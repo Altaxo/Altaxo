@@ -85,11 +85,14 @@ namespace Altaxo.Data
     /// </summary>
     /// <param name="i">The index i.</param>
     /// <returns>The index i.</returns>
-    public double GetDoubleAt(int i)
+    public double this[int i]
     {
-      return m_Start + i*m_Increment;
+      get
+      {
+        return m_Start + i * m_Increment;
+      }
     }
-
+    
     /// <summary>
     /// This returns always true.
     /// </summary>
@@ -103,7 +106,7 @@ namespace Altaxo.Data
     /// <summary>
     /// Returns the index i as AltaxoVariant.
     /// </summary>
-    public AltaxoVariant this[int i] 
+    AltaxoVariant Altaxo.Data.IReadableColumn.this[int i] 
     {
       get 
       {

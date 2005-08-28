@@ -81,7 +81,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         get
         {
-          return _columns[col].GetDoubleAt(_rows[row]);
+          return _columns[col][_rows[row]];
         }
       }
 
@@ -145,7 +145,7 @@ namespace Altaxo.Calc.LinearAlgebra
         {
           if(col==0)
             return 1;
-          else return _columns[col-1].GetDoubleAt(_rows[row]);
+          else return _columns[col-1][_rows[row]];
         }
       }
 
@@ -190,7 +190,7 @@ namespace Altaxo.Calc.LinearAlgebra
         
         get
         {
-          return _columns[col].GetDoubleAt(_rows[row]);
+          return _columns[col][_rows[row]];
         }
          
         set
@@ -247,7 +247,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         get
         {
-          return _columns[row].GetDoubleAt(_rows[col]);
+          return _columns[row][_rows[col]];
         }
       }
 
@@ -290,7 +290,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         get
         {
-          return _columns[row].GetDoubleAt(_rows[col]);
+          return _columns[row][_rows[col]];
         }
         set
         {
@@ -491,7 +491,7 @@ namespace Altaxo.Calc.LinearAlgebra
         INumericColumn col = (INumericColumn)table[selectedCols[i]];
         for(int j=0;j<rowCount;j++)
         {
-          if(double.IsNaN(col.GetDoubleAt(j)))
+          if(double.IsNaN(col[j]))
             rowValid[j]=false;
         }
       }
@@ -517,7 +517,7 @@ namespace Altaxo.Calc.LinearAlgebra
         INumericColumn col = (INumericColumn)table[selectedCols[i]];
         for(int j=0;j<rowCount;j++)
         {
-          if(double.IsNaN(col.GetDoubleAt(j)))
+          if(double.IsNaN(col[j]))
             rowValid[j]=false;
         }
       }

@@ -130,7 +130,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
       #region IROVector Members
 
-      double Altaxo.Calc.LinearAlgebra.IROVector.this[int i]
+      double Altaxo.Calc.LinearAlgebra.INumericSequence.this[int i]
       {
         get
         {

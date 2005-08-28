@@ -41,6 +41,13 @@ namespace Altaxo.Gui.Graph
     IXYPlotLineStyleViewEventSink Controller { get; set; }
     
     
+    /// <summary>
+    /// If activated, this causes the view to disable all gui elements if neither a line style nor a fill style is choosen.
+    /// </summary>
+    /// <param name="bActivate"></param>
+    void SetEnableDisableMain(bool bActivate);    
+
+
     void InitializeIndependentColor(bool val);
  
     /// <summary>
@@ -125,8 +132,17 @@ namespace Altaxo.Gui.Graph
   public interface IXYPlotLineStyleViewEventSink
   {
     
+
   }
 
+  public interface IXYPlotLineStyleController : Main.GUI.IMVCAController
+  {
+    /// <summary>
+    /// If activated, this causes the view to disable all gui elements if neither a line style nor a fill style is choosen.
+    /// </summary>
+    /// <param name="bActivate"></param>
+    void SetEnableDisableMain(bool bActivate);    
+  }
 
 
   #endregion
@@ -135,7 +151,7 @@ namespace Altaxo.Gui.Graph
   /// Summary description for XYPlotLineStyleController.
   /// </summary>
   	[UserControllerForObject(typeof(XYPlotLineStyle))]
-  public class XYPlotLineStyleController : IXYPlotLineStyleViewEventSink, Main.GUI.IMVCAController
+  public class XYPlotLineStyleController : IXYPlotLineStyleViewEventSink, IXYPlotLineStyleController
   {
     IXYPlotLineStyleView _view;
     XYPlotLineStyle _doc;
@@ -189,7 +205,17 @@ namespace Altaxo.Gui.Graph
     }
 
 
-  
+      bool _ActivateEnableDisableMain = false;
+      /// <summary>
+      /// If activated, this causes the view to disable all gui elements if neither a line style nor a fill style is choosen.
+      /// </summary>
+      /// <param name="bActivate"></param>
+      public void SetEnableDisableMain(bool bActivate)
+      {
+        _ActivateEnableDisableMain = bActivate;
+        if(null!=_view)
+          _view.SetEnableDisableMain(bActivate);
+      }
 
     void Initialize()
     {
@@ -209,6 +235,7 @@ namespace Altaxo.Gui.Graph
         SetFillCondition();
         SetFillDirection();
         SetFillColor();
+        _view.SetEnableDisableMain(_ActivateEnableDisableMain);
       }
     }
 

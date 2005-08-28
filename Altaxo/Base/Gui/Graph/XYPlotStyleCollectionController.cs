@@ -131,7 +131,7 @@ namespace Altaxo.Gui.Graph
         selIndices[i]--; // for new list selection
       }
 
-      UpdateStyleList(new int[]{});
+      UpdateStyleList(selIndices);
 
       OnCollectionChangeCommit();
       

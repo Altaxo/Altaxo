@@ -112,7 +112,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       {
         Altaxo.Data.INumericColumn col = (Altaxo.Data.INumericColumn)srctable[selectedColumns[i]];
         for(int j=0;j<rowsfirsthalf;j++)
-          firstMat[j,i] = col.GetDoubleAt(j);
+          firstMat[j,i] = col[j];
       }
       
       MatrixMath.BEMatrix secondMat = new MatrixMath.BEMatrix(halfselect,rowssecondhalf);
@@ -120,7 +120,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       {
         Altaxo.Data.INumericColumn col = (Altaxo.Data.INumericColumn)srctable[selectedColumns[i+halfselect]];
         for(int j=0;j<rowssecondhalf;j++)
-          secondMat[i,j] = col.GetDoubleAt(j);
+          secondMat[i,j] = col[j];
       }
 
       // now multiply the two matrices
@@ -259,7 +259,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
             for(int j=0;j<numrows;j++)
             {
               int rowidx = bUseSelectedRows ? selectedRows[j] : j;
-              matrixX[j,ccol] = col.GetDoubleAt(rowidx);
+              matrixX[j,ccol] = col[rowidx];
             }
             ++ccol;
           }
@@ -278,7 +278,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
             for(int j=0;j<numrows;j++)
             {
               int rowidx = bUseSelectedRows ? selectedRows[j] : j;
-              matrixX[ccol,j] = col.GetDoubleAt(rowidx);
+              matrixX[ccol,j] = col[rowidx];
             }
             ++ccol;
           }

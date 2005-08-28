@@ -40,10 +40,11 @@ namespace Altaxo.Gui.Graph
     // Get / sets the controller of this view
     IXYPlotScatterStyleViewEventSink Controller { get; set; }
   
-    
-   
-    
-    
+    /// <summary>
+    /// If activated, this causes the view to disable all gui elements if neither a line style nor a fill style is choosen.
+    /// </summary>
+    /// <param name="bActivate"></param>
+    void SetEnableDisableMain(bool bActivate);    
     
     /// <summary>
     /// Initializes the plot style color combobox.
@@ -120,13 +121,22 @@ namespace Altaxo.Gui.Graph
   {
   }
 
+  public interface IXYPlotScatterStyleController : Main.GUI.IMVCAController
+  {
+    /// <summary>
+    /// If activated, this causes the view to disable all gui elements if neither a line style nor a fill style is choosen.
+    /// </summary>
+    /// <param name="bActivate"></param>
+    void SetEnableDisableMain(bool bActivate);    
+  }
+
   #endregion
 
   /// <summary>
   /// Summary description for XYPlotScatterStyleController.
   /// </summary>
   [UserControllerForObject(typeof(XYPlotScatterStyle))]
-  public class XYPlotScatterStyleController : IXYPlotScatterStyleViewEventSink, Main.GUI.IMVCAController
+  public class XYPlotScatterStyleController : IXYPlotScatterStyleViewEventSink, IXYPlotScatterStyleController
   {
     XYPlotScatterStyle _doc;
     XYPlotScatterStyle _tempDoc;
@@ -156,7 +166,17 @@ namespace Altaxo.Gui.Graph
     }
 
 
-  
+    bool _ActivateEnableDisableMain = false;
+    /// <summary>
+    /// If activated, this causes the view to disable all gui elements if neither a line style nor a fill style is choosen.
+    /// </summary>
+    /// <param name="bActivate"></param>
+    public void SetEnableDisableMain(bool bActivate)
+    {
+      _ActivateEnableDisableMain = bActivate;
+      if(null!=_view)
+        _view.SetEnableDisableMain(bActivate);
+    }
 
     void Initialize()
     {
@@ -175,6 +195,7 @@ namespace Altaxo.Gui.Graph
         SetSymbolStyle();
         SetSymbolSize();
         SetDropLineConditions();
+        _view.SetEnableDisableMain(_ActivateEnableDisableMain);
       }
     }
 

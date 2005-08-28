@@ -534,13 +534,13 @@ namespace Altaxo.Serialization.Galactic
       {
         i = bUseSel ? selectedColumns[j] : j;
 
-        if(xcolumn.GetDoubleAt(i) == Double.NaN)
+        if(xcolumn[i] == Double.NaN)
           return string.Format("X column at index {i} has no numeric value!",i);
 
         if(!(table[i] is Altaxo.Data.INumericColumn))
           return string.Format("Table column[{0}] ({1}) is not a numeric column!",i,table[i].FullName);
 
-        if(((Altaxo.Data.INumericColumn)table[i]).GetDoubleAt(rownumber) == Double.NaN)
+        if(((Altaxo.Data.INumericColumn)table[i])[rownumber] == Double.NaN)
           return string.Format("Table cell [{0},{1}] (column {2}) has no numeric value!",i,rownumber,table[i].FullName);
       }
 
@@ -553,8 +553,8 @@ namespace Altaxo.Serialization.Galactic
       for(j=0;j<spectrumlen;j++)
       {
         i = bUseSel ? selectedColumns[j] : j;
-        xvalues[j]= xcolumn.GetDoubleAt(i);
-        yvalues[j]= ((Altaxo.Data.INumericColumn)table[i]).GetDoubleAt(rownumber);
+        xvalues[j]= xcolumn[i];
+        yvalues[j]= ((Altaxo.Data.INumericColumn)table[i])[rownumber];
 
       }
       return FromArrays(xvalues,yvalues,filename);
@@ -593,10 +593,10 @@ namespace Altaxo.Serialization.Galactic
       {
         i = bUseSel ? selectedRows[j] : j;
 
-        if(xcolumn.GetDoubleAt(i) == Double.NaN)
+        if(xcolumn[i] == Double.NaN)
           return string.Format("X column at index {i} has no numeric value!",i);
 
-        if(((Altaxo.Data.INumericColumn)table.DataColumns[columnnumber]).GetDoubleAt(i) == Double.NaN)
+        if(((Altaxo.Data.INumericColumn)table.DataColumns[columnnumber])[i] == Double.NaN)
           return string.Format("Table cell [{0},{1}] (column {2}) has no numeric value!",columnnumber,i,table.DataColumns[columnnumber].FullName);
       }
 
@@ -609,8 +609,8 @@ namespace Altaxo.Serialization.Galactic
       for(j=0;j<spectrumlen;j++)
       {
         i = bUseSel ? selectedRows[j] : j;
-        xvalues[j]= xcolumn.GetDoubleAt(i);
-        yvalues[j]= ((Altaxo.Data.INumericColumn)table.DataColumns[columnnumber]).GetDoubleAt(i);
+        xvalues[j]= xcolumn[i];
+        yvalues[j]= ((Altaxo.Data.INumericColumn)table.DataColumns[columnnumber])[i];
 
       }
       return FromArrays(xvalues,yvalues,filename);

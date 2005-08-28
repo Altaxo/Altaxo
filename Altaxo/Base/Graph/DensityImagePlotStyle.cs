@@ -452,7 +452,7 @@ namespace Altaxo.Graph
 
           for(int j=0;j<rows;j++)
           {
-            double val = col.GetDoubleAt(j);
+            double val = col[j];
             if(double.IsNaN(val))
             {
               m_Image.SetPixel(j,cols-i-1,m_ColorInvalid); // invalid pixels are transparent

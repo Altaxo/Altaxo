@@ -24,16 +24,18 @@ using System;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
+  public interface INumericSequence
+  {
+    /// <summary>Gets the element of the sequence at index i.</summary>
+    /// <value>The element at index i.</value>
+    double this[int i] { get; }
+  }
+
   /// <summary>
   /// Interface for a read-only vector of double values.
   /// </summary>
-  public interface IROVector
+  public interface IROVector : INumericSequence
   {
-
-    /// <summary>Gets the value at index i with LowerBound &lt;= i &lt;=UpperBound.</summary>
-    /// <value>The element at index i.</value>
-    double this[int i] { get; }
- 
     /// <summary>The smallest valid index of this vector</summary>
     int LowerBound { get; }
     
@@ -62,7 +64,7 @@ namespace Altaxo.Calc.LinearAlgebra
   public interface IExtensibleVector : IVector
   {
     /// <summary>
-    /// Append vector a to the right edge of this matrix.
+    /// Append vector a to the end of this vector.
     /// </summary>
     /// <param name="a">The vector to append.</param>
     void Append(IROVector a);

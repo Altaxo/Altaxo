@@ -213,7 +213,7 @@ namespace Altaxo.Serialization.Galactic
         return false;
 
       for(int i=0;i<values.Length;i++)
-        if(col.GetDoubleAt(i) != values[i])
+        if(col[i] != values[i])
           return false;
 
       return true;

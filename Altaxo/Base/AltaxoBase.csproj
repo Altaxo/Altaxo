@@ -485,7 +485,7 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Graph\I2DPlotItemStyle.cs"
+                    RelPath = "Graph\I2DGroupablePlotItem.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -526,6 +526,11 @@
                 />
                 <File
                     RelPath = "Graph\PhysicalBoundaries.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\PlotColors.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -636,6 +641,11 @@
                 />
                 <File
                     RelPath = "Graph\XYPlotStyleCollection.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\XYPlotStyleCollectionTemplates.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -931,7 +941,7 @@
                 />
                 <File
                     RelPath = "Graph\GUI\LineScatterPlotStyleControl.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File

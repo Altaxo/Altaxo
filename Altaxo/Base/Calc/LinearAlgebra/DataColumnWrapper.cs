@@ -71,7 +71,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         get
         {
-          return _column.GetDoubleAt(row);
+          return _column[row];
         }
       }
 
@@ -116,7 +116,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         get
         {
-          return _column.GetDoubleAt(_rows[row]);
+          return _column[_rows[row]];
         }
       }
 
@@ -213,7 +213,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         get
         {
-          return _column.GetDoubleAt(_rows[row]);
+          return _column[_rows[row]];
         }
         set
         {
@@ -258,7 +258,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         get
         {
-          return _column.GetDoubleAt(col);
+          return _column[col];
         }
       }
 
@@ -306,7 +306,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         get
         {
-          return _column.GetDoubleAt(row);
+          return _column[row];
         }
       }
 
@@ -354,7 +354,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         get
         {
-          return _column.GetDoubleAt(col);
+          return _column[col];
         }
       }
 
@@ -375,7 +375,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         get
         {
-          return _column.GetDoubleAt(col);
+          return _column[col];
         }
         set
         {
@@ -417,7 +417,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         get
         {
-          return _column.GetDoubleAt(row);
+          return _column[row];
         }
       }
 
@@ -438,7 +438,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         get
         {
-          return _column.GetDoubleAt(row);
+          return _column[row];
         }
         set
         {
@@ -518,7 +518,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
       double[] vec = new double[col.Count];
       for(int i=col.Count-1;i>=0;i--)
-        vec[i] = ncol.GetDoubleAt(i);
+        vec[i] = ncol[i];
 
       return VectorMath.ToROVector(vec);
     }

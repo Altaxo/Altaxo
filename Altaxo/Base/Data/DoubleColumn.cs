@@ -317,10 +317,7 @@ namespace Altaxo.Data
       return new AltaxoVariant(this[i]);
     }
 
-    public double GetDoubleAt(int i)
-    {
-      return i<m_Count ? this[i] : Double.NaN;
-    }
+   
 
     public override bool IsElementEmpty(int i)
     {

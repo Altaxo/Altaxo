@@ -17,7 +17,7 @@ namespace Altaxo.Gui.Graph
     PlotGroup _parentPlotGroup;
     
     I2DPlotStyle _additionalStyle;
-    int _insertAdditionalStyle;
+    int _insertAdditionalStyle=-1;
     IXYPlotGroupView _plotGroupView;
 
     IXYPlotStyleCollectionController _styleCollectionController;
@@ -116,7 +116,16 @@ namespace Altaxo.Gui.Graph
         {
           IMVCAController ct = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { lineScatterPair[i] }, typeof(IMVCAController));
           if(ct!=null)
+          {
             arr.Add(new ControlViewElement(string.Empty,ct));
+            if(i==_insertAdditionalStyle)
+            {
+              if(ct is IXYPlotLineStyleController)
+                (ct as IXYPlotLineStyleController).SetEnableDisableMain(true);
+              else if (ct is IXYPlotScatterStyleController)
+                (ct as IXYPlotScatterStyleController).SetEnableDisableMain(true);
+            }
+          }
         }
         arr.Add(new ControlViewElement(string.Empty,this,this._plotGroupView));
         Common.MultiChildController mctrl = new Common.MultiChildController((ControlViewElement[])arr.ToArray(typeof(ControlViewElement)), true);

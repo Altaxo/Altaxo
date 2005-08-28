@@ -136,7 +136,7 @@ namespace Altaxo.Graph.Axes.Boundaries
     public override bool Add(Altaxo.Data.IReadableColumn col, int idx)
     {
       // if column is not numeric, use the index instead
-      double d = (col is Altaxo.Data.INumericColumn) ? ((Altaxo.Data.INumericColumn)col).GetDoubleAt(idx) : idx;
+      double d = (col is Altaxo.Data.INumericColumn) ? ((Altaxo.Data.INumericColumn)col)[idx] : idx;
   
       if(EventsEnabled)
       {

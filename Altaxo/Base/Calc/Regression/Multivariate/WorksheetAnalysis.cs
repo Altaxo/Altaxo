@@ -613,7 +613,7 @@ namespace Altaxo.Calc.Regression.Multivariate
           Altaxo.Data.INumericColumn col = srctable[spectralIndices[i]] as Altaxo.Data.INumericColumn;
           for(int j=0;j<measurementIndices.Count;j++)
           {
-            matrixX[j,i] = col.GetDoubleAt(measurementIndices[j]);
+            matrixX[j,i] = col[measurementIndices[j]];
           }
         } // end fill in x-values
       }
@@ -628,7 +628,7 @@ namespace Altaxo.Calc.Regression.Multivariate
           Altaxo.Data.INumericColumn col = srctable[measurementIndices[i]] as Altaxo.Data.INumericColumn;
           for(int j=0;j<spectralIndices.Count;j++)
           {
-            matrixX[i,j] = col.GetDoubleAt(spectralIndices[j]);
+            matrixX[i,j] = col[spectralIndices[j]];
           }
         } // end fill in x-values
       }
@@ -671,7 +671,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       double[] result = new double[spectralIndices.Count];
 
       for(int i=0;i<spectralIndices.Count;i++)
-        result[i] = col.GetDoubleAt(spectralIndices[i]);
+        result[i] = col[spectralIndices[i]];
 
       return result;
     }
@@ -701,7 +701,7 @@ namespace Altaxo.Calc.Regression.Multivariate
         Altaxo.Data.INumericColumn col = concentration[concentrationIndices[i]] as Altaxo.Data.INumericColumn;
         for(int j=0;j<measurementIndices.Count;j++)
         {
-          matrixY[j,i] = col.GetDoubleAt(measurementIndices[j]);
+          matrixY[j,i] = col[measurementIndices[j]];
         }
       } // end fill in yvalues
 
@@ -922,7 +922,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       if(xColumnOfX is INumericColumn)
       {
         for(int i=0;i<xOfX.Length;i++)
-          xOfXRW[i] = ((INumericColumn)xColumnOfX).GetDoubleAt(i);
+          xOfXRW[i] = ((INumericColumn)xColumnOfX)[i];
       }
       else
       {
@@ -940,7 +940,7 @@ namespace Altaxo.Calc.Regression.Multivariate
         Altaxo.Data.INumericColumn col = concentration[concentrationIndices[i]] as Altaxo.Data.INumericColumn;
         for(int j=0;j<measurementIndices.Count;j++)
         {
-          matrixY[j,i] = col.GetDoubleAt(measurementIndices[j]);
+          matrixY[j,i] = col[measurementIndices[j]];
         }
       } // end fill in yvalues
 
@@ -953,7 +953,7 @@ namespace Altaxo.Calc.Regression.Multivariate
           Altaxo.Data.INumericColumn col = srctable[spectralIndices[i]] as Altaxo.Data.INumericColumn;
           for(int j=0;j<measurementIndices.Count;j++)
           {
-            matrixX[j,i] = col.GetDoubleAt(measurementIndices[j]);
+            matrixX[j,i] = col[measurementIndices[j]];
           }
         } // end fill in x-values
       }
@@ -968,7 +968,7 @@ namespace Altaxo.Calc.Regression.Multivariate
           Altaxo.Data.INumericColumn col = srctable[measurementIndices[i]] as Altaxo.Data.INumericColumn;
           for(int j=0;j<spectralIndices.Count;j++)
           {
-            matrixX[i,j] = col.GetDoubleAt(spectralIndices[j]);
+            matrixX[i,j] = col[spectralIndices[j]];
           }
         } // end fill in x-values
       }

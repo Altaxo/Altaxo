@@ -190,7 +190,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     
       for(int i=0;i<validRows.Count;i++)
       {
-        yarr[i] = ycol.GetDoubleAt(validRows[i]);
+        yarr[i] = ycol[validRows[i]];
         earr[i] = 1;
       }
 

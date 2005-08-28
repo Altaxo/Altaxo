@@ -98,7 +98,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
         int NN=0;
         for(int i=0;i<rows;i++)
         {
-          double val = bUseSelectedRows ? ncol.GetDoubleAt(selectedRows[i]) : ncol.GetDoubleAt(i);
+          double val = bUseSelectedRows ? ncol[selectedRows[i]] : ncol[i];
           if(Double.IsNaN(val))
             continue;
 
@@ -219,7 +219,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
         Data.INumericColumn ncol = (Data.INumericColumn)col;
         for(int i=0;i<numrows;i++)
         {
-          double val = bUseSelectedRows ? ncol.GetDoubleAt(selectedRows[i]) : ncol.GetDoubleAt(i);
+          double val = bUseSelectedRows ? ncol[selectedRows[i]] : ncol[i];
           if(Double.IsNaN(val))
             continue;
 

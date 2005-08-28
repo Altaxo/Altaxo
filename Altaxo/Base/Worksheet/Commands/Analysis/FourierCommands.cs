@@ -87,7 +87,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
         for(int j=0;j<rows;j++)
         {
-          rePart[i*rows+j] = col.GetDoubleAt(j);
+          rePart[i*rows+j] = col[j];
         }
       }
 

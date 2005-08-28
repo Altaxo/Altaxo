@@ -582,7 +582,7 @@ namespace Altaxo.Graph
 
     public bool IsXYLineStyleSupported
     {
-      get { return this.XYPlotLineStyle != null; }
+      get { return this.XYPlotLineStyle != DashStyle.Custom; }
     }
 
     public System.Drawing.Drawing2D.DashStyle XYLineStyle

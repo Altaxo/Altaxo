@@ -332,7 +332,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       for(int i=_validNumericRows.Count-1;i>=0;i--)
       {
         for(int k=_independentVariables.Length-1;k>=0;k--)
-          _independentValues[k] = _independentVariables[k].GetDoubleAt(_validNumericRows[i]);
+          _independentValues[k] = _independentVariables[k][_validNumericRows[i]];
 
         _fitFunction.Evaluate(_independentValues,parameter,_dependentValuesResult);
 
@@ -340,7 +340,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
         for(int k=_dependentValuesResult.Length-1;k>=0;--k)
         {
           if(_dependentVariables[k]!=null)
-            ys[k] += _errorEvaluation[k].EvaluateError(_dependentVariables[k].GetDoubleAt(_validNumericRows[i]),_dependentValuesResult[k]);
+            ys[k] += _errorEvaluation[k].EvaluateError(_dependentVariables[k][_validNumericRows[i]],_dependentValuesResult[k]);
         }
       }
     }

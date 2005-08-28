@@ -37,6 +37,7 @@ namespace Altaxo.Gui.Graph
   public class XYPlotScatterStyleControl : System.Windows.Forms.UserControl, IXYPlotScatterStyleView
   {
     private IXYPlotScatterStyleViewEventSink _controller;
+    private bool _EnableDisableAll=false;
     private int m_SuppressEvents=0;
     private System.Windows.Forms.GroupBox m_gbSymbol;
     private System.Windows.Forms.TextBox m_edSymbolSkipFrequency;
@@ -93,6 +94,7 @@ namespace Altaxo.Gui.Graph
     private void InitializeComponent()
     {
       this.m_gbSymbol = new System.Windows.Forms.GroupBox();
+      this._chkIndependentSize = new System.Windows.Forms.CheckBox();
       this.m_edSymbolSkipFrequency = new System.Windows.Forms.TextBox();
       this.label6 = new System.Windows.Forms.Label();
       this.m_chkSymbolSkipPoints = new System.Windows.Forms.CheckBox();
@@ -106,10 +108,9 @@ namespace Altaxo.Gui.Graph
       this.m_cbSymbolShape = new System.Windows.Forms.ComboBox();
       this.m_lblSymbolStyle = new System.Windows.Forms.Label();
       this.m_lblSymbolShape = new System.Windows.Forms.Label();
+      this._chkIndependentColor = new System.Windows.Forms.CheckBox();
       this.m_btLineSymbolColorDetails = new System.Windows.Forms.Button();
       this.m_cbLineSymbolColor = new System.Windows.Forms.ComboBox();
-      this._chkIndependentColor = new System.Windows.Forms.CheckBox();
-      this._chkIndependentSize = new System.Windows.Forms.CheckBox();
       this.m_gbSymbol.SuspendLayout();
       this.m_gbSymbolDropLine.SuspendLayout();
       this.SuspendLayout();
@@ -135,6 +136,14 @@ namespace Altaxo.Gui.Graph
       this.m_gbSymbol.TabIndex = 24;
       this.m_gbSymbol.TabStop = false;
       this.m_gbSymbol.Text = "Symbol";
+      // 
+      // _chkIndependentSize
+      // 
+      this._chkIndependentSize.Location = new System.Drawing.Point(16, 176);
+      this._chkIndependentSize.Name = "_chkIndependentSize";
+      this._chkIndependentSize.Size = new System.Drawing.Size(80, 24);
+      this._chkIndependentSize.TabIndex = 27;
+      this._chkIndependentSize.Text = "indep. Size";
       // 
       // m_edSymbolSkipFrequency
       // 
@@ -180,6 +189,7 @@ namespace Altaxo.Gui.Graph
       this.m_chkSymbolDropLineBottom.Size = new System.Drawing.Size(64, 16);
       this.m_chkSymbolDropLineBottom.TabIndex = 3;
       this.m_chkSymbolDropLineBottom.Text = "Bottom";
+      this.m_chkSymbolDropLineBottom.CheckedChanged += new System.EventHandler(this.m_chkSymbolDropLineBottom_CheckedChanged);
       // 
       // m_chkSymbolDropLineTop
       // 
@@ -188,6 +198,7 @@ namespace Altaxo.Gui.Graph
       this.m_chkSymbolDropLineTop.Size = new System.Drawing.Size(48, 16);
       this.m_chkSymbolDropLineTop.TabIndex = 2;
       this.m_chkSymbolDropLineTop.Text = "Top";
+      this.m_chkSymbolDropLineTop.CheckedChanged += new System.EventHandler(this.m_chkSymbolDropLineTop_CheckedChanged);
       // 
       // m_chkSymbolDropLineRight
       // 
@@ -196,6 +207,7 @@ namespace Altaxo.Gui.Graph
       this.m_chkSymbolDropLineRight.Size = new System.Drawing.Size(56, 16);
       this.m_chkSymbolDropLineRight.TabIndex = 1;
       this.m_chkSymbolDropLineRight.Text = "Right";
+      this.m_chkSymbolDropLineRight.CheckedChanged += new System.EventHandler(this.m_chkSymbolDropLineRight_CheckedChanged);
       // 
       // m_chkSymbolDropLineLeft
       // 
@@ -204,6 +216,7 @@ namespace Altaxo.Gui.Graph
       this.m_chkSymbolDropLineLeft.Size = new System.Drawing.Size(48, 16);
       this.m_chkSymbolDropLineLeft.TabIndex = 0;
       this.m_chkSymbolDropLineLeft.Text = "Left";
+      this.m_chkSymbolDropLineLeft.CheckedChanged += new System.EventHandler(this.m_chkSymbolDropLineLeft_CheckedChanged);
       // 
       // m_cbSymbolSize
       // 
@@ -246,6 +259,15 @@ namespace Altaxo.Gui.Graph
       this.m_lblSymbolShape.TabIndex = 0;
       this.m_lblSymbolShape.Text = "Shape";
       // 
+      // _chkIndependentColor
+      // 
+      this._chkIndependentColor.Location = new System.Drawing.Point(8, 24);
+      this._chkIndependentColor.Name = "_chkIndependentColor";
+      this._chkIndependentColor.Size = new System.Drawing.Size(128, 16);
+      this._chkIndependentColor.TabIndex = 26;
+      this._chkIndependentColor.Text = "independent Color";
+      this._chkIndependentColor.CheckedChanged += new System.EventHandler(this._chkIndependentColor_CheckedChanged);
+      // 
       // m_btLineSymbolColorDetails
       // 
       this.m_btLineSymbolColorDetails.Location = new System.Drawing.Point(162, 48);
@@ -261,23 +283,6 @@ namespace Altaxo.Gui.Graph
       this.m_cbLineSymbolColor.Size = new System.Drawing.Size(152, 21);
       this.m_cbLineSymbolColor.TabIndex = 20;
       this.m_cbLineSymbolColor.Text = "comboBox1";
-      // 
-      // _chkIndependentColor
-      // 
-      this._chkIndependentColor.Location = new System.Drawing.Point(8, 24);
-      this._chkIndependentColor.Name = "_chkIndependentColor";
-      this._chkIndependentColor.Size = new System.Drawing.Size(128, 16);
-      this._chkIndependentColor.TabIndex = 26;
-      this._chkIndependentColor.Text = "independent Color";
-      this._chkIndependentColor.CheckedChanged += new System.EventHandler(this._chkIndependentColor_CheckedChanged);
-      // 
-      // _chkIndependentSize
-      // 
-      this._chkIndependentSize.Location = new System.Drawing.Point(16, 176);
-      this._chkIndependentSize.Name = "_chkIndependentSize";
-      this._chkIndependentSize.Size = new System.Drawing.Size(80, 24);
-      this._chkIndependentSize.TabIndex = 27;
-      this._chkIndependentSize.Text = "indep. Size";
       // 
       // XYPlotScatterStyleControl
       // 
@@ -301,6 +306,33 @@ namespace Altaxo.Gui.Graph
       --m_SuppressEvents;
     }
 
+      public void EnableDisableMain(bool bEnable)
+      {
+        this._chkIndependentColor.Enabled = bEnable;
+        this._chkIndependentSize.Enabled = bEnable;
+        this.m_btLineSymbolColorDetails.Enabled = bEnable;
+        this.m_cbLineSymbolColor.Enabled = bEnable;
+        this.m_cbSymbolSize.Enabled = bEnable;
+        this.m_cbSymbolStyle.Enabled = bEnable;
+        this.m_chkSymbolSkipPoints.Enabled = bEnable;
+        this.m_edSymbolSkipFrequency.Enabled = bEnable;
+      }
+
+      bool ShouldEnableMain()
+      {
+        return this.m_cbSymbolShape.SelectedIndex!=0 ||
+          this.m_chkSymbolDropLineBottom.Checked ||
+          this.m_chkSymbolDropLineLeft.Checked ||
+          this.m_chkSymbolDropLineRight.Checked ||
+          this.m_chkSymbolDropLineTop.Checked;
+          
+      }
+      public void SetEnableDisableMain(bool bActivate)
+      {
+        this._EnableDisableAll = bActivate;
+        this.EnableDisableMain(_EnableDisableAll==false || this.ShouldEnableMain());
+      }
+
     #region IXYPlotScatterStyleView Members
 
     public IXYPlotScatterStyleViewEventSink Controller
@@ -309,8 +341,7 @@ namespace Altaxo.Gui.Graph
       set { _controller = value; }
     }
 
-    
-
+     
 
 
     public void InitializeSymbolStyle(string[] arr, string sel)
@@ -389,6 +420,8 @@ namespace Altaxo.Gui.Graph
   
     private void EhSymbolShape_SelectionChangeCommit(object sender, System.EventArgs e)
     {
+      if(this._EnableDisableAll)
+        EnableDisableMain(this.ShouldEnableMain());
     }
 
       public void InitializeIndependentColor(bool val)
@@ -407,13 +440,7 @@ namespace Altaxo.Gui.Graph
 
       private void _chkIndependentColor_CheckedChanged(object sender, System.EventArgs e)
       {
-        this.m_cbLineSymbolColor.Enabled = _chkIndependentColor.Checked;
-        this.m_btLineSymbolColorDetails.Enabled = _chkIndependentColor.Checked;
-
-        if(this._controller!=null)
-        {
-           
-        }
+        
       }
 
   
@@ -422,6 +449,34 @@ namespace Altaxo.Gui.Graph
 
 
     #endregion
+
+      private void m_chkSymbolDropLineLeft_CheckedChanged(object sender, System.EventArgs e)
+      {
+        if(this._EnableDisableAll)
+          EnableDisableMain(this.ShouldEnableMain());
+
+      }
+
+      private void m_chkSymbolDropLineRight_CheckedChanged(object sender, System.EventArgs e)
+      {
+        if(this._EnableDisableAll)
+          EnableDisableMain(this.ShouldEnableMain());
+
+      }
+
+      private void m_chkSymbolDropLineTop_CheckedChanged(object sender, System.EventArgs e)
+      {
+        if(this._EnableDisableAll)
+          EnableDisableMain(this.ShouldEnableMain());
+
+      }
+
+      private void m_chkSymbolDropLineBottom_CheckedChanged(object sender, System.EventArgs e)
+      {
+        if(this._EnableDisableAll)
+          EnableDisableMain(this.ShouldEnableMain());
+
+      }
 
      
   }

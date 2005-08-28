@@ -274,10 +274,24 @@ namespace Altaxo.Data
       return new AltaxoVariant(this[i]);
     }
 
-    public double GetDoubleAt(int i)
+   
+   
+    double Altaxo.Calc.LinearAlgebra.INumericSequence.this[int i]
     {
-      return i<m_Count ? this[i].Ticks/1E7 : Double.NaN;
+      get
+      {
+        return i<m_Count ? this[i].Ticks/1E7 : Double.NaN;
+      }
     }
+    
+    double Altaxo.Data.INumericColumn.this[int i]
+    {
+      get
+      {
+        return i < m_Count ? this[i].Ticks / 1E7 : Double.NaN;
+      }
+    }
+
 
     public override bool IsElementEmpty(int i)
     {

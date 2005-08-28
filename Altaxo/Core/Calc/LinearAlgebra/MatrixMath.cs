@@ -739,7 +739,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
       /// <summary>Gets the value at index i with LowerBound &lt;= i &lt;=UpperBound.</summary>
       /// <value>The element at index i.</value>
-      double Altaxo.Calc.LinearAlgebra.IROVector.this[int i]
+      double Altaxo.Calc.LinearAlgebra.INumericSequence.this[int i]
       {
         get
         {
@@ -839,7 +839,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
       /// <summary>Gets the value at index i with LowerBound &lt;= i &lt;=UpperBound.</summary>
       /// <value>The element at index i.</value>
-      double Altaxo.Calc.LinearAlgebra.IROVector.this[int i]
+      double Altaxo.Calc.LinearAlgebra.INumericSequence.this[int i]
       {
         get
         {
@@ -908,7 +908,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
       /// <summary>Gets the value at index i with LowerBound &lt;= i &lt;=UpperBound.</summary>
       /// <value>The element at index i.</value>
-      double Altaxo.Calc.LinearAlgebra.IROVector.this[int i]
+      double Altaxo.Calc.LinearAlgebra.INumericSequence.this[int i]
       {
         get
         {
@@ -994,7 +994,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
       /// <summary>Gets the value at index i with LowerBound &lt;= i &lt;=UpperBound.</summary>
       /// <value>The element at index i.</value>
-      double Altaxo.Calc.LinearAlgebra.IROVector.this[int i]
+      double Altaxo.Calc.LinearAlgebra.INumericSequence.this[int i]
       {
         get
         {

@@ -73,8 +73,8 @@ namespace Altaxo.Graph.Procedures
       int j=0;
       for(int i=data.PlotRangeStart;i<end && j<n;i++)
       {
-        double x = xcol.GetDoubleAt(i);
-        double y = ycol.GetDoubleAt(i);
+        double x = xcol[i];
+        double y = ycol[i];
 
         if(double.IsNaN(x) || double.IsNaN(y))
           continue;
@@ -143,8 +143,8 @@ namespace Altaxo.Graph.Procedures
       int endIndex = firstIndex+count;
       for(int i=firstIndex;i<endIndex;i++)
       {
-        double x = xcol.GetDoubleAt(i);
-        double y = ycol.GetDoubleAt(i);
+        double x = xcol[i];
+        double y = ycol[i];
         if(double.IsNaN(x) || double.IsNaN(y))
           continue;
 

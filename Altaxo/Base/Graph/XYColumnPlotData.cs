@@ -723,7 +723,7 @@ namespace Altaxo.Graph
       int len = this.PlotRangeEnd;
       for(i=this.PlotRangeStart,j=0;i<len;i++)
       {
-        if(Double.IsNaN(xColumn.GetDoubleAt(i)) || Double.IsNaN(yColumn.GetDoubleAt(i)))
+        if(Double.IsNaN(xColumn[i]) || Double.IsNaN(yColumn[i]))
         {
           if(!bInPlotSpace)
           {
