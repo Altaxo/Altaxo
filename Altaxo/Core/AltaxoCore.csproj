@@ -219,6 +219,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Calc\Fourier\RealFourierTransform.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Calc\Interpolation\Interpolation.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -295,6 +300,11 @@
                 />
                 <File
                     RelPath = "Calc\Regression\NonLinearFit.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Calc\Regression\NonLinearFit2.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

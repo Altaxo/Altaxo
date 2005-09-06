@@ -197,6 +197,31 @@ namespace Altaxo.Calc.Fourier
       }
     }
 
+    private class ChirpNativeFFTStorage
+    {
+      public double[] xjfj_real;
+      public double[] xjfj_imag;
+      public double[] fserp_real;
+      public double[] fserp_imag;
+      public double[] resarray_real;
+      public double[] resarray_imag;
+
+      public ChirpNativeFFTStorage(int msize)
+      {
+        xjfj_real  = new double[msize];
+        xjfj_imag  = new double[msize];
+        fserp_real = new double[msize];
+        fserp_imag = new double[msize];
+        resarray_real = new double[msize];
+        resarray_imag = new double[msize];
+      }
+
+      public int Length
+      {
+        get { return xjfj_real.Length; 
+        }
+      }
+    }
 
     private static void chirpnativefft(
       double[] resultreal, 
@@ -204,7 +229,8 @@ namespace Altaxo.Calc.Fourier
       double[] inputreal,
       double[] inputimag,
       int arrsize,
-      FourierDirection direction)
+      FourierDirection direction,
+      ref ChirpNativeFFTStorage s)
     {
       int phasesign = direction==FourierDirection.Forward ? 1 : -1;
       int arrsize2 = arrsize+arrsize;
@@ -214,12 +240,17 @@ namespace Altaxo.Calc.Fourier
 
       int msize = GetNecessaryTransformationSize(arrsize);
      
-      double[] xjfj_real  = new double[msize];
-      double[] xjfj_imag  = new double[msize];
-      double[] fserp_real = new double[msize];
-      double[] fserp_imag = new double[msize];
-      double[] resarray_real = new double[msize];
-      double[] resarray_imag = new double[msize];
+      if(s==null || s.Length!=msize)
+      {
+        s = new ChirpNativeFFTStorage(msize);
+      }
+
+      double[] xjfj_real  = s.xjfj_real;
+      double[] xjfj_imag  = s.xjfj_imag;
+      double[] fserp_real = s.fserp_real;
+      double[] fserp_imag = s.fserp_imag;
+      double[] resarray_real = s.resarray_real;
+      double[] resarray_imag = s.resarray_imag;
 
       // bilde xj*fj
       double prefactor = phasesign * Math.PI / arrsize;
@@ -285,10 +316,28 @@ namespace Altaxo.Calc.Fourier
     public static void
       FFT(double[] x, double[] y, FourierDirection direction)
     {
+      object storage=null;
+      FFT(x,y,direction, ref storage);
+    }
+
+    /// <summary>
+    /// Performs an FFT of arbitrary length by the chirp method. Use this method only if no other
+    /// FFT is applicable.
+    /// </summary>
+    /// <param name="x">Array of real values.</param>
+    /// <param name="y">Array of imaginary values.</param>
+    /// <param name="direction">Direction of Fourier transform.</param>
+    /// <param name="temporaryStorage">On return, this reference holds an object for temporary storage. You can use this in subsequent FFTs of the same size.</param>
+    public static void
+      FFT(double[] x, double[] y, FourierDirection direction, ref object temporaryStorage)
+    {
       if(x.Length!=y.Length)
         throw new ArgumentException("Length of real and imaginary array do not match!");
 
-      chirpnativefft(x, y, x, y, x.Length, direction);
+
+      ChirpNativeFFTStorage s = temporaryStorage as ChirpNativeFFTStorage;
+      chirpnativefft(x, y, x, y, x.Length, direction, ref s);
+      temporaryStorage = s;
     }
 
     /// <summary>
@@ -302,9 +351,27 @@ namespace Altaxo.Calc.Fourier
     public static void
       FFT(double[] x, double[] y, uint n, FourierDirection direction)
     {
-      chirpnativefft(x,y,x,y,(int)n, direction);
+      object storage=null;
+      FFT(x,y,n,direction, ref storage);
     }
 
+    /// <summary>
+    /// Performs an FFT of arbitrary length by the chirp method. Use this method only if no other
+    /// FFT is applicable.
+    /// </summary>
+    /// <param name="x">Array of real values.</param>
+    /// <param name="y">Array of imaginary values.</param>
+    /// <param name="n">Number of points to transform.</param>
+    /// <param name="direction">Direction of Fourier transform.</param>
+    /// <param name="temporaryStorage">On return, this reference holds an object for temporary storage. You can use this in subsequent FFTs of the same size.</param>
+
+    public static void
+      FFT(double[] x, double[] y, uint n, FourierDirection direction, ref object temporaryStorage)
+    {
+      ChirpNativeFFTStorage s = temporaryStorage as ChirpNativeFFTStorage;
+      chirpnativefft(x,y,x,y,(int)n, direction, ref s);
+      temporaryStorage = s;
+    }
 
     /// <summary>
     /// Returns the neccessary size for a chirp convolution of length n.

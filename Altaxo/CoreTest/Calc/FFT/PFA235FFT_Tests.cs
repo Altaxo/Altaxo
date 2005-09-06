@@ -175,8 +175,8 @@ namespace AltaxoTest.Calc.Fourier
 
       for(int i=0;i<n;i++)
       {
-        Assertion.AssertEquals("FFT of zero should give re=0", 0, re[i],0);
-        Assertion.AssertEquals("FFT of zero should give im=0", 0, im[i],0);
+        Assert.AreEqual( 0, re[i],0, "FFT of zero should give re=0");
+        Assert.AreEqual( 0, im[i],0,"FFT of zero should give im=0");
       }
     }
 
@@ -210,8 +210,8 @@ namespace AltaxoTest.Calc.Fourier
       {
         for(int j=0;j<v;j++)
         {
-          Assertion.AssertEquals(string.Format("FFT({0},{1}) of re 1 at pos 1 re[{2},{3}]",u,v,i,j), Math.Cos((2*Math.PI*j)/v), re[i*v+j],n*1E-15);
-          Assertion.AssertEquals(string.Format("FFT({0},{1}) of re 1 at pos 1 im[{2},{3}]",u,v,i,j), -Math.Sin((2*Math.PI*j)/v), im[i*v+j],n*1E-15);
+          Assert.AreEqual( Math.Cos((2*Math.PI*j)/v), re[i*v+j],n*1E-15, string.Format("FFT({0},{1}) of re 1 at pos 1 re[{2},{3}]",u,v,i,j));
+          Assert.AreEqual( -Math.Sin((2*Math.PI*j)/v), im[i*v+j],n*1E-15, string.Format("FFT({0},{1}) of re 1 at pos 1 im[{2},{3}]",u,v,i,j));
         }
       }
     }
@@ -246,8 +246,8 @@ namespace AltaxoTest.Calc.Fourier
       {
         for(int j=0;j<v;j++)
         {
-          Assertion.AssertEquals(string.Format("FFT({0},{1}) of re 1 at pos 1 re[{2},{3}]",u,v,i,j), Math.Cos((2*Math.PI*i)/u), re[i*v+j],n*1E-15);
-          Assertion.AssertEquals(string.Format("FFT({0},{1}) of re 1 at pos 1 im[{2},{3}]",u,v,i,j), -Math.Sin((2*Math.PI*i)/u), im[i*v+j],n*1E-15);
+          Assert.AreEqual( Math.Cos((2*Math.PI*i)/u), re[i*v+j],n*1E-15, string.Format("FFT({0},{1}) of re 1 at pos 1 re[{2},{3}]",u,v,i,j));
+          Assert.AreEqual( -Math.Sin((2*Math.PI*i)/u), im[i*v+j],n*1E-15,string.Format("FFT({0},{1}) of re 1 at pos 1 im[{2},{3}]",u,v,i,j));
         }
       }
     }
@@ -283,8 +283,8 @@ namespace AltaxoTest.Calc.Fourier
       {
         for(int j=0;j<v;j++)
         {
-          Assertion.AssertEquals(string.Format("FFT({0},{1}) of re 1 at pos 1 re[{2},{3}]",u,v,i,j), Math.Cos(2*Math.PI*(((double)i)/u + ((double)j)/v)), re[i*v+j],n*1E-15);
-          Assertion.AssertEquals(string.Format("FFT({0},{1}) of re 1 at pos 1 im[{2},{3}]",u,v,i,j), -Math.Sin(2*Math.PI*(((double)i)/u + ((double)j)/v)),im[i*v+j],n*1E-15);
+          Assert.AreEqual( Math.Cos(2*Math.PI*(((double)i)/u + ((double)j)/v)), re[i*v+j],n*1E-15, string.Format("FFT({0},{1}) of re 1 at pos 1 re[{2},{3}]",u,v,i,j));
+          Assert.AreEqual( -Math.Sin(2*Math.PI*(((double)i)/u + ((double)j)/v)),im[i*v+j],n*1E-15,string.Format("FFT({0},{1}) of re 1 at pos 1 im[{2},{3}]",u,v,i,j));
         }
       }
     }
@@ -323,8 +323,8 @@ namespace AltaxoTest.Calc.Fourier
       {
         for(int j=0;j<v;j++)
         {
-          Assertion.AssertEquals(string.Format("FFT({0},{1}) of re 1 at pos 1 re[{2},{3}]",u,v,i,j), Math.Cos(2*Math.PI*(((double)i)*upos/u + ((double)j)*vpos/v)), re[i*v+j],n*1E-15);
-          Assertion.AssertEquals(string.Format("FFT({0},{1}) of re 1 at pos 1 im[{2},{3}]",u,v,i,j), -Math.Sin(2*Math.PI*(((double)i)*upos/u + ((double)j)*vpos/v)), im[i*v+j],n*1E-15);
+          Assert.AreEqual( Math.Cos(2*Math.PI*(((double)i)*upos/u + ((double)j)*vpos/v)), re[i*v+j],n*1E-15, string.Format("FFT({0},{1}) of re 1 at pos 1 re[{2},{3}]",u,v,i,j));
+          Assert.AreEqual( -Math.Sin(2*Math.PI*(((double)i)*upos/u + ((double)j)*vpos/v)), im[i*v+j],n*1E-15,string.Format("FFT({0},{1}) of re 1 at pos 1 im[{2},{3}]",u,v,i,j));
         }
       }
     }
@@ -364,8 +364,8 @@ namespace AltaxoTest.Calc.Fourier
       {
         for(int j=0;j<v;j++)
         {
-          Assertion.AssertEquals(string.Format("FFT({0},{1}) of re 1 at pos 1 re[{2},{3}]",u,v,i,j), Math.Sin(2*Math.PI*(((double)i)*upos/u + ((double)j)*vpos/v)), re[i*v+j],n*1E-15);
-          Assertion.AssertEquals(string.Format("FFT({0},{1}) of re 1 at pos 1 im[{2},{3}]",u,v,i,j), Math.Cos(2*Math.PI*(((double)i)*upos/u + ((double)j)*vpos/v)), im[i*v+j],n*1E-15);
+          Assert.AreEqual( Math.Sin(2*Math.PI*(((double)i)*upos/u + ((double)j)*vpos/v)), re[i*v+j],n*1E-15, string.Format("FFT({0},{1}) of re 1 at pos 1 re[{2},{3}]",u,v,i,j));
+          Assert.AreEqual( Math.Cos(2*Math.PI*(((double)i)*upos/u + ((double)j)*vpos/v)), im[i*v+j],n*1E-15, string.Format("FFT({0},{1}) of re 1 at pos 1 im[{2},{3}]",u,v,i,j));
         }
       }
     }

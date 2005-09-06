@@ -62,9 +62,10 @@ namespace Altaxo.Calc
     /// <summary>
     /// The function evaluation.
     /// </summary>
-    /// <param name="x">The argument of the function.</param>
+    /// <param name="independent">The argument of the function.</param>
     /// <param name="parameters">The parameters of this function</param>
+    /// <param name="result">On output, this is the function result.</param>
     /// <returns>The resulting value that the function evaluates.</returns>
-    double Evaluate(double[] independent, double[] parameters, double[] result);
+    void Evaluate(double[] independent, double[] parameters, double[] result);
   }
 }

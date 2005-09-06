@@ -72,7 +72,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     double [] _parameterValues;
     double [] _independentValues;
     double [] _dependentValuesResult;
-    AscendingIntegerCollection _validNumericRows;
+    IAscendingIntegerCollection _validNumericRows;
 
     public event EventHandler Changed;
 
@@ -194,6 +194,14 @@ namespace Altaxo.Calc.Regression.Nonlinear
       }
     }
 
+    public IAscendingIntegerCollection ValidNumericRows
+    {
+      get
+      {
+        return _validNumericRows;
+      }
+    }
+
 
     void InternalReallocIndependentVariables(int noIndep)
     {
@@ -262,13 +270,8 @@ namespace Altaxo.Calc.Regression.Nonlinear
         Changed(this, EventArgs.Empty);
     }
 
-    public void InitializeFittingSession()
+    public IAscendingIntegerCollection CalculateValidNumericRows()
     {
-      _parameterValues = new double[this._parameterNames.Length];
-      this._independentValues = new double[this._independentVariables.Length];
-      this._dependentValuesResult = new double[this._dependentVariables.Length];
-
-    
       // also obtain the valid rows both of the independent and of the dependent variables
       INumericColumn[] cols = new INumericColumn[_independentVariables.Length + _dependentVariables.Length];
       int i;
@@ -276,32 +279,42 @@ namespace Altaxo.Calc.Regression.Nonlinear
       // note: for a fitting session all independent variables columns must
       // be not null
       int maxLength = int.MaxValue;
-      for(i=0;i<_independentVariables.Length;i++)
+      for (i = 0; i < _independentVariables.Length; i++)
       {
         cols[i] = _independentVariables[i];
         selectedCols.Add(i);
-        if(cols[i] is IDefinedCount)
-          maxLength = Math.Min(maxLength,((IDefinedCount)cols[i]).Count);
+        if (cols[i] is IDefinedCount)
+          maxLength = Math.Min(maxLength, ((IDefinedCount)cols[i]).Count);
       }
-      
+
       // note: for a fitting session some of the dependent variables can be null
-      for(int j=0;j<_dependentVariables.Length;++j,++i)
+      for (int j = 0; j < _dependentVariables.Length; ++j, ++i)
       {
-        if(_dependentVariables[j]!=null)
+        if (_dependentVariables[j] != null)
         {
           cols[i] = _dependentVariables[j];
           selectedCols.Add(i);
-          if(cols[i] is IDefinedCount)
-            maxLength = Math.Min(maxLength,((IDefinedCount)cols[i]).Count);
+          if (cols[i] is IDefinedCount)
+            maxLength = Math.Min(maxLength, ((IDefinedCount)cols[i]).Count);
         }
       }
-      if(maxLength==int.MaxValue)
-        maxLength=0;
+      if (maxLength == int.MaxValue)
+        maxLength = 0;
 
-      maxLength=Math.Min(maxLength,this._rangeOfRows.End);
+      maxLength = Math.Min(maxLength, this._rangeOfRows.End);
 
-      bool[] arr = Altaxo.Calc.LinearAlgebra.DataTableWrapper.GetValidNumericRows(cols,selectedCols,maxLength);
-      _validNumericRows = Altaxo.Calc.LinearAlgebra.DataTableWrapper.GetCollectionOfValidNumericRows(arr);
+      bool[] arr = Altaxo.Calc.LinearAlgebra.DataTableWrapper.GetValidNumericRows(cols, selectedCols, maxLength);
+      return Altaxo.Calc.LinearAlgebra.DataTableWrapper.GetCollectionOfValidNumericRows(arr);
+
+    }
+
+    public void InitializeFittingSession()
+    {
+      _parameterValues = new double[this._parameterNames.Length];
+      this._independentValues = new double[this._independentVariables.Length];
+      this._dependentValuesResult = new double[this._dependentVariables.Length];
+
+      _validNumericRows = CalculateValidNumericRows();
     }
 
     /// <summary>

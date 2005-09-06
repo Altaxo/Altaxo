@@ -39,7 +39,7 @@ namespace AltaxoTest.Calc.Regression
     {
       arr[0]=1;
       double r = NLFit.enorm(0,arr);
-      NUnit.Framework.Assertion.AssertEquals(0.0,r,0);
+      NUnit.Framework.Assert.AreEqual(0.0,r,0);
     }
 
     [Test]
@@ -51,7 +51,7 @@ namespace AltaxoTest.Calc.Regression
       for(int i=0;i<arr.Length;i++) 
       {
         double r = NLFit.enorm(1,arr,i);
-        NUnit.Framework.Assertion.AssertEquals((double)(i+1),r,0);
+        NUnit.Framework.Assert.AreEqual((double)(i+1),r,0);
       }
     }
 
@@ -64,7 +64,7 @@ namespace AltaxoTest.Calc.Regression
       for(int i=1;i<90001;i++) 
         arr[i] = 1;
       double r = NLFit.enorm(90001,arr);
-      NUnit.Framework.Assertion.AssertEquals(500,r,0);
+      NUnit.Framework.Assert.AreEqual(500,r,0);
     }
 
     [Test]
@@ -75,7 +75,7 @@ namespace AltaxoTest.Calc.Regression
       for(int i=1;i<90001;i++) 
         arr[i] = 1E19;
       double r = NLFit.enorm(90001,arr);
-      NUnit.Framework.Assertion.AssertEquals(500E19,r,100E10);
+      NUnit.Framework.Assert.AreEqual(500E19,r,100E10);
     }
 
     [Test]
@@ -86,7 +86,7 @@ namespace AltaxoTest.Calc.Regression
       for(int i=1;i<90001;i++) 
         arr[i] = 1E-20;
       double r = NLFit.enorm(90001,arr);
-      NUnit.Framework.Assertion.AssertEquals(500E-20,r,0);
+      NUnit.Framework.Assert.AreEqual(500E-20,r,0);
     }
   }
 
@@ -97,10 +97,10 @@ namespace AltaxoTest.Calc.Regression
   {
     public void FitFunction2plus5x(int numberOfYs, int numberOfParameter, double[] parameter, double[] ys, ref int info)
     {
-      Assertion.Assert("NumberOfParameter must be 2 in this test.",numberOfParameter==2);
-      Assertion.Assert("NumberOfYs must be 2 in this test.",numberOfYs==2);
-      Assertion.Assert("Length of parameter array must be 2 in this test.",parameter.Length==2);
-      Assertion.Assert("Length of ys array must be 2 in this test.",ys.Length==2);
+      Assert.IsTrue( numberOfParameter==2, "NumberOfParameter must be 2 in this test.");
+      Assert.IsTrue(numberOfYs==2,"NumberOfYs must be 2 in this test.");
+      Assert.IsTrue(parameter.Length==2,"Length of parameter array must be 2 in this test.");
+      Assert.IsTrue(ys.Length==2,"Length of ys array must be 2 in this test.");
 
       // we use the simplest model y=a+bx in the range -10 ..10 with step size of 1 to
       // calculate the delta
@@ -119,10 +119,10 @@ namespace AltaxoTest.Calc.Regression
 
     public void FitFunction2plus5xMod(int numberOfYs, int numberOfParameter, double[] parameter, double[] ys, ref int info)
     {
-      Assertion.Assert("NumberOfParameter must be 2 in this test.",numberOfParameter==2);
-      Assertion.Assert("NumberOfYs must be 1 in this test.",numberOfYs==1);
-      Assertion.Assert("Length of parameter array must be 2 in this test.",parameter.Length==2);
-      Assertion.Assert("Length of ys array must be 1 in this test.",ys.Length==1);
+      Assert.IsTrue(numberOfParameter==2,"NumberOfParameter must be 2 in this test.");
+      Assert.IsTrue(numberOfYs==1, "NumberOfYs must be 1 in this test.");
+      Assert.IsTrue(parameter.Length==2, "Length of parameter array must be 2 in this test.");
+      Assert.IsTrue(ys.Length==1,"Length of ys array must be 1 in this test.");
 
       // we use the simplest model y=a+bx in the range -10 ..10 with step size of 1 to
       // calculate the delta
@@ -152,8 +152,8 @@ namespace AltaxoTest.Calc.Regression
 
       NLFit.LevenbergMarquardtFit(new NLFit.LMFunction(this.FitFunction2plus5x),param,ys,1E-10,ref info);
       
-      Assertion.AssertEquals("Fit parameter 0 should be 2 in this model",2,param[0],1E-5);
-      Assertion.AssertEquals("Fit parameter 1 should be 5 in this model",5,param[1],1E-5);
+      Assert.AreEqual(2,param[0],1E-5,"Fit parameter 0 should be 2 in this model");
+      Assert.AreEqual(5,param[1],1E-5,"Fit parameter 1 should be 5 in this model");
     }
 
 
@@ -168,15 +168,15 @@ namespace AltaxoTest.Calc.Regression
 
       NLFit.LevenbergMarquardtFit(new NLFit.LMFunction(this.FitFunction2plus5xMod),param,ys,1E-10,ref info);
       
-      Assertion.AssertEquals("Info should be 0 due to inappropriate length of ys in this model",0,info);
+      Assert.AreEqual(0,info,"Info should be 0 due to inappropriate length of ys in this model");
     }
 
     public void FitFunction7malCos3xplus1(int numberOfYs, int numberOfParameter, double[] parameter, double[] ys, ref int info)
     {
-      Assertion.Assert("NumberOfParameter must be 3 in this test.",numberOfParameter==3);
-      Assertion.Assert("NumberOfYs must be 3 in this test.",numberOfYs==3);
-      Assertion.Assert("Length of parameter array must be 3 in this test.",parameter.Length==3);
-      Assertion.Assert("Length of ys array must be 3 in this test.",ys.Length==3);
+      Assert.IsTrue(numberOfParameter==3,"NumberOfParameter must be 3 in this test.");
+      Assert.IsTrue(numberOfYs==3,"NumberOfYs must be 3 in this test.");
+      Assert.IsTrue(parameter.Length==3,"Length of parameter array must be 3 in this test.");
+      Assert.IsTrue(ys.Length==3,"Length of ys array must be 3 in this test.");
 
       // we use the simplest model y=a+bx in the range -10 ..10 with step size of 1 to
       // calculate the delta
@@ -207,18 +207,18 @@ namespace AltaxoTest.Calc.Regression
 
       NLFit.LevenbergMarquardtFit(new NLFit.LMFunction(this.FitFunction7malCos3xplus1),param,ys,1E-10,ref info);
       
-      Assertion.AssertEquals("Fit parameter 0 should be 7 in this model",7,param[0],1E-4);
-      Assertion.AssertEquals("Fit parameter 1 should be 3 in this model",3,param[1],1E-4);
-      Assertion.AssertEquals("Fit parameter 2 should be 1 in this model",1,param[2],1E-4);
+      Assert.AreEqual(7,param[0],1E-4,"Fit parameter 0 should be 7 in this model");
+      Assert.AreEqual(3,param[1],1E-4,"Fit parameter 1 should be 3 in this model");
+      Assert.AreEqual(1,param[2],1E-4,"Fit parameter 2 should be 1 in this model");
     }
 
 
     public void FitFunction7malCos3xplus1Mod(int numberOfYs, int numberOfParameter, double[] parameter, double[] ys, ref int info)
     {
-      Assertion.Assert("NumberOfParameter must be 3 in this test.",numberOfParameter==3);
-      Assertion.Assert("NumberOfYs must be 21 in this test.",numberOfYs==21);
-      Assertion.Assert("Length of parameter array must be 3 in this test.",parameter.Length==3);
-      Assertion.Assert("Length of ys array must be 21 in this test.",ys.Length==21);
+      Assert.IsTrue(numberOfParameter==3,"NumberOfParameter must be 3 in this test.");
+      Assert.IsTrue(numberOfYs==21,"NumberOfYs must be 21 in this test.");
+      Assert.IsTrue(parameter.Length==3,"Length of parameter array must be 3 in this test.");
+      Assert.IsTrue(ys.Length==21,"Length of ys array must be 21 in this test.");
 
       // we use the simplest model y=a+bx in the range -10 ..10 with step size of 1 to
       // calculate the delta
@@ -246,9 +246,9 @@ namespace AltaxoTest.Calc.Regression
         NLFit.LevenbergMarquardtFit(new NLFit.LMFunction(this.FitFunction7malCos3xplus1Mod),param,ys,1E-10,ref info);
       } while(info==5);
 
-      Assertion.AssertEquals("Fit parameter 0 should be 7 in this model",7,param[0],1E-4);
-      Assertion.AssertEquals("Fit parameter 1 should be 3 in this model",3,param[1],1E-4);
-      Assertion.AssertEquals("Fit parameter 2 should be 1 in this model",1,param[2],1E-4);
+      Assert.AreEqual(7,param[0],1E-4,"Fit parameter 0 should be 7 in this model");
+      Assert.AreEqual(3,param[1],1E-4,"Fit parameter 1 should be 3 in this model");
+      Assert.AreEqual(1,param[2],1E-4,"Fit parameter 2 should be 1 in this model");
     }
 
   

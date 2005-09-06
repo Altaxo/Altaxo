@@ -86,16 +86,16 @@ namespace AltaxoTest.Calc.Fourier
 
       for(int i=0;i<n;i++)
       {
-        Assertion.AssertEquals("FFT of zero should give re=0", 0, re[i],max_fft_error(n));
-        Assertion.AssertEquals("FFT of zero should give im=0", 0, im[i],max_fft_error(n));
+        Assert.AreEqual(0, re[i],max_fft_error(n),"FFT of zero should give re=0");
+        Assert.AreEqual(0, im[i],max_fft_error(n),"FFT of zero should give im=0");
       }
 
       _fft(re,im,FourierDirection.Inverse);
 
       for(int i=0;i<n;i++)
       {
-        Assertion.AssertEquals("IFFT of zero should give re=0", 0, re[i],max_ifft_error(n));
-        Assertion.AssertEquals("IFFT of zero should give im=0", 0, im[i],max_ifft_error(n));
+        Assert.AreEqual( 0, re[i],max_ifft_error(n),"IFFT of zero should give re=0");
+        Assert.AreEqual( 0, im[i],max_ifft_error(n),"IFFT of zero should give im=0");
       }
 
     }
@@ -111,8 +111,8 @@ namespace AltaxoTest.Calc.Fourier
       
       for(int i=0;i<n;i++)
       {
-        Assertion.AssertEquals("FFT of 1 at pos 0 should give re=1", 1, re[i],max_fft_error(n));
-        Assertion.AssertEquals("FFT of 1 at pos 0 should give im=0", 0, im[i],max_fft_error(n));
+        Assert.AreEqual( 1, re[i],max_fft_error(n),"FFT of 1 at pos 0 should give re=1");
+        Assert.AreEqual( 0, im[i],max_fft_error(n),"FFT of 1 at pos 0 should give im=0");
       }
 
       _fft(re,im,FourierDirection.Inverse);
@@ -120,13 +120,13 @@ namespace AltaxoTest.Calc.Fourier
       {
         if(i==0)
         {
-          Assertion.AssertEquals("IFFT at pos 0 should give re=n", n, re[i],max_ifft_error(n));
-          Assertion.AssertEquals("IFFT at pos 0 should give im=0", 0, im[i],max_ifft_error(n));
+          Assert.AreEqual( n, re[i],max_ifft_error(n),"IFFT at pos 0 should give re=n");
+          Assert.AreEqual( 0, im[i],max_ifft_error(n),"IFFT at pos 0 should give im=0");
         }
         else
         {
-          Assertion.AssertEquals("IFFT at all pos!=0 should give re=0", 0, re[i],max_ifft_error(n));
-          Assertion.AssertEquals("IFFT at all pos!=0 should give im=0", 0, im[i],max_ifft_error(n));
+          Assert.AreEqual( 0, re[i],max_ifft_error(n),"IFFT at all pos!=0 should give re=0");
+          Assert.AreEqual( 0, im[i],max_ifft_error(n),"IFFT at all pos!=0 should give im=0");
         }
       }
     }
@@ -146,8 +146,8 @@ namespace AltaxoTest.Calc.Fourier
 
       for(uint i=0;i<n;i++)
       {
-        Assertion.AssertEquals("FFT of im 1 at pos 0 should give re=0", 0, re[i],max_fft_error(n));
-        Assertion.AssertEquals("FFT of im 1 at pos 0 should give im=1", 1, im[i],max_fft_error(n));
+        Assert.AreEqual( 0, re[i],max_fft_error(n),"FFT of im 1 at pos 0 should give re=0");
+        Assert.AreEqual( 1, im[i],max_fft_error(n),"FFT of im 1 at pos 0 should give im=1");
       }
 
       _fft(re,im,FourierDirection.Inverse);
@@ -156,13 +156,13 @@ namespace AltaxoTest.Calc.Fourier
       {
         if(i==0)
         {
-          Assertion.AssertEquals("IFFT at pos 0 should give re=0", 0, re[i],max_ifft_error(n));
-          Assertion.AssertEquals("IFFT at pos 0 should give im=n", n, im[i],max_ifft_error(n));
+          Assert.AreEqual( 0, re[i],max_ifft_error(n),"IFFT at pos 0 should give re=0");
+          Assert.AreEqual( n, im[i],max_ifft_error(n),"IFFT at pos 0 should give im=n");
         }
         else
         {
-          Assertion.AssertEquals("IFFT at all pos!=0 should give re=0", 0, re[i],max_ifft_error(n));
-          Assertion.AssertEquals("IFFT at all pos!=0 should give im=0", 0, im[i],max_ifft_error(n));
+          Assert.AreEqual( 0, re[i],max_ifft_error(n),"IFFT at all pos!=0 should give re=0");
+          Assert.AreEqual( 0, im[i],max_ifft_error(n),"IFFT at all pos!=0 should give im=0");
         }
       }
     }
@@ -182,8 +182,8 @@ namespace AltaxoTest.Calc.Fourier
 
       for(uint i=0;i<n;i++)
       {
-        Assertion.AssertEquals(string.Format("FFT({0}) of re 1 at pos 1 re[{1}]",n,i), Math.Cos((2*Math.PI*i)/n), re[i],max_fft_error(n));
-        Assertion.AssertEquals(string.Format("FFT({0}) of re 1 at pos 1 im[{1}]",n,i), Math.Sin((2*Math.PI*i)/n), im[i],max_fft_error(n));
+        Assert.AreEqual( Math.Cos((2*Math.PI*i)/n), re[i],max_fft_error(n),string.Format("FFT({0}) of re 1 at pos 1 re[{1}]",n,i));
+        Assert.AreEqual( Math.Sin((2*Math.PI*i)/n), im[i],max_fft_error(n),string.Format("FFT({0}) of re 1 at pos 1 im[{1}]",n,i));
       }
 
       _fft(re,im,FourierDirection.Inverse);
@@ -192,13 +192,13 @@ namespace AltaxoTest.Calc.Fourier
       {
         if(i==1)
         {
-          Assertion.AssertEquals("IFFT at pos 1 should give re=n", n, re[i],max_ifft_error(n));
-          Assertion.AssertEquals("IFFT at pos 1 should give im=0", 0, im[i],max_ifft_error(n));
+          Assert.AreEqual( n, re[i],max_ifft_error(n),"IFFT at pos 1 should give re=n");
+          Assert.AreEqual( 0, im[i],max_ifft_error(n),"IFFT at pos 1 should give im=0");
         }
         else
         {
-          Assertion.AssertEquals("IFFT at all pos!=1 should give re=0", 0, re[i],max_ifft_error(n));
-          Assertion.AssertEquals("IFFT at all pos!=1 should give im=0", 0, im[i],max_ifft_error(n));
+          Assert.AreEqual( 0, re[i],max_ifft_error(n),"IFFT at all pos!=1 should give re=0");
+          Assert.AreEqual( 0, im[i],max_ifft_error(n),"IFFT at all pos!=1 should give im=0");
         }
  
       }
@@ -216,8 +216,8 @@ namespace AltaxoTest.Calc.Fourier
 
       for(int i=0;i<n;i++)
       {
-        Assertion.AssertEquals(string.Format("FFT({0}) of im 1 at pos 1 re[{1}]",n,i), -Math.Sin((2*Math.PI*i)/n), re[i],max_fft_error(n));
-        Assertion.AssertEquals(string.Format("FFT({0}) of im 1 at pos 1 im[{1}]",n,i), Math.Cos((2*Math.PI*i)/n), im[i],max_fft_error(n));
+        Assert.AreEqual( -Math.Sin((2*Math.PI*i)/n), re[i],max_fft_error(n),string.Format("FFT({0}) of im 1 at pos 1 re[{1}]",n,i));
+        Assert.AreEqual( Math.Cos((2*Math.PI*i)/n), im[i],max_fft_error(n),string.Format("FFT({0}) of im 1 at pos 1 im[{1}]",n,i));
       }
     
       _fft(re,im,FourierDirection.Inverse);
@@ -227,13 +227,13 @@ namespace AltaxoTest.Calc.Fourier
  
         if(i==1)
         {
-          Assertion.AssertEquals("IFFT at pos 1 should give re=0", 0, re[i],max_ifft_error(n));
-          Assertion.AssertEquals("IFFT at pos 1 should give im=n", n, im[i],max_ifft_error(n));
+          Assert.AreEqual( 0, re[i],max_ifft_error(n),"IFFT at pos 1 should give re=0");
+          Assert.AreEqual( n, im[i],max_ifft_error(n),"IFFT at pos 1 should give im=n");
         }
         else
         {
-          Assertion.AssertEquals("IFFT at all pos!=1 should give re=0", 0, re[i],max_ifft_error(n));
-          Assertion.AssertEquals("IFFT at all pos!=1 should give im=0", 0, im[i],max_ifft_error(n));
+          Assert.AreEqual(0, re[i],max_ifft_error(n),"IFFT at all pos!=1 should give re=0");
+          Assert.AreEqual( 0, im[i],max_ifft_error(n),"IFFT at all pos!=1 should give im=0");
         }
       }
     }
@@ -266,12 +266,12 @@ namespace AltaxoTest.Calc.Fourier
 
         for(int i=0;i<n;i++)
         {
-          Assertion.AssertEquals(string.Format("FFT({0}) of im 1 at pos(re={1},im={2}) re[{3}]",n,repos,impos,i), 
+          Assert.AreEqual( 
             Math.Cos((2*Math.PI*i*(double)repos)/n) - Math.Sin((2*Math.PI*i*(double)impos)/n),
-            re[i],max_fft_error(n));
-          Assertion.AssertEquals(string.Format("FFT({0}) of im 1 at pos(re={1},im={2}) arb im[{3}]",n,repos,impos,i), 
+            re[i],max_fft_error(n),string.Format("FFT({0}) of im 1 at pos(re={1},im={2}) re[{3}]",n,repos,impos,i));
+          Assert.AreEqual(
             Math.Sin((2*Math.PI*i*(double)repos)/n) + Math.Cos((2*Math.PI*i*(double)impos)/n), 
-            im[i],max_fft_error(n));
+            im[i],max_fft_error(n),string.Format("FFT({0}) of im 1 at pos(re={1},im={2}) arb im[{3}]",n,repos,impos,i));
         }
 
         _fft(re,im,FourierDirection.Inverse);
@@ -280,14 +280,14 @@ namespace AltaxoTest.Calc.Fourier
         {
 
           if(i==repos)
-            Assertion.AssertEquals("IFFT at pos==repos should give re=n", n, re[i],max_ifft_error(n));
+            Assert.AreEqual( n, re[i],max_ifft_error(n),"IFFT at pos==repos should give re=n");
           else
-            Assertion.AssertEquals("IFFT at all pos!=repos should give re=0", 0, re[i],max_ifft_error(n));
+            Assert.AreEqual( 0, re[i],max_ifft_error(n),"IFFT at all pos!=repos should give re=0");
 
           if(i==impos)
-            Assertion.AssertEquals("IFFT at pos==impos should give im=n", n, im[i],max_ifft_error(n));
+            Assert.AreEqual( n, im[i],max_ifft_error(n),"IFFT at pos==impos should give im=n");
           else
-            Assertion.AssertEquals("IFFT at all pos!=impos should give im=0", 0, im[i],max_ifft_error(n));
+            Assert.AreEqual( 0, im[i],max_ifft_error(n),"IFFT at all pos!=impos should give im=0");
         }
         
       }
@@ -319,12 +319,12 @@ namespace AltaxoTest.Calc.Fourier
 
       for(uint i=0;i<n;i++)
       {
-        Assertion.AssertEquals(string.Format("FFT (real part) at pos {0}",i), 
+        Assert.AreEqual(
           re1[i],
-          re[i],max_fft_error(n));
-        Assertion.AssertEquals(string.Format("FFT (imaginary part) at pos {0}",i), 
+          re[i],max_fft_error(n),string.Format("FFT (real part) at pos {0}",i));
+        Assert.AreEqual(
           im1[i], 
-          im[i],max_fft_error(n));
+          im[i],max_fft_error(n),string.Format("FFT (imaginary part) at pos {0}",i));
       }
 
 
@@ -344,12 +344,12 @@ namespace AltaxoTest.Calc.Fourier
 
       for(uint i=0;i<n;i++)
       {
-        Assertion.AssertEquals(string.Format("IFFT (real part) at pos {0}",i), 
+        Assert.AreEqual(
           re1[i],
-          re[i],max_fft_error(n));
-        Assertion.AssertEquals(string.Format("IFFT (imaginary part) at pos {0}",i), 
+          re[i],max_fft_error(n),string.Format("IFFT (real part) at pos {0}",i));
+        Assert.AreEqual(
           im1[i], 
-          im[i],max_fft_error(n));
+          im[i],max_fft_error(n),string.Format("IFFT (imaginary part) at pos {0}",i));
       }
 
 
@@ -417,14 +417,14 @@ namespace AltaxoTest.Calc.Fourier
 
       for(int i=0;i<n;i++)
       {
-        Assertion.AssertEquals("FFT of zero should give re=0", 0, re[i],max_fft_error(n));
+        Assert.AreEqual(0, re[i],max_fft_error(n),"FFT of zero should give re=0");
       }
 
       _fft(re,FourierDirection.Inverse);
 
       for(int i=0;i<n;i++)
       {
-        Assertion.AssertEquals("IFFT of zero should give re=0", 0, re[i],max_ifft_error(n));
+        Assert.AreEqual( 0, re[i],max_ifft_error(n),"IFFT of zero should give re=0");
       }
 
     }
@@ -437,12 +437,12 @@ namespace AltaxoTest.Calc.Fourier
   
       _fft(re,FourierDirection.Forward);
  
-      Assertion.AssertEquals("FFT of 1 at pos 0 should give re=1", 1, re[0],max_fft_error(n));
+      Assert.AreEqual( 1, re[0],max_fft_error(n),"FFT of 1 at pos 0 should give re=1");
       for(int i=1,j=n-1;i<=j;i++,j--)
       {
-        Assertion.AssertEquals("FFT of 1 at pos 0 should give re=1", 1, re[i],max_fft_error(n));
+        Assert.AreEqual( 1, re[i],max_fft_error(n),"FFT of 1 at pos 0 should give re=1");
         if(i<j)
-          Assertion.AssertEquals("FFT of 1 at pos 0 should give im=0", 0, re[n-i],max_fft_error(n));
+          Assert.AreEqual( 0, re[n-i],max_fft_error(n),"FFT of 1 at pos 0 should give im=0");
       }
 
       _fft(re,FourierDirection.Inverse);
@@ -450,11 +450,11 @@ namespace AltaxoTest.Calc.Fourier
       {
         if(i==0)
         {
-          Assertion.AssertEquals("IFFT at pos 0 should give re=n", n, re[i],max_ifft_error(n));
+          Assert.AreEqual( n, re[i],max_ifft_error(n),string.Format("IFFT({0}) at pos 0 should give re=n",n));
         }
         else
         {
-          Assertion.AssertEquals("IFFT at all pos!=0 should give re=0", 0, re[i],max_ifft_error(n));
+          Assert.AreEqual(0, re[i],max_ifft_error(n),string.Format("IFFT({0}) at all pos!=0 should give re=0",n));
         }
       }
     }
@@ -471,13 +471,13 @@ namespace AltaxoTest.Calc.Fourier
 
       _fft(re,FourierDirection.Forward);
 
-      Assertion.AssertEquals("FFT of 1 at pos 0 should give re=1", 1, re[0],max_fft_error(n));
+      Assert.AreEqual( 1, re[0],max_fft_error(n),"FFT of 1 at pos 0 should give re=1");
       for(int i=1,j=n-1;i<=j;i++,j--)
       {
-        Assertion.AssertEquals(string.Format("FFT({0}) of re 1 at pos 1 re[{1}]",n,i), Math.Cos((2*Math.PI*i)/n), re[i],max_fft_error(n));
+        Assert.AreEqual( Math.Cos((2*Math.PI*i)/n), re[i],max_fft_error(n),string.Format("FFT({0}) of re 1 at pos 1 re[{1}]",n,i));
        
         if(i<j)
-          Assertion.AssertEquals(string.Format("FFT({0}) of re 1 at pos 1 im[{1}]",n,i), Math.Sin((2*Math.PI*i)/n), re[n-i],max_fft_error(n));
+          Assert.AreEqual( Math.Sin((2*Math.PI*i)/n), re[n-i],max_fft_error(n),string.Format("FFT({0}) of re 1 at pos 1 im[{1}]",n,i));
       }
 
       _fft(re,FourierDirection.Inverse);
@@ -486,11 +486,11 @@ namespace AltaxoTest.Calc.Fourier
       {
         if(i==1)
         {
-          Assertion.AssertEquals("IFFT at pos 1 should give re=n", n, re[i],max_ifft_error(n));
+          Assert.AreEqual( n, re[i],max_ifft_error(n),string.Format("IFFT({0}) at pos 1 should give re=n",n));
         }
         else
         {
-          Assertion.AssertEquals("IFFT at all pos!=1 should give re=0", 0, re[i],max_ifft_error(n));
+          Assert.AreEqual( 0, re[i],max_ifft_error(n),string.Format("IFFT({0}) at all pos!=1 should give re=0",n));
         }
  
       }
@@ -516,16 +516,16 @@ namespace AltaxoTest.Calc.Fourier
 
         _fft(re,FourierDirection.Forward);
 
-        Assertion.AssertEquals("FFT of 1 at pos 0 should give re=1", 1, re[0],max_fft_error(n));
+        Assert.AreEqual( 1, re[0],max_fft_error(n),"FFT of 1 at pos 0 should give re=1");
         for(int i=1,j=n-1;i<=j;i++,j--)
         {
-          Assertion.AssertEquals(string.Format("FFT({0}) of im 1 at pos(re={1}) re[{2}]",n,repos,i), 
+          Assert.AreEqual(
             Math.Cos((2*Math.PI*i*(double)repos)/n),
-            re[i],max_fft_error(n));
+            re[i],max_fft_error(n),string.Format("FFT({0}) of im 1 at pos(re={1}) re[{2}]",n,repos,i));
           if(i<j)
-            Assertion.AssertEquals(string.Format("FFT({0}) of im 1 at pos(re={1}) arb im[{2}]",n,repos,i), 
+            Assert.AreEqual(
               Math.Sin((2*Math.PI*i*(double)repos)/n), 
-              re[n-i],max_fft_error(n));
+              re[n-i],max_fft_error(n),string.Format("FFT({0}) of im 1 at pos(re={1}) arb im[{2}]",n,repos,i));
         }
 
         _fft(re,FourierDirection.Inverse);
@@ -534,9 +534,9 @@ namespace AltaxoTest.Calc.Fourier
         {
 
           if(i==repos)
-            Assertion.AssertEquals("IFFT at pos==repos should give re=n", n, re[i],max_ifft_error(n));
+            Assert.AreEqual( n, re[i],max_ifft_error(n),"IFFT at pos==repos should give re=n");
           else
-            Assertion.AssertEquals("IFFT at all pos!=repos should give re=0", 0, re[i],max_ifft_error(n));
+            Assert.AreEqual( 0, re[i],max_ifft_error(n),"IFFT at all pos!=repos should give re=0");
         }
         
       }
@@ -564,9 +564,9 @@ namespace AltaxoTest.Calc.Fourier
 
       for(uint i=0;i<n;i++)
       {
-        Assertion.AssertEquals(string.Format("FFT (real part) at pos {0}",i), 
+        Assert.AreEqual(
           re1[i],
-          re[i],max_fft_error(n));
+          re[i],max_fft_error(n),string.Format("FFT (real part) at pos {0}",i));
       }
 
 
@@ -584,9 +584,9 @@ namespace AltaxoTest.Calc.Fourier
 
       for(uint i=0;i<n;i++)
       {
-        Assertion.AssertEquals(string.Format("IFFT (real part) at pos {0}",i), 
+        Assert.AreEqual(
           re1[i],
-          re[i],max_fft_error(n));
+          re[i],max_fft_error(n),string.Format("IFFT (real part) at pos {0}",i));
       }
 
 

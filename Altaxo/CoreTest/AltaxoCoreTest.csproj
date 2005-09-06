@@ -88,6 +88,7 @@
                     Name = "nunit.framework"
                     AssemblyName = "nunit.framework"
                     HintPath = "..\..\Libraries\bin\nunit.framework.dll"
+                    Private = "True"
                 />
             </References>
         </Build>
@@ -210,6 +211,16 @@
                 />
                 <File
                     RelPath = "Calc\FFT\TestPFA235Correlation.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Calc\FFT\TestRealFourierTransform.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Calc\Regression\TestNonlinearFit2.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

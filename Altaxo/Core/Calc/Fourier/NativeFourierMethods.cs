@@ -275,7 +275,7 @@ namespace Altaxo.Calc.Fourier
     }
 
     /// <summary>
-    /// Performs a native fouriertransformation of a complex value array.
+    /// Performs a native fouriertransformation of a real value array.
     /// </summary>
     /// <param name="inputreal">The real part of the array to transform.</param>
     /// <param name="resultreal">Used to store the real part of the result of the transformation. May be equal to the input array.</param>

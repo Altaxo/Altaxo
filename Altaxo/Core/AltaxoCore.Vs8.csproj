@@ -190,6 +190,7 @@
     <Compile Include="Calc\Regression\LinearRegression.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Calc\Regression\NonLinearFit2.cs" />
     <Compile Include="Calc\Regression\Multivariate\CrossPRESSCalculationType.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -265,8 +266,10 @@
     <Compile Include="Calc\VectorCoupling.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Folder Include="Calc\Regression\PCR" />
-    <Folder Include="Calc\Regression\PLS" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Calc\Regression\PCR\" />
+    <Folder Include="Calc\Regression\PLS\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

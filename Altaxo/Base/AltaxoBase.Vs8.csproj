@@ -168,6 +168,7 @@
     <Compile Include="Calc\Regression\Nonlinear\HavriliakNegamiFunction.cs" />
     <Compile Include="Calc\Regression\Nonlinear\IFitFunction.cs" />
     <Compile Include="Calc\Regression\Nonlinear\KohlrauschDecay.cs" />
+    <Compile Include="Calc\Regression\Nonlinear\LevMarAdapter.cs" />
     <Compile Include="Calc\Regression\Nonlinear\NonlinearFitControl.cs">
       <SubType>UserControl</SubType>
     </Compile>

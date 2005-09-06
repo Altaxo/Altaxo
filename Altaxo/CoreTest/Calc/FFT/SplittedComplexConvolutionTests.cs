@@ -81,8 +81,8 @@ namespace AltaxoTest.Calc.Fourier
 
       for(int i=0;i<n;i++)
       {
-        Assertion.AssertEquals("Convolution of zero should give re=0", 0, re[i],max_conv_error(n));
-        Assertion.AssertEquals("Convolution of zero should give im=0", 0, im[i],max_conv_error(n));
+        Assert.AreEqual(0, re[i],max_conv_error(n),"Convolution of zero should give re=0");
+        Assert.AreEqual( 0, im[i],max_conv_error(n),"Convolution of zero should give im=0");
       }
     }
 
@@ -114,8 +114,8 @@ namespace AltaxoTest.Calc.Fourier
 
       for(int i=0;i<n;i++)
       {
-        Assertion.AssertEquals("Convolution with array 1 zero should give re=0", 0, re[i],max_conv_error(n));
-        Assertion.AssertEquals("Convolution with array 1 zero should give im=0", 0, im[i],max_conv_error(n));
+        Assert.AreEqual( 0, re[i],max_conv_error(n),"Convolution with array 1 zero should give re=0");
+        Assert.AreEqual( 0, im[i],max_conv_error(n),"Convolution with array 1 zero should give im=0");
       }
 
     
@@ -132,8 +132,8 @@ namespace AltaxoTest.Calc.Fourier
 
       for(int i=0;i<n;i++)
       {
-        Assertion.AssertEquals("Convolution with array 2 zero should give re=0", 0, re[i],max_conv_error(n));
-        Assertion.AssertEquals("Convolution with array 2 zero should give im=0", 0, im[i],max_conv_error(n));
+        Assert.AreEqual( 0, re[i],max_conv_error(n),"Convolution with array 2 zero should give re=0");
+        Assert.AreEqual( 0, im[i],max_conv_error(n),"Convolution with array 2 zero should give im=0");
       }
 
 
@@ -157,13 +157,13 @@ namespace AltaxoTest.Calc.Fourier
       {
         if(i==0)
         {
-          Assertion.AssertEquals("Convolution should give re=1 at pos 0", 1, re[i],max_conv_error(n));
-          Assertion.AssertEquals("Convolution should give im=0 at pos 0", 0, im[i],max_conv_error(n));
+          Assert.AreEqual( 1, re[i],max_conv_error(n),"Convolution should give re=1 at pos 0");
+          Assert.AreEqual( 0, im[i],max_conv_error(n),"Convolution should give im=0 at pos 0");
         }
         else
         {
-          Assertion.AssertEquals("Convolution should give re=0 at pos " + i.ToString(), 0, re[i],max_conv_error(n));
-          Assertion.AssertEquals("Convolution should give im=0 at pos " + i.ToString(), 0, im[i],max_conv_error(n));
+          Assert.AreEqual( 0, re[i],max_conv_error(n),"Convolution should give re=0 at pos " + i.ToString());
+          Assert.AreEqual( 0, im[i],max_conv_error(n),"Convolution should give im=0 at pos " + i.ToString());
         }
       }
     }
@@ -196,8 +196,8 @@ namespace AltaxoTest.Calc.Fourier
       for(int i=0;i<n;i++)
       {
 
-        Assertion.AssertEquals("Convolution should give re=re2 at pos " + i.ToString(), re2[i], re[i],max_conv_error(n));
-        Assertion.AssertEquals("Convolution should give im=im2 at pos " + i.ToString(), im2[i], im[i],max_conv_error(n));
+        Assert.AreEqual( re2[i], re[i],max_conv_error(n),"Convolution should give re=re2 at pos " + i.ToString());
+        Assert.AreEqual( im2[i], im[i],max_conv_error(n),"Convolution should give im=im2 at pos " + i.ToString());
       }
 
       for(int i=0;i<n;i++)
@@ -216,8 +216,8 @@ namespace AltaxoTest.Calc.Fourier
       for(int i=0;i<n;i++)
       {
 
-        Assertion.AssertEquals("Convolution should give re=re1 at pos " + i.ToString(), re1[i], re[i],max_conv_error(n));
-        Assertion.AssertEquals("Convolution should give im=im1 at pos " + i.ToString(), im1[i], im[i],max_conv_error(n));
+        Assert.AreEqual( re1[i], re[i],max_conv_error(n),"Convolution should give re=re1 at pos " + i.ToString());
+        Assert.AreEqual( im1[i], im[i],max_conv_error(n),"Convolution should give im=im1 at pos " + i.ToString());
       }
 
     }
@@ -251,8 +251,8 @@ namespace AltaxoTest.Calc.Fourier
       for(int i=0;i<n;i++)
       {
 
-        Assertion.AssertEquals("Convolution should give re=-im2 at pos " + i.ToString(), -im2[i], re[i],max_conv_error(n));
-        Assertion.AssertEquals("Convolution should give im=re2 at pos " + i.ToString(), re2[i], im[i],max_conv_error(n));
+        Assert.AreEqual( -im2[i], re[i],max_conv_error(n),"Convolution should give re=-im2 at pos " + i.ToString());
+        Assert.AreEqual( re2[i], im[i],max_conv_error(n),"Convolution should give im=re2 at pos " + i.ToString());
       }
 
       for(int i=0;i<n;i++)
@@ -271,8 +271,8 @@ namespace AltaxoTest.Calc.Fourier
       for(int i=0;i<n;i++)
       {
 
-        Assertion.AssertEquals("Convolution should give re=-im1 at pos " + i.ToString(), -im1[i], re[i],max_conv_error(n));
-        Assertion.AssertEquals("Convolution should give im=im1 at pos " + i.ToString(), re1[i], im[i],max_conv_error(n));
+        Assert.AreEqual( -im1[i], re[i],max_conv_error(n),"Convolution should give re=-im1 at pos " + i.ToString());
+        Assert.AreEqual( re1[i], im[i],max_conv_error(n),"Convolution should give im=im1 at pos " + i.ToString());
       }
     }
 
@@ -304,8 +304,8 @@ namespace AltaxoTest.Calc.Fourier
       for(int i=0;i<n;i++)
       {
 
-        Assertion.AssertEquals("Convolution should give re=re2[i-1] at pos " + i.ToString(), re2[(n+i-1)%n], re[i],max_conv_error(n));
-        Assertion.AssertEquals("Convolution should give im=im2[i-1] at pos " + i.ToString(), im2[(n+i-1)%n], im[i],max_conv_error(n));
+        Assert.AreEqual( re2[(n+i-1)%n], re[i],max_conv_error(n),"Convolution should give re=re2[i-1] at pos " + i.ToString());
+        Assert.AreEqual( im2[(n+i-1)%n], im[i],max_conv_error(n),"Convolution should give im=im2[i-1] at pos " + i.ToString());
       }
 
       for(int i=0;i<n;i++)
@@ -324,8 +324,8 @@ namespace AltaxoTest.Calc.Fourier
       for(int i=0;i<n;i++)
       {
 
-        Assertion.AssertEquals("Convolution should give re=re1[i-1] at pos " + i.ToString(), re1[(n+i-1)%n], re[i],max_conv_error(n));
-        Assertion.AssertEquals("Convolution should give im=im1[i-1] at pos " + i.ToString(), im1[(n+i-1)%n], im[i],max_conv_error(n));
+        Assert.AreEqual( re1[(n+i-1)%n], re[i],max_conv_error(n), "Convolution should give re=re1[i-1] at pos " + i.ToString());
+        Assert.AreEqual(im1[(n+i-1)%n], im[i],max_conv_error(n), "Convolution should give im=im1[i-1] at pos " + i.ToString());
       }
 
     }
@@ -358,8 +358,8 @@ namespace AltaxoTest.Calc.Fourier
       for(int i=0;i<n;i++)
       {
 
-        Assertion.AssertEquals("Convolution should give re=-im2 at pos " + i.ToString(), -im2[(n+i-1)%n], re[i],max_conv_error(n));
-        Assertion.AssertEquals("Convolution should give im=re2 at pos " + i.ToString(), re2[(n+i-1)%n], im[i],max_conv_error(n));
+        Assert.AreEqual( -im2[(n+i-1)%n], re[i],max_conv_error(n),"Convolution should give re=-im2 at pos " + i.ToString());
+        Assert.AreEqual( re2[(n+i-1)%n], im[i],max_conv_error(n),"Convolution should give im=re2 at pos " + i.ToString());
       }
 
       for(int i=0;i<n;i++)
@@ -378,8 +378,8 @@ namespace AltaxoTest.Calc.Fourier
       for(int i=0;i<n;i++)
       {
 
-        Assertion.AssertEquals("Convolution should give re=-im1 at pos " + i.ToString(), -im1[(n+i-1)%n], re[i],max_conv_error(n));
-        Assertion.AssertEquals("Convolution should give im=im1 at pos " + i.ToString(), re1[(n+i-1)%n], im[i],max_conv_error(n));
+        Assert.AreEqual( -im1[(n+i-1)%n], re[i],max_conv_error(n), "Convolution should give re=-im1 at pos " + i.ToString());
+        Assert.AreEqual( re1[(n+i-1)%n], im[i],max_conv_error(n),"Convolution should give im=im1 at pos " + i.ToString());
       }
     }
 
@@ -414,8 +414,8 @@ namespace AltaxoTest.Calc.Fourier
       for(int i=0;i<n;i++)
       {
 
-        Assertion.AssertEquals("Convolution should give re=recmp at pos " + i.ToString(), recmp[i], re[i],max_conv_error(n));
-        Assertion.AssertEquals("Convolution should give im=imcmp at pos " + i.ToString(), imcmp[i], im[i],max_conv_error(n));
+        Assert.AreEqual( recmp[i], re[i],max_conv_error(n), "Convolution should give re=recmp at pos " + i.ToString());
+        Assert.AreEqual( imcmp[i], im[i],max_conv_error(n),"Convolution should give im=imcmp at pos " + i.ToString());
       }
     }
   }

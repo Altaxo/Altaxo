@@ -34,13 +34,13 @@ namespace AltaxoTest.Calc
     [Test]
     public  void TestBesselK1()
     {
-      Assertion.AssertEquals(0.6019072301972345747375400,BesselRelated.BesselK1(1),1E-14);
+      Assert.AreEqual(0.6019072301972345747375400,BesselRelated.BesselK1(1),1E-14);
     }
 
     [Test]
     public  void TestBesselExpK1()
     {
-      Assertion.AssertEquals(1.636153486263258246513311,BesselRelated.BesselExpK1(1),1E-14);
+      Assert.AreEqual(1.636153486263258246513311,BesselRelated.BesselExpK1(1),1E-14);
     }
   }
 }

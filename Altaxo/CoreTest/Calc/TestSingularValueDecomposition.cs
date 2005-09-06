@@ -68,20 +68,20 @@ namespace AltaxoTest.Calc
       // Test singular values
       for(int i=0;i<3;i++)
       {
-        Assertion.AssertEquals("SingularValue_"+i.ToString(),expectedSingularValues[i],decomp.Diagonal[i],accuracy);
+        Assert.AreEqual(expectedSingularValues[i],decomp.Diagonal[i],accuracy,"SingularValue_"+i.ToString());
       }
 
       
       // Test the U Matrix
       for(int i=0;i<expectedU.Length;i++)
         for(int j=0;j<expectedU[0].Length;j++)
-          Assertion.AssertEquals(string.Format("U[{0}][{1}]",i,j),expectedU[i][j],decomp.U[i][j],accuracy);
+          Assert.AreEqual(expectedU[i][j],decomp.U[i][j],accuracy,string.Format("U[{0}][{1}]",i,j));
 
 
       // Test the V Matrix
       for(int i=0;i<expectedV.Length;i++)
         for(int j=0;j<expectedV[0].Length;j++)
-          Assertion.AssertEquals(string.Format("V[{0}][{1}]",i,j),expectedV[i][j],decomp.V[i][j],accuracy);
+          Assert.AreEqual(expectedV[i][j],decomp.V[i][j],accuracy,string.Format("V[{0}][{1}]",i,j));
 
 
 
@@ -124,20 +124,20 @@ namespace AltaxoTest.Calc
       
       for(int i=0;i<3;i++)
       {
-        Assertion.AssertEquals("SingularValue_"+i.ToString(),expectedSingularValues[i],decomp.Diagonal[i],accuracy);
+        Assert.AreEqual(expectedSingularValues[i],decomp.Diagonal[i],accuracy,"SingularValue_"+i.ToString());
       }
 
        
       // Test the U Matrix
       for(int i=0;i<expectedU.Length;i++)
         for(int j=0;j<expectedU[0].Length;j++)
-          Assertion.AssertEquals(string.Format("U[{0}][{1}]",i,j),Math.Abs(expectedU[i][j]),Math.Abs(decomp.U[i][j]),accuracy);
+          Assert.AreEqual(Math.Abs(expectedU[i][j]),Math.Abs(decomp.U[i][j]),accuracy,string.Format("U[{0}][{1}]",i,j));
 
 
       // Test the V Matrix
       for(int i=0;i<expectedV.Length;i++)
         for(int j=0;j<expectedV[0].Length;j++)
-          Assertion.AssertEquals(string.Format("V[{0}][{1}]",i,j),Math.Abs(expectedV[i][j]),Math.Abs(decomp.V[i][j]),accuracy);
+          Assert.AreEqual(Math.Abs(expectedV[i][j]),Math.Abs(decomp.V[i][j]),accuracy,string.Format("V[{0}][{1}]",i,j));
 
 
     }
@@ -177,19 +177,19 @@ namespace AltaxoTest.Calc
       double[] calculatedSingularValues = decomp.Diagonal;
       for(int i=0;i<4;i++)
       {
-        Assertion.AssertEquals("SingularValue_"+i.ToString(),expectedSingularValues[i],calculatedSingularValues[i],accuracy);
+        Assert.AreEqual(expectedSingularValues[i],calculatedSingularValues[i],accuracy,"SingularValue_"+i.ToString());
       }
 
       // Test the U Matrix
       for(int i=0;i<expectedU.Length;i++)
         for(int j=0;j<expectedU[0].Length;j++)
-          Assertion.AssertEquals(string.Format("U[{0}][{1}]",i,j),Math.Abs(expectedU[i][j]),Math.Abs(decomp.U[i][j]),accuracy);
+          Assert.AreEqual(Math.Abs(expectedU[i][j]),Math.Abs(decomp.U[i][j]),accuracy,string.Format("U[{0}][{1}]",i,j));
 
 
       // Test the V Matrix
       for(int i=0;i<expectedV.Length;i++)
         for(int j=0;j<expectedV[0].Length;j++)
-          Assertion.AssertEquals(string.Format("V[{0}][{1}]",i,j),Math.Abs(expectedV[i][j]),Math.Abs(decomp.V[i][j]),accuracy);
+          Assert.AreEqual(Math.Abs(expectedV[i][j]),Math.Abs(decomp.V[i][j]),accuracy,string.Format("V[{0}][{1}]",i,j));
 
 
     }
