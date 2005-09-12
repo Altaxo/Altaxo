@@ -63,6 +63,42 @@ namespace Altaxo.Calc
     //-----------------------------------------------------------------------------------
     //-----------------------------------------------------------------------------------
 
+   
+
+    /// <summary>
+    /// The real component of the complex number
+    /// </summary>
+    public double Real
+    {
+      get
+      {
+        return Re;
+      }
+      set
+      {
+        Re = value;
+      }
+    }
+
+    /// <summary>
+    /// The imaginary component of the complex number
+    /// </summary>
+    public double Imag
+    {
+      get
+      {
+        return Im;
+      }
+      set
+      {
+        Im = value;
+      }
+    }
+
+    //-----------------------------------------------------------------------------------
+    //-----------------------------------------------------------------------------------
+
+
     /// <summary>
     /// Create a complex number from a real and an imaginary component
     /// </summary>
@@ -83,6 +119,16 @@ namespace Altaxo.Calc
       this.Re   = c.Re;
       this.Im = c.Im;
     }
+
+    ///<summary>Created a <c>Complex</c> from the given string. The string can be in the
+		///following formats: <c>n</c>, <c>ni</c>, <c>n +/- ni</c>, <c>n,n</c>, <c>n,ni</c>,
+		///<c>(n,n)</c>, or <c>(n,ni)</c>, where n is a real number.</summary>
+		///<param name="s">The string to create the <c>Complex</c> from.</param>
+		///<exception cref="FormatException">if the n, is not a number.</exception>
+		///<exception cref="ArgumentNullException">if s, is <c>null</c>.</exception>
+		public Complex(string s) {
+			this = Complex.Parse(s);
+		}
 
     /// <summary>
     /// Create a complex number from a real and an imaginary component
@@ -174,6 +220,8 @@ namespace Altaxo.Calc
       return FromRealImaginary( this.Re, -this.Im );
     }
 
+    
+
     //-----------------------------------------------------------------------------------
 
     /// <summary>
@@ -198,7 +246,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="cF"></param>
     /// <returns></returns>
-    public static explicit operator Complex ( ComplexF cF ) 
+    public static implicit operator Complex ( ComplexFloat cF ) 
     {
       Complex c;
       c.Re  = (double) cF.Re;
@@ -211,7 +259,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="d"></param>
     /// <returns></returns>
-    public static explicit operator Complex ( double d ) 
+    public static implicit operator Complex ( double d ) 
     {
       Complex c;
       c.Re  = (double) d;
@@ -300,9 +348,9 @@ namespace Altaxo.Calc
       {
         return  this.GetModulus().CompareTo( (double)o );
       }
-      if( o is ComplexF ) 
+      if( o is ComplexFloat ) 
       {
-        return  this.GetModulus().CompareTo( ((ComplexF)o).GetModulus() );
+        return  this.GetModulus().CompareTo( ((ComplexFloat)o).GetModulus() );
       }
       if( o is float ) 
       {
@@ -498,23 +546,186 @@ namespace Altaxo.Calc
       return a;
     }
 
-    /// <summary>
-    /// Parse a complex representation in this fashion: "( %f, %f )"
-    /// </summary>
-    /// <param name="s"></param>
+    /// <summary>Creates a <c>Complex</c> based on a string. The string can be in the
+    ///following formats: <c>n</c>, <c>ni</c>, <c>n +/- ni</c>, <c>n,n</c>, <c>n,ni</c>,
+    ///<c>(n,n)</c>, or <c>(n,ni)</c>, where n is a real number.</summary>
+    /// <param name="s">the string to parse.</param>
     /// <returns></returns>
-    static public Complex Parse( string s ) 
+    public static Complex Parse(string s)
     {
-      throw new NotImplementedException( "Complex Complex.Parse( string s ) is not implemented." );
+      if (s == null)
+      {
+        throw new ArgumentNullException(s, "s cannot be null.");
+      }
+      s = s.Trim();
+      if (s.Length == 0)
+      {
+        throw new FormatException();
+      }
+
+      //check if one character strings are valid
+      if (s.Length == 1)
+      {
+        if (String.Compare(s, "i") == 0)
+        {
+          return new Complex(0, 1);
+        }
+        else
+        {
+          return new Complex(double.Parse(s));
+        }
+      }
+
+      //strip out parens
+      if (s.StartsWith("("))
+      {
+        if (!s.EndsWith(")"))
+        {
+          throw new FormatException();
+        }
+        else
+        {
+          s = s.Substring(1, s.Length - 2);
+        }
+      }
+
+      string real = s;
+      string imag = "0";
+
+      //comma separated
+      int index = s.IndexOf(',');
+      if (index > -1)
+      {
+        real = s.Substring(0, index);
+        imag = s.Substring(index + 1, s.Length - index - 1);
+      }
+      else
+      {
+        index = s.IndexOf('+', 1);
+        if (index > -1)
+        {
+          real = s.Substring(0, index);
+          imag = s.Substring(index + 1, s.Length - index - 1);
+        }
+        else
+        {
+          index = s.IndexOf('-', 1);
+          if (index > -1)
+          {
+            real = s.Substring(0, index);
+            imag = s.Substring(index, s.Length - index);
+          }
+        }
+      }
+
+      //see if we have numbers in the format xxxi
+      if (real.EndsWith("i"))
+      {
+        if (!imag.Equals("0"))
+        {
+          throw new FormatException();
+        }
+        else
+        {
+          imag = real.Substring(0, real.Length - 1);
+          real = "0";
+        }
+      }
+      if (imag.EndsWith("i"))
+      {
+        imag = imag.Substring(0, imag.Length - 1);
+      }
+      //handle cases of - n, + n
+      if (real.StartsWith("-"))
+      {
+        real = "-" + real.Substring(1, real.Length - 1).Trim();
+      }
+      if (imag.StartsWith("-"))
+      {
+        imag = "-" + imag.Substring(1, imag.Length - 1).Trim();
+      }
+
+      Complex ret;
+      try
+      {
+        ret = new Complex(double.Parse(real.Trim()), double.Parse(imag.Trim()));
+      }
+      catch (Exception)
+      {
+        throw new FormatException();
+      }
+      return ret;
     }
-    
-    /// <summary>
-    /// Get the string representation
-    /// </summary>
-    /// <returns></returns>
-    public override string ToString() 
+
+    ///<summary>Tests whether the the complex number is not a number.</summary>
+    ///<returns>True if either the real or imaginary components are NaN, false otherwise.</returns>
+    public bool IsNaN()
     {
-      return  String.Format( "( {0}, {1}i )", this.Re, this.Im );
+      return (Double.IsNaN(this.Re) || Double.IsNaN(this.Im));
+    }
+
+    ///<summary>Tests whether the the complex number is infinite.</summary>
+    ///<returns>True if either the real or imaginary components are infinite, false otherwise.</returns>
+    public bool IsInfinity()
+    {
+      return (Double.IsInfinity(this.Re) || Double.IsInfinity(this.Im));
+    }
+
+
+    ///<summary>A string representation of this <c>Complex</c>.</summary>
+    ///<returns>The string representation of the value of <c>this</c> instance.</returns>
+    public override string ToString()
+    {
+      return ToString(null, null);
+    }
+
+    ///<summary>A string representation of this <c>Complex</c>.</summary>
+    ///<param name="format">A format specification.</param>
+    ///<returns>The string representation of the value of <c>this</c> instance as specified by format.</returns>
+    public string ToString(string format)
+    {
+      return ToString(format, null);
+    }
+
+    ///<summary>A string representation of this <c>Complex</c>.</summary>
+    ///<param name="formatProvider">An IFormatProvider that supplies culture-specific formatting information.</param>
+    ///<returns>The string representation of the value of <c>this</c> instance as specified by provider.</returns>
+    public string ToString(IFormatProvider formatProvider)
+    {
+      return ToString(null, formatProvider);
+    }
+
+    ///<summary>A string representation of this <c>Complex</c>.</summary>
+    ///<param name="format">A format specification.</param>
+    ///<param name="formatProvider">An IFormatProvider that supplies culture-specific formatting information.</param>
+    ///<returns>The string representation of the value of <c>this</c> instance as specified by format and provider.</returns>
+    ///<exception cref="FormatException">if the n, is not a number.</exception>
+    ///<exception cref="ArgumentNullException">if s, is <c>null</c>.</exception>		
+    public string ToString(string format, IFormatProvider formatProvider)
+    {
+      if (IsNaN())
+      {
+        return "NaN";
+      }
+      if (IsInfinity())
+      {
+        return "IsInfinity";
+      }
+
+      System.Text.StringBuilder ret = new System.Text.StringBuilder();
+
+      ret.Append(Re.ToString(format, formatProvider));
+      if (Im < 0)
+      {
+        ret.Append(" ");
+      }
+      else
+      {
+        ret.Append(" + ");
+      }
+      ret.Append(Im.ToString(format, formatProvider)).Append("i");
+
+      return ret.ToString();
     }
 
     //-----------------------------------------------------------------------------------
@@ -544,6 +755,14 @@ namespace Altaxo.Calc
     static public Complex Zero 
     {
       get { return  new Complex( 0, 0 );  }
+    }
+
+    /// <summary>
+    /// Represents One
+    /// </summary>
+    static public Complex One
+    {
+      get { return new Complex(1, 0); }
     }
 
     /// <summary>

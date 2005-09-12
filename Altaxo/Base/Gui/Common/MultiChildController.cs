@@ -53,7 +53,7 @@ namespace Altaxo.Gui.Common
   /// Controller for a set of child <see>IMVCAController</see>s.
   /// </summary>
   [UserControllerForObject(typeof(IMVCAController[]))]
-  public class MultiChildController : IMultiChildController, IMultiChildViewEventSink
+  public class MultiChildController : IMultiChildController, IMultiChildViewEventSink, IRefreshable
   {
     protected IMultiChildView _view;
     protected ControlViewElement[] _childController;
@@ -109,6 +109,15 @@ namespace Altaxo.Gui.Common
         _view.InitializeLayout(_horizontalLayout);
         _view.InitializeDescription(_descriptionText);
         _view.InitializeChilds(controls,0);
+      }
+    }
+
+    public void Refresh()
+    {
+      for(int i=0;i<_childController.Length;++i)
+      {
+        if(_childController[i] is IRefreshable)
+          ((IRefreshable)_childController[i]).Refresh();
       }
     }
 

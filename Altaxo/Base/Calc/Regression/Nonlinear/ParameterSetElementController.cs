@@ -16,11 +16,15 @@ namespace Altaxo.Calc.Regression.Nonlinear
     void EhView_VarySelectionChanged(bool value);
   }
 
+  public interface IParameterSetElementController : Altaxo.Main.GUI.IMVCAController, IParameterSetElementViewEventSink , Altaxo.Gui.IRefreshable
+  {
+  }
+
 	/// <summary>
 	/// Summary description for ParameterSetElementControl.
 	/// </summary>
 	[UserControllerForObject(typeof(ParameterSetElement),100)]
-	public class ParameterSetElementController : Altaxo.Main.GUI.IMVCAController,IParameterSetElementViewEventSink 
+	public class ParameterSetElementController : IParameterSetElementController 
 	{
     ParameterSetElement _doc;
     ParameterSetElement _tempdoc;
@@ -41,6 +45,16 @@ namespace Altaxo.Calc.Regression.Nonlinear
       }
     }
 
+    /// <summary>
+    /// Called when the doc has changed outside the controller. All changes that have been
+    /// made manually are discarded, and the values of the changed document are shown on the view.
+    /// </summary>
+    public void Refresh()
+    {
+      // the doc has 
+      _tempdoc = new ParameterSetElement(_doc);
+      Initialize();
+    }
 
     public void EhView_ParameterValidating(string value, System.ComponentModel.CancelEventArgs e)
     {

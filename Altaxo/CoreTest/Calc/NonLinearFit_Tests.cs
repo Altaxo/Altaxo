@@ -251,7 +251,108 @@ namespace AltaxoTest.Calc.Regression
       Assert.AreEqual(1,param[2],1E-4,"Fit parameter 2 should be 1 in this model");
     }
 
+
   
+    /// <summary>
+    /// Generates for values z=1,2,3..n the function p[0]+p[1]*z[i]
+    /// </summary>
+    /// <param name="p"></param>
+    /// <param name="x"></param>
+    /// <param name="data"></param>
+    void poly2(int numberOfYs, int numberOfParameter, double[] p, double[] x, ref int info)
+    {
+      Assert.IsTrue(p.Length==2);
+      Assert.IsTrue(x.Length==9);
+
+      double[] y = {2,1,4,3,6,5,8,7,10};
+
+      for(int i=0;i<9;i++)
+        x[i] = p[0] + p[1]*(i+1) - y[i];  
+    
+    }
+
+
+    [Test]
+    public void Test_Poly2()
+    {
+      double[] param = new double[2];
+      param[0]=0.1;
+      param[1]=1.01;
+      
+
+      double[] ys = new double[9];
+      int info = 0;
+
+      do
+      {
+        NLFit.LevenbergMarquardtFit(new NLFit.LMFunction(this.poly2),param,ys,1E-10,ref info);
+      } while(info==5);
+
+      Assert.AreEqual(0.1111111,param[0],1E-4,"Fit parameter 0 should be 0.11111 in this model");
+      Assert.AreEqual(1,param[1],1E-4,"Fit parameter 1 should be 1 in this model");
+
+      double[] covar = new double[2*2];
+      double chisqr;
+      NLFit.ComputeCovariances(new NLFit.LMFunction(this.poly2),param,9,2,covar, out chisqr);
+      Assert.AreEqual(0.670194,covar[0],0.001);
+      Assert.AreEqual(-0.10582,covar[1],0.001);
+      Assert.AreEqual(-0.10582,covar[2],0.001);
+      Assert.AreEqual(0.021164,covar[3],0.001);
+    }
+ 
+
+    /// <summary>
+    /// Generates the values sum from i=1 to 9 of p[0]+p[1]*i - y
+    /// </summary>
+    /// <param name="p"></param>
+    /// <param name="x"></param>
+    /// <param name="data"></param>
+    void poly3(int numberOfYs, int numberOfParameter, double[] p, double[] x, ref int info)
+    {
+      if(p.Length!=2)
+        throw new ArgumentException("p");
+
+      double[] y = {2,1,4,3,6,5,8,7,10};
+
+      double sum = 0;
+      for(int i=0; i<9; ++i)
+      {
+        double diff = p[0] + p[1]*(i+1) - y[i];
+        sum += diff*diff;
+      }
+
+      sum /= x.Length;
+      sum = Math.Sqrt(sum);
+      for(int i=0;i<x.Length;++i)
+        x[i] = sum;
+
+      System.Diagnostics.Debug.WriteLine(string.Format("p[0]={0}, p[1]={1}, sum={2}",p[0],p[1],sum));
+    }
+
+    [Test]
+    public void Test_Poly3()
+    {
+      double[] param = new double[2];
+      param[0]=1;
+      param[1]=1;
+      
+
+      double[] ys = new double[2];
+      int info = 0;
+
+      do
+      {
+        NLFit.LevenbergMarquardtFit(new NLFit.LMFunction(this.poly3),param,ys,1E-10,ref info);
+      } while(info==5);
+
+      Assert.AreEqual(0.1111111,param[0],1E-4,"Fit parameter 0 should be 0.11111 in this model");
+      Assert.AreEqual(1,param[1],1E-4,"Fit parameter 1 should be 1 in this model");
+
+      double[] covar = new double[2*2];
+      double chisqr;
+      NLFit.ComputeCovariances(new NLFit.LMFunction(this.poly3),param,2,2,covar, out chisqr);
+     
+    }
   
   }
 

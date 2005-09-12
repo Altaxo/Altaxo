@@ -7,6 +7,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
   {
     public string Name;
     public double Parameter;
+    public double Variance;
     public bool   Vary;
     
       

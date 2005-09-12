@@ -143,7 +143,7 @@ namespace Altaxo.Calc.LinearAlgebra
       /// the matrix to append must have the same number of columns than this matrix.
       /// </summary>
       /// <param name="a">Matrix to append to the bottom of this matrix.</param>
-      public void AppendBottom(IMatrix a)
+      public void AppendBottom(IROMatrix a)
       {
         if(a.Rows==0)
           return; // nothing to append
@@ -284,7 +284,7 @@ namespace Altaxo.Calc.LinearAlgebra
       /// the matrix to append must have the same number of rows than this matrix.
       /// </summary>
       /// <param name="a">Matrix to append to the right of this matrix.</param>
-      public void AppendRight(IMatrix a)
+      public void AppendRight(IROMatrix a)
       {
         if(a.Columns==0)
           return; // nothing to append
@@ -1201,7 +1201,6 @@ namespace Altaxo.Calc.LinearAlgebra
 
     #endregion
 
-
     #region Helper functions
     /// <summary>
     /// Calculates the Square of the value x.
@@ -1251,7 +1250,7 @@ namespace Altaxo.Calc.LinearAlgebra
       return result;
     }
 
-    public static string MatrixToString(string name, IMatrix a)
+    public static string MatrixToString(string name, IROMatrix a)
     {
       if(null==name)
         name="";
@@ -1274,7 +1273,78 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
       return s.ToString();
+    }
+    public static string MatrixToString(string name, IROFloatMatrix a)
+    {
+      if (null == name)
+        name = "";
 
+      if (a.Rows == 0 || a.Columns == 0)
+        return string.Format("EmptyMatrix {0}({1},{2})", name, a.Rows, a.Columns);
+
+      System.Text.StringBuilder s = new System.Text.StringBuilder();
+      s.Append("Matrix " + name + ":");
+      for (int i = 0; i < a.Rows; i++)
+      {
+        s.Append("\n(");
+        for (int j = 0; j < a.Columns; j++)
+        {
+          s.Append(a[i, j].ToString());
+          if (j + 1 < a.Columns)
+            s.Append(";");
+          else
+            s.Append(")");
+        }
+      }
+      return s.ToString();
+    }
+    public static string MatrixToString(string name, IROComplexDoubleMatrix a)
+    {
+      if (null == name)
+        name = "";
+
+      if (a.Rows == 0 || a.Columns == 0)
+        return string.Format("EmptyMatrix {0}({1},{2})", name, a.Rows, a.Columns);
+
+      System.Text.StringBuilder s = new System.Text.StringBuilder();
+      s.Append("Matrix " + name + ":");
+      for (int i = 0; i < a.Rows; i++)
+      {
+        s.Append("\n(");
+        for (int j = 0; j < a.Columns; j++)
+        {
+          s.Append(a[i, j].ToString());
+          if (j + 1 < a.Columns)
+            s.Append(";");
+          else
+            s.Append(")");
+        }
+      }
+      return s.ToString();
+    }
+    public static string MatrixToString(string name, IROComplexFloatMatrix a)
+    {
+      if (null == name)
+        name = "";
+
+      if (a.Rows == 0 || a.Columns == 0)
+        return string.Format("EmptyMatrix {0}({1},{2})", name, a.Rows, a.Columns);
+
+      System.Text.StringBuilder s = new System.Text.StringBuilder();
+      s.Append("Matrix " + name + ":");
+      for (int i = 0; i < a.Rows; i++)
+      {
+        s.Append("\n(");
+        for (int j = 0; j < a.Columns; j++)
+        {
+          s.Append(a[i, j].ToString());
+          if (j + 1 < a.Columns)
+            s.Append(";");
+          else
+            s.Append(")");
+        }
+      }
+      return s.ToString();
     }
 
     #endregion

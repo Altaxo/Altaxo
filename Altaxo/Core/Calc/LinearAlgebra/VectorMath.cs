@@ -395,5 +395,131 @@ namespace Altaxo.Calc.LinearAlgebra
       return sum;
     }
 
+
+    static double sqr(double x) 
+    {
+      return x * x;
+    }
+
+    /// <summary>Given an n-vector x, this function calculates the
+    /// euclidean norm of x. 
+    /// </summary>
+    /// <param name="x">An input array. </param>
+    /// <returns>The euclidian norm of the vector of length n, i.e. the square root of the sum of squares of the elements.</returns>
+    public static double GetNorm(double[] x)
+    {
+      return GetNorm(x, 0, x.Length);
+    }
+
+    /// <summary>Given an n-vector x, this function calculates the
+    /// euclidean norm of x. 
+    /// </summary>
+    /// <param name="n">A positive integer input variable of the number of elements to process.</param>
+    /// <param name="x">An input array of length n. </param>
+    /// <param name="startindex">The index of the first element in x to process.</param>
+    /// <returns>The euclidian norm of the vector of length n, i.e. the square root of the sum of squares of the elements.</returns>
+    /// <remarks>
+    ///     the euclidean norm is computed by accumulating the sum of 
+    ///     squares in three different sums. the sums of squares for the 
+    ///     small and large components are scaled so that no overflows 
+    ///     occur. non-destructive underflows are permitted. underflows 
+    ///     and overflows do not occur in the computation of the unscaled 
+    ///     sum of squares for the intermediate components. 
+    ///     the definitions of small, intermediate and large components 
+    ///     depend on two constants, rdwarf and rgiant. the main 
+    ///     restrictions on these constants are that rdwarf**2 not 
+    ///     underflow and rgiant**2 not overflow. the constants 
+    ///     given here are suitable for every known computer. 
+    ///     <para>burton s. garbow, kenneth e. hillstrom, jorge j. more</para>
+    ///      
+    /// </remarks>
+    public static double GetNorm(double[] x, int startindex, int n)
+    {
+      const double rdwarf = 3.834e-20;
+      const double rgiant = 1.304e19;
+      double ret_val = 0.0, xabs, x1max, x3max, s1, s2, s3, agiant, floatn;
+      int i;
+
+      // Parameter adjustments
+      // --x; LELLID!!
+
+      s1 = s2 = s3 = x1max = x3max = 0.0;
+      floatn = (double)n;
+      agiant = rgiant / floatn;
+
+      for (i = 0; i < n; i++)
+      { // LELLID!!
+
+        xabs = Math.Abs(x[i + startindex]);
+        if (xabs > rdwarf && xabs < agiant) goto L70;
+        if (xabs <= rdwarf) goto L30;
+
+        //sum for large components
+        if (xabs <= x1max) goto L10;
+        s1 = 1.0 + s1 * sqr(x1max / xabs);
+        x1max = xabs;
+        goto L80;
+
+      L10:
+        s1 += sqr(xabs / x1max);
+        goto L80;
+
+      L30:
+        // sum for small components
+        if (xabs <= x3max) goto L40;
+        s3 = 1.0 + s3 * sqr(x3max / xabs);
+        x3max = xabs;
+        goto L80;
+
+      L40:
+        if (xabs != 0.0) s3 += sqr(xabs / x3max);
+        goto L80;
+
+      L70:
+        // sum for intermediate components
+        s2 += sqr(xabs);
+
+      L80: ;
+      }
+
+      // calculation of norm
+      if (s1 == 0.0) goto L100;
+      ret_val = x1max * Math.Sqrt(s1 + s2 / x1max / x1max);
+      goto L130;
+
+    L100:
+      if (s2 == 0.0) goto L110;
+      if (s2 >= x3max)
+        ret_val = Math.Sqrt(s2 * (1.0 + x3max / s2 * (x3max * s3)));
+      if (s2 < x3max)
+        ret_val = Math.Sqrt(x3max * (s2 / x3max + x3max * s3));
+      goto L130;
+
+    L110:
+      ret_val = x3max * Math.Sqrt(s3);
+
+    L130:
+      return ret_val;
+    }
+
+    /// <summary>Return the index of a the maximum absolute value in a vector</summary>
+    /// <param name="X">The input array.</param>
+    /// <returns>The index of the maximum absolute value.</returns>
+    public static int IMax(float[] X)
+    {
+    	float max = 0;
+      int index=0;
+      for (int i = 0; i < X.Length; ++i)
+      {
+        float test = System.Math.Abs(X[i]);
+        if (test > max)
+        {
+          index = i;
+          max = test;
+        }
+      }
+      return index;
+    }
+
   }
 }

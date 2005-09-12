@@ -18,11 +18,12 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
       IMVCAController[] childs = new IMVCAController[_doc.Count];
       for(int i=0;i<childs.Length;i++)
-        childs[i] = (IMVCAController)Current.Gui.GetControllerAndControl(new object[]{_doc[i]},typeof(IMVCAController));
+        childs[i] = (IMVCAController)Current.Gui.GetControllerAndControl(new object[]{_doc[i]},typeof(IParameterSetElementController));
 
       base.Initialize(childs);
     }
 
+  
     private void EhInitializationFinished(object sender, EventArgs e)
     {
       IMVCAController[] childs = new IMVCAController[_doc.Count];

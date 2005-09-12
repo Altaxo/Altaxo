@@ -58,7 +58,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// is still empty, in which case the right dimension of this matrix is set.
     /// </summary>
     /// <param name="a">The matrix to append.</param>
-    void AppendRight(IMatrix a);
+    void AppendRight(IROMatrix a);
   }
 
 
@@ -73,7 +73,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// is still empty, in which case the right dimension of this matrix is set.
     /// </summary>
     /// <param name="a">The matrix to append.</param>
-    void AppendBottom(IMatrix a);
+    void AppendBottom(IROMatrix a);
   }
 
   /// <summary>

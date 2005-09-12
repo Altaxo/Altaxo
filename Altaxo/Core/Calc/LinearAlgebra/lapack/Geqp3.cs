@@ -1,0 +1,76 @@
+/*
+ * Geqp3.cs
+ * 
+ * Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
+*/
+
+#if !MANAGED
+using System;
+using System.Runtime.InteropServices;
+
+using dnA.Utility;
+
+namespace dnA.Math.Lapack{
+	[System.Security.SuppressUnmanagedCodeSecurityAttribute]
+	internal sealed class Geqp3 {
+		private  Geqp3() {}                           
+		private static void ArgumentCheck(int m, int n, Object A, int lda, int[] jpvt) {
+			if ( A == null ) {
+				throw new ArgumentNullException("A","A cannot be null.");
+			}
+			if ( m<0 ) {
+				throw new ArgumentException("m must be at least zero.", "m");
+			}
+			if ( n<0 ) {
+				throw new ArgumentException("n must be at least zero.","n");
+			}
+			if ( lda < System.Math.Max(1,m) ) {
+				throw new ArgumentException("lda must be at least max(1,m)", "lda");
+			}
+			if (  jpvt.Length < System.Math.Max(1,n) ) {
+				throw new ArgumentException("jpvt must be at least max(1,m)", "jpvt");
+			}
+		}
+	
+		internal static int Compute( int m, int n, float[] A, int lda, int[] jpvt, out float[] tau ){
+			ArgumentCheck(m, n, A, lda, jpvt);
+			tau = new float[System.Math.Max(1, System.Math.Min(m,n))];
+			
+			return dna_lapack_sgeqp3(m,n,A,lda,jpvt,tau);
+		}
+
+		internal static int Compute( int m, int n, double[] A, int lda, int[] jpvt, out double[] tau  ){
+			ArgumentCheck(m, n, A, lda, jpvt);
+			tau = new double[System.Math.Max(1, System.Math.Min(m,n))];
+			
+			return dna_lapack_dgeqp3(m,n,A,lda,jpvt,tau);
+		}
+
+		internal static int Compute( int m, int n, ComplexFloat[] A, int lda, int[] jpvt, out ComplexFloat[] tau  ){
+			ArgumentCheck(m, n, A, lda, jpvt);
+			tau = new ComplexFloat[System.Math.Max(1, System.Math.Min(m,n))];
+			
+			return dna_lapack_cgeqp3(m,n,A,lda,jpvt,tau);
+		}
+
+		internal static int Compute( int m, int n, ComplexDouble[] A, int lda, int[] jpvt, out ComplexDouble[] tau  ){
+			ArgumentCheck(m, n, A, lda, jpvt);
+			tau = new ComplexDouble[System.Math.Max(1, System.Math.Min(m,n))];
+			
+			return dna_lapack_zgeqp3(m,n,A,lda,jpvt,tau);
+		}
+
+		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		private static extern int dna_lapack_sgeqp3( int m, int n, [In,Out]float[] A, int lda, [In,Out]int[] jpvt, [In,Out]float[] tau );
+	
+		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		private static extern int dna_lapack_dgeqp3( int m, int n, [In,Out]double[] A, int lda, [In,Out]int[] jpvt, [In,Out]double[] tau );
+
+		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		private static extern int dna_lapack_cgeqp3( int m, int n, [In,Out]ComplexFloat[] A, int lda, [In,Out]int[] jpvt, [In,Out]ComplexFloat[] tau );
+
+		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		private static extern int dna_lapack_zgeqp3( int m, int n, [In,Out]ComplexDouble[] A, int lda, [In,Out]int[] jpvt, [In,Out]ComplexDouble[] tau );
+	}
+}
+#endif

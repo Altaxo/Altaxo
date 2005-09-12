@@ -38,6 +38,8 @@ namespace Altaxo.Calc.Regression.Nonlinear
     FitFunctionSelectionController _funcselController;
     IFitEnsembleController _fitEnsembleController;
 
+    double _chiSquare;
+
     public NonlinearFitController(NonlinearFitDocument doc)
     {
       _doc = doc;
@@ -65,10 +67,19 @@ namespace Altaxo.Calc.Regression.Nonlinear
     {
       if(true==this._parameterController.Apply())
       {
+//        _doc.FitEnsemble.InitializeParametersFromParameterSet(_doc.CurrentParameters);
+
+        LevMarAdapter fitAdapter = new LevMarAdapter(_doc.FitEnsemble,_doc.CurrentParameters);
+  
+        fitAdapter.Fit();
+
+        this._chiSquare = fitAdapter.ResultingChiSquare;
+
+        fitAdapter.CopyParametersBackTo(_doc.CurrentParameters);
+
         _doc.FitEnsemble.InitializeParametersFromParameterSet(_doc.CurrentParameters);
-        _doc.FitEnsemble.Fit();
-        _doc.FitEnsemble.InitializeParameterSetFromEnsembleParameters(_doc.CurrentParameters);
         _doc.FitEnsemble.DistributeParameters();
+        
         OnAfterFittingStep();
       }
       else
@@ -81,6 +92,8 @@ namespace Altaxo.Calc.Regression.Nonlinear
     {
       if(true==this._parameterController.Apply())
       {
+        LevMarAdapter fitAdapter = new LevMarAdapter(_doc.FitEnsemble,_doc.CurrentParameters);
+        this._chiSquare = fitAdapter.EvaluateChiSquare();
         _doc.FitEnsemble.InitializeParametersFromParameterSet(_doc.CurrentParameters);
         _doc.FitEnsemble.DistributeParameters();
         OnAfterFittingStep();
@@ -164,10 +177,12 @@ namespace Altaxo.Calc.Regression.Nonlinear
     System.Collections.ArrayList _functionPlotItems = new System.Collections.ArrayList();
     public void OnAfterFittingStep()
     {
-      double chiSquare = _doc.FitEnsemble.GetChiSqr();
+      
+     
       if(_view!=null)
-        _view.SetChiSquare(chiSquare);
+        _view.SetChiSquare(this._chiSquare);
 
+ 
 
       if(_doc.FitContext is Altaxo.Graph.GUI.GraphController)
       {

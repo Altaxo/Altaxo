@@ -34,7 +34,7 @@
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;MANAGED</DefineConstants>
     <DocumentationFile>bin\Debug\AltaxoCore.xml</DocumentationFile>
     <DebugSymbols>true</DebugSymbols>
     <FileAlignment>4096</FileAlignment>
@@ -82,6 +82,7 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Calc\Algorithm.cs" />
     <Compile Include="Calc\BasicFunctions.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -97,7 +98,7 @@
     <Compile Include="Calc\ComplexArray.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Calc\ComplexF.cs">
+    <Compile Include="Calc\ComplexFloat.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Calc\ComplexMath.cs">
@@ -145,9 +146,80 @@
     <Compile Include="Calc\IScalarFunction.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Calc\LinearAlgebra\blas\Asum.cs" />
+    <Compile Include="Calc\LinearAlgebra\blas\Axpy.cs" />
+    <Compile Include="Calc\LinearAlgebra\blas\Copy.cs" />
+    <Compile Include="Calc\LinearAlgebra\blas\Dot.cs" />
+    <Compile Include="Calc\LinearAlgebra\blas\Dotc.cs" />
+    <Compile Include="Calc\LinearAlgebra\blas\Dotu.cs" />
+    <Compile Include="Calc\LinearAlgebra\blas\Gbmv.cs" />
+    <Compile Include="Calc\LinearAlgebra\blas\Gemm.cs" />
+    <Compile Include="Calc\LinearAlgebra\blas\Gemv.cs" />
+    <Compile Include="Calc\LinearAlgebra\blas\Ger.cs" />
+    <Compile Include="Calc\LinearAlgebra\blas\Gerc.cs" />
+    <Compile Include="Calc\LinearAlgebra\blas\Geru.cs" />
+    <Compile Include="Calc\LinearAlgebra\blas\Imax.cs" />
+    <Compile Include="Calc\LinearAlgebra\blas\Imin.cs" />
+    <Compile Include="Calc\LinearAlgebra\blas\Nrm2.cs" />
+    <Compile Include="Calc\LinearAlgebra\blas\Rot.cs" />
+    <Compile Include="Calc\LinearAlgebra\blas\Rotg.cs" />
+    <Compile Include="Calc\LinearAlgebra\blas\Rotm.cs" />
+    <Compile Include="Calc\LinearAlgebra\blas\Rotmg.cs" />
+    <Compile Include="Calc\LinearAlgebra\blas\Scal.cs" />
+    <Compile Include="Calc\LinearAlgebra\blas\Sdot.cs" />
+    <Compile Include="Calc\LinearAlgebra\blas\Swap.cs" />
+    <Compile Include="Calc\LinearAlgebra\blas\Trsm.cs" />
+    <Compile Include="Calc\LinearAlgebra\ComplexDoubleCholeskyDecomp.cs" />
+    <Compile Include="Calc\LinearAlgebra\ComplexDoubleLevinson.cs" />
+    <Compile Include="Calc\LinearAlgebra\ComplexDoubleLUDecomp.cs" />
+    <Compile Include="Calc\LinearAlgebra\ComplexDoubleMatrix.cs" />
+    <Compile Include="Calc\LinearAlgebra\ComplexDoubleMatrixEnumerator.cs" />
+    <Compile Include="Calc\LinearAlgebra\ComplexDoubleQRDecomp.cs" />
+    <Compile Include="Calc\LinearAlgebra\ComplexDoubleSVDDecomp.cs" />
+    <Compile Include="Calc\LinearAlgebra\ComplexDoubleSymmetricLevinson.cs" />
+    <Compile Include="Calc\LinearAlgebra\ComplexDoubleVector.cs" />
+    <Compile Include="Calc\LinearAlgebra\ComplexDoubleVectorEnumerator.cs" />
+    <Compile Include="Calc\LinearAlgebra\ComplexFloatCholeskyDecomp.cs" />
+    <Compile Include="Calc\LinearAlgebra\ComplexFloatLevinson.cs" />
+    <Compile Include="Calc\LinearAlgebra\ComplexFloatLUDecomp.cs" />
+    <Compile Include="Calc\LinearAlgebra\ComplexFloatMatrix.cs" />
+    <Compile Include="Calc\LinearAlgebra\ComplexFloatMatrixEnumerator.cs" />
+    <Compile Include="Calc\LinearAlgebra\ComplexFloatQRDecomp.cs" />
+    <Compile Include="Calc\LinearAlgebra\ComplexFloatSVDDecomp.cs" />
+    <Compile Include="Calc\LinearAlgebra\ComplexFloatSymmetricLevinson.cs" />
+    <Compile Include="Calc\LinearAlgebra\ComplexFloatVector.cs" />
+    <Compile Include="Calc\LinearAlgebra\ComplexFloatVectorEnumerator.cs" />
+    <Compile Include="Calc\LinearAlgebra\Constants.cs" />
+    <Compile Include="Calc\LinearAlgebra\DoubleCholeskyDecomp.cs" />
+    <Compile Include="Calc\LinearAlgebra\DoubleLevinson.cs" />
+    <Compile Include="Calc\LinearAlgebra\DoubleLUDecomp.cs" />
+    <Compile Include="Calc\LinearAlgebra\DoubleMatrix.cs" />
+    <Compile Include="Calc\LinearAlgebra\DoubleMatrixEnumerator.cs" />
+    <Compile Include="Calc\LinearAlgebra\DoubleQRDecomp.cs" />
+    <Compile Include="Calc\LinearAlgebra\DoubleSVDDecomp.cs" />
+    <Compile Include="Calc\LinearAlgebra\DoubleSymmetricLevinson.cs" />
     <Compile Include="Calc\LinearAlgebra\DoubleVector.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Calc\LinearAlgebra\DoubleVectorEnumerator.cs" />
+    <Compile Include="Calc\LinearAlgebra\FloatCholeskyDecomp.cs" />
+    <Compile Include="Calc\LinearAlgebra\FloatLevinson.cs" />
+    <Compile Include="Calc\LinearAlgebra\FloatLUDecomp.cs" />
+    <Compile Include="Calc\LinearAlgebra\FloatMatrix.cs" />
+    <Compile Include="Calc\LinearAlgebra\FloatMatrixEnumerator.cs" />
+    <Compile Include="Calc\LinearAlgebra\FloatQRDecomp.cs" />
+    <Compile Include="Calc\LinearAlgebra\FloatSVDDecomp.cs" />
+    <Compile Include="Calc\LinearAlgebra\FloatSymmetricLevinson.cs" />
+    <Compile Include="Calc\LinearAlgebra\FloatVector.cs" />
+    <Compile Include="Calc\LinearAlgebra\FloatVectorEnumerator.cs" />
+    <Compile Include="Calc\LinearAlgebra\HouseHolder.cs" />
+    <Compile Include="Calc\LinearAlgebra\Hypotenuse.cs" />
+    <Compile Include="Calc\LinearAlgebra\IComplexDoubleMatrix.cs" />
+    <Compile Include="Calc\LinearAlgebra\IComplexFloatMatrix.cs" />
+    <Compile Include="Calc\LinearAlgebra\IComplexDoubleVector.cs" />
+    <Compile Include="Calc\LinearAlgebra\IComplexFloatVector.cs" />
+    <Compile Include="Calc\LinearAlgebra\IFloatMatrix.cs" />
+    <Compile Include="Calc\LinearAlgebra\IFloatVector.cs" />
     <Compile Include="Calc\LinearAlgebra\IMatrix.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -163,21 +235,65 @@
     <Compile Include="Calc\LinearAlgebra\JaggedArrayMatrix.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Calc\LinearAlgebra\lapack\Bdsqr.cs" />
+    <Compile Include="Calc\LinearAlgebra\lapack\Gebrd.cs" />
+    <Compile Include="Calc\LinearAlgebra\lapack\Gehrd.cs" />
+    <Compile Include="Calc\LinearAlgebra\lapack\Geqp3.cs" />
+    <Compile Include="Calc\LinearAlgebra\lapack\Geqrf.cs" />
+    <Compile Include="Calc\LinearAlgebra\lapack\Gesv.cs" />
+    <Compile Include="Calc\LinearAlgebra\lapack\Gesvd.cs" />
+    <Compile Include="Calc\LinearAlgebra\lapack\Getrf.cs" />
+    <Compile Include="Calc\LinearAlgebra\lapack\Getri.cs" />
+    <Compile Include="Calc\LinearAlgebra\lapack\Getrs.cs" />
+    <Compile Include="Calc\LinearAlgebra\lapack\Orgbr.cs" />
+    <Compile Include="Calc\LinearAlgebra\lapack\Orghr.cs" />
+    <Compile Include="Calc\LinearAlgebra\lapack\Orgqr.cs" />
+    <Compile Include="Calc\LinearAlgebra\lapack\Ormbr.cs" />
+    <Compile Include="Calc\LinearAlgebra\lapack\Ormhr.cs" />
+    <Compile Include="Calc\LinearAlgebra\lapack\Ormqr.cs" />
+    <Compile Include="Calc\LinearAlgebra\lapack\Pocon.cs" />
+    <Compile Include="Calc\LinearAlgebra\lapack\Potrf.cs" />
+    <Compile Include="Calc\LinearAlgebra\lapack\Potri.cs" />
+    <Compile Include="Calc\LinearAlgebra\lapack\Potrs.cs" />
+    <Compile Include="Calc\LinearAlgebra\lapack\Ungbr.cs" />
+    <Compile Include="Calc\LinearAlgebra\lapack\Unghr.cs" />
+    <Compile Include="Calc\LinearAlgebra\lapack\Ungqr.cs" />
+    <Compile Include="Calc\LinearAlgebra\lapack\Unmbr.cs" />
+    <Compile Include="Calc\LinearAlgebra\lapack\Unmhr.cs" />
+    <Compile Include="Calc\LinearAlgebra\lapack\Unmqr.cs" />
+    <Compile Include="Calc\LinearAlgebra\LinearAlgebraException.cs" />
     <Compile Include="Calc\LinearAlgebra\MapackMatrix.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Calc\LinearAlgebra\Matrix.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Calc\LinearAlgebra\MatrixException.cs" />
     <Compile Include="Calc\LinearAlgebra\MatrixMath.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Calc\LinearAlgebra\NotPositiveDefiniteException.cs" />
+    <Compile Include="Calc\LinearAlgebra\NotSquareMatrixException.cs" />
+    <Compile Include="Calc\LinearAlgebra\SingularMatrixException.cs" />
     <Compile Include="Calc\LinearAlgebra\VectorMath.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Calc\LinearAlgebra\VectorSpacingEvaluator.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Calc\Optimization\ConjugateGradient.cs" />
+    <Compile Include="Calc\Optimization\ConstraintDefinition.cs" />
+    <Compile Include="Calc\Optimization\CostFunction.cs" />
+    <Compile Include="Calc\Optimization\EndCriteria.cs" />
+    <Compile Include="Calc\Optimization\FunctionMinimizeMethod.cs" />
+    <Compile Include="Calc\Optimization\ICostFunction.cs" />
+    <Compile Include="Calc\Optimization\LineSearchMethod.cs" />
+    <Compile Include="Calc\Optimization\MoreThuenteLineSearch.cs" />
+    <Compile Include="Calc\Optimization\NelderMead.cs" />
+    <Compile Include="Calc\Optimization\NewtonRaphsonLineSearch.cs" />
+    <Compile Include="Calc\Optimization\OptimizationException.cs" />
+    <Compile Include="Calc\Optimization\OptimizationMethod.cs" />
+    <Compile Include="Calc\Optimization\SecantLineSearch.cs" />
     <Compile Include="Calc\Polynomials.cs">
       <SubType>Code</SubType>
     </Compile>

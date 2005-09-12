@@ -195,7 +195,7 @@ namespace AltaxoTest.Calc.Regression
       m = 2; n = 9;
       double[] p = new double[m];
       double[] x = new double[n];
-      p[0] = 10; p[1] = 2.0;
+      p[0] = 0.1; p[1] = 1.01;
 
       x[0] = 2; x[1] = 1;
       x[2] = 4; x[3] = 3;
@@ -242,9 +242,12 @@ namespace AltaxoTest.Calc.Regression
         sum += diff*diff;
       }
 
+      sum /= x.Length;
       sum = Math.Sqrt(sum);
       for(int i=0;i<x.Length;++i)
         x[i] = sum;
+
+      System.Diagnostics.Debug.WriteLine(string.Format("p[0]={0}, p[1]={1}, sum={2}",p[0],p[1],sum));
 
     }
 
@@ -262,16 +265,13 @@ namespace AltaxoTest.Calc.Regression
       object tempstorage=null;
 
     
-      m = 2; n = 9;
+      m = 2; n = 2;
       double[] p = new double[m];
       double[] x = new double[n];
-      p[0] = 10; p[1] = 2.0;
+      p[0] = 0.1; p[1] = 1.01;
 
       x[0] = 0; x[1] = 0;
-      x[2] = 0; x[3] = 0;
-      x[4] = 0; x[5] = 0;
-      x[6] = 0; x[7] = 0;
-      x[8] = 0;
+     
 
       double[] covar = new double[m*m];
 

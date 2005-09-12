@@ -106,7 +106,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
     #endregion
 
-    public void AppendBottom(IMatrix a)
+    public void AppendBottom(IROMatrix a)
     {
       if(m_NumVectors==0 && m_VectorLen==0)
       {
@@ -134,7 +134,7 @@ namespace Altaxo.Calc.LinearAlgebra
         throw new System.NotImplementedException("This worst case is not implemented yet.");
     }
 
-    public void AppendRight(IMatrix a)
+    public void AppendRight(IROMatrix a)
     {
       if(m_NumVectors==0 && m_VectorLen==0)
       {

@@ -67,9 +67,9 @@ namespace Altaxo.Calc.Fourier
       a = b;
       b = temp;
     }
-    static private void Swap( ref ComplexF a, ref ComplexF b ) 
+    static private void Swap( ref ComplexFloat a, ref ComplexFloat b ) 
     {
-      ComplexF temp = a;
+      ComplexFloat temp = a;
       a = b;
       b = temp;
     }
@@ -320,7 +320,7 @@ namespace Altaxo.Calc.Fourier
       }
     }
 
-    static private void ReorderArray( ComplexF[] data ) 
+    static private void ReorderArray( ComplexFloat[] data ) 
     {
       Debug.Assert( data != null );
 
@@ -336,7 +336,7 @@ namespace Altaxo.Calc.Fourier
         int swap = reversedBits[ i ];
         if( swap > i ) 
         {
-          ComplexF temp = data[ i ];
+          ComplexFloat temp = data[ i ];
           data[ i ] = data[ swap ];
           data[ swap ] = temp;
         }
@@ -388,7 +388,7 @@ namespace Altaxo.Calc.Fourier
         ComplexFFT.InitializeReverseBits( level );
         ComplexFFT.InitializeComplexRotations( level );
         //_cFFTData = new Complex[ Math2.CeilingBase( length, 2 ) ];
-        //_cFFTDataF  = new ComplexF[ Math2.CeilingBase( length, 2 ) ];
+        //_cFFTDataF  = new ComplexFloat[ Math2.CeilingBase( length, 2 ) ];
         _lookupTabletLength = length;
       }
     }
@@ -565,9 +565,9 @@ namespace Altaxo.Calc.Fourier
     //======================================================================================
     
     static private bool     _bufferCFLocked = false;
-    static private ComplexF[] _bufferCF   = new ComplexF[ 0 ];
+    static private ComplexFloat[] _bufferCF   = new ComplexFloat[ 0 ];
 
-    static private void   LockBufferCF( int length, ref ComplexF[] buffer ) 
+    static private void   LockBufferCF( int length, ref ComplexFloat[] buffer ) 
     {
       Debug.Assert( length >= 0 );
       Debug.Assert( _bufferCFLocked == false );
@@ -575,11 +575,11 @@ namespace Altaxo.Calc.Fourier
       _bufferCFLocked = true;
       if( length != _bufferCF.Length ) 
       {
-        _bufferCF = new ComplexF[ length ];
+        _bufferCF = new ComplexFloat[ length ];
       }
       buffer =  _bufferCF;
     }
-    static private void   UnlockBufferCF( ref ComplexF[] buffer ) 
+    static private void   UnlockBufferCF( ref ComplexFloat[] buffer ) 
     {
       Debug.Assert( _bufferCF == buffer );
       Debug.Assert( _bufferCFLocked == true );
@@ -588,7 +588,7 @@ namespace Altaxo.Calc.Fourier
       buffer = null;
     }
 
-    private static void LinearFFT( ComplexF[] data, int start, int inc, int length, FourierDirection direction ) 
+    private static void LinearFFT( ComplexFloat[] data, int start, int inc, int length, FourierDirection direction ) 
     {
       Debug.Assert( data != null );
       Debug.Assert( start >= 0 );
@@ -597,7 +597,7 @@ namespace Altaxo.Calc.Fourier
       Debug.Assert( ( start + inc * ( length - 1 ) ) < data.Length );
       
       // copy to buffer
-      ComplexF[]  buffer = null;
+      ComplexFloat[]  buffer = null;
       LockBufferCF( length, ref buffer );
       int j = start;
       for( int i = 0; i < length; i ++ ) 
@@ -618,7 +618,7 @@ namespace Altaxo.Calc.Fourier
       UnlockBufferCF( ref buffer );
     }
 
-    private static void LinearFFT_Quick( ComplexF[] data, int start, int inc, int length, FourierDirection direction ) 
+    private static void LinearFFT_Quick( ComplexFloat[] data, int start, int inc, int length, FourierDirection direction ) 
     {
       /*Debug.Assert( data != null );
       Debug.Assert( start >= 0 );
@@ -627,7 +627,7 @@ namespace Altaxo.Calc.Fourier
       Debug.Assert( ( start + inc * ( length - 1 ) ) < data.Length ); */
       
       // copy to buffer
-      ComplexF[]  buffer = null;
+      ComplexFloat[]  buffer = null;
       LockBufferCF( length, ref buffer );
       int j = start;
       for( int i = 0; i < length; i ++ ) 
@@ -862,7 +862,7 @@ namespace Altaxo.Calc.Fourier
     /// <param name="data"></param>
     /// <param name="length"></param>
     /// <param name="direction"></param>
-    public static void  FFT( ComplexF[] data, int length, FourierDirection direction ) 
+    public static void  FFT( ComplexFloat[] data, int length, FourierDirection direction ) 
     {
       if( data == null ) 
       {
@@ -931,7 +931,7 @@ namespace Altaxo.Calc.Fourier
     /// <param name="data"></param>
     /// <param name="length"></param>
     /// <param name="direction"></param>
-    public static void  FFT_Quick( ComplexF[] data, int length, FourierDirection direction ) 
+    public static void  FFT_Quick( ComplexFloat[] data, int length, FourierDirection direction ) 
     {
       /*if( data == null ) {
         throw new ArgumentNullException( "data" );
@@ -996,7 +996,7 @@ namespace Altaxo.Calc.Fourier
     /// </summary>
     /// <param name="data"></param>
     /// <param name="direction"></param>
-    public static void  FFT( ComplexF[] data, FourierDirection direction ) 
+    public static void  FFT( ComplexFloat[] data, FourierDirection direction ) 
     {
       if( data == null ) 
       {
@@ -1284,7 +1284,7 @@ namespace Altaxo.Calc.Fourier
     /// <param name="xLength"></param>
     /// <param name="yLength"></param>
     /// <param name="direction"></param>
-    public static void  FFT2( ComplexF[] data, int xLength, int yLength, FourierDirection direction ) 
+    public static void  FFT2( ComplexFloat[] data, int xLength, int yLength, FourierDirection direction ) 
     {
       if( data == null ) 
       {
@@ -1385,7 +1385,7 @@ namespace Altaxo.Calc.Fourier
     /// <param name="yLength"></param>
     /// <param name="zLength"></param>
     /// <param name="direction"></param>
-    public static void  FFT3( ComplexF[] data, int xLength, int yLength, int zLength, FourierDirection direction ) 
+    public static void  FFT3( ComplexFloat[] data, int xLength, int yLength, int zLength, FourierDirection direction ) 
     {
       if( data == null ) 
       {

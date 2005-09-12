@@ -143,9 +143,57 @@
     <Compile Include="Calc\FFT\TestPFA235Correlation.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Calc\LinearAlgebra\Comparer.cs" />
+    <Compile Include="Calc\LinearAlgebra\ComplexDoubleCholeskyDecompTest.cs" />
+    <Compile Include="Calc\LinearAlgebra\ComplexDoubleLevinsonTest.cs" />
+    <Compile Include="Calc\LinearAlgebra\ComplexDoubleLUDecompTest.cs" />
+    <Compile Include="Calc\LinearAlgebra\ComplexDoubleMatrixEnumeratorTest.cs" />
+    <Compile Include="Calc\LinearAlgebra\ComplexDoubleMatrixTest.cs" />
+    <Compile Include="Calc\LinearAlgebra\ComplexDoubleQRDecompTest.cs" />
+    <Compile Include="Calc\LinearAlgebra\ComplexDoubleSVDDecompTest.cs" />
+    <Compile Include="Calc\LinearAlgebra\ComplexDoubleSymmetricLevinsonTests.cs" />
+    <Compile Include="Calc\LinearAlgebra\ComplexDoubleTest.cs" />
+    <Compile Include="Calc\LinearAlgebra\ComplexDoubleVectorEnumeratorTest.cs" />
+    <Compile Include="Calc\LinearAlgebra\ComplexDoubleVectorTest.cs" />
+    <Compile Include="Calc\LinearAlgebra\ComplexFloatCholeskyDecompTest.cs" />
+    <Compile Include="Calc\LinearAlgebra\ComplexFloatLevinsonTest.cs" />
+    <Compile Include="Calc\LinearAlgebra\ComplexFloatLUDecompTest.cs" />
+    <Compile Include="Calc\LinearAlgebra\ComplexFloatMatrixEnumeratorTest.cs" />
+    <Compile Include="Calc\LinearAlgebra\ComplexFloatMatrixTest.cs" />
+    <Compile Include="Calc\LinearAlgebra\ComplexFloatQRDecompTest.cs" />
+    <Compile Include="Calc\LinearAlgebra\ComplexFloatSVDDecompTest.cs" />
+    <Compile Include="Calc\LinearAlgebra\ComplexFloatSymmetricLevinsonTest.cs" />
+    <Compile Include="Calc\LinearAlgebra\ComplexFloatTest.cs" />
+    <Compile Include="Calc\LinearAlgebra\ComplexFloatVectorEnumeratorTest.cs" />
+    <Compile Include="Calc\LinearAlgebra\ComplexFloatVectorTest.cs" />
+    <Compile Include="Calc\LinearAlgebra\ComplexMathTest.cs" />
+    <Compile Include="Calc\LinearAlgebra\DoubleCholeskyDecompTest.cs" />
+    <Compile Include="Calc\LinearAlgebra\DoubleLevinsonTest.cs" />
+    <Compile Include="Calc\LinearAlgebra\DoubleLUDecompTest.cs" />
+    <Compile Include="Calc\LinearAlgebra\DoubleMatrixEnumeratorTest.cs" />
+    <Compile Include="Calc\LinearAlgebra\DoubleMatrixTest.cs" />
+    <Compile Include="Calc\LinearAlgebra\DoubleQRDecompTest.cs" />
+    <Compile Include="Calc\LinearAlgebra\DoubleSVDDecompTest.cs" />
+    <Compile Include="Calc\LinearAlgebra\DoubleSymmetricLevinsonTest.cs" />
+    <Compile Include="Calc\LinearAlgebra\DoubleVectorEnumeratorTest.cs" />
+    <Compile Include="Calc\LinearAlgebra\DoubleVectorTest.cs" />
+    <Compile Include="Calc\LinearAlgebra\FloatCholeskyDecompTest.cs" />
+    <Compile Include="Calc\LinearAlgebra\FloatLevinsonTest.cs" />
+    <Compile Include="Calc\LinearAlgebra\FloatLUDecompTest.cs" />
+    <Compile Include="Calc\LinearAlgebra\FloatMatrixEnumeratorTest.cs" />
+    <Compile Include="Calc\LinearAlgebra\FloatMatrixTest.cs" />
+    <Compile Include="Calc\LinearAlgebra\FloatQRDecompTest.cs" />
+    <Compile Include="Calc\LinearAlgebra\FloatSVDDecompTest.cs" />
+    <Compile Include="Calc\LinearAlgebra\FloatSymmetricLevinsonTest.cs" />
+    <Compile Include="Calc\LinearAlgebra\FloatVectorEnumeratorTest.cs" />
+    <Compile Include="Calc\LinearAlgebra\FloatVectorTest.cs" />
     <Compile Include="Calc\NonLinearFit_Tests.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Calc\Optimization\ConjugateGradientTest.cs" />
+    <Compile Include="Calc\Optimization\EndCriteriaTest.cs" />
+    <Compile Include="Calc\Optimization\NelderMeadTest.cs" />
+    <Compile Include="Calc\Optimization\Rosenbrock.cs" />
     <Compile Include="Calc\Regression\TestNonlinearFit2.cs" />
     <Compile Include="Calc\TestBesselRelated.cs">
       <SubType>Code</SubType>

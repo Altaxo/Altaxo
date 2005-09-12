@@ -44,7 +44,7 @@ namespace Altaxo.Calc
   /// <p>A single-precision complex number representation.</p>
   /// </summary>
   [StructLayout(LayoutKind.Sequential)]
-  public struct ComplexF : IComparable, ICloneable 
+  public struct ComplexFloat : IComparable, ICloneable 
   {
 
     //-----------------------------------------------------------------------------------
@@ -63,12 +63,46 @@ namespace Altaxo.Calc
     //-----------------------------------------------------------------------------------
     //-----------------------------------------------------------------------------------
 
+
+    /// <summary>
+    /// The real component of the complex number
+    /// </summary>
+    public float Real
+    {
+      get
+      {
+        return Re;
+      }
+      set
+      {
+        Re = value;
+      }
+    }
+
+    /// <summary>
+    /// The imaginary component of the complex number
+    /// </summary>
+    public float Imag
+    {
+      get
+      {
+        return Im;
+      }
+      set
+      {
+        Im = value;
+      }
+    }
+
+    //-----------------------------------------------------------------------------------
+    //-----------------------------------------------------------------------------------
+
     /// <summary>
     /// Create a complex number from a real and an imaginary component
     /// </summary>
     /// <param name="real"></param>
     /// <param name="imaginary"></param>
-    public ComplexF( float real, float imaginary ) 
+    public ComplexFloat( float real, float imaginary ) 
     {
       this.Re   = (float) real;
       this.Im = (float) imaginary;
@@ -78,10 +112,21 @@ namespace Altaxo.Calc
     /// Create a complex number based on an existing complex number
     /// </summary>
     /// <param name="c"></param>
-    public ComplexF( ComplexF c ) 
+    public ComplexFloat( ComplexFloat c ) 
     {
       this.Re   = c.Re;
       this.Im = c.Im;
+    }
+
+    ///<summary>Created a <c>ComplexFloat</c> from the given string. The string can be in the
+    ///following formats: <c>n</c>, <c>ni</c>, <c>n +/- ni</c>, <c>n,n</c>, <c>n,ni</c>,
+    ///<c>(n,n)</c>, or <c>(n,ni)</c>, where n is a real number.</summary>
+    ///<param name="s">The string to create the <c>ComplexFloat</c> from.</param>
+    ///<exception cref="FormatException">if the n, is not a number.</exception>
+    ///<exception cref="ArgumentNullException">if s, is <c>null</c>.</exception>
+    public ComplexFloat(string s)
+    {
+      this = ComplexFloat.Parse(s);
     }
 
     /// <summary>
@@ -90,9 +135,9 @@ namespace Altaxo.Calc
     /// <param name="real"></param>
     /// <param name="imaginary"></param>
     /// <returns></returns>
-    static public ComplexF  FromRealImaginary( float real, float imaginary ) 
+    static public ComplexFloat  FromRealImaginary( float real, float imaginary ) 
     {
-      ComplexF c;
+      ComplexFloat c;
       c.Re    = (float) real;
       c.Im = (float) imaginary;
       return c;
@@ -104,9 +149,9 @@ namespace Altaxo.Calc
     /// <param name="modulus"></param>
     /// <param name="argument"></param>
     /// <returns></returns>
-    static public ComplexF  FromModulusArgument( float modulus, float argument ) 
+    static public ComplexFloat  FromModulusArgument( float modulus, float argument ) 
     {
-      ComplexF c;
+      ComplexFloat c;
       c.Re    = (float)( modulus * System.Math.Cos( argument ) );
       c.Im  = (float)( modulus * System.Math.Sin( argument ) );
       return c;
@@ -117,15 +162,15 @@ namespace Altaxo.Calc
 
     object  ICloneable.Clone() 
     {
-      return  new ComplexF( this );
+      return  new ComplexFloat( this );
     }
     /// <summary>
     /// Clone the complex number
     /// </summary>
     /// <returns></returns>
-    public ComplexF Clone() 
+    public ComplexFloat Clone() 
     {
-      return  new ComplexF( this );
+      return  new ComplexFloat( this );
     }
     
     //-----------------------------------------------------------------------------------
@@ -168,7 +213,7 @@ namespace Altaxo.Calc
     /// Get the conjugate of the complex number
     /// </summary>
     /// <returns></returns>
-    public ComplexF GetConjugate() 
+    public ComplexFloat GetConjugate() 
     {
       return FromRealImaginary( this.Re, -this.Im );
     }
@@ -197,9 +242,9 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="c"></param>
     /// <returns></returns>
-    public static explicit operator ComplexF ( Complex c ) 
+    public static explicit operator ComplexFloat ( Complex c ) 
     {
-      ComplexF cF;
+      ComplexFloat cF;
       cF.Re = (float) c.Re;
       cF.Im = (float) c.Im;
       return cF;
@@ -210,9 +255,9 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="f"></param>
     /// <returns></returns>
-    public static explicit operator ComplexF ( float f ) 
+    public static implicit operator ComplexFloat ( float f ) 
     {
-      ComplexF c;
+      ComplexFloat c;
       c.Re    = (float) f;
       c.Im  = (float) 0;
       return c;
@@ -223,7 +268,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="c"></param>
     /// <returns></returns>
-    public static explicit operator float ( ComplexF c ) 
+    public static explicit operator float ( ComplexFloat c ) 
     {
       return (float) c.Re;
     }
@@ -237,7 +282,7 @@ namespace Altaxo.Calc
     /// <param name="a"></param>
     /// <param name="b"></param>
     /// <returns></returns>
-    public static bool  operator==( ComplexF a, ComplexF b ) 
+    public static bool  operator==( ComplexFloat a, ComplexFloat b ) 
     {
       return  ( a.Re == b.Re ) && ( a.Im == b.Im );
     }
@@ -248,7 +293,7 @@ namespace Altaxo.Calc
     /// <param name="a"></param>
     /// <param name="b"></param>
     /// <returns></returns>
-    public static bool  operator!=( ComplexF a, ComplexF b ) 
+    public static bool  operator!=( ComplexFloat a, ComplexFloat b ) 
     {
       return  ( a.Re != b.Re ) || ( a.Im != b.Im );
     }
@@ -269,9 +314,9 @@ namespace Altaxo.Calc
     /// <returns></returns>
     public override bool  Equals( object o ) 
     {
-      if( o is ComplexF ) 
+      if( o is ComplexFloat ) 
       {
-        ComplexF c = (ComplexF) o;
+        ComplexFloat c = (ComplexFloat) o;
         return   ( this == c );
       }
       return  false;
@@ -291,9 +336,9 @@ namespace Altaxo.Calc
       {
         return 1;  // null sorts before current
       }
-      if( o is ComplexF ) 
+      if( o is ComplexFloat ) 
       {
-        return  this.GetModulus().CompareTo( ((ComplexF)o).GetModulus() );
+        return  this.GetModulus().CompareTo( ((ComplexFloat)o).GetModulus() );
       }
       if( o is float ) 
       {
@@ -318,7 +363,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="a"></param>
     /// <returns></returns>
-    public static ComplexF operator+( ComplexF a ) 
+    public static ComplexFloat operator+( ComplexFloat a ) 
     {
       return a;
     }
@@ -328,7 +373,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="a"></param>
     /// <returns></returns>
-    public static ComplexF operator-( ComplexF a ) 
+    public static ComplexFloat operator-( ComplexFloat a ) 
     {
       a.Re  = -a.Re;
       a.Im  = -a.Im;
@@ -341,7 +386,7 @@ namespace Altaxo.Calc
     /// <param name="a"></param>
     /// <param name="f"></param>
     /// <returns></returns>
-    public static ComplexF operator+( ComplexF a, float f ) 
+    public static ComplexFloat operator+( ComplexFloat a, float f ) 
     {
       a.Re  = (float)( a.Re + f );
       return a;
@@ -353,7 +398,7 @@ namespace Altaxo.Calc
     /// <param name="f"></param>
     /// <param name="a"></param>
     /// <returns></returns>
-    public static ComplexF operator+( float f, ComplexF a ) 
+    public static ComplexFloat operator+( float f, ComplexFloat a ) 
     {
       a.Re  = (float)( a.Re + f );
       return a;
@@ -365,7 +410,7 @@ namespace Altaxo.Calc
     /// <param name="a"></param>
     /// <param name="b"></param>
     /// <returns></returns>
-    public static ComplexF operator+( ComplexF a, ComplexF b ) 
+    public static ComplexFloat operator+( ComplexFloat a, ComplexFloat b ) 
     {
       a.Re  = a.Re + b.Re;
       a.Im  = a.Im + b.Im;
@@ -378,7 +423,7 @@ namespace Altaxo.Calc
     /// <param name="a"></param>
     /// <param name="f"></param>
     /// <returns></returns>
-    public static ComplexF operator-( ComplexF a, float f ) 
+    public static ComplexFloat operator-( ComplexFloat a, float f ) 
     {
       a.Re  = (float)( a.Re - f );
       return a;
@@ -390,7 +435,7 @@ namespace Altaxo.Calc
     /// <param name="f"></param>
     /// <param name="a"></param>
     /// <returns></returns>
-    public static ComplexF operator-( float f, ComplexF a ) 
+    public static ComplexFloat operator-( float f, ComplexFloat a ) 
     {
       a.Re  = (float)( f - a.Re );
       a.Im  = (float)( 0 - a.Im );
@@ -403,7 +448,7 @@ namespace Altaxo.Calc
     /// <param name="a"></param>
     /// <param name="b"></param>
     /// <returns></returns>
-    public static ComplexF operator-( ComplexF a, ComplexF b ) 
+    public static ComplexFloat operator-( ComplexFloat a, ComplexFloat b ) 
     {
       a.Re  = a.Re - b.Re;
       a.Im  = a.Im - b.Im;
@@ -416,7 +461,7 @@ namespace Altaxo.Calc
     /// <param name="a"></param>
     /// <param name="f"></param>
     /// <returns></returns>
-    public static ComplexF operator*( ComplexF a, float f ) 
+    public static ComplexFloat operator*( ComplexFloat a, float f ) 
     {
       a.Re  = (float)( a.Re * f );
       a.Im  = (float)( a.Im * f );
@@ -429,7 +474,7 @@ namespace Altaxo.Calc
     /// <param name="f"></param>
     /// <param name="a"></param>
     /// <returns></returns>
-    public static ComplexF operator*( float f, ComplexF a ) 
+    public static ComplexFloat operator*( float f, ComplexFloat a ) 
     {
       a.Re  = (float)( a.Re * f );
       a.Im  = (float)( a.Im * f );
@@ -442,7 +487,7 @@ namespace Altaxo.Calc
     /// <param name="a"></param>
     /// <param name="b"></param>
     /// <returns></returns>
-    public static ComplexF operator*( ComplexF a, ComplexF b ) 
+    public static ComplexFloat operator*( ComplexFloat a, ComplexFloat b ) 
     {
       // (x + yi)(u + vi) = (xu – yv) + (xv + yu)i. 
       double  x = a.Re, y = a.Im;
@@ -458,7 +503,7 @@ namespace Altaxo.Calc
     /// <param name="a"></param>
     /// <param name="f"></param>
     /// <returns></returns>
-    public static ComplexF operator/( ComplexF a, float f ) 
+    public static ComplexFloat operator/( ComplexFloat a, float f ) 
     {
       if( f == 0 ) 
       {
@@ -475,7 +520,7 @@ namespace Altaxo.Calc
     /// <param name="a"></param>
     /// <param name="b"></param>
     /// <returns></returns>
-    public static ComplexF operator/( ComplexF a, ComplexF b ) 
+    public static ComplexFloat operator/( ComplexFloat a, ComplexFloat b ) 
     {
       double  x = a.Re, y = a.Im;
       double  u = b.Re, v = b.Im;
@@ -490,23 +535,186 @@ namespace Altaxo.Calc
       return a;
     }
 
-    /// <summary>
-    /// Parse a complex representation in this fashion: "( %f, %f )"
-    /// </summary>
-    /// <param name="s"></param>
+    /// <summary>Creates a <c>ComplexFloat</c> based on a string. The string can be in the
+    ///following formats: <c>n</c>, <c>ni</c>, <c>n +/- ni</c>, <c>n,n</c>, <c>n,ni</c>,
+    ///<c>(n,n)</c>, or <c>(n,ni)</c>, where n is a real number.</summary>
+    /// <param name="s">the string to parse.</param>
     /// <returns></returns>
-    static public ComplexF Parse( string s ) 
+    public static ComplexFloat Parse(string s)
     {
-      throw new NotImplementedException( "ComplexF ComplexF.Parse( string s ) is not implemented." );
+      if (s == null)
+      {
+        throw new ArgumentNullException(s, "s cannot be null.");
+      }
+      s = s.Trim();
+      if (s.Length == 0)
+      {
+        throw new FormatException();
+      }
+
+      //check if one character strings are valid
+      if (s.Length == 1)
+      {
+        if (String.Compare(s, "i") == 0)
+        {
+          return new ComplexFloat(0, 1);
+        }
+        else
+        {
+          return new ComplexFloat(float.Parse(s));
+        }
+      }
+
+      //strip out parens
+      if (s.StartsWith("("))
+      {
+        if (!s.EndsWith(")"))
+        {
+          throw new FormatException();
+        }
+        else
+        {
+          s = s.Substring(1, s.Length - 2);
+        }
+      }
+
+      string real = s;
+      string imag = "0";
+
+      //comma separated
+      int index = s.IndexOf(',');
+      if (index > -1)
+      {
+        real = s.Substring(0, index);
+        imag = s.Substring(index + 1, s.Length - index - 1);
+      }
+      else
+      {
+        index = s.IndexOf('+', 1);
+        if (index > -1)
+        {
+          real = s.Substring(0, index);
+          imag = s.Substring(index + 1, s.Length - index - 1);
+        }
+        else
+        {
+          index = s.IndexOf('-', 1);
+          if (index > -1)
+          {
+            real = s.Substring(0, index);
+            imag = s.Substring(index, s.Length - index);
+          }
+        }
+      }
+
+      //see if we have numbers in the format xxxi
+      if (real.EndsWith("i"))
+      {
+        if (!imag.Equals("0"))
+        {
+          throw new FormatException();
+        }
+        else
+        {
+          imag = real.Substring(0, real.Length - 1);
+          real = "0";
+        }
+      }
+      if (imag.EndsWith("i"))
+      {
+        imag = imag.Substring(0, imag.Length - 1);
+      }
+      //handle cases of - n, + n
+      if (real.StartsWith("-"))
+      {
+        real = "-" + real.Substring(1, real.Length - 1).Trim();
+      }
+      if (imag.StartsWith("-"))
+      {
+        imag = "-" + imag.Substring(1, imag.Length - 1).Trim();
+      }
+
+      ComplexFloat ret;
+      try
+      {
+        ret = new ComplexFloat(float.Parse(real.Trim()), float.Parse(imag.Trim()));
+      }
+      catch (Exception)
+      {
+        throw new FormatException();
+      }
+      return ret;
     }
-    
-    /// <summary>
-    /// Get the string representation
-    /// </summary>
-    /// <returns></returns>
-    public override string ToString() 
+
+    ///<summary>Tests whether the the complex number is not a number.</summary>
+    ///<returns>True if either the real or imaginary components are NaN, false otherwise.</returns>
+    public bool IsNaN()
     {
-      return  String.Format( "( {0}, {1}i )", this.Re, this.Im );
+      return (float.IsNaN(this.Re) || float.IsNaN(this.Im));
+    }
+
+    ///<summary>Tests whether the the complex number is infinite.</summary>
+    ///<returns>True if either the real or imaginary components are infinite, false otherwise.</returns>
+    public bool IsInfinity()
+    {
+      return (float.IsInfinity(this.Re) || float.IsInfinity(this.Im));
+    }
+
+
+    ///<summary>A string representation of this <c>ComplexFloat</c>.</summary>
+    ///<returns>The string representation of the value of <c>this</c> instance.</returns>
+    public override string ToString()
+    {
+      return ToString(null, null);
+    }
+
+    ///<summary>A string representation of this <c>ComplexFloat</c>.</summary>
+    ///<param name="format">A format specification.</param>
+    ///<returns>The string representation of the value of <c>this</c> instance as specified by format.</returns>
+    public string ToString(string format)
+    {
+      return ToString(format, null);
+    }
+
+    ///<summary>A string representation of this <c>ComplexFloat</c>.</summary>
+    ///<param name="formatProvider">An IFormatProvider that supplies culture-specific formatting information.</param>
+    ///<returns>The string representation of the value of <c>this</c> instance as specified by provider.</returns>
+    public string ToString(IFormatProvider formatProvider)
+    {
+      return ToString(null, formatProvider);
+    }
+
+    ///<summary>A string representation of this <c>ComplexFloat</c>.</summary>
+    ///<param name="format">A format specification.</param>
+    ///<param name="formatProvider">An IFormatProvider that supplies culture-specific formatting information.</param>
+    ///<returns>The string representation of the value of <c>this</c> instance as specified by format and provider.</returns>
+    ///<exception cref="FormatException">if the n, is not a number.</exception>
+    ///<exception cref="ArgumentNullException">if s, is <c>null</c>.</exception>		
+    public string ToString(string format, IFormatProvider formatProvider)
+    {
+      if (IsNaN())
+      {
+        return "NaN";
+      }
+      if (IsInfinity())
+      {
+        return "IsInfinity";
+      }
+
+      System.Text.StringBuilder ret = new System.Text.StringBuilder();
+
+      ret.Append(Re.ToString(format, formatProvider));
+      if (Im < 0)
+      {
+        ret.Append(" ");
+      }
+      else
+      {
+        ret.Append(" + ");
+      }
+      ret.Append(Im.ToString(format, formatProvider)).Append("i");
+
+      return ret.ToString();
     }
 
     //-----------------------------------------------------------------------------------
@@ -519,7 +727,7 @@ namespace Altaxo.Calc
     /// <param name="b"></param>
     /// <param name="tolerance"></param>
     /// <returns></returns>
-    static public bool IsEqual( ComplexF a, ComplexF b, float tolerance ) 
+    static public bool IsEqual( ComplexFloat a, ComplexFloat b, float tolerance ) 
     {
       return
         ( Math.Abs( a.Re - b.Re ) < tolerance ) &&
@@ -530,36 +738,46 @@ namespace Altaxo.Calc
     //----------------------------------------------------------------------------------
     //----------------------------------------------------------------------------------
 
+    
+
     /// <summary>
     /// Represents zero
     /// </summary>
-    static public ComplexF  Zero 
+    static public ComplexFloat Zero
     {
-      get { return  new ComplexF( 0, 0 ); }
+      get { return new ComplexFloat(0, 0); }
+    }
+
+    /// <summary>
+    /// Represents one
+    /// </summary>
+    static public ComplexFloat One
+    {
+      get { return new ComplexFloat(1, 0); }
     }
 
     /// <summary>
     /// Represents the result of sqrt( -1 )
     /// </summary>
-    static public ComplexF  I 
+    static public ComplexFloat  I 
     {
-      get { return  new ComplexF( 0, 1 ); }
+      get { return  new ComplexFloat( 0, 1 ); }
     }
 
     /// <summary>
-    /// Represents the largest possible value of ComplexF.
+    /// Represents the largest possible value of ComplexFloat.
     /// </summary>
-    static public ComplexF  MaxValue 
+    static public ComplexFloat  MaxValue 
     {
-      get { return  new ComplexF( float.MaxValue, float.MaxValue ); }
+      get { return  new ComplexFloat( float.MaxValue, float.MaxValue ); }
     }
 
     /// <summary>
-    /// Represents the smallest possible value of ComplexF.
+    /// Represents the smallest possible value of ComplexFloat.
     /// </summary>
-    static public ComplexF  MinValue 
+    static public ComplexFloat  MinValue 
     {
-      get { return  new ComplexF( float.MinValue, float.MinValue ); }
+      get { return  new ComplexFloat( float.MinValue, float.MinValue ); }
     }
 
 

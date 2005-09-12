@@ -1835,5 +1835,233 @@ namespace Altaxo.Calc.Regression
 #endif
 
 
+    /// <summary>
+    /// This will compute the covariances at a given parameter set xvec.
+    /// </summary>
+    /// <param name="func"></param>
+    /// <param name="xvec"></param>
+    /// <param name="covar"></param>
+    public static int ComputeCovariances(LMFunction fcn, double[] x, int n, int m, double[]covar, out double sumchisq)
+    {
+      int  info=0;
+      
+
+      double[] f = new double[n];
+      double[] fjac = new double[n*m];
+      double [] jactjac = new double[m*m];
+
+      fcn(n,m,x,f, ref info);
+      sumchisq=0;
+      for(int i=0;i<n;++i)
+        sumchisq += f[i]*f[i];
+
+      // calculate the Jacobian matrix.
+      int iflag = 2;
+      int ldfjac = n;
+      double epsfcn=0;
+      double[] wa4 = new double[n];
+      fdjac2(fcn, n, m, x, f, fjac, ldfjac, ref iflag, epsfcn, wa4);
+
+      // compute jacT*jac
+      for(int i=0;i<m;++i)
+      {
+        for(int j=0;j<m;++j)
+        {
+          double sum = 0;
+          for(int k=0;k<n;++k)
+          {
+            sum += fjac[k+n*i]*fjac[k+n*j];
+          }
+          jactjac[j+i*m] = sum;
+        }
+      }
+
+
+     return LEVMAR_COVAR(jactjac, covar, sumchisq, m, n);
+
+    }
+
+    /*
+ * This function computes in C the covariance matrix corresponding to a least
+ * squares fit. JtJ is the approximate Hessian at the solution (i.e. J^T*J, where
+ * J is the jacobian at the solution), sumsq is the sum of squared residuals
+ * (i.e. goodnes of fit) at the solution, m is the number of parameters (variables)
+ * and n the number of observations. JtJ can coincide with C.
+ * 
+ * if JtJ is of full rank, C is computed as sumsq/(n-m)*(JtJ)^-1
+ * otherwise and if LAPACK is available, C=sumsq/(n-r)*(JtJ)^+
+ * where r is JtJ's rank and ^+ denotes the pseudoinverse
+ * The diagonal of C is made up from the estimates of the variances
+ * of the estimated regression coefficients.
+ * See the documentation of routine E04YCF from the NAG fortran lib
+ *
+ * The function returns the rank of JtJ if successful, 0 on error
+ *
+ * A and C are mxm
+ *
+ */
+    static int LEVMAR_COVAR(double[] JtJ, double[] C, double sumsq, int m, int n)
+    {
+      int i;
+      int rnk;
+      double fact;
+
+#if HAVE_LAPACK
+   rnk=LEVMAR_PSEUDOINVERSE(JtJ, C, m);
+   if(!rnk) return 0;
+#else
+
+#warning LAPACK not available, LU will be used for matrix inversion when computing the covariance; this might be unstable at times
+
+      rnk=LEVMAR_LUINVERSE(JtJ, C, m);
+      if(rnk==0) return 0;
+
+      rnk=m; /* assume full rank */
+#endif // HAVE_LAPACK
+
+      fact=sumsq/(double)(n-rnk);
+      for(i=0; i<m*m; ++i)
+        C[i]*=fact;
+
+      return rnk;
+    }
+
+    /*
+    * This function computes the inverse of A in B. A and B can coincide
+    *
+    * The function employs LAPACK-free LU decomposition of A to solve m linear
+    * systems A*B_i=I_i, where B_i and I_i are the i-th columns of B and I.
+    *
+    * A and B are mxm
+    *
+    * The function returns 0 in case of error,
+    * 1 if successfull
+    *
+    */
+    static int LEVMAR_LUINVERSE(double[] A, double[] B, int m)
+    {
+
+      int i, j, k, l;
+      int [] idx;
+      int maxi=-1, idx_sz, a_sz, x_sz, work_sz ;
+      double []a;
+      double []x;
+      double []work;
+      double max, sum, tmp;
+
+      /* calculate required memory size */
+      idx_sz=m;
+      a_sz=m*m;
+      x_sz=m;
+      work_sz=m;
+
+      idx= new int[idx_sz];
+      a= new double[a_sz];
+      x= new double[x_sz];
+      work = new double[work_sz];
+
+      /* avoid destroying A by copying it to a */
+      for(i=0; i<a_sz; ++i) a[i]=A[i];
+
+      /* compute the LU decomposition of a row permutation of matrix a; the permutation itself is saved in idx[] */
+      for(i=0; i<m; ++i)
+      {
+        max=0.0;
+        for(j=0; j<m; ++j)
+          if((tmp=Math.Abs(a[i*m+j]))>max)
+            max=tmp;
+        if(max==0.0)
+        {
+          // throw new ArithmeticException("Singular matrix A !");
+          return 0;
+
+        }
+        work[i]=(1.0)/max;
+      }
+
+      for(j=0; j<m; ++j)
+      {
+        for(i=0; i<j; ++i)
+        {
+          sum=a[i*m+j];
+          for(k=0; k<i; ++k)
+            sum-=a[i*m+k]*a[k*m+j];
+          a[i*m+j]=sum;
+        }
+        max=0.0;
+        for(i=j; i<m; ++i)
+        {
+          sum=a[i*m+j];
+          for(k=0; k<j; ++k)
+            sum-=a[i*m+k]*a[k*m+j];
+          a[i*m+j]=sum;
+          if((tmp=work[i]*Math.Abs(sum))>=max)
+          {
+            max=tmp;
+            maxi=i;
+          }
+        }
+        if(j!=maxi)
+        {
+          for(k=0; k<m; ++k)
+          {
+            tmp=a[maxi*m+k];
+            a[maxi*m+k]=a[j*m+k];
+            a[j*m+k]=tmp;
+          }
+          work[maxi]=work[j];
+        }
+        idx[j]=maxi;
+        if(a[j*m+j]==0.0)
+          a[j*m+j]=DBL_EPSILON;
+        if(j!=m-1)
+        {
+          tmp=(1.0)/(a[j*m+j]);
+          for(i=j+1; i<m; ++i)
+            a[i*m+j]*=tmp;
+        }
+      }
+
+      /* The decomposition has now replaced a. Solve the m linear systems using
+       * forward and back substitution
+       */
+      for(l=0; l<m; ++l)
+      {
+        for(i=0; i<m; ++i) x[i]=0.0;
+        x[l]=(1.0);
+
+        for(i=k=0; i<m; ++i)
+        {
+          j=idx[i];
+          sum=x[j];
+          x[j]=x[i];
+          if(k!=0)
+            for(j=k-1; j<i; ++j)
+              sum-=a[i*m+j]*x[j];
+          else
+            if(sum!=0.0)
+            k=i+1;
+          x[i]=sum;
+        }
+
+        for(i=m-1; i>=0; --i)
+        {
+          sum=x[i];
+          for(j=i+1; j<m; ++j)
+            sum-=a[i*m+j]*x[j];
+          x[i]=sum/a[i*m+i];
+        }
+
+        for(i=0; i<m; ++i)
+          B[i*m+l]=x[i];
+      }
+
+ 
+
+      return 1;
+    }
+
+
+
   } // end class
 } // end namespace

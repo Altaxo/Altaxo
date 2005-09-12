@@ -56,19 +56,19 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="data"></param>
     /// <returns></returns>
-    static public  ComplexF   Sum( ComplexF[] data ) 
+    static public  ComplexFloat   Sum( ComplexFloat[] data ) 
     {
       Debug.Assert( data != null );
       return  SumRecursion( data, 0, data.Length );
     }
-    static private ComplexF   SumRecursion( ComplexF[] data, int start, int end ) 
+    static private ComplexFloat   SumRecursion( ComplexFloat[] data, int start, int end ) 
     {
       Debug.Assert( 0 <= start, "start = " + start );
       Debug.Assert( start < end, "start = " + start + " and end = " + end );
       Debug.Assert( end <= data.Length, "end = " + end + " and data.Length = " + data.Length );
       if( ( end - start ) <= 1000 ) 
       {
-        ComplexF sum = ComplexF.Zero;
+        ComplexFloat sum = ComplexFloat.Zero;
         for( int i = start; i < end; i ++ ) 
         {
           sum += data[ i ];
@@ -123,19 +123,19 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="data"></param>
     /// <returns></returns>
-    static public ComplexF    SumOfSquares( ComplexF[] data ) 
+    static public ComplexFloat    SumOfSquares( ComplexFloat[] data ) 
     {
       Debug.Assert( data != null );
       return  SumOfSquaresRecursion( data, 0, data.Length );
     }
-    static private ComplexF   SumOfSquaresRecursion( ComplexF[] data, int start, int end ) 
+    static private ComplexFloat   SumOfSquaresRecursion( ComplexFloat[] data, int start, int end ) 
     {
       Debug.Assert( 0 <= start, "start = " + start );
       Debug.Assert( start < end, "start = " + start + " and end = " + end );
       Debug.Assert( end <= data.Length, "end = " + end + " and data.Length = " + data.Length );
       if( ( end - start ) <= 1000 ) 
       {
-        ComplexF sumOfSquares = ComplexF.Zero;
+        ComplexFloat sumOfSquares = ComplexFloat.Zero;
         for( int i = start; i < end; i ++ ) 
         {
           sumOfSquares += data[ i ] * data[ i ];
@@ -190,7 +190,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="data"></param>
     /// <returns></returns>
-    static public ComplexF    Mean( ComplexF[] data ) 
+    static public ComplexFloat    Mean( ComplexFloat[] data ) 
     {
       return  ComplexStats.Sum( data ) / data.Length;
     }
@@ -210,7 +210,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="data"></param>
     /// <returns></returns>
-    static public ComplexF  Variance( ComplexF[] data ) 
+    static public ComplexFloat  Variance( ComplexFloat[] data ) 
     {
       Debug.Assert( data != null );
       if( data.Length == 0 ) 
@@ -239,7 +239,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="data"></param>
     /// <returns></returns>
-    static public ComplexF  StdDev( ComplexF[] data ) 
+    static public ComplexFloat  StdDev( ComplexFloat[] data ) 
     {
       Debug.Assert( data != null );
       if( data.Length == 0 ) 
@@ -272,7 +272,7 @@ namespace Altaxo.Calc
     /// <param name="alpha"></param>
     /// <param name="beta"></param>
     /// <returns></returns>
-    static public float RMSError( ComplexF[] alpha, ComplexF[] beta ) 
+    static public float RMSError( ComplexFloat[] alpha, ComplexFloat[] beta ) 
     {
       Debug.Assert( alpha != null );
       Debug.Assert( beta != null );
@@ -280,7 +280,7 @@ namespace Altaxo.Calc
 
       return (float) Math.Sqrt( SumOfSquaredErrorRecursion( alpha, beta, 0, alpha.Length ) );
     }
-    static private float  SumOfSquaredErrorRecursion( ComplexF[] alpha, ComplexF[] beta, int start, int end ) 
+    static private float  SumOfSquaredErrorRecursion( ComplexFloat[] alpha, ComplexFloat[] beta, int start, int end ) 
     {
       Debug.Assert( 0 <= start, "start = " + start );
       Debug.Assert( start < end, "start = " + start + " and end = " + end );
@@ -291,7 +291,7 @@ namespace Altaxo.Calc
         float sumOfSquaredError = 0;
         for( int i = start; i < end; i ++ ) 
         {
-          ComplexF delta = beta[ i ] - alpha[ i ];
+          ComplexFloat delta = beta[ i ] - alpha[ i ];
           sumOfSquaredError += ( delta.Re * delta.Re ) + ( delta.Im * delta.Im );
         
         }

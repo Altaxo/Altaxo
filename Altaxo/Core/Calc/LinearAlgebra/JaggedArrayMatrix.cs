@@ -161,7 +161,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// the matrix to append must have the same number of columns than this matrix.
     /// </summary>
     /// <param name="a">Matrix to append to the bottom of this matrix.</param>
-    public void AppendBottom(IMatrix a)
+    public void AppendBottom(IROMatrix a)
     {
       if(a.Rows==0)
         return; // nothing to append

@@ -98,19 +98,19 @@ namespace Altaxo.Calc
     //---------------------------------------------------------------------------------------------
 
     static private bool     _workspaceFLocked = false;
-    static private ComplexF[] _workspaceF     = new ComplexF[ 0 ];
+    static private ComplexFloat[] _workspaceF     = new ComplexFloat[ 0 ];
 
-    static private void   LockWorkspaceF( int length, ref ComplexF[] workspace ) 
+    static private void   LockWorkspaceF( int length, ref ComplexFloat[] workspace ) 
     {
       Debug.Assert( _workspaceFLocked == false );
       _workspaceFLocked = true;
       if( length >= _workspaceF.Length ) 
       {
-        _workspaceF = new ComplexF[ length ];
+        _workspaceF = new ComplexFloat[ length ];
       }
       workspace = _workspaceF;
     }
-    static private void   UnlockWorkspaceF( ref ComplexF[] workspace ) 
+    static private void   UnlockWorkspaceF( ref ComplexFloat[] workspace ) 
     {
       Debug.Assert( _workspaceF == workspace );
       Debug.Assert( _workspaceFLocked == true );
@@ -154,7 +154,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="array"></param>
     /// <param name="offset"></param>
-    static public void Shift( ComplexF[] array, int offset ) 
+    static public void Shift( ComplexFloat[] array, int offset ) 
     {
       Debug.Assert( array != null );
       Debug.Assert( offset >= 0 );
@@ -166,7 +166,7 @@ namespace Altaxo.Calc
       }
 
       int     length    = array.Length;
-      ComplexF[]  workspace = null;
+      ComplexFloat[]  workspace = null;
       ComplexArray.LockWorkspaceF( length, ref workspace );
 
       for( int i = 0; i < length; i ++ ) 
@@ -206,7 +206,7 @@ namespace Altaxo.Calc
     /// <param name="array"></param>
     /// <param name="minimum"></param>
     /// <param name="maximum"></param>
-    static public void GetLengthRange( ComplexF[] array, ref float minimum, ref float maximum ) 
+    static public void GetLengthRange( ComplexFloat[] array, ref float minimum, ref float maximum ) 
     {
       minimum = +float.MaxValue;
       maximum = -float.MaxValue;
@@ -281,7 +281,7 @@ namespace Altaxo.Calc
     /// <param name="array2"></param>
     /// <param name="tolerance"></param>
     /// <returns></returns>
-    static public bool    IsEqual( ComplexF[] array1, ComplexF[] array2, float tolerance ) 
+    static public bool    IsEqual( ComplexFloat[] array1, ComplexFloat[] array2, float tolerance ) 
     {
       if ( array1.Length != array2.Length ) 
       {
@@ -289,7 +289,7 @@ namespace Altaxo.Calc
       }
       for( int i = 0; i < array1.Length; i ++ ) 
       {
-        if( ComplexF.IsEqual( array1[i], array2[i], tolerance ) == false ) 
+        if( ComplexFloat.IsEqual( array1[i], array2[i], tolerance ) == false ) 
         {
           return false;
         }
@@ -332,7 +332,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="array"></param>
     /// <param name="offset"></param>
-    static public void Offset( ComplexF[] array, float offset ) 
+    static public void Offset( ComplexFloat[] array, float offset ) 
     {
       int length = array.Length;
       for( int i = 0; i < length; i ++ ) 
@@ -346,7 +346,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="array"></param>
     /// <param name="offset"></param>
-    static public void Offset( ComplexF[] array, ComplexF offset ) 
+    static public void Offset( ComplexFloat[] array, ComplexFloat offset ) 
     {
       int length = array.Length;
       for( int i = 0; i < length; i ++ ) 
@@ -432,7 +432,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="array"></param>
     /// <param name="scale"></param>
-    static public void Scale( ComplexF[] array, float scale ) 
+    static public void Scale( ComplexFloat[] array, float scale ) 
     {
       Debug.Assert( array != null );
 
@@ -449,7 +449,7 @@ namespace Altaxo.Calc
     /// <param name="scale"></param>
     /// <param name="start"></param>
     /// <param name="length"></param>
-    static public void Scale( ComplexF[] array, float scale, int start, int length ) 
+    static public void Scale( ComplexFloat[] array, float scale, int start, int length ) 
     {
       Debug.Assert( array != null );
       Debug.Assert( start >= 0 );
@@ -467,7 +467,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="array"></param>
     /// <param name="scale"></param>
-    static public void Scale( ComplexF[] array, ComplexF scale ) 
+    static public void Scale( ComplexFloat[] array, ComplexFloat scale ) 
     {
       Debug.Assert( array != null );
 
@@ -484,7 +484,7 @@ namespace Altaxo.Calc
     /// <param name="scale"></param>
     /// <param name="start"></param>
     /// <param name="length"></param>
-    static public void Scale( ComplexF[] array, ComplexF scale, int start, int length ) 
+    static public void Scale( ComplexFloat[] array, ComplexFloat scale, int start, int length ) 
     {
       Debug.Assert( array != null );
       Debug.Assert( start >= 0 );
@@ -535,7 +535,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="target"></param>
     /// <param name="rhs"></param>
-    static public void Multiply( ComplexF[] target, ComplexF[] rhs ) 
+    static public void Multiply( ComplexFloat[] target, ComplexFloat[] rhs ) 
     {
       ComplexArray.Multiply( target, rhs, target );
     }
@@ -546,7 +546,7 @@ namespace Altaxo.Calc
     /// <param name="lhs"></param>
     /// <param name="rhs"></param>
     /// <param name="result"></param>
-    static public void Multiply( ComplexF[] lhs, ComplexF[] rhs, ComplexF[] result ) 
+    static public void Multiply( ComplexFloat[] lhs, ComplexFloat[] rhs, ComplexFloat[] result ) 
     {
       Debug.Assert( lhs != null );
       Debug.Assert( rhs != null );
@@ -599,7 +599,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="target"></param>
     /// <param name="rhs"></param>
-    static public void Divide( ComplexF[] target, ComplexF[] rhs ) 
+    static public void Divide( ComplexFloat[] target, ComplexFloat[] rhs ) 
     {
       ComplexArray.Divide( target, rhs, target );
     }
@@ -610,7 +610,7 @@ namespace Altaxo.Calc
     /// <param name="lhs"></param>
     /// <param name="rhs"></param>
     /// <param name="result"></param>
-    static public void Divide( ComplexF[] lhs, ComplexF[] rhs, ComplexF[] result ) 
+    static public void Divide( ComplexFloat[] lhs, ComplexFloat[] rhs, ComplexFloat[] result ) 
     {
       Debug.Assert( lhs != null );
       Debug.Assert( rhs != null );
@@ -618,7 +618,7 @@ namespace Altaxo.Calc
       Debug.Assert( lhs.Length == rhs.Length );
       Debug.Assert( lhs.Length == result.Length );
 
-      ComplexF zero = ComplexF.Zero;
+      ComplexFloat zero = ComplexFloat.Zero;
       int length = lhs.Length;
       for( int i = 0; i < length; i ++ ) 
       {
@@ -635,10 +635,10 @@ namespace Altaxo.Calc
 
     //---------------------------------------------------------------------------------------------
 
-    /*static public void Flip( ComplexF[] array, Size3 size ) {
+    /*static public void Flip( ComplexFloat[] array, Size3 size ) {
       Debug.Assert( array != null );
 
-      ComplexF[]  workspace = null;
+      ComplexFloat[]  workspace = null;
       ComplexArray.LockWorkspaceF( size.GetTotalLength(), ref workspace );
       
       for( int z = 0; z < size.Depth; z ++ ) {
@@ -680,7 +680,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="dest"></param>
     /// <param name="source"></param>
-    static public void Copy( ComplexF[] dest, ComplexF[] source ) 
+    static public void Copy( ComplexFloat[] dest, ComplexFloat[] source ) 
     {
       Debug.Assert( dest != null );
       Debug.Assert( source != null );
@@ -725,7 +725,7 @@ namespace Altaxo.Calc
     /// overall range is [0, 1]
     /// </summary>
     /// <param name="array"></param>
-    static public void Normalize( ComplexF[] array ) 
+    static public void Normalize( ComplexFloat[] array ) 
     {
       float min = 0, max = 0;
       GetLengthRange( array, ref min, ref max );
@@ -749,11 +749,11 @@ namespace Altaxo.Calc
     /// Invert each element in the array
     /// </summary>
     /// <param name="array"></param>
-    static public void Invert( ComplexF[] array ) 
+    static public void Invert( ComplexFloat[] array ) 
     {
       for( int i = 0; i < array.Length; i ++ ) 
       {
-        array[i] = ((ComplexF) 1 ) / array[i];
+        array[i] = ((ComplexFloat) 1 ) / array[i];
       }
     }
 
