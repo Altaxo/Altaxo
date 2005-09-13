@@ -187,13 +187,13 @@
     <Compile Include="Calc\LinearAlgebra\FloatSymmetricLevinsonTest.cs" />
     <Compile Include="Calc\LinearAlgebra\FloatVectorEnumeratorTest.cs" />
     <Compile Include="Calc\LinearAlgebra\FloatVectorTest.cs" />
-    <Compile Include="Calc\NonLinearFit_Tests.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="Calc\LinearAlgebra\TestSingularValueDecomposition.cs" />
     <Compile Include="Calc\Optimization\ConjugateGradientTest.cs" />
     <Compile Include="Calc\Optimization\EndCriteriaTest.cs" />
     <Compile Include="Calc\Optimization\NelderMeadTest.cs" />
     <Compile Include="Calc\Optimization\Rosenbrock.cs" />
+    <Compile Include="Calc\Probability\TestProbabiltyDistributions.cs" />
+    <Compile Include="Calc\Regression\NonLinearFit_Tests.cs" />
     <Compile Include="Calc\Regression\TestNonlinearFit2.cs" />
     <Compile Include="Calc\TestBesselRelated.cs">
       <SubType>Code</SubType>
@@ -202,12 +202,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Calc\TestGammaRelated.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Calc\TestProbabiltyDistributions.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Calc\TestSingularValueDecomposition.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>

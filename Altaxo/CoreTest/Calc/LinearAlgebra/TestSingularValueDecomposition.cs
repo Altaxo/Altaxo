@@ -26,7 +26,7 @@ using Altaxo.Calc.LinearAlgebra;
 
 using NUnit.Framework;
 
-namespace AltaxoTest.Calc
+namespace AltaxoTest.Calc.LinearAlgebra
 {
   [TestFixture]
   public class TestSingularValueDecomposition

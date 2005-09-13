@@ -100,11 +100,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Calc\NonLinearFit_Tests.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "Calc\TestBesselRelated.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -116,16 +111,6 @@
                 />
                 <File
                     RelPath = "Calc\TestGammaRelated.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Calc\TestProbabiltyDistributions.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Calc\TestSingularValueDecomposition.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -440,6 +425,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Calc\LinearAlgebra\TestSingularValueDecomposition.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Calc\Optimization\ConjugateGradientTest.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -459,7 +449,16 @@
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
-                <Folder RelPath = "Calc\Probability\" />
+                <File
+                    RelPath = "Calc\Probability\TestProbabiltyDistributions.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Calc\Regression\NonLinearFit_Tests.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
                 <File
                     RelPath = "Calc\Regression\TestNonlinearFit2.cs"
                     SubType = "Code"

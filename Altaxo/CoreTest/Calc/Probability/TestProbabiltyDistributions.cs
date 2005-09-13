@@ -26,7 +26,7 @@ using Altaxo.Calc.Probability;
 using NUnit.Framework;
 
 
-namespace AltaxoTest.Calc
+namespace AltaxoTest.Calc.Probability
 {
 
   [TestFixture]
