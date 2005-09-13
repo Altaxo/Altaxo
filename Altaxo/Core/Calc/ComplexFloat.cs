@@ -304,22 +304,52 @@ namespace Altaxo.Calc
     /// <returns></returns>
     public override int   GetHashCode() 
     {
-      return  ( this.Re.GetHashCode() ^ this.Im.GetHashCode() );
+      return  ( this.Re.GetHashCode() + this.Im.GetHashCode() );
     }
 
-    /// <summary>
-    /// Is this complex number equivalent to another object?
-    /// </summary>
-    /// <param name="o"></param>
-    /// <returns></returns>
-    public override bool  Equals( object o ) 
+    ///<summary>Check if <c>ComplexFloat</c> variable is the same as another object</summary>
+    ///<param name="obj"><c>obj</c> to compare present <c>ComplexFloat</c> to.</param>
+    ///<returns>Returns true if the variable is the same as the <c>ComplexFloat</c> variable</returns>
+    ///<remarks>The <c>obj</c> parameter is converted into a <c>ComplexFloat</c> variable before comparing with the current <c>ComplexFloat</c>.</remarks>
+    public bool Equals(Complex obj) 
     {
-      if( o is ComplexFloat ) 
+      return this.Re == obj.Re && this.Im == obj.Im;
+    }
+		
+    ///<summary>Check if <c>ComplexFloat</c> variable is the same as another object</summary>
+    ///<param name="obj"><c>obj</c> to compare present <c>ComplexFloat</c> to.</param>
+    ///<returns>Returns true if the variable is the same as the <c>ComplexFloat</c> variable</returns>
+    ///<remarks>The <c>obj</c> parameter is converted into a <c>ComplexFloat</c> variable before comparing with the current <c>ComplexFloat</c>.</remarks>
+    public bool Equals(ComplexFloat obj) 
+    {
+      return this.Re == obj.Re && this.Im == obj.Im;
+    }
+		
+    ///<summary>Check if <c>ComplexFloat</c> variable is the same as another object</summary>
+    ///<param name="obj"><c>obj</c> to compare present <c>ComplexFloat</c> to.</param>
+    ///<returns>Returns true if the variable is the same as the <c>ComplexFloat</c> variable</returns>
+    ///<remarks>The <c>obj</c> parameter is converted into a <c>ComplexFloat</c> variable before comparing with the current <c>ComplexFloat</c>.</remarks>
+    public override bool Equals(Object obj) 
+    {
+      if( obj == null )
       {
-        ComplexFloat c = (ComplexFloat) o;
-        return   ( this == c );
+        return false;
       }
-      return  false;
+      if( obj is ComplexFloat )
+      {
+        ComplexFloat rhs = (ComplexFloat)obj;
+        return this.Equals(rhs);
+      } 
+      else if(obj is Complex )
+      {
+        Complex rhs = (Complex)obj;
+        return this.Equals(rhs);
+      }
+      else
+      {
+        return false;
+      }
+
     }
 
     //-----------------------------------------------------------------------------------

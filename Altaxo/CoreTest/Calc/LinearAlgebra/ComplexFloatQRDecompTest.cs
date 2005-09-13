@@ -35,7 +35,7 @@ namespace AltaxoTest.Calc.LinearAlgebra {
 			double MaxError = 0.0;
 			for (int i = 0; i < 3; i++) {
 				for (int j = 0; i < 3; i++) {
-					double E = ComplexMath.Absolute((qq[i, j] - I[i, j]) / I[i, j]);
+					double E = ComplexMath.Absolute((qq[i, j] - I[i, j]));
 					if (E > MaxError) {
 						MaxError = E;
 					}
@@ -80,7 +80,7 @@ namespace AltaxoTest.Calc.LinearAlgebra {
 			double MaxError = 0.0;
 			for (int i = 0; i < 2; i++) {
 				for (int j = 0; j < 2; j++) {
-					double E = ComplexMath.Absolute((qq[i, j] - I[i, j]) / I[i, j]);
+					double E = ComplexMath.Absolute((qq[i, j] - I[i, j]));
 					if (E > MaxError) {
 						MaxError = E;
 					}
@@ -122,7 +122,7 @@ namespace AltaxoTest.Calc.LinearAlgebra {
 			double MaxError = 0.0;
 			for (int i = 0; i < 4; i++) {
 				for (int j = 0; i < 4; i++) {
-					double E = ComplexMath.Absolute((qq[i, j] - I[i, j]) / I[i, j]);
+					double E = ComplexMath.Absolute((qq[i, j] - I[i, j]));
 					if (E > MaxError) {
 						MaxError = E;
 					}

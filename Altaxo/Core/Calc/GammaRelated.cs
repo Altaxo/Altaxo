@@ -1969,7 +1969,7 @@ namespace Altaxo.Calc
     /// <returns>The incomplete beta function of the parameters x, a and b.</returns>
     public static double BetaI(double x, double a, double b)
     {
-      return _BetaIR.BetaIR(x,a,b,false)/Beta(a,b,false);
+      return Beta(a,b,false)*_BetaIR.BetaIR(x,a,b,false);
     }
 
     /// <summary>
@@ -1983,7 +1983,7 @@ namespace Altaxo.Calc
     /// <returns>The incomplete beta function of the parameters x, a and b.</returns>
     public static double BetaI(double x, double a, double b, bool bDebug)
     {
-      return _BetaIR.BetaIR(x,a,b,bDebug)/Beta(a,b,bDebug);
+      return Beta(a,b,bDebug)*_BetaIR.BetaIR(x,a,b,bDebug);
     }
 
    

@@ -667,8 +667,8 @@ namespace AltaxoTest.Calc.LinearAlgebra {
 			Assert.AreEqual(cdt.Imag, -0.366, TOLERENCE);
 
 			cdt = ComplexMath.Atan(cd2);
-			Assert.AreEqual(cdt.Real, 1.571, TOLERENCE);
-			Assert.AreEqual(cdt.Imag, -0.490, TOLERENCE);		
+			Assert.AreEqual(cdt.Real, -1.5708, TOLERENCE);
+			Assert.AreEqual(cdt.Imag, -0.490415, TOLERENCE);		
 		
 			cdt = ComplexMath.Atan(cd3);
 			Assert.AreEqual(cdt.Real, 0.833, TOLERENCE);
@@ -683,7 +683,7 @@ namespace AltaxoTest.Calc.LinearAlgebra {
 			Assert.AreEqual(cft.Imag, -0.366, TOLERENCE);
 
 			cft = ComplexMath.Atan(cf2);
-			Assert.AreEqual(cft.Real, 1.571, TOLERENCE);
+			Assert.AreEqual(cft.Real, -1.571, TOLERENCE);
 			Assert.AreEqual(cft.Imag, -0.490, TOLERENCE);		
 		
 			cft = ComplexMath.Atan(cf3);
@@ -751,15 +751,15 @@ namespace AltaxoTest.Calc.LinearAlgebra {
 			ComplexFloat cf4 = new ComplexFloat(-1.1f, 2.2f);	
 			
 			Complex cdt = ComplexMath.Acosh(cd1);
-			Assert.AreEqual(cdt.Real, -1.618, TOLERENCE);
-			Assert.AreEqual(cdt.Imag,  1.138, TOLERENCE);
+			Assert.AreEqual(cdt.Real, 1.618, TOLERENCE);
+			Assert.AreEqual(cdt.Imag,  -1.138, TOLERENCE);
 
 			cdt = ComplexMath.Acosh(cd2);
-			Assert.AreEqual(cdt.Real, -1.530, TOLERENCE);
-			Assert.AreEqual(cdt.Imag, 1.571, TOLERENCE);		
+			Assert.AreEqual(cdt.Real, 1.530, TOLERENCE);
+			Assert.AreEqual(cdt.Imag, -1.571, TOLERENCE);		
 		
 			cdt = ComplexMath.Acosh(cd3);
-			Assert.AreEqual(cdt.Real, -0.444, TOLERENCE);
+			Assert.AreEqual(cdt.Real, 0.444, TOLERENCE);
 			Assert.AreEqual(cdt.Imag, 0, TOLERENCE);		
 
 			cdt = ComplexMath.Acosh(cd4);
@@ -767,15 +767,15 @@ namespace AltaxoTest.Calc.LinearAlgebra {
 			Assert.AreEqual(cdt.Imag, 2.004, TOLERENCE);		
 
 			ComplexFloat cft = ComplexMath.Acosh(cf1);
-			Assert.AreEqual(cft.Real, -1.618, TOLERENCE);
-			Assert.AreEqual(cft.Imag, 1.138, TOLERENCE);
+			Assert.AreEqual(cft.Real, 1.618, TOLERENCE);
+			Assert.AreEqual(cft.Imag, -1.138, TOLERENCE);
 
 			cft = ComplexMath.Acosh(cf2);
-			Assert.AreEqual(cft.Real, -1.530, TOLERENCE);
-			Assert.AreEqual(cft.Imag, 1.571, TOLERENCE);		
+			Assert.AreEqual(cft.Real, 1.530, TOLERENCE);
+			Assert.AreEqual(cft.Imag, -1.571, TOLERENCE);		
 		
 			cft = ComplexMath.Acosh(cf3);
-			Assert.AreEqual(cft.Real, -0.444, TOLERENCE);
+			Assert.AreEqual(cft.Real, 0.444, TOLERENCE);
 			Assert.AreEqual(cft.Imag, 0, TOLERENCE);		
 
 			cft = ComplexMath.Acosh(cf4);

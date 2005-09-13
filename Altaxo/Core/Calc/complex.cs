@@ -308,23 +308,53 @@ namespace Altaxo.Calc
     /// <returns></returns>
     public override int   GetHashCode() 
     {
-      return  ( this.Re.GetHashCode() ^ this.Im.GetHashCode() );
+      return  ( this.Re.GetHashCode() + this.Im.GetHashCode() );
+    }
+		
+    ///<summary>Check if <c>ComplexDouble</c> variable is the same as another object</summary>
+    ///<param name="obj"><c>obj</c> to compare present <c>ComplexDouble</c> to.</param>
+    ///<returns>Returns true if the variable is the same as the <c>ComplexDouble</c> variable</returns>
+    ///<remarks>The <c>obj</c> parameter is converted into a <c>ComplexDouble</c> variable before comparing with the current <c>ComplexDouble</c>.</remarks>
+    public bool Equals(Complex obj) 
+    {
+      return this.Re == obj.Re && this.Im == obj.Im;
+    }
+		
+    ///<summary>Check if <c>ComplexDouble</c> variable is the same as another object</summary>
+    ///<param name="obj"><c>obj</c> to compare present <c>ComplexDouble</c> to.</param>
+    ///<returns>Returns true if the variable is the same as the <c>ComplexDouble</c> variable</returns>
+    ///<remarks>The <c>obj</c> parameter is converted into a <c>ComplexDouble</c> variable before comparing with the current <c>ComplexDouble</c>.</remarks>
+    public bool Equals(ComplexFloat obj) 
+    {
+      return this.Re == obj.Re && this.Im == obj.Im;
+    }
+		
+    ///<summary>Check if <c>ComplexDouble</c> variable is the same as another object</summary>
+    ///<param name="obj"><c>obj</c> to compare present <c>ComplexDouble</c> to.</param>
+    ///<returns>Returns true if the variable is the same as the <c>ComplexDouble</c> variable</returns>
+    ///<remarks>The <c>obj</c> parameter is converted into a <c>ComplexDouble</c> variable before comparing with the current <c>ComplexDouble</c>.</remarks>
+    public override bool Equals(Object obj) 
+    {
+      if( obj == null )
+      {
+        return false;
+      }
+      if( obj is Complex )
+      {
+        Complex rhs = (Complex)obj;
+        return this.Equals(rhs);
+      } 
+      else if(obj is ComplexFloat )
+      {
+        ComplexFloat rhs = (ComplexFloat)obj;
+        return this.Equals(rhs);
+      } 
+      else 
+      {
+        return false;
+      }
     }
 
-    /// <summary>
-    /// Is this complex number equivalent to another object?
-    /// </summary>
-    /// <param name="o"></param>
-    /// <returns></returns>
-    public override bool  Equals( object o ) 
-    {
-      if( o is Complex ) 
-      {
-        Complex c = (Complex) o;
-        return   ( this == c );
-      }
-      return  false;
-    }
 
     //-----------------------------------------------------------------------------------
     //-----------------------------------------------------------------------------------

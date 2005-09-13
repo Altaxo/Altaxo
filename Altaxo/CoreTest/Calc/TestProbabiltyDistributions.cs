@@ -36,21 +36,21 @@ namespace AltaxoTest.Calc
     public  void TestFDistributionQuantile()
     {
       // N[Quantile[FRatioDistribution[3, 4], 1 - 1/20] , 25]
-      Assert.AreEqual(6.591382116425581280992118,FDistribution.Quantile(0.95,3,4));
+      Assert.AreEqual(6.591382116425581280992118,FDistribution.Quantile(0.95,3,4),1E-14);
     }
 
     [Test]
     public  void TestFDistributionCDF()
     {
       // N[CDF[FRatioDistribution[3, 4], 1 - 1/20] , 25]
-      Assert.AreEqual(0.5034356763953920149093067,FDistribution.CDF(0.95,3,4));
+      Assert.AreEqual(0.5034356763953920149093067,FDistribution.CDF(0.95,3,4),1E-14);
     }
 
     [Test]
     public  void TestFDistributionPDF()
     {
       // N[PDF[FRatioDistribution[3, 4], 1 - 1/20] , 25]
-      Assert.AreEqual(0.3612251124036590033894851,FDistribution.PDF(0.95,3,4),1e-14);
+      Assert.AreEqual(0.3612251124036590033894851,FDistribution.PDF(0.95,3,4),1E-14);
     }
 
     [Test]

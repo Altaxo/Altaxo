@@ -109,7 +109,7 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Calc\complex.cs"
+                    RelPath = "Calc\Complex.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

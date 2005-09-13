@@ -459,6 +459,7 @@
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
+                <Folder RelPath = "Calc\Probability\" />
                 <File
                     RelPath = "Calc\Regression\TestNonlinearFit2.cs"
                     SubType = "Code"

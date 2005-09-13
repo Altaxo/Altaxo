@@ -79,11 +79,16 @@ namespace AltaxoTest.Calc.LinearAlgebra {
 			Assert.AreEqual(cf1, cf2);
 		}
 
-		[Test]
-		public void HashTest(){
-			ComplexFloat cf = new ComplexFloat(1.1f, 2.2f);
-			Assert.AreEqual(cf.GetHashCode(), 11);
-		}
+    [Test]
+    public void HashTest()
+    {
+      ComplexFloat cd1 = new ComplexFloat(1.1f, 2.2f);
+      ComplexFloat cd2 = new ComplexFloat(1.1f, 3.3f);
+      ComplexFloat cd3 = new ComplexFloat(0.1f, 2.2f);
+      Assert.AreNotEqual(cd1.GetHashCode(), cd2.GetHashCode());
+      Assert.AreNotEqual(cd1.GetHashCode(), cd3.GetHashCode());
+      Assert.AreNotEqual(cd2.GetHashCode(), cd3.GetHashCode());
+    }
 		
 		[Test]
 		[ExpectedException(typeof(ArgumentNullException))]

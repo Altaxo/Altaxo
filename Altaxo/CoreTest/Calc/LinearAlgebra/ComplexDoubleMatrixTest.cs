@@ -995,10 +995,10 @@ namespace AltaxoTest.Calc.LinearAlgebra {
 			a[1,0] = new Complex(3);
 			a[1,1] = new Complex(7);
 			a.Invert();
-			Assert.AreEqual(a[0,0].Real, 3.5);
-			Assert.AreEqual(a[0,1].Real, -2);
-			Assert.AreEqual(a[1,0].Real, -1.5);
-			Assert.AreEqual(a[1,1].Real, 1);
+			Assert.AreEqual(a[0,0].Real, 3.5, 3.5E-15);
+			Assert.AreEqual(a[0,1].Real, -2, 2E-15);
+			Assert.AreEqual(a[1,0].Real, -1.5, 1.5E-15);
+			Assert.AreEqual(a[1,1].Real, 1, 1E-15);
 		}
 
 		//test Invert singular
@@ -1053,10 +1053,10 @@ namespace AltaxoTest.Calc.LinearAlgebra {
 			a[1,0] = new Complex(3);
 			a[1,1] = new Complex(7);
 			ComplexDoubleMatrix b = a.GetInverse();
-			Assert.AreEqual(b[0,0].Real, 3.5);
-			Assert.AreEqual(b[0,1].Real, -2);
-			Assert.AreEqual(b[1,0].Real, -1.5);
-			Assert.AreEqual(b[1,1].Real, 1);
+			Assert.AreEqual(b[0,0].Real, 3.5, 3.5E-15);
+			Assert.AreEqual(b[0,1].Real, -2, 2E-15);
+			Assert.AreEqual(b[1,0].Real, -1.5, 1.5E-15);
+			Assert.AreEqual(b[1,1].Real, 1, 1E-15);
 		}		
 
 		//test GetDeterminant
@@ -1069,8 +1069,8 @@ namespace AltaxoTest.Calc.LinearAlgebra {
 			a[1,1] = new Complex(7);
 			Complex b = a.GetDeterminant();
 			Complex test = new Complex(2);
-			Assert.AreEqual(b.Real, test.Real);
-			Assert.AreEqual(b.Imag, test.Imag);
+			Assert.AreEqual(b.Real, test.Real, 2E-15);
+			Assert.AreEqual(b.Imag, test.Imag, 2E-15);
 		}
 
 		//test GetDeterminant

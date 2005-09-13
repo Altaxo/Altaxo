@@ -71,22 +71,29 @@ namespace AltaxoTest.Calc
     [Test]
     public void TestBetaI()
     {
-      Assert.AreEqual(0.0109375,GammaRelated.BetaI(0.5,3,4));
-      Assert.AreEqual(0.016666666666666666666666666,GammaRelated.BetaI(1,3,4));
+      // N[Beta[1/2, 3, 4], 25]
+      Assert.AreEqual(0.01093750000000000000000000,GammaRelated.BetaI(0.5,3,4), 0.01E-15);
+
+      // N[Beta[1, 3, 4], 25]
+      Assert.AreEqual(0.016666666666666666666666666,GammaRelated.BetaI(1,3,4), 0.0166E-15);
+
+      // N[Beta[3/4, 7, 9], 25]
+      Assert.AreEqual(0.00002210693718580813793750195,GammaRelated.BetaI(0.75,7,9), 0.00002210E-14);
+
     }
 
     [Test]
     public void TestBetaIR()
     {
       // N[BetaRegularized[1/2, 3, 6], 25]
-      Assert.AreEqual(0.85546875,GammaRelated.BetaIR(0.5,3,6));
+      Assert.AreEqual(0.85546875,GammaRelated.BetaIR(0.5,3,6),1E-15);
     }
 
     [Test]
     public void TestInverseBetaIR()
     {
       // N[BetaRegularized[1/2, 3, 6], 25]
-      Assert.AreEqual(0.5,GammaRelated.InverseBetaRegularized(0.85546875,3,6));
+      Assert.AreEqual(0.5,GammaRelated.InverseBetaRegularized(0.85546875,3,6),1E-15);
     }
 
   }

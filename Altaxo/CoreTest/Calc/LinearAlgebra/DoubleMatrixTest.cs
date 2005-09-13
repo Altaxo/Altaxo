@@ -1,11 +1,13 @@
 using System;
 using NUnit.Framework;
+using Altaxo.Calc;
 using Altaxo.Calc.LinearAlgebra;
 
 namespace AltaxoTest.Calc.LinearAlgebra {
 	[TestFixture]
 	public class DoubleMatrixTest{
 		private const double TOLERENCE = 0.001;
+    private const double DBL_EPSILON = DoubleConstants.DBL_EPSILON;
 
 		//Test dimensions Constructor.
 		[Test]
@@ -574,10 +576,10 @@ namespace AltaxoTest.Calc.LinearAlgebra {
 			a[1,0] = 3;
 			a[1,1] = 7;
 			a.Invert();
-			Assert.AreEqual(a[0,0], 3.5);
-			Assert.AreEqual(a[0,1], -2);
-			Assert.AreEqual(a[1,0], -1.5);
-			Assert.AreEqual(a[1,1], 1);
+			Assert.AreEqual(a[0,0], 3.5,  4e-15);
+			Assert.AreEqual(a[0,1], -2,   4e-15);
+			Assert.AreEqual(a[1,0], -1.5, 4e-15);
+			Assert.AreEqual(a[1,1], 1,    4e-15);
 		}
 
 		//test Invert singular

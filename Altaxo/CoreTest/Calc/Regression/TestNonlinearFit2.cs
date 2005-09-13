@@ -251,6 +251,7 @@ namespace AltaxoTest.Calc.Regression
 
     }
 
+    /*
     [Test]
     public void Polynom3Diff()
     {
@@ -290,6 +291,7 @@ namespace AltaxoTest.Calc.Regression
       Assert.AreEqual(0.021164,covar[3],0.001);
 
     }
+    */
 
   }
 }

@@ -7,6 +7,7 @@ namespace AltaxoTest.Calc.LinearAlgebra {
 	[TestFixture]
 	public class ComplexDoubleTest {
 		private const double TOLERENCE = 0.001;		
+    private const double DBL_EPSILON = DoubleConstants.DBL_EPSILON;
 		[Test]
 		public void EqualsTest(){
 			Complex cd1 = new Complex(-1.1, 2.2);
@@ -35,20 +36,20 @@ namespace AltaxoTest.Calc.LinearAlgebra {
 			Complex cd1 = new Complex(1.1, -2.2);
 			Complex cd2 = new Complex(-3.3, 4.4);
 			Complex test = cd1 * cd2;
-			Assert.AreEqual(test.Real,6.05);
-			Assert.AreEqual(test.Imag,12.1);
+			Assert.AreEqual(test.Real,6.05, 20*DBL_EPSILON);
+			Assert.AreEqual(test.Imag,12.1, 25*DBL_EPSILON);
 			
 			test = cd1 / cd2;
-			Assert.AreEqual(test.Real,-0.44);
-			Assert.AreEqual(test.Imag,0.08);
+			Assert.AreEqual(test.Real,-0.44, 2*DBL_EPSILON);
+			Assert.AreEqual(test.Imag,0.08, 2*DBL_EPSILON);
 
 			test = cd1 + cd2;
-			Assert.AreEqual(test.Real,-2.2);
-			Assert.AreEqual(test.Imag,2.2);
+			Assert.AreEqual(test.Real,-2.2, 10*DBL_EPSILON);
+			Assert.AreEqual(test.Imag,2.2, 10*DBL_EPSILON);
 		
 			test = cd1 - cd2;
-			Assert.AreEqual(test.Real,4.4);
-			Assert.AreEqual(test.Imag,-6.6);
+			Assert.AreEqual(test.Real,4.4, 10*DBL_EPSILON);
+			Assert.AreEqual(test.Imag,-6.6, 10*DBL_EPSILON);
 
 			//test = cd1 ^ cd2;
 			//Assert.AreEqual(test.Real,1.593,TOLERENCE);
@@ -87,11 +88,17 @@ namespace AltaxoTest.Calc.LinearAlgebra {
 			Assert.AreEqual(cd1, cd2);
 		}
 
+    
 		[Test]
 		public void HashTest(){
-			Complex cd = new Complex(1.1, 2.2);
-			Assert.AreEqual(cd.GetHashCode(), 11);
-		}
+			Complex cd1 = new Complex(1.1, 2.2);
+      Complex cd2 = new Complex(1.1, 3.3);
+      Complex cd3 = new Complex(0.1, 2.2);
+			Assert.AreNotEqual(cd1.GetHashCode(), cd2.GetHashCode());
+      Assert.AreNotEqual(cd1.GetHashCode(), cd3.GetHashCode());
+      Assert.AreNotEqual(cd2.GetHashCode(), cd3.GetHashCode());
+    }
+    
 
 		[Test]
 		[ExpectedException(typeof(ArgumentNullException))]

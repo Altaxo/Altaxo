@@ -1002,7 +1002,8 @@ double max, sum, tmp;
 			if((tmp=Math.Abs(a[i*m+j]))>max)
         max=tmp;
 		  if(max==0.0){
-        throw new ArithmeticException("Singular matrix A !");
+        // throw new ArithmeticException("Singular matrix A !");
+        return 0;
       }
 		  work[i]=(1.0)/max;
 	}
