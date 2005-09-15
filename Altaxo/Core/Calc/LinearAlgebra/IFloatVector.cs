@@ -70,4 +70,91 @@ namespace Altaxo.Calc.LinearAlgebra
     void Append(IROFloatVector a);
   }
 
+
+  public abstract class AbstractROFloatVector : IROFloatVector
+  {
+    static public implicit operator AbstractROFloatVector(float[] src)
+    {
+      return new ROFloatVector(src);
+    }
+
+    #region IROVector Members
+
+    public virtual int LowerBound
+    {
+      get { return 0; }
+    }
+
+    public virtual int UpperBound
+    {
+      get
+      {
+        return Length - 1;
+      }
+    }
+
+    public abstract int Length
+    {
+      get;
+    }
+
+    #endregion
+
+    #region INumericSequence Members
+
+    public abstract float this[int i]
+    {
+      get;
+    }
+
+    #endregion
+  }
+
+  public class ROFloatVector : AbstractROFloatVector
+  {
+    private float[] _data;
+
+    public ROFloatVector(float[] array)
+    {
+      _data = array;
+    }
+
+
+
+    static public implicit operator ROFloatVector(float[] src)
+    {
+      return new ROFloatVector(src);
+    }
+
+
+
+    #region IROVector Members
+
+    public override int LowerBound
+    {
+      get { return 0; }
+    }
+
+    public override int UpperBound
+    {
+      get { return _data.Length - 1; }
+    }
+
+    public override int Length
+    {
+      get { return _data.Length; }
+    }
+
+    #endregion
+
+    #region INumericSequence Members
+
+    public override float this[int i]
+    {
+      get { return _data[i]; }
+    }
+
+    #endregion
+  }
+
 }

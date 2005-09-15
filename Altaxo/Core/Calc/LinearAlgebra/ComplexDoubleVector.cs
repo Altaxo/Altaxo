@@ -7,10 +7,10 @@ namespace Altaxo.Calc.LinearAlgebra
   ///<summary>
   /// Defines a Vector of ComplexDoubles.
   ///</summary>
-  ///<remarks>
-  /// <para>Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved.</para>
-  /// <para>Adapted to Altaxo (C) 2005 D.Lellinger.</para>
-  ///</remarks>
+  /// <remarks>
+  /// <para>Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved. See <a>http://www.dnAnalytics.net</a> for details.</para>
+  /// <para>Adopted to Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
+  /// </remarks>
   [Serializable]
   sealed public class ComplexDoubleVector
     : ICloneable, IFormattable, IEnumerable, ICollection, IList, IComplexDoubleVector
@@ -62,6 +62,7 @@ namespace Altaxo.Calc.LinearAlgebra
       }
     }
 
+
     ///<summary>Constructor for <c>ComplexDoubleVector</c> from <c>IList</c></summary>
     ///<param name="values"><c>IList</c> to convert into <c>ComplexDoubleVector</c>.</param>
     ///<exception cref="ArgumentNullException">Exception thrown if null passed as 'values' parameter.</exception>
@@ -89,6 +90,29 @@ namespace Altaxo.Calc.LinearAlgebra
       }
       data = new Complex[src.data.Length];
       Array.Copy(src.data, 0, data, 0, data.Length);
+    }
+
+    ///<summary>Constructor for <c>ComplexDoubleVector</c> to deep copy from a <see>IROComplexDoubleVector</see></summary>
+    ///<param name="src"><c>ComplexDoubleVector</c> to deep copy into <c>ComplexDoubleVector</c>.</param>
+    ///<exception cref="ArgumentNullException">Exception thrown if null passed as 'src' parameter.</exception>
+    public ComplexDoubleVector(IROComplexDoubleVector src)
+    {
+      if (src == null)
+      {
+        throw new ArgumentNullException("IROComplexDoubleVector cannot be null");
+      }
+      if (src is ComplexDoubleVector)
+      {
+        data = (Complex[])(((ComplexDoubleVector)src).data.Clone());
+      }
+      else
+      {
+        data = new Complex[src.Length];
+        for (int i = 0; i < src.Length; ++i)
+        {
+          data[i] = src[i];
+        }
+      }
     }
 
     ///<summary>Return the length of the <c>ComplexDoubleVector</c> variable</summary>
@@ -685,7 +709,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				}
 			}	
 #else
-      Blas.Geru.Compute(Order.ColumnMajor, lhs.data.Length, rhs.data.Length, 1, lhs.data, 1, rhs.data, 1, ret.data, lhs.data.Length);
+      Blas.Geru.Compute(Blas.Order.ColumnMajor, lhs.data.Length, rhs.data.Length, 1, lhs.data, 1, rhs.data, 1, ret.data, lhs.data.Length);
 #endif
       return ret;
     }
@@ -983,6 +1007,55 @@ namespace Altaxo.Calc.LinearAlgebra
     public int UpperBound
     {
       get { return data.Length-1; }
+    }
+
+    #endregion
+
+    #region Additions due to adoption
+
+    /// <summary>
+    /// Returns the column of a <see>IROComplexDoubleMatrix</see> as a new <c>ComplexDoubleVector.</c>
+    /// </summary>
+    /// <param name="mat">The matrix to copy the column from.</param>
+    /// <param name="col">Number of column to copy from the matrix.</param>
+    /// <returns>A new <c>ComplexDoubleVector</c> with the same elements as the column of the given matrix.</returns>
+    public static ComplexDoubleVector GetColumn(IROComplexDoubleMatrix mat, int col)
+    {
+      ComplexDoubleVector result = new ComplexDoubleVector(mat.Rows);
+      for(int i=0;i<result.data.Length;++i)
+        result.data[i] = mat[i,col];
+      
+      return result;
+    }
+
+    /// <summary>
+    /// Returns the column of a <see>IROComplexDoubleMatrix</see> as a new <c>Complex[]</c> array.
+    /// </summary>
+    /// <param name="mat">The matrix to copy the column from.</param>
+    /// <param name="col">Number of column to copy from the matrix.</param>
+    /// <returns>A new array of <c>Complex</c> with the same elements as the column of the given matrix.</returns>
+    public static Complex[] GetColumnAsArray(IROComplexDoubleMatrix mat, int col)
+    {
+      Complex[] result = new Complex[mat.Rows];
+      for(int i=0;i<result.Length;++i)
+        result[i] = mat[i,col];
+
+      return result;
+    }
+
+    /// <summary>
+    /// Returns the row of a <see>IROComplexDoubleMatrix</see> as a new <c>ComplexDoubleVector.</c>
+    /// </summary>
+    /// <param name="mat">The matrix to copy the column from.</param>
+    /// <param name="row">Number of row to copy from the matrix.</param>
+    /// <returns>A new <c>ComplexDoubleVector</c> with the same elements as the row of the given matrix.</returns>
+    public static ComplexDoubleVector GetRow(IROComplexDoubleMatrix mat, int row)
+    {
+      ComplexDoubleVector result = new ComplexDoubleVector(mat.Columns);
+      for(int i=0;i<result.data.Length;++i)
+        result.data[i] = mat[row,i];
+      
+      return result;
     }
 
     #endregion

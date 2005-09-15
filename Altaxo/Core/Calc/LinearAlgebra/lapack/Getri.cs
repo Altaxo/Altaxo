@@ -7,9 +7,9 @@
 using System;
 using System.Runtime.InteropServices;
 
-using dnA.Utility;
 
-namespace dnA.Math.Lapack{
+
+namespace Altaxo.Calc.LinearAlgebra.Lapack{
 	[System.Security.SuppressUnmanagedCodeSecurityAttribute]
 	internal sealed class Getri {
 		private  Getri() {}
@@ -45,23 +45,23 @@ namespace dnA.Math.Lapack{
 			return dna_lapack_cgetri(Configuration.BlockSize, n,A,lda,ipiv);
 		}
 
-		internal static int Compute( int n, ComplexDouble[] A, int lda, int[] ipiv ){
+		internal static int Compute( int n, Complex[] A, int lda, int[] ipiv ){
 			ArgumentCheck(n,A,lda,ipiv);
 			
 			return dna_lapack_zgetri(Configuration.BlockSize, n,A,lda,ipiv);
 		}
 
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
 		private static extern int dna_lapack_sgetri( int block_size, int n, [In,Out]float[] A, int lda, [In]int[] ipiv );
 	
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
 		private static extern int dna_lapack_dgetri( int block_size, int n, [In,Out]double[] A, int lda, [In]int[] ipiv );
 
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
 		private static extern int dna_lapack_cgetri( int block_size, int n, [In,Out]ComplexFloat[] A, int lda, [In]int[] ipiv );
 
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
-		private static extern int dna_lapack_zgetri( int block_size, int n, [In,Out]ComplexDouble[] A, int lda, [In]int[] ipiv );
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		private static extern int dna_lapack_zgetri( int block_size, int n, [In,Out]Complex[] A, int lda, [In]int[] ipiv );
 	}
 }
 #endif

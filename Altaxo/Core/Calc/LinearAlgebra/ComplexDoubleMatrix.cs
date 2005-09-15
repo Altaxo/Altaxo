@@ -15,6 +15,10 @@ namespace Altaxo.Calc.LinearAlgebra
   ///<summary>
   /// Defines a matrix of ComplexDoubles.
   ///</summary>
+  /// <remarks>
+  /// <para>Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved. See <a>http://www.dnAnalytics.net</a> for details.</para>
+  /// <para>Adopted to Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
+  /// </remarks>
   [System.Serializable]
   sealed public class ComplexDoubleMatrix : IComplexDoubleMatrix, ICloneable, IFormattable, IEnumerable, ICollection, IList
   {
@@ -142,6 +146,43 @@ namespace Altaxo.Calc.LinearAlgebra
 #endif
     }
 
+    
+    ///<summary>Constructor for matrix that makes a deep copy of a given <c>IROComplexDoubleMatrix</c>.</summary>
+    ///<param name="source"><c>ComplexDoubleMatrix</c> to deep copy into new matrix.</param>
+    ///<exception cref="ArgumentNullException"><c>source</c> is null.</exception>
+    public ComplexDoubleMatrix(IROComplexDoubleMatrix source)
+    {
+      if (source == null)
+      {
+        throw new ArgumentNullException("source", "The input ComplexDoubleMatrix cannot be null.");
+      }
+
+      this.rows = source.Rows;
+      this.columns = source.Columns;
+#if MANAGED
+      data = new Complex[rows][];
+      if(source is ComplexDoubleMatrix)
+      {
+        ComplexDoubleMatrix cdmsource = (ComplexDoubleMatrix)source;
+         for (int i = 0; i < rows; i++)
+           data[i] = (Complex[])cdmsource.data[i].Clone();
+      }
+      else
+      {
+        for (int i = 0; i < rows; i++)
+        {
+          data[i] = new Complex[columns];
+        }
+
+        for (int i = 0; i < rows; i++)
+          for (int j = 0; j < columns; j++)
+            data[i][j] = source[i,j];
+      }
+#else
+			data = ToLinearComplexArray(source);
+#endif
+    }
+
 
     ///<summary>Constructor for matrix that makes a deep copy of a given <c>ComplexFloatMatrix</c>.</summary>
     ///<param name="source"><c>ComplexFloatMatrix</c> to deep copy into new matrix.</param>
@@ -172,6 +213,35 @@ namespace Altaxo.Calc.LinearAlgebra
 			for( long i = 0; i < data.Length; i++){
 				data[i] = source.data[i];
 			}
+#endif
+    }
+
+    ///<summary>Constructor for matrix that makes a deep copy of a given <c>ComplexFloatMatrix</c>.</summary>
+    ///<param name="source"><c>ComplexFloatMatrix</c> to deep copy into new matrix.</param>
+    ///<exception cref="ArgumentNullException"><c>source</c> is null.</exception>
+    public ComplexDoubleMatrix(IROComplexFloatMatrix source)
+    {
+      if (source == null)
+      {
+        throw new ArgumentNullException("source", "The input ComplexFloatMatrix cannot be null.");
+      }
+      this.rows = source.Rows;
+      this.columns = source.Columns;
+#if MANAGED
+      data = new Complex[rows][];
+      for (int i = 0; i < rows; i++)
+      {
+        data[i] = new Complex[columns];
+      }
+      for (int i = 0; i < rows; i++)
+      {
+        for (int j = 0; j < columns; j++)
+        {
+          data[i][j] = source[i,j];
+        }
+      }
+#else
+      data = ComplexDoubleMatrix.ToLinearComplexArray(source);
 #endif
     }
 
@@ -207,7 +277,37 @@ namespace Altaxo.Calc.LinearAlgebra
 #endif
     }
 
-    ///<summary>Constructor for matrix that makes a deep copy of a given <c>FloatMatrix</c>.</summary>
+
+    ///<summary>Constructor for matrix that makes a deep copy of a given <c>DoubleMatrix</c>.</summary>
+    ///<param name="source"><c>DoubleMatrix</c> to deep copy into new matrix.</param>
+    ///<exception cref="ArgumentNullException"><c>source</c> is null.</exception>
+    public ComplexDoubleMatrix(IROMatrix source)
+    {
+      if (source == null)
+      {
+        throw new ArgumentNullException("source", "The input DoubleMatrix cannot be null.");
+      }
+      this.rows = source.Rows;
+      this.columns = source.Columns;
+#if MANAGED
+      data = new Complex[rows][];
+      for (int i = 0; i < rows; i++)
+      {
+        data[i] = new Complex[columns];
+      }
+      for (int i = 0; i < rows; i++)
+      {
+        for (int j = 0; j < columns; j++)
+        {
+          data[i][j] = source[i,j];
+        }
+      }
+#else
+			data = ComplexDoubleMatrix.ToLinearComplexArray(source);
+#endif
+    }
+
+    ///<summary>Constructor for matrix that makes a deep copy of a given <c>IROFloatMatrix</c>.</summary>
     ///<param name="source"><c>FloatMatrix</c> to deep copy into new matrix.</param>
     ///<exception cref="ArgumentNullException"><c>source</c> is null.</exception>
     public ComplexDoubleMatrix(FloatMatrix source)
@@ -236,6 +336,35 @@ namespace Altaxo.Calc.LinearAlgebra
 			for( long i = 0; i < data.Length; i++){
 				data[i] = source.data[i];
 			}
+#endif
+    }
+
+    ///<summary>Constructor for matrix that makes a deep copy of a given <c>IROFloatMatrix</c>.</summary>
+    ///<param name="source"><c>FloatMatrix</c> to deep copy into new matrix.</param>
+    ///<exception cref="ArgumentNullException"><c>source</c> is null.</exception>
+    public ComplexDoubleMatrix(IROFloatMatrix source)
+    {
+      if (source == null)
+      {
+        throw new ArgumentNullException("source", "The input FloatMatrix cannot be null.");
+      }
+      this.rows = source.Rows;
+      this.columns = source.Columns;
+#if MANAGED
+      data = new Complex[rows][];
+      for (int i = 0; i < rows; i++)
+      {
+        data[i] = new Complex[columns];
+      }
+      for (int i = 0; i < rows; i++)
+      {
+        for (int j = 0; j < columns; j++)
+        {
+          data[i][j] = source[i,j];
+        }
+      }
+#else
+			data = ComplexDoubleMatrix.ToLinearComplexArray(source);
 #endif
     }
 
@@ -379,72 +508,92 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<param name="source"><c>ComplexFloatMatrix</c> to make a deep copy conversion from.</param>
     static public implicit operator ComplexDoubleMatrix(ComplexFloatMatrix source)
     {
-      if (source == null)
-      {
-        return null;
-      }
-      ComplexDoubleMatrix ret = new ComplexDoubleMatrix(source.RowLength, source.ColumnLength);
-#if MANAGED
-      for (int i = 0; i < source.RowLength; i++)
-      {
-        for (int j = 0; j < source.ColumnLength; j++)
-        {
-          ret.data[i][j] = source.data[i][j];
-        }
-      }
-#else
-			for( long i = 0; i < ret.data.Length; i++){
-				ret.data[i] = source.data[i];
-			}
-#endif
-      return ret;
+      return ToComplexDoubleMatrix(source);
     }
 
     ///<summary>Implicit conversion from <c>ComplexFloatMatrix</c> matrix.</summary>
     ///<param name="source"><c>ComplexFloatMatrix</c> to make a deep copy conversion from.</param>
-    static public ComplexDoubleMatrix ToComplexDoubleMatrix(ComplexFloatMatrix source)
+    static public ComplexDoubleMatrix ToComplexDoubleMatrix(IROComplexFloatMatrix source)
     {
       if (source == null)
       {
         return null;
       }
-      return (ComplexDoubleMatrix)source;
+      ComplexDoubleMatrix ret = new ComplexDoubleMatrix(source.Rows, source.Columns);
+#if MANAGED
+      int rows = source.Rows, columns = source.Columns;
+      if (source is ComplexFloatMatrix)
+      {
+        ComplexFloat[][] sourcedata = ((ComplexFloatMatrix)source).data;
+        for (int i = 0; i < rows; i++)
+        {
+          for (int j = 0; j < columns; j++)
+          {
+            ret.data[i][j] = sourcedata[i][j];
+          }
+        }
+      }
+      else
+      {
+        for (int i = 0; i < rows; i++)
+        {
+          for (int j = 0; j < columns; j++)
+          {
+            ret.data[i][j] = source[i,j];
+          }
+        }
+      }
+#else
+			ToLinearComplexArray(source,ret.data);
+#endif
+      return ret;
     }
 
     ///<summary>Implicit conversion from <c>DoubleMatrix</c> matrix.</summary>
     ///<param name="source"><c>DoubleMatrix</c> to make a deep copy conversion from.</param>
     static public implicit operator ComplexDoubleMatrix(DoubleMatrix source)
     {
-      if (source == null)
-      {
-        return null;
-      }
-      ComplexDoubleMatrix ret = new ComplexDoubleMatrix(source.RowLength, source.ColumnLength);
-#if MANAGED
-      for (int i = 0; i < source.RowLength; i++)
-      {
-        for (int j = 0; j < source.ColumnLength; j++)
-        {
-          ret.data[i][j] = source.data[i][j];
-        }
-      }
-#else
-			for( long i = 0; i < ret.data.Length; i++){
-				ret.data[i] = source.data[i];
-			}
-#endif
-      return ret;
+      return ToComplexDoubleMatrix(source);
     }
 
     ///<summary>Implicit conversion from <c>DoubleMatrix</c> matrix.</summary>
     ///<param name="source"><c>DoubleMatrix</c> to make a deep copy conversion from.</param>
-    static public ComplexDoubleMatrix ToComplexDoubleMatrix(DoubleMatrix source)
+    static public ComplexDoubleMatrix ToComplexDoubleMatrix(IROMatrix source)
     {
+      
       if (source == null)
       {
         return null;
       }
-      return (ComplexDoubleMatrix)source;
+      int rows = source.Rows, columns = source.Columns;
+      ComplexDoubleMatrix ret = new ComplexDoubleMatrix(rows, columns);
+#if MANAGED
+   
+      if (source is DoubleMatrix)
+      {
+        double[][] sourcedata = ((DoubleMatrix)source).data;
+        for (int i = 0; i < rows; i++)
+        {
+          for (int j = 0; j < columns; j++)
+          {
+            ret.data[i][j] = sourcedata[i][j];
+          }
+        }
+      }
+      else
+      {
+        for (int i = 0; i < rows; i++)
+        {
+          for (int j = 0; j < columns; j++)
+          {
+            ret.data[i][j] = source[i,j];
+          }
+        }
+      }
+#else
+			ToLinearComplexArray(source,ret.data);
+#endif
+      return ret;
     }
 
 
@@ -452,36 +601,48 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<param name="source"><c>FloatMatrix</c> to make a deep copy conversion from.</param>
     static public implicit operator ComplexDoubleMatrix(FloatMatrix source)
     {
-      if (source == null)
-      {
-        return null;
-      }
-      ComplexDoubleMatrix ret = new ComplexDoubleMatrix(source.RowLength, source.ColumnLength);
-#if MANAGED
-      for (int i = 0; i < source.RowLength; i++)
-      {
-        for (int j = 0; j < source.ColumnLength; j++)
-        {
-          ret.data[i][j] = source.data[i][j];
-        }
-      }
-#else
-			for( long i = 0; i < ret.data.Length; i++){
-				ret.data[i] = source.data[i];
-			}
-#endif
-      return ret;
+      return ToComplexDoubleMatrix(source);
     }
 
     ///<summary>Implicit conversion from <c>FloatMatrix</c> matrix.</summary>
     ///<param name="source"><c>FloatMatrix</c> to make a deep copy conversion from.</param>
-    static public ComplexDoubleMatrix ToComplexDoubleMatrix(FloatMatrix source)
+    static public ComplexDoubleMatrix ToComplexDoubleMatrix(IROFloatMatrix source)
     {
       if (source == null)
       {
         return null;
       }
-      return (ComplexDoubleMatrix)source;
+      int rows = source.Rows, columns = source.Columns;
+      ComplexDoubleMatrix ret = new ComplexDoubleMatrix(rows, columns);
+#if MANAGED
+            
+            if (source is FloatMatrix)
+            {
+              float[][] sourcedata = ((FloatMatrix)source).data;
+
+              for (int i = 0; i < rows; i++)
+              {
+                for (int j = 0; j < columns; j++)
+                {
+                  ret.data[i][j] = sourcedata[i][j];
+                }
+              }
+            }
+            else
+            {
+
+              for (int i = 0; i < rows; i++)
+              {
+                for (int j = 0; j < columns; j++)
+                {
+                  ret.data[i][j] = source[i,j];
+                }
+              }
+            }
+#else
+			ToLinearComplexArray(source,ret.data);
+#endif
+      return ret;
     }
 
 
@@ -1031,6 +1192,37 @@ namespace Altaxo.Calc.LinearAlgebra
 #endif
     }
 
+    ///<summary>Sets the values of a row to the given vector.</summary>
+    ///<param name="row">The row to set.</param>
+    ///<param name="data">The data to file the row with.</param>
+    public void SetRow(int row, IROComplexDoubleVector data)
+    {
+      if (data == null)
+      {
+        throw new ArgumentNullException("data", "The data vector cannot be null.");
+      }
+      if (row < 0 || row >= rows)
+      {
+        throw new ArgumentOutOfRangeException("row", "row must be greater than or equal to zero and less than RowLength.");
+      }
+      if (data.Length != columns)
+      {
+        throw new ArgumentException("data length does not equal the matrix column length.");
+      }
+#if MANAGED
+
+      for( int i = 0; i < columns; i++ ) 
+      {
+        this.data[row][i] = data[i];
+      }
+#else
+            for( int i = 0; i < columns; i++ ) {
+                this.data[i*rows+row] = data[i];
+            }
+#endif
+    }
+
+
     ///<summary>Sets the values of a row to the given array.</summary>
     ///<param name="row">The row to set.</param>
     ///<param name="data">The data to file the row with.</param>
@@ -1086,6 +1278,35 @@ namespace Altaxo.Calc.LinearAlgebra
 #endif
     }
 
+    ///<summary>Sets the values of a column to the given vector.</summary>
+    ///<param name="column">The column to set.</param>
+    ///<param name="data">The data to file the column with.</param>
+    public void SetColumn(int column, IROComplexDoubleVector data)
+    {
+      if (data == null)
+      {
+        throw new ArgumentNullException("data", "The data vector cannot be null.");
+      }
+      if (column < 0 || column >= columns)
+      {
+        throw new ArgumentOutOfRangeException("column", "column must be greater than or equal to zero and less than ColumnLength.");
+      }
+      if (data.Length != rows)
+      {
+        throw new ArgumentException("data length does not equal the matrix row length.");
+      }
+#if MANAGED
+      for (int i = 0; i < rows; i++)
+      {
+        this.data[i][column] = data[i];
+      }
+#else
+            for( int i = 0; i < rows; i++ ) {
+                this.data[column*rows+i] = data[i];
+            }
+#endif
+    }
+
     ///<summary>Sets the values of a column to the given array.</summary>
     ///<param name="column">The column to set.</param>
     ///<param name="data">The data to file the column with.</param>
@@ -1115,18 +1336,33 @@ namespace Altaxo.Calc.LinearAlgebra
 #endif
     }
 
-
-    ///<summary>Set the diagonal of the <c>ComplexDoubleMatrix</c> to the values in a <c>ComplexDoubleVector</c> variable.</summary>
-    ///<param name="source"><c>ComplexDoubleVector</c> with values to insert into diagonal of <c>ComplexDoubleMatrix</c>.</param>
-    public void SetDiagonal(ComplexDoubleVector source)
+    ///<summary>Set the diagonal of the <c>ComplexDoubleMatrix</c> to the values in a <c>Complex</c> array.</summary>
+    ///<param name="source"><c>Complex</c> arraywith values to insert into diagonal of <c>ComplexDoubleMatrix</c>.</param>
+    public void SetDiagonal(Complex[] source)
     {
       int min = System.Math.Min(System.Math.Min(rows, columns), source.Length);
       for (int i = 0; i < min; i++)
       {
 #if MANAGED
-        data[i][i] = source.data[i];
+        data[i][i] = source[i];
 #else
-				data[i*rows+i] = source.data[i];
+				data[i*rows+i] = source[i];
+#endif
+      }
+    }
+
+
+    ///<summary>Set the diagonal of the <c>ComplexDoubleMatrix</c> to the values in a <c>ComplexDoubleVector</c> variable.</summary>
+    ///<param name="source"><c>ComplexDoubleVector</c> with values to insert into diagonal of <c>ComplexDoubleMatrix</c>.</param>
+    public void SetDiagonal(IROComplexDoubleVector source)
+    {
+      int min = System.Math.Min(System.Math.Min(rows, columns), source.Length);
+      for (int i = 0; i < min; i++)
+      {
+#if MANAGED
+        data[i][i] = source[i];
+#else
+				data[i*rows+i] = source[i];
 #endif
       }
     }
@@ -1295,6 +1531,8 @@ namespace Altaxo.Calc.LinearAlgebra
 #endif
       return ret;
     }
+
+   
 
     ///<summary>Negate the values in <c>ComplexDoubleMatrix</c>.</summary>
     ///<returns><c>ComplexDoubleMatrix</c> with values to negate.</returns>
@@ -1696,7 +1934,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 #else
-			dnA.Math.Blas.Scal.Compute( ret.data.Length, 1/b, ret.data, 1 );
+			Blas.Scal.Compute( ret.data.Length, 1/b, ret.data, 1 );
 #endif
       return ret;
     }
@@ -1728,7 +1966,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 #else
-			dnA.Math.Blas.Scal.Compute( data.Length, 1/a, data, 1 );
+			Blas.Scal.Compute( data.Length, 1/a, data, 1 );
 #endif
     }
 
@@ -1753,7 +1991,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 #else
-			dnA.Math.Blas.Scal.Compute( ret.data.Length, a, ret.data, 1 );
+			Blas.Scal.Compute( ret.data.Length, a, ret.data, 1 );
 #endif
       return ret;
     }
@@ -1813,7 +2051,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 #else	
-			dnA.Math.Blas.Scal.Compute( data.Length, a, data, 1 );
+			Blas.Scal.Compute( data.Length, a, data, 1 );
 #endif
     }
 
@@ -1848,7 +2086,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 #else	
-			dnA.Math.Blas.Gemv.Compute(Order.ColumnMajor, dnA.Math.Transpose.NoTrans, x.rows, x.columns, 1, x.data, x.rows, y.data, 1, 1, ret.data, 1);
+			Blas.Gemv.Compute(Blas.Order.ColumnMajor, Blas.Transpose.NoTrans, x.rows, x.columns, 1, x.data, x.rows, y.data, 1, 1, ret.data, 1);
 #endif
       return ret;
     }
@@ -1901,7 +2139,7 @@ namespace Altaxo.Calc.LinearAlgebra
       }
 #else	
 			Complex[] temp = new Complex[rows];
-			dnA.Math.Blas.Gemv.Compute(Order.ColumnMajor, dnA.Math.Transpose.NoTrans, rows, columns, 1,data, x.Length, x.data, 1, 1, temp, 1);
+			Blas.Gemv.Compute(Blas.Order.ColumnMajor, Blas.Transpose.NoTrans, rows, columns, 1,data, x.Length, x.data, 1, 1, temp, 1);
 #endif
       data = temp;
       columns = 1;
@@ -1944,7 +2182,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 #else
-			dnA.Math.Blas.Gemm.Compute(Order.ColumnMajor, dnA.Math.Transpose.NoTrans, dnA.Math.Transpose.NoTrans,
+			Blas.Gemm.Compute(Blas.Order.ColumnMajor, Blas.Transpose.NoTrans, Blas.Transpose.NoTrans,
 				x.rows, y.columns, x.columns, 1, x.data, x.rows, y.data, y.rows, 1, ret.data, ret.rows);
 #endif
       return ret;
@@ -2007,7 +2245,7 @@ namespace Altaxo.Calc.LinearAlgebra
       }
 #else
 			Complex[] temp = new Complex[(long)rows*(long)x.columns];
-			dnA.Math.Blas.Gemm.Compute(Order.ColumnMajor, dnA.Math.Transpose.NoTrans, dnA.Math.Transpose.NoTrans,
+			Blas.Gemm.Compute(Blas.Order.ColumnMajor, Blas.Transpose.NoTrans, Blas.Transpose.NoTrans,
 				rows, x.columns, columns, 1, data, rows, x.data, x.rows, 1, temp, rows);
 #endif
       data = temp;
@@ -2035,7 +2273,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 #else
-			dnA.Math.Blas.Copy.Compute(this.data.Length, x.data, 1, this.data, 1 );
+			Blas.Copy.Compute(this.data.Length, x.data, 1, this.data, 1 );
 #endif
     }
     ///<summary>Clone (deep copy) a <c>ComplexDoubleMatrix</c> variable.</summary>
@@ -2235,6 +2473,158 @@ namespace Altaxo.Calc.LinearAlgebra
     {
       throw new System.NotSupportedException();
     }
+
+    #region Additions due to Adoption to Altaxo
+
+    /// <summary>
+    /// This creates a linear array for use with unmanaged routines.
+    /// </summary>
+    /// <param name="matrix">The matrix to convert to an array.</param>
+    /// <param name="result">The resulting array must be given.</param>
+    /// <returns>Linear array of complex.</returns>
+    static void ToLinearComplexArray(IROComplexDoubleMatrix matrix, Complex[] result)
+    {
+      int rows = matrix.Rows;
+      int columns = matrix.Columns;
+
+      int k=0;
+        for(int j=0;j<columns;++j)
+          for(int i=0;i<rows;++i)
+            result[k++] = matrix[i,j];
+
+      
+    }
+
+  
+    /// <summary>
+    /// This creates a linear array for use with unmanaged routines.
+    /// </summary>
+    /// <param name="matrix">The matrix to convert to an array.</param>
+    /// <returns>Linear array of complex.</returns>
+    static void ToLinearComplexArray(IROComplexFloatMatrix matrix, Complex[] result)
+    {
+      int rows = matrix.Rows;
+      int columns = matrix.Columns;
+
+      int k=0;
+        for(int j=0;j<columns;++j)
+          for(int i=0;i<rows;++i)
+            result[k++] = matrix[i,j];
+
+     
+    }
+
+    /// <summary>
+    /// This creates a linear array for use with unmanaged routines.
+    /// </summary>
+    /// <param name="matrix">The matrix to convert to an array.</param>
+    /// <returns>Linear array of complex.</returns>
+    static void ToLinearComplexArray(IROMatrix matrix, Complex[] result)
+    {
+      int rows = matrix.Rows;
+      int columns = matrix.Columns;
+      int k=0;
+        for(int j=0;j<columns;++j)
+          for(int i=0;i<rows;++i)
+            result[k++] = matrix[i,j];
+
+     
+    }
+
+    /// <summary>
+    /// This creates a linear array for use with unmanaged routines.
+    /// </summary>
+    /// <param name="matrix">The matrix to convert to an array.</param>
+    /// <returns>Linear array of complex.</returns>
+    static void ToLinearComplexArray(IROFloatMatrix matrix, Complex[] result)
+    {
+      int rows = matrix.Rows;
+      int columns = matrix.Columns;
+     
+      int k=0;
+        for(int j=0;j<columns;++j)
+          for(int i=0;i<rows;++i)
+            result[k++] = matrix[i,j];
+
+     
+    }
+
+    /// <summary>
+    /// This creates a linear array for use with unmanaged routines.
+    /// </summary>
+    /// <param name="source">The vector to convert to an array.</param>
+    /// <returns>Linear array of complex.</returns>
+    static void ToLinearComplexArray(IROComplexDoubleVector source, Complex[] result)
+    {
+      int length = source.Length;
+      for(int i=0;i<length;++i)
+        result[i] = source[i];
+    }
+
+
+
+    /// <summary>
+    /// This creates a linear array for use with unmanaged routines.
+    /// </summary>
+    /// <param name="matrix">The matrix to convert to an array.</param>
+    /// <returns>Linear array of complex.</returns>
+    public static Complex[] ToLinearComplexArray(IROComplexDoubleMatrix matrix)
+    {
+      Complex[] result=new Complex[matrix.Rows*matrix.Columns];
+      ToLinearComplexArray(matrix,result);
+      return result;
+    }
+
+  
+    /// <summary>
+    /// This creates a linear array for use with unmanaged routines.
+    /// </summary>
+    /// <param name="matrix">The matrix to convert to an array.</param>
+    /// <returns>Linear array of complex.</returns>
+    public static Complex[] ToLinearComplexArray(IROComplexFloatMatrix matrix)
+    {
+      Complex[] result=new Complex[matrix.Rows*matrix.Columns];
+      ToLinearComplexArray(matrix,result);
+      return result;
+    }
+
+    /// <summary>
+    /// This creates a linear array for use with unmanaged routines.
+    /// </summary>
+    /// <param name="matrix">The matrix to convert to an array.</param>
+    /// <returns>Linear array of complex.</returns>
+    public static Complex[] ToLinearComplexArray(IROMatrix matrix)
+    {
+      Complex[] result=new Complex[matrix.Rows*matrix.Columns];
+      ToLinearComplexArray(matrix,result);
+      return result;
+    }
+
+    /// <summary>
+    /// This creates a linear array for use with unmanaged routines.
+    /// </summary>
+    /// <param name="matrix">The matrix to convert to an array.</param>
+    /// <returns>Linear array of complex.</returns>
+    public static Complex[] ToLinearComplexArray(IROFloatMatrix matrix)
+    {
+      Complex[] result=new Complex[matrix.Rows*matrix.Columns];
+      ToLinearComplexArray(matrix,result);
+      return result;
+    }
+
+    /// <summary>
+    /// This creates a linear array for use with unmanaged routines.
+    /// </summary>
+    /// <param name="source">The vector to convert to an array.</param>
+    /// <returns>Linear array of complex.</returns>
+    public static Complex[] ToLinearComplexArray(IROComplexDoubleVector source)
+    {
+      Complex[] result=new Complex[source.Length];
+      ToLinearComplexArray(source,result);
+      return result;
+    }
+
+    #endregion
   }
 }
 

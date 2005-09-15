@@ -77,16 +77,16 @@ namespace Altaxo.Calc.LinearAlgebra.Blas
 		}
 
 		///<summary>P/Invoke to wrapper with native code</summary>
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
 		private static extern void dna_blas_strsm( Order order, Side side, UpLo uplo, Transpose transA, Diag diag, int m,int n, float alpha, [In]float[] A, int lda, [In,Out]float[] B, int ldb );
 
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
 		private static extern void dna_blas_dtrsm( Order order, Side side, UpLo uplo, Transpose transA, Diag diag, int m,int n, double alpha, [In]double[] A, int lda, [In,Out]double[] B, int ldb );
 
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
 		private static extern void dna_blas_ctrsm( Order order, Side side, UpLo uplo, Transpose transA, Diag diag, int m,int n, ref ComplexFloat alpha, [In]ComplexFloat[] A, int lda, [In,Out]ComplexFloat[] B, int ldb );
 
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
 		private static extern void dna_blas_ztrsm( Order order, Side side, UpLo uplo, Transpose transA, Diag diag, int m,int n, ref Complex alpha, [In]Complex[] A, int lda, [In,Out]Complex[] B, int ldb );
 	}
 }

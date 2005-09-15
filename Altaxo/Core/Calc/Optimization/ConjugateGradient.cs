@@ -10,7 +10,12 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Optimization {
 	///<summary>Nonlinear Preconditioned Conjugate Gradient Method</summary>
-	public class ConjugateGradient: FunctionMinimizeMethod {
+  /// <remarks>
+  /// <para>Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved. See <a>http://www.dnAnalytics.net</a> for details.</para>
+  /// <para>Adopted to Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
+  /// </remarks>
+  public class ConjugateGradient: FunctionMinimizeMethod 
+  {
 		 ///<summary>Constructor for Conjugate Gradient Method. The constructor specifies the 
 		 /// costfunction and optionally user specified ending criteria and line search methods.</summary>
         ///<param name="costfunction">Nonlinear cost function to minimize.</param>

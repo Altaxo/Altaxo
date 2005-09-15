@@ -95,10 +95,10 @@ namespace Altaxo.Calc.LinearAlgebra.Blas
 
 #if !MANAGED
 		///<summary>P/Invoke to wrapper with native code</summary>
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
 		private static extern float dna_blas_sdsdot( int N, float alpha, [In]float[] X, int incX, [In]float[] Y, int incY );
 
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
 		private static extern double dna_blas_dsdot( int N, [In]float[] X, int incX, [In]float[] Y, int incY );
 #endif
 	}

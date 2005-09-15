@@ -9,7 +9,11 @@ using System.Runtime.Serialization;
 
 namespace Altaxo.Calc.Optimization {
     ///<summary>Base class for exceptions thrown from the Optimization namespace</summary>
-    [Serializable()]
+  /// <remarks>
+  /// <para>Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved. See <a>http://www.dnAnalytics.net</a> for details.</para>
+  /// <para>Adopted to Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
+  /// </remarks>
+  [Serializable()]
     public sealed class OptimizationException : System.SystemException {
 
         ///<summary>Initializes a new instance of the <c>OptimizationException</c> class.</summary>

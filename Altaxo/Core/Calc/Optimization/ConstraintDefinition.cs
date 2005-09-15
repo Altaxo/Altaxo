@@ -11,7 +11,12 @@ using Altaxo.Calc.LinearAlgebra;
 namespace Altaxo.Calc.Optimization
 {
 	///<summary>Interface for constraint definitions</summary>
-	public interface IConstraintDefinition {
+  /// <remarks>
+  /// <para>Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved. See <a>http://www.dnAnalytics.net</a> for details.</para>
+  /// <para>Adopted to Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
+  /// </remarks>
+  public interface IConstraintDefinition 
+  {
 		///<summary>Test whether constraint is satisfied</summary>
 		///<param name="solution"><c>DoubleVector</c> with solution to test against constraints</param>
 		///<returns>Returns true if solution satisfies constraints</returns>
@@ -28,7 +33,12 @@ namespace Altaxo.Calc.Optimization
 
 
 	///<summary>Base class for constraint definitions</summary>
-	public abstract class ConstraintDefinition : IConstraintDefinition {
+  /// <remarks>
+  /// <para>Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved. See <a>http://www.dnAnalytics.net</a> for details.</para>
+  /// <para>Adopted to Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
+  /// </remarks>
+  public abstract class ConstraintDefinition : IConstraintDefinition 
+  {
 		public abstract bool Check(DoubleVector solution);
 		
 		public double Update(DoubleVector solution, DoubleVector direction, double beta) {
@@ -49,7 +59,12 @@ namespace Altaxo.Calc.Optimization
 	}
 	
 	///<summary>Class defining no constraints</summary>
-	public class NoConstraint : ConstraintDefinition {
+  /// <remarks>
+  /// <para>Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved. See <a>http://www.dnAnalytics.net</a> for details.</para>
+  /// <para>Adopted to Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
+  /// </remarks>
+  public class NoConstraint : ConstraintDefinition 
+  {
 		
 		public override bool Check(DoubleVector solution) {
 			return true;

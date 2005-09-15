@@ -8,9 +8,9 @@
 using System;
 using System.Runtime.InteropServices;
 
-using dnA.Utility;
 
-namespace dnA.Math.Lapack{
+
+namespace Altaxo.Calc.LinearAlgebra.Lapack{
 	[System.Security.SuppressUnmanagedCodeSecurityAttribute]
 	internal sealed class Ormbr {
 		private  Ormbr() {}                           
@@ -93,10 +93,10 @@ namespace dnA.Math.Lapack{
 			return dna_lapack_dormbr(Configuration.BlockSize, vect, side, trans, m, n, k, A, lda, tau, C, ldc);
 		}
 
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
 		private static extern int dna_lapack_sormbr( int block_size, Vector vect, Side side, Transpose trans, int m, int n, int k, [In,Out]float[] A, int lda, [In,Out]float[] tau, [In,Out]float[] C, int ldc  );
 	
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
 		private static extern int dna_lapack_dormbr( int block_size, Vector vect, Side side, Transpose trans, int m, int n, int k, [In,Out]double[] A, int lda, [In,Out]double[] tau, [In,Out]double[] C, int ldc   );
 	}
 }

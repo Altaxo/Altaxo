@@ -7,9 +7,9 @@
 using System;
 using System.Runtime.InteropServices;
 
-using dnA.Utility;
 
-namespace dnA.Math.Lapack{
+
+namespace Altaxo.Calc.LinearAlgebra.Lapack{
 	[System.Security.SuppressUnmanagedCodeSecurityAttribute]
 	internal sealed class Getrs {
 		private  Getrs() {}
@@ -61,23 +61,23 @@ namespace dnA.Math.Lapack{
 			return dna_lapack_cgetrs(trans,n,nrhs,A,lda,ipiv,B,ldb);
 		}
 
-		internal static int Compute( Transpose trans, int n, int nrhs, ComplexDouble[] A, int lda, int[] ipiv, ComplexDouble[] B, int ldb ){
+		internal static int Compute( Transpose trans, int n, int nrhs, Complex[] A, int lda, int[] ipiv, Complex[] B, int ldb ){
 			ArgumentCheck(n, nrhs, A, lda,  B, ldb, ipiv);
 			
 			return dna_lapack_zgetrs(trans,n,nrhs,A,lda,ipiv,B,ldb);
 		}
 
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
 		private static extern int dna_lapack_sgetrs( Transpose trans, int n, int nrhs, [In,Out]float[] A, int lda, [In]int[] ipiv, [In,Out]float[] B, int ldb );
 	
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
 		private static extern int dna_lapack_dgetrs( Transpose trans, int n, int nrhs, [In,Out]double[] A, int lda, [In]int[] ipiv, [In,Out]double[] B, int ldb );
 
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
 		private static extern int dna_lapack_cgetrs( Transpose trans, int n, int nrhs, [In,Out]ComplexFloat[] A, int lda, [In]int[] ipiv, [In,Out]ComplexFloat[] B, int ldb );
 
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
-		private static extern int dna_lapack_zgetrs( Transpose trans, int n, int nrhs, [In,Out]ComplexDouble[] A, int lda, [In]int[] ipiv, [In,Out]ComplexDouble[] B, int ldb );
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		private static extern int dna_lapack_zgetrs( Transpose trans, int n, int nrhs, [In,Out]Complex[] A, int lda, [In]int[] ipiv, [In,Out]Complex[] B, int ldb );
 	}
 }
 #endif

@@ -10,7 +10,12 @@ using System.Runtime.InteropServices;
 namespace Altaxo.Calc.LinearAlgebra
 {
 	///<summary>This class computes the SVD factorization of a general <c>DoubleMatrix</c>.</summary>
-	public sealed class DoubleSVDDecomp : Algorithm {
+  /// <remarks>
+  /// <para>Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved. See <a>http://www.dnAnalytics.net</a> for details.</para>
+  /// <para>Adopted to Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
+  /// </remarks>
+  public sealed class DoubleSVDDecomp : Algorithm 
+  {
 		private const int MAXITER = 1000;
 
 		private DoubleMatrix u;
@@ -94,22 +99,22 @@ namespace Altaxo.Calc.LinearAlgebra
 		///<param name="matrix">The matrix to decompose.</param>
 		///<param name="computeVectors">Whether to compute the singular vectors or not.</param>
 		///<exception cref="ArgumentNullException">matrix is null.</exception>
-		public DoubleSVDDecomp(DoubleMatrix matrix, bool computeVectors){
+		public DoubleSVDDecomp(IROMatrix matrix, bool computeVectors){
 			if ( matrix == null ) {
 				throw new System.ArgumentNullException("matrix cannot be null.");
 			}
-			this.matrix = matrix.Clone();
+			this.matrix = new DoubleMatrix(matrix);
 			this.computeVectors = computeVectors;
 		}
 
 		///<summary>Constructor for SVD decomposition class.</summary>
 		///<param name="matrix">The matrix to decompose.</param>
 		///<exception cref="ArgumentNullException">matrix is null.</exception>
-		public DoubleSVDDecomp(DoubleMatrix matrix){
+		public DoubleSVDDecomp(IROMatrix matrix){
 			if ( matrix == null ) {
 				throw new System.ArgumentNullException("matrix cannot be null.");
 			}
-			this.matrix = matrix.Clone();
+			this.matrix = new DoubleMatrix(matrix);
 		}
 		
 		///<summary>Computes the algorithm.</summary>

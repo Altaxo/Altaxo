@@ -84,10 +84,10 @@ namespace Altaxo.Calc.LinearAlgebra.Blas
 
 #if !MANAGED
 		///<summary>P/Invoke to wrapper with native code</summary>
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
 		private static extern void dna_blas_cdotc(int N, [In]ComplexFloat[] X, int incX, [In]ComplexFloat[] Y, int incY, ref ComplexFloat dotc);
 
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
 		private static extern void dna_blas_zdotc( int N, [In]Complex[] X, int incX, [In]Complex[] Y, int incY, ref Complex dotc);
 #endif
 	}

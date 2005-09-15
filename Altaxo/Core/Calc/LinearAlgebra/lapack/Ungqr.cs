@@ -8,9 +8,9 @@
 using System;
 using System.Runtime.InteropServices;
 
-using dnA.Utility;
 
-namespace dnA.Math.Lapack{
+
+namespace Altaxo.Calc.LinearAlgebra.Lapack{
 	[System.Security.SuppressUnmanagedCodeSecurityAttribute]
 	internal sealed class Ungqr {
 		private  Ungqr() {}                           
@@ -44,7 +44,7 @@ namespace dnA.Math.Lapack{
 			return dna_lapack_cungqr(Configuration.BlockSize, m, n, k, A, lda, tau);
 		}
 
-		internal static int Compute( int m, int n, int k, ComplexDouble[] A, int lda, ComplexDouble[] tau ){
+		internal static int Compute( int m, int n, int k, Complex[] A, int lda, Complex[] tau ){
 			ArgumentCheck(m, n, k, A, lda, tau);
 			if (tau.Length < System.Math.Max(1, k) ){
 				throw new ArgumentException("tau must be at least max(1,k).");
@@ -53,11 +53,11 @@ namespace dnA.Math.Lapack{
 			return dna_lapack_zungqr(Configuration.BlockSize, m, n, k, A, lda, tau);
 		}
 
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
 		private static extern int dna_lapack_cungqr( int block_size, int m, int n, int k, [In,Out]ComplexFloat[] A, int lda, [In,Out]ComplexFloat[] tau  );
 	
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
-		private static extern int dna_lapack_zungqr( int block_size, int m, int n, int k, [In,Out]ComplexDouble[] A, int lda, [In,Out]ComplexDouble[] tau   );
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		private static extern int dna_lapack_zungqr( int block_size, int m, int n, int k, [In,Out]Complex[] A, int lda, [In,Out]Complex[] tau   );
 	}
 }
 #endif

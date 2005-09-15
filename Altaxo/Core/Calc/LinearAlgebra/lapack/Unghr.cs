@@ -8,9 +8,9 @@
 using System;
 using System.Runtime.InteropServices;
 
-using dnA.Utility;
 
-namespace dnA.Math.Lapack{
+
+namespace Altaxo.Calc.LinearAlgebra.Lapack{
 	[System.Security.SuppressUnmanagedCodeSecurityAttribute]
 	internal sealed class Unghr{
 		private Unghr(){}
@@ -42,16 +42,16 @@ namespace dnA.Math.Lapack{
 			return dna_lapack_cunghr(Configuration.BlockSize, n, ilo, ihi, A, lda, tau);
 		}
 
-		internal static int Compute( int n, int ilo, int ihi, ComplexDouble[] A, int lda, ComplexDouble[] tau ){
+		internal static int Compute( int n, int ilo, int ihi, Complex[] A, int lda, Complex[] tau ){
 			ArgumentCheck(n, ilo, ihi, A, lda, tau);
 			return dna_lapack_zunghr(Configuration.BlockSize, n, ilo, ihi, A, lda, tau);
 		}
 
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
 		private static extern int dna_lapack_cunghr( int block_size, int n, int ilo, int ihi, ComplexFloat[] A, int lda, ComplexFloat[] tau);
 
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
-		private static extern int dna_lapack_zunghr( int block_size, int n, int ilo, int ihi, ComplexDouble[] A, int lda, ComplexDouble[] tau);
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		private static extern int dna_lapack_zunghr( int block_size, int n, int ilo, int ihi, Complex[] A, int lda, Complex[] tau);
 
 	}
 }

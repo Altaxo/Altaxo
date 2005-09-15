@@ -8,9 +8,9 @@
 using System;
 using System.Runtime.InteropServices;
 
-using dnA.Utility;
 
-namespace dnA.Math.Lapack{
+
+namespace Altaxo.Calc.LinearAlgebra.Lapack{
 	[System.Security.SuppressUnmanagedCodeSecurityAttribute]
 	internal sealed class Orghr{
 		private Orghr()	{}
@@ -55,10 +55,10 @@ namespace dnA.Math.Lapack{
 			return dna_lapack_dorghr(Configuration.BlockSize, n, ilo, ihi, A, lda, tau);
 		}
 
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
 		private static extern int dna_lapack_sorghr(int block_size, int n, int ilo, int ihi, float[] A, int lda, float[] tau);
 
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
 		private static extern int dna_lapack_dorghr(int block_size, int n, int ilo, int ihi, double[] A, int lda, double[] tau);
 
 	}

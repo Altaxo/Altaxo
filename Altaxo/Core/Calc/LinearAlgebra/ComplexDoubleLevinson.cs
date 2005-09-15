@@ -56,7 +56,11 @@ namespace Altaxo.Calc.LinearAlgebra
 	/// which is twice as fast as this class.
 	/// </note>
 	/// </remarks>
-	/// <example>
+  /// <remarks>
+  /// <para>Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved. See <a>http://www.dnAnalytics.net</a> for details.</para>
+  /// <para>Adopted to Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
+  /// </remarks>
+  /// <example>
 	/// The following simple example illustrates the use of the class:
 	/// <para>
 	/// <code escaped="true">
@@ -360,7 +364,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <exception cref="ArithmeticException">
 		/// The values of the first element of <B>col</B> and <B>row</B> are not equal.
 		/// </exception>
-		public ComplexDoubleLevinson(ComplexDoubleVector col, ComplexDoubleVector row)
+		public ComplexDoubleLevinson(IROComplexDoubleVector col, IROComplexDoubleVector row)
 		{
 			// check parameters
 			if (col == null)
@@ -385,8 +389,8 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 
 			// save the vectors
-			m_LeftColumn = col.Clone();
-			m_TopRow = row.Clone();
+			m_LeftColumn = new ComplexDoubleVector(col);
+			m_TopRow = new ComplexDoubleVector(row);
 			m_Order = m_LeftColumn.Length;
 
 			// allocate memory for lower triangular matrix
@@ -727,7 +731,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// using the Levinson algorithm, before calculating the solution vector.
 		/// </para>
 		/// </remarks>
-		public ComplexDoubleVector Solve(ComplexDoubleVector Y)
+		public ComplexDoubleVector Solve(IROComplexDoubleVector Y)
 		{
 			ComplexDoubleVector X;
 			Complex Inner;
@@ -798,7 +802,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// using the Levinson algorithm, before calculating the solution vector.
 		/// </para>
 		/// </remarks>
-		public ComplexDoubleMatrix Solve(ComplexDoubleMatrix Y)
+		public ComplexDoubleMatrix Solve(IROComplexDoubleMatrix Y)
 		{
 			ComplexDoubleMatrix X;
 			Complex Inner;
@@ -810,7 +814,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			{
 				throw new System.ArgumentNullException("Y");
 			}
-			else if (m_Order != Y.ColumnLength)
+			else if (m_Order != Y.Columns)
 			{
 				throw new RankException("The numer of rows in Y is not equal to the number of rows in the Toeplitz matrix.");
 			}
@@ -823,14 +827,14 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 
 			// allocate memory for solution
-			X = new ComplexDoubleMatrix(m_Order, Y.RowLength);
+			X = new ComplexDoubleMatrix(m_Order, Y.Rows);
 			x = new Complex[m_Order];
 
-			for (l = 0; l < Y.RowLength; l++)
+			for (l = 0; l < Y.Rows; l++)
 			{
 
 				// get right-side column
-				y = Y.GetColumn(l).ToArray();
+				y = ComplexDoubleVector.GetColumnAsArray(Y,l);
 
 				// solve left-side column
 				for (i = 0; i < m_Order; i++)
@@ -894,7 +898,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// if we simply solved a linear Toeplitz system with a right-side identity matrix (<b>N</b> is the matrix order).
 		/// </para>
 		/// </remarks>
-		public static ComplexDoubleMatrix Inverse(ComplexDoubleVector col, ComplexDoubleVector row)
+		public static ComplexDoubleMatrix Inverse(IROComplexDoubleVector col, IROComplexDoubleVector row)
 		{
 			// check parameters
 			if (col == null)
@@ -1096,7 +1100,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// in a single algorithm.
 		/// </para>
 		/// </remarks>
-		public static ComplexDoubleVector Solve(ComplexDoubleVector col, ComplexDoubleVector row, ComplexDoubleVector Y)
+		public static ComplexDoubleVector Solve(IROComplexDoubleVector col, IROComplexDoubleVector row, IROComplexDoubleVector Y)
 		{
 			// check parameters
 			if (col == null)
@@ -1263,7 +1267,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// in a single algorithm.
 		/// </para>
 		/// </remarks>
-		public static ComplexDoubleMatrix Solve(ComplexDoubleVector col, ComplexDoubleVector row, ComplexDoubleMatrix Y)
+		public static ComplexDoubleMatrix Solve(IROComplexDoubleVector col, IROComplexDoubleVector row, IROComplexDoubleMatrix Y)
 		{
 			// check parameters
 			if (col == null)
@@ -1290,7 +1294,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			{
 				throw new System.ArgumentNullException("Y");
 			}
-			else if (col.Length != Y.ColumnLength)
+			else if (col.Length != Y.Columns)
 			{
 				throw new RankException("The numer of rows in Y does not match the length of col and row.");
 			}
@@ -1315,7 +1319,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			A[0] = Complex.One;
 			B[0] = Complex.One;
 			e = Complex.One / col[0];
-			X.SetRow(0, e * Y.GetRow(0));
+			X.SetRow(0, e * ComplexDoubleVector.GetRow(Y,0));
 
 			for (i = 1; i < order; i++)
 			{
@@ -1368,10 +1372,10 @@ namespace Altaxo.Calc.LinearAlgebra
 				// update diagonal
 				e = e / (Complex.One - Ke * Kr);
 
-				for (l = 0; l < Y.RowLength; l++)
+				for (l = 0; l < Y.Rows; l++)
 				{
 					ComplexDoubleVector W = X.GetColumn(l);
-					ComplexDoubleVector M = Y.GetColumn(l);
+					ComplexDoubleVector M = ComplexDoubleVector.GetColumn(Y,l);
 
 					Inner = M[i];
 					for (j = 0; j < i; j++)

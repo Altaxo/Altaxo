@@ -4,7 +4,6 @@ using System;
 using System.IO;
 using NUnit.Framework;
 using Altaxo.Calc;
-using Altaxo.Calc;
 using Altaxo.Calc.LinearAlgebra;
 
 #endregion Using Directives

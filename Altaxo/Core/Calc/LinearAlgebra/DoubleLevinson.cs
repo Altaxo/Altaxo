@@ -56,7 +56,11 @@ namespace Altaxo.Calc.LinearAlgebra
 	/// which is twice as fast as this class.
 	/// </note>
 	/// </remarks>
-	/// <example>
+  /// <remarks>
+  /// <para>Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved. See <a>http://www.dnAnalytics.net</a> for details.</para>
+  /// <para>Adopted to Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
+  /// </remarks>
+  /// <example>
 	/// The following simple example illustrates the use of the class:
 	/// <para>
 	/// <code escaped="true">
@@ -334,6 +338,76 @@ namespace Altaxo.Calc.LinearAlgebra
 
 		#region Constructors
 
+    /// <summary>
+    /// Constructor with <c>double[]</c> parameters.
+    /// </summary>
+    /// <param name="col">The left-most column of the Toeplitz matrix.</param>
+    /// <param name="row">The top-most row of the Toeplitz matrix.</param>
+    /// <exception cref="ArgumentNullException">
+    /// <B>col</B> is a null reference,
+    /// <para>or</para>
+    /// <para><B>row</B> is a null reference.</para>
+    /// </exception>
+    /// <exception cref="RankException">
+    /// The length col <B>col</B> is zero,
+    /// <para>or</para>
+    /// <para>the length of <B>col</B> does not match that of <B>row</B>.</para>
+    /// </exception>
+    /// <exception cref="ArithmeticException">
+    /// The values of the first element of <B>col</B> and <B>row</B> are not equal.
+    /// </exception>
+    public DoubleLevinson(double[] col, double[] row)
+    {
+      // check parameters
+      if (col == null)
+      {
+        throw new System.ArgumentNullException("col");
+      }
+      else if (col.Length == 0)
+      {
+        throw new RankException("The length of col is zero.");
+      }
+      else if (row == null)
+      {
+        throw new System.ArgumentNullException("row");
+      }
+      else if (col.Length != row.Length)
+      {
+        throw new RankException("The lengths of col and row are not equal.");
+      }
+      else if (col[0] != row[0])
+      {
+        throw new ArithmeticException("The values of the first element of col and row are not equal.");
+      }
+
+      // save the vectors
+      m_LeftColumn = new DoubleVector(col);
+      m_TopRow = new DoubleVector(row);
+      m_Order = m_LeftColumn.Length;
+
+      // allocate memory for lower triangular matrix
+      m_LowerTriangle = new double[m_Order][];
+      for (int i = 0; i < m_Order; i++)
+      {
+        m_LowerTriangle[i] = new double[i + 1];
+      }
+
+      // allocate memory for diagonal
+      m_Diagonal = new double[m_Order];
+
+      // allocate memory for upper triangular matrix
+      m_UpperTriangle = new double[m_Order][];
+      for (int i = 0; i < m_Order; i++)
+      {
+        m_UpperTriangle[i] = new double[i + 1];
+      }
+    }
+
+    public DoubleLevinson(AbstractRODoubleVector col, AbstractRODoubleVector row)
+      : this((IROVector)col, (IROVector)row)
+    {
+    }
+
 		/// <overloads>
 		/// There are two permuations of the constructor, one requires DoubleVector parameters
 		/// and the other double arrays.
@@ -356,7 +430,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <exception cref="ArithmeticException">
 		/// The values of the first element of <B>col</B> and <B>row</B> are not equal.
 		/// </exception>
-		public DoubleLevinson(DoubleVector col, DoubleVector row)
+		public DoubleLevinson(IROVector col, IROVector row)
 		{
 			// check parameters
 			if (col == null)
@@ -381,72 +455,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 
 			// save the vectors
-			m_LeftColumn = col.Clone();
-			m_TopRow = row.Clone();
-			m_Order = m_LeftColumn.Length;
-
-			// allocate memory for lower triangular matrix
-			m_LowerTriangle = new double[m_Order][];
-			for (int i = 0; i < m_Order; i++)
-			{
-				m_LowerTriangle[i] = new double[i + 1];
-			}
-
-			// allocate memory for diagonal
-			m_Diagonal = new double[m_Order];
-
-			// allocate memory for upper triangular matrix
-			m_UpperTriangle = new double[m_Order][];
-			for (int i = 0; i < m_Order; i++)
-			{
-				m_UpperTriangle[i] = new double[i + 1];
-			}
-		}
-
-		/// <summary>
-		/// Constructor with <c>double[]</c> parameters.
-		/// </summary>
-		/// <param name="col">The left-most column of the Toeplitz matrix.</param>
-		/// <param name="row">The top-most row of the Toeplitz matrix.</param>
-		/// <exception cref="ArgumentNullException">
-		/// <B>col</B> is a null reference,
-		/// <para>or</para>
-		/// <para><B>row</B> is a null reference.</para>
-		/// </exception>
-		/// <exception cref="RankException">
-		/// The length col <B>col</B> is zero,
-		/// <para>or</para>
-		/// <para>the length of <B>col</B> does not match that of <B>row</B>.</para>
-		/// </exception>
-		/// <exception cref="ArithmeticException">
-		/// The values of the first element of <B>col</B> and <B>row</B> are not equal.
-		/// </exception>
-		public DoubleLevinson(double[] col, double[] row)
-		{
-			// check parameters
-			if (col == null)
-			{
-				throw new System.ArgumentNullException("col");
-			}
-			else if (col.Length == 0)
-			{
-				throw new RankException("The length of col is zero.");
-			}
-			else if (row == null)
-			{
-				throw new System.ArgumentNullException("row");
-			}
-			else if (col.Length != row.Length)
-			{
-				throw new RankException("The lengths of col and row are not equal.");
-			}
-			else if (col[0] != row[0])
-			{
-				throw new ArithmeticException("The values of the first element of col and row are not equal.");
-			}
-
-			// save the vectors
-			m_LeftColumn = new DoubleVector(col);
+      m_LeftColumn = new DoubleVector(col);
 			m_TopRow = new DoubleVector(row);
 			m_Order = m_LeftColumn.Length;
 
@@ -467,6 +476,9 @@ namespace Altaxo.Calc.LinearAlgebra
 				m_UpperTriangle[i] = new double[i + 1];
 			}
 		}
+
+  
+	
 
 		#endregion Constructors
 
@@ -777,7 +789,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// using the Levinson algorithm, before calculating the solution vector.
 		/// </para>
 		/// </remarks>
-		public DoubleVector Solve(DoubleVector Y)
+		public DoubleVector Solve(IROVector Y)
 		{
 			DoubleVector X;
 			double Inner;
@@ -920,7 +932,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// using the Levinson algorithm, before calculating the solution vector.
 		/// </para>
 		/// </remarks>
-		public DoubleMatrix Solve(DoubleMatrix Y)
+		public DoubleMatrix Solve(IROMatrix Y)
 		{
 			DoubleMatrix X;
 			double Inner;
@@ -932,7 +944,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			{
 				throw new System.ArgumentNullException("Y");
 			}
-			else if (m_Order != Y.ColumnLength)
+			else if (m_Order != Y.Columns)
 			{
 				throw new RankException("The numer of rows in Y is not equal to the number of rows in the Toeplitz matrix.");
 			}
@@ -945,14 +957,14 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 
 			// allocate memory for solution
-			X = new DoubleMatrix(m_Order, Y.RowLength);
+			X = new DoubleMatrix(m_Order, Y.Rows);
 			x = new double[m_Order];
 
-			for (l = 0; l < Y.RowLength; l++)
+			for (l = 0; l < Y.Rows; l++)
 			{
 
 				// get right-side column
-				y = Y.GetColumn(l).ToArray();
+				y = DoubleVector.GetColumnAsArray(Y,l);
 
 				// solve left-side column
 				for (i = 0; i < m_Order; i++)
@@ -1016,7 +1028,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// if we simply solved a linear Toeplitz system with a right-side identity matrix (<b>N</b> is the matrix order).
 		/// </para>
 		/// </remarks>
-		public static DoubleMatrix Inverse(DoubleVector col, DoubleVector row)
+		public static DoubleMatrix Inverse(IROVector col, IROVector row)
 		{
 			// check parameters
 			if (col == null)
@@ -1218,7 +1230,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// in a single algorithm.
 		/// </para>
 		/// </remarks>
-		public static DoubleVector Solve(DoubleVector col, DoubleVector row, DoubleVector Y)
+		public static DoubleVector Solve(IROVector col, IROVector row, IROVector Y)
 		{
 			// check parameters
 			if (col == null)
@@ -1385,7 +1397,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// in a single algorithm.
 		/// </para>
 		/// </remarks>
-		public static DoubleMatrix Solve(DoubleVector col, DoubleVector row, DoubleMatrix Y)
+		public static DoubleMatrix Solve(IROVector col, IROVector row, IROMatrix Y)
 		{
 			// check parameters
 			if (col == null)
@@ -1412,7 +1424,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			{
 				throw new System.ArgumentNullException("Y");
 			}
-			else if (col.Length != Y.ColumnLength)
+			else if (col.Length != Y.Columns)
 			{
 				throw new RankException("The numer of rows in Y does not match the length of col and row.");
 			}
@@ -1437,7 +1449,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			A[0] = 1.0;
 			B[0] = 1.0;
 			e = 1.0 / col[0];
-			X.SetRow(0, e * Y.GetRow(0));
+			X.SetRow(0, e * DoubleVector.GetRow(Y,0));
 
 			for (i = 1; i < order; i++)
 			{
@@ -1490,10 +1502,10 @@ namespace Altaxo.Calc.LinearAlgebra
 				// update diagonal
 				e = e / (1.0 - Ke * Kr);
 
-				for (l = 0; l < Y.RowLength; l++)
+				for (l = 0; l < Y.Rows; l++)
 				{
 					DoubleVector W = X.GetColumn(l);
-					DoubleVector M = Y.GetColumn(l);
+					DoubleVector M = DoubleVector.GetColumn(Y,l);
 
 					Inner = M[i];
 					for (j = 0; j < i; j++)

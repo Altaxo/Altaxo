@@ -11,7 +11,12 @@ namespace Altaxo.Calc.Optimization
 {
 
 	///<summary>Class to define criteria to end optimization</summary>
-	public class EndCriteria : IFormattable {
+  /// <remarks>
+  /// <para>Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved. See <a>http://www.dnAnalytics.net</a> for details.</para>
+  /// <para>Adopted to Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
+  /// </remarks>
+  public class EndCriteria : IFormattable 
+  {
 		///<summary> Default constructor </summary>
 		public EndCriteria() : this(1000,1e-8, 10000, 100) {}
 		public EndCriteria(int maxiteration, double epsilon, int maxfunctionevaluation, int maxstationarypointiterations) 
@@ -60,7 +65,6 @@ namespace Altaxo.Calc.Optimization
 		public double minGradientEpsilon;
 		///<summary> Gradient Epsilon </summary>
 		public double minHessianEpsilon;
-		///<summary> Hessian Epsilon </summary>
 		
 		///<summary> Maximun number of iterations at a stationary point</summary>
 		public int maxStationaryPointIterations;

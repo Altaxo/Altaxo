@@ -159,22 +159,22 @@ namespace Altaxo.Calc.LinearAlgebra.Blas
 
 #if !MANAGED
 		///<summary>P/Invoke to wrapper with native code</summary>
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
 		private static extern void dna_blas_sscal( int N, float alpha, [In,Out]float[] X, int incX );
 
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
 		private static extern void dna_blas_dscal( int N, double alpha, [In,Out]double[] X, int incX );
 
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
 		private static extern void dna_blas_cscal( int N, ref ComplexFloat alpha, [In,Out]ComplexFloat[] X, int incX );
 
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
 		private static extern void dna_blas_zscal( int N, ref Complex alpha, [In,Out]Complex[] X, int incX );
 
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
 		private static extern void dna_blas_csscal( int N, float alpha, [In,Out]ComplexFloat[] X, int incX );
 
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
 		private static extern void dna_blas_zdscal( int N, double alpha, [In,Out]Complex[] X, int incX );
 #endif
 	}

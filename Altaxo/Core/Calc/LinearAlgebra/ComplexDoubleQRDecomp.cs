@@ -10,8 +10,13 @@ using System;
 namespace Altaxo.Calc.LinearAlgebra
 {
 	///<summary>This class computes the QR factorization of a general m by n <c>ComplexDoubleMatrix</c>.</summary>
-	public sealed class ComplexDoubleQRDecomp : Algorithm {
-		private readonly ComplexDoubleMatrix matrix;
+  /// <remarks>
+  /// <para>Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved. See <a>http://www.dnAnalytics.net</a> for details.</para>
+  /// <para>Adopted to Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
+  /// </remarks>
+  public sealed class ComplexDoubleQRDecomp : Algorithm 
+  {
+		private readonly IROComplexDoubleMatrix matrix;
 		private bool isFullRank = true;
 
 		private ComplexDoubleMatrix q_;
@@ -28,7 +33,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		///lower matrices are accessible by the <c>Q</c> and <c>R</c> properties.</summary>
 		///<param name="matrix">The matrix to factor.</param>
 		///<exception cref="ArgumentNullException">matrix is null.</exception>
-		public ComplexDoubleQRDecomp(ComplexDoubleMatrix matrix) {
+		public ComplexDoubleQRDecomp(IROComplexDoubleMatrix matrix) {
 			if (matrix == null)
 				throw new System.ArgumentNullException("matrix cannot be null.");
 			this.matrix = matrix;
@@ -36,8 +41,8 @@ namespace Altaxo.Calc.LinearAlgebra
 
 		/// <summary>Performs the QR factorization.</summary>
 		protected override void InternalCompute() {
-			int m = matrix.RowLength;
-			int n = matrix.ColumnLength;
+			int m = matrix.Rows;
+			int n = matrix.Columns;
 #if MANAGED
 			int minmn = m < n ? m : n;
 			r_ = new ComplexDoubleMatrix(matrix); // create a copy
@@ -51,11 +56,10 @@ namespace Altaxo.Calc.LinearAlgebra
 				Householder.UA(u[i], q_, i, m - 1, i, m - 1);
 			}
 #else
-			qr = new Complex[matrix.data.Length];
-			Array.Copy(matrix.data, qr, matrix.data.Length);
+			qr = ComplexDoubleMatrix.ToLinearComplexArray(matrix);
 			jpvt = new int[n];
 			jpvt[0] = 1;
-			dnA.Math.Lapack.Geqp3.Compute(m, n, qr, m, jpvt, out tau);
+			Lapack.Geqp3.Compute(m, n, qr, m, jpvt, out tau);
 			r_ = new ComplexDoubleMatrix(m, n);
 			// Populate R
 
@@ -80,9 +84,9 @@ namespace Altaxo.Calc.LinearAlgebra
 				}
 			}
 			if( m < n ){
-				dnA.Math.Lapack.Ungqr.Compute(m, m, m, q_.data, m, tau);
+				Lapack.Ungqr.Compute(m, m, m, q_.data, m, tau);
 			} else{
-				dnA.Math.Lapack.Ungqr.Compute(m, m, n, q_.data, m, tau);
+				Lapack.Ungqr.Compute(m, m, n, q_.data, m, tau);
 			}
 #endif
 			for (int i = 0; i < m; i++) {
@@ -97,7 +101,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <value>Boolean value indicates whether the given matrix is full rank or not</value>
 		public bool IsFullRank {
 			get {
-				if (matrix.RowLength != matrix.ColumnLength) throw new NotSquareMatrixException();
+				if (matrix.Rows != matrix.Columns) throw new NotSquareMatrixException();
 				Compute();
 				return isFullRank;
 			}
@@ -125,10 +129,10 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <exception cref="ArgumentException">Matrix row dimensions must agree.</exception>
 		/// <exception cref="InvalidOperationException">Matrix is rank deficient or <c>m &lt; n</c>.</exception>
 		public ComplexDoubleMatrix Solve (ComplexDoubleMatrix B) {
-			if (B.RowLength != matrix.RowLength) {
+			if (B.RowLength != matrix.Rows) {
 				throw new ArgumentException("Matrix row dimensions must agree.");
 			}
-			if (matrix.RowLength < matrix.ColumnLength) {
+			if (matrix.Rows < matrix.Columns) {
 				throw new System.InvalidOperationException("A must have at lest as a many rows as columns.");
 			}
 			Compute();
@@ -137,8 +141,8 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
       
 			// Copy right hand side
-			int m = matrix.RowLength;
-			int n = matrix.ColumnLength;
+			int m = matrix.Rows;
+			int n = matrix.Columns;
 			int nx = B.ColumnLength;
 			ComplexDoubleMatrix ret = new ComplexDoubleMatrix(n,nx);
 #if MANAGED
@@ -177,8 +181,8 @@ namespace Altaxo.Calc.LinearAlgebra
 #else
 			Complex[] c = new Complex[B.data.Length];
 		    Array.Copy(B.data, 0, c, 0, B.data.Length);
-			dnA.Math.Lapack.Unmqr.Compute(Side.Left, Transpose.ConjTrans, m, nx, n, qr, m, tau, c, m);
-			dnA.Math.Blas.Trsm.Compute(Order.ColumnMajor, Side.Left, UpLo.Upper, Transpose.NoTrans, Diag.NonUnit,
+			Lapack.Unmqr.Compute(Lapack.Side.Left, Lapack.Transpose.ConjTrans, m, nx, n, qr, m, tau, c, m);
+			Blas.Trsm.Compute(Blas.Order.ColumnMajor, Blas.Side.Left, Blas.UpLo.Upper, Blas.Transpose.NoTrans, Blas.Diag.NonUnit,
 				n, nx, 1, qr, m, c, m);
 
 			for ( int i = 0; i < n; i++ ) {

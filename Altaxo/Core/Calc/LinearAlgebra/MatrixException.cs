@@ -8,7 +8,11 @@ using System;
 using System.Runtime.Serialization;
 
 namespace Altaxo.Calc.LinearAlgebra {
-    ///<summary>Represents errors that occur when using the matrix classes.</summary>
+  ///<summary>Represents errors that occur when using the matrix classes.</summary>
+  /// <remarks>
+  /// <para>Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved. See <a>http://www.dnAnalytics.net</a> for details.</para>
+  /// <para>Adopted to Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
+  /// </remarks>
     [Serializable()]
   public abstract class MatrixException : LinearAlgebraException
   {

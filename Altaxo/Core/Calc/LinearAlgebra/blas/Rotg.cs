@@ -95,10 +95,10 @@ namespace Altaxo.Calc.LinearAlgebra.Blas
 
 #if !MANAGED
 		///<summary>P/Invoke to wrapper with native code</summary>
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
 		private static extern void dna_blas_srotg( ref float a, ref float b, out float c, out float s );
 
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
 		private static extern void dna_blas_drotg( ref double a, ref double b, out double c, out double s );
 #endif
 	}

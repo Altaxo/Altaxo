@@ -10,6 +10,10 @@ using System;
 namespace Altaxo.Calc.LinearAlgebra
 {
   ///<summary>This class computes the LU factorization of a general n by n <c>FloatMatrix</c>.</summary>
+  /// <remarks>
+  /// <para>Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved. See <a>http://www.dnAnalytics.net</a> for details.</para>
+  /// <para>Adopted to Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
+  /// </remarks>
   public sealed class FloatLUDecomp : Algorithm
   {
     private readonly int order;
@@ -30,20 +34,20 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<param name="matrix">The matrix to factor.</param>
     ///<exception cref="ArgumentNullException">matrix is null.</exception>
     ///<exception cref="NotSquareMatrixException">matrix is not square.</exception>
-    public FloatLUDecomp(FloatMatrix matrix)
+    public FloatLUDecomp(IROFloatMatrix matrix)
     {
       if (matrix == null)
       {
         throw new System.ArgumentNullException("matrix cannot be null.");
       }
 
-      if (matrix.RowLength != matrix.ColumnLength)
+      if (matrix.Rows != matrix.Columns)
       {
         throw new NotSquareMatrixException("Matrix must be square.");
       }
 
-      order = matrix.ColumnLength;
-      this.matrix = matrix.Clone();
+      order = matrix.Columns;
+      this.matrix = new FloatMatrix(matrix);
     }
     /// <summary>Performs the LU factorization.</summary>
     protected override void InternalCompute()
@@ -122,7 +126,7 @@ namespace Altaxo.Calc.LinearAlgebra
 #else
 			factor = new float[matrix.data.Length];
 			Array.Copy(matrix.data, factor, matrix.data.Length);
-			dnA.Math.Lapack.Getrf.Compute(order, order, factor, order, out pivots);
+			Lapack.Getrf.Compute(order, order, factor, order, out pivots);
 			GetSign();
 #endif
       SetLU();
@@ -269,7 +273,7 @@ namespace Altaxo.Calc.LinearAlgebra
 #else
 				float[] inverse = new float[factor.Length];
 				Array.Copy(factor,inverse,factor.Length);
-				dnA.Math.Lapack.Getri.Compute(order, inverse, order, pivots);
+				Lapack.Getri.Compute(order, inverse, order, pivots);
 				FloatMatrix ret = new FloatMatrix(order,order);
 				ret.data = inverse;
 				return ret;
@@ -278,28 +282,28 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
 #if MANAGED
-    private FloatMatrix Pivot(FloatMatrix B)
+    private FloatMatrix Pivot(IROFloatMatrix B)
     {
-      int m = B.RowLength;
-      int n = B.ColumnLength;
+      int m = B.Rows;
+      int n = B.Columns;
 
       FloatMatrix ret = new FloatMatrix(m, n);
       for (int i = 0; i < pivots.Length; i++)
       {
         for (int j = 0; j < n; j++)
         {
-          ret.data[i][j] = B.data[pivots[i]][j];
+          ret.data[i][j] = B[pivots[i],j];
         }
       }
       return ret;
     }
 
-    private FloatVector Pivot(FloatVector B)
+    private FloatVector Pivot(IROFloatVector B)
     {
       FloatVector ret = new FloatVector(B.Length);
       for (int i = 0; i < pivots.Length; i++)
       {
-        ret.data[i] = B.data[pivots[i]];
+        ret.data[i] = B[pivots[i]];
       }
       return ret;
     }
@@ -311,7 +315,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<exception cref="ArgumentNullException">B is null.</exception>
     ///<exception cref="SingularMatrixException">Ais singular.</exception>
     ///<exception cref="ArgumentException">The number of rows of A and B must be the same.</exception>
-    public FloatMatrix Solve(FloatMatrix B)
+    public FloatMatrix Solve(IROFloatMatrix B)
     {
       if (B == null)
       {
@@ -324,13 +328,13 @@ namespace Altaxo.Calc.LinearAlgebra
       }
       else
       {
-        if (B.RowLength != order)
+        if (B.Rows != order)
         {
           throw new System.ArgumentException("Matrix row dimensions must agree.");
         }
 #if MANAGED
         // Copy right hand side with pivoting
-        int nx = B.ColumnLength;
+        int nx = B.Columns;
         FloatMatrix X = Pivot(B);
 
         // Solve L*Y = B(piv,:)
@@ -361,10 +365,9 @@ namespace Altaxo.Calc.LinearAlgebra
         }
         return X;
 #else
-				float[] rhs = new float[B.data.Length];
-				Array.Copy(B.data,rhs,B.data.Length);
-				dnA.Math.Lapack.Getrs.Compute(dnA.Math.Transpose.NoTrans,order,B.ColumnLength,factor,order,pivots,rhs,B.RowLength);
-				FloatMatrix ret = new FloatMatrix(order,B.ColumnLength);
+				float[] rhs = FloatMatrix.ToLinearArray(B);
+				Lapack.Getrs.Compute(Lapack.Transpose.NoTrans,order,B.Columns,factor,order,pivots,rhs,B.Rows);
+				FloatMatrix ret = new FloatMatrix(order,B.Columns);
 				ret.data = rhs;
 				return ret;
 #endif
@@ -377,7 +380,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<exception cref="ArgumentNullException">B is null.</exception>
     ///<exception cref="SingularMatrixException">A is singular.</exception>
     ///<exception cref="ArgumentException">The number of rows of A and the length of B must be the same.</exception>
-    public FloatVector Solve(FloatVector B)
+    public FloatVector Solve(IROFloatVector B)
     {
       if (B == null)
       {
@@ -417,9 +420,8 @@ namespace Altaxo.Calc.LinearAlgebra
         }
         return X;
 #else
-				float[] rhs = new float[B.data.Length];
-				Array.Copy(B.data,rhs,B.data.Length);                   
-				dnA.Math.Lapack.Getrs.Compute(dnA.Math.Transpose.NoTrans,order,1,factor,order,pivots,rhs,rhs.Length);
+				float[] rhs = FloatMatrix.ToLinearArray(B);
+				Lapack.Getrs.Compute(Lapack.Transpose.NoTrans,order,1,factor,order,pivots,rhs,rhs.Length);
 				return new FloatVector(rhs);
 #endif
       }

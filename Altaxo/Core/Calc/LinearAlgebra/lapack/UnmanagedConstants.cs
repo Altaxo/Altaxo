@@ -4,7 +4,7 @@
  * Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved.
 */
 
-namespace Altaxo.Calc.LinearAlgebra
+namespace Altaxo.Calc.LinearAlgebra.Lapack
 {
   internal enum Order { RowMajor = 101, ColumnMajor = 102 };
   internal enum Transpose { NoTrans = 111, Trans = 112, ConjTrans = 113 };

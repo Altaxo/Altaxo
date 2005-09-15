@@ -7,9 +7,9 @@
 using System;
 using System.Runtime.InteropServices;
 
-using dnA.Utility;
 
-namespace dnA.Math.Lapack{
+
+namespace Altaxo.Calc.LinearAlgebra.Lapack{
 
 	[System.Security.SuppressUnmanagedCodeSecurityAttribute]
 	internal sealed class Gehrd{
@@ -51,22 +51,22 @@ namespace dnA.Math.Lapack{
 			return dna_lapack_cgehrd(Configuration.BlockSize, n, ilo, ihi, A, lda, tau);
 		}
 
-		public static int Compute( int n, int ilo, int ihi, ComplexDouble[] A, int lda, ComplexDouble[] tau ){
+		public static int Compute( int n, int ilo, int ihi, Complex[] A, int lda, Complex[] tau ){
 			ArgumentCheck(n, ilo, ihi, A, lda, tau);
 			return dna_lapack_zgehrd(Configuration.BlockSize, n, ilo, ihi, A, lda, tau);
 		}
 
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
 		private static extern int dna_lapack_sgehrd(int block_size, int n, int ilo, int ihi, float[] A, int lda, float[] tau);
 
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
 		private static extern int dna_lapack_dgehrd(int block_size, int n, int ilo, int ihi, double[] A, int lda, double[] tau);
 
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
 		private static extern int dna_lapack_cgehrd(int block_size, int n, int ilo, int ihi, ComplexFloat[] A, int lda, ComplexFloat[] tau);
 
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
-		private static extern int dna_lapack_zgehrd(int block_size, int n, int ilo, int ihi, ComplexDouble[] A, int lda, ComplexDouble[] tau);
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		private static extern int dna_lapack_zgehrd(int block_size, int n, int ilo, int ihi, Complex[] A, int lda, Complex[] tau);
 
 	}
 }

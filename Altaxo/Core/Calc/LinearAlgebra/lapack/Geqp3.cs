@@ -8,9 +8,9 @@
 using System;
 using System.Runtime.InteropServices;
 
-using dnA.Utility;
 
-namespace dnA.Math.Lapack{
+
+namespace Altaxo.Calc.LinearAlgebra.Lapack{
 	[System.Security.SuppressUnmanagedCodeSecurityAttribute]
 	internal sealed class Geqp3 {
 		private  Geqp3() {}                           
@@ -53,24 +53,24 @@ namespace dnA.Math.Lapack{
 			return dna_lapack_cgeqp3(m,n,A,lda,jpvt,tau);
 		}
 
-		internal static int Compute( int m, int n, ComplexDouble[] A, int lda, int[] jpvt, out ComplexDouble[] tau  ){
+		internal static int Compute( int m, int n, Complex[] A, int lda, int[] jpvt, out Complex[] tau  ){
 			ArgumentCheck(m, n, A, lda, jpvt);
-			tau = new ComplexDouble[System.Math.Max(1, System.Math.Min(m,n))];
+			tau = new Complex[System.Math.Max(1, System.Math.Min(m,n))];
 			
 			return dna_lapack_zgeqp3(m,n,A,lda,jpvt,tau);
 		}
 
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
 		private static extern int dna_lapack_sgeqp3( int m, int n, [In,Out]float[] A, int lda, [In,Out]int[] jpvt, [In,Out]float[] tau );
 	
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
 		private static extern int dna_lapack_dgeqp3( int m, int n, [In,Out]double[] A, int lda, [In,Out]int[] jpvt, [In,Out]double[] tau );
 
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
 		private static extern int dna_lapack_cgeqp3( int m, int n, [In,Out]ComplexFloat[] A, int lda, [In,Out]int[] jpvt, [In,Out]ComplexFloat[] tau );
 
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
-		private static extern int dna_lapack_zgeqp3( int m, int n, [In,Out]ComplexDouble[] A, int lda, [In,Out]int[] jpvt, [In,Out]ComplexDouble[] tau );
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		private static extern int dna_lapack_zgeqp3( int m, int n, [In,Out]Complex[] A, int lda, [In,Out]int[] jpvt, [In,Out]Complex[] tau );
 	}
 }
 #endif

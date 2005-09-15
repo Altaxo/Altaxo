@@ -8,9 +8,9 @@
 using System;
 using System.Runtime.InteropServices;
 
-using dnA.Utility;
 
-namespace dnA.Math.Lapack{
+
+namespace Altaxo.Calc.LinearAlgebra.Lapack{
 	[System.Security.SuppressUnmanagedCodeSecurityAttribute]
 	internal sealed class Gebrd {
 		private  Gebrd() {}                           
@@ -58,27 +58,27 @@ namespace dnA.Math.Lapack{
 			return dna_lapack_cgebrd(Configuration.BlockSize, m, n, A, lda, d, e, tauq, taup);
 		}
 
-		internal static int Compute( int m, int n, ComplexDouble[] A, int lda, out double[] d, out double[] e, out ComplexDouble[] tauq, out ComplexDouble[] taup ){
+		internal static int Compute( int m, int n, Complex[] A, int lda, out double[] d, out double[] e, out Complex[] tauq, out Complex[] taup ){
 			ArgumentCheck(m, n, A, lda);
 			d = new double[System.Math.Max(1, System.Math.Min(m,n))];
 			e = new double[System.Math.Max(1, System.Math.Min(m,n))];
-			tauq = new ComplexDouble[System.Math.Max(1, System.Math.Min(m,n))];
-			taup = new ComplexDouble[System.Math.Max(1, System.Math.Min(m,n))];
+			tauq = new Complex[System.Math.Max(1, System.Math.Min(m,n))];
+			taup = new Complex[System.Math.Max(1, System.Math.Min(m,n))];
 			
 			return dna_lapack_zgebrd(Configuration.BlockSize, m, n, A, lda, d, e, tauq, taup);
 		}
                                                      
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
 		private static extern int dna_lapack_sgebrd( int block_size, int m, int n, [In,Out]float[] A, int lda, [In,Out]float[] d, [In,Out]float[] e, [In,Out]float[] tauq, [In,Out]float[] taup );
 	
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
 		private static extern int dna_lapack_dgebrd( int block_size, int m, int n, [In,Out]double[] A, int lda, [In,Out]double[] d, [In,Out]double[] e, [In,Out]double[] tauq, [In,Out]double[] taup );
 
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
 		private static extern int dna_lapack_cgebrd( int block_size, int m, int n, [In,Out]ComplexFloat[] A, int lda, [In,Out]float[] d, [In,Out]float[] e, [In,Out]ComplexFloat[] tauq, [In,Out]ComplexFloat[] taup );
 
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
-		private static extern int dna_lapack_zgebrd( int block_size, int m, int n, [In,Out]ComplexDouble[] A, int lda, [In,Out]double[] d, [In,Out]double[] e, [In,Out]ComplexDouble[] tauq, [In,Out]ComplexDouble[] taup );
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		private static extern int dna_lapack_zgebrd( int block_size, int m, int n, [In,Out]Complex[] A, int lda, [In,Out]double[] d, [In,Out]double[] e, [In,Out]Complex[] tauq, [In,Out]Complex[] taup );
 	}
 }
 #endif

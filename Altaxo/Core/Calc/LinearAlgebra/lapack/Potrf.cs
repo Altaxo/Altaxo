@@ -8,9 +8,9 @@
 using System;
 using System.Runtime.InteropServices;
 
-using dnA.Utility;
 
-namespace dnA.Math.Lapack{
+
+namespace Altaxo.Calc.LinearAlgebra.Lapack{
 	[System.Security.SuppressUnmanagedCodeSecurityAttribute]
 	internal sealed class Potrf {
 		private Potrf() {}
@@ -42,22 +42,22 @@ namespace dnA.Math.Lapack{
 			return dna_lapack_cpotrf(uplo, n, A, lda);
 		}
 
-		internal static int Compute( UpLo uplo, int n, ComplexDouble[] A, int lda  ){
+		internal static int Compute( UpLo uplo, int n, Complex[] A, int lda  ){
 			ArgumentCheck(uplo, n, A, lda);
 			return dna_lapack_zpotrf(uplo, n, A, lda);
 		}
 
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
 		private static extern int dna_lapack_spotrf( UpLo uplo, int n, [In,Out]float[] A, int lda );
 
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
 		private static extern int dna_lapack_dpotrf( UpLo uplo, int n, [In,Out]double[] A, int lda );
 
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
 		private static extern int dna_lapack_cpotrf( UpLo uplo, int n, [In,Out]ComplexFloat[] A, int lda );
 
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
-		private static extern int dna_lapack_zpotrf( UpLo uplo, int n, [In,Out]ComplexDouble[] A, int lda );
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		private static extern int dna_lapack_zpotrf( UpLo uplo, int n, [In,Out]Complex[] A, int lda );
 	}
 }
 #endif

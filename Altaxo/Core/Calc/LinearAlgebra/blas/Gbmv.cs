@@ -228,16 +228,16 @@ namespace Altaxo.Calc.LinearAlgebra.Blas
 
 #if !MANAGED
 		///<summary>P/Invoke to wrapper with native code</summary>
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
 		private static extern void dna_blas_sgbmv(Order order, Transpose TransA, int M, int N, int KL, int KU, float alpha,  [In]float[] A, int lda, [In]float[] X, int incX, float beta, [In,Out]float[] Y, int incY);
 
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
 		private static extern void dna_blas_dgbmv( Order order, Transpose TransA, int M, int N, int KL, int KU, double alpha, [In]double[] A, int lda, [In]double[] X, int incX, double beta, [In,Out]double[] Y, int incY);
 
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
 		private static extern void dna_blas_cgbmv( Order order, Transpose TransA, int M, int N, int KL, int KU, ref ComplexFloat alpha, [In]ComplexFloat[] A, int lda, [In]ComplexFloat[] X, int incX, ref ComplexFloat beta, [In,Out]ComplexFloat[] Y, int incY);
 
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
 		private static extern void dna_blas_zgbmv( Order order, Transpose TransA, int M, int N, int KL, int KU, ref Complex alpha, [In]Complex[] A, int lda, [In]Complex[] X, int incX, ref Complex beta, [In,Out]Complex[] Y, int incY);
 #endif
 	}

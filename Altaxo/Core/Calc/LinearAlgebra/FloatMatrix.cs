@@ -15,6 +15,10 @@ namespace Altaxo.Calc.LinearAlgebra
   ///<summary>
   /// Defines a matrix of floats.
   ///</summary>
+  /// <remarks>
+  /// <para>Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved. See <a>http://www.dnAnalytics.net</a> for details.</para>
+  /// <para>Adopted to Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
+  /// </remarks>
   [System.Serializable]
   sealed public class FloatMatrix : IFloatMatrix, ICloneable, IFormattable, IEnumerable, ICollection, IList
   {
@@ -1344,7 +1348,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 #else
-			dnA.Math.Blas.Scal.Compute( ret.data.Length, 1/b, ret.data, 1 );
+			Blas.Scal.Compute( ret.data.Length, 1/b, ret.data, 1 );
 #endif
       return ret;
     }
@@ -1376,7 +1380,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 #else
-			dnA.Math.Blas.Scal.Compute( data.Length, 1/a, data, 1 );
+			Blas.Scal.Compute( data.Length, 1/a, data, 1 );
 #endif
     }
 
@@ -1401,7 +1405,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 #else
-			dnA.Math.Blas.Scal.Compute( ret.data.Length, a, ret.data, 1 );
+			Blas.Scal.Compute( ret.data.Length, a, ret.data, 1 );
 #endif
       return ret;
     }
@@ -1461,7 +1465,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 #else	
-			dnA.Math.Blas.Scal.Compute( data.Length, a, data, 1 );
+			Blas.Scal.Compute( data.Length, a, data, 1 );
 #endif
     }
 
@@ -1496,7 +1500,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 #else	
-			dnA.Math.Blas.Gemv.Compute(Order.ColumnMajor, dnA.Math.Transpose.NoTrans, x.rows, x.columns, 1, x.data, x.rows, y.data, 1, 1, ret.data, 1);
+			Blas.Gemv.Compute(Blas.Order.ColumnMajor, Blas.Transpose.NoTrans, x.rows, x.columns, 1, x.data, x.rows, y.data, 1, 1, ret.data, 1);
 #endif
       return ret;
     }
@@ -1549,7 +1553,7 @@ namespace Altaxo.Calc.LinearAlgebra
       }
 #else	
 			float[] temp = new float[rows];
-			dnA.Math.Blas.Gemv.Compute(Order.ColumnMajor, dnA.Math.Transpose.NoTrans, rows, columns, 1,data, x.Length, x.data, 1, 1, temp, 1);
+			Blas.Gemv.Compute(Blas.Order.ColumnMajor, Blas.Transpose.NoTrans, rows, columns, 1,data, x.Length, x.data, 1, 1, temp, 1);
 #endif
       data = temp;
       columns = 1;
@@ -1592,7 +1596,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 #else
-			dnA.Math.Blas.Gemm.Compute(Order.ColumnMajor, dnA.Math.Transpose.NoTrans, dnA.Math.Transpose.NoTrans,
+			Blas.Gemm.Compute(Blas.Order.ColumnMajor, Blas.Transpose.NoTrans, Blas.Transpose.NoTrans,
 				x.rows, y.columns, x.columns, 1, x.data, x.rows, y.data, y.rows, 1, ret.data, ret.rows);
 #endif
       return ret;
@@ -1656,7 +1660,7 @@ namespace Altaxo.Calc.LinearAlgebra
       }
 #else
 			float[] temp = new float[(long)rows*(long)x.columns];
-			dnA.Math.Blas.Gemm.Compute(Order.ColumnMajor, dnA.Math.Transpose.NoTrans, dnA.Math.Transpose.NoTrans,
+			Blas.Gemm.Compute(Blas.Order.ColumnMajor, Blas.Transpose.NoTrans, Blas.Transpose.NoTrans,
 				rows, x.columns, columns, 1, data, rows, x.data, x.rows, 1, temp, rows);
 #endif
       data = temp;
@@ -1684,7 +1688,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 #else
-			dnA.Math.Blas.Copy.Compute(this.data.Length, x.data, 1, this.data, 1 );
+			Blas.Copy.Compute(this.data.Length, x.data, 1, this.data, 1 );
 #endif
     }
 
@@ -1885,6 +1889,108 @@ namespace Altaxo.Calc.LinearAlgebra
     {
       throw new System.NotSupportedException();
     }
+
+          #region Additions due to Adoption
+
+
+    ///<summary>Constructor for matrix that makes a deep copy of a given <c>IROFloatMatrix</c>.</summary>
+    ///<param name="source"><c>IROFloatMatrix</c> to deep copy into new matrix.</param>
+    ///<exception cref="ArgumentNullException"><c>source</c> is null.</exception>
+    public FloatMatrix(IROFloatMatrix source)
+    {
+      if (source == null)
+      {
+        throw new ArgumentNullException("source", "The input FloatMatrix cannot be null.");
+      }
+
+      this.rows = source.Rows;
+      this.columns = source.Columns;
+#if MANAGED
+      data = new float[rows][];
+      if (source is FloatMatrix)
+      {
+        FloatMatrix cdmsource = (FloatMatrix)source;
+         for (int i = 0; i < rows; i++)
+           data[i] = (float[])cdmsource.data[i].Clone();
+      }
+      else
+      {
+        for (int i = 0; i < rows; i++)
+        {
+          data[i] = new float[columns];
+        }
+
+        for (int i = 0; i < rows; i++)
+          for (int j = 0; j < columns; j++)
+            data[i][j] = source[i,j];
+      }
+#else
+			data = FloatMatrix.ToLinearArray(source);
+#endif
+    }
+
+    #endregion
+
+    #region Additions due to Adoption to Altaxo
+
+    /// <summary>
+    /// This creates a linear array for use with unmanaged routines.
+    /// </summary>
+    /// <param name="matrix">The matrix to convert to an array.</param>
+    /// <returns>Linear array of complex.</returns>
+    public static float[] ToLinearArray(IROMatrix matrix)
+    {
+      int rows = matrix.Rows;
+      int columns = matrix.Columns;
+
+      float[] result = new float[rows*columns];
+
+      int k=0;
+  
+        for(int j=0;j<columns;++j)
+          for(int i=0;i<rows;++i)
+            result[k++] = (float)matrix[i,j];
+
+      return result;
+    }
+
+    /// <summary>
+    /// This creates a linear array for use with unmanaged routines.
+    /// </summary>
+    /// <param name="matrix">The matrix to convert to an array.</param>
+    /// <returns>Linear array of complex.</returns>
+    public static float[] ToLinearArray(IROFloatMatrix matrix)
+    {
+      int rows = matrix.Rows;
+      int columns = matrix.Columns;
+
+      float[] result = new float[rows*columns];
+
+      int k=0;
+      for(int j=0;j<columns;++j)
+        for(int i=0;i<rows;++i)
+          result[k++] = matrix[i,j];
+
+      return result;
+    }
+
+    /// <summary>
+    /// This creates a linear array for use with unmanaged routines.
+    /// </summary>
+    /// <param name="source">The vector to convert to an array.</param>
+    /// <returns>Linear array of complex.</returns>
+    public static float[] ToLinearArray(IROFloatVector source)
+    {
+      int length = source.Length;
+      float[] result = new float[length];
+      for(int i=0;i<length;++i)
+        result[i] = source[i];
+
+      return result;
+    }
+
+    #endregion
+
   }
 }
 

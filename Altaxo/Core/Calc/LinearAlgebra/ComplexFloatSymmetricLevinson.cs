@@ -51,7 +51,11 @@ namespace Altaxo.Calc.LinearAlgebra
 	/// 66 - 75.
 	/// </para>
 	/// </remarks>
-	/// <example>
+  /// <remarks>
+  /// <para>Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved. See <a>http://www.dnAnalytics.net</a> for details.</para>
+  /// <para>Adopted to Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
+  /// </remarks>
+  /// <example>
 	/// The following simple example illustrates the use of the class:
 	/// <para>
 	/// <code escaped="true">
@@ -336,7 +340,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <exception cref="RankException">
 		/// The length of <B>T</B> is zero.
 		/// </exception>
-		public ComplexFloatSymmetricLevinson(ComplexFloatVector T)
+		public ComplexFloatSymmetricLevinson(IROComplexFloatVector T)
 		{
 			// check parameter
 			if (T == null)
@@ -349,7 +353,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 
 			// save the vector
-			m_LeftColumn = T.Clone();
+      m_LeftColumn = new ComplexFloatVector(T);
 			m_Order = m_LeftColumn.Length;
 
 			// allocate memory for lower triangular matrix
@@ -585,7 +589,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// using the Levinson algorithm, and then calculates the solution vector.
 		/// </para>
 		/// </remarks>
-		public ComplexFloatVector Solve(ComplexFloatVector Y)
+		public ComplexFloatVector Solve(IROComplexFloatVector Y)
 		{
 			ComplexFloatVector X;
 
@@ -664,7 +668,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// using the Levinson algorithm, and then calculates the solution matrix.
 		/// </para>
 		/// </remarks>
-		public ComplexFloatMatrix Solve(ComplexFloatMatrix Y)
+		public ComplexFloatMatrix Solve(IROComplexFloatMatrix Y)
 		{
 			ComplexFloatMatrix X;
 
@@ -673,7 +677,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			{
 				throw new System.ArgumentNullException("Y");
 			}
-			else if (m_Order != Y.ColumnLength)
+			else if (m_Order != Y.Columns)
 			{
 				throw new RankException("The numer of rows in Y is not equal to the number of rows in the Toeplitz matrix.");
 			}
@@ -685,7 +689,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				throw new SingularMatrixException("The Toeplitz matrix or one of the the leading sub-matrices is singular.");
 			}
 
-			int M = Y.RowLength;
+			int M = Y.Rows;
 			int i, j, l, m;			// index/loop variables
 			ComplexFloat[] Inner;			// inner product
 			ComplexFloat[] G;				// scaling constant
@@ -702,10 +706,10 @@ namespace Altaxo.Calc.LinearAlgebra
 			for (m = 0; m < M; m++)
 			{
 #if MANAGED
-				X.data[0][m] = scalar * Y.data[0][m];
+				X.data[0][m] = scalar * Y[0,m];
 #else
 
-				X.data[m*m_Order] = scalar * Y.data[m*m_Order];
+				X.data[m*m_Order] = scalar * Y[0,m];
 #endif
 			}
 
@@ -716,9 +720,9 @@ namespace Altaxo.Calc.LinearAlgebra
 				for (m = 0; m < M; m++)
 				{
 #if MANAGED
-					Inner[m] = Y.data[i][m];
+					Inner[m] = Y[i,m];
 #else
-					Inner[m] = Y.data[m*m_Order+i];
+					Inner[m] = Y[i,m];
 #endif
 				}
 
@@ -892,7 +896,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// and suffers from no speed penalty.
 		/// </para>
 		/// </remarks>
-		public static ComplexFloatVector Solve(ComplexFloatVector T, ComplexFloatVector Y)
+		public static ComplexFloatVector Solve(IROComplexFloatVector T, IROComplexFloatVector Y)
 		{
 
 			ComplexFloatVector X;
@@ -1017,7 +1021,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// and suffers from no speed penalty.
 		/// </para>
 		/// </remarks>
-		public static ComplexFloatMatrix Solve(ComplexFloatVector T, ComplexFloatMatrix Y)
+		public static ComplexFloatMatrix Solve(IROComplexFloatVector T, IROComplexFloatMatrix Y)
 		{
 
 			ComplexFloatMatrix X;
@@ -1031,7 +1035,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			{
 				throw new System.ArgumentNullException("Y");
 			}
-			else if (T.Length != Y.ColumnLength)
+			else if (T.Length != Y.Columns)
 			{
 				throw new RankException("The length of T and Y are not equal.");
 			}
@@ -1040,7 +1044,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 				// allocate memory
 				int N = T.Length;
-				int M = Y.RowLength;
+				int M = Y.Rows;
 				X = new ComplexFloatMatrix(N, M);                 // solution matrix
 				ComplexFloatVector Z = new ComplexFloatVector(N);       // temporary storage vector
 				ComplexFloat e;                                   // prediction error
@@ -1165,7 +1169,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// solution (<b>N</b> is the matrix order).
 		/// </para>
 		/// </remarks>
-		public static ComplexFloatVector YuleWalker(ComplexFloatVector R)
+		public static ComplexFloatVector YuleWalker(IROComplexFloatVector R)
 		{
 
 			ComplexFloatVector a;
@@ -1260,7 +1264,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// if we simply solved a linear Toeplitz system with a right-side identity matrix (<b>N</b> is the matrix order).
 		/// </para>
 		/// </remarks>
-		public static ComplexFloatMatrix Inverse(ComplexFloatVector T)
+		public static ComplexFloatMatrix Inverse(IROComplexFloatVector T)
 		{
 
 			ComplexFloatMatrix X;

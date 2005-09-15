@@ -8,9 +8,9 @@
 using System;
 using System.Runtime.InteropServices;
 
-using dnA.Utility;
 
-namespace dnA.Math.Lapack{
+
+namespace Altaxo.Calc.LinearAlgebra.Lapack{
 	[System.Security.SuppressUnmanagedCodeSecurityAttribute]
 	internal sealed class Ormhr {
 		private  Ormhr() {}                           
@@ -84,7 +84,7 @@ namespace dnA.Math.Lapack{
 			return dna_lapack_cormhr(Configuration.BlockSize, side, trans, m, n, k, ilo, ihi, A, lda, tau, C, ldc);
 		}
 
-		internal static int Compute( Side side, Transpose trans, int m, int n, int k, int ilo, int ihi, ComplexDouble[] A, int lda, ComplexDouble[] tau, ComplexDouble[] C, int ldc  ){
+		internal static int Compute( Side side, Transpose trans, int m, int n, int k, int ilo, int ihi, Complex[] A, int lda, Complex[] tau, Complex[] C, int ldc  ){
 			ArgumentCheck(side, m, n, k, ilo, ihi, A, lda, tau, C, ldc);
 			if (tau.Length < System.Math.Max(1, k) ){
 				throw new ArgumentException("tau must be at least max(1,k).");
@@ -93,11 +93,11 @@ namespace dnA.Math.Lapack{
 			return dna_lapack_zormhr(Configuration.BlockSize, side, trans, m, n, k, ilo, ihi, A, lda, tau, C, ldc);
 		}
 
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
 		private static extern int dna_lapack_cormhr( int block_size, Side side, Transpose trans, int m, int n, int k, int ilo, int ihi, [In,Out]ComplexFloat[] A, int lda, [In,Out]ComplexFloat[] tau, [In,Out]ComplexFloat[] C, int ldc   );
 
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
-		private static extern int dna_lapack_zormhr( int block_size, Side side, Transpose trans, int m, int n, int k, int ilo, int ihi, [In,Out]ComplexDouble[] A, int lda, [In,Out]ComplexDouble[] tau, [In,Out]ComplexDouble[] C, int ldc   );
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		private static extern int dna_lapack_zormhr( int block_size, Side side, Transpose trans, int m, int n, int k, int ilo, int ihi, [In,Out]Complex[] A, int lda, [In,Out]Complex[] tau, [In,Out]Complex[] C, int ldc   );
 	}
 }
 #endif

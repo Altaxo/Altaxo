@@ -11,7 +11,12 @@ using System.Runtime.InteropServices;
 namespace Altaxo.Calc.LinearAlgebra
 {
 	///<summary>This class computes the SVD factorization of a general <c>ComplexDoubleMatrix</c>.</summary>
-	public sealed class ComplexDoubleSVDDecomp : Algorithm {
+  /// <remarks>
+  /// <para>Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved. See <a>http://www.dnAnalytics.net</a> for details.</para>
+  /// <para>Adopted to Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
+  /// </remarks>
+  public sealed class ComplexDoubleSVDDecomp : Algorithm 
+  {
 		private const int MAXITER = 1000;
 
 		private ComplexDoubleMatrix u;
@@ -94,22 +99,22 @@ namespace Altaxo.Calc.LinearAlgebra
 		///<param name="matrix">The matrix to decompose.</param>
 		///<param name="computeVectors">Whether to compute the singular vectors or not.</param>
 		///<exception cref="ArgumentNullException">matrix is null.</exception>
-		public ComplexDoubleSVDDecomp(ComplexDoubleMatrix matrix, bool computeVectors){
+		public ComplexDoubleSVDDecomp(IROComplexDoubleMatrix matrix, bool computeVectors){
 			if ( matrix == null ) {
 				throw new System.ArgumentNullException("matrix cannot be null.");
 			}
-			this.matrix = matrix.Clone();
+			this.matrix = new ComplexDoubleMatrix(matrix);
 			this.computeVectors = computeVectors;
 		}
 
 		///<summary>Constructor for SVD decomposition class.</summary>
 		///<param name="matrix">The matrix to decompose.</param>
 		///<exception cref="ArgumentNullException">matrix is null.</exception>
-		public ComplexDoubleSVDDecomp(ComplexDoubleMatrix matrix){
+		public ComplexDoubleSVDDecomp(IROComplexDoubleMatrix matrix){
 			if ( matrix == null ) {
 				throw new System.ArgumentNullException("matrix cannot be null.");
 			}
-			this.matrix = matrix.Clone();
+			this.matrix = new ComplexDoubleMatrix(matrix);
 		}
 		
 		///<summary>Computes the algorithm.</summary>
@@ -514,7 +519,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			v = new ComplexDoubleMatrix(cols);
 			Complex[] a = new Complex[matrix.data.Length];
 			Array.Copy(matrix.data, a, matrix.data.Length);
-			dnA.Math.Lapack.Gesvd.Compute(rows, cols, a, d, u.data, v.data );
+			Lapack.Gesvd.Compute(rows, cols, a, d, u.data, v.data );
 			v.ConjugateTranspose();
 			for( int i = 0; i < d.Length; i++){
 				s[i] = d[i];

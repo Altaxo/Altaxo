@@ -9,7 +9,12 @@ using System;
 
 namespace Altaxo.Calc.LinearAlgebra {
     ///<summary>This class computes the Cholesky factorization of a general n by n <c>FloatMatrix</c>.</summary>
-    public sealed class FloatCholeskyDecomp : Algorithm {
+  /// <remarks>
+  /// <para>Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved. See <a>http://www.dnAnalytics.net</a> for details.</para>
+  /// <para>Adopted to Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
+  /// </remarks>
+  public sealed class FloatCholeskyDecomp : Algorithm 
+  {
         private readonly int order;
         private bool ispd = true;
         private FloatMatrix l;
@@ -23,17 +28,17 @@ namespace Altaxo.Calc.LinearAlgebra {
         ///<exception cref="NotSquareMatrixException">matrix is not square.</exception>
         ///<remarks>This class only uses the lower triangle of the input matrix. It ignores the
         ///upper triangle.</remarks>
-        public FloatCholeskyDecomp(FloatMatrix matrix){
+        public FloatCholeskyDecomp(IROFloatMatrix matrix){
             if ( matrix == null ) {
                 throw new System.ArgumentNullException("matrix cannot be null.");
             }
 
-            if ( matrix.RowLength != matrix.ColumnLength ) {
+            if ( matrix.Rows != matrix.Columns ) {
                 throw new NotSquareMatrixException("Matrix must be square.");
             }
 
-            order = matrix.ColumnLength;
-            this.matrix = matrix.Clone();
+            order = matrix.Columns;
+            this.matrix = new FloatMatrix(matrix);
         }
 
         ///<summary>Computes the algorithm.</summary>
@@ -66,7 +71,7 @@ namespace Altaxo.Calc.LinearAlgebra {
 #else
             float[] factor = new float[matrix.data.Length];
             Array.Copy(matrix.data, factor, matrix.data.Length);
-            int status = dnA.Math.Lapack.Potrf.Compute(UpLo.Lower, order, factor, order);
+            int status = Lapack.Potrf.Compute(Lapack.UpLo.Lower, order, factor, order);
             if (status != 0 ) {
                 ispd = false;
             }
@@ -126,7 +131,7 @@ namespace Altaxo.Calc.LinearAlgebra {
         ///<exception cref="ArgumentNullException">B is null.</exception>
         ///<exception cref="NotPositiveDefiniteException">A is not positive definite.</exception>
         ///<exception cref="ArgumentException">The number of rows of A and B must be the same.</exception>
-        public FloatMatrix Solve (FloatMatrix B) {
+        public FloatMatrix Solve (IROFloatMatrix B) {
             if ( B == null ) {
                 throw new System.ArgumentNullException("B cannot be null.");
             }
@@ -134,17 +139,17 @@ namespace Altaxo.Calc.LinearAlgebra {
             if ( !ispd ) {
                 throw new NotPositiveDefiniteException();
             } else {
-                if ( B.RowLength != order ) {
+                if ( B.Rows != order ) {
                     throw new System.ArgumentException("Matrix row dimensions must agree." );
                 }
 #if MANAGED
                 // Copy right hand side.
-                int cols = B.ColumnLength;
+                int cols = B.Columns;
                 FloatMatrix X = new FloatMatrix(B);
                 for (int c = 0; c < cols; c++ ) {
                     // Solve L*Y = B;
                     for (int i = 0; i < order; i++) {
-                        float sum = B.data[i][c];
+                        float sum = B[i,c];
                         for (int k = i-1; k >= 0; k--) {
                             sum -= l.data[i][k] * X.data[k][c];
                         }
@@ -163,10 +168,9 @@ namespace Altaxo.Calc.LinearAlgebra {
 
                 return X;
 #else
-                float[] rhs = new float[B.data.Length];
-                Array.Copy(B.data,rhs,B.data.Length);
-                dnA.Math.Lapack.Potrs.Compute(UpLo.Lower,order,B.ColumnLength,l.data,order,rhs,B.RowLength);
-                FloatMatrix ret = new FloatMatrix(order,B.ColumnLength);
+                float[] rhs = FloatMatrix.ToLinearArray(B);
+                Lapack.Potrs.Compute(Lapack.UpLo.Lower,order,B.Columns,l.data,order,rhs,B.Rows);
+                FloatMatrix ret = new FloatMatrix(order,B.Columns);
                 ret.data = rhs;
                 return ret;
 #endif
@@ -179,7 +183,7 @@ namespace Altaxo.Calc.LinearAlgebra {
         ///<exception cref="ArgumentNullException">B is null.</exception>
         ///<exception cref="NotPositiveDefiniteException">A is not positive definite.</exception>
         ///<exception cref="ArgumentException">The number of rows of A and the length of B must be the same.</exception>
-        public FloatVector Solve (FloatVector B) {
+        public FloatVector Solve (IROFloatVector B) {
             if ( B == null ) {
                 throw new System.ArgumentNullException("B cannot be null.");
             }
@@ -195,7 +199,7 @@ namespace Altaxo.Calc.LinearAlgebra {
                 FloatVector X = new FloatVector(B);
                 // Solve L*Y = B;
                 for (int i = 0; i < order; i++) {
-                    float sum = B.data[i];
+                    float sum = B[i];
                     for (int k = i-1; k >= 0; k--) {
                         sum -= l.data[i][k] * X.data[k];
                     }
@@ -212,9 +216,8 @@ namespace Altaxo.Calc.LinearAlgebra {
 
                 return X;
 #else
-                float[] rhs = new float[B.data.Length];
-                Array.Copy(B.data,rhs,B.data.Length);
-                dnA.Math.Lapack.Potrs.Compute(UpLo.Lower,order,1,l.data,order,rhs,B.Length);
+                float[] rhs = FloatMatrix.ToLinearArray(B);
+                Lapack.Potrs.Compute(Lapack.UpLo.Lower,order,1,l.data,order,rhs,B.Length);
                 FloatVector ret = new FloatVector(order,B.Length);
                 ret.data = rhs;
                 return ret;
@@ -237,7 +240,7 @@ namespace Altaxo.Calc.LinearAlgebra {
 #else
                 float[] inverse = new float[l.data.Length];
                 Array.Copy(l.data,inverse,l.data.Length);
-                dnA.Math.Lapack.Potri.Compute(UpLo.Lower, order, inverse, order);
+                Lapack.Potri.Compute(Lapack.UpLo.Lower, order, inverse, order);
                 FloatMatrix ret = new FloatMatrix(order,order);
                 ret.data = inverse;
                 for (int i = 0; i < order; i++) {

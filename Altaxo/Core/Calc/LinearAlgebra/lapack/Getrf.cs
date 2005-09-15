@@ -7,9 +7,9 @@
 using System;
 using System.Runtime.InteropServices;
 
-using dnA.Utility;
 
-namespace dnA.Math.Lapack{
+
+namespace Altaxo.Calc.LinearAlgebra.Lapack{
 	[System.Security.SuppressUnmanagedCodeSecurityAttribute]
 	internal sealed class Getrf {
 		private  Getrf() {}
@@ -49,24 +49,24 @@ namespace dnA.Math.Lapack{
 			return dna_lapack_cgetrf(m,n,A,lda,ipiv);
 		}
 
-		internal static int Compute( int m, int n, ComplexDouble[] A, int lda, out int[] ipiv ){
+		internal static int Compute( int m, int n, Complex[] A, int lda, out int[] ipiv ){
 			ArgumentCheck(m,n,A,lda);
 			ipiv = new int[System.Math.Max(1, System.Math.Min(m,n))];
 			
 			return dna_lapack_zgetrf(m,n,A,lda,ipiv);
 		}
 
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
 		private static extern int dna_lapack_sgetrf( int m, int n, [In,Out]float[] A, int lda, [In,Out]int[] ipiv );
 	
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
 		private static extern int dna_lapack_dgetrf( int m, int n, [In,Out]double[] A, int lda, [In,Out]int[] ipiv );
 
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
 		private static extern int dna_lapack_cgetrf( int m, int n, [In,Out]ComplexFloat[] A, int lda, [In,Out]int[] ipiv );
 
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
-		private static extern int dna_lapack_zgetrf( int m, int n, [In,Out]ComplexDouble[] A, int lda, [In,Out]int[] ipiv );
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		private static extern int dna_lapack_zgetrf( int m, int n, [In,Out]Complex[] A, int lda, [In,Out]int[] ipiv );
 	}
 }
 #endif

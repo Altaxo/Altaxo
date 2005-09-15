@@ -1760,7 +1760,7 @@ namespace AltaxoTest.Calc.LinearAlgebra {
 		[ExpectedException(typeof(ArgumentNullException))]
 		public void NullParameterTestforStaticSolveVector2()
 		{
-			DoubleVector X = DoubleSymmetricLevinson.Solve(new double[]{1.0, 1.0}, null as DoubleVector);
+			DoubleVector X = DoubleSymmetricLevinson.Solve(new double[]{1.0, 1.0}, null as RODoubleVector);
 		}
 
 		#endregion Null Parameter Test 2 for Static SolveVector

@@ -8,9 +8,9 @@
 using System;
 using System.Runtime.InteropServices;
 
-using dnA.Utility;
 
-namespace dnA.Math.Lapack{
+
+namespace Altaxo.Calc.LinearAlgebra.Lapack{
 	[System.Security.SuppressUnmanagedCodeSecurityAttribute]
 	internal sealed class Potrs {
 		private Potrs() {}
@@ -45,22 +45,22 @@ namespace dnA.Math.Lapack{
 			return dna_lapack_cpotrs(uplo, n, nrhs, A, lda, B, ldb);
 		}
 
-		internal static int Compute( UpLo uplo, int n, int nrhs, ComplexDouble[] A, int lda, ComplexDouble[] B, int ldb  ){
+		internal static int Compute( UpLo uplo, int n, int nrhs, Complex[] A, int lda, Complex[] B, int ldb  ){
 			ArgumentCheck(uplo, n, nrhs, A, lda, B, ldb);
 			return dna_lapack_zpotrs(uplo, n, nrhs, A, lda, B, ldb);
 		}
 
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
 		private static extern int dna_lapack_spotrs( UpLo uplo, int n, int nrsh, [In,Out]float[] A, int lda, [In,Out]float[] B, int ldb );
 
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
 		private static extern int dna_lapack_dpotrs( UpLo uplo, int n, int nrsh, [In,Out]double[] A, int lda, [In,Out]double[] B, int ldb );
 
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
 		private static extern int dna_lapack_cpotrs( UpLo uplo, int n, int nrsh, [In,Out]ComplexFloat[] A, int lda, [In,Out]ComplexFloat[] B, int ldb );
 
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
-		private static extern int dna_lapack_zpotrs( UpLo uplo, int n, int nrsh, [In,Out]ComplexDouble[] A, int lda, [In,Out]ComplexDouble[] B, int ldb );
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		private static extern int dna_lapack_zpotrs( UpLo uplo, int n, int nrsh, [In,Out]Complex[] A, int lda, [In,Out]Complex[] B, int ldb );
 	}
 }
 #endif

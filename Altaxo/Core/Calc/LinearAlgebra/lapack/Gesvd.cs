@@ -7,9 +7,9 @@
 using System;
 using System.Runtime.InteropServices;
 
-using dnA.Utility;
 
-namespace dnA.Math.Lapack{
+
+namespace Altaxo.Calc.LinearAlgebra.Lapack{
 	[System.Security.SuppressUnmanagedCodeSecurityAttribute]
 	internal sealed class Gesvd {
 		private Gesvd() {}                           
@@ -35,24 +35,24 @@ namespace dnA.Math.Lapack{
 			return dna_lapack_cgesvd(m, n, a, m, s, u, m, v, n);
 		}
 
-		internal static int Compute( int m, int n, ComplexDouble[] a, double[] s, ComplexDouble[] u, ComplexDouble[] v  ){
+		internal static int Compute( int m, int n, Complex[] a, double[] s, Complex[] u, Complex[] v  ){
 			if( a == null ){
 				throw new ArgumentNullException("a", "a cannot be null.");
 			}
 			return dna_lapack_zgesvd(m, n, a, m, s, u, m, v, n);
 		}
 
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
 		private static extern int dna_lapack_sgesvd( int m, int n, [In,Out]float[] a, int lda, [In,Out]float[] s, [In,Out]float[] u, int ldu, [In,Out]float[] v, int ldavt );
 
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
 		private static extern int dna_lapack_dgesvd( int m, int n, [In,Out]double[] a, int lda, [In,Out]double[] s, [In,Out]double[] u, int ldu, [In,Out]double[] v, int ldavt );
 
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
 		private static extern int dna_lapack_cgesvd( int m, int n, [In,Out]ComplexFloat[] a, int lda, [In,Out]float[] s, [In,Out]ComplexFloat[] u, int ldu, [In,Out]ComplexFloat[] v, int ldavt );
 
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
-		private static extern int dna_lapack_zgesvd( int m, int n, [In,Out]ComplexDouble[] a, int lda, [In,Out]double[] s, [In,Out]ComplexDouble[] u, int ldu, [In,Out]ComplexDouble[] v, int ldavt );
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		private static extern int dna_lapack_zgesvd( int m, int n, [In,Out]Complex[] a, int lda, [In,Out]double[] s, [In,Out]Complex[] u, int ldu, [In,Out]Complex[] v, int ldavt );
 	}
 }
 #endif

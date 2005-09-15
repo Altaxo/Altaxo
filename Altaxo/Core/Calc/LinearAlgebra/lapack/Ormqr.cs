@@ -8,9 +8,9 @@
 using System;
 using System.Runtime.InteropServices;
 
-using dnA.Utility;
 
-namespace dnA.Math.Lapack{
+
+namespace Altaxo.Calc.LinearAlgebra.Lapack{
 	[System.Security.SuppressUnmanagedCodeSecurityAttribute]
 	internal sealed class Ormqr {
 		private  Ormqr() {}                           
@@ -71,10 +71,10 @@ namespace dnA.Math.Lapack{
 			return dna_lapack_dormqr(Configuration.BlockSize, side, trans, m, n, k, A, lda, tau, C, ldc);
 		}
 
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
 		private static extern int dna_lapack_sormqr( int block_size, Side side, Transpose trans, int m, int n, int k, [In,Out]float[] A, int lda, [In,Out]float[] tau, [In,Out]float[] C, int ldc  );
 	
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
 		private static extern int dna_lapack_dormqr( int block_size, Side side, Transpose trans, int m, int n, int k, [In,Out]double[] A, int lda, [In,Out]double[] tau, [In,Out]double[] C, int ldc   );
 	}
 }

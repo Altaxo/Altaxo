@@ -7,10 +7,10 @@ namespace Altaxo.Calc.LinearAlgebra
   ///<summary>
   /// Defines a Vector of floats.
   ///</summary>
-  ///<remarks>
-  /// <para>Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved.</para>
-  /// <para>Adopted to Altaxo (c) 2005</para>
-  ///</remarks>
+  /// <remarks>
+  /// <para>Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved. See <a>http://www.dnAnalytics.net</a> for details.</para>
+  /// <para>Adopted to Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
+  /// </remarks>
   [Serializable]
   sealed public class FloatVector
     : ICloneable, IFormattable, IEnumerable, ICollection, IList, IFloatVector
@@ -539,7 +539,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				}
 			}	
 #else
-      Blas.Ger.Compute(Order.ColumnMajor, lhs.data.Length, rhs.data.Length, 1, lhs.data, 1, rhs.data, 1, ret.data, lhs.data.Length);
+      Blas.Ger.Compute(Blas.Order.ColumnMajor, lhs.data.Length, rhs.data.Length, 1, lhs.data, 1, rhs.data, 1, ret.data, lhs.data.Length);
 #endif
       return ret;
     }
@@ -825,6 +825,78 @@ namespace Altaxo.Calc.LinearAlgebra
     public int UpperBound
     {
       get { return data.Length-1; }
+    }
+
+    #endregion
+
+          #region Additions due to adoption to Altaxo
+
+    ///<summary>Constructor for <c>FloatVector</c> to deep copy from a <see>IROFloatVector</see></summary>
+    ///<param name="src"><c>Vector</c> to deep copy into <c>FloatVector</c>.</param>
+    ///<exception cref="ArgumentNullException">Exception thrown if null passed as 'src' parameter.</exception>
+    public FloatVector(IROFloatVector src)
+    {
+      if (src == null)
+      {
+        throw new ArgumentNullException("IROVector cannot be null");
+      }
+      if (src is FloatVector)
+      {
+        data = (float[])(((FloatVector)src).data.Clone());
+      }
+      else
+      {
+        data = new float[src.Length];
+        for (int i = 0; i < src.Length; ++i)
+        {
+          data[i] = src[i];
+        }
+      }
+    }
+
+    /// <summary>
+    /// Returns the column of a <see>IROFloatMatrix</see> as a new <c>FloatVector.</c>
+    /// </summary>
+    /// <param name="mat">The matrix to copy the column from.</param>
+    /// <param name="col">Index of the column to copy from the matrix.</param>
+    /// <returns>A new <c>FloatVector</c> with the same elements as the column of the given matrix.</returns>
+    public static FloatVector GetColumn(IROFloatMatrix mat, int col)
+    {
+      FloatVector result = new FloatVector(mat.Rows);
+      for (int i = 0; i < result.data.Length; ++i)
+        result.data[i] = mat[i, col];
+
+      return result;
+    }
+
+    /// <summary>
+    /// Returns the column of a <see>IROFloatMatrix</see> as a new <c>float[]</c> array.
+    /// </summary>
+    /// <param name="mat">The matrix to copy the column from.</param>
+    /// <param name="col">Index of the column to copy from the matrix.</param>
+    /// <returns>A new array of <c>float</c> with the same elements as the column of the given matrix.</returns>
+    public static float[] GetColumnAsArray(IROFloatMatrix mat, int col)
+    {
+      float[] result = new float[mat.Rows];
+      for (int i = 0; i < result.Length; ++i)
+        result[i] = mat[i, col];
+
+      return result;
+    }
+
+    /// <summary>
+    /// Returns the row of a <see>IROFloatMatrix</see> as a new <c>FloatVector.</c>
+    /// </summary>
+    /// <param name="mat">The matrix to copy the column from.</param>
+    /// <param name="row">Index of the row to copy from the matrix.</param>
+    /// <returns>A new <c>DoubleVector</c> with the same elements as the row of the given matrix.</returns>
+    public static FloatVector GetRow(IROFloatMatrix mat, int row)
+    {
+      FloatVector result = new FloatVector(mat.Columns);
+      for (int i = 0; i < result.data.Length; ++i)
+        result.data[i] = mat[row, i];
+
+      return result;
     }
 
     #endregion

@@ -12,8 +12,13 @@ namespace Altaxo.Calc.LinearAlgebra {
 	/// Defines an Enumerator for the Float Matrix that supports 
 	/// simple iteration over each vector component.
 	///</summary>
+  /// <remarks>
+  /// <para>Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved. See <a>http://www.dnAnalytics.net</a> for details.</para>
+  /// <para>Adopted to Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
+  /// </remarks>
 	
-	sealed internal class FloatMatrixEnumerator: IEnumerator {
+	sealed internal class FloatMatrixEnumerator: IEnumerator 
+  {
 		private FloatMatrix m;
 		private int index;
 		private int length;

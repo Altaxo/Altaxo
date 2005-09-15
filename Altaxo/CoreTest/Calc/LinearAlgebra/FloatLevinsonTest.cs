@@ -719,7 +719,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
 		[ExpectedException(typeof(System.ArgumentNullException))]
 		public void NullParameterTestforConstructor3()
 		{
-			FloatLevinson fl = new FloatLevinson(null as FloatVector, TR5.ToArray());
+			FloatLevinson fl = new FloatLevinson(null as ROFloatVector, TR5.ToArray());
 		}
 
 		// Test constructor with a null parameter
@@ -727,7 +727,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
 		[ExpectedException(typeof(System.ArgumentNullException))]
 		public void NullParameterTestforConstructor4()
 		{
-			FloatLevinson fl = new FloatLevinson(LC5.ToArray(), null as FloatVector);
+			FloatLevinson fl = new FloatLevinson(LC5.ToArray(), null as ROFloatVector);
 		}
 		
 		#endregion  Null Parameter Tests for Constructor 

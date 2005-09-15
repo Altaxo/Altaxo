@@ -14,6 +14,10 @@ namespace Altaxo.Calc.LinearAlgebra
   ///<summary>
   /// Defines a matrix of ComplexFloats.
   ///</summary>
+  /// <remarks>
+  /// <para>Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved. See <a>http://www.dnAnalytics.net</a> for details.</para>
+  /// <para>Adopted to Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
+  /// </remarks>
   [System.Serializable]
   sealed public class ComplexFloatMatrix : IComplexFloatMatrix, ICloneable, IFormattable, IEnumerable, ICollection, IList
   {
@@ -314,8 +318,8 @@ namespace Altaxo.Calc.LinearAlgebra
       return (ComplexFloatMatrix)source;
     }
 
-    ///<summary>explicit conversion from <c>ComplexDouble</c> array.</summary>
-    ///<param name="source"><c>ComplexDouble</c> array to make a deep copy conversion from.</param>
+    ///<summary>explicit conversion from <c>Complex</c> array.</summary>
+    ///<param name="source"><c>Complex</c> array to make a deep copy conversion from.</param>
     static public explicit operator ComplexFloatMatrix(Complex[,] source)
     {
       if (source == null)
@@ -343,8 +347,8 @@ namespace Altaxo.Calc.LinearAlgebra
       return ret;
     }
 
-    ///<summary>explicit conversion from <c>ComplexDouble</c> array</summary>
-    ///<param name="source"><c>ComplexDouble</c> array to make a deep copy conversion from.</param>
+    ///<summary>explicit conversion from <c>Complex</c> array</summary>
+    ///<param name="source"><c>Complex</c> array to make a deep copy conversion from.</param>
     static public ComplexFloatMatrix ToComplexFloatMatrix(Complex[,] source)
     {
       if (source == null)
@@ -1528,7 +1532,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 #else
-			dnA.Math.Blas.Scal.Compute( ret.data.Length, 1/b, ret.data, 1 );
+			Blas.Scal.Compute( ret.data.Length, 1/b, ret.data, 1 );
 #endif
       return ret;
     }
@@ -1560,7 +1564,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 #else
-			dnA.Math.Blas.Scal.Compute( data.Length, 1/a, data, 1 );
+			Blas.Scal.Compute( data.Length, 1/a, data, 1 );
 #endif
     }
 
@@ -1585,7 +1589,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 #else
-			dnA.Math.Blas.Scal.Compute( ret.data.Length, a, ret.data, 1 );
+			Blas.Scal.Compute( ret.data.Length, a, ret.data, 1 );
 #endif
       return ret;
     }
@@ -1645,7 +1649,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 #else	
-			dnA.Math.Blas.Scal.Compute( data.Length, a, data, 1 );
+			Blas.Scal.Compute( data.Length, a, data, 1 );
 #endif
     }
 
@@ -1680,7 +1684,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 #else	
-			dnA.Math.Blas.Gemv.Compute(Order.ColumnMajor, dnA.Math.Transpose.NoTrans, x.rows, x.columns, 1, x.data, x.rows, y.data, 1, 1, ret.data, 1);
+			Blas.Gemv.Compute(Blas.Order.ColumnMajor, Blas.Transpose.NoTrans, x.rows, x.columns, 1, x.data, x.rows, y.data, 1, 1, ret.data, 1);
 #endif
       return ret;
     }
@@ -1733,7 +1737,7 @@ namespace Altaxo.Calc.LinearAlgebra
       }
 #else	
 			ComplexFloat[] temp = new ComplexFloat[rows];
-			dnA.Math.Blas.Gemv.Compute(Order.ColumnMajor, dnA.Math.Transpose.NoTrans, rows, columns, 1,data, x.Length, x.data, 1, 1, temp, 1);
+			Blas.Gemv.Compute(Blas.Order.ColumnMajor, Blas.Transpose.NoTrans, rows, columns, 1,data, x.Length, x.data, 1, 1, temp, 1);
 #endif
       data = temp;
       columns = 1;
@@ -1776,7 +1780,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 #else
-			dnA.Math.Blas.Gemm.Compute(Order.ColumnMajor, dnA.Math.Transpose.NoTrans, dnA.Math.Transpose.NoTrans,
+			Blas.Gemm.Compute(Blas.Order.ColumnMajor, Blas.Transpose.NoTrans, Blas.Transpose.NoTrans,
 				x.rows, y.columns, x.columns, 1, x.data, x.rows, y.data, y.rows, 1, ret.data, ret.rows);
 #endif
       return ret;
@@ -1839,7 +1843,7 @@ namespace Altaxo.Calc.LinearAlgebra
       }
 #else
 			ComplexFloat[] temp = new ComplexFloat[(long)rows*(long)x.columns];
-			dnA.Math.Blas.Gemm.Compute(Order.ColumnMajor, dnA.Math.Transpose.NoTrans, dnA.Math.Transpose.NoTrans,
+			Blas.Gemm.Compute(Blas.Order.ColumnMajor, Blas.Transpose.NoTrans, Blas.Transpose.NoTrans,
 				rows, x.columns, columns, 1, data, rows, x.data, x.rows, 1, temp, rows);
 #endif
       data = temp;
@@ -1867,7 +1871,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 #else
-			dnA.Math.Blas.Copy.Compute(this.data.Length, x.data, 1, this.data, 1 );
+			Blas.Copy.Compute(this.data.Length, x.data, 1, this.data, 1 );
 #endif
     }
 
@@ -2068,6 +2072,126 @@ namespace Altaxo.Calc.LinearAlgebra
     {
       throw new System.NotSupportedException();
     }
+
+    #region Additions due to Adoption
+
+
+       ///<summary>Constructor for matrix that makes a deep copy of a given <c>IROComplexDoubleMatrix</c>.</summary>
+    ///<param name="source"><c>ComplexDoubleMatrix</c> to deep copy into new matrix.</param>
+    ///<exception cref="ArgumentNullException"><c>source</c> is null.</exception>
+    public ComplexFloatMatrix(IROComplexFloatMatrix source)
+    {
+      if (source == null)
+      {
+        throw new ArgumentNullException("source", "The input ComplexDoubleMatrix cannot be null.");
+      }
+
+      this.rows = source.Rows;
+      this.columns = source.Columns;
+#if MANAGED
+      data = new ComplexFloat[rows][];
+      if (source is ComplexFloatMatrix)
+      {
+        ComplexFloatMatrix cdmsource = (ComplexFloatMatrix)source;
+         for (int i = 0; i < rows; i++)
+           data[i] = (ComplexFloat[])cdmsource.data[i].Clone();
+      }
+      else
+      {
+        for (int i = 0; i < rows; i++)
+        {
+          data[i] = new ComplexFloat[columns];
+        }
+
+        for (int i = 0; i < rows; i++)
+          for (int j = 0; j < columns; j++)
+            data[i][j] = source[i,j];
+      }
+#else
+			data = ToLinearComplexArray(source);
+#endif
+    }
+
+    #endregion
+
+    #region Additions due to Adoption to Altaxo
+
+    /// <summary>
+    /// This creates a linear array for use with unmanaged routines.
+    /// </summary>
+    /// <param name="matrix">The matrix to convert to an array.</param>
+    /// <returns>Linear array of complex.</returns>
+    public static ComplexFloat[] ToLinearComplexArray(IROComplexDoubleMatrix matrix)
+    {
+      int rows = matrix.Rows;
+      int columns = matrix.Columns;
+
+      ComplexFloat[] result = new ComplexFloat[rows*columns];
+
+      int k=0;
+        for(int j=0;j<columns;++j)
+          for(int i=0;i<rows;++i)
+            result[k++] = (ComplexFloat)matrix[i,j];
+
+      return result;
+    }
+
+    /// <summary>
+    /// This creates a linear array for use with unmanaged routines.
+    /// </summary>
+    /// <param name="matrix">The matrix to convert to an array.</param>
+    /// <returns>Linear array of complex.</returns>
+    public static ComplexFloat[] ToLinearComplexArray(IROMatrix matrix)
+    {
+      int rows = matrix.Rows;
+      int columns = matrix.Columns;
+
+      ComplexFloat[] result = new ComplexFloat[rows*columns];
+
+      int k=0;
+        for(int j=0;j<columns;++j)
+          for(int i=0;i<rows;++i)
+            result[k++] = (ComplexFloat)matrix[i,j];
+
+      return result;
+    }
+
+    /// <summary>
+    /// This creates a linear array for use with unmanaged routines.
+    /// </summary>
+    /// <param name="matrix">The matrix to convert to an array.</param>
+    /// <returns>Linear array of complex.</returns>
+    public static ComplexFloat[] ToLinearComplexArray(IROComplexFloatMatrix matrix)
+    {
+      int rows = matrix.Rows;
+      int columns = matrix.Columns;
+
+      ComplexFloat[] result = new ComplexFloat[rows*columns];
+
+      int k=0;
+        for(int j=0;j<columns;++j)
+          for(int i=0;i<rows;++i)
+            result[k++] = matrix[i,j];
+
+      return result;
+    }
+
+    /// <summary>
+    /// This creates a linear array for use with unmanaged routines.
+    /// </summary>
+    /// <param name="source">The vector to convert to an array.</param>
+    /// <returns>Linear array of complex.</returns>
+    public static ComplexFloat[] ToLinearComplexArray(IROComplexFloatVector source)
+    {
+      int length = source.Length;
+      ComplexFloat[] result = new ComplexFloat[length];
+      for(int i=0;i<length;++i)
+        result[i] = source[i];
+
+      return result;
+    }
+
+    #endregion
   }
 }
 

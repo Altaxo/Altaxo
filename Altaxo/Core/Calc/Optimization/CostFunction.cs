@@ -12,7 +12,12 @@ namespace Altaxo.Calc.Optimization
 {
 
 	///<summary>Base class for cost function declaration</summary>
-	public abstract class CostFunction : ICostFunction {
+  /// <remarks>
+  /// <para>Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved. See <a>http://www.dnAnalytics.net</a> for details.</para>
+  /// <para>Adopted to Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
+  /// </remarks>
+  public abstract class CostFunction : ICostFunction 
+  {
 
 		///<summary>Method to override to compute the cost function value of x</summary>
 		public abstract double Value( DoubleVector x);

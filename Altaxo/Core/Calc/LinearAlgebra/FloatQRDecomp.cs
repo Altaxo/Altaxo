@@ -8,7 +8,12 @@ using System;
 
 namespace Altaxo.Calc.LinearAlgebra {
 	///<summary>This class computes the QR factorization of a general m by n <c>FloatMatrix</c>.</summary>
-	public sealed class FloatQRDecomp : Algorithm {
+  /// <remarks>
+  /// <para>Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved. See <a>http://www.dnAnalytics.net</a> for details.</para>
+  /// <para>Adopted to Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
+  /// </remarks>
+  public sealed class FloatQRDecomp : Algorithm 
+  {
 		private readonly FloatMatrix matrix;
 		private bool isFullRank = true;
 
@@ -23,10 +28,10 @@ namespace Altaxo.Calc.LinearAlgebra {
 		///lower matrices are accessible by the <c>Q</c> and <c>R</c> properties.</summary>
 		///<param name="matrix">The matrix to factor.</param>
 		///<exception cref="ArgumentNullException">matrix is null.</exception>
-		public FloatQRDecomp(FloatMatrix matrix) {
+		public FloatQRDecomp(IROFloatMatrix matrix) {
 			if (matrix == null)
 				throw new System.ArgumentNullException("matrix cannot be null.");
-			this.matrix = matrix.Clone();
+			this.matrix = new FloatMatrix(matrix);
 		}
 
 		/// <summary>Performs the QR factorization.</summary>
@@ -51,7 +56,7 @@ namespace Altaxo.Calc.LinearAlgebra {
 			Array.Copy(matrix.data, qr, matrix.data.Length);
 			jpvt = new int[n];
 			jpvt[0] = 1;
-			dnA.Math.Lapack.Geqp3.Compute(m, n, qr, m, jpvt, out tau);
+			Lapack.Geqp3.Compute(m, n, qr, m, jpvt, out tau);
 			r_ = new FloatMatrix(m, n);
 			// Populate R
 			for (int i = 0; i < m; i++) {
@@ -75,9 +80,9 @@ namespace Altaxo.Calc.LinearAlgebra {
 			}
 
 			if( m < n ){
-				dnA.Math.Lapack.Orgqr.Compute(m, m, m, q_.data, m, tau);
+				Lapack.Orgqr.Compute(m, m, m, q_.data, m, tau);
 			} else{
-				dnA.Math.Lapack.Orgqr.Compute(m, m, n, q_.data, m, tau);
+				Lapack.Orgqr.Compute(m, m, n, q_.data, m, tau);
 			}
 #endif
 			for (int i = 0; i < m; i++) {
@@ -118,8 +123,8 @@ namespace Altaxo.Calc.LinearAlgebra {
 		/// <returns>X that minimizes the two norm of <c>Q*R*X-B</c>.</returns>
 		/// <exception cref="ArgumentException">Matrix row dimensions must agree.</exception>
 		/// <exception cref="InvalidOperationException">Matrix is rank deficient or <c>m &lt; n</c>.</exception>
-		public FloatMatrix Solve (FloatMatrix B) {
-			if (B.RowLength != matrix.RowLength) {
+		public FloatMatrix Solve (IROFloatMatrix B) {
+			if (B.Rows != matrix.RowLength) {
 				throw new ArgumentException("Matrix row dimensions must agree.");
 			}
 			if (matrix.RowLength < matrix.ColumnLength) {
@@ -133,7 +138,7 @@ namespace Altaxo.Calc.LinearAlgebra {
 			// Copy right hand side
 			int m = matrix.RowLength;
 			int n = matrix.ColumnLength;
-			int nx = B.ColumnLength;
+			int nx = B.Columns;
 			FloatMatrix ret = new FloatMatrix(n,nx);
 
 #if MANAGED
@@ -171,10 +176,9 @@ namespace Altaxo.Calc.LinearAlgebra {
 			}
 
 #else
-			float[] c = new float[B.data.Length];
-		    Array.Copy(B.data, 0, c, 0, B.data.Length);
-			dnA.Math.Lapack.Ormqr.Compute(Side.Left, Transpose.Trans, m, nx, n, qr, m, tau, c, m);
-			dnA.Math.Blas.Trsm.Compute(Order.ColumnMajor, Side.Left, UpLo.Upper, Transpose.NoTrans, Diag.NonUnit,
+			float[] c = FloatMatrix.ToLinearArray(B);
+			Lapack.Ormqr.Compute(Lapack.Side.Left, Lapack.Transpose.Trans, m, nx, n, qr, m, tau, c, m);
+			Blas.Trsm.Compute(Blas.Order.ColumnMajor, Blas.Side.Left, Blas.UpLo.Upper, Blas.Transpose.NoTrans, Blas.Diag.NonUnit,
 				n, nx, 1, qr, m, c, m);
 			for ( int i = 0; i < n; i++ ) {
 				for ( int j = 0; j < nx; j++) {

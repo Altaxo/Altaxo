@@ -9,7 +9,11 @@ using System.Runtime.Serialization;
 
 namespace Altaxo.Calc.LinearAlgebra {
     ///<summary>The exception is thrown when a singular matrix is passed a method not expecting one.</summary>
-    [Serializable()]
+  /// <remarks>
+  /// <para>Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved. See <a>http://www.dnAnalytics.net</a> for details.</para>
+  /// <para>Adopted to Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
+  /// </remarks>
+  [Serializable()]
     public sealed class SingularMatrixException : MatrixException {
 
         ///<summary>Initializes a new instance of the <c>SingularMatrixException</c> class.</summary>

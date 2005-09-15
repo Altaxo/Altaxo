@@ -8,7 +8,11 @@ using System;
 
 
 namespace Altaxo.Calc.LinearAlgebra {
-    ///<summary>This class computes the Cholesky factorization of a n by n <c>ComplexDoubleMatrix</c>.</summary>
+  /// <summary>This class computes the Cholesky factorization of a n by n <c>ComplexDoubleMatrix</c>.</summary>
+  /// <remarks>
+  /// <para>Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved. See <a>http://www.dnAnalytics.net</a> for details.</para>
+  /// <para>Adopted to Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
+  /// </remarks>
     public sealed class ComplexDoubleCholeskyDecomp : Algorithm {
         private readonly int order;
         private bool ispd = true;
@@ -23,17 +27,17 @@ namespace Altaxo.Calc.LinearAlgebra {
         ///<exception cref="NotSquareMatrixException">matrix is not square.</exception>
         ///<remarks>This class only uses the lower triangle of the input matrix. It ignores the
         ///upper triangle.</remarks>
-        public ComplexDoubleCholeskyDecomp(ComplexDoubleMatrix matrix){
+        public ComplexDoubleCholeskyDecomp(IROComplexDoubleMatrix matrix){
             if ( matrix == null ) {
                 throw new System.ArgumentNullException("matrix cannot be null.");
             }
 
-            if ( matrix.RowLength != matrix.ColumnLength ) {
+            if ( matrix.Rows != matrix.Columns ) {
                 throw new NotSquareMatrixException("Matrix must be square.");
             }
 
-            order = matrix.ColumnLength;
-            this.matrix = matrix.Clone();
+            order = matrix.Columns;
+            this.matrix = new ComplexDoubleMatrix(matrix);
         }
 
         ///<summary>Computes the algorithm.</summary>
@@ -65,7 +69,7 @@ namespace Altaxo.Calc.LinearAlgebra {
 #else
             Complex[] factor = new Complex[matrix.data.Length];
             Array.Copy(matrix.data, factor, matrix.data.Length);
-            int status = dnA.Math.Lapack.Potrf.Compute(UpLo.Lower, order, factor, order);
+            int status = Lapack.Potrf.Compute(Lapack.UpLo.Lower, order, factor, order);
             if (status != 0 ) {
                 ispd = false;
             }
@@ -124,7 +128,7 @@ namespace Altaxo.Calc.LinearAlgebra {
         ///<exception cref="ArgumentNullException">B is null.</exception>
         ///<exception cref="NotPositiveDefiniteException">A is not positive definite.</exception>
         ///<exception cref="ArgumentException">The number of rows of A and B must be the same.</exception>
-        public ComplexDoubleMatrix Solve (ComplexDoubleMatrix B) {
+        public ComplexDoubleMatrix Solve (IROComplexDoubleMatrix B) {
             if ( B == null ) {
                 throw new System.ArgumentNullException("B cannot be null.");
             }
@@ -132,17 +136,17 @@ namespace Altaxo.Calc.LinearAlgebra {
             if ( !ispd ) {
                 throw new NotPositiveDefiniteException();
             } else {
-                if ( B.RowLength != order ) {
+                if ( B.Rows != order ) {
                     throw new System.ArgumentException("Matrix row dimensions must agree." );
                 }
 #if MANAGED
                 // Copy right hand side.
-                int cols = B.ColumnLength;
+                int cols = B.Columns;
                 ComplexDoubleMatrix X = new ComplexDoubleMatrix(B);
                 for (int c = 0; c < cols; c++ ) {
                     // Solve L*Y = B;
                     for (int i = 0; i < order; i++) {
-                        Complex sum = B.data[i][c];
+                        Complex sum = B[i,c];
                         for (int k = i-1; k >= 0; k--) {
                             sum -= l.data[i][k] * X.data[k][c];
                         }
@@ -161,10 +165,9 @@ namespace Altaxo.Calc.LinearAlgebra {
 
                 return X;
 #else
-                Complex[] rhs = new Complex[B.data.Length];
-                Array.Copy(B.data,rhs,B.data.Length);
-                dnA.Math.Lapack.Potrs.Compute(UpLo.Lower,order,B.ColumnLength,l.data,order,rhs,B.RowLength);
-                ComplexDoubleMatrix ret = new ComplexDoubleMatrix(order,B.ColumnLength);
+                Complex[] rhs = ComplexDoubleMatrix.ToLinearComplexArray(B);
+                Lapack.Potrs.Compute(Lapack.UpLo.Lower,order,B.Columns,l.data,order,rhs,B.Rows);
+                ComplexDoubleMatrix ret = new ComplexDoubleMatrix(order,B.Columns);
                 ret.data = rhs;
                 return ret;
 #endif
@@ -177,7 +180,7 @@ namespace Altaxo.Calc.LinearAlgebra {
         ///<exception cref="ArgumentNullException">B is null.</exception>
         ///<exception cref="NotPositiveDefiniteException">A is not positive definite.</exception>
         ///<exception cref="ArgumentException">The number of rows of A and the length of B must be the same.</exception>
-        public ComplexDoubleVector Solve (ComplexDoubleVector B) {
+        public ComplexDoubleVector Solve (IROComplexDoubleVector B) {
             if ( B == null ) {
                 throw new System.ArgumentNullException("B cannot be null.");
             }
@@ -193,7 +196,7 @@ namespace Altaxo.Calc.LinearAlgebra {
                 ComplexDoubleVector X = new ComplexDoubleVector(B);
                 // Solve L*Y = B;
                 for (int i = 0; i < order; i++) {
-                    Complex sum = B.data[i];
+                    Complex sum = B[i];
                     for (int k = i-1; k >= 0; k--) {
                         sum -= l.data[i][k] * X.data[k];
                     }
@@ -211,9 +214,8 @@ namespace Altaxo.Calc.LinearAlgebra {
                 return X;
 
 #else
-                Complex[] rhs = new Complex[B.data.Length];
-                Array.Copy(B.data,rhs,B.data.Length);
-                dnA.Math.Lapack.Potrs.Compute(UpLo.Lower,order,1,l.data,order,rhs,B.Length);
+                Complex[] rhs = ComplexDoubleMatrix.ToLinearComplexArray(B);
+                Lapack.Potrs.Compute(Lapack.UpLo.Lower,order,1,l.data,order,rhs,B.Length);
                 ComplexDoubleVector ret = new ComplexDoubleVector(order,B.Length);
                 ret.data = rhs;
                 return ret;
@@ -236,7 +238,7 @@ namespace Altaxo.Calc.LinearAlgebra {
 #else
                 Complex[] inverse = new Complex[l.data.Length];
                 Array.Copy(l.data,inverse,l.data.Length);
-                dnA.Math.Lapack.Potri.Compute(UpLo.Lower, order, inverse, order);
+                Lapack.Potri.Compute(Lapack.UpLo.Lower, order, inverse, order);
                 ComplexDoubleMatrix ret = new ComplexDoubleMatrix(order,order);
                 ret.data = inverse;
                 for (int i = 0; i < order; i++) {

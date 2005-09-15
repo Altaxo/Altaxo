@@ -11,7 +11,12 @@ using Altaxo.Calc.LinearAlgebra;
 namespace Altaxo.Calc.Optimization
 {
 	///<summary>Secant Line Search Method</summary>
-	public class SecantLineSearch : LineSearchMethod {
+  /// <remarks>
+  /// <para>Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved. See <a>http://www.dnAnalytics.net</a> for details.</para>
+  /// <para>Adopted to Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
+  /// </remarks>
+  public class SecantLineSearch : LineSearchMethod 
+  {
 	
 		///<summary>Constructor for Secant Line Search</summary>
 		public SecantLineSearch(CostFunction costfunction)

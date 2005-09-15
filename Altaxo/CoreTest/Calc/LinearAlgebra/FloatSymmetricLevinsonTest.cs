@@ -1761,7 +1761,7 @@ namespace AltaxoTest.Calc.LinearAlgebra {
 		[ExpectedException(typeof(ArgumentNullException))]
 		public void NullParameterTestforStaticSolveVector2()
 		{
-			FloatVector X = FloatSymmetricLevinson.Solve(new float[]{1.0f, 1.0f}, null as FloatVector);
+			FloatVector X = FloatSymmetricLevinson.Solve(new float[]{1.0f, 1.0f}, null as ROFloatVector);
 		}
 
 		#endregion Null Parameter Test 2 for Static SolveVector

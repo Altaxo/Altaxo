@@ -13,6 +13,10 @@ namespace Altaxo.Calc.LinearAlgebra
   ///<summary>
   /// Defines a Vector of doubles.
   ///</summary>
+  /// <remarks>
+  /// <para>Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved. See <a>http://www.dnAnalytics.net</a> for details.</para>
+  /// <para>Adopted to Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
+  /// </remarks>
   [Serializable]
   sealed public class DoubleVector : IVector, ICloneable, IFormattable, IEnumerable, ICollection, IList
   {
@@ -575,7 +579,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 #else
-			dnA.Math.Blas.Ger.Compute(Order.ColumnMajor, lhs.data.Length, rhs.data.Length,1,lhs.data,1,rhs.data,1,ret.data,lhs.data.Length);
+			Blas.Ger.Compute(Blas.Order.ColumnMajor, lhs.data.Length, rhs.data.Length,1,lhs.data,1,rhs.data,1,ret.data,lhs.data.Length);
 #endif
 
       return ret;
@@ -601,7 +605,7 @@ namespace Altaxo.Calc.LinearAlgebra
       for (int i = 0; i < rhs.data.Length; i++)
         ret.data[i] = lhs * rhs.data[i];
 #else
-			dnA.Math.Blas.Scal.Compute(ret.Length,lhs, ret.data,1);
+			Blas.Scal.Compute(ret.Length,lhs, ret.data,1);
 #endif
       return ret;
     }
@@ -644,7 +648,7 @@ namespace Altaxo.Calc.LinearAlgebra
       for (int i = 0; i < lhs.data.Length; i++)
         ret[i] = lhs.data[i] / rhs;
 #else
-			dnA.Math.Blas.Scal.Compute(ret.Length, 1/rhs, ret.data,1);
+			Blas.Scal.Compute(ret.Length, 1/rhs, ret.data,1);
 #endif
       return ret;
     }
@@ -883,6 +887,77 @@ namespace Altaxo.Calc.LinearAlgebra
         data[i] = a[i+lo];
     }
 
+       #region Additions due to adoption to Altaxo
+
+      ///<summary>Constructor for <c>DoubleVector</c> to deep copy from a <see>IROVector</see></summary>
+    ///<param name="src"><c>Vector</c> to deep copy into <c>DoubleVector</c>.</param>
+    ///<exception cref="ArgumentNullException">Exception thrown if null passed as 'src' parameter.</exception>
+    public DoubleVector(IROVector src)
+    {
+      if (src == null)
+      {
+        throw new ArgumentNullException("IROVector cannot be null");
+      }
+      if (src is DoubleVector)
+      {
+        data = (double[]) (((DoubleVector)src).data.Clone());
+      }
+      else
+      {
+        data = new double[src.Length];
+        for (int i = 0; i < src.Length; ++i)
+        {
+          data[i] = src[i];
+        }
+      }
+    }
+
+    /// <summary>
+    /// Returns the column of a <see>IROMatrix</see> as a new <c>DoubleVector.</c>
+    /// </summary>
+    /// <param name="mat">The matrix to copy the column from.</param>
+    /// <param name="col">Number of column to copy from the matrix.</param>
+    /// <returns>A new <c>DoubleVector</c> with the same elements as the column of the given matrix.</returns>
+    public static DoubleVector GetColumn(IROMatrix mat, int col)
+    {
+      DoubleVector result = new DoubleVector(mat.Rows);
+      for (int i = 0; i < result.data.Length; ++i)
+        result.data[i] = mat[i, col];
+
+      return result;
+    }
+
+    /// <summary>
+    /// Returns the column of a <see>IROMatrix</see> as a new <c>double[]</c> array.
+    /// </summary>
+    /// <param name="mat">The matrix to copy the column from.</param>
+    /// <param name="col">Index of the column to copy from the matrix.</param>
+    /// <returns>A new array of <c>double</c> with the same elements as the column of the given matrix.</returns>
+    public static double[] GetColumnAsArray(IROMatrix mat, int col)
+    {
+      double[] result = new double[mat.Rows];
+      for (int i = 0; i < result.Length; ++i)
+        result[i] = mat[i, col];
+
+      return result;
+    }
+
+    /// <summary>
+    /// Returns the row of a <see>IROMatrix</see> as a new <c>DoubleVector.</c>
+    /// </summary>
+    /// <param name="mat">The matrix to copy the column from.</param>
+    /// <param name="row">Index of the row to copy from the matrix.</param>
+    /// <returns>A new <c>DoubleVector</c> with the same elements as the row of the given matrix.</returns>
+    public static DoubleVector GetRow(IROMatrix mat, int row)
+    {
+      DoubleVector result = new DoubleVector(mat.Columns);
+      for (int i = 0; i < result.data.Length; ++i)
+        result.data[i] = mat[row, i];
+
+      return result;
+    }
+
+    #endregion
   }
 }
 

@@ -1,7 +1,14 @@
 using System;
 
-namespace Altaxo.Calc.LinearAlgebra {
-	internal class Hypotenuse {
+namespace Altaxo.Calc.LinearAlgebra
+{
+  /// <summary></summary>
+  /// <remarks>
+  /// <para>Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved. See <a>http://www.dnAnalytics.net</a> for details.</para>
+  /// <para>Adopted to Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
+  /// </remarks>
+  internal class Hypotenuse 
+  {
 		private Hypotenuse() {}
 		public static double Compute(double a, double b) {
 			double r;

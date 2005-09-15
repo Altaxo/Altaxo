@@ -10,7 +10,12 @@ using System.Runtime.InteropServices;
 
 namespace Altaxo.Calc.LinearAlgebra {
 	///<summary>This class computes the SVD factorization of a general <c>FloatMatrix</c>.</summary>
-	public sealed class FloatSVDDecomp : Algorithm {
+  /// <remarks>
+  /// <para>Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved. See <a>http://www.dnAnalytics.net</a> for details.</para>
+  /// <para>Adopted to Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
+  /// </remarks>
+  public sealed class FloatSVDDecomp : Algorithm 
+  {
 		private const int MAXITER = 1000;
 
 		private FloatMatrix u;
@@ -93,22 +98,22 @@ namespace Altaxo.Calc.LinearAlgebra {
 		///<param name="matrix">The matrix to decompose.</param>
 		///<param name="computeVectors">Whether to compute the singular vectors or not.</param>
 		///<exception cref="ArgumentNullException">matrix is null.</exception>
-		public FloatSVDDecomp(FloatMatrix matrix, bool computeVectors){
+		public FloatSVDDecomp(IROFloatMatrix matrix, bool computeVectors){
 			if ( matrix == null ) {
 				throw new System.ArgumentNullException("matrix cannot be null.");
 			}
-			this.matrix = matrix.Clone();
+			this.matrix = new FloatMatrix(matrix);
 			this.computeVectors = computeVectors;
 		}
 
 		///<summary>Constructor for SVD decomposition class.</summary>
 		///<param name="matrix">The matrix to decompose.</param>
 		///<exception cref="ArgumentNullException">matrix is null.</exception>
-		public FloatSVDDecomp(FloatMatrix matrix){
+		public FloatSVDDecomp(IROFloatMatrix matrix){
 			if ( matrix == null ) {
 				throw new System.ArgumentNullException("matrix cannot be null.");
 			}
-			this.matrix = matrix.Clone();
+			this.matrix = new FloatMatrix(matrix);
 		}
 		
 		///<summary>Computes the algorithm.</summary>
@@ -511,7 +516,7 @@ namespace Altaxo.Calc.LinearAlgebra {
 			v = new FloatMatrix(cols);
 			float[] a = new float[matrix.data.Length];
 			Array.Copy(matrix.data, a, matrix.data.Length);
-			dnA.Math.Lapack.Gesvd.Compute(rows, cols, a, s.data, u.data, v.data );
+			Lapack.Gesvd.Compute(rows, cols, a, s.data, u.data, v.data );
 			v.Transpose();
 #endif		
 			w=new FloatMatrix(matrix.RowLength,matrix.ColumnLength);

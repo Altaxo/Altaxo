@@ -334,11 +334,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Calc\LinearAlgebra\Constants.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "Calc\LinearAlgebra\DoubleCholeskyDecomp.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -564,6 +559,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Calc\LinearAlgebra\blas\Configuration.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Calc\LinearAlgebra\blas\Copy.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -669,7 +669,17 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Calc\LinearAlgebra\blas\UnmanagedConstants.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Calc\LinearAlgebra\lapack\Bdsqr.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Calc\LinearAlgebra\lapack\Configuration.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -780,6 +790,11 @@
                 />
                 <File
                     RelPath = "Calc\LinearAlgebra\lapack\Ungqr.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Calc\LinearAlgebra\lapack\UnmanagedConstants.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

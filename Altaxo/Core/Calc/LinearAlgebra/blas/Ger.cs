@@ -114,10 +114,10 @@ namespace Altaxo.Calc.LinearAlgebra.Blas
 
 #if !MANAGED
 		///<summary>P/Invoke to wrapper with native code</summary>
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
 		private static extern void dna_blas_sger( Order order, int M, int N, float alpha, [In]float[] X, int incX, [In]float[] Y, int incY, [In,Out]float[] A, int lda);
 
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
 		private static extern void dna_blas_dger( Order order, int M, int N, double alpha, [In]double[] X, int incX, [In]double[] Y, int incY, [In,Out]double[] A, int lda);
 #endif
 	}

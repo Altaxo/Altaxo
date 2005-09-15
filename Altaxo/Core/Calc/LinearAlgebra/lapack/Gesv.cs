@@ -7,9 +7,9 @@
 using System;
 using System.Runtime.InteropServices;
 
-using dnA.Utility;
 
-namespace dnA.Math.Lapack{
+
+namespace Altaxo.Calc.LinearAlgebra.Lapack{
 	[System.Security.SuppressUnmanagedCodeSecurityAttribute]
 	internal sealed class Gesv {
 		private  Gesv() {}                           
@@ -55,24 +55,24 @@ namespace dnA.Math.Lapack{
 			return dna_lapack_cgesv(n,nrhs,A,lda,ipiv,B,ldb);
 		}
 
-		internal static int Compute( int n, int nrhs, ComplexDouble[] A, int lda, out int[] ipiv, ComplexDouble[] B, int ldb ){
+		internal static int Compute( int n, int nrhs, Complex[] A, int lda, out int[] ipiv, Complex[] B, int ldb ){
 			ArgumentCheck(n, nrhs, A, lda,  B, ldb);
 			ipiv = new int[System.Math.Max(1, System.Math.Min(1,n))];
 			
 			return dna_lapack_zgesv(n,nrhs,A,lda,ipiv,B,ldb);
 		}
 
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
 		private static extern int dna_lapack_sgesv( int n, int nrhs, [In,Out]float[] A, int lda, [In,Out]int[] ipiv, [In,Out]float[] B, int ldb );
 	
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
 		private static extern int dna_lapack_dgesv( int n, int nrhs, [In,Out]double[] A, int lda, [In,Out]int[] ipiv, [In,Out]double[] B, int ldb );
 
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
 		private static extern int dna_lapack_cgesv( int n, int nrhs, [In,Out]ComplexFloat[] A, int lda, [In,Out]int[] ipiv, [In,Out]ComplexFloat[] B, int ldb );
 
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
-		private static extern int dna_lapack_zgesv( int n, int nrhs, [In,Out]ComplexDouble[] A, int lda, [In,Out]int[] ipiv, [In,Out]ComplexDouble[] B, int ldb );
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		private static extern int dna_lapack_zgesv( int n, int nrhs, [In,Out]Complex[] A, int lda, [In,Out]int[] ipiv, [In,Out]Complex[] B, int ldb );
 	}
 }
 #endif

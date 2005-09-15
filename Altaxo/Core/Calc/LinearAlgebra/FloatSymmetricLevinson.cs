@@ -63,6 +63,10 @@ namespace Altaxo.Calc.LinearAlgebra
   /// 66 - 75.
   /// </para>
   /// </remarks>
+  /// <remarks>
+  /// <para>Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved. See <a>http://www.dnAnalytics.net</a> for details.</para>
+  /// <para>Adopted to Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
+  /// </remarks>
   /// <example>
   /// The following simple example illustrates the use of the class:
   /// <para>
@@ -480,7 +484,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <exception cref="RankException">
     /// The length of <B>T</B> is zero.
     /// </exception>
-    public FloatSymmetricLevinson(FloatVector T)
+    public FloatSymmetricLevinson(IROFloatVector T)
     {
       // check parameter
       if (T == null)
@@ -493,7 +497,7 @@ namespace Altaxo.Calc.LinearAlgebra
       }
 
       // save the vector
-      m_LeftColumn = T.Clone();
+      m_LeftColumn = new FloatVector(T);
       m_Order = m_LeftColumn.Length;
 
       // allocate memory for lower triangular matrix
@@ -790,7 +794,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// using the Levinson algorithm, and then calculates the solution vector.
     /// </para>
     /// </remarks>
-    public FloatVector Solve(FloatVector Y)
+    public FloatVector Solve(IROFloatVector Y)
     {
       FloatVector X;
 
@@ -952,7 +956,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// using the Levinson algorithm, and then calculates the solution matrix.
     /// </para>
     /// </remarks>
-    public FloatMatrix Solve(FloatMatrix Y)
+    public FloatMatrix Solve(IROFloatMatrix Y)
     {
       FloatMatrix X;
 
@@ -961,7 +965,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new System.ArgumentNullException("Y");
       }
-      else if (m_Order != Y.ColumnLength)
+      else if (m_Order != Y.Columns)
       {
         throw new RankException("The numer of rows in Y is not equal to the number of rows in the Toeplitz matrix.");
       }
@@ -973,7 +977,7 @@ namespace Altaxo.Calc.LinearAlgebra
         throw new SingularMatrixException("The Toeplitz matrix or one of the the leading sub-matrices is singular.");
       }
 
-      int M = Y.RowLength;
+      int M = Y.Rows;
       int i, j, l, m;			// index/loop variables
       float[] Inner;			// inner product
       float[] G;				// scaling constant
@@ -990,10 +994,10 @@ namespace Altaxo.Calc.LinearAlgebra
       for (m = 0; m < M; m++)
       {
 #if MANAGED
-        X.data[0][m] = scalar * Y.data[0][m];
+        X.data[0][m] = scalar * Y[0,m];
 #else
 
-				X.data[m*m_Order] = scalar * Y.data[m*m_Order];
+				X.data[m*m_Order] = scalar * Y[0,m];
 #endif
       }
 
@@ -1004,9 +1008,9 @@ namespace Altaxo.Calc.LinearAlgebra
         for (m = 0; m < M; m++)
         {
 #if MANAGED
-          Inner[m] = Y.data[i][m];
+          Inner[m] = Y[i,m];
 #else
-					Inner[m] = Y.data[m*m_Order+i];
+					Inner[m] = Y[i,m];
 #endif
         }
 
@@ -1152,6 +1156,12 @@ namespace Altaxo.Calc.LinearAlgebra
 
     #region Public Static Methods
 
+    public static FloatVector Solve(AbstractROFloatVector T, AbstractROFloatVector Y)
+    {
+      return Solve((IROFloatVector)T, (IROFloatVector)Y);
+    }
+
+
     /// <overloads>
     /// Solve a symmetric square Toeplitz system.
     /// </overloads>
@@ -1180,7 +1190,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// and suffers from no speed penalty.
     /// </para>
     /// </remarks>
-    public static FloatVector Solve(FloatVector T, FloatVector Y)
+    public static FloatVector Solve(IROFloatVector T, IROFloatVector Y)
     {
 
       FloatVector X;
@@ -1280,6 +1290,11 @@ namespace Altaxo.Calc.LinearAlgebra
 
     }
 
+    public static FloatMatrix Solve(AbstractROFloatVector T, IROFloatMatrix Y)
+    {
+      return Solve((IROFloatVector)T, Y);
+    }
+
     /// <summary>
     /// Solve a symmetric square Toeplitz system with a right-side matrix.
     /// </summary>
@@ -1305,7 +1320,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// and suffers from no speed penalty.
     /// </para>
     /// </remarks>
-    public static FloatMatrix Solve(FloatVector T, FloatMatrix Y)
+    public static FloatMatrix Solve(IROFloatVector T, IROFloatMatrix Y)
     {
 
       FloatMatrix X;
@@ -1319,7 +1334,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new System.ArgumentNullException("Y");
       }
-      else if (T.Length != Y.ColumnLength)
+      else if (T.Length != Y.Columns)
       {
         throw new RankException("The length of T and Y are not equal.");
       }
@@ -1328,7 +1343,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
         // allocate memory
         int N = T.Length;
-        int M = Y.RowLength;
+        int M = Y.Rows;
         X = new FloatMatrix(N, M);                 // solution matrix
         FloatVector Z = new FloatVector(N);       // temporary storage vector
         float e;                                   // prediction error
@@ -1427,6 +1442,11 @@ namespace Altaxo.Calc.LinearAlgebra
       return X;
     }
 
+    public static FloatVector YuleWalker(AbstractROFloatVector R)
+    {
+      return YuleWalker((IROFloatVector)R);
+    }
+
     /// <summary>
     /// Solve the Yule-Walker equations for a symmetric square Toeplitz system
     /// </summary>
@@ -1453,7 +1473,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// solution (<b>N</b> is the matrix order).
     /// </para>
     /// </remarks>
-    public static FloatVector YuleWalker(FloatVector R)
+    public static FloatVector YuleWalker(IROFloatVector R)
     {
 
       FloatVector a;
@@ -1548,7 +1568,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// if we simply solved a linear Toeplitz system with a right-side identity matrix (<b>N</b> is the matrix order).
     /// </para>
     /// </remarks>
-    public static FloatMatrix Inverse(FloatVector T)
+    public static FloatMatrix Inverse(IROFloatVector T)
     {
 
       FloatMatrix X;

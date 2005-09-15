@@ -8,9 +8,9 @@
 using System;
 using System.Runtime.InteropServices;
 
-using dnA.Utility;
 
-namespace dnA.Math.Lapack{
+
+namespace Altaxo.Calc.LinearAlgebra.Lapack{
 	[System.Security.SuppressUnmanagedCodeSecurityAttribute]
 	internal sealed class Pocon {
 		private Pocon() {}
@@ -42,23 +42,23 @@ namespace dnA.Math.Lapack{
 			return dna_lapack_cpocon(uplo, n, A, lda, anorm, out rcond);
 		}
 
-		internal static int Compute( UpLo uplo, int n, ComplexDouble[] A, int lda, double anorm, out double rcond){
+		internal static int Compute( UpLo uplo, int n, Complex[] A, int lda, double anorm, out double rcond){
 			ArgumentCheck(uplo, n, A, lda);
 			rcond = 0;
 			return dna_lapack_zpocon(uplo, n, A, lda, anorm, out rcond);
 		}
 
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
 		private static extern int dna_lapack_spocon(UpLo uplo, int n, [In,Out]float[] A, int lda, float anorm, out float rcond);
 
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
 		private static extern int dna_lapack_dpocon(UpLo uplo, int n, [In,Out]double[] A, int lda, double anorm, out double rcond);
 	
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
 		private static extern int dna_lapack_cpocon(UpLo uplo, int n, [In,Out]ComplexFloat[] A, int lda, float anorm, out float rcond);
 
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
-		private static extern int dna_lapack_zpocon(UpLo uplo, int n, [In,Out]ComplexDouble[] A, int lda, double anorm, out double rcond);
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		private static extern int dna_lapack_zpocon(UpLo uplo, int n, [In,Out]Complex[] A, int lda, double anorm, out double rcond);
 	}
 }
 #endif

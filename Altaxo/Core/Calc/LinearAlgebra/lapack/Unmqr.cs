@@ -8,9 +8,9 @@
 using System;
 using System.Runtime.InteropServices;
 
-using dnA.Utility;
 
-namespace dnA.Math.Lapack{
+
+namespace Altaxo.Calc.LinearAlgebra.Lapack{
 	[System.Security.SuppressUnmanagedCodeSecurityAttribute]
 	internal sealed class Unmqr {
 		private  Unmqr() {}                           
@@ -58,16 +58,16 @@ namespace dnA.Math.Lapack{
 			return dna_lapack_cunmqr(Configuration.BlockSize, side, trans, m, n, k, A, lda, tau, C, ldc);
 		}
 
-		internal static int Compute( Side side, Transpose trans, int m, int n, int k, ComplexDouble[] A, int lda, ComplexDouble[] tau, ComplexDouble[] C, int ldc  ){
+		internal static int Compute( Side side, Transpose trans, int m, int n, int k, Complex[] A, int lda, Complex[] tau, Complex[] C, int ldc  ){
 			ArgumentCheck(side, m, n, k, A, lda, tau, C, ldc);
 			return dna_lapack_zunmqr(Configuration.BlockSize, side, trans, m, n, k, A, lda, tau, C, ldc);
 		}
 
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
 		private static extern int dna_lapack_cunmqr( int block_size, Side side, Transpose trans, int m, int n, int k, [In,Out]ComplexFloat[] A, int lda, [In,Out]ComplexFloat[] tau, [In,Out]ComplexFloat[] C, int ldc   );
 
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
-		private static extern int dna_lapack_zunmqr( int block_size, Side side, Transpose trans, int m, int n, int k, [In,Out]ComplexDouble[] A, int lda, [In,Out]ComplexDouble[] tau, [In,Out]ComplexDouble[] C, int ldc   );
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		private static extern int dna_lapack_zunmqr( int block_size, Side side, Transpose trans, int m, int n, int k, [In,Out]Complex[] A, int lda, [In,Out]Complex[] tau, [In,Out]Complex[] C, int ldc   );
 	}
 }
 #endif

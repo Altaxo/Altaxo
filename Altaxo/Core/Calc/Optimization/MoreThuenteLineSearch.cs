@@ -10,7 +10,12 @@ using Altaxo.Calc.LinearAlgebra;
 namespace Altaxo.Calc.Optimization
 {
 	///<summary>More-Thuente Line Search Method</summary>
-	public class MoreThuenteLineSearch : LineSearchMethod {
+  /// <remarks>
+  /// <para>Copyright (c) 2003-2004, dnAnalytics Project. All rights reserved. See <a>http://www.dnAnalytics.net</a> for details.</para>
+  /// <para>Adopted to Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
+  /// </remarks>
+  public class MoreThuenteLineSearch : LineSearchMethod 
+  {
 	
 		///<summary>Constructor for More-Thuente Line Search.</summary>
 		public MoreThuenteLineSearch(CostFunction costfunction)

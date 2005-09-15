@@ -8,9 +8,9 @@
 using System;
 using System.Runtime.InteropServices;
 
-using dnA.Utility;
 
-namespace dnA.Math.Lapack{
+
+namespace Altaxo.Calc.LinearAlgebra.Lapack{
 	[System.Security.SuppressUnmanagedCodeSecurityAttribute]
 	internal sealed class Bdsqr {
 		private  Bdsqr() {}                           
@@ -130,7 +130,7 @@ namespace dnA.Math.Lapack{
 			return dna_lapack_cbdsqr(UpLo.Upper, n, ncvt, nru, ncc, d, e, vt, ldvt, u, ldu, c, ldc);
 		}
 
-		internal static int Compute( int n, int ncvt, int nru, int ncc, double[] d, double[] e, ComplexDouble[] vt, int ldvt, ComplexDouble[] u, int ldu, ComplexDouble[] c, int ldc  ){
+		internal static int Compute( int n, int ncvt, int nru, int ncc, double[] d, double[] e, Complex[] vt, int ldvt, Complex[] u, int ldu, Complex[] c, int ldc  ){
 			ArgumentCheck(n, ncvt, nru, ncc, d, e, vt, ldvt, u, ldu, c, ldc);
 			if( d.Length < 1 ){
 				throw new ArgumentException("The length of d must be at least 1.", "d");
@@ -151,17 +151,17 @@ namespace dnA.Math.Lapack{
 			return dna_lapack_zbdsqr(UpLo.Upper, n, ncvt, nru, ncc, d, e, vt, ldvt, u, ldu, c, ldc);
 		}
 
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
 		private static extern int dna_lapack_sbdsqr( UpLo uplo, int n, int ncvt, int nru, int ncc, [In,Out]float[] d, [In,Out]float[] e, [In,Out]float[] vt, int ldvt, [In,Out]float[] u, int ldu, [In,Out]float[] c, int ldc );
 
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
 		private static extern int dna_lapack_dbdsqr( UpLo uplo, int n, int ncvt, int nru, int ncc, [In,Out]double[] d, [In]double[] e, [In,Out]double[] vt, int ldvt, [In,Out]double[] u, int ldu, [In,Out]double[] c, int ldc );
 
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
 		private static extern int dna_lapack_cbdsqr( UpLo uplo, int n, int ncvt, int nru, int ncc, [In,Out]float[] d, [In,Out]float[] e, [In,Out]ComplexFloat[] vt, int ldvt, [In,Out]ComplexFloat[] u, int ldu, [In,Out]ComplexFloat[] c, int ldc );
 
-		[DllImport(dnA.Utility.Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
-		private static extern int dna_lapack_zbdsqr( UpLo uplo, int n, int ncvt, int nru, int ncc, [In,Out]double[] d, [In,Out]double[] e, [In,Out]ComplexDouble[] vt, int ldvt, [In,Out]ComplexDouble[] u, int ldu, [In,Out]ComplexDouble[] c, int ldc );
+		[DllImport(Configuration.BLASLibrary, ExactSpelling=true, SetLastError=false)]
+		private static extern int dna_lapack_zbdsqr( UpLo uplo, int n, int ncvt, int nru, int ncc, [In,Out]double[] d, [In,Out]double[] e, [In,Out]Complex[] vt, int ldvt, [In,Out]Complex[] u, int ldu, [In,Out]Complex[] c, int ldc );
 	}
 }
 #endif
