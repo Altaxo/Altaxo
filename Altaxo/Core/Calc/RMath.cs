@@ -159,6 +159,11 @@ namespace Altaxo.Calc
     }
 
 
+    /// <summary>
+    /// Calculates x^2 (square of x).
+    /// </summary>
+    /// <param name="x">Argument.</param>
+    /// <returns><c>x</c> squared.</returns>
     public static double Pow2(double x) { return x*x;   }
     public static double Pow3(double x) { return x*x*x; }
     public static double Pow4(double x) { double x2 = x*x;   return x2*x2;    }
@@ -168,6 +173,14 @@ namespace Altaxo.Calc
     public static double Pow8(double x) { double x2 = x*x;   double x4 = x2*x2; return x4*x4; }
     public static double Pow9(double x) { double x3 = x*x*x; return x3*x3*x3; }
 
+
+    /// <summary>
+    /// Calculates x^n by repeated multiplications. The algorithm takes ld(n) multiplications.
+    /// This algorithm can also be used with negative n.
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="n"></param>
+    /// <returns></returns>
     public static double Pow(double x, int n)
     {
       double value = 1.0;

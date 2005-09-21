@@ -450,6 +450,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Calc\Probability\RandomTests.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Calc\Probability\TestProbabiltyDistributions.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

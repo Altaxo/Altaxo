@@ -35,7 +35,7 @@ namespace Altaxo.Data
   [SerializationVersion(0)]
   [Serializable()]
   public abstract class DataColumn :
-    IDisposable,    
+    Main.IEventIndicatedDisposable,    
     System.Runtime.Serialization.ISerializable,
     System.Runtime.Serialization.IDeserializationCallback, 
     IReadableColumn, 
@@ -43,6 +43,7 @@ namespace Altaxo.Data
     IDefinedCount,
     ICloneable,
     Altaxo.Main.IDocumentNode,    
+    Altaxo.Main.IChangedEventSource,
     Main.ISuspendable
   {
     
@@ -80,7 +81,7 @@ namespace Altaxo.Data
     /// that the column should be disposed, so they have to unreference this column by setting the
     /// reference to null.
     /// </remarks>
-    public event EventHandler ColumnDisposed;
+    public event EventHandler Disposed;
 
   
     /// <summary>
@@ -530,14 +531,16 @@ namespace Altaxo.Data
     }
 
     /// <summary>
-    /// Clears the content of the column and fires the <see cref="ColumnDisposed"/> event.
+    /// Clears the content of the column and fires the <see cref="Disposed"/> event.
     /// </summary>
     public void Dispose()
     {
+      if (null != Disposed)
+        Disposed(this, EventArgs.Empty);
+
       this.ParentObject=null;
       this.Clear();
-      if(null!=ColumnDisposed)
-        ColumnDisposed(this,EventArgs.Empty);
+     
     }
 
     /// <summary>

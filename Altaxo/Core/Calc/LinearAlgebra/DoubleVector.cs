@@ -132,6 +132,7 @@ namespace Altaxo.Calc.LinearAlgebra
       }
     }
 
+   
     public int LowerBound
     {
       get
@@ -139,6 +140,7 @@ namespace Altaxo.Calc.LinearAlgebra
         return 0;
       }
     }
+    
 
     public int UpperBound
     {

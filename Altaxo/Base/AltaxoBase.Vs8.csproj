@@ -186,6 +186,7 @@
     <Compile Include="Calc\ScriptExecutionBase.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Data\ReadableColumnProxy.cs" />
     <Compile Include="Graph\I2DGroupablePlotItem.cs" />
     <Compile Include="Graph\PlotColors.cs" />
     <Compile Include="Graph\XYPlotStyleCollectionTemplates.cs" />
@@ -224,6 +225,8 @@
     </Compile>
     <Compile Include="Gui\Graph\XYPlotStyleCollectionController.cs" />
     <Compile Include="Gui\IRefreshable.cs" />
+    <Compile Include="Main\DocNodeProxy.cs" />
+    <Compile Include="Main\IEventIndicatedDisposable.cs" />
     <Compile Include="Scripting\FitFunctionScriptCollection.cs" />
     <Compile Include="Collections\AscendingIntegerCollection.cs">
       <SubType>Code</SubType>

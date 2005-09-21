@@ -148,6 +148,7 @@
     </Compile>
     <Compile Include="Calc\LinearAlgebra\blas\Asum.cs" />
     <Compile Include="Calc\LinearAlgebra\blas\Axpy.cs" />
+    <Compile Include="Calc\LinearAlgebra\blas\Configuration.cs" />
     <Compile Include="Calc\LinearAlgebra\blas\Copy.cs" />
     <Compile Include="Calc\LinearAlgebra\blas\Dot.cs" />
     <Compile Include="Calc\LinearAlgebra\blas\Dotc.cs" />
@@ -169,6 +170,7 @@
     <Compile Include="Calc\LinearAlgebra\blas\Sdot.cs" />
     <Compile Include="Calc\LinearAlgebra\blas\Swap.cs" />
     <Compile Include="Calc\LinearAlgebra\blas\Trsm.cs" />
+    <Compile Include="Calc\LinearAlgebra\blas\UnmanagedConstants.cs" />
     <Compile Include="Calc\LinearAlgebra\ComplexDoubleCholeskyDecomp.cs" />
     <Compile Include="Calc\LinearAlgebra\ComplexDoubleLevinson.cs" />
     <Compile Include="Calc\LinearAlgebra\ComplexDoubleLUDecomp.cs" />
@@ -189,7 +191,6 @@
     <Compile Include="Calc\LinearAlgebra\ComplexFloatSymmetricLevinson.cs" />
     <Compile Include="Calc\LinearAlgebra\ComplexFloatVector.cs" />
     <Compile Include="Calc\LinearAlgebra\ComplexFloatVectorEnumerator.cs" />
-    <Compile Include="Calc\LinearAlgebra\Constants.cs" />
     <Compile Include="Calc\LinearAlgebra\DoubleCholeskyDecomp.cs" />
     <Compile Include="Calc\LinearAlgebra\DoubleLevinson.cs" />
     <Compile Include="Calc\LinearAlgebra\DoubleLUDecomp.cs" />
@@ -236,6 +237,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Calc\LinearAlgebra\lapack\Bdsqr.cs" />
+    <Compile Include="Calc\LinearAlgebra\lapack\Configuration.cs" />
     <Compile Include="Calc\LinearAlgebra\lapack\Gebrd.cs" />
     <Compile Include="Calc\LinearAlgebra\lapack\Gehrd.cs" />
     <Compile Include="Calc\LinearAlgebra\lapack\Geqp3.cs" />
@@ -258,6 +260,7 @@
     <Compile Include="Calc\LinearAlgebra\lapack\Ungbr.cs" />
     <Compile Include="Calc\LinearAlgebra\lapack\Unghr.cs" />
     <Compile Include="Calc\LinearAlgebra\lapack\Ungqr.cs" />
+    <Compile Include="Calc\LinearAlgebra\lapack\UnmanagedConstants.cs" />
     <Compile Include="Calc\LinearAlgebra\lapack\Unmbr.cs" />
     <Compile Include="Calc\LinearAlgebra\lapack\Unmhr.cs" />
     <Compile Include="Calc\LinearAlgebra\lapack\Unmqr.cs" />

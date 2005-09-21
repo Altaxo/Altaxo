@@ -686,6 +686,8 @@ namespace Altaxo.Calc.LinearAlgebra
       #endregion
     }
 
+  
+
     #endregion
 
     #region Type conversion classes
@@ -1199,6 +1201,52 @@ namespace Altaxo.Calc.LinearAlgebra
 
     #endregion
 
+    #region Wrapper from linear array (LAPACK convention)
+
+    /// <summary>
+    /// Wraps a linear array to a read-only matrix. The array is column oriented, i.e. consecutive elements
+    /// belong mostly to one column.
+    /// </summary>
+    public class ROMatrixFromLinearArray : IROMatrix
+    {
+      double[] _data;
+      int _rows;
+      int _cols;
+      #region IROMatrix Members
+
+      public ROMatrixFromLinearArray(double[] array, int nRows)
+      {
+        if (array.Length % nRows != 0)
+          throw new ArgumentException(string.Format("Length of array {0} is not a multiple of nRows={1}", array.Length, nRows));
+
+        _data = array;
+        _rows = nRows;
+        _cols = array.Length / nRows;
+      }
+
+      public double this[int row, int col]
+      {
+        get
+        {
+          return _data[row + col * _rows];
+        }
+      }
+
+      public int Rows
+      {
+        get { return _rows; }
+      }
+
+      public int Columns
+      {
+        get { return _cols; }
+      }
+
+      #endregion
+    }
+
+    #endregion
+
     #endregion
 
     #region Helper functions
@@ -1361,6 +1409,17 @@ namespace Altaxo.Calc.LinearAlgebra
     public static IMatrix ToMatrix(double[][] x)
     {
       return new BEMatrix(x);
+    }
+
+    /// <summary>
+    /// Wraps a linear array into a read-only matrix. The array is packed column-wise, i.e. the first elements belong to the first column of the matrix.
+    /// </summary>
+    /// <param name="x">Linear array. The length has to be a multiple of <c>nRows</c>.</param>
+    /// <param name="nRows">Number of rows of the resulting matrix.</param>
+    /// <returns>The read-only matrix wrappage of the linear array.</returns>
+    public static IROMatrix ToROMatrix(double[] x, int nRows)
+    {
+      return new ROMatrixFromLinearArray(x, nRows);
     }
 
     /// <summary>

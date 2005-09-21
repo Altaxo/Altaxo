@@ -286,7 +286,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
     #endregion
 
-    #region Arithmitic
+    #region Arithmetic
 
     /// <summary>
     /// Adds (elementwise) two vectors a and b and stores the result in c. All vectors must have the same length.

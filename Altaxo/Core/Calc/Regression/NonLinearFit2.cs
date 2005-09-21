@@ -1,5 +1,6 @@
 using System;
 using System.Text;
+using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Regression
 {
@@ -1206,6 +1207,45 @@ double max, sum, tmp;
 
   return 1;
 }
+
+
+/*
+* This function computes the pseudoinverse of a square matrix A
+* into B using SVD. A and B can coincide
+* 
+* The function returns 0 in case of error (e.g. A is singular),
+* the rank of A if successfull
+*
+* A, B are mxm
+*
+*/
+static int LEVMAR_PSEUDOINVERSE(double[] A, double[] B, int m)
+{
+
+  IROMatrix Amat = MatrixMath.ToROMatrix(A,m);
+  DoubleSVDDecomp decomp = new DoubleSVDDecomp(Amat);
+
+  DoubleVector s = decomp.S;
+  DoubleMatrix u = decomp.U;
+  DoubleMatrix v = decomp.V;
+
+  /* compute the pseudoinverse in B */
+	for(int i=0; i<B.Length; i++)
+    B[i]=0.0; /* initialize to zero */
+
+  double one_over_denom, thresh;
+  int rank;
+  for(rank=0, thresh=DoubleConstants.DBL_EPSILON*s[0]; rank<m && s[rank]>thresh; rank++){
+    one_over_denom=1.0/s[rank];
+
+    for(int j=0; j<m; j++)
+      for(int i=0; i<m; i++)
+        B[i*m+j]+=v[i,rank]*u[j,rank]*one_over_denom;
+  }
+
+	return rank;
+}
+
 
   }
 }

@@ -69,7 +69,7 @@ namespace Altaxo.Graph
     /// <summary>The axis where the label is attached to (if it is attached).</summary>
     protected Graph.EdgeType m_AttachedAxis;
 
-    protected Altaxo.Data.IReadableColumn m_LabelColumn;
+    protected Altaxo.Data.ReadableColumnProxy m_LabelColumn;
 
     // cached values:
     protected System.Drawing.StringFormat m_CachedStringFormat;
@@ -82,6 +82,10 @@ namespace Altaxo.Graph
       public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        SSerialize(obj,info);
+      }
+      public static void SSerialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         XYPlotLabelStyle s = (XYPlotLabelStyle)obj;
         info.AddValue("Font",s.m_Font);  
@@ -100,6 +104,10 @@ namespace Altaxo.Graph
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
+        return SDeserialize(o,info,parent,true);
+      }
+      public static object SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent, bool nativeCall)
+      {
         
         XYPlotLabelStyle s = null!=o ? (XYPlotLabelStyle)o : new XYPlotLabelStyle();
 
@@ -115,6 +123,38 @@ namespace Altaxo.Graph
         s.m_AttachedAxis = (EdgeType)info.GetValue("AttachedAxis",parent);
         s.m_WhiteOut = info.GetBoolean("WhiteOut");
         s.m_BackgroundBrush = (BrushHolder)info.GetValue("BackgroundBrush",s);
+
+      
+        if(nativeCall)
+        {
+          // restore the cached values
+          s.SetCachedValues();
+          s.CreateEventChain();
+        }
+
+        return s;
+      }
+
+      
+    }
+
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotLabelStyle),1)]
+      public class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        XYPlotLabelStyle s = (XYPlotLabelStyle)obj;
+        XmlSerializationSurrogate0.SSerialize(obj,info);
+        info.AddValue("LabelColumn",s.m_LabelColumn);
+      }
+
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        
+       XYPlotLabelStyle s = (XYPlotLabelStyle) XmlSerializationSurrogate0.SDeserialize(o,info,parent,false);
+
+        s.m_LabelColumn = (Altaxo.Data.ReadableColumnProxy)info.GetValue("LabelColumn",parent);
 
         // restore the cached values
         s.SetCachedValues();
@@ -158,7 +198,7 @@ namespace Altaxo.Graph
       this.m_CachedStringFormat = (System.Drawing.StringFormat)from.m_CachedStringFormat.Clone();
       this.m_AttachToAxis        = from.m_AttachToAxis;
       this.m_AttachedAxis        = from.m_AttachedAxis;
-      this.m_LabelColumn = from.m_LabelColumn;
+      this.m_LabelColumn = (Data.ReadableColumnProxy)from.m_LabelColumn.Clone();
 
       CreateEventChain();
     }
@@ -183,7 +223,7 @@ namespace Altaxo.Graph
       this.m_CachedStringFormat.LineAlignment   = System.Drawing.StringAlignment.Center;
       this.m_AttachToAxis = false;
       this.m_AttachedAxis = EdgeType.Bottom;
-      this.m_LabelColumn = labelColumn;
+      this.m_LabelColumn = new Altaxo.Data.ReadableColumnProxy(labelColumn);
 
       CreateEventChain();
     }
@@ -191,19 +231,24 @@ namespace Altaxo.Graph
 
     protected void CreateEventChain()
     {
-      // if we change from color to a brush, add the brush events here
+        this.m_LabelColumn.Changed += new EventHandler(LabelColumnProxy_Changed);
+    }
+
+    void LabelColumnProxy_Changed(object sender, EventArgs e)
+    {
+      this.OnChanged();
     }
 
     public Altaxo.Data.IReadableColumn LabelColumn
     {
       get
       {
-        return m_LabelColumn;
+        return m_LabelColumn == null ? null : m_LabelColumn.Document;
       }
       set
       {
-        m_LabelColumn = value;
-        OnChanged();
+          m_LabelColumn.SetDocNode(value);
+          OnChanged();
       }
     }
 
@@ -599,7 +644,8 @@ namespace Altaxo.Graph
      PlotRangeList rangeList,
      PointF[] ptArray)
     {
-      this.Paint(g, layer, null, rangeList, ptArray, this.m_LabelColumn);
+      if(this.m_LabelColumn.Document!=null)
+      this.Paint(g, layer, null, rangeList, ptArray, this.m_LabelColumn.Document);
     }
 
     #endregion

@@ -27,7 +27,7 @@ namespace Altaxo.Main
   /// <summary>
   /// DocumentPath holds a path to a document
   /// </summary>
-  public class DocumentPath : System.Collections.Specialized.StringCollection
+  public class DocumentPath : System.Collections.Specialized.StringCollection, System.ICloneable
   {
     protected bool _IsAbsolutePath;
     
@@ -74,6 +74,12 @@ namespace Altaxo.Main
     {
     }
 
+    public DocumentPath(DocumentPath from)
+    {
+      this._IsAbsolutePath = from._IsAbsolutePath;
+      foreach(string s in from)
+        Add(s);
+    }
     public bool IsAbsolutePath
     {
       get { return _IsAbsolutePath; }
@@ -303,6 +309,17 @@ namespace Altaxo.Main
     }
     #endregion
 
+    #region ICloneable Members
 
+    object System.ICloneable.Clone()
+    {
+      return new DocumentPath(this);
+    }
+    public DocumentPath Clone()
+    {
+      return new DocumentPath(this);
+    }
+
+    #endregion
   }
 }

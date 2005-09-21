@@ -420,6 +420,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Data\ReadableColumnProxy.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Data\TableCollection.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -1300,6 +1305,11 @@
                     BuildAction = "Content"
                 />
                 <File
+                    RelPath = "Main\DocNodeProxy.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Main\Document.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -1321,6 +1331,11 @@
                 />
                 <File
                     RelPath = "Main\IDocumentNode.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\IEventIndicatedDisposable.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
