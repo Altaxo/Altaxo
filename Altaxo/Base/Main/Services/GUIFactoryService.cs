@@ -92,14 +92,26 @@ namespace Altaxo.Main.Services
       controller.ViewObject = control;
     }
 
+    
+    /// <summary>
+    /// Shows a configuration dialog for an object (without "Apply" button).
+    /// </summary>
+    /// <param name="controller">The controller to show in the dialog</param>
+    /// <param name="title">The title of the dialog to show.</param>
+    /// <returns>True if the object was successfully configured, false otherwise.</returns>
+    public bool ShowDialog(IMVCAController controller, string title)
+    {
+      return ShowDialog(controller,title,false);
+    }
 
       /// <summary>
     /// Shows a configuration dialog for an object.
     /// </summary>
     /// <param name="controller">The controller to show in the dialog</param>
     /// <param name="title">The title of the dialog to show.</param>
+    /// <param name="showApplyButton">If true, the "Apply" button is visible on the dialog.</param>
     /// <returns>True if the object was successfully configured, false otherwise.</returns>
-    public bool ShowDialog(IMVCAController controller, string title)
+    public bool ShowDialog(IMVCAController controller, string title, bool showApplyButton)
     {
 
       if (controller.ViewObject == null)
@@ -117,11 +129,10 @@ namespace Altaxo.Main.Services
       }
       else
       {
-        Altaxo.Main.GUI.DialogShellController dlgctrl = new Altaxo.Main.GUI.DialogShellController(new Main.GUI.DialogShellView((System.Windows.Forms.UserControl)controller.ViewObject), controller, title, false);
+        Altaxo.Main.GUI.DialogShellController dlgctrl = new Altaxo.Main.GUI.DialogShellController(new Main.GUI.DialogShellView((System.Windows.Forms.UserControl)controller.ViewObject), controller, title, showApplyButton);
         return (dlgctrl.ShowDialog(Current.MainWindow));
       }
     }
-
 
     /// <summary>
     /// Shows a configuration dialog for an object.
@@ -140,12 +151,32 @@ namespace Altaxo.Main.Services
     /// </remarks>
     public bool ShowDialog(object[] args, string title)
     {
+      return ShowDialog(args,title,false);
+    }
+
+    /// <summary>
+    /// Shows a configuration dialog for an object.
+    /// </summary>
+    /// <param name="args">Hierarchy of objects. Args[0] contain the object for which the configuration dialog is searched.
+    /// args[1].. can contain the parents of this object (in most cases this is not necessary.
+    /// If the return value is true, args[0] contains the configured object. </param>
+    /// <param name="title">The title of the dialog to show.</param>
+    /// <returns>True if the object was successfully configured, false otherwise.</returns>
+    /// <remarks>The presumtions to get this function working are:
+    /// <list>
+    /// <item>A controller which implements <see>Altaxo.Main.GUI.IMVCAController has to exist.</see></item>
+    /// <item>A <see>Altaxo.Main.GUI.UserControllerForObjectAttribute</see> has to be assigned to that controller, and the argument has to be the type of the object you want to configure.</item>
+    /// <item>A GUI control (Windows Forms: UserControl) must exist, to which an <see>Altaxo.Main.GUI.UserControlForControllerAttribute</see> is assigned to, and the argument of that attribute has to be the type of the controller.</item>
+    /// </list>
+    /// </remarks>
+    public bool ShowDialog(object[] args, string title, bool showApplyButton)
+    {
       Main.GUI.IMVCAController controller = (Main.GUI.IMVCAController)Current.Gui.GetControllerAndControl(args,typeof(Main.GUI.IMVCAController));
       
       if(null==controller)
         return false;
 
-      if (ShowDialog(controller, title))
+      if (ShowDialog(controller, title, showApplyButton))
       {
         args[0] = controller.ModelObject;
         return true;
@@ -172,9 +203,27 @@ namespace Altaxo.Main.Services
     /// </remarks>
     public bool ShowDialog(ref object arg, string title)
     {
+      return ShowDialog(ref arg, title,false);
+    }
+    /// <summary>
+    /// Shows a configuration dialog for an object.
+    /// </summary>
+    /// <param name="arg">The object to configure.
+    /// If the return value is true, arg contains the configured object. </param>
+    /// <param name="title">The title of the dialog.</param>
+    /// <returns>True if the object was successfully configured, false otherwise.</returns>
+    /// <remarks>The presumtions to get this function working are:
+    /// <list>
+    /// <item>A controller which implements <see>Altaxo.Main.GUI.IMVCAController has to exist.</see></item>
+    /// <item>A <see>Altaxo.Main.GUI.UserControllerForObjectAttribute</see> has to be assigned to that controller, and the argument has to be the type of the object you want to configure.</item>
+    /// <item>A GUI control (Windows Forms: UserControl) must exist, to which an <see>Altaxo.Main.GUI.UserControlForControllerAttribute</see> is assigned to, and the argument of that attribute has to be the type of the controller.</item>
+    /// </list>
+    /// </remarks>
+    public bool ShowDialog(ref object arg, string title, bool showApplyButton)
+    {
       object[] args = new object[1];
       args[0] = arg;
-      bool result = Current.Gui.ShowDialog(args,title);
+      bool result = Current.Gui.ShowDialog(args,title,showApplyButton);
       arg = args[0];
       return result;
     }

@@ -102,7 +102,7 @@ namespace Altaxo.Main.GUI
 
     public static bool ShowLineScatterPlotStyleAndDataDialog(System.Windows.Forms.Form parentWindow, Graph.PlotItem pa, PlotGroup plotGroup)
     {
-      return Current.Gui.ShowDialog(new object[]{pa,plotGroup},pa.Name);
+      return Current.Gui.ShowDialog(new object[]{pa,plotGroup},pa.Name, true);
     }
 
 /*  public static bool ShowLineScatterPlotStyleAndDataDialog(System.Windows.Forms.Form parentWindow, Graph.PlotItem pa, PlotGroup plotGroup)

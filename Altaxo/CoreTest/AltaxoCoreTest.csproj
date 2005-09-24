@@ -425,6 +425,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Calc\LinearAlgebra\MatrixMathTest.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Calc\LinearAlgebra\TestSingularValueDecomposition.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

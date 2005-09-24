@@ -92,7 +92,7 @@ namespace Altaxo.Gui.Common
   public class TabbedElementController : ITabbedElementViewEventSink, ITabbedElementController
   {
   
-
+    protected int _frontTabIndex=0;
     private ITabbedElementView _view;
     private System.Collections.ArrayList _tabs = new System.Collections.ArrayList();
 
@@ -119,6 +119,7 @@ namespace Altaxo.Gui.Common
 
     public void BringTabToFront(int i)
     {
+      _frontTabIndex=i;
       if(_view!=null)
         _view.BringTabToFront(i);
     }
@@ -177,7 +178,12 @@ namespace Altaxo.Gui.Common
           ControlViewElement tab = (ControlViewElement)_tabs[i];
           View.AddTab(tab.Title,tab.View);
         }
-      }     
+
+        this._frontTabIndex = Math.Min(this._frontTabIndex,_tabs.Count);
+        View.BringTabToFront(_frontTabIndex);
+      }  
+   
+
     }
 
    

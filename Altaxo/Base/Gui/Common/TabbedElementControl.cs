@@ -171,6 +171,7 @@ namespace Altaxo.Gui.Common
 
     public void BringTabToFront(int index)
     {
+      m_TabControl.SelectedIndex = index;
       m_TabControl.TabPages[index].Focus();
     }
     #endregion

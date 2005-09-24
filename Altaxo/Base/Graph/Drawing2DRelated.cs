@@ -82,6 +82,15 @@ namespace Altaxo.Graph
       }
     }
 
+    /// <summary>
+    /// Determines whether or not a given point (<c>point</c>) is into a <c>distance</c> to a finite line, that is spanned between
+    /// two points <c>lineOrg</c> and <c>lineEnd</c>.
+    /// </summary>
+    /// <param name="lineOrg">Starting point of the line.</param>
+    /// <param name="lineEnd">End point of the line.</param>
+    /// <param name="point">Point under test.</param>
+    /// <param name="distance">Distance.</param>
+    /// <returns>True if the distance between point <c>point</c> and the line between <c>lineOrg</c> and <c>lineEnd</c> is less or equal to <c>distance</c>.</returns>
     public static bool IsPointIntoDistance(PointF lineOrg, PointF lineEnd, PointF point, float distance)
     {
       // first a quick test if the point is far outside the circle

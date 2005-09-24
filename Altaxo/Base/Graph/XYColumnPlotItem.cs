@@ -397,8 +397,7 @@ namespace Altaxo.Graph
     }
 
     /// <summary>
-    /// Test wether the mouse hits a plot item. The default implementation here returns null.
-    /// If you want to have a reaction on mouse click on a curve, implement this function.
+    /// Test wether the mouse hits a plot item. 
     /// </summary>
     /// <param name="layer">The layer in which this plot item is drawn into.</param>
     /// <param name="hitpoint">The point where the mouse is pressed.</param>
@@ -413,14 +412,39 @@ namespace Altaxo.Graph
       PointF[] ptArray;
       if(myPlotAssociation.GetRangesAndPoints(layer,out rangeList,out ptArray))
       {
-        GraphicsPath gp = new GraphicsPath();
-        gp.AddLines(ptArray);
-        if(gp.IsOutlineVisible(hitpoint.X,hitpoint.Y,new Pen(Color.Black,5)))
+        if(ptArray.Length<2048)
         {
+          GraphicsPath gp = new GraphicsPath();
+          gp.AddLines(ptArray);
+          if(gp.IsOutlineVisible(hitpoint.X,hitpoint.Y,new Pen(Color.Black,5)))
+          {
+            gp.Widen(new Pen(Color.Black,5));
+            return new HitTestObject(gp,this);
+          }
+        }
+        else // we have too much points for the graphics path, so make a hit test first
+        {
+         
+          int hitindex = -1;
+          for(int i=1;i<ptArray.Length;i++)
+          {
+            if(Drawing2DRelated.IsPointIntoDistance(ptArray[i-1],ptArray[i],hitpoint,5))
+            {
+              hitindex =i;
+              break;
+            }
+          }
+          if(hitindex<0)
+            return null;
+          GraphicsPath gp = new GraphicsPath();
+          int start = Math.Max(0,hitindex-1);
+          gp.AddLine(ptArray[start],ptArray[start+1]);
+          gp.AddLine(ptArray[start+1],ptArray[start+2]);
           gp.Widen(new Pen(Color.Black,5));
           return new HitTestObject(gp,this);
         }
       }
+    
 
       return null;
     }
@@ -446,13 +470,13 @@ namespace Altaxo.Graph
       {
         double mindistance = double.MaxValue;
         int minindex = -1;
-        for(int i=0;i<ptArray.Length;i++)
+        for(int i=1;i<ptArray.Length;i++)
         {
-          double distance = Drawing2DRelated.Distance(hitpoint,ptArray[i]);
+          double distance = Drawing2DRelated.SquareDistanceLineToPoint(ptArray[i-1],ptArray[i],hitpoint);
           if(distance<mindistance)
           {
             mindistance = distance;
-            minindex = i;
+            minindex = Drawing2DRelated.Distance(ptArray[i-1],hitpoint)<Drawing2DRelated.Distance(ptArray[i],hitpoint) ? i-1 : i;
           }
         }
         // ok, minindex is the point we are looking for

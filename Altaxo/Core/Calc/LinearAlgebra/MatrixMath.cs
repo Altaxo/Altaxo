@@ -1205,13 +1205,13 @@ namespace Altaxo.Calc.LinearAlgebra
 
     /// <summary>
     /// Wraps a linear array to a read-only matrix. The array is column oriented, i.e. consecutive elements
-    /// belong mostly to one column.
+    /// belong mostly to one column. This is the convention used for LAPACK routines.
     /// </summary>
     public class ROMatrixFromLinearArray : IROMatrix
     {
-      double[] _data;
-      int _rows;
-      int _cols;
+      protected double[] _data;
+      protected int _rows;
+      protected int _cols;
       #region IROMatrix Members
 
       public ROMatrixFromLinearArray(double[] array, int nRows)
@@ -1244,6 +1244,37 @@ namespace Altaxo.Calc.LinearAlgebra
 
       #endregion
     }
+
+    /// <summary>
+    /// Wraps a linear array to a read-write matrix. The array is column oriented, i.e. consecutive elements
+    /// belong mostly to one column. This is the convention used for LAPACK routines.
+    /// </summary>
+    public class MatrixFromLinearArray : ROMatrixFromLinearArray, IMatrix
+    {
+      public MatrixFromLinearArray(double[] array, int nRows)
+      : base(array,nRows)
+      {
+      }
+      #region IMatrix Members
+
+      public double this[int row, int col]
+      {
+       
+        get
+        {
+          return _data[row + col * _rows];
+        }
+        
+        set
+        {
+          _data[row + col * _rows] = value;
+        }
+      }
+
+      #endregion
+
+    }
+
 
     #endregion
 
@@ -1420,6 +1451,17 @@ namespace Altaxo.Calc.LinearAlgebra
     public static IROMatrix ToROMatrix(double[] x, int nRows)
     {
       return new ROMatrixFromLinearArray(x, nRows);
+    }
+
+    /// <summary>
+    /// Wraps a linear array into a read-write matrix. The array is packed column-wise, i.e. the first elements belong to the first column of the matrix.
+    /// </summary>
+    /// <param name="x">Linear array. The length has to be a multiple of <c>nRows</c>.</param>
+    /// <param name="nRows">Number of rows of the resulting matrix.</param>
+    /// <returns>The read-only matrix wrappage of the linear array.</returns>
+    public static IMatrix ToMatrix(double[] x, int nRows)
+    {
+      return new MatrixFromLinearArray(x, nRows);
     }
 
     /// <summary>
@@ -2525,6 +2567,56 @@ namespace Altaxo.Calc.LinearAlgebra
   
 
     #region SingularValueDecomposition
+
+    /// <summary>
+    /// Calculates the pseudo inverse of the matrix <c>input</c> by means of singular value decomposition.
+    /// A relative value of <c>100*DBL_EPSILON</c> is used to chop the singular values before calculation.
+    /// </summary>
+    /// <param name="input">Input matrix</param>
+    /// <returns>The pseudo inverse of matrix <c>input</c>.</returns>
+    public static IMatrix PseudoInverse(IROMatrix input)
+    {
+      int rank;
+      return PseudoInverse(input,out rank);
+    }
+
+    /// <summary>
+    /// Calculates the pseudo inverse of the matrix <c>input</c> by means of singular value decomposition.
+    /// A relative value of <c>100*DBL_EPSILON</c> is used to chop the singular values before calculation.
+    /// </summary>
+    /// <param name="input">Input matrix</param>
+    /// <param name="rank">Returns the rank of the input matrix.</param>
+    /// <returns>The pseudo inverse of matrix <c>input</c>.</returns>
+    public static IMatrix PseudoInverse(IROMatrix input, out int rank)
+    {
+      MatrixMath.BEMatrix ma = new BEMatrix(input.Rows,input.Columns);
+      MatrixMath.Copy(input,ma);
+      SingularValueDecomposition svd =  new SingularValueDecomposition(ma);
+      
+      
+      double[][] B = GetMatrixArray(input.Columns,input.Rows);
+
+
+      /* compute the pseudoinverse in B */
+      double[] s = svd.Diagonal;
+      int m = input.Rows;
+      int n = input.Columns;
+      int minmn = Math.Min(m,n);
+
+      double[][] v = svd.V;
+      double[][] u = svd.U;
+      double thresh = (DoubleConstants.DBL_EPSILON*100) * s[0];
+      for(rank=0; rank<minmn && s[rank]>thresh; rank++)
+      {
+        double one_over_denom=1.0/s[rank];
+
+        for(int j=0; j<m; j++)
+          for(int i=0; i<n; i++)
+            B[i][j]+=v[i][rank]*u[j][rank]*one_over_denom;
+      }
+
+      return new JaggedArrayMatrix(B);
+    }
 
     /// <summary>Returns the singular value decomposition for this matrix.</summary>
     /// <param name="input">The input matrix (is preserved).</param>

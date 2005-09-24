@@ -33,6 +33,7 @@ namespace Altaxo.Gui.Graph
 
       InitializeCollectionAndData();
       InitializeStyles();
+      BringTabToFront(2);
     }
 
     void InitializeCollectionAndData()
@@ -166,7 +167,10 @@ namespace Altaxo.Gui.Graph
     public bool Apply()
     {
       if(_applySuspend++ > 0)
+      {
+        _applySuspend--;
         return true;
+      }
 
       bool applyResult = false;
 
