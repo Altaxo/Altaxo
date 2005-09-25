@@ -219,7 +219,7 @@ namespace Altaxo.Graph.GUI
 
     public void EhView_EndBValidating(string endB, ref bool bCancel)
     {
-      bCancel = !NumberConversion.IsDouble(endB, out m_EndA);
+      bCancel = !NumberConversion.IsDouble(endB, out m_EndB);
     }
 
     #endregion

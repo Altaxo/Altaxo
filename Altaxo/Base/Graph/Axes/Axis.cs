@@ -30,11 +30,18 @@ namespace Altaxo.Graph.Axes
   using Scaling;
   using Boundaries;
 
+  
+ 
+
+
   /// <summary>
   /// Axis is the abstract base class of all axis types including linear axis, logarithmic axis and so on.
   /// </summary>
   public abstract class Axis : ICloneable, Main.IChangedEventSource
   {
+
+
+
     #region ICloneable Members
     /// <summary>
     /// Creates a copy of the axis.
@@ -127,6 +134,12 @@ namespace Altaxo.Graph.Axes
     /// </summary>
     public abstract void ProcessDataBounds(AltaxoVariant org, bool orgfixed, AltaxoVariant end, bool endfixed); 
 
+    /// <summary>
+    /// True if the axis is linked to another. In this case, do not process the data bounds.
+    /// The layer that controls this axis has to set IsLinked temporarily to false in order
+    /// to be able to set the data bounds of this axis.
+    /// </summary>
+    public bool IsLinked;
 
 
     /// <summary>
@@ -141,18 +154,10 @@ namespace Altaxo.Graph.Axes
     {
       sm_AvailableAxes = new System.Collections.Hashtable();
 
-      System.Reflection.Assembly[] assemblies = System.AppDomain.CurrentDomain.GetAssemblies();
-      foreach(System.Reflection.Assembly assembly in assemblies)
-      {
-        // test if the assembly supports Serialization
-        
-        Type[] definedtypes = assembly.GetTypes();
-        foreach(Type definedtype in definedtypes)
-        {
-          if(definedtype.IsSubclassOf(typeof(Axis)) && !definedtype.IsAbstract)
-            sm_AvailableAxes.Add(definedtype.Name,definedtype);
-        }
-      }
+      System.Type[] types = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(Axis));
+      foreach(System.Type definedtype in types)
+        sm_AvailableAxes.Add(definedtype.Name,definedtype);
+      
     }
 
 

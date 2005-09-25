@@ -26,11 +26,14 @@ namespace Altaxo.Graph.Axes
     #region ICloneable Members
     public void CopyFrom(DateTimeAxis from)
     {
+      this.IsLinked = from.IsLinked;
+
       this.m_AxisOrg = from.m_AxisOrg;
       this.m_AxisEnd = from.m_AxisEnd;
  
       this.InternalSetDataBounds((FiniteDateTimeBoundaries)from.m_DataBounds.Clone());
       this.InternalSetRescaling((DateTimeAxisRescaleConditions)from._rescaling.Clone());
+
     }
 
     public DateTimeAxis(DateTimeAxis from)
@@ -323,7 +326,8 @@ namespace Altaxo.Graph.Axes
     
     public  void ProcessDataBounds(DateTime org, bool orgfixed, DateTime end, bool endfixed)
     {
-     
+      if(IsLinked)
+        return;
 
 
       DateTime oldAxisOrg = this.m_AxisOrg;
@@ -420,6 +424,7 @@ namespace Altaxo.Graph.Axes
 
     protected void EhBoundariesChanged(object sender, BoundariesChangedEventArgs e)
     {
+
       bool bIsRelevant=true;
 
       if(bIsRelevant) // if something really relevant changed

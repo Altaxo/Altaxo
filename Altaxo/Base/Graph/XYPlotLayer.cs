@@ -232,9 +232,9 @@ namespace Altaxo.Graph
 
     /// <summary>True if the layer area should be filled with a background brush.</summary>
     protected bool _fillLayerArea=false;
+
     /// <summary>The background brush for the layer area.</summary>
     protected BrushHolder m_LayerAreaFillBrush = new BrushHolder(Color.Aqua);
-
 
     /// <summary>
     /// The layers x position value, either absolute or relative, as determined by <see cref="_layerXPositionType"/>.
@@ -995,8 +995,14 @@ namespace Altaxo.Graph
     void CreateEventLinks()
     {
       // restore the event chain
-      if(null!=_xAxis) _xAxis.Changed += new EventHandler(this.OnXAxisChangedEventHandler);
-      if(null!=_yAxis) _yAxis.Changed += new EventHandler(this.OnYAxisChangedEventHandler);
+      if(null!=_xAxis)
+      {
+        _xAxis.Changed += new EventHandler(this.OnXAxisChangedEventHandler);
+      }
+      if(null!=_yAxis)
+      {
+        _yAxis.Changed += new EventHandler(this.OnYAxisChangedEventHandler);
+      }
 
       if(null!=_leftAxisStyle) _leftAxisStyle.Changed += new EventHandler(this.OnChildChangedEventHandler);
       if(null!=_bottomAxisStyle) _bottomAxisStyle.Changed += new EventHandler(this.OnChildChangedEventHandler);
@@ -1833,16 +1839,25 @@ namespace Altaxo.Graph
         if(!object.ReferenceEquals(_xAxis,value))
         {
           if(null!=_xAxis)
+          {
             _xAxis.Changed -= new System.EventHandler(this.OnXAxisChangedEventHandler);
+            _xAxis.IsLinked = false;
+          }
         
           _xAxis = value;
 
           if(null!=_xAxis)
+          {
             _xAxis.Changed += new System.EventHandler(this.OnXAxisChangedEventHandler);
+            _xAxis.IsLinked = this.IsXAxisLinked;
+          }
 
 
           // now we have to inform all the PlotItems that a new axis was loaded
-          RescaleXAxis();
+          if(this.IsXAxisLinked)
+            this.OnLinkedLayerAxesChanged(LinkedLayer,EventArgs.Empty);
+          else
+            RescaleXAxis();
         }
       }
     }
@@ -1883,16 +1898,25 @@ namespace Altaxo.Graph
         if(!object.ReferenceEquals(_yAxis,value))
         {
           if(null!=_yAxis)
+          {
             _yAxis.Changed -= new System.EventHandler(this.OnYAxisChangedEventHandler);
+            _yAxis.IsLinked = false;
+          }
         
           _yAxis = value;
 
           if(null!=_yAxis)
+          {
             _yAxis.Changed += new System.EventHandler(this.OnYAxisChangedEventHandler);
+            _yAxis.IsLinked = this.IsYAxisLinked;
 
+          }
 
           // now we have to inform all the PlotAssociations that a new axis was loaded
-          RescaleYAxis();
+          if(this.IsYAxisLinked)
+            this.OnLinkedLayerAxesChanged(LinkedLayer,EventArgs.Empty);
+          else
+             RescaleYAxis();
         }
       }
     }
@@ -1933,6 +1957,7 @@ namespace Altaxo.Graph
       {
         bool oldValue = this.m_LinkXAxis;
         m_LinkXAxis = value;
+        _xAxis.IsLinked = value;
         if(value!=oldValue && value==true)
         {
           if(null!=LinkedLayer)
@@ -1951,6 +1976,7 @@ namespace Altaxo.Graph
       {
         bool oldValue = this.m_LinkYAxis;
         m_LinkYAxis = value;
+        _yAxis.IsLinked = value;
         if(value!=oldValue && value==true)
         {
           if(null!=LinkedLayer)
@@ -1975,10 +2001,14 @@ namespace Altaxo.Graph
       set 
       {
         if(value==AxisLinkType.None)
+        {
           this.m_LinkXAxis = false;
+          _xAxis.IsLinked = false;
+        }
         else
         {
           this.m_LinkXAxis = true;
+          _xAxis.IsLinked = true;
           if(value==AxisLinkType.Straight)
           {
             this.m_LinkXAxisOrgA=0;
@@ -1987,9 +2017,17 @@ namespace Altaxo.Graph
             this.m_LinkXAxisEndB=1;
           }
           if(null!=LinkedLayer)
+          {
             OnLinkedLayerAxesChanged(LinkedLayer, new System.EventArgs());
+          }
         }
       }
+    }
+
+    bool EhXAxisInterrogateBoundaryChangedEvent()
+    {
+      // do nothing here, for the future we can decide to change the linked axis boundaries
+      return this.IsXAxisLinked;
     }
 
     
@@ -2010,10 +2048,12 @@ namespace Altaxo.Graph
         if(value==AxisLinkType.None)
         {
           this.m_LinkYAxis = false;
+          _yAxis.IsLinked = false;
         }
         else
         {
           this.m_LinkYAxis = true;
+          _yAxis.IsLinked = true;
           if(value==AxisLinkType.Straight)
           {
             this.m_LinkYAxisOrgA=0;
@@ -2022,9 +2062,17 @@ namespace Altaxo.Graph
             this.m_LinkYAxisEndB=1;
           }
           if(null!=LinkedLayer)
+          {
             OnLinkedLayerAxesChanged(LinkedLayer, new System.EventArgs());
+          }
         }
       }
+    }
+
+    bool EhYAxisInterrogateBoundaryChangedEvent()
+    {
+      // do nothing here, for the future we can decide to change the linked axis boundaries
+      return this.IsYAxisLinked;
     }
 
 
@@ -2258,17 +2306,22 @@ namespace Altaxo.Graph
 
       if(IsXAxisLinked && null!=LinkedLayer)
       {
-        this._xAxis.ProcessDataBounds( 
+        // we must disable our own interrogator because otherwise we can not change the axis
+        _xAxis.IsLinked = false;
+        _xAxis.ProcessDataBounds( 
           m_LinkXAxisOrgA+m_LinkXAxisOrgB*LinkedLayer.XAxis.OrgAsVariant,true,
           m_LinkXAxisEndA+m_LinkXAxisEndB*LinkedLayer.XAxis.EndAsVariant,true);
+        _xAxis.IsLinked = true;
 
       }
 
       if(IsYAxisLinked && null!=LinkedLayer)
       {
-        this._yAxis.ProcessDataBounds( 
+        _yAxis.IsLinked = false;
+        _yAxis.ProcessDataBounds( 
           m_LinkYAxisOrgA+m_LinkYAxisOrgB*LinkedLayer.YAxis.OrgAsVariant,true,
           m_LinkYAxisEndA+m_LinkYAxisEndB*LinkedLayer.YAxis.EndAsVariant,true);
+        _yAxis.IsLinked = true;
       }
 
       // indicate that the axes have changed

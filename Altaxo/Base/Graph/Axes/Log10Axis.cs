@@ -211,6 +211,7 @@ namespace Altaxo.Graph.Axes
     /// <param name="from">The axis to copy from.</param>
     public Log10Axis(Log10Axis from)
     {
+      this.IsLinked = from.IsLinked;
    
       this.m_DataBounds   = null==from.m_DataBounds ? new PositiveFiniteNumericalBoundaries() : (NumericalBoundaries)from.m_DataBounds.Clone();
       m_DataBounds.BoundaryChanged += new BoundaryChangedHandler(this.OnBoundariesChanged);
@@ -522,7 +523,8 @@ namespace Altaxo.Graph.Axes
     /// </summary>
     public override void ProcessDataBounds(double org, bool orgfixed, double end, bool endfixed)
     {
-
+      if(IsLinked)
+        return;
       // if one of the bounds is not valid, use the old bounds instead
 
       double log10org = org>0 ? Math.Log10(org) : m_Log10Org;

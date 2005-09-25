@@ -247,6 +247,8 @@ namespace Altaxo.Graph.Axes
     /// <param name="from">A other linear axis from which to copy from.</param>
     public LinearAxis(LinearAxis from)
     {
+      this.IsLinked = from.IsLinked;
+
       this.m_AxisEnd        = from.m_AxisEnd;
       this.m_AxisEndByMajor = from.m_AxisEndByMajor;
       this.m_AxisOrg        = from.m_AxisOrg;
@@ -261,6 +263,7 @@ namespace Altaxo.Graph.Axes
       this.m_OneByAxisSpan  = from.m_OneByAxisSpan;
 
       this._rescaling = null==from.Rescaling ? new NumericAxisRescaleConditions() : (NumericAxisRescaleConditions)from.Rescaling.Clone();
+
     }
 
     public virtual void CopyFrom(LinearAxis from)
@@ -457,6 +460,9 @@ namespace Altaxo.Graph.Axes
 
     public  override void ProcessDataBounds(double xorg, bool xorgfixed, double xend, bool xendfixed)
     {
+      if(IsLinked)
+         return;
+
       double oldAxisOrgByMajor = m_AxisOrgByMajor;
       double oldAxisEndByMajor = m_AxisEndByMajor;
       double oldMajorSpan      = m_MajorSpan;
@@ -516,6 +522,8 @@ namespace Altaxo.Graph.Axes
 
     protected void OnBoundariesChanged(object sender, BoundariesChangedEventArgs e)
     {
+     
+
       bool bIsRelevant=true;
 
       if(bIsRelevant) // if something really relevant changed
