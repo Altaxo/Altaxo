@@ -1322,6 +1322,7 @@ namespace Altaxo.Graph
 
         CalculateMatrix();
         this.CalculateCachedSize();
+        this.CalculateCachedPosition();
 
         // scale the position of the inner items according to the ratio of the new size to the old size
         // note: only the size is important here, since all inner items are relative to the layer origin
@@ -2819,6 +2820,8 @@ namespace Altaxo.Graph
     {
       if(null!=SizeChanged)
         SizeChanged(this,new System.EventArgs());
+
+      OnInvalidate();
     }
 
 
@@ -2826,6 +2829,8 @@ namespace Altaxo.Graph
     {
       if(null!=PositionChanged)
         PositionChanged(this,new System.EventArgs());
+
+      OnInvalidate();
     }
 
     protected virtual void OnAxesChanged()

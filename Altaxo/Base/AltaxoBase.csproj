@@ -1085,6 +1085,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Graph\Procedures\ArrangeLayers.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Graph\Procedures\NonlinearFitting.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -1132,6 +1137,21 @@
                 />
                 <File
                     RelPath = "Gui\Common\TabbedElementController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Gui\Graph\ArrangeLayersControl.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Gui\Graph\ArrangeLayersControl.resx"
+                    DependentUpon = "ArrangeLayersControl.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Gui\Graph\ArrangeLayersController.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

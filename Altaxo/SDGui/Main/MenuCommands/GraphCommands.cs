@@ -330,6 +330,13 @@ namespace Altaxo.Graph.Commands
     }
   }
 
+  public class ArrangeLayers : AbstractGraphControllerCommand
+  {
+    public override void Run(GraphController ctrl)
+    {
+      Altaxo.Graph.Procedures.ArrangeLayersDocument.ArrangeLayers(ctrl.Doc);
+    }
+  }
   /// <summary>
   /// Duplicates the Graph and the Graph view to a new one.
   /// </summary>
