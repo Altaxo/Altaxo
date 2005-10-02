@@ -49,6 +49,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       _funcselController = new FitFunctionSelectionController(_doc.FitEnsemble.Count==0 ? null : _doc.FitEnsemble[0].FitFunction);
       Current.Gui.GetControl(_funcselController);
     
+      _doc.FitEnsemble.Changed += new EventHandler(EhFitEnsemble_Changed);
     }
 
     public void Initialize()
@@ -59,6 +60,10 @@ namespace Altaxo.Calc.Regression.Nonlinear
         _view.SetSelectFunctionControl(_funcselController.ViewObject);
         _view.SetFitEnsembleControl(_fitEnsembleController.ViewObject);
       }
+    }
+
+    private void EhFitEnsemble_Changed(object sender, EventArgs e)
+    {
     }
 
     #region  INonlinearFitViewEventSink
@@ -77,8 +82,8 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
         fitAdapter.CopyParametersBackTo(_doc.CurrentParameters);
 
-        _doc.FitEnsemble.InitializeParametersFromParameterSet(_doc.CurrentParameters);
-        _doc.FitEnsemble.DistributeParameters();
+        //_doc.FitEnsemble.InitializeParametersFromParameterSet(_doc.CurrentParameters);
+        //_doc.FitEnsemble.DistributeParameters();
         
         OnAfterFittingStep();
       }
@@ -94,8 +99,8 @@ namespace Altaxo.Calc.Regression.Nonlinear
       {
         LevMarAdapter fitAdapter = new LevMarAdapter(_doc.FitEnsemble,_doc.CurrentParameters);
         this._chiSquare = fitAdapter.EvaluateChiSquare();
-        _doc.FitEnsemble.InitializeParametersFromParameterSet(_doc.CurrentParameters);
-        _doc.FitEnsemble.DistributeParameters();
+        //_doc.FitEnsemble.InitializeParametersFromParameterSet(_doc.CurrentParameters);
+        //_doc.FitEnsemble.DistributeParameters();
         OnAfterFittingStep();
       }
       else
@@ -134,8 +139,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
       if(changed)
       {
-        _doc.FitEnsemble.InitializeFittingSession();
-        _doc.FitEnsemble.InitializeParameterSetFromEnsembleParameters(_doc.CurrentParameters);
+        // _doc.FitEnsemble.InitializeParameterSetFromEnsembleParameters(_doc.CurrentParameters);
         
         this._fitEnsembleController.Refresh();
 
@@ -200,11 +204,11 @@ namespace Altaxo.Calc.Regression.Nonlinear
             {
               Altaxo.Graph.XYFunctionPlotItem plotItem = (Altaxo.Graph.XYFunctionPlotItem)_functionPlotItems[funcNumber];
               FitFunctionToScalarFunctionDDWrapper wrapper = (FitFunctionToScalarFunctionDDWrapper)plotItem.Data.Function;
-              wrapper.Initialize(fitEle.FitFunction,k,0,fitEle.ParameterValues);
+              wrapper.Initialize(fitEle.FitFunction,k,0,_doc.GetParametersForFitElement(i));
             }
             else
             {
-              FitFunctionToScalarFunctionDDWrapper wrapper = new FitFunctionToScalarFunctionDDWrapper(fitEle.FitFunction,k, fitEle.ParameterValues);
+              FitFunctionToScalarFunctionDDWrapper wrapper = new FitFunctionToScalarFunctionDDWrapper(fitEle.FitFunction,k, _doc.GetParametersForFitElement(i));
               Altaxo.Graph.XYFunctionPlotData plotdata = new Altaxo.Graph.XYFunctionPlotData(wrapper);
               Altaxo.Graph.XYFunctionPlotItem plotItem = new Altaxo.Graph.XYFunctionPlotItem(plotdata,new Altaxo.Graph.XYPlotStyleCollection(LineScatterPlotStyleKind.Line));
               graph.ActiveLayer.PlotItems.Add(plotItem);
@@ -269,5 +273,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     }
 
     #endregion
+
+   
   }
 }

@@ -229,6 +229,15 @@ namespace Altaxo.Main.Services
         return null;
     }
 
+    /// <summary>
+    /// Computes the Script text hash of a single script text.
+    /// </summary>
+    /// <param name="scriptText">The script text.</param>
+    /// <returns>A hash string which unique identifies the script text.</returns>
+    public static string ComputeScriptTextHash(string scriptText)
+    {
+      return ScriptCompilerResult.ComputeScriptTextHash(new string[]{scriptText});
+    }
 
     /// <summary>
     /// Does the compilation of the script into an assembly. The assembly is stored together with

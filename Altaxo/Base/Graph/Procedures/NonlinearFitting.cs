@@ -3,11 +3,13 @@ using Altaxo.Data;
 
 namespace Altaxo.Graph.Procedures
 {
-	/// <summary>
-	/// Contains static functions for initiating the nonlinear fitting process.
-	/// </summary>
-	public class NonlinearFitting
-	{
+  /// <summary>
+  /// Contains static functions for initiating the nonlinear fitting process.
+  /// </summary>
+  public class NonlinearFitting
+  {
+    static Calc.Regression.Nonlinear.NonlinearFitDocument _lastFitDocument;
+
     public static string Fit(Altaxo.Graph.GUI.GraphController ctrl)
     {
       if(ctrl.CurrentPlotNumber<0)
@@ -29,20 +31,33 @@ namespace Altaxo.Graph.Procedures
       if(yColumn==null)
         return "The y-column is not numeric";
 
-      Calc.Regression.Nonlinear.NonlinearFitDocument fitdoc = new Altaxo.Calc.Regression.Nonlinear.NonlinearFitDocument();
+      if(_lastFitDocument==null)
+      {
+        _lastFitDocument = new Altaxo.Calc.Regression.Nonlinear.NonlinearFitDocument();
+      }
       Calc.Regression.Nonlinear.FitElement fitele = new Altaxo.Calc.Regression.Nonlinear.FitElement(
         xColumn,
         yColumn,
         xyPlotItem.XYColumnPlotData.PlotRangeStart,
         xyPlotItem.XYColumnPlotData.PlotRangeLength);
 
-      fitdoc.FitEnsemble.Add(fitele);
-      fitdoc.FitContext = ctrl;
+      if(_lastFitDocument.FitEnsemble.Count>0)
+      {
+        fitele.FitFunction = _lastFitDocument.FitEnsemble[0].FitFunction;
+        _lastFitDocument.FitEnsemble[0] = fitele;
+      }
+      else
+      {
+        _lastFitDocument.FitEnsemble.Add(fitele);
+      }
+        
+      _lastFitDocument.FitContext = ctrl;
+      
 
-      object fitdocasobject = fitdoc;
+      object fitdocasobject = _lastFitDocument;
       Current.Gui.ShowDialog(ref fitdocasobject,"Non-linear fitting");
 
       return null;
     }
-	}
+  }
 }

@@ -360,7 +360,7 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Gui\Dialogs\CommonAboutDialog.cs">
-      <SubType>UserControl</SubType>
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="Gui\Dialogs\DirtyFilesDialog.cs">
       <SubType>Code</SubType>

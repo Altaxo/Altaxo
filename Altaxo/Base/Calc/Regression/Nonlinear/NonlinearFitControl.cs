@@ -63,6 +63,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     {
       this._tabControl = new System.Windows.Forms.TabControl();
       this._tpSelectFunction = new System.Windows.Forms.TabPage();
+      this._btNew = new System.Windows.Forms.Button();
       this._btSelect = new System.Windows.Forms.Button();
       this._tpMakeFit = new System.Windows.Forms.TabPage();
       this.label1 = new System.Windows.Forms.Label();
@@ -70,7 +71,6 @@ namespace Altaxo.Calc.Regression.Nonlinear
       this._btChiSqr = new System.Windows.Forms.Button();
       this._btDoFit = new System.Windows.Forms.Button();
       this._tpFitEnsemble = new System.Windows.Forms.TabPage();
-      this._btNew = new System.Windows.Forms.Button();
       this._tabControl.SuspendLayout();
       this._tpSelectFunction.SuspendLayout();
       this._tpMakeFit.SuspendLayout();
@@ -98,6 +98,15 @@ namespace Altaxo.Calc.Regression.Nonlinear
       this._tpSelectFunction.TabIndex = 0;
       this._tpSelectFunction.Text = "Select fit func";
       // 
+      // _btNew
+      // 
+      this._btNew.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this._btNew.Location = new System.Drawing.Point(120, 328);
+      this._btNew.Name = "_btNew";
+      this._btNew.TabIndex = 1;
+      this._btNew.Text = "New..";
+      this._btNew.Click += new System.EventHandler(this._btNew_Click);
+      // 
       // _btSelect
       // 
       this._btSelect.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -121,6 +130,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       // 
       // label1
       // 
+      this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.label1.Location = new System.Drawing.Point(216, 328);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(40, 16);
@@ -162,14 +172,6 @@ namespace Altaxo.Calc.Regression.Nonlinear
       this._tpFitEnsemble.Size = new System.Drawing.Size(424, 358);
       this._tpFitEnsemble.TabIndex = 2;
       this._tpFitEnsemble.Text = "Details";
-      // 
-      // _btNew
-      // 
-      this._btNew.Location = new System.Drawing.Point(120, 328);
-      this._btNew.Name = "_btNew";
-      this._btNew.TabIndex = 1;
-      this._btNew.Text = "New..";
-      this._btNew.Click += new System.EventHandler(this._btNew_Click);
       // 
       // NonlinearFitControl
       // 

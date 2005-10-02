@@ -77,8 +77,8 @@ namespace Altaxo.Scripting
     string[] _IndependentVariablesNames = new string[]{"x"};
     string[] _DependentVariablesNames = new string[]{"y"};
 
-    string _fitFunctionName = "User";
-    string _fitFunctionCategory = "";
+    string _fitFunctionName = "User1";
+    string _fitFunctionCategory = "UserCat";
     DateTime _fitFunctionCreationTime = DateTime.Now;
 
     public DateTime CreationTime
@@ -97,6 +97,29 @@ namespace Altaxo.Scripting
     {
       get { return _fitFunctionCategory; }
       set { _fitFunctionCategory = value; }
+    }
+
+    public override bool Equals(object obj)
+    {
+      if(!(obj is FitFunctionScript))
+      return base.Equals (obj);
+
+      FitFunctionScript from = (FitFunctionScript)obj;
+
+      if(!base.Equals(from))
+        return false;
+
+      if(this.FitFunctionCategory != from.FitFunctionCategory)
+        return false;
+      if(this.FitFunctionName != from.FitFunctionName)
+        return false;
+      
+      return true;
+    }
+
+    public override int GetHashCode()
+    {
+      return base.GetHashCode() + this._fitFunctionCategory.GetHashCode()+this._fitFunctionName.GetHashCode();
     }
 
 
@@ -121,6 +144,68 @@ namespace Altaxo.Scripting
         info.GetBaseValueEmbedded(s, typeof(AbstractScript), parent);
 
         XmlSerializationSurrogate0 surr = new XmlSerializationSurrogate0();
+        surr._deserializedObject = s;
+        info.DeserializationFinished +=new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.info_DeserializationFinished);
+
+        return s;
+      }
+
+      private void info_DeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot)
+      {
+        info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(info_DeserializationFinished);
+
+        if(documentRoot is AltaxoDocument)
+        {
+          AltaxoDocument doc = documentRoot as AltaxoDocument;
+
+          // add this script to the collection of scripts
+          doc.FitFunctionScripts.Add(_deserializedObject);
+        }
+      }
+    }
+
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FitFunctionScript), 1)]
+      public new class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      FitFunctionScript _deserializedObject;
+
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        FitFunctionScript s = (FitFunctionScript)obj;
+        info.AddBaseValueEmbedded(s, typeof(AbstractScript));
+
+        info.AddValue("Category",s._fitFunctionCategory);
+        info.AddValue("Name",s._fitFunctionName);
+        info.AddValue("CreationTime",s._fitFunctionCreationTime);
+
+        info.AddValue("NumberOfParameters",s._NumberOfParameters);
+        info.AddValue("UserDefinedParameters",s._IsUsingUserDefinedParameterNames);
+        if(s._IsUsingUserDefinedParameterNames)
+          info.AddArray("UserDefinedParameterNames",s._UserDefinedParameterNames,s._UserDefinedParameterNames.Length);
+
+        info.AddArray("IndependentVariableNames",s._IndependentVariablesNames,s._IndependentVariablesNames.Length);
+        info.AddArray("DependentVariableNames",s._DependentVariablesNames,s._DependentVariablesNames.Length);
+
+      }
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        FitFunctionScript s = null != o ? (FitFunctionScript)o : new FitFunctionScript();
+
+        // deserialize the base class
+        info.GetBaseValueEmbedded(s, typeof(AbstractScript), parent);
+
+        s._fitFunctionCategory = info.GetString("Category");
+        s._fitFunctionName = info.GetString("Name");
+        s._fitFunctionCreationTime = info.GetDateTime("CreationTime");
+        s._NumberOfParameters = info.GetInt32("NumberOfParameters");
+        s._IsUsingUserDefinedParameterNames = info.GetBoolean("UserDefinedParameters");
+        if(s._IsUsingUserDefinedParameterNames)
+        info.GetArray("UserDefinedParameterNames",out s._UserDefinedParameterNames);
+        info.GetArray("IndependentVariableNames",out s._IndependentVariablesNames);
+        info.GetArray("DependentVariableNames",out s._DependentVariablesNames);
+
+        XmlSerializationSurrogate1 surr = new XmlSerializationSurrogate1();
         surr._deserializedObject = s;
         info.DeserializationFinished +=new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.info_DeserializationFinished);
 

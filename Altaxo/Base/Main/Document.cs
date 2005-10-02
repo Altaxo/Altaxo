@@ -181,6 +181,26 @@ namespace Altaxo
         }
       }
 
+      // 4th, we save all FitFunctions into the FitFunctions subdirectory
+      foreach(Altaxo.Scripting.FitFunctionScript fit in this._FitFunctionScripts)
+      {
+        try 
+        {
+          zippedStream.StartFile("FitFunctionScripts/"+fit.CreationTime.ToString()+".xml",0);
+          //ZipEntry ZipEntry = new ZipEntry("TableLayouts/"+layout.Name+".xml");
+          //zippedStream.PutNextEntry(ZipEntry);
+          //zippedStream.SetLevel(0);
+          info.BeginWriting(zippedStream.Stream);
+          info.AddValue("FitFunctionScript",fit);
+          info.EndWriting();
+        }
+        catch(Exception exc)
+        {
+          errorText.Append(exc.ToString());
+        }
+      }
+
+
       if(errorText.Length!=0)
         throw new ApplicationException(errorText.ToString());
     }
@@ -221,6 +241,16 @@ namespace Altaxo
             object readedobject = info.GetValue("WorksheetLayout",this);
             if(readedobject is Altaxo.Worksheet.WorksheetLayout)
               this.m_TableLayoutList.Add((Altaxo.Worksheet.WorksheetLayout)readedobject);
+            info.EndReading();
+          
+          }
+          else if(!zipEntry.IsDirectory && zipEntry.Name.StartsWith("FitFunctionScripts/"))
+          {
+            System.IO.Stream zipinpstream =zipFile.GetInputStream(zipEntry);
+            info.BeginReading(zipinpstream);
+            object readedobject = info.GetValue("FitFunctionScript",this);
+            if(readedobject is Altaxo.Scripting.FitFunctionScript)
+              this._FitFunctionScripts.Add((Altaxo.Scripting.FitFunctionScript)readedobject);
             info.EndReading();
           
           }

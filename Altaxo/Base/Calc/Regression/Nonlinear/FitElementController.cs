@@ -21,6 +21,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     void EhView_ChooseDependentColumn(int idx);
     void EhView_ChooseErrorFunction(int idx);
     void EhView_ChooseFitFunction();
+    void EhView_ChooseExternalParameter(int idx);
 
     void EhView_DeleteDependentVariable(int idx);
   }
@@ -106,6 +107,26 @@ namespace Altaxo.Calc.Regression.Nonlinear
       _view.Refresh();
     }
 
+    public void EhView_ChooseExternalParameter(int idx)
+    {
+      string choice = _doc.ParameterName(idx);
+      object choiceAsObject = choice;
+      if (Current.Gui.ShowDialog(ref choiceAsObject, "Edit parameter name"))
+      {
+        choice = (string)choiceAsObject;
+
+        if (choice.Length>0)
+        {
+          _doc.SetParameterName(choice,idx);
+        }
+        else
+        {
+          Current.Gui.ErrorMessageBox("Choosen parameter name was empty!");
+        }
+      }
+      _view.Refresh();
+    }
+
    public void EhView_DeleteDependentVariable(int idx)
   {
      _doc.SetDependentVariable(idx,null);
@@ -113,13 +134,13 @@ namespace Altaxo.Calc.Regression.Nonlinear
   }
    public void EhView_ChooseErrorFunction(int idx)
     {
-    Altaxo.Main.GUI.SingleInstanceChoice choice = new SingleInstanceChoice(typeof(IErrorEvaluation),_doc.ErrorEvaluation(idx));
+    Altaxo.Main.GUI.SingleInstanceChoice choice = new SingleInstanceChoice(typeof(IVarianceScaling),_doc.ErrorEvaluation(idx));
 
      object choiceAsObject = choice;
      if(Current.Gui.ShowDialog(ref choiceAsObject, "Select error norm"))
      {
        choice = (SingleInstanceChoice)choiceAsObject;
-       _doc.SetErrorEvaluation(idx,(IErrorEvaluation)choice.Instance);
+       _doc.SetErrorEvaluation(idx,(IVarianceScaling)choice.Instance);
        _view.Refresh();
      }
     }

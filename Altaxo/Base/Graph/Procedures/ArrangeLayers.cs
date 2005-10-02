@@ -91,7 +91,12 @@ namespace Altaxo.Graph.Procedures
             graph.Layers[nLayer].TopAxisEnabled = false;
             graph.Layers[nLayer].RightAxisEnabled = false;
           }
-         graph.Layers[nLayer].SetSize(relHorzSize/100,XYPlotLayer.SizeType.RelativeToGraphDocument,relVertSize/100,XYPlotLayer.SizeType.RelativeToGraphDocument);
+            SizeF oldSize = graph.Layers[nLayer].Size;
+            graph.Layers[nLayer].SetSize(relHorzSize/100,XYPlotLayer.SizeType.RelativeToGraphDocument,relVertSize/100,XYPlotLayer.SizeType.RelativeToGraphDocument);
+            SizeF newSize = graph.Layers[nLayer].Size;
+
+            if(oldSize!=newSize)
+              graph.Layers[nLayer].RescaleInnerItemPositions(newSize.Width/oldSize.Width,newSize.Height/oldSize.Height);
          graph.Layers[nLayer].SetPosition(relHorzPos/100,XYPlotLayer.PositionType.RelativeToGraphDocument,relVertPos/100,XYPlotLayer.PositionType.RelativeToGraphDocument);
 
         }

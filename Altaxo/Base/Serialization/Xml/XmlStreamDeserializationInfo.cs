@@ -340,6 +340,14 @@ namespace Altaxo.Serialization.Xml
       }
     }
 
+    
+    public void GetArray(string name, out string[] val)
+    {
+      int count = GetInt32Attribute("Count");
+      val = new string[count];
+      GetArray(val,count);
+    }
+
     public void GetArray(string[] val, int count)
     {
       // Attribute must be readed before ReadStartElement

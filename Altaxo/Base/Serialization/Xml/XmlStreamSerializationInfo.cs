@@ -315,6 +315,20 @@ namespace Altaxo.Serialization.Xml
     }
 
 
+    public void AddArray(string name, object[] val, int count)
+    {
+      this.CreateArray(name,count);
+
+      if(count>0)
+      {
+        for(int i=0;i<count;i++)
+        {
+          this.AddValue("e",val[i]);
+        }
+      
+      } // count>0
+      this.CommitArray();
+    }
 
 
     public void CreateElement(string name)

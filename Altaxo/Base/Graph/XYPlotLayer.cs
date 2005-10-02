@@ -1329,13 +1329,24 @@ namespace Altaxo.Graph
         SizeF     newLayerSize     = this._cachedLayerSize;
         xscale = newLayerSize.Width/oldLayerSize.Width;
         yscale = newLayerSize.Height/oldLayerSize.Height;
-        GraphicsObject.ScalePosition(this._leftAxisTitle,xscale,yscale);
-        GraphicsObject.ScalePosition(this._bottomAxisTitle,xscale,yscale);
-        GraphicsObject.ScalePosition(this._rightAxisTitle,xscale,yscale);
-        GraphicsObject.ScalePosition(this._topAxisTitle,xscale,yscale);
-        GraphicsObject.ScalePosition(this._legend,xscale,yscale);
-        this.m_GraphObjects.ScalePosition(xscale,yscale);
+
+        RescaleInnerItemPositions(xscale,yscale);
       }
+    }
+
+    /// <summary>
+    /// Recalculates the positions of inner items in case the layer has changed its size.
+    /// </summary>
+    /// <param name="xscale">The ratio the layer has changed its size in horizontal direction.</param>
+    /// <param name="yscale">The ratio the layer has changed its size in vertical direction.</param>
+    public void RescaleInnerItemPositions(double xscale, double yscale)
+    {
+      GraphicsObject.ScalePosition(this._leftAxisTitle,xscale,yscale);
+      GraphicsObject.ScalePosition(this._bottomAxisTitle,xscale,yscale);
+      GraphicsObject.ScalePosition(this._rightAxisTitle,xscale,yscale);
+      GraphicsObject.ScalePosition(this._topAxisTitle,xscale,yscale);
+      GraphicsObject.ScalePosition(this._legend,xscale,yscale);
+      this.m_GraphObjects.ScalePosition(xscale,yscale);
     }
 
     public PointF Position

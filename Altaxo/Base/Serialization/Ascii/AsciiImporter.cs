@@ -333,6 +333,9 @@ namespace Altaxo.Serialization.Ascii
         {
           if(substr[k].Length==0)
             continue;
+
+          if(k>=newcols.ColumnCount)
+            continue;
         
           if(i==0) // is it the column name line
           {

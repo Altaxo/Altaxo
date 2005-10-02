@@ -17,6 +17,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     IFitFunctionSelectionViewEventSink _controller;
     private System.Windows.Forms.Splitter splitter1;
     private System.Windows.Forms.TreeView _twFitFunctions;
+    private System.Windows.Forms.ContextMenu _treeViewContextMenu;
 		/// <summary> 
 		/// Required designer variable.
 		/// </summary>
@@ -55,6 +56,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 		{
       this.splitter1 = new System.Windows.Forms.Splitter();
       this._twFitFunctions = new System.Windows.Forms.TreeView();
+      this._treeViewContextMenu = new System.Windows.Forms.ContextMenu();
       this.SuspendLayout();
       // 
       // splitter1
@@ -67,6 +69,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       // 
       // _twFitFunctions
       // 
+      this._twFitFunctions.ContextMenu = this._treeViewContextMenu;
       this._twFitFunctions.ImageIndex = -1;
       this._twFitFunctions.Location = new System.Drawing.Point(8, 16);
       this._twFitFunctions.Name = "_twFitFunctions";
@@ -74,6 +77,10 @@ namespace Altaxo.Calc.Regression.Nonlinear
       this._twFitFunctions.Size = new System.Drawing.Size(136, 272);
       this._twFitFunctions.TabIndex = 1;
       this._twFitFunctions.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this._twFitFunctions_AfterSelect);
+      // 
+      // _treeViewContextMenu
+      // 
+      this._treeViewContextMenu.Popup += new System.EventHandler(this._treeViewContextMenu_Popup);
       // 
       // FitFunctionSelectionControl
       // 
@@ -249,6 +256,21 @@ namespace Altaxo.Calc.Regression.Nonlinear
     {
       if(_controller!=null)
         _controller.EhView_SelectionChanged(e.Node.Tag);
+    }
+
+    private void EhEditItem(object sender, EventArgs e)
+    {
+    }
+
+    private void _treeViewContextMenu_Popup(object sender, System.EventArgs e)
+    {
+      if(this._twFitFunctions.SelectedNode!=null)
+      {
+        if(_twFitFunctions.SelectedNode is DocumentLeafNode)
+        {
+          this._treeViewContextMenu.MenuItems.Add(new MenuItem("Edit",new EventHandler(this.EhEditItem)));
+        }
+      }
     }
 
   }

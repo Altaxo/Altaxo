@@ -162,12 +162,19 @@ namespace Altaxo.Serialization.Ascii
       }
       return bRet;
     }
+
+    /// <summary>
+    /// Tests if the string <c>s</c> is numeric. This is a very generic test here. We accept dots and commas as decimal separators, because the decimal separator statistics
+    /// is made afterwards.
+    /// </summary>
+    /// <param name="s"></param>
+    /// <returns></returns>
     public static bool IsNumeric(string s)
     {
       bool bRet=false;
       try
       {
-        System.Convert.ToDouble(s);
+        double.Parse(s,System.Globalization.NumberStyles.Any);
         bRet=true;
       }
       catch(Exception)

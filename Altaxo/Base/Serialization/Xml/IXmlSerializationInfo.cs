@@ -61,6 +61,7 @@ namespace Altaxo.Serialization.Xml
     void AddArray(string name, double[] val, int count);
     void AddArray(string name, DateTime[] val, int count);
     void AddArray(string name, string[] val, int count);
+    void AddArray(string name, object[] val, int count);
   
     void CreateElement(string name);
     void CommitElement();

@@ -72,6 +72,14 @@ namespace Altaxo.Graph
 
     object m_Parent;
 
+    /// <summary>
+    /// The graph properties, key is a string, value is a property (arbitrary object) you want to store here.
+    /// </summary>
+    /// <remarks>The properties are saved on disc (with exception of those who starts with "tmp/".
+    /// If the property you want to store is only temporary, the properties name should therefore
+    /// start with "tmp/".</remarks>
+    protected System.Collections.Hashtable _GraphProperties;
+
     #region "Serialization"
 
     /// <summary>Used to serialize the GraphDocument Version 0.</summary>
@@ -170,6 +178,69 @@ namespace Altaxo.Graph
       }
     }
 
+   
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GraphDocument),1)]
+      public class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        GraphDocument s = (GraphDocument)obj;
+
+        // info.AddBaseValueEmbedded(s,typeof(GraphDocument).BaseType);
+        // now the data of our class
+        info.AddValue("Name",s.m_Name);
+        info.AddValue("PageBounds",s.m_PageBounds);
+        info.AddValue("PrintableBounds",s.m_PrintableBounds);
+        info.AddValue("Layers",s.m_Layers);
+
+        // new in version 1 - Add graph properties
+        int numberproperties = s._GraphProperties==null ? 0 : s._GraphProperties.Keys.Count;
+        info.CreateArray("TableProperties",numberproperties);
+        if(s._GraphProperties!=null)
+        {
+          foreach(string propkey in s._GraphProperties.Keys)
+          {
+            if(propkey.StartsWith("tmp/"))
+              continue;
+            info.CreateElement("e");
+            info.AddValue("Key",propkey);
+            object val = s._GraphProperties[propkey];
+            info.AddValue("Value",info.IsSerializable(val) ? val : null);
+            info.CommitElement();
+          }
+        }
+        info.CommitArray();
+
+
+      }
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        
+        GraphDocument s = null!=o ? (GraphDocument)o : new GraphDocument();
+
+        //  info.GetBaseValueEmbedded(s,typeof(GraphDocument).BaseType,parent);
+        s.m_Name            =  info.GetString("Name"); 
+        s.m_PageBounds      = (RectangleF)info.GetValue("PageBounds",s);
+        s.m_PrintableBounds = (RectangleF)info.GetValue("PrintableBounds",s);
+
+        s.m_Layers          = (XYPlotLayerCollection)info.GetValue("LayerList",s);
+        s.m_Layers.ParentObject = s;
+
+        // new in version 1 - Add graph properties
+        int numberproperties = info.OpenArray(); // "GraphProperties"
+        for(int i=0;i<numberproperties;i++)
+        {
+          info.OpenElement(); // "e"
+          string propkey = info.GetString("Key");
+          object propval = info.GetValue("Value",parent);
+          info.CloseElement(); // "e"
+          s.SetGraphProperty(propkey,propval);
+        }
+        info.CloseArray(numberproperties);
+        return s;
+      }
+    }
+
 
     /// <summary>
     /// Finale measures after deserialization.
@@ -197,6 +268,18 @@ namespace Altaxo.Graph
       this.m_Layers.ParentObject = this;
       this.m_PageBounds = from.m_PageBounds;
       this.m_PrintableBounds = from.m_PrintableBounds;
+
+
+      // Clone also the table properties (deep copy)
+      if(from._GraphProperties!=null)
+      {
+        foreach(string key in from._GraphProperties.Keys)
+        {
+          ICloneable val = from._GraphProperties[key] as ICloneable;
+          if(null!=val)
+            this.SetGraphProperty(key,val.Clone());
+        }
+      }
     }
 
     public object Clone()
@@ -240,6 +323,36 @@ namespace Altaxo.Graph
         m_Parent = value;
       }
     }
+
+
+    /// <summary>
+    /// Gets an arbitrary object that was stored as graph property by <see>SetGraphProperty</see>.
+    /// </summary>
+    /// <param name="key">Name of the property.</param>
+    /// <returns>The object, or null if no object under the provided name was stored here.</returns>
+    public object GetGraphProperty(string key)
+    {
+      return _GraphProperties==null ? null : this._GraphProperties[key]; 
+    }
+
+
+    /// <summary>
+    /// The table properties, key is a string, val is a object you want to store here.
+    /// </summary>
+    /// <remarks>The properties are saved on disc (with exception of those who's name starts with "tmp/".
+    /// If the property you want to store is only temporary, the property name should therefore
+    /// start with "tmp/".</remarks>
+    public void   SetGraphProperty(string key, object val)
+    {
+      if(_GraphProperties ==null)
+        _GraphProperties = new System.Collections.Hashtable();
+
+      if(_GraphProperties[key]==null)
+        _GraphProperties.Add(key,val);
+      else
+        _GraphProperties[key]=val;
+    }
+
 
     /// <summary>
     /// Event fired if either the PageBounds or the PrintableBounds changed

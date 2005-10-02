@@ -89,8 +89,11 @@ namespace Altaxo.Data
     protected TableScript m_TableScript;
 
     /// <summary>
-    /// The table properties, key is a string, 
+    /// The table properties, key is a string, value is a property you want to store here.
     /// </summary>
+    /// <remarks>The properties are saved on disc (with exception of those who starts with "tmp/".
+    /// If the property you want to store is only temporary, the properties name should therefore
+    /// start with "tmp/".</remarks>
     protected System.Collections.Hashtable _TableProperties;
     // Helper Data
 
@@ -280,6 +283,8 @@ namespace Altaxo.Data
         {
           foreach(string propkey in s._TableProperties.Keys)
           {
+            if(propkey.StartsWith("tmp/"))
+              continue;
             info.CreateElement("e");
             info.AddValue("Key",propkey);
             object val = s._TableProperties[propkey];
@@ -953,10 +958,23 @@ namespace Altaxo.Data
     #endregion
 
 
+    /// <summary>
+    /// Gets an arbitrary object that was stored as table property by <see>SetTableProperty</see>.
+    /// </summary>
+    /// <param name="key">Name of the property.</param>
+    /// <returns>The object, or null if no object under the provided name was stored here.</returns>
     public object GetTableProperty(string key)
     {
       return _TableProperties==null ? null : this._TableProperties[key]; 
     }
+
+
+    /// <summary>
+    /// The table properties, key is a string, val is a object you want to store here.
+    /// </summary>
+    /// <remarks>The properties are saved on disc (with exception of those who's name starts with "tmp/".
+    /// If the property you want to store is only temporary, the property name should therefore
+    /// start with "tmp/".</remarks>
     public void   SetTableProperty(string key, object val)
     {
       if(_TableProperties ==null)

@@ -186,9 +186,11 @@
     <Compile Include="Calc\ScriptExecutionBase.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Data\NumericColumnProxy.cs" />
     <Compile Include="Data\ReadableColumnProxy.cs" />
     <Compile Include="Graph\I2DGroupablePlotItem.cs" />
     <Compile Include="Graph\PlotColors.cs" />
+    <Compile Include="Graph\Procedures\ArrangeLayers.cs" />
     <Compile Include="Graph\XYPlotStyleCollectionTemplates.cs" />
     <Compile Include="Gui\Common\ControlViewElement.cs" />
     <Compile Include="Gui\Common\MultiChildController.cs" />

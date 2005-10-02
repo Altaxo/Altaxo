@@ -75,6 +75,7 @@ namespace Altaxo.Serialization.Xml
     /// <param name="count">The number of elements to deserialize. If this is less than the number of elements in the xml stream, the other elements are safely ignored.</param>
     void GetArray(double[] val, int count);
     void GetArray(DateTime[] val, int count);
+    void GetArray(string name, out string[] val);
     void GetArray(string[] val, int count);
 
 

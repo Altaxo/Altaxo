@@ -399,6 +399,41 @@ namespace Altaxo.Scripting
       }
     }
 
+
+    /// <summary>
+    /// Get the script text hash
+    /// </summary>
+    public virtual string ScriptTextHash
+    {
+      get 
+      { 
+        if(null!=_compilerResult)
+        {
+          return _compilerResult.ScriptTextHash;
+        }
+        if(null==m_ScriptText)
+        {
+          m_ScriptText = this.CodeHeader + this.CodeStart + this.CodeUserDefault + this.CodeEnd + this.CodeTail;
+        }
+        return Main.Services.ScriptCompilerService.ComputeScriptTextHash(m_ScriptText);
+      }
+    }
+
+    public override bool Equals(object obj)
+    {
+      if(!(obj is AbstractScript))
+        return base.Equals(obj);
+      AbstractScript script = (AbstractScript)obj;
+      return this.ScriptText.GetHashCode() == script.ScriptText.GetHashCode();
+    }
+
+    public override int GetHashCode()
+    {
+      return this.ScriptText.GetHashCode();
+    }
+
+
+
     /// <summary>
     /// Gets the index in the script (considered as string), where the
     /// user area starts. This is momentarily behind the comment line

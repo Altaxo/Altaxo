@@ -20,9 +20,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
       /// <summary>Independent variable array for temporary purpose.</summary>
       public double[] Xs;
 
-      /// <summary>Parameter mapping from the global parameter list to the local parameter list. Positive entries
-      /// give the position in the variable parameter list, negative entries gives the position -entry-1 in the 
-      /// constant parameter list.
+      /// <summary>Parameter mapping from the local parameter list to the global parameter list. Positive entries
+      /// give the position in the global variable parameter list, negative entries gives the position -entry-1 in the 
+      /// global constant parameter list.
       /// </summary>
       public int[] ParameterMapping;
 
@@ -322,18 +322,34 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
     public void CopyParametersBackTo(ParameterSet pset)
     {
-      for (int ele = 0; ele < _cachedFitElementInfo.Length; ele++)
+
+      if(pset.Count!=this._constantParameters.Length)
+        throw new ArgumentException("Length of parameter set pset does not match with cached length of parameter set");
+      int varyingPara=0;
+      for(int i=0;i<pset.Count;i++)
       {
-        CachedFitElementInfo info = _cachedFitElementInfo[ele];
-        FitElement fitEle = _fitEnsemble[ele];
-        
-        // copy of the parameter to the temporary array
-        for (int i = 0; i < info.Parameters.Length; i++)
+        if(pset[i].Vary)
+          varyingPara++;
+      }
+
+      if(varyingPara!=this._cachedVaryingParameters.Length)
+        throw new ArgumentException("Number of varying parameters in pset does not match cached number of varying parameters");
+
+      varyingPara=0;
+      for (int i=0;i<pset.Count;i++)
+      {
+        if(pset[i].Vary)
         {
-          int idx = info.ParameterMapping[i];
-          pset[i].Parameter = idx>=0 ? this._cachedVaryingParameters[idx] : _constantParameters[-1-idx];
-          pset[i].Variance = idx>=0 && _resultingCovariances!=null ? _resultingCovariances[idx+idx*_cachedVaryingParameters.Length] : 0;
+          pset[i].Parameter = this._cachedVaryingParameters[varyingPara];
+          pset[i].Variance = _resultingCovariances[varyingPara+varyingPara*_cachedVaryingParameters.Length];
+          varyingPara++;
         }
+        else
+        {
+          pset[i].Parameter = this._constantParameters[i];
+          pset[i].Variance = 0;
+        }
+        
       }
        pset.OnInitializationFinished();
     }

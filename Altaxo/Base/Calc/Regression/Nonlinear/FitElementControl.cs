@@ -82,15 +82,19 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
 
     // Variables for paint and click
+    /// <summary>Upper left vertex of the fit function box.</summary>
     Point _fitBoxLocation;
+    /// <summary>Size of the fit function box.</summary>
     Size _fitBoxSize;
 
-    /// <summary>Width of the IErrorEvaluation box.</summary>
+    /// <summary>Width of the IVarianceScaling box.</summary>
     int _errorFunctionWidth;
-    /// <summary>X position of the IErrorEvaluation box.</summary>
+    /// <summary>X position of the IVarianceScaling box.</summary>
     int _errorFunctionX;
 
+    /// <summary>X coordinate of the left edge of the external parameters boxes.</summary>
     int _externalParametersX;
+    /// <summary>With of the external parameters boxes.</summary>
     int _externalParametersWidth;
 
     int _VariablesX = 0;
@@ -339,6 +343,23 @@ namespace Altaxo.Calc.Regression.Nonlinear
       base.OnMouseDown (e);
     }
 
+    protected bool IsClickOnExternalParameter(Point point, ref int idx)
+    {
+
+      if(point.X>this._externalParametersX  &&
+        point.X<(this._externalParametersX+this._externalParametersWidth) &&
+        point.Y>=this._fitBoxLocation.Y &&
+        point.Y<(_fitElement.NumberOfParameters*_slotHeight))
+      {
+        idx = (point.Y - _fitBoxLocation.Y)/_slotHeight;
+        return true;
+      }
+      else
+      {
+        return false;
+      }
+    }
+
 
     protected bool IsClickOnIndependentVariable(Point point, ref int idx)
     {
@@ -469,6 +490,12 @@ namespace Altaxo.Calc.Regression.Nonlinear
       if(IsClickOnErrorFunction(point, ref idx))
       {
         _controller.EhView_ChooseErrorFunction(idx);
+        return;
+      }
+
+      if(IsClickOnExternalParameter(point, ref idx))
+      {
+        _controller.EhView_ChooseExternalParameter(idx);
         return;
       }
 

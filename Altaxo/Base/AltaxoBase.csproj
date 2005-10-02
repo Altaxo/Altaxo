@@ -415,6 +415,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Data\NumericColumnProxy.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Data\OperatableObject.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

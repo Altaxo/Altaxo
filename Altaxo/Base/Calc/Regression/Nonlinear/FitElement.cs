@@ -8,7 +8,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 	/// Holds the fit function together with the data sources for the independent and
 	/// dependent variables.
 	/// </summary>
-  public class FitElement
+  public class FitElement : ICloneable
   {
     #region internal classes
     class IntegerRange
@@ -62,46 +62,136 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// </summary>
     IFitFunction _fitFunction; 
     IntegerRange _rangeOfRows;
-    INumericColumn[] _independentVariables;
-    INumericColumn[] _dependentVariables;
-    IErrorEvaluation[] _errorEvaluation;
+    NumericColumnProxy[] _independentVariables;
+    NumericColumnProxy[] _dependentVariables;
+    IVarianceScaling[] _errorEvaluation;
     string [] _parameterNames = new string[0];
     string _parameterNameStart=string.Empty;
-
-    // Cached values for the fitting session
-    double [] _parameterValues;
-    double [] _independentValues;
-    double [] _dependentValuesResult;
-    IAscendingIntegerCollection _validNumericRows;
 
     public event EventHandler Changed;
 
 
+    #region Serialization
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FitElement),0)]
+      public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        FitElement s = (FitElement)obj;
+        
+        info.AddValue("FitFunction",s._fitFunction);
+        info.AddValue("NumberOfRows",s._rangeOfRows.Count);
+        info.AddValue("FirstRow",s._rangeOfRows.First);
+
+        info.AddArray("IndependentVariables",s._independentVariables,s._independentVariables.Length);
+        info.AddArray("DependentVariables",s._dependentVariables,s._dependentVariables.Length);
+        info.AddArray("VarianceEvaluation",s._errorEvaluation,s._errorEvaluation.Length);
+        info.AddArray("ParameterNames",s._parameterNames,s._parameterNames.Length);
+        info.AddValue("ParameterNameStart",s._parameterNameStart);
+      }
+
+      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        FitElement s = o!=null ? (FitElement)o : new FitElement();
+
+        s.FitFunction = (IFitFunction)info.GetValue("FitFunction",s);
+
+        int numRows = info.GetInt32("NumberOfRows");
+        int firstRow = info.GetInt32("FirstRow");
+        s._rangeOfRows = IntegerRange.NewFromFirstAndCount(firstRow,numRows);
+
+        int arraycount = info.OpenArray();
+        s._independentVariables = new NumericColumnProxy[arraycount];
+        for(int i=0;i<arraycount;++i)
+          s._independentVariables[i] = (NumericColumnProxy)info.GetValue(s);
+        info.CloseArray(arraycount);
+
+        arraycount = info.OpenArray();
+        s._dependentVariables = new NumericColumnProxy[arraycount];
+        for(int i=0;i<arraycount;++i)
+          s._dependentVariables[i] = (NumericColumnProxy)info.GetValue(s);
+        info.CloseArray(arraycount);
+
+
+        arraycount = info.OpenArray();
+        s._errorEvaluation = new IVarianceScaling[arraycount];
+        for(int i=0;i<arraycount;++i)
+          s._errorEvaluation[i] = (IVarianceScaling)info.GetValue(s);
+        info.CloseArray(arraycount);
+
+        info.GetArray("ParameterNames",out s._parameterNames);
+
+        s._parameterNameStart = info.GetString("ParameterNameStart");
+        return s;
+      }
+    }
+
+    #endregion
+
     public FitElement()
     {
-      _independentVariables = new INumericColumn[0];
+      _independentVariables = new NumericColumnProxy[0];
     
-      _dependentVariables = new INumericColumn[0];
+      _dependentVariables = new NumericColumnProxy[0];
      
-      _errorEvaluation = new IErrorEvaluation[0];
+      _errorEvaluation = new IVarianceScaling[0];
+ 
       _rangeOfRows = IntegerRange.NewFromFirstAndCount(0,int.MaxValue);
+    }
+
+    public FitElement(FitElement from)
+    {
+      this._fitFunction = from._fitFunction;
+      if (_fitFunction is ICloneable)
+        this._fitFunction = (IFitFunction)((ICloneable)from.FitFunction).Clone();
+
+      _rangeOfRows = IntegerRange.NewFromFirstAndCount(from._rangeOfRows.First, from._rangeOfRows.Count);
+      _independentVariables = new NumericColumnProxy[from._independentVariables.Length];
+      for (int i = 0; i < _independentVariables.Length; ++i)
+      {
+        if(from._independentVariables[i]!=null)
+          _independentVariables[i] = (NumericColumnProxy)from._independentVariables[i].Clone();
+      }
+
+      _dependentVariables = new NumericColumnProxy[from._dependentVariables.Length];
+      for (int i = 0; i < _dependentVariables.Length; ++i)
+      {
+        if (from._dependentVariables[i] != null)
+          _dependentVariables[i] = (NumericColumnProxy)from._dependentVariables[i].Clone();
+      }
+      _errorEvaluation = new IVarianceScaling[from._errorEvaluation.Length];
+      for (int i = 0; i < _errorEvaluation.Length; ++i)
+      {
+        if (from._errorEvaluation[i] != null)
+          _errorEvaluation[i] = (IVarianceScaling)from._errorEvaluation[i].Clone();
+      }
+
+      _parameterNames = (string[])from._parameterNames.Clone();
+      _parameterNameStart = from._parameterNameStart;
+
     }
 
     public FitElement(INumericColumn xColumn, INumericColumn yColumn, int start, int count)
     {
-      _independentVariables = new INumericColumn[1];
-      _independentVariables[0] = xColumn;
+      _independentVariables = new NumericColumnProxy[1];
+      _independentVariables[0] = new NumericColumnProxy(xColumn);
 
-      _dependentVariables = new INumericColumn[1];
-      _dependentVariables[0] = yColumn;
+      _dependentVariables = new NumericColumnProxy[1];
+      _dependentVariables[0] = new NumericColumnProxy(yColumn);
 
-      _errorEvaluation = new IErrorEvaluation[1];
-      _errorEvaluation[0] = new Norm2ErrorEvaluation();
+      _errorEvaluation = new IVarianceScaling[1];
+      _errorEvaluation[0] = new ConstantVarianceScaling();
 
       _rangeOfRows = IntegerRange.NewFromFirstAndCount(start,count);
 
     }
 
+    /// <summary>
+    /// Gives the ith parameter name.
+    /// </summary>
+    /// <param name="i">Index.</param>
+    /// <returns>The ith parameter name.</returns>
     public string ParameterName(int i)
     {
       if(null!=_fitFunction)
@@ -115,29 +205,71 @@ namespace Altaxo.Calc.Regression.Nonlinear
         return null;
     }
 
+    /// <summary>
+    /// Sets the ith parameter name.
+    /// </summary>
+    /// <param name="value">The new value of the parameter.</param>
+    /// <param name="i">Index of the parameter.</param>
+    public void SetParameterName(string value, int i)
+    {
+
+      if(value==null)
+        throw new ArgumentNullException("value","Parameter name must not be null");
+      if(value.Length==0)
+        throw new ArgumentException("Parameter name is empty", "value");
+
+      string oldValue = _parameterNames[i];
+      _parameterNames[i] = value;
+
+      if(value!=oldValue)
+        this.OnChanged();
+    }
+
+    /// <summary>
+    /// Returns the ith independent variable column. Can return <c>null</c> if the column was set properly, but was 
+    /// disposed in the mean time.
+    /// </summary>
+    /// <param name="i">Index.</param>
+    /// <returns>The ith independent variable column, or <c>null if such a column is no longer available.</c></returns>
     public INumericColumn IndependentVariables(int i)
     {
-      return this._independentVariables[i];
+      return this._independentVariables[i].Document;
     }
 
+    /// <summary>
+    /// Sets the ith independent variable column. The column is hold by a reference aware of disposed events, so that it can be null if retrieved afterwards.
+    /// </summary>
+    /// <param name="i">Index.</param>
+    /// <param name="col">Independent variable column to set.</param>
     public void SetIndependentVariable(int i, INumericColumn col)
     {
-      this._independentVariables[i] = col;
+      this._independentVariables[i] = new NumericColumnProxy(col);
     }
 
+    /// <summary>
+    /// Returns the ith dependent variable column. Can return <c>null</c> if the column was set properly, but was 
+    /// disposed in the mean time.
+    /// </summary>
+    /// <param name="i">Index.</param>
+    /// <returns>The ith dependent variable column, or <c>null if such a column is no longer available.</c></returns>
     public INumericColumn DependentVariables(int i)
     {
-      return this._dependentVariables[i];
+      return this._dependentVariables[i].Document;
     }
 
+    /// <summary>
+    /// Sets the ith dependent variable column. The column is hold by a reference aware of disposed events, so that it can be null if retrieved afterwards.
+    /// </summary>
+    /// <param name="i">Index.</param>
+    /// <param name="col">Dependent variable column to set.</param>
     public void SetDependentVariable(int i, INumericColumn col)
     {
-      this._dependentVariables[i] = col;
+      this._dependentVariables[i] = new NumericColumnProxy(col);
       
       if(col!=null)
       {
         if(this._errorEvaluation[i]==null)
-          this._errorEvaluation[i] = new Norm2ErrorEvaluation();
+          this._errorEvaluation[i] = new ConstantVarianceScaling();
       }
       else
       {
@@ -145,30 +277,19 @@ namespace Altaxo.Calc.Regression.Nonlinear
       }
     }
 
-    public IErrorEvaluation ErrorEvaluation(int i)
+    public IVarianceScaling ErrorEvaluation(int i)
     {
       return this._errorEvaluation[i];
     }
 
-    public void SetErrorEvaluation(int i, IErrorEvaluation val)
+    public void SetErrorEvaluation(int i, IVarianceScaling val)
     {
       this._errorEvaluation[i] = val;
     }
 
-    public void SetParameterValues(double[] para)
-    {
-      for(int i=0;i<_parameterValues.Length;i++)
-        _parameterValues[i] = para[i];
-    }
-
-    public double[] ParameterValues
-    {
-      get
-      {
-        return _parameterValues;
-      }
-    }
-
+    /// <summary>
+    /// Gets / sets the fitting function.
+    /// </summary>
     public IFitFunction FitFunction
     {
       get
@@ -194,19 +315,12 @@ namespace Altaxo.Calc.Regression.Nonlinear
       }
     }
 
-    public IAscendingIntegerCollection ValidNumericRows
-    {
-      get
-      {
-        return _validNumericRows;
-      }
-    }
-
+    
 
     void InternalReallocIndependentVariables(int noIndep)
     {
-      INumericColumn [] oldArr = this._independentVariables;
-      INumericColumn [] newArr = new INumericColumn[noIndep];
+      NumericColumnProxy[] oldArr = this._independentVariables;
+      NumericColumnProxy[] newArr = new NumericColumnProxy[noIndep];
       for(int i=Math.Min(newArr.Length,oldArr.Length)-1;i>=0;i--)
         newArr[i] = oldArr[i];
 
@@ -216,8 +330,8 @@ namespace Altaxo.Calc.Regression.Nonlinear
     void InternalReallocDependentVariables(int noDep)
     {
     {
-      INumericColumn [] oldArr = this._dependentVariables;
-      INumericColumn [] newArr = new INumericColumn[noDep];
+      NumericColumnProxy[] oldArr = this._dependentVariables;
+      NumericColumnProxy[] newArr = new NumericColumnProxy[noDep];
       for(int i=Math.Min(newArr.Length,oldArr.Length)-1;i>=0;i--)
         newArr[i] = oldArr[i];
       this._dependentVariables = newArr;
@@ -225,8 +339,8 @@ namespace Altaxo.Calc.Regression.Nonlinear
     {
       // do the same also with the error scaling
 
-      IErrorEvaluation[] oldArr = _errorEvaluation;
-      IErrorEvaluation[] newArr = new IErrorEvaluation[noDep];
+      IVarianceScaling[] oldArr = _errorEvaluation;
+      IVarianceScaling[] newArr = new IVarianceScaling[noDep];
       for(int i=Math.Min(newArr.Length,oldArr.Length)-1;i>=0;i--)
         newArr[i] = oldArr[i];
       this._errorEvaluation = newArr;
@@ -236,7 +350,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     void InternalReallocParameters(int noPar)
     {
       this._parameterNames = new string[noPar];
-      this._parameterValues = new double[noPar];
+      
     }
     
 
@@ -270,6 +384,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
         Changed(this, EventArgs.Empty);
     }
 
+    
     public IAscendingIntegerCollection CalculateValidNumericRows()
     {
       // also obtain the valid rows both of the independent and of the dependent variables
@@ -281,7 +396,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       int maxLength = int.MaxValue;
       for (i = 0; i < _independentVariables.Length; i++)
       {
-        cols[i] = _independentVariables[i];
+        cols[i] = _independentVariables[i].Document;
         selectedCols.Add(i);
         if (cols[i] is IDefinedCount)
           maxLength = Math.Min(maxLength, ((IDefinedCount)cols[i]).Count);
@@ -292,7 +407,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       {
         if (_dependentVariables[j] != null)
         {
-          cols[i] = _dependentVariables[j];
+          cols[i] = _dependentVariables[j].Document;
           selectedCols.Add(i);
           if (cols[i] is IDefinedCount)
             maxLength = Math.Min(maxLength, ((IDefinedCount)cols[i]).Count);
@@ -308,54 +423,14 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
     }
 
-    public void InitializeFittingSession()
-    {
-      _parameterValues = new double[this._parameterNames.Length];
-      this._independentValues = new double[this._independentVariables.Length];
-      this._dependentValuesResult = new double[this._dependentVariables.Length];
 
-      _validNumericRows = CalculateValidNumericRows();
+    #region ICloneable Members
+
+    public object Clone()
+    {
+      return new FitElement(this);
     }
 
-    /// <summary>
-    /// User-supplied subroutine which calculates the functions to minimize.
-    /// Calculates <c>numberOfYs</c> functions dependent on <c>numberOfParameter</c> parameters and
-    /// returns the calculated y values in array <c>ys</c>. The value of <c>info</c> should
-    /// not be changed unless  the user wants to terminate execution of LevenbergMarquardtFit. 
-    /// In this case set iflag to a negative integer. 
-    /// </summary>
-    public void LMFunction(
-      int numberOfYs, 
-      int numberOfParameter,
-      double[] parameter,
-      double[] ys,
-      ref int info)
-    {
-      Evaluate(parameter,ys);
-    }
-
-   
-    public void Evaluate(double[] parameter, double[] ys)
-    {
-      // zero the sum of errors
-      for(int k=_dependentValuesResult.Length-1;k>=0;--k)
-        ys[k]=0;
-
-      // Evaluate the function for all points
-      for(int i=_validNumericRows.Count-1;i>=0;i--)
-      {
-        for(int k=_independentVariables.Length-1;k>=0;k--)
-          _independentValues[k] = _independentVariables[k][_validNumericRows[i]];
-
-        _fitFunction.Evaluate(_independentValues,parameter,_dependentValuesResult);
-
-        // now calculate the deviation between fit and original
-        for(int k=_dependentValuesResult.Length-1;k>=0;--k)
-        {
-          if(_dependentVariables[k]!=null)
-            ys[k] += _errorEvaluation[k].EvaluateError(_dependentVariables[k][_validNumericRows[i]],_dependentValuesResult[k]);
-        }
-      }
-    }
-	}
+    #endregion
+}
 }
