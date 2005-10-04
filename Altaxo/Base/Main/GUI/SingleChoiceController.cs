@@ -71,7 +71,7 @@ namespace Altaxo.Main.GUI
 
     public SingleChoiceObject(string[] choices, int selection)
     {
-      _choices = (string[])_choices.Clone();
+      _choices = (string[])choices.Clone();
       _selection = selection;
     }
 

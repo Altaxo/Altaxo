@@ -260,10 +260,13 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
     private void EhEditItem(object sender, EventArgs e)
     {
+      if (_controller != null)
+        _controller.EhView_EditItem(_twFitFunctions.SelectedNode.Tag);
     }
 
     private void _treeViewContextMenu_Popup(object sender, System.EventArgs e)
     {
+      this._treeViewContextMenu.MenuItems.Clear();
       if(this._twFitFunctions.SelectedNode!=null)
       {
         if(_twFitFunctions.SelectedNode is DocumentLeafNode)

@@ -298,7 +298,28 @@ namespace Altaxo.Calc.Regression.Nonlinear
       return _resultingSumChiSquare;
     }
 
-  
+    class NelderMeadCostFunction : Calc.Optimization.CostFunction
+    {
+      LevMarAdapter _adapter;
+ 
+      public NelderMeadCostFunction(LevMarAdapter adapter)
+      {
+        _adapter = adapter;
+      }
+      public override double Value(Altaxo.Calc.LinearAlgebra.DoubleVector x)
+      {
+        for(int i=0;i<_adapter._cachedVaryingParameters.Length;++i)
+          _adapter._cachedVaryingParameters[i] = x[i];
+
+        return _adapter.EvaluateChiSquare();
+      }
+
+    }
+    public void DoSimplexMinimization()
+    {
+      Calc.Optimization.NelderMead nm = new Altaxo.Calc.Optimization.NelderMead(new NelderMeadCostFunction(this));
+      nm.Minimize(new Calc.LinearAlgebra.DoubleVector(this._cachedVaryingParameters));
+    }
 
     public void Fit()
     {

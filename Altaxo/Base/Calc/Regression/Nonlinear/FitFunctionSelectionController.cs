@@ -18,6 +18,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
   public interface IFitFunctionSelectionViewEventSink
   {
     void EhView_SelectionChanged(object selectedtag);
+    void EhView_EditItem(object selectedtag);
   }
 
   public interface IFitFunctionSelectionController : Main.GUI.IMVCAController
@@ -76,8 +77,16 @@ namespace Altaxo.Calc.Regression.Nonlinear
       {
         _tempdoc = (IFitFunction)selectedtag;
       }
-
     }
+
+    public void EhView_EditItem(object selectedtag)
+    {
+      if (selectedtag is Altaxo.Scripting.FitFunctionScript)
+      {
+        Current.Gui.ShowDialog(new object[] { selectedtag }, "Edit fit function script");
+      }
+     }
+
 
     #region IMVCController Members
 

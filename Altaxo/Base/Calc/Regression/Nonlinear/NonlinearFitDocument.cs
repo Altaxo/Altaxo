@@ -30,6 +30,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
         NonlinearFitDocument s = o!=null ? (NonlinearFitDocument)o : new NonlinearFitDocument();
 
         s._fitEnsemble = (FitEnsemble)info.GetValue("FitEnsemble",s);
+        s._fitEnsemble.Changed += new EventHandler(s.EhFitEnsemble_Changed);
         s._currentParameters = (ParameterSet)info.GetValue("Parameters",s);
 
         return s;
@@ -49,6 +50,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     public NonlinearFitDocument(NonlinearFitDocument from)
     {
       _fitEnsemble = null == from._fitEnsemble ? null : (FitEnsemble)from._fitEnsemble.Clone();
+      _fitEnsemble.Changed += new EventHandler(EhFitEnsemble_Changed);
       _currentParameters = null == from._currentParameters ? null : (ParameterSet)from._currentParameters.Clone();
       // Note that the fit context is not cloned here.
     }
@@ -132,7 +134,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
     public object Clone()
     {
-      throw new Exception("The method or operation is not implemented.");
+      return new NonlinearFitDocument(this);
     }
 
     #endregion

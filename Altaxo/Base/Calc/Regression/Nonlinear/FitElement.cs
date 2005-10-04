@@ -121,6 +121,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
         info.CloseArray(arraycount);
 
         info.GetArray("ParameterNames",out s._parameterNames);
+        for(int i=0;i<s._parameterNames.Length;++i)
+          if(s._parameterNames[i]==string.Empty)
+            s._parameterNames[i]=null; // serialization can not distinguish between an empty string and a null string
 
         s._parameterNameStart = info.GetString("ParameterNameStart");
         return s;
@@ -196,7 +199,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     {
       if(null!=_fitFunction)
       {
-        if(null==_parameterNames[i])
+        if(null==_parameterNames[i] )
           return _parameterNameStart + _fitFunction.ParameterName(i);
         else
           return _parameterNames[i];
@@ -226,6 +229,17 @@ namespace Altaxo.Calc.Regression.Nonlinear
     }
 
     /// <summary>
+    /// Sets the range of rows that are used for the regression.
+    /// </summary>
+    /// <param name="firstIndex">First row to be used.</param>
+    /// <param name="count">Number of rows to be used [from firstIndex to (firstIndex+count-1)].</param>
+    public void SetRowRange(int firstIndex, int count)
+    {
+      this._rangeOfRows = IntegerRange.NewFromFirstAndCount(firstIndex,count);
+      OnChanged();
+    }
+
+    /// <summary>
     /// Returns the ith independent variable column. Can return <c>null</c> if the column was set properly, but was 
     /// disposed in the mean time.
     /// </summary>
@@ -233,7 +247,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// <returns>The ith independent variable column, or <c>null if such a column is no longer available.</c></returns>
     public INumericColumn IndependentVariables(int i)
     {
-      return this._independentVariables[i].Document;
+      return null==this._independentVariables[i] ? null : this._independentVariables[i].Document;
     }
 
     /// <summary>
@@ -244,6 +258,8 @@ namespace Altaxo.Calc.Regression.Nonlinear
     public void SetIndependentVariable(int i, INumericColumn col)
     {
       this._independentVariables[i] = new NumericColumnProxy(col);
+      
+      this.OnChanged();
     }
 
     /// <summary>
@@ -254,7 +270,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// <returns>The ith dependent variable column, or <c>null if such a column is no longer available.</c></returns>
     public INumericColumn DependentVariables(int i)
     {
-      return this._dependentVariables[i].Document;
+      return null==this._dependentVariables[i] ? null : this._dependentVariables[i].Document;
     }
 
     /// <summary>

@@ -1203,9 +1203,6 @@
     <Content Include="Main\App.ico" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="ClassDiagram1.cd" />
-  </ItemGroup>
-  <ItemGroup>
     <Folder Include="Calc\Regression\PLS\" />
     <Folder Include="Gui\Analysis\NonLinearFitting\" />
   </ItemGroup>

@@ -134,6 +134,9 @@ namespace Altaxo.Main.Services
       }
     }
 
+
+
+
     /// <summary>
     /// Shows a configuration dialog for an object.
     /// </summary>
@@ -185,6 +188,29 @@ namespace Altaxo.Main.Services
       {
         return false;
       }
+    }
+
+
+    public bool ShowDialog(ref System.Enum arg, string title)
+    {
+      System.Type type = arg.GetType();
+      System.Array arr = System.Enum.GetValues(type);
+      int i;
+      for(i=0;i<arr.Length;++i)
+        if(arg.ToString()==arr.GetValue(i).ToString())
+          break;
+      if(i==arr.Length)
+        throw new ArgumentException("The enumeration is not of integer type","arg");
+
+      object obj = new SingleChoiceObject(System.Enum.GetNames(type),i);
+
+      if(ShowDialog(ref obj,title))
+      {
+        arg = (System.Enum)arr.GetValue((obj as Main.GUI.SingleChoiceObject).Selection);
+        return true;
+      }
+      else
+        return false;
     }
 
     /// <summary>

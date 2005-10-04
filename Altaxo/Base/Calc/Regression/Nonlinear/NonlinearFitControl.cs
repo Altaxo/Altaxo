@@ -25,6 +25,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     private System.Windows.Forms.TextBox _edChiSqr;
     private System.Windows.Forms.Label label1;
     private System.Windows.Forms.Button _btNew;
+    private System.Windows.Forms.Button _btDoSimplex;
     /// <summary> 
     /// Required designer variable.
     /// </summary>
@@ -71,6 +72,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       this._btChiSqr = new System.Windows.Forms.Button();
       this._btDoFit = new System.Windows.Forms.Button();
       this._tpFitEnsemble = new System.Windows.Forms.TabPage();
+      this._btDoSimplex = new System.Windows.Forms.Button();
       this._tabControl.SuspendLayout();
       this._tpSelectFunction.SuspendLayout();
       this._tpMakeFit.SuspendLayout();
@@ -118,6 +120,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       // 
       // _tpMakeFit
       // 
+      this._tpMakeFit.Controls.Add(this._btDoSimplex);
       this._tpMakeFit.Controls.Add(this.label1);
       this._tpMakeFit.Controls.Add(this._edChiSqr);
       this._tpMakeFit.Controls.Add(this._btChiSqr);
@@ -161,6 +164,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       this._btDoFit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this._btDoFit.Location = new System.Drawing.Point(80, 328);
       this._btDoFit.Name = "_btDoFit";
+      this._btDoFit.Size = new System.Drawing.Size(64, 23);
       this._btDoFit.TabIndex = 0;
       this._btDoFit.Text = "Fit!";
       this._btDoFit.Click += new System.EventHandler(this._btDoFit_Click);
@@ -172,6 +176,15 @@ namespace Altaxo.Calc.Regression.Nonlinear
       this._tpFitEnsemble.Size = new System.Drawing.Size(424, 358);
       this._tpFitEnsemble.TabIndex = 2;
       this._tpFitEnsemble.Text = "Details";
+      // 
+      // _btDoSimplex
+      // 
+      this._btDoSimplex.Location = new System.Drawing.Point(152, 328);
+      this._btDoSimplex.Name = "_btDoSimplex";
+      this._btDoSimplex.Size = new System.Drawing.Size(56, 23);
+      this._btDoSimplex.TabIndex = 4;
+      this._btDoSimplex.Text = "Simplex!";
+      this._btDoSimplex.Click += new System.EventHandler(this._btDoSimplex_Click);
       // 
       // NonlinearFitControl
       // 
@@ -211,7 +224,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
       _setParameterControl = (Control)control;
       _setParameterControl.Location = new Point(0,0);
-      _setParameterControl.Size = new Size(_tpMakeFit.ClientSize.Width, this._tpMakeFit.Location.Y - this._tpMakeFit.Size.Height/2);
+      _setParameterControl.Size = new Size(_tpMakeFit.ClientSize.Width, this._btDoFit.Location.Y - this._btDoFit.Height/2);
       _setParameterControl.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
       this._tpMakeFit.Controls.Add(_setParameterControl);
 
@@ -278,6 +291,12 @@ namespace Altaxo.Calc.Regression.Nonlinear
     {
       if(_controller!=null)
         _controller.EhView_NewFitFunction();
+    }
+
+    private void _btDoSimplex_Click(object sender, System.EventArgs e)
+    {
+      if(_controller!=null)
+        _controller.EhView_DoSimplex();
     }
   }
 }

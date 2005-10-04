@@ -502,6 +502,21 @@ namespace Altaxo.Scripting
     }
     
   
+
+    /// <summary>
+    /// This ensures that it was tried to compile the script. If the script object is <c>null</c>, and it was not already tried to compile the
+    /// script, the script will be compiled by this function, and the script object will be created if the comilation was sucessfull. The flag isTriedToCompile is set
+    /// to <c>true</c> then (independent on the success of the compilation) to avoid subsequent tries to compile the code.
+    /// </summary>
+    public void MakeSureWasTriedToCompile()
+    {
+      if (null == m_ScriptObject)
+      {
+        if(!this.m_WasTriedToCompile)
+          Compile();
+      }
+    }
+
     /// <summary>
     /// Does the compilation of the script into an assembly.
     /// If it was not compiled before or is dirty, it is compiled first.

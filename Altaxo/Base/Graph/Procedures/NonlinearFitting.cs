@@ -8,6 +8,7 @@ namespace Altaxo.Graph.Procedures
   /// </summary>
   public class NonlinearFitting
   {
+    const string FitDocumentPropertyName = "NonlinearFitDocument";
     static Calc.Regression.Nonlinear.NonlinearFitDocument _lastFitDocument;
 
     public static string Fit(Altaxo.Graph.GUI.GraphController ctrl)
@@ -31,31 +32,52 @@ namespace Altaxo.Graph.Procedures
       if(yColumn==null)
         return "The y-column is not numeric";
 
-      if(_lastFitDocument==null)
-      {
-        _lastFitDocument = new Altaxo.Calc.Regression.Nonlinear.NonlinearFitDocument();
-      }
-      Calc.Regression.Nonlinear.FitElement fitele = new Altaxo.Calc.Regression.Nonlinear.FitElement(
-        xColumn,
-        yColumn,
-        xyPlotItem.XYColumnPlotData.PlotRangeStart,
-        xyPlotItem.XYColumnPlotData.PlotRangeLength);
 
-      if(_lastFitDocument.FitEnsemble.Count>0)
+      Calc.Regression.Nonlinear.NonlinearFitDocument localdoc = ctrl.Doc.GetGraphProperty(FitDocumentPropertyName) as Calc.Regression.Nonlinear.NonlinearFitDocument;
+
+
+      if(localdoc==null)
       {
-        fitele.FitFunction = _lastFitDocument.FitEnsemble[0].FitFunction;
-        _lastFitDocument.FitEnsemble[0] = fitele;
+        if(_lastFitDocument==null)
+        {
+          localdoc = new Altaxo.Calc.Regression.Nonlinear.NonlinearFitDocument();
+        }
+        else
+        {
+          localdoc = (Altaxo.Calc.Regression.Nonlinear.NonlinearFitDocument)_lastFitDocument.Clone();
+        }
       }
-      else
+
+
+      if(localdoc.FitEnsemble.Count==0)
       {
-        _lastFitDocument.FitEnsemble.Add(fitele);
+        Calc.Regression.Nonlinear.FitElement fitele = new Altaxo.Calc.Regression.Nonlinear.FitElement(
+          xColumn,
+          yColumn,
+          xyPlotItem.XYColumnPlotData.PlotRangeStart,
+          xyPlotItem.XYColumnPlotData.PlotRangeLength);
+         
+        localdoc.FitEnsemble.Add(fitele);
+      }
+      else // localdoc.FitEnsemble.Count>0
+      {
+        localdoc.FitEnsemble[0].SetIndependentVariable(0,xColumn);
+        localdoc.FitEnsemble[0].SetDependentVariable(0,yColumn);
+        localdoc.FitEnsemble[0].SetRowRange(xyPlotItem.XYColumnPlotData.PlotRangeStart,xyPlotItem.XYColumnPlotData.PlotRangeLength);
       }
         
-      _lastFitDocument.FitContext = ctrl;
+      localdoc.FitContext = ctrl;
       
 
-      object fitdocasobject = _lastFitDocument;
-      Current.Gui.ShowDialog(ref fitdocasobject,"Non-linear fitting");
+      object fitdocasobject = localdoc;
+      if(true==Current.Gui.ShowDialog(ref fitdocasobject,"Non-linear fitting"))
+      {
+        // store the fit document in the graphs property
+        ctrl.Doc.SetGraphProperty(FitDocumentPropertyName,localdoc);
+
+        _lastFitDocument = (Altaxo.Calc.Regression.Nonlinear.NonlinearFitDocument)localdoc.Clone();
+      }
+
 
       return null;
     }

@@ -19,10 +19,10 @@ namespace Altaxo.Calc.Optimization
   {
 	
 		///<summary>Default constructor for simplex method</summary>
-		public NelderMead(CostFunction costfunction)
+		public NelderMead(ICostFunction costfunction)
 			: this(costfunction, new EndCriteria()) {}
 		
-		public NelderMead(CostFunction costfunction, EndCriteria endcriteria) 
+		public NelderMead(ICostFunction costfunction, EndCriteria endcriteria) 
 		{
 			this.costFunction_=costfunction;
 			this.endCriteria_=endcriteria;

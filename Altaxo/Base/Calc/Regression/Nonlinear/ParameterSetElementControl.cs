@@ -18,6 +18,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     private System.Windows.Forms.Label _lblParameterName;
     private System.Windows.Forms.TextBox _edParameterValue;
     private System.Windows.Forms.CheckBox _chkParameterVaries;
+    private System.Windows.Forms.TextBox _edVarianceValue;
 		/// <summary> 
 		/// Required designer variable.
 		/// </summary>
@@ -57,6 +58,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       this._lblParameterName = new System.Windows.Forms.Label();
       this._edParameterValue = new System.Windows.Forms.TextBox();
       this._chkParameterVaries = new System.Windows.Forms.CheckBox();
+      this._edVarianceValue = new System.Windows.Forms.TextBox();
       this.SuspendLayout();
       // 
       // _lblParameterName
@@ -84,23 +86,34 @@ namespace Altaxo.Calc.Regression.Nonlinear
       this._chkParameterVaries.TabIndex = 2;
       this._chkParameterVaries.CheckedChanged += new System.EventHandler(this._chkParameterVaries_CheckedChanged);
       // 
-      // ParameterSetControl
+      // _edVarianceValue
       // 
+      this._edVarianceValue.Location = new System.Drawing.Point(312, 0);
+      this._edVarianceValue.Name = "_edVarianceValue";
+      this._edVarianceValue.Size = new System.Drawing.Size(128, 20);
+      this._edVarianceValue.TabIndex = 3;
+      this._edVarianceValue.Text = "textBox1";
+      this._edVarianceValue.Validating += new System.ComponentModel.CancelEventHandler(this._edVarianceValue_Validating);
+      // 
+      // ParameterSetElementControl
+      // 
+      this.Controls.Add(this._edVarianceValue);
       this.Controls.Add(this._chkParameterVaries);
       this.Controls.Add(this._edParameterValue);
       this.Controls.Add(this._lblParameterName);
-      this.Name = "ParameterSetControl";
-      this.Size = new System.Drawing.Size(312, 24);
+      this.Name = "ParameterSetElementControl";
+      this.Size = new System.Drawing.Size(448, 24);
       this.ResumeLayout(false);
 
     }
 		#endregion
 
-   public  void Initialize(string name, string value, bool vary)
+   public  void Initialize(string name, string value, bool vary, string variance)
     {
       this._lblParameterName.Text = name;
       this._edParameterValue.Text = value;
       this._chkParameterVaries.Checked = vary;
+     this._edVarianceValue.Text = variance;
     }
 
 
@@ -128,6 +141,12 @@ namespace Altaxo.Calc.Regression.Nonlinear
     {
       if(_controller!=null)
         _controller.EhView_VarySelectionChanged(this._chkParameterVaries.Checked);
+    }
+
+    private void _edVarianceValue_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+    {
+      if(_controller!=null)
+        _controller.EhView_VarianceValidating(this._edVarianceValue.Text,e);    
     }
   
     }

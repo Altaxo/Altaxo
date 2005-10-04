@@ -241,7 +241,11 @@ namespace Altaxo.Gui.Scripting
 
     public void SetCheckUseUserDefinedParameters(bool useUserDefParameters)
     {
+      IFitFunctionScriptViewEventSink tempcontroller = m_Controller; // trick to suppress changed event
+      m_Controller = null;
+
       this._chkUserDefinedParameters.Checked = useUserDefParameters;
+      m_Controller = tempcontroller;
     }
 
 

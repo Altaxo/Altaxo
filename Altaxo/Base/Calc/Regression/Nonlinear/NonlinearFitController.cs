@@ -19,6 +19,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
   public interface INonlinearFitViewEventSink
   {
     void EhView_DoFit();
+    void EhView_DoSimplex();
     void EhView_EvaluateChiSqr();
     void EhView_SelectFitFunction();
     void EhView_NewFitFunction();
@@ -67,7 +68,33 @@ namespace Altaxo.Calc.Regression.Nonlinear
     }
 
     #region  INonlinearFitViewEventSink
-    
+
+    public void EhView_DoSimplex()
+    {
+      if(true==this._parameterController.Apply())
+      {
+        //        _doc.FitEnsemble.InitializeParametersFromParameterSet(_doc.CurrentParameters);
+
+        LevMarAdapter fitAdapter = new LevMarAdapter(_doc.FitEnsemble,_doc.CurrentParameters);
+  
+        fitAdapter.Fit();
+
+        this._chiSquare = fitAdapter.ResultingChiSquare;
+
+        fitAdapter.CopyParametersBackTo(_doc.CurrentParameters);
+
+        //_doc.FitEnsemble.InitializeParametersFromParameterSet(_doc.CurrentParameters);
+        //_doc.FitEnsemble.DistributeParameters();
+        
+        OnAfterFittingStep();
+      }
+      else
+      {
+        Current.Gui.ErrorMessageBox("Some of your parameter input is not valid!");
+      }
+    }
+
+
     public void EhView_DoFit()
     {
       if(true==this._parameterController.Apply())
@@ -110,32 +137,47 @@ namespace Altaxo.Calc.Regression.Nonlinear
     }
 
 
+    enum SelectionChoice { SelectAsOnly, SelectAsAdditional};
+    SelectionChoice _lastSelectionChoice=SelectionChoice.SelectAsOnly;
     void Select(IFitFunction func)
     {
       bool changed = false;
-       if(_doc.FitEnsemble.Count>0)
+      if(_doc.FitEnsemble.Count==0)
+      {
+        FitElement newele = new FitElement();
+        newele.FitFunction = func;
+        _doc.FitEnsemble.Add(newele);
+        changed=true;
+      }
+      else if(_doc.FitEnsemble.Count>0 && _doc.FitEnsemble[_doc.FitEnsemble.Count-1].FitFunction==null)
+      {
+        _doc.FitEnsemble[_doc.FitEnsemble.Count-1].FitFunction = func;
+        changed = true;
+      }
+      else // Count>0, and there is already a fit function, we
+      { // have to ask the user whether he wants to discard the old functions or keep them
+
+        System.Enum selchoice = _lastSelectionChoice;
+        if(Current.Gui.ShowDialog(ref selchoice,"As only or as additional?"))
         {
-          if(_doc.FitEnsemble[_doc.FitEnsemble.Count-1].FitFunction==null)
+          _lastSelectionChoice = (SelectionChoice)selchoice;
+          if(_lastSelectionChoice==SelectionChoice.SelectAsAdditional)
           {
-            _doc.FitEnsemble[_doc.FitEnsemble.Count-1].FitFunction = func;
-            changed = true;
-          }
-          else
-        {
             FitElement newele = new FitElement();
             newele.FitFunction = func;
             _doc.FitEnsemble.Add(newele);
             changed=true;
+          }
+          else // select as only
+          {
+            _doc.FitEnsemble[0].FitFunction = func;
+            for(int i= _doc.FitEnsemble.Count-1;i>=1;--i)
+              _doc.FitEnsemble.RemoveAt(i);
+
+            changed = true;
+          }
         }
-        }
-        else // Count==0
-        {
-          FitElement newele = new FitElement();
-          newele.FitFunction = func;
-          _doc.FitEnsemble.Add(newele);
-          changed=true;
-        }
-      
+      }
 
       if(changed)
       {

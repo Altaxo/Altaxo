@@ -175,13 +175,13 @@ namespace Altaxo.Scripting
         FitFunctionScript s = (FitFunctionScript)obj;
         info.AddBaseValueEmbedded(s, typeof(AbstractScript));
 
-        info.AddValue("Category",s._fitFunctionCategory);
-        info.AddValue("Name",s._fitFunctionName);
+        info.AddValue("Category",s.FitFunctionCategory);
+        info.AddValue("Name",s.FitFunctionName);
         info.AddValue("CreationTime",s._fitFunctionCreationTime);
 
-        info.AddValue("NumberOfParameters",s._NumberOfParameters);
-        info.AddValue("UserDefinedParameters",s._IsUsingUserDefinedParameterNames);
-        if(s._IsUsingUserDefinedParameterNames)
+        info.AddValue("NumberOfParameters",s.NumberOfParameters);
+        info.AddValue("UserDefinedParameters",s.IsUsingUserDefinedParameterNames);
+        if(s.IsUsingUserDefinedParameterNames)
           info.AddArray("UserDefinedParameterNames",s._UserDefinedParameterNames,s._UserDefinedParameterNames.Length);
 
         info.AddArray("IndependentVariableNames",s._IndependentVariablesNames,s._IndependentVariablesNames.Length);
@@ -839,6 +839,8 @@ namespace Altaxo.Scripting
     }
 
 
+  
+
     /// <summary>
     /// 
     /// </summary>
@@ -848,8 +850,7 @@ namespace Altaxo.Scripting
     public double Evaluate(double x, double[] parameters)
     {
 
-      if(null == m_ScriptObject && !m_WasTriedToCompile)
-        Compile();
+      MakeSureWasTriedToCompile();
 
       if (null == m_ScriptObject)
       {
@@ -873,6 +874,8 @@ namespace Altaxo.Scripting
     {
       get
       {
+        MakeSureWasTriedToCompile();
+
         if (this.m_ScriptObject != null)
           return ((IFitFunction)m_ScriptObject).NumberOfIndependentVariables;
         else
@@ -884,6 +887,8 @@ namespace Altaxo.Scripting
     {
       get
       {
+        MakeSureWasTriedToCompile();
+
         if (this.m_ScriptObject != null)
           return ((IFitFunction)m_ScriptObject).NumberOfDependentVariables;
         else
@@ -895,6 +900,8 @@ namespace Altaxo.Scripting
     {
       get
       {
+        MakeSureWasTriedToCompile();
+
         if (this.m_ScriptObject != null)
           return ((IFitFunction)m_ScriptObject).NumberOfParameters;
         else
@@ -915,6 +922,8 @@ namespace Altaxo.Scripting
 
     public string IndependentVariableName(int i)
     {
+      MakeSureWasTriedToCompile();
+
       if (this.m_ScriptObject != null)
         return ((IFitFunction)m_ScriptObject).IndependentVariableName(i);
       else
@@ -923,6 +932,8 @@ namespace Altaxo.Scripting
 
     public string DependentVariableName(int i)
     {
+      MakeSureWasTriedToCompile();
+
       if (this.m_ScriptObject != null)
         return ((IFitFunction)m_ScriptObject).DependentVariableName(i);
       else
@@ -931,6 +942,8 @@ namespace Altaxo.Scripting
 
     public string ParameterName(int i)
     {
+      MakeSureWasTriedToCompile();
+
       if (this.m_ScriptObject != null)
         return ((IFitFunction)m_ScriptObject).ParameterName(i);
       else
@@ -944,11 +957,9 @@ namespace Altaxo.Scripting
 
     void Altaxo.Calc.Regression.Nonlinear.IFitFunction.Evaluate(double[] independent, double[] parameters, double[] result)
     {
-      if (null == m_ScriptObject)
-      {
-        if(!this.m_WasTriedToCompile)
-          Compile();
-      }
+      MakeSureWasTriedToCompile();
+
+    
 
       if (null == m_ScriptObject)
       {

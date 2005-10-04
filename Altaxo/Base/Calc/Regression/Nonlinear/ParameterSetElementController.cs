@@ -6,13 +6,14 @@ namespace Altaxo.Calc.Regression.Nonlinear
 {
   public interface IParameterSetElementView
   {
-    void Initialize(string name, string value, bool vary);
+    void Initialize(string name, string value, bool vary, string variance);
     IParameterSetElementViewEventSink Controller { get; set; }
   }
 
   public interface IParameterSetElementViewEventSink
   {
     void EhView_ParameterValidating(string value, System.ComponentModel.CancelEventArgs e);
+    void EhView_VarianceValidating(string value, System.ComponentModel.CancelEventArgs e);
     void EhView_VarySelectionChanged(bool value);
   }
 
@@ -41,7 +42,11 @@ namespace Altaxo.Calc.Regression.Nonlinear
     {
       if(_view!=null)
       {
-        _view.Initialize(_tempdoc.Name,Altaxo.Serialization.GUIConversion.ToString(_tempdoc.Parameter),_tempdoc.Vary);
+        _view.Initialize(_tempdoc.Name,
+                          Altaxo.Serialization.GUIConversion.ToString(_tempdoc.Parameter),
+                          _tempdoc.Vary,
+                          Altaxo.Serialization.GUIConversion.ToString(_tempdoc.Variance)
+          );
       }
     }
 
@@ -63,6 +68,20 @@ namespace Altaxo.Calc.Regression.Nonlinear
         double t;
         Altaxo.Serialization.GUIConversion.IsDouble(value,out t);
         _tempdoc.Parameter = t;
+      }
+      else
+      {
+        e.Cancel = true;
+      }
+    }
+
+    public void EhView_VarianceValidating(string value, System.ComponentModel.CancelEventArgs e)
+    {
+      if(Altaxo.Serialization.GUIConversion.IsDouble(value))
+      {
+        double t;
+        Altaxo.Serialization.GUIConversion.IsDouble(value,out t);
+        _tempdoc.Variance = t;
       }
       else
       {
