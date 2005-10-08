@@ -105,6 +105,23 @@ namespace Altaxo.Graph.Axes
       }
       return ticks;
     }
+    public override AltaxoVariant[] GetMajorTicksAsVariant()
+    {
+      double[] ticks = GetMajorTicks();
+      AltaxoVariant[] vticks = new AltaxoVariant[ticks.Length];
+      for(int i=0;i<ticks.Length;++i)
+        vticks[i] = ticks[i];
+      return vticks;
+    }
+    public override AltaxoVariant[] GetMinorTicksAsVariant()
+    {
+      double[] ticks = GetMinorTicks();
+      AltaxoVariant[] vticks = new AltaxoVariant[ticks.Length];
+      for(int i=0;i<ticks.Length;++i)
+        vticks[i] = ticks[i];
+      return vticks;
+    }
+
 
     /// <summary>
     /// Returns the <see cref="NumericalBoundaries"/> object that is associated with that axis.

@@ -94,11 +94,24 @@ namespace Altaxo.Graph.Axes
     public abstract Altaxo.Data.AltaxoVariant NormalToPhysicalVariant(double x);
 
     /// <summary>
+    /// This will return the the major ticks as <see>AltaxoVariant</see>.
+    /// </summary>
+    /// <returns>The array with major tick values.</returns>
+    public abstract AltaxoVariant[] GetMajorTicksAsVariant();
+
+    /// <summary>
     /// This will return the location of the major ticks relative on this axis, that mean
     /// the value range is 0..1.
     /// </summary>
     /// <returns>The array with relative (normal) major tick values.</returns>
     public abstract double[] GetMajorTicksNormal();
+
+    /// <summary>
+    /// This will return the minor ticks as array of <see>AltaxoVariant</see>.
+    /// </summary>
+    /// <returns>The array with minor tick values.</returns>
+    public abstract AltaxoVariant[] GetMinorTicksAsVariant();
+
 
     /// <summary>
     /// This will return the location of the minor ticks relative on this axis, that mean

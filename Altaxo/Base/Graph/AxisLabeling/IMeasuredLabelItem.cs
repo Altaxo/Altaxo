@@ -21,34 +21,30 @@
 #endregion
 
 using System;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using Altaxo.Serialization;
+using Altaxo.Graph.Axes;
+using Altaxo.Data;
 
 namespace Altaxo.Graph.AxisLabeling
 {
   /// <summary>
-  /// Summary description for NumericAxisLabelFormattingFixed.
+  /// Interface for an label item that is ready to draw and was already measured.
   /// </summary>
-  public class NumericAxisLabelFormattingFixed : AbstractLabelFormatting
+  public interface IMeasuredLabelItem
   {
-    // int _decimalplaces;
-    string _formatString="{0}";
-
-    public NumericAxisLabelFormattingFixed()
-    {
-      //
-      // TODO: Add constructor logic here
-      //
-    }
-
-    protected override string FormatItem(Altaxo.Data.AltaxoVariant item)
-    {
-      return FormatItem((double)item);
-    }
-
-
-    public string FormatItem(double tick)
-    {
-      return string.Format(_formatString,tick);
-    }
-
+    /// <summary>
+    /// Size of the enclosing rectangle of the label.
+    /// </summary>
+    SizeF Size { get; }
+    /// <summary>
+    /// Draws the label to a specified point.
+    /// </summary>
+    /// <param name="g">Graphics context.</param>
+    /// <param name="point">The point where to draw the item.</param>
+    void Draw(Graphics g, PointF point);
   }
+
+ 
 }

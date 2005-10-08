@@ -39,14 +39,18 @@ namespace Altaxo.Main.GUI
     void InitializeBool1(bool value);
   }
  
+  public interface IBooleanValueController : IMVCAController
+  {
+    string DescriptionText { get; set; }
+  }
 
   #endregion
 
   /// <summary>
-  /// Controller for a single value. This is a string here, but in derived classes, that can be anything that can be converted to and from a string.
+  /// Controller for a boolean value.
   /// </summary>
   [UserControllerForObject(typeof(bool),100)]
-  public class BooleanValueController : IMVCAController, IBooleanValueViewEventSink
+  public class BooleanValueController : IBooleanValueController, IBooleanValueViewEventSink
   {
     protected IBooleanValueView _view;
     protected bool _value1Bool;

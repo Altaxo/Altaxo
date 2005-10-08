@@ -67,12 +67,12 @@ namespace Altaxo.Calc.Regression.Nonlinear
       this._btNew = new System.Windows.Forms.Button();
       this._btSelect = new System.Windows.Forms.Button();
       this._tpMakeFit = new System.Windows.Forms.TabPage();
+      this._btDoSimplex = new System.Windows.Forms.Button();
       this.label1 = new System.Windows.Forms.Label();
       this._edChiSqr = new System.Windows.Forms.TextBox();
       this._btChiSqr = new System.Windows.Forms.Button();
       this._btDoFit = new System.Windows.Forms.Button();
       this._tpFitEnsemble = new System.Windows.Forms.TabPage();
-      this._btDoSimplex = new System.Windows.Forms.Button();
       this._tabControl.SuspendLayout();
       this._tpSelectFunction.SuspendLayout();
       this._tpMakeFit.SuspendLayout();
@@ -131,6 +131,16 @@ namespace Altaxo.Calc.Regression.Nonlinear
       this._tpMakeFit.TabIndex = 1;
       this._tpMakeFit.Text = "Fit";
       // 
+      // _btDoSimplex
+      // 
+      this._btDoSimplex.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this._btDoSimplex.Location = new System.Drawing.Point(152, 328);
+      this._btDoSimplex.Name = "_btDoSimplex";
+      this._btDoSimplex.Size = new System.Drawing.Size(56, 23);
+      this._btDoSimplex.TabIndex = 4;
+      this._btDoSimplex.Text = "Simplex!";
+      this._btDoSimplex.Click += new System.EventHandler(this._btDoSimplex_Click);
+      // 
       // label1
       // 
       this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -176,15 +186,6 @@ namespace Altaxo.Calc.Regression.Nonlinear
       this._tpFitEnsemble.Size = new System.Drawing.Size(424, 358);
       this._tpFitEnsemble.TabIndex = 2;
       this._tpFitEnsemble.Text = "Details";
-      // 
-      // _btDoSimplex
-      // 
-      this._btDoSimplex.Location = new System.Drawing.Point(152, 328);
-      this._btDoSimplex.Name = "_btDoSimplex";
-      this._btDoSimplex.Size = new System.Drawing.Size(56, 23);
-      this._btDoSimplex.TabIndex = 4;
-      this._btDoSimplex.Text = "Simplex!";
-      this._btDoSimplex.Click += new System.EventHandler(this._btDoSimplex_Click);
       // 
       // NonlinearFitControl
       // 
@@ -254,8 +255,8 @@ namespace Altaxo.Calc.Regression.Nonlinear
       }
 
       _fitEnsembleControl = (Control)control;
+      _fitEnsembleControl.Size = new Size(this._tpFitEnsemble.ClientSize.Width, this._tpFitEnsemble.ClientSize.Height);
       _fitEnsembleControl.Location = new Point(0,0);
-      _fitEnsembleControl.Size = new Size(this._tpSelectFunction.ClientSize.Width, _btSelect.Location.Y - _btSelect.Size.Height/2);
       _fitEnsembleControl.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Bottom;
       this._tpFitEnsemble.Controls.Add(_fitEnsembleControl);
     }

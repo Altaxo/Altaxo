@@ -874,7 +874,7 @@ namespace Altaxo.Scripting
     {
       get
       {
-        MakeSureWasTriedToCompile();
+       
 
         if (this.m_ScriptObject != null)
           return ((IFitFunction)m_ScriptObject).NumberOfIndependentVariables;
@@ -887,7 +887,7 @@ namespace Altaxo.Scripting
     {
       get
       {
-        MakeSureWasTriedToCompile();
+        
 
         if (this.m_ScriptObject != null)
           return ((IFitFunction)m_ScriptObject).NumberOfDependentVariables;
@@ -900,7 +900,7 @@ namespace Altaxo.Scripting
     {
       get
       {
-        MakeSureWasTriedToCompile();
+        
 
         if (this.m_ScriptObject != null)
           return ((IFitFunction)m_ScriptObject).NumberOfParameters;
@@ -922,7 +922,7 @@ namespace Altaxo.Scripting
 
     public string IndependentVariableName(int i)
     {
-      MakeSureWasTriedToCompile();
+      
 
       if (this.m_ScriptObject != null)
         return ((IFitFunction)m_ScriptObject).IndependentVariableName(i);
@@ -932,7 +932,7 @@ namespace Altaxo.Scripting
 
     public string DependentVariableName(int i)
     {
-      MakeSureWasTriedToCompile();
+      
 
       if (this.m_ScriptObject != null)
         return ((IFitFunction)m_ScriptObject).DependentVariableName(i);
@@ -942,7 +942,7 @@ namespace Altaxo.Scripting
 
     public string ParameterName(int i)
     {
-      MakeSureWasTriedToCompile();
+      
 
       if (this.m_ScriptObject != null)
         return ((IFitFunction)m_ScriptObject).ParameterName(i);
@@ -958,8 +958,6 @@ namespace Altaxo.Scripting
     void Altaxo.Calc.Regression.Nonlinear.IFitFunction.Evaluate(double[] independent, double[] parameters, double[] result)
     {
       MakeSureWasTriedToCompile();
-
-    
 
       if (null == m_ScriptObject)
       {

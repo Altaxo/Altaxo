@@ -24,21 +24,11 @@ using System;
 
 namespace Altaxo.Graph.AxisLabeling
 {
-  /// <summary>
-  /// Summary description for NumericAxisLabelFormattingFixed.
-  /// </summary>
-  public class NumericAxisLabelFormattingFixed : AbstractLabelFormatting
-  {
-    // int _decimalplaces;
-    string _formatString="{0}";
-
-    public NumericAxisLabelFormattingFixed()
-    {
-      //
-      // TODO: Add constructor logic here
-      //
-    }
-
+	/// <summary>
+	/// Displays only the mantissa of a number. Usefull for minor ticks on logarithmic axes.
+	/// </summary>
+	public class NumericAxisLabelFormattingMantissa : AbstractLabelFormatting
+	{
     protected override string FormatItem(Altaxo.Data.AltaxoVariant item)
     {
       return FormatItem((double)item);
@@ -47,8 +37,13 @@ namespace Altaxo.Graph.AxisLabeling
 
     public string FormatItem(double tick)
     {
-      return string.Format(_formatString,tick);
-    }
+      string result = string.Format("{0.E0}",tick);
+      int pos = result.IndexOf('E');
+      if(pos>=0)
+        return result.Substring(0,pos);
+      else
+        return result;
 
-  }
+    }
+	}
 }

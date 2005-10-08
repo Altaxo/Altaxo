@@ -169,6 +169,23 @@ namespace Altaxo.Graph.Axes
       return (DateTime[])GetMajorTicksAsList().ToArray(typeof(DateTime));
     }
 
+    public override AltaxoVariant[] GetMajorTicksAsVariant()
+    {
+      DateTime[] ticks = GetMajorTicks();
+      AltaxoVariant[] vticks = new AltaxoVariant[ticks.Length];
+      for(int i=0;i<ticks.Length;++i)
+        vticks[i] = ticks[i];
+      return vticks;
+    }
+    public override AltaxoVariant[] GetMinorTicksAsVariant()
+    {
+      DateTime[] ticks = GetMinorTicks();
+      AltaxoVariant[] vticks = new AltaxoVariant[ticks.Length];
+      for(int i=0;i<ticks.Length;++i)
+        vticks[i] = ticks[i];
+      return vticks;
+    }
+
     System.Collections.ArrayList GetMajorTicksAsList()
     {
       System.Collections.ArrayList arr = new System.Collections.ArrayList();

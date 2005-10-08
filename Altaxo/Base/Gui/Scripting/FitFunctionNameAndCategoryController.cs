@@ -10,10 +10,11 @@ namespace Altaxo.Gui.Scripting
     FitFunctionScript _doc;
     string _tempName;
     string _tempCategory;
+    bool _tempShouldSave=false;
 
     ISingleValueController _controllerName;
     ISingleValueController _controllerCategory;
-
+    IBooleanValueController _controllerShouldSaveInUserData;
 
     public FitFunctionNameAndCategoryController(FitFunctionScript doc)
     {
@@ -23,11 +24,14 @@ namespace Altaxo.Gui.Scripting
 
       _controllerName = (ISingleValueController)Current.Gui.GetControllerAndControl(new object[] { _tempName }, typeof(ISingleValueController));
       _controllerCategory = (ISingleValueController)Current.Gui.GetControllerAndControl(new object[] { _tempCategory }, typeof(ISingleValueController));
+      _controllerShouldSaveInUserData = (IBooleanValueController)Current.Gui.GetControllerAndControl(new object[]{_tempShouldSave},typeof(IBooleanValueController));
+
 
       _controllerName.DescriptionText = "Enter fit function name:";
       _controllerCategory.DescriptionText = "Enter fit function category:";
+      _controllerShouldSaveInUserData.DescriptionText = "Save in user fit functions directory?";
 
-      base.Initialize(new IMVCAController[] { _controllerName, _controllerCategory });
+      base.Initialize(new IMVCAController[] { _controllerName, _controllerCategory ,_controllerShouldSaveInUserData});
     }
 
     public override object ModelObject
@@ -63,6 +67,27 @@ namespace Altaxo.Gui.Scripting
 
         _doc.FitFunctionName = _tempName;
         _doc.FitFunctionCategory = _tempCategory;
+
+
+        if(_controllerShouldSaveInUserData.Apply() && true==((bool)_controllerShouldSaveInUserData.ModelObject))
+        {
+          if(_doc.ScriptObject==null)
+            Current.Gui.ErrorMessageBox("Only a successfully compiled fit function can be saved in the user fit function directory!");
+          else
+          {
+            ICSharpCode.Core.Services.PropertyService propserv = (ICSharpCode.Core.Services.PropertyService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(ICSharpCode.Core.Services.PropertyService));
+            
+            string filename = "FitFunctionScripts" +System.IO.Path.DirectorySeparatorChar + _doc.ScriptTextHash+".xml";
+            string fullname = System.IO.Path.Combine(propserv.ConfigDirectory,filename);
+            System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(fullname));
+            System.IO.Stream stream = new System.IO.FileStream(fullname,System.IO.FileMode.Create,System.IO.FileAccess.Write);
+            Altaxo.Serialization.Xml.XmlStreamSerializationInfo info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo();
+            info.BeginWriting(stream);
+            info.AddValue("FitFunctionScript",_doc);
+            info.EndWriting();
+            stream.Close();
+          }
+        }
         return true;
       }
 

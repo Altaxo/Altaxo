@@ -84,12 +84,14 @@ namespace Altaxo.Calc.Regression.Nonlinear
         Control fectrl = (Control)fitEleControls[i];
         fectrl.Location = new Point(0,currentYPosition);
         fectrl.Size = new Size(this.ClientSize.Width, fectrl.Size.Height);
-        fectrl.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+        fectrl.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
         this.Controls.Add(fectrl);
 
         currentYPosition += fectrl.Size.Height;
         currentYPosition += System.Windows.Forms.SystemInformation.MenuHeight;
       }
+
+      this.ClientSize = new Size(this.ClientSize.Width,currentYPosition);
     }
 
 

@@ -790,8 +790,17 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Graph\AxisLabeling\AbstractNumericLabelFormatting.cs"
+                    RelPath = "Graph\AxisLabeling\AbstractLabelFormatting.cs"
                     SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\AxisLabeling\ILabelFormatting.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\AxisLabeling\IMeasuredLabelItem.cs"
                     BuildAction = "Compile"
                 />
                 <File
@@ -801,6 +810,11 @@
                 />
                 <File
                     RelPath = "Graph\AxisLabeling\NumericAxisLabelFormattingFixed.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\AxisLabeling\NumericAxisLabelFormattingMantissa.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

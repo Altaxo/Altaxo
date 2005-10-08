@@ -25,26 +25,21 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using Altaxo.Serialization;
 using Altaxo.Graph.Axes;
-
+using Altaxo.Data;
 
 namespace Altaxo.Graph
 {
+  using AxisLabeling;
 
   /// <summary>
-  /// 
+  /// Summary description for AbstractLabelFormatting.
   /// </summary>
-  /// <remarks>This class paints a simple label based the general numeric format, i.e. 
-  /// a fixed decimal point representation for small numeric values and a exponential
-  /// form representation using the 'E' as separator between mantissa and exponent.
-  /// Some effort has been done to make sure that all labels have the same number of trailing decimal
-  /// digits.
-  /// </remarks>
-  [SerializationSurrogate(0,typeof(XYAxisLabelStyle.SerializationSurrogate0))]
-  [SerializationVersion(0)]
-  public class XYAxisLabelStyle : AbstractXYAxisLabelStyle, System.Runtime.Serialization.IDeserializationCallback
+  public class XYAxisLabelStyle : AbstractXYAxisLabelStyle, ICloneable
   {
     protected Font m_Font = new Font(FontFamily.GenericSansSerif,18,GraphicsUnit.World);
     protected Edge m_Edge = new Edge(EdgeType.Left); 
+    protected StringFormat strfmt;
+    ILabelFormatting _labelFormatting = new AxisLabeling.NumericAxisLabelFormattingAuto();
 
     #region Serialization
     /// <summary>Used to serialize the XYAxisLabelStyle Version 0.</summary>
@@ -173,13 +168,11 @@ namespace Altaxo.Graph
       gp.AddRectangle(_enclosingRectangle);
       return gp;
     }
+
+
     private RectangleF _enclosingRectangle;
     public override void Paint(Graphics g, XYPlotLayer layer, Axis raxis, XYAxisStyle axisstyle)
     {
-      NumericalAxis axis = raxis as NumericalAxis;
-      if(axis==null)
-        return;
-
       SizeF layerSize = layer.Size;
       PointF orgP = m_Edge.GetOrg(layerSize);
       PointF endP = m_Edge.GetEnd(layerSize);
@@ -191,7 +184,7 @@ namespace Altaxo.Graph
 
       // Modification of StringFormat is necessary to avoid 
       // too big spaces between successive words
-      StringFormat strfmt = (StringFormat)StringFormat.GenericTypographic.Clone();
+      strfmt = (StringFormat)StringFormat.GenericTypographic.Clone();
       strfmt.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
 
       // next statement is necessary to have a consistent string length both
@@ -227,71 +220,26 @@ namespace Altaxo.Graph
           break;
       }
 
+      double[] relpositions = raxis.GetMajorTicksNormal();
+      AltaxoVariant[] ticks = raxis.GetMajorTicksAsVariant();
+      IMeasuredLabelItem[] labels = _labelFormatting.GetMeasuredItems(g,m_Font,strfmt,ticks);
 
-      // print the major ticks
-      double[] majorticks = axis.GetMajorTicks();
-      bool[] bExponentialForm = new Boolean[majorticks.Length];
-      // determine the number of trailing decimal digits
-      string mtick;
-      int posdecimalseparator;
-      int posexponent;
-      int digits;
-      int maxtrailingdigits=0;
-      int maxexponentialdigits=1;
-      System.Globalization.NumberFormatInfo numinfo = System.Globalization.NumberFormatInfo.InvariantInfo;
-      for(int i=0;i<majorticks.Length;i++)
-      {
-        mtick = majorticks[i].ToString(numinfo);
-        posdecimalseparator = mtick.LastIndexOf(numinfo.NumberDecimalSeparator);
-        posexponent = mtick.LastIndexOf('E');
-        if(posexponent<0) // no exponent-> count the trailing decimal digits
-        {
-          bExponentialForm[i]=false;
-          if(posdecimalseparator>0)
-          {
-            digits = mtick.Length-posdecimalseparator-1;
-            if(digits>maxtrailingdigits)
-              maxtrailingdigits = digits;
-          }
-        }
-        else // the exponential form is used
-        {
-          bExponentialForm[i]=true;
-          // the total digits used for exponential form are the characters until the 'E' of the exponent
-          // minus the decimal separator minus the minus sign
-          digits = posexponent;
-          if(posdecimalseparator>=0) --digits;
-          if(mtick[0]=='-') --digits; // the digits
-          if(digits>maxexponentialdigits)
-            maxexponentialdigits=digits;
-        }
-      }
-
-
-      // now format the lables
       _enclosingRectangle = RectangleF.Empty;
-      string exponentialformat=string.Format("G{0}",maxexponentialdigits);
-      string fixedformat = string.Format("F{0}",maxtrailingdigits);
-      for(int i=0;i<majorticks.Length;i++)
+      for(int i=0;i<ticks.Length;i++)
       {
-        double r = axis.PhysicalToNormal(majorticks[i]);
+        double r = relpositions[i];
         PointF tickorg = m_Edge.GetEdgePoint(layerSize,r);
 
-        if(bExponentialForm[i])
-          mtick = majorticks[i].ToString(exponentialformat);
-        else
-          mtick = majorticks[i].ToString(fixedformat);
-
         PointF morg = new PointF(tickorg.X + dist_x, tickorg.Y + dist_y);
-        SizeF  msize = g.MeasureString(mtick, m_Font, morg, strfmt);
+        SizeF msize = labels[i].Size;
         RectangleF mrect = new RectangleF(morg,msize);
         AdjustRectangle(ref mrect, strfmt);
         _enclosingRectangle = _enclosingRectangle.IsEmpty ? mrect : RectangleF.Union(_enclosingRectangle,mrect);
-        g.DrawString(mtick, m_Font, Brushes.Black, morg.X,morg.Y, strfmt);
-      
+        labels[i].Draw(g,morg);
       }
 
     }
   
+
   }
 }
