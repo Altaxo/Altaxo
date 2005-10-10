@@ -82,7 +82,7 @@ namespace Altaxo.Worksheet
         //s.m_TextFont = new Font("Arial",8);               
         //s.m_TextBrush = new Graph.BrushHolder(new SolidBrush(Color.Black));
         //s.m_SelectedTextBrush = new Graph.BrushHolder(new SolidBrush(Color.White));
-        //s.m_BackgroundBrush = new Graph.BrushHolder(new SolidBrush(Color.White));
+        //s._backgroundBrush = new Graph.BrushHolder(new SolidBrush(Color.White));
         //s.m_SelectedBackgroundBrush = new Graph.BrushHolder(new SolidBrush(Color.DarkGray));
 
         

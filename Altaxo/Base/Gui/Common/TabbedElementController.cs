@@ -179,7 +179,7 @@ namespace Altaxo.Gui.Common
           View.AddTab(tab.Title,tab.View);
         }
 
-        this._frontTabIndex = Math.Min(this._frontTabIndex,_tabs.Count);
+        this._frontTabIndex = Math.Min(this._frontTabIndex,_tabs.Count-1);
         View.BringTabToFront(_frontTabIndex);
       }  
    

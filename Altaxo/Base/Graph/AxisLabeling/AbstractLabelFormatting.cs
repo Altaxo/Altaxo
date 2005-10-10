@@ -18,6 +18,7 @@ namespace Altaxo.Graph.AxisLabeling
     /// <returns>The formatted text representation of this item.</returns>
     protected abstract string FormatItem(Altaxo.Data.AltaxoVariant item);
    
+    public abstract object Clone();
     
     /// <summary>
     /// Formats a couple of items as text. Special measured can be taken here to format all items the same way, for instance set the decimal separator to the same location.
@@ -43,10 +44,10 @@ namespace Altaxo.Graph.AxisLabeling
       return g.MeasureString(text, font, morg, strfmt);
     }
 
-    public virtual void DrawItem(System.Drawing.Graphics g, System.Drawing.Font font, System.Drawing.StringFormat strfmt, Altaxo.Data.AltaxoVariant item, PointF morg)
+    public virtual void DrawItem(System.Drawing.Graphics g, BrushHolder brush, System.Drawing.Font font, System.Drawing.StringFormat strfmt, Altaxo.Data.AltaxoVariant item, PointF morg)
     {
       string text = FormatItem(item);
-      g.DrawString(text, font, Brushes.Black, morg, strfmt);
+      g.DrawString(text, font, brush, morg, strfmt);
     }
 
 
@@ -92,9 +93,9 @@ namespace Altaxo.Graph.AxisLabeling
         }
       }
 
-      public void Draw(Graphics g, PointF point)
+      public void Draw(Graphics g, BrushHolder brush, PointF point)
       {
-        g.DrawString(_text, _font, Brushes.Black, point, _strfmt);
+        g.DrawString(_text, _font, brush, point, _strfmt);
       }
 
       #endregion

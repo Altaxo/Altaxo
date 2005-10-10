@@ -576,7 +576,7 @@ namespace Altaxo.Graph.GUI
               plotitem = this.NewPlotItemFromPLCon(member);
               if(null!=plotitem)
               {
-                m_Layer.PlotItems.Add(member.PlotItem);
+                m_Layer.PlotItems.Add(plotitem);
                 item.m_OriginalGroup.Add(plotitem);
               }
             }

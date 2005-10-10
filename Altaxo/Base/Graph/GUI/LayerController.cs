@@ -69,6 +69,7 @@ namespace Altaxo.Graph.GUI
     protected ILineScatterLayerContentsController m_LayerContentsController;
     protected IAxisScaleController[] m_AxisScaleController;
     protected ITitleFormatLayerController[] m_TitleFormatLayerController;
+    protected Altaxo.Gui.Graph.IXYAxisLabelStyleController[] m_LabelStyleController;
 
     
     public int CurrHorzVertIdx
@@ -112,6 +113,12 @@ namespace Altaxo.Graph.GUI
                                                                         new TitleFormatLayerController(m_Layer,EdgeType.Top)
                                                                       };
 
+      m_LabelStyleController = new Altaxo.Gui.Graph.XYAxisLabelStyleController[4]{
+                                                                        new Altaxo.Gui.Graph.XYAxisLabelStyleController((XYAxisLabelStyle)m_Layer.LeftLabelStyle),
+                                                                        new Altaxo.Gui.Graph.XYAxisLabelStyleController((XYAxisLabelStyle)m_Layer.BottomLabelStyle),
+                                                                        new Altaxo.Gui.Graph.XYAxisLabelStyleController((XYAxisLabelStyle)m_Layer.RightLabelStyle),
+                                                                        new Altaxo.Gui.Graph.XYAxisLabelStyleController((XYAxisLabelStyle)m_Layer.TopLabelStyle)
+                                                                      };
 
       m_CurrentPage = currentPage;
       m_CurrentEdge = currentEdge;
@@ -200,7 +207,7 @@ namespace Altaxo.Graph.GUI
       else if(hit.ParentLayer.TopLabelStyle==style)
         edge = EdgeType.Top;
 
-      ShowDialog(Current.MainWindow, hit.ParentLayer, "TitleAndFormat",edge);
+      ShowDialog(Current.MainWindow, hit.ParentLayer, "MajorLabels",edge);
 
       return false;
     }
@@ -235,6 +242,7 @@ namespace Altaxo.Graph.GUI
       View.AddTab("TitleAndFormat","Title&&Format");
       View.AddTab("Contents","Contents");
       View.AddTab("Position","Position");
+      View.AddTab("MajorLabels","Major labels");
 
       // Set the controller of the current visible Tab
       SetCurrentTabController(true);
@@ -290,9 +298,15 @@ namespace Altaxo.Graph.GUI
 
           m_CurrentController = m_LayerPositionController;
           break;
-       
-     
-
+        case "MajorLabels":
+          if(pageChanged)
+          {
+            View.SelectTab(m_CurrentPage);
+            SetEdgeSecondaryChoice();
+            View.CurrentContent = new Altaxo.Gui.Graph.XYAxisLabelStyleControl();
+          }
+          m_CurrentController = m_LabelStyleController[CurrEdgeIdx];
+          break;
       }
 
       if(null!=m_CurrentController)
@@ -405,6 +419,13 @@ namespace Altaxo.Graph.GUI
         }
       }
 
+      for(i=0;i<4;i++)
+      {
+        if(!m_LabelStyleController[i].Apply())
+        {
+          return false;
+        }
+      }
       return true;
     }
 

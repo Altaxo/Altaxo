@@ -801,6 +801,7 @@
                 />
                 <File
                     RelPath = "Graph\AxisLabeling\IMeasuredLabelItem.cs"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -815,6 +816,11 @@
                 />
                 <File
                     RelPath = "Graph\AxisLabeling\NumericAxisLabelFormattingMantissa.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\AxisLabeling\NumericLabelFormattingScientific.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -1171,6 +1177,21 @@
                 />
                 <File
                     RelPath = "Gui\Graph\ArrangeLayersController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Gui\Graph\XYAxisLabelStyleControl.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Gui\Graph\XYAxisLabelStyleControl.resx"
+                    DependentUpon = "XYAxisLabelStyleControl.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Gui\Graph\XYAxisLabelStyleController.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

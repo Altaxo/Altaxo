@@ -188,6 +188,11 @@
     </Compile>
     <Compile Include="Data\NumericColumnProxy.cs" />
     <Compile Include="Data\ReadableColumnProxy.cs" />
+    <Compile Include="Graph\AxisLabeling\AbstractLabelFormatting.cs" />
+    <Compile Include="Graph\AxisLabeling\ILabelFormatting.cs" />
+    <Compile Include="Graph\AxisLabeling\IMeasuredLabelItem.cs" />
+    <Compile Include="Graph\AxisLabeling\NumericAxisLabelFormattingMantissa.cs" />
+    <Compile Include="Graph\AxisLabeling\NumericLabelFormattingScientific.cs" />
     <Compile Include="Graph\I2DGroupablePlotItem.cs" />
     <Compile Include="Graph\PlotColors.cs" />
     <Compile Include="Graph\Procedures\ArrangeLayers.cs" />
@@ -201,6 +206,14 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Gui\Common\TabbedElementController.cs" />
+    <Compile Include="Gui\Graph\ArrangeLayersControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\ArrangeLayersController.cs" />
+    <Compile Include="Gui\Graph\XYAxisLabelStyleControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\XYAxisLabelStyleController.cs" />
     <Compile Include="Gui\Graph\XYColumnPlotDataControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -384,9 +397,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Graph\Axes\Scaling\NumericAxisRescaleController.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Graph\AxisLabeling\AbstractNumericLabelFormatting.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Graph\AxisLabeling\NumericAxisLabelFormattingAuto.cs">
@@ -1101,6 +1111,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Common\TabbedElementControl.resx">
       <DependentUpon>TabbedElementControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\ArrangeLayersControl.resx">
+      <DependentUpon>ArrangeLayersControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\XYAxisLabelStyleControl.resx">
+      <DependentUpon>XYAxisLabelStyleControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Graph\XYColumnPlotDataControl.resx">
       <DependentUpon>XYColumnPlotDataControl.cs</DependentUpon>

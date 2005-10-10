@@ -464,7 +464,7 @@ namespace Altaxo.Graph.GUI
     
       // restore the original position and rotation values
       //      m_TextObject.Position = new PointF(m_PositionX,m_PositionY);
-      //      m_TextObject.Rotation = m_Rotation;
+      //      m_TextObject.Rotation = _rotation;
     
     }
 

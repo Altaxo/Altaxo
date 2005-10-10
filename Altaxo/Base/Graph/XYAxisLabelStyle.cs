@@ -34,11 +34,36 @@ namespace Altaxo.Graph
   /// <summary>
   /// Summary description for AbstractLabelFormatting.
   /// </summary>
-  public class XYAxisLabelStyle : AbstractXYAxisLabelStyle, ICloneable
+  public class XYAxisLabelStyle : AbstractXYAxisLabelStyle,
+    ICloneable,
+    Main.IChangedEventSource,
+    Main.IChildChangedEventSink
   {
-    protected Font m_Font = new Font(FontFamily.GenericSansSerif,18,GraphicsUnit.World);
-    protected Edge m_Edge = new Edge(EdgeType.Left); 
-    protected StringFormat strfmt;
+    protected Font _font = new Font(FontFamily.GenericSansSerif,18,GraphicsUnit.World);
+    protected Edge _edge = new Edge(EdgeType.Left);
+    protected StringAlignment _horizontalAlignment;
+    protected StringAlignment _verticalAlignment;
+
+    protected StringFormat _stringFormat;
+    protected BrushHolder _brush = new BrushHolder(Brushes.Black,false);
+    
+    /// <summary>The x offset in EM units.</summary>
+    protected double _xOffset;
+
+    /// <summary>The y offset in EM units.</summary>
+    protected double _yOffset;
+
+    /// <summary>The rotation of the label.</summary>
+    protected double _rotation;
+
+    /// <summary>If true, the label is painted on a background.</summary>
+    protected bool _whiteOut;
+
+    /// <summary>The brush for the background.</summary>
+    protected BrushHolder  _backgroundBrush;
+
+    protected bool _automaticRotationShift=true;
+
     ILabelFormatting _labelFormatting = new AxisLabeling.NumericAxisLabelFormattingAuto();
 
     #region Serialization
@@ -54,8 +79,8 @@ namespace Altaxo.Graph
       public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context  )
       {
         XYAxisLabelStyle s = (XYAxisLabelStyle)obj;
-        info.AddValue("Font",s.m_Font);  
-        info.AddValue("Edge",s.m_Edge);  
+        info.AddValue("Font",s._font);  
+        info.AddValue("Edge",s._edge);  
       }
       /// <summary>
       /// Deserializes the XYAxisLabelStyle Version 0.
@@ -69,8 +94,8 @@ namespace Altaxo.Graph
       {
         XYAxisLabelStyle s = (XYAxisLabelStyle)obj;
 
-        s.m_Font = (Font)info.GetValue("Font",typeof(Font));
-        s.m_Edge = (Edge)info.GetValue("Edge",typeof(Edge));
+        s._font = (Font)info.GetValue("Font",typeof(Font));
+        s._edge = (Edge)info.GetValue("Edge",typeof(Edge));
         return s;
       }
     }
@@ -81,17 +106,17 @@ namespace Altaxo.Graph
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         XYAxisLabelStyle s = (XYAxisLabelStyle)obj;
-        info.AddValue("Edge",s.m_Edge);  
-        info.AddValue("Font",s.m_Font);  
+        info.AddValue("Edge",s._edge);  
+        info.AddValue("Font",s._font);  
       }
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
         
         XYAxisLabelStyle s = null!=o ? (XYAxisLabelStyle)o : new XYAxisLabelStyle(EdgeType.Left);
 
-        s.m_Edge = (Edge)info.GetValue("Edge",s);
-        s.m_Font = (Font)info.GetValue("Font",s);
-
+        s._edge = (Edge)info.GetValue("Edge",s);
+        s._font = (Font)info.GetValue("Font",s);
+        s.SetStringFormat();
         return s;
       }
     }
@@ -110,13 +135,22 @@ namespace Altaxo.Graph
 
     public XYAxisLabelStyle(EdgeType st)
     {
-      m_Edge = new Edge(st);
+      _edge = new Edge(st);
+      SetStringFormat();
     }
 
     public XYAxisLabelStyle(XYAxisLabelStyle from)
     {
-      m_Edge = from.m_Edge;
-      m_Font = null==m_Font ? null : (Font)m_Font.Clone();
+      _edge = from._edge;
+      _font = null==from._font ? null : (Font)from._font.Clone();
+      _stringFormat = (StringFormat)from._stringFormat.Clone(); 
+      _brush = (BrushHolder)from._brush.Clone();
+      _xOffset = from._xOffset;
+      _xOffset = from._xOffset;
+      _rotation = from._rotation;
+      _whiteOut = from._whiteOut;
+      _backgroundBrush = null==from._backgroundBrush ? null : (BrushHolder)from._backgroundBrush.Clone();
+      _labelFormatting = (ILabelFormatting)from._labelFormatting.Clone();
     }
 
     public override object Clone()
@@ -124,6 +158,230 @@ namespace Altaxo.Graph
       return new XYAxisLabelStyle(this);
     }
 
+    private void SetStringFormat()
+    {
+      // Modification of StringFormat is necessary to avoid 
+      // too big spaces between successive words
+      _stringFormat = (StringFormat)StringFormat.GenericTypographic.Clone();
+      _stringFormat.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
+
+      // set the alignment and line alignment of the strings
+      switch(this._edge.TypeOfEdge)
+      {
+        case EdgeType.Bottom:
+          _verticalAlignment = StringAlignment.Near;
+          _horizontalAlignment = StringAlignment.Center;
+          break;
+        case EdgeType.Top:
+          _verticalAlignment = StringAlignment.Far;
+          _horizontalAlignment = StringAlignment.Center;
+          break;
+        case EdgeType.Left:
+          _verticalAlignment = StringAlignment.Center;
+          _horizontalAlignment = StringAlignment.Far;
+          break;
+        case EdgeType.Right:
+          _verticalAlignment = StringAlignment.Center;
+          _horizontalAlignment = StringAlignment.Near;
+          break;
+      }
+    }
+    #region Properties
+
+    /// <summary>The font of the label.</summary>
+    public Font Font
+    {
+      get { return _font; }
+      set
+      {
+        _font = value;
+        OnChanged();
+      }
+    }
+
+    /// <summary>The font size of the label.</summary>
+    public float FontSize
+    {
+      get { return _font.Size; }
+      set
+      {
+        float oldValue = FontSize;
+        float newValue = Math.Max(0,value);
+
+        if(newValue != oldValue)
+        {
+          Font oldFont = _font;
+          _font = new Font(oldFont.FontFamily.Name,newValue,oldFont.Style,GraphicsUnit.World);
+          oldFont.Dispose();
+
+          OnChanged(); // Fire Changed event
+        }
+      }
+    }
+    /// <summary>The brush color.</summary>
+    public System.Drawing.Color Color
+    {
+      get { return this._brush.Color;; }
+      set 
+      {
+        Color oldColor = this.Color;
+        if(value!=oldColor)
+        {
+          this._brush.SetSolidBrush( value );
+          OnChanged(); // Fire Changed event
+        }
+      }
+    }
+
+    /// <summary>The background brush color.</summary>
+    public System.Drawing.Color BackgroundColor
+    {
+      get { return this._backgroundBrush==null ? Color.Snow : this._backgroundBrush.Color;; }
+      set 
+      {
+        Color oldColor = this.Color;
+        if(value!=oldColor)
+        {
+          if(null==_backgroundBrush)
+            _backgroundBrush = new BrushHolder(value,false);
+          else
+            _backgroundBrush.SetSolidBrush( value );
+          OnChanged(); // Fire Changed event
+        }
+      }
+    }
+
+    public ILabelFormatting LabelFormat
+    {
+      get
+      {
+        return this._labelFormatting;
+      }
+      set
+      {
+        if(null==value)
+          throw new ArgumentNullException("value");
+        
+        ILabelFormatting oldValue = this._labelFormatting;
+        if(!object.ReferenceEquals(value,oldValue))
+        {
+          _labelFormatting = value;
+          OnChanged();
+        }
+      }
+    }
+
+    /// <summary>The x offset relative to font size, i.e. a value of 1 is 1*FontSize.</summary>
+    public double XOffset
+    {
+      get { return this._xOffset; }
+      set
+      {
+        double oldValue = this._xOffset;
+        this._xOffset = value;
+        if(value!=oldValue)
+        {
+          OnChanged();
+        }
+      }
+    }
+
+    /// <summary>The y offset relative to font size, i.e. a value of 1 is 1*FontSize.</summary>
+    public double YOffset
+    {
+      get { return this._yOffset; }
+      set
+      {
+        double oldValue = this._yOffset;
+        this._yOffset = value;
+        if(value!=oldValue)
+        {
+          OnChanged();
+        }
+      }
+    }
+
+    /// <summary>The angle of the label.</summary>
+    public double Rotation
+    {
+      get { return this._rotation; }
+      set
+      {
+        double oldValue = this._rotation;
+        this._rotation = value;
+        if(value!=oldValue)
+        {
+          OnChanged();
+        }
+      }
+    }
+
+    /// <summary>If true, the label is painted on a white background.</summary>
+    public bool WhiteOut
+    {
+      get { return this._whiteOut; }
+      set
+      {
+        bool oldValue = this._whiteOut;
+        this._whiteOut = value;
+        if(value!=oldValue)
+        {
+          OnChanged();
+        }
+      }
+    }
+
+    public bool AutomaticAlignment
+    {
+      get
+      {
+        return this._automaticRotationShift;
+      }
+      set
+      {
+        bool oldValue = this.AutomaticAlignment;
+        this._automaticRotationShift = value;
+        if(value!=oldValue)
+        {
+          OnChanged();
+        }
+      }
+    }
+
+    /// <summary>Horizontal alignment of the label.</summary>
+    public System.Drawing.StringAlignment HorizontalAlignment
+    {
+      get 
+      {
+        return this._horizontalAlignment; 
+      }
+      set
+      {
+        System.Drawing.StringAlignment oldValue = this.HorizontalAlignment;
+        this._horizontalAlignment = value;
+        if(value!=oldValue)
+        {
+          OnChanged();
+        }
+      }
+    }
+
+    /// <summary>Vertical aligment of the label.</summary>
+    public System.Drawing.StringAlignment VerticalAlignment
+    {
+      get { return this._verticalAlignment; }
+      set
+      {
+        System.Drawing.StringAlignment oldValue = this.VerticalAlignment;
+        this._verticalAlignment = value;
+        if(value!=oldValue)
+        {
+          OnChanged();
+        }
+      }
+    }
+
+    #endregion
 
     public override IHitTestObject HitTest(XYPlotLayer layer, PointF pt)
     {
@@ -132,9 +390,9 @@ namespace Altaxo.Graph
     }
 
 
-    public void AdjustRectangle(ref RectangleF r, StringFormat fmt)
+    public void AdjustRectangle(ref RectangleF r, StringAlignment horz, StringAlignment vert)
     {
-      switch(fmt.LineAlignment)
+      switch(vert)
       {
         case StringAlignment.Near:
           break;
@@ -145,7 +403,7 @@ namespace Altaxo.Graph
           r.Y -= r.Height;
           break;
       }
-      switch(fmt.Alignment)
+      switch(horz)
       {
         case StringAlignment.Near:
           break;
@@ -174,18 +432,13 @@ namespace Altaxo.Graph
     public override void Paint(Graphics g, XYPlotLayer layer, Axis raxis, XYAxisStyle axisstyle)
     {
       SizeF layerSize = layer.Size;
-      PointF orgP = m_Edge.GetOrg(layerSize);
-      PointF endP = m_Edge.GetEnd(layerSize);
-      PointF outVector = m_Edge.OuterVector;
+      PointF orgP = _edge.GetOrg(layerSize);
+      PointF endP = _edge.GetEnd(layerSize);
+      PointF outVector = _edge.OuterVector;
       float dist_x = axisstyle.OuterDistance+axisstyle.GetOffset(layerSize); // Distance from axis tick point to label
       float dist_y = axisstyle.OuterDistance+axisstyle.GetOffset(layerSize); // y distance from axis tick point to label
 
-      dist_x += this.m_Font.SizeInPoints/3; // add some space to the horizontal direction in order to separate the chars a little from the ticks
-
-      // Modification of StringFormat is necessary to avoid 
-      // too big spaces between successive words
-      strfmt = (StringFormat)StringFormat.GenericTypographic.Clone();
-      strfmt.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
+     // dist_x += this._font.SizeInPoints/3; // add some space to the horizontal direction in order to separate the chars a little from the ticks
 
       // next statement is necessary to have a consistent string length both
       // on 0 degree rotated text and rotated text
@@ -193,53 +446,104 @@ namespace Altaxo.Graph
       // leads to "steps" during scaling
       g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
 
+
+
       // set the alignment and line alignment of the strings
-      switch(this.m_Edge.TypeOfEdge)
+      switch(this._edge.TypeOfEdge)
       {
         case EdgeType.Bottom:
-          strfmt.LineAlignment = StringAlignment.Near;
-          strfmt.Alignment     = StringAlignment.Center;
           dist_x = 0;
           break;
         case EdgeType.Top:
-          strfmt.LineAlignment = StringAlignment.Far;
-          strfmt.Alignment     = StringAlignment.Center;
           dist_x = 0;
           dist_y = -dist_y;
           break;
         case EdgeType.Left:
-          strfmt.LineAlignment = StringAlignment.Center;
-          strfmt.Alignment     = StringAlignment.Far;
           dist_x = -dist_x;
           dist_y = 0;
           break;
         case EdgeType.Right:
-          strfmt.LineAlignment = StringAlignment.Center;
-          strfmt.Alignment     = StringAlignment.Near;
           dist_y = 0;
           break;
       }
 
+
+
       double[] relpositions = raxis.GetMajorTicksNormal();
       AltaxoVariant[] ticks = raxis.GetMajorTicksAsVariant();
-      IMeasuredLabelItem[] labels = _labelFormatting.GetMeasuredItems(g,m_Font,strfmt,ticks);
+      IMeasuredLabelItem[] labels = _labelFormatting.GetMeasuredItems(g,_font,_stringFormat,ticks);
 
       _enclosingRectangle = RectangleF.Empty;
+      float emSize = _font.SizeInPoints;
       for(int i=0;i<ticks.Length;i++)
       {
+        System.Drawing.Drawing2D.GraphicsState gs = g.Save();
         double r = relpositions[i];
-        PointF tickorg = m_Edge.GetEdgePoint(layerSize,r);
+        PointF tickorg = _edge.GetEdgePoint(layerSize,r);
 
-        PointF morg = new PointF(tickorg.X + dist_x, tickorg.Y + dist_y);
         SizeF msize = labels[i].Size;
+        PointF morg = new PointF(tickorg.X + dist_x, tickorg.Y + dist_y);
+        if (_automaticRotationShift)
+        {
+          double alpha = _rotation * Math.PI / 180 - Math.Atan2(outVector.Y, outVector.X);
+          double shift = msize.Height * 0.5 * Math.Abs(Math.Sin(alpha)) + (msize.Width + _font.SizeInPoints / 2) * 0.5 * Math.Abs(Math.Cos(alpha));
+          morg.X += (float)(outVector.X * shift);
+          morg.Y += (float)(outVector.Y * shift);
+        }
+        else
+        {
+          morg.X += (float)(outVector.X * _font.SizeInPoints/3);
+        }
+
+       
         RectangleF mrect = new RectangleF(morg,msize);
-        AdjustRectangle(ref mrect, strfmt);
+        if(_automaticRotationShift)
+        AdjustRectangle(ref mrect, StringAlignment.Center, StringAlignment.Center);
+          else
+        AdjustRectangle(ref mrect, _horizontalAlignment, _verticalAlignment);
+
+        
         _enclosingRectangle = _enclosingRectangle.IsEmpty ? mrect : RectangleF.Union(_enclosingRectangle,mrect);
-        labels[i].Draw(g,morg);
+
+        
+        g.TranslateTransform((float)morg.X, (float)morg.Y);
+        if (this._rotation != 0)
+          g.RotateTransform((float)-this._rotation);
+        g.TranslateTransform((float)(mrect.X - morg.X + emSize*_xOffset),(float)( mrect.Y - morg.Y + emSize*_yOffset));
+        labels[i].Draw(g,_brush,new PointF(0,0));
+       
+        g.Restore(gs); // Restore the graphics state
       }
+    
 
     }
-  
+    #region IChangedEventSource Members
+
+    public event System.EventHandler Changed;
+
+    protected virtual void OnChanged()
+    {
+      if(null!=Changed)
+        Changed(this,new EventArgs());
+    }
+
+    #endregion
+
+    #region IChildChangedEventSink Members
+
+    public void EhChildChanged(object child, EventArgs e)
+    {
+      OnChildChanged(child, e);
+    }
+
+    public void OnChildChanged(object child, EventArgs e)
+    {
+      if(null!=Changed)
+        Changed(this,e);
+    }
+
+    #endregion
 
   }
 }
+

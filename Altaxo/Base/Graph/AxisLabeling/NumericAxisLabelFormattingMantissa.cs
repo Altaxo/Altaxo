@@ -29,6 +29,12 @@ namespace Altaxo.Graph.AxisLabeling
 	/// </summary>
 	public class NumericAxisLabelFormattingMantissa : AbstractLabelFormatting
 	{
+
+    public override object Clone()
+    {
+      return new NumericAxisLabelFormattingMantissa();
+    }
+
     protected override string FormatItem(Altaxo.Data.AltaxoVariant item)
     {
       return FormatItem((double)item);
@@ -37,7 +43,7 @@ namespace Altaxo.Graph.AxisLabeling
 
     public string FormatItem(double tick)
     {
-      string result = string.Format("{0.E0}",tick);
+      string result = string.Format("{0:E0}",tick);
       int pos = result.IndexOf('E');
       if(pos>=0)
         return result.Substring(0,pos);

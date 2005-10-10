@@ -141,7 +141,7 @@ namespace MWCommon
     /// Get the Width of the supplied Control using its Text, Font and Graphics context and the supplied StringFormat.
     /// </summary>
     /// <param name="ctl">Control to measure Text of.</param>
-    /// <param name="strfmt">StringFormat to use when measuring the string.</param>
+    /// <param name="_stringFormat">StringFormat to use when measuring the string.</param>
     /// <returns>Width of the Text of the Control supplied using the StringFormat supplied.</returns>
     public static int GetStringFormattedStringWidth(Control ctl, StringFormat strfmt)
     {
@@ -155,7 +155,7 @@ namespace MWCommon
     /// <param name="str">String to measure.</param>
     /// <param name="fnt">Font to use for string.</param>
     /// <param name="rct">Rectangle to measure string in.</param>
-    /// <param name="strfmt">StringFormat to use when measuring the string.</param>
+    /// <param name="_stringFormat">StringFormat to use when measuring the string.</param>
     /// <returns>Width of the Text of the Control supplied using the StringFormat supplied.</returns>
     public static int GetStringFormattedStringWidth(Graphics g, string str, Font fnt, Rectangle rct, StringFormat strfmt)
     {
@@ -172,7 +172,7 @@ namespace MWCommon
     /// Get the smallest encompassing Rectangle of the supplied Control using its Text, Font and Graphics context and the supplied StringFormat.
     /// </summary>
     /// <param name="ctl">Control to measure Text of.</param>
-    /// <param name="strfmt">StringFormat to use when measuring the string.</param>
+    /// <param name="_stringFormat">StringFormat to use when measuring the string.</param>
     /// <returns>Smallest Rectangle encompassing the Text of the Control supplied using the StringFormat supplied.</returns>
     public static Rectangle GetStringFormattedStringRectangle(Control ctl, StringFormat strfmt)
     {
@@ -186,7 +186,7 @@ namespace MWCommon
     /// <param name="str">String to measure.</param>
     /// <param name="fnt">Font to use for string.</param>
     /// <param name="rct">Rectangle to measure string in.</param>
-    /// <param name="strfmt">StringFormat to use when measuring the string.</param>
+    /// <param name="_stringFormat">StringFormat to use when measuring the string.</param>
     /// <returns>Smallest Rectangle encompassing the Text of the Control supplied using the StringFormat supplied.</returns>
     public static Rectangle GetStringFormattedStringRectangle(Graphics g, string str, Font fnt, Rectangle rct, StringFormat strfmt)
     {
@@ -217,7 +217,7 @@ namespace MWCommon
     /// Get the smallest encompassing Region of the supplied Control using its Text, Font and Graphics context and the supplied StringFormat.
     /// </summary>
     /// <param name="ctl">Control to measure Text of.</param>
-    /// <param name="strfmt">StringFormat to use when measuring the string.</param>
+    /// <param name="_stringFormat">StringFormat to use when measuring the string.</param>
     /// <returns>Smallest Region encompassing the Text of the Control supplied using the StringFormat supplied.</returns>
     public static Region GetStringFormattedStringRegion(Control ctl, StringFormat strfmt)
     {
@@ -231,7 +231,7 @@ namespace MWCommon
     /// <param name="str">String to measure.</param>
     /// <param name="fnt">Font to use for string.</param>
     /// <param name="rct">Rectangle to measure string in.</param>
-    /// <param name="strfmt">StringFormat to use when measuring the string.</param>
+    /// <param name="_stringFormat">StringFormat to use when measuring the string.</param>
     /// <returns>Smallest Region encompassing the Text of the Control supplied using the StringFormat supplied.</returns>
     public static Region GetStringFormattedStringRegion(Graphics g, string str, Font fnt, Rectangle rct, StringFormat strfmt)
     {

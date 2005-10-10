@@ -31,10 +31,10 @@ namespace Altaxo.Graph.AxisLabeling
 {
   
 
-  public interface ILabelFormatting
+  public interface ILabelFormatting : ICloneable
   {
     SizeF MeasureItem(Graphics g, System.Drawing.Font font, System.Drawing.StringFormat strfmt, Data.AltaxoVariant mtick, PointF morg);
-    void DrawItem(Graphics g, System.Drawing.Font font, System.Drawing.StringFormat strfmt, AltaxoVariant item, PointF morg);
+    void DrawItem(Graphics g, BrushHolder brush, System.Drawing.Font font, System.Drawing.StringFormat strfmt, AltaxoVariant item, PointF morg);
 
     IMeasuredLabelItem[] GetMeasuredItems(Graphics g, System.Drawing.Font font, System.Drawing.StringFormat strfmt, AltaxoVariant[] items);
   }

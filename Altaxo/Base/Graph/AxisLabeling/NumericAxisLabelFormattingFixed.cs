@@ -39,6 +39,17 @@ namespace Altaxo.Graph.AxisLabeling
       //
     }
 
+    public NumericAxisLabelFormattingFixed(NumericAxisLabelFormattingFixed from)
+    {
+      this._formatString = from._formatString;
+    }
+
+    public override object Clone()
+    {
+      return new NumericAxisLabelFormattingFixed(this);
+    }
+
+
     protected override string FormatItem(Altaxo.Data.AltaxoVariant item)
     {
       return FormatItem((double)item);

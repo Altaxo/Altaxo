@@ -37,6 +37,11 @@ namespace Altaxo.Graph.AxisLabeling
       //
     }
 
+    public override object Clone()
+    {
+      return new NumericAxisLabelFormattingAuto();
+    }
+
     protected override string FormatItem(Altaxo.Data.AltaxoVariant item)
     {
       return item.ToString();
