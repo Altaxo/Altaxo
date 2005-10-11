@@ -22,24 +22,55 @@
 
 using System;
 
-namespace Altaxo.Graph.AxisLabeling
+namespace Altaxo.Graph.LabelFormatting
 {
   /// <summary>
   /// Responsible for getting strings out of numeric values for the ticks, decide itself what
   /// format to use.
   /// </summary>
-  public class NumericAxisLabelFormattingAuto : AbstractLabelFormatting
+  public class NumericLabelFormattingAuto : AbstractNumericLabelFormatting
   {
-    public NumericAxisLabelFormattingAuto()
+    #region Serialization
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NumericLabelFormattingAuto),0)]
+      public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      //
-      // TODO: Add constructor logic here
-      //
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        NumericLabelFormattingAuto s = (NumericLabelFormattingAuto)obj;
+
+       info.AddBaseValueEmbedded(s,typeof(AbstractNumericLabelFormatting));
+        
+      }
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        NumericLabelFormattingAuto s = null!=o ? (NumericLabelFormattingAuto)o : new NumericLabelFormattingAuto();
+
+        info.GetBaseValueEmbedded(s,typeof(AbstractNumericLabelFormatting),parent);
+        return s;
+      }
     }
+
+    #endregion
+
+    public NumericLabelFormattingAuto()
+    {
+    }
+    public NumericLabelFormattingAuto(NumericLabelFormattingAuto from)
+    {
+      CopyFrom(from);
+    }
+
+    public void CopyFrom(NumericLabelFormattingAuto from)
+    {
+      base.CopyFrom(from);
+      this._decimalPlaces = from._decimalPlaces;
+    }
+
 
     public override object Clone()
     {
-      return new NumericAxisLabelFormattingAuto();
+      return new NumericLabelFormattingAuto(this);
     }
 
     protected override string FormatItem(Altaxo.Data.AltaxoVariant item)

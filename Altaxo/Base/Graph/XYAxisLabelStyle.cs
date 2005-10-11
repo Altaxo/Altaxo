@@ -29,7 +29,7 @@ using Altaxo.Data;
 
 namespace Altaxo.Graph
 {
-  using AxisLabeling;
+  using LabelFormatting;
 
   /// <summary>
   /// Summary description for AbstractLabelFormatting.
@@ -56,15 +56,12 @@ namespace Altaxo.Graph
     /// <summary>The rotation of the label.</summary>
     protected double _rotation;
 
-    /// <summary>If true, the label is painted on a background.</summary>
-    protected bool _whiteOut;
-
-    /// <summary>The brush for the background.</summary>
-    protected BrushHolder  _backgroundBrush;
+    /// <summary>The style for the background.</summary>
+    protected BackgroundStyles.IBackgroundStyle  _backgroundStyle;
 
     protected bool _automaticRotationShift=true;
 
-    ILabelFormatting _labelFormatting = new AxisLabeling.NumericAxisLabelFormattingAuto();
+    ILabelFormatting _labelFormatting = new LabelFormatting.NumericLabelFormattingAuto();
 
     #region Serialization
     /// <summary>Used to serialize the XYAxisLabelStyle Version 0.</summary>
@@ -122,6 +119,58 @@ namespace Altaxo.Graph
     }
 
 
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYAxisLabelStyle),1)]
+      public class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        XYAxisLabelStyle s = (XYAxisLabelStyle)obj;
+        info.AddValue("Edge",s._edge);  
+        info.AddValue("Font",s._font);  
+        info.AddValue("Brush",s._brush);
+        info.AddValue("Background",s._backgroundStyle);
+
+        info.AddValue("AutoAlignment",s._automaticRotationShift);
+        info.AddEnum("HorzAlignment",s._horizontalAlignment);
+        info.AddEnum("VertAlignment",s._verticalAlignment);
+
+        info.AddValue("Rotation",s._rotation);
+        info.AddValue("XOffset",s._xOffset);
+        info.AddValue("YOffset",s._yOffset);
+
+        info.AddValue("LabelFormat",s._labelFormatting);
+
+
+      }
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        
+        XYAxisLabelStyle s = null!=o ? (XYAxisLabelStyle)o : new XYAxisLabelStyle(EdgeType.Left);
+
+        s._edge = (Edge)info.GetValue("Edge",s);
+        s._font = (Font)info.GetValue("Font",s);
+        s._brush = (BrushHolder)info.GetValue("Brush",s);
+        s._backgroundStyle = (BackgroundStyles.IBackgroundStyle)info.GetValue("BackgroundStyle");
+        s._automaticRotationShift = info.GetBoolean("AutoAlignment");
+        s._horizontalAlignment = (StringAlignment)info.GetEnum("HorzAlignment",typeof(StringAlignment));
+        s._verticalAlignment = (StringAlignment)info.GetEnum("VertAlignment",typeof(StringAlignment));
+        s._rotation = info.GetDouble("Rotation");
+        s._xOffset = info.GetDouble("XOffset");
+        s._yOffset = info.GetDouble("YOffset");
+
+        s._labelFormatting = (ILabelFormatting)info.GetValue("LabelFormat",s);
+
+
+
+
+
+
+
+        s.SetStringFormat();
+        return s;
+      }
+    }
+
     /// <summary>
     /// Finale measures after deserialization.
     /// </summary>
@@ -144,12 +193,13 @@ namespace Altaxo.Graph
       _edge = from._edge;
       _font = null==from._font ? null : (Font)from._font.Clone();
       _stringFormat = (StringFormat)from._stringFormat.Clone(); 
+      _horizontalAlignment = from._horizontalAlignment;
+      _verticalAlignment = from._verticalAlignment;
       _brush = (BrushHolder)from._brush.Clone();
       _xOffset = from._xOffset;
       _xOffset = from._xOffset;
       _rotation = from._rotation;
-      _whiteOut = from._whiteOut;
-      _backgroundBrush = null==from._backgroundBrush ? null : (BrushHolder)from._backgroundBrush.Clone();
+      _backgroundStyle = null==from._backgroundStyle ? null : (BackgroundStyles.IBackgroundStyle)from._backgroundStyle.Clone();
       _labelFormatting = (ILabelFormatting)from._labelFormatting.Clone();
     }
 
@@ -234,18 +284,18 @@ namespace Altaxo.Graph
     }
 
     /// <summary>The background brush color.</summary>
-    public System.Drawing.Color BackgroundColor
+    public BackgroundStyles.IBackgroundStyle BackgroundStyle
     {
-      get { return this._backgroundBrush==null ? Color.Snow : this._backgroundBrush.Color;; }
+      get
+      {
+        return _backgroundStyle;
+      }
       set 
       {
-        Color oldColor = this.Color;
-        if(value!=oldColor)
+        BackgroundStyles.IBackgroundStyle oldValue = this._backgroundStyle;
+        if(!object.ReferenceEquals(value,oldValue))
         {
-          if(null==_backgroundBrush)
-            _backgroundBrush = new BrushHolder(value,false);
-          else
-            _backgroundBrush.SetSolidBrush( value );
+          this._backgroundStyle = value;
           OnChanged(); // Fire Changed event
         }
       }
@@ -316,20 +366,7 @@ namespace Altaxo.Graph
       }
     }
 
-    /// <summary>If true, the label is painted on a white background.</summary>
-    public bool WhiteOut
-    {
-      get { return this._whiteOut; }
-      set
-      {
-        bool oldValue = this._whiteOut;
-        this._whiteOut = value;
-        if(value!=oldValue)
-        {
-          OnChanged();
-        }
-      }
-    }
+  
 
     public bool AutomaticAlignment
     {
@@ -483,6 +520,7 @@ namespace Altaxo.Graph
 
         SizeF msize = labels[i].Size;
         PointF morg = new PointF(tickorg.X + dist_x, tickorg.Y + dist_y);
+
         if (_automaticRotationShift)
         {
           double alpha = _rotation * Math.PI / 180 - Math.Atan2(outVector.Y, outVector.X);
@@ -510,6 +548,10 @@ namespace Altaxo.Graph
         if (this._rotation != 0)
           g.RotateTransform((float)-this._rotation);
         g.TranslateTransform((float)(mrect.X - morg.X + emSize*_xOffset),(float)( mrect.Y - morg.Y + emSize*_yOffset));
+        
+        if(this._backgroundStyle!=null)
+          _backgroundStyle.Draw(g,new RectangleF(PointF.Empty,msize));
+
         labels[i].Draw(g,_brush,new PointF(0,0));
        
         g.Restore(gs); // Restore the graphics state

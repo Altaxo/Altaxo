@@ -240,7 +240,7 @@ namespace Altaxo.Gui.Graph
 
     protected int           _currentLabelStyle;
 
-    protected Altaxo.Graph.AxisLabeling.ILabelFormatting _currentLabelStyleInstance;
+    protected Altaxo.Graph.LabelFormatting.ILabelFormatting _currentLabelStyleInstance;
 
     public XYAxisLabelStyleController(XYAxisLabelStyle style)
     {
@@ -255,12 +255,15 @@ namespace Altaxo.Gui.Graph
       {
         _fontFamily  = _doc.Font.FontFamily.Name;
         _color = _doc.Color;
-        _backgroundColor = _doc.BackgroundColor;
+        _backgroundColor = Color.Transparent;
+        if(_doc.BackgroundStyle!=null && _doc.BackgroundStyle.SupportsColor)
+          _backgroundColor = _doc.BackgroundStyle.Color;
+
         _fontSize = _doc.FontSize;
         _horizontalAlignment = _doc.HorizontalAlignment;
         _verticalAlignment = _doc.VerticalAlignment;
         _automaticAlignment = _doc.AutomaticAlignment;
-        _whiteOut     = _doc.WhiteOut;
+        _whiteOut     = _doc.BackgroundStyle != null && _doc.BackgroundStyle.SupportsColor;
         _rotation     = _doc.Rotation;
         _xOffset      = _doc.XOffset;
         _yOffset      = _doc.YOffset;
@@ -287,7 +290,7 @@ namespace Altaxo.Gui.Graph
 
     void InitializeLabelStyle()
     {
-      _labelTypes = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(Altaxo.Graph.AxisLabeling.ILabelFormatting));
+      _labelTypes = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(Altaxo.Graph.LabelFormatting.ILabelFormatting));
 
       _currentLabelStyleInstance = _doc.LabelFormat;
 
@@ -351,7 +354,7 @@ namespace Altaxo.Gui.Graph
     public void EhView_LabelStyleChanged(int newValue)
     {
       _currentLabelStyle = newValue;
-      _currentLabelStyleInstance = (Altaxo.Graph.AxisLabeling.ILabelFormatting)Activator.CreateInstance(this._labelTypes[newValue]);
+      _currentLabelStyleInstance = (Altaxo.Graph.LabelFormatting.ILabelFormatting)Activator.CreateInstance(this._labelTypes[newValue]);
 
     }
 
@@ -410,12 +413,13 @@ namespace Altaxo.Gui.Graph
       _doc.Font = new Font(_fontFamily,_fontSize,GraphicsUnit.World);
       
       _doc.Color = _color;
-      _doc.BackgroundColor = _backgroundColor;
+      if(_whiteOut)
+        _doc.BackgroundStyle = new Altaxo.Graph.BackgroundStyles.BackgroundColorStyle(_backgroundColor);
+
       _doc.HorizontalAlignment = _horizontalAlignment;
       _doc.VerticalAlignment   = _verticalAlignment;
       _doc.AutomaticAlignment = _automaticAlignment;
      
-      _doc.WhiteOut     = _whiteOut;
       _doc.Rotation     = _rotation;
       _doc.XOffset      = _xOffset;
       _doc.YOffset      = _yOffset;

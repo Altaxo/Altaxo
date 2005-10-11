@@ -27,15 +27,46 @@ using Altaxo.Serialization;
 using Altaxo.Graph.Axes;
 using Altaxo.Data;
 
-namespace Altaxo.Graph.AxisLabeling
+namespace Altaxo.Graph.LabelFormatting
 {
   
 
+  /// <summary>
+  /// Procedures to format an item of the <see>Altaxo.Data.AltaxoVariant</see> class.
+  /// </summary>
   public interface ILabelFormatting : ICloneable
   {
+
+    /// <summary>
+    /// Measures the item, i.e. returns the size of the item.
+    /// </summary>
+    /// <param name="g">Graphics context.</param>
+    /// <param name="font">The font that is used to draw the item.</param>
+    /// <param name="strfmt">String format used to draw the item.</param>
+    /// <param name="mtick">The item to draw.</param>
+    /// <param name="morg">The location the item will be drawn.</param>
+    /// <returns>The size of the item if it would be drawn.</returns>
     SizeF MeasureItem(Graphics g, System.Drawing.Font font, System.Drawing.StringFormat strfmt, Data.AltaxoVariant mtick, PointF morg);
+    
+    /// <summary>
+    /// Draws the item to a specified location.
+    /// </summary>
+    /// <param name="g">Graphics context.</param>
+    /// <param name="brush">Brush used to draw the item.</param>
+    /// <param name="font">Font used to draw the item.</param>
+    /// <param name="strfmt">String format.</param>
+    /// <param name="item">The item to draw.</param>
+    /// <param name="morg">The location where the item is drawn to.</param>
     void DrawItem(Graphics g, BrushHolder brush, System.Drawing.Font font, System.Drawing.StringFormat strfmt, AltaxoVariant item, PointF morg);
 
+    /// <summary>
+    /// Measured a couple of items and prepares them for being drawn.
+    /// </summary>
+    /// <param name="g">Graphics context.</param>
+    /// <param name="font">Font used.</param>
+    /// <param name="strfmt">String format used.</param>
+    /// <param name="items">Array of items to be drawn.</param>
+    /// <returns>An array of <see>IMeasuredLabelItem</see> that can be used to determine the size of each item and to draw it.</returns>
     IMeasuredLabelItem[] GetMeasuredItems(Graphics g, System.Drawing.Font font, System.Drawing.StringFormat strfmt, AltaxoVariant[] items);
   }
 }

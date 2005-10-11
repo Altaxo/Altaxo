@@ -23,30 +23,54 @@
 using System;
 using System.Drawing;
 
-namespace Altaxo.Graph.AxisLabeling
+namespace Altaxo.Graph.LabelFormatting
 {
   /// <summary>
-  /// Summary description for NumericAxisLabelFormattingFixed.
+  /// Formats a numeric item in scientific notation, i.e. in the form mantissa*10^exponent.
   /// </summary>
-  public class NumericAxisLabelFormattingScientific : AbstractLabelFormatting
+  public class NumericLabelFormattingScientific : AbstractNumericLabelFormatting
   {
-    // int _decimalplaces;
-    string _formatString = "{0}";
+   
+
+    #region Serialization
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NumericLabelFormattingScientific),0)]
+      public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        NumericLabelFormattingScientific s = (NumericLabelFormattingScientific)obj;
+        info.AddBaseValueEmbedded(s,typeof(AbstractNumericLabelFormatting));
+      }
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        NumericLabelFormattingScientific s = null!=o ? (NumericLabelFormattingScientific)o : new NumericLabelFormattingScientific();
+        info.GetBaseValueEmbedded(s,typeof(AbstractNumericLabelFormatting),parent);
+        return s;
+      }
+    }
+
+    #endregion
 
 
-    public NumericAxisLabelFormattingScientific()
+    public NumericLabelFormattingScientific()
     {
     
     }
 
-    public NumericAxisLabelFormattingScientific(NumericAxisLabelFormattingScientific from)
+    public NumericLabelFormattingScientific(NumericLabelFormattingScientific from)
     {
-      this._formatString = from._formatString;
+      CopyFrom(from);
+    }
+
+    public void CopyFrom(NumericLabelFormattingScientific from)
+    {
+      base.CopyFrom(from);
     }
 
     public override object Clone()
     {
-      return new NumericAxisLabelFormattingScientific(this);
+      return new NumericLabelFormattingScientific(this);
     }
 
 

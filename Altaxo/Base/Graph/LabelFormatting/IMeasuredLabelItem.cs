@@ -27,7 +27,7 @@ using Altaxo.Serialization;
 using Altaxo.Graph.Axes;
 using Altaxo.Data;
 
-namespace Altaxo.Graph.AxisLabeling
+namespace Altaxo.Graph.LabelFormatting
 {
   /// <summary>
   /// Interface for an label item that is ready to draw and was already measured.
@@ -35,9 +35,10 @@ namespace Altaxo.Graph.AxisLabeling
   public interface IMeasuredLabelItem
   {
     /// <summary>
-    /// Size of the enclosing rectangle of the label.
+    /// Size of the enclosing rectangle of the label item.
     /// </summary>
     SizeF Size { get; }
+
     /// <summary>
     /// Draws the label to a specified point.
     /// </summary>

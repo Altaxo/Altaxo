@@ -1,15 +1,78 @@
+#region Copyright
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2004 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+#endregion
+
 using System;
 using System.Drawing;
 
 using Altaxo.Data;
-namespace Altaxo.Graph.AxisLabeling
+namespace Altaxo.Graph.LabelFormatting
 {
 	/// <summary>
-	/// Summary description for AbstractLabelFormatting.
+	/// Base class that can be used to derive a label formatting class
 	/// </summary>
 	public abstract class AbstractLabelFormatting : ILabelFormatting
 	{
+    protected string _prefix=string.Empty;
+    protected string _suffix=string.Empty;
+
+
+    #region Serialization
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AbstractLabelFormatting),0)]
+      public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        AbstractLabelFormatting s = (AbstractLabelFormatting)obj;
+        info.AddValue("Prefix",s._prefix);
+        info.AddValue("Suffix",s._suffix);
+      }
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        AbstractLabelFormatting s = (AbstractLabelFormatting)o;
+        s._prefix = info.GetString("Prefix");
+        s._suffix = info.GetString("Suffix");
+        return s;
+      }
+    }
+
+    #endregion
+
     #region ILabelFormatting Members
+
+
+    protected AbstractLabelFormatting()
+    {
+    }
+    protected AbstractLabelFormatting(AbstractLabelFormatting from)
+    {
+      CopyFrom(from);
+    }
+
+    protected void CopyFrom(AbstractLabelFormatting from)
+    {
+      this._prefix = from._prefix;
+      this._suffix = from._suffix;
+    }
 
     /// <summary>
     /// Formats on item as text. If you do not provide this function, you have to override <see>MeasureItem</see> and <see>DrawItem</see>.
@@ -18,6 +81,10 @@ namespace Altaxo.Graph.AxisLabeling
     /// <returns>The formatted text representation of this item.</returns>
     protected abstract string FormatItem(Altaxo.Data.AltaxoVariant item);
    
+    /// <summary>
+    /// Clones the instance.
+    /// </summary>
+    /// <returns>A new cloned instance of this class.</returns>
     public abstract object Clone();
     
     /// <summary>
@@ -38,12 +105,30 @@ namespace Altaxo.Graph.AxisLabeling
     }
 
 
+    /// <summary>
+    /// Measures the item, i.e. returns the size of the item.
+    /// </summary>
+    /// <param name="g">Graphics context.</param>
+    /// <param name="font">The font that is used to draw the item.</param>
+    /// <param name="strfmt">String format used to draw the item.</param>
+    /// <param name="mtick">The item to draw.</param>
+    /// <param name="morg">The location the item will be drawn.</param>
+    /// <returns>The size of the item if it would be drawn.</returns>
     public virtual System.Drawing.SizeF MeasureItem(System.Drawing.Graphics g, System.Drawing.Font font, System.Drawing.StringFormat strfmt, Altaxo.Data.AltaxoVariant mtick, System.Drawing.PointF morg)
     {
       string text = FormatItem(mtick);
       return g.MeasureString(text, font, morg, strfmt);
     }
 
+    /// <summary>
+    /// Draws the item to a specified location.
+    /// </summary>
+    /// <param name="g">Graphics context.</param>
+    /// <param name="brush">Brush used to draw the item.</param>
+    /// <param name="font">Font used to draw the item.</param>
+    /// <param name="strfmt">String format.</param>
+    /// <param name="item">The item to draw.</param>
+    /// <param name="morg">The location where the item is drawn to.</param>
     public virtual void DrawItem(System.Drawing.Graphics g, BrushHolder brush, System.Drawing.Font font, System.Drawing.StringFormat strfmt, Altaxo.Data.AltaxoVariant item, PointF morg)
     {
       string text = FormatItem(item);
@@ -51,6 +136,14 @@ namespace Altaxo.Graph.AxisLabeling
     }
 
 
+    /// <summary>
+    /// Measured a couple of items and prepares them for being drawn.
+    /// </summary>
+    /// <param name="g">Graphics context.</param>
+    /// <param name="font">Font used.</param>
+    /// <param name="strfmt">String format used.</param>
+    /// <param name="items">Array of items to be drawn.</param>
+    /// <returns>An array of <see>IMeasuredLabelItem</see> that can be used to determine the size of each item and to draw it.</returns>
     public virtual IMeasuredLabelItem[] GetMeasuredItems(Graphics g, System.Drawing.Font font, System.Drawing.StringFormat strfmt, AltaxoVariant[] items)
     {
      string[] titems = FormatItems(items);

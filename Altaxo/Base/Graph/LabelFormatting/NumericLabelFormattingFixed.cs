@@ -22,31 +22,54 @@
 
 using System;
 
-namespace Altaxo.Graph.AxisLabeling
+namespace Altaxo.Graph.LabelFormatting
 {
   /// <summary>
   /// Summary description for NumericAxisLabelFormattingFixed.
   /// </summary>
-  public class NumericAxisLabelFormattingFixed : AbstractLabelFormatting
+  public class NumericLabelFormattingFixed : AbstractNumericLabelFormatting
   {
-    // int _decimalplaces;
-    string _formatString="{0}";
+   
+    
+    #region Serialization
 
-    public NumericAxisLabelFormattingFixed()
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NumericLabelFormattingFixed),0)]
+      public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      //
-      // TODO: Add constructor logic here
-      //
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        NumericLabelFormattingFixed s = (NumericLabelFormattingFixed)obj;
+        info.AddBaseValueEmbedded(s,typeof(AbstractNumericLabelFormatting));
+        
+      }
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        NumericLabelFormattingFixed s = null!=o ? (NumericLabelFormattingFixed)o : new NumericLabelFormattingFixed();
+        info.GetBaseValueEmbedded(s,typeof(AbstractNumericLabelFormatting),parent);
+        return s;
+      }
     }
 
-    public NumericAxisLabelFormattingFixed(NumericAxisLabelFormattingFixed from)
+    #endregion
+
+
+    public NumericLabelFormattingFixed()
     {
-      this._formatString = from._formatString;
+    }
+
+    public NumericLabelFormattingFixed(NumericLabelFormattingFixed from)
+    {
+      CopyFrom(from);      
+    }
+
+    public void CopyFrom(NumericLabelFormattingFixed from)
+    {
+      base.CopyFrom(from);
     }
 
     public override object Clone()
     {
-      return new NumericAxisLabelFormattingFixed(this);
+      return new NumericLabelFormattingFixed(this);
     }
 
 
@@ -58,7 +81,7 @@ namespace Altaxo.Graph.AxisLabeling
 
     public string FormatItem(double tick)
     {
-      return string.Format(_formatString,tick);
+      return _prefix + tick.ToString() + _suffix;
     }
 
   }

@@ -166,13 +166,24 @@ namespace Altaxo.Scripting
 
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FitFunctionScript), 1)]
-      public new class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+      public class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       FitFunctionScript _deserializedObject;
 
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         FitFunctionScript s = (FitFunctionScript)obj;
+
+        // Update the user defined paramter names
+        if (s.m_ScriptObject != null && s.IsUsingUserDefinedParameterNames)
+        { 
+          IFitFunction ff = (IFitFunction)s.m_ScriptObject;
+            if(s._UserDefinedParameterNames==null || s._UserDefinedParameterNames.Length!=ff.NumberOfParameters)
+              s._UserDefinedParameterNames = new string[ff.NumberOfParameters];
+          for(int i=0;i<ff.NumberOfParameters;++i)
+            s._UserDefinedParameterNames[i] = ff.ParameterName(i);
+        }
+
         info.AddBaseValueEmbedded(s, typeof(AbstractScript));
 
         info.AddValue("Category",s.FitFunctionCategory);
@@ -182,7 +193,9 @@ namespace Altaxo.Scripting
         info.AddValue("NumberOfParameters",s.NumberOfParameters);
         info.AddValue("UserDefinedParameters",s.IsUsingUserDefinedParameterNames);
         if(s.IsUsingUserDefinedParameterNames)
+        {
           info.AddArray("UserDefinedParameterNames",s._UserDefinedParameterNames,s._UserDefinedParameterNames.Length);
+        }
 
         info.AddArray("IndependentVariableNames",s._IndependentVariablesNames,s._IndependentVariablesNames.Length);
         info.AddArray("DependentVariableNames",s._DependentVariablesNames,s._DependentVariablesNames.Length);
@@ -942,14 +955,19 @@ namespace Altaxo.Scripting
 
     public string ParameterName(int i)
     {
-      
+
+      // try to avoid a exception if the script object is not compiled
+      if(this._UserDefinedParameterNames==null || i>=this._UserDefinedParameterNames.Length)
+        MakeSureWasTriedToCompile();
 
       if (this.m_ScriptObject != null)
         return ((IFitFunction)m_ScriptObject).ParameterName(i);
       else
       {
         if (IsUsingUserDefinedParameterNames)
+        {
           return this._UserDefinedParameterNames[i];
+        }
         else
           return "P[" + i.ToString() + "]";
       }

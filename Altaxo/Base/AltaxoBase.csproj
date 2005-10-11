@@ -790,37 +790,12 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Graph\AxisLabeling\AbstractLabelFormatting.cs"
+                    RelPath = "Graph\BackgroundStyles\BackgroundColorStyle.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Graph\AxisLabeling\ILabelFormatting.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Graph\AxisLabeling\IMeasuredLabelItem.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Graph\AxisLabeling\NumericAxisLabelFormattingAuto.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Graph\AxisLabeling\NumericAxisLabelFormattingFixed.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Graph\AxisLabeling\NumericAxisLabelFormattingMantissa.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Graph\AxisLabeling\NumericLabelFormattingScientific.cs"
+                    RelPath = "Graph\BackgroundStyles\IBackgroundStyle.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -1109,6 +1084,111 @@
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
+                <File
+                    RelPath = "Graph\LabelFormatting\AbstractLabelFormatting.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\LabelFormatting\AbstractNumericLabelFormatting.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\LabelFormatting\ILabelFormatting.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\LabelFormatting\IMeasuredLabelItem.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\LabelFormatting\NumericLabelFormattingAuto.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\LabelFormatting\NumericLabelFormattingFixed.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\LabelFormatting\NumericLabelFormattingMantissa.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\LabelFormatting\NumericLabelFormattingScientific.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\LabelFormatting\.svn\empty-file"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Graph\LabelFormatting\.svn\entries"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Graph\LabelFormatting\.svn\format"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Graph\LabelFormatting\.svn\README.txt"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "Graph\LabelFormatting\.svn\prop-base\NumericAxisLabelFormattingAuto.cs.svn-base"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Graph\LabelFormatting\.svn\prop-base\NumericAxisLabelFormattingFixed.cs.svn-base"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Graph\LabelFormatting\.svn\props\NumericAxisLabelFormattingAuto.cs.svn-work"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Graph\LabelFormatting\.svn\props\NumericAxisLabelFormattingFixed.cs.svn-work"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Graph\LabelFormatting\.svn\text-base\AbstractLabelFormatting.cs.svn-base"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Graph\LabelFormatting\.svn\text-base\ILabelFormatting.cs.svn-base"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Graph\LabelFormatting\.svn\text-base\IMeasuredLabelItem.cs.svn-base"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Graph\LabelFormatting\.svn\text-base\NumericAxisLabelFormattingAuto.cs.svn-base"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Graph\LabelFormatting\.svn\text-base\NumericAxisLabelFormattingFixed.cs.svn-base"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Graph\LabelFormatting\.svn\text-base\NumericAxisLabelFormattingMantissa.cs.svn-base"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Graph\LabelFormatting\.svn\text-base\NumericLabelFormattingScientific.cs.svn-base"
+                    BuildAction = "None"
+                />
+                <Folder RelPath = "Graph\LabelFormatting\.svn\tmp\prop-base\" />
+                <Folder RelPath = "Graph\LabelFormatting\.svn\tmp\props\" />
+                <Folder RelPath = "Graph\LabelFormatting\.svn\tmp\text-base\" />
+                <Folder RelPath = "Graph\LabelFormatting\.svn\tmp\wcprops\" />
+                <Folder RelPath = "Graph\LabelFormatting\.svn\wcprops\" />
                 <File
                     RelPath = "Graph\Procedures\ArrangeLayers.cs"
                     SubType = "Code"

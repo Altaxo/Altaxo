@@ -21,35 +21,39 @@
 #endregion
 
 using System;
+using System.Drawing;
 
-namespace Altaxo.Graph.AxisLabeling
+namespace Altaxo.Graph.BackgroundStyles
 {
 	/// <summary>
-	/// Displays only the mantissa of a number. Usefull for minor ticks on logarithmic axes.
+	/// Provides a background around a rectangular spaced area.
 	/// </summary>
-	public class NumericAxisLabelFormattingMantissa : AbstractLabelFormatting
+	public interface IBackgroundStyle : ICloneable
 	{
-
-    public override object Clone()
-    {
-      return new NumericAxisLabelFormattingMantissa();
-    }
-
-    protected override string FormatItem(Altaxo.Data.AltaxoVariant item)
-    {
-      return FormatItem((double)item);
-    }
+    /// <summary>
+    /// Measures the outer size of the item.
+    /// </summary>
+    /// <param name="g">Graphics context.</param>
+    /// <param name="innerArea">Inner area of the item.</param>
+    /// <returns>The rectangle that encloses the item including the background.</returns>
+    RectangleF MeasureItem(Graphics g, RectangleF innerArea);
 
 
-    public string FormatItem(double tick)
-    {
-      string result = string.Format("{0:E0}",tick);
-      int pos = result.IndexOf('E');
-      if(pos>=0)
-        return result.Substring(0,pos);
-      else
-        return result;
+    /// <summary>
+    /// Draws the background.
+    /// </summary>
+    /// <param name="g">Graphics context.</param>
+    /// <param name="innerArea">The inner area of the item.</param>
+		void Draw(Graphics g, RectangleF innerArea);
 
-    }
+    /// <summary>
+    /// True if the classes color property can be set/reset;
+    /// </summary>
+    bool SupportsColor { get; }
+
+    /// <summary>
+    /// Get/sets the color.
+    /// </summary>
+    Color Color { get; set; }
 	}
 }
