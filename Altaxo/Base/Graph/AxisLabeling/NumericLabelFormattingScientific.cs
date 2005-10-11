@@ -63,18 +63,38 @@ namespace Altaxo.Graph.AxisLabeling
 
     protected void SplitInFirstPartAndExponent(double ditem, out string firstpart, out string exponent)
     {
-      string sitem1 = ditem.ToString("E0");
+      string sitem1 = ditem.ToString("E");
 
-      int posOfE = sitem1.IndexOf('E');
-      if (posOfE < 0)
+      if (ditem == 0)
       {
-        firstpart = sitem1;
+        firstpart = 0.ToString();
         exponent = string.Empty;
         return;
       }
 
-      firstpart = sitem1.Substring(0, posOfE) + "·10";
-      exponent = sitem1.Substring(posOfE + 1);
+      int posOfE = sitem1.IndexOf('E');
+      System.Diagnostics.Debug.Assert(posOfE>0);
+
+      int expo = int.Parse(sitem1.Substring(posOfE+1));
+      double mant = ditem*Calc.RMath.Pow(10, -expo);
+
+      if (expo != 0)
+      {
+
+        firstpart = mant.ToString();
+        exponent = expo.ToString();
+       
+        if (firstpart == 1.ToString())
+          firstpart = "10";
+        else
+          firstpart += "·10";
+      }
+      else
+      {
+        firstpart = mant.ToString();
+        exponent = string.Empty;
+      }
+
     }
 
     public override System.Drawing.SizeF MeasureItem(System.Drawing.Graphics g, System.Drawing.Font font, System.Drawing.StringFormat strfmt, Altaxo.Data.AltaxoVariant mtick, System.Drawing.PointF morg)
@@ -101,7 +121,88 @@ namespace Altaxo.Graph.AxisLabeling
       {
         g.DrawString(exponent, font2, brush, morg);
       }
+    }
+
+    public override IMeasuredLabelItem[] GetMeasuredItems(Graphics g, Font font, StringFormat strfmt, Altaxo.Data.AltaxoVariant[] items)
+    {
       
+
+      MeasuredLabelItem[] litems = new MeasuredLabelItem[items.Length];
+
+      Font localfont1 = (Font)font.Clone();
+      Font localfont2 = new Font(font.FontFamily, font.Size * 2 / 3, font.Style, GraphicsUnit.World);
+     
+      StringFormat localstrfmt = (StringFormat)strfmt.Clone();
+
+      string[] firstp = new string[items.Length];
+      string[] expos = new string[items.Length];
+
+      float maxexposize=0;
+      for (int i = 0; i < items.Length; ++i)
+      {
+        string firstpart, exponent;
+        SplitInFirstPartAndExponent((double)items[i], out firstpart, out exponent);
+        firstp[i] = firstpart;
+        expos[i] = exponent;
+        maxexposize = Math.Max(maxexposize,g.MeasureString(exponent,localfont2,new PointF(0,0),strfmt).Width);
+      }
+
+
+      for (int i = 0; i < items.Length; ++i)
+      {
+        litems[i] = new MeasuredLabelItem(g, localfont1, localfont2, localstrfmt, firstp[i],expos[i],maxexposize);
+      }
+
+      return litems;
+      
+    }
+
+    protected new class MeasuredLabelItem : IMeasuredLabelItem
+    {
+      protected string _firstpart;
+      protected string _exponent;
+      protected Font _font1;
+      protected Font _font2;
+      protected System.Drawing.StringFormat _strfmt;
+      protected SizeF _size1;
+      protected SizeF _size2;
+      protected float _rightPadding;
+
+      #region IMeasuredLabelItem Members
+
+      public MeasuredLabelItem(Graphics g, Font font1, Font font2, StringFormat strfmt, string firstpart, string exponent, float maxexposize)
+      {
+        _firstpart = firstpart;
+        _exponent = exponent;
+        _font1 = font1;
+        _font2 = font2;
+        _strfmt = strfmt;
+        _size1 = g.MeasureString(_firstpart, _font1, new PointF(0, 0), strfmt);
+        _size2 = g.MeasureString(_exponent, _font2, new PointF(_size1.Width, 0), strfmt);
+        _rightPadding = maxexposize-_size2.Width;
+
+      }
+
+      public virtual SizeF Size
+      {
+        get
+        {
+          return new SizeF(_size1.Width + _size2.Width + _rightPadding, _size1.Height);
+        }
+      }
+
+      public virtual void Draw(Graphics g, BrushHolder brush, PointF point)
+      {
+        g.DrawString(_firstpart, _font1, brush, point, _strfmt);
+
+        point.X += _size1.Width;
+        point.Y += 0;
+
+        g.DrawString(_exponent, _font2, brush, point, _strfmt);
+      }
+
+      #endregion
+
     }
   }
 }

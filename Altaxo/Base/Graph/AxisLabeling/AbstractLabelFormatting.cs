@@ -85,7 +85,7 @@ namespace Altaxo.Graph.AxisLabeling
         _size = g.MeasureString(_text, _font, new PointF(0,0), strfmt);
       }
 
-      public SizeF Size
+      public virtual SizeF Size
       {
         get
         {
@@ -93,7 +93,7 @@ namespace Altaxo.Graph.AxisLabeling
         }
       }
 
-      public void Draw(Graphics g, BrushHolder brush, PointF point)
+      public virtual void Draw(Graphics g, BrushHolder brush, PointF point)
       {
         g.DrawString(_text, _font, brush, point, _strfmt);
       }

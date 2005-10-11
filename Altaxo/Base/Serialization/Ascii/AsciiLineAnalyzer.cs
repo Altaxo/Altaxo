@@ -152,9 +152,11 @@ namespace Altaxo.Serialization.Ascii
     public static bool IsDateTime(string s)
     {
       bool bRet=false;
+      
       try
       {
-        System.Convert.ToDateTime(s);
+        DateTime.Parse(s);
+        
         bRet=true;
       }
       catch(Exception)
