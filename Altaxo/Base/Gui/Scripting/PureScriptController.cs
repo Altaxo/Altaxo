@@ -12,6 +12,7 @@ namespace Altaxo.Gui.Scripting
     string ScriptText { get; set; }
 
     int ScriptCursorLocation { set; }
+    int InitialScriptCursorLocation { set; }
     void SetScriptCursorLocation(int line, int column);
     void MarkText(int pos1, int pos2);
   }
@@ -30,6 +31,8 @@ namespace Altaxo.Gui.Scripting
     void SetScriptCursorLocation(int line, int column);
 
     void SetScriptCursorLocation(int offset);
+
+    void SetInitialScriptCursorLocation(int offset);
     
     /// <summary>
     /// Gets the most current script text (if a view is present, it returns the script text of the view).
@@ -135,6 +138,12 @@ namespace Altaxo.Gui.Scripting
     {
       if(_view!=null)
         _view.ScriptCursorLocation = offset;
+    }
+
+    public void SetInitialScriptCursorLocation(int offset)
+    {
+      if(_view!=null)
+        _view.InitialScriptCursorLocation = offset;
     }
 
     /// <summary>

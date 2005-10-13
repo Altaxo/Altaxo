@@ -351,7 +351,7 @@ namespace Altaxo.Gui.Scripting
       {
         m_TempScript = (IFitFunctionScriptText)_scriptController.ModelObject;
        
-        m_Script = m_TempScript;
+        m_Script.CopyFrom( m_TempScript, false);
         m_TempScript = (IFitFunctionScriptText)m_Script.CloneForModification();
         return true;
       }

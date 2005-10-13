@@ -112,6 +112,14 @@ namespace Altaxo.Gui.Scripting
       }
     }
 
+    public int InitialScriptCursorLocation
+    {
+      set
+      {
+        this.ScriptCursorLocation = value;
+      }
+    }
+
     public void SetScriptCursorLocation(int line, int column)
     {
       // TODO:  Add PureScriptControl.SetScriptCursorLocation implementation

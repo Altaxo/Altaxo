@@ -117,6 +117,7 @@ namespace Altaxo.Scripting
       get
       {
         return
+          "#region ScriptHeader\r\n"+
           "using System;\r\n" + 
           "using Altaxo;\r\n" + 
           "using Altaxo.Calc;\r\n" + 
@@ -139,6 +140,7 @@ namespace Altaxo.Scripting
       get
       {
         return
+          "#endregion\r\n"+
           "\t\t\t// ----- add your script below this line -----\r\n";
       }
     }
@@ -160,7 +162,8 @@ namespace Altaxo.Scripting
       get
       {
         return
-          "\t\t\t// ----- add your script above this line -----\r\n";
+          "\t\t\t// ----- add your script above this line -----\r\n"+
+          "#region ScriptFooter\r\n";
       }
     }
 
@@ -175,7 +178,8 @@ namespace Altaxo.Scripting
           
           "\t\t} // Execute method\r\n" +
           "\t} // class\r\n" + 
-          "} //namespace\r\n";
+          "} //namespace\r\n"+
+          "#endregion\r\n";
       }
     }
 

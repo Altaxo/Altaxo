@@ -161,7 +161,14 @@ namespace Altaxo.Worksheet.GUI
       }
       set 
       {
-        this.edFormula.Text = value;
+        if(this.edFormula.Text != value)
+        {
+          this.edFormula.Text = value;
+
+          // The following line is a trick to re-get the complete folding of the text
+          // otherwise, when you change the text here, the folding will be disabled
+          this.edFormula.Document.FoldingManager.FoldMarker.Clear(); 
+        }
       }
     }
 
@@ -175,6 +182,14 @@ namespace Altaxo.Worksheet.GUI
 
     }
 
+    public int InitialScriptCursorLocation
+    {
+      set
+      {
+        // do nothing here, because folding is active
+      }
+
+    }
 
     public void SetScriptCursorLocation(int line, int column)
     {

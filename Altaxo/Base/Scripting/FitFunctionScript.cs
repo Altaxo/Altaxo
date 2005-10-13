@@ -50,6 +50,8 @@ namespace Altaxo.Scripting
     string[] IndependentVariablesNames { set; }
 
     new int NumberOfParameters { get; set; }
+
+    void CopyFrom(IFitFunctionScriptText from, bool forModification);
   }
 
   /// <summary>
@@ -262,11 +264,37 @@ namespace Altaxo.Scripting
     /// <summary>
     /// Creates a column script as a copy from another script.
     /// </summary>
-    /// <param name="b">The script to copy from.</param>
-    public FitFunctionScript(FitFunctionScript b, bool forModification)
-      : base(b, forModification)
+    /// <param name="from">The script to copy from.</param>
+    public FitFunctionScript(FitFunctionScript from, bool forModification)
+      : base(from, forModification)
     {
+      CopyInstanceMembersFrom(from);
     }
+
+
+    private void CopyInstanceMembersFrom(FitFunctionScript from)
+    {
+      this._IsUsingUserDefinedParameterNames=from._IsUsingUserDefinedParameterNames;
+      this._NumberOfParameters = from._NumberOfParameters;
+      this._UserDefinedParameterNames = null==from._UserDefinedParameterNames ? null : (string[])from._UserDefinedParameterNames.Clone();
+      this._IndependentVariablesNames = (string[])from._IndependentVariablesNames.Clone();
+      this._DependentVariablesNames = (string[])from._DependentVariablesNames.Clone();
+      this._fitFunctionName = from._fitFunctionName;
+      this._fitFunctionCategory = from.FitFunctionCategory;
+      this._fitFunctionCreationTime = from._fitFunctionCreationTime;
+    }
+
+    public void CopyFrom(FitFunctionScript from, bool forModification)
+    {
+      base.CopyFrom(from,forModification);
+      CopyInstanceMembersFrom(from);
+    }
+
+    void IFitFunctionScriptText.CopyFrom(IFitFunctionScriptText from, bool forModification)
+    {
+      CopyFrom((FitFunctionScript)from, forModification);
+    }
+
     /// <summary>
     /// Gives the type of the script object (full name), which is created after successfull compilation.
     /// </summary>
@@ -274,6 +302,37 @@ namespace Altaxo.Scripting
     {
       get { return "Altaxo.Calc.MyFitFunction"; }
     }
+
+    public override bool Compile()
+    {
+      bool success = base.Compile ();
+
+      if(success && (this.m_ScriptObject is IFitFunction))
+      {
+        IFitFunction ff = (IFitFunction)m_ScriptObject;
+
+        this._NumberOfParameters = ff.NumberOfParameters;
+        this._fitFunctionCreationTime = DateTime.Now;
+        if(this.IsUsingUserDefinedParameterNames)
+        {
+          if(_UserDefinedParameterNames==null || _UserDefinedParameterNames.Length!=ff.NumberOfParameters)
+            _UserDefinedParameterNames = new string[ff.NumberOfParameters];
+          for(int i=0;i<ff.NumberOfParameters;++i)
+            _UserDefinedParameterNames[i] = ff.ParameterName(i);
+        }
+
+        this._IndependentVariablesNames = new string[ff.NumberOfIndependentVariables];
+        for(int i=0;i<this._IndependentVariablesNames.Length;++i)
+          this._IndependentVariablesNames[i] = ff.IndependentVariableName(i);
+
+        this._DependentVariablesNames = new string[ff.NumberOfDependentVariables];
+        for(int i=0;i<this._DependentVariablesNames.Length;++i)
+          this._DependentVariablesNames[i] = ff.DependentVariableName(i);
+      }
+
+      return success;
+    }
+
 
     #region Text Definitions
     /// <summary>
@@ -284,6 +343,7 @@ namespace Altaxo.Scripting
       get
       {
         return
+          "#region ScriptHeader\r\n"+
           "using System;\r\n" +
           "using Altaxo;\r\n" +
           "using Altaxo.Calc;\r\n" +
@@ -611,6 +671,7 @@ namespace Altaxo.Scripting
       get
       {
         return
+          "#endregion // ScriptHeader\r\n"+
           "\t\t\t// ----- add your script below this line -----\r\n";
       }
     }
@@ -632,7 +693,8 @@ namespace Altaxo.Scripting
       get
       {
         return
-          "\t\t\t// ----- add your script above this line -----\r\n";
+          "\t\t\t// ----- add your script above this line -----\r\n"+
+          "#region ScriptFooter\r\n";
       }
     }
 
@@ -649,7 +711,8 @@ namespace Altaxo.Scripting
           DependentAssignmentRegionEnd+
           "\t\t} // method\r\n" +
           "\t} // class\r\n" +
-          "} //namespace\r\n";
+          "} //namespace\r\n"+
+          "#endregion\r\n";
       }
     }
 

@@ -82,7 +82,7 @@ namespace Altaxo.Gui.Scripting
       {
         _view.ClearCompilerErrors();
         _view.AddPureScriptView(_pureScriptController.ViewObject);
-        _pureScriptController.SetScriptCursorLocation( _tempDoc.UserAreaScriptOffset);
+        _pureScriptController.SetInitialScriptCursorLocation( _tempDoc.UserAreaScriptOffset);
       }
     }
     #region IScriptViewEventSink Members

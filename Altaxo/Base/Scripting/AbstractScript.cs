@@ -270,9 +270,9 @@ namespace Altaxo.Scripting
     /// <summary>
     /// Creates a column script as a copy from another script.
     /// </summary>
-    /// <param name="b">The script to copy from.</param>
-    public AbstractScript(AbstractScript b)
-      : this(b,false)
+    /// <param name="from">The script to copy from.</param>
+    public AbstractScript(AbstractScript from)
+      : this(from,false)
     {
     }
 
@@ -280,32 +280,32 @@ namespace Altaxo.Scripting
     /// <summary>
     /// Creates a column script as a copy from another script.
     /// </summary>
-    /// <param name="b">The script to copy from.</param>
+    /// <param name="from">The script to copy from.</param>
     /// <param name="forModification">If false, the script incl. compiled assembly is copied. If true,
     /// the compiled assembly is not copied, so that the script text can be modified.</param>
-    public AbstractScript(AbstractScript b, bool forModification)
+    public AbstractScript(AbstractScript from, bool forModification)
     {
-     CopyFrom(b, forModification);
+     CopyFrom(from, forModification);
     }
     
 
     /// <summary>
     /// Copies the content of a script to here.
     /// </summary>
-    /// <param name="script">The script to copy from.</param>
+    /// <param name="from">The script to copy from.</param>
     /// <param name="forModification">If false, the script incl. compiled assembly is copied. If true,
     /// the compiled assembly is not copied, so that the script text can be modified.</param>
-    public void CopyFrom(AbstractScript b, bool forModification)
+    public void CopyFrom(AbstractScript from, bool forModification)
     {
-      this.m_ScriptText  = b.m_ScriptText;
-      this.m_ScriptObject   = b.m_ScriptObject;
-      this.m_IsDirty = b.m_IsDirty;
+      this.m_ScriptText  = from.m_ScriptText;
+      this.m_ScriptObject   = from.m_ScriptObject;
+      this.m_IsDirty = from.m_IsDirty;
       
-      this.m_WasTriedToCompile = forModification ? false : b.m_WasTriedToCompile;
+      this.m_WasTriedToCompile = forModification ? false : from.m_WasTriedToCompile;
       
-      this.m_Errors   = null==b.m_Errors ? null: (string[])b.m_Errors.Clone();
+      this.m_Errors   = null==from.m_Errors ? null: (string[])from.m_Errors.Clone();
       
-      this._compilerResult = forModification ? null :  b._compilerResult; // (not cloning is intented here)
+      this._compilerResult = forModification ? null :  from._compilerResult; // (not cloning is intented here)
     }
 
     void IScriptText.CopyFrom(IScriptText from, bool forModification)
