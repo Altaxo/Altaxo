@@ -111,6 +111,8 @@ namespace Altaxo.Worksheet.Commands
         Altaxo.Graph.PlotItem pi = new Altaxo.Graph.XYColumnPlotItem(pa[i],(Altaxo.Graph.XYPlotStyleCollection)templatePlotStyle.Clone());
         newPlotGroup.Add(pi);
       }
+      newPlotGroup.UpdateMembers(0);
+
       gc.Doc.Layers[0].PlotItems.Add(newPlotGroup);
     }
 

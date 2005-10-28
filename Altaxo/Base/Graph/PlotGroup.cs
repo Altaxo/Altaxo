@@ -310,10 +310,12 @@ namespace Altaxo.Graph
       get { return _plotItems.Count>0 ? (PlotItem)_plotItems[0] : null; }
     }
 
+    /*
     public bool IsIndependent 
     {
       get { return this._changeStyle == 0; }
     }
+    */
 
     public PlotGroupStyle Style
     {
@@ -395,7 +397,7 @@ namespace Altaxo.Graph
     {
       ++_suppressStyleChangedEvents;
       // update the styles beginning from the master item
-      if(!IsIndependent && Count>masteritem)
+      if(masteritem<Count)
       {
         I2DGroupablePlotStyle masterstyle = this[masteritem].StyleObject as I2DGroupablePlotStyle;
         if(masterstyle!=null)
