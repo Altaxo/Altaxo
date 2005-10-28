@@ -264,6 +264,13 @@ namespace Altaxo.Main.Services
       System.Windows.Forms.MessageBox.Show(Current.MainWindow,errortxt,"Error(s)!", System.Windows.Forms.MessageBoxButtons.OK,System.Windows.Forms.MessageBoxIcon.Error);
     }
     
+
+    public void ShowBackgroundCancelDialog(System.Threading.Thread thread, IExternalDrivenBackgroundMonitor monitor)
+    {
+      Altaxo.Gui.Common.BackgroundCancelDialog dlg = new Altaxo.Gui.Common.BackgroundCancelDialog(thread, monitor);
+      dlg.ShowDialog(Current.MainWindow);
+    }
+
     /// <summary>
     /// Gets a user friendly class name. See remarks for a detailed description how it is been obtained.
     /// </summary>

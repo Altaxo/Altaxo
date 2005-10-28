@@ -3,17 +3,35 @@ using System;
 namespace Altaxo.Calc.Regression.Nonlinear
 {
   /// <summary>
-  /// Summary description for KohlrauschDecay.
+  /// Havriliak-Negami function to fit dielectric spectra.
   /// </summary>
-  [FitFunction("HavriliakNegami Complex","Relaxation",1,2,4)]
+  [FitFunction("HavriliakNegami Complex","Relaxation",1,2,5)]
   public class HavriliakNegamiComplex : IFitFunction
   {
+    #region Serialization
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(HavriliakNegamiComplex),0)]
+      public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+      }
+
+      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        return new HavriliakNegamiComplex();;
+      }
+    }
+
+    #endregion
+
     public HavriliakNegamiComplex()
     {
       //
       // TODO: Add constructor logic here
       //
     }
+    
     #region IFitFunction Members
   
     #region independent variable definition
@@ -47,7 +65,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     #endregion
 
     #region parameter definition
-    string[] _parameterName = new string[]{"offset","amplitude","tau","alpha","gamma"};
+    string[] _parameterName = new string[]{"offset","amplitude","tau","alpha","gamma","conduct"};
     public int NumberOfParameters
     {
       get
@@ -65,7 +83,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     {
       Complex result = P[0] + P[1]/ComplexMath.Pow(1+ComplexMath.Pow(Complex.I*X[0]*P[2],P[3]),P[4]);
       Y[0] = result.Re;
-      Y[1] = -result.Im;
+      Y[1] = -result.Im + P[5]/X[0];
     }
 
     #endregion

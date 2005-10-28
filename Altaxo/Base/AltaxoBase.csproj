@@ -144,6 +144,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Calc\FitFunctions\Relaxation\HavriliakNegamiFunction.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Calc\LinearAlgebra\DataColumnWrapper.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -255,11 +260,6 @@
                 />
                 <File
                     RelPath = "Calc\Regression\Nonlinear\FitFunctionToScalarFunctionDDWrapper.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Calc\Regression\Nonlinear\HavriliakNegamiFunction.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -1211,6 +1211,16 @@
                 />
                 <Folder RelPath = "Gui\Analysis\NonLinearFitting\" />
                 <File
+                    RelPath = "Gui\Common\BackgroundCancelDialog.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Gui\Common\BackgroundCancelDialog.resx"
+                    DependentUpon = "BackgroundCancelDialog.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "Gui\Common\ControlViewElement.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -1741,6 +1751,11 @@
                 />
                 <File
                     RelPath = "Main\Services\GUIFactoryService.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\Services\IBackgroundMonitor.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
