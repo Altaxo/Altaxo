@@ -2500,6 +2500,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// This creates a linear array for use with unmanaged routines.
     /// </summary>
     /// <param name="matrix">The matrix to convert to an array.</param>
+    /// <param name="result">The resulting array represented as a linear vector (at least of size (rows*columns).</param>
     /// <returns>Linear array of complex.</returns>
     static void ToLinearComplexArray(IROComplexFloatMatrix matrix, Complex[] result)
     {
@@ -2518,6 +2519,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// This creates a linear array for use with unmanaged routines.
     /// </summary>
     /// <param name="matrix">The matrix to convert to an array.</param>
+    /// <param name="result">The resulting linear array. Must be at least of size (rows*columns).</param>
     /// <returns>Linear array of complex.</returns>
     static void ToLinearComplexArray(IROMatrix matrix, Complex[] result)
     {

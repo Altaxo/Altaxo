@@ -1257,7 +1257,7 @@ namespace Altaxo.Calc.LinearAlgebra
       }
       #region IMatrix Members
 
-      public double this[int row, int col]
+      public new double this[int row, int col]
       {
        
         get

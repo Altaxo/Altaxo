@@ -2070,7 +2070,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// This creates a linear array for use with unmanaged routines.
     /// </summary>
-    /// <param name=source">The vector to convert to an array.</param>
+    /// <param name="source">The vector to convert to an array.</param>
     /// <returns>Linear array of complex.</returns>
     public static double[] ToLinearArray(IROVector source)
     {

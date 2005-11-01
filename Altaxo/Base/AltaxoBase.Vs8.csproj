@@ -1,7 +1,7 @@
 ﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
-    <ProductVersion>8.0.50215</ProductVersion>
+    <ProductVersion>8.0.50727</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{CA928A5C-9673-4FBB-A60E-F91364CC9DB5}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -121,6 +121,7 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Calc\FitFunctions\Relaxation\HavriliakNegamiFunction.cs" />
     <Compile Include="Calc\LinearAlgebra\DataColumnWrapper.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -165,7 +166,6 @@
     </Compile>
     <Compile Include="Calc\Regression\Nonlinear\FitFunctionSelectionController.cs" />
     <Compile Include="Calc\Regression\Nonlinear\FitFunctionToScalarFunctionDDWrapper.cs" />
-    <Compile Include="Calc\Regression\Nonlinear\HavriliakNegamiFunction.cs" />
     <Compile Include="Calc\Regression\Nonlinear\IFitFunction.cs" />
     <Compile Include="Calc\Regression\Nonlinear\KohlrauschDecay.cs" />
     <Compile Include="Calc\Regression\Nonlinear\LevMarAdapter.cs" />
@@ -188,15 +188,23 @@
     </Compile>
     <Compile Include="Data\NumericColumnProxy.cs" />
     <Compile Include="Data\ReadableColumnProxy.cs" />
-    <Compile Include="Graph\AxisLabeling\AbstractLabelFormatting.cs" />
-    <Compile Include="Graph\AxisLabeling\ILabelFormatting.cs" />
-    <Compile Include="Graph\AxisLabeling\IMeasuredLabelItem.cs" />
-    <Compile Include="Graph\AxisLabeling\NumericAxisLabelFormattingMantissa.cs" />
-    <Compile Include="Graph\AxisLabeling\NumericLabelFormattingScientific.cs" />
+    <Compile Include="Graph\BackgroundStyles\BackgroundColorStyle.cs" />
+    <Compile Include="Graph\BackgroundStyles\IBackgroundStyle.cs" />
     <Compile Include="Graph\I2DGroupablePlotItem.cs" />
+    <Compile Include="Graph\LabelFormatting\AbstractLabelFormatting.cs" />
+    <Compile Include="Graph\LabelFormatting\AbstractNumericLabelFormatting.cs" />
+    <Compile Include="Graph\LabelFormatting\ILabelFormatting.cs" />
+    <Compile Include="Graph\LabelFormatting\IMeasuredLabelItem.cs" />
+    <Compile Include="Graph\LabelFormatting\NumericLabelFormattingAuto.cs" />
+    <Compile Include="Graph\LabelFormatting\NumericLabelFormattingFixed.cs" />
+    <Compile Include="Graph\LabelFormatting\NumericLabelFormattingMantissa.cs" />
+    <Compile Include="Graph\LabelFormatting\NumericLabelFormattingScientific.cs" />
     <Compile Include="Graph\PlotColors.cs" />
     <Compile Include="Graph\Procedures\ArrangeLayers.cs" />
     <Compile Include="Graph\XYPlotStyleCollectionTemplates.cs" />
+    <Compile Include="Gui\Common\BackgroundCancelDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Gui\Common\ControlViewElement.cs" />
     <Compile Include="Gui\Common\MultiChildController.cs" />
     <Compile Include="Gui\Common\MultiChildControl.cs">
@@ -242,6 +250,7 @@
     <Compile Include="Gui\IRefreshable.cs" />
     <Compile Include="Main\DocNodeProxy.cs" />
     <Compile Include="Main\IEventIndicatedDisposable.cs" />
+    <Compile Include="Main\Services\IBackgroundMonitor.cs" />
     <Compile Include="Scripting\FitFunctionScriptCollection.cs" />
     <Compile Include="Collections\AscendingIntegerCollection.cs">
       <SubType>Code</SubType>
@@ -397,12 +406,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Graph\Axes\Scaling\NumericAxisRescaleController.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Graph\AxisLabeling\NumericAxisLabelFormattingAuto.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Graph\AxisLabeling\NumericAxisLabelFormattingFixed.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Graph\BrushHolder.cs">
@@ -1106,6 +1109,10 @@
     <EmbeddedResource Include="Graph\GUI\XYPlotLabelStyleControl.resx">
       <DependentUpon>XYPlotLabelStyleControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Common\BackgroundCancelDialog.resx">
+      <DependentUpon>BackgroundCancelDialog.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Gui\Common\MultiChildControl.resx">
       <DependentUpon>MultiChildControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -1216,9 +1223,23 @@
     <EmbeddedResource Include="Worksheet\GUI\WorksheetView.resx">
       <DependentUpon>WorksheetView.cs</DependentUpon>
     </EmbeddedResource>
+    <Content Include="Calc\FitFunctions\Relaxation\.svn\README.txt" />
     <Content Include="Main\App.ico" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Calc\FitFunctions\Relaxation\.svn\empty-file" />
+    <None Include="Calc\FitFunctions\Relaxation\.svn\entries" />
+    <None Include="Calc\FitFunctions\Relaxation\.svn\format" />
+    <None Include="Calc\FitFunctions\Relaxation\.svn\text-base\HavriliakNegamiFunction.cs.svn-base" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Calc\FitFunctions\Relaxation\.svn\prop-base\" />
+    <Folder Include="Calc\FitFunctions\Relaxation\.svn\props\" />
+    <Folder Include="Calc\FitFunctions\Relaxation\.svn\tmp\prop-base\" />
+    <Folder Include="Calc\FitFunctions\Relaxation\.svn\tmp\props\" />
+    <Folder Include="Calc\FitFunctions\Relaxation\.svn\tmp\text-base\" />
+    <Folder Include="Calc\FitFunctions\Relaxation\.svn\tmp\wcprops\" />
+    <Folder Include="Calc\FitFunctions\Relaxation\.svn\wcprops\" />
     <Folder Include="Calc\Regression\PLS\" />
     <Folder Include="Gui\Analysis\NonLinearFitting\" />
   </ItemGroup>
