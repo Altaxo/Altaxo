@@ -327,16 +327,23 @@ namespace Altaxo.Graph
     {
       EdgeType _edgeType;
       bool _showAxis;
-      protected XYAxisStyle _axisStyle = new XYAxisStyle(EdgeType.Left);
-      AbstractXYAxisLabelStyle _labelStyle = new XYAxisLabelStyle(EdgeType.Left);
-      TextGraphics _axisTitle = null;
+      protected XYAxisStyle _axisStyle;
+      bool _showMajorLabels;
+      AbstractXYAxisLabelStyle _majorLabelStyle;
+      bool _showMinorLabels;
+      AbstractXYAxisLabelStyle _minorLabelStyle;
+      TextGraphics _axisTitle;
 
       public XYPlotLayerEdgeProperties(EdgeType type)
       {
         _edgeType = type;
         _showAxis = true;
         _axisStyle = new XYAxisStyle(_edgeType);
-        _labelStyle = new XYAxisLabelStyle(_edgeType);
+
+        _showMajorLabels = true;
+        _majorLabelStyle = new XYAxisLabelStyle(_edgeType);
+        _showMinorLabels = false;
+        _minorLabelStyle = new XYAxisLabelStyle(_edgeType);
         _axisTitle = null;
       }
     }

@@ -2,8 +2,9 @@ using System;
 using System.Text;
 using System.Collections;
 using Altaxo.Scripting;
+using Altaxo.Calc.Regression.Nonlinear;
 
-namespace Altaxo.Calc.Regression.Nonlinear
+namespace Altaxo.Gui.Analysis.NonLinearFitting
 {
 
   public interface IFitFunctionSelectionView

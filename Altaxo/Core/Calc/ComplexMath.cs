@@ -1,5 +1,4 @@
-#region Disclaimer
-
+#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2004 Dr. Dirk Lellinger
@@ -19,57 +18,7 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-
-
-// This library was translated to C# from the GNU Scientific Library. ( version 1.6)
-// I tried to follow the naming conventions of the Gnu Scientific Library as close as possible.
-// Following the header of the GNU Scientific library:
-
-/* complex/math.c
- * 
- * Copyright (C) 1996, 1997, 1998, 1999, 2000 Jorma Olavi Tähtinen, Brian Gough
- * 
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
- * your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
-
-/* Basic complex arithmetic functions
-
- * Original version by Jorma Olavi Tähtinen <jotahtin@cc.hut.fi>
- *
- * Modified for GSL by Brian Gough, 3/2000
- */
-
-/* The following references describe the methods used in these
- * functions,
- *
- *   T. E. Hull and Thomas F. Fairgrieve and Ping Tak Peter Tang,
- *   "Implementing Complex Elementary Functions Using Exception
- *   Handling", ACM Transactions on Mathematical Software, Volume 20
- *   (1994), pp 215-244, Corrigenda, p553
- *
- *   Hull et al, "Implementing the complex arcsin and arccosine
- *   functions using exception handling", ACM Transactions on
- *   Mathematical Software, Volume 23 (1997) pp 299-335
- *
- *   Abramowitz and Stegun, Handbook of Mathematical Functions, "Inverse
- *   Circular Functions in Terms of Real and Imaginary Parts", Formulas
- *   4.4.37, 4.4.38, 4.4.39
- */
-
 #endregion
-
 using System;
 using System.Diagnostics;
 

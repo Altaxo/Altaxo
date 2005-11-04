@@ -3,7 +3,7 @@ using System;
 namespace Altaxo.Calc.Regression.Nonlinear
 {
 	/// <summary>
-	/// Summary description for FitFunctionToScalarFunctionDDWrapper.
+	/// Wraps the fit function, storing its parameters, so that it can be used as a plot function.
 	/// </summary>
 	public class FitFunctionToScalarFunctionDDWrapper : IScalarFunctionDD
 	{

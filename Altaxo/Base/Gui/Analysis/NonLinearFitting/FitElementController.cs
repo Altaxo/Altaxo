@@ -2,8 +2,10 @@ using System;
 using Altaxo.Main.GUI;
 using Altaxo.Graph.GUI;
 using Altaxo.Data;
+using Altaxo.Calc.Regression.Nonlinear;
 
-namespace Altaxo.Calc.Regression.Nonlinear
+
+namespace Altaxo.Gui.Analysis.NonLinearFitting
 {
   #region interfaces
 

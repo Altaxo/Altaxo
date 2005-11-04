@@ -6,7 +6,7 @@ using System.Data;
 using System.Windows.Forms;
 using Altaxo.Main.GUI;
 
-namespace Altaxo.Calc.Regression.Nonlinear
+namespace Altaxo.Gui.Analysis.NonLinearFitting
 {
 	/// <summary>
 	/// Summary description for NonlinearFitControl.

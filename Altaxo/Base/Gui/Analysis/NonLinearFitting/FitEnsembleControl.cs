@@ -6,8 +6,10 @@ using System.Data;
 using System.Windows.Forms;
 
 using Altaxo.Main.GUI;
+using Altaxo.Calc.Regression.Nonlinear;
 
-namespace Altaxo.Calc.Regression.Nonlinear
+
+namespace Altaxo.Gui.Analysis.NonLinearFitting
 {
 	/// <summary>
 	/// Summary description for FitEnsembleControl.
@@ -91,7 +93,8 @@ namespace Altaxo.Calc.Regression.Nonlinear
         currentYPosition += System.Windows.Forms.SystemInformation.MenuHeight;
       }
 
-      this.ClientSize = new Size(this.ClientSize.Width,currentYPosition);
+      this.AutoScroll=true;
+        this.AutoScrollMinSize = new Size(this.ClientSize.Width,currentYPosition);
     }
 
 

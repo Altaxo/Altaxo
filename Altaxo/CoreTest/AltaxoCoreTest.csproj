@@ -205,6 +205,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Calc\Interpolation\BivariateAkima.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Calc\LinearAlgebra\Comparer.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

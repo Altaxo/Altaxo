@@ -1,8 +1,10 @@
 using System;
 
 using Altaxo.Main.GUI;
+using Altaxo.Calc.Regression.Nonlinear;
 
-namespace Altaxo.Calc.Regression.Nonlinear
+
+namespace Altaxo.Gui.Analysis.NonLinearFitting
 {
   #region Interfaces
   public interface IFitEnsembleView

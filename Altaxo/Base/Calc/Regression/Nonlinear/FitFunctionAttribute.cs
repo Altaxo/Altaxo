@@ -3,7 +3,7 @@ using System;
 namespace Altaxo.Calc.Regression.Nonlinear
 {
 	/// <summary>
-	/// Summary description for FitFunctionAttribute.
+	/// Marks a class as a fit function class.
 	/// </summary>
 	public class FitFunctionAttribute : System.Attribute, IComparable
 	{

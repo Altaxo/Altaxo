@@ -60,7 +60,7 @@ namespace Altaxo.Main.GUI
 		public SingleInstanceChoiceController(SingleInstanceChoice doc)
 		{
       _doc = doc;
-      _types = Altaxo.Main.Services.ReflectionService.GetSubclassesOf(_doc.InstanceType);
+      _types = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(_doc.InstanceType);
 
       int selectedIndex=-1;
       string[] choices = new string[_types.Length];

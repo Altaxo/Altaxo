@@ -3,8 +3,10 @@ using Altaxo.Main.GUI;
 using Altaxo.Graph;
 using Altaxo.Scripting;
 using Altaxo.Gui.Scripting;
+using Altaxo.Calc.Regression.Nonlinear;
 
-namespace Altaxo.Calc.Regression.Nonlinear
+
+namespace Altaxo.Gui.Analysis.NonLinearFitting
 {
   #region interfaces
   public interface INonlinearFitView

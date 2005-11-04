@@ -1,6 +1,7 @@
 using System;
+using Altaxo.Calc.Regression.Nonlinear;
 
-namespace Altaxo.Calc.Regression.Nonlinear
+namespace Altaxo.Calc.FitFunctions.Relaxation
 {
 	/// <summary>
 	/// Summary description for KohlrauschDecay.
@@ -67,7 +68,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
 
   /// <summary>
-  /// Summary description for KohlrauschDecay.
+  /// Only for testing purposes - use a "real" linear fit instead.
   /// </summary>
   [FitFunction("LinearFit","Relaxation",1,1,2)]
   public class LinearFit : IFitFunction

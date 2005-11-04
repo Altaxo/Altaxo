@@ -5,8 +5,10 @@ using System.Drawing;
 using System.Data;
 using System.Windows.Forms;
 using Altaxo.Main.GUI;
+using Altaxo.Calc.Regression.Nonlinear;
 
-namespace Altaxo.Calc.Regression.Nonlinear
+
+namespace Altaxo.Gui.Analysis.NonLinearFitting
 {
 	/// <summary>
 	/// Summary description for FitFunctionSelectionControl.

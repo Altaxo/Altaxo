@@ -7,8 +7,10 @@ using System.Windows.Forms;
 
 using Altaxo.Data;
 using Altaxo.Main.GUI;
+using Altaxo.Calc.Regression.Nonlinear;
 
-namespace Altaxo.Calc.Regression.Nonlinear
+
+namespace Altaxo.Gui.Analysis.NonLinearFitting
 {
   /// <summary>
   /// Summary description for FitElementControl.
@@ -169,6 +171,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
         e.Graphics.DrawLine(_pen, triangleStart, triangleMidst);
         e.Graphics.DrawLine(_pen, triangleMidst, triangleEnd);
         if (_fitElement.FitFunction != null)
+        {
           e.Graphics.DrawString(
             _fitElement.FitFunction.IndependentVariableName(i),
             System.Windows.Forms.SystemInformation.MenuFont,
@@ -176,7 +179,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
             new Rectangle(_fitBoxLocation.X + _slotHeight / 2 + 2, currentY, _fitBoxSize.Width - 1 - _slotHeight / 2, _slotHeight),
             leftJustified
             );
-
+        }
         currentY += _slotHeight;
       }
 
@@ -251,7 +254,14 @@ namespace Altaxo.Calc.Regression.Nonlinear
       _externalParametersWidth = this.ClientSize.Width - _externalParametersX;
       for (int i = 0; i < _numberOfParameter; i++)
       {
-        e.Graphics.DrawString(
+          Rectangle rect = new Rectangle(_externalParametersX, currentY, _externalParametersWidth, _slotHeight);
+
+          System.Windows.Forms.ControlPaint.DrawBorder3D(e.Graphics,
+         rect.X-2, rect.Y, rect.Width + 2, rect.Height,
+         System.Windows.Forms.Border3DStyle.Etched,
+         System.Windows.Forms.Border3DSide.All);
+          
+          e.Graphics.DrawString(
           _fitElement.ParameterName(i),
           System.Windows.Forms.SystemInformation.MenuFont,
           System.Drawing.Brushes.Black,
@@ -269,19 +279,26 @@ namespace Altaxo.Calc.Regression.Nonlinear
       _IndependentVariablesWidth = _fitBoxLocation.X - _slotHeight / 4;
       for (int i = 0; i < _numberOfX; i++)
       {
+        Rectangle rect =  new Rectangle(0, currentY, _IndependentVariablesWidth, _slotHeight);
+        System.Windows.Forms.ControlPaint.DrawBorder3D(e.Graphics,
+          rect.X,rect.Y,rect.Width+2,rect.Height,
+          System.Windows.Forms.Border3DStyle.Etched,
+          System.Windows.Forms.Border3DSide.All);
+
         INumericColumn col = _fitElement.IndependentVariables(i);
-        if (col == null)
-          continue;
-        string name = col.FullName;
+        if (col != null)
+        {
+         
+          string name = col.FullName;
 
-        e.Graphics.DrawString(
-          name,
-          System.Windows.Forms.SystemInformation.MenuFont,
-          System.Drawing.Brushes.Black,
-          new Rectangle(0, currentY, _IndependentVariablesWidth, _slotHeight),
-          rightJustified
-          );
-
+          e.Graphics.DrawString(
+            name,
+            System.Windows.Forms.SystemInformation.MenuFont,
+            System.Drawing.Brushes.Black,
+            rect,
+            rightJustified
+            );
+        }
         currentY += _slotHeight;
       }
 
@@ -290,27 +307,36 @@ namespace Altaxo.Calc.Regression.Nonlinear
       _DependentVariablesWidth = _errorFunctionX - (2*_slotHeight) / 8;
       for (int i = 0; i < _numberOfY; i++)
       {
+        Rectangle rect = new Rectangle(0, currentY, _DependentVariablesWidth, _slotHeight);
+
+        System.Windows.Forms.ControlPaint.DrawBorder3D(e.Graphics,
+         rect.X, rect.Y, rect.Width + 2, rect.Height,
+         System.Windows.Forms.Border3DStyle.Etched,
+         System.Windows.Forms.Border3DSide.All);
+
         INumericColumn col = _fitElement.DependentVariables(i);
-        if (col == null)
-          continue;
-        string name = col.FullName;
+        if (col != null)
+        {
+            string name = col.FullName;
 
-        e.Graphics.DrawString(
-          name,
-          System.Windows.Forms.SystemInformation.MenuFont,
-          System.Drawing.Brushes.Black,
-          new Rectangle(0, currentY, _DependentVariablesWidth, _slotHeight),
-          rightJustified
-          );
-
+            e.Graphics.DrawString(
+              name,
+              System.Windows.Forms.SystemInformation.MenuFont,
+              System.Drawing.Brushes.Black,
+              rect,
+              rightJustified
+              );
+        }
         currentY += _slotHeight;
       }
 
       string fitFuncName = null;
       if (_fitElement.FitFunction == null)
-        fitFuncName = "?";
+          fitFuncName = "?";
+      else if (_fitElement.FitFunction is Altaxo.Scripting.IFitFunctionScriptText)
+          fitFuncName = (_fitElement.FitFunction as Altaxo.Scripting.IFitFunctionScriptText).ScriptName;
       else
-        fitFuncName = _fitElement.FitFunction.ToString();
+          fitFuncName = _fitElement.FitFunction.ToString();
 
       Rectangle fitFuncBox = new Rectangle(
         _fitBoxLocation.X + _fitBoxSize.Width / 4,

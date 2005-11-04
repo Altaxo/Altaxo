@@ -1,7 +1,8 @@
 using System;
 using Altaxo.Main.GUI;
+using Altaxo.Calc.Regression.Nonlinear;
 
-namespace Altaxo.Calc.Regression.Nonlinear
+namespace Altaxo.Gui.Analysis.NonLinearFitting
 {
   /// <summary>
   /// Summary description for ParameterSetController.
