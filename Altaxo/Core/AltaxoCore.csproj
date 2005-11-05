@@ -229,7 +229,7 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Calc\Interpolation\BivariateAkima.cs"
+                    RelPath = "Calc\Interpolation\BivariateAkimaSpline.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
