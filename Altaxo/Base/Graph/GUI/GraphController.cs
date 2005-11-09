@@ -1803,10 +1803,11 @@ namespace Altaxo.Graph.GUI
     /// Looks for a graph object at pixel position <paramref name="pixelPos"/> and returns true if one is found.
     /// </summary>
     /// <param name="pixelPos">The pixel coordinates (graph panel coordinates)</param>
+    /// <param name="plotItemsOnly">If true, only the plot items where hit tested.</param>
     /// <param name="foundObject">Found object if there is one found, else null</param>
     /// <param name="foundInLayerNumber">The layer the found object belongs to, otherwise 0</param>
     /// <returns>True if a object was found at the pixel coordinates <paramref name="pixelPos"/>, else false.</returns>
-    public bool FindGraphObjectAtPixelPosition(PointF pixelPos, out IHitTestObject foundObject, out int foundInLayerNumber)
+    public bool FindGraphObjectAtPixelPosition(PointF pixelPos, bool plotItemsOnly, out IHitTestObject foundObject, out int foundInLayerNumber)
     {
       // search for a object first
       PointF mousePT = PixelToPrintableAreaCoordinates(pixelPos);
@@ -1814,7 +1815,7 @@ namespace Altaxo.Graph.GUI
       for(int nLayer=0;nLayer<Layers.Count;nLayer++)
       {
         Altaxo.Graph.XYPlotLayer layer = Layers[nLayer];
-        foundObject = layer.HitTest(mousePT);
+        foundObject = layer.HitTest(mousePT, plotItemsOnly);
         if(null!=foundObject)
         {
           foundInLayerNumber = nLayer;

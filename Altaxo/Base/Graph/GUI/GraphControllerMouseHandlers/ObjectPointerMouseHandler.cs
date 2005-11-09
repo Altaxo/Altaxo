@@ -254,7 +254,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
         // search for a object first
         IHitTestObject clickedObject;
         int clickedLayerNumber=0;
-        _grac.FindGraphObjectAtPixelPosition(mouseXY, out clickedObject, out clickedLayerNumber);
+        _grac.FindGraphObjectAtPixelPosition(mouseXY, false, out clickedObject, out clickedLayerNumber);
 
         if(bShiftKey || bControlKey) // if shift or control are pressed, we add the object to the selection list and start moving mode
         {

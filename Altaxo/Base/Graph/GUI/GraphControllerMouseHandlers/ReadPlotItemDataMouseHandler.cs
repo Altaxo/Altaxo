@@ -94,7 +94,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
       // search for a object first
       IHitTestObject clickedObject;
       int clickedLayerNumber=0;
-      _grac.FindGraphObjectAtPixelPosition(mouseXY, out clickedObject, out clickedLayerNumber);
+      _grac.FindGraphObjectAtPixelPosition(mouseXY, true, out clickedObject, out clickedLayerNumber);
       if(null!=clickedObject && clickedObject.HittedObject is XYColumnPlotItem)
       {
         m_PlotItem = (XYColumnPlotItem)clickedObject.HittedObject;

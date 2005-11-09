@@ -140,7 +140,7 @@
     <Compile Include="Calc\GammaRelated.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Calc\Interpolation\BivariateAkima.cs" />
+    <Compile Include="Calc\Interpolation\BivariateAkimaSpline.cs" />
     <Compile Include="Calc\Interpolation\Interpolation.cs">
       <SubType>Code</SubType>
     </Compile>
