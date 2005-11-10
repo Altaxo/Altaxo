@@ -715,7 +715,37 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Graph\BackgroundStyles\BlackLine.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\BackgroundStyles\BlackOut.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\BackgroundStyles\Circle.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\BackgroundStyles\DarkMarbel.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Graph\BackgroundStyles\IBackgroundStyle.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\BackgroundStyles\RectangleWithShadow.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\BackgroundStyles\WhiteOut.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -931,21 +961,6 @@
                 />
                 <File
                     RelPath = "Graph\GUI\TitleFormatLayerController.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Graph\GUI\XYPlotLabelStyleControl.cs"
-                    SubType = "UserControl"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Graph\GUI\XYPlotLabelStyleControl.resx"
-                    DependentUpon = "XYPlotLabelStyleControl.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Graph\GUI\XYPlotLabelStyleController.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

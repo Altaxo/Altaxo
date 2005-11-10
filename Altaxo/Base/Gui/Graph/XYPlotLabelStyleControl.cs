@@ -52,7 +52,6 @@ namespace Altaxo.Gui.Graph
     private System.Windows.Forms.ComboBox m_cbFontSize;
     private System.Windows.Forms.CheckBox m_chkAttachToAxis;
     private System.Windows.Forms.ComboBox m_cbAttachedAxis;
-    private System.Windows.Forms.CheckBox m_chkWhiteOut;
     private System.Windows.Forms.TextBox m_edRotation;
     private System.Windows.Forms.ComboBox m_cbHorizontalAlignment;
     private System.Windows.Forms.ComboBox m_cbVerticalAlignment;
@@ -61,6 +60,8 @@ namespace Altaxo.Gui.Graph
     private System.Windows.Forms.TextBox _edLabelColumn;
     private System.Windows.Forms.Button _btSelectLabelColumn;
     private System.Windows.Forms.Label label2;
+    private System.Windows.Forms.ComboBox _cbBackgroundStyle;
+    private System.Windows.Forms.Label label7;
     /// <summary> 
     /// Required designer variable.
     /// </summary>
@@ -113,7 +114,6 @@ namespace Altaxo.Gui.Graph
       this.m_cbVerticalAlignment = new System.Windows.Forms.ComboBox();
       this.label5 = new System.Windows.Forms.Label();
       this.m_cbAttachedAxis = new System.Windows.Forms.ComboBox();
-      this.m_chkWhiteOut = new System.Windows.Forms.CheckBox();
       this.m_edRotation = new System.Windows.Forms.TextBox();
       this.label6 = new System.Windows.Forms.Label();
       this.m_chkIndependentColor = new System.Windows.Forms.CheckBox();
@@ -121,6 +121,8 @@ namespace Altaxo.Gui.Graph
       this._edLabelColumn = new System.Windows.Forms.TextBox();
       this._btSelectLabelColumn = new System.Windows.Forms.Button();
       this.label2 = new System.Windows.Forms.Label();
+      this._cbBackgroundStyle = new System.Windows.Forms.ComboBox();
+      this.label7 = new System.Windows.Forms.Label();
       this.groupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -273,16 +275,6 @@ namespace Altaxo.Gui.Graph
       this.m_cbAttachedAxis.Text = "comboBox2";
       this.m_cbAttachedAxis.SelectedIndexChanged += new System.EventHandler(this.EhAttachedAxis_SelectionChangeCommitted);
       // 
-      // m_chkWhiteOut
-      // 
-      this.m_chkWhiteOut.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-      this.m_chkWhiteOut.Location = new System.Drawing.Point(16, 248);
-      this.m_chkWhiteOut.Name = "m_chkWhiteOut";
-      this.m_chkWhiteOut.Size = new System.Drawing.Size(96, 24);
-      this.m_chkWhiteOut.TabIndex = 33;
-      this.m_chkWhiteOut.Text = "Background:";
-      this.m_chkWhiteOut.CheckedChanged += new System.EventHandler(this.EhWhiteOut_CheckedChanged);
-      // 
       // m_edRotation
       // 
       this.m_edRotation.Location = new System.Drawing.Point(352, 224);
@@ -313,7 +305,7 @@ namespace Altaxo.Gui.Graph
       // 
       // m_cbBackgroundColor
       // 
-      this.m_cbBackgroundColor.Location = new System.Drawing.Point(128, 248);
+      this.m_cbBackgroundColor.Location = new System.Drawing.Point(128, 280);
       this.m_cbBackgroundColor.Name = "m_cbBackgroundColor";
       this.m_cbBackgroundColor.Size = new System.Drawing.Size(136, 21);
       this.m_cbBackgroundColor.TabIndex = 35;
@@ -346,14 +338,33 @@ namespace Altaxo.Gui.Graph
       this.label2.Text = "LabelColumn:";
       this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
       // 
+      // _cbBackgroundStyle
+      // 
+      this._cbBackgroundStyle.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this._cbBackgroundStyle.Location = new System.Drawing.Point(128, 248);
+      this._cbBackgroundStyle.Name = "_cbBackgroundStyle";
+      this._cbBackgroundStyle.Size = new System.Drawing.Size(136, 21);
+      this._cbBackgroundStyle.TabIndex = 41;
+      this._cbBackgroundStyle.SelectionChangeCommitted += new System.EventHandler(this._cbBackgroundStyle_SelectionChangeCommitted);
+      // 
+      // label7
+      // 
+      this.label7.Location = new System.Drawing.Point(40, 256);
+      this.label7.Name = "label7";
+      this.label7.Size = new System.Drawing.Size(72, 16);
+      this.label7.TabIndex = 42;
+      this.label7.Text = "Background:";
+      this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+      // 
       // XYPlotLabelStyleControl
       // 
+      this.Controls.Add(this.label7);
+      this.Controls.Add(this._cbBackgroundStyle);
       this.Controls.Add(this.label2);
       this.Controls.Add(this._btSelectLabelColumn);
       this.Controls.Add(this._edLabelColumn);
       this.Controls.Add(this.m_cbBackgroundColor);
       this.Controls.Add(this.m_chkIndependentColor);
-      this.Controls.Add(this.m_chkWhiteOut);
       this.Controls.Add(this.m_cbAttachedAxis);
       this.Controls.Add(this.label5);
       this.Controls.Add(this.m_cbVerticalAlignment);
@@ -426,6 +437,13 @@ namespace Altaxo.Gui.Graph
       }
     }
 
+    private void _cbBackgroundStyle_SelectionChangeCommitted(object sender, System.EventArgs e)
+    {
+      if(null!=Controller)
+        Controller.EhView_BackgroundStyleChanged(this._cbBackgroundStyle.SelectedIndex);
+    }
+
+
     private void EhBackgroundColor_SelectionChangeCommitted(object sender, System.EventArgs e)
     {
       if(null!=Controller)
@@ -485,13 +503,7 @@ namespace Altaxo.Gui.Graph
       }
     }
 
-    private void EhWhiteOut_CheckedChanged(object sender, System.EventArgs e)
-    {
-      if(null!=Controller)
-      {
-        Controller.EhView_WhiteOutChanged(this.m_chkWhiteOut.Checked);
-      }
-    }
+  
 
     private void EhIndependentColor_CheckChanged(object sender, System.EventArgs e)
     {
@@ -576,9 +588,27 @@ namespace Altaxo.Gui.Graph
       InitColorComboBox(this.m_cbColor,color);
     }
 
+    /// <summary>
+    /// Initializes the background styles.
+    /// </summary>
+    /// <param name="names"></param>
+    /// <param name="selection"></param>
+    public void BackgroundStyle_Initialize(string[] names, int selection)
+    {
+      this._cbBackgroundStyle.Items.AddRange(names);
+      this._cbBackgroundStyle.SelectedIndex = selection;
+    }
+
     public void BackgroundColor_Initialize(System.Drawing.Color color)
     {
       InitColorComboBox(this.m_cbBackgroundColor,color);
+    }
+    /// <summary>
+    /// Initializes the enable state of the background color combo box.
+    /// </summary>
+    public void BackgroundColorEnable_Initialize(bool enable)
+    {
+      this.m_cbBackgroundColor.Enabled = enable;
     }
 
 
@@ -626,10 +656,7 @@ namespace Altaxo.Gui.Graph
     }
 
 
-    public void WhiteOut_Initialize(bool bWhiteOut)
-    {
-      this.m_chkWhiteOut.Checked = bWhiteOut;
-    }
+  
 
     #endregion
 

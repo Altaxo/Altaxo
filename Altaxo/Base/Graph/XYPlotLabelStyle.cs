@@ -57,11 +57,14 @@ namespace Altaxo.Graph
     /// <summary>The rotation of the label.</summary>
     protected double m_Rotation;
 
-    /// <summary>If true, the label is painted on a background.</summary>
-    protected bool m_WhiteOut;
+    // <summary>If true, the label is painted on a background.</summary>
+    //protected bool m_WhiteOut;
 
-    /// <summary>The brush for the background.</summary>
-    protected BrushHolder  m_BackgroundBrush;
+    /// <summary>The style for the background.</summary>
+    protected BackgroundStyles.IBackgroundStyle  _backgroundStyle;
+
+    // <summary>The brush for the background.</summary>
+    //protected BrushHolder  m_BackgroundBrush;
 
     /// <summary>If true, the label is attached to one of the four edges of the layer.</summary>
     protected bool m_AttachToAxis;
@@ -98,8 +101,8 @@ namespace Altaxo.Graph
         info.AddEnum("VerticalAlignment",s.VerticalAlignment);
         info.AddValue("AttachToAxis",s.m_AttachToAxis);
         info.AddValue("AttachedAxis",s.m_AttachedAxis);
-        info.AddValue("WhiteOut",s.m_WhiteOut);
-        info.AddValue("BackgroundBrush",s.m_BackgroundBrush);  
+        //info.AddValue("WhiteOut",s.m_WhiteOut);
+        //info.AddValue("BackgroundBrush",s.m_BackgroundBrush);  
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -121,9 +124,11 @@ namespace Altaxo.Graph
         s.VerticalAlignment   = (System.Drawing.StringAlignment)info.GetEnum("VerticalAlignment",typeof(System.Drawing.StringAlignment));
         s.m_AttachToAxis = info.GetBoolean("AttachToAxis");
         s.m_AttachedAxis = (EdgeType)info.GetValue("AttachedAxis",parent);
-        s.m_WhiteOut = info.GetBoolean("WhiteOut");
-        s.m_BackgroundBrush = (BrushHolder)info.GetValue("BackgroundBrush",s);
+        bool whiteOut = info.GetBoolean("WhiteOut");
+        BrushHolder backgroundBrush = (BrushHolder)info.GetValue("BackgroundBrush",s);
 
+        if(whiteOut)
+          s._backgroundStyle = new BackgroundStyles.BackgroundColorStyle(backgroundBrush.Color);
       
         if(nativeCall)
         {
@@ -163,6 +168,67 @@ namespace Altaxo.Graph
         return s;
       }
     }
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotLabelStyle),2)]
+      public class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        SSerialize(obj,info);
+      }
+      public static void SSerialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        XYPlotLabelStyle s = (XYPlotLabelStyle)obj;
+        info.AddValue("Font",s.m_Font);  
+        info.AddValue("IndependentColor",s.m_IndependentColor);
+        info.AddValue("Brush",s.m_Brush);  
+        info.AddValue("XOffset",s.m_XOffset);
+        info.AddValue("YOffset",s.m_YOffset);
+        info.AddValue("Rotation",s.m_Rotation);
+        info.AddEnum("HorizontalAlignment",s.HorizontalAlignment);
+        info.AddEnum("VerticalAlignment",s.VerticalAlignment);
+        info.AddValue("AttachToAxis",s.m_AttachToAxis);
+        info.AddValue("AttachedAxis",s.m_AttachedAxis);
+        info.AddValue("Background",s._backgroundStyle);  
+        info.AddValue("LabelColumn",s.m_LabelColumn);
+
+      }
+
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        return SDeserialize(o,info,parent,true);
+      }
+      public static object SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent, bool nativeCall)
+      {
+        
+        XYPlotLabelStyle s = null!=o ? (XYPlotLabelStyle)o : new XYPlotLabelStyle();
+
+        s.m_Font = (Font)info.GetValue("Font",s);  
+        s.m_IndependentColor = info.GetBoolean("IndependentColor");
+        s.m_Brush = (BrushHolder)info.GetValue("Brush",s);
+        s.m_XOffset = info.GetDouble("XOffset");
+        s.m_YOffset = info.GetDouble("YOffset");
+        s.m_Rotation = info.GetDouble("Rotation");
+        s.HorizontalAlignment = (System.Drawing.StringAlignment)info.GetEnum("HorizontalAlignment",typeof(System.Drawing.StringAlignment));
+        s.VerticalAlignment   = (System.Drawing.StringAlignment)info.GetEnum("VerticalAlignment",typeof(System.Drawing.StringAlignment));
+        s.m_AttachToAxis = info.GetBoolean("AttachToAxis");
+        s.m_AttachedAxis = (EdgeType)info.GetValue("AttachedAxis",parent);
+        s._backgroundStyle = (BackgroundStyles.IBackgroundStyle)info.GetValue("Background",s);
+        s.m_LabelColumn = (Altaxo.Data.ReadableColumnProxy)info.GetValue("LabelColumn",parent);
+
+
+        if(nativeCall)
+        {
+          // restore the cached values
+          s.SetCachedValues();
+          s.CreateEventChain();
+        }
+
+        return s;
+      }
+    }
+
+
     /// <summary>
     /// Finale measures after deserialization of the linear axis.
     /// </summary>
@@ -193,8 +259,7 @@ namespace Altaxo.Graph
       this.m_XOffset    = from.m_XOffset;
       this.m_YOffset    = from.m_YOffset;
       this.m_Rotation   = from.m_Rotation;
-      this.m_WhiteOut   = from.m_WhiteOut;
-      this.m_BackgroundBrush      = (BrushHolder)from.m_BackgroundBrush.Clone();
+      this._backgroundStyle      = null==from._backgroundStyle ? null : (BackgroundStyles.IBackgroundStyle)from._backgroundStyle.Clone();
       this.m_CachedStringFormat = (System.Drawing.StringFormat)from.m_CachedStringFormat.Clone();
       this.m_AttachToAxis        = from.m_AttachToAxis;
       this.m_AttachedAxis        = from.m_AttachedAxis;
@@ -216,8 +281,7 @@ namespace Altaxo.Graph
       this.m_XOffset = 0;
       this.m_YOffset = 0;
       this.m_Rotation = 0;
-      this.m_WhiteOut = false;
-      this.m_BackgroundBrush = new BrushHolder(Color.Snow);
+      this._backgroundStyle = null;
       this.m_CachedStringFormat = new StringFormat(StringFormatFlags.NoWrap);
       this.m_CachedStringFormat.Alignment = System.Drawing.StringAlignment.Center;
       this.m_CachedStringFormat.LineAlignment   = System.Drawing.StringAlignment.Center;
@@ -315,21 +379,24 @@ namespace Altaxo.Graph
       }
     }
 
-
-    /// <summary>The background brush color.</summary>
-    public System.Drawing.Color BackgroundColor
+    /// <summary>The background style.</summary>
+    public BackgroundStyles.IBackgroundStyle BackgroundStyle
     {
-      get { return this.m_BackgroundBrush.Color;; }
+      get
+      {
+        return _backgroundStyle;
+      }
       set 
       {
-        Color oldColor = this.Color;
-        if(value!=oldColor)
+        BackgroundStyles.IBackgroundStyle oldValue = this._backgroundStyle;
+        if(!object.ReferenceEquals(value,oldValue))
         {
-          this.m_BackgroundBrush.SetSolidBrush( value );
+          this._backgroundStyle = value;
           OnChanged(); // Fire Changed event
         }
       }
     }
+
 
     /// <summary>The x offset relative to font size, i.e. a value of 1 is 1*FontSize.</summary>
     public double XOffset
@@ -376,20 +443,7 @@ namespace Altaxo.Graph
       }
     }
 
-    /// <summary>If true, the label is painted on a white background.</summary>
-    public bool WhiteOut
-    {
-      get { return this.m_WhiteOut; }
-      set
-      {
-        bool oldValue = this.m_WhiteOut;
-        this.m_WhiteOut = value;
-        if(value!=oldValue)
-        {
-          OnChanged();
-        }
-      }
-    }
+   
 
     /// <summary>Horizontal alignment of the label.</summary>
     public System.Drawing.StringAlignment HorizontalAlignment
@@ -466,7 +520,7 @@ namespace Altaxo.Graph
       float fontSize = this.FontSize;
       float xpos = (float)(m_XOffset*fontSize);
       float ypos = (float)(-m_YOffset*fontSize);
-      if(this.WhiteOut)
+      if(this._backgroundStyle!=null)
       {
         float x = xpos, y = ypos;
         SizeF stringsize = g.MeasureString(label,this.m_Font,new PointF(xpos,ypos),m_CachedStringFormat);
@@ -488,7 +542,7 @@ namespace Altaxo.Graph
             y -= stringsize.Height;
             break;
         }
-        g.FillRectangle(m_BackgroundBrush,x,y,stringsize.Width,stringsize.Height);
+        this._backgroundStyle.Draw(g,new RectangleF(x,y,stringsize.Width,stringsize.Height));
       }
       g.DrawString(label,m_Font,m_Brush,xpos,ypos,m_CachedStringFormat);
     }

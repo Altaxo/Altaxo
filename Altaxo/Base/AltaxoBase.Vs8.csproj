@@ -168,7 +168,13 @@
     <Compile Include="Data\NumericColumnProxy.cs" />
     <Compile Include="Data\ReadableColumnProxy.cs" />
     <Compile Include="Graph\BackgroundStyles\BackgroundColorStyle.cs" />
+    <Compile Include="Graph\BackgroundStyles\BlackLine.cs" />
+    <Compile Include="Graph\BackgroundStyles\BlackOut.cs" />
+    <Compile Include="Graph\BackgroundStyles\Circle.cs" />
+    <Compile Include="Graph\BackgroundStyles\DarkMarbel.cs" />
     <Compile Include="Graph\BackgroundStyles\IBackgroundStyle.cs" />
+    <Compile Include="Graph\BackgroundStyles\RectangleWithShadow.cs" />
+    <Compile Include="Graph\BackgroundStyles\WhiteOut.cs" />
     <Compile Include="Graph\I2DGroupablePlotItem.cs" />
     <Compile Include="Graph\LabelFormatting\AbstractLabelFormatting.cs" />
     <Compile Include="Graph\LabelFormatting\AbstractNumericLabelFormatting.cs" />

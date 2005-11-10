@@ -52,6 +52,12 @@ namespace Altaxo.Gui.Graph
     void EhView_BackgroundColorChanged(Color newValue);
 
     /// <summary>
+    /// Called if the background style changed.
+    /// </summary>
+    /// <param name="newValue">The new index of the style.</param>
+    void EhView_BackgroundStyleChanged(int newValue);
+
+    /// <summary>
     /// Called if the font size is changed.
     /// </summary>
     /// <param name="newValue">The new selected item of the combo box.</param>
@@ -68,12 +74,6 @@ namespace Altaxo.Gui.Graph
     /// </summary>
     /// <param name="newValue">The new selected item of the combo box.</param>
     void EhView_VerticalAlignmentChanged(string newValue);
-   
-    /// <summary>
-    /// Called if the WhiteOut box check value has changed.
-    /// </summary>
-    /// <param name="newValue"></param>
-    void EhView_WhiteOutChanged(bool newValue);
 
     /// <summary>
     /// Called when the contents of XOffset is changed.
@@ -136,6 +136,18 @@ namespace Altaxo.Gui.Graph
     void BackgroundColor_Initialize(System.Drawing.Color color);
 
     /// <summary>
+    /// Initializes the enable state of the background color combo box.
+    /// </summary>
+    void BackgroundColorEnable_Initialize(bool enable);
+
+    /// <summary>
+    /// Initializes the background styles.
+    /// </summary>
+    /// <param name="names"></param>
+    /// <param name="selection"></param>
+    void BackgroundStyle_Initialize(string[] names, int selection);
+
+    /// <summary>
     /// Initializes the font size combo box.
     /// </summary>
     /// <param name="names">The possible choices.</param>
@@ -177,12 +189,6 @@ namespace Altaxo.Gui.Graph
     void YOffset_Initialize(string text);
 
     /// <summary>
-    /// Initializes the content of the WhiteOut checkbox
-    /// </summary>
-    /// <param name="bWhiteOut">True if the label has a white background.</param>
-    void WhiteOut_Initialize(bool bWhiteOut);
-
-    /// <summary>
     /// Initializes the label style combo box.
     /// </summary>
     /// <param name="names">The possible choices.</param>
@@ -198,7 +204,7 @@ namespace Altaxo.Gui.Graph
   #endregion
 
   /// <summary>
-  /// Summary description for LinkAxisController.
+  /// Summary description.
   /// </summary>
   [UserControllerForObject(typeof(XYAxisLabelStyle))]
   public class XYAxisLabelStyleController : IXYAxisLabelStyleViewEventSink, IXYAxisLabelStyleController
@@ -211,9 +217,6 @@ namespace Altaxo.Gui.Graph
 
     /// <summary>The color for the label.</summary>
     protected Color  _color;
-
-    /// <summary>The color for the label.</summary>
-    protected Color  _backgroundColor;
   
     /// <summary>The size of the font.</summary>
     protected float _fontSize;
@@ -224,9 +227,7 @@ namespace Altaxo.Gui.Graph
 
     protected bool _automaticAlignment;
 
-    /// <summary>If true, the label is painted on a white background.</summary>
-    protected bool _whiteOut;
-
+    
     /// <summary>The x offset in EM units.</summary>
     protected double _xOffset;
 
@@ -242,6 +243,10 @@ namespace Altaxo.Gui.Graph
 
     protected Altaxo.Graph.LabelFormatting.ILabelFormatting _currentLabelStyleInstance;
 
+    protected Altaxo.Graph.BackgroundStyles.IBackgroundStyle _currentBackgroundStyleInstance;
+    
+    protected System.Type[] _backgroundStyles;
+
     public XYAxisLabelStyleController(XYAxisLabelStyle style)
     {
       _doc = style;
@@ -255,15 +260,13 @@ namespace Altaxo.Gui.Graph
       {
         _fontFamily  = _doc.Font.FontFamily.Name;
         _color = _doc.Color;
-        _backgroundColor = Color.Transparent;
-        if(_doc.BackgroundStyle!=null && _doc.BackgroundStyle.SupportsColor)
-          _backgroundColor = _doc.BackgroundStyle.Color;
+        _backgroundStyles = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(Altaxo.Graph.BackgroundStyles.IBackgroundStyle));
+        _currentBackgroundStyleInstance = _doc.BackgroundStyle;
 
         _fontSize = _doc.FontSize;
         _horizontalAlignment = _doc.HorizontalAlignment;
         _verticalAlignment = _doc.VerticalAlignment;
         _automaticAlignment = _doc.AutomaticAlignment;
-        _whiteOut     = _doc.BackgroundStyle != null && _doc.BackgroundStyle.SupportsColor;
         _rotation     = _doc.Rotation;
         _xOffset      = _doc.XOffset;
         _yOffset      = _doc.YOffset;
@@ -275,17 +278,30 @@ namespace Altaxo.Gui.Graph
         View.Font_Initialize(_fontFamily);
       
         View.Color_Initialize(_color);
-        View.BackgroundColor_Initialize(_backgroundColor);
         View.FontSize_Initialize(new string[]{"6","8","10","12","16","24","32","48","72"},Serialization.NumberConversion.ToString(_fontSize));
         View.HorizontalAlignment_Initialize(System.Enum.GetNames(typeof(System.Drawing.StringAlignment)),System.Enum.GetName(typeof(System.Drawing.StringAlignment),_horizontalAlignment));
         View.VerticalAlignment_Initialize(System.Enum.GetNames(typeof(System.Drawing.StringAlignment)),System.Enum.GetName(typeof(System.Drawing.StringAlignment),_verticalAlignment));
         View.AutomaticAlignment_Initialize(this._automaticAlignment);
-        View.WhiteOut_Initialize(_whiteOut);
         View.Rotation_Initialize(Serialization.NumberConversion.ToString(_rotation));
         View.XOffset_Initialize(Serialization.NumberConversion.ToString(_xOffset*100));
         View.YOffset_Initialize(Serialization.NumberConversion.ToString(_yOffset*100));
+        InitializeBackgroundStyle();
         InitializeLabelStyle();
       }
+    }
+
+    void InitializeBackgroundStyle()
+    {
+      int sel = Array.IndexOf(this._backgroundStyles,this._currentBackgroundStyleInstance==null ? null : this._currentBackgroundStyleInstance.GetType());
+      View.BackgroundStyle_Initialize(Current.Gui.GetUserFriendlyClassName(this._backgroundStyles,true),sel+1);
+
+      if(this._currentBackgroundStyleInstance!=null && this._currentBackgroundStyleInstance.SupportsColor)
+        View.BackgroundColor_Initialize(this._currentBackgroundStyleInstance.Color);
+      else
+        View.BackgroundColor_Initialize(Color.Transparent);
+
+      View.BackgroundColorEnable_Initialize(this._currentBackgroundStyleInstance!=null && this._currentBackgroundStyleInstance.SupportsColor);
+
     }
 
     void InitializeLabelStyle()
@@ -341,7 +357,8 @@ namespace Altaxo.Gui.Graph
 
     public void EhView_BackgroundColorChanged(System.Drawing.Color color)
     {
-      _backgroundColor = color;
+      if(this._currentBackgroundStyleInstance!=null && this._currentBackgroundStyleInstance.SupportsColor)
+        this._currentBackgroundStyleInstance.Color = color;
     }
 
     public void EhView_FontSizeChanged(string newValue)
@@ -358,6 +375,35 @@ namespace Altaxo.Gui.Graph
 
     }
 
+    /// <summary>
+    /// Called if the background style changed.
+    /// </summary>
+    /// <param name="newValue">The new index of the style.</param>
+    public void EhView_BackgroundStyleChanged(int newValue)
+    {
+     
+      Color backgroundColor = Color.Transparent;
+
+      if(newValue!=0)
+      {
+        _currentBackgroundStyleInstance = (Altaxo.Graph.BackgroundStyles.IBackgroundStyle)Activator.CreateInstance(this._backgroundStyles[newValue-1]);
+        backgroundColor = _currentBackgroundStyleInstance.Color;
+      }
+      else // is null
+      {
+        _currentBackgroundStyleInstance = null;
+      }
+
+      if(_currentBackgroundStyleInstance!=null && _currentBackgroundStyleInstance.SupportsColor)
+      {
+        View.BackgroundColor_Initialize(backgroundColor);
+        View.BackgroundColorEnable_Initialize(true);
+      }
+      else
+      {
+        View.BackgroundColorEnable_Initialize(false);
+      }
+    }
 
     public void EhView_HorizontalAlignmentChanged(string newValue)
     {
@@ -374,11 +420,7 @@ namespace Altaxo.Gui.Graph
       _automaticAlignment = newValue;
     }
 
-    public void EhView_WhiteOutChanged(bool newValue)
-    {
-      _whiteOut = newValue;
-    }
-
+   
    
 
     public void EhView_RotationValidating(string newValue, ref bool bCancel)
@@ -413,9 +455,8 @@ namespace Altaxo.Gui.Graph
       _doc.Font = new Font(_fontFamily,_fontSize,GraphicsUnit.World);
       
       _doc.Color = _color;
-      if(_whiteOut)
-        _doc.BackgroundStyle = new Altaxo.Graph.BackgroundStyles.BackgroundColorStyle(_backgroundColor);
 
+      _doc.BackgroundStyle = this._currentBackgroundStyleInstance;
       _doc.HorizontalAlignment = _horizontalAlignment;
       _doc.VerticalAlignment   = _verticalAlignment;
       _doc.AutomaticAlignment = _automaticAlignment;

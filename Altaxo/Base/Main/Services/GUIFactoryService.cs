@@ -305,5 +305,28 @@ namespace Altaxo.Main.Services
       return string.Format("{0} ({1})",definedtype.Name,definedtype.Namespace);
     }
 
+    /// <summary>
+    /// This retrieves user friendly class name for an array of types.
+    /// </summary>
+    /// <param name="types">Array of types for whose to return an user friendly class name.</param>
+    /// <param name="withStartingNone">If true, the first item will be a none (the returned string array then has one element more than the provided array).</param>
+    /// <returns>Array of strings with the user friendly class names.</returns>
+    public string[] GetUserFriendlyClassName(System.Type[] types, bool withStartingNone)
+    {
+      string[] result = new string[types.Length + (withStartingNone ? 1 :0) ];
+
+      int offset=0;
+      if(withStartingNone)
+      {
+        offset=1;
+        result[0]="None";
+      }
+
+      for(int i=0;i<types.Length;++i)
+        result[i+offset] = GetUserFriendlyClassName(types[i]);
+
+      return result;
+    }
+
   }
 }

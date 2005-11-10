@@ -27,25 +27,25 @@ namespace Altaxo.Graph.BackgroundStyles
 	/// <summary>
 	/// Backs the item with a color filled rectangle.
 	/// </summary>
-	public class BackgroundColorStyle : IBackgroundStyle
+	public class WhiteOut : IBackgroundStyle
 	{
-    protected BrushHolder _brush;
+    
 
     #region Serialization
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(BackgroundColorStyle),0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(WhiteOut),0)]
       public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        BackgroundColorStyle s = (BackgroundColorStyle)obj;
-        info.AddValue("Brush",s._brush);
+        WhiteOut s = (WhiteOut)obj;
+        
         
       }
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        BackgroundColorStyle s = null!=o ? (BackgroundColorStyle)o : new BackgroundColorStyle();
-        s._brush = (BrushHolder)info.GetValue("Brush",parent);
+        WhiteOut s = null!=o ? (WhiteOut)o : new WhiteOut();
+       
 
         return s;
       }
@@ -54,28 +54,25 @@ namespace Altaxo.Graph.BackgroundStyles
     #endregion
 
 
-		public BackgroundColorStyle()
+		public WhiteOut()
 		{
     }
 
-    public BackgroundColorStyle(Color c)
-    {
-      _brush = new BrushHolder(c);
-    }
+   
 
-    public BackgroundColorStyle(BackgroundColorStyle from)
+    public WhiteOut(WhiteOut from)
     {
       CopyFrom(from);
     }
 
-    public void CopyFrom(BackgroundColorStyle from)
+    public void CopyFrom(WhiteOut from)
     {
-      this._brush = from._brush==null ? null : (BrushHolder)from._brush.Clone();
+      
     }
 
     public object Clone()
     {
-      return new BackgroundColorStyle(this);
+      return new WhiteOut(this);
     }
 
    
@@ -89,28 +86,23 @@ namespace Altaxo.Graph.BackgroundStyles
 
     public void Draw(System.Drawing.Graphics g, System.Drawing.RectangleF innerArea)
     {
-      if(_brush!=null)
-        g.FillRectangle(_brush,innerArea);
+     g.FillRectangle(Brushes.White,innerArea.Left,innerArea.Top,innerArea.Width,innerArea.Height);
     }
 
-    public bool SupportsColor { get { return true; }}
+    public bool SupportsColor { get { return false; }}
 
     public Color Color
     {
       get
       {
-        return _brush==null ? Color.Transparent : _brush.Color;
+        return Color.White;
       }
       set
       {
-        if(value==Color.Transparent)
-          _brush = null;
-        else if(_brush==null)
-          _brush = new BrushHolder(value);
-        else
-          _brush = new BrushHolder( value) ;
+        
       }
     }
     #endregion
   }
 }
+

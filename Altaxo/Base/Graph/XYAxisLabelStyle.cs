@@ -150,7 +150,7 @@ namespace Altaxo.Graph
         s._edge = (Edge)info.GetValue("Edge",s);
         s._font = (Font)info.GetValue("Font",s);
         s._brush = (BrushHolder)info.GetValue("Brush",s);
-        s._backgroundStyle = (BackgroundStyles.IBackgroundStyle)info.GetValue("BackgroundStyle");
+        s._backgroundStyle = (BackgroundStyles.IBackgroundStyle)info.GetValue("Background");
         s._automaticRotationShift = info.GetBoolean("AutoAlignment");
         s._horizontalAlignment = (StringAlignment)info.GetEnum("HorzAlignment",typeof(StringAlignment));
         s._verticalAlignment = (StringAlignment)info.GetEnum("VertAlignment",typeof(StringAlignment));
@@ -283,7 +283,7 @@ namespace Altaxo.Graph
       }
     }
 
-    /// <summary>The background brush color.</summary>
+    /// <summary>The background style.</summary>
     public BackgroundStyles.IBackgroundStyle BackgroundStyle
     {
       get

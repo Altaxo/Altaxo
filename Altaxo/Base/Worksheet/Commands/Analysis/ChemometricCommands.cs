@@ -629,8 +629,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       Altaxo.Graph.XYPlotStyleCollection ps = new Altaxo.Graph.XYPlotStyleCollection(Altaxo.Graph.LineScatterPlotStyleKind.Empty);
       Altaxo.Graph.XYPlotLabelStyle labelStyle = new Altaxo.Graph.XYPlotLabelStyle(labelcol);
       labelStyle.FontSize = 10;
-      labelStyle.BackgroundColor = System.Drawing.Color.LightCyan;
-      labelStyle.WhiteOut = true;
+      labelStyle.BackgroundStyle = new Altaxo.Graph.BackgroundStyles.BackgroundColorStyle(System.Drawing.Color.LightCyan);
       ps.Add(labelStyle);
       
       layer.PlotItems.Add(new Altaxo.Graph.XYColumnPlotItem(pa,ps));
