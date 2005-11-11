@@ -586,14 +586,16 @@ namespace Altaxo.Calc
       double  u = b.Re, v = b.Im;
       double  denom = u*u + v*v;
 
-      if( denom == 0 ) 
+      if (denom == 0)
       {
-        throw new DivideByZeroException();
+        return new Complex(x / denom, y / denom);
       }
 
-      a.Re  = (double)( ( x*u + y*v ) / denom );
-      a.Im  = (double)( ( y*u - x*v ) / denom );
-      
+      else
+      {
+        a.Re = (double)((x * u + y * v) / denom);
+        a.Im = (double)((y * u - x * v) / denom);
+      }
       return a;
     }
 

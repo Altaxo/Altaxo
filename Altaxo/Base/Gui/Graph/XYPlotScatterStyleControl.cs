@@ -168,6 +168,7 @@ namespace Altaxo.Gui.Graph
       this.m_chkSymbolSkipPoints.Size = new System.Drawing.Size(48, 16);
       this.m_chkSymbolSkipPoints.TabIndex = 7;
       this.m_chkSymbolSkipPoints.Text = "Freq";
+      this.m_chkSymbolSkipPoints.CheckedChanged += new System.EventHandler(this.m_chkSymbolSkipPoints_CheckedChanged);
       // 
       // m_gbSymbolDropLine
       // 
@@ -417,7 +418,27 @@ namespace Altaxo.Gui.Graph
       get { return (string)m_cbLineSymbolColor.SelectedItem; }
     }
 
-  
+      public void InitializeSkipPoints(int freq)
+      {
+        this.m_edSymbolSkipFrequency.Text = freq.ToString();
+        this.m_edSymbolSkipFrequency.Enabled = (freq!=1);
+        this.m_chkSymbolSkipPoints.Checked = (freq!=1) ;
+      }
+
+      public int SkipPoints
+      {
+        get
+        {
+          if(this.m_chkSymbolSkipPoints.Checked)
+          {
+            int val;
+            if(Altaxo.Serialization.GUIConversion.IsInteger(this.m_edSymbolSkipFrequency.Text, out val))
+              return val;
+          }
+          return 1;
+        }
+      }
+
     private void EhSymbolShape_SelectionChangeCommit(object sender, System.EventArgs e)
     {
       if(this._EnableDisableAll)
@@ -442,11 +463,6 @@ namespace Altaxo.Gui.Graph
       {
         
       }
-
-  
-
-
-
 
     #endregion
 
@@ -476,6 +492,14 @@ namespace Altaxo.Gui.Graph
         if(this._EnableDisableAll)
           EnableDisableMain(this.ShouldEnableMain());
 
+      }
+
+      private void m_chkSymbolSkipPoints_CheckedChanged(object sender, System.EventArgs e)
+      {
+        if(!this.m_chkSymbolSkipPoints.Checked)
+          this.m_edSymbolSkipFrequency.Text = "1";
+
+        this.m_edSymbolSkipFrequency.Enabled = this.m_chkSymbolSkipPoints.Checked;
       }
 
      

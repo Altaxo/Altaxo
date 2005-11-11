@@ -314,9 +314,10 @@ namespace Altaxo.Graph
     }
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotLineStyle),0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotLineStyle), 1)] // by accident, it was never different from 0
       public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         XYPlotLineStyle s = (XYPlotLineStyle)obj;
         info.AddValue("Pen",s._penHolder);  
@@ -327,7 +328,15 @@ namespace Altaxo.Graph
         info.AddValue("FillBrush",s._fillBrush);
         info.AddValue("FillDirection",s._fillDirection);
       }
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+
+        public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+        {
+          XYPlotLineStyle s = SDeserialize(o, info, parent);
+          s.CreateEventChain();
+          return s;          
+        }
+
+      public virtual XYPlotLineStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
         
         XYPlotLineStyle s = null!=o ? (XYPlotLineStyle)o : new XYPlotLineStyle();
@@ -339,31 +348,25 @@ namespace Altaxo.Graph
         s._fillArea = info.GetBoolean("FillArea");
         s._fillBrush = (BrushHolder)info.GetValue("FillBrush",typeof(BrushHolder));
         s._fillDirection = (XYPlotLineStyles.FillDirection)info.GetValue("FillDirection",typeof(XYPlotLineStyles.FillDirection));
-
-        s.CreateEventChain();
-
         return s;
       }
     }
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotLineStyle),1)]
-      public class XmlSerializationSurrogate1 : XmlSerializationSurrogate0
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotLineStyle),2)]
+      public class XmlSerializationSurrogate2 : XmlSerializationSurrogate0
     {
-      public new void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public override void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         base.Serialize(obj,info);
         XYPlotLineStyle s = (XYPlotLineStyle)obj;
         info.AddValue("IndependentColor",s._independentColor);
         
       }
-      public new object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public override XYPlotLineStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-       XYPlotLineStyle s =  (XYPlotLineStyle)base.Deserialize(o,info,parent);
+       XYPlotLineStyle s =  base.SDeserialize(o,info,parent);
        s._independentColor = info.GetBoolean("IndependentColor");
-       
-        s.CreateEventChain();
-
-        return s;
+       return s;
       }
     }
 

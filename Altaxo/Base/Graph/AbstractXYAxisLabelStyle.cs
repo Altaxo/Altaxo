@@ -51,7 +51,8 @@ namespace Altaxo.Graph
     /// <param name="layer">The layer the lables belongs to.</param>
     /// <param name="axis">The axis for which to paint the (major) labels.</param>
     /// <param name="axisstyle">The axis style the axis is formatted with.</param>
-    public abstract void Paint(Graphics g, XYPlotLayer layer, Axis axis, XYAxisStyle axisstyle);
+    /// <param name="useMinorTicks">If true, the minor ticks where used instead of the (default) major ticks.</param>
+    public abstract void Paint(Graphics g, XYPlotLayer layer, Axis axis, XYAxisStyle axisstyle, bool useMinorTicks);
     #region IChangedEventSource Members
 
     public event System.EventHandler Changed;

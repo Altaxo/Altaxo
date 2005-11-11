@@ -233,6 +233,7 @@
     </Compile>
     <Compile Include="Gui\Graph\XYColumnPlotDataController.cs" />
     <Compile Include="Gui\Graph\XYColumnPlotItemController.cs" />
+    <Compile Include="Gui\Graph\XYFunctionPlotItemController.cs" />
     <Compile Include="Gui\Graph\XYPlotGroupControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -557,12 +558,6 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Graph\GUI\TitleFormatLayerController.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Graph\GUI\XYPlotLabelStyleControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Graph\GUI\XYPlotLabelStyleController.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Graph\I2DPlotStyle.cs">
@@ -1096,9 +1091,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Graph\GUI\TitleFormatLayerControl.resx">
       <DependentUpon>TitleFormatLayerControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Graph\GUI\XYPlotLabelStyleControl.resx">
-      <DependentUpon>XYPlotLabelStyleControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Analysis\NonLinearFitting\FitElementControl.resx">
       <DependentUpon>FitElementControl.cs</DependentUpon>

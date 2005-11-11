@@ -153,6 +153,8 @@ namespace Altaxo.Gui.Common
             this.ResumeLayout(false);
       */
       System.Windows.Forms.TabPage tab = new System.Windows.Forms.TabPage(title);
+
+
       System.Windows.Forms.Control cc = (System.Windows.Forms.Control)view;
       
 
@@ -160,12 +162,16 @@ namespace Altaxo.Gui.Common
       tab.Controls.Add(cc);
       m_TabControl.TabPages.Add(tab);
 
-      int diffx = Math.Max(0,cc.Width  - m_TabControl.TabPages[0].ClientSize.Width);
-      int diffy = Math.Max(0,cc.Height - m_TabControl.TabPages[0].ClientSize.Height);
-
-      if(diffx>0 || diffy>0)
+      if (null != cc)
       {
-        this.Size = new Size(this.Size.Width+diffx,this.Size.Height+diffy);
+
+        int diffx = Math.Max(0, cc.Width - m_TabControl.TabPages[0].ClientSize.Width);
+        int diffy = Math.Max(0, cc.Height - m_TabControl.TabPages[0].ClientSize.Height);
+
+        if (diffx > 0 || diffy > 0)
+        {
+          this.Size = new Size(this.Size.Width + diffx, this.Size.Height + diffy);
+        }
       }
     }
 

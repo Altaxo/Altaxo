@@ -29,6 +29,7 @@ namespace Altaxo.Graph.GUI
   {
     void EhView_PageChanged(string firstChoice);
     void EhView_SecondChoiceChanged(int index, string item);
+    void EhView_PageEnabledChanged( bool pageEnabled);
 
   }
 
@@ -42,6 +43,8 @@ namespace Altaxo.Graph.GUI
     void AddTab(string name, string text);
 
     System.Windows.Forms.Control CurrentContent { get; set; }
+    void SetCurrentContentWithEnable(System.Windows.Forms.Control control, bool enable, string title);
+    bool IsPageEnabled { get; set; }
 
     void SelectTab(string name);
     void InitializeSecondaryChoice(string[] names, string name);
@@ -61,6 +64,9 @@ namespace Altaxo.Graph.GUI
     private string   m_CurrentPage;
     private EdgeType m_CurrentEdge;
 
+    private bool[] _enableMajorLabels = new bool[4];
+    private bool[] _enableMinorLabels = new bool[4];
+
     Main.GUI.IMVCController m_CurrentController;
 
     enum ElementType { Unique, HorzVert, Edge };
@@ -70,6 +76,7 @@ namespace Altaxo.Graph.GUI
     protected IAxisScaleController[] m_AxisScaleController;
     protected ITitleFormatLayerController[] m_TitleFormatLayerController;
     protected Altaxo.Gui.Graph.IXYAxisLabelStyleController[] m_LabelStyleController;
+    protected Altaxo.Gui.Graph.IXYAxisLabelStyleController[] m_MinorLabelStyleController;
 
     
     public int CurrHorzVertIdx
@@ -119,6 +126,21 @@ namespace Altaxo.Graph.GUI
                                                                         new Altaxo.Gui.Graph.XYAxisLabelStyleController((XYAxisLabelStyle)m_Layer.RightLabelStyle),
                                                                         new Altaxo.Gui.Graph.XYAxisLabelStyleController((XYAxisLabelStyle)m_Layer.TopLabelStyle)
                                                                       };
+
+      m_MinorLabelStyleController = new Altaxo.Gui.Graph.XYAxisLabelStyleController[4]{
+                                                                                   new Altaxo.Gui.Graph.XYAxisLabelStyleController((XYAxisLabelStyle)m_Layer.AxisStyles[EdgeType.Left].MinorLabelStyle),
+                                                                                   new Altaxo.Gui.Graph.XYAxisLabelStyleController((XYAxisLabelStyle)m_Layer.AxisStyles[EdgeType.Bottom].MinorLabelStyle),
+                                                                                   new Altaxo.Gui.Graph.XYAxisLabelStyleController((XYAxisLabelStyle)m_Layer.AxisStyles[EdgeType.Right].MinorLabelStyle),
+                                                                                   new Altaxo.Gui.Graph.XYAxisLabelStyleController((XYAxisLabelStyle)m_Layer.AxisStyles[EdgeType.Top].MinorLabelStyle),
+      };
+
+
+      for(int i=0;i<4;i++)
+        this._enableMajorLabels[i] = layer.AxisStyles[(EdgeType)i].ShowMajorLabels;
+
+      for(int i=0;i<4;i++)
+        this._enableMinorLabels[i] = layer.AxisStyles[(EdgeType)i].ShowMinorLabels;
+
 
       m_CurrentPage = currentPage;
       m_CurrentEdge = currentEdge;
@@ -243,6 +265,7 @@ namespace Altaxo.Graph.GUI
       View.AddTab("Contents","Contents");
       View.AddTab("Position","Position");
       View.AddTab("MajorLabels","Major labels");
+      View.AddTab("MinorLabels","Minor labels");
 
       // Set the controller of the current visible Tab
       SetCurrentTabController(true);
@@ -303,9 +326,20 @@ namespace Altaxo.Graph.GUI
           {
             View.SelectTab(m_CurrentPage);
             SetEdgeSecondaryChoice();
-            View.CurrentContent = new Altaxo.Gui.Graph.XYAxisLabelStyleControl();
+            View.SetCurrentContentWithEnable( new Altaxo.Gui.Graph.XYAxisLabelStyleControl(), this._enableMajorLabels[CurrEdgeIdx], "Show major labels");
           }
           m_CurrentController = m_LabelStyleController[CurrEdgeIdx];
+          View.IsPageEnabled = this._enableMajorLabels[CurrEdgeIdx];
+          break;
+        case "MinorLabels":
+          if(pageChanged)
+          {
+            View.SelectTab(m_CurrentPage);
+            SetEdgeSecondaryChoice();
+            View.SetCurrentContentWithEnable( new Altaxo.Gui.Graph.XYAxisLabelStyleControl(), this._enableMinorLabels[CurrEdgeIdx], "Show minor labels");
+          }
+          m_CurrentController = m_MinorLabelStyleController[CurrEdgeIdx];
+          View.IsPageEnabled = this._enableMinorLabels[CurrEdgeIdx];
           break;
       }
 
@@ -339,6 +373,14 @@ namespace Altaxo.Graph.GUI
     {
       m_CurrentPage = firstChoice;
       SetCurrentTabController(true);
+    }
+
+    public void EhView_PageEnabledChanged( bool pageEnabled)
+    {
+      if(m_CurrentPage=="MajorLabels")
+        this._enableMajorLabels[this.CurrEdgeIdx] = pageEnabled;
+      if(m_CurrentPage=="MinorLabels")
+        this._enableMinorLabels[this.CurrEdgeIdx] = pageEnabled;
     }
 
     public void EhView_SecondChoiceChanged(int index, string item)
@@ -425,7 +467,18 @@ namespace Altaxo.Graph.GUI
         {
           return false;
         }
+         this.m_Layer.AxisStyles[(EdgeType)i].ShowMajorLabels = this._enableMajorLabels[i];
       }
+
+      for(i=0;i<4;i++)
+      {
+        if(!m_MinorLabelStyleController[i].Apply())
+        {
+          return false;
+        }
+        this.m_Layer.AxisStyles[(EdgeType)i].ShowMinorLabels = this._enableMinorLabels[i];
+      }
+
       return true;
     }
 

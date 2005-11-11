@@ -74,7 +74,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     #region Serialization
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FitElement),0)]
-      public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+      public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
@@ -421,7 +421,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       // note: for a fitting session some of the dependent variables can be null
       for (int j = 0; j < _dependentVariables.Length; ++j, ++i)
       {
-        if (_dependentVariables[j] != null)
+        if (_dependentVariables[j] != null && _dependentVariables[j].Document != null)
         {
           cols[i] = _dependentVariables[j].Document;
           selectedCols.Add(i);

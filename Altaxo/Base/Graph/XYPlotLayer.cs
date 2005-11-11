@@ -465,7 +465,9 @@ namespace Altaxo.Graph
         if (_showAxis)
           _axisStyle.Paint(g, layer, axis);
         if (ShowMajorLabels)
-          this._majorLabelStyle.Paint(g, layer, axis, _axisStyle);
+          this._majorLabelStyle.Paint(g, layer, axis, _axisStyle,false);
+        if (ShowMinorLabels)
+          this._minorLabelStyle.Paint(g, layer, axis, _axisStyle,true);
         if (_showAxis && null != _axisTitle)
           _axisTitle.Paint(g, layer);
       }
@@ -966,9 +968,10 @@ namespace Altaxo.Graph
     }
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotLayer),0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotLayer), 1)] // by accident this was never different from version 0
       public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         XYPlotLayer s = (XYPlotLayer)obj;
         // XYPlotLayer style
@@ -1045,7 +1048,20 @@ namespace Altaxo.Graph
       protected XYPlotLayer _Layer;
       protected Main.DocumentPath _LinkedLayerPath;
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+        public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+        {
+
+          XYPlotLayer s = SDeserialize(o, info, parent);
+
+
+          s.CalculateMatrix();
+          s.CreateEventLinks();
+
+          return s;
+        }
+
+
+        protected virtual XYPlotLayer SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
         
         XYPlotLayer s = null!=o ? (XYPlotLayer)o : new XYPlotLayer();
@@ -1128,8 +1144,6 @@ namespace Altaxo.Graph
 
         s._plotItems = (Altaxo.Graph.PlotItemCollection)info.GetValue("Plots",typeof(Altaxo.Graph.PlotItemCollection));
     
-        s.CalculateMatrix();
-        s.CreateEventLinks();
 
         return s;
       }
@@ -1156,11 +1170,11 @@ namespace Altaxo.Graph
       }
     }
 
-
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotLayer),1)]
-      public class XmlSerializationSurrogate1 : XmlSerializationSurrogate0
+    
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotLayer),2)]
+      public class XmlSerializationSurrogate2 : XmlSerializationSurrogate0
     {
-      public new void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public override void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         base.Serialize(obj, info);
 
@@ -1169,18 +1183,17 @@ namespace Altaxo.Graph
         info.AddValue("ClipDataToFrame",s._clipDataToFrame);
       }
 
-      public new object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected override XYPlotLayer SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
         
-        XYPlotLayer s = null!=o ? (XYPlotLayer)o : new XYPlotLayer();
-        base.Deserialize(o,info,parent);
+        XYPlotLayer s = base.SDeserialize(o,info,parent);
 
         s._clipDataToFrame = info.GetBoolean("ClipDataToFrame");
 
         return s;
       }
     }
-
+    
 
     
     /// <summary>

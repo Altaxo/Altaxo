@@ -21,9 +21,12 @@
 #endregion
 
 using System;
+using System.Drawing;
 
 namespace Altaxo.Graph
 {
+  using Axes;
+
   #region XYFunctionPlotData
   /// <summary>
   /// Summary description for XYFunctionPlotData.
@@ -34,22 +37,22 @@ namespace Altaxo.Graph
 
     #region Serialization
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYFunctionPlotData),0)]
-      public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYFunctionPlotData), 0)]
+    public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         XYFunctionPlotData s = (XYFunctionPlotData)obj;
-        
-        info.AddValue("Function",s._function);
+
+        info.AddValue("Function", s._function);
       }
 
       public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        XYFunctionPlotData s = null!=o ? (XYFunctionPlotData)o : new XYFunctionPlotData();
+        XYFunctionPlotData s = null != o ? (XYFunctionPlotData)o : new XYFunctionPlotData();
 
-        s.Function = (Altaxo.Calc.IScalarFunctionDD)info.GetValue("Function",parent);
-        
+        s.Function = (Altaxo.Calc.IScalarFunctionDD)info.GetValue("Function", parent);
+
         return s;
       }
     }
@@ -67,7 +70,7 @@ namespace Altaxo.Graph
     {
       this.Function = function;
 
-      
+
     }
 
     public XYFunctionPlotData(XYFunctionPlotData from)
@@ -77,10 +80,10 @@ namespace Altaxo.Graph
 
     public override string ToString()
     {
-      if(_function!=null)
+      if (_function != null)
         return "Function: " + _function.ToString();
       else
-        return base.ToString ();
+        return base.ToString();
     }
 
 
@@ -90,7 +93,7 @@ namespace Altaxo.Graph
     /// <value>The function.</value>
     public Altaxo.Calc.IScalarFunctionDD Function
     {
-      get 
+      get
       {
         return _function;
       }
@@ -99,13 +102,13 @@ namespace Altaxo.Graph
         Altaxo.Calc.IScalarFunctionDD oldValue = _function;
         _function = value;
 
-        if(oldValue is Main.IChangedEventSource)
+        if (oldValue is Main.IChangedEventSource)
           ((Main.IChangedEventSource)oldValue).Changed -= new EventHandler(EhFunctionChanged);
 
-        if(_function!=null && _function is Main.IChangedEventSource)
+        if (_function != null && _function is Main.IChangedEventSource)
           ((Main.IChangedEventSource)_function).Changed += new EventHandler(EhFunctionChanged);
 
-        if(!object.ReferenceEquals(oldValue,value))
+        if (!object.ReferenceEquals(oldValue, value))
           OnChanged();
       }
     }
@@ -123,7 +126,7 @@ namespace Altaxo.Graph
 
     public double Evaluate(double x)
     {
-      return _function==null ? 0 : _function.Evaluate(x);
+      return _function == null ? 0 : _function.Evaluate(x);
     }
 
     #endregion
@@ -145,17 +148,116 @@ namespace Altaxo.Graph
     /// </summary>
     protected virtual void OnChanged()
     {
-      if(Changed!=null)
+      if (Changed != null)
       {
-        Changed(this,EventArgs.Empty);
+        Changed(this, EventArgs.Empty);
       }
     }
 
     public event System.EventHandler Changed;
 
     #endregion
-  }
 
+
+    /// <summary>
+    /// This will create a point list out of the data, which can be used to plot the data. In order to create this list,
+    /// the function must have knowledge how to calculate the points out of the data. This will be done
+    /// by a function provided by the calling function.
+    /// </summary>
+    /// <param name="layer">The plot layer.</param>
+    /// <param name="rangeList">On return, this gives the list of plot ranges.</param>
+    /// <param name="ptArray">On return, this is an array of plot points in layer coordinates.</param>
+    /// <returns>True if the function is successfull, otherwise false.</returns>
+    public bool GetRangesAndPoints(
+      IPlotArea layer,
+      out PlotRangeList rangeList,
+      out PointF[] ptArray)
+    {
+      const int functionPoints = 1000;
+      const double MaxRelativeValue = 1E6;
+
+
+      // allocate an array PointF to hold the line points
+      ptArray = new PointF[functionPoints];
+
+      // double xorg = layer.XAxis.Org;
+      // double xend = layer.XAxis.End;
+      // Fill the array with values
+      // only the points where x and y are not NaNs are plotted!
+
+      int i, j;
+
+      bool bInPlotSpace = true;
+      int rangeStart = 0;
+      rangeList = new PlotRangeList();
+      I2DTo2DConverter logicalToArea = layer.LogicalToAreaConversion;
+
+      NumericalAxis xaxis = layer.XAxis as NumericalAxis;
+      NumericalAxis yaxis = layer.YAxis as NumericalAxis;
+      if (xaxis == null || yaxis == null)
+        return false;
+
+      for (i = 0, j = 0; i < functionPoints; i++)
+      {
+        double x_rel = ((double)i) / (functionPoints - 1);
+        double x = xaxis.NormalToPhysical(x_rel);
+        double y = Evaluate(x);
+
+        if (Double.IsNaN(x) || Double.IsNaN(y))
+        {
+          if (!bInPlotSpace)
+          {
+            bInPlotSpace = true;
+            rangeList.Add(new PlotRange(rangeStart, j));
+          }
+          continue;
+        }
+
+
+        // double x_rel = layer.XAxis.PhysicalToNormal(x);
+        double y_rel = yaxis.PhysicalToNormal(y);
+
+        // chop relative values to an range of about -+ 10^6
+        if (y_rel > MaxRelativeValue)
+          y_rel = MaxRelativeValue;
+        if (y_rel < -MaxRelativeValue)
+          y_rel = -MaxRelativeValue;
+
+        // after the conversion to relative coordinates it is possible
+        // that with the choosen axis the point is undefined 
+        // (for instance negative values on a logarithmic axis)
+        // in this case the returned value is NaN
+        double xcoord, ycoord;
+        if (logicalToArea.Convert(x_rel, y_rel, out xcoord, out ycoord))
+        {
+          if (bInPlotSpace)
+          {
+            bInPlotSpace = false;
+            rangeStart = j;
+          }
+          ptArray[j].X = (float)xcoord;
+          ptArray[j].Y = (float)ycoord;
+          j++;
+        }
+        else
+        {
+          if (!bInPlotSpace)
+          {
+            bInPlotSpace = true;
+            rangeList.Add(new PlotRange(rangeStart, j));
+          }
+        }
+      } // end for
+      if (!bInPlotSpace)
+      {
+        bInPlotSpace = true;
+        rangeList.Add(new PlotRange(rangeStart, j)); // add the last range
+      }
+      return true;
+    }
+
+
+  }
   #endregion
 
   #region PolynomialFunction

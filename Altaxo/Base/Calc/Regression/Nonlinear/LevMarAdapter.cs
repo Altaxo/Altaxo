@@ -193,7 +193,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
         {
           for (int j = 0; j < info.DependentVariablesInUse.Length; ++j)
           {
-            values[outputValuesPointer++] = fitEle.DependentVariables(j)[validRows[i]];
+            values[outputValuesPointer++] = fitEle.DependentVariables(info.DependentVariablesInUse[j])[validRows[i]];
           }
         }
       }

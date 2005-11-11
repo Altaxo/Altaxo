@@ -93,6 +93,7 @@ namespace Altaxo.Gui.Graph
     
     void InitializeIndependentColor(bool val);
    
+    void InitializeSkipPoints(int val);
    
 
     #region Getter
@@ -109,6 +110,7 @@ namespace Altaxo.Gui.Graph
     bool DropLineBottom {get; }
     bool DropLineRight {get; }
     bool DropLineTop   {get; }
+    int SkipPoints { get; }
 
 
     #endregion // Getter
@@ -196,6 +198,7 @@ namespace Altaxo.Gui.Graph
         SetSymbolSize();
         SetDropLineConditions();
         _view.SetEnableDisableMain(_ActivateEnableDisableMain);
+        _view.InitializeSkipPoints(_tempDoc.SkipFrequency);
       }
     }
 
@@ -346,7 +349,9 @@ namespace Altaxo.Gui.Graph
         else
           _doc.DropLine &= (Altaxo.Graph.XYPlotScatterStyles.DropLine.All^Altaxo.Graph.XYPlotScatterStyles.DropLine.Top);
 
+        // Skip points
 
+        _doc.SkipFrequency = _view.SkipPoints;
        
 
       }

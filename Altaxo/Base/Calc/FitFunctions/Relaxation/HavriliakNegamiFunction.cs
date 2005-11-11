@@ -81,6 +81,10 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
     public void Evaluate(double[] X, double[] P, double[] Y)
     {
+     // double b = P[3];
+     // double g = P[4];
+     // double tau = P[2] * Math.Pow(Math.Sin(b * Math.PI / (2 + 2 * g)), (1 / b)) * Math.Pow(Math.Sin(b * g * Math.PI / (2 + 2 * g)), (-1 / b));
+
       Complex result = P[0] + P[1]/ComplexMath.Pow(1+ComplexMath.Pow(Complex.I*X[0]*P[2],P[3]),P[4]);
       Y[0] = result.Re;
       Y[1] = -result.Im + P[5]/X[0];

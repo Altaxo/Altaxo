@@ -466,7 +466,7 @@ namespace Altaxo.Graph
 
 
     private RectangleF _enclosingRectangle;
-    public override void Paint(Graphics g, XYPlotLayer layer, Axis raxis, XYAxisStyle axisstyle)
+    public override void Paint(Graphics g, XYPlotLayer layer, Axis raxis, XYAxisStyle axisstyle, bool useMinorTicks)
     {
       SizeF layerSize = layer.Size;
       PointF orgP = _edge.GetOrg(layerSize);
@@ -506,8 +506,19 @@ namespace Altaxo.Graph
 
 
 
-      double[] relpositions = raxis.GetMajorTicksNormal();
-      AltaxoVariant[] ticks = raxis.GetMajorTicksAsVariant();
+      double[] relpositions;
+      AltaxoVariant[] ticks;
+      if(useMinorTicks)
+      {
+        relpositions = raxis.GetMinorTicksNormal();
+        ticks = raxis.GetMinorTicksAsVariant();
+      }
+      else
+      {
+        relpositions = raxis.GetMajorTicksNormal();
+        ticks = raxis.GetMajorTicksAsVariant();
+      }
+      
       IMeasuredLabelItem[] labels = _labelFormatting.GetMeasuredItems(g,_font,_stringFormat,ticks);
 
       _enclosingRectangle = RectangleF.Empty;

@@ -207,6 +207,7 @@ namespace Altaxo.Graph
     protected float _symbolSize;
     protected bool _independentSymbolSize;
     protected float _relativePenWidth;
+    protected int _skipFreq;
 
     // cached values:
     protected GraphicsPath _cachedPath;
@@ -257,9 +258,10 @@ namespace Altaxo.Graph
 
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotScatterStyle), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotScatterStyle), 1)] // by accident this was never different from 0
     public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         XYPlotScatterStyle s = (XYPlotScatterStyle)obj;
         info.AddValue("Shape", s._shape);
@@ -269,18 +271,25 @@ namespace Altaxo.Graph
         info.AddValue("SymbolSize", s._symbolSize);
         info.AddValue("RelativePenWidth", s._relativePenWidth);
       }
+
+      protected virtual XYPlotScatterStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+     {
+       XYPlotScatterStyle s = null != o ? (XYPlotScatterStyle)o : new XYPlotScatterStyle();
+
+       s._shape = (XYPlotScatterStyles.Shape)info.GetValue("Shape", typeof(XYPlotScatterStyles.Shape));
+       s._style = (XYPlotScatterStyles.Style)info.GetValue("Style", typeof(XYPlotScatterStyles.Style));
+       s._dropLine = (XYPlotScatterStyles.DropLine)info.GetValue("DropLine", typeof(XYPlotScatterStyles.DropLine));
+       s._pen = (PenHolder)info.GetValue("Pen", typeof(PenHolder));
+       s._symbolSize = info.GetSingle("SymbolSize");
+       s._relativePenWidth = info.GetSingle("RelativePenWidth");
+
+       return s;
+      }
+
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-
-        XYPlotScatterStyle s = null != o ? (XYPlotScatterStyle)o : new XYPlotScatterStyle();
-
-        s._shape = (XYPlotScatterStyles.Shape)info.GetValue("Shape", typeof(XYPlotScatterStyles.Shape));
-        s._style = (XYPlotScatterStyles.Style)info.GetValue("Style", typeof(XYPlotScatterStyles.Style));
-        s._dropLine = (XYPlotScatterStyles.DropLine)info.GetValue("DropLine", typeof(XYPlotScatterStyles.DropLine));
-        s._pen = (PenHolder)info.GetValue("Pen", typeof(PenHolder));
-        s._symbolSize = info.GetSingle("SymbolSize");
-        s._relativePenWidth = info.GetSingle("RelativePenWidth");
-
+        XYPlotScatterStyle s = SDeserialize(o, info, parent);
+       
         // restore the cached values
         s.SetCachedValues();
         s.CreateEventChain();
@@ -289,29 +298,29 @@ namespace Altaxo.Graph
       }
     }
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotScatterStyle), 1)]
-    public class XmlSerializationSurrogate1 : XmlSerializationSurrogate0
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotScatterStyle), 2)]
+    public class XmlSerializationSurrogate2 : XmlSerializationSurrogate0
     {
-      public new void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public override void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         base.Serialize(obj, info);
         XYPlotScatterStyle s = (XYPlotScatterStyle)obj;
         info.AddValue("IndependentColor", s._independentColor);
         info.AddValue("IndependentSymbolSize", s._independentSymbolSize);
+        info.AddValue("SkipFreq", s._skipFreq);
       }
-      public new object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+
+
+      protected override XYPlotScatterStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        XYPlotScatterStyle s = (XYPlotScatterStyle)base.Deserialize(o, info, parent);
+        XYPlotScatterStyle s = base.SDeserialize(o, info, parent);
         s._independentColor = info.GetBoolean("IndependentColor");
         s._independentSymbolSize = info.GetBoolean("IndependentSymbolSize");
-
-
-        s.CreateEventChain();
-
+        s._skipFreq = info.GetInt32("SkipFreq");
         return s;
       }
     }
-
+   
     /// <summary>
     /// Finale measures after deserialization of the linear axis.
     /// </summary>
@@ -340,6 +349,7 @@ namespace Altaxo.Graph
       this._cachedFillBrush = null == from._cachedFillBrush ? null : (BrushHolder)from._cachedFillBrush.Clone();
       this._symbolSize = from._symbolSize;
       this._relativePenWidth = from._relativePenWidth;
+      this._skipFreq = from._skipFreq;
 
       if (!suppressChangeEvent)
         OnChanged();
@@ -361,6 +371,7 @@ namespace Altaxo.Graph
       this._independentSymbolSize = true;
 
       _relativePenWidth = penWidth / size;
+      _skipFreq = 1;
 
       // Cached values
       SetCachedValues();
@@ -380,6 +391,7 @@ namespace Altaxo.Graph
       this._independentSymbolSize = true;
 
       this._relativePenWidth = 0.1f;
+      this._skipFreq = 1;
       this._cachedFillPath = true; // since default is solid
       this._cachedFillBrush = new BrushHolder(Color.Black);
       this._cachedPath = GetPath(_shape, _style, _symbolSize);
@@ -570,6 +582,19 @@ namespace Altaxo.Graph
       }
     }
 
+    public int SkipFrequency
+    {
+      get { return _skipFreq; }
+      set
+      {
+        if (value != _skipFreq)
+        {
+          _skipFreq = value;
+          OnChanged(); // Fire Changed event
+        }
+      }
+    }
+
     protected void SetCachedValues()
     {
       _cachedPath = GetPath(this._shape, this._style, this._symbolSize);
@@ -753,6 +778,10 @@ namespace Altaxo.Graph
 
     public void Paint(Graphics g, IPlotArea layer, PlotRangeList rangeList, PointF[] ptArray)
     {
+      // adjust the skip frequency if it was not set appropriate
+      if (_skipFreq <= 0)
+        _skipFreq = 1;
+
       // paint the drop style
       if (this.DropLine != XYPlotScatterStyles.DropLine.NoDrop)
       {
@@ -770,7 +799,7 @@ namespace Altaxo.Graph
 
         if ((0 != (this.DropLine & XYPlotScatterStyles.DropLine.Top)) && (0 != (this.DropLine & XYPlotScatterStyles.DropLine.Bottom)))
         {
-          for (int j = 0; j < ptArray.Length; j++)
+          for (int j = 0; j < ptArray.Length; j+=_skipFreq)
           {
             float x = ptArray[j].X;
             g.DrawLine(pen, x, 0, x, ye);
@@ -778,7 +807,7 @@ namespace Altaxo.Graph
         }
         else if (0 != (this.DropLine & XYPlotScatterStyles.DropLine.Top))
         {
-          for (int j = 0; j < ptArray.Length; j++)
+          for (int j = 0; j < ptArray.Length; j+=_skipFreq)
           {
             float x = ptArray[j].X;
             float y = ptArray[j].Y;
@@ -787,7 +816,7 @@ namespace Altaxo.Graph
         }
         else if (0 != (this.DropLine & XYPlotScatterStyles.DropLine.Bottom))
         {
-          for (int j = 0; j < ptArray.Length; j++)
+          for (int j = 0; j < ptArray.Length; j+=_skipFreq)
           {
             float x = ptArray[j].X;
             float y = ptArray[j].Y;
@@ -797,7 +826,7 @@ namespace Altaxo.Graph
 
         if ((0 != (this.DropLine & XYPlotScatterStyles.DropLine.Left)) && (0 != (this.DropLine & XYPlotScatterStyles.DropLine.Right)))
         {
-          for (int j = 0; j < ptArray.Length; j++)
+          for (int j = 0; j < ptArray.Length; j+=_skipFreq)
           {
             float y = ptArray[j].Y;
             g.DrawLine(pen, 0, y, xe, y);
@@ -805,7 +834,7 @@ namespace Altaxo.Graph
         }
         else if (0 != (this.DropLine & XYPlotScatterStyles.DropLine.Right))
         {
-          for (int j = 0; j < ptArray.Length; j++)
+          for (int j = 0; j < ptArray.Length; j+=_skipFreq)
           {
             float x = ptArray[j].X;
             float y = ptArray[j].Y;
@@ -814,7 +843,7 @@ namespace Altaxo.Graph
         }
         else if (0 != (this.DropLine & XYPlotScatterStyles.DropLine.Left))
         {
-          for (int j = 0; j < ptArray.Length; j++)
+          for (int j = 0; j < ptArray.Length; j+=_skipFreq)
           {
             float x = ptArray[j].X;
             float y = ptArray[j].Y;
@@ -833,7 +862,7 @@ namespace Altaxo.Graph
 
         float xpos = 0, ypos = 0;
         float xdiff, ydiff;
-        for (int j = 0; j < ptArray.Length; j++)
+        for (int j = 0; j < ptArray.Length; j+=_skipFreq)
         {
           xdiff = ptArray[j].X - xpos;
           ydiff = ptArray[j].Y - ypos;

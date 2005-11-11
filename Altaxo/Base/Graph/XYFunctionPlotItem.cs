@@ -166,6 +166,11 @@ namespace Altaxo.Graph
 
     public XYFunctionPlotItem(XYFunctionPlotItem from)
     {
+      CopyFrom(from);
+    }
+
+    public void CopyFrom(XYFunctionPlotItem from)
+    {
       this.Data = from.Data;   // also wires the event
       this.Style = from.Style; // also wires the event
     }
@@ -261,101 +266,74 @@ namespace Altaxo.Graph
 
     public override void Paint(Graphics g, IPlotArea layer)
     {
-      const int functionPoints = 1000;
-      const double MaxRelativeValue = 1E6;
+      PlotRangeList rangeList;
+      PointF[] ptArray;
 
-
-      // allocate an array PointF to hold the line points
-      PointF[] ptArray = new PointF[functionPoints];
-
-      // double xorg = layer.XAxis.Org;
-      // double xend = layer.XAxis.End;
-      // Fill the array with values
-      // only the points where x and y are not NaNs are plotted!
-
-      int i, j;
-
-      bool bInPlotSpace = true;
-      int rangeStart = 0;
-      PlotRangeList rangeList = new PlotRangeList();
-      I2DTo2DConverter logicalToArea = layer.LogicalToAreaConversion;
-
-      NumericalAxis xaxis = layer.XAxis as NumericalAxis;
-      NumericalAxis yaxis = layer.YAxis as NumericalAxis;
-      if (xaxis == null || yaxis == null)
-        return;
-
-      for (i = 0, j = 0; i < functionPoints; i++)
+      if (this.m_PlotData.GetRangesAndPoints(layer, out rangeList, out ptArray))
       {
-        double x_rel = ((double)i) / (functionPoints - 1);
-        double x = xaxis.NormalToPhysical(x_rel);
-        double y = this.m_PlotData.Evaluate(x);
+        // in the plot array ptArray now we have the coordinates of each point
 
-        if (Double.IsNaN(x) || Double.IsNaN(y))
+        // now plot the point array
+
+        if (null != this.m_PlotStyle)
         {
-          if (!bInPlotSpace)
-          {
-            bInPlotSpace = true;
-            rangeList.Add(new PlotRange(rangeStart, j));
-          }
-          continue;
+          m_PlotStyle.Paint(g, layer, rangeList, ptArray);
         }
+      }
+    }
 
+    /// <summary>
+    /// Test wether the mouse hits a plot item. 
+    /// </summary>
+    /// <param name="layer">The layer in which this plot item is drawn into.</param>
+    /// <param name="hitpoint">The point where the mouse is pressed.</param>
+    /// <returns>Null if no hit, or a <see>IHitTestObject</see> if there was a hit.</returns>
+    public override IHitTestObject HitTest(IPlotArea layer, PointF hitpoint)
+    {
+      XYFunctionPlotData myPlotAssociation = this.m_PlotData;
+      if (null == myPlotAssociation)
+        return null;
 
-        // double x_rel = layer.XAxis.PhysicalToNormal(x);
-        double y_rel = yaxis.PhysicalToNormal(y);
-
-        // chop relative values to an range of about -+ 10^6
-        if (y_rel > MaxRelativeValue)
-          y_rel = MaxRelativeValue;
-        if (y_rel < -MaxRelativeValue)
-          y_rel = -MaxRelativeValue;
-
-        // after the conversion to relative coordinates it is possible
-        // that with the choosen axis the point is undefined 
-        // (for instance negative values on a logarithmic axis)
-        // in this case the returned value is NaN
-        double xcoord, ycoord;
-        if (logicalToArea.Convert(x_rel, y_rel, out xcoord, out ycoord))
-        {
-          if (bInPlotSpace)
-          {
-            bInPlotSpace = false;
-            rangeStart = j;
-          }
-          ptArray[j].X = (float)xcoord;
-          ptArray[j].Y = (float)ycoord;
-          j++;
-        }
-        else
-        {
-          if (!bInPlotSpace)
-          {
-            bInPlotSpace = true;
-            rangeList.Add(new PlotRange(rangeStart, j));
-          }
-        }
-      } // end for
-      if (!bInPlotSpace)
+      PlotRangeList rangeList;
+      PointF[] ptArray;
+      if (myPlotAssociation.GetRangesAndPoints(layer, out rangeList, out ptArray))
       {
-        bInPlotSpace = true;
-        rangeList.Add(new PlotRange(rangeStart, j)); // add the last range
+        if (ptArray.Length < 2048)
+        {
+          GraphicsPath gp = new GraphicsPath();
+          gp.AddLines(ptArray);
+          if (gp.IsOutlineVisible(hitpoint.X, hitpoint.Y, new Pen(Color.Black, 5)))
+          {
+            gp.Widen(new Pen(Color.Black, 5));
+            return new HitTestObject(gp, this);
+          }
+        }
+        else // we have too much points for the graphics path, so make a hit test first
+        {
+
+          int hitindex = -1;
+          for (int i = 1; i < ptArray.Length; i++)
+          {
+            if (Drawing2DRelated.IsPointIntoDistance(ptArray[i - 1], ptArray[i], hitpoint, 5))
+            {
+              hitindex = i;
+              break;
+            }
+          }
+          if (hitindex < 0)
+            return null;
+          GraphicsPath gp = new GraphicsPath();
+          int start = Math.Max(0, hitindex - 1);
+          gp.AddLine(ptArray[start], ptArray[start + 1]);
+          gp.AddLine(ptArray[start + 1], ptArray[start + 2]);
+          gp.Widen(new Pen(Color.Black, 5));
+          return new HitTestObject(gp, this);
+        }
       }
 
 
-
-      // ------------------ end of creation of plot array -----------------------------------------------
-      // in the plot array ptArray now we have the coordinates of each point
-
-      // now plot the point array
-
-      if (null != this.m_PlotStyle)
-      {
-        m_PlotStyle.Paint(g, layer, rangeList, ptArray);
-      } 
+      return null;
     }
-
-
     /// <summary>
     /// This routine ensures that the plot item updates all its cached data and send the appropriate
     /// events if something has changed. Called before the layer paint routine paints the axes because

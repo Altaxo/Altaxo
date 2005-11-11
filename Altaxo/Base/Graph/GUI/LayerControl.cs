@@ -176,11 +176,60 @@ namespace Altaxo.Graph.GUI
         int sel = m_TabCtrl.SelectedIndex;
         System.Windows.Forms.TabPage tp = m_TabCtrl.TabPages[sel];
         if(tp.Controls.Count>0)
-          tp.Controls.RemoveAt(0);
+          tp.Controls.Clear();
 
         tp.Controls.Add(value);
         
       }
+    }
+
+    public void SetCurrentContentWithEnable(System.Windows.Forms.Control value, bool enable, string title)
+    {
+      int sel = m_TabCtrl.SelectedIndex;
+      System.Windows.Forms.TabPage tp = m_TabCtrl.TabPages[sel];
+      if(tp.Controls.Count>0)
+        tp.Controls.Clear();
+
+      _chkPageEnable = new CheckBox();
+      _chkPageEnable.Checked = enable;
+      _chkPageEnable.Text = title;
+      _chkPageEnable.CheckedChanged += new EventHandler(EhControlEnable_CheckedChanged);
+      _chkPageEnable.Size = new Size(this.ClientSize.Width,_chkPageEnable.Height);
+
+      value.Enabled = enable;
+      value.Location = new Point(0, _chkPageEnable.Height);
+      tp.Controls.Add(value);
+      tp.Controls.Add(_chkPageEnable);
+    }
+
+    public bool IsPageEnabled
+    {
+      get
+      {
+        if(this.m_TabCtrl.SelectedTab!=null && this.m_TabCtrl.SelectedTab.Controls.Count>=2 && this.m_TabCtrl.SelectedTab.Controls[1] is CheckBox)
+          return ((CheckBox)this.m_TabCtrl.SelectedTab.Controls[1]).Checked;
+        else
+          return true;
+      }
+      set
+      {
+        if(this.m_TabCtrl.SelectedTab!=null && this.m_TabCtrl.SelectedTab.Controls.Count>=2 && this.m_TabCtrl.SelectedTab.Controls[1] is CheckBox)
+        {
+          ((CheckBox)this.m_TabCtrl.SelectedTab.Controls[1]).Checked = value;
+          this.m_TabCtrl.Controls[0].Enabled=value;
+        }
+      }
+    }
+
+    CheckBox _chkPageEnable;
+    bool _pageEnabled = true;
+    void EhControlEnable_CheckedChanged(object sender, EventArgs args)
+    {
+      _pageEnabled = _chkPageEnable.Checked;
+      m_TabCtrl.SelectedTab.Controls[0].Enabled = _pageEnabled;
+
+      if(null!=m_Ctrl && m_SuppressEvents==0)
+        m_Ctrl.EhView_PageEnabledChanged(_pageEnabled);
     }
 
     public void InitializeSecondaryChoice(string[] names, string name)

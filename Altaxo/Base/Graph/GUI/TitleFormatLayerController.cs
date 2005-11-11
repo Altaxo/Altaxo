@@ -79,7 +79,7 @@ namespace Altaxo.Graph.GUI
   public class TitleFormatLayerController : ITitleFormatLayerController
   {
     protected ITitleFormatLayerView m_View;
-    protected XYPlotLayer                 m_Layer;
+    protected XYPlotLayer           m_Layer;
     protected EdgeType              m_Edge;
  
     protected bool    m_ShowAxis;
