@@ -550,7 +550,7 @@ namespace Altaxo.Graph
       newlayer.BottomAxisEnabled=false;
       newlayer.LeftAxisEnabled=false;
 
-      newlayer.XAxisLinkType = XYPlotLayer.AxisLinkType.Straight;
+      newlayer.AxisProperties.X.AxisLinkType = XYPlotLayer.AxisLinkType.Straight;
     }
 
 

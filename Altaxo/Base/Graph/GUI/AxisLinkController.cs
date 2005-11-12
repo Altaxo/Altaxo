@@ -146,19 +146,19 @@ namespace Altaxo.Graph.GUI
       {
         if(m_bXAxis)
         {
-          m_LinkType  = m_Layer.XAxisLinkType;
-          m_OrgA      = m_Layer.LinkXAxisOrgA;
-          m_OrgB      = m_Layer.LinkXAxisOrgB;
-          m_EndA      = m_Layer.LinkXAxisEndA;
-          m_EndB      = m_Layer.LinkXAxisEndB;
+          m_LinkType = m_Layer.AxisProperties.X.AxisLinkType;
+          m_OrgA      = m_Layer.AxisProperties.X.LinkAxisOrgA;
+          m_OrgB = m_Layer.AxisProperties.X.LinkAxisOrgB;
+          m_EndA = m_Layer.AxisProperties.X.LinkAxisEndA;
+          m_EndB = m_Layer.AxisProperties.X.LinkAxisEndB;
         }
         else
         {
-          m_LinkType  = m_Layer.YAxisLinkType;
-          m_OrgA      = m_Layer.LinkYAxisOrgA;
-          m_OrgB      = m_Layer.LinkYAxisOrgB;
-          m_EndA      = m_Layer.LinkYAxisEndA;
-          m_EndB      = m_Layer.LinkYAxisEndB;
+          m_LinkType  = m_Layer.AxisProperties.Y.AxisLinkType;
+          m_OrgA = m_Layer.AxisProperties.Y.LinkAxisOrgA;
+          m_OrgB = m_Layer.AxisProperties.Y.LinkAxisOrgB;
+          m_EndA = m_Layer.AxisProperties.Y.LinkAxisEndA;
+          m_EndB = m_Layer.AxisProperties.Y.LinkAxisEndB;
         }
       }
 
@@ -230,11 +230,11 @@ namespace Altaxo.Graph.GUI
     {
       if(this.m_bXAxis)
       {
-        m_Layer.SetXAxisLinkParameter(m_LinkType, m_OrgA,m_OrgB,m_EndA,m_EndB);
+        m_Layer.AxisProperties.X.SetAxisLinkParameter(m_LinkType, m_OrgA,m_OrgB,m_EndA,m_EndB);
       }
       else
       {
-        m_Layer.SetYAxisLinkParameter(m_LinkType, m_OrgA,m_OrgB,m_EndA,m_EndB);
+        m_Layer.AxisProperties.Y.SetAxisLinkParameter(m_LinkType, m_OrgA,m_OrgB,m_EndA,m_EndB);
       }
       return true;
     }

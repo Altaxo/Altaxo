@@ -32,9 +32,6 @@ using Altaxo.Graph.Axes.Boundaries;
 
 namespace Altaxo.Graph
 {
-
-  
-
   /// <summary>
   /// XYPlotLayer represents a rectangular area on the graph, which holds plot curves, axes and graphical elements.
   /// </summary>
@@ -286,17 +283,12 @@ namespace Altaxo.Graph
 
     /// <summary>If true, the data are clipped to the frame.</summary>
     protected bool _clipDataToFrame=true;
-
-    /// <summary>The horizontal axis of the layer.</summary>
-    protected Axis _xAxis; // the X-Axis
-    
-    /// <summary>The vertical axis of the layer.</summary>
-    protected Axis _yAxis; // the Y-Axis
   
     protected TextGraphics _legend = null;
 
     XYPlotLayerAxisStylePropertiesCollection _axisStyles = new XYPlotLayerAxisStylePropertiesCollection();
 
+    XYLayerAxisPropertiesCollection _axisProperties = new XYLayerAxisPropertiesCollection();
 
     protected GraphicsObjectCollection _graphObjects = new GraphicsObjectCollection();
 
@@ -319,35 +311,7 @@ namespace Altaxo.Graph
     /// </summary>
     protected XYPlotLayer _linkedLayer;
 
-    /// <summary>Indicate if x-axis is linked to the linked layer x axis.</summary>
-    protected bool _linkXAxis;
-
-    /// <summary>The value a of x-axis link for link of origin: org' = a + b*org.</summary>
-    protected double _linkXAxisOrgA;
-
-    /// <summary>The value b of x-axis link for link of origin: org' = a + b*org.</summary>
-    protected double _linkXAxisOrgB;
-
-    /// <summary>The value a of x-axis link for link of end: end' = a + b*end.</summary>
-    protected double _linkXAxisEndA;
-
-    /// <summary>The value b of x-axis link for link of end: end' = a + b*end.</summary>
-    protected double _linkXAxisEndB;
-
-    /// <summary>Indicate if y-axis is linked to the linked layer y axis.</summary>
-    protected bool _linkYAxis;
-
-    /// <summary>The value a of y-axis link for link of origin: org' = a + b*org.</summary>
-    protected double _linkYAxisOrgA;
-
-    /// <summary>The value b of y-axis link for link of origin: org' = a + b*org.</summary>
-    protected double _linkYAxisOrgB;
-
-    /// <summary>The value a of y-axis link for link of end: end' = a + b*end.</summary>
-    protected double _linkYAxisEndA;
-
-    /// <summary>The value b of y-axis link for link of end: end' = a + b*end.</summary>
-    protected double _linkYAxisEndB;
+   
 
 
     /// <summary>Number of times this event is disables, or 0 if it is enabled.</summary>
@@ -357,7 +321,7 @@ namespace Altaxo.Graph
     int _plotAssociationYBoundariesChanged_EventSuspendCount;
 
 
-
+    #region AxisStyleProperties
 
     /// <summary>
     /// This class summarizes all members that are belonging to one edge of the layer.
@@ -709,10 +673,10 @@ namespace Altaxo.Graph
 
       public void Paint(Graphics g, XYPlotLayer layer)
       {
-        this[EdgeType.Left].Paint(g, layer, layer._yAxis);
-        this[EdgeType.Bottom].Paint(g, layer, layer._xAxis);
-        this[EdgeType.Right].Paint(g, layer, layer._yAxis);
-        this[EdgeType.Top].Paint(g, layer, layer._xAxis);
+        this[EdgeType.Left].Paint(g, layer, layer._axisProperties.Y.Axis);
+        this[EdgeType.Bottom].Paint(g, layer, layer._axisProperties.X.Axis);
+        this[EdgeType.Right].Paint(g, layer, layer._axisProperties.Y.Axis);
+        this[EdgeType.Top].Paint(g, layer, layer._axisProperties.X.Axis);
       }
 
       #region IChildChangedEventSink Members
@@ -748,25 +712,358 @@ namespace Altaxo.Graph
       #endregion
     }
 
-    class XYLayerAxisProperties
+    #endregion
+
+    #region AxisProperties
+
+    public class XYLayerAxisProperties
     {
-      protected Axis _axis; // the X-Axis
+      /// <summary>
+      /// The axis.
+      /// </summary>
+      private Axis _axis; // the X-Axis
 
       /// <summary>Indicate if x-axis is linked to the linked layer x axis.</summary>
-      protected bool _linkAxis;
+      private bool _isLinked;
 
       /// <summary>The value a of x-axis link for link of origin: org' = a + b*org.</summary>
-      protected double _linkAxisOrgA;
-
+      private double _linkAxisOrgA;
       /// <summary>The value b of x-axis link for link of origin: org' = a + b*org.</summary>
-      protected double _linkAxisOrgB;
-
+      private double _linkAxisOrgB;
       /// <summary>The value a of x-axis link for link of end: end' = a + b*end.</summary>
-      protected double _linkAxisEndA;
-
+      private double _linkAxisEndA;
       /// <summary>The value b of x-axis link for link of end: end' = a + b*end.</summary>
-      protected double _linkAxisEndB;
+      private double _linkAxisEndB;
+
+      /// <summary>
+      /// Fired if the axis changed or the axis boundaries changed.
+      /// </summary>
+      public event EventHandler AxisInstanceChanged;
+      /// <summary>
+      /// Fired if the axis properties changed.
+      /// </summary>
+      public event EventHandler AxisPropertiesChanged;
+
+      public XYLayerAxisProperties()
+      {
+        Axis = new LinearAxis();
+        _isLinked = false;
+        _linkAxisOrgA = 0;
+        _linkAxisOrgB = 1;
+        _linkAxisEndA = 0;
+        _linkAxisEndB = 1;
+      }
+
+
+      void CopyFrom(XYLayerAxisProperties from)
+      {
+        this.Axis = from._axis == null ? null : (Axis)from._axis.Clone();
+        this._isLinked = from._isLinked;
+        this._linkAxisOrgA = from._linkAxisOrgA;
+        this._linkAxisOrgB = from._linkAxisOrgB;
+        this._linkAxisEndA = from._linkAxisEndA;
+        this._linkAxisEndB = from._linkAxisEndB;
+      }
+
+      public XYLayerAxisProperties Clone()
+      {
+        XYLayerAxisProperties result = new XYLayerAxisProperties();
+        result.CopyFrom(this);
+        return result;
+      }
+
+      public bool IsLinked
+      {
+        get { return _isLinked; }
+        set
+        {
+          bool oldValue = _isLinked;
+          _isLinked = value;
+          _axis.IsLinked = value;
+
+          if (value != oldValue && value == true)
+          {
+            // simulate the event, that the axis has changed
+            this.OnAxisInstanceChanged();  // this will cause the axis to update with the linked axis
+          }
+        }
+      }
+
+      /// <summary>The type of x axis link.</summary>
+      /// <value>Can be either None, Straight or Custom link.</value>
+      public AxisLinkType AxisLinkType
+      {
+        get
+        {
+          if (!IsLinked)
+            return AxisLinkType.None;
+          else if (LinkAxisOrgA == 0 && LinkAxisOrgB == 1 && LinkAxisEndA == 0 && LinkAxisEndB == 1)
+            return AxisLinkType.Straight;
+          else return AxisLinkType.Custom;
+        }
+        set
+        {
+          if (value == AxisLinkType.None)
+          {
+            IsLinked = false;
+          }
+          else
+          {
+            if (value == AxisLinkType.Straight)
+            {
+              _linkAxisOrgA = 0;
+              _linkAxisOrgB = 1;
+              _linkAxisEndA = 0;
+              _linkAxisEndB = 1;
+            }
+
+            IsLinked = true;
+          }
+        }
+      }
+
+
+      /// <summary>
+      /// Set all parameters of the axis link by once.
+      /// </summary>
+      /// <param name="linktype">The type of the axis link, i.e. None, Straight or Custom.</param>
+      /// <param name="orgA">The value a of x-axis link for link of axis origin: org' = a + b*org.</param>
+      /// <param name="orgB">The value b of x-axis link for link of axis origin: org' = a + b*org.</param>
+      /// <param name="endA">The value a of x-axis link for link of axis end: end' = a + b*end.</param>
+      /// <param name="endB">The value b of x-axis link for link of axis end: end' = a + b*end.</param>
+      public void SetAxisLinkParameter(AxisLinkType linktype, double orgA, double orgB, double endA, double endB)
+      {
+        if (linktype == AxisLinkType.Straight)
+        {
+          orgA = 0;
+          orgB = 1;
+          endA = 0;
+          endB = 1;
+        }
+
+        bool linkaxis = (linktype != AxisLinkType.None);
+
+        if (
+          (linkaxis != this.IsLinked) ||
+          (orgA != this.LinkAxisOrgA) ||
+          (orgB != this.LinkAxisOrgB) ||
+          (endA != this.LinkAxisEndA) ||
+          (endB != this.LinkAxisEndB))
+        {
+          this._isLinked = linkaxis;
+          this._linkAxisOrgA = orgA;
+          this._linkAxisOrgB = orgB;
+          this._linkAxisEndA = endA;
+          this._linkAxisEndB = endB;
+
+          if (IsLinked)
+            OnAxisInstanceChanged(); 
+        }
+      }
+
+      public double LinkAxisOrgA
+      {
+        get { return _linkAxisOrgA; }
+        set 
+        {
+          _linkAxisOrgA = value;
+          if (_isLinked)
+            OnAxisInstanceChanged();
+        }
+      }
+
+      
+
+      public double LinkAxisOrgB
+      {
+        get { return _linkAxisOrgB; }
+        set 
+        { 
+          _linkAxisOrgB = value;
+          if (_isLinked)
+            OnAxisInstanceChanged();
+        }
+      }
+
+      
+
+      public double LinkAxisEndA
+      {
+        get { return _linkAxisEndA; }
+        set 
+        {
+          _linkAxisEndA = value;
+          if (_isLinked)
+            OnAxisInstanceChanged();
+        }
+      }
+
+     
+
+      public double LinkAxisEndB
+      {
+        get { return _linkAxisEndB; }
+        set 
+        { 
+          _linkAxisEndB = value;
+          if (_isLinked)
+            OnAxisInstanceChanged();
+        }
+      }
+
+      public Axis Axis
+      {
+        get 
+        {
+          return _axis; 
+        }
+        set
+        {
+          Axis oldvalue = _axis;
+          _axis = value;
+          if (!object.ReferenceEquals(value, oldvalue))
+          {
+            if (null != oldvalue)
+            {
+              oldvalue.Changed -= new EventHandler(this.EhAxisPropertiesChanged);
+              oldvalue.IsLinked = false;
+            }
+            if (null != value)
+            {
+              value.Changed += new EventHandler(this.EhAxisPropertiesChanged);
+              value.IsLinked = this._isLinked;
+            }
+
+            OnAxisInstanceChanged();
+          }
+        }
+      }
+
+      void EhAxisPropertiesChanged(object sender, EventArgs e)
+      {
+        OnAxisPropertiesChanged();
+      }
+
+      /// <summary>
+      /// Measures if the linked axis has changed.
+      /// </summary>
+      /// <param name="linkedAxis">The axis that is the master axis (our axis is linked to this axis).</param>
+      public void EhLinkedLayerAxesChanged(Axis linkedAxis)
+      {
+        if (_isLinked)
+        {
+          // we must disable our own interrogator because otherwise we can not change the axis
+          _axis.IsLinked = false;
+          _axis.ProcessDataBounds(
+            LinkAxisOrgA + LinkAxisOrgB * linkedAxis.OrgAsVariant, true,
+            LinkAxisEndA + LinkAxisEndB * linkedAxis.EndAsVariant, true);
+          _axis.IsLinked = true; // restore the linked state of the axis
+
+          this.OnAxisPropertiesChanged(); // indicate that the axes boundaries have changed
+
+        }
+      }
+
+
+      protected virtual void OnAxisInstanceChanged()
+      {
+        if (AxisInstanceChanged != null)
+          AxisInstanceChanged(this, EventArgs.Empty);
+      }
+
+      protected virtual void OnAxisPropertiesChanged()
+      {
+        if (AxisPropertiesChanged != null)
+          AxisPropertiesChanged(this, EventArgs.Empty);
+      }
+
     }
+
+    public class XYLayerAxisPropertiesCollection : Main.IChangedEventSource
+    {
+      XYLayerAxisProperties[] _props = new XYLayerAxisProperties[2];
+
+      /// <summary>
+      /// Fired if one of the axis has changed (or its boundaries).
+      /// </summary>
+      public event EventHandler AxesChanged;
+
+      /// <summary>
+      /// Fired if something in this class or in its child has changed.
+      /// </summary>
+      public event EventHandler Changed;
+
+      public XYLayerAxisPropertiesCollection()
+      {
+        _props = new XYLayerAxisProperties[2];
+        _props[0] = new XYLayerAxisProperties();
+        _props[0].AxisPropertiesChanged += new EventHandler(this.EhAxisPropertiesChanged);
+        _props[1] = new XYLayerAxisProperties();
+        _props[1].AxisPropertiesChanged += new EventHandler(this.EhAxisPropertiesChanged);
+      }
+
+      public XYLayerAxisPropertiesCollection(XYLayerAxisPropertiesCollection from)
+      {
+        CopyFrom(from);
+      }
+
+      public void CopyFrom(XYLayerAxisPropertiesCollection from)
+      {
+        if (_props != null)
+        {
+          for (int i = 0; i < _props.Length; ++i)
+          {
+            _props[i].AxisPropertiesChanged -= new EventHandler(EhAxisPropertiesChanged);
+            _props[i] = null;
+          }
+        }
+
+        _props = new XYLayerAxisProperties[from._props.Length];
+        for (int i = 0; i < from._props.Length; i++)
+        {
+          _props[i] = this._props[i].Clone();
+          _props[i].AxisPropertiesChanged += new EventHandler(EhAxisPropertiesChanged);
+        }
+      }
+
+      public XYLayerAxisPropertiesCollection Clone()
+      {
+        return new XYLayerAxisPropertiesCollection(this);
+      }
+
+      public XYLayerAxisProperties X
+      {
+        get
+        {
+          return _props[0];
+        }
+      }
+
+      public XYLayerAxisProperties Y
+      {
+        get
+        {
+          return _props[1];
+        }
+      }
+
+
+      private void EhAxisPropertiesChanged(object sender, EventArgs e)
+      {
+        if (AxesChanged != null)
+          AxesChanged(this, EventArgs.Empty);
+      }
+
+      protected virtual void OnChanged()
+      {
+        if (null != Changed)
+          Changed(this, EventArgs.Empty);
+      }
+     
+    }
+
+    #endregion
+
 
     /// <summary>
     /// Collection of the axis styles for the left, bottom, right, and top axis.
@@ -776,6 +1073,13 @@ namespace Altaxo.Graph
       get { return _axisStyles; }
     }
 
+    public XYLayerAxisPropertiesCollection AxisProperties
+    {
+      get
+      {
+        return _axisProperties;
+      }
+    }
  
 
     #endregion
@@ -787,9 +1091,6 @@ namespace Altaxo.Graph
   
     /// <summary>Fired when the position of the layer changed.</summary>
     public event System.EventHandler PositionChanged;
-  
-    /// <summary>Fired when one of the axis changed its origin or its end.</summary>
-    public event System.EventHandler AxesChanged;
 
     #endregion
 
@@ -832,18 +1133,18 @@ namespace Altaxo.Graph
 
         // axis related
 
-        info.AddValue("XAxis",s._xAxis);
-        info.AddValue("YAxis",s._yAxis);
-        info.AddValue("LinkXAxis",s._linkXAxis);
-        info.AddValue("LinkYAxis",s._linkYAxis);
-        info.AddValue("LinkXAxisOrgA",s._linkXAxisOrgA);
-        info.AddValue("LinkXAxisOrgB",s._linkXAxisOrgB);
-        info.AddValue("LinkXAxisEndA",s._linkXAxisEndA);
-        info.AddValue("LinkXAxisEndB",s._linkXAxisEndB);
-        info.AddValue("LinkYAxisOrgA",s._linkYAxisOrgA);
-        info.AddValue("LinkYAxisOrgB",s._linkYAxisOrgB);
-        info.AddValue("LinkYAxisEndA",s._linkYAxisEndA);
-        info.AddValue("LinkYAxisEndB",s._linkYAxisEndB);
+        info.AddValue("XAxis",s._axisProperties.X.Axis);
+        info.AddValue("YAxis",s._axisProperties.Y.Axis);
+        info.AddValue("LinkXAxis", s._axisProperties.X.IsLinked);
+        info.AddValue("LinkYAxis", s._axisProperties.Y.IsLinked);
+        info.AddValue("LinkXAxisOrgA", s._axisProperties.X.LinkAxisOrgA);
+        info.AddValue("LinkXAxisOrgB", s._axisProperties.X.LinkAxisOrgB);
+        info.AddValue("LinkXAxisEndA", s._axisProperties.X.LinkAxisEndA);
+        info.AddValue("LinkXAxisEndB", s._axisProperties.X.LinkAxisEndB);
+        info.AddValue("LinkYAxisOrgA", s._axisProperties.Y.LinkAxisOrgA);
+        info.AddValue("LinkYAxisOrgB", s._axisProperties.Y.LinkAxisOrgB);
+        info.AddValue("LinkYAxisEndA", s._axisProperties.Y.LinkAxisEndA);
+        info.AddValue("LinkYAxisEndB", s._axisProperties.Y.LinkAxisEndB);
 
       
         // Styles
@@ -917,18 +1218,18 @@ namespace Altaxo.Graph
 
         // axis related
 
-        s._xAxis = (Axis)info.GetValue("XAxis",typeof(Axis));
-        s._yAxis = (Axis)info.GetValue("YAxis",typeof(Axis));
-        s._linkXAxis = info.GetBoolean("LinkXAxis");
-        s._linkYAxis = info.GetBoolean("LinkYAxis");
-        s._linkXAxisOrgA = info.GetDouble("LinkXAxisOrgA");
-        s._linkXAxisOrgB = info.GetDouble("LinkXAxisOrgB");
-        s._linkXAxisEndA = info.GetDouble("LinkXAxisEndA");
-        s._linkXAxisEndB = info.GetDouble("LinkXAxisEndB");
-        s._linkYAxisOrgA = info.GetDouble("LinkYAxisOrgA");
-        s._linkYAxisOrgB = info.GetDouble("LinkYAxisOrgB");
-        s._linkYAxisEndA = info.GetDouble("LinkYAxisEndA");
-        s._linkYAxisEndB = info.GetDouble("LinkYAxisEndB");
+        s._axisProperties.X.Axis = (Axis)info.GetValue("XAxis",typeof(Axis));
+        s._axisProperties.Y.Axis = (Axis)info.GetValue("YAxis",typeof(Axis));
+        s.AxisProperties.X.IsLinked = info.GetBoolean("LinkXAxis");
+        s.AxisProperties.Y.IsLinked = info.GetBoolean("LinkYAxis");
+        s.AxisProperties.X.LinkAxisOrgA = info.GetDouble("LinkXAxisOrgA");
+        s.AxisProperties.X.LinkAxisOrgB = info.GetDouble("LinkXAxisOrgB");
+        s.AxisProperties.X.LinkAxisEndA = info.GetDouble("LinkXAxisEndA");
+        s.AxisProperties.X.LinkAxisEndB = info.GetDouble("LinkXAxisEndB");
+        s.AxisProperties.Y.LinkAxisOrgA = info.GetDouble("LinkYAxisOrgA");
+        s.AxisProperties.Y.LinkAxisOrgB = info.GetDouble("LinkYAxisOrgB");
+        s.AxisProperties.Y.LinkAxisEndA = info.GetDouble("LinkYAxisEndA");
+        s.AxisProperties.Y.LinkAxisEndB = info.GetDouble("LinkYAxisEndB");
 
 
         // Styles
@@ -997,18 +1298,18 @@ namespace Altaxo.Graph
 
         // axis related
 
-        info.AddValue("XAxis",s._xAxis);
-        info.AddValue("YAxis",s._yAxis);
-        info.AddValue("LinkXAxis",s._linkXAxis);
-        info.AddValue("LinkYAxis",s._linkYAxis);
-        info.AddValue("LinkXAxisOrgA",s._linkXAxisOrgA);
-        info.AddValue("LinkXAxisOrgB",s._linkXAxisOrgB);
-        info.AddValue("LinkXAxisEndA",s._linkXAxisEndA);
-        info.AddValue("LinkXAxisEndB",s._linkXAxisEndB);
-        info.AddValue("LinkYAxisOrgA",s._linkYAxisOrgA);
-        info.AddValue("LinkYAxisOrgB",s._linkYAxisOrgB);
-        info.AddValue("LinkYAxisEndA",s._linkYAxisEndA);
-        info.AddValue("LinkYAxisEndB",s._linkYAxisEndB);
+        info.AddValue("XAxis",s._axisProperties.X.Axis);
+        info.AddValue("YAxis",s._axisProperties.Y.Axis);
+        info.AddValue("LinkXAxis",s._axisProperties.X.IsLinked);
+        info.AddValue("LinkYAxis", s._axisProperties.Y.IsLinked);
+        info.AddValue("LinkXAxisOrgA", s._axisProperties.X.LinkAxisOrgA);
+        info.AddValue("LinkXAxisOrgB", s._axisProperties.X.LinkAxisOrgB);
+        info.AddValue("LinkXAxisEndA", s._axisProperties.X.LinkAxisEndA);
+        info.AddValue("LinkXAxisEndB", s._axisProperties.X.LinkAxisEndB);
+        info.AddValue("LinkYAxisOrgA", s._axisProperties.Y.LinkAxisOrgA);
+        info.AddValue("LinkYAxisOrgB", s._axisProperties.Y.LinkAxisOrgB);
+        info.AddValue("LinkYAxisEndA", s._axisProperties.Y.LinkAxisEndA);
+        info.AddValue("LinkYAxisEndB", s._axisProperties.Y.LinkAxisEndB);
 
       
         // Styles
@@ -1091,18 +1392,18 @@ namespace Altaxo.Graph
 
         // axis related
 
-        s._xAxis = (Axis)info.GetValue("XAxis",typeof(Axis));
-        s._yAxis = (Axis)info.GetValue("YAxis",typeof(Axis));
-        s._linkXAxis = info.GetBoolean("LinkXAxis");
-        s._linkYAxis = info.GetBoolean("LinkYAxis");
-        s._linkXAxisOrgA = info.GetDouble("LinkXAxisOrgA");
-        s._linkXAxisOrgB = info.GetDouble("LinkXAxisOrgB");
-        s._linkXAxisEndA = info.GetDouble("LinkXAxisEndA");
-        s._linkXAxisEndB = info.GetDouble("LinkXAxisEndB");
-        s._linkYAxisOrgA = info.GetDouble("LinkYAxisOrgA");
-        s._linkYAxisOrgB = info.GetDouble("LinkYAxisOrgB");
-        s._linkYAxisEndA = info.GetDouble("LinkYAxisEndA");
-        s._linkYAxisEndB = info.GetDouble("LinkYAxisEndB");
+        s._axisProperties.X.Axis = (Axis)info.GetValue("XAxis",typeof(Axis));
+        s._axisProperties.Y.Axis = (Axis)info.GetValue("YAxis",typeof(Axis));
+        s._axisProperties.X.IsLinked = info.GetBoolean("LinkXAxis");
+        s._axisProperties.Y.IsLinked = info.GetBoolean("LinkYAxis");
+        s._axisProperties.X.LinkAxisOrgA = info.GetDouble("LinkXAxisOrgA");
+        s._axisProperties.X.LinkAxisOrgB = info.GetDouble("LinkXAxisOrgB");
+        s._axisProperties.X.LinkAxisEndA = info.GetDouble("LinkXAxisEndA");
+        s._axisProperties.X.LinkAxisEndB = info.GetDouble("LinkXAxisEndB");
+        s._axisProperties.Y.LinkAxisOrgA = info.GetDouble("LinkYAxisOrgA");
+        s._axisProperties.Y.LinkAxisOrgB = info.GetDouble("LinkYAxisOrgB");
+        s._axisProperties.Y.LinkAxisEndA = info.GetDouble("LinkYAxisEndA");
+        s._axisProperties.Y.LinkAxisEndB = info.GetDouble("LinkYAxisEndB");
 
 
         // Styles
@@ -1243,19 +1544,7 @@ namespace Altaxo.Graph
 
       // axis related
 
-      this._xAxis = null==from._xAxis ? null : (Axis)from._xAxis.Clone() ;
-      this._yAxis = null==from._yAxis ? null : (Axis)from._yAxis.Clone() ;
-      this._linkXAxis = from._linkXAxis;
-      this._linkYAxis = from._linkYAxis;
-      this._linkXAxisOrgA = from._linkXAxisOrgA;
-      this._linkXAxisOrgB =  from._linkXAxisOrgB;
-      this._linkXAxisEndA = from._linkXAxisEndA;
-      this._linkXAxisEndB =from._linkXAxisEndB;
-      this._linkYAxisOrgA = from._linkYAxisOrgA;
-      this._linkYAxisOrgB = from._linkYAxisOrgB;
-      this._linkYAxisEndA = from._linkYAxisEndA ;
-      this._linkYAxisEndB = from._linkYAxisEndB;
-
+      this._axisProperties = (XYLayerAxisPropertiesCollection)from._axisProperties.Clone();
 
       // Styles
 
@@ -1340,11 +1629,6 @@ namespace Altaxo.Graph
       CalculateMatrix();
 
       _plotItems = new Altaxo.Graph.PlotItemCollection(this);
-
-      // create axes and add event handlers to them
-      _xAxis = new LinearAxis(); // the X-Axis
-      _yAxis = new LinearAxis(); // the Y-Axis
-
     
     
       LeftAxisTitleString = "Y axis";
@@ -1363,41 +1647,22 @@ namespace Altaxo.Graph
 
     void CreateEventLinks()
     {
-      // restore the event chain
-      if(null!=_xAxis)
-      {
-        _xAxis.Changed += new EventHandler(this.OnXAxisChangedEventHandler);
-      }
-      if(null!=_yAxis)
-      {
-        _yAxis.Changed += new EventHandler(this.OnYAxisChangedEventHandler);
-      }
-
+      
       if(null!=_axisStyles) _axisStyles.Changed += new EventHandler(this.OnChildChangedEventHandler);
 
-      //if(null!=_leftAxisStyle) _leftAxisStyle.Changed += new EventHandler(this.OnChildChangedEventHandler);
-      //if(null!=_bottomAxisStyle) _bottomAxisStyle.Changed += new EventHandler(this.OnChildChangedEventHandler);
-      //if(null!=_rightAxisStyle) _rightAxisStyle.Changed += new EventHandler(this.OnChildChangedEventHandler);
-      //if(null!=_topAxisStyle) _topAxisStyle.Changed += new EventHandler(this.OnChildChangedEventHandler);
-
-     // if(null!=_leftMajorLabelStyle) _leftMajorLabelStyle.Changed += new EventHandler(this.OnChildChangedEventHandler);
-     // if(null!=_bottomMajorLabelStyle) _bottomMajorLabelStyle.Changed += new EventHandler(this.OnChildChangedEventHandler);
-     // if(null!=_rightMajorLabelStyle) _rightMajorLabelStyle.Changed += new EventHandler(this.OnChildChangedEventHandler);
-     // if(null!=_topMajorLabelStyle) _topMajorLabelStyle.Changed += new EventHandler(this.OnChildChangedEventHandler);
-
-    
-      // if(null!=_leftAxisTitle) _leftAxisTitle.Changed += new EventHandler(this.OnChildChangedEventHandler);
-      //if(null!=_bottomAxisTitle) _bottomAxisTitle.Changed += new EventHandler(this.OnChildChangedEventHandler);
-      //if(null!=_rightAxisTitle) _rightAxisTitle.Changed += new EventHandler(this.OnChildChangedEventHandler);
-      //if(null!=_topAxisTitle) _topAxisTitle.Changed += new EventHandler(this.OnChildChangedEventHandler);
+      if (null != _axisProperties)
+      {
+        _axisProperties.Changed += new EventHandler(OnChildChangedEventHandler);
+        _axisProperties.X.AxisInstanceChanged += new EventHandler(EhXAxisInstanceChanged);
+        _axisProperties.Y.AxisInstanceChanged += new EventHandler(EhYAxisInstanceChanged);
+      }
 
       if(null!=_legend) _legend.Changed += new EventHandler(this.OnChildChangedEventHandler);
 
-      if(null!=_linkedLayer) _linkedLayer.AxesChanged += new EventHandler(this.OnLinkedLayerAxesChanged);
+      if(null!=_linkedLayer) _linkedLayer.AxisProperties.AxesChanged += new EventHandler(this.EhLinkedLayerAxesChanged);
     
       if(null!=_graphObjects) _graphObjects.Changed += new EventHandler(this.OnChildChangedEventHandler);
 
-      //if(null!=m_PlotGroups) m_PlotGroups.Changed += new EventHandler(this.OnChildChangedEventHandler);
 
       if(null!=_plotItems)
       {
@@ -1430,16 +1695,7 @@ namespace Altaxo.Graph
     {
       if (_axisStyles.Remove(go))
         return;
-
-      // test our own objects for removal (only that that _are_ removable)
-      //if(object.ReferenceEquals(go,this._leftAxisTitle))
-      //  _leftAxisTitle=null;
-      //else if(object.ReferenceEquals(go,this._topAxisTitle))
-      //  _topAxisTitle=null;
-      //else if(object.ReferenceEquals(go,this._rightAxisTitle))
-      //  _rightAxisTitle=null;
-      //else if(object.ReferenceEquals(go,this._bottomAxisTitle))
-      //  _bottomAxisTitle=null;
+      
       else if(object.ReferenceEquals(go,this._legend))
         _legend=null;
       else if(_graphObjects.Contains(go))
@@ -1470,17 +1726,17 @@ namespace Altaxo.Graph
           // close the event handlers to the old layer
           if(null!=oldValue)
           {
-            oldValue.SizeChanged -= new System.EventHandler(OnLinkedLayerSizeChanged);
-            oldValue.PositionChanged -= new System.EventHandler(OnLinkedLayerPositionChanged);
-            oldValue.AxesChanged -= new System.EventHandler(OnLinkedLayerAxesChanged);
+            oldValue.SizeChanged -= new System.EventHandler(EhLinkedLayerSizeChanged);
+            oldValue.PositionChanged -= new System.EventHandler(EhLinkedLayerPositionChanged);
+            oldValue.AxisProperties.AxesChanged -= new System.EventHandler(EhLinkedLayerAxesChanged);
           }
 
           // link the events to the new layer
           if(null!=_linkedLayer)
           {
-            _linkedLayer.SizeChanged     += new System.EventHandler(OnLinkedLayerSizeChanged);
-            _linkedLayer.PositionChanged += new System.EventHandler(OnLinkedLayerPositionChanged);
-            _linkedLayer.AxesChanged     += new System.EventHandler(OnLinkedLayerAxesChanged);
+            _linkedLayer.SizeChanged     += new System.EventHandler(EhLinkedLayerSizeChanged);
+            _linkedLayer.PositionChanged += new System.EventHandler(EhLinkedLayerPositionChanged);
+            _linkedLayer.AxisProperties.AxesChanged     += new System.EventHandler(EhLinkedLayerAxesChanged);
           }
 
         }
@@ -1533,22 +1789,11 @@ namespace Altaxo.Graph
 
     public Altaxo.Graph.PlotItemCollection PlotItems
     {
-      get { return _plotItems; }
+      get 
+      {
+        return _plotItems; 
+      }
     }
-
-    /*
-    public PlotGroup.Collection PlotGroups
-    {
-      get { return m_PlotGroups; }
-    }
-    */
-
-    public void AddPlotAssociation(XYColumnPlotData[] pal)
-    {
-      foreach(XYColumnPlotData pa in pal)
-        this._plotItems.Add(new XYColumnPlotItem(pa,new XYPlotStyleCollection()));
-    }
-  
 
     /// <summary>
     /// Creates a new legend, removing the old one.
@@ -1593,19 +1838,7 @@ namespace Altaxo.Graph
       OnInvalidate();
     }
 
-    /// <summary>
-    /// Retrieves the description of the enumeration value <b>value</b>.
-    /// </summary>
-    /// <param name="value">The enumeration value.</param>
-    /// <returns>The description of this value. If no description is available, the ToString() method is used
-    /// to return the name of the value.</returns>
-    public static string GetDescription(Enum value)
-    {
-      FieldInfo fi= value.GetType().GetField(value.ToString()); 
-      DescriptionAttribute[] attributes = 
-        (DescriptionAttribute[])fi.GetCustomAttributes(typeof(DescriptionAttribute), false);
-      return (attributes.Length>0)?attributes[0].Description:value.ToString();
-    }
+    
 
     #endregion // XYPlotLayer Properties and Methods
 
@@ -2194,7 +2427,7 @@ namespace Altaxo.Graph
     /// </summary>
     /// <param name="sender">The sender of the event.</param>
     /// <param name="e">The event args.</param>
-    protected void OnLinkedLayerPositionChanged(object sender, System.EventArgs e)
+    protected void EhLinkedLayerPositionChanged(object sender, System.EventArgs e)
     {
       CalculateCachedPosition();
     }
@@ -2204,7 +2437,7 @@ namespace Altaxo.Graph
     /// </summary>
     /// <param name="sender">The sender of the event.</param>
     /// <param name="e">The event args.</param>
-    protected void OnLinkedLayerSizeChanged(object sender, System.EventArgs e)
+    protected void EhLinkedLayerSizeChanged(object sender, System.EventArgs e)
     {
       CalculateCachedSize();
       CalculateCachedPosition();
@@ -2219,34 +2452,53 @@ namespace Altaxo.Graph
     /// <value>The x axis of the layer.</value>
     public Axis XAxis
     {
-      get { return _xAxis; }
+      get 
+      {
+        return _axisProperties.X.Axis; 
+      }
       set
       {
-        if(!object.ReferenceEquals(_xAxis,value))
-        {
-          if(null!=_xAxis)
-          {
-            _xAxis.Changed -= new System.EventHandler(this.OnXAxisChangedEventHandler);
-            _xAxis.IsLinked = false;
-          }
-        
-          _xAxis = value;
-
-          if(null!=_xAxis)
-          {
-            _xAxis.Changed += new System.EventHandler(this.OnXAxisChangedEventHandler);
-            _xAxis.IsLinked = this.IsXAxisLinked;
-          }
-
-
-          // now we have to inform all the PlotItems that a new axis was loaded
-          if(this.IsXAxisLinked)
-            this.OnLinkedLayerAxesChanged(LinkedLayer,EventArgs.Empty);
-          else
-            RescaleXAxis();
-        }
+        _axisProperties.X.Axis = value;
       }
     }
+
+    /// <summary>Indicates if x axis is linked to the linked layer x axis.</summary>
+    /// <value>True if x axis is linked to the linked layer x axis.</value>
+    public bool IsXAxisLinked
+    {
+      get
+      {
+        return this._axisProperties.X.IsLinked; 
+      }
+      set
+      {
+        _axisProperties.X.IsLinked = value;
+      }
+    }
+
+    
+    bool EhXAxisInterrogateBoundaryChangedEvent()
+    {
+      // do nothing here, for the future we can decide to change the linked axis boundaries
+      return this.IsXAxisLinked;
+    }
+
+    /// <summary>
+    /// Called when a new x-axis was set (not when the x-axis has changed its boundaries).
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    public void EhXAxisInstanceChanged(object sender, EventArgs e)
+    {
+
+      // now we have to inform all the PlotItems that a new axis was loaded
+      if (this.IsXAxisLinked)
+        this._axisProperties.X.EhLinkedLayerAxesChanged(LinkedLayer.AxisProperties.X.Axis);
+      else
+        RescaleXAxis();
+    }
+
+   
 
     public void RescaleXAxis()
     {
@@ -2255,22 +2507,22 @@ namespace Altaxo.Graph
       //but (alas!) not all boundaries are now of the new type!
       _plotAssociationXBoundariesChanged_EventSuspendCount++; 
         
-      _xAxis.DataBoundsObject.BeginUpdate(); // Suppress events from the y-axis now
-      _xAxis.DataBoundsObject.Reset();
+      _axisProperties.X.Axis.DataBoundsObject.BeginUpdate(); // Suppress events from the y-axis now
+      _axisProperties.X.Axis.DataBoundsObject.Reset();
       foreach(PlotItem pa in this.PlotItems)
       {
         if(pa is IXBoundsHolder)
         {
           // first ensure the right data bound object is set on the XYColumnPlotData
-          ((IXBoundsHolder)pa).SetXBoundsFromTemplate(_xAxis.DataBoundsObject); // ensure that data bound object is of the right type
+          ((IXBoundsHolder)pa).SetXBoundsFromTemplate(_axisProperties.X.Axis.DataBoundsObject); // ensure that data bound object is of the right type
           // now merge the bounds with x and yAxis
-          ((IXBoundsHolder)pa).MergeXBoundsInto(_xAxis.DataBoundsObject); // merge all x-boundaries in the x-axis boundary object
+          ((IXBoundsHolder)pa).MergeXBoundsInto(_axisProperties.X.Axis.DataBoundsObject); // merge all x-boundaries in the x-axis boundary object
         
         }
       }
       _plotAssociationXBoundariesChanged_EventSuspendCount = Math.Max(0,_plotAssociationXBoundariesChanged_EventSuspendCount-1);
-      _xAxis.DataBoundsObject.EndUpdate();
-      _xAxis.ProcessDataBounds();
+      _axisProperties.X.Axis.DataBoundsObject.EndUpdate();
+      _axisProperties.X.Axis.ProcessDataBounds();
     }
    
   
@@ -2278,35 +2530,45 @@ namespace Altaxo.Graph
     /// <value>The y axis of the layer.</value>
     public Axis YAxis
     {
-      get { return _yAxis; }
+      get 
+      {
+        return _axisProperties.Y.Axis;
+      }
       set
       {
-        if(!object.ReferenceEquals(_yAxis,value))
-        {
-          if(null!=_yAxis)
-          {
-            _yAxis.Changed -= new System.EventHandler(this.OnYAxisChangedEventHandler);
-            _yAxis.IsLinked = false;
-          }
-        
-          _yAxis = value;
-
-          if(null!=_yAxis)
-          {
-            _yAxis.Changed += new System.EventHandler(this.OnYAxisChangedEventHandler);
-            _yAxis.IsLinked = this.IsYAxisLinked;
-
-          }
-
-          // now we have to inform all the PlotAssociations that a new axis was loaded
-          if(this.IsYAxisLinked)
-            this.OnLinkedLayerAxesChanged(LinkedLayer,EventArgs.Empty);
-          else
-             RescaleYAxis();
-        }
+        _axisProperties.Y.Axis = value;
       }
     }
 
+    /// <summary>Indicates if y axis is linked to the linked layer y axis.</summary>
+    /// <value>True if y axis is linked to the linked layer y axis.</value>
+    public bool IsYAxisLinked
+    {
+      get 
+      { 
+        return this._axisProperties.Y.IsLinked; 
+      }
+      set
+      {
+        _axisProperties.Y.IsLinked = value;
+        
+      }
+    }
+
+    /// <summary>
+    /// Called when a new x-axis was set (not when the x-axis has changed its boundaries).
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    public void EhYAxisInstanceChanged(object sender, EventArgs e)
+    {
+
+      // now we have to inform all the PlotItems that a new axis was loaded
+      if (this.IsYAxisLinked)
+        this._axisProperties.Y.EhLinkedLayerAxesChanged(LinkedLayer.AxisProperties.X.Axis);
+      else
+        RescaleYAxis();
+    }
 
     public void RescaleYAxis()
     {
@@ -2315,145 +2577,24 @@ namespace Altaxo.Graph
       //but (alas!) not all boundaries are now of the new type!
       _plotAssociationYBoundariesChanged_EventSuspendCount++; 
 
-      _yAxis.DataBoundsObject.BeginUpdate();
-      _yAxis.DataBoundsObject.Reset();
+      _axisProperties.Y.Axis.DataBoundsObject.BeginUpdate();
+      _axisProperties.Y.Axis.DataBoundsObject.Reset();
       foreach(PlotItem pa in this.PlotItems)
       {
         if(pa is IYBoundsHolder)
         {
           // first ensure the right data bound object is set on the XYColumnPlotData
-          ((IYBoundsHolder)pa).SetYBoundsFromTemplate(_yAxis.DataBoundsObject); // ensure that data bound object is of the right type
+          ((IYBoundsHolder)pa).SetYBoundsFromTemplate(_axisProperties.Y.Axis.DataBoundsObject); // ensure that data bound object is of the right type
           // now merge the bounds with x and yAxis
-          ((IYBoundsHolder)pa).MergeYBoundsInto(_yAxis.DataBoundsObject); // merge all x-boundaries in the x-axis boundary object
+          ((IYBoundsHolder)pa).MergeYBoundsInto(_axisProperties.Y.Axis.DataBoundsObject); // merge all x-boundaries in the x-axis boundary object
         
         }
       }
       _plotAssociationYBoundariesChanged_EventSuspendCount = Math.Max(0,_plotAssociationYBoundariesChanged_EventSuspendCount-1);
-      _yAxis.DataBoundsObject.EndUpdate();
-      _yAxis.ProcessDataBounds();
+      _axisProperties.Y.Axis.DataBoundsObject.EndUpdate();
+      _axisProperties.Y.Axis.ProcessDataBounds();
     }
     
-
-    /// <summary>Indicates if x axis is linked to the linked layer x axis.</summary>
-    /// <value>True if x axis is linked to the linked layer x axis.</value>
-    public bool IsXAxisLinked
-    {
-      get { return this._linkXAxis; }
-      set
-      {
-        bool oldValue = this._linkXAxis;
-        _linkXAxis = value;
-        _xAxis.IsLinked = value;
-        if(value!=oldValue && value==true)
-        {
-          if(null!=LinkedLayer)
-            OnLinkedLayerAxesChanged(LinkedLayer, new System.EventArgs());
-        }
-      }
-    }
-
-  
-    /// <summary>Indicates if y axis is linked to the linked layer y axis.</summary>
-    /// <value>True if y axis is linked to the linked layer y axis.</value>
-    public bool IsYAxisLinked
-    {
-      get { return this._linkYAxis; }
-      set
-      {
-        bool oldValue = this._linkYAxis;
-        _linkYAxis = value;
-        _yAxis.IsLinked = value;
-        if(value!=oldValue && value==true)
-        {
-          if(null!=LinkedLayer)
-            OnLinkedLayerAxesChanged(LinkedLayer, new System.EventArgs());
-        }
-      }
-    }
-
-
-    /// <summary>The type of x axis link.</summary>
-    /// <value>Can be either None, Straight or Custom link.</value>
-    public AxisLinkType XAxisLinkType
-    {
-      get 
-      {
-        if(!this._linkXAxis)
-          return AxisLinkType.None;
-        else if(this._linkXAxisOrgA==0 && this._linkXAxisOrgB==1 && this._linkXAxisEndA==0 && this._linkXAxisEndB==1)
-          return AxisLinkType.Straight;
-        else return AxisLinkType.Custom;
-      }
-      set 
-      {
-        if(value==AxisLinkType.None)
-        {
-          this._linkXAxis = false;
-          _xAxis.IsLinked = false;
-        }
-        else
-        {
-          this._linkXAxis = true;
-          _xAxis.IsLinked = true;
-          if(value==AxisLinkType.Straight)
-          {
-            this._linkXAxisOrgA=0;
-            this._linkXAxisOrgB=1;
-            this._linkXAxisEndA=0;
-            this._linkXAxisEndB=1;
-          }
-          if(null!=LinkedLayer)
-          {
-            OnLinkedLayerAxesChanged(LinkedLayer, new System.EventArgs());
-          }
-        }
-      }
-    }
-
-    bool EhXAxisInterrogateBoundaryChangedEvent()
-    {
-      // do nothing here, for the future we can decide to change the linked axis boundaries
-      return this.IsXAxisLinked;
-    }
-
-    
-    /// <summary>The type of y axis link.</summary>
-    /// <value>Can be either None, Straight or Custom link.</value>
-    public AxisLinkType YAxisLinkType
-    {
-      get 
-      {
-        if(!this._linkYAxis)
-          return AxisLinkType.None;
-        else if(this._linkYAxisOrgA==0 && this._linkYAxisOrgB==1 && this._linkYAxisEndA==0 && this._linkYAxisEndB==1)
-          return AxisLinkType.Straight;
-        else return AxisLinkType.Custom;
-      }
-      set 
-      {
-        if(value==AxisLinkType.None)
-        {
-          this._linkYAxis = false;
-          _yAxis.IsLinked = false;
-        }
-        else
-        {
-          this._linkYAxis = true;
-          _yAxis.IsLinked = true;
-          if(value==AxisLinkType.Straight)
-          {
-            this._linkYAxisOrgA=0;
-            this._linkYAxisOrgB=1;
-            this._linkYAxisEndA=0;
-            this._linkYAxisEndB=1;
-          }
-          if(null!=LinkedLayer)
-          {
-            OnLinkedLayerAxesChanged(LinkedLayer, new System.EventArgs());
-          }
-        }
-      }
-    }
 
     bool EhYAxisInterrogateBoundaryChangedEvent()
     {
@@ -2463,257 +2604,23 @@ namespace Altaxo.Graph
 
 
     /// <summary>
-    /// Set all parameters of the x axis link by once.
-    /// </summary>
-    /// <param name="linktype">The type of the axis link, i.e. None, Straight or Custom.</param>
-    /// <param name="orgA">The value a of x-axis link for link of axis origin: org' = a + b*org.</param>
-    /// <param name="orgB">The value b of x-axis link for link of axis origin: org' = a + b*org.</param>
-    /// <param name="endA">The value a of x-axis link for link of axis end: end' = a + b*end.</param>
-    /// <param name="endB">The value b of x-axis link for link of axis end: end' = a + b*end.</param>
-    public void SetXAxisLinkParameter(AxisLinkType linktype, double orgA, double orgB, double endA, double endB)
-    {
-      if(linktype==AxisLinkType.Straight)
-      {
-        orgA=0;
-        orgB=1;
-        endA=0;
-        endB=1;
-      }
-
-      bool linkaxis = (linktype!=AxisLinkType.None);
-
-      if(
-        (linkaxis != _linkXAxis) ||
-        (orgA!=_linkXAxisOrgA) ||
-        (orgB!=_linkXAxisOrgB) ||
-        (endA!=_linkXAxisEndA) ||
-        (endB!=_linkXAxisEndB) )
-      {
-        _linkXAxis     = linkaxis;
-        _linkXAxisOrgA = orgA;
-        _linkXAxisOrgB = orgB;
-        _linkXAxisEndA = endA;
-        _linkXAxisEndB = endB;
-          
-        if(IsLinked)
-          OnLinkedLayerAxesChanged(LinkedLayer,new EventArgs());
-      }
-    }
-
-    /// <summary>The value a of x-axis link for link of origin: org' = a + b*org.</summary>
-    /// <value>The value a of x-axis link for link of origin: org' = a + b*org.</value>
-    public double LinkXAxisOrgA
-    {
-      get { return _linkXAxisOrgA; }
-      set
-      {
-        if(_linkXAxisOrgA!=value)
-        {
-          _linkXAxisOrgA = value;
-          
-          if(IsLinked)
-            OnLinkedLayerAxesChanged(LinkedLayer,new EventArgs());
-        }
-      }
-    }
-
-    /// <summary>The value b of x-axis link for link of origin: org' = a + b*org.</summary>
-    /// <value>The value b of x-axis link for link of origin: org' = a + b*org.</value>
-    public double LinkXAxisOrgB
-    {
-      get { return _linkXAxisOrgB; }
-      set
-      {
-        if(_linkXAxisOrgB!=value)
-        {
-          _linkXAxisOrgB = value;
-          
-          if(IsLinked)
-            OnLinkedLayerAxesChanged(LinkedLayer,new EventArgs());
-        }
-      }
-    }
-
-    /// <summary>The value a of x-axis link for link of axis end: end' = a + b*end.</summary>
-    /// <value>The value a of x-axis link for link of axis end: end' = a + b*end.</value>
-    public double LinkXAxisEndA
-    {
-      get { return _linkXAxisEndA; }
-      set
-      {
-        if(_linkXAxisEndA!=value)
-        {
-          _linkXAxisEndA = value;
-          
-          if(IsLinked)
-            OnLinkedLayerAxesChanged(LinkedLayer,new EventArgs());
-        }
-      }
-    }
-
-
-    /// <summary>The value b of x-axis link for link of axis end: end' = a + b*end.</summary>
-    /// <value>The value b of x-axis link for link of axis end: end' = a + b*end.</value>
-    public double LinkXAxisEndB
-    {
-      get { return _linkXAxisEndB; }
-      set
-      {
-        if(_linkXAxisEndB!=value)
-        {
-          _linkXAxisEndB = value;
-          
-          if(IsLinked)
-            OnLinkedLayerAxesChanged(LinkedLayer,new EventArgs());
-        }
-      }
-    }
-
-
-    /// <summary>
-    /// Set all parameters of the y axis link by once.
-    /// </summary>
-    /// <param name="linktype">The type of the axis link, i.e. None, Straight or Custom.</param>
-    /// <param name="orgA">The value a of y-axis link for link of axis origin: org' = a + b*org.</param>
-    /// <param name="orgB">The value b of y-axis link for link of axis origin: org' = a + b*org.</param>
-    /// <param name="endA">The value a of y-axis link for link of axis end: end' = a + b*end.</param>
-    /// <param name="endB">The value b of y-axis link for link of axis end: end' = a + b*end.</param>
-    public void SetYAxisLinkParameter(AxisLinkType linktype, double orgA, double orgB, double endA, double endB)
-    {
-      if(linktype==AxisLinkType.Straight)
-      {
-        orgA=0;
-        orgB=1;
-        endA=0;
-        endB=1;
-      }
-
-      bool linkaxis = (linktype!=AxisLinkType.None);
-
-
-      if(
-        (linkaxis != _linkYAxis) ||
-        (orgA!=_linkYAxisOrgA) ||
-        (orgB!=_linkYAxisOrgB) ||
-        (endA!=_linkYAxisEndA) ||
-        (endB!=_linkYAxisEndB) )
-      {
-        _linkYAxis     = linkaxis;
-        _linkYAxisOrgA = orgA;
-        _linkYAxisOrgB = orgB;
-        _linkYAxisEndA = endA;
-        _linkYAxisEndB = endB;
-          
-        if(IsLinked)
-          OnLinkedLayerAxesChanged(LinkedLayer,new EventArgs());
-      }
-    }
-
-
-    /// <summary>The value a of y-axis link for link of origin: org' = a + b*org.</summary>
-    /// <value>The value a of y-axis link for link of origin: org' = a + b*org.</value>
-    public double LinkYAxisOrgA
-    {
-      get { return _linkYAxisOrgA; }
-      set
-      {
-        if(_linkYAxisOrgA!=value)
-        {
-          _linkYAxisOrgA = value;
-          
-          if(IsLinked)
-            OnLinkedLayerAxesChanged(LinkedLayer,new EventArgs());
-        }
-      }
-    }
-
-    /// <summary>The value b of y-axis link for link of origin: org' = a + b*org.</summary>
-    /// <value>The value b of y-axis link for link of origin: org' = a + b*org.</value>
-    public double LinkYAxisOrgB
-    {
-      get { return _linkYAxisOrgB; }
-      set
-      {
-        if(_linkYAxisOrgB!=value)
-        {
-          _linkYAxisOrgB = value;
-          
-          if(IsLinked)
-            OnLinkedLayerAxesChanged(LinkedLayer,new EventArgs());
-        }
-      }
-    }
-
-    /// <summary>The value a of y-axis link for link of axis end: end' = a + b*end.</summary>
-    /// <value>The value a of y-axis link for link of axis end: end' = a + b*end.</value>
-    public double LinkYAxisEndA
-    {
-      get { return _linkYAxisEndA; }
-      set
-      {
-        if(_linkYAxisEndA!=value)
-        {
-          _linkYAxisEndA = value;
-          
-          if(IsLinked)
-            OnLinkedLayerAxesChanged(LinkedLayer,new EventArgs());
-        }
-      }
-    }
-
-
-    /// <summary>The value b of y-axis link for link of axis end: end' = a + b*end.</summary>
-    /// <value>The value b of y-axis link for link of axis end: end' = a + b*end.</value>
-    public double LinkYAxisEndB
-    {
-      get { return _linkYAxisEndB; }
-      set
-      {
-        if(_linkYAxisEndB!=value)
-        {
-          _linkYAxisEndB = value;
-          
-          if(IsLinked)
-            OnLinkedLayerAxesChanged(LinkedLayer,new EventArgs());
-        }
-      }
-    }
-
-
-    /// <summary>
     /// Measures to do when one of the axis of the linked layer changed.
     /// </summary>
     /// <param name="sender">The sender of the event.</param>
     /// <param name="e">The event args.</param>
-    protected void OnLinkedLayerAxesChanged(object sender, System.EventArgs e)
+    protected void EhLinkedLayerAxesChanged(object sender, System.EventArgs e)
     {
       if(null==LinkedLayer)
         return; // this should not happen, since what is sender then?
 
-      if(IsXAxisLinked && null!=LinkedLayer)
+      if (_axisProperties.X.IsLinked && null != LinkedLayer)
       {
-        // we must disable our own interrogator because otherwise we can not change the axis
-        _xAxis.IsLinked = false;
-        _xAxis.ProcessDataBounds( 
-          _linkXAxisOrgA+_linkXAxisOrgB*LinkedLayer.XAxis.OrgAsVariant,true,
-          _linkXAxisEndA+_linkXAxisEndB*LinkedLayer.XAxis.EndAsVariant,true);
-        _xAxis.IsLinked = true;
-
+        _axisProperties.X.EhLinkedLayerAxesChanged(LinkedLayer.AxisProperties.X.Axis);
       }
 
-      if(IsYAxisLinked && null!=LinkedLayer)
+      if (_axisProperties.Y.IsLinked && null != LinkedLayer)
       {
-        _yAxis.IsLinked = false;
-        _yAxis.ProcessDataBounds( 
-          _linkYAxisOrgA+_linkYAxisOrgB*LinkedLayer.YAxis.OrgAsVariant,true,
-          _linkYAxisEndA+_linkYAxisEndB*LinkedLayer.YAxis.EndAsVariant,true);
-        _yAxis.IsLinked = true;
-      }
-
-      // indicate that the axes have changed
-      if(IsXAxisLinked || IsYAxisLinked)
-      {
-        this.OnAxesChanged();
+        _axisProperties.Y.EhLinkedLayerAxesChanged(LinkedLayer.AxisProperties.Y.Axis);
       }
     }
 
@@ -3187,11 +3094,7 @@ namespace Altaxo.Graph
       OnInvalidate();
     }
 
-    protected virtual void OnAxesChanged()
-    {
-      if(null!=AxesChanged)
-        AxesChanged(this,new System.EventArgs());
-    }
+   
 
     protected void OnInvalidate()
     {
@@ -3257,17 +3160,17 @@ namespace Altaxo.Graph
       if(0==_plotAssociationXBoundariesChanged_EventSuspendCount)
       {
         // now we have to inform all the PlotAssociations that a new axis was loaded
-        _xAxis.DataBoundsObject.BeginUpdate();
-        _xAxis.DataBoundsObject.Reset();
+        _axisProperties.X.Axis.DataBoundsObject.BeginUpdate();
+        _axisProperties.X.Axis.DataBoundsObject.Reset();
         foreach(PlotItem pa in this.PlotItems)
         {
           if(pa is IXBoundsHolder)
           {
             // merge the bounds with x and yAxis
-            ((IXBoundsHolder)pa).MergeXBoundsInto(_xAxis.DataBoundsObject); // merge all x-boundaries in the x-axis boundary object
+            ((IXBoundsHolder)pa).MergeXBoundsInto(_axisProperties.X.Axis.DataBoundsObject); // merge all x-boundaries in the x-axis boundary object
           }
         }
-        _xAxis.DataBoundsObject.EndUpdate();
+        _axisProperties.X.Axis.DataBoundsObject.EndUpdate();
       }
     }
 
@@ -3286,41 +3189,24 @@ namespace Altaxo.Graph
       if(0==_plotAssociationYBoundariesChanged_EventSuspendCount)
       {
         // now we have to inform all the PlotAssociations that a new axis was loaded
-        _yAxis.DataBoundsObject.BeginUpdate();
-        _yAxis.DataBoundsObject.Reset();
+        _axisProperties.Y.Axis.DataBoundsObject.BeginUpdate();
+        _axisProperties.Y.Axis.DataBoundsObject.Reset();
         foreach(PlotItem pa in this.PlotItems)
         {
           if(pa is IYBoundsHolder)
           {
             // merge the bounds with x and yAxis
-            ((IYBoundsHolder)pa).MergeYBoundsInto(_yAxis.DataBoundsObject); // merge all x-boundaries in the x-axis boundary object
+            ((IYBoundsHolder)pa).MergeYBoundsInto(_axisProperties.Y.Axis.DataBoundsObject); // merge all x-boundaries in the x-axis boundary object
         
           }
         }
-        _yAxis.DataBoundsObject.EndUpdate();
+        _axisProperties.Y.Axis.DataBoundsObject.EndUpdate();
       }
     }
     
-    protected virtual void OnXAxisChangedEventHandler(object sender, System.EventArgs e)
-    {
-      // inform linked layers
-      if(null!=AxesChanged)
-        AxesChanged(this,new EventArgs());
-      
-      // renew the picture
-      OnInvalidate();
-    }
-
-    protected virtual void OnYAxisChangedEventHandler(object sender, System.EventArgs e)
-    {
-      // inform linked layers 
-      if(null!=AxesChanged)
-        AxesChanged(this,new EventArgs());
-
-      // renew the picture
-      OnInvalidate();
-    }
-
+    
+ 
+    
     protected virtual void OnChildChangedEventHandler(object sender, System.EventArgs e)
     {
       OnInvalidate();
@@ -3483,6 +3369,7 @@ namespace Altaxo.Graph
 
 
     #endregion
+
   
   }
 }
