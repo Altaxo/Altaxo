@@ -389,7 +389,7 @@ namespace Altaxo.Serialization.Xml
     public object GetValue(object parentobject)
     {
       string type = m_Reader.GetAttribute("Type");
-
+     
       if(null!=type)
       {
         if("UndefinedValue"==type)

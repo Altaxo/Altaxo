@@ -1182,7 +1182,9 @@
     <EmbeddedResource Include="Main\GUI\SingleChoiceComboBoxControl.resx">
       <DependentUpon>SingleChoiceComboBoxControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Main\GUI\SingleInstanceChoiceControl.resx" />
+    <EmbeddedResource Include="Main\GUI\SingleInstanceChoiceControl.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Main\GUI\SingleValueControl.resx">
       <DependentUpon>SingleValueControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -1192,7 +1194,9 @@
     <EmbeddedResource Include="Main\GUI\SpinAndComboBoxControl.resx">
       <DependentUpon>SpinAndComboBoxControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Main\GUI\TabbedDialogView.resx" />
+    <EmbeddedResource Include="Main\GUI\TabbedDialogView.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Serialization\Galactic\ExportGalacticSpcFileDialog.resx">
       <DependentUpon>ExportGalacticSpcFileDialog.cs</DependentUpon>
     </EmbeddedResource>
@@ -1243,7 +1247,6 @@
     <Folder Include="Calc\FitFunctions\Relaxation\.svn\tmp\text-base\" />
     <Folder Include="Calc\FitFunctions\Relaxation\.svn\tmp\wcprops\" />
     <Folder Include="Calc\FitFunctions\Relaxation\.svn\wcprops\" />
-    <Folder Include="Calc\Regression\PLS\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

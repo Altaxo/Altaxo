@@ -2665,11 +2665,21 @@ namespace Altaxo.Calc.LinearAlgebra
       private int m;
       private int n;
     
-      /// <summary>
+
+       /// <summary>
       /// Creates a singular value decomposition of matrix a, resulting in matrix a itself.
       /// </summary>
       /// <param name="a">Matrix to decompose, on return: decomposed matrix.</param>
       public SingularValueDecomposition(IMatrix a)
+      {
+        ComputeSingularValueDecomposition(a);
+      }
+
+      /// <summary>
+      /// Creates a singular value decomposition of matrix a, resulting in matrix a itself.
+      /// </summary>
+      /// <param name="a">Matrix to decompose, on return: decomposed matrix.</param>
+      public void ComputeSingularValueDecomposition(IMatrix a)
       {
         m = a.Rows;
         n = a.Columns;
@@ -3105,6 +3115,46 @@ namespace Altaxo.Calc.LinearAlgebra
       public void Backsubstitution(double[] b, double[] x)
       {
         Backsubstitution(VectorMath.ToROVector(b),VectorMath.ToVector(x));
+      }
+
+
+      private class SolveTempStorage
+      {
+        public IMatrix A;
+        public SingularValueDecomposition SVD;
+      }
+
+
+      /// <summary>
+      /// Solves the equation A x = B and returns x.
+      /// </summary>
+      /// <param name="A">The matrix.</param>
+      /// <param name="B">The right side.</param>
+      /// <param name="x">On return, contains the solution vector.</param>
+      /// <param name="tempstorage">On return, holds the allocated temporary storage. You can use this
+      /// in subsequent calls to Solve with the same dimensions of the matrix.</param>
+      public static void Solve(IROMatrix A, IROVector B, IVector x, ref object tempstorage)
+      {
+        SolveTempStorage sts;
+        if (tempstorage is SolveTempStorage)
+        {
+          sts = (SolveTempStorage)tempstorage;
+          if (sts.A.Rows == A.Rows && sts.A.Columns == A.Columns)
+          {
+            MatrixMath.Copy(A, sts.A);
+            sts.SVD.ComputeSingularValueDecomposition(sts.A);
+            sts.SVD.Backsubstitution(B, x);
+            return;
+          }
+        }
+        // tempstorage can not be used
+        sts = new SolveTempStorage();
+        sts.A = new MatrixMath.BEMatrix(A.Rows,A.Columns);
+        MatrixMath.Copy(A,sts.A);
+        sts.SVD = new SingularValueDecomposition(sts.A);
+        sts.SVD.Backsubstitution(B,x);
+        tempstorage = sts;
+        return;
       }
 
       /// <summary>

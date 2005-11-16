@@ -1014,7 +1014,7 @@ namespace Altaxo.Calc.LinearAlgebra
     #region Additions due to adoption
 
     /// <summary>
-    /// Returns the column of a <see>IROComplexDoubleMatrix</see> as a new <c>ComplexDoubleVector.</c>
+    /// Returns the column of a <see cref="IROComplexDoubleMatrix" /> as a new <c>ComplexDoubleVector.</c>
     /// </summary>
     /// <param name="mat">The matrix to copy the column from.</param>
     /// <param name="col">Number of column to copy from the matrix.</param>

@@ -50,8 +50,33 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// </summary>
     /// <param name="independent">The independent variables.</param>
     /// <param name="parameters">Parameters for evaluation.</param>
-    /// <param name="result">On return, this array contains the one (or more) evaluated
+    /// <param name="FV">On return, this array contains the one (or more) evaluated
     /// function values at the point (independent).</param>
-    void Evaluate(double[] independent, double[] parameters, double[] result);
+    void Evaluate(double[] independent, double[] parameters, double[] FV);
 	}
+
+  public interface IFitFunctionWithGradient : IFitFunction
+  {
+    /// <summary>
+    /// This evaluates the gradient of the function with respect to the parameters. 
+    /// </summary>
+    /// <param name="independent">The independent variables.</param>
+    /// <param name="parameters">Parameters for evaluation.</param>
+    /// <param name="result">On return, this array contains the one (or more) evaluated
+    /// derivatives of the function values with respect to there parameters. See remarks for the order in which they are stored.</param>
+    /// <remarks>
+    /// The function values, that are calculated by <see>Evaluate</see>, are stored in the array FV. For every function value,
+    /// the derivative to all given parameters must be calculated. Presumed we have 3 parameters and 2 function values,
+    /// on return the array DF must contain:
+    /// <code>
+    /// DF[0][0] : df0/dp0
+    /// DF[0][1] : df0/dp1
+    /// DF[0][2] : df0/dp2
+    /// DF[1][0] : df1/dp0
+    /// DF[1][1] : df2/dp1
+    /// DF[1][2] : df1/dp2
+    /// </code>
+    /// </remarks>
+    void EvaluateGradient(double[] independent, double[] parameters, double[][] DF);
+  }
 }

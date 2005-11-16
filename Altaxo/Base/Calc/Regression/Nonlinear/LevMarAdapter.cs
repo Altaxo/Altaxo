@@ -19,6 +19,8 @@ namespace Altaxo.Calc.Regression.Nonlinear
       public double[] Ys;
       /// <summary>Independent variable array for temporary purpose.</summary>
       public double[] Xs;
+      /// <summary>Array of jacobians (derivatives of the function value with respect to the parameters) for temporary purpose.</summary>
+      public double[][] DYs; 
 
       /// <summary>Parameter mapping from the local parameter list to the global parameter list. Positive entries
       /// give the position in the global variable parameter list, negative entries gives the position -entry-1 in the 
@@ -55,7 +57,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
     double[] _cachedVaryingParameters;
 
     double[] _cachedDependentValues; // during the fitting procedure, this holds the original y data
-  
+
+    double[] _cachedWeights; // if this array is set, the weights are used to scale the fit differences (yreal-yfit).
+
     double[] _resultingCovariances;
     double  _resultingSumChiSquare;
 
@@ -157,6 +161,14 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
       _cachedDependentValues = new double[_cachedNumberOfData];
       GetDependentValues(_cachedDependentValues);
+
+      if (this.HasToUseWeights())
+      {
+        _cachedWeights = new double[_cachedNumberOfData];
+        GetWeights(_cachedWeights);
+      }
+      else
+        _cachedWeights = null;
     }
 
    
@@ -172,12 +184,13 @@ namespace Altaxo.Calc.Regression.Nonlinear
       }
     }
 
+
     /// <summary>
-    /// Stores the real data points ("measured data" or "dependent values") in an array. The data
+    /// Stores the dependent values of all elements in an array. The data
     /// are stored from FitElement_0 to FitElement_n. For FitElements with more than one dependent
     /// variable in use, the data are stored interleaved.
     /// </summary>
-    /// <param name="values"></param>
+    /// <param name="values">The array used to store the values.</param>
     public void GetDependentValues(double[] values)
     {
       int outputValuesPointer = 0;
@@ -200,6 +213,48 @@ namespace Altaxo.Calc.Regression.Nonlinear
     }
 
     /// <summary>
+    /// Stores the weights for the fit differences  in an array. The data
+    /// are stored from FitElement_0 to FitElement_n. For FitElements with more than one dependent
+    /// variable in use, the data are stored interleaved.
+    /// </summary>
+    /// <param name="values">The array used to store the values.</param>
+    public void GetWeights(double[] values)
+    {
+      int outputValuesPointer = 0;
+      for (int ele = 0; ele < _cachedFitElementInfo.Length; ele++)
+      {
+        CachedFitElementInfo info = _cachedFitElementInfo[ele];
+        FitElement fitEle = _fitEnsemble[ele];
+
+        IAscendingIntegerCollection validRows = info.ValidRows;
+        int numValidRows = validRows.Count;
+        // Evaluate the function for all points
+        for (int i = 0; i < numValidRows; ++i)
+        {
+          for (int j = 0; j < info.DependentVariablesInUse.Length; ++j)
+          {
+            double yreal = fitEle.DependentVariables(info.DependentVariablesInUse[j])[validRows[i]];
+            values[outputValuesPointer++] = fitEle.ErrorEvaluation(info.DependentVariablesInUse[j]).GetWeight(yreal, validRows[i]);
+          }
+        }
+      }
+    }
+
+    /// <summary>
+    /// Returns true if any of the fit elements use scaling weights. In this case we have to calculate
+    /// the weights for all fit elements and include them in the fitting procedures.
+    /// </summary>
+    /// <returns>True if any of the fit elements use weights.</returns>
+    public bool HasToUseWeights()
+    {
+      for (int i = 0; i < this._fitEnsemble.Count; ++i)
+        if (_fitEnsemble[i].UseWeights)
+          return true;
+
+      return false;
+    }
+
+    /// <summary>
     /// Provides an adapter for the NLFit.LMFunction interface.
     /// </summary>
     /// <param name="numberOfYs">Number of dependent variables. Is ignored. Instead, the length of the ys array is used.</param>
@@ -215,9 +270,20 @@ namespace Altaxo.Calc.Regression.Nonlinear
       ref int info)
     {
       EvaluateFitValues(parameter, ys);
-      for(int i=ys.Length-1;i>=0;--i)
+
+      if (_cachedWeights == null)
       {
-        ys[i] -= _cachedDependentValues[i];
+        for (int i = ys.Length - 1; i >= 0; --i)
+        {
+          ys[i] -= _cachedDependentValues[i];
+        }
+      }
+      else
+      {
+        for (int i = ys.Length - 1; i >= 0; --i)
+        {
+          ys[i] = (ys[i]-_cachedDependentValues[i])*_cachedWeights[i];
+        }
       }
     }
 
@@ -239,7 +305,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// <summary>
     /// Calculates the fitting values.
     /// </summary>
-    /// <param name="param">The parameter used to calculate the values.</param>
+    /// <param name="parameter">The parameter used to calculate the values.</param>
     /// <param name="outputValues">You must provide an array to hold the calculated values. Size of the array must be
     /// at least <see>NumberOfData</see>.</param>
     /// <remarks>The values of the fit elements are stored in the order from element_0 to element_n. If there is more
@@ -274,6 +340,64 @@ namespace Altaxo.Calc.Regression.Nonlinear
           // copy the evaluation result to the output array (interleaved)
           for (int k = 0; k < info.DependentVariablesInUse.Length; ++k)
             outputValues[outputValuesPointer++] = info.Ys[info.DependentVariablesInUse[k]];
+        }
+      }
+    }
+
+    /// <summary>
+    /// Calculates the jacobian values, i.e. the derivatives of the fitting values with respect to the parameters.
+    /// </summary>
+    /// <param name="parameter">The parameter used to calculate the values.</param>
+    /// <param name="outputValues">You must provide an array to hold the calculated values. Size of the array must be
+    /// at least <see>NumberOfData</see>*<see>NumberOfParameter</see>.</param>
+    /// <remarks>The values of the fit elements are stored in the order from element_0 to element_n*m. If there is more
+    /// than one used dependent variable per fit element, the output values are stored in interleaved order. The derivatives
+    /// on one fitting value  are stored in successive order.
+    /// </remarks>
+    public void EvaluateFitJacobian(double[] parameter, double[] outputValues, object adata)
+    {
+      outputValues.Initialize(); // make sure every element contains zero
+
+      int outputValuesPointer = 0;
+      for (int ele = 0; ele < _cachedFitElementInfo.Length; ele++)
+      {
+        CachedFitElementInfo info = _cachedFitElementInfo[ele];
+        FitElement fitEle = _fitEnsemble[ele];
+
+       
+        // make sure, that the dimension of the DYs is ok
+        if (info.DYs == null || info.DYs.Length != fitEle.NumberOfDependentVariables || info.DYs[0].Length != fitEle.NumberOfParameters)
+          info.DYs = LinearAlgebra.JaggedArrayMath.GetMatrixArray(fitEle.NumberOfDependentVariables, fitEle.NumberOfParameters);
+
+        // copy of the parameter to the temporary array
+        for (int i = 0; i < info.Parameters.Length; i++)
+        {
+          int idx = info.ParameterMapping[i];
+          info.Parameters[i] = idx >= 0 ? parameter[idx] : _constantParameters[-1 - idx];
+        }
+
+
+        IAscendingIntegerCollection validRows = info.ValidRows;
+        int numValidRows = validRows.Count;
+        // Evaluate the function for all points
+        for (int i = 0; i < numValidRows; ++i)
+        {
+          for (int k = info.Xs.Length - 1; k >= 0; k--)
+            info.Xs[k] = fitEle.IndependentVariables(k)[validRows[i]];
+
+          ((IFitFunctionWithGradient)fitEle.FitFunction).EvaluateGradient(info.Xs, info.Parameters, info.DYs);
+
+          // copy the evaluation result to the output array (interleaved)
+          for (int k = 0; k < info.DependentVariablesInUse.Length; ++k)
+          {
+            for (int l = 0; l < info.Parameters.Length; ++l)
+            {
+              int idx = info.ParameterMapping[l];
+              if(idx>=0)
+                outputValues[outputValuesPointer+idx] += info.DYs[info.DependentVariablesInUse[k]][l];
+            }
+            outputValuesPointer += parameter.Length; // increase output pointer only by the varying (!) number of parameters
+          }
         }
       }
     }
@@ -321,7 +445,32 @@ namespace Altaxo.Calc.Regression.Nonlinear
       nm.Minimize(new Calc.LinearAlgebra.DoubleVector(this._cachedVaryingParameters));
     }
 
+
+    /// <summary>
+    /// This function determines, wheter or not all fit functions provide the jacobians. In this case, the
+    /// fitting procedure can make use of the jacobian.
+    /// </summary>
+    /// <returns>True if all fit functions provide the jacobian.</returns>
+    public bool CanUseJacobianVersion()
+    {
+      for (int i = 0; i < this._fitEnsemble.Count; i++)
+      {
+        if (this._fitEnsemble[i].FitFunction != null && !(this._fitEnsemble[i].FitFunction is IFitFunctionWithGradient))
+          return false;
+      }
+      return true;
+    }
+
+
     public void Fit()
+    {
+      if (CanUseJacobianVersion())
+        Fit2Jac();
+      else
+        Fit1();
+    }
+
+    public void Fit1()
     {
       int info=0;
       double[] differences = new double[this.NumberOfData];
@@ -332,6 +481,33 @@ namespace Altaxo.Calc.Regression.Nonlinear
       
     }
 
+    /// <summary>
+    /// Can only be used, if all fit functions provide the jacobian.
+    /// </summary>
+    public void Fit2Jac()
+    {
+      int info = 0;
+      object workingmemory=null;
+
+      NonLinearFit2.LEVMAR_DER(
+        new NonLinearFit2.FitFunction(this.EvalulateFitValues),
+        new NonLinearFit2.JacobianFunction(this.EvaluateFitJacobian),
+        _cachedVaryingParameters,
+        _cachedDependentValues,
+        _cachedWeights,
+        100, // itmax
+        null, // opts,
+        null, // info,
+        ref workingmemory,
+        null, // covar,
+        null // arbitrary data
+      );
+
+      
+      _resultingCovariances = new double[_cachedVaryingParameters.Length * _cachedVaryingParameters.Length];
+      NLFit.ComputeCovariances(new NLFit.LMFunction(this.EvaluateFitDifferences), _cachedVaryingParameters, NumberOfData, _cachedVaryingParameters.Length, _resultingCovariances, out _resultingSumChiSquare);
+
+    }
 
     public double ResultingChiSquare
     {

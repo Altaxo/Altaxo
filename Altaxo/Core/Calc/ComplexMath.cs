@@ -152,7 +152,7 @@ namespace Altaxo.Calc
     }
 
     ///<summary>Return the absolute value of a complex type calculated as the euclidean norm</summary>
-    ///<remarks>Same as <see>Abs</see> and provided here for compatibility with some libraries.</remarks>
+    ///<remarks>Same as <see cref="Abs" /> and provided here for compatibility with some libraries.</remarks>
     public static double Absolute(Complex c)
     {
       return c.GetModulus();

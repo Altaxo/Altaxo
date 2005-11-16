@@ -64,10 +64,20 @@ namespace Altaxo.Serialization.Xml
     public string GetFullyQualifiedTypeName(System.Type type)
     {
       object version = m_Versions[type];
-      string[] assembly = type.Assembly.FullName.Split(new char[]{','},2);
-      return string.Format("{0},{1},{2}",assembly[0], type.ToString(),(null==version ? "0" : version.ToString()));
+      return GetFullyQualifiedTypeName(type, (null==version ? 0 : (int)version));
     }
 
+    /// <summary>
+    /// Get the fully qualified name of a type. This includes the short assembly name; the full type name, and the version, separated by a comma.
+    /// </summary>
+    /// <param name="type">The type for which the name should be returned.</param>
+    /// <param name="version">The version of this type.</param>
+    /// <returns>The fully qualified name of the type.</returns>
+    public string GetFullyQualifiedTypeName(System.Type type, int version)
+    {
+      string[] assembly = type.Assembly.FullName.Split(new char[] { ',' }, 2);
+      return string.Format("{0},{1},{2}", assembly[0], type.ToString(), version.ToString());
+    }
     /// <summary>
     /// Adds a surrogate for the type <code>type</code>.
     /// </summary>
@@ -81,7 +91,7 @@ namespace Altaxo.Serialization.Xml
       // which care for the same type as the current version of that type
       AddTypeAndVersionIfHigher(type,version,surrogate);
   
-      m_Surrogates[GetFullyQualifiedTypeName(type)] = surrogate;
+      m_Surrogates[GetFullyQualifiedTypeName(type,version)] = surrogate;
     }
 
     /// <summary>

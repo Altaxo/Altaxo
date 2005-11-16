@@ -6,7 +6,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
   /// Havriliak-Negami function to fit dielectric spectra.
   /// </summary>
   [FitFunction("HavriliakNegami Complex","Relaxation",1,2,5)]
-  public class HavriliakNegamiComplex : IFitFunction
+  public class HavriliakNegamiComplex : IFitFunctionWithGradient
   {
     #region Serialization
 
@@ -81,15 +81,38 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
     public void Evaluate(double[] X, double[] P, double[] Y)
     {
-     // double b = P[3];
-     // double g = P[4];
-     // double tau = P[2] * Math.Pow(Math.Sin(b * Math.PI / (2 + 2 * g)), (1 / b)) * Math.Pow(Math.Sin(b * g * Math.PI / (2 + 2 * g)), (-1 / b));
-
       Complex result = P[0] + P[1]/ComplexMath.Pow(1+ComplexMath.Pow(Complex.I*X[0]*P[2],P[3]),P[4]);
       Y[0] = result.Re;
       Y[1] = -result.Im + P[5]/X[0];
     }
 
+    public void EvaluateGradient(double[] X, double[] P, double[][] DY)
+    {
+      DY[0][0] = 1;
+      DY[1][0] = 0;
+
+      Complex OneByDenom = 1 / ComplexMath.Pow(1 + ComplexMath.Pow(Complex.I * X[0] * P[2], P[3]), P[4]);
+      DY[0][1] = OneByDenom.Re;
+      DY[1][1] = -OneByDenom.Im;
+      Complex IXP2 = Complex.I * X[0] * P[2];
+      Complex IXP2PowP3 = ComplexMath.Pow(IXP2, P[3]);
+      Complex der2 = OneByDenom * -P[1] * P[2] * P[4] * IXP2PowP3 / (P[2] * (1 + IXP2PowP3));
+      DY[0][2] = der2.Re;
+      DY[1][2] = -der2.Im;
+      Complex der3 = OneByDenom * -P[1] * P[4] * IXP2PowP3 * ComplexMath.Log(IXP2) / (1 + IXP2PowP3);
+      DY[0][3] = der3.Re;
+      DY[1][3] = -der3.Im;
+      Complex der4 = OneByDenom * -P[1] * ComplexMath.Log(1 + IXP2PowP3);
+      DY[0][4] = der4.Re;
+      DY[1][4] = -der4.Im;
+
+      DY[0][5] = 0;
+      DY[1][5] = 1 / X[0];
+
+
+
+
+    }
     #endregion
   }
 

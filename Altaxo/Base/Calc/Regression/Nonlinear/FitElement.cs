@@ -304,9 +304,35 @@ namespace Altaxo.Calc.Regression.Nonlinear
     }
 
     /// <summary>
-    /// Gets / sets the fitting function.
+    /// Returns true if the regression procedure has to include weights in the calculation.
+    /// Else, if weights are not used for all used dependent variables (ConstantVarianceScaling with Scaling==1), <c>false</c> is returned.
     /// </summary>
-    public IFitFunction FitFunction
+    public bool UseWeights
+    {
+      get
+      {
+        if(_errorEvaluation==null || _dependentVariables==null)
+          return false;
+
+        for (int i = 0; i < _errorEvaluation.Length; ++i)
+        {
+          if (_dependentVariables[i] != null)
+          {
+            if (_errorEvaluation[i] != null)
+            {
+              if (!(_errorEvaluation[i] is ConstantVarianceScaling) || !((ConstantVarianceScaling)_errorEvaluation[i]).IsDefault)
+                return true;
+            }
+          }
+        }
+        return false;
+      }
+    }
+
+      /// <summary>
+      /// Gets / sets the fitting function.
+      /// </summary>
+      public IFitFunction FitFunction
     {
       get
       {

@@ -8,13 +8,17 @@ namespace Altaxo.Calc.Regression.Nonlinear
   public interface IVarianceScaling : ICloneable
   {
     /// <summary>
-    /// Gets the variance in dependence of the real data and the fitted data. Note: for nonlinear regression, the function must only depend on
-    /// the real data. Set <c>yfit</c> to double.NaN in this case to make sure it is not used.
+    /// Gets the weight in dependence of the real data. 
     /// </summary>
     /// <param name="yreal">The real (measured) data.</param>
-    /// <param name="yfit">The fitted data.</param>
-    /// <returns>The variance used to scale (yreal-yfit)²</returns>
-    double GetVarianceScaling(double yreal, double yfit);
+    /// <param name="i">The index of the measured data point in the table.</param>
+    /// <returns>The weight used to scale the fit difference (yreal-yfit).</returns>
+    double GetWeight(double yreal, int i);
+
+    /// <summary>
+    /// Returns a short name for the scaling method. Used to display this short name in
+    /// the fit function dialog box.
+    /// </summary>
     string ShortName { get; }
   }
 
@@ -49,7 +53,18 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
     #endregion
 
-    public double GetVarianceScaling(double yr, double yf)
+    /// <summary>
+    /// Returns true when the scaling factor is 1 (one).
+    /// </summary>
+    public bool IsDefault
+    {
+      get
+      {
+        return _scaling == 1;
+      }
+    }
+
+    public double GetWeight(double yr, int i)
     {
       return _scaling;
     }
@@ -99,9 +114,12 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
     #endregion
 
-    public double GetVarianceScaling(double yr, double yf)
+    public double GetWeight(double yr, int i)
     {
-      return _scaling*Math.Abs(yr);
+      if (yr == 0)
+        return _scaling;
+      else
+        return _scaling/Math.Abs(yr);
     }
 
     public string ShortName

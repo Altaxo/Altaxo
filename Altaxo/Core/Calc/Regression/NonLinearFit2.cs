@@ -27,14 +27,14 @@ namespace Altaxo.Calc.Regression
 {
 
   /// <summary>
-  /// 
+  /// Levenberg - Marquard methods adapted to C# from C++ sources from Manolis Lourakis (see below).
   /// </summary>
   /// <remarks>
   ///  Adapted from the following C++ sources:
-  ///  Levenberg - Marquardt non-linear minimization algorithm
-  ///  Copyright (C) 2004  Manolis Lourakis (lourakis@ics.forth.gr)
-  ///  Institute of Computer Science, Foundation for Research and Technology - Hellas
-  ///  Heraklion, Crete, Greece.  /// </remarks>
+  ///  "Levenberg - Marquardt non-linear minimization algorithm", 
+  ///  Copyright (C) 2004  Manolis Lourakis (lourakis@ics.forth.gr), 
+  ///  Institute of Computer Science, Foundation for Research and Technology - Hellas,
+  ///  Heraklion, Crete, Greece.</remarks>
   public class NonLinearFit2
   {
 
@@ -122,6 +122,7 @@ public static int LEVMAR_DER(
   JacobianFunction jacf,  /* function to evaluate the jacobian \part x / \part p */ 
   double []p,         /* I/O: initial parameter estimates. On output has the estimated solution */
   double []x,         /* I: measurement vector */
+  double []weights,   /* vector of the weights used to scale the fit differences, can be null */
          
   int itmax,          /* I: maximum number of iterations */
   double[] opts,    /* I: minim. options [\mu, \epsilon1, \epsilon2, \epsilon3]. Respectively the scale factor for initial \mu,
@@ -219,9 +220,21 @@ int nm=n*m;
 
   /* compute e=x - f(p) and its L2 norm */
   func(p, hx, adata); nfev=1;
-  for(i=0, p_eL2=0.0; i<n; ++i){
-    e[i]=tmp=x[i]-hx[i];
-    p_eL2+=tmp*tmp;
+  if (weights == null)
+  {
+    for (i = 0, p_eL2 = 0.0; i < n; ++i)
+    {
+      e[i] = tmp = x[i] - hx[i];
+      p_eL2 += tmp * tmp;
+    }
+  }
+  else
+  {
+    for (i = 0, p_eL2 = 0.0; i < n; ++i)
+    {
+      e[i] = tmp = (x[i] - hx[i])*weights[i];
+      p_eL2 += tmp * tmp;
+    }
   }
   init_p_eL2=p_eL2;
 
@@ -260,9 +273,21 @@ int nm=n*m;
         for(j=i; j<m; ++j){
           int lm;
 
-          for(l=0, tmp=0.0; l<n; ++l){
-            lm=l*m;
-            tmp+=jac[lm+i]*jac[lm+j];
+          if (weights == null)
+          {
+            for (l = 0, tmp = 0.0; l < n; ++l)
+            {
+              lm = l * m;
+              tmp += jac[lm + i] * jac[lm + j];
+            }
+          }
+          else
+          {
+            for (l = 0, tmp = 0.0; l < n; ++l)
+            {
+              lm = l * m;
+              tmp += jac[lm + i] * jac[lm + j] * weights[i] * weights[i];
+            }
           }
 
 		      /* store tmp in the corresponding upper and lower part elements */
@@ -278,7 +303,7 @@ int nm=n*m;
     else{ // this is a large problem
       /* Cache efficient computation of J^T J based on blocking
        */
-      TRANS_MAT_MAT_MULT(jac, jacTjac, n, m, __BLOCKSZ__);
+      TRANS_MAT_MAT_MULT(jac, jacTjac, n, m, __BLOCKSZ__,weights);
 
       /* cache efficient computation of J^T e */
       for(i=0; i<m; ++i)
@@ -344,6 +369,7 @@ if(!(k%100)){
       //issolved=AX_EQ_B_SVD(jacTjac, jacTe, Dp, m);
 
 #else
+    
       /* use the LU included with levmar */
       issolved=AX_EQ_B_LU(jacTjac, jacTe, Dp, m);
 #endif // HAVE_LAPACK 
@@ -369,9 +395,21 @@ if(!(k%100)){
        }
 
         func(pDp, hx, adata); ++nfev; /* evaluate function at p + Dp */
-        for(i=0, pDp_eL2=0.0; i<n; ++i){ /* compute ||e(pDp)||_2 */
-          hx[i]=tmp=x[i]-hx[i];
-          pDp_eL2+=tmp*tmp;
+        if (weights == null)
+        {
+          for (i = 0, pDp_eL2 = 0.0; i < n; ++i)
+          { /* compute ||e(pDp)||_2 */
+            hx[i] = tmp = x[i] - hx[i];
+            pDp_eL2 += tmp * tmp;
+          }
+        }
+        else // use weights
+        {
+          for (i = 0, pDp_eL2 = 0.0; i < n; ++i)
+          { /* compute ||e(pDp)||_2 */
+            hx[i] = tmp = (x[i] - hx[i])*weights[i];
+            pDp_eL2 += tmp * tmp;
+          }
         }
 
         for(i=0, dL=0.0; i<m; ++i)
@@ -636,7 +674,7 @@ int nm=n*m;
       else{ // this is a large problem
         /* Cache efficient computation of J^T J based on blocking
          */
-        TRANS_MAT_MAT_MULT(jac, jacTjac, n, m, __BLOCKSZ__);
+        TRANS_MAT_MAT_MULT(jac, jacTjac, n, m, __BLOCKSZ__,null);
 
         /* cache efficient computation of J^T e */
         for(i=0; i<m; ++i)
@@ -896,7 +934,7 @@ double d;
  * More details on blocking can be found at 
  * http://www-2.cs.cmu.edu/afs/cs/academic/class/15213-f02/www/R07/section_a/Recitation07-SectionA.pdf
  */
-static void TRANS_MAT_MAT_MULT(double[] a,  double[] b, int n, int m, int bsize)
+static void TRANS_MAT_MAT_MULT(double[] a,  double[] b, int n, int m, int bsize, double[] weights)
 {
 int i, j, k, jj, kk;
 double sum;
@@ -916,9 +954,21 @@ int akm;
         bim=i*m;
         for(j=Math.Max(jj, i); j<Math.Min(jj+bsize, m); ++j){
           sum=0.0;
-          for(k=kk; k<Math.Min(kk+bsize, n); ++k){
-            akm=k*m;
-            sum+=a[akm+i]*a[akm+j]; //a[k*m+i]*a[k*m+j];
+          if (null == weights)
+          {
+            for (k = kk; k < Math.Min(kk + bsize, n); ++k)
+            {
+              akm = k * m;
+              sum += a[akm + i] * a[akm + j]; //a[k*m+i]*a[k*m+j];
+            }
+          }
+          else
+          {
+            for (k = kk; k < Math.Min(kk + bsize, n); ++k)
+            {
+              akm = k * m;
+              sum += a[akm + i] * a[akm + j] * weights[k]*weights[k]; //a[k*m+i]*a[k*m+j];
+            }
           }
           b[bim+j]+=sum; //b[i*m+j]+=sum;
         }
