@@ -69,5 +69,17 @@ namespace Altaxo.Graph
     /// Converts layer coordinates to logical x and y values (between 0 and 1).
     /// </summary>
     I2DTo2DConverter AreaToLogicalConversion { get; }
+
+
+    /// <summary>
+    /// Draws an isoline on the plot area.
+    /// </summary>
+    /// <param name="g">Graphics context.</param>
+    /// <param name="pen">The style of the pen used to draw the line.</param>
+    /// <param name="axis">Axis for which the isoline to draw.</param>
+    /// <param name="relaxisval">Relative value (0..1) on this axis.</param>
+    /// <param name="relaltstart">Relative value for the alternate axis of the start of the line.</param>
+    /// <param name="relaltend">Relative value for the alternate axis of the end of the line.</param>
+    void DrawIsoLine(Graphics g, Pen pen, int axis, double relaxisval, double relaltstart, double relaltend);
   }
 }

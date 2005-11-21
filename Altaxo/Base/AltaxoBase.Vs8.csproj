@@ -167,6 +167,7 @@
     </Compile>
     <Compile Include="Data\NumericColumnProxy.cs" />
     <Compile Include="Data\ReadableColumnProxy.cs" />
+    <Compile Include="Graph\GridStyle.cs" />
     <Compile Include="Graph\BackgroundStyles\BackgroundColorStyle.cs" />
     <Compile Include="Graph\BackgroundStyles\BlackLine.cs" />
     <Compile Include="Graph\BackgroundStyles\BlackOut.cs" />

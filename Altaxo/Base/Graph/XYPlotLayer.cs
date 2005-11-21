@@ -628,9 +628,146 @@ namespace Altaxo.Graph
       #endregion
     }
 
+
+    public class XYAxisStylesSummary : ICloneable, Main.IChangedEventSource
+    {
+      GridStyle _gridStyle;
+      XYPlotLayerAxisStyleProperties[] _axisStyles;
+      EdgeType[] _edges;
+
+      public XYAxisStylesSummary(EdgeType[] edges)
+      {
+        _edges = (EdgeType[])edges.Clone();
+        _axisStyles = new XYPlotLayerAxisStyleProperties[_edges.Length];
+      }
+
+      void CopyFrom(XYAxisStylesSummary from)
+      {
+        this.GridStyle = from._gridStyle == null ? null : (GridStyle)from._gridStyle.Clone();
+
+        this._axisStyles = new XYPlotLayerAxisStyleProperties[from._axisStyles.Length];
+        for (int i = 0; i < _axisStyles.Length; ++i)
+        {
+          if (from._axisStyles[i] != null)
+            SetAxisStyle((XYPlotLayerAxisStyleProperties)from._axisStyles[i].Clone(), i);
+        }
+      }
+
+      public void SetAxisStyle(XYPlotLayerAxisStyleProperties value, int i)
+      {
+        XYPlotLayerAxisStyleProperties oldvalue = _axisStyles[i];
+        if (!object.ReferenceEquals(value, oldvalue))
+        {
+          {
+            if (oldvalue != null)
+              oldvalue.Changed-= new EventHandler(this.EhChildChanged);
+            if (value != null)
+              value.Changed += new EventHandler(this.EhChildChanged);
+
+            OnChanged();
+          }
+        }
+      }
+
+      public XYPlotLayerAxisStyleProperties AxisStyle(int i)
+      {
+        if(null==_axisStyles[i])
+          _axisStyles[i] = new XYPlotLayerAxisStyleProperties(_edges[i]);
+        return _axisStyles[i];
+      }
+
+
+      public GridStyle GridStyle
+      {
+        get { return _gridStyle; }
+        set
+        {
+          GridStyle oldvalue = _gridStyle;
+          _gridStyle = value;
+          if (!object.ReferenceEquals(value, oldvalue))
+          {
+            if (oldvalue != null)
+              oldvalue.Changed -= new EventHandler(this.EhChildChanged);
+            if (value != null)
+              value.Changed += new EventHandler(this.EhChildChanged);
+
+            OnChanged();
+          }
+        }
+      }
+
+     
+
+
+      public bool Remove(GraphicsObject go)
+      {
+        for (int i = 0; i < this._axisStyles.Length; ++i)
+          if (_axisStyles[i] != null && _axisStyles[i].Remove(go))
+            return true;
+
+        return false;
+      }
+
+      public void Paint(Graphics g, XYPlotLayer layer, int axisnumber)
+      {
+        Axis axis = axisnumber == 0 ? layer.XAxis : layer.YAxis;
+
+        for (int i = 0; i < _axisStyles.Length; ++i)
+          if (null != _axisStyles[i])
+            _axisStyles[i].Paint(g, layer, axis);
+        
+        if(null!=_gridStyle)
+          _gridStyle.Paint(g, layer, axisnumber);
+      }
+
+
+      #region IChangedEventSource Members
+
+      public event EventHandler Changed;
+
+      protected virtual void OnChanged()
+      {
+        if (null != Changed)
+          Changed(this, EventArgs.Empty);
+      }
+
+      void EhChildChanged(object sender, EventArgs e)
+      {
+        OnChanged();
+      }
+
+      #endregion
+
+      #region ICloneable Members
+
+      public object Clone()
+      {
+        XYAxisStylesSummary result = new XYAxisStylesSummary(this._edges);
+        result.CopyFrom(this);
+        return result;
+      }
+
+      #endregion
+    }
+
     public class XYPlotLayerAxisStylePropertiesCollection : Main.IChildChangedEventSink, Main.IChangedEventSource, ICloneable
     {
-      XYPlotLayerAxisStyleProperties[] _styles = new XYPlotLayerAxisStyleProperties[4];
+//      XYPlotLayerAxisStyleProperties[] _styles = new XYPlotLayerAxisStyleProperties[4];
+
+      XYAxisStylesSummary[] _styles;
+
+
+      public XYPlotLayerAxisStylePropertiesCollection()
+      {
+        _styles = new XYAxisStylesSummary[2];
+
+        this._styles[0] = new XYAxisStylesSummary(new EdgeType[] { EdgeType.Bottom, EdgeType.Top });
+        this._styles[0].Changed += new EventHandler(this.OnChildChanged);
+
+        this._styles[1] = new XYAxisStylesSummary(new EdgeType[] { EdgeType.Left, EdgeType.Right });
+        this._styles[1].Changed += new EventHandler(this.OnChildChanged);
+
+      }
 
       void CopyFrom(XYPlotLayerAxisStylePropertiesCollection from)
       {
@@ -642,7 +779,7 @@ namespace Altaxo.Graph
         // now clone
         for (int i = 0; i < from._styles.Length; ++i)
         {
-          this._styles[i] = from._styles[i] == null ? null : (XYPlotLayerAxisStyleProperties)from._styles[i].Clone();
+          this._styles[i] = from._styles[i] == null ? null : (XYAxisStylesSummary)from._styles[i].Clone();
           if (this._styles[i] != null)
             this._styles[i].Changed += new EventHandler(this.OnChildChanged);
         }
@@ -652,13 +789,38 @@ namespace Altaxo.Graph
       {
         get
         {
-          XYPlotLayerAxisStyleProperties result = _styles[(int)edge];
-          if(null==result)
+          switch (edge)
           {
-            result = _styles[(int)edge] = new XYPlotLayerAxisStyleProperties(edge);
-            result.Changed += new EventHandler(OnChildChanged);
+            case EdgeType.Bottom:
+              return _styles[0].AxisStyle(0);
+              
+            case EdgeType.Top:
+              return _styles[0].AxisStyle(1);
+              
+            case EdgeType.Left:
+              return _styles[1].AxisStyle(0);
+              
+            case EdgeType.Right:
+              return _styles[1].AxisStyle(1);
+            default:
+              return null;
           }
-          return result;
+        }
+      }
+
+      public XYAxisStylesSummary X
+      {
+        get
+        {
+          return _styles[0];
+        }
+      }
+
+      public XYAxisStylesSummary Y
+      {
+        get
+        {
+          return _styles[1];
         }
       }
 
@@ -673,10 +835,8 @@ namespace Altaxo.Graph
 
       public void Paint(Graphics g, XYPlotLayer layer)
       {
-        this[EdgeType.Left].Paint(g, layer, layer._axisProperties.Y.Axis);
-        this[EdgeType.Bottom].Paint(g, layer, layer._axisProperties.X.Axis);
-        this[EdgeType.Right].Paint(g, layer, layer._axisProperties.Y.Axis);
-        this[EdgeType.Top].Paint(g, layer, layer._axisProperties.X.Axis);
+        _styles[0].Paint(g, layer, 0);
+        _styles[1].Paint(g, layer, 1);
       }
 
       #region IChildChangedEventSink Members
@@ -1052,6 +1212,8 @@ namespace Altaxo.Graph
       {
         if (AxesChanged != null)
           AxesChanged(this, EventArgs.Empty);
+
+        OnChanged();
       }
 
       protected virtual void OnChanged()
@@ -2623,6 +2785,34 @@ namespace Altaxo.Graph
         _axisProperties.Y.EhLinkedLayerAxesChanged(LinkedLayer.AxisProperties.Y.Axis);
       }
     }
+
+
+    /// <summary>
+    /// Draws an isoline on the plot area.
+    /// </summary>
+    /// <param name="g">Graphics context.</param>
+    /// <param name="pen">The style of the pen used to draw the line.</param>
+    /// <param name="axis">Axis for which the isoline to draw.</param>
+    /// <param name="relaxisval">Relative value (0..1) on this axis.</param>
+    /// <param name="relaltstart">Relative value for the alternate axis of the start of the line.</param>
+    /// <param name="relaltend">Relative value for the alternate axis of the end of the line.</param>
+    public void DrawIsoLine(Graphics g, Pen pen, int axis, double relaxisval, double relaltstart, double relaltend)
+    {
+      double x1, y1, x2, y2;
+      if (axis == 0)
+      {
+        this.LogicalToAreaConversion.Convert(relaxisval, relaltstart, out x1, out y1);
+        this.LogicalToAreaConversion.Convert(relaxisval, relaltend, out x2, out y2);
+      }
+      else
+      {
+        this.LogicalToAreaConversion.Convert(relaltstart, relaxisval, out x1, out y1);
+        this.LogicalToAreaConversion.Convert(relaltend, relaxisval, out x2, out y2);
+      }
+
+      g.DrawLine(pen, (float)x1, (float)y1, (float)x2, (float)y2);
+    }
+
 
 
     #endregion // Axis related

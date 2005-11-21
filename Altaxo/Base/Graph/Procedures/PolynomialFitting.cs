@@ -45,6 +45,9 @@ namespace Altaxo.Graph.Procedures
     {
       nPlotPoints=0;
 
+      ctrl.EnsureValidityOfCurrentLayerNumber();
+      ctrl.EnsureValidityOfCurrentPlotNumber();
+
       Altaxo.Graph.PlotItem plotItem = ctrl.ActiveLayer.PlotItems[ctrl.CurrentPlotNumber];
 
       Altaxo.Graph.XYColumnPlotItem xyPlotItem = plotItem as Altaxo.Graph.XYColumnPlotItem;
