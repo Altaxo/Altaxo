@@ -353,7 +353,7 @@ namespace Altaxo.Data
     protected System.Collections.Hashtable m_ColumnsByName=new System.Collections.Hashtable();
 
     /// <summary>
-    /// This hashtable has the <see>DataColumn</see> as keys and <see>DataColumnInfo</see> objects as values. 
+    /// This hashtable has the <see cref="DataColumn" /> as keys and <see cref="DataColumnInfo" /> objects as values. 
     /// It stores information like the position of the column, the kind of the column.
     /// </summary>
     protected System.Collections.Hashtable m_ColumnInfo = new System.Collections.Hashtable();
@@ -1443,7 +1443,7 @@ namespace Altaxo.Data
     }
 
     /// <summary>
-    /// Removes all rows. Same function as <see>RemoveRowsAll</see>.
+    /// Removes all rows. Same function as <see cref="RemoveRowsAll" />.
     /// </summary>
     public void ClearData()
     {
@@ -1635,7 +1635,7 @@ namespace Altaxo.Data
     }
 
     /// <summary>
-    /// This will refresh the column number information in the m_ColumnInfo collection of <see>DataColumnInfo</see>.
+    /// This will refresh the column number information in the m_ColumnInfo collection of <see cref="DataColumnInfo" />.
     /// </summary>
     protected void RefreshColumnIndices()
     {

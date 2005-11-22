@@ -80,7 +80,7 @@ namespace Altaxo.Collections
     }
 
     /// <summary>
-    /// Creates a collection cloned from another <see>AscendingIntegerCollection</see>.
+    /// Creates a collection cloned from another <see cref="AscendingIntegerCollection" />.
     /// </summary>
     /// <param name="from"></param>
     public AscendingIntegerCollection(AscendingIntegerCollection from)
@@ -89,7 +89,7 @@ namespace Altaxo.Collections
     }
 
     /// <summary>
-    /// Creates the collection copied from another <see>IAscendingIntegerCollection</see>.
+    /// Creates the collection copied from another <see cref="IAscendingIntegerCollection" />.
     /// </summary>
     /// <param name="from"></param>
     public AscendingIntegerCollection(IAscendingIntegerCollection from)
@@ -241,7 +241,7 @@ namespace Altaxo.Collections
     }
 
     /// <summary>
-    /// Adds all values from another <see>IAscendingIntegerCollection</see>.
+    /// Adds all values from another <see cref="IAscendingIntegerCollection" />.
     /// </summary>
     /// <param name="from">The source collection.</param>
     public void Add(IAscendingIntegerCollection from)

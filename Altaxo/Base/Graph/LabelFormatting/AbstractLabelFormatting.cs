@@ -75,7 +75,7 @@ namespace Altaxo.Graph.LabelFormatting
     }
 
     /// <summary>
-    /// Formats on item as text. If you do not provide this function, you have to override <see>MeasureItem</see> and <see>DrawItem</see>.
+    /// Formats on item as text. If you do not provide this function, you have to override <see cref="MeasureItem" /> and <see cref="DrawItem" />.
     /// </summary>
     /// <param name="item">The item to format as text.</param>
     /// <returns>The formatted text representation of this item.</returns>
@@ -91,7 +91,7 @@ namespace Altaxo.Graph.LabelFormatting
     /// Formats a couple of items as text. Special measured can be taken here to format all items the same way, for instance set the decimal separator to the same location.
     /// Default implementation is using the Format function for
     /// all values in the array.
-    /// Only neccessary to override this function if you do not override <see>GetMeasuredItems</see>.
+    /// Only neccessary to override this function if you do not override <see cref="GetMeasuredItems" />.
     /// </summary>
     /// <param name="items">The items to format.</param>
     /// <returns>The text representation of the items.</returns>
@@ -143,7 +143,7 @@ namespace Altaxo.Graph.LabelFormatting
     /// <param name="font">Font used.</param>
     /// <param name="strfmt">String format used.</param>
     /// <param name="items">Array of items to be drawn.</param>
-    /// <returns>An array of <see>IMeasuredLabelItem</see> that can be used to determine the size of each item and to draw it.</returns>
+    /// <returns>An array of <see cref="IMeasuredLabelItem" /> that can be used to determine the size of each item and to draw it.</returns>
     public virtual IMeasuredLabelItem[] GetMeasuredItems(Graphics g, System.Drawing.Font font, System.Drawing.StringFormat strfmt, AltaxoVariant[] items)
     {
      string[] titems = FormatItems(items);

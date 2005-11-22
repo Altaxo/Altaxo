@@ -50,7 +50,7 @@ namespace Altaxo.Gui.Common
   #endregion
 
   /// <summary>
-  /// Controller for a set of child <see>IMVCAController</see>s.
+  /// Controller for a set of child <see cref="IMVCAController" />s.
   /// </summary>
   [UserControllerForObject(typeof(IMVCAController[]))]
   public class MultiChildController : IMultiChildController, IMultiChildViewEventSink, IRefreshable

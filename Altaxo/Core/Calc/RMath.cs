@@ -25,7 +25,7 @@ using System;
 namespace Altaxo.Calc
 {
   /// <summary>
-  /// Provides methods for real numbers, that were forgotten by the <see>System.Math</see> class.
+  /// Provides methods for real numbers, that were forgotten by the <see cref="System.Math" /> class.
   /// </summary>
   public class RMath
   {

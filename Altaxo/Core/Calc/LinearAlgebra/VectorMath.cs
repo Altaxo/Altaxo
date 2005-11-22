@@ -202,7 +202,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Wraps a double[] array to get a IROVector.
     /// </summary>
     /// <param name="x">The array to wrap.</param>
-    /// <returns>A wrapper objects with the <see>IROVector</see> interface that wraps the provided array.</returns>
+    /// <returns>A wrapper objects with the <see cref="IROVector" /> interface that wraps the provided array.</returns>
     public static IROVector ToROVector(double[] x)
     {
       return new RODoubleArrayWrapper(x);
@@ -213,7 +213,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// </summary>
     /// <param name="x">The array to wrap.</param>
     /// <param name="usedlength">Length of the resulting vector. Can be equal or less the length of the array.</param>
-    /// <returns>A wrapper objects with the <see>IROVector</see> interface that wraps the provided array.</returns>
+    /// <returns>A wrapper objects with the <see cref="IROVector" /> interface that wraps the provided array.</returns>
     public static IROVector ToROVector(double[] x, int usedlength)
     {
       return new RODoubleArrayWrapper(x,usedlength);
@@ -223,7 +223,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Wraps a double[] array to get a IVector.
     /// </summary>
     /// <param name="x">The array to wrap.</param>
-    /// <returns>A wrapper objects with the <see>IVector</see> interface that wraps the provided array.</returns>
+    /// <returns>A wrapper objects with the <see cref="IVector" /> interface that wraps the provided array.</returns>
     public static IVector ToVector(double[] x)
     {
       return new RWDoubleArrayWrapper(x);
@@ -331,7 +331,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Returns the maximum of the elements in xarray.
     /// </summary>
     /// <param name="xarray">The array to search for maximum element.</param>
-    /// <returns>Maximum element of xarray. Returns <see>Double.NaN</see> if the array is empty.</returns>
+    /// <returns>Maximum element of xarray. Returns <see cref="Double.NaN" /> if the array is empty.</returns>
     public static double Max(double[] xarray)
     {
       double max = xarray.Length==0 ? double.NaN : xarray[xarray.GetLowerBound(0)];

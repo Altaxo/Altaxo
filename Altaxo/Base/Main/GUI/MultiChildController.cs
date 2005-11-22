@@ -43,7 +43,7 @@ namespace Altaxo.Main.GUI
   #endregion
 
   /// <summary>
-  /// Controller for a set of child <see>IMVCAController</see>s.
+  /// Controller for a set of child <see cref="IMVCAController" />s.
   /// </summary>
   public class MultiChildController : IMVCAController, IMultiChildViewEventSink, Altaxo.Gui.IRefreshable
   {

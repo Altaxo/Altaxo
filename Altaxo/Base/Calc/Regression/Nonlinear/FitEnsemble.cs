@@ -4,7 +4,7 @@ using System.Collections;
 namespace Altaxo.Calc.Regression.Nonlinear
 {
 	/// <summary>
-	/// Holds a collection of <see>FitElement</see>s and is responsible for parameter
+	/// Holds a collection of <see cref="FitElement" />s and is responsible for parameter
 	/// bundling.
 	/// </summary>
 	public class FitEnsemble : System.Collections.CollectionBase, ICloneable
@@ -18,11 +18,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// All parameters sorted by name.
     /// </summary>
     System.Collections.SortedList _ParametersSortedByName;
-
-    /// <summary>
-    /// Number of dependent variables.
-    /// </summary>
-    int _NumberOfDependentVariables;
+    
 
     public event EventHandler Changed;
 

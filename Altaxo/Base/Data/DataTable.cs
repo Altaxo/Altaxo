@@ -755,7 +755,7 @@ namespace Altaxo.Data
     {
       get { return this.m_DataColumns.ColumnCount; }
     }
-    /// <summary>Returns the number of property rows. This is the same as <see>DataColumnCount</see> and is only provided for completness.</summary>
+    /// <summary>Returns the number of property rows. This is the same as <see cref="DataColumnCount" /> and is only provided for completness.</summary>
     /// <value>The number of property rows = number of data columns in the table.</value>
     public int PropertyRowCount
     {
@@ -959,7 +959,7 @@ namespace Altaxo.Data
 
 
     /// <summary>
-    /// Gets an arbitrary object that was stored as table property by <see>SetTableProperty</see>.
+    /// Gets an arbitrary object that was stored as table property by <see cref="SetTableProperty" />.
     /// </summary>
     /// <param name="key">Name of the property.</param>
     /// <returns>The object, or null if no object under the provided name was stored here.</returns>

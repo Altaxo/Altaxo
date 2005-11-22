@@ -26,7 +26,7 @@ using System;
 namespace Altaxo.Main.Services
 {
   /// <summary>
-  /// Allows a thread to report text to a receiver. Additionally, the thread can look to the property <see>CancelledByUser</see>, and
+  /// Allows a thread to report text to a receiver. Additionally, the thread can look to the property <see cref="CancelledByUser" />, and
   /// if it is <c>true</c>, return in a safe way.
   /// </summary>
   public interface IBackgroundMonitor
@@ -59,12 +59,12 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Can be set True when the watching instance (for instance a dialog) should report the text.
     /// </summary>
-    bool ShouldReport { set; }
+    new bool ShouldReport { set; }
 
     /// <summary>
     /// Can be set True if the activity should be cancelled.
     /// </summary>
-    bool CancelledByUser { set; }
+    new bool CancelledByUser { set; }
   }
 
   public class DummyBackgroundMonitor : IBackgroundMonitor

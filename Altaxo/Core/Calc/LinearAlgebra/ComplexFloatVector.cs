@@ -915,7 +915,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
     #region Additions due to adoption to Altaxo
 
-      ///<summary>Constructor for <c>ComplexDoubleVector</c> to deep copy from a <see>IROComplexDoubleVector</see></summary>
+      ///<summary>Constructor for <c>ComplexDoubleVector</c> to deep copy from a <see cref="IROComplexDoubleVector" /></summary>
     ///<param name="src"><c>ComplexDoubleVector</c> to deep copy into <c>ComplexDoubleVector</c>.</param>
     ///<exception cref="ArgumentNullException">Exception thrown if null passed as 'src' parameter.</exception>
     public ComplexFloatVector(IROComplexFloatVector src)
@@ -939,7 +939,7 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     /// <summary>
-    /// Returns the column of a <see>IROComplexFloatMatrix</see> as a new <c>ComplexFloatVector.</c>
+    /// Returns the column of a <see cref="IROComplexFloatMatrix" /> as a new <c>ComplexFloatVector.</c>
     /// </summary>
     /// <param name="mat">The matrix to copy the column from.</param>
     /// <param name="col">Number of column to copy from the matrix.</param>
@@ -954,7 +954,7 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     /// <summary>
-    /// Returns the column of a <see>IROComplexFloatMatrix</see> as a new <c>Complex[]</c> array.
+    /// Returns the column of a <see cref="IROComplexFloatMatrix" /> as a new <c>Complex[]</c> array.
     /// </summary>
     /// <param name="mat">The matrix to copy the column from.</param>
     /// <param name="col">Number of column to copy from the matrix.</param>
@@ -969,7 +969,7 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     /// <summary>
-    /// Returns the row of a <see>IROComplexFloatMatrix</see> as a new <c>ComplexFloatVector.</c>
+    /// Returns the row of a <see cref="IROComplexFloatMatrix" /> as a new <c>ComplexFloatVector.</c>
     /// </summary>
     /// <param name="mat">The matrix to copy the column from.</param>
     /// <param name="row">Number of row to copy from the matrix.</param>

@@ -62,10 +62,10 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// </summary>
     /// <param name="independent">The independent variables.</param>
     /// <param name="parameters">Parameters for evaluation.</param>
-    /// <param name="result">On return, this array contains the one (or more) evaluated
+    /// <param name="DF">On return, this array contains the one (or more) evaluated
     /// derivatives of the function values with respect to there parameters. See remarks for the order in which they are stored.</param>
     /// <remarks>
-    /// The function values, that are calculated by <see>Evaluate</see>, are stored in the array FV. For every function value,
+    /// The function values, that are calculated by <see cref="IFitFunction.Evaluate" />, are stored in the array <c>FV</c>. For every function value,
     /// the derivative to all given parameters must be calculated. Presumed we have 3 parameters and 2 function values,
     /// on return the array DF must contain:
     /// <code>

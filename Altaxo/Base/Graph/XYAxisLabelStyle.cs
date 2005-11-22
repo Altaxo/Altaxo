@@ -572,13 +572,7 @@ namespace Altaxo.Graph
     }
     #region IChangedEventSource Members
 
-    public event System.EventHandler Changed;
-
-    protected virtual void OnChanged()
-    {
-      if(null!=Changed)
-        Changed(this,new EventArgs());
-    }
+  
 
     #endregion
 
@@ -591,8 +585,7 @@ namespace Altaxo.Graph
 
     public void OnChildChanged(object child, EventArgs e)
     {
-      if(null!=Changed)
-        Changed(this,e);
+      OnChanged();
     }
 
     #endregion

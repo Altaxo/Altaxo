@@ -94,7 +94,7 @@ namespace Altaxo.Graph.Axes
     public abstract Altaxo.Data.AltaxoVariant NormalToPhysicalVariant(double x);
 
     /// <summary>
-    /// This will return the the major ticks as <see>AltaxoVariant</see>.
+    /// This will return the the major ticks as <see cref="AltaxoVariant" />.
     /// </summary>
     /// <returns>The array with major tick values.</returns>
     public abstract AltaxoVariant[] GetMajorTicksAsVariant();
@@ -107,7 +107,7 @@ namespace Altaxo.Graph.Axes
     public abstract double[] GetMajorTicksNormal();
 
     /// <summary>
-    /// This will return the minor ticks as array of <see>AltaxoVariant</see>.
+    /// This will return the minor ticks as array of <see cref="AltaxoVariant" />.
     /// </summary>
     /// <returns>The array with minor tick values.</returns>
     public abstract AltaxoVariant[] GetMinorTicksAsVariant();

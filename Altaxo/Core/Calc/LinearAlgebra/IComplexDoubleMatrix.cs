@@ -25,7 +25,7 @@ using System;
 namespace Altaxo.Calc.LinearAlgebra
 {
   /// <summary>
-  /// IROMatrix represents a read-only matrix of <see>Complex</see> values.
+  /// IROMatrix represents a read-only matrix of <see cref="Complex" /> values.
   /// </summary>
   public interface IROComplexDoubleMatrix
   {
@@ -38,7 +38,7 @@ namespace Altaxo.Calc.LinearAlgebra
   }
 
   /// <summary>
-  /// Represents the simplest form of a 2D matrix of <see>Complex</see> values, which is readable and writeable.
+  /// Represents the simplest form of a 2D matrix of <see cref="Complex" /> values, which is readable and writeable.
   /// </summary>
   public interface IComplexDoubleMatrix : IROComplexDoubleMatrix
   {
@@ -48,7 +48,7 @@ namespace Altaxo.Calc.LinearAlgebra
   }
 
   /// <summary>
-  /// Extends <see>IComplexMatrix</see> in a way that another matrix of appropriate dimensions
+  /// Extends <see cref="IComplexDoubleMatrix" /> in a way that another matrix of appropriate dimensions
   /// can be appended to the right of the matrix. 
   /// </summary>
   public interface IRightExtensibleComplexDoubleMatrix : IComplexDoubleMatrix
@@ -63,7 +63,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 
   /// <summary>
-  /// Extends <see>IComplexMatrix</see> in a way that another matrix of appropriate dimensions
+  /// Extends <see cref="IComplexDoubleMatrix" /> in a way that another matrix of appropriate dimensions
   /// can be appended to the bottom of the matrix. 
   /// </summary>
   public interface IBottomExtensibleComplexDoubleMatrix : IComplexDoubleMatrix
@@ -77,7 +77,7 @@ namespace Altaxo.Calc.LinearAlgebra
   }
 
   /// <summary>
-  /// Extends <see>IComplexMatrix</see> in a way that another matrix of appropriate dimensions
+  /// Extends <see cref="IComplexDoubleMatrix" /> in a way that another matrix of appropriate dimensions
   /// can be appended either to the right or to the bottom of the matrix. 
   /// </summary>
   public interface IExtensibleComplexDoubleMatrix : IRightExtensibleComplexDoubleMatrix, IBottomExtensibleComplexDoubleMatrix

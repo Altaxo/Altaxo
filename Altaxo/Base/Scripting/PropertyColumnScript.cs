@@ -96,6 +96,7 @@ namespace Altaxo.Scripting
     /// Creates a column script as a copy from another script.
     /// </summary>
     /// <param name="b">The script to copy from.</param>
+    /// <param name="forModification">If true, the new script text can be modified.</param>
     public PropertyColumnScript(PropertyColumnScript b, bool forModification)
       : base(b, forModification)
     {

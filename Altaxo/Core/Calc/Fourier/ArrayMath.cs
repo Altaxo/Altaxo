@@ -31,7 +31,7 @@ namespace Altaxo.Calc.Fourier
   {
 
     /// <summary>
-    /// Copies an array of <see>Complex</see> elements into an array of the real part values and an array of the imaginary part values.
+    /// Copies an array of <see cref="Complex" /> elements into an array of the real part values and an array of the imaginary part values.
     /// </summary>
     /// <param name="src">The source array.</param>
     /// <param name="destreal">The array where the real part values are stored into.</param>
@@ -47,7 +47,7 @@ namespace Altaxo.Calc.Fourier
     }
 
     /// <summary>
-    /// Copies two arrays with real and imaginary part values into an array of <see>Complex</see> values.
+    /// Copies two arrays with real and imaginary part values into an array of <see cref="Complex" /> values.
     /// </summary>
     /// <param name="srcreal">The source array containing the real part values.</param>
     /// <param name="srcimag">The source array containing the imaginary part values.</param>

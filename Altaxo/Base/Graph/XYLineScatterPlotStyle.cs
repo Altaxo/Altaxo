@@ -31,7 +31,7 @@ namespace Altaxo.Graph
   using Axes;
 
   /// <summary>
-  /// Used for constructor of <see>XYLineScatterPlotStyle</see> to choose between Line, Scatter and both.
+  /// Used for constructor of <see cref="XYLineScatterPlotStyle" /> to choose between Line, Scatter and both.
   /// </summary>
   [Flags]
   public enum LineScatterPlotStyleKind
@@ -403,7 +403,7 @@ namespace Altaxo.Graph
     /// <param name="layer">The layer in which this plot item is drawn into.</param>
     /// <param name="plotData">The data that are plotted.</param>
     /// <param name="hitpoint">The point where the mouse is pressed.</param>
-    /// <returns>Null if no hit, or a <see>IHitTestObject</see> if there was a hit.</returns>
+    /// <returns>Null if no hit, or a <see cref="IHitTestObject" /> if there was a hit.</returns>
     public override IHitTestObject HitTest(IPlotArea layer, object plotData, PointF hitpoint)
     {
       XYColumnPlotData myPlotAssociation = plotData as XYColumnPlotData;

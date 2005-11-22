@@ -30,7 +30,7 @@ namespace Altaxo.Serialization.Ascii
   public class AsciiLineStructure 
   {
     /// <summary>
-    /// The structure of the line. This list holds <see>System.Type</see> values that represent the recognized items in the line.
+    /// The structure of the line. This list holds <see cref="System.Type" /> values that represent the recognized items in the line.
     /// </summary>
     protected System.Collections.ArrayList mylist = new System.Collections.ArrayList();
     /// <summary>The line number of the ascii file that is represented by this instance.</summary>

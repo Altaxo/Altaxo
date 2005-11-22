@@ -11,11 +11,11 @@ namespace Altaxo.Main.GUI
     protected double _value1Double;
     protected double _value1DoubleTemporary;
 
-    /// <summary>The minimum value that can be reached. If the minimum value itself is included, is determined by the flag <see>_isMinimumValueIncluded</see>.</summary>
+    /// <summary>The minimum value that can be reached. If the minimum value itself is included, is determined by the flag <see cref="_isMinimumValueIncluded" />.</summary>
     protected double _minimumValue = double.MinValue;
     /// <summary>If true, the minimum value itself is valid for the entered number. If false, only values greater than the minimum value are valid.</summary>
     protected bool _isMinimumValueIncluded=true;
-    /// <summary>The maximum value that can be reached. If the maximum value itself is included, is determined by the flag <see>_isMinimumValueIncluded</see>.</summary>
+    /// <summary>The maximum value that can be reached. If the maximum value itself is included, is determined by the flag <see cref="_isMinimumValueIncluded" />.</summary>
     protected double _maximumValue = double.MaxValue;
     /// <summary>If true, the maximum value itself is valid for the entered number. If false, only values lesser than the maximum value are valid.</summary>
     protected bool   _isMaximumValueIncluded=true;

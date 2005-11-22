@@ -494,7 +494,7 @@ namespace Altaxo.Graph
     }
 
 
-    /// <summary>If axis the label is attached to if the value of <see>AttachToAxis</see> is true.</summary>
+    /// <summary>If axis the label is attached to if the value of <see cref="AttachToAxis" /> is true.</summary>
     public EdgeType AttachedAxis
     {
       get { return this.m_AttachedAxis; }

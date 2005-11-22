@@ -43,7 +43,7 @@ namespace Altaxo.Graph
 
     /// <summary>
     /// Returns the color of the style. If not supported, returns Color.Black.
-    /// Sets the color. If <see>IsColorReceiver</see> is false, this should throw an exception
+    /// Sets the color. If <see cref="IsColorReceiver" /> is false, this should throw an exception
     /// </summary>
     System.Drawing.Color Color { get; set; }
 
@@ -54,7 +54,7 @@ namespace Altaxo.Graph
     bool IsSymbolSizeProvider { get; }
 
     /// <summary>
-    ///  Returns true if for this style the <see>SymbolSize</see> property can be set.
+    ///  Returns true if for this style the <see cref="SymbolSize" /> property can be set.
     /// </summary>
     bool IsSymbolSizeReceiver { get; }
 

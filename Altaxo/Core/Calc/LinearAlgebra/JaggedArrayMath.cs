@@ -128,7 +128,7 @@ namespace Altaxo.Calc.LinearAlgebra
     #region Type conversion
 
     /// <summary>
-    /// This wraps a jagged double array to the <see>IMatrix</see> interface. The data is not copied!
+    /// This wraps a jagged double array to the <see cref="IMatrix" /> interface. The data is not copied!
     /// </summary>
     /// <param name="x">The jagged array. Each double[] vector is a row of the matrix.</param>
     /// <param name="rows">The number of (used) rows of the array.</param>
@@ -140,7 +140,7 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     /// <summary>
-    /// This wraps a jagged double array to the <see>IROMatrix</see> interface so that the array appears to be transposed. The data is not copied!
+    /// This wraps a jagged double array to the <see cref="IROMatrix" /> interface so that the array appears to be transposed. The data is not copied!
     /// </summary>
     /// <param name="x">The jagged array. Each double[] vector is a column of the matrix (because of transpose).</param>
     /// <param name="rows">The number of (used) rows of the resulting matrix.</param>
@@ -152,7 +152,7 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     /// <summary>
-    /// This wraps a jagged double array to the <see>IROMatrix</see> interface so that the array appears to be transposed. The data is not copied!
+    /// This wraps a jagged double array to the <see cref="IROMatrix" /> interface so that the array appears to be transposed. The data is not copied!
     /// </summary>
     /// <param name="x">The jagged array. Each double[] vector is a column of the matrix (because of transpose).</param>
     /// <param name="rows">The number of (used) rows of the resulting matrix.</param>

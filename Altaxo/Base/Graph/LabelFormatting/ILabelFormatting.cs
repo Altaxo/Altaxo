@@ -32,7 +32,7 @@ namespace Altaxo.Graph.LabelFormatting
   
 
   /// <summary>
-  /// Procedures to format an item of the <see>Altaxo.Data.AltaxoVariant</see> class.
+  /// Procedures to format an item of the <see cref="Altaxo.Data.AltaxoVariant" /> class.
   /// </summary>
   public interface ILabelFormatting : ICloneable
   {
@@ -66,7 +66,7 @@ namespace Altaxo.Graph.LabelFormatting
     /// <param name="font">Font used.</param>
     /// <param name="strfmt">String format used.</param>
     /// <param name="items">Array of items to be drawn.</param>
-    /// <returns>An array of <see>IMeasuredLabelItem</see> that can be used to determine the size of each item and to draw it.</returns>
+    /// <returns>An array of <see cref="IMeasuredLabelItem" /> that can be used to determine the size of each item and to draw it.</returns>
     IMeasuredLabelItem[] GetMeasuredItems(Graphics g, System.Drawing.Font font, System.Drawing.StringFormat strfmt, AltaxoVariant[] items);
   }
 }

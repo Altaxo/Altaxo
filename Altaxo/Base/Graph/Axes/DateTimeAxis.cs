@@ -281,7 +281,7 @@ namespace Altaxo.Graph.Axes
       }
     }
     /// <summary>
-    /// Returns the <see>FiniteDateTimeBoundaries</see> object that is associated with that axis.
+    /// Returns the <see cref="FiniteDateTimeBoundaries" /> object that is associated with that axis.
     /// </summary>
     public FiniteDateTimeBoundaries DataBounds 
     {

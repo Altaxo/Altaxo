@@ -43,7 +43,7 @@ namespace Altaxo.Serialization.Xml
 
 
     /// <summary>
-    /// Used to store the actual serialization versions of the classes. Classes which are not marked with the <see>SerializationVersionAttribute</see> attribute
+    /// Used to store the actual serialization versions of the classes. Classes which are not marked with the <see cref="SerializationVersionAttribute" /> attribute
     /// are considered to have a version of 0. 
     /// </summary>
     /// <remarks>The keys for the hashtable are System.Type objects, the values are integers storing the serialization version.</remarks>
@@ -133,7 +133,7 @@ namespace Altaxo.Serialization.Xml
     /// <summary>
     /// Get a serialization surrogate for the spezified type.
     /// </summary>
-    /// <param name="type">The full qualified type name (<see>GetFullyQualifiedTypeName</see>) for which a serialization surrogate should be found.</param>
+    /// <param name="type">The full qualified type name (<see cref="GetFullyQualifiedTypeName(System.Type)" />) for which a serialization surrogate should be found.</param>
     /// <returns>The serialization surrogate for the specified type, or null if no surrogate is found.</returns>
     public IXmlSerializationSurrogate GetSurrogate(string type)
     {

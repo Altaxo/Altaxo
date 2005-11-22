@@ -25,7 +25,7 @@ using System;
 namespace Altaxo.Graph
 {
   /// <summary>
-  /// Enumerates the style how a <see>XYColumnPlotItem</see> is labeled into the <see>TextGraphics</see>. 
+  /// Enumerates the style how a <see cref="XYColumnPlotItem" /> is labeled into the <see cref="TextGraphics" />. 
   /// </summary>
   public enum XYColumnPlotItemLabelTextStyle
   {

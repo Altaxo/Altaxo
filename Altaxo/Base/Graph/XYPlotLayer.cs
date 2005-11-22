@@ -2215,7 +2215,7 @@ namespace Altaxo.Graph
 
     
     /// <summary>
-    /// Transforms a <see>PointF</see> from layer coordinates to graph (=printable area) coordinates
+    /// Transforms a <see cref="PointF" /> from layer coordinates to graph (=printable area) coordinates
     /// </summary>
     /// <param name="layerCoordinates">The layer coordinates to convert.</param>
     /// <returns>graphics path now in graph coordinates</returns>

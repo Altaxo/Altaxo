@@ -69,7 +69,7 @@ namespace Altaxo.Serialization.Xml
     void GetArray(string name, out int[] val);
 
     /// <summary>
-    /// Deserializes an array of double value. The xml node must be opened before with <see>OpenArray</see>
+    /// Deserializes an array of double value. The xml node must be opened before with <see cref="OpenArray" />
     /// </summary>
     /// <param name="val">The array, must be at least of length <c>count</c>.</param>
     /// <param name="count">The number of elements to deserialize. If this is less than the number of elements in the xml stream, the other elements are safely ignored.</param>

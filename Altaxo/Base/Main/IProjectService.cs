@@ -263,8 +263,8 @@ namespace Altaxo.Main
     event ProjectEventHandler ProjectDirtyChanged;
     
     /// <summary>
-    /// Event fired <b>after</b> any of the following other events is fired: <see>ProjectOpened</see>, 
-    /// <see>ProjectClosed</see>, <see>ProjectRenamed</see>, and <see>ProjectDirtyChanged</see>.
+    /// Event fired <b>after</b> any of the following other events is fired: <see cref="ProjectOpened" />, 
+    /// <see cref="ProjectClosed" />, <see cref="ProjectRenamed" />, and <see cref="ProjectDirtyChanged" />.
     /// </summary>
     event ProjectEventHandler ProjectChanged;
   }

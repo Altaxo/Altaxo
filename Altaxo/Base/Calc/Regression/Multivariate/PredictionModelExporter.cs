@@ -31,7 +31,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 {
   /// <summary>
   /// Utility class to retrieve the calibration model stored in an worksheet and export it
-  /// either to a <see>PLS2CalibrationModel</see> or to a XML file.
+  /// either to a <see cref="PLS2CalibrationModel" /> or to a XML file.
   /// </summary>
   class PredictionModelExporter
   {

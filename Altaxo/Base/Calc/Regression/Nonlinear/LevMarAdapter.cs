@@ -5,7 +5,7 @@ using Altaxo.Collections;
 namespace Altaxo.Calc.Regression.Nonlinear
 {
   /// <summary>
-  /// Adapts a <see>FitEnsemble</see> to the requirements of a Levenberg-Marquardt fitting procedure.
+  /// Adapts a <see cref="FitEnsemble" /> to the requirements of a Levenberg-Marquardt fitting procedure.
   /// </summary>
   public class LevMarAdapter
   {
@@ -291,9 +291,10 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// <summary>
     /// Calculates the fitting values.
     /// </summary>
-    /// <param name="param">The parameter used to calculate the values.</param>
+    /// <param name="parameter">The parameter used to calculate the values.</param>
     /// <param name="outputValues">You must provide an array to hold the calculated values. Size of the array must be
-    /// at least <see>NumberOfData</see>.</param>
+    /// at least <see cref="NumberOfData" />.</param>
+    /// <param name="additionalData">Currently ignored.</param>
     /// <remarks>The values of the fit elements are stored in the order from element_0 to element_n. If there is more
     /// than one used dependent variable per fit element, the output values are stored in interleaved order.
     /// </remarks>
@@ -307,7 +308,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// </summary>
     /// <param name="parameter">The parameter used to calculate the values.</param>
     /// <param name="outputValues">You must provide an array to hold the calculated values. Size of the array must be
-    /// at least <see>NumberOfData</see>.</param>
+    /// at least <see cref="NumberOfData" />.</param>
     /// <remarks>The values of the fit elements are stored in the order from element_0 to element_n. If there is more
     /// than one used dependent variable per fit element, the output values are stored in interleaved order.
     /// </remarks>
@@ -349,7 +350,8 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// </summary>
     /// <param name="parameter">The parameter used to calculate the values.</param>
     /// <param name="outputValues">You must provide an array to hold the calculated values. Size of the array must be
-    /// at least <see>NumberOfData</see>*<see>NumberOfParameter</see>.</param>
+    /// at least <see cref="NumberOfData" />*<see cref="FitElement.NumberOfParameters" />.</param>
+    /// <param name="adata">Currently ignored.</param>
     /// <remarks>The values of the fit elements are stored in the order from element_0 to element_n*m. If there is more
     /// than one used dependent variable per fit element, the output values are stored in interleaved order. The derivatives
     /// on one fitting value  are stored in successive order.

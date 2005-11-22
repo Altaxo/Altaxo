@@ -40,7 +40,7 @@ namespace Altaxo.Scripting
 
     /// <summary>
     /// Get / sets the user defined parameter names. If setting, this also sets the property
-    /// <see>IsUsingUserDefinedParameterNames</see> to true, and the <see>NumberOfParameters</see> to the given number
+    /// <see cref="IsUsingUserDefinedParameterNames" /> to true, and the <see cref="NumberOfParameters" /> to the given number
     /// of user defined parameters.
     /// </summary>
     string[] UserDefinedParameterNames { get; set; }
@@ -265,6 +265,7 @@ namespace Altaxo.Scripting
     /// Creates a column script as a copy from another script.
     /// </summary>
     /// <param name="from">The script to copy from.</param>
+    /// <param name="forModification">If true, the new script text can be modified.</param>
     public FitFunctionScript(FitFunctionScript from, bool forModification)
       : base(from, forModification)
     {

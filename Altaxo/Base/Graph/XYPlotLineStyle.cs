@@ -33,7 +33,7 @@ namespace Altaxo.Graph
   /// PlotRange represents a range of plotting points from index 
   /// lowerBound to (upperBound-1)
   /// I use a class instead of a struct because it is intended to use with
-  /// <see>System.Collections.ArrayList</see>.
+  /// <see cref="System.Collections.ArrayList" />.
   /// </summary>
   /// <remarks>For use in a list, the UpperBound property is somewhat useless, since it should be equal
   /// to the LowerBound property of the next item.</remarks>

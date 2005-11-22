@@ -29,7 +29,7 @@ namespace Altaxo.Calc.LinearAlgebra
 {
 
   /// <summary>
-  /// Wraps <see>Altaxo.Data.DataColumnCollection</see>s to matrices.
+  /// Wraps <see cref="Altaxo.Data.DataColumnCollection" />s to matrices.
   /// </summary>
   public class DataTableWrapper
   {
@@ -39,7 +39,7 @@ namespace Altaxo.Calc.LinearAlgebra
     
 
     /// <summary>
-    /// Wraps a set of <see>DataColumns</see> into a matrix so that the matrix columns corresponds to the <see>DataColumns</see>.
+    /// Wraps a set of <see cref="DataColumn" />s into a matrix so that the matrix columns corresponds to the <see cref="DataColumn" />s.
     /// </summary>
     class DataColumnToColumnROMatrixWrapper : IROMatrix
     {
@@ -50,7 +50,7 @@ namespace Altaxo.Calc.LinearAlgebra
       /// <summary>
       /// Constructor
       /// </summary>
-      /// <param name="collection">Collection of <see>DataColumns</see>.</param>
+      /// <param name="collection">Collection of <see cref="DataColumn" />s.</param>
       /// <param name="selectedColumns">Set set of indices into the collection that are part of the matrix.</param>
       /// <param name="selectedRows">The set of rows that are part of the matrix. This collection is not cloned here, therefore it must not be subsequently changed!</param>
       public DataColumnToColumnROMatrixWrapper(Altaxo.Data.DataColumnCollection collection, Altaxo.Collections.IAscendingIntegerCollection selectedColumns, Altaxo.Collections.IAscendingIntegerCollection selectedRows)
@@ -100,7 +100,7 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     /// <summary>
-    /// Wraps a set of <see>DataColumns</see> into a matrix so that the matrix columns corresponds to the <see>DataColumns</see>. But the first column here consists of 1s (one), and the columns start with index 1.
+    /// Wraps a set of <see cref="DataColumn" />s into a matrix so that the matrix columns corresponds to the <see cref="DataColumn" />s. But the first column here consists of 1s (one), and the columns start with index 1.
     /// That means that the resulting matrix has a number of columns that is one larger that the number of data columns.
     /// </summary>
     class InterceptPlusDataColumnToColumnROMatrixWrapper : IROMatrix
@@ -112,7 +112,7 @@ namespace Altaxo.Calc.LinearAlgebra
       /// <summary>
       /// Constructor
       /// </summary>
-      /// <param name="collection">Collection of <see>DataColumns</see>.</param>
+      /// <param name="collection">Collection of <see cref="DataColumn" />s.</param>
       /// <param name="selectedColumns">Set set of indices into the collection that are part of the matrix.</param>
       /// <param name="selectedRows">The set of rows that are part of the matrix. This collection is not cloned here, therefore it must not be subsequently changed!</param>
       public InterceptPlusDataColumnToColumnROMatrixWrapper(Altaxo.Data.DataColumnCollection collection, Altaxo.Collections.IAscendingIntegerCollection selectedColumns, Altaxo.Collections.IAscendingIntegerCollection selectedRows)
@@ -165,7 +165,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
   
     /// <summary>
-    /// Wraps a set of <see>DataColumns</see> into a matrix so that the matrix columns corresponds to the <see>DataColumns</see>.
+    /// Wraps a set of <see cref="DataColumn" />s into a matrix so that the matrix columns corresponds to the <see cref="DataColumn" />s.
     /// </summary>
     class DataColumnToColumnMatrixWrapper : DataColumnToColumnROMatrixWrapper, IMatrix
     {
@@ -205,7 +205,7 @@ namespace Altaxo.Calc.LinearAlgebra
   
 
     /// <summary>
-    /// Wrapps a set of <see>DataColumns</see> into a matrix so that the matrix rows corresponds to the <see>DataColumns</see>.
+    /// Wrapps a set of <see cref="DataColumn" />s into a matrix so that the matrix rows corresponds to the <see cref="DataColumn" />s.
     /// </summary>
     class DataColumnToRowROMatrixWrapper : IROMatrix
     {
@@ -267,7 +267,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 
     /// <summary>
-    /// Wrapps a set of <see>DataColumns</see> into a matrix so that the matrix rows corresponds to the <see>DataColumns</see>.
+    /// Wrapps a set of <see cref="DataColumn" />s into a matrix so that the matrix rows corresponds to the <see cref="DataColumn" />s.
     /// </summary>
     class DataColumnToRowMatrixWrapper : DataColumnToRowROMatrixWrapper, IMatrix
     {
@@ -305,9 +305,9 @@ namespace Altaxo.Calc.LinearAlgebra
     #region Readonly matrix wrapper functions
 
     /// <summary>
-    /// Wraps a set of <see>DataColumns</see> into a readonly matrix so that the matrix columns corresponds to the <see>DataColumns</see>.
+    /// Wraps a set of <see cref="DataColumn" />s into a readonly matrix so that the matrix columns corresponds to the <see cref="DataColumn" />s.
     /// </summary>
-    /// <param name="collection">Collection of <see>DataColumns</see>.</param>
+    /// <param name="collection">Collection of <see cref="DataColumn" />s.</param>
     /// <param name="selectedColumns">Set set of indices into the collection that are part of the matrix. You can subsequently change this parameter without affecting this wrapper.</param>
     /// <param name="selectedRows">The set of rows that are part of the matrix. This collection will be cloned here, i.e. you can subsequently change it without affecting this wrapper.</param>
     /// <returns>The wrapping read only matrix.</returns>
@@ -317,10 +317,10 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     /// <summary>
-    /// Wraps a set of <see>DataColumns</see> into a readonly matrix so that the matrix columns corresponds to the <see>DataColumns</see> But the first column consists of elements with a numerical value of 1. The number of columns
+    /// Wraps a set of <see cref="DataColumn" />s into a readonly matrix so that the matrix columns corresponds to the <see cref="DataColumn" />s But the first column consists of elements with a numerical value of 1. The number of columns
     /// of the resulting matrix is therefore 1 greater than the number of data columns in the argument.
     /// </summary>
-    /// <param name="collection">Collection of <see>DataColumns</see>.</param>
+    /// <param name="collection">Collection of <see cref="DataColumn" />s.</param>
     /// <param name="selectedColumns">Set set of indices into the collection that are part of the matrix. You can subsequently change this parameter without affecting this wrapper.</param>
     /// <param name="selectedRows">The set of rows that are part of the matrix. This collection will be cloned here, i.e. you can subsequently change it without affecting this wrapper.</param>
     /// <returns>The wrapping read only matrix.</returns>
@@ -331,9 +331,9 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     /// <summary>
-    /// Wraps a set of <see>DataColumns</see> into a readonly matrix so that the matrix columns corresponds to the <see>DataColumns</see>.
+    /// Wraps a set of <see cref="DataColumn" />s into a readonly matrix so that the matrix columns corresponds to the <see cref="DataColumn" />s.
     /// </summary>
-    /// <param name="collection">Collection of <see>DataColumns</see>.</param>
+    /// <param name="collection">Collection of <see cref="DataColumn" />s.</param>
     /// <param name="selectedColumns">Set set of indices into the collection that are part of the matrix. You can subsequently change this parameter without affecting this wrapper.</param>
     /// <param name="nRows">The number of rows that are part of the matrix (starting from index 0).</param>
     public static IROMatrix ToROColumnMatrix(Altaxo.Data.DataColumnCollection collection, Altaxo.Collections.IAscendingIntegerCollection selectedColumns, int nRows)
@@ -345,7 +345,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 
     /// <summary>
-    /// Wrapps a set of <see>DataColumns</see> into a readonly matrix so that the matrix rows corresponds to the <see>DataColumns</see>.
+    /// Wraps a set of <see cref="DataColumn" />s into a readonly matrix so that the matrix rows corresponds to the <see cref="DataColumn" />s.
     /// </summary>
     /// <param name="collection">DataColumnCollection from which to select the data columns that are part of the matrix by their indices.</param>
     /// <param name="selectedColumns">The indices of the data columns in the collection that are part of the matrix. You can subsequently change this parameter without affecting this wrapper.</param>
@@ -356,7 +356,7 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     /// <summary>
-    /// Wrapps a set of <see>DataColumns</see> into a readonly matrix so that the matrix rows corresponds to the <see>DataColumns</see>.
+    /// Wrapps a set of <see cref="DataColumn" />s into a readonly matrix so that the matrix rows corresponds to the <see cref="DataColumn" />s.
     /// </summary>
     /// <param name="collection">DataColumnCollection from which to select the data columns that are part of the matrix by their indices.</param>
     /// <param name="selectedColumns">The indices of the data columns in the collection that are part of the matrix. You can subsequently change this parameter without affecting this wrapper.</param>
@@ -370,9 +370,9 @@ namespace Altaxo.Calc.LinearAlgebra
 
     #region Writeable matrix wrapper functions
     /// <summary>
-    /// Wraps a set of <see>DataColumns</see> into a writeable matrix so that the matrix columns corresponds to the <see>DataColumns</see>.
+    /// Wraps a set of <see cref="DataColumn" />s into a writeable matrix so that the matrix columns corresponds to the <see cref="DataColumn" />s.
     /// </summary>
-    /// <param name="collection">Collection of <see>DataColumns</see>.</param>
+    /// <param name="collection">Collection of <see cref="DataColumn" />s.</param>
     /// <param name="selectedColumns">Set set of indices into the collection that are part of the matrix. You can subsequently change this parameter without affecting this wrapper.</param>
     /// <param name="selectedRows">The set of rows that are part of the matrix. This collection will be cloned here, i.e. you can subsequently change it without affecting this wrapper.</param>
     public static IMatrix ToColumnMatrix(Altaxo.Data.DataColumnCollection collection, Altaxo.Collections.IAscendingIntegerCollection selectedColumns, Altaxo.Collections.IAscendingIntegerCollection selectedRows)
@@ -381,9 +381,9 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     /// <summary>
-    /// Wraps a set of <see>DataColumns</see> into a writeable matrix so that the matrix columns corresponds to the <see>DataColumns</see>.
+    /// Wraps a set of <see cref="DataColumn" />s into a writeable matrix so that the matrix columns corresponds to the <see cref="DataColumn" />s.
     /// </summary>
-    /// <param name="collection">Collection of <see>DataColumns</see>.</param>
+    /// <param name="collection">Collection of <see cref="DataColumn" />s.</param>
     /// <param name="selectedColumns">Set set of indices into the collection that are part of the matrix. You can subsequently change this parameter without affecting this wrapper.</param>
     /// <param name="nRows">The number of rows that are part of the matrix (starting from index 0).</param>
     public static IMatrix ToColumnMatrix(Altaxo.Data.DataColumnCollection collection, Altaxo.Collections.IAscendingIntegerCollection selectedColumns, int nRows)
@@ -392,7 +392,7 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     /// <summary>
-    /// Wrapps a set of <see>DataColumns</see> into a writeable matrix so that the matrix rows corresponds to the <see>DataColumns</see>.
+    /// Wrapps a set of <see cref="DataColumn" />s into a writeable matrix so that the matrix rows corresponds to the <see cref="DataColumn" />s.
     /// </summary>
     /// <param name="collection">DataColumnCollection from which to select the data columns that are part of the matrix by their indices.</param>
     /// <param name="selectedColumns">The indices of the data columns in the collection that are part of the matrix. You can subsequently change this parameter without affecting this wrapper.</param>
@@ -403,7 +403,7 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     /// <summary>
-    /// Wrapps a set of <see>DataColumns</see> into a writeable matrix so that the matrix rows corresponds to the <see>DataColumns</see>.
+    /// Wrapps a set of <see cref="DataColumn" />s into a writeable matrix so that the matrix rows corresponds to the <see cref="DataColumn" />s.
     /// </summary>
     /// <param name="collection">DataColumnCollection from which to select the data columns that are part of the matrix by their indices.</param>
     /// <param name="selectedColumns">The indices of the data columns in the collection that are part of the matrix. You can subsequently change this parameter without affecting this wrapper.</param>
@@ -525,7 +525,7 @@ namespace Altaxo.Calc.LinearAlgebra
     }
     
     /// <summary>
-    /// Counts the number of valid rows from the array that is returned by <see>GetValidNumericRows</see>.
+    /// Counts the number of valid rows from the array that is returned by for instance <see cref="GetValidNumericRows(INumericColumn[], IAscendingIntegerCollection, int)" />.
     /// </summary>
     /// <param name="array">The boolean array.</param>
     /// <returns>The number of valid numeric rows, i.e. the number of elements in the array which have the value of true.</returns>
@@ -543,7 +543,7 @@ namespace Altaxo.Calc.LinearAlgebra
     
 
     /// <summary>
-    /// Gets the collection of valid rows from the array that is returned by <see>GetValidNumericRows</see>.
+    /// Gets the collection of valid rows from the array that is returned by <see cref="GetValidNumericRows(INumericColumn[], IAscendingIntegerCollection, int)" />.
     /// </summary>
     /// <param name="array">The boolean array.</param>
     /// <returns>An collection of ascending integer values. These values are the indizes of valid numeric rows, i.e. the number of elements in the array which have the value of true.</returns>
@@ -559,7 +559,7 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     /// <summary>
-    /// Gets the collection of valid rows from selected columns of a <see>DataColumnCollection</see>.
+    /// Gets the collection of valid rows from selected columns of a <see cref="DataColumnCollection" />.
     /// </summary>
     /// <param name="table">The collection of data columns.</param>
     /// <param name="selectedCols">The selected columns. An exception is thrown if one of these columns is non numeric.</param>

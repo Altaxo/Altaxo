@@ -51,7 +51,7 @@ namespace Altaxo.Calc.Regression.Multivariate
   public class ExcludeGroupsGroupingStrategy : ICrossValidationGroupingStrategy
   {
     /// <summary>
-    /// <see>ICrossValidationGroupingStrategy.Group</see>
+    /// <see cref="ICrossValidationGroupingStrategy.Group" />
     /// </summary>
     /// <param name="Y"></param>
     /// <returns></returns>

@@ -34,7 +34,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
     #region ROVector
     /// <summary>
-    /// Wraps a <see>DataColumns</see> into a read-only vector.
+    /// Wraps a <see cref="DataColumn" />s into a read-only vector.
     /// </summary>
     class NumericColumnToROVectorWrapper : IROVector
     {
@@ -45,7 +45,7 @@ namespace Altaxo.Calc.LinearAlgebra
       /// <summary>
       /// Constructor
       /// </summary>
-      /// <param name="column">The <see>DataColumn</see> to wrap.</param>
+      /// <param name="column">The <see cref="DataColumn" /> to wrap.</param>
       /// <param name="nRows">The number of rows that are part of the vector. (Starting from index 0).</param>
       public NumericColumnToROVectorWrapper(Altaxo.Data.INumericColumn column, int nRows)
       {
@@ -79,7 +79,7 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     /// <summary>
-    /// Wraps a <see>DataColumns</see> into a read-only vector for selected rows.
+    /// Wraps a <see cref="DataColumn" />s into a read-only vector for selected rows.
     /// </summary>
     class NumericColumnSelectedRowsToROVectorWrapper : IROVector
     {
@@ -90,7 +90,7 @@ namespace Altaxo.Calc.LinearAlgebra
       /// <summary>
       /// Constructor
       /// </summary>
-      /// <param name="column">The <see>DataColumn</see> to wrap.</param>
+      /// <param name="column">The <see cref="DataColumn" /> to wrap.</param>
       /// <param name="selectedRows">The set of rows that are part of the vector. This collection is not cloned here, therefore it must not be subsequently changed!</param>
       public NumericColumnSelectedRowsToROVectorWrapper(Altaxo.Data.INumericColumn column, IAscendingIntegerCollection selectedRows)
       {
@@ -128,7 +128,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
     #region Vector
     /// <summary>
-    /// Wraps a <see>DataColumns</see> into a writable vector.
+    /// Wraps a <see cref="DataColumn" />s into a writable vector.
     /// </summary>
     class DoubleColumnToVectorWrapper : IVector
     {
@@ -139,7 +139,7 @@ namespace Altaxo.Calc.LinearAlgebra
       /// <summary>
       /// Constructor
       /// </summary>
-      /// <param name="column">The <see>DataColumn</see> to wrap.</param>
+      /// <param name="column">The <see cref="DataColumn" /> to wrap.</param>
       /// <param name="nRows">The number of rows that are part of the vector. (Starting from index 0).</param>
       public DoubleColumnToVectorWrapper(DoubleColumn column, int nRows)
       {
@@ -177,7 +177,7 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     /// <summary>
-    /// Wraps a <see>DataColumns</see> into a writeable vector for selected rows.
+    /// Wraps a <see cref="DataColumn" />s into a writeable vector for selected rows.
     /// </summary>
     class DoubleColumnSelectedRowsToVectorWrapper : IVector
     {
@@ -187,7 +187,7 @@ namespace Altaxo.Calc.LinearAlgebra
       /// <summary>
       /// Constructor
       /// </summary>
-      /// <param name="column">The <see>DataColumn</see> to wrap.</param>
+      /// <param name="column">The <see cref="DataColumn" /> to wrap.</param>
       /// <param name="selectedRows">The set of rows that are part of the vector. This collection is not cloned here, therefore it must not be subsequently changed!</param>
       public DoubleColumnSelectedRowsToVectorWrapper(Altaxo.Data.DoubleColumn column, IAscendingIntegerCollection selectedRows)
       {
@@ -235,7 +235,7 @@ namespace Altaxo.Calc.LinearAlgebra
       /// <summary>
       /// Constructor
       /// </summary>
-      /// <param name="column">The <see>DataColumn</see> to wrap.</param>
+      /// <param name="column">The <see cref="DataColumn" /> to wrap.</param>
       /// <param name="nRows">The number of rows that are part of the vector. (Starting from index 0).</param>
       public NumericColumnToROHorzMatrixWrapper(Altaxo.Data.INumericColumn column, int nRows)
       {
@@ -283,7 +283,7 @@ namespace Altaxo.Calc.LinearAlgebra
       /// <summary>
       /// Constructor
       /// </summary>
-      /// <param name="column">The <see>DataColumn</see> to wrap.</param>
+      /// <param name="column">The <see cref="DataColumn" /> to wrap.</param>
       /// <param name="nRows">The number of rows that are part of the vector. (Starting from index 0).</param>
       public NumericColumnToROVertMatrixWrapper(Altaxo.Data.INumericColumn column, int nRows)
       {
@@ -331,7 +331,7 @@ namespace Altaxo.Calc.LinearAlgebra
       /// <summary>
       /// Constructor
       /// </summary>
-      /// <param name="column">The <see>DataColumn</see> to wrap.</param>
+      /// <param name="column">The <see cref="DataColumn" /> to wrap.</param>
       /// <param name="nRows">The number of rows that are part of the vector. (Starting from index 0).</param>
       public DoubleColumnToHorzMatrixWrapper(Altaxo.Data.DoubleColumn column, int nRows)
       {
@@ -394,7 +394,7 @@ namespace Altaxo.Calc.LinearAlgebra
       /// <summary>
       /// Constructor
       /// </summary>
-      /// <param name="column">The <see>DataColumn</see> to wrap.</param>
+      /// <param name="column">The <see cref="DataColumn" /> to wrap.</param>
       /// <param name="nRows">The number of rows that are part of the vector. (Starting from index 0).</param>
       public DoubleColumnToVertMatrixWrapper(Altaxo.Data.DoubleColumn column, int nRows)
       {
@@ -454,22 +454,22 @@ namespace Altaxo.Calc.LinearAlgebra
     #endregion
 
     /// <summary>
-    /// This returns a read-only vector of a <see>INumericColumn</see>
+    /// This returns a read-only vector of a <see cref="INumericColumn" />
     /// </summary>
     /// <param name="col">The column to wrap as a IVector.</param>
     /// <param name="nRows">The number of rows to use for the vector.</param>
-    /// <returns>An IVector wrapping the <see>INumericColumn</see>.</returns>
+    /// <returns>An IVector wrapping the <see cref="INumericColumn" />.</returns>
     public static IROVector ToROVector(INumericColumn col, int nRows)
     {
       return new NumericColumnToROVectorWrapper(col,nRows);
     }
 
     /// <summary>
-    /// This returns a read-only vector of a <see>INumericColumn</see>
+    /// This returns a read-only vector of a <see cref="INumericColumn" />
     /// </summary>
     /// <param name="col">The column to wrap as a IVector.</param>
     /// <param name="nRows">The number of rows to use for the vector.</param>
-    /// <returns>An IVector wrapping the <see>INumericColumn</see>.</returns>
+    /// <returns>An IVector wrapping the <see cref="INumericColumn" />.</returns>
     public static IROVector ToROVector(DataColumn col, int nRows)
     {
       if(!(col is INumericColumn))
@@ -479,10 +479,10 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     /// <summary>
-    /// This returns a read-only vector of a <see>INumericColumn</see>
+    /// This returns a read-only vector of a <see cref="INumericColumn" />
     /// </summary>
     /// <param name="col">The column to wrap as a IVector.</param>
-    /// <returns>An IVector wrapping the <see>INumericColumn</see>.</returns>
+    /// <returns>An IVector wrapping the <see cref="INumericColumn" />.</returns>
     public static IROVector ToROVector(DataColumn col)
     {
       if(!(col is INumericColumn))
@@ -492,11 +492,11 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     /// <summary>
-    /// This returns a read-only vector of a <see>INumericColumn</see> for selected rows.
+    /// This returns a read-only vector of a <see cref="INumericColumn" /> for selected rows.
     /// </summary>
     /// <param name="col">The column to wrap as a IVector.</param>
     /// <param name="selectedRows">The rows of the source column that are part of the vector.</param>
-    /// <returns>An IROVector wrapping the <see>INumericColumn</see>.</returns>
+    /// <returns>An IROVector wrapping the <see cref="INumericColumn" />.</returns>
     public static IROVector ToROVector(INumericColumn col, IAscendingIntegerCollection selectedRows)
     {
       return new NumericColumnSelectedRowsToROVectorWrapper(col,(IAscendingIntegerCollection)selectedRows.Clone());
@@ -504,7 +504,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 
     /// <summary>
-    /// This returns a read-only vector of a <see>INumericColumn</see>, but the data are copyied before. Thus, if you change the data
+    /// This returns a read-only vector of a <see cref="INumericColumn" />, but the data are copyied before. Thus, if you change the data
     /// into the numeric column, the data of the returned vector is not influenced.
     /// </summary>
     /// <param name="col">The column to wrap.</param>
@@ -524,43 +524,43 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     /// <summary>
-    /// This returns a read and writeable vector of a <see>DoubleColumn</see>
+    /// This returns a read and writeable vector of a <see cref="DoubleColumn" />
     /// </summary>
     /// <param name="col">The column to wrap as a IVector.</param>
-    /// <returns>An IVector wrapping the <see>DoubleColumn</see>.</returns>
+    /// <returns>An IVector wrapping the <see cref="DoubleColumn" />.</returns>
     public static IVector ToVector(DoubleColumn col)
     {
       return new DoubleColumnToVectorWrapper(col,col.Count);
     }
 
     /// <summary>
-    /// This returns a read and writeable vector of a <see>DoubleColumn</see>
+    /// This returns a read and writeable vector of a <see cref="DoubleColumn" />
     /// </summary>
     /// <param name="col">The column to wrap as a IVector.</param>
     /// <param name="nRows">The number of rows to use for the vector.</param>
-    /// <returns>An IVector wrapping the <see>DoubleColumn</see>.</returns>
+    /// <returns>An IVector wrapping the <see cref="DoubleColumn" />.</returns>
     public static IVector ToVector(DoubleColumn col, int nRows)
     {
       return new DoubleColumnToVectorWrapper(col,nRows);
     }
 
     /// <summary>
-    /// This returns a read and writeable vector of a <see>DoubleColumn</see>
+    /// This returns a read and writeable vector of a <see cref="DoubleColumn" />
     /// </summary>
     /// <param name="col">The column to wrap as a IVector.</param>
     /// <param name="selectedRows">The indices of the rows to use for the vector.</param>
-    /// <returns>An IVector wrapping the <see>DoubleColumn</see>.</returns>
+    /// <returns>An IVector wrapping the <see cref="DoubleColumn" />.</returns>
     public static IVector ToVector(DoubleColumn col, IAscendingIntegerCollection selectedRows)
     {
       return new DoubleColumnSelectedRowsToVectorWrapper(col,(IAscendingIntegerCollection)selectedRows.Clone());
     }
 
     /// <summary>
-    /// This returns a read and writeable vector of a <see>DoubleColumn</see>
+    /// This returns a read and writeable vector of a <see cref="DoubleColumn" />
     /// </summary>
     /// <param name="col">The column to wrap as a IVector.</param>
     /// <param name="nRows">The number of rows to use for the vector.</param>
-    /// <returns>An IVector wrapping the <see>DoubleColumn</see>.</returns>
+    /// <returns>An IVector wrapping the <see cref="DoubleColumn" />.</returns>
     public static IVector ToVector(DataColumn col, int nRows)
     {
       if(!(col is DoubleColumn))
@@ -570,10 +570,10 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     /// <summary>
-    /// This returns a read and writeable vector of a <see>DoubleColumn</see>
+    /// This returns a read and writeable vector of a <see cref="DoubleColumn" />
     /// </summary>
     /// <param name="col">The column to wrap as a IVector.</param>
-    /// <returns>An IVector wrapping the <see>DoubleColumn</see>.</returns>
+    /// <returns>An IVector wrapping the <see cref="DoubleColumn" />.</returns>
     public static IVector ToVector(DataColumn col)
     {
       if(!(col is DoubleColumn))
@@ -584,22 +584,22 @@ namespace Altaxo.Calc.LinearAlgebra
 
 
     /// <summary>
-    /// This returns a horizontal oriented, readonly matrix of a <see>DoubleColumn</see>
+    /// This returns a horizontal oriented, readonly matrix of a <see cref="DoubleColumn" />
     /// </summary>
     /// <param name="col">The column to wrap as a IVector.</param>
     /// <param name="nRows">The number of rows to use for the vector.</param>
-    /// <returns>An horizontal oriented <see>IROMatrix</see> wrapping the <see>DoubleColumn</see>.</returns>
+    /// <returns>An horizontal oriented <see cref="IROMatrix" /> wrapping the <see cref="DoubleColumn" />.</returns>
     public static IROMatrix ToHorzROMatrix(INumericColumn col, int nRows)
     {
       return new NumericColumnToROHorzMatrixWrapper((INumericColumn)col,nRows);
     }
 
     /// <summary>
-    /// This returns a vertical oriented, readonly matrix of a <see>DoubleColumn</see>
+    /// This returns a vertical oriented, readonly matrix of a <see cref="DoubleColumn" />
     /// </summary>
     /// <param name="col">The column to wrap as a IVector.</param>
     /// <param name="nRows">The number of rows to use for the vector.</param>
-    /// <returns>An vertical oriented <see>IROMatrix</see> wrapping the <see>DoubleColumn</see>.</returns>
+    /// <returns>An vertical oriented <see cref="IROMatrix" /> wrapping the <see cref="DoubleColumn" />.</returns>
     public static IROMatrix ToVertROMatrix(INumericColumn col, int nRows)
     {
       return new NumericColumnToROVertMatrixWrapper((INumericColumn)col,nRows);
@@ -607,11 +607,11 @@ namespace Altaxo.Calc.LinearAlgebra
 
 
     /// <summary>
-    /// This returns a read and writeable, horizontal oriented matrix of a <see>DoubleColumn</see>
+    /// This returns a read and writeable, horizontal oriented matrix of a <see cref="DoubleColumn" />
     /// </summary>
     /// <param name="col">The column to wrap as a IVector.</param>
     /// <param name="nRows">The number of rows to use for the vector.</param>
-    /// <returns>An horizontal oriented <see>IMatrix</see> wrapping the <see>DoubleColumn</see>.</returns>
+    /// <returns>An horizontal oriented <see cref="IMatrix" /> wrapping the <see cref="DoubleColumn" />.</returns>
     public static IMatrix ToHorzMatrix(DataColumn col, int nRows)
     {
       if(!(col is DoubleColumn))
@@ -621,11 +621,11 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     /// <summary>
-    /// This returns a read and writeable, vertical oriented matrix of a <see>DoubleColumn</see>
+    /// This returns a read and writeable, vertical oriented matrix of a <see cref="DoubleColumn" />
     /// </summary>
     /// <param name="col">The column to wrap as a IVector.</param>
     /// <param name="nRows">The number of rows to use for the vector.</param>
-    /// <returns>An vertical oriented <see>IMatrix</see> wrapping the <see>DoubleColumn</see>.</returns>
+    /// <returns>An vertical oriented <see cref="IMatrix" /> wrapping the <see cref="DoubleColumn" />.</returns>
     public static IMatrix ToVertMatrix(DataColumn col, int nRows)
     {
       if(!(col is DoubleColumn))

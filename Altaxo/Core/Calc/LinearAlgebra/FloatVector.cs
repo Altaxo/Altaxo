@@ -831,7 +831,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
           #region Additions due to adoption to Altaxo
 
-    ///<summary>Constructor for <c>FloatVector</c> to deep copy from a <see>IROFloatVector</see></summary>
+    ///<summary>Constructor for <c>FloatVector</c> to deep copy from a <see cref="IROFloatVector" /></summary>
     ///<param name="src"><c>Vector</c> to deep copy into <c>FloatVector</c>.</param>
     ///<exception cref="ArgumentNullException">Exception thrown if null passed as 'src' parameter.</exception>
     public FloatVector(IROFloatVector src)
@@ -855,7 +855,7 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     /// <summary>
-    /// Returns the column of a <see>IROFloatMatrix</see> as a new <c>FloatVector.</c>
+    /// Returns the column of a <see cref="IROFloatMatrix" /> as a new <c>FloatVector.</c>
     /// </summary>
     /// <param name="mat">The matrix to copy the column from.</param>
     /// <param name="col">Index of the column to copy from the matrix.</param>
@@ -870,7 +870,7 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     /// <summary>
-    /// Returns the column of a <see>IROFloatMatrix</see> as a new <c>float[]</c> array.
+    /// Returns the column of a <see cref="IROFloatMatrix" /> as a new <c>float[]</c> array.
     /// </summary>
     /// <param name="mat">The matrix to copy the column from.</param>
     /// <param name="col">Index of the column to copy from the matrix.</param>
@@ -885,7 +885,7 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     /// <summary>
-    /// Returns the row of a <see>IROFloatMatrix</see> as a new <c>FloatVector.</c>
+    /// Returns the row of a <see cref="IROFloatMatrix" /> as a new <c>FloatVector.</c>
     /// </summary>
     /// <param name="mat">The matrix to copy the column from.</param>
     /// <param name="row">Index of the row to copy from the matrix.</param>

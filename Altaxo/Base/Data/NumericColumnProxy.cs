@@ -57,7 +57,7 @@ namespace Altaxo.Data
 
     /// <summary>
     /// Tests whether or not the holded object is valid. Here the test returns true if the column
-    /// is either of type <see>INumericColumn</see> or the holded object is <c>null</c>.
+    /// is either of type <see cref="INumericColumn" /> or the holded object is <c>null</c>.
     /// </summary>
     /// <param name="obj">Object to test.</param>
     /// <returns>True if this is a valid document object.</returns>
@@ -80,7 +80,7 @@ namespace Altaxo.Data
     /// <summary>
     /// Clones this holder. For holded objects, which are part of the document hierarchy,
     /// the holded object is <b>not</b> cloned (only the reference is copied). For all other objects, the object
-    /// is cloned, too, if the object supports the <see>ICloneable</see> interface.
+    /// is cloned, too, if the object supports the <see cref="ICloneable" /> interface.
     /// </summary>
     /// <returns>The cloned object holder.</returns>
     public override object Clone()

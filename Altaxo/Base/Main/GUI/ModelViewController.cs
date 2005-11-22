@@ -42,7 +42,7 @@ namespace Altaxo.Main.GUI
   }
 
   /// <summary>
-  /// Concatenation of a <see>IMVCController</see> and a <see>IApplyController</see>.
+  /// Concatenation of a <see cref="IMVCController" /> and a <see cref="IApplyController" />.
   /// </summary>
   public interface IMVCAController : IMVCController, IApplyController
   {

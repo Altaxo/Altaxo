@@ -48,7 +48,7 @@ namespace Altaxo.Graph.Axes.Boundaries
     }
 
     /// <summary>
-    /// Suspends the change events by incrementing the suspend counter by one. Each call to this function must be paired with a call to <see>EndUpdate</see>.
+    /// Suspends the change events by incrementing the suspend counter by one. Each call to this function must be paired with a call to <see cref="EndUpdate" />.
     /// </summary>
     public abstract void BeginUpdate();
     

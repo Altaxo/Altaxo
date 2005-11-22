@@ -79,7 +79,7 @@ namespace Altaxo.Graph
 
     /// <summary>
     /// Index of plot point, i.e. the number of points plotted before the point. Since it is possible that
-    /// some points are invalid, this number can be smaller than <see>RowIndex</see>.
+    /// some points are invalid, this number can be smaller than <see cref="RowIndex" />.
     /// </summary>
     public int PlotIndex
     {

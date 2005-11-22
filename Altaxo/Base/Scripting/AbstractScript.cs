@@ -160,7 +160,7 @@ namespace Altaxo.Scripting
     IScriptText CloneForModification();
    
     /// <summary>
-    /// Returns true when the script text can not be modified. Use <see>CloneForModification</see> to
+    /// Returns true when the script text can not be modified. Use <see cref="CloneForModification" /> to
     /// obtain a writable copy.
     /// </summary>
     bool IsReadOnly

@@ -1433,7 +1433,7 @@ namespace Altaxo.Calc.LinearAlgebra
     
 
     /// <summary>
-    /// This wraps a jagged double array to the <see>IMatrix</see> interface. The data is not copied!
+    /// This wraps a jagged double array to the <see cref="IMatrix" /> interface. The data is not copied!
     /// </summary>
     /// <param name="x">The jagged array. Each double[] vector is a row of the matrix.</param>
     /// <returns></returns>

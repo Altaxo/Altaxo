@@ -3,7 +3,7 @@ using System;
 namespace Altaxo.Main
 {
   /// <summary>
-  /// DocNodeProxy holds a reference to an object. If the object is a document node (implements <see>IDocumentNode</see>), then special
+  /// DocNodeProxy holds a reference to an object. If the object is a document node (implements <see cref="IDocumentNode" />), then special
   /// measures are used in the case the document node is disposed. In this case the path to the node is stored, and if a new document node with
   /// that path exists, the reference to the object is restored.
   /// </summary>
@@ -118,7 +118,7 @@ namespace Altaxo.Main
     /// <summary>
     /// Sets the document node that is held by this proxy.
     /// </summary>
-    /// <param name="docNode">The document node. If <c>docNode</c> implements <see>Main.IDocumentNode</see>,
+    /// <param name="docNode">The document node. If <c>docNode</c> implements <see cref="Main.IDocumentNode" />,
     /// the document path is stored for this object in addition to the object itself.</param>
     public void SetDocNode(object docNode)
     {
@@ -182,7 +182,7 @@ namespace Altaxo.Main
 
     /// <summary>
     /// Event handler that is called when the document node has changed. Because the path to the node can have changed too,
-    /// the path is renewed in this case. The <see>OnChanged</see> method is called then for the proxy itself.
+    /// the path is renewed in this case. The <see cref="OnChanged" /> method is called then for the proxy itself.
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>

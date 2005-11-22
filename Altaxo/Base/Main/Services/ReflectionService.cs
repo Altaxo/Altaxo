@@ -174,12 +174,12 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// For a given type of attribute, attributeType, this function returns the attribute instances and the class
     /// types this attributes apply to. If the attribute implements the IComparable interface, the list is sorted. The attribute has
-    /// to implement the <see>IClassForClassAttribute</see> interface, and only those attributes are considered, for which the
-    /// <see>IClassForClassAttribute.TargetType</see> match the type of the target argument.
+    /// to implement the <see cref="IClassForClassAttribute" /> interface, and only those attributes are considered, for which the
+    /// <see cref="IClassForClassAttribute.TargetType" /> match the type of the target argument.
     /// </summary>
     /// <param name="attributeType">The type of attribute (this has to be a class attribute type).</param>
-    /// <param name="target">Only necessary if the attributeType is an <see>IClassForClassAttribute</see>. In this case only
-    /// those attribute instances are returned, where the target object meets the target type of the <see>IClassForClassAttribute</see>.</param>
+    /// <param name="target">Only necessary if the attributeType is an <see cref="IClassForClassAttribute" />. In this case only
+    /// those attribute instances are returned, where the target object meets the target type of the <see cref="IClassForClassAttribute" />.</param>
     /// <returns>A list of dictionary entries. The keys are the attribute instances, the values are the class types this attributes apply to.</returns>
     public static DictionaryEntry[] GetAttributeInstancesAndClassTypesForClass(System.Type attributeType, object target)
     {
@@ -189,12 +189,12 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// For a given type of attribute, attributeType, this function returns the attribute instances and the class
     /// types this attributes apply to. If the attribute implements the IComparable interface, the list is sorted. The attribute has
-    /// to implement the <see>IClassForClassAttribute</see> interface, and only those attributes are considered, for which the
-    /// <see>IClassForClassAttribute.TargetType</see> match the type of the target argument.
+    /// to implement the <see cref="IClassForClassAttribute" /> interface, and only those attributes are considered, for which the
+    /// <see cref="IClassForClassAttribute.TargetType" /> match the type of the target argument.
     /// </summary>
     /// <param name="attributeType">The type of attribute (this has to be a class attribute type).</param>
-    /// <param name="target">Only necessary if the attributeType is an <see>IClassForClassAttribute</see>. In this case only
-    /// those attribute instances are returned, where the target object meets the target type of the <see>IClassForClassAttribute</see>.</param>
+    /// <param name="target">Only necessary if the attributeType is an <see cref="IClassForClassAttribute" />. In this case only
+    /// those attribute instances are returned, where the target object meets the target type of the <see cref="IClassForClassAttribute" />.</param>
     /// <returns>A list of dictionary entries. The keys are the attribute instances, the values are the class types this attributes apply to.</returns>
     public static DictionaryEntry[] GetAttributeInstancesAndClassTypesForClass(System.Type attributeType, object target, System.Type overrideObjectType)
     {
@@ -271,7 +271,7 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Tries to get a class instance for a given attribute type. All loaded assemblies are searched for classes that attributeType applies to,
     /// then for all found classes the instantiation of a class is tried, until a instance is created successfully. Here, the attributeType has
-    /// to implement <see>IClassForClassAttribute</see>, and creationArg[0] has to match the type in <see>IClassForClassAttribute.TargetType</see>
+    /// to implement <see cref="IClassForClassAttribute" />, and creationArg[0] has to match the type in <see cref="IClassForClassAttribute.TargetType" />
     /// </summary>
     /// <param name="attributeType">The type of attribute  the class(es) to instantiate must be assigned to.</param>
     /// <param name="expectedType">The expected type of return value.</param>
@@ -288,7 +288,7 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Tries to get a class instance for a given attribute type. All loaded assemblies are searched for classes that attributeType applies to,
     /// then for all found classes the instantiation of a class is tried, until a instance is created successfully. Here, the attributeType has
-    /// to implement <see>IClassForClassAttribute</see>, and creationArg[0] has to match the type in <see>IClassForClassAttribute.TargetType</see>
+    /// to implement <see cref="IClassForClassAttribute" />, and creationArg[0] has to match the type in <see cref="IClassForClassAttribute.TargetType" />
     /// </summary>
     /// <param name="attributeType">The type of attribute  the class(es) to instantiate must be assigned to.</param>
     /// <param name="expectedType">The expected type of return value.</param>

@@ -465,7 +465,7 @@ namespace Altaxo.Data
     /// <summary>
     /// Get / sets the parent object of this data column.
     /// </summary>
-    /// <remarks>Normally the parent object is a <see>DataColumnCollection</see>. In this case this member is set during addition of the data column
+    /// <remarks>Normally the parent object is a <see cref="DataColumnCollection" />. In this case this member is set during addition of the data column
     /// to the collection. If some other object owns the data column, it is responsible for setting the parent to himself.</remarks>
     public virtual object ParentObject
     {
@@ -568,7 +568,7 @@ namespace Altaxo.Data
     
 
     /// <summary>
-    /// Creates a new column, consisting only of the selected rows of the original column <c>x</c>. If x is null, a new <see>Altaxo.Data.DoubleColumn</see> will
+    /// Creates a new column, consisting only of the selected rows of the original column <c>x</c>. If x is null, a new <see cref="Altaxo.Data.DoubleColumn" /> will
     /// be returned, consisting of the selected row indices. 
     /// </summary>
     /// <param name="x">The original column (can be null).</param>
@@ -601,13 +601,13 @@ namespace Altaxo.Data
     }
 
     /// <summary>
-    /// Creates a new column, consisting only of the selected rows of the original column <c>x</c>. If x is null, a new <see>Altaxo.Data.DoubleColumn</see> will
+    /// Creates a new column, consisting only of the selected rows of the original column <c>x</c>. If x is null, a new <see cref="Altaxo.Data.DoubleColumn" /> will
     /// be returned, consisting of the selected row indices. 
     /// </summary>
     /// <param name="x">The original column (can be null).</param>
     /// <param name="selectedRows">Selected row indices (can be null - then the entire column is used).</param>
     /// <returns>A freshly created column consisting of x at the selected indices, or of the indices itself if x was null. If both x and selectedRows are null,
-    /// an empty <see>DoubleColumn</see> is returned.</returns>
+    /// an empty <see cref="DoubleColumn" /> is returned.</returns>
     public static DataColumn CreateColumnOfSelectedRows(Altaxo.Data.DataColumn x, Altaxo.Collections.IAscendingIntegerCollection selectedRows)
     {
       int numrows = 0;

@@ -119,7 +119,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// True if all elements are strictly equally spaced. Due to the limited accuracy of floating
     /// point arithmetic, this is in generally only fulfilled when having integer vector elements. 
-    /// Otherwise, please use <see>RelativeSpaceDeviation</see> to calculate the space deviation.
+    /// Otherwise, please use <see cref="RelativeSpaceDeviation" /> to calculate the space deviation.
     /// </summary>
     public bool IsStrictlyEquallySpaced
     {

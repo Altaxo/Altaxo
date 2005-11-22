@@ -716,7 +716,7 @@ namespace Altaxo.Graph.GUI
     /// <param name="sender">The menuitem, must be of type <see cref="DataMenuItem"/>.</param>
     /// <param name="e">Not used.</param>
     /// <remarks>The handler either checks the menuitem, if it was unchecked. If it was already checked,
-    /// it shows the <see cref="LineScatterPlotStyleControl"/> into a dialog box.
+    /// it shows the LineScatterPlotStyleControl into a dialog box.
     /// </remarks>
     private void EhMenuData_Data(object sender, System.EventArgs e)
     {

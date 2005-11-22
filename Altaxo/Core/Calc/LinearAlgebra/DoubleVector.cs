@@ -891,7 +891,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
        #region Additions due to adoption to Altaxo
 
-      ///<summary>Constructor for <c>DoubleVector</c> to deep copy from a <see>IROVector</see></summary>
+      ///<summary>Constructor for <c>DoubleVector</c> to deep copy from a <see cref="IROVector" /></summary>
     ///<param name="src"><c>Vector</c> to deep copy into <c>DoubleVector</c>.</param>
     ///<exception cref="ArgumentNullException">Exception thrown if null passed as 'src' parameter.</exception>
     public DoubleVector(IROVector src)
@@ -915,7 +915,7 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     /// <summary>
-    /// Returns the column of a <see>IROMatrix</see> as a new <c>DoubleVector.</c>
+    /// Returns the column of a <see cref="IROMatrix" /> as a new <c>DoubleVector.</c>
     /// </summary>
     /// <param name="mat">The matrix to copy the column from.</param>
     /// <param name="col">Number of column to copy from the matrix.</param>
@@ -930,7 +930,7 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     /// <summary>
-    /// Returns the column of a <see>IROMatrix</see> as a new <c>double[]</c> array.
+    /// Returns the column of a <see cref="IROMatrix" /> as a new <c>double[]</c> array.
     /// </summary>
     /// <param name="mat">The matrix to copy the column from.</param>
     /// <param name="col">Index of the column to copy from the matrix.</param>
@@ -945,7 +945,7 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     /// <summary>
-    /// Returns the row of a <see>IROMatrix</see> as a new <c>DoubleVector.</c>
+    /// Returns the row of a <see cref="IROMatrix" /> as a new <c>DoubleVector.</c>
     /// </summary>
     /// <param name="mat">The matrix to copy the column from.</param>
     /// <param name="row">Index of the row to copy from the matrix.</param>

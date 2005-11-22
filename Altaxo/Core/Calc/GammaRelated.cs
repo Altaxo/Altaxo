@@ -2527,7 +2527,7 @@ namespace Altaxo.Calc
     #region InverseBeta
 
     /// <summary>
-    /// InverseBetaRegularized gives the inverse of the incomplete beta function ratio (<see>BetaIR</see> or <see>BetaRegularized</see>).
+    /// InverseBetaRegularized gives the inverse of the incomplete beta function ratio (<see cref="BetaIR(double,double,double)" /> or <see cref="BetaRegularized" />).
     /// </summary>
     /// <param name="alpha">Probability (0..1)</param>
     /// <param name="p">Parameter p.</param>

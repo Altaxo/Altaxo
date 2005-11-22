@@ -287,7 +287,7 @@ namespace Altaxo.Graph
     /// </summary>
     /// <param name="layer">The layer in which this plot item is drawn into.</param>
     /// <param name="hitpoint">The point where the mouse is pressed.</param>
-    /// <returns>Null if no hit, or a <see>IHitTestObject</see> if there was a hit.</returns>
+    /// <returns>Null if no hit, or a <see cref="IHitTestObject" /> if there was a hit.</returns>
     public override IHitTestObject HitTest(IPlotArea layer, PointF hitpoint)
     {
       XYFunctionPlotData myPlotAssociation = this.m_PlotData;

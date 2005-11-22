@@ -11,7 +11,7 @@ namespace Altaxo.Main.Services
   public class GUIFactoryService
   {
     /// <summary>
-    /// Gets an <see>IMVCController for a given document type.</see>
+    /// Gets an <see cref="IMVCController" />  for a given document type.
     /// </summary>
     /// <param name="args">The argument list. The first element args[0] is the document for which the controller is searched. The following elements are
     /// optional, and are usually the parents of this document.</param>
@@ -23,7 +23,7 @@ namespace Altaxo.Main.Services
     }
 
     /// <summary>
-    /// Gets an <see>IMVCController for a given document type, and finding the right GUI user control for it.</see>
+    /// Gets an <see cref="IMVCController" />  for a given document type, and finding the right GUI user control for it.
     /// </summary>
     /// <param name="args">The argument list. The first element args[0] is the document for which the controller is searched. The following elements are
     /// optional, and are usually the parents of this document.</param>
@@ -36,10 +36,11 @@ namespace Altaxo.Main.Services
 
 
     /// <summary>
-    /// Gets an <see>IMVCController for a given document type, and finding the right GUI user control for it.</see>
+    /// Gets an <see cref="IMVCController" />  for a given document type, and finding the right GUI user control for it.
     /// </summary>
     /// <param name="args">The argument list. The first element args[0] is the document for which the controller is searched. The following elements are
     /// optional, and are usually the parents of this document.</param>
+    /// <param name="overrideArg0Type">If this parameter is not null, this given type is used instead of determining the type of the <c>arg[0]</c> argument.</param>
     /// <param name="expectedControllerType">Type of controller that you expect to return.</param>
     /// <returns>The controller for that document when found. The controller is already initialized with the document. If no controller is found for the document, or if no GUI control is found for the controller, the return value is null.</returns>
     public IMVCController GetControllerAndControl(object[] args, System.Type overrideArg0Type, System.Type expectedControllerType)
@@ -147,9 +148,9 @@ namespace Altaxo.Main.Services
     /// <returns>True if the object was successfully configured, false otherwise.</returns>
     /// <remarks>The presumtions to get this function working are:
     /// <list>
-    /// <item>A controller which implements <see>Altaxo.Main.GUI.IMVCAController has to exist.</see></item>
-    /// <item>A <see>Altaxo.Main.GUI.UserControllerForObjectAttribute</see> has to be assigned to that controller, and the argument has to be the type of the object you want to configure.</item>
-    /// <item>A GUI control (Windows Forms: UserControl) must exist, to which an <see>Altaxo.Main.GUI.UserControlForControllerAttribute</see> is assigned to, and the argument of that attribute has to be the type of the controller.</item>
+    /// <item>A controller which implements <see cref="Altaxo.Main.GUI.IMVCAController" /> has to exist.</item>
+    /// <item>A <see cref="Altaxo.Main.GUI.UserControllerForObjectAttribute" /> has to be assigned to that controller, and the argument has to be the type of the object you want to configure.</item>
+    /// <item>A GUI control (Windows Forms: UserControl) must exist, to which an <see cref="Altaxo.Main.GUI.UserControlForControllerAttribute" /> is assigned to, and the argument of that attribute has to be the type of the controller.</item>
     /// </list>
     /// </remarks>
     public bool ShowDialog(object[] args, string title)
@@ -164,12 +165,13 @@ namespace Altaxo.Main.Services
     /// args[1].. can contain the parents of this object (in most cases this is not necessary.
     /// If the return value is true, args[0] contains the configured object. </param>
     /// <param name="title">The title of the dialog to show.</param>
+    /// <param name="showApplyButton">If true, the apply button is shown also.</param>
     /// <returns>True if the object was successfully configured, false otherwise.</returns>
     /// <remarks>The presumtions to get this function working are:
     /// <list>
-    /// <item>A controller which implements <see>Altaxo.Main.GUI.IMVCAController has to exist.</see></item>
-    /// <item>A <see>Altaxo.Main.GUI.UserControllerForObjectAttribute</see> has to be assigned to that controller, and the argument has to be the type of the object you want to configure.</item>
-    /// <item>A GUI control (Windows Forms: UserControl) must exist, to which an <see>Altaxo.Main.GUI.UserControlForControllerAttribute</see> is assigned to, and the argument of that attribute has to be the type of the controller.</item>
+    /// <item>A controller which implements <see cref="Altaxo.Main.GUI.IMVCAController" /> has to exist.</item>
+    /// <item>A <see cref="Altaxo.Main.GUI.UserControllerForObjectAttribute" /> has to be assigned to that controller, and the argument has to be the type of the object you want to configure.</item>
+    /// <item>A GUI control (Windows Forms: UserControl) must exist, to which an <see cref="Altaxo.Main.GUI.UserControlForControllerAttribute" /> is assigned to, and the argument of that attribute has to be the type of the controller.</item>
     /// </list>
     /// </remarks>
     public bool ShowDialog(object[] args, string title, bool showApplyButton)
@@ -222,9 +224,9 @@ namespace Altaxo.Main.Services
     /// <returns>True if the object was successfully configured, false otherwise.</returns>
     /// <remarks>The presumtions to get this function working are:
     /// <list>
-    /// <item>A controller which implements <see>Altaxo.Main.GUI.IMVCAController has to exist.</see></item>
-    /// <item>A <see>Altaxo.Main.GUI.UserControllerForObjectAttribute</see> has to be assigned to that controller, and the argument has to be the type of the object you want to configure.</item>
-    /// <item>A GUI control (Windows Forms: UserControl) must exist, to which an <see>Altaxo.Main.GUI.UserControlForControllerAttribute</see> is assigned to, and the argument of that attribute has to be the type of the controller.</item>
+    /// <item>A controller which implements <see cref="Altaxo.Main.GUI.IMVCAController" /> has to exist.</item>
+    /// <item>A <see cref="Altaxo.Main.GUI.UserControllerForObjectAttribute" /> has to be assigned to that controller, and the argument has to be the type of the object you want to configure.</item>
+    /// <item>A GUI control (Windows Forms: UserControl) must exist, to which an <see cref="Altaxo.Main.GUI.UserControlForControllerAttribute" /> is assigned to, and the argument of that attribute has to be the type of the controller.</item>
     /// </list>
     /// </remarks>
     public bool ShowDialog(ref object arg, string title)
@@ -237,12 +239,13 @@ namespace Altaxo.Main.Services
     /// <param name="arg">The object to configure.
     /// If the return value is true, arg contains the configured object. </param>
     /// <param name="title">The title of the dialog.</param>
+    /// <param name="showApplyButton">If true, the Apply button is shown.</param>
     /// <returns>True if the object was successfully configured, false otherwise.</returns>
     /// <remarks>The presumtions to get this function working are:
     /// <list>
-    /// <item>A controller which implements <see>Altaxo.Main.GUI.IMVCAController has to exist.</see></item>
-    /// <item>A <see>Altaxo.Main.GUI.UserControllerForObjectAttribute</see> has to be assigned to that controller, and the argument has to be the type of the object you want to configure.</item>
-    /// <item>A GUI control (Windows Forms: UserControl) must exist, to which an <see>Altaxo.Main.GUI.UserControlForControllerAttribute</see> is assigned to, and the argument of that attribute has to be the type of the controller.</item>
+    /// <item>A controller which implements <see cref="Altaxo.Main.GUI.IMVCAController" /> has to exist.</item>
+    /// <item>A <see cref="Altaxo.Main.GUI.UserControllerForObjectAttribute" /> has to be assigned to that controller, and the argument has to be the type of the object you want to configure.</item>
+    /// <item>A GUI control (Windows Forms: UserControl) must exist, to which an <see cref="Altaxo.Main.GUI.UserControlForControllerAttribute" /> is assigned to, and the argument of that attribute has to be the type of the controller.</item>
     /// </list>
     /// </remarks>
     public bool ShowDialog(ref object arg, string title, bool showApplyButton)

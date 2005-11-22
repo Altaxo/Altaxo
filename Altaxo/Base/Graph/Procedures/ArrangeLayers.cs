@@ -4,7 +4,7 @@ namespace Altaxo.Graph.Procedures
 {
 
   /// <summary>
-  /// Document of the <see>ArrageLayersController</see> controller.
+  /// Document of the <see cref="Altaxo.Gui.Graph.ArrangeLayersController" /> controller.
   /// </summary>
   public class ArrangeLayersDocument
   {

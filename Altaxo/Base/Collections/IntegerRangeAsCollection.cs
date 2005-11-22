@@ -25,7 +25,7 @@ using System;
 namespace Altaxo.Collections
 {
   /// <summary>
-  /// This class represents a simple integer range specified by start and count, that can be used as a lightweight substitute for a <see>IndexSelection</see> if 
+  /// This class represents a simple integer range specified by start and count, that can be used as a lightweight substitute for a <see cref="AscendingIntegerCollection" /> if 
   /// the selection is contiguous.
   /// </summary>
   public class IntegerRangeAsCollection : IAscendingIntegerCollection, ICloneable

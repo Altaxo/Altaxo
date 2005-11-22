@@ -205,7 +205,7 @@ namespace Altaxo.Serialization.Galactic
     /// </summary>
     /// <param name="values">An array of double values.</param>
     /// <param name="col">A double column to compare with the double array.</param>
-    /// <returns>True if the length of the array is equal to the length of the <see>DoubleColumn</see> and the values in 
+    /// <returns>True if the length of the array is equal to the length of the <see cref="DoubleColumn" /> and the values in 
     /// both array match to each other, otherwise false.</returns>
     public static bool ValuesMatch(double[] values, DoubleColumn col)
     {

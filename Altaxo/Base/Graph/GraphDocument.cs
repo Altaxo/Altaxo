@@ -326,7 +326,7 @@ namespace Altaxo.Graph
 
 
     /// <summary>
-    /// Gets an arbitrary object that was stored as graph property by <see>SetGraphProperty</see>.
+    /// Gets an arbitrary object that was stored as graph property by <see cref="SetGraphProperty" />.
     /// </summary>
     /// <param name="key">Name of the property.</param>
     /// <returns>The object, or null if no object under the provided name was stored here.</returns>
@@ -360,7 +360,7 @@ namespace Altaxo.Graph
     public event EventHandler BoundsChanged;
 
     /// <summary>
-    /// Fires the <see>BoundsChanged</see> event.
+    /// Fires the <see cref="BoundsChanged" /> event.
     /// </summary>
     protected void OnBoundsChanged()
     {

@@ -45,7 +45,7 @@ namespace Altaxo.Main
   /// Handles administrative tasks concerning an Altaxo project.
   /// </summary>
   /// <remarks>This should be instantiated only once. You can reach the current project service
-  /// by calling <see>Current.ProjectService</see>.</remarks>
+  /// by calling <see cref="Current.ProjectService" />.</remarks>
   public class ProjectService : ICSharpCode.Core.Services.AbstractService, IProjectService
   {
     /// <summary>
@@ -502,7 +502,7 @@ namespace Altaxo.Main
 
     /// <summary>
     /// Returns all currently open views that show the given document object <code>document</code>.
-    /// The IViewContent must implement <see>Altaxo.Main.GUI.IMVCController</see> in order to be found by this routine.
+    /// The IViewContent must implement <see cref="Altaxo.Main.GUI.IMVCController" /> in order to be found by this routine.
     /// </summary>
     /// <param name="document">The document for which views must be found.</param>
     /// <returns>An array containing all views that show the document table. If no view is found, an empty array is returned.</returns>
@@ -783,7 +783,7 @@ namespace Altaxo.Main
     }
 
     /// <summary>
-    /// Fires the <see>ProjectRenamed</see> event.
+    /// Fires the <see cref="ProjectRenamed" /> event.
     /// </summary>
     /// <param name="e">Indicates which project was renamed, and the old and the new name of the project.</param>
     protected virtual void OnRenameProject(ProjectRenameEventArgs e)
@@ -797,7 +797,7 @@ namespace Altaxo.Main
     }
 
     /// <summary>
-    /// Fires the <see>ProjectDirtyChanged</see> event.
+    /// Fires the <see cref="ProjectDirtyChanged" /> event.
     /// </summary>
     /// <param name="e">Indicats on which project the dirty flag changed.</param>
     protected virtual void OnProjectDirtyChanged(ProjectEventArgs e)
@@ -811,8 +811,8 @@ namespace Altaxo.Main
     }
     
     /// <summary>
-    /// Fires the <see>ProjectChanged</see> event. This occurs <b>after</b> the events <see>ProjectOpened</see>, 
-    /// <see>ProjectClosed</see>, <see>ProjectRenamed</see>, and <see>ProjectDirtyChanged</see> event. Usefull if
+    /// Fires the <see cref="ProjectChanged" /> event. This occurs <b>after</b> the events <see cref="ProjectOpened" />, 
+    /// <see cref="ProjectClosed" />, <see cref="ProjectRenamed" />, and <see cref="ProjectDirtyChanged" /> event. Usefull if
     /// you not want to subscribe to the above mentioned single events.
     /// </summary>
     protected virtual void OnProjectChanged()
@@ -843,8 +843,8 @@ namespace Altaxo.Main
     public event ProjectEventHandler ProjectDirtyChanged;
     
     /// <summary>
-    /// Event fired <b>after</b> any of the following other events is fired: <see>ProjectOpened</see>, 
-    /// <see>ProjectClosed</see>, <see>ProjectRenamed</see>, and <see>ProjectDirtyChanged</see>.
+    /// Event fired <b>after</b> any of the following other events is fired: <see cref="ProjectOpened" />, 
+    /// <see cref="ProjectClosed" />, <see cref="ProjectRenamed" />, and <see cref="ProjectDirtyChanged" />.
     /// </summary>
     public event ProjectEventHandler ProjectChanged;
   }
