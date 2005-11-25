@@ -26,7 +26,7 @@ using System.Text;
 
 using System.Drawing;
 
-namespace Altaxo.Graph.Axes
+namespace Altaxo.Graph
 {
   public class GridStyle : ICloneable, Main.IChangedEventSource
   {
@@ -90,7 +90,7 @@ namespace Altaxo.Graph.Axes
     {
       get
       {
-        if (null != _minorPen)
+        if (null == _minorPen)
           _minorPen = new PenHolder(Color.LightBlue);
 
         return _minorPen;
@@ -156,11 +156,14 @@ namespace Altaxo.Graph.Axes
       if (!_showGrid)
         return;
 
-      Axis axis = axisnumber == 0 ? layer.XAxis : layer.YAxis;
+      Axes.Axis axis = axisnumber == 0 ? layer.XAxis : layer.YAxis;
 
       if (_showZeroOnly)
       {
-        layer.DrawIsoLine(g, MajorPen, axisnumber, 0, 0, 1);
+        Altaxo.Data.AltaxoVariant var = new Altaxo.Data.AltaxoVariant(0.0);
+        double rel = axis.PhysicalVariantToNormal(var);
+        if(rel>=0 && rel<=1)
+          layer.DrawIsoLine(g, MajorPen, axisnumber, rel, 0, 1);
       }
       else
       {

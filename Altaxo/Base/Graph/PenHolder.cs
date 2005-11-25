@@ -497,7 +497,18 @@ namespace Altaxo.Graph
     /// <param name="pen">the PenHolder object to copy</param>
     public PenHolder(PenHolder pen)
     {
-      this.m_CachedMode = pen.m_CachedMode;
+      CopyFrom(pen);
+    }
+
+    /// <summary>
+    /// Copies the properties of another instance to this instance.
+    /// </summary>
+    /// <param name="pen">the PenHolder object to copy</param>
+    public void CopyFrom(PenHolder pen)
+    {
+      // this.m_CachedMode = pen.m_CachedMode;
+      this.m_CachedMode = false; _SetPenVariable(null);
+
       this.m_ConfiguredProperties = pen.m_ConfiguredProperties;
       this.m_PenType = pen.PenType;
       this.m_Alignment = pen.Alignment;
@@ -533,12 +544,15 @@ namespace Altaxo.Graph
 
       this.m_Width    = pen.Width;
 
-      if(m_CachedMode && null!=pen.m_Pen)
-        _SetPenVariable( (Pen)pen.m_Pen.Clone() );
-      else
-        _SetPenVariable(null);
-    }
+      // note: there is an problem with Pen.Clone() : if the Color of the pen
+      // was set to a known color, the color of the cloned pen is the same, but no longer a known color
+      // therefore we avoid the cloning of the pen here
 
+     // if(m_CachedMode && null!=pen.m_Pen)
+     //   _SetPenVariable( (Pen)pen.m_Pen.Clone() );
+     // else
+     //   _SetPenVariable(null);
+    }
 
     public PenHolder(Pen pen)
       : this(pen,true)
@@ -551,7 +565,7 @@ namespace Altaxo.Graph
       _SetPropertiesFromPen(pen);
       this.m_ConfiguredProperties = _GetConfiguredPropertiesVariable(pen);
       if(bCached)
-        _SetPenVariable( (Pen)pen.Clone() );
+        _SetPenVariable(_GetPenFromProperties()); // do not clone the pen because there is a problem with pen cloning with known colors (see above)
     }
 
     public static implicit operator System.Drawing.Pen(PenHolder ph)
@@ -577,7 +591,7 @@ namespace Altaxo.Graph
         _SetPropertiesFromPen(value);
         this.m_ConfiguredProperties = _GetConfiguredPropertiesVariable(value);
         if(m_CachedMode)
-          _SetPenVariable((Pen)value.Clone());
+          _SetPenVariable(_GetPenFromProperties()); // do not clone the pen because there is a problem with pen cloning with known colors (see above)
 
         OnChanged(); // Fire the Changed event
       }

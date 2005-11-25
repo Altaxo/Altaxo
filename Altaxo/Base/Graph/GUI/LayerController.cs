@@ -77,6 +77,7 @@ namespace Altaxo.Graph.GUI
     protected ITitleFormatLayerController[] m_TitleFormatLayerController;
     protected Altaxo.Gui.Graph.IXYAxisLabelStyleController[] m_LabelStyleController;
     protected Altaxo.Gui.Graph.IXYAxisLabelStyleController[] m_MinorLabelStyleController;
+    protected Altaxo.Main.GUI.IMVCAController[] _GridStyleController;
 
     
     public int CurrHorzVertIdx
@@ -128,11 +129,17 @@ namespace Altaxo.Graph.GUI
                                                                       };
 
       m_MinorLabelStyleController = new Altaxo.Gui.Graph.XYAxisLabelStyleController[4]{
-                                                                                   new Altaxo.Gui.Graph.XYAxisLabelStyleController((XYAxisLabelStyle)m_Layer.AxisStyles[EdgeType.Left].MinorLabelStyle),
-                                                                                   new Altaxo.Gui.Graph.XYAxisLabelStyleController((XYAxisLabelStyle)m_Layer.AxisStyles[EdgeType.Bottom].MinorLabelStyle),
-                                                                                   new Altaxo.Gui.Graph.XYAxisLabelStyleController((XYAxisLabelStyle)m_Layer.AxisStyles[EdgeType.Right].MinorLabelStyle),
-                                                                                   new Altaxo.Gui.Graph.XYAxisLabelStyleController((XYAxisLabelStyle)m_Layer.AxisStyles[EdgeType.Top].MinorLabelStyle),
-      };
+                                                                                        new Altaxo.Gui.Graph.XYAxisLabelStyleController((XYAxisLabelStyle)m_Layer.AxisStyles[EdgeType.Left].MinorLabelStyle),
+                                                                                        new Altaxo.Gui.Graph.XYAxisLabelStyleController((XYAxisLabelStyle)m_Layer.AxisStyles[EdgeType.Bottom].MinorLabelStyle),
+                                                                                        new Altaxo.Gui.Graph.XYAxisLabelStyleController((XYAxisLabelStyle)m_Layer.AxisStyles[EdgeType.Right].MinorLabelStyle),
+                                                                                        new Altaxo.Gui.Graph.XYAxisLabelStyleController((XYAxisLabelStyle)m_Layer.AxisStyles[EdgeType.Top].MinorLabelStyle)
+                                                                                      };
+
+      this._GridStyleController = new Altaxo.Main.GUI.IMVCAController[2]{
+                                       new Altaxo.Gui.Graph.XYGridStyleController(m_Layer.AxisStyles.X.GridStyle != null ? m_Layer.AxisStyles.X.GridStyle : new GridStyle()),
+                                       new Altaxo.Gui.Graph.XYGridStyleController(m_Layer.AxisStyles.Y.GridStyle != null ? m_Layer.AxisStyles.Y.GridStyle : new GridStyle())
+                                                                        };
+      
 
 
       for(int i=0;i<4;i++)
@@ -266,6 +273,7 @@ namespace Altaxo.Graph.GUI
       View.AddTab("Position","Position");
       View.AddTab("MajorLabels","Major labels");
       View.AddTab("MinorLabels","Minor labels");
+      View.AddTab("GridStyle","Grid style");
 
       // Set the controller of the current visible Tab
       SetCurrentTabController(true);
@@ -340,6 +348,16 @@ namespace Altaxo.Graph.GUI
           }
           m_CurrentController = m_MinorLabelStyleController[CurrEdgeIdx];
           View.IsPageEnabled = this._enableMinorLabels[CurrEdgeIdx];
+          break;
+
+        case "GridStyle":
+          if(pageChanged)
+          {
+            View.SelectTab(m_CurrentPage);
+            SetHorzVertSecondaryChoice();
+            View.CurrentContent = new Altaxo.Gui.Graph.XYGridStyleControl();
+          }
+          m_CurrentController = this._GridStyleController[CurrHorzVertIdx];
           break;
       }
 
@@ -477,6 +495,14 @@ namespace Altaxo.Graph.GUI
           return false;
         }
         this.m_Layer.AxisStyles[(EdgeType)i].ShowMinorLabels = this._enableMinorLabels[i];
+      }
+
+      for(i=0;i<2;i++)
+      {
+        if(_GridStyleController[i].Apply())
+          this.m_Layer.AxisStyles.Axis(i).GridStyle = (GridStyle)_GridStyleController[i].ModelObject;
+        else
+          return false;
       }
 
       return true;

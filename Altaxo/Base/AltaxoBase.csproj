@@ -420,6 +420,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Graph\GridStyle.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Graph\I2DGroupablePlotItem.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -1270,6 +1275,21 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Gui\Common\Drawing\ColorTypeThicknessPenControl.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Gui\Common\Drawing\ColorTypeThicknessPenControl.resx"
+                    DependentUpon = "ColorTypeThicknessPenControl.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Gui\Common\Drawing\ColorTypeThicknessPenController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Gui\Graph\ArrangeLayersControl.cs"
                     SubType = "UserControl"
                     BuildAction = "Compile"
@@ -1316,6 +1336,21 @@
                 />
                 <File
                     RelPath = "Gui\Graph\XYColumnPlotItemController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Gui\Graph\XYGridStyleControl.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Gui\Graph\XYGridStyleControl.resx"
+                    DependentUpon = "XYGridStyleControl.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Gui\Graph\XYGridStyleController.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

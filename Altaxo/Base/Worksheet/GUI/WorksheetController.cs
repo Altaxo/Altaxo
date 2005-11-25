@@ -1892,7 +1892,15 @@ namespace Altaxo.Worksheet.GUI
     {
       get
       {
-        return (m_TableLayout.ShowPropertyColumns && VertScrollPos<0) ? TotalEnabledPropertyColumns+VertScrollPos : -1;
+        if (m_TableLayout.ShowPropertyColumns && VertScrollPos < 0)
+        {
+          // make sure that VertScrollPos does not exceed TotalEnabledPropertyColumns
+          if (VertScrollPos < -TotalEnabledPropertyColumns)
+            VertScrollPos = -TotalEnabledPropertyColumns;
+          return TotalEnabledPropertyColumns + VertScrollPos;
+        }
+        else
+          return -1; 
       }
     }
 
@@ -1900,7 +1908,8 @@ namespace Altaxo.Worksheet.GUI
     public int GetFirstVisiblePropertyColumn(int top)
     {
       int firstTotRow = (int)Math.Max(0,Math.Floor((top-m_TableLayout.ColumnHeaderStyle.Height)/(double)m_TableLayout.PropertyColumnHeaderStyle.Height));
-      return m_TableLayout.ShowPropertyColumns ? firstTotRow+FirstVisiblePropertyColumn : 0;
+      int result = m_TableLayout.ShowPropertyColumns ? firstTotRow+FirstVisiblePropertyColumn : 0;
+      return result;
     }
 
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]

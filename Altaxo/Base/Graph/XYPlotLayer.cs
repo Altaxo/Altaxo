@@ -808,6 +808,11 @@ namespace Altaxo.Graph
         }
       }
 
+      public XYAxisStylesSummary Axis(int i)
+      {
+        return _styles[i];
+      }
+
       public XYAxisStylesSummary X
       {
         get
