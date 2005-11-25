@@ -80,11 +80,24 @@ namespace Altaxo.Graph.LabelFormatting
 
     protected override string[] FormatItems(Altaxo.Data.AltaxoVariant[] items)
     {
-      double[] ditems = new double[items.Length];
-        for(int i=0;i<items.Length;i++)
+      try
+      {
+
+        double[] ditems = new double[items.Length];
+        for (int i = 0; i < items.Length; i++)
           ditems[i] = (double)items[i];
 
-      return FormatItems(ditems);
+        return FormatItems(ditems);
+      }
+      catch (Exception)
+      {
+      }
+
+      string[] sitems = new string[items.Length];
+        for (int i = 0; i < items.Length; i++)
+          sitems[i] = items[i].ToString();
+        return sitems;
+      
     }
 
 
@@ -134,7 +147,7 @@ namespace Altaxo.Graph.LabelFormatting
 
 
       // now format the lables
-      string exponentialformat=string.Format("G{0}",maxexponentialdigits);
+      string exponentialformat=string.Format("E{0}",maxexponentialdigits-1);
       string fixedformat = string.Format("F{0}",maxtrailingdigits);
       for(int i=0;i<majorticks.Length;i++)
       {

@@ -27,8 +27,6 @@ using Altaxo.Main.GUI;
 
 namespace Altaxo.Gui.Graph
 {
-  
-
   #region Interfaces
 
   public interface IXYGridStyleView
@@ -40,6 +38,8 @@ namespace Altaxo.Gui.Graph
     void InitializeShowGrid(bool value);
     void InitializeShowMinorGrid(bool value);
     void InitializeShowZeroOnly(bool value);
+
+    void InitializeElementEnabling(bool majorstyle, bool minorstyle, bool showminor, bool showzeroonly);
   }
 
   public interface IXYGridStyleViewEventSink
@@ -50,6 +50,7 @@ namespace Altaxo.Gui.Graph
   }
 
   #endregion
+
 	/// <summary>
 	/// Summary description for XYGridStyleController.
 	/// </summary>
@@ -80,6 +81,20 @@ namespace Altaxo.Gui.Graph
         _view.InitializeShowMinorGrid(_tempdoc.ShowMinor);
         _view.InitializeShowZeroOnly(_tempdoc.ShowZeroOnly);
         _view.InitializeShowGrid(_tempdoc.ShowGrid);
+
+        InitializeElementEnabling();
+      }
+    }
+
+    public void InitializeElementEnabling()
+    {
+      if (_view != null)
+      {
+        bool majorstyle = _tempdoc.ShowGrid;
+        bool showzeroonly = _tempdoc.ShowGrid;
+        bool showminor = _tempdoc.ShowGrid && !_tempdoc.ShowZeroOnly;
+        bool minorstyle = _tempdoc.ShowMinor && showminor;
+        _view.InitializeElementEnabling(majorstyle, minorstyle, showminor, showzeroonly);
       }
     }
 
@@ -88,16 +103,24 @@ namespace Altaxo.Gui.Graph
     public void EhView_ShowGridChanged(bool newval)
     {
       _tempdoc.ShowGrid = newval;
+      InitializeElementEnabling();
     }
 
     public void EhView_ShowMinorGridChanged(bool newval)
     {
       _tempdoc.ShowMinor = newval;
+      InitializeElementEnabling();
     }
 
     public void EhView_ShowZeroOnly(bool newval)
     {
       _tempdoc.ShowZeroOnly = newval;
+      if (newval == true && _tempdoc.ShowMinor)
+      {
+        _tempdoc.ShowMinor = false;
+        _view.InitializeShowMinorGrid(_tempdoc.ShowMinor);
+      }
+      InitializeElementEnabling();
     }
 
     #endregion

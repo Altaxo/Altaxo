@@ -165,7 +165,14 @@ namespace Altaxo.Graph.LabelFormatting
       for (int i = 0; i < items.Length; ++i)
       {
         string firstpart, exponent;
-        SplitInFirstPartAndExponent((double)items[i], out firstpart, out exponent);
+        if (items[i].IsType(Altaxo.Data.AltaxoVariant.Content.VDouble))
+        {
+          SplitInFirstPartAndExponent((double)items[i], out firstpart, out exponent);
+        }
+        else
+        {
+          firstpart = items[i].ToString(); exponent = string.Empty;
+        }
         firstp[i] = firstpart;
         expos[i] = exponent;
         maxexposize = Math.Max(maxexposize,g.MeasureString(exponent,localfont2,new PointF(0,0),strfmt).Width);

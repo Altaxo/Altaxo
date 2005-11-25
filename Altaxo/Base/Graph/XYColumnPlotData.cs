@@ -53,8 +53,11 @@ namespace Altaxo.Graph
     /// </summary>
     protected object m_Parent;
 
-    protected Altaxo.Data.IReadableColumn m_xColumn; // the X-Column
-    protected Altaxo.Data.IReadableColumn m_yColumn; // the Y-Column
+   
+    protected Altaxo.Data.ReadableColumnProxy m_xColumn; // the X-Column
+    protected Altaxo.Data.ReadableColumnProxy m_yColumn; // the Y-Column
+
+    /// <summary>This is here only for backward deserialization compatibility. Do not use it.</summary>
     protected Altaxo.Data.IReadableColumn m_LabelColumn; // the label column
 
     protected int m_PlotRangeStart = 0;
@@ -86,6 +89,7 @@ namespace Altaxo.Graph
 
 
     #region Serialization
+#region Binary
     /// <summary>Used to serialize the XYColumnPlotData Version 0.</summary>
     public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
     {
@@ -118,8 +122,8 @@ namespace Altaxo.Graph
       {
         XYColumnPlotData s = (XYColumnPlotData)obj;
 
-        s.m_xColumn = (Altaxo.Data.IReadableColumn)info.GetValue("XColumn",typeof(Altaxo.Data.IReadableColumn));
-        s.m_yColumn = (Altaxo.Data.IReadableColumn)info.GetValue("YColumn",typeof(Altaxo.Data.IReadableColumn));
+        s.m_xColumn = (ReadableColumnProxy)info.GetValue("XColumn",typeof(ReadableColumnProxy));
+        s.m_yColumn = (ReadableColumnProxy)info.GetValue("YColumn",typeof(ReadableColumnProxy));
 
         s.m_xBoundaries = (IPhysicalBoundaries)info.GetValue("XBoundaries",typeof(IPhysicalBoundaries));
         s.m_yBoundaries = (IPhysicalBoundaries)info.GetValue("YBoundaries",typeof(IPhysicalBoundaries));
@@ -128,12 +132,37 @@ namespace Altaxo.Graph
       }
     }
 
+
+    /// <summary>
+    /// Finale measures after deserialization.
+    /// </summary>
+    /// <param name="obj">Not used.</param>
+    public virtual void OnDeserialization(object obj)
+    {
+      // restore the event chain
+      if (m_xColumn != null)
+        m_xColumn.Changed += new EventHandler(EhColumnDataChangedEventHandler);
+
+      if (m_yColumn != null)
+        m_yColumn.Changed += new EventHandler(EhColumnDataChangedEventHandler);
+
+      if (null != m_xBoundaries)
+        m_xBoundaries.BoundaryChanged += new BoundaryChangedHandler(this.OnXBoundariesChangedEventHandler);
+
+      if (null != m_yBoundaries)
+        m_yBoundaries.BoundaryChanged += new BoundaryChangedHandler(this.OnYBoundariesChangedEventHandler);
+    }
+#endregion
+
+    #region Xml 0 und 1
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYColumnPlotData),0)]
       [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYColumnPlotData),1)] // by mistake the data of version 0 and 1 are identical
       public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
+        throw new ApplicationException("Calling a deprecated serialization handler for XYColumnPlotData");
+        /*
         XYColumnPlotData s = (XYColumnPlotData)obj;
         
         if(s.m_xColumn is Main.IDocumentNode && !s.Equals(((Main.IDocumentNode)s.m_xColumn).ParentObject))
@@ -157,9 +186,7 @@ namespace Altaxo.Graph
 
         info.AddValue("XBoundaries",s.m_xBoundaries);
         info.AddValue("YBoundaries",s.m_yBoundaries);
-
-
-       
+        */
       }
 
 
@@ -237,35 +264,17 @@ namespace Altaxo.Graph
           info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(this.EhDeserializationFinished);
       }
     }
+    #endregion
 
-  
-
-    /// <summary>
-    /// Finale measures after deserialization.
-    /// </summary>
-    /// <param name="obj">Not used.</param>
-    public virtual void OnDeserialization(object obj)
-    {
-      // restore the event chain
-      if(m_xColumn is Altaxo.Data.DataColumn)
-        ((Altaxo.Data.DataColumn)m_xColumn).Changed += new EventHandler(EhColumnDataChangedEventHandler);
-      
-      if(m_yColumn is Altaxo.Data.DataColumn)
-        ((Altaxo.Data.DataColumn)m_yColumn).Changed += new EventHandler(EhColumnDataChangedEventHandler);
-    
-      if(null!=m_xBoundaries)
-        m_xBoundaries.BoundaryChanged += new BoundaryChangedHandler(this.OnXBoundariesChangedEventHandler);
-
-      if(null!=m_yBoundaries)
-        m_yBoundaries.BoundaryChanged += new BoundaryChangedHandler(this.OnYBoundariesChangedEventHandler);
-    }
-
+    #region Xml2
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYColumnPlotData),2)]
       public class XmlSerializationSurrogate2 : XmlSerializationSurrogate0
     {
       public override void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
+        throw new ApplicationException("Calling a deprecated serialization handler for XYColumnPlotData");
+        /*
         XYColumnPlotData s = (XYColumnPlotData)obj;
         base.Serialize(obj,info);
         
@@ -284,6 +293,7 @@ namespace Altaxo.Graph
             info.AddValue("LabelColumn",s.m_LabelColumn);
         }
         info.CommitArray(); // end of array OptionalData
+      */
       }
 
       public override object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -341,8 +351,61 @@ namespace Altaxo.Graph
           info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(this.EhDeserializationFinished2);
       }
     }
+#endregion
 
-  
+    #region Xml 3
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYColumnPlotData), 3)] // by mistake the data of version 0 and 1 are identical
+    public class XmlSerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        XYColumnPlotData s = (XYColumnPlotData)obj;
+
+        info.AddValue("XColumn", s.m_xColumn);
+        info.AddValue("YColumn", s.m_yColumn);
+
+        info.AddValue("XBoundaries", s.m_xBoundaries);
+        info.AddValue("YBoundaries", s.m_yBoundaries);
+      }
+
+      public virtual XYColumnPlotData SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        XYColumnPlotData s = null != o ? (XYColumnPlotData)o : new XYColumnPlotData();
+
+        s.m_xColumn = (ReadableColumnProxy)info.GetValue("XColumn", parent);
+        s.m_yColumn = (ReadableColumnProxy)info.GetValue("YColumn", parent);
+
+        s.m_xBoundaries = (IPhysicalBoundaries)info.GetValue("XBoundaries", parent);
+        s.m_yBoundaries = (IPhysicalBoundaries)info.GetValue("YBoundaries", parent);
+
+        return s;
+      }
+
+      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        XYColumnPlotData s = SDeserialize(o, info, parent);
+        CreateEventChain(s);
+        return s;
+      }
+
+      public virtual void CreateEventChain(XYColumnPlotData s)
+      {
+        if (null != s.m_xColumn)
+          s.m_xColumn.Changed += new EventHandler(s.EhColumnDataChangedEventHandler);
+        if (null != s.m_yColumn)
+          s.m_yColumn.Changed += new EventHandler(s.EhColumnDataChangedEventHandler);
+
+        if (null != s.m_xBoundaries)
+          s.m_xBoundaries.BoundaryChanged += new BoundaryChangedHandler(s.OnXBoundariesChangedEventHandler);
+
+        if (null != s.m_yBoundaries)
+          s.m_yBoundaries.BoundaryChanged += new BoundaryChangedHandler(s.OnYBoundariesChangedEventHandler);
+      }
+
+
+
+    }
+    #endregion
 
 
     #endregion
@@ -511,21 +574,18 @@ namespace Altaxo.Graph
     {
       get
       {
-        return m_xColumn;
+        return m_xColumn == null ? null : m_xColumn.Document;
       }
       set
       {
-
-        if(null!=m_xColumn && m_xColumn is Altaxo.Data.DataColumn)
+        if (null == m_xColumn)
         {
-          ((Altaxo.Data.DataColumn)m_xColumn).Changed -= new EventHandler(EhColumnDataChangedEventHandler);
+          m_xColumn = new ReadableColumnProxy(value);
+          m_xColumn.Changed += new EventHandler(this.EhColumnDataChangedEventHandler);
         }
-
-        this.m_xColumn = value;
-
-        if(null!=m_xColumn && m_xColumn is Altaxo.Data.DataColumn)
+        else
         {
-          ((Altaxo.Data.DataColumn)m_xColumn).Changed += new EventHandler(EhColumnDataChangedEventHandler);
+          m_xColumn.SetDocNode(value);
         }
 
         m_bCachedDataValid = false;
@@ -537,22 +597,23 @@ namespace Altaxo.Graph
     {
       get
       {
-        return m_yColumn;
+        return m_yColumn == null ? null : m_yColumn.Document;
       }
       set
       {
-        if(null!=m_yColumn && m_yColumn is Altaxo.Data.DataColumn)
+        if (null == m_yColumn)
         {
-          ((Altaxo.Data.DataColumn)m_yColumn).Changed -= new EventHandler(EhColumnDataChangedEventHandler);
+          m_yColumn = new ReadableColumnProxy(value);
+          m_yColumn.Changed += new EventHandler(this.EhColumnDataChangedEventHandler);
+        }
+        else
+        {
+          m_yColumn.SetDocNode(value);
         }
 
-        this.m_yColumn = value;
-        if(null!=m_yColumn && m_yColumn is Altaxo.Data.DataColumn)
-        {
-          ((Altaxo.Data.DataColumn)m_yColumn).Changed += new EventHandler(EhColumnDataChangedEventHandler);
-        }
         m_bCachedDataValid = false;
-        this.OnChanged();
+        
+        OnChanged();
       }
     }
 
@@ -581,7 +642,7 @@ namespace Altaxo.Graph
 
     public override string ToString()
     {
-      return String.Format("{0}(X), {1}(Y)",m_xColumn.FullName,m_yColumn.FullName);
+      return String.Format("{0}(X), {1}(Y)",m_xColumn.ToString(),m_yColumn.ToString());
     }
 
     public void CalculateCachedData()
@@ -604,25 +665,37 @@ namespace Altaxo.Graph
       System.Diagnostics.Debug.Assert(m_PlotRangeLength>=0);
 
       m_PointCount = m_PlotRangeStart + m_PlotRangeLength;
-      
-      if(m_xColumn is IDefinedCount)
-        m_PointCount = System.Math.Min(m_PointCount,((IDefinedCount)m_xColumn).Count);
-      if(m_yColumn is IDefinedCount)
-        m_PointCount = System.Math.Min(m_PointCount,((IDefinedCount)m_yColumn).Count);
 
-      // if both columns are indefinite long, we set the length to zero
-      if(m_PointCount==int.MaxValue || m_PointCount<0)
-        m_PointCount=0;
+      IReadableColumn xColumn = this.XColumn;
+      IReadableColumn yColumn = this.YColumn;
 
-
-      for(int i=m_PlotRangeStart;i<m_PointCount;i++)
+      if (xColumn == null || yColumn == null)
       {
-        if(!m_xColumn.IsElementEmpty(i) && !m_yColumn.IsElementEmpty(i)) 
+        m_PointCount=0;
+        m_PlottablePoints = 0;
+      }
+      else
+      {
+
+        if (xColumn is IDefinedCount)
+          m_PointCount = System.Math.Min(m_PointCount, ((IDefinedCount)xColumn).Count);
+        if (yColumn is IDefinedCount)
+          m_PointCount = System.Math.Min(m_PointCount, ((IDefinedCount)yColumn).Count);
+
+        // if both columns are indefinite long, we set the length to zero
+        if (m_PointCount == int.MaxValue || m_PointCount < 0)
+          m_PointCount = 0;
+
+
+        for (int i = m_PlotRangeStart; i < m_PointCount; i++)
         {
-          bool x_added = this.m_xBoundaries.Add(m_xColumn,i);
-          bool y_added = this.m_yBoundaries.Add(m_yColumn,i);
-          if(y_added && y_added)
-            m_PlottablePoints++;
+          if (!xColumn.IsElementEmpty(i) && !yColumn.IsElementEmpty(i))
+          {
+            bool x_added = this.m_xBoundaries.Add(xColumn, i);
+            bool y_added = this.m_yBoundaries.Add(yColumn, i);
+            if (y_added && y_added)
+              m_PlottablePoints++;
+          }
         }
       }
 

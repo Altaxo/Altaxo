@@ -159,6 +159,14 @@ namespace Altaxo.Gui.Graph
       this._cbShowZeroOnly.Checked = value;
     }
 
+    public void InitializeElementEnabling(bool majorstyle, bool minorstyle, bool showminor, bool showzeroonly)
+    {
+      this._majorStyle.Enabled = majorstyle;
+      this._minorStyle.Enabled = minorstyle;
+      this._cbShowMinor.Enabled = showminor;
+      this._cbShowZeroOnly.Enabled = showzeroonly;
+    }
+
     #endregion
 
     private void _cbEnable_CheckedChanged(object sender, System.EventArgs e)
