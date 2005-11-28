@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2004 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -487,19 +487,19 @@ namespace Altaxo.Calc.LinearAlgebra
       ret_val = x1max * Math.Sqrt(s1 + s2 / x1max / x1max);
       goto L130;
 
-    L100:
-      if (s2 == 0.0) goto L110;
+      L100:
+        if (s2 == 0.0) goto L110;
       if (s2 >= x3max)
         ret_val = Math.Sqrt(s2 * (1.0 + x3max / s2 * (x3max * s3)));
       if (s2 < x3max)
         ret_val = Math.Sqrt(x3max * (s2 / x3max + x3max * s3));
       goto L130;
 
-    L110:
-      ret_val = x3max * Math.Sqrt(s3);
+      L110:
+        ret_val = x3max * Math.Sqrt(s3);
 
-    L130:
-      return ret_val;
+      L130:
+        return ret_val;
     }
 
     /// <summary>Return the index of a the maximum absolute value in a vector</summary>
@@ -507,7 +507,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <returns>The index of the maximum absolute value.</returns>
     public static int IMax(float[] X)
     {
-    	float max = 0;
+      float max = 0;
       int index=0;
       for (int i = 0; i < X.Length; ++i)
       {

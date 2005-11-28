@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2004 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -314,7 +314,7 @@ namespace Altaxo.Graph
     }
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotLineStyle),0)]
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotLineStyle),1)] // by accident, it was never different from 0
+      [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotLineStyle),1)] // by accident, it was never different from 0
       public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -329,12 +329,12 @@ namespace Altaxo.Graph
         info.AddValue("FillDirection",s._fillDirection);
       }
 
-        public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-        {
-          XYPlotLineStyle s = SDeserialize(o, info, parent);
-          s.CreateEventChain();
-          return s;          
-        }
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        XYPlotLineStyle s = SDeserialize(o, info, parent);
+        s.CreateEventChain();
+        return s;          
+      }
 
       public virtual XYPlotLineStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
@@ -364,9 +364,9 @@ namespace Altaxo.Graph
       }
       public override XYPlotLineStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-       XYPlotLineStyle s =  base.SDeserialize(o,info,parent);
-       s._independentColor = info.GetBoolean("IndependentColor");
-       return s;
+        XYPlotLineStyle s =  base.SDeserialize(o,info,parent);
+        s._independentColor = info.GetBoolean("IndependentColor");
+        return s;
       }
     }
 
@@ -515,7 +515,7 @@ namespace Altaxo.Graph
     }
     public void SetToNextLineStyle(System.Drawing.Drawing2D.DashStyle template, int step)
     {
-     // this.CopyFrom(template,true);
+      // this.CopyFrom(template,true);
 
       // note a exception: since the last dashstyle is "Custom", not only the next dash
       // style has to be defined, but also the overnect to avoid the selection of "Custom"
@@ -1542,5 +1542,5 @@ namespace Altaxo.Graph
 
 
 
-} // end class XYPlotLineStyle
+  } // end class XYPlotLineStyle
 }

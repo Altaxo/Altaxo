@@ -1,3 +1,25 @@
+#region Copyright
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+#endregion
+
 using System;
 using System.Collections;
 using System.Text;
@@ -36,7 +58,7 @@ namespace Altaxo.Graph
   
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotStyleCollection), 0)]
-    public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+      public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
@@ -111,7 +133,7 @@ namespace Altaxo.Graph
     }
 
     public XYPlotStyleCollection()
-    : this(LineScatterPlotStyleKind.Line)
+      : this(LineScatterPlotStyleKind.Line)
     {
     }
 
@@ -192,7 +214,7 @@ namespace Altaxo.Graph
       }
     }
 
-   public void AddRange(I2DPlotStyle[] toadd)
+    public void AddRange(I2DPlotStyle[] toadd)
     {
       if (toadd != null)
       {
@@ -203,9 +225,9 @@ namespace Altaxo.Graph
         }
 
       
-          InternalGetProviders();
+        InternalGetProviders();
 
-          OnChanged();
+        OnChanged();
        
       }
     }
@@ -218,9 +240,9 @@ namespace Altaxo.Graph
         toinsert.Changed += new EventHandler(this.OnChildChanged);
 
         
-          InternalGetProviders();
+        InternalGetProviders();
 
-          OnChanged();
+        OnChanged();
        
       }
     }
@@ -405,7 +427,7 @@ namespace Altaxo.Graph
           this.SetToNextLineStyle(masterplotstyle.XYLineStyle, step);
 
         if ((0 != (style & PlotGroupStyle.Symbol)) && masterplotstyle.IsXYScatterStyleSupported)
-            this.SetToNextScatterStyle(masterplotstyle.XYScatterStyle, step);
+          this.SetToNextScatterStyle(masterplotstyle.XYScatterStyle, step);
 
         // Color has to be the last, since during the previous operations the styles are cloned, 
         // inclusive the color
@@ -420,7 +442,7 @@ namespace Altaxo.Graph
 
         int nextnextstep = nextstep;
         if ((0 != (style & PlotGroupStyle.Symbol)) && masterplotstyle.IsXYScatterStyleSupported)
-            this.SetToNextScatterStyle(masterplotstyle.XYScatterStyle, nextstep, out nextnextstep);
+          this.SetToNextScatterStyle(masterplotstyle.XYScatterStyle, nextstep, out nextnextstep);
 
         if ((0 != (style & PlotGroupStyle.Line)) && masterplotstyle.IsXYLineStyleSupported)
           if (this.IsXYLineStyleSupported)
@@ -473,7 +495,7 @@ namespace Altaxo.Graph
     }
 
 
-      public  System.Drawing.Drawing2D.DashStyle XYPlotLineStyle
+    public  System.Drawing.Drawing2D.DashStyle XYPlotLineStyle
     {
       get
       {
@@ -530,7 +552,7 @@ namespace Altaxo.Graph
       EndUpdate();
     }
 
-      public override XYPlotScatterStyles.ShapeAndStyle XYPlotScatterStyle
+    public override XYPlotScatterStyles.ShapeAndStyle XYPlotScatterStyle
     {
       get
       {
@@ -627,5 +649,5 @@ namespace Altaxo.Graph
     }
 
     #endregion
-}
+  }
 }

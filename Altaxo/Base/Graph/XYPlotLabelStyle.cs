@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2004 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -157,7 +157,7 @@ namespace Altaxo.Graph
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
         
-       XYPlotLabelStyle s = (XYPlotLabelStyle) XmlSerializationSurrogate0.SDeserialize(o,info,parent,false);
+        XYPlotLabelStyle s = (XYPlotLabelStyle) XmlSerializationSurrogate0.SDeserialize(o,info,parent,false);
 
         s.m_LabelColumn = (Altaxo.Data.ReadableColumnProxy)info.GetValue("LabelColumn",parent);
 
@@ -295,7 +295,7 @@ namespace Altaxo.Graph
 
     protected void CreateEventChain()
     {
-        this.m_LabelColumn.Changed += new EventHandler(LabelColumnProxy_Changed);
+      this.m_LabelColumn.Changed += new EventHandler(LabelColumnProxy_Changed);
     }
 
     void LabelColumnProxy_Changed(object sender, EventArgs e)
@@ -311,8 +311,8 @@ namespace Altaxo.Graph
       }
       set
       {
-          m_LabelColumn.SetDocNode(value);
-          OnChanged();
+        m_LabelColumn.SetDocNode(value);
+        OnChanged();
       }
     }
 
@@ -694,14 +694,14 @@ namespace Altaxo.Graph
     }
 
     public void Paint(Graphics g,
-     IPlotArea layer,
-     PlotRangeList rangeList,
-     PointF[] ptArray)
+      IPlotArea layer,
+      PlotRangeList rangeList,
+      PointF[] ptArray)
     {
       if(this.m_LabelColumn.Document!=null)
-      this.Paint(g, layer, null, rangeList, ptArray, this.m_LabelColumn.Document);
+        this.Paint(g, layer, null, rangeList, ptArray, this.m_LabelColumn.Document);
     }
 
     #endregion
-}
+  }
 }

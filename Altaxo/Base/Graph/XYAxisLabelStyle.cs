@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2004 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -475,7 +475,7 @@ namespace Altaxo.Graph
       float dist_x = axisstyle.OuterDistance+axisstyle.GetOffset(layerSize); // Distance from axis tick point to label
       float dist_y = axisstyle.OuterDistance+axisstyle.GetOffset(layerSize); // y distance from axis tick point to label
 
-     // dist_x += this._font.SizeInPoints/3; // add some space to the horizontal direction in order to separate the chars a little from the ticks
+      // dist_x += this._font.SizeInPoints/3; // add some space to the horizontal direction in order to separate the chars a little from the ticks
 
       // next statement is necessary to have a consistent string length both
       // on 0 degree rotated text and rotated text
@@ -547,9 +547,9 @@ namespace Altaxo.Graph
        
         RectangleF mrect = new RectangleF(morg,msize);
         if(_automaticRotationShift)
-        AdjustRectangle(ref mrect, StringAlignment.Center, StringAlignment.Center);
-          else
-        AdjustRectangle(ref mrect, _horizontalAlignment, _verticalAlignment);
+          AdjustRectangle(ref mrect, StringAlignment.Center, StringAlignment.Center);
+        else
+          AdjustRectangle(ref mrect, _horizontalAlignment, _verticalAlignment);
 
         
         _enclosingRectangle = _enclosingRectangle.IsEmpty ? mrect : RectangleF.Union(_enclosingRectangle,mrect);

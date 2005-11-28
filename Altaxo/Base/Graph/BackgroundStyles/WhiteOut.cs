@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2004 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -24,11 +24,11 @@ using System;
 using System.Drawing;
 namespace Altaxo.Graph.BackgroundStyles
 {
-	/// <summary>
-	/// Backs the item with a color filled rectangle.
-	/// </summary>
-	public class WhiteOut : IBackgroundStyle
-	{
+  /// <summary>
+  /// Backs the item with a color filled rectangle.
+  /// </summary>
+  public class WhiteOut : IBackgroundStyle
+  {
     
 
     #region Serialization
@@ -54,8 +54,8 @@ namespace Altaxo.Graph.BackgroundStyles
     #endregion
 
 
-		public WhiteOut()
-		{
+    public WhiteOut()
+    {
     }
 
    
@@ -86,7 +86,7 @@ namespace Altaxo.Graph.BackgroundStyles
 
     public void Draw(System.Drawing.Graphics g, System.Drawing.RectangleF innerArea)
     {
-     g.FillRectangle(Brushes.White,innerArea.Left,innerArea.Top,innerArea.Width,innerArea.Height);
+      g.FillRectangle(Brushes.White,innerArea.Left,innerArea.Top,innerArea.Width,innerArea.Height);
     }
 
     public bool SupportsColor { get { return false; }}

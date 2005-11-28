@@ -1,3 +1,25 @@
+#region Copyright
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+#endregion
+
 using System;
 using System.Collections;
 using System.ComponentModel;
@@ -8,51 +30,51 @@ using Altaxo.Main.GUI;
 
 namespace Altaxo.Gui.Scripting
 {
-	/// <summary>
-	/// Summary description for ScriptControl.
-	/// </summary>
-	[UserControlForController(typeof(IScriptViewEventSink))]
-	public class ScriptControl : System.Windows.Forms.UserControl, IScriptView
-	{
+  /// <summary>
+  /// Summary description for ScriptControl.
+  /// </summary>
+  [UserControlForController(typeof(IScriptViewEventSink))]
+  public class ScriptControl : System.Windows.Forms.UserControl, IScriptView
+  {
     private System.Windows.Forms.Splitter _vertSplitter;
     private System.Windows.Forms.ListBox lbCompilerErrors;
     private System.Windows.Forms.Panel _panelText;
-		/// <summary> 
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components = null;
+    /// <summary> 
+    /// Required designer variable.
+    /// </summary>
+    private System.ComponentModel.Container components = null;
 
-		public ScriptControl()
-		{
-			// This call is required by the Windows.Forms Form Designer.
-			InitializeComponent();
+    public ScriptControl()
+    {
+      // This call is required by the Windows.Forms Form Designer.
+      InitializeComponent();
 
-			// TODO: Add any initialization after the InitializeComponent call
+      // TODO: Add any initialization after the InitializeComponent call
 
-		}
+    }
 
-		/// <summary> 
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+    /// <summary> 
+    /// Clean up any resources being used.
+    /// </summary>
+    protected override void Dispose( bool disposing )
+    {
+      if( disposing )
+      {
+        if(components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose( disposing );
+    }
 
-		#region Component Designer generated code
-		/// <summary> 
-		/// Required method for Designer support - do not modify 
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+    #region Component Designer generated code
+    /// <summary> 
+    /// Required method for Designer support - do not modify 
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
       this._vertSplitter = new System.Windows.Forms.Splitter();
       this.lbCompilerErrors = new System.Windows.Forms.ListBox();
       this._panelText = new System.Windows.Forms.Panel();
@@ -95,7 +117,7 @@ namespace Altaxo.Gui.Scripting
       this.ResumeLayout(false);
 
     }
-		#endregion
+    #endregion
 
     #region IScriptView Members
 
@@ -140,7 +162,7 @@ namespace Altaxo.Gui.Scripting
 
     public void AddCompilerError(string s)
     {
-       this.lbCompilerErrors.Items.Add(s);
+      this.lbCompilerErrors.Items.Add(s);
     }
 
     #endregion

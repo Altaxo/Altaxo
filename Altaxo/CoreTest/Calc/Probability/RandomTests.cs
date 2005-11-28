@@ -1,3 +1,25 @@
+#region Copyright
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+#endregion
+
 using System;
 using Altaxo.Calc.Probability;
 using NUnit.Framework;
@@ -48,10 +70,10 @@ namespace AltaxoTest.Calc.Probability
   }
   #region EntCalc
   /// <summary>
-  ///	Apply various randomness tests to a stream of bytes
-  ///	Original code by John Walker  --  September 1996
-  ///	http://www.fourmilab.ch/
-  ///	
+  /// Apply various randomness tests to a stream of bytes
+  /// Original code by John Walker  --  September 1996
+  /// http://www.fourmilab.ch/
+  /// 
   /// C# port of ENT (ent - pseudorandom number sequence test)
   /// by Brett Trotter
   /// blt@iastate.edu
@@ -65,14 +87,14 @@ namespace AltaxoTest.Calc.Probability
         {0.0, 0.6745, 1.2816, 1.6449, 1.9600, 2.3263, 2.5758, 3.0902, 3.2905, 3.7190}
       };
 
-    private static int MONTEN = 6;				/* Bytes used as Monte Carlo co-ordinates
-													 * This should be no more bits than the mantissa 
-													 * of your "double" floating point type. */
+    private static int MONTEN = 6;        /* Bytes used as Monte Carlo co-ordinates
+                           * This should be no more bits than the mantissa 
+                           * of your "double" floating point type. */
 
     private uint[] monte = new uint[MONTEN];
-    private double[] prob = new double[256];	/* Probabilities per bin for entropy */
-    private long[] ccount = new long[256];		/* Bins to count occurrences of values */
-    private long totalc = 0; 					/* Total bytes counted */
+    private double[] prob = new double[256];  /* Probabilities per bin for entropy */
+    private long[] ccount = new long[256];    /* Bins to count occurrences of values */
+    private long totalc = 0;          /* Total bytes counted */
 
     private int mp;
     private bool sccfirst;
@@ -84,7 +106,7 @@ namespace AltaxoTest.Calc.Probability
     private double scc, sccun, sccu0, scclast, scct1, scct2, scct3;
     private double ent, chisq, datasum;
 
-    private bool binary = false;				/* Treat input as a bitstream */
+    private bool binary = false;        /* Treat input as a bitstream */
 
     public struct EntCalcResult 
     {
@@ -109,21 +131,21 @@ namespace AltaxoTest.Calc.Probability
     {
       int i;
 
-      binary = binmode;				/* Set binary / byte mode */
+      binary = binmode;       /* Set binary / byte mode */
 
       /* Initialise for calculations */
 
-      ent = 0.0;						/* Clear entropy accumulator */
-      chisq = 0.0;					/* Clear Chi-Square */
-      datasum = 0.0;					/* Clear sum of bytes for arithmetic mean */
+      ent = 0.0;            /* Clear entropy accumulator */
+      chisq = 0.0;          /* Clear Chi-Square */
+      datasum = 0.0;          /* Clear sum of bytes for arithmetic mean */
 
-      mp = 0;							/* Reset Monte Carlo accumulator pointer */
-      mcount = 0;						/* Clear Monte Carlo tries */
-      inmont = 0;						/* Clear Monte Carlo inside count */
-      incirc = 65535.0 * 65535.0;		/* In-circle distance for Monte Carlo */
+      mp = 0;             /* Reset Monte Carlo accumulator pointer */
+      mcount = 0;           /* Clear Monte Carlo tries */
+      inmont = 0;           /* Clear Monte Carlo inside count */
+      incirc = 65535.0 * 65535.0;   /* In-circle distance for Monte Carlo */
 
-      sccfirst = true;				/* Mark first time for serial correlation */
-      scct1 = scct2 = scct3 = 0.0;	/* Clear serial correlation terms */
+      sccfirst = true;        /* Mark first time for serial correlation */
+      scct1 = scct2 = scct3 = 0.0;  /* Clear serial correlation terms */
 
       incirc = Math.Pow(Math.Pow(256.0, (double) (MONTEN / 2)) - 1, 2.0);
 
@@ -135,7 +157,7 @@ namespace AltaxoTest.Calc.Probability
     }
 
 
-    /*  AddSample  --	Add one or more bytes to accumulation.	*/
+    /*  AddSample  -- Add one or more bytes to accumulation.  */
     public void AddSample(int buf, bool Fold)
     {
       AddSample((byte) buf, Fold);
@@ -152,29 +174,29 @@ namespace AltaxoTest.Calc.Probability
 
       foreach(byte bufByte in buf) 
       {
-        bean = 0;		// reset bean
+        bean = 0;   // reset bean
 
         byte oc = bufByte;
 
-        /*	Have not implemented folding yet. Plan to use System.Text.Encoding to do so.
+        /*  Have not implemented folding yet. Plan to use System.Text.Encoding to do so.
          * 
-         *				if (fold && isISOalpha(oc) && isISOupper(oc)) 
-         *				{
-         *					oc = toISOlower(oc);
-         *				}
+         *        if (fold && isISOalpha(oc) && isISOupper(oc)) 
+         *        {
+         *          oc = toISOlower(oc);
+         *        }
          */
 
         do 
         {
           if (binary) 
           {
-            c = ((oc & 0x80));		// Get the MSB of the byte being read in
+            c = ((oc & 0x80));    // Get the MSB of the byte being read in
           } 
           else 
           {
             c = oc;
           }
-          ccount[c]++;		  /* Update counter for this bin */
+          ccount[c]++;      /* Update counter for this bin */
           totalc++;
 
           /* Update inside / outside circle counts for Monte Carlo computation of PI */
@@ -217,13 +239,13 @@ namespace AltaxoTest.Calc.Probability
           scct2 = scct2 + sccun;
           scct3 = scct3 + (sccun * sccun);
           scclast = sccun;
-          oc <<= 1;						// left shift by one
-        } while (binary && (++bean < 8));		// keep looping if we're in binary mode and while the bean counter is less than 8 (bits)
+          oc <<= 1;           // left shift by one
+        } while (binary && (++bean < 8));   // keep looping if we're in binary mode and while the bean counter is less than 8 (bits)
       }
-    }	// end foreach
+    } // end foreach
 
 
-    /*  EndCalculation  --	Complete calculation and return results.  */
+    /*  EndCalculation  --  Complete calculation and return results.  */
     public EntCalcResult EndCalculation()
     {
       int i;
@@ -306,7 +328,7 @@ namespace AltaxoTest.Calc.Probability
     /*  LOG2  --  Calculate log to the base 2  */
     static double log2(double x)
     {
-      return Math.Log(x, 2);		//can use this in C#
+      return Math.Log(x, 2);    //can use this in C#
     }
   }
   public class EntFileCalc
@@ -319,7 +341,7 @@ namespace AltaxoTest.Calc.Probability
       {
         entCalc.AddSample((byte) inStream.ReadByte(), false);
       }
-			
+      
       return entCalc.EndCalculation();
     }
     public static EntCalc.EntCalcResult CalculateFile(string inFileName) 
@@ -329,7 +351,7 @@ namespace AltaxoTest.Calc.Probability
       instream.Position = 0;
 
       EntCalc.EntCalcResult tmpRes = CalculateFile(ref instream);
-			
+      
       instream.Close();
 
       return tmpRes;

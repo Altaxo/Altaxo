@@ -1,3 +1,25 @@
+#region Copyright
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+#endregion
+
 /*
  * ComplexDoubleMatrix.cs
  * 
@@ -25,7 +47,7 @@ namespace Altaxo.Calc.LinearAlgebra
 #if MANAGED
     internal Complex[][] data;
 #else
-		internal Complex[] data;
+    internal Complex[] data;
 #endif
     int rows;
     int columns;
@@ -57,7 +79,7 @@ namespace Altaxo.Calc.LinearAlgebra
         data[i] = new Complex[columns];
       }
 #else
-			data = new Complex[(long)rows*(long)columns];
+      data = new Complex[(long)rows*(long)columns];
 #endif
 
       this.rows = rows;
@@ -105,12 +127,12 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 #else
-			data = new Complex[(long)rows*(long)columns];
-			if(value != 0) {
-				for( long i = 0; i < data.Length; i++){
-					data[i] = value;
-				}
-			}
+      data = new Complex[(long)rows*(long)columns];
+      if(value != 0) {
+        for( long i = 0; i < data.Length; i++){
+          data[i] = value;
+        }
+      }
 #endif
     }
 
@@ -139,10 +161,10 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 #else
-			data = new Complex[source.data.Length];
-			for( long i = 0; i < data.Length; i++){
-				data[i] = source.data[i];
-			}
+      data = new Complex[source.data.Length];
+      for( long i = 0; i < data.Length; i++){
+        data[i] = source.data[i];
+      }
 #endif
     }
 
@@ -164,8 +186,8 @@ namespace Altaxo.Calc.LinearAlgebra
       if(source is ComplexDoubleMatrix)
       {
         ComplexDoubleMatrix cdmsource = (ComplexDoubleMatrix)source;
-         for (int i = 0; i < rows; i++)
-           data[i] = (Complex[])cdmsource.data[i].Clone();
+        for (int i = 0; i < rows; i++)
+          data[i] = (Complex[])cdmsource.data[i].Clone();
       }
       else
       {
@@ -179,7 +201,7 @@ namespace Altaxo.Calc.LinearAlgebra
             data[i][j] = source[i,j];
       }
 #else
-			data = ToLinearComplexArray(source);
+      data = ToLinearComplexArray(source);
 #endif
     }
 
@@ -209,10 +231,10 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 #else
-			data = new Complex[source.data.Length];
-			for( long i = 0; i < data.Length; i++){
-				data[i] = source.data[i];
-			}
+      data = new Complex[source.data.Length];
+      for( long i = 0; i < data.Length; i++){
+        data[i] = source.data[i];
+      }
 #endif
     }
 
@@ -270,10 +292,10 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 #else
-			data = new Complex[source.data.Length];
-			for( long i = 0; i < data.Length; i++){
-				data[i] = source.data[i];
-			}
+      data = new Complex[source.data.Length];
+      for( long i = 0; i < data.Length; i++){
+        data[i] = source.data[i];
+      }
 #endif
     }
 
@@ -303,7 +325,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 #else
-			data = ComplexDoubleMatrix.ToLinearComplexArray(source);
+      data = ComplexDoubleMatrix.ToLinearComplexArray(source);
 #endif
     }
 
@@ -332,10 +354,10 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 #else
-			data = new Complex[source.data.Length];
-			for( long i = 0; i < data.Length; i++){
-				data[i] = source.data[i];
-			}
+      data = new Complex[source.data.Length];
+      for( long i = 0; i < data.Length; i++){
+        data[i] = source.data[i];
+      }
 #endif
     }
 
@@ -364,7 +386,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 #else
-			data = ComplexDoubleMatrix.ToLinearComplexArray(source);
+      data = ComplexDoubleMatrix.ToLinearComplexArray(source);
 #endif
     }
 
@@ -393,12 +415,12 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 #else
-			data = new Complex[(long)rows*(long)columns];
-			for( int i = 0; i < rows; i++){
-				for( int j = 0; j < columns; j++ ) {
-					data[j*rows+i] = values[i,j];
-				}
-			}
+      data = new Complex[(long)rows*(long)columns];
+      for( int i = 0; i < rows; i++){
+        for( int j = 0; j < columns; j++ ) {
+          data[j*rows+i] = values[i,j];
+        }
+      }
 #endif
     }
 
@@ -427,12 +449,12 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 #else
-			data = new Complex[(long)rows*(long)columns];
-			for( int i = 0; i < rows; i++){
-				for( int j = 0; j < columns; j++ ) {
-					data[j*rows+i] = values[i,j];
-				}
-			}
+      data = new Complex[(long)rows*(long)columns];
+      for( int i = 0; i < rows; i++){
+        for( int j = 0; j < columns; j++ ) {
+          data[j*rows+i] = values[i,j];
+        }
+      }
 #endif
     }
 
@@ -461,12 +483,12 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 #else
-			data = new Complex[(long)rows*(long)columns];
-			for( int i = 0; i < rows; i++){
-				for( int j = 0; j < columns; j++ ) {
-					data[j*rows+i] = values[i,j];
-				}
-			}
+      data = new Complex[(long)rows*(long)columns];
+      for( int i = 0; i < rows; i++){
+        for( int j = 0; j < columns; j++ ) {
+          data[j*rows+i] = values[i,j];
+        }
+      }
 #endif
     }
 
@@ -495,12 +517,12 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 #else
-			data = new Complex[(long)rows*(long)columns];
-			for( int i = 0; i < rows; i++){
-				for( int j = 0; j < columns; j++ ) {
-					data[j*rows+i] = values[i,j];
-				}
-			}
+      data = new Complex[(long)rows*(long)columns];
+      for( int i = 0; i < rows; i++){
+        for( int j = 0; j < columns; j++ ) {
+          data[j*rows+i] = values[i,j];
+        }
+      }
 #endif
     }
 
@@ -544,7 +566,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 #else
-			ToLinearComplexArray(source,ret.data);
+      ToLinearComplexArray(source,ret.data);
 #endif
       return ret;
     }
@@ -591,7 +613,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 #else
-			ToLinearComplexArray(source,ret.data);
+      ToLinearComplexArray(source,ret.data);
 #endif
       return ret;
     }
@@ -616,31 +638,31 @@ namespace Altaxo.Calc.LinearAlgebra
       ComplexDoubleMatrix ret = new ComplexDoubleMatrix(rows, columns);
 #if MANAGED
             
-            if (source is FloatMatrix)
-            {
-              float[][] sourcedata = ((FloatMatrix)source).data;
+      if (source is FloatMatrix)
+      {
+        float[][] sourcedata = ((FloatMatrix)source).data;
 
-              for (int i = 0; i < rows; i++)
-              {
-                for (int j = 0; j < columns; j++)
-                {
-                  ret.data[i][j] = sourcedata[i][j];
-                }
-              }
-            }
-            else
-            {
+        for (int i = 0; i < rows; i++)
+        {
+          for (int j = 0; j < columns; j++)
+          {
+            ret.data[i][j] = sourcedata[i][j];
+          }
+        }
+      }
+      else
+      {
 
-              for (int i = 0; i < rows; i++)
-              {
-                for (int j = 0; j < columns; j++)
-                {
-                  ret.data[i][j] = source[i,j];
-                }
-              }
-            }
+        for (int i = 0; i < rows; i++)
+        {
+          for (int j = 0; j < columns; j++)
+          {
+            ret.data[i][j] = source[i,j];
+          }
+        }
+      }
 #else
-			ToLinearComplexArray(source,ret.data);
+      ToLinearComplexArray(source,ret.data);
 #endif
       return ret;
     }
@@ -746,7 +768,7 @@ namespace Altaxo.Calc.LinearAlgebra
 #if MANAGED
         ret.data[i][i] = 1;
 #else
-				ret.data[i*ret.rows+i] = 1;
+        ret.data[i*ret.rows+i] = 1;
 #endif
       }
       return ret;
@@ -805,7 +827,7 @@ namespace Altaxo.Calc.LinearAlgebra
 #if MANAGED
         return data[row][column];
 #else
-				return data[column*rows+row];
+        return data[column*rows+row];
 #endif
       }
       set
@@ -813,7 +835,7 @@ namespace Altaxo.Calc.LinearAlgebra
 #if MANAGED
         data[row][column] = value;
 #else
-				data[column*rows+row] = value;
+        data[column*rows+row] = value;
 #endif
       }
     }
@@ -846,11 +868,11 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 #else
-			for( int i = 0; i < data.Length; i++) {
-				if( data[i] != matrix.data[i] ) {
-					return false;
-				}
-			}
+      for( int i = 0; i < data.Length; i++) {
+        if( data[i] != matrix.data[i] ) {
+          return false;
+        }
+      }
 #endif
       return true;
     }
@@ -875,7 +897,7 @@ namespace Altaxo.Calc.LinearAlgebra
 #if MANAGED
           ret[i, j] = data[i][j];
 #else
-					ret[i,j] = data[j*rows+i];
+          ret[i,j] = data[j*rows+i];
 #endif
         }
       }
@@ -899,12 +921,12 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 #else
-			Complex[] temp = new Complex[(long)rows*(long)columns];
-			for( int i = 0; i < rows; i++ ) {
-				for( int j = 0; j < columns; ++j ) {
-					temp[i*columns+j] = data[j*rows+i];
-				}
-			}
+      Complex[] temp = new Complex[(long)rows*(long)columns];
+      for( int i = 0; i < rows; i++ ) {
+        for( int j = 0; j < columns; ++j ) {
+          temp[i*columns+j] = data[j*rows+i];
+        }
+      }
 #endif
       data = temp;
       int tmp = columns;
@@ -926,11 +948,11 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 #else
-			for( int i = 0; i < rows; i++ ) {
-				for( int j = 0; j < columns; ++j ) {
-					ret.data[i*columns+j] = data[j*rows+i];
-				}
-			}
+      for( int i = 0; i < rows; i++ ) {
+        for( int j = 0; j < columns; ++j ) {
+          ret.data[i*columns+j] = data[j*rows+i];
+        }
+      }
 #endif
       return ret;
     }
@@ -952,12 +974,12 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 #else
-			Complex[] temp = new Complex[(long)rows*(long)columns];
-			for( int i = 0; i < rows; i++ ) {
-				for( int j = 0; j < columns; ++j ) {
-					temp[i*columns+j] = ComplexMath.Conjugate(data[j*rows+i]);
-				}
-			}
+      Complex[] temp = new Complex[(long)rows*(long)columns];
+      for( int i = 0; i < rows; i++ ) {
+        for( int j = 0; j < columns; ++j ) {
+          temp[i*columns+j] = ComplexMath.Conjugate(data[j*rows+i]);
+        }
+      }
 #endif
       data = temp;
       int tmp = columns;
@@ -979,11 +1001,11 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 #else
-			for( int i = 0; i < rows; i++ ) {
-				for( int j = 0; j < columns; ++j ) {
-					ret.data[i*columns+j] = ComplexMath.Conjugate(data[j*rows+i]);
-				}
-			}
+      for( int i = 0; i < rows; i++ ) {
+        for( int j = 0; j < columns; ++j ) {
+          ret.data[i*columns+j] = ComplexMath.Conjugate(data[j*rows+i]);
+        }
+      }
 #endif
       return ret;
     }
@@ -1042,7 +1064,7 @@ namespace Altaxo.Calc.LinearAlgebra
 #if MANAGED
           s += ComplexMath.Absolute(data[i][j]);
 #else
-					s += ComplexMath.Absolute(data[j*rows+i]);
+          s += ComplexMath.Absolute(data[j*rows+i]);
 #endif
         }
         ret = System.Math.Max(ret, s);
@@ -1070,7 +1092,7 @@ namespace Altaxo.Calc.LinearAlgebra
 #if MANAGED
           s += ComplexMath.Absolute(data[i][j]);
 #else
-					s += ComplexMath.Absolute(data[j*rows+i]);
+          s += ComplexMath.Absolute(data[j*rows+i]);
 #endif
         }
         ret = System.Math.Max(ret, s);
@@ -1079,7 +1101,7 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     /// <summary>Calculates the Frobenius norm of this matrix.</summary>
-    /// <returns>the Frobenius norm of this matrix.</returns>	
+    /// <returns>the Frobenius norm of this matrix.</returns> 
     public double GetFrobeniusNorm()
     {
       ComplexDoubleMatrix tmp = this * this.GetConjugateTranspose();
@@ -1089,7 +1111,7 @@ namespace Altaxo.Calc.LinearAlgebra
 #if MANAGED
         ret += ComplexMath.Absolute(tmp.data[i][i]);
 #else
-				ret += ComplexMath.Absolute(tmp.data[i*rows+i]);
+        ret += ComplexMath.Absolute(tmp.data[i*rows+i]);
 #endif
       }
       return System.Math.Sqrt(ret.Real);
@@ -1122,7 +1144,7 @@ namespace Altaxo.Calc.LinearAlgebra
 #if MANAGED
         ret.data[i] = data[row][i];
 #else
-				ret.data[i] = data[i*rows+row];
+        ret.data[i] = data[i*rows+row];
 #endif
       }
       return ret;
@@ -1143,7 +1165,7 @@ namespace Altaxo.Calc.LinearAlgebra
 #if MANAGED
         ret.data[i] = data[i][column];
 #else
-				ret.data[i] = data[column*rows+i];
+        ret.data[i] = data[column*rows+i];
 #endif
       }
       return ret;
@@ -1160,7 +1182,7 @@ namespace Altaxo.Calc.LinearAlgebra
 #if MANAGED
         ret.data[i] = data[i][i];
 #else
-				ret.data[i] = data[i*rows+i];
+        ret.data[i] = data[i*rows+i];
 #endif
       }
       return ret;
@@ -1346,7 +1368,7 @@ namespace Altaxo.Calc.LinearAlgebra
 #if MANAGED
         data[i][i] = source[i];
 #else
-				data[i*rows+i] = source[i];
+        data[i*rows+i] = source[i];
 #endif
       }
     }
@@ -1362,7 +1384,7 @@ namespace Altaxo.Calc.LinearAlgebra
 #if MANAGED
         data[i][i] = source[i];
 #else
-				data[i*rows+i] = source[i];
+        data[i*rows+i] = source[i];
 #endif
       }
     }
@@ -1411,7 +1433,7 @@ namespace Altaxo.Calc.LinearAlgebra
 #if MANAGED
           ret.data[i][j] = data[i + startRow][j + startColumn];
 #else
-					ret.data[j*nRows+i] = data[(j+startColumn)*rows+(i+startRow)];
+          ret.data[j*nRows+i] = data[(j+startColumn)*rows+(i+startRow)];
 #endif
         }
       }
@@ -1432,7 +1454,7 @@ namespace Altaxo.Calc.LinearAlgebra
 #if MANAGED
             ret.data[i][j] = data[i][j];
 #else
-						ret.data[j*rows+i] = data[j*rows+i];
+            ret.data[j*rows+i] = data[j*rows+i];
 #endif
           }
         }
@@ -1454,7 +1476,7 @@ namespace Altaxo.Calc.LinearAlgebra
 #if MANAGED
             ret.data[i][j] = data[i][j];
 #else
-						ret.data[j*rows+i] = data[j*rows+i];
+            ret.data[j*rows+i] = data[j*rows+i];
 #endif
           }
         }
@@ -1476,7 +1498,7 @@ namespace Altaxo.Calc.LinearAlgebra
 #if MANAGED
             ret.data[i][j] = data[i][j];
 #else
-						ret.data[j*rows+i] = data[j*rows+i];
+            ret.data[j*rows+i] = data[j*rows+i];
 #endif
           }
         }
@@ -1498,7 +1520,7 @@ namespace Altaxo.Calc.LinearAlgebra
 #if MANAGED
             ret.data[i][j] = data[i][j];
 #else
-						ret.data[j*rows+i] = data[j*rows+i];
+            ret.data[j*rows+i] = data[j*rows+i];
 #endif
           }
         }
@@ -1525,9 +1547,9 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 #else
-			for( int i = 0; i < a.data.Length; i++){
-				ret.data[i] = - a.data[i];
-			}
+      for( int i = 0; i < a.data.Length; i++){
+        ret.data[i] = - a.data[i];
+      }
 #endif
       return ret;
     }
@@ -1571,9 +1593,9 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 #else
-			for( int i = 0; i < a.data.Length; i++){
-				ret.data[i] = a.data[i] - b.data[i];
-			}
+      for( int i = 0; i < a.data.Length; i++){
+        ret.data[i] = a.data[i] - b.data[i];
+      }
 #endif
       return ret;
     }
@@ -1599,9 +1621,9 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 #else
-			for( int i = 0; i < b.data.Length; i++){
-				ret.data[i] = a - b.data[i];
-			}
+      for( int i = 0; i < b.data.Length; i++){
+        ret.data[i] = a - b.data[i];
+      }
 #endif
       return ret;
     }
@@ -1627,9 +1649,9 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 #else
-			for( int i = 0; i < a.data.Length; i++){
-				ret.data[i] = a.data[i] - b;
-			}
+      for( int i = 0; i < a.data.Length; i++){
+        ret.data[i] = a.data[i] - b;
+      }
 #endif
       return ret;
     }
@@ -1698,9 +1720,9 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 #else
-			for( int i = 0; i < data.Length; i++){
-				data[i] -= a.data[i];
-			}
+      for( int i = 0; i < data.Length; i++){
+        data[i] -= a.data[i];
+      }
 #endif
     }
 
@@ -1717,9 +1739,9 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 #else
-			for( int i = 0; i < data.Length; i++){
-				data[i] -= a;
-			}
+      for( int i = 0; i < data.Length; i++){
+        data[i] -= a;
+      }
 #endif
     }
 
@@ -1760,9 +1782,9 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 #else
-			for( int i = 0; i < a.data.Length; i++){
-				ret.data[i] = a.data[i] + b.data[i];
-			}
+      for( int i = 0; i < a.data.Length; i++){
+        ret.data[i] = a.data[i] + b.data[i];
+      }
 #endif
       return ret;
     }
@@ -1788,9 +1810,9 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 #else
-			for( int i = 0; i < b.data.Length; i++){
-				ret.data[i] = a + b.data[i];
-			}
+      for( int i = 0; i < b.data.Length; i++){
+        ret.data[i] = a + b.data[i];
+      }
 #endif
       return ret;
     }
@@ -1816,9 +1838,9 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 #else
-			for( int i = 0; i < a.data.Length; i++){
-				ret.data[i] = a.data[i] + b;
-			}
+      for( int i = 0; i < a.data.Length; i++){
+        ret.data[i] = a.data[i] + b;
+      }
 #endif
       return ret;
     }
@@ -1888,9 +1910,9 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 #else
-			for( int i = 0; i < data.Length; i++){
-				data[i] += a.data[i];
-			}
+      for( int i = 0; i < data.Length; i++){
+        data[i] += a.data[i];
+      }
 #endif
     }
 
@@ -1907,9 +1929,9 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 #else
-			for( int i = 0; i < data.Length; i++){
-				data[i] += a;
-			}
+      for( int i = 0; i < data.Length; i++){
+        data[i] += a;
+      }
 #endif
     }
 
@@ -1934,7 +1956,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 #else
-			Blas.Scal.Compute( ret.data.Length, 1/b, ret.data, 1 );
+      Blas.Scal.Compute( ret.data.Length, 1/b, ret.data, 1 );
 #endif
       return ret;
     }
@@ -1966,7 +1988,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 #else
-			Blas.Scal.Compute( data.Length, 1/a, data, 1 );
+      Blas.Scal.Compute( data.Length, 1/a, data, 1 );
 #endif
     }
 
@@ -1991,7 +2013,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 #else
-			Blas.Scal.Compute( ret.data.Length, a, ret.data, 1 );
+      Blas.Scal.Compute( ret.data.Length, a, ret.data, 1 );
 #endif
       return ret;
     }
@@ -2050,8 +2072,8 @@ namespace Altaxo.Calc.LinearAlgebra
           data[i][j] *= a;
         }
       }
-#else	
-			Blas.Scal.Compute( data.Length, a, data, 1 );
+#else 
+      Blas.Scal.Compute( data.Length, a, data, 1 );
 #endif
     }
 
@@ -2085,8 +2107,8 @@ namespace Altaxo.Calc.LinearAlgebra
           ret.data[i] += x.data[i][j] * y.data[j];
         }
       }
-#else	
-			Blas.Gemv.Compute(Blas.Order.ColumnMajor, Blas.Transpose.NoTrans, x.rows, x.columns, 1, x.data, x.rows, y.data, 1, 1, ret.data, 1);
+#else 
+      Blas.Gemv.Compute(Blas.Order.ColumnMajor, Blas.Transpose.NoTrans, x.rows, x.columns, 1, x.data, x.rows, y.data, 1, 1, ret.data, 1);
 #endif
       return ret;
     }
@@ -2137,9 +2159,9 @@ namespace Altaxo.Calc.LinearAlgebra
           temp[i][0] += data[i][j] * x.data[j];
         }
       }
-#else	
-			Complex[] temp = new Complex[rows];
-			Blas.Gemv.Compute(Blas.Order.ColumnMajor, Blas.Transpose.NoTrans, rows, columns, 1,data, x.Length, x.data, 1, 1, temp, 1);
+#else 
+      Complex[] temp = new Complex[rows];
+      Blas.Gemv.Compute(Blas.Order.ColumnMajor, Blas.Transpose.NoTrans, rows, columns, 1,data, x.Length, x.data, 1, 1, temp, 1);
 #endif
       data = temp;
       columns = 1;
@@ -2182,8 +2204,8 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 #else
-			Blas.Gemm.Compute(Blas.Order.ColumnMajor, Blas.Transpose.NoTrans, Blas.Transpose.NoTrans,
-				x.rows, y.columns, x.columns, 1, x.data, x.rows, y.data, y.rows, 1, ret.data, ret.rows);
+      Blas.Gemm.Compute(Blas.Order.ColumnMajor, Blas.Transpose.NoTrans, Blas.Transpose.NoTrans,
+        x.rows, y.columns, x.columns, 1, x.data, x.rows, y.data, y.rows, 1, ret.data, ret.rows);
 #endif
       return ret;
 
@@ -2244,9 +2266,9 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 #else
-			Complex[] temp = new Complex[(long)rows*(long)x.columns];
-			Blas.Gemm.Compute(Blas.Order.ColumnMajor, Blas.Transpose.NoTrans, Blas.Transpose.NoTrans,
-				rows, x.columns, columns, 1, data, rows, x.data, x.rows, 1, temp, rows);
+      Complex[] temp = new Complex[(long)rows*(long)x.columns];
+      Blas.Gemm.Compute(Blas.Order.ColumnMajor, Blas.Transpose.NoTrans, Blas.Transpose.NoTrans,
+        rows, x.columns, columns, 1, data, rows, x.data, x.rows, 1, temp, rows);
 #endif
       data = temp;
     }
@@ -2273,7 +2295,7 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 #else
-			Blas.Copy.Compute(this.data.Length, x.data, 1, this.data, 1 );
+      Blas.Copy.Compute(this.data.Length, x.data, 1, this.data, 1 );
 #endif
     }
     ///<summary>Clone (deep copy) a <c>ComplexDoubleMatrix</c> variable.</summary>
@@ -2423,7 +2445,7 @@ namespace Altaxo.Calc.LinearAlgebra
 #if MANAGED
           data[i][j] = 0;
 #else
-					data[j*rows+i]=0;
+          data[j*rows+i]=0;
 #endif
     }
 
@@ -2435,7 +2457,7 @@ namespace Altaxo.Calc.LinearAlgebra
 #if MANAGED
           if (data[i][j] == (Complex)value)
 #else
-					if (data[j*rows+i]==(Complex)value)
+          if (data[j*rows+i]==(Complex)value)
 #endif
             return true;
 
@@ -2450,7 +2472,7 @@ namespace Altaxo.Calc.LinearAlgebra
 #if MANAGED
           if (data[i][j] == (Complex)value)
 #else
-					if (data[j*rows+i]==(Complex)value)
+          if (data[j*rows+i]==(Complex)value)
 #endif
             return j * rows + i;
       return -1;
@@ -2488,9 +2510,9 @@ namespace Altaxo.Calc.LinearAlgebra
       int columns = matrix.Columns;
 
       int k=0;
-        for(int j=0;j<columns;++j)
-          for(int i=0;i<rows;++i)
-            result[k++] = matrix[i,j];
+      for(int j=0;j<columns;++j)
+        for(int i=0;i<rows;++i)
+          result[k++] = matrix[i,j];
 
       
     }
@@ -2508,9 +2530,9 @@ namespace Altaxo.Calc.LinearAlgebra
       int columns = matrix.Columns;
 
       int k=0;
-        for(int j=0;j<columns;++j)
-          for(int i=0;i<rows;++i)
-            result[k++] = matrix[i,j];
+      for(int j=0;j<columns;++j)
+        for(int i=0;i<rows;++i)
+          result[k++] = matrix[i,j];
 
      
     }
@@ -2526,9 +2548,9 @@ namespace Altaxo.Calc.LinearAlgebra
       int rows = matrix.Rows;
       int columns = matrix.Columns;
       int k=0;
-        for(int j=0;j<columns;++j)
-          for(int i=0;i<rows;++i)
-            result[k++] = matrix[i,j];
+      for(int j=0;j<columns;++j)
+        for(int i=0;i<rows;++i)
+          result[k++] = matrix[i,j];
 
      
     }
@@ -2544,9 +2566,9 @@ namespace Altaxo.Calc.LinearAlgebra
       int columns = matrix.Columns;
      
       int k=0;
-        for(int j=0;j<columns;++j)
-          for(int i=0;i<rows;++i)
-            result[k++] = matrix[i,j];
+      for(int j=0;j<columns;++j)
+        for(int i=0;i<rows;++i)
+          result[k++] = matrix[i,j];
 
      
     }

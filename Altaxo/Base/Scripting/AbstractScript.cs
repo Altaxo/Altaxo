@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2004 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -44,8 +44,8 @@ namespace Altaxo.Scripting
   }
 
   public class ScriptText
-{
-}
+  {
+  }
 
   /// <summary>
   /// Interface to a script, e.g. a table or column script
@@ -233,7 +233,7 @@ namespace Altaxo.Scripting
  
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Data.AbstractScript",0)]
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Altaxo.Scripting.AbstractScript), 1)]
+      [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Altaxo.Scripting.AbstractScript), 1)]
       public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -285,7 +285,7 @@ namespace Altaxo.Scripting
     /// the compiled assembly is not copied, so that the script text can be modified.</param>
     public AbstractScript(AbstractScript from, bool forModification)
     {
-     CopyFrom(from, forModification);
+      CopyFrom(from, forModification);
     }
     
 

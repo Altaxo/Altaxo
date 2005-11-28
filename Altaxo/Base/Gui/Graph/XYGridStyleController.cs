@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2004 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -51,20 +51,20 @@ namespace Altaxo.Gui.Graph
 
   #endregion
 
-	/// <summary>
-	/// Summary description for XYGridStyleController.
-	/// </summary>
-	[UserControllerForObject(typeof(Altaxo.Graph.GridStyle))]
-	public class XYGridStyleController : Main.GUI.IMVCAController, IXYGridStyleViewEventSink
-	{
+  /// <summary>
+  /// Summary description for XYGridStyleController.
+  /// </summary>
+  [UserControllerForObject(typeof(Altaxo.Graph.GridStyle))]
+  public class XYGridStyleController : Main.GUI.IMVCAController, IXYGridStyleViewEventSink
+  {
     IXYGridStyleView _view;
     GridStyle _doc;
     GridStyle _tempdoc;
     IColorTypeThicknessPenController _majorController;
     IColorTypeThicknessPenController _minorController;
 
-		public XYGridStyleController(GridStyle doc)
-		{
+    public XYGridStyleController(GridStyle doc)
+    {
       _doc = doc;
       _tempdoc = (GridStyle)doc.Clone();
 

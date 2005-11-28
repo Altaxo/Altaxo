@@ -1,3 +1,25 @@
+#region Copyright
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+#endregion
+
 /*
  * DoubleLUDecomp.cs
  * Managed code is a port of JAMA and Jampack code.
@@ -29,7 +51,7 @@ namespace Altaxo.Calc.LinearAlgebra
 #if MANAGED
     private double[][] factor;
 #else
-		private double[] factor;
+    private double[] factor;
 #endif
     ///<summary>Constructor for LU decomposition class. The constructor performs the factorization and the upper and
     ///lower matrices are accessible by the <c>U</c> and <c>L</c> properties.</summary>
@@ -126,10 +148,10 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
 #else
-			factor = new double[matrix.data.Length];
-			Array.Copy(matrix.data, factor, matrix.data.Length);
-			Lapack.Getrf.Compute(order, order, factor, order, out pivots);
-			GetSign();
+      factor = new double[matrix.data.Length];
+      Array.Copy(matrix.data, factor, matrix.data.Length);
+      Lapack.Getrf.Compute(order, order, factor, order, out pivots);
+      GetSign();
 #endif
       SetLU();
 
@@ -165,15 +187,15 @@ namespace Altaxo.Calc.LinearAlgebra
         l.data[i][i] = 1.0;
       }
 #else
-			for (int i=0; i<order; i++) {
-				for (int j=0; j<order; j++)
-					if (i > j) {
-						l.data[j*order+i] = factor[j*order+i];
-					} else {
-						u.data[j*order+i] = factor[j*order+i];
-					}
-				l.data[i*order+i] = 1.0;
-			} 
+      for (int i=0; i<order; i++) {
+        for (int j=0; j<order; j++)
+          if (i > j) {
+            l.data[j*order+i] = factor[j*order+i];
+          } else {
+            u.data[j*order+i] = factor[j*order+i];
+          }
+        l.data[i*order+i] = 1.0;
+      } 
 #endif
 
     }
@@ -251,7 +273,7 @@ namespace Altaxo.Calc.LinearAlgebra
 #if MANAGED
           ret *= factor[j][j];
 #else
-					ret *= factor[j*order+j];
+          ret *= factor[j*order+j];
 #endif
         }
         return sign * ret;
@@ -275,12 +297,12 @@ namespace Altaxo.Calc.LinearAlgebra
         ret = Solve(ret);
         return ret;
 #else
-				double[] inverse = new double[factor.Length];
-				Array.Copy(factor,inverse,factor.Length);
-				Lapack.Getri.Compute(order, inverse, order, pivots);
-				DoubleMatrix ret = new DoubleMatrix(order,order);
-				ret.data = inverse;
-				return ret;
+        double[] inverse = new double[factor.Length];
+        Array.Copy(factor,inverse,factor.Length);
+        Lapack.Getri.Compute(order, inverse, order, pivots);
+        DoubleMatrix ret = new DoubleMatrix(order,order);
+        ret.data = inverse;
+        return ret;
 #endif
       }
     }
@@ -369,11 +391,11 @@ namespace Altaxo.Calc.LinearAlgebra
         }
         return X;
 #else
-				double[] rhs = DoubleMatrix.ToLinearArray(B);
-				Lapack.Getrs.Compute(Lapack.Transpose.NoTrans,order,B.Columns,factor,order,pivots,rhs,B.Rows);
-				DoubleMatrix ret = new DoubleMatrix(order,B.Columns);
-				ret.data = rhs;
-				return ret;
+        double[] rhs = DoubleMatrix.ToLinearArray(B);
+        Lapack.Getrs.Compute(Lapack.Transpose.NoTrans,order,B.Columns,factor,order,pivots,rhs,B.Rows);
+        DoubleMatrix ret = new DoubleMatrix(order,B.Columns);
+        ret.data = rhs;
+        return ret;
 #endif
       }
     }
@@ -424,9 +446,9 @@ namespace Altaxo.Calc.LinearAlgebra
         }
         return X;
 #else
-				double[] rhs = DoubleMatrix.ToLinearArray(B);
-				Lapack.Getrs.Compute(Lapack.Transpose.NoTrans,order,1,factor,order,pivots,rhs,rhs.Length);
-				return new DoubleVector(rhs);
+        double[] rhs = DoubleMatrix.ToLinearArray(B);
+        Lapack.Getrs.Compute(Lapack.Transpose.NoTrans,order,1,factor,order,pivots,rhs,rhs.Length);
+        return new DoubleVector(rhs);
 #endif
       }
     }

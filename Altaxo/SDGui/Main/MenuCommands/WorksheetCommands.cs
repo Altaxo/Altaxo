@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2004 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -254,11 +254,11 @@ namespace Altaxo.Worksheet.Commands
       object[] args = new object[]{script,new ScriptExecutionHandler(this.EhScriptExecution)};
       if(Current.Gui.ShowDialog(args, "WorksheetScript of " + m_Table.Name))
       {
-       m_Table.SetTableProperty(ExtractTableDataScriptPropertyName, args[0]);
+        m_Table.SetTableProperty(ExtractTableDataScriptPropertyName, args[0]);
       }
     
       this.m_Table = null;
-     }
+    }
 
     public bool EhScriptExecution(IScriptText script)
     {
@@ -344,32 +344,32 @@ namespace Altaxo.Worksheet.Commands
       return ((DataColumnScript)script).ExecuteWithSuspendedNotifications(m_Column);
     }
   }
-    public class OpenPropertyColumnScriptDialog : AbstractWorksheetControllerCommand
+  public class OpenPropertyColumnScriptDialog : AbstractWorksheetControllerCommand
+  {
+    Altaxo.Data.DataColumn m_Column;
+
+    public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
     {
-      Altaxo.Data.DataColumn m_Column;
+      Altaxo.Data.DataTable dataTable = ctrl.DataTable;
+      if(ctrl.SelectedPropertyColumns.Count==0)
+        return;
+      m_Column = dataTable.PropertyColumns[ctrl.SelectedPropertyColumns[0]];
 
-      public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
+      IScriptText script = (IScriptText)dataTable.PropertyColumns.ColumnScripts[m_Column];
+      if(script==null)
+        script = new PropertyColumnScript();
+
+      object[] args = new object[]{script,new ScriptExecutionHandler(this.EhScriptExecution)};
+      if(Current.Gui.ShowDialog(args, "PropertyColumnScript of " + m_Column.Name))
       {
-        Altaxo.Data.DataTable dataTable = ctrl.DataTable;
-        if(ctrl.SelectedPropertyColumns.Count==0)
-          return;
-       m_Column = dataTable.PropertyColumns[ctrl.SelectedPropertyColumns[0]];
-
-        IScriptText script = (IScriptText)dataTable.PropertyColumns.ColumnScripts[m_Column];
-        if(script==null)
-          script = new PropertyColumnScript();
-
-        object[] args = new object[]{script,new ScriptExecutionHandler(this.EhScriptExecution)};
-        if(Current.Gui.ShowDialog(args, "PropertyColumnScript of " + m_Column.Name))
-        {
-          if(null != dataTable.DataColumns.ColumnScripts[m_Column])
-            dataTable.DataColumns.ColumnScripts[m_Column] = (IColumnScriptText)args[0];
-          else
-            dataTable.DataColumns.ColumnScripts.Add(m_Column, args[0]);
-        }
-
-        this.m_Column = null;
+        if(null != dataTable.DataColumns.ColumnScripts[m_Column])
+          dataTable.DataColumns.ColumnScripts[m_Column] = (IColumnScriptText)args[0];
+        else
+          dataTable.DataColumns.ColumnScripts.Add(m_Column, args[0]);
       }
+
+      this.m_Column = null;
+    }
 
     public bool EhScriptExecution(IScriptText script)
     {

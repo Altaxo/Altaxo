@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2004 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -129,10 +129,10 @@ namespace Altaxo.Worksheet.GUI
         //ICSharpCode.SharpDevelop.Gui.IWorkbenchWindow newValue = value;
 
         //if(oldValue!=null)
-          //oldValue.WindowSelected -= new EventHandler(EhParent_WindowsSelected);
+        //oldValue.WindowSelected -= new EventHandler(EhParent_WindowsSelected);
 
         //if(newValue!=null)
-          //newValue.WindowSelected += new EventHandler(EhParent_WindowsSelected);
+        //newValue.WindowSelected += new EventHandler(EhParent_WindowsSelected);
 
         this.m_ParentWorkbenchWindowController = value; 
 

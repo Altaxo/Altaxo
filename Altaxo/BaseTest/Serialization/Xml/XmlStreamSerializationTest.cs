@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2004 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ using Altaxo.Serialization.Xml;
 
 namespace Altaxo.Test.Serialization.Xml
 {
-  #region Serialization test classes
+#region Serialization test classes
   [System.Xml.Serialization.XmlRoot]
   public class Foo
   {
@@ -126,12 +126,12 @@ namespace Altaxo.Test.Serialization.Xml
         return false;
     }
   }
-  #endregion
+#endregion
 
 
 
 
-  #region Tests
+#region Tests
   [NUnit.Framework.TestFixture]
   public class TestXmlSerialization
   {
@@ -465,7 +465,7 @@ namespace Altaxo.Test.Serialization.Xml
     }
 
   }
-  #endregion
+#endregion
 
 
 }

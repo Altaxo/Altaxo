@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2004 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -598,7 +598,7 @@ namespace Altaxo.Calc
       return z;
     }
 
-     /// <summary>
+    /// <summary>
     /// This function returns the complex arcsine of the complex number a,
     /// arcsin(a)}. The branch cuts are on the real axis, less than -1
     /// and greater than 1.
@@ -778,7 +778,7 @@ namespace Altaxo.Calc
       }
     }
 
-     /// <summary>
+    /// <summary>
     /// This function returns the complex hyperbolic arctangent of the complex
     /// number a,  arctanh(a).  The branch cuts are on the real
     /// axis, less than -1 and greater than 1.

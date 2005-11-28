@@ -1,3 +1,25 @@
+#region Copyright
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+#endregion
+
 using System;
 using System.Drawing;
 using System.Collections;
@@ -6,31 +28,31 @@ using System.Windows.Forms;
 
 namespace Altaxo.Gui.Scripting
 {
-	/// <summary>
-	/// Summary description for ScriptExecutionDialog.
-	/// </summary>
-	public class ScriptExecutionDialog : System.Windows.Forms.Form
-	{
+  /// <summary>
+  /// Summary description for ScriptExecutionDialog.
+  /// </summary>
+  public class ScriptExecutionDialog : System.Windows.Forms.Form
+  {
     private System.Windows.Forms.Button _btOk;
     private System.Windows.Forms.Button _btCompile;
     private System.Windows.Forms.Button _btUpdate;
     private System.Windows.Forms.Button _btCancel;
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components = null;
+    /// <summary>
+    /// Required designer variable.
+    /// </summary>
+    private System.ComponentModel.Container components = null;
 
-		public ScriptExecutionDialog()
-		{
-			//
-			// Required for Windows Form Designer support
-			//
-			InitializeComponent();
+    public ScriptExecutionDialog()
+    {
+      //
+      // Required for Windows Form Designer support
+      //
+      InitializeComponent();
 
-			//
-			// TODO: Add any constructor code after InitializeComponent call
-			//
-		}
+      //
+      // TODO: Add any constructor code after InitializeComponent call
+      //
+    }
 
     IScriptController _controller;
     public ScriptExecutionDialog(IScriptController controller)
@@ -48,28 +70,28 @@ namespace Altaxo.Gui.Scripting
       }
     }
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+    /// <summary>
+    /// Clean up any resources being used.
+    /// </summary>
+    protected override void Dispose( bool disposing )
+    {
+      if( disposing )
+      {
+        if(components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose( disposing );
+    }
 
-		#region Windows Form Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+    #region Windows Form Designer generated code
+    /// <summary>
+    /// Required method for Designer support - do not modify
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
       this._btOk = new System.Windows.Forms.Button();
       this._btCompile = new System.Windows.Forms.Button();
       this._btUpdate = new System.Windows.Forms.Button();
@@ -129,13 +151,13 @@ namespace Altaxo.Gui.Scripting
       this.ResumeLayout(false);
 
     }
-		#endregion
+    #endregion
 
 
     private void _btCompile_Click(object sender, System.EventArgs e)
     {
-    if(_controller!=null)
-      _controller.Compile();
+      if(_controller!=null)
+        _controller.Compile();
     }
 
     private void _btUpdate_Click(object sender, System.EventArgs e)
@@ -164,5 +186,5 @@ namespace Altaxo.Gui.Scripting
         }
       }
     }
-	}
+  }
 }

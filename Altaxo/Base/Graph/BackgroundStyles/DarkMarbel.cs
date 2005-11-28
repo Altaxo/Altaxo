@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2004 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ namespace Altaxo.Graph.BackgroundStyles
     #region Serialization
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DarkMarbel), 0)]
-    public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+      public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
@@ -121,13 +121,13 @@ namespace Altaxo.Graph.BackgroundStyles
 
       g.FillRectangle(_cachedDarkBrush, innerArea.Left-_shadowLength,innerArea.Top-_shadowLength,innerArea.Width+2*_shadowLength,innerArea.Height+2*_shadowLength);
       g.FillPolygon(_cachedLightBrush, new PointF[] {
-                                                         new PointF(innerArea.Left,innerArea.Top), // upper left point
-                                                         new PointF(innerArea.Right,innerArea.Top), // go to the right
-                                                         new PointF(innerArea.Right+_shadowLength,innerArea.Top-_shadowLength), // go 45 deg left down in the upper right corner
-                                                         new PointF(innerArea.Left-_shadowLength,innerArea.Top-_shadowLength), // upper left corner of the inner rectangle
-                                                         new PointF(innerArea.Left-_shadowLength,innerArea.Bottom+_shadowLength), // lower left corner of the inner rectangle
-                                                         new PointF(innerArea.Left,innerArea.Bottom) // lower left corner
-                                                       });
+                                                      new PointF(innerArea.Left,innerArea.Top), // upper left point
+                                                      new PointF(innerArea.Right,innerArea.Top), // go to the right
+                                                      new PointF(innerArea.Right+_shadowLength,innerArea.Top-_shadowLength), // go 45 deg left down in the upper right corner
+                                                      new PointF(innerArea.Left-_shadowLength,innerArea.Top-_shadowLength), // upper left corner of the inner rectangle
+                                                      new PointF(innerArea.Left-_shadowLength,innerArea.Bottom+_shadowLength), // lower left corner of the inner rectangle
+                                                      new PointF(innerArea.Left,innerArea.Bottom) // lower left corner
+                                                    });
 
       g.FillRectangle(_cachedDimBrush, innerArea);
 

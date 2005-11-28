@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2004 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -258,8 +258,8 @@ namespace Altaxo.Graph
 
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotScatterStyle), 0)]
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotScatterStyle), 1)] // by accident this was never different from 0
-    public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+      [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotScatterStyle), 1)] // by accident this was never different from 0
+      public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
@@ -273,17 +273,17 @@ namespace Altaxo.Graph
       }
 
       protected virtual XYPlotScatterStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-     {
-       XYPlotScatterStyle s = null != o ? (XYPlotScatterStyle)o : new XYPlotScatterStyle();
+      {
+        XYPlotScatterStyle s = null != o ? (XYPlotScatterStyle)o : new XYPlotScatterStyle();
 
-       s._shape = (XYPlotScatterStyles.Shape)info.GetValue("Shape", typeof(XYPlotScatterStyles.Shape));
-       s._style = (XYPlotScatterStyles.Style)info.GetValue("Style", typeof(XYPlotScatterStyles.Style));
-       s._dropLine = (XYPlotScatterStyles.DropLine)info.GetValue("DropLine", typeof(XYPlotScatterStyles.DropLine));
-       s._pen = (PenHolder)info.GetValue("Pen", typeof(PenHolder));
-       s._symbolSize = info.GetSingle("SymbolSize");
-       s._relativePenWidth = info.GetSingle("RelativePenWidth");
+        s._shape = (XYPlotScatterStyles.Shape)info.GetValue("Shape", typeof(XYPlotScatterStyles.Shape));
+        s._style = (XYPlotScatterStyles.Style)info.GetValue("Style", typeof(XYPlotScatterStyles.Style));
+        s._dropLine = (XYPlotScatterStyles.DropLine)info.GetValue("DropLine", typeof(XYPlotScatterStyles.DropLine));
+        s._pen = (PenHolder)info.GetValue("Pen", typeof(PenHolder));
+        s._symbolSize = info.GetSingle("SymbolSize");
+        s._relativePenWidth = info.GetSingle("RelativePenWidth");
 
-       return s;
+        return s;
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -299,7 +299,7 @@ namespace Altaxo.Graph
     }
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotScatterStyle), 2)]
-    public class XmlSerializationSurrogate2 : XmlSerializationSurrogate0
+      public class XmlSerializationSurrogate2 : XmlSerializationSurrogate0
     {
       public override void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {

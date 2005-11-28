@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2004 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -122,11 +122,11 @@ namespace Altaxo.Graph.GUI
                                                                       };
 
       m_LabelStyleController = new Altaxo.Gui.Graph.XYAxisLabelStyleController[4]{
-                                                                        new Altaxo.Gui.Graph.XYAxisLabelStyleController((XYAxisLabelStyle)m_Layer.LeftLabelStyle),
-                                                                        new Altaxo.Gui.Graph.XYAxisLabelStyleController((XYAxisLabelStyle)m_Layer.BottomLabelStyle),
-                                                                        new Altaxo.Gui.Graph.XYAxisLabelStyleController((XYAxisLabelStyle)m_Layer.RightLabelStyle),
-                                                                        new Altaxo.Gui.Graph.XYAxisLabelStyleController((XYAxisLabelStyle)m_Layer.TopLabelStyle)
-                                                                      };
+                                                                                   new Altaxo.Gui.Graph.XYAxisLabelStyleController((XYAxisLabelStyle)m_Layer.LeftLabelStyle),
+                                                                                   new Altaxo.Gui.Graph.XYAxisLabelStyleController((XYAxisLabelStyle)m_Layer.BottomLabelStyle),
+                                                                                   new Altaxo.Gui.Graph.XYAxisLabelStyleController((XYAxisLabelStyle)m_Layer.RightLabelStyle),
+                                                                                   new Altaxo.Gui.Graph.XYAxisLabelStyleController((XYAxisLabelStyle)m_Layer.TopLabelStyle)
+                                                                                 };
 
       m_MinorLabelStyleController = new Altaxo.Gui.Graph.XYAxisLabelStyleController[4]{
                                                                                         new Altaxo.Gui.Graph.XYAxisLabelStyleController((XYAxisLabelStyle)m_Layer.AxisStyles[EdgeType.Left].MinorLabelStyle),
@@ -136,8 +136,8 @@ namespace Altaxo.Graph.GUI
                                                                                       };
 
       this._GridStyleController = new Altaxo.Main.GUI.IMVCAController[2]{
-                                       new Altaxo.Gui.Graph.XYGridStyleController(m_Layer.AxisStyles.X.GridStyle != null ? m_Layer.AxisStyles.X.GridStyle : new GridStyle()),
-                                       new Altaxo.Gui.Graph.XYGridStyleController(m_Layer.AxisStyles.Y.GridStyle != null ? m_Layer.AxisStyles.Y.GridStyle : new GridStyle())
+                                                                          new Altaxo.Gui.Graph.XYGridStyleController(m_Layer.AxisStyles.X.GridStyle != null ? m_Layer.AxisStyles.X.GridStyle : new GridStyle()),
+                                                                          new Altaxo.Gui.Graph.XYGridStyleController(m_Layer.AxisStyles.Y.GridStyle != null ? m_Layer.AxisStyles.Y.GridStyle : new GridStyle())
                                                                         };
       
 
@@ -485,7 +485,7 @@ namespace Altaxo.Graph.GUI
         {
           return false;
         }
-         this.m_Layer.AxisStyles[(EdgeType)i].ShowMajorLabels = this._enableMajorLabels[i];
+        this.m_Layer.AxisStyles[(EdgeType)i].ShowMajorLabels = this._enableMajorLabels[i];
       }
 
       for(i=0;i<4;i++)

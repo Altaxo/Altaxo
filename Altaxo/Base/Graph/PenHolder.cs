@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2004 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -548,10 +548,10 @@ namespace Altaxo.Graph
       // was set to a known color, the color of the cloned pen is the same, but no longer a known color
       // therefore we avoid the cloning of the pen here
 
-     // if(m_CachedMode && null!=pen.m_Pen)
-     //   _SetPenVariable( (Pen)pen.m_Pen.Clone() );
-     // else
-     //   _SetPenVariable(null);
+      // if(m_CachedMode && null!=pen.m_Pen)
+      //   _SetPenVariable( (Pen)pen.m_Pen.Clone() );
+      // else
+      //   _SetPenVariable(null);
     }
 
     public PenHolder(Pen pen)

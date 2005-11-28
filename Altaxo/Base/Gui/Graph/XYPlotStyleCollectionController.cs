@@ -1,3 +1,25 @@
+#region Copyright
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+#endregion
+
 using System;
 using Altaxo.Graph;
 using Altaxo.Main.GUI;
@@ -79,16 +101,16 @@ namespace Altaxo.Gui.Graph
       }
     }
 
-     public void InitializeAvailableStyleList()
-     {
-       _plotStyleTypes = Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(I2DPlotStyle));
-       string[] names = new string[_plotStyleTypes.Length];
-       for(int i=0;i<names.Length;i++)
-         names[i] = Current.Gui.GetUserFriendlyClassName(_plotStyleTypes[i]);
+    public void InitializeAvailableStyleList()
+    {
+      _plotStyleTypes = Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(I2DPlotStyle));
+      string[] names = new string[_plotStyleTypes.Length];
+      for(int i=0;i<names.Length;i++)
+        names[i] = Current.Gui.GetUserFriendlyClassName(_plotStyleTypes[i]);
 
-       if(_view!=null)
-         _view.InitializeAvailableStyleList(names);
-     }
+      if(_view!=null)
+        _view.InitializeAvailableStyleList(names);
+    }
 
     public void InitializePredefinedStyles()
     {
@@ -174,13 +196,13 @@ namespace Altaxo.Gui.Graph
       if (selectedindex == 0)
         return;
 
-        XYPlotStyleCollection template = XYPlotStyleCollectionTemplates.GetTemplate(selectedindex - 1);
-        _tempdoc.Clear();
-        for (int i = 0; i < template.Count; i++)
-          _tempdoc.Add(template[i]);
+      XYPlotStyleCollection template = XYPlotStyleCollectionTemplates.GetTemplate(selectedindex - 1);
+      _tempdoc.Clear();
+      for (int i = 0; i < template.Count; i++)
+        _tempdoc.Add(template[i]);
 
-        UpdateStyleList(new int[0]);
-        OnCollectionChangeCommit();
+      UpdateStyleList(new int[0]);
+      OnCollectionChangeCommit();
     }
 
     #endregion
@@ -188,13 +210,13 @@ namespace Altaxo.Gui.Graph
     #region CollectionController Members
 
     public event EventHandler CollectionChangeCommit;
-     public virtual void OnCollectionChangeCommit()
-     {
-       if(CollectionChangeCommit!=null)
-         CollectionChangeCommit(this,EventArgs.Empty);
-     }
+    public virtual void OnCollectionChangeCommit()
+    {
+      if(CollectionChangeCommit!=null)
+        CollectionChangeCommit(this,EventArgs.Empty);
+    }
 
-     #endregion
+    #endregion
 
     #region IMVCController Members
 
@@ -233,10 +255,10 @@ namespace Altaxo.Gui.Graph
     public virtual bool Apply()
     {
       _doc.BeginUpdate();
-     _doc.Clear();
+      _doc.Clear();
       _doc.AddRange((I2DPlotStyle[])_tempdoc.ToArray(typeof(I2DPlotStyle)));
       _doc.EndUpdate();
-     return true;
+      return true;
     }
 
     #endregion

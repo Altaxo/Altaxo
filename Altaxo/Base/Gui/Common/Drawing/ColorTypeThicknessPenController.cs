@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2004 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -47,21 +47,21 @@ namespace Altaxo.Gui.Common.Drawing
   }
 
   #endregion
-	/// <summary>
-	/// Summary description for ColorTypeWidthPenController.
-	/// </summary>
-	public class ColorTypeThicknessPenController : IColorTypeThicknessPenController
-	{
+  /// <summary>
+  /// Summary description for ColorTypeWidthPenController.
+  /// </summary>
+  public class ColorTypeThicknessPenController : IColorTypeThicknessPenController
+  {
     PenHolder _doc;
     PenHolder _tempDoc;
     IColorTypeThicknessPenView _view;
 
-		public ColorTypeThicknessPenController(PenHolder doc)
-		{
+    public ColorTypeThicknessPenController(PenHolder doc)
+    {
       if(doc == null) throw new ArgumentNullException("doc");
-			_doc = doc;
+      _doc = doc;
       _tempDoc = (PenHolder)doc.Clone();
-		}
+    }
 
 
     void Initialize()

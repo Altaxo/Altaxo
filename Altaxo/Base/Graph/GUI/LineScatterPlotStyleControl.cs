@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2004 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -111,7 +111,7 @@ namespace Altaxo.Graph.GUI
       base.Dispose( disposing );
     }
 
-    #region Component Designer generated code
+  #region Component Designer generated code
     /// <summary> 
     /// Required method for Designer support - do not modify 
     /// the contents of this method with the code editor.
@@ -583,7 +583,7 @@ namespace Altaxo.Graph.GUI
       this.ResumeLayout(false);
 
     }
-    #endregion
+  #endregion
 
 
     public void InitComboBox(System.Windows.Forms.ComboBox box, string[] names, string name)
@@ -595,7 +595,7 @@ namespace Altaxo.Graph.GUI
       --m_SuppressEvents;
     }
 
-    #region ILineScatterPlotStyleView Members
+  #region ILineScatterPlotStyleView Members
 
     public ILineScatterPlotStyleController Controller
     {
@@ -809,7 +809,7 @@ namespace Altaxo.Graph.GUI
 
 
 
-    #endregion
+  #endregion
   }
 #endif
 }

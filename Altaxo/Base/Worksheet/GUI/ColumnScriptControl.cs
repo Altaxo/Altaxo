@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2004 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -88,7 +88,7 @@ namespace Altaxo.Worksheet.GUI
       base.Dispose( disposing );
     }
 
-    #region Component Designer generated code
+#region Component Designer generated code
     /// <summary> 
     /// Required method for Designer support - do not modify 
     /// the contents of this method with the code editor.
@@ -341,7 +341,7 @@ namespace Altaxo.Worksheet.GUI
       this.ResumeLayout(false);
 
     }
-    #endregion
+#endregion
 
 
     public IColumnScriptController Controller

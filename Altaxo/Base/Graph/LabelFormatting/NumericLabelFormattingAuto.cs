@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2004 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ namespace Altaxo.Graph.LabelFormatting
       {
         NumericLabelFormattingAuto s = (NumericLabelFormattingAuto)obj;
 
-       info.AddBaseValueEmbedded(s,typeof(AbstractNumericLabelFormatting));
+        info.AddBaseValueEmbedded(s,typeof(AbstractNumericLabelFormatting));
         
       }
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -94,9 +94,9 @@ namespace Altaxo.Graph.LabelFormatting
       }
 
       string[] sitems = new string[items.Length];
-        for (int i = 0; i < items.Length; i++)
-          sitems[i] = items[i].ToString();
-        return sitems;
+      for (int i = 0; i < items.Length; i++)
+        sitems[i] = items[i].ToString();
+      return sitems;
       
     }
 

@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2004 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -461,7 +461,7 @@ namespace Altaxo.Graph.Axes
     public  override void ProcessDataBounds(double xorg, bool xorgfixed, double xend, bool xendfixed)
     {
       if(IsLinked)
-         return;
+        return;
 
       double oldAxisOrgByMajor = m_AxisOrgByMajor;
       double oldAxisEndByMajor = m_AxisEndByMajor;

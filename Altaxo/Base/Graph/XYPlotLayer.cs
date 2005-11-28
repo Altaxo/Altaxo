@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2004 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -658,14 +658,14 @@ namespace Altaxo.Graph
         XYPlotLayerAxisStyleProperties oldvalue = _axisStyles[i];
         if (!object.ReferenceEquals(value, oldvalue))
         {
-          {
-            if (oldvalue != null)
-              oldvalue.Changed-= new EventHandler(this.EhChildChanged);
-            if (value != null)
-              value.Changed += new EventHandler(this.EhChildChanged);
+        {
+          if (oldvalue != null)
+            oldvalue.Changed-= new EventHandler(this.EhChildChanged);
+          if (value != null)
+            value.Changed += new EventHandler(this.EhChildChanged);
 
-            OnChanged();
-          }
+          OnChanged();
+        }
         }
       }
 
@@ -752,7 +752,7 @@ namespace Altaxo.Graph
 
     public class XYPlotLayerAxisStylePropertiesCollection : Main.IChildChangedEventSink, Main.IChangedEventSource, ICloneable
     {
-//      XYPlotLayerAxisStyleProperties[] _styles = new XYPlotLayerAxisStyleProperties[4];
+      //      XYPlotLayerAxisStyleProperties[] _styles = new XYPlotLayerAxisStyleProperties[4];
 
       XYAxisStylesSummary[] _styles;
 
@@ -1436,7 +1436,7 @@ namespace Altaxo.Graph
     }
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotLayer),0)]
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotLayer), 1)] // by accident this was never different from version 0
+      [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotLayer), 1)] // by accident this was never different from version 0
       public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -1516,20 +1516,20 @@ namespace Altaxo.Graph
       protected XYPlotLayer _Layer;
       protected Main.DocumentPath _LinkedLayerPath;
 
-        public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-        {
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
 
-          XYPlotLayer s = SDeserialize(o, info, parent);
-
-
-          s.CalculateMatrix();
-          s.CreateEventLinks();
-
-          return s;
-        }
+        XYPlotLayer s = SDeserialize(o, info, parent);
 
 
-        protected virtual XYPlotLayer SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+        s.CalculateMatrix();
+        s.CreateEventLinks();
+
+        return s;
+      }
+
+
+      protected virtual XYPlotLayer SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
         
         XYPlotLayer s = null!=o ? (XYPlotLayer)o : new XYPlotLayer();
@@ -1722,21 +1722,21 @@ namespace Altaxo.Graph
       //this._showRightAxis = from._showRightAxis;
       //this._showTopAxis = from._showTopAxis;
 
-     // this._leftAxisStyle = null==from._leftAxisStyle ? null : (Graph.XYAxisStyle)from._leftAxisStyle.Clone();
-     // this._bottomAxisStyle = null==from._bottomAxisStyle ? null : (Graph.XYAxisStyle)from._bottomAxisStyle.Clone();
-     // this._rightAxisStyle = null==from._rightAxisStyle ? null : (Graph.XYAxisStyle)from._rightAxisStyle.Clone();
-     // this._topAxisStyle = null==from._topAxisStyle ? null : (Graph.XYAxisStyle)from._topAxisStyle.Clone();
+      // this._leftAxisStyle = null==from._leftAxisStyle ? null : (Graph.XYAxisStyle)from._leftAxisStyle.Clone();
+      // this._bottomAxisStyle = null==from._bottomAxisStyle ? null : (Graph.XYAxisStyle)from._bottomAxisStyle.Clone();
+      // this._rightAxisStyle = null==from._rightAxisStyle ? null : (Graph.XYAxisStyle)from._rightAxisStyle.Clone();
+      // this._topAxisStyle = null==from._topAxisStyle ? null : (Graph.XYAxisStyle)from._topAxisStyle.Clone();
       
       
-     // this._leftMajorLabelStyle = null==from._leftMajorLabelStyle ? null : (Graph.AbstractXYAxisLabelStyle)from._leftMajorLabelStyle.Clone();
-     // this._bottomMajorLabelStyle = null==from._bottomMajorLabelStyle ? null : (Graph.AbstractXYAxisLabelStyle)from._bottomMajorLabelStyle.Clone();
-     // this._rightMajorLabelStyle = null==from._rightMajorLabelStyle ? null : (Graph.AbstractXYAxisLabelStyle)from._rightMajorLabelStyle.Clone();
-     // this._topMajorLabelStyle = null==from._topMajorLabelStyle ? null : (Graph.AbstractXYAxisLabelStyle)from._topMajorLabelStyle.Clone();
+      // this._leftMajorLabelStyle = null==from._leftMajorLabelStyle ? null : (Graph.AbstractXYAxisLabelStyle)from._leftMajorLabelStyle.Clone();
+      // this._bottomMajorLabelStyle = null==from._bottomMajorLabelStyle ? null : (Graph.AbstractXYAxisLabelStyle)from._bottomMajorLabelStyle.Clone();
+      // this._rightMajorLabelStyle = null==from._rightMajorLabelStyle ? null : (Graph.AbstractXYAxisLabelStyle)from._rightMajorLabelStyle.Clone();
+      // this._topMajorLabelStyle = null==from._topMajorLabelStyle ? null : (Graph.AbstractXYAxisLabelStyle)from._topMajorLabelStyle.Clone();
       
       
       // Titles and legend
-     // this._leftAxisTitle = null==from._leftAxisTitle ? null : (Graph.TextGraphics)from._leftAxisTitle.Clone();
-     // this._bottomAxisTitle = null==from._bottomAxisTitle ? null : (Graph.TextGraphics)from._bottomAxisTitle.Clone();
+      // this._leftAxisTitle = null==from._leftAxisTitle ? null : (Graph.TextGraphics)from._leftAxisTitle.Clone();
+      // this._bottomAxisTitle = null==from._bottomAxisTitle ? null : (Graph.TextGraphics)from._bottomAxisTitle.Clone();
       //this._rightAxisTitle = null==from._rightAxisTitle ? null : (Graph.TextGraphics)from._rightAxisTitle.Clone();
       //this._topAxisTitle = null==from._topAxisTitle ? null : (Graph.TextGraphics)from._topAxisTitle.Clone();
       this._legend = null==from._legend ? null : (Graph.TextGraphics)from._legend.Clone();
@@ -2982,11 +2982,11 @@ namespace Altaxo.Graph
           switch(edge)
           {
             case EdgeType.Left:
-          tg.Rotation = -90;
-          tg.XAnchor = TextGraphics.XAnchorPositionType.Center;
-          tg.YAnchor = TextGraphics.YAnchorPositionType.Bottom;
-          tg.Position = new PointF(-0.125f * Size.Width, 0.5f * Size.Height);
-          break;
+              tg.Rotation = -90;
+              tg.XAnchor = TextGraphics.XAnchorPositionType.Center;
+              tg.YAnchor = TextGraphics.YAnchorPositionType.Bottom;
+              tg.Position = new PointF(-0.125f * Size.Width, 0.5f * Size.Height);
+              break;
             case EdgeType.Bottom:
               tg.Rotation = 0;
               tg.XAnchor = TextGraphics.XAnchorPositionType.Center;

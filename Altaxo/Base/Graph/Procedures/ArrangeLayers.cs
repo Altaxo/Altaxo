@@ -1,3 +1,25 @@
+#region Copyright
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+#endregion
+
 using System;
 using System.Drawing;
 namespace Altaxo.Graph.Procedures
@@ -91,13 +113,13 @@ namespace Altaxo.Graph.Procedures
             graph.Layers[nLayer].TopAxisEnabled = false;
             graph.Layers[nLayer].RightAxisEnabled = false;
           }
-            SizeF oldSize = graph.Layers[nLayer].Size;
-            graph.Layers[nLayer].SetSize(relHorzSize/100,XYPlotLayer.SizeType.RelativeToGraphDocument,relVertSize/100,XYPlotLayer.SizeType.RelativeToGraphDocument);
-            SizeF newSize = graph.Layers[nLayer].Size;
+          SizeF oldSize = graph.Layers[nLayer].Size;
+          graph.Layers[nLayer].SetSize(relHorzSize/100,XYPlotLayer.SizeType.RelativeToGraphDocument,relVertSize/100,XYPlotLayer.SizeType.RelativeToGraphDocument);
+          SizeF newSize = graph.Layers[nLayer].Size;
 
-            if(oldSize!=newSize)
-              graph.Layers[nLayer].RescaleInnerItemPositions(newSize.Width/oldSize.Width,newSize.Height/oldSize.Height);
-         graph.Layers[nLayer].SetPosition(relHorzPos/100,XYPlotLayer.PositionType.RelativeToGraphDocument,relVertPos/100,XYPlotLayer.PositionType.RelativeToGraphDocument);
+          if(oldSize!=newSize)
+            graph.Layers[nLayer].RescaleInnerItemPositions(newSize.Width/oldSize.Width,newSize.Height/oldSize.Height);
+          graph.Layers[nLayer].SetPosition(relHorzPos/100,XYPlotLayer.PositionType.RelativeToGraphDocument,relVertPos/100,XYPlotLayer.PositionType.RelativeToGraphDocument);
 
         }
 

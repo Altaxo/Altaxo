@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2004 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -225,9 +225,9 @@ namespace Altaxo.Gui.Scripting
       this._edIndependentVariables.Text = text;
     }
     public void SetDependentVariableText(string text)
-  {
-    this._edDependentVariables.Text = text;
-  }
+    {
+      this._edDependentVariables.Text = text;
+    }
 
     public void InitializeNumberOfParameters()
     {
@@ -315,8 +315,8 @@ namespace Altaxo.Gui.Scripting
 
     private void _edIndependentVariables_Validating(object sender, System.ComponentModel.CancelEventArgs e)
     {
-    if(null!=Controller)
-      Controller.EhView_IndependentVariableTextChanged(this._edIndependentVariables.Text);
+      if(null!=Controller)
+        Controller.EhView_IndependentVariableTextChanged(this._edIndependentVariables.Text);
     }
 
     private void _edDependentVariables_Validating(object sender, System.ComponentModel.CancelEventArgs e)

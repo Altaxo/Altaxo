@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2004 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -336,7 +336,7 @@ namespace Altaxo.Calc
     {
       return this.Re == obj.Re && this.Im == obj.Im;
     }
-		
+    
     ///<summary>Check if <c>ComplexFloat</c> variable is the same as another object</summary>
     ///<param name="obj"><c>obj</c> to compare present <c>ComplexFloat</c> to.</param>
     ///<returns>Returns true if the variable is the same as the <c>ComplexFloat</c> variable</returns>
@@ -345,7 +345,7 @@ namespace Altaxo.Calc
     {
       return this.Re == obj.Re && this.Im == obj.Im;
     }
-		
+    
     ///<summary>Check if <c>ComplexFloat</c> variable is the same as another object</summary>
     ///<param name="obj"><c>obj</c> to compare present <c>ComplexFloat</c> to.</param>
     ///<returns>Returns true if the variable is the same as the <c>ComplexFloat</c> variable</returns>
@@ -740,7 +740,7 @@ namespace Altaxo.Calc
     ///<param name="formatProvider">An IFormatProvider that supplies culture-specific formatting information.</param>
     ///<returns>The string representation of the value of <c>this</c> instance as specified by format and provider.</returns>
     ///<exception cref="FormatException">if the n, is not a number.</exception>
-    ///<exception cref="ArgumentNullException">if s, is <c>null</c>.</exception>		
+    ///<exception cref="ArgumentNullException">if s, is <c>null</c>.</exception>    
     public string ToString(string format, IFormatProvider formatProvider)
     {
       if (IsNaN())

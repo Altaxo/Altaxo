@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2004 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -518,7 +518,7 @@ namespace Altaxo.Graph.GUI
         );
 
     }
-    #region IApplyController Members
+  #region IApplyController Members
 
     public bool Apply()
     {
@@ -626,9 +626,9 @@ namespace Altaxo.Graph.GUI
       return true;
     }
 
-    #endregion
+  #endregion
 
-    #region ILineScatterPlotStyleController Members
+  #region ILineScatterPlotStyleController Members
     
     public void EhView_PlotGroupIndependent_Changed(bool bPlotGroupIsIndependent)
     {
@@ -659,7 +659,7 @@ namespace Altaxo.Graph.GUI
       
     }
 
-    #endregion
+  #endregion
   } // end of class LineScatterPlotStyleController
 #endif
 

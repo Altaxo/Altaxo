@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2004 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -78,7 +78,7 @@ namespace AltaxoTest.Calc.Regression
       int ret = Altaxo.Calc.Regression.NonLinearFit2.LEVMAR_DER(
         new Altaxo.Calc.Regression.NonLinearFit2.FitFunction(ros),
         new Altaxo.Calc.Regression.NonLinearFit2.JacobianFunction(jacros),
-        p, x, 1000, opts, info, ref tempstorage, null, null); // with analytic jacobian
+        p, x, null, 1000, opts, info, ref tempstorage, null, null); // with analytic jacobian
       //ret=dlevmar_dif(modros, p, x, m, n, 1000, opts, info, NULL, NULL, NULL);  // no jacobian
       Assert.AreEqual(1, p[0], 0.1);
       Assert.AreEqual(1, p[1], 0.12);
@@ -164,7 +164,7 @@ namespace AltaxoTest.Calc.Regression
       int ret = Altaxo.Calc.Regression.NonLinearFit2.LEVMAR_DER(
         new Altaxo.Calc.Regression.NonLinearFit2.FitFunction(poly),
         new Altaxo.Calc.Regression.NonLinearFit2.JacobianFunction(jacpoly),
-        p, x, 1000, opts, info, ref tempstorage, covar, null); // with analytic jacobian
+        p, x, null, 1000, opts, info, ref tempstorage, covar, null); // with analytic jacobian
       //ret=dlevmar_dif(modros, p, x, m, n, 1000, opts, info, NULL, NULL, NULL);  // no jacobian
 
 

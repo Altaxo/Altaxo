@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2004 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -107,7 +107,7 @@ namespace Altaxo.Graph
     }
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYFunctionPlotItem), 1)]
-    public class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+      public class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
@@ -344,65 +344,65 @@ namespace Altaxo.Graph
     {
       // nothing really to do here
     }
-/*   
-#region I2DGroupablePlotStyle Members
+    /*   
+    #region I2DGroupablePlotStyle Members
 
    
 
-    public bool IsColorSupported
-    {
-      get
-      {
-        return true;
-      }
-    }
+        public bool IsColorSupported
+        {
+          get
+          {
+            return true;
+          }
+        }
 
-    public Color Color
-    {
-      get
-      {
-        return this.m_PlotStyle.Color;
-      }
-    }
+        public Color Color
+        {
+          get
+          {
+            return this.m_PlotStyle.Color;
+          }
+        }
 
-    public bool IsXYLineStyleSupported
-    {
-      get
-      {
-        return true;
-      }
-    }
+        public bool IsXYLineStyleSupported
+        {
+          get
+          {
+            return true;
+          }
+        }
 
-    public System.Drawing.Drawing2D.DashStyle XYLineStyle
-    {
-      get
-      {
-        return this.m_PlotStyle.XYPlotLineStyle;
-      }
-    }
+        public System.Drawing.Drawing2D.DashStyle XYLineStyle
+        {
+          get
+          {
+            return this.m_PlotStyle.XYPlotLineStyle;
+          }
+        }
 
-    public bool IsXYScatterStyleSupported
-    {
-      get
-      {
-        return false;
-      }
-    }
+        public bool IsXYScatterStyleSupported
+        {
+          get
+          {
+            return false;
+          }
+        }
 
-    public XYPlotScatterStyles.ShapeAndStyle XYScatterStyle
-    {
-      get
-      {
-        return XYPlotScatterStyles.ShapeAndStyle.Empty;
-      }
-    }
+        public XYPlotScatterStyles.ShapeAndStyle XYScatterStyle
+        {
+          get
+          {
+            return XYPlotScatterStyles.ShapeAndStyle.Empty;
+          }
+        }
 
-    public void SetIncrementalStyle(I2DGroupablePlotStyle pstemplate, Altaxo.Graph.PlotGroupStyle style, bool concurrently, bool strict, int step)
-    {
-        ((XYPlotStyleCollection)m_PlotStyle).SetIncrementalStyle(pstemplate,style,concurrently,strict,step);
-    }
+        public void SetIncrementalStyle(I2DGroupablePlotStyle pstemplate, Altaxo.Graph.PlotGroupStyle style, bool concurrently, bool strict, int step)
+        {
+            ((XYPlotStyleCollection)m_PlotStyle).SetIncrementalStyle(pstemplate,style,concurrently,strict,step);
+        }
 
     #endregion
- */
+     */
   }
 }

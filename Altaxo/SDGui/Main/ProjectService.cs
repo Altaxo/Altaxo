@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2004 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -348,36 +348,36 @@ namespace Altaxo.Main
       zippedStream.Close();
       myStream.Close();
 
-        try
+      try
+      {
+        if(savingException==null)
         {
-          if(savingException==null)
+          // Test the file for integrity
+          string testfilename = tempFileName!=null ? tempFileName:filename;
+          myStream = new System.IO.FileStream(testfilename,System.IO.FileMode.Open,FileAccess.Read,FileShare.None);
+          ZipFile zipFile = new ZipFile(myStream);
+          foreach(ZipEntry zipEntry in zipFile)
           {
-            // Test the file for integrity
-            string testfilename = tempFileName!=null ? tempFileName:filename;
-            myStream = new System.IO.FileStream(testfilename,System.IO.FileMode.Open,FileAccess.Read,FileShare.None);
-            ZipFile zipFile = new ZipFile(myStream);
-            foreach(ZipEntry zipEntry in zipFile)
+            if(!zipEntry.IsDirectory)
             {
-              if(!zipEntry.IsDirectory)
-              {
-                System.IO.Stream zipinpstream = zipFile.GetInputStream(zipEntry);
-              }
+              System.IO.Stream zipinpstream = zipFile.GetInputStream(zipEntry);
             }
-            zipFile.Close();
-            // end test
           }
+          zipFile.Close();
+          // end test
         }
-        catch(Exception exc)
-        {
-          savingException = exc;
-        }
+      }
+      catch(Exception exc)
+      {
+        savingException = exc;
+      }
 
-        // now, if no exception happened, copy the temporary file back to the original file
-        if(null!=tempFileName && null==savingException)
-        {
-          System.IO.File.Copy(tempFileName,filename,true);
-          System.IO.File.Delete(tempFileName);
-        }
+      // now, if no exception happened, copy the temporary file back to the original file
+      if(null!=tempFileName && null==savingException)
+      {
+        System.IO.File.Copy(tempFileName,filename,true);
+        System.IO.File.Delete(tempFileName);
+      }
       
       
       if(null!=savingException)

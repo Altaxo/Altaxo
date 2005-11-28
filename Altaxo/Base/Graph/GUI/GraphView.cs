@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2004 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ namespace Altaxo.Graph.GUI
     private System.Windows.Forms.ImageList m_LayerButtonImages;
     private System.Windows.Forms.ToolBar m_LayerToolbar;
     private GraphPanel m_GraphPanel;
-   // private System.Windows.Forms.TextBox m_TextBox;
+    // private System.Windows.Forms.TextBox m_TextBox;
     private System.ComponentModel.IContainer components;
     private IGraphController m_Ctrl;
 

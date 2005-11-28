@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2004 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -24,11 +24,11 @@ using System;
 
 namespace Altaxo.Graph.LabelFormatting
 {
-	/// <summary>
-	/// Displays only the mantissa of a number. Usefull for minor ticks on logarithmic axes.
-	/// </summary>
-	public class NumericLabelFormattingMantissa : AbstractNumericLabelFormatting
-	{
+  /// <summary>
+  /// Displays only the mantissa of a number. Usefull for minor ticks on logarithmic axes.
+  /// </summary>
+  public class NumericLabelFormattingMantissa : AbstractNumericLabelFormatting
+  {
     
 
     #region Serialization
@@ -45,7 +45,7 @@ namespace Altaxo.Graph.LabelFormatting
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
         NumericLabelFormattingMantissa s = null!=o ? (NumericLabelFormattingMantissa)o : new NumericLabelFormattingMantissa();
-       info.GetBaseValueEmbedded(s,typeof(AbstractNumericLabelFormatting),parent);
+        info.GetBaseValueEmbedded(s,typeof(AbstractNumericLabelFormatting),parent);
         return s;
       }
     }
@@ -91,5 +91,5 @@ namespace Altaxo.Graph.LabelFormatting
         return result;
 
     }
-	}
+  }
 }

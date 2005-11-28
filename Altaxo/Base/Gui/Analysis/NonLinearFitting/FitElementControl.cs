@@ -1,3 +1,25 @@
+#region Copyright
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+#endregion
+
 using System;
 using System.Collections;
 using System.ComponentModel;
@@ -254,14 +276,14 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       _externalParametersWidth = this.ClientSize.Width - _externalParametersX;
       for (int i = 0; i < _numberOfParameter; i++)
       {
-          Rectangle rect = new Rectangle(_externalParametersX, currentY, _externalParametersWidth, _slotHeight);
+        Rectangle rect = new Rectangle(_externalParametersX, currentY, _externalParametersWidth, _slotHeight);
 
-          System.Windows.Forms.ControlPaint.DrawBorder3D(e.Graphics,
-         rect.X-2, rect.Y, rect.Width + 2, rect.Height,
-         System.Windows.Forms.Border3DStyle.Etched,
-         System.Windows.Forms.Border3DSide.All);
+        System.Windows.Forms.ControlPaint.DrawBorder3D(e.Graphics,
+          rect.X-2, rect.Y, rect.Width + 2, rect.Height,
+          System.Windows.Forms.Border3DStyle.Etched,
+          System.Windows.Forms.Border3DSide.All);
           
-          e.Graphics.DrawString(
+        e.Graphics.DrawString(
           _fitElement.ParameterName(i),
           System.Windows.Forms.SystemInformation.MenuFont,
           System.Drawing.Brushes.Black,
@@ -310,33 +332,33 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         Rectangle rect = new Rectangle(0, currentY, _DependentVariablesWidth, _slotHeight);
 
         System.Windows.Forms.ControlPaint.DrawBorder3D(e.Graphics,
-         rect.X, rect.Y, rect.Width + 2, rect.Height,
-         System.Windows.Forms.Border3DStyle.Etched,
-         System.Windows.Forms.Border3DSide.All);
+          rect.X, rect.Y, rect.Width + 2, rect.Height,
+          System.Windows.Forms.Border3DStyle.Etched,
+          System.Windows.Forms.Border3DSide.All);
 
         INumericColumn col = _fitElement.DependentVariables(i);
         if (col != null)
         {
-            string name = col.FullName;
+          string name = col.FullName;
 
-            e.Graphics.DrawString(
-              name,
-              System.Windows.Forms.SystemInformation.MenuFont,
-              System.Drawing.Brushes.Black,
-              rect,
-              rightJustified
-              );
+          e.Graphics.DrawString(
+            name,
+            System.Windows.Forms.SystemInformation.MenuFont,
+            System.Drawing.Brushes.Black,
+            rect,
+            rightJustified
+            );
         }
         currentY += _slotHeight;
       }
 
       string fitFuncName = null;
       if (_fitElement.FitFunction == null)
-          fitFuncName = "?";
+        fitFuncName = "?";
       else if (_fitElement.FitFunction is Altaxo.Scripting.IFitFunctionScriptText)
-          fitFuncName = (_fitElement.FitFunction as Altaxo.Scripting.IFitFunctionScriptText).ScriptName;
+        fitFuncName = (_fitElement.FitFunction as Altaxo.Scripting.IFitFunctionScriptText).ScriptName;
       else
-          fitFuncName = _fitElement.FitFunction.ToString();
+        fitFuncName = _fitElement.FitFunction.ToString();
 
       Rectangle fitFuncBox = new Rectangle(
         _fitBoxLocation.X + _fitBoxSize.Width / 4,

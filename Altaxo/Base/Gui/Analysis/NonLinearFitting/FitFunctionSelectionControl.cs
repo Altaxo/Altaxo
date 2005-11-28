@@ -1,3 +1,25 @@
+#region Copyright
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+#endregion
+
 using System;
 using System.Collections;
 using System.ComponentModel;
@@ -10,52 +32,52 @@ using Altaxo.Calc.Regression.Nonlinear;
 
 namespace Altaxo.Gui.Analysis.NonLinearFitting
 {
-	/// <summary>
-	/// Summary description for FitFunctionSelectionControl.
-	/// </summary>
-	[UserControlForController(typeof(IFitFunctionSelectionViewEventSink))] 
-	public class FitFunctionSelectionControl : System.Windows.Forms.UserControl, IFitFunctionSelectionView
-	{
+  /// <summary>
+  /// Summary description for FitFunctionSelectionControl.
+  /// </summary>
+  [UserControlForController(typeof(IFitFunctionSelectionViewEventSink))] 
+  public class FitFunctionSelectionControl : System.Windows.Forms.UserControl, IFitFunctionSelectionView
+  {
     IFitFunctionSelectionViewEventSink _controller;
     private System.Windows.Forms.Splitter splitter1;
     private System.Windows.Forms.TreeView _twFitFunctions;
     private System.Windows.Forms.ContextMenu _treeViewContextMenu;
-		/// <summary> 
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components = null;
+    /// <summary> 
+    /// Required designer variable.
+    /// </summary>
+    private System.ComponentModel.Container components = null;
 
-		public FitFunctionSelectionControl()
-		{
-			// This call is required by the Windows.Forms Form Designer.
-			InitializeComponent();
+    public FitFunctionSelectionControl()
+    {
+      // This call is required by the Windows.Forms Form Designer.
+      InitializeComponent();
 
-			// TODO: Add any initialization after the InitializeComponent call
+      // TODO: Add any initialization after the InitializeComponent call
 
-		}
+    }
 
-		/// <summary> 
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+    /// <summary> 
+    /// Clean up any resources being used.
+    /// </summary>
+    protected override void Dispose( bool disposing )
+    {
+      if( disposing )
+      {
+        if(components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose( disposing );
+    }
 
-		#region Component Designer generated code
-		/// <summary> 
-		/// Required method for Designer support - do not modify 
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+    #region Component Designer generated code
+    /// <summary> 
+    /// Required method for Designer support - do not modify 
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
       this.splitter1 = new System.Windows.Forms.Splitter();
       this._twFitFunctions = new System.Windows.Forms.TreeView();
       this._treeViewContextMenu = new System.Windows.Forms.ContextMenu();
@@ -93,7 +115,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       this.ResumeLayout(false);
 
     }
-		#endregion
+    #endregion
 
     #region IFitFunctionSelectionView Members
 
@@ -129,8 +151,8 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       public RootNodeType RootNodeType;
 
       public RootNode(string text, RootNodeType type)
-      :
-      base(text)
+        :
+        base(text)
       {
         RootNodeType = type;
         this.Tag = type;
@@ -217,8 +239,8 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
       this._twFitFunctions.BeginUpdate();
 
-         RootNode rnode = new RootNode("Document", RootNodeType.Document);
-         this._twFitFunctions.Nodes.Add(rnode);
+      RootNode rnode = new RootNode("Document", RootNodeType.Document);
+      this._twFitFunctions.Nodes.Add(rnode);
       TreeNodeCollection root = rnode.Nodes;
 
       foreach (DictionaryEntry entry in entries)
@@ -229,7 +251,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 #if NET_2_0 
         string[] path = fullname.Split(new char[] { '\\', '/' },true);
 #else
-          string[] path = fullname.Split(new char[] { '\\', '/' });
+        string[] path = fullname.Split(new char[] { '\\', '/' });
 #endif
         
         if(path.Length==0)

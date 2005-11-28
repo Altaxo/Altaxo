@@ -1,3 +1,25 @@
+#region Copyright
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+#endregion
+
 using System;
 using System.Collections;
 using System.ComponentModel;
@@ -9,52 +31,52 @@ using Altaxo.Main.GUI;
 
 namespace Altaxo.Gui.Analysis.NonLinearFitting
 {
-	/// <summary>
-	/// Summary description for ParameterSetControl.
-	/// </summary>
-	[UserControlForController(typeof(IParameterSetElementViewEventSink))]
-	public class ParameterSetElementControl : System.Windows.Forms.UserControl, IParameterSetElementView
-	{
+  /// <summary>
+  /// Summary description for ParameterSetControl.
+  /// </summary>
+  [UserControlForController(typeof(IParameterSetElementViewEventSink))]
+  public class ParameterSetElementControl : System.Windows.Forms.UserControl, IParameterSetElementView
+  {
     private System.Windows.Forms.Label _lblParameterName;
     private System.Windows.Forms.TextBox _edParameterValue;
     private System.Windows.Forms.CheckBox _chkParameterVaries;
     private System.Windows.Forms.TextBox _edVarianceValue;
-		/// <summary> 
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components = null;
+    /// <summary> 
+    /// Required designer variable.
+    /// </summary>
+    private System.ComponentModel.Container components = null;
 
-		public ParameterSetElementControl()
-		{
-			// This call is required by the Windows.Forms Form Designer.
-			InitializeComponent();
+    public ParameterSetElementControl()
+    {
+      // This call is required by the Windows.Forms Form Designer.
+      InitializeComponent();
 
-			// TODO: Add any initialization after the InitializeComponent call
+      // TODO: Add any initialization after the InitializeComponent call
 
-		}
+    }
 
-		/// <summary> 
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+    /// <summary> 
+    /// Clean up any resources being used.
+    /// </summary>
+    protected override void Dispose( bool disposing )
+    {
+      if( disposing )
+      {
+        if(components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose( disposing );
+    }
 
-		#region Component Designer generated code
-		/// <summary> 
-		/// Required method for Designer support - do not modify 
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+    #region Component Designer generated code
+    /// <summary> 
+    /// Required method for Designer support - do not modify 
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
       this._lblParameterName = new System.Windows.Forms.Label();
       this._edParameterValue = new System.Windows.Forms.TextBox();
       this._chkParameterVaries = new System.Windows.Forms.CheckBox();
@@ -106,14 +128,14 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       this.ResumeLayout(false);
 
     }
-		#endregion
+    #endregion
 
-   public  void Initialize(string name, string value, bool vary, string variance)
+    public  void Initialize(string name, string value, bool vary, string variance)
     {
       this._lblParameterName.Text = name;
       this._edParameterValue.Text = value;
       this._chkParameterVaries.Checked = vary;
-     this._edVarianceValue.Text = variance;
+      this._edVarianceValue.Text = variance;
     }
 
 
@@ -149,5 +171,5 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         _controller.EhView_VarianceValidating(this._edVarianceValue.Text,e);    
     }
   
-    }
+  }
 }

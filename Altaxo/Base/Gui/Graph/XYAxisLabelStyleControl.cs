@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2004 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -474,16 +474,16 @@ namespace Altaxo.Gui.Graph
 
     private void _cbBackgroundStyle_SelectionChangeCommitted(object sender, System.EventArgs e)
     {
-    if(null!=Controller)
-      Controller.EhView_BackgroundStyleChanged(this._cbBackgroundStyle.SelectedIndex);
+      if(null!=Controller)
+        Controller.EhView_BackgroundStyleChanged(this._cbBackgroundStyle.SelectedIndex);
     }
 
     
 
     private void _chkAutomaticAlignment_CheckedChanged(object sender, System.EventArgs e)
     {
-    if(null!=Controller)
-      Controller.EhView_AutomaticAlignmentChanged(this._chkAutomaticAlignment.Checked);
+      if(null!=Controller)
+        Controller.EhView_AutomaticAlignmentChanged(this._chkAutomaticAlignment.Checked);
 
       this.m_cbHorizontalAlignment.Enabled = !_chkAutomaticAlignment.Checked;
       this.m_cbVerticalAlignment.Enabled = !_chkAutomaticAlignment.Checked;

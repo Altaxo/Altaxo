@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2004 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ namespace Altaxo.Gui.Graph
   /// <summary>
   /// Summary description for LineScatterPlotStyleControl.
   /// </summary>
-        	[UserControlForController(typeof(IXYPlotGroupViewEventSink))]
+  [UserControlForController(typeof(IXYPlotGroupViewEventSink))]
   public class XYPlotGroupControl : System.Windows.Forms.UserControl, IXYPlotGroupView
   {
     private IXYPlotGroupViewEventSink m_Controller;
@@ -45,10 +45,10 @@ namespace Altaxo.Gui.Graph
     private System.Windows.Forms.CheckBox m_chkPlotGroupColor;
     private System.Windows.Forms.Button m_btRemove;
     private System.Windows.Forms.Button m_btWorksheet;
-            private System.Windows.Forms.RadioButton _rbtSequential;
-            private System.Windows.Forms.RadioButton _rbtConcurrently;
-            private System.Windows.Forms.CheckBox _chkStrict;
-            private System.Windows.Forms.CheckBox _chkUpdate;
+    private System.Windows.Forms.RadioButton _rbtSequential;
+    private System.Windows.Forms.RadioButton _rbtConcurrently;
+    private System.Windows.Forms.CheckBox _chkStrict;
+    private System.Windows.Forms.CheckBox _chkUpdate;
     /// <summary> 
     /// Required designer variable.
     /// </summary>
@@ -252,15 +252,15 @@ namespace Altaxo.Gui.Graph
     {
       get { return m_chkPlotGroupSymbol.Checked; }
     }
-            public bool PlotGroupStrict
-            {
-              get { return this._chkStrict.Checked; }
-            }
+    public bool PlotGroupStrict
+    {
+      get { return this._chkStrict.Checked; }
+    }
 
-            public bool PlotGroupUpdate
-            {
-              get { return this._chkUpdate.Checked; }
-            }
+    public bool PlotGroupUpdate
+    {
+      get { return this._chkUpdate.Checked; }
+    }
 
 
 

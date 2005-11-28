@@ -1,3 +1,25 @@
+#region Copyright
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+#endregion
+
 using System;
 using System.Collections;
 using System.ComponentModel;
@@ -10,12 +32,12 @@ using Altaxo.Main.GUI;
 
 namespace Altaxo.Gui.Graph
 {
-	/// <summary>
-	/// Summary description for ArrangeLayersControl.
-	/// </summary>
-	[UserControlForController(typeof(IArrangeLayersViewEventSink))]
-	public class ArrangeLayersControl : System.Windows.Forms.UserControl, IArrangeLayersView
-	{
+  /// <summary>
+  /// Summary description for ArrangeLayersControl.
+  /// </summary>
+  [UserControlForController(typeof(IArrangeLayersViewEventSink))]
+  public class ArrangeLayersControl : System.Windows.Forms.UserControl, IArrangeLayersView
+  {
     private System.Windows.Forms.Label label1;
     private System.Windows.Forms.Label label2;
     private System.Windows.Forms.Label label3;
@@ -32,42 +54,42 @@ namespace Altaxo.Gui.Graph
     private System.Windows.Forms.TextBox _edLeftMargin;
     private System.Windows.Forms.TextBox _edBottomMargin;
     private System.Windows.Forms.TextBox _edRightMargin;
-		/// <summary> 
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components = null;
+    /// <summary> 
+    /// Required designer variable.
+    /// </summary>
+    private System.ComponentModel.Container components = null;
 
-		public ArrangeLayersControl()
-		{
-			// This call is required by the Windows.Forms Form Designer.
-			InitializeComponent();
+    public ArrangeLayersControl()
+    {
+      // This call is required by the Windows.Forms Form Designer.
+      InitializeComponent();
 
-			// TODO: Add any initialization after the InitializeComponent call
+      // TODO: Add any initialization after the InitializeComponent call
 
-		}
+    }
 
-		/// <summary> 
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+    /// <summary> 
+    /// Clean up any resources being used.
+    /// </summary>
+    protected override void Dispose( bool disposing )
+    {
+      if( disposing )
+      {
+        if(components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose( disposing );
+    }
 
-		#region Component Designer generated code
-		/// <summary> 
-		/// Required method for Designer support - do not modify 
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+    #region Component Designer generated code
+    /// <summary> 
+    /// Required method for Designer support - do not modify 
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
       this.label1 = new System.Windows.Forms.Label();
       this.label2 = new System.Windows.Forms.Label();
       this.label3 = new System.Windows.Forms.Label();
@@ -237,7 +259,7 @@ namespace Altaxo.Gui.Graph
       this.ResumeLayout(false);
 
     }
-		#endregion
+    #endregion
 
     #region IArrangeLayersView Members
 

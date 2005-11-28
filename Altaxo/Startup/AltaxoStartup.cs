@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2004 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -48,8 +48,10 @@ namespace ICSharpCode.SharpDevelop
   {
     static string[] commandLineArgs = null;
     
-		public static string[] CommandLineArgs {
-			get {
+    public static string[] CommandLineArgs 
+    {
+      get 
+      {
         return commandLineArgs;
       }
     }
@@ -58,7 +60,8 @@ namespace ICSharpCode.SharpDevelop
     {
       DialogResult result = new ExceptionBox(eargs.Exception).ShowDialog();
 
-			switch (result) {
+      switch (result) 
+      {
         case DialogResult.Ignore:
           break;
         case DialogResult.Abort:
@@ -80,57 +83,73 @@ namespace ICSharpCode.SharpDevelop
       
       SplashScreenForm.SetCommandLineArgs(args);
       
- 			foreach (string parameter in SplashScreenForm.GetParameterList()) {
-				switch (parameter.ToUpper()) {
+      foreach (string parameter in SplashScreenForm.GetParameterList()) 
+      {
+        switch (parameter.ToUpper()) 
+        {
           case "NOLOGO":
             noLogo = true;
             break;
         }
       }
       
-			if (!noLogo) {
+      if (!noLogo) 
+      {
         SplashScreenForm.SplashScreen.Show();
       }
       Application.ThreadException += new ThreadExceptionEventHandler(ShowErrorBox);
       
-			bool ignoreDefaultPath = false;
-			string [] addInDirs = ICSharpCode.SharpDevelop.AddInSettingsHandler.GetAddInDirectories(out ignoreDefaultPath);
-			AddInTreeSingleton.SetAddInDirectories(addInDirs, ignoreDefaultPath);
-			
+      bool ignoreDefaultPath = false;
+      string [] addInDirs = ICSharpCode.SharpDevelop.AddInSettingsHandler.GetAddInDirectories(out ignoreDefaultPath);
+      AddInTreeSingleton.SetAddInDirectories(addInDirs, ignoreDefaultPath);
+      
       ArrayList commands = null;
-			try {
+      try 
+      {
         ServiceManager.Services.AddService(new MessageService());
         ServiceManager.Services.AddService(new ResourceService());
         ServiceManager.Services.AddService(new IconService());
         ServiceManager.Services.InitializeServicesSubsystem("/Workspace/Services");
       
         commands = AddInTreeSingleton.AddInTree.GetTreeNode("/Workspace/Autostart").BuildChildItems(null);
-				for (int i = 0; i < commands.Count - 1; ++i) {
+        for (int i = 0; i < commands.Count - 1; ++i) 
+        {
           ((ICommand)commands[i]).Run();
         }
-			} catch (XmlException e) {
-				MessageBox.Show("Could not load XML :" + Environment.NewLine + e.Message);
+      } 
+      catch (XmlException e) 
+      {
+        MessageBox.Show("Could not load XML :" + Environment.NewLine + e.Message);
         return;
-			} catch (Exception e) {
-				MessageBox.Show("Loading error, please reinstall :"  + Environment.NewLine + e.ToString());
+      } 
+      catch (Exception e) 
+      {
+        MessageBox.Show("Loading error, please reinstall :"  + Environment.NewLine + e.ToString());
         return;
-			} finally {
-				if (SplashScreenForm.SplashScreen != null) {
+      } 
+      finally 
+      {
+        if (SplashScreenForm.SplashScreen != null) 
+        {
           SplashScreenForm.SplashScreen.Close();
         }
       }
       
-			try {
-      // run the last autostart command, this must be the workbench starting command
-				if (commands.Count > 0) {
-        ((ICommand)commands[commands.Count - 1]).Run();
+      try 
+      {
+        // run the last autostart command, this must be the workbench starting command
+        if (commands.Count > 0) 
+        {
+          ((ICommand)commands[commands.Count - 1]).Run();
+        }
+      } 
+      finally 
+      {
+        // unloading services
+        ServiceManager.Services.UnloadAllServices();
       }
-			} finally {
-      // unloading services
-      ServiceManager.Services.UnloadAllServices();
     }
   }
-	}
 }
 
 

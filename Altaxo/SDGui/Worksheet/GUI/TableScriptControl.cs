@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2004 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -218,7 +218,7 @@ namespace Altaxo.Worksheet.GUI
 
     public void SetScriptCursorLocation(int line, int column)
     {
-        this.edFormulaWrapper.JumpTo(line,column);
+      this.edFormulaWrapper.JumpTo(line,column);
     }
 
     public void MarkText(int pos1, int pos2)
@@ -285,7 +285,7 @@ namespace Altaxo.Worksheet.GUI
 
     private void EhCompilerErrors_DoubleClick(object sender, System.EventArgs e)
     {
-       string msg = lbCompilerErrors.SelectedItem as string;
+      string msg = lbCompilerErrors.SelectedItem as string;
 
       if(null!=Controller && null!=msg)
         Controller.EhView_GotoCompilerError(msg);

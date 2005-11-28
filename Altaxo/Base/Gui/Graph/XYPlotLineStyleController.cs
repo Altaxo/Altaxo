@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2004 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -150,7 +150,7 @@ namespace Altaxo.Gui.Graph
   /// <summary>
   /// Summary description for XYPlotLineStyleController.
   /// </summary>
-  	[UserControllerForObject(typeof(XYPlotLineStyle))]
+  [UserControllerForObject(typeof(XYPlotLineStyle))]
   public class XYPlotLineStyleController : IXYPlotLineStyleViewEventSink, IXYPlotLineStyleController
   {
     IXYPlotLineStyleView _view;
@@ -205,17 +205,17 @@ namespace Altaxo.Gui.Graph
     }
 
 
-      bool _ActivateEnableDisableMain = false;
-      /// <summary>
-      /// If activated, this causes the view to disable all gui elements if neither a line style nor a fill style is choosen.
-      /// </summary>
-      /// <param name="bActivate"></param>
-      public void SetEnableDisableMain(bool bActivate)
-      {
-        _ActivateEnableDisableMain = bActivate;
-        if(null!=_view)
-          _view.SetEnableDisableMain(bActivate);
-      }
+    bool _ActivateEnableDisableMain = false;
+    /// <summary>
+    /// If activated, this causes the view to disable all gui elements if neither a line style nor a fill style is choosen.
+    /// </summary>
+    /// <param name="bActivate"></param>
+    public void SetEnableDisableMain(bool bActivate)
+    {
+      _ActivateEnableDisableMain = bActivate;
+      if(null!=_view)
+        _view.SetEnableDisableMain(bActivate);
+    }
 
     void Initialize()
     {
@@ -360,7 +360,7 @@ namespace Altaxo.Gui.Graph
         // Line fill color
         str = _view.LineFillColor;
         if(str!="Custom")
-         _doc.FillBrush = new BrushHolder(Color.FromName(str));
+          _doc.FillBrush = new BrushHolder(Color.FromName(str));
 
       }
       catch(Exception ex)

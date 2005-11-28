@@ -1,3 +1,25 @@
+#region Copyright
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+#endregion
+
 using System;
 using Altaxo.Data;
 using Altaxo.Main.GUI;
@@ -25,7 +47,7 @@ namespace Altaxo.Gui.Scripting
 
   public interface IScriptViewEventSink
   {
-     void EhView_GotoCompilerError(string message);
+    void EhView_GotoCompilerError(string message);
   }
 
   public interface IScriptController : Main.GUI.IMVCAController
@@ -41,9 +63,9 @@ namespace Altaxo.Gui.Scripting
 
   #endregion
 
-	/// <summary>
-	/// Summary description for ScriptController.
-	/// </summary>
+  /// <summary>
+  /// Summary description for ScriptController.
+  /// </summary>
   [UserControllerForObject(typeof(IScriptText),200)]
   public class ScriptController : IScriptViewEventSink, IScriptController
   {
@@ -58,7 +80,7 @@ namespace Altaxo.Gui.Scripting
 
 
     public ScriptController(IScriptText doc)
-    : this(doc,null)
+      : this(doc,null)
     {
     }
     public ScriptController(IScriptText doc, ScriptExecutionHandler exec)

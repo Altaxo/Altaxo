@@ -1,3 +1,25 @@
+#region Copyright
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+#endregion
+
 using System;
 using Altaxo.Gui.Common;
 using Altaxo.Graph;
@@ -6,12 +28,12 @@ using System.Collections;
 
 namespace Altaxo.Gui.Graph
 {
-	/// <summary>
-	/// Summary description for XYColumnPlotItemController.
-	/// </summary>
-	[UserControllerForObject(typeof(XYColumnPlotItem))]
-	public class XYColumnPlotItemController : TabbedElementController, Main.GUI.IMVCAController, IXYPlotGroupViewEventSink
-	{
+  /// <summary>
+  /// Summary description for XYColumnPlotItemController.
+  /// </summary>
+  [UserControllerForObject(typeof(XYColumnPlotItem))]
+  public class XYColumnPlotItemController : TabbedElementController, Main.GUI.IMVCAController, IXYPlotGroupViewEventSink
+  {
     XYColumnPlotItem _doc;
     XYColumnPlotItem _tempdoc;
     PlotGroup _parentPlotGroup;
@@ -22,13 +44,13 @@ namespace Altaxo.Gui.Graph
 
     IXYPlotStyleCollectionController _styleCollectionController;
     public XYColumnPlotItemController(XYColumnPlotItem doc)
-     : this(doc,null)
+      : this(doc,null)
     {
     }
-		public XYColumnPlotItemController(XYColumnPlotItem doc, PlotGroup parent)
-		{
+    public XYColumnPlotItemController(XYColumnPlotItem doc, PlotGroup parent)
+    {
       _parentPlotGroup = parent;
-			_doc = doc;
+      _doc = doc;
       _tempdoc = (XYColumnPlotItem)_doc.Clone();
 
       InitializeCollectionAndData();
@@ -62,7 +84,7 @@ namespace Altaxo.Gui.Graph
     void InitializeStyles()
     {
 
-     IMVCAController ctrl;
+      IMVCAController ctrl;
 
       // prepare the style 
       // if there is only one line style or one scatter style,
@@ -95,9 +117,9 @@ namespace Altaxo.Gui.Graph
         else if (_tempdoc.Style.Count >= 2 &&
           (
           ((_tempdoc.Style[0] is XYPlotLineStyle) && (_tempdoc.Style[1] is XYPlotScatterStyle)) ||
-            ((_tempdoc.Style[0] is XYPlotScatterStyle) && (_tempdoc.Style[1] is XYPlotLineStyle))
-            )
-            )
+          ((_tempdoc.Style[0] is XYPlotScatterStyle) && (_tempdoc.Style[1] is XYPlotLineStyle))
+          )
+          )
         {
           lineScatterPair[0] = _tempdoc.Style[0];
           lineScatterPair[1] = _tempdoc.Style[1];
@@ -144,7 +166,7 @@ namespace Altaxo.Gui.Graph
         AddTab("Style " + (i + 1).ToString(), ctrl, ctrl.ViewObject);
       }
 
-    base.SetElements(false);
+      base.SetElements(false);
     }
 
 
@@ -163,7 +185,7 @@ namespace Altaxo.Gui.Graph
     #region IApplyController Members
 
     int _applySuspend; // to avoid multiple invoking here because some of the child controls
-                       // have this here as controller too     
+    // have this here as controller too     
     public bool Apply()
     {
       if(_applySuspend++ > 0)
@@ -204,16 +226,16 @@ namespace Altaxo.Gui.Graph
       if (null != _parentPlotGroup)
       {
         PlotGroupStyle plotGroupStyle = 0;
-          if (_plotGroupView.PlotGroupColor)
-            plotGroupStyle |= PlotGroupStyle.Color;
-          if (_plotGroupView.PlotGroupLineType)
-            plotGroupStyle |= PlotGroupStyle.Line;
-          if (_plotGroupView.PlotGroupSymbol)
-            plotGroupStyle |= PlotGroupStyle.Symbol;
+        if (_plotGroupView.PlotGroupColor)
+          plotGroupStyle |= PlotGroupStyle.Color;
+        if (_plotGroupView.PlotGroupLineType)
+          plotGroupStyle |= PlotGroupStyle.Line;
+        if (_plotGroupView.PlotGroupSymbol)
+          plotGroupStyle |= PlotGroupStyle.Symbol;
 
-          _parentPlotGroup.SetPropertiesOnly(plotGroupStyle, _plotGroupView.PlotGroupConcurrently, _plotGroupView.PlotGroupStrict);
-          if (_plotGroupView.PlotGroupUpdate)
-            _parentPlotGroup.UpdateMembers(plotGroupStyle, _doc);
+        _parentPlotGroup.SetPropertiesOnly(plotGroupStyle, _plotGroupView.PlotGroupConcurrently, _plotGroupView.PlotGroupStrict);
+        if (_plotGroupView.PlotGroupUpdate)
+          _parentPlotGroup.UpdateMembers(plotGroupStyle, _doc);
       }
 
       applyResult = true;

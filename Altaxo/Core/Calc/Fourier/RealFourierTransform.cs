@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2004 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -23,14 +23,14 @@ using System;
 
 namespace Altaxo.Calc.Fourier
 {
-	/// <summary>
-	/// Common interface for real valued fourier transformations of any length.
-	/// Depending of the length, which must be given at creation time and can not be changed afterwards, the
-	/// fastes transformation method is used. The neccessary temporary data is being held in this class, so that repeated transformations
-	/// will not create more temporary storage than neccessary.
-	/// </summary>
-	public class RealFourierTransform
-	{
+  /// <summary>
+  /// Common interface for real valued fourier transformations of any length.
+  /// Depending of the length, which must be given at creation time and can not be changed afterwards, the
+  /// fastes transformation method is used. The neccessary temporary data is being held in this class, so that repeated transformations
+  /// will not create more temporary storage than neccessary.
+  /// </summary>
+  public class RealFourierTransform
+  {
     enum Method { Trivial, Hartley, Pfa235, Chirp };
     Method _method;
     int _numberOfData;
@@ -38,8 +38,8 @@ namespace Altaxo.Calc.Fourier
     double[] _tempArr1N;
     object _fftTempStorage;
 
-		public RealFourierTransform(int length)
-		{
+    public RealFourierTransform(int length)
+    {
       _numberOfData = length;
 
       if(length<1)
@@ -48,7 +48,7 @@ namespace Altaxo.Calc.Fourier
       {
         _method = Method.Trivial;
       }
-        else if(Calc.BinaryMath.IsPowerOfTwo(length))
+      else if(Calc.BinaryMath.IsPowerOfTwo(length))
       {
         // use Hartley transform
         _method = Method.Hartley;
@@ -64,7 +64,7 @@ namespace Altaxo.Calc.Fourier
         // use chirp transform
         _method = Method.Chirp;
       }
-		}
+    }
 
 
     /// <summary>
@@ -101,8 +101,8 @@ namespace Altaxo.Calc.Fourier
           if(_numberOfData==2)
           {
             double a0=arr[0],a1=arr[1];
-              arr[0]=a0+a1;
-              arr[1]=a0-a1;
+            arr[0]=a0+a1;
+            arr[1]=a0-a1;
             
           }
         }
@@ -176,5 +176,5 @@ namespace Altaxo.Calc.Fourier
       }
     }
     #endregion
-	}
+  }
 }

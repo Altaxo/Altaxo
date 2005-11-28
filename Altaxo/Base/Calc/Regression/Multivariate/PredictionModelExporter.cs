@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2004 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       
     Altaxo.Data.DataTable _table;
     MultivariateContentMemento _memento;
-   // IMultivariateCalibrationModel _calibrationModel;
+    // IMultivariateCalibrationModel _calibrationModel;
     System.Xml.XmlWriter _writer;
 
     int _numberOfFactors;

@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2004 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -29,53 +29,53 @@ using System.Windows.Forms;
 
 namespace Altaxo.Gui.Common.Drawing
 {
-	/// <summary>
-	/// Summary description for ColorTypeThicknessPenControl.
-	/// </summary>
-	public class ColorTypeThicknessPenControl : System.Windows.Forms.UserControl, IColorTypeThicknessPenView
-	{
+  /// <summary>
+  /// Summary description for ColorTypeThicknessPenControl.
+  /// </summary>
+  public class ColorTypeThicknessPenControl : System.Windows.Forms.UserControl, IColorTypeThicknessPenView
+  {
     private System.Windows.Forms.ComboBox _cbColor;
     private System.Windows.Forms.ComboBox _cbLineType;
     private System.Windows.Forms.ComboBox _cbThickness;
     private System.Windows.Forms.Label label1;
     private System.Windows.Forms.Label label2;
     private System.Windows.Forms.Label label3;
-		/// <summary> 
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components = null;
+    /// <summary> 
+    /// Required designer variable.
+    /// </summary>
+    private System.ComponentModel.Container components = null;
 
-		public ColorTypeThicknessPenControl()
-		{
-			// This call is required by the Windows.Forms Form Designer.
-			InitializeComponent();
+    public ColorTypeThicknessPenControl()
+    {
+      // This call is required by the Windows.Forms Form Designer.
+      InitializeComponent();
 
-			// TODO: Add any initialization after the InitializeComponent call
+      // TODO: Add any initialization after the InitializeComponent call
 
-		}
+    }
 
-		/// <summary> 
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+    /// <summary> 
+    /// Clean up any resources being used.
+    /// </summary>
+    protected override void Dispose( bool disposing )
+    {
+      if( disposing )
+      {
+        if(components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose( disposing );
+    }
 
-		#region Component Designer generated code
-		/// <summary> 
-		/// Required method for Designer support - do not modify 
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+    #region Component Designer generated code
+    /// <summary> 
+    /// Required method for Designer support - do not modify 
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
       this._cbColor = new System.Windows.Forms.ComboBox();
       this._cbLineType = new System.Windows.Forms.ComboBox();
       this._cbThickness = new System.Windows.Forms.ComboBox();
@@ -148,7 +148,7 @@ namespace Altaxo.Gui.Common.Drawing
       this.ResumeLayout(false);
 
     }
-		#endregion
+    #endregion
 
     #region IColorTypeThicknessPenView Members
 
@@ -185,8 +185,8 @@ namespace Altaxo.Gui.Common.Drawing
 
     private void _cbColor_SelectionChangeCommitted(object sender, System.EventArgs e)
     {
-    if(null!=_controller)
-      _controller.EhView_ColorChanged(this._cbColor.SelectedIndex);
+      if(null!=_controller)
+        _controller.EhView_ColorChanged(this._cbColor.SelectedIndex);
     }
 
     private void _cbLineType_SelectionChangeCommitted(object sender, System.EventArgs e)
@@ -197,8 +197,8 @@ namespace Altaxo.Gui.Common.Drawing
 
     private void _cbThickness_Validating(object sender, System.ComponentModel.CancelEventArgs e)
     {
-    if(null!=_controller)
-      _controller.EhView_LineWidthChanged(this._cbThickness.Text,e);
+      if(null!=_controller)
+        _controller.EhView_LineWidthChanged(this._cbThickness.Text,e);
     }
   }
 }

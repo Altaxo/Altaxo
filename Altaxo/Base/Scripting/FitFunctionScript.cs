@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2004 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -104,7 +104,7 @@ namespace Altaxo.Scripting
     public override bool Equals(object obj)
     {
       if(!(obj is FitFunctionScript))
-      return base.Equals (obj);
+        return base.Equals (obj);
 
       FitFunctionScript from = (FitFunctionScript)obj;
 
@@ -180,8 +180,8 @@ namespace Altaxo.Scripting
         if (s.m_ScriptObject != null && s.IsUsingUserDefinedParameterNames)
         { 
           IFitFunction ff = (IFitFunction)s.m_ScriptObject;
-            if(s._UserDefinedParameterNames==null || s._UserDefinedParameterNames.Length!=ff.NumberOfParameters)
-              s._UserDefinedParameterNames = new string[ff.NumberOfParameters];
+          if(s._UserDefinedParameterNames==null || s._UserDefinedParameterNames.Length!=ff.NumberOfParameters)
+            s._UserDefinedParameterNames = new string[ff.NumberOfParameters];
           for(int i=0;i<ff.NumberOfParameters;++i)
             s._UserDefinedParameterNames[i] = ff.ParameterName(i);
         }
@@ -216,7 +216,7 @@ namespace Altaxo.Scripting
         s._NumberOfParameters = info.GetInt32("NumberOfParameters");
         s._IsUsingUserDefinedParameterNames = info.GetBoolean("UserDefinedParameters");
         if(s._IsUsingUserDefinedParameterNames)
-        info.GetArray("UserDefinedParameterNames",out s._UserDefinedParameterNames);
+          info.GetArray("UserDefinedParameterNames",out s._UserDefinedParameterNames);
         info.GetArray("IndependentVariableNames",out s._IndependentVariablesNames);
         info.GetArray("DependentVariableNames",out s._DependentVariablesNames);
 
@@ -494,21 +494,21 @@ namespace Altaxo.Scripting
             stb.Append(",");
         }
 
-/*
-        stb.Append(
-          "\t\tpublic int NumberOfDependentVariables\r\n" +
-          "\t\t{\r\n"+
-          "\t\t\tget\r\n"+
-          "\t\t\t{\r\n"+
-          "\t\t\t\treturn _dependentVariableName.Length;\r\n"+
-          "\t\t\t}\r\n"+
-          "\t\t}\r\n"+
-          "\t\tpublic string DependentVariableName(int i)\r\n"+
-          "\t\t{\r\n"+
-          "\t\t\treturn _dependentVariableName[i];\r\n"+
-          "\t\t}\r\n"
-          );
-*/
+        /*
+                stb.Append(
+                  "\t\tpublic int NumberOfDependentVariables\r\n" +
+                  "\t\t{\r\n"+
+                  "\t\t\tget\r\n"+
+                  "\t\t\t{\r\n"+
+                  "\t\t\t\treturn _dependentVariableName.Length;\r\n"+
+                  "\t\t\t}\r\n"+
+                  "\t\t}\r\n"+
+                  "\t\tpublic string DependentVariableName(int i)\r\n"+
+                  "\t\t{\r\n"+
+                  "\t\t\treturn _dependentVariableName[i];\r\n"+
+                  "\t\t}\r\n"
+                  );
+        */
         return stb.ToString();
       }
     }
@@ -538,7 +538,7 @@ namespace Altaxo.Scripting
           stb.Append(this._DependentVariablesNames[i]);
           stb.Append(";\r\n");
         }
-      return stb.ToString();
+        return stb.ToString();
       }
     }
     
@@ -607,21 +607,21 @@ namespace Altaxo.Scripting
             stb.Append(",");
         }
 
-/*
-        stb.Append(
-          "\t\tpublic int NumberOfIndependentVariables\r\n" +
-          "\t\t{\r\n"+
-          "\t\t\tget\r\n"+
-          "\t\t\t{\r\n"+
-          "\t\t\t\treturn _independentVariableName.Length;\r\n"+
-          "\t\t\t}\r\n"+
-          "\t\t}\r\n"+
-          "\t\tpublic string IndependentVariableName(int i)\r\n"+
-          "\t\t{\r\n"+
-          "\t\t\treturn _independentVariableName[i];\r\n"+
-          "\t\t}\r\n"
-          );
-*/
+        /*
+                stb.Append(
+                  "\t\tpublic int NumberOfIndependentVariables\r\n" +
+                  "\t\t{\r\n"+
+                  "\t\t\tget\r\n"+
+                  "\t\t\t{\r\n"+
+                  "\t\t\t\treturn _independentVariableName.Length;\r\n"+
+                  "\t\t\t}\r\n"+
+                  "\t\t}\r\n"+
+                  "\t\tpublic string IndependentVariableName(int i)\r\n"+
+                  "\t\t{\r\n"+
+                  "\t\t\treturn _independentVariableName[i];\r\n"+
+                  "\t\t}\r\n"
+                  );
+        */
         return stb.ToString();
       }
     }
@@ -812,7 +812,7 @@ namespace Altaxo.Scripting
         this.ScriptText = sb.ToString();
 
         
-         first = this.ScriptText.IndexOf(this.IndependentAssignmentRegionStart);
+        first = this.ScriptText.IndexOf(this.IndependentAssignmentRegionStart);
         if (first < 0)
           throw new ApplicationException("The script text seems to no longer contain a dependent variables assignment start region");
         first += this.IndependentAssignmentRegionStart.Length;
@@ -969,7 +969,7 @@ namespace Altaxo.Scripting
         if (this.m_ScriptObject != null)
           return ((IFitFunction)m_ScriptObject).NumberOfDependentVariables;
         else
-        return this._DependentVariablesNames.Length;
+          return this._DependentVariablesNames.Length;
       }
     }
 
@@ -1004,7 +1004,7 @@ namespace Altaxo.Scripting
       if (this.m_ScriptObject != null)
         return ((IFitFunction)m_ScriptObject).IndependentVariableName(i);
       else
-      return this._IndependentVariablesNames[i];
+        return this._IndependentVariablesNames[i];
     }
 
     public string DependentVariableName(int i)
@@ -1014,7 +1014,7 @@ namespace Altaxo.Scripting
       if (this.m_ScriptObject != null)
         return ((IFitFunction)m_ScriptObject).DependentVariableName(i);
       else
-      return this._DependentVariablesNames[i];
+        return this._DependentVariablesNames[i];
     }
 
     public string ParameterName(int i)

@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2004 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -105,69 +105,69 @@ namespace Altaxo.Main.GUI
       return Current.Gui.ShowDialog(new object[]{pa,plotGroup},pa.Name, true);
     }
 
-/*  public static bool ShowLineScatterPlotStyleAndDataDialog(System.Windows.Forms.Form parentWindow, Graph.PlotItem pa, PlotGroup plotGroup)
-    {
-      
-      // Plot Style
-      AbstractXYPlotStyle style = null;
-
-      if(pa is XYColumnPlotItem)
-        style = ((XYColumnPlotItem)pa).Style;
-      else if(pa is XYFunctionPlotItem)
-        style = ((XYFunctionPlotItem)pa).Style;
-
-      LineScatterPlotStyleController  stylectrl = new LineScatterPlotStyleController(style,plotGroup);
-      LineScatterPlotStyleControl     styleview = new LineScatterPlotStyleControl();
-      stylectrl.View = styleview;
-
-      // Plot Data
-      XYColumnPlotData plotData = ((XYColumnPlotItem)pa).Data as XYColumnPlotData;
-      LineScatterPlotDataController datactrl=null;
-      LineScatterPlotDataControl    dataview=null;
-      if(plotData!=null)
-      {
-        datactrl = new LineScatterPlotDataController(plotData);
-        dataview = new LineScatterPlotDataControl();
-        datactrl.View = dataview;
-      }
-
-      // Label Style
-      Graph.GUI.XYPlotLabelStyleController labelctrl = null;
-      Graph.GUI.XYPlotLabelStyleControl    labelview = null;
-      if(style is XYLineScatterPlotStyle)
-      {
-        XYLineScatterPlotStyle plotStyle = style as XYLineScatterPlotStyle;
-        if(plotStyle.XYPlotLabelStyle!=null)
+    /*  public static bool ShowLineScatterPlotStyleAndDataDialog(System.Windows.Forms.Form parentWindow, Graph.PlotItem pa, PlotGroup plotGroup)
         {
-          labelctrl = new XYPlotLabelStyleController(plotStyle.XYPlotLabelStyle);
-          labelview = new XYPlotLabelStyleControl();
-          labelctrl.View = labelview;
-        }
-      }
-
-      GUI.TabbedDialogController tdcctrl = new GUI.TabbedDialogController("Line/Scatter Plot",true);
-      tdcctrl.AddTab("Style",stylectrl,styleview);
       
-      if(datactrl!=null)
-        tdcctrl.AddTab("Data",datactrl,dataview);
+          // Plot Style
+          AbstractXYPlotStyle style = null;
 
-      if(labelctrl!=null && labelview!=null)
-        tdcctrl.AddTab("Label",labelctrl,labelview);
-      GUI.TabbedDialogView  tdcview = new GUI.TabbedDialogView();
-      tdcctrl.View = tdcview;
+          if(pa is XYColumnPlotItem)
+            style = ((XYColumnPlotItem)pa).Style;
+          else if(pa is XYFunctionPlotItem)
+            style = ((XYFunctionPlotItem)pa).Style;
 
-      bool result = tdcctrl.ShowDialog(parentWindow);
+          LineScatterPlotStyleController  stylectrl = new LineScatterPlotStyleController(style,plotGroup);
+          LineScatterPlotStyleControl     styleview = new LineScatterPlotStyleControl();
+          stylectrl.View = styleview;
 
-      if(plotData.LabelColumn==null && style is XYLineScatterPlotStyle)
-      {
-        ((XYLineScatterPlotStyle)style).XYPlotLabelStyle = null;
-      }
+          // Plot Data
+          XYColumnPlotData plotData = ((XYColumnPlotItem)pa).Data as XYColumnPlotData;
+          LineScatterPlotDataController datactrl=null;
+          LineScatterPlotDataControl    dataview=null;
+          if(plotData!=null)
+          {
+            datactrl = new LineScatterPlotDataController(plotData);
+            dataview = new LineScatterPlotDataControl();
+            datactrl.View = dataview;
+          }
+
+          // Label Style
+          Graph.GUI.XYPlotLabelStyleController labelctrl = null;
+          Graph.GUI.XYPlotLabelStyleControl    labelview = null;
+          if(style is XYLineScatterPlotStyle)
+          {
+            XYLineScatterPlotStyle plotStyle = style as XYLineScatterPlotStyle;
+            if(plotStyle.XYPlotLabelStyle!=null)
+            {
+              labelctrl = new XYPlotLabelStyleController(plotStyle.XYPlotLabelStyle);
+              labelview = new XYPlotLabelStyleControl();
+              labelctrl.View = labelview;
+            }
+          }
+
+          GUI.TabbedDialogController tdcctrl = new GUI.TabbedDialogController("Line/Scatter Plot",true);
+          tdcctrl.AddTab("Style",stylectrl,styleview);
+      
+          if(datactrl!=null)
+            tdcctrl.AddTab("Data",datactrl,dataview);
+
+          if(labelctrl!=null && labelview!=null)
+            tdcctrl.AddTab("Label",labelctrl,labelview);
+          GUI.TabbedDialogView  tdcview = new GUI.TabbedDialogView();
+          tdcctrl.View = tdcview;
+
+          bool result = tdcctrl.ShowDialog(parentWindow);
+
+          if(plotData.LabelColumn==null && style is XYLineScatterPlotStyle)
+          {
+            ((XYLineScatterPlotStyle)style).XYPlotLabelStyle = null;
+          }
 
 
-      return result;
-    }
+          return result;
+        }
 
-*/
+    */
     public static bool ShowDensityImagePlotStyleAndDataDialog(System.Windows.Forms.Form parentWindow, Graph.PlotItem pa, PlotGroup plotGroup)
     {
       // Plot Style

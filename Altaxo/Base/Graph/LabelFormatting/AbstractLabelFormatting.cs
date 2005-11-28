@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2004 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -26,11 +26,11 @@ using System.Drawing;
 using Altaxo.Data;
 namespace Altaxo.Graph.LabelFormatting
 {
-	/// <summary>
-	/// Base class that can be used to derive a label formatting class
-	/// </summary>
-	public abstract class AbstractLabelFormatting : ILabelFormatting
-	{
+  /// <summary>
+  /// Base class that can be used to derive a label formatting class
+  /// </summary>
+  public abstract class AbstractLabelFormatting : ILabelFormatting
+  {
     protected string _prefix=string.Empty;
     protected string _suffix=string.Empty;
 
@@ -146,7 +146,7 @@ namespace Altaxo.Graph.LabelFormatting
     /// <returns>An array of <see cref="IMeasuredLabelItem" /> that can be used to determine the size of each item and to draw it.</returns>
     public virtual IMeasuredLabelItem[] GetMeasuredItems(Graphics g, System.Drawing.Font font, System.Drawing.StringFormat strfmt, AltaxoVariant[] items)
     {
-     string[] titems = FormatItems(items);
+      string[] titems = FormatItems(items);
 
       MeasuredLabelItem[] litems = new MeasuredLabelItem[titems.Length];
 

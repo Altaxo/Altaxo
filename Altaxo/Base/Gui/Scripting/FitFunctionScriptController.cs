@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2004 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -185,7 +185,7 @@ namespace Altaxo.Gui.Scripting
 
     public string GetIndependentVariablesAsLine()
     {
-       System.Text.StringBuilder stb = new System.Text.StringBuilder();
+      System.Text.StringBuilder stb = new System.Text.StringBuilder();
       for (int i = 0; i < m_TempScript.NumberOfIndependentVariables; ++i)
       {
         stb.Append(m_TempScript.IndependentVariableName(i));
@@ -385,5 +385,5 @@ namespace Altaxo.Gui.Scripting
     }
 
     #endregion
-}
+  }
 }

@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2004 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -89,7 +89,7 @@ namespace Altaxo.Graph
 
 
     #region Serialization
-#region Binary
+    #region Binary
     /// <summary>Used to serialize the XYColumnPlotData Version 0.</summary>
     public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
     {
@@ -152,7 +152,7 @@ namespace Altaxo.Graph
       if (null != m_yBoundaries)
         m_yBoundaries.BoundaryChanged += new BoundaryChangedHandler(this.OnYBoundariesChangedEventHandler);
     }
-#endregion
+    #endregion
 
     #region Xml 0 und 1
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYColumnPlotData),0)]
@@ -351,11 +351,11 @@ namespace Altaxo.Graph
           info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(this.EhDeserializationFinished2);
       }
     }
-#endregion
+    #endregion
 
     #region Xml 3
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYColumnPlotData), 3)] // by mistake the data of version 0 and 1 are identical
-    public class XmlSerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+      public class XmlSerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {

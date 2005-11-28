@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2004 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -25,11 +25,11 @@ using System.Drawing;
 
 namespace Altaxo.Graph.BackgroundStyles
 {
-	/// <summary>
-	/// Provides a background around a rectangular spaced area.
-	/// </summary>
-	public interface IBackgroundStyle : ICloneable
-	{
+  /// <summary>
+  /// Provides a background around a rectangular spaced area.
+  /// </summary>
+  public interface IBackgroundStyle : ICloneable
+  {
     /// <summary>
     /// Measures the outer size of the item.
     /// </summary>
@@ -44,7 +44,7 @@ namespace Altaxo.Graph.BackgroundStyles
     /// </summary>
     /// <param name="g">Graphics context.</param>
     /// <param name="innerArea">The inner area of the item.</param>
-		void Draw(Graphics g, RectangleF innerArea);
+    void Draw(Graphics g, RectangleF innerArea);
 
     /// <summary>
     /// True if the classes color property can be set/reset;
@@ -55,5 +55,5 @@ namespace Altaxo.Graph.BackgroundStyles
     /// Get/sets the color.
     /// </summary>
     Color Color { get; set; }
-	}
+  }
 }

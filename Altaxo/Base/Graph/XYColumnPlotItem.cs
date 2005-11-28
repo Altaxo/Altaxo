@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2004 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -85,7 +85,7 @@ namespace Altaxo.Graph
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYColumnPlotItem),0)]
       public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-        XYColumnPlotData _item;
+      XYColumnPlotData _item;
       XYPlotLabelStyle _label;
 
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -103,13 +103,13 @@ namespace Altaxo.Graph
           lsps.XYPlotLineStyle.LineSymbolGap = lsps.LineSymbolGap; // this has changed and is now hosted in the LineStyle itself
         
         XYPlotStyleCollection ps = new XYPlotStyleCollection(new I2DPlotStyle[] { lsps.XYPlotLineStyle, lsps.ScatterStyle, lsps.XYPlotLabelStyle });
-          if (lsps.XYPlotLabelStyle != null)
-          {
-            XmlSerializationSurrogate0 surr = new XmlSerializationSurrogate0();
-            surr._item = pa;
-            surr._label = lsps.XYPlotLabelStyle;
-            info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.info_DeserializationFinished);
-          }
+        if (lsps.XYPlotLabelStyle != null)
+        {
+          XmlSerializationSurrogate0 surr = new XmlSerializationSurrogate0();
+          surr._item = pa;
+          surr._label = lsps.XYPlotLabelStyle;
+          info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.info_DeserializationFinished);
+        }
          
         
 
@@ -128,20 +128,20 @@ namespace Altaxo.Graph
         
       }
 
-        void info_DeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot)
+      void info_DeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot)
+      {
+        if (_item.LabelColumn != null)
         {
-          if (_item.LabelColumn != null)
-          {
-            _label.LabelColumn = _item.LabelColumn;
-            info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(this.info_DeserializationFinished);
-          }
+          _label.LabelColumn = _item.LabelColumn;
+          info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(this.info_DeserializationFinished);
         }
+      }
 
     }
 
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYColumnPlotItem), 1)]
-    public class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+      public class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
@@ -200,14 +200,14 @@ namespace Altaxo.Graph
 
     public XYColumnPlotItem(XYColumnPlotItem from)
     {
-     CopyFrom(from);
+      CopyFrom(from);
     }
 
     public void CopyFrom(XYColumnPlotItem from)
-  {
-    this.Data = from.Data;   // also wires the event
-    this.Style = (XYPlotStyleCollection)from.Style.Clone(); // also wires the event
-  }
+    {
+      this.Data = from.Data;   // also wires the event
+      this.Style = (XYPlotStyleCollection)from.Style.Clone(); // also wires the event
+    }
 
     public override object Clone()
     {

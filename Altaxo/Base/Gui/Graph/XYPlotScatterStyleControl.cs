@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2004 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ namespace Altaxo.Gui.Graph
   /// <summary>
   /// Summary description for XYPlotScatterStyleControl.
   /// </summary>
-  	[UserControlForController(typeof(IXYPlotScatterStyleViewEventSink))]
+  [UserControlForController(typeof(IXYPlotScatterStyleViewEventSink))]
   public class XYPlotScatterStyleControl : System.Windows.Forms.UserControl, IXYPlotScatterStyleView
   {
     private IXYPlotScatterStyleViewEventSink _controller;
@@ -55,8 +55,8 @@ namespace Altaxo.Gui.Graph
     private System.Windows.Forms.Label m_lblSymbolShape;
     private System.Windows.Forms.Button m_btLineSymbolColorDetails;
     private System.Windows.Forms.ComboBox m_cbLineSymbolColor;
-      private System.Windows.Forms.CheckBox _chkIndependentColor;
-      private System.Windows.Forms.CheckBox _chkIndependentSize;
+    private System.Windows.Forms.CheckBox _chkIndependentColor;
+    private System.Windows.Forms.CheckBox _chkIndependentSize;
     /// <summary> 
     /// Required designer variable.
     /// </summary>
@@ -307,32 +307,32 @@ namespace Altaxo.Gui.Graph
       --m_SuppressEvents;
     }
 
-      public void EnableDisableMain(bool bEnable)
-      {
-        this._chkIndependentColor.Enabled = bEnable;
-        this._chkIndependentSize.Enabled = bEnable;
-        this.m_btLineSymbolColorDetails.Enabled = bEnable;
-        this.m_cbLineSymbolColor.Enabled = bEnable;
-        this.m_cbSymbolSize.Enabled = bEnable;
-        this.m_cbSymbolStyle.Enabled = bEnable;
-        this.m_chkSymbolSkipPoints.Enabled = bEnable;
-        this.m_edSymbolSkipFrequency.Enabled = bEnable;
-      }
+    public void EnableDisableMain(bool bEnable)
+    {
+      this._chkIndependentColor.Enabled = bEnable;
+      this._chkIndependentSize.Enabled = bEnable;
+      this.m_btLineSymbolColorDetails.Enabled = bEnable;
+      this.m_cbLineSymbolColor.Enabled = bEnable;
+      this.m_cbSymbolSize.Enabled = bEnable;
+      this.m_cbSymbolStyle.Enabled = bEnable;
+      this.m_chkSymbolSkipPoints.Enabled = bEnable;
+      this.m_edSymbolSkipFrequency.Enabled = bEnable;
+    }
 
-      bool ShouldEnableMain()
-      {
-        return this.m_cbSymbolShape.SelectedIndex!=0 ||
-          this.m_chkSymbolDropLineBottom.Checked ||
-          this.m_chkSymbolDropLineLeft.Checked ||
-          this.m_chkSymbolDropLineRight.Checked ||
-          this.m_chkSymbolDropLineTop.Checked;
+    bool ShouldEnableMain()
+    {
+      return this.m_cbSymbolShape.SelectedIndex!=0 ||
+        this.m_chkSymbolDropLineBottom.Checked ||
+        this.m_chkSymbolDropLineLeft.Checked ||
+        this.m_chkSymbolDropLineRight.Checked ||
+        this.m_chkSymbolDropLineTop.Checked;
           
-      }
-      public void SetEnableDisableMain(bool bActivate)
-      {
-        this._EnableDisableAll = bActivate;
-        this.EnableDisableMain(_EnableDisableAll==false || this.ShouldEnableMain());
-      }
+    }
+    public void SetEnableDisableMain(bool bActivate)
+    {
+      this._EnableDisableAll = bActivate;
+      this.EnableDisableMain(_EnableDisableAll==false || this.ShouldEnableMain());
+    }
 
     #region IXYPlotScatterStyleView Members
 
@@ -364,14 +364,14 @@ namespace Altaxo.Gui.Graph
       get { return (string)m_cbSymbolSize.SelectedItem; }
     }
 
-      public void InitializeIndependentSymbolSize(bool val)
-      {
-        this._chkIndependentSize.Checked = val;
-      }
-      public bool IndependentSymbolSize
-      {
-        get { return this._chkIndependentSize.Checked; }
-      }
+    public void InitializeIndependentSymbolSize(bool val)
+    {
+      this._chkIndependentSize.Checked = val;
+    }
+    public bool IndependentSymbolSize
+    {
+      get { return this._chkIndependentSize.Checked; }
+    }
 
 
     public void InitializeSymbolShape(string[] arr, string sel)
@@ -418,26 +418,26 @@ namespace Altaxo.Gui.Graph
       get { return (string)m_cbLineSymbolColor.SelectedItem; }
     }
 
-      public void InitializeSkipPoints(int freq)
-      {
-        this.m_edSymbolSkipFrequency.Text = freq.ToString();
-        this.m_edSymbolSkipFrequency.Enabled = (freq!=1);
-        this.m_chkSymbolSkipPoints.Checked = (freq!=1) ;
-      }
+    public void InitializeSkipPoints(int freq)
+    {
+      this.m_edSymbolSkipFrequency.Text = freq.ToString();
+      this.m_edSymbolSkipFrequency.Enabled = (freq!=1);
+      this.m_chkSymbolSkipPoints.Checked = (freq!=1) ;
+    }
 
-      public int SkipPoints
+    public int SkipPoints
+    {
+      get
       {
-        get
+        if(this.m_chkSymbolSkipPoints.Checked)
         {
-          if(this.m_chkSymbolSkipPoints.Checked)
-          {
-            int val;
-            if(Altaxo.Serialization.GUIConversion.IsInteger(this.m_edSymbolSkipFrequency.Text, out val))
-              return val;
-          }
-          return 1;
+          int val;
+          if(Altaxo.Serialization.GUIConversion.IsInteger(this.m_edSymbolSkipFrequency.Text, out val))
+            return val;
         }
+        return 1;
       }
+    }
 
     private void EhSymbolShape_SelectionChangeCommit(object sender, System.EventArgs e)
     {
@@ -445,62 +445,62 @@ namespace Altaxo.Gui.Graph
         EnableDisableMain(this.ShouldEnableMain());
     }
 
-      public void InitializeIndependentColor(bool val)
-      {
-        this._chkIndependentColor.Checked = val;
-        _chkIndependentColor_CheckedChanged(_chkIndependentColor.Checked,EventArgs.Empty);
-      }
+    public void InitializeIndependentColor(bool val)
+    {
+      this._chkIndependentColor.Checked = val;
+      _chkIndependentColor_CheckedChanged(_chkIndependentColor.Checked,EventArgs.Empty);
+    }
  
-      public bool IndependentColor 
+    public bool IndependentColor 
+    {
+      get
       {
-        get
-        {
-          return this._chkIndependentColor.Checked; 
-        }
+        return this._chkIndependentColor.Checked; 
       }
+    }
 
-      private void _chkIndependentColor_CheckedChanged(object sender, System.EventArgs e)
-      {
+    private void _chkIndependentColor_CheckedChanged(object sender, System.EventArgs e)
+    {
         
-      }
+    }
 
     #endregion
 
-      private void m_chkSymbolDropLineLeft_CheckedChanged(object sender, System.EventArgs e)
-      {
-        if(this._EnableDisableAll)
-          EnableDisableMain(this.ShouldEnableMain());
+    private void m_chkSymbolDropLineLeft_CheckedChanged(object sender, System.EventArgs e)
+    {
+      if(this._EnableDisableAll)
+        EnableDisableMain(this.ShouldEnableMain());
 
-      }
+    }
 
-      private void m_chkSymbolDropLineRight_CheckedChanged(object sender, System.EventArgs e)
-      {
-        if(this._EnableDisableAll)
-          EnableDisableMain(this.ShouldEnableMain());
+    private void m_chkSymbolDropLineRight_CheckedChanged(object sender, System.EventArgs e)
+    {
+      if(this._EnableDisableAll)
+        EnableDisableMain(this.ShouldEnableMain());
 
-      }
+    }
 
-      private void m_chkSymbolDropLineTop_CheckedChanged(object sender, System.EventArgs e)
-      {
-        if(this._EnableDisableAll)
-          EnableDisableMain(this.ShouldEnableMain());
+    private void m_chkSymbolDropLineTop_CheckedChanged(object sender, System.EventArgs e)
+    {
+      if(this._EnableDisableAll)
+        EnableDisableMain(this.ShouldEnableMain());
 
-      }
+    }
 
-      private void m_chkSymbolDropLineBottom_CheckedChanged(object sender, System.EventArgs e)
-      {
-        if(this._EnableDisableAll)
-          EnableDisableMain(this.ShouldEnableMain());
+    private void m_chkSymbolDropLineBottom_CheckedChanged(object sender, System.EventArgs e)
+    {
+      if(this._EnableDisableAll)
+        EnableDisableMain(this.ShouldEnableMain());
 
-      }
+    }
 
-      private void m_chkSymbolSkipPoints_CheckedChanged(object sender, System.EventArgs e)
-      {
-        if(!this.m_chkSymbolSkipPoints.Checked)
-          this.m_edSymbolSkipFrequency.Text = "1";
+    private void m_chkSymbolSkipPoints_CheckedChanged(object sender, System.EventArgs e)
+    {
+      if(!this.m_chkSymbolSkipPoints.Checked)
+        this.m_edSymbolSkipFrequency.Text = "1";
 
-        this.m_edSymbolSkipFrequency.Enabled = this.m_chkSymbolSkipPoints.Checked;
-      }
+      this.m_edSymbolSkipFrequency.Enabled = this.m_chkSymbolSkipPoints.Checked;
+    }
 
      
   }

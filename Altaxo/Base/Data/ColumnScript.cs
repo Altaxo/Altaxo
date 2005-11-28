@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2004 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -127,7 +127,7 @@ namespace Altaxo.Data
 
 
 
-    #region Serialization
+  #region Serialization
     /// <summary>
     /// Responsible for serialization of the column script version 0.
     /// </summary>
@@ -209,7 +209,7 @@ namespace Altaxo.Data
     public virtual void OnDeserialization(object obj)
     {
     }
-    #endregion
+  #endregion
 
 
     /// <summary>
@@ -656,7 +656,7 @@ namespace Altaxo.Data
       return bSucceeded; 
     }
 
-    #region IScriptText Members
+  #region IScriptText Members
 
     public string ScriptName
     {
@@ -698,7 +698,7 @@ namespace Altaxo.Data
       }
     }
 
-    #endregion
+  #endregion
 
   } // end of class ColumnScript
 

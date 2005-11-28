@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2004 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -193,11 +193,11 @@ namespace Altaxo.Main.GUI
           case ".dat":
           case ".txt":
           case ".csv":
-            {
+          {
             Worksheet.Commands.FileCommands.ImportAscii(
               null,
               new string[] { item.FullName });
-            }
+          }
             break;
           default:
             fileService.OpenFile(item.FullName);
