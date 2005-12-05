@@ -187,6 +187,7 @@
     <Compile Include="Graph\LabelFormatting\NumericLabelFormattingScientific.cs" />
     <Compile Include="Graph\PlotColors.cs" />
     <Compile Include="Graph\Procedures\ArrangeLayers.cs" />
+    <Compile Include="Graph\Procedures\GraphCommands.cs" />
     <Compile Include="Graph\XYPlotStyleCollectionTemplates.cs" />
     <Compile Include="Gui\Analysis\NonLinearFitting\FitElementControl.cs">
       <SubType>UserControl</SubType>

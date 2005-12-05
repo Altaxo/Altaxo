@@ -778,13 +778,15 @@ namespace Altaxo.Graph.GUI
           {
             oldDoc.Changed -= new EventHandler(this.EhGraph_Changed);
             oldDoc.Layers.LayerCollectionChanged -= new EventHandler(this.EhGraph_LayerCollectionChanged);
-            m_Graph.BoundsChanged -= new EventHandler(this.EhGraph_BoundsChanged);
+            oldDoc.BoundsChanged -= new EventHandler(this.EhGraph_BoundsChanged);
+            oldDoc.NameChanged -= new Main.NameChangedEventHandler(this.EhGraphDocumentNameChanged);
           }
           if(m_Graph!=null)
           {
             m_Graph.Changed += new EventHandler(this.EhGraph_Changed);
             m_Graph.Layers.LayerCollectionChanged += new EventHandler(this.EhGraph_LayerCollectionChanged);
             m_Graph.BoundsChanged += new EventHandler(this.EhGraph_BoundsChanged);
+            m_Graph.NameChanged += new Main.NameChangedEventHandler(this.EhGraphDocumentNameChanged);
 
             // Ensure the current layer and plot numbers are valid
             this.EnsureValidityOfCurrentLayerNumber();
@@ -1095,6 +1097,41 @@ namespace Altaxo.Graph.GUI
           this.RefreshAutoZoom();
         View.InvalidateGraph();
       }    
+    }
+
+    public void EhGraphDocumentNameChanged(object sender, Main.NameChangedEventArgs e)
+    {
+      if (View != null)
+        View.GraphViewTitle = Doc.Name;
+
+      this.TitleName = Doc.Name;
+    }
+
+    /// <summary>
+    /// This is the whole name of the content, e.g. the file name or
+    /// the url depending on the type of the content.
+    /// </summary>
+    public string TitleName
+    {
+      get
+      {
+        return this.Doc.Name;
+      }
+      set
+      {
+        OnTitleNameChanged(EventArgs.Empty);
+      }
+    }
+
+    /// <summary>
+    /// Is called each time the name for the content has changed.
+    /// </summary>
+    public event EventHandler TitleNameChanged;
+
+    protected virtual void OnTitleNameChanged(System.EventArgs e)
+    {
+      if (null != TitleNameChanged)
+        TitleNameChanged(this, e);
     }
 
     #endregion // GraphDocument event handlers

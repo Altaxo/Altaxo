@@ -107,6 +107,12 @@ namespace Altaxo.Graph.GUI
 
 
     /// <summary>
+    /// This sets the title of the graph view.
+    /// </summary>
+    string GraphViewTitle { set; }
+
+
+    /// <summary>
     /// Get / sets the AutoScroll size property 
     /// </summary>
     Size GraphScrollSize { get; set; }

@@ -190,9 +190,12 @@ namespace Altaxo.Gui.Scripting
         {
           _doc = _compiledDoc;
         }
-        else if(_doc.IsReadOnly && _doc.ScriptText != _pureScriptController.Model.ScriptText)
-          _doc = _doc.CloneForModification();
-        _doc.ScriptText = _pureScriptController.Model.ScriptText;
+        else if (_doc.ScriptText != _pureScriptController.Model.ScriptText)
+        {
+          if (_doc.IsReadOnly)
+            _doc = _doc.CloneForModification();
+          _doc.ScriptText = _pureScriptController.Model.ScriptText;
+        }
       }
       _tempDoc = (IScriptText)_doc.Clone();
     }

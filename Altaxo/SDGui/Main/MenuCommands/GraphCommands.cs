@@ -330,6 +330,24 @@ namespace Altaxo.Graph.Commands
     }
   }
 
+  public class GraphRename : AbstractGraphControllerCommand
+  {
+    public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
+    {
+      Altaxo.Graph.Procedures.GraphCommands.Rename(ctrl);
+    }
+  }
+
+  public class GraphRefresh : AbstractGraphControllerCommand
+  {
+    public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
+    {
+      Altaxo.Graph.Procedures.GraphCommands.Refresh(ctrl);
+    }
+  }
+
+
+
   public class ArrangeLayers : AbstractGraphControllerCommand
   {
     public override void Run(GraphController ctrl)

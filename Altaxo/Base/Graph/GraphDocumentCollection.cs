@@ -478,7 +478,15 @@ namespace Altaxo.Graph
     #endregion
 
 
-
+    /// <summary>
+    /// Gets the parent GraphDocumentCollection of a child graph.
+    /// </summary>
+    /// <param name="child">A graph for which the parent collection is searched.</param>
+    /// <returns>The parent GraphDocumentCollection, if it exists, or null otherwise.</returns>
+    public static Altaxo.Graph.GraphDocumentCollection GetParentGraphDocumentCollectionOf(Main.IDocumentNode child)
+    {
+      return (GraphDocumentCollection)Main.DocumentPath.GetRootNodeImplementing(child, typeof(GraphDocumentCollection));
+    }
   
   }
 }

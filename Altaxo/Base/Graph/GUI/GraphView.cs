@@ -211,6 +211,14 @@ namespace Altaxo.Graph.GUI
       get { return m_Ctrl; }
       set { m_Ctrl = value; }
     }
+
+    /// <summary>
+    /// Sets the title of this view.
+    /// </summary>
+    public string GraphViewTitle
+    {
+      set { this.Text = value; }
+    }
     
     protected override void OnParentChanged(EventArgs e)
     {
@@ -488,8 +496,8 @@ namespace Altaxo.Graph.GUI
     */
     /// <summary>
     /// This function is to solve the problem, that after selection of the graph window by
-    /// clicking in the tab, the View did not receive KeyPressed messages. 
-    /// The cause was that by clicking the tab, the control did not receive focus, because
+    /// clicking in the graphdoc, the View did not receive KeyPressed messages. 
+    /// The cause was that by clicking the graphdoc, the control did not receive focus, because
     /// it was at this moment invisible. By making it explicit visible it now can receive the focus.
     /// </summary>
     public void TakeFocus()

@@ -303,11 +303,7 @@ namespace Altaxo.Graph.GUI
   
     
 
-    /// <summary>
-    /// Is called each time the name for the content has changed.
-    /// </summary>
-    public event EventHandler TitleNameChanged;
-    
+  
 
     /// <summary>
     /// Is called when the content is changed after a save/load operation

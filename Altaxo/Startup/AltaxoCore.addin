@@ -517,7 +517,11 @@
 				<MenuItem id="ArrangeLayers" label="${res:XML.MainMenu.GraphMenu.ArrangeLayers}"
 						description="${res:XML.MainMenu.GraphMenu.ArrangeLayers.Description}"
 						class="Altaxo.Graph.Commands.ArrangeLayers" />
-				<MenuItem id="Duplicate" label="${res:XML.MainMenu.GraphMenu.Duplicate}" icon="Icons.16x16.Duplicate"
+        <MenuItem id="Rename" label="${res:XML.MainMenu.GraphMenu.Rename}" 
+					description="${res:XML.MainMenu.GraphMenu.Rename.Description}" class="Altaxo.Graph.Commands.GraphRename" />
+        <MenuItem id="Refresh" label="${res:XML.MainMenu.GraphMenu.Refresh}" 
+					description="${res:XML.MainMenu.GraphMenu.Refresh.Description}" class="Altaxo.Graph.Commands.GraphRefresh" />
+        <MenuItem id="Duplicate" label="${res:XML.MainMenu.GraphMenu.Duplicate}" icon="Icons.16x16.Duplicate"
 					description="${res:XML.MainMenu.GraphMenu.Duplicate.Description}" class="Altaxo.Graph.Commands.DuplicateGraph" />
 			</MenuItem>
 		</Conditional>

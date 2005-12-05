@@ -137,6 +137,7 @@
     <Compile Include="Calc\Fourier\Pfa235FFT.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Calc\Fourier\RealFourierTransform.cs" />
     <Compile Include="Calc\GammaRelated.cs">
       <SubType>Code</SubType>
     </Compile>

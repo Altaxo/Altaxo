@@ -320,6 +320,123 @@ namespace Altaxo.Graph
     /// <summary>Number of times this event is disables, or 0 if it is enabled.</summary>
     int _plotAssociationYBoundariesChanged_EventSuspendCount;
 
+    #region LayerPositionAndSize
+    public class LayerPositionAndSize
+    {
+      /// <summary>
+      /// The layers x position value, either absolute or relative, as determined by <see cref="_layerXPositionType"/>.
+      /// </summary>
+      private double _layerXPosition = 0;
+
+      protected double XPosition
+      {
+        get { return _layerXPosition; }
+        set { _layerXPosition = value; }
+      }
+
+      /// <summary>
+      /// The type of the x position value, see <see cref="PositionType"/>.
+      /// </summary>
+      private PositionType _layerXPositionType = PositionType.AbsoluteValue;
+
+      protected PositionType XPositionType
+      {
+        get { return _layerXPositionType; }
+        set { _layerXPositionType = value; }
+      }
+
+      /// <summary>
+      /// The layers y position value, either absolute or relative, as determined by <see cref="_layerYPositionType"/>.
+      /// </summary>
+      private double _layerYPosition = 0;
+
+      protected double YPosition
+      {
+        get { return _layerYPosition; }
+        set { _layerYPosition = value; }
+      }
+
+      /// <summary>
+      /// The type of the y position value, see <see cref="PositionType"/>.
+      /// </summary>
+      private PositionType _layerYPositionType = PositionType.AbsoluteValue;
+
+      protected PositionType YPositionType
+      {
+        get { return _layerYPositionType; }
+        set { _layerYPositionType = value; }
+      }
+
+
+      /// <summary>
+      /// The width of the layer, either as absolute value in point (1/72 inch), or as 
+      /// relative value as pointed out by <see cref="_layerWidthType"/>.
+      /// </summary>
+      private double _layerWidth = 0;
+
+      protected double Width
+      {
+        get { return _layerWidth; }
+        set { _layerWidth = value; }
+      }
+
+      /// <summary>
+      /// The type of the value for the layer width, see <see cref="SizeType"/>.
+      /// </summary>
+      private SizeType _layerWidthType = SizeType.AbsoluteValue;
+
+      protected SizeType WidthType
+      {
+        get { return _layerWidthType; }
+        set { _layerWidthType = value; }
+      }
+
+      /// <summary>
+      /// The height of the layer, either as absolute value in point (1/72 inch), or as 
+      /// relative value as pointed out by <see cref="_layerHeightType"/>.
+      /// </summary>
+      private double _layerHeight = 0;
+
+      protected double Height
+      {
+        get { return _layerHeight; }
+        set { _layerHeight = value; }
+      }
+
+      /// <summary>
+      /// The type of the value for the layer height, see <see cref="SizeType"/>.
+      /// </summary>
+      private SizeType _layerHeightType = SizeType.AbsoluteValue;
+
+      protected SizeType HeightType
+      {
+        get { return _layerHeightType; }
+        set { _layerHeightType = value; }
+      }
+
+      /// <summary>The rotation angle (in degrees) of the layer.</summary>
+      private float _layerAngle = 0; // Rotation
+
+      protected float Angle
+      {
+        get { return _layerAngle; }
+        set { _layerAngle = value; }
+      }
+
+      /// <summary>The scaling factor of the layer, normally 1.</summary>
+      private float _layerScale = 1;  // Scale
+
+      protected float Scale
+      {
+        get { return _layerScale; }
+        set { _layerScale = value; }
+      }
+
+
+
+
+    }
+    #endregion
 
     #region AxisStyleProperties
 
