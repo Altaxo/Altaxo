@@ -419,7 +419,7 @@ namespace Altaxo.Graph
 
     protected virtual void OnSelfChanged(EventArgs e)
     {
-      OnChildChanged(null,e);
+      EhChildChanged(null,e);
     }
 
 
@@ -428,7 +428,7 @@ namespace Altaxo.Graph
     /// </summary>
     /// <param name="sender">The sender of the change notification.</param>
     /// <param name="e">The change details.</param>
-    public void OnChildChanged(object sender, System.EventArgs e)
+    public void EhChildChanged(object sender, System.EventArgs e)
     {
       if(HandleImmediateChildChangeCases(sender, e))
         return;
@@ -447,10 +447,10 @@ namespace Altaxo.Graph
 
       if(m_Parent is Main.IChildChangedEventSink )
       {
-        ((Main.IChildChangedEventSink)m_Parent).OnChildChanged(this, m_ChangeData);
+        ((Main.IChildChangedEventSink)m_Parent).EhChildChanged(this, m_ChangeData);
         if(IsSuspended) // maybe parent has suspended us now
         {
-          this.OnChildChanged(sender, e); // we call the function recursively, but now we are suspended
+          this.EhChildChanged(sender, e); // we call the function recursively, but now we are suspended
           return;
         }
       }

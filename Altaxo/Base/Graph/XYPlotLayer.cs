@@ -480,11 +480,11 @@ namespace Altaxo.Graph
       void CopyFrom(XYPlotLayerAxisStyleProperties from)
       {
         if (null != _majorLabelStyle)
-          _majorLabelStyle.Changed -= new EventHandler(OnChildChanged);
+          _majorLabelStyle.Changed -= new EventHandler(EhChildChanged);
         if (null != _minorLabelStyle)
-          _minorLabelStyle.Changed -= new EventHandler(OnChildChanged);
+          _minorLabelStyle.Changed -= new EventHandler(EhChildChanged);
         if (null != _axisTitle)
-          _axisTitle.Changed -= new EventHandler(OnChildChanged);
+          _axisTitle.Changed -= new EventHandler(EhChildChanged);
 
 
         this._edgeType = from._edgeType;
@@ -498,11 +498,11 @@ namespace Altaxo.Graph
 
 
         if(null !=_majorLabelStyle)
-          _majorLabelStyle.Changed += new EventHandler(OnChildChanged);
+          _majorLabelStyle.Changed += new EventHandler(EhChildChanged);
         if (null != _minorLabelStyle)
-          _minorLabelStyle.Changed += new EventHandler(OnChildChanged);
+          _minorLabelStyle.Changed += new EventHandler(EhChildChanged);
         if (null != _axisTitle)
-          _axisTitle.Changed += new EventHandler(OnChildChanged);
+          _axisTitle.Changed += new EventHandler(EhChildChanged);
       }
 
       public XYPlotLayerAxisStyleProperties(EdgeType type)
@@ -510,15 +510,15 @@ namespace Altaxo.Graph
         _edgeType = type;
         _showAxis = true;
         _axisStyle = new XYAxisStyle(_edgeType);
-        _axisStyle.Changed += new EventHandler(OnChildChanged);
+        _axisStyle.Changed += new EventHandler(EhChildChanged);
 
         _showMajorLabels = true;
         _majorLabelStyle = new XYAxisLabelStyle(_edgeType);
-        _majorLabelStyle.Changed += new EventHandler(OnChildChanged);
+        _majorLabelStyle.Changed += new EventHandler(EhChildChanged);
 
         _showMinorLabels = false;
         _minorLabelStyle = new XYAxisLabelStyle(_edgeType);
-        _minorLabelStyle.Changed += new EventHandler(OnChildChanged);
+        _minorLabelStyle.Changed += new EventHandler(EhChildChanged);
         _axisTitle = null;
       }
 
@@ -632,9 +632,9 @@ namespace Altaxo.Graph
           if (!object.ReferenceEquals(value, oldvalue))
           {
             if (null != oldvalue)
-              oldvalue.Changed -= new EventHandler(OnChildChanged);
+              oldvalue.Changed -= new EventHandler(EhChildChanged);
             if (null != value)
-              value.Changed += new EventHandler(OnChildChanged);
+              value.Changed += new EventHandler(EhChildChanged);
 
             OnChanged();
           }
@@ -658,9 +658,9 @@ namespace Altaxo.Graph
           if (!object.ReferenceEquals(value, oldvalue))
           {
             if (null != oldvalue)
-              oldvalue.Changed -= new EventHandler(OnChildChanged);
+              oldvalue.Changed -= new EventHandler(EhChildChanged);
             if(null!=value)
-              value.Changed += new EventHandler(OnChildChanged);
+              value.Changed += new EventHandler(EhChildChanged);
 
             OnChanged();
           }
@@ -685,9 +685,9 @@ namespace Altaxo.Graph
           if (!object.ReferenceEquals(value, oldvalue))
           {
             if (null != oldvalue)
-              oldvalue.Changed -= new EventHandler(OnChildChanged);
+              oldvalue.Changed -= new EventHandler(EhChildChanged);
             if (null != value)
-              value.Changed += new EventHandler(OnChildChanged);
+              value.Changed += new EventHandler(EhChildChanged);
 
             OnChanged();
           }
@@ -726,7 +726,7 @@ namespace Altaxo.Graph
 
       #region IChildChangedEventSink Members
 
-      public void OnChildChanged(object child, EventArgs e)
+      public void EhChildChanged(object child, EventArgs e)
       {
         OnChanged();
       }
@@ -879,10 +879,10 @@ namespace Altaxo.Graph
         _styles = new XYAxisStylesSummary[2];
 
         this._styles[0] = new XYAxisStylesSummary(new EdgeType[] { EdgeType.Bottom, EdgeType.Top });
-        this._styles[0].Changed += new EventHandler(this.OnChildChanged);
+        this._styles[0].Changed += new EventHandler(this.EhChildChanged);
 
         this._styles[1] = new XYAxisStylesSummary(new EdgeType[] { EdgeType.Left, EdgeType.Right });
-        this._styles[1].Changed += new EventHandler(this.OnChildChanged);
+        this._styles[1].Changed += new EventHandler(this.EhChildChanged);
 
       }
 
@@ -891,14 +891,14 @@ namespace Altaxo.Graph
         // Remove old event handlers
         for (int i = 0; i < this._styles.Length; ++i)
           if (_styles[i] != null)
-            _styles[i].Changed -= new EventHandler(this.OnChildChanged);
+            _styles[i].Changed -= new EventHandler(this.EhChildChanged);
 
         // now clone
         for (int i = 0; i < from._styles.Length; ++i)
         {
           this._styles[i] = from._styles[i] == null ? null : (XYAxisStylesSummary)from._styles[i].Clone();
           if (this._styles[i] != null)
-            this._styles[i].Changed += new EventHandler(this.OnChildChanged);
+            this._styles[i].Changed += new EventHandler(this.EhChildChanged);
         }
       }
 
@@ -963,7 +963,7 @@ namespace Altaxo.Graph
 
       #region IChildChangedEventSink Members
 
-      public void OnChildChanged(object child, EventArgs e)
+      public void EhChildChanged(object child, EventArgs e)
       {
         OnChanged();
       }
@@ -3411,7 +3411,7 @@ namespace Altaxo.Graph
     protected void OnInvalidate()
     {
       if(this._parentLayerCollection is Main.IChildChangedEventSink)
-        ((Main.IChildChangedEventSink)this._parentLayerCollection).OnChildChanged(this,EventArgs.Empty);
+        ((Main.IChildChangedEventSink)this._parentLayerCollection).EhChildChanged(this,EventArgs.Empty);
     }
 
     #endregion

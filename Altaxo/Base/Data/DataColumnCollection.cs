@@ -838,7 +838,7 @@ namespace Altaxo.Data
       if(info.IsIndependentVariable)
         this.EnsureUniqueColumnKindsForIndependentVariables(info.Group,datac);
 
-      this.OnChildChanged(null,ChangeEventArgs.CreateColumnAddArgs(info.Number,datac.Count));
+      this.EhChildChanged(null,ChangeEventArgs.CreateColumnAddArgs(info.Number,datac.Count));
     }
 
 
@@ -913,7 +913,7 @@ namespace Altaxo.Data
           m_ColumnScripts.Add(newCol,script);
         }
 
-        this.OnChildChanged(null,ChangeEventArgs.CreateColumnCopyOrReplaceArgs(index,oldRowCount,newCol.Count));
+        this.EhChildChanged(null,ChangeEventArgs.CreateColumnCopyOrReplaceArgs(index,oldRowCount,newCol.Count));
 
       }
     }
@@ -1027,7 +1027,7 @@ namespace Altaxo.Data
         ((DataColumnInfo)m_ColumnInfo[m_ColumnsByNumber[i]]).Number = i; 
 
       // raise datachange event that some columns have changed
-      this.OnChildChanged(null, ChangeEventArgs.CreateColumnRemoveArgs(nFirstColumn, nOriginalColumnCount, this.m_NumberOfRows));
+      this.EhChildChanged(null, ChangeEventArgs.CreateColumnRemoveArgs(nFirstColumn, nOriginalColumnCount, this.m_NumberOfRows));
    
       // reset the TriedOutRegularNaming flag, maybe one of the regular column names is now free again
       this._TriedOutRegularNaming = false;
@@ -1145,7 +1145,7 @@ namespace Altaxo.Data
           m_ColumnsByName.Remove(oldName);
           m_ColumnsByName.Add(newName,datac);
 
-          this.OnChildChanged(null,ChangeEventArgs.CreateColumnRenameArgs(this.GetColumnNumber(datac)));
+          this.EhChildChanged(null,ChangeEventArgs.CreateColumnRenameArgs(this.GetColumnNumber(datac)));
 
           // reset the TriedOutRegularNames flag, maybe one of the regular columns has been renamed
           this._TriedOutRegularNaming = false;
@@ -1555,7 +1555,7 @@ namespace Altaxo.Data
         m_ColumnsByNumber[newPosition+i] = columnsMoved[i];
       
       RefreshColumnIndices();
-      this.OnChildChanged(null,ChangeEventArgs.CreateColumnMoveArgs(firstAffectedColumn,maxAffectedColumn));
+      this.EhChildChanged(null,ChangeEventArgs.CreateColumnMoveArgs(firstAffectedColumn,maxAffectedColumn));
     }
 
     /// <summary>
@@ -1631,7 +1631,7 @@ namespace Altaxo.Data
           thiscolumn[newPosition+i] = tempMoved[i];
 
       }
-      this.OnChildChanged(null,ChangeEventArgs.CreateRowMoveArgs(ColumnCount,firstAffected,maxAffected));
+      this.EhChildChanged(null,ChangeEventArgs.CreateRowMoveArgs(ColumnCount,firstAffected,maxAffected));
     }
 
     /// <summary>
@@ -1873,7 +1873,7 @@ namespace Altaxo.Data
         {
           if(m_Parent is Main.IChildChangedEventSink)
           {
-            ((Main.IChildChangedEventSink)m_Parent).OnChildChanged(this, m_ChangeData);
+            ((Main.IChildChangedEventSink)m_Parent).EhChildChanged(this, m_ChangeData);
           }
           if(!IsSuspended)
           {
@@ -1944,7 +1944,7 @@ namespace Altaxo.Data
     /// </summary>
     /// <param name="sender">The sender of the change notification.</param>
     /// <param name="e">The change details.</param>
-    public void OnChildChanged(object sender, System.EventArgs e)
+    public void EhChildChanged(object sender, System.EventArgs e)
     {
       if(HandleImmediateChildChangeCases(sender, e))
         return;
@@ -1963,10 +1963,10 @@ namespace Altaxo.Data
 
       if(m_Parent is Main.IChildChangedEventSink )
       {
-        ((Main.IChildChangedEventSink)m_Parent).OnChildChanged(this, m_ChangeData);
+        ((Main.IChildChangedEventSink)m_Parent).EhChildChanged(this, m_ChangeData);
         if(IsSuspended) // maybe parent has suspended us now
         {
-          this.OnChildChanged(sender, e); // we call the function recursively, but now we are suspended
+          this.EhChildChanged(sender, e); // we call the function recursively, but now we are suspended
           return;
         }
       }

@@ -729,11 +729,6 @@ namespace Altaxo.Graph
 
     public void EhChildChanged(object child, EventArgs e)
     {
-      OnChildChanged(child, e);
-    }
-
-    public void OnChildChanged(object child, EventArgs e)
-    {
       if (null != Changed)
         Changed(this, e);
     }

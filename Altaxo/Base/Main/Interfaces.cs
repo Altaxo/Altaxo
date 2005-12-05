@@ -41,7 +41,7 @@ namespace Altaxo.Main
     /// <param name="e">EventArgs, can be a derived class to provide details of the change.</param>
     /// <returns>The parent returns false normally. If the parent is suspended, it returns true to signal the child
     /// that it should also suspend its notification. </returns>
-    void OnChildChanged(object child, EventArgs e);
+    void EhChildChanged(object child, EventArgs e);
   }
 
   /// <summary>

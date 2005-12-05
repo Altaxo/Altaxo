@@ -184,7 +184,7 @@ namespace Altaxo.Graph
       if (toadd != null)
       {
         this._innerList.Add(toadd);
-        toadd.Changed += new EventHandler(this.OnChildChanged);
+        toadd.Changed += new EventHandler(this.EhChildChanged);
 
         if (withReorganizationAndEvents)
         {
@@ -200,9 +200,9 @@ namespace Altaxo.Graph
       if (ps != null)
       {
         I2DPlotStyle oldStyle = this[idx];
-        oldStyle.Changed -= new EventHandler(this.OnChildChanged);
+        oldStyle.Changed -= new EventHandler(this.EhChildChanged);
 
-        ps.Changed += new EventHandler(this.OnChildChanged);
+        ps.Changed += new EventHandler(this.EhChildChanged);
         this._innerList[idx] = ps;
 
         if (withReorganizationAndEvents)
@@ -221,7 +221,7 @@ namespace Altaxo.Graph
         for(int i=0;i<toadd.Length;i++)
         {
           this._innerList.Add(toadd[i]);
-          toadd[i].Changed += new EventHandler(this.OnChildChanged);
+          toadd[i].Changed += new EventHandler(this.EhChildChanged);
         }
 
       
@@ -237,7 +237,7 @@ namespace Altaxo.Graph
       if (toinsert != null)
       {
         this._innerList.Insert(whichposition, toinsert);
-        toinsert.Changed += new EventHandler(this.OnChildChanged);
+        toinsert.Changed += new EventHandler(this.EhChildChanged);
 
         
         InternalGetProviders();
@@ -252,7 +252,7 @@ namespace Altaxo.Graph
       if(_innerList!=null)
       {
         for(int i=0;i<Count;i++)
-          this[i].Changed -= new EventHandler(this.OnChildChanged);
+          this[i].Changed -= new EventHandler(this.EhChildChanged);
 
         this._innerList.Clear();
 
@@ -265,7 +265,7 @@ namespace Altaxo.Graph
     {
       I2DPlotStyle removed = this[idx];
       _innerList.RemoveAt(idx);
-      removed.Changed -= new EventHandler(this.OnChildChanged);
+      removed.Changed -= new EventHandler(this.EhChildChanged);
 
       InternalGetProviders();
       OnChanged();
@@ -584,7 +584,7 @@ namespace Altaxo.Graph
 
     #region IChildChangedEventSink Members
 
-    public void OnChildChanged(object child, EventArgs e)
+    public void EhChildChanged(object child, EventArgs e)
     {
       if(this._eventSuspendCount==0)
         InternalGetProviders();

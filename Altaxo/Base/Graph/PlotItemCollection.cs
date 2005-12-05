@@ -378,12 +378,9 @@ namespace Altaxo.Graph
 
     public event System.EventHandler Changed;
 
-    public virtual void EhChildChanged(object child, EventArgs e)
-    {
-      OnChildChanged(child,e);
-    }
+   
 
-    public virtual void OnChildChanged(object child, EventArgs e)
+    public virtual void EhChildChanged(object child, EventArgs e)
     {
       if(null!=Changed)
         Changed(this,e);

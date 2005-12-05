@@ -423,7 +423,7 @@ namespace Altaxo.Graph
     protected virtual void OnChanged()
     {
       if(null==this.m_Container )
-        m_Container.OnChildChanged(this,new Main.ChangedEventArgs(this,null));
+        m_Container.EhChildChanged(this,new Main.ChangedEventArgs(this,null));
 
       if(null!=Changed)
         Changed(this,new Main.ChangedEventArgs(this,null));

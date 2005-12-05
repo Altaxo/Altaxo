@@ -322,7 +322,7 @@ namespace Altaxo
       }
     }
 
-    public void OnChildChanged(object sender, EventArgs e)
+    public void EhChildChanged(object sender, EventArgs e)
     {
       this.IsDirty = true;
     }

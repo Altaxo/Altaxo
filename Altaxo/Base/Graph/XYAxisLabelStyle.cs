@@ -578,12 +578,8 @@ namespace Altaxo.Graph
 
     #region IChildChangedEventSink Members
 
+  
     public void EhChildChanged(object child, EventArgs e)
-    {
-      OnChildChanged(child, e);
-    }
-
-    public void OnChildChanged(object child, EventArgs e)
     {
       OnChanged();
     }

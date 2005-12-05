@@ -123,7 +123,7 @@ namespace AltaxoTest.Data
 
       public int CallCount { get { return _CallCount; } }
 
-      public void OnChildChanged(object sender, EventArgs e)
+      public void EhChildChanged(object sender, EventArgs e)
       {
         Assertion.AssertNotNull("Test redirector for OnChildChange must not be null!", ChildChanged);
         ChildChanged(sender,e);

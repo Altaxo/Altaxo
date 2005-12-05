@@ -1223,7 +1223,7 @@ namespace Altaxo.Graph.GUI
         }
         // note the chante in the text graphics object
         if(layer.ParentLayerList!=null)
-          layer.ParentLayerList.OnChildChanged(layer,EventArgs.Empty);
+          layer.ParentLayerList.EhChildChanged(layer,EventArgs.Empty);
       }
 
 

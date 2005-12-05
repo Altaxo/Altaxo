@@ -343,7 +343,7 @@ namespace Altaxo.Data
       if(m_SuspendCount>0 && (--m_SuspendCount)==0 && m_ChangeData!=null)
       {
         if(m_Parent is Main.IChildChangedEventSink)
-          ((Main.IChildChangedEventSink)m_Parent).OnChildChanged(this, m_ChangeData);
+          ((Main.IChildChangedEventSink)m_Parent).EhChildChanged(this, m_ChangeData);
 
         if(!IsSuspended)
           OnDataChanged(); // Fire the changed event
@@ -382,7 +382,7 @@ namespace Altaxo.Data
         return;
 
       if(m_Parent is Main.IChildChangedEventSink)
-        ((Main.IChildChangedEventSink)m_Parent).OnChildChanged(this, m_ChangeData);
+        ((Main.IChildChangedEventSink)m_Parent).EhChildChanged(this, m_ChangeData);
   
       if(!IsSuspended) // parent is not suspended
         OnDataChanged(); // Fire the changed event 
@@ -478,9 +478,9 @@ namespace Altaxo.Data
         if(!object.ReferenceEquals(oldParent,m_Parent))
         {
           if(oldParent is Main.IChildChangedEventSink)
-            ((Main.IChildChangedEventSink)oldParent).OnChildChanged(this,new Main.ParentChangedEventArgs(oldParent,m_Parent));
+            ((Main.IChildChangedEventSink)oldParent).EhChildChanged(this,new Main.ParentChangedEventArgs(oldParent,m_Parent));
           if(m_Parent is Main.IChildChangedEventSink)
-            ((Main.IChildChangedEventSink)m_Parent).OnChildChanged(this,new Main.ParentChangedEventArgs(oldParent,m_Parent));
+            ((Main.IChildChangedEventSink)m_Parent).EhChildChanged(this,new Main.ParentChangedEventArgs(oldParent,m_Parent));
 
         }
       }
