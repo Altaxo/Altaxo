@@ -217,19 +217,19 @@ namespace Altaxo.Graph.GUI
     private void EhLinkNone_CheckedChanged(object sender, System.EventArgs e)
     {
       if(null!=Controller && this.m_rbLinkAxisNone.Checked==true)
-        Controller.EhView_LinkTypeChanged(XYPlotLayer.AxisLinkType.None);
+        Controller.EhView_LinkTypeChanged(AxisLinkType.None);
     }
 
     private void EhLinkStraight_CheckedChanged(object sender, System.EventArgs e)
     {
       if(null!=Controller && this.m_rbLinkAxisStraight.Checked==true)
-        Controller.EhView_LinkTypeChanged(XYPlotLayer.AxisLinkType.Straight);
+        Controller.EhView_LinkTypeChanged(AxisLinkType.Straight);
     }
 
     private void EhLinkCustom_CheckedChanged(object sender, System.EventArgs e)
     {
       if(null!=Controller && this.m_rbLinkAxisCustom.Checked==true)
-        Controller.EhView_LinkTypeChanged(XYPlotLayer.AxisLinkType.Custom);
+        Controller.EhView_LinkTypeChanged(AxisLinkType.Custom);
     }
 
     private void EhOrgA_Validating(object sender, System.ComponentModel.CancelEventArgs e)
@@ -303,19 +303,19 @@ namespace Altaxo.Graph.GUI
       this.m_edLinkAxisEndB.Enabled = bEnab;
     }
 
-    public void LinkType_Initialize(XYPlotLayer.AxisLinkType linktype)
+    public void LinkType_Initialize(AxisLinkType linktype)
     {
       switch(linktype)
       {
-        case XYPlotLayer.AxisLinkType.None:
+        case AxisLinkType.None:
           this.m_rbLinkAxisNone.Checked = true;
           EnableCustom(false);
           break;
-        case XYPlotLayer.AxisLinkType.Straight:
+        case AxisLinkType.Straight:
           this.m_rbLinkAxisStraight.Checked = true;
           EnableCustom(false);
           break;
-        case XYPlotLayer.AxisLinkType.Custom:
+        case AxisLinkType.Custom:
           this.m_rbLinkAxisCustom.Checked = true;
           EnableCustom(true);
           break;

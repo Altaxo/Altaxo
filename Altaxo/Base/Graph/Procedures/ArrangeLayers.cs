@@ -114,12 +114,12 @@ namespace Altaxo.Graph.Procedures
             graph.Layers[nLayer].RightAxisEnabled = false;
           }
           SizeF oldSize = graph.Layers[nLayer].Size;
-          graph.Layers[nLayer].SetSize(relHorzSize/100,XYPlotLayer.SizeType.RelativeToGraphDocument,relVertSize/100,XYPlotLayer.SizeType.RelativeToGraphDocument);
+          graph.Layers[nLayer].SetSize(relHorzSize/100,XYPlotLayerSizeType.RelativeToGraphDocument,relVertSize/100,XYPlotLayerSizeType.RelativeToGraphDocument);
           SizeF newSize = graph.Layers[nLayer].Size;
 
           if(oldSize!=newSize)
             graph.Layers[nLayer].RescaleInnerItemPositions(newSize.Width/oldSize.Width,newSize.Height/oldSize.Height);
-          graph.Layers[nLayer].SetPosition(relHorzPos/100,XYPlotLayer.PositionType.RelativeToGraphDocument,relVertPos/100,XYPlotLayer.PositionType.RelativeToGraphDocument);
+          graph.Layers[nLayer].SetPosition(relHorzPos/100,XYPlotLayerPositionType.RelativeToGraphDocument,relVertPos/100,XYPlotLayerPositionType.RelativeToGraphDocument);
 
         }
 

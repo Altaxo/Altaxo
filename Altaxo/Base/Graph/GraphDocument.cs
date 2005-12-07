@@ -489,8 +489,8 @@ namespace Altaxo.Graph
       Layers.Add(newlayer); // it is neccessary to add the new layer this early since we must set some properties relative to the linked layer
       // link the new layer to the last old layer
       newlayer.LinkedLayer = (linklayernumber>=0 && linklayernumber<Layers.Count)? Layers[linklayernumber] : null;
-      newlayer.SetPosition(0,XYPlotLayer.PositionType.RelativeThisNearToLinkedLayerNear,0,XYPlotLayer.PositionType.RelativeThisNearToLinkedLayerNear);
-      newlayer.SetSize(1,XYPlotLayer.SizeType.RelativeToLinkedLayer,1,XYPlotLayer.SizeType.RelativeToLinkedLayer);
+      newlayer.SetPosition(0,XYPlotLayerPositionType.RelativeThisNearToLinkedLayerNear,0,XYPlotLayerPositionType.RelativeThisNearToLinkedLayerNear);
+      newlayer.SetSize(1,XYPlotLayerSizeType.RelativeToLinkedLayer,1,XYPlotLayerSizeType.RelativeToLinkedLayer);
 
       // set enabling of axis
       newlayer.BottomAxisEnabled=false;
@@ -507,8 +507,8 @@ namespace Altaxo.Graph
       Layers.Add(newlayer); // it is neccessary to add the new layer this early since we must set some properties relative to the linked layer
       // link the new layer to the last old layer
       newlayer.LinkedLayer = (linklayernumber>=0 && linklayernumber<Layers.Count)? Layers[linklayernumber] : null;
-      newlayer.SetPosition(0,XYPlotLayer.PositionType.RelativeThisNearToLinkedLayerNear,0,XYPlotLayer.PositionType.RelativeThisNearToLinkedLayerNear);
-      newlayer.SetSize(1,XYPlotLayer.SizeType.RelativeToLinkedLayer,1,XYPlotLayer.SizeType.RelativeToLinkedLayer);
+      newlayer.SetPosition(0,XYPlotLayerPositionType.RelativeThisNearToLinkedLayerNear,0,XYPlotLayerPositionType.RelativeThisNearToLinkedLayerNear);
+      newlayer.SetSize(1,XYPlotLayerSizeType.RelativeToLinkedLayer,1,XYPlotLayerSizeType.RelativeToLinkedLayer);
 
       // set enabling of axis
       newlayer.BottomAxisEnabled=false;
@@ -525,8 +525,8 @@ namespace Altaxo.Graph
       Layers.Add(newlayer); // it is neccessary to add the new layer this early since we must set some properties relative to the linked layer
       // link the new layer to the last old layer
       newlayer.LinkedLayer = (linklayernumber>=0 && linklayernumber<Layers.Count)? Layers[linklayernumber] : null;
-      newlayer.SetPosition(0,XYPlotLayer.PositionType.RelativeThisNearToLinkedLayerNear,0,XYPlotLayer.PositionType.RelativeThisNearToLinkedLayerNear);
-      newlayer.SetSize(1,XYPlotLayer.SizeType.RelativeToLinkedLayer,1,XYPlotLayer.SizeType.RelativeToLinkedLayer);
+      newlayer.SetPosition(0,XYPlotLayerPositionType.RelativeThisNearToLinkedLayerNear,0,XYPlotLayerPositionType.RelativeThisNearToLinkedLayerNear);
+      newlayer.SetSize(1,XYPlotLayerSizeType.RelativeToLinkedLayer,1,XYPlotLayerSizeType.RelativeToLinkedLayer);
 
       // set enabling of axis
       newlayer.BottomAxisEnabled=false;
@@ -543,14 +543,14 @@ namespace Altaxo.Graph
       Layers.Add(newlayer); // it is neccessary to add the new layer this early since we must set some properties relative to the linked layer
       // link the new layer to the last old layer
       newlayer.LinkedLayer = (linklayernumber>=0 && linklayernumber<Layers.Count)? Layers[linklayernumber] : null;
-      newlayer.SetPosition(0,XYPlotLayer.PositionType.RelativeThisNearToLinkedLayerNear,0,XYPlotLayer.PositionType.RelativeThisNearToLinkedLayerNear);
-      newlayer.SetSize(1,XYPlotLayer.SizeType.RelativeToLinkedLayer,1,XYPlotLayer.SizeType.RelativeToLinkedLayer);
+      newlayer.SetPosition(0,XYPlotLayerPositionType.RelativeThisNearToLinkedLayerNear,0,XYPlotLayerPositionType.RelativeThisNearToLinkedLayerNear);
+      newlayer.SetSize(1,XYPlotLayerSizeType.RelativeToLinkedLayer,1,XYPlotLayerSizeType.RelativeToLinkedLayer);
 
       // set enabling of axis
       newlayer.BottomAxisEnabled=false;
       newlayer.LeftAxisEnabled=false;
 
-      newlayer.AxisProperties.X.AxisLinkType = XYPlotLayer.AxisLinkType.Straight;
+      newlayer.AxisProperties.X.AxisLinkType = AxisLinkType.Straight;
     }
 
 

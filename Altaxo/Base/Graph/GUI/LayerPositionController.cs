@@ -96,8 +96,8 @@ namespace Altaxo.Graph.GUI
 
     // Shadow variables
     double m_Left, m_Top, m_Width, m_Height, m_Rotation, m_Scale;
-    XYPlotLayer.PositionType m_LeftType, m_TopType;
-    XYPlotLayer.SizeType      m_HeightType, m_WidthType;
+    XYPlotLayerPositionType m_LeftType, m_TopType;
+    XYPlotLayerSizeType      m_HeightType, m_WidthType;
     bool m_ClipDataToFrame;
     XYPlotLayer m_LinkedLayer;
     IAxisLinkController m_XAxisLink, m_YAxisLink;
@@ -149,18 +149,18 @@ namespace Altaxo.Graph.GUI
 
 
         // Fill the comboboxes of the x and y position with possible values
-        string [] names = Enum.GetNames(typeof(XYPlotLayer.PositionType));
+        string [] names = Enum.GetNames(typeof(XYPlotLayerPositionType));
         
-        string nameLeft = Enum.GetName(typeof(XYPlotLayer.PositionType),m_LeftType);
-        string nameTop = Enum.GetName(typeof(XYPlotLayer.PositionType),m_TopType);
+        string nameLeft = Enum.GetName(typeof(XYPlotLayerPositionType),m_LeftType);
+        string nameTop = Enum.GetName(typeof(XYPlotLayerPositionType),m_TopType);
 
         View.InitializeLeftType(names,nameLeft);
         View.InitializeTopType(names,nameTop);
 
         // Fill the comboboxes of the width  and height with possible values
-        names = Enum.GetNames(typeof(XYPlotLayer.SizeType));
-        string nameWidth  = Enum.GetName(typeof(XYPlotLayer.SizeType),m_WidthType);
-        string nameHeigth = Enum.GetName(typeof(XYPlotLayer.SizeType),m_HeightType);
+        names = Enum.GetNames(typeof(XYPlotLayerSizeType));
+        string nameWidth  = Enum.GetName(typeof(XYPlotLayerSizeType),m_WidthType);
+        string nameHeigth = Enum.GetName(typeof(XYPlotLayerSizeType),m_HeightType);
 
         View.InitializeWidthType(names,nameWidth);
         View.InitializeHeightType(names,nameHeigth);
@@ -286,22 +286,22 @@ namespace Altaxo.Graph.GUI
 
     public void EhView_LeftTypeChanged(string txt)
     {
-      this.m_LeftType = (XYPlotLayer.PositionType)Enum.Parse(typeof(XYPlotLayer.PositionType),txt);
+      this.m_LeftType = (XYPlotLayerPositionType)Enum.Parse(typeof(XYPlotLayerPositionType),txt);
     }
 
     public void EhView_TopTypeChanged(string txt)
     {
-      this.m_TopType = (XYPlotLayer.PositionType)Enum.Parse(typeof(XYPlotLayer.PositionType),txt);
+      this.m_TopType = (XYPlotLayerPositionType)Enum.Parse(typeof(XYPlotLayerPositionType),txt);
     }
 
     public void EhView_WidthTypeChanged(string txt)
     {
-      this.m_WidthType = (XYPlotLayer.SizeType)Enum.Parse(typeof(XYPlotLayer.SizeType),txt);
+      this.m_WidthType = (XYPlotLayerSizeType)Enum.Parse(typeof(XYPlotLayerSizeType),txt);
     }
 
     public void EhView_HeightTypeChanged(string txt)
     {
-      this.m_HeightType = (XYPlotLayer.SizeType)Enum.Parse(typeof(XYPlotLayer.SizeType),txt);
+      this.m_HeightType = (XYPlotLayerSizeType)Enum.Parse(typeof(XYPlotLayerSizeType),txt);
     }
 
     public void EhView_LeftChanged(string txt, ref bool bCancel)

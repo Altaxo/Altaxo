@@ -121,6 +121,7 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Graph\AxisLinkType.cs" />
     <Compile Include="Calc\FitFunctions\Relaxation\HavriliakNegamiFunction.cs" />
     <Compile Include="Calc\FitFunctions\Relaxation\KohlrauschDecay.cs" />
     <Compile Include="Calc\LinearAlgebra\DataColumnWrapper.cs">
@@ -188,6 +189,12 @@
     <Compile Include="Graph\PlotColors.cs" />
     <Compile Include="Graph\Procedures\ArrangeLayers.cs" />
     <Compile Include="Graph\Procedures\GraphCommands.cs" />
+    <Compile Include="Graph\XYPlotLayerAxisProperties.cs" />
+    <Compile Include="Graph\XYPlotLayerAxisStyleProperties.cs" />
+    <Compile Include="Graph\XYPlotLayerAxisStylesSummary.cs" />
+    <Compile Include="Graph\XYPlotLayerPositionAndSize.cs" />
+    <Compile Include="Graph\XYPlotLayerPositionType.cs" />
+    <Compile Include="Graph\XYPlotLayerSizeType.cs" />
     <Compile Include="Graph\XYPlotStyleCollectionTemplates.cs" />
     <Compile Include="Gui\Analysis\NonLinearFitting\FitElementControl.cs">
       <SubType>UserControl</SubType>
@@ -267,6 +274,7 @@
     <Compile Include="Gui\IRefreshable.cs" />
     <Compile Include="Main\DocNodeProxy.cs" />
     <Compile Include="Main\IEventIndicatedDisposable.cs" />
+    <Compile Include="Main\RelDocNodeProxy.cs" />
     <Compile Include="Main\Services\IBackgroundMonitor.cs" />
     <Compile Include="Scripting\FitFunctionScriptCollection.cs" />
     <Compile Include="Collections\AscendingIntegerCollection.cs">

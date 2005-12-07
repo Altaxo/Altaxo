@@ -55,6 +55,7 @@ namespace Altaxo.Serialization.Xml
     int GetInt32Attribute(string name);
   
     int OpenArray(); // get Number of Array elements
+    int OpenArray(string name);
     void CloseArray(int count);
 
     void GetArray(out float[] val);

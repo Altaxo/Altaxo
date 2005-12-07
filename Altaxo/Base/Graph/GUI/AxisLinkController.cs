@@ -37,7 +37,7 @@ namespace Altaxo.Graph.GUI
     /// Called if the type of the link is changed.
     /// </summary>
     /// <param name="linktype">The linktype. Valid arguments are "None", "Straight" and "Custom".</param>
-    void EhView_LinkTypeChanged(XYPlotLayer.AxisLinkType linktype);
+    void EhView_LinkTypeChanged(AxisLinkType linktype);
 
     /// <summary>
     /// Called when the contents of OrgA is changed.
@@ -84,7 +84,7 @@ namespace Altaxo.Graph.GUI
     /// Initializes the type of the link.
     /// </summary>
     /// <param name="linktype"></param>
-    void LinkType_Initialize(XYPlotLayer.AxisLinkType linktype);
+    void LinkType_Initialize(AxisLinkType linktype);
 
     /// <summary>
     /// Initializes the content of the OrgA edit box.
@@ -125,7 +125,7 @@ namespace Altaxo.Graph.GUI
     XYPlotLayer m_Layer;
     bool  m_bXAxis;
 
-    XYPlotLayer.AxisLinkType m_LinkType;
+    AxisLinkType m_LinkType;
     double m_OrgA;
     double m_OrgB;
     double m_EndA;
@@ -194,12 +194,12 @@ namespace Altaxo.Graph.GUI
       }
     }
 
-    public void EhView_LinkTypeChanged(XYPlotLayer.AxisLinkType linktype)
+    public void EhView_LinkTypeChanged(AxisLinkType linktype)
     {
       m_LinkType = linktype;
 
       if(null!=View)
-        View.Enable_OrgAndEnd_Boxes(linktype == XYPlotLayer.AxisLinkType.Custom);
+        View.Enable_OrgAndEnd_Boxes(linktype == AxisLinkType.Custom);
     }
 
     public void EhView_OrgAValidating(string orgA, ref bool bCancel)

@@ -44,157 +44,9 @@ namespace Altaxo.Graph
     Altaxo.Main.IDocumentNode,
     IPlotArea
   {
-    #region Enumerations
+   
 
-    /// <summary>
-    /// The type of the size (i.e. width and height values.
-    /// </summary>
-    [Serializable]
-      public enum SizeType 
-    {
-      /// <summary>
-      ///  the value is a absolute value (not relative) in points (1/72 inch).
-      /// </summary>
-      AbsoluteValue,
-      /// <summary>
-      /// The value is relative to the graph document. This means that for instance the width of the layer
-      /// is relative to the width of the graph document.
-      /// </summary>
-      RelativeToGraphDocument,
-      /// <summary>
-      /// The value is relative to the linked layer. This means that for instance the width of the layer
-      /// is relative to the width of the linked layer.
-      /// </summary>
-      RelativeToLinkedLayer
-    }
-
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SizeType),0)]
-      public class SizeTypeXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-    {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-      {
-        info.SetNodeContent(obj.ToString()); 
-      }
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-      {
-        
-        string val = info.GetNodeContent();
-        return System.Enum.Parse(typeof(SizeType),val,true);
-      }
-    }
-
-    /// <summary>
-    /// The type of the position values  (i.e. x and y position of the layer).
-    /// </summary>
-    [Serializable]
-      public enum PositionType 
-    {
-      /// <summary>
-      /// The value is a absolute value (not relative) in points (1/72 inch).
-      /// </summary>
-      [Description("Absolute value (points)")]
-      AbsoluteValue,
-
-
-      /// <summary>
-      /// The value is relative to the graph document. This means that for instance the x position of the layer
-      /// is relative to the width of the graph document. A x value of 0 would position the layer at the left edge of the
-      /// graph document, a value of 1 on the right edge of the graph.
-      /// </summary>
-      [Description("Relative to graph size (0..1)")]
-      RelativeToGraphDocument,
-
-      /// <summary>
-      /// The value relates the near edge (either upper or left) of this layer to the near edge of the linked layer.
-      /// </summary>
-      /// <remarks> The values are relative to the size of the linked layer.
-      /// This means that for instance for a x position value of 0 the left edges of both layers are on the same position, for a value of 1
-      /// this means that the left edge of this layer is on the right edge of the linked layer.
-      /// </remarks>
-      RelativeThisNearToLinkedLayerNear,
-      
-      
-      /// <summary>
-      /// The value relates the near edge (either upper or left) of this layer to the far edge (either right or bottom) of the linked layer.
-      /// </summary>
-      /// <remarks> The values are relative to the size of the linked layer.
-      /// This means that for instance for a x position value of 0 the left edges of this layer is on the right edge of the linked layer,
-      /// for a value of 1
-      /// this means that the left edge of this layer is one width away from the right edge of the linked layer.
-      /// </remarks>
-      RelativeThisNearToLinkedLayerFar,
-      /// <summary>
-      /// The value relates the far edge (either right or bottom) of this layer to the near edge (either left or top) of the linked layer.
-      /// </summary>
-      /// <remarks> The values are relative to the size of the linked layer.
-      /// This means that for instance for a x position value of 0 the right edge of this layer is on the left edge of the linked layer,
-      /// for a value of 1
-      /// this means that the right edge of this layer is one width away (to the right) from the leftt edge of the linked layer.
-      /// </remarks>
-      RelativeThisFarToLinkedLayerNear,
-      /// <summary>
-      /// The value relates the far edge (either right or bottom) of this layer to the far edge (either right or bottom) of the linked layer.
-      /// </summary>
-      /// <remarks> The values are relative to the size of the linked layer.
-      /// This means that for instance for a x position value of 0 the right edge of this layer is on the right edge of the linked layer,
-      /// for a value of 1
-      /// this means that the right edge of this layer is one width away from the right edge of the linked layer, for a x value of -1 this
-      /// means that the right edge of this layer is one width away to the left from the right edge of the linked layer and this falls together
-      /// with the left edge of the linked layer.
-      /// </remarks>
-      RelativeThisFarToLinkedLayerFar
-    }
-
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PositionType),0)]
-      public class PositionTypeXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-    {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-      {
-        info.SetNodeContent(obj.ToString());
-      }
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-      {
-        
-        string val = info.GetNodeContent();
-        return System.Enum.Parse(typeof(PositionType),val,true);
-      }
-    }
-    /// <summary>
-    /// Provides how the axis is linked to the corresponding axis on the linked layer.
-    /// </summary>
-    [Serializable]
-      public enum AxisLinkType
-    {
-      /// <summary>
-      /// The axis is not linked, i.e. independent.
-      /// </summary>
-      None,
-      /// <summary>
-      /// The axis is linked straight, i.e. it has the same origin and end value as the corresponding axis of the linked layer.
-      /// </summary>
-      Straight,
-      /// <summary>
-      /// The axis is linked custom, i.e. origin and end of axis are translated linearly using formulas org'=a1+b1*org, end'=a2+b2*end.
-      /// </summary>
-      Custom
-    }
-
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AxisLinkType),0)]
-      public class AxisLinkTypeXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-    {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-      {
-        info.SetNodeContent(obj.ToString()); 
-      }
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-      {
-        
-        string val = info.GetNodeContent();
-        return System.Enum.Parse(typeof(AxisLinkType),val,true);
-      }
-    }
-
-    #endregion
+    
 
     #region Cached member variables
 
@@ -214,7 +66,7 @@ namespace Altaxo.Graph
     /// The size of the layer in points (1/72 inch).
     /// </summary>
     /// <remarks>
-    /// In case the size is absolute (see <see cref="SizeType"/>), this is the size of the layer. Otherwise
+    /// In case the size is absolute (see <see cref="XYPlotLayerSizeType"/>), this is the size of the layer. Otherwise
     /// it is only the cached value for the size, since the size is calculated then.
     /// </remarks>
     protected SizeF  _cachedLayerSize = new SizeF(0,0);
@@ -226,73 +78,26 @@ namespace Altaxo.Graph
 
     #region Member variables
 
-    /// <summary>True if the layer area should be filled with a background brush.</summary>
-    protected bool _fillLayerArea=false;
-
-    /// <summary>The background brush for the layer area.</summary>
-    protected BrushHolder m_LayerAreaFillBrush = new BrushHolder(Color.Aqua);
 
     /// <summary>
-    /// The layers x position value, either absolute or relative, as determined by <see cref="_layerXPositionType"/>.
+    /// The background style of the layer.
     /// </summary>
-    protected double _layerXPosition = 0;
-
-    /// <summary>
-    /// The type of the x position value, see <see cref="PositionType"/>.
-    /// </summary>
-    protected PositionType _layerXPositionType=PositionType.AbsoluteValue;
-
-    /// <summary>
-    /// The layers y position value, either absolute or relative, as determined by <see cref="_layerYPositionType"/>.
-    /// </summary>
-    protected double _layerYPosition = 0;
-
-    /// <summary>
-    /// The type of the y position value, see <see cref="PositionType"/>.
-    /// </summary>
-    protected PositionType _layerYPositionType=PositionType.AbsoluteValue;
-
-
-    /// <summary>
-    /// The width of the layer, either as absolute value in point (1/72 inch), or as 
-    /// relative value as pointed out by <see cref="_layerWidthType"/>.
-    /// </summary>
-    protected double _layerWidth=0;
-
-    /// <summary>
-    /// The type of the value for the layer width, see <see cref="SizeType"/>.
-    /// </summary>
-    protected SizeType _layerWidthType=SizeType.AbsoluteValue;
-
-    /// <summary>
-    /// The height of the layer, either as absolute value in point (1/72 inch), or as 
-    /// relative value as pointed out by <see cref="_layerHeightType"/>.
-    /// </summary>
-    protected double _layerHeight= 0;
-
-    /// <summary>
-    /// The type of the value for the layer height, see <see cref="SizeType"/>.
-    /// </summary>
-    protected SizeType _layerHeightType=SizeType.AbsoluteValue;
-
-    /// <summary>The rotation angle (in degrees) of the layer.</summary>
-    protected float  _layerAngle=0; // Rotation
-    
-    /// <summary>The scaling factor of the layer, normally 1.</summary>
-    protected float  _layerScale=1;  // Scale
+    protected BackgroundStyles.IBackgroundStyle _layerBackground;
 
     /// <summary>If true, the data are clipped to the frame.</summary>
     protected bool _clipDataToFrame=true;
   
     protected TextGraphics _legend = null;
 
-    XYPlotLayerAxisStylePropertiesCollection _axisStyles = new XYPlotLayerAxisStylePropertiesCollection();
+    XYPlotLayerAxisStylesSummaryCollection _axisStyles = new XYPlotLayerAxisStylesSummaryCollection();
 
-    XYLayerAxisPropertiesCollection _axisProperties = new XYLayerAxisPropertiesCollection();
+    XYPlotLayerAxisPropertiesCollection _axisProperties = new XYPlotLayerAxisPropertiesCollection();
 
     protected GraphicsObjectCollection _graphObjects = new GraphicsObjectCollection();
 
     protected Altaxo.Graph.PlotItemCollection _plotItems;
+
+    protected XYPlotLayerPositionAndSize _location = new XYPlotLayerPositionAndSize();
 
 
     /// <summary>
@@ -309,7 +114,7 @@ namespace Altaxo.Graph
     /// <summary>
     /// The layer to which this layer is linked to, or null if this layer is not linked.
     /// </summary>
-    protected XYPlotLayer _linkedLayer;
+    protected Main.RelDocNodeProxy _linkedLayer;
 
    
 
@@ -320,1044 +125,16 @@ namespace Altaxo.Graph
     /// <summary>Number of times this event is disables, or 0 if it is enabled.</summary>
     int _plotAssociationYBoundariesChanged_EventSuspendCount;
 
-    #region LayerPositionAndSize
-    public class LayerPositionAndSize
-    {
-      /// <summary>
-      /// The layers x position value, either absolute or relative, as determined by <see cref="_layerXPositionType"/>.
-      /// </summary>
-      private double _layerXPosition = 0;
-
-      protected double XPosition
-      {
-        get { return _layerXPosition; }
-        set { _layerXPosition = value; }
-      }
-
-      /// <summary>
-      /// The type of the x position value, see <see cref="PositionType"/>.
-      /// </summary>
-      private PositionType _layerXPositionType = PositionType.AbsoluteValue;
-
-      protected PositionType XPositionType
-      {
-        get { return _layerXPositionType; }
-        set { _layerXPositionType = value; }
-      }
-
-      /// <summary>
-      /// The layers y position value, either absolute or relative, as determined by <see cref="_layerYPositionType"/>.
-      /// </summary>
-      private double _layerYPosition = 0;
-
-      protected double YPosition
-      {
-        get { return _layerYPosition; }
-        set { _layerYPosition = value; }
-      }
-
-      /// <summary>
-      /// The type of the y position value, see <see cref="PositionType"/>.
-      /// </summary>
-      private PositionType _layerYPositionType = PositionType.AbsoluteValue;
-
-      protected PositionType YPositionType
-      {
-        get { return _layerYPositionType; }
-        set { _layerYPositionType = value; }
-      }
-
-
-      /// <summary>
-      /// The width of the layer, either as absolute value in point (1/72 inch), or as 
-      /// relative value as pointed out by <see cref="_layerWidthType"/>.
-      /// </summary>
-      private double _layerWidth = 0;
-
-      protected double Width
-      {
-        get { return _layerWidth; }
-        set { _layerWidth = value; }
-      }
-
-      /// <summary>
-      /// The type of the value for the layer width, see <see cref="SizeType"/>.
-      /// </summary>
-      private SizeType _layerWidthType = SizeType.AbsoluteValue;
-
-      protected SizeType WidthType
-      {
-        get { return _layerWidthType; }
-        set { _layerWidthType = value; }
-      }
-
-      /// <summary>
-      /// The height of the layer, either as absolute value in point (1/72 inch), or as 
-      /// relative value as pointed out by <see cref="_layerHeightType"/>.
-      /// </summary>
-      private double _layerHeight = 0;
-
-      protected double Height
-      {
-        get { return _layerHeight; }
-        set { _layerHeight = value; }
-      }
-
-      /// <summary>
-      /// The type of the value for the layer height, see <see cref="SizeType"/>.
-      /// </summary>
-      private SizeType _layerHeightType = SizeType.AbsoluteValue;
-
-      protected SizeType HeightType
-      {
-        get { return _layerHeightType; }
-        set { _layerHeightType = value; }
-      }
-
-      /// <summary>The rotation angle (in degrees) of the layer.</summary>
-      private float _layerAngle = 0; // Rotation
-
-      protected float Angle
-      {
-        get { return _layerAngle; }
-        set { _layerAngle = value; }
-      }
-
-      /// <summary>The scaling factor of the layer, normally 1.</summary>
-      private float _layerScale = 1;  // Scale
-
-      protected float Scale
-      {
-        get { return _layerScale; }
-        set { _layerScale = value; }
-      }
-
-
-
-
-    }
-    #endregion
-
-    #region AxisStyleProperties
-
-    /// <summary>
-    /// This class summarizes all members that are belonging to one edge of the layer.
-    /// </summary>
-    public class XYPlotLayerAxisStyleProperties : Main.IChangedEventSource, Main.IChildChangedEventSink, ICloneable
-    {
-      /// <summary>Type of the axis. Determines the orientation of labels and ticks.</summary>
-      EdgeType _edgeType;
-     
-      /// <summary>True if the axis line and ticks and labels should be drawn.</summary>
-      bool _showAxis;
-
-      /// <summary>Style of axis. Determines the line width and color of the axis and the ticks.</summary>
-      protected XYAxisStyle _axisStyle;
-      /// <summary>
-      /// If true, the major labels will be shown.
-      /// </summary>
-      bool _showMajorLabels;
-      /// <summary>
-      /// Determines the style of the major labels.
-      /// </summary>
-      AbstractXYAxisLabelStyle _majorLabelStyle;
-      /// <summary>
-      /// If true, the minor labels will be shown.
-      /// </summary>
-      bool _showMinorLabels;
-      /// <summary>
-      /// Determines the style of the minor labels.
-      /// </summary>
-      AbstractXYAxisLabelStyle _minorLabelStyle;
-      /// <summary>
-      /// The title of the axis.
-      /// </summary>
-      TextGraphics _axisTitle;
-
-
    
-
-      void CopyFrom(XYPlotLayerAxisStyleProperties from)
-      {
-        if (null != _majorLabelStyle)
-          _majorLabelStyle.Changed -= new EventHandler(EhChildChanged);
-        if (null != _minorLabelStyle)
-          _minorLabelStyle.Changed -= new EventHandler(EhChildChanged);
-        if (null != _axisTitle)
-          _axisTitle.Changed -= new EventHandler(EhChildChanged);
-
-
-        this._edgeType = from._edgeType;
-        this._showAxis = from._showAxis;
-        this._axisStyle = from._axisStyle == null ? null : (XYAxisStyle)from._axisStyle.Clone();
-        this._showMajorLabels = from._showMajorLabels;
-        this._majorLabelStyle = from._majorLabelStyle == null ? null : (AbstractXYAxisLabelStyle)from._majorLabelStyle.Clone();
-        this._showMinorLabels = from._showMinorLabels;
-        this._minorLabelStyle = from._minorLabelStyle == null ? null : (AbstractXYAxisLabelStyle)from._minorLabelStyle.Clone();
-        this._axisTitle = from._axisTitle == null ? null : (TextGraphics)from._axisTitle.Clone();
-
-
-        if(null !=_majorLabelStyle)
-          _majorLabelStyle.Changed += new EventHandler(EhChildChanged);
-        if (null != _minorLabelStyle)
-          _minorLabelStyle.Changed += new EventHandler(EhChildChanged);
-        if (null != _axisTitle)
-          _axisTitle.Changed += new EventHandler(EhChildChanged);
-      }
-
-      public XYPlotLayerAxisStyleProperties(EdgeType type)
-      {
-        _edgeType = type;
-        _showAxis = true;
-        _axisStyle = new XYAxisStyle(_edgeType);
-        _axisStyle.Changed += new EventHandler(EhChildChanged);
-
-        _showMajorLabels = true;
-        _majorLabelStyle = new XYAxisLabelStyle(_edgeType);
-        _majorLabelStyle.Changed += new EventHandler(EhChildChanged);
-
-        _showMinorLabels = false;
-        _minorLabelStyle = new XYAxisLabelStyle(_edgeType);
-        _minorLabelStyle.Changed += new EventHandler(EhChildChanged);
-        _axisTitle = null;
-      }
-
-
-
-      /// <summary>
-      /// Tries to remove a child object of this collection.
-      /// </summary>
-      /// <param name="go">The object to remove.</param>
-      /// <returns> If the provided object is a child object and
-      /// the child object could be removed, the return value is true.</returns>
-      public bool Remove(GraphicsObject go)
-      {
-        // test our own objects for removal (only that that _are_ removable)
-        if (object.ReferenceEquals(go, this._axisTitle))
-        {
-          _axisTitle = null;
-          return true;
-        }
-        return false;
-      }
-
-      public void Paint(Graphics g, XYPlotLayer layer, Axis axis)
-      {
-        if (_showAxis)
-          _axisStyle.Paint(g, layer, axis);
-        if (ShowMajorLabels)
-          this._majorLabelStyle.Paint(g, layer, axis, _axisStyle,false);
-        if (ShowMinorLabels)
-          this._minorLabelStyle.Paint(g, layer, axis, _axisStyle,true);
-        if (_showAxis && null != _axisTitle)
-          _axisTitle.Paint(g, layer);
-      }
-
-      #region Properties
-      /// <summary>
-      /// Determines whether or not the axis line and ticks should be drawn.
-      /// </summary>
-      public bool ShowAxis
-      {
-        get
-        {
-          return _showAxis;
-        }
-        set
-        {
-          bool oldvalue = _showAxis;
-          _showAxis = value;
-
-          if (value != oldvalue)
-            OnChanged();
-        }
-      }
-
-      /// <summary>
-      /// Determines whether or not the major labels should be shown.
-      /// </summary>
-      public bool ShowMajorLabels
-      {
-        get
-        {
-          return _showAxis && _showMajorLabels && _majorLabelStyle!=null;
-        }
-        set
-        {
-          bool oldvalue = _showMajorLabels;
-          _showMajorLabels = value;
-
-          if (value == true && _majorLabelStyle == null)
-            MajorLabelStyle = new XYAxisLabelStyle(this._edgeType);
-
-          if (value != oldvalue)
-            OnChanged();
-        }
-      }
-
-      /// <summary>
-      /// Determines whether or not the minor labels should be shown.
-      /// </summary>
-      public bool ShowMinorLabels
-      {
-        get
-        {
-          return _showAxis && _showMinorLabels && _minorLabelStyle != null;
-        }
-        set
-        {
-          bool oldvalue = _showMinorLabels;
-          _showMinorLabels = value;
-
-          if (value == true && _minorLabelStyle == null)
-            MinorLabelStyle = new XYAxisLabelStyle(this._edgeType);
-
-          if (value != oldvalue)
-            OnChanged();
-        }
-      }
-
-      /// <summary>Style of axis. Determines the line width and color of the axis and the ticks.</summary>
-      public XYAxisStyle AxisStyle
-      {
-        get
-        {
-          return _axisStyle;
-        }
-        set
-        {
-          XYAxisStyle oldvalue = _axisStyle;
-          _axisStyle = value;
-
-          if (!object.ReferenceEquals(value, oldvalue))
-          {
-            if (null != oldvalue)
-              oldvalue.Changed -= new EventHandler(EhChildChanged);
-            if (null != value)
-              value.Changed += new EventHandler(EhChildChanged);
-
-            OnChanged();
-          }
-        }
-      }
-
-      /// <summary>
-      /// Determines the style of the major labels.
-      /// </summary>
-      public AbstractXYAxisLabelStyle MajorLabelStyle
-      {
-        get
-        {
-          return _majorLabelStyle;
-        }
-        set
-        {
-          AbstractXYAxisLabelStyle oldvalue = _majorLabelStyle;
-          _majorLabelStyle = value;
-
-          if (!object.ReferenceEquals(value, oldvalue))
-          {
-            if (null != oldvalue)
-              oldvalue.Changed -= new EventHandler(EhChildChanged);
-            if(null!=value)
-              value.Changed += new EventHandler(EhChildChanged);
-
-            OnChanged();
-          }
-        }
-      }
-
-
-      /// <summary>
-      /// Determines the style of the minor labels.
-      /// </summary>
-      public AbstractXYAxisLabelStyle MinorLabelStyle
-      {
-        get
-        {
-          return _minorLabelStyle;
-        }
-        set
-        {
-          AbstractXYAxisLabelStyle oldvalue = _minorLabelStyle;
-          _minorLabelStyle = value;
-
-          if (!object.ReferenceEquals(value, oldvalue))
-          {
-            if (null != oldvalue)
-              oldvalue.Changed -= new EventHandler(EhChildChanged);
-            if (null != value)
-              value.Changed += new EventHandler(EhChildChanged);
-
-            OnChanged();
-          }
-        }
-      }
-
-
-      public TextGraphics Title
-      {
-        get { return _axisTitle; }
-        set
-        {
-          TextGraphics oldvalue = _axisTitle;
-          _axisTitle = value;
-
-          if(!object.ReferenceEquals(_axisTitle,oldvalue))
-          {
-            OnChanged();
-          }
-        }
-      }
-
-      #endregion
-
-      #region IChangedEventSource Members
-
-      public event EventHandler Changed;
-
-      protected void OnChanged()
-      {
-        if (Changed != null)
-          Changed(this, EventArgs.Empty);
-      }
-
-      #endregion
-
-      #region IChildChangedEventSink Members
-
-      public void EhChildChanged(object child, EventArgs e)
-      {
-        OnChanged();
-      }
-
-      #endregion
-
-      #region ICloneable Members
-
-      public object Clone()
-      {
-        XYPlotLayerAxisStyleProperties res = new XYPlotLayerAxisStyleProperties(this._edgeType);
-        res.CopyFrom(this);
-        return res;
-      }
-
-      #endregion
-    }
-
-
-    public class XYAxisStylesSummary : ICloneable, Main.IChangedEventSource
-    {
-      GridStyle _gridStyle;
-      XYPlotLayerAxisStyleProperties[] _axisStyles;
-      EdgeType[] _edges;
-
-      public XYAxisStylesSummary(EdgeType[] edges)
-      {
-        _edges = (EdgeType[])edges.Clone();
-        _axisStyles = new XYPlotLayerAxisStyleProperties[_edges.Length];
-      }
-
-      void CopyFrom(XYAxisStylesSummary from)
-      {
-        this.GridStyle = from._gridStyle == null ? null : (GridStyle)from._gridStyle.Clone();
-
-        this._axisStyles = new XYPlotLayerAxisStyleProperties[from._axisStyles.Length];
-        for (int i = 0; i < _axisStyles.Length; ++i)
-        {
-          if (from._axisStyles[i] != null)
-            SetAxisStyle((XYPlotLayerAxisStyleProperties)from._axisStyles[i].Clone(), i);
-        }
-      }
-
-      public void SetAxisStyle(XYPlotLayerAxisStyleProperties value, int i)
-      {
-        XYPlotLayerAxisStyleProperties oldvalue = _axisStyles[i];
-        if (!object.ReferenceEquals(value, oldvalue))
-        {
-        {
-          if (oldvalue != null)
-            oldvalue.Changed-= new EventHandler(this.EhChildChanged);
-          if (value != null)
-            value.Changed += new EventHandler(this.EhChildChanged);
-
-          OnChanged();
-        }
-        }
-      }
-
-      public XYPlotLayerAxisStyleProperties AxisStyle(int i)
-      {
-        if(null==_axisStyles[i])
-          _axisStyles[i] = new XYPlotLayerAxisStyleProperties(_edges[i]);
-        return _axisStyles[i];
-      }
-
-
-      public GridStyle GridStyle
-      {
-        get { return _gridStyle; }
-        set
-        {
-          GridStyle oldvalue = _gridStyle;
-          _gridStyle = value;
-          if (!object.ReferenceEquals(value, oldvalue))
-          {
-            if (oldvalue != null)
-              oldvalue.Changed -= new EventHandler(this.EhChildChanged);
-            if (value != null)
-              value.Changed += new EventHandler(this.EhChildChanged);
-
-            OnChanged();
-          }
-        }
-      }
-
-     
-
-
-      public bool Remove(GraphicsObject go)
-      {
-        for (int i = 0; i < this._axisStyles.Length; ++i)
-          if (_axisStyles[i] != null && _axisStyles[i].Remove(go))
-            return true;
-
-        return false;
-      }
-
-      public void Paint(Graphics g, XYPlotLayer layer, int axisnumber)
-      {
-        Axis axis = axisnumber == 0 ? layer.XAxis : layer.YAxis;
-
-        for (int i = 0; i < _axisStyles.Length; ++i)
-          if (null != _axisStyles[i])
-            _axisStyles[i].Paint(g, layer, axis);
-        
-        if(null!=_gridStyle)
-          _gridStyle.Paint(g, layer, axisnumber);
-      }
-
-
-      #region IChangedEventSource Members
-
-      public event EventHandler Changed;
-
-      protected virtual void OnChanged()
-      {
-        if (null != Changed)
-          Changed(this, EventArgs.Empty);
-      }
-
-      void EhChildChanged(object sender, EventArgs e)
-      {
-        OnChanged();
-      }
-
-      #endregion
-
-      #region ICloneable Members
-
-      public object Clone()
-      {
-        XYAxisStylesSummary result = new XYAxisStylesSummary(this._edges);
-        result.CopyFrom(this);
-        return result;
-      }
-
-      #endregion
-    }
-
-    public class XYPlotLayerAxisStylePropertiesCollection : Main.IChildChangedEventSink, Main.IChangedEventSource, ICloneable
-    {
-      //      XYPlotLayerAxisStyleProperties[] _styles = new XYPlotLayerAxisStyleProperties[4];
-
-      XYAxisStylesSummary[] _styles;
-
-
-      public XYPlotLayerAxisStylePropertiesCollection()
-      {
-        _styles = new XYAxisStylesSummary[2];
-
-        this._styles[0] = new XYAxisStylesSummary(new EdgeType[] { EdgeType.Bottom, EdgeType.Top });
-        this._styles[0].Changed += new EventHandler(this.EhChildChanged);
-
-        this._styles[1] = new XYAxisStylesSummary(new EdgeType[] { EdgeType.Left, EdgeType.Right });
-        this._styles[1].Changed += new EventHandler(this.EhChildChanged);
-
-      }
-
-      void CopyFrom(XYPlotLayerAxisStylePropertiesCollection from)
-      {
-        // Remove old event handlers
-        for (int i = 0; i < this._styles.Length; ++i)
-          if (_styles[i] != null)
-            _styles[i].Changed -= new EventHandler(this.EhChildChanged);
-
-        // now clone
-        for (int i = 0; i < from._styles.Length; ++i)
-        {
-          this._styles[i] = from._styles[i] == null ? null : (XYAxisStylesSummary)from._styles[i].Clone();
-          if (this._styles[i] != null)
-            this._styles[i].Changed += new EventHandler(this.EhChildChanged);
-        }
-      }
-
-      public XYPlotLayerAxisStyleProperties this[EdgeType edge]
-      {
-        get
-        {
-          switch (edge)
-          {
-            case EdgeType.Bottom:
-              return _styles[0].AxisStyle(0);
-              
-            case EdgeType.Top:
-              return _styles[0].AxisStyle(1);
-              
-            case EdgeType.Left:
-              return _styles[1].AxisStyle(0);
-              
-            case EdgeType.Right:
-              return _styles[1].AxisStyle(1);
-            default:
-              return null;
-          }
-        }
-      }
-
-      public XYAxisStylesSummary Axis(int i)
-      {
-        return _styles[i];
-      }
-
-      public XYAxisStylesSummary X
-      {
-        get
-        {
-          return _styles[0];
-        }
-      }
-
-      public XYAxisStylesSummary Y
-      {
-        get
-        {
-          return _styles[1];
-        }
-      }
-
-      public bool Remove(GraphicsObject go)
-      {
-        for (int i = 0; i < this._styles.Length; ++i)
-          if (_styles[i] != null && _styles[i].Remove(go))
-            return true;
-
-        return false;
-      }
-
-      public void Paint(Graphics g, XYPlotLayer layer)
-      {
-        _styles[0].Paint(g, layer, 0);
-        _styles[1].Paint(g, layer, 1);
-      }
-
-      #region IChildChangedEventSink Members
-
-      public void EhChildChanged(object child, EventArgs e)
-      {
-        OnChanged();
-      }
-
-      #endregion
-
-      #region IChangedEventSource Members
-
-      public event EventHandler Changed;
-
-      public void OnChanged()
-      {
-        if (Changed != null)
-          Changed(this, EventArgs.Empty);
-      }
-
-      #endregion
-
-      #region ICloneable Members
-
-      public object Clone()
-      {
-        XYPlotLayerAxisStylePropertiesCollection res = new XYPlotLayerAxisStylePropertiesCollection();
-        res.CopyFrom(this);
-        return res;
-      }
-
-      #endregion
-    }
-
-    #endregion
-
-    #region AxisProperties
-
-    public class XYLayerAxisProperties
-    {
-      /// <summary>
-      /// The axis.
-      /// </summary>
-      private Axis _axis; // the X-Axis
-
-      /// <summary>Indicate if x-axis is linked to the linked layer x axis.</summary>
-      private bool _isLinked;
-
-      /// <summary>The value a of x-axis link for link of origin: org' = a + b*org.</summary>
-      private double _linkAxisOrgA;
-      /// <summary>The value b of x-axis link for link of origin: org' = a + b*org.</summary>
-      private double _linkAxisOrgB;
-      /// <summary>The value a of x-axis link for link of end: end' = a + b*end.</summary>
-      private double _linkAxisEndA;
-      /// <summary>The value b of x-axis link for link of end: end' = a + b*end.</summary>
-      private double _linkAxisEndB;
-
-      /// <summary>
-      /// Fired if the axis changed or the axis boundaries changed.
-      /// </summary>
-      public event EventHandler AxisInstanceChanged;
-      /// <summary>
-      /// Fired if the axis properties changed.
-      /// </summary>
-      public event EventHandler AxisPropertiesChanged;
-
-      public XYLayerAxisProperties()
-      {
-        Axis = new LinearAxis();
-        _isLinked = false;
-        _linkAxisOrgA = 0;
-        _linkAxisOrgB = 1;
-        _linkAxisEndA = 0;
-        _linkAxisEndB = 1;
-      }
-
-
-      void CopyFrom(XYLayerAxisProperties from)
-      {
-        this.Axis = from._axis == null ? null : (Axis)from._axis.Clone();
-        this._isLinked = from._isLinked;
-        this._linkAxisOrgA = from._linkAxisOrgA;
-        this._linkAxisOrgB = from._linkAxisOrgB;
-        this._linkAxisEndA = from._linkAxisEndA;
-        this._linkAxisEndB = from._linkAxisEndB;
-      }
-
-      public XYLayerAxisProperties Clone()
-      {
-        XYLayerAxisProperties result = new XYLayerAxisProperties();
-        result.CopyFrom(this);
-        return result;
-      }
-
-      public bool IsLinked
-      {
-        get { return _isLinked; }
-        set
-        {
-          bool oldValue = _isLinked;
-          _isLinked = value;
-          _axis.IsLinked = value;
-
-          if (value != oldValue && value == true)
-          {
-            // simulate the event, that the axis has changed
-            this.OnAxisInstanceChanged();  // this will cause the axis to update with the linked axis
-          }
-        }
-      }
-
-      /// <summary>The type of x axis link.</summary>
-      /// <value>Can be either None, Straight or Custom link.</value>
-      public AxisLinkType AxisLinkType
-      {
-        get
-        {
-          if (!IsLinked)
-            return AxisLinkType.None;
-          else if (LinkAxisOrgA == 0 && LinkAxisOrgB == 1 && LinkAxisEndA == 0 && LinkAxisEndB == 1)
-            return AxisLinkType.Straight;
-          else return AxisLinkType.Custom;
-        }
-        set
-        {
-          if (value == AxisLinkType.None)
-          {
-            IsLinked = false;
-          }
-          else
-          {
-            if (value == AxisLinkType.Straight)
-            {
-              _linkAxisOrgA = 0;
-              _linkAxisOrgB = 1;
-              _linkAxisEndA = 0;
-              _linkAxisEndB = 1;
-            }
-
-            IsLinked = true;
-          }
-        }
-      }
-
-
-      /// <summary>
-      /// Set all parameters of the axis link by once.
-      /// </summary>
-      /// <param name="linktype">The type of the axis link, i.e. None, Straight or Custom.</param>
-      /// <param name="orgA">The value a of x-axis link for link of axis origin: org' = a + b*org.</param>
-      /// <param name="orgB">The value b of x-axis link for link of axis origin: org' = a + b*org.</param>
-      /// <param name="endA">The value a of x-axis link for link of axis end: end' = a + b*end.</param>
-      /// <param name="endB">The value b of x-axis link for link of axis end: end' = a + b*end.</param>
-      public void SetAxisLinkParameter(AxisLinkType linktype, double orgA, double orgB, double endA, double endB)
-      {
-        if (linktype == AxisLinkType.Straight)
-        {
-          orgA = 0;
-          orgB = 1;
-          endA = 0;
-          endB = 1;
-        }
-
-        bool linkaxis = (linktype != AxisLinkType.None);
-
-        if (
-          (linkaxis != this.IsLinked) ||
-          (orgA != this.LinkAxisOrgA) ||
-          (orgB != this.LinkAxisOrgB) ||
-          (endA != this.LinkAxisEndA) ||
-          (endB != this.LinkAxisEndB))
-        {
-          this._isLinked = linkaxis;
-          this._linkAxisOrgA = orgA;
-          this._linkAxisOrgB = orgB;
-          this._linkAxisEndA = endA;
-          this._linkAxisEndB = endB;
-
-          if (IsLinked)
-            OnAxisInstanceChanged(); 
-        }
-      }
-
-      public double LinkAxisOrgA
-      {
-        get { return _linkAxisOrgA; }
-        set 
-        {
-          _linkAxisOrgA = value;
-          if (_isLinked)
-            OnAxisInstanceChanged();
-        }
-      }
-
-      
-
-      public double LinkAxisOrgB
-      {
-        get { return _linkAxisOrgB; }
-        set 
-        { 
-          _linkAxisOrgB = value;
-          if (_isLinked)
-            OnAxisInstanceChanged();
-        }
-      }
-
-      
-
-      public double LinkAxisEndA
-      {
-        get { return _linkAxisEndA; }
-        set 
-        {
-          _linkAxisEndA = value;
-          if (_isLinked)
-            OnAxisInstanceChanged();
-        }
-      }
-
-     
-
-      public double LinkAxisEndB
-      {
-        get { return _linkAxisEndB; }
-        set 
-        { 
-          _linkAxisEndB = value;
-          if (_isLinked)
-            OnAxisInstanceChanged();
-        }
-      }
-
-      public Axis Axis
-      {
-        get 
-        {
-          return _axis; 
-        }
-        set
-        {
-          Axis oldvalue = _axis;
-          _axis = value;
-          if (!object.ReferenceEquals(value, oldvalue))
-          {
-            if (null != oldvalue)
-            {
-              oldvalue.Changed -= new EventHandler(this.EhAxisPropertiesChanged);
-              oldvalue.IsLinked = false;
-            }
-            if (null != value)
-            {
-              value.Changed += new EventHandler(this.EhAxisPropertiesChanged);
-              value.IsLinked = this._isLinked;
-            }
-
-            OnAxisInstanceChanged();
-          }
-        }
-      }
-
-      void EhAxisPropertiesChanged(object sender, EventArgs e)
-      {
-        OnAxisPropertiesChanged();
-      }
-
-      /// <summary>
-      /// Measures if the linked axis has changed.
-      /// </summary>
-      /// <param name="linkedAxis">The axis that is the master axis (our axis is linked to this axis).</param>
-      public void EhLinkedLayerAxesChanged(Axis linkedAxis)
-      {
-        if (_isLinked)
-        {
-          // we must disable our own interrogator because otherwise we can not change the axis
-          _axis.IsLinked = false;
-          _axis.ProcessDataBounds(
-            LinkAxisOrgA + LinkAxisOrgB * linkedAxis.OrgAsVariant, true,
-            LinkAxisEndA + LinkAxisEndB * linkedAxis.EndAsVariant, true);
-          _axis.IsLinked = true; // restore the linked state of the axis
-
-          this.OnAxisPropertiesChanged(); // indicate that the axes boundaries have changed
-
-        }
-      }
-
-
-      protected virtual void OnAxisInstanceChanged()
-      {
-        if (AxisInstanceChanged != null)
-          AxisInstanceChanged(this, EventArgs.Empty);
-      }
-
-      protected virtual void OnAxisPropertiesChanged()
-      {
-        if (AxisPropertiesChanged != null)
-          AxisPropertiesChanged(this, EventArgs.Empty);
-      }
-
-    }
-
-    public class XYLayerAxisPropertiesCollection : Main.IChangedEventSource
-    {
-      XYLayerAxisProperties[] _props = new XYLayerAxisProperties[2];
-
-      /// <summary>
-      /// Fired if one of the axis has changed (or its boundaries).
-      /// </summary>
-      public event EventHandler AxesChanged;
-
-      /// <summary>
-      /// Fired if something in this class or in its child has changed.
-      /// </summary>
-      public event EventHandler Changed;
-
-      public XYLayerAxisPropertiesCollection()
-      {
-        _props = new XYLayerAxisProperties[2];
-        _props[0] = new XYLayerAxisProperties();
-        _props[0].AxisPropertiesChanged += new EventHandler(this.EhAxisPropertiesChanged);
-        _props[1] = new XYLayerAxisProperties();
-        _props[1].AxisPropertiesChanged += new EventHandler(this.EhAxisPropertiesChanged);
-      }
-
-      public XYLayerAxisPropertiesCollection(XYLayerAxisPropertiesCollection from)
-      {
-        CopyFrom(from);
-      }
-
-      public void CopyFrom(XYLayerAxisPropertiesCollection from)
-      {
-        if (_props != null)
-        {
-          for (int i = 0; i < _props.Length; ++i)
-          {
-            _props[i].AxisPropertiesChanged -= new EventHandler(EhAxisPropertiesChanged);
-            _props[i] = null;
-          }
-        }
-
-        _props = new XYLayerAxisProperties[from._props.Length];
-        for (int i = 0; i < from._props.Length; i++)
-        {
-          _props[i] = this._props[i].Clone();
-          _props[i].AxisPropertiesChanged += new EventHandler(EhAxisPropertiesChanged);
-        }
-      }
-
-      public XYLayerAxisPropertiesCollection Clone()
-      {
-        return new XYLayerAxisPropertiesCollection(this);
-      }
-
-      public XYLayerAxisProperties X
-      {
-        get
-        {
-          return _props[0];
-        }
-      }
-
-      public XYLayerAxisProperties Y
-      {
-        get
-        {
-          return _props[1];
-        }
-      }
-
-
-      private void EhAxisPropertiesChanged(object sender, EventArgs e)
-      {
-        if (AxesChanged != null)
-          AxesChanged(this, EventArgs.Empty);
-
-        OnChanged();
-      }
-
-      protected virtual void OnChanged()
-      {
-        if (null != Changed)
-          Changed(this, EventArgs.Empty);
-      }
-     
-    }
-
-    #endregion
-
-
     /// <summary>
     /// Collection of the axis styles for the left, bottom, right, and top axis.
     /// </summary>
-    public XYPlotLayerAxisStylePropertiesCollection AxisStyles
+    public XYPlotLayerAxisStylesSummaryCollection AxisStyles
     {
       get { return _axisStyles; }
     }
 
-    public XYLayerAxisPropertiesCollection AxisProperties
+    public XYPlotLayerAxisPropertiesCollection AxisProperties
     {
       get
       {
@@ -1391,7 +168,11 @@ namespace Altaxo.Graph
       /// <param name="context">The streaming context.</param>
       public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context  )
       {
+        throw new ApplicationException("Calling of an outdated serialization routine");
+
+        /*
         XYPlotLayer s = (XYPlotLayer)obj;
+
 
       
         // XYPlotLayer style
@@ -1400,20 +181,20 @@ namespace Altaxo.Graph
 
         // size, position, rotation and scale
         
-        info.AddValue("WidthType",s._layerWidthType);
-        info.AddValue("HeightType",s._layerHeightType);
-        info.AddValue("Width",s._layerWidth);
-        info.AddValue("Height",s._layerHeight);
+        info.AddValue("WidthType",s._location.WidthType);
+        info.AddValue("HeightType",s._location.HeightType);
+        info.AddValue("Width",s._location.Width);
+        info.AddValue("Height",s._location.Height);
         info.AddValue("CachedSize",s._cachedLayerSize);
 
-        info.AddValue("XPositionType",s._layerXPositionType);
-        info.AddValue("YPositionType",s._layerYPositionType);
-        info.AddValue("XPosition",s._layerXPosition);
-        info.AddValue("YPosition",s._layerYPosition);
+        info.AddValue("XPositionType",s._location.XPositionType);
+        info.AddValue("YPositionType",s._location.YPositionType);
+        info.AddValue("XPosition",s._location.XPosition);
+        info.AddValue("YPosition",s._location.YPosition);
         info.AddValue("CachedPosition",s._cachedLayerPosition);
 
-        info.AddValue("Rotation",s._layerAngle);
-        info.AddValue("Scale",s._layerScale);
+        info.AddValue("Rotation",s._location.Angle);
+        info.AddValue("Scale",s._location.Scale);
 
         // axis related
 
@@ -1461,7 +242,7 @@ namespace Altaxo.Graph
         info.AddValue("GraphObjects",s._graphObjects);
         info.AddValue("Plots",s._plotItems);
 
-
+        */
 
       }
 
@@ -1478,27 +259,30 @@ namespace Altaxo.Graph
         XYPlotLayer s = (XYPlotLayer)obj;
       
         // XYPlotLayer style
-        s._fillLayerArea = info.GetBoolean("FillLayerArea");
-        s.m_LayerAreaFillBrush = (BrushHolder)info.GetValue("LayerAreaFillBrush",typeof(BrushHolder));
+        bool fillLayerArea = info.GetBoolean("FillLayerArea");
+        BrushHolder layerAreaFillBrush = (BrushHolder)info.GetValue("LayerAreaFillBrush",typeof(BrushHolder));
+
+        if (fillLayerArea)
+          s._layerBackground = new BackgroundStyles.BackgroundColorStyle(layerAreaFillBrush.Color);
 
 
 
         // size, position, rotation and scale
         
-        s._layerWidthType  = (SizeType)info.GetValue("WidthType",typeof(SizeType));
-        s._layerHeightType = (SizeType)info.GetValue("HeightType",typeof(SizeType));
-        s._layerWidth  = info.GetDouble("Width");
-        s._layerHeight = info.GetDouble("Height");
+        s._location.WidthType  = (XYPlotLayerSizeType)info.GetValue("WidthType",typeof(XYPlotLayerSizeType));
+        s._location.HeightType = (XYPlotLayerSizeType)info.GetValue("HeightType",typeof(XYPlotLayerSizeType));
+        s._location.Width  = info.GetDouble("Width");
+        s._location.Height = info.GetDouble("Height");
         s._cachedLayerSize   = (SizeF)info.GetValue("CachedSize",typeof(SizeF));
 
-        s._layerXPositionType = (PositionType)info.GetValue("XPositionType",typeof(PositionType));
-        s._layerYPositionType = (PositionType)info.GetValue("YPositionType",typeof(PositionType));
-        s._layerXPosition = info.GetDouble("XPosition");
-        s._layerYPosition = info.GetDouble("YPosition");
+        s._location.XPositionType = (XYPlotLayerPositionType)info.GetValue("XPositionType",typeof(XYPlotLayerPositionType));
+        s._location.YPositionType = (XYPlotLayerPositionType)info.GetValue("YPositionType",typeof(XYPlotLayerPositionType));
+        s._location.XPosition = info.GetDouble("XPosition");
+        s._location.YPosition = info.GetDouble("YPosition");
         s._cachedLayerPosition = (PointF)info.GetValue("CachedPosition",typeof(PointF));
 
-        s._layerAngle  = info.GetSingle("Rotation");
-        s._layerScale = info.GetSingle("Scale");
+        s._location.Angle  = info.GetSingle("Rotation");
+        s._location.Scale = info.GetSingle("Scale");
 
         // axis related
 
@@ -1542,7 +326,7 @@ namespace Altaxo.Graph
         s._legend = (Graph.TextGraphics)info.GetValue("Legend",typeof(Graph.TextGraphics));
       
         // XYPlotLayer specific
-        s._linkedLayer = (XYPlotLayer)info.GetValue("LinkedLayer",typeof(XYPlotLayer));
+        s._linkedLayer.SetDocNode((XYPlotLayer)info.GetValue("LinkedLayer", typeof(XYPlotLayer)), s);
 
         s._graphObjects = (Graph.GraphicsObjectCollection)info.GetValue("GraphObjects",typeof(Graph.GraphicsObjectCollection));
 
@@ -1558,6 +342,8 @@ namespace Altaxo.Graph
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
+        throw new ApplicationException("Calling of an outdated serialization routine");
+        /*
         XYPlotLayer s = (XYPlotLayer)obj;
         // XYPlotLayer style
         info.AddValue("FillLayerArea",s._fillLayerArea);
@@ -1565,20 +351,20 @@ namespace Altaxo.Graph
 
         // size, position, rotation and scale
         
-        info.AddValue("WidthType",s._layerWidthType);
-        info.AddValue("HeightType",s._layerHeightType);
-        info.AddValue("Width",s._layerWidth);
-        info.AddValue("Height",s._layerHeight);
+        info.AddValue("WidthType",s._location.WidthType);
+        info.AddValue("HeightType",s._location.HeightType);
+        info.AddValue("Width",s._location.Width);
+        info.AddValue("Height",s._location.Height);
         info.AddValue("CachedSize",s._cachedLayerSize);
 
-        info.AddValue("XPositionType",s._layerXPositionType);
-        info.AddValue("YPositionType",s._layerYPositionType);
-        info.AddValue("XPosition",s._layerXPosition);
-        info.AddValue("YPosition",s._layerYPosition);
+        info.AddValue("XPositionType",s._location.XPositionType);
+        info.AddValue("YPositionType",s._location.YPositionType);
+        info.AddValue("XPosition",s._location.XPosition);
+        info.AddValue("YPosition",s._location.YPosition);
         info.AddValue("CachedPosition",s._cachedLayerPosition);
 
-        info.AddValue("Rotation",s._layerAngle);
-        info.AddValue("Scale",s._layerScale);
+        info.AddValue("Rotation",s._location.Angle);
+        info.AddValue("Scale",s._location.Scale);
 
         // axis related
 
@@ -1626,7 +412,7 @@ namespace Altaxo.Graph
       
         info.AddValue("GraphicsObjectCollection",s._graphObjects);
         info.AddValue("Plots",s._plotItems);
-
+        */
 
       }
 
@@ -1651,28 +437,31 @@ namespace Altaxo.Graph
         
         XYPlotLayer s = null!=o ? (XYPlotLayer)o : new XYPlotLayer();
 
-        // XYPlotLayer style
-        s._fillLayerArea = info.GetBoolean("FillLayerArea");
-        s.m_LayerAreaFillBrush = (BrushHolder)info.GetValue("LayerAreaFillBrush",typeof(BrushHolder));
+        bool fillLayerArea = info.GetBoolean("FillLayerArea");
+        BrushHolder layerAreaFillBrush = (BrushHolder)info.GetValue("LayerAreaFillBrush", typeof(BrushHolder));
+
+        if (fillLayerArea)
+          s._layerBackground = new BackgroundStyles.BackgroundColorStyle(layerAreaFillBrush.Color);
+
 
 
 
         // size, position, rotation and scale
         
-        s._layerWidthType  = (SizeType)info.GetValue("WidthType",typeof(SizeType));
-        s._layerHeightType = (SizeType)info.GetValue("HeightType",typeof(SizeType));
-        s._layerWidth  = info.GetDouble("Width");
-        s._layerHeight = info.GetDouble("Height");
+        s._location.WidthType  = (XYPlotLayerSizeType)info.GetValue("WidthType",typeof(XYPlotLayerSizeType));
+        s._location.HeightType = (XYPlotLayerSizeType)info.GetValue("HeightType",typeof(XYPlotLayerSizeType));
+        s._location.Width  = info.GetDouble("Width");
+        s._location.Height = info.GetDouble("Height");
         s._cachedLayerSize   = (SizeF)info.GetValue("CachedSize",typeof(SizeF));
 
-        s._layerXPositionType = (PositionType)info.GetValue("XPositionType",typeof(PositionType));
-        s._layerYPositionType = (PositionType)info.GetValue("YPositionType",typeof(PositionType));
-        s._layerXPosition = info.GetDouble("XPosition");
-        s._layerYPosition = info.GetDouble("YPosition");
+        s._location.XPositionType = (XYPlotLayerPositionType)info.GetValue("XPositionType",typeof(XYPlotLayerPositionType));
+        s._location.YPositionType = (XYPlotLayerPositionType)info.GetValue("YPositionType",typeof(XYPlotLayerPositionType));
+        s._location.XPosition = info.GetDouble("XPosition");
+        s._location.YPosition = info.GetDouble("YPosition");
         s._cachedLayerPosition = (PointF)info.GetValue("CachedPosition",typeof(PointF));
 
-        s._layerAngle  = info.GetSingle("Rotation");
-        s._layerScale = info.GetSingle("Scale");
+        s._location.Angle  = info.GetSingle("Rotation");
+        s._location.Scale = info.GetSingle("Scale");
 
         // axis related
 
@@ -1778,7 +567,97 @@ namespace Altaxo.Graph
         return s;
       }
     }
-    
+
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotLayer), 3)]
+    public class XmlSerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        XYPlotLayer s = (XYPlotLayer)obj;
+
+        // Background
+        info.AddValue("Background",s._layerBackground);
+
+        // size, position, rotation and scale
+        info.AddValue("LocationAndSize", s._location);
+        info.AddValue("CachedSize", s._cachedLayerSize);
+        info.AddValue("CachedPosition", s._cachedLayerPosition);
+
+        // LayerProperties
+        info.AddValue("ClipDataToFrame",s._clipDataToFrame);
+
+        // axis related
+        info.AddValue("AxisProperties", s._axisProperties);
+ 
+        // Styles
+        info.AddValue("AxisStyles", s._axisStyles);
+
+        // Legends
+        info.CreateArray("Legends",1);
+        info.AddValue("e", s._legend);
+        info.CommitArray();
+
+        // XYPlotLayer specific
+        info.CreateArray("LinkedLayers",1);
+        info.AddValue("e", s._linkedLayer);
+        info.CommitArray();
+
+        info.AddValue("GraphicGlyphs", s._graphObjects);
+
+        info.AddValue("Plots", s._plotItems);
+      }
+
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+
+        XYPlotLayer s = SDeserialize(o, info, parent);
+        s.CalculateMatrix();
+        s.CreateEventLinks();
+        return s;
+      }
+
+      protected virtual XYPlotLayer SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+
+        XYPlotLayer s = (o == null ? new XYPlotLayer() : (XYPlotLayer)o);
+        int count;
+
+         // Background
+        s._layerBackground = (BackgroundStyles.IBackgroundStyle)info.GetValue("Background",s);
+
+        // size, position, rotation and scale
+        s._location = (XYPlotLayerPositionAndSize)info.GetValue("LocationAndSize", s);
+        s._cachedLayerSize   = (SizeF)info.GetValue("CachedSize",typeof(SizeF));
+        s._cachedLayerPosition = (PointF)info.GetValue("CachedPosition",typeof(PointF));
+
+
+        // LayerProperties
+         s._clipDataToFrame = info.GetBoolean("ClipDataToFrame");
+
+        // axis related
+        s._axisProperties = (XYPlotLayerAxisPropertiesCollection)info.GetValue("AxisProperties", s);
+ 
+        // Styles
+        s._axisStyles = (XYPlotLayerAxisStylesSummaryCollection)info.GetValue("AxisStyles", s);
+
+        // Legends
+        count = info.OpenArray("Legends");
+        s._legend = (TextGraphics)info.GetValue("e", s._legend);
+        info.CloseArray(count);
+
+        // XYPlotLayer specific
+        count = info.OpenArray("LinkedLayers");
+        s._linkedLayer = (Main.RelDocNodeProxy)info.GetValue("e", s);
+        info.CloseArray(count);
+
+        s._graphObjects = (GraphicsObjectCollection)info.GetValue("GraphicGlyphs", s);
+
+        s._plotItems = (PlotItemCollection)info.GetValue("Plots", s);
+
+        return s;
+      }
+    }
 
     
     /// <summary>
@@ -1804,58 +683,27 @@ namespace Altaxo.Graph
     public XYPlotLayer(XYPlotLayer from)
     {
       // XYPlotLayer style
-      this._fillLayerArea = from._fillLayerArea;
-      this.m_LayerAreaFillBrush = null==from.m_LayerAreaFillBrush ? null : (BrushHolder)from.m_LayerAreaFillBrush.Clone();
+      this._layerBackground = from._layerBackground == null ? null : (BackgroundStyles.IBackgroundStyle)from._layerBackground.Clone();
 
       // size, position, rotation and scale
-      this._layerWidthType  = from._layerWidthType;
-      this._layerHeightType = from._layerHeightType;
-      this._layerWidth  = from._layerWidth;
-      this._layerHeight = from._layerHeight ;
+      this._location = from._location.Clone();
       this._cachedLayerSize   = from._cachedLayerSize;
+      this._cachedLayerPosition = from._cachedLayerPosition;
 
       this._LogicalToAreaConverter = new LogicalToAreaConverter(this);
       this._AreaToLogicalConverter = new AreaToLogicalConverter(this);
 
-      this._layerXPositionType = from._layerXPositionType;
-      this._layerYPositionType = from._layerYPositionType;
-      this._layerXPosition = from._layerXPosition ;
-      this._layerYPosition = from._layerYPosition;
-      this._cachedLayerPosition = from._cachedLayerPosition;
 
-      this._layerAngle  =from._layerAngle;
-      this._layerScale = from._layerScale;
+
 
       // axis related
 
-      this._axisProperties = (XYLayerAxisPropertiesCollection)from._axisProperties.Clone();
+      this._axisProperties = (XYPlotLayerAxisPropertiesCollection)from._axisProperties.Clone();
 
       // Styles
 
-      this._axisStyles = (XYPlotLayerAxisStylePropertiesCollection)from._axisStyles.Clone();
+      this._axisStyles = (XYPlotLayerAxisStylesSummaryCollection)from._axisStyles.Clone();
 
-      //this._showLeftAxis = from._showLeftAxis;
-      //this._showBottomAxis = from._showBottomAxis;
-      //this._showRightAxis = from._showRightAxis;
-      //this._showTopAxis = from._showTopAxis;
-
-      // this._leftAxisStyle = null==from._leftAxisStyle ? null : (Graph.XYAxisStyle)from._leftAxisStyle.Clone();
-      // this._bottomAxisStyle = null==from._bottomAxisStyle ? null : (Graph.XYAxisStyle)from._bottomAxisStyle.Clone();
-      // this._rightAxisStyle = null==from._rightAxisStyle ? null : (Graph.XYAxisStyle)from._rightAxisStyle.Clone();
-      // this._topAxisStyle = null==from._topAxisStyle ? null : (Graph.XYAxisStyle)from._topAxisStyle.Clone();
-      
-      
-      // this._leftMajorLabelStyle = null==from._leftMajorLabelStyle ? null : (Graph.AbstractXYAxisLabelStyle)from._leftMajorLabelStyle.Clone();
-      // this._bottomMajorLabelStyle = null==from._bottomMajorLabelStyle ? null : (Graph.AbstractXYAxisLabelStyle)from._bottomMajorLabelStyle.Clone();
-      // this._rightMajorLabelStyle = null==from._rightMajorLabelStyle ? null : (Graph.AbstractXYAxisLabelStyle)from._rightMajorLabelStyle.Clone();
-      // this._topMajorLabelStyle = null==from._topMajorLabelStyle ? null : (Graph.AbstractXYAxisLabelStyle)from._topMajorLabelStyle.Clone();
-      
-      
-      // Titles and legend
-      // this._leftAxisTitle = null==from._leftAxisTitle ? null : (Graph.TextGraphics)from._leftAxisTitle.Clone();
-      // this._bottomAxisTitle = null==from._bottomAxisTitle ? null : (Graph.TextGraphics)from._bottomAxisTitle.Clone();
-      //this._rightAxisTitle = null==from._rightAxisTitle ? null : (Graph.TextGraphics)from._rightAxisTitle.Clone();
-      //this._topAxisTitle = null==from._topAxisTitle ? null : (Graph.TextGraphics)from._topAxisTitle.Clone();
       this._legend = null==from._legend ? null : (Graph.TextGraphics)from._legend.Clone();
       
       // XYPlotLayer specific
@@ -1943,7 +791,8 @@ namespace Altaxo.Graph
 
       if(null!=_legend) _legend.Changed += new EventHandler(this.OnChildChangedEventHandler);
 
-      if(null!=_linkedLayer) _linkedLayer.AxisProperties.AxesChanged += new EventHandler(this.EhLinkedLayerAxesChanged);
+      if(null!=_linkedLayer)
+        _linkedLayer.Changed += new EventHandler(this.EhLinkedLayerInstanceChanged);
     
       if(null!=_graphObjects) _graphObjects.Changed += new EventHandler(this.OnChildChangedEventHandler);
 
@@ -1993,19 +842,26 @@ namespace Altaxo.Graph
     /// <value>The layer this layer is linked to, or null if not linked.</value>
     public XYPlotLayer LinkedLayer
     {
-      get { return _linkedLayer; }
-      set
+      get 
       {
 
+        return _linkedLayer==null ? null : (XYPlotLayer)_linkedLayer.DocumentObject; 
+      }
+      set
+      {
+        
         // ignore the value if it would create a circular dependency
         if(IsLayerDependentOnMe(value))
           return;
 
 
-        XYPlotLayer oldValue = this._linkedLayer;
-        _linkedLayer =  value;
+        XYPlotLayer oldValue = this.LinkedLayer;
+        if (_linkedLayer == null)
+          _linkedLayer = new Main.RelDocNodeProxy();
 
-        if(!ReferenceEquals(oldValue,_linkedLayer))
+        _linkedLayer.SetDocNode(value,this);
+
+        if(!ReferenceEquals(oldValue,value))
         {
           // close the event handlers to the old layer
           if(null!=oldValue)
@@ -2018,9 +874,9 @@ namespace Altaxo.Graph
           // link the events to the new layer
           if(null!=_linkedLayer)
           {
-            _linkedLayer.SizeChanged     += new System.EventHandler(EhLinkedLayerSizeChanged);
-            _linkedLayer.PositionChanged += new System.EventHandler(EhLinkedLayerPositionChanged);
-            _linkedLayer.AxisProperties.AxesChanged     += new System.EventHandler(EhLinkedLayerAxesChanged);
+            value.SizeChanged     += new System.EventHandler(EhLinkedLayerSizeChanged);
+            value.PositionChanged += new System.EventHandler(EhLinkedLayerPositionChanged);
+            value.AxisProperties.AxesChanged     += new System.EventHandler(EhLinkedLayerAxesChanged);
           }
 
         }
@@ -2034,7 +890,7 @@ namespace Altaxo.Graph
     /// find out to which layer this layer is linked to.</value>
     public bool IsLinked
     {
-      get { return null!=_linkedLayer; }
+      get { return null!=_linkedLayer.DocumentObject; }
     }
 
     /// <summary>
@@ -2199,17 +1055,18 @@ namespace Altaxo.Graph
         double xoffs = newxdeforg - oldxdeforg*xscale;
         double yoffs = newydeforg - oldydeforg*yscale;
         
-        if(this._layerXPositionType == PositionType.AbsoluteValue)
-          this._layerXPosition = xoffs + this._layerXPosition*xscale;
+        if(this._location.XPositionType == XYPlotLayerPositionType.AbsoluteValue)
+          this._location.XPosition = xoffs + this._location.XPosition*xscale;
+        
 
-        if(this._layerWidthType==SizeType.AbsoluteValue)
-          this._layerWidth *= xscale;
+        if(this._location.WidthType==XYPlotLayerSizeType.AbsoluteValue)
+          this._location.Width *= xscale;
 
-        if(this._layerYPositionType == PositionType.AbsoluteValue)
-          this._layerYPosition = yoffs + this._layerYPosition*yscale;
+        if(this._location.YPositionType == XYPlotLayerPositionType.AbsoluteValue)
+          this._location.YPosition = yoffs + this._location.YPosition*yscale;
 
-        if(this._layerHeightType == SizeType.AbsoluteValue)
-          this._layerHeight *= yscale;
+        if(this._location.HeightType == XYPlotLayerSizeType.AbsoluteValue)
+          this._location.Height *= yscale;
 
         CalculateMatrix();
         this.CalculateCachedSize();
@@ -2245,7 +1102,7 @@ namespace Altaxo.Graph
       get { return this._cachedLayerPosition; }
       set
       {
-        SetPosition(value.X,PositionType.AbsoluteValue,value.Y,PositionType.AbsoluteValue);
+        SetPosition(value.X,XYPlotLayerPositionType.AbsoluteValue,value.Y,XYPlotLayerPositionType.AbsoluteValue);
       }
     }
 
@@ -2254,27 +1111,27 @@ namespace Altaxo.Graph
       get { return this._cachedLayerSize; }
       set
       {
-        SetSize(value.Width,SizeType.AbsoluteValue, value.Height,SizeType.AbsoluteValue);
+        SetSize(value.Width,XYPlotLayerSizeType.AbsoluteValue, value.Height,XYPlotLayerSizeType.AbsoluteValue);
       }
     }
 
-    public float Rotation
+    public double Rotation
     {
-      get { return this._layerAngle; }
+      get { return this._location.Angle; }
       set
       {
-        this._layerAngle = value;
+        this._location.Angle = value;
         this.CalculateMatrix();
         this.OnInvalidate();
       }
     }
 
-    public float Scale
+    public double Scale
     {
-      get { return this._layerScale; }
+      get { return this._location.Scale; }
       set
       {
-        this._layerScale = value;
+        this._location.Scale = value;
         this.CalculateMatrix();
         this.OnInvalidate();
       }
@@ -2284,8 +1141,8 @@ namespace Altaxo.Graph
     {
       _cachedForwardMatrix.Reset();
       _cachedForwardMatrix.Translate(_cachedLayerPosition.X,_cachedLayerPosition.Y);
-      _cachedForwardMatrix.Scale(_layerScale,_layerScale);
-      _cachedForwardMatrix.Rotate(_layerAngle);
+      _cachedForwardMatrix.Scale((float)_location.Scale,(float)_location.Scale);
+      _cachedForwardMatrix.Rotate((float)_location.Angle);
       _cachedReverseMatrix=_cachedForwardMatrix.Clone();
       _cachedReverseMatrix.Invert();
     }
@@ -2350,12 +1207,12 @@ namespace Altaxo.Graph
 
 
 
-    public void SetPosition(double x, PositionType xpostype, double y, PositionType ypostype)
+    public void SetPosition(double x, XYPlotLayerPositionType xpostype, double y, XYPlotLayerPositionType ypostype)
     {
-      this._layerXPosition = x;
-      this._layerXPositionType = xpostype;
-      this._layerYPosition = y;
-      this._layerYPositionType = ypostype;
+      this._location.XPosition = x;
+      this._location.XPositionType = xpostype;
+      this._location.YPosition = y;
+      this._location.YPositionType = ypostype;
 
       CalculateCachedPosition();
     }
@@ -2365,33 +1222,33 @@ namespace Altaxo.Graph
     /// x position in points.
     /// </summary>
     /// <param name="x">The horizontal position value of type xpostype.</param>
-    /// <param name="xpostype">The type of the horizontal position value, see <see cref="PositionType"/>.</param>
+    /// <param name="xpostype">The type of the horizontal position value, see <see cref="XYPlotLayerPositionType"/>.</param>
     /// <returns>Calculated absolute position of the layer in units of points (1/72 inch).</returns>
     /// <remarks>The function does not change the member variables of the layer and can therefore used
     /// for position calculations without changing the layer. The function is not static because it has to use either the parent
     /// graph or the linked layer for the calculations.</remarks>
-    public double XPositionToPointUnits(double x, PositionType xpostype)
+    public double XPositionToPointUnits(double x, XYPlotLayerPositionType xpostype)
     {
       switch(xpostype)
       {
-        case PositionType.AbsoluteValue:
+        case XYPlotLayerPositionType.AbsoluteValue:
           break;
-        case PositionType.RelativeToGraphDocument:
+        case XYPlotLayerPositionType.RelativeToGraphDocument:
           x = x*PrintableGraphSize.Width;
           break;
-        case PositionType.RelativeThisNearToLinkedLayerNear:
+        case XYPlotLayerPositionType.RelativeThisNearToLinkedLayerNear:
           if(LinkedLayer!=null)
             x = LinkedLayer.Position.X + x*LinkedLayer.Size.Width;
           break;
-        case PositionType.RelativeThisNearToLinkedLayerFar:
+        case XYPlotLayerPositionType.RelativeThisNearToLinkedLayerFar:
           if(LinkedLayer!=null)
             x = LinkedLayer.Position.X + (1+x)*LinkedLayer.Size.Width;
           break;
-        case PositionType.RelativeThisFarToLinkedLayerNear:
+        case XYPlotLayerPositionType.RelativeThisFarToLinkedLayerNear:
           if(LinkedLayer!=null)
             x = LinkedLayer.Position.X - this.Size.Width + x*LinkedLayer.Size.Width;
           break;
-        case PositionType.RelativeThisFarToLinkedLayerFar:
+        case XYPlotLayerPositionType.RelativeThisFarToLinkedLayerFar:
           if(LinkedLayer!=null)
             x = LinkedLayer.Position.X - this.Size.Width + (1+x)*LinkedLayer.Size.Width;
           break;
@@ -2404,33 +1261,33 @@ namespace Altaxo.Graph
     ///  y position in points.
     /// </summary>
     /// <param name="y">The vertical position value of type xpostype.</param>
-    /// <param name="ypostype">The type of the vertical position value, see <see cref="PositionType"/>.</param>
+    /// <param name="ypostype">The type of the vertical position value, see <see cref="XYPlotLayerPositionType"/>.</param>
     /// <returns>Calculated absolute position of the layer in units of points (1/72 inch).</returns>
     /// <remarks>The function does not change the member variables of the layer and can therefore used
     /// for position calculations without changing the layer. The function is not static because it has to use either the parent
     /// graph or the linked layer for the calculations.</remarks>
-    public double YPositionToPointUnits(double y, PositionType ypostype)
+    public double YPositionToPointUnits(double y, XYPlotLayerPositionType ypostype)
     {
       switch(ypostype)
       {
-        case PositionType.AbsoluteValue:
+        case XYPlotLayerPositionType.AbsoluteValue:
           break;
-        case PositionType.RelativeToGraphDocument:
+        case XYPlotLayerPositionType.RelativeToGraphDocument:
           y = y*PrintableGraphSize.Height;
           break;
-        case PositionType.RelativeThisNearToLinkedLayerNear:
+        case XYPlotLayerPositionType.RelativeThisNearToLinkedLayerNear:
           if(LinkedLayer!=null)
             y = LinkedLayer.Position.Y + y*LinkedLayer.Size.Height;
           break;
-        case PositionType.RelativeThisNearToLinkedLayerFar:
+        case XYPlotLayerPositionType.RelativeThisNearToLinkedLayerFar:
           if(LinkedLayer!=null)
             y = LinkedLayer.Position.Y + (1+y)*LinkedLayer.Size.Height;
           break;
-        case PositionType.RelativeThisFarToLinkedLayerNear:
+        case XYPlotLayerPositionType.RelativeThisFarToLinkedLayerNear:
           if(LinkedLayer!=null)
             y = LinkedLayer.Position.Y - this.Size.Height + y*LinkedLayer.Size.Height;
           break;
-        case PositionType.RelativeThisFarToLinkedLayerFar:
+        case XYPlotLayerPositionType.RelativeThisFarToLinkedLayerFar:
           if(LinkedLayer!=null)
             y = LinkedLayer.Position.Y - this.Size.Height + (1+y)*LinkedLayer.Size.Height;
           break;
@@ -2444,35 +1301,35 @@ namespace Altaxo.Graph
     /// Calculates from the x position value in points (1/72 inch), the corresponding value in user units.
     /// </summary>
     /// <param name="x">The vertical position value in points.</param>
-    /// <param name="xpostype_to_convert_to">The type of the vertical position value to convert to, see <see cref="PositionType"/>.</param>
+    /// <param name="xpostype_to_convert_to">The type of the vertical position value to convert to, see <see cref="XYPlotLayerPositionType"/>.</param>
     /// <returns>Calculated value of x in user units.</returns>
     /// <remarks>The function does not change the member variables of the layer and can therefore used
     /// for position calculations without changing the layer. The function is not static because it has to use either the parent
     /// graph or the linked layer for the calculations.</remarks>
-    public double XPositionToUserUnits(double x, PositionType xpostype_to_convert_to)
+    public double XPositionToUserUnits(double x, XYPlotLayerPositionType xpostype_to_convert_to)
     {
 
   
       switch(xpostype_to_convert_to)
       {
-        case PositionType.AbsoluteValue:
+        case XYPlotLayerPositionType.AbsoluteValue:
           break;
-        case PositionType.RelativeToGraphDocument:
+        case XYPlotLayerPositionType.RelativeToGraphDocument:
           x = x/PrintableGraphSize.Width;
           break;
-        case PositionType.RelativeThisNearToLinkedLayerNear:
+        case XYPlotLayerPositionType.RelativeThisNearToLinkedLayerNear:
           if(LinkedLayer!=null)
             x = (x-LinkedLayer.Position.X)/LinkedLayer.Size.Height;
           break;
-        case PositionType.RelativeThisNearToLinkedLayerFar:
+        case XYPlotLayerPositionType.RelativeThisNearToLinkedLayerFar:
           if(LinkedLayer!=null)
             x = (x-LinkedLayer.Position.X)/LinkedLayer.Size.Width - 1;
           break;
-        case PositionType.RelativeThisFarToLinkedLayerNear:
+        case XYPlotLayerPositionType.RelativeThisFarToLinkedLayerNear:
           if(LinkedLayer!=null)
             x = (x-LinkedLayer.Position.X + this.Size.Width)/LinkedLayer.Size.Width;
           break;
-        case PositionType.RelativeThisFarToLinkedLayerFar:
+        case XYPlotLayerPositionType.RelativeThisFarToLinkedLayerFar:
           if(LinkedLayer!=null)
             x = (x-LinkedLayer.Position.X + this.Size.Width)/LinkedLayer.Size.Width - 1;
           break;
@@ -2486,33 +1343,33 @@ namespace Altaxo.Graph
     /// Calculates from the y position value in points (1/72 inch), the corresponding value in user units.
     /// </summary>
     /// <param name="y">The vertical position value in points.</param>
-    /// <param name="ypostype_to_convert_to">The type of the vertical position value to convert to, see <see cref="PositionType"/>.</param>
+    /// <param name="ypostype_to_convert_to">The type of the vertical position value to convert to, see <see cref="XYPlotLayerPositionType"/>.</param>
     /// <returns>Calculated value of y in user units.</returns>
     /// <remarks>The function does not change the member variables of the layer and can therefore used
     /// for position calculations without changing the layer. The function is not static because it has to use either the parent
     /// graph or the linked layer for the calculations.</remarks>
-    public double YPositionToUserUnits(double y, PositionType ypostype_to_convert_to)
+    public double YPositionToUserUnits(double y, XYPlotLayerPositionType ypostype_to_convert_to)
     {
       switch(ypostype_to_convert_to)
       {
-        case PositionType.AbsoluteValue:
+        case XYPlotLayerPositionType.AbsoluteValue:
           break;
-        case PositionType.RelativeToGraphDocument:
+        case XYPlotLayerPositionType.RelativeToGraphDocument:
           y = y/PrintableGraphSize.Height;
           break;
-        case PositionType.RelativeThisNearToLinkedLayerNear:
+        case XYPlotLayerPositionType.RelativeThisNearToLinkedLayerNear:
           if(LinkedLayer!=null)
             y = (y-LinkedLayer.Position.Y)/LinkedLayer.Size.Height;
           break;
-        case PositionType.RelativeThisNearToLinkedLayerFar:
+        case XYPlotLayerPositionType.RelativeThisNearToLinkedLayerFar:
           if(LinkedLayer!=null)
             y = (y-LinkedLayer.Position.Y)/LinkedLayer.Size.Height - 1;
           break;
-        case PositionType.RelativeThisFarToLinkedLayerNear:
+        case XYPlotLayerPositionType.RelativeThisFarToLinkedLayerNear:
           if(LinkedLayer!=null)
             y = (y-LinkedLayer.Position.Y + this.Size.Height)/LinkedLayer.Size.Height;
           break;
-        case PositionType.RelativeThisFarToLinkedLayerFar:
+        case XYPlotLayerPositionType.RelativeThisFarToLinkedLayerFar:
           if(LinkedLayer!=null)
             y = (y-LinkedLayer.Position.Y + this.Size.Height)/LinkedLayer.Size.Height - 1;
           break;
@@ -2524,14 +1381,14 @@ namespace Altaxo.Graph
 
     /// <summary>
     /// Sets the cached position value in <see cref="_cachedLayerPosition"/> by calculating it
-    /// from the position values (<see cref="_layerXPosition"/> and <see cref="_layerYPosition"/>) 
-    /// and the position types (<see cref="_layerXPositionType"/> and <see cref="_layerYPositionType"/>).
+    /// from the position values (<see cref="_location.XPosition"/> and <see cref="_location.YPosition"/>) 
+    /// and the position types (<see cref="_location.XPositionType"/> and <see cref="_location.YPositionType"/>).
     /// </summary>
     protected void CalculateCachedPosition()
     {
       PointF newPos = new PointF(
-        (float)XPositionToPointUnits(this._layerXPosition,this._layerXPositionType),
-        (float)YPositionToPointUnits(this._layerYPosition, this._layerYPositionType));
+        (float)XPositionToPointUnits(this._location.XPosition,this._location.XPositionType),
+        (float)YPositionToPointUnits(this._location.YPosition, this._location.YPositionType));
       if(newPos != this._cachedLayerPosition)
       {
         this._cachedLayerPosition=newPos;
@@ -2541,25 +1398,25 @@ namespace Altaxo.Graph
     }
 
 
-    public void SetSize(double width, SizeType widthtype, double height, SizeType heighttype)
+    public void SetSize(double width, XYPlotLayerSizeType widthtype, double height, XYPlotLayerSizeType heighttype)
     {
-      this._layerWidth = width;
-      this._layerWidthType = widthtype;
-      this._layerHeight = height;
-      this._layerHeightType = heighttype;
+      this._location.Width = width;
+      this._location.WidthType = widthtype;
+      this._location.Height = height;
+      this._location.HeightType = heighttype;
 
       CalculateCachedSize();
     }
 
 
-    protected double WidthToPointUnits(double width, SizeType widthtype)
+    protected double WidthToPointUnits(double width, XYPlotLayerSizeType widthtype)
     {
       switch(widthtype)
       {
-        case SizeType.RelativeToGraphDocument:
+        case XYPlotLayerSizeType.RelativeToGraphDocument:
           width *= PrintableGraphSize.Width;
           break;
-        case SizeType.RelativeToLinkedLayer:
+        case XYPlotLayerSizeType.RelativeToLinkedLayer:
           if(null!=LinkedLayer)
             width *= LinkedLayer.Size.Width;
           break;
@@ -2567,14 +1424,14 @@ namespace Altaxo.Graph
       return width;
     }
 
-    protected double HeightToPointUnits(double height, SizeType heighttype)
+    protected double HeightToPointUnits(double height, XYPlotLayerSizeType heighttype)
     {
       switch(heighttype)
       {
-        case SizeType.RelativeToGraphDocument:
+        case XYPlotLayerSizeType.RelativeToGraphDocument:
           height *= PrintableGraphSize.Height;
           break;
-        case SizeType.RelativeToLinkedLayer:
+        case XYPlotLayerSizeType.RelativeToLinkedLayer:
           if(null!=LinkedLayer)
             height *= LinkedLayer.Size.Height;
           break;
@@ -2589,15 +1446,15 @@ namespace Altaxo.Graph
     /// <param name="width">The height value to convert (in point units).</param>
     /// <param name="widthtype_to_convert_to">The user unit type to convert to.</param>
     /// <returns>The value of the width in user units.</returns>
-    protected double WidthToUserUnits(double width, SizeType widthtype_to_convert_to)
+    protected double WidthToUserUnits(double width, XYPlotLayerSizeType widthtype_to_convert_to)
     {
   
       switch(widthtype_to_convert_to)
       {
-        case SizeType.RelativeToGraphDocument:
+        case XYPlotLayerSizeType.RelativeToGraphDocument:
           width /= PrintableGraphSize.Width;
           break;
-        case SizeType.RelativeToLinkedLayer:
+        case XYPlotLayerSizeType.RelativeToLinkedLayer:
           if(null!=LinkedLayer)
             width /= LinkedLayer.Size.Width;
           break;
@@ -2612,15 +1469,15 @@ namespace Altaxo.Graph
     /// <param name="height">The height value to convert (in point units).</param>
     /// <param name="heighttype_to_convert_to">The user unit type to convert to.</param>
     /// <returns>The value of the height in user units.</returns>
-    protected double HeightToUserUnits(double height, SizeType heighttype_to_convert_to)
+    protected double HeightToUserUnits(double height, XYPlotLayerSizeType heighttype_to_convert_to)
     {
 
       switch(heighttype_to_convert_to)
       {
-        case SizeType.RelativeToGraphDocument:
+        case XYPlotLayerSizeType.RelativeToGraphDocument:
           height /= PrintableGraphSize.Height;
           break;
-        case SizeType.RelativeToLinkedLayer:
+        case XYPlotLayerSizeType.RelativeToLinkedLayer:
           if(null!=LinkedLayer)
             height /= LinkedLayer.Size.Height;
           break;
@@ -2631,14 +1488,14 @@ namespace Altaxo.Graph
 
     /// <summary>
     /// Sets the cached size value in <see cref="_cachedLayerSize"/> by calculating it
-    /// from the position values (<see cref="_layerWidth"/> and <see cref="_layerHeight"/>) 
-    /// and the size types (<see cref="_layerWidthType"/> and <see cref="_layerHeightType"/>).
+    /// from the position values (<see cref="_location.Width"/> and <see cref="_location.Height"/>) 
+    /// and the size types (<see cref="_location.WidthType"/> and <see cref="_location.HeightType"/>).
     /// </summary>
     protected void CalculateCachedSize()
     {
       SizeF newSize = new SizeF(
-        (float)WidthToPointUnits(this._layerWidth,this._layerWidthType),
-        (float)HeightToPointUnits(this._layerHeight, this._layerHeightType));
+        (float)WidthToPointUnits(this._location.Width,this._location.WidthType),
+        (float)HeightToPointUnits(this._location.Height, this._location.HeightType));
       if(newSize != this._cachedLayerSize)
       {
         this._cachedLayerSize=newSize;
@@ -2652,56 +1509,56 @@ namespace Altaxo.Graph
     /// <value>User x position value of the layer.</value>
     public double UserXPosition
     {
-      get { return this._layerXPosition; }
+      get { return this._location.XPosition; }
     }
 
     /// <summary>Returns the user y position value of the layer.</summary>
     /// <value>User y position value of the layer.</value>
     public double UserYPosition
     {
-      get { return this._layerYPosition; }
+      get { return this._location.YPosition; }
     }
 
     /// <summary>Returns the user width value of the layer.</summary>
     /// <value>User width value of the layer.</value>
     public double UserWidth
     {
-      get { return this._layerWidth; }
+      get { return this._location.Width; }
     }
 
     /// <summary>Returns the user height value of the layer.</summary>
     /// <value>User height value of the layer.</value>
     public double UserHeight
     {
-      get { return this._layerHeight; }
+      get { return this._location.Height; }
     }
 
     /// <summary>Returns the type of the user x position value of the layer.</summary>
     /// <value>Type of the user x position value of the layer.</value>
-    public PositionType UserXPositionType
+    public XYPlotLayerPositionType UserXPositionType
     {
-      get { return this._layerXPositionType; }
+      get { return this._location.XPositionType; }
     }
 
     /// <summary>Returns the type of the user y position value of the layer.</summary>
     /// <value>Type of the User y position value of the layer.</value>
-    public PositionType UserYPositionType
+    public XYPlotLayerPositionType UserYPositionType
     {
-      get { return this._layerYPositionType; }
+      get { return this._location.YPositionType; }
     }
 
     /// <summary>Returns the type of the the user width value of the layer.</summary>
     /// <value>Type of the User width value of the layer.</value>
-    public SizeType UserWidthType
+    public XYPlotLayerSizeType UserWidthType
     {
-      get { return this._layerWidthType; }
+      get { return this._location.WidthType; }
     }
 
     /// <summary>Returns the the type of the user height value of the layer.</summary>
     /// <value>Type of the User height value of the layer.</value>
-    public SizeType UserHeightType
+    public XYPlotLayerSizeType UserHeightType
     {
-      get { return this._layerHeightType; }
+      get { return this._location.HeightType; }
     }
 
 
@@ -2886,6 +1743,20 @@ namespace Altaxo.Graph
       return this.IsYAxisLinked;
     }
 
+
+    /// <summary>
+    /// Only needed after deserialization, when the first time the document node is resolved.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    protected void EhLinkedLayerInstanceChanged(object sender, System.EventArgs e)
+    {
+      if (_linkedLayer.DocumentObject != null)
+      {
+        _linkedLayer.Changed -= new EventHandler(this.EhLinkedLayerInstanceChanged);
+        this.LinkedLayer = (XYPlotLayer)_linkedLayer.DocumentObject;
+      }
+    }
 
     /// <summary>
     /// Measures to do when one of the axis of the linked layer changed.
@@ -3189,9 +2060,9 @@ namespace Altaxo.Graph
       
       g.MultiplyTransform(_cachedForwardMatrix);
 
-      if(_fillLayerArea)
-        g.FillRectangle(m_LayerAreaFillBrush,0,0,_cachedLayerSize.Width,_cachedLayerSize.Height);
-
+      if(_layerBackground!=null)
+        _layerBackground.Draw(g,new RectangleF(0,0,_cachedLayerSize.Width,_cachedLayerSize.Height));
+       
       _graphObjects.DrawObjects(g,1,this);
 
       RectangleF layerBounds = new RectangleF(_cachedLayerPosition,_cachedLayerSize);
@@ -3652,17 +2523,17 @@ namespace Altaxo.Graph
         _layer = layer;
         _layer.SizeChanged += new EventHandler(EhChanged);
 
-        _layerWidth =  _layer.Size.Width;
+        _layerWidth = _layer.Size.Width;
         _layerHeight = _layer.Size.Height;
       }
       public void Update()
       {
-        _layerWidth =  _layer.Size.Width;
+        _layerWidth = _layer.Size.Width;
         _layerHeight = _layer.Size.Height;
       }
       public void EhChanged(object sender, EventArgs e)
       {
-        _layerWidth =  _layer.Size.Width;
+        _layerWidth  = _layer.Size.Width;
         _layerHeight = _layer.Size.Height;
 
         if(null!=Changed)
@@ -3671,7 +2542,7 @@ namespace Altaxo.Graph
  
       public bool Convert(double xlocation, double ylocation, out double x_rel, out double y_rel)
       {
-        x_rel = xlocation/_layerWidth;
+        x_rel = xlocation / _layerWidth;
         y_rel = 1-ylocation/_layerHeight;
         return !double.IsNaN(x_rel) && !double.IsNaN(y_rel);
       }

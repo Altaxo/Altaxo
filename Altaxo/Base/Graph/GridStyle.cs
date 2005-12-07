@@ -39,6 +39,53 @@ namespace Altaxo.Graph
     bool _showZeroOnly;
 
 
+    #region Serialization
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GridStyle), 0)]
+    public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        GridStyle s = (GridStyle)obj;
+
+        info.AddValue("Visible", s._showGrid);
+        if (s._showGrid)
+        {
+          info.AddValue("ZeroOnly", s._showZeroOnly);
+          info.AddValue("MajorPen", s._majorPen);
+          info.AddValue("ShowMinor", s._showMinor);
+          if(s._showMinor)
+            info.AddValue("MinorPen", s._minorPen);
+        }
+
+      }
+
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        GridStyle s = SDeserialize(o, info, parent);
+        return s;
+      }
+
+
+      protected virtual GridStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        GridStyle s = null != o ? (GridStyle)o : new GridStyle();
+
+        s._showGrid = info.GetBoolean("Visible");
+        if (s._showGrid)
+        {
+          s._showZeroOnly = info.GetBoolean("ZeroOnly");
+          s._majorPen = (PenHolder)info.GetValue("MajorPen", s);
+          s._showMinor = info.GetBoolean("ShowMinor");
+          if (s._showMinor)
+            s._minorPen = (PenHolder)info.GetValue("MinorPen", s);
+        }
+
+        return s;
+      }
+    }
+    #endregion
+
     public GridStyle()
     {
 

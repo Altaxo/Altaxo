@@ -195,6 +195,16 @@ namespace Altaxo.Serialization.Xml
     {
       int count = XmlConvert.ToInt32(m_Reader["Count"]);
 
+      if (count > 0)
+        m_Reader.ReadStartElement();
+
+      return count;
+    }
+
+    public int OpenArray(string name)
+    {
+      int count = XmlConvert.ToInt32(m_Reader["Count"]);
+
       if(count>0)
         m_Reader.ReadStartElement();
 
