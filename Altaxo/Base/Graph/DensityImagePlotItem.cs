@@ -248,7 +248,7 @@ namespace Altaxo.Graph
     /// it must be ensured that the axes are scaled correctly before the plots are painted.
     /// </summary>
     /// <param name="layer">The plot layer.</param>
-    public override void UpdateCachedData(IPlotArea layer)
+    public override void PreparePainting(IPlotArea layer)
     {
       if(null!=this.m_PlotAssociation)
         m_PlotAssociation.CalculateCachedData();

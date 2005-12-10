@@ -72,6 +72,7 @@ namespace Altaxo.Graph
 
     object m_Parent;
 
+   
     /// <summary>
     /// The graph properties, key is a string, value is a property (arbitrary object) you want to store here.
     /// </summary>
@@ -436,6 +437,16 @@ namespace Altaxo.Graph
     {
       GraphicsState gs = g.Save();
 
+     
+
+      for (int i = 0; i < Layers.Count; i++)
+      {
+        Layers[i].PreparePainting();
+      }
+
+      
+
+
       for(int i=0;i<Layers.Count;i++)
       {
         Layers[i].Paint(g);
@@ -557,10 +568,7 @@ namespace Altaxo.Graph
 
     #endregion
 
-    #region inherited from XYPlotLayer.Collection
-
-    
-    #endregion
+ 
 
     #region Change event handling
 
@@ -650,6 +658,8 @@ namespace Altaxo.Graph
     /// <param name="e">The change details.</param>
     public void EhChildChanged(object sender, System.EventArgs e)
     {
+      
+
       if(HandleImmediateChildChangeCases(sender, e))
         return;
 

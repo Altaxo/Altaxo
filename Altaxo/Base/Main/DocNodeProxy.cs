@@ -61,6 +61,13 @@ namespace Altaxo.Main
         else
           s.SetDocNode(node);
 
+        // create a callback to resolve the instance as early as possible
+        if (s._docNodePath != null && s._docNode == null)
+        {
+          info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(s.EhXmlDeserializationFinished);
+        }
+
+
         return s;
       }
     }
@@ -226,15 +233,25 @@ namespace Altaxo.Main
     {
       get
       {
-        if(_docNode==null && _docNodePath!=null)
-        {
-          object obj = Main.DocumentPath.GetObject(_docNodePath, Current.Project);
-          if(obj != null)
-            SetDocNode(obj);
-        }
-        return _docNode;          
-        
+        return ResolveDocumentObject(Current.Project);
       }
+    }
+
+    protected virtual object ResolveDocumentObject(object startnode)
+    {
+      if (_docNode == null && _docNodePath != null)
+      {
+        object obj = Main.DocumentPath.GetObject(_docNodePath, startnode);
+        if (obj != null)
+          SetDocNode(obj);
+      }
+      return _docNode; 
+    }
+
+    protected void EhXmlDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot)
+    {
+      if (null!=this.ResolveDocumentObject(documentRoot))
+        info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(this.EhXmlDeserializationFinished);
     }
 
     #region ICloneable Members

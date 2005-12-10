@@ -23,7 +23,7 @@
 using System;
 using Altaxo.Data;
 
-#if true
+
 namespace Altaxo.Graph.Axes
 {
   using Scaling;
@@ -44,6 +44,49 @@ namespace Altaxo.Graph.Axes
     protected FiniteDateTimeBoundaries m_DataBounds;
 
     protected DateTimeAxisRescaleConditions _rescaling;
+
+
+    #region Serialization
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DateTimeAxis), 0)]
+    public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        DateTimeAxis s = (DateTimeAxis)obj;
+
+
+        info.AddValue("Org", s.m_AxisOrg);
+        info.AddValue("End", s.m_AxisEnd);
+        info.AddValue("Bounds", s.m_DataBounds);
+        info.AddValue("Rescaling", s._rescaling);
+
+      }
+
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        DateTimeAxis s = SDeserialize(o, info, parent);
+        OnAfterDeserialization(s);
+        return s;
+      }
+
+      public virtual void OnAfterDeserialization(DateTimeAxis s)
+      {
+      }
+
+      protected virtual DateTimeAxis SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        DateTimeAxis s = null != o ? (DateTimeAxis)o : new DateTimeAxis();
+
+        s.m_AxisOrg = info.GetDateTime("Org");
+        s.m_AxisEnd = info.GetDateTime("End");
+        s.InternalSetDataBounds( (FiniteDateTimeBoundaries)info.GetValue("Bounds", s) );
+        s.InternalSetRescaling( (DateTimeAxisRescaleConditions)info.GetValue("Rescaling", s) );
+
+        return s;
+      }
+    }
+    #endregion
 
     #region ICloneable Members
     public void CopyFrom(DateTimeAxis from)
@@ -755,4 +798,3 @@ namespace Altaxo.Graph.Axes
   } // end of class 
 }
 
-#endif

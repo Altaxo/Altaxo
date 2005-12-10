@@ -624,7 +624,6 @@ namespace Altaxo.Worksheet.Commands.Analysis
     public static void PlotOnlyLabel(Altaxo.Graph.XYPlotLayer layer, Altaxo.Data.DataColumn xcol, Altaxo.Data.DataColumn ycol, Altaxo.Data.DataColumn labelcol)  
     {
       Altaxo.Graph.XYColumnPlotData pa = new Altaxo.Graph.XYColumnPlotData(xcol,ycol);
-      pa.LabelColumn = labelcol;
 
       Altaxo.Graph.XYPlotStyleCollection ps = new Altaxo.Graph.XYPlotStyleCollection(Altaxo.Graph.LineScatterPlotStyleKind.Empty);
       Altaxo.Graph.XYPlotLabelStyle labelStyle = new Altaxo.Graph.XYPlotLabelStyle(labelcol);

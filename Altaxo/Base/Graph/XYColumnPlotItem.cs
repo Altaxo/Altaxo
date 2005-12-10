@@ -39,8 +39,8 @@ namespace Altaxo.Graph
   public class XYColumnPlotItem : PlotItem, System.Runtime.Serialization.IDeserializationCallback, IXBoundsHolder, IYBoundsHolder
   {
 
-    protected XYColumnPlotData m_PlotAssociation;
-    protected XYPlotStyleCollection m_PlotStyle;
+    protected XYColumnPlotData _plotData;
+    protected XYPlotStyleCollection _plotStyle;
 
     // TODO : here should be a collection of PlotData, which can be accessed
     // by name, for instance "LabelData"
@@ -60,8 +60,8 @@ namespace Altaxo.Graph
       public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context  )
       {
         XYColumnPlotItem s = (XYColumnPlotItem)obj;
-        info.AddValue("Data",s.m_PlotAssociation);  
-        info.AddValue("Style",s.m_PlotStyle);  
+        info.AddValue("Data",s._plotData);  
+        info.AddValue("Style",s._plotStyle);  
       }
       /// <summary>
       /// Deserializes the XYColumnPlotItem Version 0.
@@ -91,8 +91,8 @@ namespace Altaxo.Graph
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         XYColumnPlotItem s = (XYColumnPlotItem)obj;
-        info.AddValue("Data",s.m_PlotAssociation);  
-        info.AddValue("Style",s.m_PlotStyle);  
+        info.AddValue("Data",s._plotData);  
+        info.AddValue("Style",s._plotStyle);  
       }
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
@@ -146,8 +146,8 @@ namespace Altaxo.Graph
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         XYColumnPlotItem s = (XYColumnPlotItem)obj;
-        info.AddValue("Data", s.m_PlotAssociation);
-        info.AddValue("Style", s.m_PlotStyle);
+        info.AddValue("Data", s._plotData);
+        info.AddValue("Style", s._plotStyle);
       }
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
@@ -178,14 +178,14 @@ namespace Altaxo.Graph
     {
       // Restore the event chain
 
-      if(null!=m_PlotAssociation)
+      if(null!=_plotData)
       {
-        m_PlotAssociation.Changed += new EventHandler(OnDataChangedEventHandler);
+        _plotData.Changed += new EventHandler(OnDataChangedEventHandler);
       }
 
-      if(null!=m_PlotStyle)
+      if(null!=_plotStyle)
       {
-        ((Main.IChangedEventSource)m_PlotStyle).Changed += new EventHandler(OnStyleChangedEventHandler);
+        ((Main.IChangedEventSource)_plotStyle).Changed += new EventHandler(OnStyleChangedEventHandler);
       }
     }
     #endregion
@@ -205,7 +205,7 @@ namespace Altaxo.Graph
 
     public void CopyFrom(XYColumnPlotItem from)
     {
-      this.Data = from.Data;   // also wires the event
+      this.Data = (XYColumnPlotData)from.Data.Clone(); // also wires the event
       this.Style = (XYPlotStyleCollection)from.Style.Clone(); // also wires the event
     }
 
@@ -216,35 +216,38 @@ namespace Altaxo.Graph
 
     public XYColumnPlotData XYColumnPlotData
     {
-      get { return m_PlotAssociation; }
+      get { return _plotData; }
     }
 
     public  XYColumnPlotData Data
     {
-      get { return m_PlotAssociation; }
+      get 
+      {
+        return _plotData; 
+      }
       set
       {
         if(null==value)
           throw new System.ArgumentNullException();
         else
         {
-          if(!object.ReferenceEquals(m_PlotAssociation,value))
+          XYColumnPlotData oldvalue = _plotData;
+          _plotData = value;
+          if(!object.ReferenceEquals(value,oldvalue))
           {
-            if(null!=m_PlotAssociation)
+            if(null!=oldvalue)
             {
-              m_PlotAssociation.Changed -= new EventHandler(OnDataChangedEventHandler);
-              m_PlotAssociation.XBoundariesChanged -= new BoundaryChangedHandler(EhXBoundariesChanged);
-              m_PlotAssociation.YBoundariesChanged -= new BoundaryChangedHandler(EhYBoundariesChanged);
+              oldvalue.Changed -= new EventHandler(OnDataChangedEventHandler);
+              oldvalue.XBoundariesChanged -= new BoundaryChangedHandler(EhXBoundariesChanged);
+              oldvalue.YBoundariesChanged -= new BoundaryChangedHandler(EhYBoundariesChanged);
+              oldvalue.ParentObject = null;
             }
-
-            m_PlotAssociation = (XYColumnPlotData)value;
-          
-            if(null!=m_PlotAssociation )
+            if(null!=value)
             {
-              m_PlotAssociation.ParentObject = this;
-              m_PlotAssociation.Changed += new EventHandler(OnDataChangedEventHandler);
-              m_PlotAssociation.XBoundariesChanged += new BoundaryChangedHandler(EhXBoundariesChanged);
-              m_PlotAssociation.YBoundariesChanged += new BoundaryChangedHandler(EhYBoundariesChanged);
+              value.ParentObject = this;
+              value.Changed += new EventHandler(OnDataChangedEventHandler);
+              value.XBoundariesChanged += new BoundaryChangedHandler(EhXBoundariesChanged);
+              value.YBoundariesChanged += new BoundaryChangedHandler(EhYBoundariesChanged);
             }
 
             OnDataChanged();
@@ -255,33 +258,33 @@ namespace Altaxo.Graph
 
     public override object StyleObject
     {
-      get { return m_PlotStyle; }
+      get { return _plotStyle; }
       set { this.Style = (XYPlotStyleCollection)value; }
     }
     public XYPlotStyleCollection Style
     {
-      get { return m_PlotStyle; }
+      get { return _plotStyle; }
       set
       {
         if(null==value)
           throw new System.ArgumentNullException();
         else
         {
-          if(!object.ReferenceEquals(m_PlotStyle,value))
+          if(!object.ReferenceEquals(_plotStyle,value))
           {
             // delete event wiring to old AbstractXYPlotStyle
-            if(null!=m_PlotStyle)
+            if(null!=_plotStyle)
             {
-              ((Main.IChangedEventSource)m_PlotStyle).Changed -= new EventHandler(OnStyleChangedEventHandler);
+              ((Main.IChangedEventSource)_plotStyle).Changed -= new EventHandler(OnStyleChangedEventHandler);
             }
           
-            m_PlotStyle = (XYPlotStyleCollection)value;
+            _plotStyle = (XYPlotStyleCollection)value;
 
             // create event wire to new Plotstyle
-            if(null!=m_PlotStyle)
+            if(null!=_plotStyle)
             {
-              m_PlotStyle.ParentObject = this;
-              ((Main.IChangedEventSource)m_PlotStyle).Changed += new EventHandler(OnStyleChangedEventHandler);
+              _plotStyle.ParentObject = this;
+              ((Main.IChangedEventSource)_plotStyle).Changed += new EventHandler(OnStyleChangedEventHandler);
             }
 
             // indicate the style has changed
@@ -330,7 +333,7 @@ namespace Altaxo.Graph
       System.Text.StringBuilder stb = new System.Text.StringBuilder();
       if(sx>0)
       {
-        stb.Append(this.GetName(m_PlotAssociation.XColumn,sx-1));
+        stb.Append(this.GetName(_plotData.XColumn,sx-1));
         if(sx>0 && sy>0)
           stb.Append("(X)");
         if(sy>0)
@@ -338,7 +341,7 @@ namespace Altaxo.Graph
       }
       if(sy>0)
       {
-        stb.Append(this.GetName(m_PlotAssociation.YColumn,sy-1));
+        stb.Append(this.GetName(_plotData.YColumn,sy-1));
         if(sx>0 && sy>0)
           stb.Append("(Y)");
       }
@@ -374,13 +377,13 @@ namespace Altaxo.Graph
 
     public override void Paint(Graphics g, IPlotArea layer)
     {
-      if(null!=this.m_PlotStyle)
+      if(null!=this._plotStyle)
       {
         PlotRangeList rangeList;
         PointF[] plotPoints;
-        this.m_PlotAssociation.GetRangesAndPoints(layer, out rangeList, out plotPoints);
+        this._plotData.GetRangesAndPoints(layer, out rangeList, out plotPoints);
         if (rangeList != null)
-          this.m_PlotStyle.Paint(g, layer, rangeList, plotPoints);
+          this._plotStyle.Paint(g, layer, rangeList, plotPoints);
       }
     }
 
@@ -390,10 +393,10 @@ namespace Altaxo.Graph
     /// it must be ensured that the axes are scaled correctly before the plots are painted.
     /// </summary>
     /// <param name="layer">The plot layer.</param>
-    public override void UpdateCachedData(IPlotArea layer)
+    public override void PreparePainting(IPlotArea layer)
     {
-      if(null!=this.m_PlotAssociation)
-        m_PlotAssociation.CalculateCachedData();
+      if(null!=this._plotData)
+        _plotData.CalculateCachedData(layer.XAxis.DataBoundsObject,layer.YAxis.DataBoundsObject);
     }
 
     /// <summary>
@@ -404,7 +407,7 @@ namespace Altaxo.Graph
     /// <returns>Null if no hit, or a <see cref="IHitTestObject" /> if there was a hit.</returns>
     public override IHitTestObject HitTest(IPlotArea layer, PointF hitpoint)
     {
-      XYColumnPlotData myPlotAssociation = this.m_PlotAssociation;
+      XYColumnPlotData myPlotAssociation = this._plotData;
       if(null==myPlotAssociation)
         return null;
 
@@ -460,7 +463,7 @@ namespace Altaxo.Graph
     {
 
    
-      XYColumnPlotData myPlotAssociation = this.m_PlotAssociation;
+      XYColumnPlotData myPlotAssociation = this._plotData;
       if(null==myPlotAssociation)
         return null;
 
@@ -503,7 +506,7 @@ namespace Altaxo.Graph
     public XYScatterPointInformation GetNextPlotPoint(IPlotArea layer, int oldplotindex, int increment)
     {
  
-      XYColumnPlotData myPlotAssociation = this.m_PlotAssociation;
+      XYColumnPlotData myPlotAssociation = this._plotData;
       if(null==myPlotAssociation)
         return null;
 
@@ -537,14 +540,11 @@ namespace Altaxo.Graph
 
     public event BoundaryChangedHandler XBoundariesChanged;
 
-    public void SetXBoundsFromTemplate(IPhysicalBoundaries val)
-    {
-      this.m_PlotAssociation.SetXBoundsFromTemplate(val);
-    }
+  
 
     public void MergeXBoundsInto(IPhysicalBoundaries pb)
     {
-      this.m_PlotAssociation.MergeXBoundsInto(pb);
+      this._plotData.MergeXBoundsInto(pb);
     }
 
     #endregion
@@ -559,14 +559,11 @@ namespace Altaxo.Graph
 
     public event BoundaryChangedHandler YBoundariesChanged;
 
-    public void SetYBoundsFromTemplate(IPhysicalBoundaries val)
-    {
-      this.m_PlotAssociation.SetYBoundsFromTemplate(val);
-    }
+  
 
     public void MergeYBoundsInto(IPhysicalBoundaries pb)
     {
-      this.m_PlotAssociation.MergeYBoundsInto(pb);
+      this._plotData.MergeYBoundsInto(pb);
     }
 
     #endregion
@@ -578,7 +575,7 @@ namespace Altaxo.Graph
     {
       get
       {
-        return this.m_PlotStyle;
+        return this._plotStyle;
       }
     }
 
@@ -586,7 +583,7 @@ namespace Altaxo.Graph
     {
       get
       {
-        return this.m_PlotStyle.IsColorProvider;
+        return this._plotStyle.IsColorProvider;
       }
     }
 
@@ -594,7 +591,7 @@ namespace Altaxo.Graph
     {
       get
       {
-        return this.m_PlotStyle.Color;
+        return this._plotStyle.Color;
       }
     }
 
@@ -602,7 +599,7 @@ namespace Altaxo.Graph
     {
       get
       {
-        return this.m_PlotStyle.IsXYLineStyleSupported;
+        return this._plotStyle.IsXYLineStyleSupported;
       }
     }
 
@@ -610,7 +607,7 @@ namespace Altaxo.Graph
     {
       get
       {
-        return this.m_PlotStyle.XYLineStyle;
+        return this._plotStyle.XYLineStyle;
       }
     }
 
@@ -618,7 +615,7 @@ namespace Altaxo.Graph
     {
       get
       {
-        return this.m_PlotStyle.IsXYScatterStyleSupported;
+        return this._plotStyle.IsXYScatterStyleSupported;
       }
     }
 
@@ -626,13 +623,13 @@ namespace Altaxo.Graph
     {
       get
       {
-        return this.m_PlotStyle.XYScatterStyle;
+        return this._plotStyle.XYScatterStyle;
       }
     }
 
     public void SetIncrementalStyle(I2DGroupablePlotStyle pstemplate, Altaxo.Graph.PlotGroupStyle style, bool concurrently, bool strict, int step)
     {
-      this.m_PlotStyle.SetIncrementalStyle(pstemplate,style,concurrently,strict,step);
+      this._plotStyle.SetIncrementalStyle(pstemplate,style,concurrently,strict,step);
     }
 
     #endregion

@@ -102,6 +102,8 @@ namespace Altaxo.Graph
     {
       _edges = (EdgeType[])edges.Clone();
       _axisStyles = new XYPlotLayerAxisStyleProperties[_edges.Length];
+      for (int i = 0; i < _edges.Length; ++i)
+        SetAxisStyle(new XYPlotLayerAxisStyleProperties(_edges[i]), i);
     }
 
     void CopyFrom(XYPlotLayerAxisStylesSummary from)

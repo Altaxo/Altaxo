@@ -24,6 +24,8 @@ using System;
 
 namespace Altaxo.Main
 {
+  public delegate void DocumentInstanceChangedEventHandler(object sender, object oldvalue, object newvalue);
+
   /// <summary>
   /// DocNodeProxy holds a reference to an object. If the object is a document node (implements <see cref="IDocumentNode" />), then special
   /// measures are used in the case the document node is disposed. In this case the relative path to the node (from a parent object) is stored, and if a new document node with
@@ -42,7 +44,9 @@ namespace Altaxo.Main
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         RelDocNodeProxy s = (RelDocNodeProxy)obj;
-        info.AddValue("Node", Main.DocumentPath.GetRelativePathFromTo(s._parentNode,(Main.IDocumentNode)s._docNode));
+        System.Diagnostics.Debug.Assert(s._parentNode != null);
+        Main.DocumentPath path = Main.DocumentPath.GetRelativePathFromTo(s._parentNode, (Main.IDocumentNode)s._docNode);
+        info.AddValue("Node", path);
       }
 
       public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -54,6 +58,13 @@ namespace Altaxo.Main
 
         s._parentNode = (Main.IDocumentNode)parent;
         s._docNodePath= (Main.DocumentPath)info.GetValue("Node", s);
+
+        // create a callback to resolve the instance as early as possible
+        if (s._docNodePath != null && s._docNode == null)
+        {
+          info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(s.EhXmlDeserializationFinished);
+        }
+
 
         return s;
       }
@@ -81,12 +92,24 @@ namespace Altaxo.Main
     /// Copying constructor.
     /// </summary>
     /// <param name="from">Object to clone from.</param>
-    void CopyFrom(RelDocNodeProxy from, Main.IDocumentNode newparent)
+    public void CopyFrom(RelDocNodeProxy from, Main.IDocumentNode newparent)
     {
         this.SetDocNode(from._docNode, newparent); // than the new Proxy refers to the same document node
     }
 
+    public void CopyPathOnlyFrom(RelDocNodeProxy from, Main.IDocumentNode newparent)
+    {
+      this.ClearDocNode();
+      this._parentNode = newparent;
+      this._docNodePath = from._docNodePath==null ? null : (Main.DocumentPath)from._docNodePath.Clone();
+    }
 
+    public RelDocNodeProxy ClonePathOnly(Main.IDocumentNode newparent)
+    {
+      RelDocNodeProxy result = new RelDocNodeProxy();
+      result.CopyPathOnlyFrom(this, newparent);
+      return result;
+    }
 
     /// <summary>
     /// True when both the document and the stored document path are <c>null</c>.
@@ -137,7 +160,12 @@ namespace Altaxo.Main
         throw new ArgumentException("This type of document is not allowed for the proxy of type " + this.GetType().ToString());
       if (parentNode == null)
         throw new ArgumentNullException("parentNode");
-      
+
+      bool docNodeInstanceChanged = !object.ReferenceEquals(_docNode, docNode) || !object.ReferenceEquals(_parentNode, parentNode);
+      if (!docNodeInstanceChanged)
+        return;
+      Main.IDocumentNode oldvalue = _docNode;
+
       if (_docNode != null)
       {
         ClearDocNode();
@@ -158,6 +186,8 @@ namespace Altaxo.Main
 
       OnAfterSetDocNode();
 
+      this.OnDocumentInstanceChanged(oldvalue,_docNode);
+
       OnChanged();
     }
 
@@ -177,7 +207,10 @@ namespace Altaxo.Main
       if (_docNode is Main.IChangedEventSource)
         ((Main.IChangedEventSource)_docNode).Changed -= new EventHandler(EhDocNode_Changed);
 
+      Main.IDocumentNode oldvalue = _docNode;
       _docNode = null;
+
+      OnDocumentInstanceChanged(oldvalue,_docNode);
     }
 
     /// <summary>
@@ -208,6 +241,8 @@ namespace Altaxo.Main
       OnChanged();
     }
 
+  
+
     /// <summary>
     /// Returns the document node. If the stored doc node is null, it is tried to resolve the stored document path.
     /// If that fails too, null is returned.
@@ -218,6 +253,9 @@ namespace Altaxo.Main
       {
         if (_docNode == null && _docNodePath != null)
         {
+          if (_docNodePath.IsAbsolutePath)
+            return null;
+
           Main.IDocumentNode obj = (Main.IDocumentNode)Main.DocumentPath.GetObject(_docNodePath, _parentNode);
           if (obj != null)
             SetDocNode(obj,_parentNode);
@@ -225,6 +263,22 @@ namespace Altaxo.Main
         return _docNode;
 
       }
+    }
+
+    private void EhXmlDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot)
+    {
+      if (this.DocumentObject != null)
+        info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(this.EhXmlDeserializationFinished);
+    }
+
+    public event DocumentInstanceChangedEventHandler DocumentInstanceChanged;
+    protected virtual void OnDocumentInstanceChanged(Main.IDocumentNode oldvalue, Main.IDocumentNode newvalue)
+    {
+      if (null != DocumentInstanceChanged)
+      {
+        DocumentInstanceChanged(this, oldvalue, newvalue);
+      }
+
     }
 
     #region IChangedEventSource Members

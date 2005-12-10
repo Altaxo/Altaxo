@@ -530,7 +530,7 @@ namespace Altaxo.Graph
       set
       {
         this._pen.Color = value;
-        this._cachedFillBrush.SetSolidBrush(value);
+        
         OnChanged(); // Fire Changed event
       }
     }
@@ -633,9 +633,11 @@ namespace Altaxo.Graph
       {
         case Shape.Square:
           gp.AddRectangle(new RectangleF(-sizeh, -sizeh, size, size));
+          gp.StartFigure();
           break;
         case Shape.Circle:
           gp.AddEllipse(-sizeh, -sizeh, size, size);
+          gp.StartFigure();
           break;
         case Shape.UpTriangle:
           gp.AddLine(0, -sizeh, 0.3301270189f * size, 0.5f * sizeh);
@@ -689,6 +691,7 @@ namespace Altaxo.Graph
       {
         case Style.DotCenter:
           gp.AddEllipse(-0.125f * sizeh, -0.125f * sizeh, 0.125f * size, 0.125f * size);
+          gp.StartFigure();
           break;
         case Style.Plus:
           gp.AddLine(-sizeh, 0, sizeh, 0);

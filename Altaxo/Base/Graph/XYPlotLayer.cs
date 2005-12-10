@@ -707,7 +707,7 @@ namespace Altaxo.Graph
       this._legend = null==from._legend ? null : (Graph.TextGraphics)from._legend.Clone();
       
       // XYPlotLayer specific
-      this._linkedLayer = from._linkedLayer; // do not clone here, parent collection's duty to fix this!
+      this._linkedLayer = from._linkedLayer.ClonePathOnly(this);
       
       this._graphObjects = null==from._graphObjects ? null : new GraphicsObjectCollection(from._graphObjects);
 
@@ -760,6 +760,7 @@ namespace Altaxo.Graph
 
       CalculateMatrix();
 
+      _linkedLayer = new Main.RelDocNodeProxy(null, this);
       _plotItems = new Altaxo.Graph.PlotItemCollection(this);
     
     
@@ -792,7 +793,7 @@ namespace Altaxo.Graph
       if(null!=_legend) _legend.Changed += new EventHandler(this.OnChildChangedEventHandler);
 
       if(null!=_linkedLayer)
-        _linkedLayer.Changed += new EventHandler(this.EhLinkedLayerInstanceChanged);
+        _linkedLayer.DocumentInstanceChanged += new Main.DocumentInstanceChangedEventHandler(this.EhLinkedLayerInstanceChanged);
     
       if(null!=_graphObjects) _graphObjects.Changed += new EventHandler(this.OnChildChangedEventHandler);
 
@@ -854,32 +855,13 @@ namespace Altaxo.Graph
         if(IsLayerDependentOnMe(value))
           return;
 
-
-        XYPlotLayer oldValue = this.LinkedLayer;
         if (_linkedLayer == null)
           _linkedLayer = new Main.RelDocNodeProxy();
 
         _linkedLayer.SetDocNode(value,this);
-
-        if(!ReferenceEquals(oldValue,value))
-        {
-          // close the event handlers to the old layer
-          if(null!=oldValue)
-          {
-            oldValue.SizeChanged -= new System.EventHandler(EhLinkedLayerSizeChanged);
-            oldValue.PositionChanged -= new System.EventHandler(EhLinkedLayerPositionChanged);
-            oldValue.AxisProperties.AxesChanged -= new System.EventHandler(EhLinkedLayerAxesChanged);
-          }
-
-          // link the events to the new layer
-          if(null!=_linkedLayer)
-          {
-            value.SizeChanged     += new System.EventHandler(EhLinkedLayerSizeChanged);
-            value.PositionChanged += new System.EventHandler(EhLinkedLayerPositionChanged);
-            value.AxisProperties.AxesChanged     += new System.EventHandler(EhLinkedLayerAxesChanged);
-          }
-
-        }
+        // Note here: the connection/disconnection to the event handlers of the linked layer
+        // is done in this.EhLinkedLayerInstanceChanged, which was called automatically when the previous statement
+        // was executed
       }
     }
 
@@ -1654,11 +1636,8 @@ namespace Altaxo.Graph
       {
         if(pa is IXBoundsHolder)
         {
-          // first ensure the right data bound object is set on the XYColumnPlotData
-          ((IXBoundsHolder)pa).SetXBoundsFromTemplate(_axisProperties.X.Axis.DataBoundsObject); // ensure that data bound object is of the right type
-          // now merge the bounds with x and yAxis
+          // merge the bounds with x and yAxis
           ((IXBoundsHolder)pa).MergeXBoundsInto(_axisProperties.X.Axis.DataBoundsObject); // merge all x-boundaries in the x-axis boundary object
-        
         }
       }
       _plotAssociationXBoundariesChanged_EventSuspendCount = Math.Max(0,_plotAssociationXBoundariesChanged_EventSuspendCount-1);
@@ -1724,11 +1703,8 @@ namespace Altaxo.Graph
       {
         if(pa is IYBoundsHolder)
         {
-          // first ensure the right data bound object is set on the XYColumnPlotData
-          ((IYBoundsHolder)pa).SetYBoundsFromTemplate(_axisProperties.Y.Axis.DataBoundsObject); // ensure that data bound object is of the right type
-          // now merge the bounds with x and yAxis
+          // merge the bounds with x and yAxis
           ((IYBoundsHolder)pa).MergeYBoundsInto(_axisProperties.Y.Axis.DataBoundsObject); // merge all x-boundaries in the x-axis boundary object
-        
         }
       }
       _plotAssociationYBoundariesChanged_EventSuspendCount = Math.Max(0,_plotAssociationYBoundariesChanged_EventSuspendCount-1);
@@ -1745,16 +1721,31 @@ namespace Altaxo.Graph
 
 
     /// <summary>
-    /// Only needed after deserialization, when the first time the document node is resolved.
+    /// Called by the proxy, when the instance of the linked layer has changed.
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    protected void EhLinkedLayerInstanceChanged(object sender, System.EventArgs e)
+    protected void EhLinkedLayerInstanceChanged(object sender, object oldvalue, object newvalue)
     {
-      if (_linkedLayer.DocumentObject != null)
+      XYPlotLayer oldValue = (XYPlotLayer)oldvalue;
+      XYPlotLayer newValue = (XYPlotLayer)newvalue;
+      if (!ReferenceEquals(oldValue, newValue))
       {
-        _linkedLayer.Changed -= new EventHandler(this.EhLinkedLayerInstanceChanged);
-        this.LinkedLayer = (XYPlotLayer)_linkedLayer.DocumentObject;
+        // close the event handlers to the old layer
+        if (null != oldValue)
+        {
+          oldValue.SizeChanged -= new System.EventHandler(EhLinkedLayerSizeChanged);
+          oldValue.PositionChanged -= new System.EventHandler(EhLinkedLayerPositionChanged);
+          oldValue.AxisProperties.AxesChanged -= new System.EventHandler(EhLinkedLayerAxesChanged);
+        }
+
+        // link the events to the new layer
+        if (null != newValue)
+        {
+          newValue.SizeChanged += new System.EventHandler(EhLinkedLayerSizeChanged);
+          newValue.PositionChanged += new System.EventHandler(EhLinkedLayerPositionChanged);
+          newValue.AxisProperties.AxesChanged += new System.EventHandler(EhLinkedLayerAxesChanged);
+        }
       }
     }
 
@@ -1768,14 +1759,23 @@ namespace Altaxo.Graph
       if(null==LinkedLayer)
         return; // this should not happen, since what is sender then?
 
-      if (_axisProperties.X.IsLinked && null != LinkedLayer)
+      try
       {
-        _axisProperties.X.EhLinkedLayerAxesChanged(LinkedLayer.AxisProperties.X.Axis);
-      }
+        if (_axisProperties.X.IsLinked && null != LinkedLayer)
+        {
+          _axisProperties.X.EhLinkedLayerAxesChanged(LinkedLayer.AxisProperties.X.Axis);
+        }
 
-      if (_axisProperties.Y.IsLinked && null != LinkedLayer)
+        if (_axisProperties.Y.IsLinked && null != LinkedLayer)
+        {
+          _axisProperties.Y.EhLinkedLayerAxesChanged(LinkedLayer.AxisProperties.Y.Axis);
+        }
+      }
+      catch (Exception )
       {
-        _axisProperties.Y.EhLinkedLayerAxesChanged(LinkedLayer.AxisProperties.Y.Axis);
+        string linkedlayername = this.LinkedLayer.Name;
+        this.LinkedLayer = null;
+        Current.Gui.ErrorMessageBox(string.Format("Link of layer {0} to layer {1} was removed, because the axes seem to be incompatible!", this.Name, linkedlayername));
       }
     }
 
@@ -2052,6 +2052,23 @@ namespace Altaxo.Graph
     #endregion // Style properties
 
     #region Painting and Hit testing
+
+    /// <summary>
+    /// This function is called by the graph document before _any_ layer is painted. We have to make sure that all of our cached data becomes valid.
+    /// 
+    /// </summary>
+
+    public virtual void PreparePainting()
+    {
+      // Before we paint the axis, we have to make sure that all plot items
+      // had their data updated, so that the axes are updated before they are drawn!
+      foreach (PlotItem pi in _plotItems)
+      {
+        pi.PreparePainting(this);
+      }
+    }
+
+
     public virtual void Paint(Graphics g)
     {
       GraphicsState savedgstate = g.Save();
@@ -2066,14 +2083,6 @@ namespace Altaxo.Graph
       _graphObjects.DrawObjects(g,1,this);
 
       RectangleF layerBounds = new RectangleF(_cachedLayerPosition,_cachedLayerSize);
-
-
-      // Before we paint the axis, we have to make sure that all plot items
-      // had their data updated, so that the axes are updated before they are drawn!
-      foreach(PlotItem pi in _plotItems)
-      {
-        pi.UpdateCachedData(this);
-      }
 
       _axisStyles.Paint(g, this);
 

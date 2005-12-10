@@ -207,11 +207,14 @@ namespace Altaxo.Main
     /// to the root object of serialization, so that path in the inner of the serialization tree are relative paths, whereas paths to objects not includes in the
     /// serialization tree are returned as absolute paths. The stoppernode can be null.</param>
     /// <returns>If the two nodes share a common root, the function returns the relative path from <code>startnode</code> to <code>endnode</code>.
-    /// If the nodes have no common root, then the function returns the absolute path of the endnode.</returns>
+    /// If the nodes have no common root, then the function returns the absolute path of the endnode.
+    /// <para>If either startnode or endnode is null, then null is returned.</para></returns>
     public static DocumentPath GetRelativePathFromTo(IDocumentNode startnode, IDocumentNode endnode, object stoppernode)
     {
       System.Collections.Hashtable hash = new System.Collections.Hashtable();
 
+      if (startnode == null || endnode == null)
+        return null;
 
       // store the complete hierarchie of objects as keys in the hash, (values are the hierarchie depth)
       int endnodedepth=0;

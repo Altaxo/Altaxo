@@ -74,6 +74,10 @@ namespace Altaxo.Worksheet.Commands
       int len = selectedColumns.Count;
 
       Graph.XYColumnPlotData[] pa = new Graph.XYColumnPlotData[len];
+      Graph.XYPlotStyleCollection[] ps = new Altaxo.Graph.XYPlotStyleCollection[len];
+      for(int i=0;i<len;++i)
+        ps[i] = (Altaxo.Graph.XYPlotStyleCollection)templatePlotStyle.Clone();
+
 
       int nNumberOfPlotData=0;
       for(int i=0;i<len;i++)
@@ -92,7 +96,8 @@ namespace Altaxo.Worksheet.Commands
         // if the next column is a label column, add it also
         if((i+1)<len && ColumnKind.Label==table.DataColumns.GetColumnKind(selectedColumns[i+1]))
         {
-          pa[i].LabelColumn = table.DataColumns[selectedColumns[i+1]];
+          Altaxo.Graph.XYPlotLabelStyle labelStyle = new Altaxo.Graph.XYPlotLabelStyle(table.DataColumns[i]);
+          ps[i].Add(labelStyle);
           i++;
         }
 
@@ -108,7 +113,7 @@ namespace Altaxo.Worksheet.Commands
 
       for(int i=0;i<nNumberOfPlotData;i++)
       {
-        Altaxo.Graph.PlotItem pi = new Altaxo.Graph.XYColumnPlotItem(pa[i],(Altaxo.Graph.XYPlotStyleCollection)templatePlotStyle.Clone());
+        Altaxo.Graph.PlotItem pi = new Altaxo.Graph.XYColumnPlotItem(pa[i],ps[i]);
         newPlotGroup.Add(pi);
       }
       newPlotGroup.UpdateMembers(0);

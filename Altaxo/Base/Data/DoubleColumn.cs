@@ -599,13 +599,39 @@ namespace Altaxo.Data
         c3.m_Array[i] = (c1.GetValueDirect(i)-c2.GetValueDirect(i)).TotalSeconds;
       }
       
-      
       c3.m_Count=len;
       
       return c3;  
     }
 
 
+    public static Altaxo.Data.DoubleColumn Subtraction(Altaxo.Data.DateTimeColumn c1, DateTime c2)
+    {
+      int len = c1.Count;
+      Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
+      for (int i = 0; i < len; i++)
+      {
+        c3.m_Array[i] = (c1.GetValueDirect(i) - c2).TotalSeconds;
+      }
+
+      c3.m_Count = len;
+
+      return c3;
+    }
+
+    public static Altaxo.Data.DoubleColumn Subtraction(DateTime c1, Altaxo.Data.DateTimeColumn c2)
+    {
+      int len = c2.Count;
+      Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
+      for (int i = 0; i < len; i++)
+      {
+        c3.m_Array[i] = (c1 - c2.GetValueDirect(i)).TotalSeconds;
+      }
+
+      c3.m_Count = len;
+
+      return c3;
+    }
 
     // ----------------------- Multiplication operator -----------------------------------
     public static Altaxo.Data.DoubleColumn operator *(Altaxo.Data.DoubleColumn c1, Altaxo.Data.DoubleColumn c2)

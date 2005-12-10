@@ -229,7 +229,6 @@ namespace Altaxo.Gui.Graph
       {
         m_PlotAssociation.XColumn = m_xCol;
         m_PlotAssociation.YColumn = m_yCol;
-        m_PlotAssociation.LabelColumn = m_labelCol;
         m_PlotAssociation.PlotRangeStart = this.m_PlotRange_From;
         m_PlotAssociation.PlotRangeLength = this.m_PlotRange_To >= this.m_MaxPossiblePlotRange_To ? int.MaxValue : this.m_PlotRange_To+1-this.m_PlotRange_From;
       }

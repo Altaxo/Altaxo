@@ -291,6 +291,9 @@ namespace Altaxo.Graph
     {
       get
       {
+        if (null == _majorLabelStyle)
+          this.MajorLabelStyle = new XYAxisLabelStyle(_edgeType);
+
         return _majorLabelStyle;
       }
       set
@@ -318,6 +321,9 @@ namespace Altaxo.Graph
     {
       get
       {
+        if (_minorLabelStyle == null)
+          this.MinorLabelStyle = new XYAxisLabelStyle(_edgeType);
+
         return _minorLabelStyle;
       }
       set

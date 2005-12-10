@@ -469,6 +469,8 @@ namespace Altaxo.Data
       return c3;  
     }
 
+  
+
     public static Altaxo.Data.DateTimeColumn operator -(Altaxo.Data.DateTimeColumn c1, double c2)
     {
       Altaxo.Data.DateTimeColumn c3 = new Altaxo.Data.DateTimeColumn(c1.m_Count);
@@ -484,7 +486,66 @@ namespace Altaxo.Data
 
       return c3;  
     }
-        
+
+    public static Altaxo.Data.DoubleColumn operator -(Altaxo.Data.DateTimeColumn c1, DateTime c2)
+    {
+      return Altaxo.Data.DoubleColumn.Subtraction(c1, c2);
+    }
+
+    public static Altaxo.Data.DoubleColumn operator -(DateTime c1, Altaxo.Data.DateTimeColumn c2)
+    {
+      return Altaxo.Data.DoubleColumn.Subtraction(c1, c2);
+    }
+
+
+
+    public override bool vop_Subtraction(DataColumn c2, out DataColumn c3)
+    {
+      if (c2 is Altaxo.Data.DateTimeColumn)
+      {
+        c3 = this - (Altaxo.Data.DateTimeColumn)c2;
+        return true;
+      }
+      c3 = null;
+      return false;
+    }
+
+    public override bool vop_Subtraction_Rev(DataColumn c2, out DataColumn c3)
+    {
+      if (c2 is Altaxo.Data.DateTimeColumn)
+      {
+        c3 = (Altaxo.Data.DateTimeColumn)c2 - this;
+        return true;
+      }
+      c3 = null;
+      return false;
+    }
+
+    public override bool vop_Subtraction(AltaxoVariant c2, out DataColumn c3)
+    {
+      if (((AltaxoVariant)c2).IsType(AltaxoVariant.Content.VDateTime))
+      {
+        DateTime c22 = (DateTime)c2;
+        c3 = this - c22;
+        return true;
+      }
+      c3 = null;
+      return false;
+    }
+
+    public override bool vop_Subtraction_Rev(AltaxoVariant c2, out DataColumn c3)
+    {
+      if (((AltaxoVariant)c2).IsType(AltaxoVariant.Content.VDateTime))
+      {
+        DateTime c22 = (DateTime)c2;
+        c3 = c22 - this;
+        return true;
+      }
+      c3 = null;
+      return false;
+    }
+
+    
     #endregion
 
   } // end Altaxo.Data.DateTimeColumn

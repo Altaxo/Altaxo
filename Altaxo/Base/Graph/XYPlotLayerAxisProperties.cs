@@ -89,7 +89,7 @@ namespace Altaxo.Graph
       {
         XYPlotLayerAxisProperties s = null != o ? (XYPlotLayerAxisProperties)o : new XYPlotLayerAxisProperties();
 
-        s._axis = (Axis)info.GetValue("Axis", typeof(Axis));
+        s.Axis = (Axis)info.GetValue("Axis", typeof(Axis));
         s._isLinked = info.GetBoolean("Link");
         s._linkAxisOrgA = info.GetDouble("OrgA");
         s._linkAxisOrgB = info.GetDouble("OrgB");
@@ -379,7 +379,7 @@ namespace Altaxo.Graph
         int count = info.OpenArray("Properties");
         s._props = new XYPlotLayerAxisProperties[count];
         for (int i = 0; i < count; ++i)
-          s._props[i] = (XYPlotLayerAxisProperties)info.GetValue("e", s);
+          s.SetAxisProperties( (XYPlotLayerAxisProperties)info.GetValue("e", s),i);
         info.CloseArray(count);
 
         return s;
@@ -390,10 +390,8 @@ namespace Altaxo.Graph
     public XYPlotLayerAxisPropertiesCollection()
     {
       _props = new XYPlotLayerAxisProperties[2];
-      _props[0] = new XYPlotLayerAxisProperties();
-      _props[0].AxisPropertiesChanged += new EventHandler(this.EhAxisPropertiesChanged);
-      _props[1] = new XYPlotLayerAxisProperties();
-      _props[1].AxisPropertiesChanged += new EventHandler(this.EhAxisPropertiesChanged);
+      this.SetAxisProperties(new XYPlotLayerAxisProperties(), 0);
+      this.SetAxisProperties(new XYPlotLayerAxisProperties(), 1);
     }
 
     public XYPlotLayerAxisPropertiesCollection(XYPlotLayerAxisPropertiesCollection from)
@@ -407,7 +405,8 @@ namespace Altaxo.Graph
       {
         for (int i = 0; i < _props.Length; ++i)
         {
-          _props[i].AxisPropertiesChanged -= new EventHandler(EhAxisPropertiesChanged);
+          if(_props[i]!=null)
+            _props[i].AxisPropertiesChanged -= new EventHandler(EhAxisPropertiesChanged);
           _props[i] = null;
         }
       }
@@ -415,9 +414,11 @@ namespace Altaxo.Graph
       _props = new XYPlotLayerAxisProperties[from._props.Length];
       for (int i = 0; i < from._props.Length; i++)
       {
-        _props[i] = this._props[i].Clone();
+        _props[i] = from._props[i].Clone();
         _props[i].AxisPropertiesChanged += new EventHandler(EhAxisPropertiesChanged);
       }
+
+      OnChanged();
     }
 
     public XYPlotLayerAxisPropertiesCollection Clone()
@@ -441,6 +442,19 @@ namespace Altaxo.Graph
       }
     }
 
+    protected void SetAxisProperties(XYPlotLayerAxisProperties newvalue, int i)
+    {
+      XYPlotLayerAxisProperties oldvalue = _props[i];
+      _props[i] = newvalue;
+
+      if (!object.ReferenceEquals(oldvalue, newvalue))
+      {
+        if (null != oldvalue)
+          oldvalue.AxisPropertiesChanged -= new EventHandler(EhAxisPropertiesChanged);
+        if (null != newvalue)
+          newvalue.AxisPropertiesChanged += new EventHandler(EhAxisPropertiesChanged);
+      }
+    }
 
     private void EhAxisPropertiesChanged(object sender, EventArgs e)
     {

@@ -47,8 +47,6 @@ namespace Altaxo.Data
         ReadableColumnProxy s = o!=null ? (ReadableColumnProxy)o : new ReadableColumnProxy();
         info.GetBaseValueEmbedded(s,typeof(DocNodeProxy),parent);         // deserialize the base class
 
-        info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(s.EhXmlDeserializationFinished);
-
         return s;
       }
     }
@@ -73,12 +71,6 @@ namespace Altaxo.Data
     public ReadableColumnProxy(ReadableColumnProxy from)
       : base(from)
     {
-    }
-
-    private void EhXmlDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot)
-    {
-      if(this.Document!=null)
-        info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(this.EhXmlDeserializationFinished);
     }
 
     protected override bool IsValidDocument(object obj)

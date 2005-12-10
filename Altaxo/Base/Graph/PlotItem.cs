@@ -92,7 +92,7 @@ namespace Altaxo.Graph
     /// it must be ensured that the axes are scaled correctly before the plots are painted.
     /// </summary>
     /// <param name="layer">The plot layer.</param>
-    public abstract void UpdateCachedData(IPlotArea layer);
+    public abstract void PreparePainting(IPlotArea layer);
 
     /// <summary>
     /// Creates a cloned copy of this object.

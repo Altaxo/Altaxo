@@ -1287,11 +1287,15 @@ namespace Altaxo.Graph.GUI
       // Code to write the stream goes here.
       Graphics grfx = m_View.CreateGraphGraphics();
       IntPtr ipHdc = grfx.GetHdc();
-      System.Drawing.Imaging.Metafile mf = new System.Drawing.Imaging.Metafile(stream,ipHdc);
+      System.Drawing.Imaging.Metafile mf = new System.Drawing.Imaging.Metafile(stream,ipHdc,this.Doc.PageBounds,System.Drawing.Imaging.MetafileFrameUnit.Point);
       grfx.ReleaseHdc(ipHdc);
       grfx.Dispose();
       grfx = Graphics.FromImage(mf);
-          
+
+      grfx.PageUnit = GraphicsUnit.Point;
+      grfx.PageScale = 1;
+      grfx.TranslateTransform(this.Doc.PrintableBounds.X, this.Doc.PrintableBounds.Y);
+
       this.m_Graph.DoPaint(grfx,true);
 
       grfx.Dispose();

@@ -32,12 +32,7 @@ namespace Altaxo.Graph.Axes.Boundaries
     /// <summary>Fired if the x boundaries of the object changed.</summary>
     event BoundaryChangedHandler XBoundariesChanged;
 
-    /// <summary>
-    /// This sets the x boundary object to a object of the same type as val. The inner data of the boundary, if present,
-    /// are copied into the new x boundary object.
-    /// </summary>
-    /// <param name="val">The template boundary object.</param>
-    void SetXBoundsFromTemplate(IPhysicalBoundaries val);
+   
 
     /// <summary>
     /// This merges the x boundary of the object with the boundary pb. The boundary pb is updated so that
