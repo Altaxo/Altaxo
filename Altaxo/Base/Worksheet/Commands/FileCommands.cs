@@ -99,7 +99,7 @@ namespace Altaxo.Worksheet.Commands
       // import also the other files, but this time we create new tables
       for(int i=startrest;i<filenames.Length;i++)
       {
-        using(System.IO.Stream myStream = new System.IO.FileStream(filenames[0],System.IO.FileMode.Open,System.IO.FileAccess.Read))
+        using(System.IO.Stream myStream = new System.IO.FileStream(filenames[i],System.IO.FileMode.Open,System.IO.FileAccess.Read))
         {
           Altaxo.Worksheet.GUI.IWorksheetController newwkscontroller = Current.ProjectService.CreateNewWorksheet();
           ImportAscii(newwkscontroller,myStream);

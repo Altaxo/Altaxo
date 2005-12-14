@@ -475,7 +475,19 @@ namespace Altaxo.Graph.Axes
 
 
       CalculateTicks(xorg, xend, out m_MajorSpan, out m_MinorTicks);
-      if(xend>=xorg)
+      if (xend == xorg)
+      {
+        if(xorgfixed)
+          m_AxisOrgByMajor = xorg / m_MajorSpan;
+        else
+          m_AxisOrgByMajor = System.Math.Floor(m_MinorTicks * xorg / m_MajorSpan) / m_MinorTicks - 3 ;
+
+        if(xendfixed)
+          m_AxisEndByMajor = xend / m_MajorSpan;
+        else
+          m_AxisEndByMajor = System.Math.Ceiling(m_MinorTicks * xend / m_MajorSpan) / m_MinorTicks +3;
+      }
+      else if(xend>xorg)
       {
         if(xorgfixed)
           m_AxisOrgByMajor = xorg/m_MajorSpan;

@@ -88,7 +88,7 @@ namespace Altaxo.Graph.Axes.Boundaries
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
         
-        FiniteDateTimeBoundaries s = (FiniteDateTimeBoundaries)o;
+        FiniteDateTimeBoundaries s = null!=o ? (FiniteDateTimeBoundaries)o : new FiniteDateTimeBoundaries();
 
         s.numberOfItems = info.GetInt32("NumberOfItems");  
         s.minValue = info.GetDateTime("MinValue");

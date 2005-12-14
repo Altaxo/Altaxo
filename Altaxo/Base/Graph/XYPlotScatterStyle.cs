@@ -530,6 +530,7 @@ namespace Altaxo.Graph
       set
       {
         this._pen.Color = value;
+        SetCachedValues();
         
         OnChanged(); // Fire Changed event
       }

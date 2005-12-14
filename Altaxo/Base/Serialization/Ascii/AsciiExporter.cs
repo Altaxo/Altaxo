@@ -115,7 +115,7 @@ namespace Altaxo.Serialization.Ascii
     /// <param name="separator">The separator char that separates the items from each other.</param>
     static public void ExportAscii(System.IO.Stream myStream, Altaxo.Data.DataTable table, char separator)
     {
-      StreamWriter strwr = new StreamWriter(myStream);
+      StreamWriter strwr = new StreamWriter(myStream, System.Text.Encoding.Default); // Change to Unicode or quest encoding by a dialog box
 
       ExportDataColumnNames(strwr,table,separator);
     

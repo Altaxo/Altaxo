@@ -133,8 +133,18 @@ namespace Altaxo.Worksheet.Commands.Analysis
         table.DataColumns.Add(colCol,"Col",Altaxo.Data.ColumnKind.X);
 
         // new : add a copy of all property columns; can be usefull
-        for(int i=0;i<srctable.PropertyColumnCount;i++)
-          table.DataColumns.Add((DataColumn)srctable.PropertyColumns[i].Clone(),srctable.PropertyColumns.GetColumnName(i),srctable.PropertyColumns.GetColumnKind(i),srctable.PropertyColumns.GetColumnGroup(i));
+        for (int i = 0; i < srctable.PropertyColumnCount; i++)
+        {
+          DataColumn originalColumn = srctable.PropertyColumns[i];
+          DataColumn clonedColumn = (DataColumn)originalColumn.Clone();
+          clonedColumn.Clear();
+          for (int si = 0; si < numcols; si++)
+          {
+            int idx = bUseSelectedColumns ? selectedColumns[si] : si;
+            clonedColumn[si] = originalColumn[idx];
+          }
+          table.DataColumns.Add(clonedColumn, srctable.PropertyColumns.GetColumnName(i), srctable.PropertyColumns.GetColumnKind(i), srctable.PropertyColumns.GetColumnGroup(i));
+        }
 
         table.DataColumns.Add(colMean,"Mean");
         table.DataColumns.Add(colSd,"Sd");

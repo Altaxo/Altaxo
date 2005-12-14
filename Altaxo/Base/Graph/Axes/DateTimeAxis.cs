@@ -40,11 +40,14 @@ namespace Altaxo.Graph.Axes
     /// <summary>Current axis end (cached value).</summary>
     protected DateTime m_AxisEnd=DateTime.MaxValue;
 
+
     /// <summary>Holds the <see cref="NumericalBoundaries"/> for that axis.</summary>
     protected FiniteDateTimeBoundaries m_DataBounds;
 
     protected DateTimeAxisRescaleConditions _rescaling;
 
+    SpanCompound m_MajorSpan;
+    int m_MinorTicks;
 
     #region Serialization
 
@@ -58,6 +61,9 @@ namespace Altaxo.Graph.Axes
 
         info.AddValue("Org", s.m_AxisOrg);
         info.AddValue("End", s.m_AxisEnd);
+        info.AddEnum("MajorSpanUnit", s.m_MajorSpan._unit);
+        info.AddValue("MajorSpanValue", s.m_MajorSpan._span);
+        info.AddValue("MinorTicks", s.m_MinorTicks);
         info.AddValue("Bounds", s.m_DataBounds);
         info.AddValue("Rescaling", s._rescaling);
 
@@ -80,6 +86,10 @@ namespace Altaxo.Graph.Axes
 
         s.m_AxisOrg = info.GetDateTime("Org");
         s.m_AxisEnd = info.GetDateTime("End");
+        Unit spanUnit = (Unit)info.GetEnum("MajorSpanUnit", typeof(Unit));
+        TimeSpan span = info.GetTimeSpan("MajorSpanValue");
+        s.m_MajorSpan = new SpanCompound(spanUnit, span);
+        s.m_MinorTicks = info.GetInt32("MinorTicks");
         s.InternalSetDataBounds( (FiniteDateTimeBoundaries)info.GetValue("Bounds", s) );
         s.InternalSetRescaling( (DateTimeAxisRescaleConditions)info.GetValue("Rescaling", s) );
 
@@ -397,8 +407,7 @@ namespace Altaxo.Graph.Axes
     // public abstract bool   EndFixed { get; set; }
 
 
-    SpanCompound m_MajorSpan;
-    int m_MinorTicks;
+ 
 
     /// <summary>
     /// calculates the axis org and end using the databounds

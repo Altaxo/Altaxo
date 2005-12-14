@@ -372,7 +372,8 @@ namespace Altaxo.Graph.Axes
       double minorsperdecade = 50.0/decadespan;
       
       // do not allow more than 10 minors per decade than 
-      if(decadespan>0.3 && minorsperdecade>10) minorsperdecade=10;
+      if(decadespan>0.3 && minorsperdecade>9) 
+        minorsperdecade=9;
 
       // if minorsperdecade is lesser than one, we dont have minors, so we can
       // return an empty field
@@ -381,26 +382,26 @@ namespace Altaxo.Graph.Axes
 
 
       // ensure the minorsperdecade are one of the following values
-      // 1,2,4,5,8,10,20,40,50,80,100 usw.
+      // 3,9,..
       double dec=1;
+      double minormax=1;
       for(int i=0;;i++)
       {
         double val;
-        switch(i%5)
+        switch(i%2)
         {
           default:
-          case 0: val=1*dec; break;
-          case 1: val=2*dec; break;
-          case 2: val=4*dec; break;
-          case 3: val=5*dec; break;
-          case 4: val=8*dec; dec*=10; break;
+          case 0: val=3*dec; break;
+          case 1: val=9*dec; dec*=10; break;
         }
-        if(val>=minorsperdecade)
+        if (val <= minorsperdecade)
         {
-          minorsperdecade=val;
-          break;
+          minormax = val;
         }
+        else
+          break;
       }
+      minorsperdecade = minormax;
       // now if minorsperdecade is at least 2, it is a good "even" value
 
       // now get the major ticks
@@ -410,7 +411,7 @@ namespace Altaxo.Graph.Axes
       int majorcount = majorticks.Length;
 
       // of cause this increment is only valid in the decade between 1 and 10
-      double minorincrement = 10/minorsperdecade;
+      double minorincrement = 9/(minorsperdecade);
 
       // there are two cases now, either we have at least one major tick,
       // then we have two different decades on left and right of the axis,
@@ -534,8 +535,8 @@ namespace Altaxo.Graph.Axes
       // do something if org and end are the same
       if(log10org==log10end)
       {
-        log10org += 1;
-        log10end -= 1;
+        log10org -= 1;
+        log10end += 1;
       }
 
       // calculate the number of decades between end and org
