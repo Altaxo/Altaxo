@@ -2080,11 +2080,13 @@ namespace Altaxo.Graph
       if(_layerBackground!=null)
         _layerBackground.Draw(g,new RectangleF(0,0,_cachedLayerSize.Width,_cachedLayerSize.Height));
        
-      _graphObjects.DrawObjects(g,1,this);
+     
 
       RectangleF layerBounds = new RectangleF(_cachedLayerPosition,_cachedLayerSize);
 
       _axisStyles.Paint(g, this);
+
+      _graphObjects.DrawObjects(g, 1, this);
 
       if(_legend!=null)
         _legend.Paint(g,this);

@@ -196,6 +196,7 @@ namespace Altaxo.Graph
       _horizontalAlignment = from._horizontalAlignment;
       _verticalAlignment = from._verticalAlignment;
       _brush = (BrushHolder)from._brush.Clone();
+      _automaticRotationShift = from._automaticRotationShift;
       _xOffset = from._xOffset;
       _xOffset = from._xOffset;
       _rotation = from._rotation;

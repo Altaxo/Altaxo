@@ -21,6 +21,7 @@
 #endregion
 
 using System;
+using System.Collections;
 using Altaxo.Serialization;
 using Altaxo.Graph.Axes.Scaling;
 using Altaxo.Graph.Axes.Boundaries;
@@ -337,7 +338,7 @@ namespace Altaxo.Graph.Axes
       int i,j;
       for(i=beg,j=0 ;(i<=end) && (j<nMajorTicks) ; i+=m_DecadesPerMajorTick,j++)
       {
-        retval[j] = Math.Pow(10,i);
+        retval[j] = Calc.RMath.Pow(10,i);
       }
       return retval;
     }
@@ -367,10 +368,55 @@ namespace Altaxo.Graph.Axes
 
       double decadespan = Math.Abs(m_Log10Org-m_Log10End);
 
+      // now get the major ticks
+      double[] majorticks = GetMajorTicks();
+      // and calculate begin and end of minor ticks
+
+      int majorcount = majorticks.Length;
+
+
       // guess from the span the tickiness (i.e. the increment of the multiplicator)
       // so that not more than 50 minor ticks are visible
       double minorsperdecade = 50.0/decadespan;
       
+      // when there is more than one decade per major tick, then allow only minor ticks onto a full decade
+      if (this.m_DecadesPerMajorTick > 1)
+      {
+        int decadesPerMinor;
+        for (decadesPerMinor = 1; decadesPerMinor<m_DecadesPerMajorTick; decadesPerMinor++)
+        {
+          if (0 != (m_DecadesPerMajorTick % decadesPerMinor))
+            continue;
+          double resultingMinors = decadespan / decadesPerMinor;
+          if (resultingMinors < 50)
+            break;
+        }
+        if (decadesPerMinor == m_DecadesPerMajorTick)
+          return new double[] { };
+
+        ArrayList minorlist = new ArrayList();
+
+        int log10firstmajor = (int)Math.Floor(Math.Log10(majorticks[0]) + 0.125);
+        int beg = (int)Math.Ceiling((log10org-log10firstmajor) / decadesPerMinor);
+        int end = (int)Math.Floor((log10end-log10firstmajor) / decadesPerMinor);
+
+        
+        for (int i = beg, j=0 ; i <= end; i++)
+        {
+          double result = Calc.RMath.Pow(10, log10firstmajor + i * decadesPerMinor);
+          double logdiff = Math.Log10(result) - Math.Log10(majorticks[j]);
+          if(Math.Abs(logdiff)<0.125)
+          {
+            if((j+1)<majorticks.Length)
+              j++;
+            continue;
+          }
+          minorlist.Add(result);
+        }
+        return (double[])minorlist.ToArray(typeof(double));
+      }
+
+
       // do not allow more than 10 minors per decade than 
       if(decadespan>0.3 && minorsperdecade>9) 
         minorsperdecade=9;
@@ -404,11 +450,7 @@ namespace Altaxo.Graph.Axes
       minorsperdecade = minormax;
       // now if minorsperdecade is at least 2, it is a good "even" value
 
-      // now get the major ticks
-      double [] majorticks = GetMajorTicks();
-      // and calculate begin and end of minor ticks
-
-      int majorcount = majorticks.Length;
+     
 
       // of cause this increment is only valid in the decade between 1 and 10
       double minorincrement = 9/(minorsperdecade);

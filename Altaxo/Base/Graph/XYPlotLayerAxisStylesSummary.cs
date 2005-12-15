@@ -176,14 +176,24 @@ namespace Altaxo.Graph
 
     public void Paint(Graphics g, XYPlotLayer layer, int axisnumber)
     {
+      PaintGrid(g, layer, axisnumber);
+      PaintAxes(g, layer, axisnumber);
+    }
+    public void PaintGrid(Graphics g, XYPlotLayer layer, int axisnumber)
+    {
+      Axis axis = axisnumber == 0 ? layer.XAxis : layer.YAxis;
+
+      if (null != _gridStyle)
+        _gridStyle.Paint(g, layer, axisnumber);
+    }
+
+    public void PaintAxes(Graphics g, XYPlotLayer layer, int axisnumber)
+    {
       Axis axis = axisnumber == 0 ? layer.XAxis : layer.YAxis;
 
       for (int i = 0; i < _axisStyles.Length; ++i)
         if (null != _axisStyles[i])
           _axisStyles[i].Paint(g, layer, axis);
-
-      if (null != _gridStyle)
-        _gridStyle.Paint(g, layer, axisnumber);
     }
 
 
@@ -364,8 +374,10 @@ namespace Altaxo.Graph
 
     public void Paint(Graphics g, XYPlotLayer layer)
     {
-      _styles[0].Paint(g, layer, 0);
-      _styles[1].Paint(g, layer, 1);
+      _styles[0].PaintGrid(g, layer, 0);
+      _styles[1].PaintGrid(g, layer, 1);
+      _styles[0].PaintAxes(g, layer, 0);
+      _styles[1].PaintAxes(g, layer, 1);
     }
 
     #region IChildChangedEventSink Members
