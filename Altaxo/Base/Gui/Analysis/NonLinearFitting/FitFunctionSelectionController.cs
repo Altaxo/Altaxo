@@ -23,6 +23,7 @@
 using System;
 using System.Text;
 using System.Collections;
+using System.Reflection;
 using Altaxo.Scripting;
 using Altaxo.Calc.Regression.Nonlinear;
 
@@ -72,8 +73,36 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     {
       if(_view!=null)
       {
-        DictionaryEntry[] entries = Altaxo.Main.Services.ReflectionService.GetAttributeInstancesAndClassTypes(typeof(FitFunctionAttribute));
-        _view.InitializeFitFunctionList(entries,_tempdoc==null ? null : _tempdoc.GetType());
+        DictionaryEntry[] classentries = Altaxo.Main.Services.ReflectionService.GetAttributeInstancesAndClassTypes(typeof(FitFunctionClassAttribute));
+
+        SortedList list = new SortedList();
+
+        foreach (DictionaryEntry entry in classentries)
+        {
+          System.Type definedtype = (System.Type)entry.Value;
+
+          MethodInfo[] methods = definedtype.GetMethods(System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public);
+          foreach (MethodInfo method in methods)
+          {
+            if (method.IsStatic && method.ReturnType != typeof(void) && method.GetParameters().Length==0)
+            {
+              object[] attribs = method.GetCustomAttributes(typeof(FitFunctionCreatorAttribute), false);
+              foreach(FitFunctionCreatorAttribute creatorattrib in attribs)
+                list.Add(creatorattrib,method);
+            }
+          }
+        }
+
+
+        DictionaryEntry[] entries = new DictionaryEntry[list.Count];
+        int j = 0;
+        foreach (DictionaryEntry entry in list)
+        {
+          entries[j++] = entry;
+        }
+
+
+        _view.InitializeFitFunctionList(entries, _tempdoc==null ? null : _tempdoc.GetType());
         _view.InitializeDocumentFitFunctionList(GetDocumentEntries(), null);
       }
     }
@@ -95,6 +124,10 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       if(selectedtag is System.Type)
       {
         _tempdoc = System.Activator.CreateInstance((System.Type)selectedtag) as IFitFunction;
+      }
+      else if (selectedtag is MethodInfo)
+      {
+        _tempdoc = ((MethodInfo)selectedtag).Invoke(null,new object[]{}) as IFitFunction;
       }
       else if (selectedtag is IFitFunction)
       {

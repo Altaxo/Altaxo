@@ -28,15 +28,24 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
   /// <summary>
   /// Summary description for KohlrauschDecay.
   /// </summary>
-  [FitFunction("KohlrauschDecay","Relaxation",1,1,4)]
+  [FitFunctionClass]
   public class KohlrauschDecay : IFitFunction
   {
+    
     public KohlrauschDecay()
     {
       //
       // TODO: Add constructor logic here
       //
     }
+
+    [FitFunctionCreator("KohlrauschDecay", "Relaxation", 1, 1, 4)]
+    public static IFitFunction CreateDefault()
+    {
+      return new KohlrauschDecay();
+    }
+
+    
     #region IFitFunction Members
 
     public int NumberOfIndependentVariables
@@ -92,7 +101,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
   /// <summary>
   /// Only for testing purposes - use a "real" linear fit instead.
   /// </summary>
-  [FitFunction("LinearFitWithGradient","Relaxation",1,1,2)]
+  [FitFunctionClass]
   public class LinearFitWithGradient : IFitFunctionWithGradient
   {
     public LinearFitWithGradient()
@@ -100,6 +109,12 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       //
       // TODO: Add constructor logic here
       //
+    }
+
+    [FitFunctionCreator("LinearFitWithGradient","Relaxation",1,1,2)]
+    public static IFitFunction LinearFitWithGradientOrder2()
+    {
+      return new LinearFitWithGradient();
     }
     #region IFitFunction Members
 
@@ -162,7 +177,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
   /// <summary>
   /// Only for testing purposes - use a "real" linear fit instead.
   /// </summary>
-  [FitFunction("LinearFit", "Relaxation", 1, 1, 2)]
+  [FitFunctionClass]
   public class LinearFit : IFitFunction
   {
     public LinearFit()
@@ -171,6 +186,13 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       // TODO: Add constructor logic here
       //
     }
+
+    [FitFunctionCreator("LinearFit", "Relaxation", 1, 1, 2)]
+    public static IFitFunction LinearFitOrder2()
+    {
+      return new LinearFit();
+    }
+
     #region IFitFunction Members
 
     public int NumberOfIndependentVariables

@@ -171,9 +171,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     class BuiltinLeafNode : LeafNode
     {
-      public System.Type FunctionType;
+      public object FunctionType;
 
-      public BuiltinLeafNode(string text, System.Type functionType)
+      public BuiltinLeafNode(string text, object functionType)
         : base(text)
       {
         FunctionType = functionType;
@@ -209,8 +209,8 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
       foreach(DictionaryEntry entry in entries)
       {
-        FitFunctionAttribute attr = (FitFunctionAttribute)entry.Key;
-        System.Type fitfunctype = (System.Type)entry.Value;
+        FitFunctionCreatorAttribute attr = (FitFunctionCreatorAttribute)entry.Key;
+        
 
         string[] path = attr.Category.Split(new char[]{'\\','/'});
 
@@ -226,7 +226,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
           where = node.Nodes;
         }
 
-        BuiltinLeafNode leaf = new BuiltinLeafNode(attr.Name,fitfunctype);
+        BuiltinLeafNode leaf = new BuiltinLeafNode(attr.Name,entry.Value);
         where.Add(leaf);
       }
       this._twFitFunctions.EndUpdate();
