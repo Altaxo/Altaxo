@@ -47,8 +47,8 @@ namespace Altaxo.Gui.Graph
     private System.Windows.Forms.Button m_btWorksheet;
     private System.Windows.Forms.RadioButton _rbtSequential;
     private System.Windows.Forms.RadioButton _rbtConcurrently;
-    private System.Windows.Forms.CheckBox _chkStrict;
     private System.Windows.Forms.CheckBox _chkUpdate;
+    private System.Windows.Forms.ComboBox _cbStrict;
     /// <summary> 
     /// Required designer variable.
     /// </summary>
@@ -86,6 +86,7 @@ namespace Altaxo.Gui.Graph
     private void InitializeComponent()
     {
       this.groupBox1 = new System.Windows.Forms.GroupBox();
+      this._chkUpdate = new System.Windows.Forms.CheckBox();
       this.m_chkPlotGroupSymbol = new System.Windows.Forms.CheckBox();
       this.m_chkPlotGroupLineType = new System.Windows.Forms.CheckBox();
       this.m_chkPlotGroupColor = new System.Windows.Forms.CheckBox();
@@ -93,15 +94,14 @@ namespace Altaxo.Gui.Graph
       this._rbtConcurrently = new System.Windows.Forms.RadioButton();
       this.m_btRemove = new System.Windows.Forms.Button();
       this.m_btWorksheet = new System.Windows.Forms.Button();
-      this._chkStrict = new System.Windows.Forms.CheckBox();
-      this._chkUpdate = new System.Windows.Forms.CheckBox();
+      this._cbStrict = new System.Windows.Forms.ComboBox();
       this.groupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
       // groupBox1
       // 
+      this.groupBox1.Controls.Add(this._cbStrict);
       this.groupBox1.Controls.Add(this._chkUpdate);
-      this.groupBox1.Controls.Add(this._chkStrict);
       this.groupBox1.Controls.Add(this.m_chkPlotGroupSymbol);
       this.groupBox1.Controls.Add(this.m_chkPlotGroupLineType);
       this.groupBox1.Controls.Add(this.m_chkPlotGroupColor);
@@ -113,6 +113,14 @@ namespace Altaxo.Gui.Graph
       this.groupBox1.TabIndex = 29;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Plot Group";
+      // 
+      // _chkUpdate
+      // 
+      this._chkUpdate.Location = new System.Drawing.Point(8, 176);
+      this._chkUpdate.Name = "_chkUpdate";
+      this._chkUpdate.Size = new System.Drawing.Size(64, 24);
+      this._chkUpdate.TabIndex = 6;
+      this._chkUpdate.Text = "Update";
       // 
       // m_chkPlotGroupSymbol
       // 
@@ -170,21 +178,13 @@ namespace Altaxo.Gui.Graph
       this.m_btWorksheet.TabIndex = 27;
       this.m_btWorksheet.Text = "Worksheet";
       // 
-      // _chkStrict
+      // _cbStrict
       // 
-      this._chkStrict.Location = new System.Drawing.Point(8, 200);
-      this._chkStrict.Name = "_chkStrict";
-      this._chkStrict.Size = new System.Drawing.Size(72, 24);
-      this._chkStrict.TabIndex = 5;
-      this._chkStrict.Text = "Strict";
-      // 
-      // _chkUpdate
-      // 
-      this._chkUpdate.Location = new System.Drawing.Point(8, 176);
-      this._chkUpdate.Name = "_chkUpdate";
-      this._chkUpdate.Size = new System.Drawing.Size(64, 24);
-      this._chkUpdate.TabIndex = 6;
-      this._chkUpdate.Text = "Update";
+      this._cbStrict.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this._cbStrict.Location = new System.Drawing.Point(8, 200);
+      this._cbStrict.Name = "_cbStrict";
+      this._cbStrict.Size = new System.Drawing.Size(88, 21);
+      this._cbStrict.TabIndex = 7;
       // 
       // XYPlotGroupControl
       // 
@@ -220,7 +220,7 @@ namespace Altaxo.Gui.Graph
  
     
 
-    public void InitializePlotGroupConditions(bool bColor, bool bLineType, bool bSymbol, bool bConcurrently, bool bStrict)
+    public void InitializePlotGroupConditions(bool bColor, bool bLineType, bool bSymbol, bool bConcurrently, Altaxo.Graph.PlotGroupStrictness bStrict)
     {
       this._rbtConcurrently.Checked=  bConcurrently;
       this._rbtSequential.Checked = !bConcurrently;
@@ -229,7 +229,9 @@ namespace Altaxo.Gui.Graph
       this.m_chkPlotGroupLineType.Checked = bLineType;
       this.m_chkPlotGroupSymbol.Checked = bSymbol;
 
-      this._chkStrict.Checked = bStrict;
+      this._cbStrict.Items.Clear();
+      this._cbStrict.Items.AddRange(new object[] { "Normal", "Exact", "Strict" });
+      this._cbStrict.SelectedIndex = (int)bStrict;
       this._chkUpdate.Checked = true;
     }
 
@@ -252,9 +254,12 @@ namespace Altaxo.Gui.Graph
     {
       get { return m_chkPlotGroupSymbol.Checked; }
     }
-    public bool PlotGroupStrict
+    public Altaxo.Graph.PlotGroupStrictness PlotGroupStrict
     {
-      get { return this._chkStrict.Checked; }
+      get 
+      {
+        return (Altaxo.Graph.PlotGroupStrictness)(System.Enum.GetValues(typeof(Altaxo.Graph.PlotGroupStrictness))).GetValue(this._cbStrict.SelectedIndex);
+      }
     }
 
     public bool PlotGroupUpdate

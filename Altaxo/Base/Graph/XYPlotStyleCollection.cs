@@ -406,9 +406,14 @@ namespace Altaxo.Graph
     }
 
     
-    public void SetIncrementalStyle(I2DGroupablePlotStyle masterplotstyle, PlotGroupStyle style, bool concurrently, bool strict, int step)
+    public void SetIncrementalStyle(I2DGroupablePlotStyle masterplotstyle, PlotGroupStyle style, bool concurrently, PlotGroupStrictness strict, int step)
     {
-      if (strict && (masterplotstyle is XYPlotStyleCollection))
+      if (strict == PlotGroupStrictness.Strict && (masterplotstyle is XYPlotStyleCollection))
+      {
+        XYPlotStyleCollection template = (XYPlotStyleCollection)masterplotstyle;
+        this.CopyFrom(template);
+      }
+      else if (strict==PlotGroupStrictness.Exact && (masterplotstyle is XYPlotStyleCollection))
       {
         XYPlotStyleCollection template = (XYPlotStyleCollection)masterplotstyle;
         int len = Math.Min(this.Count,template.Count);

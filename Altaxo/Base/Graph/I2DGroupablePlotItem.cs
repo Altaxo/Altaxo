@@ -77,6 +77,6 @@ namespace Altaxo.Graph
     /// <param name="changeConcurrently">If true, the varying styles are changed concurrently.</param>
     /// <param name="changeStrictly">If true, the slave styles are enforced to have the same structure and properties than the master style (except for the varying styles).</param>
     /// <param name="step">The number of steps distance to the template style. For instance, if step==1 the next color is used, if step==-1 the previous color is used.</param>
-    void SetIncrementalStyle(I2DGroupablePlotStyle pstemplate, PlotGroupStyle style, bool changeConcurrently, bool changeStrictly, int step);
+    void SetIncrementalStyle(I2DGroupablePlotStyle pstemplate, PlotGroupStyle style, bool changeConcurrently, PlotGroupStrictness changeStrictly, int step);
   }
 }

@@ -40,6 +40,29 @@ namespace Altaxo.Graph
     All           = Symbol | Line | Color
   }
 
+  /// <summary>
+  /// Enumerates the strictness of the coupling between plot items into a plot group.
+  /// </summary>
+  public enum PlotGroupStrictness
+  {
+    /// <summary>
+    /// Only the property are coupled, like color and symbols.
+    /// </summary>
+    Normal=0,
+
+    /// <summary>
+    /// If the plot styles have the same substyles (for instance both have scatter styles), then the style's properties
+    /// are set to the same values.
+    ///
+    /// </summary>
+    Exact,
+
+    /// <summary>
+    /// The style of the master item is copyied exactly to the style of the slave items (including all substyles).
+    /// </summary>
+    Strict
+  }
+
   [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PlotGroupStyle),0)]
   public class PlotGroupStyleTypeXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
   {
@@ -68,7 +91,7 @@ namespace Altaxo.Graph
     /// </summary>
     PlotGroupStyle _changeStyle;
     bool _changeStylesConcurrently;
-    bool _changeStylesStrictly;
+    PlotGroupStrictness _changeStylesStrictly;
 
     System.Collections.ArrayList _plotItems;
     
@@ -115,7 +138,7 @@ namespace Altaxo.Graph
     {
       PlotGroupStyle m_Style;
       bool _concurrently;
-      bool _strict;
+      PlotGroupStrictness _strict;
       int[] _plotItemIndices; // stores not the plotitems itself, only the position of the items in the list
     
       public Memento(PlotGroup pg, PlotItemCollection plotlist)
@@ -144,7 +167,7 @@ namespace Altaxo.Graph
       [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PlotGroup.Memento),0)]
         public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
       {
-        public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+        public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
         {
           PlotGroup.Memento s = (PlotGroup.Memento)obj;
           info.AddValue("Style",s.m_Style);  
@@ -154,7 +177,13 @@ namespace Altaxo.Graph
           info.CommitArray();
         }
 
-        public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+
+          public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+          {
+            PlotGroup.Memento s = SDeserialize(o, info, parent);
+            return s;
+          }
+          public virtual PlotGroup.Memento SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
         {
           
           PlotGroup.Memento s = null!=o ? (PlotGroup.Memento)o : new PlotGroup.Memento();
@@ -167,6 +196,29 @@ namespace Altaxo.Graph
             s._plotItemIndices[i] = info.GetInt32();
           }
           info.CloseArray(count);
+
+          return s;
+        }
+      }
+
+      [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PlotGroup.Memento), 1)]
+      public class XmlSerializationSurrogate1 : XmlSerializationSurrogate0
+      {
+        public override void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+        {
+          base.Serialize(obj, info);
+          PlotGroup.Memento s = (PlotGroup.Memento)obj;
+          info.AddValue("Concurrently",s._concurrently);
+          info.AddEnum("Strict", s._strict);
+        }
+       
+        public override PlotGroup.Memento SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+        {
+
+          PlotGroup.Memento s = base.SDeserialize(o, info, parent);
+
+          s._concurrently = info.GetBoolean("Concurrently");
+          s._strict = (PlotGroupStrictness)info.GetEnum("Strict", typeof(PlotGroupStrictness));
 
           return s;
         }
@@ -185,7 +237,7 @@ namespace Altaxo.Graph
 
 
 
-    public PlotGroup(PlotItem master, PlotGroupStyle style, bool concurrently, bool strict)
+    public PlotGroup(PlotItem master, PlotGroupStyle style, bool concurrently, PlotGroupStrictness strict)
     {
       _changeStyle = style;
       _changeStylesConcurrently = concurrently;
@@ -195,7 +247,7 @@ namespace Altaxo.Graph
       _plotItems.Add(master);
     }
 
-    public PlotGroup(PlotGroupStyle style, bool concurrently, bool strict)
+    public PlotGroup(PlotGroupStyle style, bool concurrently, PlotGroupStrictness strict)
     {
       _changeStyle = style;
       _changeStylesConcurrently = concurrently;
@@ -279,7 +331,7 @@ namespace Altaxo.Graph
     /// <param name="concurrently">If true, all styles are varied concurrently.</param>
     /// <param name="strict">If true, the slave plot items are enforced to have the same properties than the master plot item.</param>
     /// <returns>True when at least one of the properties was changed (i.e. different).</returns>
-    public bool SetPropertiesOnly(PlotGroupStyle style, bool concurrently, bool strict)
+    public bool SetPropertiesOnly(PlotGroupStyle style, bool concurrently, PlotGroupStrictness strict)
     {
       bool bChanged = _changeStyle != style || _changeStylesConcurrently != concurrently || _changeStylesStrictly != strict;
 
@@ -351,7 +403,7 @@ namespace Altaxo.Graph
       }
     }
 
-    public bool ChangeStylesStrictly
+    public PlotGroupStrictness ChangeStylesStrictly
     {
       get { return this._changeStylesStrictly; }
       set

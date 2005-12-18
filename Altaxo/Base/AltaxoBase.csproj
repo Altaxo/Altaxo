@@ -375,6 +375,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Graph\AxisLinkType.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Graph\BrushHolder.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -565,7 +570,37 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Graph\XYPlotLayerAxisProperties.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\XYPlotLayerAxisStyleProperties.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\XYPlotLayerAxisStylesSummary.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Graph\XYPlotLayerCollection.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\XYPlotLayerPositionAndSize.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\XYPlotLayerPositionType.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\XYPlotLayerSizeType.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -1135,6 +1170,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Graph\Procedures\GraphCommands.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Graph\Procedures\NonlinearFitting.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -1336,6 +1376,11 @@
                 />
                 <File
                     RelPath = "Gui\Graph\XYColumnPlotItemController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Gui\Graph\XYFunctionPlotItemController.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -1565,6 +1610,11 @@
                 />
                 <File
                     RelPath = "Main\PrintingService.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\RelDocNodeProxy.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
