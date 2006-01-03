@@ -150,6 +150,8 @@ namespace Altaxo.Main
         "\r\n" +
         "- Exocortex DSP (exocortexdsp.sourceforge.net) contributes the complex library.\r\n" +
         "\r\n" +
+        "- dnAnalytics (www.dnAnalytics.net) for part of the linear algebra and optimization functions.\r\n" +
+        "\r\n" +
         "- The authors of the projects that I have forgotten (sorry!), and the authors of the\r\n"+
         "  countless support tools that are neccessary to manage such a project (for instance\r\n"+
         "  Subversion, WinMerge, NUnit, NDoc).\r\n" +
@@ -397,7 +399,7 @@ namespace Altaxo.Main
       this.label3.Name = "label3";
       this.label3.Size = new System.Drawing.Size(192, 16);
       this.label3.TabIndex = 4;
-      this.label3.Text = "(C) 2002-2004 Dr. Dirk Lellinger";
+      this.label3.Text = "(C) 2002-2006 Dr. Dirk Lellinger";
       // 
       // m_LinkLabel
       // 

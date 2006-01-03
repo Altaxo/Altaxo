@@ -14,23 +14,15 @@
             <property name="LatexCompiler" value="latex" />
             <property name="TexFileFullPath" value=".\doc\Documentation.tex" />
         </documenter>
-        <documenter name="LinearHtml">
-            <property name="OutputDirectory" value=".\doc\" />
-            <property name="Title" value="An NDoc Documented Class Library" />
-        </documenter>
         <documenter name="MSDN">
-            <property name="OutputDirectory" value="..\..\temp\doc\AltaxoCoreMSDN\" />
+            <property name="OutputDirectory" value="..\..\..\tempsource\CoreClassRef\" />
             <property name="HtmlHelpName" value="AltaxoCore class reference" />
-            <property name="Title" value="AltaxoCore class reference (0.52.0.361, 2005/04/22)" />
+            <property name="Title" value="AltaxoCore class reference (0.53.0.429, 2005/12/22)" />
+            <property name="OutputTarget" value="Web" />
             <property name="FooterHtml" value="(C) 2002-2005 Dr. Dirk Lellinger, assembly: %ASSEMBLY_NAME%" />
             <property name="AssemblyVersionInfo" value="AssemblyVersion" />
             <property name="AutoPropertyBackerSummaries" value="True" />
             <property name="CleanIntermediates" value="True" />
-        </documenter>
-        <documenter name="VS.NET 2003">
-            <property name="OutputDirectory" value=".\doc\" />
-            <property name="HtmlHelpName" value="Documentation" />
-            <property name="Title" value="An NDoc documented library" />
         </documenter>
         <documenter name="XML">
             <property name="OutputFile" value=".\doc\doc.xml" />

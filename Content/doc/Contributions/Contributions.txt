@@ -1,0 +1,64 @@
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
+//    See http://altaxo.sourceforge.net
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+The AltaxoCore library would not be possible without the contributions from the open source community.
+AltaxoCore contains contributions from the following projects (in alphabetic order):
+
+- dnAnalytics (www.dnAnalytics.net):
+	most part of the linear algebra namespace (including blas and lapack support), optimization namespace
+
+- Exocortex DSP (www.exocortex.org)
+	complex number classes (but now partially replaced by routines from the Gnu Scientific library), Fourier transformations
+
+- FFT library (www.jjj.de):
+	Fourier transformations
+
+- FORTRAN algorithms (translated by f2c to C++, then manually to C#) from the ACM and other public sources
+
+- Gnu Scientific library (www.gsl.org)
+	complex number mathematics
+
+- LevMar (Levenberg-Marquardt implementation by Manolis Lourakis, lourakis@ics.forth.gr)
+	nonlinear regression
+
+- MaPack (http://www.aisto.com/roeder/dotnet)
+	linear algebra
+
+- MatPack (www.matpack.de):
+	Special functions, interpolation, random numbers, nonlinear regression, Fourier transformations, ...
+
+
+
+Please note also the license files from some of the contributors in the same directory where you found this file.
+If you feel I have forgotten you in the list above, please email me a short notice (see altaxo.sourceforge.net).
+
+Thanks again to all of the contributors,
+
+		D.Lellinger
+
+
+
+
+
+
+

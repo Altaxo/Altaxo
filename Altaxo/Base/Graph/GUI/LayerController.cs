@@ -357,7 +357,7 @@ namespace Altaxo.Graph.GUI
             SetHorzVertSecondaryChoice();
             View.CurrentContent = new Altaxo.Gui.Graph.XYGridStyleControl();
           }
-          m_CurrentController = this._GridStyleController[CurrHorzVertIdx];
+          m_CurrentController = this._GridStyleController[CurrHorzVertIdx==0 ? 1 : 0];
           break;
       }
 

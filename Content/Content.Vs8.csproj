@@ -1,7 +1,7 @@
 ﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
-    <ProductVersion>8.0.50215</ProductVersion>
+    <ProductVersion>8.0.50727</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{012F4935-9036-4F02-8C03-060EC9514A1D}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -467,6 +467,10 @@
     <Content Include="doc\ChangeLog.xml" />
     <Content Include="doc\CodingStyleGuide.pdf" />
     <Content Include="doc\CodingStyleGuide.sxw" />
+    <Content Include="doc\Contributions\Contributions.txt" />
+    <Content Include="doc\Contributions\dnAnalytics-license.txt" />
+    <Content Include="doc\Contributions\ExocortexDSP-license.txt" />
+    <Content Include="doc\Contributions\LevMar-license.txt" />
     <Content Include="doc\copyright.txt" />
     <Content Include="doc\help\031SharpZipLib.chm" />
     <Content Include="doc\help\031SharpZipLib.hhc" />

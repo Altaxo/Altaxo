@@ -658,8 +658,10 @@
 						link="http://www.matpack.de" />
 					<MenuItem id="ExocortexDSP" label="Exocortex DSP" icon="Icons.16x16.WebSearchIcon" description="The Complex value library was used from here. But many other routines available."
 						link="http://www.sourceforge.net/projects/exocortexdsp" />
-					<MenuItem id="Magic Library" label="Magic Library" icon="Icons.16x16.WebSearchIcon" description="One of the best .NET control libraries around."
-						link="http://www.dotnetmagic.com" />
+          <MenuItem id="dnAnalytics" label="dnAnalytics" icon="Icons.16x16.WebSearchIcon" description="Contributes part of the linear algebra and optimization functions."
+						link="http://www.dnAnalytics.net" />
+          <MenuItem id="DockPanelSuite" label="DockPanelSuite" icon="Icons.16x16.WebSearchIcon" description="One of the best .NET control libraries around."
+						link="http://www.sourceforge.net/projects/dockpanelsuite" />
 					<MenuItem id="NAnt" label="NAnt" icon="Icons.16x16.WebSearchIcon" description="THE .NET building tool."
 						link="http://nant.sourceforge.net/" />
 					<MenuItem id="NDoc" label="NDoc" icon="Icons.16x16.WebSearchIcon" description="I used the NDoc as the SharpDevelop documentation generator. Look out it is cool."

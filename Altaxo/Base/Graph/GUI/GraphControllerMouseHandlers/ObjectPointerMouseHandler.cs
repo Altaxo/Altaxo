@@ -434,18 +434,19 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
 
 
     /// <summary>
-    /// Removes the currently selected objects (currently only GraphicsObjects are removed)
+    /// Removes the currently selected objects (the <see>cref="IHitTestObject" /> of the selected object(s) must provide
+    /// a handler for deleting the object).
     /// </summary>
     public void RemoveSelectedObjects()
     {
       System.Collections.ArrayList removedObjects = new System.Collections.ArrayList();
-      foreach(IHitTestObject o in this.m_SelectedObjects.Keys)
+     
+      foreach (IHitTestObject o in this.m_SelectedObjects.Keys)
       {
-        if(o.HittedObject is GraphicsObject && ((GraphicsObject)o.HittedObject).Container!=null)
+        if (o.Remove!=null)
         {
-          GraphicsObjectCollection coll = ((GraphicsObject)o.HittedObject).Container;
-          coll.Remove((GraphicsObject)o.HittedObject);
-          removedObjects.Add(o);
+          if(true==o.Remove(o))
+            removedObjects.Add(o);
         }
       }
 
@@ -501,6 +502,22 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
         _grac.RepaintGraphArea();
     }
 
+
+    /// <summary>
+    /// This function is called if a key is pressed.
+    /// </summary>
+    /// <param name="msg"></param>
+    /// <param name="keyData"></param>
+    /// <returns></returns>
+    public override bool ProcessCmdKey(ref Message msg, Keys keyData)
+    {
+      if (0 != (keyData & Keys.Delete))
+      {
+        this.RemoveSelectedObjects();
+        return true;
+      }
+      return false; // per default the key is not processed
+    }
 
 
   } // end of class
