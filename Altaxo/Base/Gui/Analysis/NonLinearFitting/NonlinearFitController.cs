@@ -100,8 +100,8 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         //        _doc.FitEnsemble.InitializeParametersFromParameterSet(_doc.CurrentParameters);
 
         LevMarAdapter fitAdapter = new LevMarAdapter(_doc.FitEnsemble,_doc.CurrentParameters);
-  
-        fitAdapter.Fit();
+
+        fitAdapter.DoSimplexMinimization();
 
         this._chiSquare = fitAdapter.ResultingChiSquare;
 

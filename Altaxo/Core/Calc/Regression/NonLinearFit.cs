@@ -692,7 +692,7 @@ namespace Altaxo.Calc.Regression
       { // Lellid!!
         wa3[j] = 0.0;
         l = ipvt[j];
-        temp = wa1[0]; // Lellid
+        temp = wa1[l];
         for (i = 0; i <= j; ++i) 
         { // LELLID!!
           wa3[i] += fjac[i + j * fjac_dim1] * temp;

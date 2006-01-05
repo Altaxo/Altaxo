@@ -488,9 +488,11 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
     public void Fit()
     {
+      /* Up to new Fit2 is very slow, so we not use it until it is clear what causes this slow convergence
       if (CanUseJacobianVersion())
         Fit2Jac();
       else
+      */
         Fit1();
     }
 
@@ -562,7 +564,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
         if(pset[i].Vary)
         {
           pset[i].Parameter = this._cachedVaryingParameters[varyingPara];
-          pset[i].Variance = _resultingCovariances[varyingPara+varyingPara*_cachedVaryingParameters.Length];
+          pset[i].Variance = _resultingCovariances==null ? 0 : _resultingCovariances[varyingPara+varyingPara*_cachedVaryingParameters.Length];
           varyingPara++;
         }
         else
