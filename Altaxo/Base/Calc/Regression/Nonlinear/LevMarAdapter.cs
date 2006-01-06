@@ -564,7 +564,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
         if(pset[i].Vary)
         {
           pset[i].Parameter = this._cachedVaryingParameters[varyingPara];
-          pset[i].Variance = _resultingCovariances==null ? 0 : _resultingCovariances[varyingPara+varyingPara*_cachedVaryingParameters.Length];
+          pset[i].Variance = _resultingCovariances==null ? 0 : Math.Sqrt(_resultingCovariances[varyingPara+varyingPara*_cachedVaryingParameters.Length]);
           varyingPara++;
         }
         else

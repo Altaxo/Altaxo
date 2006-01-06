@@ -103,8 +103,8 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       // _tabControl
       // 
       this._tabControl.Controls.Add(this._tpSelectFunction);
+      this._tabControl.Controls.Add(this._tpFitEnsemble); 
       this._tabControl.Controls.Add(this._tpMakeFit);
-      this._tabControl.Controls.Add(this._tpFitEnsemble);
       this._tabControl.Dock = System.Windows.Forms.DockStyle.Fill;
       this._tabControl.Location = new System.Drawing.Point(0, 0);
       this._tabControl.Name = "_tabControl";
@@ -150,7 +150,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       this._tpMakeFit.Location = new System.Drawing.Point(4, 22);
       this._tpMakeFit.Name = "_tpMakeFit";
       this._tpMakeFit.Size = new System.Drawing.Size(424, 358);
-      this._tpMakeFit.TabIndex = 1;
+      this._tpMakeFit.TabIndex = 2;
       this._tpMakeFit.Text = "Fit";
       // 
       // _btDoSimplex
@@ -206,7 +206,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       this._tpFitEnsemble.Location = new System.Drawing.Point(4, 22);
       this._tpFitEnsemble.Name = "_tpFitEnsemble";
       this._tpFitEnsemble.Size = new System.Drawing.Size(424, 358);
-      this._tpFitEnsemble.TabIndex = 2;
+      this._tpFitEnsemble.TabIndex = 1;
       this._tpFitEnsemble.Text = "Details";
       // 
       // NonlinearFitControl

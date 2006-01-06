@@ -167,6 +167,7 @@ namespace Altaxo.Main.GUI
         SizeF size1, size2;
         using(System.Drawing.Graphics grfx = this.CreateGraphics())
         {
+          m_Label1.Text = string.Empty;
           size1 = grfx.MeasureString(_description,m_Label1.Font);
           size2 = grfx.MeasureString(_description,m_Label1.Font,m_Label1.ClientSize.Width);
         }

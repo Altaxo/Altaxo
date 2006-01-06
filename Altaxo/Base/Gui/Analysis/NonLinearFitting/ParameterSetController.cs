@@ -43,6 +43,8 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       for(int i=0;i<childs.Length;i++)
         childs[i] = (IMVCAController)Current.Gui.GetControllerAndControl(new object[]{_doc[i]},typeof(IParameterSetElementController));
 
+      base.DescriptionText =  "ParameterName                                      Value                     Vary?       Variance\r\n" +
+                              "-------------------------------------------------------------------------------------------------------";
       base.Initialize(childs);
     }
 
