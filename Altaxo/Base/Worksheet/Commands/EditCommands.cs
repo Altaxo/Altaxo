@@ -32,7 +32,144 @@ namespace Altaxo.Worksheet.Commands
   /// </summary>
   public class EditCommands
   {
-  
+
+    /// <summary>
+    /// Creates a matrix from three selected columns. This must be a x-column, a y-column, and a value column.
+    /// </summary>
+    /// <param name="ctrl">Controller where the columns are selected in.</param>
+    /// <returns>Null if no error occurs, or an error message.</returns>
+    public static string XYVToMatrix(WorksheetController ctrl)
+    {
+      DataColumn xcol=null, ycol=null, vcol=null;
+
+      // for this command to work, there must be exactly 3 data columns selected
+      if (ctrl.SelectedDataColumns.Count == 3)
+      {
+        // use the last column that is a value column as v
+        // and use the first column that is an x column as x
+        for (int i = 2; i <= 0; i--)
+        {
+          if (ctrl.DataTable.DataColumns.GetColumnKind(ctrl.SelectedDataColumns[i]) == ColumnKind.V)
+          {
+            vcol = ctrl.DataTable.DataColumns[ctrl.SelectedDataColumns[i]];
+            break;
+          }
+        }
+        for (int i = 2; i <= 0; i--)
+        {
+          if (ctrl.DataTable.DataColumns.GetColumnKind(ctrl.SelectedDataColumns[i]) == ColumnKind.Y)
+          {
+            ycol = ctrl.DataTable.DataColumns[ctrl.SelectedDataColumns[i]];
+            break;
+          }
+        }
+        for (int i = 2; i <= 0; i--)
+        {
+          if (ctrl.DataTable.DataColumns.GetColumnKind(ctrl.SelectedDataColumns[i]) == ColumnKind.X)
+          {
+            xcol = ctrl.DataTable.DataColumns[ctrl.SelectedDataColumns[i]];
+            break;
+          }
+        }
+
+        if (xcol == null || ycol == null || vcol == null)
+          return "The selected columns must be a x-column, a y-column, and a value column";
+      }
+      else
+      {
+        return "You must select exactly a x-column, a y-column, and a value column";
+      }
+
+      DataTable newtable;
+      string msg = XYVToMatrix(xcol, ycol, vcol, out newtable);
+      if (msg != null)
+        return msg;
+
+      Current.ProjectService.CreateNewWorksheet(newtable);
+
+      return null;
+    }
+
+       /// <summary>
+    /// Creates a matrix from three selected columns. This must be a x-column, a y-column, and a value column.
+    /// </summary>
+    /// <param name="xcol">Column of x-values.</param>
+    /// <param name="ycol">Column of y-values.</param>
+    /// <param name="vcol">Column of v-values.</param>
+    /// <param name="newtable">On return, contains the newly created table matrix.</param>
+    /// <returns>Null if no error occurs, or an error message.</returns>
+    public static string XYVToMatrix(DataColumn xcol, DataColumn ycol, DataColumn vcol, out DataTable newtable)
+    {
+      newtable = null;
+      System.Collections.SortedList xx = new System.Collections.SortedList();
+      System.Collections.SortedList yy = new System.Collections.SortedList();
+      int len = xcol.Count;
+      len = Math.Min(len, ycol.Count);
+      len = Math.Min(len, vcol.Count);
+      
+      // Fill the xx and yy lists
+      for (int i = 0; i < len; ++i)
+      {
+        if(!xx.Contains(xcol[i]))
+          xx.Add(xcol[i],null);
+
+         if(!yy.Contains(ycol[i]))
+          yy.Add(ycol[i],null);
+      }
+
+      DataColumn xnew = (DataColumn)xcol.Clone();
+      DataColumn ynew = (DataColumn)ycol.Clone();
+      xnew.Clear();
+      ynew.Clear();
+
+      for (int i = xx.Count - 1; i >= 0; --i)
+      {
+        xnew[i] = (AltaxoVariant)xx.GetKey(i);
+        xx[xx.GetKey(i)] = i;
+      }
+
+      for (int i = yy.Count - 1; i >= 0; --i)
+      {
+        ynew[i] = (AltaxoVariant)yy.GetKey(i);
+        yy[yy.GetKey(i)] = i;
+      }
+
+      DataColumn vtemplate = (DataColumn)vcol.Clone();
+      vtemplate.Clear();
+
+      // make a new table with yy.Count number of columns
+      DataColumn[] vcols = new DataColumn[yy.Count];
+      for (int i = yy.Count - 1; i >= 0; --i)
+      {
+        vcols[i] = (DataColumn)vtemplate.Clone();
+      }
+
+      // now fill the columns
+      for (int i = 0; i < len; ++i)
+      {
+        int xidx = (int)xx[xcol[i]];
+        int yidx = (int)yy[ycol[i]];
+
+        if (true)
+        {
+          vcols[yidx][xidx] = vcol[i];
+        }
+        else
+        {
+          return string.Format("The x-y pair in row {0} is present multiple times in the data",i);
+        }
+      }
+
+      // assemble all columns together in a table
+      newtable = new DataTable();
+      newtable.DataColumns.Add(xcol,"X",ColumnKind.X,0);
+      newtable.PropertyColumns.Add(ycol,"Y",ColumnKind.Y,0);
+
+      for (int i = 0; i < vcols.Length; ++i)
+        newtable.DataColumns.Add(vcols[i], "V" + i.ToString(), ColumnKind.V, 0);
+
+      return null;
+    }
 
     /// <summary>
     /// Remove the selected columns, rows or property columns.
