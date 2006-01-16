@@ -193,7 +193,53 @@ namespace Altaxo.Calc.LinearAlgebra
       }
     }
 
+    class EquidistantSequenceVector : IROVector
+    {
+      double _start;
+      double _step;
+      int _len;
 
+      public EquidistantSequenceVector(double start, double step, int length)
+      {
+        _start = start;
+        _step = step;
+        _len = length;
+      }
+
+      #region IROVector Members
+
+      public int LowerBound
+      {
+        get { return 0; }
+      }
+
+      public int UpperBound
+      {
+        get { return _len - 1; }
+      }
+
+      public int Length
+      {
+        get { return _len; }
+      }
+
+      #endregion
+
+      #region INumericSequence Members
+
+      public double this[int i]
+      {
+        
+        get 
+        {
+          if (i < 0 || i >= _len)
+            throw new ArgumentOutOfRangeException("i");
+          return _start + i * _step; 
+        }
+      }
+
+      #endregion
+    }
 
     #endregion
 
@@ -238,7 +284,22 @@ namespace Altaxo.Calc.LinearAlgebra
     {
       return new ExtensibleVector(length);
     }
+
+    /// <summary>
+    /// Creates a read-only vector with equidistant elements from start to start+(length-1)*step. The created vector
+    /// consumes memory only for the three variables, independent of its length.
+    /// </summary>
+    /// <param name="start">First element of the vector.</param>
+    /// <param name="step">Difference between two successive elements.</param>
+    /// <param name="length">Length of the vector.</param>
+    /// <returns></returns>
+    public static IROVector CreateEquidistantSequence(double start, double step, int length)
+    {
+      return new EquidistantSequenceVector(start, step, length);
+    }
     #endregion
+
+
 
     #region Filling
 

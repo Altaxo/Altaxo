@@ -148,6 +148,17 @@ namespace Altaxo.Worksheet.Commands
       Altaxo.Worksheet.Commands.EditCommands.PasteFromClipboard(ctrl);
     }
   }
+
+  public class XYVToMatrix : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
+    {
+      string msg = Altaxo.Worksheet.Commands.EditCommands.XYVToMatrix(ctrl);
+      if (msg != null)
+        Current.Gui.ErrorMessageBox(msg);
+    }
+  }
+
   #endregion
 
   #region Plot commands
@@ -384,6 +395,14 @@ namespace Altaxo.Worksheet.Commands
     public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.ColumnCommands.SetSelectedColumnAsX(ctrl);
+    }
+  }
+
+  public class SetColumnAsY : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
+    {
+      Altaxo.Worksheet.Commands.ColumnCommands.SetSelectedColumnAsY(ctrl);
     }
   }
 

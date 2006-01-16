@@ -565,6 +565,9 @@ namespace Altaxo.Main
     /// <returns>The view content for the provided table.</returns>
     public Altaxo.Worksheet.GUI.IWorksheetController CreateNewWorksheet(Altaxo.Data.DataTable table)
     {
+      if (table.ParentObject == null)
+        this.CurrentOpenProject.DataTableCollection.Add(table);
+
       return CreateNewWorksheet(table,this.CurrentOpenProject.CreateNewTableLayout(table));
     }
 

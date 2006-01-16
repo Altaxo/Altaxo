@@ -101,7 +101,7 @@ namespace Altaxo.Data
   /// AltaxoVariant is never used to store the data in the array, for this purpose
   /// the native data types are used
   /// </summary>
-  public struct AltaxoVariant
+  public struct AltaxoVariant : IComparable
   {
     public enum Content { VNull, VDouble, VDateTime, VString, VOperatable, VObject }
  
@@ -727,5 +727,38 @@ namespace Altaxo.Data
       throw new AltaxoOperatorException("Error: Try to apply unary false operator to variant " + a.ToString());
     }
 
+
+    #region IComparable Members
+
+    int IComparable.CompareTo(object obj)
+    {
+      if (!(obj is AltaxoVariant))
+        throw new Exception("Can not compare AltaxoVariant to an object of type " + obj.GetType().ToString());
+      
+      AltaxoVariant from = (AltaxoVariant)obj;
+
+      if (this.m_Content != from.m_Content)
+        throw new Exception(string.Format("A variant of type {0} can not be compared to a variant of type {1}", this.m_Content.ToString(), from.m_Content.ToString()));
+
+      // both have the same content
+      switch (m_Content)
+      {
+        case Content.VNull:
+          return 0;
+        case Content.VDouble:
+          return m_Double.CompareTo(from.m_Double);
+        case Content.VDateTime:
+          return ((DateTime)m_Object).CompareTo(from.m_Object);
+        case Content.VString:
+          return ((string)m_Object).CompareTo(from.m_Object);
+        default:
+          if (this.m_Object is IComparable)
+            return ((IComparable)this).CompareTo(from.m_Object);
+          else
+            throw new Exception(string.Format("The inner object of this AltaxoVariant (of typeof: {0}) does not implement IComparable",this.m_Object.GetType().ToString()));
+      }
+    }
+
+    #endregion
   } // end of AltaxoVariant
 } // end of namespace

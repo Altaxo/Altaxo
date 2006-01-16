@@ -272,6 +272,26 @@ namespace Altaxo.Worksheet.Commands
     }
 
     /// <summary>
+    /// Sets the column kind of the first selected column or property column to a X column.
+    /// </summary>
+    public static void SetSelectedColumnAsY(WorksheetController ctrl)
+    {
+      bool bChanged = false;
+      if (ctrl.SelectedDataColumns.Count > 0)
+      {
+        ctrl.DataTable.DataColumns.SetColumnKind(ctrl.SelectedDataColumns[0], Altaxo.Data.ColumnKind.Y);
+        bChanged = true;
+      }
+      if (ctrl.SelectedPropertyColumns.Count > 0)
+      {
+        ctrl.DataTable.PropertyColumns.SetColumnKind(ctrl.SelectedPropertyColumns[0], Altaxo.Data.ColumnKind.Y);
+        bChanged = true;
+      }
+      if (bChanged)
+        ctrl.UpdateTableView(); // draw new because 
+
+    }
+    /// <summary>
     /// Sets the column kind of all selected columns or property columns to a label column.
     /// </summary>
     public static void SetSelectedColumnAsLabel(WorksheetController ctrl)

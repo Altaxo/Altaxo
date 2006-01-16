@@ -99,6 +99,136 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
 
   /// <summary>
+  /// Havriliak-Negami function to fit dielectric spectra.
+  /// </summary>
+  [FitFunctionClass]
+  public class KohlrauschFrequencyDomain : IFitFunction
+  {
+    bool _useFrequencyInsteadOmega;
+    bool _modulus;
+    bool _withConductivity;
+
+    #region Serialization
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(KohlrauschFrequencyDomain), 0)]
+    public class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        KohlrauschFrequencyDomain s = (KohlrauschFrequencyDomain)obj;
+        info.AddValue("UseFrequency", s._useFrequencyInsteadOmega);
+        info.AddValue("Modulus", s._modulus);
+        info.AddValue("Conductivity", s._withConductivity);
+      }
+
+      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        KohlrauschFrequencyDomain s = o != null ? (KohlrauschFrequencyDomain)o : new KohlrauschFrequencyDomain();
+        s._useFrequencyInsteadOmega = info.GetBoolean("UseFrequency");
+        s._modulus = info.GetBoolean("Modulus");
+        s._withConductivity = info.GetBoolean("Conductivity");
+        return s;
+      }
+    }
+
+    #endregion
+
+    public KohlrauschFrequencyDomain()
+    {
+      //
+      // TODO: Add constructor logic here
+      //
+    }
+
+    [FitFunctionCreator("Kohlrausch Complex (Omega)", "Relaxation", 1, 2, 4)]
+    public static IFitFunction CreateFofOmega()
+    {
+      KohlrauschFrequencyDomain result = new KohlrauschFrequencyDomain();
+      result._useFrequencyInsteadOmega = false;
+      result._withConductivity = true;
+      return result;
+    }
+
+    [FitFunctionCreator("Kohlrausch Complex (Freq)", "Relaxation", 1, 2, 4)]
+    public static IFitFunction CreateFofFrequency()
+    {
+      KohlrauschFrequencyDomain result = new KohlrauschFrequencyDomain();
+      result._useFrequencyInsteadOmega = true;
+      result._withConductivity = true;
+      return result;
+    }
+
+
+    #region IFitFunction Members
+
+    #region independent variable definition
+
+    public int NumberOfIndependentVariables
+    {
+      get
+      {
+        return 1;
+      }
+    }
+    public string IndependentVariableName(int i)
+    {
+      return this._useFrequencyInsteadOmega ? "Frequency" : "Omega";
+    }
+    #endregion
+
+    #region dependent variable definition
+    private string[] _dependentVariableName = new string[] { "re", "im" };
+    public int NumberOfDependentVariables
+    {
+      get
+      {
+        return _dependentVariableName.Length;
+      }
+    }
+    public string DependentVariableName(int i)
+    {
+      return _dependentVariableName[i];
+    }
+    #endregion
+
+    #region parameter definition
+    string[] _parameterName = new string[] { "offset", "amplitude", "tau", "beta", "conductivity" };
+    public int NumberOfParameters
+    {
+      get
+      {
+        return this._withConductivity ?  _parameterName.Length : _parameterName.Length - 1 ;
+      }
+    }
+    public string ParameterName(int i)
+    {
+      return _parameterName[i];
+    }
+    #endregion
+
+    public void Evaluate(double[] X, double[] P, double[] Y)
+    {
+      double x = X[0];
+      if (_useFrequencyInsteadOmega)
+        x *= (2 * Math.PI);
+
+      double w_r = x * P[2]; // omega scaled with tau
+
+      Complex result = P[0] + P[1] * Complex.FromRealImaginary(Kohlrausch.Re(P[3], w_r), Kohlrausch.Im(P[3], w_r));
+      Y[0] = result.Re;
+
+      if (this._withConductivity)
+        Y[1] = result.Im + P[4] / (x * 8.854187817e-12);
+      else
+        Y[1] = result.Im;
+    }
+
+    #endregion
+  }
+
+
+
+  /// <summary>
   /// Only for testing purposes - use a "real" linear fit instead.
   /// </summary>
   [FitFunctionClass]

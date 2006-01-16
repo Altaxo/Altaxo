@@ -148,6 +148,7 @@
     <Compile Include="Calc\IScalarFunction.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Calc\Kohlrausch.cs" />
     <Compile Include="Calc\LinearAlgebra\blas\Asum.cs" />
     <Compile Include="Calc\LinearAlgebra\blas\Axpy.cs" />
     <Compile Include="Calc\LinearAlgebra\blas\Configuration.cs" />

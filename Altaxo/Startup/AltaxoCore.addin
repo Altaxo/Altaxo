@@ -419,9 +419,13 @@
 					<MenuItem id="GraphCopyPage" label="${res:XML.MainMenu.EditMenu.CopyPage}" icon="Icons.16x16.NewDocumentIcon"
 						description="${res:XML.MainMenu.EditMenu.CopyPage.Description}" class="Altaxo.Graph.Commands.CopyPage" />
 			</Conditional>
+      <Conditional activewindow="Altaxo.Worksheet.GUI.SDWorksheetController" action="Exclude">
+        <MenuItem id="XYVToMatrix" label="${res:XML.MainMenu.EditMenu.XYVToMatrix}"
+          description="${res:XML.MainMenu.EditMenu.XYVToMatrix.Description}" class="Altaxo.Worksheet.Commands.XYVToMatrix" />
+      </Conditional>
 
 
-		</MenuItem>
+    </MenuItem>
 		<MenuItem id="View" label="${res:XML.MainMenu.ViewMenu}">
 			<MenuItem id="ViewBuilder" label="" class="ICSharpCode.SharpDevelop.Commands.ViewMenuBuilder" />
 			<MenuItem id="ViewItemsSeparator" label="-" />
@@ -533,7 +537,9 @@
 					class="Altaxo.Worksheet.Commands.SetColumnAsValue" />
 				<MenuItem id="SetColumnAsLabel" label="${res:XML.MainMenu.ColumnMenu.SetColumnAsLabel}" description="${res:XML.MainMenu.ColumnMenu.SetColumnAsLabel.Description}"
 					class="Altaxo.Worksheet.Commands.SetColumnAsLabel" />
-				<MenuItem id="Rename" label="${res:XML.MainMenu.ColumnMenu.Rename}" description="${res:XML.MainMenu.ColumnMenu.Rename.Description}"
+        <MenuItem id="SetColumnAsY" label="${res:XML.MainMenu.ColumnMenu.SetColumnAsY}" description="${res:XML.MainMenu.ColumnMenu.SetColumnAsY.Description}"
+					class="Altaxo.Worksheet.Commands.SetColumnAsY" />
+        <MenuItem id="Rename" label="${res:XML.MainMenu.ColumnMenu.Rename}" description="${res:XML.MainMenu.ColumnMenu.Rename.Description}"
 					class="Altaxo.Worksheet.Commands.RenameColumn" />
 				<MenuItem id="SetGroupNumber" label="${res:XML.MainMenu.ColumnMenu.SetGroupNumber}" description="${res:XML.MainMenu.ColumnMenu.SetGroupNumber.Description}"
 					class="Altaxo.Worksheet.Commands.SetColumnGroupNumber" />

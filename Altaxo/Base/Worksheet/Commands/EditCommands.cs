@@ -47,7 +47,7 @@ namespace Altaxo.Worksheet.Commands
       {
         // use the last column that is a value column as v
         // and use the first column that is an x column as x
-        for (int i = 2; i <= 0; i--)
+        for (int i = 2; i >= 0; i--)
         {
           if (ctrl.DataTable.DataColumns.GetColumnKind(ctrl.SelectedDataColumns[i]) == ColumnKind.V)
           {
@@ -55,7 +55,7 @@ namespace Altaxo.Worksheet.Commands
             break;
           }
         }
-        for (int i = 2; i <= 0; i--)
+        for (int i = 2; i >= 0; i--)
         {
           if (ctrl.DataTable.DataColumns.GetColumnKind(ctrl.SelectedDataColumns[i]) == ColumnKind.Y)
           {
@@ -63,7 +63,7 @@ namespace Altaxo.Worksheet.Commands
             break;
           }
         }
-        for (int i = 2; i <= 0; i--)
+        for (int i = 2; i >= 0; i--)
         {
           if (ctrl.DataTable.DataColumns.GetColumnKind(ctrl.SelectedDataColumns[i]) == ColumnKind.X)
           {
@@ -117,8 +117,8 @@ namespace Altaxo.Worksheet.Commands
           yy.Add(ycol[i],null);
       }
 
-      DataColumn xnew = (DataColumn)xcol.Clone();
-      DataColumn ynew = (DataColumn)ycol.Clone();
+      DataColumn xnew = (DataColumn)Activator.CreateInstance(xcol.GetType());
+      DataColumn ynew = (DataColumn)Activator.CreateInstance(ycol.GetType());
       xnew.Clear();
       ynew.Clear();
 
@@ -130,12 +130,11 @@ namespace Altaxo.Worksheet.Commands
 
       for (int i = yy.Count - 1; i >= 0; --i)
       {
-        ynew[i] = (AltaxoVariant)yy.GetKey(i);
-        yy[yy.GetKey(i)] = i;
+        ynew[1 + i] = (AltaxoVariant)yy.GetKey(i); // 1 + is because the table will get an additional x-column
+        yy[yy.GetKey(i)] = i; 
       }
 
-      DataColumn vtemplate = (DataColumn)vcol.Clone();
-      vtemplate.Clear();
+      DataColumn vtemplate = (DataColumn)Activator.CreateInstance(vcol.GetType());
 
       // make a new table with yy.Count number of columns
       DataColumn[] vcols = new DataColumn[yy.Count];
@@ -162,8 +161,8 @@ namespace Altaxo.Worksheet.Commands
 
       // assemble all columns together in a table
       newtable = new DataTable();
-      newtable.DataColumns.Add(xcol,"X",ColumnKind.X,0);
-      newtable.PropertyColumns.Add(ycol,"Y",ColumnKind.Y,0);
+      newtable.DataColumns.Add(xnew,"X",ColumnKind.X,0);
+      newtable.PropertyColumns.Add(ynew,"Y",ColumnKind.Y,0);
 
       for (int i = 0; i < vcols.Length; ++i)
         newtable.DataColumns.Add(vcols[i], "V" + i.ToString(), ColumnKind.V, 0);

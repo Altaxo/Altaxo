@@ -21,6 +21,7 @@
 #endregion
 
 using System;
+using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Interpolation
 {
@@ -45,10 +46,9 @@ namespace Altaxo.Calc.Interpolation
     {
     }
 
-
-    double[] _myX;
-    double[] _myY;
-    double[] _myZ;
+    IROVector _myX;
+    IROVector _myY;
+    IROMatrix _myZ;
 
     /// <summary>
     /// Constructs an Akima bivariate spline.
@@ -58,13 +58,18 @@ namespace Altaxo.Calc.Interpolation
     /// <param name="z">DOUBLY-DIMENSIONED ARRAY OF DIMENSION (LX,LY) STORING THE VALUES OF THE FUNCTION (Z VALUES) AT INPUT GRID POINTS</param>
     /// <param name="copyDataLocally">If true, the data where cloned before stored here in this instance. If false, the data
     /// are stored directly. Make sure then, that the data are not changed outside.</param>
-    public BivariateAkimaSpline(double[]x, double[]y, double[]z, bool copyDataLocally)
+    public BivariateAkimaSpline(IROVector x, IROVector y,  IROMatrix z, bool copyDataLocally)
     {
       if(copyDataLocally)
       {
-        _myX = (double[])x.Clone();
-        _myY = (double[])y.Clone();
-        _myZ = (double[])z.Clone();
+        _myX = VectorMath.ToVector(new double[x.Length]);
+        VectorMath.Copy(x,(IVector)_myX);
+
+        _myY = VectorMath.ToVector(new double[y.Length]);
+        VectorMath.Copy(y, (IVector)_myY);
+
+        _myZ = new MatrixMath.BEMatrix(_myZ.Rows, _myZ.Columns);
+        MatrixMath.Copy(z, (IMatrix)_myZ);
       }
       else
       {
@@ -76,9 +81,9 @@ namespace Altaxo.Calc.Interpolation
    
     public double Interpolate(double x, double y)
     {
-      double[] z = new double[1];
-      this.itplbv_(_myX.Length, _myY.Length, _myX, _myY, _myZ, 1, new double[]{x}, new double[]{y}, z);
-      return z[0];
+      MatrixMath.Scalar z = new MatrixMath.Scalar();
+      this.itplbv_(_myX.Length, _myY.Length, _myX, _myY, _myZ, 1, new MatrixMath.Scalar(x), new MatrixMath.Scalar(y), z);
+      return z;
     }
 
     /// <summary>
@@ -91,6 +96,21 @@ namespace Altaxo.Calc.Interpolation
     /// IS APPLICABLE TO A RECTANGLE OF THE INPUT GRID IN THE X-Y 
     /// PLANE.  EACH POLYNOMIAL IS DETERMINED LOCALLY.
     /// </summary>
+    /// <param name="x">VECTOR OF DIMENSION LX STORING THE X COORDINATES OF INPUT GRID POINTS (IN ASCENDING ORDER)</param>
+    /// <param name="y">VECTOR OF DIMENSION LY STORING THE Y COORDINATES OF INPUT GRID POINTS (IN ASCENDING ORDER)</param>
+    /// <param name="z">MATRIX OF DIMENSION (LX,LY) STORING THE VALUES OF THE FUNCTION (Z VALUES) AT INPUT GRID POINTS</param>
+    /// <param name="u">VECTOR OF DIMENSION N STORING THE X COORDINATES OF DESIRED POINTS</param>
+    /// <param name="v">VECTOR OF DIMENSION N STORING THE Y COORDINATES OF DESIRED POINTS</param>
+    /// <param name="w">VECTOR OF DIMENSION N WHERE THE INTERPOLATED Z VALUES AT DESIRED POINTS ARE TO BE DISPLAYED</param>
+    public static void Interpolate(IROVector x, IROVector y, IROMatrix z, IROVector u, IROVector v, IVector w)
+    {
+      BivariateAkimaSpline spline = new BivariateAkimaSpline();
+      spline.itplbv_(x.Length,y.Length,x,y,z,w.Length,u,v,w);
+    }
+
+    /// <summary>
+    /// Old interface to the akima spline. Since all arrays are converted to IVector or IMatrix, avoid this interface if possible.
+    /// </summary>
     /// <param name="x">ARRAY OF DIMENSION LX STORING THE X COORDINATES OF INPUT GRID POINTS (IN ASCENDING ORDER)</param>
     /// <param name="y">ARRAY OF DIMENSION LY STORING THE Y COORDINATES OF INPUT GRID POINTS (IN ASCENDING ORDER)</param>
     /// <param name="z">DOUBLY-DIMENSIONED ARRAY OF DIMENSION (LX,LY) STORING THE VALUES OF THE FUNCTION (Z VALUES) AT INPUT GRID POINTS</param>
@@ -100,9 +120,9 @@ namespace Altaxo.Calc.Interpolation
     public static void Interpolate(double[] x, double[] y, double[] z, double[] u, double[] v, double[] w)
     {
       BivariateAkimaSpline spline = new BivariateAkimaSpline();
-      spline.itplbv_(x.Length,y.Length,x,y,z,w.Length,u,v,w);
+      spline.itplbv_(x.Length, y.Length, VectorMath.ToROVector(x), VectorMath.ToROVector(y), MatrixMath.ToROMatrix(z,x.Length),
+        w.Length, VectorMath.ToROVector(u), VectorMath.ToROVector(v), VectorMath.ToVector(w));
     }
-
 
     #region Created from the FORTRAN sources
   
@@ -297,8 +317,8 @@ namespace Altaxo.Calc.Interpolation
     /// SETTING OF SOME INPUT PARAMETERS TO LOCAL VARIABLES 
     /// Parameter adjustments 
     ///</remarks>
-    private int itplbv_(int lx, int ly, double[] x,
-      double[] y, double[] z__, int n, double[] u, double[] v, double[] w)
+    private int itplbv_(int lx, int ly, IROVector x,
+      IROVector y, IROMatrix z__, int n, IROVector u, IROVector v, IVector w)
     {
 
       /* System generated locals */
@@ -508,10 +528,10 @@ namespace Altaxo.Calc.Interpolation
         y3 = y[jy - 2]; // LelliD
         y4 = y[jy-1]; // LelliD
         b3 = 1.0 / (y4 - y3);
-        z33 = z__[jx - 2 + (jy - 2) * z_dim1]; // LelliD
-        z43 = z__[jx -1 + (jy - 2) * z_dim1]; // LelliD
-        z34 = z__[jx - 2 + (jy -1) * z_dim1]; // LelliD
-        z44 = z__[jx -1 + (jy -1) * z_dim1]; // LelliD
+        z33 = z__[jx - 2, jy - 2]; // LelliD
+        z43 = z__[jx -1, jy - 2 ]; // LelliD
+        z34 = z__[jx - 2, jy -1]; // LelliD
+        z44 = z__[jx -1, (jy -1)]; // LelliD
         z3a3 = (z43 - z33) * a3;
         z4a3 = (z44 - z34) * a3;
         z3b3 = (z34 - z33) * b3;
@@ -528,8 +548,8 @@ namespace Altaxo.Calc.Interpolation
         }
         x2 = x[jx - 3]; // LelliD 
         a2 = 1.0 / (x3 - x2);
-        z23 = z__[jx - 3 + (jy - 2) * z_dim1]; // LelliD
-        z24 = z__[jx - 3 + (jy -1) * z_dim1]; // LelliD
+        z23 = z__[jx - 3,(jy - 2)]; // LelliD
+        z24 = z__[jx - 3,(jy -1)]; // LelliD
         z3a2 = (z33 - z23) * a2;
         z4a2 = (z34 - z24) * a2;
         if (jxml == 0)
@@ -539,8 +559,8 @@ namespace Altaxo.Calc.Interpolation
       L170:
         x5 = x[jx ]; // LelliD
         a4 = 1.0 / (x5 - x4);
-        z53 = z__[jx + 0 + (jy - 2) * z_dim1]; // LelliD
-        z54 = z__[jx + 0 + (jy -1) * z_dim1]; // LelliD
+        z53 = z__[jx + 0,(jy - 2)]; // LelliD
+        z54 = z__[jx + 0,(jy -1)]; // LelliD
         z3a4 = (z53 - z43) * a4;
         z4a4 = (z54 - z44) * a4;
         if (jxm2 != 0)
@@ -561,8 +581,8 @@ namespace Altaxo.Calc.Interpolation
           goto L200;
         }
         a1 = 1.0 / (x2 - x[jx - 4]); // LelliD
-        z3a1 = (z23 - z__[jx - 4 + (jy - 2) * z_dim1]) * a1; // LelliD
-        z4a1 = (z24 - z__[jx - 4 + (jy -1) * z_dim1]) * a1; // LelliD
+        z3a1 = (z23 - z__[jx - 4, (jy - 2)]) * a1; // LelliD
+        z4a1 = (z24 - z__[jx - 4, (jy -1)]) * a1; // LelliD
         goto L210;
       L200:
         z3a1 = z3a2 + z3a2 - z3a3;
@@ -573,8 +593,8 @@ namespace Altaxo.Calc.Interpolation
           goto L220;
         }
         a5 = 1.0 / (x[jx + 1] - x5); // LelliD
-        z3a5 = (z__[jx + 1 + (jy - 2) * z_dim1] - z53) * a5; // LelliD
-        z4a5 = (z__[jx + 1 + (jy -1) * z_dim1] - z54) * a5; // LelliD
+        z3a5 = (z__[jx + 1, (jy - 2)] - z53) * a5; // LelliD
+        z4a5 = (z__[jx + 1, (jy - 1)] - z54) * a5; // LelliD
         goto L240;
       L220:
         z3a5 = z3a4 + z3a4 - z3a3;
@@ -596,8 +616,8 @@ namespace Altaxo.Calc.Interpolation
         }
         y2 = y[jy - 3]; // LelliD
         b2 = 1.0 / (y3 - y2);
-        z32 = z__[jx - 2 + (jy - 3) * z_dim1]; // LelliD
-        z42 = z__[jx -1 + (jy - 3) * z_dim1]; // LelliD
+        z32 = z__[jx - 2, (jy - 3) ]; // LelliD
+        z42 = z__[jx -1,   (jy - 3)]; // LelliD
         z3b2 = (z33 - z32) * b2;
         z4b2 = (z43 - z42) * b2;
         if (jyml == 0)
@@ -607,8 +627,8 @@ namespace Altaxo.Calc.Interpolation
       L250:
         y5 = y[jy + 0]; // LelliD
         b4 = 1.0 / (y5 - y4);
-        z35 = z__[jx - 2 + (jy + 0) * z_dim1]; // LelliD
-        z45 = z__[jx -1 + (jy + 0) * z_dim1]; // LelliD
+        z35 = z__[jx - 2, (jy + 0)]; // LelliD
+        z45 = z__[jx -1,  (jy + 0)]; // LelliD
         z3b4 = (z35 - z34) * b4;
         z4b4 = (z45 - z44) * b4;
         if (jym2 != 0)
@@ -629,8 +649,8 @@ namespace Altaxo.Calc.Interpolation
           goto L280;
         }
         b1 = 1.0 / (y2 - y[jy - 4]); // LelliD
-        z3b1 = (z32 - z__[jx - 2 + (jy - 4) * z_dim1]) * b1; // LelliD
-        z4b1 = (z42 - z__[jx - 1 + (jy - 4) * z_dim1]) * b1; // LelliD
+        z3b1 = (z32 - z__[jx - 2, (jy - 4)]) * b1; // LelliD
+        z4b1 = (z42 - z__[jx - 1, (jy - 4)]) * b1; // LelliD
         goto L290;
       L280:
         z3b1 = z3b2 + z3b2 - z3b3;
@@ -641,8 +661,8 @@ namespace Altaxo.Calc.Interpolation
           goto L300;
         }
         b5 = 1.0 / (y[jy + 1] - y5); // LelliD
-        z3b5 = (z__[jx - 2 + (jy + 1) * z_dim1] - z35) * b5; // LelliD
-        z4b5 = (z__[jx - 1 + (jy + 1) * z_dim1] - z45) * b5; // LelliD
+        z3b5 = (z__[jx - 2, (jy + 1)] - z35) * b5; // LelliD
+        z4b5 = (z__[jx - 1, (jy + 1)] - z45) * b5; // LelliD
         goto L320;
       L300:
         z3b5 = z3b4 + z3b4 - z3b3;
@@ -670,13 +690,13 @@ namespace Altaxo.Calc.Interpolation
         {
           goto L330;
         }
-        za4b2 = ((z53 - z__[jx + 0 + (jy - 3) * z_dim1]) * b2 - z4b2) * a4; // LelliD
+        za4b2 = ((z53 - z__[jx + 0, (jy - 3)]) * b2 - z4b2) * a4; // LelliD
         if (jyml == 0)
         {
           goto L340;
         }
       L330:
-        za4b4 = ((z__[jx + 0 + (jy + 0) * z_dim1] - z54) * b4 - z4b4) * a4; // LelliD
+        za4b4 = ((z__[jx + 0, (jy + 0)] - z54) * b4 - z4b4) * a4; // LelliD
         if (jym2 != 0)
         {
           goto L380;
@@ -691,13 +711,13 @@ namespace Altaxo.Calc.Interpolation
         {
           goto L360;
         }
-        za2b2 = (z3b2 - (z23 - z__[jx - 3 + (jy - 3) * z_dim1]) * b2) * a2; // LelliD
+        za2b2 = (z3b2 - (z23 - z__[jx - 3, (jy - 3)]) * b2) * a2; // LelliD
         if (jyml == 0)
         {
           goto L370;
         }
       L360:
-        za2b4 = (z3b4 - (z__[jx - 3 + (jy + 0) * z_dim1] - z24) * b4) * a2; // LelliD
+        za2b4 = (z3b4 - (z__[jx - 3, (jy + 0)] - z24) * b4) * a2; // LelliD
         if (jym2 != 0)
         {
           goto L390;

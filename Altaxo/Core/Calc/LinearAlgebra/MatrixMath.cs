@@ -571,6 +571,13 @@ namespace Altaxo.Calc.LinearAlgebra
         m_Value = val;
       }
 
+      /// <summary>
+      /// Creates the scalar with the default value of zero.
+      /// </summary>
+      public Scalar()
+      {
+      }
+
       public override string ToString()
       {
         return MatrixMath.MatrixToString(null,this);
@@ -1438,6 +1445,16 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="x">The jagged array. Each double[] vector is a row of the matrix.</param>
     /// <returns></returns>
     public static IMatrix ToMatrix(double[][] x)
+    {
+      return new BEMatrix(x);
+    }
+
+    /// <summary>
+    /// This wraps a jagged double array to the <see cref="IROMatrix" /> interface. The data is not copied!
+    /// </summary>
+    /// <param name="x">The jagged array. Each double[] vector is a row of the matrix.</param>
+    /// <returns></returns>
+    public static IMatrix ToROMatrix(double[][] x)
     {
       return new BEMatrix(x);
     }
