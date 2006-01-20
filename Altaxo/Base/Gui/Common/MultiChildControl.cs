@@ -180,14 +180,9 @@ namespace Altaxo.Gui.Common
 
       if(_description!=null && _description!=string.Empty)
       {
-        SizeF size1, size2;
-        using(System.Drawing.Graphics grfx = this.CreateGraphics())
-        {
-          size1 = grfx.MeasureString(_description,m_Label1.Font);
-          size2 = grfx.MeasureString(_description,m_Label1.Font,m_Label1.ClientSize.Width);
-        }
-        m_Label1.Size = new Size(this.ClientSize.Width-2*m_Label1.Location.X,(int)(m_Label1.PreferredHeight*Math.Ceiling(size2.Height/size1.Height)));
-        this.m_Label1.Text = _description;
+        m_Label1.Text = _description;
+        m_Label1.Width = this.ClientSize.Width - 2 * m_Label1.Location.X;
+        m_Label1.Height = m_Label1.PreferredHeight;
       }
       else
       {
@@ -219,14 +214,9 @@ namespace Altaxo.Gui.Common
 
       if (_description != null && _description != string.Empty)
       {
-        SizeF size1, size2;
-        using (System.Drawing.Graphics grfx = this.CreateGraphics())
-        {
-          size1 = grfx.MeasureString(_description, m_Label1.Font);
-          size2 = grfx.MeasureString(_description, m_Label1.Font, m_Label1.ClientSize.Width);
-        }
-        m_Label1.Size = new Size(this.ClientSize.Width - 2 * m_Label1.Location.X, (int)(m_Label1.PreferredHeight * Math.Ceiling(size2.Height / size1.Height)));
-        this.m_Label1.Text = _description;
+        m_Label1.Text = _description;
+        m_Label1.Width = this.ClientSize.Width - 2 * m_Label1.Location.X;
+        m_Label1.Height = m_Label1.PreferredHeight;
       }
       else
       {

@@ -99,62 +99,64 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
 
   /// <summary>
-  /// Havriliak-Negami function to fit dielectric spectra.
+  /// Kohlrausch function in the frequency domain to fit compliance or dielectric spectra.
   /// </summary>
   [FitFunctionClass]
-  public class KohlrauschFrequencyDomain : IFitFunction
+  public class KohlrauschComplianceFrequencyDomain : IFitFunction
   {
     bool _useFrequencyInsteadOmega;
-    bool _modulus;
-    bool _withConductivity;
+    bool _useFlowTerm;
+    bool _isDielectricData;
 
     #region Serialization
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(KohlrauschFrequencyDomain), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(KohlrauschComplianceFrequencyDomain), 0)]
     public class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        KohlrauschFrequencyDomain s = (KohlrauschFrequencyDomain)obj;
+        KohlrauschComplianceFrequencyDomain s = (KohlrauschComplianceFrequencyDomain)obj;
         info.AddValue("UseFrequency", s._useFrequencyInsteadOmega);
-        info.AddValue("Modulus", s._modulus);
-        info.AddValue("Conductivity", s._withConductivity);
+        info.AddValue("FlowTerm", s._useFlowTerm);
+        info.AddValue("IsDielectric", s._isDielectricData);
       }
 
       public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        KohlrauschFrequencyDomain s = o != null ? (KohlrauschFrequencyDomain)o : new KohlrauschFrequencyDomain();
+        KohlrauschComplianceFrequencyDomain s = o != null ? (KohlrauschComplianceFrequencyDomain)o : new KohlrauschComplianceFrequencyDomain();
         s._useFrequencyInsteadOmega = info.GetBoolean("UseFrequency");
-        s._modulus = info.GetBoolean("Modulus");
-        s._withConductivity = info.GetBoolean("Conductivity");
+        s._useFlowTerm = info.GetBoolean("FlowTerm");
+        s._isDielectricData = info.GetBoolean("IsDielectric");
         return s;
       }
     }
 
     #endregion
 
-    public KohlrauschFrequencyDomain()
+    public KohlrauschComplianceFrequencyDomain()
     {
       //
       // TODO: Add constructor logic here
       //
     }
 
-    [FitFunctionCreator("Kohlrausch Complex (Omega)", "Relaxation", 1, 2, 4)]
+    [FitFunctionCreator("Kohlrausch Complex (Omega)", "Retardation/Dielectrics", 1, 2, 4)]
     public static IFitFunction CreateFofOmega()
     {
-      KohlrauschFrequencyDomain result = new KohlrauschFrequencyDomain();
+      KohlrauschComplianceFrequencyDomain result = new KohlrauschComplianceFrequencyDomain();
       result._useFrequencyInsteadOmega = false;
-      result._withConductivity = true;
+      result._useFlowTerm = true;
+      result._isDielectricData = true;
       return result;
     }
 
-    [FitFunctionCreator("Kohlrausch Complex (Freq)", "Relaxation", 1, 2, 4)]
+    [FitFunctionCreator("Kohlrausch Complex (Freq)", "Retardation/Dielectrics", 1, 2, 4)]
     public static IFitFunction CreateFofFrequency()
     {
-      KohlrauschFrequencyDomain result = new KohlrauschFrequencyDomain();
+      KohlrauschComplianceFrequencyDomain result = new KohlrauschComplianceFrequencyDomain();
       result._useFrequencyInsteadOmega = true;
-      result._withConductivity = true;
+      result._useFlowTerm = true;
+      result._isDielectricData = true;
       return result;
     }
 
@@ -192,12 +194,159 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     #endregion
 
     #region parameter definition
-    string[] _parameterName = new string[] { "offset", "amplitude", "tau", "beta", "conductivity" };
+    string[] _parameterNameC = new string[] { "j_inf", "delta_j", "tau", "beta", "viscosity" };
+    string[] _parameterNameD = new string[] { "eps_inf", "delta_eps", "tau", "beta", "conductivity" };
     public int NumberOfParameters
     {
       get
       {
-        return this._withConductivity ?  _parameterName.Length : _parameterName.Length - 1 ;
+        if (_isDielectricData)
+         return this._useFlowTerm ?  _parameterNameD.Length : _parameterNameD.Length - 1 ;
+        else
+         return this._useFlowTerm ?  _parameterNameC.Length : _parameterNameC.Length - 1 ;
+      }
+    }
+    public string ParameterName(int i)
+    {
+      if (_isDielectricData)
+        return _parameterNameD[i];
+      else
+        return _parameterNameC[i];
+    }
+    #endregion
+
+    public void Evaluate(double[] X, double[] P, double[] Y)
+    {
+      double x = X[0];
+      if (_useFrequencyInsteadOmega)
+        x *= (2 * Math.PI);
+
+      double w_r = x * P[2]; // omega scaled with tau
+
+      Complex result = P[0] + P[1] * Kohlrausch.ReIm(P[3], w_r);
+      Y[0] = result.Re;
+
+      if (this._useFlowTerm)
+      {
+        if (this._isDielectricData)
+          Y[1] = -result.Im - P[4] / (x * 8.854187817e-12);
+        else
+          Y[1] = -result.Im - P[4] / (x);
+      }
+      else
+      {
+        Y[1] = -result.Im;
+      }
+    }
+
+    #endregion
+  }
+
+
+
+  /// <summary>
+  /// Kohlrausch function in the frequency domain to fit modulus spectra. This is the inverse of the retardation spectra,
+  /// i.e. tau is the retardation time (and not the relaxation time!).
+  /// </summary>
+  [FitFunctionClass]
+  public class KohlrauschModulusFrequencyDomain : IFitFunction
+  {
+    bool _useFrequencyInsteadOmega;
+    bool _useFlowTerm;
+   
+
+    #region Serialization
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(KohlrauschModulusFrequencyDomain), 0)]
+    public class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        KohlrauschModulusFrequencyDomain s = (KohlrauschModulusFrequencyDomain)obj;
+        info.AddValue("UseFrequency", s._useFrequencyInsteadOmega);
+        info.AddValue("FlowTerm", s._useFlowTerm);
+        //info.AddValue("IsDielectric", s._isDielectricData);
+      }
+
+      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        KohlrauschModulusFrequencyDomain s = o != null ? (KohlrauschModulusFrequencyDomain)o : new KohlrauschModulusFrequencyDomain();
+        s._useFrequencyInsteadOmega = info.GetBoolean("UseFrequency");
+        s._useFlowTerm = info.GetBoolean("FlowTerm");
+        //s._isDielectricData = info.GetBoolean("IsDielectric");
+        return s;
+      }
+    }
+
+    #endregion
+
+    public KohlrauschModulusFrequencyDomain()
+    {
+      //
+      // TODO: Add constructor logic here
+      //
+    }
+
+    [FitFunctionCreator("Kohlrausch Complex (Omega)", "Retardation/Modulus", 1, 2, 4)]
+    public static IFitFunction CreateFofOmega()
+    {
+      KohlrauschModulusFrequencyDomain result = new KohlrauschModulusFrequencyDomain();
+      result._useFrequencyInsteadOmega = false;
+      result._useFlowTerm = true;
+     
+      return result;
+    }
+
+    [FitFunctionCreator("Kohlrausch Complex (Freq)", "Retardation/Modulus", 1, 2, 4)]
+    public static IFitFunction CreateFofFrequency()
+    {
+      KohlrauschModulusFrequencyDomain result = new KohlrauschModulusFrequencyDomain();
+      result._useFrequencyInsteadOmega = true;
+      result._useFlowTerm = true;
+   
+      return result;
+    }
+
+
+    #region IFitFunction Members
+
+    #region independent variable definition
+
+    public int NumberOfIndependentVariables
+    {
+      get
+      {
+        return 1;
+      }
+    }
+    public string IndependentVariableName(int i)
+    {
+      return this._useFrequencyInsteadOmega ? "Frequency" : "Omega";
+    }
+    #endregion
+
+    #region dependent variable definition
+    private string[] _dependentVariableName = new string[] { "re", "im" };
+    public int NumberOfDependentVariables
+    {
+      get
+      {
+        return _dependentVariableName.Length;
+      }
+    }
+    public string DependentVariableName(int i)
+    {
+      return _dependentVariableName[i];
+    }
+    #endregion
+
+    #region parameter definition
+    string[] _parameterName = new string[] { "m_0", "m_inf", "tau_retard", "beta", "viscosity" };
+    public int NumberOfParameters
+    {
+      get
+      {
+        return this._useFlowTerm ? _parameterName.Length : _parameterName.Length - 1;
       }
     }
     public string ParameterName(int i)
@@ -214,18 +363,21 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
       double w_r = x * P[2]; // omega scaled with tau
 
-      Complex result = P[0] + P[1] * Complex.FromRealImaginary(Kohlrausch.Re(P[3], w_r), Kohlrausch.Im(P[3], w_r));
-      Y[0] = result.Re;
+      Complex result = 1/P[1] + (1/P[0]-1/P[1]) * Kohlrausch.ReIm(P[3], w_r);
 
-      if (this._withConductivity)
-        Y[1] = result.Im + P[4] / (x * 8.854187817e-12);
-      else
-        Y[1] = result.Im;
+      if (this._useFlowTerm)
+      {
+          result.Im -= P[4] / (x);
+      }
+
+
+      result = 1 / result;
+      Y[0] = result.Re;
+      Y[1] = result.Im;
     }
 
     #endregion
   }
-
 
 
   /// <summary>

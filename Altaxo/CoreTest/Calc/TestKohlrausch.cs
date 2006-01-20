@@ -40,13 +40,22 @@ namespace AltaxoTest.Calc
     [Test]
     public void TestIm2()
     {
-      double result = Kohlrausch.Im2(0.5, 1.0/1024);
+      double beta = 63/32.0;
+      double result = Kohlrausch.Im2(beta, Math.Exp(2.65625 / beta));
     }
 
     [Test]
     public void TestIm()
     {
-      double result = Kohlrausch.Im(0.5, 1.0);
+      double beta = 1 / 32.0;
+      double result = Kohlrausch.Im(beta, Math.Exp(-5/beta));
+    }
+
+    [Test]
+    public void TestIm2SmallBeta()
+    {
+      double beta = 1 / 32.0;
+      double result = Kohlrausch.Im2SmallBeta(beta, Math.Exp(-5 / beta));
     }
 
     [Test]

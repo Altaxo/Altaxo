@@ -28,169 +28,12 @@ namespace Altaxo.Calc
 {
   using LinearAlgebra;
 	/// <summary>
-	/// Summary description for Kohlrausch.
+	/// The Kohlrausch function in the frequency domain.
 	/// </summary>
 	public class Kohlrausch
-	{
-	
-    /// <summary>
-    /// Imaginary part of the Fourier transformed derivative of the Kohlrausch function for high frequencies (beta<=1) or low frequencies (beta>=1).
-    /// </summary>
-    /// <param name="beta">Beta parameter.</param>
-    /// <param name="z">Circular frequency.</param>
-    /// <returns>Imaginary part of the Fourier transformed derivative of the Kohlrausch function for high frequencies, or double.NaN if the sequence not converges.</returns>
-    public static double Im1(double beta, double z)
-    {
-      int k=1;
-      double z_pow_minusBeta = Math.Pow(z,-beta);
-      double kfac = 1;
-      double z_pow_minusBetaK = z_pow_minusBeta;
-      
+  {
 
-      double term1 = GammaRelated.Gamma(1+k*beta)*z_pow_minusBetaK*Math.Sin(Math.PI*beta*k*0.5)/kfac;
-      
-      ++k;
-      z_pow_minusBetaK *= z_pow_minusBeta;
-      kfac *= k;
-
-      double term2 = GammaRelated.Gamma(1+k*beta)*z_pow_minusBetaK*Math.Sin(Math.PI*beta*k*0.5)/kfac;
- 
-      double curr = term1-term2;
-      double sum = curr;
-      double prev = curr;
-
-      for(;;)
-      {
-        ++k;
-        z_pow_minusBetaK *= z_pow_minusBeta;
-        kfac *= k;
-
-        term1 = GammaRelated.Gamma(1+k*beta)*z_pow_minusBetaK*Math.Sin(Math.PI*beta*k*0.5)/kfac;
-
-        ++k;
-        z_pow_minusBetaK *= z_pow_minusBeta;
-        kfac *= k;
-
-        term2 = GammaRelated.Gamma(1+k*beta)*z_pow_minusBetaK*Math.Sin(Math.PI*beta*k*0.5)/kfac;
-
-        curr = term1-term2;
-
-        if(Math.Abs(curr)<Math.Abs(sum*1E-15))
-          break;
-        if(k>4 && Math.Abs(curr)>Math.Abs(sum)) // sum is not converging
-        {
-          sum = double.NaN; 
-          break;
-        }
-        if(double.IsInfinity(kfac))
-        {
-          sum = double.NaN;
-          break;
-        }
-
-        prev = curr;
-        sum += curr;
-      }
-      return sum;
-    }
-
-    /// <summary>
-    /// Imaginary part of the Fourier transformed derivative of the Kohlrausch function for low frequencies.
-    /// </summary>
-    /// <param name="beta">Beta parameter.</param>
-    /// <param name="z">Circular frequency.</param>
-    /// <returns>Imaginary part of the Fourier transformed derivative of the Kohlrausch function for high frequencies, or double.NaN if the sequence not converges.</returns>
-    public static double Im2(double beta, double z)
-    {
-      int k = 1;
-      double z_pow_2km1 = z;
-      double z_square = z * z;
-      double k2m2fac = 1;
-
-      double term1 = GammaRelated.Gamma((k+k-1)/beta)*z_pow_2km1/ k2m2fac;
-
-      if (z_square == 0)
-        return term1; // if z was so small that z_square can not be evaluated, return after term1
-
-      k=2;
-      k2m2fac = 2;
-      z_pow_2km1 *= z_square;
-      double term2 = GammaRelated.Gamma((k + k - 1) / beta) * z_pow_2km1 / k2m2fac;
-
-      double curr = term1-term2;
-      double sum = curr;
-      double prev = curr;
-
-      for (; ; )
-      {
-        k2m2fac *= (k+k)*(k+k-1);
-        ++k;
-        z_pow_2km1 *= z_square;
-        term1 = GammaRelated.Gamma((k + k - 1) / beta) * z_pow_2km1 / k2m2fac;
-
-        k2m2fac *= (k + k) * (k + k - 1);
-        ++k;
-        z_pow_2km1 *= z_square;
-        term2 = GammaRelated.Gamma((k + k - 1) / beta) * z_pow_2km1 / k2m2fac;
-
-        curr = term1 - term2;
-
-        if (Math.Abs(curr) < Math.Abs(sum * 1E-15))
-          break;
-        if (Math.Abs(curr) > Math.Abs(prev)) // sum is not converging
-        {
-          sum = double.NaN;
-          break;
-        }
-        if (double.IsInfinity(k2m2fac))
-        {
-          sum = double.NaN;
-          break;
-        }
-
-        prev = curr;
-        sum += curr;
-      }
-      return sum/beta;
-    }
-
-    static Interpolation.BivariateAkimaSpline _imspline ;
-    static Interpolation.BivariateAkimaSpline _respline;
-    static void CreateImaginaryPartSpline()
-    {
-      IROVector x = VectorMath.CreateEquidistantSequence(0, 1.0 / 32, 33); // beta ranging from 0 to 1
-      IROVector y = VectorMath.CreateEquidistantSequence(-5, 1.0 / 64, 353); // y ranging from -5 to 0.5
-      IROMatrix z = MatrixMath.ToROMatrix(_imdata);
-      _imspline = new Interpolation.BivariateAkimaSpline(x, y, z, false);
-    }
-    static void CreateRealPartSpline()
-    {
-      IROVector x = VectorMath.CreateEquidistantSequence(0, 1.0 / 32, 33); // beta ranging from 0 to 1
-      IROVector y = VectorMath.CreateEquidistantSequence(-5, 1.0 / 64, 353); // y ranging from -5 to 0.5
-      IROMatrix z = MatrixMath.ToROMatrix(_redata);
-      _respline = new Interpolation.BivariateAkimaSpline(x, y, z, false);
-    }
-
-
-    public static double Im(double beta, double w)
-    {
-      double y = beta * Math.Log(w);
-
-      if (y <= -5)
-        return Im2(beta, w);
-      else if (y > 0.25)
-        return Im1(beta, w);
-      else
-      {
-        if (_imspline == null)
-          CreateImaginaryPartSpline();
-
-        double log_ar = _imspline.Interpolate(beta, y);
-
-
-        return beta*Math.Exp(log_ar);
-      }
-    }
+    #region Real part series
 
 
     /// <summary>
@@ -198,8 +41,53 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="beta">Beta parameter.</param>
     /// <param name="z">Circular frequency.</param>
-    /// <returns>Real part of the Fourier transformed derivative of the Kohlrausch function for high frequencies, or double.NaN if the sequence not converges.</returns>
+    /// <returns>Real part of the Fourier transformed derivative of the Kohlrausch function for high frequencies, or double.NaN if the series not converges.</returns>
+    /// <remarks>This is the real part of the Fourier transform (in Mathematica notation): Re[Integrate[-D[Exp[-t^beta],t]*Exp[-I w t],{t, 0, Infinity}]]. For
+    /// beta smaller than one, the return value is always positive.</remarks>
     public static double Re1(double beta, double z)
+    {
+      int k = 1;
+      double z_pow_minusBeta = Math.Pow(z, -beta);
+      double kfac = 1;
+      double z_pow_minusBetaK = z_pow_minusBeta;
+
+
+      double term1a = GammaRelated.Gamma(1 + k * beta) * z_pow_minusBetaK / kfac;
+      double term1 = term1a * Math.Cos(Math.PI * beta * k * 0.5);
+
+      double sum = term1;
+
+      for (; ; )
+      {
+
+        ++k;
+        z_pow_minusBetaK *= z_pow_minusBeta;
+        kfac *= -k;
+
+        double term2a = GammaRelated.Gamma(1 + k * beta) * z_pow_minusBetaK / kfac;
+        double term2 = term2a * Math.Cos(Math.PI * beta * k * 0.5);
+
+        if (Math.Abs(term2a) < Math.Abs(sum * 1E-15))
+          break;
+        if (Math.Abs(term2a) > Math.Abs(term1a) || double.IsInfinity(kfac)) // sum is not converging
+        {
+          sum = double.NaN;
+          break;
+        }
+
+        term1a = term2a; // take as previous term
+        sum += term2;
+      }
+      return sum;
+    }
+
+    /// <summary>
+    /// Real part of the Fourier transformed derivative of the Kohlrausch function for high frequencies.
+    /// </summary>
+    /// <param name="beta">Beta parameter.</param>
+    /// <param name="z">Circular frequency.</param>
+    /// <returns>Real part of the Fourier transformed derivative of the Kohlrausch function for high frequencies, or double.NaN if the series not converges.</returns>
+    public static double Re1OldStyle(double beta, double z)
     {
       int k = 1;
       double z_pow_minusBeta = Math.Pow(z, -beta);
@@ -259,7 +147,9 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="beta">Beta parameter.</param>
     /// <param name="z">Circular frequency, must be much lesser than one.</param>
-    /// <returns>Real part of the Fourier transformed derivative of the Kohlrausch function for low frequencies, or double.NaN if the sequence not converges.</returns>
+    /// <returns>Real part of the Fourier transformed derivative of the Kohlrausch function for low frequencies, or double.NaN if the series not converges.</returns>
+    /// <remarks>This is the real part of the Fourier transform (in Mathematica notation): Re[Integrate[-D[Exp[-t^beta],t]*Exp[-I w t],{t, 0, Infinity}]]. For
+    /// beta smaller than one, the return value is always positive.</remarks>
     public static double Re2(double beta, double z)
     {
       if (beta < 0.0625)
@@ -267,11 +157,11 @@ namespace Altaxo.Calc
 
 
       int k = 1;
-      double z_pow_2k = z*z;
+      double z_pow_2k = z * z;
       double z_square = z * z;
       double k2m1fac = 1;
 
-      double term1 = GammaRelated.Gamma((k + k ) / beta) * z_pow_2k / k2m1fac;
+      double term1 = GammaRelated.Gamma((k + k) / beta) * z_pow_2k / k2m1fac;
 
       if (z_square == 0)
         return term1; // if z was so small that z_square can not be evaluated, return after term1
@@ -279,7 +169,7 @@ namespace Altaxo.Calc
       k = 2;
       k2m1fac = 6;
       z_pow_2k *= z_square;
-      double term2 = GammaRelated.Gamma((k + k ) / beta) * z_pow_2k / k2m1fac;
+      double term2 = GammaRelated.Gamma((k + k) / beta) * z_pow_2k / k2m1fac;
 
       double curr = term1 - term2;
       double sum = curr;
@@ -290,12 +180,12 @@ namespace Altaxo.Calc
         k2m1fac *= (k + k) * (k + k + 1);
         ++k;
         z_pow_2k *= z_square;
-        term1 = GammaRelated.Gamma((k + k ) / beta) * z_pow_2k / k2m1fac;
+        term1 = GammaRelated.Gamma((k + k) / beta) * z_pow_2k / k2m1fac;
 
         k2m1fac *= (k + k) * (k + k + 1);
         ++k;
         z_pow_2k *= z_square;
-        term2 = GammaRelated.Gamma((k + k ) / beta) * z_pow_2k / k2m1fac;
+        term2 = GammaRelated.Gamma((k + k) / beta) * z_pow_2k / k2m1fac;
 
         curr = term1 - term2;
 
@@ -324,7 +214,9 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="beta">Beta parameter.</param>
     /// <param name="z">Circular frequency, must be much lesser than one.</param>
-    /// <returns>Real part of the Fourier transformed derivative of the Kohlrausch function for low frequencies, or double.NaN if the sequence not converges.</returns>
+    /// <returns>Real part of the Fourier transformed derivative of the Kohlrausch function for low frequencies, or double.NaN if the series not converges.</returns>
+    /// <remarks>This is the real part of the Fourier transform (in Mathematica notation): Re[Integrate[-D[Exp[-t^beta],t]*Exp[-I w t],{t, 0, Infinity}]]. For
+    /// beta smaller than one, the return value is always positive.</remarks>
     public static double Re2SmallBeta(double beta, double z)
     {
       int k = 1;
@@ -337,11 +229,11 @@ namespace Altaxo.Calc
       k = 2;
       k2m1fac = 6;
       ln_z_pow_2k += ln_z_square;
-      double term2 = GammaRelated.LnGamma((k + k) / beta) + ln_z_pow_2k - Math.Log( k2m1fac );
+      double term2 = GammaRelated.LnGamma((k + k) / beta) + ln_z_pow_2k - Math.Log(k2m1fac);
 
       double ln_scaling = Math.Max(term1, term2);
 
-      double curr = Math.Exp(term1-ln_scaling) - Math.Exp(term2-ln_scaling);
+      double curr = Math.Exp(term1 - ln_scaling) - Math.Exp(term2 - ln_scaling);
       double sum = curr;
       double prev = curr;
 
@@ -350,12 +242,12 @@ namespace Altaxo.Calc
         k2m1fac *= (k + k) * (k + k + 1);
         ++k;
         ln_z_pow_2k += ln_z_square;
-        term1 = GammaRelated.LnGamma((k + k) / beta) + ln_z_pow_2k - Math.Log( k2m1fac) ;
+        term1 = GammaRelated.LnGamma((k + k) / beta) + ln_z_pow_2k - Math.Log(k2m1fac);
 
         k2m1fac *= (k + k) * (k + k + 1);
         ++k;
         ln_z_pow_2k += ln_z_square;
-        term2 = GammaRelated.LnGamma((k + k) / beta) + ln_z_pow_2k - Math.Log( k2m1fac );
+        term2 = GammaRelated.LnGamma((k + k) / beta) + ln_z_pow_2k - Math.Log(k2m1fac);
 
         curr = Math.Exp(term1 - ln_scaling) - Math.Exp(term2 - ln_scaling);
 
@@ -378,9 +270,254 @@ namespace Altaxo.Calc
       return (sum / beta) * Math.Exp(ln_scaling);
     }
 
+    #endregion
+
+    #region Imaginary series
+
+    /// <summary>
+    /// Imaginary part of the Fourier transformed derivative of the Kohlrausch function for high frequencies.
+    /// </summary>
+    /// <param name="beta">Beta parameter.</param>
+    /// <param name="z">Circular frequency.</param>
+    /// <returns>Imaginary part of the Fourier transformed derivative of the Kohlrausch function for high frequencies, or double.NaN if the series not converges.</returns>
+    /// <remarks>This is the imaginary part of the Fourier transform (in Mathematica notation): Im[Integrate[D[Exp[-t^beta],t]*Exp[-I w t],{t, 0, Infinity}]]. The sign of
+    /// the return value here is positive!.</remarks>
+    public static double Im1OldStyle(double beta, double z)
+    {
+      int k=1;
+      double z_pow_minusBeta = Math.Pow(z,-beta);
+      double kfac = 1;
+      double z_pow_minusBetaK = z_pow_minusBeta;
+      
+
+      double term1 = GammaRelated.Gamma(1+k*beta)*z_pow_minusBetaK*Math.Sin(Math.PI*beta*k*0.5)/kfac;
+      
+      ++k;
+      z_pow_minusBetaK *= z_pow_minusBeta;
+      kfac *= k;
+
+      double term2 = GammaRelated.Gamma(1+k*beta)*z_pow_minusBetaK*Math.Sin(Math.PI*beta*k*0.5)/kfac;
+ 
+      double curr = term1-term2;
+      double sum = curr;
+      double prev = curr;
+
+      for(;;)
+      {
+        ++k;
+        z_pow_minusBetaK *= z_pow_minusBeta;
+        kfac *= k;
+
+        term1 = GammaRelated.Gamma(1+k*beta)*z_pow_minusBetaK*Math.Sin(Math.PI*beta*k*0.5)/kfac;
+
+        ++k;
+        z_pow_minusBetaK *= z_pow_minusBeta;
+        kfac *= k;
+
+        term2 = GammaRelated.Gamma(1+k*beta)*z_pow_minusBetaK*Math.Sin(Math.PI*beta*k*0.5)/kfac;
+
+        curr = term1-term2;
+
+        if(Math.Abs(curr)<Math.Abs(sum*1E-15))
+          break;
+        if(k>4 && Math.Abs(curr)>Math.Abs(sum)) // sum is not converging
+        {
+          sum = double.NaN; 
+          break;
+        }
+        if(double.IsInfinity(kfac))
+        {
+          sum = double.NaN;
+          break;
+        }
+
+        prev = curr;
+        sum += curr;
+      }
+      return sum;
+    }
+
+    /// <summary>
+    /// Imaginary part of the Fourier transformed derivative of the Kohlrausch function for high frequencies.
+    /// </summary>
+    /// <param name="beta">Beta parameter.</param>
+    /// <param name="z">Circular frequency.</param>
+    /// <returns>Imaginary part of the Fourier transformed derivative of the Kohlrausch function for high frequencies, or double.NaN if the series not converges.</returns>
+    /// <remarks>This is the imaginary part of the Fourier transform (in Mathematica notation): Im[Integrate[D[Exp[-t^beta],t]*Exp[-I w t],{t, 0, Infinity}]]. The sign of
+    /// the return value here is positive!.</remarks>
+    public static double Im1(double beta, double z)
+    {
+      int k = 1;
+      double z_pow_minusBeta = Math.Pow(z, -beta);
+      double kfac = 1;
+      double z_pow_minusBetaK = z_pow_minusBeta;
 
 
+      double term1a = GammaRelated.Gamma(1 + k * beta) * z_pow_minusBetaK  / kfac;
+      double term1 = term1a * Math.Sin(Math.PI * beta * k * 0.5);
 
+      double sum = term1;
+
+      for(;;)
+      {
+
+      ++k;
+      z_pow_minusBetaK *= z_pow_minusBeta;
+      kfac *= -k;
+
+      double term2a = GammaRelated.Gamma(1 + k * beta) * z_pow_minusBetaK / kfac;
+      double term2 = term2a * Math.Sin(Math.PI * beta * k * 0.5);
+
+      if (Math.Abs(term2a) < Math.Abs(sum * 1E-15))
+          break;
+      if (Math.Abs(term2a)>Math.Abs(term1a) || double.IsInfinity(kfac)) // sum is not converging
+        {
+          sum = double.NaN;
+          break;
+        }
+
+      term1a = term2a; // take as previous term
+      sum += term2;
+      }
+      return sum;
+    }
+
+    /// <summary>
+    /// Imaginary part of the Fourier transformed derivative of the Kohlrausch function for low frequencies.
+    /// </summary>
+    /// <param name="beta">Beta parameter.</param>
+    /// <param name="z">Circular frequency.</param>
+    /// <returns>Imaginary part of the Fourier transformed derivative of the Kohlrausch function for high frequencies, or double.NaN if the series not converges.</returns>
+    /// <returns>Imaginary part of the Fourier transformed derivative of the Kohlrausch function for high frequencies, or double.NaN if the series not converges.</returns>
+    /// <remarks>This is the imaginary part of the Fourier transform (in Mathematica notation): Im[Integrate[D[Exp[-t^beta],t]*Exp[-I w t],{t, 0, Infinity}]]. The sign of
+    /// the return value here is positive!.</remarks>
+    public static double Im2(double beta, double z)
+    {
+      if (beta < 0.0625)
+        return Im2SmallBeta(beta, z);
+
+      int k = 1;
+      double z_pow_2km1 = z;
+      double z_square = z * z;
+      double k2m2fac = 1;
+
+      double term1 = GammaRelated.Gamma((k+k-1)/beta)*z_pow_2km1/ k2m2fac;
+
+      if (z_square == 0)
+        return term1; // if z was so small that z_square can not be evaluated, return after term1
+
+      k=2;
+      k2m2fac = 2;
+      z_pow_2km1 *= z_square;
+      double term2 = GammaRelated.Gamma((k + k - 1) / beta) * z_pow_2km1 / k2m2fac;
+
+      double curr = term1-term2;
+      double sum = curr;
+      double prev = curr;
+
+      for (; ; )
+      {
+        k2m2fac *= (k+k)*(k+k-1);
+        ++k;
+        z_pow_2km1 *= z_square;
+        term1 = GammaRelated.Gamma((k + k - 1) / beta) * z_pow_2km1 / k2m2fac;
+
+        k2m2fac *= (k + k) * (k + k - 1);
+        ++k;
+        z_pow_2km1 *= z_square;
+        term2 = GammaRelated.Gamma((k + k - 1) / beta) * z_pow_2km1 / k2m2fac;
+
+        curr = term1 - term2;
+
+        if (Math.Abs(curr) < Math.Abs(sum * 1E-15))
+          break;
+        if (Math.Abs(curr) > Math.Abs(prev)) // sum is not converging
+        {
+          sum = double.NaN;
+          break;
+        }
+        if (double.IsInfinity(k2m2fac))
+        {
+          sum = double.NaN;
+          break;
+        }
+
+        prev = curr;
+        sum += curr;
+      }
+      return sum/beta;
+    }
+
+    /// <summary>
+    /// Imaginary part of the Fourier transformed derivative of the Kohlrausch function for low frequencies, and beta<=1/20..
+    /// </summary>
+    /// <param name="beta">Beta parameter.</param>
+    /// <param name="z">Circular frequency.</param>
+    /// <returns>Imaginary part of the Fourier transformed derivative of the Kohlrausch function for low frequencies, or double.NaN if the series not converges.</returns>
+    /// <returns>Imaginary part of the Fourier transformed derivative of the Kohlrausch function for high frequencies, or double.NaN if the series not converges.</returns>
+    /// <remarks>This is the imaginary part of the Fourier transform (in Mathematica notation): Im[Integrate[D[Exp[-t^beta],t]*Exp[-I w t],{t, 0, Infinity}]]. The sign of
+    /// the return value here is positive!.</remarks>
+    public static double Im2SmallBeta(double beta, double z)
+    {
+      
+
+      int k = 1;
+      double ln_z_pow_2km1 = k * Math.Log(z);
+      double ln_z_square = 2 * Math.Log(z);
+      double k2m2fac = 1;
+
+      double curr = GammaRelated.LnGamma((k + k -1) / beta) + ln_z_pow_2km1 - Math.Log(k2m2fac);
+      double ln_scaling = curr;
+      double sum = 1;
+
+      double prev = curr;
+
+      for (; ; )
+      {
+        k2m2fac *= (k + k) * (k + k - 1);
+        ++k;
+        ln_z_pow_2km1 += ln_z_square;
+        curr = GammaRelated.LnGamma((k + k -1) / beta) + ln_z_pow_2km1 - Math.Log(k2m2fac);
+
+        if (curr < (prev - 34.5))
+          break;
+        if (curr >= prev)
+        {
+          sum = double.NaN;
+          break;
+        }
+        if (double.IsInfinity(k2m2fac))
+        {
+          sum = double.NaN;
+          break;
+        }
+
+        if ((k & 1) == 0)
+          sum -= Math.Exp(curr - ln_scaling);
+        else
+          sum += Math.Exp(curr - ln_scaling);
+
+        prev = curr;
+      }
+      return (sum / beta) * Math.Exp(ln_scaling);
+    }
+
+    #endregion
+
+    #region Scheduler for real and imaginary part
+
+    /// <summary>
+    /// Real part of the Fourier transformed derivative of the Kohlrausch function for all frequencies. In dependence on the parameters,
+    /// either a series expansion (accuracy ca. 1E-14) or a bivariate akima spline (accuracy 1E-4) is used.
+    /// </summary>
+    /// <param name="beta">Beta parameter (0..1).</param>
+    /// <param name="z">Circular frequency.</param>
+    /// <returns>Real part of the Fourier transformed derivative of the Kohlrausch function, or double.NaN if the function can not be evaluated (can happen for beta smaller than 1/64).</returns>
+    /// <remarks>This is the real part of the Fourier transform (in Mathematica notation): Re[Integrate[-D[Exp[-t^beta],t]*Exp[-I w t],{t, 0, Infinity}]]. For
+    /// beta smaller than one, the return value is always positive.
+    /// <para>Wanted! Who can contribute to a more accurate interpolation between the points? (The points itself are calculated with an
+    /// accuracy of 1E-18.)</para>
+    /// </remarks>
     public static double Re(double beta, double w)
     {
       double y = beta * Math.Log(w);
@@ -409,11 +546,83 @@ namespace Altaxo.Calc
       }
     }
 
+    /// <summary>
+    /// Imaginary part of the Fourier transformed derivative of the Kohlrausch function for all frequencies. In dependence on the parameters,
+    /// either a series expansion (accuracy ca. 1E-14) or a bivariate Akima spline (accuracy 1E-4) is used.
+    /// </summary>
+    /// <param name="beta">Beta parameter (0..1).</param>
+    /// <param name="w">Circular frequency.</param>
+    /// <returns>Real part of the Fourier transformed derivative of the Kohlrausch function, or double.NaN if the function can not be evaluated (can happen for beta smaller than 1/64).</returns>
+    /// <remarks>This is the imaginary part of the Fourier transform (in Mathematica notation): Im[Integrate[-D[Exp[-t^beta],t]*Exp[-I w t],{t, 0, Infinity}]]. For
+    /// beta smaller than one, the return value is always negative.
+    /// <para>Wanted! Who can contribute to a more accurate interpolation between the points? (The points itself are calculated with an
+    /// accuracy of 1E-18.)</para>
+    /// </remarks>
+    public static double Im(double beta, double w)
+    {
+      double y = beta * Math.Log(w);
+
+      if (y < -5)
+        return -Im2(beta, w);
+      else if (y > 0.25)
+        return -Im1(beta, w);
+      else
+      {
+        if (_imspline == null)
+          CreateImaginaryPartSpline();
+
+        double log_ar = _imspline.Interpolate(beta, y);
+
+
+        return -beta * Math.Exp(log_ar);
+      }
+    }
+
+    /// <summary>
+    /// Fourier transformed derivative of the Kohlrausch function for all frequencies. In dependence on the parameters,
+    /// either a series expansion (accuracy ca. 1E-14) or a bivariate Akima spline (accuracy 1E-4) is used.
+    /// </summary>
+    /// <param name="beta">Beta parameter (0..1).</param>
+    /// <param name="w">Circular frequency.</param>
+    /// <returns>Fourier transformed derivative of the Kohlrausch function, or Complex.NaN if the function can not be evaluated (can happen for beta smaller than 1/64).</returns>
+    /// <remarks>This is the imaginary part of the Fourier transform (in Mathematica notation): Integrate[-D[Exp[-t^beta],t]*Exp[-I w t],{t, 0, Infinity}]. For
+    /// beta smaller than one, this is a retardation function, so the real part is positive and the imaginary part is negative.
+    /// <para>Wanted! Who can contribute to a more accurate interpolation between the points? (The points itself are calculated with an
+    /// accuracy of 1E-18.)</para>
+    /// </remarks>
+    public static Complex ReIm(double beta, double w)
+    {
+      return Complex.FromRealImaginary(Re(beta, w), Im(beta, w));
+    }
+
+    #endregion
+
+    #region Interpolation
+
+    static Interpolation.BivariateAkimaSpline _imspline;
+    static Interpolation.BivariateAkimaSpline _respline;
+    static void CreateImaginaryPartSpline()
+    {
+      IROVector x = VectorMath.CreateEquidistantSequence(0, 1.0 / 32, 33); // beta ranging from 0 to 1
+      IROVector y = VectorMath.CreateEquidistantSequence(-5, 1.0 / 64, 353); // y ranging from -5 to 0.5
+      IROMatrix z = MatrixMath.ToROMatrix(_imdata);
+      _imspline = new Interpolation.BivariateAkimaSpline(x, y, z, false);
+    }
+    static void CreateRealPartSpline()
+    {
+      IROVector x = VectorMath.CreateEquidistantSequence(0, 1.0 / 32, 33); // beta ranging from 0 to 1
+      IROVector y = VectorMath.CreateEquidistantSequence(-5, 1.0 / 64, 353); // y ranging from -5 to 0.5
+      IROMatrix z = MatrixMath.ToROMatrix(_redata);
+      _respline = new Interpolation.BivariateAkimaSpline(x, y, z, false);
+    }
+
+    #endregion
+
     #region DataField
 
     #region RealPart
 
-     /// <summary>
+    /// <summary>
     /// This field is the logarithm of (1-re) for beta=0 to 1 (steps=1/32)
     /// and for y =-5 to 0.5 in steps of 1/64 with  w=Exp(y/beta) -> y = beta*ln(w).
     /// re is the real part of the fourier transformed negative first derivative of the Kohlrausch function.
