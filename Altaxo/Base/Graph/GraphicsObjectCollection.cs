@@ -185,27 +185,43 @@ namespace Altaxo.Graph
       {
         value.Container = this;
         List[index] = value;
+
+        OnChanged();
       }
     }
 
     public int Add(GraphicsObject go)
     {
+      return Add(go, true);
+    }
+
+    public int Add(GraphicsObject go, bool fireChangedEvent)
+    {
       go.Container = this;
-      return List.Add(go);
+      int result =  List.Add(go);
+
+      if (fireChangedEvent)
+        OnChanged();
+
+      return result;
     }
 
     public void AddRange(GraphicsObject[] gos)
     {
       int len = gos.Length;
       for(int i=0;i<len;i++)
-        this.Add(gos[i]);
+        this.Add(gos[i],false);
+
+      OnChanged();
     }
 
     public void AddRange(GraphicsObjectCollection goc)
     {
       int len = goc.Count;
       for(int i=0;i<len;i++)
-        this.Add(goc[i]);
+        this.Add(goc[i],false);
+
+      OnChanged();
     }
 
     public bool Contains(GraphicsObject go)
@@ -225,6 +241,7 @@ namespace Altaxo.Graph
     public void Insert(int index, GraphicsObject go)
     {
       List.Insert(index, go);
+      OnChanged();
     }
 
     // See also 'System.Collections.IEnumerator'
@@ -236,6 +253,7 @@ namespace Altaxo.Graph
     public void Remove(GraphicsObject go)
     {
       List.Remove(go);
+      OnChanged();
     }
     #region IChangedEventSource Members
 

@@ -353,7 +353,7 @@ namespace Altaxo.Graph.GUI
     
     public bool EnableCut 
     {
-      get { return false; }
+      get { return true; }
     }
     public bool EnableCopy 
     {
@@ -374,13 +374,15 @@ namespace Altaxo.Graph.GUI
     
     public void Cut(object sender, EventArgs e)
     {
+      this.CutSelectedObjectsToClipboard();
     }
     public void Copy(object sender, EventArgs e)
     {
-    
+      this.CopySelectedObjectsToClipboard();
     }
     public void Paste(object sender, EventArgs e)
     {
+      this.PasteObjectsFromClipboard();
     }
     public void Delete(object sender, EventArgs e)
     {

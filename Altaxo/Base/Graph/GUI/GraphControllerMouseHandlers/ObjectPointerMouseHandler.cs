@@ -457,10 +457,90 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
 
         _grac.RefreshGraph();
       }
+    }
 
+    public void CopySelectedObjectsToClipboard()
+    {
+      System.Windows.Forms.DataObject dao = new System.Windows.Forms.DataObject();
+
+      ArrayList objectList = new ArrayList();
+
+      foreach (IHitTestObject o in this.m_SelectedObjects.Keys)
+      {
+        if (o.HittedObject is System.Runtime.Serialization.ISerializable)
+        {
+          objectList.Add(o.HittedObject);
+        }
+      }
+
+      dao.SetData("Altaxo.Graph.GraphObjectList", objectList);
+
+      // now copy the data object to the clipboard
+      System.Windows.Forms.Clipboard.SetDataObject(dao, true);
+    }
+
+    public void CutSelectedObjectsToClipboard()
+    {
+      System.Windows.Forms.DataObject dao = new System.Windows.Forms.DataObject();
+
+      ArrayList objectList = new ArrayList();
+      ArrayList notSerialized = new ArrayList();
+
+      foreach (IHitTestObject o in this.m_SelectedObjects.Keys)
+      {
+        if (o.HittedObject is System.Runtime.Serialization.ISerializable)
+        {
+          objectList.Add(o.HittedObject);
+        }
+        else
+        {
+          notSerialized.Add(o);
+        }
+      }
+
+      dao.SetData("Altaxo.Graph.GraphObjectList", objectList);
+
+      // now copy the data object to the clipboard
+      System.Windows.Forms.Clipboard.SetDataObject(dao, true);
+
+      // Remove the not serialized objects from the selection, so they are not removed from the graph..
+      foreach (object o in notSerialized)
+        m_SelectedObjects.Remove(o);
+
+      this.RemoveSelectedObjects();
     }
 
 
+    /// <summary>
+    /// Arranges the objects so they share the bottom line of the last selected object.
+    /// </summary>
+    public void ArrangeTop()
+    {
+      if (m_SelectedObjects.Count < 2)
+        return;
+
+
+      RectangleF masterbound = new RectangleF();
+      foreach (IHitTestObject o in this.m_SelectedObjects.Keys)
+      {
+        masterbound = o.SelectionPath.GetBounds();
+        break;
+      }
+
+      // now move each object to the new position, which is the difference in the position of the bounds.X
+      foreach (IHitTestObject o in this.m_SelectedObjects.Keys)
+      {
+        RectangleF bounds = o.SelectionPath.GetBounds();
+        float dx, dy;
+
+        dx = 0;
+        dy = masterbound.Y - bounds.Y ;
+        o.ShiftPosition(dx, dy);
+      }
+
+      _grac.RefreshGraph(); // force a refresh
+    }
+    
     /// <summary>
     /// Determines whether or not the pixel position in <paramref name="pixelPos"/> is on a already selected object
     /// </summary>
@@ -511,11 +591,17 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     /// <returns></returns>
     public override bool ProcessCmdKey(ref Message msg, Keys keyData)
     {
-      if (0 != (keyData & Keys.Delete))
+      if (keyData == Keys.Delete)
       {
         this.RemoveSelectedObjects();
         return true;
       }
+      else if(keyData==Keys.T)
+      {
+        ArrangeTop();
+        return true;
+      }
+
       return false; // per default the key is not processed
     }
 

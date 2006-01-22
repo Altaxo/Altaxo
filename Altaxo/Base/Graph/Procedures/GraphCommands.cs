@@ -25,7 +25,7 @@ using Altaxo.Graph.GUI;
 namespace Altaxo.Graph.Procedures
 {
   /// <summary>
-  /// GraphCommands contain operations concerning the worksheet itself, such as rename.
+  /// GraphCommands contain operations concerning the graph document itself, such as rename.
   /// </summary>
   public class GraphCommands
   {

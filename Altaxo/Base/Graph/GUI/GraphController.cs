@@ -1599,14 +1599,20 @@ namespace Altaxo.Graph.GUI
       }
     }
 
+
+    #endregion // Properties
+
+    #region Editing selected objects
+
+
     /// <summary>
     /// Returns the number of selected objects into this graph.
     /// </summary>
-    public int NumberOfSelectedObjects 
+    public int NumberOfSelectedObjects
     {
       get
       {
-        if(m_MouseState is ObjectPointerMouseHandler)
+        if (m_MouseState is ObjectPointerMouseHandler)
           return ((ObjectPointerMouseHandler)m_MouseState).NumberOfSelectedObjects;
         else
           return 0;
@@ -1618,11 +1624,55 @@ namespace Altaxo.Graph.GUI
     /// </summary>
     public void RemoveSelectedObjects()
     {
-      if(m_MouseState is ObjectPointerMouseHandler)
+      if (m_MouseState is ObjectPointerMouseHandler)
         ((ObjectPointerMouseHandler)m_MouseState).RemoveSelectedObjects();
     }
 
-    #endregion // Properties
+    /// <summary>
+    /// Copy the selected objects of this graph to the clipboard.
+    /// </summary>
+    public void CopySelectedObjectsToClipboard()
+    {
+      if (m_MouseState is ObjectPointerMouseHandler)
+        ((ObjectPointerMouseHandler)m_MouseState).CopySelectedObjectsToClipboard();
+    }
+
+    /// <summary>
+    /// Copy the selected objects of this graph to the clipboard.
+    /// </summary>
+    public void CutSelectedObjectsToClipboard()
+    {
+      if (m_MouseState is ObjectPointerMouseHandler)
+        ((ObjectPointerMouseHandler)m_MouseState).CutSelectedObjectsToClipboard();
+    }
+
+    public void PasteObjectsFromClipboard()
+    {
+      Altaxo.Graph.GraphDocument gd = this.Doc;
+      System.Windows.Forms.DataObject dao = System.Windows.Forms.Clipboard.GetDataObject() as System.Windows.Forms.DataObject;
+
+      string[] formats = dao.GetFormats();
+      System.Diagnostics.Trace.WriteLine("Available formats:");
+
+      if (dao.GetDataPresent("Altaxo.Graph.GraphObjectList"))
+      {
+        object obj = dao.GetData("Altaxo.Graph.GraphObjectList");
+
+        // if at this point obj is a memory stream, you probably have forgotten the deserialization constructor of the class you expect to deserialize here
+        if (obj is ArrayList)
+        {
+          ArrayList list = (ArrayList)obj;
+          foreach (object item in list)
+          {
+            if(item is GraphicsObject)
+              this.ActiveLayer.GraphObjects.Add(item as GraphicsObject);
+          }
+        }
+        return;
+      }
+    }
+
+    #endregion
 
     #region Scaling and Positioning
 

@@ -23,11 +23,12 @@
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Runtime.Serialization;
 
 
 namespace Altaxo.Graph
 {
-
+  [Serializable]
   public enum BrushType 
   {
     SolidBrush,
@@ -53,13 +54,12 @@ namespace Altaxo.Graph
   }
   
   /// <summary>
-  /// BrushSubstitute holds all information neccessary to create a brush
+  /// Holds all information neccessary to create a brush
   /// of any kind without allocating resources, so this class
-  /// can be made serializable
+  /// can be made serializable.
   /// </summary>
-  [Altaxo.Serialization.SerializationSurrogate(0,typeof(BrushHolder.BrushHolderSurrogate0))]
-  [Altaxo.Serialization.SerializationVersion(0)]
-  public class BrushHolder : System.ICloneable, System.IDisposable, System.Runtime.Serialization.IDeserializationCallback, Main.IChangedEventSource
+  [Serializable]
+  public class BrushHolder : System.ICloneable, System.IDisposable, ISerializable, IDeserializationCallback, Main.IChangedEventSource
   {
 
     protected BrushType m_BrushType; // Type of the brush
@@ -78,48 +78,44 @@ namespace Altaxo.Graph
     protected bool      m_Bool1;
 
     #region "Serialization"
-    public class BrushHolderSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
+
+    protected BrushHolder(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
     {
-      public void GetObjectData(  object obj, 
-        System.Runtime.Serialization.SerializationInfo info,
-        System.Runtime.Serialization.StreamingContext context )
+      SetObjectData(this, info, context, null);
+    }
+    public void GetObjectData(SerializationInfo info, StreamingContext context)
+    {
+
+      info.AddValue("Type", m_BrushType);
+      switch (m_BrushType)
       {
-        BrushHolder s = (BrushHolder)obj;
-        info.AddValue("Type",s.m_BrushType);
-        switch(s.m_BrushType)
-        {
-          case BrushType.SolidBrush:
-            info.AddValue("ForeColor",s.m_ForeColor);
-            break;
-          case BrushType.HatchBrush:
-            info.AddValue("ForeColor",s.m_ForeColor);
-            info.AddValue("BackColor",s.m_BackColor);
-            info.AddValue("HatchStyle",s.m_HatchStyle);
-            break;
-        } // end of switch
+        case BrushType.SolidBrush:
+          info.AddValue("ForeColor", m_ForeColor);
+          break;
+        case BrushType.HatchBrush:
+          info.AddValue("ForeColor", m_ForeColor);
+          info.AddValue("BackColor", m_BackColor);
+          info.AddValue("HatchStyle", m_HatchStyle);
+          break;
+      } // end of switch
+    }
+    public object SetObjectData(object obj, SerializationInfo info, StreamingContext context, ISurrogateSelector selector)
+    {
+      BrushHolder s = (BrushHolder)obj;
+      s.m_BrushType = (BrushType)info.GetValue("Type", typeof(BrushType));
+      switch (s.m_BrushType)
+      {
+        case BrushType.SolidBrush:
+          s.m_ForeColor = (Color)info.GetValue("ForeColor", typeof(Color));
+          break;
+        case BrushType.HatchBrush:
+          s.m_ForeColor = (Color)info.GetValue("ForeColor", typeof(Color));
+          s.m_BackColor = (Color)info.GetValue("BackColor", typeof(Color));
+          break;
       }
-      public object SetObjectData(
-        object obj,
-        System.Runtime.Serialization.SerializationInfo info,
-        System.Runtime.Serialization.StreamingContext context,
-        System.Runtime.Serialization.ISurrogateSelector selector
-        )
-      {
-        BrushHolder s = (BrushHolder)obj;
-        s.m_BrushType  = (BrushType)info.GetValue("Type",typeof(BrushType));
-        switch(s.m_BrushType)
-        {
-          case BrushType.SolidBrush:
-            s.m_ForeColor = (Color)info.GetValue("ForeColor",typeof(Color));
-            break;
-          case BrushType.HatchBrush:
-            s.m_ForeColor = (Color)info.GetValue("ForeColor",typeof(Color));
-            s.m_BackColor = (Color)info.GetValue("BackColor",typeof(Color));
-            break;
-        }
-        return s;
-      } // end of SetObjectData
-    } // end of BrushHolderSurrogate0
+      return s;
+    } // end of SetObjectData
+   
 
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(BrushHolder),0)]

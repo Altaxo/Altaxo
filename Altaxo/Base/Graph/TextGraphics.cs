@@ -251,8 +251,16 @@ namespace Altaxo.Graph
 
   } // end of class TextLine
   
-
-  public enum BackgroundStyle { None, BlackLine, Shadow, DarkMarbel, WhiteOut, BlackOut }
+  [Serializable]
+  public enum BackgroundStyle
+  {
+    None, 
+    BlackLine, 
+    Shadow, 
+    DarkMarbel, 
+    WhiteOut, 
+    BlackOut
+  }
 
   [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(BackgroundStyle),0)]
   public class BackgroundStyleXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
@@ -275,12 +283,11 @@ namespace Altaxo.Graph
   /// but also some formatting of the text, and quite important - the plot symbols
   /// to be used either in the legend or in the axis titles
   /// </summary>
-  [SerializationSurrogate(0,typeof(TextGraphics.SerializationSurrogate0))]
-  [SerializationVersion(0)]
+  [Serializable()]
   public class TextGraphics : GraphicsObject
   {
     [Serializable]
-      public enum XAnchorPositionType { Left, Center, Right }
+    public enum XAnchorPositionType { Left, Center, Right }
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XAnchorPositionType),0)]
       public class XAnchorPositionTypeXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
@@ -343,77 +350,50 @@ namespace Altaxo.Graph
 
 
     #region Serialization
-    /// <summary>Used to serialize the TextGraphics Version 0.</summary>
-    public new class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
-    {
-      /// <summary>
-      /// Serializes TextGraphics Version 0.
-      /// </summary>
-      /// <param name="obj">The TextGraphics to serialize.</param>
-      /// <param name="info">The serialization info.</param>
-      /// <param name="context">The streaming context.</param>
-      public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context  )
-      {
-        TextGraphics s = (TextGraphics)obj;
-        // get the surrogate selector of the base class
-        System.Runtime.Serialization.ISurrogateSelector ss = AltaxoStreamingContext.GetSurrogateSelector(context);
-        if(null!=ss)
-        {
-          System.Runtime.Serialization.ISerializationSurrogate surr =
-            ss.GetSurrogate(obj.GetType().BaseType,context, out ss);
-  
-          // serialize the base class
-          surr.GetObjectData(obj,info,context); // stream the data of the base object
-        }
-        else 
-        {
-          throw new NotImplementedException(string.Format("Serializing a {0} without surrogate not implemented yet!",obj.GetType()));
-        }
-        info.AddValue("Text",s.m_Text);
-        info.AddValue("Font",s.m_Font);
-        info.AddValue("Brush",s.m_BrushHolder);
-        info.AddValue("BackgroundStyle",s.m_BackgroundStyle);
-        info.AddValue("LineSpacing",s.m_LineSpacingFactor);
-        info.AddValue("ShadowLength",s.m_ShadowLength);
-        info.AddValue("XAnchor",s.m_XAnchorType);
-        info.AddValue("YAnchor",s.m_YAnchorType);
-      }
-      /// <summary>
-      /// Deserializes the TextGraphics Version 0.
-      /// </summary>
-      /// <param name="obj">The empty TextGraphics object to deserialize into.</param>
-      /// <param name="info">The serialization info.</param>
-      /// <param name="context">The streaming context.</param>
-      /// <param name="selector">The deserialization surrogate selector.</param>
-      /// <returns>The deserialized TextGraphics.</returns>
-      public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
-      {
-        TextGraphics s = (TextGraphics)obj;
-        // get the surrogate selector of the base class
-        System.Runtime.Serialization.ISurrogateSelector ss = AltaxoStreamingContext.GetSurrogateSelector(context);
-        if(null!=ss)
-        {
-          System.Runtime.Serialization.ISerializationSurrogate surr =
-            ss.GetSurrogate(obj.GetType().BaseType,context, out ss);
-          // deserialize the base class
-          surr.SetObjectData(obj,info,context,selector);
-        }
-        else 
-        {
-          throw new NotImplementedException(string.Format("Serializing a {0} without surrogate not implemented yet!",obj.GetType()));
-        }
-        s.m_Text = info.GetString("Text");
-        s.m_Font = (Font)info.GetValue("Font",typeof(Font));
-        s.m_BrushHolder = (BrushHolder)info.GetValue("Brush",typeof(BrushHolder));
-        s.m_BackgroundStyle = (BackgroundStyle)info.GetValue("BackgroundStyle",typeof(BackgroundStyle));
-        s.m_LineSpacingFactor = info.GetSingle("LineSpacing");
-        s.m_ShadowLength = info.GetSingle("ShadowLength");
-        s.m_XAnchorType = (XAnchorPositionType)info.GetValue("XAnchor",typeof(XAnchorPositionType));
-        s.m_YAnchorType = (YAnchorPositionType)info.GetValue("YAnchor",typeof(YAnchorPositionType));
 
-        return s;
-      }
+    #region ForClipboard
+
+    protected TextGraphics(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
+    {
+      SetObjectData(this,info,context,null);
     }
+    public override object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
+    {
+      base.SetObjectData(obj, info, context, selector);
+
+      m_Text = info.GetString("Text");
+      m_Font = (Font)info.GetValue("Font", typeof(Font));
+      m_BrushHolder = (BrushHolder)info.GetValue("Brush", typeof(BrushHolder));
+      m_BackgroundStyle = (BackgroundStyle)info.GetValue("BackgroundStyle", typeof(BackgroundStyle));
+      m_LineSpacingFactor = info.GetSingle("LineSpacing");
+      m_ShadowLength = info.GetSingle("ShadowLength");
+      m_XAnchorType = (XAnchorPositionType)info.GetValue("XAnchor", typeof(XAnchorPositionType));
+      m_YAnchorType = (YAnchorPositionType)info.GetValue("YAnchor", typeof(YAnchorPositionType));
+      return this;
+    }
+    public override void GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
+    {
+      base.GetObjectData(info, context);
+
+      info.AddValue("Text", m_Text);
+      info.AddValue("Font", m_Font);
+      info.AddValue("Brush", m_BrushHolder);
+      info.AddValue("BackgroundStyle", m_BackgroundStyle);
+      info.AddValue("LineSpacing", m_LineSpacingFactor);
+      info.AddValue("ShadowLength", m_ShadowLength);
+      info.AddValue("XAnchor", m_XAnchorType);
+      info.AddValue("YAnchor", m_YAnchorType);
+    }
+
+    /// <summary>
+    /// Finale measures after deserialization.
+    /// </summary>
+    /// <param name="obj">Not used.</param>
+    public override void OnDeserialization(object obj)
+    {
+    }
+
+    #endregion
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(TextGraphics),0)]
       public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
@@ -452,13 +432,7 @@ namespace Altaxo.Graph
       }
     }
 
-    /// <summary>
-    /// Finale measures after deserialization.
-    /// </summary>
-    /// <param name="obj">Not used.</param>
-    public override void OnDeserialization(object obj)
-    {
-    }
+  
     #endregion
 
 

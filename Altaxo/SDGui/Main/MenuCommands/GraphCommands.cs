@@ -355,6 +355,17 @@ namespace Altaxo.Graph.Commands
       Altaxo.Graph.Procedures.ArrangeLayersDocument.ArrangeLayers(ctrl.Doc);
     }
   }
+
+  public class AdjustTop : AbstractGraphControllerCommand
+  {
+    public override void Run(GraphController ctrl)
+    {
+     
+     
+    }
+  }
+
+
   /// <summary>
   /// Duplicates the Graph and the Graph view to a new one.
   /// </summary>

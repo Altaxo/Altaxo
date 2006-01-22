@@ -32,10 +32,10 @@ namespace Altaxo.Graph
   /// GraphicsObject is the abstract base class for general graphical objects on the layer,
   /// for instance text elements, lines, pictures, rectangles and so on.
   /// </summary>
-  [SerializationSurrogate(0,typeof(GraphicsObject.SerializationSurrogate0))]
-  [SerializationVersion(0)]
+  [Serializable()]
   public abstract class GraphicsObject 
     :
+    System.Runtime.Serialization.ISerializable,
     System.Runtime.Serialization.IDeserializationCallback,
     Main.IChangedEventSource,
     System.ICloneable  
@@ -69,42 +69,25 @@ namespace Altaxo.Graph
 
 
     #region Serialization
-    /// <summary>Used to serialize the GraphicsObject Version 0.</summary>
-    public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
+
+    protected GraphicsObject(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
     {
-      /// <summary>
-      /// Serializes GraphicsObject Version 0.
-      /// </summary>
-      /// <param name="obj">The GraphicsObject to serialize.</param>
-      /// <param name="info">The serialization info.</param>
-      /// <param name="context">The streaming context.</param>
-      public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context  )
-      {
-        GraphicsObject s = (GraphicsObject)obj;
-        info.AddValue("Position",s.m_Position);  
-        info.AddValue("Bounds",s.m_Bounds);
-        info.AddValue("Rotation",s.m_Rotation);
-        info.AddValue("AutoSize",s.m_AutoSize);
-      }
-      /// <summary>
-      /// Deserializes the GraphicsObject Version 0.
-      /// </summary>
-      /// <param name="obj">The empty GraphicsObject object to deserialize into.</param>
-      /// <param name="info">The serialization info.</param>
-      /// <param name="context">The streaming context.</param>
-      /// <param name="selector">The deserialization surrogate selector.</param>
-      /// <returns>The deserialized GraphicsObject.</returns>
-      public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
-      {
-        GraphicsObject s = (GraphicsObject)obj;
-
-        s.m_Position = (PointF)info.GetValue("Position",typeof(PointF));  
-        s.m_Bounds = (RectangleF)info.GetValue("Bounds",typeof(RectangleF));
-        s.m_Rotation = info.GetSingle("Rotation");
-        s.m_AutoSize = info.GetBoolean("AutoSize");
-
-        return s;
-      }
+      SetObjectData(this,info,context,null);
+    }
+    public virtual object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
+    {
+      m_Position = (PointF)info.GetValue("Position", typeof(PointF));
+      m_Bounds = (RectangleF)info.GetValue("Bounds", typeof(RectangleF));
+      m_Rotation = info.GetSingle("Rotation");
+      m_AutoSize = info.GetBoolean("AutoSize");
+      return this;
+    }
+    public virtual void GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
+    {
+      info.AddValue("Position", m_Position);
+      info.AddValue("Bounds",   m_Bounds);
+      info.AddValue("Rotation", m_Rotation);
+      info.AddValue("AutoSize", m_AutoSize);
     }
 
 
