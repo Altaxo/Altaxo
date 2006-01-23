@@ -318,8 +318,27 @@
 					class="Altaxo.Worksheet.Commands.PlotScatter" />
 				<ToolbarItem id="PlotLineScatter" icon="Icons.16x16.PlotLineScatter" tooltip="${res:XML.MainMenu.PlotMenu.PlotLineAndScatter.Description}"
 					class="Altaxo.Worksheet.Commands.PlotLineAndScatter" />
-			</Conditional>	
-			</ToolbarItem>
+			</Conditional>
+      <ToolbarItem id="ArrangeSeparator" tooltip="-" />
+      <Conditional activewindow="Altaxo.Graph.GUI.SDGraphController" action="Disable">
+        <ToolbarItem id="ArrangeTop" icon="Icons.16x16.ArrangeTop" tooltip="${res:XML.MainMenu.GraphMenu.ArrangeTop.Description}"
+					class="Altaxo.Graph.Commands.ArrangeTop" />
+        <ToolbarItem id="ArrangeBottom" icon="Icons.16x16.ArrangeBottom" tooltip="${res:XML.MainMenu.GraphMenu.ArrangeBottom.Description}"
+					class="Altaxo.Graph.Commands.ArrangeBottom" />
+        <ToolbarItem id="ArrangeLeft" icon="Icons.16x16.ArrangeLeft" tooltip="${res:XML.MainMenu.GraphMenu.ArrangeLeft.Description}"
+					class="Altaxo.Graph.Commands.ArrangeLeft" />
+        <ToolbarItem id="ArrangeRight" icon="Icons.16x16.ArrangeRight" tooltip="${res:XML.MainMenu.GraphMenu.ArrangeRight.Description}"
+					class="Altaxo.Graph.Commands.ArrangeRight" />
+        <ToolbarItem id="ArrangeHorizontal" icon="Icons.16x16.ArrangeHorizontal" tooltip="${res:XML.MainMenu.GraphMenu.ArrangeHorizontal.Description}"
+					class="Altaxo.Graph.Commands.ArrangeHorizontal" />
+        <ToolbarItem id="ArrangeVertical" icon="Icons.16x16.ArrangeVertical" tooltip="${res:XML.MainMenu.GraphMenu.ArrangeVertical.Description}"
+					class="Altaxo.Graph.Commands.ArrangeVertical" />
+        <ToolbarItem id="ArrangeHorizontalTable" icon="Icons.16x16.ArrangeHorizontalTable" tooltip="${res:XML.MainMenu.GraphMenu.ArrangeHorizontalTable.Description}"
+					class="Altaxo.Graph.Commands.ArrangeHorizontalTable" />
+        <ToolbarItem id="ArrangeVerticalTable" icon="Icons.16x16.ArrangeVerticalTable" tooltip="${res:XML.MainMenu.GraphMenu.ArrangeVerticalTable.Description}"
+					class="Altaxo.Graph.Commands.ArrangeVerticalTable" />
+      </Conditional>
+    </ToolbarItem>
 	</Extension>
 	<Extension path="/Altaxo/Workbench/MainMenu">
 		<MenuItem id="File" label="${res:XML.MainMenu.FileMenu}">

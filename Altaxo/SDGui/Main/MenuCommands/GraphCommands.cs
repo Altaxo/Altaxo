@@ -356,12 +356,60 @@ namespace Altaxo.Graph.Commands
     }
   }
 
-  public class AdjustTop : AbstractGraphControllerCommand
+  public class ArrangeTop : AbstractGraphControllerCommand
   {
     public override void Run(GraphController ctrl)
     {
-     
-     
+      ctrl.ArrangeTop();
+    }
+  }
+  public class ArrangeBottom : AbstractGraphControllerCommand
+  {
+    public override void Run(GraphController ctrl)
+    {
+      ctrl.ArrangeBottom();
+    }
+  }
+  public class ArrangeLeft : AbstractGraphControllerCommand
+  {
+    public override void Run(GraphController ctrl)
+    {
+      ctrl.ArrangeLeft();
+    }
+  }
+  public class ArrangeRight : AbstractGraphControllerCommand
+  {
+    public override void Run(GraphController ctrl)
+    {
+      ctrl.ArrangeRight();
+    }
+  }
+  public class ArrangeHorizontal : AbstractGraphControllerCommand
+  {
+    public override void Run(GraphController ctrl)
+    {
+      ctrl.ArrangeHorizontal();
+    }
+  }
+  public class ArrangeVertical : AbstractGraphControllerCommand
+  {
+    public override void Run(GraphController ctrl)
+    {
+      ctrl.ArrangeVertical();
+    }
+  }
+  public class ArrangeHorizontalTable : AbstractGraphControllerCommand
+  {
+    public override void Run(GraphController ctrl)
+    {
+      ctrl.ArrangeHorizontalTable();
+    }
+  }
+  public class ArrangeVerticalTable : AbstractGraphControllerCommand
+  {
+    public override void Run(GraphController ctrl)
+    {
+      ctrl.ArrangeVerticalTable();
     }
   }
 

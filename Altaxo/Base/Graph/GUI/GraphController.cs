@@ -1674,6 +1674,84 @@ namespace Altaxo.Graph.GUI
 
     #endregion
 
+    #region Arrangement of selected objects
+
+    /// <summary>
+    /// Arranges the objects so they share the bottom boundary of the last selected object.
+    /// </summary>
+    public void ArrangeBottom()
+    {
+        if (m_MouseState is ObjectPointerMouseHandler)
+          ((ObjectPointerMouseHandler)m_MouseState).ArrangeBottomToBottom();
+    }
+
+    /// <summary>
+    /// Arranges the objects so they share the top boundary of the last selected object.
+    /// </summary>
+    public void ArrangeTop()
+    {
+      if (m_MouseState is ObjectPointerMouseHandler)
+         ((ObjectPointerMouseHandler)m_MouseState).ArrangeTopToTop();
+    }
+
+    /// <summary>
+    /// Arranges the objects so they share the left boundary of the last selected object.
+    /// </summary>
+    public void ArrangeLeft()
+    {
+      if (m_MouseState is ObjectPointerMouseHandler)
+         ((ObjectPointerMouseHandler)m_MouseState).ArrangeLeftToLeft();
+    }
+
+    /// <summary>
+    /// Arranges the objects so they share the right boundary of the last selected object.
+    /// </summary>
+    public void ArrangeRight()
+    {
+      if (m_MouseState is ObjectPointerMouseHandler)
+         ((ObjectPointerMouseHandler)m_MouseState).ArrangeRightToRight();
+    }
+
+    /// <summary>
+    /// Arranges the objects so they share the vertical middle line of the last selected object.
+    /// </summary>
+    public void ArrangeHorizontal()
+    {
+      if (m_MouseState is ObjectPointerMouseHandler)
+         ((ObjectPointerMouseHandler)m_MouseState).ArrangeHorizontal();
+    }
+
+
+    /// <summary>
+    /// Arranges the objects so they share the horizontal middle line of the last selected object.
+    /// </summary>
+    public void ArrangeVertical()
+    {
+      if (m_MouseState is ObjectPointerMouseHandler)
+         ((ObjectPointerMouseHandler)m_MouseState).ArrangeVertical();
+    }
+
+    /// <summary>
+    /// Arranges the objects so they their vertical middle line is uniform spaced between the first and the last selected object.
+    /// </summary>
+    public void ArrangeHorizontalTable()
+    {
+      if (m_MouseState is ObjectPointerMouseHandler)
+         ((ObjectPointerMouseHandler)m_MouseState).ArrangeHorizontalTable();
+    }
+
+    /// <summary>
+    /// Arranges the objects so they their horizontal middle line is uniform spaced between the first and the last selected object.
+    /// </summary>
+    public void ArrangeVerticalTable()
+    {
+      if (m_MouseState is ObjectPointerMouseHandler)
+        ((ObjectPointerMouseHandler)m_MouseState).ArrangeVerticalTable();
+    }
+
+
+    #endregion
+
     #region Scaling and Positioning
 
     /// <summary>

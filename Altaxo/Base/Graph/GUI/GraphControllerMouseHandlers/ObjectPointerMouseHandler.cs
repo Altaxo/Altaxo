@@ -580,6 +580,77 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     }
 
     /// <summary>
+    /// Arranges the objects so they share the horizontal middle line of the last selected object.
+    /// </summary>
+    public void ArrangeVertical()
+    {
+      Arrange(delegate(IHitTestObject obj, RectangleF bounds, RectangleF masterbounds)
+      { obj.ShiftPosition((masterbounds.X + masterbounds.Width*0.5f) - (bounds.X + bounds.Width*0.5f), 0); }
+      );
+    }
+
+    /// <summary>
+    /// Arranges the objects so they share the vertical middle line of the last selected object.
+    /// </summary>
+    public void ArrangeHorizontal()
+    {
+      Arrange(delegate(IHitTestObject obj, RectangleF bounds, RectangleF masterbounds)
+      { obj.ShiftPosition(0, (masterbounds.Y + masterbounds.Height*0.5f) - (bounds.Y + bounds.Height*0.5f)); }
+      );
+    }
+
+
+    /// <summary>
+    /// Arranges the objects so they their vertical middle line is uniform spaced between the first and the last selected object.
+    /// </summary>
+    public void ArrangeHorizontalTable()
+    {
+      if (m_SelectedObjects.Count < 3)
+        return;
+
+
+      RectangleF firstbound = m_SelectedObjects[0].SelectionPath.GetBounds();
+      RectangleF lastbound = m_SelectedObjects[m_SelectedObjects.Count - 1].SelectionPath.GetBounds();
+      float step = (lastbound.X + lastbound.Width * 0.5f) - (firstbound.X + firstbound.Width * 0.5f);
+      step /= (m_SelectedObjects.Count - 1);
+
+      // now move each object to the new position, which is the difference in the position of the bounds.X
+      for (int i = m_SelectedObjects.Count - 2; i > 0; i--)
+      {
+        IHitTestObject o = m_SelectedObjects[i];
+        RectangleF bounds = o.SelectionPath.GetBounds();
+        o.ShiftPosition((firstbound.X + firstbound.Width * 0.5f) + i * step - (bounds.X + bounds.Width * 0.5f),0);
+      }
+
+      _grac.RefreshGraph(); // force a refresh
+    }
+
+    /// <summary>
+    /// Arranges the objects so they their horizontal middle line is uniform spaced between the first and the last selected object.
+    /// </summary>
+    public void ArrangeVerticalTable()
+    {
+      if (m_SelectedObjects.Count < 3)
+        return;
+
+
+      RectangleF firstbound = m_SelectedObjects[0].SelectionPath.GetBounds();
+      RectangleF lastbound = m_SelectedObjects[m_SelectedObjects.Count - 1].SelectionPath.GetBounds();
+      float step = (lastbound.Y + lastbound.Height * 0.5f) - (firstbound.Y + firstbound.Height * 0.5f);
+      step /= (m_SelectedObjects.Count - 1);
+
+      // now move each object to the new position, which is the difference in the position of the bounds.X
+      for (int i = m_SelectedObjects.Count - 2; i > 0; i--)
+      {
+        IHitTestObject o = m_SelectedObjects[i];
+        RectangleF bounds = o.SelectionPath.GetBounds();
+        o.ShiftPosition(0,(firstbound.Y + firstbound.Height * 0.5f) + i * step - (bounds.Y + bounds.Height * 0.5f));
+      }
+
+      _grac.RefreshGraph(); // force a refresh
+    }
+
+    /// <summary>
     /// Determines whether or not the pixel position in <paramref name="pixelPos"/> is on a already selected object
     /// </summary>
     /// <param name="pixelPos">The pixel position to test (on the graph panel)</param>
