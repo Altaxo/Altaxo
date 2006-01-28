@@ -721,7 +721,7 @@ namespace Altaxo.Graph
                     continue;   // handle it as if it where normal text
                   }
 
-                  itemstack.Push(currTextItem);
+                  // itemstack.Push(currTextItem); // here we don't need to put the item on the stack, since we pared until the closing brace
                   currTextItem = new TextItem(currTextItem,null);
                   currTextLine.Add(currTextItem);
                   currTextItem.SetAsSymbol(args,arg);

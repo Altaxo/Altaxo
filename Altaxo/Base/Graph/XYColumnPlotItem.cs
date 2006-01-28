@@ -333,7 +333,7 @@ namespace Altaxo.Graph
       System.Text.StringBuilder stb = new System.Text.StringBuilder();
       if(sx>0)
       {
-        stb.Append(this.GetName(_plotData.XColumn,sx-1));
+        stb.Append(_plotData.GetXName(sx-1));
         if(sx>0 && sy>0)
           stb.Append("(X)");
         if(sy>0)
@@ -341,7 +341,7 @@ namespace Altaxo.Graph
       }
       if(sy>0)
       {
-        stb.Append(this.GetName(_plotData.YColumn,sy-1));
+        stb.Append(_plotData.GetYName(sy-1));
         if(sx>0 && sy>0)
           stb.Append("(Y)");
       }

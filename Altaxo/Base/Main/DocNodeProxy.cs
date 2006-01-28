@@ -31,8 +31,8 @@ namespace Altaxo.Main
   /// </summary>
   public class DocNodeProxy : System.ICloneable, Main.IChangedEventSource
   {
-    object _docNode;
-    Main.DocumentPath _docNodePath;
+    protected object _docNode;
+    protected Main.DocumentPath _docNodePath;
 
     #region Serialization
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DocNodeProxy),0)]

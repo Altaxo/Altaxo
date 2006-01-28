@@ -351,7 +351,7 @@ namespace Altaxo.Graph
     {
       get 
       {
-        return _coefficients==null ? 0 : _coefficients.Length;
+        return _coefficients==null ? 0 : _coefficients.Length-1;
       }
     }
 

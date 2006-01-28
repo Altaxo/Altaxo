@@ -467,6 +467,56 @@ namespace Altaxo.Graph
     }
 
 
+    public string GetXName(int level)
+    {
+      IReadableColumn col = this.m_xColumn.Document;
+      if (col is Data.DataColumn)
+      {
+        Altaxo.Data.DataTable table = Altaxo.Data.DataTable.GetParentDataTableOf((DataColumn)col);
+        string tablename = table == null ? string.Empty : table.Name + "\\";
+        string collectionname = table == null ? string.Empty : (table.PropertyColumns.ContainsColumn((DataColumn)col) ? "PropCols\\" : "DataCols\\");
+        if (level <= 0)
+          return ((DataColumn)col).Name;
+        else if (level == 1)
+          return tablename + ((DataColumn)col).Name;
+        else
+          return tablename + collectionname + ((DataColumn)col).Name;
+      }
+      else if (col != null)
+      {
+        return col.FullName;
+      }
+      else
+      {
+        return m_xColumn.GetName(level) + " (broken)";
+      }
+    }
+
+    public string GetYName(int level)
+    {
+      IReadableColumn col = this.m_yColumn.Document;
+      if (col is Data.DataColumn)
+      {
+        Altaxo.Data.DataTable table = Altaxo.Data.DataTable.GetParentDataTableOf((DataColumn)col);
+        string tablename = table == null ? string.Empty : table.Name + "\\";
+        string collectionname = table == null ? string.Empty : (table.PropertyColumns.ContainsColumn((DataColumn)col) ? "PropCols\\" : "DataCols\\");
+        if (level <= 0)
+          return ((DataColumn)col).Name;
+        else if (level == 1)
+          return tablename + ((DataColumn)col).Name;
+        else
+          return tablename + collectionname + ((DataColumn)col).Name;
+      }
+      else if (col != null)
+      {
+        return col.FullName;
+      }
+      else
+      {
+        return m_yColumn.GetName(level) + " (broken)";
+      }
+    }
+
     public void MergeXBoundsInto(IPhysicalBoundaries pb)
     {
        if(null==m_xBoundaries || pb.GetType() != m_xBoundaries.GetType())
