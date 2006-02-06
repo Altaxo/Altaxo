@@ -274,6 +274,30 @@ namespace Altaxo.Graph.Commands
 
 
   /// <summary>
+  /// Handler for the menu item "File" - "Export Metafile".
+  /// </summary>
+  public class FileExportTiff : AbstractGraphControllerCommand
+  {
+    public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
+    {
+      System.IO.Stream myStream;
+      SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+
+      saveFileDialog1.Filter = "Tiff files (*.tif)|*.tif|All files (*.*)|*.*";
+      saveFileDialog1.FilterIndex = 2;
+      saveFileDialog1.RestoreDirectory = true;
+
+      if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+      {
+        if ((myStream = saveFileDialog1.OpenFile()) != null)
+        {
+          ctrl.SaveAsBitmap(myStream,300,System.Drawing.Imaging.ImageFormat.Tiff);
+          myStream.Close();
+        } // end openfile ok
+      } // end dlgresult ok
+    }
+  }
+  /// <summary>
   /// Handler for the menu item "Edit" - "New layer(axes)" - "Normal: Bottom X Left Y".
   /// </summary>
   public class NewLayerNormalBottomXLeftY : AbstractGraphControllerCommand

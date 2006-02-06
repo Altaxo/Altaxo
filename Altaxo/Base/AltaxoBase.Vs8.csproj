@@ -111,6 +111,10 @@
       <Project>{A1006FEB-2FFC-4507-8D82-265130CDD08E}</Project>
       <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
     </ProjectReference>
+    <ProjectReference Include="..\..\Libraries\Numerator\zNumerator.csproj">
+      <Project>{1CFDD727-D2B7-4521-AF53-D24EA4C69176}</Project>
+      <Name>zNumerator</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Core\AltaxoCore.Vs8.csproj">
       <Name>AltaxoCore.Vs8</Name>
       <Project>{7045C197-9DA8-4FA4-886C-992ACADD838F}</Project>

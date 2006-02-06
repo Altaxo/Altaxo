@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<!--
+	font configuration for the stretchy font
+	
+	a font config needs to have a root node named "font-configuration", it must
+	have a font-name attribute, and may have an optional scaling-factor attribute, 
+	this indicates how large this font should be made relative to the current 
+	font.
+	
+	font-configuration needs to have the following nodes, all of these
+	may be empty
+	
+	1: simple-glyph-ranges
+	a set of ranges of simple glyphs. this will have a set of "range" child nodes, 
+	and each "range" has attributes of "first", "last", and "offset", these
+	are the first and last glyph indices in the font, and offset is the number
+	to add to the real character that will map to a glyph index.
+	
+	2: simple-glyphs
+	a set of simple glyphs, this has a list of "simple" child nodes, and each
+	one of these has attributes of "char" and "index" where char in the 
+	character code of the real character, and index in the glyph index in this
+	font.
+	
+	3: stretchy-glyphs
+	needs to have a list of "stretchy" child nodes.
+	a "stretchy" node must have "char" and "orientation" attributes, 
+	these are the real character that will be stretched, and the orientation
+	of the stretchy char, either "vertical" or horizontal"
+	also, a "stretchy" node needs to have 2 child nodes, "simple" and compound"
+	these are the indices in the font of the stretchy glyphs. each one
+	of these needs to have an attribute of "index", this is a string of space
+	separated numbers representing the index of the glyph. there may be 0 to
+	many simple indices, these must be stored smallest to largest glyph size.
+	there must be 4 indices for the compound indices. they are:
+	index 0 : the bottom glyph, -1 if none exists.
+	index 1 : the repeated glyph, this needs to be here.
+	index 2 : the middle glyph if one exists, -1 otherwise.
+	index 3 : the top glyph if one exists, -1 otherwise.
+	
+	node, all nodes may have an optional "comment" attribute, this
+	is ignored.
+-->
+<font-configuration font-name="cm-stretchy" scaling-factor="1.0">
+	
+	<simple-glyphs>
+	</simple-glyphs>	
+	
+	<simple-glyph-ranges>
+	</simple-glyph-ranges>
+	
+	<stretchy-glyphs>
+		<stretchy char="0x221a" orientation="vertical" comment="square root">
+			<simple index="0x20 0x22 0x24 0x26"/>
+			<compound index="0x28 0x29 -1 0x2a"/>
+		</stretchy>
+		<stretchy char="0x222b" orientation="vertical" comment="single integral">
+			<simple index="0x55 0x56"/>
+			<compound index="0x57 0x58 -1 0x59"/>
+		</stretchy>	
+		<stretchy char="(" orientation="vertical">
+			<simple index="0x2b 0x2c 0x2d 0x2e"/>
+			<compound index="0x33 0x34 -1 0x35"/>
+		</stretchy>	
+		<stretchy char=")" orientation="vertical">
+			<simple index="0x2f 0x30 0x31 0x32"/>
+			<compound index="0x36 0x37 -1 0x38"/>
+		</stretchy>	
+		<stretchy char="{" orientation="vertical">
+			<simple index="0x39 0x3a 0x3b 0x3c"/>
+			<compound index="0x41 0x42 0x43 0x44"/>
+		</stretchy>
+		<stretchy char="}" orientation="vertical">
+			<simple index="0x3d 0x3e 0x3f 0x40"/>
+			<compound index="0x45 0x46 0x47 0x48"/>
+		</stretchy>
+		<stretchy char="[" orientation="vertical">
+			<simple index="0x49 0x4a 0x4b"/>
+			<compound index="0x4f 0x50 -1 0x51"/>
+		</stretchy>
+		<stretchy char="]" orientation="vertical">
+			<simple index="0x4c 0x4d 0x4e"/>
+			<compound index="0x52 0x53 -1 0x54"/>
+		</stretchy>
+		<stretchy char="|" orientation="vertical">
+			<simple index="-1"/>
+			<compound index="-1 0x50 -1 -1"/>
+		</stretchy>   		
+		<stretchy char="0x2190" orientation="horizontal" comment="LeftArrow">
+			<simple index="0x5e"/>
+			<compound index="0x60 0x5c -1 0x5f"/>
+		</stretchy>
+		<stretchy char="0x2191" orientation="vertical" comment="up arrow">
+			<simple index="0x61"/>
+			<compound index="0x64 0x63 -1 0x62"/>
+		</stretchy>		
+		<stretchy char="0x2192" orientation="horizontal" comment="RightArrow">
+			<simple index="0x5a"/>
+			<compound index="0x5b 0x5c -1 0x5d"/>  			
+		</stretchy>				
+		<stretchy char="0x2193" orientation="vertical" comment="down arrow">
+			<simple index="0x65"/>
+			<compound index="0x66 0x63 -1 0x67"/>
+		</stretchy>		
+		<stretchy char="0xaf" orientation="horizontal" comment="over bar">
+			<simple index="0x5c"/>
+			<compound index="-1 0x5c -1 -1"/>
+		</stretchy>	
+	</stretchy-glyphs>	
+</font-configuration>

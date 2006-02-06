@@ -39,9 +39,10 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
   public class FitFunctionSelectionControl : System.Windows.Forms.UserControl, IFitFunctionSelectionView
   {
     IFitFunctionSelectionViewEventSink _controller;
-    private System.Windows.Forms.Splitter splitter1;
     private System.Windows.Forms.TreeView _twFitFunctions;
     private System.Windows.Forms.ContextMenu _treeViewContextMenu;
+    private SplitContainer _splitContainer;
+    private RichTextBox _rtbDescription;
     /// <summary> 
     /// Required designer variable.
     /// </summary>
@@ -78,27 +79,22 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     /// </summary>
     private void InitializeComponent()
     {
-      this.splitter1 = new System.Windows.Forms.Splitter();
       this._twFitFunctions = new System.Windows.Forms.TreeView();
       this._treeViewContextMenu = new System.Windows.Forms.ContextMenu();
+      this._splitContainer = new System.Windows.Forms.SplitContainer();
+      this._rtbDescription = new System.Windows.Forms.RichTextBox();
+      this._splitContainer.Panel1.SuspendLayout();
+      this._splitContainer.Panel2.SuspendLayout();
+      this._splitContainer.SuspendLayout();
       this.SuspendLayout();
-      // 
-      // splitter1
-      // 
-      this.splitter1.Location = new System.Drawing.Point(0, 0);
-      this.splitter1.Name = "splitter1";
-      this.splitter1.Size = new System.Drawing.Size(152, 344);
-      this.splitter1.TabIndex = 0;
-      this.splitter1.TabStop = false;
       // 
       // _twFitFunctions
       // 
       this._twFitFunctions.ContextMenu = this._treeViewContextMenu;
-      this._twFitFunctions.ImageIndex = -1;
-      this._twFitFunctions.Location = new System.Drawing.Point(8, 16);
+      this._twFitFunctions.Dock = System.Windows.Forms.DockStyle.Fill;
+      this._twFitFunctions.Location = new System.Drawing.Point(0, 0);
       this._twFitFunctions.Name = "_twFitFunctions";
-      this._twFitFunctions.SelectedImageIndex = -1;
-      this._twFitFunctions.Size = new System.Drawing.Size(136, 272);
+      this._twFitFunctions.Size = new System.Drawing.Size(153, 344);
       this._twFitFunctions.TabIndex = 1;
       this._twFitFunctions.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this._twFitFunctions_AfterSelect);
       // 
@@ -106,12 +102,43 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       // 
       this._treeViewContextMenu.Popup += new System.EventHandler(this._treeViewContextMenu_Popup);
       // 
+      // _splitContainer
+      // 
+      this._splitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+      this._splitContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
+      this._splitContainer.Location = new System.Drawing.Point(0, 0);
+      this._splitContainer.Name = "_splitContainer";
+      // 
+      // _splitContainer.Panel1
+      // 
+      this._splitContainer.Panel1.Controls.Add(this._twFitFunctions);
+      // 
+      // _splitContainer.Panel2
+      // 
+      this._splitContainer.Panel2.Controls.Add(this._rtbDescription);
+      this._splitContainer.Size = new System.Drawing.Size(349, 344);
+      this._splitContainer.SplitterDistance = 153;
+      this._splitContainer.TabIndex = 2;
+      // 
+      // _rtbDescription
+      // 
+      this._rtbDescription.Cursor = System.Windows.Forms.Cursors.IBeam;
+      this._rtbDescription.Dock = System.Windows.Forms.DockStyle.Fill;
+      this._rtbDescription.Location = new System.Drawing.Point(0, 0);
+      this._rtbDescription.Name = "_rtbDescription";
+      this._rtbDescription.ReadOnly = true;
+      this._rtbDescription.Size = new System.Drawing.Size(192, 344);
+      this._rtbDescription.TabIndex = 0;
+      this._rtbDescription.Text = "";
+      // 
       // FitFunctionSelectionControl
       // 
-      this.Controls.Add(this._twFitFunctions);
-      this.Controls.Add(this.splitter1);
+      this.Controls.Add(this._splitContainer);
       this.Name = "FitFunctionSelectionControl";
-      this.Size = new System.Drawing.Size(336, 344);
+      this.Size = new System.Drawing.Size(349, 344);
+      this._splitContainer.Panel1.ResumeLayout(false);
+      this._splitContainer.Panel2.ResumeLayout(false);
+      this._splitContainer.ResumeLayout(false);
       this.ResumeLayout(false);
 
     }
@@ -129,6 +156,16 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       {
         _controller = value;
       }
+    }
+
+    public void SetRtfDocumentation(string rtfString)
+    {
+      this._rtbDescription.Rtf = rtfString;
+    }
+
+    public Color GetRtfBackgroundColor()
+    {
+      return this._rtbDescription.BackColor;
     }
 
     TreeNode GetPathNode(TreeNodeCollection coll, string path)

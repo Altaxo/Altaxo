@@ -22,6 +22,9 @@
 
 using System;
 using System.Text;
+using System.IO;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.Collections;
 using System.Reflection;
 using Altaxo.Scripting;
@@ -37,6 +40,8 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     IFitFunctionSelectionViewEventSink Controller { get; set; }
     void InitializeFitFunctionList(DictionaryEntry[] entries, System.Type currentSelection);
     void InitializeDocumentFitFunctionList(DictionaryEntry[] entries, object currentSelection);
+    void SetRtfDocumentation(string rtfString);
+    Color GetRtfBackgroundColor();
   }
 
   public interface IFitFunctionSelectionViewEventSink
@@ -128,12 +133,85 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       else if (selectedtag is MethodInfo)
       {
         _tempdoc = ((MethodInfo)selectedtag).Invoke(null,new object[]{}) as IFitFunction;
+        SetDocumentation((MethodInfo)selectedtag);
       }
       else if (selectedtag is IFitFunction)
       {
         _tempdoc = (IFitFunction)selectedtag;
       }
     }
+
+    private void SetDocumentation(MethodInfo method)
+    {
+      object[] attribs = method.GetCustomAttributes(typeof(System.ComponentModel.DescriptionAttribute), false);
+      System.Text.StringBuilder stb = new StringBuilder();
+
+      foreach (System.ComponentModel.DescriptionAttribute attrib in attribs)
+      {
+        stb.Append( Current.ResourceService.GetString(attrib.Description));
+      }
+
+      _view.SetRtfDocumentation(ComposeText(stb.ToString()));
+    }
+
+    string textheader =
+   @"{\rtf1\ansi\ansicpg1252\deff0\deflang1033{\fonttbl{\f0\fswiss\fcharset0 Arial;}}" +
+   @"\viewkind4\uc1\pard\f0\fs20 ";
+
+    string texttrailer = @"}";
+    string imageheader = @"{\pict\wmetafile8 ";
+    string imagetrailer = "}";
+
+    MathML.Rendering.GraphicsRendering _mmlRendering = new MathML.Rendering.GraphicsRendering();
+    string ComposeText(string rawtext)
+    {
+      StringBuilder stb = new StringBuilder();
+      stb.Append(textheader);
+
+      int currpos = 0;
+      for (; ; )
+      {
+        int startidx = rawtext.IndexOf("<math>", currpos);
+        if (startidx < 0)
+          break;
+        int endidx = rawtext.IndexOf("</math>", startidx);
+        if (endidx < 0)
+          break;
+        endidx += "</math>".Length;
+
+        // all text from currpos to startidx-1 can be copyied to the stringbuilder
+        stb.Append(rawtext, currpos, startidx - currpos);
+
+        // all text from startidx to endidx-1 must be loaded into the control and rendered
+        System.IO.StringReader rd = new StringReader(rawtext.Substring(startidx, endidx - startidx));
+        MathML.MathMLDocument doc = new MathML.MathMLDocument();
+        doc.Load(rd);
+        rd.Close();
+        _mmlRendering.BackColor = _view.GetRtfBackgroundColor();
+        _mmlRendering.MathElement = (MathML.MathMLMathElement)doc.DocumentElement;
+
+        System.Drawing.Imaging.Metafile mf = (Metafile)_mmlRendering.GetImage(typeof(Metafile));
+        GraphicsUnit unit = GraphicsUnit.Point;
+        RectangleF rect = mf.GetBounds(ref unit);
+        string imagetext = _mmlRendering.GetRtfImage(mf);
+        stb.Append(imageheader);
+        stb.Append(@"\picwgoal" + Math.Ceiling(15 * rect.Width).ToString());
+        stb.Append(@"\pichgoal" + Math.Ceiling(15 * rect.Height).ToString());
+        stb.Append(" ");
+        stb.Append(imagetext);
+        stb.Append(imagetrailer);
+
+        currpos = endidx;
+      }
+
+      stb.Append(rawtext, currpos, rawtext.Length - currpos);
+
+      stb.Append(texttrailer);
+
+      return stb.ToString();
+    }
+
+
 
     public void EhView_EditItem(object selectedtag)
     {

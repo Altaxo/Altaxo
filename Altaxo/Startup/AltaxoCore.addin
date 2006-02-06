@@ -416,7 +416,9 @@
 				<MenuItem id="GraphExport" label="${res:XML.MainMenu.FileMenu.Export}">
 					<MenuItem id="GraphExportMetafile" label="${res:XML.MainMenu.FileMenu.Export.WindowsMetaFile}" icon="Icons.16x16.NewDocumentIcon"
 						description="${res:XML.MainMenu.FileMenu.Export.WindowsMetaFile.Description}" class="Altaxo.Graph.Commands.FileExportMetafile" />
-				</MenuItem>
+          <MenuItem id="GraphExportTiff" label="${res:XML.MainMenu.FileMenu.Export.BitmapTiffFile}" icon="Icons.16x16.NewDocumentIcon"
+						description="${res:XML.MainMenu.FileMenu.Export.BitmapTiffFile.Description}" class="Altaxo.Graph.Commands.FileExportTiff" />
+        </MenuItem>
 			</Conditional>
 			<MenuItem id="ExitSeparator" label="-" />
 			<MenuItem id="Exit" label="${res:XML.MainMenu.FileMenu.Exit}" description="${res:XML.MainMenu.FileMenu.Exit.Desription}"

@@ -1,0 +1,193 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{1CFDD727-D2B7-4521-AF53-D24EA4C69176}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Numerator</RootNamespace>
+    <AssemblyName>Numerator</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="MathML.Rendering\Area.cs" />
+    <Compile Include="MathML.Rendering\AreaFactory.cs" />
+    <Compile Include="MathML.Rendering\AreaIdentifier.cs" />
+    <Compile Include="MathML.Rendering\AreaRegion.cs" />
+    <Compile Include="MathML.Rendering\BackgroundArea.cs" />
+    <Compile Include="MathML.Rendering\BinContainerArea.cs" />
+    <Compile Include="MathML.Rendering\BoundingBox.cs" />
+    <Compile Include="MathML.Rendering\BoxArea.cs" />
+    <Compile Include="MathML.Rendering\ColorArea.cs" />
+    <Compile Include="MathML.Rendering\ContainerArea.cs" />
+    <Compile Include="MathML.Rendering\Exceptions.cs" />
+    <Compile Include="MathML.Rendering\FillerArea.cs" />
+    <Compile Include="MathML.Rendering\FontFactory.cs" />
+    <Compile Include="MathML.Rendering\FontHandle.cs" />
+    <Compile Include="MathML.Rendering\FontInstance.cs" />
+    <Compile Include="MathML.Rendering\FormattingContext.cs" />
+    <Compile Include="MathML.Rendering\FreezeArea.cs" />
+    <Compile Include="MathML.Rendering\GlyphArea.cs" />
+    <Compile Include="MathML.Rendering\GlyphAttributes.cs" />
+    <Compile Include="MathML.Rendering\GlyphFactory.cs" />
+    <Compile Include="MathML.Rendering\GlyphMap.cs" />
+    <Compile Include="MathML.Rendering\GraphicsRendering.cs" />
+    <Compile Include="MathML.Rendering\HideArea.cs" />
+    <Compile Include="MathML.Rendering\HorizontalArea.cs" />
+    <Compile Include="MathML.Rendering\HorizontalCompoundGlyph.cs" />
+    <Compile Include="MathML.Rendering\HorizontalFillerArea.cs" />
+    <Compile Include="MathML.Rendering\HorizontalSpaceArea.cs" />
+    <Compile Include="MathML.Rendering\IdArea.cs" />
+    <Compile Include="MathML.Rendering\IgnoreArea.cs" />
+    <Compile Include="MathML.Rendering\InkArea.cs" />
+    <Compile Include="MathML.Rendering\LinearContainer.cs" />
+    <Compile Include="MathML.Rendering\MarkArea.cs" />
+    <Compile Include="MathML.Rendering\MathMLControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MathML.Rendering\MathMLElementFinder.cs" />
+    <Compile Include="MathML.Rendering\MathMLFormatter.cs" />
+    <Compile Include="MathML.Rendering\MathMLMeasurer.cs" />
+    <Compile Include="MathML.Rendering\MathMLTableSizer.cs" />
+    <Compile Include="MathML.Rendering\MathMLWrapperArea.cs" />
+    <Compile Include="MathML.Rendering\NonSelectionArea.cs" />
+    <Compile Include="MathML.Rendering\OverlapArea.cs" />
+    <Compile Include="MathML.Rendering\PredefinedSymbolInfo.cs" />
+    <Compile Include="MathML.Rendering\ReplacementContext.cs" />
+    <Compile Include="MathML.Rendering\Selection.cs" />
+    <Compile Include="MathML.Rendering\ShiftArea.cs" />
+    <Compile Include="MathML.Rendering\SimpleArea.cs" />
+    <Compile Include="MathML.Rendering\SimpleGlyphAttributes.cs" />
+    <Compile Include="MathML.Rendering\SimpleGlyphRange.cs" />
+    <Compile Include="MathML.Rendering\Strength.cs" />
+    <Compile Include="MathML.Rendering\StretchyGlyphAttributes.cs" />
+    <Compile Include="MathML.Rendering\StretchyGlyphIndices.cs" />
+    <Compile Include="MathML.Rendering\StringArea.cs" />
+    <Compile Include="MathML.Rendering\TableArea.cs" />
+    <Compile Include="MathML.Rendering\TableCellArea.cs" />
+    <Compile Include="MathML.Rendering\Utility.cs" />
+    <Compile Include="MathML.Rendering\VerticalArea.cs" />
+    <Compile Include="MathML.Rendering\VerticalCompoundGlyph.cs" />
+    <Compile Include="MathML.Rendering\VerticalFillerArea.cs" />
+    <Compile Include="MathML.Rendering\VerticalSpaceArea.cs" />
+    <Compile Include="MathML.Rendering\Win32.cs" />
+    <Compile Include="MathML.Rendering\Win32_GraphicDevice.cs" />
+    <Compile Include="MathML\Entity.cs" />
+    <Compile Include="MathML\EntityDictionary.cs" />
+    <Compile Include="MathML\enums.cs" />
+    <Compile Include="MathML\Length.cs" />
+    <Compile Include="MathML\MathMLActionElement.cs" />
+    <Compile Include="MathML\MathMLAlignGroupElement.cs" />
+    <Compile Include="MathML\MathMLAlignMarkElement.cs" />
+    <Compile Include="MathML\MathMLAnnotationElement.cs" />
+    <Compile Include="MathML\MathMLApplyElement.cs" />
+    <Compile Include="MathML\MathMLArgumentsEnumerator.cs" />
+    <Compile Include="MathML\MathMLArgumentsList.cs" />
+    <Compile Include="MathML\MathMLBvarElement.cs" />
+    <Compile Include="MathML\MathMLCaseElement.cs" />
+    <Compile Include="MathML\MathMLCiElement.cs" />
+    <Compile Include="MathML\MathMLCnElement.cs" />
+    <Compile Include="MathML\MathMLConditionElement.cs" />
+    <Compile Include="MathML\MathMLContainer.cs" />
+    <Compile Include="MathML\MathMLContainerImpl.cs" />
+    <Compile Include="MathML\MathMLContentContainer.cs" />
+    <Compile Include="MathML\MathMLContentElement.cs" />
+    <Compile Include="MathML\MathMLContentToken.cs" />
+    <Compile Include="MathML\MathMLCsymbolElement.cs" />
+    <Compile Include="MathML\MathMLDeclarationsList.cs" />
+    <Compile Include="MathML\MathMLDeclareElement.cs" />
+    <Compile Include="MathML\MathMLDocument.cs" />
+    <Compile Include="MathML\MathMLElement.cs" />
+    <Compile Include="MathML\MathMLEncloseElement.cs" />
+    <Compile Include="MathML\MathMLFencedElement.cs" />
+    <Compile Include="MathML\MathMLFnElement.cs" />
+    <Compile Include="MathML\MathMLFractionElement.cs" />
+    <Compile Include="MathML\MathMLGlyphElement.cs" />
+    <Compile Include="MathML\MathMLIntervalElement.cs" />
+    <Compile Include="MathML\MathMLLabeledRowElement.cs" />
+    <Compile Include="MathML\MathMLLambdaElement.cs" />
+    <Compile Include="MathML\MathMLListElement.cs" />
+    <Compile Include="MathML\MathMLMathElement.cs" />
+    <Compile Include="MathML\MathMLMatrixElement.cs" />
+    <Compile Include="MathML\MathMLMatrixrowElement.cs" />
+    <Compile Include="MathML\MathMLMultiScriptsElement.cs" />
+    <Compile Include="MathML\MathMLNodeList.cs" />
+    <Compile Include="MathML\MathMLOperatorElement.cs" />
+    <Compile Include="MathML\MathMLPaddedElement.cs" />
+    <Compile Include="MathML\MathMLPiecewiseElement.cs" />
+    <Compile Include="MathML\MathMLPlaceholderElement.cs" />
+    <Compile Include="MathML\MathMLPredefinedSymbol.cs" />
+    <Compile Include="MathML\MathMLPresentationContainer.cs" />
+    <Compile Include="MathML\MathMLPresentationElement.cs" />
+    <Compile Include="MathML\MathMLPresentationToken.cs" />
+    <Compile Include="MathML\MathMLPresentationTokenNodeList.cs" />
+    <Compile Include="MathML\MathMLRadicalElement.cs" />
+    <Compile Include="MathML\MathMLReader.cs" />
+    <Compile Include="MathML\MathMLScriptElement.cs" />
+    <Compile Include="MathML\MathMLSemanticsElement.cs" />
+    <Compile Include="MathML\MathMLSeparator.cs" />
+    <Compile Include="MathML\MathMLSetElement.cs" />
+    <Compile Include="MathML\MathMLSpaceElement.cs" />
+    <Compile Include="MathML\MathMLStringLitElement.cs" />
+    <Compile Include="MathML\MathMLStyleElement.cs" />
+    <Compile Include="MathML\MathMLTableCellElement.cs" />
+    <Compile Include="MathML\MathMLTableElement.cs" />
+    <Compile Include="MathML\MathMLTableNodeList.cs" />
+    <Compile Include="MathML\MathMLTableRowElement.cs" />
+    <Compile Include="MathML\MathMLUnderOverElement.cs" />
+    <Compile Include="MathML\MathMLVectorElement.cs" />
+    <Compile Include="MathML\MathMLVisitor.cs" />
+    <Compile Include="MathML\MathMLXMLAnnotationElement.cs" />
+    <Compile Include="MathML\Operator.cs" />
+    <Compile Include="MathML\OperatorDictionary.cs" />
+    <Compile Include="MathML\UserDataHandler.cs" />
+    <Compile Include="MathML\Utility.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="MathML\MathML.csproj" />
+    <Content Include="MathML\MathML.csproj.user" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="MathML.Rendering\MathMLControl.resx">
+      <DependentUpon>MathMLControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PostBuildEvent>copy Numerator.* ..\..\..\..\rt$(ConfigurationName)\bin</PostBuildEvent>
+  </PropertyGroup>
+</Project>

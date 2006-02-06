@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<!--
+	font configuration for the times new roman font
+	
+	a font config needs to have a root node named "font-configuration", it must
+	have a font-name attribute, and may have an optional scaling-factor attribute, 
+	this indicates how large this font should be made relative to the current 
+	font.
+	
+	font-configuration needs to have the following nodes, all of these
+	may be empty
+	
+	1: simple-glyph-ranges
+	a set of ranges of simple glyphs. this will have a set of "range" child nodes, 
+	and each "range" has attributes of "first", "last", and "offset", these
+	are the first and last glyph indices in the font, and offset is the number
+	to add to the real character that will map to a glyph index.
+	
+	2: simple-glyphs
+	a set of simple glyphs, this has a list of "simple" child nodes, and each
+	one of these has attributes of "char" and "index" where char in the 
+	character code of the real character, and index in the glyph index in this
+	font.
+	
+	3: stretchy-glyphs
+	needs to have a list of "stretchy" child nodes.
+	a "stretchy" node must have "char" and "orientation" attributes, 
+	these are the real character that will be stretched, and the orientation
+	of the stretchy char, either "vertical" or horizontal"
+	also, a "stretchy" node needs to have 2 child nodes, "simple" and compound"
+	these are the indices in the font of the stretchy glyphs. each one
+	of these needs to have an attribute of "index", this is a string of space
+	separated numbers representing the index of the glyph. there may be 0 to
+	many simple indices, these must be stored smallest to largest glyph size.
+	there must be 4 indices for the compound indices. they are:
+	index 0 : the bottom glyph, -1 if none exists.
+	index 1 : the repeated glyph, this needs to be here.
+	index 2 : the middle glyph if one exists, -1 otherwise.
+	index 3 : the top glyph if one exists, -1 otherwise.
+-->
+<font-configuration font-name="Math Roman" scaling-factor="1.0">
+
+	<simple-glyphs>
+	</simple-glyphs>
+	
+	<simple-glyph-ranges>
+		<range first="0x2190" last="0x21ff" offset="0" comment="Arrows"/> 
+		<range first="0x2200" last="0x22ff" offset="0" comment="Mathematical Operators"/> 
+		<range first="0x03d0" last="0x03ff" offset="0" comment="extended greek"/> 	
+		<range first="0x2300" last="0x23ff" offset="0" comment="extended greek"/> 
+		<range first="0x2000" last="0x206f" offset="0" comment="general punctuation"/> 
+		<range first="0xfffc" last="0xfffc" offset="0" comment="object char"/> 
+	</simple-glyph-ranges>	
+	
+	<stretchy-glyphs>
+	</stretchy-glyphs>
+
+</font-configuration>

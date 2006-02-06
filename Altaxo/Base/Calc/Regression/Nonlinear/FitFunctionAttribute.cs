@@ -40,22 +40,36 @@ namespace Altaxo.Calc.Regression.Nonlinear
   {
     string _name;
     string _category;
+    string _descriptionResource;
     int    _numberOfIndependentVariables;
     int    _numberOfDependentVariables;
     int    _numberOfParameters;
+
+
+    public FitFunctionCreatorAttribute(
+    string name,
+    string category,
+    int numIndependentVariables,
+    int numDependentVariables,
+    int numParameters)
+    : this(name,category,numIndependentVariables,numDependentVariables,numParameters,null)
+    {
+    }
 
     public FitFunctionCreatorAttribute(
       string name,
       string category,
       int numIndependentVariables,
       int numDependentVariables,
-      int numParameters)
+      int numParameters, 
+      string descriptionResource)
     {
       _name = name;
       _category = category;
       _numberOfIndependentVariables = numIndependentVariables;
       _numberOfDependentVariables = numDependentVariables;
       _numberOfParameters = numParameters;
+      _descriptionResource = descriptionResource;
     }
 
     public string Name
@@ -70,6 +84,14 @@ namespace Altaxo.Calc.Regression.Nonlinear
       get
       {
         return _category;
+      }
+    }
+
+    public string DescriptionResource
+    {
+      get 
+      {
+        return _descriptionResource; 
       }
     }
     public int NumberOfIndependentVariables

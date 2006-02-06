@@ -1303,6 +1303,45 @@ namespace Altaxo.Graph.GUI
       return null;
     }
 
+    /// <summary>
+    /// Saves the graph as an tiff file into the stream <paramref name="stream"/>.
+    /// </summary>
+    /// <param name="stream">The stream to save the metafile into.</param>
+    /// <param name="dpiResolution">Resolution of the bitmap in dpi. Determines the pixel size of the bitmap.</param>
+    /// <param name="imageFormat">The format of the destination image.</param>
+    /// <returns>Null if successfull, error description otherwise.</returns>
+    public string SaveAsBitmap(System.IO.Stream stream, int dpiResolution, System.Drawing.Imaging.ImageFormat imageFormat)
+    {
+
+      double scale = dpiResolution / 72.0;
+      // Code to write the stream goes here.
+      Graphics grfx = m_View.CreateGraphGraphics();
+      
+
+      int width = (int)Math.Ceiling(m_Graph.PageBounds.Width * scale);
+      int height = (int)Math.Ceiling(m_Graph.PageBounds.Height * scale);
+      System.Drawing.Bitmap mf = new System.Drawing.Bitmap(width, height, grfx);
+      grfx.Dispose();
+
+      mf.SetResolution(dpiResolution, dpiResolution);
+
+      grfx = Graphics.FromImage(mf);
+
+      grfx.PageUnit = GraphicsUnit.Point;
+      grfx.TranslateTransform(this.Doc.PrintableBounds.X, this.Doc.PrintableBounds.Y);
+      grfx.PageScale = 1; // (float)scale;
+
+
+      this.m_Graph.DoPaint(grfx, true);
+
+      grfx.Dispose();
+
+      mf.Save(stream, imageFormat);
+
+      mf.Dispose();
+
+      return null;
+    }
 
     private void DoPaint(Graphics g, bool bForPrinting)
     {
