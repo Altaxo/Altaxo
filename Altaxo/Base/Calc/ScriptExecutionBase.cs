@@ -526,7 +526,16 @@ namespace Altaxo.Calc
       return _parameterNames[i];
     }
 
-
+    /// <summary>
+    /// Returns the default parameter value of parameter <c>i</c>. Defaults to return 0. Scripts can
+    /// override this function in order to provide more useful values.
+    /// </summary>
+    /// <param name="i">Index of parameter.</param>
+    /// <returns>Returns 0 (zero) by default.</returns>
+    public virtual double DefaultParameterValue(int i)
+    {
+      return 0;
+    }
 
     /// <summary>
     /// This evaluates a function value. 

@@ -144,14 +144,35 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     private void SetDocumentation(MethodInfo method)
     {
       object[] attribs = method.GetCustomAttributes(typeof(System.ComponentModel.DescriptionAttribute), false);
+      
+      SetDocumentationText(attribs.Length==0 ? string.Empty : ((System.ComponentModel.DescriptionAttribute)attribs[0]).Description);
+    }
+
+    private void SetDocumentationText(string resource)
+    {
+      string[] resources = resource.Split(new char[]{';',' '},StringSplitOptions.RemoveEmptyEntries);
+
       System.Text.StringBuilder stb = new StringBuilder();
 
-      foreach (System.ComponentModel.DescriptionAttribute attrib in attribs)
+      foreach (string res in resources)
       {
-        stb.Append( Current.ResourceService.GetString(attrib.Description));
+        if (res.StartsWith("p:"))
+        {
+          // TODO : Load from a bitmap resource here and add the bitmap to the rtf text
+         
+        }
+        else
+        {
+          string rawtext = Current.ResourceService.GetString(res);
+          if(rawtext!=null && rawtext.Length>0)
+            ComposeText(stb, rawtext);
+        }
       }
 
-      _view.SetRtfDocumentation(ComposeText(stb.ToString()));
+      if (stb.Length != 0)
+        stb.Append(texttrailer);
+
+      _view.SetRtfDocumentation(stb.ToString());
     }
 
     string textheader =
@@ -163,10 +184,10 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     string imagetrailer = "}";
 
     MathML.Rendering.GraphicsRendering _mmlRendering = new MathML.Rendering.GraphicsRendering();
-    string ComposeText(string rawtext)
+    void ComposeText(StringBuilder stb, string rawtext)
     {
-      StringBuilder stb = new StringBuilder();
-      stb.Append(textheader);
+      if(stb.Length==0)
+        stb.Append(textheader);
 
       int currpos = 0;
       for (; ; )
@@ -190,7 +211,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         _mmlRendering.BackColor = _view.GetRtfBackgroundColor();
         _mmlRendering.MathElement = (MathML.MathMLMathElement)doc.DocumentElement;
 
-        System.Drawing.Imaging.Metafile mf = (Metafile)_mmlRendering.GetImage(typeof(Metafile));
+        System.Drawing.Image mf = _mmlRendering.GetImage(typeof(Bitmap));
         GraphicsUnit unit = GraphicsUnit.Point;
         RectangleF rect = mf.GetBounds(ref unit);
         string imagetext = _mmlRendering.GetRtfImage(mf);
@@ -205,10 +226,6 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       }
 
       stb.Append(rawtext, currpos, rawtext.Length - currpos);
-
-      stb.Append(texttrailer);
-
-      return stb.ToString();
     }
 
 

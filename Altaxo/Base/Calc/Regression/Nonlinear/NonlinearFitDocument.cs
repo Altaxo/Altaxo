@@ -122,6 +122,30 @@ namespace Altaxo.Calc.Regression.Nonlinear
       return result;
     }
 
+
+    /// <summary>
+    /// This will set all parameters in the ensembly with the same name than that of the parameter names
+    /// of fit function at index <c>idx</c> to their default values (those are provided by the fit function).
+    /// </summary>
+    /// <param name="idx">Index of the fit element.</param>
+    public void SetDefaultParametersForFitElement(int idx)
+    {
+      FitElement fitele = _fitEnsemble[idx];
+      if (fitele.FitFunction == null)
+        return;
+
+
+      System.Collections.Hashtable byName = new System.Collections.Hashtable();
+      for (int i = 0; i < _currentParameters.Count; i++)
+        byName.Add(_currentParameters[i].Name, i);
+      
+      for (int i = 0; i < fitele.NumberOfParameters; ++i)
+      {
+        int k = (int)byName[fitele.ParameterName(i)];
+          _currentParameters[k].Parameter = fitele.FitFunction.DefaultParameterValue(i);
+      }
+    }
+
     private void RecalculateParameterSet()
     {
       // save old values

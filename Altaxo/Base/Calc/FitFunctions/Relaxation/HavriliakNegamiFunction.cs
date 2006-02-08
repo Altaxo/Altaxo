@@ -129,7 +129,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     #endregion
 
     #region parameter definition
-    string[] _parameterName = new string[]{"offset","amplitude","tau","alpha","gamma","conductivity"};
+    string[] _parameterName = new string[] { "eps_inf", "delta_eps", "tau", "alpha", "gamma", "conductivity" };
     public int NumberOfParameters
     {
       get
@@ -140,6 +140,25 @@ namespace Altaxo.Calc.Regression.Nonlinear
     public string ParameterName(int i)
     {
       return _parameterName[i];
+    }
+
+    public double DefaultParameterValue(int i)
+    {
+      switch (i)
+      {
+        case 0:
+          return 1;
+        case 1:
+          return 1;
+        case 2:
+          return 1;
+        case 3:
+          return 1;
+        case 4:
+          return 1;
+      }
+
+      return 0;
     }
     #endregion
 

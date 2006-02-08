@@ -46,6 +46,9 @@ rmdir /S /Q .\Libraries\ICSharpCode.TextEditor\src\bin
 rmdir /S /Q .\Libraries\ICSharpCode.XmlForms\obj
 rmdir /S /Q .\Libraries\ICSharpCode.XmlForms\bin
 
+rmdir /S /Q .\Libraries\Numerator\obj
+rmdir /S /Q .\Libraries\Numerator\bin
+
 rmdir /S /Q .\Libraries\SharpAssembly\src\SharpAssembly\obj
 rmdir /S /Q .\Libraries\SharpAssembly\src\SharpAssembly\bin
 rmdir /S /Q .\Libraries\SharpAssembly\src\SharpAssembly\obj
@@ -65,3 +68,4 @@ rmdir /S /Q .\Libraries\SharpZipLib\src\bin
 
 rmdir /S /Q .\Libraries\WinFormsUI\WinFormsUI\obj
 rmdir /S /Q .\Libraries\WinFormsUI\WinFormsUI\bin
+

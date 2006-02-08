@@ -1037,6 +1037,15 @@ namespace Altaxo.Scripting
       }
     }
 
+    public double DefaultParameterValue(int i)
+    {
+
+      if (this.m_ScriptObject != null)
+        return ((IFitFunction)m_ScriptObject).DefaultParameterValue(i);
+      else
+        return 0;
+    }
+
     void Altaxo.Calc.Regression.Nonlinear.IFitFunction.Evaluate(double[] independent, double[] parameters, double[] result)
     {
       MakeSureWasTriedToCompile();

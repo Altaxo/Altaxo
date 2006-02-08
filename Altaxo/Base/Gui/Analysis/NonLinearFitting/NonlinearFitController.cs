@@ -166,16 +166,18 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     void Select(IFitFunction func)
     {
       bool changed = false;
-      if(_doc.FitEnsemble.Count==0)
+      if(_doc.FitEnsemble.Count==0) // Fitting is fresh, we can add the function silently
       {
         FitElement newele = new FitElement();
         newele.FitFunction = func;
         _doc.FitEnsemble.Add(newele);
+        _doc.SetDefaultParametersForFitElement(0);
         changed=true;
       }
       else if(_doc.FitEnsemble.Count>0 && _doc.FitEnsemble[_doc.FitEnsemble.Count-1].FitFunction==null)
       {
         _doc.FitEnsemble[_doc.FitEnsemble.Count-1].FitFunction = func;
+        _doc.SetDefaultParametersForFitElement(_doc.FitEnsemble.Count - 1);
         changed = true;
       }
       else // Count>0, and there is already a fit function, we
@@ -190,11 +192,14 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
             FitElement newele = new FitElement();
             newele.FitFunction = func;
             _doc.FitEnsemble.Add(newele);
+            _doc.SetDefaultParametersForFitElement(_doc.FitEnsemble.Count - 1);
             changed=true;
           }
           else // select as only
           {
             _doc.FitEnsemble[0].FitFunction = func;
+            _doc.SetDefaultParametersForFitElement(0);
+
             for(int i= _doc.FitEnsemble.Count-1;i>=1;--i)
               _doc.FitEnsemble.RemoveAt(i);
 

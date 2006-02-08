@@ -55,6 +55,10 @@ namespace MathML.Rendering
 		{
 			string configDir = ConfigurationSettings.AppSettings.Get("mathml-rendering-config");
 
+      if (configDir != null && configDir.Length != 0 && !Directory.Exists(configDir))
+      {
+        configDir = Application.StartupPath + System.IO.Path.DirectorySeparatorChar + configDir;
+      }
 
 			if(configDir == null || configDir.Length == 0 || !Directory.Exists(configDir))
 			{

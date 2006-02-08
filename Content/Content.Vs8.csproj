@@ -129,6 +129,10 @@
     <Compile Include="Main.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Content Include="data\resources\mathml\font-configuration-1-math-roman.xml" />
+    <Content Include="data\resources\mathml\font-configuration-2-cm-stretchy.xml" />
+    <Content Include="data\resources\mathml\font-configuration-3-times-new-roman.xml" />
+    <Content Include="data\resources\mathml\font-configuration-lucida-sans-unicode.xml" />
     <Content Include="data\schemas\manifest.xsd" />
     <Content Include="data\templates\file\Misc\EmptySharpReport.xft" />
     <Content Include="data\templates\file\Misc\EmptyWixFragment.xft" />

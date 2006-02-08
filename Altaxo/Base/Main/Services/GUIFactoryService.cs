@@ -288,6 +288,18 @@ namespace Altaxo.Main.Services
     {
       System.Windows.Forms.MessageBox.Show(Current.MainWindow,errortxt,"Error(s)!", System.Windows.Forms.MessageBoxButtons.OK,System.Windows.Forms.MessageBoxIcon.Error);
     }
+
+    /// <summary>
+    /// Shows a message box with a question to be answered either yes or no.
+    /// </summary>
+    /// <param name="txt">The question text.</param>
+    /// <param name="caption">The caption of the dialog box.</param>
+    /// <param name="defaultanswer">If true, the default answer is "yes", otherwise "no".</param>
+    /// <returns>True if the user answered with Yes, otherwise false.</returns>
+    public bool YesNoMessageBox(string txt, string caption, bool defaultanswer)
+    {
+      return System.Windows.Forms.DialogResult.Yes==System.Windows.Forms.MessageBox.Show(Current.MainWindow, txt, caption, System.Windows.Forms.MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Question,defaultanswer ? System.Windows.Forms.MessageBoxDefaultButton.Button1: System.Windows.Forms.MessageBoxDefaultButton.Button2);
+    }
     
 
     public void ShowBackgroundCancelDialog(System.Threading.Thread thread, IExternalDrivenBackgroundMonitor monitor)

@@ -875,6 +875,7 @@
     <Compile Include="Serialization\EnumParsing.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Serialization\FileIOHelper.cs" />
     <Compile Include="Serialization\Galactic\ExportGalacticSpcFileDialog.cs">
       <SubType>Form</SubType>
     </Compile>

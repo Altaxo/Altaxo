@@ -89,11 +89,34 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       return (new string[]{"offset","amplitude","tau","beta"})[i];
     }
 
+    public double DefaultParameterValue(int i)
+    {
+      switch (i)
+      {
+        case 0:
+          return 0;
+        case 1:
+          return 1;
+        case 2:
+          return 1;
+        case 3:
+          return 1;
+      }
+
+      return 0;
+    }
+
     public void Evaluate(double[] X, double[] P, double[] Y)
     {
       Y[0] = P[0] + P[1]*Math.Exp(-Math.Pow(X[0]/P[2],P[3]));
     }
 
+    #endregion
+
+    #region IFitFunction Members
+
+
+   
     #endregion
   }
 
@@ -213,6 +236,23 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
         return _parameterNameD[i];
       else
         return _parameterNameC[i];
+    }
+
+    public double DefaultParameterValue(int i)
+    {
+      switch (i)
+      {
+        case 0:
+          return 1;
+        case 1:
+          return 1;
+        case 2:
+          return 1;
+        case 3:
+          return 1;
+      }
+
+      return 0;
     }
     #endregion
 
@@ -354,6 +394,23 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     {
       return _parameterName[i];
     }
+
+    public double DefaultParameterValue(int i)
+    {
+      switch (i)
+      {
+        case 0:
+          return 1;
+        case 1:
+          return 2;
+        case 2:
+          return 1;
+        case 3:
+          return 1;
+      }
+
+      return 0;
+    }
     #endregion
 
     public void Evaluate(double[] X, double[] P, double[] Y)
@@ -441,6 +498,11 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       return (new string[]{"intercept","slope",})[i];
     }
 
+    public double DefaultParameterValue(int i)
+    {
+      return 0;
+    }
+
     public void Evaluate(double[] X, double[] P, double[] Y)
     {
       Y[0] = P[0] + P[1]*X[0];
@@ -518,6 +580,11 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       return (new string[] { "intercept", "slope", })[i];
     }
 
+    public double DefaultParameterValue(int i)
+    {
+      return 0;
+    }
+
     public void Evaluate(double[] X, double[] P, double[] Y)
     {
       Y[0] = P[0] + P[1] * X[0];
@@ -525,7 +592,58 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
     #endregion
 
-   
 
+
+
+    #region IFitFunction Members
+
+
+  
+
+    #endregion
+
+    #region IFitFunction Members
+
+    int IFitFunction.NumberOfIndependentVariables
+    {
+      get { throw new Exception("The method or operation is not implemented."); }
+    }
+
+    int IFitFunction.NumberOfDependentVariables
+    {
+      get { throw new Exception("The method or operation is not implemented."); }
+    }
+
+    int IFitFunction.NumberOfParameters
+    {
+      get { throw new Exception("The method or operation is not implemented."); }
+    }
+
+    string IFitFunction.IndependentVariableName(int i)
+    {
+      throw new Exception("The method or operation is not implemented.");
+    }
+
+    string IFitFunction.DependentVariableName(int i)
+    {
+      throw new Exception("The method or operation is not implemented.");
+    }
+
+    string IFitFunction.ParameterName(int i)
+    {
+      throw new Exception("The method or operation is not implemented.");
+    }
+
+    double IFitFunction.DefaultParameterValue(int i)
+    {
+      throw new Exception("The method or operation is not implemented.");
+    }
+
+    void IFitFunction.Evaluate(double[] independent, double[] parameters, double[] FV)
+    {
+      throw new Exception("The method or operation is not implemented.");
+    }
+
+    #endregion
   }
 }

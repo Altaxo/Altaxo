@@ -66,6 +66,13 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// <returns>The name of the ith paramter.</returns>
     string ParameterName(int i);
 
+    /// <summary>
+    /// Returns a default parameter value. You must ensure that the fit function would generate
+    /// values with those default parameters.
+    /// </summary>
+    /// <param name="i">Index of the parameter.</param>
+    /// <returns>A default value for the parameter <c>i</c>.</returns>
+    double DefaultParameterValue(int i);
 
     /// <summary>
     /// This evaluates a function value. 

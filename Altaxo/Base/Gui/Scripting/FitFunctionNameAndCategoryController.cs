@@ -99,15 +99,23 @@ namespace Altaxo.Gui.Scripting
           {
             ICSharpCode.Core.Services.PropertyService propserv = (ICSharpCode.Core.Services.PropertyService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(ICSharpCode.Core.Services.PropertyService));
             
-            string filename = "FitFunctionScripts" +System.IO.Path.DirectorySeparatorChar + _doc.ScriptTextHash+".xml";
+            
+            string filename = "FitFunctionScripts" +System.IO.Path.DirectorySeparatorChar + Altaxo.Serialization.FileIOHelper.GetValidFileName(_doc.FitFunctionCategory + "-" + _doc.FitFunctionName + ".xml");
             string fullname = System.IO.Path.Combine(propserv.ConfigDirectory,filename);
             System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(fullname));
-            System.IO.Stream stream = new System.IO.FileStream(fullname,System.IO.FileMode.Create,System.IO.FileAccess.Write);
-            Altaxo.Serialization.Xml.XmlStreamSerializationInfo info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo();
-            info.BeginWriting(stream);
-            info.AddValue("FitFunctionScript",_doc);
-            info.EndWriting();
-            stream.Close();
+
+            if (System.IO.File.Exists(fullname))
+            {
+              if(!Current.Gui.YesNoMessageBox(string.Format("The file {0} already exists. Do you really want to overwrite the file?", filename), "Overwrite?", false))
+                return false; // Cancel the end of dialog
+            }
+
+              System.IO.Stream stream = new System.IO.FileStream(fullname, System.IO.FileMode.Create, System.IO.FileAccess.Write);
+              Altaxo.Serialization.Xml.XmlStreamSerializationInfo info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo();
+              info.BeginWriting(stream);
+              info.AddValue("FitFunctionScript", _doc);
+              info.EndWriting();
+              stream.Close();
           }
         }
         return true;
