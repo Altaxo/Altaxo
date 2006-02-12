@@ -55,6 +55,8 @@ namespace Altaxo
 
     private static Altaxo.Main.Services.IResourceService sm_theResourceService;
 
+    private static Altaxo.Main.Services.IFitFunctionService sm_theFitFunctionService;
+
     private static bool sm_theApplicationIsClosing;
 
     /// <summary>
@@ -111,6 +113,14 @@ namespace Altaxo
     public static Altaxo.Main.Services.IResourceService ResourceService
     {
       get { return sm_theResourceService; }
+    }
+
+    /// <summary>
+    /// Returns the fit function service, which is used to obtain the file based user defined fit functions.
+    /// </summary>
+    public static Altaxo.Main.Services.IFitFunctionService FitFunctionService
+    {
+      get { return sm_theFitFunctionService; }
     }
 
     /// <summary>
@@ -199,6 +209,19 @@ namespace Altaxo
         sm_theResourceService = resourceservice; 
       else
         throw new ApplicationException("The resource service can not be re-set to another value, only initialized for the first time!");
+
+    }
+
+    /// <summary>
+    /// Sets the fit function service.
+    /// </summary>
+    /// <param name="fitFunctionService">The instance of fit function service to use in this application.</param>
+    public static void SetFitFunctionService(Altaxo.Main.Services.IFitFunctionService fitFunctionService)
+    {
+      if (null == sm_theFitFunctionService)
+        sm_theFitFunctionService = fitFunctionService;
+      else
+        throw new ApplicationException("The fit function service can not be re-set to another value, only initialized for the first time!");
 
     }
 

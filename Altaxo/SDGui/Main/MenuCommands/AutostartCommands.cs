@@ -91,6 +91,11 @@ namespace Altaxo.Main.Commands // ICSharpCode.SharpDevelop.Commands
       w.WorkbenchLayout = new SdiWorkbenchLayout();
       w.RedrawAllComponents();
 #endif  
+
+
+      // less important services follow now
+      Altaxo.Main.Services.FitFunctionService fitFunctionService = new Altaxo.Main.Services.FitFunctionService();
+      Altaxo.Current.SetFitFunctionService(fitFunctionService);
     }
 
     private class ResourceServiceWrapper : Altaxo.Main.Services.IResourceService

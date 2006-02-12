@@ -40,9 +40,12 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
   {
     IFitFunctionSelectionViewEventSink _controller;
     private System.Windows.Forms.TreeView _twFitFunctions;
-    private System.Windows.Forms.ContextMenu _treeViewContextMenu;
     private SplitContainer _splitContainer;
     private RichTextBox _rtbDescription;
+
+    TreeNode _lastClickedNode;
+    private ContextMenu _userFileLeafNodeContextMenu;
+    private MenuItem menuContextEdit;
     /// <summary> 
     /// Required designer variable.
     /// </summary>
@@ -80,9 +83,10 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     private void InitializeComponent()
     {
       this._twFitFunctions = new System.Windows.Forms.TreeView();
-      this._treeViewContextMenu = new System.Windows.Forms.ContextMenu();
       this._splitContainer = new System.Windows.Forms.SplitContainer();
       this._rtbDescription = new System.Windows.Forms.RichTextBox();
+      this._userFileLeafNodeContextMenu = new System.Windows.Forms.ContextMenu();
+      this.menuContextEdit = new System.Windows.Forms.MenuItem();
       this._splitContainer.Panel1.SuspendLayout();
       this._splitContainer.Panel2.SuspendLayout();
       this._splitContainer.SuspendLayout();
@@ -90,17 +94,13 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       // 
       // _twFitFunctions
       // 
-      this._twFitFunctions.ContextMenu = this._treeViewContextMenu;
       this._twFitFunctions.Dock = System.Windows.Forms.DockStyle.Fill;
       this._twFitFunctions.Location = new System.Drawing.Point(0, 0);
       this._twFitFunctions.Name = "_twFitFunctions";
       this._twFitFunctions.Size = new System.Drawing.Size(153, 344);
       this._twFitFunctions.TabIndex = 1;
       this._twFitFunctions.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this._twFitFunctions_AfterSelect);
-      // 
-      // _treeViewContextMenu
-      // 
-      this._treeViewContextMenu.Popup += new System.EventHandler(this._treeViewContextMenu_Popup);
+      this._twFitFunctions.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this._twFitFunctions_NodeMouseClick);
       // 
       // _splitContainer
       // 
@@ -130,6 +130,17 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       this._rtbDescription.Size = new System.Drawing.Size(192, 344);
       this._rtbDescription.TabIndex = 0;
       this._rtbDescription.Text = "";
+      // 
+      // _userFileLeafNodeContextMenu
+      // 
+      this._userFileLeafNodeContextMenu.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+            this.menuContextEdit});
+      // 
+      // menuContextEdit
+      // 
+      this.menuContextEdit.Index = 0;
+      this.menuContextEdit.Text = "Edit";
+      this.menuContextEdit.Click += new System.EventHandler(this.menuContextEdit_Click);
       // 
       // FitFunctionSelectionControl
       // 
@@ -229,6 +240,16 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       }
     }
 
+    class UserFileLeafNode : LeafNode
+    {
+      public Altaxo.Main.Services.FitFunctionInformation FunctionInfo;
+      public UserFileLeafNode(string text, Altaxo.Main.Services.FitFunctionInformation func)
+        : base(text)
+      {
+        FunctionInfo = func;
+        this.Tag = func;
+      }
+    }
 
     #endregion
 
@@ -270,6 +291,39 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     }
 
 
+    public void InitializeUserFitFunctionList(Altaxo.Main.Services.FitFunctionInformation[] entries)
+    {
+        // The key of the entries is the name string, the value is the object
+
+      this._twFitFunctions.BeginUpdate();
+
+      RootNode rnode = new RootNode("User", RootNodeType.Document);
+      this._twFitFunctions.Nodes.Add(rnode);
+      TreeNodeCollection root = rnode.Nodes;
+
+      foreach (Altaxo.Main.Services.FitFunctionInformation entry in entries)
+      {
+        string[] path = entry.Category.Split(new char[] { '\\', '/' }, StringSplitOptions.RemoveEmptyEntries);
+        TreeNodeCollection where = root;
+        for (int j = 0; j < path.Length; j++)
+        {
+          TreeNode node = GetPathNode(where, path[j]);
+          if (node == null)
+          {
+            node = new CategoryNode(path[j]);
+            where.Add(node);
+          }
+          where = node.Nodes;
+        }
+
+        TreeNode leaf = new UserFileLeafNode(entry.Name, entry);
+        leaf.ContextMenu = _userFileLeafNodeContextMenu;
+        where.Add(leaf);
+      }
+      this._twFitFunctions.EndUpdate();
+
+    }
+
     public void InitializeDocumentFitFunctionList(DictionaryEntry[] entries, object currentSelection)
     {
       // The key of the entries is the name string, the value is the object
@@ -285,11 +339,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         string fullname = (string)entry.Key;
         IFitFunction fitfunc = (IFitFunction)entry.Value;
 
-#if NET_2_0 
-        string[] path = fullname.Split(new char[] { '\\', '/' },true);
-#else
-        string[] path = fullname.Split(new char[] { '\\', '/' });
-#endif
+        string[] path = fullname.Split(new char[] { '\\', '/' },StringSplitOptions.RemoveEmptyEntries);
         
         if(path.Length==0)
           continue;
@@ -307,6 +357,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         }
 
         TreeNode leaf = new DocumentLeafNode(path[path.Length-1],fitfunc);
+        leaf.ContextMenu = _userFileLeafNodeContextMenu;
         where.Add(leaf);
       }
       this._twFitFunctions.EndUpdate();
@@ -325,16 +376,19 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         _controller.EhView_EditItem(_twFitFunctions.SelectedNode.Tag);
     }
 
-    private void _treeViewContextMenu_Popup(object sender, System.EventArgs e)
+ 
+
+  
+
+    private void menuContextEdit_Click(object sender, EventArgs e)
     {
-      this._treeViewContextMenu.MenuItems.Clear();
-      if(this._twFitFunctions.SelectedNode!=null)
-      {
-        if(_twFitFunctions.SelectedNode is DocumentLeafNode)
-        {
-          this._treeViewContextMenu.MenuItems.Add(new MenuItem("Edit",new EventHandler(this.EhEditItem)));
-        }
-      }
+      if (_controller != null)
+        _controller.EhView_EditItem(_lastClickedNode.Tag);
+    }
+
+    private void _twFitFunctions_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+    {
+      this._lastClickedNode = e.Node;
     }
 
   }

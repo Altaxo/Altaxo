@@ -40,6 +40,8 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     IFitFunctionSelectionViewEventSink Controller { get; set; }
     void InitializeFitFunctionList(DictionaryEntry[] entries, System.Type currentSelection);
     void InitializeDocumentFitFunctionList(DictionaryEntry[] entries, object currentSelection);
+    void InitializeUserFitFunctionList(Altaxo.Main.Services.FitFunctionInformation[] entries);
+
     void SetRtfDocumentation(string rtfString);
     Color GetRtfBackgroundColor();
   }
@@ -58,7 +60,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
   public class FitFunctionSelectionController : IFitFunctionSelectionViewEventSink, Main.GUI.IMVCAController
   {
     IFitFunction _doc;
-    IFitFunction _tempdoc;
+    object _tempdoc;
     IFitFunctionSelectionView _view;
 
     public FitFunctionSelectionController(IFitFunction doc)
@@ -109,6 +111,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
         _view.InitializeFitFunctionList(entries, _tempdoc==null ? null : _tempdoc.GetType());
         _view.InitializeDocumentFitFunctionList(GetDocumentEntries(), null);
+        _view.InitializeUserFitFunctionList(Current.FitFunctionService.GetUserDefinedFitFunctions());
       }
     }
 
@@ -138,6 +141,10 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       else if (selectedtag is IFitFunction)
       {
         _tempdoc = (IFitFunction)selectedtag;
+      }
+      else if (selectedtag is Altaxo.Main.Services.FitFunctionInformation)
+      {
+        _tempdoc = selectedtag;
       }
     }
 
@@ -232,12 +239,42 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     public void EhView_EditItem(object selectedtag)
     {
-      if (selectedtag is Altaxo.Scripting.FitFunctionScript)
+      if (selectedtag is IFitFunction)
       {
-        Current.Gui.ShowDialog(new object[] { selectedtag }, "Edit fit function script");
+        EditItem((IFitFunction)selectedtag);
+      }
+      else if (selectedtag is Altaxo.Main.Services.FitFunctionInformation)
+      {
+        IFitFunction func = Altaxo.Main.Services.FitFunctionService.ReadFileBasedFitFunction(selectedtag as Altaxo.Main.Services.FitFunctionInformation);
+        EditItem(func);
       }
     }
 
+    void EditItem(IFitFunction func)
+    {
+      if (null != func)
+      {
+        object[] args = new object[] { func };
+        if (Current.Gui.ShowDialog(args, "Edit fit function script"))
+        {
+          if (args[0] is FitFunctionScript)
+          {
+            Altaxo.Gui.Scripting.FitFunctionNameAndCategoryController ctrl = new Altaxo.Gui.Scripting.FitFunctionNameAndCategoryController((FitFunctionScript)args[0]);
+            if (Current.Gui.ShowDialog(ctrl, "Store?"))
+            {
+              // Note: category and/or name can have changed now, so it is more save to
+              // completely reinitialize the fit function tree
+              Initialize();
+            }
+          }
+
+        }
+      }
+    }
+
+
+
+      
 
     #region IMVCController Members
 
@@ -277,10 +314,17 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     public bool Apply()
     {
       
-      if(_tempdoc != null)
+      if(_tempdoc is IFitFunction)
       {
-        _doc = _tempdoc;
+        _doc = (IFitFunction)_tempdoc;
         return true;
+      }
+
+      else if (_tempdoc is Main.Services.FitFunctionInformation)
+      {
+        Main.Services.FitFunctionInformation info = (Main.Services.FitFunctionInformation)_tempdoc;
+        _doc = Altaxo.Main.Services.FitFunctionService.ReadFileBasedFitFunction(info);
+        return _doc!=null;
       }
 
       return false;

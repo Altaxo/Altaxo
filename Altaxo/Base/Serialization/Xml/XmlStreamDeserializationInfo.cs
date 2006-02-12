@@ -26,7 +26,7 @@ using System.Xml;
 namespace Altaxo.Serialization.Xml
 {
   /// <summary>
-  /// Summary description for XmlStreamSerializationInfo.
+  /// Deserializes object from a XML stream.
   /// </summary>
   public class XmlStreamDeserializationInfo : IXmlDeserializationInfo
   {
