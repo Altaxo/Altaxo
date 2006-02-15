@@ -356,7 +356,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       if (_fitElement.FitFunction == null)
         fitFuncName = "?";
       else if (_fitElement.FitFunction is Altaxo.Scripting.IFitFunctionScriptText)
-        fitFuncName = (_fitElement.FitFunction as Altaxo.Scripting.IFitFunctionScriptText).ScriptName;
+        fitFuncName = (_fitElement.FitFunction as Altaxo.Scripting.IFitFunctionScriptText).FitFunctionName;
       else
         fitFuncName = _fitElement.FitFunction.ToString();
 

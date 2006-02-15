@@ -282,6 +282,7 @@
     <Compile Include="Main\Services\FitFunctionService.cs" />
     <Compile Include="Main\Services\IBackgroundMonitor.cs" />
     <Compile Include="Main\Services\IFitFunctionService.cs" />
+    <Compile Include="Main\Services\RtfComposerService.cs" />
     <Compile Include="Scripting\FitFunctionScriptCollection.cs" />
     <Compile Include="Collections\AscendingIntegerCollection.cs">
       <SubType>Code</SubType>

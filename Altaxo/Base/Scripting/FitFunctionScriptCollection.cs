@@ -42,6 +42,11 @@ namespace Altaxo.Scripting
       return _InnerList.Contains(script);
     }
 
+    public void Remove(FitFunctionScript script)
+    {
+      if (_InnerList.Contains(script))
+        _InnerList.Remove(script);
+    }
   
     #region ICollection Members
 

@@ -144,6 +144,8 @@ namespace Altaxo.Calc.Regression.Nonlinear
         int k = (int)byName[fitele.ParameterName(i)];
           _currentParameters[k].Parameter = fitele.FitFunction.DefaultParameterValue(i);
       }
+
+      _currentParameters.OnInitializationFinished();
     }
 
     private void RecalculateParameterSet()

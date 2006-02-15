@@ -32,10 +32,12 @@ namespace Altaxo.Gui.Scripting
     FitFunctionScript _doc;
     string _tempName;
     string _tempCategory;
+    string _tempDescription;
     bool _tempShouldSave=false;
 
     ISingleValueController _controllerName;
     ISingleValueController _controllerCategory;
+    ISingleValueController _controllerDescription;
     IBooleanValueController _controllerShouldSaveInUserData;
 
     public FitFunctionNameAndCategoryController(FitFunctionScript doc)
@@ -46,14 +48,15 @@ namespace Altaxo.Gui.Scripting
 
       _controllerName = (ISingleValueController)Current.Gui.GetControllerAndControl(new object[] { _tempName }, typeof(ISingleValueController));
       _controllerCategory = (ISingleValueController)Current.Gui.GetControllerAndControl(new object[] { _tempCategory }, typeof(ISingleValueController));
-      _controllerShouldSaveInUserData = (IBooleanValueController)Current.Gui.GetControllerAndControl(new object[]{_tempShouldSave},typeof(IBooleanValueController));
+      _controllerCategory = (ISingleValueController)Current.Gui.GetControllerAndControl(new object[] { _tempDescription }, typeof(ISingleValueController));
+      _controllerShouldSaveInUserData = (IBooleanValueController)Current.Gui.GetControllerAndControl(new object[] { _tempShouldSave }, typeof(IBooleanValueController));
 
 
       _controllerName.DescriptionText = "Enter fit function name:";
       _controllerCategory.DescriptionText = "Enter fit function category:";
       _controllerShouldSaveInUserData.DescriptionText = "Save in user fit functions directory?";
 
-      base.Initialize(new IMVCAController[] { _controllerName, _controllerCategory ,_controllerShouldSaveInUserData});
+      base.Initialize(new IMVCAController[] { _controllerName, _controllerCategory, _controllerDescription, _controllerShouldSaveInUserData });
     }
 
     public override object ModelObject
@@ -66,7 +69,7 @@ namespace Altaxo.Gui.Scripting
 
     public override bool Apply()
     {
-      bool result1, result2;
+      bool result1, result2, result3;
 
       result1 = _controllerName.Apply();
       if (result1)
@@ -77,7 +80,11 @@ namespace Altaxo.Gui.Scripting
       if (result2)
         _tempCategory = (string)_controllerCategory.ModelObject;
 
-      if (result1 && result2)
+      result3 = _controllerDescription.Apply();
+      if (result3)
+        _tempDescription = (string)_controllerCategory.ModelObject;
+
+      if (result1 && result2 && result3)
       {
         // make sure that the name is not empty
         _tempName = _tempName.Trim();
@@ -89,6 +96,7 @@ namespace Altaxo.Gui.Scripting
 
         _doc.FitFunctionName = _tempName;
         _doc.FitFunctionCategory = _tempCategory;
+        _doc.FitFunctionDescription = _tempDescription;
 
 
         if (_controllerShouldSaveInUserData.Apply() && true == ((bool)_controllerShouldSaveInUserData.ModelObject))

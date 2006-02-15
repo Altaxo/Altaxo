@@ -79,6 +79,11 @@ namespace Altaxo.Calc.Regression.Nonlinear
       //
     }
 
+    public override string ToString()
+    {
+      return "HavriliakNegami Complex " + (_useFrequencyInsteadOmega ? "(Freq)" : "(Omeg)");
+    }
+
     [FitFunctionCreator("HavriliakNegami Complex (Omeg)", "Relaxation", 1, 2, 5)]
     public static IFitFunction CreateFofOmega()
     {

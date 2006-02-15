@@ -28,6 +28,7 @@ using System.Data;
 using System.Windows.Forms;
 using Altaxo.Main.GUI;
 using Altaxo.Calc.Regression.Nonlinear;
+using Altaxo.Main.Services;
 
 
 namespace Altaxo.Gui.Analysis.NonLinearFitting
@@ -46,6 +47,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     TreeNode _lastClickedNode;
     private ContextMenu _userFileLeafNodeContextMenu;
     private MenuItem menuContextEdit;
+    private MenuItem menuContextRemove;
+    private ContextMenu _appFileLeafNodeContextMenu;
+    private MenuItem menuItem1;
     /// <summary> 
     /// Required designer variable.
     /// </summary>
@@ -87,6 +91,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       this._rtbDescription = new System.Windows.Forms.RichTextBox();
       this._userFileLeafNodeContextMenu = new System.Windows.Forms.ContextMenu();
       this.menuContextEdit = new System.Windows.Forms.MenuItem();
+      this.menuContextRemove = new System.Windows.Forms.MenuItem();
+      this._appFileLeafNodeContextMenu = new System.Windows.Forms.ContextMenu();
+      this.menuItem1 = new System.Windows.Forms.MenuItem();
       this._splitContainer.Panel1.SuspendLayout();
       this._splitContainer.Panel2.SuspendLayout();
       this._splitContainer.SuspendLayout();
@@ -134,13 +141,30 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       // _userFileLeafNodeContextMenu
       // 
       this._userFileLeafNodeContextMenu.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-            this.menuContextEdit});
+            this.menuContextEdit,
+            this.menuContextRemove});
       // 
       // menuContextEdit
       // 
       this.menuContextEdit.Index = 0;
       this.menuContextEdit.Text = "Edit";
       this.menuContextEdit.Click += new System.EventHandler(this.menuContextEdit_Click);
+      // 
+      // menuContextRemove
+      // 
+      this.menuContextRemove.Index = 1;
+      this.menuContextRemove.Text = "Remove";
+      this.menuContextRemove.Click += new System.EventHandler(this.menuContextRemove_Click);
+      // 
+      // _appFileLeafNodeContextMenu
+      // 
+      this._appFileLeafNodeContextMenu.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+            this.menuItem1});
+      // 
+      // menuItem1
+      // 
+      this.menuItem1.Index = 0;
+      this.menuItem1.Text = "Edit";
       // 
       // FitFunctionSelectionControl
       // 
@@ -231,8 +255,8 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     class DocumentLeafNode : LeafNode
     {
-      public IFitFunction FunctionInstance;
-      public DocumentLeafNode(string text, IFitFunction func)
+      public Altaxo.Main.Services.IFitFunctionInformation FunctionInstance;
+      public DocumentLeafNode(string text, Altaxo.Main.Services.IFitFunctionInformation func)
         : base(text)
       {
         FunctionInstance = func;
@@ -242,8 +266,8 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     class UserFileLeafNode : LeafNode
     {
-      public Altaxo.Main.Services.FitFunctionInformation FunctionInfo;
-      public UserFileLeafNode(string text, Altaxo.Main.Services.FitFunctionInformation func)
+      public Altaxo.Main.Services.FileBasedFitFunctionInformation FunctionInfo;
+      public UserFileLeafNode(string text, Altaxo.Main.Services.FileBasedFitFunctionInformation func)
         : base(text)
       {
         FunctionInfo = func;
@@ -253,24 +277,27 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     #endregion
 
-    public void InitializeFitFunctionList(DictionaryEntry[] entries, Type currentSelection)
+    public void ClearFitFunctionList()
+    {
+      this._twFitFunctions.Nodes.Clear();
+    }
+
+    public void AddFitFunctionList(string rootname, Altaxo.Main.Services.IFitFunctionInformation[] entries, FitFunctionContextMenuStyle menustyle)
     {
       // The key of the entries is the FitFunctionAttribute, the value is the type of the fitting function
 
       this._twFitFunctions.BeginUpdate();
-      this._twFitFunctions.Nodes.Clear();
+      
 
-      RootNode rnode = new RootNode("Builtin", RootNodeType.Builtin);
+      RootNode rnode = new RootNode(rootname, RootNodeType.Builtin);
       this._twFitFunctions.Nodes.Add(rnode);
-      TreeNodeCollection root = rnode.Nodes; 
+      TreeNodeCollection root = rnode.Nodes;
 
 
-      foreach(DictionaryEntry entry in entries)
+      foreach (Altaxo.Main.Services.IFitFunctionInformation entry in entries)
       {
-        FitFunctionCreatorAttribute attr = (FitFunctionCreatorAttribute)entry.Key;
-        
 
-        string[] path = attr.Category.Split(new char[]{'\\','/'});
+        string[] path = entry.Category.Split(new char[]{'\\','/'});
 
         TreeNodeCollection where = root;
         for(int j=0;j<path.Length;j++)
@@ -284,111 +311,63 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
           where = node.Nodes;
         }
 
-        BuiltinLeafNode leaf = new BuiltinLeafNode(attr.Name,entry.Value);
-        where.Add(leaf);
-      }
-      this._twFitFunctions.EndUpdate();
-    }
+        BuiltinLeafNode leaf = new BuiltinLeafNode(entry.Name,entry);
 
-
-    public void InitializeUserFitFunctionList(Altaxo.Main.Services.FitFunctionInformation[] entries)
-    {
-        // The key of the entries is the name string, the value is the object
-
-      this._twFitFunctions.BeginUpdate();
-
-      RootNode rnode = new RootNode("User", RootNodeType.Document);
-      this._twFitFunctions.Nodes.Add(rnode);
-      TreeNodeCollection root = rnode.Nodes;
-
-      foreach (Altaxo.Main.Services.FitFunctionInformation entry in entries)
-      {
-        string[] path = entry.Category.Split(new char[] { '\\', '/' }, StringSplitOptions.RemoveEmptyEntries);
-        TreeNodeCollection where = root;
-        for (int j = 0; j < path.Length; j++)
+        switch (menustyle)
         {
-          TreeNode node = GetPathNode(where, path[j]);
-          if (node == null)
-          {
-            node = new CategoryNode(path[j]);
-            where.Add(node);
-          }
-          where = node.Nodes;
+          case FitFunctionContextMenuStyle.None:
+            break;
+          case FitFunctionContextMenuStyle.EditAndDelete:
+            leaf.ContextMenu = _userFileLeafNodeContextMenu;
+            break;
+          case FitFunctionContextMenuStyle.Edit:
+            leaf.ContextMenu = _appFileLeafNodeContextMenu;
+            break;
         }
-
-        TreeNode leaf = new UserFileLeafNode(entry.Name, entry);
-        leaf.ContextMenu = _userFileLeafNodeContextMenu;
-        where.Add(leaf);
-      }
-      this._twFitFunctions.EndUpdate();
-
-    }
-
-    public void InitializeDocumentFitFunctionList(DictionaryEntry[] entries, object currentSelection)
-    {
-      // The key of the entries is the name string, the value is the object
-
-      this._twFitFunctions.BeginUpdate();
-
-      RootNode rnode = new RootNode("Document", RootNodeType.Document);
-      this._twFitFunctions.Nodes.Add(rnode);
-      TreeNodeCollection root = rnode.Nodes;
-
-      foreach (DictionaryEntry entry in entries)
-      {
-        string fullname = (string)entry.Key;
-        IFitFunction fitfunc = (IFitFunction)entry.Value;
-
-        string[] path = fullname.Split(new char[] { '\\', '/' },StringSplitOptions.RemoveEmptyEntries);
-        
-        if(path.Length==0)
-          continue;
-
-        TreeNodeCollection where = root;
-        for (int j = 0; j < path.Length-1; j++)
-        {
-          TreeNode node = GetPathNode(where, path[j]);
-          if (node == null)
-          {
-            node = new CategoryNode(path[j]);
-            where.Add(node);
-          }
-          where = node.Nodes;
-        }
-
-        TreeNode leaf = new DocumentLeafNode(path[path.Length-1],fitfunc);
-        leaf.ContextMenu = _userFileLeafNodeContextMenu;
         where.Add(leaf);
       }
       this._twFitFunctions.EndUpdate();
     }
+
+
+  
+
+   
     #endregion
 
     private void _twFitFunctions_AfterSelect(object sender, System.Windows.Forms.TreeViewEventArgs e)
     {
       if(_controller!=null)
-        _controller.EhView_SelectionChanged(e.Node.Tag);
+        _controller.EhView_SelectionChanged(e.Node.Tag as IFitFunctionInformation);
+
+      if (e.Node.Tag is IFitFunctionInformation)
+      {
+        Altaxo.Main.Services.IFitFunctionInformation info = e.Node.Tag as IFitFunctionInformation;
+        _rtbDescription.Rtf = Altaxo.Main.Services.RtfComposerService.GetRtfText(info.Description, _rtbDescription.BackColor);
+      }
     }
 
     private void EhEditItem(object sender, EventArgs e)
     {
       if (_controller != null)
-        _controller.EhView_EditItem(_twFitFunctions.SelectedNode.Tag);
+        _controller.EhView_EditItem(_twFitFunctions.SelectedNode.Tag as IFitFunctionInformation);
     }
-
- 
-
-  
 
     private void menuContextEdit_Click(object sender, EventArgs e)
     {
       if (_controller != null)
-        _controller.EhView_EditItem(_lastClickedNode.Tag);
+        _controller.EhView_EditItem(_lastClickedNode.Tag as IFitFunctionInformation);
+    }
+
+    private void menuContextRemove_Click(object sender, EventArgs e)
+    {
+      if (_controller != null)
+        _controller.EhView_RemoveItem(_lastClickedNode.Tag as IFitFunctionInformation);
     }
 
     private void _twFitFunctions_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
     {
-      this._lastClickedNode = e.Node;
+      _lastClickedNode = e.Node;
     }
 
   }

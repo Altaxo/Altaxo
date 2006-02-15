@@ -288,6 +288,11 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       this._edChiSqr.Text = Altaxo.Serialization.GUIConversion.ToString(chiSquare);
     }
 
+    public void SwitchToFitEnsemblePage()
+    {
+      this._tabControl.SelectedTab = this._tpFitEnsemble;
+    }
+
     #endregion
 
     private void _btDoFit_Click(object sender, System.EventArgs e)

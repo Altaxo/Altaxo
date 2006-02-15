@@ -39,6 +39,12 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       //
     }
 
+    public override string ToString()
+    {
+      return "KohlrauschDecay";
+    }
+
+
     [FitFunctionCreator("KohlrauschDecay", "Relaxation", 1, 1, 4)]
     [System.ComponentModel.Description("FitFunctions.Relaxation.Kohlrausch.Decay")]
     public static IFitFunction CreateDefault()
@@ -162,6 +168,11 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       //
       // TODO: Add constructor logic here
       //
+    }
+
+    public override string ToString()
+    {
+      return "Kohlrausch Complex " + (_useFrequencyInsteadOmega ? "(Freq)" : "(Omeg)");
     }
 
     [FitFunctionCreator("Kohlrausch Complex (Omega)", "Retardation/Dielectrics", 1, 2, 4)]
@@ -326,6 +337,11 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       //
       // TODO: Add constructor logic here
       //
+    }
+
+    public override string ToString()
+    {
+      return "Kohlrausch Modulus Complex " + (_useFrequencyInsteadOmega ? "(Freq)" : "(Omeg)");
     }
 
     [FitFunctionCreator("Kohlrausch Complex (Omega)", "Retardation/Modulus", 1, 2, 4)]

@@ -52,6 +52,28 @@ namespace Altaxo.Scripting
     new int NumberOfParameters { get; set; }
 
     void CopyFrom(IFitFunctionScriptText from, bool forModification);
+
+    /// <summary>
+    /// Date/Time of creating this fit function.
+    /// </summary>
+    DateTime CreationTime { get; }
+
+    /// <summary>
+    /// Name of the fit function.
+    /// </summary>
+    string FitFunctionName {get; set;}
+
+    /// <summary>
+    /// Category of the fit function. If the fit function category contains PathSeparatorChars, than the
+    /// parts of the string that are separated by these chars are treated as separate sub-categories.
+    /// </summary>
+    string FitFunctionCategory { get; set; }
+
+    /// <summary>
+    /// Descriptional text for that fit function.
+    /// </summary>
+    string FitFunctionDescription { get; set; }
+
   }
 
   /// <summary>
@@ -82,12 +104,16 @@ namespace Altaxo.Scripting
     string _fitFunctionName = "User1";
     string _fitFunctionCategory = "UserCat";
     DateTime _fitFunctionCreationTime = DateTime.Now;
+    string _fitFunctionDescription = string.Empty;
 
     public DateTime CreationTime
     {
       get { return _fitFunctionCreationTime; }
     }
 
+    /// <summary>
+    /// Name of the fit function.
+    /// </summary>
     public string FitFunctionName
     {
       get { return _fitFunctionName; }
@@ -95,10 +121,23 @@ namespace Altaxo.Scripting
     }
     
 
+    /// <summary>
+    /// Category of the fit function. If the fit function category contains PathSeparatorChars, than the
+    /// parts of the string that are separated by these chars are treated as separate sub-categories.
+    /// </summary>
     public string FitFunctionCategory
     {
       get { return _fitFunctionCategory; }
       set { _fitFunctionCategory = value; }
+    }
+
+    /// <summary>
+    /// Descriptional text for that fit function.
+    /// </summary>
+    public string FitFunctionDescription
+    {
+      get { return _fitFunctionDescription; }
+      set { _fitFunctionDescription = value; }
     }
 
     public override bool Equals(object obj)
@@ -232,6 +271,84 @@ namespace Altaxo.Scripting
         info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(info_DeserializationFinished);
 
         if(documentRoot is AltaxoDocument)
+        {
+          AltaxoDocument doc = documentRoot as AltaxoDocument;
+
+          // add this script to the collection of scripts
+          doc.FitFunctionScripts.Add(_deserializedObject);
+        }
+      }
+    }
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FitFunctionScript), 2)]
+    public class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      FitFunctionScript _deserializedObject;
+
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        FitFunctionScript s = (FitFunctionScript)obj;
+
+        // Update the user defined paramter names
+        if (s.m_ScriptObject != null && s.IsUsingUserDefinedParameterNames)
+        {
+          IFitFunction ff = (IFitFunction)s.m_ScriptObject;
+          if (s._UserDefinedParameterNames == null || s._UserDefinedParameterNames.Length != ff.NumberOfParameters)
+            s._UserDefinedParameterNames = new string[ff.NumberOfParameters];
+          for (int i = 0; i < ff.NumberOfParameters; ++i)
+            s._UserDefinedParameterNames[i] = ff.ParameterName(i);
+        }
+
+        info.AddValue("Category", s.FitFunctionCategory);
+        info.AddValue("Name", s.FitFunctionName);
+        info.AddValue("CreationTime", s._fitFunctionCreationTime);
+        info.AddValue("Description", s.FitFunctionName);
+
+        info.AddBaseValueEmbedded(s, typeof(AbstractScript));
+
+        info.AddValue("NumberOfParameters", s.NumberOfParameters);
+        info.AddValue("UserDefinedParameters", s.IsUsingUserDefinedParameterNames);
+        if (s.IsUsingUserDefinedParameterNames)
+        {
+          info.AddArray("UserDefinedParameterNames", s._UserDefinedParameterNames, s._UserDefinedParameterNames.Length);
+        }
+
+        info.AddArray("IndependentVariableNames", s._IndependentVariablesNames, s._IndependentVariablesNames.Length);
+        info.AddArray("DependentVariableNames", s._DependentVariablesNames, s._DependentVariablesNames.Length);
+
+      }
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        FitFunctionScript s = null != o ? (FitFunctionScript)o : new FitFunctionScript();
+
+
+        s._fitFunctionCategory = info.GetString("Category");
+        s._fitFunctionName = info.GetString("Name");
+        s._fitFunctionCreationTime = info.GetDateTime("CreationTime");
+        s._fitFunctionDescription = info.GetString("Description");
+
+        // deserialize the base class
+        info.GetBaseValueEmbedded(s, typeof(AbstractScript), parent);
+
+        s._NumberOfParameters = info.GetInt32("NumberOfParameters");
+        s._IsUsingUserDefinedParameterNames = info.GetBoolean("UserDefinedParameters");
+        if (s._IsUsingUserDefinedParameterNames)
+          info.GetArray("UserDefinedParameterNames", out s._UserDefinedParameterNames);
+        info.GetArray("IndependentVariableNames", out s._IndependentVariablesNames);
+        info.GetArray("DependentVariableNames", out s._DependentVariablesNames);
+
+        XmlSerializationSurrogate2 surr = new XmlSerializationSurrogate2();
+        surr._deserializedObject = s;
+        info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.info_DeserializationFinished);
+
+        return s;
+      }
+
+      private void info_DeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot)
+      {
+        info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(info_DeserializationFinished);
+
+        if (documentRoot is AltaxoDocument)
         {
           AltaxoDocument doc = documentRoot as AltaxoDocument;
 

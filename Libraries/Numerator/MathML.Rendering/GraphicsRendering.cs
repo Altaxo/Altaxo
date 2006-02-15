@@ -268,16 +268,16 @@ namespace MathML.Rendering
         _rtf = new StringBuilder();
         _stream = new MemoryStream();
 
-          // Get the device context from the graphics context
-           _hdc = Win32.GetDC(IntPtr.Zero);
+        // Get the device context from the graphics context
+        _hdc = Win32.GetDC(IntPtr.Zero);
 
-          
 
-          // Create a new Enhanced Metafile from the device context
-          _metaFile = new Metafile(_stream, _hdc);
 
-          // Release the device context
-          Win32.ReleaseDC(IntPtr.Zero, _hdc);
+        // Create a new Enhanced Metafile from the device context
+        _metaFile = new Metafile(_stream, _hdc);
+
+        // Release the device context
+        Win32.ReleaseDC(IntPtr.Zero, _hdc);
 
 
         // Get a graphics context from the Enhanced Metafile

@@ -38,6 +38,8 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     void SetSelectFunctionControl(object control);
     void SetFitEnsembleControl(object control);
     void SetChiSquare(double chiSquare);
+
+    void SwitchToFitEnsemblePage();
   }
 
   public interface INonlinearFitViewEventSink
@@ -68,18 +70,18 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     public NonlinearFitController(NonlinearFitDocument doc)
     {
       _doc = doc;
-      _parameterController = (Main.GUI.IMVCAController)Current.Gui.GetControllerAndControl(new object[]{_doc.CurrentParameters},typeof(Main.GUI.IMVCAController));
-      _fitEnsembleController = (IFitEnsembleController)Current.Gui.GetControllerAndControl(new object[]{_doc.FitEnsemble},typeof(IFitEnsembleController));
+      _parameterController = (Main.GUI.IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _doc.CurrentParameters }, typeof(Main.GUI.IMVCAController));
+      _fitEnsembleController = (IFitEnsembleController)Current.Gui.GetControllerAndControl(new object[] { _doc.FitEnsemble }, typeof(IFitEnsembleController));
 
-      _funcselController = new FitFunctionSelectionController(_doc.FitEnsemble.Count==0 ? null : _doc.FitEnsemble[0].FitFunction);
+      _funcselController = new FitFunctionSelectionController(_doc.FitEnsemble.Count == 0 ? null : _doc.FitEnsemble[0].FitFunction);
       Current.Gui.GetControl(_funcselController);
-    
+
       _doc.FitEnsemble.Changed += new EventHandler(EhFitEnsemble_Changed);
     }
 
     public void Initialize()
     {
-      if(_view!=null)
+      if (_view != null)
       {
         _view.SetParameterControl(_parameterController.ViewObject);
         _view.SetSelectFunctionControl(_funcselController.ViewObject);
@@ -95,11 +97,11 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     public void EhView_DoSimplex()
     {
-      if(true==this._parameterController.Apply())
+      if (true == this._parameterController.Apply())
       {
         //        _doc.FitEnsemble.InitializeParametersFromParameterSet(_doc.CurrentParameters);
 
-        LevMarAdapter fitAdapter = new LevMarAdapter(_doc.FitEnsemble,_doc.CurrentParameters);
+        LevMarAdapter fitAdapter = new LevMarAdapter(_doc.FitEnsemble, _doc.CurrentParameters);
 
         fitAdapter.DoSimplexMinimization();
 
@@ -109,7 +111,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
         //_doc.FitEnsemble.InitializeParametersFromParameterSet(_doc.CurrentParameters);
         //_doc.FitEnsemble.DistributeParameters();
-        
+
         OnAfterFittingStep();
       }
       else
@@ -121,12 +123,12 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     public void EhView_DoFit()
     {
-      if(true==this._parameterController.Apply())
+      if (true == this._parameterController.Apply())
       {
         //        _doc.FitEnsemble.InitializeParametersFromParameterSet(_doc.CurrentParameters);
 
-        LevMarAdapter fitAdapter = new LevMarAdapter(_doc.FitEnsemble,_doc.CurrentParameters);
-  
+        LevMarAdapter fitAdapter = new LevMarAdapter(_doc.FitEnsemble, _doc.CurrentParameters);
+
         fitAdapter.Fit();
 
         this._chiSquare = fitAdapter.ResultingChiSquare;
@@ -135,7 +137,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
         //_doc.FitEnsemble.InitializeParametersFromParameterSet(_doc.CurrentParameters);
         //_doc.FitEnsemble.DistributeParameters();
-        
+
         OnAfterFittingStep();
       }
       else
@@ -144,11 +146,11 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       }
     }
 
-    public     void EhView_EvaluateChiSqr()
+    public void EhView_EvaluateChiSqr()
     {
-      if(true==this._parameterController.Apply())
+      if (true == this._parameterController.Apply())
       {
-        LevMarAdapter fitAdapter = new LevMarAdapter(_doc.FitEnsemble,_doc.CurrentParameters);
+        LevMarAdapter fitAdapter = new LevMarAdapter(_doc.FitEnsemble, _doc.CurrentParameters);
         this._chiSquare = fitAdapter.EvaluateChiSquare();
         //_doc.FitEnsemble.InitializeParametersFromParameterSet(_doc.CurrentParameters);
         //_doc.FitEnsemble.DistributeParameters();
@@ -161,22 +163,22 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     }
 
 
-    enum SelectionChoice { SelectAsOnly, SelectAsAdditional};
-    SelectionChoice _lastSelectionChoice=SelectionChoice.SelectAsOnly;
+    enum SelectionChoice { SelectAsOnly, SelectAsAdditional };
+    SelectionChoice _lastSelectionChoice = SelectionChoice.SelectAsOnly;
     void Select(IFitFunction func)
     {
       bool changed = false;
-      if(_doc.FitEnsemble.Count==0) // Fitting is fresh, we can add the function silently
+      if (_doc.FitEnsemble.Count == 0) // Fitting is fresh, we can add the function silently
       {
         FitElement newele = new FitElement();
         newele.FitFunction = func;
         _doc.FitEnsemble.Add(newele);
         _doc.SetDefaultParametersForFitElement(0);
-        changed=true;
+        changed = true;
       }
-      else if(_doc.FitEnsemble.Count>0 && _doc.FitEnsemble[_doc.FitEnsemble.Count-1].FitFunction==null)
+      else if (_doc.FitEnsemble.Count > 0 && _doc.FitEnsemble[_doc.FitEnsemble.Count - 1].FitFunction == null)
       {
-        _doc.FitEnsemble[_doc.FitEnsemble.Count-1].FitFunction = func;
+        _doc.FitEnsemble[_doc.FitEnsemble.Count - 1].FitFunction = func;
         _doc.SetDefaultParametersForFitElement(_doc.FitEnsemble.Count - 1);
         changed = true;
       }
@@ -184,23 +186,23 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       { // have to ask the user whether he wants to discard the old functions or keep them
 
         System.Enum selchoice = _lastSelectionChoice;
-        if(Current.Gui.ShowDialog(ref selchoice,"As only or as additional?"))
+        if (Current.Gui.ShowDialog(ref selchoice, "As only or as additional?"))
         {
           _lastSelectionChoice = (SelectionChoice)selchoice;
-          if(_lastSelectionChoice==SelectionChoice.SelectAsAdditional)
+          if (_lastSelectionChoice == SelectionChoice.SelectAsAdditional)
           {
             FitElement newele = new FitElement();
             newele.FitFunction = func;
             _doc.FitEnsemble.Add(newele);
             _doc.SetDefaultParametersForFitElement(_doc.FitEnsemble.Count - 1);
-            changed=true;
+            changed = true;
           }
           else // select as only
           {
             _doc.FitEnsemble[0].FitFunction = func;
             _doc.SetDefaultParametersForFitElement(0);
 
-            for(int i= _doc.FitEnsemble.Count-1;i>=1;--i)
+            for (int i = _doc.FitEnsemble.Count - 1; i >= 1; --i)
               _doc.FitEnsemble.RemoveAt(i);
 
             changed = true;
@@ -208,23 +210,24 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         }
       }
 
-      if(changed)
+      if (changed)
       {
         // _doc.FitEnsemble.InitializeParameterSetFromEnsembleParameters(_doc.CurrentParameters);
-        
-        this._fitEnsembleController.Refresh();
 
+        this._fitEnsembleController.Refresh();
+      
       }
     }
 
 
     public void EhView_SelectFitFunction()
     {
-      
 
-      if(_funcselController.Apply())
+
+      if (_funcselController.Apply())
       {
-        Select((IFitFunction)_funcselController.ModelObject);       
+        Select((IFitFunction)_funcselController.ModelObject);
+        _view.SwitchToFitEnsemblePage();
       }
 
     }
@@ -234,7 +237,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       FitFunctionScript script = new FitFunctionScript();
 
       object scriptAsObject = script;
-      if(Current.Gui.ShowDialog(ref scriptAsObject,"Create fit function"))
+      if (Current.Gui.ShowDialog(ref scriptAsObject, "Create fit function"))
       {
         script = (FitFunctionScript)scriptAsObject;
 
@@ -243,45 +246,45 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         Current.Project.FitFunctionScripts.Add(script);
 
         Select(script);
-
         _funcselController.Refresh();
-        
+        _view.SwitchToFitEnsemblePage();
+
       }
     }
 
     System.Collections.ArrayList _functionPlotItems = new System.Collections.ArrayList();
     public void OnAfterFittingStep()
     {
-      
-     
-      if(_view!=null)
+
+
+      if (_view != null)
         _view.SetChiSquare(this._chiSquare);
 
- 
 
-      if(_doc.FitContext is Altaxo.Graph.GUI.GraphController)
+
+      if (_doc.FitContext is Altaxo.Graph.GUI.GraphController)
       {
         // for every dependent variable in the FitEnsemble, create a function graph
         Altaxo.Graph.GUI.GraphController graph = _doc.FitContext as Altaxo.Graph.GUI.GraphController;
 
-        int funcNumber=0;
-        for(int i=0;i<_doc.FitEnsemble.Count;i++)
+        int funcNumber = 0;
+        for (int i = 0; i < _doc.FitEnsemble.Count; i++)
         {
           FitElement fitEle = _doc.FitEnsemble[i];
 
-          for(int k=0;k<fitEle.NumberOfDependentVariables;k++, funcNumber++)
+          for (int k = 0; k < fitEle.NumberOfDependentVariables; k++, funcNumber++)
           {
-            if(funcNumber<_functionPlotItems.Count && _functionPlotItems[funcNumber]!=null)
+            if (funcNumber < _functionPlotItems.Count && _functionPlotItems[funcNumber] != null)
             {
               Altaxo.Graph.XYFunctionPlotItem plotItem = (Altaxo.Graph.XYFunctionPlotItem)_functionPlotItems[funcNumber];
               FitFunctionToScalarFunctionDDWrapper wrapper = (FitFunctionToScalarFunctionDDWrapper)plotItem.Data.Function;
-              wrapper.Initialize(fitEle.FitFunction,k,0,_doc.GetParametersForFitElement(i));
+              wrapper.Initialize(fitEle.FitFunction, k, 0, _doc.GetParametersForFitElement(i));
             }
             else
             {
-              FitFunctionToScalarFunctionDDWrapper wrapper = new FitFunctionToScalarFunctionDDWrapper(fitEle.FitFunction,k, _doc.GetParametersForFitElement(i));
+              FitFunctionToScalarFunctionDDWrapper wrapper = new FitFunctionToScalarFunctionDDWrapper(fitEle.FitFunction, k, _doc.GetParametersForFitElement(i));
               Altaxo.Graph.XYFunctionPlotData plotdata = new Altaxo.Graph.XYFunctionPlotData(wrapper);
-              Altaxo.Graph.XYFunctionPlotItem plotItem = new Altaxo.Graph.XYFunctionPlotItem(plotdata,new Altaxo.Graph.XYPlotStyleCollection(LineScatterPlotStyleKind.Line));
+              Altaxo.Graph.XYFunctionPlotItem plotItem = new Altaxo.Graph.XYFunctionPlotItem(plotdata, new Altaxo.Graph.XYPlotStyleCollection(LineScatterPlotStyleKind.Line));
               graph.ActiveLayer.PlotItems.Add(plotItem);
               _functionPlotItems.Add(plotItem);
             }
@@ -289,9 +292,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         }
 
         // if there are more elements in _functionPlotItems, remove them from the graph
-        for(int i=_functionPlotItems.Count-1;i>=funcNumber;--i)
+        for (int i = _functionPlotItems.Count - 1; i >= funcNumber; --i)
         {
-          if(_functionPlotItems[i]!=null)
+          if (_functionPlotItems[i] != null)
           {
             graph.ActiveLayer.PlotItems.Remove((Altaxo.Graph.PlotItem)_functionPlotItems[i]);
             _functionPlotItems.RemoveAt(i);
@@ -309,19 +312,19 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     {
       get
       {
-        
+
         return _view;
       }
       set
       {
-        if(_view!=null)
+        if (_view != null)
           _view.Controller = null;
 
         _view = value as INonlinearFitView;
-        
+
         Initialize();
 
-        if(_view!=null)
+        if (_view != null)
           _view.Controller = this;
       }
     }
@@ -345,6 +348,6 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     #endregion
 
-   
+
   }
 }

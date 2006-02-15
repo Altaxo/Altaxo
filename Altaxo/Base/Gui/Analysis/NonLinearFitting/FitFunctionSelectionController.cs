@@ -29,18 +29,22 @@ using System.Collections;
 using System.Reflection;
 using Altaxo.Scripting;
 using Altaxo.Calc.Regression.Nonlinear;
+using Altaxo.Main.Services;
 
 namespace Altaxo.Gui.Analysis.NonLinearFitting
 {
+  public enum FitFunctionContextMenuStyle
+  {
+    None, 
+    Edit,
+    EditAndDelete
+  }
 
   public interface IFitFunctionSelectionView
   {
-   
-
     IFitFunctionSelectionViewEventSink Controller { get; set; }
-    void InitializeFitFunctionList(DictionaryEntry[] entries, System.Type currentSelection);
-    void InitializeDocumentFitFunctionList(DictionaryEntry[] entries, object currentSelection);
-    void InitializeUserFitFunctionList(Altaxo.Main.Services.FitFunctionInformation[] entries);
+    void ClearFitFunctionList();
+    void AddFitFunctionList(string rootname, Altaxo.Main.Services.IFitFunctionInformation[] info, FitFunctionContextMenuStyle menustyle);
 
     void SetRtfDocumentation(string rtfString);
     Color GetRtfBackgroundColor();
@@ -48,8 +52,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
   public interface IFitFunctionSelectionViewEventSink
   {
-    void EhView_SelectionChanged(object selectedtag);
-    void EhView_EditItem(object selectedtag);
+    void EhView_SelectionChanged(IFitFunctionInformation selectedtag);
+    void EhView_EditItem(IFitFunctionInformation selectedtag);
+    void EhView_RemoveItem(IFitFunctionInformation selectedtag);
   }
 
   public interface IFitFunctionSelectionController : Main.GUI.IMVCAController
@@ -60,13 +65,13 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
   public class FitFunctionSelectionController : IFitFunctionSelectionViewEventSink, Main.GUI.IMVCAController
   {
     IFitFunction _doc;
-    object _tempdoc;
+    IFitFunctionInformation _tempdoc;
     IFitFunctionSelectionView _view;
 
     public FitFunctionSelectionController(IFitFunction doc)
     {
       _doc = doc;
-      _tempdoc = doc;
+      _tempdoc = null;
       Initialize();
     }
 
@@ -80,173 +85,46 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     {
       if(_view!=null)
       {
-        DictionaryEntry[] classentries = Altaxo.Main.Services.ReflectionService.GetAttributeInstancesAndClassTypes(typeof(FitFunctionClassAttribute));
-
-        SortedList list = new SortedList();
-
-        foreach (DictionaryEntry entry in classentries)
-        {
-          System.Type definedtype = (System.Type)entry.Value;
-
-          MethodInfo[] methods = definedtype.GetMethods(System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public);
-          foreach (MethodInfo method in methods)
-          {
-            if (method.IsStatic && method.ReturnType != typeof(void) && method.GetParameters().Length==0)
-            {
-              object[] attribs = method.GetCustomAttributes(typeof(FitFunctionCreatorAttribute), false);
-              foreach(FitFunctionCreatorAttribute creatorattrib in attribs)
-                list.Add(creatorattrib,method);
-            }
-          }
-        }
-
-
-        DictionaryEntry[] entries = new DictionaryEntry[list.Count];
-        int j = 0;
-        foreach (DictionaryEntry entry in list)
-        {
-          entries[j++] = entry;
-        }
-
-
-        _view.InitializeFitFunctionList(entries, _tempdoc==null ? null : _tempdoc.GetType());
-        _view.InitializeDocumentFitFunctionList(GetDocumentEntries(), null);
-        _view.InitializeUserFitFunctionList(Current.FitFunctionService.GetUserDefinedFitFunctions());
+        _view.ClearFitFunctionList();
+        _view.AddFitFunctionList("Builtin functions", Current.FitFunctionService.GetBuiltinFitFunctions(), FitFunctionContextMenuStyle.None);
+        _view.AddFitFunctionList("Application functions", Current.FitFunctionService.GetApplicationFitFunctions(), FitFunctionContextMenuStyle.Edit);
+        _view.AddFitFunctionList("User functions", Current.FitFunctionService.GetUserDefinedFitFunctions(), FitFunctionContextMenuStyle.EditAndDelete);
+        _view.AddFitFunctionList("Document functions", Current.FitFunctionService.GetDocumentFitFunctions(), FitFunctionContextMenuStyle.EditAndDelete);
       }
     }
 
 
-    DictionaryEntry[] GetDocumentEntries()
+  
+    public void EhView_SelectionChanged(IFitFunctionInformation selectedtag)
     {
-      ArrayList arr = new ArrayList();
-      foreach(FitFunctionScript func in Current.Project.FitFunctionScripts)
-      {
-        arr.Add(new DictionaryEntry(func.FitFunctionCategory+"\\"+func.FitFunctionName,func));
-      }
-
-      return (DictionaryEntry[])arr.ToArray(typeof(DictionaryEntry));
-    }
-
-    public void EhView_SelectionChanged(object selectedtag)
-    {
-      if(selectedtag is System.Type)
-      {
-        _tempdoc = System.Activator.CreateInstance((System.Type)selectedtag) as IFitFunction;
-      }
-      else if (selectedtag is MethodInfo)
-      {
-        _tempdoc = ((MethodInfo)selectedtag).Invoke(null,new object[]{}) as IFitFunction;
-        SetDocumentation((MethodInfo)selectedtag);
-      }
-      else if (selectedtag is IFitFunction)
-      {
-        _tempdoc = (IFitFunction)selectedtag;
-      }
-      else if (selectedtag is Altaxo.Main.Services.FitFunctionInformation)
-      {
         _tempdoc = selectedtag;
-      }
-    }
-
-    private void SetDocumentation(MethodInfo method)
-    {
-      object[] attribs = method.GetCustomAttributes(typeof(System.ComponentModel.DescriptionAttribute), false);
-      
-      SetDocumentationText(attribs.Length==0 ? string.Empty : ((System.ComponentModel.DescriptionAttribute)attribs[0]).Description);
-    }
-
-    private void SetDocumentationText(string resource)
-    {
-      string[] resources = resource.Split(new char[]{';',' '},StringSplitOptions.RemoveEmptyEntries);
-
-      System.Text.StringBuilder stb = new StringBuilder();
-
-      foreach (string res in resources)
-      {
-        if (res.StartsWith("p:"))
-        {
-          // TODO : Load from a bitmap resource here and add the bitmap to the rtf text
-         
-        }
-        else
-        {
-          string rawtext = Current.ResourceService.GetString(res);
-          if(rawtext!=null && rawtext.Length>0)
-            ComposeText(stb, rawtext);
-        }
-      }
-
-      if (stb.Length != 0)
-        stb.Append(texttrailer);
-
-      _view.SetRtfDocumentation(stb.ToString());
-    }
-
-    string textheader =
-   @"{\rtf1\ansi\ansicpg1252\deff0\deflang1033{\fonttbl{\f0\fswiss\fcharset0 Arial;}}" +
-   @"\viewkind4\uc1\pard\f0\fs20 ";
-
-    string texttrailer = @"}";
-    string imageheader = @"{\pict\wmetafile8 ";
-    string imagetrailer = "}";
-
-    MathML.Rendering.GraphicsRendering _mmlRendering = new MathML.Rendering.GraphicsRendering();
-    void ComposeText(StringBuilder stb, string rawtext)
-    {
-      if(stb.Length==0)
-        stb.Append(textheader);
-
-      int currpos = 0;
-      for (; ; )
-      {
-        int startidx = rawtext.IndexOf("<math>", currpos);
-        if (startidx < 0)
-          break;
-        int endidx = rawtext.IndexOf("</math>", startidx);
-        if (endidx < 0)
-          break;
-        endidx += "</math>".Length;
-
-        // all text from currpos to startidx-1 can be copyied to the stringbuilder
-        stb.Append(rawtext, currpos, startidx - currpos);
-
-        // all text from startidx to endidx-1 must be loaded into the control and rendered
-        System.IO.StringReader rd = new StringReader(rawtext.Substring(startidx, endidx - startidx));
-        MathML.MathMLDocument doc = new MathML.MathMLDocument();
-        doc.Load(rd);
-        rd.Close();
-        _mmlRendering.BackColor = _view.GetRtfBackgroundColor();
-        _mmlRendering.MathElement = (MathML.MathMLMathElement)doc.DocumentElement;
-
-        System.Drawing.Image mf = _mmlRendering.GetImage(typeof(Bitmap));
-        GraphicsUnit unit = GraphicsUnit.Point;
-        RectangleF rect = mf.GetBounds(ref unit);
-        string imagetext = _mmlRendering.GetRtfImage(mf);
-        stb.Append(imageheader);
-        stb.Append(@"\picwgoal" + Math.Ceiling(15 * rect.Width).ToString());
-        stb.Append(@"\pichgoal" + Math.Ceiling(15 * rect.Height).ToString());
-        stb.Append(" ");
-        stb.Append(imagetext);
-        stb.Append(imagetrailer);
-
-        currpos = endidx;
-      }
-
-      stb.Append(rawtext, currpos, rawtext.Length - currpos);
     }
 
 
-
-    public void EhView_EditItem(object selectedtag)
+    public void EhView_EditItem(IFitFunctionInformation selectedtag)
     {
-      if (selectedtag is IFitFunction)
+      if (selectedtag is DocumentFitFunctionInformation)
       {
-        EditItem((IFitFunction)selectedtag);
+        EditItem(selectedtag.CreateFitFunction());
       }
-      else if (selectedtag is Altaxo.Main.Services.FitFunctionInformation)
+      else if (selectedtag is FileBasedFitFunctionInformation)
       {
-        IFitFunction func = Altaxo.Main.Services.FitFunctionService.ReadFileBasedFitFunction(selectedtag as Altaxo.Main.Services.FitFunctionInformation);
+        IFitFunction func = Altaxo.Main.Services.FitFunctionService.ReadUserDefinedFitFunction(selectedtag as Altaxo.Main.Services.FileBasedFitFunctionInformation);
         EditItem(func);
+      }
+    }
+
+    public void EhView_RemoveItem(IFitFunctionInformation selectedtag)
+    {
+      if (selectedtag is DocumentFitFunctionInformation)
+      {
+        Current.Project.FitFunctionScripts.Remove(selectedtag.CreateFitFunction() as FitFunctionScript);
+        Initialize();
+      }
+      else if (selectedtag is FileBasedFitFunctionInformation)
+      {
+        Current.FitFunctionService.RemoveUserDefinedFitFunction(selectedtag as Altaxo.Main.Services.FileBasedFitFunctionInformation);
+        Initialize();
       }
     }
 
@@ -313,20 +191,19 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     public bool Apply()
     {
-      
-      if(_tempdoc is IFitFunction)
+      if (_tempdoc == null) // nothing selected, so return the original doc
+        return true;
+
+
+      try
       {
-        _doc = (IFitFunction)_tempdoc;
+        _doc = _tempdoc.CreateFitFunction();
         return true;
       }
-
-      else if (_tempdoc is Main.Services.FitFunctionInformation)
+      catch (Exception ex)
       {
-        Main.Services.FitFunctionInformation info = (Main.Services.FitFunctionInformation)_tempdoc;
-        _doc = Altaxo.Main.Services.FitFunctionService.ReadFileBasedFitFunction(info);
-        return _doc!=null;
+        Current.Gui.ErrorMessageBox("Can not create fit function. An exception was thrown: " + ex.Message);
       }
-
       return false;
     }
 
