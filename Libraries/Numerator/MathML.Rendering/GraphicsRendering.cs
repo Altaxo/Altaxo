@@ -26,9 +26,15 @@ namespace MathML.Rendering
     private Area area = null;
 
     // root of the formatting tree
-    private Area format = null;        
+    private Area format = null;
 
-   	private int fontSize = FormattingContext.DefaultFontPointSize;
+    private int fontSize = FormattingContext.DefaultFontPointSize;
+
+    public int FontSize
+    {
+      get { return fontSize; }
+      set { fontSize = value; }
+    }
 
     Image BackgroundImage=null;
     public Color BackColor=Color.Transparent;
@@ -72,8 +78,9 @@ namespace MathML.Rendering
     /// </summary>
     /// <param name="type">The type of image to return, currently this can be
     /// either Bitmap or Metafile</param>
+    /// <param name="gr">The graphics context in which this bitmap should be created.</param>
     /// <returns>A new image, null if an invalid type is given or there is no current element</returns>
-    public Image GetImage(Type type)
+    public Image GetImage(Type type, Graphics gr)
     {
       Image image = null;
       int height = (int)Math.Ceiling(box.VerticalExtent);
@@ -85,17 +92,21 @@ namespace MathML.Rendering
       }
       else if(type.Equals(typeof(Metafile)))
       {
-        IntPtr screenDc = Win32.GetDC(IntPtr.Zero);
+        //IntPtr screenDc = Win32.GetDC(IntPtr.Zero);
+        IntPtr screenDc = gr.GetHdc();
         image = new Metafile(new MemoryStream(), screenDc, EmfType.EmfOnly);
-        Win32.ReleaseDC(IntPtr.Zero, screenDc);
+        //Win32.ReleaseDC(IntPtr.Zero, screenDc);
+        gr.ReleaseHdc(screenDc);
       }
 
       if(image != null && area != null)
       {
-        IntPtr screenDc = Win32.GetDC(IntPtr.Zero);			
+        //IntPtr screenDc = Win32.GetDC(IntPtr.Zero);			
+        IntPtr screenDc = gr.GetHdc();
         IntPtr mathBmpDc = Win32.CreateCompatibleDC(screenDc);	
         IntPtr mathBmpHandle = Win32.CreateCompatibleBitmap(screenDc, width, height);	
-        Win32.ReleaseDC(IntPtr.Zero, screenDc);						
+        //Win32.ReleaseDC(IntPtr.Zero, screenDc);						
+        gr.ReleaseHdc(screenDc);
 
         Win32.SetBkMode(mathBmpDc, Win32.TRANSPARENT);							
 

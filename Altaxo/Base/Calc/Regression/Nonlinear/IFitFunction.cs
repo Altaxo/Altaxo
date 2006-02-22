@@ -75,6 +75,14 @@ namespace Altaxo.Calc.Regression.Nonlinear
     double DefaultParameterValue(int i);
 
     /// <summary>
+    /// Returns the default variance scaling for the dependent variable <c>i</c>.
+    /// </summary>
+    /// <param name="i">Index of the dependent variable.</param>
+    /// <returns>The variance scaling for that dependent variable. If <c>null</c> is returned, then the
+    /// default variance scaling (weight==const.==1) is assumed.</returns>
+    IVarianceScaling DefaultVarianceScaling(int i);
+
+    /// <summary>
     /// This evaluates a function value. 
     /// </summary>
     /// <param name="independent">The independent variables.</param>

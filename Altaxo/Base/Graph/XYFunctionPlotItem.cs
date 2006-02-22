@@ -327,7 +327,11 @@ namespace Altaxo.Graph
           gp.AddLine(ptArray[start], ptArray[start + 1]);
           gp.AddLine(ptArray[start + 1], ptArray[start + 2]);
           gp.Widen(new Pen(Color.Black, 5));
-          return new HitTestObject(gp, this);
+          HitTestObject hitobj = new HitTestObject(gp, this);
+
+          
+
+          return hitobj;
         }
       }
 

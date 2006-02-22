@@ -538,6 +538,17 @@ namespace Altaxo.Calc
     }
 
     /// <summary>
+    /// Returns the default variance scaling for dependent variable <c>i</c>. Default returns <c>null</c>, which
+    /// means a constant weight of 1 is assumed.
+    /// </summary>
+    /// <param name="i">Index of dependent variable.</param>
+    /// <returns>Null by default. You can override this behaviour.</returns>
+    public virtual Altaxo.Calc.Regression.Nonlinear.IVarianceScaling DefaultVarianceScaling(int i)
+    {
+      return null;
+    }
+
+    /// <summary>
     /// This evaluates a function value. 
     /// </summary>
     /// <param name="independent">The independent variables.</param>

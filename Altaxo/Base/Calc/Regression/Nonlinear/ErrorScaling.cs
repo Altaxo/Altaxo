@@ -30,11 +30,12 @@ namespace Altaxo.Calc.Regression.Nonlinear
   public interface IVarianceScaling : ICloneable
   {
     /// <summary>
-    /// Gets the weight in dependence of the real data. 
+    /// Gets the weight in dependence of the real data (roughly spoken: inverse of variance).
     /// </summary>
     /// <param name="yreal">The real (measured) data.</param>
     /// <param name="i">The index of the measured data point in the table.</param>
-    /// <returns>The weight used to scale the fit difference (yreal-yfit).</returns>
+    /// <returns>The weight used to scale the fit difference (yreal-yfit). In case a variance is given for the current data,
+    /// you should return (1/variance). </returns>
     double GetWeight(double yreal, int i);
 
     /// <summary>

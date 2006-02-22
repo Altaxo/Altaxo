@@ -21,62 +21,90 @@
 #endregion
 
 using System;
+using System.ComponentModel;
+using Altaxo.Calc.Regression.Nonlinear;
 
-namespace Altaxo.Calc.Regression.Nonlinear
+namespace Altaxo.Calc.FitFunctions.Relaxation
 {
   /// <summary>
   /// Havriliak-Negami function to fit dielectric spectra.
   /// </summary>
   [FitFunctionClass]
-  public class HavriliakNegamiComplex : IFitFunctionWithGradient
+  public class HavriliakNegamiSusceptibility : IFitFunctionWithGradient
   {
     bool _useFrequencyInsteadOmega;
-    bool _negativeImaginarySign;
-    bool _excludeConductivity;
+    bool _useFlowTerm;
+    bool _isDielectricData;
 
     #region Serialization
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(HavriliakNegamiComplex),0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Calc.Regression.Nonlinear.HavriliakNegamiComplex", 0)]
       public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
+        throw new NotImplementedException();
       }
 
       public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        return new HavriliakNegamiComplex();;
+       HavriliakNegamiSusceptibility s = new HavriliakNegamiSusceptibility();
+        s._isDielectricData = true;
+        return s;
       }
     }
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(HavriliakNegamiComplex), 1)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Calc.Regression.Nonlinear.HavriliakNegamiComplex", 1)]
     public class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
+        throw new NotImplementedException();
+        /*
         HavriliakNegamiComplex s = (HavriliakNegamiComplex)obj;
         info.AddValue("UseFrequency", s._useFrequencyInsteadOmega);
         info.AddValue("NegImSign", s._negativeImaginarySign);
         info.AddValue("ExcludeConductivity", s._excludeConductivity);
+        */
       }
 
       public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        HavriliakNegamiComplex s = o != null ? (HavriliakNegamiComplex)o : new HavriliakNegamiComplex();
+        HavriliakNegamiSusceptibility s = o != null ? (HavriliakNegamiSusceptibility)o : new HavriliakNegamiSusceptibility();
         s._useFrequencyInsteadOmega = info.GetBoolean("UseFrequency");
-        s._negativeImaginarySign = info.GetBoolean("NegImSign");
-        s._excludeConductivity = info.GetBoolean("ExcludeConductivity");
+        info.GetBoolean("NegImSign");
+        s._useFlowTerm = !info.GetBoolean("ExcludeConductivity");
+        s._isDielectricData = true;
+        return s;
+      }
+    }
+
+     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(HavriliakNegamiSusceptibility),2)]
+     public class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        HavriliakNegamiSusceptibility s = (HavriliakNegamiSusceptibility)obj;
+        info.AddValue("UseFrequency", s._useFrequencyInsteadOmega);
+        info.AddValue("FlowTerm", s._useFlowTerm);
+        info.AddValue("IsDielectric", s._isDielectricData);
+      }
+
+      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        HavriliakNegamiSusceptibility s = o != null ? (HavriliakNegamiSusceptibility)o : new HavriliakNegamiSusceptibility();
+         s._useFrequencyInsteadOmega = info.GetBoolean("UseFrequency");
+        s._useFlowTerm = info.GetBoolean("FlowTerm");
+        s._isDielectricData = info.GetBoolean("IsDielectric");
         return s;
       }
     }
 
     #endregion
 
-    public HavriliakNegamiComplex()
+    public HavriliakNegamiSusceptibility()
     {
-      //
-      // TODO: Add constructor logic here
-      //
+      
     }
 
     public override string ToString()
@@ -84,22 +112,49 @@ namespace Altaxo.Calc.Regression.Nonlinear
       return "HavriliakNegami Complex " + (_useFrequencyInsteadOmega ? "(Freq)" : "(Omeg)");
     }
 
-    [FitFunctionCreator("HavriliakNegami Complex (Omeg)", "Relaxation", 1, 2, 5)]
-    public static IFitFunction CreateFofOmega()
+    [FitFunctionCreator("HavriliakNegami Complex (Omeg)", "Retardation/Dielectrics", 1, 2, 5)]
+    [Description("FitFunctions.Relaxation.HavriliakNegamiSusceptibility.Introduction;XML.MML.HavriliakNegamiSusceptibility.Dielectrics;FitFunctions.IndependentVariable.Omega;FitFunctions.Relaxation.HavriliakNegamiSusceptibility.Dielectrics")]
+    public static IFitFunction CreateDielectricFunctionOfOmega()
     {
-      HavriliakNegamiComplex result =  new HavriliakNegamiComplex();
+      HavriliakNegamiSusceptibility result = new HavriliakNegamiSusceptibility();
       result._useFrequencyInsteadOmega = false;
+      result._isDielectricData = true;
+      result._useFlowTerm = true;
       return result;
     }
 
-    [FitFunctionCreator("HavriliakNegami Complex (Freq)", "Relaxation", 1, 2, 5)]
-    public static IFitFunction CreateFofFrequency()
+    [FitFunctionCreator("HavriliakNegami Complex (Freq)", "Retardation/Dielectrics", 1, 2, 5)]
+    [Description("FitFunctions.Relaxation.HavriliakNegamiSusceptibility.Introduction;XML.MML.HavriliakNegamiSusceptibility.Dielectrics;FitFunctions.IndependentVariable.FrequencyAsOmega;FitFunctions.Relaxation.HavriliakNegamiSusceptibility.Dielectrics")]
+    public static IFitFunction CreateDielectricFunctionOfFrequency()
     {
-      HavriliakNegamiComplex result =  new HavriliakNegamiComplex();
+      HavriliakNegamiSusceptibility result = new HavriliakNegamiSusceptibility();
       result._useFrequencyInsteadOmega = true;
+      result._isDielectricData = true;
+      result._useFlowTerm = true;
       return result;
     }
 
+    [FitFunctionCreator("HavriliakNegami Complex (Omeg)", "Retardation/General", 1, 2, 5)]
+    [Description("FitFunctions.Relaxation.HavriliakNegamiSusceptibility.Introduction;XML.MML.HavriliakNegamiSusceptibility.General;FitFunctions.IndependentVariable.Omega;FitFunctions.Relaxation.HavriliakNegamiSusceptibility.General")]
+    public static IFitFunction CreateGeneralFunctionOfOmega()
+    {
+      HavriliakNegamiSusceptibility result = new HavriliakNegamiSusceptibility();
+      result._useFrequencyInsteadOmega = false;
+      result._isDielectricData = false;
+      result._useFlowTerm = true;
+      return result;
+    }
+
+    [FitFunctionCreator("HavriliakNegami Complex (Freq)", "Retardation/General", 1, 2, 5)]
+    [Description("FitFunctions.Relaxation.HavriliakNegamiSusceptibility.Introduction;XML.MML.HavriliakNegamiSusceptibility.General;FitFunctions.IndependentVariable.FrequencyAsOmega;FitFunctions.Relaxation.HavriliakNegamiSusceptibility.General")]
+    public static IFitFunction CreateGeneralFunctionOfFrequency()
+    {
+      HavriliakNegamiSusceptibility result = new HavriliakNegamiSusceptibility();
+      result._useFrequencyInsteadOmega = true;
+      result._isDielectricData = false;
+      result._useFlowTerm = true;
+      return result;
+    }
     
     #region IFitFunction Members
   
@@ -119,32 +174,34 @@ namespace Altaxo.Calc.Regression.Nonlinear
     #endregion
 
     #region dependent variable definition
-    private string[] _dependentVariableName = new string[]{"re","im"};
+    private string[] _dependentVariableNameS = new string[]{"j'","j''"};
+    private string[] _dependentVariableNameD = new string[] { "eps'", "eps''" };
     public int NumberOfDependentVariables
     {
       get
       {
-        return _dependentVariableName.Length;
+        return _dependentVariableNameS.Length;
       }
     }
     public string DependentVariableName(int i)
     {
-      return _dependentVariableName[i];
+      return _isDielectricData ? _dependentVariableNameD[i] : _dependentVariableNameS[i];
     }
     #endregion
 
     #region parameter definition
-    string[] _parameterName = new string[] { "eps_inf", "delta_eps", "tau", "alpha", "gamma", "conductivity" };
+    string[] _parameterNameD = new string[] { "eps_inf", "delta_eps", "tau", "alpha", "gamma", "conductivity" };
+    string[] _parameterNameS = new string[] { "j_inf", "delta_j", "tau", "alpha", "gamma", "viscosity" };
     public int NumberOfParameters
     {
       get
       {
-        return this._excludeConductivity ? _parameterName.Length-1 : _parameterName.Length;
+        return this._useFlowTerm ? _parameterNameS.Length : _parameterNameS.Length-1;
       }
     }
     public string ParameterName(int i)
     {
-      return _parameterName[i];
+      return _isDielectricData ? _parameterNameD[i] : _parameterNameS[i];
     }
 
     public double DefaultParameterValue(int i)
@@ -165,6 +222,12 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
       return 0;
     }
+
+    public IVarianceScaling DefaultVarianceScaling(int i)
+    {
+      return null;
+    }
+
     #endregion
 
     public void Evaluate(double[] X, double[] P, double[] Y)
@@ -175,16 +238,16 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
       Complex result = P[0] + P[1]/ComplexMath.Pow(1+ComplexMath.Pow(Complex.I*x*P[2],P[3]),P[4]);
       Y[0] = result.Re;
-      
-      if(this._excludeConductivity)
-        Y[1] = -result.Im;
+
+      if (this._useFlowTerm)
+      {
+        if(this._isDielectricData)
+          Y[1] = -result.Im + P[5] / (x * 8.854187817e-12);
+        else
+          Y[1] = -result.Im + P[5] / (x);
+      }
       else
-        Y[1] = -result.Im + P[5] / (x * 8.854187817e-12);
-
-
-      if (this._negativeImaginarySign)
-        Y[1] = -Y[1];
-
+        Y[1] = -result.Im;  
     }
 
     public void EvaluateGradient(double[] X, double[] P, double[][] DY)
@@ -211,22 +274,12 @@ namespace Altaxo.Calc.Regression.Nonlinear
       DY[0][4] = der4.Re;
       DY[1][4] = -der4.Im;
 
-      if (!_excludeConductivity)
+      if (_useFlowTerm)
       {
+        
         DY[0][5] = 0;
-        DY[1][5] = 1 / (x * 8.854187817e-12);
+        DY[1][5] = _isDielectricData ?  1 / (x * 8.854187817e-12) : 1/x;
       }
-
-      if (_negativeImaginarySign)
-      {
-        int len = this.NumberOfParameters;
-        for (int i = 0; i < len; ++i)
-          DY[1][i] = -DY[1][i];
-      }
-
-
-
-
     }
     #endregion
   }

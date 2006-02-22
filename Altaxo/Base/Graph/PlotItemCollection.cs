@@ -247,10 +247,23 @@ namespace Altaxo.Graph
       IHitTestObject result;
       for(int i=0;i<Count;i++)
       {
-        if(null!=(result=this[i].HitTest(layer,hitpoint)))
+        if (null != (result = this[i].HitTest(layer, hitpoint)))
+        {
+          result.Remove = new DoubleClickHandler(this.EhHitTestObject_Remove);
           return result;
+        }
       }
       return null;
+    }
+
+    /// <summary>
+    /// Handles the remove of a plot item.
+    /// </summary>
+    /// <param name="target">The target hit (should be plot item) to remove.</param>
+    /// <returns>True if the item was removed.</returns>
+    bool EhHitTestObject_Remove(IHitTestObject target)
+    {
+      return this.Remove(target.HittedObject as PlotItem);
     }
 
     /// <summary>
@@ -302,13 +315,20 @@ namespace Altaxo.Graph
       OnChanged();
     }
 
-    public void Remove(Graph.PlotItem plotitem)
+    /// <summary>
+    /// Removes an plot item from the list.
+    /// </summary>
+    /// <param name="plotitem">The item to remove.</param>
+    /// <returns>True if the item was removed. False otherwise.</returns>
+    public bool Remove(Graph.PlotItem plotitem)
     {
       int idx = IndexOf(plotitem);
       if(idx>=0)
       {
         RemoveAt(idx);
+        return true;
       }
+      return false;
     }
 
     public PlotItem this[int i]

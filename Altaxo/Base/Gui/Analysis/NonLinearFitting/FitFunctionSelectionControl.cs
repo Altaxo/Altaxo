@@ -42,7 +42,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     IFitFunctionSelectionViewEventSink _controller;
     private System.Windows.Forms.TreeView _twFitFunctions;
     private SplitContainer _splitContainer;
-    private RichTextBox _rtbDescription;
+    private RichTextBox _rtfDescription;
 
     TreeNode _lastClickedNode;
     private ContextMenu _userFileLeafNodeContextMenu;
@@ -88,7 +88,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     {
       this._twFitFunctions = new System.Windows.Forms.TreeView();
       this._splitContainer = new System.Windows.Forms.SplitContainer();
-      this._rtbDescription = new System.Windows.Forms.RichTextBox();
+      this._rtfDescription = new System.Windows.Forms.RichTextBox();
       this._userFileLeafNodeContextMenu = new System.Windows.Forms.ContextMenu();
       this.menuContextEdit = new System.Windows.Forms.MenuItem();
       this.menuContextRemove = new System.Windows.Forms.MenuItem();
@@ -122,21 +122,22 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       // 
       // _splitContainer.Panel2
       // 
-      this._splitContainer.Panel2.Controls.Add(this._rtbDescription);
+      this._splitContainer.Panel2.Controls.Add(this._rtfDescription);
       this._splitContainer.Size = new System.Drawing.Size(349, 344);
       this._splitContainer.SplitterDistance = 153;
       this._splitContainer.TabIndex = 2;
       // 
-      // _rtbDescription
+      // _rtfDescription
       // 
-      this._rtbDescription.Cursor = System.Windows.Forms.Cursors.IBeam;
-      this._rtbDescription.Dock = System.Windows.Forms.DockStyle.Fill;
-      this._rtbDescription.Location = new System.Drawing.Point(0, 0);
-      this._rtbDescription.Name = "_rtbDescription";
-      this._rtbDescription.ReadOnly = true;
-      this._rtbDescription.Size = new System.Drawing.Size(192, 344);
-      this._rtbDescription.TabIndex = 0;
-      this._rtbDescription.Text = "";
+      this._rtfDescription.Cursor = System.Windows.Forms.Cursors.IBeam;
+      this._rtfDescription.Dock = System.Windows.Forms.DockStyle.Fill;
+      this._rtfDescription.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+      this._rtfDescription.Location = new System.Drawing.Point(0, 0);
+      this._rtfDescription.Name = "_rtfDescription";
+      this._rtfDescription.ReadOnly = true;
+      this._rtfDescription.Size = new System.Drawing.Size(192, 344);
+      this._rtfDescription.TabIndex = 0;
+      this._rtfDescription.Text = "";
       // 
       // _userFileLeafNodeContextMenu
       // 
@@ -195,12 +196,12 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     public void SetRtfDocumentation(string rtfString)
     {
-      this._rtbDescription.Rtf = rtfString;
+      this._rtfDescription.Rtf = rtfString;
     }
 
     public Color GetRtfBackgroundColor()
     {
-      return this._rtbDescription.BackColor;
+      return this._rtfDescription.BackColor;
     }
 
     TreeNode GetPathNode(TreeNodeCollection coll, string path)
@@ -335,6 +336,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
    
     #endregion
 
+    private Graphics _rtfGraphics;
     private void _twFitFunctions_AfterSelect(object sender, System.Windows.Forms.TreeViewEventArgs e)
     {
       if(_controller!=null)
@@ -343,7 +345,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       if (e.Node.Tag is IFitFunctionInformation)
       {
         Altaxo.Main.Services.IFitFunctionInformation info = e.Node.Tag as IFitFunctionInformation;
-        _rtbDescription.Rtf = Altaxo.Main.Services.RtfComposerService.GetRtfText(info.Description, _rtbDescription.BackColor);
+        if (_rtfGraphics == null)
+          _rtfGraphics = this.CreateGraphics();
+        _rtfDescription.Rtf = Altaxo.Main.Services.RtfComposerService.GetRtfText(info.Description, _rtfGraphics, _rtfDescription.BackColor, 12);
       }
     }
 

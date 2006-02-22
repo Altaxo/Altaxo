@@ -30,28 +30,27 @@ namespace Altaxo.Main.Services
 {
   public class RtfComposerService
   {
-
     static readonly string textheader =
-  @"{\rtf1\ansi\ansicpg1252\deff0\deflang1033{\fonttbl{\f0\fswiss\fcharset0 Arial;}}" +
-  @"\viewkind4\uc1\pard\f0\fs20 ";
+  @"{\rtf1\ansi\ansicpg1252\deff0\deflang1033{\fonttbl{\f0\fswiss\fcharset0 Arial;}{\f1\froman\fprq2\fcharset0 Times New Roman;}{\f2\froman\fprq2\fcharset2 Symbol;}}" +
+  @"\viewkind4\uc1\pard\f0 ";
 
     static readonly string texttrailer = @"}";
     static readonly string imageheader = @"{\pict\wmetafile8 ";
     static readonly string imagetrailer = "}";
 
     
-    public static string GetRtfText(string rawtext, Color backcolor)
+    public static string GetRtfText(string rawtext, Graphics gr, Color backcolor, int fontsize)
     {
       MathML.Rendering.GraphicsRendering _mmlRendering = new MathML.Rendering.GraphicsRendering();
       _mmlRendering.BackColor = backcolor;
-
+      _mmlRendering.FontSize = fontsize;
       StringBuilder stb = new StringBuilder();
-      ComposeText(stb, rawtext, _mmlRendering);
+      ComposeText(stb, rawtext, _mmlRendering, gr);
       stb.Append(texttrailer);
       return stb.ToString();
     }
 
-    static void ComposeText(StringBuilder stb, string rawtext, MathML.Rendering.GraphicsRendering _mmlRendering)
+    static void ComposeText(StringBuilder stb, string rawtext, MathML.Rendering.GraphicsRendering _mmlRendering, Graphics gr)
     {
      
 
@@ -79,7 +78,7 @@ namespace Altaxo.Main.Services
         rd.Close();
         _mmlRendering.MathElement = (MathML.MathMLMathElement)doc.DocumentElement;
 
-        System.Drawing.Image mf = _mmlRendering.GetImage(typeof(Bitmap));
+        System.Drawing.Image mf = _mmlRendering.GetImage(typeof(Bitmap),gr);
         GraphicsUnit unit = GraphicsUnit.Point;
         RectangleF rect = mf.GetBounds(ref unit);
         string imagetext = _mmlRendering.GetRtfImage(mf);

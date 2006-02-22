@@ -151,18 +151,8 @@ namespace Altaxo.Serialization.Ascii
 
     public static bool IsDateTime(string s)
     {
-      bool bRet=false;
-      
-      try
-      {
-        DateTime.Parse(s);
-        
-        bRet=true;
-      }
-      catch(Exception)
-      {
-      }
-      return bRet;
+      DateTime result;
+      return DateTime.TryParse(s, out result);
     }
 
     /// <summary>
@@ -173,16 +163,11 @@ namespace Altaxo.Serialization.Ascii
     /// <returns></returns>
     public static bool IsNumeric(string s)
     {
-      bool bRet=false;
-      try
-      {
-        double.Parse(s,System.Globalization.NumberStyles.Any);
-        bRet=true;
-      }
-      catch(Exception)
-      {
-      }
-      return bRet;
+      double result;
+      if (double.TryParse(s, System.Globalization.NumberStyles.Any, System.Globalization.NumberFormatInfo.CurrentInfo, out result))
+        return true;
+
+      return double.TryParse(s, System.Globalization.NumberStyles.Any, System.Globalization.NumberFormatInfo.InvariantInfo, out result);
     }
 
     public int WordStartsTab4_GetHashCode()

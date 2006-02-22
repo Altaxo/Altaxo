@@ -37,16 +37,8 @@ namespace Altaxo.Serialization
     /// <returns>True if the string can successfully parsed to a DateTime object.</returns>
     public static bool IsDateTime(string s)
     {
-      bool bRet=false;
-      try
-      {
-        System.Convert.ToDateTime(s);
-        bRet=true;
-      }
-      catch(Exception)
-      {
-      }
-      return bRet;
+      DateTime result;
+      return DateTime.TryParse(s, out result);
     }
 
 
@@ -58,17 +50,7 @@ namespace Altaxo.Serialization
     /// <returns>True if the string can successfully parsed to a DateTime object.</returns>
     public static bool IsDateTime(string s, out DateTime val)
     {
-      bool bRet=false;
-      val=DateTime.MinValue;
-      try
-      {
-        val = System.Convert.ToDateTime(s);
-        bRet=true;
-      }
-      catch(Exception)
-      {
-      }
-      return bRet;
+      return DateTime.TryParse(s, out val);
     }
 
 
@@ -80,16 +62,8 @@ namespace Altaxo.Serialization
     /// <returns>True if the string can successfully parsed to a TimeSpan object.</returns>
     public static bool IsTimeSpan(string s)
     {
-      bool bRet=false;
-      try
-      {
-        TimeSpan.Parse(s);
-        bRet=true;
-      }
-      catch(Exception)
-      {
-      }
-      return bRet;
+      TimeSpan result;
+      return TimeSpan.TryParse(s, out result);
     }
 
     /// <summary>
@@ -100,18 +74,7 @@ namespace Altaxo.Serialization
     /// <returns>True if the string can successfully parsed to a DateTime object.</returns>
     public static bool IsTimeSpan(string s, out TimeSpan val)
     {
-      bool bRet=false;
-      val = TimeSpan.Zero;
-
-      try
-      {
-        val = TimeSpan.Parse(s);
-        bRet=true;
-      }
-      catch(Exception)
-      {
-      }
-      return bRet;
+      return TimeSpan.TryParse(s, out val);
     }
   
   }

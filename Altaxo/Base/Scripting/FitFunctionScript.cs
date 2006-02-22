@@ -1163,6 +1163,15 @@ namespace Altaxo.Scripting
         return 0;
     }
 
+
+    public IVarianceScaling DefaultVarianceScaling(int i)
+    {
+      if (this.m_ScriptObject != null)
+        return ((IFitFunction)m_ScriptObject).DefaultVarianceScaling(i);
+      else
+        return null;
+    }
+
     void Altaxo.Calc.Regression.Nonlinear.IFitFunction.Evaluate(double[] independent, double[] parameters, double[] result)
     {
       MakeSureWasTriedToCompile();

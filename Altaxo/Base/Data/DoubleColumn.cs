@@ -265,9 +265,9 @@ namespace Altaxo.Data
     public void CopyDataFrom(double[] srcarray, int count)
     {
       int oldCount = this.m_Count;
-      int srcarraycount=GetUsedLength(srcarray,Math.Min(srcarray.Length,count));
+      int srcarraycount=0;
 
-      if(null==srcarray || 0==srcarraycount)
+      if(null==srcarray || 0==(srcarraycount=GetUsedLength(srcarray,Math.Min(srcarray.Length,count))))
       {
         m_Array=null;
         m_Capacity=0;

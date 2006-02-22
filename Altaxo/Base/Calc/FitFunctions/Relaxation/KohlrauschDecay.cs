@@ -112,6 +112,11 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       return 0;
     }
 
+    public IVarianceScaling DefaultVarianceScaling(int i)
+    {
+      return null;
+    }
+
     public void Evaluate(double[] X, double[] P, double[] Y)
     {
       Y[0] = P[0] + P[1]*Math.Exp(-Math.Pow(X[0]/P[2],P[3]));
@@ -265,6 +270,12 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
       return 0;
     }
+
+    public IVarianceScaling DefaultVarianceScaling(int i)
+    {
+      return null;
+    }
+
     #endregion
 
     public void Evaluate(double[] X, double[] P, double[] Y)
@@ -427,6 +438,12 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
       return 0;
     }
+
+    public IVarianceScaling DefaultVarianceScaling(int i)
+    {
+      return null;
+    }
+
     #endregion
 
     public void Evaluate(double[] X, double[] P, double[] Y)
@@ -519,6 +536,11 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       return 0;
     }
 
+    public IVarianceScaling DefaultVarianceScaling(int i)
+    {
+      return null;
+    }
+
     public void Evaluate(double[] X, double[] P, double[] Y)
     {
       Y[0] = P[0] + P[1]*X[0];
@@ -601,6 +623,11 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       return 0;
     }
 
+    public IVarianceScaling DefaultVarianceScaling(int i)
+    {
+      return null;
+    }
+
     public void Evaluate(double[] X, double[] P, double[] Y)
     {
       Y[0] = P[0] + P[1] * X[0];
@@ -618,48 +645,6 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
     #endregion
 
-    #region IFitFunction Members
-
-    int IFitFunction.NumberOfIndependentVariables
-    {
-      get { throw new Exception("The method or operation is not implemented."); }
-    }
-
-    int IFitFunction.NumberOfDependentVariables
-    {
-      get { throw new Exception("The method or operation is not implemented."); }
-    }
-
-    int IFitFunction.NumberOfParameters
-    {
-      get { throw new Exception("The method or operation is not implemented."); }
-    }
-
-    string IFitFunction.IndependentVariableName(int i)
-    {
-      throw new Exception("The method or operation is not implemented.");
-    }
-
-    string IFitFunction.DependentVariableName(int i)
-    {
-      throw new Exception("The method or operation is not implemented.");
-    }
-
-    string IFitFunction.ParameterName(int i)
-    {
-      throw new Exception("The method or operation is not implemented.");
-    }
-
-    double IFitFunction.DefaultParameterValue(int i)
-    {
-      throw new Exception("The method or operation is not implemented.");
-    }
-
-    void IFitFunction.Evaluate(double[] independent, double[] parameters, double[] FV)
-    {
-      throw new Exception("The method or operation is not implemented.");
-    }
-
-    #endregion
+  
   }
 }
