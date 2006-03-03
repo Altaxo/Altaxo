@@ -16,7 +16,7 @@ namespace MathML.Rendering
 		Start, End
 	}
 
-	internal class Selection
+	public class Selection
 	{
 		// the currently selected element
 		public MathMLElement Element;

@@ -42,7 +42,7 @@ namespace MathML.Rendering
 			return this;
 		}
 
-		public override AreaRegion GetEditRegion(float x, float y, int index)
+    public override AreaRegion GetEditRegion(IFormattingContext context, float x, float y, int index)
 		{
 			x = index > 0 ? x + LeftEdge + box.HorizontalExtent : x + LeftEdge;
 			return new AreaRegion(this, x, y);

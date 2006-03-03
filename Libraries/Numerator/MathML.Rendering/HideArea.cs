@@ -40,6 +40,6 @@ namespace MathML.Rendering
 		/**
 		 * this is a hide area, so no rendering is done
 		 */
-		public override void Render(GraphicDevice device, float x, float y) {}
+		public override void Render(IGraphicDevice device, float x, float y) {}
 	}
 }

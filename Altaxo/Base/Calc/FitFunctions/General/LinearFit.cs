@@ -23,36 +23,28 @@
 using System;
 using Altaxo.Calc.Regression.Nonlinear;
 
-namespace Altaxo.Calc.FitFunctions.Relaxation
+namespace Altaxo.Calc.FitFunctions.General
 {
+
+
   /// <summary>
-  /// Summary description for KohlrauschDecay.
+  /// Only for testing purposes - use a "real" linear fit instead.
   /// </summary>
   [FitFunctionClass]
-  public class KohlrauschDecay : IFitFunction
+  public class LinearFitWithGradient : IFitFunctionWithGradient
   {
-    
-    public KohlrauschDecay()
+    public LinearFitWithGradient()
     {
       //
       // TODO: Add constructor logic here
       //
     }
 
-    public override string ToString()
+    [FitFunctionCreator("LinearFitWithGradient", "Relaxation", 1, 1, 2)]
+    public static IFitFunction LinearFitWithGradientOrder2()
     {
-      return "KohlrauschDecay";
+      return new LinearFitWithGradient();
     }
-
-
-    [FitFunctionCreator("KohlrauschDecay", "Relaxation", 1, 1, 4)]
-    [System.ComponentModel.Description("FitFunctions.Relaxation.Kohlrausch.Decay")]
-    public static IFitFunction CreateDefault()
-    {
-      return new KohlrauschDecay();
-    }
-
-    
     #region IFitFunction Members
 
     public int NumberOfIndependentVariables
@@ -75,7 +67,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     {
       get
       {
-        return 4;
+        return 2;
       }
     }
 
@@ -92,23 +84,11 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
     public string ParameterName(int i)
     {
-      return (new string[]{"offset","amplitude","tau","beta"})[i];
+      return (new string[] { "intercept", "slope", })[i];
     }
 
     public double DefaultParameterValue(int i)
     {
-      switch (i)
-      {
-        case 0:
-          return 0;
-        case 1:
-          return 1;
-        case 2:
-          return 1;
-        case 3:
-          return 1;
-      }
-
       return 0;
     }
 
@@ -119,20 +99,108 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
     public void Evaluate(double[] X, double[] P, double[] Y)
     {
-      Y[0] = P[0] + P[1]*Math.Exp(-Math.Pow(X[0]/P[2],P[3]));
+      Y[0] = P[0] + P[1] * X[0];
     }
 
     #endregion
 
-    #region IFitFunction Members
+    public void EvaluateGradient(double[] X, double[] P, double[][] DY)
+    {
+      DY[0][0] = 1;
+      DY[0][1] = X[0];
+    }
 
-
-   
-    #endregion
   }
 
 
+  /// <summary>
+  /// Only for testing purposes - use a "real" linear fit instead.
+  /// </summary>
+  [FitFunctionClass]
+  public class LinearFit : IFitFunction
+  {
+    public LinearFit()
+    {
+      //
+      // TODO: Add constructor logic here
+      //
+    }
 
- 
+    [FitFunctionCreator("LinearFit", "Relaxation", 1, 1, 2)]
+    public static IFitFunction LinearFitOrder2()
+    {
+      return new LinearFit();
+    }
 
+    #region IFitFunction Members
+
+    public int NumberOfIndependentVariables
+    {
+      get
+      {
+        return 1;
+      }
+    }
+
+    public int NumberOfDependentVariables
+    {
+      get
+      {
+        return 1;
+      }
+    }
+
+    public int NumberOfParameters
+    {
+      get
+      {
+        return 2;
+      }
+    }
+
+    public string IndependentVariableName(int i)
+    {
+      // TODO:  Add KohlrauschDecay.IndependentVariableName implementation
+      return "x";
+    }
+
+    public string DependentVariableName(int i)
+    {
+      return "y";
+    }
+
+    public string ParameterName(int i)
+    {
+      return (new string[] { "intercept", "slope", })[i];
+    }
+
+    public double DefaultParameterValue(int i)
+    {
+      return 0;
+    }
+
+    public IVarianceScaling DefaultVarianceScaling(int i)
+    {
+      return null;
+    }
+
+    public void Evaluate(double[] X, double[] P, double[] Y)
+    {
+      Y[0] = P[0] + P[1] * X[0];
+    }
+
+    #endregion
+
+
+
+
+    #region IFitFunction Members
+
+
+
+
+    #endregion
+
+
+  }
 }

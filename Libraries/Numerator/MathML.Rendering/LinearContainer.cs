@@ -51,7 +51,7 @@ namespace MathML.Rendering
 		 * context to reflect a different positions for each 
 		 * child area
 		 */
-		public override void Render(GraphicDevice device, float x, float y)
+		public override void Render(IGraphicDevice device, float x, float y)
 		{
 			for(int i = 0; i < content.Length; i++)
 			{

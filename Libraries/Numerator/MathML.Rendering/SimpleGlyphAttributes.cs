@@ -69,9 +69,9 @@ namespace MathML.Rendering.GlyphMapper
 		 * set of glyph index and font, if none exists, a new 
 		 * glyph area is created and cached via a weak reference.
 		 */
-		public Area GetArea(FontHandle fontHandle)
+    public Area GetArea(IFormattingContext context, IFontHandle fontHandle)
 		{
-			return new GlyphArea(fontHandle, GlyphIndex);
+			return new GlyphArea(context, fontHandle, GlyphIndex);
 		}
 	}
 }

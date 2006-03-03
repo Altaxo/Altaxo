@@ -85,7 +85,7 @@ namespace MathML.Rendering
 	/// * In the case of an embellished stretchy operator, the preceding rule applies to the 
 	///   stretchy operator at its core.
 	/// </remarks>
-	internal class MathMLFormatter : MathMLVisitor
+	public class MathMLFormatter : MathMLVisitor
 	{
 		// measure size of sub-areas
 		private MathMLMeasurer measurer;
@@ -107,7 +107,7 @@ namespace MathML.Rendering
 		/// adds a default font area to the root of the area 
 		/// tree to set the default font.
 		/// </summary>
-		public Area Format(MathMLMathElement element, FormattingContext context)
+		public Area Format(MathMLMathElement element, IFormattingContext context)
 		{
 			return (Area)element.Accept(this, context);
 		}
@@ -126,7 +126,7 @@ namespace MathML.Rendering
             // document to create tmp elements
 			MathMLDocument document = new MathMLDocument();
 			Area area = null;
-			FormattingContext ctx = new FormattingContext((FormattingContext)args);			
+			IFormattingContext ctx = ((IFormattingContext)args).Clone();			
 
 			if(e.Operator is MathMLPredefinedSymbol)
 			{
@@ -146,7 +146,7 @@ namespace MathML.Rendering
 							}
 							Area[] areas = new Area[3];
 							areas[0] = AreaFactory.String(ctx, info.Value);
-							areas[1] = GlyphFactory.GetGlyph(ctx.Size, PredefinedSymbolInfo.ApplyFunction[0]);
+							areas[1] = GlyphFactory.GetGlyph(ctx, ctx.Size, PredefinedSymbolInfo.ApplyFunction[0]);
 							ctx.Parens = false;
 							areas[2] = FormatFencedContainer(e, ctx, argList, new Char[] {','}, "(", ")");
 							area = AreaFactory.Horizontal(areas);							
@@ -171,7 +171,7 @@ namespace MathML.Rendering
 
 							if(parens)
 							{
-								area = FenceArea(area, ctx.Size, '(', ')');
+								area = FenceArea(ctx, area, ctx.Size, '(', ')');
 							}
 							
 						} break;
@@ -279,8 +279,8 @@ namespace MathML.Rendering
 								}
 							}
 							if(radicandElement != null)
-							{	
-								FormattingContext indexCtx = new FormattingContext(ctx);
+							{
+                IFormattingContext indexCtx = ctx.Clone();
 								indexCtx.ScriptLevel++;
 								Area index = (Area)indexElement.Accept(this, indexCtx);
 								area = AreaFactory.Radical(ctx, (Area)radicandElement.Accept(this, ctx), index);
@@ -295,7 +295,7 @@ namespace MathML.Rendering
 
 							if(argCount > 0) 
 							{
-								FormattingContext bseCtx = new FormattingContext(ctx);
+                IFormattingContext bseCtx = ctx.Clone();
 								bseCtx.Parens = true;
 								MathMLElement bse = (MathMLElement)arguments.Item(0);
 								bseArea = (Area)bse.Accept(this, bseCtx);
@@ -303,7 +303,7 @@ namespace MathML.Rendering
 
 							if(argCount > 1)
 							{
-								FormattingContext scriptCtx = new FormattingContext(ctx);
+                IFormattingContext scriptCtx = ctx.Clone();
 								scriptCtx.ScriptLevel++;
 								scriptCtx.Parens = true;
 								MathMLElement script = (MathMLElement)arguments.Item(1);
@@ -333,7 +333,7 @@ namespace MathML.Rendering
 
 							if(argCount > 0)
 							{
-								FormattingContext scriptCtx = new FormattingContext(ctx);
+                IFormattingContext scriptCtx = ctx.Clone();
 								scriptCtx.ScriptLevel++;
 								scriptCtx.Parens = true;
 								MathMLElement script = (MathMLElement)arguments.Item(0);
@@ -371,7 +371,7 @@ namespace MathML.Rendering
 								else if(logbase == null && n is MathMLElement && n.Name == "logbase")
 								{
 									logbase = (MathMLElement)n;
-									FormattingContext scriptCtx = new FormattingContext(ctx);
+                  IFormattingContext scriptCtx = ctx.Clone();
 									scriptCtx.ScriptLevel++;
 									logbaseArea = (Area)logbase.Accept(this, scriptCtx);
 									continue;
@@ -386,7 +386,7 @@ namespace MathML.Rendering
 								null, new Length(LengthType.Undefined));
 							Area[] areas = new Area[3];
 							areas[0] = area;
-							areas[1] = GlyphFactory.GetGlyph(ctx.Size, PredefinedSymbolInfo.ApplyFunction[0]);
+							areas[1] = GlyphFactory.GetGlyph(ctx, ctx.Size, PredefinedSymbolInfo.ApplyFunction[0]);
 							ctx.Parens = false;
 							areas[2] = FormatFencedContainer(e, ctx, argList, new Char[] {','}, "(", ")");
 							area = AreaFactory.Horizontal(areas);	
@@ -408,7 +408,7 @@ namespace MathML.Rendering
 
 				ctx.Parens = true;
 				areas[0] = (Area)e.Operator.Accept(this, ctx);
-				areas[1] = GlyphFactory.GetGlyph(ctx.Size, PredefinedSymbolInfo.ApplyFunction[0]);
+				areas[1] = GlyphFactory.GetGlyph(ctx, ctx.Size, PredefinedSymbolInfo.ApplyFunction[0]);
 				ctx.Parens = false;
 				areas[2] = FormatFencedContainer(e, ctx, argList, new Char[] {','}, "(", ")");
 				area = AreaFactory.Horizontal(areas);	
@@ -416,7 +416,7 @@ namespace MathML.Rendering
 
 			if(area == null)
 			{
-				area = AreaFactory.String((FormattingContext)args, "?");
+				area = AreaFactory.String((IFormattingContext)args, "?");
 			}
 
 			return CompleteArea(ctx, e, area);
@@ -424,27 +424,27 @@ namespace MathML.Rendering
 
 		public object Visit(MathMLBvarElement e, object args)  
 		{
-			return AreaFactory.String((FormattingContext)args, "?");
+			return AreaFactory.String((IFormattingContext)args, "?");
 		}
 
 		public object Visit(MathMLFnElement e, object args)  
 		{
-			return AreaFactory.String((FormattingContext)args, "?");
+			return AreaFactory.String((IFormattingContext)args, "?");
 		}
 
 		public object Visit(MathMLLambdaElement e, object args) 
 		{
-			return AreaFactory.String((FormattingContext)args, "?");
+			return AreaFactory.String((IFormattingContext)args, "?");
 		}
 
 		public object Visit(MathMLListElement e, object args)  
 		{
-			return AreaFactory.String((FormattingContext)args, "?");
+			return AreaFactory.String((IFormattingContext)args, "?");
 		}
 
 		public object Visit(MathMLSetElement e, object args)  
 		{
-			return AreaFactory.String((FormattingContext)args, "?");
+			return AreaFactory.String((IFormattingContext)args, "?");
 		}
 
 		/// <summary>
@@ -455,7 +455,7 @@ namespace MathML.Rendering
 		/// </summary>
 		public object Visit(MathMLMathElement e, object args)
 		{
-			FormattingContext context = (FormattingContext)args;
+			IFormattingContext context = (IFormattingContext)args;
 			context.DisplayStyle = e.Display;
 			int i = 0;
 
@@ -479,7 +479,7 @@ namespace MathML.Rendering
 			Area cache = Area.GetArea(e);
 			if(cache != null) return cache;
 
-			FormattingContext ctx = (FormattingContext)args;
+			IFormattingContext ctx = (IFormattingContext)args;
 
 			try
 			{
@@ -518,7 +518,7 @@ namespace MathML.Rendering
 
 		public object Visit(MathMLEncloseElement e, object args) 
 		{
-			return CompleteArea((FormattingContext)args, e, AreaFactory.String((FormattingContext)args, "enclose"));
+			return CompleteArea((IFormattingContext)args, e, AreaFactory.String((IFormattingContext)args, "enclose"));
 		}
 
 		/// <summary>
@@ -531,7 +531,7 @@ namespace MathML.Rendering
 			Area cache = Area.GetArea(e);
 			if(cache != null) return cache;
 
-			FormattingContext context = new FormattingContext((FormattingContext)args);
+			IFormattingContext context = ((IFormattingContext)args).Clone();
 			char[] separators = e.Separators.ToCharArray();
 			string open = e.Open;
 			string close = e.Close;
@@ -547,7 +547,7 @@ namespace MathML.Rendering
 			return CompleteArea(context, e, area);
 		}
 
-		private Area FormatFencedContainer(MathMLElement e, FormattingContext context, ArrayList arguments, 
+		private Area FormatFencedContainer(MathMLElement e, IFormattingContext context, ArrayList arguments, 
 			char[] separators, String open, String close)
 		{			
 			BoundingBox extent = BoundingBox.New();
@@ -575,7 +575,7 @@ namespace MathML.Rendering
 				{
 					// at the next child node, but i has not been bumped yet
 					areas[i + j + openCount + 1] = 
-						GlyphFactory.GetGlyph(
+						GlyphFactory.GetGlyph(context, 
 						context.Size, separators[j < separators.Length ? j : separators.Length - 1]);
 					j++;
 				}
@@ -590,8 +590,8 @@ namespace MathML.Rendering
 			else
 			{
 				// calculate availible width
-				context.Stretch.Width = context.Stretch.Width - extent.Width;
-				if(context.Stretch.Width < 0) context.Stretch.Width = 0;
+				context.StretchWidth = context.StretchWidth - extent.Width;
+				if(context.Stretch.Width < 0) context.StretchWidth = 0;
 			}
 
 			// process all areas that need to be stretched			
@@ -601,8 +601,8 @@ namespace MathML.Rendering
 				if(op != null && op.Stretchy)
 				{
 					areas[i + openCount + j] = (Area)op.Accept(this, context);
-					context.Stretch.Width -= areas[i + openCount + j].BoundingBox.Width;
-					if(context.Stretch.Width < 0) context.Stretch.Width = 0;
+					context.StretchWidth -= areas[i + openCount + j].BoundingBox.Width;
+					if(context.Stretch.Width < 0) context.StretchWidth = 0;
 
 					// adjust sep index
 					if (i + 1 < argCount) j++;
@@ -610,16 +610,16 @@ namespace MathML.Rendering
 			}		
 
 			// add fenced elements, these only stretchy vertically
-			context.Stretch.Width = 0;
+			context.StretchWidth = 0;
 			if(openCount > 0)
 			{
 				areas[0] = open.Length > 1 ? AreaFactory.String(context, open) : 
-					GlyphFactory.GetStretchyGlyph(context.Size, open[0], context.Stretch);
+					GlyphFactory.GetStretchyGlyph(context, context.Size, open[0], context.Stretch);
 			}
 			if(closeCount > 0)
 			{
 				areas[areas.Length - 1] = close.Length > 1 ? AreaFactory.String(context, close) :
-					GlyphFactory.GetStretchyGlyph(context.Size, close[0], context.Stretch);
+					GlyphFactory.GetStretchyGlyph(context, context.Size, close[0], context.Stretch);
 			}		
 	
 			return AreaFactory.Horizontal(areas);
@@ -629,7 +629,7 @@ namespace MathML.Rendering
         /// fence an area with a set of glyphs. The glyphs will stretch if they can
         /// to fit the vertical extent of the area.
         /// </summary>
-		private Area FenceArea(Area area, int ptSize, char open, char close)
+    private Area FenceArea(IFormattingContext context, Area area, float ptSize, char open, char close)
 		{
 			Area[] areas = new Area[1 + (open != 0 ? 1 : 0) + (close != 0 ? 1 : 0)];
 			int i = 0;
@@ -639,12 +639,12 @@ namespace MathML.Rendering
 			stretch.Width = 0;
 
             if(open != 0)
-                areas[i++] = GlyphFactory.GetStretchyGlyph(ptSize, open, stretch);
+                areas[i++] = GlyphFactory.GetStretchyGlyph(context, ptSize, open, stretch);
 
 			areas[i++] = area;
 
 			if(close != 0)
-                areas[i++] = GlyphFactory.GetStretchyGlyph(ptSize, close, stretch);
+                areas[i++] = GlyphFactory.GetStretchyGlyph(context, ptSize, close, stretch);
 
 			return AreaFactory.Horizontal(areas);			
 		}
@@ -655,7 +655,7 @@ namespace MathML.Rendering
 			Area cache = Area.GetArea(e);
 			if(cache != null) return cache;
 
-			return CompleteArea((FormattingContext)args, e, (Area)Visit((MathMLPresentationContainer)e, args));
+			return CompleteArea((IFormattingContext)args, e, (Area)Visit((MathMLPresentationContainer)e, args));
 		}
 
 		/// <summary>
@@ -668,7 +668,7 @@ namespace MathML.Rendering
 			Area cache = Area.GetArea(e);
 			if(cache != null) return cache;
 
-			FormattingContext ctx = new FormattingContext((FormattingContext)args);		
+			IFormattingContext ctx = ((IFormattingContext)args).Clone();		
 
 			// format the child tree
 			Area area = (Area)Visit((MathMLPresentationContainer)e, ctx);
@@ -715,22 +715,22 @@ namespace MathML.Rendering
 		
 		public object Visit(MathMLDocument e, object args)  
 		{
-			return AreaFactory.String((FormattingContext)args, "?");
+			return AreaFactory.String((IFormattingContext)args, "?");
 		}
 			
 		public object Visit(MathMLAnnotationElement e, object args)  
 		{
-			return CompleteArea((FormattingContext)args, e, AreaFactory.String((FormattingContext)args, "?"));
+			return CompleteArea((IFormattingContext)args, e, AreaFactory.String((IFormattingContext)args, "?"));
 		}
 				
 		public object Visit(MathMLCaseElement e, object args)  
 		{
-			return CompleteArea((FormattingContext)args, e, AreaFactory.String((FormattingContext)args, "?"));
+			return CompleteArea((IFormattingContext)args, e, AreaFactory.String((IFormattingContext)args, "?"));
 		}
 					
 		public object Visit(MathMLConditionElement e, object args)  
 		{
-			return CompleteArea((FormattingContext)args, e, AreaFactory.String((FormattingContext)args, "?"));
+			return CompleteArea((IFormattingContext)args, e, AreaFactory.String((IFormattingContext)args, "?"));
 		}
 		
 		/// <summary>
@@ -745,7 +745,7 @@ namespace MathML.Rendering
 			if(cache != null) return cache;
 
 			Area area = null;
-			FormattingContext ctx = new FormattingContext((FormattingContext)args);		
+			IFormattingContext ctx = ((IFormattingContext)args).Clone();		
 
 			XmlNode text = e.FirstChild;
 			if(text != null && text.NodeType == XmlNodeType.Text)
@@ -758,9 +758,9 @@ namespace MathML.Rendering
 			}
 			else
 			{
-				area = AreaFactory.String((FormattingContext)args, "?");
+				area = AreaFactory.String((IFormattingContext)args, "?");
 			}
-			return CompleteArea((FormattingContext)args, e, area);
+			return CompleteArea((IFormattingContext)args, e, area);
 		}
 						
 		public object Visit(MathMLCnElement e, object args)  
@@ -769,7 +769,7 @@ namespace MathML.Rendering
 			if(cache != null) return cache;
 
 			Area area = null;
-			FormattingContext ctx = (FormattingContext)args;		
+			IFormattingContext ctx = (IFormattingContext)args;		
 
 			XmlNode text = e.FirstChild;
 			if(text != null && text.NodeType == XmlNodeType.Text)
@@ -778,46 +778,46 @@ namespace MathML.Rendering
 			}
 			else
 			{
-				area = AreaFactory.String((FormattingContext)args, "?");
+				area = AreaFactory.String((IFormattingContext)args, "?");
 			}
-			return CompleteArea((FormattingContext)args, e, area);
+			return CompleteArea((IFormattingContext)args, e, area);
 		}
 						
 		public object Visit(MathMLCsymbolElement e, object args)  
 		{
-			return CompleteArea((FormattingContext)args, e, AreaFactory.String((FormattingContext)args, "?"));
+			return CompleteArea((IFormattingContext)args, e, AreaFactory.String((IFormattingContext)args, "?"));
 		}
 				
 		public object Visit(MathMLDeclareElement e, object args)  
 		{
-			return CompleteArea((FormattingContext)args, e, AreaFactory.String((FormattingContext)args, "?"));
+			return CompleteArea((IFormattingContext)args, e, AreaFactory.String((IFormattingContext)args, "?"));
 		}
 				
 		public object Visit(MathMLIntervalElement e, object args) 
 		{
-			return CompleteArea((FormattingContext)args, e, AreaFactory.String((FormattingContext)args, "?"));
+			return CompleteArea((IFormattingContext)args, e, AreaFactory.String((IFormattingContext)args, "?"));
 		}
 		
 		public object Visit(MathMLMatrixElement e, object args) 
 		{
-			return CompleteArea((FormattingContext)args, e, AreaFactory.String((FormattingContext)args, "?"));
+			return CompleteArea((IFormattingContext)args, e, AreaFactory.String((IFormattingContext)args, "?"));
 		}
 					
 		public object Visit(MathMLMatrixRowElement e, object args)  
 		{
-			return CompleteArea((FormattingContext)args, e, AreaFactory.String((FormattingContext)args, "?"));
+			return CompleteArea((IFormattingContext)args, e, AreaFactory.String((IFormattingContext)args, "?"));
 		}
 					
 		public object Visit(MathMLPiecewiseElement e, object args) 
 		{
-			return CompleteArea((FormattingContext)args, e, AreaFactory.String((FormattingContext)args, "?"));
+			return CompleteArea((IFormattingContext)args, e, AreaFactory.String((IFormattingContext)args, "?"));
 		}
 					
 		public object Visit(MathMLPredefinedSymbol e, object args)  
 		{
 			Area cache = Area.GetArea(e);
 			if(cache != null) return cache;
-			FormattingContext ctx = (FormattingContext)args;
+			IFormattingContext ctx = (IFormattingContext)args;
 
 			Area area = null;
 			PredefinedSymbolInfo info = PredefinedSymbolInfo.Get(e.Name);
@@ -830,22 +830,22 @@ namespace MathML.Rendering
 			{
 				area = AreaFactory.String(ctx, "?");
 			}
-			return CompleteArea((FormattingContext)args, e, area);
+			return CompleteArea((IFormattingContext)args, e, area);
 		}
 					
 		public object Visit(MathMLVectorElement e, object args)  
 		{
-			return CompleteArea((FormattingContext)args, e, AreaFactory.String((FormattingContext)args, "?"));
+			return CompleteArea((IFormattingContext)args, e, AreaFactory.String((IFormattingContext)args, "?"));
 		}
 		
 		public object Visit(MathMLAlignGroupElement e, object args) 
 		{
-			return CompleteArea((FormattingContext)args, e, AreaFactory.String((FormattingContext)args, "?"));
+			return CompleteArea((IFormattingContext)args, e, AreaFactory.String((IFormattingContext)args, "?"));
 		}
 			
 		public object Visit(MathMLAlignMarkElement e, object args)  
 		{
-			return CompleteArea((FormattingContext)args, e, AreaFactory.String((FormattingContext)args, "?"));
+			return CompleteArea((IFormattingContext)args, e, AreaFactory.String((IFormattingContext)args, "?"));
 		}
 		
 		/// <summary>
@@ -856,7 +856,7 @@ namespace MathML.Rendering
 			Area cache = Area.GetArea(e);
 			if(cache != null) return cache;
 
-			FormattingContext context = (FormattingContext)args;			
+			IFormattingContext context = (IFormattingContext)args;			
 			Area numerator = (Area)e.Numerator.Accept(this, context);			
 			Area denominator = (Area)e.Denominator.Accept(this, context);
 
@@ -872,7 +872,7 @@ namespace MathML.Rendering
 			Area cache = Area.GetArea(e);
 			if(cache != null) return cache;
 
-			return CompleteArea((FormattingContext)args, e, AreaFactory.Glyph((FormattingContext)args, e.FontFamily, e.Alt, e.Index));
+			return CompleteArea((IFormattingContext)args, e, AreaFactory.Glyph((IFormattingContext)args, e.FontFamily, e.Alt, e.Index));
 		}
  	
         /// <summary>
@@ -880,7 +880,7 @@ namespace MathML.Rendering
         /// </summary>					
 		public object Visit(MathMLMultiScriptsElement e, object args) 
 		{
-			return AreaFactory.String((FormattingContext)args, "MathMLMultiScriptsElement not supported yet");
+			return AreaFactory.String((IFormattingContext)args, "MathMLMultiScriptsElement not supported yet");
 		}
 
 		/// <summary>
@@ -894,7 +894,7 @@ namespace MathML.Rendering
 			if(cache != null) return cache;
 
 			Area op = null;
-			FormattingContext context = (FormattingContext)args;	
+			IFormattingContext context = (IFormattingContext)args;	
 
 			// copy of stretch size, this will be changed, no sense copy whole context
 			BoundingBox stretch = context.Stretch;
@@ -925,7 +925,7 @@ namespace MathML.Rendering
 						stretch.Width -= rspace.BoundingBox.Width;
 						if(stretch.Width < 0) stretch.Width = 0;
 	
-						op = GlyphFactory.GetStretchyGlyph(context.Size, text.Value[0], stretch);
+						op = GlyphFactory.GetStretchyGlyph(context, context.Size, text.Value[0], stretch);
 					}
 					else if(glyph != null)
 					{
@@ -933,7 +933,7 @@ namespace MathML.Rendering
 							"creating stretchy filler area from operator with glyph, index is {0}", 
 							glyph.Index));
 
-						op = GlyphFactory.GetStretchyGlyph(context.Size, (char)glyph.Index, context.Stretch);
+						op = GlyphFactory.GetStretchyGlyph(context, context.Size, (char)glyph.Index, context.Stretch);
 					}
 				}
 				else
@@ -958,7 +958,7 @@ namespace MathML.Rendering
 				op = AreaFactory.String(context, "?");
 			}			
 
-            return CompleteArea((FormattingContext)args, e, Colorize(e, AreaFactory.Horizontal(new Area[]{lspace, op, rspace})));
+            return CompleteArea((IFormattingContext)args, e, Colorize(e, AreaFactory.Horizontal(new Area[]{lspace, op, rspace})));
 		} 	
 					
 		public object Visit(MathMLStringLitElement e, object args)  
@@ -968,8 +968,8 @@ namespace MathML.Rendering
 
 			XmlNode xmlNode = e.FirstChild;
 			string text = xmlNode.NodeType == XmlNodeType.Text ? xmlNode.Value : String.Empty;
-			return CompleteArea((FormattingContext)args, 
-				e, Colorize(e, AreaFactory.String((FormattingContext)args, e.LQuote + text + e.RQuote)));
+			return CompleteArea((IFormattingContext)args, 
+				e, Colorize(e, AreaFactory.String((IFormattingContext)args, e.LQuote + text + e.RQuote)));
 		}
 		
 		/// <summary>
@@ -980,8 +980,8 @@ namespace MathML.Rendering
 			Area cache = Area.GetArea(e);
 			if(cache != null) return cache;
 
-			FormattingContext ctx = (FormattingContext)args;
-			FormattingContext indexCtx = new FormattingContext(ctx);
+			IFormattingContext ctx = (IFormattingContext)args;
+      IFormattingContext indexCtx = ctx.Clone();
 			indexCtx.ScriptLevel++;
 			Area radicand = (Area)e.Radicand.Accept(this, ctx);
 			Area index = e.Index != null ? (Area)e.Index.Accept(this, indexCtx) : null;
@@ -997,8 +997,8 @@ namespace MathML.Rendering
 			if(cache != null) return cache;
 
 			Area baseArea = null, subArea = null, superArea = null;
-			FormattingContext ctx = (FormattingContext)args;
-			FormattingContext nctx = new FormattingContext(ctx);
+			IFormattingContext ctx = (IFormattingContext)args;
+			IFormattingContext nctx = ctx.Clone();
 
             // format the base area, we better well have one...
 			baseArea = (Area)e.Base.Accept(this, ctx);
@@ -1025,7 +1025,7 @@ namespace MathML.Rendering
 			Area cache = Area.GetArea(e);
 			if(cache != null) return cache;
 
-			FormattingContext ctx = (FormattingContext)args;
+			IFormattingContext ctx = (IFormattingContext)args;
 			float width = ctx.Evaluate(e.Width);
 			float height = ctx.Evaluate(e.Height);
 			float depth = ctx.Evaluate(e.Depth);
@@ -1034,7 +1034,7 @@ namespace MathML.Rendering
 
 		public object Visit(MathMLTableRowElement e, object args) 
 		{
-			return CompleteArea((FormattingContext)args, e, AreaFactory.String((FormattingContext)args, "?"));
+			return CompleteArea((IFormattingContext)args, e, AreaFactory.String((IFormattingContext)args, "?"));
 		}
 			
 		public object Visit(MathMLTableElement e, object args)  
@@ -1042,7 +1042,7 @@ namespace MathML.Rendering
 			Area cache = Area.GetArea(e);
 			if(cache != null) return cache;
 
-			FormattingContext ctx = new FormattingContext((FormattingContext)args);
+			IFormattingContext ctx = ((IFormattingContext)args).Clone();
 			MathMLTableSizer sizer = new MathMLTableSizer(ctx, measurer, e);
 			ArrayList cells = new ArrayList();
 
@@ -1080,17 +1080,17 @@ namespace MathML.Rendering
 			
 		public object Visit(MathMLLabeledRowElement e, object args) 
 		{
-			return CompleteArea((FormattingContext)args, e, AreaFactory.String((FormattingContext)args, "?"));
+			return CompleteArea((IFormattingContext)args, e, AreaFactory.String((IFormattingContext)args, "?"));
 		}
 		
 		public object Visit(MathMLUnderOverElement e, object args) 
 		{
 			Area cache = Area.GetArea(e);
 			if(cache != null) return cache;
-			FormattingContext ctx = (FormattingContext)args;
-			FormattingContext baseCtx = new FormattingContext(ctx);
-			FormattingContext overCtx = new FormattingContext(ctx);
-			FormattingContext underCtx = new FormattingContext(ctx);
+			IFormattingContext ctx = (IFormattingContext)args;
+      IFormattingContext baseCtx = ctx.Clone();
+      IFormattingContext overCtx = ctx.Clone();
+      IFormattingContext underCtx = ctx.Clone();
 			MathMLElement baseElement = e.Base;
 			MathMLElement overElement = e.OverScript;
 			MathMLElement underElement = e.UnderScript;
@@ -1190,12 +1190,12 @@ namespace MathML.Rendering
 			
 		public object Visit(MathMLSemanticsElement e, object args) 
 		{
-			return CompleteArea((FormattingContext)args, e, AreaFactory.String((FormattingContext)args, "?"));
+			return CompleteArea((IFormattingContext)args, e, AreaFactory.String((IFormattingContext)args, "?"));
 		}
 			
 		public object Visit(MathMLXMLAnnotationElement e, object args)  
 		{
-			return CompleteArea((FormattingContext)args, e, AreaFactory.String((FormattingContext)args, "?"));
+			return CompleteArea((IFormattingContext)args, e, AreaFactory.String((IFormattingContext)args, "?"));
 		}
 		
 		/// <summary>
@@ -1216,7 +1216,7 @@ namespace MathML.Rendering
 			Area area = null;
 
 			// make an updated context
-			FormattingContext context = new FormattingContext((FormattingContext)args);
+			IFormattingContext context = ((IFormattingContext)args).Clone();
 			XmlNode node = null;
 			MathMLElement element = null;
 			MathMLNodeList contents = e.Contents;
@@ -1265,7 +1265,7 @@ namespace MathML.Rendering
 				area = AreaFactory.Horizontal(areas);
 			}
 
-			return CompleteArea((FormattingContext)args, e, Colorize(e, area));
+			return CompleteArea((IFormattingContext)args, e, Colorize(e, area));
 		}	
 
 		/// <summary>
@@ -1273,7 +1273,7 @@ namespace MathML.Rendering
 		/// </summary>
 		public object Visit(MathMLSeparator e, object args) 
 		{
-			return CompleteArea((FormattingContext)args, e, AreaFactory.String((FormattingContext)args, "?"));
+			return CompleteArea((IFormattingContext)args, e, AreaFactory.String((IFormattingContext)args, "?"));
 		}
 
 		/// <summary>
@@ -1306,19 +1306,19 @@ namespace MathML.Rendering
 			{
 				argList.Add(o);
 			}
-			Area area = FormatContainer(e, (FormattingContext)args, argList);
+			Area area = FormatContainer(e, (IFormattingContext)args, argList);
 
 			// table cell areas elemetns area a special case, they get 'Completed'
 			// in the MathMLTableCellElement method
-			return e is MathMLTableCellElement ? area : CompleteArea((FormattingContext)args, e, area);
+			return e is MathMLTableCellElement ? area : CompleteArea((IFormattingContext)args, e, area);
 		}
 
         /// <summary>
         /// Format a row of elements. This can be either a presentation container or a mrow
         /// </summary>
-		private Area FormatContainer(MathMLElement e, FormattingContext ctx, ArrayList arguments)
+		private Area FormatContainer(MathMLElement e, IFormattingContext ctx, ArrayList arguments)
 		{
-			FormattingContext context = new FormattingContext(ctx);
+      IFormattingContext context = ctx.Clone();
 			BoundingBox extent = BoundingBox.New();
 			Area[] areas = new Area[arguments.Count];
 			int stretchCount = 0;
@@ -1361,11 +1361,11 @@ namespace MathML.Rendering
 					context.Stretch = stretch;
 
 					// calculate availible width
-					context.Stretch.Width = context.Stretch.Width - extent.Width;
-					if(context.Stretch.Width < 0) context.Stretch.Width = 0;
+					context.StretchWidth = context.Stretch.Width - extent.Width;
+					if(context.Stretch.Width < 0) context.StretchWidth = 0;
 
 					// size to stretch each width equally
-					context.Stretch.Width = context.Stretch.Width / (float)stretchCount;
+					context.StretchWidth = context.Stretch.Width / (float)stretchCount;
 				}            
 
 				// process all areas that need to be stretched			
@@ -1403,14 +1403,14 @@ namespace MathML.Rendering
 		/// </summary>
 		public object Visit(MathMLPlaceholderElement e, object args)
 		{
-			FormattingContext ctx = (FormattingContext)args;
-			Area glyph = GlyphFactory.GetGlyph(ctx.Size, '\xfffc');
+			IFormattingContext ctx = (IFormattingContext)args;
+			Area glyph = GlyphFactory.GetGlyph(ctx, ctx.Size, '\xfffc');
 			return CompleteArea(ctx, e, glyph);
 		}
 
 		public object Visit(MathMLContentContainer e, object args)
 		{
-			FormattingContext ctx = (FormattingContext)args;
+			IFormattingContext ctx = (IFormattingContext)args;
 			// only deal with first child for now
 			MathMLElement elm = e.FirstChild as MathMLElement;
 			return elm != null ? elm.Accept(this, ctx) : AreaFactory.String(ctx, "?");
@@ -1445,7 +1445,7 @@ namespace MathML.Rendering
 			return a;
 		}
 
-		private static PointF GetCellAlignment(MathMLTableCellElement e, Area area, FormattingContext ctx,
+		private static PointF GetCellAlignment(MathMLTableCellElement e, Area area, IFormattingContext ctx,
 			BoundingBox cellSize, PointF cellShift)
 		{
 			BoundingBox areaSize = area.BoundingBox;
@@ -1490,7 +1490,7 @@ namespace MathML.Rendering
 				case Align.Axis:
 				{
 					// shift to the axis (shift up in the negative direction)
-					vShift = -GraphicDevice.Axis(ctx);
+					vShift = -ctx.Axis;
 				} break;
 				default: 
 				{	
@@ -1512,7 +1512,7 @@ namespace MathML.Rendering
 		 * wrap the completed area with a MathMLWrapper area and set the
 		 * elements area field to point to the newly completed area
 		 */
-		private Area CompleteArea(FormattingContext ctx, MathMLElement e, Area area)
+		private Area CompleteArea(IFormattingContext ctx, MathMLElement e, Area area)
 		{
 			if(ctx.cacheArea)
 			{
@@ -1527,7 +1527,7 @@ namespace MathML.Rendering
 		 * wrap the completed area with a MathMLWrapper area and set the
 		 * elements area field to point to the newly completed area
 		 */
-		private Area Error(FormattingContext ctx, MathMLElement e, String errorMsg)
+		private Area Error(IFormattingContext ctx, MathMLElement e, String errorMsg)
 		{
 			Debug.WriteLine("Error Formatting " + e.GetType().Name + " element, " + errorMsg);
 			Area area = AreaFactory.String(ctx, "?");

@@ -94,21 +94,21 @@ namespace MathML.Rendering
 			return new AreaRegion(this, x, y);
 		}
 
-		public override AreaRegion GetRegion(float x, float y, MathMLElement element, int index)
+    public override AreaRegion GetRegion(IFormattingContext context, float x, float y, MathMLElement element, int index)
 		{
 			foreach(Area a in content)
 			{
-				AreaRegion r = a.GetRegion(x, y, element, index);
+				AreaRegion r = a.GetRegion(context, x, y, element, index);
 				if(r != null) return r;
 			}
 			return null;
 		}
 
-		public override AreaRegion GetEditRegion(float x, float y, int index)
+    public override AreaRegion GetEditRegion(IFormattingContext context, float x, float y, int index)
 		{
 			foreach(Area a in content)
 			{
-				AreaRegion r = a.GetEditRegion(x, y, index);
+				AreaRegion r = a.GetEditRegion(context, x, y, index);
 				if(r != null) return r;				
 			}
 			return null;

@@ -22,7 +22,7 @@
 using System;
 using System.Xml;
 using System.Diagnostics;
-using System.Windows.Forms;
+
 
 namespace MathML.Rendering.GlyphMapper
 {
@@ -84,18 +84,18 @@ namespace MathML.Rendering.GlyphMapper
 				simpleGlyphs = new SimpleGlyphAttributes[0];
 				simpleGlyphRanges = new SimpleGlyphRange[0];
 				fontName = "";
-				MessageBox.Show("could not load mathfont.config.xml, " + e.ToString());
+				throw new Exception("could not load mathfont.config.xml, " + e.ToString());
 			}	
 		}
 
 		/**
 		 * create a new glyph area.
 		 */
-		public Area GetGlyph(int pointSize, char c)
+    public Area GetGlyph(IFormattingContext context, float pointSize, char c)
 		{
 			Area result = null;
 			int simpleGlyphIndex;
-			int fontIndex = GetFontIndex(pointSize);
+			int fontIndex = GetFontIndex(context, pointSize);
 
 			if(fontIndex >= 0)
 			{
@@ -108,7 +108,7 @@ namespace MathML.Rendering.GlyphMapper
 				// look for a glyph in a range
 				for(int i = 0; i < simpleGlyphRanges.Length; i++)
 				{
-					if((result = simpleGlyphRanges[i].GetArea(fontInstances[fontIndex].FontHandle, c)) != null)
+					if((result = simpleGlyphRanges[i].GetArea(context, fontInstances[fontIndex].FontHandle, c)) != null)
 					{
 						fontInstances[fontIndex].CacheGlyphArea(c, result);
 						return result;                        
@@ -118,7 +118,7 @@ namespace MathML.Rendering.GlyphMapper
 				// look for the glyph in the maps
 				if((simpleGlyphIndex = this.GetSimpleIndex(c)) >= 0 &&
 					(result = 
-					simpleGlyphs[simpleGlyphIndex].GetArea(fontInstances[fontIndex].FontHandle)) != null)
+					simpleGlyphs[simpleGlyphIndex].GetArea(context, fontInstances[fontIndex].FontHandle)) != null)
 				{
 					fontInstances[fontIndex].CacheGlyphArea(c, result);
 					return result;
@@ -140,7 +140,7 @@ namespace MathML.Rendering.GlyphMapper
 		 * horizontal stretchy glyphs.
 		 * @param c the character to find a glyph for.
 		 */
-		public Area GetStretchyGlyph(int pointSize, char c, BoundingBox desiredSize, out float lineThickness)
+    public Area GetStretchyGlyph(IFormattingContext context, float pointSize, char c, BoundingBox desiredSize, out float lineThickness)
 		{
 			Area result = null;
 
@@ -151,7 +151,7 @@ namespace MathML.Rendering.GlyphMapper
 			int stretchyIndex = GetStretchyIndex(c);
 			if(stretchyIndex >= 0)
 			{
-				int fontIndex = GetFontIndex(pointSize);
+				int fontIndex = GetFontIndex(context, pointSize);
 				if(fontIndex >= 0)
 				{
 					result = fontInstances[fontIndex].GetStretchyArea(stretchyIndex, desiredSize, out lineThickness);
@@ -181,7 +181,7 @@ namespace MathML.Rendering.GlyphMapper
 		 * find an index to a font that mathces the given font cell height, 
 		 * if no font is availible, one is created with this height.
 		 */
-		private int GetFontIndex(int fontSize)
+    private int GetFontIndex(IFormattingContext context, float fontSize)
 		{
 			fontSize = (int)(fontSize * scaleFactor);
 			for(int i = 0; i < fontInstances.Length; i++)
@@ -193,20 +193,20 @@ namespace MathML.Rendering.GlyphMapper
 			}
 
 			// no font found, so try to create one.
-			return CreateFont(fontSize);
+			return CreateFont(context, fontSize);
 		}
 
 		/** 
 		 * create a font with the given font size. return the index of the new
 		 * font, or -1 if we failed to create the font
 		 */
-		private int CreateFont(int fontSize)
+    private int CreateFont(IFormattingContext context, float fontSize)
 		{
 			fontSize = (int)(fontSize * scaleFactor);
 			FontInstance[] tmp = fontInstances;
 			fontInstances = new FontInstance[fontInstances.Length + 1];	
 			tmp.CopyTo(fontInstances, 0);
-			fontInstances[fontInstances.Length - 1] = new FontInstance(fontName, fontSize, stretchyGlyphIndices);
+			fontInstances[fontInstances.Length - 1] = new FontInstance(context, fontName, fontSize, stretchyGlyphIndices);
 			return fontInstances.Length - 1;
 		}	
 

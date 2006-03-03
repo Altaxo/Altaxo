@@ -47,11 +47,11 @@ namespace MathML.Rendering
 			return region;
 		}
 
-		public override AreaRegion GetRegion(float x, float y, MathMLElement element, int index)
+    public override AreaRegion GetRegion(IFormattingContext context, float x, float y, MathMLElement element, int index)
 		{
 			if(element == this.element)
 			{
-				AreaRegion region = child.GetEditRegion(x, y, index);
+				AreaRegion region = child.GetEditRegion(context, x, y, index);
 				if(region != null)
 				{
 					region.Element = element;
@@ -65,13 +65,13 @@ namespace MathML.Rendering
 			}
 			else
 			{
-				return child.GetRegion(x, y, element, index);
+				return child.GetRegion(context, x, y, element, index);
 			}
 		}
 
-		public override AreaRegion GetRegion(float x, float y, Area area, int index)
+    public override AreaRegion GetRegion(IFormattingContext context, float x, float y, Area area, int index)
 		{
-			AreaRegion region = child.GetRegion (x, y, area, index);
+			AreaRegion region = child.GetRegion (context, x, y, area, index);
 			if(region != null && region.Element == null)
 			{
 				region.Element = element;				
@@ -79,7 +79,7 @@ namespace MathML.Rendering
 			return region;
 		}
 
-		public override AreaRegion GetEditRegion(float x, float y, int index)
+    public override AreaRegion GetEditRegion(IFormattingContext context, float x, float y, int index)
 		{
 			return null;
 		}

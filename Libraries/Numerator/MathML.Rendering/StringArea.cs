@@ -20,6 +20,7 @@
 //andy[at]epsilon3[dot]net
 
 using System;
+using System.Drawing;
 using Scaled = System.Single;
 
 namespace MathML.Rendering
@@ -51,7 +52,7 @@ namespace MathML.Rendering
 		/**
 		 * keep track of the font
 		 */
-		private readonly FontHandle font;
+		private readonly IFontHandle font;
 
 		/**
 		 * keep track of the bouning box, calculated in the ctor
@@ -67,9 +68,9 @@ namespace MathML.Rendering
 		/**
 		 * create a string area
 		 */
-		public StringArea(FormattingContext context, string content)
+		public StringArea(IFormattingContext context, string content)
 		{
-			this.font = FontFactory.GetFont(context);
+			this.font = context.GetFont();
 			this.content = content;
 			box = BoundingBox.New();
 
@@ -78,7 +79,7 @@ namespace MathML.Rendering
 			for(int i = 0; i < content.Length; i++)
 			{
 				BoundingBox tmp = BoundingBox.New();
-				GraphicDevice.MeasureGlyph(font.Handle, content[i], out tmp, out left, out right);
+				context.MeasureGlyph(font, content[i], out tmp, out left, out right);
 				box.Append(tmp);
 
 				// left edge of first char
@@ -92,9 +93,9 @@ namespace MathML.Rendering
 			rightEdge = right;
 		}
 
-		public override void Render(GraphicDevice device, float x, float y)
+		public override void Render(IGraphicDevice device, float x, float y)
 		{
-			IntPtr savedFont = device.SetFont(font.Handle);
+			IFontHandle savedFont = device.SetFont(font);
 			device.DrawString(x, y, content);
 			device.RestoreFont(savedFont);
 		}
@@ -114,7 +115,7 @@ namespace MathML.Rendering
 			get { return rightEdge; }
 		}
 
-		public override AreaRegion GetEditRegion(float x, float y, int index)
+    public override AreaRegion GetEditRegion(IFormattingContext context, float x, float y, int index)
 		{
 			// measure horizontal position of char:
 			BoundingBox horz = BoundingBox.New();
@@ -122,14 +123,14 @@ namespace MathML.Rendering
 			for(int i = 0; i < index && i < content.Length; i++)
 			{
 				BoundingBox tmp = BoundingBox.New();
-				GraphicDevice.MeasureGlyph(font.Handle, content[i], out tmp, out left, out right);
+				context.MeasureGlyph(font, content[i], out tmp, out left, out right);
 				horz.Append(tmp);
 			}
 			return new AreaRegion(this, x + horz.Width, y);
 		}
 
 
-		public override AreaRegion GetRegion(float x, float y, Area area, int index)
+    public override AreaRegion GetRegion(IFormattingContext context, float x, float y, Area area, int index)
 		{
 			if(area == this && index <= content.Length)
 			{
@@ -139,7 +140,7 @@ namespace MathML.Rendering
 				for(int i = 0; i < index; i++)
 				{
 					BoundingBox tmp = BoundingBox.New();
-					GraphicDevice.MeasureGlyph(font.Handle, content[i], out tmp, out left, out right);
+					context.MeasureGlyph(font, content[i], out tmp, out left, out right);
 					horz.Append(tmp);
 				}
                 return new AreaRegion(this, x + horz.Width, y);

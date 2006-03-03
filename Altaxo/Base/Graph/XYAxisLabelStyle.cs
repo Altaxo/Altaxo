@@ -163,10 +163,13 @@ namespace Altaxo.Graph
 
 
 
+        // Modification of StringFormat is necessary to avoid 
+        // too big spaces between successive words
+        s._stringFormat = (StringFormat)StringFormat.GenericTypographic.Clone();
+        s._stringFormat.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
 
 
-
-        s.SetStringFormat();
+        
         return s;
       }
     }

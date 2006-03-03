@@ -39,16 +39,16 @@ namespace MathML.Rendering
 		/**
 		 * create an area that formats a string.
 		 */
-		public static Area String(FormattingContext context, String str) 
+		public static Area String(IFormattingContext context, String str) 
 		{
 			Area result = null;
-			int fontSize = context.Size;
+			float fontSize = context.Size;
 			ArrayList list = null;
 			int start = 0;
 			
 			if(str.Length == 1)
 			{
-				result = str[0] > '\x7f' ? GlyphFactory.GetGlyph(fontSize, str[0]) :
+				result = str[0] > '\x7f' ? GlyphFactory.GetGlyph(context, fontSize, str[0]) :
 					new StringArea(context, str);
 			}
 			else
@@ -60,7 +60,7 @@ namespace MathML.Rendering
 					{
 						if(list == null) { list = new ArrayList(); }
 						list.Add(new StringArea(context, str.Substring(start, i - start)));
-						list.Add(GlyphFactory.GetGlyph(fontSize, str[i]));
+						list.Add(GlyphFactory.GetGlyph(context, fontSize, str[i]));
 						start = i + 1;
 					}
 				}
@@ -77,11 +77,11 @@ namespace MathML.Rendering
 			return result;
 		}
 
-		public static Area Glyph(FormattingContext context, String fontName, 
+		public static Area Glyph(IFormattingContext context, String fontName, 
 			String altFontName, ushort index) 
 		{ 
-			FontHandle font = FontFactory.GetFont(context, fontName, altFontName);
-			return new GlyphArea(font, index);
+			IFontHandle font = context.GetFont(fontName, altFontName);
+			return new GlyphArea(context, font, index);
 		}
 
 		public static Area Background(System.Drawing.Color color, Area area) 
@@ -293,7 +293,7 @@ namespace MathML.Rendering
 		 * this notion natuarally falls into the conecpt of a vertical array area, 
 		 * an area, a line, and the second area.
 		 */
-		public static Area Fraction(FormattingContext ctx, Area numerator, Area denominator, int lineThickness) 
+		public static Area Fraction(IFormattingContext ctx, Area numerator, Area denominator, int lineThickness) 
 		{
 			Area space = new VerticalSpaceArea(1, 1);
 			Area line = HorizontalLine(1);
@@ -304,14 +304,14 @@ namespace MathML.Rendering
 
 			Area[] areas = {denominator, space, line, space, numerator};
 
-			return Shift(GraphicDevice.Axis(ctx), new VerticalArea(areas, 2));
+			return Shift(ctx.Axis, new VerticalArea(areas, 2));
 		}
 
 		/**
 		 * format a script area. This is an area with a base, and
 		 * optional super and subscript areas.
 		 */
-		public static Area Script(FormattingContext context, Area baseArea, 
+		public static Area Script(IFormattingContext context, Area baseArea, 
 			Area subArea, Length subMinShift, Area superArea, Length superMinShift) 
 		{
 			// we might have a italic base where we have an overhang at the top, in this
@@ -378,10 +378,10 @@ namespace MathML.Rendering
 		/**
 		 * format a radical
 		 */
-		public static Area Radical(FormattingContext context, Area radicand, Area index)
+		public static Area Radical(IFormattingContext context, Area radicand, Area index)
 		{
 			const char RadicalGlyphIndex = '\x221a';
-			int fontSize = context.Size;
+			float fontSize = context.Size;
 			BoundingBox radicandBox = radicand.BoundingBox;
 			BoundingBox radicalBox;
 			float minIndexWidth;
@@ -400,7 +400,7 @@ namespace MathML.Rendering
 			glyphBox.Height += topMinSpace;
 
 			// create a glyph for the radical char
-			Area radical = GlyphFactory.GetStretchyGlyph(fontSize, RadicalGlyphIndex, glyphBox, out lineThickness);			
+			Area radical = GlyphFactory.GetStretchyGlyph(context, fontSize, RadicalGlyphIndex, glyphBox, out lineThickness);			
 
 			// line for the top part of the radical
 			Area horizontalLine = HorizontalLine(lineThickness);
@@ -483,7 +483,7 @@ namespace MathML.Rendering
 		 * script rows. this ignores (for now anyway) the min shift values
 		 * specified in the DOM
 		 */
-		private static void CalculateScriptShift(FormattingContext context, 
+		private static void CalculateScriptShift(IFormattingContext context, 
 			BoundingBox baseBox, BoundingBox subBox, Length subMinSize, 
 			BoundingBox superBox, Length superMinSize, 
 			out float subShift, out float superShift) 
@@ -498,14 +498,14 @@ namespace MathML.Rendering
 		 * script rows. this ignores (for now anyway) the min shift values
 		 * specified in the DOM.
 		 */
-		private static void CalculateScriptShift(FormattingContext context, 
+		private static void CalculateScriptShift(IFormattingContext context, 
 			BoundingBox baseBox, BoundingBox subBox, BoundingBox superBox, 
 			out float subShift, out float superShift) 
 		{
 
-			float ex = GraphicDevice.Ex(context);
-			float axis = GraphicDevice.Axis(context);
-			float rule = GraphicDevice.DefaultLineThickness(context);
+			float ex = context.Ex;
+			float axis = context.Axis;
+			float rule = context.DefaultLineThickness;
 
 			superShift = Math.Max(ex, baseBox.Height - axis);
 			subShift = Math.Max(axis, baseBox.Depth + axis);

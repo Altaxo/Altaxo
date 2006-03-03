@@ -20,6 +20,7 @@
 //andy[at]epsilon3[dot]net
 
 using System;
+using System.Drawing;
 
 /**
  * store a set of glyph attributes, these are calculated
@@ -75,7 +76,7 @@ namespace MathML.Rendering.GlyphMapper
 		 *		  stretchy glyph, shrink the reported metrics by one, so
 		 *		  we get a nice overlap.
 		 */
-		public GlyphAttributes(IntPtr fontHandle, short charIndex, int fudge)
+    public GlyphAttributes(IFormattingContext context, IFontHandle fontHandle, short charIndex, int fudge)
 		{
 			Index = charIndex;
 			glyphArea = null;
@@ -83,7 +84,7 @@ namespace MathML.Rendering.GlyphMapper
 
 			if(charIndex >= 0)
 			{
-				GraphicDevice.MeasureGlyph(fontHandle, (ushort)charIndex, out Box, 
+				context.MeasureGlyph(fontHandle, (ushort)charIndex, out Box, 
 					out Left, out Right);
 
 				if(fudge == FudgeWidth)
@@ -113,7 +114,7 @@ namespace MathML.Rendering.GlyphMapper
 		 */
 		private WeakReference glyphArea;
 
-		public Area GetGlyph(FontHandle fontHandle)
+		public Area GetGlyph(IFontHandle fontHandle)
 		{
 			Area result = null;
 			if(glyphArea != null && glyphArea.IsAlive)

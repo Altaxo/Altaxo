@@ -28,7 +28,7 @@ namespace MathML.Rendering
 	/// This included the offset of an area to the starting postion, 
 	/// and the inner most source mathml element
 	/// </summary>
-	internal class AreaRegion
+	public class AreaRegion
 	{
 		// area this region is describing
 		public readonly Area Area;

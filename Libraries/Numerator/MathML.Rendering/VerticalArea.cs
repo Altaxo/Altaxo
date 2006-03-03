@@ -94,7 +94,7 @@ namespace MathML.Rendering
 		/**
 		 * render all of the child areas.
 		 */
-		public override void Render(GraphicDevice device, float x, float y)
+		public override void Render(IGraphicDevice device, float x, float y)
 		{
 			y = y + BoundingBox.Depth;
 			foreach(Area a in content)
@@ -211,14 +211,14 @@ namespace MathML.Rendering
 			return new AreaRegion(this, x, y);
 		}
 
-		public override AreaRegion GetEditRegion(float x, float y, int index)
+    public override AreaRegion GetEditRegion(IFormattingContext context, float x, float y, int index)
 		{
 			float yy = y + BoundingBox.Depth;
 			foreach(Area a in content)
 			{
 				BoundingBox box = a.BoundingBox;
 				yy -= box.Depth;
-				AreaRegion r = a.GetEditRegion(x, yy, index);
+				AreaRegion r = a.GetEditRegion(context, x, yy, index);
 				if(r != null) 
 				{
 					return r;
@@ -229,14 +229,14 @@ namespace MathML.Rendering
 			return null;
 		}
 
-		public override AreaRegion GetRegion(float x, float y, MathMLElement element, int index)
+    public override AreaRegion GetRegion(IFormattingContext context, float x, float y, MathMLElement element, int index)
 		{
 			float yy = y + BoundingBox.Depth;
 			foreach(Area a in content)
 			{
 				BoundingBox box = a.BoundingBox;
 				yy -= box.Depth;
-				AreaRegion r = a.GetRegion(x, yy, element, index);
+				AreaRegion r = a.GetRegion(context, x, yy, element, index);
 				if(r != null) 
 				{
 					return r;

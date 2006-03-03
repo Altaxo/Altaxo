@@ -41,7 +41,7 @@ namespace MathML.Rendering
 	///                    |                       | v
 	///                    |-----------------------|--
 	/// </summary>
-	internal struct BoundingBox
+	public struct BoundingBox
 	{
 		/// <summary>
 		/// create a new bounding box with the given parameters
@@ -52,7 +52,7 @@ namespace MathML.Rendering
 			box.Width = width;
 			box.Depth = depth;
 			box.Height = height;
-			return box;
+     	return box;
 		}
 
 		/// <summary>
@@ -68,7 +68,7 @@ namespace MathML.Rendering
 			box.Width = 0;
 			box.Depth = Single.Epsilon;
 			box.Height = Single.Epsilon;
-			return box;
+      return box;
 		}
 
 		/// <summary>

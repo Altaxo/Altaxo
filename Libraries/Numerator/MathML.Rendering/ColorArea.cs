@@ -43,7 +43,7 @@ namespace MathML.Rendering
 		 * change the color of the rendering context, and call the child's
 		 * render method recursivly
 		 */
-		public override void Render(GraphicDevice device, float x, float y)
+		public override void Render(IGraphicDevice device, float x, float y)
 		{
 			Color oldColor = device.Color;
 			device.Color = color;

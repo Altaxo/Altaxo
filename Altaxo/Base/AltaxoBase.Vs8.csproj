@@ -125,8 +125,11 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Calc\FitFunctions\General\LinearFit.cs" />
+    <Compile Include="Calc\FitFunctions\Relaxation\HavriliakNegamiSusceptibility.cs" />
+    <Compile Include="Calc\FitFunctions\Relaxation\KohlrauschModulusRetardation.cs" />
+    <Compile Include="Calc\FitFunctions\Relaxation\KohlrauschSusceptibility.cs" />
     <Compile Include="Graph\AxisLinkType.cs" />
-    <Compile Include="Calc\FitFunctions\Relaxation\HavriliakNegamiFunction.cs" />
     <Compile Include="Calc\FitFunctions\Relaxation\KohlrauschDecay.cs" />
     <Compile Include="Calc\LinearAlgebra\DataColumnWrapper.cs">
       <SubType>Code</SubType>

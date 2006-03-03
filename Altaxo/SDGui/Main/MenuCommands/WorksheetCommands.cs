@@ -91,6 +91,14 @@ namespace Altaxo.Worksheet.Commands
     }
   }
 
+  public class ImportAsciiInSingleWorksheet : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
+    {
+      Altaxo.Worksheet.Commands.FileCommands.ImportAscii(ctrl,false);
+    }
+  }
+
   public class ImportImage : AbstractWorksheetControllerCommand
   {
     public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)

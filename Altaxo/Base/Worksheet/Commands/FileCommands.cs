@@ -80,7 +80,7 @@ namespace Altaxo.Worksheet.Commands
       importer.ImportAscii(recognizedOptions,ctrl.Doc);
     }
 
-    public static void ImportAscii(WorksheetController ctrl, string[] filenames)
+    public static void ImportAsciiToMultipleWorksheets(WorksheetController ctrl, string[] filenames)
     {
       int startrest=0;
 
@@ -109,8 +109,19 @@ namespace Altaxo.Worksheet.Commands
 
     }
 
+    public static void ImportAsciiToSingleWorksheet(WorksheetController ctrl, string[] filenames)
+    {
+      Array.Sort(filenames); // Windows seems to store the filenames reverse to the clicking order or in arbitrary order
+      AsciiImporter.ImportMultipleAscii(filenames, ctrl.Doc);
+    }
 
-    public static void ImportAscii(WorksheetController ctrl)
+
+     public static void ImportAscii(WorksheetController ctrl)
+      {
+       ImportAscii(ctrl,true);
+      }
+
+    public static void ImportAscii(WorksheetController ctrl, bool toMultipleWorksheets)
     {
       using(OpenFileDialog openFileDialog1 = new OpenFileDialog())
       {
@@ -121,7 +132,10 @@ namespace Altaxo.Worksheet.Commands
 
         if(openFileDialog1.ShowDialog() == DialogResult.OK && openFileDialog1.FileNames.Length>0)
         {
-          ImportAscii(ctrl,openFileDialog1.FileNames);
+          if (toMultipleWorksheets)
+            ImportAsciiToMultipleWorksheets(ctrl, openFileDialog1.FileNames);
+          else
+            ImportAsciiToSingleWorksheet(ctrl, openFileDialog1.FileNames);
         }
       }
     }

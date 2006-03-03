@@ -59,7 +59,7 @@ namespace MathML.Rendering
 		 * render the child area branch shifted by the shift 
 		 * amount
 		 */
-		public override void Render(GraphicDevice device, float x, float y)
+		public override void Render(IGraphicDevice device, float x, float y)
 		{
 			child.Render(device, x, y - shift);
 		}
@@ -72,7 +72,7 @@ namespace MathML.Rendering
 			return new ShiftArea(shift, child);
 		}
 
-		public override AreaRegion GetRegion(float x, float y, Area area, int index)
+    public override AreaRegion GetRegion(IFormattingContext context, float x, float y, Area area, int index)
 		{
 			if(area == source)
 			{
@@ -80,7 +80,7 @@ namespace MathML.Rendering
 			}
 			else
 			{
-				return child.GetRegion(x, y - shift, area, index);
+				return child.GetRegion(context, x, y - shift, area, index);
 			}
 		}
 
@@ -89,14 +89,14 @@ namespace MathML.Rendering
 			return child.GetRegion (x, y - shift, pointX, pointY);
 		}
 
-		public override AreaRegion GetRegion(float x, float y, MathMLElement element, int index)
+    public override AreaRegion GetRegion(IFormattingContext context, float x, float y, MathMLElement element, int index)
 		{
-			return child.GetRegion (x, y - shift, element, index);
+			return child.GetRegion (context, x, y - shift, element, index);
 		}
 
-		public override AreaRegion GetEditRegion(float x, float y, int index)
+    public override AreaRegion GetEditRegion(IFormattingContext context, float x, float y, int index)
 		{
-			return child.GetEditRegion (x, y - shift, index);
+			return child.GetEditRegion (context, x, y - shift, index);
 		}
 
 

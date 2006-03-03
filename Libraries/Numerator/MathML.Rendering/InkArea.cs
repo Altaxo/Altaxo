@@ -44,7 +44,7 @@ namespace MathML.Rendering
 		 * coordinates at the origin of the bounding box, so we need to 
 		 * calculate the extent of that rectangle here.
 		 */
-		public override void Render(GraphicDevice device, float x, float y)
+		public override void Render(IGraphicDevice device, float x, float y)
 		{
 			BoundingBox box = child.BoundingBox;
 			device.DrawFilledRectangle(y - box.Height, x, x + box.Width, y + box.Depth);

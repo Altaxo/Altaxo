@@ -67,7 +67,7 @@ namespace MathML.Rendering
 		/**
 		 * TODO, figure out why we do nothing here
 		 */
-		public override void Render(GraphicDevice device, float x, float y) {}
+		public override void Render(IGraphicDevice device, float x, float y) {}
 
 		/**
 		 * if the id id empty (at a terminal node), return 0, 

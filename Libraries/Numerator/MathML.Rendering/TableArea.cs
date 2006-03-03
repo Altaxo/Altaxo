@@ -53,7 +53,7 @@ namespace MathML.Rendering
 		}
 
 
-		public override void Render(GraphicDevice device, float x, float y)
+		public override void Render(IGraphicDevice device, float x, float y)
 		{
 			// base renders all areas at the same origin, shift origin to upper
 			// left corner
@@ -138,7 +138,7 @@ namespace MathML.Rendering
 			return result;
 		}
 
-		public override AreaRegion GetRegion(float x, float y, MathMLElement element, int index)
+    public override AreaRegion GetRegion(IFormattingContext context, float x, float y, MathMLElement element, int index)
 		{
 			AreaRegion result = null;
 			if(this.element == element)
@@ -149,7 +149,7 @@ namespace MathML.Rendering
 			{
 				foreach(Area a in content)
 				{
-					result = a.GetRegion(x, y - box.Height, element, index);
+					result = a.GetRegion(context, x, y - box.Height, element, index);
 					if(result != null) 
 					{
 						Debug.Assert(result.Element != null, "Invalid element type for TableArea cell area");

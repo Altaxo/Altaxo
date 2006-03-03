@@ -55,7 +55,7 @@ namespace MathML.Rendering
 		/// in the future, this will be optimized so that a visitor only calculates
 		/// the min size instead of creating an entire sub tree of areas.
 		/// </summary>
-		public BoundingBox MeasureElement(FormattingContext ctx, MathMLElement e)
+		public BoundingBox MeasureElement(IFormattingContext ctx, MathMLElement e)
 		{
 			Debug.Assert(ctx.cacheArea == false);
 			if(e != null)
@@ -84,7 +84,7 @@ namespace MathML.Rendering
 			}
 		}
 
-		public BoundingBox[] MeasureElements(FormattingContext ctx, MathMLElement[] elements)
+		public BoundingBox[] MeasureElements(IFormattingContext ctx, MathMLElement[] elements)
 		{
 			BoundingBox[] boxes = new BoundingBox[elements.Length];
 			for(int i = 0; i < elements.Length; i++)
@@ -101,7 +101,7 @@ namespace MathML.Rendering
 			return boxes;
 		}
 
-		public BoundingBox[][] MeasureElements(FormattingContext ctx, MathMLElement[][] elements)
+		public BoundingBox[][] MeasureElements(IFormattingContext ctx, MathMLElement[][] elements)
 		{
 			BoundingBox[][] boxes = new BoundingBox[elements.Length][];
 			for(int i = 0; i < elements.Length; i++)
@@ -123,7 +123,7 @@ namespace MathML.Rendering
 
 		object MathML.MathMLVisitor.Visit(MathMLPresentationContainer e, object args)
 		{
-			FormattingContext context = new FormattingContext((FormattingContext)args);
+			IFormattingContext context = ((IFormattingContext)args).Clone();
 			MathMLNodeList arguments = e.Arguments;
 			BoundingBox extent = BoundingBox.New();
 			int stretchCount = 0;
@@ -166,11 +166,11 @@ namespace MathML.Rendering
 					context.Stretch = stretch;
 
 					// calculate availible width
-					context.Stretch.Width = context.Stretch.Width - extent.Width;
-					if(context.Stretch.Width < 0) context.Stretch.Width = 0;
+					context.StretchWidth = context.StretchWidth - extent.Width;
+					if(context.Stretch.Width < 0) context.StretchWidth = 0;
 
 					// size to stretch each width equally
-					context.Stretch.Width = context.Stretch.Width / (float)stretchCount;
+					context.StretchWidth = context.Stretch.Width / (float)stretchCount;
 				}            
 
 				// process all areas that need to be stretched			
@@ -193,7 +193,7 @@ namespace MathML.Rendering
 			Area area = null;
 
 			// make an updated context
-			FormattingContext context = new FormattingContext((FormattingContext)args);
+			IFormattingContext context = ((IFormattingContext)args).Clone();
 			XmlNode node = null;
 			MathMLElement element = null;
 			MathMLNodeList contents = e.Contents;
@@ -267,7 +267,7 @@ namespace MathML.Rendering
 
 		object MathML.MathMLVisitor.Visit(MathMLTableElement e, object args)
 		{
-			MathMLTableSizer sizer = new MathMLTableSizer((FormattingContext)args, this, e);
+			MathMLTableSizer sizer = new MathMLTableSizer((IFormattingContext)args, this, e);
 			return sizer.BoundingBox;			
 		}
 

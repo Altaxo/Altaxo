@@ -49,7 +49,7 @@ namespace MathML.Rendering
         /**
 		 * x and y are the upper left corner of the parent table
 		 */
-		public override void Render(GraphicDevice device, float x, float y)
+		public override void Render(IGraphicDevice device, float x, float y)
 		{
 			child.Render(device, x + areaShift.X, y + areaShift.Y);
 		}
@@ -92,7 +92,7 @@ namespace MathML.Rendering
 			return null;
 		}
 
-		public override AreaRegion GetRegion(float x, float y, MathMLElement element, int index)
+    public override AreaRegion GetRegion(IFormattingContext context, float x, float y, MathMLElement element, int index)
 		{
 			if(element == this.element)
 			{
@@ -100,7 +100,7 @@ namespace MathML.Rendering
 			}
 			else
 			{
-				return child.GetRegion(x + areaShift.X, y + areaShift.Y, element, index);
+				return child.GetRegion(context, x + areaShift.X, y + areaShift.Y, element, index);
 			}
 		}
 	}

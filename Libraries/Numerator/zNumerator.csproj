@@ -31,7 +31,6 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
@@ -47,29 +46,25 @@
     <Compile Include="MathML.Rendering\ContainerArea.cs" />
     <Compile Include="MathML.Rendering\Exceptions.cs" />
     <Compile Include="MathML.Rendering\FillerArea.cs" />
-    <Compile Include="MathML.Rendering\FontFactory.cs" />
     <Compile Include="MathML.Rendering\FontHandle.cs" />
     <Compile Include="MathML.Rendering\FontInstance.cs" />
-    <Compile Include="MathML.Rendering\FormattingContext.cs" />
     <Compile Include="MathML.Rendering\FreezeArea.cs" />
     <Compile Include="MathML.Rendering\GlyphArea.cs" />
     <Compile Include="MathML.Rendering\GlyphAttributes.cs" />
     <Compile Include="MathML.Rendering\GlyphFactory.cs" />
     <Compile Include="MathML.Rendering\GlyphMap.cs" />
-    <Compile Include="MathML.Rendering\GraphicsRendering.cs" />
     <Compile Include="MathML.Rendering\HideArea.cs" />
     <Compile Include="MathML.Rendering\HorizontalArea.cs" />
     <Compile Include="MathML.Rendering\HorizontalCompoundGlyph.cs" />
     <Compile Include="MathML.Rendering\HorizontalFillerArea.cs" />
     <Compile Include="MathML.Rendering\HorizontalSpaceArea.cs" />
     <Compile Include="MathML.Rendering\IdArea.cs" />
+    <Compile Include="MathML.Rendering\IFormattingContext.cs" />
     <Compile Include="MathML.Rendering\IgnoreArea.cs" />
+    <Compile Include="MathML.Rendering\IGraphicDevice.cs" />
     <Compile Include="MathML.Rendering\InkArea.cs" />
     <Compile Include="MathML.Rendering\LinearContainer.cs" />
     <Compile Include="MathML.Rendering\MarkArea.cs" />
-    <Compile Include="MathML.Rendering\MathMLControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="MathML.Rendering\MathMLElementFinder.cs" />
     <Compile Include="MathML.Rendering\MathMLFormatter.cs" />
     <Compile Include="MathML.Rendering\MathMLMeasurer.cs" />
@@ -95,8 +90,10 @@
     <Compile Include="MathML.Rendering\VerticalCompoundGlyph.cs" />
     <Compile Include="MathML.Rendering\VerticalFillerArea.cs" />
     <Compile Include="MathML.Rendering\VerticalSpaceArea.cs" />
-    <Compile Include="MathML.Rendering\Win32.cs" />
-    <Compile Include="MathML.Rendering\Win32_GraphicDevice.cs" />
+    <Compile Include="MathML.Rendering\WinContextBase.cs" />
+    <Compile Include="MathML.Rendering\WinDrawingContext.cs" />
+    <Compile Include="MathML.Rendering\WinFormattingContext.cs" />
+    <Compile Include="MathML.Rendering\WinGraphicsRenderer.cs" />
     <Compile Include="MathML\Entity.cs" />
     <Compile Include="MathML\EntityDictionary.cs" />
     <Compile Include="MathML\enums.cs" />
@@ -168,16 +165,6 @@
     <Compile Include="MathML\UserDataHandler.cs" />
     <Compile Include="MathML\Utility.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="MathML\MathML.csproj" />
-    <Content Include="MathML\MathML.csproj.user" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="MathML.Rendering\MathMLControl.resx">
-      <DependentUpon>MathMLControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

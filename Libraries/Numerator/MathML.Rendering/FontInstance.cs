@@ -38,24 +38,24 @@ namespace MathML.Rendering.GlyphMapper
 		 * the native font handle that is the native font
 		 * for this instance.
 		 */
-		public readonly FontHandle FontHandle;
+		public readonly IFontHandle FontHandle;
 
-		public readonly int PointSize;
+		public readonly float PointSize;
 
 		private StretchyGlyphAttributes[] stretchyAttributes;
 
 		private SortedList cachedAreas;
 
-		public FontInstance(string fontName, int pointSize, StretchyGlyphIndices[] glyphIndices)
+    public FontInstance(IFormattingContext context, string fontName, float pointSize, StretchyGlyphIndices[] glyphIndices)
 		{
 			cachedAreas = null;
 			PointSize = pointSize;
-			FontHandle = GraphicDevice.CreateFont(pointSize, false, 500, fontName);
+			FontHandle = context.CreateFont(pointSize, false, 500, fontName);
 			stretchyAttributes = new StretchyGlyphAttributes[glyphIndices.Length];
 			for(int i = 0; i < stretchyAttributes.Length; i++)
 			{
 				stretchyAttributes[i] = new StretchyGlyphAttributes(
-					FontHandle.Handle, ref glyphIndices[i]);
+					context, FontHandle, ref glyphIndices[i]);
 			}
 		}
 

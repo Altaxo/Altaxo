@@ -317,6 +317,8 @@ namespace Altaxo.Data
         return new AltaxoVariant(((string)a.m_Object)+((string)b.m_Object));
       else if(a.m_Content==Content.VDateTime && b.m_Content==Content.VDouble)
         return new AltaxoVariant(((DateTime)a.m_Object).AddSeconds(b.m_Double));
+      else if (a.m_Content == Content.VDouble && b.m_Content == Content.VDateTime)
+        return new AltaxoVariant(((DateTime)b.m_Object).AddSeconds(a.m_Double));
       else if(a.m_Content==Content.VString && b.m_Content==Content.VDouble)
         return new AltaxoVariant(((string)a.m_Object)+((double)b.m_Double).ToString());
       else if(a.m_Content==Content.VString && b.m_Content==Content.VDateTime)
@@ -355,13 +357,17 @@ namespace Altaxo.Data
     {
       object result;
 
-      if(a.m_Content==Content.VDouble && b.m_Content==Content.VDouble)
+      if (a.m_Content == Content.VDouble && b.m_Content == Content.VDouble)
         return new AltaxoVariant(a.m_Double * b.m_Double);
-      else if(a.m_Content==Content.VNull && b.m_Content==Content.VNull)
+      else if (a.m_Content == Content.VDouble && b.m_Content == Content.VDateTime)
+        return new AltaxoVariant(DateTime.FromBinary((long)(a.m_Double * ((DateTime)b.m_Object).Ticks)));
+      else if (a.m_Content == Content.VDateTime && b.m_Content == Content.VDouble)
+        return new AltaxoVariant(DateTime.FromBinary((long)(b.m_Double * ((DateTime)a.m_Object).Ticks)));
+      else if (a.m_Content == Content.VNull && b.m_Content == Content.VNull)
         return new AltaxoVariant();
-      else if(a.m_Content==Content.VOperatable && ((IOperatable)a.m_Object).vop_Multiplication(b.m_Content==Content.VDouble ? b.m_Double : b.m_Object, out result))
+      else if (a.m_Content == Content.VOperatable && ((IOperatable)a.m_Object).vop_Multiplication(b.m_Content == Content.VDouble ? b.m_Double : b.m_Object, out result))
         return new AltaxoVariant(result);
-      else if(b.m_Content==Content.VOperatable && ((IOperatable)b.m_Object).vop_Multiplication_Rev(a.m_Content==Content.VDouble ? a.m_Double : a.m_Object, out result))
+      else if (b.m_Content == Content.VOperatable && ((IOperatable)b.m_Object).vop_Multiplication_Rev(a.m_Content == Content.VDouble ? a.m_Double : a.m_Object, out result))
         return new AltaxoVariant(result);
       else
         throw new AltaxoOperatorException("Error: Try to multiply types " + a.m_Content.ToString() + " and " + b.m_Content.ToString()); 

@@ -501,5 +501,117 @@ namespace Altaxo.Serialization.Ascii
     }
 
 
+    /// <summary>
+    /// Compare the values in a double array with values in a double column and see if they match.
+    /// </summary>
+    /// <param name="values">An array of double values.</param>
+    /// <param name="col">A double column to compare with the double array.</param>
+    /// <returns>True if the length of the array is equal to the length of the <see cref="DoubleColumn" /> and the values in 
+    /// both array match to each other, otherwise false.</returns>
+    public static bool ValuesMatch(Altaxo.Data.DataColumn values, Altaxo.Data.DataColumn col)
+    {
+      if (values.Count != col.Count)
+        return false;
+
+      for (int i = 0; i < values.Count; i++)
+        if (col[i] != values[i])
+          return false;
+
+      return true;
+    }
+
+
+    /// <summary>
+    /// Imports a couple of ASCII files into one (!) table. The first column of each file is considered to be the x-column, and if they match another x-column, the newly imported columns will get the same column group.
+    /// </summary>
+    /// <param name="filenames">An array of filenames to import.</param>
+    /// <param name="table">The table the data should be imported to.</param>
+    /// <returns>Null if no error occurs, or an error description.</returns>
+    public static string ImportMultipleAscii(string[] filenames, Altaxo.Data.DataTable table)
+    {
+      Altaxo.Data.DataColumn xcol = null;
+      Altaxo.Data.DataColumn xvalues, yvalues;
+      System.Text.StringBuilder errorList = new System.Text.StringBuilder();
+      int lastColumnGroup = 0;
+
+      if (table.DataColumns.ColumnCount > 0)
+      {
+        lastColumnGroup = table.DataColumns.GetColumnGroup(table.DataColumns.ColumnCount - 1);
+        Altaxo.Data.DataColumn xColumnOfRightMost = table.DataColumns.FindXColumnOfGroup(lastColumnGroup);
+        xcol = (Altaxo.Data.DoubleColumn)xColumnOfRightMost;
+      }
+
+      // add also a property column named "FilePath" if not existing so far
+      if (!table.PropCols.ContainsColumn("FilePath"))
+        table.PropCols.Add(new Altaxo.Data.TextColumn(), "FilePath");
+
+
+      foreach (string filename in filenames)
+      {
+        Altaxo.Data.DataTable newtable = null;
+        using (System.IO.Stream stream = new System.IO.FileStream(filename, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.Read))
+        {
+          newtable = null;
+          newtable = Import(stream);
+          stream.Close();
+        }
+
+        if (newtable.DataColumns.ColumnCount == 0)
+          continue;
+
+
+        xvalues = newtable.DataColumns[0];
+        bool bMatchsXColumn = false;
+
+        // first look if our default xcolumn matches the xvalues
+        if (null != xcol)
+          bMatchsXColumn = ValuesMatch(xvalues, xcol);
+
+        // if no match, then consider all xcolumns from right to left, maybe some fits
+        if (!bMatchsXColumn)
+        {
+          for (int ncol = table.DataColumns.ColumnCount - 1; ncol >= 0; ncol--)
+          {
+            if ((Altaxo.Data.ColumnKind.X == table.DataColumns.GetColumnKind(ncol)) &&
+              (ValuesMatch(xvalues, table.DataColumns[ncol]))
+              )
+            {
+              xcol = table.DataColumns[ncol];
+              lastColumnGroup = table.DataColumns.GetColumnGroup(xcol);
+              bMatchsXColumn = true;
+              break;
+            }
+          }
+        }
+
+        // create a new x column if the last one does not match
+        if (!bMatchsXColumn)
+        {
+          xcol = (Altaxo.Data.DataColumn)xvalues.Clone();
+          lastColumnGroup = table.DataColumns.GetUnusedColumnGroupNumber();
+          table.DataColumns.Add(xcol, newtable.DataColumns.GetColumnName(0), Altaxo.Data.ColumnKind.X, lastColumnGroup);
+        }
+
+        for (int i = 1; i < newtable.DataColumns.ColumnCount; i++)
+        {
+          // now add the y-values
+          Altaxo.Data.DataColumn ycol = (Altaxo.Data.DataColumn)newtable.DataColumns[i].Clone();
+          table.DataColumns.Add(ycol,
+          table.DataColumns.FindUniqueColumnName(newtable.DataColumns.GetColumnName(i)),
+            Altaxo.Data.ColumnKind.V,
+            lastColumnGroup);
+
+         
+          // now set the file name property cell
+          if (table.PropCols["FilePath"] is Altaxo.Data.TextColumn)
+          {
+            table.PropCols["FilePath"][table.DataColumns.GetColumnNumber(ycol)] = filename;
+          }
+        }
+      } // foreache file
+
+      return errorList.Length == 0 ? null : errorList.ToString();
+    }
+
   } // end class 
 }

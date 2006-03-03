@@ -21,6 +21,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Drawing;
 
 namespace MathML.Rendering.GlyphMapper
 {
@@ -54,7 +55,7 @@ namespace MathML.Rendering.GlyphMapper
 		 * create a set of attributes.
 		 * this calculates all of the glyph metrics from the graphic device.
 		 */
-		public StretchyGlyphAttributes(IntPtr fontHandle, ref StretchyGlyphIndices indices)
+		public StretchyGlyphAttributes(IFormattingContext context, IFontHandle fontHandle, ref StretchyGlyphIndices indices)
 		{
 			orientation = indices.Orientation;
 
@@ -63,7 +64,7 @@ namespace MathML.Rendering.GlyphMapper
 				simpleGlyphs = new GlyphAttributes[indices.SimpleIndices.Length];
 				for(int i = 0; i < simpleGlyphs.Length; i++)
 				{
-					simpleGlyphs[i] = new GlyphAttributes(fontHandle, 
+					simpleGlyphs[i] = new GlyphAttributes(context, fontHandle, 
 						indices.SimpleIndices[i], GlyphAttributes.FudgeNone);
 				}
 			} 
@@ -78,7 +79,7 @@ namespace MathML.Rendering.GlyphMapper
 				for(int i = 0; i < compoundGlyphs.Length; i++)
 				{
 					// TODO deal with horizontal glyphs
-					compoundGlyphs[i] = new GlyphAttributes(fontHandle, 
+					compoundGlyphs[i] = new GlyphAttributes(context, fontHandle, 
 						indices.CompoundIndices[i], 
 						i == StretchyGlyphIndices.Filler ? GlyphAttributes.FudgeHeight : GlyphAttributes.FudgeNone);
 				}
@@ -98,7 +99,7 @@ namespace MathML.Rendering.GlyphMapper
 		 * 
 		 * once a glyph is found, it is centered in the desiredSize region.
 		 */
-		public Area GetStretchyArea(FontHandle fontHandle, BoundingBox desiredSize, out float lineThickness)
+		public Area GetStretchyArea(IFontHandle fontHandle, BoundingBox desiredSize, out float lineThickness)
 		{
 			Area result = null;
 			if((result = GetSimpleArea(fontHandle, desiredSize)) == null)
@@ -147,7 +148,7 @@ namespace MathML.Rendering.GlyphMapper
 		 * return the first one that is just larger that the requested 
 		 * size. return null if no mathching glyph is found
 		 */
-		private Area GetSimpleArea(FontHandle fontHandle, BoundingBox desiredSize)
+		private Area GetSimpleArea(IFontHandle fontHandle, BoundingBox desiredSize)
 		{
 			if(orientation == StretchyOrientation.Vertical)
 			{
@@ -172,7 +173,7 @@ namespace MathML.Rendering.GlyphMapper
 			return null;
 		}
 
-		private Area GetCompoundArea(FontHandle fontHandle, BoundingBox desiredSize)
+		private Area GetCompoundArea(IFontHandle fontHandle, BoundingBox desiredSize)
 		{
 			Area[] areas = null;
 			if(compoundGlyphs[StretchyGlyphIndices.Bottom].Index >= 0)
@@ -210,7 +211,7 @@ namespace MathML.Rendering.GlyphMapper
 			
 		}
 
-		private Area GetLargestSimpleArea(FontHandle fontHandle)
+		private Area GetLargestSimpleArea(IFontHandle fontHandle)
 		{
 			Area result = null;
 			if(simpleGlyphs.Length > 0)
@@ -220,7 +221,7 @@ namespace MathML.Rendering.GlyphMapper
 			return result;
 		}
 
-		private Area[] StretchBottom(FontHandle fontHandle, BoundingBox box)
+		private Area[] StretchBottom(IFontHandle fontHandle, BoundingBox box)
 		{
 			Area[] result;
 			Area filler = compoundGlyphs[StretchyGlyphIndices.Filler].GetGlyph(fontHandle);
@@ -238,7 +239,7 @@ namespace MathML.Rendering.GlyphMapper
 			return result;
 		}
 
-		private Area[] StretchTop(FontHandle fontHandle, BoundingBox box)
+		private Area[] StretchTop(IFontHandle fontHandle, BoundingBox box)
 		{
 			Area[] result;
 			Area filler = compoundGlyphs[StretchyGlyphIndices.Filler].GetGlyph(fontHandle);
@@ -255,7 +256,7 @@ namespace MathML.Rendering.GlyphMapper
 			return result;
 		}
 
-		private Area[] StretchBottomTop(FontHandle fontHandle, BoundingBox box)
+		private Area[] StretchBottomTop(IFontHandle fontHandle, BoundingBox box)
 		{
 			float availSpace;
 			int fillerCount;
@@ -286,7 +287,7 @@ namespace MathML.Rendering.GlyphMapper
 			return result;
 		}
 
-		private Area[] StretchBottomMiddleTop(FontHandle fontHandle, BoundingBox box)
+		private Area[] StretchBottomMiddleTop(IFontHandle fontHandle, BoundingBox box)
 		{
 			float availSpace;
 			Area[] result;
@@ -334,7 +335,7 @@ namespace MathML.Rendering.GlyphMapper
 			return result;
 		}
 
-		private Area[] StretchFillerOnly(FontHandle fontHandle, BoundingBox box)
+		private Area[] StretchFillerOnly(IFontHandle fontHandle, BoundingBox box)
 		{
 			int fillerCount;
 			Area[] result;

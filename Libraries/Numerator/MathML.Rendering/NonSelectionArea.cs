@@ -13,7 +13,7 @@ namespace MathML.Rendering
 		{
 		}
 
-		public override AreaRegion GetEditRegion(float x, float y, int index)
+    public override AreaRegion GetEditRegion(IFormattingContext context, float x, float y, int index)
 		{
 			return null;
 		}

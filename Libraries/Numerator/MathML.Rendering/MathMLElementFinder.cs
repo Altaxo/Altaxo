@@ -28,7 +28,7 @@ namespace MathML.Rendering
 	/// <summary>
 	/// Summary description for MathMLElementFinder.
 	/// </summary>
-	internal class MathMLElementFinder : MathMLVisitor
+	public class MathMLElementFinder : MathMLVisitor
 	{
 		// mathml node selection type
 		private enum SelectionType

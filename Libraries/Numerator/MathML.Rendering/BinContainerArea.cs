@@ -44,7 +44,7 @@ namespace MathML.Rendering
 		 * Render the Area. Most modifier area simply defer rendering
 		 * to the child area.
 		 */
-		public override void Render(GraphicDevice device, float x, float y)
+		public override void Render(IGraphicDevice device, float x, float y)
 		{
 			child.Render(device, x, y);
 		}
@@ -208,7 +208,7 @@ namespace MathML.Rendering
 			get { return child.BoundingBox; }
 		}
 
-		public override AreaRegion GetRegion(float x, float y, Area area, int index)
+    public override AreaRegion GetRegion(IFormattingContext context, float x, float y, Area area, int index)
 		{
 			if(area == source)
 			{
@@ -216,7 +216,7 @@ namespace MathML.Rendering
 			}
 			else
 			{
-				return child.GetRegion(x, y, area, index);
+				return child.GetRegion(context, x, y, area, index);
 			}
 		}
 
@@ -225,17 +225,17 @@ namespace MathML.Rendering
 			return child.GetRegion (x, y, pointX, pointY);
 		}
 
-		public override AreaRegion GetRegion(float x, float y, MathMLElement element, int index)
+    public override AreaRegion GetRegion(IFormattingContext context, float x, float y, MathMLElement element, int index)
 		{
-			return child.GetRegion (x, y, element, index);
+			return child.GetRegion (context, x, y, element, index);
 		}
 
 		/// <summary>
 		/// Get the child area's terminal node
 		/// </summary>
-		public override AreaRegion GetEditRegion(float x, float y, int index)
+    public override AreaRegion GetEditRegion(IFormattingContext context, float x, float y, int index)
 		{
-			return child.GetEditRegion (x, y, index);
+			return child.GetEditRegion (context, x, y, index);
 		}
 
 

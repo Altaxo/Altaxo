@@ -36,7 +36,7 @@ namespace MathML.Rendering
 			this.color = color;
 		}
 
-		public override void Render(GraphicDevice device, float x, float y)
+		public override void Render(IGraphicDevice device, float x, float y)
 		{
 			BoundingBox box = child.BoundingBox;
 			Color oldColor = device.Color;

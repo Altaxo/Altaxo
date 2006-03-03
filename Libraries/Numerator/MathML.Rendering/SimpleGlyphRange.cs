@@ -40,13 +40,13 @@ namespace MathML.Rendering
 			offset = Utility.ParseUShort(node.GetAttribute("offset"));
 		}
 
-		public Area GetArea(FontHandle fontHandle, char c)
+      public Area GetArea(IFormattingContext context, IFontHandle fontHandle, char c)
 		{
 			Area result = null;
 			ushort glyphIndex = (ushort)(c + offset);
-			if(glyphIndex >= first && glyphIndex <= last)
+      if (glyphIndex >= first && glyphIndex <= last)
 			{
-				result = new GlyphArea(fontHandle, glyphIndex);
+				result = new GlyphArea(context, fontHandle, glyphIndex);
 			}
 			return result;
 		}

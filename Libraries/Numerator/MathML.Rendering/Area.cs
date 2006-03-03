@@ -30,7 +30,7 @@ namespace MathML.Rendering
 	 * interface describing basic geometric rendering area.
 	 * TODO - import documentation from thesis.
 	 */
-	internal class Area : ICloneable
+	public class Area : ICloneable
 	{
 		/**
 		 * make sure that an instance of this base class is
@@ -41,7 +41,7 @@ namespace MathML.Rendering
         /**
 		 * render this area. 
 		 */
-		public virtual void Render(GraphicDevice device, float x, float y) {}
+		public virtual void Render(IGraphicDevice device, float x, float y) {}
 
 		/**
 		 * Fit this area to a given size. Some areas are not re-sizeable, 
@@ -143,17 +143,17 @@ namespace MathML.Rendering
 		 */
 		public virtual Object Clone() { return null; }
 
-		public virtual AreaRegion GetRegion(float x, float y, float pointX, float pointY)
+    public virtual AreaRegion GetRegion(float x, float y, float pointX, float pointY)
 		{
 			return BoundingBox.Contains(x, y, pointX, pointY) ? new AreaRegion(this, x + LeftEdge, y) : null;
 		}
 
-		public virtual AreaRegion GetRegion(float x, float y, MathMLElement element, int index)
+    public virtual AreaRegion GetRegion(IFormattingContext context, float x, float y, MathMLElement element, int index)
 		{
 			return null;
 		}
 
-		public virtual AreaRegion GetRegion(float x, float y, Area area, int index)
+    public virtual AreaRegion GetRegion(IFormattingContext context, float x, float y, Area area, int index)
 		{
 			if(index == 0 && area == this)
 			{
@@ -170,7 +170,7 @@ namespace MathML.Rendering
 		/// Terminal nodes should return themselves, and container areas should return 
 		/// the first child node.
 		/// </summary>
-		public virtual AreaRegion GetEditRegion(float x, float y, int index)
+    public virtual AreaRegion GetEditRegion(IFormattingContext context, float x, float y, int index)
 		{
 			return null;
 		}

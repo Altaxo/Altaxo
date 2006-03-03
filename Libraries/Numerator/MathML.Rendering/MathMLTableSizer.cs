@@ -23,7 +23,6 @@ using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Collections;
-using System.Windows.Forms;
 
 namespace MathML.Rendering
 {
@@ -80,13 +79,13 @@ namespace MathML.Rendering
 		/**
 		 * construct a new sizer. All calculations are done here.
 		 */
-		public MathMLTableSizer(FormattingContext ctx, MathMLMeasurer measurer, MathMLTableElement table)
+		public MathMLTableSizer(IFormattingContext ctx, MathMLMeasurer measurer, MathMLTableElement table)
 		{
 			try
 			{
 				// copy the context because we change the stretch size so not to 
 				// stretch tables
-				ctx = new FormattingContext(ctx);
+        ctx = ctx.Clone();
 				ctx.Stretch = BoundingBox.New();
 				ctx.cacheArea = false;
 
@@ -161,7 +160,7 @@ namespace MathML.Rendering
 			}
 			catch(Exception ex)
 			{
-				MessageBox.Show("error constructing table sizer: " + ex.Message);
+				throw new Exception("Error constructing table sizer: " + ex.Message);
 			}
 		}
 
@@ -224,7 +223,7 @@ namespace MathML.Rendering
 		 * pre-reqs: columns, column.Width and equalColumns have been set
 		 * readonly function
 		 */
-		private static float CalculateTableWidth(FormattingContext ctx, MathMLTableElement table, 
+		private static float CalculateTableWidth(IFormattingContext ctx, MathMLTableElement table, 
 			Column[] columns, bool equalColumns, int effectiveColumns)
 		{
 			Length widthLength = table.Width;
@@ -562,7 +561,7 @@ namespace MathML.Rendering
 			return cells;
 		}
 
-		private static Row[] CreateRows(FormattingContext ctx, MathMLTableCellElement[][] cells, 
+		private static Row[] CreateRows(IFormattingContext ctx, MathMLTableCellElement[][] cells, 
 			BoundingBox[][] minCellSizes, Length[] rowSpacing, Length frameSpacing)
 		{
 			int i = 0;
@@ -599,7 +598,7 @@ namespace MathML.Rendering
 		/**
 		 * calculate the required space to fit all the columns
 		 */
-		private static Column[] CreateColumns(FormattingContext ctx, MathMLMeasurer measurer, 
+		private static Column[] CreateColumns(IFormattingContext ctx, MathMLMeasurer measurer, 
 			MathMLTableCellElement[][] cells, BoundingBox[][] minCellSizes, int columnCount, 
 			Length[] columnWidths, Length[] spaceWidths, Length frameSpacing)
 		{
@@ -954,7 +953,7 @@ namespace MathML.Rendering
 			}
 			catch(Exception ex)
 			{
-				MessageBox.Show("error creating table lines, table should still display, error: \n" +
+				throw new Exception("error creating table lines, table should still display, error: " +
 					ex.Message);
 			}
 
@@ -967,7 +966,7 @@ namespace MathML.Rendering
 		 * The final shift is calcuated by the formatter because it requires information
 		 * about the formatted size of the cell area.
 		 */
-		private static void CalculateShiftAndSize(FormattingContext ctx, MathMLTableElement table, Row[] rows, 
+		private static void CalculateShiftAndSize(IFormattingContext ctx, MathMLTableElement table, Row[] rows, 
 			Column[] columns, ref BoundingBox box, ref float shift)
 		{
 			shift = 0;
@@ -997,7 +996,7 @@ namespace MathML.Rendering
 		 * This value is also used to modify the bounding box that is returned from this 
 		 * class that is used for the TableArea
 		 */
-		private static float GetTableShift(FormattingContext ctx, MathMLTableElement table, BoundingBox tableExtent)
+		private static float GetTableShift(IFormattingContext ctx, MathMLTableElement table, BoundingBox tableExtent)
 		{	
 			float shift = 0;
 			// orient the row in the vertical direction, can be one of the following
@@ -1020,7 +1019,7 @@ namespace MathML.Rendering
 				case Align.Axis:
 				{
 					// shift to the axis (shift up in the negative direction)
-					shift = (tableExtent.VerticalExtent / 2.0f) -GraphicDevice.Axis(ctx);
+					shift = (tableExtent.VerticalExtent / 2.0f) -ctx.Axis;
 				} break;
 				default: 
 				{	
@@ -1091,7 +1090,7 @@ namespace MathML.Rendering
 			/**
 			 * construct a new TableColumn object
 			 */
-			public Column(FormattingContext ctx, Length columnWidth, 
+			public Column(IFormattingContext ctx, Length columnWidth, 
 				float evaluatedWidth, bool spacing)
 			{
 				Spacing = spacing;	

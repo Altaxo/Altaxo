@@ -28,7 +28,7 @@ namespace MathML.Rendering
 	 * this could just as easily been a BoundingBox, but making
 	 * a separate class is a bit clearer to read
 	 */
-	internal struct Strength
+	public struct Strength
 	{
 		/**
 		 * create a Strength object

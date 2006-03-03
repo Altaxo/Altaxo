@@ -76,7 +76,7 @@ namespace MathML.Rendering
 	 * only enumerator, so that it can be easily pased recursivly 
 	 * through an area tree.
 	 */
-	internal class AreaIdentifier
+	public class AreaIdentifier
 	{
 		/**
 		 * create a new empty identifer. An emtpy identifer

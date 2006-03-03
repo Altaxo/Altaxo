@@ -174,7 +174,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     #endregion
 
     #region dependent variable definition
-    private string[] _dependentVariableNameS = new string[]{"j'","j''"};
+    private string[] _dependentVariableNameS = new string[]{"chi'","chi''"};
     private string[] _dependentVariableNameD = new string[] { "eps'", "eps''" };
     public int NumberOfDependentVariables
     {

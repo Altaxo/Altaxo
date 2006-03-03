@@ -24,11 +24,12 @@ using System.Collections;
 using System.Drawing;
 using Scaled = System.Single;
 using System.Diagnostics;
-
+using System.Drawing.Drawing2D;
 
 namespace MathML.Rendering
 {
-	/**
+  #region History
+  /**
 	 * all native rendering and font related functions
 	 * go here. The windows version will use this file called
 	 * Win32_RenderingDevice.cs. In the future, we may create
@@ -312,61 +313,30 @@ namespace MathML.Rendering
 	 * | |   |  |        |                       |
 	 * ----------  <------------------------------
 	 */
-	internal class GraphicDevice
+
+  #endregion
+  public class WinDrawingContext : WinContextBase, IGraphicDevice
 	{
-		public GraphicDevice(IntPtr handle)
+
+
+    public WinDrawingContext(Graphics handle)
+      : base(handle)
 		{
-			dc = handle;
+			
+
+     strfmt = (StringFormat)StringFormat.GenericTypographic.Clone();
+     strfmt.Alignment = StringAlignment.Near;
+     strfmt.LineAlignment = StringAlignment.Near;
+
+     _graphics.SmoothingMode = SmoothingMode.AntiAlias;
 		}
 
-		/**
-		 * wrap a win32 device context, and dispose of it when it is no
-		 * longer needed.
-		 */
-		private class MeasurmentContext
-		{
-			/**
-			 * the HDC
-			 */
-			public readonly IntPtr Handle;
+    
+    StringFormat strfmt;
+   
 
-			/**
-			 * this is used only for measuremnt, so just make it like the 
-			 * desktop DC
-			 */
-			public MeasurmentContext()
-			{
-				IntPtr screenDc = Win32.GetDC(IntPtr.Zero);
-				Handle = Win32.CreateCompatibleDC(screenDc);
-				Win32.ReleaseDC(IntPtr.Zero, screenDc);
-				Debug.WriteLine(String.Format("Created measurment context, handle: {0}", Handle));
-			}
 
-			/**
-			 * done with the dc, so destroy it
-			 */
-			~MeasurmentContext()
-			{
-				Win32.DeleteDC(Handle);
-				Debug.WriteLine("Destroyed measurment context");
-			}
-		}
-
-		/**
-		 * hold onto a context, only for measuring glyph metrics.
-		 */
-		private static MeasurmentContext measurmentContext = new MeasurmentContext();
-
-		/**
-		 * The native device context (in the win32 version anyway, in a 
-		 * future gtk version, this will be whatever the gtk equivilant
-		 * to a device context is. This should be set before
-		 * any calls are mede into the formating / layout trees.
-		 * 
-		 * TODO this needs major cleanup, using this as 
-		 * a static var is just asking for trouble.
-		 */
-		public IntPtr dc = IntPtr.Zero;
+	
 
 		/**
 		 * the current color (pen, text, brush)
@@ -381,82 +351,32 @@ namespace MathML.Rendering
 		/**
 		 * the current pen
 		 */
-		private IntPtr currentPen;
+		private Pen currentPen;
 
 		/**
 		 * the current solid pen
 		 */
-		private IntPtr solidPen;
+		private Pen solidPen;
 
-		/**
-		 * the current dashed pen
-		 */
-		private IntPtr dashedPen;
-
-		/**
-		 * current dotted pen
-		 */
-		private IntPtr dottedPen;
+	
+	
 
 		/**
 		 * the current line style
 		 */
-		private LineStyle lineStyle;
+    private LineStyle lineStyle = LineStyle.Solid;
 
-		private Color currentBrushColor;
-		private IntPtr currentBrush;
+    private Color currentBrushColor = Color.Black;
+		private Brush currentBrush = Brushes.Black;
+    private IFontHandle currentFont;
+    
 
 		/**
 		 * static cach of solid brushes
 		 */
 		private static SolidBrushCache solidBrushCache = new SolidBrushCache();
 
-		/**
-		 * get the dpi resolution of the current device
-		 */
-		public static Scaled Dpi(FormattingContext context)
-		{
-			// TODO is this right?
-			return 72.0f;
-		}
-
-		/**
-		 * the height of the character "x" in the current 
-		 * font size
-		 */
-		public static int Ex(FormattingContext context) 
-		{
-
-			BoundingBox size;
-			float left, right;
-			FontHandle font = FontFactory.GetFont(context);
-
-			if(MeasureGlyph(font.Handle, 'x', out size, out left, out right)) 
-			{
-				return (int)size.Height;
-			}
-			else 
-			{
-				throw new Exception("MeasureGlyph failed");
-			}				
-		}
-
-		/**
-		 * the centerline of the current font, this is not 
-		 * the baseline, but where the 2 lines cross in an 'x'
-		 */
-		public static Scaled Axis(FormattingContext context) 
-		{
-			return Ex(context) / 2.0f;
-		}
-
-
-		public static Scaled DefaultLineThickness(FormattingContext context) 
-		{
-			// should be at least 1 px thick
-			//return Math.Max(context.m
-			return 2.0f;
-		}
+		
 
 		/**
 		* Sets the given font as the curent active font.
@@ -464,30 +384,37 @@ namespace MathML.Rendering
 		* @return The previous font. This font MUST BE RESTORED when the new
 		* font is no longer used
 		*/
-		public IntPtr SetFont(IntPtr font)
+
+
+		public IFontHandle SetFont(IFontHandle font)
 		{
-			return Win32.SelectObject(dc, font);
+      IFontHandle result = currentFont;
+      currentFont = font;
+      
+      return result;
 		}
 
 		/**
 		* restores a font previously returned from SetFont
 		*/
-		public void RestoreFont(IntPtr font)
+		public void RestoreFont(IFontHandle font)
 		{
 			// note, font resource are not destroyed here. font
 			// resources are cached in the fonts list, and are 
 			// destroyed when this object is told to clear them.
 
-			Win32.SelectObject(dc, font);
-		}
+      currentFont = font;
+     
+     
+    }
 
 		/**
 		 * destroy a native font resource
 		 * note, this should only be called by the MathFont finalizer.
 		 */
-		public static void DestroyFont(IntPtr font)
+		public static void DestroyFont(Font font)
 		{
-			Win32.DeleteObject(font);
+      font.Dispose();
 		}		
 
 		/**
@@ -500,7 +427,6 @@ namespace MathML.Rendering
 			set 
 			{ 
 				currentColor = value; 
-				Win32.SetTextColor(dc, Win32.RGB(value));
 			}
 		}
 
@@ -510,179 +436,33 @@ namespace MathML.Rendering
 		public LineStyle LineStyle
 		{
 			get { return lineStyle; }
-			set { lineStyle = value; }
+			set 
+      {
+        lineStyle = value; 
+      }
 		}			
 
-		/**
-		 * calculate how many pixels per point.
-		 */
-		public static int PointsToPixels(float points)
-		{
-			// 72 points per inch
-			return (int)((float)Win32.GetDeviceCaps(measurmentContext.Handle, Win32.LOGPIXELSY) * (points  / 72.0f));
-		}
-
-		/**
-		 * calculate how many pixels per mm.
-		 */
-		public static int MMsToPixels(float mms)
-		{
-			// 25.4 mm 
-			return (int)((float)Win32.GetDeviceCaps(measurmentContext.Handle, Win32.LOGPIXELSY) * (mms / 25.4));
-		}
-
-		/**
-		 * calculate how many pixels per cm.
-		 */
-		public static int CMsToPixels(float cms)
-		{
-			return (int)((float)Win32.GetDeviceCaps(measurmentContext.Handle, Win32.LOGPIXELSY) * (cms / 2.54));
-		}
-
-		/**
-		 * calculate how many pixels per pica.
-		 */
-		public static int PicasToPixels(float picas)
-		{
-			return (int)((float)Win32.GetDeviceCaps(measurmentContext.Handle, Win32.LOGPIXELSY) * (picas / 12));
-		}
-
-		/**
-		 * calculate how many pixels per inch.
-		 */
-		public static int InchesToPixels(float inches)
-		{
-			return (int)((inches * Win32.GetDeviceCaps(measurmentContext.Handle, Win32.LOGPIXELSY)));
-		}
-
-		/**
-		 * Create a native font resource. This MUST be explicitly deleted when it is 
-		 * no longer needed by calling DestroyFont.
-		 * 
-		 * @param emHeight the desired character height of the font, this is 
-		 * the size above the baseline for a capital M, or the largest
-		 * character height in the font		 
-		 * @param italic create an italic font 
-		 * @param weight the weight of the font
-		 * @param fontName the face name of the font
-		 */
-		public static FontHandle CreateFont(int emHeight, bool italic, int weight, String fontName)
-		{			
-			Win32.LOGFONT lf = new Win32.LOGFONT();
-
-			lf.lfHeight = -emHeight;
-			lf.lfWidth = 0;
-			lf.lfEscapement = 0;
-			lf.lfOrientation = 0;
-			lf.lfWeight = weight;	
-			lf.lfItalic = italic ? (byte)1 : (byte)0;
-			lf.lfUnderline = 0;
-			lf.lfStrikeOut = 0;
-			lf.lfCharSet = Win32.DEFAULT_CHARSET;
-			lf.lfOutPrecision = Win32.OUT_OUTLINE_PRECIS;
-			lf.lfClipPrecision = Win32.CLIP_DEFAULT_PRECIS;
-			lf.lfQuality = Win32.PROOF_QUALITY;
-			lf.lfPitchAndFamily = Win32.FF_DONTCARE;
-			lf.lfFaceName = fontName;
-
-			return new FontHandle(Win32.CreateFontIndirect(ref lf), emHeight, italic, weight, fontName);
-		}
-
-		/**
-		 * get the glyph metrics of a glyph.
-		 * in this case, the returned bounding box is the box that the 
-		 * glyph metrics say fully encapsulate the glyph, including the 
-		 * space on the left and right sides of the glyph. So, the width 
-		 * of the box is the actual amout to advance the x position to
-		 * draw the next glyph.
-		 * 
-		 * note, this method is not extremly efficient, in the future, we
-		 * may store glyph metrics with a glyph, or get a whole load of these
-		 * in one block, and store them somewhere. The code needs to be 
-		 * profiled, and we will see if this method is a bottle neck.
-		 * 
-		 * @param font A handle to a native font.
-		 * @param The char index (the actual character value)
-		 * @param box The returned bounding box of the glyph
-		 * @param left The distance from the origin the left colored edge of 
-		 *             the glyph.
-		 * @param right same as left.
-		 */
-		public static bool MeasureGlyph(IntPtr font, ushort index, out BoundingBox box, 
-			out Scaled left, out Scaled right)
-		{
-			bool retval = false;
-			Win32.GLYPHMETRICS gm = new Win32.GLYPHMETRICS();
-			Win32.MAT2 mat = new Win32.MAT2();
-
-			// save the old font
-			IntPtr savedFont = Win32.SelectObject(measurmentContext.Handle, font);
-			
-			// need to set the matrix to the identity matrix.
-			// note, the sdk documentation does not say anything about 
-			// this, but this call WILL NOT WORK without this matrix
-			// set to identity, this can be verified on the internet, 
-			// and by testing.
-			mat.eM11.val = 1;
-			mat.eM22.val = 1;
-
-			if(Win32.GetGlyphOutline(measurmentContext.Handle, index, Win32.GGO_METRICS, ref gm, 0, 
-				IntPtr.Zero, ref mat) > 0)
-			{
-				// the total cell advance
-				box.Width = gm.gmCellIncX;
-
-				// the height above the baseline
-				box.Height = gm.gmptGlyphOrigin.y;
-
-				// the total height - height above baseline
-				box.Depth = gm.gmBlackBoxY - gm.gmptGlyphOrigin.y;
-
-				// distance from cell origin to left edge of glyph
-				left = gm.gmptGlyphOrigin.x;
-
-				// the space on the right edge of the glyph.
-				// get this by taking the total advance, sub bouding box, 
-				// and origin.
-				right = gm.gmCellIncX - gm.gmBlackBoxX - gm.gmptGlyphOrigin.x;
-
-				// all was ok
-				retval = true;
-			}
-			else
-			{
-				box = BoundingBox.New();
-				left = right = 0;
-			}
-
-			// restore the font
-			Win32.SelectObject(measurmentContext.Handle, savedFont);
-
-			return retval;
-		}
+	
+   
+   
 
 		public void DrawGlyph(ushort index, float x, float y)
 		{
-			Char[] buffer = {(char)index};
-			Win32.TextOut(dc, (int)x, (int)y, buffer, 1);
+      this.DrawString(x, y, string.Empty+(char)index);
 		}
+
+
+    
+    public void DrawString(float x, float y, String s)
+    {
+      FontHandle fhandle = (FontHandle)currentFont;
+      _graphics.DrawString(s, fhandle.Handle, currentBrush, x, y-fhandle.Baseline, strfmt);
+    }
+
 
 		public void DrawFilledRectangle(float top, float left, float right, float bottom)
 		{
-			// play around with int conversion so that we do not get rectangles that are too small
-			// when dealing with float values that are close together
-			int width = (int)Math.Ceiling(right - left);
-			int height = (int)Math.Ceiling(bottom - top);
-			int l = (int)left;
-			int t = (int)top;
-			Win32.RECT rect;
-
-			rect.left = l;
-			rect.top = t;
-			rect.right = l + width;
-			rect.bottom = t + height;
-
-			Win32.FillRect(dc, ref rect, SetupSolidBrush());
+      _graphics.FillRectangle(currentBrush, left, top, right - left, bottom - top);
 		}
 
 		/**
@@ -694,38 +474,17 @@ namespace MathML.Rendering
 		 */
 		public void DrawLines(PointF[] points)
 		{
-			Win32.POINT p = new Win32.POINT();
-
+		
 			if (LineStyle.None == lineStyle)
 				return;
- 
+
+
 			//mTranMatrix->TransformCoord(&aX0,&aY0);
 			//mTranMatrix->TransformCoord(&aX1,&aY1);
  
 			SetupPen();
 
-			for(int i = 0; i < points.Length; i++)
-			{
-				Win32.MoveToEx(dc, (int)points[i].X, (int)points[i].Y, ref p);
-				i++;
-				Win32.LineTo(dc, (int)points[i].X, (int)points[i].Y);
-			}
- 
-//			if (nsLineStyle_kDotted == mCurrLineStyle)
-//			{
-//				lineddastruct dda_struct;
-// 
-//				dda_struct.nDottedPixel = 1;
-//				dda_struct.dc = mDC;
-//				dda_struct.crColor = mColor;
-// 
-//				LineDDA((int)(aX0),(int)(aY0),(int)(aX1),(int)(aY1),(LINEDDAPROC) LineDDAFunc,(long)&dda_struct);
-//			}
-//			else
-//			{
-//				Win32.MoveToEx(mDC, (int)(aX0), (int)(aY0), NULL);
-//				Win32.LineTo(mDC, (int)(aX1), (int)(aY1));
-//			}
+      _graphics.DrawLines(currentPen, points);
 		}
 
 		/**
@@ -737,151 +496,62 @@ namespace MathML.Rendering
 				 */
 		public void DrawLine(PointF from, PointF to)
 		{
-			Win32.POINT p = new Win32.POINT();
 
 			if (LineStyle.None == lineStyle)
 				return;
  
-			//mTranMatrix->TransformCoord(&aX0,&aY0);
-			//mTranMatrix->TransformCoord(&aX1,&aY1);
- 
 			SetupPen();
 
-			Win32.MoveToEx(dc, (int)from.X, (int)from.Y, ref p);
-			Win32.LineTo(dc, (int)to.X, (int)to.Y);
+      _graphics.DrawLine(currentPen, from, to);
 
  
-			//			if (nsLineStyle_kDotted == mCurrLineStyle)
-			//			{
-			//				lineddastruct dda_struct;
-			// 
-			//				dda_struct.nDottedPixel = 1;
-			//				dda_struct.dc = mDC;
-			//				dda_struct.crColor = mColor;
-			// 
-			//				LineDDA((int)(aX0),(int)(aY0),(int)(aX1),(int)(aY1),(LINEDDAPROC) LineDDAFunc,(long)&dda_struct);
-			//			}
-			//			else
-			//			{
-			//				Win32.MoveToEx(mDC, (int)(aX0), (int)(aY0), NULL);
-			//				Win32.LineTo(mDC, (int)(aX1), (int)(aY1));
-			//			}
+	
 		}
 
-		public void DrawString(float x, float y, String s)
-		{
-			Win32.TextOut(dc, (int)x, (int)y, s, s.Length);
-		}
+	
 
 		/**
 		 * setup a solid pen using the current color.
 		 * from mozilla
 		 */
-		private IntPtr SetupSolidPen()
+		private Pen SetupSolidPen()
 		{
-			if ((currentColor != currentPenColor) || (IntPtr.Zero == currentPen) || (currentPen != solidPen))
-			{
-				IntPtr  tpen;
+      if ((currentColor != currentPenColor) || (null == currentPen) || (currentPen != solidPen))
+      {
+        solidPen = currentPen = new Pen(currentColor);
+        currentPenColor = currentColor;
+      }
+			return currentPen;
+		}
+ 
+		
+		private Pen SetupPen()
+		{
       
-				if (Color.Black == currentColor) 
-				{
-					tpen = Win32.StockBlackPen;
-				} 
-				else if (Color.White == currentColor) 
-				{
-					tpen = Win32.StockWhitePen;
-				} 
-				else 
-				{
-					tpen = Win32.CreatePen(Win32.PS_SOLID, 0, Win32.RGB(currentColor));
-				}
- 
-				Win32.SelectObject(dc, tpen);
- 
-				if (currentPen != IntPtr.Zero && (currentPen != Win32.StockBlackPen) && (currentPen != Win32.StockWhitePen)) 
-				{
-					Win32.DeleteObject(currentPen);
-				}
- 
-				solidPen = currentPen = tpen;
-				currentPenColor = currentColor;
-			}
- 
-			return currentPen;
-		}
- 
-		private IntPtr SetupDashedPen()
-		{
-			if ((currentColor != currentPenColor) || (IntPtr.Zero == currentPen) || (currentPen != dashedPen))
-			{
-				IntPtr  tpen = Win32.CreatePen(Win32.PS_DOT, 0, Win32.RGB(currentColor));
- 
-				Win32.SelectObject(dc, tpen);
- 
-				if (IntPtr.Zero != currentPen)
-				{
-					Win32.DeleteObject(currentPen);		
-				}
-
-				dashedPen = currentPen = tpen;
-				currentPenColor = currentColor;
-			} 
-			return currentPen;
-		}
- 
-		private IntPtr SetupDottedPen()
-		{
-			if ((currentColor != currentPenColor) || (IntPtr.Zero == currentPen) || (currentPen != dottedPen))
-			{
-				IntPtr  tpen = Win32.CreatePen(Win32.PS_DOT, 0, Win32.RGB(currentColor));
- 
-				Win32.SelectObject(dc, tpen);
- 
-				if (IntPtr.Zero != currentPen)
-				{
-					Win32.DeleteObject(currentPen);
-				}
- 
-				dottedPen = currentPen = tpen;
-				currentPenColor = currentColor;
-			} 
-			return currentPen;
-		}
-
-		private IntPtr SetupPen()
-		{
-			IntPtr pen;
- 
-			switch(lineStyle)
-			{
-				case LineStyle.Solid:
-					pen = SetupSolidPen();
-					break;
- 
-				case LineStyle.Dashed:
-					pen = SetupDashedPen();
-					break;
- 
-				//case LineStyle.Dotted:
-				//	pen = SetupDottedPen();
-				//	break;
- 
-				case LineStyle.None:
-					pen = IntPtr.Zero;
-					break;
- 
-				default:
-					pen = SetupSolidPen();
-					break;
-			} 
-			return pen;
+      if(lineStyle == LineStyle.Solid)
+      {
+        SetupSolidPen();
+        currentPen.DashStyle = DashStyle.Solid;
+        return currentPen;
+      }
+      else if (lineStyle == LineStyle.Dashed)
+      {
+        SetupSolidPen();
+        currentPen.DashStyle = DashStyle.Dash;
+        return currentPen;
+      }
+      else
+      {
+        return null;
+      }
 		} 
+    
 
-		private IntPtr SetupSolidBrush()
+		private Brush SetupSolidBrush()
 		{
-			if ((currentColor != currentBrushColor) || (IntPtr.Zero == currentBrush))
+			if ((currentColor != currentBrushColor) || (null == currentBrush))
 			{
-				IntPtr tbrush = solidBrushCache.GetSolidBrush(dc, currentColor);
+				Brush tbrush = solidBrushCache.GetSolidBrush(this, currentColor);
  
 				currentBrush = tbrush;
 				currentBrushColor = currentColor;
@@ -901,7 +571,7 @@ namespace MathML.Rendering
  
 			private struct CacheEntry 
 			{
-				public IntPtr   mBrush;
+				public Brush   mBrush;
 				public Color mBrushColor;
 			};
  
@@ -911,59 +581,46 @@ namespace MathML.Rendering
 			public SolidBrushCache()
 			{
 				// First two entries are stock objects
-				mCache[0].mBrush = Win32.GetStockObject(Win32.WHITE_BRUSH);
+        mCache[0].mBrush = Brushes.White;
 				mCache[0].mBrushColor = Color.White;
-				mCache[1].mBrush = Win32.GetStockObject(Win32.BLACK_BRUSH);
+        mCache[1].mBrush = Brushes.Black;
 				mCache[1].mBrushColor = Color.Black;
 			}
  
-			~SolidBrushCache()
-			{
-				Debug.WriteLine("Destroying solid brush cache");
-				// No need to delete the stock objects
-				for (int i = 2; i < mCache.Length; i++) 
-				{
-					if (mCache[i].mBrush != IntPtr.Zero) 
-					{
-						Debug.WriteLine("Destroying native brush...");
-						Win32.DeleteObject(mCache[i].mBrush);
-					}
-				}
-			}
- 
-			public IntPtr GetSolidBrush(IntPtr theHDC, Color aColor)
+		
+			 
+			public Brush GetSolidBrush(WinDrawingContext theHDC, Color aColor)
 			{
 				int     i;
-				IntPtr  result = IntPtr.Zero;
+        Brush result = null;
    
 				// See if it's already in the cache
-				for (i = 0; (i < BRUSH_CACHE_SIZE) && mCache[i].mBrush != IntPtr.Zero; i++) 
+				for (i = 0; (i < BRUSH_CACHE_SIZE) && mCache[i].mBrush != null; i++) 
 				{
-					if (mCache[i].mBrush != IntPtr.Zero && (mCache[i].mBrushColor == aColor)) 
+					if (mCache[i].mBrush != null && (mCache[i].mBrushColor == aColor)) 
 					{
 						// Found an existing brush
 						result = mCache[i].mBrush;
-						Win32.SelectObject(theHDC, result);
+						theHDC.currentBrush = result;
 						break;
 					}
 				}
  
-				if (result == IntPtr.Zero) 
+				if (result == null) 
 				{
 					// We didn't find it in the set of existing brushes, so create a
 					// new brush
-					result = Win32.CreateSolidBrush(Win32.RGB(aColor));
+          result = new SolidBrush(aColor);
+          theHDC.currentBrush = result;
  
-					// Select the brush.  NOTE: we want to select the new brush before
-					// deleting the old brush to prevent any win98 GDI leaks (bug 159298)
-					Win32.SelectObject(theHDC, result);
+					
  
 					// If there's an empty slot in the cache, then just add it there
 					if (i >= BRUSH_CACHE_SIZE) 
 					{
 						// Nope. The cache is full so we need to replace the oldest entry
 						// in the cache
-						Win32.DeleteObject(mCache[mIndexOldest].mBrush);
+						
 						i = mIndexOldest;
 						if (++mIndexOldest >= BRUSH_CACHE_SIZE) 
 						{

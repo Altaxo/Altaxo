@@ -21,6 +21,7 @@
 
 using System;
 using System.Collections;
+using System.Drawing;
 using MathML.Rendering.GlyphMapper;
 using Scaled = System.Single;
 
@@ -49,7 +50,7 @@ namespace MathML.Rendering
 		/**
 		* a reference to a font that is used by the graphic device
 		*/
-		private readonly FontHandle font;
+		private readonly IFontHandle font;
 
 		/**
 		 * keep track of the size so we do not re-calculate them
@@ -58,14 +59,14 @@ namespace MathML.Rendering
 		private readonly float leftEdge = 0;
 		private readonly float rightEdge = 0;
 
-		public GlyphArea(FontHandle font, ushort index)
+		public GlyphArea(IFormattingContext context, IFontHandle font, ushort index)
 		{
 			this.font = font;
 			this.index = index;
-			GraphicDevice.MeasureGlyph(font.Handle, index, out box, out leftEdge, out rightEdge);
+			context.MeasureGlyph(font, index, out box, out leftEdge, out rightEdge);
 		}
 
-		public GlyphArea(FontHandle fontHandle, ref GlyphAttributes attributes)
+		public GlyphArea(IFontHandle fontHandle, ref GlyphAttributes attributes)
 		{
 			this.font = fontHandle;
 			this.leftEdge = attributes.Left;
@@ -77,10 +78,10 @@ namespace MathML.Rendering
 		/**
 		 * render this area. 
 		 */
-		public override void Render(GraphicDevice device, float x, float y) 
+		public override void Render(IGraphicDevice device, float x, float y) 
 		{
-			IntPtr oldFont = device.SetFont(font.Handle);
-            device.DrawGlyph(index, x, y);		
+			IFontHandle oldFont = device.SetFont(font);
+      device.DrawGlyph(index, x, y);		
 			device.RestoreFont(oldFont);
 		}
 
@@ -119,7 +120,7 @@ namespace MathML.Rendering
 			}
 		}
 
-		public override AreaRegion GetEditRegion(float x, float y, int index)
+    public override AreaRegion GetEditRegion(IFormattingContext context, float x, float y, int index)
 		{
 			x = index > 0 ? x + leftEdge + box.HorizontalExtent : x + leftEdge;
 			return new AreaRegion(this, x, y);

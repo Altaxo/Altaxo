@@ -64,7 +64,7 @@ namespace MathML.Rendering
 		 * render each child area with an updated rendering context
 		 * to give each child a correct left side
 		 */
-		public override void Render(GraphicDevice device, float x, float y)
+		public override void Render(IGraphicDevice device, float x, float y)
 		{
 			foreach(Area a in content)
 			{
@@ -228,7 +228,7 @@ namespace MathML.Rendering
 			return new AreaRegion(this, x, y);
 		}
 
-		public override AreaRegion GetRegion(float x, float y, Area area, int index)
+    public override AreaRegion GetRegion(IFormattingContext context, float x, float y, Area area, int index)
 		{
 			if(area == this || area == source)
 			{
@@ -238,7 +238,7 @@ namespace MathML.Rendering
 			{
 				foreach(Area a in content)
 				{
-					AreaRegion r = a.GetRegion(x, y, area, index);
+					AreaRegion r = a.GetRegion(context, x, y, area, index);
 					if(r != null) return r;
 					x += a.BoundingBox.HorizontalExtent;					
 				}
@@ -246,22 +246,22 @@ namespace MathML.Rendering
 			return null;
 		}
 
-		public override AreaRegion GetRegion(float x, float y, MathMLElement element, int index)
+    public override AreaRegion GetRegion(IFormattingContext context, float x, float y, MathMLElement element, int index)
 		{
 			foreach(Area a in content)
 			{
-				AreaRegion r = a.GetRegion(x, y, element, index);
+				AreaRegion r = a.GetRegion(context, x, y, element, index);
 				if(r != null) return r;
 				x += a.BoundingBox.HorizontalExtent;					
 			}
 			return null;
 		}
 
-		public override AreaRegion GetEditRegion(float x, float y, int index)
+    public override AreaRegion GetEditRegion(IFormattingContext context, float x, float y, int index)
 		{
 			foreach(Area a in content)
 			{
-				AreaRegion r = a.GetEditRegion(x, y, index);
+				AreaRegion r = a.GetEditRegion(context, x, y, index);
 				if(r != null) return r;
 				x += a.BoundingBox.HorizontalExtent;					
 			}
