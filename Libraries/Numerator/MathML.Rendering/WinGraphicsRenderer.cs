@@ -49,24 +49,9 @@ namespace MathML.Rendering
     {
       get { return mathElement; }
     }
-    public void SetMathElement(Graphics g, MathMLMathElement value)
+    public void SetMathElement(MathMLMathElement value)
       {
         mathElement = value;
-        
-
-        if(mathElement != null)
-        {
-          // build the formatting tree
-          MathMLFormatter formatter = new MathMLFormatter();
-          WinFormattingContext ctx = new WinFormattingContext(g, fontSize);
-          format = formatter.Format(mathElement, ctx);
-
-          // build the are tree
-          box = format.BoundingBox;
-          area = format.Fit(box);
-        }
-
-       
       }
      
    
@@ -81,6 +66,22 @@ namespace MathML.Rendering
     /// <returns>A new image, null if an invalid type is given or there is no current element</returns>
     public Image GetImage(Type type, Graphics gr)
     {
+
+      if (mathElement == null)
+        return null;
+
+        gr.PageUnit = GraphicsUnit.Pixel;
+
+      // build the formatting tree
+        MathMLFormatter formatter = new MathMLFormatter();
+        WinFormattingContext ctx = new WinFormattingContext(gr, fontSize);
+        format = formatter.Format(mathElement, ctx);
+
+        // build the are tree
+        box = format.BoundingBox;
+        area = format.Fit(box);
+      
+
       Image image = null;
       int height = (int)Math.Ceiling(box.VerticalExtent);
       int width = (int)Math.Ceiling(box.HorizontalExtent);
@@ -101,7 +102,9 @@ namespace MathML.Rendering
 
         using (Graphics gi = Graphics.FromImage(image))
         {
-          Draw(gi, width, height, 0, 0);
+          gi.PageUnit = GraphicsUnit.Pixel;
+          gi.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+          DrawWithoutFormatting(gi, width, height, 0, 0);
         }
       }
 
@@ -112,7 +115,7 @@ namespace MathML.Rendering
     /// draw the current mathml element (if we have one) to the given
     /// device context clipping to the given size
     /// </summary>
-    private void Draw(Graphics gr, int width, int height, 
+    private void DrawWithoutFormatting(Graphics gr, int width, int height, 
       int scrollPosX, int scrollPosY)
     {
       // clear the background in all cases
@@ -134,7 +137,11 @@ namespace MathML.Rendering
         gr.FillRectangle(backBrush, rect);
 
       if (area != null)
+      {
         area.Render(new WinDrawingContext(gr), scrollPosX, scrollPosY + box.Height);
+      }
+      
+      
     }
 
 

@@ -816,6 +816,27 @@ namespace Altaxo.Data
       Add(datac,new DataColumnInfo(name,kind,groupNumber));
     }
 
+    /// <summary>
+    /// Either returns an existing column with name <c>columnname</c> and type <c>expectedtype</c> or creates a new column of the provided type.
+    /// </summary>
+    /// <param name="columnname">The column name.</param>
+    /// <param name="expectedcolumntype">Expected type of the column.</param>
+    /// <param name="kind">Only used when a new column is created.</param>
+    /// <param name="groupNumber">Only used when a new column is created.</param>
+    /// <returns>Either an existing column of name <c>columnname</c> and type <c>expectedtype</c>. If this is
+    /// not the case, a new column with a similar name and the <c>expectedtype</c> is created and added to the collection. The new column is returned then.</returns>
+    public DataColumn EnsureExistence(string columnname, System.Type expectedcolumntype, ColumnKind kind, int groupNumber)
+    {
+      if (IsColumnOfType(columnname, expectedcolumntype))
+        return this[columnname];
+
+      object o = System.Activator.CreateInstance(expectedcolumntype);
+      if(!(o is DataColumn))
+        throw new ApplicationException("The type you provided is not compatible with DataColumn, provided type: " + expectedcolumntype.GetType().ToString());
+
+      Add((DataColumn)o, columnname, kind, groupNumber);
+      return (DataColumn)o;
+    }
 
     /// <summary>
     /// Add a column using a DataColumnInfo object. The provided info must not be used elsewhere, since it is used directly.
@@ -1091,6 +1112,20 @@ namespace Altaxo.Data
     public bool ContainsColumn(string columnname)
     {
       return m_ColumnsByName.ContainsKey(columnname);
+    }
+
+    /// <summary>
+    /// Check if the named column is of the expected type.
+    /// </summary>
+    /// <param name="columnname">Name of the column.</param>
+    /// <param name="type">Expected type.</param>
+    /// <returns>True if the column exists and is exactly! of the expeced type. False otherwise.</returns>
+    public bool IsColumnOfType(string columnname, System.Type expectedtype)
+    {
+      if (m_ColumnsByName.ContainsKey(columnname) && m_ColumnsByName[columnname].GetType() == expectedtype)
+        return true;
+      else
+        return false;
     }
 
     /// <summary>

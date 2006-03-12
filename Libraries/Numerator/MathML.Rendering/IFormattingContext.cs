@@ -99,6 +99,11 @@ namespace MathML.Rendering
    Scaled DefaultLineThickness { get; }
 
     bool MeasureGlyph(IFontHandle font, ushort index, out BoundingBox box, out Scaled left, out Scaled right);
+
+
+    float OnePixel { get; }
+
+
   }
    
 }

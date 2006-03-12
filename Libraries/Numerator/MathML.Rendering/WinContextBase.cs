@@ -92,63 +92,94 @@ namespace MathML.Rendering
     #endregion
 
     protected Graphics _graphics;
+    /// <summary>
+    /// This is the factor that must be multiplied to "point" units to get the units in the graphic context.
+    /// </summary>
+    protected double _pointsToGU;
 
     public WinContextBase(Graphics g)
     {
       _graphics = g;
+      switch (_graphics.PageUnit)
+      {
+        case GraphicsUnit.Display:
+          throw new ApplicationException("GraphicsUnit.Display is not supported here, because no relation to pixel units can be deduced from it.");
+        case GraphicsUnit.Document:
+          _pointsToGU = 300.0 / 72.0;
+          break;
+        case GraphicsUnit.Inch:
+          _pointsToGU = 1.0 / 72.0;
+          break;
+        case GraphicsUnit.Millimeter:
+          _pointsToGU = 254.0 / 720.0;
+          break;
+        case GraphicsUnit.Pixel:
+          _pointsToGU = _graphics.DpiY / 72.0;
+          break;
+        case GraphicsUnit.Point:
+          _pointsToGU = 1;
+          break;
+        case GraphicsUnit.World:
+          throw new ApplicationException("GraphicsUnit.World is not supported here, because no relation to pixel units can be deduced from it.");
+      }
     }
 
 
     /**
    * calculate how many pixels per point.
    */
-    public float PointsToPixels(float points)
+    public float PointsToGU(float points)
     {
       // 72 points per inch
 
-      return (this._graphics.DpiY * points / 72.0f);
+      return (float)(points*_pointsToGU);
     }
 
     /**
      * calculate how many pixels per mm.
      */
     
-    public float MMsToPixels(float mms)
+    public float MMsToGU(float mms)
     {
       // 25.4 mm 
-      return (_graphics.DpiY * (mms / 25.4f));
+      return (float)(mms*_pointsToGU*(720.0 / 254.0));
     }
 
     /**
      * calculate how many pixels per cm.
      */
-    public float CMsToPixels(float cms)
+    public float CMsToGU(float cms)
     {
-      return (_graphics.DpiY * (cms / 2.54f));
+      return (float)(cms * _pointsToGU * (7200.0 / 254.0));
     }
 
     /**
      * calculate how many pixels per pica.
      */
-    public float PicasToPixels(float picas)
+    public float PicasToGU(float picas)
     {
-      return (_graphics.DpiY * (picas / 12.0f));
+      return (float)(picas *_pointsToGU * (72.0/ 12.0));
     }
 
     /**
      * calculate how many pixels per inch.
      */
-    public float InchesToPixels( float inches)
+    public float InchesToGU( float inches)
     {
-      return ((inches * _graphics.DpiY));
+      return (float)(inches * _pointsToGU * 72.0);
     }
 
 
-     public IFontHandle CreateFont(float emHeight, bool italic, int weight, String fontName)
+    /**
+     * calculate how many pixels per graphics unit
+     */
+    public float PixelsToGU(float pixels)
     {
-       return CreateFontStatic(emHeight, italic, weight, fontName);
+      return (float)(pixels * _pointsToGU * 72.0 /_graphics.DpiY);
     }
 
+    public float OnePixel { get { return PixelsToGU(1); } }
+    
     /**
      * Create a native font resource. This MUST be explicitly deleted when it is 
      * no longer needed by calling DestroyFont.
@@ -160,7 +191,7 @@ namespace MathML.Rendering
      * @param weight the weight of the font
      * @param fontName the face name of the font
      */
-    public static IFontHandle CreateFontStatic(float emHeight, bool italic, int weight, String fontName)
+    public static IFontHandle CreateFontStatic(Graphics gr, float emHeight, bool italic, int weight, String fontName)
     {
       /*
       Win32.LOGFONT lf = new Win32.LOGFONT();
@@ -181,10 +212,11 @@ namespace MathML.Rendering
       lf.lfFaceName = fontName;
 
        */
-      Font result = new Font(fontName, emHeight, (italic ? FontStyle.Italic : FontStyle.Regular) | (weight > 500 ? FontStyle.Bold : FontStyle.Regular), GraphicsUnit.World);
+      Font ft = new Font(fontName, emHeight, (italic ? FontStyle.Italic : FontStyle.Regular) | (weight > 500 ? FontStyle.Bold : FontStyle.Regular), GraphicsUnit.World);
 
-      float ascending = (result.Size * result.FontFamily.GetCellAscent(result.Style)) / result.FontFamily.GetEmHeight(result.Style);
-      return new FontHandle(result, emHeight, italic, weight, fontName, ascending);
+      float ascending = (ft.Size * ft.FontFamily.GetCellAscent(ft.Style)) / ft.FontFamily.GetEmHeight(ft.Style);
+      
+      return new FontHandle(ft, emHeight, italic, weight, fontName, ascending);
     }
 
 
@@ -209,29 +241,33 @@ namespace MathML.Rendering
     *             the glyph.
     * @param right same as left.
     */
-    public static bool MeasureGlyph(Graphics measurementContext, IFontHandle fonthandle, ushort index, out BoundingBox box,
+    public static bool MeasureGlyph(Graphics gr, IFontHandle fonthandle, ushort index, out BoundingBox box,
       out Scaled left, out Scaled right)
     {
       bool retval = false;
       string s = string.Empty + (char)index;
       Font font = ((FontHandle)fonthandle).Handle;
 
-      GraphicsPath path = new GraphicsPath();
-      path.AddString(s, font.FontFamily, (int)font.Style, font.Size, new Point(0, 0), StringFormat.GenericTypographic);
       int em = font.FontFamily.GetEmHeight(font.Style);
       int asc = font.FontFamily.GetCellAscent(font.Style);
       int des = font.FontFamily.GetCellDescent(font.Style);
-
-      SizeF mbox = measurementContext.MeasureString(s, font, (int)(100 * font.Size), StringFormat.GenericTypographic);
       float ascending = font.Size * asc / (float)em;
       float totalheight = font.Size * (asc + des) / (float)em;
+
+
+      GraphicsPath path = new GraphicsPath();
+      path.AddString(s, font.FontFamily, (int)font.Style, font.Size, new PointF(0, -ascending), StringFormat.GenericTypographic);
       RectangleF rect = path.GetBounds();
-      System.Diagnostics.Debug.WriteLine("Bounds=" + rect.ToString());
+      
+      SizeF mbox = gr.MeasureString(s, font, new PointF(0,0), StringFormat.GenericTypographic);
+   
+   
+      //System.Diagnostics.Debug.WriteLine("Bounds=" + rect.ToString());
 
       box.Width = mbox.Width;
-      box.Height = ascending - rect.Y;
-      box.Depth = rect.Bottom - ascending;
-      left = rect.X;
+      box.Height =  - rect.Y;
+      box.Depth = rect.Bottom;
+      left = Math.Max(0,rect.X);
       right = Math.Max(0, mbox.Width - rect.Right);
       retval = true;
 

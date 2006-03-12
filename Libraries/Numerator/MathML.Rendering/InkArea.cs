@@ -36,7 +36,9 @@ namespace MathML.Rendering
 		 * the ink area gets its' color from the color area which
 		 * is rendered first.
 		 */
-		public InkArea(Area area) : base(area) {}
+		public InkArea(Area area) : base(area) 
+    {
+    }
 
 		/**
 		 * render a filled rectangle with the current color that fills

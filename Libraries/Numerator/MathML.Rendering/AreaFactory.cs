@@ -293,10 +293,11 @@ namespace MathML.Rendering
 		 * this notion natuarally falls into the conecpt of a vertical array area, 
 		 * an area, a line, and the second area.
 		 */
-		public static Area Fraction(IFormattingContext ctx, Area numerator, Area denominator, int lineThickness) 
+		public static Area Fraction(IFormattingContext ctx, Area numerator, Area denominator, float lineThickness) 
 		{
-			Area space = new VerticalSpaceArea(1, 1);
-			Area line = HorizontalLine(1);
+      
+			Area space = new VerticalSpaceArea(ctx.OnePixel, ctx.OnePixel);
+			Area line = HorizontalLine(ctx.OnePixel);
 
 			numerator = HorizontalCenter(numerator);
 
@@ -389,9 +390,9 @@ namespace MathML.Rendering
 
 			// these space numbers have no real meaning, the were just
 			// chosen as a size that looks good.
-			float leftSpace = 2.0f + radicandBox.Width * 0.01f;
-			float rightSpace = 2.0f;
-			float topMinSpace = 1.0f + radicandBox.VerticalExtent * 0.03f;			
+			float leftSpace = 2*context.OnePixel + radicandBox.Width * 0.01f;
+			float rightSpace = 2*context.OnePixel;
+			float topMinSpace = context.OnePixel + radicandBox.VerticalExtent * 0.03f;			
 
 			// size to create glyph
 			BoundingBox glyphBox = radicandBox;

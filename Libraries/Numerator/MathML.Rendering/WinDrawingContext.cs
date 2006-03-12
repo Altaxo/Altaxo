@@ -324,15 +324,15 @@ namespace MathML.Rendering
 		{
 			
 
-     strfmt = (StringFormat)StringFormat.GenericTypographic.Clone();
-     strfmt.Alignment = StringAlignment.Near;
-     strfmt.LineAlignment = StringAlignment.Near;
+     _stringFormat = (StringFormat)StringFormat.GenericTypographic.Clone();
+     _stringFormat.Alignment = StringAlignment.Near;
+     _stringFormat.LineAlignment = StringAlignment.Near;
 
-     _graphics.SmoothingMode = SmoothingMode.AntiAlias;
+    
 		}
 
     
-    StringFormat strfmt;
+    StringFormat _stringFormat;
    
 
 
@@ -456,7 +456,7 @@ namespace MathML.Rendering
     public void DrawString(float x, float y, String s)
     {
       FontHandle fhandle = (FontHandle)currentFont;
-      _graphics.DrawString(s, fhandle.Handle, currentBrush, x, y-fhandle.Baseline, strfmt);
+      _graphics.DrawString(s, fhandle.Handle, currentBrush, x, (y-fhandle.Baseline), _stringFormat);
     }
 
 

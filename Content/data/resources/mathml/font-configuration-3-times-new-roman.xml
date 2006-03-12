@@ -44,6 +44,8 @@
 	</simple-glyphs>
 	
 	<simple-glyph-ranges>
+    		<range first="0x64" last="0x65" offset="0xDF1E" comment="DifferentialD and ee - 0x2146 and 0x2147" /> 
+		<range first="0x69" last="0x69" offset="0xDF21" comment="imaginary i - 0x2148"/> 
 		<range first="0x0391" last="0x03d6" offset="0" comment="Greek"/> 
 		<range first="0x0000" last="0x2134" offset="0" comment="catch all"/> 
 		<range first="0x2149" last="0xfffb" offset="0" comment="catch all"/> 

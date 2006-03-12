@@ -61,6 +61,8 @@ namespace MathML.Rendering
         return GetFont(context, "", "");
       }
 
+     
+
       /**
        * get a font based on the font type given in the variant, 
        * and the size given in height. If the size can not be 
@@ -93,7 +95,7 @@ namespace MathML.Rendering
 
         if (font == null)
         {
-          font = CreateFontStatic(height, italic, weight, name);
+          font = CreateFontStatic(((WinFormattingContext)context)._graphics, height, italic, weight, name);
           fonts.Add(new WeakReference(font));
         }
         return font;
@@ -183,6 +185,10 @@ namespace MathML.Rendering
       return _fontFactory.GetFont(this, fontName, altFontName);
     }
 
+    public IFontHandle CreateFont(float emHeightInPixels, bool italic, int weight, String fontName)
+    {
+      return CreateFontStatic(_graphics, emHeightInPixels, italic, weight, fontName);
+    }
 
 		/// <summary>
 		/// default contstuctor
@@ -278,11 +284,11 @@ namespace MathML.Rendering
 			{
 				case LengthType.Big:
 				{
-					result = 20;
+					result = this.PixelsToGU(20);
 				} break;
 				case LengthType.Cm:
 				{
-					result = CMsToPixels(length.Value);
+					result = CMsToGU(length.Value);
 				} break;
 				case LengthType.Em:
 				{
@@ -294,7 +300,7 @@ namespace MathML.Rendering
 				} break;
 				case LengthType.In:
 				{
-          result = InchesToPixels(length.Value);
+          result = InchesToGU(length.Value);
 				} break;
 				case LengthType.Infinity:
 				{
@@ -306,7 +312,7 @@ namespace MathML.Rendering
 				} break;
 				case LengthType.Mm:
 				{
-          result = MMsToPixels( length.Value);
+          result = MMsToGU( length.Value);
 				} break;
 				case LengthType.NegativeMedium:
 				{
@@ -342,7 +348,7 @@ namespace MathML.Rendering
 				} break;
 				case LengthType.Pc:
 				{
-          result = PicasToPixels( length.Value);
+          result = PicasToGU( length.Value);
 				} break;
 				case LengthType.Percentage:
 				{
@@ -350,7 +356,7 @@ namespace MathML.Rendering
 				} break;
 				case LengthType.Pt:
 				{
-          result = PointsToPixels(length.Value);
+          result = PointsToGU(length.Value);
 				} break;
 				case LengthType.Pure:
 				{
@@ -358,7 +364,7 @@ namespace MathML.Rendering
 				} break;
 				case LengthType.Px:
 				{
-					result = length.Value;
+					result = PixelsToGU(length.Value);
 				} break;
 				case LengthType.Small:
 				{
@@ -428,8 +434,7 @@ namespace MathML.Rendering
 			set
 			{
 				int d = value - scriptLevel;
-				actualSize = (int)(4*actualSize * Math.Pow(SizeMultiplier, d));
-        actualSize /= 4.0f;
+				actualSize = (float)(actualSize * Math.Pow(SizeMultiplier, d));
 				Size = actualSize;
 			}
 		}
@@ -542,7 +547,7 @@ namespace MathML.Rendering
       {
         // should be at least 1 px thick
         //return Math.Max(context.m
-        return 2.0f;
+        return PixelsToGU(2);
       } 
     }
 
@@ -552,7 +557,7 @@ namespace MathML.Rendering
     /**
 		 * get the dpi resolution of the current device
 		 */
-    ///
+    /*
     public Scaled Dpi
     {
       get
@@ -560,6 +565,7 @@ namespace MathML.Rendering
       return 72.0f;
       }
     }
+     */
 
 
     public  bool MeasureGlyph(IFontHandle font, ushort index, out BoundingBox box, out Scaled left, out Scaled right)

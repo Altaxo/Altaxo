@@ -860,7 +860,7 @@ namespace MathML.Rendering
 			Area numerator = (Area)e.Numerator.Accept(this, context);			
 			Area denominator = (Area)e.Denominator.Accept(this, context);
 
-			return CompleteArea(context, e, AreaFactory.Fraction(context, numerator, denominator, 5));
+			return CompleteArea(context, e, AreaFactory.Fraction(context, numerator, denominator, 5*context.OnePixel));
 		} 		
 		
 		/// <summary>

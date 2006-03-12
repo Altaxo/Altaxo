@@ -542,9 +542,7 @@ namespace Altaxo.Serialization.Ascii
       }
 
       // add also a property column named "FilePath" if not existing so far
-      if (!table.PropCols.ContainsColumn("FilePath"))
-        table.PropCols.Add(new Altaxo.Data.TextColumn(), "FilePath");
-
+      Altaxo.Data.TextColumn filePathPropCol = (Altaxo.Data.TextColumn)table.PropCols.EnsureExistence("FilePath", typeof(Altaxo.Data.TextColumn), Altaxo.Data.ColumnKind.Label, 0);
 
       foreach (string filename in filenames)
       {
@@ -603,10 +601,15 @@ namespace Altaxo.Serialization.Ascii
 
          
           // now set the file name property cell
-          if (table.PropCols["FilePath"] is Altaxo.Data.TextColumn)
-          {
-            table.PropCols["FilePath"][table.DataColumns.GetColumnNumber(ycol)] = filename;
-          }
+            int destcolnumber = table.DataColumns.GetColumnNumber(ycol);
+            filePathPropCol[destcolnumber] = filename;
+
+          // now set the imported property cells
+            for (int s = 0; s < newtable.PropCols.ColumnCount; s++)
+            {
+              Altaxo.Data.DataColumn dest = table.PropCols.EnsureExistence(newtable.PropCols.GetColumnName(i), newtable.PropCols[i].GetType(), Altaxo.Data.ColumnKind.V, 0);
+              dest.SetValueAt(destcolnumber, table.PropCols[s][i]);
+            }
         }
       } // foreache file
 

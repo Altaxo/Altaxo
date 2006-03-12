@@ -21,6 +21,7 @@
 #endregion
 
 using System;
+using System.ComponentModel;
 using Altaxo.Calc.Regression.Nonlinear;
 namespace Altaxo.Calc.FitFunctions.Relaxation
 {
@@ -71,8 +72,31 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       return "Kohlrausch Complex " + (_useFrequencyInsteadOmega ? "(Freq)" : "(Omeg)");
     }
 
+    [FitFunctionCreator("Kohlrausch Complex (Omega)", "Retardation/General", 1, 2, 4)]
+    [Description("FitFunctions.Relaxation.Susceptibility.Introduction;XML.MML.GenericSusceptibility;FitFunctions.Relaxation.KohlrauschSusceptibility.Part2;XML.MML.KohlrauschTimeDomain;FitFunctions.IndependentVariable.Omega;FitFunctions.Relaxation.KohlrauschSusceptibility.Part3")]
+    public static IFitFunction CreateGeneralFunctionOfOmega()
+    {
+      KohlrauschSusceptibility result = new KohlrauschSusceptibility();
+      result._useFrequencyInsteadOmega = false;
+      result._useFlowTerm = true;
+      result._isDielectricData = true;
+      return result;
+    }
+
+    [FitFunctionCreator("Kohlrausch Complex (Freq)", "Retardation/General", 1, 2, 4)]
+    [Description("FitFunctions.Relaxation.Susceptibility.Introduction;XML.MML.GenericSusceptibility;FitFunctions.Relaxation.KohlrauschSusceptibility.Part2;XML.MML.KohlrauschTimeDomain;FitFunctions.IndependentVariable.FrequencyAsOmega;FitFunctions.Relaxation.KohlrauschSusceptibility.Part3")]
+    public static IFitFunction CreateGeneralFunctionOfFrequency()
+    {
+      KohlrauschSusceptibility result = new KohlrauschSusceptibility();
+      result._useFrequencyInsteadOmega = true;
+      result._useFlowTerm = true;
+      result._isDielectricData = true;
+      return result;
+    }
+
     [FitFunctionCreator("Kohlrausch Complex (Omega)", "Retardation/Dielectrics", 1, 2, 4)]
-    public static IFitFunction CreateFofOmega()
+    [Description("FitFunctions.Relaxation.DielectricSusceptibility.Introduction;XML.MML.GenericDielectricSusceptibility;FitFunctions.Relaxation.KohlrauschSusceptibility.Part2;XML.MML.KohlrauschTimeDomain;FitFunctions.IndependentVariable.Omega;FitFunctions.Relaxation.KohlrauschDielectricSusceptibility.Part3")]
+    public static IFitFunction CreateDielectricFunctionOfOmega()
     {
       KohlrauschSusceptibility result = new KohlrauschSusceptibility();
       result._useFrequencyInsteadOmega = false;
@@ -82,7 +106,8 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     }
 
     [FitFunctionCreator("Kohlrausch Complex (Freq)", "Retardation/Dielectrics", 1, 2, 4)]
-    public static IFitFunction CreateFofFrequency()
+    [Description("FitFunctions.Relaxation.DielectricSusceptibility.Introduction;XML.MML.GenericDielectricSusceptibility;FitFunctions.Relaxation.KohlrauschSusceptibility.Part2;XML.MML.KohlrauschTimeDomain;FitFunctions.IndependentVariable.FrequencyAsOmega;FitFunctions.Relaxation.KohlrauschDielectricSusceptibility.Part3")]
+    public static IFitFunction CreateDielectricFunctionOfFrequency()
     {
       KohlrauschSusceptibility result = new KohlrauschSusceptibility();
       result._useFrequencyInsteadOmega = true;
@@ -125,7 +150,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     #endregion
 
     #region parameter definition
-    string[] _parameterNameC = new string[] { "j_inf", "delta_j", "tau", "beta", "viscosity" };
+    string[] _parameterNameC = new string[] { "chi_inf", "delta_chi", "tau", "beta", "viscosity" };
     string[] _parameterNameD = new string[] { "eps_inf", "delta_eps", "tau", "beta", "conductivity" };
     public int NumberOfParameters
     {

@@ -30,8 +30,14 @@ namespace Altaxo.Main.Services
 {
   public class RtfComposerService
   {
+    /*
     static readonly string textheader =
   @"{\rtf1\ansi\ansicpg1252\deff0\deflang1033{\fonttbl{\f0\fswiss\fcharset0 Arial;}{\f1\froman\fprq2\fcharset0 Times New Roman;}{\f2\froman\fprq2\fcharset2 Symbol;}}" +
+  @"\viewkind4\uc1\pard\f0 ";
+    */
+
+    static readonly string textheader =
+  @"{\rtf1\ansi\ansicpg1252\deff0\deflang1033{\fonttbl{\f0\froman\fprq2\fcharset0 Times New Roman;}{\f1\fswiss\fcharset0 Arial;}{\f2\froman\fprq2\fcharset2 Symbol;}}" +
   @"\viewkind4\uc1\pard\f0 ";
 
     static readonly string texttrailer = @"}";
@@ -76,7 +82,7 @@ namespace Altaxo.Main.Services
         MathML.MathMLDocument doc = new MathML.MathMLDocument();
         doc.Load(rd);
         rd.Close();
-        _mmlRendering.SetMathElement(gr, (MathML.MathMLMathElement)doc.DocumentElement);
+        _mmlRendering.SetMathElement((MathML.MathMLMathElement)doc.DocumentElement);
 
         System.Drawing.Image mf = _mmlRendering.GetImage(typeof(Bitmap),gr);
         GraphicsUnit unit = GraphicsUnit.Point;

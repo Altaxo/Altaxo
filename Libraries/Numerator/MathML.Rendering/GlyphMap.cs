@@ -183,7 +183,7 @@ namespace MathML.Rendering.GlyphMapper
 		 */
     private int GetFontIndex(IFormattingContext context, float fontSize)
 		{
-			fontSize = (int)(fontSize * scaleFactor);
+			fontSize = (fontSize * scaleFactor);
 			for(int i = 0; i < fontInstances.Length; i++)
 			{
 				if(fontInstances[i].PointSize == fontSize)
@@ -202,7 +202,7 @@ namespace MathML.Rendering.GlyphMapper
 		 */
     private int CreateFont(IFormattingContext context, float fontSize)
 		{
-			fontSize = (int)(fontSize * scaleFactor);
+			fontSize = (fontSize * scaleFactor);
 			FontInstance[] tmp = fontInstances;
 			fontInstances = new FontInstance[fontInstances.Length + 1];	
 			tmp.CopyTo(fontInstances, 0);
