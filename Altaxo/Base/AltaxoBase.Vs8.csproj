@@ -125,7 +125,7 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Calc\FitFunctions\General\LinearFit.cs" />
+    <Compile Include="Calc\FitFunctions\General\PolynomialFit.cs" />
     <Compile Include="Calc\FitFunctions\Relaxation\HavriliakNegamiSusceptibility.cs" />
     <Compile Include="Calc\FitFunctions\Relaxation\KohlrauschModulusRetardation.cs" />
     <Compile Include="Calc\FitFunctions\Relaxation\KohlrauschSusceptibility.cs" />

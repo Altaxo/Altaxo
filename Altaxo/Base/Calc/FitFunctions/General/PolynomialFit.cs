@@ -21,6 +21,7 @@
 #endregion
 
 using System;
+using System.ComponentModel;
 using Altaxo.Calc.Regression.Nonlinear;
 
 namespace Altaxo.Calc.FitFunctions.General
@@ -31,20 +32,50 @@ namespace Altaxo.Calc.FitFunctions.General
   /// Only for testing purposes - use a "real" linear fit instead.
   /// </summary>
   [FitFunctionClass]
-  public class LinearFitWithGradient : IFitFunctionWithGradient
+  public class PolynomialFit : IFitFunctionWithGradient
   {
-    public LinearFitWithGradient()
+    int _order;
+
+    #region Serialization
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PolynomialFit), 0)]
+    public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      //
-      // TODO: Add constructor logic here
-      //
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        PolynomialFit s = (PolynomialFit)obj;
+        info.AddValue("Order", s._order);
+    
+      }
+
+      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        PolynomialFit s = o != null ? (PolynomialFit)o : new PolynomialFit();
+        s._order = info.GetInt32("Order");
+        return s;
+      }
     }
 
-    [FitFunctionCreator("LinearFitWithGradient", "Relaxation", 1, 1, 2)]
-    public static IFitFunction LinearFitWithGradientOrder2()
+    #endregion
+
+    public PolynomialFit()
     {
-      return new LinearFitWithGradient();
+      _order = 2;
     }
+
+    public PolynomialFit(int order)
+    {
+      _order = order;
+    }
+
+    [FitFunctionCreator("PolynomialFit", "General", 1, 1, 10)]
+    [System.ComponentModel.Description("FitFunctions.General.PolynomialFit")]
+    public static IFitFunction CreatePolynomialFitOrder9()
+    {
+      return new PolynomialFit(9);
+    }
+
+
     #region IFitFunction Members
 
     public int NumberOfIndependentVariables
@@ -67,7 +98,7 @@ namespace Altaxo.Calc.FitFunctions.General
     {
       get
       {
-        return 2;
+        return _order+1;
       }
     }
 
@@ -84,7 +115,7 @@ namespace Altaxo.Calc.FitFunctions.General
 
     public string ParameterName(int i)
     {
-      return (new string[] { "intercept", "slope", })[i];
+      return "a" + i.ToString();
     }
 
     public double DefaultParameterValue(int i)
@@ -99,108 +130,29 @@ namespace Altaxo.Calc.FitFunctions.General
 
     public void Evaluate(double[] X, double[] P, double[] Y)
     {
-      Y[0] = P[0] + P[1] * X[0];
+      double sum = P[_order];
+      for (int i = _order-1; i >= 0; i--)
+      {
+        sum *= X[0];
+        sum += P[i];
+      }
+
+      Y[0] = sum;
     }
 
     #endregion
 
     public void EvaluateGradient(double[] X, double[] P, double[][] DY)
     {
-      DY[0][0] = 1;
-      DY[0][1] = X[0];
+      double sum = 1;
+      for (int i = 0; i <= _order; i++)
+      {
+        DY[0][i] = sum;
+        sum *= (i + 1) * X[0];
+      }
     }
 
   }
 
 
-  /// <summary>
-  /// Only for testing purposes - use a "real" linear fit instead.
-  /// </summary>
-  [FitFunctionClass]
-  public class LinearFit : IFitFunction
-  {
-    public LinearFit()
-    {
-      //
-      // TODO: Add constructor logic here
-      //
-    }
-
-    [FitFunctionCreator("LinearFit", "Relaxation", 1, 1, 2)]
-    public static IFitFunction LinearFitOrder2()
-    {
-      return new LinearFit();
-    }
-
-    #region IFitFunction Members
-
-    public int NumberOfIndependentVariables
-    {
-      get
-      {
-        return 1;
-      }
-    }
-
-    public int NumberOfDependentVariables
-    {
-      get
-      {
-        return 1;
-      }
-    }
-
-    public int NumberOfParameters
-    {
-      get
-      {
-        return 2;
-      }
-    }
-
-    public string IndependentVariableName(int i)
-    {
-      // TODO:  Add KohlrauschDecay.IndependentVariableName implementation
-      return "x";
-    }
-
-    public string DependentVariableName(int i)
-    {
-      return "y";
-    }
-
-    public string ParameterName(int i)
-    {
-      return (new string[] { "intercept", "slope", })[i];
-    }
-
-    public double DefaultParameterValue(int i)
-    {
-      return 0;
-    }
-
-    public IVarianceScaling DefaultVarianceScaling(int i)
-    {
-      return null;
-    }
-
-    public void Evaluate(double[] X, double[] P, double[] Y)
-    {
-      Y[0] = P[0] + P[1] * X[0];
-    }
-
-    #endregion
-
-
-
-
-    #region IFitFunction Members
-
-
-
-
-    #endregion
-
-
-  }
 }

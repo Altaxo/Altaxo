@@ -20,9 +20,12 @@
 //andy[at]epsilon3[dot]net
 
 using System;
+using System.Configuration;
+using System.IO;
 using System.Collections;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Drawing.Text;
 using System.Diagnostics;
 using Scaled = System.Single;
 
@@ -46,8 +49,69 @@ namespace MathML.Rendering
        */
       private ArrayList fonts = new ArrayList();
 
+      PrivateFontCollection _fontCollection = new PrivateFontCollection();
+      Hashtable _fontCollectionFamilyCache;
+
+
       public FontFactory()
       {
+        string configDir = ConfigurationSettings.AppSettings.Get("mathml-rendering-config");
+        string searchDir = null;
+
+        if (configDir == null || configDir.Length == 0)
+          searchDir = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
+        else if (Path.IsPathRooted(configDir))
+        {
+          if (Directory.Exists(configDir))
+            searchDir = configDir;
+          else
+            throw new ApplicationException("Configured font configuration file directory does not exist! Configured path: " + configDir);
+        }
+        else // path is not rooted
+        {
+          string basepath = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location) + Path.DirectorySeparatorChar;
+          if (Directory.Exists(basepath + configDir))
+            searchDir = basepath + configDir;
+          else
+            throw new ApplicationException("Configured font configuration file directory does not exist! Configured path: " + configDir + ", the base path is: " + basepath);
+        }
+
+        string[] files = Directory.GetFiles(searchDir, "*.ttf");
+        foreach (string file in files)
+          _fontCollection.AddFontFile(file);
+
+        _fontCollectionFamilyCache = new Hashtable();
+        FontFamily[] families = _fontCollection.Families;
+        for (int i = 0; i < families.Length; i++)
+          _fontCollectionFamilyCache.Add(families[i].Name, i);
+      }
+
+      /**
+  * Create a native font resource. This MUST be explicitly deleted when it is 
+  * no longer needed by calling DestroyFont.
+  * 
+  * @param emHeight the desired character height of the font, this is 
+  * the size above the baseline for a capital M, or the largest
+  * character height in the font		 
+  * @param italic create an italic font 
+  * @param weight the weight of the font
+  * @param fontName the face name of the font
+  */
+      public IFontHandle CreateFont(Graphics gr, float emHeight, bool italic, int weight, String fontName)
+      {
+        Font ft;
+        if (_fontCollectionFamilyCache.Contains(fontName))
+        {
+          FontFamily fam = _fontCollection.Families[(int)_fontCollectionFamilyCache[fontName]];
+          ft = new Font(fam, emHeight, (italic ? FontStyle.Italic : FontStyle.Regular) | (weight > 500 ? FontStyle.Bold : FontStyle.Regular), GraphicsUnit.World);
+        }
+        else
+        {
+        ft = new Font(fontName, emHeight, (italic ? FontStyle.Italic : FontStyle.Regular) | (weight > 500 ? FontStyle.Bold : FontStyle.Regular), GraphicsUnit.World);
+        }
+        float ascending = (ft.Size * ft.FontFamily.GetCellAscent(ft.Style)) / ft.FontFamily.GetEmHeight(ft.Style);
+
+        return new FontHandle(ft, emHeight, italic, weight, fontName, ascending);
       }
 
       /**
@@ -95,7 +159,7 @@ namespace MathML.Rendering
 
         if (font == null)
         {
-          font = CreateFontStatic(((WinFormattingContext)context)._graphics, height, italic, weight, name);
+          font = CreateFont(((WinFormattingContext)context)._graphics, height, italic, weight, name);
           fonts.Add(new WeakReference(font));
         }
         return font;
@@ -187,7 +251,7 @@ namespace MathML.Rendering
 
     public IFontHandle CreateFont(float emHeightInPixels, bool italic, int weight, String fontName)
     {
-      return CreateFontStatic(_graphics, emHeightInPixels, italic, weight, fontName);
+      return _fontFactory.CreateFont(_graphics, emHeightInPixels, italic, weight, fontName);
     }
 
 		/// <summary>

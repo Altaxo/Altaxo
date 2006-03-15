@@ -132,13 +132,15 @@
     <Content Include="data\resources\mathml\font-configuration-1-math-roman.xml" />
     <Content Include="data\resources\mathml\font-configuration-2-cm-stretchy.xml" />
     <Content Include="data\resources\mathml\font-configuration-3-times-new-roman.xml" />
-    <Content Include="data\resources\mathml\font-configuration-lucida-sans-unicode.xml" />
     <Content Include="data\schemas\manifest.xsd" />
     <Content Include="data\templates\file\Misc\EmptySharpReport.xft" />
     <Content Include="data\templates\file\Misc\EmptyWixFragment.xft" />
     <Content Include="data\templates\project\Setup\WixProjectEx.xpt" />
     <Content Include="data\templates\project\Setup\WixProjectVS6I.xpt" />
     <Content Include="data\templates\project\Setup\WixProjectVSI.xpt" />
+    <Content Include="data\resources\mathml\cm-roman.ttf" />
+    <Content Include="data\resources\mathml\cm-stretchy.ttf" />
+    <Content Include="data\resources\mathml\math-roman.ttf" />
     <None Include="HelpConverter.InstallState" />
     <Content Include="data\resources\StringResources.el.resources" />
     <Content Include="data\resources\StringResources.no.resources" />

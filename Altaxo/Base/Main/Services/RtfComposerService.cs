@@ -163,7 +163,7 @@ namespace Altaxo.Main.Services
     /// Metafile, and finally appends the bits of the Windows Metafile in HEX
     /// to a string and returns the string.
     /// </summary>
-    /// <param name="_image"></param>
+    /// <param name="image"></param>
     /// <returns>
     /// A string containing the bits of a Windows Metafile in HEX
     /// </returns>

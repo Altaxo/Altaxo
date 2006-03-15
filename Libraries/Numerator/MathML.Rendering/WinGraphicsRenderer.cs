@@ -83,8 +83,8 @@ namespace MathML.Rendering
       
 
       Image image = null;
-      int height = (int)Math.Ceiling(box.VerticalExtent);
-      int width = (int)Math.Ceiling(box.HorizontalExtent);
+      int height = (int)Math.Ceiling(2+box.VerticalExtent);
+      int width = (int)Math.Ceiling(2+box.HorizontalExtent);
 
       if(type.Equals(typeof(Bitmap)))
       {
@@ -104,7 +104,7 @@ namespace MathML.Rendering
         {
           gi.PageUnit = GraphicsUnit.Pixel;
           gi.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
-          DrawWithoutFormatting(gi, width, height, 0, 0);
+          DrawWithoutFormatting(gi, width, height, 1, 1);
         }
       }
 

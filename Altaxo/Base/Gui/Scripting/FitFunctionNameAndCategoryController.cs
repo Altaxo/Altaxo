@@ -45,10 +45,11 @@ namespace Altaxo.Gui.Scripting
       _doc = doc;
       _tempName = _doc.FitFunctionName;
       _tempCategory = _doc.FitFunctionCategory;
+      _tempDescription = _doc.FitFunctionDescription;
 
       _controllerName = (ISingleValueController)Current.Gui.GetControllerAndControl(new object[] { _tempName }, typeof(ISingleValueController));
       _controllerCategory = (ISingleValueController)Current.Gui.GetControllerAndControl(new object[] { _tempCategory }, typeof(ISingleValueController));
-      _controllerCategory = (ISingleValueController)Current.Gui.GetControllerAndControl(new object[] { _tempDescription }, typeof(ISingleValueController));
+      _controllerDescription = (ISingleValueController)Current.Gui.GetControllerAndControl(new object[] { _tempDescription }, typeof(ISingleValueController));
       _controllerShouldSaveInUserData = (IBooleanValueController)Current.Gui.GetControllerAndControl(new object[] { _tempShouldSave }, typeof(IBooleanValueController));
 
 

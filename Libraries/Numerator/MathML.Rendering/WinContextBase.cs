@@ -191,34 +191,19 @@ namespace MathML.Rendering
      * @param weight the weight of the font
      * @param fontName the face name of the font
      */
+    /*
     public static IFontHandle CreateFontStatic(Graphics gr, float emHeight, bool italic, int weight, String fontName)
     {
-      /*
-      Win32.LOGFONT lf = new Win32.LOGFONT();
+      
 
-      lf.lfHeight = -emHeight;
-      lf.lfWidth = 0;
-      lf.lfEscapement = 0;
-      lf.lfOrientation = 0;
-      lf.lfWeight = weight;	
-      lf.lfItalic = italic ? (byte)1 : (byte)0;
-      lf.lfUnderline = 0;
-      lf.lfStrikeOut = 0;
-      lf.lfCharSet = Win32.DEFAULT_CHARSET;
-      lf.lfOutPrecision = Win32.OUT_OUTLINE_PRECIS;
-      lf.lfClipPrecision = Win32.CLIP_DEFAULT_PRECIS;
-      lf.lfQuality = Win32.PROOF_QUALITY;
-      lf.lfPitchAndFamily = Win32.FF_DONTCARE;
-      lf.lfFaceName = fontName;
-
-       */
+      
       Font ft = new Font(fontName, emHeight, (italic ? FontStyle.Italic : FontStyle.Regular) | (weight > 500 ? FontStyle.Bold : FontStyle.Regular), GraphicsUnit.World);
 
       float ascending = (ft.Size * ft.FontFamily.GetCellAscent(ft.Style)) / ft.FontFamily.GetEmHeight(ft.Style);
       
       return new FontHandle(ft, emHeight, italic, weight, fontName, ascending);
     }
-
+    */
 
 
     /**

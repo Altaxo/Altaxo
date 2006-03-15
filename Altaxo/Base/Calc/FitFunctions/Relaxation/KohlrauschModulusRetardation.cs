@@ -21,6 +21,7 @@
 #endregion
 
 using System;
+using System.ComponentModel;
 using Altaxo.Calc.Regression.Nonlinear;
 
 
@@ -75,6 +76,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     }
 
     [FitFunctionCreator("Kohlrausch Complex (Omega)", "Retardation/Modulus", 1, 2, 4)]
+    [Description("FitFunctions.Relaxation.ModulusRetardation.Introduction;XML.MML.GenericRetardationModulus;FitFunctions.Relaxation.KohlrauschSusceptibility.Part2;XML.MML.KohlrauschTimeDomain;FitFunctions.IndependentVariable.Omega;FitFunctions.Relaxation.ModulusRetardation.Part3")]
     public static IFitFunction CreateFofOmega()
     {
       KohlrauschModulusRetardation result = new KohlrauschModulusRetardation();
@@ -85,6 +87,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     }
 
     [FitFunctionCreator("Kohlrausch Complex (Freq)", "Retardation/Modulus", 1, 2, 4)]
+    [Description("FitFunctions.Relaxation.ModulusRetardation.Introduction;XML.MML.GenericRetardationModulus;FitFunctions.Relaxation.KohlrauschSusceptibility.Part2;XML.MML.KohlrauschTimeDomain;FitFunctions.IndependentVariable.FrequencyAsOmega;FitFunctions.Relaxation.ModulusRetardation.Part3")]
     public static IFitFunction CreateFofFrequency()
     {
       KohlrauschModulusRetardation result = new KohlrauschModulusRetardation();

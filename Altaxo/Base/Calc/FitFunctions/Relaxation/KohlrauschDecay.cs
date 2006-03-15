@@ -31,7 +31,24 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
   [FitFunctionClass]
   public class KohlrauschDecay : IFitFunction
   {
-    
+    #region Serialization
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(KohlrauschDecay), 0)]
+    public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        KohlrauschDecay s = (KohlrauschDecay)obj;
+      }
+
+      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        KohlrauschDecay s = o != null ? (KohlrauschDecay)o : new KohlrauschDecay();
+        return s;
+      }
+    }
+
+    #endregion
     public KohlrauschDecay()
     {
       //
@@ -81,7 +98,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
     public string IndependentVariableName(int i)
     {
-      // TODO:  Add KohlrauschDecay.IndependentVariableName implementation
+      
       return "x";
     }
 
