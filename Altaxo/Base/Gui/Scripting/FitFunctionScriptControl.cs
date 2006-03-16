@@ -53,6 +53,8 @@ namespace Altaxo.Gui.Scripting
     private System.Windows.Forms.Label label4;
     private System.Windows.Forms.TextBox _edDependentVariables;
     private System.Windows.Forms.Panel _panelScriptText;
+    private Button _btCommit;
+    private Button _btRevert;
 
     private IFitFunctionScriptViewEventSink m_Controller;
 
@@ -98,6 +100,8 @@ namespace Altaxo.Gui.Scripting
       this.label4 = new System.Windows.Forms.Label();
       this._edDependentVariables = new System.Windows.Forms.TextBox();
       this._panelScriptText = new System.Windows.Forms.Panel();
+      this._btCommit = new System.Windows.Forms.Button();
+      this._btRevert = new System.Windows.Forms.Button();
       this.SuspendLayout();
       // 
       // label1
@@ -141,7 +145,7 @@ namespace Altaxo.Gui.Scripting
       this._edParameterNames.Size = new System.Drawing.Size(384, 20);
       this._edParameterNames.TabIndex = 41;
       this._edParameterNames.Text = "textBox1";
-      this._edParameterNames.Validating += new System.ComponentModel.CancelEventHandler(this._edParameterNames_TextChanged);
+      this._edParameterNames.TextChanged += new System.EventHandler(this._edParameterNames_TextChanged);
       // 
       // label3
       // 
@@ -159,6 +163,7 @@ namespace Altaxo.Gui.Scripting
       this._edIndependentVariables.TabIndex = 43;
       this._edIndependentVariables.Text = "textBox1";
       this._edIndependentVariables.Validating += new System.ComponentModel.CancelEventHandler(this._edIndependentVariables_Validating);
+      this._edIndependentVariables.TextChanged += new System.EventHandler(this._edIndependentVariables_Validating);
       // 
       // label4
       // 
@@ -175,21 +180,43 @@ namespace Altaxo.Gui.Scripting
       this._edDependentVariables.Size = new System.Drawing.Size(200, 20);
       this._edDependentVariables.TabIndex = 45;
       this._edDependentVariables.Text = "textBox2";
-      this._edDependentVariables.Validating += new System.ComponentModel.CancelEventHandler(this._edDependentVariables_Validating);
+      this._edDependentVariables.TextChanged += new System.EventHandler(this._edDependentVariables_TextChanged);
       // 
       // _panelScriptText
       // 
-      this._panelScriptText.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-        | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
+      this._panelScriptText.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this._panelScriptText.BackColor = System.Drawing.SystemColors.ControlLightLight;
-      this._panelScriptText.Location = new System.Drawing.Point(0, 80);
+      this._panelScriptText.Location = new System.Drawing.Point(0, 85);
       this._panelScriptText.Name = "_panelScriptText";
-      this._panelScriptText.Size = new System.Drawing.Size(600, 344);
+      this._panelScriptText.Size = new System.Drawing.Size(600, 339);
       this._panelScriptText.TabIndex = 46;
       // 
-      // ParametrizedFunctionScriptControl
+      // _btCommit
       // 
+      this._btCommit.Location = new System.Drawing.Point(525, 56);
+      this._btCommit.Name = "_btCommit";
+      this._btCommit.Size = new System.Drawing.Size(75, 23);
+      this._btCommit.TabIndex = 47;
+      this._btCommit.Text = "Commit";
+      this._btCommit.UseVisualStyleBackColor = true;
+      this._btCommit.Click += new System.EventHandler(this._btCommit_Click);
+      // 
+      // _btRevert
+      // 
+      this._btRevert.Location = new System.Drawing.Point(525, 8);
+      this._btRevert.Name = "_btRevert";
+      this._btRevert.Size = new System.Drawing.Size(75, 23);
+      this._btRevert.TabIndex = 48;
+      this._btRevert.Text = "Revert";
+      this._btRevert.UseVisualStyleBackColor = true;
+      this._btRevert.Click += new System.EventHandler(this._btRevert_Click);
+      // 
+      // FitFunctionScriptControl
+      // 
+      this.Controls.Add(this._btRevert);
+      this.Controls.Add(this._btCommit);
       this.Controls.Add(this._panelScriptText);
       this.Controls.Add(this._edDependentVariables);
       this.Controls.Add(this.label4);
@@ -200,9 +227,10 @@ namespace Altaxo.Gui.Scripting
       this.Controls.Add(this._chkUserDefinedParameters);
       this.Controls.Add(this._cbNumberOfParameters);
       this.Controls.Add(this.label1);
-      this.Name = "ParametrizedFunctionScriptControl";
+      this.Name = "FitFunctionScriptControl";
       this.Size = new System.Drawing.Size(600, 428);
       this.ResumeLayout(false);
+      this.PerformLayout();
 
     }
     #endregion
@@ -213,46 +241,59 @@ namespace Altaxo.Gui.Scripting
       get { return m_Controller; }
       set { m_Controller = value; }
     }
-  
+
+    int _suppressEvents = 0;
     public void SetParameterText(string text, bool enable)
     {
+      _suppressEvents++;
       this._edParameterNames.Text = text;
       this._edParameterNames.Enabled = enable;
+      _suppressEvents--;
     }
 
     public void SetIndependentVariableText(string text)
     {
+      _suppressEvents++;
       this._edIndependentVariables.Text = text;
+      _suppressEvents--;
     }
     public void SetDependentVariableText(string text)
     {
+      _suppressEvents++;
       this._edDependentVariables.Text = text;
+      _suppressEvents--;
     }
 
     public void InitializeNumberOfParameters()
     {
+      _suppressEvents++;
       this._cbNumberOfParameters.BeginUpdate();
       this._cbNumberOfParameters.Items.Clear();
       for(int i=0;i<100;i++)
         this._cbNumberOfParameters.Items.Add(i.ToString());
 
       this._cbNumberOfParameters.EndUpdate();
+      _suppressEvents--;
     }
 
     public void SetCheckUseUserDefinedParameters(bool useUserDefParameters)
     {
+      _suppressEvents++;
       IFitFunctionScriptViewEventSink tempcontroller = m_Controller; // trick to suppress changed event
       m_Controller = null;
 
       this._chkUserDefinedParameters.Checked = useUserDefParameters;
       m_Controller = tempcontroller;
+      _suppressEvents--;
     }
 
 
     public void SetNumberOfParameters(int numberOfParameters, bool enable)
     {
+      _suppressEvents++;
       this._cbNumberOfParameters.SelectedIndex = numberOfParameters;
       this._cbNumberOfParameters.Enabled = enable;
+      _suppressEvents--;
     }
 
   
@@ -284,46 +325,74 @@ namespace Altaxo.Gui.Scripting
       this.ParentForm.Close();
     }
 
- 
 
+    public void EnableScriptView(object view, bool enable)
+    {
+      Control c = view as Control;
+      if (c != null)
+        c.Enabled = enable;
+    }
    
    
 
 
 
   
-    private void _edParameterNames_TextChanged(object sender, System.ComponentModel.CancelEventArgs e)
+ 
+    private void _edParameterNames_TextChanged(object sender, EventArgs e)
     {
-      if(null!=Controller)
+      if (null != Controller && 0==_suppressEvents)
         Controller.EhView_UserDefinedParameterTextChanged(this._edParameterNames.Text);
     }
 
     private void _cbNumberOfParameters_SelectionChangeCommitted(object sender, System.EventArgs e)
     {
-      if (null != Controller)
+      if (null != Controller && 0 == _suppressEvents)
         Controller.EhView_NumberOfParameterChanged(this._cbNumberOfParameters.SelectedIndex);
     }
 
     private void _chkUserDefinedParameters_CheckedChanged(object sender, System.EventArgs e)
     {
-      if (null != Controller)
+      if (null != Controller && 0 == _suppressEvents)
         Controller.EhView_UserDefinedParameterCheckChanged(_chkUserDefinedParameters.Checked);
 
       this._cbNumberOfParameters.Enabled = !_chkUserDefinedParameters.Checked;
       this._edParameterNames.Enabled = _chkUserDefinedParameters.Checked;
     }
 
-    private void _edIndependentVariables_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+ 
+    private void _edIndependentVariables_Validating(object sender, EventArgs e)
     {
-      if(null!=Controller)
+      if (null != Controller && 0 == _suppressEvents)
         Controller.EhView_IndependentVariableTextChanged(this._edIndependentVariables.Text);
     }
 
-    private void _edDependentVariables_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+   
+
+    private void _edDependentVariables_TextChanged(object sender, EventArgs e)
     {
-      if(null!=Controller)
+      if (null != Controller && 0 == _suppressEvents)
         Controller.EhView_DependentVariableTextChanged(this._edDependentVariables.Text);
-    
     }
+
+   
+
+    private void _btCommit_Click(object sender, EventArgs e)
+    {
+      if (null != Controller)
+        Controller.EhView_CommitChanges();
+    }
+
+    private void _btRevert_Click(object sender, EventArgs e)
+    {
+      if (null != Controller)
+        Controller.EhView_RevertChanges();
+    }
+
+  
+
+   
+
+   
   }
 }

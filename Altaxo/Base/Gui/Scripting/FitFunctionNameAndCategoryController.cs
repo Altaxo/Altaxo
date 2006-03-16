@@ -55,6 +55,7 @@ namespace Altaxo.Gui.Scripting
 
       _controllerName.DescriptionText = "Enter fit function name:";
       _controllerCategory.DescriptionText = "Enter fit function category:";
+      _controllerDescription.DescriptionText = "Enter fit function description:";
       _controllerShouldSaveInUserData.DescriptionText = "Save in user fit functions directory?";
 
       base.Initialize(new IMVCAController[] { _controllerName, _controllerCategory, _controllerDescription, _controllerShouldSaveInUserData });
@@ -83,7 +84,7 @@ namespace Altaxo.Gui.Scripting
 
       result3 = _controllerDescription.Apply();
       if (result3)
-        _tempDescription = (string)_controllerCategory.ModelObject;
+        _tempDescription = (string)_controllerDescription.ModelObject;
 
       if (result1 && result2 && result3)
       {

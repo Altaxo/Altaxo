@@ -515,7 +515,7 @@ namespace Altaxo.Scripting
 
         for(int i=0;i<this.NumberOfParameters;i++)
         {
-          stb.Append("\"" + this.ParameterName(i) + "\"");
+          stb.Append("\"" + this.ParameterName(i,false) + "\"");
           if((i+1)<this.NumberOfParameters)
             stb.Append(",");
         }
@@ -1136,13 +1136,19 @@ namespace Altaxo.Scripting
 
     public string ParameterName(int i)
     {
+      return ParameterName(i, true);
+    }
 
+    public string ParameterName(int i, bool tryUseCompiledObject)
+    {
       // try to avoid a exception if the script object is not compiled
-      if(this._UserDefinedParameterNames==null || i>=this._UserDefinedParameterNames.Length)
-        MakeSureWasTriedToCompile();
+     // if (tryUseCompiledObject && IsUsingUserDefinedParameterNames && (_UserDefinedParameterNames == null || i >= this._UserDefinedParameterNames.Length))
+     //   MakeSureWasTriedToCompile();
 
       if (this.m_ScriptObject != null)
+      {
         return ((IFitFunction)m_ScriptObject).ParameterName(i);
+      }
       else
       {
         if (IsUsingUserDefinedParameterNames)

@@ -459,17 +459,23 @@ namespace ICSharpCode.SharpDevelop.Services
 								if (text == null) {
 									text = editable.Text;
 								}
-								int hash = text.GetHashCode();
-								if (lastUpdateSize[fileName] == null || (int)lastUpdateSize[fileName] != hash) {
-									parseInformation = ParseFile(fileName, text, !viewContent.IsUntitled);
-									lastUpdateSize[fileName] = hash;
-									updated = true;
-								}
-								if (updated) {
-									if (parseInformation != null && editable is IParseInformationListener) {
-										((IParseInformationListener)editable).ParseInformationUpdated(parseInformation);
-									}
-								}
+                if (text != null)
+                {
+                  int hash = text.GetHashCode();
+                  if (lastUpdateSize[fileName] == null || (int)lastUpdateSize[fileName] != hash)
+                  {
+                    parseInformation = ParseFile(fileName, text, !viewContent.IsUntitled);
+                    lastUpdateSize[fileName] = hash;
+                    updated = true;
+                  }
+                  if (updated)
+                  {
+                    if (parseInformation != null && editable is IParseInformationListener)
+                    {
+                      ((IParseInformationListener)editable).ParseInformationUpdated(parseInformation);
+                    }
+                  }
+                }
 //								if (fn != null) {
 //									ParseFile(fn); // TODO: this one should update file parsings requested through queue
 //								}

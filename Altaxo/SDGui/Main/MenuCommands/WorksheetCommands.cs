@@ -381,10 +381,10 @@ namespace Altaxo.Worksheet.Commands
       object[] args = new object[]{script,new ScriptExecutionHandler(this.EhScriptExecution)};
       if(Current.Gui.ShowDialog(args, "PropertyColumnScript of " + m_Column.Name))
       {
-        if(null != dataTable.DataColumns.ColumnScripts[m_Column])
-          dataTable.DataColumns.ColumnScripts[m_Column] = (IColumnScriptText)args[0];
+        if(null != dataTable.PropertyColumns.ColumnScripts[m_Column])
+          dataTable.PropertyColumns.ColumnScripts[m_Column] = (IColumnScriptText)args[0];
         else
-          dataTable.DataColumns.ColumnScripts.Add(m_Column, args[0]);
+          dataTable.PropertyColumns.ColumnScripts.Add(m_Column, args[0]);
       }
 
       this.m_Column = null;
