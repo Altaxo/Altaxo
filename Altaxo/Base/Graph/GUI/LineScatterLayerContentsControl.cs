@@ -49,6 +49,7 @@ namespace Altaxo.Graph.GUI
     //private System.Windows.Forms.TreeView m_Content_tvDataAvail;
     private MWControls.MWTreeView m_Content_tvDataAvail;
     private System.Windows.Forms.Label label13;
+    private SplitContainer _splitContainer;
     /// <summary> 
     /// Required designer variable.
     /// </summary>
@@ -85,7 +86,7 @@ namespace Altaxo.Graph.GUI
     /// </summary>
     private void InitializeComponent()
     {
-      System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(LineScatterLayerContentsControl));
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LineScatterLayerContentsControl));
       this.m_Contents_chkShowRange = new System.Windows.Forms.CheckBox();
       this.m_Contents_btEditRange = new System.Windows.Forms.Button();
       this.m_Contents_btUngroup = new System.Windows.Forms.Button();
@@ -99,19 +100,26 @@ namespace Altaxo.Graph.GUI
       this.label14 = new System.Windows.Forms.Label();
       this.m_Content_tvDataAvail = new MWControls.MWTreeView();
       this.label13 = new System.Windows.Forms.Label();
+      this._splitContainer = new System.Windows.Forms.SplitContainer();
+      this._splitContainer.Panel1.SuspendLayout();
+      this._splitContainer.Panel2.SuspendLayout();
+      this._splitContainer.SuspendLayout();
       this.SuspendLayout();
       // 
       // m_Contents_chkShowRange
       // 
-      this.m_Contents_chkShowRange.Location = new System.Drawing.Point(352, 240);
+      this.m_Contents_chkShowRange.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.m_Contents_chkShowRange.Location = new System.Drawing.Point(147, 240);
       this.m_Contents_chkShowRange.Name = "m_Contents_chkShowRange";
+      this.m_Contents_chkShowRange.Size = new System.Drawing.Size(104, 24);
       this.m_Contents_chkShowRange.TabIndex = 25;
       this.m_Contents_chkShowRange.Text = "Show Range";
       this.m_Contents_chkShowRange.CheckedChanged += new System.EventHandler(this.EhShowRange_CheckedChanged);
       // 
       // m_Contents_btEditRange
       // 
-      this.m_Contents_btEditRange.Location = new System.Drawing.Point(352, 208);
+      this.m_Contents_btEditRange.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.m_Contents_btEditRange.Location = new System.Drawing.Point(147, 208);
       this.m_Contents_btEditRange.Name = "m_Contents_btEditRange";
       this.m_Contents_btEditRange.Size = new System.Drawing.Size(104, 24);
       this.m_Contents_btEditRange.TabIndex = 24;
@@ -120,7 +128,8 @@ namespace Altaxo.Graph.GUI
       // 
       // m_Contents_btUngroup
       // 
-      this.m_Contents_btUngroup.Location = new System.Drawing.Point(352, 176);
+      this.m_Contents_btUngroup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.m_Contents_btUngroup.Location = new System.Drawing.Point(147, 176);
       this.m_Contents_btUngroup.Name = "m_Contents_btUngroup";
       this.m_Contents_btUngroup.Size = new System.Drawing.Size(104, 24);
       this.m_Contents_btUngroup.TabIndex = 23;
@@ -129,7 +138,8 @@ namespace Altaxo.Graph.GUI
       // 
       // m_Contents_btGroup
       // 
-      this.m_Contents_btGroup.Location = new System.Drawing.Point(352, 144);
+      this.m_Contents_btGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.m_Contents_btGroup.Location = new System.Drawing.Point(147, 144);
       this.m_Contents_btGroup.Name = "m_Contents_btGroup";
       this.m_Contents_btGroup.Size = new System.Drawing.Size(104, 24);
       this.m_Contents_btGroup.TabIndex = 22;
@@ -138,7 +148,8 @@ namespace Altaxo.Graph.GUI
       // 
       // m_Contents_btPlotAssociations
       // 
-      this.m_Contents_btPlotAssociations.Location = new System.Drawing.Point(352, 112);
+      this.m_Contents_btPlotAssociations.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.m_Contents_btPlotAssociations.Location = new System.Drawing.Point(147, 112);
       this.m_Contents_btPlotAssociations.Name = "m_Contents_btPlotAssociations";
       this.m_Contents_btPlotAssociations.Size = new System.Drawing.Size(104, 24);
       this.m_Contents_btPlotAssociations.TabIndex = 21;
@@ -148,8 +159,9 @@ namespace Altaxo.Graph.GUI
       // 
       // m_Contents_btListSelDown
       // 
+      this.m_Contents_btListSelDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.m_Contents_btListSelDown.Image = ((System.Drawing.Image)(resources.GetObject("m_Contents_btListSelDown.Image")));
-      this.m_Contents_btListSelDown.Location = new System.Drawing.Point(352, 72);
+      this.m_Contents_btListSelDown.Location = new System.Drawing.Point(147, 72);
       this.m_Contents_btListSelDown.Name = "m_Contents_btListSelDown";
       this.m_Contents_btListSelDown.Size = new System.Drawing.Size(32, 32);
       this.m_Contents_btListSelDown.TabIndex = 20;
@@ -157,8 +169,9 @@ namespace Altaxo.Graph.GUI
       // 
       // m_Contents_btListSelUp
       // 
+      this.m_Contents_btListSelUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.m_Contents_btListSelUp.Image = ((System.Drawing.Image)(resources.GetObject("m_Contents_btListSelUp.Image")));
-      this.m_Contents_btListSelUp.Location = new System.Drawing.Point(352, 32);
+      this.m_Contents_btListSelUp.Location = new System.Drawing.Point(147, 32);
       this.m_Contents_btListSelUp.Name = "m_Contents_btListSelUp";
       this.m_Contents_btListSelUp.Size = new System.Drawing.Size(32, 32);
       this.m_Contents_btListSelUp.TabIndex = 19;
@@ -166,21 +179,25 @@ namespace Altaxo.Graph.GUI
       // 
       // m_Contents_lbContents
       // 
+      this.m_Contents_lbContents.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.m_Contents_lbContents.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable;
-      this.m_Contents_lbContents.Location = new System.Drawing.Point(208, 24);
+      this.m_Contents_lbContents.Location = new System.Drawing.Point(0, 24);
       this.m_Contents_lbContents.Name = "m_Contents_lbContents";
       this.m_Contents_lbContents.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-      this.m_Contents_lbContents.Size = new System.Drawing.Size(136, 238);
+      this.m_Contents_lbContents.Size = new System.Drawing.Size(136, 240);
       this.m_Contents_lbContents.TabIndex = 18;
-      this.m_Contents_lbContents.DoubleClick += new System.EventHandler(this.EhContents_DoubleClick);
-      this.m_Contents_lbContents.MeasureItem += new System.Windows.Forms.MeasureItemEventHandler(this.EhContents_MeasureItem);
       this.m_Contents_lbContents.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.EhContents_DrawItem);
+      this.m_Contents_lbContents.DoubleClick += new System.EventHandler(this.EhContents_DoubleClick);
       this.m_Contents_lbContents.SelectedIndexChanged += new System.EventHandler(this.EhContents_SelectedIndexChanged);
+      this.m_Contents_lbContents.MeasureItem += new System.Windows.Forms.MeasureItemEventHandler(this.EhContents_MeasureItem);
       // 
       // m_Contents_btPullData
       // 
+      this.m_Contents_btPullData.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.m_Contents_btPullData.Image = ((System.Drawing.Image)(resources.GetObject("m_Contents_btPullData.Image")));
-      this.m_Contents_btPullData.Location = new System.Drawing.Point(168, 72);
+      this.m_Contents_btPullData.Location = new System.Drawing.Point(163, 72);
       this.m_Contents_btPullData.Name = "m_Contents_btPullData";
       this.m_Contents_btPullData.Size = new System.Drawing.Size(32, 32);
       this.m_Contents_btPullData.TabIndex = 17;
@@ -188,8 +205,9 @@ namespace Altaxo.Graph.GUI
       // 
       // m_Contents_btPutData
       // 
+      this.m_Contents_btPutData.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.m_Contents_btPutData.Image = ((System.Drawing.Image)(resources.GetObject("m_Contents_btPutData.Image")));
-      this.m_Contents_btPutData.Location = new System.Drawing.Point(168, 32);
+      this.m_Contents_btPutData.Location = new System.Drawing.Point(163, 32);
       this.m_Contents_btPutData.Name = "m_Contents_btPutData";
       this.m_Contents_btPutData.Size = new System.Drawing.Size(32, 32);
       this.m_Contents_btPutData.TabIndex = 16;
@@ -197,7 +215,7 @@ namespace Altaxo.Graph.GUI
       // 
       // label14
       // 
-      this.label14.Location = new System.Drawing.Point(208, 8);
+      this.label14.Location = new System.Drawing.Point(0, 8);
       this.label14.Name = "label14";
       this.label14.Size = new System.Drawing.Size(88, 16);
       this.label14.TabIndex = 15;
@@ -205,39 +223,62 @@ namespace Altaxo.Graph.GUI
       // 
       // m_Content_tvDataAvail
       // 
-      this.m_Content_tvDataAvail.ImageIndex = -1;
-      this.m_Content_tvDataAvail.Location = new System.Drawing.Point(8, 24);
+      this.m_Content_tvDataAvail.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.m_Content_tvDataAvail.CheckedNodes = ((System.Collections.Hashtable)(resources.GetObject("m_Content_tvDataAvail.CheckedNodes")));
+      this.m_Content_tvDataAvail.Location = new System.Drawing.Point(3, 24);
       this.m_Content_tvDataAvail.Name = "m_Content_tvDataAvail";
-      this.m_Content_tvDataAvail.SelectedImageIndex = -1;
+      this.m_Content_tvDataAvail.SelNodes = ((System.Collections.Hashtable)(resources.GetObject("m_Content_tvDataAvail.SelNodes")));
       this.m_Content_tvDataAvail.Size = new System.Drawing.Size(152, 240);
       this.m_Content_tvDataAvail.TabIndex = 14;
       this.m_Content_tvDataAvail.BeforeExpand += new System.Windows.Forms.TreeViewCancelEventHandler(this.EhDataAvailable_BeforeExpand);
       // 
       // label13
       // 
-      this.label13.Location = new System.Drawing.Point(8, 8);
+      this.label13.Location = new System.Drawing.Point(3, 8);
       this.label13.Name = "label13";
       this.label13.Size = new System.Drawing.Size(80, 16);
       this.label13.TabIndex = 13;
       this.label13.Text = "Available data";
       // 
+      // _splitContainer
+      // 
+      this._splitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+      this._splitContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
+      this._splitContainer.Location = new System.Drawing.Point(0, 0);
+      this._splitContainer.Name = "_splitContainer";
+      // 
+      // _splitContainer.Panel1
+      // 
+      this._splitContainer.Panel1.Controls.Add(this.m_Content_tvDataAvail);
+      this._splitContainer.Panel1.Controls.Add(this.label13);
+      this._splitContainer.Panel1.Controls.Add(this.m_Contents_btPutData);
+      this._splitContainer.Panel1.Controls.Add(this.m_Contents_btPullData);
+      // 
+      // _splitContainer.Panel2
+      // 
+      this._splitContainer.Panel2.Controls.Add(this.m_Contents_lbContents);
+      this._splitContainer.Panel2.Controls.Add(this.m_Contents_chkShowRange);
+      this._splitContainer.Panel2.Controls.Add(this.label14);
+      this._splitContainer.Panel2.Controls.Add(this.m_Contents_btEditRange);
+      this._splitContainer.Panel2.Controls.Add(this.m_Contents_btListSelUp);
+      this._splitContainer.Panel2.Controls.Add(this.m_Contents_btUngroup);
+      this._splitContainer.Panel2.Controls.Add(this.m_Contents_btListSelDown);
+      this._splitContainer.Panel2.Controls.Add(this.m_Contents_btGroup);
+      this._splitContainer.Panel2.Controls.Add(this.m_Contents_btPlotAssociations);
+      this._splitContainer.Size = new System.Drawing.Size(456, 271);
+      this._splitContainer.SplitterDistance = 196;
+      this._splitContainer.TabIndex = 26;
+      // 
       // LineScatterLayerContentsControl
       // 
-      this.Controls.Add(this.m_Contents_chkShowRange);
-      this.Controls.Add(this.m_Contents_btEditRange);
-      this.Controls.Add(this.m_Contents_btUngroup);
-      this.Controls.Add(this.m_Contents_btGroup);
-      this.Controls.Add(this.m_Contents_btPlotAssociations);
-      this.Controls.Add(this.m_Contents_btListSelDown);
-      this.Controls.Add(this.m_Contents_btListSelUp);
-      this.Controls.Add(this.m_Contents_lbContents);
-      this.Controls.Add(this.m_Contents_btPullData);
-      this.Controls.Add(this.m_Contents_btPutData);
-      this.Controls.Add(this.label14);
-      this.Controls.Add(this.m_Content_tvDataAvail);
-      this.Controls.Add(this.label13);
+      this.Controls.Add(this._splitContainer);
       this.Name = "LineScatterLayerContentsControl";
-      this.Size = new System.Drawing.Size(464, 272);
+      this.Size = new System.Drawing.Size(456, 271);
+      this._splitContainer.Panel1.ResumeLayout(false);
+      this._splitContainer.Panel2.ResumeLayout(false);
+      this._splitContainer.ResumeLayout(false);
       this.ResumeLayout(false);
 
     }

@@ -178,6 +178,8 @@ namespace Altaxo.Graph.GUI
         if(tp.Controls.Count>0)
           tp.Controls.Clear();
 
+        value.Location = new Point(0, 0);
+        value.Dock = DockStyle.Fill;
         tp.Controls.Add(value);
         
       }
@@ -198,6 +200,8 @@ namespace Altaxo.Graph.GUI
 
       value.Enabled = enable;
       value.Location = new Point(0, _chkPageEnable.Height);
+      value.Size = new Size(tp.ClientSize.Width, tp.ClientSize.Height - _chkPageEnable.Height);
+      value.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       tp.Controls.Add(value);
       tp.Controls.Add(_chkPageEnable);
     }

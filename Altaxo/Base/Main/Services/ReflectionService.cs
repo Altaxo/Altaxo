@@ -80,7 +80,7 @@ namespace Altaxo.Main.Services
       }
       else
       {
-        return subtype.IsSubclassOf(basetype);
+        return subtype.IsSubclassOf(basetype) || subtype==basetype;
       }
 
     }
@@ -132,9 +132,18 @@ namespace Altaxo.Main.Services
         }
          return (Assembly[])list.ToArray(typeof(System.Reflection.Assembly));
       }
-
     }
 
+    /// <summary>
+    /// Returns true if <c>testAssembly</c> is dependent on <c>baseAssembly.</c>
+    /// </summary>
+    /// <param name="baseAssembly">Base assembly.</param>
+    /// <param name="testAssembly">Assembly to test.</param>
+    /// <returns>True if <c>testAssembly</c> is dependent on <c>baseAssembly.</returns>
+    public static bool IsDependentAssembly(Assembly baseAssembly, Assembly testAssembly)
+    {
+      return baseAssembly==testAssembly || Contains(testAssembly.GetReferencedAssemblies(), baseAssembly.GetName());
+    }
 
 
     /// <summary>
@@ -314,12 +323,101 @@ namespace Altaxo.Main.Services
       #endregion
     }
 
-    private class AttributeForClassListCollection : Dictionary<System.Type, AttributeForClassList>, IAttributeForClassListCollection
+    private class AttributeForClassListCollection : IAttributeForClassListCollection
     {
-      public System.Type _attributeType;
+      /// <summary>
+      /// The attribute type this list collection is intended for.
+      /// </summary>
+      private System.Type _attributeType;
+      private List<List<System.Type>> _classesWithMyAttribute = new List<List<Type>>();
+      private Dictionary<System.Type, AttributeForClassList> _attributeForClassListCollection;
+
       public AttributeForClassListCollection(System.Type attributeType)
       {
         _attributeType = attributeType;
+      }
+
+      public Type AttributeType { get { return _attributeType; } }
+      public int CurrentAssemblyCount { get { return _classesWithMyAttribute.Count; } }
+
+
+      /// <summary>
+      /// Get all classes with the attribute <c>AttributeType</c> starting from a certain assembly.
+      /// </summary>
+      /// <param name="startAssembly">Index of the first assembly to search for.</param>
+      /// <returns>A list of all classes that have the attribute.</returns>
+      public List<Type> GetClasses(int startAssembly)
+      {
+        Update();
+        List<Type> list = new List<Type>();
+        for (int i = startAssembly; i < _classesWithMyAttribute.Count; i++)
+        {
+          list.AddRange(_classesWithMyAttribute[i]);
+        }
+        return list;
+      }
+
+      public IAttributeForClassList GetAttributeForClassList(Type myTargetType)
+      {
+        AttributeForClassList list;
+        if (_attributeForClassListCollection == null)
+          _attributeForClassListCollection = new Dictionary<Type, AttributeForClassList>();
+
+        if (_attributeForClassListCollection.ContainsKey(myTargetType))
+        {
+          list = _attributeForClassListCollection[myTargetType];
+        }
+        else
+        {
+          list = new AttributeForClassList(_attributeType, myTargetType);
+          _attributeForClassListCollection.Add(myTargetType, list);
+        }
+
+        if (this._attributeType != list._attributeType)
+          throw new ApplicationException("Programming error (attributeType did not match), please inform the author that this exception happened");
+        if (list._targetType != myTargetType)
+          throw new ApplicationException("Programming error (targetType did not match), please inform the author that this exception happened");
+
+        List<Type> definedtypes = GetClasses(list._currentAssemblyCount);
+        list._currentAssemblyCount = CurrentAssemblyCount;
+
+        foreach (Type definedtype in definedtypes)
+        {
+          Attribute[] attributes = Attribute.GetCustomAttributes(definedtype, _attributeType);
+
+          foreach (Attribute att in attributes)
+          {
+            if (att is IClassForClassAttribute)
+            {
+                         
+                if (IsSubClassOfOrImplements(myTargetType, ((IClassForClassAttribute)att).TargetType))
+                  list.Add(att, definedtype);
+            }
+          }
+        } // end foreach type
+        list.Sort();
+        return list;
+      }
+
+      void Update()
+      {
+        for (int i = _classesWithMyAttribute.Count; i < _loadedAssemblies.Count; i++)
+        {
+          Assembly assembly = _loadedAssemblies[i];
+          List<Type> typesWithMyAttribute = new List<Type>();
+          if (IsDependentAssembly(_attributeType.Assembly, assembly))
+          {
+            Type[] definedtypes = assembly.GetTypes();
+            foreach (Type definedtype in definedtypes)
+            {
+              Attribute[] attributes = Attribute.GetCustomAttributes(definedtype, _attributeType);
+              if (attributes.Length > 0)
+                typesWithMyAttribute.Add(definedtype);
+            }
+          }
+          _classesWithMyAttribute.Add(typesWithMyAttribute);
+        }
+        System.Diagnostics.Debug.Assert(_loadedAssemblies.Count == _classesWithMyAttribute.Count);
       }
     }
 
@@ -346,10 +444,13 @@ namespace Altaxo.Main.Services
       }
       else
       {
-        if (listColl._attributeType != attributeType)
-          throw new ApplicationException("Programming error (attribtuteType did not match), please inform the author that this exception happened");
+        if (listColl.AttributeType != attributeType)
+          throw new ApplicationException("Programming error (attributeType did not match), please inform the author that this exception happened");
       }
 
+      return listColl.GetAttributeForClassList(myTargetType);
+
+      /*
        AttributeForClassList list;
        if (listColl.ContainsKey(myTargetType))
        {
@@ -365,41 +466,38 @@ namespace Altaxo.Main.Services
            throw new ApplicationException("Programming error (attributeType did not match), please inform the author that this exception happened");
          if (list._targetType != (overrideObjectType != null ? overrideObjectType : target.GetType()))
            throw new ApplicationException("Programming error (targetType did not match), please inform the author that this exception happened");
-
-      System.Reflection.Assembly[] assemblies = GetDependendAssemblies(attributeType.Assembly,list._currentAssemblyCount);
-      list._currentAssemblyCount = _loadedAssemblies.Count;
-
-      foreach(Assembly assembly in assemblies)
-      {
-        Type[] definedtypes = assembly.GetTypes();
-        foreach(Type definedtype in definedtypes)
+     
+        List<Type> definedtypes = listColl.GetClasses(list._currentAssemblyCount);
+        list._currentAssemblyCount = listColl.CurrentAssemblyCount;
+       
+        foreach (Type definedtype in definedtypes)
         {
-          Attribute[] attributes = Attribute.GetCustomAttributes(definedtype,attributeType);
-            
-          foreach(Attribute att in attributes)
+          Attribute[] attributes = Attribute.GetCustomAttributes(definedtype, attributeType);
+
+          foreach (Attribute att in attributes)
           {
-            if(att is IClassForClassAttribute)
+            if (att is IClassForClassAttribute)
             {
-              if(overrideObjectType==null)
+              if (overrideObjectType == null)
               {
-                if(((IClassForClassAttribute)att).TargetType.IsInstanceOfType(target))
-                  list.Add(att,definedtype);
+                if (((IClassForClassAttribute)att).TargetType.IsInstanceOfType(target))
+                  list.Add(att, definedtype);
               }
               else
               {
-                if(IsSubClassOfOrImplements(overrideObjectType,((IClassForClassAttribute)att).TargetType))
-                  list.Add(att,definedtype);
-
+                if (IsSubClassOfOrImplements(overrideObjectType, ((IClassForClassAttribute)att).TargetType))
+                  list.Add(att, definedtype);
               }
             }
           }
         } // end foreach type
-      } // end foreach assembly 
+   
 
       
       list.Sort();
 
       return list;
+       */
     }
 
     /// <summary>
