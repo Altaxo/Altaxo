@@ -309,6 +309,7 @@
     <Compile Include="Calc\Probability\RandomGenerators.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Calc\Regression\DynamicParameterEstimation.cs" />
     <Compile Include="Calc\Regression\LinearRegression.cs">
       <SubType>Code</SubType>
     </Compile>

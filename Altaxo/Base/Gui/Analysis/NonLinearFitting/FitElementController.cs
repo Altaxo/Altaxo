@@ -46,6 +46,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     void EhView_ChooseErrorFunction(int idx);
     void EhView_ChooseFitFunction();
     void EhView_ChooseExternalParameter(int idx);
+    void EhView_ChooseFitRange();
 
     void EhView_DeleteDependentVariable(int idx);
   }
@@ -89,7 +90,17 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       }
     }
     #region IFitElementController
-  
+
+    public void EhView_ChooseFitRange()
+    {
+      object range = _doc.GetRowRange();
+      if (Current.Gui.ShowDialog(ref range, "Choose fit range"))
+      {
+        _doc.SetRowRange((Calc.PositiveIntegerRange)range);
+        _view.Refresh();
+      }
+    }
+
     public void EhView_ChooseIndependentColumn(int idx)
     {
       SingleColumnChoice choice = new SingleColumnChoice();

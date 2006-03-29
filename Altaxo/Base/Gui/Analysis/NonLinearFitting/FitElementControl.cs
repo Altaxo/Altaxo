@@ -183,7 +183,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       int currentY = 0;
 
       // Draw the independent variables
-     
+
       for (int i = 0; i < _numberOfX; i++)
       {
         Point triangleStart = new Point(_fitBoxLocation.X, currentY + (1 * _slotHeight) / 4);
@@ -205,8 +205,10 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         currentY += _slotHeight;
       }
 
+
+
       // now draw the dependent variables
-      _DependentVariablesY  = (_totalSlots - _numberOfY)*_slotHeight;
+      _DependentVariablesY = (_totalSlots - _numberOfY) * _slotHeight;
       currentY = _DependentVariablesY;
 
       _errorFunctionWidth = (6 * _slotHeight) / 4;
@@ -218,9 +220,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
           _errorFunctionX,
           currentY,
           _errorFunctionWidth,
-          _slotHeight-1);
+          _slotHeight - 1);
 
-      
+
         e.Graphics.FillRectangle(Brushes.WhiteSmoke, errorFuncRect);
         e.Graphics.DrawRectangle(_pen, errorFuncRect);
         if (_fitElement.ErrorEvaluation(i) != null)
@@ -279,10 +281,10 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         Rectangle rect = new Rectangle(_externalParametersX, currentY, _externalParametersWidth, _slotHeight);
 
         System.Windows.Forms.ControlPaint.DrawBorder3D(e.Graphics,
-          rect.X-2, rect.Y, rect.Width + 2, rect.Height,
+          rect.X - 2, rect.Y, rect.Width + 2, rect.Height,
           System.Windows.Forms.Border3DStyle.Etched,
           System.Windows.Forms.Border3DSide.All);
-          
+
         e.Graphics.DrawString(
           _fitElement.ParameterName(i),
           System.Windows.Forms.SystemInformation.MenuFont,
@@ -301,16 +303,16 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       _IndependentVariablesWidth = _fitBoxLocation.X - _slotHeight / 4;
       for (int i = 0; i < _numberOfX; i++)
       {
-        Rectangle rect =  new Rectangle(0, currentY, _IndependentVariablesWidth, _slotHeight);
+        Rectangle rect = new Rectangle(0, currentY, _IndependentVariablesWidth, _slotHeight);
         System.Windows.Forms.ControlPaint.DrawBorder3D(e.Graphics,
-          rect.X,rect.Y,rect.Width+2,rect.Height,
+          rect.X, rect.Y, rect.Width + 2, rect.Height,
           System.Windows.Forms.Border3DStyle.Etched,
           System.Windows.Forms.Border3DSide.All);
 
         INumericColumn col = _fitElement.IndependentVariables(i);
         if (col != null)
         {
-         
+
           string name = col.FullName;
 
           e.Graphics.DrawString(
@@ -324,9 +326,26 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         currentY += _slotHeight;
       }
 
+      {
+        // draw the plot range
+        Calc.PositiveIntegerRange plotRange = _fitElement.GetRowRange();
+        string rangestring = "Range: " + plotRange.First.ToString() + " to " + (plotRange.IsInfinite ? "infinity" : plotRange.Last.ToString());
+        Rectangle rect = new Rectangle(0, currentY, _IndependentVariablesWidth, _slotHeight);
+        System.Windows.Forms.ControlPaint.DrawBorder3D(e.Graphics,
+          rect.X, rect.Y, rect.Width + 2, rect.Height,
+          System.Windows.Forms.Border3DStyle.Etched,
+          System.Windows.Forms.Border3DSide.All);
+        e.Graphics.DrawString(
+             rangestring,
+             System.Windows.Forms.SystemInformation.MenuFont,
+             System.Drawing.Brushes.Black,
+             rect,
+             rightJustified
+             );
+      }
       // Draw the names of the dependent columns
       currentY = _DependentVariablesY;
-      _DependentVariablesWidth = _errorFunctionX - (2*_slotHeight) / 8;
+      _DependentVariablesWidth = _errorFunctionX - (2 * _slotHeight) / 8;
       for (int i = 0; i < _numberOfY; i++)
       {
         Rectangle rect = new Rectangle(0, currentY, _DependentVariablesWidth, _slotHeight);
@@ -372,11 +391,11 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         fitFuncBox
         );
 
-      if(this._fitFunctionSelected)
-        e.Graphics.DrawRectangle(Pens.Red,fitFuncBox);
+      if (this._fitFunctionSelected)
+        e.Graphics.DrawRectangle(Pens.Red, fitFuncBox);
 
 
-    
+
 
       base.OnPaint(e);
     }
@@ -418,6 +437,22 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         point.Y<(_fitElement.NumberOfIndependentVariables*_slotHeight))
       {
         idx = (point.Y - _fitBoxLocation.Y)/_slotHeight;
+        return true;
+      }
+      else
+      {
+        return false;
+      }
+    }
+
+    protected bool IsClickOnFitRange(Point point)
+    {
+
+      if (point.X > _VariablesX &&
+        point.X < this._IndependentVariablesWidth &&
+        point.Y >= (_fitBoxLocation.Y + _fitElement.NumberOfIndependentVariables * _slotHeight) &&
+        point.Y < (_fitBoxLocation.Y + (1+_fitElement.NumberOfIndependentVariables) * _slotHeight))
+      {
         return true;
       }
       else
@@ -526,6 +561,11 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         return;
       }
 
+      if (IsClickOnFitRange(point))
+      {
+        _controller.EhView_ChooseFitRange();
+        return;
+      }
 
       // test if clicked on a dependent variable column
       if(IsClickOnDependentVariable(point, ref idx))

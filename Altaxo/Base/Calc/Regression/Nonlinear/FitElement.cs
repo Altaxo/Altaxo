@@ -21,6 +21,7 @@
 #endregion
 
 using System;
+using Altaxo.Calc;
 using Altaxo.Data;
 using Altaxo.Collections;
 
@@ -32,58 +33,12 @@ namespace Altaxo.Calc.Regression.Nonlinear
   /// </summary>
   public class FitElement : ICloneable
   {
-    #region internal classes
-    class IntegerRange
-    {
-      int _first;
-      int _count;
-
-      protected IntegerRange()
-      {
-      }
-
-      public static IntegerRange NewFromFirstAndCount(int first, int count)
-      {
-        return NewFromFirstAndEnd(first,first+count);
-      }
-
-      static public IntegerRange NewFromFirstAndEnd(int first, int end)
-      {
-        IntegerRange n = new IntegerRange();
-        n._first = Math.Min(first,end);
-        n._count = Math.Abs(first-end);
-        return n;
-      }
-
-      public int First
-      {
-        get { return _first; }
-      }
-      public int Count
-      {
-        get { return _count; }
-      }
-      public int Last
-      {
-        get { return _first+_count-1; }
-      }
-      public int End
-      {
-        get
-        {
-          return _first + _count; 
-        }
-      }
-    }
-  
-    
-
-    #endregion
+   
     /// <summary>
     /// Fitting function. Can be null if no fitting function was actually chosen.
     /// </summary>
     IFitFunction _fitFunction; 
-    IntegerRange _rangeOfRows;
+    PositiveIntegerRange _rangeOfRows;
     NumericColumnProxy[] _independentVariables;
     NumericColumnProxy[] _dependentVariables;
     IVarianceScaling[] _errorEvaluation;
@@ -121,7 +76,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
         int numRows = info.GetInt32("NumberOfRows");
         int firstRow = info.GetInt32("FirstRow");
-        s._rangeOfRows = IntegerRange.NewFromFirstAndCount(firstRow,numRows);
+        s._rangeOfRows = PositiveIntegerRange.NewFromFirstAndCount(firstRow,numRows);
 
         int arraycount = info.OpenArray();
         s._independentVariables = new NumericColumnProxy[arraycount];
@@ -162,7 +117,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
      
       _errorEvaluation = new IVarianceScaling[0];
  
-      _rangeOfRows = IntegerRange.NewFromFirstAndCount(0,int.MaxValue);
+      _rangeOfRows = PositiveIntegerRange.NewFromFirstAndCount(0,int.MaxValue);
     }
 
     public FitElement(FitElement from)
@@ -171,7 +126,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       if (_fitFunction is ICloneable)
         this._fitFunction = (IFitFunction)((ICloneable)from.FitFunction).Clone();
 
-      _rangeOfRows = IntegerRange.NewFromFirstAndCount(from._rangeOfRows.First, from._rangeOfRows.Count);
+      _rangeOfRows = PositiveIntegerRange.NewFromFirstAndCount(from._rangeOfRows.First, from._rangeOfRows.Count);
       _independentVariables = new NumericColumnProxy[from._independentVariables.Length];
       for (int i = 0; i < _independentVariables.Length; ++i)
       {
@@ -208,7 +163,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       _errorEvaluation = new IVarianceScaling[1];
       _errorEvaluation[0] = new ConstantVarianceScaling();
 
-      _rangeOfRows = IntegerRange.NewFromFirstAndCount(start,count);
+      _rangeOfRows = PositiveIntegerRange.NewFromFirstAndCount(start,count);
 
     }
 
@@ -257,8 +212,19 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// <param name="count">Number of rows to be used [from firstIndex to (firstIndex+count-1)].</param>
     public void SetRowRange(int firstIndex, int count)
     {
-      this._rangeOfRows = IntegerRange.NewFromFirstAndCount(firstIndex,count);
+      this._rangeOfRows = PositiveIntegerRange.NewFromFirstAndCount(firstIndex,count);
       OnChanged();
+    }
+
+    public void SetRowRange(PositiveIntegerRange range)
+    {
+      this._rangeOfRows.CopyFrom(range);
+      OnChanged();
+    }
+
+    public PositiveIntegerRange GetRowRange()
+    {
+       return this._rangeOfRows;
     }
 
     /// <summary>

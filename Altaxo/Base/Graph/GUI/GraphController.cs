@@ -1312,7 +1312,8 @@ namespace Altaxo.Graph.GUI
     /// <returns>Null if successfull, error description otherwise.</returns>
     public string SaveAsBitmap(System.IO.Stream stream, int dpiResolution, System.Drawing.Imaging.ImageFormat imageFormat)
     {
-
+      Graph.Procedures.Export.SaveAsBitmap(m_Graph, stream, dpiResolution, imageFormat);
+      /*
       double scale = dpiResolution / 72.0;
       // Code to write the stream goes here.
       Graphics grfx = m_View.CreateGraphGraphics();
@@ -1339,7 +1340,7 @@ namespace Altaxo.Graph.GUI
       mf.Save(stream, imageFormat);
 
       mf.Dispose();
-
+      */
       return null;
     }
 

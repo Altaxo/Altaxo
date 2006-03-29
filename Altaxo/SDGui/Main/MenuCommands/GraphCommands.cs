@@ -219,6 +219,7 @@ namespace Altaxo.Graph.Commands
       stream.Close();
 
       PutEnhMetafileOnClipboard(ctrl.View.Form.Handle,mf);
+      //System.Windows.Forms.Clipboard.SetData(DataFormats.GetFormat(DataFormats.EnhancedMetafile).Name, mf);
     }
   }
 

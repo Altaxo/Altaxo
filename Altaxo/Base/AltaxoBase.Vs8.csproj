@@ -129,6 +129,8 @@
     <Compile Include="Calc\FitFunctions\Relaxation\HavriliakNegamiSusceptibility.cs" />
     <Compile Include="Calc\FitFunctions\Relaxation\KohlrauschModulusRetardation.cs" />
     <Compile Include="Calc\FitFunctions\Relaxation\KohlrauschSusceptibility.cs" />
+    <Compile Include="Calc\IntegerRange.cs" />
+    <Compile Include="Calc\PositiveIntegerRange.cs" />
     <Compile Include="Graph\AxisLinkType.cs" />
     <Compile Include="Calc\FitFunctions\Relaxation\KohlrauschDecay.cs" />
     <Compile Include="Calc\LinearAlgebra\DataColumnWrapper.cs">
@@ -195,6 +197,7 @@
     <Compile Include="Graph\LabelFormatting\NumericLabelFormattingScientific.cs" />
     <Compile Include="Graph\PlotColors.cs" />
     <Compile Include="Graph\Procedures\ArrangeLayers.cs" />
+    <Compile Include="Graph\Procedures\Export.cs" />
     <Compile Include="Graph\Procedures\GraphCommands.cs" />
     <Compile Include="Graph\XYPlotLayerAxisProperties.cs" />
     <Compile Include="Graph\XYPlotLayerAxisStyleProperties.cs" />
@@ -244,6 +247,13 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Gui\Graph\ArrangeLayersController.cs" />
+    <Compile Include="Gui\Graph\PlottingRangeControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\PlottingRangeControl.Designer.cs">
+      <DependentUpon>PlottingRangeControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\PlottingRangeController.cs" />
     <Compile Include="Gui\Graph\XYAxisLabelStyleControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -1157,6 +1167,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Graph\ArrangeLayersControl.resx">
       <DependentUpon>ArrangeLayersControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\PlottingRangeControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>PlottingRangeControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Graph\XYAxisLabelStyleControl.resx">
       <DependentUpon>XYAxisLabelStyleControl.cs</DependentUpon>

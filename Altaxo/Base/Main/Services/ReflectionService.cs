@@ -58,10 +58,11 @@ namespace Altaxo.Main.Services
     {
       if(basetype.IsInterface)
       {
-        if(subtype==basetype)
+        if (subtype == basetype)
           return true;
         else
-          return Array.IndexOf(subtype.GetInterfaces(),basetype)>=0;
+          return null!=subtype.GetInterface(basetype.ToString());
+          //return Array.IndexOf(subtype.GetInterfaces(),basetype)>=0;
       }
       else
       {

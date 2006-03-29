@@ -142,10 +142,34 @@ namespace Altaxo.Gui.Graph
       if(null!=View)
       {
         string[] tables = Current.Project.DataTableCollection.GetSortedTableNames();
-        View.Tables_Initialize(tables,0);
-        
-        string[] columns = Current.Project.DataTableCollection[tables[0]].DataColumns.GetColumnNames();
-        View.Columns_Initialize(columns,0);
+
+        Data.DataTable t1 = Data.DataTable.GetParentDataTableOf(m_xCol as Main.IDocumentNode);
+        Data.DataTable t2 = Data.DataTable.GetParentDataTableOf(m_yCol as Main.IDocumentNode);
+        Data.DataTable tg = null;
+        if (t1 != null && t2!=null && t1 == t2)
+          tg = t1;
+        else if (t1 == null)
+          tg = t2;
+        else if (t2 == null)
+          tg = t1;
+
+        int seltable = -1;
+        if (tg != null)
+        {
+          seltable = Array.IndexOf(tables, tg.Name);
+        }
+     
+        View.Tables_Initialize(tables,seltable);
+
+        if (seltable >= 0)
+        {
+          string[] columns = Current.Project.DataTableCollection[tables[seltable]].DataColumns.GetColumnNames();
+          View.Columns_Initialize(columns, -1);
+        }
+        else
+        {
+          View.Columns_Initialize(new string[]{}, -1);
+        }
 
         View.XColumn_Initialize(m_xCol==null ? String.Empty : m_xCol.FullName);
         View.YColumn_Initialize(m_yCol==null ? String.Empty : m_yCol.FullName);
