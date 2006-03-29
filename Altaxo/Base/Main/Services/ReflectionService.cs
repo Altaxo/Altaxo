@@ -22,6 +22,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 using Altaxo.Main.GUI;
 
@@ -32,6 +33,19 @@ namespace Altaxo.Main.Services
   /// </summary>
   public class ReflectionService
   {
+    static List<Assembly> _loadedAssemblies;
+    static ReflectionService()
+    {
+      AppDomain currentDomain = AppDomain.CurrentDomain;
+      _loadedAssemblies = new List<Assembly>();
+      _loadedAssemblies.AddRange(currentDomain.GetAssemblies());
+      currentDomain.AssemblyLoad += new AssemblyLoadEventHandler(EhAssemblyLoaded);
+    }
+
+    static void EhAssemblyLoaded(object sender, AssemblyLoadEventArgs e)
+    {
+      _loadedAssemblies.Add(e.LoadedAssembly);
+    }
 
     private class DictEntryKeyComparer : IComparer
     {
@@ -94,22 +108,31 @@ namespace Altaxo.Main.Services
     /// Gets a list of currently loaded assemblies that are dependend on the given base assembly. The base assembly is also in the returned list.
     /// </summary>
     /// <param name="baseAssembly">The base assembly.</param>
+    /// <param name="start">Index into the <c>_loadedAssemblies</c> array where to start the search. Set it to 0 if you want a full search.</param>
     /// <returns>All assemblies, that are currently loaded and that references the given base assembly. The base assembly is also in the returned list.</returns>
-    public static System.Reflection.Assembly[] GetDependendAssemblies(Assembly baseAssembly)
+    public static System.Reflection.Assembly[] GetDependendAssemblies(Assembly baseAssembly, int start)
     {
-      ArrayList list = new ArrayList();
-
-      AssemblyName baseAssemblyName = baseAssembly.GetName();
-
-      System.Reflection.Assembly[] assemblies = System.AppDomain.CurrentDomain.GetAssemblies();
-      foreach(Assembly assembly in assemblies)
+      if (start >= _loadedAssemblies.Count)
       {
-        if(Contains(assembly.GetReferencedAssemblies(),baseAssemblyName))
-          list.Add(assembly); 
+        return new Assembly[0];
       }
-      list.Add(baseAssembly);
+      else
+      {
+        ArrayList list = new ArrayList();
 
-      return (Assembly[])list.ToArray(typeof(System.Reflection.Assembly));
+        AssemblyName baseAssemblyName = baseAssembly.GetName();
+
+        for (int i = start; i < _loadedAssemblies.Count; i++)
+        {
+          Assembly assembly = _loadedAssemblies[i];
+          if (Contains(assembly.GetReferencedAssemblies(), baseAssemblyName))
+            list.Add(assembly);
+          else if (assembly == baseAssembly)
+            list.Add(assembly);
+        }
+         return (Assembly[])list.ToArray(typeof(System.Reflection.Assembly));
+      }
+
     }
 
 
@@ -124,7 +147,7 @@ namespace Altaxo.Main.Services
     {
       ArrayList list = new ArrayList();
 
-      Assembly[] assemblies = GetDependendAssemblies(basetype.Assembly);
+      Assembly[] assemblies = GetDependendAssemblies(basetype.Assembly,0);
       foreach(Assembly assembly in assemblies)
       {
         Type[] definedtypes = assembly.GetTypes();
@@ -148,7 +171,7 @@ namespace Altaxo.Main.Services
     {
       ArrayList list = new ArrayList();
 
-      Assembly[] assemblies = GetDependendAssemblies(basetype.Assembly);
+      Assembly[] assemblies = GetDependendAssemblies(basetype.Assembly,0);
       foreach(Assembly assembly in assemblies)
       {
         Type[] definedtypes = assembly.GetTypes();
@@ -173,7 +196,7 @@ namespace Altaxo.Main.Services
     {
       ArrayList list = new ArrayList();
 
-      System.Reflection.Assembly[] assemblies = GetDependendAssemblies(attributeType.Assembly);
+      System.Reflection.Assembly[] assemblies = GetDependendAssemblies(attributeType.Assembly,0);
       foreach(Assembly assembly in assemblies)
       {
         Type[] definedtypes = assembly.GetTypes();
@@ -204,10 +227,102 @@ namespace Altaxo.Main.Services
     /// <param name="target">Only necessary if the attributeType is an <see cref="IClassForClassAttribute" />. In this case only
     /// those attribute instances are returned, where the target object meets the target type of the <see cref="IClassForClassAttribute" />.</param>
     /// <returns>A list of dictionary entries. The keys are the attribute instances, the values are the class types this attributes apply to.</returns>
-    public static DictionaryEntry[] GetAttributeInstancesAndClassTypesForClass(System.Type attributeType, object target)
+    public static IAttributeForClassList GetAttributeInstancesAndClassTypesForClass(System.Type attributeType, object target, ref IAttributeForClassListCollection cachedList)
     {
-      return GetAttributeInstancesAndClassTypesForClass(attributeType, target, null);
+      return GetAttributeInstancesAndClassTypesForClass(attributeType, target, null, ref cachedList);
     }
+
+  
+    public interface IAttributeForClassList
+    {
+      KeyValuePair<Attribute, System.Type> this[int i] { get; }
+      int Count { get; }
+    }
+
+    public interface IAttributeForClassListCollection
+    {
+    }
+
+    private class AttributeForClassList : IAttributeForClassList
+    {
+      private class DictEntryKeyComparer : IComparer<KeyValuePair<Attribute,System.Type>>
+      {
+        #region IComparer Members
+
+        public int Compare(KeyValuePair<Attribute, System.Type> x, KeyValuePair<Attribute, System.Type> y)
+        {
+          IComparable xx = (IComparable)x.Key;
+          IComparable yy = (IComparable)y.Key;
+
+          return xx.CompareTo(yy);
+        }
+
+        #endregion
+      }
+
+      /// <summary>
+      /// How many assemblies are currently cached into this list.
+      /// </summary>
+      public int _currentAssemblyCount;
+
+      /// <summary>
+      /// The type of the attribute this assembly caches.
+      /// </summary>
+      public System.Type _attributeType;
+
+      public System.Type _targetType;
+
+      bool _isSortable;
+
+      List<KeyValuePair<Attribute, System.Type>> _list;
+
+      public AttributeForClassList(System.Type attributeType, System.Type targettype)
+      {
+        _attributeType = attributeType;
+        _targetType = targettype;
+        _isSortable = IsSubClassOfOrImplements(_attributeType, typeof(IComparable));
+      }
+
+
+
+      public void Add(Attribute attr, System.Type target)
+      {
+        if (null == _list)
+          _list = new List<KeyValuePair<Attribute, Type>>();
+        _list.Add(new KeyValuePair<Attribute, Type>(attr, target));
+      }
+
+
+      public void Sort()
+      {
+        if (_list!=null && _list.Count > 1 && _isSortable)
+          _list.Sort(new DictEntryKeyComparer());
+      }
+
+      #region IAttributeForClassList Members
+
+      public KeyValuePair<Attribute, Type> this[int i]
+      {
+        get { return _list[i]; }
+      }
+
+      public int Count
+      {
+        get { return _list.Count; }
+      }
+
+      #endregion
+    }
+
+    private class AttributeForClassListCollection : Dictionary<System.Type, AttributeForClassList>, IAttributeForClassListCollection
+    {
+      public System.Type _attributeType;
+      public AttributeForClassListCollection(System.Type attributeType)
+      {
+        _attributeType = attributeType;
+      }
+    }
+
 
     /// <summary>
     /// For a given type of attribute, attributeType, this function returns the attribute instances and the class
@@ -219,13 +334,41 @@ namespace Altaxo.Main.Services
     /// <param name="target">Only necessary if the attributeType is an <see cref="IClassForClassAttribute" />. In this case only
     /// those attribute instances are returned, where the target object meets the target type of the <see cref="IClassForClassAttribute" />.</param>
     /// <returns>A list of dictionary entries. The keys are the attribute instances, the values are the class types this attributes apply to.</returns>
-    public static DictionaryEntry[] GetAttributeInstancesAndClassTypesForClass(System.Type attributeType, object target, System.Type overrideObjectType)
+    public static IAttributeForClassList GetAttributeInstancesAndClassTypesForClass(System.Type attributeType, object target, System.Type overrideObjectType, ref IAttributeForClassListCollection cachedList)
     {
       System.Diagnostics.Debug.Assert(IsSubClassOfOrImplements(attributeType,typeof(IClassForClassAttribute)));
+      System.Type myTargetType = overrideObjectType != null ? overrideObjectType : target.GetType();
 
-      ArrayList list = new ArrayList();
+      AttributeForClassListCollection listColl = cachedList as AttributeForClassListCollection;
+      if (listColl == null)
+      {
+        cachedList = listColl = new AttributeForClassListCollection(attributeType);
+      }
+      else
+      {
+        if (listColl._attributeType != attributeType)
+          throw new ApplicationException("Programming error (attribtuteType did not match), please inform the author that this exception happened");
+      }
 
-      System.Reflection.Assembly[] assemblies = GetDependendAssemblies(attributeType.Assembly);
+       AttributeForClassList list;
+       if (listColl.ContainsKey(myTargetType))
+       {
+         list = listColl[myTargetType];
+       }
+       else
+       {
+         list = new AttributeForClassList(attributeType,myTargetType);
+         listColl.Add(myTargetType, list);
+       }
+
+         if (attributeType != list._attributeType)
+           throw new ApplicationException("Programming error (attributeType did not match), please inform the author that this exception happened");
+         if (list._targetType != (overrideObjectType != null ? overrideObjectType : target.GetType()))
+           throw new ApplicationException("Programming error (targetType did not match), please inform the author that this exception happened");
+
+      System.Reflection.Assembly[] assemblies = GetDependendAssemblies(attributeType.Assembly,list._currentAssemblyCount);
+      list._currentAssemblyCount = _loadedAssemblies.Count;
+
       foreach(Assembly assembly in assemblies)
       {
         Type[] definedtypes = assembly.GetTypes();
@@ -240,12 +383,12 @@ namespace Altaxo.Main.Services
               if(overrideObjectType==null)
               {
                 if(((IClassForClassAttribute)att).TargetType.IsInstanceOfType(target))
-                  list.Add(new DictionaryEntry(att,definedtype));
+                  list.Add(att,definedtype);
               }
               else
               {
                 if(IsSubClassOfOrImplements(overrideObjectType,((IClassForClassAttribute)att).TargetType))
-                  list.Add(new DictionaryEntry(att,definedtype));
+                  list.Add(att,definedtype);
 
               }
             }
@@ -253,10 +396,10 @@ namespace Altaxo.Main.Services
         } // end foreach type
       } // end foreach assembly 
 
-      if(list.Count>1 && IsSubClassOfOrImplements(attributeType,typeof(IComparable)))
-        list.Sort(new DictEntryKeyComparer());
+      
+      list.Sort();
 
-      return (DictionaryEntry[])list.ToArray(typeof(DictionaryEntry));
+      return list;
     }
 
     /// <summary>
@@ -302,9 +445,9 @@ namespace Altaxo.Main.Services
     /// <returns>The instance of the first class for which the instantiation was successfull and results in the expectedType. Otherwise null.</returns>
     /// <remarks>The instantiation is tried first with the full argument list. If that fails, the last element of the argument list is chopped and the instantiation is tried again.
     /// This process is repeated until the instantiation was successfull or the argument list is empty (empty constructor is tried at last).</remarks>
-    public static object GetClassForClassInstanceByAttribute(System.Type attributeType, System.Type expectedType, object[] creationArgs)
+    public static object GetClassForClassInstanceByAttribute(System.Type attributeType, System.Type expectedType, object[] creationArgs, ref IAttributeForClassListCollection cachedList)
     {
-      return GetClassForClassInstanceByAttribute(attributeType, expectedType,  creationArgs, null);
+      return GetClassForClassInstanceByAttribute(attributeType, expectedType,  creationArgs, null, ref cachedList);
     }
    
 
@@ -321,44 +464,56 @@ namespace Altaxo.Main.Services
     /// <returns>The instance of the first class for which the instantiation was successfull and results in the expectedType. Otherwise null.</returns>
     /// <remarks>The instantiation is tried first with the full argument list. If that fails, the last element of the argument list is chopped and the instantiation is tried again.
     /// This process is repeated until the instantiation was successfull or the argument list is empty (empty constructor is tried at last).</remarks>
-    public static object GetClassForClassInstanceByAttribute(System.Type attributeType, System.Type expectedType, object[] creationArgs, System.Type overrideArgs0Type)
+    public static object GetClassForClassInstanceByAttribute(System.Type attributeType, System.Type expectedType, object[] creationArgs, System.Type overrideArgs0Type, ref IAttributeForClassListCollection cachedList)
     {
       object result=null;
-      // 1st search for all classes that wear the UserControllerForObject attribute
-      DictionaryEntry[] list = ReflectionService.GetAttributeInstancesAndClassTypesForClass(attributeType,creationArgs[0],overrideArgs0Type);
 
-      for(int i=list.Length-1;i>=0;i--)
+     
+
+
+      // 1st search for all classes that wear the UserControllerForObject attribute
+      IAttributeForClassList list = ReflectionService.GetAttributeInstancesAndClassTypesForClass(attributeType,creationArgs[0],overrideArgs0Type, ref cachedList);
+
+      System.Type[][] creationTypes = new Type[creationArgs.Length+1][];
+      
+   
+
+
+      for(int i=list.Count-1;i>=0;i--)
       {
         if(!IsSubClassOfOrImplements( (System.Type)list[i].Value,expectedType))
           continue;
         // try to create the class
-        try
-        {
-          result = Activator.CreateInstance((System.Type)list[i].Value,creationArgs);
-          break;
-        }
-        catch(Exception ex)
-        {
-          System.Diagnostics.Debug.WriteLine(ex.ToString());
-        }
 
-        for(int l=creationArgs.Length-1;l>=0;l--)
+        System.Type type = (System.Type)list[i].Value;
+
+        //ConstructorInfo[] cinfos = type.GetConstructors();
+
+        for (int j = creationArgs.Length; j >= 0; j--)
         {
-          object[] choppedArgs = new object[l];
-          Array.Copy(creationArgs,choppedArgs,l);
-          // try to create the class finally without args
-          try
+          if(creationTypes[j]==null)
           {
-            result = Activator.CreateInstance((System.Type)list[i].Value,choppedArgs);
-            break;
+            creationTypes[j]=new Type[j];
+             for(int k=0;k<j;k++)
+                creationTypes[j][k] = creationArgs[k].GetType();
           }
-          catch(Exception ex)
+
+          ConstructorInfo cinfo = type.GetConstructor(creationTypes[j]);
+          if (cinfo != null)
           {
-            System.Diagnostics.Debug.WriteLine(ex.ToString());
+            object[] chopped = null;
+            if (j < creationArgs.Length)
+            {
+              chopped = new object[j];
+              Array.Copy(creationArgs, chopped, j);
+            }
+
+            result = cinfo.Invoke(j==creationArgs.Length ? creationArgs : chopped);
+
+            if (result != null)
+              return result;
           }
         }
-        if(result!=null)
-          break;
       }
       return result;
     }

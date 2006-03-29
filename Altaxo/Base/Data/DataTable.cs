@@ -1054,7 +1054,10 @@ namespace Altaxo.Data
     /// <param name="child">The child object for which the parent table should be found.</param>
     public static Altaxo.Data.DataTable GetParentDataTableOf(Main.IDocumentNode child)
     {
-      return (DataTable)Main.DocumentPath.GetRootNodeImplementing(child,typeof(DataTable));
+      if (child == null)
+        return null;
+      else
+        return (DataTable)Main.DocumentPath.GetRootNodeImplementing(child,typeof(DataTable));
     }
     
   } // end class Altaxo.Data.DataTable

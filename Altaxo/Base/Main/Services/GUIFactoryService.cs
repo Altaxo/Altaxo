@@ -32,6 +32,9 @@ namespace Altaxo.Main.Services
   /// </summary>
   public class GUIFactoryService
   {
+
+    ReflectionService.IAttributeForClassListCollection _cachedControllerList;
+    ReflectionService.IAttributeForClassListCollection _cachedControlList;
     /// <summary>
     /// Gets an <see cref="IMVCController" />  for a given document type.
     /// </summary>
@@ -41,7 +44,7 @@ namespace Altaxo.Main.Services
     /// <returns>The controller for that document when found. The controller is already initialized with the document. If not found, null is returned.</returns>
     public IMVCController GetController(object[] args, System.Type expectedControllerType)
     {
-      return (IMVCController)ReflectionService.GetClassForClassInstanceByAttribute(typeof(UserControllerForObjectAttribute),expectedControllerType,args);
+      return (IMVCController)ReflectionService.GetClassForClassInstanceByAttribute(typeof(UserControllerForObjectAttribute),expectedControllerType,args, ref _cachedControllerList);
     }
 
     /// <summary>
@@ -71,13 +74,13 @@ namespace Altaxo.Main.Services
       if(!ReflectionService.IsSubClassOfOrImplements(expectedControllerType,typeof(IMVCController)))
         throw new ArgumentException("Expected controller type has to be IMVCController or a subclass or derived class of this");
 
-      IMVCController controller = (IMVCController)ReflectionService.GetClassForClassInstanceByAttribute(typeof(UserControllerForObjectAttribute),expectedControllerType,args,overrideArg0Type);
+      IMVCController controller = (IMVCController)ReflectionService.GetClassForClassInstanceByAttribute(typeof(UserControllerForObjectAttribute),expectedControllerType,args,overrideArg0Type, ref _cachedControllerList);
       if(controller==null)
         return null;
 
       
 
-      System.Windows.Forms.UserControl control = (System.Windows.Forms.UserControl)ReflectionService.GetClassForClassInstanceByAttribute(typeof(UserControlForControllerAttribute),typeof(System.Windows.Forms.UserControl),new object[]{controller});
+      System.Windows.Forms.UserControl control = (System.Windows.Forms.UserControl)ReflectionService.GetClassForClassInstanceByAttribute(typeof(UserControlForControllerAttribute),typeof(System.Windows.Forms.UserControl),new object[]{controller}, ref _cachedControlList);
 
       if(control==null)
         return null;
@@ -97,7 +100,7 @@ namespace Altaxo.Main.Services
     /// <returns>The control with the type provided as expectedType argument, or null if no such controller was found.</returns>
     public object GetControl(IMVCController controller, System.Type expectedType)
     {
-      return ReflectionService.GetClassForClassInstanceByAttribute(typeof(UserControlForControllerAttribute), expectedType, new object[] { controller });
+      return ReflectionService.GetClassForClassInstanceByAttribute(typeof(UserControlForControllerAttribute), expectedType, new object[] { controller },ref _cachedControlList);
     }
 
 
@@ -107,7 +110,7 @@ namespace Altaxo.Main.Services
     /// <param name="controller">The controller a control is searched for.</param>
     public void GetControl(IMVCController controller)
     {
-      System.Windows.Forms.UserControl control = (System.Windows.Forms.UserControl)ReflectionService.GetClassForClassInstanceByAttribute(typeof(UserControlForControllerAttribute),typeof(System.Windows.Forms.UserControl),new object[]{controller});
+      System.Windows.Forms.UserControl control = (System.Windows.Forms.UserControl)ReflectionService.GetClassForClassInstanceByAttribute(typeof(UserControlForControllerAttribute),typeof(System.Windows.Forms.UserControl),new object[]{controller},ref _cachedControlList);
 
       if(control==null)
         return;
