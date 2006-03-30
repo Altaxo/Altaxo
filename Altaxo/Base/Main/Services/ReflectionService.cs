@@ -572,10 +572,18 @@ namespace Altaxo.Main.Services
       // 1st search for all classes that wear the UserControllerForObject attribute
       IAttributeForClassList list = ReflectionService.GetAttributeInstancesAndClassTypesForClass(attributeType,creationArgs[0],overrideArgs0Type, ref cachedList);
 
-      System.Type[][] creationTypes = new Type[creationArgs.Length+1][];
-      
-   
+      // evaluate the len of the creation args without null's as arguments
+      int trueArgLen = creationArgs.Length;
+      for (int i = 0; i < creationArgs.Length; i++)
+      {
+        if (creationArgs[i] == null)
+        {
+          trueArgLen = i;
+          break;
+        }
+      }
 
+      System.Type[][] creationTypes = new Type[trueArgLen+1][];
 
       for(int i=list.Count-1;i>=0;i--)
       {
@@ -587,13 +595,15 @@ namespace Altaxo.Main.Services
 
         //ConstructorInfo[] cinfos = type.GetConstructors();
 
-        for (int j = creationArgs.Length; j >= 0; j--)
+        for (int j = trueArgLen; j >= 0; j--)
         {
           if(creationTypes[j]==null)
           {
             creationTypes[j]=new Type[j];
-             for(int k=0;k<j;k++)
+            for (int k = j-1; k >=0; k--)
+            {
                 creationTypes[j][k] = creationArgs[k].GetType();
+            }
           }
 
           ConstructorInfo cinfo = type.GetConstructor(creationTypes[j]);
