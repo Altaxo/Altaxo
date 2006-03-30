@@ -290,6 +290,15 @@
     <Compile Include="Gui\Graph\XYPlotStyleCollectionController.cs" />
     <Compile Include="Gui\IRefreshable.cs" />
     <Compile Include="Main\DocNodeProxy.cs" />
+    <Compile Include="Main\GUI\MWControls\EditorHatchStyle.cs" />
+    <Compile Include="Main\GUI\MWControls\EditorHatchStyleUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Main\GUI\MWControls\MWRubberbandGradientBlend.cs" />
+    <Compile Include="Main\GUI\MWControls\MWRubberbandGradientColorBlend.cs" />
+    <Compile Include="Main\GUI\MWControls\MWStringMethods.cs" />
+    <Compile Include="Main\GUI\MWControls\MWTreeViewEnums.cs" />
+    <Compile Include="Main\GUI\MWControls\MWTreeViewEventArgs.cs" />
     <Compile Include="Main\IEventIndicatedDisposable.cs" />
     <Compile Include="Main\RelDocNodeProxy.cs" />
     <Compile Include="Main\Services\FitFunctionService.cs" />
@@ -769,15 +778,6 @@
     <Compile Include="Main\GUI\MultipleChoiceController.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Main\GUI\MWControls\EventArgs.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Main\GUI\MWControls\MWCommon.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Main\GUI\MWControls\MWEnums.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Main\GUI\MWControls\MWTreeNodeWrapper.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -1223,6 +1223,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Main\GUI\MultiChildControl.resx">
       <DependentUpon>MultiChildControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Main\GUI\MWControls\EditorHatchStyleUI.resx">
+      <DependentUpon>EditorHatchStyleUI.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Main\GUI\MWControls\MWTreeView.resx">
       <DependentUpon>MWTreeView.cs</DependentUpon>

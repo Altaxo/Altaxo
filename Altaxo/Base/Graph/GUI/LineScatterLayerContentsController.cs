@@ -256,7 +256,7 @@ namespace Altaxo.Graph.GUI
 
       // first, put the selected node into the list, even if it is not checked
 
-      foreach(MWCommon.MWTreeNodeWrapper tw in hashtable.Values)
+      foreach (MWControlSuite.MWTreeNodeWrapper tw in hashtable.Values)
       {
         TreeNode sn= tw.Node;
         if(null!=sn && null!=sn.Parent)

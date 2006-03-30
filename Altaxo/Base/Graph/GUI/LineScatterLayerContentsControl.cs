@@ -47,7 +47,7 @@ namespace Altaxo.Graph.GUI
     private System.Windows.Forms.Button m_Contents_btPutData;
     private System.Windows.Forms.Label label14;
     //private System.Windows.Forms.TreeView m_Content_tvDataAvail;
-    private MWControls.MWTreeView m_Content_tvDataAvail;
+    private MWControlSuite.MWTreeView m_Content_tvDataAvail;
     private System.Windows.Forms.Label label13;
     private SplitContainer _splitContainer;
     /// <summary> 
@@ -98,7 +98,7 @@ namespace Altaxo.Graph.GUI
       this.m_Contents_btPullData = new System.Windows.Forms.Button();
       this.m_Contents_btPutData = new System.Windows.Forms.Button();
       this.label14 = new System.Windows.Forms.Label();
-      this.m_Content_tvDataAvail = new MWControls.MWTreeView();
+      this.m_Content_tvDataAvail = new MWControlSuite.MWTreeView();
       this.label13 = new System.Windows.Forms.Label();
       this._splitContainer = new System.Windows.Forms.SplitContainer();
       this._splitContainer.Panel1.SuspendLayout();
