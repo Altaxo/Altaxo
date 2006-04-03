@@ -26,6 +26,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Data;
 using System.Windows.Forms;
+using Altaxo.Collections;
 
 namespace Altaxo.Graph.GUI
 {
@@ -42,11 +43,10 @@ namespace Altaxo.Graph.GUI
     private System.Windows.Forms.Button m_Contents_btPlotAssociations;
     private System.Windows.Forms.Button m_Contents_btListSelDown;
     private System.Windows.Forms.Button m_Contents_btListSelUp;
-    private System.Windows.Forms.ListBox m_Contents_lbContents;
+    private MWControlSuite.MWTreeView   m_Contents_lbContents;
     private System.Windows.Forms.Button m_Contents_btPullData;
     private System.Windows.Forms.Button m_Contents_btPutData;
     private System.Windows.Forms.Label label14;
-    //private System.Windows.Forms.TreeView m_Content_tvDataAvail;
     private MWControlSuite.MWTreeView m_Content_tvDataAvail;
     private System.Windows.Forms.Label label13;
     private SplitContainer _splitContainer;
@@ -94,7 +94,7 @@ namespace Altaxo.Graph.GUI
       this.m_Contents_btPlotAssociations = new System.Windows.Forms.Button();
       this.m_Contents_btListSelDown = new System.Windows.Forms.Button();
       this.m_Contents_btListSelUp = new System.Windows.Forms.Button();
-      this.m_Contents_lbContents = new System.Windows.Forms.ListBox();
+      this.m_Contents_lbContents = new MWControlSuite.MWTreeView();
       this.m_Contents_btPullData = new System.Windows.Forms.Button();
       this.m_Contents_btPutData = new System.Windows.Forms.Button();
       this.label14 = new System.Windows.Forms.Label();
@@ -182,16 +182,16 @@ namespace Altaxo.Graph.GUI
       this.m_Contents_lbContents.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.m_Contents_lbContents.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable;
+      this.m_Contents_lbContents.CheckedNodes = ((System.Collections.Hashtable)(resources.GetObject("m_Contents_lbContents.CheckedNodes")));
+      this.m_Contents_lbContents.HideSelection = false;
       this.m_Contents_lbContents.Location = new System.Drawing.Point(0, 24);
       this.m_Contents_lbContents.Name = "m_Contents_lbContents";
-      this.m_Contents_lbContents.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+      this.m_Contents_lbContents.RubberbandGradientBlend = new MWControlSuite.MWRubberbandGradientBlend[0];
+      this.m_Contents_lbContents.RubberbandGradientColorBlend = new MWControlSuite.MWRubberbandGradientColorBlend[0];
+      this.m_Contents_lbContents.SelNodes = ((System.Collections.Hashtable)(resources.GetObject("m_Contents_lbContents.SelNodes")));
       this.m_Contents_lbContents.Size = new System.Drawing.Size(136, 240);
       this.m_Contents_lbContents.TabIndex = 18;
-      this.m_Contents_lbContents.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.EhContents_DrawItem);
       this.m_Contents_lbContents.DoubleClick += new System.EventHandler(this.EhContents_DoubleClick);
-      this.m_Contents_lbContents.SelectedIndexChanged += new System.EventHandler(this.EhContents_SelectedIndexChanged);
-      this.m_Contents_lbContents.MeasureItem += new System.Windows.Forms.MeasureItemEventHandler(this.EhContents_MeasureItem);
       // 
       // m_Contents_btPullData
       // 
@@ -227,8 +227,11 @@ namespace Altaxo.Graph.GUI
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.m_Content_tvDataAvail.CheckedNodes = ((System.Collections.Hashtable)(resources.GetObject("m_Content_tvDataAvail.CheckedNodes")));
+      this.m_Content_tvDataAvail.HideSelection = false;
       this.m_Content_tvDataAvail.Location = new System.Drawing.Point(3, 24);
       this.m_Content_tvDataAvail.Name = "m_Content_tvDataAvail";
+      this.m_Content_tvDataAvail.RubberbandGradientBlend = new MWControlSuite.MWRubberbandGradientBlend[0];
+      this.m_Content_tvDataAvail.RubberbandGradientColorBlend = new MWControlSuite.MWRubberbandGradientColorBlend[0];
       this.m_Content_tvDataAvail.SelNodes = ((System.Collections.Hashtable)(resources.GetObject("m_Content_tvDataAvail.SelNodes")));
       this.m_Content_tvDataAvail.Size = new System.Drawing.Size(152, 240);
       this.m_Content_tvDataAvail.TabIndex = 14;
@@ -306,14 +309,79 @@ namespace Altaxo.Graph.GUI
       }
     }
 
+ 
 
-    public void DataAvailable_Initialize(TreeNode[] nodes)
+    void Update(MWControlSuite.MWTreeView view, TreeNodeCollection tree, NGTreeNodeCollection coll, Hashtable selectedNGNodes)
+    {
+      if (tree.Count != 0)
+        throw new ApplicationException("Tree must be empty here");
+
+      for (int i = 0; i < coll.Count; i++)
+      {
+        bool isExpanded = false;
+       
+
+        if (null != coll[i].GuiTag)
+        {
+          TreeNode node = (TreeNode)coll[i].GuiTag;
+          isExpanded = node.IsExpanded;
+         
+          node.Remove();
+          node.Nodes.Clear();
+          tree.Add(node);
+          
+        }
+        else
+        {
+          tree.Add(NewNode(coll[i]));
+        }
+
+        if (coll[i].Nodes.Count > 0)
+          Update(view,tree[i].Nodes, coll[i].Nodes,selectedNGNodes);
+
+        if (isExpanded)
+          tree[i].Expand();
+        if (null != selectedNGNodes && selectedNGNodes.ContainsKey(coll[i]))
+        {
+          view.SelectNode(tree[i], false);
+          if (tree[i].Parent != null && !(tree[i].Parent.IsExpanded))
+            tree[i].Parent.Expand();
+        }
+      }
+    }
+
+    TreeNode NewNode(NGTreeNode node)
+    {
+      TreeNode tnode = new TreeNode();
+      tnode.Text = node.Text;
+      tnode.Tag = node;
+      node.GuiTag = tnode;
+      return tnode;
+    }
+
+
+    Hashtable SelectedNGNodes(MWControlSuite.MWTreeView view)
+    {
+      Hashtable result = new Hashtable();
+      Hashtable selected = view.SelNodes;
+      foreach (DictionaryEntry en in selected)
+      {
+        result.Add(((MWControlSuite.MWTreeNodeWrapper)en.Value).Node.Tag, null);
+      }
+      return result;
+    }
+
+
+
+  
+
+    public void DataAvailable_Initialize(NGTreeNodeCollection nodes)
     {
       this.m_Content_tvDataAvail.BeginUpdate();
       // Clear the TreeView each time the method is called.
       this.m_Content_tvDataAvail.Nodes.Clear();
 
-      this.m_Content_tvDataAvail.Nodes.AddRange(nodes);
+      Update(this.m_Content_tvDataAvail,this.m_Content_tvDataAvail.Nodes, nodes,null);
 
       this.m_Content_tvDataAvail.EndUpdate();
     }
@@ -323,51 +391,66 @@ namespace Altaxo.Graph.GUI
       this.m_Content_tvDataAvail.ClearSelNodes();
     }
   
-    public void Contents_SetItemCount(int newCount)
+    public void Contents_SetItems(NGTreeNodeCollection items)
     {
       // please note:
       // every time we change the count, we have to remove all items and add them again
       // this is because the group items have another heigth, but the MeasureItem routine is
       // only called once when the item is added into the list
-
+      bool isFirstTime = this.m_Contents_lbContents.Nodes.Count == 0;
       this.m_Contents_lbContents.BeginUpdate();
-      this.m_Contents_lbContents.Items.Clear();
-      for(int i=0;i<newCount;i++)
-        this.m_Contents_lbContents.Items.Add(i);
+      Hashtable selNGNodes = SelectedNGNodes(this.m_Contents_lbContents);
+      this.m_Contents_lbContents.ClearSelNodes();
+      this.m_Contents_lbContents.Nodes.Clear();
+      Update(this.m_Contents_lbContents,this.m_Contents_lbContents.Nodes, items,selNGNodes);
+
+      if (isFirstTime) // Expand all root items if this is the first time
+      {
+        for (int i = 0; i < m_Contents_lbContents.Nodes.Count; i++)
+          m_Contents_lbContents.Nodes[i].Expand();
+      }
+      
+      this.m_Contents_lbContents.EndUpdate();
+      this.m_Contents_lbContents.Focus();
+
+
+
+    }
+
+    public void Contents_RemoveItems(NGTreeNode[] items)
+    {
+      this.m_Contents_lbContents.BeginUpdate();
+
+      foreach (NGTreeNode node in items)
+        m_Contents_lbContents.RemoveNode((TreeNode)node.GuiTag);
 
       this.m_Contents_lbContents.EndUpdate();
     }
 
     public void Contents_SetSelected(int idx, bool bSelect)
     {
-      this.m_Contents_lbContents.SetSelected(idx,bSelect);
+      //this.m_Contents_lbContents.SetSelected(idx,bSelect);
     }
 
     public void Contents_InvalidateItems(int idx1, int idx2)
     {
-      this.m_Contents_lbContents.Items[idx1] = idx1;
-      this.m_Contents_lbContents.Items[idx2] = idx2;
+      //this.m_Contents_lbContents.Items[idx1] = idx1;
+      //this.m_Contents_lbContents.Items[idx2] = idx2;
 
     }
 
     #endregion
-
-    private int[] SelectedContents
-    {
-      get
-      {
-        int[] selidxs = new int[m_Contents_lbContents.SelectedIndices.Count];
-        this.m_Contents_lbContents.SelectedIndices.CopyTo(selidxs,0);
-        return selidxs;
-      }
-    }
-
+  
     private void EhDataAvailable_BeforeExpand(object sender, System.Windows.Forms.TreeViewCancelEventArgs e)
     {
       if(null!=Controller)
       {
         this.m_Content_tvDataAvail.BeginUpdate();
-        Controller.EhView_DataAvailableBeforeExpand(e.Node);
+        NGTreeNode ngnode = (NGTreeNode)e.Node.Tag;
+        Controller.EhView_DataAvailableBeforeExpand(ngnode);
+        e.Node.Nodes.Clear();
+        Update(this.m_Content_tvDataAvail,e.Node.Nodes, ngnode.Nodes,null);
+
         this.m_Content_tvDataAvail.EndUpdate();
       }
     }
@@ -376,24 +459,28 @@ namespace Altaxo.Graph.GUI
     {
       if(null!=Controller)
       {
-        if(this.m_Contents_lbContents.SelectedItems.Count==1)
+       
+        if(this.m_Contents_lbContents.SelNodes.Count==1)
         {
-          int selidx = this.m_Contents_lbContents.SelectedIndices[0];
-          Controller.EhView_ContentsDoubleClick(selidx);
+          foreach (DictionaryEntry dict in this.m_Contents_lbContents.SelNodes)
+          {
+            Controller.EhView_ContentsDoubleClick(((MWControlSuite.MWTreeNodeWrapper)dict.Value).Node.Tag as NGTreeNode);
+          }
         }
+        this.m_Contents_lbContents.Focus();
       }
     }
 
-    private void EhContents_MeasureItem(object sender, System.Windows.Forms.MeasureItemEventArgs e)
-    {
-      if(null!=Controller)
-        Controller.EhView_ContentsMeasureItem(sender, e);
-    }
 
-    private void EhContents_DrawItem(object sender, System.Windows.Forms.DrawItemEventArgs e)
+    NGTreeNode[] SelectedNodes(MWControlSuite.MWTreeView tree)
     {
-      if(null!=Controller)
-        Controller.EhView_ContentsDrawItem(sender, e);
+      Hashtable hash = tree.SelNodes;
+      NGTreeNode[] result = new NGTreeNode[hash.Count];
+      int i=0;
+      foreach (DictionaryEntry dict in hash)
+        result[i++] = ((MWControlSuite.MWTreeNodeWrapper)dict.Value).Node.Tag as NGTreeNode;
+
+      return result;
     }
 
 
@@ -406,51 +493,85 @@ namespace Altaxo.Graph.GUI
     {
       if(null!=Controller)
       {
-        Controller.EhView_PutData(this.m_Content_tvDataAvail.SelNodes);
+        Controller.EhView_PutData(SelectedNodes(this.m_Content_tvDataAvail));
+        this.m_Contents_lbContents.Focus();
       }
     }
 
     private void EhPullData_Click(object sender, System.EventArgs e)
     {
-      if(null!=Controller)
-        Controller.EhView_PullDataClick(SelectedContents);
+
+      if (null != Controller)
+      {
+        Controller.EhView_PullDataClick(SelectedNodes(this.m_Contents_lbContents));
+      }
     }
 
     private void EhListSelUp_Click(object sender, System.EventArgs e)
     {
-      if(null!=Controller)
-        Controller.EhView_ListSelUpClick(SelectedContents);
+
+      if (null != Controller)
+      {
+        Controller.EhView_ListSelUpClick(SelectedNodes(this.m_Contents_lbContents));
+        this.m_Contents_lbContents.Focus();
+      }
+      
     }
 
     private void EhListSelDown_Click(object sender, System.EventArgs e)
     {
-      if(null!=Controller)
-        Controller.EhView_SelDownClick(SelectedContents);
+
+      if (null != Controller)
+      {
+        Controller.EhView_SelDownClick(SelectedNodes(this.m_Contents_lbContents));
+        this.m_Contents_lbContents.Focus();
+      }
+      
     }
 
     private void EhPlotAssociations_Click(object sender, System.EventArgs e)
     {
-      if(null!=Controller)
-        Controller.EhView_PlotAssociationsClick(SelectedContents);
+
+      if (null != Controller)
+      {
+        Controller.EhView_PlotAssociationsClick(SelectedNodes(this.m_Contents_lbContents));
+        this.m_Contents_lbContents.Focus();
+      }
+      
     }
 
     private void EhGroup_Click(object sender, System.EventArgs e)
     {
-      if(null!=Controller)
-        Controller.EhView_GroupClick(SelectedContents);
+
+      if (null != Controller)
+      {
+        Controller.EhView_GroupClick(SelectedNodes(this.m_Contents_lbContents));
+        this.m_Contents_lbContents.Focus();
+      }
+      
     
     }
 
     private void EhUngroup_Click(object sender, System.EventArgs e)
     {
-      if(null!=Controller)
-        Controller.EhView_UngroupClick(SelectedContents);
+
+      if (null != Controller)
+      {
+        Controller.EhView_UngroupClick(SelectedNodes(this.m_Contents_lbContents));
+        this.m_Contents_lbContents.Focus();
+      }
+      
     }
 
     private void EhEditRange_Click(object sender, System.EventArgs e)
     {
-      if(null!=Controller)
-        Controller.EhView_EditRangeClick(SelectedContents);
+
+      if (null != Controller)
+      {
+        Controller.EhView_EditRangeClick(SelectedNodes(this.m_Contents_lbContents));
+        this.m_Contents_lbContents.Focus();
+      }
+      
     }
 
     private void EhShowRange_CheckedChanged(object sender, System.EventArgs e)

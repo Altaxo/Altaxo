@@ -23,7 +23,9 @@
 using System;
 using System.Windows.Forms;
 using System.Drawing;
-
+using System.Collections;
+using System.Collections.Generic;
+using Altaxo.Collections;
 
 namespace Altaxo.Graph.GUI
 {
@@ -32,22 +34,20 @@ namespace Altaxo.Graph.GUI
   {
     ILineScatterLayerContentsView View { get; set; }
 
-    void EhView_DataAvailableBeforeExpand(TreeNode node);
+    void EhView_DataAvailableBeforeExpand(NGTreeNode node);
 
-    void EhView_ContentsMeasureItem(object sender, System.Windows.Forms.MeasureItemEventArgs e);
-    void EhView_ContentsDrawItem(object sender, System.Windows.Forms.DrawItemEventArgs e);
-    void EhView_ContentsDoubleClick(int selidx);
+    void EhView_ContentsDoubleClick(NGTreeNode selNode);
 
-    void EhView_PutData(System.Collections.Hashtable hashtable);
-    void EhView_PullDataClick(int[] selidxs);
+    void EhView_PutData(NGTreeNode[] selNodes);
+    void EhView_PullDataClick(NGTreeNode[] selNodes);
 
-    void EhView_ListSelUpClick(int[] selidxs);
-    void EhView_SelDownClick(int[] selidxs);
+    void EhView_ListSelUpClick(NGTreeNode[] selNodes);
+    void EhView_SelDownClick(NGTreeNode[] selNodes);
 
-    void EhView_GroupClick(int[] selidx);
-    void EhView_UngroupClick(int[] selidxs);
-    void EhView_EditRangeClick(int[] selidxs);
-    void EhView_PlotAssociationsClick(int[] selidxs);
+    void EhView_GroupClick(NGTreeNode[] selNodes);
+    void EhView_UngroupClick(NGTreeNode[] selNodes);
+    void EhView_EditRangeClick(NGTreeNode[] selNodes);
+    void EhView_PlotAssociationsClick(NGTreeNode[] selNodes);
 
   }
 
@@ -68,7 +68,7 @@ namespace Altaxo.Graph.GUI
     /// Initializes the treeview of available data with content.
     /// </summary>
     /// <param name="nodes"></param>
-    void DataAvailable_Initialize(TreeNode[] nodes);
+    void DataAvailable_Initialize(NGTreeNodeCollection nodes);
 
     /// <summary>
     /// Clears all selection from the DataAvailable tree view.
@@ -79,7 +79,11 @@ namespace Altaxo.Graph.GUI
     /// Initializes the content list box by setting the number of items.
     /// </summary>
     /// <param name="itemcount">Number of items.</param>
-    void Contents_SetItemCount(int itemcount);
+    void Contents_SetItems(NGTreeNodeCollection items);
+
+    void Contents_RemoveItems(NGTreeNode[] items);
+
+
     /// <summary>
     /// Select/deselect the item number idx in the content list box.
     /// </summary>
@@ -104,12 +108,15 @@ namespace Altaxo.Graph.GUI
     protected ILineScatterLayerContentsView m_View;
     protected XYPlotLayer m_Layer;
 
-    System.Collections.ArrayList m_ItemArray = new System.Collections.ArrayList();
+    NGTreeNode m_RootNode = new NGTreeNode();
+    NGTreeNodeCollection m_ItemArray;
+    
     bool m_bDirty=false;
 
     public LineScatterLayerContentsController(XYPlotLayer layer)
     {
       m_Layer = layer;
+      m_ItemArray = m_RootNode.Nodes;
       SetElements(true);
     }
 
@@ -124,21 +131,21 @@ namespace Altaxo.Graph.GUI
       if(null!=View)
       {
         int nTables = Current.Project.DataTableCollection.Count;
-        TreeNode[] nodes = new TreeNode[nTables];
+        NGTreeNode no = new NGTreeNode();
         int i=0;
         foreach(Data.DataTable dt in Current.Project.DataTableCollection)
         {
-          nodes[i++] = new TreeNode(dt.Name,new TreeNode[1]{new TreeNode()});
+          no.Nodes.Add( new NGTreeNode(dt.Name,new NGTreeNode[1]{new NGTreeNode()}));
         }
 
-        View.DataAvailable_Initialize(nodes);
+        View.DataAvailable_Initialize(no.Nodes);
       }
 
       // now fill the list box with all plot associations currently inside
       
       if(bInit)
       {
-        m_ItemArray = new System.Collections.ArrayList();
+       
         System.Collections.Hashtable addedItems = new System.Collections.Hashtable();
         for(int i=0;i<m_Layer.PlotItems.Count;i++)
         {
@@ -152,17 +159,27 @@ namespace Altaxo.Graph.GUI
             {
               // add only one item to the list box, namely a PLCon group item with
               // all the members of that group
-              PLCon plitem = new PLCon(grp); 
-              m_ItemArray.Add(plitem);
+              PLCon plitem = new PLCon(grp);
+              NGTreeNode grpNode = new NGTreeNode();
+              grpNode.Text = "PlotGroup";
+              grpNode.Tag = grp;
+              m_ItemArray.Add(grpNode);
               // add all the items in the group also to the list of added items 
               for(int j=0;j<grp.Count;j++)
               {
+                NGTreeNode childNode = new NGTreeNode();
+                childNode.Text = grp[j].GetName(2);
+                childNode.Tag = grp[j];
+                grpNode.Nodes.Add(childNode);
                 addedItems.Add(grp[j],null);
               }
             }
             else // else if the item is not in a plot group
             {
-              m_ItemArray.Add(new PLCon(pa));
+              NGTreeNode toAdd = new NGTreeNode();
+              toAdd.Text = pa.GetName(2);
+              toAdd.Tag = pa;
+              m_ItemArray.Add(toAdd);
               addedItems.Add(pa,null);
             }
           }       
@@ -170,7 +187,7 @@ namespace Altaxo.Graph.GUI
       }
 
       if(null!=View)
-        View.Contents_SetItemCount(m_ItemArray.Count);
+        View.Contents_SetItems(m_ItemArray);
 
 
       // if initializing set dirty to false
@@ -233,16 +250,16 @@ namespace Altaxo.Graph.GUI
     }
 
 
-    public void EhView_DataAvailableBeforeExpand(TreeNode node)
+    public void EhView_DataAvailableBeforeExpand(NGTreeNode node)
     {
       Data.DataTable dt = Current.Project.DataTableCollection[node.Text];
       if(null!=dt)
       {
         node.Nodes.Clear();
-        TreeNode[] toadd = new TreeNode[dt.DataColumns.ColumnCount];
+        NGTreeNode[] toadd = new NGTreeNode[dt.DataColumns.ColumnCount];
         for(int i=0;i<toadd.Length;i++)
         {
-          toadd[i] = new TreeNode(dt[i].Name);
+          toadd[i] = new NGTreeNode(dt[i].Name);
         }
         node.Nodes.AddRange(toadd);
       }
@@ -251,101 +268,92 @@ namespace Altaxo.Graph.GUI
 
 
 
-    public void EhView_PutData(System.Collections.Hashtable hashtable)
+    public void EhView_PutData(NGTreeNode[] selNodes)
     {
 
       // first, put the selected node into the list, even if it is not checked
 
-      foreach (MWControlSuite.MWTreeNodeWrapper tw in hashtable.Values)
+      foreach (NGTreeNode sn  in selNodes)
       {
-        TreeNode sn= tw.Node;
-        if(null!=sn && null!=sn.Parent)
+        if(null!=sn.Parent)
         {
-          m_ItemArray.Add(new PLCon(sn.Parent.Text,sn.Text));
+          NGTreeNode newNode = new NGTreeNode();
+          newNode.Text = sn.Text;
+          newNode.Tag = new PLCon(sn.Parent.Text,sn.Text);
+           m_ItemArray.Add(newNode);
         }
       }
 
-      View.Contents_SetItemCount(m_ItemArray.Count);
+      View.Contents_SetItems(m_ItemArray);
       View.DataAvailable_ClearSelection();
       SetDirty();
     }
 
-    public void EhView_PullDataClick(int[] selidxs)
+    public void EhView_PullDataClick(NGTreeNode[] selNodes)
     {
-      // for each selected item in the list, 
-      // remove it from the list
-      for(int i=selidxs.Length-1;i>=0;i--)
-        m_ItemArray.RemoveAt(selidxs[i]);
+      View.Contents_RemoveItems(selNodes);
 
-      View.Contents_SetItemCount(m_ItemArray.Count);
+      foreach(NGTreeNode node in selNodes)
+        node.Remove();
+     
       SetDirty();
     }
 
 
-    
-    public void EhView_ContentsMeasureItem(object sender, System.Windows.Forms.MeasureItemEventArgs e)
-    {
-      PLCon item = (PLCon)m_ItemArray[e.Index];
-      if(item.IsGroup)
-        e.ItemHeight *= item.m_Group.Count;
-    }
 
 
-    public void EhView_ContentsDrawItem(object sender, System.Windows.Forms.DrawItemEventArgs e)
+
+    public void EhView_ContentsDoubleClick(NGTreeNode selNode)
     {
-      int height = e.Bounds.Height;
-      e.DrawBackground();
-      PLCon item = (PLCon)this.m_ItemArray[e.Index];
-      using(Brush brush = new SolidBrush(e.ForeColor))
+      object tag = selNode.Tag;
+      PlotItem pa = null;
+      if (tag is PlotItem)
       {
-        if(item.IsGroup) // item is a group
-        {
-          height /= item.m_Group.Count;
-          for(int i=0;i<item.m_Group.Count;i++)
-          {
-            string str = string.Format("g{0} {1}",e.Index,item.m_Group[i].ToString());
-            e.Graphics.DrawString(str,
-              e.Font,brush,0,e.Bounds.Top+i*height);
-          }
-        }
-        else // item is not a group
-        {
-          e.Graphics.DrawString(item.ToString(),
-            e.Font,brush,0,e.Bounds.Top);
-        }
+        pa = tag as PlotItem;
       }
-    
-    }
-
-    public void EhView_ContentsDoubleClick(int selectedIndex)
-    {
-      PlotItem pa = ((PLCon)this.m_ItemArray[selectedIndex]).PlotItem;
-      if(null!=pa)
+      else if (tag is PLCon)
+      {
+        pa = ((PLCon)tag).PlotItem;
+      }
+      if (null != pa)
       {
         PlotGroup plotGroup = m_Layer.PlotItems.GetPlotGroupOf(pa);
-        //LineScatterPlotStyleController.ShowPlotStyleDialog(View.Form,pa,plotGroup);
-        Main.GUI.DialogFactory.ShowPlotStyleAndDataDialog(View.Form,pa,plotGroup);
+        Main.GUI.DialogFactory.ShowPlotStyleAndDataDialog(View.Form, pa, plotGroup);
+      }
+    }
+    
+
+
+    public void EhView_ListSelUpClick(NGTreeNode[] selNodes)
+    {
+      // move the selected items upwards in the list
+      ContentsListBox_MoveUpDown(-1,selNodes);
+      SetDirty();
+    }
+
+    public void EhView_SelDownClick(NGTreeNode[] selNodes)
+    {
+      // move the selected items downwards in the list
+      ContentsListBox_MoveUpDown(1,selNodes);
+      SetDirty();
+    }
+
+    public void ContentsListBox_MoveUpDown(int iDelta, NGTreeNode[] selNodes)
+    {
+      if (NGTreeNode.HaveSameParent(selNodes))
+      {
+        NGTreeNode.MoveUpDown(iDelta, selNodes);
+        View.Contents_SetItems(this.m_ItemArray);
+        SetDirty();
       }
     }
 
-
-    public void EhView_ListSelUpClick(int[] selidxs)
-    {
-      // move the selected items upwards in the list
-      ContentsListBox_MoveUpDown(-1,selidxs);
-      SetDirty();
-    }
-
-    public void EhView_SelDownClick(int[] selidxs)
-    {
-      // move the selected items downwards in the list
-      ContentsListBox_MoveUpDown(1,selidxs);
-      SetDirty();
-    }
 
     public void ContentsListBox_MoveUpDown(int iDelta, int[] selidxs)
     {
       int i;
+
+      
 
       if(iDelta!=1 && iDelta!=-1)
         return;
@@ -359,7 +367,7 @@ namespace Altaxo.Graph.GUI
 
         for(i=0;i<selidxs.Length;i++)
         {
-          object helpSeg;
+          NGTreeNode helpSeg;
           int iSeg=selidxs[i];
 
           helpSeg = m_ItemArray[iSeg-1];
@@ -380,7 +388,7 @@ namespace Altaxo.Graph.GUI
 
         for(i=selidxs.Length-1;i>=0;i--)
         {
-          object helpSeg;
+          NGTreeNode helpSeg;
           int iSeg=selidxs[i];
 
           helpSeg = m_ItemArray[iSeg+1];
@@ -393,150 +401,161 @@ namespace Altaxo.Graph.GUI
         }
       } // end if iDelta==1
     }
-  
 
-    public void EhView_GroupClick(int[] selidxs)
+
+    public void EhView_GroupClick(NGTreeNode[] selNodes)
     {
+      
       // retrieve the selected items
-      if(selidxs.Length<2)
+      if(selNodes.Length<2)
         return; // we cannot group anything if no or only one item is selected
 
       // look, if one of the selected items is a plot group
       // if found, use this group and add the remaining items to this
-      PLCon foundgroup=null;
       int   foundindex=-1;
-      int i;
-      for(i=0;i<selidxs.Length;i++)
+      for(int i=0;i<selNodes.Length;i++)
       {
-        foundgroup = (PLCon)m_ItemArray[selidxs[i]];
-        if(foundgroup.IsGroup)
+        if(selNodes[i].Tag is PlotGroup || (selNodes[i].Tag is PLCon && ((PLCon)selNodes[i].Tag).IsGroup))
         {
-          foundindex = selidxs[i];
+          foundindex = i;
           break;
         }
-        foundgroup=null; // set to null to indicate not a group item
-      }
+       }
 
 
       // if a group was found use this to add the remaining items
-      // else use a new PLCon to add the items to
-      PLCon addgroup = null!=foundgroup ? foundgroup : new PLCon(new PLCon[0]); 
-      // now add the remaining selected items to the found group
-      for(i=0;i<selidxs.Length;i++)
-      {
-        if(selidxs[i]==foundindex) continue; // don't add the found group to itself
-        PLCon item = (PLCon)m_ItemArray[selidxs[i]];
-        if(item.IsGroup) // if it is a group, add the members of the group to avoid more than one recursion
-        {
-          for(int j=0;j<item.m_Group.Count;j++)
-            addgroup.m_Group.Add(item.m_Group[i]);
-        }
-        else // item to add is not a group
-        {
-          addgroup.m_Group.Add(item);
-        }
-      } // end for
+       if (foundindex >= 0)
+       {
+         for (int i = 0; i < selNodes.Length; i++)
+           if (i != foundindex)
+           {
+             selNodes[i].Remove();
+             selNodes[foundindex].Nodes.Add(selNodes[i]);
+           }
+       }
+       // else use a new PLCon to add the items to
+       else
+       {
+         PLCon addgroup = new PLCon(new PlotGroup(PlotGroupStyle.All,false,PlotGroupStrictness.Normal));
+         NGTreeNode newNode = new NGTreeNode();
+         newNode.Tag = addgroup;
+         newNode.Text = "PlotGroup";
 
+
+         // now add the remaining selected items to the found group
+         for (int i = 0; i < selNodes.Length; i++)
+         {
+           NGTreeNode node = selNodes[i];
+           if (node.Nodes.Count > 0) // if it is a group, add the members of the group to avoid more than one recursion
+           {
+             while(node.Nodes.Count>0)
+             {
+               NGTreeNode addnode = node.Nodes[0];
+               addnode.Remove();
+               newNode.Nodes.Add(addnode);
+             }
+           }
+           else // item to add is not a group
+           {
+             node.Remove();
+             newNode.Nodes.Add(node);
+           }
+         } // end for
+         this.m_ItemArray.Add(newNode);
+       }
       // now all items are in the new group
 
       // so update the list box:
-      // delete all items except of the found group
+       View.Contents_SetItems(this.m_ItemArray);
 
-      if(null!=foundgroup)
-      {
-        for(i=selidxs.Length-1;i>=0;i--) // step from end of list because items shift away if removing some items
-        {
-          if(selidxs[i]==foundindex)
-          {
-            m_ItemArray[selidxs[i]]=addgroup; // this is only a trick to force measuring the item again
-            continue; // don't add the found group to itself
-          }
-          m_ItemArray.RemoveAt(selidxs[i]);
-        }
-      }
-      else // if no previous group was found, replace first selected item by the group
-      {
-        m_ItemArray[selidxs[0]]= addgroup;
-        // remove the remaining items
-        for(i=selidxs.Length-1;i>=1;i--)
-        {
-          m_ItemArray.RemoveAt(selidxs[i]);
-        }
-      }
-      View.Contents_SetItemCount(m_ItemArray.Count);
       SetDirty();
     }
 
-    public void EhView_UngroupClick(int[] selidxs)
+    public void EhView_UngroupClick(NGTreeNode[] selNodes)
     {
       // retrieve the selected items
-      if(selidxs.Length<1)
+      if(selNodes.Length<1)
         return; // we cannot ungroup anything if nothing selected
 
-      for(int i=selidxs.Length-1;i>=0;i--)
+      selNodes = NGTreeNode.FilterIndependentNodes(selNodes);
+
+      for(int i=selNodes.Length-1;i>=0;i--)
       {
-        PLCon item = (PLCon)m_ItemArray[selidxs[i]];
-      
-        if(item.IsGroup)
+        if (selNodes[i].Nodes.Count==0 && selNodes[i].Parent!=null && selNodes[i].Parent.Parent!=null)
         {
-          // insert all items contained in that group in the next position
-          for(int j=item.m_Group.Count-1;j>=1;j--)
+          NGTreeNode parent = selNodes[i].Parent;
+          NGTreeNode grandParent = parent.Parent;
+          selNodes[i].Remove();
+          grandParent.Nodes.Add(selNodes[i]);
+
+          if (parent.Nodes.Count == 0)
+            parent.Remove();
+        }
+        else if (selNodes[i].Nodes.Count > 0 && selNodes[i].Parent != null)
+        {
+          NGTreeNode parent = selNodes[i].Parent;
+          while(selNodes[i].Nodes.Count>0)
           {
-            m_ItemArray.Insert(selidxs[i]+1,item.m_Group[j]);
+            NGTreeNode no = selNodes[i].Nodes[0];
+            no.Remove();
+            parent.Nodes.Add(no);
           }
-          // and replace the group item by the first item of that group
-          m_ItemArray[selidxs[i]] = item.m_Group[0];
+          selNodes[i].Remove();
         }
       } // end for
-      View.Contents_SetItemCount(m_ItemArray.Count);
+      View.Contents_SetItems(m_ItemArray);
       SetDirty();
+
     }
 
 
-    public void EhView_EditRangeClick(int[] selidxs)
+    public void EhView_EditRangeClick(NGTreeNode[] selNodes)
     {
       // retrieve the selected items
-      if(selidxs.Length<1)
+      if(selNodes.Length<1)
         return; // we cannot ungroup anything if nothing selected
 
-      PLCon item = (PLCon)m_ItemArray[selidxs[0]];
-
-      if(item.IsGroup)
+      if (selNodes.Length == 1)
       {
+        if (selNodes[0].Tag is PlotItem)
+        {
+          PlotItem pi = (PlotItem)selNodes[0].Tag;
+          PlotGroup pg = this.m_Layer.PlotItems.GetPlotGroupOf(pi);
+          Altaxo.Main.GUI.DialogFactory.ShowPlotStyleAndDataDialog(Current.MainWindow, pi, pg);
+        }
       }
-      else if(item.IsSingleKnownItem)
-      {
-        PlotGroup pg = this.m_Layer.PlotItems.GetPlotGroupOf(item.PlotItem);
-        Altaxo.Main.GUI.DialogFactory.ShowPlotStyleAndDataDialog(Current.MainWindow, item.PlotItem, pg);
-      }
+      
     }
 
-    public void EhView_PlotAssociationsClick(int[] selidxs)
+    public void EhView_PlotAssociationsClick(NGTreeNode[] selNodes)
     {
-      EhView_EditRangeClick(selidxs);
+      EhView_EditRangeClick(selNodes);
     }
 
 
     #endregion
 
     #region IApplyController Members
-
+    
     public bool Apply()
     {
 
       if(!this.m_bDirty)
         return true; // not dirty - so no need to apply something
 
-      m_Layer.PlotItems.Clear();
+      m_Layer.PlotItems.Clear(); // first, clear all Plot items
 
+     
       // now we must get all items out of the listbox and look
       // for which items are new or changed
       for(int i=0;i<m_ItemArray.Count;i++)
       {
-        PLCon item = (PLCon)m_ItemArray[i];
+        NGTreeNode node = m_ItemArray[i];
         PlotItem plotitem=null;
-        
-        if(item.IsSingleNewItem)
+        object tag = node.Tag;
+        PLCon item = tag as PLCon;
+
+        if(item!=null && item.IsSingleNewItem)
         {
           plotitem = this.NewPlotItemFromPLCon(item);
           if(null!=plotitem)
@@ -544,62 +563,37 @@ namespace Altaxo.Graph.GUI
             m_Layer.PlotItems.Add(plotitem);
           }
         }
-        else if(item.IsSingleKnownItem)
+        else if(tag is PlotItem)
         {
-          plotitem = item.PlotItem;
-          m_Layer.PlotItems.Add(plotitem);
+          m_Layer.PlotItems.Add((PlotItem)tag);
         }
-        else if(item.IsUnchangedOldGroup)
+        else if(tag is PlotGroup || (item!=null && item.IsGroup))
         {
+          PlotGroup newplotgrp;
+          if(item!=null && item.IsGroup)
+          {
+            // 1st) create a new PlotGroup
+            newplotgrp = new PlotGroup(PlotGroupStyle.All,false,PlotGroupStrictness.Normal);
+          }
+          else
+          {
+            newplotgrp = (PlotGroup)tag;
+          }
+
+        
           // if the group was not changed, add all group members to the
           // plotassociation collection and add the group to the group list
-          for(int j=0;j<item.m_Group.Count;j++)
+          for(int j=0;j<node.Nodes.Count;j++)
           {
-            PLCon member = (PLCon)item.m_Group[j];
-            m_Layer.PlotItems.Add(member.PlotItem);
-          } // end for
-          m_Layer.PlotItems.Add(item.m_OriginalGroup); // add the unchanged group back to the layer
-        } // if item.IsUnchangedOldGroup
-        else if(item.IsChangedOldGroup) // group exists before, but was changed
-        {
-          item.m_OriginalGroup.Clear();
-          for(int j=0;j<item.m_Group.Count;j++)
-          {
-            PLCon member = (PLCon)item.m_Group[j];
-            if(member.IsSingleKnownItem)
+           
+            if(node.Nodes[j].Tag is PlotItem)
             {
-              m_Layer.PlotItems.Add(member.PlotItem);
-              item.m_OriginalGroup.Add(member.PlotItem);
+              m_Layer.PlotItems.Add((PlotItem)node.Nodes[j].Tag);
+              newplotgrp.Add((PlotItem)node.Nodes[j].Tag);
             }
-            else // than it is a single new item
+            else if(node.Nodes[j].Tag is PLCon && ((PLCon)node.Nodes[j].Tag).IsSingleNewItem)
             {
-              plotitem = this.NewPlotItemFromPLCon(member);
-              if(null!=plotitem)
-              {
-                m_Layer.PlotItems.Add(plotitem);
-                item.m_OriginalGroup.Add(plotitem);
-              }
-            }
-          } // end for
-          m_Layer.PlotItems.Add(item.m_OriginalGroup); // add the plot group back to the layer
-        } // else if item.IsChangedOldGroup
-        else if(item.IsNewGroup) // if it is a new group
-        {
-          // 1st) create a new PlotGroup
-          PlotGroup newplotgrp = new PlotGroup(PlotGroupStyle.All,false,PlotGroupStrictness.Normal);
-          // if the group was not changed, add all group members to the
-          // plotassociation collection and add the group to the group list
-          for(int j=0;j<item.m_Group.Count;j++)
-          {
-            PLCon member = (PLCon)item.m_Group[j];
-            if(member.IsSingleKnownItem)
-            {
-              m_Layer.PlotItems.Add(member.PlotItem);
-              newplotgrp.Add(member.PlotItem);
-            }
-            else // than it is a single new item
-            {
-              plotitem = this.NewPlotItemFromPLCon(member);
+              plotitem = this.NewPlotItemFromPLCon(((PLCon)node.Nodes[j].Tag));
               if(null!=plotitem)
               {
                 m_Layer.PlotItems.Add(plotitem);
@@ -612,6 +606,7 @@ namespace Altaxo.Graph.GUI
       } // end for all items in the list box
       
       SetElements(true); // Reload the applied contents to make sure it is synchronized
+     
       return true; // all ok
     }
 
@@ -702,7 +697,7 @@ namespace Altaxo.Graph.GUI
       }
       public bool IsGroup
       {
-        get { return null!=m_Group && m_Group.Count>0; }
+        get { return null!=m_Group; }
       }
       public bool IsUnchangedOldGroup
       {

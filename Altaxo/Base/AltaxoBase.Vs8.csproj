@@ -131,6 +131,7 @@
     <Compile Include="Calc\FitFunctions\Relaxation\KohlrauschSusceptibility.cs" />
     <Compile Include="Calc\IntegerRange.cs" />
     <Compile Include="Calc\PositiveIntegerRange.cs" />
+    <Compile Include="Collections\NGTreeNode.cs" />
     <Compile Include="Graph\AxisLinkType.cs" />
     <Compile Include="Calc\FitFunctions\Relaxation\KohlrauschDecay.cs" />
     <Compile Include="Calc\LinearAlgebra\DataColumnWrapper.cs">
