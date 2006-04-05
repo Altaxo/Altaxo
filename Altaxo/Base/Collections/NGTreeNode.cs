@@ -9,14 +9,19 @@ namespace Altaxo.Collections
   /// </summary>
   public interface NGTreeNodeCollection : IList<NGTreeNode>
   {
+    /// <summary>
+    /// Adds a bunch of nodes.
+    /// </summary>
+    /// <param name="nodes">Array of nodes to add to this collection.</param>
     void AddRange(NGTreeNode[] nodes);
   }
 
-  // Represents a non GUI tree node that can be used for interfaces with Gui components.
+  // Represents a non GUI tree node that can be used for interfacing/communication with Gui components.
   public class NGTreeNode
   {
     /// <summary>
-    /// Can be used by the application to get a connection to document items. Do not use this for Gui items, the <c>GuiTag</c> is intented for this.
+    /// Can be used by the application to get a connection to document items.
+    /// Do not use this for Gui items, the <c>GuiTag</c> can be used for this purpose.
     /// </summary>
     public object Tag;
 
@@ -30,27 +35,51 @@ namespace Altaxo.Collections
     /// </summary>
     public string Text;
 
-
+    /// <summary>
+    /// Collection of child nodes.
+    /// </summary>
     MyNGTreeNodeCollection _nodes;
 
+    /// <summary>
+    /// Parent node.
+    /// </summary>
     NGTreeNode _parent;
+
+    /// <summary>
+    /// Parent tree node.
+    /// </summary>
     public NGTreeNode Parent { get { return _parent; } }
 
+    /// <summary>
+    /// Empty constructor.
+    /// </summary>
     public NGTreeNode()
     {
     }
 
+    /// <summary>
+    /// Constructor that initializes the text of the tree node.
+    /// </summary>
+    /// <param name="text">Text for the tree node.</param>
     public NGTreeNode(string text)
     {
       Text = text;
     }
 
+    /// <summary>
+    /// Constructor that initializes the text of the tree node and adds a range of elements to it.
+    /// </summary>
+    /// <param name="text">Text for the tree node.</param>
+    /// <param name="nodes">Array of child nodes.</param>
     public NGTreeNode(string text, NGTreeNode[] nodes)
     {
       Text = text;
       Nodes.AddRange(nodes);
     }
 
+    /// <summary>
+    /// Collection of the child nodes of this node.
+    /// </summary>
     public NGTreeNodeCollection Nodes
     {
       get
@@ -62,7 +91,9 @@ namespace Altaxo.Collections
       }
     }
 
-
+    /// <summary>
+    /// Frees this node, i.e. removes the node from it's parent collection (and set the parent node to <c>null</c>.
+    /// </summary>
     public void Remove()
     {
       if (_parent != null)
@@ -92,6 +123,10 @@ namespace Altaxo.Collections
       }
     }
 
+    /// <summary>
+    /// Returns the hierarchy of indices, i.e. the indices beginning with the root node collection and ending
+    /// with the index in the nodes parent collection.
+    /// </summary>
     public int[] HierarchyIndices
     {
       get
@@ -170,6 +205,12 @@ namespace Altaxo.Collections
       return list.ToArray();
     }
 
+    /// <summary>
+    /// Determines if all nodes in the array have the same parent.
+    /// </summary>
+    /// <param name="nodes">Array of nodes.</param>
+    /// <returns>True if all nodes have the same parent. If the array is empty or contains only one element, true is returned.
+    /// If all nodes have no parent (Parent==null), true is returned as well.</returns>
     public static bool HaveSameParent(NGTreeNode[] nodes)
     {
       if (nodes.Length <=1)
@@ -183,6 +224,15 @@ namespace Altaxo.Collections
       return true;
     }
 
+    /// <summary>
+    /// The nodes in the array are sorted by order, i.e. by there hierarchy indices.
+    /// </summary>
+    /// <param name="nodes">Nodes to sort. On return, contains the same nodes, but in order.</param>
+    /// <remarks>
+    /// Presume you have some nodes that are noted by their indices: 1, 2, 3, 1.1, 1.2, 3.1, 3.2
+    /// <para>The sort by order would sort these nodes in the following order:</para>
+    /// <para>1, 1.1, 1.2, 2, 3, 3.1, 3.2</para>.
+    /// </remarks>
     public static void SortByOrder(NGTreeNode[] nodes)
     {
       SortedDictionary<int[], NGTreeNode> dic = new SortedDictionary<int[], NGTreeNode>(new IntArrayComparer());
@@ -222,7 +272,16 @@ namespace Altaxo.Collections
     #region Moving
 
 
-    
+    /// <summary>
+    /// This procedure will move up or move down some nodes in the tree.
+    /// </summary>
+    /// <param name="iDelta">Number of movement steps. Value less than zero will move up the nodes in the tree, values greater null will move down the nodes in the tree.</param>
+    /// <param name="selNodes">Nodes to move.</param>
+    /// <remarks>The following assumptions must be fullfilled:
+    /// <para>First, the nodes are filtered: If the array contain both a parent node and child nodes of this parent node,
+    /// the child nodes will be not moved.</para>
+    /// <para>The remaining nodes must have the same parent, otherwise an exception is thrown.</para>
+    /// </remarks>
     static public void MoveUpDown(int iDelta, NGTreeNode[] selNodes)
     {
       if (iDelta == 0 || selNodes==null || selNodes.Length==0)

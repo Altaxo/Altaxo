@@ -45,18 +45,7 @@ namespace Altaxo.Gui.Graph
     /// <param name="newValue">The new selected item of the combo box.</param>
     void EhView_ColorChanged(Color newValue);
 
-    /// <summary>
-    /// Called if the background color is changed.
-    /// </summary>
-    /// <param name="newValue">The new selected item of the combo box.</param>
-    void EhView_BackgroundColorChanged(Color newValue);
-
-    /// <summary>
-    /// Called if the background style changed.
-    /// </summary>
-    /// <param name="newValue">The new index of the style.</param>
-    void EhView_BackgroundStyleChanged(int newValue);
-
+   
     /// <summary>
     /// Called if the font size is changed.
     /// </summary>
@@ -149,21 +138,12 @@ namespace Altaxo.Gui.Graph
     void Color_Initialize(System.Drawing.Color color);
 
     /// <summary>
-    /// Initializes the content of the background color combo box.
+    /// Initializes the background controll with the controller.
     /// </summary>
-    void BackgroundColor_Initialize(System.Drawing.Color color);
-
-    /// <summary>
-    /// Initializes the enable state of the background color combo box.
-    /// </summary>
-    void BackgroundColorEnable_Initialize(bool enable);
-
-    /// <summary>
-    /// Initializes the background styles.
-    /// </summary>
-    /// <param name="names"></param>
-    /// <param name="selection"></param>
-    void BackgroundStyle_Initialize(string[] names, int selection);
+    /// <param name="controller">Controller for this background control.</param>
+    /// <returns>The gui object (the control).</returns>
+    object BackgroundControl_Initialize(BackgroundStyleController controller);
+  
 
     /// <summary>
     /// Initializes the font size combo box.
@@ -277,14 +257,13 @@ namespace Altaxo.Gui.Graph
 
     protected IReadableColumn _labelColumn;
 
-    protected Altaxo.Graph.BackgroundStyles.IBackgroundStyle _currentBackgroundStyleInstance;
-    
-    protected System.Type[] _backgroundStyles;
+    protected BackgroundStyleController _backgroundStyleController;
 
     public XYPlotLabelStyleController(XYPlotLabelStyle plotStyle)
     {
       _doc = plotStyle;
       Initialize(true);
+      _backgroundStyleController = new BackgroundStyleController(_doc.BackgroundStyle);
     }
 
 
@@ -295,8 +274,6 @@ namespace Altaxo.Gui.Graph
         _fontFamily  = _doc.Font.FontFamily.Name;
         _independentColor = _doc.IndependentColor;
         _color = _doc.Color;
-        _backgroundStyles = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(Altaxo.Graph.BackgroundStyles.IBackgroundStyle));
-        _currentBackgroundStyleInstance = _doc.BackgroundStyle;
         _fontSize = _doc.FontSize;
         _horizontalAlignment = _doc.HorizontalAlignment;
         _verticalAlignment = _doc.VerticalAlignment;
@@ -321,26 +298,15 @@ namespace Altaxo.Gui.Graph
         View.Rotation_Initialize(Serialization.NumberConversion.ToString(_rotation));
         View.XOffset_Initialize(Serialization.NumberConversion.ToString(_xOffset*100));
         View.YOffset_Initialize(Serialization.NumberConversion.ToString(_yOffset*100));
-        
-        InitializeBackgroundStyle();
+
+        _backgroundStyleController.ViewObject = View.BackgroundControl_Initialize(_backgroundStyleController);
+
 
         InitializeLabelColumnText();
       }
     }
 
-    void InitializeBackgroundStyle()
-    {
-      int sel = Array.IndexOf(this._backgroundStyles,this._currentBackgroundStyleInstance==null ? null : this._currentBackgroundStyleInstance.GetType());
-      View.BackgroundStyle_Initialize(Current.Gui.GetUserFriendlyClassName(this._backgroundStyles,true),sel+1);
-
-      if(this._currentBackgroundStyleInstance!=null && this._currentBackgroundStyleInstance.SupportsColor)
-        View.BackgroundColor_Initialize(this._currentBackgroundStyleInstance.Color);
-      else
-        View.BackgroundColor_Initialize(Color.Transparent);
-
-      View.BackgroundColorEnable_Initialize(this._currentBackgroundStyleInstance!=null && this._currentBackgroundStyleInstance.SupportsColor);
-
-    }
+  
 
 
     void InitializeLabelColumnText()
@@ -385,41 +351,6 @@ namespace Altaxo.Gui.Graph
     }
 
 
-    /// <summary>
-    /// Called if the background style changed.
-    /// </summary>
-    /// <param name="newValue">The new index of the style.</param>
-    public void EhView_BackgroundStyleChanged(int newValue)
-    {
-
-      Color backgroundColor = Color.Transparent;
-
-      if(newValue!=0)
-      {
-        _currentBackgroundStyleInstance = (Altaxo.Graph.BackgroundStyles.IBackgroundStyle)Activator.CreateInstance(this._backgroundStyles[newValue-1]);
-        backgroundColor = _currentBackgroundStyleInstance.Color;
-      }
-      else // is null
-      {
-        _currentBackgroundStyleInstance = null;
-      }
-
-      if(_currentBackgroundStyleInstance!=null && _currentBackgroundStyleInstance.SupportsColor)
-      {
-        View.BackgroundColor_Initialize(backgroundColor);
-        View.BackgroundColorEnable_Initialize(true);
-      }
-      else
-      {
-        View.BackgroundColorEnable_Initialize(false);
-      }
-    }
-
-    public void EhView_BackgroundColorChanged(System.Drawing.Color color)
-    {
-      if(this._currentBackgroundStyleInstance!=null && this._currentBackgroundStyleInstance.SupportsColor)
-        this._currentBackgroundStyleInstance.Color = color;
-    }
 
     public void EhView_FontSizeChanged(string newValue)
     {
@@ -497,11 +428,13 @@ namespace Altaxo.Gui.Graph
 
     public bool Apply()
     {
+      if (!_backgroundStyleController.Apply())
+        return false;
     
       _doc.Font = new Font(_fontFamily,_fontSize,GraphicsUnit.World);
       _doc.IndependentColor = _independentColor;
       _doc.Color = _color;
-      _doc.BackgroundStyle = this._currentBackgroundStyleInstance;
+      _doc.BackgroundStyle = (Altaxo.Graph.BackgroundStyles.IBackgroundStyle)_backgroundStyleController.ModelObject;
       _doc.HorizontalAlignment = _horizontalAlignment;
       _doc.VerticalAlignment   = _verticalAlignment;
       _doc.AttachToAxis = _attachToEdge;

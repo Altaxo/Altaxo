@@ -109,6 +109,7 @@ namespace Altaxo.Graph.BackgroundStyles
 
     public System.Drawing.RectangleF MeasureItem(System.Drawing.Graphics g, System.Drawing.RectangleF innerArea)
     {
+      innerArea.Inflate(3.0f*_shadowLength/2, 3.0f*_shadowLength/2);
       return innerArea;
     }
 

@@ -56,12 +56,11 @@ namespace Altaxo.Gui.Graph
     private System.Windows.Forms.ComboBox m_cbHorizontalAlignment;
     private System.Windows.Forms.ComboBox m_cbVerticalAlignment;
     private System.Windows.Forms.CheckBox m_chkIndependentColor;
-    private System.Windows.Forms.ComboBox m_cbBackgroundColor;
     private System.Windows.Forms.TextBox _edLabelColumn;
     private System.Windows.Forms.Button _btSelectLabelColumn;
     private System.Windows.Forms.Label label2;
-    private System.Windows.Forms.ComboBox _cbBackgroundStyle;
     private System.Windows.Forms.Label label7;
+    private BackgroundStyleControl _ctrlBackground;
     /// <summary> 
     /// Required designer variable.
     /// </summary>
@@ -117,12 +116,11 @@ namespace Altaxo.Gui.Graph
       this.m_edRotation = new System.Windows.Forms.TextBox();
       this.label6 = new System.Windows.Forms.Label();
       this.m_chkIndependentColor = new System.Windows.Forms.CheckBox();
-      this.m_cbBackgroundColor = new System.Windows.Forms.ComboBox();
       this._edLabelColumn = new System.Windows.Forms.TextBox();
       this._btSelectLabelColumn = new System.Windows.Forms.Button();
       this.label2 = new System.Windows.Forms.Label();
-      this._cbBackgroundStyle = new System.Windows.Forms.ComboBox();
       this.label7 = new System.Windows.Forms.Label();
+      this._ctrlBackground = new Altaxo.Gui.Graph.BackgroundStyleControl();
       this.groupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -141,7 +139,6 @@ namespace Altaxo.Gui.Graph
       this.m_edYOffset.Name = "m_edYOffset";
       this.m_edYOffset.Size = new System.Drawing.Size(56, 20);
       this.m_edYOffset.TabIndex = 16;
-      this.m_edYOffset.Text = "";
       this.m_edYOffset.Validating += new System.ComponentModel.CancelEventHandler(this.EhYOffset_Validating);
       // 
       // m_edXOffset
@@ -150,7 +147,6 @@ namespace Altaxo.Gui.Graph
       this.m_edXOffset.Name = "m_edXOffset";
       this.m_edXOffset.Size = new System.Drawing.Size(56, 20);
       this.m_edXOffset.TabIndex = 15;
-      this.m_edXOffset.Text = "";
       this.m_edXOffset.Validating += new System.ComponentModel.CancelEventHandler(this.EhXOffset_Validating);
       // 
       // label23
@@ -241,7 +237,7 @@ namespace Altaxo.Gui.Graph
       this.groupBox1.Controls.Add(this.label23);
       this.groupBox1.Controls.Add(this.m_edYOffset);
       this.groupBox1.Controls.Add(this.label24);
-      this.groupBox1.Location = new System.Drawing.Point(280, 256);
+      this.groupBox1.Location = new System.Drawing.Point(280, 112);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(136, 96);
       this.groupBox1.TabIndex = 29;
@@ -277,16 +273,15 @@ namespace Altaxo.Gui.Graph
       // 
       // m_edRotation
       // 
-      this.m_edRotation.Location = new System.Drawing.Point(352, 224);
+      this.m_edRotation.Location = new System.Drawing.Point(352, 80);
       this.m_edRotation.Name = "m_edRotation";
       this.m_edRotation.Size = new System.Drawing.Size(56, 20);
       this.m_edRotation.TabIndex = 20;
-      this.m_edRotation.Text = "";
       this.m_edRotation.Validating += new System.ComponentModel.CancelEventHandler(this.EhRotation_Validating);
       // 
       // label6
       // 
-      this.label6.Location = new System.Drawing.Point(320, 200);
+      this.label6.Location = new System.Drawing.Point(320, 56);
       this.label6.Name = "label6";
       this.label6.Size = new System.Drawing.Size(96, 16);
       this.label6.TabIndex = 20;
@@ -302,15 +297,6 @@ namespace Altaxo.Gui.Graph
       this.m_chkIndependentColor.TabIndex = 34;
       this.m_chkIndependentColor.Text = "Independent color";
       this.m_chkIndependentColor.CheckedChanged += new System.EventHandler(this.EhIndependentColor_CheckChanged);
-      // 
-      // m_cbBackgroundColor
-      // 
-      this.m_cbBackgroundColor.Location = new System.Drawing.Point(128, 280);
-      this.m_cbBackgroundColor.Name = "m_cbBackgroundColor";
-      this.m_cbBackgroundColor.Size = new System.Drawing.Size(136, 21);
-      this.m_cbBackgroundColor.TabIndex = 35;
-      this.m_cbBackgroundColor.Text = "comboBox1";
-      this.m_cbBackgroundColor.SelectionChangeCommitted += new System.EventHandler(this.EhBackgroundColor_SelectionChangeCommitted);
       // 
       // _edLabelColumn
       // 
@@ -338,15 +324,6 @@ namespace Altaxo.Gui.Graph
       this.label2.Text = "LabelColumn:";
       this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
       // 
-      // _cbBackgroundStyle
-      // 
-      this._cbBackgroundStyle.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this._cbBackgroundStyle.Location = new System.Drawing.Point(128, 248);
-      this._cbBackgroundStyle.Name = "_cbBackgroundStyle";
-      this._cbBackgroundStyle.Size = new System.Drawing.Size(136, 21);
-      this._cbBackgroundStyle.TabIndex = 41;
-      this._cbBackgroundStyle.SelectionChangeCommitted += new System.EventHandler(this._cbBackgroundStyle_SelectionChangeCommitted);
-      // 
       // label7
       // 
       this.label7.Location = new System.Drawing.Point(40, 256);
@@ -356,14 +333,21 @@ namespace Altaxo.Gui.Graph
       this.label7.Text = "Background:";
       this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
       // 
+      // _ctrlBackground
+      // 
+      this._ctrlBackground.Controller = null;
+      this._ctrlBackground.Location = new System.Drawing.Point(128, 256);
+      this._ctrlBackground.Name = "_ctrlBackground";
+      this._ctrlBackground.Size = new System.Drawing.Size(262, 30);
+      this._ctrlBackground.TabIndex = 43;
+      // 
       // XYPlotLabelStyleControl
       // 
+      this.Controls.Add(this._ctrlBackground);
       this.Controls.Add(this.label7);
-      this.Controls.Add(this._cbBackgroundStyle);
       this.Controls.Add(this.label2);
       this.Controls.Add(this._btSelectLabelColumn);
       this.Controls.Add(this._edLabelColumn);
-      this.Controls.Add(this.m_cbBackgroundColor);
       this.Controls.Add(this.m_chkIndependentColor);
       this.Controls.Add(this.m_cbAttachedAxis);
       this.Controls.Add(this.label5);
@@ -382,7 +366,9 @@ namespace Altaxo.Gui.Graph
       this.Name = "XYPlotLabelStyleControl";
       this.Size = new System.Drawing.Size(440, 360);
       this.groupBox1.ResumeLayout(false);
+      this.groupBox1.PerformLayout();
       this.ResumeLayout(false);
+      this.PerformLayout();
 
     }
     #endregion
@@ -437,24 +423,9 @@ namespace Altaxo.Gui.Graph
       }
     }
 
-    private void _cbBackgroundStyle_SelectionChangeCommitted(object sender, System.EventArgs e)
-    {
-      if(null!=Controller)
-        Controller.EhView_BackgroundStyleChanged(this._cbBackgroundStyle.SelectedIndex);
-    }
+  
 
-
-    private void EhBackgroundColor_SelectionChangeCommitted(object sender, System.EventArgs e)
-    {
-      if(null!=Controller)
-      {
-        string name = (string)this.m_cbBackgroundColor.SelectedItem;
-        if(name!="Custom")
-        {
-          Controller.EhView_BackgroundColorChanged(System.Drawing.Color.FromName(name));
-        }
-      }
-    }
+  
 
     private void EhFontSize_SelectionChangeCommitted(object sender, System.EventArgs e)
     {
@@ -565,6 +536,11 @@ namespace Altaxo.Gui.Graph
       box.SelectedItem = choosenfontfamily;
     }
 
+    public object BackgroundControl_Initialize(BackgroundStyleController controller)
+    {
+      _ctrlBackground.Controller = controller;
+      return _ctrlBackground;
+    }
 
     public void LabelColumn_Initialize(string labelColumnAsText)
     {
@@ -588,28 +564,7 @@ namespace Altaxo.Gui.Graph
       InitColorComboBox(this.m_cbColor,color);
     }
 
-    /// <summary>
-    /// Initializes the background styles.
-    /// </summary>
-    /// <param name="names"></param>
-    /// <param name="selection"></param>
-    public void BackgroundStyle_Initialize(string[] names, int selection)
-    {
-      this._cbBackgroundStyle.Items.AddRange(names);
-      this._cbBackgroundStyle.SelectedIndex = selection;
-    }
-
-    public void BackgroundColor_Initialize(System.Drawing.Color color)
-    {
-      InitColorComboBox(this.m_cbBackgroundColor,color);
-    }
-    /// <summary>
-    /// Initializes the enable state of the background color combo box.
-    /// </summary>
-    public void BackgroundColorEnable_Initialize(bool enable)
-    {
-      this.m_cbBackgroundColor.Enabled = enable;
-    }
+    
 
 
     public void FontSize_Initialize(string[] names, string name)

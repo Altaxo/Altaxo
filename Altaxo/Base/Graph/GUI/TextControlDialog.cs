@@ -39,7 +39,6 @@ namespace Altaxo.Graph.GUI
     private System.Windows.Forms.ComboBox m_cbFontSize;
     private System.Windows.Forms.ComboBox m_cbFontColor;
     private System.Windows.Forms.Label m_lblBackground;
-    private System.Windows.Forms.ComboBox m_cbBackground;
     private System.Windows.Forms.Label m_lblPosX;
     private System.Windows.Forms.TextBox m_edPosX;
     private System.Windows.Forms.Label m_lblPosY;
@@ -61,7 +60,9 @@ namespace Altaxo.Graph.GUI
     private float  m_Rotation; // original rotation of textobject
     private System.Windows.Forms.Button m_btNormal;
     private System.Windows.Forms.Button m_btStrikeout;
-    private bool   m_bDialogInitialized=false; // true if all dialog elements are initialized
+    private bool   m_bDialogInitialized=false;
+    private Altaxo.Gui.Graph.BackgroundStyleControl _ctrlBackgroundStyle; // true if all dialog elements are initialized
+    private Altaxo.Gui.Graph.BackgroundStyleController _backgroundStyleController;
     /// <summary>
     /// Required designer variable.
     /// </summary>
@@ -99,6 +100,10 @@ namespace Altaxo.Graph.GUI
     public void FillDialogElements()
     {
       string name=null;
+      _backgroundStyleController = new Altaxo.Gui.Graph.BackgroundStyleController(m_TextObject.Background);
+      _backgroundStyleController.ViewObject = _ctrlBackgroundStyle;
+      _ctrlBackgroundStyle.Controller = _backgroundStyleController;
+      _backgroundStyleController.TemporaryModelObjectChanged += this.EhBackgroundChanged;
 
       this.m_edText.Text = m_TextObject.Text;
 
@@ -142,10 +147,7 @@ namespace Altaxo.Graph.GUI
       this.m_cbFontColor.SelectedItem = name;
 
 
-      // fill the background dialog box
-      foreach(BackgroundStyle bgs in Enum.GetValues(typeof(BackgroundStyle)) )
-        this.m_cbBackground.Items.Add(bgs.ToString());
-      this.m_cbBackground.SelectedItem = this.m_TextObject.BackgroundStyle.ToString();
+      
     
     
       // indicate that all elements are now filled -
@@ -153,6 +155,14 @@ namespace Altaxo.Graph.GUI
       this.m_bDialogInitialized = true;
     }
 
+    protected override void OnClosing(CancelEventArgs e)
+    {
+      if (_backgroundStyleController.Apply())
+        m_TextObject.Background = (Altaxo.Graph.BackgroundStyles.IBackgroundStyle)_backgroundStyleController.ModelObject;
+      else
+        e.Cancel = true;
+      base.OnClosing(e);
+    }
 
     /// <summary>
     /// Clean up any resources being used.
@@ -176,14 +186,13 @@ namespace Altaxo.Graph.GUI
     /// </summary>
     private void InitializeComponent()
     {
-      System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(TextControlDialog));
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TextControlDialog));
       this.m_btOK = new System.Windows.Forms.Button();
       this.m_btCancel = new System.Windows.Forms.Button();
       this.m_cbFonts = new System.Windows.Forms.ComboBox();
       this.m_cbFontSize = new System.Windows.Forms.ComboBox();
       this.m_cbFontColor = new System.Windows.Forms.ComboBox();
       this.m_lblBackground = new System.Windows.Forms.Label();
-      this.m_cbBackground = new System.Windows.Forms.ComboBox();
       this.m_lblPosX = new System.Windows.Forms.Label();
       this.m_edPosX = new System.Windows.Forms.TextBox();
       this.m_lblPosY = new System.Windows.Forms.Label();
@@ -200,6 +209,7 @@ namespace Altaxo.Graph.GUI
       this.m_pnPreview = new System.Windows.Forms.Panel();
       this.m_btNormal = new System.Windows.Forms.Button();
       this.m_btStrikeout = new System.Windows.Forms.Button();
+      this._ctrlBackgroundStyle = new Altaxo.Gui.Graph.BackgroundStyleControl();
       this.SuspendLayout();
       // 
       // m_btOK
@@ -249,20 +259,11 @@ namespace Altaxo.Graph.GUI
       // 
       // m_lblBackground
       // 
-      this.m_lblBackground.Location = new System.Drawing.Point(176, 40);
+      this.m_lblBackground.Location = new System.Drawing.Point(22, 40);
       this.m_lblBackground.Name = "m_lblBackground";
       this.m_lblBackground.Size = new System.Drawing.Size(72, 16);
       this.m_lblBackground.TabIndex = 4;
       this.m_lblBackground.Text = "Background";
-      // 
-      // m_cbBackground
-      // 
-      this.m_cbBackground.Location = new System.Drawing.Point(264, 40);
-      this.m_cbBackground.Name = "m_cbBackground";
-      this.m_cbBackground.Size = new System.Drawing.Size(88, 21);
-      this.m_cbBackground.TabIndex = 5;
-      this.m_cbBackground.Text = "comboBox1";
-      this.m_cbBackground.SelectedIndexChanged += new System.EventHandler(this.OncbBackground_SelectedIndexChanged);
       // 
       // m_lblPosX
       // 
@@ -320,7 +321,7 @@ namespace Altaxo.Graph.GUI
       // 
       // m_btBold
       // 
-      this.m_btBold.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+      this.m_btBold.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.m_btBold.Image = ((System.Drawing.Image)(resources.GetObject("m_btBold.Image")));
       this.m_btBold.Location = new System.Drawing.Point(40, 112);
       this.m_btBold.Name = "m_btBold";
@@ -330,7 +331,7 @@ namespace Altaxo.Graph.GUI
       // 
       // m_btItalic
       // 
-      this.m_btItalic.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+      this.m_btItalic.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.m_btItalic.Image = ((System.Drawing.Image)(resources.GetObject("m_btItalic.Image")));
       this.m_btItalic.Location = new System.Drawing.Point(72, 112);
       this.m_btItalic.Name = "m_btItalic";
@@ -340,7 +341,7 @@ namespace Altaxo.Graph.GUI
       // 
       // m_btUnderline
       // 
-      this.m_btUnderline.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+      this.m_btUnderline.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.m_btUnderline.Image = ((System.Drawing.Image)(resources.GetObject("m_btUnderline.Image")));
       this.m_btUnderline.Location = new System.Drawing.Point(104, 112);
       this.m_btUnderline.Name = "m_btUnderline";
@@ -368,7 +369,7 @@ namespace Altaxo.Graph.GUI
       // 
       // m_btGreek
       // 
-      this.m_btGreek.Font = new System.Drawing.Font("Symbol", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+      this.m_btGreek.Font = new System.Drawing.Font("Symbol", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.m_btGreek.Image = ((System.Drawing.Image)(resources.GetObject("m_btGreek.Image")));
       this.m_btGreek.Location = new System.Drawing.Point(232, 112);
       this.m_btGreek.Name = "m_btGreek";
@@ -378,8 +379,8 @@ namespace Altaxo.Graph.GUI
       // 
       // m_edText
       // 
-      this.m_edText.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
+      this.m_edText.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.m_edText.Location = new System.Drawing.Point(8, 144);
       this.m_edText.Multiline = true;
       this.m_edText.Name = "m_edText";
@@ -391,9 +392,9 @@ namespace Altaxo.Graph.GUI
       // 
       // m_pnPreview
       // 
-      this.m_pnPreview.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-        | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
+      this.m_pnPreview.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.m_pnPreview.Location = new System.Drawing.Point(8, 240);
       this.m_pnPreview.Name = "m_pnPreview";
       this.m_pnPreview.Size = new System.Drawing.Size(408, 96);
@@ -418,10 +419,19 @@ namespace Altaxo.Graph.GUI
       this.m_btStrikeout.TabIndex = 18;
       this.m_btStrikeout.Click += new System.EventHandler(this.OnbtStrikeout_Click);
       // 
+      // _ctrlBackgroundStyle
+      // 
+      this._ctrlBackgroundStyle.Controller = null;
+      this._ctrlBackgroundStyle.Location = new System.Drawing.Point(100, 36);
+      this._ctrlBackgroundStyle.Name = "_ctrlBackgroundStyle";
+      this._ctrlBackgroundStyle.Size = new System.Drawing.Size(262, 30);
+      this._ctrlBackgroundStyle.TabIndex = 23;
+      // 
       // TextControlDialog
       // 
       this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
       this.ClientSize = new System.Drawing.Size(424, 342);
+      this.Controls.Add(this._ctrlBackgroundStyle);
       this.Controls.Add(this.m_btStrikeout);
       this.Controls.Add(this.m_btNormal);
       this.Controls.Add(this.m_pnPreview);
@@ -438,7 +448,6 @@ namespace Altaxo.Graph.GUI
       this.Controls.Add(this.m_lblRotation);
       this.Controls.Add(this.m_lblPosY);
       this.Controls.Add(this.m_lblPosX);
-      this.Controls.Add(this.m_cbBackground);
       this.Controls.Add(this.m_lblBackground);
       this.Controls.Add(this.m_cbFontColor);
       this.Controls.Add(this.m_cbFontSize);
@@ -448,6 +457,7 @@ namespace Altaxo.Graph.GUI
       this.Name = "TextControlDialog";
       this.Text = "Text Control";
       this.ResumeLayout(false);
+      this.PerformLayout();
 
     }
     #endregion
@@ -609,12 +619,12 @@ namespace Altaxo.Graph.GUI
       }   
     }
 
-    private void OncbBackground_SelectedIndexChanged(object sender, System.EventArgs e)
+
+    private void EhBackgroundChanged(object sender, System.EventArgs e)
     {
       if(m_bDialogInitialized)
       {
-        string str = (string)this.m_cbBackground.SelectedItem;
-        this.m_TextObject.BackgroundStyle = (BackgroundStyle)Enum.Parse(typeof(BackgroundStyle),str,true);
+        this.m_TextObject.Background = (Graph.BackgroundStyles.IBackgroundStyle)_backgroundStyleController.TemporaryModelObject;
         this.m_pnPreview.Invalidate();
       }   
     }

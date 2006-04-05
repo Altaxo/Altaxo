@@ -26,8 +26,11 @@ using System.Drawing.Drawing2D;
 using Altaxo.Serialization;
 using System.Text.RegularExpressions;
 
+
+
 namespace Altaxo.Graph
 {
+  using Altaxo.Graph.BackgroundStyles;
   public class TextItem
   {
     protected enum InnerType { Empty, Text, Symbol, PlotCurveName }
@@ -321,9 +324,9 @@ namespace Altaxo.Graph
     protected string m_Text = ""; // the text, which contains the formatting symbols
     protected Font m_Font;
     protected BrushHolder m_BrushHolder = new BrushHolder(Color.Black);
-    protected BackgroundStyle m_BackgroundStyle = BackgroundStyle.None;
+    protected IBackgroundStyle m_BackgroundStyle = null;
     protected float m_LineSpacingFactor=1.25f; // multiplicator for the line space, i.e. 1, 1.5 or 2
-    protected float m_ShadowLength=5.0f; // length of the background shadow in 1/72 inch
+   // protected float m_ShadowLength=5.0f; // length of the background shadow in 1/72 inch
 
     protected XAnchorPositionType m_XAnchorType = XAnchorPositionType.Left;
     protected YAnchorPositionType m_YAnchorType = YAnchorPositionType.Top;
@@ -346,6 +349,7 @@ namespace Altaxo.Graph
     protected float m_WidthOfOne_n = 0; // Width of the lower letter n
     protected float m_WidthOfThree_M = 0; // Width of three upper letters M
     protected PointF m_TextOffset; // offset of text to left upper corner of outer rectangle
+    protected RectangleF m_ExtendedTextBounds; // the text bounds extended by some margin around it
     #endregion // Cached or temporary variables
 
 
@@ -364,9 +368,8 @@ namespace Altaxo.Graph
       m_Text = info.GetString("Text");
       m_Font = (Font)info.GetValue("Font", typeof(Font));
       m_BrushHolder = (BrushHolder)info.GetValue("Brush", typeof(BrushHolder));
-      m_BackgroundStyle = (BackgroundStyle)info.GetValue("BackgroundStyle", typeof(BackgroundStyle));
+      m_BackgroundStyle = (IBackgroundStyle)info.GetValue("BackgroundStyle", typeof(IBackgroundStyle));
       m_LineSpacingFactor = info.GetSingle("LineSpacing");
-      m_ShadowLength = info.GetSingle("ShadowLength");
       m_XAnchorType = (XAnchorPositionType)info.GetValue("XAnchor", typeof(XAnchorPositionType));
       m_YAnchorType = (YAnchorPositionType)info.GetValue("YAnchor", typeof(YAnchorPositionType));
       return this;
@@ -380,7 +383,6 @@ namespace Altaxo.Graph
       info.AddValue("Brush", m_BrushHolder);
       info.AddValue("BackgroundStyle", m_BackgroundStyle);
       info.AddValue("LineSpacing", m_LineSpacingFactor);
-      info.AddValue("ShadowLength", m_ShadowLength);
       info.AddValue("XAnchor", m_XAnchorType);
       info.AddValue("YAnchor", m_YAnchorType);
     }
@@ -400,6 +402,8 @@ namespace Altaxo.Graph
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
+        throw new ApplicationException("This serializer is not the actual version, and should therefore not be called");
+        /*
         TextGraphics s = (TextGraphics)obj;
         info.AddBaseValueEmbedded(s,typeof(TextGraphics).BaseType);
 
@@ -411,7 +415,7 @@ namespace Altaxo.Graph
         info.AddValue("ShadowLength",s.m_ShadowLength);
         info.AddValue("XAnchor",s.m_XAnchorType);
         info.AddValue("YAnchor",s.m_YAnchorType);
-
+        */
       }
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
@@ -422,11 +426,47 @@ namespace Altaxo.Graph
         s.m_Text = info.GetString("Text");
         s.m_Font = (Font)info.GetValue("Font",typeof(Font));
         s.m_BrushHolder = (BrushHolder)info.GetValue("Brush",typeof(BrushHolder));
-        s.m_BackgroundStyle = (BackgroundStyle)info.GetValue("BackgroundStyle",typeof(BackgroundStyle));
+        s.BackgroundStyleOld = (BackgroundStyle)info.GetValue("BackgroundStyle",typeof(BackgroundStyle));
         s.m_LineSpacingFactor = info.GetSingle("LineSpacing");
-        s.m_ShadowLength = info.GetSingle("ShadowLength");
+        info.GetSingle("ShadowLength");
         s.m_XAnchorType = (XAnchorPositionType)info.GetValue("XAnchor",typeof(XAnchorPositionType));
         s.m_YAnchorType = (YAnchorPositionType)info.GetValue("YAnchor",typeof(YAnchorPositionType));
+
+        return s;
+      }
+    }
+
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(TextGraphics), 1)]
+    public class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        TextGraphics s = (TextGraphics)obj;
+        info.AddBaseValueEmbedded(s, typeof(TextGraphics).BaseType);
+
+        info.AddValue("Text", s.m_Text);
+        info.AddValue("Font", s.m_Font);
+        info.AddValue("Brush", s.m_BrushHolder);
+        info.AddValue("BackgroundStyle", s.m_BackgroundStyle);
+        info.AddValue("LineSpacing", s.m_LineSpacingFactor);
+        info.AddValue("XAnchor", s.m_XAnchorType);
+        info.AddValue("YAnchor", s.m_YAnchorType);
+
+      }
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+
+        TextGraphics s = null != o ? (TextGraphics)o : new TextGraphics();
+        info.GetBaseValueEmbedded(s, typeof(TextGraphics).BaseType, parent);
+
+        s.m_Text = info.GetString("Text");
+        s.m_Font = (Font)info.GetValue("Font", typeof(Font));
+        s.m_BrushHolder = (BrushHolder)info.GetValue("Brush", typeof(BrushHolder));
+        s.m_BackgroundStyle = (IBackgroundStyle)info.GetValue("BackgroundStyle", typeof(IBackgroundStyle));
+        s.m_LineSpacingFactor = info.GetSingle("LineSpacing");
+        s.m_XAnchorType = (XAnchorPositionType)info.GetValue("XAnchor", typeof(XAnchorPositionType));
+        s.m_YAnchorType = (YAnchorPositionType)info.GetValue("YAnchor", typeof(YAnchorPositionType));
 
         return s;
       }
@@ -446,9 +486,8 @@ namespace Altaxo.Graph
       m_Text = from.m_Text;
       m_Font = null==from.Font ? null : (Font)from.Font.Clone();
       m_BrushHolder = null==m_BrushHolder ? new BrushHolder(Color.Black):(BrushHolder)from.m_BrushHolder.Clone();
-      m_BackgroundStyle = from.BackgroundStyle;
+      m_BackgroundStyle = from.m_BackgroundStyle==null ? null : (IBackgroundStyle)from.m_BackgroundStyle.Clone();
       m_LineSpacingFactor = from.m_LineSpacingFactor;
-      m_ShadowLength = from.m_ShadowLength;
       m_XAnchorType = from.m_XAnchorType;
       m_YAnchorType = from.m_YAnchorType;
   
@@ -503,9 +542,8 @@ namespace Altaxo.Graph
       this.m_Text = from.m_Text;
       this.m_Font = from.m_Font==null ? null : (Font)from.m_Font.Clone();
       this.m_BrushHolder = from.m_BrushHolder==null ? null : (BrushHolder)from.m_BrushHolder.Clone();
-      this.m_BackgroundStyle = from.m_BackgroundStyle;
+      this.m_BackgroundStyle = from.m_BackgroundStyle == null ? null : (IBackgroundStyle)from.m_BackgroundStyle.Clone();
       this.m_LineSpacingFactor = from.m_LineSpacingFactor;
-      this.m_ShadowLength = from.m_ShadowLength;
       m_XAnchorType = from.m_XAnchorType;
       m_YAnchorType = from.m_YAnchorType;
 
@@ -974,12 +1012,12 @@ namespace Altaxo.Graph
       }
 
       // now measure the Background and the distance from outer rectangle to text
-      MeasureBackground();
+      MeasureBackground(g);
 
       m_bMeasureInSync = true;
     } // end of function MeasureStructure
 
-
+    /*
     protected void MeasureBackground()
     {
 
@@ -1030,16 +1068,116 @@ namespace Altaxo.Graph
       this.m_Bounds = new RectangleF(new PointF(-xanchor,-yanchor),size);
       this.m_TextOffset = new PointF(distanceXL,distanceYU);
     }
+     */
 
-    public BackgroundStyle BackgroundStyle
+    protected void MeasureBackground(Graphics g)
     {
-      get { return m_BackgroundStyle; }
+
+      float distanceXL = 0; // left distance bounds-text
+      float distanceXR = 0; // right distance text-bounds
+      float distanceYU = 0;   // upper y distance bounding rectangle-string
+      float distanceYL = 0; // lower y distance
+
+      
+      if (this.m_BackgroundStyle != null)
+      {
+        // the distance to the sides should be like the character n
+        distanceXL = 0.25f * m_WidthOfOne_n; // left distance bounds-text
+        distanceXR = distanceXL; // right distance text-bounds
+        distanceYU = m_cyBaseDescent;   // upper y distance bounding rectangle-string
+        distanceYL = 0; // lower y distance
+      }
+      
+      SizeF size = new SizeF(m_TextWidth + distanceXL + distanceXR, m_TextHeight + distanceYU + distanceYL);
+      m_ExtendedTextBounds = new RectangleF(PointF.Empty, size);
+      RectangleF textRectangle = new RectangleF(new PointF(-distanceXL, -distanceYU), size);
+
+      if (this.m_BackgroundStyle != null)
+      {
+        RectangleF backgroundRect = this.m_BackgroundStyle.MeasureItem(g, textRectangle);
+        m_ExtendedTextBounds.Offset(textRectangle.X - backgroundRect.X, textRectangle.Y - backgroundRect.Y);
+
+        size = backgroundRect.Size;
+        distanceXL = -backgroundRect.Left;
+        distanceXR = backgroundRect.Right - m_TextWidth;
+        distanceYU = -backgroundRect.Top;
+        distanceYL = backgroundRect.Bottom - m_TextHeight;
+      }
+
+      float xanchor = 0;
+      float yanchor = 0;
+      if (m_XAnchorType == XAnchorPositionType.Center)
+        xanchor = size.Width / 2.0f;
+      else if (m_XAnchorType == XAnchorPositionType.Right)
+        xanchor = size.Width;
+
+      if (m_YAnchorType == YAnchorPositionType.Center)
+        yanchor = size.Height / 2.0f;
+      else if (m_YAnchorType == YAnchorPositionType.Bottom)
+        yanchor = size.Height;
+
+      this.m_Bounds = new RectangleF(new PointF(-xanchor, -yanchor), size);
+      this.m_TextOffset = new PointF(distanceXL, distanceYU);
+      
+    }
+
+    public IBackgroundStyle Background
+    {
+      get
+      {
+        return m_BackgroundStyle;
+      }
       set
       {
-        if(m_BackgroundStyle != value)
+        m_BackgroundStyle = value;
+        m_bMeasureInSync = false;
+      }
+    }
+
+    private BackgroundStyle BackgroundStyleOld
+    {
+      get 
+      {
+        if (null == m_BackgroundStyle)
+          return BackgroundStyle.None;
+        else if (m_BackgroundStyle is BackgroundStyles.BlackLine)
+          return BackgroundStyle.BlackLine;
+        else if (m_BackgroundStyle is BackgroundStyles.BlackOut)
+          return BackgroundStyle.BlackOut;
+        else if (m_BackgroundStyle is BackgroundStyles.DarkMarbel)
+          return BackgroundStyle.DarkMarbel;
+        else if (m_BackgroundStyle is BackgroundStyles.RectangleWithShadow)
+          return BackgroundStyle.Shadow;
+        else if (m_BackgroundStyle is BackgroundStyles.WhiteOut)
+          return BackgroundStyle.WhiteOut;
+        else
+          return BackgroundStyle.None;
+      }
+      set
+      {
+        m_bMeasureInSync = false;
+
+        switch (value)
         {
-          m_BackgroundStyle = value;
-          MeasureBackground(); // measure the background again
+            
+          case BackgroundStyle.BlackLine:
+            m_BackgroundStyle = new BackgroundStyles.BlackLine();
+            break;
+          case BackgroundStyle.BlackOut:
+            m_BackgroundStyle = new BackgroundStyles.BlackOut();
+            break;
+          case BackgroundStyle.DarkMarbel:
+            m_BackgroundStyle = new BackgroundStyles.DarkMarbel();
+            break;
+          case BackgroundStyle.WhiteOut:
+            m_BackgroundStyle = new BackgroundStyles.WhiteOut();
+            break;
+          case BackgroundStyle.Shadow:
+            m_BackgroundStyle = new BackgroundStyles.RectangleWithShadow();
+            break;
+          case BackgroundStyle.None:
+            m_BackgroundStyle = null;
+            break;
         }
       }
     }
@@ -1121,42 +1259,9 @@ namespace Altaxo.Graph
 
       if(!this.m_bMeasureInSync)
         return;
-    
 
-      switch(this.m_BackgroundStyle)
-      {
-        default:
-        case BackgroundStyle.None:
-          break; // do nothing
-        case BackgroundStyle.BlackLine:
-          g.DrawRectangle(Pens.Black,0,0,m_Bounds.Width,m_Bounds.Height);
-          break;
-        case BackgroundStyle.BlackOut:
-          g.FillRectangle(Brushes.Black,0,0,m_Bounds.Width,m_Bounds.Height);
-          break;
-        case BackgroundStyle.WhiteOut:
-          g.FillRectangle(Brushes.White,0,0,m_Bounds.Width,m_Bounds.Height);
-          break;
-        case BackgroundStyle.Shadow:
-          // please note: m_Bounds is already extended to the shadow
-          g.FillRectangle(Brushes.Black,m_ShadowLength,m_ShadowLength,m_Bounds.Width-m_ShadowLength,m_Bounds.Height-m_ShadowLength);
-          g.FillRectangle(Brushes.White,0,0,m_Bounds.Width-m_ShadowLength,m_Bounds.Height-m_ShadowLength);
-          g.DrawRectangle(Pens.Black,0,0,m_Bounds.Width-m_ShadowLength,m_Bounds.Height-m_ShadowLength);
-          break;
-        case BackgroundStyle.DarkMarbel:
-          g.FillRectangle(Brushes.Black,0.0f,0.0f,m_Bounds.Width,m_Bounds.Height);
-          g.FillPolygon(Brushes.LightGray,new PointF[] {
-                                                         new PointF(0,0), // upper left point
-                                                         new PointF(m_Bounds.Width,0), // go to the right
-                                                         new PointF(m_Bounds.Width-m_ShadowLength,m_ShadowLength), // go 45 deg left down in the upper right corner
-                                                         new PointF(m_ShadowLength,m_ShadowLength), // upper left corner of the inner rectangle
-                                                         new PointF(m_ShadowLength,m_Bounds.Height-m_ShadowLength), // lower left corner of the inner rectangle
-                                                         new PointF(0,m_Bounds.Height) // lower left corner
-                                                       });
-
-          g.FillRectangle(Brushes.DimGray,m_ShadowLength,m_ShadowLength,m_Bounds.Width-2*m_ShadowLength,m_Bounds.Height-2*m_ShadowLength);
-          break;
-      } // end of switch BackgroundStyle
+      if (m_BackgroundStyle != null)
+        m_BackgroundStyle.Draw(g, m_ExtendedTextBounds);
     }
 
     public override void Paint(Graphics g, object obj)

@@ -248,6 +248,13 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Gui\Graph\ArrangeLayersController.cs" />
+    <Compile Include="Gui\Graph\BackgroundStyleControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\BackgroundStyleControl.Designer.cs">
+      <DependentUpon>BackgroundStyleControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\BackgroundStyleController.cs" />
     <Compile Include="Gui\Graph\PlottingRangeControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -1168,6 +1175,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Graph\ArrangeLayersControl.resx">
       <DependentUpon>ArrangeLayersControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\BackgroundStyleControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>BackgroundStyleControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Graph\PlottingRangeControl.resx">
       <SubType>Designer</SubType>
