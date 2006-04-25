@@ -915,6 +915,7 @@
     <Compile Include="Serialization\NumberParsing.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Serialization\Origin\OpjFile.cs" />
     <Compile Include="Serialization\SerializationAttributes.cs">
       <SubType>Code</SubType>
     </Compile>
