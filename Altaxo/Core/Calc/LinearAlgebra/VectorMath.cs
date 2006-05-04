@@ -98,6 +98,46 @@ namespace Altaxo.Calc.LinearAlgebra
       #endregion
     }
 
+    /// <summary>
+    /// Serves as wrapper for an IROVector to get only a section of the original wrapper.
+    /// </summary>
+    private class ROVectorSectionWrapper : IROVector
+    {
+      protected IROVector _x;
+      int _start;
+      int _length;
+
+      /// <summary>
+      /// Constructor, takes a double array for wrapping.
+      /// </summary>
+      /// <param name="x"></param>
+      /// <param name="start">Start index of the section to wrap.</param>
+      /// <param name="len">Length of the section to wrap.</param>
+      public ROVectorSectionWrapper(IROVector x, int start, int len)
+      {
+        if(start>=x.Length)
+          throw new ArgumentException("Start of the section is beyond length of the vector");
+       if (start+len>=x.Length)
+          throw new ArgumentException("End of the section is beyond length of the vector");
+       
+        _x = x;
+        _start = start;
+        _length = len;
+      }
+
+      /// <summary>Gets the value at index i with LowerBound &lt;= i &lt;=UpperBound.</summary>
+      /// <value>The element at index i.</value>
+      public double this[int i] { get { return _x[i+_start]; } }
+
+      /// <summary>The smallest valid index of this vector.</summary>
+      public int LowerBound { get { return 0; } }
+
+      /// <summary>The greates valid index of this vector. Is by definition LowerBound+Length-1.</summary>
+      public int UpperBound { get { return _length - 1; } }
+
+      /// <summary>The number of elements of this vector.</summary>
+      public int Length { get { return _length; } }  // change this later to length property
+    }
 
     private class ExtensibleVector : IExtensibleVector  
     {
@@ -263,6 +303,18 @@ namespace Altaxo.Calc.LinearAlgebra
     public static IROVector ToROVector(double[] x, int usedlength)
     {
       return new RODoubleArrayWrapper(x,usedlength);
+    }
+
+    /// <summary>
+    /// Wraps a section of a original vector <c>x</c> into a new vector.
+    /// </summary>
+    /// <param name="x">Original vector.</param>
+    /// <param name="start">Index of the start of the section to wrap.</param>
+    /// <param name="len">Length (=number of elements) of the section to wrap.</param>
+    /// <returns>A IROVector that contains the section from <c>start</c> to <c>start+len-1</c> of the original vector.</returns>
+    public static IROVector ToROVector(IROVector x, int start, int len)
+    {
+      return new ROVectorSectionWrapper(x, start, len);
     }
 
     /// <summary>

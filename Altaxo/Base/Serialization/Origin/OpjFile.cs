@@ -194,12 +194,12 @@ public int Parse()
       }
       else if (version == 210)
       {	// 5.0
-        version = 500;
+        version = 410;
         FILEPRE = 0x25;
-        HEAD = 0x22;
+        HEAD = 0x20;
         NEW_COL = 0x72;
         COL_SIZE = 0x1b;
-        valuesize = 11;
+        valuesize = 8;
       }
       else if (version == 2625)
       {	// 6.0
@@ -263,7 +263,7 @@ public int Parse()
         //fflush(debug);
         fstr.Seek(POS + PRE, SeekOrigin.Begin); //fseek(f,POS + PRE,SEEK_SET);
         f.Read(name, 0, 25); //fread(&name,25,1,f);
-        string[] namestring = enc.GetString(name).Split('_');
+        string[] namestring = enc.GetString(name).Split(new char[] { '_', '\0' });
         string sname = namestring[0]; //strtok(name,"_");	// spreadsheet name
         string cname = namestring[1];	// column name
         if (nr_spreads == 0 || sname != spreadname[nr_spreads - 1])
@@ -285,6 +285,7 @@ public int Parse()
         ////////////////////////////// SIZE of column /////////////////////////////////////////////
         fstr.Seek(POS + PRE + COL_SIZE, SeekOrigin.Begin); //fseek(f,POS+PRE+COL_SIZE,SEEK_SET);
         nr = f.ReadInt32(); //fread(&nr,4,1,f);
+        DATA = nr;
         nr /= valuesize;
         //fprintf(debug,"	[number of rows = %d @ 0x%X]\n",nr,POS+PRE+COL_SIZE);
         //fflush(debug);
@@ -308,7 +309,7 @@ public int Parse()
         //fprintf(debug,"\n");
         //fflush(debug);
 
-        DATA = valuesize * nr - 1;
+        DATA = DATA - 1;
         if (version == 410)
           POS += 2;
         int pos = POS + PRE + DATA + HEAD + 0x05;

@@ -2086,6 +2086,11 @@ namespace Altaxo.Graph
 
       _axisStyles.Paint(g, this);
 
+      foreach (PlotItem pi in _plotItems)
+      {
+        pi.Paint(g, this);
+      }
+
       _graphObjects.DrawObjects(g, 1, this);
 
       if(_legend!=null)
@@ -2097,10 +2102,7 @@ namespace Altaxo.Graph
         g.SetClip(new RectangleF(new PointF(0,0),this._cachedLayerSize));
       }
 
-      foreach(PlotItem pi in _plotItems)
-      {
-        pi.Paint(g,this);
-      }
+    
 
 
       g.Restore(savedgstate);

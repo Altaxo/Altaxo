@@ -53,8 +53,13 @@ namespace Altaxo.Calc.Regression
       _backgroundOrderPlus1 = 1 + Math.Max(-1, backgroundOrder);
 
       // where to start the calculation (index of first y point that can be used)
-      int start = Math.Max(_numX, _numY + 1);
-      int numberOfData = Math.Min(x.Length, y.Length) - start;
+      int start = Math.Max(_numX-1, _numY );
+      int numberOfData = 0;
+      if (numX > 0)
+        numberOfData = Math.Min(x.Length, y.Length) - start;
+      else
+        numberOfData = y.Length - start;
+
       int numberOfParameter = _numX + _numY + _backgroundOrderPlus1;
 
 
@@ -135,6 +140,41 @@ namespace Altaxo.Calc.Regression
       }
 
 
+    }
+
+    /// <summary>
+    /// Extrapolates y-values until the end of the vector by using linear prediction.
+    /// </summary>
+    /// <param name="yTraining">Input vector of y values used to calculated the prediction coefficients.
+    /// <param name="yPredValues">Input/output vector of y values to extrapolate.
+    /// The fields beginning from 0 to <c>len-1</c> must contain valid values used for initialization of the extrapolation.
+    /// At the end of the procedure, the upper end (<c>len</c> .. <c>yPredValues.Count-1</c> contain the 
+    /// extrapolated data.</param>
+    /// </param>
+    /// <param name="len">Number of valid input data points for extrapolation (not for the training data!).</param>
+    /// <param name="yOrder">Number of history samples used for prediction. Must be greater or equal to 1.</param>
+    public static DynamicParameterEstimation Extrapolate(IROVector yTraining, IVector yPredValues, int len, int yOrder)
+    {
+      if (yOrder < 1)
+        throw new ArgumentException("yOrder must be at least 1");
+      if (yOrder >= (yTraining.Length - yOrder))
+        throw new ArgumentException("Not enough data points for this degree (yOrder must be less than yTraining.Length/2).");
+
+      DynamicParameterEstimation est = new DynamicParameterEstimation();
+      est.Calculate(null, yTraining, 0, yOrder, 0);
+
+      // now calculate the extrapolation data
+      
+      for (int i = len; i < yPredValues.Length; i++)
+      {
+        double sum = 0;
+        for (int j = 0; j < yOrder; j++)
+        {
+          sum += yPredValues[i - j - 1] * est._parameter[j];
+        }
+        yPredValues[i] = sum;
+      }
+      return est;
     }
   }
 }

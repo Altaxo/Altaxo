@@ -22,17 +22,21 @@
 
 using System;
 using System.Drawing;
+using System.Runtime.Serialization;
 namespace Altaxo.Graph.BackgroundStyles
 {
   /// <summary>
   /// Backs the item with a color filled rectangle.
   /// </summary>
-  public class RectangleWithShadow : IBackgroundStyle
+  [Serializable]
+  public class RectangleWithShadow : IBackgroundStyle, IDeserializationCallback
   {
     protected Color _color = Color.White;
     protected float _shadowLength = 5;
 
+    [NonSerialized]
     protected Brush _cachedShadowBrush;
+    [NonSerialized]
     protected Brush _cachedFillBrush;
 
     #region Serialization
@@ -55,6 +59,15 @@ namespace Altaxo.Graph.BackgroundStyles
 
         return s;
       }
+    }
+
+    #endregion
+
+    #region IDeserializationCallback Members
+
+    public void OnDeserialization(object sender)
+    {
+      SetCachedBrushes();
     }
 
     #endregion
@@ -142,5 +155,6 @@ namespace Altaxo.Graph.BackgroundStyles
       }
     }
     #endregion
+
   }
 }

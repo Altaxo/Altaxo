@@ -145,7 +145,7 @@ namespace Altaxo.Graph.GUI
       
       if(bInit)
       {
-       
+        m_ItemArray.Clear();
         System.Collections.Hashtable addedItems = new System.Collections.Hashtable();
         for(int i=0;i<m_Layer.PlotItems.Count;i++)
         {
@@ -578,6 +578,7 @@ namespace Altaxo.Graph.GUI
           else
           {
             newplotgrp = (PlotGroup)tag;
+            newplotgrp.Clear();
           }
 
         

@@ -272,9 +272,9 @@ namespace Altaxo.Graph.GUI
     public void EhView_LinkedLayerChanged(string txt)
     {
       int linkedlayernumber = -1;
-
-      if(txt.StartsWith("XYPlotLayer "))
-        linkedlayernumber= System.Convert.ToInt32(txt.Substring(6));
+      string label = "XYPlotLayer ";
+      if(txt.StartsWith(label))
+        linkedlayernumber= System.Convert.ToInt32(txt.Substring(label.Length));
 
       m_LinkedLayer = linkedlayernumber<0 ? null : m_Layer.ParentLayerList[linkedlayernumber];
     }

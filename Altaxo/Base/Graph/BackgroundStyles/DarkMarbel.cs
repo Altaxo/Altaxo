@@ -22,12 +22,14 @@
 
 using System;
 using System.Drawing;
+using System.Runtime.Serialization;
 namespace Altaxo.Graph.BackgroundStyles
 {
   /// <summary>
   /// Backs the item with a color filled rectangle.
   /// </summary>
-  public class DarkMarbel : IBackgroundStyle
+  [Serializable]
+  public class DarkMarbel : IBackgroundStyle, IDeserializationCallback
   {
     protected Color _color = Color.LightGray;
     protected float _shadowLength = 5;
@@ -59,6 +61,14 @@ namespace Altaxo.Graph.BackgroundStyles
 
     #endregion
 
+    #region IDeserializationCallback Members
+
+    public void OnDeserialization(object sender)
+    {
+      SetCachedBrushes();
+    }
+
+    #endregion
 
     public DarkMarbel()
     {

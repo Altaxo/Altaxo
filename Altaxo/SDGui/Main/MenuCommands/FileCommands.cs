@@ -269,4 +269,24 @@ namespace Altaxo.Main.Commands
     }
   }
 
+  public class FileImportOriginOpj : AbstractMenuCommand
+  {
+    public override void Run()
+    {
+      using (OpenFileDialog openFileDialog1 = new OpenFileDialog())
+      {
+        openFileDialog1.Filter = "OPJ files (*.opj)|*.opj|All files (*.*)|*.*";
+        openFileDialog1.FilterIndex = 1;
+        openFileDialog1.RestoreDirectory = true;
+        openFileDialog1.Multiselect = false;
+
+        if (openFileDialog1.ShowDialog() == DialogResult.OK && openFileDialog1.FileName.Length > 0)
+        {
+          string result = Altaxo.Serialization.Origin.Importer.Import(openFileDialog1.FileName);
+          if (result != null)
+            Current.Gui.ErrorMessageBox(result);
+        }
+      }
+    }
+  }
 }

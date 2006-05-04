@@ -27,6 +27,7 @@ namespace Altaxo.Graph.BackgroundStyles
   /// <summary>
   /// Backs the item with a color filled rectangle.
   /// </summary>
+  [Serializable]
   public class BackgroundColorStyle : IBackgroundStyle
   {
     protected BrushHolder _brush;
