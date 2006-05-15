@@ -1,0 +1,165 @@
+// <file>
+//     <copyright see="prj:///doc/copyright.txt"/>
+//     <license see="prj:///doc/license.txt"/>
+//     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
+//     <version>$Revision: 915 $</version>
+// </file>
+
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
+using System.Globalization;
+using System.Windows.Forms;
+using ICSharpCode.Core;
+using ICSharpCode.SharpDevelop.Gui;
+
+namespace ICSharpCode.SharpDevelop.Project
+{
+	public abstract class ConfigurationGuiBinding
+	{
+		ConfigurationGuiHelper helper;
+		string property;
+		
+		public MSBuildProject Project {
+			get {
+				return helper.Project;
+			}
+		}
+		
+		public ConfigurationGuiHelper Helper {
+			get {
+				return helper;
+			}
+			internal set {
+				helper = value;
+			}
+		}
+		
+		public string Property {
+			get {
+				return property;
+			}
+			internal set {
+				property = value;
+			}
+		}
+		
+		PropertyStorageLocations defaultLocation = PropertyStorageLocations.Base;
+		
+		public PropertyStorageLocations DefaultLocation {
+			get {
+				return defaultLocation;
+			}
+			set {
+				defaultLocation = value;
+			}
+		}
+		
+		PropertyStorageLocations location = PropertyStorageLocations.Unknown;
+		ChooseStorageLocationButton storageLocationButton;
+		
+		public PropertyStorageLocations Location {
+			get {
+				return location;
+			}
+			set {
+				if (location != value) {
+					location = value;
+					if (storageLocationButton != null) {
+						storageLocationButton.StorageLocation = value;
+					}
+					helper.IsDirty = true;
+				}
+			}
+		}
+		
+		public ChooseStorageLocationButton CreateLocationButton()
+		{
+			ChooseStorageLocationButton btn = new ChooseStorageLocationButton();
+			if (location == PropertyStorageLocations.Unknown) {
+				btn.StorageLocation = defaultLocation;
+			} else {
+				btn.StorageLocation = location;
+			}
+			RegisterLocationButton(btn);
+			return btn;
+		}
+		
+		/// <summary>
+		/// Makes this configuration binding being controlled by the specified button.
+		/// Use this method if you want to use one ChooseStorageLocationButton to control
+		/// multiple properties.
+		/// </summary>
+		public void RegisterLocationButton(ChooseStorageLocationButton btn)
+		{
+			this.storageLocationButton = btn;
+			btn.StorageLocationChanged += delegate(object sender, EventArgs e) {
+				this.Location = ((ChooseStorageLocationButton)sender).StorageLocation;
+			};
+		}
+		
+		public ChooseStorageLocationButton CreateLocationButtonInPanel(string panelName)
+		{
+			ChooseStorageLocationButton btn = CreateLocationButton();
+			Control panel = Helper.ControlDictionary[panelName];
+			foreach (Control ctl in panel.Controls) {
+				if ((ctl.Anchor & AnchorStyles.Left) == AnchorStyles.Left) {
+					ctl.Left += btn.Width + 8;
+					if ((ctl.Anchor & AnchorStyles.Right) == AnchorStyles.Right) {
+						ctl.Width -= btn.Width + 8;
+					}
+				}
+			}
+			btn.Location = new Point(4, (panel.ClientSize.Height - btn.Height) / 2);
+			panel.Controls.Add(btn);
+			panel.Controls.SetChildIndex(btn, 0);
+			return btn;
+		}
+		
+		/// <summary>
+		/// Moves the control '<paramref name="controlName"/>' a bit to the right and inserts a
+		/// <see cref="ChooseStorageLocationButton"/>.
+		/// </summary>
+		public ChooseStorageLocationButton CreateLocationButton(string controlName)
+		{
+			return CreateLocationButton(Helper.ControlDictionary[controlName]);
+		}
+		
+		/// <summary>
+		/// Moves the <paramref name="replacedControl"/> a bit to the right and inserts a
+		/// <see cref="ChooseStorageLocationButton"/>.
+		/// </summary>
+		public ChooseStorageLocationButton CreateLocationButton(Control replacedControl)
+		{
+			ChooseStorageLocationButton btn = CreateLocationButton();
+			btn.Location = new Point(replacedControl.Left, replacedControl.Top + (replacedControl.Height - btn.Height) / 2);
+			replacedControl.Left  += btn.Width + 4;
+			replacedControl.Width -= btn.Width + 4;
+			replacedControl.Parent.Controls.Add(btn);
+			replacedControl.Parent.Controls.SetChildIndex(btn, replacedControl.Parent.Controls.IndexOf(replacedControl));
+			return btn;
+		}
+		
+		bool isFirstGet = true;
+		
+		public T Get<T>(T defaultValue)
+		{
+			if (isFirstGet) {
+				isFirstGet = false;
+				return helper.GetProperty(property, defaultValue, out location);
+			} else {
+				PropertyStorageLocations tmp;
+				return helper.GetProperty(property, defaultValue, out tmp);
+			}
+		}
+		
+		public void Set<T>(T value)
+		{
+			helper.SetProperty(property, value, location);
+		}
+		
+		public abstract void Load();
+		public abstract bool Save();
+	}
+}

@@ -1,12 +1,13 @@
 <?xml version="1.0"?>
 <Template originator   = "Mike Krueger"
           created      = "06/10/2001"
-          lastModified = "02/01/2003">
+          lastModified = "14/01/2006">
 	
 	<!-- Template Header -->
 	<TemplateConfiguration>
 		<Name>${res:Templates.Project.UserControlLibrary.Name}</Name>
 		<Category>C#</Category>
+		<Subcategory>${res:Templates.File.Categories.WindowsApplications}</Subcategory>
 		<Icon>C#.Project.ControlLibrary</Icon>
 		<LanguageName>C#</LanguageName>
 		<Description>${res:Templates.Project.UserControlLibrary.Description}</Description>
@@ -23,21 +24,30 @@
 		</Options>
 		
 		<Project name = "${ProjectName}" directory = ".">
-			<Options Target = "Library" PauseConsoleOutput = "False" />
+			<Options OutputType = "Library" />
+
+			<ProjectItems>
+				<Reference Include="System" />
+				<Reference Include="System.Data" />
+				<Reference Include="System.Drawing" />
+				<Reference Include="System.Windows.Forms" />
+				<Reference Include="System.Xml" />
+			</ProjectItems>
 
 			<Files>
 				<File name="UserControl1.cs"><![CDATA[${StandardHeader.C#}
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
-using System.ComponentModel;
 
 namespace ${StandardNamespace}
 {
 	/// <summary>
-	/// Description of UserControl1.	
+	/// Description of UserControl1.
 	/// </summary>
-	public class UserControl1 : System.Windows.Forms.UserControl
+	public partial class UserControl1
 	{
 		public UserControl1()
 		{
@@ -50,8 +60,32 @@ namespace ${StandardNamespace}
 			// TODO: Add constructor code after the InitializeComponent() call.
 			//
 		}
+	}
+}]]></File>
+<File name="UserControl1.Designer.cs" dependentUpon="UserControl1.cs" language="C#"><![CDATA[${StandardHeader.C#}
+namespace ${StandardNamespace}
+{
+	partial class UserControl1 : System.Windows.Forms.UserControl
+	{
+		/// <summary>
+		/// Designer variable used to keep track of non-visual components.
+		/// </summary>
+		private System.ComponentModel.IContainer components = null;
 		
-		#region Windows Forms Designer generated code
+		/// <summary>
+		/// Disposes resources used by the form.
+		/// </summary>
+		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing) {
+				if (components != null) {
+					components.Dispose();
+				}
+			}
+			base.Dispose(disposing);
+		}
+		
 		/// <summary>
 		/// This method is required for Windows Forms designer support.
 		/// Do not change the method contents inside the source code editor. The Forms designer might
@@ -62,12 +96,12 @@ namespace ${StandardNamespace}
 			// 
 			// UserControl1
 			// 
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Name = "UserControl1";
-			this.Size = new System.Drawing.Size(292, 266);
 		}
-		#endregion
 	}
-}]]></File>
+}
+]]></File>
 		<File name="AssemblyInfo.cs">
 			<![CDATA[using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -96,11 +130,6 @@ using System.Runtime.CompilerServices;
 
 [assembly: AssemblyVersion("1.0.*")]
 
-// The following attributes specify the key for the sign of your assembly. See the
-// .NET Framework documentation for more information about signing.
-// This is not required, if you don't want signing let these attributes like they're.
-[assembly: AssemblyDelaySign(false)]
-[assembly: AssemblyKeyFile("")]
 ]]></File>
 			</Files>
 		</Project>

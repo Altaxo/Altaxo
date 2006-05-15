@@ -21,12 +21,12 @@
 #endregion
 
 using System;
-using ICSharpCode.Core.Services;
-using ICSharpCode.Core.AddIns.Codons;
+using ICSharpCode.Core;
 
 using System.Collections;
 using System.Xml;
-using ICSharpCode.SharpDevelop.Internal.Project;
+using ICSharpCode.SharpDevelop.Internal;
+using ICSharpCode.SharpDevelop.Project;
 
 namespace Altaxo.Main.Commands
 {
@@ -42,9 +42,6 @@ namespace Altaxo.Main.Commands
 
       
       // get the parser service
-
-      ICSharpCode.SharpDevelop.Services.IParserService parserService = (ICSharpCode.SharpDevelop.Services.IParserService)ServiceManager.Services.GetService(typeof(ICSharpCode.SharpDevelop.Services.IParserService));
-
       HelperProject project = new HelperProject();
       System.Reflection.Assembly[] assemblies = System.AppDomain.CurrentDomain.GetAssemblies();
       foreach(System.Reflection.Assembly assembly in assemblies)
@@ -57,15 +54,12 @@ namespace Altaxo.Main.Commands
 
         // System.Diagnostics.Trace.WriteLine("Try to add assembly to reference:" + assembly.ToString());
 
-        ICSharpCode.SharpDevelop.Internal.Project.ProjectReference reference
-          = new ICSharpCode.SharpDevelop.Internal.Project.ProjectReference(ICSharpCode.SharpDevelop.Internal.Project.ReferenceType.Assembly, assembly.Location);
+        ICSharpCode.SharpDevelop.Project.ReferenceProjectItem reference
+          = new ICSharpCode.SharpDevelop.Project.ReferenceProjectItem(project, assembly.Location);
 
-        project.ProjectReferences.Add(reference);
-        parserService.AddReferenceToCompletionLookup(project,reference);
-
+        project.Items.Add(reference);
+        ParserService.CreateProjectContentForAddedProject(project);
       }
-      
-    
     }
 
 
@@ -73,31 +67,13 @@ namespace Altaxo.Main.Commands
     /// This class'es purpose in only to add assembly references to the parser service,
     /// since direct adding of assemblies is not possible in #D 0.98
     /// </summary>
-    private class HelperProject : ICSharpCode.SharpDevelop.Internal.Project.IProject
+    private class HelperProject : ICSharpCode.SharpDevelop.Project.IProject
     {
-      ICSharpCode.SharpDevelop.Internal.Project.Collections.ProjectReferenceCollection _projectReferences = new ICSharpCode.SharpDevelop.Internal.Project.Collections.ProjectReferenceCollection();
+      //ICSharpCode.SharpDevelop.Project.Collections.ProjectReferenceCollection _projectReferences = new ICSharpCode.SharpDevelop.Internal.Project.Collections.ProjectReferenceCollection();
 
       #region IProject Members
 
-      public ICSharpCode.SharpDevelop.Internal.Project.Collections.ProjectFileCollection ProjectFiles
-      {
-        get
-        {
-          throw new NotImplementedException();
-        }
-      }
-
-      public ICSharpCode.SharpDevelop.Internal.Project.NewFileSearch NewFileSearch
-      {
-        get
-        {
-          throw new NotImplementedException();
-        }
-        set
-        {
-          throw new NotImplementedException();
-        }
-      }
+     
 
       public string BaseDirectory
       {
@@ -125,13 +101,7 @@ namespace Altaxo.Main.Commands
         set {}
       }
 
-      public ICSharpCode.SharpDevelop.Internal.Project.DeployInformation DeployInformation
-      {
-        get
-        {
-          throw new NotImplementedException();
-        }
-      }
+     
 
       public bool IsFileInProject(string fileName)
       {
@@ -143,13 +113,7 @@ namespace Altaxo.Main.Commands
         throw new NotImplementedException();
       }
 
-      public ICSharpCode.SharpDevelop.Internal.Project.Collections.ProjectReferenceCollection ProjectReferences
-      {
-        get
-        {
-          return this._projectReferences;
-        }
-      }
+     
 
       public string Description
       {
@@ -165,13 +129,7 @@ namespace Altaxo.Main.Commands
 
       public event System.EventHandler NameChanged;
 
-      public ICSharpCode.SharpDevelop.Internal.Project.Collections.ConfigurationCollection Configurations
-      {
-        get
-        {
-          throw new NotImplementedException();
-        }
-      }
+     
 
       public string ProjectType
       {
@@ -181,17 +139,7 @@ namespace Altaxo.Main.Commands
         }
       }
 
-      public ICSharpCode.SharpDevelop.Internal.Project.IConfiguration ActiveConfiguration
-      {
-        get
-        {
-          throw new NotImplementedException();
-        }
-        set
-        {
-          throw new NotImplementedException();
-        }
-      }
+     
 
       public void LoadProject(string fileName)
       {
@@ -241,20 +189,7 @@ namespace Altaxo.Main.Commands
         }
       }
 
-      public IConfiguration CloneConfiguration(IConfiguration configuration)
-      {
-        throw new NotImplementedException();
-      }
-
-      public ICSharpCode.SharpDevelop.Internal.Project.IConfiguration CreateConfiguration()
-      {
-        throw new NotImplementedException();
-      }
-
-      ICSharpCode.SharpDevelop.Internal.Project.IConfiguration ICSharpCode.SharpDevelop.Internal.Project.IProject.CreateConfiguration(string name)
-      {
-        throw new NotImplementedException();
-      }
+    
 
       public void SaveProject(string fileName)
       {
@@ -268,6 +203,265 @@ namespace Altaxo.Main.Commands
       public void Dispose()
       {
         // TODO:  Add HelperProject.Dispose implementation
+      }
+
+      #endregion
+
+      #region IProject Members
+
+      public System.Collections.Generic.List<ProjectItem> Items
+      {
+        get { throw new Exception("The method or operation is not implemented."); }
+      }
+
+      public System.Collections.Generic.List<ProjectSection> ProjectSections
+      {
+        get { throw new Exception("The method or operation is not implemented."); }
+      }
+
+      public string Language
+      {
+        get { throw new Exception("The method or operation is not implemented."); }
+      }
+
+      public ICSharpCode.SharpDevelop.Dom.LanguageProperties LanguageProperties
+      {
+        get { throw new Exception("The method or operation is not implemented."); }
+      }
+
+      public IAmbience Ambience
+      {
+        get { throw new Exception("The method or operation is not implemented."); }
+      }
+
+      public string FileName
+      {
+        get
+        {
+          throw new Exception("The method or operation is not implemented.");
+        }
+        set
+        {
+          throw new Exception("The method or operation is not implemented.");
+        }
+      }
+
+      public string Directory
+      {
+        get { throw new Exception("The method or operation is not implemented."); }
+      }
+
+      public string Configuration
+      {
+        get
+        {
+          throw new Exception("The method or operation is not implemented.");
+        }
+        set
+        {
+          throw new Exception("The method or operation is not implemented.");
+        }
+      }
+
+      public string Platform
+      {
+        get
+        {
+          throw new Exception("The method or operation is not implemented.");
+        }
+        set
+        {
+          throw new Exception("The method or operation is not implemented.");
+        }
+      }
+
+      public string AssemblyName
+      {
+        get
+        {
+          throw new Exception("The method or operation is not implemented.");
+        }
+        set
+        {
+          throw new Exception("The method or operation is not implemented.");
+        }
+      }
+
+      public string DocumentationFileName
+      {
+        get { throw new Exception("The method or operation is not implemented."); }
+      }
+
+      public string OutputAssemblyFullPath
+      {
+        get { throw new Exception("The method or operation is not implemented."); }
+      }
+
+      public OutputType OutputType
+      {
+        get
+        {
+          throw new Exception("The method or operation is not implemented.");
+        }
+        set
+        {
+          throw new Exception("The method or operation is not implemented.");
+        }
+      }
+
+      public string RootNamespace
+      {
+        get
+        {
+          throw new Exception("The method or operation is not implemented.");
+        }
+        set
+        {
+          throw new Exception("The method or operation is not implemented.");
+        }
+      }
+
+      public string AppDesignerFolder
+      {
+        get
+        {
+          throw new Exception("The method or operation is not implemented.");
+        }
+        set
+        {
+          throw new Exception("The method or operation is not implemented.");
+        }
+      }
+
+      public System.Collections.Generic.List<string> GetConfigurationNames()
+      {
+        throw new Exception("The method or operation is not implemented.");
+      }
+
+      public System.Collections.Generic.List<string> GetPlatformNames()
+      {
+        throw new Exception("The method or operation is not implemented.");
+      }
+
+      public bool CanCompile(string fileName)
+      {
+        throw new Exception("The method or operation is not implemented.");
+      }
+
+      public void Save()
+      {
+        throw new Exception("The method or operation is not implemented.");
+      }
+
+      public void Save(string fileName)
+      {
+        throw new Exception("The method or operation is not implemented.");
+      }
+
+      public bool IsStartable
+      {
+        get { throw new Exception("The method or operation is not implemented."); }
+      }
+
+      public void Start(bool withDebugging)
+      {
+        throw new Exception("The method or operation is not implemented.");
+      }
+
+      public ParseProjectContent CreateProjectContent()
+      {
+        throw new Exception("The method or operation is not implemented.");
+      }
+
+      public ProjectItem CreateProjectItem(string itemType)
+      {
+        throw new Exception("The method or operation is not implemented.");
+      }
+
+      public void Build(MSBuildEngineCallback callback)
+      {
+        throw new Exception("The method or operation is not implemented.");
+      }
+
+      public void Rebuild(MSBuildEngineCallback callback)
+      {
+        throw new Exception("The method or operation is not implemented.");
+      }
+
+      public void Clean(MSBuildEngineCallback callback)
+      {
+        throw new Exception("The method or operation is not implemented.");
+      }
+
+      public void Publish(MSBuildEngineCallback callback)
+      {
+        throw new Exception("The method or operation is not implemented.");
+      }
+
+      #endregion
+
+      #region ISolutionFolder Members
+
+      public ISolutionFolderContainer Parent
+      {
+        get
+        {
+          throw new Exception("The method or operation is not implemented.");
+        }
+        set
+        {
+          throw new Exception("The method or operation is not implemented.");
+        }
+      }
+
+      public string TypeGuid
+      {
+        get
+        {
+          throw new Exception("The method or operation is not implemented.");
+        }
+        set
+        {
+          throw new Exception("The method or operation is not implemented.");
+        }
+      }
+
+      public string IdGuid
+      {
+        get
+        {
+          throw new Exception("The method or operation is not implemented.");
+        }
+        set
+        {
+          throw new Exception("The method or operation is not implemented.");
+        }
+      }
+
+      public string Location
+      {
+        get
+        {
+          throw new Exception("The method or operation is not implemented.");
+        }
+        set
+        {
+          throw new Exception("The method or operation is not implemented.");
+        }
+      }
+
+      #endregion
+
+      #region IMementoCapable Members
+
+      public Properties CreateMemento()
+      {
+        throw new Exception("The method or operation is not implemented.");
+      }
+
+      public void SetMemento(Properties memento)
+      {
+        throw new Exception("The method or operation is not implemented.");
       }
 
       #endregion

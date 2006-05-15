@@ -226,6 +226,7 @@ namespace Altaxo.Graph
 
         s.m_Layers          = (XYPlotLayerCollection)info.GetValue("LayerList",s);
         s.m_Layers.ParentObject = s;
+        s.m_Layers.SetPrintableGraphBounds(s.m_PrintableBounds, false);
 
         // new in version 1 - Add graph properties
         int numberproperties = info.OpenArray(); // "GraphProperties"

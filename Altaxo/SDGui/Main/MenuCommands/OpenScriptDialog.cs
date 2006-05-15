@@ -30,11 +30,8 @@ using Altaxo.Worksheet;
 using Altaxo.Worksheet.GUI;
 
 using ICSharpCode.SharpZipLib.Zip;
-using ICSharpCode.Core.AddIns.Codons;
 using ICSharpCode.SharpDevelop.Gui;
-using ICSharpCode.SharpDevelop.Services;
-using ICSharpCode.Core.AddIns;
-using ICSharpCode.Core.Services;
+using ICSharpCode.Core;
 
 
 namespace Altaxo.Worksheet.Commands
@@ -90,10 +87,10 @@ namespace Altaxo.Main.Commands.ScriptEditorCommands
           return ((ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor.SharpDevelopTextAreaControl)Owner).ActiveTextAreaControl.TextArea.ClipboardHandler.EnableCut;
 
         IWorkbenchWindow window   = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow;
-        IEditable        editable = window != null ? window.ActiveViewContent as IEditable : null;
+        IClipboardHandler editable = window != null ? window.ActiveViewContent as IClipboardHandler : null;
         if (editable != null) 
         {
-          return editable.ClipboardHandler.EnableCut;
+          return editable.EnableCut;
         }
         return false;
       }
@@ -110,10 +107,10 @@ namespace Altaxo.Main.Commands.ScriptEditorCommands
         }
 
         IWorkbenchWindow window   = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow;
-        IEditable        editable = window != null ? window.ActiveViewContent as IEditable : null;
+        IClipboardHandler editable = window != null ? window.ActiveViewContent as IClipboardHandler : null;
         if (editable != null) 
         {
-          editable.ClipboardHandler.Cut(null, null);
+          editable.Cut();
         }
       }
     }
@@ -129,10 +126,10 @@ namespace Altaxo.Main.Commands.ScriptEditorCommands
           return ((ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor.SharpDevelopTextAreaControl)Owner).ActiveTextAreaControl.TextArea.ClipboardHandler.EnableCopy;
 
         IWorkbenchWindow window   = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow;
-        IEditable        editable = window != null ? window.ActiveViewContent as IEditable : null;
+        IClipboardHandler editable = window != null ? window.ActiveViewContent as IClipboardHandler : null;
         if (editable != null) 
         {
-          return editable.ClipboardHandler.EnableCopy;
+          return editable.EnableCopy;
         }
         return false;
       }
@@ -148,10 +145,10 @@ namespace Altaxo.Main.Commands.ScriptEditorCommands
           return;
         }
         IWorkbenchWindow window   = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow;
-        IEditable        editable = window != null ? window.ActiveViewContent as IEditable : null;
+        IClipboardHandler editable = window != null ? window.ActiveViewContent as IClipboardHandler : null;
         if (editable != null) 
         {
-          editable.ClipboardHandler.Copy(null, null);
+          editable.Copy();
         }
       }
     }
@@ -167,10 +164,10 @@ namespace Altaxo.Main.Commands.ScriptEditorCommands
           return ((ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor.SharpDevelopTextAreaControl)Owner).ActiveTextAreaControl.TextArea.ClipboardHandler.EnablePaste;
 
         IWorkbenchWindow window   = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow;
-        IEditable        editable = window != null ? window.ActiveViewContent as IEditable : null;
+        IClipboardHandler editable = window != null ? window.ActiveViewContent as IClipboardHandler : null;
         if (editable != null) 
         {
-          return editable.ClipboardHandler.EnablePaste;
+          return editable.EnablePaste;
         }
         return false;
       }
@@ -185,10 +182,10 @@ namespace Altaxo.Main.Commands.ScriptEditorCommands
           return;
         }
         IWorkbenchWindow window   = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow;
-        IEditable        editable = window != null ? window.ActiveViewContent as IEditable : null;
+        IClipboardHandler editable = window != null ? window.ActiveViewContent as IClipboardHandler : null;
         if (editable != null) 
         {
-          editable.ClipboardHandler.Paste(null, null);
+          editable.Paste();
         }
       }
     }
@@ -204,10 +201,10 @@ namespace Altaxo.Main.Commands.ScriptEditorCommands
           return ((ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor.SharpDevelopTextAreaControl)Owner).ActiveTextAreaControl.TextArea.ClipboardHandler.EnableDelete;
 
         IWorkbenchWindow window   = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow;
-        IEditable        editable = window != null ? window.ActiveViewContent as IEditable : null;
+        IClipboardHandler editable = window != null ? window.ActiveViewContent as IClipboardHandler : null;
         if (editable != null) 
         {
-          return editable.ClipboardHandler.EnableDelete;
+          return editable.EnableDelete;
         }
         return false;
       }
@@ -221,12 +218,12 @@ namespace Altaxo.Main.Commands.ScriptEditorCommands
       }
 
       IWorkbenchWindow window = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow;
-      
-      if (window != null && window.ViewContent is IEditable) 
+
+      if (window != null && window.ViewContent is IClipboardHandler) 
       {
-        if (((IEditable)window.ViewContent).ClipboardHandler != null) 
+        if (((IClipboardHandler)window.ViewContent) != null) 
         {
-          ((IEditable)window.ViewContent).ClipboardHandler.Delete(null, null);
+          ((IClipboardHandler)window.ViewContent).Delete();
         }
       }
     }
@@ -279,10 +276,8 @@ namespace Altaxo.Main.Commands.ScriptEditorCommands
           } 
           else 
           {
-            ICSharpCode.SharpDevelop.Services.IProjectService projectService = (ICSharpCode.SharpDevelop.Services.IProjectService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(ICSharpCode.SharpDevelop.Services.IProjectService));
-            FileUtilityService fileUtilityService = (FileUtilityService)ServiceManager.Services.GetService(typeof(FileUtilityService));
-            projectService.MarkFileDirty(window.ViewContent.TitleName);
-            fileUtilityService.ObservedSave(new FileOperationDelegate(window.ViewContent.Save), window.ViewContent.TitleName);
+            ICSharpCode.SharpDevelop.Project.ProjectService.MarkFileDirty(window.ViewContent.TitleName);
+            FileUtility.ObservedSave(new FileOperationDelegate(window.ViewContent.Save), window.ViewContent.TitleName);
           }
         }
       }
@@ -296,58 +291,56 @@ namespace Altaxo.Main.Commands.ScriptEditorCommands
     public override void Run()
     {
       if(System.Windows.Forms.Form.ActiveForm.Modal)
-        return; 
+        return;
 
 
       IWorkbenchWindow window = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow;
-      
-      if (window != null) 
+
+      if (window != null)
       {
-        if (window.ViewContent.IsViewOnly) 
+        if (window.ViewContent.IsViewOnly)
         {
           return;
         }
-        if (window.ViewContent is ICustomizedCommands) 
+        if (window.ViewContent is ICustomizedCommands)
         {
-          if (((ICustomizedCommands)window.ViewContent).SaveAsCommand()) 
+          if (((ICustomizedCommands)window.ViewContent).SaveAsCommand())
           {
             return;
           }
         }
-        using (SaveFileDialog fdiag = new SaveFileDialog()) 
+        using (SaveFileDialog fdiag = new SaveFileDialog())
         {
           fdiag.OverwritePrompt = true;
-          fdiag.AddExtension    = true;
-          
-          string[] fileFilters  = (string[])(AddInTreeSingleton.AddInTree.GetTreeNode("/SharpDevelop/Workbench/FileFilter").BuildChildItems(this)).ToArray(typeof(string));
-          fdiag.Filter          = String.Join("|", fileFilters);
-          for (int i = 0; i < fileFilters.Length; ++i) 
+          fdiag.AddExtension = true;
+
+          string[] fileFilters = (string[])(AddInTree.GetTreeNode("/SharpDevelop/Workbench/FileFilter").BuildChildItems(this)).ToArray(typeof(string));
+          fdiag.Filter = String.Join("|", fileFilters);
+          for (int i = 0; i < fileFilters.Length; ++i)
           {
-            if (fileFilters[i].IndexOf(Path.GetExtension(window.ViewContent.TitleName == null ? window.ViewContent.UntitledName : window.ViewContent.TitleName)) >= 0) 
+            if (fileFilters[i].IndexOf(Path.GetExtension(window.ViewContent.FileName == null ? window.ViewContent.UntitledName : window.ViewContent.FileName)) >= 0)
             {
               fdiag.FilterIndex = i + 1;
               break;
             }
           }
-          
-          if (fdiag.ShowDialog() == DialogResult.OK) 
+
+          if (fdiag.ShowDialog(ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.MainForm) == DialogResult.OK)
           {
             string fileName = fdiag.FileName;
-            
-            IFileService fileService = (IFileService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IFileService));
-            FileUtilityService fileUtilityService = (FileUtilityService)ServiceManager.Services.GetService(typeof(FileUtilityService));
-            if (!fileUtilityService.IsValidFileName(fileName)) 
+
+
+
+            if (!FileService.CheckFileName(fileName))
             {
-              IMessageService messageService =(IMessageService)ServiceManager.Services.GetService(typeof(IMessageService));
-              messageService.ShowMessage("File name " + fileName +" is invalid");
               return;
             }
-            
-            if (fileUtilityService.ObservedSave(new NamedFileOperationDelegate(window.ViewContent.Save), fileName) == FileOperationResult.OK) 
+
+            if (FileUtility.ObservedSave(new NamedFileOperationDelegate(window.ViewContent.Save), fileName) == FileOperationResult.OK)
             {
-              fileService.RecentOpen.AddLastFile(fileName);
-              IMessageService messageService =(IMessageService)ServiceManager.Services.GetService(typeof(IMessageService));
-              messageService.ShowMessage(fileName, "File saved");
+              FileService.RecentOpen.AddLastFile(fileName);
+
+              MessageService.ShowMessage(fileName, "${res:ICSharpCode.SharpDevelop.Commands.SaveFile.FileSaved}");
             }
           }
         }

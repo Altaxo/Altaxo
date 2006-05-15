@@ -22,7 +22,7 @@
 
 using System;
 using System.Windows.Forms;
-using ICSharpCode.Core.AddIns.Codons;
+using ICSharpCode.Core;
 using Altaxo;
 using Altaxo.Main;
 using Altaxo.Worksheet;

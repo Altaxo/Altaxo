@@ -23,10 +23,6 @@ namespace WeifenLuo.WinFormsUI
 	internal class DockPanelPersist
 	{
 		private const string ConfigFileVersion = "0.9.3";
-		private static readonly string[] SupportedVersions = {"0.9.2", "0.9.3"};
-
-		// all version numbers for backward compatibility here are the indices in the SupportedVersions array
-		private const int PaneDockStateVersionIndex = 1; // from 0.9.3 on, Pane uses DockState instead of VisibleState
 
 		private class DummyContent : DockContent
 		{
@@ -410,8 +406,7 @@ namespace WeifenLuo.WinFormsUI
 				throw new ArgumentException(ResourceHelper.GetString("DockPanel.LoadFromXml.InvalidXmlFormat"));
 
 			string formatVersion = xmlIn.GetAttribute("FormatVersion");
-			int versionIndex = Array.IndexOf(SupportedVersions, formatVersion);
-			if (versionIndex < 0)
+			if (formatVersion != ConfigFileVersion)
 				throw new ArgumentException(ResourceHelper.GetString("DockPanel.LoadFromXml.InvalidFormatVersion"));
 			DockPanelStruct dockPanelStruct = new DockPanelStruct();
 			dockPanelStruct.DockLeftPortion = Convert.ToDouble(xmlIn.GetAttribute("DockLeftPortion"), CultureInfo.InvariantCulture);
@@ -453,8 +448,7 @@ namespace WeifenLuo.WinFormsUI
 				if (xmlIn.Name != "Pane" || id != i)
 					throw new ArgumentException(ResourceHelper.GetString("DockPanel.LoadFromXml.InvalidXmlFormat"));
 
-				string dockState = xmlIn.GetAttribute((versionIndex < PaneDockStateVersionIndex) ? "VisibleState" : "DockState");
-				panes[i].DockState = (DockState)dockStateConverter.ConvertFrom(dockState);
+				panes[i].DockState = (DockState)dockStateConverter.ConvertFrom(xmlIn.GetAttribute("DockState"));
 				panes[i].IndexActiveContent = Convert.ToInt32(xmlIn.GetAttribute("ActiveContent"));
 				panes[i].ZOrderIndex = -1;
 

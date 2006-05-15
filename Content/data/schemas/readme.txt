@@ -2,7 +2,8 @@ AddIn.xsd
 ---------
 
 SharpDevelop schema for .addin files.  
-Created by Ivo Kovacka.  
+Created by Ivo Kovacka.
+Doozers automatically updated by "BuildAddinDocumentation".
 GNU General Public License.
 
 
@@ -21,18 +22,11 @@ Created by Matt Ward
 GNU General Public License.
 
 
-NAnt-0.84.xsd
--------------
-
-http://nant.sourceforge.net/
-GNU General Public License.
-
-
 NAnt.xsd
 --------
 
-NAnt 0.85 RC 2 schema.
-http://nant.sourceforge.net/release/0.85-rc2/nant.xsd
+NAnt 0.85 RC 3 schema.
+http://nant.sourceforge.net/release/0.85-rc3/nant.xsd
 GNU General Public License.
 
 

@@ -22,7 +22,6 @@
 
 using System;
 using System.Windows.Forms;
-using ICSharpCode.Core.AddIns.Codons;
 using Altaxo;
 using Altaxo.Main;
 using Altaxo.Graph;
@@ -33,7 +32,7 @@ using ICSharpCode.SharpZipLib.Zip;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
-using ICSharpCode.Core.Services;
+using ICSharpCode.Core;
 
 namespace Altaxo.Graph.Commands
 {
@@ -572,6 +571,7 @@ namespace Altaxo.Graph.Commands
     /// </summary>
     public override void Run()
     {
+      base.Run();
     }
   }
 
@@ -621,8 +621,8 @@ namespace Altaxo.Graph.Commands
       bool bThisChecked = this.IsChecked; // only to retrieve the checked state
       if(bBaseChecked!=bThisChecked) // to prevent that every button "updates" the toolbar
       {
-        ICSharpCode.SharpDevelop.Gui.Workbench1 wb = Current.Workbench as ICSharpCode.SharpDevelop.Gui.Workbench1;
-        wb.UpdateToolbars();      
+        //ICSharpCode.SharpDevelop.Gui.Workbench1 wb = Current.Workbench as ICSharpCode.SharpDevelop.Gui.Workbench1;
+        //wb.UpdateToolbars();      
       }
     }
 
@@ -652,7 +652,7 @@ namespace Altaxo.Graph.Commands
           Controller.CurrentGraphToolType=typeof(GUI.GraphControllerMouseHandlers.ObjectPointerMouseHandler);
         }
 
-        ((ICSharpCode.SharpDevelop.Gui.DefaultWorkbench)ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.Workbench).UpdateToolbars();
+       // ((ICSharpCode.SharpDevelop.Gui.DefaultWorkbench)ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.Workbench).UpdateToolbars();
 
       }
     }
@@ -682,7 +682,7 @@ namespace Altaxo.Graph.Commands
           Controller.CurrentGraphToolType=typeof(GUI.GraphControllerMouseHandlers.TextToolMouseHandler);
         }
 
-        ((ICSharpCode.SharpDevelop.Gui.DefaultWorkbench)ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.Workbench).UpdateToolbars();
+        //((ICSharpCode.SharpDevelop.Gui.DefaultWorkbench)ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.Workbench).UpdateToolbars();
 
       }
     }
@@ -713,7 +713,7 @@ namespace Altaxo.Graph.Commands
           Controller.CurrentGraphToolType=typeof(GUI.GraphControllerMouseHandlers.ReadPlotItemDataMouseHandler);
         }
 
-        ((ICSharpCode.SharpDevelop.Gui.DefaultWorkbench)ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.Workbench).UpdateToolbars();
+        //((ICSharpCode.SharpDevelop.Gui.DefaultWorkbench)ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.Workbench).UpdateToolbars();
 
       }
     }
@@ -745,7 +745,7 @@ namespace Altaxo.Graph.Commands
           Controller.CurrentGraphToolType=typeof(GUI.GraphControllerMouseHandlers.ReadXYCoordinatesMouseHandler);
         }
 
-        ((ICSharpCode.SharpDevelop.Gui.DefaultWorkbench)ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.Workbench).UpdateToolbars();
+        //((ICSharpCode.SharpDevelop.Gui.DefaultWorkbench)ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.Workbench).UpdateToolbars();
 
       }
     }
@@ -774,7 +774,7 @@ namespace Altaxo.Graph.Commands
           Controller.CurrentGraphToolType=typeof(GUI.GraphControllerMouseHandlers.SingleLineDrawingMouseHandler);
         }
 
-        ((ICSharpCode.SharpDevelop.Gui.DefaultWorkbench)ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.Workbench).UpdateToolbars();
+       // ((ICSharpCode.SharpDevelop.Gui.DefaultWorkbench)ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.Workbench).UpdateToolbars();
 
       }
     }
@@ -805,7 +805,7 @@ namespace Altaxo.Graph.Commands
           Controller.CurrentGraphToolType=typeof(GUI.GraphControllerMouseHandlers.ArrowLineDrawingMouseHandler);
         }
 
-        ((ICSharpCode.SharpDevelop.Gui.DefaultWorkbench)ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.Workbench).UpdateToolbars();
+        //((ICSharpCode.SharpDevelop.Gui.DefaultWorkbench)ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.Workbench).UpdateToolbars();
 
       }
     }
@@ -837,7 +837,7 @@ namespace Altaxo.Graph.Commands
           Controller.CurrentGraphToolType=typeof(GUI.GraphControllerMouseHandlers.RectangleDrawingMouseHandler);
         }
 
-        ((ICSharpCode.SharpDevelop.Gui.DefaultWorkbench)ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.Workbench).UpdateToolbars();
+       // ((ICSharpCode.SharpDevelop.Gui.DefaultWorkbench)ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.Workbench).UpdateToolbars();
 
       }
     }
@@ -868,7 +868,7 @@ namespace Altaxo.Graph.Commands
           Controller.CurrentGraphToolType=typeof(GUI.GraphControllerMouseHandlers.EllipseDrawingMouseHandler);
         }
 
-        ((ICSharpCode.SharpDevelop.Gui.DefaultWorkbench)ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.Workbench).UpdateToolbars();
+       // ((ICSharpCode.SharpDevelop.Gui.DefaultWorkbench)ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.Workbench).UpdateToolbars();
 
       }
     }
@@ -895,12 +895,12 @@ namespace Altaxo.Graph.Commands
         if(true==value && null!=Controller)
         {
           Controller.CurrentGraphToolType=typeof(Altaxo.Graph.GUI.GraphControllerMouseHandlers.ZoomAxesMouseHandler);
-          ResourceService resourceService = (ResourceService)ServiceManager.Services.GetService(typeof(IResourceService));
-          Cursor cursor = resourceService.GetCursor("Cursors.32x32.ZoomAxes");
+          
+          Cursor cursor = ResourceService.GetCursor("Cursors.32x32.ZoomAxes");
           this.Controller.View.SetPanelCursor(cursor);
         }
 
-        ((ICSharpCode.SharpDevelop.Gui.DefaultWorkbench)ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.Workbench).UpdateToolbars();
+        //((ICSharpCode.SharpDevelop.Gui.DefaultWorkbench)ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.Workbench).UpdateToolbars();
 
       }
     }

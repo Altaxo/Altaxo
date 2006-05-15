@@ -23,12 +23,11 @@
 using System;
 using System.Windows.Forms;
 using System.IO;
-using ICSharpCode.Core.AddIns.Codons;
+using ICSharpCode.Core;
 using Altaxo;
 using Altaxo.Main;
 using ICSharpCode.SharpZipLib.Zip;
 using ICSharpCode.SharpDevelop.Gui;
-using ICSharpCode.Core.Services;
 
 namespace Altaxo.Main.Commands
 {
@@ -36,12 +35,11 @@ namespace Altaxo.Main.Commands
   {
     public override void Run()
     {
-      FileUtilityService fileUtilityService = (FileUtilityService)ServiceManager.Services.GetService(typeof(FileUtilityService));
-      string fileName = fileUtilityService.SharpDevelopRootPath + 
+      string fileName = FileUtility.ApplicationRootPath + 
         Path.DirectorySeparatorChar + "doc" +
         Path.DirectorySeparatorChar + "help" +
         Path.DirectorySeparatorChar + "AltaxoHelp.chm";
-      if (fileUtilityService.TestFileExists(fileName)) 
+      if (FileUtility.TestFileExists(fileName)) 
       {
         Help.ShowHelp((Form)WorkbenchSingleton.Workbench, fileName);
       }
@@ -52,12 +50,12 @@ namespace Altaxo.Main.Commands
   {
     public override void Run()
     {
-      FileUtilityService fileUtilityService = (FileUtilityService)ServiceManager.Services.GetService(typeof(FileUtilityService));
-      string fileName = fileUtilityService.SharpDevelopRootPath + 
+      
+      string fileName = FileUtility.ApplicationRootPath + 
         Path.DirectorySeparatorChar + "doc" +
         Path.DirectorySeparatorChar + "help" +
         Path.DirectorySeparatorChar + "AltaxoClassRef.chm";
-      if (fileUtilityService.TestFileExists(fileName)) 
+      if (FileUtility.TestFileExists(fileName)) 
       {
         Help.ShowHelp((Form)WorkbenchSingleton.Workbench, fileName);
       }

@@ -317,7 +317,7 @@ namespace Altaxo.Main.Services
 
       public int Count
       {
-        get { return _list.Count; }
+        get { return _list == null ? 0 : _list.Count; }
       }
 
       #endregion

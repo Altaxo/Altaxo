@@ -22,7 +22,7 @@
 
 using System;
 using System.Windows.Forms;
-using ICSharpCode.Core.AddIns.Codons;
+using ICSharpCode.Core;
 using Altaxo;
 using Altaxo.Main;
 using Altaxo.Worksheet;
@@ -32,17 +32,19 @@ using ICSharpCode.SharpZipLib.Zip;
 namespace Altaxo.Worksheet.Commands
 { 
 
+
+
+
   /// <summary>
   /// This condition is true if the active view content is a worksheet which contains PLS model data.
   /// </summary>
-  [ICSharpCode.Core.AddIns.Conditions.ConditionAttribute()]
-  public class PLSModelCondition : ICSharpCode.Core.AddIns.Conditions.AbstractCondition
+  public class PLSModelConditionEvaluator : IConditionEvaluator
   {
-    [ICSharpCode.Core.AddIns.XmlMemberAttribute("ContainsPLSModelData", IsRequired = true)]
-    string selectedData;
-
-    public override bool IsValid(object owner)
+    public bool IsValid(object caller, Condition condition)
     {
+
+      string selectedData = condition.Properties["ContainsPLSModelData"];
+
       if(Current.Workbench.ActiveViewContent==null)
         return false;
       if(!(Current.Workbench.ActiveViewContent is Altaxo.Worksheet.GUI.WorksheetController))

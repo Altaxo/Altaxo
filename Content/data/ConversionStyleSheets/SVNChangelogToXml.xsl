@@ -1,4 +1,4 @@
-<xsl:transform version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+﻿<xsl:transform version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	<xsl:template match="log">
 		<ChangeLog project="SharpDevelop">
 			<xsl:for-each select="./logentry">
@@ -8,7 +8,7 @@
 						<xsl:variable name="author">
 							<xsl:choose>
 								<xsl:when test="$orig_author = 'mikekrueger'">
-	   								<xsl:text>Mike Krueger</xsl:text>
+	   								<xsl:text>Mike Krüger</xsl:text>
 	  							</xsl:when>
 	  							<xsl:when test="$orig_author = 'roma'">
 	   								<xsl:text>Roman Taranchenko</xsl:text>
@@ -46,8 +46,11 @@
 	  							<xsl:when test="$orig_author = 'mattward'">
 									<xsl:text>Matt Ward</xsl:text>
 	  							</xsl:when>
-	  							<xsl:when test="$orig_author = 'ivokovacka'">
-									<xsl:text>Ifko Kovacka</xsl:text>
+	  							<xsl:when test="$orig_author = 'mathiassimmack'">
+									<xsl:text>Mathias Simmack</xsl:text>
+	  							</xsl:when>
+	  							<xsl:when test="$orig_author = 'davidsrbecky'">
+									<xsl:text>David Srbecký</xsl:text>
 	  							</xsl:when>
 	  							<xsl:otherwise>
 	  								<xsl:value-of select="./author" />

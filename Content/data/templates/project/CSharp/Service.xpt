@@ -1,12 +1,13 @@
 <?xml version="1.0"?>
 <Template originator   = "Mike Krueger"
           created      = "02/01/2003"
-          lastModified = "02/01/2003">
+          lastModified = "14/01/2006">
 	
 	<!-- Template Header -->
 	<TemplateConfiguration>
 		<Name>${res:Templates.Project.WindowsService.Name}</Name>
 		<Category>C#</Category>
+		<Subcategory>${res:Templates.File.Categories.WindowsApplications}</Subcategory>
 		<Icon>C#.Project.ServiceProject</Icon>
 		<LanguageName>C#</LanguageName>
 		<Description>${res:Templates.Project.WindowsService.Description}</Description>
@@ -14,7 +15,7 @@
 	
 	<!-- Actions -->
 	<Actions>
-		<Open filename = "MyService.cs"/>
+		<Open filename = "${ProjectName}.cs"/>
 	</Actions>
 
 	<!-- Template Content -->
@@ -24,48 +25,40 @@
 		</Options>
 		
 		<Project name = "${ProjectName}" directory = ".">
-			
-			<Options Target = "Library" PauseConsoleOutput = "False" />
-	
+			<Options />
+
+			<ProjectItems>
+				<Reference Include="System" />
+				<Reference Include="System.Data" />
+				<Reference Include="System.ServiceProcess" />
+				<Reference Include="System.Xml" />
+			</ProjectItems>
+
 			<Files>
-				<File name="MyService.cs"><![CDATA[${StandardHeader.C#}
+				<File name="${ProjectName}.cs"><![CDATA[${StandardHeader.C#}
+
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.ServiceProcess;
-using System.Configuration.Install;
+using System.Text;
 
 namespace ${StandardNamespace}
 {
-	/// <summary>
-	/// This is the class for my Service
-	/// </summary>
-	public class MyService : System.ServiceProcess.ServiceBase
+	public class ${ProjectName} : ServiceBase
 	{
-		public MyService()
+		public ${ProjectName}()
 		{
-			InitializeComponents();
-
-			// TODO: Add any further initialization code
-		}
-
-		private void InitializeComponents()
-		{
-			this.ServiceName = "MyService";
+			InitializeComponent();
 		}
 		
-		/// <summary>
-		/// This method starts the service.
-		/// </summary>
-		public static void Main()
+		private void InitializeComponent()
 		{
-			System.ServiceProcess.ServiceBase.Run(new System.ServiceProcess.ServiceBase[] {
-				new MyService() // To run more than one service you have to add them here
-			});
+			this.ServiceName = "${ProjectName}";
 		}
-
+		
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
@@ -74,43 +67,48 @@ namespace ${StandardNamespace}
 			// TODO: Add cleanup code here (if required)
 			base.Dispose(disposing);
 		}
-
+		
 		/// <summary>
 		/// Start this service.
 		/// </summary>
 		protected override void OnStart(string[] args)
 		{
-			// TODO: Add start code here (if required)
-			//       to start your service.
+			// TODO: Add start code here (if required) to start your service.
 		}
- 
+		
 		/// <summary>
 		/// Stop this service.
 		/// </summary>
 		protected override void OnStop()
 		{
-			// TODO: Add tear-down code here (if required) 
-			//       to stop your service.
+			// TODO: Add tear-down code here (if required) to stop your service.
 		}
 	}
 }
+]]></File>
+				<File name="Program.cs"><![CDATA[${StandardHeader.C#}
 
-[RunInstaller(true)]
-public class ProjectInstaller : Installer
+using System;
+using System.Collections.Generic;
+using System.ServiceProcess;
+using System.Text;
+
+namespace ${ProjectName}
 {
-	public ProjectInstaller()
+	static class Program
 	{
-		ServiceProcessInstaller spi = new ServiceProcessInstaller();
-		spi.Account = ServiceAccount.LocalSystem;
-		
-		ServiceInstaller si = new ServiceInstaller();
-		si.ServiceName = "Hello Service Template";
-		si.StartType = ServiceStartMode.Automatic;
-		Installers.AddRange(new Installer[] {spi, si});
+		/// <summary>
+		/// This method starts the service.
+		/// </summary>
+		static void Main()
+		{
+			// To run more than one service you have to add them here
+			ServiceBase.Run(new ServiceBase[] { new ${ProjectName}() });
+		}
 	}
 }
 ]]></File>
-			<File name="AssemblyInfo.cs"><![CDATA[using System.Reflection;
+				<File name="AssemblyInfo.cs"><![CDATA[using System.Reflection;
 using System.Runtime.CompilerServices;
 
 // Information about this assembly is defined by the following
@@ -137,11 +135,6 @@ using System.Runtime.CompilerServices;
 
 [assembly: AssemblyVersion("1.0.*")]
 
-// The following attributes specify the key for the sign of your assembly. See the
-// .NET Framework documentation for more information about signing.
-// This is not required, if you don't want signing let these attributes like they're.
-[assembly: AssemblyDelaySign(false)]
-[assembly: AssemblyKeyFile("")]
 ]]></File>
 			</Files>
 		</Project>

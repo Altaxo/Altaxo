@@ -52,7 +52,7 @@ namespace Altaxo.Main
   /// <summary>
   /// Summary description for PrintingService.
   /// </summary>
-  public class PrintingService :  ICSharpCode.Core.Services.AbstractService, IPrintingService
+  public class PrintingService :  IPrintingService
   {
   
     private System.Windows.Forms.PageSetupDialog m_PageSetupDialog;

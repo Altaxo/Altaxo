@@ -40,8 +40,9 @@ namespace Altaxo.Main.Services
 
     public FitFunctionService()
     {
-      ICSharpCode.Core.Services.PropertyService propserv = (ICSharpCode.Core.Services.PropertyService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(ICSharpCode.Core.Services.PropertyService));
-      string userFitFunctionDirectory = System.IO.Path.Combine(propserv.ConfigDirectory, "FitFunctionScripts");
+     
+     // ICSharpCode.Core.Services.PropertyService propserv = (ICSharpCode.Core.Services.PropertyService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(ICSharpCode.Core.Services.PropertyService));
+      string userFitFunctionDirectory = System.IO.Path.Combine(ICSharpCode.Core.PropertyService.ConfigDirectory, "FitFunctionScripts");
       _userFunctionService = new FileBasedFitFunctionService(userFitFunctionDirectory);
 
 

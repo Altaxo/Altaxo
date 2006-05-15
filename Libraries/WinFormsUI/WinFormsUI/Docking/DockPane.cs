@@ -9,6 +9,7 @@
 // *****************************************************************************
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -109,7 +110,7 @@ namespace WeifenLuo.WinFormsUI
 			SetStyle(ControlStyles.ResizeRedraw, true);
 			SetStyle(ControlStyles.UserPaint, true);
 			SetStyle(ControlStyles.AllPaintingInWmPaint, true);
-			SetStyle(ControlStyles.DoubleBuffer, true);
+			SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
 			SetStyle(ControlStyles.Selectable, true);
 
 			m_isFloat = (dockState == DockState.Float);
@@ -174,6 +175,7 @@ namespace WeifenLuo.WinFormsUI
 			base.Dispose(disposing);
 		}
 
+		private Stack<DockContent> m_visitedTabs = new Stack<DockContent>();
 		private DockContent m_activeContent = null;
 		/// <include file='CodeDoc\DockPane.xml' path='//CodeDoc/Class[@name="DockPane"]/Property[@name="ActiveContent"]/*'/>
 		public virtual DockContent ActiveContent
@@ -201,7 +203,15 @@ namespace WeifenLuo.WinFormsUI
 					DockPanel.ActiveAutoHideContent = null;
 
 				m_activeContent = value;
-
+				
+				if (m_activeContent != null && m_activeContent.DockState == DockState.Document)
+				{
+					if (!(m_visitedTabs.Count > 0 && m_visitedTabs.Peek() == m_activeContent))
+					{
+						m_visitedTabs.Push(m_activeContent);
+					}
+				}
+				
 				if (FloatWindow != null)
 					FloatWindow.SetText();
 
@@ -597,8 +607,9 @@ namespace WeifenLuo.WinFormsUI
 				// Need to set the visible content first, otherwise keyboard focus will be lost
 				if (ActiveContent != null)
 				{
-					ActiveContent.Visible = true;
 					ActiveContent.Bounds = rectContent;
+					ActiveContent.BringToFront();
+					ActiveContent.Visible = true;
 				}
 
 				// Hide all inactive contents
@@ -809,27 +820,46 @@ namespace WeifenLuo.WinFormsUI
 				return;
 
 			DockContent prevVisible = null;
-			for (int i=Contents.IndexOf(ActiveContent)-1; i>=0; i--)
-				if (Contents[i].DockState == DockState)
+			
+			if (ActiveContent.DockState == DockState.Unknown)
+			{
+				while(m_visitedTabs.Count > 0)
 				{
-					prevVisible = Contents[i];
-					break;
+					prevVisible = m_visitedTabs.Pop();
+					
+					if (prevVisible != null && !prevVisible.IsDisposed && prevVisible != ActiveContent)
+						break;
 				}
-
-			DockContent nextVisible = null;
-			for (int i=Contents.IndexOf(ActiveContent)+1; i<Contents.Count; i++)
-				if (Contents[i].DockState == DockState)
-				{
-					nextVisible = Contents[i];
-					break;
-				}
-
+			}
+			
 			if (prevVisible != null)
+			{
 				ActiveContent = prevVisible;
-			else if (nextVisible != null)
-				ActiveContent = nextVisible;
+			}
 			else
-				ActiveContent = null;
+			{
+				for (int i=Contents.IndexOf(ActiveContent)-1; i>=0; i--)
+					if (Contents[i].DockState == DockState)
+					{
+						prevVisible = Contents[i];
+						break;
+					}
+				
+				DockContent nextVisible = null;
+				for (int i=Contents.IndexOf(ActiveContent)+1; i<Contents.Count; i++)
+					if (Contents[i].DockState == DockState)
+					{
+						nextVisible = Contents[i];
+						break;
+					}
+			
+	 			if (prevVisible != null)
+	 				ActiveContent = prevVisible;
+				else if (nextVisible != null)
+					ActiveContent = nextVisible;
+	 			else
+	 				ActiveContent = null;
+			}
 		}
 
 		private static readonly object DockStateChangedEvent = new object();

@@ -30,14 +30,13 @@ using System.Windows.Forms;
 using System.ComponentModel;
 using System.Xml;
 
-using ICSharpCode.SharpDevelop.Internal.Project;
-using ICSharpCode.Core.AddIns;
-using ICSharpCode.Core.Properties;
+using ICSharpCode.SharpDevelop;
+using ICSharpCode.Core;
+using ICSharpCode.Core;
 
-using ICSharpCode.Core.Services;
-using ICSharpCode.SharpDevelop.Gui.Components;
-using ICSharpCode.SharpDevelop.Services;
-using Reflector.UserInterface;
+using ICSharpCode.SharpDevelop.Gui;
+
+
 
 namespace ICSharpCode.SharpDevelop.Gui
 {
@@ -46,8 +45,11 @@ namespace ICSharpCode.SharpDevelop.Gui
   /// </summary>
   public class Workbench1 : DefaultWorkbench, Altaxo.Main.GUI.IWorkbench
   {
-    readonly static string mainMenuPath    = "/Altaxo/Workbench/MainMenu";
-    readonly static string viewContentPath = "/SharpDevelop/Workbench/Views";
+
+    static Workbench1()
+    {
+      
+    }
 
     #region "Serialization"
   
@@ -71,10 +73,13 @@ namespace ICSharpCode.SharpDevelop.Gui
     public Workbench1()
       : base()
     {
-      ResourceService resourceService = (ResourceService)ServiceManager.Services.GetService(typeof(IResourceService));
-      Icon = resourceService.GetIcon("Icons.MainApplicationIcon");
+      mainMenuPath = "/Altaxo/Workbench/MainMenu";
+      viewContentPath = "/Altaxo/Workbench/Pads";
+      toolBarPath = "/Altaxo/Workbench/ToolBar";
+      
+      Icon = ResourceService.GetIcon("Icons.MainApplicationIcon");
     }
-
+    /*
     public new void InitializeWorkspace()
     {
       Menu = null;
@@ -90,20 +95,22 @@ namespace ICSharpCode.SharpDevelop.Gui
       CreateMainMenu();
       CreateToolBars();
     }
-
+    */
 
     void UpdateMenu(object sender, EventArgs e)
     {
+      /*
       UpdateMenus();
       UpdateToolbars();
+       */
     }
 
     void SetStandardStatusBar(object sender, EventArgs e)
     {
-      IStatusBarService statusBarService = (IStatusBarService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IStatusBarService));
-      statusBarService.SetMessage("${res:MainWindow.StatusBar.ReadyMessage}");
+      
+      StatusBarService.SetMessage("${res:MainWindow.StatusBar.ReadyMessage}");
     }
-
+    /*
     void CreateMainMenu()
     {
       TopMenu = new CommandBar(CommandBarStyle.Menu);
@@ -126,32 +133,30 @@ namespace ICSharpCode.SharpDevelop.Gui
         // Note: original ToolbarService don't support checked toolbar items
         AltaxoToolbarService toolBarService = (AltaxoToolbarService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(AltaxoToolbarService));
 #endif
-        CommandBar[] toolBars = toolBarService.CreateToolbars();
+        CommandBar[] toolBars = ToolBarService.CreateToolbars();
         ToolBars = toolBars;
       }
     }
-
+    */
    
     public void EhProjectChanged(object sender, Altaxo.Main.ProjectEventArgs e)
     {
       UpdateMenu(null, null);
-      ResourceService resourceService = (ResourceService)ServiceManager.Services.GetService(typeof(IResourceService));
-      Altaxo.Main.ProjectService projectService = (Altaxo.Main.ProjectService)ServiceManager.Services.GetService(typeof(Altaxo.Main.ProjectService));
       System.Text.StringBuilder title = new System.Text.StringBuilder();
-      title.Append(resourceService.GetString("MainWindow.DialogName"));
-      if (projectService != null) 
+      title.Append(ResourceService.GetString("MainWindow.DialogName"));
+      if (Altaxo.Current.ProjectService != null) 
       {
-        if(projectService.CurrentProjectFileName == null)
+        if (Altaxo.Current.ProjectService.CurrentProjectFileName == null)
         {
           title.Append(" - ");
-          title.Append(resourceService.GetString("Altaxo.Project.UntitledName"));
+          title.Append(ResourceService.GetString("Altaxo.Project.UntitledName"));
         }
         else
         {
           title.Append(" - ");
-          title.Append(projectService.CurrentProjectFileName);
+          title.Append(Altaxo.Current.ProjectService.CurrentProjectFileName);
         }
-        if(projectService.CurrentOpenProject!= null && projectService.CurrentOpenProject.IsDirty)
+        if (Altaxo.Current.ProjectService.CurrentOpenProject != null && Altaxo.Current.ProjectService.CurrentOpenProject.IsDirty)
           title.Append("*");
       } 
       this.Title = title.ToString();
@@ -159,7 +164,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 
     protected override void OnClosing(CancelEventArgs e)
     {
-      Altaxo.Main.ProjectService projectService = (Altaxo.Main.ProjectService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(Altaxo.Main.ProjectService));
+      Altaxo.Main.IProjectService projectService = Altaxo.Current.ProjectService;
       
       if (projectService != null)
       {

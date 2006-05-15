@@ -1,555 +1,259 @@
-<VisualStudioProject>
-    <CSHARP
-        ProjectType = "Local"
-        ProductVersion = "7.10.3077"
-        SchemaVersion = "2.0"
-        ProjectGuid = "{D3C782BA-178E-4235-A3BA-8C11DEBB6BEE}"
-    >
-        <Build>
-            <Settings
-                ApplicationIcon = ""
-                AssemblyKeyContainerName = ""
-                AssemblyName = "WeifenLuo.WinFormsUI.Docking"
-                AssemblyOriginatorKeyFile = ""
-                DefaultClientScript = "JScript"
-                DefaultHTMLPageLayout = "Grid"
-                DefaultTargetSchema = "IE50"
-                DelaySign = "false"
-                OutputType = "Library"
-                PreBuildEvent = ""
-                PostBuildEvent = ""
-                RootNamespace = "WeifenLuo.WinFormsUI"
-                RunPostBuildEvent = "OnBuildSuccess"
-                StartupObject = ""
-            >
-                <Config
-                    Name = "Debug"
-                    AllowUnsafeBlocks = "false"
-                    BaseAddress = "285212672"
-                    CheckForOverflowUnderflow = "false"
-                    ConfigurationOverrideFile = ""
-                    DefineConstants = "DEBUG;TRACE"
-                    DocumentationFile = ""
-                    DebugSymbols = "true"
-                    FileAlignment = "4096"
-                    IncrementalBuild = "true"
-                    NoStdLib = "false"
-                    NoWarn = ""
-                    Optimize = "false"
-                    OutputPath = "bin\Debug\"
-                    RegisterForComInterop = "false"
-                    RemoveIntegerChecks = "false"
-                    TreatWarningsAsErrors = "false"
-                    WarningLevel = "4"
-                />
-                <Config
-                    Name = "Release"
-                    AllowUnsafeBlocks = "false"
-                    BaseAddress = "285212672"
-                    CheckForOverflowUnderflow = "false"
-                    ConfigurationOverrideFile = ""
-                    DefineConstants = "TRACE"
-                    DocumentationFile = ""
-                    DebugSymbols = "false"
-                    FileAlignment = "4096"
-                    IncrementalBuild = "false"
-                    NoStdLib = "false"
-                    NoWarn = ""
-                    Optimize = "true"
-                    OutputPath = "bin\Release\"
-                    RegisterForComInterop = "false"
-                    RemoveIntegerChecks = "false"
-                    TreatWarningsAsErrors = "false"
-                    WarningLevel = "4"
-                />
-                <Config
-                    Name = "NDoc"
-                    AllowUnsafeBlocks = "false"
-                    BaseAddress = "285212672"
-                    CheckForOverflowUnderflow = "false"
-                    ConfigurationOverrideFile = ""
-                    DefineConstants = "NDOC"
-                    DocumentationFile = "CodeDoc\CodeDoc.xml"
-                    DebugSymbols = "true"
-                    FileAlignment = "4096"
-                    IncrementalBuild = "true"
-                    NoStdLib = "false"
-                    NoWarn = ""
-                    Optimize = "false"
-                    OutputPath = "bin\NDoc\"
-                    RegisterForComInterop = "false"
-                    RemoveIntegerChecks = "false"
-                    TreatWarningsAsErrors = "false"
-                    WarningLevel = "4"
-                />
-            </Settings>
-            <References>
-                <Reference
-                    Name = "System"
-                    AssemblyName = "System"
-                    HintPath = "..\..\..\..\..\..\WINNT\Microsoft.NET\Framework\v1.0.3705\System.dll"
-                />
-                <Reference
-                    Name = "System.XML"
-                    AssemblyName = "System.Xml"
-                    HintPath = "..\..\..\..\..\..\WINNT\Microsoft.NET\Framework\v1.0.3705\System.XML.dll"
-                />
-                <Reference
-                    Name = "System.Drawing"
-                    AssemblyName = "System.Drawing"
-                    HintPath = "..\..\..\..\..\..\WINNT\Microsoft.NET\Framework\v1.0.3705\System.Drawing.dll"
-                />
-                <Reference
-                    Name = "System.Windows.Forms"
-                    AssemblyName = "System.Windows.Forms"
-                    HintPath = "..\..\..\..\..\..\WINNT\Microsoft.NET\Framework\v1.0.3705\System.Windows.Forms.dll"
-                />
-                <Reference
-                    Name = "System.Design"
-                    AssemblyName = "System.Design"
-                    HintPath = "..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Design.dll"
-                />
-                <Reference
-                    Name = "System.Data"
-                    AssemblyName = "System.Data"
-                    HintPath = "..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Data.dll"
-                />
-            </References>
-        </Build>
-        <Files>
-            <Include>
-                <File
-                    RelPath = "AssemblyInfo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Strings.resX"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Controls\InertButton.cs"
-                    SubType = "Component"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Controls\CodeDoc\InertButton.xml"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "Docking\AutoHidePane.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Docking\AutoHidePaneCollection.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Docking\AutoHideStateCollection.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Docking\AutoHideStripBase.cs"
-                    SubType = "Component"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Docking\AutoHideStripVS2003.cs"
-                    SubType = "Component"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Docking\AutoHideTab.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Docking\AutoHideTabCollection.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Docking\AutoHideTabVS2003.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Docking\AutoHideWindow.cs"
-                    SubType = "Component"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Docking\AutoHideWindowSplitter.cs"
-                    SubType = "Component"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Docking\DisplayingDockList.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Docking\DockAreasEditor.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Docking\DockContent.cs"
-                    SubType = "Form"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Docking\DockContentCollection.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Docking\DockHelper.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Docking\DockList.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Docking\DockPane.cs"
-                    SubType = "UserControl"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Docking\DockPaneCaptionBase.cs"
-                    SubType = "Component"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Docking\DockPaneCaptionVS2003.cs"
-                    SubType = "Component"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Docking\DockPaneCollection.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Docking\DockPanel.cs"
-                    SubType = "Component"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Docking\DockPanelExtender.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Docking\DockPanelPersist.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Docking\DockPaneSplitter.cs"
-                    SubType = "Component"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Docking\DockPaneStripBase.cs"
-                    SubType = "Component"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Docking\DockPaneStripVS2003.cs"
-                    SubType = "Component"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Docking\DockPaneTab.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Docking\DockPaneTabCollection.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Docking\DockPaneTabVS2003.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Docking\DockWindow.cs"
-                    SubType = "Component"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Docking\DockWindowCollection.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Docking\DockWindowSplitter.cs"
-                    SubType = "Component"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Docking\DragHandler.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Docking\DragHandlerBase.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Docking\DummyControl.cs"
-                    SubType = "Component"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Docking\Enums.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Docking\EventArgs.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Docking\FloatWindow.cs"
-                    SubType = "Form"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Docking\FloatWindowCollection.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Docking\HiddenMdiChild.cs"
-                    SubType = "Form"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Docking\Interfaces.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Docking\Measures.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Docking\NestedDockingStatus.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Docking\SplitterBase.cs"
-                    SubType = "Component"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Docking\CodeDoc\AutoHidePane.xml"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "Docking\CodeDoc\AutoHidePaneCollection.xml"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "Docking\CodeDoc\AutoHideStripBase.xml"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "Docking\CodeDoc\AutoHideStripVS2003.xml"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "Docking\CodeDoc\AutoHideTab.xml"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "Docking\CodeDoc\AutoHideTabCollection.xml"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "Docking\CodeDoc\DisplayingDockList.xml"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "Docking\CodeDoc\DockContent.xml"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "Docking\CodeDoc\DockContentCollection.xml"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "Docking\CodeDoc\DockList.xml"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "Docking\CodeDoc\DockPane.xml"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "Docking\CodeDoc\DockPaneCaptionBase.xml"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "Docking\CodeDoc\DockPaneCaptionVS2003.xml"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "Docking\CodeDoc\DockPaneCollection.xml"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "Docking\CodeDoc\DockPanel.xml"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "Docking\CodeDoc\DockPanelExtender.xml"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "Docking\CodeDoc\DockPaneStripBase.xml"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "Docking\CodeDoc\DockPaneStripVS2003.xml"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "Docking\CodeDoc\DockPaneTab.xml"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "Docking\CodeDoc\DockPaneTabCollection.xml"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "Docking\CodeDoc\DockWindow.xml"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "Docking\CodeDoc\DockWindowCollection.xml"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "Docking\CodeDoc\Enums.xml"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "Docking\CodeDoc\EventArgs.xml"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "Docking\CodeDoc\FloatWindow.xml"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "Docking\CodeDoc\FloatWindowCollection.xml"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "Docking\CodeDoc\Interfaces.xml"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "Docking\CodeDoc\NestedDockingStatus.xml"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "Helpers\DrawHelper.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Helpers\Localization.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Helpers\LocalWindowsHook.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Helpers\ResourceHelper.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Resources\DockPaneCaption.AutoHideNo.bmp"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Resources\DockPaneCaption.AutoHideYes.bmp"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Resources\DockPaneCaption.CloseDisabled.bmp"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Resources\DockPaneCaption.CloseEnabled.bmp"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Resources\DockPaneStrip.CloseDisabled.bmp"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Resources\DockPaneStrip.CloseEnabled.bmp"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Resources\DockPaneStrip.ScrollLeftDisabled.bmp"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Resources\DockPaneStrip.ScrollLeftEnabled.bmp"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Resources\DockPaneStrip.ScrollRightDisabled.bmp"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Resources\DockPaneStrip.ScrollRightEnabled.bmp"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Win32\Enums.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Win32\Gdi32.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Win32\Structs.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Win32\User32.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-            </Include>
-        </Files>
-    </CSHARP>
-</VisualStudioProject>
-
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{E509019E-4028-4DB8-97B8-72FD390B3DB9}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <AssemblyName>WeifenLuo.WinFormsUI.Docking</AssemblyName>
+    <AssemblyOriginatorKeyFile>ICSharpCode.Core.snk</AssemblyOriginatorKeyFile>
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <OutputType>Library</OutputType>
+    <RootNamespace>WeifenLuo.WinFormsUI</RootNamespace>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <DefineConstants>TRACE</DefineConstants>
+    <DebugSymbols>false</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System">
+      <Name>System</Name>
+    </Reference>
+    <Reference Include="System.Data">
+      <Name>System.Data</Name>
+    </Reference>
+    <Reference Include="System.Design">
+      <Name>System.Design</Name>
+    </Reference>
+    <Reference Include="System.Drawing">
+      <Name>System.Drawing</Name>
+    </Reference>
+    <Reference Include="System.Windows.Forms">
+      <Name>System.Windows.Forms</Name>
+    </Reference>
+    <Reference Include="System.Xml">
+      <Name>System.XML</Name>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Controls\InertButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Docking\AutoHidePane.cs" />
+    <Compile Include="Docking\AutoHidePaneCollection.cs" />
+    <Compile Include="Docking\AutoHideStateCollection.cs" />
+    <Compile Include="Docking\AutoHideStripBase.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Docking\AutoHideStripVS2003.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Docking\AutoHideTab.cs" />
+    <Compile Include="Docking\AutoHideTabCollection.cs" />
+    <Compile Include="Docking\AutoHideTabVS2003.cs" />
+    <Compile Include="Docking\AutoHideWindow.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Docking\AutoHideWindowSplitter.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Docking\DisplayingDockList.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\DockAreasEditor.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\DockContent.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Docking\DockContentCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\DockHelper.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\DockList.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\DockPane.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Docking\DockPaneCaptionBase.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Docking\DockPaneCaptionVS2003.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Docking\DockPaneCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\DockPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Docking\DockPanelExtender.cs" />
+    <Compile Include="Docking\DockPanelPersist.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\DockPaneSplitter.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Docking\DockPaneStripBase.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Docking\DockPaneStripVS2003.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Docking\DockPaneTab.cs" />
+    <Compile Include="Docking\DockPaneTabCollection.cs" />
+    <Compile Include="Docking\DockPaneTabVS2003.cs" />
+    <Compile Include="Docking\DockWindow.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Docking\DockWindowCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\DockWindowSplitter.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Docking\DragHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\DragHandlerBase.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\DummyControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Docking\Enums.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\EventArgs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\FloatWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Docking\FloatWindowCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\HiddenMdiChild.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Docking\Interfaces.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\Measures.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\NestedDockingStatus.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\SplitterBase.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Helpers\DrawHelper.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Helpers\Localization.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Helpers\LocalWindowsHook.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Helpers\ResourceHelper.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Win32\Enums.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Win32\Gdi32.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Win32\Structs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Win32\User32.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <EmbeddedResource Include="Strings.resX" />
+    <EmbeddedResource Include="Resources\DockPaneCaption.AutoHideNo.bmp" />
+    <EmbeddedResource Include="Resources\DockPaneCaption.AutoHideYes.bmp" />
+    <EmbeddedResource Include="Resources\DockPaneCaption.CloseDisabled.bmp" />
+    <EmbeddedResource Include="Resources\DockPaneCaption.CloseEnabled.bmp" />
+    <EmbeddedResource Include="Resources\DockPaneStrip.CloseDisabled.bmp" />
+    <EmbeddedResource Include="Resources\DockPaneStrip.CloseEnabled.bmp" />
+    <EmbeddedResource Include="Resources\DockPaneStrip.ScrollLeftDisabled.bmp" />
+    <EmbeddedResource Include="Resources\DockPaneStrip.ScrollLeftEnabled.bmp" />
+    <EmbeddedResource Include="Resources\DockPaneStrip.ScrollRightDisabled.bmp" />
+    <EmbeddedResource Include="Resources\DockPaneStrip.ScrollRightEnabled.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Controls\CodeDoc\InertButton.xml" />
+    <Content Include="Docking\CodeDoc\AutoHidePane.xml" />
+    <Content Include="Docking\CodeDoc\AutoHidePaneCollection.xml" />
+    <Content Include="Docking\CodeDoc\AutoHideStripBase.xml" />
+    <Content Include="Docking\CodeDoc\AutoHideStripVS2003.xml" />
+    <Content Include="Docking\CodeDoc\AutoHideTab.xml" />
+    <Content Include="Docking\CodeDoc\AutoHideTabCollection.xml" />
+    <Content Include="Docking\CodeDoc\DisplayingDockList.xml" />
+    <Content Include="Docking\CodeDoc\DockContent.xml" />
+    <Content Include="Docking\CodeDoc\DockContentCollection.xml" />
+    <Content Include="Docking\CodeDoc\DockList.xml" />
+    <Content Include="Docking\CodeDoc\DockPane.xml" />
+    <Content Include="Docking\CodeDoc\DockPaneCaptionBase.xml" />
+    <Content Include="Docking\CodeDoc\DockPaneCaptionVS2003.xml" />
+    <Content Include="Docking\CodeDoc\DockPaneCollection.xml" />
+    <Content Include="Docking\CodeDoc\DockPanel.xml" />
+    <Content Include="Docking\CodeDoc\DockPanelExtender.xml" />
+    <Content Include="Docking\CodeDoc\DockPaneStripBase.xml" />
+    <Content Include="Docking\CodeDoc\DockPaneStripVS2003.xml" />
+    <Content Include="Docking\CodeDoc\DockPaneTab.xml" />
+    <Content Include="Docking\CodeDoc\DockPaneTabCollection.xml" />
+    <Content Include="Docking\CodeDoc\DockWindow.xml" />
+    <Content Include="Docking\CodeDoc\DockWindowCollection.xml" />
+    <Content Include="Docking\CodeDoc\Enums.xml" />
+    <Content Include="Docking\CodeDoc\EventArgs.xml" />
+    <Content Include="Docking\CodeDoc\FloatWindow.xml" />
+    <Content Include="Docking\CodeDoc\FloatWindowCollection.xml" />
+    <Content Include="Docking\CodeDoc\Interfaces.xml" />
+    <Content Include="Docking\CodeDoc\NestedDockingStatus.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ICSharpCode.Core.snk" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Configuration\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSHARP.Targets" />
+</Project>

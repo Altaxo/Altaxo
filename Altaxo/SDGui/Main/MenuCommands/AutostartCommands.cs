@@ -29,18 +29,14 @@ using System.Reflection;
 using System.Runtime.Remoting;
 using System.Security.Policy;
 
-using ICSharpCode.Core.Services;
-using ICSharpCode.Core.Properties;
-using ICSharpCode.Core.AddIns.Codons;
+using ICSharpCode.Core;
 
-using ICSharpCode.SharpDevelop.Services;
+
+
 using ICSharpCode.SharpDevelop.Gui;
-using ICSharpCode.SharpDevelop.Gui.Dialogs;
-//using ICSharpCode.SharpDevelop.Gui.ErrorHandlers;
 
-//#if OriginalCode
-using SharpDevelop.Internal.Parser;
-//#endif
+
+
 
 using ICSharpCode.SharpDevelop.Commands;
 
@@ -48,51 +44,21 @@ namespace Altaxo.Main.Commands // ICSharpCode.SharpDevelop.Commands
 {
   
 
-  public class InitializeWorkbench1Command : AbstractCommand
+  public class AutostartCommand : AbstractCommand
   {
     const string workbenchMemento = "SharpDevelop.Workbench.WorkbenchMemento";
     
     public override void Run()
     {
-
-      ICSharpCode.Core.Services.IResourceService resourceService = (ICSharpCode.Core.Services.IResourceService)ServiceManager.Services.GetService(typeof(ICSharpCode.Core.Services.IResourceService));
-      Altaxo.Current.SetResourceService(new ResourceServiceWrapper(resourceService));      
-      
-      Altaxo.Main.ProjectService projectService = (Altaxo.Main.ProjectService)ServiceManager.Services.GetService(typeof(Altaxo.Main.ProjectService));
-      Altaxo.Current.SetProjectService( projectService );
-
-      Altaxo.Main.IPrintingService printingService = (Altaxo.Main.IPrintingService)ServiceManager.Services.GetService(typeof(Altaxo.Main.IPrintingService));
-      Altaxo.Current.SetPrintingService( printingService );
-
+      Altaxo.Current.SetResourceService(new ResourceServiceWrapper());      
+      Altaxo.Current.SetProjectService( new Altaxo.Main.ProjectService() );
+      Altaxo.Current.SetPrintingService( new Altaxo.Main.PrintingService() );
       Altaxo.Current.SetGUIFactoryService( new Altaxo.Main.Services.GUIFactoryService() );
-
-      //Altaxo.MainController ctrl = new Altaxo.MainController(new Altaxo.AltaxoDocument());
-
-      Workbench1 w = new Workbench1();
-      Altaxo.Current.SetWorkbench ( w );
-      //Altaxo.Current.InitializeMainController(ctrl);
-      WorkbenchSingleton.Workbench = w;
-      
-      w.InitializeWorkspace();
-
-      projectService.ProjectChanged += new ProjectEventHandler(w.EhProjectChanged);
+      Altaxo.Current.SetWorkbench(WorkbenchSingleton.Workbench as Altaxo.Main.GUI.IWorkbench);
+      //Altaxo.Current.ProjectService.ProjectChanged += new ProjectEventHandler(Altaxo.Current.Workbench.EhProjectChanged);
       
       // we construct the main document (for now)
       Altaxo.Current.ProjectService.CurrentOpenProject = new AltaxoDocument();
-
-  
-      PropertyService propertyService = (PropertyService)ServiceManager.Services.GetService(typeof(PropertyService));
-      w.SetMemento((IXmlConvertable)propertyService.GetProperty(workbenchMemento, new WorkbenchMemento()));
-      w.UpdatePadContents(null, null);
-      
-#if !ModifiedForAltaxo
-      WorkbenchSingleton.CreateWorkspace();
-#else
-      w.WorkbenchLayout = new SdiWorkbenchLayout();
-      w.RedrawAllComponents();
-#endif  
-
-
       // less important services follow now
       Altaxo.Main.Services.FitFunctionService fitFunctionService = new Altaxo.Main.Services.FitFunctionService();
       Altaxo.Current.SetFitFunctionService(fitFunctionService);
@@ -100,26 +66,23 @@ namespace Altaxo.Main.Commands // ICSharpCode.SharpDevelop.Commands
 
     private class ResourceServiceWrapper : Altaxo.Main.Services.IResourceService
     {
-      ICSharpCode.Core.Services.IResourceService _service;
-      public ResourceServiceWrapper(ICSharpCode.Core.Services.IResourceService service)
+      public ResourceServiceWrapper()
       {
-        _service = service;
       }
 
       public string GetString(string name)
       {
-        return _service.GetString(name);
+        return ICSharpCode.Core.ResourceService.GetString(name);
       }
     }
   }
 
-
+  /*
   public class StartCodeCompletionWizard : AbstractCommand
   {
     public override void Run()
     {
-      PropertyService propertyService = (PropertyService)ServiceManager.Services.GetService(typeof(PropertyService));
-      string path = propertyService.GetProperty("SharpDevelop.CodeCompletion.DataDirectory", String.Empty).ToString();
+      string path = PropertyService.GetProperty("SharpDevelop.CodeCompletion.DataDirectory", String.Empty).ToString();
       FileUtilityService fileUtilityService = (FileUtilityService)ServiceManager.Services.GetService(typeof(FileUtilityService));
       string codeCompletionTemp = fileUtilityService.GetDirectoryNameWithSeparator(path);
       string codeCompletionProxyFile = codeCompletionTemp + "CodeCompletionProxyDataV02.bin";
@@ -345,7 +308,7 @@ namespace Altaxo.Main.Commands // ICSharpCode.SharpDevelop.Commands
   }
 
 
-
+  */
   
   
 }

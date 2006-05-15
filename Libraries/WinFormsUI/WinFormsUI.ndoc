@@ -1,6 +1,6 @@
 <project SchemaVersion="1.3">
     <assemblies>
-        <assembly location=".\WinFormsUI\bin\NDoc\WeifenLuo.WinFormsUI.Docking.dll" documentation=".\WinFormsUI\bin\NDoc\CodeDoc.xml" />
+        <assembly location=".\WinFormsUI\bin\Debug\WeifenLuo.WinFormsUI.Docking.dll" documentation=".\WinFormsUI\bin\Debug\CodeDoc.xml" />
     </assemblies>
     <documenters>
         <documenter name="JavaDoc">

@@ -2,11 +2,12 @@
 <Template author="Markus Palme" version="1.0">
 	
 	<Config
-		  name        = "${res:Templates.File.SingletonClass.Name}"
-		  icon        = "VB.File.NewClass"
-		  category    = "VB"
-		  defaultname = "SingletonClass${Number}.vb"
-		  language    = "VBNET"/>
+		name        = "${res:Templates.File.SingletonClass.Name}"
+		icon        = "VBNet.File.NewClass"
+		category    = "VB"
+		defaultname = "SingletonClass${Number}.vb"
+		language    = "VB"
+	/>
 	 
 	<Description>${res:Templates.File.SingletonClass.Description}</Description>
 	
@@ -21,26 +22,18 @@
 	 -->
 	<Files>
 		<File name="${FullName}" language="VBNET"><![CDATA[${StandardHeader.VBNET}
-
-Imports System
-
-Namespace ${StandardNamespace}
-	' Description of ${ClassName}.
-	Public NotInheritable Class ${ClassName}
+''' <summary>
+'' Description of ${ClassName}.
+''' </summary>
+Public NotInheritable Class ${ClassName}
+	Private Shared _instance As ${ClassName} = New ${ClassName}()
 	
-		Private Shared _instance As ${ClassName} = New ${ClassName}()
-		
-		Public ReadOnly Shared Property Instance As ${ClassName}
-			Get
-				Return _instance
-			End Get
-		End Property
-		
-		Private Sub New()
-		
-		End Sub
-	End Class
-End Namespace
+	Public Shared ReadOnly Property Instance As ${ClassName}
+		Get
+			Return _instance
+		End Get
+	End Property
+End Class
 ]]></File>
 	</Files>
 	

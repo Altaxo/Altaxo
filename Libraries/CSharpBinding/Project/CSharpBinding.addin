@@ -1,0 +1,92 @@
+<AddIn name        = "C# Binding"
+       author      = "Mike Krueger"
+       copyright   = "prj:///doc/copyright.txt"
+       description = "Backing binding for C#">
+	
+	<Manifest>
+		<Identity name = "ICSharpCode.CSharpBinding"/>
+	</Manifest>
+	
+	<Runtime>
+		<Import assembly = "CSharpBinding.dll"/>
+		<Import assembly = ":ICSharpCode.SharpDevelop"/>
+	</Runtime>
+	
+	<Path name = "/SharpDevelop/Workbench/Ambiences">
+		<Class id    = "C#"
+		       class = "ICSharpCode.Core.CSharpAmbience"/>
+	</Path>
+	
+	<Path name = "/SharpDevelop/Pads/ProjectBrowser/ContextMenu/ProjectActions/Convert">
+		<Condition name = "ProjectActive" activeproject="VBNet">
+			<MenuItem id = "VBToCSharpConverter"
+			          label = "${res:ICSharpCode.SharpDevelop.Commands.VBConvertProjectToCSharp}"
+			          class = "CSharpBinding.VBToCSharpConverter"/>
+		</Condition>
+	</Path>
+	
+	<Path name = "/SharpDevelop/Workbench/FileFilter">
+		<FileFilter id = "C#"
+		            insertbefore="AllFiles"
+		            name = "${res:SharpDevelop.FileFilter.CSharpFiles}"
+		            extensions = "*.cs"/>
+	</Path>
+	
+	<Path name = "/Workspace/Parser">
+		<Parser id    = "C#"
+		        supportedextensions  = ".cs"
+		        projectfileextension = ".csproj"
+		        class = "CSharpBinding.Parser.TParser"/>
+	</Path>
+	
+	<Path name = "/AddIns/DefaultTextEditor/CodeCompletion">
+		<CodeCompletionBinding id = "CSharp" extensions = ".cs" class = "CSharpBinding.CSharpCompletionBinding"/>
+	</Path>
+	
+	<Path path = "/SharpDevelop/BackendBindings/ProjectOptions/C#">
+		<DialogPanel id    = "Application"
+		             label = "${res:Dialog.ProjectOptions.ApplicationSettings}"
+		             class = "ICSharpCode.SharpDevelop.Gui.OptionPanels.ApplicationSettings"/>
+		<DialogPanel id    = "ReferencePaths"
+		             label = "${res:Dialog.ProjectOptions.ReferencePaths}"
+		             class = "ICSharpCode.SharpDevelop.Gui.OptionPanels.ReferencePaths"/>
+		<DialogPanel id    = "Signing"
+		             label = "${res:Dialog.ProjectOptions.Signing}"
+		             class = "ICSharpCode.SharpDevelop.Gui.OptionPanels.Signing"/>
+		<DialogPanel id    = "BuildEvents"
+		             label = "${res:Dialog.ProjectOptions.BuildEvents}"
+		             class = "ICSharpCode.SharpDevelop.Gui.OptionPanels.BuildEvents"/>
+		<DialogPanel id    = "BuildOptions"
+		             label = "${res:Dialog.ProjectOptions.BuildOptions}"
+		             class = "CSharpBinding.OptionPanels.BuildOptions"/>
+		<DialogPanel id    = "DebugOptions"
+		             label = "${res:Dialog.ProjectOptions.DebugOptions}"
+		             class = "ICSharpCode.SharpDevelop.Gui.OptionPanels.DebugOptions"/>
+		<!--<DialogPanel id    = "Publish"
+		             label = "${res:Dialog.ProjectOptions.Publish}"
+		             class = "ICSharpCode.SharpDevelop.Gui.OptionPanels.Publish"/>-->
+	</Path>
+	
+	<Path name = "/AddIns/DefaultTextEditor/Formatter/C#">
+		<Class id ="CSharpFormatter" class = "CSharpBinding.FormattingStrategy.CSharpFormattingStrategy"/>
+	</Path>
+	
+	<Path name = "/Workspace/Icons">
+		<!-- C# -->
+		<Icon id         = "C#Prj"
+		      language   = "C#"
+		      resource   = "C#.ProjectIcon"/>
+		
+		<Icon id         = "C#File"
+		      extensions = ".cs"
+		      resource   = "C#.FileIcon"/>
+	</Path>
+	
+	<Path path = "/SharpDevelop/Workbench/LanguageBindings">
+		<LanguageBinding id                   = "C#"
+		                 guid                 = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+		                 supportedextensions  = ".cs"
+		                 projectfileextension = ".csproj"
+		                 class                = "CSharpBinding.CSharpLanguageBinding" />
+	</Path>
+</AddIn>

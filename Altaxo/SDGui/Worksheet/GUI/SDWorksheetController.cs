@@ -22,12 +22,14 @@
 
 using System;
 using System.Windows.Forms;
+using System.Collections.Generic;
 using Altaxo;
 using Altaxo.Main;
 using Altaxo.Main.GUI;
 using Altaxo.Worksheet;
 using Altaxo.Worksheet.GUI;
 
+using ICSharpCode.Core;
 
 namespace Altaxo.Worksheet.GUI
 {
@@ -89,8 +91,7 @@ namespace Altaxo.Worksheet.GUI
         this.SelectedDataColumns.Add(clickedCell.Column);
         this.m_View.TableAreaInvalidate();
       }
-      ICSharpCode.SharpDevelop.Services.MenuService menuService = (ICSharpCode.SharpDevelop.Services.MenuService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(ICSharpCode.SharpDevelop.Services.MenuService));
-      ContextMenu mnu = menuService.CreateContextMenu(this, "/Altaxo/Views/Worksheet/DataColumnHeader/ContextMenu");
+      ContextMenuStrip mnu = MenuService.CreateContextMenu(this, "/Altaxo/Views/Worksheet/DataColumnHeader/ContextMenu");
       mnu.Show(this.Control,clickedCell.MousePositionFirstDown);
     }
 
@@ -358,7 +359,7 @@ namespace Altaxo.Worksheet.GUI
       get { return true; }
     }
     
-    public void Cut(object sender, EventArgs e)
+    public void Cut()
     {
       if(this.m_CellEdit_IsArmed)
       {
@@ -371,7 +372,7 @@ namespace Altaxo.Worksheet.GUI
       }
     }
 
-    public void Copy(object sender, EventArgs e)
+    public void Copy()
     {
       if(this.m_CellEdit_IsArmed)
       {
@@ -384,7 +385,7 @@ namespace Altaxo.Worksheet.GUI
       }
     
     }
-    public void Paste(object sender, EventArgs e)
+    public void Paste()
     {
       if(this.m_CellEdit_IsArmed)
       {
@@ -395,7 +396,7 @@ namespace Altaxo.Worksheet.GUI
         Commands.EditCommands.PasteFromClipboard(this);
       }
     }
-    public void Delete(object sender, EventArgs e)
+    public void Delete()
     {
       if(this.m_CellEdit_IsArmed)
       {
@@ -411,7 +412,7 @@ namespace Altaxo.Worksheet.GUI
         Current.ProjectService.DeleteTable(this.DataTable,false);
       }
     }
-    public void SelectAll(object sender, EventArgs e)
+    public void SelectAll()
     {
       if(this.DataTable.DataColumns.ColumnCount>0)
       {
@@ -424,5 +425,30 @@ namespace Altaxo.Worksheet.GUI
     #endregion
 
 
+
+    #region IViewContent Members
+
+
+    public System.Collections.Generic.List<ICSharpCode.SharpDevelop.Gui.ISecondaryViewContent> SecondaryViewContents
+    {
+      get 
+      {
+        return new List<ICSharpCode.SharpDevelop.Gui.ISecondaryViewContent>(); // is empty
+      }
+    }
+
+    #endregion
+
+    #region IBaseViewContent Members
+
+
+    public void Deselecting()
+    {
+      throw new Exception("The method or operation is not implemented.");
+    }
+
+    #endregion
+
+   
   }
 }

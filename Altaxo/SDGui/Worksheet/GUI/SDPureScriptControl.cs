@@ -30,6 +30,7 @@ using System.Windows.Forms;
 using Altaxo.Main.GUI;
 using Altaxo.Gui.Scripting;
 
+using ICSharpCode.Core;
 
 namespace Altaxo.Worksheet.GUI
 {
@@ -47,7 +48,7 @@ namespace Altaxo.Worksheet.GUI
 
     private ICSharpCode.TextEditor.TextEditorControl edFormula;
     private ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor.TextEditorDisplayBindingWrapper edFormulaWrapper;
-    ICSharpCode.SharpDevelop.Services.DefaultParserService _parserService = (ICSharpCode.SharpDevelop.Services.DefaultParserService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(ICSharpCode.SharpDevelop.Services.DefaultParserService));
+    //ICSharpCode.SharpDevelop.Services.DefaultParserService _parserService = (ICSharpCode.SharpDevelop.Services.DefaultParserService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(ICSharpCode.SharpDevelop.Services.DefaultParserService));
 
 
     public SDPureScriptControl()
@@ -88,22 +89,19 @@ namespace Altaxo.Worksheet.GUI
     bool _registered;
     void Register()
     {
-      if(_parserService!=null)
-      {
         if(!_registered)
         {
           _registered = true;
-          _parserService.RegisterModalContent(EditableContent);
+          ParserService.RegisterModalContent(EditableContent);
         }
-      }
+      
     }
     void Unregister()
     {
-      if(_parserService!=null)
-      {
-        _parserService.UnregisterModalContent();
-        _registered = false;
-      }
+
+      ParserService.UnregisterModalContent();
+      _registered = false;
+     
     }
   
     private object EditableContent

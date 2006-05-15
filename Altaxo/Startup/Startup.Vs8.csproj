@@ -1,12 +1,12 @@
 ﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
-    <ProductVersion>8.0.50215</ProductVersion>
+    <ProductVersion>8.0.50727</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{63420446-3D85-4D00-BA9E-9EA7680B87E0}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ApplicationIcon>App.ico</ApplicationIcon>
+    <ApplicationIcon>Altaxo.ico</ApplicationIcon>
     <AssemblyKeyContainerName>
     </AssemblyKeyContainerName>
     <AssemblyName>AltaxoStartup</AssemblyName>
@@ -28,13 +28,13 @@
     </UpgradeBackupLocation>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <OutputPath>bin\debug\</OutputPath>
+    <OutputPath>..\..\rtdebug\bin\</OutputPath>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <BaseAddress>285212672</BaseAddress>
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
-    <DefineConstants>DEBUG;TRACE;LellidMod</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;ModifiedForAltaxo</DefineConstants>
     <DocumentationFile>
     </DocumentationFile>
     <DebugSymbols>true</DebugSymbols>
@@ -73,6 +73,7 @@
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
+    <Reference Include="System.configuration" />
     <Reference Include="System.Data">
       <Name>System.Data</Name>
     </Reference>
@@ -85,55 +86,63 @@
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
-    <ProjectReference Include="..\..\Libraries\CommandBar\zCommandBar.Vs8.csproj">
-      <Name>zCommandBar.Vs8</Name>
-      <Project>{397ADB5E-E608-4304-A3F7-F97E62B33932}</Project>
-      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Libraries\ICSharpCode.Core\zICSharpCode.Core.Vs8.csproj">
-      <Name>zICSharpCode.Core.Vs8</Name>
-      <Project>{A1006FEB-2FFC-4507-8D82-265130CDD08E}</Project>
-      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Libraries\SharpDevelop.Base\zSharpDevelop.Base.Vs8.csproj">
-      <Name>zSharpDevelop.Base.Vs8</Name>
-      <Project>{AF2C9C35-FC89-4648-9D13-26538C00AFE1}</Project>
-      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Libraries\WinFormsUI\WinFormsUI\zWinFormsUI.Vs8.csproj">
-      <Name>zWinFormsUI.Vs8</Name>
-      <Project>{D3C782BA-178E-4235-A3BA-8C11DEBB6BEE}</Project>
-      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Altaxo.ico" />
     <Content Include="AltaxoCore.addin" />
-    <Compile Include="AltaxoStartup.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="AssemblyInfo.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Dialogs\AddInTreeSettingsHandler.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Content Include="Resources\SharpDevelop.ico" />
+    <EmbeddedResource Include="Resources\SplashScreen.jpg" />
+    <Compile Include="Configuration\AssemblyInfo.cs" />
     <Compile Include="Dialogs\ExceptionBox.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Dialogs\SplashScreen.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="SharpDevelopMain.cs" />
     <None Include="AltaxoStartup.exe.config" />
+    <None Include="app.config" />
     <None Include="App.ico" />
     <None Include="Bugs.txt" />
+    <None Include="Configuration\AssemblyInfo.template" />
     <None Include="ForNextVersionOfSharpDev.txt" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="Resources\StartUp.snk" />
     <None Include="UsingSharpDevelopForAltaxo.txt" />
-    <EmbeddedResource Include="BitmapResources.resources" />
-    <EmbeddedResource Include="SplashScreen.png" />
-    <EmbeddedResource Include="StringResources.resources" />
+    <EmbeddedResource Include="Resources\BitmapResources.resources" />
+    <EmbeddedResource Include="Resources\StringResources.resources" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Libraries\ICSharpCode.Core\Project\ICSharpCode.Core.csproj">
+      <Project>{35CEF10F-2D4C-45F2-9DD1-161E0FEC583C}</Project>
+      <Name>ICSharpCode.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Libraries\SharpDevelop.Base\Project\ICSharpCode.SharpDevelop.csproj">
+      <Project>{2748AD25-9C63-4E12-877B-4DCE96FBED54}</Project>
+      <Name>ICSharpCode.SharpDevelop</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Base\AltaxoBase.Vs8.csproj">
+      <Project>{CA928A5C-9673-4FBB-A60E-F91364CC9DB5}</Project>
+      <Name>AltaxoBase.Vs8</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SDGui\AltaxoSDGui.Vs8.csproj">
+      <Project>{9EBAB076-12F4-4549-9FD5-6D2B8B387B06}</Project>
+      <Name>AltaxoSDGui.Vs8</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>if not exist ..\..\..\..\rt$(ConfigurationName)\AddIns mkdir ..\..\..\..\rt$(ConfigurationName)\AddIns
-copy ..\..\AltaxoCore.addin ..\..\..\..\rt$(ConfigurationName)\AddIns</PreBuildEvent>
-    <PostBuildEvent>copy ..\..\AltaxoStartup.exe.config ..\..\..\..\rt$(ConfigurationName)\bin
-copy AltaxoStartup.* ..\..\..\..\rt$(ConfigurationName)\bin</PostBuildEvent>
+    <PreBuildEvent>if not exist $(SolutionDir)rt$(ConfigurationName)\AddIns mkdir $(SolutionDir)rt$(ConfigurationName)\AddIns
+copy $(ProjectDir)AltaxoCore.addin $(SolutionDir)rt$(ConfigurationName)\AddIns</PreBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
 </Project>

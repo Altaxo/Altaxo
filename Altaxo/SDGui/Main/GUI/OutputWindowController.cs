@@ -21,11 +21,10 @@
 #endregion
 using System;
 
-using ICSharpCode.Core.Properties;
-using ICSharpCode.Core.Services;
-using ICSharpCode.SharpDevelop.Services;
+using ICSharpCode.Core;
+
 using ICSharpCode.SharpDevelop.Gui;
-using ICSharpCode.SharpDevelop.Gui.Pads;
+
 
 namespace Altaxo.Main.GUI
 {
@@ -35,7 +34,7 @@ namespace Altaxo.Main.GUI
   public class OutputWindowController : ICSharpCode.SharpDevelop.Gui.IPadContent, Altaxo.Main.Services.IOutputService
   {
     System.Windows.Forms.TextBox _view;
-    ResourceService resourceService = (ResourceService)ServiceManager.Services.GetService(typeof(ResourceService));
+    
 
 
     public OutputWindowController()
@@ -57,7 +56,7 @@ namespace Altaxo.Main.GUI
     {
       get
       {
-        return resourceService.GetString("MainWindow.Windows.AltaxoOutputWindowLabel");
+        return ResourceService.GetString("MainWindow.Windows.AltaxoOutputWindowLabel");
       }
     }
 
@@ -110,6 +109,8 @@ namespace Altaxo.Main.GUI
         shortcut = value;
       }
     }
+
+    /*
     public void BringPadToFront()
     {
       if (!WorkbenchSingleton.Workbench.WorkbenchLayout.IsVisible(this)) 
@@ -118,6 +119,7 @@ namespace Altaxo.Main.GUI
       }
       WorkbenchSingleton.Workbench.WorkbenchLayout.ActivatePad(this);
     }
+    */
 
     public void RedrawContent()
     {

@@ -25,12 +25,10 @@ using System.Collections;
 using System.Xml;
 
 
-using ICSharpCode.Core.AddIns.Conditions;
-using ICSharpCode.Core.Services;
+using ICSharpCode.Core;
 
 using ICSharpCode.SharpDevelop.Gui;
-using ICSharpCode.SharpDevelop.Services;
-using ICSharpCode.SharpDevelop.Internal.Project;
+using ICSharpCode.SharpDevelop.Project;
 
 namespace Altaxo.Worksheet.Commands
 {
@@ -40,63 +38,52 @@ namespace Altaxo.Worksheet.Commands
   /// one (exactly one column must be selected), any (one or more columns must be selected),
   /// or the number of columns.
   /// </summary>
-  [ConditionAttribute()]
-  public class SelectedDataCondition : AbstractCondition
+
+
+  public class SelectedDataConditionEvaluator : IConditionEvaluator
   {
-    [ICSharpCode.Core.AddIns.XmlMemberAttribute("selecteddatacolumns", IsRequired = true)]
-    string selectedData;
-    
-    public string SelectedData 
+    public bool IsValid(object caller, Condition condition)
     {
-      get 
-      {
-        return selectedData;
-      }
-      set 
-      {
-        selectedData = value.ToLower();
-      }
-    }
-    
-    public override bool IsValid(object owner)
-    {
-      if(Current.Workbench.ActiveViewContent==null)
+      string selectedData = condition.Properties["selecteddatacolumns"].ToLower();
+
+      if (Current.Workbench.ActiveViewContent == null)
         return false;
-      if(!(Current.Workbench.ActiveViewContent is Altaxo.Worksheet.GUI.WorksheetController))
+      if (!(Current.Workbench.ActiveViewContent is Altaxo.Worksheet.GUI.WorksheetController))
         return false;
 
-      Altaxo.Worksheet.GUI.WorksheetController ctrl 
-        = Current.Workbench.ActiveViewContent as Altaxo.Worksheet.GUI.WorksheetController; 
+      Altaxo.Worksheet.GUI.WorksheetController ctrl
+        = Current.Workbench.ActiveViewContent as Altaxo.Worksheet.GUI.WorksheetController;
 
       int val = ctrl.SelectedDataColumns.Count;
 
-      switch(selectedData)
+      switch (selectedData)
       {
         case "none":
-          return val==0;
+          return val == 0;
         case "one":
-          return val==1;
+          return val == 1;
         case "two":
-          return val==2;
+          return val == 2;
         case "all":
-          return val==ctrl.Doc.DataColumnCount;
+          return val == ctrl.Doc.DataColumnCount;
         case "any":
-          return val>0;
+          return val > 0;
         case "*":
-          return val>0;
+          return val > 0;
         default:
-        {
-          try 
           {
-            int num = int.Parse(selectedData);
-            return val==num;
+            try
+            {
+              int num = int.Parse(selectedData);
+              return val == num;
+            }
+            catch (Exception ex)
+            {
+              return false;
+            }
           }
-          catch(Exception ex)
-          {
-            return false;
-          }
-        }
       }
     }
   }
+
 }

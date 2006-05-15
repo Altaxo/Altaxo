@@ -3,7 +3,7 @@
 	
 	<Config
 		  name        = "${res:Templates.File.UnitTest.Name}"
-		  icon        = "VB.File.FullFile"
+		  icon        = "VBNet.File.FullFile"
 		  category    = "VB"
 		  defaultname = "Test${Number}.vb"
 		  language    = "VBNET"/>
@@ -40,29 +40,26 @@
 		
 	<Files>
 		<File name="${FullName}" language="VBNET"><![CDATA[${StandardHeader.VBNET}
-Imports System
+
 Imports NUnit.Framework
 
-Namespace ${StandardNamespace}.Tests
+<TestFixture> _
+Public Class ${ClassName}
+	<Test> _
+	Public Sub TestMethod
+		' TODO: Add your test.
+	End Sub<% if (AddSetupCode) { %>
 	
-	<TestFixture> _
-	Public Class ${ClassName}
-		<Test> _
-		Public Sub TestMethod
-			' TODO: Add your test.
-		End Sub<% if (AddSetupCode) { %>
-		
-		<TestFixtureSetUp> _
-		Public Sub Init
-			' TODO: Add Init code.
-		End Sub<% } if (AddTearDownCode) { %>
-		
-		<TestFixtureTearDown> _
-		Public Sub Dispose
-			' TODO: Add tear down code.
-		End Sub<% } %>
-	End Class
-End Namespace
+	<TestFixtureSetUp> _
+	Public Sub Init
+		' TODO: Add Init code.
+	End Sub<% } if (AddTearDownCode) { %>
+	
+	<TestFixtureTearDown> _
+	Public Sub Dispose
+		' TODO: Add tear down code.
+	End Sub<% } %>
+End Class
 ]]></File>
 	</Files>
 	

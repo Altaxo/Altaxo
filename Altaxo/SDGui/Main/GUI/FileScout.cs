@@ -33,20 +33,18 @@ using System.Reflection;
 using System.Resources;
 using System.Threading;
 using System.Xml;
-using ICSharpCode.Core.Properties;
-using ICSharpCode.Core.Services;
+using ICSharpCode.Core;
 
-using ICSharpCode.SharpDevelop.Services;
 
 using ICSharpCode.SharpDevelop.Gui;
-using ICSharpCode.SharpDevelop.Gui.Pads;
+
 
 
 namespace Altaxo.Main.GUI
 {
   public class FileScout : UserControl, ICSharpCode.SharpDevelop.Gui.IPadContent
   {
-    ResourceService resourceService = (ResourceService)ServiceManager.Services.GetService(typeof(ResourceService));
+    
     public Control Control 
     {
       get 
@@ -59,7 +57,7 @@ namespace Altaxo.Main.GUI
     {
       get 
       {
-        return resourceService.GetString("MainWindow.Windows.FileScoutLabel");
+        return ResourceService.GetString("MainWindow.Windows.FileScoutLabel");
       }
     }
     
@@ -95,7 +93,7 @@ namespace Altaxo.Main.GUI
         shortcut = value;
       }
     }
-    
+    /*
     public void BringPadToFront()
     {
       if (!WorkbenchSingleton.Workbench.WorkbenchLayout.IsVisible(this)) 
@@ -104,7 +102,7 @@ namespace Altaxo.Main.GUI
       }
       WorkbenchSingleton.Workbench.WorkbenchLayout.ActivatePad(this);
     }
-
+    */
     public void RedrawContent()
     {
       OnTitleChanged(null);
@@ -128,15 +126,15 @@ namespace Altaxo.Main.GUI
       filetree.AfterSelect += new TreeViewEventHandler(DirectorySelected);
       ImageList imglist = new ImageList();
       imglist.ColorDepth = ColorDepth.Depth32Bit;
-      imglist.Images.Add(resourceService.GetBitmap("Icons.16x16.ClosedFolderBitmap"));
-      imglist.Images.Add(resourceService.GetBitmap("Icons.16x16.OpenFolderBitmap"));
-      imglist.Images.Add(resourceService.GetBitmap("Icons.16x16.FLOPPY"));
-      imglist.Images.Add(resourceService.GetBitmap("Icons.16x16.DRIVE"));
-      imglist.Images.Add(resourceService.GetBitmap("Icons.16x16.CDROM"));
-      imglist.Images.Add(resourceService.GetBitmap("Icons.16x16.NETWORK"));
-      imglist.Images.Add(resourceService.GetBitmap("Icons.16x16.Desktop"));
-      imglist.Images.Add(resourceService.GetBitmap("Icons.16x16.PersonalFiles"));
-      imglist.Images.Add(resourceService.GetBitmap("Icons.16x16.MyComputer"));
+      imglist.Images.Add(ResourceService.GetBitmap("Icons.16x16.ClosedFolderBitmap"));
+      imglist.Images.Add(ResourceService.GetBitmap("Icons.16x16.OpenFolderBitmap"));
+      imglist.Images.Add(ResourceService.GetBitmap("Icons.16x16.FLOPPY"));
+      imglist.Images.Add(ResourceService.GetBitmap("Icons.16x16.DRIVE"));
+      imglist.Images.Add(ResourceService.GetBitmap("Icons.16x16.CDROM"));
+      imglist.Images.Add(ResourceService.GetBitmap("Icons.16x16.NETWORK"));
+      imglist.Images.Add(ResourceService.GetBitmap("Icons.16x16.Desktop"));
+      imglist.Images.Add(ResourceService.GetBitmap("Icons.16x16.PersonalFiles"));
+      imglist.Images.Add(ResourceService.GetBitmap("Icons.16x16.MyComputer"));
       
       filetree.ImageList = imglist;
       
@@ -169,13 +167,8 @@ namespace Altaxo.Main.GUI
     
     void FileSelected(object sender, EventArgs e)
     {
-      IProjectService projectService = (IProjectService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IProjectService));
-      IFileService    fileService    = (IFileService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IFileService));
-      FileUtilityService fileUtilityService = (FileUtilityService)ServiceManager.Services.GetService(typeof(FileUtilityService));
-      
       foreach (FileList.FileListItem item in filelister.SelectedItems) 
       {
-        
         switch (Path.GetExtension(item.FullName).ToLower()) 
         {
           case ".axoprj":
@@ -200,7 +193,7 @@ namespace Altaxo.Main.GUI
           }
             break;
           default:
-            fileService.OpenFile(item.FullName);
+            FileService.OpenFile(item.FullName);
             break;
         }
       }

@@ -21,6 +21,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Collections;
@@ -372,19 +373,19 @@ namespace Altaxo.Graph.GUI
       get { return false; }
     }
     
-    public void Cut(object sender, EventArgs e)
+    public void Cut()
     {
       this.CutSelectedObjectsToClipboard();
     }
-    public void Copy(object sender, EventArgs e)
+    public void Copy()
     {
       this.CopySelectedObjectsToClipboard();
     }
-    public void Paste(object sender, EventArgs e)
+    public void Paste()
     {
       this.PasteObjectsFromClipboard();
     }
-    public void Delete(object sender, EventArgs e)
+    public void Delete()
     {
       if(this.NumberOfSelectedObjects>0)
       {
@@ -396,11 +397,34 @@ namespace Altaxo.Graph.GUI
         Current.ProjectService.DeleteGraphDocument(this.Doc,false);
       }
     }
-    public void SelectAll(object sender, EventArgs e)
+    public void SelectAll()
     {
     }
     #endregion
 
 
+
+    #region IViewContent Members
+
+
+    public System.Collections.Generic.List<ISecondaryViewContent> SecondaryViewContents
+    {
+      get 
+      {
+        return new List<ICSharpCode.SharpDevelop.Gui.ISecondaryViewContent>();
+      }
+    }
+
+    #endregion
+
+    #region IBaseViewContent Members
+
+
+    public void Deselecting()
+    {
+      throw new Exception("The method or operation is not implemented.");
+    }
+
+    #endregion
   }
 }

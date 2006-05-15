@@ -28,13 +28,10 @@ using System.Windows.Forms;
 
 
 using ICSharpCode.SharpDevelop.Gui;
-using ICSharpCode.SharpDevelop.Internal.Project;
 
-using ICSharpCode.Core.Properties;
-using ICSharpCode.Core.Services;
+using ICSharpCode.Core;
 
 using ICSharpCode.SharpZipLib.Zip;
-using ICSharpCode.SharpDevelop.Services;
 
 namespace Altaxo.Main
 {
@@ -46,7 +43,7 @@ namespace Altaxo.Main
   /// </summary>
   /// <remarks>This should be instantiated only once. You can reach the current project service
   /// by calling <see cref="Current.ProjectService" />.</remarks>
-  public class ProjectService : ICSharpCode.Core.Services.AbstractService, IProjectService
+  public class ProjectService : IProjectService
   {
     /// <summary>
     /// The currently opened Altaxo project.
@@ -59,8 +56,8 @@ namespace Altaxo.Main
     string   openProjectFileName = null;
 
 
-    FileUtilityService fileUtilityService = (FileUtilityService)ServiceManager.Services.GetService(typeof(FileUtilityService));
-    ResourceService resourceService = (ResourceService)ServiceManager.Services.GetService(typeof(ResourceService));
+    //FileUtilityService fileUtilityService = (FileUtilityService)ServiceManager.Services.GetService(typeof(FileUtilityService));
+    //ResourceService resourceService = (ResourceService)ServiceManager.Services.GetService(typeof(ResourceService));
 
 
     /// <summary>
@@ -99,13 +96,7 @@ namespace Altaxo.Main
       get { return this.openProjectFileName; }
     }
 
-    /// <summary>
-    /// Initializes the project service.
-    /// </summary>
-    public override void InitializeService()
-    {
-      base.InitializeService();
-    }
+   
 
     /// <summary>
     /// Saves the state of the main window into a zipped file.
@@ -217,12 +208,11 @@ namespace Altaxo.Main
         CloseProject();
       }
         
-      if (!fileUtilityService.TestFileExists(filename)) 
+      if (!FileUtility.TestFileExists(filename)) 
       {
         return;
       }
-      IStatusBarService statusBarService = (IStatusBarService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IStatusBarService));
-      statusBarService.SetMessage("${res:MainWindow.StatusBar.OpeningCombineMessage}");
+      StatusBarService.SetMessage("${res:MainWindow.StatusBar.OpeningCombineMessage}");
         
       if (Path.GetExtension(filename).ToUpper() == ".AXOPRJ") 
       {
@@ -238,7 +228,7 @@ namespace Altaxo.Main
         LoadProject(filename);
       }
 
-      statusBarService.SetMessage("${res:MainWindow.StatusBar.ReadyMessage}");
+      StatusBarService.SetMessage("${res:MainWindow.StatusBar.ReadyMessage}");
     }
     
     /// <summary>
@@ -247,7 +237,7 @@ namespace Altaxo.Main
     /// <param name="filename">The file name of the project to load.</param>
     void LoadProject(string filename)
     {
-      if (!fileUtilityService.TestFileExists(filename)) 
+      if (!FileUtility.TestFileExists(filename)) 
       {
         return;
       }
@@ -255,8 +245,8 @@ namespace Altaxo.Main
       this.Load(filename);
       openProjectFileName = filename;
       
-      IFileService fileService = (IFileService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IFileService));
-      fileService.RecentOpen.AddLastProject(filename);
+      //IFileService fileService = (IFileService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IFileService));
+      FileService.RecentOpen.AddLastProject(filename);
       
       OnProjectOpened(new ProjectEventArgs(openProject));
       
@@ -407,9 +397,9 @@ namespace Altaxo.Main
         this.OnRenameProject(new ProjectRenameEventArgs(this.openProject,oldFileName,filename));
 
       
-      fileUtilityService.ObservedSave(new NamedFileOperationDelegate(this.Save),
+      FileUtility.ObservedSave(new NamedFileOperationDelegate(this.Save),
         filename,
-        resourceService.GetString("Internal.Project.Combine.CantSaveCombineErrorText"),
+        ResourceService.GetString("Internal.Project.Combine.CantSaveCombineErrorText"),
         FileErrorPolicy.ProvideAlternative);
     }
 
@@ -422,15 +412,15 @@ namespace Altaxo.Main
       fdiag.OverwritePrompt = true;
       fdiag.AddExtension    = true;
       
-      StringParserService stringParserService = (StringParserService)ServiceManager.Services.GetService(typeof(StringParserService));
-      fdiag.Filter = stringParserService.Parse("${res:Altaxo.FileFilter.ProjectFiles}|*.axoprj|${res:Altaxo.FileFilter.AllFiles}|*.*");
+      
+      fdiag.Filter = StringParser.Parse("${res:Altaxo.FileFilter.ProjectFiles}|*.axoprj|${res:Altaxo.FileFilter.AllFiles}|*.*");
       
       if (fdiag.ShowDialog() == DialogResult.OK) 
       {
         string filename = fdiag.FileName;
         SaveProject(filename);
-        IMessageService messageService =(IMessageService)ServiceManager.Services.GetService(typeof(IMessageService));
-        messageService.ShowMessage(filename, resourceService.GetString("Altaxo.Project.ProjectSavedMessage"));
+        
+        MessageService.ShowMessage(filename, ResourceService.GetString("Altaxo.Project.ProjectSavedMessage"));
       }
     }
 
@@ -440,8 +430,8 @@ namespace Altaxo.Main
     /// <param name="e">Cancel event args. On return, the e.Cancel property is set to true, if the users cancel the saving.</param>
     public virtual void AskForSavingOfProject(System.ComponentModel.CancelEventArgs e)
     {
-      string text = resourceService.GetString("Altaxo.Project.AskForSavingOfProjectDialog.Text");
-      string caption = resourceService.GetString("Altaxo.Project.AskForSavingOfProjectDialog.Caption");
+      string text = ResourceService.GetString("Altaxo.Project.AskForSavingOfProjectDialog.Text");
+      string caption = ResourceService.GetString("Altaxo.Project.AskForSavingOfProjectDialog.Caption");
       System.Windows.Forms.DialogResult dlgresult = System.Windows.Forms.MessageBox.Show(Current.MainWindow,text,caption,System.Windows.Forms.MessageBoxButtons.YesNoCancel);
     
       switch(dlgresult)

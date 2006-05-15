@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<Template author="Mathias Simmack" version="1.0">
+	
+	<Config
+		  name        = "WinFX Resource Dictionary"
+		  icon        = "Icons.32x32.XMLFileIcon"
+		  subcategory = "WinFX"
+		  category    = "C#"
+		  defaultname = "Dictionary${Number}.xaml"
+		  language    = "XML"/>
+	 
+	<Description>A WinFX Resource Dictionary</Description>
+	
+	<!-- 
+	Special new file templates:
+		${StandardNamespace}        -> Standardnamespace of the current project or FileNameWithoutExtension
+		${FullName}                 -> Full generated path name
+		${FileName}                 -> File name with extension
+		${FileNameWithoutExtension} -> File name without extension
+		${Extension}                -> Extension in the form ".cs"
+		${Path}                     -> Full path of the file
+	 -->
+	<Files>
+		<File name="${FullName}" language="XML" buildAction="Page"><![CDATA[<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/avalon/2005"
+    xmlns:x="http://schemas.microsoft.com/winfx/xaml/2005"
+    >
+    
+</ResourceDictionary>]]></File>
+	</Files>
+	
+	<AdditionalOptions/>
+</Template>
+
+

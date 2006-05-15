@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
 <Template originator   = "Markus Palme"
           created      = "24/11/2002"
-          lastModified = "02/01/2003">
+          lastModified = "07/20/2005">
 
 	<!-- Template Header -->
 	<TemplateConfiguration>
 		<Name>${res:Templates.Project.ClassLibrary.Name}</Name>
-		<Category>VBNET</Category>
-		<Icon>VB.Project.Library</Icon>
-		<LanguageName>VBNET</LanguageName>
+		<Category>VBNet</Category>
+		<Icon>VBNet.Project.Library</Icon>
+		<LanguageName>VBNet</LanguageName>
 		<Description>${res:Templates.Project.ClassLibrary.Description}</Description>
 	</TemplateConfiguration>
 	
@@ -22,11 +22,25 @@
 			<StartupProject>${ProjectName}</StartupProject>
 		</Options>
 		
+		
 		<Project name = "${ProjectName}" directory = ".">
-			<Options Target = "Library" PauseConsoleOutput = "False"/>	
+			<Options OutputType = "Library" />	
+			
+			<ProjectItems>
+				<Reference Include="System" />
+				<Reference Include="System.Data" />
+				<Reference Include="System.Xml" />
+				
+				<Import Include="Microsoft.VisualBasic" />
+				<Import Include="System" />
+				<Import Include="System.Collections" />
+				<Import Include="System.Collections.Generic" />
+				<Import Include="System.Data" />
+				<Import Include="System.Diagnostics" />
+			</ProjectItems>
+			
 			<Files>
 				<File name="NewClass.vb"><![CDATA[${StandardHeader.VBNET}
-Imports System
 
 Public Class NewClass
 	
@@ -38,8 +52,8 @@ Imports System.Runtime.CompilerServices
 
 ' Information about this assembly is defined by the following
 ' attributes.
-'	<ProjectOptions Target = "WinExe" PauseConsoleOutput = "False" />
-' change them to the information which is associated with the assembly
+' 
+' Change them to the information which is associated with the assembly
 ' you compile.
 
 <assembly: AssemblyTitle("")>
@@ -59,12 +73,7 @@ Imports System.Runtime.CompilerServices
 ' numbers with the '*' character (the default):
 
 <assembly: AssemblyVersion("1.0.*")>
-
-' The following attributes specify the key for the sign of your assembly. See the
-' .NET Framework documentation for more information about signing.
-' This is not required, if you don't want signing let these attributes like they're.
-<assembly: AssemblyDelaySign(false)>
-<assembly: AssemblyKeyFile("")>]]></File>
+]]></File>
 			</Files>
 		</Project>
 	</Combine>	

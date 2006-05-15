@@ -106,10 +106,9 @@
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
-    <ProjectReference Include="..\..\Libraries\ICSharpCode.Core\zICSharpCode.Core.Vs8.csproj">
-      <Name>zICSharpCode.Core.Vs8</Name>
-      <Project>{A1006FEB-2FFC-4507-8D82-265130CDD08E}</Project>
-      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+    <ProjectReference Include="..\..\Libraries\ICSharpCode.Core\Project\ICSharpCode.Core.csproj">
+      <Project>{35CEF10F-2D4C-45F2-9DD1-161E0FEC583C}</Project>
+      <Name>ICSharpCode.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Libraries\Numerator\zNumerator.csproj">
       <Project>{1CFDD727-D2B7-4521-AF53-D24EA4C69176}</Project>

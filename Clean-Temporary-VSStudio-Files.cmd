@@ -32,37 +32,45 @@ rmdir /S /Q .\Libraries\AssemblySvnVersion\bin
 rmdir /S /Q .\Libraries\CommandBar\obj
 rmdir /S /Q .\Libraries\CommandBar\bin
 
-rmdir /S /Q .\Libraries\CSharpBinding\obj
-rmdir /S /Q .\Libraries\CSharpBinding\bin
+rmdir /S /Q .\Libraries\CSharpBinding\Project\obj
+rmdir /S /Q .\Libraries\CSharpBinding\Project\bin
+rmdir /S /Q .\Libraries\CSharpBinding\Test\obj
+rmdir /S /Q .\Libraries\CSharpBinding\Test\bin
 
-rmdir /S /Q .\Libraries\ICSharpCode.Core\obj
-rmdir /S /Q .\Libraries\ICSharpCode.Core\bin
+rmdir /S /Q .\Libraries\ICSharpCode.Core\Project\obj
+rmdir /S /Q .\Libraries\ICSharpCode.Core\Project\bin
+rmdir /S /Q .\Libraries\ICSharpCode.Core\Test\obj
+rmdir /S /Q .\Libraries\ICSharpCode.Core\Test\bin
 
-rmdir /S /Q .\Libraries\ICSharpCode.TextEditor\src\obj
-rmdir /S /Q .\Libraries\ICSharpCode.TextEditor\src\bin
+rmdir /S /Q .\Libraries\ICSharpCode.TextEditor\Project\obj
+rmdir /S /Q .\Libraries\ICSharpCode.TextEditor\project\bin
+rmdir /S /Q .\Libraries\ICSharpCode.TextEditor\Test\obj
+rmdir /S /Q .\Libraries\ICSharpCode.TextEditor\Test\bin
 
-rmdir /S /Q .\Libraries\ICSharpCode.XmlForms\obj
-rmdir /S /Q .\Libraries\ICSharpCode.XmlForms\bin
+rmdir /S /Q .\Libraries\log4net\src\obj
+rmdir /S /Q .\Libraries\log4net\src\bin
+rmdir /S /Q .\Libraries\log4net\bin
+rmdir /S /Q .\Libraries\log4net\build
+
+rmdir /S /Q .\Libraries\NRefactory\Project\obj
+rmdir /S /Q .\Libraries\NRefactory\Project\bin
+rmdir /S /Q .\Libraries\NRefactory\Test\obj
+rmdir /S /Q .\Libraries\NRefactory\Test\bin
 
 rmdir /S /Q .\Libraries\Numerator\obj
 rmdir /S /Q .\Libraries\Numerator\bin
 
-rmdir /S /Q .\Libraries\SharpAssembly\src\SharpAssembly\obj
-rmdir /S /Q .\Libraries\SharpAssembly\src\SharpAssembly\bin
-rmdir /S /Q .\Libraries\SharpAssembly\src\SharpAssembly\obj
-rmdir /S /Q .\Libraries\SharpAssembly\src\SharpAssembly\bin
+rmdir /S /Q .\Libraries\SharpDevelop.Base\Project\obj
+rmdir /S /Q .\Libraries\SharpDevelop.Base\Project\bin
+rmdir /S /Q .\Libraries\SharpDevelop.Base\Test\obj
+rmdir /S /Q .\Libraries\SharpDevelop.Base\Test\bin
 
-rmdir /S /Q .\Libraries\SharpDevelop.Base\obj
-rmdir /S /Q .\Libraries\SharpDevelop.Base\bin
 
-rmdir /S /Q .\Libraries\SharpDevelop.DefaultTextEditor\obj
-rmdir /S /Q .\Libraries\SharpDevelop.DefaultTextEditor\bin
-
-rmdir /S /Q .\Libraries\SharpRefactory\src\obj
-rmdir /S /Q .\Libraries\SharpRefactory\src\bin
 
 rmdir /S /Q .\Libraries\SharpZipLib\src\obj
 rmdir /S /Q .\Libraries\SharpZipLib\src\bin
+rmdir /S /Q .\Libraries\SharpZipLib\tests\obj
+rmdir /S /Q .\Libraries\SharpZipLib\tests\bin
 
 rmdir /S /Q .\Libraries\WinFormsUI\WinFormsUI\obj
 rmdir /S /Q .\Libraries\WinFormsUI\WinFormsUI\bin
