@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 967 $</version>
+//     <version>$Revision: 1393 $</version>
 // </file>
 
 using System;
@@ -42,7 +42,7 @@ namespace ICSharpCode.SharpDevelop.Project
 		BootstrapperFile
 	}
 	
-	public abstract class ProjectItem : LocalizedObject, IDisposable
+	public abstract class ProjectItem : LocalizedObject, IDisposable, ICloneable
 	{
 		string        include;
 		PropertyGroup properties = new PropertyGroup();
@@ -82,6 +82,17 @@ namespace ICSharpCode.SharpDevelop.Project
 			item.Include = newInclude;
 		}
 		
+		public virtual ProjectItem Clone()
+		{
+			// TODO: Make me abstract in SD 2.1
+			throw new NotSupportedException();
+		}
+		
+		object ICloneable.Clone()
+		{
+			return this.Clone();
+		}
+		
 		[Browsable(false)]
 		public PropertyGroup Properties {
 			get {
@@ -94,6 +105,8 @@ namespace ICSharpCode.SharpDevelop.Project
 		[Browsable(false)]
 		public virtual string FileName {
 			get {
+				if (project == null)
+					return Include;
 				if (fileNameCache == null)
 					fileNameCache = Path.Combine(project.Directory, include);
 				return fileNameCache;

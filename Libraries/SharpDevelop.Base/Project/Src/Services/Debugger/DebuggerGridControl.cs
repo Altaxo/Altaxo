@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1293 $</version>
 // </file>
 
 using System;
@@ -91,6 +91,15 @@ namespace ICSharpCode.Core
 			textArea.Click   += OnTextAreaClick;
 			textArea.KeyDown += OnTextAreaClick;
 			frm.ClientSize = new Size(frm.ClientSize.Width, row.Height + 2);
+		}
+		
+		public bool IsMouseOver {
+			get {
+				if (frm != null && !frm.IsDisposed) {
+					return frm.ClientRectangle.Contains(frm.PointToClient(Control.MousePosition));
+				}
+				return false;
+			}
 		}
 		
 		void OnTextAreaClick(object sender, EventArgs e)

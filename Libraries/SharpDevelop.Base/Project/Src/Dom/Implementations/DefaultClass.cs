@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1371 $</version>
 // </file>
 
 using System;
@@ -20,6 +20,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 	{
 		ClassType classType;
 		DomRegion region;
+		DomRegion bodyRegion;
 		
 		ICompilationUnit compilationUnit;
 		
@@ -126,6 +127,11 @@ namespace ICSharpCode.SharpDevelop.Dom
 			}
 		}
 		
+		public IClass GetCompoundClass()
+		{
+			return this.DefaultReturnType.GetUnderlyingClass() ?? this;
+		}
+		
 		protected override void OnFullyQualifiedNameChanged(EventArgs e)
 		{
 			base.OnFullyQualifiedNameChanged(e);
@@ -164,6 +170,15 @@ namespace ICSharpCode.SharpDevelop.Dom
 			}
 			set {
 				region = value;
+			}
+		}
+		
+		public DomRegion BodyRegion {
+			get {
+				return bodyRegion;
+			}
+			set {
+				bodyRegion = value;
 			}
 		}
 		
@@ -321,14 +336,24 @@ namespace ICSharpCode.SharpDevelop.Dom
 			return BaseTypes[index];
 		}
 		
+		IReturnType cachedBaseType;
+		
 		public IReturnType BaseType {
 			get {
-				foreach (IReturnType baseType in this.BaseTypes) {
-					IClass baseClass = baseType.GetUnderlyingClass();
-					if (baseClass != null && baseClass.ClassType == this.ClassType)
-						return baseType;
+				if (cachedBaseType == null) {
+					foreach (IReturnType baseType in this.BaseTypes) {
+						IClass baseClass = baseType.GetUnderlyingClass();
+						if (baseClass != null && baseClass.ClassType == this.ClassType) {
+							cachedBaseType = baseType;
+							break;
+						}
+					}
 				}
-				return GetBaseTypeByClassType();
+				if (cachedBaseType == null) {
+					return GetBaseTypeByClassType();
+				} else {
+					return cachedBaseType;
+				}
 			}
 		}
 		

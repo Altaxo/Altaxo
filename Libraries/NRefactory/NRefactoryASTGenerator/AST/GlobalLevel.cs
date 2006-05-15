@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 975 $</version>
+//     <version>$Revision: 1346 $</version>
 // </file>
 
 using System;
@@ -55,6 +55,7 @@ namespace NRefactoryASTGenerator.AST
 		ClassType type;
 		List<TypeReference> baseTypes;
 		List<TemplateDefinition> templates;
+		Point bodyStartLocation;
 		
 		public TypeDeclaration(Modifier modifier, List<AttributeSection> attributes) : base(modifier, attributes) {}
 	}

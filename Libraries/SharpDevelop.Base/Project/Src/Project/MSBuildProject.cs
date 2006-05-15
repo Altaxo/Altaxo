@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1262 $</version>
+//     <version>$Revision: 1367 $</version>
 // </file>
 
 using System;
@@ -89,6 +89,7 @@ namespace ICSharpCode.SharpDevelop.Project
 			this.FileName = Path.GetFullPath(projectFileName);
 			using (MSBuildFileReader reader = new MSBuildFileReader(projectFileName)) {
 				reader.WhitespaceHandling = WhitespaceHandling.Significant;
+				reader.Namespaces = false;
 				reader.MoveToContent(); // we have to skip over the XmlDeclaration (if it exists)
 				if (reader.Name == "VisualStudioProject") {
 					reader.Close();
@@ -116,6 +117,7 @@ namespace ICSharpCode.SharpDevelop.Project
 					}
 				}
 			}
+			ExpandWildcards();
 			
 			string userSettingsFileName = projectFileName + ".user";
 			if (File.Exists(userSettingsFileName)) {
@@ -133,6 +135,26 @@ namespace ICSharpCode.SharpDevelop.Project
 									break;
 							}
 						}
+					}
+				}
+			}
+		}
+		
+		void ExpandWildcards()
+		{
+			for (int i = 0; i < items.Count; i++) {
+				ProjectItem item = items[i];
+				if (item.Include.IndexOf('*') >= 0 && item is FileProjectItem) {
+					items.RemoveAt(i--);
+					try {
+						string path = Path.Combine(this.Directory, Path.GetDirectoryName(item.Include));
+						foreach (string file in System.IO.Directory.GetFiles(path, Path.GetFileName(item.Include))) {
+							ProjectItem n = item.Clone();
+							n.Include = FileUtility.GetRelativePath(this.Directory, file);
+							items.Insert(++i, n);
+						}
+					} catch (Exception ex) {
+						MessageService.ShowError(ex, "Error expanding wildcards in " + item.Include);
 					}
 				}
 			}
@@ -187,6 +209,7 @@ namespace ICSharpCode.SharpDevelop.Project
 			}
 			using (MSBuildFileWriter writer = new MSBuildFileWriter(fileName, Encoding.UTF8)) {
 				writer.Formatting = Formatting.Indented;
+				writer.Namespaces = false;
 				
 				writer.WriteStartElement("Project");
 				// 				writer.WriteAttributeString("MSBuildVersion", "2.0");
@@ -251,6 +274,7 @@ namespace ICSharpCode.SharpDevelop.Project
 			if (userConfigurations.Count > 0 || UserBaseConfiguration.PropertyCount > 0 || File.Exists(userSettingsFileName)) {
 				using (MSBuildFileWriter writer = new MSBuildFileWriter(userSettingsFileName, Encoding.UTF8)) {
 					writer.Formatting = Formatting.Indented;
+					writer.Namespaces = false;
 					writer.WriteStartElement("Project");
 					writer.WriteAttributeString("xmlns", "http://schemas.microsoft.com/developer/msbuild/2003");
 					
@@ -327,6 +351,10 @@ namespace ICSharpCode.SharpDevelop.Project
 			
 			if (!File.Exists(psi.FileName)) {
 				MessageService.ShowError(psi.FileName + " does not exist and cannot be started.");
+				return;
+			}
+			if (!System.IO.Directory.Exists(psi.WorkingDirectory)) {
+				MessageService.ShowError("Working directory " + psi.WorkingDirectory + " does not exist; the process cannot be started. You can specify the working directory in the project options.");
 				return;
 			}
 			

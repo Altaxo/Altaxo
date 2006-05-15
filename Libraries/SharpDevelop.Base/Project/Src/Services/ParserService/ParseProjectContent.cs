@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1223 $</version>
+//     <version>$Revision: 1379 $</version>
 // </file>
 
 using System;
@@ -128,7 +128,7 @@ namespace ICSharpCode.Core
 			ReferenceProjectItem reference = e.ProjectItem as ReferenceProjectItem;
 			if (reference != null) {
 				try {
-					IProjectContent referencedContent = ProjectContentRegistry.GetProjectContentForReference(reference);
+					IProjectContent referencedContent = ProjectContentRegistry.GetExistingProjectContentForReference(reference);
 					if (referencedContent != null) {
 						ReferencedContents.Remove(referencedContent);
 						OnReferencedContentsChanged(EventArgs.Empty);
@@ -175,6 +175,13 @@ namespace ICSharpCode.Core
 		internal int GetInitializationWorkAmount()
 		{
 			return project.Items.Count;
+		}
+		
+		internal void ReInitialize2()
+		{
+			if (initializing) return;
+			initializing = true;
+			Initialize2();
 		}
 		
 		internal void Initialize2()

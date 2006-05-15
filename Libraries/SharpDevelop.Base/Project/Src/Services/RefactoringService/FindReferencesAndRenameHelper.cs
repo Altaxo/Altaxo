@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1267 $</version>
+//     <version>$Revision: 1393 $</version>
 // </file>
 
 using System;
@@ -28,8 +28,7 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 		{
 			foreach (IViewContent content in WorkbenchSingleton.Workbench.ViewContentCollection) {
 				if (content is ITextEditorControlProvider &&
-				    content.FileName != null &&
-				    FileUtility.IsEqualFileName(content.FileName, fileName))
+				    FileUtility.IsEqualFileName(content.IsUntitled ? content.UntitledName : content.FileName, fileName))
 				{
 					return new ProvidedDocumentInformation(((ITextEditorControlProvider)content).TextEditorControl.Document, fileName, 0);
 				}

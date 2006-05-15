@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1346 $</version>
 // </file>
 
 using System;
@@ -16,6 +16,9 @@ namespace ICSharpCode.SharpDevelop.Dom
 			get;
 		}
 		
+		/// <summary>
+		/// Declaration region of the member (without body!)
+		/// </summary>
 		DomRegion Region {
 			get;
 		}

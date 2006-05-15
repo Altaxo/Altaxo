@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1076 $</version>
+//     <version>$Revision: 1297 $</version>
 // </file>
 
 using System;
@@ -27,7 +27,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 		
 		public void Initialize(IClass currentClass)
 		{
-			this.currentClass = currentClass.DefaultReturnType.GetUnderlyingClass();
+			this.currentClass = currentClass.GetCompoundClass();
 			this.codeGen = currentClass.ProjectContent.Language.CodeGenerator;
 			this.classFinderContext = new ClassFinder(currentClass, currentClass.Region.BeginLine + 1, 0);
 			this.InitContent();

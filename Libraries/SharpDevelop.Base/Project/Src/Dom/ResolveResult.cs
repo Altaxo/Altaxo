@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1379 $</version>
 // </file>
 
 using System;
@@ -211,6 +211,13 @@ namespace ICSharpCode.SharpDevelop.Dom
 		public ResolveResult PrimaryResult {
 			get {
 				return primaryResult;
+			}
+		}
+		
+		public IEnumerable<ResolveResult> Results {
+			get {
+				yield return primaryResult;
+				yield return secondaryResult;
 			}
 		}
 		
@@ -423,7 +430,9 @@ namespace ICSharpCode.SharpDevelop.Dom
 		{
 			ArrayList ar = GetCompletionData(projectContent.Language, true);
 			if (resolvedClass != null) {
-				ar.AddRange(resolvedClass.InnerClasses);
+				foreach (IClass baseClass in resolvedClass.ClassInheritanceTree) {
+					ar.AddRange(baseClass.InnerClasses);
+				}
 			}
 			return ar;
 		}

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1346 $</version>
 // </file>
 
 using System;
@@ -22,9 +22,11 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			if (c.ClassType == ClassType.Delegate) {
 				return;
 			}
-			if (c.Region.BeginLine < c.Region.EndLine) {
-				FoldMarker newFoldMarker = new FoldMarker(document, c.Region.BeginLine - 1, c.Region.BeginColumn - 1,
-				                               c.Region.EndLine - 1, c.Region.EndColumn, FoldType.TypeBody);
+			DomRegion cRegion = c.BodyRegion;
+			if (cRegion.IsEmpty) cRegion = c.Region;
+			if (cRegion.BeginLine < cRegion.EndLine) {
+				FoldMarker newFoldMarker = new FoldMarker(document, cRegion.BeginLine - 1, cRegion.BeginColumn - 1,
+				                               cRegion.EndLine - 1, cRegion.EndColumn, FoldType.TypeBody);
 				if (newFoldMarker.Length > 0) {
 					foldMarkers.Add(newFoldMarker);
 				}

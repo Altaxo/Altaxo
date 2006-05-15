@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1194 $</version>
+//     <version>$Revision: 1325 $</version>
 // </file>
 
 using System;
@@ -36,7 +36,8 @@ namespace ICSharpCode.SharpDevelop.Gui
 		readonly static string mainMenuPath    = "/SharpDevelop/Workbench/MainMenu";
 		readonly static string viewContentPath = "/SharpDevelop/Workbench/Pads";
 #endif
-    List<PadDescriptor>  viewContentCollection    = new List<PadDescriptor>();
+		
+		List<PadDescriptor>  viewContentCollection    = new List<PadDescriptor>();
 		List<IViewContent> workbenchContentCollection = new List<IViewContent>();
 		
 		bool closeAll = false;
@@ -237,11 +238,10 @@ namespace ICSharpCode.SharpDevelop.Gui
 		
 		public void UpdateRenderer()
 		{
-      bool pro = PropertyService.Get("ICSharpCode.SharpDevelop.Gui.UseProfessionalRenderer", true);
+			bool pro = PropertyService.Get("ICSharpCode.SharpDevelop.Gui.UseProfessionalRenderer", true);
 			if (pro) {
 				ToolStripManager.Renderer = new ToolStripProfessionalRenderer();
 			} else {
-
 				ProfessionalColorTable colorTable = new ProfessionalColorTable();
 				colorTable.UseSystemColors        = true;
 				ToolStripManager.Renderer         = new ToolStripProfessionalRenderer(colorTable);
@@ -386,7 +386,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		{
 			if (e.IsDirectory) {
 				foreach (IViewContent content in ViewContentCollection) {
-					if (content.FileName.StartsWith(e.SourceFile)) {
+					if (content.FileName != null && content.FileName.StartsWith(e.SourceFile)) {
 						content.FileName = e.TargetFile + content.FileName.Substring(e.SourceFile.Length);
 					}
 				}

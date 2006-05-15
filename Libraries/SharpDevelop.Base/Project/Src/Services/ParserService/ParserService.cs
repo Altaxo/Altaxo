@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1230 $</version>
+//     <version>$Revision: 1393 $</version>
 // </file>
 
 using System;
@@ -178,6 +178,7 @@ namespace ICSharpCode.Core
 					ICSharpCode.Core.MessageService.ShowError(e, "Error while retrieving project contents from " + project);
 				}
 			}
+			WorkbenchSingleton.SafeThreadAsyncCall((ThreadStart)ProjectService.ParserServiceCreatedProjectContents);
 			int workAmount = 0;
 			foreach (ParseProjectContent newContent in createdContents) {
 				if (abortLoadSolutionProjectsThread) return;
@@ -190,7 +191,7 @@ namespace ICSharpCode.Core
 			}
 			StatusBarService.ProgressMonitor.BeginTask("Parsing...", workAmount);
 			foreach (ParseProjectContent newContent in createdContents) {
-				if (abortLoadSolutionProjectsThread) return;
+				if (abortLoadSolutionProjectsThread) break;
 				try {
 					newContent.Initialize2();
 				} catch (Exception e) {
@@ -204,10 +205,28 @@ namespace ICSharpCode.Core
 		{
 			ParseProjectContent newContent = (ParseProjectContent)state;
 			newContent.Initialize1();
+			StatusBarService.ProgressMonitor.BeginTask("Parsing...", newContent.GetInitializationWorkAmount());
 			newContent.Initialize2();
+			StatusBarService.ProgressMonitor.Done();
 		}
 		
-		public static IProjectContent CreateProjectContentForAddedProject(IProject project)
+		static void ReparseProject(object state)
+		{
+			ParseProjectContent newContent = (ParseProjectContent)state;
+			StatusBarService.ProgressMonitor.BeginTask("Parsing...", newContent.GetInitializationWorkAmount());
+			newContent.ReInitialize2();
+			StatusBarService.ProgressMonitor.Done();
+		}
+		
+		public static void Reparse(IProject project)
+		{
+			ParseProjectContent pc = GetProjectContent(project) as ParseProjectContent;
+			if (pc != null) {
+				ThreadPool.QueueUserWorkItem(ReparseProject, pc);
+			}
+		}
+		
+		internal static IProjectContent CreateProjectContentForAddedProject(IProject project)
 		{
 			lock (projectContents) {
 				ParseProjectContent newContent = project.CreateProjectContent();
@@ -219,8 +238,10 @@ namespace ICSharpCode.Core
 		
 		public static IProjectContent GetProjectContent(IProject project)
 		{
-			if (projectContents.ContainsKey(project)) {
-				return projectContents[project];
+			lock (projectContents) {
+				if (projectContents.ContainsKey(project)) {
+					return projectContents[project];
+				}
 			}
 			return null;
 		}
@@ -416,7 +437,8 @@ namespace ICSharpCode.Core
 		public static void ParseViewContent(IViewContent viewContent)
 		{
 			string text = ((IEditable)viewContent).Text;
-			ParseInformation parseInformation = ParseFile(viewContent.FileName, text, !viewContent.IsUntitled, true);
+			ParseInformation parseInformation = ParseFile(viewContent.IsUntitled ? viewContent.UntitledName : viewContent.FileName,
+			                                              text, !viewContent.IsUntitled, true);
 			if (parseInformation != null && viewContent is IParseInformationListener) {
 				((IParseInformationListener)viewContent).ParseInformationUpdated(parseInformation);
 			}
@@ -475,12 +497,12 @@ namespace ICSharpCode.Core
 		}
 		
 		static void CreateDefaultProjectContent()
-    {
-      LoggingService.Info("Creating default project content");
-      LoggingService.Debug("Stacktrace is:\n" + Environment.StackTrace);
-      defaultProjectContent = new DefaultProjectContent();
-      defaultProjectContent.ReferencedContents.Add(ProjectContentRegistry.Mscorlib);
-      string[] defaultReferences = new string[] {
+		{
+			LoggingService.Info("Creating default project content");
+			LoggingService.Debug("Stacktrace is:\n" + Environment.StackTrace);
+			defaultProjectContent = new DefaultProjectContent();
+			defaultProjectContent.ReferencedContents.Add(ProjectContentRegistry.Mscorlib);
+			string[] defaultReferences = new string[] {
 				"System",
 				"System.Data",
 				"System.Drawing",
@@ -492,35 +514,28 @@ namespace ICSharpCode.Core
         "AltaxoBase",
         "AltaxoSDGui",
 #endif
-      };
-      foreach (string defaultReference in defaultReferences)
-      {
-        ReferenceProjectItem item = new ReferenceProjectItem(null, defaultReference);
-        IProjectContent pc = ProjectContentRegistry.GetProjectContentForReference(item);
-        if (pc != null)
-        {
-          defaultProjectContent.ReferencedContents.Add(pc);
-        }
-      }
-
-      WorkbenchSingleton.Workbench.ActiveWorkbenchWindowChanged += delegate
-      {
-        if (WorkbenchSingleton.Workbench.ActiveWorkbenchWindow != null)
-        {
-          string file = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent.FileName
-            ?? WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent.UntitledName;
-          if (file != null)
-          {
-            IParser parser = GetParser(file);
-            if (parser != null && parser.Language != null)
-            {
-              defaultProjectContent.Language = parser.Language;
-              defaultProjectContent.DefaultImports = parser.Language.CreateDefaultImports(defaultProjectContent);
-            }
-          }
-        }
-      };
-    }
+			};
+			foreach (string defaultReference in defaultReferences) {
+				ReferenceProjectItem item = new ReferenceProjectItem(null, defaultReference);
+				IProjectContent pc = ProjectContentRegistry.GetProjectContentForReference(item);
+				if (pc != null) {
+					defaultProjectContent.ReferencedContents.Add(pc);
+				}
+			}
+			WorkbenchSingleton.Workbench.ActiveWorkbenchWindowChanged += delegate {
+				if (WorkbenchSingleton.Workbench.ActiveWorkbenchWindow != null) {
+					string file = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent.FileName
+						?? WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent.UntitledName;
+					if (file != null) {
+						IParser parser = GetParser(file);
+						if (parser != null && parser.Language != null) {
+							defaultProjectContent.Language = parser.Language;
+							defaultProjectContent.DefaultImports = parser.Language.CreateDefaultImports(defaultProjectContent);
+						}
+					}
+				}
+			};
+		}
 		
 		public static ParseInformation ParseFile(string fileName, string fileContent, bool updateCommentTags, bool fireUpdate)
 		{

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1300 $</version>
 // </file>
 
 using System;
@@ -11,7 +11,7 @@ namespace ICSharpCode.SharpDevelop.Project
 {
 	public delegate void SolutionFolderEventHandler(object sender, SolutionFolderEventArgs e);
 	
-	public class SolutionFolderEventArgs
+	public class SolutionFolderEventArgs : EventArgs
 	{
 		ISolutionFolder solutionFolder;
 		

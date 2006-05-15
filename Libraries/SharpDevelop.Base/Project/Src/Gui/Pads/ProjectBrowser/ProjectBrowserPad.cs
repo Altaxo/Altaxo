@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1187 $</version>
+//     <version>$Revision: 1345 $</version>
 // </file>
 
 using System;
@@ -72,6 +72,7 @@ namespace ICSharpCode.SharpDevelop.Project
 			if (ProjectService.OpenSolution != null) {
 				ProjectServiceSolutionLoaded(null, new SolutionEventArgs(ProjectService.OpenSolution));
 			}
+			ActiveWindowChanged(null, null);
 		}
 		
 		public void StartLabelEdit(ExtTreeNode node)

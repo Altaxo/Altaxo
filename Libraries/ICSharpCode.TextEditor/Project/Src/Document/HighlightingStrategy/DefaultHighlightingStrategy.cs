@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1262 $</version>
+//     <version>$Revision: 1352 $</version>
 // </file>
 
 using System;
@@ -24,6 +24,14 @@ namespace ICSharpCode.TextEditor.Document
 		List<HighlightRuleSet> rules = new List<HighlightRuleSet>();
 		
 		Dictionary<string, HighlightColor> environmentColors = new Dictionary<string, HighlightColor>();
+		
+		public IEnumerable<KeyValuePair<string, HighlightColor>> EnvironmentColors {
+			get {
+				return environmentColors;
+			}
+		}
+		
+		
 		Dictionary<string, string> properties       = new Dictionary<string, string>();
 		string[]  extensions;
 		

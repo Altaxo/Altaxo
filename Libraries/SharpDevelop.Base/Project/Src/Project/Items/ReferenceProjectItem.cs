@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1230 $</version>
+//     <version>$Revision: 1360 $</version>
 // </file>
 
 using System;
@@ -168,6 +168,14 @@ namespace ICSharpCode.SharpDevelop.Project
 			} catch (ArgumentException) { }
 			
 			return null;
+		}
+		
+		public override ProjectItem Clone()
+		{
+			ProjectItem n = new ReferenceProjectItem(this.Project);
+			n.Include = this.Include;
+			this.CopyExtraPropertiesTo(n);
+			return n;
 		}
 	}
 }

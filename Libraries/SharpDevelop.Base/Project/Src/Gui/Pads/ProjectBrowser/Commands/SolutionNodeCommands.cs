@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1074 $</version>
+//     <version>$Revision: 1300 $</version>
 // </file>
 
 using System;
@@ -50,9 +50,7 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 			IProject newProject = LanguageBindingService.LoadProject(fileName, Path.GetFileNameWithoutExtension(fileName));
 			if (newProject != null) {
 				newProject.Location = FileUtility.GetRelativePath(solutionFolderNode.Solution.Directory, fileName);
-				ParserService.CreateProjectContentForAddedProject(newProject);
-				solutionFolderNode.Container.AddFolder(newProject);
-				solutionFolderNode.Solution.FixSolutionConfiguration(new IProject[] { newProject });
+				ProjectService.AddProject(solutionFolderNode, newProject);
 				NodeBuilders.AddProjectNode((TreeNode)solutionFolderNode, newProject).EnsureVisible();
 				solutionFolderNode.Solution.ApplySolutionConfigurationToProjects();
 				solutionFolderNode.Solution.ApplySolutionPlatformToProjects();

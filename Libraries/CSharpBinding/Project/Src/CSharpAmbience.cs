@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1370 $</version>
 // </file>
 
 using System;
@@ -303,6 +303,14 @@ namespace ICSharpCode.Core
 			}
 			
 			if (property.IsIndexer) {
+				if (property.DeclaringType != null) {
+					if (UseFullyQualifiedMemberNames) {
+						builder.Append(property.DeclaringType.FullyQualifiedName);
+					} else {
+						builder.Append(property.DeclaringType.Name);
+					}
+					builder.Append('.');
+				}
 				builder.Append("this");
 			} else {
 				if (IncludeHTMLMarkup) {

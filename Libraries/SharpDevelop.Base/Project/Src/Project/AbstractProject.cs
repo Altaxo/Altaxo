@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1194 $</version>
+//     <version>$Revision: 1343 $</version>
 // </file>
 
 using System;
@@ -779,6 +779,8 @@ namespace ICSharpCode.SharpDevelop.Project
 			return properties;
 		}
 		
+		internal static List<string> filesToOpenAfterSolutionLoad = new List<string>();
+		
 		/// <summary>
 		/// Loads project preferences (currently opened files, bookmarks etc.).
 		/// </summary>
@@ -788,9 +790,7 @@ namespace ICSharpCode.SharpDevelop.Project
 				ICSharpCode.SharpDevelop.Bookmarks.BookmarkManager.AddMark(mark);
 			}
 			foreach (string fileName in properties.Get("files", new string[0])) {
-				if (File.Exists(fileName)) {
-					FileService.OpenFile(fileName);
-				}
+				filesToOpenAfterSolutionLoad.Add(fileName);
 			}
 		}
 	}

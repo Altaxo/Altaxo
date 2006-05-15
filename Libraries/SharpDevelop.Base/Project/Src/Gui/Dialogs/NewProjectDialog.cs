@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 990 $</version>
+//     <version>$Revision: 1311 $</version>
 // </file>
 
 using System;
@@ -254,23 +254,6 @@ namespace ICSharpCode.SharpDevelop.Project.Dialogs
 		public bool IsFilenameAvailable(string fileName)
 		{
 			return true;
-		}
-		
-		public void SaveFile(IProject project, string filename, string content, bool showFile)
-		{
-			FileProjectItem newItem = new FileProjectItem(project, ItemType.Compile);
-			newItem.Include = filename;
-			ProjectService.AddProjectItem(project, newItem);
-			
-			StreamWriter sr = File.CreateText(filename);
-			sr.Write(StringParser.Parse(content, new string[,] { {"PROJECT", ((TextBox)ControlDictionary["nameTextBox"]).Text}, {"FILE", Path.GetFileName(filename)}}));
-			sr.Close();
-			
-			if (showFile) {
-				string longfilename = Path.Combine(ProjectSolution, StringParser.Parse(filename, new string[,] { {"PROJECT", ((TextBox)ControlDictionary["nameTextBox"]).Text}}));
-				
-				FileService.OpenFile(longfilename);
-			}
 		}
 		
 		public string NewProjectLocation;

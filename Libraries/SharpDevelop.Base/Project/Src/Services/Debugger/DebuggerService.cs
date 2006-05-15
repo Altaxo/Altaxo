@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1288 $</version>
+//     <version>$Revision: 1312 $</version>
 // </file>
 
 using System;
@@ -20,6 +20,7 @@ using ICSharpCode.TextEditor;
 using System.Drawing;
 using System.Windows.Forms;
 using BM = ICSharpCode.SharpDevelop.Bookmarks;
+using ITextEditorControlProvider = ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor.ITextEditorControlProvider;
 
 namespace ICSharpCode.Core
 {
@@ -237,21 +238,23 @@ namespace ICSharpCode.Core
 		
 		static void ViewContentOpened(object sender, ViewContentEventArgs e)
 		{
-			if (e.Content.Control is TextEditor.TextEditorControl) {
-				TextArea textArea = ((TextEditor.TextEditorControl)e.Content.Control).ActiveTextAreaControl.TextArea;
+			if (e.Content is ITextEditorControlProvider) {
+				TextArea textArea = ((ITextEditorControlProvider)e.Content).TextEditorControl.ActiveTextAreaControl.TextArea;
 				
 				textArea.IconBarMargin.MouseDown += IconBarMouseDown;
 				textArea.ToolTipRequest          += TextAreaToolTipRequest;
+				textArea.MouseLeave              += TextAreaMouseLeave;
 			}
 		}
 		
 		static void ViewContentClosed(object sender, ViewContentEventArgs e)
 		{
-			if (e.Content.Control is TextEditor.TextEditorControl) {
-				TextArea textArea = ((TextEditor.TextEditorControl)e.Content.Control).ActiveTextAreaControl.TextArea;
+			if (e.Content is ITextEditorControlProvider) {
+				TextArea textArea = ((ITextEditorControlProvider)e.Content).TextEditorControl.ActiveTextAreaControl.TextArea;
 				
 				textArea.IconBarMargin.MouseDown -= IconBarMouseDown;
 				textArea.ToolTipRequest          -= TextAreaToolTipRequest;
+				textArea.MouseLeave              -= TextAreaMouseLeave;
 			}
 		}
 		
@@ -286,6 +289,7 @@ namespace ICSharpCode.Core
 		/// </summary>
 		static void TextAreaToolTipRequest(object sender, ToolTipRequestEventArgs e)
 		{
+			DebuggerGridControl toolTipControl = null;
 			try {
 				TextArea textArea = (TextArea)sender;
 				if (e.ToolTipShown) return;
@@ -308,13 +312,12 @@ namespace ICSharpCode.Core
 						return;
 					string textContent = doc.TextContent;
 					ExpressionResult expressionResult = expressionFinder.FindFullExpression(textContent, seg.Offset + logicPos.X);
-					string expression = expressionResult.Expression;
-					if (expression != null && expression.Length > 0) {
+					string expression = (expressionResult.Expression ?? "").Trim();
+					if (expression.Length > 0) {
 						// Look if it is variable
 						ResolveResult result = ParserService.Resolve(expressionResult, logicPos.Y + 1, logicPos.X + 1, textArea.MotherTextEditorControl.FileName, textContent);
 						bool debuggerCanShowValue;
 						string toolTipText = GetText(result, expression, out debuggerCanShowValue);
-						DebuggerGridControl toolTipControl = null;
 						if (toolTipText != null) {
 							if (Control.ModifierKeys == Keys.Control) {
 								toolTipText = "expr: " + expressionResult.ToString() + "\n" + toolTipText;
@@ -326,10 +329,7 @@ namespace ICSharpCode.Core
 						if (toolTipText != null) {
 							e.ShowToolTip(toolTipText);
 						}
-						if (oldToolTipControl != null) {
-							Form frm = oldToolTipControl.FindForm();
-							if (frm != null) frm.Close();
-						}
+						CloseOldToolTip();
 						if (toolTipControl != null) {
 							toolTipControl.ShowForm(textArea, logicPos);
 						}
@@ -338,7 +338,31 @@ namespace ICSharpCode.Core
 				}
 			} catch (Exception ex) {
 				ICSharpCode.Core.MessageService.ShowError(ex);
+			} finally {
+				if (toolTipControl == null && CanCloseOldToolTip)
+					CloseOldToolTip();
 			}
+		}
+		
+		static bool CanCloseOldToolTip {
+			get {
+				return oldToolTipControl != null && oldToolTipControl.AllowClose;
+			}
+		}
+		
+		static void CloseOldToolTip()
+		{
+			if (oldToolTipControl != null) {
+				Form frm = oldToolTipControl.FindForm();
+				if (frm != null) frm.Close();
+				oldToolTipControl = null;
+			}
+		}
+		
+		static void TextAreaMouseLeave(object source, EventArgs e)
+		{
+			if (CanCloseOldToolTip && !oldToolTipControl.IsMouseOver)
+				CloseOldToolTip();
 		}
 		
 		static string GetText(ResolveResult result, string expression, out bool debuggerCanShowValue)
@@ -423,6 +447,7 @@ namespace ICSharpCode.Core
 				text.Append(member.ToString());
 			}
 			if (tryDisplayValue && currentDebugger != null) {
+				LoggingService.Info("asking debugger for value of '" + expression + "'");
 				string currentValue = currentDebugger.GetValueAsString(expression);
 				if (currentValue != null) {
 					debuggerCanShowValue = true;

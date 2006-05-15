@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1353 $</version>
 // </file>
 
 using System;
@@ -107,7 +107,25 @@ namespace ICSharpCode.NRefactory.Tests.AST
 			IParser parser = ParserFactory.CreateParser(SupportedLanguage.VBNet, new StringReader(program));
 			parser.Parse();
 			Assert.IsTrue(parser.Errors.count > 0);
+			UsingDeclaration u = (UsingDeclaration)parser.CompilationUnit.Children[0];
+			foreach (Using us in u.Usings) {
+				Assert.IsNotNull(us);
+			}
 		}
+		
+		[Test]
+		public void VBNetWrongUsing2Test()
+		{
+			string program = "Imports ,\n";
+			IParser parser = ParserFactory.CreateParser(SupportedLanguage.VBNet, new StringReader(program));
+			parser.Parse();
+			Assert.IsTrue(parser.Errors.count > 0);
+			UsingDeclaration u = (UsingDeclaration)parser.CompilationUnit.Children[0];
+			foreach (Using us in u.Usings) {
+				Assert.IsNotNull(us);
+			}
+		}
+		
 		[Test]
 		public void VBNetDeclarationTest()
 		{

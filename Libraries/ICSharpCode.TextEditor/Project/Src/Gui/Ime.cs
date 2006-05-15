@@ -2,12 +2,13 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Shinsaku Nakagawa" email="shinsaku@users.sourceforge.jp"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1339 $</version>
 // </file>
 
 using System;
 using System.Runtime.InteropServices;
 using System.Drawing;
+using System.Windows.Forms;
 
 namespace ICSharpCode.TextEditor
 {
@@ -31,15 +32,11 @@ namespace ICSharpCode.TextEditor
 				return font;
 			}
 			set {
-				if (font == null) {
+				if (!value.Equals(font)) {
 					font = value;
 					lf = null;
+					SetIMEWindowFont(value);
 				}
-				else if (font.Equals(value) == false) {
-					font = value;
-					lf = null;
-				}
-				SetIMEWindowFont(value);
 			}
 		}
 
@@ -113,25 +110,33 @@ namespace ICSharpCode.TextEditor
 		}
 		private const int IMC_SETCOMPOSITIONFONT = 0x000a;
 		LOGFONT lf = null;
+		static bool disableIME;
 		
 		private void SetIMEWindowFont(Font f)
 		{
+			if (disableIME || hIMEWnd == IntPtr.Zero) return;
+			
 			if (lf == null) {
 				lf = new LOGFONT();
 				f.ToLogFont(lf);
 				lf.lfFaceName = f.Name;  // This is very important! "Font.ToLogFont" Method sets invalid value to LOGFONT.lfFaceName
 			}
 
-			SendMessage(
-			            hIMEWnd,
-			            WM_IME_CONTROL,
-			            new IntPtr(IMC_SETCOMPOSITIONFONT),
-			            lf
-			           );
+			try {
+				SendMessage(
+				            hIMEWnd,
+				            WM_IME_CONTROL,
+				            new IntPtr(IMC_SETCOMPOSITIONFONT),
+				            lf
+				           );
+			} catch (AccessViolationException ex) {
+				Handle(ex);
+			}
 		}
 
 		public void SetIMEWindowLocation(int x, int y)
 		{
+			if (disableIME || hIMEWnd == IntPtr.Zero) return;
 
 			POINT p = new POINT();
 			p.x = x;
@@ -142,12 +147,25 @@ namespace ICSharpCode.TextEditor
 			lParam.ptCurrentPos = p;
 			lParam.rcArea = new RECT();
 
-			SendMessage(
-			            hIMEWnd,
-			            WM_IME_CONTROL,
-			            new IntPtr(IMC_SETCOMPOSITIONWINDOW),
-			            lParam
-			           );
+			try {
+				SendMessage(
+				            hIMEWnd,
+				            WM_IME_CONTROL,
+				            new IntPtr(IMC_SETCOMPOSITIONWINDOW),
+				            lParam
+				           );
+			} catch (AccessViolationException ex) {
+				Handle(ex);
+			}
+		}
+		
+		void Handle(Exception ex)
+		{
+			Console.WriteLine(ex);
+			if (!disableIME) {
+				disableIME = true;
+				MessageBox.Show("Error calling IME: " + ex.Message + "\nIME is disabled.", "IME error");
+			}
 		}
 	}
 }

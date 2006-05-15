@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1346 $</version>
 // </file>
 
 using System;
@@ -55,7 +55,14 @@ namespace ICSharpCode.SharpDevelop.Dom
 			get;
 		}
 		
+		/// <summary>
+		/// Region of the whole class including the body.
+		/// </summary>
 		DomRegion Region {
+			get;
+		}
+		
+		DomRegion BodyRegion {
 			get;
 		}
 		
@@ -101,6 +108,12 @@ namespace ICSharpCode.SharpDevelop.Dom
 		IReturnType BaseType {
 			get;
 		}
+		
+		/// <summary>
+		/// If this is a partial class, gets the compound class containing information from all parts.
+		/// If this is not a partial class, a reference to this class is returned.
+		/// </summary>
+		IClass GetCompoundClass();
 		
 		IClass GetInnermostClass(int caretLine, int caretColumn);
 		

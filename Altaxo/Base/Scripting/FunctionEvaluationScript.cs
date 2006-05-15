@@ -120,10 +120,12 @@ namespace Altaxo.Scripting
           "using Altaxo;\r\n" + 
           "using Altaxo.Calc;\r\n" + 
           "using Altaxo.Data;\r\n" + 
-          "#endregion\r\n"+
-          "namespace Altaxo.Calc {\r\n" + 
-          "\tpublic class FunctionEvaluationScript : Altaxo.Calc.FunctionEvaluationScriptBase {\r\n" +
-          "\t\tpublic override double EvaluateFunctionValue(double x) {\r\n"; 
+          "namespace Altaxo.Calc\r\n" + 
+          "{\r\n" + 
+          "\tpublic class FunctionEvaluationScript : Altaxo.Calc.FunctionEvaluationScriptBase\r\n" +
+          "\t{\r\n"+
+          "\t\tpublic override double EvaluateFunctionValue(double x)\r\n" +
+          "\t\t{\r\n"; 
       }
     }
 
@@ -132,6 +134,7 @@ namespace Altaxo.Scripting
       get
       {
         return
+          "#endregion\r\n"+
           "\t\t\t// ----- add your script below this line -----\r\n";
       }
     }
@@ -153,7 +156,8 @@ namespace Altaxo.Scripting
       get
       {
         return
-          "\t\t\t// ----- add your script above this line -----\r\n";
+          "\t\t\t// ----- add your script above this line -----\r\n"+
+          "#region ScriptFooter\r\n";
       }
     }
 
@@ -168,7 +172,8 @@ namespace Altaxo.Scripting
           
           "\t\t} // method\r\n" +
           "\t} // class\r\n" + 
-          "} //namespace\r\n";
+          "} //namespace\r\n"+
+          "#endregion\r\n";
       }
     }
 

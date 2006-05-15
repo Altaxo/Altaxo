@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1262 $</version>
+//     <version>$Revision: 1329 $</version>
 // </file>
 
 using System;
@@ -383,6 +383,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 					return;
 				}
 				if (Path.IsPathRooted(parsedFileName)) {
+					Directory.CreateDirectory(Path.GetDirectoryName(parsedFileName));
 					window.ViewContent.Save(parsedFileName);
 				}
 			}

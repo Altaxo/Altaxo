@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1379 $</version>
 // </file>
 
 using System;
@@ -106,6 +106,21 @@ class C : A {
 			ResolveResult result = Resolve(program, "B", 6);
 			Assert.IsTrue(result is TypeResolveResult);
 			Assert.AreEqual("A.B", result.ResolvedType.FullyQualifiedName);
+			
+			result = Resolve(program, "C.B", 6);
+			Assert.IsTrue(result is TypeResolveResult);
+			Assert.AreEqual("A.B", result.ResolvedType.FullyQualifiedName);
+			
+			result = Resolve(program, "C", 6);
+			Assert.IsTrue(result is TypeResolveResult);
+			Assert.AreEqual("C", result.ResolvedType.FullyQualifiedName);
+			foreach (object o in result.GetCompletionData(nrrt.lastPC)) {
+				if (o is IClass) {
+					Assert.AreEqual("A.B", ((IClass)o).FullyQualifiedName);
+					return;
+				}
+			}
+			Assert.Fail("Inherited inner class not visible.");
 		}
 	}
 }

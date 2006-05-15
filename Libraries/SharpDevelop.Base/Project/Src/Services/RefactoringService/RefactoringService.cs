@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1029 $</version>
+//     <version>$Revision: 1393 $</version>
 // </file>
 
 using System;
@@ -27,7 +27,7 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 		/// <param name="directDerivationOnly">If true, gets only the classes that derive directly from <paramref name="baseClass"/>.</param>
 		public static List<IClass> FindDerivedClasses(IClass baseClass, IEnumerable<IProjectContent> projectContents, bool directDerivationOnly)
 		{
-			baseClass = FixClass(baseClass);
+			baseClass = baseClass.GetCompoundClass();
 			string baseClassName = baseClass.Name;
 			string baseClassFullName = baseClass.FullyQualifiedName;
 			List<IClass> list = new List<IClass>();
@@ -37,19 +37,7 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 					// can derive from the class
 					continue;
 				}
-				foreach (IClass c in pc.Classes) {
-					int count = c.BaseTypes.Count;
-					for (int i = 0; i < count; i++) {
-						string baseTypeName = c.BaseTypes[i].Name;
-						if (pc.Language.NameComparer.Equals(baseTypeName, baseClassName) ||
-						    pc.Language.NameComparer.Equals(baseTypeName, baseClassFullName)) {
-							IReturnType possibleBaseClass = c.GetBaseType(i);
-							if (possibleBaseClass.FullyQualifiedName == baseClass.FullyQualifiedName) {
-								list.Add(c);
-							}
-						}
-					}
-				}
+				AddDerivedClasses(pc, baseClass, baseClassName, baseClassFullName, pc.Classes, list);
 			}
 			if (!directDerivationOnly) {
 				List<IClass> additional = new List<IClass>();
@@ -62,6 +50,25 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 				}
 			}
 			return list;
+		}
+		
+		static void AddDerivedClasses(IProjectContent pc, IClass baseClass, string baseClassName, string baseClassFullName,
+		                              IEnumerable<IClass> classList, IList<IClass> resultList)
+		{
+			foreach (IClass c in classList) {
+				AddDerivedClasses(pc, baseClass, baseClassName, baseClassFullName, c.InnerClasses, resultList);
+				int count = c.BaseTypes.Count;
+				for (int i = 0; i < count; i++) {
+					string baseTypeName = c.BaseTypes[i].Name;
+					if (pc.Language.NameComparer.Equals(baseTypeName, baseClassName) ||
+					    pc.Language.NameComparer.Equals(baseTypeName, baseClassFullName)) {
+						IReturnType possibleBaseClass = c.GetBaseType(i);
+						if (possibleBaseClass.FullyQualifiedName == baseClass.FullyQualifiedName) {
+							resultList.Add(c);
+						}
+					}
+				}
+			}
 		}
 		#endregion
 		
@@ -79,7 +86,33 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 		/// </summary>
 		public static List<Reference> FindReferences(IClass @class, IProgressMonitor progressMonitor)
 		{
+			if (@class == null)
+				throw new ArgumentNullException("class");
 			return RunFindReferences(@class, null, false, progressMonitor);
+		}
+		
+		/// <summary>
+		/// Find all references to the resolved entity.
+		/// </summary>
+		public static List<Reference> FindReferences(ResolveResult entity, IProgressMonitor progressMonitor)
+		{
+			if (entity == null)
+				throw new ArgumentNullException("entity");
+			if (entity is LocalResolveResult) {
+				return RunFindReferences(entity.CallingClass, (entity as LocalResolveResult).Field, true, progressMonitor);
+			} else if (entity is TypeResolveResult) {
+				return FindReferences((entity as TypeResolveResult).ResolvedClass, progressMonitor);
+			} else if (entity is MemberResolveResult) {
+				return FindReferences((entity as MemberResolveResult).ResolvedMember, progressMonitor);
+			} else if (entity is MethodResolveResult) {
+				IMethod method = (entity as MethodResolveResult).GetMethodIfSingleOverload();
+				if (method != null) {
+					return FindReferences(method, progressMonitor);
+				}
+			} else if (entity is MixedResolveResult) {
+				return FindReferences((entity as MixedResolveResult).PrimaryResult, progressMonitor);
+			}
+			return null;
 		}
 		
 		/// <summary>
@@ -109,7 +142,7 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 				files = new List<ProjectItem>();
 				files.Add(FindItem(ownerClass.CompilationUnit.FileName));
 			} else {
-				ownerClass = FixClass(ownerClass);
+				ownerClass = ownerClass.GetCompoundClass();
 				files = GetPossibleFiles(ownerClass, member);
 			}
 			ParseableFileContentEnumerator enumerator = new ParseableFileContentEnumerator(files.ToArray());
@@ -147,39 +180,52 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 		                          bool isLocal,
 		                          string fileName, string fileContent)
 		{
-			string lowerFileContent = fileContent.ToLower();
+			string lowerFileContent = fileContent.ToLowerInvariant();
 			string searchedText; // the text that is searched for
+			bool searchingIndexer = false;
 			
 			if (member == null) {
-				searchedText = parentClass.Name.ToLower();
+				searchedText = parentClass.Name.ToLowerInvariant();
 			} else {
 				// When looking for a member, the name of the parent class does not always exist
 				// in the file where the member is accessed.
 				// (examples: derived classes, partial classes)
 				if (member is IMethod && ((IMethod)member).IsConstructor)
-					searchedText = parentClass.Name.ToLower();
-				else
-					searchedText = member.Name.ToLower();
+					searchedText = parentClass.Name.ToLowerInvariant();
+				else {
+					if (member is IProperty && ((IProperty)member).IsIndexer) {
+						searchingIndexer = true;
+						searchedText = GetIndexerExpressionStartToken(fileName);
+					} else {
+						searchedText = member.Name.ToLowerInvariant();
+					}
+				}
 			}
 			
 			int pos = -1;
+			int exprPos;
 			IExpressionFinder expressionFinder = null;
 			while ((pos = lowerFileContent.IndexOf(searchedText, pos + 1)) >= 0) {
-				if (pos > 0 && char.IsLetterOrDigit(fileContent, pos - 1)) {
-					continue; // memberName is not a whole word (a.SomeName cannot reference Name)
-				}
-				if (pos < fileContent.Length - searchedText.Length - 1
-				    && char.IsLetterOrDigit(fileContent, pos + searchedText.Length))
-				{
-					continue; // memberName is not a whole word (a.Name2 cannot reference Name)
+				if (!searchingIndexer) {
+					if (pos > 0 && char.IsLetterOrDigit(fileContent, pos - 1)) {
+						continue; // memberName is not a whole word (a.SomeName cannot reference Name)
+					}
+					if (pos < fileContent.Length - searchedText.Length - 1
+					    && char.IsLetterOrDigit(fileContent, pos + searchedText.Length))
+					{
+						continue; // memberName is not a whole word (a.Name2 cannot reference Name)
+					}
+					exprPos = pos;
+				} else {
+					exprPos = pos-1;	// indexer expressions are found by resolving the part before the indexer
 				}
 				
 				if (expressionFinder == null) {
 					expressionFinder = ParserService.GetExpressionFinder(fileName);
 				}
-				ExpressionResult expr = expressionFinder.FindFullExpression(fileContent, pos);
+				ExpressionResult expr = expressionFinder.FindFullExpression(fileContent, exprPos);
 				if (expr.Expression != null) {
-					Point position = GetPosition(fileContent, pos);
+					Point position = GetPosition(fileContent, exprPos);
 				repeatResolve:
 					// TODO: Optimize by re-using the same resolver if multiple expressions were
 					// found in this file (the resolver should parse all methods at once)
@@ -189,18 +235,14 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 						// find reference to local variable
 						if (IsReferenceToLocalVariable(rr, member)) {
 							list.Add(new Reference(fileName, pos, searchedText.Length, expr.Expression, rr));
+						} else if (FixIndexerExpression(expressionFinder, ref expr, mrr)) {
+							goto repeatResolve;
 						}
 					} else if (member != null) {
 						// find reference to member
 						if (IsReferenceToMember(member, rr)) {
 							list.Add(new Reference(fileName, pos, searchedText.Length, expr.Expression, rr));
-						} else if (mrr != null && mrr.ResolvedMember is IProperty && ((IProperty)mrr.ResolvedMember).IsIndexer) {
-							// we got an indexer call as expression ("objectList[0].ToString()[2]")
-							// strip the index from the expression to resolve the underlying expression
-							string newExpr = expressionFinder.RemoveLastPart(expr.Expression);
-							if (newExpr.Length >= expr.Expression.Length)
-								throw new ApplicationException("new expression must be shorter than old expression");
-							expr.Expression = newExpr;
+						} else if (FixIndexerExpression(expressionFinder, ref expr, mrr)) {
 							goto repeatResolve;
 						}
 					} else {
@@ -221,6 +263,45 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 			}
 		}
 		
+		/// <summary>
+		/// Makes the given ExpressionResult point to the underlying expression if
+		/// the expression is an indexer expression.
+		/// </summary>
+		/// <returns><c>true</c>, if the expression was an indexer expression and has been changed, <c>false</c> otherwise.</returns>
+		public static bool FixIndexerExpression(IExpressionFinder expressionFinder, ref ExpressionResult expr, MemberResolveResult mrr)
+		{
+			if (mrr != null && mrr.ResolvedMember is IProperty && ((IProperty)mrr.ResolvedMember).IsIndexer) {
+				// we got an indexer call as expression ("objectList[0].ToString()[2]")
+				// strip the index from the expression to resolve the underlying expression
+				string newExpr = expressionFinder.RemoveLastPart(expr.Expression);
+				if (newExpr.Length >= expr.Expression.Length) {
+					throw new ApplicationException("new expression must be shorter than old expression");
+				}
+				expr.Expression = newExpr;
+				return true;
+			}
+			return false;
+		}
+		
+		/// <summary>
+		/// Determines the token that denotes a possible beginning of an indexer
+		/// expression in the specified file.
+		/// </summary>
+		static string GetIndexerExpressionStartToken(string fileName)
+		{
+			if (fileName != null) {
+				ParseInformation pi = ParserService.GetParseInformation(fileName);
+				if (pi != null &&
+				    pi.MostRecentCompilationUnit != null &&
+				    pi.MostRecentCompilationUnit.ProjectContent != null &&
+				    pi.MostRecentCompilationUnit.ProjectContent.Language != null) {
+					return pi.MostRecentCompilationUnit.ProjectContent.Language.IndexerExpressionStartToken;
+				}
+			}
+			LoggingService.Warn("RefactoringService: unable to determine the correct indexer expression start token for file '"+fileName+"'");
+			return LanguageProperties.CSharp.IndexerExpressionStartToken;
+		}
+		
 		static Point GetPosition(string fileContent, int pos)
 		{
 			int line = 1;
@@ -234,14 +315,6 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 				}
 			}
 			return new Point(column, line);
-		}
-		
-		/// <summary>
-		/// Gets the compound class if the class was partial.
-		/// </summary>
-		static IClass FixClass(IClass c)
-		{
-			return c.DefaultReturnType.GetUnderlyingClass();
 		}
 		
 		public static List<string> GetFileNames(IClass c)
@@ -263,27 +336,31 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 		}
 		
 		/// <summary>
-		/// Gets the list of files that could have a reference to the specified class.
-		/// </summary>
-		static List<ProjectItem> GetPossibleFiles(IClass c)
-		{
-			if (c.DeclaringType != null) {
-				return GetPossibleFiles(c.DeclaringType, c);
-			}
-			List<ProjectItem> resultList = new List<ProjectItem>();
-			GetPossibleFilesInternal(resultList, c.ProjectContent, c.IsInternal);
-			return resultList;
-		}
-		
-		/// <summary>
 		/// Gets the files of files that could have a reference to the <paramref name="member"/>
 		/// int the <paramref name="ownerClass"/>.
 		/// </summary>
 		static List<ProjectItem> GetPossibleFiles(IClass ownerClass, IDecoration member)
 		{
-			if (member == null)
-				return GetPossibleFiles(ownerClass);
 			List<ProjectItem> resultList = new List<ProjectItem>();
+			if (ProjectService.OpenSolution == null) {
+				FileProjectItem tempItem = new FileProjectItem(null, ItemType.Compile);
+				tempItem.Include = ownerClass.CompilationUnit.FileName;
+				resultList.Add(tempItem);
+				return resultList;
+			}
+			
+			if (member == null) {
+				// get files possibly referencing ownerClass
+				while (ownerClass.DeclaringType != null) {
+					// for nested classes, treat class as member
+					member = ownerClass;
+					ownerClass = ownerClass.DeclaringType;
+				}
+				if (member == null) {
+					GetPossibleFilesInternal(resultList, ownerClass.ProjectContent, ownerClass.IsInternal);
+					return resultList;
+				}
+			}
 			if (member.IsPrivate) {
 				List<string> fileNames = GetFileNames(ownerClass);
 				foreach (string fileName in fileNames) {
@@ -303,16 +380,18 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 		
 		static ProjectItem FindItem(string fileName)
 		{
-			if (ProjectService.OpenSolution == null)
-				return null;
-			foreach (IProject p in ProjectService.OpenSolution.Projects) {
-				foreach (ProjectItem item in p.Items) {
-					if (FileUtility.IsEqualFileName(fileName, item.FileName)) {
-						return item;
+			if (ProjectService.OpenSolution != null) {
+				foreach (IProject p in ProjectService.OpenSolution.Projects) {
+					foreach (ProjectItem item in p.Items) {
+						if (FileUtility.IsEqualFileName(fileName, item.FileName)) {
+							return item;
+						}
 					}
 				}
 			}
-			return null;
+			FileProjectItem tempItem = new FileProjectItem(null, ItemType.Compile);
+			tempItem.Include = fileName;
+			return tempItem;
 		}
 		
 		static void GetPossibleFilesInternal(List<ProjectItem> resultList, IProjectContent ownerProjectContent, bool internalOnly)

@@ -123,11 +123,12 @@ namespace Altaxo.Scripting
           "using Altaxo;\r\n" + 
           "using Altaxo.Calc;\r\n" + 
           "using Altaxo.Data;\r\n" + 
-          "#endregion\r\n"+
-          "namespace Altaxo.Calc {\r\n" + 
-          "\tpublic class ExtractWorksheetDataScript : Altaxo.Calc.ExtractTableValuesExeBase {\r\n" +
-          "\t\tpublic override bool IsRowIncluded(Altaxo.Data.DataTable mytable, int i) {\r\n" +
-          "\t\t\t#region ScriptVars\r\n" +
+          "namespace Altaxo.Calc\r\n" + 
+          "{\r\n" + 
+          "\tpublic class ExtractWorksheetDataScript : Altaxo.Calc.ExtractTableValuesExeBase\r\n" +
+          "\t{\r\n"+
+          "\t\tpublic override bool IsRowIncluded(Altaxo.Data.DataTable mytable, int i)\r\n" +
+          "\t\t{\r\n" +
           "\t\t\tAltaxo.Data.DataColumnCollection  col = mytable.DataColumns;\r\n" +
           "\t\t\tAltaxo.Data.DataColumnCollection pcol = mytable.PropertyColumns;\r\n"+ 
           "\t\t\tAltaxo.Data.DataTableCollection table = Altaxo.Data.DataTableCollection.GetParentDataTableCollectionOf(mytable);\r\n";
@@ -139,7 +140,7 @@ namespace Altaxo.Scripting
       get
       {
         return
-          "\t\t\t#endregion\r\n"+
+          "#endregion\r\n"+
           "\t\t\t// ----- add your script below this line -----\r\n";
       }
     }
@@ -161,7 +162,8 @@ namespace Altaxo.Scripting
       get
       {
         return
-          "\t\t\t// ----- add your script above this line -----\r\n";
+          "\t\t\t// ----- add your script above this line -----\r\n"+
+          "#region ScriptFooter\r\n";
       }
     }
 
@@ -176,7 +178,8 @@ namespace Altaxo.Scripting
           
           "\t\t} // method\r\n" +
           "\t} // class\r\n" + 
-          "} //namespace\r\n";
+          "} //namespace\r\n"+
+          "#endregion\r\n";
       }
     }
 

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1279 $</version>
+//     <version>$Revision: 1349 $</version>
 // </file>
 
 using System;
@@ -62,6 +62,7 @@ namespace ICSharpCode.SharpDevelop.Project
 		public ProjectBrowserControl()
 		{
 			InitializeComponent();
+			treeView.CanClearSelection = false;
 			treeView.BeforeSelect   += TreeViewBeforeSelect;
 			treeView.AfterExpand    += TreeViewAfterExpand;
 			FileService.FileRenamed += FileServiceFileRenamed;

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1010 $</version>
+//     <version>$Revision: 1300 $</version>
 // </file>
 
 using System;
@@ -98,21 +98,22 @@ namespace ICSharpCode.SharpDevelop.Gui
 			toolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
 			contentPanel.Controls.Add(toolStrip);
 			
-			ProjectService.SolutionLoaded += ProjectServiceSolutionLoaded;
+			ProjectService.SolutionLoaded += ProjectServiceSolutionChanged;
+			ProjectService.ProjectAdded += ProjectServiceSolutionChanged; // rebuild view when project is added to solution
+			ProjectService.SolutionFolderRemoved += ProjectServiceSolutionChanged; // rebuild view when project is removed from solution
 			ProjectService.SolutionClosed += ProjectServiceSolutionClosed;
 			
 			ParserService.ParseInformationUpdated += new ParseInformationEventHandler(ParserServiceParseInformationUpdated);
 			
 			AmbienceService.AmbienceChanged += new EventHandler(AmbienceServiceAmbienceChanged);
 			if (ProjectService.OpenSolution != null) {
-				ProjectServiceSolutionLoaded(null, null);
+				ProjectServiceSolutionChanged(null, null);
 			}
-			Application.Idle += new EventHandler(UpdateThread);
 			UpdateToolbars();
 		}
 		
 		List<ICompilationUnit[]> pending = new List<ICompilationUnit[]> ();
-		void UpdateThread(object sender, EventArgs ea)
+		void UpdateThread()
 		{
 			lock (pending) {
 				foreach (ICompilationUnit[] units in pending) {
@@ -134,6 +135,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			lock (pending) {
 				pending.Add(new ICompilationUnit[] { e.ParseInformation.BestCompilationUnit as ICompilationUnit, e.CompilationUnit});
 			}
+			WorkbenchSingleton.SafeThreadAsyncCall(new MethodInvoker(UpdateThread));
 		}
 		
 		#region Navigation
@@ -275,7 +277,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			}
 		}
 		
-		void ProjectServiceSolutionLoaded(object sender, SolutionEventArgs e)
+		void ProjectServiceSolutionChanged(object sender, EventArgs e)
 		{
 			classBrowserTreeView.Nodes.Clear();
 			foreach (IProject project in ProjectService.OpenSolution.Projects) {

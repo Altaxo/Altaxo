@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 955 $</version>
+//     <version>$Revision: 1385 $</version>
 // </file>
 
 using ICSharpCode.Core;
@@ -98,6 +98,20 @@ namespace ICSharpCode.SharpDevelop.Project
 			}
 		}
 		
+		[Browsable(false)]
+		public string Namespace {
+			get {
+				string ns = base.Properties["Namespace"];
+				if (ns.Length > 0) {
+					return ns;
+				} 
+				return Project.RootNamespace;
+			}
+			set {
+				base.Properties["Namespace"] = value;
+			}
+		}
+		
 		public override string FileName {
 			get {
 				if (Project != null && RelPath != null) {
@@ -115,6 +129,14 @@ namespace ICSharpCode.SharpDevelop.Project
 		public WebReferenceUrl(IProject project) : base(project)
 		{
 			UrlBehavior = "Static";
+		}
+		
+		public override ProjectItem Clone()
+		{
+			ProjectItem n = new WebReferenceUrl(this.Project);
+			n.Include = this.Include;
+			this.CopyExtraPropertiesTo(n);
+			return n;
 		}
 	}
 }

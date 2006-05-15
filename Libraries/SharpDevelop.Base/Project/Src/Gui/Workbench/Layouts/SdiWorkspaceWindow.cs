@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1172 $</version>
+//     <version>$Revision: 1355 $</version>
 // </file>
 
 using System;
@@ -134,6 +134,10 @@ namespace ICSharpCode.SharpDevelop.Gui
 		private void CreateViewTabControl()
 		{
 			viewTabControl = new TabControl();
+			viewTabControl.GotFocus += delegate {
+				TabPage page = viewTabControl.TabPages[viewTabControl.TabIndex];
+				if (page.Controls.Count == 1 && !page.ContainsFocus) page.Controls[0].Focus();
+			};
 			viewTabControl.Alignment = TabAlignment.Bottom;
 			viewTabControl.Dock = DockStyle.Fill;
 			viewTabControl.Selected += viewTabControlSelected;

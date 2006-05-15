@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 975 $</version>
+//     <version>$Revision: 1346 $</version>
 // </file>
 
 using System;
@@ -32,6 +32,12 @@ namespace ICSharpCode.NRefactory.Parser.AST
 		public void BlockEnd()
 		{
 			blockStack.Pop();
+		}
+		
+		public INode CurrentBock {
+			get {
+				return blockStack.Count > 0 ? (INode)blockStack.Peek() : null;
+			}
 		}
 		
 		public override void AddChild(INode childNode)

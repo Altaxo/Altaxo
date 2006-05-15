@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1346 $</version>
 // </file>
 
 using System;
@@ -32,13 +32,38 @@ namespace ICSharpCode.NRefactory.Tests.AST
 		}
 		
 		[Test]
-		public void CSharpSimplePartitialClassTypeDeclarationTest()
+		public void CSharpSimpleClassRegionTest()
+		{
+			const string program = "class MyClass\n{\n}\n";
+			TypeDeclaration td = ParseUtilCSharp.ParseGlobal<TypeDeclaration>(program);
+			Assert.AreEqual(1, td.StartLocation.Y, "StartLocation.Y");
+			Assert.AreEqual(1, td.StartLocation.X, "StartLocation.X");
+			Assert.AreEqual(1, td.BodyStartLocation.Y, "BodyStartLocation.Y");
+			Assert.AreEqual(14, td.BodyStartLocation.X, "BodyStartLocation.X");
+			Assert.AreEqual(3, td.EndLocation.Y, "EndLocation.Y");
+		}
+		
+		[Test]
+		public void CSharpSimplePartialClassTypeDeclarationTest()
 		{
 			TypeDeclaration td = ParseUtilCSharp.ParseGlobal<TypeDeclaration>("partial class MyClass { }");
 			Assert.IsNotNull(td);
 			Assert.AreEqual(ClassType.Class, td.Type);
 			Assert.AreEqual("MyClass", td.Name);
 			Assert.AreEqual(Modifier.Partial, td.Modifier);
+		}
+		
+		[Test]
+		public void CSharpNestedClassesTest()
+		{
+			TypeDeclaration td = ParseUtilCSharp.ParseGlobal<TypeDeclaration>("class MyClass { partial class P1 {} public partial class P2 {} static class P3 {} internal static class P4 {} }");
+			Assert.IsNotNull(td);
+			Assert.AreEqual(ClassType.Class, td.Type);
+			Assert.AreEqual("MyClass", td.Name);
+			Assert.AreEqual(Modifier.Partial, ((TypeDeclaration)td.Children[0]).Modifier);
+			Assert.AreEqual(Modifier.Partial | Modifier.Public, ((TypeDeclaration)td.Children[1]).Modifier);
+			Assert.AreEqual(Modifier.Static, ((TypeDeclaration)td.Children[2]).Modifier);
+			Assert.AreEqual(Modifier.Static | Modifier.Internal, ((TypeDeclaration)td.Children[3]).Modifier);
 		}
 		
 		[Test]
@@ -171,6 +196,8 @@ public abstract class MyClass : MyBase, Interface1, My.Test.Interface2
 			Assert.AreEqual("TestClass", td.Name);
 			Assert.AreEqual(ClassType.Class, td.Type);
 			Assert.AreEqual(1, td.StartLocation.Y, "start line");
+			Assert.AreEqual(1, td.BodyStartLocation.Y, "bodystart line");
+			Assert.AreEqual(16, td.BodyStartLocation.X, "bodystart col");
 			Assert.AreEqual(2, td.EndLocation.Y, "end line");
 		}
 		

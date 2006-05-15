@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1267 $</version>
+//     <version>$Revision: 1297 $</version>
 // </file>
 
 using System;
@@ -146,7 +146,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 		
 		public static void RenameClass(IClass c, string newName)
 		{
-			c = c.DefaultReturnType.GetUnderlyingClass(); // get compound class if class is partial
+			c = c.GetCompoundClass(); // get compound class if class is partial
 			
 			List<Reference> list = RefactoringService.FindReferences(c, null);
 			if (list == null) return;

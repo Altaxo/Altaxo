@@ -123,11 +123,12 @@ namespace Altaxo.Scripting
           "using Altaxo;\r\n" + 
           "using Altaxo.Calc;\r\n" + 
           "using Altaxo.Data;\r\n" + 
-          "#endregion\r\n"+
-          "namespace Altaxo.Calc {\r\n" + 
-          "\tpublic class SetPropertyColumnValues : Altaxo.Calc.ColScriptExeBase {\r\n" +
-          "\t\tpublic override void Execute(Altaxo.Data.DataColumn mycol) {\r\n" +
-          "\t\t\t#region ScriptVars\r\n"+
+          "namespace Altaxo.Calc\r\n" + 
+          "{\r\n" + 
+          "\tpublic class SetPropertyColumnValues : Altaxo.Calc.ColScriptExeBase\r\n" +
+          "\t{\r\n"+
+          "\t\tpublic override void Execute(Altaxo.Data.DataColumn mycol)\r\n" +
+          "\t\t{\r\n" +
           "\t\t\tAltaxo.Data.DataColumnCollection pcol = Altaxo.Data.DataColumnCollection.GetParentDataColumnCollectionOf(mycol);\r\n" +
           "\t\t\tAltaxo.Data.DataTable         mytable = Altaxo.Data.DataTable.GetParentDataTableOf(pcol);\r\n" +
           "\t\t\tAltaxo.Data.DataColumnCollection  col = mytable==null? null : mytable.DataColumns;\r\n" +
@@ -140,7 +141,7 @@ namespace Altaxo.Scripting
       get
       {
         return
-          "\t\t\t#endregion\r\n"+
+          "#endregion\r\n"+
           "\t\t\t// ----- add your script below this line -----\r\n";
       }
     }
@@ -162,7 +163,8 @@ namespace Altaxo.Scripting
       get
       {
         return
-          "\t\t\t// ----- add your script above this line -----\r\n";
+          "\t\t\t// ----- add your script above this line -----\r\n"+
+          "#region ScriptFooter\r\n";
       }
     }
 
@@ -177,7 +179,8 @@ namespace Altaxo.Scripting
           
           "\t\t} // Execute method\r\n" +
           "\t} // class\r\n" + 
-          "} //namespace\r\n";
+          "} //namespace\r\n"+
+          "#endregion\r\n";
       }
     }
 

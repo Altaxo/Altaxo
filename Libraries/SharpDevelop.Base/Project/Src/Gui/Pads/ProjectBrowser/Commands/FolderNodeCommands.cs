@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1262 $</version>
+//     <version>$Revision: 1345 $</version>
 // </file>
 
 using System;
@@ -118,6 +118,8 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 						if (FileUtility.IsEqualFileName(fileNode.FileName, copiedFileName)) {
 							if (fileNode.FileNodeStatus == FileNodeStatus.Missing) {
 								fileNode.FileNodeStatus = FileNodeStatus.InProject;
+							} else if (fileNode.FileNodeStatus == FileNodeStatus.None) {
+								return IncludeFileInProject.IncludeFileNode(fileNode);
 							}
 							return fileNode.ProjectItem as FileProjectItem;
 						}
@@ -261,9 +263,10 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 		public override void Run()
 		{
 			TreeNode selectedNode = ProjectBrowserPad.Instance.ProjectBrowserControl.SelectedNode;
-			DirectoryNode node = selectedNode as DirectoryNode;
-			if (node == null) {
-				node = selectedNode.Parent as DirectoryNode;
+			DirectoryNode node = null;
+			while (selectedNode != null && node == null) {
+				node = selectedNode as DirectoryNode;
+				selectedNode = selectedNode.Parent;
 			}
 			if (node == null) {
 				return;

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1276 $</version>
+//     <version>$Revision: 1311 $</version>
 // </file>
 
 using System;
@@ -142,8 +142,19 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 				StringParser.Properties["StandardNamespace"] = project.RootNamespace;
 				// Add Project items
 				foreach (ProjectItem projectItem in projectItems) {
-					projectItem.Project = project;
-					project.Items.Add(projectItem);
+					bool itemFound = false;
+					foreach (ProjectItem existingItem in project.Items) {
+						if (existingItem.ItemType == projectItem.ItemType
+						    && existingItem.Include == projectItem.Include)
+						{
+							itemFound = true;
+							break;
+						}
+					}
+					if (!itemFound) {
+						projectItem.Project = project;
+						project.Items.Add(projectItem);
+					}
 				}
 				
 				// Add Imports

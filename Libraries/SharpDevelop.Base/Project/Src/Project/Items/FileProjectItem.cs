@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1024 $</version>
+//     <version>$Revision: 1360 $</version>
 // </file>
 
 using System;
@@ -130,6 +130,14 @@ namespace ICSharpCode.SharpDevelop.Project
 		public FileProjectItem(IProject project, ItemType type) : base(project)
 		{
 			this.type = type;
+		}
+		
+		public override ProjectItem Clone()
+		{
+			ProjectItem n = new FileProjectItem(this.Project, this.ItemType);
+			n.Include = this.Include;
+			this.CopyExtraPropertiesTo(n);
+			return n;
 		}
 	}
 }

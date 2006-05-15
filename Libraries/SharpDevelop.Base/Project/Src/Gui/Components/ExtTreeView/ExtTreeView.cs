@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1214 $</version>
+//     <version>$Revision: 1349 $</version>
 // </file>
 
 using System;
@@ -249,6 +249,20 @@ namespace ICSharpCode.SharpDevelop.Gui
 			}
 		}
 		
+		bool canClearSelection = true;
+		
+		/// <summary>
+		/// Gets/Sets whether the user can clear the selection by clicking in the empty area.
+		/// </summary>
+		public bool CanClearSelection {
+			get {
+				return canClearSelection;
+			}
+			set {
+				canClearSelection = value;
+			}
+		}
+		
 		protected override void OnMouseDown(MouseEventArgs e)
 		{
 			base.OnMouseDown(e);
@@ -258,8 +272,9 @@ namespace ICSharpCode.SharpDevelop.Gui
 					SelectedNode = node;
 				}
 			} else {
-				SelectedNode = null;
-				this.ContextMenuStrip = null;
+				if (canClearSelection) {
+					SelectedNode = null;
+				}
 			}
 		}
 		
@@ -270,7 +285,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			base.OnBeforeSelect(e);
 			ExtTreeNode node = e.Node as ExtTreeNode;
 			if (node != null) {
-				this.ContextMenuStrip = MenuService.CreateContextMenu(e.Node, node.ContextmenuAddinTreePath);
+				node.ContextMenuStrip = MenuService.CreateContextMenu(e.Node, node.ContextmenuAddinTreePath);
 			}
 		}
 		

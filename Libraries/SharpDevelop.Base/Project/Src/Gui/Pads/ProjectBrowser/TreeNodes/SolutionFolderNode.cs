@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1214 $</version>
+//     <version>$Revision: 1315 $</version>
 // </file>
 
 using System;
@@ -158,7 +158,7 @@ namespace ICSharpCode.SharpDevelop.Project
 			if (dataObject.GetDataPresent(typeof(ISolutionFolder).ToString())) {
 				string guid = dataObject.GetData(typeof(ISolutionFolder).ToString()).ToString();
 				ISolutionFolder solutionFolder = container.Solution.GetSolutionFolder(guid);
-				if (solutionFolder == container)
+				if (solutionFolder == null || solutionFolder == container)
 					return false;
 				if (solutionFolder is ISolutionFolderContainer) {
 					return solutionFolder.Parent != container

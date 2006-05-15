@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1375 $</version>
 // </file>
 
 using System;
@@ -116,16 +116,16 @@ namespace ICSharpCode.SharpDevelop.Dom
 				return ProjectContentRegistry.Mscorlib.GetClass(FullyQualifiedName);
 			}
 			public override List<IMethod> GetMethods() {
-				return new List<IMethod>(1);
+				return new List<IMethod>();
 			}
 			public override List<IProperty> GetProperties() {
-				return new List<IProperty>(1);
+				return new List<IProperty>();
 			}
 			public override List<IField> GetFields() {
-				return new List<IField>(1);
+				return new List<IField>();
 			}
 			public override List<IEvent> GetEvents() {
-				return new List<IEvent>(1);
+				return new List<IEvent>();
 			}
 		}
 		

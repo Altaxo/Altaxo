@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1380 $</version>
 // </file>
 
 using System;
@@ -90,11 +90,17 @@ namespace ICSharpCode.SharpDevelop.Gui
 				return PropertyService.Get("Workbench.CurrentLayout", "Default");
 			}
 			set {
+				if (WorkbenchSingleton.InvokeRequired)
+					throw new InvalidOperationException("Invoke required");
 				if (value != CurrentLayoutName) {
-					
 					PropertyService.Set("Workbench.CurrentLayout", value);
-					WorkbenchSingleton.SafeThreadCall(WorkbenchSingleton.Workbench.WorkbenchLayout, "LoadConfiguration");
-					WorkbenchSingleton.SafeThreadCall(typeof(LayoutConfiguration), "OnLayoutChanged", EventArgs.Empty);
+					WorkbenchSingleton.Workbench.WorkbenchLayout.LoadConfiguration();
+					OnLayoutChanged(EventArgs.Empty);
+					#if DEBUG
+					GC.Collect();
+					GC.WaitForPendingFinalizers();
+					GC.Collect();
+					#endif
 				}
 			}
 		}

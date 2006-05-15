@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1176 $</version>
+//     <version>$Revision: 1318 $</version>
 // </file>
 
 using System;
@@ -93,6 +93,28 @@ namespace ICSharpCode.Core
 				}
 				return null;
 			}
+		}
+		
+		public static IProjectContent GetExistingProjectContentForReference(ReferenceProjectItem item)
+		{
+			if (item is ProjectReferenceProjectItem) {
+				if (((ProjectReferenceProjectItem)item).ReferencedProject == null)
+				{
+					return null;
+				}
+				return ParserService.GetProjectContent(((ProjectReferenceProjectItem)item).ReferencedProject);
+			}
+			lock (contents) {
+				string itemInclude = item.Include;
+				string itemFileName = item.FileName;
+				if (contents.ContainsKey(itemFileName)) {
+					return contents[itemFileName];
+				}
+				if (contents.ContainsKey(itemInclude)) {
+					return contents[itemInclude];
+				}
+			}
+			return null;
 		}
 		
 		public static IProjectContent GetProjectContentForReference(ReferenceProjectItem item)

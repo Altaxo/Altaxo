@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1105 $</version>
+//     <version>$Revision: 1332 $</version>
 // </file>
 
 using System;
@@ -73,7 +73,9 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		{
 			base.InitializeTextAreaControl(newControl);
 			
-			newControl.ContextMenuStrip = MenuService.CreateContextMenu(this, contextMenuPath);
+			newControl.ShowContextMenu += delegate(object sender, MouseEventArgs e) {
+				MenuService.ShowContextMenu(this, contextMenuPath, (Control)sender, e.X, e.Y);
+			};
 			newControl.TextArea.KeyEventHandler += new ICSharpCode.TextEditor.KeyEventHandler(HandleKeyPress);
 			newControl.Caret.PositionChanged += new EventHandler(CaretPositionChanged);
 			newControl.TextArea.ClipboardHandler.CopyText += new CopyTextEventHandler(ClipboardHandlerCopyText);

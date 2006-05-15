@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1055 $</version>
+//     <version>$Revision: 1331 $</version>
 // </file>
 
 using System;
@@ -49,7 +49,7 @@ namespace ICSharpCode.SharpDevelop.Commands
 			{
 				if (WorkbenchSingleton.Workbench.ActiveWorkbenchWindow != null) {
 					if (!WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ActiveViewContent.Control.ContainsFocus) {
-						if (Form.ActiveForm == (Form)WorkbenchSingleton.Workbench) {
+						if (Form.ActiveForm == WorkbenchSingleton.MainForm) {
 							WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ActiveViewContent.Control.Focus();
 						}
 					}
@@ -75,7 +75,7 @@ namespace ICSharpCode.SharpDevelop.Commands
 				Keys keyPressed = (Keys)m.WParam.ToInt32() | Control.ModifierKeys;
 				
 				if (keyPressed == Keys.Escape) {
-					if (PadHasFocus()) {
+					if (PadHasFocus() && !MenuService.IsContextMenuOpen) {
 						SelectActiveWorkbenchWindow();
 						return true;
 					}

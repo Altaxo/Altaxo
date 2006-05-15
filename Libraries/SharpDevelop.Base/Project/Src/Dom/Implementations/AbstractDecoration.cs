@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1182 $</version>
+//     <version>$Revision: 1383 $</version>
 // </file>
 
 using System;
@@ -166,7 +166,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 		}
 		public bool IsOverridable {
 			get {
-				return (IsOverride || IsVirtual) && !IsSealed;
+				return (IsOverride || IsVirtual || IsAbstract) && !IsSealed;
 			}
 		}
 		public bool IsNew {

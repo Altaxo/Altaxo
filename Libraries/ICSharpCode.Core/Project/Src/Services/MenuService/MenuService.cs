@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1331 $</version>
 // </file>
 
 using System;
@@ -55,7 +55,8 @@ namespace ICSharpCode.Core
 						}
 					}
 				};
-				contextMenu.Opened += new EventHandler(ContextMenuPopupHandler);
+				contextMenu.Opened += ContextMenuOpened;
+				contextMenu.Closed += ContextMenuClosed;
 				return contextMenu;
 			} catch (TreePathNotFoundException) {
 				MessageService.ShowError("Warning tree path '" + addInTreePath +"' not found.");
@@ -63,14 +64,28 @@ namespace ICSharpCode.Core
 			}
 		}
 		
-		static void ContextMenuPopupHandler(object sender, EventArgs e)
+		static bool isContextMenuOpen;
+		
+		public static bool IsContextMenuOpen {
+			get {
+				return isContextMenuOpen;
+			}
+		}
+		
+		static void ContextMenuOpened(object sender, EventArgs e)
 		{
+			isContextMenuOpen = true;
 			ContextMenuStrip contextMenu = (ContextMenuStrip)sender;
 			foreach (object o in contextMenu.Items) {
 				if (o is IStatusUpdate) {
 					((IStatusUpdate)o).UpdateStatus();
 				}
 			}
+		}
+		
+		static void ContextMenuClosed(object sender, EventArgs e)
+		{
+			isContextMenuOpen = false;
 		}
 		
 		public static void ShowContextMenu(object owner, string addInTreePath, Control parent, int x, int y)

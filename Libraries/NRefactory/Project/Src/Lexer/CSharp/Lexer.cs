@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Andrea Paatz" email="andrea@icsharpcode.net"/>
-//     <version>$Revision: 1017 $</version>
+//     <version>$Revision: 1368 $</version>
 // </file>
 
 using System;
@@ -20,6 +20,14 @@ namespace ICSharpCode.NRefactory.Parser.CSharp
 	{
 		public Lexer(TextReader reader) : base(reader)
 		{
+		}
+		
+		void ReadPreProcessingDirective()
+		{
+			Point start = new Point(Col - 1, Line);
+			string directive = ReadIdent('#');
+			string argument  = ReadToEOL();
+			this.specialTracker.AddPreProcessingDirective(directive, argument.Trim(), start, new Point(start.X + directive.Length + argument.Length, start.Y));
 		}
 		
 		protected override Token Next()
@@ -47,10 +55,7 @@ namespace ICSharpCode.NRefactory.Parser.CSharp
 						}
 						break;
 					case '#':
-						Point start = new Point(Col - 1, Line);
-						string directive = ReadIdent('#');
-						string argument  = ReadToEOL();
-						this.specialTracker.AddPreProcessingDirective(directive, argument.Trim(), start, new Point(start.X + directive.Length + argument.Length, start.Y));
+						ReadPreProcessingDirective();
 						continue;
 					case '"':
 						token = ReadString();
@@ -817,7 +822,7 @@ namespace ICSharpCode.NRefactory.Parser.CSharp
 						}
 						break;
 					case '#':
-						SkipToEOL();
+						ReadPreProcessingDirective();
 						break;
 					case '"':
 						ReadString();
