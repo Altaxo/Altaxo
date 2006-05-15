@@ -390,10 +390,6 @@
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Calc\Regression\PCR\" />
-    <Folder Include="Calc\Regression\PLS\" />
-  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>rem Update the build version of the main important assemblies
