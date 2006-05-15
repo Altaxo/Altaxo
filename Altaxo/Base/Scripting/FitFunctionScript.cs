@@ -467,12 +467,11 @@ namespace Altaxo.Scripting
           "using Altaxo.Calc;\r\n" +
           "using Altaxo.Data;\r\n" +
           "using Altaxo.Calc.Regression.Nonlinear;\r\n" + 
-          "namespace Altaxo.Calc\r\n" +
-          "{\r\n" +
-          "\tpublic class MyFitFunction : Altaxo.Calc.FitFunctionExeBase\r\n" +
-          "\t{\r\n" +
-          "\t\tpublic MyFitFunction()\r\n"+
-          "\t\t{\r\n"+
+          "#endregion\r\n"+
+          "namespace Altaxo.Calc {\r\n" +
+          "\tpublic class MyFitFunction : Altaxo.Calc.FitFunctionExeBase {\r\n" +
+          "\t\tpublic MyFitFunction() {\r\n"+
+          "\t\t\t#region ScriptVars\r\n"+
           this.IndependentDefinitionRegionStart+
           this.IndependentDefinitionRegionCore+
           this.IndependentDefinitionRegionEnd+
@@ -789,7 +788,7 @@ namespace Altaxo.Scripting
       get
       {
         return
-          "#endregion // ScriptHeader\r\n"+
+          "\t\t\t#endregion // ScriptVars\r\n"+
           "\t\t\t// ----- add your script below this line -----\r\n";
       }
     }
@@ -824,13 +823,13 @@ namespace Altaxo.Scripting
       get
       {
         return
+          "#endregion\r\n"+
           DependentAssignmentRegionStart+
           DependentAssignmentRegionCore+
           DependentAssignmentRegionEnd+
           "\t\t} // method\r\n" +
           "\t} // class\r\n" +
-          "} //namespace\r\n"+
-          "#endregion\r\n";
+          "} //namespace\r\n";
       }
     }
 

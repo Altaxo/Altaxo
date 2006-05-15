@@ -2106,31 +2106,31 @@
 		     class    = "ICSharpCode.SharpDevelop.Gui.SideBarView"/>
 
     <Pad id       = "FileScout"
-		     category = "Tools"
+		     category = "Main"
 		     title    = "${res:MainWindow.Windows.FileScoutLabel}"
 		     icon     = "PadIcons.FileBrowser"
 		     shortcut = "Control|Alt|F"
 		     class    = "Altaxo.Main.GUI.FileScout"/>
 
     <Pad id       = "AltaxoProjectScout"
-        category = "Tools"
-        title    = "${res:MainWindow.Windows.FileScoutLabel}"
-        icon     = "PadIcons.FileBrowser"
+        category = "Main"
+        title    = "${res:MainWindow.Windows.ProjectScoutLabel}"
+        icon     = "PadIcons.ProjectBrowser"
         shortcut = "Control|Alt|P"
         class    = "Altaxo.Main.GUI.ProjectScout"/>
     
     <Pad id       = "AltaxoOutputWindow"
-        category = "Tools"
-        title    = "${res:MainWindow.Windows.FileScoutLabel}"
-        icon     = "PadIcons.FileBrowser"
+        category = "Main"
+        title    = "${res:MainWindow.Windows.OutputWindow}"
+        icon     = "PadIcons.Output"
         shortcut = "Control|Alt|O"
         precreated ="true" 
         class    = "Altaxo.Main.GUI.OutputWindowController"/>
     
     <Pad id       = "AltaxoDataDisplayWindow"
-        category = "Tools"
-        title    = "${res:MainWindow.Windows.FileScoutLabel}"
-        icon     = "PadIcons.FileBrowser"
+        category = "Main"
+        title    = "${res:MainWindow.Windows.BookmarksLabel}"
+        icon     = "PadIcons.Bookmarks"
         shortcut = "Control|Alt|D"
         precreated ="true" 
         class    = "Altaxo.Main.GUI.DataDisplayController"/>
@@ -2253,12 +2253,7 @@
       <MenuItem id    = "MainViewMenuBuilder"
             type  = "Builder"
             class = "ICSharpCode.SharpDevelop.Commands.MainViewMenuBuilder" />
-      <MenuItem id = "Tools" label = "${res:XML.MainMenu.ViewMenu.ToolsMenu}" type="Menu">
-        <MenuItem id    = "ToolsViewMenuBuilder"
-                    type  = "Builder"
-                    class = "ICSharpCode.SharpDevelop.Commands.ToolsViewMenuBuilder" />
-      </MenuItem>
-      <MenuItem id="ViewItemsSeparator" label="-" />
+      <MenuItem id="ViewItemsSeparator" type = "Separator"/>
       <MenuItem id="FullScreen" label="${res:XML.MainMenu.ViewMenu.FullScreen}" icon="Icons.16x16.FullScreen"
 				description="${res:XML.MainMenu.ViewMenu.FullScreen.Description}" class="ICSharpCode.SharpDevelop.Commands.ToggleFullscreenCommand" />
     </MenuItem>
@@ -2440,7 +2435,7 @@
         <MenuItem id="PrevWindow" label="${res:XML.MainMenu.WindowMenu.PrvWindow}" icon="Icons.16x16.PrevWindowIcon"
 					description="${res:XML.MainMenu.WindowMenu.PrvWindow.Description}" shortcut="Shift|Control|Tab"
 					class="ICSharpCode.SharpDevelop.Commands.SelectPrevWindow" />
-        <MenuItem id="NxtPrvSeparator" label="-" />
+        <MenuItem id="NxtPrvSeparator" type = "Separator"/>
         <MenuItem id="CloseAll" label="${res:XML.MainMenu.FileMenu.CloseAll}" icon="Icons.16x16.CloseAllDocuments"
 					description="${res:XML.MainMenu.FileMenu.CloseAll.Description}" class="ICSharpCode.SharpDevelop.Commands.CloseAllWindows" />
       </Condition>
@@ -2453,10 +2448,10 @@
 				description="${res:XML.MainMenu.HelpMenu.ClassHelp.Description}" shortcut="Alt|F1" class="Altaxo.Main.Commands.ShowAltaxoClassHelp" />
       <MenuItem id="TipOfTheDay" label="${res:XML.MainMenu.HelpMenu.Tips}" icon="Icons.16x16.TipOfTheDay"
 				description="${res:XML.MainMenu.HelpMenu.Tips.Description}" class="ICSharpCode.SharpDevelop.Commands.ViewTipOfTheDay" />
-      <MenuItem id="Separator1" label="-" />
+      <MenuItem id="Separator1" type = "Separator"/>
       <MenuItem id="ViewGPL" label="${res:XML.MainMenu.HelpMenu.GPL}" icon="Icons.16x16.CopyLeftIcon"
 				description="${res:XML.MainMenu.HelpMenu.GPL.Description}" class="ICSharpCode.SharpDevelop.Commands.ViewGPL" />
-      <MenuItem id="Separator2" label="-" />
+      <MenuItem id="Separator2" type = "Separator"/>
       <MenuItem id="Web" label="${res:XML.MainMenu.HelpMenu.WebMenu}"  type="Menu">
 
         <MenuItem id="Altaxo" label="Altaxo">
@@ -2515,7 +2510,7 @@
 						link="http://msdn.microsoft.com/net" />
         </MenuItem>
       </MenuItem>
-      <MenuItem id="Separator3" label="-" />
+      <MenuItem id="Separator3" type = "Separator"/>
       <MenuItem id="ForceException" label="${res:XML.MainMenu.HelpMenu.ForceException}"
         description="${res:XML.MainMenu.HelpMenu.ForceException.Description}" class="Altaxo.Worksheet.Commands.OpenScriptDialog" />
       <MenuItem id="About" label="${res:XML.MainMenu.HelpMenu.About}" icon="Icons.16x16.AboutIcon"
@@ -2560,7 +2555,7 @@
     <ToolbarItem id="GraphToolSeparator"  type = "Separator"/>
     <Condition name = "WindowActive" activewindow="Altaxo.Graph.GUI.SDGraphController" action="Disable">
       <ToolbarItem id="GraphPointer" icon="Icons.16x16.GraphPointerTool" tooltip="${res:XML.MainMenu.GraphMenu.Tools.Pointer.Description}"
-        class="Altaxo.Graph.Commands.SelectPointerTool" />
+        loadclasslazy="false" class="Altaxo.Graph.Commands.SelectPointerTool" />
       <ToolbarItem id="TextPointer" icon="Icons.16x16.TextTool" tooltip="${res:XML.MainMenu.GraphMenu.Tools.TextTool.Description}"
         class="Altaxo.Graph.Commands.SelectTextTool" />
       <ToolbarItem id="ReadPlotItemData" icon="Icons.16x16.ReadData" tooltip="${res:XML.MainMenu.GraphMenu.Tools.ReadPlotItemData.Description}"

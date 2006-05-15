@@ -154,13 +154,12 @@ namespace Altaxo.Scripting
           "using System;\r\n" + 
           "using Altaxo;\r\n" + 
           "using Altaxo.Calc;\r\n" + 
-          "using Altaxo.Data;\r\n" + 
-          "namespace Altaxo.Calc\r\n" + 
-          "{\r\n" + 
-          "\tpublic class SetDataColumnValues : Altaxo.Calc.ColScriptExeBase\r\n" +
-          "\t{\r\n"+
-          "\t\tpublic override void Execute(Altaxo.Data.DataColumn mycol)\r\n" +
-          "\t\t{\r\n" +
+          "using Altaxo.Data;\r\n" +
+          "#endregion\r\n" +
+          "namespace Altaxo.Calc {\r\n" + 
+          "\tpublic class SetDataColumnValues : Altaxo.Calc.ColScriptExeBase {\r\n" +
+          "\t\tpublic override void Execute(Altaxo.Data.DataColumn mycol) {\r\n" +
+          "\t\t\t#region ScriptVars\r\n" +
           "\t\t\tAltaxo.Data.DataColumnCollection   col = Altaxo.Data.DataColumnCollection.GetParentDataColumnCollectionOf(mycol);\r\n" +
           "\t\t\tAltaxo.Data.DataTable          mytable = Altaxo.Data.DataTable.GetParentDataTableOf(col);\r\n" +
           "\t\t\tAltaxo.Data.DataColumnCollection  pcol = mytable==null? null : mytable.PropertyColumns;\r\n" +
@@ -173,7 +172,7 @@ namespace Altaxo.Scripting
       get
       {
         return
-          "#endregion\r\n"+
+          "\t\t\t#endregion\r\n"+
           "\t\t\t// ----- add your script below this line -----\r\n";
       }
     }
@@ -197,8 +196,7 @@ namespace Altaxo.Scripting
       get
       {
         return
-          "\t\t\t// ----- add your script above this line -----\r\n"+
-          "#region ScriptFooter\r\n";
+          "\t\t\t// ----- add your script above this line -----\r\n";
       }
     }
 
@@ -214,8 +212,7 @@ namespace Altaxo.Scripting
         return          
           "\t\t} // Execute method\r\n" +
           "\t} // class\r\n" + 
-          "} //namespace\r\n"+
-          "#endregion\r\n";
+          "} //namespace\r\n";
       }
     }
 

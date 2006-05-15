@@ -19,11 +19,11 @@
     <DebugSymbols>true</DebugSymbols>
     <Optimize>False</Optimize>
     <DebugType>Full</DebugType>
-    <DocumentationFile>..\..\..\..\bin\ICSharpCode.Core.xml</DocumentationFile>
+    <DocumentationFile>..\..\..\rtdebug\bin\ICSharpCode.Core.xml</DocumentationFile>
     <NoWarn>1591</NoWarn>
     <DefineConstants>DEBUG;ModifiedForAltaxo</DefineConstants>
     <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
-    <OutputPath>..\..\..\..\bin\</OutputPath>
+    <OutputPath>..\..\..\rtdebug\bin\</OutputPath>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -139,11 +139,6 @@
     <Compile Include="Src\AddInTree\CoreStartup.cs" />
     <Compile Include="Src\AddInTree\AddInManager.cs" />
     <Compile Include="Src\AddInTree\AddIn\DefaultDoozers\StringDoozer.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="..\..\..\..\data\schemas\AddIn.xsd">
-      <Link>Src\AddInTree\AddIn\AddIn.xsd</Link>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\log4net\src\log4net.csproj">

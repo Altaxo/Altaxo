@@ -54,7 +54,6 @@ namespace Altaxo.Main.Commands // ICSharpCode.SharpDevelop.Commands
       Altaxo.Current.SetProjectService( new Altaxo.Main.ProjectService() );
       Altaxo.Current.SetPrintingService( new Altaxo.Main.PrintingService() );
       Altaxo.Current.SetGUIFactoryService( new Altaxo.Main.Services.GUIFactoryService() );
-      Altaxo.Current.SetWorkbench(WorkbenchSingleton.Workbench as Altaxo.Main.GUI.IWorkbench);
       //Altaxo.Current.ProjectService.ProjectChanged += new ProjectEventHandler(Altaxo.Current.Workbench.EhProjectChanged);
       
       // we construct the main document (for now)

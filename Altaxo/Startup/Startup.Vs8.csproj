@@ -105,9 +105,9 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="SharpDevelopMain.cs" />
-    <None Include="AltaxoStartup.exe.config" />
-    <None Include="app.config" />
-    <None Include="App.ico" />
+    <None Include="AltaxoStartup.exe.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Bugs.txt" />
     <None Include="Configuration\AssemblyInfo.template" />
     <None Include="ForNextVersionOfSharpDev.txt" />

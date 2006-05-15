@@ -60,7 +60,7 @@ namespace MathML.Rendering
     /// </summary>
 		private GlyphFactory()
 		{
-			string configDir = ConfigurationSettings.AppSettings.Get("mathml-rendering-config");
+      string configDir = ConfigurationSettings.AppSettings.Get("MathMLRenderingConfig");
       string searchDir = null;
 
       if(configDir==null || configDir.Length==0)

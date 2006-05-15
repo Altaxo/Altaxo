@@ -1,18 +1,5 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Properties" GeneratedClassName="Settings">
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)">
   <Profiles />
-  <Settings>
-    <Setting Name="UserStrings" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">AltaxoString.resources</Value>
-    </Setting>
-    <Setting Name="UserIcons" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">AltaxoBitmap.resources</Value>
-    </Setting>
-    <Setting Name="ApplicationUserDataDirectory" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">Altaxo\Altaxo</Value>
-    </Setting>
-    <Setting Name="mathmlrenderingconfig" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">..\data\resources\mathml</Value>
-    </Setting>
-  </Settings>
+  <Settings />
 </SettingsFile>

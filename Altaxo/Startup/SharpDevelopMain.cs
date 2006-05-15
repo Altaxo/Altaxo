@@ -200,7 +200,9 @@ namespace ICSharpCode.SharpDevelop
 				// .NET base autostarts
 				// taken out of the add-in tree for performance reasons (every tick in startup counts)
 #if ModifiedForAltaxo
-				WorkbenchSingleton.InitializeWorkbench(new ICSharpCode.SharpDevelop.Gui.Workbench1());
+        ICSharpCode.SharpDevelop.Gui.Workbench1 wb = new ICSharpCode.SharpDevelop.Gui.Workbench1();
+        Altaxo.Current.SetWorkbench(wb);
+				WorkbenchSingleton.InitializeWorkbench(wb);
         new Altaxo.Main.Commands.AutostartCommand().Run();
 #else
 				WorkbenchSingleton.InitializeWorkbench();

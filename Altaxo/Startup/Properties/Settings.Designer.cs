@@ -22,41 +22,5 @@ namespace Properties {
                 return defaultInstance;
             }
         }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("AltaxoString.resources")]
-        public string UserStrings {
-            get {
-                return ((string)(this["UserStrings"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("AltaxoBitmap.resources")]
-        public string UserIcons {
-            get {
-                return ((string)(this["UserIcons"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Altaxo\\Altaxo")]
-        public string ApplicationUserDataDirectory {
-            get {
-                return ((string)(this["ApplicationUserDataDirectory"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("..\\data\\resources\\mathml")]
-        public string mathmlrenderingconfig {
-            get {
-                return ((string)(this["mathmlrenderingconfig"]));
-            }
-        }
     }
 }

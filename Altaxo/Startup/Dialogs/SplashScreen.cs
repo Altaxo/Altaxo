@@ -56,7 +56,11 @@ namespace ICSharpCode.SharpDevelop
 			this.ClientSize = bitmap.Size;
 			using (Font font = new Font("Sans Serif", 4)) {
 				using (Graphics g = Graphics.FromImage(bitmap)) {
+#if ModifiedForAltaxo
+          g.DrawString(versionText, font, Brushes.Black, 114, 14);
+#else
 					g.DrawString(versionText, font, Brushes.Black, 100, 142);
+#endif
 				}
 			}
 			BackgroundImage = bitmap;
