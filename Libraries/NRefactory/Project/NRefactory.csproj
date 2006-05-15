@@ -26,14 +26,14 @@
     <Optimize>False</Optimize>
     <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
     <DefineConstants>TEST; DEBUG</DefineConstants>
-    <OutputPath>..\..\..\rtdebug\bin\</OutputPath>
+    <OutputPath>bin\debug\</OutputPath>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <Optimize>True</Optimize>
     <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
     <DefineConstants>TEST</DefineConstants>
-    <OutputPath>..\..\..\..\bin\</OutputPath>
+    <OutputPath>bin\release\</OutputPath>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">

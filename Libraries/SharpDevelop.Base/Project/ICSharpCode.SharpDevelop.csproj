@@ -25,13 +25,13 @@
     <Optimize>False</Optimize>
     <DefineConstants>DEBUG;ModifiedForAltaxo</DefineConstants>
     <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
-    <OutputPath>..\..\..\rtdebug\bin\</OutputPath>
+    <OutputPath>bin\debug\</OutputPath>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <Optimize>True</Optimize>
     <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
-    <OutputPath>..\..\..\..\bin\</OutputPath>
+    <OutputPath>bin\release\</OutputPath>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -205,7 +205,7 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Src\Gui\Dialogs\TreeViewOptions.cs">
-      <SubType>Component</SubType>
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="Src\Gui\Dialogs\WordCountDialog.cs">
       <SubType>Form</SubType>
@@ -800,7 +800,7 @@
     </ProjectReference>
     <ProjectReference Include="..\..\WinFormsUI\WinFormsUI\WinFormsUI.csproj">
       <Project>{E509019E-4028-4DB8-97B8-72FD390B3DB9}</Project>
-      <Name>WinFormsUI</Name>
+      <Name>WinFormsUI2005</Name>
     </ProjectReference>
     <Content Include="..\..\..\..\AddIns\ICSharpCode.SharpDevelop.addin">
       <Link>ICSharpCode.SharpDevelop.addin</Link>

@@ -19,18 +19,18 @@
     <DebugSymbols>true</DebugSymbols>
     <Optimize>False</Optimize>
     <DebugType>Full</DebugType>
-    <DocumentationFile>..\..\..\rtdebug\bin\ICSharpCode.Core.xml</DocumentationFile>
+    <DocumentationFile>bin\debug\ICSharpCode.Core.xml</DocumentationFile>
     <NoWarn>1591</NoWarn>
     <DefineConstants>DEBUG;ModifiedForAltaxo</DefineConstants>
     <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
-    <OutputPath>..\..\..\rtdebug\bin\</OutputPath>
+    <OutputPath>bin\debug\</OutputPath>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>False</DebugSymbols>
     <Optimize>True</Optimize>
     <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
-    <OutputPath>..\..\..\..\bin\</OutputPath>
+    <OutputPath>bin\release\</OutputPath>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>

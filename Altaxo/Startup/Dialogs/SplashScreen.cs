@@ -18,12 +18,12 @@ namespace ICSharpCode.SharpDevelop
 	public class SplashScreenForm : Form
 	{
 #if ModifiedForAltaxo
-		public const string VersionText = "SharpDevelop 2 build " + RevisionClass.Revision;
+		public const string VersionText = "Altaxo 0.53 build " + RevisionClass.Revision;
 #else
-    public const string VersionText = "Altaxo 2 build " + RevisionClass.Revision;
+		public const string VersionText = "SharpDevelop 2 build " + RevisionClass.Revision;
 #endif
-		
-		static SplashScreenForm splashScreen;
+
+    static SplashScreenForm splashScreen;
 		static ArrayList requestedFileList = new ArrayList();
 		static ArrayList parameterList = new ArrayList();
 		Bitmap bitmap;
@@ -57,7 +57,7 @@ namespace ICSharpCode.SharpDevelop
 			using (Font font = new Font("Sans Serif", 4)) {
 				using (Graphics g = Graphics.FromImage(bitmap)) {
 #if ModifiedForAltaxo
-          g.DrawString(versionText, font, Brushes.Black, 114, 14);
+          g.DrawString(versionText, font, Brushes.Black, 124, 14);
 #else
 					g.DrawString(versionText, font, Brushes.Black, 100, 142);
 #endif

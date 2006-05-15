@@ -130,7 +130,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Main\GUI\ProjectScout.cs">
-      <SubType>UserControl</SubType>
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Main\GUI\WindowsMdiWorkbenchLayout.cs">
       <SubType>Code</SubType>
