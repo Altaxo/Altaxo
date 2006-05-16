@@ -15,16 +15,16 @@ namespace WeifenLuo.WinFormsUI
 	/// <include file='CodeDoc/AutoHideTab.xml' path='//CodeDoc/Class[@name="AutoHideTab"]/ClassDef/*'/>
 	public class AutoHideTab : IDisposable
 	{
-		private DockContent m_content;
+		private IDockContent m_content;
 
-		/// <include file='CodeDoc/AutoHideTab.xml' path='//CodeDoc/Class[@name="AutoHideTab"]/Construct[@name="(DockContent)"]/*'/>
-		public AutoHideTab(DockContent content)
+		/// <include file='CodeDoc/AutoHideTab.xml' path='//CodeDoc/Class[@name="AutoHideTab"]/Construct[@name="(IDockContent)"]/*'/>
+		public AutoHideTab(IDockContent content)
 		{
 			m_content = content;
 		}
 
 		/// <include file='CodeDoc/AutoHideTab.xml' path='//CodeDoc/Class[@name="AutoHideTab"]/Property[@name="Content"]/*'/>
-		public DockContent Content
+		public IDockContent Content
 		{
 			get	{	return m_content;	}
 		}

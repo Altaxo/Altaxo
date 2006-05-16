@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1048 $</version>
+//     <version>$Revision: 1177 $</version>
 // </file>
 
 using System;
@@ -52,6 +52,15 @@ namespace ICSharpCode.Core
 				propertyObjects["exe"] = FileVersionInfo.GetVersionInfo(exeName);
 			}
 			properties["USER"] = Environment.UserName;
+			
+			// Maybe test for Mono?
+			if (IntPtr.Size == 4) {
+				properties["Platform"] = "Win32";
+			} else if (IntPtr.Size == 8) {
+				properties["Platform"] = "Win64";
+			} else {
+				properties["Platform"] = "unknown";
+			}
 		}
 		
 		public static string Parse(string input)

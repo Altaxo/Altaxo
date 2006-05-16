@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1325 $</version>
+//     <version>$Revision: 1334 $</version>
 // </file>
 
 using System;
@@ -12,7 +12,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Diagnostics;
 using System.Globalization;
-using System.CodeDom.Compiler;
+using System.Reflection;
 using System.Windows.Forms;
 using System.ComponentModel;
 using System.Xml;
@@ -48,6 +48,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		
 		IWorkbenchLayout layout = null;
 		
+		#region FullScreen & View content properties
 		public bool FullScreen {
 			get {
 				return fullscreen;
@@ -129,7 +130,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 				return layout.ActiveContent;
 			}
 		}
-		
+		#endregion
 		
 		public DefaultWorkbench()
 		{
@@ -139,6 +140,88 @@ namespace ICSharpCode.SharpDevelop.Gui
 			StartPosition = FormStartPosition.Manual;
 			AllowDrop     = true;
 		}
+		
+		#region Single instance code
+		protected override void WndProc(ref Message m)
+		{
+			if (!SingleInstanceHelper.PreFilterMessage(ref m)) {
+				base.WndProc(ref m);
+			}
+		}
+		
+		public static class SingleInstanceHelper
+		{
+			const int WM_USER = 0x400;
+			const int CUSTOM_MESSAGE = WM_USER + 2;
+			const int RESULT_FILES_HANDLED = 2;
+			const int RESULT_PROJECT_IS_OPEN = 3;
+			
+			[System.Runtime.InteropServices.DllImport("user32.dll")]
+			static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
+			
+			[System.Runtime.InteropServices.DllImport("user32.DLL")]
+			static extern IntPtr SetForegroundWindow(IntPtr hWnd);
+			
+			public static bool OpenFilesInPreviousInstance(string[] fileList)
+			{
+				LoggingService.Info("Trying to pass arguments to previous instance...");
+				int currentProcessId = Process.GetCurrentProcess().Id;
+				string currentFile = Assembly.GetEntryAssembly().Location;
+				int number = new Random().Next();
+				string fileName = Path.Combine(Path.GetTempPath(), "sd" + number + ".tmp");
+				try {
+					File.WriteAllLines(fileName, fileList);
+					List<IntPtr> alternatives = new List<IntPtr>();
+					foreach (Process p in Process.GetProcessesByName("SharpDevelop")) {
+						if (p.Id == currentProcessId) continue;
+						
+						if (FileUtility.IsEqualFileName(currentFile, p.MainModule.FileName)) {
+							IntPtr hWnd = p.MainWindowHandle;
+							if (hWnd != IntPtr.Zero) {
+								long result = SendMessage(hWnd, CUSTOM_MESSAGE, new IntPtr(number), IntPtr.Zero).ToInt64();
+								if (result == RESULT_FILES_HANDLED) {
+									return true;
+								} else if (result == RESULT_PROJECT_IS_OPEN) {
+									alternatives.Add(hWnd);
+								}
+							}
+						}
+					}
+					foreach (IntPtr hWnd in alternatives) {
+						if (SendMessage(hWnd, CUSTOM_MESSAGE, new IntPtr(number), new IntPtr(1)).ToInt64()== RESULT_FILES_HANDLED) {
+							return true;
+						}
+					}
+					return false;
+				} finally {
+					File.Delete(fileName);
+				}
+			}
+			
+			internal static bool PreFilterMessage(ref Message m)
+			{
+				if (m.Msg != CUSTOM_MESSAGE)
+					return false;
+				long fileNumber = m.WParam.ToInt64();
+				long openEvenIfProjectIsOpened = m.LParam.ToInt64();
+				LoggingService.Info("Receiving custom message...");
+				if (openEvenIfProjectIsOpened == 0 && ProjectService.OpenSolution != null) {
+					m.Result = new IntPtr(RESULT_PROJECT_IS_OPEN);
+				} else {
+					m.Result = new IntPtr(RESULT_FILES_HANDLED);
+					try {
+						WorkbenchSingleton.SafeThreadAsyncCall((MethodInvoker)delegate { SetForegroundWindow(WorkbenchSingleton.MainForm.Handle) ; });
+						foreach (string file in File.ReadAllLines(Path.Combine(Path.GetTempPath(), "sd" + fileNumber + ".tmp"))) {
+							WorkbenchSingleton.SafeThreadAsyncCall(new Converter<string, IWorkbenchWindow>(FileService.OpenFile), new object[] { file });
+						}
+					} catch (Exception ex) {
+						LoggingService.Warn(ex);
+					}
+				}
+				return true;
+			}
+		}
+		#endregion
 		
 		System.Windows.Forms.Timer toolbarUpdateTimer;
 
@@ -304,7 +387,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 				return;
 			}
 			
-			string directory = PropertyService.ConfigDirectory + "temp";
+			string directory = Path.Combine(PropertyService.ConfigDirectory, "temp");
 			if (!Directory.Exists(directory)) {
 				Directory.CreateDirectory(directory);
 			}

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1367 $</version>
+//     <version>$Revision: 1388 $</version>
 // </file>
 
 using System;
@@ -44,6 +44,8 @@ namespace ICSharpCode.SharpDevelop.Project
 			BaseConfiguration.SetIsGuarded("Platform", true);
 			
 			configurations["Debug|*"] = new PropertyGroup();
+			configurations["Debug|*"]["BaseIntermediateOutputPath"] = @"obj\";
+			configurations["Debug|*"]["IntermediateOutputPath"] = @"obj\Debug\";
 			if (information.CreateProjectWithDefaultOutputPath) {
 				configurations["Debug|*"]["OutputPath"] = @"bin\Debug\";
 			}
@@ -53,6 +55,8 @@ namespace ICSharpCode.SharpDevelop.Project
 			configurations["Debug|*"]["DebugType"] = "Full";
 			
 			configurations["Release|*"] = new PropertyGroup();
+			configurations["Release|*"]["BaseIntermediateOutputPath"] = @"obj\";
+			configurations["Release|*"]["IntermediateOutputPath"] = @"obj\Release\";
 			if (information.CreateProjectWithDefaultOutputPath) {
 				configurations["Release|*"]["OutputPath"] = @"bin\Release\";
 			}
@@ -433,7 +437,7 @@ namespace ICSharpCode.SharpDevelop.Project
 		}
 		#endregion
 		
-		public static void RunMSBuild(string fileName, string target, string configuration, string platform, bool isSingleProject, MSBuildEngineCallback callback)
+		public static void RunMSBuild(string fileName, string target, string configuration, string platform, bool isSingleProject, MSBuildEngineCallback callback, IDictionary<string, string> additionalProperties)
 		{
 			WorkbenchSingleton.Workbench.GetPad(typeof(CompilerMessageView)).BringPadToFront();
 			MSBuildEngine engine = new MSBuildEngine();
@@ -442,6 +446,11 @@ namespace ICSharpCode.SharpDevelop.Project
 				if (!dir.EndsWith("/") && !dir.EndsWith("\\"))
 					dir += Path.DirectorySeparatorChar;
 				engine.AdditionalProperties.Add("SolutionDir", dir);
+			}
+			if (additionalProperties != null) {
+				foreach (KeyValuePair<string, string> pair in additionalProperties) {
+					engine.AdditionalProperties.Add(pair.Key, pair.Value);
+				}
 			}
 			engine.Configuration = configuration;
 			engine.Platform = platform;
@@ -453,30 +462,30 @@ namespace ICSharpCode.SharpDevelop.Project
 			}
 		}
 		
-		public void RunMSBuild(string target, MSBuildEngineCallback callback)
+		public void RunMSBuild(string target, MSBuildEngineCallback callback, IDictionary<string, string> additionalProperties)
 		{
-			RunMSBuild(this.FileName, target, this.Configuration, this.Platform, true, callback);
+			RunMSBuild(this.FileName, target, this.Configuration, this.Platform, true, callback, additionalProperties);
 		}
 		
-		public override void Build(MSBuildEngineCallback callback)
+		public override void Build(MSBuildEngineCallback callback, IDictionary<string, string> additionalProperties)
 		{
-			RunMSBuild("Build", callback);
+			RunMSBuild("Build", callback, additionalProperties);
 		}
 		
-		public override void Rebuild(MSBuildEngineCallback callback)
+		public override void Rebuild(MSBuildEngineCallback callback, IDictionary<string, string> additionalProperties)
 		{
-			RunMSBuild("Rebuild", callback);
+			RunMSBuild("Rebuild", callback, additionalProperties);
 		}
 		
-		public override void Clean(MSBuildEngineCallback callback)
+		public override void Clean(MSBuildEngineCallback callback, IDictionary<string, string> additionalProperties)
 		{
-			RunMSBuild("Clean", callback);
+			RunMSBuild("Clean", callback, additionalProperties);
 			isDirty = true;
 		}
 		
-		public override void Publish(MSBuildEngineCallback callback)
+		public override void Publish(MSBuildEngineCallback callback, IDictionary<string, string> additionalProperties)
 		{
-			RunMSBuild("Publish", callback);
+			RunMSBuild("Publish", callback, additionalProperties);
 		}
 		
 		public override string ToString()

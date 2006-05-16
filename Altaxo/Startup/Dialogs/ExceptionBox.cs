@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1182 $</version>
+//     <version>$Revision: 1388 $</version>
 // </file>
 
 // project created on 2/6/2003 at 11:10 AM
@@ -37,8 +37,7 @@ namespace ICSharpCode.SharpDevelop
       this.exceptionThrown = e;
       this.message = message;
       InitializeComponent();
-      if (mustTerminate)
-      {
+			if (mustTerminate) {
         closeButton.Visible = false;
         continueButton.Text = closeButton.Text;
         continueButton.Left -= closeButton.Width - continueButton.Width;

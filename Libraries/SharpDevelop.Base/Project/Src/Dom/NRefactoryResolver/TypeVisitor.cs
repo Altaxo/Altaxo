@@ -2,20 +2,17 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1339 $</version>
+//     <version>$Revision: 1389 $</version>
 // </file>
 
 // created on 22.08.2003 at 19:02
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 
+using ICSharpCode.Core;
 using ICSharpCode.NRefactory.Parser;
 using ICSharpCode.NRefactory.Parser.AST;
-
-using ICSharpCode.SharpDevelop.Dom;
-using ICSharpCode.Core;
 
 namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 {
@@ -509,7 +506,7 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 							c = projectContent.GetClass(reference.SystemType, typeParameterCount);
 							t = (c != null) ? c.DefaultReturnType : null;
 						} else {
-							t = projectContent.SearchType(reference.SystemType, typeParameterCount, callingClass, caretLine, caretColumn);
+							t = projectContent.SearchType(new SearchTypeRequest(reference.SystemType, typeParameterCount, callingClass, caretLine, caretColumn)).Result;
 						}
 						if (t == null) {
 							if (reference.GenericTypes.Count == 0 && !reference.IsArrayType) {

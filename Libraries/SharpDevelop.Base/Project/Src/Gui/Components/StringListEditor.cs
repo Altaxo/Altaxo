@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1233 $</version>
 // </file>
 
 using System;
@@ -225,6 +225,17 @@ namespace ICSharpCode.SharpDevelop.Gui
 			}
 		}
 		
+		bool autoAddAfterBrowse;
+		
+		public bool AutoAddAfterBrowse {
+			get {
+				return autoAddAfterBrowse;
+			}
+			set {
+				autoAddAfterBrowse = value;
+			}
+		}
+		
 		public string TitleText {
 			get {
 				return TitleLabel.Text;
@@ -277,6 +288,9 @@ namespace ICSharpCode.SharpDevelop.Gui
 				if (!path.EndsWith("\\") && !path.EndsWith("/"))
 					path += "\\";
 				editTextBox.Text = path;
+				if (autoAddAfterBrowse) {
+					AddButtonClick(null, null);
+				}
 			}
 		}
 		

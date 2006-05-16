@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1320 $</version>
+//     <version>$Revision: 1389 $</version>
 // </file>
 
 using System;
@@ -35,6 +35,12 @@ namespace ICSharpCode.SharpDevelop.Dom
 		public CodeGenerator CodeGenerator {
 			get {
 				return codeGenerator;
+			}
+		}
+		
+		public virtual RefactoringProvider RefactoringProvider {
+			get {
+				return RefactoringProvider.DummyProvider;
 			}
 		}
 		
@@ -154,6 +160,12 @@ namespace ICSharpCode.SharpDevelop.Dom
 		{
 			public CSharpProperties() : base(StringComparer.InvariantCulture, CSharpCodeGenerator.Instance) {}
 			
+			public override RefactoringProvider RefactoringProvider {
+				get {
+					return NRefactoryRefactoringProvider.NRefactoryProviderInstance;
+				}
+			}
+			
 			public override string ToString()
 			{
 				return "[LanguageProperties: C#]";
@@ -228,6 +240,12 @@ namespace ICSharpCode.SharpDevelop.Dom
 				u.Usings.Add("System.Diagnostics");
 				u.Usings.Add("System.Windows.Forms");
 				return u;
+			}
+			
+			public override RefactoringProvider RefactoringProvider {
+				get {
+					return NRefactoryRefactoringProvider.NRefactoryProviderInstance;
+				}
 			}
 			
 			public override string ToString()

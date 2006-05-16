@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1394 $</version>
 // </file>
 
 using System;
@@ -41,7 +41,7 @@ namespace ICSharpCode.TextEditor.Document
 		// returns special color. (BackGround Color, Cursor Color and so on)
 		
 		/// <remarks>
-		/// Used internally, do not call
+		/// Gets the color of an Environment element.
 		/// </remarks>
 		HighlightColor   GetColorFor(string name);
 		

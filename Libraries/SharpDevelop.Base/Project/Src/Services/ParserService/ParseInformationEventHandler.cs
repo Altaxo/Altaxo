@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1392 $</version>
 // </file>
 
 using System;
@@ -59,12 +59,14 @@ namespace ICSharpCode.Core
 		string fileName;
 		string content;
 		bool updated;
+		ParseInformation parseInformation;
 		
-		public ParserUpdateStepEventArgs(string fileName, string content, bool updated)
+		public ParserUpdateStepEventArgs(string fileName, string content, bool updated, ParseInformation parseInformation)
 		{
 			this.fileName = fileName;
 			this.content = content;
 			this.updated = updated;
+			this.parseInformation = parseInformation;
 		}
 		
 		public string FileName {
@@ -80,6 +82,12 @@ namespace ICSharpCode.Core
 		public bool Updated {
 			get {
 				return updated;
+			}
+		}
+		
+		public ParseInformation ParseInformation {
+			get {
+				return parseInformation;
 			}
 		}
 	}

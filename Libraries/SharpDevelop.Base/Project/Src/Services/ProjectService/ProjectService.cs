@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1382 $</version>
+//     <version>$Revision: 1388 $</version>
 // </file>
 
 using System;
@@ -64,6 +64,22 @@ namespace ICSharpCode.SharpDevelop.Project
 			FileService.FileRemoved += FileServiceFileRemoved;
 		}
 
+		/// <summary>
+		/// Returns if a project loader exists for the given file. This method works even in early
+		/// startup (before service initialization)
+		/// </summary>
+		public static bool HasProjectLoader(string fileName)
+		{
+			AddInTreeNode addinTreeNode = AddInTree.GetTreeNode("/SharpDevelop/Workbench/Combine/FileFilter");
+			foreach (Codon codon in addinTreeNode.Codons) {
+				string pattern = codon.Properties.Get("extensions", "");
+				if (FileUtility.MatchesPattern(fileName, pattern) && codon.Properties.Contains("class")) {
+					return true;
+				}
+			}
+			return false;
+		}
+		
 		public static IProjectLoader GetProjectLoader(string fileName)
 		{
 			AddInTreeNode addinTreeNode = AddInTree.GetTreeNode("/SharpDevelop/Workbench/Combine/FileFilter");
@@ -329,7 +345,7 @@ namespace ICSharpCode.SharpDevelop.Project
 		
 		static string GetPreferenceFileName(string projectFileName)
 		{
-			string directory = PropertyService.ConfigDirectory + "preferences";
+			string directory = Path.Combine(PropertyService.ConfigDirectory, "preferences");
 			return Path.Combine(directory,
 			                    Path.GetFileName(projectFileName)
 			                    + "." + projectFileName.ToLowerInvariant().GetHashCode().ToString("x")
@@ -340,7 +356,7 @@ namespace ICSharpCode.SharpDevelop.Project
 		{
 			if (openSolution == null)
 				return;
-			string directory = PropertyService.ConfigDirectory + "preferences";
+			string directory = Path.Combine(PropertyService.ConfigDirectory, "preferences");
 			if (!Directory.Exists(directory)) {
 				Directory.CreateDirectory(directory);
 			}

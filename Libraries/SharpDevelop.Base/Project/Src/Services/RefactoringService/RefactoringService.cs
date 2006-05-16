@@ -2,14 +2,13 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1393 $</version>
+//     <version>$Revision: 1389 $</version>
 // </file>
 
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using ICSharpCode.Core;
-using ICSharpCode.SharpDevelop;
 using ICSharpCode.SharpDevelop.Dom;
 using ICSharpCode.SharpDevelop.Gui;
 using ICSharpCode.SharpDevelop.Project;
@@ -116,14 +115,6 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 		}
 		
 		/// <summary>
-		/// Find all references to the specified local variable.
-		/// </summary>
-		public static List<Reference> FindReferences(LocalResolveResult local, IProgressMonitor progressMonitor)
-		{
-			return RunFindReferences(local.CallingClass, local.Field, true, progressMonitor);
-		}
-		
-		/// <summary>
 		/// This method can be used in three modes:
 		/// 1. Find references to classes (parentClass = targetClass, member = null, isLocal = false)
 		/// 2. Find references to members (parentClass = parent, member = member, isLocal = false)
@@ -180,24 +171,24 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 		                          bool isLocal,
 		                          string fileName, string fileContent)
 		{
-			string lowerFileContent = fileContent.ToLowerInvariant();
+			string lowerFileContent = fileContent.ToLower();
 			string searchedText; // the text that is searched for
 			bool searchingIndexer = false;
 			
 			if (member == null) {
-				searchedText = parentClass.Name.ToLowerInvariant();
+				searchedText = parentClass.Name.ToLower();
 			} else {
 				// When looking for a member, the name of the parent class does not always exist
 				// in the file where the member is accessed.
 				// (examples: derived classes, partial classes)
 				if (member is IMethod && ((IMethod)member).IsConstructor)
-					searchedText = parentClass.Name.ToLowerInvariant();
+					searchedText = parentClass.Name.ToLower();
 				else {
 					if (member is IProperty && ((IProperty)member).IsIndexer) {
 						searchingIndexer = true;
 						searchedText = GetIndexerExpressionStartToken(fileName);
 					} else {
-						searchedText = member.Name.ToLowerInvariant();
+						searchedText = member.Name.ToLower();
 					}
 				}
 			}
@@ -317,7 +308,7 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 			return new Point(column, line);
 		}
 		
-		public static List<string> GetFileNames(IClass c)
+		static List<string> GetFileNames(IClass c)
 		{
 			List<string> list = new List<string>();
 			CompoundClass cc = c as CompoundClass;
@@ -336,31 +327,27 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 		}
 		
 		/// <summary>
+		/// Gets the list of files that could have a reference to the specified class.
+		/// </summary>
+		static List<ProjectItem> GetPossibleFiles(IClass c)
+		{
+			if (c.DeclaringType != null) {
+				return GetPossibleFiles(c.DeclaringType, c);
+			}
+			List<ProjectItem> resultList = new List<ProjectItem>();
+			GetPossibleFilesInternal(resultList, c.ProjectContent, c.IsInternal);
+			return resultList;
+		}
+		
+		/// <summary>
 		/// Gets the files of files that could have a reference to the <paramref name="member"/>
 		/// int the <paramref name="ownerClass"/>.
 		/// </summary>
 		static List<ProjectItem> GetPossibleFiles(IClass ownerClass, IDecoration member)
 		{
+			if (member == null)
+				return GetPossibleFiles(ownerClass);
 			List<ProjectItem> resultList = new List<ProjectItem>();
-			if (ProjectService.OpenSolution == null) {
-				FileProjectItem tempItem = new FileProjectItem(null, ItemType.Compile);
-				tempItem.Include = ownerClass.CompilationUnit.FileName;
-				resultList.Add(tempItem);
-				return resultList;
-			}
-			
-			if (member == null) {
-				// get files possibly referencing ownerClass
-				while (ownerClass.DeclaringType != null) {
-					// for nested classes, treat class as member
-					member = ownerClass;
-					ownerClass = ownerClass.DeclaringType;
-				}
-				if (member == null) {
-					GetPossibleFilesInternal(resultList, ownerClass.ProjectContent, ownerClass.IsInternal);
-					return resultList;
-				}
-			}
 			if (member.IsPrivate) {
 				List<string> fileNames = GetFileNames(ownerClass);
 				foreach (string fileName in fileNames) {
@@ -380,18 +367,16 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 		
 		static ProjectItem FindItem(string fileName)
 		{
-			if (ProjectService.OpenSolution != null) {
-				foreach (IProject p in ProjectService.OpenSolution.Projects) {
-					foreach (ProjectItem item in p.Items) {
-						if (FileUtility.IsEqualFileName(fileName, item.FileName)) {
-							return item;
-						}
+			if (ProjectService.OpenSolution == null)
+				return null;
+			foreach (IProject p in ProjectService.OpenSolution.Projects) {
+				foreach (ProjectItem item in p.Items) {
+					if (FileUtility.IsEqualFileName(fileName, item.FileName)) {
+						return item;
 					}
 				}
 			}
-			FileProjectItem tempItem = new FileProjectItem(null, ItemType.Compile);
-			tempItem.Include = fileName;
-			return tempItem;
+			return null;
 		}
 		
 		static void GetPossibleFilesInternal(List<ProjectItem> resultList, IProjectContent ownerProjectContent, bool internalOnly)
@@ -421,6 +406,7 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 		}
 		#endregion
 		
+		#region IsReferenceTo...
 		public static bool IsReferenceToLocalVariable(ResolveResult rr, IMember variable)
 		{
 			LocalResolveResult local = rr as LocalResolveResult;
@@ -446,7 +432,9 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 				return false;
 			}
 		}
+		#endregion
 		
+		#region IsSimilarMember / FindBaseMember
 		/// <summary>
 		/// Gets if member1 is the same as member2 or if member1 overrides member2.
 		/// </summary>
@@ -530,5 +518,6 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 			}
 			return null;
 		}
+		#endregion
 	}
 }

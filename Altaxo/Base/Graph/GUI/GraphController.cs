@@ -1149,7 +1149,7 @@ namespace Altaxo.Graph.GUI
       float hx = ppea.PageSettings.HardMarginX; // in hundreths of inch
       float hy = ppea.PageSettings.HardMarginY; // in hundreths of inch
       g.PageUnit = GraphicsUnit.Point;
-      g.TranslateTransform(-hx*72/100.0,-hy*72/100.0);
+      g.TranslateTransform(-hx*72/100.0f,-hy*72/100.0f);
       DoPaint(g,true);
     }
 

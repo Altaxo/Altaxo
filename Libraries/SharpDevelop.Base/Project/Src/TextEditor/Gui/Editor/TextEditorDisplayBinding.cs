@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1117 $</version>
+//     <version>$Revision: 1392 $</version>
 // </file>
 
 using System;
@@ -59,9 +59,11 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			b2.textAreaControl.Dock = DockStyle.Fill;
 			b2.Load(fileName);
 			b2.textAreaControl.Document.HighlightingStrategy = HighlightingStrategyFactory.CreateHighlightingStrategyForFile(fileName);
+			b2.textAreaControl.InitializeAdvancedHighlighter();
 			b2.textAreaControl.InitializeFormatter();
 			b2.ForceFoldingUpdate();
 			b2.textAreaControl.ActivateQuickClassBrowserOnDemand();
+			
 			return b2;
 		}
 		
@@ -71,6 +73,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			
 			b2.textAreaControl.Document.TextContent = StringParser.Parse(content);
 			b2.textAreaControl.Document.HighlightingStrategy = HighlightingStrategyFactory.CreateHighlightingStrategy(language);
+			b2.textAreaControl.InitializeAdvancedHighlighter();
 			b2.textAreaControl.InitializeFormatter();
 			b2.textAreaControl.ActivateQuickClassBrowserOnDemand();
 			return b2;

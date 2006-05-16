@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1145 $</version>
 // </file>
 
 using System;
@@ -22,6 +22,13 @@ namespace ICSharpCode.SharpDevelop.Gui
 		string Title {
 			get;
 			set;
+		}
+		
+		/// <summary>
+		/// Gets if the workbench window has been disposed.
+		/// </summary>
+		bool IsDisposed {
+			get;
 		}
 		
 		/// <summary>

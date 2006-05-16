@@ -2,14 +2,10 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1336 $</version>
 // </file>
 
 using System;
-using System.Drawing;
-using System.Diagnostics;
-using System.Drawing.Text;
-using System.Drawing.Imaging;
 using System.Windows.Forms;
 
 namespace ICSharpCode.Core
@@ -55,14 +51,17 @@ namespace ICSharpCode.Core
 				MessageService.ShowError("Can't create toolbar checkbox : " + codon.Id);
 			}
 			
+			if (codon.Properties.Contains("label")){
+				Text = StringParser.Parse(codon.Properties["label"]);
+			}
 			if (Image == null && codon.Properties.Contains("icon")) {
-				Image = ResourceService.GetBitmap(codon.Properties["icon"]);
+				Image = ResourceService.GetBitmap(StringParser.Parse(codon.Properties["icon"]));
 			}
 			UpdateText();
 			UpdateStatus();
 		}
 		
-		protected override void OnClick(System.EventArgs e)
+		protected override void OnClick(EventArgs e)
 		{
 			base.OnClick(e);
 			if (menuCommand != null) {
@@ -93,14 +92,23 @@ namespace ICSharpCode.Core
 					if (isChecked != Checked)
 						Checked = isChecked;
 				}
+				
+				if (this.Visible && codon.Properties.Contains("icon")) {
+					Image = ResourceService.GetBitmap(StringParser.Parse(codon.Properties["icon"]));
+				}
 			}
 		}
 		
 		public virtual void UpdateText()
 		{
-			Text = StringParser.Parse(codon.Properties["label"]);
-			if (codon.Properties.Contains("tooltip")) {
-				ToolTipText = StringParser.Parse(codon.Properties["tooltip"]);
+			if (codon != null) {
+				if (codon.Properties.Contains("tooltip")) {
+					ToolTipText = StringParser.Parse(codon.Properties["tooltip"]);
+				}
+				
+				if (codon.Properties.Contains("label")){
+					Text = StringParser.Parse(codon.Properties["label"]);
+				}
 			}
 		}
 	}

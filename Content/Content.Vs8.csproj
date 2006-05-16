@@ -145,6 +145,7 @@
     <Content Include="data\schemas\manifest.xsd" />
     <Content Include="data\templates\file\CSharp\FileCategorySortOrder.xml" />
     <Content Include="data\templates\file\Misc\EmptySharpReport.xft" />
+    <Content Include="data\templates\file\VBNet\FileCategorySortOrder.xml" />
     <Content Include="data\templates\project\CSharp\ProjectCategorySortOrder.xml" />
     <Content Include="data\resources\mathml\cm-roman.ttf" />
     <Content Include="data\resources\mathml\cm-stretchy.ttf" />
@@ -173,8 +174,11 @@
     <Content Include="data\templates\project\CSharp\WebpageProject.xpt" />
     <Content Include="data\templates\project\CSharp\WPFApplication.xpt" />
     <Content Include="data\templates\project\CSharp\WPFNavigationApplication.xpt" />
+    <Content Include="data\templates\project\VBNet\ProjectCategorySortOrder.xml" />
     <Content Include="data\templates\project\VBNet\SharpDevelopAddin.xpt" />
     <Content Include="data\templates\project\VBNet\SharpDevelopMacro.xpt" />
+    <Content Include="data\templates\file\VBNet\VBNet.Gtk.Window.xft" />
+    <Content Include="data\templates\project\VBNet\GtkProject.xpt" />
     <None Include="HelpConverter.InstallState" />
     <Content Include="data\resources\StringResources.no.resources" />
     <EmbeddedResource Include="HelpSetup.resx">

@@ -49,6 +49,17 @@
     <Compile Include="Src\AddInTree\AddIn\Codon.cs" />
     <Compile Include="Src\AddInTree\AddIn\ComplexCondition.cs" />
     <Compile Include="Src\AddInTree\AddIn\Condition.cs" />
+    <Compile Include="Src\AddInTree\AddIn\DefaultDoozers\ToolBarItem\AbstractTextBoxCommand.cs" />
+    <Compile Include="Src\AddInTree\AddIn\DefaultDoozers\ToolBarItem\Gui\ToolBarLabel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Src\AddInTree\AddIn\DefaultDoozers\ToolBarItem\Gui\ToolBarSplitButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Src\AddInTree\AddIn\DefaultDoozers\ToolBarItem\Gui\ToolBarTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Src\AddInTree\AddIn\DefaultDoozers\ToolBarItem\ITextBoxCommand.cs" />
     <Compile Include="Src\AddInTree\AddIn\ExtensionPath.cs" />
     <Compile Include="Src\AddInTree\AddIn\IConditionEvaluator.cs" />
     <Compile Include="Src\AddInTree\AddIn\ICondition.cs" />
@@ -125,6 +136,7 @@
     <Compile Include="Src\Services\StringParser\StringParser.cs" />
     <Compile Include="Src\Services\ToolBarService\ToolBarService.cs" />
     <Compile Include="Src\Util\AbstractCommand.cs" />
+    <Compile Include="Src\Util\AppDomainLaunchHelper.cs" />
     <Compile Include="Src\Util\ICommand.cs" />
     <Compile Include="Src\Util\RightToLeftConverter.cs" />
     <Compile Include="Src\Services\MessageService\InputBox.cs">

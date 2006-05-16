@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1262 $</version>
+//     <version>$Revision: 1301 $</version>
 // </file>
 
 using System;
@@ -56,6 +56,15 @@ namespace ICSharpCode.TextEditor.Document
 			}
 			if (!syntaxModeFileProviders.Contains(syntaxModeFileProvider)) {
 				syntaxModeFileProviders.Add(syntaxModeFileProvider);
+			}
+		}
+
+		public void AddHighlightingStrategy(IHighlightingStrategy highlightingStrategy)
+		{
+			highlightingDefs[highlightingStrategy.Name] = highlightingStrategy;
+			foreach (string extension in highlightingStrategy.Extensions)
+			{
+				extensionsToName[extension.ToUpperInvariant()] = highlightingStrategy.Name;
 			}
 		}
 		

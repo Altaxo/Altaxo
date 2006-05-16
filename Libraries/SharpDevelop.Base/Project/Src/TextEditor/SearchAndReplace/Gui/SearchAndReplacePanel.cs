@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1267 $</version>
+//     <version>$Revision: 1301 $</version>
 // </file>
 
 using System;
@@ -52,6 +52,7 @@ namespace SearchAndReplace
 				
 				ControlDictionary["findNextButton"].Click     += FindNextButtonClicked;
 				ControlDictionary["lookInBrowseButton"].Click += LookInBrowseButtonClicked;
+				((Form)Parent).AcceptButton = (Button)ControlDictionary["findNextButton"];
 				SetOptions();
 				RightToLeftConverter.ReConvertRecursive(this);
 				ResumeLayout(false);
@@ -97,6 +98,7 @@ namespace SearchAndReplace
 			} else {
 				SearchReplaceManager.FindNext();
 			}
+			Focus();
 		}
 		
 		void FindAllButtonClicked(object sender, EventArgs e)
@@ -145,6 +147,7 @@ namespace SearchAndReplace
 			} else {
 				SearchReplaceManager.Replace();
 			}
+			Focus();
 		}
 		
 		void WritebackOptions()

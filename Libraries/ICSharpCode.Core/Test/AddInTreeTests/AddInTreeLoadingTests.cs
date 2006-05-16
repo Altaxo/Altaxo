@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1252 $</version>
 // </file>
 
 using System;
@@ -89,18 +89,18 @@ namespace ICSharpCode.Core.Tests.AddInTreeTests.Tests
 			Assert.AreEqual(1, addIn.Runtimes.Count);
 			Assert.AreEqual(addIn.Runtimes[0].Assembly, "../bin/SharpDevelop.Base.dll");
 			Assert.AreEqual(addIn.Runtimes[0].DefinedDoozers.Count, 2);
-			Assert.AreEqual(addIn.Runtimes[0].DefinedDoozers[0]["name"], "MyDoozer");
-			Assert.AreEqual(addIn.Runtimes[0].DefinedDoozers[0]["class"], "ICSharpCode.Core.ClassDoozer");
+			Assert.AreEqual(addIn.Runtimes[0].DefinedDoozers[0].Name, "MyDoozer");
+			Assert.AreEqual(addIn.Runtimes[0].DefinedDoozers[0].ClassName, "ICSharpCode.Core.ClassDoozer");
 			
-			Assert.AreEqual(addIn.Runtimes[0].DefinedDoozers[1]["name"], "Test");
-			Assert.AreEqual(addIn.Runtimes[0].DefinedDoozers[1]["class"], "ICSharpCode.Core.ClassDoozer2");
+			Assert.AreEqual(addIn.Runtimes[0].DefinedDoozers[1].Name, "Test");
+			Assert.AreEqual(addIn.Runtimes[0].DefinedDoozers[1].ClassName, "ICSharpCode.Core.ClassDoozer2");
 			
 			Assert.AreEqual(addIn.Runtimes[0].DefinedConditionEvaluators.Count, 2);
-			Assert.AreEqual(addIn.Runtimes[0].DefinedConditionEvaluators[0]["name"], "MyCompare");
-			Assert.AreEqual(addIn.Runtimes[0].DefinedConditionEvaluators[0]["class"], "ICSharpCode.Core.CompareCondition");
+			Assert.AreEqual(addIn.Runtimes[0].DefinedConditionEvaluators[0].Name, "MyCompare");
+			Assert.AreEqual(addIn.Runtimes[0].DefinedConditionEvaluators[0].ClassName, "ICSharpCode.Core.CompareCondition");
 			
-			Assert.AreEqual(addIn.Runtimes[0].DefinedConditionEvaluators[1]["name"], "Condition2");
-			Assert.AreEqual(addIn.Runtimes[0].DefinedConditionEvaluators[1]["class"], "Condition2Class");
+			Assert.AreEqual(addIn.Runtimes[0].DefinedConditionEvaluators[1].Name, "Condition2");
+			Assert.AreEqual(addIn.Runtimes[0].DefinedConditionEvaluators[1].ClassName, "Condition2Class");
 		}
 		#endregion
 		

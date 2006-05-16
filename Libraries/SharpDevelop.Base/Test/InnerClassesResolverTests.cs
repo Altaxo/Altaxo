@@ -2,16 +2,13 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1379 $</version>
+//     <version>$Revision: 1391 $</version>
 // </file>
 
 using System;
 using System.Collections;
-using System.IO;
-using NUnit.Framework;
-using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.Dom;
-using ICSharpCode.SharpDevelop.Dom.NRefactoryResolver;
+using NUnit.Framework;
 
 namespace ICSharpCode.SharpDevelop.Tests
 {

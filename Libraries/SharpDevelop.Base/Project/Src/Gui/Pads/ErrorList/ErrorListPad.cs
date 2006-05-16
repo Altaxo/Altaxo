@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1196 $</version>
 // </file>
 
 using System;
@@ -65,6 +65,15 @@ namespace ICSharpCode.SharpDevelop.Gui
 			}
 		}
 		
+		public static bool ShowAfterBuild {
+			get {
+				return PropertyService.Get("SharpDevelop.ShowErrorListAfterBuild", true);
+			}
+			set {
+				PropertyService.Set("SharpDevelop.ShowErrorListAfterBuild", value);
+			}
+		}
+		
 		public override Control Control {
 			get {
 				return contentPanel;
@@ -124,7 +133,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		
 		void ProjectServiceEndBuild(object sender, EventArgs e)
 		{
-			if (TaskService.TaskCount > 0) {
+			if (TaskService.TaskCount > 0 && ShowAfterBuild) {
 				WorkbenchSingleton.Workbench.WorkbenchLayout.ActivatePad(this.GetType().FullName);
 			}
 			UpdateToolstripStatus();

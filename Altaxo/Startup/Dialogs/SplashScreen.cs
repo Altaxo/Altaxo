@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 989 $</version>
+//     <version>$Revision: 1139 $</version>
 // </file>
 
 using System;
@@ -20,7 +20,7 @@ namespace ICSharpCode.SharpDevelop
 #if ModifiedForAltaxo
 		public const string VersionText = "Altaxo 0.53 build " + RevisionClass.Revision;
 #else
-		public const string VersionText = "SharpDevelop 2 build " + RevisionClass.Revision;
+		public const string VersionText = "Serralongue build " + RevisionClass.Revision;
 #endif
 
     static SplashScreenForm splashScreen;

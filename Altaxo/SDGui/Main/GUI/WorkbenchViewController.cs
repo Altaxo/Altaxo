@@ -436,6 +436,16 @@ namespace Altaxo.Main.GUI
 
     #endregion
 
+
+    #region IWorkbenchWindow Members
+
+
+    public bool IsDisposed
+    {
+      get { return this.View==null; }
+    }
+
+    #endregion
   }
 
 }

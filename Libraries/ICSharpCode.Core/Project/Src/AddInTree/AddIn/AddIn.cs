@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1094 $</version>
+//     <version>$Revision: 1177 $</version>
 // </file>
 
 using System;
@@ -48,6 +48,24 @@ namespace ICSharpCode.Core
 		public override string ToString()
 		{
 			return "[AddIn: " + Name + "]";
+		}
+		
+		string customErrorMessage;
+		
+		/// <summary>
+		/// Gets the message of a custom load error. Used only when AddInAction is set to CustomError.
+		/// </summary>
+		public string CustomErrorMessage {
+			get {
+				return customErrorMessage;
+			}
+			internal set {
+				if (value != null) {
+					Enabled = false;
+					Action = AddInAction.CustomError;
+				}
+				customErrorMessage = value;
+			}
 		}
 		
 		/// <summary>
@@ -136,7 +154,7 @@ namespace ICSharpCode.Core
 		{
 		}
 		
-		static void SetupAddIn(XmlTextReader reader, AddIn addIn, string hintPath)
+		static void SetupAddIn(XmlReader reader, AddIn addIn, string hintPath)
 		{
 			while (reader.Read()) {
 				if (reader.NodeType == XmlNodeType.Element && reader.IsStartElement()) {
@@ -160,20 +178,7 @@ namespace ICSharpCode.Core
 							break;
 						case "Runtime":
 							if (!reader.IsEmptyElement) {
-								while (reader.Read()){
-									if (reader.NodeType == XmlNodeType.EndElement && reader.LocalName == "Runtime") {
-										break;
-									}
-									if (reader.NodeType == XmlNodeType.Element && reader.IsStartElement()) {
-										switch (reader.LocalName) {
-											case "Import":
-												addIn.runtimes.Add(Runtime.Read(addIn, reader, hintPath));
-												break;
-											default:
-												throw new AddInLoadException("Unknown node in runtime section :" + reader.LocalName);
-										}
-									}
-								}
+								Runtime.ReadSection(reader, addIn, hintPath);
 							}
 							break;
 						case "Include":

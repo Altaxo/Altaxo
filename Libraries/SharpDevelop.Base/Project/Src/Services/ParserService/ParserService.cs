@@ -2,30 +2,20 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1393 $</version>
+//     <version>$Revision: 1392 $</version>
 // </file>
 
 using System;
-using System.IO;
-using System.Threading;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Security;
-using System.Security.Permissions;
-using System.Security.Policy;
-using System.Xml;
+using System.IO;
 using System.Text;
+using System.Threading;
 
-using ICSharpCode.Core;
-using ICSharpCode.SharpDevelop.Project;
-using ICSharpCode.SharpDevelop.Gui;
 using ICSharpCode.SharpDevelop.Dom;
+using ICSharpCode.SharpDevelop.Gui;
+using ICSharpCode.SharpDevelop.Project;
 
 namespace ICSharpCode.Core
 {
@@ -386,7 +376,7 @@ namespace ICSharpCode.Core
                 ((IParseInformationListener)editable).ParseInformationUpdated(parseInformation);
               }
             }
-            OnParserUpdateStepFinished(new ParserUpdateStepEventArgs(fileName, text, updated));
+            OnParserUpdateStepFinished(new ParserUpdateStepEventArgs(fileName, text, updated, parseInformation));
           }
         }
 
@@ -428,7 +418,7 @@ namespace ICSharpCode.Core
 								((IParseInformationListener)editable).ParseInformationUpdated(parseInformation);
 							}
 						}
-						OnParserUpdateStepFinished(new ParserUpdateStepEventArgs(fileName, text, updated));
+						OnParserUpdateStepFinished(new ParserUpdateStepEventArgs(fileName, text, updated, parseInformation));
 					}
 				}
 			}
@@ -437,8 +427,7 @@ namespace ICSharpCode.Core
 		public static void ParseViewContent(IViewContent viewContent)
 		{
 			string text = ((IEditable)viewContent).Text;
-			ParseInformation parseInformation = ParseFile(viewContent.IsUntitled ? viewContent.UntitledName : viewContent.FileName,
-			                                              text, !viewContent.IsUntitled, true);
+			ParseInformation parseInformation = ParseFile(viewContent.FileName, text, !viewContent.IsUntitled, true);
 			if (parseInformation != null && viewContent is IParseInformationListener) {
 				((IParseInformationListener)viewContent).ParseInformationUpdated(parseInformation);
 			}
@@ -544,6 +533,8 @@ namespace ICSharpCode.Core
 		
 		public static ParseInformation ParseFile(IProjectContent fileProjectContent, string fileName, string fileContent, bool updateCommentTags, bool fireUpdate)
 		{
+			if (fileName == null) throw new ArgumentNullException("fileName");
+			
 			IParser parser = GetParser(fileName);
 			if (parser == null) {
 				return null;

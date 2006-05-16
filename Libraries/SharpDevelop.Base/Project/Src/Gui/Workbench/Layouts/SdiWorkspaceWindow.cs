@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1355 $</version>
+//     <version>$Revision: 1388 $</version>
 // </file>
 
 using System;
@@ -125,7 +125,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			this.DockPadding.All = 2;
 
 			SetTitleEvent(this, EventArgs.Empty);
-			this.TabPageContextMenu  = MenuService.CreateContextMenu(this, contextMenuPath);
+			this.TabPageContextMenuStrip = MenuService.CreateContextMenu(this, contextMenuPath);
 			InitControls();
 			
 			ParserService.LoadSolutionProjectsThreadEnded += LoadSolutionProjectsThreadEndedEvent;

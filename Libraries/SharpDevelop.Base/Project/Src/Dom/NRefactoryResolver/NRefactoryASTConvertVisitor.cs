@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1346 $</version>
+//     <version>$Revision: 1388 $</version>
 // </file>
 
 // created on 04.08.2003 at 17:49

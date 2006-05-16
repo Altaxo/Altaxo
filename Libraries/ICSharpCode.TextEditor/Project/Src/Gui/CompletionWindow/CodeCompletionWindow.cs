@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1105 $</version>
+//     <version>$Revision: 1186 $</version>
 // </file>
 
 using System;
@@ -218,11 +218,9 @@ namespace ICSharpCode.TextEditor.Gui.CompletionWindow
 					codeCompletionListView.PageUp();
 					return true;
 				case Keys.Down:
-				case Keys.Right:
 					codeCompletionListView.SelectNextItem();
 					return true;
 				case Keys.Up:
-				case Keys.Left:
 					codeCompletionListView.SelectPrevItem();
 					return true;
 				case Keys.Tab:

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1142 $</version>
+//     <version>$Revision: 1337 $</version>
 // </file>
 
 using System;
@@ -75,21 +75,25 @@ namespace ICSharpCode.Core
 		
 		public static void UpdateToolbar(ToolStrip toolStrip)
 		{
+			toolStrip.SuspendLayout();
 			foreach (ToolStripItem item in toolStrip.Items) {
 				if (item is IStatusUpdate) {
 					((IStatusUpdate)item).UpdateStatus();
 				}
 			}
+			toolStrip.ResumeLayout();
 			//toolStrip.Refresh();
 		}
 		
 		public static void UpdateToolbarText(ToolStrip toolStrip)
 		{
+			toolStrip.SuspendLayout();
 			foreach (ToolStripItem item in toolStrip.Items) {
 				if (item is IStatusUpdate) {
 					((IStatusUpdate)item).UpdateText();
 				}
 			}
+			toolStrip.ResumeLayout();
 		}
 	}
 }

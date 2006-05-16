@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Shinsaku Nakagawa" email="shinsaku@users.sourceforge.jp"/>
-//     <version>$Revision: 1339 $</version>
+//     <version>$Revision: 1388 $</version>
 // </file>
 
 using System;

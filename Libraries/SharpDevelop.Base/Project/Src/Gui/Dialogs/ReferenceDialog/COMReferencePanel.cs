@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Poul Staugaard" email="poul@staugaard.dk"/>
-//     <version>$Revision: 1223 $</version>
+//     <version>$Revision: 1228 $</version>
 // </file>
 
 using System;

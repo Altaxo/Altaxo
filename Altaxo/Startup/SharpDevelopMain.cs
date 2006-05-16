@@ -2,22 +2,16 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1131 $</version>
+//     <version>$Revision: 1389 $</version>
 // </file>
 
 using System;
-using System.IO;
 using System.Diagnostics;
+using System.IO;
 using System.Reflection;
-using System.Drawing;
-using System.Collections;
-using System.Collections.Generic;
-using System.Windows.Forms;
 using System.Resources;
-using System.Xml;
 using System.Threading;
-using System.Runtime.Remoting;
-using System.Security.Policy;
+using System.Windows.Forms;
 
 using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.Commands;
@@ -171,7 +165,8 @@ namespace ICSharpCode.SharpDevelop
         c.ConfigDirectory = FileUtility.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".Altaxo", "Altaxo2") + Path.DirectorySeparatorChar;
 #else
 				CoreStartup c = new CoreStartup("SharpDevelop");
-        c.ConfigDirectory = FileUtility.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".ICSharpCode", "SharpDevelop2") + Path.DirectorySeparatorChar;
+				c.ConfigDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+				                                 ".ICSharpCode/SharpDevelop2.1");
 #endif
         LoggingService.Info("Starting core services...");
 				c.StartCoreServices();
@@ -196,6 +191,14 @@ namespace ICSharpCode.SharpDevelop
 				LoggingService.Info("Loading AddInTree...");
 				c.RunInitialization();
 				
+				string[] fileList = SplashScreenForm.GetRequestedFileList();
+				if (fileList.Length > 0) {
+					if (LoadFilesInPreviousInstance(fileList)) {
+						LoggingService.Info("Aborting startup, arguments will be handled by previous instance");
+						return;
+					}
+				}
+				
 				LoggingService.Info("Initializing workbench...");
 				// .NET base autostarts
 				// taken out of the add-in tree for performance reasons (every tick in startup counts)
@@ -219,7 +222,7 @@ namespace ICSharpCode.SharpDevelop
 				// finally start the workbench.
 				try {
 					LoggingService.Info("Starting workbench...");
-					new StartWorkbenchCommand().Run(SplashScreenForm.GetRequestedFileList());
+					new StartWorkbenchCommand().Run(fileList);
 					exception = false;
 				} finally {
 					LoggingService.Info("Unloading services...");
@@ -239,6 +242,21 @@ namespace ICSharpCode.SharpDevelop
 			}
 		}
 		
+		static bool LoadFilesInPreviousInstance(string[] fileList)
+		{
+			try {
+				foreach (string file in fileList) {
+					if (ProjectService.HasProjectLoader(file)) {
+						return false;
+					}
+				}
+				return DefaultWorkbench.SingleInstanceHelper.OpenFilesInPreviousInstance(fileList);
+			} catch (Exception ex) {
+				LoggingService.Error(ex);
+				return false;
+			}
+		}
+		
 		static void RegisterDoozers()
 		{
 			AddInTree.ConditionEvaluators.Add("ActiveContentExtension", new ActiveContentExtensionConditionEvaluator());
@@ -253,6 +271,7 @@ namespace ICSharpCode.SharpDevelop
 			AddInTree.ConditionEvaluators.Add("ProjectActive", new ProjectActiveConditionEvaluator());
 			AddInTree.ConditionEvaluators.Add("TextContent", new ICSharpCode.SharpDevelop.DefaultEditor.Conditions.TextContentConditionEvaluator());
 			AddInTree.ConditionEvaluators.Add("BrowserLocation", new ICSharpCode.SharpDevelop.BrowserDisplayBinding.BrowserLocationConditionEvaluator());
+			AddInTree.ConditionEvaluators.Add("RefactoringProviderSupports", new Refactoring.RefactoringProviderSupportsConditionEvaluator());
 #if ModifiedForAltaxo
       AddInTree.ConditionEvaluators.Add("SelectedDataColumns", new Altaxo.Worksheet.Commands.SelectedDataConditionEvaluator());
       AddInTree.ConditionEvaluators.Add("ContainsPLSModelData", new Altaxo.Worksheet.Commands.PLSModelConditionEvaluator());

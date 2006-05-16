@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1227 $</version>
+//     <version>$Revision: 1228 $</version>
 // </file>
 
 using System;
@@ -21,6 +21,18 @@ namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 {
 	public class AbstractBuildOptions : AbstractProjectOptionPanel
 	{
+		protected void InitBaseIntermediateOutputPath()
+		{
+			helper.BindString("baseIntermediateOutputPathTextBox", "BaseIntermediateOutputPath").CreateLocationButton("baseIntermediateOutputPathTextBox");
+			ConnectBrowseFolder("baseIntermediateOutputPathBrowseButton", "baseIntermediateOutputPathTextBox", "${res:Dialog.Options.PrjOptions.Configuration.FolderBrowserDescription}");
+		}
+		
+		protected void InitIntermediateOutputPath()
+		{
+			helper.BindString("intermediateOutputPathTextBox", "IntermediateOutputPath").CreateLocationButton("intermediateOutputPathTextBox");
+			ConnectBrowseFolder("intermediateOutputPathBrowseButton", "intermediateOutputPathTextBox", "${res:Dialog.Options.PrjOptions.Configuration.FolderBrowserDescription}");
+		}
+		
 		protected void InitOutputPath()
 		{
 			helper.BindString("outputPathTextBox", "OutputPath").CreateLocationButton("outputPathTextBox");
@@ -151,7 +163,7 @@ namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 			ConfigurationGuiBinding b;
 			b = helper.BindBoolean("registerCOMInteropCheckBox", "RegisterForComInterop", false);
 			b.DefaultLocation = PropertyStorageLocations.PlatformSpecific;
-			advancedLocationButton = b.CreateLocationButtonInPanel("advancedOutputGroupBox");
+			advancedLocationButton = b.CreateLocationButtonInPanel("platformSpecificOptionsPanel");
 			
 			b = helper.BindStringEnum("generateSerializationAssemblyComboBox", "GenerateSerializationAssemblies",
 			                          "Auto",

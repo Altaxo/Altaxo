@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1038 $</version>
+//     <version>$Revision: 1177 $</version>
 // </file>
 
 using System;
@@ -21,7 +21,8 @@ namespace ICSharpCode.Core
 		Uninstall,
 		Update,
 		InstalledTwice,
-		DependencyError
+		DependencyError,
+		CustomError
 	}
 	
 	public static class AddInManager

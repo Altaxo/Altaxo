@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1320 $</version>
+//     <version>$Revision: 1391 $</version>
 // </file>
 
 using System;
@@ -17,6 +17,7 @@ using ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor;
 using ICSharpCode.SharpDevelop.Dom;
 using ICSharpCode.SharpDevelop.Bookmarks;
 using ICSharpCode.SharpDevelop.Gui;
+using ICSharpCode.SharpDevelop.Gui.ClassBrowser;
 using SearchAndReplace;
 using ICSharpCode.SharpDevelop.Refactoring;
 
@@ -69,7 +70,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 			list.Add(cmd);
 			
 			if (member is IField) {
-				IProperty foundProperty = FindProperty(member as IField);
+				IProperty foundProperty = FindReferencesAndRenameHelper.FindProperty(member as IField);
 				if (foundProperty != null) {
 					cmd = new MenuCommand("${res:SharpDevelop.Refactoring.GoToProperty}", GotoTagMember);
 					cmd.Tag = foundProperty;
@@ -101,21 +102,6 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 			}
 			
 			return list.ToArray();
-		}
-		
-		IProperty FindProperty(IField field)
-		{
-			LanguageProperties language = field.DeclaringType.ProjectContent.Language;
-			if (language.CodeGenerator == null) return null;
-			string propertyName = language.CodeGenerator.GetPropertyName(field.Name);
-			IProperty foundProperty = null;
-			foreach (IProperty prop in field.DeclaringType.Properties) {
-				if (language.NameComparer.Equals(propertyName, prop.Name)) {
-					foundProperty = prop;
-					break;
-				}
-			}
-			return foundProperty;
 		}
 		
 		void CreateProperty(object sender, EventArgs e)
@@ -177,28 +163,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 		void Rename(object sender, EventArgs e)
 		{
 			MenuCommand item = (MenuCommand)sender;
-			IMember member = (IMember)item.Tag;
-			string newName = MessageService.ShowInputBox("${res:SharpDevelop.Refactoring.Rename}", "${res:SharpDevelop.Refactoring.RenameMemberText}", member.Name);
-			if (!FindReferencesAndRenameHelper.CheckName(newName, member.Name)) return;
-			
-			List<Reference> list = RefactoringService.FindReferences(member, null);
-			if (list == null) return;
-			FindReferencesAndRenameHelper.RenameReferences(list, newName);
-			
-			if (member is IField) {
-				IProperty property = FindProperty((IField)member);
-				if (property != null) {
-					string newPropertyName = member.DeclaringType.ProjectContent.Language.CodeGenerator.GetPropertyName(newName);
-					if (newPropertyName != newName && newPropertyName != property.Name) {
-						if (MessageService.AskQuestionFormatted("${res:SharpDevelop.Refactoring.Rename}", "${res:SharpDevelop.Refactoring.RenameFieldAndProperty}", property.FullyQualifiedName, newPropertyName)) {
-							list = RefactoringService.FindReferences(property, null);
-							if (list != null) {
-								FindReferencesAndRenameHelper.RenameReferences(list, newPropertyName);
-							}
-						}
-					}
-				}
-			}
+			FindReferencesAndRenameHelper.RenameMember((IMember)item.Tag);
 		}
 		
 		void FindOverrides(object sender, EventArgs e)

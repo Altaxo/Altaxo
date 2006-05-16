@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1033 $</version>
+//     <version>$Revision: 1389 $</version>
 // </file>
 
 using System;
@@ -130,7 +130,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 						return type;
 					try {
 						isSearching = true;
-						type = pc.SearchType(name, typeParameterCount, declaringClass, caretLine, caretColumn);
+						type = pc.SearchType(new SearchTypeRequest(name, typeParameterCount, declaringClass, caretLine, caretColumn)).Result;
 						cache[this] = type;
 						return type;
 					} finally {

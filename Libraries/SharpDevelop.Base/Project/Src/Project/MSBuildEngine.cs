@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1120 $</version>
+//     <version>$Revision: 1233 $</version>
 // </file>
 
 using System;
@@ -39,13 +39,22 @@ namespace ICSharpCode.SharpDevelop.Project
 		/// </summary>
 		public static readonly SortedList<string, string> MSBuildProperties;
 		
+		/// <summary>
+		/// Gets a list of additional target files that are automatically loaded into all projects.
+		/// </summary>
+		public static readonly List<string> AdditionalTargetFiles;
+		
 		static MSBuildEngine()
 		{
-			CompileTaskNames = new List<string>(new string[] {"csc", "vbc", "ilasm"});
+			CompileTaskNames = AddInTree.BuildItems<string>("/SharpDevelop/MSBuildEngine/CompileTaskNames", null, false);
+			for (int i = 0; i < CompileTaskNames.Count; i++) {
+				CompileTaskNames[i] = CompileTaskNames[i].ToLowerInvariant();
+			}
+			AdditionalTargetFiles = AddInTree.BuildItems<string>("/SharpDevelop/MSBuildEngine/AdditionalTargetFiles", null, false);
 			MSBuildProperties = new SortedList<string, string>();
 			MSBuildProperties.Add("SharpDevelopBinPath", Path.GetDirectoryName(typeof(MSBuildEngine).Assembly.Location));
 		}
-
+		
 		#region relocated from ICSharpCode.SharpDevelop.Project.Commands.Build in BuildCommands.cs
 		public static int LastErrorCount;
 		public static int LastWarningCount;
@@ -64,7 +73,7 @@ namespace ICSharpCode.SharpDevelop.Project
 						LastErrorCount++;
 				}
 				TaskService.InUpdate = false;
-				if (results.Errors.Count > 0) {
+				if (results.Errors.Count > 0 && ErrorListPad.ShowAfterBuild) {
 					WorkbenchSingleton.Workbench.GetPad(typeof(ErrorListPad)).BringPadToFront();
 				}
 			}
@@ -203,6 +212,11 @@ namespace ICSharpCode.SharpDevelop.Project
 				Microsoft.Build.BuildEngine.Project project = engine.CreateNewProject();
 				try {
 					project.Load(buildFile);
+					
+					foreach (string targetFile in AdditionalTargetFiles) {
+						project.AddNewImport(targetFile, null);
+					}
+					
 					if (engine.BuildProject(project, targets))
 						results.NativeCompilerReturnValue = 0;
 					else
@@ -217,6 +231,7 @@ namespace ICSharpCode.SharpDevelop.Project
 				if (callback != null) {
 					WorkbenchSingleton.MainForm.BeginInvoke(callback, results);
 				}
+				engine.UnloadAllProjects();
 			}
 		}
 		
@@ -307,6 +322,21 @@ namespace ICSharpCode.SharpDevelop.Project
 			{
 				if (string.Equals(file, activeTaskName, StringComparison.InvariantCultureIgnoreCase)) {
 					file = "";
+				} else if (file.StartsWith("positionof#")) {
+					string memberName = file.Substring(11);
+					file = "";
+					IProject project = ProjectService.GetProject(projectFiles.Peek());
+					if (project != null) {
+						IProjectContent pc = ParserService.GetProjectContent(project);
+						if (pc != null) {
+							Position pos = pc.GetPosition(memberName);
+							if (pos != null && pos.Cu != null) {
+								file = pos.Cu.FileName ?? "";
+								lineNumber = pos.Line;
+								columnNumber = pos.Column;
+							}
+						}
+					}
 				} else {
 					bool isShortFileName = file == Path.GetFileNameWithoutExtension(file);
 					if (projectFiles.Count > 0) {

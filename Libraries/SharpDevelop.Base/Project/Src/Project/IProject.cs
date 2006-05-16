@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1194 $</version>
+//     <version>$Revision: 1233 $</version>
 // </file>
 
 using System;
@@ -138,9 +138,9 @@ namespace ICSharpCode.SharpDevelop.Project
 		/// </summary>
 		ProjectItem CreateProjectItem(string itemType);
 
-		void Build(MSBuildEngineCallback callback);
-		void Rebuild(MSBuildEngineCallback callback);
-		void Clean(MSBuildEngineCallback callback);
-		void Publish(MSBuildEngineCallback callback);
+		void Build(MSBuildEngineCallback callback, IDictionary<string, string> additionalProperties);
+		void Rebuild(MSBuildEngineCallback callback, IDictionary<string, string> additionalProperties);
+		void Clean(MSBuildEngineCallback callback, IDictionary<string, string> additionalProperties);
+		void Publish(MSBuildEngineCallback callback, IDictionary<string, string> additionalProperties);
 	}
 }

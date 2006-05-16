@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1297 $</version>
+//     <version>$Revision: 1301 $</version>
 // </file>
 
 using System;
@@ -16,37 +16,28 @@ using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.Dom;
 using ICSharpCode.SharpDevelop.Project;
 
-namespace ICSharpCode.SharpDevelop.Gui
+namespace ICSharpCode.SharpDevelop.Gui.ClassBrowser
 {
 	/// <summary>
 	/// This class reperesents the base class for all nodes in the
 	/// class browser.
 	/// </summary>
-	public class ProjectNode : ExtTreeNode
+	public class ProjectNode : AbstractProjectNode
 	{
-		IProject project;
-		
-		public IProject Project {
-			get {
-				return project;
-			}
-		}
-		
-		protected ProjectNode()
+		protected ProjectNode() : base()
 		{
 		}
 		
-		public ProjectNode(IProject project)
+		public ProjectNode(IProject project) : base(project)
 		{
 			sortOrder = 0;
 			
-			this.project = project;
-			Text = project.Name;
-			SetIcon(IconService.GetImageForProjectType(project.Language));
+			Text = Project.Name;
+			SetIcon(IconService.GetImageForProjectType(Project.Language));
 			Nodes.Add(new TreeNode(StringParser.Parse("${res:ICSharpCode.SharpDevelop.Gui.Pads.ClassScout.LoadingNode}")));
 		}
 		
-		public void UpdateParseInformation(ICompilationUnit oldUnit, ICompilationUnit unit)
+		public override void UpdateParseInformation(ICompilationUnit oldUnit, ICompilationUnit unit)
 		{
 			Dictionary<string, IClass> classDictionary      = new Dictionary<string, IClass>();
 			Dictionary<string, bool>   wasUpdatedDictionary = new Dictionary<string, bool>();
@@ -64,7 +55,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 					if (node != null) {
 						node.Class = c.GetCompoundClass();
 					} else {
-						new ClassNode(project, c.GetCompoundClass()).AddTo(path);
+						new ClassNode(Project, c.GetCompoundClass()).AddTo(path);
 					}
 					wasUpdatedDictionary[c.FullyQualifiedName] = true;
 				}
@@ -101,14 +92,14 @@ namespace ICSharpCode.SharpDevelop.Gui
 		protected override void Initialize()
 		{
 			base.Initialize();
-			IProjectContent projectContent = ParserService.GetProjectContent(project);
+			IProjectContent projectContent = ParserService.GetProjectContent(Project);
 			
 			if (projectContent != null) {
 				Nodes.Clear();
-				ReferenceFolderNode referencesNode = new ReferenceFolderNode(project);
+				ReferenceFolderNode referencesNode = new ReferenceFolderNode(Project);
 				referencesNode.AddTo(this);
 				projectContent.ReferencedContentsChanged += delegate { referencesNode.UpdateReferenceNodes(); };
-				foreach (ProjectItem item in project.Items) {
+				foreach (ProjectItem item in Project.Items) {
 					switch (item.ItemType) {
 						case ItemType.Reference:
 							break;
@@ -129,24 +120,24 @@ namespace ICSharpCode.SharpDevelop.Gui
 				TreeNode path = GetNodeByPath(c.Namespace, true);
 				TreeNode node = GetNodeByName(path.Nodes, c.Name);
 				if (node == null) {
-					new ClassNode(project, c.GetCompoundClass()).AddTo(path);
+					new ClassNode(Project, c.GetCompoundClass()).AddTo(path);
 				}
 			}
 		}
 		
 		protected virtual string StripRootNamespace(string directory)
 		{
-			if (project != null) {
+			if (Project != null) {
 				// TODO: Give user the option to always show the root namespace
-				string rootNamespace = project.RootNamespace;
+				string rootNamespace = Project.RootNamespace;
 				if (directory.StartsWith(rootNamespace)) {
 					directory = directory.Substring(rootNamespace.Length);
 				}
 			}
 			return directory;
 		}
-		
-		public TreeNode GetNodeByPath(string directory, bool create)
+
+		public override TreeNode GetNodeByPath(string directory, bool create)
 		{
 			directory = StripRootNamespace(directory);
 			

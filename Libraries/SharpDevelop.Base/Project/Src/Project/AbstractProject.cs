@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1343 $</version>
+//     <version>$Revision: 1388 $</version>
 // </file>
 
 using System;
@@ -728,19 +728,19 @@ namespace ICSharpCode.SharpDevelop.Project
 		#endregion
 		
 		
-		public virtual void Build(MSBuildEngineCallback callback)
+		public virtual void Build(MSBuildEngineCallback callback, IDictionary<string, string> additionalProperties)
 		{
 		}
 		
-		public virtual void Rebuild(MSBuildEngineCallback callback)
+		public virtual void Rebuild(MSBuildEngineCallback callback, IDictionary<string, string> additionalProperties)
 		{
 		}
 		
-		public virtual void Clean(MSBuildEngineCallback callback)
+		public virtual void Clean(MSBuildEngineCallback callback, IDictionary<string, string> additionalProperties)
 		{
 		}
 		
-		public virtual void Publish(MSBuildEngineCallback callback)
+		public virtual void Publish(MSBuildEngineCallback callback, IDictionary<string, string> additionalProperties)
 		{
 		}
 		

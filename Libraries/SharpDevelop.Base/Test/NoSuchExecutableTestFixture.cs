@@ -2,13 +2,13 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Matthew Ward" email="mrward@users.sourceforge.net"/>
-//     <version>$Revision: 1092 $</version>
+//     <version>$Revision: 1391 $</version>
 // </file>
 
 using System;
 using System.ComponentModel;
-using NUnit.Framework;
 using ICSharpCode.SharpDevelop.Util;
+using NUnit.Framework;
 
 namespace ICSharpCode.SharpDevelop.Tests
 {

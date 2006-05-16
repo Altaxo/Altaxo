@@ -13,6 +13,15 @@ using System.Drawing;
 
 namespace WeifenLuo.WinFormsUI
 {
+	/// <include file='CodeDoc\Interfaces.xml' path='//CodeDoc/Interface[@name="IDockContent"]/InterfaceDef/*'/>
+	public interface IDockContent : IDisposable
+	{
+		/// <include file='CodeDoc\Interfaces.xml' path='//CodeDoc/Interface[@name="IDockListContainer"]/Property[@name="DockHandler"]/*'/>
+		DockContentHandler DockHandler	{	get;	}
+		
+		bool IsDisposed { get; }
+	}
+
 	/// <include file='CodeDoc\Interfaces.xml' path='//CodeDoc/Interface[@name="IDockListContainer"]/InterfaceDef/*'/>
 	public interface IDockListContainer
 	{

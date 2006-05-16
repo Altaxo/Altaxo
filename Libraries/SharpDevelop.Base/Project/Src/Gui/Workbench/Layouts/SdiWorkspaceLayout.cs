@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1273 $</version>
+//     <version>$Revision: 1301 $</version>
 // </file>
 
 using System;
@@ -35,36 +35,37 @@ namespace ICSharpCode.SharpDevelop.Gui
 		
 		public IWorkbenchWindow ActiveWorkbenchwindow {
 			get {
-				if (dockPanel == null || dockPanel.ActiveDocument == null || dockPanel.ActiveDocument.IsDisposed)  {
+				if (dockPanel == null || dockPanel.ActiveDocument == null)  {
 					return null;
 				}
-				return dockPanel.ActiveDocument as IWorkbenchWindow;
+				IWorkbenchWindow window = dockPanel.ActiveDocument as IWorkbenchWindow;
+				if (window.IsDisposed) {
+					return null;
+				}
+				return window;
 			}
 		}
 		
 		// prevent setting ActiveContent to null when application loses focus (e.g. because of context menu popup)
-		DockContent lastActiveContent;
+		IDockContent lastActiveContent;
 		
 		public object ActiveContent {
 			get {
-				DockContent activeContent;
+				IDockContent activeContent;
 				if (dockPanel == null)  {
 					activeContent = lastActiveContent;
 				} else {
 					activeContent = dockPanel.ActiveContent ?? lastActiveContent;
 				}
+				if (activeContent != null && activeContent.IsDisposed)
+					activeContent = null;
+				
 				lastActiveContent = activeContent;
 				
-				if (activeContent == null || activeContent.IsDisposed) {
-					return null;
-				}
-				if (activeContent is IWorkbenchWindow) {
+				if (activeContent is IWorkbenchWindow)
 					return ((IWorkbenchWindow)activeContent).ActiveViewContent;
-				}
-				
-				if (activeContent is PadContentWrapper) {
+				if (activeContent is PadContentWrapper)
 					return ((PadContentWrapper)activeContent).PadContent;
-				}
 				
 				return activeContent;
 			}
@@ -80,21 +81,24 @@ namespace ICSharpCode.SharpDevelop.Gui
 			toolStripContainer.SuspendLayout();
 			toolStripContainer.Dock = DockStyle.Fill;
 			
-			dockPanel = new WeifenLuo.WinFormsUI.DockPanel();
-			toolStripContainer.ContentPanel.Controls.Add(this.dockPanel);
-			
 			mainMenuContainer = new AutoHideMenuStripContainer(((DefaultWorkbench)wbForm).TopMenu);
 			mainMenuContainer.Dock = DockStyle.Top;
-			
-			this.dockPanel.ActiveAutoHideContent = null;
-			this.dockPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			
 			statusStripContainer = new AutoHideStatusStripContainer((StatusStrip)StatusBarService.Control);
 			statusStripContainer.Dock = DockStyle.Bottom;
 			
+			dockPanel = new WeifenLuo.WinFormsUI.DockPanel();
+			dockPanel.DocumentStyle = DocumentStyles.DockingWindow;
+			this.dockPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			
+			Panel helperPanel = new Panel();
+			helperPanel.Dock = DockStyle.Fill;
+			helperPanel.Controls.Add(dockPanel);
+			toolStripContainer.ContentPanel.Controls.Add(helperPanel);
 			
 			toolStripContainer.ContentPanel.Controls.Add(mainMenuContainer);
 			toolStripContainer.ContentPanel.Controls.Add(statusStripContainer);
+			
 			wbForm.Controls.Add(toolStripContainer);
 			// dock panel has to be added to the form before LoadLayoutConfiguration is called to fix SD2-463
 			
@@ -257,7 +261,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 						string configPath = Path.Combine(PropertyService.ConfigDirectory, "layouts");
 						if (!Directory.Exists(configPath))
 							Directory.CreateDirectory(configPath);
-						dockPanel.SaveAsXml(Path.Combine(configPath, current.FileName));
+						dockPanel.SaveAsXml(Path.Combine(configPath, current.FileName), System.Text.Encoding.UTF8);
 					}
 				}
 			} catch (Exception e) {

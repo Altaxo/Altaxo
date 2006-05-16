@@ -54,6 +54,16 @@
     <Reference Include="Microsoft.Build.Engine" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Src\Gui\Dialogs\OptionPanels\IDEOptions\ProjectAndSolutionOptionsPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Src\Gui\Pads\ClassBrowser\NodeBuilder\ClassNodeBuilders.cs" />
+    <Compile Include="Src\Gui\Pads\ClassBrowser\NodeBuilder\DefaultClassNodeBuilder.cs" />
+    <Compile Include="Src\Gui\Pads\ClassBrowser\NodeBuilder\DefaultProjectNodeBuilder.cs" />
+    <Compile Include="Src\Gui\Pads\ClassBrowser\NodeBuilder\IClassNodeBuilder.cs" />
+    <Compile Include="Src\Gui\Pads\ClassBrowser\NodeBuilder\IProjectNodeBuilder.cs" />
+    <Compile Include="Src\Gui\Pads\ClassBrowser\NodeBuilder\ProjectNodeBuilders.cs" />
+    <Compile Include="Src\Gui\Pads\ClassBrowser\Nodes\AbstractProjectNode.cs" />
     <Compile Include="Src\Internal\ExternalTool\ExternalTool.cs" />
     <Compile Include="Src\Internal\Templates\CodeTemplate.cs" />
     <Compile Include="Src\Internal\Templates\Project\ProjectTemplate.cs" />
@@ -76,6 +86,10 @@
     <Compile Include="Src\Internal\Doozers\IDialogPanelDescriptor.cs" />
     <Compile Include="Src\Services\File\FileService.cs" />
     <Compile Include="Src\Services\File\FileEventArgs.cs" />
+    <Compile Include="Src\Services\RefactoringService\NamespaceRefactoringService.cs" />
+    <Compile Include="Src\Services\RefactoringService\NRefactoryRefactoringProvider.cs" />
+    <Compile Include="Src\Services\RefactoringService\RefactoringProvider.cs" />
+    <Compile Include="Src\Services\RefactoringService\RefactorMenu.cs" />
     <Compile Include="Src\Services\Tasks\Task.cs" />
     <Compile Include="Src\Services\Tasks\TaskService.cs" />
     <Compile Include="Src\Services\DisplayBinding\IDisplayBinding.cs" />
@@ -502,7 +516,7 @@
     <Compile Include="Src\TextEditor\Commands\CodeGenerators\AbstractClassImplementorCodeGenerator.cs" />
     <Compile Include="Src\TextEditor\Commands\CodeGenerators\AbstractFieldCodeGenerator.cs" />
     <Compile Include="Src\TextEditor\Commands\CodeGenerators\AbstractPropertyCodeGenerator.cs" />
-    <Compile Include="Src\TextEditor\Commands\CodeGenerators\CodeGenerator.cs" />
+    <Compile Include="Src\TextEditor\Commands\CodeGenerators\CodeGeneratorBase.cs" />
     <Compile Include="Src\TextEditor\Commands\CodeGenerators\ConstructorCodeGenerator.cs" />
     <Compile Include="Src\TextEditor\Commands\CodeGenerators\EqualsCodeGenerator.cs" />
     <Compile Include="Src\TextEditor\Commands\CodeGenerators\GetterAndSetterCodeGenerator.cs" />
@@ -532,6 +546,8 @@
     <Compile Include="Src\TextEditor\Gui\Dialogs\SortOptionsDialog.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Src\TextEditor\Gui\Editor\AdvancedHighlighter.cs" />
+    <Compile Include="Src\TextEditor\Gui\Editor\AdvancedHighlightingStrategy.cs" />
     <Compile Include="Src\TextEditor\Gui\Editor\CompletionWindow\CodeCompletionData.cs" />
     <Compile Include="Src\TextEditor\Gui\Editor\CompletionWindow\CodeCompletionDataProvider.cs" />
     <Compile Include="Src\TextEditor\Gui\Editor\CompletionWindow\CommentCompletionDataProvider.cs" />
@@ -805,6 +821,9 @@
     <Content Include="..\..\..\..\AddIns\ICSharpCode.SharpDevelop.addin">
       <Link>ICSharpCode.SharpDevelop.addin</Link>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ProjectAndSolutionOptionsPanel.xfrm" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSHARP.Targets" />
 </Project>

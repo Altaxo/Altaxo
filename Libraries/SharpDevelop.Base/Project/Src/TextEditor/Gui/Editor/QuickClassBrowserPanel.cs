@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="none" email=""/>
-//     <version>$Revision: 1297 $</version>
+//     <version>$Revision: 1301 $</version>
 // </file>
 
 // created on 07.03.2004 at 19:12

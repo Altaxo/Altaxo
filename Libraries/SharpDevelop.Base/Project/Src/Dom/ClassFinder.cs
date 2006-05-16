@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1389 $</version>
 // </file>
 
 using System;
@@ -87,7 +87,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 		
 		public IReturnType SearchType(string name, int typeParameterCount)
 		{
-			return projectContent.SearchType(name, typeParameterCount, callingClass, cu, caretLine, caretColumn);
+			return projectContent.SearchType(new SearchTypeRequest(name, typeParameterCount, callingClass, cu, caretLine, caretColumn)).Result;
 		}
 		
 		public string SearchNamespace(string name)
