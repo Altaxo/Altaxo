@@ -1146,6 +1146,10 @@ namespace Altaxo.Graph.GUI
     public void EhPrintPage(object sender, System.Drawing.Printing.PrintPageEventArgs ppea)
     {
       Graphics g = ppea.Graphics;
+      float hx = ppea.PageSettings.HardMarginX; // in hundreths of inch
+      float hy = ppea.PageSettings.HardMarginY; // in hundreths of inch
+      g.PageUnit = GraphicsUnit.Point;
+      g.TranslateTransform(-hx*72/100.0,-hy*72/100.0);
       DoPaint(g,true);
     }
 
@@ -1410,15 +1414,18 @@ namespace Altaxo.Graph.GUI
       this.m_VertRes = g.DpiY;
 
       g.PageUnit = GraphicsUnit.Point;
-        
-      if(bForPrinting)
-        g.PageScale=1;
-      else
-        g.PageScale = this.m_Zoom;
 
-      float pointsh = UnitPerInch*m_View.GraphScrollPosition.X/(this.m_HorizRes*this.m_Zoom);
-      float pointsv = UnitPerInch*m_View.GraphScrollPosition.Y/(this.m_VertRes*this.m_Zoom);
-      g.TranslateTransform(pointsh,pointsv);
+      if (bForPrinting)
+      {
+        g.PageScale = 1;
+      }
+      else
+      {
+        g.PageScale = this.m_Zoom;
+        float pointsh = UnitPerInch * m_View.GraphScrollPosition.X / (this.m_HorizRes * this.m_Zoom);
+        float pointsv = UnitPerInch * m_View.GraphScrollPosition.Y / (this.m_VertRes * this.m_Zoom);
+        g.TranslateTransform(pointsh, pointsv);
+      }
     }
 
     /// <summary>
