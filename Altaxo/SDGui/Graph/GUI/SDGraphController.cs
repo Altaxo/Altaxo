@@ -43,7 +43,16 @@ namespace Altaxo.Graph.GUI
     ICSharpCode.SharpDevelop.Gui.IEditable,
     ICSharpCode.SharpDevelop.Gui.IClipboardHandler
   {
-    
+    protected ICSharpCode.SharpDevelop.Gui.IWorkbenchWindow workbenchWindow;
+    public event EventHandler WorkbenchWindowChanged;
+
+    protected virtual void OnWorkbenchWindowChanged(EventArgs e)
+    {
+      if (WorkbenchWindowChanged != null)
+      {
+        WorkbenchWindowChanged(this, e);
+      }
+    }
 
     #region Serialization
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SDGraphController),0)]
@@ -86,61 +95,59 @@ namespace Altaxo.Graph.GUI
 
 
 
-    protected ICSharpCode.SharpDevelop.Gui.IWorkbenchWindow m_ParentWorkbenchWindowController;
     public Main.GUI.IWorkbenchWindowController ParentWorkbenchWindowController 
     { 
-      get { return m_ParentWorkbenchWindowController as Main.GUI.IWorkbenchWindowController; }
+      get { return workbenchWindow as Main.GUI.IWorkbenchWindowController; }
       set 
       {
-        if(null!=m_ParentWorkbenchWindowController)
+        if(null!=workbenchWindow)
         {
-          m_ParentWorkbenchWindowController.WindowDeselected -= new EventHandler(EhParentWindowDeselected);
-          m_ParentWorkbenchWindowController.WindowSelected -= new EventHandler(EhParentWindowSelected);
+          workbenchWindow.WindowDeselected -= new EventHandler(EhParentWindowDeselected);
+          workbenchWindow.WindowSelected -= new EventHandler(EhParentWindowSelected);
         }
           
-        m_ParentWorkbenchWindowController = value;
+        workbenchWindow = value;
 
-        if(null!=m_ParentWorkbenchWindowController)
+        if(null!=workbenchWindow)
         {
-          m_ParentWorkbenchWindowController.WindowDeselected += new EventHandler(EhParentWindowDeselected);
-          m_ParentWorkbenchWindowController.WindowSelected += new EventHandler(EhParentWindowSelected);
+          workbenchWindow.WindowDeselected += new EventHandler(EhParentWindowDeselected);
+          workbenchWindow.WindowSelected += new EventHandler(EhParentWindowSelected);
         }
       }
     }
 
-
-
-    #region ICSharpCode.SharpDevelop.Gui
-
-    public void Dispose()
-    {
-    }
-
-    /// <summary>
-    /// This is the Windows.Forms control for the view.
-    /// </summary>
-    public System.Windows.Forms.Control Control 
+    #region IBaseViewContent implementation (copied from AbstractBaseViewContent)
+    public virtual Control Control
     {
       get { return this.View as System.Windows.Forms.Control; }
     }
 
-    /// <summary>
-    /// The workbench window in which this view is displayed.
-    /// </summary>
-    public ICSharpCode.SharpDevelop.Gui.IWorkbenchWindow  WorkbenchWindow 
+    public virtual IWorkbenchWindow WorkbenchWindow
     {
-      get 
+      get
       {
-        return this.m_ParentWorkbenchWindowController; 
+        return workbenchWindow;
       }
       set
       {
-        //ICSharpCode.SharpDevelop.Gui.IWorkbenchWindow oldValue = this.m_ParentWorkbenchWindowController;
-        //ICSharpCode.SharpDevelop.Gui.IWorkbenchWindow newValue = value;
-
-        this.m_ParentWorkbenchWindowController = value; 
+        workbenchWindow = value;
+        OnWorkbenchWindowChanged(EventArgs.Empty);
       }
     }
+   
+
+   
+    #region IDisposable implementation
+    public virtual void Dispose()
+    {
+      workbenchWindow = null;
+    }
+    #endregion
+
+    #endregion		
+
+    #region ICSharpCode.SharpDevelop.Gui
+
     
     /// <summary>
     /// A generic name for the file, when it does have no file name
@@ -243,7 +250,6 @@ namespace Altaxo.Graph.GUI
     /// </summary>
     public void SwitchedTo()
     {
-      View.TakeFocus();
     }
     
     /// <summary>
@@ -251,6 +257,10 @@ namespace Altaxo.Graph.GUI
     /// tab before the other window is selected. NOT when the windows is deselected.
     /// </summary>
     public void Deselected()
+    {
+    }
+
+    public virtual void Deselecting()
     {
     }
 
@@ -315,6 +325,7 @@ namespace Altaxo.Graph.GUI
     public event EventHandler BeforeSave;
 
     public event EventHandler     Saving;
+
     public event ICSharpCode.SharpDevelop.Gui.SaveEventHandler Saved;
 
     #endregion
@@ -402,8 +413,6 @@ namespace Altaxo.Graph.GUI
     }
     #endregion
 
-
-
     #region IViewContent Members
 
 
@@ -413,16 +422,6 @@ namespace Altaxo.Graph.GUI
       {
         return new List<ICSharpCode.SharpDevelop.Gui.ISecondaryViewContent>();
       }
-    }
-
-    #endregion
-
-    #region IBaseViewContent Members
-
-
-    public void Deselecting()
-    {
-      throw new Exception("The method or operation is not implemented.");
     }
 
     #endregion

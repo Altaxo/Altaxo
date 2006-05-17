@@ -117,9 +117,7 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Graph\GUI\SDGraphControl.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="Graph\GUI\SDGraphController.cs" />
     <Compile Include="Main\GUI\DataDisplayController.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -130,7 +128,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Main\GUI\ProjectScout.cs">
-      <SubType>UserControl</SubType>
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Main\GUI\WindowsMdiWorkbenchLayout.cs">
       <SubType>Code</SubType>

@@ -35,8 +35,8 @@ using ICSharpCode.SharpZipLib.Zip;
 
 namespace Altaxo.Main
 {
-  
-  
+
+
 
   /// <summary>
   /// Handles administrative tasks concerning an Altaxo project.
@@ -49,11 +49,11 @@ namespace Altaxo.Main
     /// The currently opened Altaxo project.
     /// </summary>
     Altaxo.AltaxoDocument openProject = null;
-    
+
     /// <summary>
     /// The file name of the currently opened Altaxo project.
     /// </summary>
-    string   openProjectFileName = null;
+    string openProjectFileName = null;
 
 
     //FileUtilityService fileUtilityService = (FileUtilityService)ServiceManager.Services.GetService(typeof(FileUtilityService));
@@ -63,27 +63,27 @@ namespace Altaxo.Main
     /// <summary>
     /// The currently open Altaxo project.
     /// </summary>
-    public Altaxo.AltaxoDocument CurrentOpenProject 
+    public Altaxo.AltaxoDocument CurrentOpenProject
     {
-      get 
+      get
       {
         return openProject;
       }
-      set 
+      set
       {
         Altaxo.AltaxoDocument oldProject = openProject;
 
-        if(oldProject!=null)
+        if (oldProject != null)
           oldProject.DirtyChanged -= new EventHandler(this.EhProjectDirtyChanged);
 
 
         openProject = value;
 
-        if(openProject!=null)
+        if (openProject != null)
           openProject.DirtyChanged += new EventHandler(this.EhProjectDirtyChanged);
 
 
-        if(!object.Equals(oldProject,value) )
+        if (!object.Equals(oldProject, value))
           OnProjectChanged();
       }
     }
@@ -96,7 +96,7 @@ namespace Altaxo.Main
       get { return this.openProjectFileName; }
     }
 
-   
+
 
     /// <summary>
     /// Saves the state of the main window into a zipped file.
@@ -106,44 +106,44 @@ namespace Altaxo.Main
     public void SaveWindowStateToZippedFile(ICompressedFileContainerStream zippedStream, Altaxo.Serialization.Xml.XmlStreamSerializationInfo info)
     {
       System.Text.StringBuilder errorText = new System.Text.StringBuilder();
-    
-    {
-      // first, we save our own state 
-      zippedStream.StartFile("Workbench/MainWindow.xml",0);
-      try
+
       {
-        info.BeginWriting(zippedStream.Stream);
-        info.AddValue("MainWindow",Current.Workbench);
-        info.EndWriting();
+        // first, we save our own state 
+        zippedStream.StartFile("Workbench/MainWindow.xml", 0);
+        try
+        {
+          info.BeginWriting(zippedStream.Stream);
+          info.AddValue("MainWindow", Current.Workbench);
+          info.EndWriting();
+        }
+        catch (Exception exc)
+        {
+          errorText.Append(exc.ToString());
+        }
       }
-      catch( Exception exc)
-      {
-        errorText.Append(exc.ToString());
-      }
-    }
 
       // second, we save all workbench windows into the Workbench/Views 
-      int i=0;
-      foreach(IViewContent ctrl in Current.Workbench.ViewContentCollection)
+      int i = 0;
+      foreach (IViewContent ctrl in Current.Workbench.ViewContentCollection)
       {
-        if(info.IsSerializable(ctrl))
+        if (info.IsSerializable(ctrl))
         {
           i++;
-          zippedStream.StartFile("Workbench/Views/View"+i.ToString()+".xml",0);
+          zippedStream.StartFile("Workbench/Views/View" + i.ToString() + ".xml", 0);
           try
           {
             info.BeginWriting(zippedStream.Stream);
-            info.AddValue("WorkbenchViewContent",ctrl);
+            info.AddValue("WorkbenchViewContent", ctrl);
             info.EndWriting();
           }
-          catch(Exception exc)
+          catch (Exception exc)
           {
             errorText.Append(exc.ToString());
           }
         }
       }
 
-      if(errorText.Length!=0)
+      if (errorText.Length != 0)
         throw new ApplicationException(errorText.ToString());
     }
 
@@ -157,14 +157,14 @@ namespace Altaxo.Main
     public void RestoreWindowStateFromZippedFile(ZipFile zipFile, Altaxo.Serialization.Xml.XmlStreamDeserializationInfo info, AltaxoDocument restoredDoc)
     {
       System.Collections.ArrayList restoredControllers = new System.Collections.ArrayList();
-      foreach(ZipEntry zipEntry in zipFile)
+      foreach (ZipEntry zipEntry in zipFile)
       {
-        if(!zipEntry.IsDirectory && zipEntry.Name.StartsWith("Workbench/Views/"))
+        if (!zipEntry.IsDirectory && zipEntry.Name.StartsWith("Workbench/Views/"))
         {
           System.IO.Stream zipinpstream = zipFile.GetInputStream(zipEntry);
           info.BeginReading(zipinpstream);
-          object readedobject = info.GetValue("Table",this);
-          if(readedobject is ICSharpCode.SharpDevelop.Gui.IViewContent)
+          object readedobject = info.GetValue("Table", this);
+          if (readedobject is ICSharpCode.SharpDevelop.Gui.IViewContent)
             restoredControllers.Add(readedobject);
           info.EndReading();
         }
@@ -175,13 +175,13 @@ namespace Altaxo.Main
 
       // now give all restored controllers a view and show them in the Main view
 
-      foreach(IViewContent viewcontent in restoredControllers)
+      foreach (IViewContent viewcontent in restoredControllers)
       {
         Main.GUI.IMVCControllerEx ctrl = viewcontent as Main.GUI.IMVCControllerEx;
-        if(ctrl!=null)
+        if (ctrl != null)
           ctrl.CreateDefaultViewObject();
-        
-        if(viewcontent.Control != null)
+
+        if (viewcontent.Control != null)
         {
           Current.Workbench.ShowView(ctrl);
         }
@@ -195,61 +195,61 @@ namespace Altaxo.Main
     /// <param name="filename"></param>
     public void OpenProject(string filename)
     {
-      if (CurrentOpenProject != null) 
+      if (CurrentOpenProject != null)
       {
         System.ComponentModel.CancelEventArgs e = new System.ComponentModel.CancelEventArgs();
-        if(this.CurrentOpenProject.IsDirty)
+        if (this.CurrentOpenProject.IsDirty)
           AskForSavingOfProject(e);
 
-        if(e.Cancel==true)
+        if (e.Cancel == true)
           return;
 
 
         CloseProject();
       }
-        
-      if (!FileUtility.TestFileExists(filename)) 
+
+      if (!FileUtility.TestFileExists(filename))
       {
         return;
       }
       StatusBarService.SetMessage("${res:MainWindow.StatusBar.OpeningCombineMessage}");
-        
-      if (Path.GetExtension(filename).ToUpper() == ".AXOPRJ") 
+
+      if (Path.GetExtension(filename).ToUpper() == ".AXOPRJ")
       {
         string validproject = Path.ChangeExtension(filename, ".axoprj");
-        if (File.Exists(validproject)) 
+        if (File.Exists(validproject))
         {
           LoadProject(validproject);
-        } 
-        
-      } 
-      else 
+        }
+
+      }
+      else
       {
         LoadProject(filename);
       }
 
       StatusBarService.SetMessage("${res:MainWindow.StatusBar.ReadyMessage}");
     }
-    
+
     /// <summary>
     /// Loads a existing Altaxo project with the provided name.
     /// </summary>
     /// <param name="filename">The file name of the project to load.</param>
     void LoadProject(string filename)
     {
-      if (!FileUtility.TestFileExists(filename)) 
+      if (!FileUtility.TestFileExists(filename))
       {
         return;
       }
-      
+
       this.Load(filename);
       openProjectFileName = filename;
-      
+
       //IFileService fileService = (IFileService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IFileService));
       FileService.RecentOpen.AddLastProject(filename);
-      
+
       OnProjectOpened(new ProjectEventArgs(openProject));
-      
+
       // RestoreCombinePreferences(CurrentOpenCombine, openCombineFileName);
     }
 
@@ -270,9 +270,9 @@ namespace Altaxo.Main
 
       try
       {
-        newdocument.RestoreFromZippedFile(zipFileWrapper,info);
+        newdocument.RestoreFromZippedFile(zipFileWrapper, info);
       }
-      catch(Exception exc)
+      catch (Exception exc)
       {
         errorText.Append(exc.ToString());
       }
@@ -281,21 +281,21 @@ namespace Altaxo.Main
       {
         Current.Workbench.CloseAllViews();
         this.CurrentOpenProject = newdocument;
-        RestoreWindowStateFromZippedFile(zipFile,info,newdocument);
+        RestoreWindowStateFromZippedFile(zipFile, info, newdocument);
         this.CurrentOpenProject.IsDirty = false;
       }
-      catch(Exception exc)
+      catch (Exception exc)
       {
         errorText.Append(exc.ToString());
-        System.Windows.Forms.MessageBox.Show(Current.MainWindow,errorText.ToString(),"An error occured");
+        System.Windows.Forms.MessageBox.Show(Current.MainWindow, errorText.ToString(), "An error occured");
       }
       finally
       {
         myStream.Close();
       }
 
-      
-      if(errorText.Length!=0)
+
+      if (errorText.Length != 0)
         throw new ApplicationException(errorText.ToString());
     }
 
@@ -306,20 +306,20 @@ namespace Altaxo.Main
     private void Save(string filename)
     {
       Altaxo.Serialization.Xml.XmlStreamSerializationInfo info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo();
-      
+
       bool fileAlreadyExists = System.IO.File.Exists(filename);
 
 
-      
+
       System.IO.Stream myStream;
-      string tempFileName=null;
-      if(fileAlreadyExists)
+      string tempFileName = null;
+      if (fileAlreadyExists)
       {
         tempFileName = System.IO.Path.GetTempFileName();
-        myStream = new System.IO.FileStream(tempFileName,System.IO.FileMode.Create,FileAccess.Write,FileShare.None);
+        myStream = new System.IO.FileStream(tempFileName, System.IO.FileMode.Create, FileAccess.Write, FileShare.None);
       }
       else
-        myStream = new System.IO.FileStream(filename,System.IO.FileMode.Create,FileAccess.Write,FileShare.None);
+        myStream = new System.IO.FileStream(filename, System.IO.FileMode.Create, FileAccess.Write, FileShare.None);
 
       ZipOutputStream zippedStream = new ZipOutputStream(myStream);
       ZipOutputStreamWrapper zippedStreamWrapper = new ZipOutputStreamWrapper(zippedStream);
@@ -330,7 +330,7 @@ namespace Altaxo.Main
         this.openProject.SaveToZippedFile(zippedStreamWrapper, info);
         SaveWindowStateToZippedFile(zippedStreamWrapper, info);
       }
-      catch(Exception exc)
+      catch (Exception exc)
       {
         savingException = exc;
       }
@@ -340,15 +340,15 @@ namespace Altaxo.Main
 
       try
       {
-        if(savingException==null)
+        if (savingException == null)
         {
           // Test the file for integrity
-          string testfilename = tempFileName!=null ? tempFileName:filename;
-          myStream = new System.IO.FileStream(testfilename,System.IO.FileMode.Open,FileAccess.Read,FileShare.None);
+          string testfilename = tempFileName != null ? tempFileName : filename;
+          myStream = new System.IO.FileStream(testfilename, System.IO.FileMode.Open, FileAccess.Read, FileShare.None);
           ZipFile zipFile = new ZipFile(myStream);
-          foreach(ZipEntry zipEntry in zipFile)
+          foreach (ZipEntry zipEntry in zipFile)
           {
-            if(!zipEntry.IsDirectory)
+            if (!zipEntry.IsDirectory)
             {
               System.IO.Stream zipinpstream = zipFile.GetInputStream(zipEntry);
             }
@@ -357,22 +357,22 @@ namespace Altaxo.Main
           // end test
         }
       }
-      catch(Exception exc)
+      catch (Exception exc)
       {
         savingException = exc;
       }
 
       // now, if no exception happened, copy the temporary file back to the original file
-      if(null!=tempFileName && null==savingException)
+      if (null != tempFileName && null == savingException)
       {
-        System.IO.File.Copy(tempFileName,filename,true);
+        System.IO.File.Copy(tempFileName, filename, true);
         System.IO.File.Delete(tempFileName);
       }
-      
-      
-      if(null!=savingException)
+
+
+      if (null != savingException)
         throw savingException;
-      
+
       this.openProject.IsDirty = false;
     }
 
@@ -393,13 +393,13 @@ namespace Altaxo.Main
     {
       string oldFileName = this.openProjectFileName;
       this.openProjectFileName = filename;
-      if(oldFileName!=filename)
-        this.OnRenameProject(new ProjectRenameEventArgs(this.openProject,oldFileName,filename));
+      if (oldFileName != filename)
+        this.OnRenameProject(new ProjectRenameEventArgs(this.openProject, oldFileName, filename));
 
-      
+
       FileUtility.ObservedSave(new NamedFileOperationDelegate(this.Save),
         filename,
-        ResourceService.GetString("Internal.Project.Combine.CantSaveCombineErrorText"),
+        ResourceService.GetString("Altaxo.Project.CantSaveProjectErrorText"),
         FileErrorPolicy.ProvideAlternative);
     }
 
@@ -410,16 +410,16 @@ namespace Altaxo.Main
     {
       SaveFileDialog fdiag = new SaveFileDialog();
       fdiag.OverwritePrompt = true;
-      fdiag.AddExtension    = true;
-      
-      
+      fdiag.AddExtension = true;
+
+
       fdiag.Filter = StringParser.Parse("${res:Altaxo.FileFilter.ProjectFiles}|*.axoprj|${res:Altaxo.FileFilter.AllFiles}|*.*");
-      
-      if (fdiag.ShowDialog() == DialogResult.OK) 
+
+      if (fdiag.ShowDialog() == DialogResult.OK)
       {
         string filename = fdiag.FileName;
         SaveProject(filename);
-        
+
         MessageService.ShowMessage(filename, ResourceService.GetString("Altaxo.Project.ProjectSavedMessage"));
       }
     }
@@ -432,17 +432,17 @@ namespace Altaxo.Main
     {
       string text = ResourceService.GetString("Altaxo.Project.AskForSavingOfProjectDialog.Text");
       string caption = ResourceService.GetString("Altaxo.Project.AskForSavingOfProjectDialog.Caption");
-      System.Windows.Forms.DialogResult dlgresult = System.Windows.Forms.MessageBox.Show(Current.MainWindow,text,caption,System.Windows.Forms.MessageBoxButtons.YesNoCancel);
-    
-      switch(dlgresult)
+      System.Windows.Forms.DialogResult dlgresult = System.Windows.Forms.MessageBox.Show(Current.MainWindow, text, caption, System.Windows.Forms.MessageBoxButtons.YesNoCancel);
+
+      switch (dlgresult)
       {
         case System.Windows.Forms.DialogResult.Yes:
-          if(this.CurrentProjectFileName!=null)
+          if (this.CurrentProjectFileName != null)
             this.SaveProject();
           else
             this.SaveProjectAs();
 
-          if(this.CurrentOpenProject.IsDirty)
+          if (this.CurrentOpenProject.IsDirty)
             e.Cancel = true; // Cancel if the saving was not successfull
           break;
 
@@ -452,7 +452,7 @@ namespace Altaxo.Main
           e.Cancel = true; // Cancel if the user pressed cancel
           break;
       }
-    
+
     }
 
 
@@ -462,17 +462,17 @@ namespace Altaxo.Main
     public void CloseProject()
     {
 
-      if (CurrentOpenProject != null) 
+      if (CurrentOpenProject != null)
       {
         System.ComponentModel.CancelEventArgs e = new System.ComponentModel.CancelEventArgs();
-        if(this.CurrentOpenProject.IsDirty)
+        if (this.CurrentOpenProject.IsDirty)
           AskForSavingOfProject(e);
 
-        if(e.Cancel==false)
+        if (e.Cancel == false)
         {
           //if (saveCombinePreferencies)
           //  SaveCombinePreferences(CurrentOpenCombine, openCombineFileName);
-        
+
           Altaxo.AltaxoDocument closedProject = CurrentOpenProject;
           //CurrentSelectedProject = null;
           //CurrentOpenCombine = CurrentSelectedCombine = null;
@@ -480,7 +480,7 @@ namespace Altaxo.Main
           WorkbenchSingleton.Workbench.CloseAllViews();
           OnProjectClosed(new ProjectEventArgs(closedProject));
           //closedProject.Dispose();
-          
+
           // now create a new project
           CurrentOpenProject = new Altaxo.AltaxoDocument();
           OnProjectOpened(new ProjectEventArgs(CurrentOpenProject));
@@ -501,11 +501,11 @@ namespace Altaxo.Main
       System.Collections.ArrayList contentList = new System.Collections.ArrayList();
       // first step : look in all views
 
-      foreach(IViewContent content in Current.Workbench.ViewContentCollection)
+      foreach (IViewContent content in Current.Workbench.ViewContentCollection)
       {
-        if(content is Altaxo.Main.GUI.IMVCController)
+        if (content is Altaxo.Main.GUI.IMVCController)
         {
-          if(object.ReferenceEquals(((Altaxo.Main.GUI.IMVCController)content).ModelObject,document))
+          if (object.ReferenceEquals(((Altaxo.Main.GUI.IMVCController)content).ModelObject, document))
             contentList.Add(content);
         }
       }
@@ -523,11 +523,11 @@ namespace Altaxo.Main
     /// <returns>The view content for the provided table.</returns>
     public Altaxo.Worksheet.GUI.IWorksheetController CreateNewWorksheet(string worksheetName, bool bCreateDefaultColumns)
     {
-      
+
       Altaxo.Data.DataTable dt1 = this.CurrentOpenProject.CreateNewTable(worksheetName, bCreateDefaultColumns);
       return CreateNewWorksheet(dt1);
     }
-  
+
     /// <summary>
     /// Creates a view content for a table.
     /// </summary>
@@ -535,7 +535,7 @@ namespace Altaxo.Main
     /// <returns>The view content for the provided table.</returns>
     public Altaxo.Worksheet.GUI.IWorksheetController CreateNewWorksheet(bool bCreateDefaultColumns)
     {
-      return CreateNewWorksheet(this.CurrentOpenProject.DataTableCollection.FindNewTableName(),bCreateDefaultColumns);
+      return CreateNewWorksheet(this.CurrentOpenProject.DataTableCollection.FindNewTableName(), bCreateDefaultColumns);
     }
 
     /// <summary>
@@ -544,7 +544,7 @@ namespace Altaxo.Main
     /// <returns>The content controller for that table.</returns>
     public Altaxo.Worksheet.GUI.IWorksheetController CreateNewWorksheet()
     {
-      return CreateNewWorksheet(this.CurrentOpenProject.DataTableCollection.FindNewTableName(),false);
+      return CreateNewWorksheet(this.CurrentOpenProject.DataTableCollection.FindNewTableName(), false);
     }
 
 
@@ -558,7 +558,7 @@ namespace Altaxo.Main
       if (table.ParentObject == null)
         this.CurrentOpenProject.DataTableCollection.Add(table);
 
-      return CreateNewWorksheet(table,this.CurrentOpenProject.CreateNewTableLayout(table));
+      return CreateNewWorksheet(table, this.CurrentOpenProject.CreateNewTableLayout(table));
     }
 
 
@@ -576,7 +576,7 @@ namespace Altaxo.Main
       ctrl.View = view;
 
 
-      if(null!=Current.Workbench)
+      if (null != Current.Workbench)
         Current.Workbench.ShowView(ctrl);
 
       return ctrl;
@@ -588,17 +588,17 @@ namespace Altaxo.Main
     /// </summary>
     /// <param name="table">The table for which a view must be found.</param>
     /// <returns>The view content for the provided table.</returns>
-    public object  OpenOrCreateWorksheetForTable(Altaxo.Data.DataTable table)
+    public object OpenOrCreateWorksheetForTable(Altaxo.Data.DataTable table)
     {
-  
+
       // if a content exist that show that table, activate that content
       IViewContent[] foundContent = SearchContentForDocument(table);
-      if(foundContent.Length>0)
+      if (foundContent.Length > 0)
       {
         foundContent[0].WorkbenchWindow.SelectWindow();
         return foundContent[0];
       }
-  
+
 
       // otherwise create a new Worksheet
       return CreateNewWorksheet(table);
@@ -612,13 +612,13 @@ namespace Altaxo.Main
     /// if false, the user is ask before the table is deleted.</param>
     public void DeleteTable(Altaxo.Data.DataTable table, bool force)
     {
-      if(!force && 
-        System.Windows.Forms.DialogResult.No == System.Windows.Forms.MessageBox.Show(Current.MainWindow,"Are you sure to remove the table and the corresponding views?","Attention",System.Windows.Forms.MessageBoxButtons.YesNo,System.Windows.Forms.MessageBoxIcon.Warning))
+      if (!force &&
+        System.Windows.Forms.DialogResult.No == System.Windows.Forms.MessageBox.Show(Current.MainWindow, "Are you sure to remove the table and the corresponding views?", "Attention", System.Windows.Forms.MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Warning))
         return;
 
       // close all windows
       IViewContent[] foundContent = SearchContentForDocument(table);
-      foreach(IViewContent content in foundContent)
+      foreach (IViewContent content in foundContent)
       {
         content.WorkbenchWindow.CloseWindow(true);
       }
@@ -636,7 +636,7 @@ namespace Altaxo.Main
       return CreateNewGraph(this.CurrentOpenProject.CreateNewGraphDocument());
     }
 
-  
+
 
     /// <summary>
     /// Creates a new view content for a graph document.
@@ -649,20 +649,20 @@ namespace Altaxo.Main
       //Altaxo.Main.GUI.WorkbenchForm wbvform = new Altaxo.Main.GUI.WorkbenchForm(this.View.Form);
       //wbv_controller.View = wbvform;
 
-      if(graph==null)
+      if (graph == null)
         graph = this.CurrentOpenProject.CreateNewGraphDocument();
 
       Altaxo.Graph.GUI.GraphController ctrl = new Altaxo.Graph.GUI.SDGraphController(graph);
       Altaxo.Graph.GUI.GraphView view = new Altaxo.Graph.GUI.GraphView();
       ctrl.View = view;
 
-      
+
       //wbv_controller.Content = ctrl;
 
       //this.m_WorkbenchViews.Add(wbv_controller);
       //wbvform.Show();
 
-      if(null!=Current.Workbench)
+      if (null != Current.Workbench)
         Current.Workbench.ShowView(ctrl);
       return ctrl;
     }
@@ -673,23 +673,23 @@ namespace Altaxo.Main
     /// </summary>
     /// <param name="graph">The graph for which a view must be found.</param>
     /// <returns>The view content for the provided graph.</returns>
-    public object  OpenOrCreateGraphForGraphDocument(Altaxo.Graph.GraphDocument graph)
+    public object OpenOrCreateGraphForGraphDocument(Altaxo.Graph.GraphDocument graph)
     {
-  
+
       // if a content exist that show that graph, activate that content
       IViewContent[] foundContent = SearchContentForDocument(graph);
-      if(foundContent.Length>0)
+      if (foundContent.Length > 0)
       {
         foundContent[0].WorkbenchWindow.SelectWindow();
         return foundContent[0];
       }
-  
+
 
       // otherwise create a new graph view
       return CreateNewGraph(graph);
     }
 
-  
+
     /// <summary>
     /// This function will delete a graph document and close all corresponding views.
     /// </summary>
@@ -698,15 +698,15 @@ namespace Altaxo.Main
     /// if false, the user is ask before the graph document is deleted.</param>
     public void DeleteGraphDocument(Altaxo.Graph.GraphDocument graph, bool force)
     {
-      if(!force && 
+      if (!force &&
         System.Windows.Forms.DialogResult.No == System.Windows.Forms.MessageBox.Show(
         Current.MainWindow,
-        "Are you sure to remove the graph document and the corresponding views?","Attention",System.Windows.Forms.MessageBoxButtons.YesNo,System.Windows.Forms.MessageBoxIcon.Warning))
+        "Are you sure to remove the graph document and the corresponding views?", "Attention", System.Windows.Forms.MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Warning))
         return;
 
       // close all windows
       IViewContent[] foundContent = SearchContentForDocument(graph);
-      foreach(IViewContent content in foundContent)
+      foreach (IViewContent content in foundContent)
       {
         content.WorkbenchWindow.CloseWindow(true);
       }
@@ -720,7 +720,7 @@ namespace Altaxo.Main
     /// <remarks>No exception is thrown if the Form frm is not a member of the graph forms collection.</remarks>
     public void RemoveGraph(Altaxo.Graph.GUI.GraphController ctrl)
     {
-      if(null!=Current.Workbench)
+      if (null != Current.Workbench)
         Current.Workbench.CloseContent(ctrl);
 
       //if(this.m_WorkbenchViews.Contains(ctrl))
@@ -734,7 +734,7 @@ namespace Altaxo.Main
     /// <remarks>No exception is thrown if the Form frm is not a member of the worksheet forms collection.</remarks>
     public void RemoveWorksheet(Altaxo.Worksheet.GUI.WorksheetController ctrl)
     {
-      if(null!=Current.Workbench)
+      if (null != Current.Workbench)
         Current.Workbench.CloseContent(ctrl);
     }
 
@@ -753,21 +753,21 @@ namespace Altaxo.Main
     /// <param name="e">Event args indicating which project was opened.</param>
     protected virtual void OnProjectOpened(ProjectEventArgs e)
     {
-      if (ProjectOpened != null) 
+      if (ProjectOpened != null)
       {
         ProjectOpened(this, e);
       }
 
       OnProjectChanged();
     }
-    
+
     /// <summary>
     /// Fires the project closed event.
     /// </summary>
     /// <param name="e">Indicates which project was closed.</param>
     protected virtual void OnProjectClosed(ProjectEventArgs e)
     {
-      if (ProjectClosed != null) 
+      if (ProjectClosed != null)
       {
         ProjectClosed(this, e);
       }
@@ -781,7 +781,7 @@ namespace Altaxo.Main
     /// <param name="e">Indicates which project was renamed, and the old and the new name of the project.</param>
     protected virtual void OnRenameProject(ProjectRenameEventArgs e)
     {
-      if (ProjectRenamed != null) 
+      if (ProjectRenamed != null)
       {
         ProjectRenamed(this, e);
       }
@@ -795,14 +795,14 @@ namespace Altaxo.Main
     /// <param name="e">Indicats on which project the dirty flag changed.</param>
     protected virtual void OnProjectDirtyChanged(ProjectEventArgs e)
     {
-      if (ProjectDirtyChanged != null) 
+      if (ProjectDirtyChanged != null)
       {
         ProjectDirtyChanged(this, e);
       }
 
       OnProjectChanged();
     }
-    
+
     /// <summary>
     /// Fires the <see cref="ProjectChanged" /> event. This occurs <b>after</b> the events <see cref="ProjectOpened" />, 
     /// <see cref="ProjectClosed" />, <see cref="ProjectRenamed" />, and <see cref="ProjectDirtyChanged" /> event. Usefull if
@@ -810,7 +810,7 @@ namespace Altaxo.Main
     /// </summary>
     protected virtual void OnProjectChanged()
     {
-      if(ProjectChanged != null)
+      if (ProjectChanged != null)
         ProjectChanged(this, new ProjectEventArgs(this.CurrentOpenProject));
 
     }
@@ -834,7 +834,7 @@ namespace Altaxo.Main
     /// Fired when the dirty state of the project changed.
     /// </summary>
     public event ProjectEventHandler ProjectDirtyChanged;
-    
+
     /// <summary>
     /// Event fired <b>after</b> any of the following other events is fired: <see cref="ProjectOpened" />, 
     /// <see cref="ProjectClosed" />, <see cref="ProjectRenamed" />, and <see cref="ProjectDirtyChanged" />.

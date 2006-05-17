@@ -41,6 +41,15 @@ namespace Altaxo.Worksheet.GUI
     ICSharpCode.SharpDevelop.Gui.IEditable,
     ICSharpCode.SharpDevelop.Gui.IClipboardHandler
   {
+    protected ICSharpCode.SharpDevelop.Gui.IWorkbenchWindow workbenchWindow;
+    public event EventHandler WorkbenchWindowChanged;
+    protected virtual void OnWorkbenchWindowChanged(EventArgs e)
+    {
+      if (WorkbenchWindowChanged != null)
+      {
+        WorkbenchWindowChanged(this, e);
+      }
+    }
 
     #region Serialization
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SDWorksheetController),0)]
@@ -81,7 +90,6 @@ namespace Altaxo.Worksheet.GUI
 
     #endregion // Constructors
 
-
     #region Context menu handlers
     protected override void OnRightClickDataColumnHeader(ClickedCellInfo clickedCell)
     {
@@ -99,12 +107,9 @@ namespace Altaxo.Worksheet.GUI
 
     #region ICSharpCode.SharpDevelop.Gui
 
-
-    protected ICSharpCode.SharpDevelop.Gui.IWorkbenchWindow m_ParentWorkbenchWindowController;
-  
-
     public void Dispose()
     {
+      workbenchWindow = null;
     }
 
     /// <summary>
@@ -122,21 +127,12 @@ namespace Altaxo.Worksheet.GUI
     {
       get
       {
-        return this.m_ParentWorkbenchWindowController;
+        return this.workbenchWindow;
       }
       set 
       { 
-        //ICSharpCode.SharpDevelop.Gui.IWorkbenchWindow oldValue = this.m_ParentWorkbenchWindowController;
-        //ICSharpCode.SharpDevelop.Gui.IWorkbenchWindow newValue = value;
-
-        //if(oldValue!=null)
-        //oldValue.WindowSelected -= new EventHandler(EhParent_WindowsSelected);
-
-        //if(newValue!=null)
-        //newValue.WindowSelected += new EventHandler(EhParent_WindowsSelected);
-
-        this.m_ParentWorkbenchWindowController = value; 
-
+        this.workbenchWindow = value;
+        OnWorkbenchWindowChanged(EventArgs.Empty);
       }
     }
     
@@ -182,7 +178,7 @@ namespace Altaxo.Worksheet.GUI
     /// </summary>
     public bool IsUntitled 
     {
-      get { return this.Doc.Name==null || this.Doc.Name==String.Empty; }
+      get { return string.IsNullOrEmpty(this.Doc.Name); }
     }
     
     /// <summary>
@@ -210,11 +206,6 @@ namespace Altaxo.Worksheet.GUI
     {
       get { return true; }
     }
-    
-    private void EhParent_WindowsSelected(object sender, EventArgs e)
-    {
-      Selected();
-    }
 
     /// <summary>
     /// Is called when the window is switched to.
@@ -223,7 +214,6 @@ namespace Altaxo.Worksheet.GUI
     /// </summary>
     public void SwitchedTo()
     {
-      View.TakeFocus();
     }
 
     /// <summary>
@@ -239,6 +229,10 @@ namespace Altaxo.Worksheet.GUI
     /// tab before the other window is selected. NOT when the windows is deselected.
     /// </summary>
     public void Deselected()
+    {
+    }
+
+    public void Deselecting()
     {
     }
 
@@ -300,6 +294,7 @@ namespace Altaxo.Worksheet.GUI
     public event EventHandler BeforeSave;
 
     public event EventHandler     Saving;
+
     public event ICSharpCode.SharpDevelop.Gui.SaveEventHandler Saved;
 
     #endregion
@@ -340,7 +335,7 @@ namespace Altaxo.Worksheet.GUI
     
     public bool EnableCut 
     {
-      get { return false; }
+      get { return this.m_CellEdit_IsArmed; }
     }
     public bool EnableCopy 
     {
@@ -439,16 +434,7 @@ namespace Altaxo.Worksheet.GUI
 
     #endregion
 
-    #region IBaseViewContent Members
-
-
-    public void Deselecting()
-    {
-      throw new Exception("The method or operation is not implemented.");
-    }
-
-    #endregion
-
+   
    
   }
 }
