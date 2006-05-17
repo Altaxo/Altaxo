@@ -49,6 +49,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     void EhView_EvaluateChiSqr();
     void EhView_SelectFitFunction();
     void EhView_NewFitFunction();
+    void EhView_CopyParameterV();
+    void EhView_CopyParameterNV();
+    void EhView_CopyParameterNVV();
   }
 
   #endregion
@@ -304,6 +307,71 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         graph.RefreshGraph();
       }
     }
+
+    public void EhView_CopyParameterV()
+    {
+      System.Windows.Forms.DataObject dao = new System.Windows.Forms.DataObject();
+      Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
+      for (int i = 0; i < _doc.CurrentParameters.Count; i++)
+        col[i] = _doc.CurrentParameters[i].Parameter;
+
+      Altaxo.Data.DataTable tb = new Altaxo.Data.DataTable();
+      tb.DataColumns.Add(col, "Value", Altaxo.Data.ColumnKind.V, 0);
+      Altaxo.Worksheet.Commands.EditCommands.WriteAsciiToClipBoardIfDataCellsSelected(
+        tb, new Altaxo.Collections.AscendingIntegerCollection(),
+        new Altaxo.Collections.AscendingIntegerCollection(),
+        new Altaxo.Collections.AscendingIntegerCollection(),
+        dao);
+      System.Windows.Forms.Clipboard.SetDataObject(dao, true);
+    }
+    public void EhView_CopyParameterNV()
+    {
+      System.Windows.Forms.DataObject dao = new System.Windows.Forms.DataObject();
+      Altaxo.Data.TextColumn txt = new Altaxo.Data.TextColumn();
+      Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
+
+      for (int i = 0; i < _doc.CurrentParameters.Count; i++)
+      {
+        txt[i] = _doc.CurrentParameters[i].Name;
+        col[i] = _doc.CurrentParameters[i].Parameter;
+      }
+
+      Altaxo.Data.DataTable tb = new Altaxo.Data.DataTable();
+      tb.DataColumns.Add(txt, "Name", Altaxo.Data.ColumnKind.V, 0);
+      tb.DataColumns.Add(col, "Value", Altaxo.Data.ColumnKind.V, 0);
+      Altaxo.Worksheet.Commands.EditCommands.WriteAsciiToClipBoardIfDataCellsSelected(
+        tb, new Altaxo.Collections.AscendingIntegerCollection(),
+        new Altaxo.Collections.AscendingIntegerCollection(),
+        new Altaxo.Collections.AscendingIntegerCollection(),
+        dao);
+      System.Windows.Forms.Clipboard.SetDataObject(dao, true);
+    }
+    public void EhView_CopyParameterNVV()
+    {
+      System.Windows.Forms.DataObject dao = new System.Windows.Forms.DataObject();
+      Altaxo.Data.TextColumn txt = new Altaxo.Data.TextColumn();
+      Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
+      Altaxo.Data.DoubleColumn var = new Altaxo.Data.DoubleColumn();
+
+      for (int i = 0; i < _doc.CurrentParameters.Count; i++)
+      {
+        txt[i] = _doc.CurrentParameters[i].Name;
+        col[i] = _doc.CurrentParameters[i].Parameter;
+        var[i] = _doc.CurrentParameters[i].Variance;
+      }
+
+      Altaxo.Data.DataTable tb = new Altaxo.Data.DataTable();
+      tb.DataColumns.Add(txt, "Name", Altaxo.Data.ColumnKind.V, 0);
+      tb.DataColumns.Add(col, "Value", Altaxo.Data.ColumnKind.V, 0);
+      tb.DataColumns.Add(var, "Variance", Altaxo.Data.ColumnKind.V, 0);
+      Altaxo.Worksheet.Commands.EditCommands.WriteAsciiToClipBoardIfDataCellsSelected(
+        tb, new Altaxo.Collections.AscendingIntegerCollection(),
+        new Altaxo.Collections.AscendingIntegerCollection(),
+        new Altaxo.Collections.AscendingIntegerCollection(),
+        dao);
+      System.Windows.Forms.Clipboard.SetDataObject(dao, true);
+    }
+
     #endregion
 
     #region IMVCController Members

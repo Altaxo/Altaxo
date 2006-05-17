@@ -2086,9 +2086,17 @@ namespace Altaxo.Graph
 
       _axisStyles.Paint(g, this);
 
+      if (ClipDataToFrame)
+      {
+        g.SetClip(new RectangleF(new PointF(0, 0), this._cachedLayerSize));
+      }
       foreach (PlotItem pi in _plotItems)
       {
         pi.Paint(g, this);
+      }
+      if (ClipDataToFrame)
+      {
+        g.ResetClip();
       }
 
       _graphObjects.DrawObjects(g, 1, this);

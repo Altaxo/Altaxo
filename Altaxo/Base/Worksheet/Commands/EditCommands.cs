@@ -260,11 +260,29 @@ namespace Altaxo.Worksheet.Commands
       Altaxo.Collections.AscendingIntegerCollection selCols = dg.SelectedDataColumns;
       Altaxo.Collections.AscendingIntegerCollection selRows = dg.SelectedDataRows;
       Altaxo.Collections.AscendingIntegerCollection selPropCols = dg.SelectedPropertyColumns;
+      WriteAsciiToClipBoardIfDataCellsSelected(dt, selCols, selRows, selPropCols, dao);
+    }
 
+
+   /// <summary>
+    /// Writes ASCII to the clipboard if data cells are selected.
+    /// </summary>
+    /// <param name="dt">The data table.</param>
+    /// <param name="selCols">Selected data columns.</param>
+    /// <param name="selRows">Selected data rows.</param>
+    /// <param name="selPropCols">Selected property columns.</param>
+    /// <param name="dao">The clipboard data object</param>
+    public static void WriteAsciiToClipBoardIfDataCellsSelected(
+      DataTable dt,
+      Altaxo.Collections.AscendingIntegerCollection selCols,
+      Altaxo.Collections.AscendingIntegerCollection selRows,
+      Altaxo.Collections.AscendingIntegerCollection selPropCols,
+      System.Windows.Forms.DataObject dao)
+    {
       if(selCols.Count==0)
       {
         selCols = new Altaxo.Collections.AscendingIntegerCollection();
-        selCols.AddRange(0,dg.Doc.DataColumnCount);
+        selCols.AddRange(0,dt.DataColumnCount);
       }
 
       if(selRows.Count==0)

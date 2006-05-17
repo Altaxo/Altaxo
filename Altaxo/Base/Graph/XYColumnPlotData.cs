@@ -767,7 +767,7 @@ namespace Altaxo.Graph
           {
             bool x_added = this.m_xBoundaries.Add(xColumn, i);
             bool y_added = this.m_yBoundaries.Add(yColumn, i);
-            if (y_added && y_added)
+            if (x_added && y_added)
               m_PlottablePoints++;
           }
         }

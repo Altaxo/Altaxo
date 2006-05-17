@@ -48,6 +48,10 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     private System.Windows.Forms.Label label1;
     private System.Windows.Forms.Button _btNew;
     private System.Windows.Forms.Button _btDoSimplex;
+    private ToolStrip _toolStripFit;
+    private ToolStripButton _tsbCopyParameter;
+    private ToolStripButton _tsbCopyParameterAll;
+    private ToolStripButton _tsbCopyParameterValue;
     /// <summary> 
     /// Required designer variable.
     /// </summary>
@@ -84,26 +88,32 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     /// </summary>
     private void InitializeComponent()
     {
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(NonlinearFitControl));
       this._tabControl = new System.Windows.Forms.TabControl();
       this._tpSelectFunction = new System.Windows.Forms.TabPage();
       this._btNew = new System.Windows.Forms.Button();
       this._btSelect = new System.Windows.Forms.Button();
+      this._tpFitEnsemble = new System.Windows.Forms.TabPage();
       this._tpMakeFit = new System.Windows.Forms.TabPage();
       this._btDoSimplex = new System.Windows.Forms.Button();
       this.label1 = new System.Windows.Forms.Label();
       this._edChiSqr = new System.Windows.Forms.TextBox();
       this._btChiSqr = new System.Windows.Forms.Button();
       this._btDoFit = new System.Windows.Forms.Button();
-      this._tpFitEnsemble = new System.Windows.Forms.TabPage();
+      this._toolStripFit = new System.Windows.Forms.ToolStrip();
+      this._tsbCopyParameter = new System.Windows.Forms.ToolStripButton();
+      this._tsbCopyParameterAll = new System.Windows.Forms.ToolStripButton();
+      this._tsbCopyParameterValue = new System.Windows.Forms.ToolStripButton();
       this._tabControl.SuspendLayout();
       this._tpSelectFunction.SuspendLayout();
       this._tpMakeFit.SuspendLayout();
+      this._toolStripFit.SuspendLayout();
       this.SuspendLayout();
       // 
       // _tabControl
       // 
       this._tabControl.Controls.Add(this._tpSelectFunction);
-      this._tabControl.Controls.Add(this._tpFitEnsemble); 
+      this._tabControl.Controls.Add(this._tpFitEnsemble);
       this._tabControl.Controls.Add(this._tpMakeFit);
       this._tabControl.Dock = System.Windows.Forms.DockStyle.Fill;
       this._tabControl.Location = new System.Drawing.Point(0, 0);
@@ -127,6 +137,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       this._btNew.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this._btNew.Location = new System.Drawing.Point(120, 328);
       this._btNew.Name = "_btNew";
+      this._btNew.Size = new System.Drawing.Size(75, 23);
       this._btNew.TabIndex = 1;
       this._btNew.Text = "New..";
       this._btNew.Click += new System.EventHandler(this._btNew_Click);
@@ -136,12 +147,22 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       this._btSelect.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this._btSelect.Location = new System.Drawing.Point(32, 328);
       this._btSelect.Name = "_btSelect";
+      this._btSelect.Size = new System.Drawing.Size(75, 23);
       this._btSelect.TabIndex = 0;
       this._btSelect.Text = "Select";
       this._btSelect.Click += new System.EventHandler(this._btSelectFitFunc_Click);
       // 
+      // _tpFitEnsemble
+      // 
+      this._tpFitEnsemble.Location = new System.Drawing.Point(4, 22);
+      this._tpFitEnsemble.Name = "_tpFitEnsemble";
+      this._tpFitEnsemble.Size = new System.Drawing.Size(424, 358);
+      this._tpFitEnsemble.TabIndex = 1;
+      this._tpFitEnsemble.Text = "Details";
+      // 
       // _tpMakeFit
       // 
+      this._tpMakeFit.Controls.Add(this._toolStripFit);
       this._tpMakeFit.Controls.Add(this._btDoSimplex);
       this._tpMakeFit.Controls.Add(this.label1);
       this._tpMakeFit.Controls.Add(this._edChiSqr);
@@ -179,7 +200,6 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       this._edChiSqr.Name = "_edChiSqr";
       this._edChiSqr.Size = new System.Drawing.Size(144, 20);
       this._edChiSqr.TabIndex = 2;
-      this._edChiSqr.Text = "";
       // 
       // _btChiSqr
       // 
@@ -201,13 +221,50 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       this._btDoFit.Text = "Fit!";
       this._btDoFit.Click += new System.EventHandler(this._btDoFit_Click);
       // 
-      // _tpFitEnsemble
+      // _toolStripFit
       // 
-      this._tpFitEnsemble.Location = new System.Drawing.Point(4, 22);
-      this._tpFitEnsemble.Name = "_tpFitEnsemble";
-      this._tpFitEnsemble.Size = new System.Drawing.Size(424, 358);
-      this._tpFitEnsemble.TabIndex = 1;
-      this._tpFitEnsemble.Text = "Details";
+      this._toolStripFit.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this._tsbCopyParameter,
+            this._tsbCopyParameterAll,
+            this._tsbCopyParameterValue});
+      this._toolStripFit.Location = new System.Drawing.Point(0, 0);
+      this._toolStripFit.Name = "_toolStripFit";
+      this._toolStripFit.Size = new System.Drawing.Size(424, 25);
+      this._toolStripFit.TabIndex = 5;
+      this._toolStripFit.Text = "toolStrip1";
+      // 
+      // _tsbCopyParameter
+      // 
+      this._tsbCopyParameter.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+      this._tsbCopyParameter.Image = ((System.Drawing.Image)(resources.GetObject("_tsbCopyParameter.Image")));
+      this._tsbCopyParameter.ImageTransparentColor = System.Drawing.Color.Magenta;
+      this._tsbCopyParameter.Name = "_tsbCopyParameter";
+      this._tsbCopyParameter.Size = new System.Drawing.Size(52, 22);
+      this._tsbCopyParameter.Text = "Copy NV";
+      this._tsbCopyParameter.ToolTipText = "Copy parameter (name and value) to clipboard";
+      this._tsbCopyParameter.Click += new System.EventHandler(this._tsbCopyParameter_Click);
+      // 
+      // _tsbCopyParameterAll
+      // 
+      this._tsbCopyParameterAll.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+      this._tsbCopyParameterAll.Image = ((System.Drawing.Image)(resources.GetObject("_tsbCopyParameterAll.Image")));
+      this._tsbCopyParameterAll.ImageTransparentColor = System.Drawing.Color.Magenta;
+      this._tsbCopyParameterAll.Name = "_tsbCopyParameterAll";
+      this._tsbCopyParameterAll.Size = new System.Drawing.Size(58, 22);
+      this._tsbCopyParameterAll.Text = "Copy NVV";
+      this._tsbCopyParameterAll.ToolTipText = "Copy Parameter (name, value, and variance))";
+      this._tsbCopyParameterAll.Click += new System.EventHandler(this._tsbCopyParameterAll_Click);
+      // 
+      // _tsbCopyParameterValue
+      // 
+      this._tsbCopyParameterValue.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+      this._tsbCopyParameterValue.Image = ((System.Drawing.Image)(resources.GetObject("_tsbCopyParameterValue.Image")));
+      this._tsbCopyParameterValue.ImageTransparentColor = System.Drawing.Color.Magenta;
+      this._tsbCopyParameterValue.Name = "_tsbCopyParameterValue";
+      this._tsbCopyParameterValue.Size = new System.Drawing.Size(45, 22);
+      this._tsbCopyParameterValue.Text = "Copy V";
+      this._tsbCopyParameterValue.ToolTipText = "Copy Parameter Values only";
+      this._tsbCopyParameterValue.Click += new System.EventHandler(this._tsbCopyParameterValue_Click);
       // 
       // NonlinearFitControl
       // 
@@ -217,6 +274,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       this._tabControl.ResumeLayout(false);
       this._tpSelectFunction.ResumeLayout(false);
       this._tpMakeFit.ResumeLayout(false);
+      this._tpMakeFit.PerformLayout();
+      this._toolStripFit.ResumeLayout(false);
+      this._toolStripFit.PerformLayout();
       this.ResumeLayout(false);
 
     }
@@ -246,8 +306,8 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       }
 
       _setParameterControl = (Control)control;
-      _setParameterControl.Location = new Point(0,0);
-      _setParameterControl.Size = new Size(_tpMakeFit.ClientSize.Width, this._btDoFit.Location.Y - this._btDoFit.Height/2);
+      _setParameterControl.Location = new Point(0,this._toolStripFit.Size.Height);
+      _setParameterControl.Size = new Size(_tpMakeFit.ClientSize.Width, this._btDoFit.Location.Y - _toolStripFit.Size.Height - this._btDoFit.Height/2);
       _setParameterControl.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
       this._tpMakeFit.Controls.Add(_setParameterControl);
 
@@ -325,6 +385,26 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     {
       if(_controller!=null)
         _controller.EhView_DoSimplex();
+    }
+
+    private void _tsbCopyParameter_Click(object sender, EventArgs e)
+    {
+      if (_controller != null)
+        _controller.EhView_CopyParameterNV();
+
+    }
+
+    private void _tsbCopyParameterAll_Click(object sender, EventArgs e)
+    {
+      if (_controller != null)
+        _controller.EhView_CopyParameterNVV();
+    }
+
+    private void _tsbCopyParameterValue_Click(object sender, EventArgs e)
+    {
+      if (_controller != null)
+        _controller.EhView_CopyParameterV();
+
     }
   }
 }
