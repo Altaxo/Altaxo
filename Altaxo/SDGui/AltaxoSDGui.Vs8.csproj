@@ -118,6 +118,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Graph\GUI\SDGraphController.cs" />
+    <Compile Include="Gui\Pads\ProjectBrowser\ProjectTree.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Main\GUI\DataDisplayController.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -127,7 +130,7 @@
     <Compile Include="Main\GUI\OutputWindowController.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Main\GUI\ProjectScout.cs">
+    <Compile Include="Gui\Pads\ProjectBrowser\ProjectScout.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Main\GUI\WindowsMdiWorkbenchLayout.cs">
@@ -187,8 +190,9 @@
     <Compile Include="Worksheet\GUI\TableScriptController.cs">
       <SubType>Code</SubType>
     </Compile>
-    <EmbeddedResource Include="Main\GUI\ProjectScout.resx">
+    <EmbeddedResource Include="Gui\Pads\ProjectBrowser\ProjectScout.resx">
       <DependentUpon>ProjectScout.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Main\GUI\WorkbenchForm.resx">
       <DependentUpon>WorkbenchForm.cs</DependentUpon>

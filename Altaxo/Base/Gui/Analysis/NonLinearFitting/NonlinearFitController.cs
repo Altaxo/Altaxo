@@ -105,8 +105,8 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         //        _doc.FitEnsemble.InitializeParametersFromParameterSet(_doc.CurrentParameters);
 
         LevMarAdapter fitAdapter = new LevMarAdapter(_doc.FitEnsemble, _doc.CurrentParameters);
-
-        fitAdapter.DoSimplexMinimization();
+        
+        Current.Gui.ShowBackgroundCancelDialog(10000, new System.Threading.ThreadStart(fitAdapter.DoSimplexMinimization), null);
 
         this._chiSquare = fitAdapter.ResultingChiSquare;
 
@@ -132,7 +132,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
         LevMarAdapter fitAdapter = new LevMarAdapter(_doc.FitEnsemble, _doc.CurrentParameters);
 
-        fitAdapter.Fit();
+        Current.Gui.ShowBackgroundCancelDialog(10000, new System.Threading.ThreadStart(fitAdapter.Fit), null);
 
         this._chiSquare = fitAdapter.ResultingChiSquare;
 

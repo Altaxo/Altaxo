@@ -353,7 +353,57 @@ namespace AltaxoTest.Calc.Regression
       NLFit.ComputeCovariances(new NLFit.LMFunction(this.poly3),param,2,2,covar, out chisqr);
      
     }
-  
+
+
+    /// <summary>
+    /// Generates for values z=1,2,3..n the function p[0]+p[1]*z[i]
+    /// </summary>
+    /// <param name="p"></param>
+    /// <param name="x"></param>
+    /// <param name="data"></param>
+    void poly4(int numberOfYs, int numberOfParameter, double[] p, double[] x, ref int info)
+    {
+      Assert.IsTrue(p.Length == 2);
+      Assert.IsTrue(x.Length == 10);
+
+      double[] y = new double[10];
+      for (int i = 0; i < 10; i++)
+        y[i] = (1 + (i % 2 == 0 ? 0.1 : -0.1)) * RMath.Pow2(i+1) + 0.01 * RMath.Pow4(i+1);
+
+      for (int i = 0; i < 10; i++)
+        x[i] = p[0]*RMath.Pow2(i+1)+p[1]*RMath.Pow4(1E-4*(i+1))-y[i];
+    }
+
+    /// <summary>
+    /// This tests the fitting when the parameters have very different dimensions.
+    /// </summary>
+    [Test]
+    public void Test_Poly4()
+    {
+      double[] param = new double[2];
+      param[0] = 1;
+      param[1] = 1E10;
+
+
+      double[] ys = new double[10];
+      int info = 0;
+
+      do
+      {
+        NLFit.LevenbergMarquardtFit(new NLFit.LMFunction(this.poly4), param, ys, 1E-10, ref info);
+      } while (info == 5);
+
+      Assert.AreEqual(1.08222543840634, param[0], 1E-4, "Fit parameter 0 should be 1.08222543840634 in this model");
+      Assert.AreEqual(86441011642265, param[1], 1E4, "Fit parameter 1 should be 86441011642265 in this model");
+
+      double[] covar = new double[2 * 2];
+      double chisqr;
+      NLFit.ComputeCovariances(new NLFit.LMFunction(this.poly4), param, 10, 2, covar, out chisqr);
+      // Expected error for parameter1 is: 0.115944838291204
+      // Expected error for parameter2 is: 14249106469708
+      Assert.AreEqual(0.115944838291204, Math.Sqrt(covar[0]), 1E-5, "Square root of covariance of parameter0 should be 0.115944838291204");
+      Assert.AreEqual(14249106469708, Math.Sqrt(covar[3]), 142491064, "Square root of covariance of parameter1 should be 14249106469708");
+    }
   }
 
 

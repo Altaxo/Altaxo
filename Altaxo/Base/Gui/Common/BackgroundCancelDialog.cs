@@ -33,6 +33,9 @@ namespace Altaxo.Gui.Common
 {
   /// <summary>
   /// Modal dialog to cancel a background thread.
+  /// The dialog is closed automatically when the thread ends by itself.
+  /// If the thread is ended by itself, the dialog result will be OK, otherwise, if the user
+  /// cancells the thread, the dialog result will be Cancel.
   /// </summary>
   public class BackgroundCancelDialog : System.Windows.Forms.Form
   {
@@ -43,6 +46,7 @@ namespace Altaxo.Gui.Common
     IExternalDrivenBackgroundMonitor _monitor;
     private System.Windows.Forms.Button _btInterrupt;
     private System.Windows.Forms.Button _btAbort;
+    private bool wasUserInterrupted;
     /// <summary>
     /// Required designer variable.
     /// </summary>
@@ -57,9 +61,16 @@ namespace Altaxo.Gui.Common
       //
       InitializeComponent();
 
-      //
-      // TODO: Add any constructor code after InitializeComponent call
-      //
+      btCancel.Visible = monitor != null;
+      _btInterrupt.Visible = monitor == null;
+      _btAbort.Visible = false;
+
+    }
+
+    protected override void OnLoad(EventArgs e)
+    {
+      _timer.Start(); // start timer only here, not in the constructor
+      base.OnLoad(e);
     }
 
     /// <summary>
@@ -94,33 +105,37 @@ namespace Altaxo.Gui.Common
       // 
       // lblText
       // 
-      this.lblText.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-        | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
+      this.lblText.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.lblText.Location = new System.Drawing.Point(8, 8);
       this.lblText.Name = "lblText";
       this.lblText.Size = new System.Drawing.Size(368, 56);
       this.lblText.TabIndex = 0;
+      this.lblText.Text = "An operation has not yet finished. If you feel that the operation takes unusual l" +
+          "ong time, you can interrupt it.";
       // 
       // btCancel
       // 
       this.btCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.btCancel.Location = new System.Drawing.Point(152, 72);
       this.btCancel.Name = "btCancel";
+      this.btCancel.Size = new System.Drawing.Size(75, 23);
       this.btCancel.TabIndex = 1;
       this.btCancel.Text = "Cancel";
       this.btCancel.Click += new System.EventHandler(this.btCancel_Click);
       // 
       // _timer
       // 
-      this._timer.Enabled = true;
       this._timer.SynchronizingObject = this;
       this._timer.Elapsed += new System.Timers.ElapsedEventHandler(this._timer_Elapsed);
       // 
       // _btInterrupt
       // 
-      this._btInterrupt.Location = new System.Drawing.Point(72, 72);
+      this._btInterrupt.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this._btInterrupt.Location = new System.Drawing.Point(152, 72);
       this._btInterrupt.Name = "_btInterrupt";
+      this._btInterrupt.Size = new System.Drawing.Size(75, 23);
       this._btInterrupt.TabIndex = 2;
       this._btInterrupt.Text = "Interrupt";
       this._btInterrupt.Visible = false;
@@ -128,8 +143,10 @@ namespace Altaxo.Gui.Common
       // 
       // _btAbort
       // 
-      this._btAbort.Location = new System.Drawing.Point(232, 72);
+      this._btAbort.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this._btAbort.Location = new System.Drawing.Point(152, 72);
       this._btAbort.Name = "_btAbort";
+      this._btAbort.Size = new System.Drawing.Size(75, 23);
       this._btAbort.TabIndex = 3;
       this._btAbort.Text = "Abort";
       this._btAbort.Visible = false;
@@ -158,20 +175,34 @@ namespace Altaxo.Gui.Common
     {
       if(!_thread.IsAlive)
       {
+        this.DialogResult = wasUserInterrupted ? DialogResult.OK : DialogResult.Cancel;
         this.Close();
       }
 
-      this.lblText.Text = _monitor.ReportText;
-
-      _monitor.ShouldReport = true;
+      if (_monitor != null)
+      {
+        this.lblText.Text = _monitor.ReportText;
+        _monitor.ShouldReport = true;
+      }
     }
 
 
   
     private void btCancel_Click(object sender, System.EventArgs e)
     {
-      _monitor.CancelledByUser = true;
-      _btInterrupt.Visible = true;
+      this.wasUserInterrupted = true;
+      if (_monitor != null)
+      {
+        _monitor.CancelledByUser = true;
+        btCancel.Visible = false;
+        _btInterrupt.Visible = true;
+      }
+      else
+      {
+        btCancel.Visible = false;
+        _btInterrupt.Visible = true;
+        _btInterrupt_Click(sender, e);
+      }
     }
 
     private void BackgroundCancelDialog_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -182,17 +213,23 @@ namespace Altaxo.Gui.Common
 
     private void _btInterrupt_Click(object sender, System.EventArgs e)
     {
-      if(_thread.IsAlive)
+      if (_thread.IsAlive)
+      {
+        wasUserInterrupted = true;
         _thread.Interrupt();
-
+      }
+      _btInterrupt.Visible = false;
       _btAbort.Visible = true;
     
     }
 
     private void _btAbort_Click(object sender, System.EventArgs e)
     {
-      if(_thread.IsAlive)
+      if (_thread.IsAlive)
+      {
+        wasUserInterrupted = true;
         _thread.Abort();
+      }
     }
   }
 }

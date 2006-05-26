@@ -31,11 +31,12 @@ namespace Altaxo.Main.GUI
   /// <summary>
   /// Controls the Output window pad which shows the Altaxo text output.
   /// </summary>
-  public class OutputWindowController : ICSharpCode.SharpDevelop.Gui.IPadContent, Altaxo.Main.Services.IOutputService
+  public class OutputWindowController :
+    ICSharpCode.SharpDevelop.Gui.IPadContent,
+    Altaxo.Main.Services.IOutputService,
+    ICSharpCode.SharpDevelop.Gui.IClipboardHandler
   {
     System.Windows.Forms.TextBox _view;
-    
-
 
     public OutputWindowController()
     {
@@ -142,9 +143,28 @@ namespace Altaxo.Main.GUI
 
     #region IOutputService Members
 
+
+
+    public void Write(string text)
+    {
+      _view.AppendText(text);
+
+
+      if (!_view.Visible || _view.Parent==null)
+      {
+        ICSharpCode.SharpDevelop.Gui.IWorkbenchWindow ww = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow;
+
+        WorkbenchSingleton.Workbench.GetPad(this.GetType()).BringPadToFront();
+
+        // now focus back to the formerly active workbench window.
+        ww.SelectWindow();
+
+      }
+    }
+
     public void WriteLine()
     {
-      _view.AppendText(System.Environment.NewLine);
+      Write(System.Environment.NewLine);
     }
 
     public void WriteLine(string text)
@@ -164,10 +184,8 @@ namespace Altaxo.Main.GUI
       Write(string.Format(provider,format,args));
       WriteLine();
     }
-    public void Write(string text)
-    {
-      _view.AppendText(text);
-    }
+
+ 
 
     public void Write(string format, params object[] args)
     {
@@ -177,6 +195,64 @@ namespace Altaxo.Main.GUI
     public void Write(System.IFormatProvider provider, string format, params object[] args)
     {
       Write(string.Format(provider,format,args));
+    }
+
+    #endregion
+
+    #region IClipboardHandler Members
+
+    public bool EnableCut
+    {
+      get { return _view.SelectionLength > 0; }
+    }
+
+    public bool EnableCopy
+    {
+      get { return _view.SelectionLength > 0; }
+    }
+
+    public bool EnablePaste
+    {
+      get { return true; }
+    }
+
+    public bool EnableDelete
+    {
+      get { return _view.SelectionLength > 0; }
+    }
+
+    public bool EnableSelectAll
+    {
+      get { return true; }
+    }
+
+    public void Cut()
+    {
+      _view.Cut();
+    }
+
+    public void Copy()
+    {
+      _view.Copy();
+    }
+
+    public void Paste()
+    {
+      _view.Paste();
+    }
+
+    public void Delete()
+    {
+      int start = _view.SelectionStart;
+      int len = _view.SelectionLength;
+      if (len > 0)
+        _view.Text = _view.Text.Substring(0, start) + _view.Text.Substring(start + len);
+     
+    }
+
+    public void SelectAll()
+    {
+      _view.SelectAll();
     }
 
     #endregion

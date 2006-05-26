@@ -55,7 +55,7 @@ namespace MathML.Rendering
 
       public FontFactory()
       {
-        string configDir = ConfigurationSettings.AppSettings.Get("mathml-rendering-config");
+        string configDir = ConfigurationSettings.AppSettings.Get("MathMLRenderingConfig");
         string searchDir = null;
 
         if (configDir == null || configDir.Length == 0)

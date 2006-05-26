@@ -1872,13 +1872,30 @@ namespace Altaxo.Calc.Regression
           {
             sum += fjac[k+n*i]*fjac[k+n*j];
           }
-          jactjac[j+i*m] = sum;
+          jactjac[j + i * m] = sum;
         }
       }
 
+      // changed  20060519: scale jactjac so that the diagonal is 1 (except for those elements which are zero)
+      double[] scale = new double[m];
+      for(int i=0;i<m;i++)
+      {
+        double jj = jactjac[i+i*m];
+        scale[i] = jj == 0 ? 1 : 1 / Math.Sqrt(Math.Abs(jj));
+      }
 
-      return LEVMAR_COVAR(jactjac, covar, sumchisq, m, n);
+      for (int i = 0; i < m; ++i)
+        for (int j = 0; j < m; ++j)
+          jactjac[j + i * m] *= scale[i] * scale[j];
 
+      int result =  LEVMAR_COVAR(jactjac, covar, sumchisq, m, n);
+
+      // changed  20060519: now scale the covar back again so that Diag[x]*covar*Diag[x]
+      for (int i = 0; i < m; ++i)
+        for (int j = 0; j < m; ++j)
+          covar[j + i * m] *= scale[i] * scale[j];
+
+      return result;
     }
 
     /*
@@ -1910,7 +1927,7 @@ namespace Altaxo.Calc.Regression
       IMatrix matresult = MatrixMath.PseudoInverse(MatrixMath.ToROMatrix(JtJ,m),out rnk);
       MatrixMath.Copy(matresult,MatrixMath.ToMatrix(C,m));
 
-      fact=sumsq/(double)(n-rnk);
+      fact = sumsq / (double)(n - rnk);
       for(i=0; i<m*m; ++i)
         C[i]*=fact;
 

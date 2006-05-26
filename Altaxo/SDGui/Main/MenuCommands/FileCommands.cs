@@ -237,6 +237,47 @@ namespace Altaxo.Main.Commands
     }
   }
 
+  /// <summary>
+  /// Taken from Commands.MenuItemBuilders. See last line for change.
+  /// </summary>
+  public class RecentProjectsMenuBuilder : ISubmenuBuilder
+  {
+    public ToolStripItem[] BuildSubmenu(Codon codon, object owner)
+    {
+      RecentOpen recentOpen = FileService.RecentOpen;
+
+      if (recentOpen.RecentProject.Count > 0)
+      {
+        MenuCommand[] items = new MenuCommand[recentOpen.RecentProject.Count];
+        for (int i = 0; i < recentOpen.RecentProject.Count; ++i)
+        {
+          string accelaratorKeyPrefix = i < 10 ? "&" + ((i + 1) % 10) + " " : "";
+          items[i] = new MenuCommand(accelaratorKeyPrefix + recentOpen.RecentProject[i], new EventHandler(LoadRecentProject));
+          items[i].Tag = recentOpen.RecentProject[i].ToString();
+          items[i].Description = StringParser.Parse(ResourceService.GetString("Dialog.Componnents.RichMenuItem.LoadProjectDescription"),
+                                                    new string[,] { { "PROJECT", recentOpen.RecentProject[i].ToString() } });
+        }
+        return items;
+      }
+
+      MenuCommand defaultMenu = new MenuCommand("${res:Dialog.Componnents.RichMenuItem.NoRecentProjectsString}");
+      defaultMenu.Enabled = false;
+
+      return new MenuCommand[] { defaultMenu };
+    }
+
+
+    void LoadRecentProject(object sender, EventArgs e)
+    {
+      MenuCommand item = (MenuCommand)sender;
+
+      string fileName = item.Tag.ToString();
+
+      // The following line was changed to load an altaxo solution.
+      FileUtility.ObservedLoad(new NamedFileOperationDelegate(Current.ProjectService.OpenProject), fileName);
+    }
+  }
+
   public class FileExit : AbstractMenuCommand
   {
     public override void Run()

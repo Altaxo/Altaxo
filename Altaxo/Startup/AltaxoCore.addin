@@ -39,7 +39,7 @@
         title    = "${res:MainWindow.Windows.ProjectScoutLabel}"
         icon     = "PadIcons.ProjectBrowser"
         shortcut = "Control|Alt|P"
-        class    = "Altaxo.Main.GUI.ProjectScout"/>
+        class    = "Altaxo.Gui.Pads.ProjectScout"/>
 
     <Pad id       = "AltaxoOutputWindow"
         category = "Main"
@@ -58,7 +58,6 @@
         class    = "Altaxo.Main.GUI.DataDisplayController"/>
 
   </Path>
-
 
   <Path name = "/Altaxo/Workbench/MainMenu">
     <MenuItem id="File" label="${res:XML.MainMenu.FileMenu}" type="Menu">
@@ -145,6 +144,14 @@
 						description="${res:XML.MainMenu.FileMenu.Export.BitmapTiffFile.Description}" class="Altaxo.Graph.Commands.FileExportTiff" />
         </MenuItem>
       </Condition>
+
+ 			<MenuItem id = "RecentProjects" attribute = "RecentProjects" label = "${res:XML.MainMenu.FileMenu.RecentProjects}" type="Menu">
+				<MenuItem id = "RecentProjectsBuilder" type = "Builder" class = "Altaxo.Main.Commands.RecentProjectsMenuBuilder" />
+				<MenuItem id = "RecentProjectsSeparator" type = "Separator"  />
+				<MenuItem id = "ClearRecentFiles"
+				          label = "${res:XML.MainMenu.FileMenu.ClearRecentProjects}"
+				          class = "ICSharpCode.SharpDevelop.Commands.ClearRecentProjects" />
+			</MenuItem>
       <MenuItem id="ExitSeparator" type = "Separator"/>
       <MenuItem id="Exit" label="${res:XML.MainMenu.FileMenu.Exit}" description="${res:XML.MainMenu.FileMenu.Exit.Desription}"
 				class="Altaxo.Main.Commands.FileExit" />
@@ -355,7 +362,7 @@
         <MenuItem id="CloseAll" label="${res:XML.MainMenu.FileMenu.CloseAll}" icon="Icons.16x16.CloseAllDocuments"
 					description="${res:XML.MainMenu.FileMenu.CloseAll.Description}" class="ICSharpCode.SharpDevelop.Commands.CloseAllWindows" />
       </Condition>
-      <MenuItem id="ContentBuilder" label="boguslabel" class="ICSharpCode.SharpDevelop.Commands.OpenContentsMenuBuilder" />
+      <MenuItem id = "ContentBuilder"  type="Builder" class="ICSharpCode.SharpDevelop.Commands.OpenContentsMenuBuilder"/>
     </MenuItem>
     <MenuItem id="Help" label="${res:XML.MainMenu.HelpMenu}" type="Menu">
       <MenuItem id="ProgramHelp" label="${res:XML.MainMenu.HelpMenu.ProgramHelp}" icon="Icons.16x16.HelpIcon"

@@ -303,12 +303,31 @@ namespace Altaxo.Main.Services
     {
       return System.Windows.Forms.DialogResult.Yes==System.Windows.Forms.MessageBox.Show(Current.MainWindow, txt, caption, System.Windows.Forms.MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Question,defaultanswer ? System.Windows.Forms.MessageBoxDefaultButton.Button1: System.Windows.Forms.MessageBoxDefaultButton.Button2);
     }
-    
 
-    public void ShowBackgroundCancelDialog(System.Threading.Thread thread, IExternalDrivenBackgroundMonitor monitor)
+
+    public bool ShowBackgroundCancelDialog(int millisecondsDelay, System.Threading.ThreadStart threadstart, IExternalDrivenBackgroundMonitor monitor)
     {
-      Altaxo.Gui.Common.BackgroundCancelDialog dlg = new Altaxo.Gui.Common.BackgroundCancelDialog(thread, monitor);
-      dlg.ShowDialog(Current.MainWindow);
+      System.Threading.Thread t = new System.Threading.Thread(threadstart);
+      t.Start();
+      return ShowBackgroundCancelDialog(millisecondsDelay, t, monitor);
+    }
+
+    public bool ShowBackgroundCancelDialog(int millisecondsDelay, System.Threading.Thread thread, IExternalDrivenBackgroundMonitor monitor)
+    {
+      for (int i = 0; i < millisecondsDelay && thread.IsAlive; i += 10)
+        System.Threading.Thread.Sleep(10);
+
+      if (thread.IsAlive)
+      {
+        Altaxo.Gui.Common.BackgroundCancelDialog dlg = new Altaxo.Gui.Common.BackgroundCancelDialog(thread, monitor);
+
+        if (thread.IsAlive)
+        {
+          System.Windows.Forms.DialogResult r = dlg.ShowDialog(Current.MainWindow);
+          return r == System.Windows.Forms.DialogResult.OK ? false : true;
+        }
+      }
+      return false;
     }
 
     /// <summary>

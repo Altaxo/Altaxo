@@ -30,7 +30,10 @@ namespace Altaxo.Main.GUI
   /// <summary>
   /// Controls the data display window pad that shows the data obtained from the data reader.
   /// </summary>
-  public class DataDisplayController : ICSharpCode.SharpDevelop.Gui.IPadContent, Altaxo.Main.Services.IDataDisplayService
+  public class DataDisplayController :
+    ICSharpCode.SharpDevelop.Gui.IPadContent, 
+    Altaxo.Main.Services.IDataDisplayService,
+    ICSharpCode.SharpDevelop.Gui.IClipboardHandler
   {
     System.Windows.Forms.TextBox _view;
   
@@ -146,12 +149,13 @@ namespace Altaxo.Main.GUI
     public void WriteOneLine(string text)
     {
       _view.Text = text;
-      if(!_view.Visible)
+      if(!_view.Visible || _view.Parent==null)
       {
         ICSharpCode.SharpDevelop.Gui.IWorkbenchWindow ww = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow;
-        //this.BringPadToFront(); 
+        WorkbenchSingleton.Workbench.WorkbenchLayout.ActivatePad(this.GetType().ToString());
+        // now focus back to the formerly active workbench window.
         ww.SelectWindow();
-        ww.ActiveViewContent.Control.Focus();
+       // ww.ActiveViewContent.Control.Focus();
 
       }
     }
@@ -176,6 +180,64 @@ namespace Altaxo.Main.GUI
     {
       _view.Text = line1 + System.Environment.NewLine + line2 + System.Environment.NewLine + line3;
     }
+    #endregion
+
+    #region IClipboardHandler Members
+
+    public bool EnableCut
+    {
+      get { return _view.SelectionLength > 0; }
+    }
+
+    public bool EnableCopy
+    {
+      get { return _view.SelectionLength > 0; }
+    }
+
+    public bool EnablePaste
+    {
+      get { return true; }
+    }
+
+    public bool EnableDelete
+    {
+      get { return _view.SelectionLength > 0; }
+    }
+
+    public bool EnableSelectAll
+    {
+      get { return true; }
+    }
+
+    public void Cut()
+    {
+      _view.Cut();
+    }
+
+    public void Copy()
+    {
+      _view.Copy();
+    }
+
+    public void Paste()
+    {
+      _view.Paste();
+    }
+
+    public void Delete()
+    {
+      int start = _view.SelectionStart;
+      int len = _view.SelectionLength;
+      if (len > 0)
+        _view.Text = _view.Text.Substring(0, start) + _view.Text.Substring(start + len);
+
+    }
+
+    public void SelectAll()
+    {
+      _view.SelectAll();
+    }
+
     #endregion
   }
 }
