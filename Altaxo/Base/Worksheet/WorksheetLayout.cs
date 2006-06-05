@@ -60,12 +60,18 @@ namespace Altaxo.Worksheet
     protected System.Collections.Hashtable m_DefaultColumnStyles;
 
     /// <summary>
+    /// Stores the default property column Styles in a Hashtable
+    /// the key for the hash table is the Type of the ColumnStyle
+    /// </summary>
+    protected System.Collections.Hashtable m_DefaultPropertyColumnStyles;
+
+    /// <summary>
     /// m_ColumnStyles stores the column styles for each data column individually,
     /// key is the data column itself.
     /// There is no need to store a column style here if the column is styled as default,
     /// instead the defaultColumnStyle is used in this case
     /// </summary>
-    protected internal System.Collections.Hashtable m_ColumnStyles;
+    protected ColumnDictionary m_ColumnStyles;
 
 
     /// <summary>
@@ -102,7 +108,7 @@ namespace Altaxo.Worksheet
       protected System.Collections.Hashtable m_ColStyles;
       protected Main.DocumentPath  m_PathToTable;
 
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         WorksheetLayout s = (WorksheetLayout)obj;
 
@@ -133,8 +139,14 @@ namespace Altaxo.Worksheet
       }
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
+        WorksheetLayout s = null != o ? (WorksheetLayout)o : new WorksheetLayout();
+        Deserialize(s, info, parent);
+        return s;
+      }
+
+        protected virtual void Deserialize(WorksheetLayout s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+        {
         
-        WorksheetLayout s = null!=o ? (WorksheetLayout)o : new WorksheetLayout();
 
         XmlSerializationSurrogate0 surr = new XmlSerializationSurrogate0();
         surr.m_ColStyles = new System.Collections.Hashtable();
@@ -175,8 +187,6 @@ namespace Altaxo.Worksheet
           }
         }
         info.CloseArray(count);
-
-        return s;
       }
 
       public void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot)
@@ -211,8 +221,37 @@ namespace Altaxo.Worksheet
           info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(this.EhDeserializationFinished);
       }
     }
- 
-    
+
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(WorksheetLayout), 1)]
+    public class XmlSerializationSurrogate1 : XmlSerializationSurrogate0
+    {
+      public override void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        base.Serialize(obj, info);
+
+        WorksheetLayout s = (WorksheetLayout)obj;
+        info.CreateArray("DefaultPropertyColumnStyles", s.m_DefaultPropertyColumnStyles.Values.Count);
+        foreach (object style in s.m_DefaultPropertyColumnStyles.Values)
+          info.AddValue("DefaultPropertyColumnStyle", style);
+        info.CommitArray();
+      }
+
+
+      protected override void Deserialize(WorksheetLayout s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        base.Deserialize(s, info, parent);
+
+        int count = info.OpenArray(); // DefaultPropertyColumnStyles
+        for (int i = 0; i < count; i++)
+        {
+          object defstyle = info.GetValue("DefaultPropertyColumnStyle", s);
+          s.DefaultPropertyColumnStyles.Add(defstyle.GetType(), defstyle);
+        }
+        info.CloseArray(count);
+      }
+    }
+
     #endregion
 
     #region Constructors
@@ -224,8 +263,11 @@ namespace Altaxo.Worksheet
       // defaultColumnsStyles stores the default column Styles in a Hashtable
       m_DefaultColumnStyles = new System.Collections.Hashtable();
 
+      // defaultPropertyColumnsStyles stores the default property column Styles in a Hashtable
+      m_DefaultPropertyColumnStyles = new System.Collections.Hashtable();
+
       // m_ColumnStyles stores the column styles for each data column individually,
-      m_ColumnStyles = new System.Collections.Hashtable();
+      m_ColumnStyles = new ColumnDictionary();
 
 
       // The style of the row header. This is the leftmost column that shows usually the row number.
@@ -278,7 +320,12 @@ namespace Altaxo.Worksheet
       get { return m_DefaultColumnStyles; }
     }
 
-    public System.Collections.Hashtable ColumnStyles
+    public System.Collections.Hashtable DefaultPropertyColumnStyles
+    {
+      get { return m_DefaultPropertyColumnStyles; }
+    }
+
+    public System.Collections.IDictionary ColumnStyles
     {
       get { return m_ColumnStyles; }
     }
@@ -329,6 +376,153 @@ namespace Altaxo.Worksheet
       {
         return System.Xml.XmlConvert.ToString(m_Guid);
       }
+    }
+
+    #endregion
+
+    #region Dictionaries
+
+    protected class ColumnDictionary : System.Collections.IDictionary
+    {
+      System.Collections.Hashtable _hash = new System.Collections.Hashtable();
+
+      void EhKeyDisposed(object sender, EventArgs e)
+      {
+        if (_hash.ContainsKey(sender))
+          _hash.Remove(sender);
+      }
+
+      #region IDictionary Members
+
+      public void Add(object key, object value)
+      {
+        if (_hash.ContainsKey(key))
+        {
+          _hash.Add(key, value); // will always throw an exception
+        }
+        else
+        {
+          if (key is Altaxo.Main.IEventIndicatedDisposable)
+          {
+            (key as Altaxo.Main.IEventIndicatedDisposable).Disposed += EhKeyDisposed;
+          }
+          _hash.Add(key, value);
+        }
+        
+      }
+
+      public void Clear()
+      {
+        foreach (object key in _hash.Keys)
+        {
+          if (key is Altaxo.Main.IEventIndicatedDisposable)
+          {
+            (key as Altaxo.Main.IEventIndicatedDisposable).Disposed -= EhKeyDisposed;
+          }
+        }
+        _hash.Clear();
+      }
+
+      public bool Contains(object key)
+      {
+        return _hash.Contains(key);
+      }
+
+      public System.Collections.IDictionaryEnumerator GetEnumerator()
+      {
+        return _hash.GetEnumerator();
+      }
+
+      public bool IsFixedSize
+      {
+        get { return _hash.IsFixedSize; }
+      }
+
+      public bool IsReadOnly
+      {
+        get { return _hash.IsReadOnly; }
+      }
+
+      public System.Collections.ICollection Keys
+      {
+        get { return _hash.Keys; }
+      }
+
+      public void Remove(object key)
+      {
+        if (_hash.ContainsKey(key))
+        {
+          if (key is Altaxo.Main.IEventIndicatedDisposable)
+          {
+            (key as Altaxo.Main.IEventIndicatedDisposable).Disposed -= EhKeyDisposed;
+          }
+          _hash.Remove(key);
+        }
+        else
+        {
+          _hash.Remove(key); // will always throw an exception
+        }
+
+      }
+
+      public System.Collections.ICollection Values
+      {
+        get { return _hash.Values; }
+      }
+
+      public object this[object key]
+      {
+        get
+        {
+          return _hash[key];
+        }
+        set
+        {
+          if (_hash.ContainsKey(key))
+          {
+            _hash[key] = value;
+          }
+          else
+          {
+            Add(key, value);
+          }
+        }
+      }
+
+      #endregion
+
+      #region ICollection Members
+
+      public void CopyTo(Array array, int index)
+      {
+        throw new NotImplementedException();
+      }
+
+      public int Count
+      {
+        get { return _hash.Count; }
+      }
+
+      public bool IsSynchronized
+      {
+        get { return _hash.IsSynchronized; }
+      }
+
+      public object SyncRoot
+      {
+        get { return _hash.SyncRoot; }
+      }
+
+      #endregion
+
+      #region IEnumerable Members
+
+      System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+      {
+        return _hash.GetEnumerator();
+      }
+
+      #endregion
     }
 
     #endregion

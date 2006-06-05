@@ -113,17 +113,10 @@ namespace Altaxo.Worksheet
     public ColumnHeaderStyle()
     {
       m_Size = 40;
-      /*
-      m_TextFormat.Alignment=StringAlignment.Center;
-      m_TextFormat.FormatFlags=StringFormatFlags.LineLimit;
-      m_TextFormat.LineAlignment=StringAlignment.Far;
 
-      m_LeftUpperFormat.Alignment = StringAlignment.Near;
-      m_LeftUpperFormat.LineAlignment = StringAlignment.Near;
-
-      m_RightUpperFormat.Alignment = StringAlignment.Far;
-      m_RightUpperFormat.LineAlignment = StringAlignment.Near;
-      */
+      m_BackgroundBrush = new Altaxo.Graph.BrushHolder(SystemColors.Control);
+      m_TextBrush = new Altaxo.Graph.BrushHolder(SystemColors.ControlText);
+      m_CellPen = new Altaxo.Graph.PenHolder(SystemColors.ControlDarkDark, 1);
 
       m_TextFormat.Alignment=StringAlignment.Center;
       m_TextFormat.FormatFlags=StringFormatFlags.LineLimit;
@@ -143,13 +136,11 @@ namespace Altaxo.Worksheet
       m_RightUpperFormat = (StringFormat)chs.m_RightUpperFormat.Clone();
     }
 
+   
+
     public override void Paint(Graphics dc, Rectangle cellRectangle, int nRow, Altaxo.Data.DataColumn data, bool bSelected)
     {
-      m_CellPen.Cached = true;
-      dc.DrawRectangle(m_CellPen.Pen,cellRectangle);
-    
-      if(bSelected)
-        dc.FillRectangle(m_SelectedBackgroundBrush,cellRectangle);
+      PaintBackground(dc, cellRectangle, bSelected);
     
       Altaxo.Data.DataColumnCollection dataColCol = (Altaxo.Data.DataColumnCollection)Main.DocumentPath.GetRootNodeImplementing(data,typeof(Altaxo.Data.DataColumnCollection));
       string columnnumber = dataColCol.GetColumnNumber(data).ToString();

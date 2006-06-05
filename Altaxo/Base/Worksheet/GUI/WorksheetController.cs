@@ -1202,12 +1202,14 @@ namespace Altaxo.Worksheet.GUI
       }
       else
       {
-        if(null!=(colstyle = (Altaxo.Worksheet.ColumnStyle)m_TableLayout.DefaultColumnStyles[searchstyletype]))
+        if(null!=(colstyle = (Altaxo.Worksheet.ColumnStyle)m_TableLayout.DefaultPropertyColumnStyles[searchstyletype]))
           return colstyle;
 
         // if not successfull yet, we will create a new defaultColumnStyle
         colstyle = (Altaxo.Worksheet.ColumnStyle)Activator.CreateInstance(searchstyletype);
-        m_TableLayout.DefaultColumnStyles.Add(searchstyletype,colstyle);
+        m_TableLayout.DefaultPropertyColumnStyles.Add(searchstyletype,colstyle);
+        colstyle.CellBorder = new PenHolder(m_TableLayout.ColumnHeaderStyle.CellBorder);
+        colstyle.BackgroundBrush = (Graph.BrushHolder)m_TableLayout.ColumnHeaderStyle.BackgroundBrush.Clone();
         return colstyle;
       }
     }
@@ -2611,8 +2613,6 @@ namespace Altaxo.Worksheet.GUI
     public void EhView_TableAreaPaint(System.Windows.Forms.PaintEventArgs e)
     {
       Graphics dc=e.Graphics;
-      Pen bluePen = new Pen(Color.Blue, 1);
-      Brush brownBrush = new SolidBrush(Color.Aquamarine);
 
       bool bDrawColumnHeader = false;
 
@@ -2635,7 +2635,7 @@ namespace Altaxo.Worksheet.GUI
 
 
 
-      dc.FillRectangle(brownBrush,e.ClipRectangle); // first set the background
+      dc.FillRectangle(SystemBrushes.Window,e.ClipRectangle); // first set the background
       
       if(null==DataTable)
         return;
@@ -2651,10 +2651,16 @@ namespace Altaxo.Worksheet.GUI
       // if neccessary, draw the row header (the most left column)
       if(e.ClipRectangle.Left<m_TableLayout.RowHeaderStyle.Width)
       {
-        cellRectangle.Height = m_TableLayout.RowHeaderStyle.Height;
+        cellRectangle.Height = m_TableLayout.ColumnHeaderStyle.Height;
         cellRectangle.Width = m_TableLayout.RowHeaderStyle.Width;
         cellRectangle.X=0;
         
+        // if visible, draw the top left corner of the table
+        if (bDrawColumnHeader)
+        {
+          cellRectangle.Y = 0;
+          m_TableLayout.RowHeaderStyle.PaintBackground(dc, cellRectangle, false);
+        }
 
         // if visible, draw property column header items
         yShift=this.GetTopCoordinateOfPropertyColumn(firstPropertyColumnToDraw);

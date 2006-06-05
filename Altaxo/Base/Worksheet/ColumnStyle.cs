@@ -36,13 +36,13 @@ namespace Altaxo.Worksheet
   public abstract class ColumnStyle : System.ICloneable, System.Runtime.Serialization.IDeserializationCallback // pendant to DataGridColumnStyle
   {
     protected int m_Size=80;
-    protected Graph.PenHolder m_CellPen = new Graph.PenHolder(Color.Blue,1);
+    protected Graph.PenHolder m_CellPen = new Graph.PenHolder(SystemColors.InactiveBorder,1);
     protected StringFormat m_TextFormat = new StringFormat();
     protected Font m_TextFont = new Font("Arial",8);                
-    protected Graph.BrushHolder m_TextBrush = new Graph.BrushHolder(Color.Black);
-    protected Graph.BrushHolder m_SelectedTextBrush = new Graph.BrushHolder(Color.White);
-    protected Graph.BrushHolder m_BackgroundBrush = new Graph.BrushHolder(Color.White);
-    protected Graph.BrushHolder m_SelectedBackgroundBrush = new Graph.BrushHolder(Color.DarkGray);
+    protected Graph.BrushHolder m_TextBrush = new Graph.BrushHolder(SystemColors.WindowText);
+    protected Graph.BrushHolder m_SelectedTextBrush = new Graph.BrushHolder(SystemColors.HighlightText);
+    protected Graph.BrushHolder m_BackgroundBrush = new Graph.BrushHolder(SystemColors.Window);
+    protected Graph.BrushHolder m_SelectedBackgroundBrush = new Graph.BrushHolder(SystemColors.Highlight);
 
     #region Serialization
     public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
@@ -179,11 +179,66 @@ namespace Altaxo.Worksheet
         m_Size=value;
       } 
     }
+
+    public Graph.PenHolder CellBorder
+    {
+      get
+      {
+        return m_CellPen;
+      }
+      set
+      {
+        if (value == null)
+          throw new ArgumentNullException();
+        m_CellPen = value;
+      }
+    }
+
+    public Graph.BrushHolder BackgroundBrush
+    {
+      get
+      {
+        return m_BackgroundBrush;
+      }
+      set
+      {
+        if (value == null)
+          throw new ArgumentNullException();
+        m_BackgroundBrush = value;
+      }
+    }
+
+    public Graph.BrushHolder TextBrush
+    {
+      get
+      {
+        return m_TextBrush;
+      }
+      set
+      {
+        if (value == null)
+          throw new ArgumentNullException();
+        m_TextBrush = value;
+      }
+    }
   
-  
+    public abstract void Paint(Graphics dc, Rectangle cellRectangle, int nRow, Altaxo.Data.DataColumn data, bool bSelected);
+
+    public virtual void PaintBackground(Graphics dc, Rectangle cellRectangle, bool bSelected)
+    {
+      if (bSelected)
+        dc.FillRectangle(m_SelectedBackgroundBrush, cellRectangle);
+      else
+        dc.FillRectangle(m_BackgroundBrush, cellRectangle);
+
+      m_CellPen.Cached = true;
+      dc.DrawLine(m_CellPen.Pen, cellRectangle.Left, cellRectangle.Bottom-1, cellRectangle.Right-1, cellRectangle.Bottom-1);
+      dc.DrawLine(m_CellPen.Pen, cellRectangle.Right-1, cellRectangle.Bottom-1, cellRectangle.Right-1, cellRectangle.Top);
+    }
+
   
     public abstract object Clone();
-    public abstract void Paint(Graphics dc, Rectangle cell, int nRow, Altaxo.Data.DataColumn data, bool bSelected);
+   // public abstract void Paint(Graphics dc, Rectangle cell, int nRow, Altaxo.Data.DataColumn data, bool bSelected)
     public abstract string GetColumnValueAtRow(int nRow, Altaxo.Data.DataColumn data);
     public abstract void SetColumnValueAtRow(string s, int nRow, Altaxo.Data.DataColumn data);
     

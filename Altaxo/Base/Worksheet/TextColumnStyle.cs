@@ -125,12 +125,8 @@ namespace Altaxo.Worksheet
 
     public override void Paint(Graphics dc, Rectangle cellRectangle, int nRow, Altaxo.Data.DataColumn data, bool bSelected)
     {
-      m_CellPen.Cached = true;
+      PaintBackground(dc, cellRectangle, bSelected);
 
-      dc.DrawRectangle(m_CellPen.Pen,cellRectangle);
-    
-      if(bSelected)
-        dc.FillRectangle(m_SelectedBackgroundBrush,cellRectangle);
     
       string myString = ((Altaxo.Data.TextColumn)data)[nRow];
     

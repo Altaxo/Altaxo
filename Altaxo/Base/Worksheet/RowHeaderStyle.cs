@@ -103,6 +103,10 @@ namespace Altaxo.Worksheet
     {
       m_TextFormat.Alignment=StringAlignment.Center;
       m_TextFormat.FormatFlags=StringFormatFlags.LineLimit;
+
+      m_BackgroundBrush = new Altaxo.Graph.BrushHolder(SystemColors.Control);
+      m_TextBrush = new Altaxo.Graph.BrushHolder(SystemColors.ControlText);
+      m_CellPen = new Altaxo.Graph.PenHolder(SystemColors.ControlDarkDark, 1);
     }
 
     public RowHeaderStyle(RowHeaderStyle rhs)
@@ -138,21 +142,17 @@ namespace Altaxo.Worksheet
     {
     }
 
+   
+
     public override void Paint(Graphics dc, Rectangle cellRectangle, int nRow, Altaxo.Data.DataColumn data, bool bSelected)
     {
-      m_CellPen.Cached = true;
-      dc.DrawRectangle(m_CellPen.Pen,cellRectangle);
-    
-      if(bSelected)
-        dc.FillRectangle(m_SelectedBackgroundBrush,cellRectangle);
-    
+
+      PaintBackground(dc, cellRectangle, bSelected);
     
       if(bSelected)
         dc.DrawString("["+nRow+"]",m_TextFont,m_SelectedTextBrush,cellRectangle,m_TextFormat);
       else
         dc.DrawString("["+nRow+"]",m_TextFont,m_TextBrush,cellRectangle,m_TextFormat);
-
-    
     }
     
   }
