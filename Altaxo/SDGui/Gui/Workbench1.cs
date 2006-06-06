@@ -38,27 +38,25 @@ using ICSharpCode.SharpDevelop.Gui;
 
 
 
-namespace ICSharpCode.SharpDevelop.Gui
+namespace Altaxo.Gui
 {
   /// <summary>
   /// This is the a Workspace with a multiple document interface.
   /// </summary>
-  public class Workbench1 : DefaultWorkbench, Altaxo.Main.GUI.IWorkbench
+  public class AltaxoSDWorkbench : DefaultWorkbench, Altaxo.Main.GUI.IWorkbench
   {
 
-    static Workbench1()
-    {
-      
-    }
+   
 
     #region "Serialization"
   
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Workbench1),0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoSDGui","ICSharpCode.SharpDevelop.Gui.Workbench1",0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AltaxoSDWorkbench), 1)]
       public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo  info)
       {
-        Workbench1 s = (Workbench1)obj;
+        AltaxoSDWorkbench s = (AltaxoSDWorkbench)obj;
       }
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo  info, object parent)
       {
@@ -70,7 +68,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 
     #endregion
 
-    public Workbench1()
+    public AltaxoSDWorkbench()
       : base()
     {
       mainMenuPath = "/Altaxo/Workbench/MainMenu";

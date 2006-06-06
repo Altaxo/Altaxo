@@ -30,15 +30,10 @@ using System.Runtime.Remoting;
 using System.Security.Policy;
 
 using ICSharpCode.Core;
-
-
-
 using ICSharpCode.SharpDevelop.Gui;
-
-
-
-
 using ICSharpCode.SharpDevelop.Commands;
+
+using Altaxo.Gui;
 
 namespace Altaxo.Main.Commands // ICSharpCode.SharpDevelop.Commands
 {
@@ -54,7 +49,7 @@ namespace Altaxo.Main.Commands // ICSharpCode.SharpDevelop.Commands
       Altaxo.Current.SetProjectService( new Altaxo.Main.ProjectService() );
       Altaxo.Current.SetPrintingService( new Altaxo.Main.PrintingService() );
       Altaxo.Current.SetGUIFactoryService( new Altaxo.Main.Services.GUIFactoryService() );
-      //Altaxo.Current.ProjectService.ProjectChanged += new ProjectEventHandler(Altaxo.Current.Workbench.EhProjectChanged);
+      Altaxo.Current.ProjectService.ProjectChanged += new ProjectEventHandler(((AltaxoSDWorkbench)Altaxo.Current.Workbench).EhProjectChanged);
       
       // we construct the main document (for now)
       Altaxo.Current.ProjectService.CurrentOpenProject = new AltaxoDocument();
