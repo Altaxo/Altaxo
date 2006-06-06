@@ -118,11 +118,11 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Graph\GUI\SDGraphController.cs" />
+    <Compile Include="Gui\AltaxoSDWorkbench.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Gui\Pads\ProjectBrowser\ProjectTree.cs">
       <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Gui\Workbench1.cs">
-      <SubType>Form</SubType>
     </Compile>
     <Compile Include="Main\GUI\DataDisplayController.cs">
       <SubType>Code</SubType>
