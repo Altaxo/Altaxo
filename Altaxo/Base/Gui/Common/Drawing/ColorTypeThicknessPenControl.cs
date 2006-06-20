@@ -26,6 +26,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Data;
 using System.Windows.Forms;
+using Altaxo.Graph;
 
 namespace Altaxo.Gui.Common.Drawing
 {
@@ -34,9 +35,9 @@ namespace Altaxo.Gui.Common.Drawing
   /// </summary>
   public class ColorTypeThicknessPenControl : System.Windows.Forms.UserControl, IColorTypeThicknessPenView
   {
-    private System.Windows.Forms.ComboBox _cbColor;
-    private System.Windows.Forms.ComboBox _cbLineType;
-    private System.Windows.Forms.ComboBox _cbThickness;
+    private KnownColorComboBox _cbColor;
+    private DashStyleComboBox _cbLineType;
+    private LineThicknessComboBox _cbThickness;
     private System.Windows.Forms.Label label1;
     private System.Windows.Forms.Label label2;
     private System.Windows.Forms.Label label3;
@@ -76,9 +77,9 @@ namespace Altaxo.Gui.Common.Drawing
     /// </summary>
     private void InitializeComponent()
     {
-      this._cbColor = new System.Windows.Forms.ComboBox();
-      this._cbLineType = new System.Windows.Forms.ComboBox();
-      this._cbThickness = new System.Windows.Forms.ComboBox();
+      this._cbColor = new KnownColorComboBox();
+      this._cbLineType = new DashStyleComboBox();
+      this._cbThickness = new LineThicknessComboBox();
       this.label1 = new System.Windows.Forms.Label();
       this.label2 = new System.Windows.Forms.Label();
       this.label3 = new System.Windows.Forms.Label();
@@ -160,25 +161,19 @@ namespace Altaxo.Gui.Common.Drawing
       set { _controller = value; }
     }
 
-    public void InitializeColors(string[] names, int selection)
+    public void InitializeColor(System.Drawing.Color selectedColor)
     {
-      this._cbColor.Items.Clear();
-      this._cbColor.Items.AddRange(names);
-      this._cbColor.SelectedIndex = selection;
+      this._cbColor.Color = selectedColor;
     }
 
-    public void InitializeLineType(string[] names, int selection)
+    public void InitializeLineType(DashStyleEx selection)
     {
-      this._cbLineType.Items.Clear();
-      this._cbLineType.Items.AddRange(names);
-      this._cbLineType.SelectedIndex = selection;
+      this._cbLineType.DashStyleEx = selection;
     }
 
-    public void InitializeLineWidth(string[] names, string selection)
+    public void InitializeLineWidth(float selection)
     {
-      this._cbThickness.Items.Clear();
-      this._cbThickness.Items.AddRange(names);
-      this._cbThickness.Text = selection;
+      this._cbThickness.Thickness = selection;
     }
 
     #endregion
@@ -186,19 +181,19 @@ namespace Altaxo.Gui.Common.Drawing
     private void _cbColor_SelectionChangeCommitted(object sender, System.EventArgs e)
     {
       if(null!=_controller)
-        _controller.EhView_ColorChanged(this._cbColor.SelectedIndex);
+        _controller.EhView_ColorChanged(this._cbColor.Color);
     }
 
     private void _cbLineType_SelectionChangeCommitted(object sender, System.EventArgs e)
     {
       if(null!=_controller)
-        _controller.EhView_LineTypeChanged(this._cbLineType.SelectedIndex);
+        _controller.EhView_LineTypeChanged(this._cbLineType.DashStyleEx);
     }
 
     private void _cbThickness_Validating(object sender, System.ComponentModel.CancelEventArgs e)
     {
       if(null!=_controller)
-        _controller.EhView_LineWidthChanged(this._cbThickness.Text,e);
+        _controller.EhView_LineWidthChanged(this._cbThickness.Thickness);
     }
   }
 }

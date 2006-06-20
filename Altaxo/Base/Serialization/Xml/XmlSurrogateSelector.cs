@@ -68,6 +68,17 @@ namespace Altaxo.Serialization.Xml
     }
 
     /// <summary>
+    /// Get the serialization version  of a type.
+    /// </summary>
+    /// <param name="type">The type for which the version should be returned.</param>
+    /// <returns>The serialization version of the type.</returns>
+    public int GetVersion(System.Type type)
+    {
+      object version = m_Versions[type];
+      return null == version ? 0 : (int)version;
+    }
+
+    /// <summary>
     /// Get the fully qualified name of a type. This includes the short assembly name; the full type name, and the version, separated by a comma.
     /// </summary>
     /// <param name="type">The type for which the name should be returned.</param>

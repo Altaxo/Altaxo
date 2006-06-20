@@ -201,7 +201,7 @@
 						class="Altaxo.Worksheet.Commands.PlotDensityImage" />
         </Condition>
         <Condition name="ContainsPLSModelData" ContainsPLSModelData="*" action="Exclude">
-          <MenuItem id="PLS" label="${res:XML.MainMenu.PLSPlotMenu}">
+          <MenuItem id="PLS" label="${res:XML.MainMenu.PLSPlotMenu}" type="Menu">
             <MenuItem id="SetNumFactors" label="${res:XML.MainMenu.PlotMenu.PLS.SetNumberOfFactors}" icon="Icons.16x16.Question"
                       description="${res:XML.MainMenu.PlotMenu.PLS.SetNumberOfFactors.Description}" class="Altaxo.Worksheet.Commands.PLSQuestPreferredNumberOfFactors" />
             <MenuItem id="PlotPRESS" label="${res:XML.MainMenu.PlotMenu.PLS.PlotPRESSValue}" icon="Icons.16x16.PlotLine"
@@ -359,9 +359,27 @@
 					description="${res:XML.MainMenu.WindowMenu.PrvWindow.Description}" shortcut="Shift|Control|Tab"
 					class="ICSharpCode.SharpDevelop.Commands.SelectPrevWindow" />
         <MenuItem id="NxtPrvSeparator" type = "Separator"/>
+        <MenuItem id="SortBy" label="${res:XML.MainMenu.WindowMenu.SortBy}" type="Menu">
+          <MenuItem id="SortByCreation" label="${res:XML.MainMenu.WindowMenu.SortByCreation}" 
+            description="${res:XML.MainMenu.WindowMenu.SortByCreation.Description}" class="Altaxo.Main.Commands.SortGraphTablesByCreationTime" />
+          <MenuItem id="SortByTypeCreation" label="${res:XML.MainMenu.WindowMenu.SortByTypeAndCreation}" 
+            description="${res:XML.MainMenu.WindowMenu.SortByTypeAndCreation.Description}" class="Altaxo.Main.Commands.SortGraphTablesByTypeAndCreationTime" />
+          <MenuItem id="SortByName" label="${res:XML.MainMenu.WindowMenu.SortByName}" 
+            description="${res:XML.MainMenu.WindowMenu.SortByName.Description}" class="Altaxo.Main.Commands.SortGraphTablesByName" />
+          <MenuItem id="SortByTypeName" label="${res:XML.MainMenu.WindowMenu.SortByTypeAndName}" 
+            description="${res:XML.MainMenu.WindowMenu.SortByTypeAndName.Description}" class="Altaxo.Main.Commands.SortGraphTablesByTypeAndName" />
+        </MenuItem>
         <MenuItem id="CloseAll" label="${res:XML.MainMenu.FileMenu.CloseAll}" icon="Icons.16x16.CloseAllDocuments"
 					description="${res:XML.MainMenu.FileMenu.CloseAll.Description}" class="ICSharpCode.SharpDevelop.Commands.CloseAllWindows" />
       </Condition>
+      <MenuItem id="OpenAll" label="${res:XML.MainMenu.WindowMenu.OpenAll}" type="Menu">
+        <MenuItem id="OpenAllWorksheets" label="${res:XML.MainMenu.WindowMenu.OpenAllWorksheets}" 
+          description="${res:XML.MainMenu.WindowMenu.OpenAllWorksheets.Description}" class="Altaxo.Main.Commands.OpenAllWorksheets" />
+        <MenuItem id="OpenAllGraphs" label="${res:XML.MainMenu.WindowMenu.OpenAllGraphs}" 
+          description="${res:XML.MainMenu.WindowMenu.OpenAllGraphs.Description}" class="Altaxo.Main.Commands.OpenAllGraphs" />
+        <MenuItem id="OpenAllWorksheetsAndGraphs" label="${res:XML.MainMenu.WindowMenu.OpenAllWorksheetsAndGraphs}" 
+          description="${res:XML.MainMenu.WindowMenu.OpenAllWorksheetsAndGraphs.Description}" class="Altaxo.Main.Commands.OpenAllWorksheetsAndGraphs" />
+      </MenuItem>
       <MenuItem id = "ContentBuilder"  type="Builder" class="ICSharpCode.SharpDevelop.Commands.OpenContentsMenuBuilder"/>
     </MenuItem>
     <MenuItem id="Help" label="${res:XML.MainMenu.HelpMenu}" type="Menu">

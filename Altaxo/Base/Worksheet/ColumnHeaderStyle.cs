@@ -111,12 +111,9 @@ namespace Altaxo.Worksheet
     }
 
     public ColumnHeaderStyle()
+      : base(ColumnStyleType.ColumnHeader)
     {
       m_Size = 40;
-
-      m_BackgroundBrush = new Altaxo.Graph.BrushHolder(SystemColors.Control);
-      m_TextBrush = new Altaxo.Graph.BrushHolder(SystemColors.ControlText);
-      m_CellPen = new Altaxo.Graph.PenHolder(SystemColors.ControlDarkDark, 1);
 
       m_TextFormat.Alignment=StringAlignment.Center;
       m_TextFormat.FormatFlags=StringFormatFlags.LineLimit;
@@ -154,9 +151,9 @@ namespace Altaxo.Worksheet
       
       if(bSelected)
       {
-        dc.DrawString(columnnumber,m_TextFont,m_SelectedTextBrush,numRectangle,m_LeftUpperFormat);
-        dc.DrawString(kindandgroup,m_TextFont,m_SelectedTextBrush,numRectangle,m_RightUpperFormat);
-        dc.DrawString(data.Name,m_TextFont,m_SelectedTextBrush,nameRectangle,m_TextFormat);
+        dc.DrawString(columnnumber,m_TextFont,_defaultSelectedTextBrush,numRectangle,m_LeftUpperFormat);
+        dc.DrawString(kindandgroup, m_TextFont, _defaultSelectedTextBrush, numRectangle, m_RightUpperFormat);
+        dc.DrawString(data.Name, m_TextFont, _defaultSelectedTextBrush, nameRectangle, m_TextFormat);
       }
       else
       {

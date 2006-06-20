@@ -376,6 +376,7 @@ namespace Altaxo.Serialization.Xml
         throw new ArgumentException(string.Format("Type {0} has no XmlSerializationSurrogate to get serialized",basetype));
       else
       {
+        m_Writer.WriteElementString("BaseType", m_SurrogateSelector.GetFullyQualifiedTypeName(basetype));
         ss.Serialize(o,this);
       }   
     }

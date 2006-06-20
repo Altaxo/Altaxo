@@ -30,16 +30,16 @@ namespace Altaxo.Gui.Common.Drawing
   public interface IColorTypeThicknessPenView
   {
     IColorTypeThicknessPenViewEventSink Controller { get; set; }
-    void InitializeColors(string[] names, int selection);
-    void InitializeLineType(string[] names, int selection);
-    void InitializeLineWidth(string[] names, string selection);
+    void InitializeColor(System.Drawing.Color selectedColor);
+    void InitializeLineType(DashStyleEx selection);
+    void InitializeLineWidth(float selection);
   }
 
   public interface IColorTypeThicknessPenViewEventSink
   {
-    void EhView_ColorChanged(int selection);
-    void EhView_LineTypeChanged(int selection);
-    void EhView_LineWidthChanged(string value, System.ComponentModel.CancelEventArgs e);
+    void EhView_ColorChanged(System.Drawing.Color selection);
+    void EhView_LineTypeChanged(DashStyleEx selection);
+    void EhView_LineWidthChanged(float value);
   }
 
   public interface IColorTypeThicknessPenController : IColorTypeThicknessPenViewEventSink, Main.GUI.IMVCAController
@@ -68,46 +68,31 @@ namespace Altaxo.Gui.Common.Drawing
     {
       if(_view!=null)
       {
-        string[] names = System.Enum.GetNames(typeof(System.Drawing.KnownColor));
-        string name = _tempDoc.Color.IsKnownColor ? _tempDoc.Color.Name : _tempDoc.Color.ToString();
-        _view.InitializeColors(names,Array.IndexOf(names,name));
+        string[] names;
+        string name;
 
-
-        names = System.Enum.GetNames(typeof(System.Drawing.Drawing2D.DashStyle));
-        name = _tempDoc.DashStyle.ToString();
-        _view.InitializeLineType(names,Array.IndexOf(names,name));
-
-
-        double[] thickness = new double[]{0.2, 0.5, 1.0, 2.0, 3.0};
-        names = new string[thickness.Length];
-        for(int i=0;i<names.Length;++i)
-          names[i] = Altaxo.Serialization.GUIConversion.ToString(thickness[i]);
-        name = Altaxo.Serialization.GUIConversion.ToString(_tempDoc.Width);
-        _view.InitializeLineWidth(names,name);
+        _view.InitializeColor(_tempDoc.Color);
+        _view.InitializeLineType(_tempDoc.DashStyleEx);
+        _view.InitializeLineWidth(_tempDoc.Width);
 
 
       }
     }
     #region IColorTypeThicknessPenViewEventSink Members
 
-    public void EhView_ColorChanged(int selection)
+    public void EhView_ColorChanged(System.Drawing.Color selection)
     {
-      System.Drawing.KnownColor cc = (System.Drawing.KnownColor)Enum.GetValues(typeof(System.Drawing.KnownColor)).GetValue(selection);
-      _tempDoc.Color = System.Drawing.Color.FromKnownColor(cc);
+      _tempDoc.Color = selection;
     }
 
-    public void EhView_LineTypeChanged(int selection)
+    public void EhView_LineTypeChanged(DashStyleEx selection)
     {
-      _tempDoc.DashStyle = (System.Drawing.Drawing2D.DashStyle)selection;
+      _tempDoc.DashStyleEx = selection;
     }
 
-    public void EhView_LineWidthChanged(string value,  System.ComponentModel.CancelEventArgs e)
+    public void EhView_LineWidthChanged(float value)
     {
-      double w;
-      if(Altaxo.Serialization.GUIConversion.IsDouble(value, out w))
-        _tempDoc.Width = (float)w;
-      else
-        e.Cancel = true;
+      _tempDoc.Width = value;
     }
 
     #endregion

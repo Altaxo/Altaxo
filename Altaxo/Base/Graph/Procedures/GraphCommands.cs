@@ -21,6 +21,10 @@
 #endregion
 
 using Altaxo.Graph.GUI;
+using System;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
 
 namespace Altaxo.Graph.Procedures
 {
@@ -73,6 +77,101 @@ namespace Altaxo.Graph.Procedures
     public static void Refresh(GraphController ctrl)
     {
       ctrl.RefreshGraph();
+    }
+
+
+    /// <summary>
+    /// Handler for the menu item "Edit" - "CopyPage".
+    /// </summary>
+    class CopyPageCommand
+    {
+      [DllImport("user32.dll")]
+      static extern bool OpenClipboard(IntPtr hWndNewOwner);
+      [DllImport("user32.dll")]
+      static extern bool EmptyClipboard();
+      [DllImport("user32.dll")]
+      static extern IntPtr SetClipboardData(uint uFormat, IntPtr hMem);
+      [DllImport("user32.dll")]
+      static extern bool CloseClipboard();
+      [DllImport("gdi32.dll")]
+      static extern IntPtr CopyEnhMetaFile(IntPtr hemfSrc, IntPtr hNULL);
+      [DllImport("gdi32.dll")]
+      static extern bool DeleteEnhMetaFile(IntPtr hemf);
+
+
+      static CopyPageCommand()
+      {
+      }
+
+      /// <summary>
+      /// Microsoft Knowledge Base Article - 323530 PRB: Metafiles on Clipboard Are Not Visible to All Applications
+      /// </summary>
+      /// <param name="hWnd"></param>
+      /// <param name="mf"></param>
+      /// <returns></returns>
+      static bool PutEnhMetafileOnClipboard(IntPtr hWnd, Metafile mf)
+      {
+        bool bResult = false;
+        IntPtr hEMF, hEMF2;
+        hEMF = mf.GetHenhmetafile(); // invalidates mf
+        if (!hEMF.Equals(new IntPtr(0)))
+        {
+          hEMF2 = CopyEnhMetaFile(hEMF, new IntPtr(0));
+          if (!hEMF2.Equals(new IntPtr(0)))
+          {
+            if (OpenClipboard(hWnd))
+            {
+              if (EmptyClipboard())
+              {
+                IntPtr hRes = SetClipboardData(14 /*CF_ENHMETAFILE*/, hEMF2);
+                bResult = hRes.Equals(hEMF2);
+                CloseClipboard();
+              }
+            }
+          }
+          DeleteEnhMetaFile(hEMF);
+        }
+        return bResult;
+      }
+
+      static public void Run(GraphController ctrl)
+      {
+        // Create a bitmap just to have a graphics context
+        System.Drawing.Bitmap helperbitmap = new System.Drawing.Bitmap(4, 4, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+        helperbitmap.SetResolution(300, 300);
+        Graphics grfx = Graphics.FromImage(helperbitmap);
+        // Code to write the stream goes here.
+        IntPtr ipHdc = grfx.GetHdc();
+        System.IO.Stream stream = new System.IO.MemoryStream();
+        //System.Drawing.Imaging.Metafile mf = new System.Drawing.Imaging.Metafile(stream,ipHdc);
+        System.Drawing.Imaging.Metafile mf = new System.Drawing.Imaging.Metafile(stream, ipHdc, ctrl.Doc.PageBounds, MetafileFrameUnit.Point);
+
+        //      System.Drawing.Imaging.Metafile mf = new System.Drawing.Imaging.Metafile("CreateMetaFile.emf",ipHdc);
+        grfx.ReleaseHdc(ipHdc);
+        grfx.Dispose();
+        grfx = Graphics.FromImage(mf);
+        grfx.PageUnit = GraphicsUnit.Point;
+        grfx.PageScale = 1;
+        grfx.TranslateTransform(ctrl.Doc.PrintableBounds.X, ctrl.Doc.PrintableBounds.Y);
+
+        ctrl.Doc.DoPaint(grfx, true);
+
+
+        grfx.Dispose();
+        helperbitmap.Dispose();
+
+
+        stream.Flush();
+        stream.Close();
+
+        PutEnhMetafileOnClipboard(ctrl.View.Form.Handle, mf);
+        //System.Windows.Forms.Clipboard.SetData(DataFormats.GetFormat(DataFormats.EnhancedMetafile).Name, mf);
+      }
+    }
+
+    public static void CopyPageToClipboard(GraphController ctrl)
+    {
+      CopyPageCommand.Run(ctrl);
     }
   }
 }

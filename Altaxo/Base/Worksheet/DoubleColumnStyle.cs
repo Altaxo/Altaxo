@@ -95,6 +95,7 @@ namespace Altaxo.Worksheet
 
 
     public DoubleColumnStyle()
+      : base(ColumnStyleType.DataCell)
     {
       m_TextFormat.Alignment=StringAlignment.Far;
       m_TextFormat.FormatFlags=StringFormatFlags.LineLimit;
@@ -135,7 +136,7 @@ namespace Altaxo.Worksheet
       string myString = ((Altaxo.Data.DoubleColumn)data)[nRow].ToString();
     
       if(bSelected)
-        dc.DrawString(myString,m_TextFont,m_SelectedTextBrush,cellRectangle,m_TextFormat);
+        dc.DrawString(myString, m_TextFont, _defaultSelectedTextBrush, cellRectangle, m_TextFormat);
       else
         dc.DrawString(myString,m_TextFont,m_TextBrush,cellRectangle,m_TextFormat);
 

@@ -100,13 +100,10 @@ namespace Altaxo.Worksheet
     #endregion
 
     public RowHeaderStyle()
+      : base(ColumnStyleType.RowHeader)
     {
       m_TextFormat.Alignment=StringAlignment.Center;
       m_TextFormat.FormatFlags=StringFormatFlags.LineLimit;
-
-      m_BackgroundBrush = new Altaxo.Graph.BrushHolder(SystemColors.Control);
-      m_TextBrush = new Altaxo.Graph.BrushHolder(SystemColors.ControlText);
-      m_CellPen = new Altaxo.Graph.PenHolder(SystemColors.ControlDarkDark, 1);
     }
 
     public RowHeaderStyle(RowHeaderStyle rhs)
@@ -150,7 +147,7 @@ namespace Altaxo.Worksheet
       PaintBackground(dc, cellRectangle, bSelected);
     
       if(bSelected)
-        dc.DrawString("["+nRow+"]",m_TextFont,m_SelectedTextBrush,cellRectangle,m_TextFormat);
+        dc.DrawString("[" + nRow + "]", m_TextFont, _defaultSelectedTextBrush, cellRectangle, m_TextFormat);
       else
         dc.DrawString("["+nRow+"]",m_TextFont,m_TextBrush,cellRectangle,m_TextFormat);
     }

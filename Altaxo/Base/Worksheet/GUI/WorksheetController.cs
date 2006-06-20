@@ -1208,8 +1208,7 @@ namespace Altaxo.Worksheet.GUI
         // if not successfull yet, we will create a new defaultColumnStyle
         colstyle = (Altaxo.Worksheet.ColumnStyle)Activator.CreateInstance(searchstyletype);
         m_TableLayout.DefaultPropertyColumnStyles.Add(searchstyletype,colstyle);
-        colstyle.CellBorder = new PenHolder(m_TableLayout.ColumnHeaderStyle.CellBorder);
-        colstyle.BackgroundBrush = (Graph.BrushHolder)m_TableLayout.ColumnHeaderStyle.BackgroundBrush.Clone();
+        colstyle.ChangeTypeTo(ColumnStyleType.PropertyCell);
         return colstyle;
       }
     }

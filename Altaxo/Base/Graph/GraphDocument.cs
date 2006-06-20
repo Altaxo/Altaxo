@@ -58,28 +58,47 @@ namespace Altaxo.Graph
     /// <remarks>The value is only used by hosting classes, since the reference point (0,0) of the GraphDocument
     /// is the top left corner of the printable area. The hosting class has to translate the graphics origin
     /// to that point before calling the painting routine <see cref="DoPaint"/>.</remarks>
-    private RectangleF m_PageBounds = new RectangleF(0, 0, 842, 595);
+    private RectangleF _pageBounds = new RectangleF(0, 0, 842, 595);
 
     
     /// <summary>
     /// The printable area of the document, i.e. the page size minus the margins at each sC:\Users\LelliD\C\CALC\Altaxo\Altaxo\Graph\GraphDocument.cside in points (1/72 inch)
     /// </summary>
-    private RectangleF m_PrintableBounds = new RectangleF(14, 14, 814 , 567 );
+    private RectangleF _printableBounds = new RectangleF(14, 14, 814 , 567 );
 
-    XYPlotLayerCollection m_Layers;
+    XYPlotLayerCollection _layers;
 
-    string m_Name;
+    string _name;
 
-    object m_Parent;
+    object _parent;
 
-   
+    /// <summary>
+    /// The date/time of creation of this graph.
+    /// </summary>
+    protected DateTime _creationTime;
+
+    /// <summary>
+    /// The date/time when this graph was changed.
+    /// </summary>
+    protected DateTime _lastChangeTime;
+
+    /// <summary>
+    /// Notes concerning this graph.
+    /// </summary>
+    protected string _notes;
+
+    /// <summary>
+    /// An identifier that can be shown on the graph and that is searchable.
+    /// </summary>
+    protected string _graphIdentifier;
+
     /// <summary>
     /// The graph properties, key is a string, value is a property (arbitrary object) you want to store here.
     /// </summary>
     /// <remarks>The properties are saved on disc (with exception of those who starts with "tmp/".
     /// If the property you want to store is only temporary, the properties name should therefore
     /// start with "tmp/".</remarks>
-    protected System.Collections.Hashtable _GraphProperties;
+    protected System.Collections.Hashtable _graphProperties;
 
     #region "Serialization"
 
@@ -111,8 +130,8 @@ namespace Altaxo.Graph
       
       
         // now the data of our class
-        info.AddValue("PageBounds",s.m_PageBounds);
-        info.AddValue("PrintableBounds",s.m_PrintableBounds);
+        info.AddValue("PageBounds",s._pageBounds);
+        info.AddValue("PrintableBounds",s._printableBounds);
       }
 
       /// <summary>
@@ -140,8 +159,8 @@ namespace Altaxo.Graph
         {
           throw new NotImplementedException(string.Format("Serializing a {0} without surrogate not implemented yet!",obj.GetType()));
         }
-        s.m_PageBounds      = (RectangleF)info.GetValue("PageBounds",typeof(RectangleF));
-        s.m_PrintableBounds = (RectangleF)info.GetValue("PrintableBounds",typeof(RectangleF));
+        s._pageBounds      = (RectangleF)info.GetValue("PageBounds",typeof(RectangleF));
+        s._printableBounds = (RectangleF)info.GetValue("PrintableBounds",typeof(RectangleF));
         return s;
       }
     }
@@ -155,10 +174,10 @@ namespace Altaxo.Graph
 
         // info.AddBaseValueEmbedded(s,typeof(GraphDocument).BaseType);
         // now the data of our class
-        info.AddValue("Name",s.m_Name);
-        info.AddValue("PageBounds",s.m_PageBounds);
-        info.AddValue("PrintableBounds",s.m_PrintableBounds);
-        info.AddValue("Layers",s.m_Layers);
+        info.AddValue("Name",s._name);
+        info.AddValue("PageBounds",s._pageBounds);
+        info.AddValue("PrintableBounds",s._printableBounds);
+        info.AddValue("Layers",s._layers);
 
       }
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -167,12 +186,12 @@ namespace Altaxo.Graph
         GraphDocument s = null!=o ? (GraphDocument)o : new GraphDocument();
 
         //  info.GetBaseValueEmbedded(s,typeof(GraphDocument).BaseType,parent);
-        s.m_Name            =  info.GetString("Name"); 
-        s.m_PageBounds      = (RectangleF)info.GetValue("PageBounds",s);
-        s.m_PrintableBounds = (RectangleF)info.GetValue("PrintableBounds",s);
+        s._name            =  info.GetString("Name"); 
+        s._pageBounds      = (RectangleF)info.GetValue("PageBounds",s);
+        s._printableBounds = (RectangleF)info.GetValue("PrintableBounds",s);
 
-        s.m_Layers          = (XYPlotLayerCollection)info.GetValue("LayerList",s);
-        s.m_Layers.ParentObject = s;
+        s._layers          = (XYPlotLayerCollection)info.GetValue("LayerList",s);
+        s._layers.ParentObject = s;
 
 
         return s;
@@ -183,29 +202,29 @@ namespace Altaxo.Graph
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GraphDocument),1)]
       public class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         GraphDocument s = (GraphDocument)obj;
 
         // info.AddBaseValueEmbedded(s,typeof(GraphDocument).BaseType);
         // now the data of our class
-        info.AddValue("Name",s.m_Name);
-        info.AddValue("PageBounds",s.m_PageBounds);
-        info.AddValue("PrintableBounds",s.m_PrintableBounds);
-        info.AddValue("Layers",s.m_Layers);
+        info.AddValue("Name",s._name);
+        info.AddValue("PageBounds",s._pageBounds);
+        info.AddValue("PrintableBounds",s._printableBounds);
+        info.AddValue("Layers",s._layers);
 
         // new in version 1 - Add graph properties
-        int numberproperties = s._GraphProperties==null ? 0 : s._GraphProperties.Keys.Count;
+        int numberproperties = s._graphProperties==null ? 0 : s._graphProperties.Keys.Count;
         info.CreateArray("TableProperties",numberproperties);
-        if(s._GraphProperties!=null)
+        if(s._graphProperties!=null)
         {
-          foreach(string propkey in s._GraphProperties.Keys)
+          foreach(string propkey in s._graphProperties.Keys)
           {
             if(propkey.StartsWith("tmp/"))
               continue;
             info.CreateElement("e");
             info.AddValue("Key",propkey);
-            object val = s._GraphProperties[propkey];
+            object val = s._graphProperties[propkey];
             info.AddValue("Value",info.IsSerializable(val) ? val : null);
             info.CommitElement();
           }
@@ -214,19 +233,25 @@ namespace Altaxo.Graph
 
 
       }
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+
+        public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+        {
+
+          GraphDocument s = null != o ? (GraphDocument)o : new GraphDocument();
+          Deserialize(s, info, parent);
+          return s;
+        }
+
+      public virtual void Deserialize(GraphDocument s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        
-        GraphDocument s = null!=o ? (GraphDocument)o : new GraphDocument();
-
         //  info.GetBaseValueEmbedded(s,typeof(GraphDocument).BaseType,parent);
-        s.m_Name            =  info.GetString("Name"); 
-        s.m_PageBounds      = (RectangleF)info.GetValue("PageBounds",s);
-        s.m_PrintableBounds = (RectangleF)info.GetValue("PrintableBounds",s);
+        s._name            =  info.GetString("Name"); 
+        s._pageBounds      = (RectangleF)info.GetValue("PageBounds",s);
+        s._printableBounds = (RectangleF)info.GetValue("PrintableBounds",s);
 
-        s.m_Layers          = (XYPlotLayerCollection)info.GetValue("LayerList",s);
-        s.m_Layers.ParentObject = s;
-        s.m_Layers.SetPrintableGraphBounds(s.m_PrintableBounds, false);
+        s._layers          = (XYPlotLayerCollection)info.GetValue("LayerList",s);
+        s._layers.ParentObject = s;
+        s._layers.SetPrintableGraphBounds(s._printableBounds, false);
 
         // new in version 1 - Add graph properties
         int numberproperties = info.OpenArray(); // "GraphProperties"
@@ -239,7 +264,31 @@ namespace Altaxo.Graph
           s.SetGraphProperty(propkey,propval);
         }
         info.CloseArray(numberproperties);
-        return s;
+      }
+    }
+
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GraphDocument), 2)]
+    public class XmlSerializationSurrogate2 : XmlSerializationSurrogate1
+    {
+      public override void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        base.Serialize(obj, info);
+        GraphDocument s = (GraphDocument)obj;
+        info.AddValue("GraphIdentifier", s._graphIdentifier);
+        info.AddValue("Notes", s._notes);
+        info.AddValue("CreationTime", s._creationTime);
+        info.AddValue("LastChangeTime", s._lastChangeTime);
+        
+
+      }
+      public override void Deserialize(GraphDocument s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        base.Deserialize(s, info, parent);
+        s._graphIdentifier = info.GetString("GraphIdentifier");
+        s._notes = info.GetString("Notes");
+        s._creationTime = info.GetDateTime("CreationTime");
+        s._lastChangeTime = info.GetDateTime("LastChangeTime");
       }
     }
 
@@ -259,25 +308,28 @@ namespace Altaxo.Graph
     /// </summary>
     public GraphDocument()
     {
-      this.m_Layers = new Altaxo.Graph.XYPlotLayerCollection();
-      this.m_Layers.ParentObject = this;
-      this.m_Layers.SetPrintableGraphBounds(m_PrintableBounds,false);
+      this._layers = new Altaxo.Graph.XYPlotLayerCollection();
+      this._layers.ParentObject = this;
+      this._layers.SetPrintableGraphBounds(_printableBounds,false);
+      _creationTime = _lastChangeTime = DateTime.UtcNow;
     }
 
     public GraphDocument(GraphDocument from)
     {
-      this.m_Layers = (XYPlotLayerCollection)from.m_Layers.Clone();
-      this.m_Layers.ParentObject = this;
-      this.m_PageBounds = from.m_PageBounds;
-      this.m_PrintableBounds = from.m_PrintableBounds;
+      this._layers = (XYPlotLayerCollection)from._layers.Clone();
+      this._layers.ParentObject = this;
+      this._pageBounds = from._pageBounds;
+      this._printableBounds = from._printableBounds;
+      _creationTime = _lastChangeTime = DateTime.UtcNow;
+      this._notes = from._notes;
 
 
       // Clone also the table properties (deep copy)
-      if(from._GraphProperties!=null)
+      if(from._graphProperties!=null)
       {
-        foreach(string key in from._GraphProperties.Keys)
+        foreach(string key in from._graphProperties.Keys)
         {
-          ICloneable val = from._GraphProperties[key] as ICloneable;
+          ICloneable val = from._graphProperties[key] as ICloneable;
           if(null!=val)
             this.SetGraphProperty(key,val.Clone());
         }
@@ -291,18 +343,18 @@ namespace Altaxo.Graph
     
     public string Name
     {
-      get { return m_Name; }
+      get { return _name; }
       set
       {
-        if(m_Name!=value)
+        if(_name!=value)
         {
           // test if an object with this name is already in the parent
           Altaxo.Main.INamedObjectCollection parentColl = ParentObject as Altaxo.Main.INamedObjectCollection;
           if(null!=parentColl && null!=parentColl.GetChildObjectNamed(value))
             throw new ApplicationException(string.Format("The graph {0} can not be renamed to {1}, since another graph with the same name already exists",this.Name,value));
 
-          string oldValue = m_Name;
-          m_Name = value;
+          string oldValue = _name;
+          _name = value;
           OnNameChanged(this,oldValue,value);
         }
       }
@@ -316,13 +368,50 @@ namespace Altaxo.Graph
         NameChanged(sender, new Altaxo.Main.NameChangedEventArgs(oldValue,newValue));
     }
 
+    /// <summary>
+    /// The date/time of creation of this graph.
+    /// </summary>
+    public DateTime CreationTimeUtc
+    {
+      get
+      {
+        return _creationTime;
+      }
+    }
+
+    /// <summary>
+    /// The date/time when this graph was changed.
+    /// </summary>
+    public DateTime LastChangeTimeUtc
+    {
+      get
+      {
+        return _lastChangeTime;
+      }
+    }
+
+    /// <summary>
+    /// Notes concerning this graph.
+    /// </summary>
+    public string Notes
+    {
+      get
+      {
+        return _notes;
+      }
+      set
+      {
+        _notes = value;
+        OnChanged();
+      }
+    }
 
     public object ParentObject
     {
-      get { return m_Parent; }
+      get { return _parent; }
       set 
       {
-        m_Parent = value;
+        _parent = value;
       }
     }
 
@@ -334,7 +423,7 @@ namespace Altaxo.Graph
     /// <returns>The object, or null if no object under the provided name was stored here.</returns>
     public object GetGraphProperty(string key)
     {
-      return _GraphProperties==null ? null : this._GraphProperties[key]; 
+      return _graphProperties==null ? null : this._graphProperties[key]; 
     }
 
 
@@ -346,13 +435,13 @@ namespace Altaxo.Graph
     /// start with "tmp/".</remarks>
     public void   SetGraphProperty(string key, object val)
     {
-      if(_GraphProperties ==null)
-        _GraphProperties = new System.Collections.Hashtable();
+      if(_graphProperties ==null)
+        _graphProperties = new System.Collections.Hashtable();
 
-      if(_GraphProperties[key]==null)
-        _GraphProperties.Add(key,val);
+      if(_graphProperties[key]==null)
+        _graphProperties.Add(key,val);
       else
-        _GraphProperties[key]=val;
+        _graphProperties[key]=val;
     }
 
 
@@ -378,11 +467,11 @@ namespace Altaxo.Graph
     /// to that point before calling the painting routine <see cref="DoPaint"/>.</remarks>
     public RectangleF PageBounds
     {
-      get { return m_PageBounds; }
+      get { return _pageBounds; }
       set 
       {
-        RectangleF oldValue = m_PageBounds;
-        m_PageBounds=value;
+        RectangleF oldValue = _pageBounds;
+        _pageBounds=value;
         if(value!=oldValue)
           OnBoundsChanged();
       }
@@ -393,13 +482,13 @@ namespace Altaxo.Graph
     /// </summary>
     public RectangleF PrintableBounds
     {
-      get { return m_PrintableBounds; }
+      get { return _printableBounds; }
       set
       {
-        RectangleF oldBounds = m_PrintableBounds;
-        m_PrintableBounds=value;
+        RectangleF oldBounds = _printableBounds;
+        _printableBounds=value;
 
-        if(m_PrintableBounds!=oldBounds)
+        if(_printableBounds!=oldBounds)
         {
           Layers.SetPrintableGraphBounds( value, true);
           OnBoundsChanged();
@@ -413,7 +502,7 @@ namespace Altaxo.Graph
     /// </summary>
     public virtual SizeF PrintableSize
     {
-      get { return new SizeF(m_PrintableBounds.Width,m_PrintableBounds.Height); }
+      get { return new SizeF(_printableBounds.Width,_printableBounds.Height); }
     }
 
 
@@ -422,7 +511,7 @@ namespace Altaxo.Graph
     /// </summary>
     public XYPlotLayerCollection Layers
     {
-      get { return m_Layers; } 
+      get { return _layers; } 
     }
 
 
@@ -676,9 +765,9 @@ namespace Altaxo.Graph
       if(m_ResumeInProgress || IsSuspended)
         return;
 
-      if(m_Parent is Main.IChildChangedEventSink )
+      if(_parent is Main.IChildChangedEventSink )
       {
-        ((Main.IChildChangedEventSink)m_Parent).EhChildChanged(this, m_ChangeData);
+        ((Main.IChildChangedEventSink)_parent).EhChildChanged(this, m_ChangeData);
         if(IsSuspended) // maybe parent has suspended us now
         {
           this.EhChildChanged(sender, e); // we call the function recursively, but now we are suspended

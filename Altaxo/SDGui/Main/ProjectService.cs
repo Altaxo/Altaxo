@@ -513,6 +513,24 @@ namespace Altaxo.Main
       return (IViewContent[])contentList.ToArray(typeof(IViewContent));
     }
 
+    /// <summary>
+    /// Returns true if the given document has at least one open view in the workbench.
+    /// </summary>
+    /// <param name="document">The document.</param>
+    /// <returns>True if there is at least one open view for the document.</returns>
+    public bool HasDocumentAnOpenView(object document)
+    {
+      foreach (IViewContent content in Current.Workbench.ViewContentCollection)
+      {
+        if (content is Altaxo.Main.GUI.IMVCController)
+        {
+          if (object.ReferenceEquals(((Altaxo.Main.GUI.IMVCController)content).ModelObject, document))
+            return true;
+        }
+      }
+      return false;
+    }
+
 
 
     /// <summary>

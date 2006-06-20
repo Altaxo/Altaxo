@@ -440,13 +440,21 @@ namespace Altaxo.Serialization.Xml
 
     public void GetBaseValueEmbedded(object instance, System.Type basetype, object parent )
     {
-      IXmlSerializationSurrogate ss = m_SurrogateSelector.GetSurrogate(basetype);
-      if(null==ss)
-        throw new ArgumentException(string.Format("Type {0} has no XmlSerializationSurrogate to get serialized",basetype));
+      if ("BaseType" == CurrentElementName)
+      {
+        string basetypestring = m_Reader.ReadElementString();
+        IXmlSerializationSurrogate ss = m_SurrogateSelector.GetSurrogate(basetypestring);
+        if (null == ss)
+          throw new ArgumentException(string.Format("Type {0} has no XmlSerializationSurrogate to get serialized", basetype));
+        ss.Deserialize(instance, this, parent);
+      }
       else
       {
-        ss.Deserialize(instance,this,parent);
-      }   
+        IXmlSerializationSurrogate ss = m_SurrogateSelector.GetSurrogate(basetype);
+        if (null == ss)
+          throw new ArgumentException(string.Format("Type {0} has no XmlSerializationSurrogate to get serialized", basetype));
+        ss.Deserialize(instance, this, parent);
+      }
     }
     public void GetBaseValueStandalone(string name, object instance, System.Type basetype, object parent)
     {

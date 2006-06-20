@@ -290,7 +290,11 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		public void ShowInsightWindow(IInsightDataProvider insightDataProvider)
 		{
 			if (insightWindow == null || insightWindow.IsDisposed) {
+#if ModifiedForAltaxo
+        insightWindow = new InsightWindow(Form.ActiveForm, this, FileName);
+#else
 				insightWindow = new InsightWindow(((Form)WorkbenchSingleton.Workbench), this, FileName);
+#endif
 				insightWindow.Closed += new EventHandler(CloseInsightWindow);
 			}
 			insightWindow.AddInsightDataProvider(insightDataProvider);
@@ -305,8 +309,13 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		
 		public void ShowCompletionWindow(ICompletionDataProvider completionDataProvider, char ch)
 		{
+#if ModifiedForAltaxo
+      Form active = Form.ActiveForm;
+      codeCompletionWindow = CodeCompletionWindow.ShowCompletionWindow(active, this, this.FileName, completionDataProvider, ch);
+#else
 			codeCompletionWindow = CodeCompletionWindow.ShowCompletionWindow((Form)WorkbenchSingleton.Workbench, this, this.FileName, completionDataProvider, ch);
-			if (codeCompletionWindow != null) {
+#endif
+      if (codeCompletionWindow != null) {
 				codeCompletionWindow.Closed += new EventHandler(CloseCodeCompletionWindow);
 			}
 		}

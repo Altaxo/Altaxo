@@ -163,6 +163,7 @@
     <Compile Include="Main\MenuCommands\SelectedColumnCondition.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Main\MenuCommands\WindowCommands.cs" />
     <Compile Include="Main\MenuCommands\WorksheetCommands.cs">
       <SubType>Code</SubType>
     </Compile>

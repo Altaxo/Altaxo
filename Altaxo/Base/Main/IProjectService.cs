@@ -162,6 +162,12 @@ namespace Altaxo.Main
     /// <param name="info">The serialization info used to serialize the state of the main window.</param>
     void SaveWindowStateToZippedFile(Altaxo.Main.ICompressedFileContainerStream zippedStream, Altaxo.Serialization.Xml.XmlStreamSerializationInfo info);
 
+      /// <summary>
+    /// Returns true if the given document has at least one open view in the workbench.
+    /// </summary>
+    /// <param name="document">The document.</param>
+    /// <returns>True if there is at least one open view for the document.</returns>
+    bool HasDocumentAnOpenView(object document);
 
     /// <summary>
     /// This function will delete a data table and close the corresponding views.

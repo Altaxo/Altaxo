@@ -235,6 +235,27 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Gui\Common\Drawing\ColorTypeThicknessPenController.cs" />
+    <Compile Include="Gui\Common\Drawing\DashCapComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\DashStyleComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\KnownColorComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\LineCapComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\LineJoinComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\LineThicknessComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\MiterLimitComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Gui\Common\MultiChildController.cs" />
     <Compile Include="Gui\Common\MultiChildControl.cs">
       <SubType>UserControl</SubType>

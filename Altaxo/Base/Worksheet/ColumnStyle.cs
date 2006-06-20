@@ -26,6 +26,10 @@ using Altaxo.Serialization;
 
 namespace Altaxo.Worksheet
 {
+
+  [Serializable]
+  public enum ColumnStyleType { RowHeader, ColumnHeader, PropertyHeader, PropertyCell, DataCell }
+
   /// <summary>
   /// Altaxo.Worksheet.ColumnStyle provides the data for visualization of the column
   /// data, for instance m_Width and color of columns
@@ -33,16 +37,35 @@ namespace Altaxo.Worksheet
   /// </summary>
   [SerializationSurrogate(0,typeof(ColumnStyle.SerializationSurrogate0))]
   [SerializationVersion(0)]
+  [Serializable]
   public abstract class ColumnStyle : System.ICloneable, System.Runtime.Serialization.IDeserializationCallback // pendant to DataGridColumnStyle
   {
+
+    protected static Graph.BrushHolder _defaultNormalBackgroundBrush = new Graph.BrushHolder(SystemColors.Window);
+    protected static Graph.BrushHolder _defaultHeaderBackgroundBrush = new Graph.BrushHolder(SystemColors.Control);
+    protected static Graph.BrushHolder _defaultSelectedBackgroundBrush = new Graph.BrushHolder(SystemColors.Highlight);
+    protected static Graph.BrushHolder _defaultNormalTextBrush = new Graph.BrushHolder(SystemColors.WindowText);
+    protected static Graph.BrushHolder _defaultSelectedTextBrush = new Graph.BrushHolder(SystemColors.HighlightText);
+    protected static Font _defaultTextFont = new Font("Arial", 8);
+    protected static Graph.PenHolder _defaultCellPen = new Graph.PenHolder(SystemColors.InactiveBorder, 1);
+
+    protected ColumnStyleType _columnStyleType;
+
     protected int m_Size=80;
-    protected Graph.PenHolder m_CellPen = new Graph.PenHolder(SystemColors.InactiveBorder,1);
     protected StringFormat m_TextFormat = new StringFormat();
-    protected Font m_TextFont = new Font("Arial",8);                
+
+    protected bool _isCellPenCustom;
+    protected Graph.PenHolder m_CellPen = new Graph.PenHolder(SystemColors.InactiveBorder,1);
+    
+    protected Font m_TextFont = new Font("Arial",8);
+
+    protected bool _isTextBrushCustom;
     protected Graph.BrushHolder m_TextBrush = new Graph.BrushHolder(SystemColors.WindowText);
-    protected Graph.BrushHolder m_SelectedTextBrush = new Graph.BrushHolder(SystemColors.HighlightText);
+
+    protected bool _isBackgroundBrushCustom;
     protected Graph.BrushHolder m_BackgroundBrush = new Graph.BrushHolder(SystemColors.Window);
-    protected Graph.BrushHolder m_SelectedBackgroundBrush = new Graph.BrushHolder(SystemColors.Highlight);
+
+    
 
     #region Serialization
     public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
@@ -53,45 +76,25 @@ namespace Altaxo.Worksheet
         info.AddValue("Size",(float)s.m_Size);
         info.AddValue("Pen",s.m_CellPen);
         info.AddValue("TextBrush",s.m_TextBrush);
-        info.AddValue("SelTextBrush",s.m_SelectedTextBrush);
         info.AddValue("BkgBrush",s.m_BackgroundBrush);
-        info.AddValue("SelBkgBrush",s.m_SelectedBackgroundBrush);
         info.AddValue("Alignment",s.m_TextFormat.Alignment);
         
 
         info.AddValue("Font",s.m_TextFont); // Serialization is possible in NET1SP2, but deserialization fails (Tested with SOAP formatter)
         
-        /*
-        string fontname = s.m_TextFont.Name;
-        float  fontsize = s.m_TextFont.Size;
-        FontStyle fontstyle = s.m_TextFont.Style;
-        GraphicsUnit fontunit = s.m_TextFont.Unit;
-        info.AddValue("FontName",fontname);
-        info.AddValue("FontSize",fontsize);
-        info.AddValue("FontStyle",fontstyle);
-        info.AddValue("FontUnit",fontunit);
-        */
+       
 
       }
       public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
       {
         ColumnStyle s = (ColumnStyle)obj;
 
-        //s.m_CellPen = new Graph.PenHolder(Color.Blue, 1, false);
-        //s.m_TextFormat = new StringFormat();
-        //s.m_TextFont = new Font("Arial",8);               
-        //s.m_TextBrush = new Graph.BrushHolder(new SolidBrush(Color.Black));
-        //s.m_SelectedTextBrush = new Graph.BrushHolder(new SolidBrush(Color.White));
-        //s._backgroundBrush = new Graph.BrushHolder(new SolidBrush(Color.White));
-        //s.m_SelectedBackgroundBrush = new Graph.BrushHolder(new SolidBrush(Color.DarkGray));
-
+       
         
         s.m_Size = (int)info.GetSingle("Size");
         s.m_CellPen = (Graph.PenHolder)info.GetValue("Pen",typeof(Graph.PenHolder));
         s.m_TextBrush = (Graph.BrushHolder)info.GetValue("TextBrush",typeof(Graph.BrushHolder));
-        s.m_SelectedTextBrush = (Graph.BrushHolder)info.GetValue("SelTextBrush",typeof(Graph.BrushHolder));
         s.m_BackgroundBrush = (Graph.BrushHolder)info.GetValue("BkgBrush",typeof(Graph.BrushHolder));
-        s.m_SelectedBackgroundBrush = (Graph.BrushHolder)info.GetValue("SelBkgBrush",typeof(Graph.BrushHolder));
         s.m_TextFormat = new StringFormat();
         s.m_TextFormat.Alignment = (StringAlignment)info.GetValue("Alignment",typeof(StringAlignment));
 
@@ -99,18 +102,6 @@ namespace Altaxo.Worksheet
         // Deserialising a font with SoapFormatter raises an error at least in Net1SP2, so I had to circuumvent this
         s.m_TextFont = (Font)info.GetValue("Font",typeof(Font)); 
         //  s.m_TextFont = new Font("Arial",8);               
-
-
-        /*                                        
-        string fontname;
-        float  fontsize;
-        FontStyle fontstyle;
-        GraphicsUnit fontunit;
-        fontname = info.GetString("FontName");
-        fontsize = info.GetSingle("FontSize");
-        fontstyle = (FontStyle)info.GetValue("FontStyle",typeof(FontStyle));
-        fontunit = (GraphicsUnit)info.GetValue("FontUnit",typeof(GraphicsUnit));
-        */
 
 
         return s;
@@ -123,6 +114,7 @@ namespace Altaxo.Worksheet
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
+        /*
         ColumnStyle s = (ColumnStyle)obj;
         info.AddValue("Size",(float)s.m_Size);
         info.AddValue("Pen",s.m_CellPen);
@@ -131,42 +123,220 @@ namespace Altaxo.Worksheet
         info.AddValue("BkgBrush",s.m_BackgroundBrush);
         info.AddValue("SelBkgBrush",s.m_SelectedBackgroundBrush);
         info.AddValue("Alignment",Enum.GetName(typeof(System.Drawing.StringAlignment),s.m_TextFormat.Alignment));
-        info.AddValue("Font",s.m_TextFont); 
+        info.AddValue("Font",s.m_TextFont);
+        */
+        throw new ApplicationException("Programming error, please contact the programmer");
       }
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
         ColumnStyle s = (ColumnStyle)o ;
         s.m_Size = (int)info.GetSingle("Size");
-        s.m_CellPen = (Graph.PenHolder)info.GetValue("Pen",s);
-        s.m_TextBrush = (Graph.BrushHolder)info.GetValue("TextBrush",s);
-        s.m_SelectedTextBrush = (Graph.BrushHolder)info.GetValue("SelTextBrush",s);
-        s.m_BackgroundBrush = (Graph.BrushHolder)info.GetValue("BkgBrush",s);
-        s.m_SelectedBackgroundBrush = (Graph.BrushHolder)info.GetValue("SelBkgBrush",s);
+
+        object notneeded;
+        notneeded = info.GetValue("Pen",s);
+        notneeded = info.GetValue("TextBrush", s);
+        
+
+        notneeded = info.GetValue("SelTextBrush",s);
+        notneeded = info.GetValue("BkgBrush", s);
+
+        notneeded = info.GetValue("SelBkgBrush",s);
         s.m_TextFormat.Alignment = (StringAlignment)Enum.Parse(typeof(StringAlignment),info.GetString("Alignment"));
         s.m_TextFont = (Font)info.GetValue("Font",s);
         return s;
       }
     }
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ColumnStyle), 1)]
+    public class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        ColumnStyle s = (ColumnStyle)obj;
+        info.AddEnum("Type", s._columnStyleType);
+        info.AddValue("Size", (float)s.m_Size);
+        info.AddValue("Alignment", Enum.GetName(typeof(System.Drawing.StringAlignment), s.m_TextFormat.Alignment));
+
+        info.AddValue("CustomPen", s._isCellPenCustom);
+        if(s._isCellPenCustom) 
+          info.AddValue("Pen", s.m_CellPen);
+        
+        info.AddValue("CustomText", s._isTextBrushCustom);
+        if(s._isTextBrushCustom)
+          info.AddValue("TextBrush", s.m_TextBrush);
+
+        info.AddValue("CustomBkg", s._isBackgroundBrushCustom);
+        if(s._isBackgroundBrushCustom)
+          info.AddValue("BkgBrush", s.m_BackgroundBrush);
+
+        info.AddValue("CustomFont", s.IsCustomFont);
+        if(s.IsCustomFont)
+          info.AddValue("Font", s.m_TextFont);
+      }
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        ColumnStyle s = (ColumnStyle)o;
+
+        if ("Size" == info.CurrentElementName)
+          return new XmlSerializationSurrogate0().Deserialize(o, info, parent);
+        
+        s._columnStyleType = (ColumnStyleType)info.GetEnum("Type", typeof(ColumnStyleType));
+        s.m_Size = (int)info.GetSingle("Size");
+        s.m_TextFormat.Alignment = (StringAlignment)Enum.Parse(typeof(StringAlignment), info.GetString("Alignment"));
+        s._isCellPenCustom = info.GetBoolean("CustomPen");
+        if (s._isCellPenCustom)
+        {
+          s.CellBorder = (Graph.PenHolder)info.GetValue("Pen", s);
+        }
+        else
+        {
+          s.SetDefaultCellBorder();
+        }
+
+        s._isTextBrushCustom = info.GetBoolean("CustomText");
+        if (s._isTextBrushCustom)
+        {
+          s.TextBrush = (Graph.BrushHolder)info.GetValue("TextBrush", s);
+        }
+        else
+        {
+          s.SetDefaultTextBrush();
+        }
+
+        s._isBackgroundBrushCustom = info.GetBoolean("CustomBkg");
+        if (s._isBackgroundBrushCustom)
+        {
+          s.BackgroundBrush = (Graph.BrushHolder)info.GetValue("BkgBrush", s);
+        }
+        else
+        {
+          s.SetDefaultBackgroundBrush();
+        }
+
+        bool isCustomFont = info.GetBoolean("CustomFont");
+        if (isCustomFont)
+          s.TextFont = (Font)info.GetValue("Font", s);
+        else
+          s.SetDefaultTextFont();
+
+        return s;
+      }
+    }
+
+
     public virtual void OnDeserialization(object obj)
     {
+
     }
 
     #endregion
 
-    public ColumnStyle()
+    /// <summary>
+    /// For deserialization purposes only.
+    /// </summary>
+    private ColumnStyle()
     {
+    }
+
+    public ColumnStyle(ColumnStyleType type)
+    {
+      _columnStyleType = type;
+
+      SetDefaultCellBorder();
+      SetDefaultBackgroundBrush();
+      SetDefaultTextBrush();
+      SetDefaultTextFont();
+      }
+
+    public void ChangeTypeTo(ColumnStyleType type)
+    {
+      _columnStyleType = type;
+
+      if (!_isCellPenCustom)
+        SetDefaultCellBorder();
+
+      if (!_isTextBrushCustom)
+        SetDefaultTextBrush();
+
+      if (!_isBackgroundBrushCustom)
+        SetDefaultBackgroundBrush();
+
+      SetDefaultTextFont();
     }
 
     public ColumnStyle(ColumnStyle s)
     {
+      _columnStyleType = s._columnStyleType;
       m_Size = s.m_Size;
+
+      _isCellPenCustom = s._isCellPenCustom;
       m_CellPen = (Graph.PenHolder)s.m_CellPen.Clone();
       m_TextFormat = (StringFormat)s.m_TextFormat.Clone();
       m_TextFont = (Font)s.m_TextFont.Clone();
+      
+      _isTextBrushCustom = s._isTextBrushCustom;
       m_TextBrush = (Graph.BrushHolder)s.m_TextBrush.Clone();
-      m_SelectedBackgroundBrush = (Graph.BrushHolder)s.m_SelectedBackgroundBrush.Clone();
-      m_SelectedTextBrush = (Graph.BrushHolder)s.m_SelectedTextBrush.Clone();
+
+      _isBackgroundBrushCustom = s._isBackgroundBrushCustom;
+      m_BackgroundBrush = (Graph.BrushHolder)s.m_BackgroundBrush.Clone();
     }
+
+    /// <summary>
+    /// Get a clone of the default cell border.
+    /// </summary>
+    /// <returns></returns>
+    public static Graph.PenHolder GetDefaultCellBorder(ColumnStyleType type)
+    {
+      if(type==ColumnStyleType.DataCell || type==ColumnStyleType.PropertyCell)
+        return (Graph.PenHolder)_defaultCellPen.Clone();
+      else      
+        return new Altaxo.Graph.PenHolder(SystemColors.ControlDarkDark, 1);
+    }
+
+    public void SetDefaultCellBorder()
+    {
+      this.CellBorder = GetDefaultCellBorder(this._columnStyleType);
+      this._isCellPenCustom = false;
+    }
+
+    public static Graph.BrushHolder GetDefaultTextBrush(ColumnStyleType type)
+    {
+      if (type == ColumnStyleType.DataCell || type == ColumnStyleType.PropertyCell)
+        return (Graph.BrushHolder)_defaultNormalTextBrush.Clone();
+      else
+        return new Altaxo.Graph.BrushHolder(SystemColors.ControlText);
+    }
+    public void SetDefaultTextBrush()
+    {
+      this.TextBrush = GetDefaultTextBrush(_columnStyleType);
+      this._isTextBrushCustom = false;
+    }
+
+    public static Graph.BrushHolder GetDefaultBackgroundBrush(ColumnStyleType type)
+    {
+      if (type == ColumnStyleType.DataCell)
+        return (Graph.BrushHolder)_defaultNormalBackgroundBrush.Clone();
+      else
+        return (Graph.BrushHolder)_defaultHeaderBackgroundBrush.Clone();
+    }
+    public void SetDefaultBackgroundBrush()
+    {
+      this.BackgroundBrush = GetDefaultBackgroundBrush(_columnStyleType);
+      this._isBackgroundBrushCustom = false;
+    }
+
+
+    public static Font GetDefaultTextFont(ColumnStyleType type)
+    {
+      return (Font)_defaultTextFont.Clone();
+    }
+    public void SetDefaultTextFont()
+    {
+      this.TextFont = GetDefaultTextFont(_columnStyleType);
+    }
+
+
+
 
     public int Width
     {
@@ -188,10 +358,23 @@ namespace Altaxo.Worksheet
       }
       set
       {
+
         if (value == null)
           throw new ArgumentNullException();
+
+        Graph.PenHolder oldValue = m_CellPen;
         m_CellPen = value;
+        if(!object.ReferenceEquals(value,oldValue))
+        {
+          oldValue.Changed -= EhCellPenChanged;
+          value.Changed += EhCellPenChanged;
+        }
       }
+    }
+
+    void EhCellPenChanged(object sender, EventArgs e)
+    {
+      _isCellPenCustom = true;
     }
 
     public Graph.BrushHolder BackgroundBrush
@@ -204,8 +387,19 @@ namespace Altaxo.Worksheet
       {
         if (value == null)
           throw new ArgumentNullException();
+        Graph.BrushHolder oldValue = m_BackgroundBrush;
         m_BackgroundBrush = value;
+        if (!object.ReferenceEquals(value, oldValue))
+        {
+          oldValue.Changed -= EhBackgroundBrushChanged;
+          value.Changed += EhBackgroundBrushChanged;
+        }
       }
+    }
+
+    void EhBackgroundBrushChanged(object sender, EventArgs e)
+    {
+      _isBackgroundBrushCustom = true;
     }
 
     public Graph.BrushHolder TextBrush
@@ -218,16 +412,50 @@ namespace Altaxo.Worksheet
       {
         if (value == null)
           throw new ArgumentNullException();
+        Graph.BrushHolder oldValue = m_TextBrush;
         m_TextBrush = value;
+        if (!object.ReferenceEquals(value, oldValue))
+        {
+          oldValue.Changed -= EhTextBrushChanged;
+          value.Changed += EhTextBrushChanged;
+        }
       }
     }
-  
+
+    void EhTextBrushChanged(object sender, EventArgs e)
+    {
+      _isTextBrushCustom = true;
+    }
+
+    public Font TextFont
+    {
+      get
+      {
+        return m_TextFont;
+      }
+      set
+      {
+        if (null == m_TextFont)
+          throw new ArgumentNullException();
+
+        m_TextFont = value;
+      }
+    }
+
+    public bool IsCustomFont
+    {
+      get
+      {
+        return m_TextFont == _defaultTextFont;
+      }
+    }
+
     public abstract void Paint(Graphics dc, Rectangle cellRectangle, int nRow, Altaxo.Data.DataColumn data, bool bSelected);
 
     public virtual void PaintBackground(Graphics dc, Rectangle cellRectangle, bool bSelected)
     {
       if (bSelected)
-        dc.FillRectangle(m_SelectedBackgroundBrush, cellRectangle);
+        dc.FillRectangle(_defaultSelectedBackgroundBrush, cellRectangle);
       else
         dc.FillRectangle(m_BackgroundBrush, cellRectangle);
 

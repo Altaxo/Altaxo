@@ -27,6 +27,7 @@ using System.Runtime.Serialization;
 
 namespace Altaxo.Graph
 {
+  #region PenHolder
   /// <summary>
   /// PenHolder is a serializable surrogate for a Pen object.
   /// you can implicitly or explicitly convert it to a pen, but you must
@@ -555,6 +556,7 @@ namespace Altaxo.Graph
       //   _SetPenVariable(null);
     }
 
+    /*
     public PenHolder(Pen pen)
       : this(pen, true)
     {
@@ -568,6 +570,7 @@ namespace Altaxo.Graph
       if (bCached)
         _SetPenVariable(_GetPenFromProperties()); // do not clone the pen because there is a problem with pen cloning with known colors (see above)
     }
+    */
 
     public static implicit operator System.Drawing.Pen(PenHolder ph)
     {
@@ -587,6 +590,7 @@ namespace Altaxo.Graph
         }
         return m_Pen;
       }
+    /*
       set
       {
         _SetPropertiesFromPen(value);
@@ -596,6 +600,7 @@ namespace Altaxo.Graph
 
         OnChanged(); // Fire the Changed event
       }
+     */
     }
 
     public bool Cached
@@ -875,6 +880,23 @@ namespace Altaxo.Graph
         OnChanged(); // Fire the Changed event
       }
     }
+
+    public DashStyleEx DashStyleEx
+    {
+      get
+      {
+        if (m_DashStyle != DashStyle.Custom)
+          return new DashStyleEx(m_DashStyle);
+        else
+          return new DashStyleEx(m_DashPattern);
+      }
+      set
+      {
+        DashStyle = value.KnownStyle;
+        DashPattern = value.CustomStyle;
+      }
+    }
+
     public LineCap EndCap
     {
       get { return m_CachedMode ? m_Pen.EndCap : m_EndCap; }
@@ -994,4 +1016,316 @@ namespace Altaxo.Graph
 
     #endregion
   } // end of class PenHolder
+
+  #endregion
+
+  #region DashStyleEx
+
+  [Serializable]
+  public class DashStyleEx : ICloneable
+  {
+    DashStyle _knownStyle;
+    float[] _customStyle;
+
+    public DashStyleEx(DashStyle style)
+    {
+      if (style == DashStyle.Custom)
+        throw new ArgumentOutOfRangeException("Style must not be a custom style, use the other constructor instead");
+
+      _knownStyle = style;
+    }
+
+    public DashStyleEx(float[] customStyle)
+    {
+      _customStyle = (float[])customStyle.Clone();
+      _knownStyle = DashStyle.Custom;
+    }
+
+    public DashStyleEx(DashStyleEx from)
+    {
+      CopyFrom(from);
+    }
+
+    public void CopyFrom(DashStyleEx from)
+    {
+      this._knownStyle = from.KnownStyle;
+      this._customStyle = from._customStyle == null ? null : (float[])from._customStyle.Clone();
+    }
+
+    public DashStyleEx Clone()
+    {
+      return new DashStyleEx(this);
+    }
+    object ICloneable.Clone()
+    {
+      return new DashStyleEx(this);
+    }
+
+    public bool IsKnownStyle
+    {
+      get
+      {
+        return _knownStyle != DashStyle.Custom;
+      }
+    }
+
+    public bool IsCustomStyle
+    {
+      get
+      {
+        return _knownStyle == DashStyle.Custom;
+      }
+    }
+
+    public DashStyle KnownStyle
+    {
+      get
+      {
+        return _knownStyle;
+      }
+    }
+
+    public float[] CustomStyle
+    {
+      get
+      {
+        return null == _customStyle ? null : (float[])_customStyle.Clone();
+      }
+    }
+
+
+    public void SetPenDash(Pen pen)
+    {
+      pen.DashStyle = _knownStyle;
+      if (IsCustomStyle)
+        pen.DashPattern = (float[])this._customStyle.Clone();
+    }
+
+    public override bool Equals(object obj)
+    {
+      if (obj is DashStyleEx)
+      {
+        DashStyleEx from = (DashStyleEx)obj;
+
+        if (this.IsKnownStyle && this._knownStyle == from._knownStyle)
+          return true;
+        else if (this.IsCustomStyle && this._customStyle == from._customStyle)
+          return true;
+      }
+
+      return false;
+    }
+
+    public override string ToString()
+    {
+      if (_knownStyle != DashStyle.Custom)
+        return _knownStyle.ToString();
+      else
+      {
+        System.Text.StringBuilder stb = new System.Text.StringBuilder();
+        foreach (float f in _customStyle)
+        {
+          stb.Append(Altaxo.Serialization.GUIConversion.ToString(f));
+          stb.Append(";");
+        }
+        return stb.ToString(0, stb.Length - 1);
+      }
+    }
+
+
+    public static DashStyleEx Solid
+    {
+      get { return new DashStyleEx(DashStyle.Solid); }
+    }
+    public static DashStyleEx Dot
+    {
+      get { return new DashStyleEx(DashStyle.Dot); }
+    }
+
+    public static DashStyleEx Dash
+    {
+      get { return new DashStyleEx(DashStyle.Dash); }
+    }
+
+    public static DashStyleEx DashDot
+    {
+      get { return new DashStyleEx(DashStyle.DashDot); }
+    }
+    public static DashStyleEx DashDotDot
+    {
+      get { return new DashStyleEx(DashStyle.DashDotDot); }
+    }
+
+
+
+  }
+  #endregion
+
+  #region LineCapEx
+
+  [Serializable]
+  public class LineCapEx : ICloneable
+  {
+    LineCap _knownStyle;
+    CustomLineCap _customStyle;
+
+    public LineCapEx(LineCap style)
+    {
+      if (style == LineCap.Custom)
+        throw new ArgumentOutOfRangeException("Style must not be a custom style, use the other constructor instead");
+
+      _knownStyle = style;
+    }
+
+    public LineCapEx(CustomLineCap customStyle)
+    {
+      _customStyle = (CustomLineCap)customStyle.Clone();
+      _knownStyle = LineCap.Custom;
+    }
+
+    public LineCapEx(AdjustableArrowCap customStyle)
+    {
+      _customStyle = (AdjustableArrowCap)customStyle.Clone();
+      _knownStyle = LineCap.Custom;
+    }
+
+    public LineCapEx(LineCapEx from)
+    {
+      CopyFrom(from);
+    }
+
+    public void CopyFrom(LineCapEx from)
+    {
+      this._knownStyle = from.KnownStyle;
+      this._customStyle = from._customStyle == null ? null : (CustomLineCap)from._customStyle.Clone();
+    }
+
+    public LineCapEx Clone()
+    {
+      return new LineCapEx(this);
+    }
+    object ICloneable.Clone()
+    {
+      return new LineCapEx(this);
+    }
+
+    public bool IsKnownStyle
+    {
+      get
+      {
+        return _knownStyle != LineCap.Custom;
+      }
+    }
+
+    public bool IsCustomStyle
+    {
+      get
+      {
+        return _knownStyle == LineCap.Custom;
+      }
+    }
+
+    public LineCap KnownStyle
+    {
+      get
+      {
+        return _knownStyle;
+      }
+    }
+
+    public AdjustableArrowCap CustomStyle
+    {
+      get
+      {
+        return null == _customStyle ? null : (AdjustableArrowCap)_customStyle.Clone();
+      }
+    }
+
+
+    public void SetPenStartCap(Pen pen)
+    {
+      pen.StartCap = _knownStyle;
+      if (IsCustomStyle)
+        pen.CustomStartCap = (AdjustableArrowCap)this._customStyle.Clone();
+    }
+    public void SetPenEndCap(Pen pen)
+    {
+      pen.EndCap = _knownStyle;
+      if (IsCustomStyle)
+        pen.CustomEndCap = (AdjustableArrowCap)this._customStyle.Clone();
+    }
+
+    public override bool Equals(object obj)
+    {
+      if (obj is LineCapEx)
+      {
+        LineCapEx from = (LineCapEx)obj;
+
+        if (this.IsKnownStyle && this._knownStyle == from._knownStyle)
+          return true;
+        else if (this.IsCustomStyle && this._customStyle == from._customStyle)
+          return true;
+      }
+
+      return false;
+    }
+
+    public override string ToString()
+    {
+      if (_knownStyle != LineCap.Custom)
+        return _knownStyle.ToString();
+      else
+      {
+        return _customStyle.ToString();
+      }
+    }
+
+
+    public static LineCapEx AnchorMask
+    {
+      get { return new LineCapEx(LineCap.AnchorMask); }
+    }
+    public static LineCapEx ArrowAnchor
+    {
+      get { return new LineCapEx(LineCap.ArrowAnchor); }
+    }
+    public static LineCapEx DiamondAnchor
+    {
+      get { return new LineCapEx(LineCap.DiamondAnchor); }
+    }
+    public static LineCapEx Flat
+    {
+      get { return new LineCapEx(LineCap.Flat); }
+    }
+    public static LineCapEx NoAnchor
+    {
+      get { return new LineCapEx(LineCap.NoAnchor); }
+    }
+    public static LineCapEx Round
+    {
+      get { return new LineCapEx(LineCap.Round); }
+    }
+    public static LineCapEx RoundAnchor
+    {
+      get { return new LineCapEx(LineCap.RoundAnchor); }
+    }
+    public static LineCapEx Square
+    {
+      get { return new LineCapEx(LineCap.Square); }
+    }
+    public static LineCapEx SquareAnchor
+    {
+      get { return new LineCapEx(LineCap.SquareAnchor); }
+    }
+    public static LineCapEx Triangle
+    {
+      get { return new LineCapEx(LineCap.Triangle); }
+    }
+   
+
+
+
+  }
+  #endregion
+
 }
