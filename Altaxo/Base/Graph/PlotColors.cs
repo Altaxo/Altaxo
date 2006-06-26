@@ -23,9 +23,221 @@
 using System;
 using System.Text;
 using System.Drawing;
+using System.Collections.Generic;
 
 namespace Altaxo.Graph
 {
+  /// <summary>
+  /// Type of colors that is shown e.g. in comboboxes.
+  /// </summary>
+  [Serializable]
+  public enum ColorType
+  {
+    /// <summary>
+    /// Known colors and system colors are shown.
+    /// </summary>
+    KnownAndSystemColor,
+    /// <summary>
+    /// Known colors are shown.
+    /// </summary>
+    KnownColor,
+    /// <summary>
+    /// Only plot colors are shown.
+    /// </summary>
+    PlotColor
+  }
+
+  public static class ColorDictionary
+  {
+    static Dictionary<string, Color> _nameToColor;
+    static Dictionary<Color, string> _colorToName;
+    static List<Color> _knownAndSystemColors;
+    static List<Color> _knownColors;
+    static List<Color> _plotColors;
+
+    static ColorDictionary()
+    {
+      _nameToColor = new Dictionary<string, Color>();
+      _colorToName = new Dictionary<Color, string>(new MyColorComparer());
+      _knownAndSystemColors = new List<Color>();
+      _knownColors = new List<Color>();
+
+      foreach (object o in Enum.GetValues(typeof(KnownColor)))
+      {
+        Color c = Color.FromKnownColor((KnownColor)o);
+        try
+        {
+          _nameToColor.Add(c.Name, c);
+          
+          if(!_colorToName.ContainsKey(c)) // Some different names give the same color, so we can use only the first name here
+            _colorToName.Add(c, c.Name);
+          
+          _knownAndSystemColors.Add(c);
+          if (!c.IsSystemColor)
+            _knownColors.Add(c);
+        }
+        catch (Exception ex)
+        {
+
+        }
+      }
+    }
+
+    public static string GetColorName(Color c)
+    {
+      if (c.IsNamedColor)
+        return c.Name;
+      else
+        return _colorToName[c];
+    }
+    public static string GetBaseColorName(Color c)
+    {
+      if (c.IsNamedColor)
+        return c.Name;
+
+      string result = _colorToName[c];
+      if (null == result)
+        return result;
+      else
+        return _colorToName[Color.FromArgb(c.R, c.G, c.B)];
+    }
+
+    public static bool IsColorNamed(Color c)
+    {
+      return c.IsNamedColor || _colorToName.ContainsKey(c);
+    }
+
+    public static bool IsBaseColorNamed(Color c)
+    {
+      if (c.IsNamedColor)
+        return true;
+
+      if (_colorToName.ContainsKey(c))
+        return true;
+      else
+        return _colorToName.ContainsKey(Color.FromArgb(c.R, c.G, c.B));
+    }
+
+
+    public static bool IsNameKnown(string name)
+    {
+      return _nameToColor.ContainsKey(name);
+    }
+
+    public static Color GetColor(string name)
+    {
+      return _nameToColor[name];
+    }
+
+
+    public static Color[] GetKnownAndSystemColors()
+    {
+      return _knownAndSystemColors.ToArray();
+    }
+
+    public static Color[] GetKnownColors()
+    {
+      return _knownColors.ToArray();
+    }
+
+    public static Color[] GetPlotColors()
+    {
+      return PlotColors.Colors.ToArray();
+    }
+
+    public static Color[] GetColorsOfType(ColorType type)
+    {
+      Color[] result = null;
+      switch (type)
+      {
+        case ColorType.PlotColor:
+          result = GetPlotColors();
+          break;
+        case ColorType.KnownColor:
+          result =GetKnownColors();
+          break;
+        case ColorType.KnownAndSystemColor:
+          result =  GetKnownAndSystemColors();
+          break;
+      }
+      return result;
+    }
+
+    public static bool IsColorOfType(Color c, ColorType type)
+    {
+      bool result = false;
+      switch (type)
+      {
+        case ColorType.PlotColor:
+          {
+            result = PlotColors.Colors.IsPlotColor(c);
+          }
+          break;
+        case ColorType.KnownColor:
+          {
+            if (_colorToName.ContainsKey(c))
+            {
+              Color cc = _nameToColor[_colorToName[c]];
+              result = !(cc.IsSystemColor);
+            }
+          }
+          break;
+        case ColorType.KnownAndSystemColor:
+          {
+            result = _colorToName.ContainsKey(c);
+          }
+          break;
+      }
+      return result;
+    }
+
+    public static Color GetNormalizedColor(Color c, ColorType type)
+    {
+      Color result = c;
+      switch (type)
+      {
+        case ColorType.PlotColor:
+          if (_colorToName.ContainsKey(c))
+          {
+            result = _nameToColor[_colorToName[c]];
+          }
+          break;
+        case ColorType.KnownColor:
+        case ColorType.KnownAndSystemColor:
+          if (_colorToName.ContainsKey(c))
+          {
+            result = _nameToColor[_colorToName[c]];
+          }
+          break;
+      }
+      return result;
+    }
+
+
+    class MyColorComparer : IEqualityComparer<Color>
+    {
+      #region IEqualityComparer<Color> Members
+
+      public bool Equals(Color x, Color y)
+      {
+        if (x.IsSystemColor || y.IsSystemColor)
+          return ( x == y );
+        else
+          return ( x.R == y.R && x.G == y.G && x.B == y.B && x.A == y.A );
+      }
+
+      public int GetHashCode(Color x)
+      {
+        if (x.IsSystemColor)
+          return x.GetHashCode();
+        else
+          return Color.FromArgb(x.A, x.R, x.G, x.B).GetHashCode();
+      }
+
+      #endregion
+    }
+  }
+
   public class PlotColor
   {
     System.Drawing.Color _color;
@@ -41,7 +253,7 @@ namespace Altaxo.Graph
     {
       get { return _color; }
     }
-   
+
     public string Name
     {
       get { return _name; }
@@ -54,7 +266,7 @@ namespace Altaxo.Graph
 
     public override bool Equals(object obj)
     {
-      if(obj is PlotColor)
+      if (obj is PlotColor)
         return this._color == ((PlotColor)obj)._color;
 
       return false;
@@ -80,7 +292,7 @@ namespace Altaxo.Graph
 
     private PlotColors()
     {
-      Add(new PlotColor(System.Drawing.Color.Black,"Black"));
+      Add(new PlotColor(System.Drawing.Color.Black, "Black"));
       Add(new PlotColor(System.Drawing.Color.Red, "Red"));
       Add(new PlotColor(System.Drawing.Color.Green, "Green"));
       Add(new PlotColor(System.Drawing.Color.Blue, "Blue"));
@@ -106,6 +318,14 @@ namespace Altaxo.Graph
       InnerList.Add(c);
     }
 
+    public Color[] ToArray()
+    {
+      Color[] result = new Color[Count];
+      for (int i = Count - 1; i >= 0; i--)
+        result[i] = this[i].Color;
+      return result;
+    }
+
     public int IndexOf(Color c)
     {
       for (int i = 0; i < Count; i++)
@@ -121,7 +341,12 @@ namespace Altaxo.Graph
     public PlotColor GetPlotColor(Color c)
     {
       int i = IndexOf(c);
-      return i<0 ? null : this[i];
+      return i < 0 ? null : this[i];
+    }
+
+    public bool IsPlotColor(Color c)
+    {
+      return IndexOf(c) >= 0;
     }
 
     public string GetPlotColorName(Color c)

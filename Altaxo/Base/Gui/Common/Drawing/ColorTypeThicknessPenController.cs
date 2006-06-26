@@ -33,6 +33,7 @@ namespace Altaxo.Gui.Common.Drawing
     void InitializeColor(System.Drawing.Color selectedColor);
     void InitializeLineType(DashStyleEx selection);
     void InitializeLineWidth(float selection);
+    ColorType ColorType  { get; set; }
   }
 
   public interface IColorTypeThicknessPenViewEventSink
@@ -40,6 +41,7 @@ namespace Altaxo.Gui.Common.Drawing
     void EhView_ColorChanged(System.Drawing.Color selection);
     void EhView_LineTypeChanged(DashStyleEx selection);
     void EhView_LineWidthChanged(float value);
+    void EhView_ShowFullPenDialog();
   }
 
   public interface IColorTypeThicknessPenController : IColorTypeThicknessPenViewEventSink, Main.GUI.IMVCAController
@@ -93,6 +95,13 @@ namespace Altaxo.Gui.Common.Drawing
     public void EhView_LineWidthChanged(float value)
     {
       _tempDoc.Width = value;
+    }
+
+    public void EhView_ShowFullPenDialog()
+    {
+      PenAllPropertiesControl ctrl = new PenAllPropertiesControl();
+      ctrl.Pen = _tempDoc;
+      Current.Gui.ShowDialog(ctrl, "Pen properties");
     }
 
     #endregion

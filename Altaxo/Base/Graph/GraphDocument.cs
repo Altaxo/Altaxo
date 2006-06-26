@@ -277,8 +277,8 @@ namespace Altaxo.Graph
         GraphDocument s = (GraphDocument)obj;
         info.AddValue("GraphIdentifier", s._graphIdentifier);
         info.AddValue("Notes", s._notes);
-        info.AddValue("CreationTime", s._creationTime);
-        info.AddValue("LastChangeTime", s._lastChangeTime);
+        info.AddValue("CreationTime", s._creationTime.ToLocalTime());
+        info.AddValue("LastChangeTime", s._lastChangeTime.ToLocalTime());
         
 
       }
@@ -287,8 +287,8 @@ namespace Altaxo.Graph
         base.Deserialize(s, info, parent);
         s._graphIdentifier = info.GetString("GraphIdentifier");
         s._notes = info.GetString("Notes");
-        s._creationTime = info.GetDateTime("CreationTime");
-        s._lastChangeTime = info.GetDateTime("LastChangeTime");
+        s._creationTime = info.GetDateTime("CreationTime").ToUniversalTime();
+        s._lastChangeTime = info.GetDateTime("LastChangeTime").ToUniversalTime();
       }
     }
 

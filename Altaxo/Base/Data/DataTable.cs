@@ -354,16 +354,16 @@ namespace Altaxo.Data
         base.Serialize(obj, info);
         DataTable s = (DataTable)obj;
         info.AddValue("Notes", s._notes);
-        info.AddValue("CreationTime", s._creationTime);
-        info.AddValue("LastChangeTime", s._lastChangeTime);
+        info.AddValue("CreationTime", s._creationTime.ToLocalTime());
+        info.AddValue("LastChangeTime", s._lastChangeTime.ToLocalTime());
        
       }
       public override void Deserialize(DataTable s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
         base.Deserialize(s, info, parent);
         s._notes = info.GetString("Notes");
-        s._creationTime = info.GetDateTime("CreationTime");
-        s._lastChangeTime = info.GetDateTime("LastChangeTime");
+        s._creationTime = info.GetDateTime("CreationTime").ToUniversalTime();
+        s._lastChangeTime = info.GetDateTime("LastChangeTime").ToUniversalTime();
       }
     }
 

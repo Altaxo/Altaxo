@@ -1,89 +1,27 @@
-#region Copyright
-/////////////////////////////////////////////////////////////////////////////
-//    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
-//
-//    This program is free software; you can redistribute it and/or modify
-//    it under the terms of the GNU General Public License as published by
-//    the Free Software Foundation; either version 2 of the License, or
-//    (at your option) any later version.
-//
-//    This program is distributed in the hope that it will be useful,
-//    but WITHOUT ANY WARRANTY; without even the implied warranty of
-//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//    GNU General Public License for more details.
-//
-//    You should have received a copy of the GNU General Public License
-//    along with this program; if not, write to the Free Software
-//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-//
-/////////////////////////////////////////////////////////////////////////////
-#endregion
-
-using System;
-using System.Collections;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Windows.Forms;
-using Altaxo.Main.GUI;
-
-using Altaxo.Graph;
-namespace Altaxo.Gui.Graph
+namespace Altaxo.Gui.Common.Drawing
 {
-  /// <summary>
-  /// Summary description for XYPlotLineStyleControl.
-  /// </summary>
-  [UserControlForController(typeof(IXYPlotLineStyleViewEventSink))]
-  public class XYPlotLineStyleControl : System.Windows.Forms.UserControl, IXYPlotLineStyleView
+  partial class PenAllPropertiesControl
   {
-    private IXYPlotLineStyleViewEventSink _controller;
-    private bool _EnableDisableAll=false;
-    private int m_SuppressEvents=0;
-    private System.Windows.Forms.GroupBox m_gbLine;
-    private System.Windows.Forms.Button m_btLineFillColorDetails;
-    private System.Windows.Forms.ComboBox m_cbLineFillDirection;
-    private System.Windows.Forms.Label label5;
-    private System.Windows.Forms.Label label4;
-    private System.Windows.Forms.CheckBox m_chkLineFillArea;
-    private System.Windows.Forms.ComboBox m_cbLineWidth;
-    private System.Windows.Forms.ComboBox m_cbLineType;
-    private System.Windows.Forms.ComboBox m_cbLineConnect;
-    private System.Windows.Forms.Label label3;
-    private System.Windows.Forms.Label label2;
-    private System.Windows.Forms.Label label1;
-    private System.Windows.Forms.CheckBox m_chkLineSymbolGap;
-    private System.Windows.Forms.Button m_btLineSymbolColorDetails;
-    private System.Windows.Forms.ComboBox m_cbLineSymbolColor;
-    private System.Windows.Forms.CheckBox _chkIndependentColor;
-    private Altaxo.Gui.Common.Drawing.BrushColorComboBox m_cbLineFillColor;
-    private IContainer components;
-
-    public XYPlotLineStyleControl()
-    {
-      // This call is required by the Windows.Forms Form Designer.
-      InitializeComponent();
-
-      // TODO: Add any initialization after the InitializeComponent call
-
-    }
+    /// <summary> 
+    /// Required designer variable.
+    /// </summary>
+    private System.ComponentModel.IContainer components = null;
 
     /// <summary> 
     /// Clean up any resources being used.
     /// </summary>
-    protected override void Dispose( bool disposing )
+    /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+    protected override void Dispose(bool disposing)
     {
-      if( disposing )
+      if (disposing && (components != null))
       {
-        if(components != null)
-        {
-          components.Dispose();
-        }
+        components.Dispose();
       }
-      base.Dispose( disposing );
+      base.Dispose(disposing);
     }
 
     #region Component Designer generated code
+
     /// <summary> 
     /// Required method for Designer support - do not modify 
     /// the contents of this method with the code editor.
@@ -91,61 +29,113 @@ namespace Altaxo.Gui.Graph
     private void InitializeComponent()
     {
       this.components = new System.ComponentModel.Container();
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(XYPlotLineStyleControl));
-      this.m_gbLine = new System.Windows.Forms.GroupBox();
-      this.m_cbLineFillColor = new Altaxo.Gui.Common.Drawing.BrushColorComboBox();
-      this.m_btLineFillColorDetails = new System.Windows.Forms.Button();
-      this.m_cbLineFillDirection = new System.Windows.Forms.ComboBox();
-      this.label5 = new System.Windows.Forms.Label();
-      this.label4 = new System.Windows.Forms.Label();
-      this.m_chkLineFillArea = new System.Windows.Forms.CheckBox();
-      this.m_cbLineWidth = new System.Windows.Forms.ComboBox();
-      this.m_cbLineType = new System.Windows.Forms.ComboBox();
-      this.m_cbLineConnect = new System.Windows.Forms.ComboBox();
-      this.label3 = new System.Windows.Forms.Label();
-      this.label2 = new System.Windows.Forms.Label();
-      this.label1 = new System.Windows.Forms.Label();
-      this._chkIndependentColor = new System.Windows.Forms.CheckBox();
-      this.m_cbLineSymbolColor = new System.Windows.Forms.ComboBox();
-      this.m_btLineSymbolColorDetails = new System.Windows.Forms.Button();
-      this.m_chkLineSymbolGap = new System.Windows.Forms.CheckBox();
-      this.m_gbLine.SuspendLayout();
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PenAllPropertiesControl));
+      this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+      this._lblColor = new System.Windows.Forms.Label();
+      this._lblStyle = new System.Windows.Forms.Label();
+      this._cbDashStyle = new Altaxo.Gui.Common.Drawing.DashStyleComboBox();
+      this._cbColor = new Altaxo.Gui.Common.Drawing.ColorComboBox();
+      this._cbDashCap = new Altaxo.Gui.Common.Drawing.DashCapComboBox();
+      this._lblDashCap = new System.Windows.Forms.Label();
+      this._lblStartCap = new System.Windows.Forms.Label();
+      this._lblEndCap = new System.Windows.Forms.Label();
+      this._lblJoin = new System.Windows.Forms.Label();
+      this._lblMiter = new System.Windows.Forms.Label();
+      this._cbLineJoin = new Altaxo.Gui.Common.Drawing.LineJoinComboBox();
+      this._cbMiterLimit = new Altaxo.Gui.Common.Drawing.MiterLimitComboBox();
+      this._cbThickness = new Altaxo.Gui.Common.Drawing.LineThicknessComboBox();
+      this._lblThickness = new System.Windows.Forms.Label();
+      this.lineCapComboBox1 = new Altaxo.Gui.Common.Drawing.LineCapComboBox();
+      this._cbStartCap = new Altaxo.Gui.Common.Drawing.LineCapComboBox();
+      this._cbEndCap = new Altaxo.Gui.Common.Drawing.LineCapComboBox();
+      this._LineDesignPanel = new System.Windows.Forms.Panel();
+      this.tableLayoutPanel1.SuspendLayout();
       this.SuspendLayout();
       // 
-      // m_gbLine
+      // tableLayoutPanel1
       // 
-      this.m_gbLine.Controls.Add(this.m_cbLineFillColor);
-      this.m_gbLine.Controls.Add(this.m_btLineFillColorDetails);
-      this.m_gbLine.Controls.Add(this.m_cbLineFillDirection);
-      this.m_gbLine.Controls.Add(this.label5);
-      this.m_gbLine.Controls.Add(this.label4);
-      this.m_gbLine.Controls.Add(this.m_chkLineFillArea);
-      this.m_gbLine.Controls.Add(this.m_cbLineWidth);
-      this.m_gbLine.Controls.Add(this.m_cbLineType);
-      this.m_gbLine.Controls.Add(this.m_cbLineConnect);
-      this.m_gbLine.Controls.Add(this.label3);
-      this.m_gbLine.Controls.Add(this.label2);
-      this.m_gbLine.Controls.Add(this.label1);
-      this.m_gbLine.Controls.Add(this._chkIndependentColor);
-      this.m_gbLine.Controls.Add(this.m_cbLineSymbolColor);
-      this.m_gbLine.Controls.Add(this.m_btLineSymbolColorDetails);
-      this.m_gbLine.Controls.Add(this.m_chkLineSymbolGap);
-      this.m_gbLine.Location = new System.Drawing.Point(8, 0);
-      this.m_gbLine.Name = "m_gbLine";
-      this.m_gbLine.Size = new System.Drawing.Size(224, 328);
-      this.m_gbLine.TabIndex = 23;
-      this.m_gbLine.TabStop = false;
-      this.m_gbLine.Text = "Line";
+      this.tableLayoutPanel1.ColumnCount = 4;
+      this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+      this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+      this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+      this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+      this.tableLayoutPanel1.Controls.Add(this._lblColor, 0, 0);
+      this.tableLayoutPanel1.Controls.Add(this._lblStyle, 0, 3);
+      this.tableLayoutPanel1.Controls.Add(this._cbDashStyle, 1, 3);
+      this.tableLayoutPanel1.Controls.Add(this._cbColor, 1, 0);
+      this.tableLayoutPanel1.Controls.Add(this._cbDashCap, 3, 3);
+      this.tableLayoutPanel1.Controls.Add(this._lblDashCap, 2, 3);
+      this.tableLayoutPanel1.Controls.Add(this._lblStartCap, 0, 4);
+      this.tableLayoutPanel1.Controls.Add(this._lblEndCap, 2, 4);
+      this.tableLayoutPanel1.Controls.Add(this._lblJoin, 0, 5);
+      this.tableLayoutPanel1.Controls.Add(this._lblMiter, 2, 5);
+      this.tableLayoutPanel1.Controls.Add(this._cbLineJoin, 1, 5);
+      this.tableLayoutPanel1.Controls.Add(this._cbMiterLimit, 3, 5);
+      this.tableLayoutPanel1.Controls.Add(this._cbThickness, 1, 2);
+      this.tableLayoutPanel1.Controls.Add(this._lblThickness, 0, 2);
+      this.tableLayoutPanel1.Controls.Add(this._cbStartCap, 1, 4);
+      this.tableLayoutPanel1.Controls.Add(this._cbEndCap, 3, 4);
+      this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 3);
+      this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+      this.tableLayoutPanel1.RowCount = 6;
+      this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+      this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+      this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+      this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+      this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+      this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+      this.tableLayoutPanel1.Size = new System.Drawing.Size(379, 145);
+      this.tableLayoutPanel1.TabIndex = 0;
       // 
-      // m_cbLineFillColor
+      // _lblColor
       // 
-      this.m_cbLineFillColor.Brush = ((Altaxo.Graph.BrushHolder)(resources.GetObject("m_cbLineFillColor.Brush")));
-      this.m_cbLineFillColor.ColorType = Altaxo.Graph.ColorType.KnownAndSystemColor;
-      this.m_cbLineFillColor.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-      this.m_cbLineFillColor.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.m_cbLineFillColor.FormattingEnabled = true;
-      this.m_cbLineFillColor.ItemHeight = 15;
-      this.m_cbLineFillColor.Items.AddRange(new object[] {
+      this._lblColor.AutoSize = true;
+      this._lblColor.Location = new System.Drawing.Point(3, 0);
+      this._lblColor.Name = "_lblColor";
+      this._lblColor.Size = new System.Drawing.Size(34, 13);
+      this._lblColor.TabIndex = 0;
+      this._lblColor.Text = "Color:";
+      // 
+      // _lblStyle
+      // 
+      this._lblStyle.AutoSize = true;
+      this._lblStyle.Location = new System.Drawing.Point(3, 70);
+      this._lblStyle.Name = "_lblStyle";
+      this._lblStyle.Size = new System.Drawing.Size(33, 13);
+      this._lblStyle.TabIndex = 1;
+      this._lblStyle.Text = "Style:";
+      // 
+      // _cbDashStyle
+      // 
+      this._cbDashStyle.DashStyleEx = ((Altaxo.Graph.DashStyleEx)(resources.GetObject("_cbDashStyle.DashStyleEx")));
+      this._cbDashStyle.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+      this._cbDashStyle.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this._cbDashStyle.FormattingEnabled = true;
+      this._cbDashStyle.ItemHeight = 13;
+      this._cbDashStyle.Items.AddRange(new object[] {
+            ((object)(resources.GetObject("_cbDashStyle.Items"))),
+            ((object)(resources.GetObject("_cbDashStyle.Items1"))),
+            ((object)(resources.GetObject("_cbDashStyle.Items2"))),
+            ((object)(resources.GetObject("_cbDashStyle.Items3"))),
+            ((object)(resources.GetObject("_cbDashStyle.Items4"))),
+            ((object)(resources.GetObject("_cbDashStyle.Items5"))),
+            ((object)(resources.GetObject("_cbDashStyle.Items6"))),
+            ((object)(resources.GetObject("_cbDashStyle.Items7"))),
+            ((object)(resources.GetObject("_cbDashStyle.Items8"))),
+            ((object)(resources.GetObject("_cbDashStyle.Items9")))});
+      this._cbDashStyle.Location = new System.Drawing.Point(68, 73);
+      this._cbDashStyle.Name = "_cbDashStyle";
+      this._cbDashStyle.Size = new System.Drawing.Size(121, 19);
+      this._cbDashStyle.TabIndex = 2;
+      // 
+      // _cbColor
+      // 
+      this._cbColor.Color = System.Drawing.Color.Black;
+      this._cbColor.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+      this._cbColor.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this._cbColor.FormattingEnabled = true;
+      this._cbColor.ItemHeight = 13;
+      this._cbColor.Items.AddRange(new object[] {
             System.Drawing.SystemColors.ActiveBorder,
             System.Drawing.SystemColors.ActiveCaption,
             System.Drawing.SystemColors.ActiveCaptionText,
@@ -494,313 +484,223 @@ namespace Altaxo.Gui.Graph
             System.Drawing.SystemColors.GradientInactiveCaption,
             System.Drawing.SystemColors.MenuBar,
             System.Drawing.SystemColors.MenuHighlight});
-      this.m_cbLineFillColor.Location = new System.Drawing.Point(80, 296);
-      this.m_cbLineFillColor.Name = "m_cbLineFillColor";
-      this.m_cbLineFillColor.Size = new System.Drawing.Size(121, 21);
-      this.m_cbLineFillColor.TabIndex = 25;
+      this._cbColor.Location = new System.Drawing.Point(68, 3);
+      this._cbColor.Name = "_cbColor";
+      this._cbColor.Size = new System.Drawing.Size(121, 19);
+      this._cbColor.TabIndex = 3;
       // 
-      // m_btLineFillColorDetails
+      // _cbDashCap
       // 
-      this.m_btLineFillColorDetails.Location = new System.Drawing.Point(8, 296);
-      this.m_btLineFillColorDetails.Name = "m_btLineFillColorDetails";
-      this.m_btLineFillColorDetails.Size = new System.Drawing.Size(40, 23);
-      this.m_btLineFillColorDetails.TabIndex = 11;
-      this.m_btLineFillColorDetails.Text = "Adv..";
+      this._cbDashCap.DashCap = System.Drawing.Drawing2D.DashCap.Flat;
+      this._cbDashCap.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+      this._cbDashCap.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this._cbDashCap.FormattingEnabled = true;
+      this._cbDashCap.ItemHeight = 13;
+      this._cbDashCap.Items.AddRange(new object[] {
+            System.Drawing.Drawing2D.DashCap.Flat,
+            System.Drawing.Drawing2D.DashCap.Round,
+            System.Drawing.Drawing2D.DashCap.Triangle,
+            System.Drawing.Drawing2D.DashCap.Flat,
+            System.Drawing.Drawing2D.DashCap.Round,
+            System.Drawing.Drawing2D.DashCap.Triangle});
+      this._cbDashCap.Location = new System.Drawing.Point(255, 73);
+      this._cbDashCap.Name = "_cbDashCap";
+      this._cbDashCap.Size = new System.Drawing.Size(121, 19);
+      this._cbDashCap.TabIndex = 4;
       // 
-      // m_cbLineFillDirection
+      // _lblDashCap
       // 
-      this.m_cbLineFillDirection.Location = new System.Drawing.Point(80, 248);
-      this.m_cbLineFillDirection.Name = "m_cbLineFillDirection";
-      this.m_cbLineFillDirection.Size = new System.Drawing.Size(121, 21);
-      this.m_cbLineFillDirection.TabIndex = 9;
-      this.m_cbLineFillDirection.Text = "comboBox1";
+      this._lblDashCap.AutoSize = true;
+      this._lblDashCap.Location = new System.Drawing.Point(195, 70);
+      this._lblDashCap.Name = "_lblDashCap";
+      this._lblDashCap.Size = new System.Drawing.Size(54, 13);
+      this._lblDashCap.TabIndex = 5;
+      this._lblDashCap.Text = "DashCap:";
       // 
-      // label5
+      // _lblStartCap
       // 
-      this.label5.Location = new System.Drawing.Point(8, 272);
-      this.label5.Name = "label5";
-      this.label5.Size = new System.Drawing.Size(72, 16);
-      this.label5.TabIndex = 8;
-      this.label5.Text = "Fill Color";
+      this._lblStartCap.AutoSize = true;
+      this._lblStartCap.Location = new System.Drawing.Point(3, 95);
+      this._lblStartCap.Name = "_lblStartCap";
+      this._lblStartCap.Size = new System.Drawing.Size(32, 13);
+      this._lblStartCap.TabIndex = 6;
+      this._lblStartCap.Text = "Start:";
       // 
-      // label4
+      // _lblEndCap
       // 
-      this.label4.Location = new System.Drawing.Point(8, 248);
-      this.label4.Name = "label4";
-      this.label4.Size = new System.Drawing.Size(72, 16);
-      this.label4.TabIndex = 7;
-      this.label4.Text = "Fill Direction";
+      this._lblEndCap.AutoSize = true;
+      this._lblEndCap.Location = new System.Drawing.Point(195, 95);
+      this._lblEndCap.Name = "_lblEndCap";
+      this._lblEndCap.Size = new System.Drawing.Size(29, 13);
+      this._lblEndCap.TabIndex = 7;
+      this._lblEndCap.Text = "End:";
       // 
-      // m_chkLineFillArea
+      // _lblJoin
       // 
-      this.m_chkLineFillArea.Location = new System.Drawing.Point(16, 216);
-      this.m_chkLineFillArea.Name = "m_chkLineFillArea";
-      this.m_chkLineFillArea.Size = new System.Drawing.Size(176, 16);
-      this.m_chkLineFillArea.TabIndex = 6;
-      this.m_chkLineFillArea.Text = "Fill Area";
-      this.m_chkLineFillArea.CheckedChanged += new System.EventHandler(this.EhLineFillArea_CheckedChanged);
+      this._lblJoin.AutoSize = true;
+      this._lblJoin.Location = new System.Drawing.Point(3, 120);
+      this._lblJoin.Name = "_lblJoin";
+      this._lblJoin.Size = new System.Drawing.Size(29, 13);
+      this._lblJoin.TabIndex = 8;
+      this._lblJoin.Text = "Join:";
       // 
-      // m_cbLineWidth
+      // _lblMiter
       // 
-      this.m_cbLineWidth.Location = new System.Drawing.Point(89, 75);
-      this.m_cbLineWidth.Name = "m_cbLineWidth";
-      this.m_cbLineWidth.Size = new System.Drawing.Size(121, 21);
-      this.m_cbLineWidth.TabIndex = 5;
-      this.m_cbLineWidth.Text = "comboBox1";
+      this._lblMiter.AutoSize = true;
+      this._lblMiter.Location = new System.Drawing.Point(195, 120);
+      this._lblMiter.Name = "_lblMiter";
+      this._lblMiter.Size = new System.Drawing.Size(33, 13);
+      this._lblMiter.TabIndex = 9;
+      this._lblMiter.Text = "Miter:";
       // 
-      // m_cbLineType
+      // _cbLineJoin
       // 
-      this.m_cbLineType.Location = new System.Drawing.Point(89, 102);
-      this.m_cbLineType.Name = "m_cbLineType";
-      this.m_cbLineType.Size = new System.Drawing.Size(121, 21);
-      this.m_cbLineType.TabIndex = 4;
-      this.m_cbLineType.Text = "comboBox1";
+      this._cbLineJoin.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+      this._cbLineJoin.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this._cbLineJoin.FormattingEnabled = true;
+      this._cbLineJoin.ItemHeight = 13;
+      this._cbLineJoin.Items.AddRange(new object[] {
+            System.Drawing.Drawing2D.LineJoin.Miter,
+            System.Drawing.Drawing2D.LineJoin.Bevel,
+            System.Drawing.Drawing2D.LineJoin.Round,
+            System.Drawing.Drawing2D.LineJoin.MiterClipped});
+      this._cbLineJoin.LineJoin = System.Drawing.Drawing2D.LineJoin.Miter;
+      this._cbLineJoin.Location = new System.Drawing.Point(68, 123);
+      this._cbLineJoin.Name = "_cbLineJoin";
+      this._cbLineJoin.Size = new System.Drawing.Size(121, 19);
+      this._cbLineJoin.TabIndex = 10;
       // 
-      // m_cbLineConnect
+      // _cbMiterLimit
       // 
-      this.m_cbLineConnect.Location = new System.Drawing.Point(89, 129);
-      this.m_cbLineConnect.Name = "m_cbLineConnect";
-      this.m_cbLineConnect.Size = new System.Drawing.Size(121, 21);
-      this.m_cbLineConnect.TabIndex = 3;
-      this.m_cbLineConnect.Text = "comboBox1";
-      this.m_cbLineConnect.SelectionChangeCommitted += new System.EventHandler(this.m_cbLineConnect_SelectionChangeCommitted);
+      this._cbMiterLimit.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+      this._cbMiterLimit.FormattingEnabled = true;
+      this._cbMiterLimit.ItemHeight = 13;
+      this._cbMiterLimit.Items.AddRange(new object[] {
+            0F,
+            0.125F,
+            0.25F,
+            0.5F,
+            1F,
+            2F,
+            3F,
+            5F,
+            10F});
+      this._cbMiterLimit.Location = new System.Drawing.Point(255, 123);
+      this._cbMiterLimit.MiterValue = 1F;
+      this._cbMiterLimit.Name = "_cbMiterLimit";
+      this._cbMiterLimit.Size = new System.Drawing.Size(121, 19);
+      this._cbMiterLimit.TabIndex = 11;
       // 
-      // label3
+      // _cbThickness
       // 
-      this.label3.Location = new System.Drawing.Point(40, 78);
-      this.label3.Name = "label3";
-      this.label3.Size = new System.Drawing.Size(40, 16);
-      this.label3.TabIndex = 2;
-      this.label3.Text = "Width";
+      this._cbThickness.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+      this._cbThickness.FormattingEnabled = true;
+      this._cbThickness.ItemHeight = 13;
+      this._cbThickness.Items.AddRange(new object[] {
+            0F,
+            0.125F,
+            0.25F,
+            0.5F,
+            1F,
+            2F,
+            3F,
+            5F,
+            10F});
+      this._cbThickness.Location = new System.Drawing.Point(68, 48);
+      this._cbThickness.Name = "_cbThickness";
+      this._cbThickness.Size = new System.Drawing.Size(121, 19);
+      this._cbThickness.TabIndex = 12;
+      this._cbThickness.Thickness = 1F;
       // 
-      // label2
+      // _lblThickness
       // 
-      this.label2.Location = new System.Drawing.Point(40, 107);
-      this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(32, 16);
-      this.label2.TabIndex = 1;
-      this.label2.Text = "Type";
+      this._lblThickness.AutoSize = true;
+      this._lblThickness.Location = new System.Drawing.Point(3, 45);
+      this._lblThickness.Name = "_lblThickness";
+      this._lblThickness.Size = new System.Drawing.Size(59, 13);
+      this._lblThickness.TabIndex = 13;
+      this._lblThickness.Text = "Thickness:";
       // 
-      // label1
+      // lineCapComboBox1
       // 
-      this.label1.Location = new System.Drawing.Point(32, 134);
-      this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(48, 16);
-      this.label1.TabIndex = 0;
-      this.label1.Text = "Connect";
+      this.lineCapComboBox1.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+      this.lineCapComboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.lineCapComboBox1.ItemHeight = 13;
+      this.lineCapComboBox1.Location = new System.Drawing.Point(0, 0);
+      this.lineCapComboBox1.Name = "lineCapComboBox1";
+      this.lineCapComboBox1.Size = new System.Drawing.Size(121, 19);
+      this.lineCapComboBox1.TabIndex = 0;
       // 
-      // _chkIndependentColor
+      // _cbStartCap
       // 
-      this._chkIndependentColor.Location = new System.Drawing.Point(8, 24);
-      this._chkIndependentColor.Name = "_chkIndependentColor";
-      this._chkIndependentColor.Size = new System.Drawing.Size(128, 16);
-      this._chkIndependentColor.TabIndex = 24;
-      this._chkIndependentColor.Text = "independent color";
-      this._chkIndependentColor.CheckedChanged += new System.EventHandler(this._chkIndependentColor_CheckedChanged);
+      this._cbStartCap.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+      this._cbStartCap.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this._cbStartCap.FormattingEnabled = true;
+      this._cbStartCap.ItemHeight = 13;
+
+      this._cbStartCap.LineCapEx = Altaxo.Graph.LineCapEx.Flat;
+      this._cbStartCap.Location = new System.Drawing.Point(68, 98);
+      this._cbStartCap.Name = "_cbStartCap";
+      this._cbStartCap.Size = new System.Drawing.Size(121, 19);
+      this._cbStartCap.TabIndex = 14;
       // 
-      // m_cbLineSymbolColor
+      // _cbEndCap
       // 
-      this.m_cbLineSymbolColor.Location = new System.Drawing.Point(8, 48);
-      this.m_cbLineSymbolColor.Name = "m_cbLineSymbolColor";
-      this.m_cbLineSymbolColor.Size = new System.Drawing.Size(152, 21);
-      this.m_cbLineSymbolColor.TabIndex = 20;
-      this.m_cbLineSymbolColor.Text = "comboBox1";
+      this._cbEndCap.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+      this._cbEndCap.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this._cbEndCap.FormattingEnabled = true;
+      this._cbEndCap.ItemHeight = 13;
+
+      this._cbEndCap.LineCapEx = Altaxo.Graph.LineCapEx.Flat;
+      this._cbEndCap.Location = new System.Drawing.Point(255, 98);
+      this._cbEndCap.Name = "_cbEndCap";
+      this._cbEndCap.Size = new System.Drawing.Size(121, 19);
+      this._cbEndCap.TabIndex = 15;
       // 
-      // m_btLineSymbolColorDetails
+      // _LineDesignPanel
       // 
-      this.m_btLineSymbolColorDetails.Location = new System.Drawing.Point(162, 48);
-      this.m_btLineSymbolColorDetails.Name = "m_btLineSymbolColorDetails";
-      this.m_btLineSymbolColorDetails.Size = new System.Drawing.Size(48, 20);
-      this.m_btLineSymbolColorDetails.TabIndex = 21;
-      this.m_btLineSymbolColorDetails.Text = "Adv..";
+      this._LineDesignPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this._LineDesignPanel.Location = new System.Drawing.Point(0, 280);
+      this._LineDesignPanel.Name = "_LineDesignPanel";
+      this._LineDesignPanel.Size = new System.Drawing.Size(380, 120);
+      this._LineDesignPanel.TabIndex = 1;
       // 
-      // m_chkLineSymbolGap
+      // PenAllPropertiesControl
       // 
-      this.m_chkLineSymbolGap.Location = new System.Drawing.Point(11, 156);
-      this.m_chkLineSymbolGap.Name = "m_chkLineSymbolGap";
-      this.m_chkLineSymbolGap.Size = new System.Drawing.Size(112, 24);
-      this.m_chkLineSymbolGap.TabIndex = 22;
-      this.m_chkLineSymbolGap.Text = "Line/Symbol Gap";
-      // 
-      // XYPlotLineStyleControl
-      // 
-      this.Controls.Add(this.m_gbLine);
-      this.Name = "XYPlotLineStyleControl";
-      this.Size = new System.Drawing.Size(232, 336);
-      this.m_gbLine.ResumeLayout(false);
+      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+      this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+      this.AutoSize = true;
+      this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+      this.Controls.Add(this._LineDesignPanel);
+      this.Controls.Add(this.tableLayoutPanel1);
+      this.Name = "PenAllPropertiesControl";
+      this.Size = new System.Drawing.Size(385, 403);
+      this.tableLayoutPanel1.ResumeLayout(false);
+      this.tableLayoutPanel1.PerformLayout();
       this.ResumeLayout(false);
 
     }
-    #endregion
-
-
-    public void InitComboBox(System.Windows.Forms.ComboBox box, string[] names, string name)
-    {
-      ++m_SuppressEvents;
-      box.Items.Clear();
-      box.Items.AddRange(names);
-      box.SelectedItem = name;
-      --m_SuppressEvents;
-    }
-
-    public void EnableDisableMain(bool bEnable)
-    {
-      this._chkIndependentColor.Enabled = bEnable;
-      this.m_btLineFillColorDetails.Enabled = bEnable;
-      this.m_btLineSymbolColorDetails.Enabled = bEnable;
-      this.m_cbLineFillColor.Enabled = bEnable;
-      this.m_cbLineSymbolColor.Enabled = bEnable;
-      this.m_cbLineType.Enabled = bEnable;
-      this.m_cbLineWidth.Enabled = bEnable;
-      this.m_chkLineSymbolGap.Enabled = bEnable;
-    }
-
-    bool ShouldEnableMain()
-    {
-      return this.m_cbLineConnect.SelectedIndex!=0 || this.m_chkLineFillArea.Checked;
-    }
-
-    public void SetEnableDisableMain(bool bActivate)
-    {
-      this._EnableDisableAll = bActivate;
-      this.EnableDisableMain(_EnableDisableAll==false || this.ShouldEnableMain());
-    }
-
-    #region IXYPlotLineStyleView Members
-
-    public IXYPlotLineStyleViewEventSink Controller
-    {
-      get { return _controller; }
-      set { _controller = value; }
-    }
-
-    public void InitializeLineSymbolGapCondition(bool bGap)
-    {
-      ++m_SuppressEvents;
-      this.m_chkLineSymbolGap.Checked = bGap;
-      --m_SuppressEvents;
-    }
-
-    public bool LineSymbolGap
-    {
-      get { return m_chkLineSymbolGap.Checked; }
-    }
-
-    public void InitializePlotStyleColor(string[] arr, string sel)
-    {
-      InitComboBox(this.m_cbLineSymbolColor,arr,sel);
-    }
-    public string SymbolColor
-    {
-      get { return (string)m_cbLineSymbolColor.SelectedItem; }
-    }
-
-    public void InitializeLineConnect(string[] arr, string sel)
-    {
-      InitComboBox(this.m_cbLineConnect,arr,sel);
-    }
-    public string LineConnect
-    {
-      get { return (string)m_cbLineConnect.SelectedItem; }
-    }
-    
-    public void InitializeLineStyle(string[] arr, string sel)
-    {
-      InitComboBox(this.m_cbLineType,arr,sel);
-    }
-    public string LineType
-    {
-      get { return (string)m_cbLineType.SelectedItem; }
-    }
-  
-    public void InitializeLineWidth(string[] arr, string sel)
-    {
-      InitComboBox(this.m_cbLineWidth,arr,sel);
-    }
-    public string LineWidth
-    {
-      get { return (string)m_cbLineWidth.SelectedItem; }
-    }
-  
-
-    public void InitializeFillCondition(bool bFill)
-    {
-      this.m_chkLineFillArea.Checked = bFill;
-      this.m_cbLineFillColor.Enabled = bFill;
-      this.m_cbLineFillDirection.Enabled = bFill;
-    }
-
-    public bool LineFillArea 
-    {
-      get { return m_chkLineFillArea.Checked; }
-    }
-
-  
-
-
-    private void EhLineFillArea_CheckedChanged(object sender, System.EventArgs e)
-    {
-      bool bFill = m_chkLineFillArea.Checked;
-      this.m_cbLineFillColor.Enabled = bFill;
-      this.m_cbLineFillDirection.Enabled = bFill;
-
-      if(this._EnableDisableAll)
-        EnableDisableMain(this.ShouldEnableMain());
-    }
-
-   
-
-    public void InitializeFillColor(BrushHolder sel)
-    {
-      m_cbLineFillColor.Brush = sel;
-    }
-
-    public BrushHolder LineFillColor
-    {
-      get { return m_cbLineFillColor.Brush; }
-    }
-  
-    public void InitializeFillDirection(string[] arr, string sel)
-    {
-      InitComboBox(this.m_cbLineFillDirection,arr,sel);
-    }
-
-       
-      
-    public string LineFillDirection
-    {
-      get { return (string)m_cbLineFillDirection.SelectedItem; }
-    }
-  
-    public void InitializeIndependentColor(bool val)
-    {
-      this._chkIndependentColor.Checked = val;
-      _chkIndependentColor_CheckedChanged(_chkIndependentColor.Checked,EventArgs.Empty);
-    }
-
-    public bool IndependentColor 
-    {
-      get
-      {
-        return this._chkIndependentColor.Checked; 
-      }
-    }
-
-    private void _chkIndependentColor_CheckedChanged(object sender, System.EventArgs e)
-    {
-     
-    }
-
-
-       
-
 
     #endregion
 
-    private void m_cbLineConnect_SelectionChangeCommitted(object sender, System.EventArgs e)
-    {
-      if(this._EnableDisableAll)
-        EnableDisableMain(this.ShouldEnableMain());
-    }
+    private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+    private System.Windows.Forms.Label _lblColor;
+    private System.Windows.Forms.Label _lblStyle;
+    private DashStyleComboBox _cbDashStyle;
+    private ColorComboBox _cbColor;
+    private DashCapComboBox _cbDashCap;
+    private System.Windows.Forms.Label _lblDashCap;
+    private System.Windows.Forms.Label _lblStartCap;
+    private System.Windows.Forms.Label _lblEndCap;
+    private System.Windows.Forms.Label _lblJoin;
+    private System.Windows.Forms.Label _lblMiter;
+    private LineJoinComboBox _cbLineJoin;
+    private MiterLimitComboBox _cbMiterLimit;
+    private LineThicknessComboBox _cbThickness;
+    private System.Windows.Forms.Label _lblThickness;
+    private LineCapComboBox lineCapComboBox1;
+    private LineCapComboBox _cbStartCap;
+    private LineCapComboBox _cbEndCap;
+    private System.Windows.Forms.Panel _LineDesignPanel;
   }
 }

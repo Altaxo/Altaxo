@@ -41,6 +41,11 @@ namespace Altaxo.Gui.Common.Drawing
 
     static List<LineCapEx> _lineCaps;
 
+    public LineCapComboBox()
+      : this(true,LineCapEx.Flat)
+    {
+    }
+
     public LineCapComboBox(bool isForEndCap)
       : this(isForEndCap, LineCapEx.Flat)
     {
@@ -64,8 +69,10 @@ namespace Altaxo.Gui.Common.Drawing
     {
       _lineCaps = new List<LineCapEx>();
 
-      foreach(LineCap cap in Enum.GetValues(typeof(LineCap)))
-      _lineCaps.Add(new LineCapEx(cap));
+      foreach (LineCapEx cap in LineCapEx.GetValues())
+      {
+          _lineCaps.Add(cap);
+      }
     }
 
     void SetDataSource(LineCapEx selected)
@@ -73,7 +80,7 @@ namespace Altaxo.Gui.Common.Drawing
       if (_lineCaps == null)
         SetDefaultValues();
       if (!_lineCaps.Contains(selected))
-        _lineCaps.Add(selected.Clone());
+        _lineCaps.Add(selected);
 
       this.BeginUpdate();
 
@@ -119,7 +126,7 @@ namespace Altaxo.Gui.Common.Drawing
       LineCapEx item = (LineCapEx)Items[e.Index];
       SolidBrush foreColorBrush = new SolidBrush(e.ForeColor);
 
-      Pen linePen = new Pen(foreColorBrush, (float)Math.Ceiling(0.125 * e.Bounds.Height));
+      Pen linePen = new Pen(foreColorBrush, (float)Math.Ceiling(0.4 * e.Bounds.Height));
       if (_isForEndCap)
       {
         item.SetPenEndCap(linePen);

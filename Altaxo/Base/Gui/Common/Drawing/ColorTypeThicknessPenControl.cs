@@ -35,21 +35,21 @@ namespace Altaxo.Gui.Common.Drawing
   /// </summary>
   public class ColorTypeThicknessPenControl : System.Windows.Forms.UserControl, IColorTypeThicknessPenView
   {
-    private KnownColorComboBox _cbColor;
+    private ColorComboBox _cbColor;
     private DashStyleComboBox _cbLineType;
     private LineThicknessComboBox _cbThickness;
     private System.Windows.Forms.Label label1;
     private System.Windows.Forms.Label label2;
     private System.Windows.Forms.Label label3;
-    /// <summary> 
-    /// Required designer variable.
-    /// </summary>
-    private System.ComponentModel.Container components = null;
+    private ContextMenuStrip _controlContextMenu;
+    private ToolStripMenuItem _menuShowFullPenDialog;
+    private IContainer components;
 
     public ColorTypeThicknessPenControl()
     {
       // This call is required by the Windows.Forms Form Designer.
       InitializeComponent();
+
 
       // TODO: Add any initialization after the InitializeComponent call
 
@@ -77,39 +77,50 @@ namespace Altaxo.Gui.Common.Drawing
     /// </summary>
     private void InitializeComponent()
     {
-      this._cbColor = new KnownColorComboBox();
-      this._cbLineType = new DashStyleComboBox();
-      this._cbThickness = new LineThicknessComboBox();
+      this.components = new System.ComponentModel.Container();
+      this._cbColor = new Altaxo.Gui.Common.Drawing.ColorComboBox();
+      this._cbLineType = new Altaxo.Gui.Common.Drawing.DashStyleComboBox();
+      this._cbThickness = new Altaxo.Gui.Common.Drawing.LineThicknessComboBox();
       this.label1 = new System.Windows.Forms.Label();
       this.label2 = new System.Windows.Forms.Label();
       this.label3 = new System.Windows.Forms.Label();
+      this._controlContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+      this._menuShowFullPenDialog = new System.Windows.Forms.ToolStripMenuItem();
+      this._controlContextMenu.SuspendLayout();
       this.SuspendLayout();
       // 
       // _cbColor
       // 
+      this._cbColor.Color = System.Drawing.Color.Black;
+      this._cbColor.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
       this._cbColor.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this._cbColor.ItemHeight = 13;
       this._cbColor.Location = new System.Drawing.Point(64, 8);
       this._cbColor.Name = "_cbColor";
-      this._cbColor.Size = new System.Drawing.Size(121, 21);
+      this._cbColor.Size = new System.Drawing.Size(121, 19);
       this._cbColor.TabIndex = 0;
       this._cbColor.SelectionChangeCommitted += new System.EventHandler(this._cbColor_SelectionChangeCommitted);
       // 
       // _cbLineType
       // 
+      this._cbLineType.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
       this._cbLineType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this._cbLineType.ItemHeight = 13;
       this._cbLineType.Location = new System.Drawing.Point(64, 40);
       this._cbLineType.Name = "_cbLineType";
-      this._cbLineType.Size = new System.Drawing.Size(121, 21);
+      this._cbLineType.Size = new System.Drawing.Size(121, 19);
       this._cbLineType.TabIndex = 1;
       this._cbLineType.SelectionChangeCommitted += new System.EventHandler(this._cbLineType_SelectionChangeCommitted);
       // 
       // _cbThickness
       // 
+      this._cbThickness.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+      this._cbThickness.ItemHeight = 13;
       this._cbThickness.Location = new System.Drawing.Point(64, 72);
       this._cbThickness.Name = "_cbThickness";
-      this._cbThickness.Size = new System.Drawing.Size(121, 21);
+      this._cbThickness.Size = new System.Drawing.Size(121, 19);
       this._cbThickness.TabIndex = 2;
-      this._cbThickness.Text = "1";
+      this._cbThickness.Thickness = 1F;
       this._cbThickness.Validating += new System.ComponentModel.CancelEventHandler(this._cbThickness_Validating);
       // 
       // label1
@@ -136,8 +147,23 @@ namespace Altaxo.Gui.Common.Drawing
       this.label3.TabIndex = 5;
       this.label3.Text = "Thickness:";
       // 
+      // _controlContextMenu
+      // 
+      this._controlContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this._menuShowFullPenDialog});
+      this._controlContextMenu.Name = "_controlContextMenu";
+      this._controlContextMenu.Size = new System.Drawing.Size(196, 26);
+      // 
+      // _menuShowFullPenDialog
+      // 
+      this._menuShowFullPenDialog.Name = "_menuShowFullPenDialog";
+      this._menuShowFullPenDialog.Size = new System.Drawing.Size(195, 22);
+      this._menuShowFullPenDialog.Text = "Show full pen dialog ...";
+      this._menuShowFullPenDialog.Click += new System.EventHandler(this._menuShowFullPenDialog_Click);
+      // 
       // ColorTypeThicknessPenControl
       // 
+      this.ContextMenuStrip = this._controlContextMenu;
       this.Controls.Add(this.label3);
       this.Controls.Add(this.label2);
       this.Controls.Add(this.label1);
@@ -146,6 +172,7 @@ namespace Altaxo.Gui.Common.Drawing
       this.Controls.Add(this._cbColor);
       this.Name = "ColorTypeThicknessPenControl";
       this.Size = new System.Drawing.Size(184, 96);
+      this._controlContextMenu.ResumeLayout(false);
       this.ResumeLayout(false);
 
     }
@@ -159,6 +186,18 @@ namespace Altaxo.Gui.Common.Drawing
     {
       get { return _controller; }
       set { _controller = value; }
+    }
+
+    public ColorType ColorType
+    {
+      get
+      {
+        return _cbColor.ColorType;
+      }
+      set
+      {
+        _cbColor.ColorType = value;
+      }
     }
 
     public void InitializeColor(System.Drawing.Color selectedColor)
@@ -194,6 +233,12 @@ namespace Altaxo.Gui.Common.Drawing
     {
       if(null!=_controller)
         _controller.EhView_LineWidthChanged(this._cbThickness.Thickness);
+    }
+
+    private void _menuShowFullPenDialog_Click(object sender, EventArgs e)
+    {
+      if (null != _controller)
+        _controller.EhView_ShowFullPenDialog();
     }
   }
 }

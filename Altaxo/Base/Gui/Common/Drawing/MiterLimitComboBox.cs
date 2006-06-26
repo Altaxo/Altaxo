@@ -109,12 +109,12 @@ namespace Altaxo.Gui.Common.Drawing
 
 
       PointF[] points = new PointF[]{
-        new PointF(rectColor.Right,rectColor.Top),
+        new PointF(rectColor.Right,rectColor.Top+0.125f*rectColor.Height),
         new PointF(rectColor.Right-0.5f*rectColor.Width,0.5f*(rectColor.Top+rectColor.Bottom)),
-        new PointF(rectColor.Right,rectColor.Bottom)
+        new PointF(rectColor.Right,rectColor.Bottom-0.125f*rectColor.Height)
       };
 
-      Pen pen = new Pen(foreColorBrush, (float)Math.Ceiling(0.125*e.Bounds.Height));
+      Pen pen = new Pen(foreColorBrush, (float)Math.Ceiling(0.375 * e.Bounds.Height));
       pen.MiterLimit = miterValue;
 
       grfx.DrawLines(pen,points);

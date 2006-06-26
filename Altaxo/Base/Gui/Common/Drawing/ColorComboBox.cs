@@ -26,29 +26,74 @@ using System.Text;
 using System.Windows.Forms;
 using System.Drawing;
 
+using Altaxo.Graph;
+
 namespace Altaxo.Gui.Common.Drawing
 {
-  public class KnownColorComboBox : ComboBox
+  public class ColorComboBox : ComboBox
   {
+    ColorType _colorType;
     ContextMenuStrip _contextStrip;
     static ColorDialog _colorDialog;
 
-    public KnownColorComboBox()
-     : this(Color.Black)
+    public ColorComboBox()
     {
-    }
-
-    public KnownColorComboBox(Color selectedColor)
-    {
-      DropDownStyle = ComboBoxStyle.DropDownList;
-      DrawMode = DrawMode.OwnerDrawFixed;
-      ItemHeight = Font.Height;
-      SetDataSource(selectedColor);
-
+      SetComboBoxProperties(this);
       _contextStrip = new ContextMenuStrip();
-      _contextStrip.Items.Add("Custom Color..", null, this.EhChooseCustomColor);
+      FillMenu();
       this.ContextMenuStrip = _contextStrip;
+      _colorType = ColorType.KnownAndSystemColor;
     }
+
+    public ColorComboBox(Color selectedColor)
+      : this()
+    {
+      SetDataSource(selectedColor);
+    }
+
+    public static void SetComboBoxProperties(ComboBox box)
+    {
+      box.DropDownStyle = ComboBoxStyle.DropDownList;
+      box.DrawMode = DrawMode.OwnerDrawFixed;
+      box.ItemHeight = box.Font.Height;
+    }
+
+    public static void AddCustomColorContextMenu(ContextMenuStrip menu, EventHandler eh)
+    {
+      menu.Items.Add("Custom Color..", null, eh);
+    }
+    public static void AddTransparencyContextMenu(ContextMenuStrip menu, EventHandler eh)
+    {
+      menu.Items.Add("-");
+      for (int i = 0; i <= 100; i += 10)
+      {
+        ToolStripItem item = new ToolStripMenuItem();
+        item.Text = "Transparency: " + i.ToString() + "%";
+        item.Tag = (int)(255 - 2.55 * i);
+        item.Click += eh;
+        menu.Items.Add(item);
+      }
+    }
+
+    public virtual void FillMenu()
+    {
+      AddCustomColorContextMenu(_contextStrip, this.EhChooseCustomColor);
+      AddTransparencyContextMenu(_contextStrip, this.EhChooseTransparencyValue);
+    }
+
+    public ColorType ColorType
+    {
+      get
+      {
+        return _colorType;
+      }
+      set
+      {
+        _colorType = value;
+        SetDataSource(this.Color);
+      }
+    }
+
 
     void SetDataSource(Color selectedColor)
     {
@@ -56,13 +101,13 @@ namespace Altaxo.Gui.Common.Drawing
 
       Items.Clear();
 
-      if(!selectedColor.IsKnownColor)
+      if(!ColorDictionary.IsColorOfType(selectedColor,_colorType))
         Items.Add(selectedColor);
 
-      foreach (object o in Enum.GetValues(typeof(KnownColor)))
-        Items.Add(Color.FromKnownColor((KnownColor)o));
-
-      SelectedItem = selectedColor;
+      foreach(Color c in ColorDictionary.GetColorsOfType(_colorType))
+        Items.Add(c);
+      
+      SelectedItem = ColorDictionary.GetNormalizedColor(selectedColor,_colorType);
 
       this.EndUpdate();
     }
@@ -71,7 +116,10 @@ namespace Altaxo.Gui.Common.Drawing
     {
       get
       {
-        return  (Color)SelectedItem;
+        if (SelectedItem is Color)
+          return (Color)SelectedItem;
+        else
+          return Color.Black;
       }
       set
       {
@@ -115,6 +163,16 @@ namespace Altaxo.Gui.Common.Drawing
         OnSelectedValueChanged(EventArgs.Empty);
         OnSelectionChangeCommitted(EventArgs.Empty);
       }
+    }
+
+    protected void EhChooseTransparencyValue(object sender, EventArgs e)
+    {
+      ToolStripItem item = (ToolStripItem)sender;
+      int alpha = (int)item.Tag;
+      this.Color = Color.FromArgb(alpha, this.Color);
+      OnSelectedItemChanged(EventArgs.Empty);
+      OnSelectedValueChanged(EventArgs.Empty);
+      OnSelectionChangeCommitted(EventArgs.Empty);
     }
   }
 }

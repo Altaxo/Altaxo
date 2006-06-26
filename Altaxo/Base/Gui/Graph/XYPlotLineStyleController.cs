@@ -105,7 +105,7 @@ namespace Altaxo.Gui.Graph
     /// </summary>
     /// <param name="arr">String array of possible selections</param>
     /// <param name="sel">Current selection.</param>
-    void InitializeFillColor(string[] arr , string sel);
+    void InitializeFillColor(BrushHolder sel);
   
 
     #region Getter
@@ -119,7 +119,7 @@ namespace Altaxo.Gui.Graph
     string LineWidth   { get; }
     bool   LineFillArea { get; }
     string LineFillDirection { get; }
-    string LineFillColor {get; }
+    BrushHolder LineFillColor {get; }
 
     
 
@@ -287,19 +287,7 @@ namespace Altaxo.Gui.Graph
 
     public void SetFillColor()
     {
-      string name = "Custom"; // default
-
-      if(null!=_tempDoc.FillBrush)
-      {
-        name = "Custom";
-        if(_tempDoc.FillBrush.BrushType==BrushType.SolidBrush) 
-        {
-          name = PlotColors.Colors.GetPlotColorName(_tempDoc.FillBrush.Color);
-          if(null==name)
-            name = "Custom";
-        }
-      }
-      _view.InitializeFillColor(GetPlotColorNames(), name);
+      _view.InitializeFillColor(_tempDoc.FillBrush);
     }
 
 
@@ -358,9 +346,7 @@ namespace Altaxo.Gui.Graph
         // Line fill direction
         _doc.FillDirection = (Altaxo.Graph.XYPlotLineStyles.FillDirection)Enum.Parse(typeof(Altaxo.Graph.XYPlotLineStyles.FillDirection),_view.LineFillDirection);
         // Line fill color
-        str = _view.LineFillColor;
-        if(str!="Custom")
-          _doc.FillBrush = new BrushHolder(Color.FromName(str));
+        _doc.FillBrush = _view.LineFillColor;
 
       }
       catch(Exception ex)

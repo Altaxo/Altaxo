@@ -231,6 +231,14 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Gui\Common\ControlViewElement.cs" />
+    <Compile Include="Gui\Common\CustomColorDialog\AlphaSlider.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\CustomColorDialog\CustomColorDialog.cs" />
+    <Compile Include="Gui\Common\CustomColorDialog\NativeMethods.cs" />
+    <Compile Include="Gui\Common\Drawing\BrushColorComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Gui\Common\Drawing\ColorTypeThicknessPenControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -241,7 +249,7 @@
     <Compile Include="Gui\Common\Drawing\DashStyleComboBox.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Gui\Common\Drawing\KnownColorComboBox.cs">
+    <Compile Include="Gui\Common\Drawing\ColorComboBox.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Gui\Common\Drawing\LineCapComboBox.cs">
@@ -255,6 +263,12 @@
     </Compile>
     <Compile Include="Gui\Common\Drawing\MiterLimitComboBox.cs">
       <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\PenAllPropertiesControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\PenAllPropertiesControl.Designer.cs">
+      <DependentUpon>PenAllPropertiesControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Gui\Common\MultiChildController.cs" />
     <Compile Include="Gui\Common\MultiChildControl.cs">
@@ -1185,10 +1199,6 @@
       <DependentUpon>BackgroundCancelDialog.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Gui\Common\Drawing\ColorTypeThicknessPenControl.resx">
-      <DependentUpon>ColorTypeThicknessPenControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="Gui\Common\MultiChildControl.resx">
       <DependentUpon>MultiChildControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -1223,6 +1233,7 @@
       <DependentUpon>XYPlotLabelStyleControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Graph\XYPlotLineStyleControl.resx">
+      <SubType>Designer</SubType>
       <DependentUpon>XYPlotLineStyleControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Graph\XYPlotScatterStyleControl.resx">

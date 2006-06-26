@@ -36,11 +36,7 @@ namespace Altaxo.Gui.Graph
     {
       if (null != Controller)
       {
-        string name = (string)this._cbColors.SelectedItem;
-        if (name != "Custom")
-        {
-          Controller.EhView_BackgroundColorChanged(System.Drawing.Color.FromName(name));
-        }
+          Controller.EhView_BackgroundColorChanged(_cbColors.Color);
       }
     }
 
@@ -61,18 +57,11 @@ namespace Altaxo.Gui.Graph
     }
 
 
-    public static void InitColorComboBox(System.Windows.Forms.ComboBox box, System.Drawing.Color color)
-    {
-      box.Items.Clear();
-      string[] names = System.Enum.GetNames(typeof(System.Drawing.KnownColor));
-      box.Items.Add("Custom");
-      box.Items.AddRange(names);
-      box.SelectedItem = color.IsKnownColor ? color.Name : "Custom";
-    }
+  
 
     public void BackgroundColor_Initialize(System.Drawing.Color color)
     {
-      InitColorComboBox(this._cbColors, color);
+      this._cbColors.Color = color;
     }
 
     /// <summary>

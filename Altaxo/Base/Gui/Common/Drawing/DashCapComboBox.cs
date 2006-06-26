@@ -95,8 +95,8 @@ namespace Altaxo.Gui.Common.Drawing
       DashCap item = (DashCap)Items[e.Index];
       SolidBrush foreColorBrush = new SolidBrush(e.ForeColor);
 
-      Pen linePen = new Pen(foreColorBrush, (float)Math.Ceiling(0.125 * e.Bounds.Height));
-      linePen.DashStyle = DashStyle.DashDot;
+      Pen linePen = new Pen(foreColorBrush, (float)Math.Ceiling(0.5 * e.Bounds.Height));
+      linePen.DashStyle = DashStyle.Dot; 
       linePen.DashCap = item;
 
       grfx.DrawLine(linePen,

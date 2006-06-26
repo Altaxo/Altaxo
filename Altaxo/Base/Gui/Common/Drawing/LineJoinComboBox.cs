@@ -95,14 +95,15 @@ namespace Altaxo.Gui.Common.Drawing
       LineJoin item = (LineJoin)Items[e.Index];
       SolidBrush foreColorBrush = new SolidBrush(e.ForeColor);
 
-      Pen linePen = new Pen(foreColorBrush, (float)Math.Ceiling(0.125 * e.Bounds.Height));
+      Pen linePen = new Pen(foreColorBrush, (float)Math.Ceiling(0.375 * e.Bounds.Height));
       linePen.LineJoin = item;
-
+      grfx.InterpolationMode = InterpolationMode.HighQualityBicubic;
+     
       grfx.DrawLines(linePen,
         new PointF[]{
-          new PointF(rectColor.Right,rectColor.Top),
+          new PointF(rectColor.Right,rectColor.Top+0.125f*rectColor.Height),
           new PointF(0.5f*(rectColor.Left+rectColor.Right), 0.5f * (rectColor.Top + rectColor.Bottom)),
-          new PointF(rectColor.Right, rectColor.Bottom)});
+          new PointF(rectColor.Right, rectColor.Bottom-0.125f*rectColor.Height)});
 
       grfx.DrawString(item.ToString(), Font, foreColorBrush, rectText);
     }
