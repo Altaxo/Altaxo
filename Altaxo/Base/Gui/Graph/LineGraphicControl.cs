@@ -19,6 +19,7 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 #endregion
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -27,55 +28,64 @@ using System.Data;
 using System.Text;
 using System.Windows.Forms;
 
-using Altaxo.Graph;
-
-namespace Altaxo.Gui.Common.Drawing
+using Altaxo.Main.GUI;
+namespace Altaxo.Gui.Graph
 {
-  public partial class PenAllPropertiesControl : UserControl, Altaxo.Main.GUI.IMVCAController
+  [UserControlForController(typeof(ILineGraphicViewEventSink))]
+  public partial class LineGraphicControl : UserControl, ILineGraphicView
   {
-    
-
-    public PenAllPropertiesControl()
+    public LineGraphicControl()
     {
       InitializeComponent();
     }
 
-    public PenHolder Pen
+    #region ILineGraphicView Members
+
+    public Altaxo.Graph.PenHolder DocPen
     {
-      get { return _penGlue.Pen; }
+      get
+      {
+        return _penGlue.Pen;
+      }
       set
-      { 
+      {
         _penGlue.Pen = value;
       }
     }
 
-
-    #region IMVCController Members
-
-    public object ViewObject
+    public PointF DocPosition
     {
       get
       {
-        return this;
+        return _positionSizeGlue.Position;
       }
       set
       {
-        throw new Exception("The method or operation is not implemented.");
+        _positionSizeGlue.Position = value;
       }
     }
 
-    public object ModelObject
+    public SizeF DocSize
     {
-      get { return _penGlue.Pen; }
+      get
+      {
+        return _positionSizeGlue.Size;
+      }
+      set
+      {
+        _positionSizeGlue.Size = value;
+      }
     }
-
-    #endregion
-
-    #region IApplyController Members
-
-    public bool Apply()
+    public float DocRotation
     {
-      return true;
+      get
+      {
+        return (float)_positionSizeGlue.Rotation;
+      }
+      set
+      {
+        _positionSizeGlue.Rotation = value;
+      }
     }
 
     #endregion

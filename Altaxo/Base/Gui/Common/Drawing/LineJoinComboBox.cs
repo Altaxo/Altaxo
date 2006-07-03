@@ -37,15 +37,15 @@ namespace Altaxo.Gui.Common.Drawing
   public class LineJoinComboBox : ComboBox
   {
     public LineJoinComboBox()
-      : this(LineJoin.Miter)
-    {
-    }
-
-    public LineJoinComboBox(LineJoin selected)
     {
       DropDownStyle = ComboBoxStyle.DropDownList;
       DrawMode = DrawMode.OwnerDrawFixed;
       ItemHeight = Font.Height;
+    }
+
+    public LineJoinComboBox(LineJoin selected)
+      : this()
+    {
       SetDataSource(selected);
     }
 
@@ -69,7 +69,7 @@ namespace Altaxo.Gui.Common.Drawing
     {
       get
       {
-        return (LineJoin)SelectedItem;
+        return null==SelectedItem ? LineJoin.Miter : (LineJoin)SelectedItem;
       }
       set
       {

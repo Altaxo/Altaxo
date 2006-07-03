@@ -45,7 +45,7 @@ namespace Altaxo.Graph
     protected StringAlignment _verticalAlignment;
 
     protected StringFormat _stringFormat;
-    protected BrushHolder _brush = new BrushHolder(Brushes.Black,false);
+    protected BrushHolder _brush = new BrushHolder(Color.Black);
     
     /// <summary>The x offset in EM units.</summary>
     protected double _xOffset;

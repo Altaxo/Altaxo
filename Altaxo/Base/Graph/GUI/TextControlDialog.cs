@@ -37,7 +37,6 @@ namespace Altaxo.Graph.GUI
     private System.Windows.Forms.Button m_btCancel;
     private System.Windows.Forms.ComboBox m_cbFonts;
     private System.Windows.Forms.ComboBox m_cbFontSize;
-    private System.Windows.Forms.ComboBox m_cbFontColor;
     private System.Windows.Forms.Label m_lblBackground;
     private System.Windows.Forms.Label m_lblPosX;
     private System.Windows.Forms.TextBox m_edPosX;
@@ -63,10 +62,8 @@ namespace Altaxo.Graph.GUI
     private bool   m_bDialogInitialized=false;
     private Altaxo.Gui.Graph.BackgroundStyleControl _ctrlBackgroundStyle; // true if all dialog elements are initialized
     private Altaxo.Gui.Graph.BackgroundStyleController _backgroundStyleController;
-    /// <summary>
-    /// Required designer variable.
-    /// </summary>
-    private System.ComponentModel.Container components = null;
+    private Altaxo.Gui.Common.Drawing.ColorComboBox m_cbFontColor;
+    private IContainer components;
 
     public TextControlDialog(Altaxo.Graph.XYPlotLayer layer, TextGraphics tgo)
     {
@@ -135,19 +132,7 @@ namespace Altaxo.Graph.GUI
 
 
       // fill the color dialog box
-      this.m_cbFontColor.Items.Add("Custom");
-
-      foreach (PlotColor c in PlotColors.Colors)
-      {
-        this.m_cbFontColor.Items.Add(c.Name);
-      }
-      name = PlotColors.Colors.GetPlotColorName(this.m_TextObject.Color);
-      if(null==name)
-        name = "Custom";
-      this.m_cbFontColor.SelectedItem = name;
-
-
-      
+      this.m_cbFontColor.Color = this.m_TextObject.Color;
     
     
       // indicate that all elements are now filled -
@@ -186,12 +171,12 @@ namespace Altaxo.Graph.GUI
     /// </summary>
     private void InitializeComponent()
     {
+      this.components = new System.ComponentModel.Container();
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TextControlDialog));
       this.m_btOK = new System.Windows.Forms.Button();
       this.m_btCancel = new System.Windows.Forms.Button();
       this.m_cbFonts = new System.Windows.Forms.ComboBox();
       this.m_cbFontSize = new System.Windows.Forms.ComboBox();
-      this.m_cbFontColor = new System.Windows.Forms.ComboBox();
       this.m_lblBackground = new System.Windows.Forms.Label();
       this.m_lblPosX = new System.Windows.Forms.Label();
       this.m_edPosX = new System.Windows.Forms.TextBox();
@@ -209,6 +194,7 @@ namespace Altaxo.Graph.GUI
       this.m_pnPreview = new System.Windows.Forms.Panel();
       this.m_btNormal = new System.Windows.Forms.Button();
       this.m_btStrikeout = new System.Windows.Forms.Button();
+      this.m_cbFontColor = new Altaxo.Gui.Common.Drawing.ColorComboBox();
       this._ctrlBackgroundStyle = new Altaxo.Gui.Graph.BackgroundStyleControl();
       this.SuspendLayout();
       // 
@@ -234,28 +220,19 @@ namespace Altaxo.Graph.GUI
       // 
       this.m_cbFonts.Location = new System.Drawing.Point(8, 8);
       this.m_cbFonts.Name = "m_cbFonts";
-      this.m_cbFonts.Size = new System.Drawing.Size(160, 21);
+      this.m_cbFonts.Size = new System.Drawing.Size(128, 21);
       this.m_cbFonts.TabIndex = 1;
       this.m_cbFonts.Text = "Arial";
       this.m_cbFonts.TextChanged += new System.EventHandler(this.OncbFonts_TextChanged);
       // 
       // m_cbFontSize
       // 
-      this.m_cbFontSize.Location = new System.Drawing.Point(184, 8);
+      this.m_cbFontSize.Location = new System.Drawing.Point(142, 8);
       this.m_cbFontSize.Name = "m_cbFontSize";
       this.m_cbFontSize.Size = new System.Drawing.Size(64, 21);
       this.m_cbFontSize.TabIndex = 2;
       this.m_cbFontSize.Text = "comboBox1";
       this.m_cbFontSize.TextChanged += new System.EventHandler(this.OncbFontSize_TextChanged);
-      // 
-      // m_cbFontColor
-      // 
-      this.m_cbFontColor.Location = new System.Drawing.Point(264, 8);
-      this.m_cbFontColor.Name = "m_cbFontColor";
-      this.m_cbFontColor.Size = new System.Drawing.Size(88, 21);
-      this.m_cbFontColor.TabIndex = 3;
-      this.m_cbFontColor.Text = "comboBox1";
-      this.m_cbFontColor.SelectedIndexChanged += new System.EventHandler(this.OncbFontColor_SelectedIndexChanged);
       // 
       // m_lblBackground
       // 
@@ -312,9 +289,9 @@ namespace Altaxo.Graph.GUI
       // 
       // m_cbRotation
       // 
-      this.m_cbRotation.Location = new System.Drawing.Point(296, 72);
+      this.m_cbRotation.Location = new System.Drawing.Point(296, 73);
       this.m_cbRotation.Name = "m_cbRotation";
-      this.m_cbRotation.Size = new System.Drawing.Size(56, 21);
+      this.m_cbRotation.Size = new System.Drawing.Size(66, 21);
       this.m_cbRotation.TabIndex = 11;
       this.m_cbRotation.Text = "comboBox1";
       this.m_cbRotation.TextChanged += new System.EventHandler(this.On_cbRotation_TextChanged);
@@ -419,10 +396,201 @@ namespace Altaxo.Graph.GUI
       this.m_btStrikeout.TabIndex = 18;
       this.m_btStrikeout.Click += new System.EventHandler(this.OnbtStrikeout_Click);
       // 
+      // m_cbFontColor
+      // 
+      this.m_cbFontColor.Color = System.Drawing.Color.Black;
+      this.m_cbFontColor.ColorType = Altaxo.Graph.ColorType.KnownAndSystemColor;
+      this.m_cbFontColor.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+      this.m_cbFontColor.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.m_cbFontColor.FormattingEnabled = true;
+      this.m_cbFontColor.ItemHeight = 15;
+      this.m_cbFontColor.Items.AddRange(new object[] {
+            System.Drawing.SystemColors.ActiveBorder,
+            System.Drawing.SystemColors.ActiveCaption,
+            System.Drawing.SystemColors.ActiveCaptionText,
+            System.Drawing.SystemColors.AppWorkspace,
+            System.Drawing.SystemColors.Control,
+            System.Drawing.SystemColors.ControlDark,
+            System.Drawing.SystemColors.ControlDarkDark,
+            System.Drawing.SystemColors.ControlLight,
+            System.Drawing.SystemColors.ControlLightLight,
+            System.Drawing.SystemColors.ControlText,
+            System.Drawing.SystemColors.Desktop,
+            System.Drawing.SystemColors.GrayText,
+            System.Drawing.SystemColors.Highlight,
+            System.Drawing.SystemColors.HighlightText,
+            System.Drawing.SystemColors.HotTrack,
+            System.Drawing.SystemColors.InactiveBorder,
+            System.Drawing.SystemColors.InactiveCaption,
+            System.Drawing.SystemColors.InactiveCaptionText,
+            System.Drawing.SystemColors.Info,
+            System.Drawing.SystemColors.InfoText,
+            System.Drawing.SystemColors.Menu,
+            System.Drawing.SystemColors.MenuText,
+            System.Drawing.SystemColors.ScrollBar,
+            System.Drawing.SystemColors.Window,
+            System.Drawing.SystemColors.WindowFrame,
+            System.Drawing.SystemColors.WindowText,
+            System.Drawing.Color.Transparent,
+            System.Drawing.Color.AliceBlue,
+            System.Drawing.Color.AntiqueWhite,
+            System.Drawing.Color.Aqua,
+            System.Drawing.Color.Aquamarine,
+            System.Drawing.Color.Azure,
+            System.Drawing.Color.Beige,
+            System.Drawing.Color.Bisque,
+            System.Drawing.Color.Black,
+            System.Drawing.Color.BlanchedAlmond,
+            System.Drawing.Color.Blue,
+            System.Drawing.Color.BlueViolet,
+            System.Drawing.Color.Brown,
+            System.Drawing.Color.BurlyWood,
+            System.Drawing.Color.CadetBlue,
+            System.Drawing.Color.Chartreuse,
+            System.Drawing.Color.Chocolate,
+            System.Drawing.Color.Coral,
+            System.Drawing.Color.CornflowerBlue,
+            System.Drawing.Color.Cornsilk,
+            System.Drawing.Color.Crimson,
+            System.Drawing.Color.Cyan,
+            System.Drawing.Color.DarkBlue,
+            System.Drawing.Color.DarkCyan,
+            System.Drawing.Color.DarkGoldenrod,
+            System.Drawing.Color.DarkGray,
+            System.Drawing.Color.DarkGreen,
+            System.Drawing.Color.DarkKhaki,
+            System.Drawing.Color.DarkMagenta,
+            System.Drawing.Color.DarkOliveGreen,
+            System.Drawing.Color.DarkOrange,
+            System.Drawing.Color.DarkOrchid,
+            System.Drawing.Color.DarkRed,
+            System.Drawing.Color.DarkSalmon,
+            System.Drawing.Color.DarkSeaGreen,
+            System.Drawing.Color.DarkSlateBlue,
+            System.Drawing.Color.DarkSlateGray,
+            System.Drawing.Color.DarkTurquoise,
+            System.Drawing.Color.DarkViolet,
+            System.Drawing.Color.DeepPink,
+            System.Drawing.Color.DeepSkyBlue,
+            System.Drawing.Color.DimGray,
+            System.Drawing.Color.DodgerBlue,
+            System.Drawing.Color.Firebrick,
+            System.Drawing.Color.FloralWhite,
+            System.Drawing.Color.ForestGreen,
+            System.Drawing.Color.Fuchsia,
+            System.Drawing.Color.Gainsboro,
+            System.Drawing.Color.GhostWhite,
+            System.Drawing.Color.Gold,
+            System.Drawing.Color.Goldenrod,
+            System.Drawing.Color.Gray,
+            System.Drawing.Color.Green,
+            System.Drawing.Color.GreenYellow,
+            System.Drawing.Color.Honeydew,
+            System.Drawing.Color.HotPink,
+            System.Drawing.Color.IndianRed,
+            System.Drawing.Color.Indigo,
+            System.Drawing.Color.Ivory,
+            System.Drawing.Color.Khaki,
+            System.Drawing.Color.Lavender,
+            System.Drawing.Color.LavenderBlush,
+            System.Drawing.Color.LawnGreen,
+            System.Drawing.Color.LemonChiffon,
+            System.Drawing.Color.LightBlue,
+            System.Drawing.Color.LightCoral,
+            System.Drawing.Color.LightCyan,
+            System.Drawing.Color.LightGoldenrodYellow,
+            System.Drawing.Color.LightGray,
+            System.Drawing.Color.LightGreen,
+            System.Drawing.Color.LightPink,
+            System.Drawing.Color.LightSalmon,
+            System.Drawing.Color.LightSeaGreen,
+            System.Drawing.Color.LightSkyBlue,
+            System.Drawing.Color.LightSlateGray,
+            System.Drawing.Color.LightSteelBlue,
+            System.Drawing.Color.LightYellow,
+            System.Drawing.Color.Lime,
+            System.Drawing.Color.LimeGreen,
+            System.Drawing.Color.Linen,
+            System.Drawing.Color.Magenta,
+            System.Drawing.Color.Maroon,
+            System.Drawing.Color.MediumAquamarine,
+            System.Drawing.Color.MediumBlue,
+            System.Drawing.Color.MediumOrchid,
+            System.Drawing.Color.MediumPurple,
+            System.Drawing.Color.MediumSeaGreen,
+            System.Drawing.Color.MediumSlateBlue,
+            System.Drawing.Color.MediumSpringGreen,
+            System.Drawing.Color.MediumTurquoise,
+            System.Drawing.Color.MediumVioletRed,
+            System.Drawing.Color.MidnightBlue,
+            System.Drawing.Color.MintCream,
+            System.Drawing.Color.MistyRose,
+            System.Drawing.Color.Moccasin,
+            System.Drawing.Color.NavajoWhite,
+            System.Drawing.Color.Navy,
+            System.Drawing.Color.OldLace,
+            System.Drawing.Color.Olive,
+            System.Drawing.Color.OliveDrab,
+            System.Drawing.Color.Orange,
+            System.Drawing.Color.OrangeRed,
+            System.Drawing.Color.Orchid,
+            System.Drawing.Color.PaleGoldenrod,
+            System.Drawing.Color.PaleGreen,
+            System.Drawing.Color.PaleTurquoise,
+            System.Drawing.Color.PaleVioletRed,
+            System.Drawing.Color.PapayaWhip,
+            System.Drawing.Color.PeachPuff,
+            System.Drawing.Color.Peru,
+            System.Drawing.Color.Pink,
+            System.Drawing.Color.Plum,
+            System.Drawing.Color.PowderBlue,
+            System.Drawing.Color.Purple,
+            System.Drawing.Color.Red,
+            System.Drawing.Color.RosyBrown,
+            System.Drawing.Color.RoyalBlue,
+            System.Drawing.Color.SaddleBrown,
+            System.Drawing.Color.Salmon,
+            System.Drawing.Color.SandyBrown,
+            System.Drawing.Color.SeaGreen,
+            System.Drawing.Color.SeaShell,
+            System.Drawing.Color.Sienna,
+            System.Drawing.Color.Silver,
+            System.Drawing.Color.SkyBlue,
+            System.Drawing.Color.SlateBlue,
+            System.Drawing.Color.SlateGray,
+            System.Drawing.Color.Snow,
+            System.Drawing.Color.SpringGreen,
+            System.Drawing.Color.SteelBlue,
+            System.Drawing.Color.Tan,
+            System.Drawing.Color.Teal,
+            System.Drawing.Color.Thistle,
+            System.Drawing.Color.Tomato,
+            System.Drawing.Color.Turquoise,
+            System.Drawing.Color.Violet,
+            System.Drawing.Color.Wheat,
+            System.Drawing.Color.White,
+            System.Drawing.Color.WhiteSmoke,
+            System.Drawing.Color.Yellow,
+            System.Drawing.Color.YellowGreen,
+            System.Drawing.SystemColors.ButtonFace,
+            System.Drawing.SystemColors.ButtonHighlight,
+            System.Drawing.SystemColors.ButtonShadow,
+            System.Drawing.SystemColors.GradientActiveCaption,
+            System.Drawing.SystemColors.GradientInactiveCaption,
+            System.Drawing.SystemColors.MenuBar,
+            System.Drawing.SystemColors.MenuHighlight});
+      this.m_cbFontColor.Location = new System.Drawing.Point(232, 8);
+      this.m_cbFontColor.Name = "m_cbFontColor";
+      this.m_cbFontColor.Size = new System.Drawing.Size(130, 21);
+      this.m_cbFontColor.TabIndex = 24;
+      this.m_cbFontColor.SelectionChangeCommitted += new System.EventHandler(this.OncbFontColor_SelectedIndexChanged);
+      // 
       // _ctrlBackgroundStyle
       // 
+      this._ctrlBackgroundStyle.AutoSize = true;
       this._ctrlBackgroundStyle.Controller = null;
       this._ctrlBackgroundStyle.Location = new System.Drawing.Point(100, 36);
+      this._ctrlBackgroundStyle.Margin = new System.Windows.Forms.Padding(0);
       this._ctrlBackgroundStyle.Name = "_ctrlBackgroundStyle";
       this._ctrlBackgroundStyle.Size = new System.Drawing.Size(262, 30);
       this._ctrlBackgroundStyle.TabIndex = 23;
@@ -431,6 +599,7 @@ namespace Altaxo.Graph.GUI
       // 
       this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
       this.ClientSize = new System.Drawing.Size(424, 342);
+      this.Controls.Add(this.m_cbFontColor);
       this.Controls.Add(this._ctrlBackgroundStyle);
       this.Controls.Add(this.m_btStrikeout);
       this.Controls.Add(this.m_btNormal);
@@ -449,7 +618,6 @@ namespace Altaxo.Graph.GUI
       this.Controls.Add(this.m_lblPosY);
       this.Controls.Add(this.m_lblPosX);
       this.Controls.Add(this.m_lblBackground);
-      this.Controls.Add(this.m_cbFontColor);
       this.Controls.Add(this.m_cbFontSize);
       this.Controls.Add(this.m_cbFonts);
       this.Controls.Add(this.m_btCancel);
@@ -610,12 +778,10 @@ namespace Altaxo.Graph.GUI
       if(m_bDialogInitialized)
       {
 
-        string str = (string)this.m_cbFontColor.SelectedItem;
-        if(str!="Custom")
-        {
-          this.m_TextObject.Color = Color.FromName(str);
+
+        this.m_TextObject.Color = m_cbFontColor.Color;
           this.m_pnPreview.Invalidate();
-        }
+       
       }   
     }
 

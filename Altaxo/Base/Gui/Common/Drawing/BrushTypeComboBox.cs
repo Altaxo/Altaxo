@@ -34,30 +34,30 @@ namespace Altaxo.Gui.Common.Drawing
 
 
 
-  public class DashCapComboBox : ComboBox
+  public class BrushTypeComboBox : ComboBox
   {
-    public DashCapComboBox()
+    public BrushTypeComboBox()
     {
       DropDownStyle = ComboBoxStyle.DropDownList;
       DrawMode = DrawMode.OwnerDrawFixed;
       ItemHeight = Font.Height;
     }
 
-    public DashCapComboBox(DashCap selected)
+    public BrushTypeComboBox(BrushType selected)
       : this()
     {
       SetDataSource(selected);
     }
 
 
-   
 
-    void SetDataSource(DashCap selected)
+
+    void SetDataSource(BrushType selected)
     {
       this.BeginUpdate();
 
       Items.Clear();
-      foreach (DashCap o in Enum.GetValues(typeof(DashCap)))
+      foreach (BrushType o in Enum.GetValues(typeof(BrushType)))
         Items.Add(o);
 
       SelectedItem = selected;
@@ -65,11 +65,11 @@ namespace Altaxo.Gui.Common.Drawing
       this.EndUpdate();
     }
 
-    public DashCap DashCap
+    public BrushType BrushType
     {
       get
       {
-        return SelectedItem == null ? DashCap.Flat : (DashCap)SelectedItem;
+        return SelectedItem == null ? BrushType.SolidBrush : (BrushType)SelectedItem;
       }
       set
       {
@@ -92,19 +92,35 @@ namespace Altaxo.Gui.Common.Drawing
       if (this.Enabled)
         e.DrawBackground();
 
-      DashCap item = e.Index>=0 ? (DashCap)Items[e.Index] : DashCap.Flat;
+      BrushType item = e.Index>=0 ? (BrushType)Items[e.Index] : BrushType.SolidBrush;
+    
       SolidBrush foreColorBrush = new SolidBrush(e.ForeColor);
+      Brush fillbrush = foreColorBrush;
 
-      Pen linePen = new Pen(foreColorBrush, (float)Math.Ceiling(0.5 * e.Bounds.Height));
-      linePen.DashStyle = DashStyle.Dot; 
-      linePen.DashCap = item;
+      switch (item)
+      {
+        case BrushType.SolidBrush:
+          fillbrush = new SolidBrush(e.ForeColor);
+          break;
+        case BrushType.HatchBrush:
+          fillbrush = new HatchBrush(HatchStyle.Cross, e.BackColor, e.ForeColor);
+          break;
+        case BrushType.LinearGradientBrush:
+          fillbrush = new LinearGradientBrush(rectColor, e.BackColor, e.ForeColor, LinearGradientMode.ForwardDiagonal);
+          break;
+        case BrushType.PathGradientBrush:
+          GraphicsPath gp = new GraphicsPath();
+          gp.AddRectangle(rectColor);
+          PathGradientBrush pgb = new PathGradientBrush(gp);
+          pgb.CenterColor = e.ForeColor;
+          fillbrush = pgb;
+          break;
+      }
 
-      grfx.DrawLine(linePen,
-        rectColor.Left, 0.5f * (rectColor.Top + rectColor.Bottom),
-        rectColor.Right, 0.5f * (rectColor.Top + rectColor.Bottom));
+      grfx.FillRectangle(fillbrush, rectColor);
       grfx.DrawString(item.ToString(), Font, foreColorBrush, rectText);
     }
 
-   
+
   }
 }

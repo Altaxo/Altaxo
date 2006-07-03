@@ -50,9 +50,9 @@ namespace Altaxo.Graph
     /// <summary>Pen used for painting of the minor ticks.</summary>
     protected PenHolder m_MinorTickPen =  new PenHolder(Color.Black,1);
     /// <summary>Length of the major ticks in points (1/72 inch).</summary>
-    protected float m_MajorTickLength = 12;
+    protected float m_MajorTickLength = 8;
     /// <summary>Length of the minor ticks in points (1/72 inch).</summary>
-    protected float m_MinorTickLength = 8;
+    protected float m_MinorTickLength = 4;
     /// <summary>True if major ticks should be painted outside of the layer.</summary>
     protected bool  m_bOuterMajorTicks=true; // true if outer major ticks should be visible
     /// <summary>True if major ticks should be painted inside of the layer.</summary>

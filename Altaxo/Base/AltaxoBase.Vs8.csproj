@@ -195,6 +195,7 @@
     <Compile Include="Graph\LabelFormatting\NumericLabelFormattingFixed.cs" />
     <Compile Include="Graph\LabelFormatting\NumericLabelFormattingMantissa.cs" />
     <Compile Include="Graph\LabelFormatting\NumericLabelFormattingScientific.cs" />
+    <Compile Include="Graph\LengthUnit.cs" />
     <Compile Include="Graph\PlotColors.cs" />
     <Compile Include="Graph\Procedures\ArrangeLayers.cs" />
     <Compile Include="Graph\Procedures\Export.cs" />
@@ -236,6 +237,15 @@
     </Compile>
     <Compile Include="Gui\Common\CustomColorDialog\CustomColorDialog.cs" />
     <Compile Include="Gui\Common\CustomColorDialog\NativeMethods.cs" />
+    <Compile Include="Gui\Common\Drawing\BrushControlsGlue.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\HatchStyleComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\LineCapSizeComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Gui\Common\Drawing\BrushColorComboBox.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -270,6 +280,12 @@
     <Compile Include="Gui\Common\Drawing\PenAllPropertiesControl.Designer.cs">
       <DependentUpon>PenAllPropertiesControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Gui\Common\Drawing\PenControlsGlue.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\BrushTypeComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Gui\Common\MultiChildController.cs" />
     <Compile Include="Gui\Common\MultiChildControl.cs">
       <SubType>UserControl</SubType>
@@ -289,6 +305,10 @@
       <DependentUpon>BackgroundStyleControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\BackgroundStyleController.cs" />
+    <Compile Include="Gui\Graph\LineGraphicController.cs" />
+    <Compile Include="Gui\Graph\ObjectPositionAndSizeGlue.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Gui\Graph\PlottingRangeControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -296,6 +316,12 @@
       <DependentUpon>PlottingRangeControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\PlottingRangeController.cs" />
+    <Compile Include="Gui\Graph\LineGraphicControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\LineGraphicControl.Designer.cs">
+      <DependentUpon>LineGraphicControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Graph\XYAxisLabelStyleControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -1199,6 +1225,14 @@
       <DependentUpon>BackgroundCancelDialog.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Common\Drawing\ColorTypeThicknessPenControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ColorTypeThicknessPenControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Common\Drawing\PenAllPropertiesControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>PenAllPropertiesControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Gui\Common\MultiChildControl.resx">
       <DependentUpon>MultiChildControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -1215,6 +1249,10 @@
     <EmbeddedResource Include="Gui\Graph\PlottingRangeControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>PlottingRangeControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\LineGraphicControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>LineGraphicControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Graph\XYAxisLabelStyleControl.resx">
       <DependentUpon>XYAxisLabelStyleControl.cs</DependentUpon>

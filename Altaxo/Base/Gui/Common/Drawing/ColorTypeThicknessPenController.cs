@@ -30,17 +30,11 @@ namespace Altaxo.Gui.Common.Drawing
   public interface IColorTypeThicknessPenView
   {
     IColorTypeThicknessPenViewEventSink Controller { get; set; }
-    void InitializeColor(System.Drawing.Color selectedColor);
-    void InitializeLineType(DashStyleEx selection);
-    void InitializeLineWidth(float selection);
-    ColorType ColorType  { get; set; }
+    PenHolder DocPen  { get; set; }
   }
 
   public interface IColorTypeThicknessPenViewEventSink
   {
-    void EhView_ColorChanged(System.Drawing.Color selection);
-    void EhView_LineTypeChanged(DashStyleEx selection);
-    void EhView_LineWidthChanged(float value);
     void EhView_ShowFullPenDialog();
   }
 
@@ -70,32 +64,12 @@ namespace Altaxo.Gui.Common.Drawing
     {
       if(_view!=null)
       {
-        string[] names;
-        string name;
-
-        _view.InitializeColor(_tempDoc.Color);
-        _view.InitializeLineType(_tempDoc.DashStyleEx);
-        _view.InitializeLineWidth(_tempDoc.Width);
-
-
+        _view.DocPen = _tempDoc;
       }
     }
     #region IColorTypeThicknessPenViewEventSink Members
 
-    public void EhView_ColorChanged(System.Drawing.Color selection)
-    {
-      _tempDoc.Color = selection;
-    }
-
-    public void EhView_LineTypeChanged(DashStyleEx selection)
-    {
-      _tempDoc.DashStyleEx = selection;
-    }
-
-    public void EhView_LineWidthChanged(float value)
-    {
-      _tempDoc.Width = value;
-    }
+   
 
     public void EhView_ShowFullPenDialog()
     {

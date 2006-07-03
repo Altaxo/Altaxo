@@ -612,7 +612,7 @@ namespace Altaxo.Graph
       
       // ensure that brush and pen are cached
       if(null!=_penHolder) _penHolder.Cached=true;
-      if(null!=_fillBrush) _fillBrush.Cached = true;
+     
 
       int rangelistlen = rangeList.Count;
 

@@ -26,6 +26,8 @@ using System.Text;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.ComponentModel;
+
 using Altaxo.Graph;
 
 
@@ -39,39 +41,40 @@ namespace Altaxo.Gui.Common.Drawing
     bool _isForEndCap;
     ContextMenuStrip _contextStrip;
 
-    static List<LineCapEx> _lineCaps;
+    static SortedDictionary<string, LineCapEx> _lineCaps;
 
     public LineCapComboBox()
-      : this(true,LineCapEx.Flat)
     {
-    }
-
-    public LineCapComboBox(bool isForEndCap)
-      : this(isForEndCap, LineCapEx.Flat)
-    {
-    }
-
-    public LineCapComboBox(bool isForEndCap, LineCapEx selected)
-    {
-      _isForEndCap = isForEndCap;
       DropDownStyle = ComboBoxStyle.DropDownList;
       DrawMode = DrawMode.OwnerDrawFixed;
       ItemHeight = Font.Height;
-      SetDataSource(selected);
 
       _contextStrip = new ContextMenuStrip();
       _contextStrip.Items.Add("Custom ..", null, this.EhChooseCustom);
       this.ContextMenuStrip = _contextStrip;
     }
 
+    public LineCapComboBox(bool isForEndCap)
+      : this()
+    {
+      _isForEndCap = isForEndCap;
+    }
+
+    public LineCapComboBox(bool isForEndCap, LineCapEx selected)
+      : this()
+    {
+      _isForEndCap = isForEndCap;
+      SetDataSource(selected);
+    }
+
 
     void SetDefaultValues()
     {
-      _lineCaps = new List<LineCapEx>();
+      _lineCaps = new SortedDictionary<string, LineCapEx>();
 
       foreach (LineCapEx cap in LineCapEx.GetValues())
       {
-          _lineCaps.Add(cap);
+          _lineCaps.Add(cap.Name, cap);
       }
     }
 
@@ -79,26 +82,27 @@ namespace Altaxo.Gui.Common.Drawing
     {
       if (_lineCaps == null)
         SetDefaultValues();
-      if (!_lineCaps.Contains(selected))
-        _lineCaps.Add(selected);
+      if (!_lineCaps.ContainsKey(selected.Name))
+        _lineCaps.Add(selected.Name, selected);
 
       this.BeginUpdate();
 
       Items.Clear();
 
-      foreach (LineCapEx o in _lineCaps)
-        Items.Add(o);
+      foreach (KeyValuePair<string,LineCapEx> o in _lineCaps)
+        Items.Add(o.Value);
 
-      SelectedItem = selected;
+      SelectedItem = LineCapEx.FromName(selected.Name);
 
       this.EndUpdate();
     }
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public LineCapEx LineCapEx
     {
       get
       {
-        return (LineCapEx)SelectedItem;
+        return null==SelectedItem ? LineCapEx.Flat : (LineCapEx)SelectedItem;
       }
       set
       {
@@ -109,6 +113,7 @@ namespace Altaxo.Gui.Common.Drawing
 
     protected override void OnDrawItem(DrawItemEventArgs e)
     {
+     
       Graphics grfx = e.Graphics;
       Rectangle rectColor = new Rectangle(e.Bounds.Left, e.Bounds.Top, 2 * e.Bounds.Height, e.Bounds.Height);
       rectColor.Inflate(-1, -1);
@@ -123,7 +128,7 @@ namespace Altaxo.Gui.Common.Drawing
 
       //grfx.DrawRectangle(new Pen(e.ForeColor), rectColor);
 
-      LineCapEx item = (LineCapEx)Items[e.Index];
+      LineCapEx item = e.Index>=0 ? (LineCapEx)Items[e.Index] : LineCapEx.Flat;
       SolidBrush foreColorBrush = new SolidBrush(e.ForeColor);
 
       Pen linePen = new Pen(foreColorBrush, (float)Math.Ceiling(0.4 * e.Bounds.Height));

@@ -33,15 +33,16 @@ namespace Altaxo.Gui.Common.Drawing
     static List<float> _miterValues;
 
     public MiterLimitComboBox()
-      : this(1)
-    {
-    }
-
-    public MiterLimitComboBox(float miterLimit)
+     
     {
       DropDownStyle = ComboBoxStyle.DropDown;
       DrawMode = DrawMode.OwnerDrawFixed;
       ItemHeight = Font.Height;
+    }
+
+    public MiterLimitComboBox(float miterLimit)
+      : this()
+    {
       SetDataSource(miterLimit);
     }
 
@@ -78,7 +79,7 @@ namespace Altaxo.Gui.Common.Drawing
     {
       get
       {
-        return (float)SelectedItem;
+        return null==SelectedItem ? 1 : (float)SelectedItem;
       }
       set
       {

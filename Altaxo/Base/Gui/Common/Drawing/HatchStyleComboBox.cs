@@ -34,30 +34,27 @@ namespace Altaxo.Gui.Common.Drawing
 
 
 
-  public class DashCapComboBox : ComboBox
+  public class HatchStyleComboBox : ComboBox
   {
-    public DashCapComboBox()
+    public HatchStyleComboBox()
     {
       DropDownStyle = ComboBoxStyle.DropDownList;
       DrawMode = DrawMode.OwnerDrawFixed;
       ItemHeight = Font.Height;
     }
 
-    public DashCapComboBox(DashCap selected)
+    public HatchStyleComboBox(HatchStyle selected)
       : this()
     {
       SetDataSource(selected);
     }
 
-
-   
-
-    void SetDataSource(DashCap selected)
+    void SetDataSource(HatchStyle selected)
     {
       this.BeginUpdate();
 
       Items.Clear();
-      foreach (DashCap o in Enum.GetValues(typeof(DashCap)))
+      foreach (HatchStyle o in Enum.GetValues(typeof(HatchStyle)))
         Items.Add(o);
 
       SelectedItem = selected;
@@ -65,11 +62,11 @@ namespace Altaxo.Gui.Common.Drawing
       this.EndUpdate();
     }
 
-    public DashCap DashCap
+    public HatchStyle HatchStyle
     {
       get
       {
-        return SelectedItem == null ? DashCap.Flat : (DashCap)SelectedItem;
+        return SelectedItem == null ? HatchStyle.Min : (HatchStyle)SelectedItem;
       }
       set
       {
@@ -92,19 +89,14 @@ namespace Altaxo.Gui.Common.Drawing
       if (this.Enabled)
         e.DrawBackground();
 
-      DashCap item = e.Index>=0 ? (DashCap)Items[e.Index] : DashCap.Flat;
+      HatchStyle item = e.Index>=0 ? (HatchStyle)Items[e.Index] : HatchStyle.Min;
+      HatchBrush hatchBrush = new HatchBrush(item, e.ForeColor,e.BackColor);
       SolidBrush foreColorBrush = new SolidBrush(e.ForeColor);
 
-      Pen linePen = new Pen(foreColorBrush, (float)Math.Ceiling(0.5 * e.Bounds.Height));
-      linePen.DashStyle = DashStyle.Dot; 
-      linePen.DashCap = item;
-
-      grfx.DrawLine(linePen,
-        rectColor.Left, 0.5f * (rectColor.Top + rectColor.Bottom),
-        rectColor.Right, 0.5f * (rectColor.Top + rectColor.Bottom));
+      grfx.FillRectangle(hatchBrush, rectColor);
       grfx.DrawString(item.ToString(), Font, foreColorBrush, rectText);
     }
 
-   
+
   }
 }

@@ -51,7 +51,7 @@ namespace Altaxo.Gui.Graph
     /// </summary>
     /// <param name="arr">String array of possible selections</param>
     /// <param name="sel">Current selection.</param>
-    void InitializePlotStyleColor(string[] arr , string sel);
+    void InitializePlotStyleColor(Color sel);
 
     /// <summary>
     /// Initializes the symbol size combobox.
@@ -100,7 +100,7 @@ namespace Altaxo.Gui.Graph
 
     bool IndependentColor { get; }
     
-    string SymbolColor { get; }
+    Color SymbolColor { get; }
     string SymbolShape {get; }
     bool   IndependentSymbolSize { get; }
     string SymbolStyle {get; }
@@ -248,20 +248,7 @@ namespace Altaxo.Gui.Graph
 
     public void SetPlotStyleColor()
     {
-      string name = "Custom"; // default
-
-      if(null!=_tempDoc.Pen)
-      {
-        name = "Custom";
-        if(_tempDoc.Pen.PenType == PenType.SolidColor)
-        {
-          name = PlotColors.Colors.GetPlotColorName(_tempDoc.Pen.Color);
-          if(null==name) 
-            name = "Custom";
-        }
-      }
-      
-      _view.InitializePlotStyleColor(GetPlotColorNames(),name);
+      _view.InitializePlotStyleColor(_tempDoc.Pen.Color);
     }
 
 
@@ -302,18 +289,14 @@ namespace Altaxo.Gui.Graph
       
 
         // Symbol Color
-        string str = _view.SymbolColor;
-        if(str!="Custom")
-        {
-          _doc.Color = Color.FromName(str);
-        }
+        _doc.Color = _view.SymbolColor;
 
         _doc.IndependentColor = _view.IndependentColor;
       
         _doc.IndependentSymbolSize = _view.IndependentSymbolSize;
 
         // Symbol Shape
-        str = _view.SymbolShape;
+        string str = _view.SymbolShape;
         _doc.Shape = (Altaxo.Graph.XYPlotScatterStyles.Shape)Enum.Parse(typeof(Altaxo.Graph.XYPlotScatterStyles.Shape),str);
 
         // Symbol Style

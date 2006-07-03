@@ -63,7 +63,6 @@ namespace Altaxo.Graph
   {
 
     protected BrushType m_BrushType; // Type of the brush
-    protected bool      m_CachedMode; // Is the brushed cached inside this object
     protected Brush     m_Brush;      // this is the cached brush object
 
     protected Color     m_ForeColor; // Color of the brush
@@ -171,7 +170,6 @@ namespace Altaxo.Graph
     public BrushHolder(BrushHolder bh)
     {
       m_BrushType   = bh.m_BrushType; // Type of the brush
-      m_CachedMode  = bh.m_CachedMode;; // Is the brushed cached inside this object
       m_Brush       = null==bh.m_Brush ? null : (Brush)bh.m_Brush.Clone();      // this is the cached brush object
       m_ForeColor   = bh.m_ForeColor; // Color of the brush
       m_BackColor   = bh.m_BackColor; // Backcolor of brush, f.i.f. HatchStyle brushes
@@ -185,81 +183,107 @@ namespace Altaxo.Graph
       m_Bool1       = bh.m_Bool1;
     }
 
+  
     public BrushHolder(Color c)
-      : this(c,false)
     {
-    }
-
-    public BrushHolder(Color c, bool bCacheMode)
-    {
-      this.m_CachedMode = bCacheMode;
       this.m_BrushType = BrushType.SolidBrush;
       this.m_ForeColor = c;
-
-      if(bCacheMode)
-        _SetBrushVariable( new SolidBrush(c) );
     }
-
-    
-    public BrushHolder(Brush br, bool cacheMode)
-    {
-      m_CachedMode = cacheMode;
-      this.Brush = br;
-    }
-
 
     public static implicit operator System.Drawing.Brush(BrushHolder bh)
     {
-      bh.Cached = true; // if we use implicit conversion, we set cached mode to true because I suppose this conversion is used in functions
       return bh.Brush;
     }
-
-    public bool Cached
-    {
-      get { return this.m_CachedMode; }
-      set 
-      {
-        if(this.m_CachedMode != value) // only if the mode changed
-        {
-          // if forced to cache mode, create and set the pen variable
-          _SetBrushVariable( value ? this.Brush : null );
-          m_CachedMode = value;
-        }
-      }
-    }
+ 
 
     public BrushType BrushType
     {
-      get { return this.m_BrushType; }
+      get 
+      {
+        return this.m_BrushType; 
+      }
+      set
+      {
+        BrushType oldValue = this.m_BrushType;
+        m_BrushType = value;
+        if (m_BrushType != oldValue)
+        {
+          _SetBrushVariable(null);
+          OnChanged();
+        }
+      }
     }
 
     public Color Color
     {
       get { return m_ForeColor; }
+      set
+      {
+        bool bChanged = (m_ForeColor!=value);
+        m_ForeColor = value;
+        if (bChanged)
+        {
+          _SetBrushVariable(null);
+          OnChanged();
+        }
+      }
     }
+
+    public Color BackColor
+    {
+      get { return m_BackColor; }
+      set
+      {
+        bool bChanged = (m_BackColor!=value);
+        m_BackColor = value;
+        if (bChanged)
+        {
+          _SetBrushVariable(null);
+          OnChanged();
+        }
+      }
+    }
+
+    public HatchStyle HatchStyle
+    {
+      get
+      {
+        return m_HatchStyle;
+      }
+      set
+      {
+        bool bChanged = (m_HatchStyle != value);
+        m_HatchStyle = value;
+        if (bChanged)
+        {
+          _SetBrushVariable(null);
+          OnChanged();
+        }
+      }
+    }
+
 
     public Brush Brush
     {
-      get 
+      get
       {
-        if(this.m_CachedMode)
+        if (m_Brush == null)
         {
-          return m_Brush;
-        }
-        else
-        {
-          switch(m_BrushType)
+          Brush br = null;
+          switch (m_BrushType)
           {
             case BrushType.SolidBrush:
-              return new SolidBrush(m_ForeColor);
+              br = new SolidBrush(m_ForeColor);
+              break;
             case BrushType.HatchBrush:
-              return new HatchBrush(m_HatchStyle,m_ForeColor,m_BackColor);
-            default:
-              return null;
+              br = new HatchBrush(m_HatchStyle, m_ForeColor, m_BackColor);
+              break;
           } // end of switch
-        }     
+          this._SetBrushVariable(br);
+        }
+        return m_Brush;
       } // end of get
-      set
+    /* set
       {
         if(value is SolidBrush)
         {
@@ -278,6 +302,7 @@ namespace Altaxo.Graph
 
         OnChanged();
       } // end of set
+     */
     } // end of prop. Brush
 
 
@@ -286,10 +311,7 @@ namespace Altaxo.Graph
     {
       m_BrushType = BrushType.SolidBrush;
       m_ForeColor     = c;
-
-      if(m_CachedMode)
-        _SetBrushVariable( new SolidBrush(c) );
-
+      _SetBrushVariable(null);
       OnChanged();
     }
 
@@ -301,12 +323,11 @@ namespace Altaxo.Graph
     public void SetHatchBrush(HatchStyle hs, Color fc, Color bc)
     {
       m_BrushType = BrushType.HatchBrush;
+      m_HatchStyle = hs;
       m_ForeColor = fc;
       m_BackColor = bc;
 
-      if(m_CachedMode)
-        _SetBrushVariable(new HatchBrush(hs,fc,bc) );
-
+      _SetBrushVariable(null);
       OnChanged();
     }
 

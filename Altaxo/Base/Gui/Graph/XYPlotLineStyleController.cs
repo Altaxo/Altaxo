@@ -28,6 +28,7 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using Altaxo.Graph;
 using Altaxo.Main.GUI;
+using Altaxo.Gui.Common.Drawing;
 
 namespace Altaxo.Gui.Graph
 {
@@ -50,14 +51,7 @@ namespace Altaxo.Gui.Graph
 
     void InitializeIndependentColor(bool val);
  
-    /// <summary>
-    /// Initializes the plot style color combobox.
-    /// </summary>
-    /// <param name="arr">String array of possible selections</param>
-    /// <param name="sel">Current selection.</param>
-    void InitializePlotStyleColor(string[] arr , string sel);
-
-   
+    void InitializePen(IColorTypeThicknessPenController controller);
 
     /// <summary>
     /// Initializes the LineSymbolGap check box.
@@ -73,19 +67,7 @@ namespace Altaxo.Gui.Graph
     /// <param name="sel">Current selection.</param>
     void InitializeLineConnect(string[] arr , string sel);
 
-    /// <summary>
-    /// Initializes the Line Style combobox.
-    /// </summary>
-    /// <param name="arr">String array of possible selections</param>
-    /// <param name="sel">Current selection.</param>
-    void InitializeLineStyle(string[] arr , string sel);
-
-    /// <summary>
-    /// Initializes the Line Width combobox.
-    /// </summary>
-    /// <param name="arr">String array of possible selections</param>
-    /// <param name="sel">Current selection.</param>
-    void InitializeLineWidth(string[] arr , string sel);
+   
 
     /// <summary>
     /// Initializes the fill check box.
@@ -113,10 +95,9 @@ namespace Altaxo.Gui.Graph
     bool LineSymbolGap { get; }
     bool IndependentColor { get; }
    
-    string SymbolColor { get; }
+ 
     string LineConnect { get; }
-    string LineType    { get; }
-    string LineWidth   { get; }
+  
     bool   LineFillArea { get; }
     string LineFillDirection { get; }
     BrushHolder LineFillColor {get; }
@@ -156,11 +137,13 @@ namespace Altaxo.Gui.Graph
     IXYPlotLineStyleView _view;
     XYPlotLineStyle _doc;
     XYPlotLineStyle _tempDoc;
+    IColorTypeThicknessPenController _penController;
 
     public XYPlotLineStyleController(XYPlotLineStyle doc)
     {
       _doc = doc;
       _tempDoc = (XYPlotLineStyle)_doc.Clone();
+      _penController = new ColorTypeThicknessPenController(_tempDoc.PenHolder);
     }
 
 
@@ -225,13 +208,11 @@ namespace Altaxo.Gui.Graph
        
 
         // now we have to set all dialog elements to the right values
-        SetPlotStyleColor();
+        _view.InitializePen(_penController);
         SetLineSymbolGapCondition();
 
         // Line properties
         SetLineConnect();
-        SetLineStyle();
-        SetLineWidth();
         SetFillCondition();
         SetFillDirection();
         SetFillColor();
@@ -254,25 +235,11 @@ namespace Altaxo.Gui.Graph
       _view.InitializeLineConnect(names,_tempDoc.Connection.ToString());
     }
 
-    public void SetLineStyle()
-    {
-      string [] names = System.Enum.GetNames(typeof(DashStyle));
-
-      _view.InitializeLineStyle(names,_tempDoc.PenHolder.DashStyle.ToString());
-    }
+   
 
 
   
-    public void SetLineWidth()
-    {
-      float[] LineWidths = 
-      { 0.2f,0.5f,1,1.5f,2,3,4,5 };
-      string[] names = new string[LineWidths.Length];
-      for(int i=0;i<names.Length;i++)
-        names[i] = LineWidths[i].ToString();
-
-      _view.InitializeLineWidth(names,_tempDoc.PenHolder.Width.ToString());
-    }
+    
 
     public void SetFillCondition()
     {
@@ -291,24 +258,7 @@ namespace Altaxo.Gui.Graph
     }
 
 
-    public void SetPlotStyleColor()
-    {
-      string name = "Custom"; // default
-
-      if(null!=_tempDoc.PenHolder)
-      {
-        name = "Custom";
-        if(_tempDoc.PenHolder.PenType == PenType.SolidColor)
-        {
-          name = PlotColors.Colors.GetPlotColorName(_tempDoc.PenHolder.Color);
-          if(null==name) 
-            name = "Custom";
-        }
-      }
-      
-      
-      _view.InitializePlotStyleColor(GetPlotColorNames(),name);
-    }
+ 
 
 
     #region IApplyController Members
@@ -323,22 +273,13 @@ namespace Altaxo.Gui.Graph
         // Symbol Gap
         _doc.LineSymbolGap = _view.LineSymbolGap;
 
-        // Symbol Color
-        string str = _view.SymbolColor;
-        if(str!="Custom")
-        {
-          _doc.Color = Color.FromName(str);
-        }
+        // Pen
+        _penController.Apply();
+        _doc.PenHolder.CopyFrom( _tempDoc.PenHolder );
 
-        _doc.IndependentColor = _view.IndependentColor;
        
         // Line Connect
         _doc.Connection = (Altaxo.Graph.XYPlotLineStyles.ConnectionStyle)Enum.Parse(typeof(Altaxo.Graph.XYPlotLineStyles.ConnectionStyle),_view.LineConnect);
-        // Line Type
-        _doc.PenHolder.DashStyle = (DashStyle)Enum.Parse(typeof(DashStyle),_view.LineType);
-        // Line Width
-        float width = System.Convert.ToSingle(_view.LineWidth);
-        _doc.PenHolder.Width = width;
 
 
         // Fill Area

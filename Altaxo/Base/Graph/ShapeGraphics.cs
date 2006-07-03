@@ -345,10 +345,20 @@ namespace Altaxo.Graph
         if (gp.IsOutlineVisible(pt, myPen))
         {
           gp.Widen(myPen);
-          return new HitTestObject(gp, this);
+          HitTestObject result = new HitTestObject(gp, this);
+          result.DoubleClick = EhHitDoubleClick;
+          return result;
         }
       }
       return null;
+    }
+
+    static bool EhHitDoubleClick(IHitTestObject o)
+    {
+      object hitted = o.HittedObject;
+      Current.Gui.ShowDialog(ref hitted, "Line properties");
+      ((LineGraphic)hitted).OnChanged();
+      return true;
     }
 
 

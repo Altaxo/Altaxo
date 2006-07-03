@@ -25,51 +25,60 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
 using System.Drawing;
-using System.Drawing.Drawing2D;
-using Altaxo.Graph;
-
 
 namespace Altaxo.Gui.Common.Drawing
 {
-
-
-
-  public class DashCapComboBox : ComboBox
+  public class LineCapSizeComboBox : ComboBox
   {
-    public DashCapComboBox()
+    static List<float> _thicknessValues;
+
+    public LineCapSizeComboBox()
     {
-      DropDownStyle = ComboBoxStyle.DropDownList;
+      DropDownStyle = ComboBoxStyle.DropDown;
       DrawMode = DrawMode.OwnerDrawFixed;
       ItemHeight = Font.Height;
     }
 
-    public DashCapComboBox(DashCap selected)
+    public LineCapSizeComboBox(float thickness)
       : this()
     {
-      SetDataSource(selected);
+      SetDataSource(thickness);
     }
 
+    void SetDefaultValues()
+    {
+      _thicknessValues = new List<float>();
+      _thicknessValues.AddRange(new float[] { 4,6,8,10,12,16,20,24,28,32 });
+    }
 
-   
-
-    void SetDataSource(DashCap selected)
+    void SetDataSource(float thickness)
     {
       this.BeginUpdate();
 
-      Items.Clear();
-      foreach (DashCap o in Enum.GetValues(typeof(DashCap)))
-        Items.Add(o);
+      if (_thicknessValues == null)
+        SetDefaultValues();
 
-      SelectedItem = selected;
+      Items.Clear();
+
+      if (!_thicknessValues.Contains(thickness))
+      {
+        _thicknessValues.Add(thickness);
+        _thicknessValues.Sort();
+      }
+
+      foreach (float val in _thicknessValues)
+        Items.Add(val);
+
+      SelectedItem = thickness;
 
       this.EndUpdate();
     }
 
-    public DashCap DashCap
+    public float Thickness
     {
       get
       {
-        return SelectedItem == null ? DashCap.Flat : (DashCap)SelectedItem;
+        return null==SelectedItem ? 8 : (float)SelectedItem;
       }
       set
       {
@@ -92,19 +101,44 @@ namespace Altaxo.Gui.Common.Drawing
       if (this.Enabled)
         e.DrawBackground();
 
-      DashCap item = e.Index>=0 ? (DashCap)Items[e.Index] : DashCap.Flat;
+      //grfx.DrawRectangle(new Pen(e.ForeColor), rectColor);
+
+
+      float itemThickness = (float)Items[e.Index];
       SolidBrush foreColorBrush = new SolidBrush(e.ForeColor);
 
-      Pen linePen = new Pen(foreColorBrush, (float)Math.Ceiling(0.5 * e.Bounds.Height));
-      linePen.DashStyle = DashStyle.Dot; 
-      linePen.DashCap = item;
+      System.Drawing.Drawing2D.GraphicsPath path = new System.Drawing.Drawing2D.GraphicsPath();
+      
+      PointF middle = new PointF(rectColor.Left+0.5f*rectColor.Width,rectColor.Top+0.5f*rectColor.Height);
 
-      grfx.DrawLine(linePen,
-        rectColor.Left, 0.5f * (rectColor.Top + rectColor.Bottom),
-        rectColor.Right, 0.5f * (rectColor.Top + rectColor.Bottom));
-      grfx.DrawString(item.ToString(), Font, foreColorBrush, rectText);
+      PointF[] points = new PointF[]{
+        new PointF(rectColor.Left,middle.Y),
+        new PointF(middle.X,middle.Y+0.5f*itemThickness),
+        new PointF(rectColor.Right,middle.Y),
+        new PointF(middle.X,middle.Y-0.5f*itemThickness)
+      };
+
+      grfx.FillPolygon(foreColorBrush, points);
+      
+      string text = Altaxo.Serialization.GUIConversion.ToString(itemThickness);
+      grfx.DrawString(text, Font, foreColorBrush, rectText);
     }
 
-   
+    protected override void OnValidating(System.ComponentModel.CancelEventArgs e)
+    {
+      double w;
+      if (Altaxo.Serialization.GUIConversion.IsDouble(this.Text, out w))
+      {
+        this.SetDataSource((float)w);
+      }
+      else
+      {
+        e.Cancel = true;
+      }
+
+      base.OnValidating(e);
+    }
+
+
   }
 }

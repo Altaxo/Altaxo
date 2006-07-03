@@ -19,54 +19,77 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 #endregion
+
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
 using System.Text;
-using System.Windows.Forms;
 
+using Altaxo.Main.GUI;
 using Altaxo.Graph;
 
-namespace Altaxo.Gui.Common.Drawing
+namespace Altaxo.Gui.Graph
 {
-  public partial class PenAllPropertiesControl : UserControl, Altaxo.Main.GUI.IMVCAController
+  public interface ILineGraphicView
   {
-    
+    PenHolder DocPen { get; set; }
+    System.Drawing.PointF DocPosition { get; set; }
+    System.Drawing.SizeF DocSize { get; set; }
+    float DocRotation { get; set; }
+  }
+  public interface ILineGraphicViewEventSink
+  {
+  }
 
-    public PenAllPropertiesControl()
-    {
-      InitializeComponent();
-    }
-
-    public PenHolder Pen
-    {
-      get { return _penGlue.Pen; }
-      set
-      { 
-        _penGlue.Pen = value;
-      }
-    }
-
+  [UserControllerForObject(typeof(LineGraphic))]
+  public class LineGraphicController : ILineGraphicViewEventSink, IMVCAController
+  {
+    ILineGraphicView _view;
+    LineGraphic _doc;
+    LineGraphic _tempdoc;
 
     #region IMVCController Members
+
+    public LineGraphicController(LineGraphic doc)
+    {
+      _doc = doc;
+      _tempdoc = (LineGraphic)doc.Clone();
+      Initialize(true);
+    }
+
+    void Initialize(bool bInit)
+    {
+      if (_view != null)
+      {
+        _view.DocPen = _tempdoc.Pen;
+        _view.DocPosition = _tempdoc.Position;
+        _view.DocSize = _tempdoc.Size;
+        _view.DocRotation = _tempdoc.Rotation;
+      }
+    }
 
     public object ViewObject
     {
       get
       {
-        return this;
+        return _view;
       }
       set
       {
-        throw new Exception("The method or operation is not implemented.");
+   //     if (_view != null)
+   //       _view.Controller = null;
+
+        _view = value as ILineGraphicView;
+
+        Initialize(false);
+
+  //      if (_view != null)
+    //      _view.Controller = this;
       }
     }
 
     public object ModelObject
     {
-      get { return _penGlue.Pen; }
+      get { return _doc; }
     }
 
     #endregion
@@ -75,6 +98,10 @@ namespace Altaxo.Gui.Common.Drawing
 
     public bool Apply()
     {
+      _doc.Pen = _view.DocPen;
+      _doc.Position = _view.DocPosition;
+      _doc.Size = _view.DocSize;
+      _doc.Rotation = _view.DocRotation;
       return true;
     }
 

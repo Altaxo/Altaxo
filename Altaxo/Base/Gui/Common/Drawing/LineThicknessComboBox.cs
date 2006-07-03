@@ -33,15 +33,16 @@ namespace Altaxo.Gui.Common.Drawing
     static List<float> _thicknessValues;
 
     public LineThicknessComboBox()
-      : this(1)
-    {
-    }
-
-    public LineThicknessComboBox(float thickness)
     {
       DropDownStyle = ComboBoxStyle.DropDown;
       DrawMode = DrawMode.OwnerDrawFixed;
       ItemHeight = Font.Height;
+    }
+
+    public LineThicknessComboBox(float thickness)
+      : this()
+    {
+     
       SetDataSource(thickness);
     }
 
@@ -78,7 +79,7 @@ namespace Altaxo.Gui.Common.Drawing
     {
       get
       {
-        return (float)SelectedItem;
+        return null==SelectedItem ? 1 : (float)SelectedItem;
       }
       set
       {

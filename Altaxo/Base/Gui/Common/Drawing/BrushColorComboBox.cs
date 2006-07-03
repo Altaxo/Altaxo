@@ -25,6 +25,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
 using System.Drawing;
+using System.ComponentModel;
 
 using Altaxo.Graph;
 
@@ -103,6 +104,7 @@ namespace Altaxo.Gui.Common.Drawing
       this.EndUpdate();
     }
   
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public BrushHolder Brush
     {
       get

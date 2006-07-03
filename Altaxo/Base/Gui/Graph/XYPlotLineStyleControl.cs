@@ -29,6 +29,7 @@ using System.Windows.Forms;
 using Altaxo.Main.GUI;
 
 using Altaxo.Graph;
+using Altaxo.Gui.Common.Drawing;
 namespace Altaxo.Gui.Graph
 {
   /// <summary>
@@ -46,17 +47,12 @@ namespace Altaxo.Gui.Graph
     private System.Windows.Forms.Label label5;
     private System.Windows.Forms.Label label4;
     private System.Windows.Forms.CheckBox m_chkLineFillArea;
-    private System.Windows.Forms.ComboBox m_cbLineWidth;
-    private System.Windows.Forms.ComboBox m_cbLineType;
     private System.Windows.Forms.ComboBox m_cbLineConnect;
-    private System.Windows.Forms.Label label3;
-    private System.Windows.Forms.Label label2;
     private System.Windows.Forms.Label label1;
     private System.Windows.Forms.CheckBox m_chkLineSymbolGap;
-    private System.Windows.Forms.Button m_btLineSymbolColorDetails;
-    private System.Windows.Forms.ComboBox m_cbLineSymbolColor;
     private System.Windows.Forms.CheckBox _chkIndependentColor;
     private Altaxo.Gui.Common.Drawing.BrushColorComboBox m_cbLineFillColor;
+    private Altaxo.Gui.Common.Drawing.ColorTypeThicknessPenControl _ctrlColorTypeThickness;
     private IContainer components;
 
     public XYPlotLineStyleControl()
@@ -99,36 +95,26 @@ namespace Altaxo.Gui.Graph
       this.label5 = new System.Windows.Forms.Label();
       this.label4 = new System.Windows.Forms.Label();
       this.m_chkLineFillArea = new System.Windows.Forms.CheckBox();
-      this.m_cbLineWidth = new System.Windows.Forms.ComboBox();
-      this.m_cbLineType = new System.Windows.Forms.ComboBox();
       this.m_cbLineConnect = new System.Windows.Forms.ComboBox();
-      this.label3 = new System.Windows.Forms.Label();
-      this.label2 = new System.Windows.Forms.Label();
       this.label1 = new System.Windows.Forms.Label();
       this._chkIndependentColor = new System.Windows.Forms.CheckBox();
-      this.m_cbLineSymbolColor = new System.Windows.Forms.ComboBox();
-      this.m_btLineSymbolColorDetails = new System.Windows.Forms.Button();
       this.m_chkLineSymbolGap = new System.Windows.Forms.CheckBox();
+      this._ctrlColorTypeThickness = new Altaxo.Gui.Common.Drawing.ColorTypeThicknessPenControl();
       this.m_gbLine.SuspendLayout();
       this.SuspendLayout();
       // 
       // m_gbLine
       // 
+      this.m_gbLine.Controls.Add(this._ctrlColorTypeThickness);
       this.m_gbLine.Controls.Add(this.m_cbLineFillColor);
       this.m_gbLine.Controls.Add(this.m_btLineFillColorDetails);
       this.m_gbLine.Controls.Add(this.m_cbLineFillDirection);
       this.m_gbLine.Controls.Add(this.label5);
       this.m_gbLine.Controls.Add(this.label4);
       this.m_gbLine.Controls.Add(this.m_chkLineFillArea);
-      this.m_gbLine.Controls.Add(this.m_cbLineWidth);
-      this.m_gbLine.Controls.Add(this.m_cbLineType);
       this.m_gbLine.Controls.Add(this.m_cbLineConnect);
-      this.m_gbLine.Controls.Add(this.label3);
-      this.m_gbLine.Controls.Add(this.label2);
       this.m_gbLine.Controls.Add(this.label1);
       this.m_gbLine.Controls.Add(this._chkIndependentColor);
-      this.m_gbLine.Controls.Add(this.m_cbLineSymbolColor);
-      this.m_gbLine.Controls.Add(this.m_btLineSymbolColorDetails);
       this.m_gbLine.Controls.Add(this.m_chkLineSymbolGap);
       this.m_gbLine.Location = new System.Drawing.Point(8, 0);
       this.m_gbLine.Name = "m_gbLine";
@@ -146,6 +132,180 @@ namespace Altaxo.Gui.Graph
       this.m_cbLineFillColor.FormattingEnabled = true;
       this.m_cbLineFillColor.ItemHeight = 15;
       this.m_cbLineFillColor.Items.AddRange(new object[] {
+            System.Drawing.SystemColors.ActiveBorder,
+            System.Drawing.SystemColors.ActiveCaption,
+            System.Drawing.SystemColors.ActiveCaptionText,
+            System.Drawing.SystemColors.AppWorkspace,
+            System.Drawing.SystemColors.Control,
+            System.Drawing.SystemColors.ControlDark,
+            System.Drawing.SystemColors.ControlDarkDark,
+            System.Drawing.SystemColors.ControlLight,
+            System.Drawing.SystemColors.ControlLightLight,
+            System.Drawing.SystemColors.ControlText,
+            System.Drawing.SystemColors.Desktop,
+            System.Drawing.SystemColors.GrayText,
+            System.Drawing.SystemColors.Highlight,
+            System.Drawing.SystemColors.HighlightText,
+            System.Drawing.SystemColors.HotTrack,
+            System.Drawing.SystemColors.InactiveBorder,
+            System.Drawing.SystemColors.InactiveCaption,
+            System.Drawing.SystemColors.InactiveCaptionText,
+            System.Drawing.SystemColors.Info,
+            System.Drawing.SystemColors.InfoText,
+            System.Drawing.SystemColors.Menu,
+            System.Drawing.SystemColors.MenuText,
+            System.Drawing.SystemColors.ScrollBar,
+            System.Drawing.SystemColors.Window,
+            System.Drawing.SystemColors.WindowFrame,
+            System.Drawing.SystemColors.WindowText,
+            System.Drawing.Color.Transparent,
+            System.Drawing.Color.AliceBlue,
+            System.Drawing.Color.AntiqueWhite,
+            System.Drawing.Color.Aqua,
+            System.Drawing.Color.Aquamarine,
+            System.Drawing.Color.Azure,
+            System.Drawing.Color.Beige,
+            System.Drawing.Color.Bisque,
+            System.Drawing.Color.Black,
+            System.Drawing.Color.BlanchedAlmond,
+            System.Drawing.Color.Blue,
+            System.Drawing.Color.BlueViolet,
+            System.Drawing.Color.Brown,
+            System.Drawing.Color.BurlyWood,
+            System.Drawing.Color.CadetBlue,
+            System.Drawing.Color.Chartreuse,
+            System.Drawing.Color.Chocolate,
+            System.Drawing.Color.Coral,
+            System.Drawing.Color.CornflowerBlue,
+            System.Drawing.Color.Cornsilk,
+            System.Drawing.Color.Crimson,
+            System.Drawing.Color.Cyan,
+            System.Drawing.Color.DarkBlue,
+            System.Drawing.Color.DarkCyan,
+            System.Drawing.Color.DarkGoldenrod,
+            System.Drawing.Color.DarkGray,
+            System.Drawing.Color.DarkGreen,
+            System.Drawing.Color.DarkKhaki,
+            System.Drawing.Color.DarkMagenta,
+            System.Drawing.Color.DarkOliveGreen,
+            System.Drawing.Color.DarkOrange,
+            System.Drawing.Color.DarkOrchid,
+            System.Drawing.Color.DarkRed,
+            System.Drawing.Color.DarkSalmon,
+            System.Drawing.Color.DarkSeaGreen,
+            System.Drawing.Color.DarkSlateBlue,
+            System.Drawing.Color.DarkSlateGray,
+            System.Drawing.Color.DarkTurquoise,
+            System.Drawing.Color.DarkViolet,
+            System.Drawing.Color.DeepPink,
+            System.Drawing.Color.DeepSkyBlue,
+            System.Drawing.Color.DimGray,
+            System.Drawing.Color.DodgerBlue,
+            System.Drawing.Color.Firebrick,
+            System.Drawing.Color.FloralWhite,
+            System.Drawing.Color.ForestGreen,
+            System.Drawing.Color.Fuchsia,
+            System.Drawing.Color.Gainsboro,
+            System.Drawing.Color.GhostWhite,
+            System.Drawing.Color.Gold,
+            System.Drawing.Color.Goldenrod,
+            System.Drawing.Color.Gray,
+            System.Drawing.Color.Green,
+            System.Drawing.Color.GreenYellow,
+            System.Drawing.Color.Honeydew,
+            System.Drawing.Color.HotPink,
+            System.Drawing.Color.IndianRed,
+            System.Drawing.Color.Indigo,
+            System.Drawing.Color.Ivory,
+            System.Drawing.Color.Khaki,
+            System.Drawing.Color.Lavender,
+            System.Drawing.Color.LavenderBlush,
+            System.Drawing.Color.LawnGreen,
+            System.Drawing.Color.LemonChiffon,
+            System.Drawing.Color.LightBlue,
+            System.Drawing.Color.LightCoral,
+            System.Drawing.Color.LightCyan,
+            System.Drawing.Color.LightGoldenrodYellow,
+            System.Drawing.Color.LightGray,
+            System.Drawing.Color.LightGreen,
+            System.Drawing.Color.LightPink,
+            System.Drawing.Color.LightSalmon,
+            System.Drawing.Color.LightSeaGreen,
+            System.Drawing.Color.LightSkyBlue,
+            System.Drawing.Color.LightSlateGray,
+            System.Drawing.Color.LightSteelBlue,
+            System.Drawing.Color.LightYellow,
+            System.Drawing.Color.Lime,
+            System.Drawing.Color.LimeGreen,
+            System.Drawing.Color.Linen,
+            System.Drawing.Color.Magenta,
+            System.Drawing.Color.Maroon,
+            System.Drawing.Color.MediumAquamarine,
+            System.Drawing.Color.MediumBlue,
+            System.Drawing.Color.MediumOrchid,
+            System.Drawing.Color.MediumPurple,
+            System.Drawing.Color.MediumSeaGreen,
+            System.Drawing.Color.MediumSlateBlue,
+            System.Drawing.Color.MediumSpringGreen,
+            System.Drawing.Color.MediumTurquoise,
+            System.Drawing.Color.MediumVioletRed,
+            System.Drawing.Color.MidnightBlue,
+            System.Drawing.Color.MintCream,
+            System.Drawing.Color.MistyRose,
+            System.Drawing.Color.Moccasin,
+            System.Drawing.Color.NavajoWhite,
+            System.Drawing.Color.Navy,
+            System.Drawing.Color.OldLace,
+            System.Drawing.Color.Olive,
+            System.Drawing.Color.OliveDrab,
+            System.Drawing.Color.Orange,
+            System.Drawing.Color.OrangeRed,
+            System.Drawing.Color.Orchid,
+            System.Drawing.Color.PaleGoldenrod,
+            System.Drawing.Color.PaleGreen,
+            System.Drawing.Color.PaleTurquoise,
+            System.Drawing.Color.PaleVioletRed,
+            System.Drawing.Color.PapayaWhip,
+            System.Drawing.Color.PeachPuff,
+            System.Drawing.Color.Peru,
+            System.Drawing.Color.Pink,
+            System.Drawing.Color.Plum,
+            System.Drawing.Color.PowderBlue,
+            System.Drawing.Color.Purple,
+            System.Drawing.Color.Red,
+            System.Drawing.Color.RosyBrown,
+            System.Drawing.Color.RoyalBlue,
+            System.Drawing.Color.SaddleBrown,
+            System.Drawing.Color.Salmon,
+            System.Drawing.Color.SandyBrown,
+            System.Drawing.Color.SeaGreen,
+            System.Drawing.Color.SeaShell,
+            System.Drawing.Color.Sienna,
+            System.Drawing.Color.Silver,
+            System.Drawing.Color.SkyBlue,
+            System.Drawing.Color.SlateBlue,
+            System.Drawing.Color.SlateGray,
+            System.Drawing.Color.Snow,
+            System.Drawing.Color.SpringGreen,
+            System.Drawing.Color.SteelBlue,
+            System.Drawing.Color.Tan,
+            System.Drawing.Color.Teal,
+            System.Drawing.Color.Thistle,
+            System.Drawing.Color.Tomato,
+            System.Drawing.Color.Turquoise,
+            System.Drawing.Color.Violet,
+            System.Drawing.Color.Wheat,
+            System.Drawing.Color.White,
+            System.Drawing.Color.WhiteSmoke,
+            System.Drawing.Color.Yellow,
+            System.Drawing.Color.YellowGreen,
+            System.Drawing.SystemColors.ButtonFace,
+            System.Drawing.SystemColors.ButtonHighlight,
+            System.Drawing.SystemColors.ButtonShadow,
+            System.Drawing.SystemColors.GradientActiveCaption,
+            System.Drawing.SystemColors.GradientInactiveCaption,
+            System.Drawing.SystemColors.MenuBar,
+            System.Drawing.SystemColors.MenuHighlight,
             System.Drawing.SystemColors.ActiveBorder,
             System.Drawing.SystemColors.ActiveCaption,
             System.Drawing.SystemColors.ActiveCaptionText,
@@ -540,50 +700,18 @@ namespace Altaxo.Gui.Graph
       this.m_chkLineFillArea.Text = "Fill Area";
       this.m_chkLineFillArea.CheckedChanged += new System.EventHandler(this.EhLineFillArea_CheckedChanged);
       // 
-      // m_cbLineWidth
-      // 
-      this.m_cbLineWidth.Location = new System.Drawing.Point(89, 75);
-      this.m_cbLineWidth.Name = "m_cbLineWidth";
-      this.m_cbLineWidth.Size = new System.Drawing.Size(121, 21);
-      this.m_cbLineWidth.TabIndex = 5;
-      this.m_cbLineWidth.Text = "comboBox1";
-      // 
-      // m_cbLineType
-      // 
-      this.m_cbLineType.Location = new System.Drawing.Point(89, 102);
-      this.m_cbLineType.Name = "m_cbLineType";
-      this.m_cbLineType.Size = new System.Drawing.Size(121, 21);
-      this.m_cbLineType.TabIndex = 4;
-      this.m_cbLineType.Text = "comboBox1";
-      // 
       // m_cbLineConnect
       // 
-      this.m_cbLineConnect.Location = new System.Drawing.Point(89, 129);
+      this.m_cbLineConnect.Location = new System.Drawing.Point(69, 148);
       this.m_cbLineConnect.Name = "m_cbLineConnect";
       this.m_cbLineConnect.Size = new System.Drawing.Size(121, 21);
       this.m_cbLineConnect.TabIndex = 3;
       this.m_cbLineConnect.Text = "comboBox1";
       this.m_cbLineConnect.SelectionChangeCommitted += new System.EventHandler(this.m_cbLineConnect_SelectionChangeCommitted);
       // 
-      // label3
-      // 
-      this.label3.Location = new System.Drawing.Point(40, 78);
-      this.label3.Name = "label3";
-      this.label3.Size = new System.Drawing.Size(40, 16);
-      this.label3.TabIndex = 2;
-      this.label3.Text = "Width";
-      // 
-      // label2
-      // 
-      this.label2.Location = new System.Drawing.Point(40, 107);
-      this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(32, 16);
-      this.label2.TabIndex = 1;
-      this.label2.Text = "Type";
-      // 
       // label1
       // 
-      this.label1.Location = new System.Drawing.Point(32, 134);
+      this.label1.Location = new System.Drawing.Point(8, 148);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(48, 16);
       this.label1.TabIndex = 0;
@@ -598,29 +726,22 @@ namespace Altaxo.Gui.Graph
       this._chkIndependentColor.Text = "independent color";
       this._chkIndependentColor.CheckedChanged += new System.EventHandler(this._chkIndependentColor_CheckedChanged);
       // 
-      // m_cbLineSymbolColor
-      // 
-      this.m_cbLineSymbolColor.Location = new System.Drawing.Point(8, 48);
-      this.m_cbLineSymbolColor.Name = "m_cbLineSymbolColor";
-      this.m_cbLineSymbolColor.Size = new System.Drawing.Size(152, 21);
-      this.m_cbLineSymbolColor.TabIndex = 20;
-      this.m_cbLineSymbolColor.Text = "comboBox1";
-      // 
-      // m_btLineSymbolColorDetails
-      // 
-      this.m_btLineSymbolColorDetails.Location = new System.Drawing.Point(162, 48);
-      this.m_btLineSymbolColorDetails.Name = "m_btLineSymbolColorDetails";
-      this.m_btLineSymbolColorDetails.Size = new System.Drawing.Size(48, 20);
-      this.m_btLineSymbolColorDetails.TabIndex = 21;
-      this.m_btLineSymbolColorDetails.Text = "Adv..";
-      // 
       // m_chkLineSymbolGap
       // 
-      this.m_chkLineSymbolGap.Location = new System.Drawing.Point(11, 156);
+      this.m_chkLineSymbolGap.Location = new System.Drawing.Point(16, 186);
       this.m_chkLineSymbolGap.Name = "m_chkLineSymbolGap";
       this.m_chkLineSymbolGap.Size = new System.Drawing.Size(112, 24);
       this.m_chkLineSymbolGap.TabIndex = 22;
       this.m_chkLineSymbolGap.Text = "Line/Symbol Gap";
+      // 
+      // _ctrlColorTypeThickness
+      // 
+      this._ctrlColorTypeThickness.ColorType = Altaxo.Graph.ColorType.PlotColor;
+      this._ctrlColorTypeThickness.Controller = null;
+      this._ctrlColorTypeThickness.Location = new System.Drawing.Point(6, 46);
+      this._ctrlColorTypeThickness.Name = "_ctrlColorTypeThickness";
+      this._ctrlColorTypeThickness.Size = new System.Drawing.Size(184, 96);
+      this._ctrlColorTypeThickness.TabIndex = 26;
       // 
       // XYPlotLineStyleControl
       // 
@@ -647,11 +768,8 @@ namespace Altaxo.Gui.Graph
     {
       this._chkIndependentColor.Enabled = bEnable;
       this.m_btLineFillColorDetails.Enabled = bEnable;
-      this.m_btLineSymbolColorDetails.Enabled = bEnable;
+      this._ctrlColorTypeThickness.Enabled = bEnable;
       this.m_cbLineFillColor.Enabled = bEnable;
-      this.m_cbLineSymbolColor.Enabled = bEnable;
-      this.m_cbLineType.Enabled = bEnable;
-      this.m_cbLineWidth.Enabled = bEnable;
       this.m_chkLineSymbolGap.Enabled = bEnable;
     }
 
@@ -686,14 +804,13 @@ namespace Altaxo.Gui.Graph
       get { return m_chkLineSymbolGap.Checked; }
     }
 
-    public void InitializePlotStyleColor(string[] arr, string sel)
+    public void InitializePen(IColorTypeThicknessPenController controller)
     {
-      InitComboBox(this.m_cbLineSymbolColor,arr,sel);
+      controller.ViewObject = this._ctrlColorTypeThickness;
     }
-    public string SymbolColor
-    {
-      get { return (string)m_cbLineSymbolColor.SelectedItem; }
-    }
+
+  
+ 
 
     public void InitializeLineConnect(string[] arr, string sel)
     {
@@ -704,23 +821,6 @@ namespace Altaxo.Gui.Graph
       get { return (string)m_cbLineConnect.SelectedItem; }
     }
     
-    public void InitializeLineStyle(string[] arr, string sel)
-    {
-      InitComboBox(this.m_cbLineType,arr,sel);
-    }
-    public string LineType
-    {
-      get { return (string)m_cbLineType.SelectedItem; }
-    }
-  
-    public void InitializeLineWidth(string[] arr, string sel)
-    {
-      InitComboBox(this.m_cbLineWidth,arr,sel);
-    }
-    public string LineWidth
-    {
-      get { return (string)m_cbLineWidth.SelectedItem; }
-    }
   
 
     public void InitializeFillCondition(bool bFill)

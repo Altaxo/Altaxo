@@ -150,6 +150,17 @@ namespace Altaxo.Serialization
       return val.ToString();
     }
 
+    public static string ToString(double val, int accuracy)
+    {
+      return val.ToString("G"+accuracy.ToString());
+    }
+
+    public static string ToString(double val, string format)
+    {
+      return val.ToString(format);
+    }
+
+
     #endregion
 
     #region Integer

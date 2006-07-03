@@ -26,6 +26,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.ComponentModel;
 using Altaxo.Graph;
 
 
@@ -42,20 +43,23 @@ namespace Altaxo.Gui.Common.Drawing
     static List<DashStyleEx> _dashStyles;
 
     public DashStyleComboBox()
-      : this(DashStyleEx.Solid)
-    {
-    }
-
-    public DashStyleComboBox(DashStyleEx selected)
     {
       DropDownStyle = ComboBoxStyle.DropDownList;
       DrawMode = DrawMode.OwnerDrawFixed;
       ItemHeight = Font.Height;
-      SetDataSource(selected);
+
 
       _contextStrip = new ContextMenuStrip();
       _contextStrip.Items.Add("Custom ..", null, this.EhChooseCustom);
       this.ContextMenuStrip = _contextStrip;
+    }
+
+    public DashStyleComboBox(DashStyleEx selected)
+      : this()
+    {
+     
+      SetDataSource(selected);
+
     }
 
 
@@ -88,11 +92,12 @@ namespace Altaxo.Gui.Common.Drawing
       this.EndUpdate();
     }
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public DashStyleEx DashStyleEx
     {
       get
       {
-        return (DashStyleEx)SelectedItem;
+        return SelectedItem==null ? DashStyleEx.Solid : (DashStyleEx)SelectedItem;
       }
       set
       {
@@ -117,7 +122,7 @@ namespace Altaxo.Gui.Common.Drawing
 
       //grfx.DrawRectangle(new Pen(e.ForeColor), rectColor);
 
-      DashStyleEx item = (DashStyleEx)Items[e.Index];
+      DashStyleEx item = e.Index>=0?(DashStyleEx)Items[e.Index] : DashStyleEx.Solid;
       SolidBrush foreColorBrush = new SolidBrush(e.ForeColor);
 
       Pen linePen = new Pen(foreColorBrush, (float)Math.Ceiling(0.125*e.Bounds.Height));

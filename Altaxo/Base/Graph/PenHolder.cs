@@ -41,7 +41,6 @@ namespace Altaxo.Graph
   {
     protected PenHolder.Configured m_ConfiguredProperties; // ORed collection of the configured properties (i.e. non-standard properties) 
     protected PenType m_PenType; // the type of the pen
-    protected bool m_CachedMode; // is a Pen object cached by this object
     protected PenAlignment m_Alignment; // Alignment of the Pen
     protected BrushHolder m_Brush; // the brush of this pen
     protected Color m_Color; // Color of this Pen object
@@ -221,12 +220,7 @@ namespace Altaxo.Graph
       s.m_ConfiguredProperties = (Configured)info.GetInt32("Configured");
       Configured cp = s.m_ConfiguredProperties;
 
-      // cache mode is disabled after serialization, and we
-      // can not enable it till all objects are deserialized
-      // (for instance sometimes the brushholder deserialization is finished
-      // later then the pen itself)
-      s.m_CachedMode = false;
-
+     
       if (0 != (cp & PenHolder.Configured.PenType))
         s.m_PenType = (PenType)info.GetValue("Type", typeof(PenType));
       else
@@ -369,11 +363,7 @@ namespace Altaxo.Graph
         s.m_ConfiguredProperties = (Configured)info.GetInt32("Configured");
         Configured cp = s.m_ConfiguredProperties;
 
-        // cache mode is disabled after serialization, and we
-        // can not enable it till all objects are deserialized
-        // (for instance sometimes the brushholder deserialization is finished
-        // later then the pen itself)
-        s.m_CachedMode = false;
+       
 
         if (0 != (cp & PenHolder.Configured.PenType))
           s.m_PenType = (PenType)info.GetEnum("Type", typeof(PenType));
@@ -514,11 +504,7 @@ namespace Altaxo.Graph
         s.m_ConfiguredProperties = (Configured)info.GetInt32("Configured");
         Configured cp = s.m_ConfiguredProperties;
 
-        // cache mode is disabled after serialization, and we
-        // can not enable it till all objects are deserialized
-        // (for instance sometimes the brushholder deserialization is finished
-        // later then the pen itself)
-        s.m_CachedMode = false;
+        
 
         if (0 != (cp & PenHolder.Configured.PenType))
           s.m_PenType = (PenType)info.GetEnum("Type", typeof(PenType));
@@ -632,7 +618,7 @@ namespace Altaxo.Graph
 
     public PenHolder(Color c, float width, bool bCachedMode)
     {
-      this.m_CachedMode = bCachedMode;
+     
       this.m_PenType = PenType.SolidColor;
       this.m_Color = c;
       this.m_Width = width;
@@ -661,15 +647,14 @@ namespace Altaxo.Graph
     /// <param name="pen">the PenHolder object to copy</param>
     public void CopyFrom(PenHolder pen)
     {
-      // this.m_CachedMode = pen.m_CachedMode;
-      this.m_CachedMode = false; _SetPenVariable(null);
+      _SetPenVariable(null);
 
       this.m_ConfiguredProperties = pen.m_ConfiguredProperties;
       this.m_PenType = pen.PenType;
       this.m_Alignment = pen.Alignment;
 
       if (0 != (this.m_ConfiguredProperties & Configured.Brush))
-        this.m_Brush = new BrushHolder(pen.Brush, false);
+        this.m_Brush = new BrushHolder(pen.m_Brush);
 
       this.m_Color = pen.Color;
 
@@ -736,11 +721,9 @@ namespace Altaxo.Graph
     {
       get
       {
-        if (!m_CachedMode)
-        {
+        if (m_Pen==null)
           m_Pen = _GetPenFromProperties();
-          m_CachedMode = true;
-        }
+
         return m_Pen;
       }
    
@@ -748,15 +731,10 @@ namespace Altaxo.Graph
 
     public bool Cached
     {
-      get { return this.m_CachedMode; }
+      get { return false; }
       set
       {
-        if (this.m_CachedMode == value)
-          return; // no change in cache mode, so nothing to do here
-
-        // if forced to cache mode, create and set the pen variable
-        _SetPenVariable(value ? this._GetPenFromProperties() : null);
-        m_CachedMode = value;
+        
       }
     }
 
@@ -798,13 +776,17 @@ namespace Altaxo.Graph
       Pen pen = new Pen(Color.Black);
 
       // now set the optional Pen properties
+      if (0 != (cp & PenHolder.Configured.Width))
+        pen.Width = this.m_Width;
+
       if (0 != (cp & PenHolder.Configured.Alignment))
         pen.Alignment = m_Alignment;
 
-      if (0 != (cp & PenHolder.Configured.Brush))
-        pen.Brush = this.m_Brush;
       if (0 != (cp & PenHolder.Configured.Color))
         pen.Color = this.m_Color;
+      if (0 != (cp & PenHolder.Configured.Brush))
+        pen.Brush = this.m_Brush;
+    
       if (0 != (cp & PenHolder.Configured.CompoundArray))
         pen.CompoundArray = this.m_CompoundArray;
       if (0 != (cp & PenHolder.Configured.DashStyle))
@@ -825,8 +807,7 @@ namespace Altaxo.Graph
         this.m_StartCap.SetPenStartCap(pen);
       if (0 != (cp & PenHolder.Configured.Transform))
         pen.Transform = this.m_Transform;
-      if (0 != (cp & PenHolder.Configured.Width))
-        pen.Width = this.m_Width;
+   
 
 
       return pen;
@@ -843,20 +824,24 @@ namespace Altaxo.Graph
 
     public PenType PenType
     {
-      get { return this.m_CachedMode ? m_Pen.PenType : m_PenType; }
+      get { return m_PenType; }
     }
 
     public PenAlignment Alignment
     {
-      get { return this.m_CachedMode ? m_Pen.Alignment : m_Alignment; }
+      get { return  m_Alignment; }
       set
       {
-        _SetProp(Configured.Alignment, PenAlignment.Center != value);
+        bool bChanged = (m_Alignment != value);
         m_Alignment = value;
-        if (m_CachedMode)
-          m_Pen.Alignment = value;
+        if (bChanged)
+        {
+          _SetProp(Configured.Alignment, PenAlignment.Center != value);
 
-        OnChanged(); // Fire the Changed event
+          _SetPenVariable(null);
+
+          OnChanged(); // Fire the Changed event
+        }
       }
     }
 
@@ -865,17 +850,11 @@ namespace Altaxo.Graph
     {
       get
       {
-        if (m_CachedMode)
-          return new BrushHolder(m_Pen.Brush, false);
+        if (m_Brush == null)
+          return new BrushHolder(this.m_Color);
         else
-          return m_Brush;
-
+           return m_Brush;
       }
-    }
-
-    public Brush Brush
-    {
-      get { return m_CachedMode ? m_Pen.Brush : m_Brush; }
       set
       {
         if (null == value)
@@ -885,143 +864,143 @@ namespace Altaxo.Graph
           m_PenType = PenType.SolidColor;
           _SetBrushVariable(null);
         }
-        else if (value is SolidBrush)
+        else if (value.BrushType==BrushType.SolidBrush)
         {
           m_PenType = PenType.SolidColor;
-          m_Color = ((SolidBrush)value).Color;
+          m_Color = value.Color;
           _SetBrushVariable(null);
 
           _SetProp(Configured.PenType, PenType.SolidColor != m_PenType);
           _SetProp(Configured.Color, Color.Black != m_Color);
           _SetProp(Configured.Brush, false);
         } // if value is SolidBrush
-        else if (value is HatchBrush)
+        else if (value.BrushType == BrushType.HatchBrush)
         {
           m_PenType = PenType.HatchFill;
-          _SetBrushVariable(new BrushHolder(value, false));
+          _SetBrushVariable(new BrushHolder(value));
 
           _SetProp(Configured.PenType, true);
           _SetProp(Configured.Color, false);
           _SetProp(Configured.Brush, true);
         }
-        else if (value is TextureBrush)
+        else if (value.BrushType == BrushType.TextureBrush)
         {
           m_PenType = PenType.TextureFill;
-          _SetBrushVariable(new BrushHolder(value, false));
+          _SetBrushVariable(new BrushHolder(value));
 
           _SetProp(Configured.PenType, true);
           _SetProp(Configured.Color, false);
           _SetProp(Configured.Brush, true);
         }
-        else if (value is LinearGradientBrush)
+        else if (value.BrushType == BrushType.LinearGradientBrush)
         {
           m_PenType = PenType.LinearGradient;
-          _SetBrushVariable(new BrushHolder(value, false));
+          _SetBrushVariable(new BrushHolder(value));
 
           _SetProp(Configured.PenType, true);
           _SetProp(Configured.Color, false);
           _SetProp(Configured.Brush, true);
         }
-        else if (value is PathGradientBrush)
+        else if (value.BrushType == BrushType.PathGradientBrush)
         {
           m_PenType = PenType.PathGradient;
-          _SetBrushVariable(new BrushHolder(value, false));
+          _SetBrushVariable(new BrushHolder(value));
 
           _SetProp(Configured.PenType, true);
           _SetProp(Configured.Color, false);
           _SetProp(Configured.Brush, true);
         }
-
-        // now set also the properties of the pen itself
-        if (m_CachedMode)
-          m_Pen.Brush = value;
-
         OnChanged(); // Fire the Changed event
       }
     }
 
     public Color Color
     {
-      get { return m_CachedMode ? m_Pen.Color : m_Color; }
+      get { return m_Color; }
       set
       {
-        _SetProp(Configured.PenType, false);
-        _SetProp(Configured.Color, Color.Black != value);
-        _SetProp(Configured.Brush, false);
-
-        m_PenType = PenType.SolidColor;
+        bool bChanged = (m_Color != value);
         m_Color = value;
-        m_Brush = null;
+        if (bChanged)
+        {
+          _SetProp(Configured.PenType, false);
+          _SetProp(Configured.Color, Color.Black != value);
+          _SetProp(Configured.Brush, false);
 
-        if (m_CachedMode)
-          m_Pen.Color = value;
+          m_PenType = PenType.SolidColor;
+          m_Brush = null;
 
-        OnChanged(); // Fire the Changed event
+          _SetBrushVariable(null);
+
+          OnChanged(); // Fire the Changed event
+        }
       }
     }
     public float[] CompoundArray
     {
-      get { return m_CachedMode ? m_Pen.CompoundArray : m_CompoundArray; }
+      get { return  m_CompoundArray; }
       set
       {
         _SetProp(Configured.CompoundArray, null != value && value.Length > 0);
         m_CompoundArray = (float[])value.Clone();
-        if (m_CachedMode)
-          m_Pen.CompoundArray = value;
-
+        _SetPenVariable(null);
         OnChanged(); // Fire the Changed event
       }
     }
     public DashCap DashCap
     {
-      get { return m_CachedMode ? m_Pen.DashCap : m_DashCap; }
+      get { return  m_DashCap; }
       set
       {
-        _SetProp(Configured.DashCap, DashCap.Flat != value);
+        bool bChanged = (m_DashCap != value);
         m_DashCap = value;
-        if (m_CachedMode)
-          m_Pen.DashCap = value;
-
-        OnChanged(); // Fire the Changed event
+        if (bChanged)
+        {
+          _SetProp(Configured.DashCap, DashCap.Flat != value);
+          _SetPenVariable(null);
+          OnChanged(); // Fire the Changed event
+        }
       }
     }
     public float DashOffset
     {
-      get { return m_CachedMode ? m_Pen.DashOffset : m_DashOffset; }
+      get { return  m_DashOffset; }
       set
       {
-        _SetProp(Configured.DashOffset, 0 != value);
+        bool bChanged = (m_DashOffset != value);
         m_DashOffset = value;
-        if (m_CachedMode)
-          m_Pen.DashOffset = value;
-
-        OnChanged(); // Fire the Changed event
+        if (bChanged)
+        {
+          _SetProp(Configured.DashOffset, 0 != value);
+          _SetPenVariable(null);
+          OnChanged(); // Fire the Changed event
+        }
       }
     }
     public float[] DashPattern
     {
-      get { return m_CachedMode ? m_Pen.DashPattern : m_DashPattern; }
+      get { return  m_DashPattern; }
       set
       {
         _SetProp(Configured.DashPattern, null != value && value.Length > 0);
         m_DashPattern = value;
-        if (m_CachedMode)
-          m_Pen.DashPattern = value;
-
+        _SetPenVariable(null);
         OnChanged(); // Fire the Changed event
       }
     }
     public DashStyle DashStyle
     {
-      get { return m_CachedMode ? m_Pen.DashStyle : m_DashStyle; }
+      get { return m_DashStyle; }
       set
       {
-        _SetProp(Configured.DashStyle, DashStyle.Solid != value);
+        bool bChanged = (m_DashStyle != value);
         m_DashStyle = value;
-        if (m_CachedMode)
-          m_Pen.DashStyle = value;
-
-        OnChanged(); // Fire the Changed event
+        if (bChanged)
+        {
+          _SetProp(Configured.DashStyle, DashStyle.Solid != value);
+          _SetPenVariable(null);
+          OnChanged(); // Fire the Changed event
+        }
       }
     }
 
@@ -1049,41 +1028,45 @@ namespace Altaxo.Graph
       }
       set
       {
+        bool bChanged = (m_EndCap != value);
         m_EndCap = value;
 
-        _SetProp(Configured.EndCap, !m_EndCap.IsDefaultStyle);
-        if (m_CachedMode)
+        if (bChanged)
         {
-          m_EndCap.SetPenEndCap(m_Pen);
+          _SetProp(Configured.EndCap, !m_EndCap.IsDefaultStyle);
+          _SetPenVariable(null);
+          OnChanged(); // Fire the Changed event
         }
-
-        OnChanged(); // Fire the Changed event
       }
     }
     public LineJoin LineJoin
     {
-      get { return m_CachedMode ? m_Pen.LineJoin : m_LineJoin; }
+      get { return  m_LineJoin; }
       set
       {
-        _SetProp(Configured.LineJoin, LineJoin.Miter != value);
+        bool bChanged = (m_LineJoin != value);
         m_LineJoin = value;
-        if (m_CachedMode)
-          m_Pen.LineJoin = value;
-
-        OnChanged(); // Fire the Changed event
+        if (bChanged)
+        {
+          _SetProp(Configured.LineJoin, LineJoin.Miter != value);
+          _SetPenVariable(null);
+          OnChanged(); // Fire the Changed event
+        }
       }
     }
     public float MiterLimit
     {
-      get { return m_CachedMode ? m_Pen.MiterLimit : m_MiterLimit; }
+      get { return  m_MiterLimit; }
       set
       {
-        _SetProp(Configured.MiterLimit, 10 != value);
+        bool bChanged = (m_MiterLimit != value);
         m_MiterLimit = value;
-        if (m_CachedMode)
-          m_Pen.MiterLimit = value;
-
-        OnChanged(); // Fire the Changed event
+        if (bChanged)
+        {
+          _SetProp(Configured.MiterLimit, 10 != value);
+          _SetPenVariable(null);
+          OnChanged(); // Fire the Changed event
+        }
       }
     }
     public LineCapEx StartCap
@@ -1095,43 +1078,42 @@ namespace Altaxo.Graph
       }
       set
       {
-        
-          m_StartCap = value;
-
-        _SetProp(Configured.StartCap, !m_StartCap.IsDefaultStyle);
-        if (m_CachedMode)
+        bool bChanged = (m_StartCap != value);
+        m_StartCap = value;
+        if (bChanged)
         {
-          m_StartCap.SetPenStartCap(m_Pen);
-        }
+          _SetProp(Configured.StartCap, !m_StartCap.IsDefaultStyle);
+          _SetPenVariable(null);
 
-        OnChanged(); // Fire the Changed event
+          OnChanged(); // Fire the Changed event
+        }
       }
     }
     public Matrix Transform
     {
-      get { return m_CachedMode ? m_Pen.Transform : m_Transform; }
+      get { return m_Transform; }
       set
       {
         _SetProp(Configured.Transform, null != value && !value.IsIdentity);
         m_Transform = value.Clone();
-        if (m_CachedMode)
-          m_Pen.Transform = value;
-
+        _SetPenVariable(null);
         OnChanged(); // Fire the Changed event
       }
     }
 
     public float Width
     {
-      get { return m_CachedMode ? m_Pen.Width : m_Width; }
+      get { return m_Width; }
       set
       {
-        _SetProp(Configured.Width, 1 != value);
+        bool bChanged = (m_Width != value);
         m_Width = value;
-        if (m_CachedMode)
-          m_Pen.Width = value;
-
-        OnChanged(); // Fire the Changed event
+        if (bChanged)
+        {
+          _SetProp(Configured.Width, 1 != value);
+          _SetPenVariable(null);
+          OnChanged(); // Fire the Changed event
+        }
       }
     }
 
@@ -1330,9 +1312,10 @@ namespace Altaxo.Graph
     }
 
   [Serializable]
-  public struct LineCapEx
+  public struct LineCapEx 
   {
     #region Inner classes
+    [Serializable]
     class KnownLineCapWrapper : LineCapExtension
     {
       LineCap _cap;
@@ -1368,6 +1351,7 @@ namespace Altaxo.Graph
 
       #endregion
     }
+    [Serializable]
     class DefaultLineCapWrapper : LineCapExtension
     {
       public DefaultLineCapWrapper()
@@ -1422,6 +1406,13 @@ namespace Altaxo.Graph
           _registeredStyles.Add(ex.Name,ex);
         }
       }
+
+      // now the other linecaps
+      LineCapExtension more;
+      more = new ArrowF10LineCap();
+      _registeredStyles.Add(more.Name, more);
+      more = new ArrowF20LineCap();
+      _registeredStyles.Add(more.Name, more);
     }
 
     public LineCapEx(LineCap style)
@@ -1435,6 +1426,7 @@ namespace Altaxo.Graph
 
     public LineCapEx(string name)
     {
+     
       _currentStyle = _registeredStyles[name];
       if (_currentStyle == null)
         throw new ArgumentException(string.Format("Unknown LineCapEx style: {0}", name), "name");
@@ -1477,7 +1469,9 @@ namespace Altaxo.Graph
       _currentStyle = ex;
       _size = _currentStyle.DefaultSize;
     }
-  
+
+   
+
     public bool IsKnownStyle
     {
       get
@@ -1539,6 +1533,16 @@ namespace Altaxo.Graph
       }
       return false;
     }
+
+    public static bool operator ==(LineCapEx a, LineCapEx b)
+    {
+      return (a._size == b._size) && (a._currentStyle == b._currentStyle);
+    }
+    public static bool operator !=(LineCapEx a, LineCapEx b)
+    {
+      return !(a == b);
+    }
+
     public override int GetHashCode()
     {
       if (_currentStyle != null)
@@ -1549,7 +1553,6 @@ namespace Altaxo.Graph
 
     public override string ToString()
     {
-      
       return Name;
     }
     public string Name
@@ -1573,6 +1576,10 @@ namespace Altaxo.Graph
       return arr;
     }
 
+    public static LineCapEx FromName(string name)
+    {
+      return new LineCapEx(name);
+    }
     public static LineCapEx AnchorMask
     {
       get { return new LineCapEx("AnchorMask"); }
@@ -1613,7 +1620,105 @@ namespace Altaxo.Graph
     {
       get { return new LineCapEx("Triangle"); }
     }
+
+    
+  
+
+    
   }
   #endregion
 
+
+  public class ArrowF10LineCap : LineCapExtension
+  {
+    CustomLineCap _cap;
+    const float _designWidth = 2;
+
+    public ArrowF10LineCap()
+    {
+      GraphicsPath hPath = new GraphicsPath();
+
+      // Create the outline for our custom end cap.
+      hPath.AddLine(new PointF(0, -_designWidth), new PointF(-_designWidth/2,-_designWidth));
+      hPath.AddLine(new PointF(-_designWidth/2, -_designWidth), new PointF(0, 0));
+      hPath.AddLine(new PointF(0, 0), new PointF(_designWidth/2, -_designWidth));
+      hPath.AddLine(new PointF(_designWidth/2,-_designWidth), new PointF(0, -_designWidth));
+
+      // Construct the hook-shaped end cap.
+      _cap = new CustomLineCap(hPath,null);
+      _cap.BaseInset = _designWidth;
+    }
+
+    public override string Name { get { return "ArrowF10"; } }
+    public override float DefaultSize { get { return 8; } }
+
+    CustomLineCap GetClone(Pen pen, float size)
+    {
+      CustomLineCap clone = (CustomLineCap)_cap.Clone();
+      if (pen.Width * _designWidth < size)
+        clone.WidthScale = pen.Width == 0 ? 1 : size / (pen.Width * _designWidth);
+      else
+        clone.WidthScale = 1;
+      
+      //clone.WidthScale = 1;
+      return clone;
+    }
+
+    public override void SetStartCap(Pen pen, float size)
+    {
+      pen.StartCap = LineCap.Custom;
+      pen.CustomStartCap = GetClone(pen,size);
+    }
+    public override void SetEndCap(Pen pen, float size)
+    {
+      pen.EndCap = LineCap.Custom;
+      pen.CustomEndCap = GetClone(pen,size);
+    }
+  }
+  public class ArrowF20LineCap : LineCapExtension
+  {
+    CustomLineCap _cap;
+    const float _designWidth = 2;
+
+    public ArrowF20LineCap()
+    {
+      GraphicsPath hPath = new GraphicsPath();
+
+      // Create the outline for our custom end cap.
+      hPath.AddLine(new PointF(0, -2*_designWidth), new PointF(-_designWidth/2, -2*_designWidth));
+      hPath.AddLine(new PointF(-_designWidth/2, -2*_designWidth), new PointF(0, 0));
+      hPath.AddLine(new PointF(0, 0), new PointF(_designWidth/2, -2*_designWidth));
+      hPath.AddLine(new PointF(_designWidth/2, -2*_designWidth), new PointF(0, -2*_designWidth));
+
+      // Construct the hook-shaped end cap.
+      _cap = new CustomLineCap(hPath, null);
+      _cap.BaseInset = _designWidth*2;
+    }
+
+    public override string Name { get { return "ArrowF20"; } }
+    public override float DefaultSize { get { return 8; } }
+
+    CustomLineCap GetClone(Pen pen, float size)
+    {
+      CustomLineCap clone = (CustomLineCap)_cap.Clone();
+      if (pen.Width * _designWidth < size)
+        clone.WidthScale = pen.Width==0 ? 1 : size / (pen.Width * _designWidth);
+      else
+        clone.WidthScale = 1;
+
+      //clone.WidthScale = 1;
+      return clone;
+    }
+
+    public override void SetStartCap(Pen pen, float size)
+    {
+      pen.StartCap = LineCap.Custom;
+      pen.CustomStartCap = GetClone(pen, size);
+    }
+    public override void SetEndCap(Pen pen, float size)
+    {
+      pen.EndCap = LineCap.Custom;
+      pen.CustomEndCap = GetClone(pen, size);
+    }
+  }
 }
