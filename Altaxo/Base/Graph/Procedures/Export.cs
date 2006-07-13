@@ -33,6 +33,7 @@ namespace Altaxo.Graph.Procedures
   /// </summary>
   public class Export
   {
+    #region Bitmap
     /// <summary>
     /// Saves the graph as an bitmap file into the file <paramref name="filename"/> using the default
     /// pixel format 32bppArgb and no background brush.
@@ -144,8 +145,127 @@ namespace Altaxo.Graph.Procedures
 
       mf.Dispose();
 
-       
+
     }
+
+    #endregion
+
+    #region Metafile
+
+    public static Metafile GetMetafile(GraphDocument doc)
+    {
+      System.IO.MemoryStream stream = new System.IO.MemoryStream();
+      Metafile mf = SaveAsMetafile(doc, stream,300);
+      stream.Flush();
+      stream.Close();
+      return mf;
+    }
+
+    /// <summary>
+    /// Saves the graph as an bitmap file into the file <paramref name="filename"/> using the default
+    /// pixel format 32bppArgb and no background brush.
+    /// </summary>
+    /// <param name="doc">The graph document to export.</param>
+    /// <param name="stream">The filename of the file to save the bitmap into.</param>
+    /// <param name="dpiResolution">Resolution of the bitmap in dpi. Determines the pixel size of the bitmap.</param>
+    /// <param name="imageFormat">The format of the destination image.</param>
+    public static Metafile SaveAsMetafile(GraphDocument doc, string filename, int dpiResolution)
+    {
+      return SaveAsMetafile(doc, filename, dpiResolution, null);
+    }
+
+    /// <summary>
+    /// Saves the graph as an bitmap file into the file <paramref name="filename"/> using the default
+    /// pixel format 32bppArgb.
+    /// </summary>
+    /// <param name="doc">The graph document to export.</param>
+    /// <param name="stream">The filename of the file to save the bitmap into.</param>
+    /// <param name="dpiResolution">Resolution of the bitmap in dpi. Determines the pixel size of the bitmap.</param>
+    /// <param name="imageFormat">The format of the destination image.</param>
+    /// <param name="backbrush">Brush used to fill the background of the image. Can be <c>null</c>.</param>
+    public static Metafile SaveAsMetafile(GraphDocument doc, string filename, int dpiResolution, Brush backbrush)
+    {
+      return SaveAsMetafile(doc, filename, dpiResolution, backbrush, PixelFormat.Format32bppArgb);
+    }
+
+
+    /// <summary>
+    /// Saves the graph as an bitmap file into the file <paramref name="filename"/>.
+    /// </summary>
+    /// <param name="doc">The graph document to export.</param>
+    /// <param name="stream">The filename of the file to save the bitmap into.</param>
+    /// <param name="dpiResolution">Resolution of the bitmap in dpi. Determines the pixel size of the bitmap.</param>
+    /// <param name="imageFormat">The format of the destination image.</param>
+    /// <param name="backbrush">Brush used to fill the background of the image. Can be <c>null</c>.</param>
+    /// <param name="pixelformat">Specify the pixelformat here.</param>
+    public static Metafile SaveAsMetafile(GraphDocument doc, string filename, int dpiResolution,  Brush backbrush, PixelFormat pixelformat)
+    {
+      Metafile mf;
+      using (System.IO.Stream str = new System.IO.FileStream(filename, System.IO.FileMode.CreateNew, System.IO.FileAccess.Write, System.IO.FileShare.Read))
+      {
+        mf = SaveAsMetafile(doc, str, dpiResolution, backbrush, pixelformat);
+        str.Close();
+      }
+      return mf;
+    }
+
+
+    /// <summary>
+    /// Saves the graph as an bitmap file into the stream using the default pixelformat 32bppArgb and no background brush.<paramref name="stream"/>.
+    /// </summary>
+    /// <param name="doc">The graph document to export.</param>
+    /// <param name="stream">The stream to save the metafile into.</param>
+    /// <param name="dpiResolution">Resolution of the bitmap in dpi. Determines the pixel size of the bitmap.</param>
+    /// <param name="imageFormat">The format of the destination image.</param>
+    public static Metafile SaveAsMetafile(GraphDocument doc, System.IO.Stream stream, int dpiResolution)
+    {
+      return SaveAsMetafile(doc, stream, dpiResolution, null, PixelFormat.Format32bppArgb);
+    }
+
+
+    /// <summary>
+    /// Saves the graph as an bitmap file into the stream using the default pixelformat 32bppArgb.<paramref name="stream"/>.
+    /// </summary>
+    /// <param name="doc">The graph document to export.</param>
+    /// <param name="stream">The stream to save the metafile into.</param>
+    /// <param name="dpiResolution">Resolution of the bitmap in dpi. Determines the pixel size of the bitmap.</param>
+    /// <param name="imageFormat">The format of the destination image.</param>
+    /// <param name="backbrush">Brush used to fill the background of the image. Can be <c>null</c>.</param>
+    public static Metafile SaveAsMetafile(GraphDocument doc, System.IO.Stream stream, int dpiResolution,  Brush backbrush)
+    {
+      return SaveAsMetafile(doc, stream, dpiResolution, backbrush, PixelFormat.Format32bppArgb);
+    }
+
+    /// <summary>
+    /// Saves the graph as an enhanced windows metafile into the stream <paramref name="stream"/>.
+    /// </summary>
+    /// <param name="doc">The graph document used.</param>
+    /// <param name="stream">The stream to save the metafile into.</param>
+    /// <returns>The metafile that was created using the stream.</returns>
+    public static Metafile SaveAsMetafile(GraphDocument doc, System.IO.Stream stream, int dpiResolution, Brush backbrush, PixelFormat pixelformat)
+    {
+      // Create a bitmap just to have a graphics context
+      System.Drawing.Bitmap helperbitmap = new System.Drawing.Bitmap(4, 4, pixelformat);
+      helperbitmap.SetResolution(dpiResolution, dpiResolution);
+      Graphics grfx = Graphics.FromImage(helperbitmap);
+      // Code to write the stream goes here.
+      IntPtr ipHdc = grfx.GetHdc();
+      System.Drawing.Imaging.Metafile mf = new System.Drawing.Imaging.Metafile(stream, ipHdc, doc.PageBounds, MetafileFrameUnit.Point);
+      grfx.ReleaseHdc(ipHdc);
+      grfx.Dispose();
+      grfx = Graphics.FromImage(mf);
+      grfx.PageUnit = GraphicsUnit.Point;
+      grfx.PageScale = 1;
+      grfx.TranslateTransform(doc.PrintableBounds.X, doc.PrintableBounds.Y);
+
+      doc.DoPaint(grfx, true);
+
+      grfx.Dispose();
+      helperbitmap.Dispose();
+      return mf;
+    }
+
+    #endregion
 
 
   }

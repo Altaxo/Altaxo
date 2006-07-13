@@ -71,10 +71,26 @@ namespace Altaxo.Gui.Common.Drawing
 
     public virtual void FillMenu()
     {
+      AddCustomBrushContextMenu(_contextStrip, this.EhShowCustomBrushDialog);
       ColorComboBox.AddCustomColorContextMenu(_contextStrip, this.EhChooseCustomColor);
       ColorComboBox.AddTransparencyContextMenu(_contextStrip, this.EhChooseTransparencyValue);
     }
-   
+
+    public static void AddCustomBrushContextMenu(ContextMenuStrip menu, EventHandler eh)
+    {
+      menu.Items.Add("Custom Brush..", null, eh);
+    }
+
+    void EhShowCustomBrushDialog(object sender, EventArgs e)
+    {
+      BrushAllPropertiesControl ctrl = new BrushAllPropertiesControl();
+      ctrl.Brush = (BrushHolder)this.Brush.Clone();
+      if (Current.Gui.ShowDialog(ctrl, "Brush properties"))
+      {
+        this.Brush = ctrl.Brush;
+      }
+    }
+
     void SetDataSource(BrushHolder selectedBrush)
     {
       this.BeginUpdate();
@@ -146,11 +162,24 @@ namespace Altaxo.Gui.Common.Drawing
         {
           Color itemColor = e.Index < 0 ? Color.Black : (Color)Items[e.Index];
           grfx.FillRectangle(new SolidBrush(itemColor), rectColor);
-          text = itemColor.IsNamedColor ? itemColor.Name : "Custom Color";
+          if (itemColor.IsNamedColor)
+          {
+            text = itemColor.Name;
+          }
+          else if (ColorDictionary.IsBaseColorNamed(itemColor))
+          {
+            int transparency = ((255 - itemColor.A) * 100) / 255;
+            text = "T" + transparency.ToString() + ColorDictionary.GetBaseColorName(itemColor);
+          }
+          else
+          {
+            text = "Custom Color";
+          }
         }
         else
         {
           BrushHolder itemBrush = (BrushHolder)Items[e.Index];
+          itemBrush.Rectangle = rectColor;
           grfx.FillRectangle(itemBrush, rectColor);
           text = "Custom Brush";
         }

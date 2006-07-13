@@ -25,59 +25,61 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.ComponentModel;
+
 
 namespace Altaxo.Gui.Common.Drawing
 {
-  public class MiterLimitComboBox : ComboBox
+  public class FocusComboBox : ComboBox
   {
-    static List<float> _miterValues;
+    static List<float> _listValues;
 
-    public MiterLimitComboBox()
-     
+    public FocusComboBox()
     {
       DropDownStyle = ComboBoxStyle.DropDown;
       DrawMode = DrawMode.OwnerDrawFixed;
       ItemHeight = Font.Height;
     }
 
-    public MiterLimitComboBox(float miterLimit)
+    public FocusComboBox(float value)
       : this()
     {
-      SetDataSource(miterLimit);
+
+      SetDataSource(value);
     }
 
     void SetDefaultValues()
     {
-      _miterValues = new List<float>();
-      _miterValues.AddRange(new float[] { 0, 0.125f, 0.25f, 0.5f, 1, 2, 3, 5, 10 });
+      _listValues = new List<float>();
+      _listValues.AddRange(new float[] { 0, 0.125f, 0.25f, 0.5f, 0.75f, 0.875f, 1 });
     }
 
-    void SetDataSource(float miterLimit)
+    void SetDataSource(float value)
     {
       this.BeginUpdate();
 
-      if (_miterValues == null)
+      if (_listValues == null)
         SetDefaultValues();
 
       Items.Clear();
 
-      if (!_miterValues.Contains(miterLimit))
+      if (!_listValues.Contains(value))
       {
-        _miterValues.Add(miterLimit);
-        _miterValues.Sort();
+        _listValues.Add(value);
+        _listValues.Sort();
       }
 
-      foreach (float val in _miterValues)
+      foreach (float val in _listValues)
         Items.Add(val);
 
-      SelectedItem = miterLimit;
+      SelectedItem = value;
 
       this.EndUpdate();
     }
 
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-    public float MiterValue
+    public float Value
     {
       get
       {
@@ -109,29 +111,18 @@ namespace Altaxo.Gui.Common.Drawing
       if (this.Enabled)
         e.DrawBackground();
 
-      //grfx.DrawRectangle(new Pen(e.ForeColor), rectColor);
+      float item = (float)Items[e.Index];
+      using (LinearGradientBrush br = new LinearGradientBrush(rectColor, e.ForeColor, e.BackColor, LinearGradientMode.Horizontal))
+      {
+        br.SetBlendTriangularShape(item);
+        grfx.FillRectangle(br, rectColor);
+      }
 
-
-      float miterValue = (float)Items[e.Index];
-      SolidBrush foreColorBrush = new SolidBrush(e.ForeColor);
-
-
-      PointF[] points = new PointF[]{
-        new PointF(rectColor.Right,rectColor.Top+0.125f*rectColor.Height),
-        new PointF(rectColor.Right-0.5f*rectColor.Width,0.5f*(rectColor.Top+rectColor.Bottom)),
-        new PointF(rectColor.Right,rectColor.Bottom-0.125f*rectColor.Height)
-      };
-
-      Pen pen = new Pen(foreColorBrush, (float)Math.Ceiling(0.375 * e.Bounds.Height));
-      pen.MiterLimit = miterValue;
-
-      grfx.DrawLines(pen,points);
-
-      string text = Altaxo.Serialization.GUIConversion.ToString(miterValue);
-      grfx.DrawString(text, Font, foreColorBrush, rectText);
-
-      pen.Dispose();
-      foreColorBrush.Dispose();
+      using (SolidBrush foreColorBrush = new SolidBrush(e.ForeColor))
+      {
+        string text = Altaxo.Serialization.GUIConversion.ToString(item);
+        grfx.DrawString(text, Font, foreColorBrush, rectText);
+      }
     }
 
     protected override void OnValidating(System.ComponentModel.CancelEventArgs e)

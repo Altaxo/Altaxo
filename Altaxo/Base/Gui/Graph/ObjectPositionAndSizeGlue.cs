@@ -28,6 +28,7 @@ using System.Windows.Forms;
 using System.Drawing;
 
 using Altaxo.Graph;
+using Altaxo.Gui.Common.Drawing;
 
 namespace Altaxo.Gui.Graph
 {
@@ -82,26 +83,8 @@ namespace Altaxo.Gui.Graph
     {
       return GetPositionValue(t, ref value);
     }
-    static void SetRotationText(TextBox t, double value)
-    {
-      string txt = Altaxo.Serialization.GUIConversion.ToString(value);
-      if (t != null)
-        t.Text = txt;
-    }
-    static bool GetRotationValue(TextBox t, ref double value)
-    {
-      double v;
-      if (Altaxo.Serialization.GUIConversion.IsDouble(t.Text, out v))
-      {
-        value = v;
-        return true;
-      }
-      else
-      {
-        return false;
-      }
-    }
-
+  
+  
 
     #endregion
 
@@ -326,45 +309,51 @@ namespace Altaxo.Gui.Graph
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public double Rotation
     {
-      get { return _rotation; }
+      get 
+      {
+        if (_cbRotation != null)
+          return _cbRotation.Rotation;
+        else
+        return _rotation; 
+      }
       set
       {
         _rotation = value;
-        SetRotationText(_edRotation, value);
+        if (_cbRotation != null)
+          _cbRotation.Rotation = (float)value;
       }
     }
 
-    TextBox _edRotation;
-    public TextBox EdRotation
+    Altaxo.Gui.Common.Drawing.RotationComboBox _cbRotation;
+    public Altaxo.Gui.Common.Drawing.RotationComboBox CbRotation
     {
-      get { return _edRotation; }
+      get { return _cbRotation; }
       set 
       {
-        if (_edRotation != null)
-          _edRotation.Validating -= EhRotation_Validating;
+        if (_cbRotation != null)
+        {
+          _cbRotation.Validated -= EhRotation_Validated;
+          _cbRotation.SelectionChangeCommitted -= EhRotation_Validated;
+        }
 
-        _edRotation = value;
+        _cbRotation = value;
 
-        if (_edRotation != null)
-          _edRotation.Validating += EhRotation_Validating;
+        if (_cbRotation != null)
+        {
+          _cbRotation.Validated += EhRotation_Validated;
+          _cbRotation.SelectionChangeCommitted += EhRotation_Validated;
 
-        SetPositionText(_edRotation, _rotation);
+          _cbRotation.Rotation = (float)_rotation;
+        }
+
+        
       
       }
     }
 
-    void EhRotation_Validating(object sender, CancelEventArgs e)
+    void EhRotation_Validated(object sender, EventArgs e)
     {
-      if (!_edRotation.Modified)
-        return;
-      if (GetRotationValue(_edRotation, ref _rotation))
-      {
-        return;
-      }
-      else
-      {
-        e.Cancel = true;
-      }
+      _rotation = _cbRotation.Rotation;
     }
     #endregion
   }

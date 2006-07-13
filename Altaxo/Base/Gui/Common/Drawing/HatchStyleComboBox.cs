@@ -26,6 +26,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.ComponentModel;
 using Altaxo.Graph;
 
 
@@ -62,6 +63,7 @@ namespace Altaxo.Gui.Common.Drawing
       this.EndUpdate();
     }
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public HatchStyle HatchStyle
     {
       get

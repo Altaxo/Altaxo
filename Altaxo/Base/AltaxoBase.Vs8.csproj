@@ -237,10 +237,25 @@
     </Compile>
     <Compile Include="Gui\Common\CustomColorDialog\CustomColorDialog.cs" />
     <Compile Include="Gui\Common\CustomColorDialog\NativeMethods.cs" />
+    <Compile Include="Gui\Common\Drawing\BrushAllPropertiesControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\BrushAllPropertiesControl.Designer.cs">
+      <DependentUpon>BrushAllPropertiesControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Common\Drawing\BrushControlsGlue.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Gui\Common\Drawing\FocusComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Gui\Common\Drawing\HatchStyleComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\LinearGradientModeExComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\LinearGradientShapeComboBox.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Gui\Common\Drawing\LineCapSizeComboBox.cs">
@@ -286,6 +301,12 @@
     <Compile Include="Gui\Common\Drawing\BrushTypeComboBox.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Gui\Common\Drawing\RotationComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\WrapModeComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Gui\Common\MultiChildController.cs" />
     <Compile Include="Gui\Common\MultiChildControl.cs">
       <SubType>UserControl</SubType>
@@ -322,6 +343,19 @@
     <Compile Include="Gui\Graph\LineGraphicControl.Designer.cs">
       <DependentUpon>LineGraphicControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Gui\Graph\PositionSizeRotationScaleControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\PositionSizeRotationScaleControl.Designer.cs">
+      <DependentUpon>PositionSizeRotationScaleControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\ShapeGraphicControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\ShapeGraphicControl.Designer.cs">
+      <DependentUpon>ShapeGraphicControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\ShapeGraphicController.cs" />
     <Compile Include="Gui\Graph\XYAxisLabelStyleControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -1225,6 +1259,10 @@
       <DependentUpon>BackgroundCancelDialog.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Common\Drawing\BrushAllPropertiesControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>BrushAllPropertiesControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Gui\Common\Drawing\ColorTypeThicknessPenControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>ColorTypeThicknessPenControl.cs</DependentUpon>
@@ -1253,6 +1291,14 @@
     <EmbeddedResource Include="Gui\Graph\LineGraphicControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>LineGraphicControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\PositionSizeRotationScaleControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>PositionSizeRotationScaleControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\ShapeGraphicControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ShapeGraphicControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Graph\XYAxisLabelStyleControl.resx">
       <DependentUpon>XYAxisLabelStyleControl.cs</DependentUpon>

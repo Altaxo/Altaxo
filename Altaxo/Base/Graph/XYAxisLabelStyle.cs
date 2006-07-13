@@ -272,7 +272,7 @@ namespace Altaxo.Graph
         }
       }
     }
-    /// <summary>The brush color.</summary>
+    /// <summary>The brush color. If you set this, the font brush will be set to a solid brush.</summary>
     public System.Drawing.Color Color
     {
       get { return this._brush.Color;; }
@@ -284,6 +284,21 @@ namespace Altaxo.Graph
           this._brush.SetSolidBrush( value );
           OnChanged(); // Fire Changed event
         }
+      }
+    }
+
+    /// <summary>The brush. During setting, the brush is cloned.</summary>
+    public BrushHolder Brush
+    {
+      get 
+      {
+        return this._brush; ; 
+      }
+      set
+      {
+       
+        this._brush = (BrushHolder)value.Clone();
+        OnChanged(); // Fire Changed event
       }
     }
 

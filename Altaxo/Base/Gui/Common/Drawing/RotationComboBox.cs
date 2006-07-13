@@ -29,55 +29,57 @@ using System.ComponentModel;
 
 namespace Altaxo.Gui.Common.Drawing
 {
-  public class MiterLimitComboBox : ComboBox
+  public class RotationComboBox : ComboBox
   {
-    static List<float> _miterValues;
+    static List<float> _rotationValues;
 
-    public MiterLimitComboBox()
-     
+    public RotationComboBox()
     {
       DropDownStyle = ComboBoxStyle.DropDown;
       DrawMode = DrawMode.OwnerDrawFixed;
       ItemHeight = Font.Height;
     }
 
-    public MiterLimitComboBox(float miterLimit)
+    public RotationComboBox(float rotation)
       : this()
     {
-      SetDataSource(miterLimit);
+
+      SetDataSource(rotation);
     }
 
     void SetDefaultValues()
     {
-      _miterValues = new List<float>();
-      _miterValues.AddRange(new float[] { 0, 0.125f, 0.25f, 0.5f, 1, 2, 3, 5, 10 });
+      _rotationValues = new List<float>();
+      _rotationValues.AddRange(new float[] { 0, 45, 90, 135, 180, 225, 270, 315 });
     }
 
-    void SetDataSource(float miterLimit)
+    void SetDataSource(float rotation)
     {
       this.BeginUpdate();
 
-      if (_miterValues == null)
+      if (_rotationValues == null)
         SetDefaultValues();
 
       Items.Clear();
 
-      if (!_miterValues.Contains(miterLimit))
+      rotation = (float)Math.IEEERemainder(rotation, 360);
+
+      if (!_rotationValues.Contains(rotation))
       {
-        _miterValues.Add(miterLimit);
-        _miterValues.Sort();
+        _rotationValues.Add(rotation);
+        _rotationValues.Sort();
       }
 
-      foreach (float val in _miterValues)
+      foreach (float val in _rotationValues)
         Items.Add(val);
 
-      SelectedItem = miterLimit;
+      SelectedItem = rotation;
 
       this.EndUpdate();
     }
 
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-    public float MiterValue
+    public float Rotation
     {
       get
       {
@@ -109,29 +111,25 @@ namespace Altaxo.Gui.Common.Drawing
       if (this.Enabled)
         e.DrawBackground();
 
-      //grfx.DrawRectangle(new Pen(e.ForeColor), rectColor);
+     
+      int minSize = Math.Min(rectColor.Height,rectColor.Width);
+      PointF middle = new PointF(rectColor.X+minSize/2,rectColor.Y+minSize/2);
 
 
-      float miterValue = (float)Items[e.Index];
+      float rot = (float)Items[e.Index];
+      PointF dest = new PointF(
+        middle.X+(float)(0.5*minSize*Math.Cos(rot*Math.PI/180)),
+        middle.Y+(float)(0.5*minSize*Math.Sin(rot*Math.PI/180)));
+      
+
       SolidBrush foreColorBrush = new SolidBrush(e.ForeColor);
+      Pen foreColorPen = new Pen(e.ForeColor);
 
+      grfx.DrawEllipse(foreColorPen, new Rectangle(rectColor.X, rectColor.Y, minSize, minSize));
+      grfx.DrawLine(foreColorPen, middle, dest);
 
-      PointF[] points = new PointF[]{
-        new PointF(rectColor.Right,rectColor.Top+0.125f*rectColor.Height),
-        new PointF(rectColor.Right-0.5f*rectColor.Width,0.5f*(rectColor.Top+rectColor.Bottom)),
-        new PointF(rectColor.Right,rectColor.Bottom-0.125f*rectColor.Height)
-      };
-
-      Pen pen = new Pen(foreColorBrush, (float)Math.Ceiling(0.375 * e.Bounds.Height));
-      pen.MiterLimit = miterValue;
-
-      grfx.DrawLines(pen,points);
-
-      string text = Altaxo.Serialization.GUIConversion.ToString(miterValue);
+      string text = Altaxo.Serialization.GUIConversion.ToString(rot);
       grfx.DrawString(text, Font, foreColorBrush, rectText);
-
-      pen.Dispose();
-      foreColorBrush.Dispose();
     }
 
     protected override void OnValidating(System.ComponentModel.CancelEventArgs e)

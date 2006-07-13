@@ -28,14 +28,13 @@ using Altaxo.Serialization;
 namespace Altaxo.Graph
 {
 
+  #region ShapeGraphic
 
   [Serializable]
   public abstract class ShapeGraphic : GraphicsObject
   {
     protected BrushHolder m_fillBrush;
     protected PenHolder m_linePen;
-    //  protected float m_lineWidth = 1;
-    protected bool m_fill = false;
 
     #region Serialization
 
@@ -52,7 +51,6 @@ namespace Altaxo.Graph
       base.GetObjectData(info, context);
 
       info.AddValue("LinePen", s.m_linePen);
-      info.AddValue("Fill", s.m_fill);
       info.AddValue("FillBrush", s.m_fillBrush);
 
     }
@@ -60,9 +58,8 @@ namespace Altaxo.Graph
     {
       ShapeGraphic s = (ShapeGraphic)base.SetObjectData(obj, info, context, selector);
 
-      s.m_linePen = (PenHolder)info.GetValue("LinePen", typeof(PenHolder));
-      s.m_fill = info.GetBoolean("Fill");
-      s.m_fillBrush = (BrushHolder)info.GetValue("FillBrush", typeof(BrushHolder));
+      s.Pen = (PenHolder)info.GetValue("LinePen", typeof(PenHolder));
+      s.Brush = (BrushHolder)info.GetValue("FillBrush", typeof(BrushHolder));
 
       return s;
     } // end of SetObjectData
@@ -84,9 +81,9 @@ namespace Altaxo.Graph
         info.AddBaseValueEmbedded(s, typeof(ShapeGraphic).BaseType);
 
         info.AddValue("LinePen", s.m_linePen);
-        //info.AddValue("LineWidth",s.m_lineWidth);
+       
 
-        info.AddValue("Fill", s.m_fill);
+        info.AddValue("Fill", s.m_fillBrush.IsVisible);
         info.AddValue("FillBrush", s.m_fillBrush);
       }
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -96,11 +93,8 @@ namespace Altaxo.Graph
         info.GetBaseValueEmbedded(s, typeof(ShapeGraphic).BaseType, parent);
 
 
-        s.m_linePen = (PenHolder)info.GetValue("LinePen", s);
-        //s.m_lineWidth = info.GetSingle("LineWidth");
-
-        s.m_fill = info.GetBoolean("Fill");
-        s.m_fillBrush = (BrushHolder)info.GetValue("FillBrush", s);
+        s.Pen = (PenHolder)info.GetValue("LinePen", s);
+        s.Brush = (BrushHolder)info.GetValue("FillBrush", s);
         return s;
       }
     }
@@ -110,10 +104,8 @@ namespace Altaxo.Graph
 
     public ShapeGraphic()
     {
-      m_fillBrush = new BrushHolder(Color.White);
-      m_linePen = new PenHolder(Color.Black);
-      //m_lineWidth = 1;
-      m_fill = false;
+      Brush = new BrushHolder(Color.Transparent);
+      Pen = new PenHolder(Color.Black);
     }
 
     public ShapeGraphic(ShapeGraphic from)
@@ -122,24 +114,8 @@ namespace Altaxo.Graph
     {
       this.m_fillBrush = (BrushHolder)from.m_fillBrush.Clone();
       this.m_linePen = (PenHolder)from.m_linePen.Clone();
-      //this.m_lineWidth = from.m_lineWidth;
-      this.m_fill = from.m_fill;
     }
-
-    public virtual float LineWidth
-    {
-      get
-      {
-        return m_linePen.Width;
-      }
-      set
-      {
-        if (value > 0)
-          m_linePen.Width = value;
-        else
-          throw new ArgumentOutOfRangeException("LineWidth", "Line Width must be > 0");
-      }
-    }
+   
 
     public virtual PenHolder Pen
     {
@@ -149,49 +125,67 @@ namespace Altaxo.Graph
       }
       set
       {
-        if (value != null)
-          m_linePen = (PenHolder)value.Clone();
-        else
-          throw new ArgumentNullException("The line pen must not be null");
+        if (value == null)
+           throw new ArgumentNullException("The line pen must not be null");
+
+         if (m_linePen != null)
+           m_linePen.Changed -= this.EhChildChanged;
+
+
+        m_linePen = (PenHolder)value.Clone();
+        m_linePen.Changed += this.EhChildChanged;
+        OnChanged();
+         
       }
     }
 
-    public virtual Color LineColor
+    public virtual BrushHolder Brush
     {
       get
       {
-        return m_linePen.Color;
+        return m_fillBrush;
       }
       set
       {
-        m_linePen.Color = value;
+        if (value == null)
+          throw new ArgumentNullException("The fill brush must not be null");
+
+        if (m_fillBrush != null)
+          m_fillBrush.Changed -= this.EhChildChanged;
+
+
+       
+        m_fillBrush = (BrushHolder)value.Clone();
+        m_fillBrush.Changed += this.EhChildChanged;
+        OnChanged();
+
+       
       }
     }
 
-    public virtual bool Fill
+     
+    public override IHitTestObject HitTest(PointF pt)
     {
-      get
-      {
-        return m_fill;
-      }
-      set
-      {
-        m_fill = value;
-      }
+      IHitTestObject result = base.HitTest(pt);
+      if(result!=null)
+        result.DoubleClick = EhHitDoubleClick;
+      return result;
     }
-    public virtual Color FillColor
+
+    static bool EhHitDoubleClick(IHitTestObject o)
     {
-      get
-      {
-        return m_fillBrush.Color;
-      }
-      set
-      {
-        m_fillBrush = new BrushHolder(value);
-      }
+      object hitted = o.HittedObject;
+      Current.Gui.ShowDialog(ref hitted, "Line properties");
+      ((ShapeGraphic)hitted).OnChanged();
+      return true;
     }
+
+
   } //  End Class
 
+  #endregion
+
+  #region LineGraphic
 
   [Serializable]
   public class LineGraphic : ShapeGraphic, IGrippableObject
@@ -305,8 +299,8 @@ namespace Altaxo.Graph
       this(startPosition)
     {
       this.SetEndPosition(endPosition);
-      this.LineWidth = lineWidth;
-      this.LineColor = lineColor;
+      this.Pen.Width = lineWidth;
+      this.Pen.Color = lineColor;
       this.AutoSize = false;
     }
 
@@ -314,8 +308,8 @@ namespace Altaxo.Graph
       :
       this(new PointF(startX, startY), new PointF(endX, endY))
     {
-      this.LineWidth = lineWidth;
-      this.LineColor = lineColor;
+      this.Pen.Width = lineWidth;
+      this.Pen.Color = lineColor;
       this.AutoSize = false;
     }
 
@@ -326,31 +320,47 @@ namespace Altaxo.Graph
 
     #endregion
 
+    public override bool AllowNegativeSize
+    {
+      get
+      {
+        return true;
+      }
+    }
+
     public override object Clone()
     {
       return new LineGraphic(this);
     }
 
 
-    public override IHitTestObject HitTest(PointF pt)
+    public override GraphicsPath GetSelectionPath()
     {
       GraphicsPath gp = new GraphicsPath();
       Matrix myMatrix = new Matrix();
-      gp.AddLine(0, 0, Width, Height);
-      myMatrix.Translate(X, Y);
-      myMatrix.Rotate(this.Rotation);
-      gp.Transform(myMatrix);
-      using (Pen myPen = new Pen(Color.Black, 5))
+
+      gp.AddLine(X + m_Bounds.X, Y + m_Bounds.Y, X + m_Bounds.X + Width, Y + m_Bounds.Y+Height);
+      if (Pen.Width < 5)
+        gp.Widen(new Pen(Color.Black, 5));
+      else
+        gp.Widen(Pen);
+
+      if (this.Rotation != 0)
       {
-        if (gp.IsOutlineVisible(pt, myPen))
-        {
-          gp.Widen(myPen);
-          HitTestObject result = new HitTestObject(gp, this);
-          result.DoubleClick = EhHitDoubleClick;
-          return result;
-        }
+        myMatrix.RotateAt(this.Rotation, new PointF(X, Y), MatrixOrder.Append);
       }
-      return null;
+
+      gp.Transform(myMatrix);
+      return gp;
+    }
+
+    public override IHitTestObject HitTest(PointF pt)
+    {
+      IHitTestObject result = base.HitTest(pt);
+      if(result!=null)
+        result.DoubleClick = EhHitDoubleClick;
+      return result;
+      
     }
 
     static bool EhHitDoubleClick(IHitTestObject o)
@@ -362,109 +372,64 @@ namespace Altaxo.Graph
     }
 
 
-    public PointF GetStartPosition()
-    {
-      return this.GetPosition();
-    }
-
-    public void SetStartPosition(PointF Value)
-    {
-      this.SetPosition(Value);
-    }
-
-
-    public PointF GetEndPosition()
-    {
-      PointF endPosition = new PointF(this.m_Position.X, this.m_Position.Y);
-      endPosition.X += this.Size.Width;
-      endPosition.Y += this.Size.Height;
-      return endPosition;
-    }
-
-    public void SetEndPosition(PointF Value)
-    {
-      SizeF siz = new SizeF(
-        Value.X - this.m_Position.X,
-        Value.Y - this.m_Position.Y);
-      SetSize(siz);
-    }
+   
+    
 
     public override void Paint(Graphics g, object obj)
-    {
+    {/*
       GraphicsState gs = g.Save();
       g.TranslateTransform(X, Y);
       g.RotateTransform(this.m_Rotation);
       g.DrawLine(this.Pen, 0, 0, Width, Height);
       g.Restore(gs);
+      */
+
+      GraphicsState gs = g.Save();
+      g.TranslateTransform(X, Y);
+      if (m_Rotation != 0)
+        g.RotateTransform(m_Rotation);
+      g.DrawLine(Pen, 0,0,Width, Height);
+      g.Restore(gs);
     }
     #region IGrippableObject Members
 
-    public void ShowGrips(Graphics g)
+    public override void ShowGrips(Graphics g)
     {
-      g.DrawRectangle(Pens.Blue, X - 6, Y - 6, 12, 12);
-      g.DrawRectangle(Pens.Blue, X + Width - 6, Y + Height - 6, 12, 12);
-      g.DrawLine(Pens.Blue, X, Y, X + Width, Y + Height);
+      GraphicsState gs = g.Save();
+      g.TranslateTransform(X, Y);
+      if (m_Rotation != 0)
+        g.RotateTransform(m_Rotation);
+
+      DrawRectangularGrip(g, new PointF(0, 0));
+      DrawRectangularGrip(g, new PointF(1, 1));
+
+      g.DrawLine(Pens.Blue, 0, 0, Width,  Height);
+      
+      g.Restore(gs);
     }
 
-    public IGripManipulationHandle GripHitTest(PointF point)
+    public override IGripManipulationHandle GripHitTest(PointF point)
     {
-      double dx, dy;
-      dx = point.X - this.X;
-      dy = point.Y - this.Y;
+      PointF rel;
 
-      if ((dx * dx + dy * dy) < 36)
-        return new GripHandle(this, true);
+      rel = new PointF(0, 0);
+      if (IsRectangularGripHitted(rel, point))
+        return new SizeMoveGripHandle(this, rel);
 
-      dx = point.X - this.X - this.Width;
-      dy = point.Y - this.Y - this.Height;
-
-      if ((dx * dx + dy * dy) < 36)
-        return new GripHandle(this, false);
+      rel = new PointF(1, 1);
+      if (IsRectangularGripHitted(rel, point))
+        return new SizeMoveGripHandle(this, rel);
 
       return null;
     }
 
     #endregion
 
-
-    #region GripHandle
-
-    private class GripHandle : IGripManipulationHandle
-    {
-      LineGraphic _parent;
-      bool _isFirstPoint;
-
-      public GripHandle(LineGraphic parent, bool isFirstPoint)
-      {
-        _parent = parent;
-        _isFirstPoint = isFirstPoint;
-      }
-
-      #region IGripManipulationHandle Members
-
-      public void MoveGrip(PointF newPosition)
-      {
-        if (_isFirstPoint)
-        {
-          PointF endPoint = _parent.GetEndPosition();
-          _parent.SetStartPosition(newPosition);
-          _parent.SetEndPosition(endPoint);
-        }
-        else // second point
-        {
-          _parent.SetEndPosition(newPosition);
-        }
-      }
-
-      #endregion
-
-    }
-
-    #endregion
-
-
   } // End Class
 
+  #endregion
+
+  #region RectangleGraphic
 
   [Serializable]
   public class RectangleGraphic : ShapeGraphic
@@ -648,19 +613,22 @@ namespace Altaxo.Graph
       g.TranslateTransform(X, Y);
       if (m_Rotation != -0)
         g.RotateTransform(m_Rotation);
-      RectangleF rect = new RectangleF(0, 0, Width, Height);
-      if (this.Fill)
+      
+      if (Brush.IsVisible)
       {
-        g.FillRectangle(new SolidBrush(this.FillColor), rect);
+        Brush.Rectangle = m_Bounds;
+        g.FillRectangle(Brush, m_Bounds);
       }
-      Pen myPen = new Pen(this.LineColor, this.LineWidth);
-      g.DrawRectangle(myPen, 0, 0, rect.Width, rect.Height);
+
+      Pen.BrushRectangle = m_Bounds;
+      g.DrawRectangle(Pen, m_Bounds.X, m_Bounds.Y, m_Bounds.Width, m_Bounds.Height);
       g.Restore(gs);
     }
-
   } // End Class
 
+  #endregion
 
+  #region EllipseGraphic
   [Serializable]
   public class EllipseGraphic : ShapeGraphic
   {
@@ -818,6 +786,20 @@ namespace Altaxo.Graph
       return new EllipseGraphic(this);
     }
 
+    public override GraphicsPath GetSelectionPath()
+    {
+      GraphicsPath gp = new GraphicsPath();
+      Matrix myMatrix = new Matrix();
+
+      gp.AddEllipse(new RectangleF(X + m_Bounds.X, Y + m_Bounds.Y, Width, Height));
+      if (this.Rotation != 0)
+      {
+        myMatrix.RotateAt(this.Rotation, new PointF(X, Y), MatrixOrder.Append);
+      }
+
+      gp.Transform(myMatrix);
+      return gp;
+    }
 
     public override void Paint(Graphics g, object obj)
     {
@@ -825,15 +807,19 @@ namespace Altaxo.Graph
       g.TranslateTransform(X, Y);
       if (m_Rotation != 0)
         g.RotateTransform(m_Rotation);
+     
+      if (Brush.IsVisible)
+      {
+        Brush.Rectangle = m_Bounds;
+        g.FillEllipse(Brush, m_Bounds);
+      }
 
-      RectangleF rect = new RectangleF(0, 0, Width, Height);
-      if (this.Fill)
-        g.FillEllipse(new SolidBrush(this.FillColor), rect);
-
-      Pen myPen = new Pen(this.LineColor, this.LineWidth);
-      g.DrawEllipse(myPen, rect);
+      Pen.BrushRectangle = m_Bounds;
+      g.DrawEllipse(Pen, m_Bounds);
       g.Restore(gs);
     }
   } // end class
+
+  #endregion
 
 } // end Namespace

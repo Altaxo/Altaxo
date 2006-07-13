@@ -52,7 +52,30 @@ namespace Altaxo.Graph
       return System.Enum.Parse(typeof(BrushType),val,true);
     }
   }
+
+  [Serializable]
+  public enum LinearGradientShape
+  {
+    Linear,
+    Triangular,
+    SigmaBell
+  }
+
   
+
+  [Serializable]
+  public enum LinearGradientModeEx
+  {
+    BackwardDiagonal,
+    ForwardDiagonal,
+    Horizontal, 
+    Vertical,
+    RevBackwardDiagonal,
+    RevForwardDiagonal,
+    RevHorizontal, 
+    RevVertical
+  }
+
   /// <summary>
   /// Holds all information neccessary to create a brush
   /// of any kind without allocating resources, so this class
@@ -71,8 +94,7 @@ namespace Altaxo.Graph
     protected Image     m_Image; // für Texturebrush
     protected Matrix    m_Matrix; // für TextureBrush
     protected WrapMode  m_WrapMode; // für TextureBrush und LinearGradientBrush
-    protected PointF    m_Point1;
-    protected PointF    m_Point2;
+    protected RectangleF m_Rectangle;
     protected float     m_Float1;
     protected bool      m_Bool1;
 
@@ -167,20 +189,19 @@ namespace Altaxo.Graph
     }
     #endregion
 
-    public BrushHolder(BrushHolder bh)
+    public BrushHolder(BrushHolder from)
     {
-      m_BrushType   = bh.m_BrushType; // Type of the brush
-      m_Brush       = null==bh.m_Brush ? null : (Brush)bh.m_Brush.Clone();      // this is the cached brush object
-      m_ForeColor   = bh.m_ForeColor; // Color of the brush
-      m_BackColor   = bh.m_BackColor; // Backcolor of brush, f.i.f. HatchStyle brushes
-      m_HatchStyle  = bh.m_HatchStyle; // für HatchBrush
-      m_Image       = null==bh.m_Image ? null : (Image)bh.m_Image.Clone(); // für Texturebrush
-      m_Matrix      = null==bh.m_Matrix ? null : (Matrix)bh.m_Matrix.Clone(); // für TextureBrush
-      m_WrapMode    = bh.m_WrapMode; // für TextureBrush und LinearGradientBrush
-      m_Point1      = bh.m_Point1;
-      m_Point2      = bh.m_Point2;
-      m_Float1      = bh.m_Float1;
-      m_Bool1       = bh.m_Bool1;
+      m_BrushType   = from.m_BrushType; // Type of the brush
+      m_Brush = null;      // this is the cached brush object
+      m_ForeColor   = from.m_ForeColor; // Color of the brush
+      m_BackColor   = from.m_BackColor; // Backcolor of brush, f.i.f. HatchStyle brushes
+      m_HatchStyle  = from.m_HatchStyle; // für HatchBrush
+      m_Image       = null==from.m_Image ? null : (Image)from.m_Image.Clone(); // für Texturebrush
+      m_Matrix      = null==from.m_Matrix ? null : (Matrix)from.m_Matrix.Clone(); // für TextureBrush
+      m_WrapMode    = from.m_WrapMode; // für TextureBrush und LinearGradientBrush
+      m_Rectangle   = from.m_Rectangle;
+      m_Float1      = from.m_Float1;
+      m_Bool1       = from.m_Bool1;
     }
 
   
@@ -211,6 +232,28 @@ namespace Altaxo.Graph
           _SetBrushVariable(null);
           OnChanged();
         }
+      }
+    }
+
+    /// <summary>
+    /// Returns true if the brush is visible, i.e. is not a transparent brush.
+    /// </summary>
+    public bool IsVisible
+    {
+      get
+      {
+        return !(m_BrushType == BrushType.SolidBrush && m_ForeColor.A == 0);
+      }
+    }
+
+    /// <summary>
+    /// Returns true if the brush is invisible, i.e. is a solid and transparent brush.
+    /// </summary>
+    public bool IsInvisible
+    {
+      get
+      {
+        return m_BrushType == BrushType.SolidBrush && m_ForeColor.A == 0;
       }
     }
 
@@ -262,6 +305,31 @@ namespace Altaxo.Graph
       }
     }
 
+    public RectangleF Rectangle
+    {
+      get
+      {
+        return m_Rectangle;
+      }
+      set
+      {
+        if (m_BrushType == BrushType.LinearGradientBrush || m_BrushType == BrushType.PathGradientBrush)
+        {
+          bool bChanged = (m_Rectangle != value);
+          m_Rectangle = value;
+          if (bChanged)
+          {
+            _SetBrushVariable(null);
+            OnChanged();
+          }
+        }
+        else
+        {
+          m_Rectangle = value; // has no meaning for other brushes, so we set it but dont care
+        }
+      }
+    }
+
 
     public Brush Brush
     {
@@ -277,6 +345,25 @@ namespace Altaxo.Graph
               break;
             case BrushType.HatchBrush:
               br = new HatchBrush(m_HatchStyle, m_ForeColor, m_BackColor);
+              break;
+            case BrushType.LinearGradientBrush:
+              if (m_Rectangle.IsEmpty)
+                m_Rectangle = new RectangleF(0, 0, 1000, 1000);
+              br = new LinearGradientBrush(m_Rectangle, m_ForeColor, m_BackColor, LinearGradientMode.BackwardDiagonal);
+              break;
+            case BrushType.PathGradientBrush:
+              GraphicsPath p = new GraphicsPath();
+              if (m_Rectangle.IsEmpty)
+                m_Rectangle = new RectangleF(0, 0, 1000, 1000);
+              p.AddRectangle(m_Rectangle);
+              PathGradientBrush pgb =  new PathGradientBrush(p);
+              pgb.SurroundColors = new Color[] { m_ForeColor };
+              pgb.CenterColor = m_BackColor;
+              br = pgb;
+              break;
+            case BrushType.TextureBrush:
+              TextureBrush tb = new TextureBrush(System.Windows.Forms.Form.ActiveForm.Icon.ToBitmap());
+              br = tb;
               break;
           } // end of switch
           this._SetBrushVariable(br);

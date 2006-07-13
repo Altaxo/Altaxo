@@ -33,6 +33,12 @@ namespace Altaxo.Gui.Common.Drawing
     private bool _userChangedStartCapSize;
     private bool _userChangedEndCapSize;
 
+    public PenControlsGlue()
+    {
+      this.BrushGlue = new BrushControlsGlue();
+    }
+
+    #region Pen
 
     PenHolder _pen;
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -40,8 +46,8 @@ namespace Altaxo.Gui.Common.Drawing
     {
       get
       {
-      //  if (_pen != null)
-      //    GetGuiElementValues(_pen);
+        //  if (_pen != null)
+        //    GetGuiElementValues(_pen);
         return _pen;
       }
       set
@@ -49,7 +55,6 @@ namespace Altaxo.Gui.Common.Drawing
         _pen = value;
 
         BrushGlue = _brushGlue;
-        CbColor = _cbColor;
         CbLineThickness = _cbThickness;
         CbDashStyle = _cbDashStyle;
         CbDashCap = _cbDashCap;
@@ -69,44 +74,42 @@ namespace Altaxo.Gui.Common.Drawing
         PenChanged(this, EventArgs.Empty);
     }
 
-    ColorType _colorType = ColorType.KnownAndSystemColor;
-    public ColorType ColorType
-    {
-      get
-      {
-        return _colorType;
-      }
-      set
-      {
-        _colorType = value;
+    #endregion
 
-        if (_cbColor != null)
-          _cbColor.ColorType = _colorType;
-        if (_brushGlue != null)
-          _brushGlue.ColorType = _colorType;
-      }
-    }
+    #region BrushGlue
 
-
-   
+    System.Windows.Forms.ToolStripItem _customPenDialogItem;
     BrushControlsGlue _brushGlue;
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public BrushControlsGlue BrushGlue
     {
       get { return _brushGlue; }
-      set
+      private set
       {
         if (_brushGlue != null)
+        {
           _brushGlue.BrushChanged -= EhBrushChanged;
-        
+
+          _brushGlue.RemoveContextMenuItem(_customPenDialogItem);
+        }
+
         _brushGlue = value;
-        if (_brushGlue != null)
-          _brushGlue.ColorType = _colorType;
         if (_pen != null && _brushGlue != null)
           _brushGlue.Brush = _pen.BrushHolder;
 
 
         if (_brushGlue != null)
+        {
           _brushGlue.BrushChanged += EhBrushChanged;
+
+          if (_customPenDialogItem == null)
+          {
+            _customPenDialogItem = new System.Windows.Forms.ToolStripMenuItem();
+            _customPenDialogItem.Text = "Custom Pen ...";
+            _customPenDialogItem.Click += EhShowCustomPenDialog;
+          }
+          _brushGlue.InsertContextMenuItem(_customPenDialogItem);
+        }
 
       }
     }
@@ -120,50 +123,15 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
-    ColorComboBox _cbColor;
-    public ColorComboBox CbColor
-    {
-      get { return _cbColor; }
-      set
-      {
-        if (_cbColor != null)
-          _cbColor.SelectionChangeCommitted -= EhColor_SelectionChangeCommitted;
+    #endregion
 
-        _cbColor = value;
-        if (_cbColor != null)
-          _cbColor.ColorType = _colorType;
-        if (_pen != null && _cbColor != null)
-          _cbColor.Color = _pen.Color;
-
-        if (_cbColor != null)
-        {
-          _cbColor.SelectionChangeCommitted += EhColor_SelectionChangeCommitted;
-
-          System.Windows.Forms.ToolStripItem tsi = new System.Windows.Forms.ToolStripMenuItem();
-          tsi.Text = "Custom Pen ...";
-          tsi.Click += EhShowCustomPenDialog;
-          _cbColor.ContextMenuStrip.Items.Insert(0, tsi);
-        }
-
-
-      }
-    }
-
-    void EhColor_SelectionChangeCommitted(object sender, EventArgs e)
-    {
-      if (_pen != null)
-      {
-        _pen.Color = _cbColor.Color;
-        OnPenChanged();
-      }
-    }
-
+    #region Dash
 
     DashStyleComboBox _cbDashStyle;
     public DashStyleComboBox CbDashStyle
     {
       get { return _cbDashStyle; }
-      set 
+      set
       {
         if (_cbDashStyle != null)
           _cbDashStyle.SelectionChangeCommitted -= EhDashStyle_SelectionChangeCommitted;
@@ -190,7 +158,7 @@ namespace Altaxo.Gui.Common.Drawing
     public DashCapComboBox CbDashCap
     {
       get { return _cbDashCap; }
-      set 
+      set
       {
         if (_cbDashCap != null)
           _cbDashCap.SelectionChangeCommitted -= EhDashCap_SelectionChangeCommitted;
@@ -213,11 +181,15 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
+    #endregion
+
+    #region Width
+
     LineThicknessComboBox _cbThickness;
     public LineThicknessComboBox CbLineThickness
     {
       get { return _cbThickness; }
-      set 
+      set
       {
         if (_cbThickness != null)
         {
@@ -254,12 +226,16 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
+    #endregion
+
+    #region StartCap
+
     LineCapComboBox _cbStartCap;
 
     public LineCapComboBox CbStartCap
     {
       get { return _cbStartCap; }
-      set 
+      set
       {
         if (_cbStartCap != null)
           _cbStartCap.SelectionChangeCommitted -= EhStartCap_SelectionChangeCommitted;
@@ -275,41 +251,20 @@ namespace Altaxo.Gui.Common.Drawing
 
     void EhStartCap_SelectionChangeCommitted(object sender, EventArgs e)
     {
-      if (_cbStartCapSize != null)
+      if (_pen != null)
       {
-        if (!_userChangedStartCapSize)
-          _cbStartCapSize.Thickness = _cbStartCap.LineCapEx.Size;
+        LineCapEx cap = _cbStartCap.LineCapEx;
+        if (_userChangedStartCapSize && _cbStartCapSize != null)
+          cap.Size = _cbStartCapSize.Thickness;
+
+        _pen.StartCap = cap;
+
+        if (_cbStartCapSize != null)
+          _cbStartCapSize.Thickness = cap.Size;
+
+        OnPenChanged();
       }
-    }
 
-    LineCapComboBox _cbEndCap;
-
-    public LineCapComboBox CbEndCap
-    {
-      get { return _cbEndCap; }
-      set 
-      {
-        if (_cbEndCap != null)
-          _cbEndCap.SelectionChangeCommitted -= EhEndCap_SelectionChangeCommitted;
-
-        _cbEndCap = value;
-        if (_pen != null && _cbEndCap != null)
-          _cbEndCap.LineCapEx = _pen.EndCap;
-
-        if (_cbEndCap != null)
-          _cbEndCap.SelectionChangeCommitted += EhEndCap_SelectionChangeCommitted;
-      }
-    }
-
-  
-
-    void EhEndCap_SelectionChangeCommitted(object sender, EventArgs e)
-    {
-      if (_cbEndCapSize != null)
-      {
-        if (!_userChangedEndCapSize)
-          _cbEndCapSize.Thickness = _cbEndCap.LineCapEx.Size;
-      }
     }
 
     LineCapSizeComboBox _cbStartCapSize;
@@ -317,7 +272,7 @@ namespace Altaxo.Gui.Common.Drawing
     public LineCapSizeComboBox CbStartCapSize
     {
       get { return _cbStartCapSize; }
-      set 
+      set
       {
         if (_cbStartCapSize != null)
         {
@@ -341,10 +296,63 @@ namespace Altaxo.Gui.Common.Drawing
     {
       _userChangedStartCapSize = true;
 
+      if (_pen != null)
+      {
+        LineCapEx cap = _pen.StartCap;
+        cap.Size = _cbStartCapSize.Thickness;
+        _pen.StartCap = cap;
+
+        OnPenChanged();
+      }
+
     }
     void EhStartCapSize_TextChanged(object sender, EventArgs e)
     {
-      _userChangedStartCapSize = true;
+      EhStartCapSize_SelectionChangeCommitted(sender, e);
+    }
+
+    #endregion
+
+    #region EndCap
+
+    LineCapComboBox _cbEndCap;
+
+    public LineCapComboBox CbEndCap
+    {
+      get { return _cbEndCap; }
+      set
+      {
+        if (_cbEndCap != null)
+          _cbEndCap.SelectionChangeCommitted -= EhEndCap_SelectionChangeCommitted;
+
+        _cbEndCap = value;
+        if (_pen != null && _cbEndCap != null)
+          _cbEndCap.LineCapEx = _pen.EndCap;
+
+        if (_cbEndCap != null)
+          _cbEndCap.SelectionChangeCommitted += EhEndCap_SelectionChangeCommitted;
+      }
+    }
+
+
+
+    void EhEndCap_SelectionChangeCommitted(object sender, EventArgs e)
+    {
+      if (_pen != null)
+      {
+        LineCapEx cap = _cbEndCap.LineCapEx;
+        if (_userChangedEndCapSize && _cbEndCapSize != null)
+          cap.Size = _cbEndCapSize.Thickness;
+
+        _pen.EndCap = cap;
+
+        if (_cbEndCapSize != null)
+          _cbEndCapSize.Thickness = cap.Size;
+
+        OnPenChanged();
+      }
+
+
     }
 
     LineCapSizeComboBox _cbEndCapSize;
@@ -352,7 +360,7 @@ namespace Altaxo.Gui.Common.Drawing
     public LineCapSizeComboBox CbEndCapSize
     {
       get { return _cbEndCapSize; }
-      set 
+      set
       {
         if (_cbEndCapSize != null)
         {
@@ -376,23 +384,36 @@ namespace Altaxo.Gui.Common.Drawing
     {
       _userChangedEndCapSize = true;
 
+      if (_pen != null)
+      {
+        LineCapEx cap = _pen.EndCap;
+        cap.Size = _cbEndCapSize.Thickness;
+        _pen.EndCap = cap;
+
+        OnPenChanged();
+      }
+
     }
     void EhEndCapSize_TextChanged(object sender, EventArgs e)
     {
-      _userChangedEndCapSize = true;
+      EhEndCapSize_SelectionChangeCommitted(sender, e);
     }
 
+
+    #endregion
+
+    #region LineJoin
 
     LineJoinComboBox _cbLineJoin;
 
     public LineJoinComboBox CbLineJoin
     {
       get { return _cbLineJoin; }
-      set 
+      set
       {
         if (_cbLineJoin != null)
           _cbLineJoin.SelectionChangeCommitted -= EhLineJoin_SelectionChangeCommitted;
-        
+
 
         _cbLineJoin = value;
         if (_pen != null && _cbLineJoin != null)
@@ -400,7 +421,7 @@ namespace Altaxo.Gui.Common.Drawing
 
         if (_cbLineJoin != null)
           _cbLineJoin.SelectionChangeCommitted += EhLineJoin_SelectionChangeCommitted;
-         
+
       }
     }
 
@@ -412,6 +433,10 @@ namespace Altaxo.Gui.Common.Drawing
         OnPenChanged();
       }
     }
+
+    #endregion
+
+    #region Miter
     MiterLimitComboBox _cbMiterLimit;
 
     public MiterLimitComboBox CbMiterLimit
@@ -455,7 +480,9 @@ namespace Altaxo.Gui.Common.Drawing
     }
 
 
+    #endregion
 
+    #region Dialog
 
     void EhShowCustomPenDialog(object sender, EventArgs e)
     {
@@ -467,74 +494,69 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
-   
+    #endregion
 
+    #region Mirrored Brush Properties
 
+    public ColorType ColorType
+    {
+      get
+      {
+        return _brushGlue.ColorType;
+      }
+      set
+      {
+        _brushGlue.ColorType = value;
+      }
+    }
 
-    /*
-        void SetGuiElementValues(PenHolder doc)
-        {
-          if (_cbColor != null)
-            _cbColor.Color = doc.Color;
+    public BrushTypeComboBox CbBrushType
+    {
+      get
+      {
+        return _brushGlue.CbBrushType;
+      }
+      set
+      {
+        _brushGlue.CbBrushType = value;
+      }
+    }
 
-          if (_cbDashCap != null)
-            _cbDashCap.DashCap = doc.DashCap;
+    public HatchStyleComboBox CbBrushHatchStyle
+    {
+      get
+      {
+        return _brushGlue.CbHatchStyle;
+      }
+      set
+      {
+        _brushGlue.CbHatchStyle = value;
+      }
+    }
 
-          if (_cbDashStyle != null)
-            _cbDashStyle.DashStyleEx = doc.DashStyleEx;
+    public ColorComboBox CbBrushColor
+    {
+      get
+      {
+        return _brushGlue.CbColor1;
+      }
+      set
+      {
+        _brushGlue.CbColor1 = value;
+      }
+    }
+    public ColorComboBox CbBrushColor2
+    {
+      get
+      {
+        return _brushGlue.CbColor2;
+      }
+      set
+      {
+        _brushGlue.CbColor2 = value;
+      }
+    }
 
-          if (_cbEndCap != null)
-            _cbEndCap.LineCapEx = doc.EndCap;
-
-          if (_cbEndCapSize != null)
-            _cbEndCapSize.Thickness = doc.EndCap.Size;
-
-          if (_cbStartCap != null)
-            _cbStartCap.LineCapEx = doc.StartCap;
-
-          if (_cbStartCapSize != null)
-            _cbStartCapSize.Thickness = doc.StartCap.Size;
-
-          if (_cbThickness != null)
-            _cbThickness.Thickness = doc.Width;
-
-          if (_cbLineJoin != null)
-            _cbLineJoin.LineJoin = doc.LineJoin;
-
-          if (_cbMiterLimit != null)
-            _cbMiterLimit.MiterValue = doc.MiterLimit;
-        }
-
-
-        void GetGuiElementValues(PenHolder doc)
-        {
-          if (_cbColor != null)
-            doc.Color = _cbColor.Color;
-          if (_cbThickness != null)
-            doc.Width = _cbThickness.Thickness;
-
-          if (_cbDashStyle != null)
-            doc.DashStyleEx = _cbDashStyle.DashStyleEx;
-
-          if (_cbDashCap != null)
-            doc.DashCap = _cbDashCap.DashCap;
-
-          if (_cbStartCap != null)
-          {
-            LineCapEx startCap = _cbStartCap.LineCapEx;
-
-            if (_cbStartCapSize != null)
-              startCap.Size = _cbStartCapSize.Thickness;
-            doc.StartCap = startCap;
-          }
-          if (_cbEndCap != null)
-          {
-            LineCapEx endCap = _cbEndCap.LineCapEx;
-            if (_cbEndCapSize != null)
-              endCap.Size = _cbEndCapSize.Thickness;
-            doc.EndCap = endCap;
-          }
-        }
-     */
+    #endregion
   }
 }

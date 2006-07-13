@@ -25,6 +25,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
 using System.Drawing;
+using System.ComponentModel;
 
 using Altaxo.Graph;
 
@@ -56,6 +57,7 @@ namespace Altaxo.Gui.Common.Drawing
       box.DropDownStyle = ComboBoxStyle.DropDownList;
       box.DrawMode = DrawMode.OwnerDrawFixed;
       box.ItemHeight = box.Font.Height;
+    
     }
 
     public static void AddCustomColorContextMenu(ContextMenuStrip menu, EventHandler eh)
@@ -112,6 +114,7 @@ namespace Altaxo.Gui.Common.Drawing
       this.EndUpdate();
     }
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public Color Color
     {
       get
@@ -146,7 +149,17 @@ namespace Altaxo.Gui.Common.Drawing
       
       Color itemColor = e.Index < 0 ? Color.Black : (Color)Items[e.Index];
       grfx.FillRectangle(new SolidBrush(itemColor), rectColor);
-      string text = itemColor.IsNamedColor ? itemColor.Name : "Custom";
+      string text = "Custom";
+      if (itemColor.IsNamedColor)
+      {
+        text = itemColor.Name;
+      }
+      else if (ColorDictionary.IsBaseColorNamed(itemColor))
+      {
+        int transparency = ((255 - itemColor.A) * 100) / 255;
+        text = "T" + transparency.ToString() + ColorDictionary.GetBaseColorName(itemColor);
+      }
+
       grfx.DrawString(text, Font, new SolidBrush(e.ForeColor), rectText);
     }
 

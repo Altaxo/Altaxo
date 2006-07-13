@@ -23,6 +23,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.ComponentModel;
+using System.Windows.Forms;
 
 using Altaxo.Graph;
 
@@ -30,6 +31,26 @@ namespace Altaxo.Gui.Common.Drawing
 {
   public class BrushControlsGlue : Component
   {
+    public BrushControlsGlue()
+    {
+      ToolStripMenuItem it = new ToolStripMenuItem();
+      it.Text = "Custom Brush ...";
+      it.Click += EhShowCustomBrushDialog;
+
+      InsertContextMenuItem(it);
+    }
+
+    void EhShowCustomBrushDialog(object sender, EventArgs e)
+    {
+      BrushAllPropertiesControl ctrl = new BrushAllPropertiesControl();
+      ctrl.Brush = this.Brush;
+      if (Current.Gui.ShowDialog(ctrl, "Brush properties"))
+      {
+        this.Brush = ctrl.Brush;
+        OnBrushChanged();
+      }
+    }
+
     BrushHolder _brush;
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public BrushHolder Brush
@@ -98,11 +119,16 @@ namespace Altaxo.Gui.Common.Drawing
       if (_brush != null)
       {
         _brush.BrushType = _cbBrushType.BrushType;
+        
         OnBrushChanged();
+
+        UpdateColor2State();
+        UpdateHatchStyleState();
       }
     }
 
 
+    #region HatchStyle
     HatchStyleComboBox _cbHatchStyle;
     public HatchStyleComboBox CbHatchStyle
     {
@@ -118,6 +144,9 @@ namespace Altaxo.Gui.Common.Drawing
 
         if (_cbHatchStyle != null)
           _cbHatchStyle.SelectionChangeCommitted += EhHatchStyle_SelectionChangeCommitted;
+
+        UpdateHatchStyleState();
+      
       }
     }
 
@@ -130,6 +159,36 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
+    Control _lblHatchStyle;
+    public Control LabelHatchStyle
+    {
+      get
+      {
+        return _lblHatchStyle;
+      }
+      set
+      {
+        _lblHatchStyle = value;
+        UpdateHatchStyleState();
+      }
+    }
+    void UpdateHatchStyleState()
+    {
+      if (_brush != null)
+      {
+        BrushType btype = _brush.BrushType;
+        bool vis = (btype == BrushType.HatchBrush);
+        if (_lblHatchStyle != null)
+          _lblHatchStyle.Visible = vis;
+        if (_cbHatchStyle != null)
+          _cbHatchStyle.Visible = vis;
+      }
+    }
+
+    #endregion
+
+    #region Color1
+
     ColorComboBox _cbColor1;
     public ColorComboBox CbColor1
     {
@@ -137,7 +196,12 @@ namespace Altaxo.Gui.Common.Drawing
       set 
       {
         if (_cbColor1 != null)
+        {
           _cbColor1.SelectionChangeCommitted -= EhColor1_SelectionChangeCommitted;
+
+          foreach (ToolStripItem item in _customContextMenuItems)
+            _cbColor1.ContextMenuStrip.Items.Remove(item);
+        }
 
         _cbColor1 = value;
         if (_cbColor1 != null)
@@ -146,7 +210,13 @@ namespace Altaxo.Gui.Common.Drawing
           _cbColor1.Color = _brush.Color;
 
         if (_cbColor1 != null)
+        {
           _cbColor1.SelectionChangeCommitted += EhColor1_SelectionChangeCommitted;
+
+
+          foreach (ToolStripItem item in _customContextMenuItems)
+            _cbColor1.ContextMenuStrip.Items.Insert(0, item);
+        }
       }
     }
 
@@ -159,6 +229,8 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
+    #endregion
+    #region Color2
     ColorComboBox _cbColor2;
 
     public ColorComboBox CbColor2
@@ -175,6 +247,8 @@ namespace Altaxo.Gui.Common.Drawing
 
         if (_cbColor2 != null)
           _cbColor2.SelectionChangeCommitted += EhColor2_SelectionChangeCommitted;
+
+        UpdateColor2State();
       }
     }
 
@@ -187,6 +261,58 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
+
+    Control _lblColor2;
+    public Control LabelColor2
+    {
+      get
+      {
+        return _lblColor2;
+      }
+      set
+      {
+        _lblColor2 = value;
+        UpdateColor2State();
+      }
+    }
+    void UpdateColor2State()
+    {
+      if (_brush != null)
+      {
+        BrushType btype = _brush.BrushType;
+        bool vis = (btype != BrushType.SolidBrush) && (btype != BrushType.TextureBrush);
+        if (_lblColor2 != null)
+          _lblColor2.Visible = vis;
+        if (_cbColor2 != null)
+          _cbColor2.Visible = vis;
+      }
+    }
+
+
+    #endregion
+
+    List<ToolStripItem> _customContextMenuItems = new List<ToolStripItem>();
+
+    public void InsertContextMenuItem(ToolStripItem item)
+    {
+      if(_customContextMenuItems.Contains(item))
+        return;
+
+      _customContextMenuItems.Add(item);
+
+      if(_cbColor1!=null)
+        _cbColor1.ContextMenuStrip.Items.Insert(0,item);
+    }
+    public void RemoveContextMenuItem(ToolStripItem item)
+    {
+      if(!_customContextMenuItems.Contains(item))
+        return;
+
+      _customContextMenuItems.Remove(item);
+
+      if(_cbColor1!=null)
+        _cbColor1.ContextMenuStrip.Items.Remove(item);
+    }
 
   }
 }

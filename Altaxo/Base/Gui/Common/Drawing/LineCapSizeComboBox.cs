@@ -25,6 +25,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
 using System.Drawing;
+using System.ComponentModel;
 
 namespace Altaxo.Gui.Common.Drawing
 {
@@ -74,11 +75,17 @@ namespace Altaxo.Gui.Common.Drawing
       this.EndUpdate();
     }
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public float Thickness
     {
       get
       {
-        return null==SelectedItem ? 8 : (float)SelectedItem;
+        if (SelectedItem != null)
+          return (float)SelectedItem;
+        double v;
+        if (Altaxo.Serialization.GUIConversion.IsDouble(this.Text, out v))
+          return (float)v;
+        return 8;
       }
       set
       {

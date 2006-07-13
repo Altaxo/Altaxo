@@ -910,6 +910,7 @@ namespace Altaxo.Graph
           _SetProp(Configured.Color, false);
           _SetProp(Configured.Brush, true);
         }
+        _SetPenVariable(null);
         OnChanged(); // Fire the Changed event
       }
     }
@@ -1155,6 +1156,28 @@ namespace Altaxo.Graph
     }
 
     #endregion
+
+
+    public RectangleF BrushRectangle
+    {
+      get
+      {
+        return m_Brush == null ? RectangleF.Empty : m_Brush.Rectangle;
+      }
+      set
+      {
+        if (m_Brush != null)
+        {
+          if (value != m_Brush.Rectangle)
+          {
+            m_Brush.Rectangle = value;
+            if (m_Pen != null)
+              m_Pen.Brush = m_Brush.Brush;
+          }
+        }
+      }
+    }
+
   } // end of class PenHolder
 
   #endregion
@@ -1254,6 +1277,13 @@ namespace Altaxo.Graph
       }
 
       return false;
+    }
+    public override int GetHashCode()
+    {
+      if (IsCustomStyle && _customStyle!=null)
+        return _customStyle.GetHashCode();
+      else
+        return _knownStyle.GetHashCode();
     }
 
     public override string ToString()
@@ -1720,5 +1750,7 @@ namespace Altaxo.Graph
       pen.EndCap = LineCap.Custom;
       pen.CustomEndCap = GetClone(pen, size);
     }
+
+   
   }
 }

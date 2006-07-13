@@ -29,30 +29,32 @@ using Altaxo.Graph;
 
 namespace Altaxo.Gui.Graph
 {
-  public interface ILineGraphicView
+  public interface IShapeGraphicView
   {
     PenHolder DocPen { get; set; }
+    BrushHolder DocBrush { get; set; }
+    bool IsFilled { get; set; }
     System.Drawing.PointF DocPosition { get; set; }
     System.Drawing.SizeF DocSize { get; set; }
     float DocRotation { get; set; }
   }
-  public interface ILineGraphicViewEventSink
+  public interface IShapeGraphicViewEventSink
   {
   }
 
-  [UserControllerForObject(typeof(LineGraphic),101)]
-  public class LineGraphicController : ILineGraphicViewEventSink, IMVCAController
+  [UserControllerForObject(typeof(ShapeGraphic))]
+  public class ShapeGraphicController : IShapeGraphicViewEventSink, IMVCAController
   {
-    ILineGraphicView _view;
-    LineGraphic _doc;
-    LineGraphic _tempdoc;
+    IShapeGraphicView _view;
+    ShapeGraphic _doc;
+    ShapeGraphic _tempdoc;
 
     #region IMVCController Members
 
-    public LineGraphicController(LineGraphic doc)
+    public ShapeGraphicController(ShapeGraphic doc)
     {
       _doc = doc;
-      _tempdoc = (LineGraphic)doc.Clone();
+      _tempdoc = (ShapeGraphic)doc.Clone();
       Initialize(true);
     }
 
@@ -61,6 +63,8 @@ namespace Altaxo.Gui.Graph
       if (_view != null)
       {
         _view.DocPen = _tempdoc.Pen;
+        _view.DocBrush = _tempdoc.Brush;
+        _view.IsFilled = _tempdoc.Brush.IsVisible;
         _view.DocPosition = _tempdoc.Position;
         _view.DocSize = _tempdoc.Size;
         _view.DocRotation = _tempdoc.Rotation;
@@ -75,15 +79,15 @@ namespace Altaxo.Gui.Graph
       }
       set
       {
-   //     if (_view != null)
-   //       _view.Controller = null;
+        //     if (_view != null)
+        //       _view.Controller = null;
 
-        _view = value as ILineGraphicView;
+        _view = value as IShapeGraphicView;
 
         Initialize(false);
 
-  //      if (_view != null)
-    //      _view.Controller = this;
+        //      if (_view != null)
+        //      _view.Controller = this;
       }
     }
 
@@ -99,6 +103,7 @@ namespace Altaxo.Gui.Graph
     public bool Apply()
     {
       _doc.Pen = _view.DocPen;
+      _doc.Brush = _view.DocBrush;
       _doc.Position = _view.DocPosition;
       _doc.Size = _view.DocSize;
       _doc.Rotation = _view.DocRotation;

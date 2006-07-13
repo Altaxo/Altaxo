@@ -19,6 +19,7 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 #endregion
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -31,24 +32,22 @@ using Altaxo.Graph;
 
 namespace Altaxo.Gui.Common.Drawing
 {
-  public partial class PenAllPropertiesControl : UserControl, Altaxo.Main.GUI.IMVCAController
+  public partial class BrushAllPropertiesControl : UserControl, Altaxo.Main.GUI.IMVCAController
   {
-    
-
-    public PenAllPropertiesControl()
+    public BrushAllPropertiesControl()
     {
       InitializeComponent();
     }
 
-    public PenHolder Pen
+    public BrushHolder Brush
     {
-      get 
+      get
       {
-        return _penGlue.Pen; 
+        return _brushGlue.Brush;
       }
       set
       {
-        _penGlue.Pen = value;
+        _brushGlue.Brush = value;
       }
     }
 
@@ -69,7 +68,7 @@ namespace Altaxo.Gui.Common.Drawing
 
     public object ModelObject
     {
-      get { return _penGlue.Pen; }
+      get { return _brushGlue.Brush; }
     }
 
     #endregion
@@ -83,22 +82,28 @@ namespace Altaxo.Gui.Common.Drawing
 
     #endregion
 
-    private void EhPenChanged(object sender, EventArgs e)
+    private void EhBrushChanged(object sender, EventArgs e)
     {
-      _LineDesignPanel.Invalidate();
+      _brushPreviewPanel.Invalidate();
     }
 
-    private void EhPenPreview_Paint(object sender, PaintEventArgs e)
+    private void EhBrushPreview_Paint(object sender, PaintEventArgs e)
     {
       Graphics grfx = e.Graphics;
-      Rectangle fullRect = _LineDesignPanel.ClientRectangle;
+      Rectangle fullRect = this._brushPreviewPanel.ClientRectangle;
+      fullRect.Inflate(-fullRect.Width / 16, -fullRect.Height / 16);
 
-      PointF p1 = new PointF(fullRect.Left + fullRect.Width / 4.0f, fullRect.Top + fullRect.Height / 2.0f);
-      PointF p2 = new PointF(fullRect.Right - fullRect.Width / 4.0f, fullRect.Top + fullRect.Height / 2.0f);
+      if (_brushGlue != null)
+      {
+        grfx.FillRectangle(Brushes.White, fullRect);
+        Rectangle r2 = fullRect;
+        r2.Inflate(-r2.Width / 4, -r2.Height / 4);
+        grfx.FillRectangle(Brushes.Black, r2);
 
-      if(_penGlue!=null)
-        grfx.DrawLine(_penGlue.Pen, p1, p2);
- 
+        _brushGlue.Brush.Rectangle = fullRect;
+        grfx.FillRectangle(_brushGlue.Brush, fullRect);
+      }
+
     }
   }
 }

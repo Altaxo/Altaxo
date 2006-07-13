@@ -95,9 +95,8 @@ namespace Altaxo.Graph
       if (c.IsNamedColor)
         return c.Name;
 
-      string result = _colorToName[c];
-      if (null == result)
-        return result;
+      if(_colorToName.ContainsKey(c))
+        return _colorToName[c];
       else
         return _colorToName[Color.FromArgb(c.R, c.G, c.B)];
     }

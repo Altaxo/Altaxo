@@ -1288,22 +1288,14 @@ namespace Altaxo.Graph.GUI
     /// <returns>Null if successfull, error description otherwise.</returns>
     public string SaveAsMetafile(System.IO.Stream stream)
     {
-      // Code to write the stream goes here.
-      Graphics grfx = m_View.CreateGraphGraphics();
-      IntPtr ipHdc = grfx.GetHdc();
-      System.Drawing.Imaging.Metafile mf = new System.Drawing.Imaging.Metafile(stream,ipHdc,this.Doc.PageBounds,System.Drawing.Imaging.MetafileFrameUnit.Point);
-      grfx.ReleaseHdc(ipHdc);
-      grfx.Dispose();
-      grfx = Graphics.FromImage(mf);
-
-      grfx.PageUnit = GraphicsUnit.Point;
-      grfx.PageScale = 1;
-      grfx.TranslateTransform(this.Doc.PrintableBounds.X, this.Doc.PrintableBounds.Y);
-
-      this.m_Graph.DoPaint(grfx,true);
-
-      grfx.Dispose();
-      
+      try
+      {
+        Altaxo.Graph.Procedures.Export.SaveAsMetafile(this.Doc, stream, 300);
+      }
+      catch (Exception ex)
+      {
+        return ex.Message;
+      }
       return null;
     }
 
@@ -1317,34 +1309,6 @@ namespace Altaxo.Graph.GUI
     public string SaveAsBitmap(System.IO.Stream stream, int dpiResolution, System.Drawing.Imaging.ImageFormat imageFormat)
     {
       Graph.Procedures.Export.SaveAsBitmap(m_Graph, stream, dpiResolution, imageFormat);
-      /*
-      double scale = dpiResolution / 72.0;
-      // Code to write the stream goes here.
-      Graphics grfx = m_View.CreateGraphGraphics();
-      
-
-      int width = (int)Math.Ceiling(m_Graph.PageBounds.Width * scale);
-      int height = (int)Math.Ceiling(m_Graph.PageBounds.Height * scale);
-      System.Drawing.Bitmap mf = new System.Drawing.Bitmap(width, height, grfx);
-      grfx.Dispose();
-
-      mf.SetResolution(dpiResolution, dpiResolution);
-
-      grfx = Graphics.FromImage(mf);
-
-      grfx.PageUnit = GraphicsUnit.Point;
-      grfx.TranslateTransform(this.Doc.PrintableBounds.X, this.Doc.PrintableBounds.Y);
-      grfx.PageScale = 1; // (float)scale;
-
-
-      this.m_Graph.DoPaint(grfx, true);
-
-      grfx.Dispose();
-
-      mf.Save(stream, imageFormat);
-
-      mf.Dispose();
-      */
       return null;
     }
 
@@ -1716,6 +1680,61 @@ namespace Altaxo.Graph.GUI
           }
         }
         return;
+      }
+      if (dao.ContainsFileDropList())
+      {
+        bool bSuccess = false;
+        System.Collections.Specialized.StringCollection coll = dao.GetFileDropList();
+        foreach (string filename in coll)
+        {
+          Image img;
+          try
+          {
+            img = Image.FromFile(filename);
+            if (img != null)
+            {
+              SizeF size = this.ActiveLayer.Size;
+              size.Width /= 2;
+              size.Height /= 2;
+              EmbeddedImageGraphic item = new EmbeddedImageGraphic(PointF.Empty, size, img);
+              this.ActiveLayer.GraphObjects.Add(item);
+              bSuccess = true;
+              continue;
+            }
+          }
+          catch (Exception ex)
+          {
+          }
+        }
+        if (bSuccess)
+          return;
+      }
+    
+      if (dao.GetDataPresent(typeof(System.Drawing.Imaging.Metafile)))
+      {
+        System.Drawing.Imaging.Metafile img = dao.GetData(typeof(System.Drawing.Imaging.Metafile)) as System.Drawing.Imaging.Metafile;
+        if (img != null)
+        {
+          SizeF size = this.ActiveLayer.Size;
+          size.Width /= 2;
+          size.Height /= 2;
+          EmbeddedImageGraphic item = new EmbeddedImageGraphic(PointF.Empty, size, img);
+          this.ActiveLayer.GraphObjects.Add(item);
+          return;
+        }
+      }
+      if (dao.ContainsImage())
+      {
+        Image img = dao.GetImage();
+        if (img != null)
+        {
+          SizeF size = this.ActiveLayer.Size;
+          size.Width /= 2;
+          size.Height /= 2;
+          EmbeddedImageGraphic item = new EmbeddedImageGraphic(PointF.Empty, size, img);
+          this.ActiveLayer.GraphObjects.Add(item);
+          return;
+        }
       }
     }
 

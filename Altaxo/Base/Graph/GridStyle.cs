@@ -204,13 +204,17 @@ namespace Altaxo.Graph
         return;
 
       Axes.Axis axis = axisnumber == 0 ? layer.XAxis : layer.YAxis;
+      RectangleF layerRect = new RectangleF(new PointF(0, 0), layer.Size);
 
       if (_showZeroOnly)
       {
         Altaxo.Data.AltaxoVariant var = new Altaxo.Data.AltaxoVariant(0.0);
         double rel = axis.PhysicalVariantToNormal(var);
-        if(rel>=0 && rel<=1)
+        _majorPen.BrushRectangle = layerRect;
+        if (rel >= 0 && rel <= 1)
+        {
           layer.DrawIsoLine(g, MajorPen, axisnumber, rel, 0, 1);
+        }
       }
       else
       {
@@ -218,6 +222,7 @@ namespace Altaxo.Graph
 
         if (_showMinor)
         {
+          _minorPen.BrushRectangle = layerRect;
           ticks = axis.GetMinorTicksNormal();
           for (int i = 0; i < ticks.Length; ++i)
           {
@@ -227,6 +232,7 @@ namespace Altaxo.Graph
 
 
 
+        _majorPen.BrushRectangle = layerRect;
         ticks = axis.GetMajorTicksNormal();
         for (int i = 0; i < ticks.Length; ++i)
         {

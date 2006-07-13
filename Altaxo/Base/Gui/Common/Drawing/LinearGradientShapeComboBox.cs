@@ -25,68 +25,53 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.ComponentModel;
+using Altaxo.Graph;
+
 
 namespace Altaxo.Gui.Common.Drawing
 {
-  public class MiterLimitComboBox : ComboBox
-  {
-    static List<float> _miterValues;
 
-    public MiterLimitComboBox()
-     
+
+
+  public class LinearGradientShapeComboBox : ComboBox
+  {
+    public LinearGradientShapeComboBox()
     {
-      DropDownStyle = ComboBoxStyle.DropDown;
+      DropDownStyle = ComboBoxStyle.DropDownList;
       DrawMode = DrawMode.OwnerDrawFixed;
       ItemHeight = Font.Height;
     }
 
-    public MiterLimitComboBox(float miterLimit)
+    public LinearGradientShapeComboBox(LinearGradientShape selected)
       : this()
     {
-      SetDataSource(miterLimit);
+      SetDataSource(selected);
     }
 
-    void SetDefaultValues()
-    {
-      _miterValues = new List<float>();
-      _miterValues.AddRange(new float[] { 0, 0.125f, 0.25f, 0.5f, 1, 2, 3, 5, 10 });
-    }
 
-    void SetDataSource(float miterLimit)
+
+
+    void SetDataSource(LinearGradientShape selected)
     {
       this.BeginUpdate();
 
-      if (_miterValues == null)
-        SetDefaultValues();
-
       Items.Clear();
+      foreach (LinearGradientShape o in Enum.GetValues(typeof(LinearGradientShape)))
+        Items.Add(o);
 
-      if (!_miterValues.Contains(miterLimit))
-      {
-        _miterValues.Add(miterLimit);
-        _miterValues.Sort();
-      }
-
-      foreach (float val in _miterValues)
-        Items.Add(val);
-
-      SelectedItem = miterLimit;
+      SelectedItem = selected;
 
       this.EndUpdate();
     }
 
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-    public float MiterValue
+    public LinearGradientShape LinearGradientShape
     {
       get
       {
-        if (SelectedItem != null)
-          return (float)SelectedItem;
-        double v;
-        if (Altaxo.Serialization.GUIConversion.IsDouble(this.Text, out v))
-          return (float)v;
-        return 1;
+        return SelectedItem == null ? LinearGradientShape.Linear : (LinearGradientShape)SelectedItem;
       }
       set
       {
@@ -109,44 +94,20 @@ namespace Altaxo.Gui.Common.Drawing
       if (this.Enabled)
         e.DrawBackground();
 
-      //grfx.DrawRectangle(new Pen(e.ForeColor), rectColor);
+      LinearGradientShape item = e.Index >= 0 ? (LinearGradientShape)Items[e.Index] : LinearGradientShape.Linear;
 
+      Rectangle rectShape = new Rectangle(rectColor.X + rectColor.Width / 4, rectColor.Y, rectColor.Width / 2, rectColor.Height);
+      using (LinearGradientBrush br = new LinearGradientBrush(rectShape, e.ForeColor, e.BackColor, LinearGradientMode.Horizontal))
+      {
+        if (item == LinearGradientShape.Triangular)
+          br.SetBlendTriangularShape(0.5f);
+        else if (item == LinearGradientShape.SigmaBell)
+          br.SetSigmaBellShape(0.5f);
 
-      float miterValue = (float)Items[e.Index];
+        grfx.FillRectangle(br, rectColor);
+      }
       SolidBrush foreColorBrush = new SolidBrush(e.ForeColor);
-
-
-      PointF[] points = new PointF[]{
-        new PointF(rectColor.Right,rectColor.Top+0.125f*rectColor.Height),
-        new PointF(rectColor.Right-0.5f*rectColor.Width,0.5f*(rectColor.Top+rectColor.Bottom)),
-        new PointF(rectColor.Right,rectColor.Bottom-0.125f*rectColor.Height)
-      };
-
-      Pen pen = new Pen(foreColorBrush, (float)Math.Ceiling(0.375 * e.Bounds.Height));
-      pen.MiterLimit = miterValue;
-
-      grfx.DrawLines(pen,points);
-
-      string text = Altaxo.Serialization.GUIConversion.ToString(miterValue);
-      grfx.DrawString(text, Font, foreColorBrush, rectText);
-
-      pen.Dispose();
-      foreColorBrush.Dispose();
-    }
-
-    protected override void OnValidating(System.ComponentModel.CancelEventArgs e)
-    {
-      double w;
-      if (Altaxo.Serialization.GUIConversion.IsDouble(this.Text, out w))
-      {
-        this.SetDataSource((float)w);
-      }
-      else
-      {
-        e.Cancel = true;
-      }
-
-      base.OnValidating(e);
+      grfx.DrawString(item.ToString(), Font, foreColorBrush, rectText);
     }
 
 

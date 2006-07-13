@@ -126,7 +126,7 @@ namespace Altaxo.Graph.Procedures
                 IntPtr hRes = SetClipboardData(14 /*CF_ENHMETAFILE*/, hEMF2);
                 bResult = hRes.Equals(hEMF2);
                 CloseClipboard();
-              }
+             }
             }
           }
           DeleteEnhMetaFile(hEMF);
@@ -136,36 +136,22 @@ namespace Altaxo.Graph.Procedures
 
       static public void Run(GraphController ctrl)
       {
-        // Create a bitmap just to have a graphics context
-        System.Drawing.Bitmap helperbitmap = new System.Drawing.Bitmap(4, 4, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-        helperbitmap.SetResolution(300, 300);
-        Graphics grfx = Graphics.FromImage(helperbitmap);
-        // Code to write the stream goes here.
-        IntPtr ipHdc = grfx.GetHdc();
-        System.IO.Stream stream = new System.IO.MemoryStream();
-        //System.Drawing.Imaging.Metafile mf = new System.Drawing.Imaging.Metafile(stream,ipHdc);
-        System.Drawing.Imaging.Metafile mf = new System.Drawing.Imaging.Metafile(stream, ipHdc, ctrl.Doc.PageBounds, MetafileFrameUnit.Point);
+       // System.Drawing.Imaging.Metafile mf = Altaxo.Graph.Procedures.Export.GetMetafile(ctrl.Doc);
+       // PutEnhMetafileOnClipboard(ctrl.View.Form.Handle, mf);
 
-        //      System.Drawing.Imaging.Metafile mf = new System.Drawing.Imaging.Metafile("CreateMetaFile.emf",ipHdc);
-        grfx.ReleaseHdc(ipHdc);
-        grfx.Dispose();
-        grfx = Graphics.FromImage(mf);
-        grfx.PageUnit = GraphicsUnit.Point;
-        grfx.PageScale = 1;
-        grfx.TranslateTransform(ctrl.Doc.PrintableBounds.X, ctrl.Doc.PrintableBounds.Y);
+        System.Windows.Forms.DataObject dao = new System.Windows.Forms.DataObject();
+        string filepath = System.IO.Path.GetTempPath();
+        string filename = filepath + "AltaxoClipboardMetafile.emf";
+        if (System.IO.File.Exists(filename))
+          System.IO.File.Delete(filename);
+        Metafile mf = Altaxo.Graph.Procedures.Export.SaveAsMetafile(ctrl.Doc, filename, 300);
+        System.Collections.Specialized.StringCollection coll = new System.Collections.Specialized.StringCollection();
+        coll.Add(filename);
+        dao.SetFileDropList(coll);
+        dao.SetData(typeof(Metafile), mf);
+        System.Windows.Forms.Clipboard.SetDataObject(dao);
 
-        ctrl.Doc.DoPaint(grfx, true);
-
-
-        grfx.Dispose();
-        helperbitmap.Dispose();
-
-
-        stream.Flush();
-        stream.Close();
-
-        PutEnhMetafileOnClipboard(ctrl.View.Form.Handle, mf);
-        //System.Windows.Forms.Clipboard.SetData(DataFormats.GetFormat(DataFormats.EnhancedMetafile).Name, mf);
+        
       }
     }
 

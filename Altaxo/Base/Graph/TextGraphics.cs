@@ -1411,6 +1411,33 @@ namespace Altaxo.Graph
 
     }
 
+    #region IGrippableObject Members
+
+    public override void ShowGrips(Graphics g)
+    {
+      GraphicsState gs = g.Save();
+      g.TranslateTransform(X, Y);
+      if (m_Rotation != 0)
+        g.RotateTransform(m_Rotation);
+
+      DrawRotationGrip(g,new PointF(1,1));
+      g.DrawRectangle(Pens.Blue, m_Bounds.X, m_Bounds.Y, m_Bounds.Width, m_Bounds.Height);
+      g.Restore(gs);
+    }
+
+    public override IGripManipulationHandle GripHitTest(PointF point)
+    {
+      PointF rel;
+
+      rel = new PointF(1, 1);
+      if (IsRotationGripHitted(rel, point))
+        return new RotationGripHandle(this, rel);
+
+      return null;
+    }
+
+    #endregion
+
     
 
   }

@@ -38,7 +38,8 @@ namespace Altaxo.Graph
     System.Runtime.Serialization.ISerializable,
     System.Runtime.Serialization.IDeserializationCallback,
     Main.IChangedEventSource,
-    System.ICloneable  
+    System.ICloneable,
+    IGrippableObject
   {
     /// <summary>
     /// If true, the graphical object sizes itself, for instance simple text objects.
@@ -222,51 +223,7 @@ namespace Altaxo.Graph
     }
 
 
-    public virtual IHitTestObject HitTest(PointF pt)
-    {
-      GraphicsPath gp = GetSelectionPath();
-      if(gp.IsVisible(pt))
-      {
-        return new HitTestObject(gp,this);
-      }
-      else
-        return null;
-    }
-
-
-    public virtual GraphicsPath GetSelectionPath()
-    {
-      GraphicsPath gp = new GraphicsPath();
-      Matrix myMatrix = new Matrix();
-
-      gp.AddRectangle(new RectangleF(X+m_Bounds.X, Y+m_Bounds.Y, Width, Height));
-      if(this.Rotation != 0)
-      {
-        myMatrix.RotateAt(this.Rotation, new PointF(X, Y), MatrixOrder.Append);
-      }
-
-      gp.Transform(myMatrix);
-      return gp;
-    }
-
-
-    public virtual bool HitTest(RectangleF rect)
-    {
-      // is this object contained within the supplied rectangle
-
-      GraphicsPath gp = new GraphicsPath();
-      Matrix myMatrix = new Matrix();
-
-
-      gp.AddRectangle(new RectangleF(X+m_Bounds.X, Y+m_Bounds.Y, Width, Height));
-      if(this.Rotation != 0)
-      {
-        myMatrix.RotateAt(this.Rotation, new PointF(this.X, this.Y), MatrixOrder.Append);
-      }
-      gp.Transform(myMatrix);
-      RectangleF gpRect  = gp.GetBounds();
-      return rect.Contains(gpRect);
-    }
+  
 
     public virtual bool AutoSize
     {
@@ -303,6 +260,14 @@ namespace Altaxo.Graph
       }
     }
 
+    public virtual bool AllowNegativeSize
+    {
+      get
+      {
+        return false;
+      }
+    }
+
     public virtual PointF GetPosition()
     {
       return this.m_Position;
@@ -325,6 +290,47 @@ namespace Altaxo.Graph
       }
     }
 
+    public PointF GetStartPosition()
+    {
+      return this.GetPosition();
+    }
+
+    public void SetStartPosition(PointF Value)
+    {
+      this.SetPosition(Value);
+    }
+
+
+    public PointF GetEndPosition()
+    {
+      return RelativeToAbsolutePosition(new PointF(1, 1), true);
+    }
+
+    public void SetEndPosition(PointF Value)
+    {
+      if (m_Rotation == 0)
+      {
+        SizeF siz = new SizeF(
+          Value.X - this.m_Position.X,
+          Value.Y - this.m_Position.Y);
+        SetSize(siz);
+      }
+      else
+      {
+        double cosphi = Math.Cos(m_Rotation * Math.PI / 180);
+        double sinphi = Math.Sin(m_Rotation * Math.PI / 180);
+        double dx = Value.X - this.X;
+        double dy = Value.Y - this.Y;
+        // now we have to rotate backward to get the endpoint
+        SizeF siz = new SizeF();
+        siz.Width = (float)(dx * cosphi + dy * sinphi);
+        siz.Height = (float)(-dx * sinphi + dy * cosphi);
+        SetSize(siz);
+
+      }
+    }
+
+   
     /// <summary>
     /// Scales the position of an item according to the provided xscale and yscale. Can be called with null for the item (in this case nothing happens).
     /// </summary>
@@ -403,6 +409,12 @@ namespace Altaxo.Graph
     public event System.EventHandler Changed;
 
 
+    protected void EhChildChanged(object sender, EventArgs e)
+    {
+      OnChanged();
+    }
+
+
     protected virtual void OnChanged()
     {
       if(null!=this.m_Container )
@@ -419,5 +431,376 @@ namespace Altaxo.Graph
     /// </summary>
     /// <returns>The cloned copy of this object.</returns>
     public abstract object Clone();
+
+    #region HitTesting
+    public virtual IHitTestObject HitTest(PointF pt)
+    {
+      GraphicsPath gp = GetSelectionPath();
+      if (gp.IsVisible(pt))
+      {
+        return new HitTestObject(gp, this);
+      }
+      else
+        return null;
+    }
+
+
+    public virtual GraphicsPath GetSelectionPath()
+    {
+      GraphicsPath gp = new GraphicsPath();
+      Matrix myMatrix = new Matrix();
+
+      gp.AddRectangle(new RectangleF(X + m_Bounds.X, Y + m_Bounds.Y, Width, Height));
+      if (this.Rotation != 0)
+      {
+        myMatrix.RotateAt(this.Rotation, new PointF(X, Y), MatrixOrder.Append);
+      }
+
+      gp.Transform(myMatrix);
+      return gp;
+    }
+
+
+    public virtual bool HitTest(RectangleF rect)
+    {
+      // is this object contained within the supplied rectangle
+
+      GraphicsPath gp = new GraphicsPath();
+      Matrix myMatrix = new Matrix();
+
+
+      gp.AddRectangle(new RectangleF(X + m_Bounds.X, Y + m_Bounds.Y, Width, Height));
+      if (this.Rotation != 0)
+      {
+        myMatrix.RotateAt(this.Rotation, new PointF(this.X, this.Y), MatrixOrder.Append);
+      }
+      gp.Transform(myMatrix);
+      RectangleF gpRect = gp.GetBounds();
+      return rect.Contains(gpRect);
+    }
+    #endregion
+
+    #region Hitting Helper functions
+
+    /// <summary>
+    /// Converts relative positions (0..1, 0..1) to absolute position of the rectangle, taking into account
+    /// the current rotation.
+    /// </summary>
+    /// <param name="p">Relative coordinates of the rectangle (0,0 is the upper left corner, 1,1 is the lower right corner).</param>
+    /// <param name="withRotation">If true, the coordinates are calculated taking the rotation into account.</param>
+    /// <returns>The coordinates of this point.</returns>
+    public PointF RelativeToAbsolutePosition(PointF p, bool withRotation)
+    {
+      double dx = p.X * m_Bounds.Width;
+      double dy = p.Y * m_Bounds.Height;
+
+      
+     dx += m_Bounds.X;
+     dy += m_Bounds.Y;
+     
+
+      if (withRotation && m_Rotation != 0)
+      {
+        double cosphi = Math.Cos(m_Rotation * Math.PI / 180);
+        double sinphi = Math.Sin(m_Rotation * Math.PI / 180);
+
+        double helpdx = (dx * cosphi - dy * sinphi);
+        dy = (dy * cosphi + dx * sinphi);
+        dx = helpdx;
+
+      }
+
+      if (withRotation)
+        return new PointF((float)(m_Position.X + dx), (float)(m_Position.Y + dy));
+      else
+        return new PointF((float)(dx), (float)(dy));
+    }
+
+    public SizeF ToUnrotatedDifference(PointF pivot, PointF point)
+    {
+      double dx = point.X - pivot.X;
+      double dy = point.Y - pivot.Y;
+
+      if (m_Rotation != 0)
+      {
+        double cosphi = Math.Cos(m_Rotation * Math.PI / 180);
+        double sinphi = Math.Sin(m_Rotation * Math.PI / 180);
+        // now we have to rotate backward to get the endpoint
+        double helpdx = (dx * cosphi + dy * sinphi);
+        dy = (-dx * sinphi + dy * cosphi);
+        dx = helpdx;
+      }
+
+      return new SizeF((float)dx, (float)dy);
+    }
+
+    public PointF ToUnrotatedCoordinates(PointF pivot, PointF point)
+    {
+      double dx = point.X - pivot.X;
+      double dy = point.Y - pivot.Y;
+
+      if (m_Rotation != 0)
+      {
+        double cosphi = Math.Cos(m_Rotation * Math.PI / 180);
+        double sinphi = Math.Sin(m_Rotation * Math.PI / 180);
+        // now we have to rotate backward to get the endpoint
+        double helpdx = (dx * cosphi + dy * sinphi);
+        dy = (-dx * sinphi + dy * cosphi);
+        dx = helpdx;
+      }
+      return new PointF((float)(pivot.X + dx), (float)(pivot.Y + dy));
+    }
+
+
+    public SizeF ToRotatedDifference(PointF pivot, PointF point)
+    {
+      double dx = point.X - pivot.X;
+      double dy = point.Y - pivot.Y;
+
+      if (m_Rotation != 0)
+      {
+        double cosphi = Math.Cos(m_Rotation * Math.PI / 180);
+        double sinphi = Math.Sin(m_Rotation * Math.PI / 180);
+        // now we have to rotate backward to get the endpoint
+        double helpdx = (dx * cosphi - dy * sinphi);
+        dy = (dx * sinphi + dy * cosphi);
+        dx = helpdx;
+      }
+      return new SizeF((float)(dx), (float)(dy));
+    }
+
+    public void SetBoundsFrom(PointF relPivot, PointF relDrawGrip, SizeF diff)
+    {
+      double dx = relDrawGrip.X - relPivot.X;
+      double dy = relDrawGrip.Y - relPivot.Y;
+
+      if (dx == 1 && (diff.Width > 0 || AllowNegativeSize))
+      {
+        this.m_Bounds.Width = diff.Width;
+      }
+      else if (dx == -1 && (diff.Width < 0 || AllowNegativeSize))
+      {
+        SizeF s = ToRotatedDifference(PointF.Empty, new PointF(diff.Width + m_Bounds.Width, 0));
+        this.m_Position.X += s.Width;
+        this.m_Position.Y += s.Height;
+        this.m_Bounds.Width = -diff.Width;
+      }
+
+      if (dy == 1 && (diff.Height > 0 || AllowNegativeSize))
+      {
+        this.m_Bounds.Height = diff.Height;
+      }
+      else if (dy == -1 && (diff.Height < 0 || AllowNegativeSize))
+      {
+        SizeF s = ToRotatedDifference(PointF.Empty, new PointF(0, diff.Height + m_Bounds.Height));
+        this.m_Position.X += s.Width;
+        this.m_Position.Y += s.Height;
+        this.m_Bounds.Height = -diff.Height;
+      }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="relPivot">Pivot point in relative coordinates.</param>
+    /// <param name="absPivot">Pivot point in absolute coordinates.</param>
+    /// <param name="relDrawGrip">Grip point in relative coordinates.</param>
+    /// <param name="diff">Difference between absolute grip point and absolute pivot point, in unrotated absolute coordinates.</param>
+    public void SetRotationFrom(PointF relPivot, PointF absPivot, PointF relDrawGrip, SizeF diff)
+    {
+      double dx = (relDrawGrip.X - relPivot.X) * m_Bounds.Width;
+      double dy = (relDrawGrip.Y - relPivot.Y) * m_Bounds.Height;
+      double a1 = Math.Atan2(dy, dx);
+      double a2 = Math.Atan2(diff.Height, diff.Width);
+
+      this.m_Rotation = (float)(180 * (a2 - a1) / Math.PI);
+
+      //SizeF s = ToRotatedDifference(PointF.Empty, new PointF(-m_Bounds.Width / 2, -m_Bounds.Height / 2));
+      SizeF s = ToRotatedDifference(RelativeToAbsolutePosition(relPivot, false), Point.Empty);
+      this.m_Position.X = absPivot.X + s.Width;
+      this.m_Position.Y = absPivot.Y + s.Height;
+
+    }
+
+    public RectangleF GetRectangularGrip(PointF relPos)
+    {
+      PointF pos = RelativeToAbsolutePosition(relPos, false);
+
+      RectangleF rect = new RectangleF(pos, SizeF.Empty);
+      rect.Inflate(6, 6);
+
+      return rect;
+    }
+
+    public void DrawRectangularGrip(Graphics g, PointF relPos)
+    {
+      RectangleF r = GetRectangularGrip(relPos);
+      g.DrawRectangle(Pens.Blue, r.X, r.Y, r.Width, r.Height);
+    }
+
+    public bool IsRectangularGripHitted(PointF relPos, PointF hittest)
+    {
+      PointF pos = RelativeToAbsolutePosition(relPos, true);
+      double dx = hittest.X - pos.X;
+      double dy = hittest.Y - pos.Y;
+      double r = dx * dx + dy * dy;
+      return r <= 36;
+    }
+
+    public void DrawRotationGrip(Graphics g, PointF relPos)
+    {
+      RectangleF r = GetRectangularGrip(relPos);
+      Pen pen = new Pen(Color.Blue);
+      pen.StartCap = LineCap.ArrowAnchor;
+      pen.EndCap = LineCap.ArrowAnchor;
+      g.DrawArc(pen, r.X, r.Y, r.Width, r.Height, 0, 320);
+    }
+
+    public bool IsRotationGripHitted(PointF relPos, PointF hittest)
+    {
+      return IsRectangularGripHitted(relPos, hittest);
+    }
+
+
+    #endregion
+
+    #region IGrippableObject Members
+
+    public virtual void ShowGrips(Graphics g)
+    {
+      GraphicsState gs = g.Save();
+      g.TranslateTransform(X, Y);
+      if (m_Rotation != 0)
+        g.RotateTransform(m_Rotation);
+
+      DrawRectangularGrip(g, new PointF(0, 0));
+      DrawRectangularGrip(g, new PointF(0, 1));
+      DrawRectangularGrip(g, new PointF(1, 0));
+      DrawRectangularGrip(g, new PointF(1, 1));
+
+      DrawRectangularGrip(g, new PointF(0.5f, 0));
+      DrawRectangularGrip(g, new PointF(1, 0.5f));
+      DrawRectangularGrip(g, new PointF(0.5f, 1));
+      DrawRectangularGrip(g, new PointF(0, 0.5f));
+
+      DrawRotationGrip(g, new PointF(0.2f, 0.2f));
+      DrawRotationGrip(g, new PointF(0.8f, 0.2f));
+      DrawRotationGrip(g, new PointF(0.8f, 0.8f));
+      DrawRotationGrip(g, new PointF(0.2f, 0.8f));
+
+      g.DrawRectangle(Pens.Blue, m_Bounds.X,m_Bounds.Y,m_Bounds.Width,m_Bounds.Height);
+
+      g.Restore(gs);
+    }
+
+    public virtual IGripManipulationHandle GripHitTest(PointF point)
+    {
+      PointF rel;
+
+      rel = new PointF(0, 0);
+      if (IsRectangularGripHitted(rel, point))
+        return new SizeMoveGripHandle(this, rel);
+
+      rel = new PointF(1, 0);
+      if (IsRectangularGripHitted(rel, point))
+        return new SizeMoveGripHandle(this, rel);
+
+      rel = new PointF(0, 1);
+      if (IsRectangularGripHitted(rel, point))
+        return new SizeMoveGripHandle(this, rel);
+
+      rel = new PointF(1, 1);
+      if (IsRectangularGripHitted(rel, point))
+        return new SizeMoveGripHandle(this, rel);
+
+      rel = new PointF(0.5f, 0);
+      if (IsRectangularGripHitted(rel, point))
+        return new SizeMoveGripHandle(this, rel);
+
+      rel = new PointF(1, 0.5f);
+      if (IsRectangularGripHitted(rel, point))
+        return new SizeMoveGripHandle(this, rel);
+
+      rel = new PointF(0.5f, 1);
+      if (IsRectangularGripHitted(rel, point))
+        return new SizeMoveGripHandle(this, rel);
+
+      rel = new PointF(0, 0.5f);
+      if (IsRectangularGripHitted(rel, point))
+        return new SizeMoveGripHandle(this, rel);
+
+      rel = new PointF(0.2f, 0.2f);
+      if (IsRotationGripHitted(rel, point))
+        return new RotationGripHandle(this, rel);
+
+      rel = new PointF(0.8f, 0.2f);
+      if (IsRotationGripHitted(rel, point))
+        return new RotationGripHandle(this, rel);
+
+      rel = new PointF(0.8f, 0.8f);
+      if (IsRotationGripHitted(rel, point))
+        return new RotationGripHandle(this, rel);
+
+      rel = new PointF(0.2f, 0.8f);
+      if (IsRotationGripHitted(rel, point))
+        return new RotationGripHandle(this, rel);
+
+      return null;
+    }
+
+    #endregion
+
+    #region GripHandle
+
+    protected class SizeMoveGripHandle : IGripManipulationHandle
+    {
+      GraphicsObject _parent;
+      PointF _drawrPosition;
+      PointF _fixrPosition;
+      PointF _fixaPosition;
+      bool _allowNegativeSize;
+
+      public SizeMoveGripHandle(GraphicsObject parent, PointF relPos)
+      {
+        _parent = parent;
+        _drawrPosition = relPos;
+        _fixrPosition = new PointF(relPos.X == 0 ? 1 : 0, relPos.Y == 0 ? 1 : 0);
+        _fixaPosition = _parent.RelativeToAbsolutePosition(_fixrPosition, true);
+      }
+
+      public void MoveGrip(PointF newPosition)
+      {
+        SizeF diff = _parent.ToUnrotatedDifference(_fixaPosition, newPosition);
+        _parent.SetBoundsFrom(_fixrPosition, _drawrPosition, diff);
+      }
+    }
+
+    protected class RotationGripHandle : IGripManipulationHandle
+    {
+      GraphicsObject _parent;
+      PointF _drawrPosition;
+      PointF _fixrPosition;
+      PointF _fixaPosition;
+
+      public RotationGripHandle(GraphicsObject parent, PointF relPos)
+      {
+        _parent = parent;
+        _drawrPosition = relPos;
+        _fixrPosition = new PointF(0.5f, 0.5f);
+        _fixaPosition = _parent.RelativeToAbsolutePosition(_fixrPosition, true);
+      }
+
+      public void MoveGrip(PointF newPosition)
+      {
+        SizeF diff = new SizeF();
+
+        diff.Width = newPosition.X - _fixaPosition.X;
+        diff.Height = newPosition.Y - _fixaPosition.Y;
+        _parent.SetRotationFrom(_fixrPosition, _fixaPosition, _drawrPosition, diff);
+      }
+    }
+
+    #endregion
+
   }
 }
