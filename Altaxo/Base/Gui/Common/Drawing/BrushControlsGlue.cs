@@ -66,6 +66,11 @@ namespace Altaxo.Gui.Common.Drawing
           CbHatchStyle = _cbHatchStyle;
           CbColor1 = _cbColor1;
           CbColor2 = _cbColor2;
+          CbGradientMode = _cbGradientMode;
+          CbGradientShape = _cbGradientShape;
+          CbWrapMode = _cbWrapMode;
+          CbGradientFocus = _cbGradientFocus;
+          CbGradientScale = _cbGradientScale;
         }
       }
     }
@@ -124,6 +129,11 @@ namespace Altaxo.Gui.Common.Drawing
 
         UpdateColor2State();
         UpdateHatchStyleState();
+        UpdateWrapModeState();
+        UpdateGradientModeState();
+        UpdateGradientShapeState();
+        UpdateGradientFocusState();
+        UpdateGradientScaleState();
       }
     }
 
@@ -291,6 +301,326 @@ namespace Altaxo.Gui.Common.Drawing
 
     #endregion
 
+    #region Wrap Mode
+    WrapModeComboBox _cbWrapMode;
+    public WrapModeComboBox CbWrapMode
+    {
+      get { return _cbWrapMode; }
+      set
+      {
+        if (_cbWrapMode != null)
+          _cbWrapMode.SelectionChangeCommitted -= EhWrapMode_SelectionChangeCommitted;
+
+        _cbWrapMode = value;
+        if (_brush != null && _cbWrapMode != null)
+          _cbWrapMode.WrapMode = _brush.WrapMode;
+
+        if (_cbWrapMode != null)
+          _cbWrapMode.SelectionChangeCommitted += EhWrapMode_SelectionChangeCommitted;
+
+        UpdateWrapModeState();
+
+      }
+    }
+
+    void EhWrapMode_SelectionChangeCommitted(object sender, EventArgs e)
+    {
+      if (_brush != null)
+      {
+        _brush.WrapMode = _cbWrapMode.WrapMode;
+        OnBrushChanged();
+      }
+    }
+
+    Control _lblWrapMode;
+    public Control LabelWrapMode
+    {
+      get
+      {
+        return _lblWrapMode;
+      }
+      set
+      {
+        _lblWrapMode = value;
+        UpdateWrapModeState();
+      }
+    }
+    void UpdateWrapModeState()
+    {
+      if (_brush != null)
+      {
+        BrushType btype = _brush.BrushType;
+        bool vis = (btype==BrushType.LinearGradientBrush || btype==BrushType.PathGradientBrush);
+        if (_lblWrapMode != null)
+          _lblWrapMode.Visible = vis;
+        if (_cbWrapMode != null)
+          _cbWrapMode.Visible = vis;
+      }
+    }
+    #endregion
+
+    #region Gradient Mode
+
+    LinearGradientModeExComboBox _cbGradientMode;
+    public LinearGradientModeExComboBox CbGradientMode
+    {
+      get { return _cbGradientMode; }
+      set
+      {
+        if (_cbGradientMode != null)
+          _cbGradientMode.SelectionChangeCommitted -= EhGradientMode_SelectionChangeCommitted;
+
+        _cbGradientMode = value;
+        if (_brush != null && _cbGradientMode != null)
+          _cbGradientMode.LinearGradientMode = _brush.GradientMode;
+
+        if (_cbGradientMode != null)
+          _cbGradientMode.SelectionChangeCommitted += EhGradientMode_SelectionChangeCommitted;
+
+        UpdateGradientModeState();
+
+      }
+    }
+
+    void EhGradientMode_SelectionChangeCommitted(object sender, EventArgs e)
+    {
+      if (_brush != null)
+      {
+        _brush.GradientMode = _cbGradientMode.LinearGradientMode;
+        OnBrushChanged();
+      }
+    }
+
+    Control _lblGradientMode;
+    public Control LabelGradientMode
+    {
+      get
+      {
+        return _lblGradientMode;
+      }
+      set
+      {
+        _lblGradientMode = value;
+        UpdateGradientModeState();
+      }
+    }
+    void UpdateGradientModeState()
+    {
+      if (_brush != null)
+      {
+        BrushType btype = _brush.BrushType;
+        bool vis = (btype == BrushType.LinearGradientBrush);
+        if (_lblGradientMode != null)
+          _lblGradientMode.Visible = vis;
+        if (_cbGradientMode != null)
+          _cbGradientMode.Visible = vis;
+      }
+    }
+
+    #endregion
+
+    #region Gradient Shape
+    LinearGradientShapeComboBox _cbGradientShape;
+    public LinearGradientShapeComboBox CbGradientShape
+    {
+      get { return _cbGradientShape; }
+      set
+      {
+        if (_cbGradientShape != null)
+          _cbGradientShape.SelectionChangeCommitted -= EhGradientShape_SelectionChangeCommitted;
+
+        _cbGradientShape = value;
+        if (_brush != null && _cbGradientShape != null)
+          _cbGradientShape.LinearGradientShape = _brush.GradientShape;
+
+        if (_cbWrapMode != null)
+          _cbGradientShape.SelectionChangeCommitted += EhGradientShape_SelectionChangeCommitted;
+
+        UpdateGradientShapeState();
+
+      }
+    }
+
+    void EhGradientShape_SelectionChangeCommitted(object sender, EventArgs e)
+    {
+      if (_brush != null)
+      {
+        _brush.GradientShape = _cbGradientShape.LinearGradientShape;
+        OnBrushChanged();
+      }
+    }
+
+    Control _lblGradientShape;
+    public Control LabelGradientShape
+    {
+      get
+      {
+        return _lblGradientShape;
+      }
+      set
+      {
+        _lblGradientShape = value;
+        UpdateGradientShapeState();
+      }
+    }
+    void UpdateGradientShapeState()
+    {
+      if (_brush != null)
+      {
+        BrushType btype = _brush.BrushType;
+        bool vis = (btype == BrushType.LinearGradientBrush);
+        if (_lblGradientShape != null)
+          _lblGradientShape.Visible = vis;
+        if (_cbGradientShape != null)
+          _cbGradientShape.Visible = vis;
+      }
+    }
+    #endregion
+
+    #region Gradient Focus
+
+    GradientFocusComboBox _cbGradientFocus;
+    public GradientFocusComboBox CbGradientFocus
+    {
+      get { return _cbGradientFocus; }
+      set
+      {
+        if (_cbGradientFocus != null)
+        {
+          _cbGradientFocus.SelectionChangeCommitted -= EhGradientFocus_SelectionChangeCommitted;
+          _cbGradientFocus.TextUpdate -= EhGradientFocus_TextChanged;
+        }
+
+        _cbGradientFocus = value;
+        if (_brush != null && _cbGradientFocus != null)
+          _cbGradientFocus.GradientFocus = _brush.GradientFocus;
+
+        if (_cbGradientFocus != null)
+        {
+          _cbGradientFocus.SelectionChangeCommitted += EhGradientFocus_SelectionChangeCommitted;
+          _cbGradientFocus.TextUpdate += EhGradientFocus_TextChanged;
+        }
+
+        UpdateGradientFocusState();
+      }
+    }
+
+    void EhGradientFocus_SelectionChangeCommitted(object sender, EventArgs e)
+    {
+      if (_brush != null)
+      {
+        _brush.GradientFocus = _cbGradientFocus.GradientFocus;
+        OnBrushChanged();
+      }
+    }
+    void EhGradientFocus_TextChanged(object sender, EventArgs e)
+    {
+      if (_brush != null)
+      {
+        _brush.GradientFocus = _cbGradientFocus.GradientFocus;
+        OnBrushChanged();
+      }
+    }
+
+    Control _lblGradientFocus;
+    public Control LabelGradientFocus
+    {
+      get
+      {
+        return _lblGradientFocus;
+      }
+      set
+      {
+        _lblGradientFocus = value;
+        UpdateGradientFocusState();
+      }
+    }
+    void UpdateGradientFocusState()
+    {
+      if (_brush != null)
+      {
+        BrushType btype = _brush.BrushType;
+        bool vis = (btype == BrushType.LinearGradientBrush);
+        if (_lblGradientFocus != null)
+          _lblGradientFocus.Visible = vis;
+        if (_cbGradientFocus != null)
+          _cbGradientFocus.Visible = vis;
+      }
+    }
+    #endregion
+
+    #region Gradient Scale
+    GradientScaleComboBox _cbGradientScale;
+    public GradientScaleComboBox CbGradientScale
+    {
+      get { return _cbGradientScale; }
+      set
+      {
+        if (_cbGradientScale != null)
+        {
+          _cbGradientScale.SelectionChangeCommitted -= EhGradientScale_SelectionChangeCommitted;
+          _cbGradientScale.TextUpdate -= EhGradientScale_TextChanged;
+        }
+
+        _cbGradientScale = value;
+        if (_brush != null && _cbGradientScale != null)
+          _cbGradientScale.GradientScale = _brush.GradientScale;
+
+        if (_cbGradientScale != null)
+        {
+          _cbGradientScale.SelectionChangeCommitted += EhGradientScale_SelectionChangeCommitted;
+          _cbGradientScale.TextUpdate += EhGradientScale_TextChanged;
+        }
+
+        UpdateGradientScaleState();
+      }
+    }
+
+    void EhGradientScale_SelectionChangeCommitted(object sender, EventArgs e)
+    {
+      if (_brush != null)
+      {
+        _brush.GradientScale = _cbGradientScale.GradientScale;
+        OnBrushChanged();
+      }
+    }
+    void EhGradientScale_TextChanged(object sender, EventArgs e)
+    {
+      if (_brush != null)
+      {
+        _brush.GradientScale = _cbGradientScale.GradientScale;
+        OnBrushChanged();
+      }
+    }
+
+    Control _lblGradientScale;
+    public Control LabelGradientScale
+    {
+      get
+      {
+        return _lblGradientScale;
+      }
+      set
+      {
+        _lblGradientScale = value;
+        UpdateGradientScaleState();
+      }
+    }
+    void UpdateGradientScaleState()
+    {
+      if (_brush != null)
+      {
+        BrushType btype = _brush.BrushType;
+        bool vis = (btype == BrushType.LinearGradientBrush);
+        if (_lblGradientScale != null)
+          _lblGradientScale.Visible = vis;
+        if (_cbGradientScale != null)
+          _cbGradientScale.Visible = vis;
+      }
+    }
+    #endregion
+
+    #region Context Menu
     List<ToolStripItem> _customContextMenuItems = new List<ToolStripItem>();
 
     public void InsertContextMenuItem(ToolStripItem item)
@@ -313,6 +643,8 @@ namespace Altaxo.Gui.Common.Drawing
       if(_cbColor1!=null)
         _cbColor1.ContextMenuStrip.Items.Remove(item);
     }
+
+    #endregion
 
   }
 }

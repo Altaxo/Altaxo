@@ -246,7 +246,10 @@
     <Compile Include="Gui\Common\Drawing\BrushControlsGlue.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Gui\Common\Drawing\FocusComboBox.cs">
+    <Compile Include="Gui\Common\Drawing\GradientFocusComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\GradientScaleComboBox.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Gui\Common\Drawing\HatchStyleComboBox.cs">
@@ -302,6 +305,9 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Gui\Common\Drawing\RotationComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\TextureImageComboBox.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Gui\Common\Drawing\WrapModeComboBox.cs">

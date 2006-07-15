@@ -44,7 +44,7 @@ namespace Altaxo.Gui.Common.Drawing
       ItemHeight = Font.Height;
     }
 
-    public LinearGradientModeExComboBox(LinearGradientMode selected)
+    public LinearGradientModeExComboBox(LinearGradientModeEx selected)
       : this()
     {
       SetDataSource(selected);
@@ -53,12 +53,12 @@ namespace Altaxo.Gui.Common.Drawing
 
 
 
-    void SetDataSource(LinearGradientMode selected)
+    void SetDataSource(LinearGradientModeEx selected)
     {
       this.BeginUpdate();
 
       Items.Clear();
-      foreach (LinearGradientMode o in Enum.GetValues(typeof(LinearGradientMode)))
+      foreach (LinearGradientModeEx o in Enum.GetValues(typeof(LinearGradientModeEx)))
         Items.Add(o);
 
       SelectedItem = selected;
@@ -67,11 +67,11 @@ namespace Altaxo.Gui.Common.Drawing
     }
 
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-    public LinearGradientMode LinearGradientMode
+    public LinearGradientModeEx LinearGradientMode
     {
       get
       {
-        return SelectedItem == null ? LinearGradientMode.Horizontal : (LinearGradientMode)SelectedItem;
+        return SelectedItem == null ? LinearGradientModeEx.Horizontal : (LinearGradientModeEx)SelectedItem;
       }
       set
       {
@@ -94,9 +94,12 @@ namespace Altaxo.Gui.Common.Drawing
       if (this.Enabled)
         e.DrawBackground();
 
-      LinearGradientMode item = e.Index >= 0 ? (LinearGradientMode)Items[e.Index] : LinearGradientMode.Horizontal;
-
-      using (LinearGradientBrush br = new LinearGradientBrush(rectColor, e.ForeColor, e.BackColor, item))
+      LinearGradientModeEx item = e.Index >= 0 ? (LinearGradientModeEx)Items[e.Index] : LinearGradientModeEx.Horizontal;
+      LinearGradientMode lgm;
+      bool reverse;
+      BrushHolder.ToLinearGradientMode(item, out lgm, out reverse);
+      
+      using (LinearGradientBrush br = new LinearGradientBrush(rectColor, reverse ? e.BackColor:e.ForeColor, reverse? e.ForeColor:e.BackColor, lgm))
       {
         grfx.FillRectangle(br, rectColor);
       }

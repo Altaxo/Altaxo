@@ -96,7 +96,10 @@ namespace Altaxo.Graph
     protected WrapMode  m_WrapMode; // für TextureBrush und LinearGradientBrush
     protected RectangleF m_Rectangle;
     protected float     m_Float1;
+    protected float m_Scale;
     protected bool      m_Bool1;
+    protected LinearGradientModeEx m_GradientMode;
+    protected LinearGradientShape m_GradientShape;
 
     #region "Serialization"
 
@@ -202,6 +205,9 @@ namespace Altaxo.Graph
       m_Rectangle   = from.m_Rectangle;
       m_Float1      = from.m_Float1;
       m_Bool1       = from.m_Bool1;
+      this.m_GradientMode = from.m_GradientMode;
+      this.m_GradientShape = from.m_GradientShape;
+      this.m_Scale = from.m_Scale;
     }
 
   
@@ -305,6 +311,136 @@ namespace Altaxo.Graph
       }
     }
 
+    public WrapMode WrapMode
+    {
+      get
+      {
+        return m_WrapMode;
+      }
+      set
+      {
+        bool bChanged = (m_WrapMode != value);
+        m_WrapMode = value;
+        if (bChanged)
+        {
+          _SetBrushVariable(null);
+          OnChanged();
+        }
+      }
+    }
+
+    public LinearGradientModeEx GradientMode
+    {
+      get
+      {
+        return m_GradientMode;
+      }
+      set
+      {
+        bool bChanged = (m_GradientMode != value);
+        m_GradientMode = value;
+        if (bChanged)
+        {
+          _SetBrushVariable(null);
+          OnChanged();
+        }
+      }
+    }
+    public static void ToLinearGradientMode(LinearGradientModeEx mode, out LinearGradientMode lgm, out bool reverse)
+    {
+      switch (mode)
+      {
+        case LinearGradientModeEx.BackwardDiagonal:
+          lgm = LinearGradientMode.BackwardDiagonal;
+          reverse = false;
+          break;
+        case LinearGradientModeEx.ForwardDiagonal:
+          lgm = LinearGradientMode.ForwardDiagonal;
+          reverse = false;
+          break;
+        default:
+        case LinearGradientModeEx.Horizontal:
+          lgm = LinearGradientMode.Horizontal;
+          reverse = false;
+          break;
+        case LinearGradientModeEx.Vertical:
+          lgm = LinearGradientMode.Vertical;
+          reverse = false;
+          break;
+
+        case LinearGradientModeEx.RevBackwardDiagonal:
+          lgm = LinearGradientMode.BackwardDiagonal;
+          reverse = true;
+          break;
+        case LinearGradientModeEx.RevForwardDiagonal:
+          lgm = LinearGradientMode.ForwardDiagonal;
+          reverse = true;
+          break;
+        case LinearGradientModeEx.RevHorizontal:
+          lgm = LinearGradientMode.Horizontal;
+          reverse = true;
+          break;
+        case LinearGradientModeEx.RevVertical:
+          lgm = LinearGradientMode.Vertical;
+          reverse = true;
+          break;
+      }
+    }
+
+    public LinearGradientShape GradientShape
+    {
+      get
+      {
+        return m_GradientShape;
+      }
+      set
+      {
+        bool bChanged = (m_GradientShape != value);
+        m_GradientShape = value;
+        if (bChanged)
+        {
+          _SetBrushVariable(null);
+          OnChanged();
+        }
+      }
+    }
+
+    public float GradientFocus
+    {
+      get
+      {
+        return m_Float1;
+      }
+      set
+      {
+        bool bChanged = (m_Float1 != value);
+        m_Float1 = value;
+        if (bChanged)
+        {
+          _SetBrushVariable(null);
+          OnChanged();
+        }
+      }
+    }
+
+    public float GradientScale
+    {
+      get
+      {
+        return m_Scale;
+      }
+      set
+      {
+        bool bChanged = (m_Scale != value);
+        m_Scale = value;
+        if (bChanged)
+        {
+          _SetBrushVariable(null);
+          OnChanged();
+        }
+      }
+    }
+
     public RectangleF Rectangle
     {
       get
@@ -349,7 +485,17 @@ namespace Altaxo.Graph
             case BrushType.LinearGradientBrush:
               if (m_Rectangle.IsEmpty)
                 m_Rectangle = new RectangleF(0, 0, 1000, 1000);
-              br = new LinearGradientBrush(m_Rectangle, m_ForeColor, m_BackColor, LinearGradientMode.BackwardDiagonal);
+              LinearGradientBrush lgb;
+              LinearGradientMode lgmode;
+              bool reverse;
+              BrushHolder.ToLinearGradientMode(m_GradientMode, out lgmode, out reverse);
+              br = lgb = new LinearGradientBrush(m_Rectangle, reverse?m_BackColor:m_ForeColor, reverse?m_ForeColor:m_BackColor, lgmode);
+              if(m_WrapMode!= WrapMode.Clamp)
+                lgb.WrapMode = m_WrapMode;
+              if (m_GradientShape == LinearGradientShape.Triangular)
+                lgb.SetBlendTriangularShape(m_Float1, m_Scale);
+              else if (m_GradientShape == LinearGradientShape.SigmaBell)
+                lgb.SetSigmaBellShape(m_Float1, m_Scale);
               break;
             case BrushType.PathGradientBrush:
               GraphicsPath p = new GraphicsPath();
@@ -359,6 +505,7 @@ namespace Altaxo.Graph
               PathGradientBrush pgb =  new PathGradientBrush(p);
               pgb.SurroundColors = new Color[] { m_ForeColor };
               pgb.CenterColor = m_BackColor;
+              pgb.WrapMode = m_WrapMode;
               br = pgb;
               break;
             case BrushType.TextureBrush:
@@ -370,29 +517,9 @@ namespace Altaxo.Graph
         }
         return m_Brush;
       } // end of get
-    /* set
-      {
-        if(value is SolidBrush)
-        {
-          m_BrushType = BrushType.SolidBrush;
-          m_ForeColor = ((SolidBrush)value).Color;
-        }
-        else if(value is HatchBrush)
-        {
-          m_BrushType = BrushType.HatchBrush;
-          m_ForeColor = ((HatchBrush)value).ForegroundColor;
-          m_BackColor = ((HatchBrush)value).BackgroundColor;
-          m_HatchStyle = ((HatchBrush)value).HatchStyle;
-        }
-        
-        _SetBrushVariable(m_CachedMode ? (Brush)value.Clone() : null);
+     } // end of prop. Brush
 
-        OnChanged();
-      } // end of set
-     */
-    } // end of prop. Brush
-
-
+  
 
     public void SetSolidBrush(Color c)
     {

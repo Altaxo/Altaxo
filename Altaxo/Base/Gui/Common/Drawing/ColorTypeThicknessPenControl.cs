@@ -143,16 +143,7 @@ namespace Altaxo.Gui.Common.Drawing
       this._cbThickness.Anchor = System.Windows.Forms.AnchorStyles.Left;
       this._cbThickness.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
       this._cbThickness.ItemHeight = 15;
-      this._cbThickness.Items.AddRange(new object[] {
-            0F,
-            0.125F,
-            0.25F,
-            0.5F,
-            1F,
-            2F,
-            3F,
-            5F,
-            10F});
+    
       this._cbThickness.Location = new System.Drawing.Point(68, 57);
       this._cbThickness.Name = "_cbThickness";
       this._cbThickness.Size = new System.Drawing.Size(121, 21);
@@ -175,6 +166,7 @@ namespace Altaxo.Gui.Common.Drawing
       this._cbColor.ColorType = Altaxo.Graph.ColorType.KnownAndSystemColor;
       this._cbColor.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
       this._cbColor.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this._cbColor.FormattingEnabled = true;
       this._cbColor.ItemHeight = 15;
       this._cbColor.Location = new System.Drawing.Point(68, 3);
       this._cbColor.Name = "_cbColor";

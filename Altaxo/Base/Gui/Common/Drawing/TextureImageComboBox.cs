@@ -27,68 +27,49 @@ using System.Windows.Forms;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.ComponentModel;
+using Altaxo.Graph;
 
 
 namespace Altaxo.Gui.Common.Drawing
 {
-  public class FocusComboBox : ComboBox
-  {
-    static List<float> _listValues;
 
-    public FocusComboBox()
+
+
+  public class TextureImageComboBox : ComboBox
+  {
+    public TextureImageComboBox()
     {
-      DropDownStyle = ComboBoxStyle.DropDown;
+      DropDownStyle = ComboBoxStyle.DropDownList;
       DrawMode = DrawMode.OwnerDrawFixed;
       ItemHeight = Font.Height;
     }
 
-    public FocusComboBox(float value)
+    public TextureImageComboBox(string selected)
       : this()
     {
-
-      SetDataSource(value);
+      SetDataSource(selected);
     }
 
-    void SetDefaultValues()
-    {
-      _listValues = new List<float>();
-      _listValues.AddRange(new float[] { 0, 0.125f, 0.25f, 0.5f, 0.75f, 0.875f, 1 });
-    }
 
-    void SetDataSource(float value)
+
+
+    void SetDataSource(string selected)
     {
       this.BeginUpdate();
 
-      if (_listValues == null)
-        SetDefaultValues();
-
       Items.Clear();
-
-      if (!_listValues.Contains(value))
-      {
-        _listValues.Add(value);
-        _listValues.Sort();
-      }
-
-      foreach (float val in _listValues)
-        Items.Add(val);
-
-      SelectedItem = value;
+      
+      SelectedItem = selected;
 
       this.EndUpdate();
     }
 
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-    public float Value
+    public string TextureImage
     {
       get
       {
-        if (SelectedItem != null)
-          return (float)SelectedItem;
-        double v;
-        if (Altaxo.Serialization.GUIConversion.IsDouble(this.Text, out v))
-          return (float)v;
-        return 1;
+        return SelectedItem == null ? null : (string)SelectedItem;
       }
       set
       {
@@ -111,33 +92,9 @@ namespace Altaxo.Gui.Common.Drawing
       if (this.Enabled)
         e.DrawBackground();
 
-      float item = (float)Items[e.Index];
-      using (LinearGradientBrush br = new LinearGradientBrush(rectColor, e.ForeColor, e.BackColor, LinearGradientMode.Horizontal))
-      {
-        br.SetBlendTriangularShape(item);
-        grfx.FillRectangle(br, rectColor);
-      }
-
-      using (SolidBrush foreColorBrush = new SolidBrush(e.ForeColor))
-      {
-        string text = Altaxo.Serialization.GUIConversion.ToString(item);
-        grfx.DrawString(text, Font, foreColorBrush, rectText);
-      }
-    }
-
-    protected override void OnValidating(System.ComponentModel.CancelEventArgs e)
-    {
-      double w;
-      if (Altaxo.Serialization.GUIConversion.IsDouble(this.Text, out w))
-      {
-        this.SetDataSource((float)w);
-      }
-      else
-      {
-        e.Cancel = true;
-      }
-
-      base.OnValidating(e);
+      string item = e.Index >= 0 ? (string)Items[e.Index] : string.Empty;
+      SolidBrush foreColorBrush = new SolidBrush(e.ForeColor);
+      grfx.DrawString(item.ToString(), Font, foreColorBrush, rectText);
     }
 
 

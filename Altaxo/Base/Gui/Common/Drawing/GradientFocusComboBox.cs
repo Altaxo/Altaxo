@@ -27,51 +27,68 @@ using System.Windows.Forms;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.ComponentModel;
-using Altaxo.Graph;
 
 
 namespace Altaxo.Gui.Common.Drawing
 {
-
-
-
-  public class WrapModeComboBox : ComboBox
+  public class GradientFocusComboBox : ComboBox
   {
-    public WrapModeComboBox()
+    static List<float> _listValues;
+
+    public GradientFocusComboBox()
     {
-      DropDownStyle = ComboBoxStyle.DropDownList;
+      DropDownStyle = ComboBoxStyle.DropDown;
       DrawMode = DrawMode.OwnerDrawFixed;
       ItemHeight = Font.Height;
     }
 
-    public WrapModeComboBox(WrapMode selected)
+    public GradientFocusComboBox(float value)
       : this()
     {
-      SetDataSource(selected);
+
+      SetDataSource(value);
     }
 
+    void SetDefaultValues()
+    {
+      _listValues = new List<float>();
+      _listValues.AddRange(new float[] { 0, 0.125f, 0.25f, 0.5f, 0.75f, 0.875f, 1 });
+    }
 
-
-
-    void SetDataSource(WrapMode selected)
+    void SetDataSource(float value)
     {
       this.BeginUpdate();
 
-      Items.Clear();
-      foreach (WrapMode o in Enum.GetValues(typeof(WrapMode)))
-        Items.Add(o);
+      if (_listValues == null)
+        SetDefaultValues();
 
-      SelectedItem = selected;
+      Items.Clear();
+
+      if (!_listValues.Contains(value))
+      {
+        _listValues.Add(value);
+        _listValues.Sort();
+      }
+
+      foreach (float val in _listValues)
+        Items.Add(val);
+
+      SelectedItem = value;
 
       this.EndUpdate();
     }
 
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-    public WrapMode WrapMode
+    public float GradientFocus
     {
       get
       {
-        return SelectedItem == null ? WrapMode.Clamp : (WrapMode)SelectedItem;
+        if (SelectedItem != null)
+          return (float)SelectedItem;
+        double v;
+        if (Altaxo.Serialization.GUIConversion.IsDouble(this.Text, out v))
+          return (float)v;
+        return 1;
       }
       set
       {
@@ -94,20 +111,33 @@ namespace Altaxo.Gui.Common.Drawing
       if (this.Enabled)
         e.DrawBackground();
 
-      WrapMode item = e.Index >= 0 ? (WrapMode)Items[e.Index] : WrapMode.Clamp;
-
-      Rectangle rectShape = new Rectangle(rectColor.X + rectColor.Width / 4, rectColor.Y+rectColor.Height/4, rectColor.Width / 2, rectColor.Height/2);
-      using (LinearGradientBrush br = new LinearGradientBrush(rectShape, e.ForeColor, e.BackColor, LinearGradientMode.BackwardDiagonal))
+      float item = (float)Items[e.Index];
+      using (LinearGradientBrush br = new LinearGradientBrush(rectColor, e.ForeColor, e.BackColor, LinearGradientMode.Horizontal))
       {
-        if(item!=WrapMode.Clamp)
-          br.WrapMode = item;
+        br.SetBlendTriangularShape(item);
         grfx.FillRectangle(br, rectColor);
       }
-      
+
       using (SolidBrush foreColorBrush = new SolidBrush(e.ForeColor))
       {
-        grfx.DrawString(item.ToString(), Font, foreColorBrush, rectText);
+        string text = Altaxo.Serialization.GUIConversion.ToString(item);
+        grfx.DrawString(text, Font, foreColorBrush, rectText);
       }
+    }
+
+    protected override void OnValidating(System.ComponentModel.CancelEventArgs e)
+    {
+      double w;
+      if (Altaxo.Serialization.GUIConversion.IsDouble(this.Text, out w))
+      {
+        this.SetDataSource((float)w);
+      }
+      else
+      {
+        e.Cancel = true;
+      }
+
+      base.OnValidating(e);
     }
 
 
