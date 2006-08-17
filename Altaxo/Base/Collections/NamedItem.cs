@@ -21,39 +21,41 @@
 #endregion
 
 using System;
-using System.Drawing;
+using System.Collections.Generic;
+using System.Text;
 
-namespace Altaxo.Graph.BackgroundStyles
+namespace Altaxo.Collections
 {
-  /// <summary>
-  /// Provides a background around a rectangular spaced area.
-  /// </summary>
-  public interface IBackgroundStyle : ICloneable
+  public class NamedItem<T>
   {
-    /// <summary>
-    /// Measures the outer size of the item.
-    /// </summary>
-    /// <param name="g">Graphics context.</param>
-    /// <param name="innerArea">Inner area of the item.</param>
-    /// <returns>The rectangle that encloses the item including the background.</returns>
-    RectangleF MeasureItem(Graphics g, RectangleF innerArea);
+    T _item;
+    string _name;
 
+    public NamedItem(T item, string name)
+    {
+      _item = item;
+      _name = name;
+    }
 
-    /// <summary>
-    /// Draws the background.
-    /// </summary>
-    /// <param name="g">Graphics context.</param>
-    /// <param name="innerArea">The inner area of the item.</param>
-    void Draw(Graphics g, RectangleF innerArea);
+    public string Name { get { return _name; } }
+    public T Item { get { return _item; } }
 
-    /// <summary>
-    /// True if the classes color property can be set/reset;
-    /// </summary>
-    bool SupportsBrush { get; }
-
-    /// <summary>
-    /// Get/sets the color.
-    /// </summary>
-    BrushHolder Brush { get; set; }
+    public override bool Equals(object obj)
+    {
+      if (obj == null)
+        return false;
+      if (!(obj is NamedItem<T>))
+        return false;
+      NamedItem<T> from = (NamedItem<T>)obj;
+      return object.Equals(this._item, from._item);
+    }
+    public override int GetHashCode()
+    {
+      return _item.GetHashCode();
+    }
+    public override string ToString()
+    {
+      return _name;
+    }
   }
 }

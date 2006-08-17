@@ -27,6 +27,7 @@ using System.Drawing;
 using System.Data;
 using System.Windows.Forms;
 using Altaxo.Main.GUI;
+using Altaxo.Gui.Common.Drawing;
 
 namespace Altaxo.Gui.Graph
 {
@@ -42,13 +43,13 @@ namespace Altaxo.Gui.Graph
     private System.Windows.Forms.Label label1;
     private System.Windows.Forms.Label label3;
     private System.Windows.Forms.Label label4;
-    private System.Windows.Forms.ComboBox m_cbFont;
+    private FontComboBox m_cbFont;
     private System.Windows.Forms.GroupBox groupBox1;
     private System.Windows.Forms.Label label5;
     private System.Windows.Forms.Label label6;
     private System.Windows.Forms.TextBox m_edYOffset;
     private System.Windows.Forms.TextBox m_edXOffset;
-    private System.Windows.Forms.ComboBox m_cbFontSize;
+    private FontSizeComboBox m_cbFontSize;
     private System.Windows.Forms.CheckBox m_chkAttachToAxis;
     private System.Windows.Forms.ComboBox m_cbAttachedAxis;
     private System.Windows.Forms.TextBox m_edRotation;
@@ -61,6 +62,7 @@ namespace Altaxo.Gui.Graph
     private System.Windows.Forms.Label label7;
     private BackgroundStyleControl _ctrlBackground;
     private Altaxo.Gui.Common.Drawing.ColorComboBox m_cbColor;
+    private Altaxo.Gui.Common.Drawing.FontControlsGlue _fontControlsGlue;
     private IContainer components;
 
     public XYPlotLabelStyleControl()
@@ -99,9 +101,9 @@ namespace Altaxo.Gui.Graph
       this.m_edYOffset = new System.Windows.Forms.TextBox();
       this.m_edXOffset = new System.Windows.Forms.TextBox();
       this.label23 = new System.Windows.Forms.Label();
-      this.m_cbFontSize = new System.Windows.Forms.ComboBox();
+      this.m_cbFontSize = new Altaxo.Gui.Common.Drawing.FontSizeComboBox();
       this.m_cbHorizontalAlignment = new System.Windows.Forms.ComboBox();
-      this.m_cbFont = new System.Windows.Forms.ComboBox();
+      this.m_cbFont = new Altaxo.Gui.Common.Drawing.FontComboBox();
       this.label1 = new System.Windows.Forms.Label();
       this.label3 = new System.Windows.Forms.Label();
       this.label4 = new System.Windows.Forms.Label();
@@ -119,6 +121,7 @@ namespace Altaxo.Gui.Graph
       this.label7 = new System.Windows.Forms.Label();
       this._ctrlBackground = new Altaxo.Gui.Graph.BackgroundStyleControl();
       this.m_cbColor = new Altaxo.Gui.Common.Drawing.ColorComboBox();
+      this._fontControlsGlue = new Altaxo.Gui.Common.Drawing.FontControlsGlue();
       this.groupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -158,12 +161,13 @@ namespace Altaxo.Gui.Graph
       // 
       // m_cbFontSize
       // 
+      this.m_cbFontSize.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+      this.m_cbFontSize.ItemHeight = 13;
       this.m_cbFontSize.Location = new System.Drawing.Point(128, 104);
       this.m_cbFontSize.Name = "m_cbFontSize";
-      this.m_cbFontSize.Size = new System.Drawing.Size(136, 21);
+      this.m_cbFontSize.Size = new System.Drawing.Size(136, 19);
       this.m_cbFontSize.TabIndex = 21;
       this.m_cbFontSize.Text = "comboBox1";
-      this.m_cbFontSize.SelectionChangeCommitted += new System.EventHandler(this.EhFontSize_SelectionChangeCommitted);
       // 
       // m_cbHorizontalAlignment
       // 
@@ -176,16 +180,17 @@ namespace Altaxo.Gui.Graph
       // 
       // m_cbFont
       // 
-      this.m_cbFont.Location = new System.Drawing.Point(128, 40);
+      this.m_cbFont.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+      this.m_cbFont.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.m_cbFont.ItemHeight = 13;
+      this.m_cbFont.Location = new System.Drawing.Point(128, 71);
       this.m_cbFont.Name = "m_cbFont";
-      this.m_cbFont.Size = new System.Drawing.Size(136, 21);
+      this.m_cbFont.Size = new System.Drawing.Size(136, 19);
       this.m_cbFont.TabIndex = 23;
-      this.m_cbFont.Text = "comboBox1";
-      this.m_cbFont.SelectionChangeCommitted += new System.EventHandler(this.EhFont_SelectionChangedCommitted);
       // 
       // label1
       // 
-      this.label1.Location = new System.Drawing.Point(64, 40);
+      this.label1.Location = new System.Drawing.Point(64, 71);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(56, 16);
       this.label1.TabIndex = 24;
@@ -280,7 +285,7 @@ namespace Altaxo.Gui.Graph
       // m_chkIndependentColor
       // 
       this.m_chkIndependentColor.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-      this.m_chkIndependentColor.Location = new System.Drawing.Point(8, 64);
+      this.m_chkIndependentColor.Location = new System.Drawing.Point(24, 34);
       this.m_chkIndependentColor.Name = "m_chkIndependentColor";
       this.m_chkIndependentColor.Size = new System.Drawing.Size(96, 40);
       this.m_chkIndependentColor.TabIndex = 34;
@@ -324,15 +329,17 @@ namespace Altaxo.Gui.Graph
       // 
       // _ctrlBackground
       // 
+      this._ctrlBackground.AutoSize = true;
       this._ctrlBackground.Controller = null;
       this._ctrlBackground.Location = new System.Drawing.Point(128, 256);
+      this._ctrlBackground.Margin = new System.Windows.Forms.Padding(0);
       this._ctrlBackground.Name = "_ctrlBackground";
       this._ctrlBackground.Size = new System.Drawing.Size(262, 30);
       this._ctrlBackground.TabIndex = 43;
       // 
       // m_cbColor
       // 
-      this.m_cbColor.Color = System.Drawing.Color.Black;
+      this.m_cbColor.ColorType = Altaxo.Graph.ColorType.KnownAndSystemColor;
       this.m_cbColor.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
       this.m_cbColor.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.m_cbColor.FormattingEnabled = true;
@@ -511,12 +518,540 @@ namespace Altaxo.Gui.Graph
             System.Drawing.SystemColors.GradientActiveCaption,
             System.Drawing.SystemColors.GradientInactiveCaption,
             System.Drawing.SystemColors.MenuBar,
+            System.Drawing.SystemColors.MenuHighlight,
+            System.Drawing.SystemColors.ActiveBorder,
+            System.Drawing.SystemColors.ActiveCaption,
+            System.Drawing.SystemColors.ActiveCaptionText,
+            System.Drawing.SystemColors.AppWorkspace,
+            System.Drawing.SystemColors.Control,
+            System.Drawing.SystemColors.ControlDark,
+            System.Drawing.SystemColors.ControlDarkDark,
+            System.Drawing.SystemColors.ControlLight,
+            System.Drawing.SystemColors.ControlLightLight,
+            System.Drawing.SystemColors.ControlText,
+            System.Drawing.SystemColors.Desktop,
+            System.Drawing.SystemColors.GrayText,
+            System.Drawing.SystemColors.Highlight,
+            System.Drawing.SystemColors.HighlightText,
+            System.Drawing.SystemColors.HotTrack,
+            System.Drawing.SystemColors.InactiveBorder,
+            System.Drawing.SystemColors.InactiveCaption,
+            System.Drawing.SystemColors.InactiveCaptionText,
+            System.Drawing.SystemColors.Info,
+            System.Drawing.SystemColors.InfoText,
+            System.Drawing.SystemColors.Menu,
+            System.Drawing.SystemColors.MenuText,
+            System.Drawing.SystemColors.ScrollBar,
+            System.Drawing.SystemColors.Window,
+            System.Drawing.SystemColors.WindowFrame,
+            System.Drawing.SystemColors.WindowText,
+            System.Drawing.Color.Transparent,
+            System.Drawing.Color.AliceBlue,
+            System.Drawing.Color.AntiqueWhite,
+            System.Drawing.Color.Aqua,
+            System.Drawing.Color.Aquamarine,
+            System.Drawing.Color.Azure,
+            System.Drawing.Color.Beige,
+            System.Drawing.Color.Bisque,
+            System.Drawing.Color.Black,
+            System.Drawing.Color.BlanchedAlmond,
+            System.Drawing.Color.Blue,
+            System.Drawing.Color.BlueViolet,
+            System.Drawing.Color.Brown,
+            System.Drawing.Color.BurlyWood,
+            System.Drawing.Color.CadetBlue,
+            System.Drawing.Color.Chartreuse,
+            System.Drawing.Color.Chocolate,
+            System.Drawing.Color.Coral,
+            System.Drawing.Color.CornflowerBlue,
+            System.Drawing.Color.Cornsilk,
+            System.Drawing.Color.Crimson,
+            System.Drawing.Color.Cyan,
+            System.Drawing.Color.DarkBlue,
+            System.Drawing.Color.DarkCyan,
+            System.Drawing.Color.DarkGoldenrod,
+            System.Drawing.Color.DarkGray,
+            System.Drawing.Color.DarkGreen,
+            System.Drawing.Color.DarkKhaki,
+            System.Drawing.Color.DarkMagenta,
+            System.Drawing.Color.DarkOliveGreen,
+            System.Drawing.Color.DarkOrange,
+            System.Drawing.Color.DarkOrchid,
+            System.Drawing.Color.DarkRed,
+            System.Drawing.Color.DarkSalmon,
+            System.Drawing.Color.DarkSeaGreen,
+            System.Drawing.Color.DarkSlateBlue,
+            System.Drawing.Color.DarkSlateGray,
+            System.Drawing.Color.DarkTurquoise,
+            System.Drawing.Color.DarkViolet,
+            System.Drawing.Color.DeepPink,
+            System.Drawing.Color.DeepSkyBlue,
+            System.Drawing.Color.DimGray,
+            System.Drawing.Color.DodgerBlue,
+            System.Drawing.Color.Firebrick,
+            System.Drawing.Color.FloralWhite,
+            System.Drawing.Color.ForestGreen,
+            System.Drawing.Color.Fuchsia,
+            System.Drawing.Color.Gainsboro,
+            System.Drawing.Color.GhostWhite,
+            System.Drawing.Color.Gold,
+            System.Drawing.Color.Goldenrod,
+            System.Drawing.Color.Gray,
+            System.Drawing.Color.Green,
+            System.Drawing.Color.GreenYellow,
+            System.Drawing.Color.Honeydew,
+            System.Drawing.Color.HotPink,
+            System.Drawing.Color.IndianRed,
+            System.Drawing.Color.Indigo,
+            System.Drawing.Color.Ivory,
+            System.Drawing.Color.Khaki,
+            System.Drawing.Color.Lavender,
+            System.Drawing.Color.LavenderBlush,
+            System.Drawing.Color.LawnGreen,
+            System.Drawing.Color.LemonChiffon,
+            System.Drawing.Color.LightBlue,
+            System.Drawing.Color.LightCoral,
+            System.Drawing.Color.LightCyan,
+            System.Drawing.Color.LightGoldenrodYellow,
+            System.Drawing.Color.LightGray,
+            System.Drawing.Color.LightGreen,
+            System.Drawing.Color.LightPink,
+            System.Drawing.Color.LightSalmon,
+            System.Drawing.Color.LightSeaGreen,
+            System.Drawing.Color.LightSkyBlue,
+            System.Drawing.Color.LightSlateGray,
+            System.Drawing.Color.LightSteelBlue,
+            System.Drawing.Color.LightYellow,
+            System.Drawing.Color.Lime,
+            System.Drawing.Color.LimeGreen,
+            System.Drawing.Color.Linen,
+            System.Drawing.Color.Magenta,
+            System.Drawing.Color.Maroon,
+            System.Drawing.Color.MediumAquamarine,
+            System.Drawing.Color.MediumBlue,
+            System.Drawing.Color.MediumOrchid,
+            System.Drawing.Color.MediumPurple,
+            System.Drawing.Color.MediumSeaGreen,
+            System.Drawing.Color.MediumSlateBlue,
+            System.Drawing.Color.MediumSpringGreen,
+            System.Drawing.Color.MediumTurquoise,
+            System.Drawing.Color.MediumVioletRed,
+            System.Drawing.Color.MidnightBlue,
+            System.Drawing.Color.MintCream,
+            System.Drawing.Color.MistyRose,
+            System.Drawing.Color.Moccasin,
+            System.Drawing.Color.NavajoWhite,
+            System.Drawing.Color.Navy,
+            System.Drawing.Color.OldLace,
+            System.Drawing.Color.Olive,
+            System.Drawing.Color.OliveDrab,
+            System.Drawing.Color.Orange,
+            System.Drawing.Color.OrangeRed,
+            System.Drawing.Color.Orchid,
+            System.Drawing.Color.PaleGoldenrod,
+            System.Drawing.Color.PaleGreen,
+            System.Drawing.Color.PaleTurquoise,
+            System.Drawing.Color.PaleVioletRed,
+            System.Drawing.Color.PapayaWhip,
+            System.Drawing.Color.PeachPuff,
+            System.Drawing.Color.Peru,
+            System.Drawing.Color.Pink,
+            System.Drawing.Color.Plum,
+            System.Drawing.Color.PowderBlue,
+            System.Drawing.Color.Purple,
+            System.Drawing.Color.Red,
+            System.Drawing.Color.RosyBrown,
+            System.Drawing.Color.RoyalBlue,
+            System.Drawing.Color.SaddleBrown,
+            System.Drawing.Color.Salmon,
+            System.Drawing.Color.SandyBrown,
+            System.Drawing.Color.SeaGreen,
+            System.Drawing.Color.SeaShell,
+            System.Drawing.Color.Sienna,
+            System.Drawing.Color.Silver,
+            System.Drawing.Color.SkyBlue,
+            System.Drawing.Color.SlateBlue,
+            System.Drawing.Color.SlateGray,
+            System.Drawing.Color.Snow,
+            System.Drawing.Color.SpringGreen,
+            System.Drawing.Color.SteelBlue,
+            System.Drawing.Color.Tan,
+            System.Drawing.Color.Teal,
+            System.Drawing.Color.Thistle,
+            System.Drawing.Color.Tomato,
+            System.Drawing.Color.Turquoise,
+            System.Drawing.Color.Violet,
+            System.Drawing.Color.Wheat,
+            System.Drawing.Color.White,
+            System.Drawing.Color.WhiteSmoke,
+            System.Drawing.Color.Yellow,
+            System.Drawing.Color.YellowGreen,
+            System.Drawing.SystemColors.ButtonFace,
+            System.Drawing.SystemColors.ButtonHighlight,
+            System.Drawing.SystemColors.ButtonShadow,
+            System.Drawing.SystemColors.GradientActiveCaption,
+            System.Drawing.SystemColors.GradientInactiveCaption,
+            System.Drawing.SystemColors.MenuBar,
+            System.Drawing.SystemColors.MenuHighlight,
+            System.Drawing.SystemColors.ActiveBorder,
+            System.Drawing.SystemColors.ActiveCaption,
+            System.Drawing.SystemColors.ActiveCaptionText,
+            System.Drawing.SystemColors.AppWorkspace,
+            System.Drawing.SystemColors.Control,
+            System.Drawing.SystemColors.ControlDark,
+            System.Drawing.SystemColors.ControlDarkDark,
+            System.Drawing.SystemColors.ControlLight,
+            System.Drawing.SystemColors.ControlLightLight,
+            System.Drawing.SystemColors.ControlText,
+            System.Drawing.SystemColors.Desktop,
+            System.Drawing.SystemColors.GrayText,
+            System.Drawing.SystemColors.Highlight,
+            System.Drawing.SystemColors.HighlightText,
+            System.Drawing.SystemColors.HotTrack,
+            System.Drawing.SystemColors.InactiveBorder,
+            System.Drawing.SystemColors.InactiveCaption,
+            System.Drawing.SystemColors.InactiveCaptionText,
+            System.Drawing.SystemColors.Info,
+            System.Drawing.SystemColors.InfoText,
+            System.Drawing.SystemColors.Menu,
+            System.Drawing.SystemColors.MenuText,
+            System.Drawing.SystemColors.ScrollBar,
+            System.Drawing.SystemColors.Window,
+            System.Drawing.SystemColors.WindowFrame,
+            System.Drawing.SystemColors.WindowText,
+            System.Drawing.Color.Transparent,
+            System.Drawing.Color.AliceBlue,
+            System.Drawing.Color.AntiqueWhite,
+            System.Drawing.Color.Aqua,
+            System.Drawing.Color.Aquamarine,
+            System.Drawing.Color.Azure,
+            System.Drawing.Color.Beige,
+            System.Drawing.Color.Bisque,
+            System.Drawing.Color.Black,
+            System.Drawing.Color.BlanchedAlmond,
+            System.Drawing.Color.Blue,
+            System.Drawing.Color.BlueViolet,
+            System.Drawing.Color.Brown,
+            System.Drawing.Color.BurlyWood,
+            System.Drawing.Color.CadetBlue,
+            System.Drawing.Color.Chartreuse,
+            System.Drawing.Color.Chocolate,
+            System.Drawing.Color.Coral,
+            System.Drawing.Color.CornflowerBlue,
+            System.Drawing.Color.Cornsilk,
+            System.Drawing.Color.Crimson,
+            System.Drawing.Color.Cyan,
+            System.Drawing.Color.DarkBlue,
+            System.Drawing.Color.DarkCyan,
+            System.Drawing.Color.DarkGoldenrod,
+            System.Drawing.Color.DarkGray,
+            System.Drawing.Color.DarkGreen,
+            System.Drawing.Color.DarkKhaki,
+            System.Drawing.Color.DarkMagenta,
+            System.Drawing.Color.DarkOliveGreen,
+            System.Drawing.Color.DarkOrange,
+            System.Drawing.Color.DarkOrchid,
+            System.Drawing.Color.DarkRed,
+            System.Drawing.Color.DarkSalmon,
+            System.Drawing.Color.DarkSeaGreen,
+            System.Drawing.Color.DarkSlateBlue,
+            System.Drawing.Color.DarkSlateGray,
+            System.Drawing.Color.DarkTurquoise,
+            System.Drawing.Color.DarkViolet,
+            System.Drawing.Color.DeepPink,
+            System.Drawing.Color.DeepSkyBlue,
+            System.Drawing.Color.DimGray,
+            System.Drawing.Color.DodgerBlue,
+            System.Drawing.Color.Firebrick,
+            System.Drawing.Color.FloralWhite,
+            System.Drawing.Color.ForestGreen,
+            System.Drawing.Color.Fuchsia,
+            System.Drawing.Color.Gainsboro,
+            System.Drawing.Color.GhostWhite,
+            System.Drawing.Color.Gold,
+            System.Drawing.Color.Goldenrod,
+            System.Drawing.Color.Gray,
+            System.Drawing.Color.Green,
+            System.Drawing.Color.GreenYellow,
+            System.Drawing.Color.Honeydew,
+            System.Drawing.Color.HotPink,
+            System.Drawing.Color.IndianRed,
+            System.Drawing.Color.Indigo,
+            System.Drawing.Color.Ivory,
+            System.Drawing.Color.Khaki,
+            System.Drawing.Color.Lavender,
+            System.Drawing.Color.LavenderBlush,
+            System.Drawing.Color.LawnGreen,
+            System.Drawing.Color.LemonChiffon,
+            System.Drawing.Color.LightBlue,
+            System.Drawing.Color.LightCoral,
+            System.Drawing.Color.LightCyan,
+            System.Drawing.Color.LightGoldenrodYellow,
+            System.Drawing.Color.LightGray,
+            System.Drawing.Color.LightGreen,
+            System.Drawing.Color.LightPink,
+            System.Drawing.Color.LightSalmon,
+            System.Drawing.Color.LightSeaGreen,
+            System.Drawing.Color.LightSkyBlue,
+            System.Drawing.Color.LightSlateGray,
+            System.Drawing.Color.LightSteelBlue,
+            System.Drawing.Color.LightYellow,
+            System.Drawing.Color.Lime,
+            System.Drawing.Color.LimeGreen,
+            System.Drawing.Color.Linen,
+            System.Drawing.Color.Magenta,
+            System.Drawing.Color.Maroon,
+            System.Drawing.Color.MediumAquamarine,
+            System.Drawing.Color.MediumBlue,
+            System.Drawing.Color.MediumOrchid,
+            System.Drawing.Color.MediumPurple,
+            System.Drawing.Color.MediumSeaGreen,
+            System.Drawing.Color.MediumSlateBlue,
+            System.Drawing.Color.MediumSpringGreen,
+            System.Drawing.Color.MediumTurquoise,
+            System.Drawing.Color.MediumVioletRed,
+            System.Drawing.Color.MidnightBlue,
+            System.Drawing.Color.MintCream,
+            System.Drawing.Color.MistyRose,
+            System.Drawing.Color.Moccasin,
+            System.Drawing.Color.NavajoWhite,
+            System.Drawing.Color.Navy,
+            System.Drawing.Color.OldLace,
+            System.Drawing.Color.Olive,
+            System.Drawing.Color.OliveDrab,
+            System.Drawing.Color.Orange,
+            System.Drawing.Color.OrangeRed,
+            System.Drawing.Color.Orchid,
+            System.Drawing.Color.PaleGoldenrod,
+            System.Drawing.Color.PaleGreen,
+            System.Drawing.Color.PaleTurquoise,
+            System.Drawing.Color.PaleVioletRed,
+            System.Drawing.Color.PapayaWhip,
+            System.Drawing.Color.PeachPuff,
+            System.Drawing.Color.Peru,
+            System.Drawing.Color.Pink,
+            System.Drawing.Color.Plum,
+            System.Drawing.Color.PowderBlue,
+            System.Drawing.Color.Purple,
+            System.Drawing.Color.Red,
+            System.Drawing.Color.RosyBrown,
+            System.Drawing.Color.RoyalBlue,
+            System.Drawing.Color.SaddleBrown,
+            System.Drawing.Color.Salmon,
+            System.Drawing.Color.SandyBrown,
+            System.Drawing.Color.SeaGreen,
+            System.Drawing.Color.SeaShell,
+            System.Drawing.Color.Sienna,
+            System.Drawing.Color.Silver,
+            System.Drawing.Color.SkyBlue,
+            System.Drawing.Color.SlateBlue,
+            System.Drawing.Color.SlateGray,
+            System.Drawing.Color.Snow,
+            System.Drawing.Color.SpringGreen,
+            System.Drawing.Color.SteelBlue,
+            System.Drawing.Color.Tan,
+            System.Drawing.Color.Teal,
+            System.Drawing.Color.Thistle,
+            System.Drawing.Color.Tomato,
+            System.Drawing.Color.Turquoise,
+            System.Drawing.Color.Violet,
+            System.Drawing.Color.Wheat,
+            System.Drawing.Color.White,
+            System.Drawing.Color.WhiteSmoke,
+            System.Drawing.Color.Yellow,
+            System.Drawing.Color.YellowGreen,
+            System.Drawing.SystemColors.ButtonFace,
+            System.Drawing.SystemColors.ButtonHighlight,
+            System.Drawing.SystemColors.ButtonShadow,
+            System.Drawing.SystemColors.GradientActiveCaption,
+            System.Drawing.SystemColors.GradientInactiveCaption,
+            System.Drawing.SystemColors.MenuBar,
+            System.Drawing.SystemColors.MenuHighlight,
+            System.Drawing.SystemColors.ActiveBorder,
+            System.Drawing.SystemColors.ActiveCaption,
+            System.Drawing.SystemColors.ActiveCaptionText,
+            System.Drawing.SystemColors.AppWorkspace,
+            System.Drawing.SystemColors.Control,
+            System.Drawing.SystemColors.ControlDark,
+            System.Drawing.SystemColors.ControlDarkDark,
+            System.Drawing.SystemColors.ControlLight,
+            System.Drawing.SystemColors.ControlLightLight,
+            System.Drawing.SystemColors.ControlText,
+            System.Drawing.SystemColors.Desktop,
+            System.Drawing.SystemColors.GrayText,
+            System.Drawing.SystemColors.Highlight,
+            System.Drawing.SystemColors.HighlightText,
+            System.Drawing.SystemColors.HotTrack,
+            System.Drawing.SystemColors.InactiveBorder,
+            System.Drawing.SystemColors.InactiveCaption,
+            System.Drawing.SystemColors.InactiveCaptionText,
+            System.Drawing.SystemColors.Info,
+            System.Drawing.SystemColors.InfoText,
+            System.Drawing.SystemColors.Menu,
+            System.Drawing.SystemColors.MenuText,
+            System.Drawing.SystemColors.ScrollBar,
+            System.Drawing.SystemColors.Window,
+            System.Drawing.SystemColors.WindowFrame,
+            System.Drawing.SystemColors.WindowText,
+            System.Drawing.Color.Transparent,
+            System.Drawing.Color.AliceBlue,
+            System.Drawing.Color.AntiqueWhite,
+            System.Drawing.Color.Aqua,
+            System.Drawing.Color.Aquamarine,
+            System.Drawing.Color.Azure,
+            System.Drawing.Color.Beige,
+            System.Drawing.Color.Bisque,
+            System.Drawing.Color.Black,
+            System.Drawing.Color.BlanchedAlmond,
+            System.Drawing.Color.Blue,
+            System.Drawing.Color.BlueViolet,
+            System.Drawing.Color.Brown,
+            System.Drawing.Color.BurlyWood,
+            System.Drawing.Color.CadetBlue,
+            System.Drawing.Color.Chartreuse,
+            System.Drawing.Color.Chocolate,
+            System.Drawing.Color.Coral,
+            System.Drawing.Color.CornflowerBlue,
+            System.Drawing.Color.Cornsilk,
+            System.Drawing.Color.Crimson,
+            System.Drawing.Color.Cyan,
+            System.Drawing.Color.DarkBlue,
+            System.Drawing.Color.DarkCyan,
+            System.Drawing.Color.DarkGoldenrod,
+            System.Drawing.Color.DarkGray,
+            System.Drawing.Color.DarkGreen,
+            System.Drawing.Color.DarkKhaki,
+            System.Drawing.Color.DarkMagenta,
+            System.Drawing.Color.DarkOliveGreen,
+            System.Drawing.Color.DarkOrange,
+            System.Drawing.Color.DarkOrchid,
+            System.Drawing.Color.DarkRed,
+            System.Drawing.Color.DarkSalmon,
+            System.Drawing.Color.DarkSeaGreen,
+            System.Drawing.Color.DarkSlateBlue,
+            System.Drawing.Color.DarkSlateGray,
+            System.Drawing.Color.DarkTurquoise,
+            System.Drawing.Color.DarkViolet,
+            System.Drawing.Color.DeepPink,
+            System.Drawing.Color.DeepSkyBlue,
+            System.Drawing.Color.DimGray,
+            System.Drawing.Color.DodgerBlue,
+            System.Drawing.Color.Firebrick,
+            System.Drawing.Color.FloralWhite,
+            System.Drawing.Color.ForestGreen,
+            System.Drawing.Color.Fuchsia,
+            System.Drawing.Color.Gainsboro,
+            System.Drawing.Color.GhostWhite,
+            System.Drawing.Color.Gold,
+            System.Drawing.Color.Goldenrod,
+            System.Drawing.Color.Gray,
+            System.Drawing.Color.Green,
+            System.Drawing.Color.GreenYellow,
+            System.Drawing.Color.Honeydew,
+            System.Drawing.Color.HotPink,
+            System.Drawing.Color.IndianRed,
+            System.Drawing.Color.Indigo,
+            System.Drawing.Color.Ivory,
+            System.Drawing.Color.Khaki,
+            System.Drawing.Color.Lavender,
+            System.Drawing.Color.LavenderBlush,
+            System.Drawing.Color.LawnGreen,
+            System.Drawing.Color.LemonChiffon,
+            System.Drawing.Color.LightBlue,
+            System.Drawing.Color.LightCoral,
+            System.Drawing.Color.LightCyan,
+            System.Drawing.Color.LightGoldenrodYellow,
+            System.Drawing.Color.LightGray,
+            System.Drawing.Color.LightGreen,
+            System.Drawing.Color.LightPink,
+            System.Drawing.Color.LightSalmon,
+            System.Drawing.Color.LightSeaGreen,
+            System.Drawing.Color.LightSkyBlue,
+            System.Drawing.Color.LightSlateGray,
+            System.Drawing.Color.LightSteelBlue,
+            System.Drawing.Color.LightYellow,
+            System.Drawing.Color.Lime,
+            System.Drawing.Color.LimeGreen,
+            System.Drawing.Color.Linen,
+            System.Drawing.Color.Magenta,
+            System.Drawing.Color.Maroon,
+            System.Drawing.Color.MediumAquamarine,
+            System.Drawing.Color.MediumBlue,
+            System.Drawing.Color.MediumOrchid,
+            System.Drawing.Color.MediumPurple,
+            System.Drawing.Color.MediumSeaGreen,
+            System.Drawing.Color.MediumSlateBlue,
+            System.Drawing.Color.MediumSpringGreen,
+            System.Drawing.Color.MediumTurquoise,
+            System.Drawing.Color.MediumVioletRed,
+            System.Drawing.Color.MidnightBlue,
+            System.Drawing.Color.MintCream,
+            System.Drawing.Color.MistyRose,
+            System.Drawing.Color.Moccasin,
+            System.Drawing.Color.NavajoWhite,
+            System.Drawing.Color.Navy,
+            System.Drawing.Color.OldLace,
+            System.Drawing.Color.Olive,
+            System.Drawing.Color.OliveDrab,
+            System.Drawing.Color.Orange,
+            System.Drawing.Color.OrangeRed,
+            System.Drawing.Color.Orchid,
+            System.Drawing.Color.PaleGoldenrod,
+            System.Drawing.Color.PaleGreen,
+            System.Drawing.Color.PaleTurquoise,
+            System.Drawing.Color.PaleVioletRed,
+            System.Drawing.Color.PapayaWhip,
+            System.Drawing.Color.PeachPuff,
+            System.Drawing.Color.Peru,
+            System.Drawing.Color.Pink,
+            System.Drawing.Color.Plum,
+            System.Drawing.Color.PowderBlue,
+            System.Drawing.Color.Purple,
+            System.Drawing.Color.Red,
+            System.Drawing.Color.RosyBrown,
+            System.Drawing.Color.RoyalBlue,
+            System.Drawing.Color.SaddleBrown,
+            System.Drawing.Color.Salmon,
+            System.Drawing.Color.SandyBrown,
+            System.Drawing.Color.SeaGreen,
+            System.Drawing.Color.SeaShell,
+            System.Drawing.Color.Sienna,
+            System.Drawing.Color.Silver,
+            System.Drawing.Color.SkyBlue,
+            System.Drawing.Color.SlateBlue,
+            System.Drawing.Color.SlateGray,
+            System.Drawing.Color.Snow,
+            System.Drawing.Color.SpringGreen,
+            System.Drawing.Color.SteelBlue,
+            System.Drawing.Color.Tan,
+            System.Drawing.Color.Teal,
+            System.Drawing.Color.Thistle,
+            System.Drawing.Color.Tomato,
+            System.Drawing.Color.Turquoise,
+            System.Drawing.Color.Violet,
+            System.Drawing.Color.Wheat,
+            System.Drawing.Color.White,
+            System.Drawing.Color.WhiteSmoke,
+            System.Drawing.Color.Yellow,
+            System.Drawing.Color.YellowGreen,
+            System.Drawing.SystemColors.ButtonFace,
+            System.Drawing.SystemColors.ButtonHighlight,
+            System.Drawing.SystemColors.ButtonShadow,
+            System.Drawing.SystemColors.GradientActiveCaption,
+            System.Drawing.SystemColors.GradientInactiveCaption,
+            System.Drawing.SystemColors.MenuBar,
             System.Drawing.SystemColors.MenuHighlight});
-      this.m_cbColor.Location = new System.Drawing.Point(128, 74);
+      this.m_cbColor.Location = new System.Drawing.Point(126, 44);
       this.m_cbColor.Name = "m_cbColor";
       this.m_cbColor.Size = new System.Drawing.Size(136, 21);
       this.m_cbColor.TabIndex = 44;
       this.m_cbColor.SelectionChangeCommitted += new System.EventHandler(this.EhColor_SelectionChangeCommitted);
+      // 
+      // _fontControlsGlue
+      // 
+      this._fontControlsGlue.CbFont = this.m_cbFont;
+      this._fontControlsGlue.CbFontSize = this.m_cbFontSize;
+      this._fontControlsGlue.FontChanged += new System.EventHandler(this.EhFont_SelectionChangedCommitted);
       // 
       // XYPlotLabelStyleControl
       // 
@@ -585,7 +1120,7 @@ namespace Altaxo.Gui.Graph
     private void EhFont_SelectionChangedCommitted(object sender, System.EventArgs e)
     {
       if(null!=Controller)
-        Controller.EhView_FontChanged((string)this.m_cbFont.SelectedItem);
+        Controller.EhView_FontChanged(_fontControlsGlue.Font);
     }   
 
     private void EhColor_SelectionChangeCommitted(object sender, System.EventArgs e)
@@ -596,18 +1131,6 @@ namespace Altaxo.Gui.Graph
       }
     }
 
-  
-
-  
-
-    private void EhFontSize_SelectionChangeCommitted(object sender, System.EventArgs e)
-    {
-      if(null!=Controller)
-      {
-        string name = (string)this.m_cbFontSize.SelectedItem;
-        Controller.EhView_FontSizeChanged(name);
-      }
-    }
 
     private void EhHorizontalAlignment_SelectionChangeCommitted(object sender, System.EventArgs e)
     {
@@ -710,9 +1233,9 @@ namespace Altaxo.Gui.Graph
       this._edLabelColumn.Text = labelColumnAsText;
     }
 
-    public void Font_Initialize(string fontfamily)
+    public void Font_Initialize(Font font)
     {
-      InitFontComboBox(this.m_cbFont,fontfamily);
+      _fontControlsGlue.Font = font;
     }
 
 
@@ -730,10 +1253,7 @@ namespace Altaxo.Gui.Graph
     
 
 
-    public void FontSize_Initialize(string[] names, string name)
-    {
-      InitComboBox(this.m_cbFontSize,names,name);
-    }
+   
     
 
     public void HorizontalAlignment_Initialize(string[] names, string name)

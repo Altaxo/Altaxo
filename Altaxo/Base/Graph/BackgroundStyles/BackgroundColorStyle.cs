@@ -71,7 +71,7 @@ namespace Altaxo.Graph.BackgroundStyles
 
     public void CopyFrom(BackgroundColorStyle from)
     {
-      this._brush = from._brush==null ? null : (BrushHolder)from._brush.Clone();
+      this.Brush = from._brush;
     }
 
     public object Clone()
@@ -90,26 +90,24 @@ namespace Altaxo.Graph.BackgroundStyles
 
     public void Draw(System.Drawing.Graphics g, System.Drawing.RectangleF innerArea)
     {
-      if(_brush!=null)
-        g.FillRectangle(_brush,innerArea);
+      if (_brush != null)
+      {
+        _brush.Rectangle = innerArea;
+        g.FillRectangle(_brush, innerArea);
+      }
     }
 
-    public bool SupportsColor { get { return true; }}
+    public bool SupportsBrush { get { return true; }}
 
-    public Color Color
+    public BrushHolder Brush
     {
       get
       {
-        return _brush==null ? Color.Transparent : _brush.Color;
+        return _brush;
       }
       set
       {
-        if(value==Color.Transparent)
-          _brush = null;
-        else if(_brush==null)
-          _brush = new BrushHolder(value);
-        else
-          _brush = new BrushHolder( value) ;
+        _brush = value==null ? null : value.Clone();
       }
     }
     #endregion

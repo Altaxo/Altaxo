@@ -31,13 +31,12 @@ namespace Altaxo.Graph.BackgroundStyles
   [Serializable]
   public class RectangleWithShadow : IBackgroundStyle, IDeserializationCallback
   {
-    protected Color _color = Color.White;
+    protected BrushHolder _brush = new BrushHolder(Color.White);
     protected float _shadowLength = 5;
 
     [NonSerialized]
-    protected Brush _cachedShadowBrush;
-    [NonSerialized]
-    protected Brush _cachedFillBrush;
+    protected BrushHolder _cachedShadowBrush;
+   
 
     #region Serialization
 
@@ -46,20 +45,43 @@ namespace Altaxo.Graph.BackgroundStyles
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
+        throw new ApplicationException("Programming error - this should not be called");
+        /*
         RectangleWithShadow s = (RectangleWithShadow)obj;
         info.AddValue("Color", s._color);
+        info.AddValue("ShadowLength", s._shadowLength);
+        */
+      }
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        RectangleWithShadow s = null != o ? (RectangleWithShadow)o : new RectangleWithShadow();
+        s.Brush = new BrushHolder((Color)info.GetValue("Color", parent));
+        s._shadowLength = (float)info.GetDouble();
+
+        return s;
+      }
+    }
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(RectangleWithShadow), 1)]
+    public class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        RectangleWithShadow s = (RectangleWithShadow)obj;
+        info.AddValue("Brush", s._brush);
         info.AddValue("ShadowLength", s._shadowLength);
 
       }
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
         RectangleWithShadow s = null != o ? (RectangleWithShadow)o : new RectangleWithShadow();
-        s.Color = (Color)info.GetValue("Color", parent);
+        s.Brush = (BrushHolder)info.GetValue("Brush", parent);
         s._shadowLength = (float)info.GetDouble();
 
         return s;
       }
     }
+
 
     #endregion
 
@@ -79,7 +101,7 @@ namespace Altaxo.Graph.BackgroundStyles
 
     public RectangleWithShadow(Color c)
     {
-      this.Color = c;
+      this.Brush = new BrushHolder(c);
     }
 
     public RectangleWithShadow(RectangleWithShadow from)
@@ -89,7 +111,7 @@ namespace Altaxo.Graph.BackgroundStyles
 
     public void CopyFrom(RectangleWithShadow from)
     {
-      this.Color = from._color;
+      this.Brush = from._brush;
     }
 
     public object Clone()
@@ -100,16 +122,31 @@ namespace Altaxo.Graph.BackgroundStyles
     private void ResetCachedBrushes()
     {
       this._cachedShadowBrush = null;
-      this._cachedFillBrush = null;
     }
 
     private void SetCachedBrushes()
     {
-      this._cachedShadowBrush = new SolidBrush(Color.FromArgb(_color.A,0,0,0));
-      this._cachedFillBrush = new SolidBrush(_color);
+      switch (_brush.BrushType)
+      {
+        default:
+        case BrushType.SolidBrush:
+          this._cachedShadowBrush = new BrushHolder(Color.FromArgb(_brush.Color.A, 0, 0, 0));
+          break;
+        case BrushType.HatchBrush:
+          this._cachedShadowBrush = new BrushHolder(Color.FromArgb(_brush.Color.A, 0, 0, 0));
+          break;
+        case BrushType.TextureBrush:
+          this._cachedShadowBrush = new BrushHolder(Color.Black);
+          break;
+        case BrushType.LinearGradientBrush:
+        case BrushType.PathGradientBrush:
+          this._cachedShadowBrush = (BrushHolder)_brush.Clone();
+          this._cachedShadowBrush.Color = Color.FromArgb(_brush.Color.A, 0, 0, 0);
+          this._cachedShadowBrush.BackColor = Color.FromArgb(_brush.BackColor.A, 0, 0, 0);
+          break;
+      }
+      
     }
-
-   
 
     #region IBackgroundStyle Members
 
@@ -123,18 +160,25 @@ namespace Altaxo.Graph.BackgroundStyles
 
     public void Draw(System.Drawing.Graphics g, System.Drawing.RectangleF innerArea)
     {
-      if (null == _cachedFillBrush)
+      if (null == _cachedShadowBrush)
         SetCachedBrushes();
 
       innerArea.Inflate(_shadowLength / 2,_shadowLength/2);
    
       // please note: m_Bounds is already extended to the shadow
-      g.FillRectangle(_cachedShadowBrush, innerArea.Left + _shadowLength, innerArea.Top + _shadowLength, innerArea.Width , innerArea.Height );
-      g.FillRectangle(_cachedFillBrush, innerArea.Left, innerArea.Top, innerArea.Width , innerArea.Height );
+
+      // first the shadow
+      _cachedShadowBrush.Rectangle = innerArea;
+      g.TranslateTransform(_shadowLength, _shadowLength);
+      g.FillRectangle(_cachedShadowBrush, innerArea);
+      g.TranslateTransform(-_shadowLength, -_shadowLength);
+
+      _brush.Rectangle = innerArea;
+      g.FillRectangle(_brush, innerArea);
       g.DrawRectangle(Pens.Black, innerArea.Left, innerArea.Top, innerArea.Width , innerArea.Height );
     }
 
-    public bool SupportsColor
+    public bool SupportsBrush
     { 
       get
       { 
@@ -142,15 +186,15 @@ namespace Altaxo.Graph.BackgroundStyles
       } 
     }
 
-    public Color Color
+    public BrushHolder Brush
     {
       get
       {
-        return _color;
+        return _brush;
       }
       set
       {
-        _color = value;
+        _brush = value==null ? null : value.Clone();
         ResetCachedBrushes();
       }
     }

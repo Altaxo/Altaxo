@@ -523,6 +523,7 @@ namespace Altaxo.Graph
       int len =  System.Enum.GetValues(typeof(DashStyle)).Length;
       int next = step+(int)template;
       this.PenHolder.DashStyle = (DashStyle)Calc.BasicFunctions.PMod(next,len-1);
+      
 
       OnChanged(); // Fire Changed event
     }

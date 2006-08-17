@@ -48,6 +48,8 @@ namespace Altaxo.Serialization.Xml
 
     TimeSpan GetTimeSpan(string name);
 
+    System.IO.MemoryStream GetMemoryStream(string name);
+
     object GetEnum(string name, System.Type type); // see remarks on serialization
 
     string GetNodeContent(); // gets the inner text of the node directly

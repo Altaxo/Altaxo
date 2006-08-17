@@ -50,8 +50,8 @@ namespace Altaxo.Graph
       ShapeGraphic s = this;
       base.GetObjectData(info, context);
 
-      info.AddValue("LinePen", s.m_linePen);
-      info.AddValue("FillBrush", s.m_fillBrush);
+     info.AddValue("LinePen", s.m_linePen);
+     info.AddValue("FillBrush", s.m_fillBrush);
 
     }
     public override object SetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context, System.Runtime.Serialization.ISurrogateSelector selector)
@@ -81,8 +81,6 @@ namespace Altaxo.Graph
         info.AddBaseValueEmbedded(s, typeof(ShapeGraphic).BaseType);
 
         info.AddValue("LinePen", s.m_linePen);
-       
-
         info.AddValue("Fill", s.m_fillBrush.IsVisible);
         info.AddValue("FillBrush", s.m_fillBrush);
       }
@@ -94,6 +92,7 @@ namespace Altaxo.Graph
 
 
         s.Pen = (PenHolder)info.GetValue("LinePen", s);
+        bool fill = info.GetBoolean("Fill");
         s.Brush = (BrushHolder)info.GetValue("FillBrush", s);
         return s;
       }
@@ -388,6 +387,7 @@ namespace Altaxo.Graph
       g.TranslateTransform(X, Y);
       if (m_Rotation != 0)
         g.RotateTransform(m_Rotation);
+      Pen.BrushRectangle = this.m_Bounds;
       g.DrawLine(Pen, 0,0,Width, Height);
       g.Restore(gs);
     }

@@ -28,69 +28,60 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.ComponentModel;
 using Altaxo.Graph;
-using Altaxo.Drawing;
-
+using Altaxo.Collections;
 
 namespace Altaxo.Gui.Common.Drawing
 {
-  public class TextureImageComboBox : ComboBox
+
+
+
+  public class FontFamilyComboBox : ComboBox
   {
-    public TextureImageComboBox()
+    public FontFamilyComboBox()
     {
       DropDownStyle = ComboBoxStyle.DropDownList;
       DrawMode = DrawMode.OwnerDrawFixed;
       ItemHeight = Font.Height;
-
-      this.ContextMenuStrip = new ContextMenuStrip();
-      this.ContextMenuStrip.Items.Add("From file ...", null, EhLoadFromFile);
     }
 
-    public TextureImageComboBox(ImageProxy selected)
+    public FontFamilyComboBox(FontFamily selected)
       : this()
     {
       SetDataSource(selected);
     }
 
 
-    void EhLoadFromFile(object sender, EventArgs e)
-    {
-      OpenFileDialog dlg = new OpenFileDialog();
-      if (DialogResult.OK == dlg.ShowDialog(Current.MainWindow))
-      {
-        ImageProxy img = ImageProxy.FromFile(dlg.FileName);
-        if (img.IsValid)
-        {
-          SetDataSource(img);
-          OnSelectedItemChanged(EventArgs.Empty);
-          OnSelectedValueChanged(EventArgs.Empty);
-          OnSelectionChangeCommitted(EventArgs.Empty);
-        }
-      }
-    }
 
-    void SetDataSource(ImageProxy selected)
+
+    void SetDataSource(FontFamily selected)
     {
       this.BeginUpdate();
 
       Items.Clear();
 
-      Items.Add(ImageProxy.FromResource("Altaxo.Textures.Marbel.Marbel01.jpg"));
-
-      if (selected != null)
+      foreach (FontFamily ff in FontFamily.Families)
       {
-        Items.Add(selected);
-        SelectedItem = selected;
+        if (!ff.IsStyleAvailable(FontStyle.Regular))
+          continue;
+        if (!ff.IsStyleAvailable(FontStyle.Bold))
+          continue;
+        if (!ff.IsStyleAvailable(FontStyle.Italic))
+          continue;
+
+        Items.Add(new NamedItem<FontFamily>(ff,ff.Name));
       }
+
+      SelectedItem = new NamedItem<FontFamily>(selected,selected.Name);
 
       this.EndUpdate();
     }
 
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-    public ImageProxy TextureImage
+    public FontFamily FontFamilyDocument
     {
       get
       {
-        return SelectedItem == null ? null : (ImageProxy)SelectedItem;
+        return SelectedItem == null ? FontFamily.GenericSansSerif : ((NamedItem<FontFamily>)SelectedItem).Item;
       }
       set
       {
@@ -113,9 +104,15 @@ namespace Altaxo.Gui.Common.Drawing
       if (this.Enabled)
         e.DrawBackground();
 
-      ImageProxy item = e.Index >= 0 ? (ImageProxy)Items[e.Index] : null;
+      NamedItem<FontFamily> item = e.Index >= 0 ? (NamedItem<FontFamily>)Items[e.Index] : new NamedItem<FontFamily>(FontFamily.GenericSansSerif,FontFamily.GenericSansSerif.Name);
       SolidBrush foreColorBrush = new SolidBrush(e.ForeColor);
-      grfx.DrawString(item==null?"<No image>":item.ToString(), Font, foreColorBrush, rectText);
+    
+      Font font = new Font(item.Item,Font.Size,FontStyle.Regular);
+   
+      
+      grfx.DrawString("Abc", font, foreColorBrush, rectColor);
+
+      grfx.DrawString(item.ToString(), Font, foreColorBrush, rectText);
     }
 
 

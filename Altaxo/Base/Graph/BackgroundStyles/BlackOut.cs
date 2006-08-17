@@ -30,7 +30,6 @@ namespace Altaxo.Graph.BackgroundStyles
   [Serializable]
   public class BlackOut : IBackgroundStyle
   {
-    protected BrushHolder _brush;
 
     #region Serialization
 
@@ -89,13 +88,13 @@ namespace Altaxo.Graph.BackgroundStyles
       g.FillRectangle(Brushes.Black,innerArea.Left,innerArea.Top,innerArea.Width,innerArea.Height);
     }
 
-    public bool SupportsColor { get { return false; }}
+    public bool SupportsBrush { get { return false; }}
 
-    public Color Color
+    public BrushHolder Brush
     {
       get
       {
-        return  Color.Black ;
+        return  null ;
       }
       set
       {

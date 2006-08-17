@@ -54,7 +54,7 @@ namespace Altaxo.Graph
     protected float m_MiterLimit;
     protected LineCapEx m_StartCap;
     protected Matrix m_Transform;
-    protected float m_Width; // Widht of this Pen object
+    protected float m_Width; // Width of this Pen object
     [NonSerialized()]
     Pen m_Pen; // the cached pen object
 
@@ -202,13 +202,19 @@ namespace Altaxo.Graph
       if (0 != (cp & PenHolder.Configured.DashPattern))
         info.AddValue("DashPattern", s.DashPattern);
       if (0 != (cp & PenHolder.Configured.EndCap))
-        info.AddValue("EndCap", s.EndCap);
+      {
+        info.AddValue("EndCap", s.m_EndCap.Name);
+        info.AddValue("EndCapSize", s.m_EndCap.Size);
+      }
       if (0 != (cp & PenHolder.Configured.LineJoin))
         info.AddValue("LineJoin", s.LineJoin);
       if (0 != (cp & PenHolder.Configured.MiterLimit))
         info.AddValue("MiterLimit", s.MiterLimit);
       if (0 != (cp & PenHolder.Configured.StartCap))
-        info.AddValue("StartCap", s.StartCap);
+      {
+        info.AddValue("StartCap", s.m_StartCap.Name);
+        info.AddValue("StartCapSize", s.m_StartCap.Size);
+      }
       if (0 != (cp & PenHolder.Configured.Transform))
         info.AddValue("Transform", s.Transform.Elements);
       if (0 != (cp & PenHolder.Configured.Width))
@@ -267,7 +273,11 @@ namespace Altaxo.Graph
         s.m_DashPattern = null;
 
       if (0 != (cp & PenHolder.Configured.EndCap))
-        s.m_EndCap = (LineCapEx)info.GetValue("EndCap", typeof(LineCapEx));
+      {
+        string name = info.GetString("EndCap");
+        float size = info.GetSingle("EndCapSize");
+        s.m_EndCap = new LineCapEx(name, size);
+      }
       else
         s.m_EndCap = LineCapEx.Flat;
 
@@ -282,7 +292,11 @@ namespace Altaxo.Graph
         s.m_MiterLimit = 10;
 
       if (0 != (cp & PenHolder.Configured.StartCap))
-        s.m_StartCap = (LineCapEx)info.GetValue("StartCap", typeof(LineCapEx));
+      {
+        string name = info.GetString("StartCap");
+        float size = info.GetSingle("StartCapSize");
+        s.m_StartCap = new LineCapEx(name, size);
+      }
       else
         s.m_StartCap = LineCapEx.Flat;
 
@@ -1333,6 +1347,7 @@ namespace Altaxo.Graph
 
   #region LineCapEx
 
+  [Serializable]
   public abstract class LineCapExtension
     {
     public abstract string Name { get; }
@@ -1342,7 +1357,7 @@ namespace Altaxo.Graph
     }
 
   [Serializable]
-  public struct LineCapEx 
+  public struct LineCapEx : System.Runtime.Serialization.ISerializable
   {
     #region Inner classes
     [Serializable]
@@ -1407,11 +1422,38 @@ namespace Altaxo.Graph
     }
     #endregion
 
+
     LineCapExtension _currentStyle;
     float _size;
 
     static DefaultLineCapWrapper _defaultStyle;
     static System.Collections.Generic.SortedDictionary<string, LineCapExtension> _registeredStyles;
+
+    #region Clipboard Serialization
+      public LineCapEx(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
+    {
+      _currentStyle = null;
+      _size = 0;
+      SetObjectData(this, info, context, null);
+    }
+
+    public void GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
+    {
+     LineCapEx s = this;
+     info.AddValue("Name", s.Name);
+     info.AddValue("Size", s.Size);
+
+    }
+    public object SetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context, System.Runtime.Serialization.ISurrogateSelector selector)
+    {
+      LineCapEx s = new LineCapEx();
+
+     string name =  info.GetString("Name");
+      float size = info.GetSingle("Size");
+      this.CopyFrom(new LineCapEx(name,size));
+      return this;
+    } // end of SetObjectData
+    #endregion
 
     static LineCapEx()
     {

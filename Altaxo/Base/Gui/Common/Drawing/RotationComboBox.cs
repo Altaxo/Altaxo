@@ -32,6 +32,7 @@ namespace Altaxo.Gui.Common.Drawing
   public class RotationComboBox : ComboBox
   {
     static List<float> _rotationValues;
+    bool _textIsDirty;
 
     public RotationComboBox()
     {
@@ -44,7 +45,7 @@ namespace Altaxo.Gui.Common.Drawing
       : this()
     {
 
-      SetDataSource(rotation);
+      SetDataSource(rotation,false);
     }
 
     void SetDefaultValues()
@@ -53,7 +54,7 @@ namespace Altaxo.Gui.Common.Drawing
       _rotationValues.AddRange(new float[] { 0, 45, 90, 135, 180, 225, 270, 315 });
     }
 
-    void SetDataSource(float rotation)
+    void SetDataSource(float rotation, bool manuallyEnteredByUser)
     {
       this.BeginUpdate();
 
@@ -64,7 +65,7 @@ namespace Altaxo.Gui.Common.Drawing
 
       rotation = (float)Math.IEEERemainder(rotation, 360);
 
-      if (!_rotationValues.Contains(rotation))
+      if (manuallyEnteredByUser && !_rotationValues.Contains(rotation))
       {
         _rotationValues.Add(rotation);
         _rotationValues.Sort();
@@ -76,6 +77,9 @@ namespace Altaxo.Gui.Common.Drawing
       SelectedItem = rotation;
 
       this.EndUpdate();
+      
+      _textIsDirty = false;
+
     }
 
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -92,7 +96,7 @@ namespace Altaxo.Gui.Common.Drawing
       }
       set
       {
-        SetDataSource(value);
+        SetDataSource(value,false);
       }
     }
 
@@ -137,7 +141,7 @@ namespace Altaxo.Gui.Common.Drawing
       double w;
       if (Altaxo.Serialization.GUIConversion.IsDouble(this.Text, out w))
       {
-        this.SetDataSource((float)w);
+        this.SetDataSource((float)w, _textIsDirty);
       }
       else
       {
@@ -145,6 +149,12 @@ namespace Altaxo.Gui.Common.Drawing
       }
 
       base.OnValidating(e);
+    }
+
+    protected override void OnTextChanged(EventArgs e)
+    {
+      _textIsDirty = true;
+      base.OnTextChanged(e);
     }
 
 

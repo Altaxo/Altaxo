@@ -187,6 +187,7 @@
     <Compile Include="Graph\BackgroundStyles\RectangleWithShadow.cs" />
     <Compile Include="Graph\BackgroundStyles\WhiteOut.cs" />
     <Compile Include="Graph\I2DGroupablePlotItem.cs" />
+    <Compile Include="Drawing\ImageProxy.cs" />
     <Compile Include="Graph\LabelFormatting\AbstractLabelFormatting.cs" />
     <Compile Include="Graph\LabelFormatting\AbstractNumericLabelFormatting.cs" />
     <Compile Include="Graph\LabelFormatting\ILabelFormatting.cs" />
@@ -1390,6 +1391,9 @@
     <EmbeddedResource Include="Serialization\Galactic\ExportGalacticSpcFileDialog.resx">
       <DependentUpon>ExportGalacticSpcFileDialog.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Textures.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Worksheet\GUI\ColumnScriptControl.resx">
       <DependentUpon>ColumnScriptControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -1428,6 +1432,25 @@
     <None Include="Calc\FitFunctions\Relaxation\.svn\entries" />
     <None Include="Calc\FitFunctions\Relaxation\.svn\format" />
     <None Include="Calc\FitFunctions\Relaxation\.svn\text-base\HavriliakNegamiFunction.cs.svn-base" />
+    <Compile Include="Collections\NamedItem.cs" />
+    <Compile Include="Gui\Common\Drawing\FontComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\FontControlsGlue.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\FontFamilyComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\FontSizeComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\TextureScaleComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\BackgroundControlsGlue.cs">
+      <SubType>Component</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Calc\FitFunctions\Relaxation\.svn\prop-base\" />

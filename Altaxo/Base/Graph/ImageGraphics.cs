@@ -26,6 +26,7 @@ using System.Drawing.Drawing2D;
 using Altaxo.Serialization;
 using System.IO;
 
+using Altaxo.Drawing;
 namespace Altaxo.Graph
 {
   #region ImageGraphic
@@ -140,8 +141,7 @@ namespace Altaxo.Graph
   [SerializationVersion(0)]
   public class EmbeddedImageGraphic : ImageGraphic
   {
-    protected MemoryStream _imageStream;
-    protected Image m_Image;
+    protected ImageProxy m_Image;
 
     #region Serialization
     /// <summary>Used to serialize the EmbeddedImageGraphic Version 0.</summary>
@@ -198,7 +198,7 @@ namespace Altaxo.Graph
         {
           throw new NotImplementedException(string.Format("Serializing a {0} without surrogate not implemented yet!", obj.GetType()));
         }
-        s.m_Image = (Image)info.GetValue("Image", typeof(Image));
+        s.m_Image = (ImageProxy)info.GetValue("Image", typeof(Image));
         return s;
       }
     }
@@ -218,7 +218,7 @@ namespace Altaxo.Graph
 
         EmbeddedImageGraphic s = null != o ? (EmbeddedImageGraphic)o : new EmbeddedImageGraphic();
         info.GetBaseValueEmbedded(s, typeof(EmbeddedImageGraphic).BaseType, parent);
-        s.m_Image = (Image)info.GetValue("Image", typeof(Image));
+        s.m_Image = (ImageProxy)info.GetValue("Image", s);
         return s;
       }
     }
@@ -242,7 +242,7 @@ namespace Altaxo.Graph
     }
 
 
-    public EmbeddedImageGraphic(PointF graphicPosition, Image startingImage)
+    public EmbeddedImageGraphic(PointF graphicPosition, ImageProxy startingImage)
       :
       this()
     {
@@ -250,13 +250,13 @@ namespace Altaxo.Graph
       this.Image = startingImage;
     }
 
-    public EmbeddedImageGraphic(float posX, float posY, Image startingImage)
+    public EmbeddedImageGraphic(float posX, float posY, ImageProxy startingImage)
       :
       this(new PointF(posX, posY), startingImage)
     {
     }
 
-    public EmbeddedImageGraphic(PointF graphicPosition, SizeF graphicSize, Image startingImage)
+    public EmbeddedImageGraphic(PointF graphicPosition, SizeF graphicSize, ImageProxy startingImage)
       :
       this(graphicPosition, startingImage)
     {
@@ -264,44 +264,44 @@ namespace Altaxo.Graph
       this.AutoSize = false;
     }
 
-    public EmbeddedImageGraphic(float posX, float posY, SizeF graphicSize, Image startingImage)
+    public EmbeddedImageGraphic(float posX, float posY, SizeF graphicSize, ImageProxy startingImage)
       :
       this(new PointF(posX, posY), graphicSize, startingImage)
     {
     }
-    public EmbeddedImageGraphic(float posX, float posY, float width, float height, Image startingImage)
+    public EmbeddedImageGraphic(float posX, float posY, float width, float height, ImageProxy startingImage)
       :
       this(new PointF(posX, posY), new SizeF(width, height), startingImage)
     {
     }
 
-    public EmbeddedImageGraphic(PointF graphicPosition, float Rotation, Image startingImage)
+    public EmbeddedImageGraphic(PointF graphicPosition, float Rotation, ImageProxy startingImage)
       :
       this(graphicPosition, startingImage)
     {
       this.Rotation = Rotation;
     }
 
-    public EmbeddedImageGraphic(float posX, float posY, float Rotation, Image startingImage)
+    public EmbeddedImageGraphic(float posX, float posY, float Rotation, ImageProxy startingImage)
       :
       this(new PointF(posX, posY), Rotation, startingImage)
     {
     }
 
-    public EmbeddedImageGraphic(PointF graphicPosition, SizeF graphicSize, float Rotation, Image startingImage)
+    public EmbeddedImageGraphic(PointF graphicPosition, SizeF graphicSize, float Rotation, ImageProxy startingImage)
       :
       this(graphicPosition, Rotation, startingImage)
     {
       this.SetSize(graphicSize);
       this.AutoSize = false;
     }
-    public EmbeddedImageGraphic(float posX, float posY, SizeF graphicSize, float Rotation, Image startingImage)
+    public EmbeddedImageGraphic(float posX, float posY, SizeF graphicSize, float Rotation, ImageProxy startingImage)
       :
       this(new PointF(posX, posY), graphicSize, Rotation, startingImage)
     {
     }
 
-    public EmbeddedImageGraphic(float posX, float posY, float width, float height, float Rotation, Image startingImage)
+    public EmbeddedImageGraphic(float posX, float posY, float width, float height, float Rotation, ImageProxy startingImage)
       :
       this(new PointF(posX, posY), new SizeF(width, height), Rotation, startingImage)
     {
@@ -311,7 +311,7 @@ namespace Altaxo.Graph
       :
       base(from)
     {
-      this.m_Image = null == from.m_Image ? null : (Image)from.m_Image.Clone();
+      this.m_Image = null == from.m_Image ? null : from.m_Image.Clone();
     }
 
     #endregion
@@ -322,7 +322,7 @@ namespace Altaxo.Graph
     }
 
 
-    public Image Image
+    public ImageProxy Image
     {
       get
       {
@@ -334,15 +334,11 @@ namespace Altaxo.Graph
       }
     }
 
-    public void SetImageStream(MemoryStream s)
-    {
-      _imageStream = s;
-      m_Image = Image.FromStream(s);
-    }
+  
 
     public override Image GetImage()
     {
-      return this.Image;
+      return this.m_Image == null ? null : this.m_Image.GetImage();
     }
 
     public override void Paint(Graphics g, object obj)
@@ -352,15 +348,17 @@ namespace Altaxo.Graph
       if (m_Rotation != 0)
         g.RotateTransform(m_Rotation);
 
-      if (null != m_Image)
+      Image img = m_Image == null ? null : m_Image.GetImage(); 
+
+      if (null != img)
       {
         if (this.AutoSize)
         {
-          this.Width = (m_Image.Width / m_Image.HorizontalResolution) * g.DpiX;
-          this.Height = (m_Image.Height / m_Image.VerticalResolution) * g.DpiY;
+          this.Width = (img.Width / img.HorizontalResolution) * g.DpiX;
+          this.Height = (img.Height / img.VerticalResolution) * g.DpiY;
         }
 
-        g.DrawImage(m_Image, 0, 0, Width, Height);
+        g.DrawImage(img, 0, 0, Width, Height);
 
       }
 

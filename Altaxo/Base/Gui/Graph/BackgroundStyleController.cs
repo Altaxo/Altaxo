@@ -39,7 +39,7 @@ namespace Altaxo.Gui.Graph
     /// Called if the background color is changed.
     /// </summary>
     /// <param name="newValue">The new selected item of the combo box.</param>
-    void EhView_BackgroundColorChanged(Color newValue);
+    void EhView_BackgroundBrushChanged(BrushHolder newValue);
 
     /// <summary>
     /// Called if the background style changed.
@@ -59,12 +59,12 @@ namespace Altaxo.Gui.Graph
     /// <summary>
     /// Initializes the content of the background color combo box.
     /// </summary>
-    void BackgroundColor_Initialize(System.Drawing.Color color);
+    void BackgroundBrush_Initialize(BrushHolder brush);
 
     /// <summary>
     /// Initializes the enable state of the background color combo box.
     /// </summary>
-    void BackgroundColorEnable_Initialize(bool enable);
+    void BackgroundBrushEnable_Initialize(bool enable);
 
     /// <summary>
     /// Initializes the background styles.
@@ -118,12 +118,12 @@ namespace Altaxo.Gui.Graph
       int sel = Array.IndexOf(this._backgroundStyles, this._tempDoc == null ? null : this._tempDoc.GetType());
       _view.BackgroundStyle_Initialize(Current.Gui.GetUserFriendlyClassName(this._backgroundStyles, true), sel + 1);
 
-      if (this._tempDoc != null && this._tempDoc.SupportsColor)
-        _view.BackgroundColor_Initialize(this._tempDoc.Color);
+      if (this._tempDoc != null && this._tempDoc.SupportsBrush)
+        _view.BackgroundBrush_Initialize(this._tempDoc.Brush);
       else
-        _view.BackgroundColor_Initialize(Color.Transparent);
+        _view.BackgroundBrush_Initialize(new BrushHolder(Color.Transparent));
 
-      _view.BackgroundColorEnable_Initialize(this._tempDoc != null && this._tempDoc.SupportsColor);
+      _view.BackgroundBrushEnable_Initialize(this._tempDoc != null && this._tempDoc.SupportsBrush);
 
     }
 
@@ -178,11 +178,11 @@ namespace Altaxo.Gui.Graph
 
     #region IPlotRangeViewEventSink Members
 
-    public void EhView_BackgroundColorChanged(System.Drawing.Color color)
+    public void EhView_BackgroundBrushChanged(BrushHolder brush)
     {
-      if (this._tempDoc != null && this._tempDoc.SupportsColor)
+      if (this._tempDoc != null && this._tempDoc.SupportsBrush)
       {
-        this._tempDoc.Color = color;
+        this._tempDoc.Brush = brush;
         OnTemporaryModelObjectChanged();
       }
     }
@@ -194,28 +194,26 @@ namespace Altaxo.Gui.Graph
     public void EhView_BackgroundStyleChanged(int newValue)
     {
 
-      Color backgroundColor = Color.Transparent;
+      BrushHolder backgroundColor = new BrushHolder(Color.Transparent);
 
       if (newValue != 0)
       {
         _tempDoc = (Altaxo.Graph.BackgroundStyles.IBackgroundStyle)Activator.CreateInstance(this._backgroundStyles[newValue - 1]);
-        backgroundColor = _tempDoc.Color;
-        
+        backgroundColor = _tempDoc.Brush;
       }
       else // is null
       {
         _tempDoc = null;
-        
       }
 
-      if (_tempDoc != null && _tempDoc.SupportsColor)
+      if (_tempDoc != null && _tempDoc.SupportsBrush)
       {
-        _view.BackgroundColor_Initialize(backgroundColor);
-        _view.BackgroundColorEnable_Initialize(true);
+        _view.BackgroundBrush_Initialize(backgroundColor);
+        _view.BackgroundBrushEnable_Initialize(true);
       }
       else
       {
-        _view.BackgroundColorEnable_Initialize(false);
+        _view.BackgroundBrushEnable_Initialize(false);
       }
 
       OnTemporaryModelObjectChanged();

@@ -1,0 +1,53 @@
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AltaxoBase.Vs8", "Altaxo\Base\AltaxoBase.Vs8.csproj", "{CA928A5C-9673-4FBB-A60E-F91364CC9DB5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AltaxoCore.Vs8", "Altaxo\Core\AltaxoCore.Vs8.csproj", "{7045C197-9DA8-4FA4-886C-992ACADD838F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D74A8CA6-2E0C-4E69-ADF7-0DE96598FD94}"
+	ProjectSection(SolutionItems) = preProject
+		Content\doc\altaxotodo.xml = Content\doc\altaxotodo.xml
+		Icon1.ico = Icon1.ico
+		LayerButtons.bmp = LayerButtons.bmp
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zNumerator", "Libraries\Numerator\zNumerator.csproj", "{1CFDD727-D2B7-4521-AF53-D24EA4C69176}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICSharpCode.Core", "Libraries\ICSharpCode.Core\Project\ICSharpCode.Core.csproj", "{35CEF10F-2D4C-45F2-9DD1-161E0FEC583C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		DesignTimeDebugging|Any CPU = DesignTimeDebugging|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CA928A5C-9673-4FBB-A60E-F91364CC9DB5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA928A5C-9673-4FBB-A60E-F91364CC9DB5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA928A5C-9673-4FBB-A60E-F91364CC9DB5}.DesignTimeDebugging|Any CPU.ActiveCfg = DesignTimeDebugging|Any CPU
+		{CA928A5C-9673-4FBB-A60E-F91364CC9DB5}.DesignTimeDebugging|Any CPU.Build.0 = DesignTimeDebugging|Any CPU
+		{CA928A5C-9673-4FBB-A60E-F91364CC9DB5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA928A5C-9673-4FBB-A60E-F91364CC9DB5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7045C197-9DA8-4FA4-886C-992ACADD838F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7045C197-9DA8-4FA4-886C-992ACADD838F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7045C197-9DA8-4FA4-886C-992ACADD838F}.DesignTimeDebugging|Any CPU.ActiveCfg = Debug|Any CPU
+		{7045C197-9DA8-4FA4-886C-992ACADD838F}.DesignTimeDebugging|Any CPU.Build.0 = Debug|Any CPU
+		{7045C197-9DA8-4FA4-886C-992ACADD838F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7045C197-9DA8-4FA4-886C-992ACADD838F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1CFDD727-D2B7-4521-AF53-D24EA4C69176}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1CFDD727-D2B7-4521-AF53-D24EA4C69176}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1CFDD727-D2B7-4521-AF53-D24EA4C69176}.DesignTimeDebugging|Any CPU.ActiveCfg = Debug|Any CPU
+		{1CFDD727-D2B7-4521-AF53-D24EA4C69176}.DesignTimeDebugging|Any CPU.Build.0 = Debug|Any CPU
+		{1CFDD727-D2B7-4521-AF53-D24EA4C69176}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1CFDD727-D2B7-4521-AF53-D24EA4C69176}.Release|Any CPU.Build.0 = Release|Any CPU
+		{35CEF10F-2D4C-45F2-9DD1-161E0FEC583C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{35CEF10F-2D4C-45F2-9DD1-161E0FEC583C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{35CEF10F-2D4C-45F2-9DD1-161E0FEC583C}.DesignTimeDebugging|Any CPU.ActiveCfg = Debug|Any CPU
+		{35CEF10F-2D4C-45F2-9DD1-161E0FEC583C}.DesignTimeDebugging|Any CPU.Build.0 = Debug|Any CPU
+		{35CEF10F-2D4C-45F2-9DD1-161E0FEC583C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{35CEF10F-2D4C-45F2-9DD1-161E0FEC583C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

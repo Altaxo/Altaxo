@@ -30,8 +30,6 @@ namespace Altaxo.Graph.BackgroundStyles
   [Serializable]
   public class BlackLine : IBackgroundStyle
   {
-    protected BrushHolder _brush;
-
     #region Serialization
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(BlackLine), 0)]
@@ -53,7 +51,6 @@ namespace Altaxo.Graph.BackgroundStyles
     }
 
     #endregion
-
 
     public BlackLine()
     {
@@ -90,13 +87,13 @@ namespace Altaxo.Graph.BackgroundStyles
       g.DrawRectangle(Pens.Black, innerArea.Left, innerArea.Top, innerArea.Width, innerArea.Height);
     }
 
-    public bool SupportsColor { get { return false; } }
+    public bool SupportsBrush { get { return false; } }
 
-    public Color Color
+    public BrushHolder Brush
     {
       get
       {
-        return  Color.Black;
+        return  null;
       }
       set
       {

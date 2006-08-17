@@ -29,45 +29,53 @@ namespace Altaxo.Graph.BackgroundStyles
   /// Backs the item with a color filled rectangle.
   /// </summary>
   [Serializable]
-  public class DarkMarbel : IBackgroundStyle, IDeserializationCallback
+  public class DarkMarbel : IBackgroundStyle
   {
-    protected Color _color = Color.LightGray;
+    protected BrushHolder _brush = new BrushHolder(Color.LightGray);
     protected float _shadowLength = 5;
-
-    protected Brush _cachedLightBrush;
-    protected Brush _cachedDimBrush;
-    protected Brush _cachedDarkBrush;
 
     #region Serialization
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DarkMarbel), 0)]
-      public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
+        throw new ApplicationException("Programming error - this should not be called");
+        /*
         DarkMarbel s = (DarkMarbel)obj;
         info.AddValue("Color", s._color);
         info.AddValue("ShadowLength", s._shadowLength);
+        */
       }
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
         DarkMarbel s = null != o ? (DarkMarbel)o : new DarkMarbel();
-        s.Color = (Color)info.GetValue("Color", parent);
+        s.Brush  = new BrushHolder((Color)info.GetValue("Color", parent));
         s._shadowLength = (float)info.GetDouble();
 
         return s;
       }
     }
 
-    #endregion
-
-    #region IDeserializationCallback Members
-
-    public void OnDeserialization(object sender)
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DarkMarbel), 1)]
+    public class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      SetCachedBrushes();
-    }
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        DarkMarbel s = (DarkMarbel)obj;
+        info.AddValue("Brush", s._brush);
+        info.AddValue("ShadowLength", s._shadowLength);
+      }
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        DarkMarbel s = null != o ? (DarkMarbel)o : new DarkMarbel();
+        s.Brush = (BrushHolder)info.GetValue("Brush", parent);
+        s._shadowLength = (float)info.GetDouble();
 
+        return s;
+      }
+    }
     #endregion
 
     public DarkMarbel()
@@ -76,7 +84,7 @@ namespace Altaxo.Graph.BackgroundStyles
 
     public DarkMarbel(Color c)
     {
-      this.Color = c;
+      this.Brush = new BrushHolder(c);
       
     }
 
@@ -87,7 +95,7 @@ namespace Altaxo.Graph.BackgroundStyles
 
     public void CopyFrom(DarkMarbel from)
     {
-      this.Color = from._color;
+      this.Brush = from._brush;
       
     }
 
@@ -97,23 +105,7 @@ namespace Altaxo.Graph.BackgroundStyles
     }
 
 
-    private void ResetCachedBrushes()
-    {
-      this._cachedLightBrush = null;
-
-      this._cachedDimBrush = null;
-
-      this._cachedDarkBrush = null;
-    }
-
-    private void SetCachedBrushes()
-    {
-      this._cachedLightBrush = new SolidBrush(_color);
-      Color dim = Color.FromArgb(_color.A, _color.R / 2, _color.G / 2, _color.B / 2);
-      this._cachedDimBrush = new SolidBrush(dim);
-      Color dark = Color.FromArgb(_color.A, 0, 0, 0);
-      this._cachedDarkBrush = new SolidBrush(dark);
-    }
+  
 
     #region IBackgroundStyle Members
 
@@ -125,28 +117,38 @@ namespace Altaxo.Graph.BackgroundStyles
 
     public void Draw(System.Drawing.Graphics g, System.Drawing.RectangleF innerArea)
     {
-      if (null == _cachedLightBrush)
-        SetCachedBrushes();
+     
 
-      innerArea.Inflate(_shadowLength / 2, _shadowLength / 2);
+      innerArea.Inflate(_shadowLength / 2, _shadowLength / 2); // Padding
+      RectangleF outerArea = innerArea;
+      outerArea.Inflate(_shadowLength, _shadowLength);
 
-      g.FillRectangle(_cachedDarkBrush, innerArea.Left-_shadowLength,innerArea.Top-_shadowLength,innerArea.Width+2*_shadowLength,innerArea.Height+2*_shadowLength);
-      g.FillPolygon(_cachedLightBrush, new PointF[] {
-                                                      new PointF(innerArea.Left,innerArea.Top), // upper left point
-                                                      new PointF(innerArea.Right,innerArea.Top), // go to the right
-                                                      new PointF(innerArea.Right+_shadowLength,innerArea.Top-_shadowLength), // go 45 deg left down in the upper right corner
-                                                      new PointF(innerArea.Left-_shadowLength,innerArea.Top-_shadowLength), // upper left corner of the inner rectangle
-                                                      new PointF(innerArea.Left-_shadowLength,innerArea.Bottom+_shadowLength), // lower left corner of the inner rectangle
-                                                      new PointF(innerArea.Left,innerArea.Bottom) // lower left corner
-                                                    });
+      _brush.Rectangle = outerArea;
+      g.FillRectangle(_brush, outerArea);
 
-      g.FillRectangle(_cachedDimBrush, innerArea);
+      SolidBrush twhite = new SolidBrush(Color.FromArgb(128, 255, 255, 255));
+      g.FillPolygon(twhite, new PointF[] {
+                                                      new PointF(outerArea.Left,outerArea.Top), // upper left point
+                                                      new PointF(outerArea.Right,outerArea.Top), // go to the right
+                                                      new PointF(innerArea.Right,innerArea.Top), // go 45 deg left down in the upper right corner
+                                                      new PointF(innerArea.Left,innerArea.Top), // upper left corner of the inner rectangle
+                                                      new PointF(innerArea.Left,innerArea.Bottom), // lower left corner of the inner rectangle
+                                                      new PointF(outerArea.Left,outerArea.Bottom) // lower left corner
+      });
 
-
+      SolidBrush tblack = new SolidBrush(Color.FromArgb(128, 0, 0, 0));
+      g.FillPolygon(tblack, new PointF[] {
+                                                      new PointF(outerArea.Right,outerArea.Bottom),  
+                                                      new PointF(outerArea.Right,outerArea.Top), 
+                                                      new PointF(innerArea.Right,innerArea.Top), 
+                                                      new PointF(innerArea.Right,innerArea.Bottom), // upper left corner of the inner rectangle
+                                                      new PointF(innerArea.Left,innerArea.Bottom), // lower left corner of the inner rectangle
+                                                      new PointF(outerArea.Left,outerArea.Bottom) // lower left corner
+      });
 
     }
 
-    public bool SupportsColor
+    public bool SupportsBrush
     {
       get
       {
@@ -154,16 +156,16 @@ namespace Altaxo.Graph.BackgroundStyles
       }
     }
 
-    public Color Color
+    public BrushHolder Brush
     {
       get
       {
-        return _color;
+        return _brush;
       }
       set
       {
-        _color = value;
-        ResetCachedBrushes();
+        _brush = value==null ? null : value.Clone();
+       
       }
     }
     #endregion

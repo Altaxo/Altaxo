@@ -126,6 +126,20 @@ namespace Altaxo.Serialization.Xml
     {
       m_Writer.WriteElementString(name, XmlConvert.ToString(val));
     }
+
+    public void AddValue(string name, System.IO.MemoryStream stream)
+    {
+      m_Writer.WriteStartElement(name);
+      if (stream == null)
+        m_Writer.WriteAttributeString("Length", XmlConvert.ToString(0));
+      else
+      {
+        byte[] buffer = stream.ToArray();
+        m_Writer.WriteAttributeString("Length", XmlConvert.ToString(buffer.Length));
+        m_Writer.WriteBase64(buffer, 0, buffer.Length);
+      }
+      m_Writer.WriteEndElement();
+    }
     
     public void AddEnum(string name, System.Enum val)
     {

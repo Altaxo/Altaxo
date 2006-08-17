@@ -26,6 +26,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
 
+using Altaxo.Gui.Common.Drawing;
 namespace Altaxo.Graph.GUI
 {
   /// <summary>
@@ -35,7 +36,7 @@ namespace Altaxo.Graph.GUI
   {
     private System.Windows.Forms.Button m_btOK;
     private System.Windows.Forms.Button m_btCancel;
-    private System.Windows.Forms.ComboBox m_cbFonts;
+    private FontFamilyComboBox m_cbFonts;
     private System.Windows.Forms.ComboBox m_cbFontSize;
     private System.Windows.Forms.Label m_lblBackground;
     private System.Windows.Forms.Label m_lblPosX;
@@ -122,9 +123,8 @@ namespace Altaxo.Graph.GUI
 
     
       // fill the font name combobox with all fonts
-      foreach(FontFamily ff in FontFamily.Families)
-        this.m_cbFonts.Items.Add(ff.Name);
-      this.m_cbFonts.SelectedItem = m_TextObject.Font.FontFamily.Name;
+     
+      this.m_cbFonts.FontFamilyDocument = m_TextObject.Font.FontFamily;
 
       // fill the font size combobox with reasonable values
       this.m_cbFontSize.Items.AddRange(new string[]{"8","9","10","11","12","14","16","18","20","22","24","26","28","36","48","72"});
@@ -175,7 +175,7 @@ namespace Altaxo.Graph.GUI
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TextControlDialog));
       this.m_btOK = new System.Windows.Forms.Button();
       this.m_btCancel = new System.Windows.Forms.Button();
-      this.m_cbFonts = new System.Windows.Forms.ComboBox();
+      this.m_cbFonts = new FontFamilyComboBox();
       this.m_cbFontSize = new System.Windows.Forms.ComboBox();
       this.m_lblBackground = new System.Windows.Forms.Label();
       this.m_lblPosX = new System.Windows.Forms.Label();
@@ -223,7 +223,7 @@ namespace Altaxo.Graph.GUI
       this.m_cbFonts.Size = new System.Drawing.Size(128, 21);
       this.m_cbFonts.TabIndex = 1;
       this.m_cbFonts.Text = "Arial";
-      this.m_cbFonts.TextChanged += new System.EventHandler(this.OncbFonts_TextChanged);
+      this.m_cbFonts.SelectionChangeCommitted += new System.EventHandler(this.OncbFonts_TextChanged);
       // 
       // m_cbFontSize
       // 
@@ -741,7 +741,7 @@ namespace Altaxo.Graph.GUI
     {
       if(m_bDialogInitialized)
       {
-        FontFamily ff = new FontFamily(this.m_cbFonts.Text);
+        FontFamily ff = this.m_cbFonts.FontFamilyDocument;
         // make sure that regular style is available
         if(ff.IsStyleAvailable(FontStyle.Regular))
           this.m_TextObject.Font = new Font(ff,this.m_TextObject.Font.Size,FontStyle.Regular,GraphicsUnit.World);

@@ -137,6 +137,28 @@ namespace Altaxo.Serialization.Xml
       return GetString();
     }
 
+    public System.IO.MemoryStream GetMemoryStream(string name)
+    {
+      int length = XmlConvert.ToInt32(m_Reader["Length"]);
+      if (length == 0)
+      {
+        m_Reader.ReadStartElement();
+        m_Reader.ReadEndElement();
+        return null;
+      }
+      else
+      {
+        byte[] buffer = new byte[length];
+       
+        int readed = m_Reader.ReadElementContentAsBase64(buffer, 0, length);
+        if (readed!=length)
+          throw new System.FormatException(string.Format("Length of the stream was smaller than denoted in the length attribute in the node header; Expected length: {0}; actual stream length: {1}",length,readed));
+        if (0 != m_Reader.ReadElementContentAsBase64(buffer, 0, length)) // this second call should return 0; it is only called to advance the text reader to the next node
+          throw new System.FormatException("Length of the stream was greater than denoted in the length attribute in the node header");
+       
+        return new System.IO.MemoryStream(buffer);
+      }
+    }
     
     public object GetEnum(string name, System.Type type)
     {

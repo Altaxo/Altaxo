@@ -26,6 +26,7 @@ using System.Drawing.Drawing2D;
 using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
+using Altaxo.Drawing;
 using Altaxo.Graph;
 using Altaxo.Serialization;
 using Altaxo.Graph.GUI.GraphControllerMouseHandlers;
@@ -1687,10 +1688,10 @@ namespace Altaxo.Graph.GUI
         System.Collections.Specialized.StringCollection coll = dao.GetFileDropList();
         foreach (string filename in coll)
         {
-          Image img;
+          ImageProxy img;
           try
           {
-            img = Image.FromFile(filename);
+            img = ImageProxy.FromFile(filename);
             if (img != null)
             {
               SizeF size = this.ActiveLayer.Size;
@@ -1718,7 +1719,7 @@ namespace Altaxo.Graph.GUI
           SizeF size = this.ActiveLayer.Size;
           size.Width /= 2;
           size.Height /= 2;
-          EmbeddedImageGraphic item = new EmbeddedImageGraphic(PointF.Empty, size, img);
+          EmbeddedImageGraphic item = new EmbeddedImageGraphic(PointF.Empty, size, ImageProxy.FromImage(img));
           this.ActiveLayer.GraphObjects.Add(item);
           return;
         }
@@ -1731,7 +1732,7 @@ namespace Altaxo.Graph.GUI
           SizeF size = this.ActiveLayer.Size;
           size.Width /= 2;
           size.Height /= 2;
-          EmbeddedImageGraphic item = new EmbeddedImageGraphic(PointF.Empty, size, img);
+          EmbeddedImageGraphic item = new EmbeddedImageGraphic(PointF.Empty, size, ImageProxy.FromImage(img));
           this.ActiveLayer.GraphObjects.Add(item);
           return;
         }

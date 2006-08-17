@@ -25,31 +25,31 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Runtime.Serialization;
 
-
+using Altaxo.Drawing;
 namespace Altaxo.Graph
 {
   [Serializable]
-  public enum BrushType 
+  public enum BrushType
   {
     SolidBrush,
-    HatchBrush, 
-    TextureBrush, 
-    LinearGradientBrush, 
+    HatchBrush,
+    TextureBrush,
+    LinearGradientBrush,
     PathGradientBrush
   };
 
-  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(BrushType),0)]
+  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(BrushType), 0)]
   public class BrushTypeXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
   {
     public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
     {
-      info.SetNodeContent(obj.ToString()); 
+      info.SetNodeContent(obj.ToString());
     }
     public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
     {
-      
+
       string val = info.GetNodeContent();
-      return System.Enum.Parse(typeof(BrushType),val,true);
+      return System.Enum.Parse(typeof(BrushType), val, true);
     }
   }
 
@@ -61,18 +61,18 @@ namespace Altaxo.Graph
     SigmaBell
   }
 
-  
+
 
   [Serializable]
   public enum LinearGradientModeEx
   {
     BackwardDiagonal,
     ForwardDiagonal,
-    Horizontal, 
+    Horizontal,
     Vertical,
     RevBackwardDiagonal,
     RevForwardDiagonal,
-    RevHorizontal, 
+    RevHorizontal,
     RevVertical
   }
 
@@ -82,100 +82,66 @@ namespace Altaxo.Graph
   /// can be made serializable.
   /// </summary>
   [Serializable]
-  public class BrushHolder : System.ICloneable, System.IDisposable, ISerializable, IDeserializationCallback, Main.IChangedEventSource
+  public class BrushHolder : System.ICloneable, System.IDisposable, Main.IChangedEventSource
   {
 
-    protected BrushType m_BrushType; // Type of the brush
-    protected Brush     m_Brush;      // this is the cached brush object
+    protected BrushType _brushType; // Type of the brush
+    protected Color _foreColor; // Color of the brush
+    protected Color _backColor; // Backcolor of brush, f.i.f. HatchStyle brushes
+    protected HatchStyle _hatchStyle; // Attention: is not serializable!
+    protected ImageProxy _textureImage; // für Texturebrush
+    protected WrapMode _wrapMode; // für TextureBrush und LinearGradientBrush
+    protected RectangleF _brushBoundingRectangle;
+    protected float _focus;
+    protected float _scale;
+    protected bool _bool1;
+    protected LinearGradientModeEx _gradientMode;
+    protected LinearGradientShape _gradientShape;
 
-    protected Color     m_ForeColor; // Color of the brush
-    protected Color     m_BackColor; // Backcolor of brush, f.i.f. HatchStyle brushes
-    protected HatchStyle  m_HatchStyle; // für HatchBrush
-    protected Image     m_Image; // für Texturebrush
-    protected Matrix    m_Matrix; // für TextureBrush
-    protected WrapMode  m_WrapMode; // für TextureBrush und LinearGradientBrush
-    protected RectangleF m_Rectangle;
-    protected float     m_Float1;
-    protected float m_Scale;
-    protected bool      m_Bool1;
-    protected LinearGradientModeEx m_GradientMode;
-    protected LinearGradientShape m_GradientShape;
+    [field:NonSerialized]
+    public event System.EventHandler Changed;
+
+    [NonSerialized]
+    protected Brush _cachedBrush;      // this is the cached brush object
 
     #region "Serialization"
 
-    protected BrushHolder(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-    {
-      SetObjectData(this, info, context, null);
-    }
-    public void GetObjectData(SerializationInfo info, StreamingContext context)
-    {
-
-      info.AddValue("Type", m_BrushType);
-      switch (m_BrushType)
-      {
-        case BrushType.SolidBrush:
-          info.AddValue("ForeColor", m_ForeColor);
-          break;
-        case BrushType.HatchBrush:
-          info.AddValue("ForeColor", m_ForeColor);
-          info.AddValue("BackColor", m_BackColor);
-          info.AddValue("HatchStyle", m_HatchStyle);
-          break;
-      } // end of switch
-    }
-    public object SetObjectData(object obj, SerializationInfo info, StreamingContext context, ISurrogateSelector selector)
-    {
-      BrushHolder s = (BrushHolder)obj;
-      s.m_BrushType = (BrushType)info.GetValue("Type", typeof(BrushType));
-      switch (s.m_BrushType)
-      {
-        case BrushType.SolidBrush:
-          s.m_ForeColor = (Color)info.GetValue("ForeColor", typeof(Color));
-          break;
-        case BrushType.HatchBrush:
-          s.m_ForeColor = (Color)info.GetValue("ForeColor", typeof(Color));
-          s.m_BackColor = (Color)info.GetValue("BackColor", typeof(Color));
-          break;
-      }
-      return s;
-    } // end of SetObjectData
    
 
-
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(BrushHolder),0)]
-      public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(BrushHolder), 0)]
+    public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         BrushHolder s = (BrushHolder)obj;
-        info.AddValue("Type",s.m_BrushType);
-        switch(s.m_BrushType)
+        info.AddValue("Type", s._brushType);
+        switch (s._brushType)
         {
           case BrushType.SolidBrush:
-            info.AddValue("ForeColor",s.m_ForeColor);
+            info.AddValue("ForeColor", s._foreColor);
             break;
           case BrushType.HatchBrush:
-            info.AddValue("ForeColor",s.m_ForeColor);
-            info.AddValue("BackColor",s.m_BackColor);
-            info.AddEnum("HatchStyle",s.m_HatchStyle);
+            info.AddValue("ForeColor", s._foreColor);
+            info.AddValue("BackColor", s._backColor);
+            info.AddEnum("HatchStyle", s._hatchStyle);
             break;
         } // end of switch
       }
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        
-        BrushHolder s = null!=o ? (BrushHolder)o : new BrushHolder(Color.Black);
 
-        s.m_BrushType  = (BrushType)info.GetValue("Type",s);
-        switch(s.m_BrushType)
+        BrushHolder s = null != o ? (BrushHolder)o : new BrushHolder(Color.Black);
+
+        s._brushType = (BrushType)info.GetValue("Type", s);
+        switch (s._brushType)
         {
           case BrushType.SolidBrush:
-            s.m_ForeColor = (Color)info.GetValue("ForeColor",s);
+            s._foreColor = (Color)info.GetValue("ForeColor", s);
             break;
           case BrushType.HatchBrush:
-            s.m_ForeColor = (Color)info.GetValue("ForeColor",s);
-            s.m_BackColor = (Color)info.GetValue("BackColor",s);
-            s.m_HatchStyle = (HatchStyle)info.GetEnum("HatchStyle",typeof(HatchStyle));
+            s._foreColor = (Color)info.GetValue("ForeColor", s);
+            s._backColor = (Color)info.GetValue("BackColor", s);
+            s._hatchStyle = (HatchStyle)info.GetEnum("HatchStyle", typeof(HatchStyle));
             break;
         }
         return s;
@@ -183,61 +149,153 @@ namespace Altaxo.Graph
     }
 
 
-    /// <summary>
-    /// Finale measures after deserialization of the linear axis.
-    /// </summary>
-    /// <param name="obj">Not used.</param>
-    public virtual void OnDeserialization(object obj)
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(BrushHolder), 1)]
+    public class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        BrushHolder s = (BrushHolder)obj;
+        info.AddValue("Type", s._brushType);
+        switch (s._brushType)
+        {
+          case BrushType.SolidBrush:
+            info.AddValue("ForeColor", s._foreColor);
+            break;
+          case BrushType.HatchBrush:
+            info.AddValue("ForeColor", s._foreColor);
+            info.AddValue("BackColor", s._backColor);
+            info.AddEnum("HatchStyle", s._hatchStyle);
+            break;
+          case BrushType.LinearGradientBrush:
+            info.AddValue("ForeColor", s._foreColor);
+            info.AddValue("BackColor", s._backColor);
+            info.AddEnum("WrapMode", s._wrapMode);
+            info.AddEnum("GradientMode", s._gradientMode);
+            info.AddEnum("GradientShape", s._gradientShape);
+            info.AddValue("Scale", s._scale);
+            info.AddValue("Focus", s._focus);
+            break;
+          case BrushType.PathGradientBrush:
+            info.AddValue("ForeColor", s._foreColor);
+            info.AddValue("BackColor", s._backColor);
+            info.AddEnum("WrapMode", s._wrapMode);
+            break;
+          case BrushType.TextureBrush:
+            info.AddValue("Texture", s._textureImage);
+            info.AddEnum("WrapMode", s._wrapMode);
+            info.AddValue("Scale", s._scale);
+            break;
+        } // end of switch
+      }
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+
+        BrushHolder s = null != o ? (BrushHolder)o : new BrushHolder(Color.Black);
+
+        s._brushType = (BrushType)info.GetValue("Type", s);
+        switch (s._brushType)
+        {
+          case BrushType.SolidBrush:
+            s._foreColor = (Color)info.GetValue("ForeColor", s);
+            break;
+          case BrushType.HatchBrush:
+            s._foreColor = (Color)info.GetValue("ForeColor", s);
+            s._backColor = (Color)info.GetValue("BackColor", s);
+            s._hatchStyle = (HatchStyle)info.GetEnum("HatchStyle", typeof(HatchStyle));
+            break;
+          case BrushType.LinearGradientBrush:
+             s._foreColor = (Color)info.GetValue("ForeColor",s);
+             s._backColor = (Color)info.GetValue("BackColor", s);
+             s._wrapMode = (WrapMode)info.GetEnum("WrapMode", typeof(WrapMode));
+             s._gradientMode = (LinearGradientModeEx)info.GetEnum("GradientMode", typeof(LinearGradientModeEx));
+            s._gradientShape = (LinearGradientShape)info.GetEnum("GradientShape", typeof(LinearGradientShape));
+            s._scale = info.GetSingle("Scale");
+            s._focus = info.GetSingle("Focus");
+            break;
+          case BrushType.PathGradientBrush:
+            s._foreColor = (Color)info.GetValue("ForeColor", s);
+            s._backColor = (Color)info.GetValue("BackColor", s);
+            s._wrapMode = (WrapMode)info.GetEnum("WrapMode", typeof(WrapMode));
+            break;
+          case BrushType.TextureBrush:
+            s.TextureImage = (ImageProxy)info.GetValue("Texture", s);
+            s._wrapMode = (WrapMode)info.GetEnum("WrapMode", typeof(WrapMode));
+            s._scale = info.GetSingle("Scale");
+            break;
+        }
+        return s;
+      }
     }
+
+
+   
     #endregion
 
     public BrushHolder(BrushHolder from)
     {
-      m_BrushType   = from.m_BrushType; // Type of the brush
-      m_Brush = null;      // this is the cached brush object
-      m_ForeColor   = from.m_ForeColor; // Color of the brush
-      m_BackColor   = from.m_BackColor; // Backcolor of brush, f.i.f. HatchStyle brushes
-      m_HatchStyle  = from.m_HatchStyle; // für HatchBrush
-      m_Image       = null==from.m_Image ? null : (Image)from.m_Image.Clone(); // für Texturebrush
-      m_Matrix      = null==from.m_Matrix ? null : (Matrix)from.m_Matrix.Clone(); // für TextureBrush
-      m_WrapMode    = from.m_WrapMode; // für TextureBrush und LinearGradientBrush
-      m_Rectangle   = from.m_Rectangle;
-      m_Float1      = from.m_Float1;
-      m_Bool1       = from.m_Bool1;
-      this.m_GradientMode = from.m_GradientMode;
-      this.m_GradientShape = from.m_GradientShape;
-      this.m_Scale = from.m_Scale;
+      _brushType = from._brushType; // Type of the brush
+      _cachedBrush = null;      // this is the cached brush object
+      _foreColor = from._foreColor; // Color of the brush
+      _backColor = from._backColor; // Backcolor of brush, f.i.f. HatchStyle brushes
+      _hatchStyle = from._hatchStyle; // für HatchBrush
+      _textureImage = null == from._textureImage ? null : from._textureImage.Clone(); // für Texturebrush
+      _wrapMode = from._wrapMode; // für TextureBrush und LinearGradientBrush
+      _brushBoundingRectangle = from._brushBoundingRectangle;
+      _focus = from._focus;
+      _bool1 = from._bool1;
+      this._gradientMode = from._gradientMode;
+      this._gradientShape = from._gradientShape;
+      this._scale = from._scale;
     }
 
-  
+
     public BrushHolder(Color c)
     {
-      this.m_BrushType = BrushType.SolidBrush;
-      this.m_ForeColor = c;
+      this._brushType = BrushType.SolidBrush;
+      this._foreColor = c;
     }
 
     public static implicit operator System.Drawing.Brush(BrushHolder bh)
     {
       return bh.Brush;
     }
- 
+
 
     public BrushType BrushType
     {
-      get 
+      get
       {
-        return this.m_BrushType; 
+        return this._brushType;
       }
       set
       {
-        BrushType oldValue = this.m_BrushType;
-        m_BrushType = value;
-        if (m_BrushType != oldValue)
+        BrushType oldValue = this._brushType;
+        _brushType = value;
+        if (_brushType != oldValue)
         {
           _SetBrushVariable(null);
+          OnBrushTypeChanged(oldValue, value);
           OnChanged();
         }
+      }
+    }
+
+    /// <summary>
+    /// Intended to initialize some brush variables to default values if the brush type changed.
+    /// </summary>
+    /// <param name="oldValue">Old brush type.</param>
+    /// <param name="newValue">New brush type.</param>
+    protected virtual void OnBrushTypeChanged(BrushType oldValue, BrushType newValue)
+    {
+      switch (newValue)
+      {
+        case BrushType.LinearGradientBrush:
+          _scale = 0;
+          break;
+        case BrushType.TextureBrush:
+          _scale = 1;
+          break;
+
       }
     }
 
@@ -248,7 +306,7 @@ namespace Altaxo.Graph
     {
       get
       {
-        return !(m_BrushType == BrushType.SolidBrush && m_ForeColor.A == 0);
+        return !(_brushType == BrushType.SolidBrush && _foreColor.A == 0);
       }
     }
 
@@ -259,17 +317,17 @@ namespace Altaxo.Graph
     {
       get
       {
-        return m_BrushType == BrushType.SolidBrush && m_ForeColor.A == 0;
+        return _brushType == BrushType.SolidBrush && _foreColor.A == 0;
       }
     }
 
     public Color Color
     {
-      get { return m_ForeColor; }
+      get { return _foreColor; }
       set
       {
-        bool bChanged = (m_ForeColor!=value);
-        m_ForeColor = value;
+        bool bChanged = (_foreColor != value);
+        _foreColor = value;
         if (bChanged)
         {
           _SetBrushVariable(null);
@@ -280,11 +338,11 @@ namespace Altaxo.Graph
 
     public Color BackColor
     {
-      get { return m_BackColor; }
+      get { return _backColor; }
       set
       {
-        bool bChanged = (m_BackColor!=value);
-        m_BackColor = value;
+        bool bChanged = (_backColor != value);
+        _backColor = value;
         if (bChanged)
         {
           _SetBrushVariable(null);
@@ -297,12 +355,12 @@ namespace Altaxo.Graph
     {
       get
       {
-        return m_HatchStyle;
+        return _hatchStyle;
       }
       set
       {
-        bool bChanged = (m_HatchStyle != value);
-        m_HatchStyle = value;
+        bool bChanged = (_hatchStyle != value);
+        _hatchStyle = value;
         if (bChanged)
         {
           _SetBrushVariable(null);
@@ -315,12 +373,12 @@ namespace Altaxo.Graph
     {
       get
       {
-        return m_WrapMode;
+        return _wrapMode;
       }
       set
       {
-        bool bChanged = (m_WrapMode != value);
-        m_WrapMode = value;
+        bool bChanged = (_wrapMode != value);
+        _wrapMode = value;
         if (bChanged)
         {
           _SetBrushVariable(null);
@@ -333,12 +391,12 @@ namespace Altaxo.Graph
     {
       get
       {
-        return m_GradientMode;
+        return _gradientMode;
       }
       set
       {
-        bool bChanged = (m_GradientMode != value);
-        m_GradientMode = value;
+        bool bChanged = (_gradientMode != value);
+        _gradientMode = value;
         if (bChanged)
         {
           _SetBrushVariable(null);
@@ -391,12 +449,12 @@ namespace Altaxo.Graph
     {
       get
       {
-        return m_GradientShape;
+        return _gradientShape;
       }
       set
       {
-        bool bChanged = (m_GradientShape != value);
-        m_GradientShape = value;
+        bool bChanged = (_gradientShape != value);
+        _gradientShape = value;
         if (bChanged)
         {
           _SetBrushVariable(null);
@@ -409,12 +467,12 @@ namespace Altaxo.Graph
     {
       get
       {
-        return m_Float1;
+        return _focus;
       }
       set
       {
-        bool bChanged = (m_Float1 != value);
-        m_Float1 = value;
+        bool bChanged = (_focus != value);
+        _focus = value;
         if (bChanged)
         {
           _SetBrushVariable(null);
@@ -427,12 +485,12 @@ namespace Altaxo.Graph
     {
       get
       {
-        return m_Scale;
+        return _scale;
       }
       set
       {
-        bool bChanged = (m_Scale != value);
-        m_Scale = value;
+        bool bChanged = (_scale != value);
+        _scale = value;
         if (bChanged)
         {
           _SetBrushVariable(null);
@@ -441,18 +499,48 @@ namespace Altaxo.Graph
       }
     }
 
+    public ImageProxy TextureImage
+    {
+      get
+      {
+        return _textureImage;
+      }
+      set
+      {
+        bool bChanged = _textureImage != value;
+        _textureImage = value;
+        if (bChanged)
+        {
+          _SetBrushVariable(null);
+          OnChanged();
+        }
+      }
+    }
+
+    public float TextureScale
+    {
+      get
+      {
+        return _scale;
+      }
+      set
+      {
+        this.GradientScale = value;
+      }
+    }
+
     public RectangleF Rectangle
     {
       get
       {
-        return m_Rectangle;
+        return _brushBoundingRectangle;
       }
       set
       {
-        if (m_BrushType == BrushType.LinearGradientBrush || m_BrushType == BrushType.PathGradientBrush)
+        if (_brushType == BrushType.LinearGradientBrush || _brushType == BrushType.PathGradientBrush)
         {
-          bool bChanged = (m_Rectangle != value);
-          m_Rectangle = value;
+          bool bChanged = (_brushBoundingRectangle != value);
+          _brushBoundingRectangle = value;
           if (bChanged)
           {
             _SetBrushVariable(null);
@@ -461,7 +549,7 @@ namespace Altaxo.Graph
         }
         else
         {
-          m_Rectangle = value; // has no meaning for other brushes, so we set it but dont care
+          _brushBoundingRectangle = value; // has no meaning for other brushes, so we set it but dont care
         }
       }
     }
@@ -471,75 +559,83 @@ namespace Altaxo.Graph
     {
       get
       {
-        if (m_Brush == null)
+        if (_cachedBrush == null)
         {
           Brush br = null;
-          switch (m_BrushType)
+          switch (_brushType)
           {
             case BrushType.SolidBrush:
-              br = new SolidBrush(m_ForeColor);
+              br = new SolidBrush(_foreColor);
               break;
             case BrushType.HatchBrush:
-              br = new HatchBrush(m_HatchStyle, m_ForeColor, m_BackColor);
+              br = new HatchBrush(_hatchStyle, _foreColor, _backColor);
               break;
             case BrushType.LinearGradientBrush:
-              if (m_Rectangle.IsEmpty)
-                m_Rectangle = new RectangleF(0, 0, 1000, 1000);
+              if (_brushBoundingRectangle.IsEmpty)
+                _brushBoundingRectangle = new RectangleF(0, 0, 1000, 1000);
               LinearGradientBrush lgb;
               LinearGradientMode lgmode;
               bool reverse;
-              BrushHolder.ToLinearGradientMode(m_GradientMode, out lgmode, out reverse);
-              br = lgb = new LinearGradientBrush(m_Rectangle, reverse?m_BackColor:m_ForeColor, reverse?m_ForeColor:m_BackColor, lgmode);
-              if(m_WrapMode!= WrapMode.Clamp)
-                lgb.WrapMode = m_WrapMode;
-              if (m_GradientShape == LinearGradientShape.Triangular)
-                lgb.SetBlendTriangularShape(m_Float1, m_Scale);
-              else if (m_GradientShape == LinearGradientShape.SigmaBell)
-                lgb.SetSigmaBellShape(m_Float1, m_Scale);
+              BrushHolder.ToLinearGradientMode(_gradientMode, out lgmode, out reverse);
+              br = lgb = new LinearGradientBrush(_brushBoundingRectangle, reverse ? _backColor : _foreColor, reverse ? _foreColor : _backColor, lgmode);
+              if (_wrapMode != WrapMode.Clamp)
+                lgb.WrapMode = _wrapMode;
+              if (_gradientShape == LinearGradientShape.Triangular)
+                lgb.SetBlendTriangularShape(_focus, _scale);
+              else if (_gradientShape == LinearGradientShape.SigmaBell)
+                lgb.SetSigmaBellShape(_focus, _scale);
               break;
             case BrushType.PathGradientBrush:
               GraphicsPath p = new GraphicsPath();
-              if (m_Rectangle.IsEmpty)
-                m_Rectangle = new RectangleF(0, 0, 1000, 1000);
-              p.AddRectangle(m_Rectangle);
-              PathGradientBrush pgb =  new PathGradientBrush(p);
-              pgb.SurroundColors = new Color[] { m_ForeColor };
-              pgb.CenterColor = m_BackColor;
-              pgb.WrapMode = m_WrapMode;
+              if (_brushBoundingRectangle.IsEmpty)
+                _brushBoundingRectangle = new RectangleF(0, 0, 1000, 1000);
+              p.AddRectangle(_brushBoundingRectangle);
+              PathGradientBrush pgb = new PathGradientBrush(p);
+              pgb.SurroundColors = new Color[] { _foreColor };
+              pgb.CenterColor = _backColor;
+              pgb.WrapMode = _wrapMode;
               br = pgb;
               break;
             case BrushType.TextureBrush:
-              TextureBrush tb = new TextureBrush(System.Windows.Forms.Form.ActiveForm.Icon.ToBitmap());
+              Image img = null != _textureImage ? _textureImage.GetImage() : null;
+              if (img == null)
+              {
+                img = Current.MainWindow.Icon.ToBitmap();
+              }
+              TextureBrush tb = new TextureBrush(img);
+              tb.WrapMode = this._wrapMode;
+              if (_scale != 1)
+                tb.ScaleTransform(_scale, _scale);
               br = tb;
               break;
           } // end of switch
           this._SetBrushVariable(br);
         }
-        return m_Brush;
+        return _cachedBrush;
       } // end of get
-     } // end of prop. Brush
+    } // end of prop. Brush
 
-  
+
 
     public void SetSolidBrush(Color c)
     {
-      m_BrushType = BrushType.SolidBrush;
-      m_ForeColor     = c;
+      _brushType = BrushType.SolidBrush;
+      _foreColor = c;
       _SetBrushVariable(null);
       OnChanged();
     }
 
     public void SetHatchBrush(HatchStyle hs, Color fc)
     {
-      SetHatchBrush(hs,fc,Color.Black);
+      SetHatchBrush(hs, fc, Color.Black);
     }
 
     public void SetHatchBrush(HatchStyle hs, Color fc, Color bc)
     {
-      m_BrushType = BrushType.HatchBrush;
-      m_HatchStyle = hs;
-      m_ForeColor = fc;
-      m_BackColor = bc;
+      _brushType = BrushType.HatchBrush;
+      _hatchStyle = hs;
+      _foreColor = fc;
+      _backColor = bc;
 
       _SetBrushVariable(null);
       OnChanged();
@@ -547,30 +643,35 @@ namespace Altaxo.Graph
 
     protected void _SetBrushVariable(Brush br)
     {
-      if(null!=m_Brush)
-        m_Brush.Dispose();
+      if (null != _cachedBrush)
+        _cachedBrush.Dispose();
 
-      m_Brush = br;
+      _cachedBrush = br;
     }
-    
-    public object Clone()
+
+    object ICloneable.Clone()
+    {
+      return new BrushHolder(this);
+    }
+
+    public BrushHolder Clone()
     {
       return new BrushHolder(this);
     }
 
     public void Dispose()
     {
-      if(null!=m_Brush)
-        m_Brush.Dispose();
-      m_Brush = null;
+      if (null != _cachedBrush)
+        _cachedBrush.Dispose();
+      _cachedBrush = null;
     }
     #region IChangedEventSource Members
 
-    public event System.EventHandler Changed;
+ 
 
     protected virtual void OnChanged()
     {
-      if(null!=Changed)
+      if (null != Changed)
         Changed(this, new EventArgs());
     }
 

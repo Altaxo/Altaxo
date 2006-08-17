@@ -30,7 +30,6 @@ namespace Altaxo.Graph.BackgroundStyles
   [Serializable]
   public class WhiteOut : IBackgroundStyle
   {
-    
 
     #region Serialization
 
@@ -53,7 +52,6 @@ namespace Altaxo.Graph.BackgroundStyles
     }
 
     #endregion
-
 
     public WhiteOut()
     {
@@ -90,13 +88,13 @@ namespace Altaxo.Graph.BackgroundStyles
       g.FillRectangle(Brushes.White,innerArea.Left,innerArea.Top,innerArea.Width,innerArea.Height);
     }
 
-    public bool SupportsColor { get { return false; }}
+    public bool SupportsBrush { get { return false; }}
 
-    public Color Color
+    public BrushHolder Brush
     {
       get
       {
-        return Color.White;
+        return null;
       }
       set
       {

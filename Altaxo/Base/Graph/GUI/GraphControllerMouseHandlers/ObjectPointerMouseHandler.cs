@@ -474,6 +474,20 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
 
       dao.SetData("Altaxo.Graph.GraphObjectList", objectList);
 
+      // Test code to test if the object list can be serialized
+      if(false)
+      {
+      System.Runtime.Serialization.Formatters.Binary.BinaryFormatter binform = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+        System.IO.MemoryStream stream = new System.IO.MemoryStream();
+        binform.Serialize(stream, objectList);
+
+        stream.Flush();
+        stream.Seek(0, System.IO.SeekOrigin.Begin);
+        object obj = binform.Deserialize(stream);
+        stream.Close();
+        stream.Dispose();
+      }
+
       // now copy the data object to the clipboard
       System.Windows.Forms.Clipboard.SetDataObject(dao, true);
     }

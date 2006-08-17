@@ -88,6 +88,9 @@ namespace Altaxo.Gui.Common.Drawing
       if (Current.Gui.ShowDialog(ctrl, "Brush properties"))
       {
         this.Brush = ctrl.Brush;
+        OnSelectedItemChanged(EventArgs.Empty);
+        OnSelectedValueChanged(EventArgs.Empty);
+        OnSelectionChangeCommitted(EventArgs.Empty);
       }
     }
 

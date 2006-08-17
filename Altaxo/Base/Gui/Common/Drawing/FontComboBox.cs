@@ -28,69 +28,93 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.ComponentModel;
 using Altaxo.Graph;
-using Altaxo.Drawing;
 
 
 namespace Altaxo.Gui.Common.Drawing
 {
-  public class TextureImageComboBox : ComboBox
+
+
+
+  public class FontComboBox : ComboBox
   {
-    public TextureImageComboBox()
+    private class FontAndStyle
+    {
+      public FontFamily Family;
+      public FontStyle Style;
+      public FontAndStyle(FontFamily fam, FontStyle style)
+      {
+        Family = fam;
+        Style = style;
+      }
+      public override bool Equals(object obj)
+      {
+        if(obj==null || !(obj is FontAndStyle))
+          return false;
+        FontAndStyle from = (FontAndStyle)obj;
+
+        return this.Family == from.Family && this.Style == from.Style;
+      }
+
+      public override int GetHashCode()
+      {
+        return Family.GetHashCode() + Style.GetHashCode();
+      }
+
+      public override string ToString()
+      {
+        return Family.Name + "-" + Style.ToString();
+      }
+
+      public static FontAndStyle Default
+      {
+        get { return new FontAndStyle(FontFamily.GenericSansSerif, FontStyle.Regular); }
+      }
+    }
+
+    public FontComboBox()
     {
       DropDownStyle = ComboBoxStyle.DropDownList;
       DrawMode = DrawMode.OwnerDrawFixed;
       ItemHeight = Font.Height;
-
-      this.ContextMenuStrip = new ContextMenuStrip();
-      this.ContextMenuStrip.Items.Add("From file ...", null, EhLoadFromFile);
     }
 
-    public TextureImageComboBox(ImageProxy selected)
+    public FontComboBox(Font selected)
       : this()
     {
       SetDataSource(selected);
     }
 
 
-    void EhLoadFromFile(object sender, EventArgs e)
-    {
-      OpenFileDialog dlg = new OpenFileDialog();
-      if (DialogResult.OK == dlg.ShowDialog(Current.MainWindow))
-      {
-        ImageProxy img = ImageProxy.FromFile(dlg.FileName);
-        if (img.IsValid)
-        {
-          SetDataSource(img);
-          OnSelectedItemChanged(EventArgs.Empty);
-          OnSelectedValueChanged(EventArgs.Empty);
-          OnSelectionChangeCommitted(EventArgs.Empty);
-        }
-      }
-    }
 
-    void SetDataSource(ImageProxy selected)
+
+    void SetDataSource(Font selected)
     {
       this.BeginUpdate();
 
       Items.Clear();
 
-      Items.Add(ImageProxy.FromResource("Altaxo.Textures.Marbel.Marbel01.jpg"));
-
-      if (selected != null)
+      foreach (FontFamily ff in FontFamily.Families)
       {
-        Items.Add(selected);
-        SelectedItem = selected;
+        
+        foreach(FontStyle style in Enum.GetValues(typeof(FontStyle)))
+        {
+          if (ff.IsStyleAvailable(style))
+          Items.Add(new FontAndStyle(ff,style));
+        }
       }
+
+      SelectedItem = new FontAndStyle(selected.FontFamily,selected.Style);
 
       this.EndUpdate();
     }
 
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-    public ImageProxy TextureImage
+    public Font FontDocument
     {
       get
       {
-        return SelectedItem == null ? null : (ImageProxy)SelectedItem;
+          FontAndStyle fas = SelectedItem != null ? (FontAndStyle)SelectedItem : FontAndStyle.Default;
+          return new Font(fas.Family, 12, fas.Style);
       }
       set
       {
@@ -113,9 +137,14 @@ namespace Altaxo.Gui.Common.Drawing
       if (this.Enabled)
         e.DrawBackground();
 
-      ImageProxy item = e.Index >= 0 ? (ImageProxy)Items[e.Index] : null;
+      FontAndStyle item = e.Index >= 0 ? (FontAndStyle)Items[e.Index] : FontAndStyle.Default;
       SolidBrush foreColorBrush = new SolidBrush(e.ForeColor);
-      grfx.DrawString(item==null?"<No image>":item.ToString(), Font, foreColorBrush, rectText);
+
+      Font font = new Font(item.Family, Font.Size, item.Style);
+      grfx.DrawString("Abc", font, foreColorBrush, rectColor);
+      grfx.DrawString(item.ToString(), Font, foreColorBrush, rectText);
+
+      font.Dispose();
     }
 
 

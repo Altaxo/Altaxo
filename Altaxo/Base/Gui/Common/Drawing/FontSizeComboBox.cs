@@ -25,72 +25,69 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.ComponentModel;
-using Altaxo.Graph;
-using Altaxo.Drawing;
 
 
 namespace Altaxo.Gui.Common.Drawing
 {
-  public class TextureImageComboBox : ComboBox
+  public class FontSizeComboBox : ComboBox
   {
-    public TextureImageComboBox()
+    static List<float> _itemValues;
+
+    public FontSizeComboBox()
     {
-      DropDownStyle = ComboBoxStyle.DropDownList;
+      DropDownStyle = ComboBoxStyle.DropDown;
       DrawMode = DrawMode.OwnerDrawFixed;
       ItemHeight = Font.Height;
-
-      this.ContextMenuStrip = new ContextMenuStrip();
-      this.ContextMenuStrip.Items.Add("From file ...", null, EhLoadFromFile);
     }
 
-    public TextureImageComboBox(ImageProxy selected)
+    public FontSizeComboBox(float thickness)
       : this()
     {
-      SetDataSource(selected);
+
+      SetDataSource(thickness);
     }
 
-
-    void EhLoadFromFile(object sender, EventArgs e)
+    void SetDefaultValues()
     {
-      OpenFileDialog dlg = new OpenFileDialog();
-      if (DialogResult.OK == dlg.ShowDialog(Current.MainWindow))
-      {
-        ImageProxy img = ImageProxy.FromFile(dlg.FileName);
-        if (img.IsValid)
-        {
-          SetDataSource(img);
-          OnSelectedItemChanged(EventArgs.Empty);
-          OnSelectedValueChanged(EventArgs.Empty);
-          OnSelectionChangeCommitted(EventArgs.Empty);
-        }
-      }
+      _itemValues = new List<float>();
+      _itemValues.AddRange(new float[] { 6, 8,  10, 12, 14, 16, 18, 20, 24, 28, 32, 48, 72 });
     }
 
-    void SetDataSource(ImageProxy selected)
+    void SetDataSource(float thickness)
     {
       this.BeginUpdate();
 
+      if (_itemValues == null)
+        SetDefaultValues();
+
       Items.Clear();
 
-      Items.Add(ImageProxy.FromResource("Altaxo.Textures.Marbel.Marbel01.jpg"));
-
-      if (selected != null)
+      if (!_itemValues.Contains(thickness))
       {
-        Items.Add(selected);
-        SelectedItem = selected;
+        _itemValues.Add(thickness);
+        _itemValues.Sort();
       }
+
+      foreach (float val in _itemValues)
+        Items.Add(val);
+
+      SelectedItem = thickness;
 
       this.EndUpdate();
     }
 
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-    public ImageProxy TextureImage
+    public float FontSize
     {
       get
       {
-        return SelectedItem == null ? null : (ImageProxy)SelectedItem;
+        if (SelectedItem != null)
+          return (float)SelectedItem;
+        double v;
+        if (Altaxo.Serialization.GUIConversion.IsDouble(this.Text, out v))
+          return (float)v;
+        return 1;
       }
       set
       {
@@ -113,9 +110,36 @@ namespace Altaxo.Gui.Common.Drawing
       if (this.Enabled)
         e.DrawBackground();
 
-      ImageProxy item = e.Index >= 0 ? (ImageProxy)Items[e.Index] : null;
+      //grfx.DrawRectangle(new Pen(e.ForeColor), rectColor);
+
+
+      float itemThickness = (float)Items[e.Index];
       SolidBrush foreColorBrush = new SolidBrush(e.ForeColor);
-      grfx.DrawString(item==null?"<No image>":item.ToString(), Font, foreColorBrush, rectText);
+
+      if (itemThickness >= rectColor.Height)
+        grfx.FillRectangle(foreColorBrush, rectColor);
+      else
+        grfx.DrawLine(new Pen(foreColorBrush, itemThickness),
+       rectColor.Left, 0.5f * (rectColor.Top + rectColor.Bottom),
+       rectColor.Right, 0.5f * (rectColor.Top + rectColor.Bottom));
+
+      string text = Altaxo.Serialization.GUIConversion.ToString(itemThickness);
+      grfx.DrawString(text, Font, foreColorBrush, rectText);
+    }
+
+    protected override void OnValidating(System.ComponentModel.CancelEventArgs e)
+    {
+      double w;
+      if (Altaxo.Serialization.GUIConversion.IsDouble(this.Text, out w))
+      {
+        this.SetDataSource((float)w);
+      }
+      else
+      {
+        e.Cancel = true;
+      }
+
+      base.OnValidating(e);
     }
 
 

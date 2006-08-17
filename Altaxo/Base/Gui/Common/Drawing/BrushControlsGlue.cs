@@ -71,6 +71,8 @@ namespace Altaxo.Gui.Common.Drawing
           CbWrapMode = _cbWrapMode;
           CbGradientFocus = _cbGradientFocus;
           CbGradientScale = _cbGradientScale;
+          CbTextureImage = _cbTextureImage;
+          CbTextureScale = _cbTextureScale;
         }
       }
     }
@@ -97,7 +99,7 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
-
+    #region BrushType
     BrushTypeComboBox _cbBrushType;
 
     public BrushTypeComboBox CbBrushType
@@ -134,9 +136,12 @@ namespace Altaxo.Gui.Common.Drawing
         UpdateGradientShapeState();
         UpdateGradientFocusState();
         UpdateGradientScaleState();
+        UpdateTextureImageState();
+        UpdateTextureScaleState();
       }
     }
 
+    #endregion
 
     #region HatchStyle
     HatchStyleComboBox _cbHatchStyle;
@@ -240,6 +245,7 @@ namespace Altaxo.Gui.Common.Drawing
     }
 
     #endregion
+
     #region Color2
     ColorComboBox _cbColor2;
 
@@ -350,7 +356,7 @@ namespace Altaxo.Gui.Common.Drawing
       if (_brush != null)
       {
         BrushType btype = _brush.BrushType;
-        bool vis = (btype==BrushType.LinearGradientBrush || btype==BrushType.PathGradientBrush);
+        bool vis = (btype == BrushType.LinearGradientBrush || btype == BrushType.PathGradientBrush || btype == BrushType.TextureBrush);
         if (_lblWrapMode != null)
           _lblWrapMode.Visible = vis;
         if (_cbWrapMode != null)
@@ -616,6 +622,137 @@ namespace Altaxo.Gui.Common.Drawing
           _lblGradientScale.Visible = vis;
         if (_cbGradientScale != null)
           _cbGradientScale.Visible = vis;
+      }
+    }
+    #endregion
+
+    #region Texture Image
+
+    TextureImageComboBox _cbTextureImage;
+    public TextureImageComboBox CbTextureImage
+    {
+      get { return _cbTextureImage; }
+      set
+      {
+        if (_cbTextureImage != null)
+          _cbTextureImage.SelectionChangeCommitted -= EhTextureImage_SelectionChangeCommitted;
+
+        _cbTextureImage = value;
+        if (_brush != null && _cbTextureImage != null)
+          _cbTextureImage.TextureImage = _brush.TextureImage;
+
+        if (_cbTextureImage != null)
+          _cbTextureImage.SelectionChangeCommitted += EhTextureImage_SelectionChangeCommitted;
+
+        UpdateTextureImageState();
+
+      }
+    }
+
+    void EhTextureImage_SelectionChangeCommitted(object sender, EventArgs e)
+    {
+      if (_brush != null)
+      {
+        _brush.TextureImage = _cbTextureImage.TextureImage;
+        OnBrushChanged();
+      }
+    }
+
+    Control _lblTextureImage;
+    public Control LabelTextureImage
+    {
+      get
+      {
+        return _lblTextureImage;
+      }
+      set
+      {
+        _lblTextureImage = value;
+        UpdateTextureImageState();
+      }
+    }
+    void UpdateTextureImageState()
+    {
+      if (_brush != null)
+      {
+        BrushType btype = _brush.BrushType;
+        bool vis = (btype == BrushType.TextureBrush);
+        if (_lblTextureImage != null)
+          _lblTextureImage.Visible = vis;
+        if (_cbTextureImage != null)
+          _cbTextureImage.Visible = vis;
+      }
+    }
+
+    #endregion
+
+    #region Texture Scale
+    TextureScaleComboBox _cbTextureScale;
+    public TextureScaleComboBox CbTextureScale
+    {
+      get { return _cbTextureScale; }
+      set
+      {
+        if (_cbTextureScale != null)
+        {
+          _cbTextureScale.SelectionChangeCommitted -= EhTextureScale_SelectionChangeCommitted;
+          _cbTextureScale.TextUpdate -= EhTextureScale_TextChanged;
+        }
+
+        _cbTextureScale = value;
+        if (_brush != null && _cbTextureScale != null)
+          _cbTextureScale.TextureScale = _brush.TextureScale;
+
+        if (_cbTextureScale != null)
+        {
+          _cbTextureScale.SelectionChangeCommitted += EhTextureScale_SelectionChangeCommitted;
+          _cbTextureScale.TextUpdate += EhTextureScale_TextChanged;
+        }
+
+        UpdateTextureScaleState();
+      }
+    }
+
+    void EhTextureScale_SelectionChangeCommitted(object sender, EventArgs e)
+    {
+      if (_brush != null)
+      {
+        _brush.TextureScale = _cbTextureScale.TextureScale;
+        OnBrushChanged();
+      }
+    }
+    void EhTextureScale_TextChanged(object sender, EventArgs e)
+    {
+      if (_brush != null)
+      {
+        _brush.TextureScale = _cbTextureScale.TextureScale;
+        OnBrushChanged();
+      }
+    }
+
+    Control _lblTextureScale;
+    public Control LabelTextureScale
+    {
+      get
+      {
+        return _lblTextureScale;
+      }
+      set
+      {
+        _lblTextureScale = value;
+        UpdateTextureScaleState();
+      }
+    }
+    void UpdateTextureScaleState()
+    {
+      if (_brush != null)
+      {
+        BrushType btype = _brush.BrushType;
+        bool vis = (btype == BrushType.TextureBrush);
+        if (_lblTextureScale != null)
+          _lblTextureScale.Visible = vis;
+        if (_cbTextureScale != null)
+          _cbTextureScale.Visible = vis;
       }
     }
     #endregion

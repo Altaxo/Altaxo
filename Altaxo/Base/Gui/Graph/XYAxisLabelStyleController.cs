@@ -37,7 +37,7 @@ namespace Altaxo.Gui.Graph
     /// Called if the font family is changed.
     /// </summary>
     /// <param name="newValue">The new selected item of the combo box.</param>
-    void EhView_FontChanged(string newValue);
+    void EhView_FontChanged(Font newValue);
 
     /// <summary>
     /// Called if the color is changed.
@@ -112,8 +112,8 @@ namespace Altaxo.Gui.Graph
     /// <summary>
     /// Initializes the font family combo box.
     /// </summary>
-    /// <param name="name">The actual name of the choice.</param>
-    void Font_Initialize(string name);
+    /// <param name="font">The actual font of the choice.</param>
+    void Font_Initialize(Font font);
 
     /// <summary>
     /// Initializes the content of the Color combo box.
@@ -195,7 +195,7 @@ namespace Altaxo.Gui.Graph
     XYAxisLabelStyle _doc;
 
     /// <summary>The font of the label.</summary>
-    protected string _fontFamily;
+    protected Font _fontFamily;
 
     /// <summary>The color for the label.</summary>
     protected Color  _color;
@@ -239,7 +239,7 @@ namespace Altaxo.Gui.Graph
     {
       if(bInit)
       {
-        _fontFamily  = _doc.Font.FontFamily.Name;
+        _fontFamily  = _doc.Font;
         _color = _doc.Color;
         _fontSize = _doc.FontSize;
         _horizontalAlignment = _doc.HorizontalAlignment;
@@ -309,7 +309,7 @@ namespace Altaxo.Gui.Graph
       }
     }
 
-    public void EhView_FontChanged(string newValue)
+    public void EhView_FontChanged(Font newValue)
     {
       _fontFamily = newValue;
     }
@@ -386,8 +386,9 @@ namespace Altaxo.Gui.Graph
       if (!_backgroundStyleController.Apply())
         return false;
     
-      _doc.Font = new Font(_fontFamily,_fontSize,GraphicsUnit.World);
       
+      _doc.Font = new Font(_fontFamily.FontFamily,_fontSize,_fontFamily.Style,GraphicsUnit.World);
+     
       _doc.Color = _color;
 
       _doc.BackgroundStyle = (Altaxo.Graph.BackgroundStyles.IBackgroundStyle)_backgroundStyleController.ModelObject;
