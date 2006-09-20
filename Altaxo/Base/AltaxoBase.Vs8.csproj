@@ -1399,13 +1399,13 @@
     <Compile Include="Graph\Scales\LinearAxis.cs" />
     <Compile Include="Graph\Scales\Log10Axis.cs" />
     <Compile Include="Graph\Scales\NumericalAxis.cs" />
-    <Compile Include="Graph\Scales\Scaling\BoundaryRescaling.cs" />
-    <Compile Include="Graph\Scales\Scaling\DateTimeAxisRescaleConditions.cs" />
-    <Compile Include="Graph\Scales\Scaling\DateTimeAxisRescaleController.cs" />
-    <Compile Include="Graph\Scales\Scaling\LogarithmicAxisRescaleConditions.cs" />
-    <Compile Include="Graph\Scales\Scaling\LogarithmicAxisRescaleController.cs" />
-    <Compile Include="Graph\Scales\Scaling\NumericAxisRescaleConditions.cs" />
-    <Compile Include="Graph\Scales\Scaling\NumericAxisRescaleController.cs" />
+    <Compile Include="Graph\Scales\Rescaling\BoundaryRescaling.cs" />
+    <Compile Include="Graph\Scales\Rescaling\DateTimeAxisRescaleConditions.cs" />
+    <Compile Include="Graph\Scales\Rescaling\DateTimeAxisRescaleController.cs" />
+    <Compile Include="Graph\Scales\Rescaling\LogarithmicAxisRescaleConditions.cs" />
+    <Compile Include="Graph\Scales\Rescaling\LogarithmicAxisRescaleController.cs" />
+    <Compile Include="Graph\Scales\Rescaling\NumericAxisRescaleConditions.cs" />
+    <Compile Include="Graph\Scales\Rescaling\NumericAxisRescaleController.cs" />
     <Compile Include="Gui\Common\Drawing\FontComboBox.cs">
       <SubType>Component</SubType>
     </Compile>
