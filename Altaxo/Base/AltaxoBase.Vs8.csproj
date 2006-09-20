@@ -1383,7 +1383,6 @@
     <Compile Include="Graph\PlotGroups\SymbolShapeStyleGroupStyle.cs" />
     <Compile Include="Graph\PlotGroups\SymbolSizeGroupStyle.cs" />
     <Compile Include="Graph\PlotGroups\WaterfallTransform.cs" />
-    <Compile Include="Graph\Scales\Axis.cs" />
     <Compile Include="Graph\Scales\Boundaries\AbstractPhysicalBoundaries.cs" />
     <Compile Include="Graph\Scales\Boundaries\BoundariesChangedEventArgs.cs" />
     <Compile Include="Graph\Scales\Boundaries\EventHandlers.cs" />
@@ -1395,10 +1394,10 @@
     <Compile Include="Graph\Scales\Boundaries\IYBoundsHolder.cs" />
     <Compile Include="Graph\Scales\Boundaries\NumericalBoundaries.cs" />
     <Compile Include="Graph\Scales\Boundaries\PositiveFiniteNumericalBoundaries.cs" />
-    <Compile Include="Graph\Scales\DateTimeAxis.cs" />
-    <Compile Include="Graph\Scales\LinearAxis.cs" />
-    <Compile Include="Graph\Scales\Log10Axis.cs" />
-    <Compile Include="Graph\Scales\NumericalAxis.cs" />
+    <Compile Include="Graph\Scales\DateTimeScale.cs" />
+    <Compile Include="Graph\Scales\LinearScale.cs" />
+    <Compile Include="Graph\Scales\Log10Scale.cs" />
+    <Compile Include="Graph\Scales\NumericalScale.cs" />
     <Compile Include="Graph\Scales\Rescaling\BoundaryRescaling.cs" />
     <Compile Include="Graph\Scales\Rescaling\DateTimeAxisRescaleConditions.cs" />
     <Compile Include="Graph\Scales\Rescaling\DateTimeAxisRescaleController.cs" />
@@ -1406,6 +1405,7 @@
     <Compile Include="Graph\Scales\Rescaling\LogarithmicAxisRescaleController.cs" />
     <Compile Include="Graph\Scales\Rescaling\NumericAxisRescaleConditions.cs" />
     <Compile Include="Graph\Scales\Rescaling\NumericAxisRescaleController.cs" />
+    <Compile Include="Graph\Scales\Scale.cs" />
     <Compile Include="Gui\Common\Drawing\FontComboBox.cs">
       <SubType>Component</SubType>
     </Compile>
