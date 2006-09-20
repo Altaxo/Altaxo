@@ -1,4 +1,4 @@
-﻿// <file>
+// <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
@@ -24,7 +24,7 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyTrademark("(C) Dr. Dirk Lellinger 2002-2006")]
 [assembly: AssemblyCulture("")]
 
-[assembly: AssemblyVersion(RevisionClass.Version + "." + RevisionClass.Revision)]
+[assembly: AssemblyVersion("0.53.0.481")]
 
 [assembly: AssemblyDelaySign(false)]
 

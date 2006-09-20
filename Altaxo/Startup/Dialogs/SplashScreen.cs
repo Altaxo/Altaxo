@@ -18,7 +18,25 @@ namespace ICSharpCode.SharpDevelop
 	public class SplashScreenForm : Form
 	{
 #if ModifiedForAltaxo
-		public const string VersionText = "Altaxo 0.53 build " + RevisionClass.Revision;
+		//public const string VersionText = "Altaxo 0.53 build " + RevisionClass.Revision;
+    public string VersionText
+    {
+      get
+      {
+        const string search1 = "=";
+        string[] vs = null;
+        System.Reflection.Assembly startass = System.Reflection.Assembly.GetExecutingAssembly();
+        int idx1 = startass.FullName.IndexOf(search1);
+        if(idx1>0)
+          vs = startass.FullName.Substring(idx1+search1.Length).Split(new char[]{'.',' ',','},5);
+
+        if (vs!=null && vs.Length>=4)
+          return "Altaxo " + vs[0] + '.' + vs[1] + " build " + vs[3];
+        else
+          return startass.FullName;
+      }
+    }
+
 #else
 		public const string VersionText = "Serralongue build " + RevisionClass.Revision;
 #endif
