@@ -1,43 +1,15 @@
-#region Copyright
-/////////////////////////////////////////////////////////////////////////////
-//    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
-//
-//    This program is free software; you can redistribute it and/or modify
-//    it under the terms of the GNU General Public License as published by
-//    the Free Software Foundation; either version 2 of the License, or
-//    (at your option) any later version.
-//
-//    This program is distributed in the hope that it will be useful,
-//    but WITHOUT ANY WARRANTY; without even the implied warranty of
-//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//    GNU General Public License for more details.
-//
-//    You should have received a copy of the GNU General Public License
-//    along with this program; if not, write to the Free Software
-//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-//
-/////////////////////////////////////////////////////////////////////////////
-#endregion
-
 using System;
+using System.Collections.Generic;
+using System.Text;
 using System.Drawing;
-using System.Drawing.Drawing2D;
-using Altaxo.Serialization;
-
 
 namespace Altaxo.Graph
 {
-  
- 
+  using PlotGroups;
 
-
-  /// <summary>
-  /// PlotItem holds the pair of data and style neccessary to plot a curve, function,
-  /// surface and so on.  
-  /// </summary>
-  public abstract class  PlotItem
-    :
+  public abstract class PlotItem
+  :
+    IGPlotItem,
     Main.IChangedEventSource,
     System.ICloneable,
     Main.IDocumentNode,
@@ -47,20 +19,18 @@ namespace Altaxo.Graph
     /// <summary>
     /// The parent object.
     /// </summary>
-    protected object m_Parent;
+    protected object _parent;
 
-    /*
-    /// <summary>
-    /// Get/sets the data object of this plot.
-    /// </summary>
-    // public abstract object Data { get; set; }
-    */
+    protected virtual void CopyFrom(PlotItem from)
+    {
+      this._parent = from._parent;
+    }
 
     /// <summary>
     /// Get/sets the style object of this plot.
     /// </summary>
     public abstract object StyleObject { get; set; }
-    
+
 
     /// <summary>
     /// The name of the plot. It can be of different length. An argument of zero or less
@@ -104,8 +74,16 @@ namespace Altaxo.Graph
 
     public virtual object ParentObject
     {
-      get { return m_Parent; }
-      set { m_Parent = value; }
+      get { return _parent; }
+      set { _parent = value; }
+    }
+
+    public virtual PlotItemCollection ParentCollection
+    {
+      get
+      {
+        return _parent as PlotItemCollection;
+      }
     }
 
     public virtual string Name
@@ -113,23 +91,26 @@ namespace Altaxo.Graph
       get
       {
         Main.INamedObjectCollection noc = ParentObject as Main.INamedObjectCollection;
-        return noc==null ? null : noc.GetNameOfChildObject(this);
+        return noc == null ? null : noc.GetNameOfChildObject(this);
       }
     }
 
     /// <summary>
     /// Fired if the data object changed or something inside the data object changed
     /// </summary>
+    [field:NonSerialized]
     public event System.EventHandler DataChanged;
 
     /// <summary>
     /// Fired if the style object changed or something inside the style object changed
     /// </summary>
+    [field:NonSerialized]
     public event System.EventHandler StyleChanged;
 
     /// <summary>
     /// Fired if either data or style has changed.
     /// </summary>
+    [field:NonSerialized]
     public event System.EventHandler Changed;
 
     /// <summary>
@@ -137,8 +118,8 @@ namespace Altaxo.Graph
     /// </summary>
     public virtual void OnDataChanged()
     {
-      if(null!=DataChanged)
-        DataChanged(this,new System.EventArgs());
+      if (null != DataChanged)
+        DataChanged(this, new System.EventArgs());
 
       OnChanged();
     }
@@ -148,20 +129,21 @@ namespace Altaxo.Graph
     /// </summary>
     public virtual void OnStyleChanged()
     {
-      if(null!=StyleChanged)
-        StyleChanged(this,new System.EventArgs());
-      
-      OnChanged();}
+      if (null != StyleChanged)
+        StyleChanged(this, new System.EventArgs());
+
+      OnChanged();
+    }
 
     /// <summary>
     /// Intended to used by derived classes, fires the Changed event
     /// </summary>
     public virtual void OnChanged()
     {
-      if(null!=Changed)
-        Changed(this,new System.EventArgs());
-    
-    
+      if (null != Changed)
+        Changed(this, new System.EventArgs());
+
+
     }
 
 
@@ -192,7 +174,7 @@ namespace Altaxo.Graph
     /// <returns>The object with the specified name.</returns>
     public virtual object GetChildObjectNamed(string name)
     {
-     
+
       return null;
     }
 
@@ -203,9 +185,9 @@ namespace Altaxo.Graph
     /// <returns>The name of the object. Null if the object is not found. String.Empty if the object is found but has no name.</returns>
     public virtual string GetNameOfChildObject(object o)
     {
-      if(o==null)
+      if (o == null)
         return null;
-      
+
       else
         return null;
     }
@@ -222,5 +204,24 @@ namespace Altaxo.Graph
       return null;
     }
 
+
+    #region IPlotItem Members
+
+    public abstract void CollectStyles(PlotGroupStyleCollection styles);
+
+    public abstract void PrepareStyles(PlotGroupStyleCollection externalGroups);
+
+    public abstract void ApplyStyles(PlotGroupStyleCollection externalGroups);
+
+    /// <summary>
+    /// Paints a symbol for this plot item for use in a legend.
+    /// </summary>
+    /// <param name="g">The graphics context.</param>
+    /// <param name="location">The rectangle where the symbol should be painted into.</param>
+    public virtual void PaintSymbol(Graphics g, RectangleF location)
+    {
+    }
+
+    #endregion
   } // end of class PlotItem
 }

@@ -23,35 +23,37 @@
 using System;
 using Altaxo.Gui.Common;
 using Altaxo.Graph;
+using Altaxo.Graph.PlotGroups;
 using Altaxo.Main.GUI;
 using System.Collections;
 
 namespace Altaxo.Gui.Graph
 {
+  
   /// <summary>
   /// Summary description for XYColumnPlotItemController.
   /// </summary>
-  [UserControllerForObject(typeof(XYColumnPlotItem))]
-  public class XYColumnPlotItemController : TabbedElementController, Main.GUI.IMVCAController, IXYPlotGroupViewEventSink
+  [UserControllerForObject(typeof(G2DPlotItem))]
+  public class G2DPlotItemController : TabbedElementController, Main.GUI.IMVCAController, IXYPlotGroupViewEventSink
   {
-    XYColumnPlotItem _doc;
-    XYColumnPlotItem _tempdoc;
-    PlotGroup _parentPlotGroup;
+    G2DPlotItem _doc;
+    G2DPlotItem _tempdoc;
+    PlotGroupStyleCollection _groupStyles;
     
-    I2DPlotStyle _additionalStyle;
-    int _insertAdditionalStyle=-1;
+    IG2DPlotStyle _additionalPlotStyle;
+    int _insertAdditionalPlotStyle=-1;
     IXYPlotGroupView _plotGroupView;
 
     IXYPlotStyleCollectionController _styleCollectionController;
-    public XYColumnPlotItemController(XYColumnPlotItem doc)
+    public G2DPlotItemController(G2DPlotItem doc)
       : this(doc,null)
     {
     }
-    public XYColumnPlotItemController(XYColumnPlotItem doc, PlotGroup parent)
+    public G2DPlotItemController(G2DPlotItem doc, PlotGroupStyleCollection parent)
     {
-      _parentPlotGroup = parent;
+      _groupStyles = parent;
       _doc = doc;
-      _tempdoc = (XYColumnPlotItem)_doc.Clone();
+      _tempdoc = (G2DPlotItem)_doc.Clone();
 
       InitializeCollectionAndData();
       InitializeStyles();
@@ -65,21 +67,107 @@ namespace Altaxo.Gui.Graph
       AddTab("Styles",_styleCollectionController,_styleCollectionController.ViewObject);
       _styleCollectionController.CollectionChangeCommit += new EventHandler(_styleCollectionController_CollectionChangeCommit);
 
-      _plotGroupView = (IXYPlotGroupView)Current.Gui.GetControl(this,typeof(IXYPlotGroupView));
-      if (_parentPlotGroup != null)
-        _plotGroupView.InitializePlotGroupConditions(
-          0 != (_parentPlotGroup.Style & PlotGroupStyle.Color),
-          0 != (_parentPlotGroup.Style & PlotGroupStyle.Line),
-          0 != (_parentPlotGroup.Style & PlotGroupStyle.Symbol),
-          _parentPlotGroup.ChangeStylesConcurrently,
-          _parentPlotGroup.ChangeStylesStrictly
-          );
-
+      InitializePlotGroupView();
      
 
-      IMVCAController ctrl = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _tempdoc.Data, _tempdoc }, typeof(IMVCAController));
-      AddTab("Data", ctrl, ctrl.ViewObject);
+      IMVCAController ctrl = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _tempdoc.DataObject, _tempdoc }, typeof(IMVCAController));
+      if(ctrl!=null)
+        AddTab("Data", ctrl, ctrl.ViewObject);
     }
+
+    void InitializePlotGroupView()
+    {
+      bool bStandard = true;
+      bool bSerial = false;
+      bool color = false;
+      bool linestyle = false;
+      bool symbol = false;
+
+      if (_groupStyles != null)
+      {
+        color = _groupStyles.ContainsType(typeof(ColorGroupStyle));
+        linestyle = _groupStyles.ContainsType(typeof(LineStyleGroupStyle));
+        symbol = _groupStyles.ContainsType(typeof(SymbolShapeStyleGroupStyle));
+
+        if (_groupStyles.Count != (color ? 1 : 0) + (linestyle ? 1 : 0) + (symbol ? 1 : 0))
+          bStandard = false;
+
+        if(color && linestyle && typeof(LineStyleGroupStyle)==_groupStyles.GetChildTypeOf(typeof(ColorGroupStyle)))
+        {
+          bSerial = true;
+        }
+        if((linestyle && symbol) && typeof(SymbolShapeStyleGroupStyle)==_groupStyles.GetChildTypeOf(typeof(LineStyleGroupStyle)))
+        {
+          if (color && !bSerial)
+            bStandard = false;
+          else
+            bSerial = true;
+        }
+      }
+
+      if (bStandard && _groupStyles!=null)
+      {
+        _plotGroupView = (IXYPlotGroupView)Current.Gui.GetControl(this, typeof(IXYPlotGroupView));
+        _plotGroupView.InitializePlotGroupConditions(
+            color,
+            linestyle,
+            symbol,
+            !bSerial, //_parentPlotGroup.ChangeStylesConcurrently,
+            PlotGroupStrictness.Normal //_parentPlotGroup.ChangeStylesStrictly
+            );
+      }
+    }
+
+    void ApplyPlotGroupView()
+    {
+      if (null == _groupStyles || null == _plotGroupView)
+        return;
+
+
+      bool color = _plotGroupView.PlotGroupColor;
+      bool linestyle = _plotGroupView.PlotGroupLineType;
+      bool symbol = _plotGroupView.PlotGroupSymbol;
+      bool serial = !_plotGroupView.PlotGroupConcurrently;
+
+      if (_groupStyles.ContainsType(typeof(ColorGroupStyle)))
+        _groupStyles.RemoveType(typeof(ColorGroupStyle));
+      if (_groupStyles.ContainsType(typeof(LineStyleGroupStyle)))
+        _groupStyles.RemoveType(typeof(LineStyleGroupStyle));
+      if (_groupStyles.ContainsType(typeof(SymbolShapeStyleGroupStyle)))
+        _groupStyles.RemoveType(typeof(SymbolShapeStyleGroupStyle));
+
+
+      if (color)
+      {
+        _groupStyles.Add(new ColorGroupStyle());
+      }
+      if (linestyle)
+      {
+        if (serial && color)
+          _groupStyles.Add(new LineStyleGroupStyle(), typeof(ColorGroupStyle));
+        else
+          _groupStyles.Add(new LineStyleGroupStyle());
+      }
+      if (symbol)
+      {
+        if (serial && linestyle)
+          _groupStyles.Add(new SymbolShapeStyleGroupStyle(), typeof(LineStyleGroupStyle));
+        else if (serial && color)
+          _groupStyles.Add(new SymbolShapeStyleGroupStyle(), typeof(ColorGroupStyle));
+        else
+          _groupStyles.Add(new SymbolShapeStyleGroupStyle());
+      }
+
+
+
+      // now distribute the new style to the other plot items
+      if (_doc.ParentCollection != null)
+      {
+        _doc.ParentCollection.PrepareStyles(_groupStyles);
+        _doc.ParentCollection.ApplyStyles(_groupStyles, _doc);
+      }
+    }
+
 
     void InitializeStyles()
     {
@@ -89,29 +177,29 @@ namespace Altaxo.Gui.Graph
       // prepare the style 
       // if there is only one line style or one scatter style,
       // then add an additional scatter or line style, but set this additional style initially to have no function
-      _additionalStyle = null;
-      I2DPlotStyle[] lineScatterPair = new I2DPlotStyle[2];
+      _additionalPlotStyle = null;
+      IG2DPlotStyle[] lineScatterPair = new IG2DPlotStyle[2];
 
       if (_tempdoc.Style.Count > 0)
       {
         if (_tempdoc.Style[0] is XYPlotLineStyle && (_tempdoc.Style.Count == 1 || !(_tempdoc.Style[1] is XYPlotScatterStyle)))
         {
           XYPlotScatterStyle scatterStyle = new XYPlotScatterStyle();
-          _additionalStyle = scatterStyle;
+          _additionalPlotStyle = scatterStyle;
           scatterStyle.Shape = Altaxo.Graph.XYPlotScatterStyles.Shape.NoSymbol;
 
-          _insertAdditionalStyle = 1;
+          _insertAdditionalPlotStyle = 1;
           lineScatterPair[0] = _tempdoc.Style[0];
-          lineScatterPair[1] = _additionalStyle;
+          lineScatterPair[1] = _additionalPlotStyle;
         }
         else if (_tempdoc.Style[0] is XYPlotScatterStyle && (_tempdoc.Style.Count == 1 || !(_tempdoc.Style[1] is XYPlotLineStyle)))
         {
           XYPlotLineStyle lineStyle = new XYPlotLineStyle();
-          _additionalStyle = lineStyle;
+          _additionalPlotStyle = lineStyle;
           lineStyle.Connection = Altaxo.Graph.XYPlotLineStyles.ConnectionStyle.NoLine;
 
-          _insertAdditionalStyle = 0;
-          lineScatterPair[0] = _additionalStyle;
+          _insertAdditionalPlotStyle = 0;
+          lineScatterPair[0] = _additionalPlotStyle;
           lineScatterPair[1] = _tempdoc.Style[0];
         }
         else if (_tempdoc.Style.Count >= 2 &&
@@ -141,7 +229,7 @@ namespace Altaxo.Gui.Graph
           if(ct!=null)
           {
             arr.Add(new ControlViewElement(string.Empty,ct));
-            if(i==_insertAdditionalStyle)
+            if(i==_insertAdditionalPlotStyle)
             {
               if(ct is IXYPlotLineStyleController)
                 (ct as IXYPlotLineStyleController).SetEnableDisableMain(true);
@@ -154,16 +242,16 @@ namespace Altaxo.Gui.Graph
         Common.MultiChildController mctrl = new Common.MultiChildController((ControlViewElement[])arr.ToArray(typeof(ControlViewElement)), true);
         Current.Gui.GetControl(mctrl);
 
-        AddTab(_additionalStyle == null ? "Style 1&&2" : "Style 1", mctrl, mctrl.ViewObject);
+        AddTab(_additionalPlotStyle == null ? "Style 1&&2" : "Style 1", mctrl, mctrl.ViewObject);
 
-        continue_With_I = _additionalStyle == null ? 2 : 1;
+        continue_With_I = _additionalPlotStyle == null ? 2 : 1;
       }
 
 
       for (int i = continue_With_I; i < _tempdoc.Style.Count; i++)
       {
         ctrl = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _tempdoc.Style[i] }, typeof(IMVCAController));
-        AddTab("Style " + (i + 1).ToString(), ctrl, ctrl.ViewObject);
+        AddTab("Style " + (i + 1).ToString(), ctrl, ctrl!=null ? ctrl.ViewObject : null);
       }
 
       base.SetElements(false);
@@ -201,6 +289,8 @@ namespace Altaxo.Gui.Graph
 
       for(int i=0;i<TabCount;i++)
       {
+        if (Tab(i).Controller == null)
+          continue;
         if(false==Tab(i).Controller.Apply())
         {
           BringTabToFront(i);
@@ -210,33 +300,19 @@ namespace Altaxo.Gui.Graph
       }
 
       bool bAdditionalStyleIsVisible = false;
-      if (_additionalStyle is XYPlotScatterStyle)
-        bAdditionalStyleIsVisible = ((XYPlotScatterStyle)_additionalStyle).IsVisible;
-      if (_additionalStyle is XYPlotLineStyle)
-        bAdditionalStyleIsVisible = ((XYPlotLineStyle)_additionalStyle).IsVisible;
+      if (_additionalPlotStyle is XYPlotScatterStyle)
+        bAdditionalStyleIsVisible = ((XYPlotScatterStyle)_additionalPlotStyle).IsVisible;
+      if (_additionalPlotStyle is XYPlotLineStyle)
+        bAdditionalStyleIsVisible = ((XYPlotLineStyle)_additionalPlotStyle).IsVisible;
 
       if (bAdditionalStyleIsVisible)
       {
-        _tempdoc.Style.Insert(_insertAdditionalStyle,_additionalStyle);
+        _tempdoc.Style.Insert(_insertAdditionalPlotStyle,_additionalPlotStyle);
       }
 
       _doc.CopyFrom(_tempdoc);
 
-
-      if (null != _parentPlotGroup)
-      {
-        PlotGroupStyle plotGroupStyle = 0;
-        if (_plotGroupView.PlotGroupColor)
-          plotGroupStyle |= PlotGroupStyle.Color;
-        if (_plotGroupView.PlotGroupLineType)
-          plotGroupStyle |= PlotGroupStyle.Line;
-        if (_plotGroupView.PlotGroupSymbol)
-          plotGroupStyle |= PlotGroupStyle.Symbol;
-
-        _parentPlotGroup.SetPropertiesOnly(plotGroupStyle, _plotGroupView.PlotGroupConcurrently, _plotGroupView.PlotGroupStrict);
-        if (_plotGroupView.PlotGroupUpdate)
-          _parentPlotGroup.UpdateMembers(plotGroupStyle, _doc);
-      }
+      ApplyPlotGroupView();
 
       applyResult = true;
 
@@ -260,9 +336,9 @@ namespace Altaxo.Gui.Graph
 
     class MyPlotStyleCollectionController : XYPlotStyleCollectionController
     {
-      XYColumnPlotItemController _parent;
+      G2DPlotItemController _parent;
 
-      public MyPlotStyleCollectionController(XYColumnPlotItemController parent)
+      public MyPlotStyleCollectionController(G2DPlotItemController parent)
         : base(parent._tempdoc.Style)
       {
         _parent = parent;

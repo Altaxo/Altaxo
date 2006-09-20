@@ -85,6 +85,8 @@ namespace Altaxo.Graph.Procedures
     /// </summary>
     class CopyPageCommand
     {
+
+      /*
       [DllImport("user32.dll")]
       static extern bool OpenClipboard(IntPtr hWndNewOwner);
       [DllImport("user32.dll")]
@@ -97,11 +99,6 @@ namespace Altaxo.Graph.Procedures
       static extern IntPtr CopyEnhMetaFile(IntPtr hemfSrc, IntPtr hNULL);
       [DllImport("gdi32.dll")]
       static extern bool DeleteEnhMetaFile(IntPtr hemf);
-
-
-      static CopyPageCommand()
-      {
-      }
 
       /// <summary>
       /// Microsoft Knowledge Base Article - 323530 PRB: Metafiles on Clipboard Are Not Visible to All Applications
@@ -123,7 +120,7 @@ namespace Altaxo.Graph.Procedures
             {
               if (EmptyClipboard())
               {
-                IntPtr hRes = SetClipboardData(14 /*CF_ENHMETAFILE*/, hEMF2);
+                IntPtr hRes = SetClipboardData(14 , hEMF2); // 14==CF_ENHMETAFILE
                 bResult = hRes.Equals(hEMF2);
                 CloseClipboard();
              }
@@ -133,6 +130,8 @@ namespace Altaxo.Graph.Procedures
         }
         return bResult;
       }
+      */
+
 
       static public void Run(GraphController ctrl)
       {

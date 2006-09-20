@@ -92,7 +92,18 @@ namespace Altaxo.Graph.Axes.Boundaries
     /// <param name="idx">The index into this numeric column where the data value is located</param>
     /// <returns>True if data is in the tracked range, false if the data is not in the tracked range.</returns>
     public abstract bool Add(Altaxo.Data.IReadableColumn col, int idx);
-    
+
+
+    /// <summary>
+    /// Processes a single value.
+    /// If the data value is inside the considered value range, the boundaries are
+    /// updated and the number of items is increased by one. The function has to return true
+    /// in this case. On the other hand, if the value is outside the range, the function has to
+    /// return false.
+    /// </summary>
+    /// <param name="col">The data value.</param>
+    /// <returns>True if data is in the tracked range, false if the data is not in the tracked range.</returns>
+    public abstract bool Add(Altaxo.Data.AltaxoVariant item);
 
     public virtual void Reset()
     {

@@ -23,9 +23,10 @@
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
+using Altaxo.Collections;
 using Altaxo.Main.GUI;
 using Altaxo.Graph;
 
@@ -84,11 +85,8 @@ namespace Altaxo.Gui.Graph
     /// <summary>
     /// Intitalizes the drop line checkboxes.
     /// </summary>
-    /// <param name="bLeft">True when a line should be drawn to the left layer edge.</param>
-    /// <param name="bBottom">True when a line should be drawn to the bottom layer edge.</param>
-    /// <param name="bRight">True when a line should be drawn to the right layer edge.</param>
-    /// <param name="bTop">True when a line should be drawn to the top layer edge.</param>
-    void InitializeDropLineConditions(bool bLeft, bool bBottom, bool bRight, bool bTop);
+    /// <param name="names">List of names plus the information if they are selected or not.</param>
+    void InitializeDropLineConditions(List<SelectableListNode> names);
 
     
     void InitializeIndependentColor(bool val);
@@ -106,10 +104,7 @@ namespace Altaxo.Gui.Graph
     string SymbolStyle {get; }
     string SymbolSize  {get; }
 
-    bool DropLineLeft  {get; }
-    bool DropLineBottom {get; }
-    bool DropLineRight {get; }
-    bool DropLineTop   {get; }
+    List<SelectableListNode> DropLines { get; }
     int SkipPoints { get; }
 
 
@@ -232,17 +227,26 @@ namespace Altaxo.Gui.Graph
     }
    
 
+    
+
+
     public void SetDropLineConditions()
     {
-      bool bLeft = 0!=(_tempDoc.DropLine&Altaxo.Graph.XYPlotScatterStyles.DropLine.Left);
-      bool bRight = 0!=(_tempDoc.DropLine&Altaxo.Graph.XYPlotScatterStyles.DropLine.Right);
-      bool bTop = 0!=(_tempDoc.DropLine&Altaxo.Graph.XYPlotScatterStyles.DropLine.Top);
-      bool bBottom = 0!=(_tempDoc.DropLine&Altaxo.Graph.XYPlotScatterStyles.DropLine.Bottom);
-    
-      _view.InitializeDropLineConditions(bLeft,bBottom,bRight,bTop);
+      Altaxo.Graph.XYPlotLayer layer = Main.DocumentPath.GetRootNodeImplementing(_doc, typeof(Altaxo.Graph.XYPlotLayer)) as Altaxo.Graph.XYPlotLayer;
+
+      List<SelectableListNode> names = new List<SelectableListNode>();
+
+      foreach (A2DAxisStyleIdentifier id in layer.CoordinateSystem.GetJoinedAxisStyleIdentifier(layer.UsedAxisStyleIdentifier, _tempDoc.DropLine))
+      {
+
+        bool sel = _tempDoc.DropLine.Contains(id);
+        A2DAxisStyleInformation info = layer.CoordinateSystem.GetAxisStyleInformation(id);
+        names.Add(new SelectableListNode(info.NameOfAxisStyle, id, sel));
+      }
+
+      _view.InitializeDropLineConditions(names); 
     }
 
-   
 
 
 
@@ -308,29 +312,9 @@ namespace Altaxo.Gui.Graph
         _doc.SymbolSize = System.Convert.ToSingle(str);
 
         // Drop line left
-        if(_view.DropLineLeft) 
-          _doc.DropLine |= Altaxo.Graph.XYPlotScatterStyles.DropLine.Left;
-        else
-          _doc.DropLine &= (Altaxo.Graph.XYPlotScatterStyles.DropLine.All^Altaxo.Graph.XYPlotScatterStyles.DropLine.Left);
-
-
-        // Drop line bottom
-        if(_view.DropLineBottom) 
-          _doc.DropLine |= Altaxo.Graph.XYPlotScatterStyles.DropLine.Bottom;
-        else
-          _doc.DropLine &= (Altaxo.Graph.XYPlotScatterStyles.DropLine.All^Altaxo.Graph.XYPlotScatterStyles.DropLine.Bottom);
-
-        // Drop line right
-        if(_view.DropLineRight) 
-          _doc.DropLine |= Altaxo.Graph.XYPlotScatterStyles.DropLine.Right;
-        else
-          _doc.DropLine &= (Altaxo.Graph.XYPlotScatterStyles.DropLine.All^Altaxo.Graph.XYPlotScatterStyles.DropLine.Right);
-
-        // Drop line top
-        if(_view.DropLineTop) 
-          _doc.DropLine |= Altaxo.Graph.XYPlotScatterStyles.DropLine.Top;
-        else
-          _doc.DropLine &= (Altaxo.Graph.XYPlotScatterStyles.DropLine.All^Altaxo.Graph.XYPlotScatterStyles.DropLine.Top);
+        _doc.DropLine.Clear();
+        foreach (SelectableListNode node in _view.DropLines)
+          _doc.DropLine.Add((A2DAxisStyleIdentifier)node.Item);
 
         // Skip points
 

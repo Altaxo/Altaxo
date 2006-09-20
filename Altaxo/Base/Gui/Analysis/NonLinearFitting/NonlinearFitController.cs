@@ -299,7 +299,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         {
           if (_functionPlotItems[i] != null)
           {
-            graph.ActiveLayer.PlotItems.Remove((Altaxo.Graph.PlotItem)_functionPlotItems[i]);
+            graph.ActiveLayer.PlotItems.Remove((Altaxo.Graph.IGPlotItem)_functionPlotItems[i]);
             _functionPlotItems.RemoveAt(i);
 
           }

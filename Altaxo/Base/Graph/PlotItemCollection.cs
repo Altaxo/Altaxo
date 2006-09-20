@@ -1,26 +1,6 @@
-#region Copyright
-/////////////////////////////////////////////////////////////////////////////
-//    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
-//
-//    This program is free software; you can redistribute it and/or modify
-//    it under the terms of the GNU General Public License as published by
-//    the Free Software Foundation; either version 2 of the License, or
-//    (at your option) any later version.
-//
-//    This program is distributed in the hope that it will be useful,
-//    but WITHOUT ANY WARRANTY; without even the implied warranty of
-//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//    GNU General Public License for more details.
-//
-//    You should have received a copy of the GNU General Public License
-//    along with this program; if not, write to the Free Software
-//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-//
-/////////////////////////////////////////////////////////////////////////////
-#endregion
-
 using System;
+using System.Collections.Generic;
+using System.Text;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using Altaxo.Serialization;
@@ -28,109 +8,176 @@ using Altaxo.Graph.Axes.Boundaries;
 
 namespace Altaxo.Graph
 {
-  [SerializationSurrogate(0,typeof(PlotItemCollection.SerializationSurrogate0))]
-  [SerializationVersion(0)]
+  using PlotGroups;
+
   public class PlotItemCollection 
     :
-    Altaxo.Data.CollectionBase,
-    System.Runtime.Serialization.IDeserializationCallback,
+    IGPlotItem, 
+    IEnumerable<IGPlotItem>,
     Main.IChangedEventSource,
     Main.IChildChangedEventSink,
-    System.ICloneable,
     Main.IDocumentNode,
-    Main.INamedObjectCollection
+    Main.INamedObjectCollection,
+    IXBoundsHolder,
+    IYBoundsHolder
   {
-    /// <summary>The parent layer of this list.</summary>
-    private XYPlotLayer m_Owner; 
+    PlotGroupStyleCollection _styles;
+    List<IGPlotItem> _plotItems;
 
-    private PlotGroup.Collection m_PlotGroups;
+    [NonSerialized]
+    IGPlotItem[] _cachedPlotItemsFlattened;
+
+    /// <summary>The parent layer of this list.</summary>
+    private object _parent;
 
     #region Serialization
-    /// <summary>Used to serialize the PlotItemCollection Version 0.</summary>
-    public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PlotItemCollection), 0)]
+    public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public object[] m_PlotItems = null; 
-
-      /// <summary>
-      /// Serializes PlotItemCollection Version 0.
-      /// </summary>
-      /// <param name="obj">The PlotItemCollection to serialize.</param>
-      /// <param name="info">The serialization info.</param>
-      /// <param name="context">The streaming context.</param>
-      public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context  )
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
+        throw new NotImplementedException("Programming error - trying to serialize an old version of PlotItemCollection");
+        /*
         PlotItemCollection s = (PlotItemCollection)obj;
-        info.AddValue("Data",s.myList);
-        info.AddValue("PlotGroups",s.m_PlotGroups);
 
+        info.CreateArray("PlotItems", s.Count);
+        for (int i = 0; i < s.Count; i++)
+          info.AddValue("PlotItem", s[i]);
+        info.CommitArray();
+
+        // now serialize the PlotGroups
+        info.CreateArray("PlotGroups", s.m_PlotGroups.Count);
+        for (int i = 0; i < s.m_PlotGroups.Count; i++)
+        {
+          PlotGroup pg = (PlotGroup)s.m_PlotGroups[i];
+          info.AddValue("PlotGroup", new PlotGroup.Memento(pg, s));
+        }
+        info.CommitArray(); // PlotGroups
+        */
       }
 
-      /// <summary>
-      /// Deserializes the PlotItemCollection Version 0.
-      /// </summary>
-      /// <param name="obj">The empty PlotItemCollection object to deserialize into.</param>
-      /// <param name="info">The serialization info.</param>
-      /// <param name="context">The streaming context.</param>
-      /// <param name="selector">The deserialization surrogate selector.</param>
-      /// <returns>The deserialized PlotItemCollection.</returns>
-      public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
+      struct PGTrans
       {
-        PlotItemCollection s = (PlotItemCollection)obj;
+        public PlotGroupMemento PlotGroup;
+        public PlotItemCollection PlotItemCollection;
+      }
 
-        s.myList = (System.Collections.ArrayList)info.GetValue("Data",typeof(System.Collections.ArrayList));
-        s.m_PlotGroups = (Graph.PlotGroup.Collection)info.GetValue("PlotGroups",typeof(Graph.PlotGroup.Collection));
-        
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+
+        PlotItemCollection s = null != o ? (PlotItemCollection)o : new PlotItemCollection();
+
+        int count = info.OpenArray();
+        IGPlotItem[] plotItems = new IGPlotItem[count];
+        for (int i = 0; i < count; i++)
+        {
+          plotItems[i] = (IGPlotItem)info.GetValue("PlotItem", s);
+        }
+        info.CloseArray(count);
+
+
+        count = info.OpenArray(); // PlotGroups
+        PGTrans[] plotGroups = new PGTrans[count];
+        for (int i = 0; i < count; i++)
+        {
+          plotGroups[i].PlotGroup = (PlotGroupMemento)info.GetValue(s);
+        }
+        info.CloseArray(count);
+
+        // now assemble the new tree based collection based on the both fields
+
+        for (int pix = 0; pix < plotItems.Length; pix++)
+        {
+          // look if this plotItem is member of some group
+          int foundidx = -1;
+          for (int grx = 0; grx < plotGroups.Length; grx++)
+          {
+            if (Array.IndexOf<int>(plotGroups[grx].PlotGroup._plotItemIndices, pix) >= 0)
+            {
+              foundidx = grx; 
+            break;
+            }
+          }
+          if (foundidx < 0) // if not found in some group, add the item directly
+          {
+            s.Add(plotItems[pix]); 
+          }
+          else
+          {
+            
+            if (plotGroups[foundidx].PlotItemCollection == null)
+            {
+              PlotItemCollection newColl = new PlotItemCollection();
+              plotGroups[foundidx].PlotItemCollection = newColl;
+              s.Add(plotGroups[foundidx].PlotItemCollection);
+              // now set the properties of this new collection
+              bool serial = !plotGroups[foundidx].PlotGroup._concurrently;
+              IPlotGroupStyle curr = null;
+              IPlotGroupStyle prev = null;
+              if (0 != (plotGroups[foundidx].PlotGroup._plotGroupStyle & Version0PlotGroupStyle.Color))
+              {
+                curr = new ColorGroupStyle();
+                newColl.GroupStyles.Add(curr);
+              }
+              if (0 != (plotGroups[foundidx].PlotGroup._plotGroupStyle & Version0PlotGroupStyle.Line))
+              {
+                prev = curr;
+                curr = new LineStyleGroupStyle();
+                newColl.GroupStyles.Add(curr, serial ? prev.GetType() : null);
+              }
+              if (0 != (plotGroups[foundidx].PlotGroup._plotGroupStyle & Version0PlotGroupStyle.Symbol))
+              {
+                prev = curr;
+                curr = new SymbolShapeStyleGroupStyle();
+                newColl.GroupStyles.Add(curr, serial ? prev.GetType() : null);
+              }
+            }
+            // now add the item to this collection
+            plotGroups[foundidx].PlotItemCollection.Add(plotItems[pix]);
+          }
+        }
+
         return s;
       }
     }
 
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PlotItemCollection),0)]
-      public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PlotItemCollection), 1)]
+    public class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         PlotItemCollection s = (PlotItemCollection)obj;
-        
-        info.CreateArray("PlotItems",s.Count);
-        for(int i=0;i<s.Count;i++)
-          info.AddValue("PlotItem",s[i]);
+
+        info.CreateArray("PlotItems", s.Count);
+        for (int i = 0; i < s.Count; i++)
+          info.AddValue("PlotItem", s[i]);
         info.CommitArray();
 
-        // now serialize the PlotGroups
-        info.CreateArray("PlotGroups",s.m_PlotGroups.Count);
-        for(int i=0;i<s.m_PlotGroups.Count;i++)
-        {
-          PlotGroup pg = (PlotGroup)s.m_PlotGroups[i];
-          info.AddValue("PlotGroup",new PlotGroup.Memento(pg,s));
-        }
-        info.CommitArray(); // PlotGroups
+        info.AddValue("GroupStyles", s._styles);
       }
+     
+
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        
-        PlotItemCollection s = null!=o ? (PlotItemCollection)o : new PlotItemCollection();
+
+        PlotItemCollection s = null != o ? (PlotItemCollection)o : new PlotItemCollection();
 
         int count = info.OpenArray();
-        for(int i=0;i<count;i++)
+        IGPlotItem[] plotItems = new IGPlotItem[count];
+        for (int i = 0; i < count; i++)
         {
-          PlotItem plotitem = (PlotItem)info.GetValue("PlotItem",s);
-          s.Add(plotitem);
+          s.Add((IGPlotItem)info.GetValue("PlotItem", s));
         }
         info.CloseArray(count);
-        
 
-        count = info.OpenArray(); // PlotGroups
-        for(int i=0;i<count;i++)
-        {
-          PlotGroup.Memento pgm = (PlotGroup.Memento)info.GetValue(s);
-          s.m_PlotGroups.Add(pgm.GetPlotGroup(s));
-        }
-        info.CloseArray(count);
-        
+        s._styles = (PlotGroupStyleCollection)info.GetValue("GroupStyles", s);
+
         return s;
       }
     }
+
 
     /// <summary>
     /// Finale measures after deserialization.
@@ -139,30 +186,33 @@ namespace Altaxo.Graph
     public virtual void OnDeserialization(object obj)
     {
       // restore the event chain
-      for(int i=0;i<Count;i++)
+      for (int i = 0; i < Count; i++)
         WireItem(this[i]);
-
-      if(null!=m_PlotGroups)
-        m_PlotGroups.Changed += new EventHandler(this.EhPlotGroups_Changed);
-
     }
-        
+
     #endregion
 
-
+    #region Constructors
 
     public PlotItemCollection(XYPlotLayer owner)
     {
-      m_Owner = owner;
-      m_PlotGroups = new PlotGroup.Collection();
+      _parent = owner;
+      _plotItems = new List<IGPlotItem>();
+      _styles = new PlotGroupStyleCollection();
+    }
+
+    public PlotItemCollection()
+    {
+      _plotItems = new List<IGPlotItem>();
+      _styles = new PlotGroupStyleCollection();
     }
 
     /// <summary>
     /// Empty constructor for deserialization.
     /// </summary>
-    protected PlotItemCollection()
+    protected PlotItemCollection(int x)
     {
-      m_PlotGroups = new PlotGroup.Collection();
+      _styles = new PlotGroupStyleCollection();
     }
 
     /// <summary>
@@ -182,39 +232,67 @@ namespace Altaxo.Graph
     /// <param name="from">The list to clone all items from.</param>
     public PlotItemCollection(XYPlotLayer owner, PlotItemCollection from)
     {
-      m_Owner = owner;
-      m_PlotGroups = new PlotGroup.Collection();
+      _parent = owner;
+      _styles = new PlotGroupStyleCollection();
+      _plotItems = new List<IGPlotItem>();
+
 
       // Clone all the items in the list.
       for(int i=0;i<from.Count;i++)
-        Add((PlotItem)from[i].Clone()); // clone the items
+        Add((IGPlotItem)from[i].Clone()); // clone the items
 
       // special way neccessary to handle plot groups
-      this.m_PlotGroups = null==from.m_PlotGroups ? null : from.m_PlotGroups.Clone(this,from);
+      this._styles = null == from._styles ? null : from._styles.Clone();
     }
 
-    public object Clone()
+    object ICloneable.Clone()
     {
       return new PlotItemCollection(this);
     }
 
+    public PlotItemCollection Clone()
+    {
+      return new PlotItemCollection(this);
+    }
+
+    #endregion
+
+    #region Other stuff
+
     public XYPlotLayer ParentLayer
     {
-      get { return m_Owner; }
+      get { return _parent as XYPlotLayer; }
       set
       {
-        SetParentLayer(value,false);
+        SetParentLayer(value, false);
       }
     }
-    
+
+    public PlotItemCollection ParentCollection
+    {
+      get
+      {
+        return _parent as PlotItemCollection;
+      }
+    }
+
     public object ParentObject
     {
-      get { return m_Owner; }
+      get { return _parent; }
+      set { _parent = value; }
+    }
+
+    public PlotGroupStyleCollection GroupStyles
+    {
+      get
+      {
+        return this._styles;
+      }
     }
 
     public virtual string Name
     {
-      get {return "PlotItems"; }
+      get { return "PlotItems"; }
     }
 
     /// <summary>
@@ -225,36 +303,139 @@ namespace Altaxo.Graph
     /// <remarks>Use this with bSuppressEvents = true if you are in constructor or deserialization code where not all variables are currently initalized.</remarks>
     public void SetParentLayer(XYPlotLayer parent, bool bSuppressEvents)
     {
-      if(null==parent)
+      if (null == parent)
       {
         throw new ArgumentNullException();
       }
       else
       {
-        m_Owner = parent;
-            
-        if(!bSuppressEvents)
+        _parent = parent;
+      }
+    }
+    #endregion
+ 
+    #region IG2DPlotItem Members
+
+    /// <summary>
+    /// Collects all possible group styles that can be applied to this plot item in
+    /// styles.
+    /// </summary>
+    /// <param name="styles">The collection of group styles.</param>
+    public void CollectStyles(PlotGroupStyleCollection styles)
+    {
+      foreach (IGPlotItem pi in _plotItems)
+        pi.CollectStyles(styles);
+    }
+
+    public void PrepareStyles(PlotGroupStyleCollection styles)
+    {
+        _styles.BeginPrepare();
+
+        foreach (IGPlotItem pi in _plotItems)
         {
-          // if the owner changed, it has possibly other x and y axis boundaries, so we have to set the plot items to this new boundaries
-          for(int i=0;i<Count;i++)
-            SetItemBoundaries(this[i]);
+          pi.PrepareStyles(_styles);
+          _styles.PrepareStep();
         }
+
+        _styles.EndPrepare();
+    }
+
+    public void ApplyStyles(PlotGroupStyleCollection styles)
+    {
+      ApplyStyles(styles, 0);
+    }
+
+    public void ApplyStyles(PlotGroupStyleCollection styles, IGPlotItem pivot)
+    {
+      int pivotidx = _plotItems.IndexOf(pivot);
+      if (pivotidx < 0)
+        pivotidx = 0;
+      ApplyStyles(styles, pivotidx);
+    }
+
+
+    protected void ApplyStyles(PlotGroupStyleCollection styles, int pivotidx)
+    {
+      _styles.BeginApply();
+      for(int i=pivotidx;i<_plotItems.Count;i++)
+      {
+        IGPlotItem pi = _plotItems[i];
+        pi.ApplyStyles(_styles);
+        _styles.Step(1);
+      }
+      _styles.EndApply();
+
+      if (pivotidx > 0)
+      {
+        _styles.BeginApply();
+        for (int i = pivotidx; i >=0; i--)
+        {
+          IGPlotItem pi = _plotItems[i];
+          pi.ApplyStyles(_styles);
+          _styles.Step(-1);
+        }
+        _styles.EndApply();
       }
     }
 
-    public IHitTestObject HitTest(XYPlotLayer layer, PointF hitpoint)
+
+    /// <summary>
+    /// Paints a symbol for this plot item for use in a legend.
+    /// </summary>
+    /// <param name="g">The graphics context.</param>
+    /// <param name="location">The rectangle where the symbol should be painted into.</param>
+    public virtual void PaintSymbol(Graphics g, RectangleF location)
     {
-      IHitTestObject result;
-      for(int i=0;i<Count;i++)
+    }
+
+    public string GetName(int level)
+    {
+      return string.Format("<Collection of {0} plot items>", this._plotItems.Count); 
+    }
+
+    public string GetName(string style)
+    {
+      return string.Format("<Collection of {0} plot items>", this._plotItems.Count);
+    }
+
+    public void PreparePainting(IPlotArea layer)
+    {
+      foreach (IGPlotItem pi in _plotItems)
+        pi.PreparePainting(layer);
+    }
+
+    public void Paint(System.Drawing.Graphics g, IPlotArea layer)
+    {
+      ICoordinateTransformingGroupStyle coordTransStyle;
+      if (null != (coordTransStyle = _styles.GetCoordinateTransformingStyle()))
+        coordTransStyle.Paint(g, layer, this);
+      else
       {
-        if (null != (result = this[i].HitTest(layer, hitpoint)))
+        foreach (IGPlotItem pi in _plotItems)
+          pi.Paint(g, layer);
+      }
+    }
+
+
+    #region Hit test
+
+    public IHitTestObject HitTest(IPlotArea layer, System.Drawing.PointF hitpoint)
+    {
+      IHitTestObject result = null;
+      foreach (IGPlotItem pi in _plotItems)
+      {
+        result = pi.HitTest(layer, hitpoint);
+        if (null != result)
         {
-          result.Remove = new DoubleClickHandler(this.EhHitTestObject_Remove);
+          if(result.Remove==null)
+            result.Remove = new DoubleClickHandler(this.EhHitTestObject_Remove);
+
           return result;
         }
       }
       return null;
     }
+
 
     /// <summary>
     /// Handles the remove of a plot item.
@@ -263,56 +444,60 @@ namespace Altaxo.Graph
     /// <returns>True if the item was removed.</returns>
     bool EhHitTestObject_Remove(IHitTestObject target)
     {
-      return this.Remove(target.HittedObject as PlotItem);
+      return this.Remove(target.HittedObject as IGPlotItem);
     }
 
-    /// <summary>
-    /// Restores the event chain of a item.
-    /// </summary>
-    /// <param name="plotitem">The plotitem for which the event chain should be restored.</param>
-    public void WireItem(Graph.PlotItem plotitem)
+    #endregion
+  
+    #endregion
+
+    #region IEnumerable<IG2DPlotItem> Members
+
+    public IEnumerator<IGPlotItem> GetEnumerator()
     {
-      plotitem.ParentObject = this;
-      SetItemBoundaries(plotitem);
-      plotitem.Changed += new EventHandler(this.EhChildChanged);
+      return _plotItems.GetEnumerator();
     }
 
-    /// <summary>
-    /// This sets the type of the item boundaries to the type of the owner layer
-    /// </summary>
-    /// <param name="plotitem">The plot item for which the boundary type should be set.</param>
-    public void SetItemBoundaries(Graph.PlotItem plotitem)
+    #endregion
+
+    #region IEnumerable Members
+
+    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
     {
-      if(plotitem is IXBoundsHolder)
-      {
-        IXBoundsHolder pa = (IXBoundsHolder)plotitem;
-//        if(null!=m_Owner)
-//          pa.SetXBoundsFromTemplate(m_Owner.XAxis.DataBoundsObject); // ensure that data bound object is of the right type
-        pa.XBoundariesChanged += new BoundaryChangedHandler(this.EhXBoundaryChanged);
-      }
-      if(plotitem is IYBoundsHolder)
-      {
-        IYBoundsHolder pa = (IYBoundsHolder)plotitem;
-//        if(null!=m_Owner)
-//          pa.SetYBoundsFromTemplate(m_Owner.YAxis.DataBoundsObject); // ensure that data bound object is of the right type
-        pa.YBoundariesChanged += new BoundaryChangedHandler(this.EhYBoundaryChanged);
-      }
+      return _plotItems.GetEnumerator();
     }
 
-    public new void Clear()
+    #endregion
+
+    #region Other collection methods
+
+    public int Count
     {
-      m_PlotGroups.Clear();
-      base.Clear();
+      get { return _plotItems.Count; }
     }
 
-    public void Add(Graph.PlotItem plotitem)
+    public void Add(IGPlotItem item)
     {
-      if(plotitem==null)
+      if (item == null)
         throw new ArgumentNullException();
 
-      base.InnerList.Add(plotitem);
-      WireItem(plotitem);
+      _plotItems.Add(item);
+
+      WireItem(item);
+      OnCollectionChanged();
       OnChanged();
+    }
+
+    public void Clear()
+    {
+      _plotItems.Clear();
+      _styles.Clear();
+      OnCollectionChanged();
+    }
+
+    public IGPlotItem this[int i]
+    {
+      get { return _plotItems[i]; }
     }
 
     /// <summary>
@@ -320,43 +505,58 @@ namespace Altaxo.Graph
     /// </summary>
     /// <param name="plotitem">The item to remove.</param>
     /// <returns>True if the item was removed. False otherwise.</returns>
-    public bool Remove(Graph.PlotItem plotitem)
+    public bool Remove(IGPlotItem plotitem)
     {
-      int idx = IndexOf(plotitem);
-      if(idx>=0)
+      int idx = _plotItems.IndexOf(plotitem);
+      if (idx >= 0)
       {
-        RemoveAt(idx);
+        _plotItems.RemoveAt(idx);
+        OnCollectionChanged();
         return true;
       }
       return false;
     }
 
-    public PlotItem this[int i]
+    public int IndexOf(IGPlotItem it)
     {
-      get { return (PlotItem)base.InnerList[i]; }
-    }
-      
-    public int IndexOf(PlotItem it)
-    {
-      return base.InnerList.IndexOf(it,0,Count);
+      return _plotItems.IndexOf(it, 0, Count);
     }
 
-    public void EhXBoundaryChanged(object sender, BoundariesChangedEventArgs args)
+    /// <summary>
+    /// This method must be called, if plot item members are added or removed to this collection.
+    /// </summary>
+    protected virtual void OnCollectionChanged()
     {
-      if(null!=this.m_Owner)
-        m_Owner.OnPlotAssociationXBoundariesChanged(sender,args);
-    }
-    
-    public void EhYBoundaryChanged(object sender, BoundariesChangedEventArgs args)
-    {
-      if(null!=this.m_Owner)
-        m_Owner.OnPlotAssociationYBoundariesChanged(sender,args);
+     _cachedPlotItemsFlattened = null;
+
+      if (_parent is PlotItemCollection)
+        ((PlotItemCollection)_parent).OnCollectionChanged();
     }
 
-    public void EhPlotGroups_Changed(object sender, EventArgs e)
+    protected void FillPlotItemList(IList<IGPlotItem> list)
     {
-      OnChanged();
+      foreach (IGPlotItem pi in _plotItems)
+        if (pi is PlotItemCollection)
+          ((PlotItemCollection)pi).FillPlotItemList(list);
+        else
+          list.Add(pi);
     }
+
+    public IGPlotItem[] Flattened
+    {
+      get
+      {
+        if (_cachedPlotItemsFlattened == null)
+        {
+          List<IGPlotItem> list = new List<IGPlotItem>();
+          FillPlotItemList(list);
+          _cachedPlotItemsFlattened = list.ToArray();
+        }
+        return _cachedPlotItemsFlattened;
+      }
+    }
+
+    #endregion
 
     #region NamedObjectCollection
 
@@ -368,10 +568,10 @@ namespace Altaxo.Graph
     public virtual object GetChildObjectNamed(string name)
     {
       double number;
-      if(double.TryParse(name,System.Globalization.NumberStyles.Integer,System.Globalization.NumberFormatInfo.InvariantInfo, out number))
+      if (double.TryParse(name, System.Globalization.NumberStyles.Integer, System.Globalization.NumberFormatInfo.InvariantInfo, out number))
       {
-        int idx=(int)number;
-        if(idx>=0 && idx<this.Count)
+        int idx = (int)number;
+        if (idx >= 0 && idx < this.Count)
           return this[idx];
       }
       return null;
@@ -384,8 +584,12 @@ namespace Altaxo.Graph
     /// <returns>The name of the object. Null if the object is not found. String.Empty if the object is found but has no name.</returns>
     public virtual string GetNameOfChildObject(object o)
     {
-      int idx = this.InnerList.IndexOf(o);
-      return idx>=0 ? idx.ToString() : null;
+      if (o is IGPlotItem)
+      {
+        int idx = _plotItems.IndexOf((IGPlotItem)o);
+        return idx >= 0 ? idx.ToString() : null;
+      }
+      return null;
     }
 
     #endregion
@@ -394,50 +598,277 @@ namespace Altaxo.Graph
 
     public event System.EventHandler Changed;
 
-   
+
 
     public virtual void EhChildChanged(object child, EventArgs e)
     {
-      if(null!=Changed)
-        Changed(this,e);
+      if (null != Changed)
+        Changed(this, e);
     }
 
     protected virtual void OnChanged()
     {
-      if(null!=Changed)
-        Changed(this,new Main.ChangedEventArgs(this,null));
+      if (null != Changed)
+        Changed(this, new Main.ChangedEventArgs(this, null));
     }
 
     #endregion
 
     #region PlotGroup handling
 
-    public PlotGroup GetPlotGroupOf(PlotItem assoc)
+    
+
+    /// <summary>
+    /// Add the PlotGroupStyle.
+    /// </summary>
+    /// <param name="pg">The plot group style to add.</param>
+    public void Add(IPlotGroupStyle pg)
     {
-      return m_PlotGroups.GetPlotGroupOf(assoc);
+      this._styles.Add(pg);
+      OnChanged();
+    }
+
+    public void ListPossiblePlotGroupStyles()
+    {
+      foreach (IGPlotItem pi in _plotItems)
+      {
+        
+      }
+    }
+
+
+
+    #endregion
+
+    #region Plot Item bounds
+
+    /// <summary>
+    /// Restores the event chain of a item.
+    /// </summary>
+    /// <param name="plotitem">The plotitem for which the event chain should be restored.</param>
+    public void WireItem(IGPlotItem plotitem)
+    {
+      plotitem.ParentObject = this;
+      WireBoundaryEvents(plotitem);
+      plotitem.Changed += new EventHandler(this.EhChildChanged);
     }
 
     /// <summary>
-    /// Add the PlotGroup and all items in this group to the collection.
+    /// This sets the type of the item boundaries to the type of the owner layer
     /// </summary>
-    /// <param name="pg"></param>
-    public void Add(Altaxo.Graph.PlotGroup pg)
+    /// <param name="plotitem">The plot item for which the boundary type should be set.</param>
+    void WireBoundaryEvents(IGPlotItem plotitem)
     {
-      // 1. make sure that all PlotItems of this group are contained in our collection
-
-      for(int i=0;i<pg.Count;i++)
+      if (plotitem is IXBoundsHolder)
       {
-        PlotItem pa = pg[i];
-        if(!base.InnerList.Contains(pa))
-          this.Add(pa);
+        IXBoundsHolder xholder = (IXBoundsHolder)plotitem;
+        xholder.XBoundariesChanged += new BoundaryChangedHandler(this.EhXBoundaryChanged);
       }
-
-      // 2. add the plotgroup to the plotgroup collection
-      m_PlotGroups.Add(pg);
+      if (plotitem is IYBoundsHolder)
+      {
+        IYBoundsHolder yholder = (IYBoundsHolder)plotitem;
+        yholder.YBoundariesChanged += new BoundaryChangedHandler(this.EhYBoundaryChanged);
+      }
     }
 
     #endregion
+
+    #region Event Handling
+
+    public void EhXBoundaryChanged(object sender, BoundariesChangedEventArgs args)
+    {
+      if (this._parent is XYPlotLayer)
+        ((XYPlotLayer)_parent).OnPlotAssociationXBoundariesChanged(sender, args);
+      else if (this._parent is PlotItemCollection)
+        ((PlotItemCollection)_parent).EhXBoundaryChanged(sender, args);
+    }
+
+    public void EhYBoundaryChanged(object sender, BoundariesChangedEventArgs args)
+    {
+      if (this._parent is XYPlotLayer)
+        ((XYPlotLayer)_parent).OnPlotAssociationYBoundariesChanged(sender, args);
+      else if (this._parent is PlotItemCollection)
+        ((PlotItemCollection)_parent).EhYBoundaryChanged(sender, args);
+    }
+
+    public void EhPlotGroups_Changed(object sender, EventArgs e)
+    {
+      OnChanged();
+    }
+
+
+
+    #endregion
+
+    #region IXBoundsHolder Members
+
+    [field:NonSerialized]
+    public event BoundaryChangedHandler XBoundariesChanged;
+
+    public void MergeXBoundsInto(IPlotArea layer, IPhysicalBoundaries pb)
+    {
+      ICoordinateTransformingGroupStyle coordTransStyle;
+      if (null != (coordTransStyle = _styles.GetCoordinateTransformingStyle()))
+        coordTransStyle.MergeXBoundsInto(layer, pb, this);
+      else
+        CoordinateTransformingStyleBase.MergeXBoundsInto(layer, pb, this);
+    }
+
+    #endregion
+
+    #region IYBoundsHolder Members
+
+    [field:NonSerialized]
+    public event BoundaryChangedHandler YBoundariesChanged;
+
+    public void MergeYBoundsInto(IPlotArea layer, IPhysicalBoundaries pb)
+    {
+      ICoordinateTransformingGroupStyle coordTransStyle;
+      if (null != (coordTransStyle = _styles.GetCoordinateTransformingStyle()))
+        coordTransStyle.MergeYBoundsInto(layer, pb, this);
+      else
+        CoordinateTransformingStyleBase.MergeYBoundsInto(layer, pb, this);
+
+    }
+
+    #endregion
+
+    #region deprecated stuff for deserialisation
+
+
+    enum Version0PlotGroupStyle
+    {
+      // Note: we must provide every (!) combination a name, because of xml serialization
+      None = 0x00,
+      Color = 0x01,
+      Line = 0x02,
+      LineAndColor = Line | Color,
+      Symbol = 0x04,
+      SymbolAndColor = Symbol | Color,
+      SymbolAndLine = Symbol | Line,
+      All = Symbol | Line | Color
+    }
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Graph.PlotGroupStyle", 0)]
+    class PlotGroupStyleTypeXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        throw new NotImplementedException("This is deprectated stuff");
+        //info.SetNodeContent(obj.ToString());
+      }
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+
+        string val = info.GetNodeContent();
+        return System.Enum.Parse(typeof(Version0PlotGroupStyle), val, true);
+      }
+    }
+
+    /// <summary>
+    /// Deprectated stuff neccessary to deserialize PlotItemCollection Version 0.
+    /// </summary>
+     class PlotGroupMemento
+    {
+      public Version0PlotGroupStyle _plotGroupStyle;
+      public bool _concurrently;
+      public PlotGroupStrictness _plotGroupStrictness;
+      public int[] _plotItemIndices; // stores not the plotitems itself, only the position of the items in the list
+
+      protected PlotGroupMemento()
+      {
+      }
+      /*
+      public PlotGroupMemento(PlotGroup pg, PlotItemCollection plotlist)
+      {
+        m_Style = pg.Style;
+        _concurrently = pg.ChangeStylesConcurrently;
+        _strict = pg.ChangeStylesStrictly;
+
+        _plotItemIndices = new int[pg.Count];
+        for (int i = 0; i < _plotItemIndices.Length; i++)
+          _plotItemIndices[i] = plotlist.IndexOf(pg[i]);
+      }
+
+     
+
+      public PlotGroup GetPlotGroup(PlotItemCollection plotlist)
+      {
+        PlotGroup pg = new PlotGroup(m_Style, _concurrently, _strict);
+        for (int i = 0; i < _plotItemIndices.Length; i++)
+          pg.Add(plotlist[i]);
+        return pg;
+      }
+      */
+
+
+      [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Graph.PlotGroup+Memento", 0)]
+      public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+      {
+        public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+        {
+          throw new NotImplementedException("This is deprecated stuff");
+          /*
+          PlotGroup.Memento s = (PlotGroup.Memento)obj;
+          info.AddValue("Style", s.m_Style);
+          info.CreateArray("PlotItems", s._plotItemIndices.Length);
+          for (int i = 0; i < s._plotItemIndices.Length; i++)
+            info.AddValue("PlotItem", s._plotItemIndices[i]);
+          info.CommitArray();
+          */
+        }
+
+
+        public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+        {
+          PlotGroupMemento s = SDeserialize(o, info, parent);
+          return s;
+        }
+        public virtual PlotGroupMemento SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+        {
+
+          PlotGroupMemento s = null != o ? (PlotGroupMemento)o : new PlotGroupMemento();
+          s._plotGroupStyle = (Version0PlotGroupStyle)info.GetValue("Style", typeof(Version0PlotGroupStyle));
+
+          int count = info.OpenArray();
+          s._plotItemIndices = new int[count];
+          for (int i = 0; i < count; i++)
+          {
+            s._plotItemIndices[i] = info.GetInt32();
+          }
+          info.CloseArray(count);
+
+          return s;
+        }
+      }
+
+      [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.PlotGroup+Memento", 1)]
+      public class XmlSerializationSurrogate1 : XmlSerializationSurrogate0
+      {
+        public override void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+        {
+          throw new NotImplementedException("This is deprecated stuff");
+          /*
+          base.Serialize(obj, info);
+          PlotGroup.Memento s = (PlotGroup.Memento)obj;
+          info.AddValue("Concurrently", s._concurrently);
+          info.AddEnum("Strict", s._strict);
+          */
+        }
+
+        public override PlotGroupMemento SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+        {
+
+          PlotGroupMemento s = base.SDeserialize(o, info, parent);
+
+          s._concurrently = info.GetBoolean("Concurrently");
+          s._plotGroupStrictness = (PlotGroupStrictness)info.GetEnum("Strict", typeof(PlotGroupStrictness));
+
+          return s;
+        }
+      }
+    }
+  
+    #endregion
   }
-
-
 }

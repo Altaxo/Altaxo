@@ -147,8 +147,11 @@ namespace Altaxo.Graph.GUI
     {
       foreach(TabPage page in this.m_TabCtrl.Controls)
       {
-        if(page.Name==name)
+        if (page.Name == name)
+        {
           this.m_TabCtrl.SelectedTab = page;
+          break;
+        }
       }
     }
 
@@ -163,7 +166,7 @@ namespace Altaxo.Graph.GUI
       }
     }
 
-    public System.Windows.Forms.Control CurrentContent
+    public object CurrentContent
     {
       get
       {
@@ -178,14 +181,18 @@ namespace Altaxo.Graph.GUI
         if(tp.Controls.Count>0)
           tp.Controls.Clear();
 
-        value.Location = new Point(0, 0);
-        value.Dock = DockStyle.Fill;
-        tp.Controls.Add(value);
+        Control ctrl = value as Control;
+        if (ctrl != null)
+        {
+          ctrl.Location = new Point(0, 0);
+          ctrl.Dock = DockStyle.Fill;
+          tp.Controls.Add(ctrl);
+        }
         
       }
     }
 
-    public void SetCurrentContentWithEnable(System.Windows.Forms.Control value, bool enable, string title)
+    public void SetCurrentContentWithEnable(object guielement, bool enable, string title)
     {
       int sel = m_TabCtrl.SelectedIndex;
       System.Windows.Forms.TabPage tp = m_TabCtrl.TabPages[sel];
@@ -198,11 +205,15 @@ namespace Altaxo.Graph.GUI
       _chkPageEnable.CheckedChanged += new EventHandler(EhControlEnable_CheckedChanged);
       _chkPageEnable.Size = new Size(this.ClientSize.Width,_chkPageEnable.Height);
 
-      value.Enabled = enable;
-      value.Location = new Point(0, _chkPageEnable.Height);
-      value.Size = new Size(tp.ClientSize.Width, tp.ClientSize.Height - _chkPageEnable.Height);
-      value.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      tp.Controls.Add(value);
+      Control value = guielement as Control;
+      if (value!=null)
+      {
+        value.Enabled = enable;
+        value.Location = new Point(0, _chkPageEnable.Height);
+        value.Size = new Size(tp.ClientSize.Width, tp.ClientSize.Height - _chkPageEnable.Height);
+        value.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+        tp.Controls.Add(value);
+      }
       tp.Controls.Add(_chkPageEnable);
     }
 

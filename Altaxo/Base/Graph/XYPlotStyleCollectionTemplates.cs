@@ -154,20 +154,29 @@ namespace Altaxo.Graph
 
     static XYPlotStyleCollection CreateLineStyle()
     {
-      return new XYPlotStyleCollection(LineScatterPlotStyleKind.Line); 
+      XYPlotStyleCollection coll = new XYPlotStyleCollection(LineScatterPlotStyleKind.Empty);
+      coll.Add(new XYPlotLineStyle());
+      return coll;
     }
     static XYPlotStyleCollection CreateScatterStyle()
     {
-      return new XYPlotStyleCollection(LineScatterPlotStyleKind.Scatter);
+      XYPlotStyleCollection coll = new XYPlotStyleCollection(LineScatterPlotStyleKind.Empty);
+      coll.Add(new XYPlotScatterStyle());
+      return coll;
     }
     static XYPlotStyleCollection CreateLineAndScatterStyle()
     {
-      return new XYPlotStyleCollection(LineScatterPlotStyleKind.LineAndScatter);
+      XYPlotStyleCollection coll = new XYPlotStyleCollection(LineScatterPlotStyleKind.Empty);
+      coll.Add(new XYPlotLineStyle());
+      coll.Add(new XYPlotScatterStyle());
+      return coll;
     }
 
     static XYPlotStyleCollection CreateLineAndScatterAndLabelStyle()
     {
-      XYPlotStyleCollection coll = new XYPlotStyleCollection(LineScatterPlotStyleKind.LineAndScatter);
+      XYPlotStyleCollection coll = new XYPlotStyleCollection(LineScatterPlotStyleKind.Empty);
+      coll.Add(new XYPlotLineStyle());
+      coll.Add(new XYPlotScatterStyle());
       coll.Add(new XYPlotLabelStyle());
       return coll;
     }

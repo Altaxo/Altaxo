@@ -511,7 +511,7 @@ namespace Altaxo.Calc
     /// either a series expansion (accuracy ca. 1E-14) or a bivariate akima spline (accuracy 1E-4) is used.
     /// </summary>
     /// <param name="beta">Beta parameter (0..1).</param>
-    /// <param name="z">Circular frequency.</param>
+    /// <param name="w">Circular frequency.</param>
     /// <returns>Real part of the Fourier transformed derivative of the Kohlrausch function, or double.NaN if the function can not be evaluated (can happen for beta smaller than 1/64).</returns>
     /// <remarks>This is the real part of the Fourier transform (in Mathematica notation): Re[Integrate[-D[Exp[-t^beta],t]*Exp[-I w t],{t, 0, Infinity}]]. For
     /// beta smaller than one, the return value is always positive.

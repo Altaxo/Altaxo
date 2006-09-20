@@ -22,6 +22,7 @@
 
 using System;
 using System.Drawing;
+using Altaxo.Drawing;
 
 namespace Altaxo.Graph
 {
@@ -159,6 +160,21 @@ namespace Altaxo.Graph
     #endregion
 
 
+    class MyPlotData : Processed2DPlotData
+    {
+      public double[] _xPhysical;
+      public double[] _yPhysical;
+
+      public override Altaxo.Data.AltaxoVariant GetXPhysical(int originalRowIndex)
+      {
+        return _xPhysical[originalRowIndex];
+      }
+      public override Altaxo.Data.AltaxoVariant GetYPhysical(int originalRowIndex)
+      {
+        return _yPhysical[originalRowIndex];
+      }
+    }
+
     /// <summary>
     /// This will create a point list out of the data, which can be used to plot the data. In order to create this list,
     /// the function must have knowledge how to calculate the points out of the data. This will be done
@@ -168,17 +184,21 @@ namespace Altaxo.Graph
     /// <param name="rangeList">On return, this gives the list of plot ranges.</param>
     /// <param name="ptArray">On return, this is an array of plot points in layer coordinates.</param>
     /// <returns>True if the function is successfull, otherwise false.</returns>
-    public bool GetRangesAndPoints(
-      IPlotArea layer,
-      out PlotRangeList rangeList,
-      out PointF[] ptArray)
+    public Processed2DPlotData GetRangesAndPoints(
+      IPlotArea layer)
     {
       const int functionPoints = 1000;
       const double MaxRelativeValue = 1E6;
 
 
       // allocate an array PointF to hold the line points
-      ptArray = new PointF[functionPoints];
+      PointF[] ptArray = new PointF[functionPoints];
+      MyPlotData result = new MyPlotData();
+      result.PlotPointsInAbsoluteLayerCoordinates = ptArray;
+      double[] xPhysArray = new double[functionPoints];
+      double[] yPhysArray = new double[functionPoints];
+      result._xPhysical = xPhysArray;
+      result._yPhysical = yPhysArray;
 
       // double xorg = layer.XAxis.Org;
       // double xend = layer.XAxis.End;
@@ -189,13 +209,14 @@ namespace Altaxo.Graph
 
       bool bInPlotSpace = true;
       int rangeStart = 0;
-      rangeList = new PlotRangeList();
-      I2DTo2DConverter logicalToArea = layer.LogicalToAreaConversion;
+      PlotRangeList rangeList = new PlotRangeList();
+      result.RangeList = rangeList;
+      G2DCoordinateSystem coordsys = layer.CoordinateSystem;
 
       NumericalAxis xaxis = layer.XAxis as NumericalAxis;
       NumericalAxis yaxis = layer.YAxis as NumericalAxis;
       if (xaxis == null || yaxis == null)
-        return false;
+        return null;
 
       for (i = 0, j = 0; i < functionPoints; i++)
       {
@@ -228,13 +249,15 @@ namespace Altaxo.Graph
         // (for instance negative values on a logarithmic axis)
         // in this case the returned value is NaN
         double xcoord, ycoord;
-        if (logicalToArea.Convert(x_rel, y_rel, out xcoord, out ycoord))
+        if (coordsys.LogicalToLayerCoordinates(x_rel, y_rel, out xcoord, out ycoord))
         {
           if (bInPlotSpace)
           {
             bInPlotSpace = false;
             rangeStart = j;
           }
+          xPhysArray[j] = x;
+          yPhysArray[j] = y;
           ptArray[j].X = (float)xcoord;
           ptArray[j].Y = (float)ycoord;
           j++;
@@ -253,7 +276,7 @@ namespace Altaxo.Graph
         bInPlotSpace = true;
         rangeList.Add(new PlotRange(rangeStart, j)); // add the last range
       }
-      return true;
+      return result;
     }
 
 

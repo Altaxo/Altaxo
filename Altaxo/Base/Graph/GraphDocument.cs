@@ -575,8 +575,7 @@ namespace Altaxo.Graph
     public void CreateNewLayerNormalBottomXLeftY()
     {
       XYPlotLayer newlayer= new XYPlotLayer(DefaultLayerPosition,DefaultLayerSize);
-      newlayer.TopAxisEnabled=false;
-      newlayer.RightAxisEnabled=false;
+      newlayer.CreateDefaultAxes();
     
       Layers.Add(newlayer);
     }
@@ -592,11 +591,7 @@ namespace Altaxo.Graph
       newlayer.LinkedLayer = (linklayernumber>=0 && linklayernumber<Layers.Count)? Layers[linklayernumber] : null;
       newlayer.SetPosition(0,XYPlotLayerPositionType.RelativeThisNearToLinkedLayerNear,0,XYPlotLayerPositionType.RelativeThisNearToLinkedLayerNear);
       newlayer.SetSize(1,XYPlotLayerSizeType.RelativeToLinkedLayer,1,XYPlotLayerSizeType.RelativeToLinkedLayer);
-
-      // set enabling of axis
-      newlayer.BottomAxisEnabled=false;
-      newlayer.LeftAxisEnabled=false;
-      newlayer.RightAxisEnabled=false;
+      newlayer.ScaleStyles.AxisStyleEnsured(new A2DAxisStyleIdentifier(0, 1));
     }
 
     /// <summary>
@@ -612,9 +607,7 @@ namespace Altaxo.Graph
       newlayer.SetSize(1,XYPlotLayerSizeType.RelativeToLinkedLayer,1,XYPlotLayerSizeType.RelativeToLinkedLayer);
 
       // set enabling of axis
-      newlayer.BottomAxisEnabled=false;
-      newlayer.TopAxisEnabled=false;
-      newlayer.LeftAxisEnabled=false;
+      newlayer.ScaleStyles.AxisStyleEnsured(new A2DAxisStyleIdentifier(1, 1));
     }
 
     /// <summary>
@@ -630,8 +623,9 @@ namespace Altaxo.Graph
       newlayer.SetSize(1,XYPlotLayerSizeType.RelativeToLinkedLayer,1,XYPlotLayerSizeType.RelativeToLinkedLayer);
 
       // set enabling of axis
-      newlayer.BottomAxisEnabled=false;
-      newlayer.LeftAxisEnabled=false;
+      newlayer.ScaleStyles.AxisStyleEnsured(new A2DAxisStyleIdentifier(0, 1));
+      newlayer.ScaleStyles.AxisStyleEnsured(new A2DAxisStyleIdentifier(1, 1));
+     
     }
 
 
@@ -648,8 +642,9 @@ namespace Altaxo.Graph
       newlayer.SetSize(1,XYPlotLayerSizeType.RelativeToLinkedLayer,1,XYPlotLayerSizeType.RelativeToLinkedLayer);
 
       // set enabling of axis
-      newlayer.BottomAxisEnabled=false;
-      newlayer.LeftAxisEnabled=false;
+      newlayer.ScaleStyles.AxisStyleEnsured(new A2DAxisStyleIdentifier(0, 1));
+      newlayer.ScaleStyles.AxisStyleEnsured(new A2DAxisStyleIdentifier(1, 1));
+      
 
       newlayer.AxisProperties.X.AxisLinkType = AxisLinkType.Straight;
     }

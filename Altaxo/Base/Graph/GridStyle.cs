@@ -88,7 +88,7 @@ namespace Altaxo.Graph
 
     public GridStyle()
     {
-
+      _showGrid = true;
     }
 
     public GridStyle(GridStyle from)
@@ -213,7 +213,12 @@ namespace Altaxo.Graph
         _majorPen.BrushRectangle = layerRect;
         if (rel >= 0 && rel <= 1)
         {
-          layer.DrawIsoLine(g, MajorPen, axisnumber, rel, 0, 1);
+          if (axisnumber == 0)
+            layer.CoordinateSystem.DrawIsoline(g, MajorPen, rel, 0, rel, 1);
+          else
+            layer.CoordinateSystem.DrawIsoline(g, MajorPen, 0, rel, 1, rel);
+
+          //layer.DrawIsoLine(g, MajorPen, axisnumber, rel, 0, 1);
         }
       }
       else
@@ -226,17 +231,27 @@ namespace Altaxo.Graph
           ticks = axis.GetMinorTicksNormal();
           for (int i = 0; i < ticks.Length; ++i)
           {
-            layer.DrawIsoLine(g, MinorPen, axisnumber, ticks[i], 0, 1);
+            if (axisnumber == 0)
+              layer.CoordinateSystem.DrawIsoline(g, MinorPen, ticks[i], 0, ticks[i], 1);
+            else
+              layer.CoordinateSystem.DrawIsoline(g, MinorPen, 0, ticks[i], 1, ticks[i]);
+            
+            //layer.DrawIsoLine(g, MinorPen, axisnumber, ticks[i], 0, 1);
           }
         }
 
 
 
-        _majorPen.BrushRectangle = layerRect;
+        MajorPen.BrushRectangle = layerRect;
         ticks = axis.GetMajorTicksNormal();
         for (int i = 0; i < ticks.Length; ++i)
         {
-          layer.DrawIsoLine(g, MajorPen, axisnumber, ticks[i], 0, 1);
+          if(axisnumber==0)
+            layer.CoordinateSystem.DrawIsoline(g, MajorPen, ticks[i], 0, ticks[i], 1);
+          else
+            layer.CoordinateSystem.DrawIsoline(g, MajorPen, 0, ticks[i], 1, ticks[i]);
+          
+          //layer.DrawIsoLine(g, MajorPen, axisnumber, ticks[i], 0, 1);
         }
       }
     }

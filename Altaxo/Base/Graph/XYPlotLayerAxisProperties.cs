@@ -442,6 +442,25 @@ namespace Altaxo.Graph
       }
     }
 
+    public Axis Axis(int i)
+    {
+      return _props[i].Axis;
+    }
+    public void SetAxis(int i, Axis ax)
+    {
+      _props[i].Axis = ax;
+    }
+    public int IndexOf(Axis ax)
+    {
+      for (int i = 0; i < _props.Length; i++)
+      {
+        if (_props[i].Axis == ax)
+          return i;
+      }
+
+      return -1;
+    }
+
     protected void SetAxisProperties(XYPlotLayerAxisProperties newvalue, int i)
     {
       XYPlotLayerAxisProperties oldvalue = _props[i];

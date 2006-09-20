@@ -929,10 +929,10 @@ namespace Altaxo.Graph
               if(ti.m_LayerNumber>=0 && ti.m_LayerNumber<layer.ParentLayerList.Count)
                 layer = layer.ParentLayerList[ti.m_LayerNumber];
 
-              Graph.PlotItem pa=null;
-              if(ti.m_PlotNumber<layer.PlotItems.Count)
+              IGPlotItem pa=null;
+              if(ti.m_PlotNumber<layer.PlotItems.Flattened.Length)
               {
-                pa = layer.PlotItems[ti.m_PlotNumber];
+                pa = layer.PlotItems.Flattened[ti.m_PlotNumber];
               }
               if(pa!=null)
               {
@@ -979,7 +979,7 @@ namespace Altaxo.Graph
               if(ti.m_LayerNumber>=0 && ti.m_LayerNumber<layer.ParentLayerList.Count)
                 layer = layer.ParentLayerList[ti.m_LayerNumber];
 
-              if(ti.m_PlotNumber<layer.PlotItems.Count)
+              if(ti.m_PlotNumber<layer.PlotItems.Flattened.Length)
               {
                 //Graph.PlotItem pa = layer.PlotAssociations[ti.m_PlotNumber];
                 MeasureFont(g,ti.Font,out ti.m_cyLineSpace, out ti.m_cyAscent, out ti.m_cyDescent);
@@ -1349,16 +1349,16 @@ namespace Altaxo.Graph
             if(ti.m_LayerNumber>=0 && ti.m_LayerNumber<layer.ParentLayerList.Count)
               layer = layer.ParentLayerList[ti.m_LayerNumber];
 
-            if(ti.m_PlotNumber<layer.PlotItems.Count)
+            if(ti.m_PlotNumber<layer.PlotItems.Flattened.Length)
             {
-              Graph.PlotItem pa = layer.PlotItems[ti.m_PlotNumber];
+              IGPlotItem pa = layer.PlotItems.Flattened[ti.m_PlotNumber];
             
               PointF symbolpos = new PointF(currPosX,currPosY + ti.m_yShift  + 0.5f*ti.m_cyDescent - 0.5f*ti.m_cyAscent);
-              
-              if(pa is XYColumnPlotItem)
-                ((XYColumnPlotItem)pa).Style.PaintSymbol(g, symbolpos, ti.m_Width);
-              else if(pa is XYFunctionPlotItem)
-                ((XYFunctionPlotItem)pa).Style.PaintSymbol(g, symbolpos, ti.m_Width);
+              float symbolwidth = ti.m_Width;
+              RectangleF symbolRect = new RectangleF(symbolpos,new SizeF(symbolwidth,0));
+              symbolRect.Inflate(0, ti.Font.Size);
+              pa.PaintSymbol(g,symbolRect);
+
               currPosX += ti.m_Width;
             
               if(!bForPreview)

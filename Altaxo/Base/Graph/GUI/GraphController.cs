@@ -28,6 +28,7 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using Altaxo.Drawing;
 using Altaxo.Graph;
+using Altaxo.Graph.PlotGroups;
 using Altaxo.Serialization;
 using Altaxo.Graph.GUI.GraphControllerMouseHandlers;
 
@@ -488,10 +489,10 @@ namespace Altaxo.Graph.GUI
       // then append the plot associations of the actual layer
 
       int actPA = CurrentPlotNumber;
-      int len = actLayer.PlotItems.Count;
+      int len = actLayer.PlotItems.Flattened.Length;
       for(int i = 0; i<len; i++)
       {
-        PlotItem pa = actLayer.PlotItems[i];
+        IGPlotItem pa = actLayer.PlotItems.Flattened[i];
         DataMenuItem mi = new DataMenuItem(pa.ToString(), new EventHandler(EhMenuData_Data));
         mi.Checked = (i==actPA);
         mi.PlotItemNumber = i;
@@ -730,7 +731,7 @@ namespace Altaxo.Graph.GUI
         // the actual plot association
         int actLayerNum = this.CurrentLayerNumber;
         XYPlotLayer actLayer = this.Layers[actLayerNum];
-        if(null!=actLayer && dmi.PlotItemNumber<actLayer.PlotItems.Count)
+        if(null!=actLayer && dmi.PlotItemNumber<actLayer.PlotItems.Flattened.Length)
         {
           dmi.Checked=true;
           CurrentPlotNumber = dmi.PlotItemNumber;
@@ -742,11 +743,12 @@ namespace Altaxo.Graph.GUI
         // of the plot association represented by this menu item
         int actLayerNum = this.CurrentLayerNumber;
         XYPlotLayer actLayer = this.Layers[actLayerNum];
-        PlotItem pa = actLayer.PlotItems[CurrentPlotNumber];
+        IGPlotItem pa = actLayer.PlotItems.Flattened[CurrentPlotNumber];
 
+        
 
         // get plot group
-        PlotGroup plotGroup = actLayer.PlotItems.GetPlotGroupOf(pa);
+        PlotGroupStyleCollection plotGroup = pa.ParentCollection.GroupStyles;
         
         
         //LineScatterPlotStyleController.ShowPlotStyleDialog(this.m_View.Form,pa,plotGroup);
@@ -889,10 +891,10 @@ namespace Altaxo.Graph.GUI
         ContextMenu contextMenu = new ContextMenu();
 
         int actPA = CurrentPlotNumber;
-        int len = ActiveLayer.PlotItems.Count;
+        int len = ActiveLayer.PlotItems.Flattened.Length;
         for(int i = 0; i<len; i++)
         {
-          PlotItem pa = ActiveLayer.PlotItems[i];
+          IGPlotItem pa = ActiveLayer.PlotItems.Flattened[i];
           DataMenuItem mi = new DataMenuItem(pa.ToString(), new EventHandler(EhMenuData_Data));
           mi.Checked = (i==actPA);
           mi.PlotItemNumber = i;
@@ -1187,11 +1189,11 @@ namespace Altaxo.Graph.GUI
     protected static bool EhEditPlotItem(IHitTestObject hit)
     {
       XYPlotLayer actLayer = hit.ParentLayer;
-      PlotItem pa = (PlotItem)hit.HittedObject;
+      IGPlotItem pa = (IGPlotItem)hit.HittedObject;
 
 
       // get plot group
-      PlotGroup plotGroup = actLayer.PlotItems.GetPlotGroupOf(pa);
+      PlotGroupStyleCollection plotGroup = pa.ParentCollection.GroupStyles;
         
         
       //LineScatterPlotStyleController.ShowPlotStyleDialog(this.m_View.Form,pa,plotGroup);
@@ -1567,11 +1569,11 @@ namespace Altaxo.Graph.GUI
       if(null!=ActiveLayer) // if the ActiveLayer exists
       {
         // if the XYColumnPlotData don't exist anymore, correct it
-        if(ActiveLayer.PlotItems.Count>0) // if at least one plotitem exists
+        if(ActiveLayer.PlotItems.Flattened.Length>0) // if at least one plotitem exists
         {
           if(m_CurrentPlotNumber<0)
             CurrentPlotNumber=0;
-          else if(m_CurrentPlotNumber>ActiveLayer.PlotItems.Count)
+          else if(m_CurrentPlotNumber>ActiveLayer.PlotItems.Flattened.Length)
             CurrentPlotNumber = 0;
         }
         else
@@ -1599,11 +1601,11 @@ namespace Altaxo.Graph.GUI
       }
       set
       {
-        if(CurrentLayerNumber>=0 && 0!=this.m_Graph.Layers[CurrentLayerNumber].PlotItems.Count && value<0)
+        if(CurrentLayerNumber>=0 && 0!=this.m_Graph.Layers[CurrentLayerNumber].PlotItems.Flattened.Length && value<0)
           throw new ArgumentOutOfRangeException("CurrentPlotNumber",value,"CurrentPlotNumber has to be greater or equal than zero");
 
-        if(CurrentLayerNumber>=0 && value>=m_Graph.Layers[CurrentLayerNumber].PlotItems.Count)
-          throw new ArgumentOutOfRangeException("CurrentPlotNumber",value,"CurrentPlotNumber has to  be lesser than actual count: " + m_Graph.Layers[CurrentLayerNumber].PlotItems.Count.ToString());
+        if(CurrentLayerNumber>=0 && value>=m_Graph.Layers[CurrentLayerNumber].PlotItems.Flattened.Length)
+          throw new ArgumentOutOfRangeException("CurrentPlotNumber",value,"CurrentPlotNumber has to  be lesser than actual count: " + m_Graph.Layers[CurrentLayerNumber].PlotItems.Flattened.Length.ToString());
 
         m_CurrentPlotNumber = value<0 ? -1 : value;
 

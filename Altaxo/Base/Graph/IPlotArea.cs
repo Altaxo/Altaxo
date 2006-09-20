@@ -32,16 +32,7 @@ namespace Altaxo.Graph
   /// </summary>
   public interface IPlotArea
   {
-    /// <summary>
-    /// Returns true if the plot area is orthogonal, i.e. if the x and the y axis are orthogonal to each other.
-    /// </summary>
-    bool IsOrthogonal { get; }
-
-    /// <summary>
-    /// Returns true if the plot coordinates can be calculated as a linear transformation of the physical values.
-    /// Returns false if this is for instance a polar diagram. 
-    /// </summary>
-    bool IsAffine { get; }
+  
 
     /// <summary>
     /// Gets the axis of the independent variable.
@@ -53,33 +44,13 @@ namespace Altaxo.Graph
     /// </summary>
     Axis YAxis { get; }
 
-    /// <summary>
-    /// Get a region object, which describes the plotting area. Used to clip the plotting to
-    /// the plotting area.
-    /// </summary>
-    /// <returns>A region object describing the plotting area.</returns>
-    Region GetRegion();
 
-    /// <summary>
-    /// Converts logical x and y values (between 0 and 1) to the appropriate coordinate values (layer coordinates).
-    /// </summary>
-    I2DTo2DConverter LogicalToAreaConversion { get; }
+    G2DCoordinateSystem CoordinateSystem { get; }
 
+  
     /// <summary>
-    /// Converts layer coordinates to logical x and y values (between 0 and 1).
+    /// Returns the size of the rectangular layer area.
     /// </summary>
-    I2DTo2DConverter AreaToLogicalConversion { get; }
-
-
-    /// <summary>
-    /// Draws an isoline on the plot area.
-    /// </summary>
-    /// <param name="g">Graphics context.</param>
-    /// <param name="pen">The style of the pen used to draw the line.</param>
-    /// <param name="axis">Axis for which the isoline to draw.</param>
-    /// <param name="relaxisval">Relative value (0..1) on this axis.</param>
-    /// <param name="relaltstart">Relative value for the alternate axis of the start of the line.</param>
-    /// <param name="relaltend">Relative value for the alternate axis of the end of the line.</param>
-    void DrawIsoLine(Graphics g, Pen pen, int axis, double relaxisval, double relaltstart, double relaltend);
+    SizeF Size { get; }
   }
 }

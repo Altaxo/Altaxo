@@ -236,9 +236,9 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
         if(nextplotitemnumber<0)
         {
           nextlayer-=1;
-          nextplotitemnumber = nextlayer<0 ? int.MaxValue : _grac.Layers[nextlayer].PlotItems.Count-1;
+          nextplotitemnumber = nextlayer<0 ? int.MaxValue : _grac.Layers[nextlayer].PlotItems.Flattened.Length-1;
         }
-        else if(nextplotitemnumber>=_grac.Layers[nextlayer].PlotItems.Count)
+        else if(nextplotitemnumber>=_grac.Layers[nextlayer].PlotItems.Flattened.Length)
         {
           nextlayer+=1;
           nextplotitemnumber=0;
@@ -247,10 +247,10 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
         if(nextlayer<0 || nextlayer>=numlayers)
           break;
           
-        if(nextplotitemnumber<0 || nextplotitemnumber>=_grac.Layers[nextlayer].PlotItems.Count)
+        if(nextplotitemnumber<0 || nextplotitemnumber>=_grac.Layers[nextlayer].PlotItems.Flattened.Length)
           continue;
   
-        plotitem =  _grac.Layers[nextlayer].PlotItems[nextplotitemnumber] as XYColumnPlotItem;
+        plotitem =  _grac.Layers[nextlayer].PlotItems.Flattened[nextplotitemnumber] as XYColumnPlotItem;
         if(null==plotitem)
           continue;
   
@@ -330,8 +330,8 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     {
       if(layernumber<_grac.Doc.Layers.Count)
       {
-        for(int i=0;i<_grac.Doc.Layers[layernumber].PlotItems.Count;i++)
-          if(object.ReferenceEquals(_grac.Doc.Layers[layernumber].PlotItems[i],plotitem))
+        for(int i=0;i<_grac.Doc.Layers[layernumber].PlotItems.Flattened.Length;i++)
+          if(object.ReferenceEquals(_grac.Doc.Layers[layernumber].PlotItems.Flattened[i],plotitem))
             return i;
       }
       return -1;

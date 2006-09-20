@@ -27,7 +27,7 @@ using Altaxo.Serialization;
 using Altaxo.Data;
 using Altaxo.Graph.Axes;
 using Altaxo.Graph.Axes.Boundaries;
-
+using Altaxo.Drawing;
 
 namespace Altaxo.Graph
 {
@@ -42,7 +42,6 @@ namespace Altaxo.Graph
   [SerializationVersion(0)]
   public class XYColumnPlotData 
     :
-    IXYBoundsHolder, 
     System.Runtime.Serialization.IDeserializationCallback,
     Main.IChangedEventSource, 
     System.ICloneable,
@@ -819,6 +818,20 @@ namespace Altaxo.Graph
       set { this.m_PlotRangeLength = value<0 ? 0 : value; }
     }
 
+    class MyPlotData : Processed2DPlotData
+    {
+      public IReadableColumn _xColumn;
+      public IReadableColumn _yColumm;
+
+      public override AltaxoVariant GetXPhysical(int originalRowIndex)
+      {
+        return _xColumn[originalRowIndex];
+      }
+      public override AltaxoVariant GetYPhysical(int originalRowIndex)
+      {
+        return _yColumm[originalRowIndex];
+      }
+    }
     
     /// <summary>
     /// This will create a point list out of the data, which can be used to plot the data. In order to create this list,
@@ -829,28 +842,33 @@ namespace Altaxo.Graph
     /// <param name="rangeList">On return, this gives the list of plot ranges.</param>
     /// <param name="ptArray">On return, this is an array of plot points in layer coordinates.</param>
     /// <returns>True if the function is successfull, otherwise false.</returns>
-    public bool GetRangesAndPoints(
-      IPlotArea layer,
-      out PlotRangeList rangeList,
-      out PointF[] ptArray)
+    public Processed2DPlotData GetRangesAndPoints(
+      IPlotArea layer)
     {
       const double MaxRelativeValue = 1E2;
+      MyPlotData result = new MyPlotData();
 
-      rangeList=null;
-      ptArray=null;
+      PlotRangeList rangeList=null;
+      PointF[] ptArray=null;
+      
 
 
       Altaxo.Data.INumericColumn xColumn = this.XColumn as Altaxo.Data.INumericColumn;
       Altaxo.Data.INumericColumn yColumn = this.YColumn as Altaxo.Data.INumericColumn;
 
       if(null==xColumn || null==yColumn)
-        return false; // this plotitem is only for x and y double columns
+        return null; // this plotitem is only for x and y double columns
 
       if(this.PlottablePoints<=0)
-        return false;
+        return null;
 
       // allocate an array PointF to hold the line points
       ptArray = new PointF[this.PlottablePoints];
+      result.PlotPointsInAbsoluteLayerCoordinates = ptArray;
+
+      // allocate  the physical points
+      result._xColumn = this.XColumn;
+      result._yColumm = this.YColumn;
 
       // Fill the array with values
       // only the points where x and y are not NaNs are plotted!
@@ -861,10 +879,12 @@ namespace Altaxo.Graph
       int  rangeStart=0;
       int  rangeOffset=0;
       rangeList = new PlotRangeList();
+      result.RangeList = rangeList;
+
 
       Axis xAxis = layer.XAxis;
       Axis yAxis = layer.YAxis;
-      I2DTo2DConverter logicalToArea = layer.LogicalToAreaConversion;
+      G2DCoordinateSystem coordsys = layer.CoordinateSystem;
 
 
       int len = this.PlotRangeEnd;
@@ -884,6 +904,8 @@ namespace Altaxo.Graph
         double x_rel,y_rel;
         double xcoord, ycoord;
 
+        
+
         x_rel = xAxis.PhysicalVariantToNormal(xColumn[i]);
         y_rel = yAxis.PhysicalVariantToNormal(yColumn[i]);
 
@@ -902,7 +924,7 @@ namespace Altaxo.Graph
         // that with the choosen axis the point is undefined 
         // (for instance negative values on a logarithmic axis)
         // in this case the returned value is NaN
-        if(logicalToArea.Convert(x_rel,y_rel, out xcoord, out ycoord))
+        if(coordsys.LogicalToLayerCoordinates(x_rel,y_rel, out xcoord, out ycoord))
         {
           if(bInPlotSpace)
           {
@@ -912,6 +934,7 @@ namespace Altaxo.Graph
           }
           ptArray[j].X = (float)xcoord;
           ptArray[j].Y = (float)ycoord;
+          
           j++;
         }
         else
@@ -928,7 +951,7 @@ namespace Altaxo.Graph
         bInPlotSpace=true;
         rangeList.Add(new PlotRange(rangeStart,j,rangeOffset)); // add the last range
       }
-      return true;
+      return result;
     }
   }
 }

@@ -137,6 +137,7 @@ namespace Altaxo.Main
       return type.IsInstanceOfType(root) ? root : null;
     }
 
+   
 
     /// <summary>
     /// Get the absolute path of the node <code>node</code> starting from the root.

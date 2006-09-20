@@ -499,14 +499,14 @@ namespace Altaxo.Graph
       double y_rel_top = gl.YAxis.PhysicalVariantToNormal(yColumn[cols-1]);
 
       double xleft, xright, ytop, ybottom;
-      if( gl.LogicalToAreaConversion.Convert(x_rel_left,y_rel_top, out xleft, out ytop) &&
-        gl.LogicalToAreaConversion.Convert(x_rel_right, y_rel_bottom, out xright, out ybottom))
+      if (gl.CoordinateSystem.LogicalToLayerCoordinates(x_rel_left, y_rel_top, out xleft, out ytop) &&
+        gl.CoordinateSystem.LogicalToLayerCoordinates(x_rel_right, y_rel_bottom, out xright, out ybottom))
       {
 
         GraphicsState savedGraphicsState = gfrx.Save();
 
         if(this.m_ClipToLayer)
-          gfrx.Clip = gl.GetRegion();
+          gfrx.Clip = gl.CoordinateSystem.GetRegion();
 
         gfrx.DrawImage(m_Image,(float)xleft,(float)ytop,(float)(xright-xleft),(float)(ybottom-ytop));
       

@@ -79,9 +79,8 @@ namespace Altaxo.Graph.GUI
   public class TitleFormatLayerController : ITitleFormatLayerController
   {
     protected ITitleFormatLayerView m_View;
-    protected XYPlotLayer           m_Layer;
-    protected EdgeType              m_Edge;
- 
+    protected G2DAxisStyle _doc;
+
     protected bool    m_ShowAxis;
     protected bool    m_Original_ShowAxis;
 
@@ -111,10 +110,9 @@ namespace Altaxo.Graph.GUI
 
     protected bool    m_AxisPositionValueEnabled = true;
 
-    public TitleFormatLayerController(XYPlotLayer layer, EdgeType edge)
+    public TitleFormatLayerController(G2DAxisStyle doc)
     {
-      m_Layer = layer;
-      m_Edge  = edge;
+      _doc = doc;
       this.SetElements(true);
     }
 
@@ -125,32 +123,9 @@ namespace Altaxo.Graph.GUI
 
 
 
-      XYAxisStyle axstyle=null;
-      string title=null;
-      bool bAxisEnabled=false;
-      switch(m_Edge)
-      {
-        case EdgeType.Left:
-          axstyle = m_Layer.LeftAxisStyle;
-          title   = m_Layer.LeftAxisTitleString;
-          bAxisEnabled = m_Layer.LeftAxisEnabled;
-          break;
-        case EdgeType.Right:
-          axstyle = m_Layer.RightAxisStyle;
-          title   = m_Layer.RightAxisTitleString;
-          bAxisEnabled = m_Layer.RightAxisEnabled;
-          break;
-        case EdgeType.Bottom:
-          axstyle = m_Layer.BottomAxisStyle;
-          title   = m_Layer.BottomAxisTitleString;
-          bAxisEnabled = m_Layer.BottomAxisEnabled;
-          break;
-        case EdgeType.Top:
-          axstyle = m_Layer.TopAxisStyle;
-          title   = m_Layer.TopAxisTitleString;
-          bAxisEnabled = m_Layer.TopAxisEnabled;
-          break;
-      }
+      G2DAxisLineStyle axstyle=_doc.AxisLineStyle;
+      string title = _doc.TitleText;
+      bool bAxisEnabled=_doc.ShowAxisLine;
 
       // Show Axis
       if(bInit)
@@ -213,16 +188,26 @@ namespace Altaxo.Graph.GUI
 
       // Major ticks
       if(bInit)
-        this.m_MajorTicks = this.m_Original_MajorTicks = (axstyle.InnerMajorTicks?1:0) + (axstyle.OuterMajorTicks?2:0); 
+        this.m_MajorTicks = this.m_Original_MajorTicks = (axstyle.LeftSideMajorTicks?1:0) + (axstyle.RightSideMajorTicks?2:0); 
       if(null!=View)
-        View.InitializeMajorTicks(new string[]{"None","In","Out","In&Out"},this.m_MajorTicks);
-
-      
+      {
+      if(_doc.CachedAxisInformation!=null)
+        View.InitializeMajorTicks(new string[]{"None",_doc.CachedAxisInformation.NameOfLeftSide,_doc.CachedAxisInformation.NameOfRightSide,
+          _doc.CachedAxisInformation.NameOfLeftSide+"&"+_doc.CachedAxisInformation.NameOfRightSide}, this.m_MajorTicks);
+      else
+       View.InitializeMajorTicks(new string[]{"None","LeftSide","RightSide","LeftSide&RightSide"},this.m_MajorTicks);
+      }
       // Minor ticks
       if(bInit)
-        this.m_MinorTicks = this.m_Original_MinorTicks = (axstyle.InnerMinorTicks?1:0) + (axstyle.OuterMinorTicks?2:0); 
+        this.m_MinorTicks = this.m_Original_MinorTicks = (axstyle.LeftSideMinorTicks?1:0) + (axstyle.RightSideMinorTicks?2:0); 
       if(null!=View)
+      {
+      if(_doc.CachedAxisInformation!=null)
+        View.InitializeMinorTicks(new string[]{"None",_doc.CachedAxisInformation.NameOfLeftSide,_doc.CachedAxisInformation.NameOfRightSide,
+          _doc.CachedAxisInformation.NameOfLeftSide+"&"+_doc.CachedAxisInformation.NameOfRightSide},this.m_MinorTicks);
+      else
         View.InitializeMinorTicks(new string[]{"None","In","Out","In&Out"},this.m_MinorTicks);
+      }
 
 
       // Position and PositionValue
@@ -254,9 +239,8 @@ namespace Altaxo.Graph.GUI
       if(null!=View)
       {
         View.InitializeAxisPosition(new string[] {
-                                                   m_Edge.ToString(),
-                                                   "% from " + m_Edge.ToString(),
-                                                   "At position ="
+                                                   "Default",
+                                                   "% from default"
                                                  }, this.m_AxisPosition);
 
         View.InitializeAxisPositionValue(this.m_AxisPositionValue);
@@ -297,7 +281,7 @@ namespace Altaxo.Graph.GUI
     }
     public object ModelObject
     {
-      get { return this.m_Layer; }
+      get { return this._doc; }
     }
 
     public void EhView_ShowAxisChanged(bool bShow)
@@ -353,22 +337,7 @@ namespace Altaxo.Graph.GUI
 
     public bool Apply()
     {
-      XYAxisStyle axstyle=null;
-      switch(m_Edge)
-      {
-        case EdgeType.Left:
-          axstyle = m_Layer.LeftAxisStyle;
-          break;
-        case EdgeType.Right:
-          axstyle = m_Layer.RightAxisStyle;
-          break;
-        case EdgeType.Bottom:
-          axstyle = m_Layer.BottomAxisStyle;
-          break;
-        case EdgeType.Top:
-          axstyle = m_Layer.TopAxisStyle;
-          break;
-      }
+      G2DAxisLineStyle axstyle=_doc.AxisLineStyle;
 
       try
       {
@@ -378,25 +347,8 @@ namespace Altaxo.Graph.GUI
           m_Title=null;
 
         // Axis enable and title
-        switch(m_Edge)
-        {
-          case EdgeType.Left:
-            m_Layer.LeftAxisEnabled = m_ShowAxis;
-            m_Layer.LeftAxisTitleString = m_Title;
-            break;
-          case EdgeType.Right:
-            m_Layer.RightAxisEnabled = m_ShowAxis;
-            m_Layer.RightAxisTitleString = m_Title;
-            break;
-          case EdgeType.Bottom:
-            m_Layer.BottomAxisEnabled = m_ShowAxis;
-            m_Layer.BottomAxisTitleString = m_Title;
-            break;
-          case EdgeType.Top:
-            m_Layer.TopAxisEnabled = m_ShowAxis;
-            m_Layer.TopAxisTitleString = m_Title;
-            break;
-        }
+        _doc.ShowAxisLine = m_ShowAxis;
+        _doc.TitleText = m_Title;
 
 
         // axis color
@@ -415,14 +367,14 @@ namespace Altaxo.Graph.GUI
         // read major ticks
         if(m_MajorTicks != m_Original_MajorTicks)
         {
-          axstyle.InnerMajorTicks = 0!=(1&m_MajorTicks);
-          axstyle.OuterMajorTicks = 0!=(2&m_MajorTicks);
+          axstyle.LeftSideMajorTicks = 0!=(1&m_MajorTicks);
+          axstyle.RightSideMajorTicks = 0!=(2&m_MajorTicks);
         }
         // read minor ticks
         if(m_MinorTicks != m_Original_MinorTicks)
         {
-          axstyle.InnerMinorTicks = 0!=(1&m_MinorTicks);
-          axstyle.OuterMinorTicks = 0!=(2&m_MinorTicks);
+          axstyle.LeftSideMinorTicks = 0!=(1&m_MinorTicks);
+          axstyle.RightSideMinorTicks = 0!=(2&m_MinorTicks);
         }
 
 
@@ -443,6 +395,7 @@ namespace Altaxo.Graph.GUI
               posval = System.Convert.ToDouble(this.m_AxisPositionValue);
               axstyle.Position = new Calc.RelativeOrAbsoluteValue(posval,false);
               break;
+            
           }
         }
       

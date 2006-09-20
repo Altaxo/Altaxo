@@ -24,8 +24,10 @@ using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
+using Altaxo.Collections;
 using Altaxo.Graph;
 using Altaxo.Main.GUI;
 using Altaxo.Gui.Common.Drawing;
@@ -80,7 +82,7 @@ namespace Altaxo.Gui.Graph
     /// </summary>
     /// <param name="arr">String array of possible selections</param>
     /// <param name="sel">Current selection.</param>
-    void InitializeFillDirection(string[] arr , string sel);
+    void InitializeFillDirection(List<ListNode> list, int sel);
 
     /// <summary>
     /// Initializes the fill color combobox.
@@ -99,7 +101,7 @@ namespace Altaxo.Gui.Graph
     string LineConnect { get; }
   
     bool   LineFillArea { get; }
-    string LineFillDirection { get; }
+    ListNode LineFillDirection { get; }
     BrushHolder LineFillColor {get; }
 
     
@@ -248,8 +250,28 @@ namespace Altaxo.Gui.Graph
 
     public void SetFillDirection()
     {
-      string [] names = System.Enum.GetNames(typeof(Altaxo.Graph.XYPlotLineStyles.FillDirection));
-      _view.InitializeFillDirection(names,_tempDoc.FillDirection.ToString());
+      Altaxo.Graph.IPlotArea layer = Main.DocumentPath.GetRootNodeImplementing(_doc, typeof(Altaxo.Graph.IPlotArea)) as Altaxo.Graph.IPlotArea;
+
+      List<ListNode> names = new List<ListNode>();
+
+      int idx = -1;
+      if (layer != null)
+      {
+        foreach (A2DAxisStyleInformation info in layer.CoordinateSystem.AxisStyles)
+          names.Add(new ListNode(info.NameOfAxisStyle, info));
+
+        idx = layer.CoordinateSystem.IndexOfAxisStyle(_tempDoc.FillDirection);
+
+
+        if (idx < 0 && _tempDoc.FillDirection != null)
+        {
+          A2DAxisStyleInformation info = layer.CoordinateSystem.GetAxisStyleInformation(_tempDoc.FillDirection);
+          names.Add(new ListNode(info.NameOfAxisStyle, info));
+          idx = names.Count - 1;
+        }
+
+      }
+      _view.InitializeFillDirection(names,Math.Max(idx,0)); // _tempDoc.FillDirection.ToString());
     }
 
     public void SetFillColor()
@@ -285,7 +307,11 @@ namespace Altaxo.Gui.Graph
         // Fill Area
         _doc.FillArea = _view.LineFillArea;
         // Line fill direction
-        _doc.FillDirection = (Altaxo.Graph.XYPlotLineStyles.FillDirection)Enum.Parse(typeof(Altaxo.Graph.XYPlotLineStyles.FillDirection),_view.LineFillDirection);
+        A2DAxisStyleIdentifier id = null;
+        if(_doc.FillArea && null!=_view.LineFillDirection)
+          id = ((A2DAxisStyleInformation)_view.LineFillDirection.Item).Identifier;
+
+        _doc.FillDirection = id;
         // Line fill color
         _doc.FillBrush = _view.LineFillColor;
 

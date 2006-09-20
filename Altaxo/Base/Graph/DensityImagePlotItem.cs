@@ -29,6 +29,8 @@ using Altaxo.Graph.Axes.Boundaries;
 
 namespace Altaxo.Graph
 {
+  using PlotGroups;
+
   /// <summary>
   /// Association of data and style specialized for x-y-plots of column data.
   /// </summary>
@@ -135,8 +137,19 @@ namespace Altaxo.Graph
 
     public DensityImagePlotItem(DensityImagePlotItem from)
     {
-      this.Data = from.Data;   // also wires the event
-      this.Style = from.Style; // also wires the event
+      CopyFrom(from);
+    }
+
+    protected override void CopyFrom(PlotItem fromb)
+    {
+      base.CopyFrom(fromb);
+
+      DensityImagePlotItem from = fromb as DensityImagePlotItem;
+      if (null != from)
+      {
+        this.Data = from.Data;   // also wires the event
+        this.Style = from.Style; // also wires the event
+      }
     }
 
     public override object Clone()
@@ -282,7 +295,7 @@ namespace Altaxo.Graph
         this.m_PlotAssociation.SetXBoundsFromTemplate(val as NumericalBoundaries);
     }
 
-    public void MergeXBoundsInto(IPhysicalBoundaries pb)
+    public void MergeXBoundsInto(IPlotArea layer, IPhysicalBoundaries pb)
     {
       if(pb is NumericalBoundaries)
         this.m_PlotAssociation.MergeXBoundsInto(pb as NumericalBoundaries);
@@ -306,12 +319,27 @@ namespace Altaxo.Graph
         this.m_PlotAssociation.SetYBoundsFromTemplate(val as NumericalBoundaries);
     }
 
-    public void MergeYBoundsInto(IPhysicalBoundaries pb)
+    public void MergeYBoundsInto(IPlotArea layer, IPhysicalBoundaries pb)
     {
       if(pb is NumericalBoundaries)
         this.m_PlotAssociation.MergeYBoundsInto(pb as NumericalBoundaries);
     }
 
     #endregion
+
+    public override void CollectStyles(PlotGroupStyleCollection styles)
+    {
+      
+    }
+
+    public override void PrepareStyles(PlotGroupStyleCollection externalGroups)
+    {
+      
+    }
+
+    public override void ApplyStyles(PlotGroupStyleCollection externalGroups)
+    {
+      
+    }
   }
 }

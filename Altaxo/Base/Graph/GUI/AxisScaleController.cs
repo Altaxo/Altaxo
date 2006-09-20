@@ -56,7 +56,7 @@ namespace Altaxo.Graph.GUI
     public enum AxisDirection { Horizontal=0, Vertical=1 }
     protected IAxisScaleView m_View;
     protected XYPlotLayer m_Layer;
-    protected AxisDirection m_Direction;
+    protected int m_axisNumber;
     
     // Cached values
     protected Axis m_Axis;
@@ -78,11 +78,11 @@ namespace Altaxo.Graph.GUI
     protected IMVCAController m_BoundaryController;
 
 
-    public AxisScaleController(XYPlotLayer layer, AxisDirection dir)
+    public AxisScaleController(XYPlotLayer layer, int axisnumber)
     {
       m_Layer = layer;
-      m_Direction = dir;
-      m_Axis = dir==AxisDirection.Horizontal ? m_Layer.XAxis : m_Layer.YAxis;
+      m_axisNumber = axisnumber;
+      m_Axis = m_Layer.AxisProperties.Axis(axisnumber);
       _tempAxis = (Axis)m_Axis.Clone();
 
 
@@ -92,7 +92,10 @@ namespace Altaxo.Graph.GUI
     public AxisScaleController(XYPlotLayer layer, Axis ax)
     {
       m_Layer = layer;
-      m_Direction = layer.XAxis == ax ? AxisDirection.Horizontal : AxisDirection.Vertical;
+      m_axisNumber = layer.AxisProperties.IndexOf(ax);
+      if (m_axisNumber < 0)
+        throw new ArgumentException("Provided axis is not member of the layer");
+
       m_Axis = ax;
       _tempAxis = (Axis)m_Axis.Clone();
 
@@ -182,10 +185,7 @@ namespace Altaxo.Graph.GUI
       // note: the order is essential here
       // first set the axis in the layer, _then_ apply the RescaleConditions
 
-      if((m_Direction==AxisDirection.Horizontal))
-        m_Layer.XAxis = _tempAxis;
-      else
-        m_Layer.YAxis = _tempAxis;
+      m_Layer.AxisProperties.SetAxis(m_axisNumber, _tempAxis);
 
    
 

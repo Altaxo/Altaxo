@@ -21,11 +21,12 @@
 #endregion
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Data;
 using System.Windows.Forms;
+using Altaxo.Collections;
 using Altaxo.Main.GUI;
 using Altaxo.Gui.Common.Drawing;
 
@@ -1165,7 +1166,7 @@ namespace Altaxo.Gui.Graph
     {
       if(null!=Controller)
       {
-        string name = (string)this.m_cbAttachedAxis.SelectedItem;
+        ListNode name = (ListNode)this.m_cbAttachedAxis.SelectedItem;
         Controller.EhView_AttachedAxisChanged(name);
       }
     }
@@ -1212,6 +1213,13 @@ namespace Altaxo.Gui.Graph
       box.Items.Clear();
       box.Items.AddRange(names);
       box.SelectedItem = name;
+    }
+
+    public static void InitComboBox(System.Windows.Forms.ComboBox box, List<ListNode> names, int sel)
+    {
+      box.Items.Clear();
+      box.Items.AddRange(names.ToArray());
+      box.SelectedIndex = sel;
     }
 
     public static void InitFontComboBox(ComboBox box, string choosenfontfamily)
@@ -1273,9 +1281,9 @@ namespace Altaxo.Gui.Graph
       this.m_cbAttachedAxis.Enabled = !bAttach;     
     }
 
-    public void AttachedAxis_Initialize(string[] names, string name)
+    public void AttachedAxis_Initialize(List<ListNode> names, int sel)
     {
-      InitComboBox(this.m_cbAttachedAxis,names,name);
+      InitComboBox(this.m_cbAttachedAxis,names,sel);
     }
 
     public void Rotation_Initialize(string text)

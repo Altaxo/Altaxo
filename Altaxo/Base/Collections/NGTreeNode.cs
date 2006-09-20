@@ -27,7 +27,7 @@ using System.Text;
 namespace Altaxo.Collections
 {
   /// <summary>
-  /// Represents a collection of <see cref="NGTreeNode />.
+  /// Represents a collection of <see cref="NGTreeNode" />.
   /// </summary>
   public interface NGTreeNodeCollection : IList<NGTreeNode>
   {

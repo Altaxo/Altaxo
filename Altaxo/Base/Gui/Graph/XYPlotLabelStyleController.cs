@@ -21,6 +21,8 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
+using Altaxo.Collections;
 using Altaxo.Serialization;
 using System.Drawing;
 using Altaxo.Graph;
@@ -70,7 +72,7 @@ namespace Altaxo.Gui.Graph
     /// Called if the attached axis selection is changed.
     /// </summary>
     /// <param name="newValue">The new selected item of the combo box.</param>
-    void EhView_AttachedAxisChanged(string newValue);
+    void EhView_AttachedAxisChanged(ListNode newValue);
 
   
 
@@ -166,8 +168,8 @@ namespace Altaxo.Gui.Graph
     /// Initializes the AttachedAxis combo box.
     /// </summary>
     /// <param name="names">The possible choices.</param>
-    /// <param name="name">The actual name of the choice.</param>
-    void AttachedAxis_Initialize(string[] names, string name);
+    /// <param name="sel">The actual choice.</param>
+    void AttachedAxis_Initialize(List<ListNode> names, int sel);
 
 
     /// <summary>
@@ -231,7 +233,7 @@ namespace Altaxo.Gui.Graph
     protected bool _attachToEdge;
 
     /// <summary>The axis where the label is attached to (if it is attached).</summary>
-    protected EdgeType _attachedEdge;
+    protected A2DAxisStyleIdentifier _attachedEdge;
 
    
 
@@ -266,7 +268,7 @@ namespace Altaxo.Gui.Graph
         
         _horizontalAlignment = _doc.HorizontalAlignment;
         _verticalAlignment = _doc.VerticalAlignment;
-        _attachToEdge = _doc.AttachToAxis;
+        _attachToEdge = _doc.AttachedAxis!=null;
         _attachedEdge = _doc.AttachedAxis;
         _rotation     = _doc.Rotation;
         _xOffset      = _doc.XOffset;
@@ -282,7 +284,7 @@ namespace Altaxo.Gui.Graph
         View.HorizontalAlignment_Initialize(System.Enum.GetNames(typeof(System.Drawing.StringAlignment)),System.Enum.GetName(typeof(System.Drawing.StringAlignment),_horizontalAlignment));
         View.VerticalAlignment_Initialize(System.Enum.GetNames(typeof(System.Drawing.StringAlignment)),System.Enum.GetName(typeof(System.Drawing.StringAlignment),_verticalAlignment));
         View.AttachToAxis_Initialize(_attachToEdge);
-        View.AttachedAxis_Initialize(System.Enum.GetNames(typeof(EdgeType)),System.Enum.GetName(typeof(EdgeType),_attachedEdge));
+        SetAttachmentDirection();
         View.Rotation_Initialize(Serialization.NumberConversion.ToString(_rotation));
         View.XOffset_Initialize(Serialization.NumberConversion.ToString(_xOffset*100));
         View.YOffset_Initialize(Serialization.NumberConversion.ToString(_yOffset*100));
@@ -294,7 +296,28 @@ namespace Altaxo.Gui.Graph
       }
     }
 
-  
+
+    public void SetAttachmentDirection()
+    {
+      Altaxo.Graph.IPlotArea layer = Main.DocumentPath.GetRootNodeImplementing(_doc, typeof(Altaxo.Graph.IPlotArea)) as Altaxo.Graph.IPlotArea;
+
+      List<ListNode> names = new List<ListNode>();
+
+      foreach (A2DAxisStyleInformation info in layer.CoordinateSystem.AxisStyles)
+        names.Add(new ListNode(info.NameOfAxisStyle, info));
+
+      int idx = layer.CoordinateSystem.IndexOfAxisStyle(_attachedEdge);
+
+
+      if (idx < 0 && _attachedEdge != null)
+      {
+        A2DAxisStyleInformation info = layer.CoordinateSystem.GetAxisStyleInformation(_attachedEdge);
+        names.Add(new ListNode(info.NameOfAxisStyle, info));
+        idx = names.Count - 1;
+      }
+
+      _view.AttachedAxis_Initialize(names, Math.Max(idx, 0)); 
+    }
 
 
     void InitializeLabelColumnText()
@@ -357,9 +380,9 @@ namespace Altaxo.Gui.Graph
       _attachToEdge = newValue;
     }
 
-    public void EhView_AttachedAxisChanged(string newValue)
+    public void EhView_AttachedAxisChanged(ListNode newValue)
     {
-      _attachedEdge = (EdgeType)System.Enum.Parse(typeof(EdgeType),newValue);
+      _attachedEdge = ((A2DAxisStyleInformation)newValue.Item).Identifier;
     }
 
     public void EhView_IndependentColorChanged(bool newValue)
@@ -420,8 +443,12 @@ namespace Altaxo.Gui.Graph
       _doc.BackgroundStyle = (Altaxo.Graph.BackgroundStyles.IBackgroundStyle)_backgroundStyleController.ModelObject;
       _doc.HorizontalAlignment = _horizontalAlignment;
       _doc.VerticalAlignment   = _verticalAlignment;
-      _doc.AttachToAxis = _attachToEdge;
-      _doc.AttachedAxis = _attachedEdge;
+
+      if (_attachToEdge)
+        _doc.AttachedAxis = _attachedEdge;
+      else
+        _doc.AttachedAxis = null;
+
       _doc.Rotation     = _rotation;
       _doc.XOffset      = _xOffset;
       _doc.YOffset      = _yOffset;

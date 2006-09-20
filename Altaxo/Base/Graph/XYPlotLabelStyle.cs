@@ -29,13 +29,14 @@ using Altaxo.Serialization;
 
 namespace Altaxo.Graph
 {
+  using PlotGroups;
 
   public class XYPlotLabelStyle :
     ICloneable,
     Main.IChangedEventSource,
-    System.Runtime.Serialization.IDeserializationCallback, 
+    System.Runtime.Serialization.IDeserializationCallback,
     Main.IChildChangedEventSink,
-    I2DPlotStyle
+    IG2DPlotStyle
   {
     /// <summary>The font of the label.</summary>
     protected System.Drawing.Font m_Font;
@@ -46,8 +47,8 @@ namespace Altaxo.Graph
     protected bool m_IndependentColor;
 
     /// <summary>The brush for the label.</summary>
-    protected BrushHolder  m_Brush;
-  
+    protected BrushHolder m_Brush;
+
     /// <summary>The x offset in EM units.</summary>
     protected double m_XOffset;
 
@@ -61,76 +62,117 @@ namespace Altaxo.Graph
     //protected bool m_WhiteOut;
 
     /// <summary>The style for the background.</summary>
-    protected BackgroundStyles.IBackgroundStyle  _backgroundStyle;
+    protected BackgroundStyles.IBackgroundStyle _backgroundStyle;
 
     // <summary>The brush for the background.</summary>
     //protected BrushHolder  m_BackgroundBrush;
 
-    /// <summary>If true, the label is attached to one of the four edges of the layer.</summary>
-    protected bool m_AttachToAxis;
+   
 
     /// <summary>The axis where the label is attached to (if it is attached).</summary>
-    protected Graph.EdgeType m_AttachedAxis;
+    protected A2DAxisStyleIdentifier m_AttachedAxis;
 
     protected Altaxo.Data.ReadableColumnProxy m_LabelColumn;
 
     // cached values:
     protected System.Drawing.StringFormat m_CachedStringFormat;
 
+    protected object _parent;
+
 
     #region Serialization
-  
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotLabelStyle),0)]
-      public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+
+    private A2DAxisStyleIdentifier GetDirection(EdgeType fillDir)
     {
+      switch (fillDir)
+      {
+        case EdgeType.Bottom:
+          return A2DAxisStyleIdentifier.X0;
+        case EdgeType.Top:
+          return A2DAxisStyleIdentifier.X1;
+        case EdgeType.Left:
+          return A2DAxisStyleIdentifier.Y0;
+        case EdgeType.Right:
+          return A2DAxisStyleIdentifier.Y1;
+      }
+      return null;
+    }
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotLabelStyle), 0)]
+    public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public static A2DAxisStyleIdentifier GetDirection(EdgeType fillDir)
+      {
+        switch (fillDir)
+        {
+          case EdgeType.Bottom:
+            return A2DAxisStyleIdentifier.X0;
+          case EdgeType.Top:
+            return A2DAxisStyleIdentifier.X1;
+          case EdgeType.Left:
+            return A2DAxisStyleIdentifier.Y0;
+          case EdgeType.Right:
+            return A2DAxisStyleIdentifier.Y1;
+        }
+        return null;
+      }
+
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        SSerialize(obj,info);
+        SSerialize(obj, info);
       }
       public static void SSerialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
+        throw new NotSupportedException("Serialization of old versions not supported, probably a programming error");
+        /*
         XYPlotLabelStyle s = (XYPlotLabelStyle)obj;
-        info.AddValue("Font",s.m_Font);  
-        info.AddValue("IndependentColor",s.m_IndependentColor);
-        info.AddValue("Brush",s.m_Brush);  
-        info.AddValue("XOffset",s.m_XOffset);
-        info.AddValue("YOffset",s.m_YOffset);
-        info.AddValue("Rotation",s.m_Rotation);
-        info.AddEnum("HorizontalAlignment",s.HorizontalAlignment);
-        info.AddEnum("VerticalAlignment",s.VerticalAlignment);
-        info.AddValue("AttachToAxis",s.m_AttachToAxis);
-        info.AddValue("AttachedAxis",s.m_AttachedAxis);
+        info.AddValue("Font", s.m_Font);
+        info.AddValue("IndependentColor", s.m_IndependentColor);
+        info.AddValue("Brush", s.m_Brush);
+        info.AddValue("XOffset", s.m_XOffset);
+        info.AddValue("YOffset", s.m_YOffset);
+        info.AddValue("Rotation", s.m_Rotation);
+        info.AddEnum("HorizontalAlignment", s.HorizontalAlignment);
+        info.AddEnum("VerticalAlignment", s.VerticalAlignment);
+        info.AddValue("AttachToAxis", s.m_AttachToAxis);
+        info.AddValue("AttachedAxis", s.m_AttachedAxis);
         //info.AddValue("WhiteOut",s.m_WhiteOut);
         //info.AddValue("BackgroundBrush",s.m_BackgroundBrush);  
+         */
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        return SDeserialize(o,info,parent,true);
+        return SDeserialize(o, info, parent, true);
       }
       public static object SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent, bool nativeCall)
       {
-        
-        XYPlotLabelStyle s = null!=o ? (XYPlotLabelStyle)o : new XYPlotLabelStyle();
 
-        s.m_Font = (Font)info.GetValue("Font",s);  
+        XYPlotLabelStyle s = null != o ? (XYPlotLabelStyle)o : new XYPlotLabelStyle();
+
+        s.m_Font = (Font)info.GetValue("Font", s);
         s.m_IndependentColor = info.GetBoolean("IndependentColor");
-        s.m_Brush = (BrushHolder)info.GetValue("Brush",s);
+        s.m_Brush = (BrushHolder)info.GetValue("Brush", s);
         s.m_XOffset = info.GetDouble("XOffset");
         s.m_YOffset = info.GetDouble("YOffset");
         s.m_Rotation = info.GetDouble("Rotation");
-        s.HorizontalAlignment = (System.Drawing.StringAlignment)info.GetEnum("HorizontalAlignment",typeof(System.Drawing.StringAlignment));
-        s.VerticalAlignment   = (System.Drawing.StringAlignment)info.GetEnum("VerticalAlignment",typeof(System.Drawing.StringAlignment));
-        s.m_AttachToAxis = info.GetBoolean("AttachToAxis");
-        s.m_AttachedAxis = (EdgeType)info.GetValue("AttachedAxis",parent);
+        s.HorizontalAlignment = (System.Drawing.StringAlignment)info.GetEnum("HorizontalAlignment", typeof(System.Drawing.StringAlignment));
+        s.VerticalAlignment = (System.Drawing.StringAlignment)info.GetEnum("VerticalAlignment", typeof(System.Drawing.StringAlignment));
+        bool attachToAxis = info.GetBoolean("AttachToAxis");
+        EdgeType attachedAxis = (EdgeType)info.GetValue("AttachedAxis", parent);
         bool whiteOut = info.GetBoolean("WhiteOut");
-        BrushHolder backgroundBrush = (BrushHolder)info.GetValue("BackgroundBrush",s);
+        BrushHolder backgroundBrush = (BrushHolder)info.GetValue("BackgroundBrush", s);
 
-        if(whiteOut)
+        if (attachToAxis)
+          s.m_AttachedAxis = GetDirection(attachedAxis);
+        else
+          s.m_AttachedAxis = null;
+
+        if (whiteOut)
           s._backgroundStyle = new BackgroundStyles.BackgroundColorStyle(backgroundBrush.Color);
-      
-        if(nativeCall)
+
+        if (nativeCall)
         {
           // restore the cached values
           s.SetCachedValues();
@@ -140,26 +182,30 @@ namespace Altaxo.Graph
         return s;
       }
 
-      
+
     }
 
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotLabelStyle),1)]
-      public class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotLabelStyle), 1)]
+    public class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
+        throw new NotSupportedException("Serialization of old versions not supported, probably a programming error");
+
+        /*
         XYPlotLabelStyle s = (XYPlotLabelStyle)obj;
-        XmlSerializationSurrogate0.SSerialize(obj,info);
-        info.AddValue("LabelColumn",s.m_LabelColumn);
+        XmlSerializationSurrogate0.SSerialize(obj, info);
+        info.AddValue("LabelColumn", s.m_LabelColumn);
+        */
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        
-        XYPlotLabelStyle s = (XYPlotLabelStyle) XmlSerializationSurrogate0.SDeserialize(o,info,parent,false);
 
-        s.m_LabelColumn = (Altaxo.Data.ReadableColumnProxy)info.GetValue("LabelColumn",parent);
+        XYPlotLabelStyle s = (XYPlotLabelStyle)XmlSerializationSurrogate0.SDeserialize(o, info, parent, false);
+
+        s.m_LabelColumn = (Altaxo.Data.ReadableColumnProxy)info.GetValue("LabelColumn", parent);
 
         // restore the cached values
         s.SetCachedValues();
@@ -169,55 +215,61 @@ namespace Altaxo.Graph
       }
     }
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotLabelStyle),2)]
-      public class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotLabelStyle), 2)]
+    public class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        SSerialize(obj,info);
+        SSerialize(obj, info);
       }
       public static void SSerialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
+        throw new NotSupportedException("Serialization of old versions not supported, probably a programming error");
+        /*
         XYPlotLabelStyle s = (XYPlotLabelStyle)obj;
-        info.AddValue("Font",s.m_Font);  
-        info.AddValue("IndependentColor",s.m_IndependentColor);
-        info.AddValue("Brush",s.m_Brush);  
-        info.AddValue("XOffset",s.m_XOffset);
-        info.AddValue("YOffset",s.m_YOffset);
-        info.AddValue("Rotation",s.m_Rotation);
-        info.AddEnum("HorizontalAlignment",s.HorizontalAlignment);
-        info.AddEnum("VerticalAlignment",s.VerticalAlignment);
-        info.AddValue("AttachToAxis",s.m_AttachToAxis);
-        info.AddValue("AttachedAxis",s.m_AttachedAxis);
-        info.AddValue("Background",s._backgroundStyle);  
-        info.AddValue("LabelColumn",s.m_LabelColumn);
-
+        info.AddValue("Font", s.m_Font);
+        info.AddValue("IndependentColor", s.m_IndependentColor);
+        info.AddValue("Brush", s.m_Brush);
+        info.AddValue("XOffset", s.m_XOffset);
+        info.AddValue("YOffset", s.m_YOffset);
+        info.AddValue("Rotation", s.m_Rotation);
+        info.AddEnum("HorizontalAlignment", s.HorizontalAlignment);
+        info.AddEnum("VerticalAlignment", s.VerticalAlignment);
+        info.AddValue("AttachToAxis", s.m_AttachToAxis);
+        info.AddValue("AttachedAxis", s.m_AttachedAxis);
+        info.AddValue("Background", s._backgroundStyle);
+        info.AddValue("LabelColumn", s.m_LabelColumn);
+        */
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        return SDeserialize(o,info,parent,true);
+        return SDeserialize(o, info, parent, true);
       }
       public static object SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent, bool nativeCall)
       {
-        
-        XYPlotLabelStyle s = null!=o ? (XYPlotLabelStyle)o : new XYPlotLabelStyle();
 
-        s.m_Font = (Font)info.GetValue("Font",s);  
+        XYPlotLabelStyle s = null != o ? (XYPlotLabelStyle)o : new XYPlotLabelStyle();
+
+        s.m_Font = (Font)info.GetValue("Font", s);
         s.m_IndependentColor = info.GetBoolean("IndependentColor");
-        s.m_Brush = (BrushHolder)info.GetValue("Brush",s);
+        s.m_Brush = (BrushHolder)info.GetValue("Brush", s);
         s.m_XOffset = info.GetDouble("XOffset");
         s.m_YOffset = info.GetDouble("YOffset");
         s.m_Rotation = info.GetDouble("Rotation");
-        s.HorizontalAlignment = (System.Drawing.StringAlignment)info.GetEnum("HorizontalAlignment",typeof(System.Drawing.StringAlignment));
-        s.VerticalAlignment   = (System.Drawing.StringAlignment)info.GetEnum("VerticalAlignment",typeof(System.Drawing.StringAlignment));
-        s.m_AttachToAxis = info.GetBoolean("AttachToAxis");
-        s.m_AttachedAxis = (EdgeType)info.GetValue("AttachedAxis",parent);
-        s._backgroundStyle = (BackgroundStyles.IBackgroundStyle)info.GetValue("Background",s);
-        s.m_LabelColumn = (Altaxo.Data.ReadableColumnProxy)info.GetValue("LabelColumn",parent);
+        s.HorizontalAlignment = (System.Drawing.StringAlignment)info.GetEnum("HorizontalAlignment", typeof(System.Drawing.StringAlignment));
+        s.VerticalAlignment = (System.Drawing.StringAlignment)info.GetEnum("VerticalAlignment", typeof(System.Drawing.StringAlignment));
+        bool attachToAxis = info.GetBoolean("AttachToAxis");
+        EdgeType attachedAxis = (EdgeType)info.GetValue("AttachedAxis", parent);
+        s._backgroundStyle = (BackgroundStyles.IBackgroundStyle)info.GetValue("Background", s);
+        s.m_LabelColumn = (Altaxo.Data.ReadableColumnProxy)info.GetValue("LabelColumn", parent);
 
+        if (attachToAxis)
+          s.m_AttachedAxis = XmlSerializationSurrogate0.GetDirection(attachedAxis);
+        else
+          s.m_AttachedAxis = null;
 
-        if(nativeCall)
+        if (nativeCall)
         {
           // restore the cached values
           s.SetCachedValues();
@@ -253,16 +305,15 @@ namespace Altaxo.Graph
 
     public XYPlotLabelStyle(XYPlotLabelStyle from)
     {
-      this.m_Font       = (Font)from.m_Font.Clone();
+      this.m_Font = (Font)from.m_Font.Clone();
       this.m_IndependentColor = from.m_IndependentColor;
-      this.m_Brush      = (BrushHolder)from.m_Brush.Clone();
-      this.m_XOffset    = from.m_XOffset;
-      this.m_YOffset    = from.m_YOffset;
-      this.m_Rotation   = from.m_Rotation;
-      this._backgroundStyle      = null==from._backgroundStyle ? null : (BackgroundStyles.IBackgroundStyle)from._backgroundStyle.Clone();
+      this.m_Brush = (BrushHolder)from.m_Brush.Clone();
+      this.m_XOffset = from.m_XOffset;
+      this.m_YOffset = from.m_YOffset;
+      this.m_Rotation = from.m_Rotation;
+      this._backgroundStyle = null == from._backgroundStyle ? null : (BackgroundStyles.IBackgroundStyle)from._backgroundStyle.Clone();
       this.m_CachedStringFormat = (System.Drawing.StringFormat)from.m_CachedStringFormat.Clone();
-      this.m_AttachToAxis        = from.m_AttachToAxis;
-      this.m_AttachedAxis        = from.m_AttachedAxis;
+      this.m_AttachedAxis = from.m_AttachedAxis;
       this.m_LabelColumn = (Data.ReadableColumnProxy)from.m_LabelColumn.Clone();
 
       CreateEventChain();
@@ -275,7 +326,7 @@ namespace Altaxo.Graph
 
     public XYPlotLabelStyle(Altaxo.Data.IReadableColumn labelColumn)
     {
-      this.m_Font = new Font(System.Drawing.FontFamily.GenericSansSerif,8,GraphicsUnit.World);
+      this.m_Font = new Font(System.Drawing.FontFamily.GenericSansSerif, 8, GraphicsUnit.World);
       this.m_IndependentColor = false;
       this.m_Brush = new BrushHolder(Color.Black);
       this.m_XOffset = 0;
@@ -284,9 +335,8 @@ namespace Altaxo.Graph
       this._backgroundStyle = null;
       this.m_CachedStringFormat = new StringFormat(StringFormatFlags.NoWrap);
       this.m_CachedStringFormat.Alignment = System.Drawing.StringAlignment.Center;
-      this.m_CachedStringFormat.LineAlignment   = System.Drawing.StringAlignment.Center;
-      this.m_AttachToAxis = false;
-      this.m_AttachedAxis = EdgeType.Bottom;
+      this.m_CachedStringFormat.LineAlignment = System.Drawing.StringAlignment.Center;
+      this.m_AttachedAxis = null;
       this.m_LabelColumn = new Altaxo.Data.ReadableColumnProxy(labelColumn);
 
       CreateEventChain();
@@ -334,12 +384,12 @@ namespace Altaxo.Graph
       set
       {
         float oldValue = FontSize;
-        float newValue = Math.Max(0,value);
+        float newValue = Math.Max(0, value);
 
-        if(newValue != oldValue)
+        if (newValue != oldValue)
         {
           Font oldFont = m_Font;
-          m_Font = new Font(oldFont.FontFamily.Name,newValue,oldFont.Style,GraphicsUnit.World);
+          m_Font = new Font(oldFont.FontFamily.Name, newValue, oldFont.Style, GraphicsUnit.World);
           oldFont.Dispose();
 
           OnChanged(); // Fire Changed event
@@ -357,7 +407,7 @@ namespace Altaxo.Graph
       {
         bool oldValue = m_IndependentColor;
         m_IndependentColor = value;
-        if(value!=oldValue)
+        if (value != oldValue)
         {
           OnChanged();
         }
@@ -367,13 +417,13 @@ namespace Altaxo.Graph
     /// <summary>The brush color.</summary>
     public System.Drawing.Color Color
     {
-      get { return this.m_Brush.Color;; }
-      set 
+      get { return this.m_Brush.Color; }
+      set
       {
         Color oldColor = this.Color;
-        if(value!=oldColor)
+        if (value != oldColor)
         {
-          this.m_Brush.SetSolidBrush( value );
+          this.m_Brush.SetSolidBrush(value);
           OnChanged(); // Fire Changed event
         }
       }
@@ -386,10 +436,10 @@ namespace Altaxo.Graph
       {
         return _backgroundStyle;
       }
-      set 
+      set
       {
         BackgroundStyles.IBackgroundStyle oldValue = this._backgroundStyle;
-        if(!object.ReferenceEquals(value,oldValue))
+        if (!object.ReferenceEquals(value, oldValue))
         {
           this._backgroundStyle = value;
           OnChanged(); // Fire Changed event
@@ -406,7 +456,7 @@ namespace Altaxo.Graph
       {
         double oldValue = this.m_XOffset;
         this.m_XOffset = value;
-        if(value!=oldValue)
+        if (value != oldValue)
         {
           OnChanged();
         }
@@ -421,7 +471,7 @@ namespace Altaxo.Graph
       {
         double oldValue = this.m_YOffset;
         this.m_YOffset = value;
-        if(value!=oldValue)
+        if (value != oldValue)
         {
           OnChanged();
         }
@@ -436,27 +486,27 @@ namespace Altaxo.Graph
       {
         double oldValue = this.m_Rotation;
         this.m_Rotation = value;
-        if(value!=oldValue)
+        if (value != oldValue)
         {
           OnChanged();
         }
       }
     }
 
-   
+
 
     /// <summary>Horizontal alignment of the label.</summary>
     public System.Drawing.StringAlignment HorizontalAlignment
     {
-      get 
+      get
       {
-        return this.m_CachedStringFormat.Alignment; 
+        return this.m_CachedStringFormat.Alignment;
       }
       set
       {
         System.Drawing.StringAlignment oldValue = this.HorizontalAlignment;
         this.m_CachedStringFormat.Alignment = value;
-        if(value!=oldValue)
+        if (value != oldValue)
         {
           OnChanged();
         }
@@ -471,38 +521,24 @@ namespace Altaxo.Graph
       {
         System.Drawing.StringAlignment oldValue = this.VerticalAlignment;
         this.m_CachedStringFormat.LineAlignment = value;
-        if(value!=oldValue)
+        if (value != oldValue)
         {
           OnChanged();
         }
       }
     }
 
-    /// <summary>If true, the label is attached to one of the 4 axes.</summary>
-    public bool AttachToAxis
-    {
-      get { return this.m_AttachToAxis; }
-      set
-      {
-        bool oldValue = this.m_AttachToAxis;
-        this.m_AttachToAxis = value;
-        if(value!=oldValue)
-        {
-          OnChanged();
-        }
-      }
-    }
 
 
     /// <summary>If axis the label is attached to if the value of <see cref="AttachToAxis" /> is true.</summary>
-    public EdgeType AttachedAxis
+    public A2DAxisStyleIdentifier AttachedAxis
     {
       get { return this.m_AttachedAxis; }
       set
       {
-        EdgeType oldValue = this.m_AttachedAxis;
+        A2DAxisStyleIdentifier oldValue = this.m_AttachedAxis;
         this.m_AttachedAxis = value;
-        if(value!=oldValue)
+        if (value != oldValue)
         {
           OnChanged();
         }
@@ -515,110 +551,107 @@ namespace Altaxo.Graph
     }
 
 
+    /// <summary>
+    /// Paints one label.
+    /// </summary>
+    /// <param name="g"></param>
+    /// <param name="label"></param>
     public void Paint(Graphics g, string label)
     {
       float fontSize = this.FontSize;
-      float xpos = (float)(m_XOffset*fontSize);
-      float ypos = (float)(-m_YOffset*fontSize);
-      if(this._backgroundStyle!=null)
+      float xpos = (float)(m_XOffset * fontSize);
+      float ypos = (float)(-m_YOffset * fontSize);
+      SizeF stringsize = g.MeasureString(label, this.m_Font, new PointF(xpos, ypos), m_CachedStringFormat);
+
+      if (this._backgroundStyle != null)
       {
         float x = xpos, y = ypos;
-        SizeF stringsize = g.MeasureString(label,this.m_Font,new PointF(xpos,ypos),m_CachedStringFormat);
-        switch(m_CachedStringFormat.Alignment)
+        switch (m_CachedStringFormat.Alignment)
         {
           case StringAlignment.Center:
-            x -= stringsize.Width/2;
+            x -= stringsize.Width / 2;
             break;
           case StringAlignment.Far:
             x -= stringsize.Width;
             break;
         }
-        switch(m_CachedStringFormat.LineAlignment)
+        switch (m_CachedStringFormat.LineAlignment)
         {
           case StringAlignment.Center:
-            y -= stringsize.Height/2;
+            y -= stringsize.Height / 2;
             break;
           case StringAlignment.Far:
             y -= stringsize.Height;
             break;
         }
-        this._backgroundStyle.Draw(g,new RectangleF(x,y,stringsize.Width,stringsize.Height));
+        this._backgroundStyle.Draw(g, new RectangleF(x, y, stringsize.Width, stringsize.Height));
       }
-      g.DrawString(label,m_Font,m_Brush,xpos,ypos,m_CachedStringFormat);
+
+      m_Brush.Rectangle = new RectangleF(new PointF(xpos, ypos), stringsize);
+      g.DrawString(label, m_Font, m_Brush, xpos, ypos, m_CachedStringFormat);
     }
 
+
     public void Paint(Graphics g,
-      IPlotArea layer,
-      Graph.AbstractXYPlotStyle parentStyle,
-      PlotRangeList rangeList,
-      PointF[] ptArray,
-      Altaxo.Data.IReadableColumn labelColumn)
+     IPlotArea layer,
+     Processed2DPlotData pdata)
     {
-      // force color to be that of the parent style if not independent
-      if(!this.m_IndependentColor && parentStyle!=null && this.m_Brush.Color!=parentStyle.Color)
-        this.m_Brush.SetSolidBrush(parentStyle.Color);
-        
+      if (this.m_LabelColumn.Document == null)
+        return;
+
+      PlotRangeList rangeList = pdata.RangeList;
+      PointF[] ptArray = pdata.PlotPointsInAbsoluteLayerCoordinates;
+      Altaxo.Data.IReadableColumn labelColumn = this.m_LabelColumn.Document;
+
 
       // save the graphics stat since we have to translate the origin
       System.Drawing.Drawing2D.GraphicsState gs = g.Save();
-
-      double bottomPosition= 0; 
-      double topPosition   = 0;
-      double leftPosition  = 0;
+      /*
+      double bottomPosition = 0;
+      double topPosition = 0;
+      double leftPosition = 0;
       double rightPosition = 0;
 
-      if(layer.IsAffine && layer.IsOrthogonal)
-      {
-        layer.LogicalToAreaConversion.Convert(0,0, out leftPosition, out bottomPosition);
-        layer.LogicalToAreaConversion.Convert(1,1, out rightPosition, out topPosition);
-      }
-
-      double xpos=0, ypos=0;
-      double xpre,ypre;
-      double xdiff,ydiff;
-      for(int r=0;r<rangeList.Count;r++)
+      layer.CoordinateSystem.LogicalToLayerCoordinates(0, 0, out leftPosition, out bottomPosition);
+      layer.CoordinateSystem.LogicalToLayerCoordinates(1, 1, out rightPosition, out topPosition);
+ */
+      double xpos = 0, ypos = 0;
+      double xpre, ypre;
+      double xdiff, ydiff;
+      for (int r = 0; r < rangeList.Count; r++)
       {
         int lower = rangeList[r].LowerBound;
         int upper = rangeList[r].UpperBound;
         int offset = rangeList[r].OffsetToOriginal;
-        for(int j=lower;j<upper;j++)
+        for (int j = lower; j < upper; j++)
         {
-          string label = labelColumn[j+offset].ToString();
-          if(label==null || label==string.Empty)
+          string label = labelColumn[j + offset].ToString();
+          if (label == null || label == string.Empty)
             continue;
-          
+
           xpre = ptArray[j].X;
           ypre = ptArray[j].Y;
-          
-          if(this.m_AttachToAxis)
+
+          if (null!=this.m_AttachedAxis)
           {
-            switch(this.m_AttachedAxis)
-            {
-              case Graph.EdgeType.Bottom:
-                ypre = bottomPosition;
-                break;
-              case Graph.EdgeType.Left:
-                xpre = leftPosition;
-                break;
-              case Graph.EdgeType.Right:
-                xpre = rightPosition;
-                break;
-              case Graph.EdgeType.Top:
-                ypre = topPosition;
-                break;
-            }
+            double rx = layer.XAxis.PhysicalVariantToNormal(pdata.GetXPhysical(j + offset));
+            double ry = layer.YAxis.PhysicalVariantToNormal(pdata.GetYPhysical(j + offset));
+
+            PointF pp = layer.CoordinateSystem.GetPointOnAxis(this.m_AttachedAxis,rx,ry);
+            xpre = pp.X;
+            ypre = pp.Y;
           }
-          
+
 
           xdiff = xpre - xpos;
           ydiff = ypre - ypos;
-          xpos =  xpre;
-          ypos =  ypre;
-          g.TranslateTransform((float)xdiff,(float)ydiff);
-          if(this.m_Rotation!=0)
+          xpos = xpre;
+          ypos = ypre;
+          g.TranslateTransform((float)xdiff, (float)ydiff);
+          if (this.m_Rotation != 0)
             g.RotateTransform((float)-this.m_Rotation);
-          this.Paint(g,label);
-          if(this.m_Rotation!=0)
+          this.Paint(g, label);
+          if (this.m_Rotation != 0)
             g.RotateTransform((float)this.m_Rotation);
         } // end for
       }
@@ -627,30 +660,35 @@ namespace Altaxo.Graph
     }
 
 
+    public RectangleF PaintSymbol(System.Drawing.Graphics g, System.Drawing.RectangleF bounds)
+    {
+      return bounds;
+    }
+
     public object Clone()
     {
       return new XYPlotLabelStyle(this);
     }
-  
+
     #region IChangedEventSource Members
 
     public event System.EventHandler Changed;
 
     protected virtual void OnChanged()
     {
-      if(null!=Changed)
-        Changed(this,new EventArgs());
+      if (null != Changed)
+        Changed(this, new EventArgs());
     }
 
     #endregion
 
     #region IChildChangedEventSink Members
 
-   
+
     public void EhChildChanged(object child, EventArgs e)
     {
-      if(null!=Changed)
-        Changed(this,e);
+      if (null != Changed)
+        Changed(this, e);
     }
 
     #endregion
@@ -685,17 +723,49 @@ namespace Altaxo.Graph
       }
       set
       {
-        
+
       }
     }
 
-    public void Paint(Graphics g,
-      IPlotArea layer,
-      PlotRangeList rangeList,
-      PointF[] ptArray)
+   
+
+    #region IG2DPlotStyle Members
+
+    public void AddLocalGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
     {
-      if(this.m_LabelColumn.Document!=null)
-        this.Paint(g, layer, null, rangeList, ptArray, this.m_LabelColumn.Document);
+      if(this.IsColorProvider)
+        ColorGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
+    }
+
+    public void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
+    {
+      if (this.IsColorProvider)
+        ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate() { return PlotColors.Colors.GetPlotColor(this.Color); });
+
+    }
+
+    public void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
+    {
+      if (this.IsColorReceiver)
+        ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(PlotColor c) { this.Color = c; });
+    }
+
+    #endregion
+
+
+    #endregion
+
+    #region IDocumentNode Members
+
+    public object ParentObject
+    {
+      get { return _parent; }
+      set { _parent = value; }
+    }
+
+    public string Name
+    {
+      get { return "LabelStyle"; }
     }
 
     #endregion

@@ -22,11 +22,13 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Data;
 using System.Windows.Forms;
 using Altaxo.Main.GUI;
+using Altaxo.Collections;
 
 using Altaxo.Graph;
 using Altaxo.Gui.Common.Drawing;
@@ -764,6 +766,18 @@ namespace Altaxo.Gui.Graph
       --m_SuppressEvents;
     }
 
+    public void InitComboBox(System.Windows.Forms.ComboBox box, List<ListNode> names, int sel)
+    {
+      ++m_SuppressEvents;
+      box.Items.Clear();
+      box.Items.AddRange(names.ToArray());
+      
+      if(sel>=0 && sel<box.Items.Count)
+        box.SelectedIndex = sel;
+
+      --m_SuppressEvents;
+    }
+
     public void EnableDisableMain(bool bEnable)
     {
       this._chkIndependentColor.Enabled = bEnable;
@@ -860,16 +874,16 @@ namespace Altaxo.Gui.Graph
       get { return m_cbLineFillColor.Brush; }
     }
   
-    public void InitializeFillDirection(string[] arr, string sel)
+    public void InitializeFillDirection(List<ListNode> list, int sel)
     {
-      InitComboBox(this.m_cbLineFillDirection,arr,sel);
+      InitComboBox(this.m_cbLineFillDirection,list,sel);
     }
 
        
       
-    public string LineFillDirection
+    public ListNode LineFillDirection
     {
-      get { return (string)m_cbLineFillDirection.SelectedItem; }
+      get { return (ListNode)m_cbLineFillDirection.SelectedItem; }
     }
   
     public void InitializeIndependentColor(bool val)

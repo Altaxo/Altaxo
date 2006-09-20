@@ -205,6 +205,17 @@ namespace Altaxo.Graph.Axes.Boundaries
       }
     }
 
+    /// <summary>
+    /// Manipulates the boundaries by shifting them by a certain amount.
+    /// Don't use this function unless you are absoluteley sure what you do.
+    /// This function is intended for coordinate transforming styles only.
+    /// </summary>
+    /// <param name="amount">The amount by which to shift the boundaries.</param>
+    public void Shift(double amount)
+    {
+      minValue += amount;
+      maxValue += amount;
+    }
 
     #region IPhysicalBoundaries Members
 

@@ -142,48 +142,10 @@ namespace Altaxo.Graph.GUI
       }
 
       // now fill the list box with all plot associations currently inside
-      
       if(bInit)
       {
         m_ItemArray.Clear();
-        System.Collections.Hashtable addedItems = new System.Collections.Hashtable();
-        for(int i=0;i<m_Layer.PlotItems.Count;i++)
-        {
-          PlotItem pa = m_Layer.PlotItems[i];
-        
-          if(!addedItems.ContainsKey(pa)) // if not already added to the list box
-          {
-            PlotGroup grp = m_Layer.PlotItems.GetPlotGroupOf(pa); // get the plot group of the item
-        
-            if(null!=grp) // if the item is member of a group
-            {
-              // add only one item to the list box, namely a PLCon group item with
-              // all the members of that group
-              PLCon plitem = new PLCon(grp);
-              NGTreeNode grpNode = new NGTreeNode();
-              grpNode.Text = "PlotGroup";
-              grpNode.Tag = grp;
-              m_ItemArray.Add(grpNode);
-              // add all the items in the group also to the list of added items 
-              for(int j=0;j<grp.Count;j++)
-              {
-                NGTreeNode childNode = new NGTreeNode();
-                childNode.Text = grp[j].GetName(2);
-                childNode.Tag = grp[j];
-                grpNode.Nodes.Add(childNode);
-                addedItems.Add(grp[j],null);
-              }
-            }
-            else // else if the item is not in a plot group
-            {
-              NGTreeNode toAdd = new NGTreeNode();
-              toAdd.Text = pa.GetName(2);
-              toAdd.Tag = pa;
-              m_ItemArray.Add(toAdd);
-              addedItems.Add(pa,null);
-            }
-          }       
-        }
+        AddToNGTreeNode(m_RootNode, m_Layer.PlotItems);
       }
 
       if(null!=View)
@@ -196,17 +158,54 @@ namespace Altaxo.Graph.GUI
     }
 
 
-    private PlotItem NewPlotItemFromPLCon(PLCon item)
+    private void AddToNGTreeNode(NGTreeNode node, PlotItemCollection picoll)
     {
-      if(!item.IsSingleNewItem)
-        return null;
+      foreach (IGPlotItem pa in picoll)
+      {
+        if (pa is PlotItemCollection) // if this is a plot item collection
+        {
+          // add only one item to the list box, namely a PLCon group item with
+          // all the members of that group
+          NGTreeNode grpNode = new NGTreeNode();
+          grpNode.Text = "PlotGroup";
+          grpNode.Tag = pa;
+          node.Nodes.Add(grpNode);
+          // add all the items in the group also to the list of added items 
+          AddToNGTreeNode(grpNode, (PlotItemCollection)pa);
+        }
+        else // else if the item is not in a plot group
+        {
+          NGTreeNode toAdd = new NGTreeNode();
+          toAdd.Text = pa.GetName(2);
+          toAdd.Tag = pa;
+          node.Nodes.Add(toAdd);
+        }
+      }
+    }
 
+    private void AddToPlotItemCollection(PlotItemCollection picoll, NGTreeNode rootnode)
+    {
+      picoll.Clear();
+      foreach (NGTreeNode node in rootnode.Nodes)
+      {
+        IGPlotItem item = (IGPlotItem)node.Tag;
+        if (item is PlotItemCollection) // if this is a plot item collection
+          AddToPlotItemCollection((PlotItemCollection)item, node);
+
+        picoll.Add(item);
+
+      }
+    }
+
+
+    private IGPlotItem NewPlotItemFromPLCon(string tablename, string columnname)
+    {
       // create a new plotassociation from the column
       // first, get the y column from table and name
-      Data.DataTable tab = Current.Project.DataTableCollection[item.table];
+      Data.DataTable tab = Current.Project.DataTableCollection[tablename];
       if(null!=tab)
       {
-        Data.DataColumn ycol = tab[item.column];
+        Data.DataColumn ycol = tab[columnname];
         if(null!=ycol)
         {
           Data.DataColumn xcol = tab.DataColumns.FindXColumnOf(ycol);
@@ -279,7 +278,7 @@ namespace Altaxo.Graph.GUI
         {
           NGTreeNode newNode = new NGTreeNode();
           newNode.Text = sn.Text;
-          newNode.Tag = new PLCon(sn.Parent.Text,sn.Text);
+          newNode.Tag = this.NewPlotItemFromPLCon(sn.Parent.Text,sn.Text);
            m_ItemArray.Add(newNode);
         }
       }
@@ -306,19 +305,15 @@ namespace Altaxo.Graph.GUI
     public void EhView_ContentsDoubleClick(NGTreeNode selNode)
     {
       object tag = selNode.Tag;
-      PlotItem pa = null;
-      if (tag is PlotItem)
+      IGPlotItem pa = null;
+      if (tag is IGPlotItem)
       {
-        pa = tag as PlotItem;
+        pa = tag as IGPlotItem;
       }
-      else if (tag is PLCon)
-      {
-        pa = ((PLCon)tag).PlotItem;
-      }
+     
       if (null != pa)
       {
-        PlotGroup plotGroup = m_Layer.PlotItems.GetPlotGroupOf(pa);
-        Main.GUI.DialogFactory.ShowPlotStyleAndDataDialog(View.Form, pa, plotGroup);
+        Main.GUI.DialogFactory.ShowPlotStyleAndDataDialog(View.Form, pa, pa.ParentCollection.GroupStyles);
       }
     }
     
@@ -403,6 +398,10 @@ namespace Altaxo.Graph.GUI
     }
 
 
+    /// <summary>
+    /// Group the selected nodes.
+    /// </summary>
+    /// <param name="selNodes"></param>
     public void EhView_GroupClick(NGTreeNode[] selNodes)
     {
       
@@ -415,13 +414,12 @@ namespace Altaxo.Graph.GUI
       int   foundindex=-1;
       for(int i=0;i<selNodes.Length;i++)
       {
-        if(selNodes[i].Tag is PlotGroup || (selNodes[i].Tag is PLCon && ((PLCon)selNodes[i].Tag).IsGroup))
+        if(selNodes[i].Tag is PlotItemCollection)
         {
           foundindex = i;
           break;
         }
        }
-
 
       // if a group was found use this to add the remaining items
        if (foundindex >= 0)
@@ -436,9 +434,9 @@ namespace Altaxo.Graph.GUI
        // else use a new PLCon to add the items to
        else
        {
-         PLCon addgroup = new PLCon(new PlotGroup(PlotGroupStyle.All,false,PlotGroupStrictness.Normal));
+         
          NGTreeNode newNode = new NGTreeNode();
-         newNode.Tag = addgroup;
+         newNode.Tag = new PlotItemCollection();
          newNode.Text = "PlotGroup";
 
 
@@ -461,7 +459,7 @@ namespace Altaxo.Graph.GUI
              newNode.Nodes.Add(node);
            }
          } // end for
-         this.m_ItemArray.Add(newNode);
+         m_RootNode.Nodes.Add(newNode);
        }
       // now all items are in the new group
 
@@ -511,17 +509,12 @@ namespace Altaxo.Graph.GUI
 
     public void EhView_EditRangeClick(NGTreeNode[] selNodes)
     {
-      // retrieve the selected items
-      if(selNodes.Length<1)
-        return; // we cannot ungroup anything if nothing selected
-
       if (selNodes.Length == 1)
       {
-        if (selNodes[0].Tag is PlotItem)
+        if (selNodes[0].Tag is IGPlotItem)
         {
-          PlotItem pi = (PlotItem)selNodes[0].Tag;
-          PlotGroup pg = this.m_Layer.PlotItems.GetPlotGroupOf(pi);
-          Altaxo.Main.GUI.DialogFactory.ShowPlotStyleAndDataDialog(Current.MainWindow, pi, pg);
+          IGPlotItem pi = (IGPlotItem)selNodes[0].Tag;
+          Altaxo.Main.GUI.DialogFactory.ShowPlotStyleAndDataDialog(Current.MainWindow, pi, pi.ParentCollection.GroupStyles);
         }
       }
       
@@ -544,67 +537,7 @@ namespace Altaxo.Graph.GUI
         return true; // not dirty - so no need to apply something
 
       m_Layer.PlotItems.Clear(); // first, clear all Plot items
-
-     
-      // now we must get all items out of the listbox and look
-      // for which items are new or changed
-      for(int i=0;i<m_ItemArray.Count;i++)
-      {
-        NGTreeNode node = m_ItemArray[i];
-        PlotItem plotitem=null;
-        object tag = node.Tag;
-        PLCon item = tag as PLCon;
-
-        if(item!=null && item.IsSingleNewItem)
-        {
-          plotitem = this.NewPlotItemFromPLCon(item);
-          if(null!=plotitem)
-          {
-            m_Layer.PlotItems.Add(plotitem);
-          }
-        }
-        else if(tag is PlotItem)
-        {
-          m_Layer.PlotItems.Add((PlotItem)tag);
-        }
-        else if(tag is PlotGroup || (item!=null && item.IsGroup))
-        {
-          PlotGroup newplotgrp;
-          if(item!=null && item.IsGroup)
-          {
-            // 1st) create a new PlotGroup
-            newplotgrp = new PlotGroup(PlotGroupStyle.All,false,PlotGroupStrictness.Normal);
-          }
-          else
-          {
-            newplotgrp = (PlotGroup)tag;
-            newplotgrp.Clear();
-          }
-
-        
-          // if the group was not changed, add all group members to the
-          // plotassociation collection and add the group to the group list
-          for(int j=0;j<node.Nodes.Count;j++)
-          {
-           
-            if(node.Nodes[j].Tag is PlotItem)
-            {
-              m_Layer.PlotItems.Add((PlotItem)node.Nodes[j].Tag);
-              newplotgrp.Add((PlotItem)node.Nodes[j].Tag);
-            }
-            else if(node.Nodes[j].Tag is PLCon && ((PLCon)node.Nodes[j].Tag).IsSingleNewItem)
-            {
-              plotitem = this.NewPlotItemFromPLCon(((PLCon)node.Nodes[j].Tag));
-              if(null!=plotitem)
-              {
-                m_Layer.PlotItems.Add(plotitem);
-                newplotgrp.Add(plotitem);
-              }
-            }
-          } // for all items in that new group
-          m_Layer.PlotItems.Add(newplotgrp); // add the new plot group to the layer
-        } // if it was a new group
-      } // end for all items in the list box
+      AddToPlotItemCollection(m_Layer.PlotItems, m_RootNode);
       
       SetElements(true); // Reload the applied contents to make sure it is synchronized
      
@@ -634,141 +567,6 @@ namespace Altaxo.Graph.GUI
 
     #endregion
 
-    #region Item class
-    public class PLCon
-    {
-      public string table, column; // holds either name of table and column if freshly added
-      public PlotItem PlotItem;   // or the plot association itself in case of existing PlotAssociations
-      
-      // m_Group holds (in PLCon items) information about the group members
-      public PLCon.Collection m_Group; 
-      //  m_OriginalGroup is set to the original plot group in case it exists before
-      public PlotGroup m_OriginalGroup=null;
-
-      public PLCon(string table, string column)
-      {
-        this.table=table;
-        this.column=column;
-        this.PlotItem=null;
-        this.m_Group=null;
-      }
-      public PLCon(PlotItem pa)
-      {
-        this.table=null;
-        this.column=null;
-        this.PlotItem=pa;
-        this.m_Group=null;
-      }
-
-      public PLCon(PLCon[] array)
-      {
-        this.table=null;
-        this.column=null;
-        this.PlotItem=null;
-        this.m_OriginalGroup = null;
-        this.m_Group = new PLCon.Collection();
-        this.m_Group.AddRange(array);
-      }
-
-      public PLCon(PlotGroup grp)
-      {
-        this.table=null;
-        this.column=null;
-        this.PlotItem=null;
-
-        this.m_OriginalGroup = grp;
-        this.m_Group = new PLCon.Collection();
-        for(int i=0;i<grp.Count;i++)
-          m_Group.Add(new PLCon(grp[i]));
-      }
-
-
-      public bool IsValid
-      {
-        get { return null!=PlotItem || (null!=table && null!=column); }
-      }
-
-      public bool IsSingleNewItem
-      {
-        get { return null==PlotItem && null==m_Group; }
-      }
-      public bool IsSingleKnownItem
-      {
-        get { return null!=PlotItem && null==m_Group; }
-      }
-      public bool IsGroup
-      {
-        get { return null!=m_Group; }
-      }
-      public bool IsUnchangedOldGroup
-      {
-        get 
-        {
-          if(!IsGroup)
-            return false;
-        
-          if(null==m_OriginalGroup)
-            return false; // a original group must exist
-
-          // and the counts of the original group and the m_Group Collection have to match
-          if(m_OriginalGroup.Count!=m_Group.Count)
-            return false;
-
-          // and all items in that original group have to match the items in
-          // the m_Group Collection
-          for(int i=0;i<m_OriginalGroup.Count;i++)
-          {
-            if(!object.ReferenceEquals(m_OriginalGroup[i],m_Group[i].PlotItem))
-              return false;
-          }
-          
-          return true; // if all conditions fullfilled, it is unchanged
-        }
-      }
-
-      public bool IsChangedOldGroup
-      {
-        get
-        {
-          return IsGroup && (null!=m_OriginalGroup) && (!IsUnchangedOldGroup);
-        }
-      }
-      public bool IsNewGroup
-      {
-        get { return IsGroup && (null==m_OriginalGroup); }
-      }
-
-      public override string ToString()
-      {
-        if(null!=PlotItem)
-          return PlotItem.GetName(0);
-        else if(table!=null && column!=null)
-          return table+"\\"+this.column;
-        else
-          return "<no more available>";
-          
-      }
-
-      public class Collection : Altaxo.Data.CollectionBase
-      {
-        public void Add(PLCon item)
-        {
-          base.InnerList.Add(item);
-        }
-
-        public void AddRange(PLCon[] array)
-        {
-          base.InnerList.AddRange(array);
-        }
-
-        public PLCon this[int i]
-        {
-          get { return (PLCon)base.InnerList[i]; }
-        }
-
-      }
-    } // end class PLCon
-
-    #endregion
+   
   }
 }

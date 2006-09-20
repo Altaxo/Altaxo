@@ -946,6 +946,7 @@ namespace Altaxo.Graph
           m_Brush = null;
 
           _SetBrushVariable(null);
+          _SetPenVariable(null);
 
           OnChanged(); // Fire the Changed event
         }

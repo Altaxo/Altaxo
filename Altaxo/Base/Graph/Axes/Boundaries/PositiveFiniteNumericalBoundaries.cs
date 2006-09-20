@@ -22,6 +22,7 @@
 
 using System;
 using Altaxo.Serialization;
+using Altaxo.Data;
 
 namespace Altaxo.Graph.Axes.Boundaries
 {
@@ -130,11 +131,18 @@ namespace Altaxo.Graph.Axes.Boundaries
       return new PositiveFiniteNumericalBoundaries(this);
     }
 
-
-    public override bool Add(Altaxo.Data.IReadableColumn col, int idx)
+    public override bool Add(IReadableColumn col, int idx)
     {
-      double d = (col is Altaxo.Data.INumericColumn) ? ((Altaxo.Data.INumericColumn)col)[idx] : idx;
+      return Add((col is INumericColumn) ? ((INumericColumn)col)[idx] : idx);
+    }
 
+    public override bool Add(Altaxo.Data.AltaxoVariant val)
+    {
+      return Add(val.ToDouble());
+    }
+
+    public bool Add(double d)
+    {
       if(EventsEnabled)
       {
         if(d>0 && !double.IsInfinity(d))

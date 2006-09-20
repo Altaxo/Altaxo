@@ -37,7 +37,7 @@ namespace Altaxo.Graph
   [SerializationVersion(0)]
   public class XYZEquidistantMeshColumnPlotData 
     :
-    IXYBoundsHolder, System.Runtime.Serialization.IDeserializationCallback,
+    System.Runtime.Serialization.IDeserializationCallback,
     Main.IChangedEventSource,
     System.ICloneable,
     Main.IDocumentNode

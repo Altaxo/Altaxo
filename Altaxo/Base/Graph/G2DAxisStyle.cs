@@ -34,28 +34,19 @@ namespace Altaxo.Graph
   /// <summary>
   /// This class summarizes all members that are belonging to one edge of the layer.
   /// </summary>
-  public class XYPlotLayerAxisStyleProperties : Main.IChangedEventSource, Main.IChildChangedEventSink, ICloneable
+  public class G2DAxisStyle : Main.IChangedEventSource, Main.IChildChangedEventSink, ICloneable
   {
-    /// <summary>Type of the axis. Determines the orientation of labels and ticks.</summary>
-    EdgeType _edgeType;
-
-    /// <summary>True if the axis line and ticks and labels should be drawn.</summary>
-    bool _showAxis;
+    /// <summary>
+    /// Identifies the axis style.
+    /// </summary>
+    A2DAxisStyleIdentifier _styleID;
 
     /// <summary>Style of axis. Determines the line width and color of the axis and the ticks.</summary>
-    protected XYAxisStyle _axisStyle;
-    /// <summary>
-    /// If true, the major labels will be shown.
-    /// </summary>
-    bool _showMajorLabels;
+    protected G2DAxisLineStyle _axisLineStyle;
     /// <summary>
     /// Determines the style of the major labels.
     /// </summary>
     AbstractXYAxisLabelStyle _majorLabelStyle;
-    /// <summary>
-    /// If true, the minor labels will be shown.
-    /// </summary>
-    bool _showMinorLabels;
     /// <summary>
     /// Determines the style of the minor labels.
     /// </summary>
@@ -65,49 +56,108 @@ namespace Altaxo.Graph
     /// </summary>
     TextGraphics _axisTitle;
 
+    A2DAxisStyleInformation _cachedAxisInfo;
+
 
     #region Serialization
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotLayerAxisStyleProperties), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotLayerAxisStyleProperties", 0)]
     public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
+        throw new NotSupportedException("Serialization of old versions not supported - probably a programming error");
+        /*
         XYPlotLayerAxisStyleProperties s = (XYPlotLayerAxisStyleProperties)obj;
 
         info.AddValue("ShowAxis", s._showAxis);
         info.AddValue("Edge", s._edgeType);
         info.AddValue("AxisStyle", s._axisStyle);
         info.AddValue("ShowMajorLabels", s._showMajorLabels);
-        if(s._showMajorLabels)
+        if (s._showMajorLabels)
           info.AddValue("MajorLabelStyle", s._majorLabelStyle);
         info.AddValue("ShowMinorLabels", s._showMinorLabels);
-        if(s._showMinorLabels)
+        if (s._showMinorLabels)
           info.AddValue("MinorLabelStyle", s._minorLabelStyle);
+        info.AddValue("AxisTitle", s._axisTitle);
+        */
+      }
+
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        G2DAxisStyle s = SDeserialize(o, info, parent);
+        return s;
+      }
+
+
+      protected virtual G2DAxisStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        G2DAxisStyle s = null != o ? (G2DAxisStyle)o : new G2DAxisStyle();
+
+        // Styles
+        bool showAxis = info.GetBoolean("ShowAxis");
+        EdgeType edge = (EdgeType)info.GetEnum("Edge", typeof(EdgeType));
+        s.AxisLineStyle = (G2DAxisLineStyle)info.GetValue("AxisStyle", s);
+        bool showMajorLabels = info.GetBoolean("ShowMajorLabels");
+        if (showMajorLabels)
+          s.MajorLabelStyle = (AbstractXYAxisLabelStyle)info.GetValue("MajorLabelStyle", s);
+        bool showMinorLabels = info.GetBoolean("ShowMinorLabels");
+        if (showMinorLabels)
+          s.MinorLabelStyle = (AbstractXYAxisLabelStyle)info.GetValue("MinorLabelStyle", s);
+        s.Title = (Graph.TextGraphics)info.GetValue("AxisTitle", s);
+
+        switch (edge)
+        {
+          case EdgeType.Bottom:
+            s._styleID = new A2DAxisStyleIdentifier(0, 0);
+            break;
+          case EdgeType.Top:
+            s._styleID = new A2DAxisStyleIdentifier(0, 1);
+            break;
+          case EdgeType.Left:
+            s._styleID = new A2DAxisStyleIdentifier(1, 0);
+            break;
+          case EdgeType.Right:
+            s._styleID = new A2DAxisStyleIdentifier(1, 1);
+            break;
+        }
+
+
+        return s;
+      }
+    }
+
+    // 2006-09-06 renaming to G2DAxisStyle
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(G2DAxisStyle), 1)]
+    public class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        G2DAxisStyle s = (G2DAxisStyle)obj;
+
+        info.AddValue("StyleID", s._styleID);
+        info.AddValue("AxisStyle", s._axisLineStyle);
+        info.AddValue("MajorLabelStyle", s._majorLabelStyle);
+        info.AddValue("MinorLabelStyle", s._minorLabelStyle);
         info.AddValue("AxisTitle", s._axisTitle);
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        XYPlotLayerAxisStyleProperties s = SDeserialize(o, info, parent);
+        G2DAxisStyle s = SDeserialize(o, info, parent);
         return s;
       }
 
 
-      protected virtual XYPlotLayerAxisStyleProperties SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected virtual G2DAxisStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        XYPlotLayerAxisStyleProperties s = null != o ? (XYPlotLayerAxisStyleProperties)o : new XYPlotLayerAxisStyleProperties();
+        G2DAxisStyle s = null != o ? (G2DAxisStyle)o : new G2DAxisStyle();
 
         // Styles
-        s._showAxis = info.GetBoolean("ShowAxis");
-        s._edgeType = (EdgeType)info.GetEnum("Edge", typeof(EdgeType));
-        s.AxisStyle = (XYAxisStyle)info.GetValue("AxisStyle", s);
-        s._showMajorLabels = info.GetBoolean("ShowMajorLabels");
-        if(s._showMajorLabels)
-          s.MajorLabelStyle = (AbstractXYAxisLabelStyle)info.GetValue("MajorLabelStyle", s);
-        s._showMinorLabels = info.GetBoolean("ShowMinorLabels");
-        if(s._showMinorLabels)
-          s.MinorLabelStyle = (AbstractXYAxisLabelStyle)info.GetValue("MinorLabelStyle", s);
+        s._styleID = (A2DAxisStyleIdentifier)info.GetValue("StyleID", s);
+        s.AxisLineStyle = (G2DAxisLineStyle)info.GetValue("AxisStyle", s);
+        s.MajorLabelStyle = (AbstractXYAxisLabelStyle)info.GetValue("MajorLabelStyle", s);
+        s.MinorLabelStyle = (AbstractXYAxisLabelStyle)info.GetValue("MinorLabelStyle", s);
         s.Title = (Graph.TextGraphics)info.GetValue("AxisTitle", s);
 
 
@@ -116,12 +166,16 @@ namespace Altaxo.Graph
     }
     #endregion
 
-    protected XYPlotLayerAxisStyleProperties()
+    protected G2DAxisStyle()
     {
     }
 
-    void CopyFrom(XYPlotLayerAxisStyleProperties from)
+    void CopyFrom(G2DAxisStyle from)
     {
+      this._styleID = from._styleID;
+
+      if (null != _axisLineStyle)
+        _axisLineStyle.Changed -= new EventHandler(EhChildChanged);
       if (null != _majorLabelStyle)
         _majorLabelStyle.Changed -= new EventHandler(EhChildChanged);
       if (null != _minorLabelStyle)
@@ -129,17 +183,14 @@ namespace Altaxo.Graph
       if (null != _axisTitle)
         _axisTitle.Changed -= new EventHandler(EhChildChanged);
 
-
-      this._edgeType = from._edgeType;
-      this._showAxis = from._showAxis;
-      this._axisStyle = from._axisStyle == null ? null : (XYAxisStyle)from._axisStyle.Clone();
-      this._showMajorLabels = from._showMajorLabels;
+      this._axisLineStyle = from._axisLineStyle == null ? null : (G2DAxisLineStyle)from._axisLineStyle.Clone();
       this._majorLabelStyle = from._majorLabelStyle == null ? null : (AbstractXYAxisLabelStyle)from._majorLabelStyle.Clone();
-      this._showMinorLabels = from._showMinorLabels;
       this._minorLabelStyle = from._minorLabelStyle == null ? null : (AbstractXYAxisLabelStyle)from._minorLabelStyle.Clone();
       this._axisTitle = from._axisTitle == null ? null : (TextGraphics)from._axisTitle.Clone();
 
 
+      if (null != _axisLineStyle)
+        _axisLineStyle.Changed += new EventHandler(EhChildChanged);
       if (null != _majorLabelStyle)
         _majorLabelStyle.Changed += new EventHandler(EhChildChanged);
       if (null != _minorLabelStyle)
@@ -148,23 +199,47 @@ namespace Altaxo.Graph
         _axisTitle.Changed += new EventHandler(EhChildChanged);
     }
 
-    public XYPlotLayerAxisStyleProperties(EdgeType type)
+    public G2DAxisStyle(A2DAxisStyleIdentifier id)
     {
-      _edgeType = type;
-      _showAxis = true;
-      _axisStyle = new XYAxisStyle(_edgeType);
-      _axisStyle.Changed += new EventHandler(EhChildChanged);
+      _styleID = id;
+      _axisLineStyle = new G2DAxisLineStyle();
+      _axisLineStyle.Changed += new EventHandler(EhChildChanged);
 
-      _showMajorLabels = true;
-      _majorLabelStyle = new XYAxisLabelStyle(_edgeType);
+      _majorLabelStyle = new XYAxisLabelStyle();
       _majorLabelStyle.Changed += new EventHandler(EhChildChanged);
-
-      _showMinorLabels = false;
-      _minorLabelStyle = new XYAxisLabelStyle(_edgeType);
-      _minorLabelStyle.Changed += new EventHandler(EhChildChanged);
-      _axisTitle = null;
     }
 
+    /// <summary>
+    /// Identifies the axis style.
+    /// </summary>
+    public A2DAxisStyleIdentifier StyleID
+    {
+      get
+      {
+        return _styleID;
+      }
+    }
+
+    public A2DAxisStyleInformation CachedAxisInformation
+    {
+      get
+      {
+        return _cachedAxisInfo;
+      }
+      set
+      {
+        _cachedAxisInfo = value;
+      }
+    }
+
+    public bool IsEmpty
+    {
+      get
+      {
+        bool r = ShowAxisLine | ShowTitle | ShowMajorLabels | ShowMinorLabels;
+        return !r;
+      }
+    }
 
 
     /// <summary>
@@ -184,15 +259,18 @@ namespace Altaxo.Graph
       return false;
     }
 
-    public void Paint(Graphics g, XYPlotLayer layer, Axis axis)
+    public void Paint(Graphics g, XYPlotLayer layer, int axisnumber)
     {
-      if (_showAxis)
-        _axisStyle.Paint(g, layer, axis);
+      A2DAxisStyleInformation styleinfo = layer.CoordinateSystem.GetAxisStyleInformation(_styleID);
+      _cachedAxisInfo = styleinfo;
+
+      if (ShowAxisLine)
+        _axisLineStyle.Paint(g, layer, styleinfo);
       if (ShowMajorLabels)
-        this._majorLabelStyle.Paint(g, layer, axis, _axisStyle, false);
+        this._majorLabelStyle.Paint(g, layer, styleinfo, _axisLineStyle, false);
       if (ShowMinorLabels)
-        this._minorLabelStyle.Paint(g, layer, axis, _axisStyle, true);
-      if (_showAxis && null != _axisTitle)
+        this._minorLabelStyle.Paint(g, layer, styleinfo, _axisLineStyle, true);
+      if (ShowTitle)
         _axisTitle.Paint(g, layer);
     }
 
@@ -200,19 +278,18 @@ namespace Altaxo.Graph
     /// <summary>
     /// Determines whether or not the axis line and ticks should be drawn.
     /// </summary>
-    public bool ShowAxis
+    public bool ShowAxisLine
     {
       get
       {
-        return _showAxis;
+        return _axisLineStyle != null;
       }
       set
       {
-        bool oldvalue = _showAxis;
-        _showAxis = value;
-
-        if (value != oldvalue)
-          OnChanged();
+        if (value == false)
+          AxisLineStyle = null;
+        else if (_axisLineStyle == null)
+          AxisLineStyle = new G2DAxisLineStyle();
       }
     }
 
@@ -223,18 +300,14 @@ namespace Altaxo.Graph
     {
       get
       {
-        return _showAxis && _showMajorLabels && _majorLabelStyle != null;
+        return _majorLabelStyle != null;
       }
       set
       {
-        bool oldvalue = _showMajorLabels;
-        _showMajorLabels = value;
-
-        if (value == true && _majorLabelStyle == null)
-          MajorLabelStyle = new XYAxisLabelStyle(this._edgeType);
-
-        if (value != oldvalue)
-          OnChanged();
+        if (value == false)
+          MajorLabelStyle = null;
+        else if (_majorLabelStyle == null)
+          MajorLabelStyle = new XYAxisLabelStyle();
       }
     }
 
@@ -245,32 +318,28 @@ namespace Altaxo.Graph
     {
       get
       {
-        return _showAxis && _showMinorLabels && _minorLabelStyle != null;
+        return _minorLabelStyle != null;
       }
       set
       {
-        bool oldvalue = _showMinorLabels;
-        _showMinorLabels = value;
-
-        if (value == true && _minorLabelStyle == null)
-          MinorLabelStyle = new XYAxisLabelStyle(this._edgeType);
-
-        if (value != oldvalue)
-          OnChanged();
+        if (value == false)
+          MinorLabelStyle = null;
+        else if (_minorLabelStyle == null)
+          MinorLabelStyle = new XYAxisLabelStyle();
       }
     }
 
     /// <summary>Style of axis. Determines the line width and color of the axis and the ticks.</summary>
-    public XYAxisStyle AxisStyle
+    public G2DAxisLineStyle AxisLineStyle
     {
       get
       {
-        return _axisStyle;
+        return _axisLineStyle;
       }
       set
       {
-        XYAxisStyle oldvalue = _axisStyle;
-        _axisStyle = value;
+        G2DAxisLineStyle oldvalue = _axisLineStyle;
+        _axisLineStyle = value;
 
         if (!object.ReferenceEquals(value, oldvalue))
         {
@@ -292,7 +361,7 @@ namespace Altaxo.Graph
       get
       {
         if (null == _majorLabelStyle)
-          this.MajorLabelStyle = new XYAxisLabelStyle(_edgeType);
+          this.MajorLabelStyle = new XYAxisLabelStyle();
 
         return _majorLabelStyle;
       }
@@ -322,7 +391,7 @@ namespace Altaxo.Graph
       get
       {
         if (_minorLabelStyle == null)
-          this.MinorLabelStyle = new XYAxisLabelStyle(_edgeType);
+          this.MinorLabelStyle = new XYAxisLabelStyle();
 
         return _minorLabelStyle;
       }
@@ -343,6 +412,26 @@ namespace Altaxo.Graph
       }
     }
 
+    /// <summary>
+    /// Determines whether or not the title is shown.
+    /// </summary>
+    public bool ShowTitle
+    {
+      get
+      {
+        return this._axisTitle != null;
+      }
+      set
+      {
+        if (value == false)
+          Title = null;
+        else if (_axisTitle == null)
+        {
+          Title = new TextGraphics();
+          Title.Text = "axis title";
+        }
+      }
+    }
 
     public TextGraphics Title
     {
@@ -354,6 +443,32 @@ namespace Altaxo.Graph
 
         if (!object.ReferenceEquals(_axisTitle, oldvalue))
         {
+          OnChanged();
+        }
+      }
+    }
+
+    public string TitleText
+    {
+      get { return null==_axisTitle ? string.Empty : _axisTitle.Text; }
+      set
+      {
+        string oldvalue = TitleText;
+        if (value!=oldvalue)
+        {
+          if (string.IsNullOrEmpty(value))
+          {
+            _axisTitle = null;
+          }
+          else
+          {
+            if (_axisTitle == null)
+              _axisTitle = new TextGraphics();
+
+            _axisTitle.Text = value;
+          }
+
+
           OnChanged();
         }
       }
@@ -386,7 +501,7 @@ namespace Altaxo.Graph
 
     public object Clone()
     {
-      XYPlotLayerAxisStyleProperties res = new XYPlotLayerAxisStyleProperties(this._edgeType);
+      G2DAxisStyle res = new G2DAxisStyle(_styleID);
       res.CopyFrom(this);
       return res;
     }

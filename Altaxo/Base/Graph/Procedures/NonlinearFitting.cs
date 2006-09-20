@@ -38,7 +38,7 @@ namespace Altaxo.Graph.Procedures
       if(ctrl.CurrentPlotNumber<0)
         return "No active plot!";
 
-      Altaxo.Graph.PlotItem plotItem = ctrl.ActiveLayer.PlotItems[ctrl.CurrentPlotNumber];
+      IGPlotItem plotItem = ctrl.ActiveLayer.PlotItems.Flattened[ctrl.CurrentPlotNumber];
 
       Altaxo.Graph.XYColumnPlotItem xyPlotItem = plotItem as Altaxo.Graph.XYColumnPlotItem;
 

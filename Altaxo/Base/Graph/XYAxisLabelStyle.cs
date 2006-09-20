@@ -40,7 +40,7 @@ namespace Altaxo.Graph
     Main.IChildChangedEventSink
   {
     protected Font _font = new Font(FontFamily.GenericSansSerif,18,GraphicsUnit.World);
-    protected Edge _edge = new Edge(EdgeType.Left);
+    
     protected StringAlignment _horizontalAlignment;
     protected StringAlignment _verticalAlignment;
 
@@ -77,7 +77,6 @@ namespace Altaxo.Graph
       {
         XYAxisLabelStyle s = (XYAxisLabelStyle)obj;
         info.AddValue("Font",s._font);  
-        info.AddValue("Edge",s._edge);  
       }
       /// <summary>
       /// Deserializes the XYAxisLabelStyle Version 0.
@@ -92,7 +91,6 @@ namespace Altaxo.Graph
         XYAxisLabelStyle s = (XYAxisLabelStyle)obj;
 
         s._font = (Font)info.GetValue("Font",typeof(Font));
-        s._edge = (Edge)info.GetValue("Edge",typeof(Edge));
         return s;
       }
     }
@@ -102,16 +100,19 @@ namespace Altaxo.Graph
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
+        throw new NotSupportedException("Serialization of old versions is not supported - probably a programming error");
+        /*
         XYAxisLabelStyle s = (XYAxisLabelStyle)obj;
         info.AddValue("Edge",s._edge);  
         info.AddValue("Font",s._font);  
+        */
       }
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
         
-        XYAxisLabelStyle s = null!=o ? (XYAxisLabelStyle)o : new XYAxisLabelStyle(EdgeType.Left);
+        XYAxisLabelStyle s = null!=o ? (XYAxisLabelStyle)o : new XYAxisLabelStyle();
 
-        s._edge = (Edge)info.GetValue("Edge",s);
+        //s._edge = (Edge)info.GetValue("Edge",s);
         s._font = (Font)info.GetValue("Font",s);
         s.SetStringFormat();
         return s;
@@ -124,6 +125,8 @@ namespace Altaxo.Graph
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
+        throw new NotSupportedException("Serialization of old versions is not supported - probably a programming error");
+        /*
         XYAxisLabelStyle s = (XYAxisLabelStyle)obj;
         info.AddValue("Edge",s._edge);  
         info.AddValue("Font",s._font);  
@@ -139,15 +142,15 @@ namespace Altaxo.Graph
         info.AddValue("YOffset",s._yOffset);
 
         info.AddValue("LabelFormat",s._labelFormatting);
-
+        */
 
       }
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
         
-        XYAxisLabelStyle s = null!=o ? (XYAxisLabelStyle)o : new XYAxisLabelStyle(EdgeType.Left);
+        XYAxisLabelStyle s = null!=o ? (XYAxisLabelStyle)o : new XYAxisLabelStyle();
 
-        s._edge = (Edge)info.GetValue("Edge",s);
+        //s._edge = (Edge)info.GetValue("Edge",s);
         s._font = (Font)info.GetValue("Font",s);
         s._brush = (BrushHolder)info.GetValue("Brush",s);
         s._backgroundStyle = (BackgroundStyles.IBackgroundStyle)info.GetValue("Background");
@@ -174,6 +177,59 @@ namespace Altaxo.Graph
       }
     }
 
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYAxisLabelStyle), 2)]
+    public class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+
+        XYAxisLabelStyle s = (XYAxisLabelStyle)obj;
+        info.AddValue("Font",s._font);  
+        info.AddValue("Brush",s._brush);
+        info.AddValue("Background",s._backgroundStyle);
+
+        info.AddValue("AutoAlignment",s._automaticRotationShift);
+        info.AddEnum("HorzAlignment",s._horizontalAlignment);
+        info.AddEnum("VertAlignment",s._verticalAlignment);
+
+        info.AddValue("Rotation",s._rotation);
+        info.AddValue("XOffset",s._xOffset);
+        info.AddValue("YOffset",s._yOffset);
+
+        info.AddValue("LabelFormat",s._labelFormatting);
+      }
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+
+        XYAxisLabelStyle s = null != o ? (XYAxisLabelStyle)o : new XYAxisLabelStyle();
+
+        s._font = (Font)info.GetValue("Font", s);
+        s._brush = (BrushHolder)info.GetValue("Brush", s);
+        s._backgroundStyle = (BackgroundStyles.IBackgroundStyle)info.GetValue("Background");
+        s._automaticRotationShift = info.GetBoolean("AutoAlignment");
+        s._horizontalAlignment = (StringAlignment)info.GetEnum("HorzAlignment", typeof(StringAlignment));
+        s._verticalAlignment = (StringAlignment)info.GetEnum("VertAlignment", typeof(StringAlignment));
+        s._rotation = info.GetDouble("Rotation");
+        s._xOffset = info.GetDouble("XOffset");
+        s._yOffset = info.GetDouble("YOffset");
+
+        s._labelFormatting = (ILabelFormatting)info.GetValue("LabelFormat", s);
+
+
+
+
+        // Modification of StringFormat is necessary to avoid 
+        // too big spaces between successive words
+        s._stringFormat = (StringFormat)StringFormat.GenericTypographic.Clone();
+        s._stringFormat.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
+
+
+
+        return s;
+      }
+    }
+
     /// <summary>
     /// Finale measures after deserialization.
     /// </summary>
@@ -185,15 +241,13 @@ namespace Altaxo.Graph
 
 
 
-    public XYAxisLabelStyle(EdgeType st)
+    public XYAxisLabelStyle()
     {
-      _edge = new Edge(st);
       SetStringFormat();
     }
 
     public XYAxisLabelStyle(XYAxisLabelStyle from)
     {
-      _edge = from._edge;
       _font = null==from._font ? null : (Font)from._font.Clone();
       _stringFormat = (StringFormat)from._stringFormat.Clone(); 
       _horizontalAlignment = from._horizontalAlignment;
@@ -219,6 +273,7 @@ namespace Altaxo.Graph
       _stringFormat = (StringFormat)StringFormat.GenericTypographic.Clone();
       _stringFormat.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
 
+      /*
       // set the alignment and line alignment of the strings
       switch(this._edge.TypeOfEdge)
       {
@@ -239,6 +294,7 @@ namespace Altaxo.Graph
           _horizontalAlignment = StringAlignment.Near;
           break;
       }
+       */
     }
     #region Properties
 
@@ -253,8 +309,9 @@ namespace Altaxo.Graph
       }
     }
 
+   
     /// <summary>The font size of the label.</summary>
-    public float FontSize
+    public override float FontSize
     {
       get { return _font.Size; }
       set
@@ -439,6 +496,14 @@ namespace Altaxo.Graph
 
     #endregion
 
+    A2DAxisStyleIdentifier _cachedStyleID;
+    public A2DAxisStyleIdentifier AxisStyleID
+    {
+      get
+      {
+        return _cachedStyleID;
+      }
+    }
     public override IHitTestObject HitTest(XYPlotLayer layer, PointF pt)
     {
       GraphicsPath gp = GetSelectionPath(layer);
@@ -478,21 +543,35 @@ namespace Altaxo.Graph
     /// <returns></returns>
     public virtual GraphicsPath GetSelectionPath(XYPlotLayer layer)
     {
-      GraphicsPath gp = new GraphicsPath();
-      gp.AddRectangle(_enclosingRectangle);
-      return gp;
+      return (GraphicsPath)_enclosingPath.Clone();
     }
 
-
-    private RectangleF _enclosingRectangle;
-    public override void Paint(Graphics g, XYPlotLayer layer, Axis raxis, XYAxisStyle axisstyle, bool useMinorTicks)
+    private GraphicsPath _enclosingPath = new GraphicsPath(); // with Winding also overlapping rectangles are selected
+    public override void Paint(Graphics g, XYPlotLayer layer, A2DAxisStyleInformation styleInfo, G2DAxisLineStyle axisstyle, bool useMinorTicks)
     {
+      _cachedStyleID = styleInfo.Identifier;
+      A2DAxisStyleIdentifier styleID = styleInfo.Identifier;
+      Axis raxis = styleID.AxisNumber==0 ? layer.XAxis : layer.YAxis;
+
+      _enclosingPath.Reset();
+      _enclosingPath.FillMode = FillMode.Winding; // with Winding also overlapping rectangles are selected
+      GraphicsPath helperPath = new GraphicsPath();
+      Matrix math = new Matrix();
+
+      double rx0 = 0, rx1 = 1;
+      double ry0 = 0, ry1 = 1;
+      if (styleID.AxisNumber == 0)
+        ry0 = ry1 = styleID.LogicalValue;
+      else
+        rx0 = rx1 = styleID.LogicalValue;
+
+
       SizeF layerSize = layer.Size;
-      PointF orgP = _edge.GetOrg(layerSize);
-      PointF endP = _edge.GetEnd(layerSize);
-      PointF outVector = _edge.OuterVector;
-      float dist_x = axisstyle.OuterDistance+axisstyle.GetOffset(layerSize); // Distance from axis tick point to label
-      float dist_y = axisstyle.OuterDistance+axisstyle.GetOffset(layerSize); // y distance from axis tick point to label
+      PointF outVector;
+      double outer;
+      float outerDistance = axisstyle.GetOuterDistance(styleInfo.PreferedLabelSide);
+      float dist_x = outerDistance; // Distance from axis tick point to label
+      float dist_y = outerDistance; // y distance from axis tick point to label
 
       // dist_x += this._font.SizeInPoints/3; // add some space to the horizontal direction in order to separate the chars a little from the ticks
 
@@ -501,29 +580,6 @@ namespace Altaxo.Graph
       // without this statement, the text is fitted to the pixel grid, which
       // leads to "steps" during scaling
       g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
-
-
-
-      // set the alignment and line alignment of the strings
-      switch(this._edge.TypeOfEdge)
-      {
-        case EdgeType.Bottom:
-          dist_x = 0;
-          break;
-        case EdgeType.Top:
-          dist_x = 0;
-          dist_y = -dist_y;
-          break;
-        case EdgeType.Left:
-          dist_x = -dist_x;
-          dist_y = 0;
-          break;
-        case EdgeType.Right:
-          dist_y = 0;
-          break;
-      }
-
-
 
       double[] relpositions;
       AltaxoVariant[] ticks;
@@ -540,16 +596,20 @@ namespace Altaxo.Graph
       
       IMeasuredLabelItem[] labels = _labelFormatting.GetMeasuredItems(g,_font,_stringFormat,ticks);
 
-      _enclosingRectangle = RectangleF.Empty;
       float emSize = _font.SizeInPoints;
       for(int i=0;i<ticks.Length;i++)
       {
-        System.Drawing.Drawing2D.GraphicsState gs = g.Save();
         double r = relpositions[i];
-        PointF tickorg = _edge.GetEdgePoint(layerSize,r);
+
+        outer = styleInfo.PreferedLabelSide==A2DAxisSide.Left? 90 : -90;
+        PointF tickorg = layer.CoordinateSystem.GetNormalizedDirection(rx0, ry0, rx1, ry1, r, outer, out outVector);
+        PointF tickend = tickorg;
+        tickend.X += outVector.X * outerDistance;
+        tickend.Y += outVector.Y * outerDistance;
+       
 
         SizeF msize = labels[i].Size;
-        PointF morg = new PointF(tickorg.X + dist_x, tickorg.Y + dist_y);
+        PointF morg = tickend;
 
         if (_automaticRotationShift)
         {
@@ -570,21 +630,32 @@ namespace Altaxo.Graph
         else
           AdjustRectangle(ref mrect, _horizontalAlignment, _verticalAlignment);
 
-        
-        _enclosingRectangle = _enclosingRectangle.IsEmpty ? mrect : RectangleF.Union(_enclosingRectangle,mrect);
-
-        
-        g.TranslateTransform((float)morg.X, (float)morg.Y);
+        math.Reset();
+        math.Translate((float)morg.X, (float)morg.Y);
         if (this._rotation != 0)
-          g.RotateTransform((float)-this._rotation);
-        g.TranslateTransform((float)(mrect.X - morg.X + emSize*_xOffset),(float)( mrect.Y - morg.Y + emSize*_yOffset));
-        
+        {
+          math.Rotate((float)-this._rotation);
+        }
+        math.Translate((float)(mrect.X - morg.X + emSize * _xOffset), (float)(mrect.Y - morg.Y + emSize * _yOffset));
+
+
+        System.Drawing.Drawing2D.GraphicsState gs = g.Save();
+        g.MultiplyTransform(math);
+
         if(this._backgroundStyle!=null)
           _backgroundStyle.Draw(g,new RectangleF(PointF.Empty,msize));
 
+        _brush.Rectangle = new RectangleF(PointF.Empty, msize);      
         labels[i].Draw(g,_brush,new PointF(0,0));
-       
         g.Restore(gs); // Restore the graphics state
+
+        helperPath.Reset();
+        helperPath.AddRectangle(new RectangleF(PointF.Empty, msize));
+        helperPath.Transform(math);
+
+        _enclosingPath.AddPath(helperPath,true);
+
+       
       }
     
 

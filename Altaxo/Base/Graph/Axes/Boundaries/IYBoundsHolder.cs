@@ -38,8 +38,9 @@ namespace Altaxo.Graph.Axes.Boundaries
     /// This merges the y boundary of the object with the boundary pb. The boundary pb is updated so that
     /// it now includes the y boundary range of the object.
     /// </summary>
+    /// <param name="layer">The plot layer on which the item will be shown.</param>
     /// <param name="pb">The boundary object pb which is updated to include the y boundaries of the object.</param>
-    void MergeYBoundsInto(IPhysicalBoundaries pb);
+    void MergeYBoundsInto(IPlotArea layer, IPhysicalBoundaries pb);
   }
 
 }

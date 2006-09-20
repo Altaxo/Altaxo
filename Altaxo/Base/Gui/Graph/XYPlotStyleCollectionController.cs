@@ -103,7 +103,7 @@ namespace Altaxo.Gui.Graph
 
     public void InitializeAvailableStyleList()
     {
-      _plotStyleTypes = Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(I2DPlotStyle));
+      _plotStyleTypes = Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IG2DPlotStyle));
       string[] names = new string[_plotStyleTypes.Length];
       for(int i=0;i<names.Length;i++)
         names[i] = Current.Gui.GetUserFriendlyClassName(_plotStyleTypes[i]);
@@ -125,7 +125,7 @@ namespace Altaxo.Gui.Graph
 
     public virtual void EhView_AddStyle(int[] selindices, int nstyle)
     {
-      I2DPlotStyle style = (I2DPlotStyle)Activator.CreateInstance(this._plotStyleTypes[nstyle]);
+      IG2DPlotStyle style = (IG2DPlotStyle)Activator.CreateInstance(this._plotStyleTypes[nstyle]);
       _tempdoc.Add(style);
       UpdateStyleList(new int[]{});
 
@@ -256,7 +256,7 @@ namespace Altaxo.Gui.Graph
     {
       _doc.BeginUpdate();
       _doc.Clear();
-      _doc.AddRange((I2DPlotStyle[])_tempdoc.ToArray(typeof(I2DPlotStyle)));
+      _doc.AddRange((IG2DPlotStyle[])_tempdoc.ToArray(typeof(IG2DPlotStyle)));
       _doc.EndUpdate();
       return true;
     }

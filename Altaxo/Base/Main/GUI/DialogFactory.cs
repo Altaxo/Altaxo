@@ -87,7 +87,7 @@ namespace Altaxo.Main.GUI
     }
 
 
-    public static bool ShowPlotStyleAndDataDialog(System.Windows.Forms.Form parentWindow, Graph.PlotItem pa, PlotGroup plotGroup)
+    public static bool ShowPlotStyleAndDataDialog(System.Windows.Forms.Form parentWindow, IGPlotItem pa, Altaxo.Graph.PlotGroups.PlotGroupStyleCollection plotGroup)
     {
       if(pa is Graph.XYColumnPlotItem || pa is Graph.XYFunctionPlotItem)
         return ShowLineScatterPlotStyleAndDataDialog(parentWindow,pa,plotGroup);
@@ -100,7 +100,7 @@ namespace Altaxo.Main.GUI
       }
     }
 
-    public static bool ShowLineScatterPlotStyleAndDataDialog(System.Windows.Forms.Form parentWindow, Graph.PlotItem pa, PlotGroup plotGroup)
+    public static bool ShowLineScatterPlotStyleAndDataDialog(System.Windows.Forms.Form parentWindow, IGPlotItem pa, Altaxo.Graph.PlotGroups.PlotGroupStyleCollection plotGroup)
     {
       return Current.Gui.ShowDialog(new object[]{pa,plotGroup},string.Format("#{0}: {1}",pa.Name,pa.ToString()), true);
     }
@@ -168,7 +168,7 @@ namespace Altaxo.Main.GUI
         }
 
     */
-    public static bool ShowDensityImagePlotStyleAndDataDialog(System.Windows.Forms.Form parentWindow, Graph.PlotItem pa, PlotGroup plotGroup)
+    public static bool ShowDensityImagePlotStyleAndDataDialog(System.Windows.Forms.Form parentWindow, IGPlotItem pa, Altaxo.Graph.PlotGroups.PlotGroupStyleCollection plotGroup)
     {
       // Plot Style
       DensityImagePlotStyleController stylectrl = new DensityImagePlotStyleController(((Graph.DensityImagePlotItem)pa).Style);

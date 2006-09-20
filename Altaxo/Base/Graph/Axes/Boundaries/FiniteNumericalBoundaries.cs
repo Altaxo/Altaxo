@@ -132,11 +132,21 @@ namespace Altaxo.Graph.Axes.Boundaries
       return new FiniteNumericalBoundaries(this);
     }
 
-
     public override bool Add(Altaxo.Data.IReadableColumn col, int idx)
     {
       // if column is not numeric, use the index instead
       double d = (col is Altaxo.Data.INumericColumn) ? ((Altaxo.Data.INumericColumn)col)[idx] : idx;
+      return Add(d);
+    }
+
+    public override bool Add(Altaxo.Data.AltaxoVariant item)
+    {
+      return Add(item.ToDouble());
+    }
+
+
+    public virtual bool Add(double d)
+    {
   
       if(EventsEnabled)
       {

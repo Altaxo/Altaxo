@@ -186,7 +186,6 @@
     <Compile Include="Graph\BackgroundStyles\IBackgroundStyle.cs" />
     <Compile Include="Graph\BackgroundStyles\RectangleWithShadow.cs" />
     <Compile Include="Graph\BackgroundStyles\WhiteOut.cs" />
-    <Compile Include="Graph\I2DGroupablePlotItem.cs" />
     <Compile Include="Drawing\ImageProxy.cs" />
     <Compile Include="Graph\LabelFormatting\AbstractLabelFormatting.cs" />
     <Compile Include="Graph\LabelFormatting\AbstractNumericLabelFormatting.cs" />
@@ -202,8 +201,8 @@
     <Compile Include="Graph\Procedures\Export.cs" />
     <Compile Include="Graph\Procedures\GraphCommands.cs" />
     <Compile Include="Graph\XYPlotLayerAxisProperties.cs" />
-    <Compile Include="Graph\XYPlotLayerAxisStyleProperties.cs" />
-    <Compile Include="Graph\XYPlotLayerAxisStylesSummary.cs" />
+    <Compile Include="Graph\G2DAxisStyle.cs" />
+    <Compile Include="Graph\G2DScaleStyle.cs" />
     <Compile Include="Graph\XYPlotLayerPositionAndSize.cs" />
     <Compile Include="Graph\XYPlotLayerPositionType.cs" />
     <Compile Include="Graph\XYPlotLayerSizeType.cs" />
@@ -371,8 +370,7 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Gui\Graph\XYColumnPlotDataController.cs" />
-    <Compile Include="Gui\Graph\XYColumnPlotItemController.cs" />
-    <Compile Include="Gui\Graph\XYFunctionPlotItemController.cs" />
+    <Compile Include="Gui\Graph\G2DPlotItemController.cs" />
     <Compile Include="Gui\Graph\XYGridStyleControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -716,9 +714,6 @@
     <Compile Include="Graph\GUI\TitleFormatLayerController.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Graph\I2DPlotStyle.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Graph\I2DTo2DConverter.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -741,7 +736,7 @@
     <Compile Include="Graph\PhysicalBoundaries.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Graph\PlotGroup.cs">
+    <Compile Include="Graph\PlotGroups\PlotGroupStyleCollection.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Graph\PlotItem.cs">
@@ -772,7 +767,7 @@
     <Compile Include="Graph\XYAxisLabelStyle.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Graph\XYAxisStyle.cs">
+    <Compile Include="Graph\G2DAxisLineStyle.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Graph\XYColumnPlotData.cs">
@@ -1432,7 +1427,31 @@
     <None Include="Calc\FitFunctions\Relaxation\.svn\entries" />
     <None Include="Calc\FitFunctions\Relaxation\.svn\format" />
     <None Include="Calc\FitFunctions\Relaxation\.svn\text-base\HavriliakNegamiFunction.cs.svn-base" />
+    <Compile Include="Collections\ListNode.cs" />
     <Compile Include="Collections\NamedItem.cs" />
+    <Compile Include="Drawing\PointD.cs" />
+    <Compile Include="Graph\A2DAxisStyleIdentifier.cs" />
+    <Compile Include="Graph\A2DAxisStyleInformation.cs" />
+    <Compile Include="Graph\G2DCoordinateSystem.cs" />
+    <Compile Include="Graph\G2DScaleStyleCollection.cs" />
+    <Compile Include="Graph\PlotGroups\AbsoluteStackTransform.cs" />
+    <Compile Include="Graph\PlotGroups\BarWidthPositionGroupStyle.cs" />
+    <Compile Include="Graph\PlotGroups\ColorPlotGroupStyle.cs" />
+    <Compile Include="Graph\PlotGroups\CoordinateTransformingStyleBase.cs" />
+    <Compile Include="Graph\G2DPlotItem.cs" />
+    <Compile Include="Graph\PlotGroups\ICoordinateTransformingGroupStyle.cs" />
+    <Compile Include="Graph\IG2DPlotStyle.cs" />
+    <Compile Include="Graph\IGPlotItem.cs" />
+    <Compile Include="Graph\PlotGroups\IPlotGroupStyle.cs" />
+    <Compile Include="Graph\PlotGroups\LineStyleGroupStyle.cs" />
+    <Compile Include="Graph\PlotGroupStrictness.cs" />
+    <Compile Include="Graph\PlotGroups\PlotGroupStyle.cs" />
+    <Compile Include="Graph\PlotRange.cs" />
+    <Compile Include="Graph\Processed2DPlotData.cs" />
+    <Compile Include="Graph\PlotGroups\RelativeStackTransform.cs" />
+    <Compile Include="Graph\PlotGroups\SymbolShapeStyleGroupStyle.cs" />
+    <Compile Include="Graph\PlotGroups\SymbolSizeGroupStyle.cs" />
+    <Compile Include="Graph\PlotGroups\WaterfallTransform.cs" />
     <Compile Include="Gui\Common\Drawing\FontComboBox.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -1451,6 +1470,7 @@
     <Compile Include="Gui\Graph\BackgroundControlsGlue.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Graph\BarGraphPlotStyle.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Calc\FitFunctions\Relaxation\.svn\prop-base\" />

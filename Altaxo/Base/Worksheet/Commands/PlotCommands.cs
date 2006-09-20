@@ -57,17 +57,6 @@ namespace Altaxo.Worksheet.Commands
       else
         templatePlotStyle = new Altaxo.Graph.XYPlotStyleCollection(Graph.LineScatterPlotStyleKind.Scatter);
 
-      Altaxo.Graph.PlotGroupStyle templatePlotGroupStyle = Altaxo.Graph.PlotGroupStyle.All;
-      if(!bLine)
-      {
-        templatePlotGroupStyle &= (Altaxo.Graph.PlotGroupStyle.All ^ Altaxo.Graph.PlotGroupStyle.Line);
-      }
-      if(!bScatter)
-      {
-        templatePlotGroupStyle &= (Altaxo.Graph.PlotGroupStyle.All ^ Altaxo.Graph.PlotGroupStyle.Symbol);
-      }
-
-
       // first, create a plot association for every selected column in
       // the data grid
 
@@ -108,15 +97,15 @@ namespace Altaxo.Worksheet.Commands
 
       Altaxo.Graph.GUI.IGraphController gc = Current.ProjectService.CreateNewGraph();
 
-
-      Altaxo.Graph.PlotGroup newPlotGroup = new Altaxo.Graph.PlotGroup(templatePlotGroupStyle,false,Altaxo.Graph.PlotGroupStrictness.Strict);
+      Altaxo.Graph.PlotItemCollection newPlotGroup = new Altaxo.Graph.PlotItemCollection(gc.Doc.Layers[0].PlotItems);
 
       for(int i=0;i<nNumberOfPlotData;i++)
       {
-        Altaxo.Graph.PlotItem pi = new Altaxo.Graph.XYColumnPlotItem(pa[i],ps[i]);
+        Altaxo.Graph.IGPlotItem pi = new Altaxo.Graph.XYColumnPlotItem(pa[i],ps[i]);
         newPlotGroup.Add(pi);
       }
-      newPlotGroup.UpdateMembers(0);
+
+      newPlotGroup.CollectStyles(newPlotGroup.GroupStyles);
 
       gc.Doc.Layers[0].PlotItems.Add(newPlotGroup);
     }
@@ -145,7 +134,7 @@ namespace Altaxo.Worksheet.Commands
 
       Altaxo.Graph.GUI.IGraphController gc = Current.ProjectService.CreateNewGraph();
 
-      Altaxo.Graph.PlotItem pi = new Altaxo.Graph.DensityImagePlotItem(assoc,plotStyle);
+      Altaxo.Graph.IGPlotItem pi = new Altaxo.Graph.DensityImagePlotItem(assoc,plotStyle);
       gc.Doc.Layers[0].PlotItems.Add(pi);
 
     }

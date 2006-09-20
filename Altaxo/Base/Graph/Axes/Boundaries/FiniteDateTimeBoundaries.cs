@@ -211,15 +211,22 @@ namespace Altaxo.Graph.Axes.Boundaries
         Add((FiniteDateTimeBoundaries)b);
     }
 
-
     public override bool Add(Altaxo.Data.IReadableColumn col, int idx)
     {
       // if column is not numeric, use the index instead
-      if(!(col is Altaxo.Data.DateTimeColumn))
+      if (!(col is Altaxo.Data.DateTimeColumn))
         return false;
+      else
+        return Add(((Altaxo.Data.DateTimeColumn)col)[idx]);
+    }
 
-      DateTime d = ((Altaxo.Data.DateTimeColumn)col)[idx];
-  
+    public override bool Add(Altaxo.Data.AltaxoVariant item)
+    {
+      return Add((DateTime)item);
+    }
+
+    public bool Add(DateTime d)
+    {
       if(EventsEnabled)
       {
         if(DateTime.MinValue!=d)
