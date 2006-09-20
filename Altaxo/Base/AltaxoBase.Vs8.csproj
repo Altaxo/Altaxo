@@ -500,75 +500,6 @@
     <Compile Include="Graph\AbstractXYPlotStyle.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Graph\Axes\Axis.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Graph\Axes\Boundaries\AbstractPhysicalBoundaries.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Graph\Axes\Boundaries\BoundariesChangedEventArgs.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Graph\Axes\Boundaries\EventHandlers.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Graph\Axes\Boundaries\FiniteDateTimeBoundaries.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Graph\Axes\Boundaries\FiniteNumericalBoundaries.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Graph\Axes\Boundaries\IPhysicalBoundaries.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Graph\Axes\Boundaries\IXBoundsHolder.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Graph\Axes\Boundaries\IXYBoundsHolder.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Graph\Axes\Boundaries\IYBoundsHolder.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Graph\Axes\Boundaries\NumericalBoundaries.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Graph\Axes\Boundaries\PositiveFiniteNumericalBoundaries.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Graph\Axes\DateTimeAxis.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Graph\Axes\LinearAxis.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Graph\Axes\Log10Axis.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Graph\Axes\NumericalAxis.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Graph\Axes\Scaling\BoundaryRescaling.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Graph\Axes\Scaling\DateTimeAxisRescaleConditions.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Graph\Axes\Scaling\DateTimeAxisRescaleController.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Graph\Axes\Scaling\LogarithmicAxisRescaleConditions.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Graph\Axes\Scaling\LogarithmicAxisRescaleController.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Graph\Axes\Scaling\NumericAxisRescaleConditions.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Graph\Axes\Scaling\NumericAxisRescaleController.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Graph\BrushHolder.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -1452,6 +1383,29 @@
     <Compile Include="Graph\PlotGroups\SymbolShapeStyleGroupStyle.cs" />
     <Compile Include="Graph\PlotGroups\SymbolSizeGroupStyle.cs" />
     <Compile Include="Graph\PlotGroups\WaterfallTransform.cs" />
+    <Compile Include="Graph\Scales\Axis.cs" />
+    <Compile Include="Graph\Scales\Boundaries\AbstractPhysicalBoundaries.cs" />
+    <Compile Include="Graph\Scales\Boundaries\BoundariesChangedEventArgs.cs" />
+    <Compile Include="Graph\Scales\Boundaries\EventHandlers.cs" />
+    <Compile Include="Graph\Scales\Boundaries\FiniteDateTimeBoundaries.cs" />
+    <Compile Include="Graph\Scales\Boundaries\FiniteNumericalBoundaries.cs" />
+    <Compile Include="Graph\Scales\Boundaries\IPhysicalBoundaries.cs" />
+    <Compile Include="Graph\Scales\Boundaries\IXBoundsHolder.cs" />
+    <Compile Include="Graph\Scales\Boundaries\IXYBoundsHolder.cs" />
+    <Compile Include="Graph\Scales\Boundaries\IYBoundsHolder.cs" />
+    <Compile Include="Graph\Scales\Boundaries\NumericalBoundaries.cs" />
+    <Compile Include="Graph\Scales\Boundaries\PositiveFiniteNumericalBoundaries.cs" />
+    <Compile Include="Graph\Scales\DateTimeAxis.cs" />
+    <Compile Include="Graph\Scales\LinearAxis.cs" />
+    <Compile Include="Graph\Scales\Log10Axis.cs" />
+    <Compile Include="Graph\Scales\NumericalAxis.cs" />
+    <Compile Include="Graph\Scales\Scaling\BoundaryRescaling.cs" />
+    <Compile Include="Graph\Scales\Scaling\DateTimeAxisRescaleConditions.cs" />
+    <Compile Include="Graph\Scales\Scaling\DateTimeAxisRescaleController.cs" />
+    <Compile Include="Graph\Scales\Scaling\LogarithmicAxisRescaleConditions.cs" />
+    <Compile Include="Graph\Scales\Scaling\LogarithmicAxisRescaleController.cs" />
+    <Compile Include="Graph\Scales\Scaling\NumericAxisRescaleConditions.cs" />
+    <Compile Include="Graph\Scales\Scaling\NumericAxisRescaleController.cs" />
     <Compile Include="Gui\Common\Drawing\FontComboBox.cs">
       <SubType>Component</SubType>
     </Compile>
