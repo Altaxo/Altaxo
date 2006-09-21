@@ -28,7 +28,7 @@ using Altaxo.Serialization;
 
 namespace Altaxo.Graph
 {
-  using Axes;
+  using Scales;
 
   /// <summary>
   /// Used for constructor of <see cref="XYLineScatterPlotStyle" /> to choose between Line, Scatter and both.

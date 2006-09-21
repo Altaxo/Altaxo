@@ -25,7 +25,7 @@ using Altaxo.Graph.GUI;
 using Altaxo.Serialization;
 using Altaxo.Main.GUI;
 
-namespace Altaxo.Graph.Axes.Scaling
+namespace Altaxo.Graph.Scales.Rescaling
 {
   /// <summary>
   /// Summary description for DateTimeAxisRescaleController.
@@ -38,7 +38,7 @@ namespace Altaxo.Graph.Axes.Scaling
   {
     protected IOrgEndSpanView _view;
     protected DateTimeAxisRescaleConditions _doc;
-    protected DateTimeAxis _axis;
+    protected DateTimeScale _axis;
     
     protected DateTime _org;
     protected DateTime _end;
@@ -55,7 +55,7 @@ namespace Altaxo.Graph.Axes.Scaling
   
 
 
-    public DateTimeAxisRescaleController(DateTimeAxisRescaleConditions doc, DateTimeAxis ax)
+    public DateTimeAxisRescaleController(DateTimeAxisRescaleConditions doc, DateTimeScale ax)
     {
       _doc = doc;
       _axis = ax;

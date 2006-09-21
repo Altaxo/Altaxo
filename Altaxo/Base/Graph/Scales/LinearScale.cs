@@ -22,143 +22,90 @@
 
 using System;
 using Altaxo.Serialization;
-using Altaxo.Graph.Axes.Scaling;
-using Altaxo.Graph.Axes.Boundaries;
+using Altaxo.Graph.Scales.Rescaling;
+using Altaxo.Graph.Scales.Boundaries;
 
-namespace Altaxo.Graph.Axes
+namespace Altaxo.Graph.Scales
 {
   /// <summary>
   /// A linear axis, i.e a axis where physical values v can be translated to logical values l by v=a+b*l.
   /// </summary>
-  [SerializationSurrogate(0,typeof(LinearAxis.SerializationSurrogate0))]
-  [SerializationVersion(0)]
-  public class LinearAxis : NumericalAxis, System.Runtime.Serialization.IDeserializationCallback
+  
+  [Serializable]
+  public class LinearScale : NumericalScale, System.Runtime.Serialization.IDeserializationCallback
   {
     // primary values
     /// <summary>Proposed value of axis origin, proposed either by the lower physical boundary or by the user (if axis org is fixed).</summary>
-    protected double m_BaseOrg=0; // proposed value of org
+    protected double _baseOrg=0; // proposed value of org
     /// <summary>Proposed value of axis end, proposed either by the upper physical boundary or by the user (if axis end is fixed).</summary>
-    protected double m_BaseEnd=1; // proposed value of end
+    protected double _baseEnd=1; // proposed value of end
     /// <summary>Current axis origin divided by the major tick span value.</summary>
-    protected double m_AxisOrgByMajor=0;
+    protected double _axisOrgByMajor=0;
     /// <summary>Current axis end divided by the major tick span value.</summary>
-    protected double m_AxisEndByMajor=5;
+    protected double _axisEndByMajor=5;
     /// <summary>Physical span value between two major ticks.</summary>
-    protected double m_MajorSpan=0.2; // physical span value between two major ticks
+    protected double _majorSpan=0.2; // physical span value between two major ticks
     /// <summary>Minor ticks per Major tick ( if there is one minor tick between two major ticks m_minorticks is 2!</summary>
-    protected int    m_MinorTicks=2;
+    protected int    _minorTicks=2;
    
     /// <summary>Holds the <see cref="NumericalBoundaries"/> for that axis.</summary>
-    protected NumericalBoundaries m_DataBounds = new FiniteNumericalBoundaries();
+    protected NumericalBoundaries _dataBounds = new FiniteNumericalBoundaries();
 
     protected NumericAxisRescaleConditions _rescaling = new NumericAxisRescaleConditions();
 
     // cached values
     /// <summary>Current axis origin (cached value).</summary>
-    protected double m_AxisOrg=0;
+    protected double _cachedAxisOrg=0;
     /// <summary>Current axis end (cached value).</summary>
-    protected double m_AxisEnd=1;
+    protected double _cachedAxisEnd=1;
     /// <summary>Current axis span (i.e. end-org) (cached value).</summary>
-    protected double m_AxisSpan=1;
+    protected double _cachedAxisSpan=1;
     /// <summary>Current inverse of axis span (cached value).</summary>
-    protected double m_OneByAxisSpan=1;
+    protected double _cachedOneByAxisSpan=1;
 
 
     #region Serialization
-    /// <summary>Used to serialize the LinearAxis Version 0.</summary>
-    public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
-    {
-      /// <summary>
-      /// Serializes LinearAxis Version 0.
-      /// </summary>
-      /// <param name="obj">The axis to serialize.</param>
-      /// <param name="info">The serialization info.</param>
-      /// <param name="context">The streaming context.</param>
-      public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context  )
-      {
-        LinearAxis s = (LinearAxis)obj;
-        info.AddValue("BaseOrg",s.m_BaseOrg);  
-        info.AddValue("BaseEnd",s.m_BaseEnd);  
-        info.AddValue("MajorSpan",s.m_MajorSpan);
-        info.AddValue("MinorTicks",s.m_MinorTicks);
-        info.AddValue("OrgByMajor",s.m_AxisOrgByMajor);
-        info.AddValue("EndByMajor",s.m_AxisEndByMajor);
-
-        // info.AddValue("OrgFixed",s.m_AxisOrgFixed);
-        // info.AddValue("EndFixed",s.m_AxisEndFixed);
-
-        info.AddValue("Bounds",s.m_DataBounds);
-      }
-      /// <summary>
-      /// Deserializes the Linear Axis Version 0.
-      /// </summary>
-      /// <param name="obj">The empty axis object to deserialize into.</param>
-      /// <param name="info">The serialization info.</param>
-      /// <param name="context">The streaming context.</param>
-      /// <param name="selector">The deserialization surrogate selector.</param>
-      /// <returns>The deserialized linear axis.</returns>
-      public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
-      {
-        LinearAxis s = (LinearAxis)obj;
-
-        s.m_BaseOrg = (double)info.GetDouble("BaseOrg");
-        s.m_BaseEnd = (double)info.GetDouble("BaseEnd");
-
-        s.m_MajorSpan = (double)info.GetDouble("MajorSpan");
-        s.m_MinorTicks = (int)info.GetInt32("MinorTicks");
-
-        s.m_AxisOrgByMajor = (double)info.GetDouble("OrgByMajor");
-        s.m_AxisEndByMajor = (double)info.GetDouble("EndByMajor");
-
-        // s.m_AxisOrgFixed = (bool)info.GetBoolean("OrgFixed");
-        // s.m_AxisEndFixed = (bool)info.GetBoolean("EndFixed");
-
-        s.m_DataBounds = (FiniteNumericalBoundaries)info.GetValue("Bounds",typeof(FiniteNumericalBoundaries));
-    
-        return s;
-      }
-    }
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Graph.LinearAxis",0)]
       public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        LinearAxis s = (LinearAxis)obj;
-        info.AddValue("BaseOrg",s.m_BaseOrg);  
-        info.AddValue("BaseEnd",s.m_BaseEnd);  
-        info.AddValue("MajorSpan",s.m_MajorSpan);
-        info.AddValue("MinorTicks",s.m_MinorTicks);
-        info.AddValue("OrgByMajor",s.m_AxisOrgByMajor);
-        info.AddValue("EndByMajor",s.m_AxisEndByMajor);
+        LinearScale s = (LinearScale)obj;
+        info.AddValue("BaseOrg",s._baseOrg);  
+        info.AddValue("BaseEnd",s._baseEnd);  
+        info.AddValue("MajorSpan",s._majorSpan);
+        info.AddValue("MinorTicks",s._minorTicks);
+        info.AddValue("OrgByMajor",s._axisOrgByMajor);
+        info.AddValue("EndByMajor",s._axisEndByMajor);
 
         // info.AddValue("OrgFixed",s.m_AxisOrgFixed);
         // info.AddValue("EndFixed",s.m_AxisEndFixed);
 
-        info.AddValue("Bounds",s.m_DataBounds);
+        info.AddValue("Bounds",s._dataBounds);
       }
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
         
-        LinearAxis s = null!=o ? (LinearAxis)o : new LinearAxis();
+        LinearScale s = null!=o ? (LinearScale)o : new LinearScale();
 
-        s.m_BaseOrg = (double)info.GetDouble("BaseOrg");
-        s.m_BaseEnd = (double)info.GetDouble("BaseEnd");
+        s._baseOrg = (double)info.GetDouble("BaseOrg");
+        s._baseEnd = (double)info.GetDouble("BaseEnd");
 
-        s.m_MajorSpan = (double)info.GetDouble("MajorSpan");
-        s.m_MinorTicks = (int)info.GetInt32("MinorTicks");
+        s._majorSpan = (double)info.GetDouble("MajorSpan");
+        s._minorTicks = (int)info.GetInt32("MinorTicks");
 
-        s.m_AxisOrgByMajor = (double)info.GetDouble("OrgByMajor");
-        s.m_AxisEndByMajor = (double)info.GetDouble("EndByMajor");
+        s._axisOrgByMajor = (double)info.GetDouble("OrgByMajor");
+        s._axisEndByMajor = (double)info.GetDouble("EndByMajor");
 
         bool AxisOrgFixed = (bool)info.GetBoolean("OrgFixed");
         bool AxisEndFixed = (bool)info.GetBoolean("EndFixed");
 
-        s.m_DataBounds = (FiniteNumericalBoundaries)info.GetValue("Bounds",s);
+        s._dataBounds = (FiniteNumericalBoundaries)info.GetValue("Bounds",s);
   
         s.SetCachedValues();
         // restore the event chain
-        s.m_DataBounds.BoundaryChanged += new BoundaryChangedHandler(s.OnBoundariesChanged);
+        s._dataBounds.BoundaryChanged += new BoundaryChangedHandler(s.OnBoundariesChanged);
   
         s._rescaling = new NumericAxisRescaleConditions();
         s._rescaling.SetOrgAndEnd(AxisOrgFixed ? BoundaryRescaling.Fixed : BoundaryRescaling.Auto, s.Org, AxisEndFixed ? BoundaryRescaling.Fixed:BoundaryRescaling.Auto, s.End);
@@ -167,23 +114,24 @@ namespace Altaxo.Graph.Axes
       }
     }
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LinearAxis),1)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Axes.LinearAxis", 1)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LinearScale),2)]
       public class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        LinearAxis s = (LinearAxis)obj;
-        info.AddValue("BaseOrg",s.m_BaseOrg);  
-        info.AddValue("BaseEnd",s.m_BaseEnd);  
-        info.AddValue("MajorSpan",s.m_MajorSpan);
-        info.AddValue("MinorTicks",s.m_MinorTicks);
-        info.AddValue("OrgByMajor",s.m_AxisOrgByMajor);
-        info.AddValue("EndByMajor",s.m_AxisEndByMajor);
+        LinearScale s = (LinearScale)obj;
+        info.AddValue("BaseOrg",s._baseOrg);  
+        info.AddValue("BaseEnd",s._baseEnd);  
+        info.AddValue("MajorSpan",s._majorSpan);
+        info.AddValue("MinorTicks",s._minorTicks);
+        info.AddValue("OrgByMajor",s._axisOrgByMajor);
+        info.AddValue("EndByMajor",s._axisEndByMajor);
 
         // info.AddValue("OrgFixed",s.m_AxisOrgFixed); // removed in version 1
         // info.AddValue("EndFixed",s.m_AxisEndFixed); // removed in version 1
 
-        info.AddValue("Bounds",s.m_DataBounds);
+        info.AddValue("Bounds",s._dataBounds);
 
         // new in version 1:
         info.AddValue("Rescaling",s._rescaling);
@@ -191,25 +139,25 @@ namespace Altaxo.Graph.Axes
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
         
-        LinearAxis s = null!=o ? (LinearAxis)o : new LinearAxis();
+        LinearScale s = null!=o ? (LinearScale)o : new LinearScale();
 
-        s.m_BaseOrg = (double)info.GetDouble("BaseOrg");
-        s.m_BaseEnd = (double)info.GetDouble("BaseEnd");
+        s._baseOrg = (double)info.GetDouble("BaseOrg");
+        s._baseEnd = (double)info.GetDouble("BaseEnd");
 
-        s.m_MajorSpan = (double)info.GetDouble("MajorSpan");
-        s.m_MinorTicks = (int)info.GetInt32("MinorTicks");
+        s._majorSpan = (double)info.GetDouble("MajorSpan");
+        s._minorTicks = (int)info.GetInt32("MinorTicks");
 
-        s.m_AxisOrgByMajor = (double)info.GetDouble("OrgByMajor");
-        s.m_AxisEndByMajor = (double)info.GetDouble("EndByMajor");
+        s._axisOrgByMajor = (double)info.GetDouble("OrgByMajor");
+        s._axisEndByMajor = (double)info.GetDouble("EndByMajor");
 
         //s.m_AxisOrgFixed = (bool)info.GetBoolean("OrgFixed");
         //s.m_AxisEndFixed = (bool)info.GetBoolean("EndFixed");
 
-        s.m_DataBounds = (FiniteNumericalBoundaries)info.GetValue("Bounds",s);
+        s._dataBounds = (FiniteNumericalBoundaries)info.GetValue("Bounds",s);
   
         s.SetCachedValues();
         // restore the event chain
-        s.m_DataBounds.BoundaryChanged += new BoundaryChangedHandler(s.OnBoundariesChanged);
+        s._dataBounds.BoundaryChanged += new BoundaryChangedHandler(s.OnBoundariesChanged);
   
         // new in version 1
         s._rescaling = (NumericAxisRescaleConditions)info.GetValue("Rescaling",s);
@@ -227,7 +175,7 @@ namespace Altaxo.Graph.Axes
       // restore the cached values
       SetCachedValues();
       // restore the event chain
-      m_DataBounds.BoundaryChanged += new BoundaryChangedHandler(this.OnBoundariesChanged);
+      _dataBounds.BoundaryChanged += new BoundaryChangedHandler(this.OnBoundariesChanged);
     }
     #endregion
 
@@ -235,60 +183,60 @@ namespace Altaxo.Graph.Axes
     /// <summary>
     /// Creates a default linear axis with org=0 and end=1.
     /// </summary>
-    public LinearAxis()
+    public LinearScale()
     {
-      m_DataBounds = new FiniteNumericalBoundaries();
-      m_DataBounds.BoundaryChanged += new BoundaryChangedHandler(this.OnBoundariesChanged);
+      _dataBounds = new FiniteNumericalBoundaries();
+      _dataBounds.BoundaryChanged += new BoundaryChangedHandler(this.OnBoundariesChanged);
     }
 
     /// <summary>
     /// Copy constructor.
     /// </summary>
     /// <param name="from">A other linear axis from which to copy from.</param>
-    public LinearAxis(LinearAxis from)
+    public LinearScale(LinearScale from)
     {
       this.IsLinked = from.IsLinked;
 
-      this.m_AxisEnd        = from.m_AxisEnd;
-      this.m_AxisEndByMajor = from.m_AxisEndByMajor;
-      this.m_AxisOrg        = from.m_AxisOrg;
-      this.m_AxisOrgByMajor = from.m_AxisOrgByMajor;
-      this.m_AxisSpan       = from.m_AxisSpan;
-      this.m_BaseEnd        = from.m_BaseEnd;
-      this.m_BaseOrg        = from.m_BaseOrg;
-      this.m_DataBounds     = null==from.m_DataBounds ? new FiniteNumericalBoundaries() : (NumericalBoundaries)from.m_DataBounds.Clone(); 
-      m_DataBounds.BoundaryChanged += new BoundaryChangedHandler(this.OnBoundariesChanged);
-      this.m_MajorSpan      = from.m_MajorSpan;
-      this.m_MinorTicks     = from.m_MinorTicks;
-      this.m_OneByAxisSpan  = from.m_OneByAxisSpan;
+      this._cachedAxisEnd        = from._cachedAxisEnd;
+      this._axisEndByMajor = from._axisEndByMajor;
+      this._cachedAxisOrg        = from._cachedAxisOrg;
+      this._axisOrgByMajor = from._axisOrgByMajor;
+      this._cachedAxisSpan       = from._cachedAxisSpan;
+      this._baseEnd        = from._baseEnd;
+      this._baseOrg        = from._baseOrg;
+      this._dataBounds     = null==from._dataBounds ? new FiniteNumericalBoundaries() : (NumericalBoundaries)from._dataBounds.Clone(); 
+      _dataBounds.BoundaryChanged += new BoundaryChangedHandler(this.OnBoundariesChanged);
+      this._majorSpan      = from._majorSpan;
+      this._minorTicks     = from._minorTicks;
+      this._cachedOneByAxisSpan  = from._cachedOneByAxisSpan;
 
       this._rescaling = null==from.Rescaling ? new NumericAxisRescaleConditions() : (NumericAxisRescaleConditions)from.Rescaling.Clone();
 
     }
 
-    public virtual void CopyFrom(LinearAxis from)
+    public virtual void CopyFrom(LinearScale from)
     {
-      this.m_AxisEnd        = from.m_AxisEnd;
-      this.m_AxisEndByMajor = from.m_AxisEndByMajor;
-      this.m_AxisOrg        = from.m_AxisOrg;
-      this.m_AxisOrgByMajor = from.m_AxisOrgByMajor;
-      this.m_AxisSpan       = from.m_AxisSpan;
-      this.m_BaseEnd        = from.m_BaseEnd;
-      this.m_BaseOrg        = from.m_BaseOrg;
-      if(null!=m_DataBounds)
-        m_DataBounds.BoundaryChanged -= new BoundaryChangedHandler(this.OnBoundariesChanged);
-      this.m_DataBounds     = null==from.m_DataBounds ? new FiniteNumericalBoundaries() : (NumericalBoundaries)from.m_DataBounds.Clone(); 
-      m_DataBounds.BoundaryChanged += new BoundaryChangedHandler(this.OnBoundariesChanged);
-      this.m_MajorSpan      = from.m_MajorSpan;
-      this.m_MinorTicks     = from.m_MinorTicks;
-      this.m_OneByAxisSpan  = from.m_OneByAxisSpan;
+      this._cachedAxisEnd        = from._cachedAxisEnd;
+      this._axisEndByMajor = from._axisEndByMajor;
+      this._cachedAxisOrg        = from._cachedAxisOrg;
+      this._axisOrgByMajor = from._axisOrgByMajor;
+      this._cachedAxisSpan       = from._cachedAxisSpan;
+      this._baseEnd        = from._baseEnd;
+      this._baseOrg        = from._baseOrg;
+      if(null!=_dataBounds)
+        _dataBounds.BoundaryChanged -= new BoundaryChangedHandler(this.OnBoundariesChanged);
+      this._dataBounds     = null==from._dataBounds ? new FiniteNumericalBoundaries() : (NumericalBoundaries)from._dataBounds.Clone(); 
+      _dataBounds.BoundaryChanged += new BoundaryChangedHandler(this.OnBoundariesChanged);
+      this._majorSpan      = from._majorSpan;
+      this._minorTicks     = from._minorTicks;
+      this._cachedOneByAxisSpan  = from._cachedOneByAxisSpan;
 
       this._rescaling = null==from.Rescaling ? new NumericAxisRescaleConditions() : (NumericAxisRescaleConditions)from.Rescaling.Clone();
     }
 
     public override object Clone()
     {
-      return new LinearAxis(this);
+      return new LinearScale(this);
     }
 
     /// <summary>
@@ -296,11 +244,11 @@ namespace Altaxo.Graph.Axes
     /// </summary>
     public override double Org
     {
-      get { return m_AxisOrg; } 
+      get { return _cachedAxisOrg; } 
       set 
       {
-        m_AxisOrg = value;
-        ProcessDataBounds(m_AxisOrg,true,m_AxisEnd,true);
+        _cachedAxisOrg = value;
+        ProcessDataBounds(_cachedAxisOrg,true,_cachedAxisEnd,true);
       }
     }
 
@@ -309,11 +257,11 @@ namespace Altaxo.Graph.Axes
     /// </summary>
     public override double End 
     {
-      get { return m_AxisEnd; } 
+      get { return _cachedAxisEnd; } 
       set
       { 
-        m_AxisEnd = value;
-        ProcessDataBounds(m_AxisOrg,true,m_AxisEnd,true);
+        _cachedAxisEnd = value;
+        ProcessDataBounds(_cachedAxisOrg,true,_cachedAxisEnd,true);
       }
     }
 
@@ -335,7 +283,7 @@ namespace Altaxo.Graph.Axes
     /// </summary>
     public override NumericalBoundaries DataBounds 
     {
-      get { return m_DataBounds; }
+      get { return _dataBounds; }
     }
 
     /// <summary>
@@ -345,12 +293,12 @@ namespace Altaxo.Graph.Axes
     /// <returns>Normalized value.</returns>
     public override double PhysicalToNormal(double x)
     {
-      return (x- m_AxisOrg ) * m_OneByAxisSpan; 
+      return (x- _cachedAxisOrg ) * _cachedOneByAxisSpan; 
     }
 
     public override double NormalToPhysical(double x)
     {
-      return m_AxisOrg + x * m_AxisSpan;
+      return _cachedAxisOrg + x * _cachedAxisSpan;
     }
 
     /// <summary>
@@ -385,21 +333,21 @@ namespace Altaxo.Graph.Axes
       int j;
       double i,beg,end;
       double[] retv;
-      if(m_AxisOrgByMajor<=m_AxisEndByMajor) // normal case org<end
+      if(_axisOrgByMajor<=_axisEndByMajor) // normal case org<end
       {
-        beg=System.Math.Ceiling(m_AxisOrgByMajor);
-        end=System.Math.Floor(m_AxisEndByMajor);
+        beg=System.Math.Ceiling(_axisOrgByMajor);
+        end=System.Math.Floor(_axisEndByMajor);
         retv = new double[1+(int)(end-beg)];
         for(j=0,i=beg;i<=end;i+=1,j++)
-          retv[j]=i*m_MajorSpan;
+          retv[j]=i*_majorSpan;
       }
       else
       {
-        beg=System.Math.Floor(m_AxisOrgByMajor);
-        end=System.Math.Ceiling(m_AxisEndByMajor);
+        beg=System.Math.Floor(_axisOrgByMajor);
+        end=System.Math.Ceiling(_axisEndByMajor);
         retv = new double[1+(int)(beg-end)];
         for(j=0,i=beg;i>=end;i-=1,j++)
-          retv[j]=i*m_MajorSpan;
+          retv[j]=i*_majorSpan;
       }
       return retv;
     }
@@ -409,44 +357,44 @@ namespace Altaxo.Graph.Axes
       int j;
       double i,beg,end;
       double[] retv;
-      if(m_MinorTicks<2)
+      if(_minorTicks<2)
         return new double[]{}; // below 2 there are no minor ticks per definition
 
-      if(m_AxisOrgByMajor<=m_AxisEndByMajor) // normal case org<end
+      if(_axisOrgByMajor<=_axisEndByMajor) // normal case org<end
       {
-        beg=System.Math.Ceiling(m_AxisOrgByMajor);
-        end=System.Math.Floor(m_AxisEndByMajor);
+        beg=System.Math.Ceiling(_axisOrgByMajor);
+        end=System.Math.Floor(_axisEndByMajor);
         int majorticks = 1+(int)(end-beg);
-        beg = System.Math.Ceiling(m_AxisOrgByMajor*m_MinorTicks);
-        end = System.Math.Floor(m_AxisEndByMajor*m_MinorTicks);
+        beg = System.Math.Ceiling(_axisOrgByMajor*_minorTicks);
+        end = System.Math.Floor(_axisEndByMajor*_minorTicks);
         int minorticks = 1+(int)(end-beg) - majorticks;
         retv = new double[minorticks];
         for(j=0,i=beg;i<=end && j<minorticks;i+=1)
         {
-          if(i%m_MinorTicks!=0)
+          if(i%_minorTicks!=0)
           {
-            retv[j]=i*m_MajorSpan/m_MinorTicks;
+            retv[j]=i*_majorSpan/_minorTicks;
             j++;
           }
         }
       }
       else
       {
-        beg=System.Math.Floor(m_AxisOrgByMajor);
-        end=System.Math.Ceiling(m_AxisEndByMajor);
+        beg=System.Math.Floor(_axisOrgByMajor);
+        end=System.Math.Ceiling(_axisEndByMajor);
         retv = new double[1+(int)(beg-end)];
         for(j=0,i=beg;i>=end;i-=1,j++)
-          retv[j]=i*m_MajorSpan;
+          retv[j]=i*_majorSpan;
       }
       return retv;
     }
 
     public override void ProcessDataBounds()
     {
-      if(null==this.m_DataBounds || this.m_DataBounds.IsEmpty)
+      if(null==this._dataBounds || this._dataBounds.IsEmpty)
         return;
     
-      ProcessDataBounds(m_DataBounds.LowerBound,m_DataBounds.UpperBound,_rescaling); 
+      ProcessDataBounds(_dataBounds.LowerBound,_dataBounds.UpperBound,_rescaling); 
     }
 
 
@@ -463,62 +411,62 @@ namespace Altaxo.Graph.Axes
       if(IsLinked)
         return;
 
-      double oldAxisOrgByMajor = m_AxisOrgByMajor;
-      double oldAxisEndByMajor = m_AxisEndByMajor;
-      double oldMajorSpan      = m_MajorSpan;
-      int    oldMinorTicks     = m_MinorTicks;
+      double oldAxisOrgByMajor = _axisOrgByMajor;
+      double oldAxisEndByMajor = _axisEndByMajor;
+      double oldMajorSpan      = _majorSpan;
+      int    oldMinorTicks     = _minorTicks;
 
-      m_BaseOrg = xorg;
-      m_BaseEnd = xend;
+      _baseOrg = xorg;
+      _baseEnd = xend;
     
      
 
 
-      CalculateTicks(xorg, xend, out m_MajorSpan, out m_MinorTicks);
+      CalculateTicks(xorg, xend, out _majorSpan, out _minorTicks);
       if (xend == xorg)
       {
         if(xorgfixed)
-          m_AxisOrgByMajor = xorg / m_MajorSpan;
+          _axisOrgByMajor = xorg / _majorSpan;
         else
-          m_AxisOrgByMajor = System.Math.Floor(m_MinorTicks * xorg / m_MajorSpan) / m_MinorTicks - 3 ;
+          _axisOrgByMajor = System.Math.Floor(_minorTicks * xorg / _majorSpan) / _minorTicks - 3 ;
 
         if(xendfixed)
-          m_AxisEndByMajor = xend / m_MajorSpan;
+          _axisEndByMajor = xend / _majorSpan;
         else
-          m_AxisEndByMajor = System.Math.Ceiling(m_MinorTicks * xend / m_MajorSpan) / m_MinorTicks +3;
+          _axisEndByMajor = System.Math.Ceiling(_minorTicks * xend / _majorSpan) / _minorTicks +3;
       }
       else if(xend>xorg)
       {
         if(xorgfixed)
-          m_AxisOrgByMajor = xorg/m_MajorSpan;
+          _axisOrgByMajor = xorg/_majorSpan;
         else
-          m_AxisOrgByMajor = System.Math.Floor(m_MinorTicks * xorg/m_MajorSpan)/m_MinorTicks;
+          _axisOrgByMajor = System.Math.Floor(_minorTicks * xorg/_majorSpan)/_minorTicks;
 
         if(xendfixed)
-          m_AxisEndByMajor = xend/m_MajorSpan;
+          _axisEndByMajor = xend/_majorSpan;
         else
-          m_AxisEndByMajor = System.Math.Ceiling(m_MinorTicks * xend /m_MajorSpan)/m_MinorTicks;
+          _axisEndByMajor = System.Math.Ceiling(_minorTicks * xend /_majorSpan)/_minorTicks;
       }
       else // org is greater than end !
       {
         if(xorgfixed)
-          m_AxisOrgByMajor = xorg/m_MajorSpan;
+          _axisOrgByMajor = xorg/_majorSpan;
         else
-          m_AxisOrgByMajor = System.Math.Ceiling(m_MinorTicks * xorg/m_MajorSpan)/m_MinorTicks;
+          _axisOrgByMajor = System.Math.Ceiling(_minorTicks * xorg/_majorSpan)/_minorTicks;
 
         if(xendfixed)
-          m_AxisEndByMajor = xend/m_MajorSpan;
+          _axisEndByMajor = xend/_majorSpan;
         else
-          m_AxisEndByMajor = System.Math.Floor(m_MinorTicks * xend /m_MajorSpan)/m_MinorTicks;
+          _axisEndByMajor = System.Math.Floor(_minorTicks * xend /_majorSpan)/_minorTicks;
       }
 
       SetCachedValues();
 
       // compare with the saved values to find out whether or not something changed
-      if(oldAxisOrgByMajor!=m_AxisOrgByMajor ||
-        oldAxisEndByMajor!=m_AxisEndByMajor ||
-        oldMajorSpan != m_MajorSpan ||
-        oldMinorTicks != m_MinorTicks)
+      if(oldAxisOrgByMajor!=_axisOrgByMajor ||
+        oldAxisEndByMajor!=_axisEndByMajor ||
+        oldMajorSpan != _majorSpan ||
+        oldMinorTicks != _minorTicks)
       {
         OnChanged();
       }
@@ -526,10 +474,10 @@ namespace Altaxo.Graph.Axes
 
     protected void SetCachedValues()
     {
-      m_AxisOrg = m_AxisOrgByMajor * m_MajorSpan;
-      m_AxisEnd = m_AxisEndByMajor * m_MajorSpan;
-      m_AxisSpan = m_AxisEnd - m_AxisOrg;
-      m_OneByAxisSpan = 1/m_AxisSpan;
+      _cachedAxisOrg = _axisOrgByMajor * _majorSpan;
+      _cachedAxisEnd = _axisEndByMajor * _majorSpan;
+      _cachedAxisSpan = _cachedAxisEnd - _cachedAxisOrg;
+      _cachedOneByAxisSpan = 1/_cachedAxisSpan;
     }
 
     protected void OnBoundariesChanged(object sender, BoundariesChangedEventArgs e)

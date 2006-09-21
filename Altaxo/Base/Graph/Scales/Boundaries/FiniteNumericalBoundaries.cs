@@ -23,75 +23,20 @@
 using System;
 using Altaxo.Serialization;
 
-namespace Altaxo.Graph.Axes.Boundaries
+namespace Altaxo.Graph.Scales.Boundaries
 {
   /// <summary>
   /// FinitePhysicalBoundaries is intended to use for LinearAxis
   /// it keeps track of the most negative and most positive value
   /// </summary>
-  [SerializationSurrogate(0,typeof(FiniteNumericalBoundaries.SerializationSurrogate0))]
-  [SerializationVersion(0)]
+  [Serializable]
   public class FiniteNumericalBoundaries : NumericalBoundaries
   {
     #region Serialization
-    /// <summary>Used to serialize the FinitePhysicalBoundaries Version 0.</summary>
-    public new class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
-    {
-      /// <summary>
-      /// Serializes FinitePhysicalBoundaries Version 0.
-      /// </summary>
-      /// <param name="obj">The FinitePhysicalBoundaries to serialize.</param>
-      /// <param name="info">The serialization info.</param>
-      /// <param name="context">The streaming context.</param>
-      public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context  )
-      {
-        FiniteNumericalBoundaries s = (FiniteNumericalBoundaries)obj;
-        // get the surrogate selector of the base class
-        System.Runtime.Serialization.ISurrogateSelector ss = AltaxoStreamingContext.GetSurrogateSelector(context);
-        if(null!=ss)
-        {
-          System.Runtime.Serialization.ISerializationSurrogate surr =
-            ss.GetSurrogate(obj.GetType().BaseType,context, out ss);
 
-          // serialize the base class
-          surr.GetObjectData(obj,info,context); // stream the data of the base object
-        }
-        else 
-        {
-          throw new NotImplementedException(string.Format("Serializing a {0} without surrogate not implemented yet!",obj.GetType()));
-        }
-      }
-      /// <summary>
-      /// Deserializes the FinitePhysicalBoundaries Version 0.
-      /// </summary>
-      /// <param name="obj">The empty FinitePhysicalBoundaries object to deserialize into.</param>
-      /// <param name="info">The serialization info.</param>
-      /// <param name="context">The streaming context.</param>
-      /// <param name="selector">The deserialization surrogate selector.</param>
-      /// <returns>The deserialized FinitePhysicalBoundaries.</returns>
-      public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
-      {
-        FiniteNumericalBoundaries s = (FiniteNumericalBoundaries)obj;
-        // get the surrogate selector of the base class
-        System.Runtime.Serialization.ISurrogateSelector ss = AltaxoStreamingContext.GetSurrogateSelector(context);
-        if(null!=ss)
-        {
-          System.Runtime.Serialization.ISerializationSurrogate surr =
-            ss.GetSurrogate(obj.GetType().BaseType,context, out ss);
-          // deserialize the base class
-          surr.SetObjectData(obj,info,context,selector);
-        }
-        else 
-        {
-          throw new NotImplementedException(string.Format("Serializing a {0} without surrogate not implemented yet!",obj.GetType()));
-        }
-
-        return s;
-      }
-    }
-
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Graph.FinitePhysicalBoundaries",0)]
-      [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FiniteNumericalBoundaries),1)]
+      [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Graph.FinitePhysicalBoundaries",0)]
+      [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Axes.Boundaries.FiniteNumericalBoundaries", 1)]
+      [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FiniteNumericalBoundaries), 2)]
       public new class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -153,9 +98,9 @@ namespace Altaxo.Graph.Axes.Boundaries
         if(!double.IsInfinity(d))
         {
           bool bLower=false, bUpper=false;
-          if(d<minValue) { minValue = d; bLower=true; }
-          if(d>maxValue) { maxValue = d; bUpper=true; }
-          numberOfItems++;
+          if(d<_minValue) { _minValue = d; bLower=true; }
+          if(d>_maxValue) { _maxValue = d; bUpper=true; }
+          _numberOfItems++;
   
           OnNumberOfItemsChanged();
 
@@ -169,9 +114,9 @@ namespace Altaxo.Graph.Axes.Boundaries
       {
         if(!double.IsInfinity(d))
         {
-          if(d<minValue) minValue = d;
-          if(d>maxValue) maxValue = d;
-          numberOfItems++;
+          if(d<_minValue) _minValue = d;
+          if(d>_maxValue) _maxValue = d;
+          _numberOfItems++;
           return true;
         }
       }

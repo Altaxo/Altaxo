@@ -23,76 +23,43 @@
 using System;
 using Altaxo.Serialization;
 
-namespace Altaxo.Graph.Axes.Boundaries
+namespace Altaxo.Graph.Scales.Boundaries
 {
   /// <summary>
   /// Provides a class for tracking the boundaries of a plot association where the x-axis is a DateTime axis.
   /// </summary>
-  [SerializationSurrogate(0,typeof(FiniteDateTimeBoundaries.SerializationSurrogate0))]
-  [SerializationVersion(0)]
+  [Serializable]
   public class FiniteDateTimeBoundaries : AbstractPhysicalBoundaries, System.Runtime.Serialization.IDeserializationCallback
   {
     
-    protected DateTime minValue = DateTime.MaxValue;
-    protected DateTime maxValue = DateTime.MinValue;
+    protected DateTime _minValue = DateTime.MaxValue;
+    protected DateTime _maxValue = DateTime.MinValue;
   
-    private DateTime  m_SavedMinValue, m_SavedMaxValue; // stores the minValue and MaxValue in the moment if the events where disabled
+    [NonSerialized]
+    private DateTime  _cachedMinValue, _cachedMaxValue; // stores the minValue and MaxValue in the moment if the events where disabled
 
     #region Serialization
-    /// <summary>Used to serialize the PhysicalBoundaries Version 0.</summary>
-    public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
-    {
-      /// <summary>
-      /// Serializes PhysicalBoundaries Version 0.
-      /// </summary>
-      /// <param name="obj">The PhysicalBoundaries to serialize.</param>
-      /// <param name="info">The serialization info.</param>
-      /// <param name="context">The streaming context.</param>
-      public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context  )
-      {
-        FiniteDateTimeBoundaries s = (FiniteDateTimeBoundaries)obj;
-        info.AddValue("NumberOfItems",s.numberOfItems);
-        info.AddValue("MinValue",s.minValue);
-        info.AddValue("MaxValue",s.maxValue);
-      }
-      /// <summary>
-      /// Deserializes the PhysicalBoundaries Version 0.
-      /// </summary>
-      /// <param name="obj">The empty PhysicalBoundaries object to deserialize into.</param>
-      /// <param name="info">The serialization info.</param>
-      /// <param name="context">The streaming context.</param>
-      /// <param name="selector">The deserialization surrogate selector.</param>
-      /// <returns>The deserialized PhysicalBoundaries.</returns>
-      public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
-      {
-        FiniteDateTimeBoundaries s = (FiniteDateTimeBoundaries)obj;
 
-        s.numberOfItems = info.GetInt32("NumberOfItems");  
-        s.minValue = info.GetDateTime("MinValue");
-        s.maxValue = info.GetDateTime("MaxValue");
 
-        return s;
-      }
-    }
-
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FiniteDateTimeBoundaries),0)]
-      public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Graph.Axes.Boundaries.FiniteDateTimeBoundaries", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FiniteDateTimeBoundaries),1)]
+    public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         FiniteDateTimeBoundaries s = (FiniteDateTimeBoundaries)obj;
-        info.AddValue("NumberOfItems",s.numberOfItems);
-        info.AddValue("MinValue",s.minValue);
-        info.AddValue("MaxValue",s.maxValue);
+        info.AddValue("NumberOfItems",s._numberOfItems);
+        info.AddValue("MinValue",s._minValue);
+        info.AddValue("MaxValue",s._maxValue);
       }
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
         
         FiniteDateTimeBoundaries s = null!=o ? (FiniteDateTimeBoundaries)o : new FiniteDateTimeBoundaries();
 
-        s.numberOfItems = info.GetInt32("NumberOfItems");  
-        s.minValue = info.GetDateTime("MinValue");
-        s.maxValue = info.GetDateTime("MaxValue");
+        s._numberOfItems = info.GetInt32("NumberOfItems");  
+        s._minValue = info.GetDateTime("MinValue");
+        s._maxValue = info.GetDateTime("MaxValue");
 
         return s;
       }
@@ -111,28 +78,28 @@ namespace Altaxo.Graph.Axes.Boundaries
 
     public FiniteDateTimeBoundaries()
     {
-      minValue = DateTime.MaxValue;
-      maxValue = DateTime.MinValue;
+      _minValue = DateTime.MaxValue;
+      _maxValue = DateTime.MinValue;
     }
 
     public FiniteDateTimeBoundaries(FiniteDateTimeBoundaries x)
       : base(x)
     {
-      minValue      = x.minValue;
-      maxValue      = x.maxValue;
+      _minValue      = x._minValue;
+      _maxValue      = x._maxValue;
     }
 
     public override void EndUpdate()
     {
-      if(m_EventsSuspendCount>0)
+      if(_eventSuspendCount>0)
       {
-        --m_EventsSuspendCount;
+        --_eventSuspendCount;
         // if anything changed in the meantime, fire the event
-        if(this.m_SavedNumberOfItems!=this.numberOfItems)
+        if(this._savedNumberOfItems!=this._numberOfItems)
           OnNumberOfItemsChanged();
 
-        bool bLower = (this.m_SavedMinValue!=this.minValue);
-        bool bUpper = (this.m_SavedMaxValue!=this.maxValue);
+        bool bLower = (this._cachedMinValue!=this._minValue);
+        bool bUpper = (this._cachedMaxValue!=this._maxValue);
 
         if(bLower || bUpper)
           OnBoundaryChanged(bLower,bUpper);
@@ -141,12 +108,12 @@ namespace Altaxo.Graph.Axes.Boundaries
 
     public override void BeginUpdate()
     {
-      ++m_EventsSuspendCount;
-      if(m_EventsSuspendCount==1) // events are freshly disabled
+      ++_eventSuspendCount;
+      if(_eventSuspendCount==1) // events are freshly disabled
       {
-        this.m_SavedNumberOfItems = this.numberOfItems;
-        this.m_SavedMinValue = this.minValue;
-        this.m_SavedMaxValue = this.maxValue;
+        this._savedNumberOfItems = this._numberOfItems;
+        this._cachedMinValue = this._minValue;
+        this._cachedMaxValue = this._maxValue;
       }
     }
 
@@ -156,13 +123,13 @@ namespace Altaxo.Graph.Axes.Boundaries
     public override void Reset()
     {
       base.Reset();
-      minValue = DateTime.MaxValue;
-      maxValue = DateTime.MinValue;
+      _minValue = DateTime.MaxValue;
+      _maxValue = DateTime.MinValue;
     }
 
 
-    public virtual DateTime LowerBound { get { return minValue; } }
-    public virtual DateTime UpperBound { get { return maxValue; } }
+    public virtual DateTime LowerBound { get { return _minValue; } }
+    public virtual DateTime UpperBound { get { return _maxValue; } }
 
     /// <summary>
     /// merged boundaries of another object into this object
@@ -172,18 +139,18 @@ namespace Altaxo.Graph.Axes.Boundaries
     {
       if(this.GetType()==b.GetType())
       {
-        if(b.numberOfItems>0)
+        if(b._numberOfItems>0)
         {
           bool bLower=false,bUpper=false;
-          numberOfItems += b.numberOfItems;
-          if(b.minValue < minValue) 
+          _numberOfItems += b._numberOfItems;
+          if(b._minValue < _minValue) 
           {
-            minValue = b.minValue;
+            _minValue = b._minValue;
             bLower=true;
           }
-          if(b.maxValue > maxValue)
+          if(b._maxValue > _maxValue)
           {
-            maxValue = b.maxValue;
+            _maxValue = b._maxValue;
             bUpper=true;
           }
           
@@ -232,9 +199,9 @@ namespace Altaxo.Graph.Axes.Boundaries
         if(DateTime.MinValue!=d)
         {
           bool bLower=false, bUpper=false;
-          if(d<minValue) { minValue = d; bLower=true; }
-          if(d>maxValue) { maxValue = d; bUpper=true; }
-          numberOfItems++;
+          if(d<_minValue) { _minValue = d; bLower=true; }
+          if(d>_maxValue) { _maxValue = d; bUpper=true; }
+          _numberOfItems++;
   
           OnNumberOfItemsChanged();
 
@@ -248,9 +215,9 @@ namespace Altaxo.Graph.Axes.Boundaries
       {
         if(DateTime.MinValue!=d)
         {
-          if(d<minValue) minValue = d;
-          if(d>maxValue) maxValue = d;
-          numberOfItems++;
+          if(d<_minValue) _minValue = d;
+          if(d>_maxValue) _maxValue = d;
+          _numberOfItems++;
           return true;
         }
       }

@@ -24,7 +24,7 @@ using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using Altaxo.Serialization;
-using Altaxo.Graph.Axes;
+using Altaxo.Graph.Scales;
 using Altaxo.Data;
 
 namespace Altaxo.Graph
@@ -551,7 +551,7 @@ namespace Altaxo.Graph
     {
       _cachedStyleID = styleInfo.Identifier;
       A2DAxisStyleIdentifier styleID = styleInfo.Identifier;
-      Axis raxis = styleID.AxisNumber==0 ? layer.XAxis : layer.YAxis;
+      Scale raxis = styleID.AxisNumber==0 ? layer.XAxis : layer.YAxis;
 
       _enclosingPath.Reset();
       _enclosingPath.FillMode = FillMode.Winding; // with Winding also overlapping rectangles are selected

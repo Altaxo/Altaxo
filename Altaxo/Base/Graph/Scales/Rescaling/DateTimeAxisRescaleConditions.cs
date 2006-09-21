@@ -22,11 +22,12 @@
 
 using System;
 
-namespace Altaxo.Graph.Axes.Scaling
+namespace Altaxo.Graph.Scales.Rescaling
 {
   /// <summary>
   /// Summary description for AxisRescaleConditions.
   /// </summary>
+  [Serializable]
   public class DateTimeAxisRescaleConditions : ICloneable, Altaxo.Main.IChangedEventSource
   {
     protected BoundaryRescaling _orgRescaling;
@@ -36,11 +37,13 @@ namespace Altaxo.Graph.Axes.Scaling
     protected DateTime _end;
     protected TimeSpan _span;
 
+    [field:NonSerialized]
     public event EventHandler Changed;
 
     #region Serialization
- 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DateTimeAxisRescaleConditions),0)]
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Graph.Axes.Scaling.DateTimeAxisRescaleConditions",0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DateTimeAxisRescaleConditions),1)]
       public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)

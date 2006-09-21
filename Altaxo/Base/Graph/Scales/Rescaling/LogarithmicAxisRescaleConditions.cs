@@ -22,17 +22,19 @@
 
 using System;
 
-namespace Altaxo.Graph.Axes.Scaling
+namespace Altaxo.Graph.Scales.Rescaling
 {
   /// <summary>
   /// Summary description for LogarithmicAxisRescaleConditions.
   /// </summary>
+  [Serializable]
   public class LogarithmicAxisRescaleConditions : NumericAxisRescaleConditions
   {
 
     #region Serialization
- 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LogarithmicAxisRescaleConditions),0)]
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Axes.Scaling.LogarithmicAxisRescaleConditions", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LogarithmicAxisRescaleConditions),1)]
       public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)

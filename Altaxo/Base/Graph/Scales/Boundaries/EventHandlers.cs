@@ -21,7 +21,7 @@
 #endregion
 
 
-namespace Altaxo.Graph.Axes.Boundaries
+namespace Altaxo.Graph.Scales.Boundaries
 {
 
   public delegate void BoundaryChangedHandler(object sender, BoundariesChangedEventArgs args);

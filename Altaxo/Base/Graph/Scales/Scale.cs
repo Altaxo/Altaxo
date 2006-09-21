@@ -25,9 +25,9 @@ using Altaxo.Serialization;
 using Altaxo.Data;
 
 
-namespace Altaxo.Graph.Axes
+namespace Altaxo.Graph.Scales
 {
-  using Scaling;
+  using Rescaling;
   using Boundaries;
 
   
@@ -37,8 +37,14 @@ namespace Altaxo.Graph.Axes
   /// <summary>
   /// Axis is the abstract base class of all axis types including linear axis, logarithmic axis and so on.
   /// </summary>
-  public abstract class Axis : ICloneable, Main.IChangedEventSource
+  [Serializable]
+  public abstract class Scale : ICloneable, Main.IChangedEventSource
   {
+    /// <summary>
+    /// Fired when the data of the axis has changed, for instance end point, org point, or tick spacing.
+    /// </summary>
+    [field:NonSerialized]
+    public event System.EventHandler Changed;
 
 
 
@@ -52,11 +58,7 @@ namespace Altaxo.Graph.Axes
     
     #region IChangedEventSource Members
 
-    /// <summary>
-    /// Fired when the data of the axis has changed, for instance end point, org point, or tick spacing.
-    /// </summary>
-    public event System.EventHandler Changed;
-
+   
     /// <summary>
     /// Used to fire the axis changed event, can be overriden in child classes.
     /// </summary>
@@ -163,11 +165,11 @@ namespace Altaxo.Graph.Axes
     /// <summary>
     /// Static constructor that initializes the collection of available axis types by searching in the current assembly for child classes of axis.
     /// </summary>
-    static Axis()
+    static Scale()
     {
       sm_AvailableAxes = new System.Collections.Hashtable();
 
-      System.Type[] types = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(Axis));
+      System.Type[] types = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(Scale));
       foreach(System.Type definedtype in types)
         sm_AvailableAxes.Add(definedtype.Name,definedtype);
       

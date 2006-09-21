@@ -22,7 +22,7 @@
 
 using System;
 using System.Drawing;
-using Altaxo.Graph.Axes;
+using Altaxo.Graph.Scales;
 
 
 namespace Altaxo.Graph
@@ -37,12 +37,12 @@ namespace Altaxo.Graph
     /// <summary>
     /// Gets the axis of the independent variable.
     /// </summary>
-    Axis XAxis { get; }
+    Scale XAxis { get; }
     
     /// <summary>
     /// Gets the axis of the dependent variable.
     /// </summary>
-    Axis YAxis { get; }
+    Scale YAxis { get; }
 
 
     G2DCoordinateSystem CoordinateSystem { get; }

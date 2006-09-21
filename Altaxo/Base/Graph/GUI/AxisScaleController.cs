@@ -22,7 +22,7 @@
 
 using System;
 using Altaxo.Main.GUI;
-using Altaxo.Graph.Axes;
+using Altaxo.Graph.Scales;
 
 namespace Altaxo.Graph.GUI
 {
@@ -59,9 +59,9 @@ namespace Altaxo.Graph.GUI
     protected int m_axisNumber;
     
     // Cached values
-    protected Axis m_Axis;
+    protected Scale m_Axis;
 
-    protected Axis _tempAxis;
+    protected Scale _tempAxis;
 
     protected string  m_AxisOrg;
     protected string  m_Original_AxisOrg;
@@ -83,13 +83,13 @@ namespace Altaxo.Graph.GUI
       m_Layer = layer;
       m_axisNumber = axisnumber;
       m_Axis = m_Layer.AxisProperties.Axis(axisnumber);
-      _tempAxis = (Axis)m_Axis.Clone();
+      _tempAxis = (Scale)m_Axis.Clone();
 
 
       SetElements();
     }
 
-    public AxisScaleController(XYPlotLayer layer, Axis ax)
+    public AxisScaleController(XYPlotLayer layer, Scale ax)
     {
       m_Layer = layer;
       m_axisNumber = layer.AxisProperties.IndexOf(ax);
@@ -97,7 +97,7 @@ namespace Altaxo.Graph.GUI
         throw new ArgumentException("Provided axis is not member of the layer");
 
       m_Axis = ax;
-      _tempAxis = (Axis)m_Axis.Clone();
+      _tempAxis = (Scale)m_Axis.Clone();
 
 
       SetElements();
@@ -148,14 +148,14 @@ namespace Altaxo.Graph.GUI
 
     public void SetAxisType(bool bInit)
     {
-      string[] names = new string[Axis.AvailableAxes.Keys.Count];
+      string[] names = new string[Scale.AvailableAxes.Keys.Count];
 
       int i=0;
       string curraxisname=null;
-      foreach(string axs in Axis.AvailableAxes.Keys)
+      foreach(string axs in Scale.AvailableAxes.Keys)
       {
         names[i++] = axs;
-        if(_tempAxis.GetType()==Axis.AvailableAxes[axs])
+        if(_tempAxis.GetType()==Scale.AvailableAxes[axs])
           curraxisname = axs;
       }
 
@@ -212,14 +212,14 @@ namespace Altaxo.Graph.GUI
       try
       {
 
-        System.Type axistype = (System.Type)Axis.AvailableAxes[m_AxisType];
+        System.Type axistype = (System.Type)Scale.AvailableAxes[m_AxisType];
         if(null!=axistype)
         {
           if(axistype!=_tempAxis.GetType())
           {
             // replace the current axis by a new axis of the type axistype
-            Axis _oldAxis = _tempAxis;
-            _tempAxis = (Axis)System.Activator.CreateInstance(axistype);
+            Scale _oldAxis = _tempAxis;
+            _tempAxis = (Scale)System.Activator.CreateInstance(axistype);
 
             // Try to set the same org and end as the axis before
             // this will fail for instance if we switch from linear to logarithmic with negative bounds

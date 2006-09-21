@@ -24,7 +24,7 @@ using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using Altaxo.Serialization;
-using Altaxo.Graph.Axes;
+using Altaxo.Graph.Scales;
 
 
 namespace Altaxo.Graph
@@ -550,7 +550,7 @@ namespace Altaxo.Graph
     {
       A2DAxisStyleIdentifier styleID = styleInfo.Identifier;
       _cachedAxisStyleInfo = styleInfo.Clone();
-      Axis axis = styleID.AxisNumber == 0 ? layer.XAxis : layer.YAxis;
+      Scale axis = styleID.AxisNumber == 0 ? layer.XAxis : layer.YAxis;
       
       double rx0 = 0, rx1 = 1;
       double ry0 = 0, ry1 = 1;

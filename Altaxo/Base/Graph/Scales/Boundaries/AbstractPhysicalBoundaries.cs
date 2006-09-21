@@ -22,25 +22,28 @@
 
 using System;
 
-namespace Altaxo.Graph.Axes.Boundaries
+namespace Altaxo.Graph.Scales.Boundaries
 {
   /// <summary>
   /// Represents the boundaries of an axis.
   /// </summary>
+  [Serializable]
   public abstract class AbstractPhysicalBoundaries : IPhysicalBoundaries
   {
 
-    protected int numberOfItems=0;
+    protected int _numberOfItems=0;
  
-  
-    protected int m_EventsSuspendCount=0;
-    protected int m_SavedNumberOfItems; // stores the number of items when events are disabled
+
+    [NonSerialized]
+    protected int _eventSuspendCount=0;
+    [NonSerialized]
+    protected int _savedNumberOfItems; // stores the number of items when events are disabled
  
   
     
     public AbstractPhysicalBoundaries()
     {
-      numberOfItems = 0;
+      _numberOfItems = 0;
     }
 
     /// <summary>
@@ -49,7 +52,7 @@ namespace Altaxo.Graph.Axes.Boundaries
     /// <param name="from">The boundary object to copy from.</param>
     public AbstractPhysicalBoundaries(AbstractPhysicalBoundaries from)
     {
-      numberOfItems = from.numberOfItems;
+      _numberOfItems = from._numberOfItems;
     }
 
 
@@ -65,7 +68,7 @@ namespace Altaxo.Graph.Axes.Boundaries
     {
       get
       { 
-        return m_EventsSuspendCount<=0;
+        return _eventSuspendCount<=0;
       }
     }
 
@@ -107,14 +110,14 @@ namespace Altaxo.Graph.Axes.Boundaries
 
     public virtual void Reset()
     {
-      numberOfItems = 0;
+      _numberOfItems = 0;
     }
 
     public int NumberOfItems
     {
       get 
       { 
-        return numberOfItems;
+        return _numberOfItems;
       } 
     }
 
@@ -122,7 +125,7 @@ namespace Altaxo.Graph.Axes.Boundaries
     { 
       get
       {
-        return numberOfItems==0;
+        return _numberOfItems==0;
       } 
     }
 

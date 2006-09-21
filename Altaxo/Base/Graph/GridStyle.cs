@@ -203,7 +203,7 @@ namespace Altaxo.Graph
       if (!_showGrid)
         return;
 
-      Axes.Axis axis = axisnumber == 0 ? layer.XAxis : layer.YAxis;
+      Scales.Scale axis = axisnumber == 0 ? layer.XAxis : layer.YAxis;
       RectangleF layerRect = new RectangleF(new PointF(0, 0), layer.Size);
 
       if (_showZeroOnly)

@@ -25,8 +25,8 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using Altaxo.Serialization;
 using Altaxo.Data;
-using Altaxo.Graph.Axes;
-using Altaxo.Graph.Axes.Boundaries;
+using Altaxo.Graph.Scales;
+using Altaxo.Graph.Scales.Boundaries;
 using Altaxo.Drawing;
 
 namespace Altaxo.Graph
@@ -882,8 +882,8 @@ namespace Altaxo.Graph
       result.RangeList = rangeList;
 
 
-      Axis xAxis = layer.XAxis;
-      Axis yAxis = layer.YAxis;
+      Scale xAxis = layer.XAxis;
+      Scale yAxis = layer.YAxis;
       G2DCoordinateSystem coordsys = layer.CoordinateSystem;
 
 

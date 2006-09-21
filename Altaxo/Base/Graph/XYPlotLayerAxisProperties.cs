@@ -26,8 +26,8 @@ using System.Reflection;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using Altaxo.Serialization;
-using Altaxo.Graph.Axes;
-using Altaxo.Graph.Axes.Boundaries;
+using Altaxo.Graph.Scales;
+using Altaxo.Graph.Scales.Boundaries;
 
 namespace Altaxo.Graph
 {
@@ -36,7 +36,7 @@ namespace Altaxo.Graph
     /// <summary>
     /// The axis.
     /// </summary>
-    private Axis _axis; // the X-Axis
+    private Scale _axis; // the X-Axis
 
     /// <summary>Indicate if x-axis is linked to the linked layer x axis.</summary>
     private bool _isLinked;
@@ -89,7 +89,7 @@ namespace Altaxo.Graph
       {
         XYPlotLayerAxisProperties s = null != o ? (XYPlotLayerAxisProperties)o : new XYPlotLayerAxisProperties();
 
-        s.Axis = (Axis)info.GetValue("Axis", typeof(Axis));
+        s.Axis = (Scale)info.GetValue("Axis", typeof(Scale));
         s._isLinked = info.GetBoolean("Link");
         s._linkAxisOrgA = info.GetDouble("OrgA");
         s._linkAxisOrgB = info.GetDouble("OrgB");
@@ -104,7 +104,7 @@ namespace Altaxo.Graph
 
     public XYPlotLayerAxisProperties()
     {
-      Axis = new LinearAxis();
+      Axis = new LinearScale();
       _isLinked = false;
       _linkAxisOrgA = 0;
       _linkAxisOrgB = 1;
@@ -114,7 +114,7 @@ namespace Altaxo.Graph
     
     void CopyFrom(XYPlotLayerAxisProperties from)
     {
-      this.Axis = from._axis == null ? null : (Axis)from._axis.Clone();
+      this.Axis = from._axis == null ? null : (Scale)from._axis.Clone();
       this._isLinked = from._isLinked;
       this._linkAxisOrgA = from._linkAxisOrgA;
       this._linkAxisOrgB = from._linkAxisOrgB;
@@ -268,7 +268,7 @@ namespace Altaxo.Graph
       }
     }
 
-    public Axis Axis
+    public Scale Axis
     {
       get
       {
@@ -276,7 +276,7 @@ namespace Altaxo.Graph
       }
       set
       {
-        Axis oldvalue = _axis;
+        Scale oldvalue = _axis;
         _axis = value;
         if (!object.ReferenceEquals(value, oldvalue))
         {
@@ -305,7 +305,7 @@ namespace Altaxo.Graph
     /// Measures if the linked axis has changed.
     /// </summary>
     /// <param name="linkedAxis">The axis that is the master axis (our axis is linked to this axis).</param>
-    public void EhLinkedLayerAxesChanged(Axis linkedAxis)
+    public void EhLinkedLayerAxesChanged(Scale linkedAxis)
     {
       if (_isLinked)
       {
@@ -442,15 +442,15 @@ namespace Altaxo.Graph
       }
     }
 
-    public Axis Axis(int i)
+    public Scale Axis(int i)
     {
       return _props[i].Axis;
     }
-    public void SetAxis(int i, Axis ax)
+    public void SetAxis(int i, Scale ax)
     {
       _props[i].Axis = ax;
     }
-    public int IndexOf(Axis ax)
+    public int IndexOf(Scale ax)
     {
       for (int i = 0; i < _props.Length; i++)
       {

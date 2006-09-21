@@ -23,79 +23,45 @@
 using System;
 using Altaxo.Serialization;
 
-namespace Altaxo.Graph.Axes.Boundaries
+namespace Altaxo.Graph.Scales.Boundaries
 {
   /// <summary>
   /// Provides a abstract class for tracking the numerical
   /// boundaries of a plot association. Every plot association has two of these objects
   /// that help tracking the boundaries of X and Y axis
   /// </summary>
-  [SerializationSurrogate(0,typeof(NumericalBoundaries.SerializationSurrogate0))]
-  [SerializationVersion(0)]
+  [Serializable]
   public abstract class NumericalBoundaries : AbstractPhysicalBoundaries, System.Runtime.Serialization.IDeserializationCallback
   {
     
-    protected double minValue=double.MaxValue;
-    protected double maxValue=double.MinValue;
+    protected double _minValue=double.MaxValue;
+    protected double _maxValue=double.MinValue;
   
-    private double  m_SavedMinValue, m_SavedMaxValue; // stores the minValue and MaxValue in the moment if the events where disabled
+    [NonSerialized]
+    private double  _cachedMinValue, _cachedMaxValue; // stores the minValue and MaxValue in the moment if the events where disabled
 
     #region Serialization
-    /// <summary>Used to serialize the PhysicalBoundaries Version 0.</summary>
-    public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
-    {
-      /// <summary>
-      /// Serializes PhysicalBoundaries Version 0.
-      /// </summary>
-      /// <param name="obj">The PhysicalBoundaries to serialize.</param>
-      /// <param name="info">The serialization info.</param>
-      /// <param name="context">The streaming context.</param>
-      public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context  )
-      {
-        NumericalBoundaries s = (NumericalBoundaries)obj;
-        info.AddValue("NumberOfItems",s.numberOfItems);
-        info.AddValue("MinValue",s.minValue);
-        info.AddValue("MaxValue",s.maxValue);
-      }
-      /// <summary>
-      /// Deserializes the PhysicalBoundaries Version 0.
-      /// </summary>
-      /// <param name="obj">The empty PhysicalBoundaries object to deserialize into.</param>
-      /// <param name="info">The serialization info.</param>
-      /// <param name="context">The streaming context.</param>
-      /// <param name="selector">The deserialization surrogate selector.</param>
-      /// <returns>The deserialized PhysicalBoundaries.</returns>
-      public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
-      {
-        NumericalBoundaries s = (NumericalBoundaries)obj;
-
-        s.numberOfItems = info.GetInt32("NumberOfItems");  
-        s.minValue = info.GetDouble("MinValue");
-        s.maxValue = info.GetDouble("MaxValue");
-
-        return s;
-      }
-    }
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Graph.PhysicalBoundaries",0)]
-      [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NumericalBoundaries),1)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Axes.Boundaries.NumericalBoundaries", 1)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NumericalBoundaries), 2)]
       public class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         NumericalBoundaries s = (NumericalBoundaries)obj;
-        info.AddValue("NumberOfItems",s.numberOfItems);
-        info.AddValue("MinValue",s.minValue);
-        info.AddValue("MaxValue",s.maxValue);
+        info.AddValue("NumberOfItems",s._numberOfItems);
+        info.AddValue("MinValue",s._minValue);
+        info.AddValue("MaxValue",s._maxValue);
       }
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
         
         NumericalBoundaries s = (NumericalBoundaries)o;
 
-        s.numberOfItems = info.GetInt32("NumberOfItems");  
-        s.minValue = info.GetDouble("MinValue");
-        s.maxValue = info.GetDouble("MaxValue");
+        s._numberOfItems = info.GetInt32("NumberOfItems");  
+        s._minValue = info.GetDouble("MinValue");
+        s._maxValue = info.GetDouble("MaxValue");
 
         return s;
       }
@@ -114,28 +80,28 @@ namespace Altaxo.Graph.Axes.Boundaries
 
     public NumericalBoundaries()
     {
-      minValue = double.MaxValue;
-      maxValue = double.MinValue;
+      _minValue = double.MaxValue;
+      _maxValue = double.MinValue;
     }
 
     public NumericalBoundaries(NumericalBoundaries x)
       : base(x)
     {
-      minValue      = x.minValue;
-      maxValue      = x.maxValue;
+      _minValue      = x._minValue;
+      _maxValue      = x._maxValue;
     }
 
     public override void EndUpdate()
     {
-      if(m_EventsSuspendCount>0)
+      if(_eventSuspendCount>0)
       {
-        --m_EventsSuspendCount;
+        --_eventSuspendCount;
         // if anything changed in the meantime, fire the event
-        if(this.m_SavedNumberOfItems!=this.numberOfItems)
+        if(this._savedNumberOfItems!=this._numberOfItems)
           OnNumberOfItemsChanged();
 
-        bool bLower = (this.m_SavedMinValue!=this.minValue);
-        bool bUpper = (this.m_SavedMaxValue!=this.maxValue);
+        bool bLower = (this._cachedMinValue!=this._minValue);
+        bool bUpper = (this._cachedMaxValue!=this._maxValue);
 
         if(bLower || bUpper)
           OnBoundaryChanged(bLower,bUpper);
@@ -144,12 +110,12 @@ namespace Altaxo.Graph.Axes.Boundaries
 
     public override void BeginUpdate()
     {
-      ++m_EventsSuspendCount;
-      if(m_EventsSuspendCount==1) // events are freshly disabled
+      ++_eventSuspendCount;
+      if(_eventSuspendCount==1) // events are freshly disabled
       {
-        this.m_SavedNumberOfItems = this.numberOfItems;
-        this.m_SavedMinValue = this.minValue;
-        this.m_SavedMaxValue = this.maxValue;
+        this._savedNumberOfItems = this._numberOfItems;
+        this._cachedMinValue = this._minValue;
+        this._cachedMaxValue = this._maxValue;
       }
     }
 
@@ -159,13 +125,13 @@ namespace Altaxo.Graph.Axes.Boundaries
     public override void Reset()
     {
       base.Reset();
-      minValue = Double.MaxValue;
-      maxValue = Double.MinValue;
+      _minValue = Double.MaxValue;
+      _maxValue = Double.MinValue;
     }
 
 
-    public virtual double LowerBound { get { return minValue; } }
-    public virtual double UpperBound { get { return maxValue; } }
+    public virtual double LowerBound { get { return _minValue; } }
+    public virtual double UpperBound { get { return _maxValue; } }
 
     /// <summary>
     /// merged boundaries of another object into this object
@@ -175,18 +141,18 @@ namespace Altaxo.Graph.Axes.Boundaries
     {
       if(this.GetType()==b.GetType())
       {
-        if(b.numberOfItems>0)
+        if(b._numberOfItems>0)
         {
           bool bLower=false,bUpper=false;
-          numberOfItems += b.numberOfItems;
-          if(b.minValue < minValue) 
+          _numberOfItems += b._numberOfItems;
+          if(b._minValue < _minValue) 
           {
-            minValue = b.minValue;
+            _minValue = b._minValue;
             bLower=true;
           }
-          if(b.maxValue > maxValue)
+          if(b._maxValue > _maxValue)
           {
-            maxValue = b.maxValue;
+            _maxValue = b._maxValue;
             bUpper=true;
           }
           
@@ -213,8 +179,8 @@ namespace Altaxo.Graph.Axes.Boundaries
     /// <param name="amount">The amount by which to shift the boundaries.</param>
     public void Shift(double amount)
     {
-      minValue += amount;
-      maxValue += amount;
+      _minValue += amount;
+      _maxValue += amount;
     }
 
     #region IPhysicalBoundaries Members

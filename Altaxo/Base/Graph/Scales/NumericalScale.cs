@@ -24,15 +24,16 @@ using System;
 using Altaxo.Serialization;
 using Altaxo.Data;
 
-namespace Altaxo.Graph.Axes
+namespace Altaxo.Graph.Scales
 {
-  using Scaling;
+  using Rescaling;
   using Boundaries;
 
   /// <summary>
   /// Axis is the abstract base class of all axis types including linear axis, logarithmic axis and so on.
   /// </summary>
-  public abstract class NumericalAxis : Axis
+  [Serializable]
+  public abstract class NumericalScale : Scale
   {
     /// <summary>
     /// PhysicalToNormal translates physical values into a normal value linear along the axis

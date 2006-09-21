@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-using Altaxo.Graph.Axes.Boundaries;
+using Altaxo.Graph.Scales.Boundaries;
 
 namespace Altaxo.Graph.PlotGroups
 {

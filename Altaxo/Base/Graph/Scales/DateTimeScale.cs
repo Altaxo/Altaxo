@@ -24,72 +24,74 @@ using System;
 using Altaxo.Data;
 
 
-namespace Altaxo.Graph.Axes
+namespace Altaxo.Graph.Scales
 {
-  using Scaling;
+  using Rescaling;
   using Boundaries;
 
   /// <summary>
   /// Summary description for DateTimeAxis.
   /// </summary>
-  public class DateTimeAxis : Axis
+  [Serializable]
+  public class DateTimeScale : Scale
   {
     // cached values
     /// <summary>Current axis origin (cached value).</summary>
-    protected DateTime m_AxisOrg=DateTime.MinValue;
+    protected DateTime _axisOrg=DateTime.MinValue;
     /// <summary>Current axis end (cached value).</summary>
-    protected DateTime m_AxisEnd=DateTime.MaxValue;
+    protected DateTime _axisEnd=DateTime.MaxValue;
 
 
     /// <summary>Holds the <see cref="NumericalBoundaries"/> for that axis.</summary>
-    protected FiniteDateTimeBoundaries m_DataBounds;
+    protected FiniteDateTimeBoundaries _dataBounds;
 
     protected DateTimeAxisRescaleConditions _rescaling;
 
-    SpanCompound m_MajorSpan;
-    int m_MinorTicks;
+    SpanCompound _majorSpan;
+    int _minorTicks;
 
     #region Serialization
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DateTimeAxis), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Graph.Axes.DateTimeAxis", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DateTimeScale), 1)]
     public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        DateTimeAxis s = (DateTimeAxis)obj;
+        DateTimeScale s = (DateTimeScale)obj;
 
 
-        info.AddValue("Org", s.m_AxisOrg);
-        info.AddValue("End", s.m_AxisEnd);
-        info.AddEnum("MajorSpanUnit", s.m_MajorSpan._unit);
-        info.AddValue("MajorSpanValue", s.m_MajorSpan._span);
-        info.AddValue("MinorTicks", s.m_MinorTicks);
-        info.AddValue("Bounds", s.m_DataBounds);
+        info.AddValue("Org", s._axisOrg);
+        info.AddValue("End", s._axisEnd);
+        info.AddEnum("MajorSpanUnit", s._majorSpan._unit);
+        info.AddValue("MajorSpanValue", s._majorSpan._span);
+        info.AddValue("MinorTicks", s._minorTicks);
+        info.AddValue("Bounds", s._dataBounds);
         info.AddValue("Rescaling", s._rescaling);
 
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        DateTimeAxis s = SDeserialize(o, info, parent);
+        DateTimeScale s = SDeserialize(o, info, parent);
         OnAfterDeserialization(s);
         return s;
       }
 
-      public virtual void OnAfterDeserialization(DateTimeAxis s)
+      public virtual void OnAfterDeserialization(DateTimeScale s)
       {
       }
 
-      protected virtual DateTimeAxis SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected virtual DateTimeScale SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        DateTimeAxis s = null != o ? (DateTimeAxis)o : new DateTimeAxis();
+        DateTimeScale s = null != o ? (DateTimeScale)o : new DateTimeScale();
 
-        s.m_AxisOrg = info.GetDateTime("Org");
-        s.m_AxisEnd = info.GetDateTime("End");
+        s._axisOrg = info.GetDateTime("Org");
+        s._axisEnd = info.GetDateTime("End");
         Unit spanUnit = (Unit)info.GetEnum("MajorSpanUnit", typeof(Unit));
         TimeSpan span = info.GetTimeSpan("MajorSpanValue");
-        s.m_MajorSpan = new SpanCompound(spanUnit, span);
-        s.m_MinorTicks = info.GetInt32("MinorTicks");
+        s._majorSpan = new SpanCompound(spanUnit, span);
+        s._minorTicks = info.GetInt32("MinorTicks");
         s.InternalSetDataBounds( (FiniteDateTimeBoundaries)info.GetValue("Bounds", s) );
         s.InternalSetRescaling( (DateTimeAxisRescaleConditions)info.GetValue("Rescaling", s) );
 
@@ -99,24 +101,24 @@ namespace Altaxo.Graph.Axes
     #endregion
 
     #region ICloneable Members
-    public void CopyFrom(DateTimeAxis from)
+    public void CopyFrom(DateTimeScale from)
     {
       this.IsLinked = from.IsLinked;
 
-      this.m_AxisOrg = from.m_AxisOrg;
-      this.m_AxisEnd = from.m_AxisEnd;
+      this._axisOrg = from._axisOrg;
+      this._axisEnd = from._axisEnd;
  
-      this.InternalSetDataBounds((FiniteDateTimeBoundaries)from.m_DataBounds.Clone());
+      this.InternalSetDataBounds((FiniteDateTimeBoundaries)from._dataBounds.Clone());
       this.InternalSetRescaling((DateTimeAxisRescaleConditions)from._rescaling.Clone());
 
     }
 
-    public DateTimeAxis(DateTimeAxis from)
+    public DateTimeScale(DateTimeScale from)
     {
       CopyFrom(from);
     }
 
-    public DateTimeAxis()
+    public DateTimeScale()
     {
       this.InternalSetDataBounds(new FiniteDateTimeBoundaries());
       this.InternalSetRescaling(new DateTimeAxisRescaleConditions());
@@ -128,7 +130,7 @@ namespace Altaxo.Graph.Axes
     /// <returns>The cloned copy of the axis.</returns>
     public override object Clone()
     {
-      return new DateTimeAxis(this);
+      return new DateTimeScale(this);
     }
 
    
@@ -137,13 +139,13 @@ namespace Altaxo.Graph.Axes
 
     protected void InternalSetDataBounds(FiniteDateTimeBoundaries bounds)
     {
-      if(this.m_DataBounds!=null)
+      if(this._dataBounds!=null)
       {
-        this.m_DataBounds.BoundaryChanged -= new BoundaryChangedHandler(this.EhBoundariesChanged);
-        this.m_DataBounds = null;
+        this._dataBounds.BoundaryChanged -= new BoundaryChangedHandler(this.EhBoundariesChanged);
+        this._dataBounds = null;
       }
-      this.m_DataBounds = bounds;
-      this.m_DataBounds.BoundaryChanged += new BoundaryChangedHandler(this.EhBoundariesChanged);
+      this._dataBounds = bounds;
+      this._dataBounds.BoundaryChanged += new BoundaryChangedHandler(this.EhBoundariesChanged);
     }
 
     protected void InternalSetRescaling(DateTimeAxisRescaleConditions rescaling)
@@ -163,7 +165,7 @@ namespace Altaxo.Graph.Axes
     /// 0 for axis origin, 1 for axis end</returns>
     public double PhysicalToNormal(DateTime x)
     {
-      return (x-m_AxisOrg).TotalSeconds / (m_AxisEnd-m_AxisOrg).TotalSeconds; 
+      return (x-_axisOrg).TotalSeconds / (_axisEnd-_axisOrg).TotalSeconds; 
     }
     /// <summary>
     /// NormalToPhysical is the inverse function to PhysicalToNormal
@@ -174,7 +176,7 @@ namespace Altaxo.Graph.Axes
     /// <returns>the corresponding physical value</returns>
     public DateTime NormalToPhysical(double x)
     {
-      return m_AxisOrg.AddSeconds(x*(m_AxisEnd-m_AxisOrg).TotalSeconds);
+      return _axisOrg.AddSeconds(x*(_axisEnd-_axisOrg).TotalSeconds);
     }
 
     /// <summary>
@@ -265,13 +267,13 @@ namespace Altaxo.Graph.Axes
     {
       System.Collections.ArrayList arr = new System.Collections.ArrayList();
     
-      if(m_AxisOrg<=m_AxisEnd)
+      if(_axisOrg<=_axisEnd)
       {
-        for(DateTime d=m_AxisOrg;;)
+        for(DateTime d=_axisOrg;;)
         {
 
-          DateTime r = m_MajorSpan.RoundUp(d);
-          if(r>m_AxisEnd)
+          DateTime r = _majorSpan.RoundUp(d);
+          if(r>_axisEnd)
             break;
           arr.Add(r);
 
@@ -281,11 +283,11 @@ namespace Altaxo.Graph.Axes
       }
       else // downwards
       {
-        for(DateTime d=m_AxisOrg;;)
+        for(DateTime d=_axisOrg;;)
         {
 
-          DateTime r = m_MajorSpan.RoundDown(d);
-          if(r<m_AxisEnd)
+          DateTime r = _majorSpan.RoundDown(d);
+          if(r<_axisEnd)
             break;
           arr.Add(r);
 
@@ -304,7 +306,7 @@ namespace Altaxo.Graph.Axes
     /// <returns>physical values for the minor ticks</returns>
     public DateTime[] GetMinorTicks()
     {
-      if(this.m_MinorTicks==0)
+      if(this._minorTicks==0)
         return new DateTime[0];
 
       System.Collections.ArrayList major = GetMajorTicksAsList();
@@ -362,7 +364,7 @@ namespace Altaxo.Graph.Axes
     {
       get
       {
-        return this.m_DataBounds;
+        return this._dataBounds;
       }
     } // return a PhysicalBoundarie object that is associated with that axis
     
@@ -373,7 +375,7 @@ namespace Altaxo.Graph.Axes
     {
       get
       {
-        return this.m_DataBounds;
+        return this._dataBounds;
       }
     } // return a PhysicalBoundarie object that is associated with that axis
 
@@ -382,11 +384,11 @@ namespace Altaxo.Graph.Axes
     {
       get
       {
-        return this.m_AxisOrg;
+        return this._axisOrg;
       }
       set
       {
-        this.m_AxisOrg = value;
+        this._axisOrg = value;
       }
     }
     /// <summary>The axis end point in physical units.</summary>
@@ -394,11 +396,11 @@ namespace Altaxo.Graph.Axes
     {
       get
       {
-        return m_AxisEnd;
+        return _axisEnd;
       }
       set
       {
-        m_AxisEnd = value;
+        _axisEnd = value;
       }
     }
     // /// <summary>Indicates that the axis origin is fixed to a certain value.</summary>
@@ -421,41 +423,41 @@ namespace Altaxo.Graph.Axes
         return;
 
 
-      DateTime oldAxisOrg = this.m_AxisOrg;
-      DateTime oldAxisEnd = this.m_AxisEnd;
+      DateTime oldAxisOrg = this._axisOrg;
+      DateTime oldAxisEnd = this._axisEnd;
     
      
 
 
-      CalculateTicks(org, end, out m_MajorSpan, out m_MinorTicks);
+      CalculateTicks(org, end, out _majorSpan, out _minorTicks);
       
       if(end>=org)
       {
         if(orgfixed)
-          m_AxisOrg = org;
+          _axisOrg = org;
         else
-          m_AxisOrg = m_MajorSpan.RoundDown(org);
+          _axisOrg = _majorSpan.RoundDown(org);
 
         if(endfixed)
-          m_AxisEnd = end;
+          _axisEnd = end;
         else
-          m_AxisEnd = m_MajorSpan.RoundUp(end);
+          _axisEnd = _majorSpan.RoundUp(end);
       }
       else // org is greater than end !
       {
         if(orgfixed)
-          m_AxisOrg = org;
+          _axisOrg = org;
         else
-          m_AxisOrg = m_MajorSpan.RoundUp(org);
+          _axisOrg = _majorSpan.RoundUp(org);
 
         if(endfixed)
-          m_AxisEnd = end;
+          _axisEnd = end;
         else
-          m_AxisEnd = m_MajorSpan.RoundDown(end);
+          _axisEnd = _majorSpan.RoundDown(end);
       }
 
       // compare with the saved values to find out whether or not something changed
-      if( m_AxisOrg!=oldAxisOrg || m_AxisEnd!=oldAxisEnd)
+      if( _axisOrg!=oldAxisOrg || _axisEnd!=oldAxisEnd)
       {
         OnChanged();
       }
@@ -472,10 +474,10 @@ namespace Altaxo.Graph.Axes
 
     public override void ProcessDataBounds()
     {
-      if(null==this.m_DataBounds || this.m_DataBounds.IsEmpty)
+      if(null==this._dataBounds || this._dataBounds.IsEmpty)
         SetDefaultAxisValues();
       else
-        ProcessDataBounds(m_DataBounds.LowerBound,m_DataBounds.UpperBound,_rescaling); 
+        ProcessDataBounds(_dataBounds.LowerBound,_dataBounds.UpperBound,_rescaling); 
     }
 
 

@@ -25,7 +25,7 @@ using Altaxo.Graph.GUI;
 using Altaxo.Serialization;
 using Altaxo.Main.GUI;
 
-namespace Altaxo.Graph.Axes.Scaling
+namespace Altaxo.Graph.Scales.Rescaling
 {
   /// <summary>
   /// Summary description for NumericAxisRescaleController.
@@ -35,7 +35,7 @@ namespace Altaxo.Graph.Axes.Scaling
     :
     NumericAxisRescaleController
   {
-    public LogarithmicAxisRescaleController(LogarithmicAxisRescaleConditions doc, NumericalAxis ax)
+    public LogarithmicAxisRescaleController(LogarithmicAxisRescaleConditions doc, NumericalScale ax)
       : base(doc,ax)
     {
     }

@@ -26,7 +26,7 @@ using Altaxo.Drawing;
 
 namespace Altaxo.Graph
 {
-  using Axes;
+  using Scales;
 
   #region XYFunctionPlotData
   /// <summary>
@@ -213,8 +213,8 @@ namespace Altaxo.Graph
       result.RangeList = rangeList;
       G2DCoordinateSystem coordsys = layer.CoordinateSystem;
 
-      NumericalAxis xaxis = layer.XAxis as NumericalAxis;
-      NumericalAxis yaxis = layer.YAxis as NumericalAxis;
+      NumericalScale xaxis = layer.XAxis as NumericalScale;
+      NumericalScale yaxis = layer.YAxis as NumericalScale;
       if (xaxis == null || yaxis == null)
         return null;
 

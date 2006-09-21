@@ -23,7 +23,7 @@
 using System;
 using Altaxo.Serialization;
 
-namespace Altaxo.Graph.Axes.Boundaries
+namespace Altaxo.Graph.Scales.Boundaries
 {
   /// <summary>
   /// Provides an interface for tracking the physical

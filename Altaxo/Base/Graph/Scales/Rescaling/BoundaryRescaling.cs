@@ -22,7 +22,7 @@
 
 using System;
 
-namespace Altaxo.Graph.Axes.Scaling
+namespace Altaxo.Graph.Scales.Rescaling
 {
   /// <summary>
   /// Denotes what happens with one side of an axis when the data are changed.

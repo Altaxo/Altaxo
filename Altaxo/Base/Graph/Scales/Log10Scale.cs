@@ -23,111 +23,64 @@
 using System;
 using System.Collections;
 using Altaxo.Serialization;
-using Altaxo.Graph.Axes.Scaling;
-using Altaxo.Graph.Axes.Boundaries;
+using Altaxo.Graph.Scales.Rescaling;
+using Altaxo.Graph.Scales.Boundaries;
 
 
-namespace Altaxo.Graph.Axes
+namespace Altaxo.Graph.Scales
 {
   /// <summary>
   /// Represents a logarithmic axis, i.e. the physical values v correspond to logical values l by v=a*10^(b*l).
   /// </summary>
-  [SerializationSurrogate(0,typeof(Log10Axis.SerializationSurrogate0))]
-  [SerializationVersion(0)]
-  public class Log10Axis : NumericalAxis, System.Runtime.Serialization.IDeserializationCallback
+  [Serializable]
+  public class Log10Scale : NumericalScale, System.Runtime.Serialization.IDeserializationCallback
   {
     /// <summary>Decimal logarithm of axis org.</summary>
-    double m_Log10Org=0; // Log10 of physical axis org
+    double _log10Org=0; // Log10 of physical axis org
     /// <summary>Decimal logarithm of axis end.</summary>
-    double m_Log10End=1; // Log10 of physical axis end
+    double _log10End=1; // Log10 of physical axis end
 
     /// <summary>Number of decades per major tick.</summary>
-    int    m_DecadesPerMajorTick=1; // how many decades is one major tick
+    int    _decadesPerMajorTick=1; // how many decades is one major tick
 
     /// <summary>The boundary object. It collectes only positive values for the axis is logarithmic.</summary>
-    protected NumericalBoundaries m_DataBounds = null;
+    protected NumericalBoundaries _dataBounds = null;
 
     protected LogarithmicAxisRescaleConditions _rescaling = new LogarithmicAxisRescaleConditions();
 
     #region Serialization
-    /// <summary>Used to serialize the Log10Axis Version 0.</summary>
-    public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
-    {
-      /// <summary>
-      /// Serializes Log10Axis Version 0.
-      /// </summary>
-      /// <param name="obj">The axis to serialize.</param>
-      /// <param name="info">The serialization info.</param>
-      /// <param name="context">The streaming context.</param>
-      public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context  )
-      {
-        Log10Axis s = (Log10Axis)obj;
-        info.AddValue("Log10Org",s.m_Log10Org);  
-        info.AddValue("Log10End",s.m_Log10End);  
-        info.AddValue("DecadesPerMajor",s.m_DecadesPerMajorTick);
-
-        //info.AddValue("OrgFixed",s.m_AxisOrgFixed);
-        //info.AddValue("EndFixed",s.m_AxisEndFixed);
-
-        info.AddValue("Bounds",s.m_DataBounds);
-      }
-      /// <summary>
-      /// Deserializes the Linear Axis Version 0.
-      /// </summary>
-      /// <param name="obj">The empty axis object to deserialize into.</param>
-      /// <param name="info">The serialization info.</param>
-      /// <param name="context">The streaming context.</param>
-      /// <param name="selector">The deserialization surrogate selector.</param>
-      /// <returns>The deserialized linear axis.</returns>
-      public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
-      {
-        Log10Axis s = (Log10Axis)obj;
-
-        s.m_Log10Org = (double)info.GetDouble("Log10Org");
-        s.m_Log10End = (double)info.GetDouble("Log10End");
-
-        s.m_DecadesPerMajorTick = (int)info.GetInt32("DecadesPerMajor");
-
-        //s.m_AxisOrgFixed = (bool)info.GetBoolean("OrgFixed");
-        //s.m_AxisEndFixed = (bool)info.GetBoolean("EndFixed");
-
-        s.m_DataBounds = (PositiveFiniteNumericalBoundaries)info.GetValue("Bounds",typeof(PositiveFiniteNumericalBoundaries));
-    
-        return s;
-      }
-    }
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Graph.Log10Axis",0)]
       public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        Log10Axis s = (Log10Axis)obj;
-        info.AddValue("Log10Org",s.m_Log10Org);  
-        info.AddValue("Log10End",s.m_Log10End);  
-        info.AddValue("DecadesPerMajor",s.m_DecadesPerMajorTick);
+        Log10Scale s = (Log10Scale)obj;
+        info.AddValue("Log10Org",s._log10Org);  
+        info.AddValue("Log10End",s._log10End);  
+        info.AddValue("DecadesPerMajor",s._decadesPerMajorTick);
 
         //info.AddValue("OrgFixed",s.m_AxisOrgFixed);
         //info.AddValue("EndFixed",s.m_AxisEndFixed);
 
-        info.AddValue("Bounds",s.m_DataBounds);
+        info.AddValue("Bounds",s._dataBounds);
       }
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
         
-        Log10Axis s = null!=o ? (Log10Axis)o : new Log10Axis();
+        Log10Scale s = null!=o ? (Log10Scale)o : new Log10Scale();
 
-        s.m_Log10Org = (double)info.GetDouble("Log10Org");
-        s.m_Log10End = (double)info.GetDouble("Log10End");
+        s._log10Org = (double)info.GetDouble("Log10Org");
+        s._log10End = (double)info.GetDouble("Log10End");
 
-        s.m_DecadesPerMajorTick = (int)info.GetInt32("DecadesPerMajor");
+        s._decadesPerMajorTick = (int)info.GetInt32("DecadesPerMajor");
 
         bool AxisOrgFixed = (bool)info.GetBoolean("OrgFixed");
         bool AxisEndFixed = (bool)info.GetBoolean("EndFixed");
 
-        s.m_DataBounds = (PositiveFiniteNumericalBoundaries)info.GetValue("Bounds",typeof(PositiveFiniteNumericalBoundaries));
+        s._dataBounds = (PositiveFiniteNumericalBoundaries)info.GetValue("Bounds",typeof(PositiveFiniteNumericalBoundaries));
     
-        s.m_DataBounds.BoundaryChanged += new BoundaryChangedHandler(s.OnBoundariesChanged);
+        s._dataBounds.BoundaryChanged += new BoundaryChangedHandler(s.OnBoundariesChanged);
 
 
         s._rescaling = new LogarithmicAxisRescaleConditions();
@@ -141,20 +94,21 @@ namespace Altaxo.Graph.Axes
       }
     }
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Log10Axis),1)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Axes.Log10Axis", 1)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Log10Scale),2)]
       public class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        Log10Axis s = (Log10Axis)obj;
-        info.AddValue("Log10Org",s.m_Log10Org);  
-        info.AddValue("Log10End",s.m_Log10End);  
-        info.AddValue("DecadesPerMajor",s.m_DecadesPerMajorTick);
+        Log10Scale s = (Log10Scale)obj;
+        info.AddValue("Log10Org",s._log10Org);  
+        info.AddValue("Log10End",s._log10End);  
+        info.AddValue("DecadesPerMajor",s._decadesPerMajorTick);
 
         //info.AddValue("OrgFixed",s.m_AxisOrgFixed);
         //info.AddValue("EndFixed",s.m_AxisEndFixed);
 
-        info.AddValue("Bounds",s.m_DataBounds);
+        info.AddValue("Bounds",s._dataBounds);
         
         // new in version 1:
         info.AddValue("Rescaling",s._rescaling);
@@ -163,19 +117,19 @@ namespace Altaxo.Graph.Axes
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
         
-        Log10Axis s = null!=o ? (Log10Axis)o : new Log10Axis();
+        Log10Scale s = null!=o ? (Log10Scale)o : new Log10Scale();
 
-        s.m_Log10Org = (double)info.GetDouble("Log10Org");
-        s.m_Log10End = (double)info.GetDouble("Log10End");
+        s._log10Org = (double)info.GetDouble("Log10Org");
+        s._log10End = (double)info.GetDouble("Log10End");
 
-        s.m_DecadesPerMajorTick = (int)info.GetInt32("DecadesPerMajor");
+        s._decadesPerMajorTick = (int)info.GetInt32("DecadesPerMajor");
 
         // s.m_AxisOrgFixed = (bool)info.GetBoolean("OrgFixed");
         // s.m_AxisEndFixed = (bool)info.GetBoolean("EndFixed");
 
-        s.m_DataBounds = (PositiveFiniteNumericalBoundaries)info.GetValue("Bounds",typeof(PositiveFiniteNumericalBoundaries));
+        s._dataBounds = (PositiveFiniteNumericalBoundaries)info.GetValue("Bounds",typeof(PositiveFiniteNumericalBoundaries));
     
-        s.m_DataBounds.BoundaryChanged += new BoundaryChangedHandler(s.OnBoundariesChanged);
+        s._dataBounds.BoundaryChanged += new BoundaryChangedHandler(s.OnBoundariesChanged);
 
         // new in version 1
         s._rescaling = (LogarithmicAxisRescaleConditions)info.GetValue("Rescaling",s);
@@ -191,7 +145,7 @@ namespace Altaxo.Graph.Axes
     public virtual void OnDeserialization(object obj)
     {
       // restore the event chain
-      m_DataBounds.BoundaryChanged += new BoundaryChangedHandler(this.OnBoundariesChanged);
+      _dataBounds.BoundaryChanged += new BoundaryChangedHandler(this.OnBoundariesChanged);
     }
     #endregion
 
@@ -200,25 +154,25 @@ namespace Altaxo.Graph.Axes
     /// <summary>
     /// Creates a default logarithmic axis with org=1 and end=10.
     /// </summary>
-    public Log10Axis()
+    public Log10Scale()
     {
-      m_DataBounds = new PositiveFiniteNumericalBoundaries();
-      m_DataBounds.BoundaryChanged += new BoundaryChangedHandler(this.OnBoundariesChanged);
+      _dataBounds = new PositiveFiniteNumericalBoundaries();
+      _dataBounds.BoundaryChanged += new BoundaryChangedHandler(this.OnBoundariesChanged);
     }
 
     /// <summary>
     /// Copy constructor.
     /// </summary>
     /// <param name="from">The axis to copy from.</param>
-    public Log10Axis(Log10Axis from)
+    public Log10Scale(Log10Scale from)
     {
       this.IsLinked = from.IsLinked;
    
-      this.m_DataBounds   = null==from.m_DataBounds ? new PositiveFiniteNumericalBoundaries() : (NumericalBoundaries)from.m_DataBounds.Clone();
-      m_DataBounds.BoundaryChanged += new BoundaryChangedHandler(this.OnBoundariesChanged);
-      this.m_DecadesPerMajorTick = from.m_DecadesPerMajorTick;
-      this.m_Log10End = from.m_Log10End;
-      this.m_Log10Org = from.m_Log10Org;
+      this._dataBounds   = null==from._dataBounds ? new PositiveFiniteNumericalBoundaries() : (NumericalBoundaries)from._dataBounds.Clone();
+      _dataBounds.BoundaryChanged += new BoundaryChangedHandler(this.OnBoundariesChanged);
+      this._decadesPerMajorTick = from._decadesPerMajorTick;
+      this._log10End = from._log10End;
+      this._log10Org = from._log10Org;
 
       this._rescaling = null==from.Rescaling ? new LogarithmicAxisRescaleConditions() : (LogarithmicAxisRescaleConditions)from.Rescaling.Clone();
 
@@ -230,7 +184,7 @@ namespace Altaxo.Graph.Axes
     /// <returns>The cloned copy.</returns>
     public override object Clone()
     {
-      return new Log10Axis(this);
+      return new Log10Scale(this);
     }
 
     /// <summary>
@@ -261,7 +215,7 @@ namespace Altaxo.Graph.Axes
         return Double.NaN;
 
       double log10x = Math.Log10(x);
-      return (log10x-m_Log10Org)/(m_Log10End-m_Log10Org);
+      return (log10x-_log10Org)/(_log10End-_log10Org);
     }
     /// <summary>
     /// NormalToPhysical is the inverse function to PhysicalToNormal
@@ -272,7 +226,7 @@ namespace Altaxo.Graph.Axes
     /// <returns>the corresponding physical value</returns>
     public override double NormalToPhysical(double x)
     {
-      double log10x = m_Log10Org + (m_Log10End-m_Log10Org)*x;
+      double log10x = _log10Org + (_log10End-_log10Org)*x;
       return Math.Pow(10,log10x);
     }
 
@@ -314,21 +268,21 @@ namespace Altaxo.Graph.Axes
       double log10end;
 
       // ensure that log10org<log10end
-      if(m_Log10Org<m_Log10End)
+      if(_log10Org<_log10End)
       {
-        log10org = m_Log10Org;
-        log10end = m_Log10End;
+        log10org = _log10Org;
+        log10end = _log10End;
       }
       else
       {
-        log10org = m_Log10End;
-        log10end = m_Log10Org;
+        log10org = _log10End;
+        log10end = _log10Org;
       }
 
       // calculate the number of major ticks
 
       int nFullDecades = (int)(1+Math.Floor(log10end)-Math.Ceiling(log10org));
-      int nMajorTicks = (int)Math.Floor((nFullDecades+m_DecadesPerMajorTick-1)/(double)m_DecadesPerMajorTick);
+      int nMajorTicks = (int)Math.Floor((nFullDecades+_decadesPerMajorTick-1)/(double)_decadesPerMajorTick);
 
 
       double[] retval = new double[nMajorTicks];
@@ -336,7 +290,7 @@ namespace Altaxo.Graph.Axes
       int end=(int)Math.Floor(log10end);
 
       int i,j;
-      for(i=beg,j=0 ;(i<=end) && (j<nMajorTicks) ; i+=m_DecadesPerMajorTick,j++)
+      for(i=beg,j=0 ;(i<=end) && (j<nMajorTicks) ; i+=_decadesPerMajorTick,j++)
       {
         retval[j] = Calc.RMath.Pow(10,i);
       }
@@ -355,18 +309,18 @@ namespace Altaxo.Graph.Axes
       double log10end;
 
       // ensure that log10org<log10end
-      if(m_Log10Org<m_Log10End)
+      if(_log10Org<_log10End)
       {
-        log10org = m_Log10Org;
-        log10end = m_Log10End;
+        log10org = _log10Org;
+        log10end = _log10End;
       }
       else
       {
-        log10org = m_Log10End;
-        log10end = m_Log10Org;
+        log10org = _log10End;
+        log10end = _log10Org;
       }
 
-      double decadespan = Math.Abs(m_Log10Org-m_Log10End);
+      double decadespan = Math.Abs(_log10Org-_log10End);
 
       // now get the major ticks
       double[] majorticks = GetMajorTicks();
@@ -380,18 +334,18 @@ namespace Altaxo.Graph.Axes
       double minorsperdecade = 50.0/decadespan;
       
       // when there is more than one decade per major tick, then allow only minor ticks onto a full decade
-      if (this.m_DecadesPerMajorTick > 1)
+      if (this._decadesPerMajorTick > 1)
       {
         int decadesPerMinor;
-        for (decadesPerMinor = 1; decadesPerMinor<m_DecadesPerMajorTick; decadesPerMinor++)
+        for (decadesPerMinor = 1; decadesPerMinor<_decadesPerMajorTick; decadesPerMinor++)
         {
-          if (0 != (m_DecadesPerMajorTick % decadesPerMinor))
+          if (0 != (_decadesPerMajorTick % decadesPerMinor))
             continue;
           double resultingMinors = decadespan / decadesPerMinor;
           if (resultingMinors < 50)
             break;
         }
-        if (decadesPerMinor == m_DecadesPerMajorTick)
+        if (decadesPerMinor == _decadesPerMajorTick)
           return new double[] { };
 
         ArrayList minorlist = new ArrayList();
@@ -531,28 +485,28 @@ namespace Altaxo.Graph.Axes
 
     public override NumericalBoundaries DataBounds
     {
-      get { return this.m_DataBounds; }
+      get { return this._dataBounds; }
     } // return a PhysicalBoundarie object that is associated with that axis
 
     public override double Org
     {
-      get { return Math.Pow(10,m_Log10Org); } 
+      get { return Math.Pow(10,_log10Org); } 
       set 
       {
         if(value>0)
         {
-          ProcessDataBounds(value,true,Math.Pow(10,m_Log10End),true);
+          ProcessDataBounds(value,true,Math.Pow(10,_log10End),true);
         }
       }
     }
     public override double End 
     {
-      get { return Math.Pow(10,m_Log10End); } 
+      get { return Math.Pow(10,_log10End); } 
       set
       {
         if(value>0)
         {
-          ProcessDataBounds(Math.Pow(10,m_Log10Org),true,value,true);
+          ProcessDataBounds(Math.Pow(10,_log10Org),true,value,true);
         }
       }
     }
@@ -570,8 +524,8 @@ namespace Altaxo.Graph.Axes
         return;
       // if one of the bounds is not valid, use the old bounds instead
 
-      double log10org = org>0 ? Math.Log10(org) : m_Log10Org;
-      double log10end = end>0 ? Math.Log10(end) : m_Log10End;
+      double log10org = org>0 ? Math.Log10(org) : _log10Org;
+      double log10end = end>0 ? Math.Log10(end) : _log10End;
 
 
       // do something if org and end are the same
@@ -585,19 +539,19 @@ namespace Altaxo.Graph.Axes
       double decades = Math.Abs(log10end-log10org);
 
       // limit the number of major ticks to about 10
-      m_DecadesPerMajorTick = (int)Math.Ceiling(decades/10.0);
+      _decadesPerMajorTick = (int)Math.Ceiling(decades/10.0);
 
 
-      m_Log10Org = log10org;
-      m_Log10End = log10end;
+      _log10Org = log10org;
+      _log10End = log10end;
 
     }
     public override void ProcessDataBounds()
     {
-      if(null==this.m_DataBounds || this.m_DataBounds.IsEmpty)
+      if(null==this._dataBounds || this._dataBounds.IsEmpty)
         return;
     
-      ProcessDataBounds(m_DataBounds.LowerBound,m_DataBounds.UpperBound,_rescaling); 
+      ProcessDataBounds(_dataBounds.LowerBound,_dataBounds.UpperBound,_rescaling); 
     }
 
     public void ProcessDataBounds(double xorg, double xend, NumericAxisRescaleConditions rescaling)

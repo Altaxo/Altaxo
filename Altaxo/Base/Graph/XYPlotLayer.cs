@@ -27,8 +27,8 @@ using System.Reflection;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using Altaxo.Serialization;
-using Altaxo.Graph.Axes;
-using Altaxo.Graph.Axes.Boundaries;
+using Altaxo.Graph.Scales;
+using Altaxo.Graph.Scales.Boundaries;
 
 
 namespace Altaxo.Graph
@@ -327,8 +327,8 @@ namespace Altaxo.Graph
 
         // axis related
 
-        s._axisProperties.X.Axis = (Axis)info.GetValue("XAxis",typeof(Axis));
-        s._axisProperties.Y.Axis = (Axis)info.GetValue("YAxis",typeof(Axis));
+        s._axisProperties.X.Axis = (Scale)info.GetValue("XAxis",typeof(Scale));
+        s._axisProperties.Y.Axis = (Scale)info.GetValue("YAxis",typeof(Scale));
         s.AxisProperties.X.IsLinked = info.GetBoolean("LinkXAxis");
         s.AxisProperties.Y.IsLinked = info.GetBoolean("LinkYAxis");
         s.AxisProperties.X.LinkAxisOrgA = info.GetDouble("LinkXAxisOrgA");
@@ -519,8 +519,8 @@ namespace Altaxo.Graph
 
         // axis related
 
-        s._axisProperties.X.Axis = (Axis)info.GetValue("XAxis",typeof(Axis));
-        s._axisProperties.Y.Axis = (Axis)info.GetValue("YAxis",typeof(Axis));
+        s._axisProperties.X.Axis = (Scale)info.GetValue("XAxis",typeof(Scale));
+        s._axisProperties.Y.Axis = (Scale)info.GetValue("YAxis",typeof(Scale));
         s._axisProperties.X.IsLinked = info.GetBoolean("LinkXAxis");
         s._axisProperties.Y.IsLinked = info.GetBoolean("LinkYAxis");
         s._axisProperties.X.LinkAxisOrgA = info.GetDouble("LinkXAxisOrgA");
@@ -1753,7 +1753,7 @@ namespace Altaxo.Graph
 
     /// <summary>Gets or sets the x axis of this layer.</summary>
     /// <value>The x axis of the layer.</value>
-    public Axis XAxis
+    public Scale XAxis
     {
       get 
       {
@@ -1828,7 +1828,7 @@ namespace Altaxo.Graph
   
     /// <summary>Gets or sets the y axis of this layer.</summary>
     /// <value>The y axis of the layer.</value>
-    public Axis YAxis
+    public Scale YAxis
     {
       get 
       {
@@ -2505,7 +2505,7 @@ namespace Altaxo.Graph
 
     #region Inner types
 
-    public bool IsLinear { get { return XAxis is LinearAxis && YAxis is LinearAxis; }}
+    public bool IsLinear { get { return XAxis is LinearScale && YAxis is LinearScale; }}
    
 
     G2DCoordinateSystem _coordinateSystem;

@@ -24,7 +24,7 @@ using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using Altaxo.Serialization;
-using Altaxo.Graph.Axes.Boundaries;
+using Altaxo.Graph.Scales.Boundaries;
 
 namespace Altaxo.Graph
 {

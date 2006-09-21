@@ -27,8 +27,8 @@ using System.Reflection;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using Altaxo.Serialization;
-using Altaxo.Graph.Axes;
-using Altaxo.Graph.Axes.Boundaries;
+using Altaxo.Graph.Scales;
+using Altaxo.Graph.Scales.Boundaries;
 
 namespace Altaxo.Graph
 {
@@ -265,7 +265,7 @@ namespace Altaxo.Graph
     }
     public void PaintGrid(Graphics g, XYPlotLayer layer, int axisnumber)
     {
-      Axis axis = axisnumber == 0 ? layer.XAxis : layer.YAxis;
+      Scale axis = axisnumber == 0 ? layer.XAxis : layer.YAxis;
 
       if (null != _gridStyle)
         _gridStyle.Paint(g, layer, axisnumber);
