@@ -1434,6 +1434,9 @@
     <Folder Include="Calc\FitFunctions\Relaxation\.svn\tmp\text-base\" />
     <Folder Include="Calc\FitFunctions\Relaxation\.svn\tmp\wcprops\" />
     <Folder Include="Calc\FitFunctions\Relaxation\.svn\wcprops\" />
+    <Folder Include="Graph\G2D\PlotStyles\" />
+    <Folder Include="Graph\G2D\Shapes\" />
+    <Folder Include="Gui\Graph\Scales\Rescaling\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
