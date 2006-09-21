@@ -1309,7 +1309,6 @@
     <Compile Include="Graph\PlotGroups\SymbolSizeGroupStyle.cs" />
     <Compile Include="Graph\PlotGroups\WaterfallTransform.cs" />
     <Compile Include="Graph\PointD.cs" />
-    <Compile Include="Graph\Scales\AxisLinkType.cs" />
     <Compile Include="Graph\Scales\Boundaries\AbstractPhysicalBoundaries.cs" />
     <Compile Include="Graph\Scales\Boundaries\BoundariesChangedEventArgs.cs" />
     <Compile Include="Graph\Scales\Boundaries\EventHandlers.cs" />
@@ -1330,6 +1329,7 @@
     <Compile Include="Graph\Scales\Rescaling\LogarithmicAxisRescaleConditions.cs" />
     <Compile Include="Graph\Scales\Rescaling\NumericAxisRescaleConditions.cs" />
     <Compile Include="Graph\Scales\Scale.cs" />
+    <Compile Include="Graph\Scales\ScaleLinkType.cs" />
     <Compile Include="Gui\Common\Drawing\FontComboBox.cs">
       <SubType>Component</SubType>
     </Compile>

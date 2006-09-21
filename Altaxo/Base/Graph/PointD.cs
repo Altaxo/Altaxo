@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Altaxo.Drawing
+namespace Altaxo.Graph
 {
   public struct PointD
   {

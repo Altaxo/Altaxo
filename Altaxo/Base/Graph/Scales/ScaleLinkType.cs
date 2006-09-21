@@ -28,13 +28,13 @@ using Altaxo.Serialization;
 using Altaxo.Graph.Scales;
 using Altaxo.Graph.Scales.Boundaries;
 
-namespace Altaxo.Graph
+namespace Altaxo.Graph.Scales
 {
   /// <summary>
   /// Provides how the axis is linked to the corresponding axis on the linked layer.
   /// </summary>
   [Serializable]
-  public enum AxisLinkType
+  public enum ScaleLinkType
   {
     /// <summary>
     /// The axis is not linked, i.e. independent.
@@ -51,7 +51,8 @@ namespace Altaxo.Graph
   }
 
   [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Graph.XYPlotLayer+AxisLinkType", 0)]
-  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AxisLinkType), 1)]
+  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.AxisLinkType", 1)]
+  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ScaleLinkType), 2)]
   public class AxisLinkTypeXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
   {
     public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -62,7 +63,7 @@ namespace Altaxo.Graph
     {
 
       string val = info.GetNodeContent();
-      return System.Enum.Parse(typeof(AxisLinkType), val, true);
+      return System.Enum.Parse(typeof(ScaleLinkType), val, true);
     }
   }
 

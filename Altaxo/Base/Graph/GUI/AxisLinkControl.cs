@@ -27,6 +27,8 @@ using System.Drawing;
 using System.Data;
 using System.Windows.Forms;
 
+using Altaxo.Graph.Scales;
+
 namespace Altaxo.Graph.GUI
 {
   /// <summary>
@@ -217,19 +219,19 @@ namespace Altaxo.Graph.GUI
     private void EhLinkNone_CheckedChanged(object sender, System.EventArgs e)
     {
       if(null!=Controller && this.m_rbLinkAxisNone.Checked==true)
-        Controller.EhView_LinkTypeChanged(AxisLinkType.None);
+        Controller.EhView_LinkTypeChanged(ScaleLinkType.None);
     }
 
     private void EhLinkStraight_CheckedChanged(object sender, System.EventArgs e)
     {
       if(null!=Controller && this.m_rbLinkAxisStraight.Checked==true)
-        Controller.EhView_LinkTypeChanged(AxisLinkType.Straight);
+        Controller.EhView_LinkTypeChanged(ScaleLinkType.Straight);
     }
 
     private void EhLinkCustom_CheckedChanged(object sender, System.EventArgs e)
     {
       if(null!=Controller && this.m_rbLinkAxisCustom.Checked==true)
-        Controller.EhView_LinkTypeChanged(AxisLinkType.Custom);
+        Controller.EhView_LinkTypeChanged(ScaleLinkType.Custom);
     }
 
     private void EhOrgA_Validating(object sender, System.ComponentModel.CancelEventArgs e)
@@ -303,19 +305,19 @@ namespace Altaxo.Graph.GUI
       this.m_edLinkAxisEndB.Enabled = bEnab;
     }
 
-    public void LinkType_Initialize(AxisLinkType linktype)
+    public void LinkType_Initialize(ScaleLinkType linktype)
     {
       switch(linktype)
       {
-        case AxisLinkType.None:
+        case ScaleLinkType.None:
           this.m_rbLinkAxisNone.Checked = true;
           EnableCustom(false);
           break;
-        case AxisLinkType.Straight:
+        case ScaleLinkType.Straight:
           this.m_rbLinkAxisStraight.Checked = true;
           EnableCustom(false);
           break;
-        case AxisLinkType.Custom:
+        case ScaleLinkType.Custom:
           this.m_rbLinkAxisCustom.Checked = true;
           EnableCustom(true);
           break;

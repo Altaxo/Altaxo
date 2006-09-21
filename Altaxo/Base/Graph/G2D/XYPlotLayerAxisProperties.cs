@@ -148,25 +148,25 @@ namespace Altaxo.Graph
 
     /// <summary>The type of x axis link.</summary>
     /// <value>Can be either None, Straight or Custom link.</value>
-    public AxisLinkType AxisLinkType
+    public ScaleLinkType AxisLinkType
     {
       get
       {
         if (!IsLinked)
-          return AxisLinkType.None;
+          return ScaleLinkType.None;
         else if (LinkAxisOrgA == 0 && LinkAxisOrgB == 1 && LinkAxisEndA == 0 && LinkAxisEndB == 1)
-          return AxisLinkType.Straight;
-        else return AxisLinkType.Custom;
+          return ScaleLinkType.Straight;
+        else return ScaleLinkType.Custom;
       }
       set
       {
-        if (value == AxisLinkType.None)
+        if (value == ScaleLinkType.None)
         {
           IsLinked = false;
         }
         else
         {
-          if (value == AxisLinkType.Straight)
+          if (value == ScaleLinkType.Straight)
           {
             _linkAxisOrgA = 0;
             _linkAxisOrgB = 1;
@@ -188,9 +188,9 @@ namespace Altaxo.Graph
     /// <param name="orgB">The value b of x-axis link for link of axis origin: org' = a + b*org.</param>
     /// <param name="endA">The value a of x-axis link for link of axis end: end' = a + b*end.</param>
     /// <param name="endB">The value b of x-axis link for link of axis end: end' = a + b*end.</param>
-    public void SetAxisLinkParameter(AxisLinkType linktype, double orgA, double orgB, double endA, double endB)
+    public void SetAxisLinkParameter(ScaleLinkType linktype, double orgA, double orgB, double endA, double endB)
     {
-      if (linktype == AxisLinkType.Straight)
+      if (linktype == ScaleLinkType.Straight)
       {
         orgA = 0;
         orgB = 1;
@@ -198,7 +198,7 @@ namespace Altaxo.Graph
         endB = 1;
       }
 
-      bool linkaxis = (linktype != AxisLinkType.None);
+      bool linkaxis = (linktype != ScaleLinkType.None);
 
       if (
         (linkaxis != this.IsLinked) ||

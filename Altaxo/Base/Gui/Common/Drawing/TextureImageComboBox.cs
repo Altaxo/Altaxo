@@ -28,7 +28,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.ComponentModel;
 using Altaxo.Graph;
-using Altaxo.Drawing;
+
 
 
 namespace Altaxo.Gui.Common.Drawing

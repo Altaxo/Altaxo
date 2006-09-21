@@ -220,7 +220,7 @@ namespace Altaxo.Gui.Graph
  
     
 
-    public void InitializePlotGroupConditions(bool bColor, bool bLineType, bool bSymbol, bool bConcurrently, Altaxo.Graph.PlotGroupStrictness bStrict)
+    public void InitializePlotGroupConditions(bool bColor, bool bLineType, bool bSymbol, bool bConcurrently, Altaxo.Graph.PlotGroups.PlotGroupStrictness bStrict)
     {
       this._rbtConcurrently.Checked=  bConcurrently;
       this._rbtSequential.Checked = !bConcurrently;
@@ -254,11 +254,11 @@ namespace Altaxo.Gui.Graph
     {
       get { return m_chkPlotGroupSymbol.Checked; }
     }
-    public Altaxo.Graph.PlotGroupStrictness PlotGroupStrict
+    public Altaxo.Graph.PlotGroups.PlotGroupStrictness PlotGroupStrict
     {
       get 
       {
-        return (Altaxo.Graph.PlotGroupStrictness)(System.Enum.GetValues(typeof(Altaxo.Graph.PlotGroupStrictness))).GetValue(this._cbStrict.SelectedIndex);
+        return (Altaxo.Graph.PlotGroups.PlotGroupStrictness)(System.Enum.GetValues(typeof(Altaxo.Graph.PlotGroups.PlotGroupStrictness))).GetValue(this._cbStrict.SelectedIndex);
       }
     }
 

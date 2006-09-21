@@ -30,7 +30,7 @@ using System.Drawing.Drawing2D;
 using System.Diagnostics;
 using Altaxo.Serialization;
 using Altaxo.Main;
-
+using Altaxo.Graph.Scales;
 
 namespace Altaxo.Graph
 {
@@ -646,7 +646,7 @@ namespace Altaxo.Graph
       newlayer.ScaleStyles.AxisStyleEnsured(new A2DAxisStyleIdentifier(1, 1));
       
 
-      newlayer.AxisProperties.X.AxisLinkType = AxisLinkType.Straight;
+      newlayer.AxisProperties.X.AxisLinkType = ScaleLinkType.Straight;
     }
 
 

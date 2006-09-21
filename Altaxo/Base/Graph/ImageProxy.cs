@@ -27,7 +27,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Resources;
 
-namespace Altaxo.Drawing
+namespace Altaxo.Graph
 {
   /// <summary>
   /// Holds an image, either from a resource or from a file stream or from the clipboard.
@@ -47,7 +47,8 @@ namespace Altaxo.Drawing
     Image _image;
 
     #region Serialization
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ImageProxy), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Drawing.ImageProxy", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ImageProxy), 1)]
     public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)

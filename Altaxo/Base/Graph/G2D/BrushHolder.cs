@@ -25,7 +25,6 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Runtime.Serialization;
 
-using Altaxo.Drawing;
 namespace Altaxo.Graph
 {
   [Serializable]

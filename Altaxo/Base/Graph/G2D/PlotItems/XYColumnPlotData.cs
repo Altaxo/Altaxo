@@ -27,7 +27,6 @@ using Altaxo.Serialization;
 using Altaxo.Data;
 using Altaxo.Graph.Scales;
 using Altaxo.Graph.Scales.Boundaries;
-using Altaxo.Drawing;
 
 namespace Altaxo.Graph
 {

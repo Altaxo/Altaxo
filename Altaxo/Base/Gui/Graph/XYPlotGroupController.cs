@@ -47,14 +47,14 @@ namespace Altaxo.Gui.Graph
     /// <param name="bSymbol">True if the symbol shape is changed.</param>
     /// <param name="bConcurrently">True if all styles are changed concurrently.</param>
     /// <param name="bStrict">True if the depending plot styles are enforced to have strictly the same properties than the parent style.</param>
-    void InitializePlotGroupConditions(bool bColor, bool bLineType, bool bSymbol, bool bConcurrently, Altaxo.Graph.PlotGroupStrictness bStrict);
+    void InitializePlotGroupConditions(bool bColor, bool bLineType, bool bSymbol, bool bConcurrently, Altaxo.Graph.PlotGroups.PlotGroupStrictness bStrict);
 
 
     #region Getter
 
    
 
-    Altaxo.Graph.PlotGroupStrictness PlotGroupStrict { get; }
+    Altaxo.Graph.PlotGroups.PlotGroupStrictness PlotGroupStrict { get; }
     bool PlotGroupColor { get; }
     bool PlotGroupLineType { get; }
     bool PlotGroupSymbol { get; }

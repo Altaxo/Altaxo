@@ -30,11 +30,8 @@ namespace Altaxo.Graph
   /// Drawing2DRelated contains static methods related to mathematics and helper
   /// functions for classed from the System.Drawing namespace.
   /// </summary>
-  public class Drawing2DRelated
+  public static class Drawing2DRelated
   {
-    private Drawing2DRelated()
-    {
-    }
 
     /// <summary>
     /// Calculates the distance between two points.

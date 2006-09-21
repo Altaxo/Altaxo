@@ -26,7 +26,7 @@ using System.Drawing.Drawing2D;
 using Altaxo.Serialization;
 using System.IO;
 
-using Altaxo.Drawing;
+
 namespace Altaxo.Graph
 {
   #region ImageGraphic
