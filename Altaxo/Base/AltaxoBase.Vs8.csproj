@@ -131,7 +131,6 @@
     <Compile Include="Calc\IntegerRange.cs" />
     <Compile Include="Calc\PositiveIntegerRange.cs" />
     <Compile Include="Collections\NGTreeNode.cs" />
-    <Compile Include="Graph\AxisLinkType.cs" />
     <Compile Include="Calc\FitFunctions\Relaxation\KohlrauschDecay.cs" />
     <Compile Include="Calc\LinearAlgebra\DataColumnWrapper.cs">
       <SubType>Code</SubType>
@@ -177,20 +176,11 @@
     </Compile>
     <Compile Include="Data\NumericColumnProxy.cs" />
     <Compile Include="Data\ReadableColumnProxy.cs" />
-    <Compile Include="Graph\GridStyle.cs" />
-    <Compile Include="Drawing\ImageProxy.cs" />
     <Compile Include="Graph\LengthUnit.cs" />
     <Compile Include="Graph\PlotColors.cs" />
     <Compile Include="Graph\Procedures\ArrangeLayers.cs" />
     <Compile Include="Graph\Procedures\Export.cs" />
     <Compile Include="Graph\Procedures\GraphCommands.cs" />
-    <Compile Include="Graph\XYPlotLayerAxisProperties.cs" />
-    <Compile Include="Graph\G2DAxisStyle.cs" />
-    <Compile Include="Graph\G2DScaleStyle.cs" />
-    <Compile Include="Graph\XYPlotLayerPositionAndSize.cs" />
-    <Compile Include="Graph\XYPlotLayerPositionType.cs" />
-    <Compile Include="Graph\XYPlotLayerSizeType.cs" />
-    <Compile Include="Graph\XYPlotStyleCollectionTemplates.cs" />
     <Compile Include="Gui\Analysis\NonLinearFitting\FitElementControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -478,12 +468,6 @@
     <Compile Include="Data\Variant.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Graph\AbstractXYAxisLabelStyle.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Graph\DensityImagePlotItem.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Graph\Drawing2DRelated.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -608,29 +592,8 @@
     <Compile Include="Graph\GUI\TitleFormatLayerController.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Graph\I2DTo2DConverter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Graph\IGrippableObject.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Graph\IHitTestObject.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Graph\IPlotArea.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Scripting\FitFunctionScript.cs" />
-    <Compile Include="Graph\PhysicalBoundaries.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Graph\PlotGroups\PlotGroupStyleCollection.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Graph\PlotItem.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Graph\PlotItemCollection.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Graph\Procedures\NonlinearFitting.cs" />
@@ -641,45 +604,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Graph\SystemDrawingSerialization.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Graph\XYAxisLabelStyle.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Graph\G2DAxisLineStyle.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Graph\XYColumnPlotData.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Graph\XYColumnPlotItem.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Graph\XYColumnPlotItemLabelTextStyle.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Graph\XYFunctionPlotData.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Graph\XYFunctionPlotItem.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Graph\XYPlotLayer.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Graph\XYPlotLayerCollection.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Graph\XYPlotLineStyle.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Graph\XYPlotScatterStyle.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Graph\XYScatterPointInformation.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Graph\XYZEquidistantMeshColumnPlotData.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Gui\Scripting\FitFunctionNameAndCategoryController.cs" />
@@ -1064,7 +988,6 @@
     <Compile Include="Worksheet\WorksheetLayoutCollection.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Graph\XYPlotStyleCollection.cs" />
     <EmbeddedResource Include="Graph\GUI\AxisLinkControl.resx">
       <DependentUpon>AxisLinkControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -1302,15 +1225,20 @@
     <None Include="Calc\FitFunctions\Relaxation\.svn\text-base\HavriliakNegamiFunction.cs.svn-base" />
     <Compile Include="Collections\ListNode.cs" />
     <Compile Include="Collections\NamedItem.cs" />
-    <Compile Include="Drawing\PointD.cs" />
     <Compile Include="Graph\A2DAxisStyleIdentifier.cs" />
     <Compile Include="Graph\A2DAxisStyleInformation.cs" />
-    <Compile Include="Graph\G2DScaleStyleCollection.cs" />
-    <Compile Include="Graph\G2D\BackgroundStyles\BackgroundColorStyle.cs" />
+    <Compile Include="Graph\G2D\AxisStyles\AbstractXYAxisLabelStyle.cs" />
+    <Compile Include="Graph\G2D\AxisStyles\G2DAxisLineStyle.cs" />
+    <Compile Include="Graph\G2D\AxisStyles\G2DAxisStyle.cs" />
+    <Compile Include="Graph\G2D\AxisStyles\G2DScaleStyle.cs" />
+    <Compile Include="Graph\G2D\AxisStyles\G2DScaleStyleCollection.cs" />
+    <Compile Include="Graph\G2D\AxisStyles\GridStyle.cs" />
+    <Compile Include="Graph\G2D\AxisStyles\XYAxisLabelStyle.cs" />
     <Compile Include="Graph\G2D\BackgroundStyles\BlackLine.cs" />
     <Compile Include="Graph\G2D\BackgroundStyles\BlackOut.cs" />
     <Compile Include="Graph\G2D\BackgroundStyles\Circle.cs" />
     <Compile Include="Graph\G2D\BackgroundStyles\DarkMarbel.cs" />
+    <Compile Include="Graph\G2D\BackgroundStyles\FilledRectangle.cs" />
     <Compile Include="Graph\G2D\BackgroundStyles\IBackgroundStyle.cs" />
     <Compile Include="Graph\G2D\BackgroundStyles\RectangleWithShadow.cs" />
     <Compile Include="Graph\G2D\BackgroundStyles\WhiteOut.cs" />
@@ -1318,6 +1246,9 @@
     <Compile Include="Graph\G2D\G2DCoordinateSystem.cs" />
     <Compile Include="Graph\G2D\GraphDocument.cs" />
     <Compile Include="Graph\G2D\GraphDocumentCollection.cs" />
+    <Compile Include="Graph\G2D\IGrippableObject.cs" />
+    <Compile Include="Graph\G2D\IHitTestObject.cs" />
+    <Compile Include="Graph\G2D\IPlotArea.cs" />
     <Compile Include="Graph\G2D\LabelFormatting\AbstractLabelFormatting.cs" />
     <Compile Include="Graph\G2D\LabelFormatting\AbstractNumericLabelFormatting.cs" />
     <Compile Include="Graph\G2D\LabelFormatting\ILabelFormatting.cs" />
@@ -1327,35 +1258,58 @@
     <Compile Include="Graph\G2D\LabelFormatting\NumericLabelFormattingMantissa.cs" />
     <Compile Include="Graph\G2D\LabelFormatting\NumericLabelFormattingScientific.cs" />
     <Compile Include="Graph\G2D\PenHolder.cs" />
+    <Compile Include="Graph\G2D\PlotItems\DensityImagePlotItem.cs" />
+    <Compile Include="Graph\G2D\PlotItems\G2DPlotItem.cs" />
+    <Compile Include="Graph\G2D\PlotItems\IGPlotItem.cs" />
+    <Compile Include="Graph\G2D\PlotItems\PlotItem.cs" />
+    <Compile Include="Graph\G2D\PlotItems\PlotItemCollection.cs" />
+    <Compile Include="Graph\G2D\PlotItems\PlotRange.cs" />
+    <Compile Include="Graph\G2D\PlotItems\Processed2DPlotData.cs" />
+    <Compile Include="Graph\G2D\PlotItems\XYColumnPlotData.cs" />
+    <Compile Include="Graph\G2D\PlotItems\XYColumnPlotItem.cs" />
+    <Compile Include="Graph\G2D\PlotItems\XYFunctionPlotData.cs" />
+    <Compile Include="Graph\G2D\PlotItems\XYFunctionPlotItem.cs" />
+    <Compile Include="Graph\G2D\PlotItems\XYScatterPointInformation.cs" />
+    <Compile Include="Graph\G2D\PlotItems\XYZEquidistantMeshColumnPlotData.cs" />
     <Compile Include="Graph\G2D\PlotStyles\AbstractXYPlotStyle.cs" />
     <Compile Include="Graph\G2D\PlotStyles\BarGraphPlotStyle.cs" />
     <Compile Include="Graph\G2D\PlotStyles\DensityImagePlotStyle.cs" />
+    <Compile Include="Graph\G2D\PlotStyles\IG2DPlotStyle.cs" />
     <Compile Include="Graph\G2D\PlotStyles\XYLineScatterPlotStyle.cs" />
     <Compile Include="Graph\G2D\PlotStyles\XYPlotLabelStyle.cs" />
+    <Compile Include="Graph\G2D\PlotStyles\XYPlotLineStyle.cs" />
+    <Compile Include="Graph\G2D\PlotStyles\XYPlotScatterStyle.cs" />
+    <Compile Include="Graph\G2D\PlotStyles\XYPlotStyleCollection.cs" />
+    <Compile Include="Graph\G2D\PlotStyles\XYPlotStyleCollectionTemplates.cs" />
     <Compile Include="Graph\G2D\Shapes\GraphicsObject.cs" />
     <Compile Include="Graph\G2D\Shapes\GraphicsObjectCollection.cs" />
     <Compile Include="Graph\G2D\Shapes\ImageGraphics.cs" />
     <Compile Include="Graph\G2D\Shapes\ShapeGraphics.cs" />
     <Compile Include="Graph\G2D\Shapes\SimpleTextGraphics.cs" />
     <Compile Include="Graph\G2D\Shapes\TextGraphics.cs" />
+    <Compile Include="Graph\G2D\Shapes\XYColumnPlotItemLabelTextStyle.cs" />
+    <Compile Include="Graph\G2D\XYPlotLayer.cs" />
+    <Compile Include="Graph\G2D\XYPlotLayerAxisProperties.cs" />
+    <Compile Include="Graph\G2D\XYPlotLayerCollection.cs" />
+    <Compile Include="Graph\G2D\XYPlotLayerPositionAndSize.cs" />
+    <Compile Include="Graph\G2D\XYPlotLayerPositionType.cs" />
+    <Compile Include="Graph\G2D\XYPlotLayerSizeType.cs" />
+    <Compile Include="Graph\ImageProxy.cs" />
     <Compile Include="Graph\PlotGroups\AbsoluteStackTransform.cs" />
     <Compile Include="Graph\PlotGroups\BarWidthPositionGroupStyle.cs" />
     <Compile Include="Graph\PlotGroups\ColorPlotGroupStyle.cs" />
     <Compile Include="Graph\PlotGroups\CoordinateTransformingStyleBase.cs" />
-    <Compile Include="Graph\G2DPlotItem.cs" />
     <Compile Include="Graph\PlotGroups\ICoordinateTransformingGroupStyle.cs" />
-    <Compile Include="Graph\IG2DPlotStyle.cs" />
-    <Compile Include="Graph\IGPlotItem.cs" />
     <Compile Include="Graph\PlotGroups\IPlotGroupStyle.cs" />
     <Compile Include="Graph\PlotGroups\LineStyleGroupStyle.cs" />
-    <Compile Include="Graph\PlotGroupStrictness.cs" />
+    <Compile Include="Graph\PlotGroups\PlotGroupStrictness.cs" />
     <Compile Include="Graph\PlotGroups\PlotGroupStyle.cs" />
-    <Compile Include="Graph\PlotRange.cs" />
-    <Compile Include="Graph\Processed2DPlotData.cs" />
     <Compile Include="Graph\PlotGroups\RelativeStackTransform.cs" />
     <Compile Include="Graph\PlotGroups\SymbolShapeStyleGroupStyle.cs" />
     <Compile Include="Graph\PlotGroups\SymbolSizeGroupStyle.cs" />
     <Compile Include="Graph\PlotGroups\WaterfallTransform.cs" />
+    <Compile Include="Graph\PointD.cs" />
+    <Compile Include="Graph\Scales\AxisLinkType.cs" />
     <Compile Include="Graph\Scales\Boundaries\AbstractPhysicalBoundaries.cs" />
     <Compile Include="Graph\Scales\Boundaries\BoundariesChangedEventArgs.cs" />
     <Compile Include="Graph\Scales\Boundaries\EventHandlers.cs" />
@@ -1406,8 +1360,7 @@
     <Folder Include="Calc\FitFunctions\Relaxation\.svn\tmp\text-base\" />
     <Folder Include="Calc\FitFunctions\Relaxation\.svn\tmp\wcprops\" />
     <Folder Include="Calc\FitFunctions\Relaxation\.svn\wcprops\" />
-    <Folder Include="Graph\G2D\AxisStyles\" />
-    <Folder Include="Graph\G2D\PlotItems\" />
+    <Folder Include="Drawing\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
