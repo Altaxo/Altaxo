@@ -481,16 +481,7 @@
     <Compile Include="Graph\AbstractXYAxisLabelStyle.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Graph\AbstractXYPlotStyle.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Graph\BrushHolder.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Graph\DensityImagePlotItem.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Graph\DensityImagePlotStyle.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Graph\Drawing2DRelated.cs">
@@ -500,18 +491,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Scripting\FunctionEvaluationScript.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Graph\GraphDocument.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Graph\GraphDocumentCollection.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Graph\GraphicsObject.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Graph\GraphicsObjectCollection.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Graph\GUI\AxisLinkControl.cs">
@@ -638,16 +617,10 @@
     <Compile Include="Graph\IHitTestObject.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Graph\ImageGraphics.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Graph\IPlotArea.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Scripting\FitFunctionScript.cs" />
-    <Compile Include="Graph\PenHolder.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Graph\PhysicalBoundaries.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -667,16 +640,7 @@
     <Compile Include="Graph\RectangleD.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Graph\ShapeGraphics.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Graph\SimpleTextGraphics.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Graph\SystemDrawingSerialization.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Graph\TextGraphics.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Graph\XYAxisLabelStyle.cs">
@@ -698,12 +662,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Graph\XYFunctionPlotItem.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Graph\XYLineScatterPlotStyle.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Graph\XYPlotLabelStyle.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Graph\XYPlotLayer.cs">
@@ -1347,7 +1305,6 @@
     <Compile Include="Drawing\PointD.cs" />
     <Compile Include="Graph\A2DAxisStyleIdentifier.cs" />
     <Compile Include="Graph\A2DAxisStyleInformation.cs" />
-    <Compile Include="Graph\G2DCoordinateSystem.cs" />
     <Compile Include="Graph\G2DScaleStyleCollection.cs" />
     <Compile Include="Graph\G2D\BackgroundStyles\BackgroundColorStyle.cs" />
     <Compile Include="Graph\G2D\BackgroundStyles\BlackLine.cs" />
@@ -1357,6 +1314,10 @@
     <Compile Include="Graph\G2D\BackgroundStyles\IBackgroundStyle.cs" />
     <Compile Include="Graph\G2D\BackgroundStyles\RectangleWithShadow.cs" />
     <Compile Include="Graph\G2D\BackgroundStyles\WhiteOut.cs" />
+    <Compile Include="Graph\G2D\BrushHolder.cs" />
+    <Compile Include="Graph\G2D\G2DCoordinateSystem.cs" />
+    <Compile Include="Graph\G2D\GraphDocument.cs" />
+    <Compile Include="Graph\G2D\GraphDocumentCollection.cs" />
     <Compile Include="Graph\G2D\LabelFormatting\AbstractLabelFormatting.cs" />
     <Compile Include="Graph\G2D\LabelFormatting\AbstractNumericLabelFormatting.cs" />
     <Compile Include="Graph\G2D\LabelFormatting\ILabelFormatting.cs" />
@@ -1365,6 +1326,18 @@
     <Compile Include="Graph\G2D\LabelFormatting\NumericLabelFormattingFixed.cs" />
     <Compile Include="Graph\G2D\LabelFormatting\NumericLabelFormattingMantissa.cs" />
     <Compile Include="Graph\G2D\LabelFormatting\NumericLabelFormattingScientific.cs" />
+    <Compile Include="Graph\G2D\PenHolder.cs" />
+    <Compile Include="Graph\G2D\PlotStyles\AbstractXYPlotStyle.cs" />
+    <Compile Include="Graph\G2D\PlotStyles\BarGraphPlotStyle.cs" />
+    <Compile Include="Graph\G2D\PlotStyles\DensityImagePlotStyle.cs" />
+    <Compile Include="Graph\G2D\PlotStyles\XYLineScatterPlotStyle.cs" />
+    <Compile Include="Graph\G2D\PlotStyles\XYPlotLabelStyle.cs" />
+    <Compile Include="Graph\G2D\Shapes\GraphicsObject.cs" />
+    <Compile Include="Graph\G2D\Shapes\GraphicsObjectCollection.cs" />
+    <Compile Include="Graph\G2D\Shapes\ImageGraphics.cs" />
+    <Compile Include="Graph\G2D\Shapes\ShapeGraphics.cs" />
+    <Compile Include="Graph\G2D\Shapes\SimpleTextGraphics.cs" />
+    <Compile Include="Graph\G2D\Shapes\TextGraphics.cs" />
     <Compile Include="Graph\PlotGroups\AbsoluteStackTransform.cs" />
     <Compile Include="Graph\PlotGroups\BarWidthPositionGroupStyle.cs" />
     <Compile Include="Graph\PlotGroups\ColorPlotGroupStyle.cs" />
@@ -1421,7 +1394,6 @@
     <Compile Include="Gui\Graph\BackgroundControlsGlue.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Graph\BarGraphPlotStyle.cs" />
     <Compile Include="Gui\Graph\Scales\Rescaling\DateTimeAxisRescaleController.cs" />
     <Compile Include="Gui\Graph\Scales\Rescaling\LogarithmicAxisRescaleController.cs" />
     <Compile Include="Gui\Graph\Scales\Rescaling\NumericAxisRescaleController.cs" />
@@ -1434,8 +1406,8 @@
     <Folder Include="Calc\FitFunctions\Relaxation\.svn\tmp\text-base\" />
     <Folder Include="Calc\FitFunctions\Relaxation\.svn\tmp\wcprops\" />
     <Folder Include="Calc\FitFunctions\Relaxation\.svn\wcprops\" />
-    <Folder Include="Graph\G2D\PlotStyles\" />
-    <Folder Include="Graph\G2D\Shapes\" />
+    <Folder Include="Graph\G2D\AxisStyles\" />
+    <Folder Include="Graph\G2D\PlotItems\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
