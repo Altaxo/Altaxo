@@ -22,7 +22,7 @@
 
 using System;
 
-namespace Altaxo.Graph.LabelFormatting
+namespace Altaxo.Graph.G2D.LabelFormatting
 {
   /// <summary>
   /// Displays only the mantissa of a number. Usefull for minor ticks on logarithmic axes.
@@ -33,7 +33,8 @@ namespace Altaxo.Graph.LabelFormatting
 
     #region Serialization
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NumericLabelFormattingMantissa),0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.LabelFormatting.NumericLabelFormattingMantissa", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NumericLabelFormattingMantissa),1)]
       public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)

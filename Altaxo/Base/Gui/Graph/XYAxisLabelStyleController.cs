@@ -27,6 +27,8 @@ using Altaxo.Graph;
 using Altaxo.Graph.GUI;
 using Altaxo.Main.GUI;
 using Altaxo.Data;
+using Altaxo.Graph.G2D.BackgroundStyles;
+
 
 namespace Altaxo.Gui.Graph
 {
@@ -223,7 +225,7 @@ namespace Altaxo.Gui.Graph
 
     protected int           _currentLabelStyle;
 
-    protected Altaxo.Graph.LabelFormatting.ILabelFormatting _currentLabelStyleInstance;
+    protected Altaxo.Graph.G2D.LabelFormatting.ILabelFormatting _currentLabelStyleInstance;
 
     protected BackgroundStyleController _backgroundStyleController;
 
@@ -270,7 +272,7 @@ namespace Altaxo.Gui.Graph
 
     void InitializeLabelStyle()
     {
-      _labelTypes = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(Altaxo.Graph.LabelFormatting.ILabelFormatting));
+      _labelTypes = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(Altaxo.Graph.G2D.LabelFormatting.ILabelFormatting));
 
       _currentLabelStyleInstance = _doc.LabelFormat;
 
@@ -331,7 +333,7 @@ namespace Altaxo.Gui.Graph
     public void EhView_LabelStyleChanged(int newValue)
     {
       _currentLabelStyle = newValue;
-      _currentLabelStyleInstance = (Altaxo.Graph.LabelFormatting.ILabelFormatting)Activator.CreateInstance(this._labelTypes[newValue]);
+      _currentLabelStyleInstance = (Altaxo.Graph.G2D.LabelFormatting.ILabelFormatting)Activator.CreateInstance(this._labelTypes[newValue]);
 
     }
 
@@ -391,7 +393,7 @@ namespace Altaxo.Gui.Graph
      
       _doc.Color = _color;
 
-      _doc.BackgroundStyle = (Altaxo.Graph.BackgroundStyles.IBackgroundStyle)_backgroundStyleController.ModelObject;
+      _doc.BackgroundStyle = (IBackgroundStyle)_backgroundStyleController.ModelObject;
       _doc.HorizontalAlignment = _horizontalAlignment;
       _doc.VerticalAlignment   = _verticalAlignment;
       _doc.AutomaticAlignment = _automaticAlignment;

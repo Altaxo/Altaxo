@@ -23,7 +23,7 @@
 using System;
 using System.Drawing;
 
-namespace Altaxo.Graph.LabelFormatting
+namespace Altaxo.Graph.G2D.LabelFormatting
 {
   /// <summary>
   /// Formats a numeric item in scientific notation, i.e. in the form mantissa*10^exponent.
@@ -34,7 +34,8 @@ namespace Altaxo.Graph.LabelFormatting
 
     #region Serialization
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NumericLabelFormattingScientific),0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.LabelFormatting.NumericLabelFormattingScientific", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NumericLabelFormattingScientific),1)]
       public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)

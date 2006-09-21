@@ -178,23 +178,7 @@
     <Compile Include="Data\NumericColumnProxy.cs" />
     <Compile Include="Data\ReadableColumnProxy.cs" />
     <Compile Include="Graph\GridStyle.cs" />
-    <Compile Include="Graph\BackgroundStyles\BackgroundColorStyle.cs" />
-    <Compile Include="Graph\BackgroundStyles\BlackLine.cs" />
-    <Compile Include="Graph\BackgroundStyles\BlackOut.cs" />
-    <Compile Include="Graph\BackgroundStyles\Circle.cs" />
-    <Compile Include="Graph\BackgroundStyles\DarkMarbel.cs" />
-    <Compile Include="Graph\BackgroundStyles\IBackgroundStyle.cs" />
-    <Compile Include="Graph\BackgroundStyles\RectangleWithShadow.cs" />
-    <Compile Include="Graph\BackgroundStyles\WhiteOut.cs" />
     <Compile Include="Drawing\ImageProxy.cs" />
-    <Compile Include="Graph\LabelFormatting\AbstractLabelFormatting.cs" />
-    <Compile Include="Graph\LabelFormatting\AbstractNumericLabelFormatting.cs" />
-    <Compile Include="Graph\LabelFormatting\ILabelFormatting.cs" />
-    <Compile Include="Graph\LabelFormatting\IMeasuredLabelItem.cs" />
-    <Compile Include="Graph\LabelFormatting\NumericLabelFormattingAuto.cs" />
-    <Compile Include="Graph\LabelFormatting\NumericLabelFormattingFixed.cs" />
-    <Compile Include="Graph\LabelFormatting\NumericLabelFormattingMantissa.cs" />
-    <Compile Include="Graph\LabelFormatting\NumericLabelFormattingScientific.cs" />
     <Compile Include="Graph\LengthUnit.cs" />
     <Compile Include="Graph\PlotColors.cs" />
     <Compile Include="Graph\Procedures\ArrangeLayers.cs" />
@@ -1365,6 +1349,22 @@
     <Compile Include="Graph\A2DAxisStyleInformation.cs" />
     <Compile Include="Graph\G2DCoordinateSystem.cs" />
     <Compile Include="Graph\G2DScaleStyleCollection.cs" />
+    <Compile Include="Graph\G2D\BackgroundStyles\BackgroundColorStyle.cs" />
+    <Compile Include="Graph\G2D\BackgroundStyles\BlackLine.cs" />
+    <Compile Include="Graph\G2D\BackgroundStyles\BlackOut.cs" />
+    <Compile Include="Graph\G2D\BackgroundStyles\Circle.cs" />
+    <Compile Include="Graph\G2D\BackgroundStyles\DarkMarbel.cs" />
+    <Compile Include="Graph\G2D\BackgroundStyles\IBackgroundStyle.cs" />
+    <Compile Include="Graph\G2D\BackgroundStyles\RectangleWithShadow.cs" />
+    <Compile Include="Graph\G2D\BackgroundStyles\WhiteOut.cs" />
+    <Compile Include="Graph\G2D\LabelFormatting\AbstractLabelFormatting.cs" />
+    <Compile Include="Graph\G2D\LabelFormatting\AbstractNumericLabelFormatting.cs" />
+    <Compile Include="Graph\G2D\LabelFormatting\ILabelFormatting.cs" />
+    <Compile Include="Graph\G2D\LabelFormatting\IMeasuredLabelItem.cs" />
+    <Compile Include="Graph\G2D\LabelFormatting\NumericLabelFormattingAuto.cs" />
+    <Compile Include="Graph\G2D\LabelFormatting\NumericLabelFormattingFixed.cs" />
+    <Compile Include="Graph\G2D\LabelFormatting\NumericLabelFormattingMantissa.cs" />
+    <Compile Include="Graph\G2D\LabelFormatting\NumericLabelFormattingScientific.cs" />
     <Compile Include="Graph\PlotGroups\AbsoluteStackTransform.cs" />
     <Compile Include="Graph\PlotGroups\BarWidthPositionGroupStyle.cs" />
     <Compile Include="Graph\PlotGroups\ColorPlotGroupStyle.cs" />
@@ -1400,11 +1400,8 @@
     <Compile Include="Graph\Scales\NumericalScale.cs" />
     <Compile Include="Graph\Scales\Rescaling\BoundaryRescaling.cs" />
     <Compile Include="Graph\Scales\Rescaling\DateTimeAxisRescaleConditions.cs" />
-    <Compile Include="Graph\Scales\Rescaling\DateTimeAxisRescaleController.cs" />
     <Compile Include="Graph\Scales\Rescaling\LogarithmicAxisRescaleConditions.cs" />
-    <Compile Include="Graph\Scales\Rescaling\LogarithmicAxisRescaleController.cs" />
     <Compile Include="Graph\Scales\Rescaling\NumericAxisRescaleConditions.cs" />
-    <Compile Include="Graph\Scales\Rescaling\NumericAxisRescaleController.cs" />
     <Compile Include="Graph\Scales\Scale.cs" />
     <Compile Include="Gui\Common\Drawing\FontComboBox.cs">
       <SubType>Component</SubType>
@@ -1425,6 +1422,9 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Graph\BarGraphPlotStyle.cs" />
+    <Compile Include="Gui\Graph\Scales\Rescaling\DateTimeAxisRescaleController.cs" />
+    <Compile Include="Gui\Graph\Scales\Rescaling\LogarithmicAxisRescaleController.cs" />
+    <Compile Include="Gui\Graph\Scales\Rescaling\NumericAxisRescaleController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Calc\FitFunctions\Relaxation\.svn\prop-base\" />
@@ -1436,7 +1436,6 @@
     <Folder Include="Calc\FitFunctions\Relaxation\.svn\wcprops\" />
     <Folder Include="Graph\G2D\PlotStyles\" />
     <Folder Include="Graph\G2D\Shapes\" />
-    <Folder Include="Gui\Graph\Scales\Rescaling\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

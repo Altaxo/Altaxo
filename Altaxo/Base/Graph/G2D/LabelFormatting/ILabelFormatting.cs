@@ -27,7 +27,7 @@ using Altaxo.Serialization;
 using Altaxo.Graph.Scales;
 using Altaxo.Data;
 
-namespace Altaxo.Graph.LabelFormatting
+namespace Altaxo.Graph.G2D.LabelFormatting
 {
   
 

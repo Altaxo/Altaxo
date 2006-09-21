@@ -30,7 +30,7 @@ using System.Text.RegularExpressions;
 
 namespace Altaxo.Graph
 {
-  using Altaxo.Graph.BackgroundStyles;
+  using Altaxo.Graph.G2D.BackgroundStyles;
   public class TextItem
   {
     protected enum InnerType { Empty, Text, Symbol, PlotCurveName }
@@ -1140,15 +1140,15 @@ namespace Altaxo.Graph
       {
         if (null == m_BackgroundStyle)
           return BackgroundStyle.None;
-        else if (m_BackgroundStyle is BackgroundStyles.BlackLine)
+        else if (m_BackgroundStyle is BlackLine)
           return BackgroundStyle.BlackLine;
-        else if (m_BackgroundStyle is BackgroundStyles.BlackOut)
+        else if (m_BackgroundStyle is BlackOut)
           return BackgroundStyle.BlackOut;
-        else if (m_BackgroundStyle is BackgroundStyles.DarkMarbel)
+        else if (m_BackgroundStyle is DarkMarbel)
           return BackgroundStyle.DarkMarbel;
-        else if (m_BackgroundStyle is BackgroundStyles.RectangleWithShadow)
+        else if (m_BackgroundStyle is RectangleWithShadow)
           return BackgroundStyle.Shadow;
-        else if (m_BackgroundStyle is BackgroundStyles.WhiteOut)
+        else if (m_BackgroundStyle is WhiteOut)
           return BackgroundStyle.WhiteOut;
         else
           return BackgroundStyle.None;
@@ -1161,19 +1161,19 @@ namespace Altaxo.Graph
         {
             
           case BackgroundStyle.BlackLine:
-            m_BackgroundStyle = new BackgroundStyles.BlackLine();
+            m_BackgroundStyle = new BlackLine();
             break;
           case BackgroundStyle.BlackOut:
-            m_BackgroundStyle = new BackgroundStyles.BlackOut();
+            m_BackgroundStyle = new BlackOut();
             break;
           case BackgroundStyle.DarkMarbel:
-            m_BackgroundStyle = new BackgroundStyles.DarkMarbel();
+            m_BackgroundStyle = new DarkMarbel();
             break;
           case BackgroundStyle.WhiteOut:
-            m_BackgroundStyle = new BackgroundStyles.WhiteOut();
+            m_BackgroundStyle = new WhiteOut();
             break;
           case BackgroundStyle.Shadow:
-            m_BackgroundStyle = new BackgroundStyles.RectangleWithShadow();
+            m_BackgroundStyle = new RectangleWithShadow();
             break;
           case BackgroundStyle.None:
             m_BackgroundStyle = null;

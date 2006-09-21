@@ -29,6 +29,8 @@ using Altaxo.Graph;
 using Altaxo.Graph.GUI;
 using Altaxo.Main.GUI;
 using Altaxo.Data;
+using Altaxo.Graph.G2D.BackgroundStyles;
+
 
 namespace Altaxo.Gui.Graph
 {
@@ -440,7 +442,7 @@ namespace Altaxo.Gui.Graph
       _doc.Font = new Font(_font.FontFamily,_font.Size,_font.Style,GraphicsUnit.World);
       _doc.IndependentColor = _independentColor;
       _doc.Color = _color;
-      _doc.BackgroundStyle = (Altaxo.Graph.BackgroundStyles.IBackgroundStyle)_backgroundStyleController.ModelObject;
+      _doc.BackgroundStyle = (IBackgroundStyle)_backgroundStyleController.ModelObject;
       _doc.HorizontalAlignment = _horizontalAlignment;
       _doc.VerticalAlignment   = _verticalAlignment;
 

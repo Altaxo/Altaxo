@@ -22,7 +22,7 @@
 
 using System;
 
-namespace Altaxo.Graph.LabelFormatting
+namespace Altaxo.Graph.G2D.LabelFormatting
 {
   /// <summary>
   /// Responsible for getting strings out of numeric values for the ticks, decide itself what
@@ -32,7 +32,8 @@ namespace Altaxo.Graph.LabelFormatting
   {
     #region Serialization
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NumericLabelFormattingAuto),0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.LabelFormatting.NumericLabelFormattingAuto", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NumericLabelFormattingAuto),1)]
       public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)

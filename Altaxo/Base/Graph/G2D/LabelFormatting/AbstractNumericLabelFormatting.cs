@@ -24,7 +24,7 @@ using System;
 using System.Drawing;
 
 using Altaxo.Data;
-namespace Altaxo.Graph.LabelFormatting
+namespace Altaxo.Graph.G2D.LabelFormatting
 {
   /// <summary>
   /// Base class that can be used to derive a numeric abel formatting class
@@ -35,7 +35,8 @@ namespace Altaxo.Graph.LabelFormatting
 
     #region Serialization
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AbstractNumericLabelFormatting),0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.LabelFormatting.AbstractNumericLabelFormatting", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AbstractNumericLabelFormatting),1)]
       public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)

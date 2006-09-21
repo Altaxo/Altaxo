@@ -26,10 +26,12 @@ using System.Drawing.Drawing2D;
 using Altaxo.Serialization;
 using Altaxo.Graph.Scales;
 using Altaxo.Data;
+using Altaxo.Graph.G2D.BackgroundStyles;
+
 
 namespace Altaxo.Graph
 {
-  using LabelFormatting;
+  using G2D.LabelFormatting;
 
   /// <summary>
   /// Summary description for AbstractLabelFormatting.
@@ -57,11 +59,11 @@ namespace Altaxo.Graph
     protected double _rotation;
 
     /// <summary>The style for the background.</summary>
-    protected BackgroundStyles.IBackgroundStyle  _backgroundStyle;
+    protected G2D.BackgroundStyles.IBackgroundStyle _backgroundStyle;
 
     protected bool _automaticRotationShift=true;
 
-    ILabelFormatting _labelFormatting = new LabelFormatting.NumericLabelFormattingAuto();
+    ILabelFormatting _labelFormatting = new G2D.LabelFormatting.NumericLabelFormattingAuto();
 
     #region Serialization
     /// <summary>Used to serialize the XYAxisLabelStyle Version 0.</summary>
@@ -153,7 +155,7 @@ namespace Altaxo.Graph
         //s._edge = (Edge)info.GetValue("Edge",s);
         s._font = (Font)info.GetValue("Font",s);
         s._brush = (BrushHolder)info.GetValue("Brush",s);
-        s._backgroundStyle = (BackgroundStyles.IBackgroundStyle)info.GetValue("Background");
+        s._backgroundStyle = (IBackgroundStyle)info.GetValue("Background");
         s._automaticRotationShift = info.GetBoolean("AutoAlignment");
         s._horizontalAlignment = (StringAlignment)info.GetEnum("HorzAlignment",typeof(StringAlignment));
         s._verticalAlignment = (StringAlignment)info.GetEnum("VertAlignment",typeof(StringAlignment));
@@ -206,7 +208,7 @@ namespace Altaxo.Graph
 
         s._font = (Font)info.GetValue("Font", s);
         s._brush = (BrushHolder)info.GetValue("Brush", s);
-        s._backgroundStyle = (BackgroundStyles.IBackgroundStyle)info.GetValue("Background");
+        s._backgroundStyle = (IBackgroundStyle)info.GetValue("Background");
         s._automaticRotationShift = info.GetBoolean("AutoAlignment");
         s._horizontalAlignment = (StringAlignment)info.GetEnum("HorzAlignment", typeof(StringAlignment));
         s._verticalAlignment = (StringAlignment)info.GetEnum("VertAlignment", typeof(StringAlignment));
@@ -257,7 +259,7 @@ namespace Altaxo.Graph
       _xOffset = from._xOffset;
       _xOffset = from._xOffset;
       _rotation = from._rotation;
-      _backgroundStyle = null==from._backgroundStyle ? null : (BackgroundStyles.IBackgroundStyle)from._backgroundStyle.Clone();
+      _backgroundStyle = null==from._backgroundStyle ? null : (IBackgroundStyle)from._backgroundStyle.Clone();
       _labelFormatting = (ILabelFormatting)from._labelFormatting.Clone();
     }
 
@@ -360,7 +362,7 @@ namespace Altaxo.Graph
     }
 
     /// <summary>The background style.</summary>
-    public BackgroundStyles.IBackgroundStyle BackgroundStyle
+    public G2D.BackgroundStyles.IBackgroundStyle BackgroundStyle
     {
       get
       {
@@ -368,7 +370,7 @@ namespace Altaxo.Graph
       }
       set 
       {
-        BackgroundStyles.IBackgroundStyle oldValue = this._backgroundStyle;
+        IBackgroundStyle oldValue = this._backgroundStyle;
         if(!object.ReferenceEquals(value,oldValue))
         {
           this._backgroundStyle = value;

@@ -22,30 +22,31 @@
 
 using System;
 using System.Drawing;
-namespace Altaxo.Graph.BackgroundStyles
+namespace Altaxo.Graph.G2D.BackgroundStyles
 {
   /// <summary>
   /// Backs the item with a color filled rectangle.
   /// </summary>
   [Serializable]
-  public class BackgroundColorStyle : IBackgroundStyle
+  public class FilledRectangle : IBackgroundStyle
   {
     protected BrushHolder _brush;
 
     #region Serialization
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(BackgroundColorStyle),0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.BackgroundStyles.BackgroundColorStyle", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FilledRectangle),0)]
       public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        BackgroundColorStyle s = (BackgroundColorStyle)obj;
+        FilledRectangle s = (FilledRectangle)obj;
         info.AddValue("Brush",s._brush);
         
       }
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        BackgroundColorStyle s = null!=o ? (BackgroundColorStyle)o : new BackgroundColorStyle();
+        FilledRectangle s = null!=o ? (FilledRectangle)o : new FilledRectangle();
         s._brush = (BrushHolder)info.GetValue("Brush",parent);
 
         return s;
@@ -55,28 +56,28 @@ namespace Altaxo.Graph.BackgroundStyles
     #endregion
 
 
-    public BackgroundColorStyle()
+    public FilledRectangle()
     {
     }
 
-    public BackgroundColorStyle(Color c)
+    public FilledRectangle(Color c)
     {
       _brush = new BrushHolder(c);
     }
 
-    public BackgroundColorStyle(BackgroundColorStyle from)
+    public FilledRectangle(FilledRectangle from)
     {
       CopyFrom(from);
     }
 
-    public void CopyFrom(BackgroundColorStyle from)
+    public void CopyFrom(FilledRectangle from)
     {
       this.Brush = from._brush;
     }
 
     public object Clone()
     {
-      return new BackgroundColorStyle(this);
+      return new FilledRectangle(this);
     }
 
    

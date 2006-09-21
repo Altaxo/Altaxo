@@ -26,7 +26,7 @@ using System.ComponentModel;
 
 using System.Drawing;
 using Altaxo.Graph;
-using Altaxo.Graph.BackgroundStyles;
+using Altaxo.Graph.G2D.BackgroundStyles;
 using Altaxo.Gui.Common.Drawing;
 
 namespace Altaxo.Gui.Graph
@@ -72,7 +72,7 @@ namespace Altaxo.Gui.Graph
 
     #region Style
 
-    System.Type[] _backgroundStyles = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(Altaxo.Graph.BackgroundStyles.IBackgroundStyle));
+    System.Type[] _backgroundStyles = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IBackgroundStyle));
     System.Windows.Forms.ComboBox _cbStyle;
     public System.Windows.Forms.ComboBox CbStyle
     {

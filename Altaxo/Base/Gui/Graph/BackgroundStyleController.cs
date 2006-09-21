@@ -28,7 +28,7 @@ using System.Drawing;
 using Altaxo.Calc;
 using Altaxo.Main.GUI;
 using Altaxo.Graph;
-using Altaxo.Graph.BackgroundStyles;
+using Altaxo.Graph.G2D.BackgroundStyles;
 
 namespace Altaxo.Gui.Graph
 {
@@ -104,7 +104,7 @@ namespace Altaxo.Gui.Graph
     {
       if (bInit)
       {
-        _backgroundStyles = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(Altaxo.Graph.BackgroundStyles.IBackgroundStyle));
+        _backgroundStyles = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IBackgroundStyle));
       }
 
       if (null != _view)
@@ -198,7 +198,7 @@ namespace Altaxo.Gui.Graph
 
       if (newValue != 0)
       {
-        _tempDoc = (Altaxo.Graph.BackgroundStyles.IBackgroundStyle)Activator.CreateInstance(this._backgroundStyles[newValue - 1]);
+        _tempDoc = (IBackgroundStyle)Activator.CreateInstance(this._backgroundStyles[newValue - 1]);
         backgroundColor = _tempDoc.Brush;
       }
       else // is null

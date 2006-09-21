@@ -22,7 +22,7 @@
 
 using System;
 using System.Drawing;
-namespace Altaxo.Graph.BackgroundStyles
+namespace Altaxo.Graph.G2D.BackgroundStyles
 {
   /// <summary>
   /// Backs the item with a color filled rectangle.
@@ -32,14 +32,13 @@ namespace Altaxo.Graph.BackgroundStyles
   {
     #region Serialization
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(BlackLine), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.BackgroundStyles.BlackLine", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(BlackLine), 1)]
       public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         BlackLine s = (BlackLine)obj;
-       
-
       }
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {

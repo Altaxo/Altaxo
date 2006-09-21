@@ -23,7 +23,7 @@
 using System;
 using System.Drawing;
 
-namespace Altaxo.Graph.BackgroundStyles
+namespace Altaxo.Graph.G2D.BackgroundStyles
 {
   /// <summary>
   /// Provides a background around a rectangular spaced area.

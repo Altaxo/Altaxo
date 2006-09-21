@@ -29,6 +29,7 @@ using System.Drawing.Drawing2D;
 using Altaxo.Serialization;
 using Altaxo.Graph.Scales;
 using Altaxo.Graph.Scales.Boundaries;
+using Altaxo.Graph.G2D.BackgroundStyles;
 
 
 namespace Altaxo.Graph
@@ -80,7 +81,7 @@ namespace Altaxo.Graph
     /// <summary>
     /// The background style of the layer.
     /// </summary>
-    protected BackgroundStyles.IBackgroundStyle _layerBackground;
+    protected G2D.BackgroundStyles.IBackgroundStyle _layerBackground;
 
     /// <summary>If true, the data are clipped to the frame.</summary>
     protected bool _clipDataToFrame=true;
@@ -304,7 +305,7 @@ namespace Altaxo.Graph
         BrushHolder layerAreaFillBrush = (BrushHolder)info.GetValue("LayerAreaFillBrush",typeof(BrushHolder));
 
         if (fillLayerArea)
-          s._layerBackground = new BackgroundStyles.BackgroundColorStyle(layerAreaFillBrush.Color);
+          s._layerBackground = new FilledRectangle(layerAreaFillBrush.Color);
 
 
 
@@ -495,7 +496,7 @@ namespace Altaxo.Graph
         BrushHolder layerAreaFillBrush = (BrushHolder)info.GetValue("LayerAreaFillBrush", typeof(BrushHolder));
 
         if (fillLayerArea)
-          s._layerBackground = new BackgroundStyles.BackgroundColorStyle(layerAreaFillBrush.Color);
+          s._layerBackground = new FilledRectangle(layerAreaFillBrush.Color);
 
 
 
@@ -690,7 +691,7 @@ namespace Altaxo.Graph
         int count;
 
          // Background
-        s._layerBackground = (BackgroundStyles.IBackgroundStyle)info.GetValue("Background",s);
+        s._layerBackground = (IBackgroundStyle)info.GetValue("Background",s);
 
         // size, position, rotation and scale
         s._location = (XYPlotLayerPositionAndSize)info.GetValue("LocationAndSize", s);
@@ -754,7 +755,7 @@ namespace Altaxo.Graph
     public void CopyFrom(XYPlotLayer from)
     {
       // XYPlotLayer style
-      this._layerBackground = from._layerBackground == null ? null : (BackgroundStyles.IBackgroundStyle)from._layerBackground.Clone();
+      this._layerBackground = from._layerBackground == null ? null : (IBackgroundStyle)from._layerBackground.Clone();
 
       // size, position, rotation and scale
       this._location = from._location.Clone();

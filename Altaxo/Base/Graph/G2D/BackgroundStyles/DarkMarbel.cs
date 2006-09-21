@@ -23,7 +23,7 @@
 using System;
 using System.Drawing;
 using System.Runtime.Serialization;
-namespace Altaxo.Graph.BackgroundStyles
+namespace Altaxo.Graph.G2D.BackgroundStyles
 {
   /// <summary>
   /// Backs the item with a color filled rectangle.
@@ -36,7 +36,7 @@ namespace Altaxo.Graph.BackgroundStyles
 
     #region Serialization
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DarkMarbel), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.BackgroundStyles.DarkMarbel", 0)]
     public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -58,7 +58,8 @@ namespace Altaxo.Graph.BackgroundStyles
       }
     }
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DarkMarbel), 1)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.BackgroundStyles.DarkMarbel", 1)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DarkMarbel), 2)]
     public class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)

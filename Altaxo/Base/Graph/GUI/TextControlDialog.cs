@@ -27,6 +27,9 @@ using System.ComponentModel;
 using System.Windows.Forms;
 
 using Altaxo.Gui.Common.Drawing;
+using Altaxo.Graph.G2D.BackgroundStyles;
+
+
 namespace Altaxo.Graph.GUI
 {
   /// <summary>
@@ -143,7 +146,7 @@ namespace Altaxo.Graph.GUI
     protected override void OnClosing(CancelEventArgs e)
     {
       if (_backgroundStyleController.Apply())
-        m_TextObject.Background = (Altaxo.Graph.BackgroundStyles.IBackgroundStyle)_backgroundStyleController.ModelObject;
+        m_TextObject.Background = (IBackgroundStyle)_backgroundStyleController.ModelObject;
       else
         e.Cancel = true;
       base.OnClosing(e);
@@ -790,7 +793,7 @@ namespace Altaxo.Graph.GUI
     {
       if(m_bDialogInitialized)
       {
-        this.m_TextObject.Background = (Graph.BackgroundStyles.IBackgroundStyle)_backgroundStyleController.TemporaryModelObject;
+        this.m_TextObject.Background = (IBackgroundStyle)_backgroundStyleController.TemporaryModelObject;
         this.m_pnPreview.Invalidate();
       }   
     }

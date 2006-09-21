@@ -26,6 +26,8 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using Altaxo.Graph.XYPlotScatterStyles;
 using Altaxo.Serialization;
+using Altaxo.Graph.G2D.BackgroundStyles;
+
 
 namespace Altaxo.Graph
 {
@@ -62,7 +64,7 @@ namespace Altaxo.Graph
     //protected bool m_WhiteOut;
 
     /// <summary>The style for the background.</summary>
-    protected BackgroundStyles.IBackgroundStyle _backgroundStyle;
+    protected G2D.BackgroundStyles.IBackgroundStyle _backgroundStyle;
 
     // <summary>The brush for the background.</summary>
     //protected BrushHolder  m_BackgroundBrush;
@@ -170,7 +172,7 @@ namespace Altaxo.Graph
           s.m_AttachedAxis = null;
 
         if (whiteOut)
-          s._backgroundStyle = new BackgroundStyles.BackgroundColorStyle(backgroundBrush.Color);
+          s._backgroundStyle = new FilledRectangle(backgroundBrush.Color);
 
         if (nativeCall)
         {
@@ -261,7 +263,7 @@ namespace Altaxo.Graph
         s.VerticalAlignment = (System.Drawing.StringAlignment)info.GetEnum("VerticalAlignment", typeof(System.Drawing.StringAlignment));
         bool attachToAxis = info.GetBoolean("AttachToAxis");
         EdgeType attachedAxis = (EdgeType)info.GetValue("AttachedAxis", parent);
-        s._backgroundStyle = (BackgroundStyles.IBackgroundStyle)info.GetValue("Background", s);
+        s._backgroundStyle = (IBackgroundStyle)info.GetValue("Background", s);
         s.m_LabelColumn = (Altaxo.Data.ReadableColumnProxy)info.GetValue("LabelColumn", parent);
 
         if (attachToAxis)
@@ -311,7 +313,7 @@ namespace Altaxo.Graph
       this.m_XOffset = from.m_XOffset;
       this.m_YOffset = from.m_YOffset;
       this.m_Rotation = from.m_Rotation;
-      this._backgroundStyle = null == from._backgroundStyle ? null : (BackgroundStyles.IBackgroundStyle)from._backgroundStyle.Clone();
+      this._backgroundStyle = null == from._backgroundStyle ? null : (IBackgroundStyle)from._backgroundStyle.Clone();
       this.m_CachedStringFormat = (System.Drawing.StringFormat)from.m_CachedStringFormat.Clone();
       this.m_AttachedAxis = from.m_AttachedAxis;
       this.m_LabelColumn = (Data.ReadableColumnProxy)from.m_LabelColumn.Clone();
@@ -430,7 +432,7 @@ namespace Altaxo.Graph
     }
 
     /// <summary>The background style.</summary>
-    public BackgroundStyles.IBackgroundStyle BackgroundStyle
+    public G2D.BackgroundStyles.IBackgroundStyle BackgroundStyle
     {
       get
       {
@@ -438,7 +440,7 @@ namespace Altaxo.Graph
       }
       set
       {
-        BackgroundStyles.IBackgroundStyle oldValue = this._backgroundStyle;
+        IBackgroundStyle oldValue = this._backgroundStyle;
         if (!object.ReferenceEquals(value, oldValue))
         {
           this._backgroundStyle = value;
