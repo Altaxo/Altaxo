@@ -42,15 +42,15 @@ namespace Altaxo.Main.Commands
         DateTime dx, dy;
         if (x is Data.DataTable)
           dx = ((Data.DataTable)x).CreationTimeUtc;
-        else if (x is Graph.GraphDocument)
-          dx = ((Graph.GraphDocument)x).CreationTimeUtc;
+        else if (x is Graph.G2D.GraphDocument)
+          dx = ((Graph.G2D.GraphDocument)x).CreationTimeUtc;
         else
           dx = DateTime.MinValue;
 
         if (y is Data.DataTable)
           dy = ((Data.DataTable)y).CreationTimeUtc;
-        else if (y is Graph.GraphDocument)
-          dy = ((Graph.GraphDocument)y).CreationTimeUtc;
+        else if (y is Graph.G2D.GraphDocument)
+          dy = ((Graph.G2D.GraphDocument)y).CreationTimeUtc;
         else dy = DateTime.MinValue;
 
         return dx.CompareTo(dy);
@@ -67,15 +67,15 @@ namespace Altaxo.Main.Commands
         string dx, dy;
         if (x is Data.DataTable)
           dx = ((Data.DataTable)x).Name;
-        else if (x is Graph.GraphDocument)
-          dx = ((Graph.GraphDocument)x).Name;
+        else if (x is Graph.G2D.GraphDocument)
+          dx = ((Graph.G2D.GraphDocument)x).Name;
         else
           dx = string.Empty;
 
         if (y is Data.DataTable)
           dy = ((Data.DataTable)y).Name;
-        else if (y is Graph.GraphDocument)
-          dy = ((Graph.GraphDocument)y).Name;
+        else if (y is Graph.G2D.GraphDocument)
+          dy = ((Graph.G2D.GraphDocument)y).Name;
         else dy = string.Empty;
 
         return dx.CompareTo(dy);
@@ -92,14 +92,14 @@ namespace Altaxo.Main.Commands
         string dx, dy;
         if (x is Data.DataTable)
           dx = "AAA";
-        else if (x is Graph.GraphDocument)
+        else if (x is Graph.G2D.GraphDocument)
           dx = "AAB";
         else
           dx = x.GetType().ToString();
 
         if (y is Data.DataTable)
           dy = "AAA";
-        else if (y is Graph.GraphDocument)
+        else if (y is Graph.G2D.GraphDocument)
           dy = "AAB";
         else dy = y.GetType().ToString();
 
@@ -146,13 +146,13 @@ namespace Altaxo.Main.Commands
 
     public static void GetAllGraphDocuments(ArrayList arr)
     {
-      foreach (Graph.GraphDocument graph in Current.Project.GraphDocumentCollection)
+      foreach (Graph.G2D.GraphDocument graph in Current.Project.GraphDocumentCollection)
         arr.Add(graph);
     }
 
     public static void GetNonOpenGraphDocuments(ArrayList arr)
     {
-      foreach (Graph.GraphDocument graph in Current.Project.GraphDocumentCollection)
+      foreach (Graph.G2D.GraphDocument graph in Current.Project.GraphDocumentCollection)
         if (!Current.ProjectService.HasDocumentAnOpenView(graph))
           arr.Add(graph);
     }
@@ -170,8 +170,8 @@ namespace Altaxo.Main.Commands
       {
         if (tab is Data.DataTable)
           Current.ProjectService.OpenOrCreateWorksheetForTable((Data.DataTable)tab);
-        else if (tab is Graph.GraphDocument)
-          Current.ProjectService.OpenOrCreateGraphForGraphDocument((Graph.GraphDocument)tab);
+        else if (tab is Graph.G2D.GraphDocument)
+          Current.ProjectService.OpenOrCreateGraphForGraphDocument((Graph.G2D.GraphDocument)tab);
       }
     }
 

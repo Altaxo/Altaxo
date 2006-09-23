@@ -26,6 +26,12 @@ using System.Drawing;
 using System.Collections;
 using System.Collections.Generic;
 using Altaxo.Collections;
+using Altaxo.Graph.G2D;
+using Altaxo.Graph.G2D.Plot;
+using Altaxo.Graph.G2D.Plot.Data;
+using Altaxo.Graph.G2D.Plot.Styles;
+
+
 
 namespace Altaxo.Graph.GUI
 {
@@ -210,9 +216,9 @@ namespace Altaxo.Graph.GUI
         {
           Data.DataColumn xcol = tab.DataColumns.FindXColumnOf(ycol);
           if(null==xcol)
-            return  new Graph.XYColumnPlotItem(new XYColumnPlotData(new Altaxo.Data.IndexerColumn(),ycol),new XYPlotStyleCollection(LineScatterPlotStyleKind.Scatter));
+            return  new XYColumnPlotItem(new XYColumnPlotData(new Altaxo.Data.IndexerColumn(),ycol),new XYPlotStyleCollection(LineScatterPlotStyleKind.Scatter));
           else
-            return  new Graph.XYColumnPlotItem(new XYColumnPlotData(xcol,ycol),new XYPlotStyleCollection(LineScatterPlotStyleKind.LineAndScatter));
+            return  new XYColumnPlotItem(new XYColumnPlotData(xcol,ycol),new XYPlotStyleCollection(LineScatterPlotStyleKind.LineAndScatter));
           // now enter the plotassociation back into the layer's plot association list
         }
       }

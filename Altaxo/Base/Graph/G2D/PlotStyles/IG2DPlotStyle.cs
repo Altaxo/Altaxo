@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
+using Altaxo.Graph.G2D.Plot.Data;
 
-namespace Altaxo.Graph
+namespace Altaxo.Graph.G2D.Plot.Styles
 {
   using PlotGroups;
+  using Groups;
 
   public interface IG2DPlotStyle : ICloneable, Main.IChangedEventSource, Main.IDocumentNode
   {

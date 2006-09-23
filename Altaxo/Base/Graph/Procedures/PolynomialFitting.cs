@@ -24,7 +24,11 @@ using System;
 using Altaxo.Calc;
 using Altaxo.Calc.Regression;
 using Altaxo.Calc.Probability;
-using Altaxo.Graph;
+using Altaxo.Graph.G2D;
+using Altaxo.Graph.G2D.Plot;
+using Altaxo.Graph.G2D.Plot.Data;
+using Altaxo.Graph.G2D.Plot.Styles;
+
 
 namespace Altaxo.Graph.Procedures
 {
@@ -50,12 +54,12 @@ namespace Altaxo.Graph.Procedures
 
       IGPlotItem plotItem = ctrl.ActiveLayer.PlotItems.Flattened[ctrl.CurrentPlotNumber];
 
-      Altaxo.Graph.XYColumnPlotItem xyPlotItem = plotItem as Altaxo.Graph.XYColumnPlotItem;
+      XYColumnPlotItem xyPlotItem = plotItem as XYColumnPlotItem;
 
       if(xyPlotItem==null)
         return "No active plot!";
       
-      Altaxo.Graph.XYColumnPlotData data = xyPlotItem.XYColumnPlotData;
+      XYColumnPlotData data = xyPlotItem.XYColumnPlotData;
       if(data==null) 
         return "Active plot item has no data";
 
@@ -102,12 +106,12 @@ namespace Altaxo.Graph.Procedures
 
       IGPlotItem plotItem = ctrl.ActiveLayer.PlotItems.Flattened[ctrl.CurrentPlotNumber];
 
-      Altaxo.Graph.XYColumnPlotItem xyPlotItem = plotItem as Altaxo.Graph.XYColumnPlotItem;
+      XYColumnPlotItem xyPlotItem = plotItem as XYColumnPlotItem;
 
       if(xyPlotItem==null)
         return result;
       
-      Altaxo.Graph.XYColumnPlotData data = xyPlotItem.XYColumnPlotData;
+      XYColumnPlotData data = xyPlotItem.XYColumnPlotData;
       if(data==null) 
         return result;
 
@@ -244,7 +248,7 @@ namespace Altaxo.Graph.Procedures
 
 
       // add the fit curve to the graph
-      IScalarFunctionDD plotfunction = new Altaxo.Graph.PolynomialFunction(fit.Parameter);
+      IScalarFunctionDD plotfunction = new PolynomialFunction(fit.Parameter);
       XYFunctionPlotItem fittedCurve = new XYFunctionPlotItem(new XYFunctionPlotData(plotfunction),new XYPlotStyleCollection(LineScatterPlotStyleKind.Line));
 
       ctrl.ActiveLayer.PlotItems.Add(fittedCurve);

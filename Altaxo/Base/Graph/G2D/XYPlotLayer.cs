@@ -32,8 +32,12 @@ using Altaxo.Graph.Scales.Boundaries;
 using Altaxo.Graph.G2D.BackgroundStyles;
 
 
-namespace Altaxo.Graph
+namespace Altaxo.Graph.G2D
 {
+  using Shapes;
+  using AxisStyles;
+  using Plot;
+
   /// <summary>
   /// XYPlotLayer represents a rectangular area on the graph, which holds plot curves, axes and graphical elements.
   /// </summary>
@@ -94,7 +98,7 @@ namespace Altaxo.Graph
 
     protected GraphicsObjectCollection _graphObjects;
 
-    protected Altaxo.Graph.PlotItemCollection _plotItems;
+    protected PlotItemCollection _plotItems;
 
     protected XYPlotLayerPositionAndSize _location;
 
@@ -348,23 +352,23 @@ namespace Altaxo.Graph
         bool showRight = info.GetBoolean("ShowRightAxis");
         bool showTop = info.GetBoolean("ShowTopAxis");
 
-        s._scaleStyles.AxisStyleEnsured(A2DAxisStyleIdentifier.Y0).AxisLineStyle = (Graph.G2DAxisLineStyle)info.GetValue("LeftAxisStyle", typeof(Graph.G2DAxisLineStyle));
-        s._scaleStyles.AxisStyleEnsured(A2DAxisStyleIdentifier.X0).AxisLineStyle = (Graph.G2DAxisLineStyle)info.GetValue("BottomAxisStyle", typeof(Graph.G2DAxisLineStyle));
-        s._scaleStyles.AxisStyleEnsured(A2DAxisStyleIdentifier.Y1).AxisLineStyle = (Graph.G2DAxisLineStyle)info.GetValue("RightAxisStyle", typeof(Graph.G2DAxisLineStyle));
-        s._scaleStyles.AxisStyleEnsured(A2DAxisStyleIdentifier.X1).AxisLineStyle = (Graph.G2DAxisLineStyle)info.GetValue("TopAxisStyle", typeof(Graph.G2DAxisLineStyle));
+        s._scaleStyles.AxisStyleEnsured(A2DAxisStyleIdentifier.Y0).AxisLineStyle = (G2DAxisLineStyle)info.GetValue("LeftAxisStyle", typeof(G2DAxisLineStyle));
+        s._scaleStyles.AxisStyleEnsured(A2DAxisStyleIdentifier.X0).AxisLineStyle = (G2DAxisLineStyle)info.GetValue("BottomAxisStyle", typeof(G2DAxisLineStyle));
+        s._scaleStyles.AxisStyleEnsured(A2DAxisStyleIdentifier.Y1).AxisLineStyle = (G2DAxisLineStyle)info.GetValue("RightAxisStyle", typeof(G2DAxisLineStyle));
+        s._scaleStyles.AxisStyleEnsured(A2DAxisStyleIdentifier.X1).AxisLineStyle = (G2DAxisLineStyle)info.GetValue("TopAxisStyle", typeof(G2DAxisLineStyle));
 
 
-        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.Y0).MajorLabelStyle = (Graph.AbstractXYAxisLabelStyle)info.GetValue("LeftLabelStyle", typeof(Graph.AbstractXYAxisLabelStyle));
-        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.X0).MajorLabelStyle = (Graph.AbstractXYAxisLabelStyle)info.GetValue("BottomLabelStyle", typeof(Graph.AbstractXYAxisLabelStyle));
-        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.Y1).MajorLabelStyle = (Graph.AbstractXYAxisLabelStyle)info.GetValue("RightLabelStyle", typeof(Graph.AbstractXYAxisLabelStyle));
-        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.X1).MajorLabelStyle = (Graph.AbstractXYAxisLabelStyle)info.GetValue("TopLabelStyle", typeof(Graph.AbstractXYAxisLabelStyle));
+        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.Y0).MajorLabelStyle = (AbstractXYAxisLabelStyle)info.GetValue("LeftLabelStyle", typeof(AbstractXYAxisLabelStyle));
+        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.X0).MajorLabelStyle = (AbstractXYAxisLabelStyle)info.GetValue("BottomLabelStyle", typeof(AbstractXYAxisLabelStyle));
+        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.Y1).MajorLabelStyle = (AbstractXYAxisLabelStyle)info.GetValue("RightLabelStyle", typeof(AbstractXYAxisLabelStyle));
+        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.X1).MajorLabelStyle = (AbstractXYAxisLabelStyle)info.GetValue("TopLabelStyle", typeof(AbstractXYAxisLabelStyle));
       
       
         // Titles and legend
-        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.Y0).Title = (Graph.TextGraphics)info.GetValue("LeftAxisTitle", typeof(Graph.TextGraphics));
-        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.X0).Title = (Graph.TextGraphics)info.GetValue("BottomAxisTitle", typeof(Graph.TextGraphics));
-        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.Y1).Title = (Graph.TextGraphics)info.GetValue("RightAxisTitle", typeof(Graph.TextGraphics));
-        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.X1).Title = (Graph.TextGraphics)info.GetValue("TopAxisTitle", typeof(Graph.TextGraphics));
+        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.Y0).Title = (TextGraphics)info.GetValue("LeftAxisTitle", typeof(TextGraphics));
+        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.X0).Title = (TextGraphics)info.GetValue("BottomAxisTitle", typeof(TextGraphics));
+        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.Y1).Title = (TextGraphics)info.GetValue("RightAxisTitle", typeof(TextGraphics));
+        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.X1).Title = (TextGraphics)info.GetValue("TopAxisTitle", typeof(TextGraphics));
         
         if(!showLeft)
           s._scaleStyles.RemoveAxisStyle(A2DAxisStyleIdentifier.Y0);
@@ -376,16 +380,16 @@ namespace Altaxo.Graph
           s._scaleStyles.RemoveAxisStyle(A2DAxisStyleIdentifier.X1);
         
         
-        s._legend = (Graph.TextGraphics)info.GetValue("Legend",typeof(Graph.TextGraphics));
+        s._legend = (TextGraphics)info.GetValue("Legend",typeof(TextGraphics));
       
 
 
         // XYPlotLayer specific
         s._linkedLayer.SetDocNode((XYPlotLayer)info.GetValue("LinkedLayer", typeof(XYPlotLayer)), s);
 
-        s._graphObjects = (Graph.GraphicsObjectCollection)info.GetValue("GraphObjects",typeof(Graph.GraphicsObjectCollection));
+        s._graphObjects = (GraphicsObjectCollection)info.GetValue("GraphObjects",typeof(GraphicsObjectCollection));
 
-        s._plotItems = (Altaxo.Graph.PlotItemCollection)info.GetValue("Plots",typeof(Altaxo.Graph.PlotItemCollection));
+        s._plotItems = (PlotItemCollection)info.GetValue("Plots",typeof(PlotItemCollection));
 
         return s;
       }
@@ -540,23 +544,23 @@ namespace Altaxo.Graph
         bool showRight = info.GetBoolean("ShowRightAxis");
         bool showTop = info.GetBoolean("ShowTopAxis");
 
-        s._scaleStyles.AxisStyleEnsured(A2DAxisStyleIdentifier.Y0).AxisLineStyle = (Graph.G2DAxisLineStyle)info.GetValue("LeftAxisStyle", typeof(Graph.G2DAxisLineStyle));
-        s._scaleStyles.AxisStyleEnsured(A2DAxisStyleIdentifier.X0).AxisLineStyle = (Graph.G2DAxisLineStyle)info.GetValue("BottomAxisStyle", typeof(Graph.G2DAxisLineStyle));
-        s._scaleStyles.AxisStyleEnsured(A2DAxisStyleIdentifier.Y1).AxisLineStyle = (Graph.G2DAxisLineStyle)info.GetValue("RightAxisStyle", typeof(Graph.G2DAxisLineStyle));
-        s._scaleStyles.AxisStyleEnsured(A2DAxisStyleIdentifier.X1).AxisLineStyle = (Graph.G2DAxisLineStyle)info.GetValue("TopAxisStyle", typeof(Graph.G2DAxisLineStyle));
+        s._scaleStyles.AxisStyleEnsured(A2DAxisStyleIdentifier.Y0).AxisLineStyle = (G2DAxisLineStyle)info.GetValue("LeftAxisStyle", typeof(G2DAxisLineStyle));
+        s._scaleStyles.AxisStyleEnsured(A2DAxisStyleIdentifier.X0).AxisLineStyle = (G2DAxisLineStyle)info.GetValue("BottomAxisStyle", typeof(G2DAxisLineStyle));
+        s._scaleStyles.AxisStyleEnsured(A2DAxisStyleIdentifier.Y1).AxisLineStyle = (G2DAxisLineStyle)info.GetValue("RightAxisStyle", typeof(G2DAxisLineStyle));
+        s._scaleStyles.AxisStyleEnsured(A2DAxisStyleIdentifier.X1).AxisLineStyle = (G2DAxisLineStyle)info.GetValue("TopAxisStyle", typeof(G2DAxisLineStyle));
 
 
-        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.Y0).MajorLabelStyle = (Graph.AbstractXYAxisLabelStyle)info.GetValue("LeftLabelStyle", typeof(Graph.AbstractXYAxisLabelStyle));
-        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.X0).MajorLabelStyle = (Graph.AbstractXYAxisLabelStyle)info.GetValue("BottomLabelStyle", typeof(Graph.AbstractXYAxisLabelStyle));
-        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.Y1).MajorLabelStyle = (Graph.AbstractXYAxisLabelStyle)info.GetValue("RightLabelStyle", typeof(Graph.AbstractXYAxisLabelStyle));
-        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.X1).MajorLabelStyle = (Graph.AbstractXYAxisLabelStyle)info.GetValue("TopLabelStyle", typeof(Graph.AbstractXYAxisLabelStyle));
+        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.Y0).MajorLabelStyle = (AbstractXYAxisLabelStyle)info.GetValue("LeftLabelStyle", typeof(AbstractXYAxisLabelStyle));
+        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.X0).MajorLabelStyle = (AbstractXYAxisLabelStyle)info.GetValue("BottomLabelStyle", typeof(AbstractXYAxisLabelStyle));
+        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.Y1).MajorLabelStyle = (AbstractXYAxisLabelStyle)info.GetValue("RightLabelStyle", typeof(AbstractXYAxisLabelStyle));
+        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.X1).MajorLabelStyle = (AbstractXYAxisLabelStyle)info.GetValue("TopLabelStyle", typeof(AbstractXYAxisLabelStyle));
 
 
         // Titles and legend
-        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.Y0).Title = (Graph.TextGraphics)info.GetValue("LeftAxisTitle", typeof(Graph.TextGraphics));
-        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.X0).Title = (Graph.TextGraphics)info.GetValue("BottomAxisTitle", typeof(Graph.TextGraphics));
-        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.Y1).Title = (Graph.TextGraphics)info.GetValue("RightAxisTitle", typeof(Graph.TextGraphics));
-        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.X1).Title = (Graph.TextGraphics)info.GetValue("TopAxisTitle", typeof(Graph.TextGraphics));
+        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.Y0).Title = (TextGraphics)info.GetValue("LeftAxisTitle", typeof(TextGraphics));
+        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.X0).Title = (TextGraphics)info.GetValue("BottomAxisTitle", typeof(TextGraphics));
+        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.Y1).Title = (TextGraphics)info.GetValue("RightAxisTitle", typeof(TextGraphics));
+        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.X1).Title = (TextGraphics)info.GetValue("TopAxisTitle", typeof(TextGraphics));
 
         if (!showLeft)
           s._scaleStyles.RemoveAxisStyle(A2DAxisStyleIdentifier.Y0);
@@ -569,7 +573,7 @@ namespace Altaxo.Graph
 
 
 
-        s._legend = (Graph.TextGraphics)info.GetValue("Legend",typeof(Graph.TextGraphics));
+        s._legend = (TextGraphics)info.GetValue("Legend",typeof(TextGraphics));
       
         // XYPlotLayer specific
         Main.DocumentPath linkedLayer = (Main.DocumentPath)info.GetValue("LinkedLayer",typeof(XYPlotLayer));
@@ -581,9 +585,9 @@ namespace Altaxo.Graph
           info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.EhDeserializationFinished);
         }
 
-        s._graphObjects = (Graph.GraphicsObjectCollection)info.GetValue("GraphObjects",typeof(Graph.GraphicsObjectCollection));
+        s._graphObjects = (GraphicsObjectCollection)info.GetValue("GraphObjects",typeof(GraphicsObjectCollection));
 
-        s._plotItems = (Altaxo.Graph.PlotItemCollection)info.GetValue("Plots",typeof(Altaxo.Graph.PlotItemCollection));
+        s._plotItems = (PlotItemCollection)info.GetValue("Plots",typeof(PlotItemCollection));
     
 
         return s;
@@ -773,14 +777,14 @@ namespace Altaxo.Graph
 
       this.ScaleStyles = (G2DScaleStyleCollection)from._scaleStyles.Clone();
 
-      this.Legend = null==from._legend ? null : (Graph.TextGraphics)from._legend.Clone();
+      this.Legend = null==from._legend ? null : (TextGraphics)from._legend.Clone();
       
       // XYPlotLayer specific
       this.LinkedLayerLink = from._linkedLayer.ClonePathOnly(this);
       
       this.GraphObjects = null==from._graphObjects ? null : new GraphicsObjectCollection(from._graphObjects);
 
-      this.PlotItems = null==from._plotItems ? null : new Altaxo.Graph.PlotItemCollection(this,from._plotItems);
+      this.PlotItems = null==from._plotItems ? null : new PlotItemCollection(this,from._plotItems);
 
       // special way neccessary to handle plot groups
       //this.m_PlotGroups = null==from.m_PlotGroups ? null : from.m_PlotGroups.Clone(this._plotItems,from._plotItems);
@@ -869,7 +873,7 @@ namespace Altaxo.Graph
       CalculateMatrix();
 
       LinkedLayerLink = new Main.RelDocNodeProxy(null, this);
-      PlotItems = new Altaxo.Graph.PlotItemCollection(this);
+      PlotItems = new PlotItemCollection(this);
 
 
      // CreateDefaultAxes();
@@ -1050,7 +1054,7 @@ namespace Altaxo.Graph
     }
 
 
-    public Altaxo.Graph.PlotItemCollection PlotItems
+    public PlotItemCollection PlotItems
     {
       get 
       {

@@ -28,8 +28,9 @@ using System.Drawing.Drawing2D;
 using Altaxo.Serialization;
 using Altaxo.Graph.Scales;
 using Altaxo.Graph.Scales.Boundaries;
+using Altaxo.Graph.G2D.Shapes;
 
-namespace Altaxo.Graph
+namespace Altaxo.Graph.G2D.AxisStyles
 {
   /// <summary>
   /// This class summarizes all members that are belonging to one edge of the layer.
@@ -104,7 +105,7 @@ namespace Altaxo.Graph
         bool showMinorLabels = info.GetBoolean("ShowMinorLabels");
         if (showMinorLabels)
           s.MinorLabelStyle = (AbstractXYAxisLabelStyle)info.GetValue("MinorLabelStyle", s);
-        s.Title = (Graph.TextGraphics)info.GetValue("AxisTitle", s);
+        s.Title = (TextGraphics)info.GetValue("AxisTitle", s);
 
         switch (edge)
         {
@@ -158,7 +159,7 @@ namespace Altaxo.Graph
         s.AxisLineStyle = (G2DAxisLineStyle)info.GetValue("AxisStyle", s);
         s.MajorLabelStyle = (AbstractXYAxisLabelStyle)info.GetValue("MajorLabelStyle", s);
         s.MinorLabelStyle = (AbstractXYAxisLabelStyle)info.GetValue("MinorLabelStyle", s);
-        s.Title = (Graph.TextGraphics)info.GetValue("AxisTitle", s);
+        s.Title = (TextGraphics)info.GetValue("AxisTitle", s);
 
 
         return s;

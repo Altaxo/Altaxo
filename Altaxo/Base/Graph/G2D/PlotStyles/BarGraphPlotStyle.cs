@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
 
-namespace Altaxo.Graph
+namespace Altaxo.Graph.G2D.Plot.Styles
 {
   using PlotGroups;
+  using Plot.Groups;
+  using Plot.Data;
 
   public class BarGraphPlotStyle : IG2DPlotStyle
   {

@@ -26,7 +26,7 @@ using System.Drawing.Drawing2D;
 using Altaxo.Serialization;
 using Altaxo.Graph.Scales;
 
-namespace Altaxo.Graph
+namespace Altaxo.Graph.G2D.AxisStyles
 {
 
   /// <remarks>AbstractXYAxisLabelStyle is the abstract base class of all LabelStyles.</remarks>

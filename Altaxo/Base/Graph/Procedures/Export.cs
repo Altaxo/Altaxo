@@ -28,6 +28,8 @@ using System.Drawing.Imaging;
 
 namespace Altaxo.Graph.Procedures
 {
+  using G2D;
+
   /// <summary>
   /// Routines to export graphs as bitmap
   /// </summary>

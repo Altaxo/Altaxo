@@ -22,6 +22,8 @@
 
 using System;
 using Altaxo.Serialization;
+using Altaxo.Graph.G2D.Plot;
+using Altaxo.Graph.G2D.Plot.Styles;
 
 namespace Altaxo.Graph.GUI
 {

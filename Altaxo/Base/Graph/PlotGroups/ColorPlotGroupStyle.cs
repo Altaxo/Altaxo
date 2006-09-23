@@ -4,6 +4,8 @@ using System.Text;
 
 namespace Altaxo.Graph.PlotGroups
 {
+  using G2D.Plot.Groups;
+
   public class ColorGroupStyle : IPlotGroupStyle
   {
     bool _isInitialized;

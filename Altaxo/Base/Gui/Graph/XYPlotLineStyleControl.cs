@@ -30,7 +30,7 @@ using System.Windows.Forms;
 using Altaxo.Main.GUI;
 using Altaxo.Collections;
 
-using Altaxo.Graph;
+using Altaxo.Graph.G2D;
 using Altaxo.Gui.Common.Drawing;
 namespace Altaxo.Gui.Graph
 {
@@ -127,7 +127,7 @@ namespace Altaxo.Gui.Graph
       // 
       // m_cbLineFillColor
       // 
-      this.m_cbLineFillColor.Brush = ((Altaxo.Graph.BrushHolder)(resources.GetObject("m_cbLineFillColor.Brush")));
+      this.m_cbLineFillColor.Brush = ((BrushHolder)(resources.GetObject("m_cbLineFillColor.Brush")));
       this.m_cbLineFillColor.ColorType = Altaxo.Graph.ColorType.KnownAndSystemColor;
       this.m_cbLineFillColor.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
       this.m_cbLineFillColor.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;

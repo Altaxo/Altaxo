@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
 using Altaxo.Data;
-namespace Altaxo.Graph
+namespace Altaxo.Graph.G2D.Plot.Data
 {
   /// <summary>
   /// Allows access not only to the original physical plot data,

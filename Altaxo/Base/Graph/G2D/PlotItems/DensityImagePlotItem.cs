@@ -27,9 +27,11 @@ using Altaxo.Serialization;
 using Altaxo.Graph.Scales.Boundaries;
 
 
-namespace Altaxo.Graph
+namespace Altaxo.Graph.G2D.Plot
 {
-  using PlotGroups;
+  using Groups;
+  using Styles;
+  using Data;
 
   /// <summary>
   /// Association of data and style specialized for x-y-plots of column data.

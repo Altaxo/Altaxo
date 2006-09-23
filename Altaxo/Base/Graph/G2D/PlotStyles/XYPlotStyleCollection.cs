@@ -27,9 +27,12 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Collections.Generic;
 
-namespace Altaxo.Graph
+
+
+namespace Altaxo.Graph.G2D.Plot.Styles
 {
-  using PlotGroups;
+  using Plot.Groups;
+  using Data;
 
   public class XYPlotStyleCollection
     :

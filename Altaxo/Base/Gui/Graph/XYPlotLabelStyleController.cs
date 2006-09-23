@@ -25,12 +25,14 @@ using System.Collections.Generic;
 using Altaxo.Collections;
 using Altaxo.Serialization;
 using System.Drawing;
-using Altaxo.Graph;
+using Altaxo.Graph.G2D;
 using Altaxo.Graph.GUI;
 using Altaxo.Main.GUI;
 using Altaxo.Data;
-using Altaxo.Graph.G2D.BackgroundStyles;
 
+using Altaxo.Graph;
+using Altaxo.Graph.G2D.BackgroundStyles;
+using Altaxo.Graph.G2D.Plot.Styles;
 
 namespace Altaxo.Gui.Graph
 {
@@ -301,7 +303,7 @@ namespace Altaxo.Gui.Graph
 
     public void SetAttachmentDirection()
     {
-      Altaxo.Graph.IPlotArea layer = Main.DocumentPath.GetRootNodeImplementing(_doc, typeof(Altaxo.Graph.IPlotArea)) as Altaxo.Graph.IPlotArea;
+      IPlotArea layer = Main.DocumentPath.GetRootNodeImplementing(_doc, typeof(IPlotArea)) as IPlotArea;
 
       List<ListNode> names = new List<ListNode>();
 

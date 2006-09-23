@@ -26,6 +26,8 @@ using System.Runtime.Serialization;
 using Altaxo.Serialization;
 using Altaxo.Main;
 
+using Altaxo.Graph.G2D;
+
 namespace Altaxo
 {
   /// <summary>
@@ -41,7 +43,7 @@ namespace Altaxo
   {
     protected Altaxo.Data.DataTableCollection m_DataSet = null; // The root of all the data
 
-    protected Altaxo.Graph.GraphDocumentCollection m_GraphSet = null; // all graphs are stored here
+    protected Altaxo.Graph.G2D.GraphDocumentCollection m_GraphSet = null; // all graphs are stored here
 
     protected Altaxo.Worksheet.WorksheetLayoutCollection m_TableLayoutList = null;
 
@@ -61,7 +63,7 @@ namespace Altaxo
     public AltaxoDocument()
     {
       m_DataSet = new Altaxo.Data.DataTableCollection(this);
-      m_GraphSet = new Altaxo.Graph.GraphDocumentCollection(this);
+      m_GraphSet = new GraphDocumentCollection(this);
       m_TableLayoutList = new Altaxo.Worksheet.WorksheetLayoutCollection(this);
       _FitFunctionScripts = new Altaxo.Scripting.FitFunctionScriptCollection();
       //  m_Worksheets = new System.Collections.ArrayList();
@@ -144,7 +146,7 @@ namespace Altaxo
       }
 
       // second, we save all graphs into the Graphs subdirectory
-      foreach(Altaxo.Graph.GraphDocument graph in this.m_GraphSet)
+      foreach(GraphDocument graph in this.m_GraphSet)
       {
         try
         {
@@ -229,8 +231,8 @@ namespace Altaxo
             System.IO.Stream zipinpstream =zipFile.GetInputStream(zipEntry);
             info.BeginReading(zipinpstream);
             object readedobject = info.GetValue("Graph",this);
-            if(readedobject is Altaxo.Graph.GraphDocument)
-              this.m_GraphSet.Add((Altaxo.Graph.GraphDocument)readedobject);
+            if(readedobject is GraphDocument)
+              this.m_GraphSet.Add((GraphDocument)readedobject);
             info.EndReading();
           
           }
@@ -287,7 +289,7 @@ namespace Altaxo
     {
       get { return m_DataSet; }
     }
-    public Altaxo.Graph.GraphDocumentCollection GraphDocumentCollection
+    public Altaxo.Graph.G2D.GraphDocumentCollection GraphDocumentCollection
     {
       get { return m_GraphSet; }
     }
@@ -343,9 +345,9 @@ namespace Altaxo
       return dt1;
     }
 
-    public Altaxo.Graph.GraphDocument CreateNewGraphDocument()
+    public Altaxo.Graph.G2D.GraphDocument CreateNewGraphDocument()
     {
-      Altaxo.Graph.GraphDocument doc = new Altaxo.Graph.GraphDocument();
+      GraphDocument doc = new GraphDocument();
       GraphDocumentCollection.Add(doc);
 
       return doc;

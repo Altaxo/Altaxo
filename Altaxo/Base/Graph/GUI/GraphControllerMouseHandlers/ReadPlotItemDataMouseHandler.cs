@@ -27,7 +27,9 @@ using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
 using Altaxo.Data;
-using Altaxo.Graph;
+using Altaxo.Graph.G2D;
+using Altaxo.Graph.G2D.Plot;
+using Altaxo.Graph.G2D.Plot.Data;
 using Altaxo.Serialization;
 
 namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers

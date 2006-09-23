@@ -6,8 +6,9 @@ using System.Drawing.Drawing2D;
 using Altaxo.Serialization;
 using Altaxo.Graph.Scales.Boundaries;
 
-namespace Altaxo.Graph
+namespace Altaxo.Graph.G2D.Plot
 {
+  using Plot.Groups;
   using PlotGroups;
 
   public class PlotItemCollection 

@@ -21,6 +21,7 @@
 #endregion
 
 using System;
+using Altaxo.Graph.G2D;
 
 namespace Altaxo.Main
 {
@@ -183,7 +184,7 @@ namespace Altaxo.Main
     /// <param name="graph">The graph document to delete.</param>
     /// <param name="force">If true, the graph document is deleted without safety question,
     /// if false, the user is ask before the graph document is deleted.</param>
-    void DeleteGraphDocument(Altaxo.Graph.GraphDocument graph, bool force);
+    void DeleteGraphDocument(GraphDocument graph, bool force);
 
     /// <summary>
     /// Creates a new table and the view content for the newly created table.
@@ -232,7 +233,7 @@ namespace Altaxo.Main
     /// </summary>
     /// <param name="graph">The graph document.</param>
     /// <returns>The view content for the provided graph document.</returns>
-    Altaxo.Graph.GUI.IGraphController CreateNewGraph(Altaxo.Graph.GraphDocument graph);
+    Altaxo.Graph.GUI.IGraphController CreateNewGraph(GraphDocument graph);
 
     /// <summary>
     /// Opens a view that shows the graph <code>graph</code>. If no view for the graph can be found,
@@ -240,7 +241,7 @@ namespace Altaxo.Main
     /// </summary>
     /// <param name="graph">The graph for which a view must be found.</param>
     /// <returns>The view content for the provided graph.</returns>
-    object OpenOrCreateGraphForGraphDocument(Altaxo.Graph.GraphDocument graph);
+    object OpenOrCreateGraphForGraphDocument(GraphDocument graph);
 
     /// <summary>This will remove the Graph <paramref>ctrl</paramref> from the corresponding forms collection.</summary>
     /// <param name="ctrl">The Graph to remove.</param>

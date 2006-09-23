@@ -32,7 +32,7 @@ using Altaxo.Serialization;
 using Altaxo.Main;
 using Altaxo.Graph.Scales;
 
-namespace Altaxo.Graph
+namespace Altaxo.Graph.G2D
 {
   /// <summary>
   /// This is the class that holds all elements of a graph, especially one ore more layers.
@@ -308,7 +308,7 @@ namespace Altaxo.Graph
     /// </summary>
     public GraphDocument()
     {
-      this._layers = new Altaxo.Graph.XYPlotLayerCollection();
+      this._layers = new XYPlotLayerCollection();
       this._layers.ParentObject = this;
       this._layers.SetPrintableGraphBounds(_printableBounds,false);
       _creationTime = _lastChangeTime = DateTime.UtcNow;

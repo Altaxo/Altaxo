@@ -25,7 +25,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Runtime.Serialization;
 
-namespace Altaxo.Graph
+namespace Altaxo.Graph.G2D
 {
   #region PenHolder
   /// <summary>
@@ -860,7 +860,7 @@ namespace Altaxo.Graph
     }
 
 
-    public Graph.BrushHolder BrushHolder
+    public BrushHolder BrushHolder
     {
       get
       {

@@ -22,6 +22,14 @@
 
 using Altaxo.Data;
 
+using Altaxo.Graph.G2D.Plot;
+using Altaxo.Graph.G2D.Plot.Styles;
+using Altaxo.Graph.G2D.Plot.Data;
+using Altaxo.Graph.G2D.Plot.Groups;
+
+
+
+
 namespace Altaxo.Worksheet.Commands
 {
   /// <summary>
@@ -49,23 +57,23 @@ namespace Altaxo.Worksheet.Commands
     /// <param name="bScatter">If true, the scatter style is activated (the points are plotted as symbols).</param>
     public static void PlotLine(DataTable table, Altaxo.Collections.IAscendingIntegerCollection selectedColumns, bool bLine, bool bScatter)
     {
-      Altaxo.Graph.XYPlotStyleCollection templatePlotStyle;
+      XYPlotStyleCollection templatePlotStyle;
       if(bLine && bScatter)
-        templatePlotStyle  = new Altaxo.Graph.XYPlotStyleCollection(Graph.LineScatterPlotStyleKind.LineAndScatter);
+        templatePlotStyle  = new XYPlotStyleCollection(LineScatterPlotStyleKind.LineAndScatter);
       else if (bLine)
-        templatePlotStyle = new Altaxo.Graph.XYPlotStyleCollection(Graph.LineScatterPlotStyleKind.Line);
+        templatePlotStyle = new XYPlotStyleCollection(LineScatterPlotStyleKind.Line);
       else
-        templatePlotStyle = new Altaxo.Graph.XYPlotStyleCollection(Graph.LineScatterPlotStyleKind.Scatter);
+        templatePlotStyle = new XYPlotStyleCollection(LineScatterPlotStyleKind.Scatter);
 
       // first, create a plot association for every selected column in
       // the data grid
 
       int len = selectedColumns.Count;
 
-      Graph.XYColumnPlotData[] pa = new Graph.XYColumnPlotData[len];
-      Graph.XYPlotStyleCollection[] ps = new Altaxo.Graph.XYPlotStyleCollection[len];
+      XYColumnPlotData[] pa = new XYColumnPlotData[len];
+      XYPlotStyleCollection[] ps = new XYPlotStyleCollection[len];
       for(int i=0;i<len;++i)
-        ps[i] = (Altaxo.Graph.XYPlotStyleCollection)templatePlotStyle.Clone();
+        ps[i] = (XYPlotStyleCollection)templatePlotStyle.Clone();
 
 
       int nNumberOfPlotData=0;
@@ -76,16 +84,16 @@ namespace Altaxo.Worksheet.Commands
         Altaxo.Data.DataColumn xcol = table.DataColumns.FindXColumnOf(ycol);
       
         if(null!=xcol)
-          pa[i] = new Graph.XYColumnPlotData(xcol,ycol);
+          pa[i] = new XYColumnPlotData(xcol,ycol);
         else
-          pa[i] = new Graph.XYColumnPlotData( new Altaxo.Data.IndexerColumn(), ycol);
+          pa[i] = new XYColumnPlotData( new Altaxo.Data.IndexerColumn(), ycol);
 
         nNumberOfPlotData++;
 
         // if the next column is a label column, add it also
         if((i+1)<len && ColumnKind.Label==table.DataColumns.GetColumnKind(selectedColumns[i+1]))
         {
-          Altaxo.Graph.XYPlotLabelStyle labelStyle = new Altaxo.Graph.XYPlotLabelStyle(table.DataColumns[i]);
+          XYPlotLabelStyle labelStyle = new XYPlotLabelStyle(table.DataColumns[i]);
           ps[i].Add(labelStyle);
           i++;
         }
@@ -97,11 +105,11 @@ namespace Altaxo.Worksheet.Commands
 
       Altaxo.Graph.GUI.IGraphController gc = Current.ProjectService.CreateNewGraph();
 
-      Altaxo.Graph.PlotItemCollection newPlotGroup = new Altaxo.Graph.PlotItemCollection(gc.Doc.Layers[0].PlotItems);
+      PlotItemCollection newPlotGroup = new PlotItemCollection(gc.Doc.Layers[0].PlotItems);
 
       for(int i=0;i<nNumberOfPlotData;i++)
       {
-        Altaxo.Graph.IGPlotItem pi = new Altaxo.Graph.XYColumnPlotItem(pa[i],ps[i]);
+        IGPlotItem pi = new XYColumnPlotItem(pa[i],ps[i]);
         newPlotGroup.Add(pi);
       }
 
@@ -122,19 +130,19 @@ namespace Altaxo.Worksheet.Commands
     /// <param name="bScatter"></param>
     public static void PlotDensityImage(GUI.WorksheetController dg, bool bLine, bool bScatter)
     {
-      Altaxo.Graph.DensityImagePlotStyle plotStyle = new Altaxo.Graph.DensityImagePlotStyle();
+      DensityImagePlotStyle plotStyle = new DensityImagePlotStyle();
 
       // if nothing is selected, assume that the whole table should be plotted
       int len = dg.SelectedDataColumns.Count;
 
-      Graph.XYZEquidistantMeshColumnPlotData assoc = new Graph.XYZEquidistantMeshColumnPlotData(dg.Doc.DataColumns,len==0 ? null : dg.SelectedDataColumns);
+      XYZEquidistantMeshColumnPlotData assoc = new XYZEquidistantMeshColumnPlotData(dg.Doc.DataColumns,len==0 ? null : dg.SelectedDataColumns);
 
       
       // now create a new Graph with this plot associations
 
       Altaxo.Graph.GUI.IGraphController gc = Current.ProjectService.CreateNewGraph();
 
-      Altaxo.Graph.IGPlotItem pi = new Altaxo.Graph.DensityImagePlotItem(assoc,plotStyle);
+      IGPlotItem pi = new DensityImagePlotItem(assoc,plotStyle);
       gc.Doc.Layers[0].PlotItems.Add(pi);
 
     }

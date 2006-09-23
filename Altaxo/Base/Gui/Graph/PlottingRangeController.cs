@@ -26,7 +26,7 @@ using System.Text;
 
 using Altaxo.Calc;
 using Altaxo.Main.GUI;
-using Altaxo.Graph;
+using Altaxo.Graph.G2D;
 
 namespace Altaxo.Gui.Graph
 {

@@ -29,6 +29,11 @@ using Altaxo.Calc.Regression.Multivariate;
 using Altaxo.Data;
 using Altaxo.Main.GUI;
 
+using Altaxo.Graph.G2D;
+using Altaxo.Graph.G2D.BackgroundStyles;
+using Altaxo.Graph.G2D.Plot;
+using Altaxo.Graph.G2D.Plot.Data;
+using Altaxo.Graph.G2D.Plot.Styles;
 
 namespace Altaxo.Worksheet.Commands.Analysis
 {
@@ -621,17 +626,17 @@ namespace Altaxo.Worksheet.Commands.Analysis
     /// <param name="xcol">The x column.</param>
     /// <param name="ycol">The y column.</param>
     /// <param name="labelcol">The label column.</param>
-    public static void PlotOnlyLabel(Altaxo.Graph.XYPlotLayer layer, Altaxo.Data.DataColumn xcol, Altaxo.Data.DataColumn ycol, Altaxo.Data.DataColumn labelcol)  
+    public static void PlotOnlyLabel(XYPlotLayer layer, Altaxo.Data.DataColumn xcol, Altaxo.Data.DataColumn ycol, Altaxo.Data.DataColumn labelcol)  
     {
-      Altaxo.Graph.XYColumnPlotData pa = new Altaxo.Graph.XYColumnPlotData(xcol,ycol);
+      XYColumnPlotData pa = new XYColumnPlotData(xcol,ycol);
 
-      Altaxo.Graph.XYPlotStyleCollection ps = new Altaxo.Graph.XYPlotStyleCollection(Altaxo.Graph.LineScatterPlotStyleKind.Empty);
-      Altaxo.Graph.XYPlotLabelStyle labelStyle = new Altaxo.Graph.XYPlotLabelStyle(labelcol);
+      XYPlotStyleCollection ps = new XYPlotStyleCollection(LineScatterPlotStyleKind.Empty);
+      XYPlotLabelStyle labelStyle = new XYPlotLabelStyle(labelcol);
       labelStyle.FontSize = 10;
-      labelStyle.BackgroundStyle = new Altaxo.Graph.G2D.BackgroundStyles.FilledRectangle(System.Drawing.Color.LightCyan);
+      labelStyle.BackgroundStyle = new FilledRectangle(System.Drawing.Color.LightCyan);
       ps.Add(labelStyle);
       
-      layer.PlotItems.Add(new Altaxo.Graph.XYColumnPlotItem(pa,ps));
+      layer.PlotItems.Add(new XYColumnPlotItem(pa,ps));
     }
 
     /// <summary>
@@ -641,7 +646,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     /// <param name="layer">The layer to plot into.</param>
     /// <param name="whichY">The number of the component (y, concentration etc.) for which to plot the residuals.</param>
     /// <param name="numberOfFactors">The number of factors used for calculation of the residuals.</param>
-    public static void PlotYResiduals(Altaxo.Data.DataTable table, Altaxo.Graph.XYPlotLayer layer, int whichY, int numberOfFactors)
+    public static void PlotYResiduals(Altaxo.Data.DataTable table, XYPlotLayer layer, int whichY, int numberOfFactors)
     {
       string yrescolname = WorksheetAnalysis.GetYResidual_ColumnName(whichY,numberOfFactors);
       string yactcolname = WorksheetAnalysis.GetYOriginal_ColumnName(whichY);
@@ -665,7 +670,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     /// <param name="layer">The layer to plot into.</param>
     /// <param name="whichY">The number of the component (y, concentration etc.) for which to plot the residuals.</param>
     /// <param name="numberOfFactors">The number of factors used for calculation of the residuals.</param>
-    public static void PlotYCrossResiduals(Altaxo.Data.DataTable table, Altaxo.Graph.XYPlotLayer layer, int whichY, int numberOfFactors)
+    public static void PlotYCrossResiduals(Altaxo.Data.DataTable table, XYPlotLayer layer, int whichY, int numberOfFactors)
     {
       string yrescolname = WorksheetAnalysis.GetYCrossResidual_ColumnName(whichY,numberOfFactors);
       string yactcolname = WorksheetAnalysis.GetYOriginal_ColumnName(whichY);
@@ -729,7 +734,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     /// <param name="layer">The layer to plot into.</param>
     /// <param name="whichY">The number of the component (y, concentration etc.) for which to plot the residuals.</param>
     /// <param name="numberOfFactors">The number of factors used for calculation of the residuals.</param>
-    public static void PlotXResiduals(Altaxo.Data.DataTable table, Altaxo.Graph.XYPlotLayer layer, int whichY, int numberOfFactors)
+    public static void PlotXResiduals(Altaxo.Data.DataTable table, XYPlotLayer layer, int whichY, int numberOfFactors)
     {
       string xresidualcolname = WorksheetAnalysis.GetXResidual_ColumnName(whichY,numberOfFactors);
       string yactcolname = WorksheetAnalysis.GetYOriginal_ColumnName(whichY);
@@ -754,7 +759,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     /// <param name="layer">The layer to plot into.</param>
     /// <param name="whichY">The number of the component (y, concentration etc.) for which to plot the residuals.</param>
     /// <param name="numberOfFactors">The number of factors used for calculation of the residuals.</param>
-    public static void PlotXCrossResiduals(Altaxo.Data.DataTable table, Altaxo.Graph.XYPlotLayer layer, int whichY, int numberOfFactors)
+    public static void PlotXCrossResiduals(Altaxo.Data.DataTable table, XYPlotLayer layer, int whichY, int numberOfFactors)
     {
       string xresidualcolname = WorksheetAnalysis.GetXCrossResidual_ColumnName(whichY,numberOfFactors);
       string yactcolname = WorksheetAnalysis.GetYOriginal_ColumnName(whichY);
@@ -776,7 +781,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     /// <param name="layer">The layer to plot into.</param>
     /// <param name="whichY">The number of the component (y, concentration etc.) for which to plot the residuals.</param>
     /// <param name="numberOfFactors">The number of factors used for calculation of the residuals.</param>
-    public static void PlotPredictedVersusActualY(Altaxo.Data.DataTable table, Altaxo.Graph.XYPlotLayer layer, int whichY, int numberOfFactors)
+    public static void PlotPredictedVersusActualY(Altaxo.Data.DataTable table, XYPlotLayer layer, int whichY, int numberOfFactors)
     {
       string ypredcolname = WorksheetAnalysis.GetYPredicted_ColumnName(whichY,numberOfFactors);
       string yactcolname = WorksheetAnalysis.GetYOriginal_ColumnName(whichY);
@@ -798,7 +803,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     /// <param name="layer">The layer to plot into.</param>
     /// <param name="whichY">The number of the component (y, concentration etc.) for which to plot the residuals.</param>
     /// <param name="numberOfFactors">The number of factors used for calculation of the residuals.</param>
-    public static void PlotCrossPredictedVersusActualY(Altaxo.Data.DataTable table, Altaxo.Graph.XYPlotLayer layer, int whichY, int numberOfFactors)
+    public static void PlotCrossPredictedVersusActualY(Altaxo.Data.DataTable table, XYPlotLayer layer, int whichY, int numberOfFactors)
     {
       string ypredcolname = WorksheetAnalysis.GetYCrossPredicted_ColumnName(whichY,numberOfFactors);
       string yactcolname = WorksheetAnalysis.GetYOriginal_ColumnName(whichY);
@@ -962,14 +967,14 @@ namespace Altaxo.Worksheet.Commands.Analysis
     /// </summary>
     /// <param name="table">The table of PLS output data.</param>
     /// <param name="layer">The layer to plot into.</param>
-    public static void PlotPRESSValue(Altaxo.Data.DataTable table, Altaxo.Graph.XYPlotLayer layer)
+    public static void PlotPRESSValue(Altaxo.Data.DataTable table, XYPlotLayer layer)
     {
       Altaxo.Data.DataColumn ycol = table[WorksheetAnalysis.GetPRESSValue_ColumnName()];
       Altaxo.Data.DataColumn xcol = table[WorksheetAnalysis.GetNumberOfFactors_ColumnName()];
 
-      Altaxo.Graph.XYColumnPlotData pa = new Altaxo.Graph.XYColumnPlotData(xcol,ycol);
-      Altaxo.Graph.XYPlotStyleCollection ps = new Altaxo.Graph.XYPlotStyleCollection(Altaxo.Graph.LineScatterPlotStyleKind.LineAndScatter);
-      layer.PlotItems.Add(new Altaxo.Graph.XYColumnPlotItem(pa,ps));
+      XYColumnPlotData pa = new XYColumnPlotData(xcol,ycol);
+      XYPlotStyleCollection ps = new XYPlotStyleCollection(LineScatterPlotStyleKind.LineAndScatter);
+      layer.PlotItems.Add(new XYColumnPlotItem(pa,ps));
 
       layer.DefaultXAxisTitleString = "Number of factors";
       layer.DefaultYAxisTitleString   = "PRESS value";
@@ -990,14 +995,14 @@ namespace Altaxo.Worksheet.Commands.Analysis
     /// </summary>
     /// <param name="table">The table of PLS output data.</param>
     /// <param name="layer">The layer to plot into.</param>
-    public static void PlotCrossPRESSValue(Altaxo.Data.DataTable table, Altaxo.Graph.XYPlotLayer layer)
+    public static void PlotCrossPRESSValue(Altaxo.Data.DataTable table, XYPlotLayer layer)
     {
       Altaxo.Data.DataColumn ycol = table[WorksheetAnalysis.GetCrossPRESSValue_ColumnName()];
       Altaxo.Data.DataColumn xcol = table[WorksheetAnalysis.GetNumberOfFactors_ColumnName()];
 
-      Altaxo.Graph.XYColumnPlotData pa = new Altaxo.Graph.XYColumnPlotData(xcol,ycol);
-      Altaxo.Graph.XYPlotStyleCollection ps = new Altaxo.Graph.XYPlotStyleCollection(Altaxo.Graph.LineScatterPlotStyleKind.LineAndScatter);
-      layer.PlotItems.Add(new Altaxo.Graph.XYColumnPlotItem(pa,ps));
+      XYColumnPlotData pa = new XYColumnPlotData(xcol,ycol);
+      XYPlotStyleCollection ps = new XYPlotStyleCollection(LineScatterPlotStyleKind.LineAndScatter);
+      layer.PlotItems.Add(new XYColumnPlotItem(pa,ps));
 
       layer.DefaultXAxisTitleString = "Number of factors";
       layer.DefaultYAxisTitleString   = "Cross PRESS value";
@@ -1020,7 +1025,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     /// <param name="table">The table of PLS output data.</param>
     /// <param name="layer">The layer to plot into.</param>
     /// <param name="preferredNumberOfFactors">The number of factors used for leverage calculation.</param>
-    public static void PlotXLeverage(Altaxo.Data.DataTable table, Altaxo.Graph.XYPlotLayer layer, int preferredNumberOfFactors)
+    public static void PlotXLeverage(Altaxo.Data.DataTable table, XYPlotLayer layer, int preferredNumberOfFactors)
     {
       string xcolname = WorksheetAnalysis.GetMeasurementLabel_ColumnName();
       string ycolname = WorksheetAnalysis.GetXLeverage_ColumnName(preferredNumberOfFactors);

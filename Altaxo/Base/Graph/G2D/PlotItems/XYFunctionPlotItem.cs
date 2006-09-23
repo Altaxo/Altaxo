@@ -26,9 +26,13 @@ using System.Drawing.Drawing2D;
 using Altaxo.Serialization;
 using Altaxo.Data;
 using Altaxo.Graph.Scales;
+using Altaxo.Graph.G2D;
 
-namespace Altaxo.Graph
+
+namespace Altaxo.Graph.G2D.Plot
 {
+  using Styles;
+  using Data;
   /// <summary>
   /// Association of data and style specialized for x-y-plots of column data.
   /// </summary>

@@ -24,12 +24,14 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using Altaxo.Graph.XYPlotScatterStyles;
+using Altaxo.Graph.G2D.Plot.Styles.XYPlotScatterStyles;
 using Altaxo.Serialization;
 
-namespace Altaxo.Graph
+namespace Altaxo.Graph.G2D.Plot.Styles
 {
   using PlotGroups;
+  using Plot.Groups;
+  using Plot.Data;
 
   namespace XYPlotScatterStyles
   {

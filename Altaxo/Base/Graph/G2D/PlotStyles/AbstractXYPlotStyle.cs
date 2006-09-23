@@ -26,7 +26,7 @@ using System.Drawing.Drawing2D;
 using Altaxo.Serialization;
 
 
-namespace Altaxo.Graph
+namespace Altaxo.Graph.G2D.Plot.Styles
 {
   /// <summary>
   /// Summary description for AbstractXYPlotStyle.

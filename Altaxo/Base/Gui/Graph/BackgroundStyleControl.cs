@@ -28,7 +28,8 @@ using System.Data;
 using System.Text;
 using System.Windows.Forms;
 using Altaxo.Main.GUI;
-using Altaxo.Graph;
+using Altaxo.Graph.G2D;
+using Altaxo.Graph.G2D;
 
 namespace Altaxo.Gui.Graph
 {

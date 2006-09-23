@@ -23,6 +23,7 @@
 using System;
 using System.Drawing;
 using Altaxo.Serialization;
+using Altaxo.Graph.G2D;
 
 namespace Altaxo.Worksheet
 {
@@ -41,13 +42,13 @@ namespace Altaxo.Worksheet
   public abstract class ColumnStyle : System.ICloneable, System.Runtime.Serialization.IDeserializationCallback // pendant to DataGridColumnStyle
   {
 
-    protected static Graph.BrushHolder _defaultNormalBackgroundBrush = new Graph.BrushHolder(SystemColors.Window);
-    protected static Graph.BrushHolder _defaultHeaderBackgroundBrush = new Graph.BrushHolder(SystemColors.Control);
-    protected static Graph.BrushHolder _defaultSelectedBackgroundBrush = new Graph.BrushHolder(SystemColors.Highlight);
-    protected static Graph.BrushHolder _defaultNormalTextBrush = new Graph.BrushHolder(SystemColors.WindowText);
-    protected static Graph.BrushHolder _defaultSelectedTextBrush = new Graph.BrushHolder(SystemColors.HighlightText);
+    protected static BrushHolder _defaultNormalBackgroundBrush = new BrushHolder(SystemColors.Window);
+    protected static BrushHolder _defaultHeaderBackgroundBrush = new BrushHolder(SystemColors.Control);
+    protected static BrushHolder _defaultSelectedBackgroundBrush = new BrushHolder(SystemColors.Highlight);
+    protected static BrushHolder _defaultNormalTextBrush = new BrushHolder(SystemColors.WindowText);
+    protected static BrushHolder _defaultSelectedTextBrush = new BrushHolder(SystemColors.HighlightText);
     protected static Font _defaultTextFont = new Font("Arial", 8);
-    protected static Graph.PenHolder _defaultCellPen = new Graph.PenHolder(SystemColors.InactiveBorder, 1);
+    protected static PenHolder _defaultCellPen = new PenHolder(SystemColors.InactiveBorder, 1);
 
     protected ColumnStyleType _columnStyleType;
 
@@ -55,15 +56,15 @@ namespace Altaxo.Worksheet
     protected StringFormat m_TextFormat = new StringFormat();
 
     protected bool _isCellPenCustom;
-    protected Graph.PenHolder m_CellPen = new Graph.PenHolder(SystemColors.InactiveBorder,1);
+    protected PenHolder m_CellPen = new PenHolder(SystemColors.InactiveBorder,1);
     
     protected Font m_TextFont = new Font("Arial",8);
 
     protected bool _isTextBrushCustom;
-    protected Graph.BrushHolder m_TextBrush = new Graph.BrushHolder(SystemColors.WindowText);
+    protected BrushHolder m_TextBrush = new BrushHolder(SystemColors.WindowText);
 
     protected bool _isBackgroundBrushCustom;
-    protected Graph.BrushHolder m_BackgroundBrush = new Graph.BrushHolder(SystemColors.Window);
+    protected BrushHolder m_BackgroundBrush = new BrushHolder(SystemColors.Window);
 
     
 
@@ -92,9 +93,9 @@ namespace Altaxo.Worksheet
        
         
         s.m_Size = (int)info.GetSingle("Size");
-        s.m_CellPen = (Graph.PenHolder)info.GetValue("Pen",typeof(Graph.PenHolder));
-        s.m_TextBrush = (Graph.BrushHolder)info.GetValue("TextBrush",typeof(Graph.BrushHolder));
-        s.m_BackgroundBrush = (Graph.BrushHolder)info.GetValue("BkgBrush",typeof(Graph.BrushHolder));
+        s.m_CellPen = (PenHolder)info.GetValue("Pen",typeof(PenHolder));
+        s.m_TextBrush = (BrushHolder)info.GetValue("TextBrush",typeof(BrushHolder));
+        s.m_BackgroundBrush = (BrushHolder)info.GetValue("BkgBrush",typeof(BrushHolder));
         s.m_TextFormat = new StringFormat();
         s.m_TextFormat.Alignment = (StringAlignment)info.GetValue("Alignment",typeof(StringAlignment));
 
@@ -186,7 +187,7 @@ namespace Altaxo.Worksheet
         s._isCellPenCustom = info.GetBoolean("CustomPen");
         if (s._isCellPenCustom)
         {
-          s.CellBorder = (Graph.PenHolder)info.GetValue("Pen", s);
+          s.CellBorder = (PenHolder)info.GetValue("Pen", s);
         }
         else
         {
@@ -196,7 +197,7 @@ namespace Altaxo.Worksheet
         s._isTextBrushCustom = info.GetBoolean("CustomText");
         if (s._isTextBrushCustom)
         {
-          s.TextBrush = (Graph.BrushHolder)info.GetValue("TextBrush", s);
+          s.TextBrush = (BrushHolder)info.GetValue("TextBrush", s);
         }
         else
         {
@@ -206,7 +207,7 @@ namespace Altaxo.Worksheet
         s._isBackgroundBrushCustom = info.GetBoolean("CustomBkg");
         if (s._isBackgroundBrushCustom)
         {
-          s.BackgroundBrush = (Graph.BrushHolder)info.GetValue("BkgBrush", s);
+          s.BackgroundBrush = (BrushHolder)info.GetValue("BkgBrush", s);
         }
         else
         {
@@ -270,27 +271,27 @@ namespace Altaxo.Worksheet
       m_Size = s.m_Size;
 
       _isCellPenCustom = s._isCellPenCustom;
-      m_CellPen = (Graph.PenHolder)s.m_CellPen.Clone();
+      m_CellPen = (PenHolder)s.m_CellPen.Clone();
       m_TextFormat = (StringFormat)s.m_TextFormat.Clone();
       m_TextFont = (Font)s.m_TextFont.Clone();
       
       _isTextBrushCustom = s._isTextBrushCustom;
-      m_TextBrush = (Graph.BrushHolder)s.m_TextBrush.Clone();
+      m_TextBrush = (BrushHolder)s.m_TextBrush.Clone();
 
       _isBackgroundBrushCustom = s._isBackgroundBrushCustom;
-      m_BackgroundBrush = (Graph.BrushHolder)s.m_BackgroundBrush.Clone();
+      m_BackgroundBrush = (BrushHolder)s.m_BackgroundBrush.Clone();
     }
 
     /// <summary>
     /// Get a clone of the default cell border.
     /// </summary>
     /// <returns></returns>
-    public static Graph.PenHolder GetDefaultCellBorder(ColumnStyleType type)
+    public static PenHolder GetDefaultCellBorder(ColumnStyleType type)
     {
       if(type==ColumnStyleType.DataCell || type==ColumnStyleType.PropertyCell)
-        return (Graph.PenHolder)_defaultCellPen.Clone();
+        return (PenHolder)_defaultCellPen.Clone();
       else      
-        return new Altaxo.Graph.PenHolder(SystemColors.ControlDarkDark, 1);
+        return new PenHolder(SystemColors.ControlDarkDark, 1);
     }
 
     public void SetDefaultCellBorder()
@@ -299,12 +300,12 @@ namespace Altaxo.Worksheet
       this._isCellPenCustom = false;
     }
 
-    public static Graph.BrushHolder GetDefaultTextBrush(ColumnStyleType type)
+    public static BrushHolder GetDefaultTextBrush(ColumnStyleType type)
     {
       if (type == ColumnStyleType.DataCell || type == ColumnStyleType.PropertyCell)
-        return (Graph.BrushHolder)_defaultNormalTextBrush.Clone();
+        return (BrushHolder)_defaultNormalTextBrush.Clone();
       else
-        return new Altaxo.Graph.BrushHolder(SystemColors.ControlText);
+        return new BrushHolder(SystemColors.ControlText);
     }
     public void SetDefaultTextBrush()
     {
@@ -312,12 +313,12 @@ namespace Altaxo.Worksheet
       this._isTextBrushCustom = false;
     }
 
-    public static Graph.BrushHolder GetDefaultBackgroundBrush(ColumnStyleType type)
+    public static BrushHolder GetDefaultBackgroundBrush(ColumnStyleType type)
     {
       if (type == ColumnStyleType.DataCell)
-        return (Graph.BrushHolder)_defaultNormalBackgroundBrush.Clone();
+        return (BrushHolder)_defaultNormalBackgroundBrush.Clone();
       else
-        return (Graph.BrushHolder)_defaultHeaderBackgroundBrush.Clone();
+        return (BrushHolder)_defaultHeaderBackgroundBrush.Clone();
     }
     public void SetDefaultBackgroundBrush()
     {
@@ -350,7 +351,7 @@ namespace Altaxo.Worksheet
       } 
     }
 
-    public Graph.PenHolder CellBorder
+    public PenHolder CellBorder
     {
       get
       {
@@ -362,7 +363,7 @@ namespace Altaxo.Worksheet
         if (value == null)
           throw new ArgumentNullException();
 
-        Graph.PenHolder oldValue = m_CellPen;
+        PenHolder oldValue = m_CellPen;
         m_CellPen = value;
         if(!object.ReferenceEquals(value,oldValue))
         {
@@ -377,7 +378,7 @@ namespace Altaxo.Worksheet
       _isCellPenCustom = true;
     }
 
-    public Graph.BrushHolder BackgroundBrush
+    public BrushHolder BackgroundBrush
     {
       get
       {
@@ -387,7 +388,7 @@ namespace Altaxo.Worksheet
       {
         if (value == null)
           throw new ArgumentNullException();
-        Graph.BrushHolder oldValue = m_BackgroundBrush;
+        BrushHolder oldValue = m_BackgroundBrush;
         m_BackgroundBrush = value;
         if (!object.ReferenceEquals(value, oldValue))
         {
@@ -402,7 +403,7 @@ namespace Altaxo.Worksheet
       _isBackgroundBrushCustom = true;
     }
 
-    public Graph.BrushHolder TextBrush
+    public BrushHolder TextBrush
     {
       get
       {
@@ -412,7 +413,7 @@ namespace Altaxo.Worksheet
       {
         if (value == null)
           throw new ArgumentNullException();
-        Graph.BrushHolder oldValue = m_TextBrush;
+        BrushHolder oldValue = m_TextBrush;
         m_TextBrush = value;
         if (!object.ReferenceEquals(value, oldValue))
         {

@@ -22,7 +22,7 @@
 using System;
 using System.Text;
 
-namespace Altaxo.Graph
+namespace Altaxo.Graph.G2D
 {
   /// <summary>
   /// The type of the size (i.e. width and height values.

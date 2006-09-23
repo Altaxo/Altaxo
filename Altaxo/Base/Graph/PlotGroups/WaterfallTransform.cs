@@ -5,8 +5,10 @@ using System.Text;
 using Altaxo.Data;
 using Altaxo.Graph.Scales.Boundaries;
 
-namespace Altaxo.Graph.PlotGroups
+namespace Altaxo.Graph.G2D.Plot.Groups
 {
+  using Plot.Data;
+
   public class WaterfallTransform : ICoordinateTransformingGroupStyle
   {
     double _xinc=0;

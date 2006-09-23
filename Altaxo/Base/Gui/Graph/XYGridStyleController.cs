@@ -21,7 +21,9 @@
 #endregion
 
 using System;
-using Altaxo.Graph;
+using Altaxo.Graph.G2D;
+using Altaxo.Graph.G2D.AxisStyles;
+
 using Altaxo.Gui.Common.Drawing;
 using Altaxo.Main.GUI;
 
@@ -54,7 +56,7 @@ namespace Altaxo.Gui.Graph
   /// <summary>
   /// Summary description for XYGridStyleController.
   /// </summary>
-  [UserControllerForObject(typeof(Altaxo.Graph.GridStyle))]
+  [UserControllerForObject(typeof(GridStyle))]
   public class XYGridStyleController : Main.GUI.IMVCAController, IXYGridStyleViewEventSink
   {
     IXYGridStyleView _view;

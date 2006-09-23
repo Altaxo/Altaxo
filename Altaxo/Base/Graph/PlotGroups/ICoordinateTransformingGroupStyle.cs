@@ -4,7 +4,7 @@ using System.Text;
 
 using Altaxo.Graph.Scales.Boundaries;
 
-namespace Altaxo.Graph.PlotGroups
+namespace Altaxo.Graph.G2D.Plot.Groups
 {
   public interface ICoordinateTransformingGroupStyle : ICloneable
   {

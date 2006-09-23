@@ -22,11 +22,14 @@
 
 using System;
 using Altaxo.Main.GUI;
-using Altaxo.Graph;
+using Altaxo.Graph.G2D;
 using Altaxo.Scripting;
 using Altaxo.Gui.Scripting;
 using Altaxo.Calc.Regression.Nonlinear;
 
+using Altaxo.Graph.G2D.Plot;
+using Altaxo.Graph.G2D.Plot.Data;
+using Altaxo.Graph.G2D.Plot.Styles;
 
 namespace Altaxo.Gui.Analysis.NonLinearFitting
 {
@@ -279,15 +282,15 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
           {
             if (funcNumber < _functionPlotItems.Count && _functionPlotItems[funcNumber] != null)
             {
-              Altaxo.Graph.XYFunctionPlotItem plotItem = (Altaxo.Graph.XYFunctionPlotItem)_functionPlotItems[funcNumber];
+              XYFunctionPlotItem plotItem = (XYFunctionPlotItem)_functionPlotItems[funcNumber];
               FitFunctionToScalarFunctionDDWrapper wrapper = (FitFunctionToScalarFunctionDDWrapper)plotItem.Data.Function;
               wrapper.Initialize(fitEle.FitFunction, k, 0, _doc.GetParametersForFitElement(i));
             }
             else
             {
               FitFunctionToScalarFunctionDDWrapper wrapper = new FitFunctionToScalarFunctionDDWrapper(fitEle.FitFunction, k, _doc.GetParametersForFitElement(i));
-              Altaxo.Graph.XYFunctionPlotData plotdata = new Altaxo.Graph.XYFunctionPlotData(wrapper);
-              Altaxo.Graph.XYFunctionPlotItem plotItem = new Altaxo.Graph.XYFunctionPlotItem(plotdata, new Altaxo.Graph.XYPlotStyleCollection(LineScatterPlotStyleKind.Line));
+              XYFunctionPlotData plotdata = new XYFunctionPlotData(wrapper);
+              XYFunctionPlotItem plotItem = new XYFunctionPlotItem(plotdata, new XYPlotStyleCollection(LineScatterPlotStyleKind.Line));
               graph.ActiveLayer.PlotItems.Add(plotItem);
               _functionPlotItems.Add(plotItem);
             }
@@ -299,7 +302,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         {
           if (_functionPlotItems[i] != null)
           {
-            graph.ActiveLayer.PlotItems.Remove((Altaxo.Graph.IGPlotItem)_functionPlotItems[i]);
+            graph.ActiveLayer.PlotItems.Remove((IGPlotItem)_functionPlotItems[i]);
             _functionPlotItems.RemoveAt(i);
 
           }

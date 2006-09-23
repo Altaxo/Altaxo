@@ -23,6 +23,7 @@
 using System;
 using Altaxo.Main.GUI;
 using Altaxo.Graph.Scales;
+using Altaxo.Graph.G2D;
 
 namespace Altaxo.Graph.GUI
 {

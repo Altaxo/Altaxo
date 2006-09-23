@@ -6,6 +6,8 @@ using System.Drawing.Drawing2D;
 
 namespace Altaxo.Graph.PlotGroups
 {
+  using G2D.Plot.Groups;
+
   public class LineStyleGroupStyle : IPlotGroupStyle
   {
     bool _isInitialized;

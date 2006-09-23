@@ -26,8 +26,10 @@ using System.Drawing.Drawing2D;
 using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
-using Altaxo.Graph;
+using Altaxo.Graph.G2D;
+using Altaxo.Graph.G2D.Shapes;
 using Altaxo.Serialization;
+
 namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers 
 {
   /// <summary>
@@ -44,7 +46,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     protected override void FinishDrawing()
     {
       RectangleF rect = GetNormalRectangle(_Points[0].layerCoord,_Points[1].layerCoord);
-      Graph.RectangleGraphic go =  new Graph.RectangleGraphic(rect.X,rect.Y,rect.Width,rect.Height);
+      RectangleGraphic go =  new RectangleGraphic(rect.X,rect.Y,rect.Width,rect.Height);
 
       // deselect the text tool
       this._grac.CurrentGraphToolType = typeof(GraphControllerMouseHandlers.ObjectPointerMouseHandler);

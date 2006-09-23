@@ -22,7 +22,7 @@
 
 using System;
 
-namespace Altaxo.Graph
+namespace Altaxo.Graph.G2D.Plot
 {
   /// <summary>
   /// Enumerates the style how a <see cref="XYColumnPlotItem" /> is labeled into the <see cref="TextGraphics" />. 

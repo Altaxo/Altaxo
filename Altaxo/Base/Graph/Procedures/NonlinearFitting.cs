@@ -22,6 +22,9 @@
 
 using System;
 using Altaxo.Data;
+using Altaxo.Graph.G2D.Plot;
+using Altaxo.Graph.G2D.Plot.Data;
+using Altaxo.Graph.G2D.Plot.Styles;
 
 namespace Altaxo.Graph.Procedures
 {
@@ -40,7 +43,7 @@ namespace Altaxo.Graph.Procedures
 
       IGPlotItem plotItem = ctrl.ActiveLayer.PlotItems.Flattened[ctrl.CurrentPlotNumber];
 
-      Altaxo.Graph.XYColumnPlotItem xyPlotItem = plotItem as Altaxo.Graph.XYColumnPlotItem;
+      XYColumnPlotItem xyPlotItem = plotItem as XYColumnPlotItem;
 
       if(xyPlotItem==null)
         return "Active plot is not a X-Y Plot!";

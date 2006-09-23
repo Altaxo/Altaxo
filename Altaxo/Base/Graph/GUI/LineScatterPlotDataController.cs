@@ -22,6 +22,8 @@
 
 using System;
 
+using Altaxo.Graph.G2D.Plot.Data;
+
 namespace Altaxo.Graph.GUI
 {
   #region Interfaces

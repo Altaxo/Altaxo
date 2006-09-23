@@ -22,6 +22,8 @@
 
 using System;
 
+using Altaxo.Graph.G2D;
+
 namespace Altaxo.Graph.Scales.Boundaries
 {
   /// <summary>

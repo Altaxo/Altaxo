@@ -28,6 +28,8 @@ using System.Data;
 using System.Windows.Forms;
 using Altaxo.Main.GUI;
 
+using Altaxo.Graph.G2D.Plot.Groups;
+
 namespace Altaxo.Gui.Graph
 {
   /// <summary>
@@ -220,7 +222,7 @@ namespace Altaxo.Gui.Graph
  
     
 
-    public void InitializePlotGroupConditions(bool bColor, bool bLineType, bool bSymbol, bool bConcurrently, Altaxo.Graph.PlotGroups.PlotGroupStrictness bStrict)
+    public void InitializePlotGroupConditions(bool bColor, bool bLineType, bool bSymbol, bool bConcurrently, Altaxo.Graph.G2D.Plot.Groups.PlotGroupStrictness bStrict)
     {
       this._rbtConcurrently.Checked=  bConcurrently;
       this._rbtSequential.Checked = !bConcurrently;
@@ -254,11 +256,11 @@ namespace Altaxo.Gui.Graph
     {
       get { return m_chkPlotGroupSymbol.Checked; }
     }
-    public Altaxo.Graph.PlotGroups.PlotGroupStrictness PlotGroupStrict
+    public Altaxo.Graph.G2D.Plot.Groups.PlotGroupStrictness PlotGroupStrict
     {
       get 
       {
-        return (Altaxo.Graph.PlotGroups.PlotGroupStrictness)(System.Enum.GetValues(typeof(Altaxo.Graph.PlotGroups.PlotGroupStrictness))).GetValue(this._cbStrict.SelectedIndex);
+        return (PlotGroupStrictness)(System.Enum.GetValues(typeof(PlotGroupStrictness))).GetValue(this._cbStrict.SelectedIndex);
       }
     }
 

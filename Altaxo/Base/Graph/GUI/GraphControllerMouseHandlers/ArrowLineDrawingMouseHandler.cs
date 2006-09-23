@@ -26,7 +26,8 @@ using System.Drawing.Drawing2D;
 using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
-using Altaxo.Graph;
+using Altaxo.Graph.G2D;
+using Altaxo.Graph.G2D.Shapes;
 using Altaxo.Serialization;
 namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
 {
@@ -44,7 +45,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
 
     protected override void FinishDrawing()
     {
-      Graph.LineGraphic go = new LineGraphic(_Points[0].layerCoord,_Points[1].layerCoord);
+      LineGraphic go = new LineGraphic(_Points[0].layerCoord,_Points[1].layerCoord);
       //go.Pen.EndCap = new System.Drawing.Drawing2D.AdjustableArrowCap(2,1,true);
       LineCapEx cap = LineCapEx.FromName("ArrowF10");
       cap.Size = 10;

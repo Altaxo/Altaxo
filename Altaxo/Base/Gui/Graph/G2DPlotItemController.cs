@@ -22,7 +22,10 @@
 
 using System;
 using Altaxo.Gui.Common;
-using Altaxo.Graph;
+using Altaxo.Graph.G2D;
+using Altaxo.Graph.G2D.Plot;
+using Altaxo.Graph.G2D.Plot.Styles;
+using Altaxo.Graph.G2D.Plot.Groups;
 using Altaxo.Graph.PlotGroups;
 using Altaxo.Main.GUI;
 using System.Collections;
@@ -186,7 +189,7 @@ namespace Altaxo.Gui.Graph
         {
           XYPlotScatterStyle scatterStyle = new XYPlotScatterStyle();
           _additionalPlotStyle = scatterStyle;
-          scatterStyle.Shape = Altaxo.Graph.XYPlotScatterStyles.Shape.NoSymbol;
+          scatterStyle.Shape = Altaxo.Graph.G2D.Plot.Styles.XYPlotScatterStyles.Shape.NoSymbol;
 
           _insertAdditionalPlotStyle = 1;
           lineScatterPair[0] = _tempdoc.Style[0];
@@ -196,7 +199,7 @@ namespace Altaxo.Gui.Graph
         {
           XYPlotLineStyle lineStyle = new XYPlotLineStyle();
           _additionalPlotStyle = lineStyle;
-          lineStyle.Connection = Altaxo.Graph.XYPlotLineStyles.ConnectionStyle.NoLine;
+          lineStyle.Connection = Altaxo.Graph.G2D.Plot.Styles.XYPlotLineStyles.ConnectionStyle.NoLine;
 
           _insertAdditionalPlotStyle = 0;
           lineScatterPair[0] = _additionalPlotStyle;

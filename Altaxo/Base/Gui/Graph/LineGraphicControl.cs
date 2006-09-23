@@ -29,6 +29,8 @@ using System.Text;
 using System.Windows.Forms;
 
 using Altaxo.Main.GUI;
+using Altaxo.Graph.G2D;
+
 namespace Altaxo.Gui.Graph
 {
   [UserControlForController(typeof(ILineGraphicViewEventSink))]
@@ -41,7 +43,7 @@ namespace Altaxo.Gui.Graph
 
     #region ILineGraphicView Members
 
-    public Altaxo.Graph.PenHolder DocPen
+    public PenHolder DocPen
     {
       get
       {

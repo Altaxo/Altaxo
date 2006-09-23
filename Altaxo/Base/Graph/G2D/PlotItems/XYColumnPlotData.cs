@@ -28,7 +28,7 @@ using Altaxo.Data;
 using Altaxo.Graph.Scales;
 using Altaxo.Graph.Scales.Boundaries;
 
-namespace Altaxo.Graph
+namespace Altaxo.Graph.G2D.Plot.Data
 {
 
   
@@ -468,7 +468,7 @@ namespace Altaxo.Graph
     public string GetXName(int level)
     {
       IReadableColumn col = this.m_xColumn.Document;
-      if (col is Data.DataColumn)
+      if (col is Altaxo.Data.DataColumn)
       {
         Altaxo.Data.DataTable table = Altaxo.Data.DataTable.GetParentDataTableOf((DataColumn)col);
         string tablename = table == null ? string.Empty : table.Name + "\\";
@@ -493,7 +493,7 @@ namespace Altaxo.Graph
     public string GetYName(int level)
     {
       IReadableColumn col = this.m_yColumn.Document;
-      if (col is Data.DataColumn)
+      if (col is Altaxo.Data.DataColumn)
       {
         Altaxo.Data.DataTable table = Altaxo.Data.DataTable.GetParentDataTableOf((DataColumn)col);
         string tablename = table == null ? string.Empty : table.Name + "\\";

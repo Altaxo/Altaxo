@@ -27,7 +27,10 @@ using System.ComponentModel;
 using System.Windows.Forms;
 
 using Altaxo.Gui.Common.Drawing;
+using Altaxo.Graph.G2D;
 using Altaxo.Graph.G2D.BackgroundStyles;
+using Altaxo.Graph.G2D.Shapes;
+
 
 
 namespace Altaxo.Graph.GUI
@@ -56,7 +59,7 @@ namespace Altaxo.Graph.GUI
     private System.Windows.Forms.Button m_btGreek;
     private System.Windows.Forms.TextBox m_edText;
     private System.Windows.Forms.Panel m_pnPreview;
-    private Altaxo.Graph.XYPlotLayer m_Layer; // parent layer
+    private XYPlotLayer m_Layer; // parent layer
     private TextGraphics m_TextObject;
     private float  m_PositionX; // original x position of textobject
     private float  m_PositionY; // original y position of textobject
@@ -69,7 +72,7 @@ namespace Altaxo.Graph.GUI
     private Altaxo.Gui.Common.Drawing.ColorComboBox m_cbFontColor;
     private IContainer components;
 
-    public TextControlDialog(Altaxo.Graph.XYPlotLayer layer, TextGraphics tgo)
+    public TextControlDialog(XYPlotLayer layer, TextGraphics tgo)
     {
       //
       // Required for Windows Form Designer support

@@ -2,9 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Altaxo.Graph.PlotGroups
+namespace Altaxo.Graph.G2D.Plot.Groups
 {
-  using XYPlotScatterStyles;
+  using PlotGroups;
+
+  using Plot.Styles.XYPlotScatterStyles;
 
   public class SymbolShapeStyleGroupStyle : IPlotGroupStyle
   {
@@ -32,7 +34,6 @@ namespace Altaxo.Graph.PlotGroups
     }
 
     #endregion
-
 
     #region Constructors
 

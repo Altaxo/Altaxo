@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
 
-namespace Altaxo.Graph
+namespace Altaxo.Graph.G2D.Plot
 {
-  using PlotGroups;
+  using Groups;
 
   public abstract class PlotItem
   :

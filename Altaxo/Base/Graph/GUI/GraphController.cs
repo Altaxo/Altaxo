@@ -26,7 +26,12 @@ using System.Drawing.Drawing2D;
 using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
-using Altaxo.Graph;
+using Altaxo.Graph.G2D;
+using Altaxo.Graph.G2D.Shapes;
+using Altaxo.Graph.G2D.Plot;
+using Altaxo.Graph.G2D.Plot.Data;
+using Altaxo.Graph.G2D.Plot.Styles;
+using Altaxo.Graph.G2D.Plot.Groups;
 using Altaxo.Graph.PlotGroups;
 using Altaxo.Serialization;
 using Altaxo.Graph.GUI.GraphControllerMouseHandlers;
@@ -54,7 +59,7 @@ namespace Altaxo.Graph.GUI
 
 
     /// <summary>Holds the Graph document (the place were the layers, plots, graph elements... are stored).</summary>
-    protected Altaxo.Graph.GraphDocument m_Graph;
+    protected GraphDocument m_Graph;
 
     /// <summary>Holds the view (the window where the graph is visualized).</summary>
     protected IGraphView m_View;
@@ -190,9 +195,9 @@ namespace Altaxo.Graph.GUI
       private void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot)
       {
         object o = Main.DocumentPath.GetObject(_PathToGraph,documentRoot,_GraphController);
-        if(o is Altaxo.Graph.GraphDocument)
+        if(o is GraphDocument)
         {
-          _GraphController.Doc = o as Altaxo.Graph.GraphDocument;
+          _GraphController.Doc = o as GraphDocument;
           info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(this.EhDeserializationFinished);
         }
       }
@@ -1661,7 +1666,7 @@ namespace Altaxo.Graph.GUI
 
     public void PasteObjectsFromClipboard()
     {
-      Altaxo.Graph.GraphDocument gd = this.Doc;
+      GraphDocument gd = this.Doc;
       System.Windows.Forms.DataObject dao = System.Windows.Forms.Clipboard.GetDataObject() as System.Windows.Forms.DataObject;
 
       string[] formats = dao.GetFormats();
@@ -2051,7 +2056,7 @@ namespace Altaxo.Graph.GUI
 
       for(int nLayer=0;nLayer<Layers.Count;nLayer++)
       {
-        Altaxo.Graph.XYPlotLayer layer = Layers[nLayer];
+        XYPlotLayer layer = Layers[nLayer];
         foundObject = layer.HitTest(mousePT, plotItemsOnly);
         if(null!=foundObject)
         {

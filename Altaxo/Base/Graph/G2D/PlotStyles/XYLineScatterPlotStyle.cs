@@ -26,9 +26,10 @@ using System.Drawing.Drawing2D;
 using Altaxo.Serialization;
 
 
-namespace Altaxo.Graph
+namespace Altaxo.Graph.G2D.Plot.Styles
 {
   using Scales;
+  using Plot.Data;
 
   /// <summary>
   /// Used for constructor of <see cref="XYLineScatterPlotStyle" /> to choose between Line, Scatter and both.

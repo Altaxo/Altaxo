@@ -29,7 +29,7 @@ using Altaxo.Data;
 using Altaxo.Graph.G2D.BackgroundStyles;
 
 
-namespace Altaxo.Graph
+namespace Altaxo.Graph.G2D.AxisStyles
 {
   using G2D.LabelFormatting;
 

@@ -24,7 +24,7 @@ using System;
 using System.Text;
 using System.Collections;
 
-namespace Altaxo.Graph
+namespace Altaxo.Graph.G2D.Plot.Styles
 {
   public class XYPlotStyleCollectionTemplates
   {

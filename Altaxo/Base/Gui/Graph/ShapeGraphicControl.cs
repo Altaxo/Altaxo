@@ -29,6 +29,8 @@ using System.Text;
 using System.Windows.Forms;
 
 using Altaxo.Main.GUI;
+using Altaxo.Graph.G2D;
+
 namespace Altaxo.Gui.Graph
 {
   [UserControlForController(typeof(IShapeGraphicViewEventSink))]
@@ -41,7 +43,7 @@ namespace Altaxo.Gui.Graph
 
     #region IShapeGraphicView Members
 
-    public Altaxo.Graph.PenHolder DocPen
+    public PenHolder DocPen
     {
       get
       {
@@ -67,7 +69,7 @@ namespace Altaxo.Gui.Graph
     }
 
 
-    public Altaxo.Graph.BrushHolder DocBrush
+    public BrushHolder DocBrush
     {
       get
       {

@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using System.Text;
 
 using Altaxo.Graph.Scales.Boundaries;
+using Altaxo.Graph.G2D;
+using Altaxo.Graph.G2D.Plot;
 
-namespace Altaxo.Graph.PlotGroups
+
+namespace Altaxo.Graph.G2D.Plot.Groups
 {
   public class CoordinateTransformingStyleBase
   {

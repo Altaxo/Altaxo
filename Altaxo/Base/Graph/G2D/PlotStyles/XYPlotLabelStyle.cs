@@ -24,14 +24,16 @@
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using Altaxo.Graph.XYPlotScatterStyles;
+using Altaxo.Graph.G2D.Plot.Styles.XYPlotScatterStyles;
 using Altaxo.Serialization;
 using Altaxo.Graph.G2D.BackgroundStyles;
 
 
-namespace Altaxo.Graph
+namespace Altaxo.Graph.G2D.Plot.Styles
 {
   using PlotGroups;
+  using Plot.Groups;
+  using Plot.Data;
 
   public class XYPlotLabelStyle :
     ICloneable,
@@ -316,7 +318,7 @@ namespace Altaxo.Graph
       this._backgroundStyle = null == from._backgroundStyle ? null : (IBackgroundStyle)from._backgroundStyle.Clone();
       this.m_CachedStringFormat = (System.Drawing.StringFormat)from.m_CachedStringFormat.Clone();
       this.m_AttachedAxis = from.m_AttachedAxis;
-      this.m_LabelColumn = (Data.ReadableColumnProxy)from.m_LabelColumn.Clone();
+      this.m_LabelColumn = (Altaxo.Data.ReadableColumnProxy)from.m_LabelColumn.Clone();
 
       CreateEventChain();
     }

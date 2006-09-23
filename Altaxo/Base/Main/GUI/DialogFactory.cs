@@ -22,9 +22,10 @@
 
 using System;
 
-using Altaxo.Graph;
+using Altaxo.Graph.G2D;
 using Altaxo.Graph.GUI;
-
+using Altaxo.Graph.G2D.Plot;
+using Altaxo.Graph.G2D.Plot.Groups;
 
 namespace Altaxo.Main.GUI
 {
@@ -87,11 +88,11 @@ namespace Altaxo.Main.GUI
     }
 
 
-    public static bool ShowPlotStyleAndDataDialog(System.Windows.Forms.Form parentWindow, IGPlotItem pa, Altaxo.Graph.PlotGroups.PlotGroupStyleCollection plotGroup)
+    public static bool ShowPlotStyleAndDataDialog(System.Windows.Forms.Form parentWindow, IGPlotItem pa, PlotGroupStyleCollection plotGroup)
     {
-      if(pa is Graph.XYColumnPlotItem || pa is Graph.XYFunctionPlotItem)
+      if(pa is XYColumnPlotItem || pa is XYFunctionPlotItem)
         return ShowLineScatterPlotStyleAndDataDialog(parentWindow,pa,plotGroup);
-      else if(pa is Graph.DensityImagePlotItem)
+      else if(pa is DensityImagePlotItem)
         return ShowDensityImagePlotStyleAndDataDialog(parentWindow,pa,plotGroup);
       else
       {
@@ -100,7 +101,7 @@ namespace Altaxo.Main.GUI
       }
     }
 
-    public static bool ShowLineScatterPlotStyleAndDataDialog(System.Windows.Forms.Form parentWindow, IGPlotItem pa, Altaxo.Graph.PlotGroups.PlotGroupStyleCollection plotGroup)
+    public static bool ShowLineScatterPlotStyleAndDataDialog(System.Windows.Forms.Form parentWindow, IGPlotItem pa, PlotGroupStyleCollection plotGroup)
     {
       return Current.Gui.ShowDialog(new object[]{pa,plotGroup},string.Format("#{0}: {1}",pa.Name,pa.ToString()), true);
     }
@@ -168,10 +169,10 @@ namespace Altaxo.Main.GUI
         }
 
     */
-    public static bool ShowDensityImagePlotStyleAndDataDialog(System.Windows.Forms.Form parentWindow, IGPlotItem pa, Altaxo.Graph.PlotGroups.PlotGroupStyleCollection plotGroup)
+    public static bool ShowDensityImagePlotStyleAndDataDialog(System.Windows.Forms.Form parentWindow, IGPlotItem pa, PlotGroupStyleCollection plotGroup)
     {
       // Plot Style
-      DensityImagePlotStyleController stylectrl = new DensityImagePlotStyleController(((Graph.DensityImagePlotItem)pa).Style);
+      DensityImagePlotStyleController stylectrl = new DensityImagePlotStyleController(((DensityImagePlotItem)pa).Style);
       DensityImagePlotStyleControl      styleview = new DensityImagePlotStyleControl();
       stylectrl.View = styleview;
 

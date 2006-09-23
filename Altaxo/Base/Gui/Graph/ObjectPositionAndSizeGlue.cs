@@ -28,6 +28,7 @@ using System.Windows.Forms;
 using System.Drawing;
 
 using Altaxo.Graph;
+using Altaxo.Graph.G2D;
 using Altaxo.Gui.Common.Drawing;
 
 namespace Altaxo.Gui.Graph

@@ -23,11 +23,12 @@
 using System;
 using Altaxo.Serialization;
 using System.Drawing;
-using Altaxo.Graph;
+using Altaxo.Graph.G2D;
 using Altaxo.Graph.GUI;
 using Altaxo.Main.GUI;
 using Altaxo.Data;
 using Altaxo.Graph.G2D.BackgroundStyles;
+using Altaxo.Graph.G2D.AxisStyles;
 
 
 namespace Altaxo.Gui.Graph

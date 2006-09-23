@@ -26,6 +26,8 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 
+using Altaxo.Graph.G2D;
+
 namespace Altaxo.Graph.Procedures
 {
   /// <summary>
@@ -47,10 +49,10 @@ namespace Altaxo.Graph.Procedures
 
     protected class GraphRenameValidator : Main.GUI.TextValueInputController.NonEmptyStringValidator
     {
-      Altaxo.Graph.GraphDocument _doc;
+      GraphDocument _doc;
       GraphController _controller;
 
-      public GraphRenameValidator(Altaxo.Graph.GraphDocument graphdoc, GraphController ctrl)
+      public GraphRenameValidator(GraphDocument graphdoc, GraphController ctrl)
         : base("The graph's name must not be empty! Please enter a valid name.")
       {
         _doc = graphdoc;
@@ -65,9 +67,9 @@ namespace Altaxo.Graph.Procedures
 
         if (_doc.Name == graphname)
           return null;
-        else if (Graph.GraphDocumentCollection.GetParentGraphDocumentCollectionOf(_controller.Doc) == null)
+        else if (GraphDocumentCollection.GetParentGraphDocumentCollectionOf(_controller.Doc) == null)
           return null; // if there is no parent data set we can enter anything
-        else if (Graph.GraphDocumentCollection.GetParentGraphDocumentCollectionOf(_controller.Doc).Contains(graphname))
+        else if (GraphDocumentCollection.GetParentGraphDocumentCollectionOf(_controller.Doc).Contains(graphname))
           return "This graph name already exists, please choose another name!";
         else
           return null;

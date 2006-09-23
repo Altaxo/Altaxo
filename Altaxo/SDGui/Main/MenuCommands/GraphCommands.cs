@@ -25,6 +25,10 @@ using System.Windows.Forms;
 using Altaxo;
 using Altaxo.Main;
 using Altaxo.Graph;
+using Altaxo.Graph.G2D;
+using Altaxo.Graph.G2D.Plot;
+using Altaxo.Graph.G2D.Plot.Styles;
+using Altaxo.Graph.G2D.Plot.Data;
 using Altaxo.Graph.GUI;
 using Altaxo.Gui.Scripting;
 using Altaxo.Scripting;
@@ -395,7 +399,7 @@ namespace Altaxo.Graph.Commands
     public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
     {
       ctrl.EnsureValidityOfCurrentLayerNumber();
-      ctrl.Doc.Layers[ctrl.CurrentLayerNumber].PlotItems.Add(new XYFunctionPlotItem(new XYFunctionPlotData(new Graph.PolynomialFunction(new double[]{0,0,1})),new XYPlotStyleCollection(LineScatterPlotStyleKind.Line)));
+      ctrl.Doc.Layers[ctrl.CurrentLayerNumber].PlotItems.Add(new XYFunctionPlotItem(new XYFunctionPlotData(new PolynomialFunction(new double[]{0,0,1})),new XYPlotStyleCollection(LineScatterPlotStyleKind.Line)));
     }
   }
 

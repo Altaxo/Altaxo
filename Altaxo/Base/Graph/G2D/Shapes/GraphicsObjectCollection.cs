@@ -27,7 +27,7 @@ using System.Drawing.Drawing2D;
 using Altaxo.Serialization;
 
 
-namespace Altaxo.Graph
+namespace Altaxo.Graph.G2D.Shapes
 {
   /// <summary>
   /// Summary description for GraphicsObjectCollection.

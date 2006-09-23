@@ -26,8 +26,10 @@ using System.Drawing.Drawing2D;
 using Altaxo.Serialization;
 using Altaxo.Graph.Scales.Boundaries;
 
-namespace Altaxo.Graph
+namespace Altaxo.Graph.G2D.Plot.Styles
 {
+  using Plot.Data;
+
   /// <summary>
   /// This plot style is responsible for showing density plots as pixel image. Because of the limitation to a pixel image, each pixel is correlated
   /// with a single data point in the table. Splining of data is not implemented here. Beause of this limitation, the image can only be shown

@@ -27,9 +27,11 @@ using Altaxo.Serialization;
 //using System.Runtime.InteropServices;
 
 
-namespace Altaxo.Graph
+namespace Altaxo.Graph.G2D.Plot.Styles
 {
   using PlotGroups;
+  using Plot.Groups;
+  using Plot.Data;
 
   namespace XYPlotLineStyles
   {
@@ -225,13 +227,13 @@ namespace Altaxo.Graph
       {
         switch (fillDir)
         {
-          case Altaxo.Graph.XYPlotLineStyles.FillDirection.Bottom:
+          case XYPlotLineStyles.FillDirection.Bottom:
             return A2DAxisStyleIdentifier.X0;
-          case Altaxo.Graph.XYPlotLineStyles.FillDirection.Top:
+          case XYPlotLineStyles.FillDirection.Top:
             return A2DAxisStyleIdentifier.X1;
-          case Altaxo.Graph.XYPlotLineStyles.FillDirection.Left:
+          case XYPlotLineStyles.FillDirection.Left:
             return A2DAxisStyleIdentifier.Y0;
-          case Altaxo.Graph.XYPlotLineStyles.FillDirection.Right:
+          case XYPlotLineStyles.FillDirection.Right:
             return A2DAxisStyleIdentifier.Y1;
         }
         return null;

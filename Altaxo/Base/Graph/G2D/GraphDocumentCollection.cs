@@ -24,7 +24,7 @@ using System;
 using Altaxo;
 using Altaxo.Main;
 
-namespace Altaxo.Graph
+namespace Altaxo.Graph.G2D
 {
   public class GraphDocumentCollection : 
     System.Runtime.Serialization.IDeserializationCallback,
@@ -176,13 +176,13 @@ namespace Altaxo.Graph
     {
       public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context  )
       {
-        Altaxo.Graph.GraphDocumentCollection s = (Altaxo.Graph.GraphDocumentCollection)obj;
+        GraphDocumentCollection s = (GraphDocumentCollection)obj;
         // info.AddValue("Parent",s.parent);
         info.AddValue("Graphs",s.m_GraphsByName);
       }
       public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
       {
-        Altaxo.Graph.GraphDocumentCollection s = (Altaxo.Graph.GraphDocumentCollection)obj;
+        GraphDocumentCollection s = (GraphDocumentCollection)obj;
         // s.parent = (AltaxoDocument)(info.GetValue("Parent",typeof(AltaxoDocument)));
         s.m_GraphsByName = (System.Collections.SortedList)(info.GetValue("Graphs",typeof(System.Collections.SortedList)));
       
@@ -245,11 +245,11 @@ namespace Altaxo.Graph
     }
 
 
-    public Altaxo.Graph.GraphDocument this[string name]
+    public GraphDocument this[string name]
     {
       get
       {
-        return (Altaxo.Graph.GraphDocument)m_GraphsByName[name];
+        return (GraphDocument)m_GraphsByName[name];
       }
     }
 
@@ -258,7 +258,7 @@ namespace Altaxo.Graph
       return m_GraphsByName.ContainsKey(graphname);
     }
 
-    public void Add(Altaxo.Graph.GraphDocument theGraph)
+    public void Add(GraphDocument theGraph)
     {
       if(null!=theGraph.Name && string.Empty!=theGraph.Name && theGraph.Equals(m_GraphsByName[theGraph.Name]))
         return; // do silently nothing if the graph (the same!) is already registered
@@ -274,7 +274,7 @@ namespace Altaxo.Graph
       this.OnSelfChanged(ChangedEventArgs.IfItemAdded);
     }
 
-    public void Remove(Altaxo.Graph.GraphDocument theGraph)
+    public void Remove(GraphDocument theGraph)
     {
       if(theGraph!=null && theGraph.Name!=null)
       {
@@ -483,7 +483,7 @@ namespace Altaxo.Graph
     /// </summary>
     /// <param name="child">A graph for which the parent collection is searched.</param>
     /// <returns>The parent GraphDocumentCollection, if it exists, or null otherwise.</returns>
-    public static Altaxo.Graph.GraphDocumentCollection GetParentGraphDocumentCollectionOf(Main.IDocumentNode child)
+    public static GraphDocumentCollection GetParentGraphDocumentCollectionOf(Main.IDocumentNode child)
     {
       return (GraphDocumentCollection)Main.DocumentPath.GetRootNodeImplementing(child, typeof(GraphDocumentCollection));
     }

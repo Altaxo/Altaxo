@@ -28,9 +28,13 @@ using System.Text.RegularExpressions;
 
 
 
-namespace Altaxo.Graph
+namespace Altaxo.Graph.G2D.Shapes
 {
-  using Altaxo.Graph.G2D.BackgroundStyles;
+  using Plot;
+  using Plot.Data;
+  using BackgroundStyles;
+
+
   public class TextItem
   {
     protected enum InnerType { Empty, Text, Symbol, PlotCurveName }
@@ -923,9 +927,9 @@ namespace Altaxo.Graph
           else if(ti.IsPlotCurveName)
           {
             // first of all, retrieve the actual name
-            if(obj is Altaxo.Graph.XYPlotLayer)
+            if(obj is XYPlotLayer)
             {
-              Graph.XYPlotLayer layer = (Graph.XYPlotLayer)obj;
+              XYPlotLayer layer = (XYPlotLayer)obj;
               if(ti.m_LayerNumber>=0 && ti.m_LayerNumber<layer.ParentLayerList.Count)
                 layer = layer.ParentLayerList[ti.m_LayerNumber];
 
@@ -940,8 +944,8 @@ namespace Altaxo.Graph
 
                 if(ti.m_PlotLabelStyle!=null && !ti.m_PlotLabelStyleIsPropColName && pa is XYColumnPlotItem)
                 {
-                  Graph.XYColumnPlotItemLabelTextStyle style = Graph.XYColumnPlotItemLabelTextStyle.YS;
-                  try { style = (Graph.XYColumnPlotItemLabelTextStyle)Enum.Parse(typeof(Graph.XYColumnPlotItemLabelTextStyle),ti.m_PlotLabelStyle,true); }
+                  XYColumnPlotItemLabelTextStyle style = XYColumnPlotItemLabelTextStyle.YS;
+                  try { style = (XYColumnPlotItemLabelTextStyle)Enum.Parse(typeof(XYColumnPlotItemLabelTextStyle),ti.m_PlotLabelStyle,true); }
                   catch(Exception) {}
                   ti.PlotCurveName = ((XYColumnPlotItem)pa).GetName(style);
                 }
@@ -973,9 +977,9 @@ namespace Altaxo.Graph
 
           else if(ti.IsSymbol)
           {
-            if(obj is Altaxo.Graph.XYPlotLayer)
+            if(obj is XYPlotLayer)
             {
-              Graph.XYPlotLayer layer = (Graph.XYPlotLayer)obj;
+              XYPlotLayer layer = (XYPlotLayer)obj;
               if(ti.m_LayerNumber>=0 && ti.m_LayerNumber<layer.ParentLayerList.Count)
                 layer = layer.ParentLayerList[ti.m_LayerNumber];
 
@@ -1343,9 +1347,9 @@ namespace Altaxo.Graph
             currPosX += ti.m_Width;
           } // end of if ti.IsText
 
-          else if(ti.IsSymbol && obj is Altaxo.Graph.XYPlotLayer)
+          else if(ti.IsSymbol && obj is XYPlotLayer)
           {
-            Graph.XYPlotLayer layer = (Graph.XYPlotLayer)obj;
+            XYPlotLayer layer = (XYPlotLayer)obj;
             if(ti.m_LayerNumber>=0 && ti.m_LayerNumber<layer.ParentLayerList.Count)
               layer = layer.ParentLayerList[ti.m_LayerNumber];
 

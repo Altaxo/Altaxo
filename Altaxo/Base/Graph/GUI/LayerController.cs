@@ -23,6 +23,12 @@
 using System;
 using System.Collections.Generic;
 
+using Altaxo.Graph.G2D;
+using Altaxo.Graph.G2D.AxisStyles;
+using Altaxo.Graph.G2D.Plot;
+using Altaxo.Graph.G2D.Plot.Data;
+using Altaxo.Graph.G2D.Plot.Styles;
+
 namespace Altaxo.Graph.GUI
 {
   #region Interfaces

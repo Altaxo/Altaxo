@@ -28,8 +28,10 @@ using Altaxo.Data;
 using Altaxo.Graph.Scales.Boundaries;
 
 
-namespace Altaxo.Graph
+namespace Altaxo.Graph.G2D.Plot
 {
+  using Styles;
+  using Data;
 
   /// <summary>
   /// Association of data and style specialized for x-y-plots of column data.
@@ -324,9 +326,9 @@ namespace Altaxo.Graph
       return stb.ToString();
     }
 
-    private string GetName(Data.IReadableColumn col, int level)
+    private string GetName(Altaxo.Data.IReadableColumn col, int level)
     {
-      if (col is Data.DataColumn)
+      if (col is Altaxo.Data.DataColumn)
       {
         Altaxo.Data.DataTable table = Altaxo.Data.DataTable.GetParentDataTableOf((DataColumn)col);
         string tablename = table == null ? string.Empty : table.Name + "\\";
