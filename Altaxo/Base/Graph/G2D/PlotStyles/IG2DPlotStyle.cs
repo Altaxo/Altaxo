@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
-using Altaxo.Graph.G2D.Plot.Data;
+using Altaxo.Graph.Gdi.Plot.Data;
 
-namespace Altaxo.Graph.G2D.Plot.Styles
+namespace Altaxo.Graph.Gdi.Plot.Styles
 {
   using PlotGroups;
   using Groups;
@@ -17,7 +17,7 @@ namespace Altaxo.Graph.G2D.Plot.Styles
     /// </summary>
     /// <param name="ExternalGroups">External plot groups. This collection remains unchanged.</param>
     /// <param name="localGroups">Local plot groups. To this collection PlotGroupStyles are added if neccessary.</param>
-    void AddLocalGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups);
+    void AddLocalGroupStyles(G2DPlotGroupStyleCollection externalGroups, G2DPlotGroupStyleCollection localGroups);
 
 
     /// <summary>
@@ -25,7 +25,7 @@ namespace Altaxo.Graph.G2D.Plot.Styles
     /// </summary>
     /// <param name="externalGroups"></param>
     /// <param name="localGroups"></param>
-    void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups);
+    void PrepareGroupStyles(G2DPlotGroupStyleCollection externalGroups, G2DPlotGroupStyleCollection localGroups);
 
 
     /// <summary>
@@ -33,7 +33,7 @@ namespace Altaxo.Graph.G2D.Plot.Styles
     /// </summary>
     /// <param name="externalGroups"></param>
     /// <param name="localGroups"></param>
-    void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups);
+    void ApplyGroupStyles(G2DPlotGroupStyleCollection externalGroups, G2DPlotGroupStyleCollection localGroups);
 
     /// <summary>
     /// Paints the style.

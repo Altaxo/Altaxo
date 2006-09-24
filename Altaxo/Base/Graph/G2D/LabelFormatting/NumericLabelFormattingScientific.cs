@@ -23,7 +23,7 @@
 using System;
 using System.Drawing;
 
-namespace Altaxo.Graph.G2D.LabelFormatting
+namespace Altaxo.Graph.Gdi.LabelFormatting
 {
   /// <summary>
   /// Formats a numeric item in scientific notation, i.e. in the form mantissa*10^exponent.

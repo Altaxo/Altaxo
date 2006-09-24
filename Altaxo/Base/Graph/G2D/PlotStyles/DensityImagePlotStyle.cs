@@ -26,7 +26,7 @@ using System.Drawing.Drawing2D;
 using Altaxo.Serialization;
 using Altaxo.Graph.Scales.Boundaries;
 
-namespace Altaxo.Graph.G2D.Plot.Styles
+namespace Altaxo.Graph.Gdi.Plot.Styles
 {
   using Plot.Data;
 

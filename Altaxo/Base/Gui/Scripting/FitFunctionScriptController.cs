@@ -23,7 +23,7 @@
 using System;
 using System.Text.RegularExpressions;
 using Altaxo.Scripting;
-using Altaxo.Graph.G2D;
+using Altaxo.Graph.Gdi;
 using Altaxo.Main.GUI;
 
 namespace Altaxo.Gui.Scripting

@@ -26,7 +26,7 @@ using System.Text;
 
 using System.Drawing;
 
-namespace Altaxo.Graph.G2D.AxisStyles
+namespace Altaxo.Graph.Gdi.AxisStyles
 {
   public class GridStyle : ICloneable, Main.IChangedEventSource
   {

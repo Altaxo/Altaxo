@@ -26,7 +26,7 @@ using System.Runtime.Serialization;
 using Altaxo.Serialization;
 using Altaxo.Main;
 
-using Altaxo.Graph.G2D;
+using Altaxo.Graph.Gdi;
 
 namespace Altaxo
 {
@@ -43,7 +43,7 @@ namespace Altaxo
   {
     protected Altaxo.Data.DataTableCollection m_DataSet = null; // The root of all the data
 
-    protected Altaxo.Graph.G2D.GraphDocumentCollection m_GraphSet = null; // all graphs are stored here
+    protected Altaxo.Graph.Gdi.GraphDocumentCollection m_GraphSet = null; // all graphs are stored here
 
     protected Altaxo.Worksheet.WorksheetLayoutCollection m_TableLayoutList = null;
 
@@ -289,7 +289,7 @@ namespace Altaxo
     {
       get { return m_DataSet; }
     }
-    public Altaxo.Graph.G2D.GraphDocumentCollection GraphDocumentCollection
+    public Altaxo.Graph.Gdi.GraphDocumentCollection GraphDocumentCollection
     {
       get { return m_GraphSet; }
     }
@@ -345,7 +345,7 @@ namespace Altaxo
       return dt1;
     }
 
-    public Altaxo.Graph.G2D.GraphDocument CreateNewGraphDocument()
+    public Altaxo.Graph.Gdi.GraphDocument CreateNewGraphDocument()
     {
       GraphDocument doc = new GraphDocument();
       GraphDocumentCollection.Add(doc);

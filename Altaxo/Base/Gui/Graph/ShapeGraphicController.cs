@@ -25,8 +25,8 @@ using System.Collections.Generic;
 using System.Text;
 
 using Altaxo.Main.GUI;
-using Altaxo.Graph.G2D;
-using Altaxo.Graph.G2D.Shapes;
+using Altaxo.Graph.Gdi;
+using Altaxo.Graph.Gdi.Shapes;
 
 namespace Altaxo.Gui.Graph
 {

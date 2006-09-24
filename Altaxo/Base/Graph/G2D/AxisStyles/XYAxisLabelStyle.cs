@@ -26,12 +26,12 @@ using System.Drawing.Drawing2D;
 using Altaxo.Serialization;
 using Altaxo.Graph.Scales;
 using Altaxo.Data;
-using Altaxo.Graph.G2D.BackgroundStyles;
+using Altaxo.Graph.Gdi.BackgroundStyles;
 
 
-namespace Altaxo.Graph.G2D.AxisStyles
+namespace Altaxo.Graph.Gdi.AxisStyles
 {
-  using G2D.LabelFormatting;
+  using Gdi.LabelFormatting;
 
   /// <summary>
   /// Summary description for AbstractLabelFormatting.
@@ -59,11 +59,11 @@ namespace Altaxo.Graph.G2D.AxisStyles
     protected double _rotation;
 
     /// <summary>The style for the background.</summary>
-    protected G2D.BackgroundStyles.IBackgroundStyle _backgroundStyle;
+    protected Gdi.BackgroundStyles.IBackgroundStyle _backgroundStyle;
 
     protected bool _automaticRotationShift=true;
 
-    ILabelFormatting _labelFormatting = new G2D.LabelFormatting.NumericLabelFormattingAuto();
+    ILabelFormatting _labelFormatting = new Gdi.LabelFormatting.NumericLabelFormattingAuto();
 
     #region Serialization
     /// <summary>Used to serialize the XYAxisLabelStyle Version 0.</summary>
@@ -362,7 +362,7 @@ namespace Altaxo.Graph.G2D.AxisStyles
     }
 
     /// <summary>The background style.</summary>
-    public G2D.BackgroundStyles.IBackgroundStyle BackgroundStyle
+    public Gdi.BackgroundStyles.IBackgroundStyle BackgroundStyle
     {
       get
       {

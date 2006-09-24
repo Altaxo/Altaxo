@@ -22,7 +22,7 @@
 
 using System;
 using System.Drawing;
-using Altaxo.Graph.G2D.AxisStyles;
+using Altaxo.Graph.Gdi.AxisStyles;
 
 namespace Altaxo.Graph.GUI
 {

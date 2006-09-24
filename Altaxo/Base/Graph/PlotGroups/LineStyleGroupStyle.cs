@@ -6,7 +6,7 @@ using System.Drawing.Drawing2D;
 
 namespace Altaxo.Graph.PlotGroups
 {
-  using G2D.Plot.Groups;
+  using Gdi.Plot.Groups;
 
   public class LineStyleGroupStyle : IPlotGroupStyle
   {
@@ -134,8 +134,8 @@ namespace Altaxo.Graph.PlotGroups
     #region Static helpers
 
     public static void AddLocalGroupStyle(
-   PlotGroupStyleCollection externalGroups,
-   PlotGroupStyleCollection localGroups)
+   IPlotGroupStyleCollection externalGroups,
+   IPlotGroupStyleCollection localGroups)
     {
       if (PlotGroupStyle.ShouldAddLocalGroupStyle(externalGroups, localGroups, typeof(LineStyleGroupStyle)))
         localGroups.Add(new LineStyleGroupStyle());
@@ -144,8 +144,8 @@ namespace Altaxo.Graph.PlotGroups
 
     public delegate DashStyle Getter();
     public static void PrepareStyle(
-      PlotGroupStyleCollection externalGroups,
-      PlotGroupStyleCollection localGroups,
+      IPlotGroupStyleCollection externalGroups,
+      IPlotGroupStyleCollection localGroups,
       Getter getter)
     {
       if (!externalGroups.ContainsType(typeof(LineStyleGroupStyle))
@@ -167,12 +167,12 @@ namespace Altaxo.Graph.PlotGroups
 
     public delegate void Setter(DashStyle c);
     public static void ApplyStyle(
-      PlotGroupStyleCollection externalGroups,
-      PlotGroupStyleCollection localGroups,
+      IPlotGroupStyleCollection externalGroups,
+      IPlotGroupStyleCollection localGroups,
       Setter setter)
     {
       LineStyleGroupStyle grpStyle = null;
-      PlotGroupStyleCollection grpColl = null;
+      IPlotGroupStyleCollection grpColl = null;
       if (externalGroups.ContainsType(typeof(LineStyleGroupStyle)))
         grpColl = externalGroups;
       else if (localGroups != null && localGroups.ContainsType(typeof(LineStyleGroupStyle)))

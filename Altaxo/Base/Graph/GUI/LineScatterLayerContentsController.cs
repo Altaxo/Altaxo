@@ -26,10 +26,10 @@ using System.Drawing;
 using System.Collections;
 using System.Collections.Generic;
 using Altaxo.Collections;
-using Altaxo.Graph.G2D;
-using Altaxo.Graph.G2D.Plot;
-using Altaxo.Graph.G2D.Plot.Data;
-using Altaxo.Graph.G2D.Plot.Styles;
+using Altaxo.Graph.Gdi;
+using Altaxo.Graph.Gdi.Plot;
+using Altaxo.Graph.Gdi.Plot.Data;
+using Altaxo.Graph.Gdi.Plot.Styles;
 
 
 

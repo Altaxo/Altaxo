@@ -27,7 +27,7 @@ using Altaxo.Serialization;
 using Altaxo.Graph.Scales.Boundaries;
 
 
-namespace Altaxo.Graph.G2D.Plot
+namespace Altaxo.Graph.Gdi.Plot
 {
   using Groups;
   using Styles;
@@ -297,7 +297,7 @@ namespace Altaxo.Graph.G2D.Plot
         this.m_PlotAssociation.SetXBoundsFromTemplate(val as NumericalBoundaries);
     }
 
-    public void MergeXBoundsInto(IPlotArea layer, IPhysicalBoundaries pb)
+    public void MergeXBoundsInto(IPhysicalBoundaries pb)
     {
       if(pb is NumericalBoundaries)
         this.m_PlotAssociation.MergeXBoundsInto(pb as NumericalBoundaries);
@@ -321,7 +321,7 @@ namespace Altaxo.Graph.G2D.Plot
         this.m_PlotAssociation.SetYBoundsFromTemplate(val as NumericalBoundaries);
     }
 
-    public void MergeYBoundsInto(IPlotArea layer, IPhysicalBoundaries pb)
+    public void MergeYBoundsInto(IPhysicalBoundaries pb)
     {
       if(pb is NumericalBoundaries)
         this.m_PlotAssociation.MergeYBoundsInto(pb as NumericalBoundaries);
@@ -329,17 +329,17 @@ namespace Altaxo.Graph.G2D.Plot
 
     #endregion
 
-    public override void CollectStyles(PlotGroupStyleCollection styles)
+    public override void CollectStyles(G2DPlotGroupStyleCollection styles)
     {
       
     }
 
-    public override void PrepareStyles(PlotGroupStyleCollection externalGroups)
+    public override void PrepareStyles(G2DPlotGroupStyleCollection externalGroups)
     {
       
     }
 
-    public override void ApplyStyles(PlotGroupStyleCollection externalGroups)
+    public override void ApplyStyles(G2DPlotGroupStyleCollection externalGroups)
     {
       
     }

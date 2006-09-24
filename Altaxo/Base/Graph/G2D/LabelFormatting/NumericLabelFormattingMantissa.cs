@@ -22,7 +22,7 @@
 
 using System;
 
-namespace Altaxo.Graph.G2D.LabelFormatting
+namespace Altaxo.Graph.Gdi.LabelFormatting
 {
   /// <summary>
   /// Displays only the mantissa of a number. Usefull for minor ticks on logarithmic axes.

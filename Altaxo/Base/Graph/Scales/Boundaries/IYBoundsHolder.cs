@@ -22,7 +22,7 @@
 
 using System;
 
-using Altaxo.Graph.G2D;
+using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Graph.Scales.Boundaries
 {
@@ -40,9 +40,8 @@ namespace Altaxo.Graph.Scales.Boundaries
     /// This merges the y boundary of the object with the boundary pb. The boundary pb is updated so that
     /// it now includes the y boundary range of the object.
     /// </summary>
-    /// <param name="layer">The plot layer on which the item will be shown.</param>
     /// <param name="pb">The boundary object pb which is updated to include the y boundaries of the object.</param>
-    void MergeYBoundsInto(IPlotArea layer, IPhysicalBoundaries pb);
+    void MergeYBoundsInto(IPhysicalBoundaries pb);
   }
 
 }

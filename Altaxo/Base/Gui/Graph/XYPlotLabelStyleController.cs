@@ -25,14 +25,14 @@ using System.Collections.Generic;
 using Altaxo.Collections;
 using Altaxo.Serialization;
 using System.Drawing;
-using Altaxo.Graph.G2D;
+using Altaxo.Graph.Gdi;
 using Altaxo.Graph.GUI;
 using Altaxo.Main.GUI;
 using Altaxo.Data;
 
 using Altaxo.Graph;
-using Altaxo.Graph.G2D.BackgroundStyles;
-using Altaxo.Graph.G2D.Plot.Styles;
+using Altaxo.Graph.Gdi.BackgroundStyles;
+using Altaxo.Graph.Gdi.Plot.Styles;
 
 namespace Altaxo.Gui.Graph
 {

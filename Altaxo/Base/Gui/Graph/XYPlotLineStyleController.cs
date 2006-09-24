@@ -29,8 +29,8 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using Altaxo.Collections;
 using Altaxo.Graph;
-using Altaxo.Graph.G2D;
-using Altaxo.Graph.G2D.Plot.Styles;
+using Altaxo.Graph.Gdi;
+using Altaxo.Graph.Gdi.Plot.Styles;
 using Altaxo.Main.GUI;
 using Altaxo.Gui.Common.Drawing;
 
@@ -234,7 +234,7 @@ namespace Altaxo.Gui.Graph
     public void SetLineConnect()
     {
 
-      string [] names = System.Enum.GetNames(typeof(Altaxo.Graph.G2D.Plot.Styles.XYPlotLineStyles.ConnectionStyle));
+      string [] names = System.Enum.GetNames(typeof(Altaxo.Graph.Gdi.Plot.Styles.XYPlotLineStyles.ConnectionStyle));
     
       _view.InitializeLineConnect(names,_tempDoc.Connection.ToString());
     }
@@ -303,7 +303,7 @@ namespace Altaxo.Gui.Graph
 
        
         // Line Connect
-        _doc.Connection = (Altaxo.Graph.G2D.Plot.Styles.XYPlotLineStyles.ConnectionStyle)Enum.Parse(typeof(Altaxo.Graph.G2D.Plot.Styles.XYPlotLineStyles.ConnectionStyle), _view.LineConnect);
+        _doc.Connection = (Altaxo.Graph.Gdi.Plot.Styles.XYPlotLineStyles.ConnectionStyle)Enum.Parse(typeof(Altaxo.Graph.Gdi.Plot.Styles.XYPlotLineStyles.ConnectionStyle), _view.LineConnect);
 
 
         // Fill Area

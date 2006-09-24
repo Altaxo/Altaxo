@@ -32,7 +32,7 @@ using Altaxo.Serialization;
 using Altaxo.Main;
 using Altaxo.Graph.Scales;
 
-namespace Altaxo.Graph.G2D
+namespace Altaxo.Graph.Gdi
 {
   /// <summary>
   /// This is the class that holds all elements of a graph, especially one ore more layers.

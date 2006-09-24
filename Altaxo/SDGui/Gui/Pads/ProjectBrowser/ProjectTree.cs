@@ -88,7 +88,7 @@ namespace Altaxo.Gui.Pads
         node.Tag = table.Name;
       }
 
-      foreach (Altaxo.Graph.G2D.GraphDocument graph in Current.Project.GraphDocumentCollection)
+      foreach (Altaxo.Graph.Gdi.GraphDocument graph in Current.Project.GraphDocumentCollection)
       {
         TreeNode node = tablesNode.Nodes.Add(graph.Name);
         node.Tag = graph.Name;
@@ -277,7 +277,7 @@ namespace Altaxo.Gui.Pads
     private void GraphDocumentCollection_Changed(object sender, EventArgs e)
     {
       this.graphsNode.Nodes.Clear();
-      foreach (Altaxo.Graph.G2D.GraphDocument item in Current.Project.GraphDocumentCollection)
+      foreach (Altaxo.Graph.Gdi.GraphDocument item in Current.Project.GraphDocumentCollection)
       {
         TreeNode node = graphsNode.Nodes.Add(item.Name);
         node.Tag = item.Name;

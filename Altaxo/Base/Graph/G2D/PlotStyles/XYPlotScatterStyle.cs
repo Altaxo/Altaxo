@@ -24,10 +24,10 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using Altaxo.Graph.G2D.Plot.Styles.XYPlotScatterStyles;
+using Altaxo.Graph.Gdi.Plot.Styles.XYPlotScatterStyles;
 using Altaxo.Serialization;
 
-namespace Altaxo.Graph.G2D.Plot.Styles
+namespace Altaxo.Graph.Gdi.Plot.Styles
 {
   using PlotGroups;
   using Plot.Groups;
@@ -846,14 +846,14 @@ namespace Altaxo.Graph.G2D.Plot.Styles
 
     #region IPlotStyle Members
 
-    public void AddLocalGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
+    public void AddLocalGroupStyles(G2DPlotGroupStyleCollection externalGroups, G2DPlotGroupStyleCollection localGroups)
     {
       ColorGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
       SymbolSizeGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
       SymbolShapeStyleGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
     }
 
-    public void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
+    public void PrepareGroupStyles(G2DPlotGroupStyleCollection externalGroups, G2DPlotGroupStyleCollection localGroups)
     {
       if(this.IsColorProvider)
         ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate() { return PlotColors.Colors.GetPlotColor(this.Color); });
@@ -865,7 +865,7 @@ namespace Altaxo.Graph.G2D.Plot.Styles
       
     }
 
-    public void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
+    public void ApplyGroupStyles(G2DPlotGroupStyleCollection externalGroups, G2DPlotGroupStyleCollection localGroups)
     {
       if (this.IsColorReceiver)
         ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(PlotColor c) { this.Color = c; });

@@ -26,7 +26,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 
-using Altaxo.Graph.G2D;
+using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Graph.Procedures
 {

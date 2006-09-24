@@ -1301,9 +1301,11 @@
     <Compile Include="Graph\PlotGroups\CoordinateTransformingStyleBase.cs" />
     <Compile Include="Graph\PlotGroups\ICoordinateTransformingGroupStyle.cs" />
     <Compile Include="Graph\PlotGroups\IPlotGroupStyle.cs" />
+    <Compile Include="Graph\PlotGroups\IPlotGroupStyleCollection.cs" />
     <Compile Include="Graph\PlotGroups\LineStyleGroupStyle.cs" />
     <Compile Include="Graph\PlotGroups\PlotGroupStrictness.cs" />
     <Compile Include="Graph\PlotGroups\PlotGroupStyle.cs" />
+    <Compile Include="Graph\PlotGroups\PlotGroupStyleCollectionBase.cs" />
     <Compile Include="Graph\PlotGroups\RelativeStackTransform.cs" />
     <Compile Include="Graph\PlotGroups\SymbolShapeStyleGroupStyle.cs" />
     <Compile Include="Graph\PlotGroups\SymbolSizeGroupStyle.cs" />
@@ -1360,7 +1362,6 @@
     <Folder Include="Calc\FitFunctions\Relaxation\.svn\tmp\text-base\" />
     <Folder Include="Calc\FitFunctions\Relaxation\.svn\tmp\wcprops\" />
     <Folder Include="Calc\FitFunctions\Relaxation\.svn\wcprops\" />
-    <Folder Include="Drawing\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

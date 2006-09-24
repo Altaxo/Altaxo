@@ -5,11 +5,11 @@ using System.Text;
 using Altaxo.Data;
 using Altaxo.Graph.Scales.Boundaries;
 
-namespace Altaxo.Graph.G2D.Plot.Groups
+namespace Altaxo.Graph.Gdi.Plot.Groups
 {
   using Plot.Data;
 
-  public class WaterfallTransform : ICoordinateTransformingGroupStyle
+  public class WaterfallTransform : IG2DCoordinateTransformingGroupStyle
   {
     double _xinc=0;
     double _yinc=0;
@@ -30,7 +30,7 @@ namespace Altaxo.Graph.G2D.Plot.Groups
     {
       if(!(pb is NumericalBoundaries))
       {
-        CoordinateTransformingStyleBase.MergeXBoundsInto(layer, pb,coll);
+        CoordinateTransformingStyleBase.MergeXBoundsInto(pb,coll);
         return;
       }
 
@@ -43,7 +43,7 @@ namespace Altaxo.Graph.G2D.Plot.Groups
         if (pi is IXBoundsHolder)
         {
           IXBoundsHolder xbpi = (IXBoundsHolder)pi;
-          xbpi.MergeXBoundsInto(layer, xbounds);
+          xbpi.MergeXBoundsInto(xbounds);
         }
         if(pi is G2DPlotItem)
           nItems++;
@@ -63,7 +63,7 @@ namespace Altaxo.Graph.G2D.Plot.Groups
         {
           IXBoundsHolder xbpi = (IXBoundsHolder)pi;
           xbounds.Reset();
-          xbpi.MergeXBoundsInto(layer, xbounds);
+          xbpi.MergeXBoundsInto(xbounds);
           xbounds.Shift(_xinc * idx);
           pb.Add(xbounds);
         }

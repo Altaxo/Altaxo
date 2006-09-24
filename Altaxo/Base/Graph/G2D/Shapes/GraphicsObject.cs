@@ -26,7 +26,7 @@ using System.Drawing.Drawing2D;
 using Altaxo.Serialization;
 
 
-namespace Altaxo.Graph.G2D.Shapes
+namespace Altaxo.Graph.Gdi.Shapes
 {
   /// <summary>
   /// GraphicsObject is the abstract base class for general graphical objects on the layer,

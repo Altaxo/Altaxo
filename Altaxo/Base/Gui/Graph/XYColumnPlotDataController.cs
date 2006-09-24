@@ -21,8 +21,8 @@
 #endregion
 
 using System;
-using Altaxo.Graph.G2D;
-using Altaxo.Graph.G2D.Plot.Data;
+using Altaxo.Graph.Gdi;
+using Altaxo.Graph.Gdi.Plot.Data;
 using Altaxo.Main.GUI;
 
 namespace Altaxo.Gui.Graph

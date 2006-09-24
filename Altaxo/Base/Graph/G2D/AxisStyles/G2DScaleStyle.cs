@@ -29,9 +29,9 @@ using System.Drawing.Drawing2D;
 using Altaxo.Serialization;
 using Altaxo.Graph.Scales;
 using Altaxo.Graph.Scales.Boundaries;
-using Altaxo.Graph.G2D.Shapes;
+using Altaxo.Graph.Gdi.Shapes;
 
-namespace Altaxo.Graph.G2D.AxisStyles
+namespace Altaxo.Graph.Gdi.AxisStyles
 {
   /// <summary>
   /// AxisStylesSummary collects all styles that correspond to one axis scale (i.e. either x-axis or y-axis)

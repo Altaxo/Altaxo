@@ -24,7 +24,7 @@ using System;
 using Altaxo;
 using Altaxo.Main;
 
-namespace Altaxo.Graph.G2D
+namespace Altaxo.Graph.Gdi
 {
   public class GraphDocumentCollection : 
     System.Runtime.Serialization.IDeserializationCallback,

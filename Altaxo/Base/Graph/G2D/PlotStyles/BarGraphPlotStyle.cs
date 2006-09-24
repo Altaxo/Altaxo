@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
 
-namespace Altaxo.Graph.G2D.Plot.Styles
+namespace Altaxo.Graph.Gdi.Plot.Styles
 {
   using PlotGroups;
   using Plot.Groups;
@@ -37,12 +37,12 @@ namespace Altaxo.Graph.G2D.Plot.Styles
     #region IG2DPlotStyle Members
 
  
-    public void AddLocalGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
+    public void AddLocalGroupStyles(G2DPlotGroupStyleCollection externalGroups, G2DPlotGroupStyleCollection localGroups)
     {
       BarWidthPositionGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
     }
 
-    public void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
+    public void PrepareGroupStyles(G2DPlotGroupStyleCollection externalGroups, G2DPlotGroupStyleCollection localGroups)
     {
       BarWidthPositionGroupStyle.IntendToApply(externalGroups, localGroups);
       BarWidthPositionGroupStyle bwp = PlotGroupStyle.GetStyleToInitialize<BarWidthPositionGroupStyle>(externalGroups, localGroups);
@@ -50,7 +50,7 @@ namespace Altaxo.Graph.G2D.Plot.Styles
         bwp.Initialize(_relGapWidth, _relBoundsWidth);
     }
 
-    public void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
+    public void ApplyGroupStyles(G2DPlotGroupStyleCollection externalGroups, G2DPlotGroupStyleCollection localGroups)
     {
 
       BarWidthPositionGroupStyle bwp = PlotGroupStyle.GetStyleToApply<BarWidthPositionGroupStyle>(externalGroups, localGroups);

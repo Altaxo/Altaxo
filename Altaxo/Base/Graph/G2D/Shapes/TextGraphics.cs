@@ -28,7 +28,7 @@ using System.Text.RegularExpressions;
 
 
 
-namespace Altaxo.Graph.G2D.Shapes
+namespace Altaxo.Graph.Gdi.Shapes
 {
   using Plot;
   using Plot.Data;

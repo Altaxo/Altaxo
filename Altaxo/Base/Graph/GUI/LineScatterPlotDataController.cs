@@ -22,7 +22,7 @@
 
 using System;
 
-using Altaxo.Graph.G2D.Plot.Data;
+using Altaxo.Graph.Gdi.Plot.Data;
 
 namespace Altaxo.Graph.GUI
 {

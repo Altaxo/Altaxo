@@ -21,8 +21,8 @@
 #endregion
 
 using System;
-using Altaxo.Graph.G2D;
-using Altaxo.Graph.G2D.AxisStyles;
+using Altaxo.Graph.Gdi;
+using Altaxo.Graph.Gdi.AxisStyles;
 
 using Altaxo.Gui.Common.Drawing;
 using Altaxo.Main.GUI;

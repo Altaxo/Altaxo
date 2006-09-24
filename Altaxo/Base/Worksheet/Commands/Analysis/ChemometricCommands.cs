@@ -29,11 +29,11 @@ using Altaxo.Calc.Regression.Multivariate;
 using Altaxo.Data;
 using Altaxo.Main.GUI;
 
-using Altaxo.Graph.G2D;
-using Altaxo.Graph.G2D.BackgroundStyles;
-using Altaxo.Graph.G2D.Plot;
-using Altaxo.Graph.G2D.Plot.Data;
-using Altaxo.Graph.G2D.Plot.Styles;
+using Altaxo.Graph.Gdi;
+using Altaxo.Graph.Gdi.BackgroundStyles;
+using Altaxo.Graph.Gdi.Plot;
+using Altaxo.Graph.Gdi.Plot.Data;
+using Altaxo.Graph.Gdi.Plot.Styles;
 
 namespace Altaxo.Worksheet.Commands.Analysis
 {

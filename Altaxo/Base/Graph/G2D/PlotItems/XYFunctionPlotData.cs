@@ -24,7 +24,7 @@ using System;
 using System.Drawing;
 
 
-namespace Altaxo.Graph.G2D.Plot.Data
+namespace Altaxo.Graph.Gdi.Plot.Data
 {
   using Scales;
 

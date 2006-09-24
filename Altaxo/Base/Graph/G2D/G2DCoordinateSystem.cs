@@ -4,7 +4,7 @@ using System.Text;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 
-namespace Altaxo.Graph.G2D
+namespace Altaxo.Graph.Gdi
 {
   public abstract class G2DCoordinateSystem : ICloneable
   {

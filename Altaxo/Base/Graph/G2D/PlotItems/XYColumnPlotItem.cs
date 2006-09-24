@@ -28,7 +28,7 @@ using Altaxo.Data;
 using Altaxo.Graph.Scales.Boundaries;
 
 
-namespace Altaxo.Graph.G2D.Plot
+namespace Altaxo.Graph.Gdi.Plot
 {
   using Styles;
   using Data;
@@ -390,7 +390,7 @@ namespace Altaxo.Graph.G2D.Plot
 
 
 
-    public void MergeXBoundsInto(IPlotArea layer, IPhysicalBoundaries pb)
+    public void MergeXBoundsInto(IPhysicalBoundaries pb)
     {
       this._plotData.MergeXBoundsInto(pb);
     }
@@ -410,7 +410,7 @@ namespace Altaxo.Graph.G2D.Plot
 
 
 
-    public void MergeYBoundsInto(IPlotArea layer, IPhysicalBoundaries pb)
+    public void MergeYBoundsInto(IPhysicalBoundaries pb)
     {
       this._plotData.MergeYBoundsInto(pb);
     }

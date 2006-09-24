@@ -4,7 +4,7 @@ using System.Text;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 
-namespace Altaxo.Graph.G2D.Plot
+namespace Altaxo.Graph.Gdi.Plot
 {
   using PlotGroups;
   using Groups;
@@ -20,7 +20,7 @@ namespace Altaxo.Graph.G2D.Plot
     Processed2DPlotData _cachedPlotDataUsedForPainting;
 
     [NonSerialized]
-    PlotGroupStyleCollection _localGroups;
+    G2DPlotGroupStyleCollection _localGroups;
 
     public override object StyleObject
     {
@@ -101,16 +101,16 @@ namespace Altaxo.Graph.G2D.Plot
 
     #region IPlotItem Members
 
-    public override void CollectStyles(PlotGroupStyleCollection styles)
+    public override void CollectStyles(G2DPlotGroupStyleCollection styles)
     {
       // first add missing local group styles
       foreach (IG2DPlotStyle sps in _plotStyles)
         sps.AddLocalGroupStyles(null, styles);
     }
 
-    public override void PrepareStyles(PlotGroupStyleCollection externalGroups)
+    public override void PrepareStyles(G2DPlotGroupStyleCollection externalGroups)
     {
-      _localGroups = new PlotGroupStyleCollection();
+      _localGroups = new G2DPlotGroupStyleCollection();
       
       // first add missing local group styles
       foreach (IG2DPlotStyle sps in _plotStyles)
@@ -122,7 +122,7 @@ namespace Altaxo.Graph.G2D.Plot
         sps.PrepareGroupStyles(externalGroups, _localGroups);
     }
 
-    public override void ApplyStyles(PlotGroupStyleCollection externalGroups)
+    public override void ApplyStyles(G2DPlotGroupStyleCollection externalGroups)
     {
       
       foreach (IG2DPlotStyle sps in _plotStyles)

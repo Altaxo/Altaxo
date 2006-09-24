@@ -21,7 +21,7 @@
 #endregion
 
 using System;
-using Altaxo.Graph.G2D;
+using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Graph.Scales.Boundaries
 {
@@ -39,9 +39,8 @@ namespace Altaxo.Graph.Scales.Boundaries
     /// This merges the x boundary of the object with the boundary pb. The boundary pb is updated so that
     /// it now includes the x boundary range of the object.
     /// </summary>
-    /// <param name="layer">The plot layer on which the item will be shown.</param>
     /// <param name="pb">The boundary object pb which is updated to include the x boundaries of the object.</param>
-    void MergeXBoundsInto(IPlotArea layer, IPhysicalBoundaries pb);
+    void MergeXBoundsInto(IPhysicalBoundaries pb);
   }
 
 }

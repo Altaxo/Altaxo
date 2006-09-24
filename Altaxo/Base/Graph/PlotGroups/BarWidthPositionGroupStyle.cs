@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Altaxo.Graph.PlotGroups
 {
-  using G2D.Plot.Groups;
+  using Gdi.Plot.Groups;
 
   public class BarWidthPositionGroupStyle : IPlotGroupStyle
   {
@@ -124,14 +124,14 @@ namespace Altaxo.Graph.PlotGroups
   
 
     public static void AddLocalGroupStyle(
-     PlotGroupStyleCollection externalGroups,
-     PlotGroupStyleCollection localGroups)
+     IPlotGroupStyleCollection externalGroups,
+     IPlotGroupStyleCollection localGroups)
     {
       if (PlotGroupStyle.ShouldAddLocalGroupStyle(externalGroups, localGroups, typeof(BarWidthPositionGroupStyle)))
         localGroups.Add(new BarWidthPositionGroupStyle());
     }
 
-    public static void IntendToApply(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
+    public static void IntendToApply(IPlotGroupStyleCollection externalGroups, IPlotGroupStyleCollection localGroups)
     {
       if (externalGroups != null && externalGroups.ContainsType(typeof(BarWidthPositionGroupStyle)))
       {

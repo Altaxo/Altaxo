@@ -661,7 +661,7 @@ namespace Altaxo.Main
     /// </summary>
     /// <param name="graph">The graph document.</param>
     /// <returns>The view content for the provided graph document.</returns>
-    public Altaxo.Graph.GUI.IGraphController CreateNewGraph(Altaxo.Graph.G2D.GraphDocument graph)
+    public Altaxo.Graph.GUI.IGraphController CreateNewGraph(Altaxo.Graph.Gdi.GraphDocument graph)
     {
       //Altaxo.Main.GUI.IWorkbenchWindowController wbv_controller = new Altaxo.Main.GUI.WorkbenchWindowController();
       //Altaxo.Main.GUI.WorkbenchForm wbvform = new Altaxo.Main.GUI.WorkbenchForm(this.View.Form);
@@ -691,7 +691,7 @@ namespace Altaxo.Main
     /// </summary>
     /// <param name="graph">The graph for which a view must be found.</param>
     /// <returns>The view content for the provided graph.</returns>
-    public object OpenOrCreateGraphForGraphDocument(Altaxo.Graph.G2D.GraphDocument graph)
+    public object OpenOrCreateGraphForGraphDocument(Altaxo.Graph.Gdi.GraphDocument graph)
     {
 
       // if a content exist that show that graph, activate that content
@@ -714,7 +714,7 @@ namespace Altaxo.Main
     /// <param name="graph">The graph document to delete.</param>
     /// <param name="force">If true, the graph document is deleted without safety question,
     /// if false, the user is ask before the graph document is deleted.</param>
-    public void DeleteGraphDocument(Altaxo.Graph.G2D.GraphDocument graph, bool force)
+    public void DeleteGraphDocument(Altaxo.Graph.Gdi.GraphDocument graph, bool force)
     {
       if (!force &&
         System.Windows.Forms.DialogResult.No == System.Windows.Forms.MessageBox.Show(

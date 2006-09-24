@@ -29,7 +29,7 @@ using Altaxo.Serialization;
 using Altaxo.Graph.Scales;
 using Altaxo.Graph.Scales.Boundaries;
 
-namespace Altaxo.Graph.G2D
+namespace Altaxo.Graph.Gdi
 {
   public class XYPlotLayerPositionAndSize : System.ICloneable, Altaxo.Main.IChangedEventSource
   {

@@ -24,10 +24,10 @@ using System;
 using Altaxo.Calc;
 using Altaxo.Calc.Regression;
 using Altaxo.Calc.Probability;
-using Altaxo.Graph.G2D;
-using Altaxo.Graph.G2D.Plot;
-using Altaxo.Graph.G2D.Plot.Data;
-using Altaxo.Graph.G2D.Plot.Styles;
+using Altaxo.Graph.Gdi;
+using Altaxo.Graph.Gdi.Plot;
+using Altaxo.Graph.Gdi.Plot.Data;
+using Altaxo.Graph.Gdi.Plot.Styles;
 
 
 namespace Altaxo.Graph.Procedures

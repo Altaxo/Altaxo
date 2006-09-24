@@ -25,7 +25,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Runtime.Serialization;
 
-namespace Altaxo.Graph.G2D
+namespace Altaxo.Graph.Gdi
 {
   #region PenHolder
   /// <summary>

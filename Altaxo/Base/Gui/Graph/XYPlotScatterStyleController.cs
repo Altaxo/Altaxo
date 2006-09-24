@@ -26,9 +26,9 @@ using System.Drawing.Drawing2D;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
-using Altaxo.Graph.G2D.Plot.Styles;
-using Altaxo.Graph.G2D.Plot;
-using Altaxo.Graph.G2D;
+using Altaxo.Graph.Gdi.Plot.Styles;
+using Altaxo.Graph.Gdi.Plot;
+using Altaxo.Graph.Gdi;
 using Altaxo.Graph;
 using Altaxo.Collections;
 using Altaxo.Main.GUI;
@@ -213,16 +213,16 @@ namespace Altaxo.Gui.Graph
   
     public void SetSymbolStyle()
     {
-      string [] names = System.Enum.GetNames(typeof(Altaxo.Graph.G2D.Plot.Styles.XYPlotScatterStyles.Style));
+      string [] names = System.Enum.GetNames(typeof(Altaxo.Graph.Gdi.Plot.Styles.XYPlotScatterStyles.Style));
       _view.InitializeSymbolStyle(names,_tempDoc.Style.ToString());
     }
 
   
     public void SetSymbolShape()
     {
-      string[] names = System.Enum.GetNames(typeof(Altaxo.Graph.G2D.Plot.Styles.XYPlotScatterStyles.Shape));
+      string[] names = System.Enum.GetNames(typeof(Altaxo.Graph.Gdi.Plot.Styles.XYPlotScatterStyles.Shape));
 
-      Altaxo.Graph.G2D.Plot.Styles.XYPlotScatterStyles.Shape sh = Altaxo.Graph.G2D.Plot.Styles.XYPlotScatterStyles.Shape.NoSymbol;
+      Altaxo.Graph.Gdi.Plot.Styles.XYPlotScatterStyles.Shape sh = Altaxo.Graph.Gdi.Plot.Styles.XYPlotScatterStyles.Shape.NoSymbol;
       sh = _tempDoc.Shape;
       string name = sh.ToString();
       _view.InitializeSymbolShape(names,name);
@@ -305,11 +305,11 @@ namespace Altaxo.Gui.Graph
 
         // Symbol Shape
         string str = _view.SymbolShape;
-        _doc.Shape = (Altaxo.Graph.G2D.Plot.Styles.XYPlotScatterStyles.Shape)Enum.Parse(typeof(Altaxo.Graph.G2D.Plot.Styles.XYPlotScatterStyles.Shape), str);
+        _doc.Shape = (Altaxo.Graph.Gdi.Plot.Styles.XYPlotScatterStyles.Shape)Enum.Parse(typeof(Altaxo.Graph.Gdi.Plot.Styles.XYPlotScatterStyles.Shape), str);
 
         // Symbol Style
         str = _view.SymbolStyle;
-        _doc.Style = (Altaxo.Graph.G2D.Plot.Styles.XYPlotScatterStyles.Style)Enum.Parse(typeof(Altaxo.Graph.G2D.Plot.Styles.XYPlotScatterStyles.Style), str);
+        _doc.Style = (Altaxo.Graph.Gdi.Plot.Styles.XYPlotScatterStyles.Style)Enum.Parse(typeof(Altaxo.Graph.Gdi.Plot.Styles.XYPlotScatterStyles.Style), str);
 
         // Symbol Size
         str = _view.SymbolSize;

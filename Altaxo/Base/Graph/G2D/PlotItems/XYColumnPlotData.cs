@@ -28,7 +28,7 @@ using Altaxo.Data;
 using Altaxo.Graph.Scales;
 using Altaxo.Graph.Scales.Boundaries;
 
-namespace Altaxo.Graph.G2D.Plot.Data
+namespace Altaxo.Graph.Gdi.Plot.Data
 {
 
   

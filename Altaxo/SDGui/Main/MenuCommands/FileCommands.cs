@@ -111,9 +111,9 @@ namespace Altaxo.Main.Commands
             
             Current.ProjectService.CreateNewWorksheet(table,tableAndLayout.Layout);
           }
-          else if (deserObject is Altaxo.Graph.G2D.GraphDocument)
+          else if (deserObject is Altaxo.Graph.Gdi.GraphDocument)
           {
-            Altaxo.Graph.G2D.GraphDocument graph = deserObject as Altaxo.Graph.G2D.GraphDocument;
+            Altaxo.Graph.Gdi.GraphDocument graph = deserObject as Altaxo.Graph.Gdi.GraphDocument;
             if(graph.Name==null || graph.Name==string.Empty)
               graph.Name = Current.Project.GraphDocumentCollection.FindNewName();
             else if( Current.Project.GraphDocumentCollection.Contains(graph.Name))

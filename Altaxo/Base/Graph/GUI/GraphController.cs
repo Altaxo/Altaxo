@@ -26,12 +26,12 @@ using System.Drawing.Drawing2D;
 using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
-using Altaxo.Graph.G2D;
-using Altaxo.Graph.G2D.Shapes;
-using Altaxo.Graph.G2D.Plot;
-using Altaxo.Graph.G2D.Plot.Data;
-using Altaxo.Graph.G2D.Plot.Styles;
-using Altaxo.Graph.G2D.Plot.Groups;
+using Altaxo.Graph.Gdi;
+using Altaxo.Graph.Gdi.Shapes;
+using Altaxo.Graph.Gdi.Plot;
+using Altaxo.Graph.Gdi.Plot.Data;
+using Altaxo.Graph.Gdi.Plot.Styles;
+using Altaxo.Graph.Gdi.Plot.Groups;
 using Altaxo.Graph.PlotGroups;
 using Altaxo.Serialization;
 using Altaxo.Graph.GUI.GraphControllerMouseHandlers;
@@ -752,7 +752,7 @@ namespace Altaxo.Graph.GUI
         
 
         // get plot group
-        PlotGroupStyleCollection plotGroup = pa.ParentCollection.GroupStyles;
+        G2DPlotGroupStyleCollection plotGroup = pa.ParentCollection.GroupStyles;
         
         
         //LineScatterPlotStyleController.ShowPlotStyleDialog(this.m_View.Form,pa,plotGroup);
@@ -1197,7 +1197,7 @@ namespace Altaxo.Graph.GUI
 
 
       // get plot group
-      PlotGroupStyleCollection plotGroup = pa.ParentCollection.GroupStyles;
+      G2DPlotGroupStyleCollection plotGroup = pa.ParentCollection.GroupStyles;
         
         
       //LineScatterPlotStyleController.ShowPlotStyleDialog(this.m_View.Form,pa,plotGroup);

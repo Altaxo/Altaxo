@@ -25,7 +25,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using Altaxo.Serialization;
 
-namespace Altaxo.Graph.G2D.Shapes
+namespace Altaxo.Graph.Gdi.Shapes
 {
 
   #region ShapeGraphic

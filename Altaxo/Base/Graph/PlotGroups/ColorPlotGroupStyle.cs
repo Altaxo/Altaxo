@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Altaxo.Graph.PlotGroups
 {
-  using G2D.Plot.Groups;
+  using Gdi.Plot.Groups;
 
   public class ColorGroupStyle : IPlotGroupStyle
   {
@@ -136,8 +136,8 @@ namespace Altaxo.Graph.PlotGroups
     #region Static helpers
 
     public static void AddLocalGroupStyle(
-      PlotGroupStyleCollection externalGroups,
-      PlotGroupStyleCollection localGroups)
+      IPlotGroupStyleCollection externalGroups,
+      IPlotGroupStyleCollection localGroups)
     {
       if (PlotGroupStyle.ShouldAddLocalGroupStyle(externalGroups, localGroups, typeof(ColorGroupStyle)))
         localGroups.Add(new ColorGroupStyle());
@@ -145,8 +145,8 @@ namespace Altaxo.Graph.PlotGroups
 
     public delegate PlotColor Getter();
     public static void PrepareStyle(
-      PlotGroupStyleCollection externalGroups,
-      PlotGroupStyleCollection localGroups,
+      IPlotGroupStyleCollection externalGroups,
+      IPlotGroupStyleCollection localGroups,
       Getter getter)
     {
       if (!externalGroups.ContainsType(typeof(ColorGroupStyle))
@@ -168,12 +168,12 @@ namespace Altaxo.Graph.PlotGroups
 
     public delegate void Setter(PlotColor c);
     public static void ApplyStyle(
-      PlotGroupStyleCollection externalGroups,
-      PlotGroupStyleCollection localGroups,
+      IPlotGroupStyleCollection externalGroups,
+      IPlotGroupStyleCollection localGroups,
       Setter setter)
     {
       ColorGroupStyle grpStyle = null;
-      PlotGroupStyleCollection grpColl = null;
+      IPlotGroupStyleCollection grpColl = null;
       if (externalGroups.ContainsType(typeof(ColorGroupStyle)))
         grpColl = externalGroups;
       else if (localGroups != null && localGroups.ContainsType(typeof(ColorGroupStyle)))

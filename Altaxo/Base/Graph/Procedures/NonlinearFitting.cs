@@ -22,9 +22,9 @@
 
 using System;
 using Altaxo.Data;
-using Altaxo.Graph.G2D.Plot;
-using Altaxo.Graph.G2D.Plot.Data;
-using Altaxo.Graph.G2D.Plot.Styles;
+using Altaxo.Graph.Gdi.Plot;
+using Altaxo.Graph.Gdi.Plot.Data;
+using Altaxo.Graph.Gdi.Plot.Styles;
 
 namespace Altaxo.Graph.Procedures
 {

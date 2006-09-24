@@ -23,7 +23,7 @@
 using System;
 using System.Drawing;
 
-namespace Altaxo.Graph.G2D
+namespace Altaxo.Graph.Gdi
 {
   /// <summary>
   /// Provides an interface for all objects that are grippable, i.e. that show special areas by which

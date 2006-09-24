@@ -611,7 +611,7 @@ namespace Altaxo.Gui.Common.Drawing
       // 
       // _cbBrushType
       // 
-      this._cbBrushType.BrushType = Altaxo.Graph.G2D.BrushType.SolidBrush;
+      this._cbBrushType.BrushType = Altaxo.Graph.Gdi.BrushType.SolidBrush;
       this._cbBrushType.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
       this._cbBrushType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this._cbBrushType.FormattingEnabled = true;

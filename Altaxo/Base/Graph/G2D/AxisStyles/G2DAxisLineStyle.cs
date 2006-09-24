@@ -27,7 +27,7 @@ using Altaxo.Serialization;
 using Altaxo.Graph.Scales;
 
 
-namespace Altaxo.Graph.G2D.AxisStyles
+namespace Altaxo.Graph.Gdi.AxisStyles
 {
 
   /// <summary>

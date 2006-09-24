@@ -29,10 +29,10 @@ using System.Drawing.Drawing2D;
 using Altaxo.Serialization;
 using Altaxo.Graph.Scales;
 using Altaxo.Graph.Scales.Boundaries;
-using Altaxo.Graph.G2D.BackgroundStyles;
+using Altaxo.Graph.Gdi.BackgroundStyles;
 
 
-namespace Altaxo.Graph.G2D
+namespace Altaxo.Graph.Gdi
 {
   using Shapes;
   using AxisStyles;
@@ -85,7 +85,7 @@ namespace Altaxo.Graph.G2D
     /// <summary>
     /// The background style of the layer.
     /// </summary>
-    protected G2D.BackgroundStyles.IBackgroundStyle _layerBackground;
+    protected Gdi.BackgroundStyles.IBackgroundStyle _layerBackground;
 
     /// <summary>If true, the data are clipped to the frame.</summary>
     protected bool _clipDataToFrame=true;
@@ -1822,7 +1822,7 @@ namespace Altaxo.Graph.G2D
         if(pa is IXBoundsHolder)
         {
           // merge the bounds with x and yAxis
-          ((IXBoundsHolder)pa).MergeXBoundsInto(this,_axisProperties.X.Axis.DataBoundsObject); // merge all x-boundaries in the x-axis boundary object
+          ((IXBoundsHolder)pa).MergeXBoundsInto(_axisProperties.X.Axis.DataBoundsObject); // merge all x-boundaries in the x-axis boundary object
         }
       }
       _plotAssociationXBoundariesChanged_EventSuspendCount = Math.Max(0,_plotAssociationXBoundariesChanged_EventSuspendCount-1);
@@ -1889,7 +1889,7 @@ namespace Altaxo.Graph.G2D
         if(pa is IYBoundsHolder)
         {
           // merge the bounds with x and yAxis
-          ((IYBoundsHolder)pa).MergeYBoundsInto(this,_axisProperties.Y.Axis.DataBoundsObject); // merge all x-boundaries in the x-axis boundary object
+          ((IYBoundsHolder)pa).MergeYBoundsInto(_axisProperties.Y.Axis.DataBoundsObject); // merge all x-boundaries in the x-axis boundary object
         }
       }
       _plotAssociationYBoundariesChanged_EventSuspendCount = Math.Max(0,_plotAssociationYBoundariesChanged_EventSuspendCount-1);
@@ -2428,7 +2428,7 @@ namespace Altaxo.Graph.G2D
           if(pa is IXBoundsHolder)
           {
             // merge the bounds with x and yAxis
-            ((IXBoundsHolder)pa).MergeXBoundsInto(this,_axisProperties.X.Axis.DataBoundsObject); // merge all x-boundaries in the x-axis boundary object
+            ((IXBoundsHolder)pa).MergeXBoundsInto(_axisProperties.X.Axis.DataBoundsObject); // merge all x-boundaries in the x-axis boundary object
           }
         }
         _axisProperties.X.Axis.DataBoundsObject.EndUpdate();
@@ -2457,7 +2457,7 @@ namespace Altaxo.Graph.G2D
           if(pa is IYBoundsHolder)
           {
             // merge the bounds with x and yAxis
-            ((IYBoundsHolder)pa).MergeYBoundsInto(this,_axisProperties.Y.Axis.DataBoundsObject); // merge all x-boundaries in the x-axis boundary object
+            ((IYBoundsHolder)pa).MergeYBoundsInto(_axisProperties.Y.Axis.DataBoundsObject); // merge all x-boundaries in the x-axis boundary object
         
           }
         }

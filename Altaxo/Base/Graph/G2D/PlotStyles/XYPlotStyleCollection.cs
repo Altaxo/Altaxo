@@ -29,7 +29,7 @@ using System.Collections.Generic;
 
 
 
-namespace Altaxo.Graph.G2D.Plot.Styles
+namespace Altaxo.Graph.Gdi.Plot.Styles
 {
   using Plot.Groups;
   using Data;
@@ -398,19 +398,19 @@ namespace Altaxo.Graph.G2D.Plot.Styles
 
     #region IPlotStyle Members
 
-    public void AddLocalGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
+    public void AddLocalGroupStyles(G2DPlotGroupStyleCollection externalGroups, G2DPlotGroupStyleCollection localGroups)
     {
       foreach (IG2DPlotStyle ps in this)
         ps.AddLocalGroupStyles(externalGroups, localGroups);
     }
 
-    public void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
+    public void PrepareGroupStyles(G2DPlotGroupStyleCollection externalGroups, G2DPlotGroupStyleCollection localGroups)
     {
       foreach (IG2DPlotStyle ps in this)
         ps.PrepareGroupStyles(externalGroups, localGroups);
     }
 
-    public void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
+    public void ApplyGroupStyles(G2DPlotGroupStyleCollection externalGroups, G2DPlotGroupStyleCollection localGroups)
     {
       foreach (IG2DPlotStyle ps in this)
         ps.ApplyGroupStyles(externalGroups, localGroups);

@@ -28,7 +28,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
 using Altaxo.Graph;
-using Altaxo.Graph.G2D;
+using Altaxo.Graph.Gdi;
 using Altaxo.Serialization;
 using ICSharpCode.SharpDevelop.Gui;
 

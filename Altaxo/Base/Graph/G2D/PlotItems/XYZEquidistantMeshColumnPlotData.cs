@@ -28,7 +28,7 @@ using Altaxo.Data;
 using Altaxo.Collections;
 using Altaxo.Graph.Scales.Boundaries;
 
-namespace Altaxo.Graph.G2D.Plot.Data
+namespace Altaxo.Graph.Gdi.Plot.Data
 {
   /// <summary>
   /// Summary description for XYColumnPlotData.

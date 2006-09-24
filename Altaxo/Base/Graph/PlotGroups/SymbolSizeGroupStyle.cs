@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Altaxo.Graph.PlotGroups
 {
-  using G2D.Plot.Groups;
+  using Gdi.Plot.Groups;
 
   /// <summary>
   /// This group style is intended to publish the symbol size to all interested
@@ -131,8 +131,8 @@ namespace Altaxo.Graph.PlotGroups
     #region Static helpers
 
     public static void AddLocalGroupStyle(
-     PlotGroupStyleCollection externalGroups,
-     PlotGroupStyleCollection localGroups)
+     IPlotGroupStyleCollection externalGroups,
+     IPlotGroupStyleCollection localGroups)
     {
       if (PlotGroupStyle.ShouldAddLocalGroupStyle(externalGroups, localGroups, typeof(SymbolSizeGroupStyle)))
         localGroups.Add(new SymbolSizeGroupStyle());
@@ -140,8 +140,8 @@ namespace Altaxo.Graph.PlotGroups
 
     public delegate float SymbolSizeGetter();
     public static void PrepareStyle(
-      PlotGroupStyleCollection externalGroups,
-      PlotGroupStyleCollection localGroups,
+      IPlotGroupStyleCollection externalGroups,
+      IPlotGroupStyleCollection localGroups,
       SymbolSizeGetter getter)
     {
       if (!externalGroups.ContainsType(typeof(SymbolSizeGroupStyle))
@@ -165,12 +165,12 @@ namespace Altaxo.Graph.PlotGroups
 
     public delegate void SymbolSizeSetter(float c);
     public static void ApplyStyle(
-      PlotGroupStyleCollection externalGroups,
-      PlotGroupStyleCollection localGroups,
+      IPlotGroupStyleCollection externalGroups,
+      IPlotGroupStyleCollection localGroups,
       SymbolSizeSetter setter)
     {
       SymbolSizeGroupStyle grpStyle = null;
-      PlotGroupStyleCollection grpColl = null;
+      IPlotGroupStyleCollection grpColl = null;
       if (externalGroups.ContainsType(typeof(SymbolSizeGroupStyle)))
         grpColl = externalGroups;
       else if (localGroups != null && localGroups.ContainsType(typeof(SymbolSizeGroupStyle)))

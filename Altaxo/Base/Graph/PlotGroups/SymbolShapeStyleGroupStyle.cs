@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Altaxo.Graph.G2D.Plot.Groups
+namespace Altaxo.Graph.Gdi.Plot.Groups
 {
   using PlotGroups;
 
@@ -133,8 +133,8 @@ namespace Altaxo.Graph.G2D.Plot.Groups
     #region Static helpers
 
     public static void AddLocalGroupStyle(
-     PlotGroupStyleCollection externalGroups,
-     PlotGroupStyleCollection localGroups)
+     IPlotGroupStyleCollection externalGroups,
+     IPlotGroupStyleCollection localGroups)
     {
       if (PlotGroupStyle.ShouldAddLocalGroupStyle(externalGroups, localGroups, typeof(SymbolShapeStyleGroupStyle)))
         localGroups.Add(new SymbolShapeStyleGroupStyle());
@@ -142,8 +142,8 @@ namespace Altaxo.Graph.G2D.Plot.Groups
 
     public delegate ShapeAndStyle Getter();
     public static void PrepareStyle(
-      PlotGroupStyleCollection externalGroups,
-      PlotGroupStyleCollection localGroups,
+      IPlotGroupStyleCollection externalGroups,
+      IPlotGroupStyleCollection localGroups,
       Getter getter)
     {
       if (!externalGroups.ContainsType(typeof(SymbolShapeStyleGroupStyle))
@@ -166,12 +166,12 @@ namespace Altaxo.Graph.G2D.Plot.Groups
 
     public delegate void Setter(ShapeAndStyle val);
     public static void ApplyStyle(
-      PlotGroupStyleCollection externalGroups,
-      PlotGroupStyleCollection localGroups,
+      IPlotGroupStyleCollection externalGroups,
+      IPlotGroupStyleCollection localGroups,
       Setter setter)
     {
       SymbolShapeStyleGroupStyle grpStyle = null;
-      PlotGroupStyleCollection grpColl = null;
+      IPlotGroupStyleCollection grpColl = null;
       if (externalGroups.ContainsType(typeof(SymbolShapeStyleGroupStyle)))
         grpColl = externalGroups;
       else if (localGroups != null && localGroups.ContainsType(typeof(SymbolShapeStyleGroupStyle)))

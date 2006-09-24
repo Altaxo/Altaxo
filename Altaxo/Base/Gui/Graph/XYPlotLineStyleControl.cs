@@ -30,7 +30,7 @@ using System.Windows.Forms;
 using Altaxo.Main.GUI;
 using Altaxo.Collections;
 
-using Altaxo.Graph.G2D;
+using Altaxo.Graph.Gdi;
 using Altaxo.Gui.Common.Drawing;
 namespace Altaxo.Gui.Graph
 {

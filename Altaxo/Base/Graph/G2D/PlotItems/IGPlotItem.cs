@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
 
-namespace Altaxo.Graph.G2D.Plot
+namespace Altaxo.Graph.Gdi.Plot
 {
   using Plot.Groups;
 
@@ -37,21 +37,21 @@ namespace Altaxo.Graph.G2D.Plot
     /// styles.
     /// </summary>
     /// <param name="styles">The collection of group styles.</param>
-    void CollectStyles(PlotGroupStyleCollection styles);
+    void CollectStyles(G2DPlotGroupStyleCollection styles);
 
     /// <summary>
     /// Prepare the group styles before applying them. This function is called for <b>all</b> plot items in a group <b>before</b>
     /// the ApplyStyle function is called.
     /// </summary>
     /// <param name="styles">The collection of group styles.</param>
-    void PrepareStyles(PlotGroupStyleCollection styles);
+    void PrepareStyles(G2DPlotGroupStyleCollection styles);
 
     /// <summary>
     /// Applies the group styles to this plot item. This function is called for all plot items in a group before
     /// the next function (for instance PreparePainting) is called.
     /// </summary>
     /// <param name="styles">The collection of group styles.</param>
-    void ApplyStyles(PlotGroupStyleCollection styles);
+    void ApplyStyles(G2DPlotGroupStyleCollection styles);
 
     /// <summary>
     /// This routine ensures that the plot item updates all its cached data and send the appropriate

@@ -22,10 +22,10 @@
 
 using Altaxo.Data;
 
-using Altaxo.Graph.G2D.Plot;
-using Altaxo.Graph.G2D.Plot.Styles;
-using Altaxo.Graph.G2D.Plot.Data;
-using Altaxo.Graph.G2D.Plot.Groups;
+using Altaxo.Graph.Gdi.Plot;
+using Altaxo.Graph.Gdi.Plot.Styles;
+using Altaxo.Graph.Gdi.Plot.Data;
+using Altaxo.Graph.Gdi.Plot.Groups;
 
 
 

@@ -6,7 +6,7 @@ using System.Drawing.Drawing2D;
 using Altaxo.Serialization;
 using Altaxo.Graph.Scales.Boundaries;
 
-namespace Altaxo.Graph.G2D.Plot
+namespace Altaxo.Graph.Gdi.Plot
 {
   using Plot.Groups;
   using PlotGroups;
@@ -22,7 +22,7 @@ namespace Altaxo.Graph.G2D.Plot
     IXBoundsHolder,
     IYBoundsHolder
   {
-    PlotGroupStyleCollection _styles;
+    G2DPlotGroupStyleCollection _styles;
     List<IGPlotItem> _plotItems;
 
     [NonSerialized]
@@ -173,7 +173,7 @@ namespace Altaxo.Graph.G2D.Plot
         }
         info.CloseArray(count);
 
-        s._styles = (PlotGroupStyleCollection)info.GetValue("GroupStyles", s);
+        s._styles = (G2DPlotGroupStyleCollection)info.GetValue("GroupStyles", s);
 
         return s;
       }
@@ -199,13 +199,13 @@ namespace Altaxo.Graph.G2D.Plot
     {
       _parent = owner;
       _plotItems = new List<IGPlotItem>();
-      _styles = new PlotGroupStyleCollection();
+      _styles = new G2DPlotGroupStyleCollection();
     }
 
     public PlotItemCollection()
     {
       _plotItems = new List<IGPlotItem>();
-      _styles = new PlotGroupStyleCollection();
+      _styles = new G2DPlotGroupStyleCollection();
     }
 
     /// <summary>
@@ -213,7 +213,7 @@ namespace Altaxo.Graph.G2D.Plot
     /// </summary>
     protected PlotItemCollection(int x)
     {
-      _styles = new PlotGroupStyleCollection();
+      _styles = new G2DPlotGroupStyleCollection();
     }
 
     /// <summary>
@@ -234,7 +234,7 @@ namespace Altaxo.Graph.G2D.Plot
     public PlotItemCollection(XYPlotLayer owner, PlotItemCollection from)
     {
       _parent = owner;
-      _styles = new PlotGroupStyleCollection();
+      _styles = new G2DPlotGroupStyleCollection();
       _plotItems = new List<IGPlotItem>();
 
 
@@ -283,7 +283,7 @@ namespace Altaxo.Graph.G2D.Plot
       set { _parent = value; }
     }
 
-    public PlotGroupStyleCollection GroupStyles
+    public G2DPlotGroupStyleCollection GroupStyles
     {
       get
       {
@@ -322,13 +322,13 @@ namespace Altaxo.Graph.G2D.Plot
     /// styles.
     /// </summary>
     /// <param name="styles">The collection of group styles.</param>
-    public void CollectStyles(PlotGroupStyleCollection styles)
+    public void CollectStyles(G2DPlotGroupStyleCollection styles)
     {
       foreach (IGPlotItem pi in _plotItems)
         pi.CollectStyles(styles);
     }
 
-    public void PrepareStyles(PlotGroupStyleCollection styles)
+    public void PrepareStyles(G2DPlotGroupStyleCollection styles)
     {
         _styles.BeginPrepare();
 
@@ -341,12 +341,12 @@ namespace Altaxo.Graph.G2D.Plot
         _styles.EndPrepare();
     }
 
-    public void ApplyStyles(PlotGroupStyleCollection styles)
+    public void ApplyStyles(G2DPlotGroupStyleCollection styles)
     {
       ApplyStyles(styles, 0);
     }
 
-    public void ApplyStyles(PlotGroupStyleCollection styles, IGPlotItem pivot)
+    public void ApplyStyles(G2DPlotGroupStyleCollection styles, IGPlotItem pivot)
     {
       int pivotidx = _plotItems.IndexOf(pivot);
       if (pivotidx < 0)
@@ -355,7 +355,7 @@ namespace Altaxo.Graph.G2D.Plot
     }
 
 
-    protected void ApplyStyles(PlotGroupStyleCollection styles, int pivotidx)
+    protected void ApplyStyles(G2DPlotGroupStyleCollection styles, int pivotidx)
     {
       _styles.BeginApply();
       for(int i=pivotidx;i<_plotItems.Count;i++)
@@ -407,8 +407,8 @@ namespace Altaxo.Graph.G2D.Plot
 
     public void Paint(System.Drawing.Graphics g, IPlotArea layer)
     {
-      ICoordinateTransformingGroupStyle coordTransStyle;
-      if (null != (coordTransStyle = _styles.GetCoordinateTransformingStyle()))
+      IG2DCoordinateTransformingGroupStyle coordTransStyle;
+      if (null != (coordTransStyle = _styles.CoordinateTransformingStyle))
         coordTransStyle.Paint(g, layer, this);
       else
       {
@@ -706,13 +706,13 @@ namespace Altaxo.Graph.G2D.Plot
     [field:NonSerialized]
     public event BoundaryChangedHandler XBoundariesChanged;
 
-    public void MergeXBoundsInto(IPlotArea layer, IPhysicalBoundaries pb)
+    public void MergeXBoundsInto(IPhysicalBoundaries pb)
     {
-      ICoordinateTransformingGroupStyle coordTransStyle;
-      if (null != (coordTransStyle = _styles.GetCoordinateTransformingStyle()))
-        coordTransStyle.MergeXBoundsInto(layer, pb, this);
+      IG2DCoordinateTransformingGroupStyle coordTransStyle;
+      if (null != (coordTransStyle = _styles.CoordinateTransformingStyle))
+        coordTransStyle.MergeXBoundsInto(this.ParentLayer, pb, this);
       else
-        CoordinateTransformingStyleBase.MergeXBoundsInto(layer, pb, this);
+        CoordinateTransformingStyleBase.MergeXBoundsInto(pb, this);
     }
 
     #endregion
@@ -722,13 +722,13 @@ namespace Altaxo.Graph.G2D.Plot
     [field:NonSerialized]
     public event BoundaryChangedHandler YBoundariesChanged;
 
-    public void MergeYBoundsInto(IPlotArea layer, IPhysicalBoundaries pb)
+    public void MergeYBoundsInto(IPhysicalBoundaries pb)
     {
-      ICoordinateTransformingGroupStyle coordTransStyle;
-      if (null != (coordTransStyle = _styles.GetCoordinateTransformingStyle()))
-        coordTransStyle.MergeYBoundsInto(layer, pb, this);
+      IG2DCoordinateTransformingGroupStyle coordTransStyle;
+      if (null != (coordTransStyle = _styles.CoordinateTransformingStyle))
+        coordTransStyle.MergeYBoundsInto(this.ParentLayer, pb, this);
       else
-        CoordinateTransformingStyleBase.MergeYBoundsInto(layer, pb, this);
+        CoordinateTransformingStyleBase.MergeYBoundsInto(pb, this);
 
     }
 

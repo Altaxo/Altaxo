@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
 
-namespace Altaxo.Graph.G2D.Plot
+namespace Altaxo.Graph.Gdi.Plot
 {
   using Groups;
 
@@ -207,11 +207,11 @@ namespace Altaxo.Graph.G2D.Plot
 
     #region IPlotItem Members
 
-    public abstract void CollectStyles(PlotGroupStyleCollection styles);
+    public abstract void CollectStyles(G2DPlotGroupStyleCollection styles);
 
-    public abstract void PrepareStyles(PlotGroupStyleCollection externalGroups);
+    public abstract void PrepareStyles(G2DPlotGroupStyleCollection externalGroups);
 
-    public abstract void ApplyStyles(PlotGroupStyleCollection externalGroups);
+    public abstract void ApplyStyles(G2DPlotGroupStyleCollection externalGroups);
 
     /// <summary>
     /// Paints a symbol for this plot item for use in a legend.

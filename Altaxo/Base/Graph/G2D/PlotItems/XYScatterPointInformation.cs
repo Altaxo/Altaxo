@@ -23,7 +23,7 @@ using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 
-namespace Altaxo.Graph.G2D.Plot.Data
+namespace Altaxo.Graph.Gdi.Plot.Data
 {
   /// <summary>
   /// Provides information about a single scatter point, like coordinates, row index, index into plot and so on.

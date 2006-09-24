@@ -23,11 +23,11 @@
 using System;
 using System.Collections.Generic;
 
-using Altaxo.Graph.G2D;
-using Altaxo.Graph.G2D.AxisStyles;
-using Altaxo.Graph.G2D.Plot;
-using Altaxo.Graph.G2D.Plot.Data;
-using Altaxo.Graph.G2D.Plot.Styles;
+using Altaxo.Graph.Gdi;
+using Altaxo.Graph.Gdi.AxisStyles;
+using Altaxo.Graph.Gdi.Plot;
+using Altaxo.Graph.Gdi.Plot.Data;
+using Altaxo.Graph.Gdi.Plot.Styles;
 
 namespace Altaxo.Graph.GUI
 {

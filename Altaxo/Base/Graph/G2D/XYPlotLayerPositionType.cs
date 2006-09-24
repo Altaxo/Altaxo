@@ -23,7 +23,7 @@ using System;
 using System.ComponentModel;   
 using System.Text;
 
-namespace Altaxo.Graph.G2D
+namespace Altaxo.Graph.Gdi
 {
   /// <summary>
   /// The type of the position values  (i.e. x and y position of the layer).

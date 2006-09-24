@@ -23,7 +23,7 @@
 using System;
 using System.Drawing;
 
-using Altaxo.Graph.G2D;
+using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Graph.Procedures
 {

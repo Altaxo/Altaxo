@@ -22,7 +22,7 @@
 
 using System;
 
-namespace Altaxo.Graph.G2D.LabelFormatting
+namespace Altaxo.Graph.Gdi.LabelFormatting
 {
   /// <summary>
   /// Responsible for getting strings out of numeric values for the ticks, decide itself what

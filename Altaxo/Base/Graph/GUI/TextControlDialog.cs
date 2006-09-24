@@ -27,9 +27,9 @@ using System.ComponentModel;
 using System.Windows.Forms;
 
 using Altaxo.Gui.Common.Drawing;
-using Altaxo.Graph.G2D;
-using Altaxo.Graph.G2D.BackgroundStyles;
-using Altaxo.Graph.G2D.Shapes;
+using Altaxo.Graph.Gdi;
+using Altaxo.Graph.Gdi.BackgroundStyles;
+using Altaxo.Graph.Gdi.Shapes;
 
 
 

@@ -25,7 +25,7 @@ using System.Drawing;
 using Altaxo.Graph.Scales;
 
 
-namespace Altaxo.Graph.G2D
+namespace Altaxo.Graph.Gdi
 {
   /// <summary>
   /// Interface used for all plot items and styles to get information for plotting their data.

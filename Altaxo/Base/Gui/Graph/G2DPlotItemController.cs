@@ -22,10 +22,10 @@
 
 using System;
 using Altaxo.Gui.Common;
-using Altaxo.Graph.G2D;
-using Altaxo.Graph.G2D.Plot;
-using Altaxo.Graph.G2D.Plot.Styles;
-using Altaxo.Graph.G2D.Plot.Groups;
+using Altaxo.Graph.Gdi;
+using Altaxo.Graph.Gdi.Plot;
+using Altaxo.Graph.Gdi.Plot.Styles;
+using Altaxo.Graph.Gdi.Plot.Groups;
 using Altaxo.Graph.PlotGroups;
 using Altaxo.Main.GUI;
 using System.Collections;
@@ -41,7 +41,7 @@ namespace Altaxo.Gui.Graph
   {
     G2DPlotItem _doc;
     G2DPlotItem _tempdoc;
-    PlotGroupStyleCollection _groupStyles;
+    G2DPlotGroupStyleCollection _groupStyles;
     
     IG2DPlotStyle _additionalPlotStyle;
     int _insertAdditionalPlotStyle=-1;
@@ -52,7 +52,7 @@ namespace Altaxo.Gui.Graph
       : this(doc,null)
     {
     }
-    public G2DPlotItemController(G2DPlotItem doc, PlotGroupStyleCollection parent)
+    public G2DPlotItemController(G2DPlotItem doc, G2DPlotGroupStyleCollection parent)
     {
       _groupStyles = parent;
       _doc = doc;
@@ -189,7 +189,7 @@ namespace Altaxo.Gui.Graph
         {
           XYPlotScatterStyle scatterStyle = new XYPlotScatterStyle();
           _additionalPlotStyle = scatterStyle;
-          scatterStyle.Shape = Altaxo.Graph.G2D.Plot.Styles.XYPlotScatterStyles.Shape.NoSymbol;
+          scatterStyle.Shape = Altaxo.Graph.Gdi.Plot.Styles.XYPlotScatterStyles.Shape.NoSymbol;
 
           _insertAdditionalPlotStyle = 1;
           lineScatterPair[0] = _tempdoc.Style[0];
@@ -199,7 +199,7 @@ namespace Altaxo.Gui.Graph
         {
           XYPlotLineStyle lineStyle = new XYPlotLineStyle();
           _additionalPlotStyle = lineStyle;
-          lineStyle.Connection = Altaxo.Graph.G2D.Plot.Styles.XYPlotLineStyles.ConnectionStyle.NoLine;
+          lineStyle.Connection = Altaxo.Graph.Gdi.Plot.Styles.XYPlotLineStyles.ConnectionStyle.NoLine;
 
           _insertAdditionalPlotStyle = 0;
           lineScatterPair[0] = _additionalPlotStyle;

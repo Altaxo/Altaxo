@@ -22,7 +22,7 @@
 
 using System;
 using System.Drawing;
-namespace Altaxo.Graph.G2D.BackgroundStyles
+namespace Altaxo.Graph.Gdi.BackgroundStyles
 {
   /// <summary>
   /// Backs the item with a color filled rectangle.

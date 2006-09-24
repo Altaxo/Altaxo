@@ -4,13 +4,13 @@ using System.Text;
 
 namespace Altaxo.Graph.PlotGroups
 {
-  using G2D.Plot.Groups;
+  using Gdi.Plot.Groups;
 
   public static class PlotGroupStyle
   {
     public static bool ShouldAddLocalGroupStyle(
-      PlotGroupStyleCollection externalGroups,
-      PlotGroupStyleCollection localGroups,
+      IPlotGroupStyleCollection externalGroups,
+      IPlotGroupStyleCollection localGroups,
       System.Type type)
     {
       bool found = false;
@@ -24,8 +24,8 @@ namespace Altaxo.Graph.PlotGroups
 
 
     public static T GetStyleToInitialize<T>(
-      PlotGroupStyleCollection externalGroups,
-      PlotGroupStyleCollection localGroups
+      IPlotGroupStyleCollection externalGroups,
+      IPlotGroupStyleCollection localGroups
       ) where T: IPlotGroupStyle, new()
     {
       if (!externalGroups.ContainsType(typeof(T))
@@ -49,12 +49,12 @@ namespace Altaxo.Graph.PlotGroups
 
 
     public static T GetStyleToApply<T>(
-     PlotGroupStyleCollection externalGroups,
-     PlotGroupStyleCollection localGroups
+     IPlotGroupStyleCollection externalGroups,
+     IPlotGroupStyleCollection localGroups
      ) where T : IPlotGroupStyle
     {
       T grpStyle = default(T);
-      PlotGroupStyleCollection grpColl = null;
+      IPlotGroupStyleCollection grpColl = null;
       if (externalGroups.ContainsType(typeof(T)))
         grpColl = externalGroups;
       else if (localGroups != null && localGroups.ContainsType(typeof(T)))

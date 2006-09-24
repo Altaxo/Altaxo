@@ -22,14 +22,14 @@
 
 using System;
 using Altaxo.Main.GUI;
-using Altaxo.Graph.G2D;
+using Altaxo.Graph.Gdi;
 using Altaxo.Scripting;
 using Altaxo.Gui.Scripting;
 using Altaxo.Calc.Regression.Nonlinear;
 
-using Altaxo.Graph.G2D.Plot;
-using Altaxo.Graph.G2D.Plot.Data;
-using Altaxo.Graph.G2D.Plot.Styles;
+using Altaxo.Graph.Gdi.Plot;
+using Altaxo.Graph.Gdi.Plot.Data;
+using Altaxo.Graph.Gdi.Plot.Styles;
 
 namespace Altaxo.Gui.Analysis.NonLinearFitting
 {

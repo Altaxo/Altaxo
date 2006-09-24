@@ -26,7 +26,7 @@ using System.Drawing.Drawing2D;
 using Altaxo.Serialization;
 
 
-namespace Altaxo.Graph.G2D
+namespace Altaxo.Graph.Gdi
 {
   using Shapes;
 

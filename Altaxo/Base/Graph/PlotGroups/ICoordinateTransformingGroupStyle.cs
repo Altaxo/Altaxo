@@ -4,9 +4,9 @@ using System.Text;
 
 using Altaxo.Graph.Scales.Boundaries;
 
-namespace Altaxo.Graph.G2D.Plot.Groups
+namespace Altaxo.Graph.Gdi.Plot.Groups
 {
-  public interface ICoordinateTransformingGroupStyle : ICloneable
+  public interface IG2DCoordinateTransformingGroupStyle : ICloneable
   {
     void MergeXBoundsInto(IPlotArea layer, IPhysicalBoundaries pb, PlotItemCollection coll);
     void MergeYBoundsInto(IPlotArea layer, IPhysicalBoundaries pb, PlotItemCollection coll);

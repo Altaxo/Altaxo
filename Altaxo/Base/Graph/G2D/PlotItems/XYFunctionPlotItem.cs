@@ -26,10 +26,10 @@ using System.Drawing.Drawing2D;
 using Altaxo.Serialization;
 using Altaxo.Data;
 using Altaxo.Graph.Scales;
-using Altaxo.Graph.G2D;
+using Altaxo.Graph.Gdi;
 
 
-namespace Altaxo.Graph.G2D.Plot
+namespace Altaxo.Graph.Gdi.Plot
 {
   using Styles;
   using Data;

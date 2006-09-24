@@ -27,7 +27,7 @@ using Altaxo.Serialization;
 using Altaxo.Graph.Scales;
 using Altaxo.Data;
 
-namespace Altaxo.Graph.G2D.LabelFormatting
+namespace Altaxo.Graph.Gdi.LabelFormatting
 {
   /// <summary>
   /// Interface for an label item that is ready to draw and was already measured.

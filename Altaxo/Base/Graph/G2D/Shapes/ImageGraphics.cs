@@ -27,7 +27,7 @@ using Altaxo.Serialization;
 using System.IO;
 
 
-namespace Altaxo.Graph.G2D.Shapes
+namespace Altaxo.Graph.Gdi.Shapes
 {
   #region ImageGraphic
   [SerializationSurrogate(0,typeof(ImageGraphic.SerializationSurrogate0))]

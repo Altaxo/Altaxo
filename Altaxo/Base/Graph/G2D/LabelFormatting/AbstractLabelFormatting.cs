@@ -24,7 +24,7 @@ using System;
 using System.Drawing;
 
 using Altaxo.Data;
-namespace Altaxo.Graph.G2D.LabelFormatting
+namespace Altaxo.Graph.Gdi.LabelFormatting
 {
   /// <summary>
   /// Base class that can be used to derive a label formatting class

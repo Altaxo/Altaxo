@@ -28,9 +28,9 @@ using System.Drawing.Drawing2D;
 using Altaxo.Serialization;
 using Altaxo.Graph.Scales;
 using Altaxo.Graph.Scales.Boundaries;
-using Altaxo.Graph.G2D.Shapes;
+using Altaxo.Graph.Gdi.Shapes;
 
-namespace Altaxo.Graph.G2D.AxisStyles
+namespace Altaxo.Graph.Gdi.AxisStyles
 {
   /// <summary>
   /// This class summarizes all members that are belonging to one edge of the layer.

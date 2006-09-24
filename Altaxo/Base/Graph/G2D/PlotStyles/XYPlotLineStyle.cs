@@ -27,7 +27,7 @@ using Altaxo.Serialization;
 //using System.Runtime.InteropServices;
 
 
-namespace Altaxo.Graph.G2D.Plot.Styles
+namespace Altaxo.Graph.Gdi.Plot.Styles
 {
   using PlotGroups;
   using Plot.Groups;
@@ -1257,13 +1257,13 @@ namespace Altaxo.Graph.G2D.Plot.Styles
 
     #region IG2DPlotStyle Members
 
-    public void AddLocalGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
+    public void AddLocalGroupStyles(G2DPlotGroupStyleCollection externalGroups, G2DPlotGroupStyleCollection localGroups)
     {
       ColorGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
       LineStyleGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
     }
 
-    public void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
+    public void PrepareGroupStyles(G2DPlotGroupStyleCollection externalGroups, G2DPlotGroupStyleCollection localGroups)
     {
       if (this.IsColorProvider)
         ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate() { return PlotColors.Colors.GetPlotColor(this.Color); });
@@ -1271,7 +1271,7 @@ namespace Altaxo.Graph.G2D.Plot.Styles
       LineStyleGroupStyle.PrepareStyle(externalGroups, localGroups, delegate { return this.PenHolder.DashStyle; });
     }
 
-    public void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
+    public void ApplyGroupStyles(G2DPlotGroupStyleCollection externalGroups, G2DPlotGroupStyleCollection localGroups)
     {
       if (this.IsColorReceiver)
         ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(PlotColor c) { this.Color = c; });

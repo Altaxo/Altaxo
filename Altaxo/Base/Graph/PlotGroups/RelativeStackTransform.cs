@@ -4,11 +4,11 @@ using System.Text;
 using Altaxo.Data;
 using Altaxo.Graph.Scales.Boundaries;
 
-namespace Altaxo.Graph.G2D.Plot.Groups
+namespace Altaxo.Graph.Gdi.Plot.Groups
 {
   using Plot.Data;
 
-  public class RelativeStackTransform : ICoordinateTransformingGroupStyle
+  public class RelativeStackTransform : IG2DCoordinateTransformingGroupStyle
   {
     public RelativeStackTransform()
     {
@@ -22,7 +22,7 @@ namespace Altaxo.Graph.G2D.Plot.Groups
 
     public void MergeXBoundsInto(IPlotArea layer, IPhysicalBoundaries pb, PlotItemCollection coll)
     {
-      CoordinateTransformingStyleBase.MergeXBoundsInto(layer, pb, coll);
+      CoordinateTransformingStyleBase.MergeXBoundsInto(pb, coll);
     }
 
     public void MergeYBoundsInto(IPlotArea layer, IPhysicalBoundaries pb, PlotItemCollection coll)
@@ -30,7 +30,7 @@ namespace Altaxo.Graph.G2D.Plot.Groups
       Dictionary<G2DPlotItem, Processed2DPlotData> plotDataList;
       if (!CanUseStyle(layer, coll, out plotDataList))
       {
-        CoordinateTransformingStyleBase.MergeXBoundsInto(layer, pb, coll);
+        CoordinateTransformingStyleBase.MergeXBoundsInto(pb, coll);
         return;
       }
 
