@@ -29,13 +29,13 @@ using System.Drawing.Drawing2D;
 using Altaxo.Serialization;
 using Altaxo.Graph.Scales;
 using Altaxo.Graph.Scales.Boundaries;
-using Altaxo.Graph.Gdi.BackgroundStyles;
+using Altaxo.Graph.Gdi.Background;
 
 
 namespace Altaxo.Graph.Gdi
 {
   using Shapes;
-  using AxisStyles;
+  using Axis;
   using Plot;
 
   /// <summary>
@@ -85,7 +85,7 @@ namespace Altaxo.Graph.Gdi
     /// <summary>
     /// The background style of the layer.
     /// </summary>
-    protected Gdi.BackgroundStyles.IBackgroundStyle _layerBackground;
+    protected Gdi.Background.IBackgroundStyle _layerBackground;
 
     /// <summary>If true, the data are clipped to the frame.</summary>
     protected bool _clipDataToFrame=true;

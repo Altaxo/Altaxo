@@ -28,7 +28,7 @@ using System.Drawing;
 using Altaxo.Calc;
 using Altaxo.Main.GUI;
 using Altaxo.Graph.Gdi;
-using Altaxo.Graph.Gdi.BackgroundStyles;
+using Altaxo.Graph.Gdi.Background;
 
 namespace Altaxo.Gui.Graph
 {

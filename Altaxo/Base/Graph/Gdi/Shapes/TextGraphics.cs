@@ -32,7 +32,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 {
   using Plot;
   using Plot.Data;
-  using BackgroundStyles;
+  using Background;
 
 
   public class TextItem

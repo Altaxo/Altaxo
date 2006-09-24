@@ -31,7 +31,7 @@ using Altaxo.Graph.Scales;
 using Altaxo.Graph.Scales.Boundaries;
 using Altaxo.Graph.Gdi.Shapes;
 
-namespace Altaxo.Graph.Gdi.AxisStyles
+namespace Altaxo.Graph.Gdi.Axis
 {
   
   /// <summary>

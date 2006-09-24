@@ -26,10 +26,10 @@ using System.Drawing.Drawing2D;
 using Altaxo.Serialization;
 using Altaxo.Graph.Scales;
 using Altaxo.Data;
-using Altaxo.Graph.Gdi.BackgroundStyles;
+using Altaxo.Graph.Gdi.Background;
 
 
-namespace Altaxo.Graph.Gdi.AxisStyles
+namespace Altaxo.Graph.Gdi.Axis
 {
   using Gdi.LabelFormatting;
 
@@ -59,7 +59,7 @@ namespace Altaxo.Graph.Gdi.AxisStyles
     protected double _rotation;
 
     /// <summary>The style for the background.</summary>
-    protected Gdi.BackgroundStyles.IBackgroundStyle _backgroundStyle;
+    protected Gdi.Background.IBackgroundStyle _backgroundStyle;
 
     protected bool _automaticRotationShift=true;
 
@@ -362,7 +362,7 @@ namespace Altaxo.Graph.Gdi.AxisStyles
     }
 
     /// <summary>The background style.</summary>
-    public Gdi.BackgroundStyles.IBackgroundStyle BackgroundStyle
+    public Gdi.Background.IBackgroundStyle BackgroundStyle
     {
       get
       {

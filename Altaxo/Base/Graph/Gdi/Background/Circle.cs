@@ -23,7 +23,7 @@
 using System;
 using System.Text;
 
-namespace Altaxo.Graph.Gdi.BackgroundStyles
+namespace Altaxo.Graph.Gdi.Background
 {
   class Circle
   {

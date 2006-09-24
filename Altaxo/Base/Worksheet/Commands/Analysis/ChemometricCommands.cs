@@ -30,7 +30,7 @@ using Altaxo.Data;
 using Altaxo.Main.GUI;
 
 using Altaxo.Graph.Gdi;
-using Altaxo.Graph.Gdi.BackgroundStyles;
+using Altaxo.Graph.Gdi.Background;
 using Altaxo.Graph.Gdi.Plot;
 using Altaxo.Graph.Gdi.Plot.Data;
 using Altaxo.Graph.Gdi.Plot.Styles;

@@ -28,7 +28,7 @@ using System.Windows.Forms;
 
 using Altaxo.Gui.Common.Drawing;
 using Altaxo.Graph.Gdi;
-using Altaxo.Graph.Gdi.BackgroundStyles;
+using Altaxo.Graph.Gdi.Background;
 using Altaxo.Graph.Gdi.Shapes;
 
 

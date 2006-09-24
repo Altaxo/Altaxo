@@ -31,7 +31,7 @@ using Altaxo.Graph.Scales;
 using Altaxo.Graph.Scales.Boundaries;
 using Altaxo.Graph.Gdi.Shapes;
 
-namespace Altaxo.Graph.Gdi.AxisStyles
+namespace Altaxo.Graph.Gdi.Axis
 {
   /// <summary>
   /// AxisStylesSummary collects all styles that correspond to one axis scale (i.e. either x-axis or y-axis)

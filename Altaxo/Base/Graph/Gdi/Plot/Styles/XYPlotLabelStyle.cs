@@ -26,7 +26,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using Altaxo.Graph.Gdi.Plot.Styles.XYPlotScatterStyles;
 using Altaxo.Serialization;
-using Altaxo.Graph.Gdi.BackgroundStyles;
+using Altaxo.Graph.Gdi.Background;
 
 
 namespace Altaxo.Graph.Gdi.Plot.Styles
@@ -66,7 +66,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     //protected bool m_WhiteOut;
 
     /// <summary>The style for the background.</summary>
-    protected Gdi.BackgroundStyles.IBackgroundStyle _backgroundStyle;
+    protected Gdi.Background.IBackgroundStyle _backgroundStyle;
 
     // <summary>The brush for the background.</summary>
     //protected BrushHolder  m_BackgroundBrush;
@@ -434,7 +434,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     }
 
     /// <summary>The background style.</summary>
-    public Gdi.BackgroundStyles.IBackgroundStyle BackgroundStyle
+    public Gdi.Background.IBackgroundStyle BackgroundStyle
     {
       get
       {

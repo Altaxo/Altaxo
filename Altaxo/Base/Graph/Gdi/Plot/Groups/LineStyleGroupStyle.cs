@@ -4,9 +4,9 @@ using System.Text;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 
-namespace Altaxo.Graph.PlotGroups
+namespace Altaxo.Graph.Gdi.Plot.Groups
 {
-  using Gdi.Plot.Groups;
+  using PlotGroups;
 
   public class LineStyleGroupStyle : IPlotGroupStyle
   {
