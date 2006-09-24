@@ -27,7 +27,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
   /// <summary>
   /// Summary description for NumericAxisLabelFormattingFixed.
   /// </summary>
-  public class NumericLabelFormattingFixed : AbstractNumericLabelFormatting
+  public class NumericLabelFormattingFixed : NumericLabelFormattingBase
   {
    
     
@@ -40,13 +40,13 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         NumericLabelFormattingFixed s = (NumericLabelFormattingFixed)obj;
-        info.AddBaseValueEmbedded(s,typeof(AbstractNumericLabelFormatting));
+        info.AddBaseValueEmbedded(s,typeof(NumericLabelFormattingBase));
         
       }
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
         NumericLabelFormattingFixed s = null!=o ? (NumericLabelFormattingFixed)o : new NumericLabelFormattingFixed();
-        info.GetBaseValueEmbedded(s,typeof(AbstractNumericLabelFormatting),parent);
+        info.GetBaseValueEmbedded(s,typeof(NumericLabelFormattingBase),parent);
         return s;
       }
     }

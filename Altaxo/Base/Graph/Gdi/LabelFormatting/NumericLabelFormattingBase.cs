@@ -29,27 +29,27 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
   /// <summary>
   /// Base class that can be used to derive a numeric abel formatting class
   /// </summary>
-  public abstract class AbstractNumericLabelFormatting : AbstractLabelFormatting
+  public abstract class NumericLabelFormattingBase : LabelFormattingBase
   {
     protected int _decimalPlaces;
 
     #region Serialization
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.LabelFormatting.AbstractNumericLabelFormatting", 0)]
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AbstractNumericLabelFormatting),1)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NumericLabelFormattingBase),1)]
       public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        AbstractNumericLabelFormatting s = (AbstractNumericLabelFormatting)obj;
-        info.AddBaseValueEmbedded(s,typeof(AbstractLabelFormatting));
+        NumericLabelFormattingBase s = (NumericLabelFormattingBase)obj;
+        info.AddBaseValueEmbedded(s,typeof(LabelFormattingBase));
         info.AddValue("DecimalPlaces",s._decimalPlaces);
         
       }
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        AbstractNumericLabelFormatting s =  (AbstractNumericLabelFormatting)o;
-        info.GetBaseValueEmbedded(s,typeof(AbstractLabelFormatting),parent);
+        NumericLabelFormattingBase s =  (NumericLabelFormattingBase)o;
+        info.GetBaseValueEmbedded(s,typeof(LabelFormattingBase),parent);
         s._decimalPlaces = info.GetInt32("DecimalPlaces");
         return s;
       }
@@ -57,7 +57,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 
     #endregion
 
-    protected void CopyFrom(AbstractNumericLabelFormatting from)
+    protected void CopyFrom(NumericLabelFormattingBase from)
     {
       this._decimalPlaces = from._decimalPlaces;
     }

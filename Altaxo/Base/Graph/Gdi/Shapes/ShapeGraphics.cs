@@ -31,7 +31,7 @@ namespace Altaxo.Graph.Gdi.Shapes
   #region ShapeGraphic
 
   [Serializable]
-  public abstract class ShapeGraphic : GraphicsObject
+  public abstract class ShapeGraphic : ShapeBase
   {
     protected BrushHolder m_fillBrush;
     protected PenHolder m_linePen;
@@ -338,7 +338,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       GraphicsPath gp = new GraphicsPath();
       Matrix myMatrix = new Matrix();
 
-      gp.AddLine(X + m_Bounds.X, Y + m_Bounds.Y, X + m_Bounds.X + Width, Y + m_Bounds.Y+Height);
+      gp.AddLine(X + _bounds.X, Y + _bounds.Y, X + _bounds.X + Width, Y + _bounds.Y+Height);
       if (Pen.Width < 5)
         gp.Widen(new Pen(Color.Black, 5));
       else
@@ -385,9 +385,9 @@ namespace Altaxo.Graph.Gdi.Shapes
 
       GraphicsState gs = g.Save();
       g.TranslateTransform(X, Y);
-      if (m_Rotation != 0)
-        g.RotateTransform(m_Rotation);
-      Pen.BrushRectangle = this.m_Bounds;
+      if (_rotation != 0)
+        g.RotateTransform(_rotation);
+      Pen.BrushRectangle = this._bounds;
       g.DrawLine(Pen, 0,0,Width, Height);
       g.Restore(gs);
     }
@@ -397,8 +397,8 @@ namespace Altaxo.Graph.Gdi.Shapes
     {
       GraphicsState gs = g.Save();
       g.TranslateTransform(X, Y);
-      if (m_Rotation != 0)
-        g.RotateTransform(m_Rotation);
+      if (_rotation != 0)
+        g.RotateTransform(_rotation);
 
       DrawRectangularGrip(g, new PointF(0, 0));
       DrawRectangularGrip(g, new PointF(1, 1));
@@ -611,17 +611,17 @@ namespace Altaxo.Graph.Gdi.Shapes
     {
       GraphicsState gs = g.Save();
       g.TranslateTransform(X, Y);
-      if (m_Rotation != -0)
-        g.RotateTransform(m_Rotation);
+      if (_rotation != -0)
+        g.RotateTransform(_rotation);
       
       if (Brush.IsVisible)
       {
-        Brush.Rectangle = m_Bounds;
-        g.FillRectangle(Brush, m_Bounds);
+        Brush.Rectangle = _bounds;
+        g.FillRectangle(Brush, _bounds);
       }
 
-      Pen.BrushRectangle = m_Bounds;
-      g.DrawRectangle(Pen, m_Bounds.X, m_Bounds.Y, m_Bounds.Width, m_Bounds.Height);
+      Pen.BrushRectangle = _bounds;
+      g.DrawRectangle(Pen, _bounds.X, _bounds.Y, _bounds.Width, _bounds.Height);
       g.Restore(gs);
     }
   } // End Class
@@ -791,7 +791,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       GraphicsPath gp = new GraphicsPath();
       Matrix myMatrix = new Matrix();
 
-      gp.AddEllipse(new RectangleF(X + m_Bounds.X, Y + m_Bounds.Y, Width, Height));
+      gp.AddEllipse(new RectangleF(X + _bounds.X, Y + _bounds.Y, Width, Height));
       if (this.Rotation != 0)
       {
         myMatrix.RotateAt(this.Rotation, new PointF(X, Y), MatrixOrder.Append);
@@ -805,17 +805,17 @@ namespace Altaxo.Graph.Gdi.Shapes
     {
       GraphicsState gs = g.Save();
       g.TranslateTransform(X, Y);
-      if (m_Rotation != 0)
-        g.RotateTransform(m_Rotation);
+      if (_rotation != 0)
+        g.RotateTransform(_rotation);
      
       if (Brush.IsVisible)
       {
-        Brush.Rectangle = m_Bounds;
-        g.FillEllipse(Brush, m_Bounds);
+        Brush.Rectangle = _bounds;
+        g.FillEllipse(Brush, _bounds);
       }
 
-      Pen.BrushRectangle = m_Bounds;
-      g.DrawEllipse(Pen, m_Bounds);
+      Pen.BrushRectangle = _bounds;
+      g.DrawEllipse(Pen, _bounds);
       g.Restore(gs);
     }
   } // end class

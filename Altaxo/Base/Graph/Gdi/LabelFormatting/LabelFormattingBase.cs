@@ -29,7 +29,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
   /// <summary>
   /// Base class that can be used to derive a label formatting class
   /// </summary>
-  public abstract class AbstractLabelFormatting : ILabelFormatting
+  public abstract class LabelFormattingBase : ILabelFormatting
   {
     protected string _prefix=string.Empty;
     protected string _suffix=string.Empty;
@@ -38,18 +38,18 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
     #region Serialization
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Graph.LabelFormatting.AbstractLabelFormatting", 0)]
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AbstractLabelFormatting),1)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LabelFormattingBase),1)]
       public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        AbstractLabelFormatting s = (AbstractLabelFormatting)obj;
+        LabelFormattingBase s = (LabelFormattingBase)obj;
         info.AddValue("Prefix",s._prefix);
         info.AddValue("Suffix",s._suffix);
       }
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        AbstractLabelFormatting s = (AbstractLabelFormatting)o;
+        LabelFormattingBase s = (LabelFormattingBase)o;
         s._prefix = info.GetString("Prefix");
         s._suffix = info.GetString("Suffix");
         return s;
@@ -61,15 +61,15 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
     #region ILabelFormatting Members
 
 
-    protected AbstractLabelFormatting()
+    protected LabelFormattingBase()
     {
     }
-    protected AbstractLabelFormatting(AbstractLabelFormatting from)
+    protected LabelFormattingBase(LabelFormattingBase from)
     {
       CopyFrom(from);
     }
 
-    protected void CopyFrom(AbstractLabelFormatting from)
+    protected void CopyFrom(LabelFormattingBase from)
     {
       this._prefix = from._prefix;
       this._suffix = from._suffix;

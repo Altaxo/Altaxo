@@ -32,17 +32,8 @@ namespace Altaxo.Graph.Gdi.Axis
   /// <remarks>AbstractXYAxisLabelStyle is the abstract base class of all LabelStyles.</remarks>
   public abstract class AxisLabelStyleBase : Main.IChangedEventSource, System.ICloneable
   {
-    /*
-    /// <summary>
-    /// Creates the abstract base class instance. You have to provided, for which edge of the layer
-    /// this AbstractXYAxisLabelStyle is intended.
-    /// </summary>
-    /// <param name="st"></param>
-    public AbstractXYAxisLabelStyle(EdgeType st)
-      : base(st)
-    {
-    }
-    */
+    [field:NonSerialized]
+    public event System.EventHandler Changed;
 
     /// <summary>
     /// Abstract paint function for the AbstractXYAxisLabelStyle.
@@ -52,10 +43,11 @@ namespace Altaxo.Graph.Gdi.Axis
     /// <param name="styleInfo">The information which identifies the axis styles.</param>
     /// <param name="axisstyle">The axis style the axis is formatted with.</param>
     /// <param name="useMinorTicks">If true, the minor ticks where used instead of the (default) major ticks.</param>
-    public abstract void Paint(Graphics g, XYPlotLayer layer, A2DAxisStyleInformation styleInfo, G2DAxisLineStyle axisstyle, bool useMinorTicks);
+    public abstract void Paint(Graphics g, XYPlotLayer layer, A2DAxisStyleInformation styleInfo, AxisLineStyle axisstyle, bool useMinorTicks);
+ 
     #region IChangedEventSource Members
 
-    public event System.EventHandler Changed;
+
 
     protected virtual void OnChanged()
     {

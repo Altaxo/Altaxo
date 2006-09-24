@@ -32,10 +32,14 @@ namespace Altaxo.Graph.Gdi.Shapes
   /// <summary>
   /// Summary description for GraphicsObjectCollection.
   /// </summary>
-  [SerializationSurrogate(0,typeof(GraphicsObjectCollection.SerializationSurrogate0))]
+  [SerializationSurrogate(0,typeof(ShapeCollection.SerializationSurrogate0))]
   [SerializationVersion(0)]
-  public class GraphicsObjectCollection : Altaxo.Data.CollectionBase, Main.IChangedEventSource, Main.IChildChangedEventSink
+  public class ShapeCollection : Altaxo.Data.CollectionBase, Main.IChangedEventSource, Main.IChildChangedEventSink
   {
+
+    [field:NonSerialized]
+    public event System.EventHandler Changed;
+
 
     #region "Serialization"
 
@@ -51,7 +55,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       /// <param name="context">The streaming context.</param>
       public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context  )
       {
-        GraphicsObjectCollection s = (GraphicsObjectCollection)obj;
+        ShapeCollection s = (ShapeCollection)obj;
         info.AddValue("Data",s.myList);
       }
 
@@ -65,7 +69,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       /// <returns>The deserialized GraphicsObjectCollection.</returns>
       public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
       {
-        GraphicsObjectCollection s = (GraphicsObjectCollection)obj;
+        ShapeCollection s = (ShapeCollection)obj;
 
         s.myList =  (System.Collections.ArrayList)info.GetValue("Data",typeof(System.Collections.ArrayList));
         
@@ -73,13 +77,13 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
     }
 
-
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GraphicsObjectCollection),0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.GraphicsObjectCollection", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ShapeCollection),1)]
       public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        GraphicsObjectCollection s = (GraphicsObjectCollection)obj;
+        ShapeCollection s = (ShapeCollection)obj;
         
         info.CreateArray("GraphObjects",s.myList.Count);
         for(int i=0;i<s.myList.Count;i++)
@@ -89,12 +93,12 @@ namespace Altaxo.Graph.Gdi.Shapes
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
         
-        GraphicsObjectCollection s = null!=o ? (GraphicsObjectCollection)o : new GraphicsObjectCollection();
+        ShapeCollection s = null!=o ? (ShapeCollection)o : new ShapeCollection();
 
         int count = info.OpenArray();
         for(int i=0;i<count;i++)
         {
-          GraphicsObject go = (GraphicsObject)info.GetValue(s);
+          ShapeBase go = (ShapeBase)info.GetValue(s);
           s.Add(go);
         }
         info.CloseArray(count);
@@ -117,7 +121,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 
 
-    public GraphicsObjectCollection()
+    public ShapeCollection()
     {
     }
 
@@ -126,13 +130,13 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// Copy constructor. Clones (!) all the graph items from the other collection
     /// </summary>
     /// <param name="from">The collection to clone the items from.</param>
-    public GraphicsObjectCollection(GraphicsObjectCollection from)
+    public ShapeCollection(ShapeCollection from)
     {
       for(int i=0;i<from.Count;i++)
-        this.Add((GraphicsObject)from[i].Clone());
+        this.Add((ShapeBase)from[i].Clone());
     }
 
-    public GraphicsObjectCollection(GraphicsObject[] g)
+    public ShapeCollection(ShapeBase[] g)
       : base()
     {
       this.AddRange(g);
@@ -143,16 +147,16 @@ namespace Altaxo.Graph.Gdi.Shapes
       int len = this.InnerList.Count;
       for(int i=0;i<len;i++)
       {
-        ((GraphicsObject)this.InnerList[i]).Paint(g, container);
+        ((ShapeBase)this.InnerList[i]).Paint(g, container);
       }
     }
 
-    public GraphicsObject FindObjectAtPoint(PointF pt)
+    public ShapeBase FindObjectAtPoint(PointF pt)
     {
       if(null!=this.InnerList)
       {
         int len = this.InnerList.Count;
-        foreach(GraphicsObject g in this.InnerList)
+        foreach(ShapeBase g in this.InnerList)
         {
           if(null!=g.HitTest(pt))
             return g;
@@ -169,17 +173,17 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <param name="yscale"></param>
     public void ScalePosition(double xscale, double yscale)
     {
-      foreach(GraphicsObject o in this.InnerList)
+      foreach(ShapeBase o in this.InnerList)
       {
-        GraphicsObject.ScalePosition(o,xscale,yscale);
+        ShapeBase.ScalePosition(o,xscale,yscale);
       }
     }
 
-    public GraphicsObject this[int index]
+    public ShapeBase this[int index]
     {
       get
       {
-        return (GraphicsObject)List[index];
+        return (ShapeBase)List[index];
       }
       set
       {
@@ -190,12 +194,12 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
     }
 
-    public int Add(GraphicsObject go)
+    public int Add(ShapeBase go)
     {
       return Add(go, true);
     }
 
-    public int Add(GraphicsObject go, bool fireChangedEvent)
+    public int Add(ShapeBase go, bool fireChangedEvent)
     {
       go.Container = this;
       int result =  List.Add(go);
@@ -206,7 +210,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       return result;
     }
 
-    public void AddRange(GraphicsObject[] gos)
+    public void AddRange(ShapeBase[] gos)
     {
       int len = gos.Length;
       for(int i=0;i<len;i++)
@@ -215,7 +219,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       OnChanged();
     }
 
-    public void AddRange(GraphicsObjectCollection goc)
+    public void AddRange(ShapeCollection goc)
     {
       int len = goc.Count;
       for(int i=0;i<len;i++)
@@ -224,21 +228,21 @@ namespace Altaxo.Graph.Gdi.Shapes
       OnChanged();
     }
 
-    public bool Contains(GraphicsObject go)
+    public bool Contains(ShapeBase go)
     {
       return List.Contains(go);
     }
 
-    public void CopyTo(GraphicsObject[] array, int index)
+    public void CopyTo(ShapeBase[] array, int index)
     {
       List.CopyTo(array, index);
     }
 
-    public int IndexOf(GraphicsObject go)
+    public int IndexOf(ShapeBase go)
     {
       return List.IndexOf(go);
     }
-    public void Insert(int index, GraphicsObject go)
+    public void Insert(int index, ShapeBase go)
     {
       List.Insert(index, go);
       OnChanged();
@@ -250,14 +254,13 @@ namespace Altaxo.Graph.Gdi.Shapes
       return new GraphObjectEnumerator(this);
     }
 
-    public void Remove(GraphicsObject go)
+    public void Remove(ShapeBase go)
     {
       List.Remove(go);
       OnChanged();
     }
     #region IChangedEventSource Members
 
-    public event System.EventHandler Changed;
 
     public virtual void EhChildChanged(object child, EventArgs e)
     {
@@ -282,7 +285,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     private IEnumerable temp;
 
 
-    public GraphObjectEnumerator(GraphicsObjectCollection mappings)
+    public GraphObjectEnumerator(ShapeCollection mappings)
       : base()
     {
       this.temp = (IEnumerable)mappings;

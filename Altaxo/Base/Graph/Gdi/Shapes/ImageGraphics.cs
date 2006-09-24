@@ -32,7 +32,7 @@ namespace Altaxo.Graph.Gdi.Shapes
   #region ImageGraphic
   [SerializationSurrogate(0,typeof(ImageGraphic.SerializationSurrogate0))]
   [SerializationVersion(0)]
-  public abstract class ImageGraphic : GraphicsObject
+  public abstract class ImageGraphic : ShapeBase
   {
     #region Serialization
     /// <summary>Used to serialize the ImageGraphic Version 0.</summary>
@@ -345,8 +345,8 @@ namespace Altaxo.Graph.Gdi.Shapes
     {
       GraphicsState gs = g.Save();
       g.TranslateTransform(X, Y);
-      if (m_Rotation != 0)
-        g.RotateTransform(m_Rotation);
+      if (_rotation != 0)
+        g.RotateTransform(_rotation);
 
       Image img = m_Image == null ? null : m_Image.GetImage(); 
 
@@ -594,8 +594,8 @@ namespace Altaxo.Graph.Gdi.Shapes
     {
       GraphicsState gs = g.Save();
       g.TranslateTransform(X,Y);
-      if( m_Rotation != 0)
-        g.RotateTransform(m_Rotation);
+      if( _rotation != 0)
+        g.RotateTransform(_rotation);
     
       Image myImage = this.GetImage();
   

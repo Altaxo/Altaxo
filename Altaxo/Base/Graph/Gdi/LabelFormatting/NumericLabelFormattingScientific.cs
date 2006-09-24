@@ -28,7 +28,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
   /// <summary>
   /// Formats a numeric item in scientific notation, i.e. in the form mantissa*10^exponent.
   /// </summary>
-  public class NumericLabelFormattingScientific : AbstractNumericLabelFormatting
+  public class NumericLabelFormattingScientific : NumericLabelFormattingBase
   {
    
 
@@ -41,12 +41,12 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         NumericLabelFormattingScientific s = (NumericLabelFormattingScientific)obj;
-        info.AddBaseValueEmbedded(s,typeof(AbstractNumericLabelFormatting));
+        info.AddBaseValueEmbedded(s,typeof(NumericLabelFormattingBase));
       }
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
         NumericLabelFormattingScientific s = null!=o ? (NumericLabelFormattingScientific)o : new NumericLabelFormattingScientific();
-        info.GetBaseValueEmbedded(s,typeof(AbstractNumericLabelFormatting),parent);
+        info.GetBaseValueEmbedded(s,typeof(NumericLabelFormattingBase),parent);
         return s;
       }
     }

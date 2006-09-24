@@ -291,7 +291,7 @@ namespace Altaxo.Graph.Gdi.Shapes
   /// to be used either in the legend or in the axis titles
   /// </summary>
   [Serializable()]
-  public class TextGraphics : GraphicsObject
+  public class TextGraphics : ShapeBase
   {
     [Serializable]
     public enum XAnchorPositionType { Left, Center, Right }
@@ -1120,7 +1120,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       else if (m_YAnchorType == YAnchorPositionType.Bottom)
         yanchor = size.Height;
 
-      this.m_Bounds = new RectangleF(new PointF(-xanchor, -yanchor), size);
+      this._bounds = new RectangleF(new PointF(-xanchor, -yanchor), size);
       this.m_TextOffset = new PointF(distanceXL, distanceYU);
       
     }
@@ -1289,14 +1289,14 @@ namespace Altaxo.Graph.Gdi.Shapes
 
       Matrix transformmatrix= new Matrix();
       transformmatrix.Translate(X,Y);
-      transformmatrix.Rotate(m_Rotation);
-      transformmatrix.Translate(m_Bounds.X,m_Bounds.Y);
+      transformmatrix.Rotate(_rotation);
+      transformmatrix.Translate(_bounds.X,_bounds.Y);
 
       if(!bForPreview)
       {
         g.TranslateTransform(X,Y);
-        g.RotateTransform(m_Rotation);
-        g.TranslateTransform(m_Bounds.X,m_Bounds.Y);
+        g.RotateTransform(_rotation);
+        g.TranslateTransform(_bounds.X,_bounds.Y);
       }
 
 
@@ -1421,11 +1421,11 @@ namespace Altaxo.Graph.Gdi.Shapes
     {
       GraphicsState gs = g.Save();
       g.TranslateTransform(X, Y);
-      if (m_Rotation != 0)
-        g.RotateTransform(m_Rotation);
+      if (_rotation != 0)
+        g.RotateTransform(_rotation);
 
       DrawRotationGrip(g,new PointF(1,1));
-      g.DrawRectangle(Pens.Blue, m_Bounds.X, m_Bounds.Y, m_Bounds.Width, m_Bounds.Height);
+      g.DrawRectangle(Pens.Blue, _bounds.X, _bounds.Y, _bounds.Width, _bounds.Height);
       g.Restore(gs);
     }
 

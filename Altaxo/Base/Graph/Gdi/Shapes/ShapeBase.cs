@@ -32,8 +32,8 @@ namespace Altaxo.Graph.Gdi.Shapes
   /// GraphicsObject is the abstract base class for general graphical objects on the layer,
   /// for instance text elements, lines, pictures, rectangles and so on.
   /// </summary>
-  [Serializable()]
-  public abstract class GraphicsObject 
+  [Serializable]
+  public abstract class ShapeBase 
     :
     System.Runtime.Serialization.ISerializable,
     System.Runtime.Serialization.IDeserializationCallback,
@@ -44,74 +44,80 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <summary>
     /// If true, the graphical object sizes itself, for instance simple text objects.
     /// </summary>
-    protected bool   m_AutoSize = true;
+    protected bool   _autoSize = true;
 
     /// <summary>
     /// The bounds of this object.
     /// </summary>
-    protected RectangleF m_Bounds = new RectangleF(0,0,0,0);
-
-    /// <summary>
-    /// The parent collection this graphical object belongs to.
-    /// </summary>
-    protected GraphicsObjectCollection m_Container=null;
+    protected RectangleF _bounds = new RectangleF(0,0,0,0);
 
     /// <summary>
     /// The position of the graphical object, normally the upper left corner. Strictly spoken,
     /// this is the position of the anchor point of the object.
     /// </summary>
-    protected PointF m_Position = new PointF(0, 0);
+    protected PointF _position = new PointF(0, 0);
+  
     /// <summary>
     /// The rotation angle of the graphical object in reference to the layer.
     /// </summary>
-    protected float  m_Rotation = 0;
+    protected float  _rotation = 0;
 
+
+    /// <summary>
+    /// The parent collection this graphical object belongs to.
+    /// </summary>
+    [NonSerialized]
+    protected ShapeCollection _parentCollection = null;
+
+    [field:NonSerialized]
+    public event System.EventHandler Changed;
 
 
 
     #region Serialization
 
-    protected GraphicsObject(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
+    protected ShapeBase(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
     {
       SetObjectData(this,info,context,null);
     }
     public virtual object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
     {
-      m_Position = (PointF)info.GetValue("Position", typeof(PointF));
-      m_Bounds = (RectangleF)info.GetValue("Bounds", typeof(RectangleF));
-      m_Rotation = info.GetSingle("Rotation");
-      m_AutoSize = info.GetBoolean("AutoSize");
+      _position = (PointF)info.GetValue("Position", typeof(PointF));
+      _bounds = (RectangleF)info.GetValue("Bounds", typeof(RectangleF));
+      _rotation = info.GetSingle("Rotation");
+      _autoSize = info.GetBoolean("AutoSize");
       return this;
     }
     public virtual void GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
     {
-      info.AddValue("Position", m_Position);
-      info.AddValue("Bounds",   m_Bounds);
-      info.AddValue("Rotation", m_Rotation);
-      info.AddValue("AutoSize", m_AutoSize);
+      info.AddValue("Position", _position);
+      info.AddValue("Bounds",   _bounds);
+      info.AddValue("Rotation", _rotation);
+      info.AddValue("AutoSize", _autoSize);
     }
 
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GraphicsObject),0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Graph.GraphicsObject", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ShapeBase),1)]
       public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        GraphicsObject s = (GraphicsObject)obj;
-        info.AddValue("Position",s.m_Position);  
-        info.AddValue("Bounds",s.m_Bounds);
-        info.AddValue("Rotation",s.m_Rotation);
-        info.AddValue("AutoSize",s.m_AutoSize);
+        ShapeBase s = (ShapeBase)obj;
+        info.AddValue("Position",s._position);  
+        info.AddValue("Bounds",s._bounds);
+        info.AddValue("Rotation",s._rotation);
+        info.AddValue("AutoSize",s._autoSize);
       }
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
         
-        GraphicsObject s = (GraphicsObject)o;
+        ShapeBase s = (ShapeBase)o;
 
-        s.m_Position = (PointF)info.GetValue("Position",s);  
-        s.m_Bounds = (RectangleF)info.GetValue("Bounds",s);
-        s.m_Rotation = info.GetSingle("Rotation");
-        s.m_AutoSize = info.GetBoolean("AutoSize");
+        s._position = (PointF)info.GetValue("Position",s);  
+        s._bounds = (RectangleF)info.GetValue("Bounds",s);
+        s._rotation = info.GetSingle("Rotation");
+        s._autoSize = info.GetBoolean("AutoSize");
 
         return s;
       }
@@ -131,19 +137,19 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// Copy constructor.
     /// </summary>
     /// <param name="from">The object to copy the data from.</param>
-    protected GraphicsObject(GraphicsObject from)
+    protected ShapeBase(ShapeBase from)
     {
-      this.m_AutoSize = from.m_AutoSize;
-      this.m_Bounds  = from.m_Bounds;
-      this.m_Container = null;
-      this.m_Position  = from.m_Position;
-      this.m_Rotation  = from.m_Rotation;
+      this._autoSize = from._autoSize;
+      this._bounds  = from._bounds;
+      this._parentCollection = null;
+      this._position  = from._position;
+      this._rotation  = from._rotation;
     }
 
     /// <summary>
     /// Initializes with default values.
     /// </summary>
-    protected GraphicsObject()
+    protected ShapeBase()
     {
     }
 
@@ -151,7 +157,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// Initializes with a certain position in points (1/72 inch).
     /// </summary>
     /// <param name="graphicPosition">The initial position of the graphical object.</param>
-    protected GraphicsObject(PointF graphicPosition)
+    protected ShapeBase(PointF graphicPosition)
     {
       SetPosition(graphicPosition);
     }
@@ -161,64 +167,64 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// </summary>
     /// <param name="posX">The initial x position of the graphical object.</param>
     /// <param name="posY">The initial y position of the graphical object.</param>
-    protected GraphicsObject(float posX, float posY)
+    protected ShapeBase(float posX, float posY)
       : this(new PointF(posX,posY))
     {
     }
 
-    protected GraphicsObject(PointF graphicPosition, SizeF graphicSize)
+    protected ShapeBase(PointF graphicPosition, SizeF graphicSize)
       : this(graphicPosition)
     {
       SetSize(graphicSize);
       this.AutoSize = false;
     }
-    protected GraphicsObject(float posX, float posY, SizeF graphicSize)
+    protected ShapeBase(float posX, float posY, SizeF graphicSize)
       : this(new PointF(posX, posY), graphicSize)
     {
     }
 
-    protected GraphicsObject(float posX, float posY,
+    protected ShapeBase(float posX, float posY,
       float width, float height)
       : this(new PointF(posX, posY), new SizeF(width, height))
     {
     }
 
-    protected GraphicsObject(PointF graphicPosition, float Rotation)
+    protected ShapeBase(PointF graphicPosition, float Rotation)
     {
       this.SetPosition(graphicPosition);
       this.Rotation = Rotation;
     }
 
-    protected GraphicsObject(float posX, float posY, float Rotation)
+    protected ShapeBase(float posX, float posY, float Rotation)
       : this(new PointF(posX, posY), Rotation)
     {
     }
 
-    protected GraphicsObject(PointF graphicPosition, SizeF graphicSize, float Rotation)
+    protected ShapeBase(PointF graphicPosition, SizeF graphicSize, float Rotation)
       : this(graphicPosition, Rotation)
     {
       this.SetSize(graphicSize);
       this.AutoSize = false;
     }
-    protected GraphicsObject(float posX, float posY, SizeF graphicSize, float Rotation)
+    protected ShapeBase(float posX, float posY, SizeF graphicSize, float Rotation)
       : this(new PointF(posX, posY), graphicSize, Rotation)
     {
     }
 
-    protected GraphicsObject(float posX, float posY, float width, float height, float Rotation)
+    protected ShapeBase(float posX, float posY, float width, float height, float Rotation)
       : this(new PointF(posX, posY), new SizeF(width, height), Rotation)
     {
     }
 
-    public GraphicsObjectCollection Container
+    public ShapeCollection Container
     {
       get
       {
-        return m_Container;
+        return _parentCollection;
       }
       set
       {
-        m_Container = value;
+        _parentCollection = value;
       }
     }
 
@@ -229,34 +235,34 @@ namespace Altaxo.Graph.Gdi.Shapes
     {
       get
       {
-        return m_AutoSize;
+        return _autoSize;
       }
       set
       {
-        if(value != m_AutoSize)
-          m_AutoSize = value;
+        if(value != _autoSize)
+          _autoSize = value;
       }
     }
     public virtual float X
     {
       get
       {
-        return m_Position.X;
+        return _position.X;
       }
       set
       {
-        m_Position.X = value;
+        _position.X = value;
       }
     }
     public virtual float Y
     {
       get
       {
-        return m_Position.Y;
+        return _position.Y;
       }
       set
       {
-        m_Position.Y = value;
+        _position.Y = value;
       }
     }
 
@@ -270,12 +276,12 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     public virtual PointF GetPosition()
     {
-      return this.m_Position;
+      return this._position;
     }
 
     public virtual void SetPosition(PointF Value)
     {
-      this.m_Position = Value;
+      this._position = Value;
     }
 
     public PointF Position
@@ -308,17 +314,17 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     public void SetEndPosition(PointF Value)
     {
-      if (m_Rotation == 0)
+      if (_rotation == 0)
       {
         SizeF siz = new SizeF(
-          Value.X - this.m_Position.X,
-          Value.Y - this.m_Position.Y);
+          Value.X - this._position.X,
+          Value.Y - this._position.Y);
         SetSize(siz);
       }
       else
       {
-        double cosphi = Math.Cos(m_Rotation * Math.PI / 180);
-        double sinphi = Math.Sin(m_Rotation * Math.PI / 180);
+        double cosphi = Math.Cos(_rotation * Math.PI / 180);
+        double sinphi = Math.Sin(_rotation * Math.PI / 180);
         double dx = Value.X - this.X;
         double dy = Value.Y - this.Y;
         // now we have to rotate backward to get the endpoint
@@ -337,7 +343,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <param name="o">The graphics object whose position is scaled.</param>
     /// <param name="xscale">The xscale ratio.</param>
     /// <param name="yscale">The yscale ratio.</param>
-    public static void ScalePosition(GraphicsObject o, double xscale, double yscale)
+    public static void ScalePosition(ShapeBase o, double xscale, double yscale)
     {
       if(o!=null)
       {
@@ -351,32 +357,32 @@ namespace Altaxo.Graph.Gdi.Shapes
     {
       get
       {
-        return m_Bounds.Height;
+        return _bounds.Height;
       }
       set
       {
-        m_Bounds.Height = value;
+        _bounds.Height = value;
       }
     }
     public virtual float Width
     {
       get
       {
-        return m_Bounds.Width;
+        return _bounds.Width;
       }
       set
       {
-        m_Bounds.Width = value;
+        _bounds.Width = value;
       }
     }
 
     public virtual void SetSize(SizeF Value)
     {
-      m_Bounds.Size = Value;
+      _bounds.Size = Value;
     }
     public virtual SizeF GetSize()
     {
-      return this.m_Bounds.Size;
+      return this._bounds.Size;
     }
 
     public SizeF Size 
@@ -395,18 +401,17 @@ namespace Altaxo.Graph.Gdi.Shapes
     {
       get
       {
-        return m_Rotation;
+        return _rotation;
       }
       set
       {
-        m_Rotation = value;
+        _rotation = value;
       }
     }
 
     public abstract void Paint(Graphics g, object obj);
     #region IChangedEventSource Members
 
-    public event System.EventHandler Changed;
 
 
     protected void EhChildChanged(object sender, EventArgs e)
@@ -417,8 +422,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     protected virtual void OnChanged()
     {
-      if(null!=this.m_Container )
-        m_Container.EhChildChanged(this,new Main.ChangedEventArgs(this,null));
+      if(null!=this._parentCollection )
+        _parentCollection.EhChildChanged(this,new Main.ChangedEventArgs(this,null));
 
       if(null!=Changed)
         Changed(this,new Main.ChangedEventArgs(this,null));
@@ -450,7 +455,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       GraphicsPath gp = new GraphicsPath();
       Matrix myMatrix = new Matrix();
 
-      gp.AddRectangle(new RectangleF(X + m_Bounds.X, Y + m_Bounds.Y, Width, Height));
+      gp.AddRectangle(new RectangleF(X + _bounds.X, Y + _bounds.Y, Width, Height));
       if (this.Rotation != 0)
       {
         myMatrix.RotateAt(this.Rotation, new PointF(X, Y), MatrixOrder.Append);
@@ -469,7 +474,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       Matrix myMatrix = new Matrix();
 
 
-      gp.AddRectangle(new RectangleF(X + m_Bounds.X, Y + m_Bounds.Y, Width, Height));
+      gp.AddRectangle(new RectangleF(X + _bounds.X, Y + _bounds.Y, Width, Height));
       if (this.Rotation != 0)
       {
         myMatrix.RotateAt(this.Rotation, new PointF(this.X, this.Y), MatrixOrder.Append);
@@ -491,18 +496,18 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <returns>The coordinates of this point.</returns>
     public PointF RelativeToAbsolutePosition(PointF p, bool withRotation)
     {
-      double dx = p.X * m_Bounds.Width;
-      double dy = p.Y * m_Bounds.Height;
+      double dx = p.X * _bounds.Width;
+      double dy = p.Y * _bounds.Height;
 
       
-     dx += m_Bounds.X;
-     dy += m_Bounds.Y;
+     dx += _bounds.X;
+     dy += _bounds.Y;
      
 
-      if (withRotation && m_Rotation != 0)
+      if (withRotation && _rotation != 0)
       {
-        double cosphi = Math.Cos(m_Rotation * Math.PI / 180);
-        double sinphi = Math.Sin(m_Rotation * Math.PI / 180);
+        double cosphi = Math.Cos(_rotation * Math.PI / 180);
+        double sinphi = Math.Sin(_rotation * Math.PI / 180);
 
         double helpdx = (dx * cosphi - dy * sinphi);
         dy = (dy * cosphi + dx * sinphi);
@@ -511,7 +516,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
 
       if (withRotation)
-        return new PointF((float)(m_Position.X + dx), (float)(m_Position.Y + dy));
+        return new PointF((float)(_position.X + dx), (float)(_position.Y + dy));
       else
         return new PointF((float)(dx), (float)(dy));
     }
@@ -521,10 +526,10 @@ namespace Altaxo.Graph.Gdi.Shapes
       double dx = point.X - pivot.X;
       double dy = point.Y - pivot.Y;
 
-      if (m_Rotation != 0)
+      if (_rotation != 0)
       {
-        double cosphi = Math.Cos(m_Rotation * Math.PI / 180);
-        double sinphi = Math.Sin(m_Rotation * Math.PI / 180);
+        double cosphi = Math.Cos(_rotation * Math.PI / 180);
+        double sinphi = Math.Sin(_rotation * Math.PI / 180);
         // now we have to rotate backward to get the endpoint
         double helpdx = (dx * cosphi + dy * sinphi);
         dy = (-dx * sinphi + dy * cosphi);
@@ -539,10 +544,10 @@ namespace Altaxo.Graph.Gdi.Shapes
       double dx = point.X - pivot.X;
       double dy = point.Y - pivot.Y;
 
-      if (m_Rotation != 0)
+      if (_rotation != 0)
       {
-        double cosphi = Math.Cos(m_Rotation * Math.PI / 180);
-        double sinphi = Math.Sin(m_Rotation * Math.PI / 180);
+        double cosphi = Math.Cos(_rotation * Math.PI / 180);
+        double sinphi = Math.Sin(_rotation * Math.PI / 180);
         // now we have to rotate backward to get the endpoint
         double helpdx = (dx * cosphi + dy * sinphi);
         dy = (-dx * sinphi + dy * cosphi);
@@ -557,10 +562,10 @@ namespace Altaxo.Graph.Gdi.Shapes
       double dx = point.X - pivot.X;
       double dy = point.Y - pivot.Y;
 
-      if (m_Rotation != 0)
+      if (_rotation != 0)
       {
-        double cosphi = Math.Cos(m_Rotation * Math.PI / 180);
-        double sinphi = Math.Sin(m_Rotation * Math.PI / 180);
+        double cosphi = Math.Cos(_rotation * Math.PI / 180);
+        double sinphi = Math.Sin(_rotation * Math.PI / 180);
         // now we have to rotate backward to get the endpoint
         double helpdx = (dx * cosphi - dy * sinphi);
         dy = (dx * sinphi + dy * cosphi);
@@ -576,26 +581,26 @@ namespace Altaxo.Graph.Gdi.Shapes
 
       if (dx == 1 && (diff.Width > 0 || AllowNegativeSize))
       {
-        this.m_Bounds.Width = diff.Width;
+        this._bounds.Width = diff.Width;
       }
       else if (dx == -1 && (diff.Width < 0 || AllowNegativeSize))
       {
-        SizeF s = ToRotatedDifference(PointF.Empty, new PointF(diff.Width + m_Bounds.Width, 0));
-        this.m_Position.X += s.Width;
-        this.m_Position.Y += s.Height;
-        this.m_Bounds.Width = -diff.Width;
+        SizeF s = ToRotatedDifference(PointF.Empty, new PointF(diff.Width + _bounds.Width, 0));
+        this._position.X += s.Width;
+        this._position.Y += s.Height;
+        this._bounds.Width = -diff.Width;
       }
 
       if (dy == 1 && (diff.Height > 0 || AllowNegativeSize))
       {
-        this.m_Bounds.Height = diff.Height;
+        this._bounds.Height = diff.Height;
       }
       else if (dy == -1 && (diff.Height < 0 || AllowNegativeSize))
       {
-        SizeF s = ToRotatedDifference(PointF.Empty, new PointF(0, diff.Height + m_Bounds.Height));
-        this.m_Position.X += s.Width;
-        this.m_Position.Y += s.Height;
-        this.m_Bounds.Height = -diff.Height;
+        SizeF s = ToRotatedDifference(PointF.Empty, new PointF(0, diff.Height + _bounds.Height));
+        this._position.X += s.Width;
+        this._position.Y += s.Height;
+        this._bounds.Height = -diff.Height;
       }
     }
 
@@ -608,17 +613,17 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <param name="diff">Difference between absolute grip point and absolute pivot point, in unrotated absolute coordinates.</param>
     public void SetRotationFrom(PointF relPivot, PointF absPivot, PointF relDrawGrip, SizeF diff)
     {
-      double dx = (relDrawGrip.X - relPivot.X) * m_Bounds.Width;
-      double dy = (relDrawGrip.Y - relPivot.Y) * m_Bounds.Height;
+      double dx = (relDrawGrip.X - relPivot.X) * _bounds.Width;
+      double dy = (relDrawGrip.Y - relPivot.Y) * _bounds.Height;
       double a1 = Math.Atan2(dy, dx);
       double a2 = Math.Atan2(diff.Height, diff.Width);
 
-      this.m_Rotation = (float)(180 * (a2 - a1) / Math.PI);
+      this._rotation = (float)(180 * (a2 - a1) / Math.PI);
 
       //SizeF s = ToRotatedDifference(PointF.Empty, new PointF(-m_Bounds.Width / 2, -m_Bounds.Height / 2));
       SizeF s = ToRotatedDifference(RelativeToAbsolutePosition(relPivot, false), Point.Empty);
-      this.m_Position.X = absPivot.X + s.Width;
-      this.m_Position.Y = absPivot.Y + s.Height;
+      this._position.X = absPivot.X + s.Width;
+      this._position.Y = absPivot.Y + s.Height;
 
     }
 
@@ -670,8 +675,8 @@ namespace Altaxo.Graph.Gdi.Shapes
     {
       GraphicsState gs = g.Save();
       g.TranslateTransform(X, Y);
-      if (m_Rotation != 0)
-        g.RotateTransform(m_Rotation);
+      if (_rotation != 0)
+        g.RotateTransform(_rotation);
 
       DrawRectangularGrip(g, new PointF(0, 0));
       DrawRectangularGrip(g, new PointF(0, 1));
@@ -688,7 +693,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       DrawRotationGrip(g, new PointF(0.8f, 0.8f));
       DrawRotationGrip(g, new PointF(0.2f, 0.8f));
 
-      g.DrawRectangle(Pens.Blue, m_Bounds.X,m_Bounds.Y,m_Bounds.Width,m_Bounds.Height);
+      g.DrawRectangle(Pens.Blue, _bounds.X,_bounds.Y,_bounds.Width,_bounds.Height);
 
       g.Restore(gs);
     }
@@ -754,13 +759,13 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     protected class SizeMoveGripHandle : IGripManipulationHandle
     {
-      GraphicsObject _parent;
+      ShapeBase _parent;
       PointF _drawrPosition;
       PointF _fixrPosition;
       PointF _fixaPosition;
       bool _allowNegativeSize;
 
-      public SizeMoveGripHandle(GraphicsObject parent, PointF relPos)
+      public SizeMoveGripHandle(ShapeBase parent, PointF relPos)
       {
         _parent = parent;
         _drawrPosition = relPos;
@@ -777,12 +782,12 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     protected class RotationGripHandle : IGripManipulationHandle
     {
-      GraphicsObject _parent;
+      ShapeBase _parent;
       PointF _drawrPosition;
       PointF _fixrPosition;
       PointF _fixaPosition;
 
-      public RotationGripHandle(GraphicsObject parent, PointF relPos)
+      public RotationGripHandle(ShapeBase parent, PointF relPos)
       {
         _parent = parent;
         _drawrPosition = relPos;

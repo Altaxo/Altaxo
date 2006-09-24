@@ -96,7 +96,7 @@ namespace Altaxo.Graph.Gdi
 
     XYPlotLayerAxisPropertiesCollection _axisProperties;
 
-    protected GraphicsObjectCollection _graphObjects;
+    protected ShapeCollection _graphObjects;
 
     protected PlotItemCollection _plotItems;
 
@@ -387,7 +387,7 @@ namespace Altaxo.Graph.Gdi
         // XYPlotLayer specific
         s._linkedLayer.SetDocNode((XYPlotLayer)info.GetValue("LinkedLayer", typeof(XYPlotLayer)), s);
 
-        s._graphObjects = (GraphicsObjectCollection)info.GetValue("GraphObjects",typeof(GraphicsObjectCollection));
+        s._graphObjects = (ShapeCollection)info.GetValue("GraphObjects",typeof(ShapeCollection));
 
         s._plotItems = (PlotItemCollection)info.GetValue("Plots",typeof(PlotItemCollection));
 
@@ -585,7 +585,7 @@ namespace Altaxo.Graph.Gdi
           info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.EhDeserializationFinished);
         }
 
-        s._graphObjects = (GraphicsObjectCollection)info.GetValue("GraphObjects",typeof(GraphicsObjectCollection));
+        s._graphObjects = (ShapeCollection)info.GetValue("GraphObjects",typeof(ShapeCollection));
 
         s._plotItems = (PlotItemCollection)info.GetValue("Plots",typeof(PlotItemCollection));
     
@@ -722,7 +722,7 @@ namespace Altaxo.Graph.Gdi
         s._linkedLayer = (Main.RelDocNodeProxy)info.GetValue("e", s);
         info.CloseArray(count);
 
-        s._graphObjects = (GraphicsObjectCollection)info.GetValue("GraphicGlyphs", s);
+        s._graphObjects = (ShapeCollection)info.GetValue("GraphicGlyphs", s);
 
         s._plotItems = (PlotItemCollection)info.GetValue("Plots", s);
 
@@ -782,7 +782,7 @@ namespace Altaxo.Graph.Gdi
       // XYPlotLayer specific
       this.LinkedLayerLink = from._linkedLayer.ClonePathOnly(this);
       
-      this.GraphObjects = null==from._graphObjects ? null : new GraphicsObjectCollection(from._graphObjects);
+      this.GraphObjects = null==from._graphObjects ? null : new ShapeCollection(from._graphObjects);
 
       this.PlotItems = null==from._plotItems ? null : new PlotItemCollection(this,from._plotItems);
 
@@ -844,7 +844,7 @@ namespace Altaxo.Graph.Gdi
       this.CoordinateSystem = new G2DCartesicCoordinateSystem();
       this.ScaleStyles = new G2DScaleStyleCollection();
       this.AxisProperties = new XYPlotLayerAxisPropertiesCollection();
-      this.GraphObjects = new GraphicsObjectCollection();
+      this.GraphObjects = new ShapeCollection();
       this._location = new XYPlotLayerPositionAndSize();
      
     }
@@ -867,7 +867,7 @@ namespace Altaxo.Graph.Gdi
      
       this.ScaleStyles = new G2DScaleStyleCollection();
       this.AxisProperties = new XYPlotLayerAxisPropertiesCollection();
-      this.GraphObjects = new GraphicsObjectCollection();
+      this.GraphObjects = new ShapeCollection();
       
 
       CalculateMatrix();
@@ -905,12 +905,12 @@ namespace Altaxo.Graph.Gdi
       get { return _parentLayerCollection as XYPlotLayerCollection; }
     }
 
-    public GraphicsObjectCollection GraphObjects
+    public ShapeCollection GraphObjects
     {
       get { return _graphObjects; }
       protected set
       {
-        GraphicsObjectCollection oldvalue = _graphObjects;
+        ShapeCollection oldvalue = _graphObjects;
         _graphObjects = value;
         if (!object.ReferenceEquals(value, oldvalue))
         {
@@ -952,7 +952,7 @@ namespace Altaxo.Graph.Gdi
     }
     
 
-    public void Remove(GraphicsObject go)
+    public void Remove(ShapeBase go)
     {
       if (_scaleStyles.Remove(go))
         return;
@@ -1257,10 +1257,10 @@ namespace Altaxo.Graph.Gdi
     {
       foreach (AxisStyle style in this.ScaleStyles.AxisStyles)
       {
-        GraphicsObject.ScalePosition(style.Title, xscale, yscale);
+        ShapeBase.ScalePosition(style.Title, xscale, yscale);
       }
 
-      GraphicsObject.ScalePosition(this._legend,xscale,yscale);
+      ShapeBase.ScalePosition(this._legend,xscale,yscale);
       this._graphObjects.ScalePosition(xscale,yscale);
     }
 
@@ -2233,7 +2233,7 @@ namespace Altaxo.Graph.Gdi
       PointF layerC = GraphToLayerCoordinates(pageC);
 
 
-      List<GraphicsObject> specObjects = new List<GraphicsObject>();
+      List<ShapeBase> specObjects = new List<ShapeBase>();
       foreach(AxisStyle style in _scaleStyles.AxisStyles)
         specObjects.Add(style.Title);
       specObjects.Add(_legend);
@@ -2242,14 +2242,14 @@ namespace Altaxo.Graph.Gdi
       {
 
         // do the hit test first for the special objects of the layer
-        foreach (GraphicsObject go in specObjects)
+        foreach (ShapeBase go in specObjects)
         {
           if (null != go)
           {
             hit = go.HitTest(layerC);
             if (null != hit)
             {
-              if (null == hit.Remove && (hit.HittedObject is GraphicsObject))
+              if (null == hit.Remove && (hit.HittedObject is ShapeBase))
                 hit.Remove = new DoubleClickHandler(EhTitlesOrLegend_Remove);
               return ForwardTransform(hit);
             }
@@ -2309,12 +2309,12 @@ namespace Altaxo.Graph.Gdi
 
       
         // now hit testing the other objects in the layer
-        foreach (GraphicsObject go in _graphObjects)
+        foreach (ShapeBase go in _graphObjects)
         {
           hit = go.HitTest(layerC);
           if (null != hit)
           {
-            if (null == hit.Remove && (hit.HittedObject is GraphicsObject))
+            if (null == hit.Remove && (hit.HittedObject is ShapeBase))
               hit.Remove = new DoubleClickHandler(EhGraphicsObject_Remove);
             return ForwardTransform(hit);
           }
@@ -2381,13 +2381,13 @@ namespace Altaxo.Graph.Gdi
 
     static bool EhGraphicsObject_Remove(IHitTestObject o)
     {
-      GraphicsObject go = (GraphicsObject)o.HittedObject;
+      ShapeBase go = (ShapeBase)o.HittedObject;
       o.ParentLayer.GraphObjects.Remove(go);
       return true;
     }
     static bool EhTitlesOrLegend_Remove(IHitTestObject o)
     {
-      GraphicsObject go = (GraphicsObject)o.HittedObject;
+      ShapeBase go = (ShapeBase)o.HittedObject;
       XYPlotLayer layer = o.ParentLayer;
 
       if(object.ReferenceEquals(go,layer._legend))

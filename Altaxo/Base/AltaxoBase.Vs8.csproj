@@ -1224,7 +1224,6 @@
     <Compile Include="Collections\NamedItem.cs" />
     <Compile Include="Graph\A2DAxisStyleIdentifier.cs" />
     <Compile Include="Graph\A2DAxisStyleInformation.cs" />
-    <Compile Include="Graph\Gdi\Axis\AbstractXYAxisLabelStyle.cs" />
     <Compile Include="Graph\Gdi\Axis\AxisLabelStyle.cs" />
     <Compile Include="Graph\Gdi\Axis\AxisLabelStyleBase.cs" />
     <Compile Include="Graph\Gdi\Axis\AxisLineStyle.cs" />
@@ -1247,11 +1246,11 @@
     <Compile Include="Graph\Gdi\IGrippableObject.cs" />
     <Compile Include="Graph\Gdi\IHitTestObject.cs" />
     <Compile Include="Graph\Gdi\IPlotArea.cs" />
-    <Compile Include="Graph\Gdi\LabelFormatting\AbstractLabelFormatting.cs" />
-    <Compile Include="Graph\Gdi\LabelFormatting\AbstractNumericLabelFormatting.cs" />
     <Compile Include="Graph\Gdi\LabelFormatting\ILabelFormatting.cs" />
     <Compile Include="Graph\Gdi\LabelFormatting\IMeasuredLabelItem.cs" />
+    <Compile Include="Graph\Gdi\LabelFormatting\LabelFormattingBase.cs" />
     <Compile Include="Graph\Gdi\LabelFormatting\NumericLabelFormattingAuto.cs" />
+    <Compile Include="Graph\Gdi\LabelFormatting\NumericLabelFormattingBase.cs" />
     <Compile Include="Graph\Gdi\LabelFormatting\NumericLabelFormattingFixed.cs" />
     <Compile Include="Graph\Gdi\LabelFormatting\NumericLabelFormattingMantissa.cs" />
     <Compile Include="Graph\Gdi\LabelFormatting\NumericLabelFormattingScientific.cs" />
@@ -1288,9 +1287,9 @@
     <Compile Include="Graph\Gdi\Plot\XYColumnPlotItem.cs" />
     <Compile Include="Graph\Gdi\Plot\XYColumnPlotItemLabelTextStyle.cs" />
     <Compile Include="Graph\Gdi\Plot\XYFunctionPlotItem.cs" />
-    <Compile Include="Graph\Gdi\Shapes\GraphicsObject.cs" />
-    <Compile Include="Graph\Gdi\Shapes\GraphicsObjectCollection.cs" />
     <Compile Include="Graph\Gdi\Shapes\ImageGraphics.cs" />
+    <Compile Include="Graph\Gdi\Shapes\ShapeBase.cs" />
+    <Compile Include="Graph\Gdi\Shapes\ShapeCollection.cs" />
     <Compile Include="Graph\Gdi\Shapes\ShapeGraphics.cs" />
     <Compile Include="Graph\Gdi\Shapes\SimpleTextGraphics.cs" />
     <Compile Include="Graph\Gdi\Shapes\TextGraphics.cs" />

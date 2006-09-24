@@ -1682,8 +1682,8 @@ namespace Altaxo.Graph.GUI
           ArrayList list = (ArrayList)obj;
           foreach (object item in list)
           {
-            if(item is GraphicsObject)
-              this.ActiveLayer.GraphObjects.Add(item as GraphicsObject);
+            if(item is ShapeBase)
+              this.ActiveLayer.GraphObjects.Add(item as ShapeBase);
           }
         }
         return;

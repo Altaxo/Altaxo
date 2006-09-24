@@ -31,7 +31,7 @@ namespace Altaxo.Graph.Gdi.Shapes
   /// </summary>
   [SerializationSurrogate(0,typeof(SimpleTextGraphics.SerializationSurrogate0))]
   [SerializationVersion(0)]
-  public class SimpleTextGraphics : GraphicsObject
+  public class SimpleTextGraphics : ShapeBase
   {
     protected Font m_Font;
     protected string m_Text = "";
@@ -232,7 +232,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
       System.Drawing.Drawing2D.GraphicsState gs = g.Save();
       g.TranslateTransform(X,Y);
-      g.RotateTransform(m_Rotation);
+      g.RotateTransform(_rotation);
       
       // Modification of StringFormat is necessary to avoid 
       // too big spaces between successive words

@@ -202,7 +202,7 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
 
-    public bool Remove(GraphicsObject go)
+    public bool Remove(ShapeBase go)
     {
       for (int i = 0; i < this._styles.Length; ++i)
         if (_styles[i] != null && _styles[i].Remove(go))

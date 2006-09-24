@@ -249,7 +249,7 @@ namespace Altaxo.Graph.Gdi.Axis
     /// <param name="go">The object to remove.</param>
     /// <returns> If the provided object is a child object and
     /// the child object could be removed, the return value is true.</returns>
-    public bool Remove(GraphicsObject go)
+    public bool Remove(ShapeBase go)
     {
       // test our own objects for removal (only that that _are_ removable)
       if (object.ReferenceEquals(go, this._axisTitle))

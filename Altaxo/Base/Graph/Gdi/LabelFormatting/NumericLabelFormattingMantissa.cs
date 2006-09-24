@@ -27,7 +27,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
   /// <summary>
   /// Displays only the mantissa of a number. Usefull for minor ticks on logarithmic axes.
   /// </summary>
-  public class NumericLabelFormattingMantissa : AbstractNumericLabelFormatting
+  public class NumericLabelFormattingMantissa : NumericLabelFormattingBase
   {
     
 
@@ -40,13 +40,13 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         NumericLabelFormattingMantissa s = (NumericLabelFormattingMantissa)obj;
-        info.AddBaseValueEmbedded(s,typeof(AbstractNumericLabelFormatting));
+        info.AddBaseValueEmbedded(s,typeof(NumericLabelFormattingBase));
         
       }
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
         NumericLabelFormattingMantissa s = null!=o ? (NumericLabelFormattingMantissa)o : new NumericLabelFormattingMantissa();
-        info.GetBaseValueEmbedded(s,typeof(AbstractNumericLabelFormatting),parent);
+        info.GetBaseValueEmbedded(s,typeof(NumericLabelFormattingBase),parent);
         return s;
       }
     }

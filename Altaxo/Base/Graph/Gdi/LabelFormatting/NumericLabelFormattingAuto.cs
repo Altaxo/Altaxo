@@ -28,7 +28,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
   /// Responsible for getting strings out of numeric values for the ticks, decide itself what
   /// format to use.
   /// </summary>
-  public class NumericLabelFormattingAuto : AbstractNumericLabelFormatting
+  public class NumericLabelFormattingAuto : NumericLabelFormattingBase
   {
     #region Serialization
 
@@ -40,14 +40,14 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
       {
         NumericLabelFormattingAuto s = (NumericLabelFormattingAuto)obj;
 
-        info.AddBaseValueEmbedded(s,typeof(AbstractNumericLabelFormatting));
+        info.AddBaseValueEmbedded(s,typeof(NumericLabelFormattingBase));
         
       }
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
         NumericLabelFormattingAuto s = null!=o ? (NumericLabelFormattingAuto)o : new NumericLabelFormattingAuto();
 
-        info.GetBaseValueEmbedded(s,typeof(AbstractNumericLabelFormatting),parent);
+        info.GetBaseValueEmbedded(s,typeof(NumericLabelFormattingBase),parent);
         return s;
       }
     }
