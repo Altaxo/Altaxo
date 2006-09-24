@@ -30,7 +30,7 @@ namespace Altaxo.Graph.Gdi.Axis
 {
 
   /// <remarks>AbstractXYAxisLabelStyle is the abstract base class of all LabelStyles.</remarks>
-  public abstract class AbstractXYAxisLabelStyle : Main.IChangedEventSource, System.ICloneable
+  public abstract class AxisLabelStyleBase : Main.IChangedEventSource, System.ICloneable
   {
     /*
     /// <summary>

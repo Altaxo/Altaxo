@@ -191,11 +191,11 @@ namespace Altaxo.Gui.Graph
   /// <summary>
   /// Summary description.
   /// </summary>
-  [UserControllerForObject(typeof(XYAxisLabelStyle))]
+  [UserControllerForObject(typeof(AxisLabelStyle))]
   public class XYAxisLabelStyleController : IXYAxisLabelStyleViewEventSink, IXYAxisLabelStyleController
   {
     IXYAxisLabelStyleView _view;
-    XYAxisLabelStyle _doc;
+    AxisLabelStyle _doc;
 
     /// <summary>The font of the label.</summary>
     protected Font _fontFamily;
@@ -230,7 +230,7 @@ namespace Altaxo.Gui.Graph
 
     protected BackgroundStyleController _backgroundStyleController;
 
-    public XYAxisLabelStyleController(XYAxisLabelStyle style)
+    public XYAxisLabelStyleController(AxisLabelStyle style)
     {
       _doc = style;
       Initialize(true);

@@ -135,7 +135,7 @@ namespace Altaxo.Graph.GUI
       _enableMinorLabels = new Dictionary<A2DAxisStyleIdentifier, bool>();
       foreach(A2DAxisStyleIdentifier ident in _axisStyleIds.Keys)
       {
-        G2DAxisStyle prop = layer.ScaleStyles.AxisStyle(ident);
+        AxisStyle prop = layer.ScaleStyles.AxisStyle(ident);
         if(prop==null)
         {
           _enableMajorLabels.Add(ident, false);
@@ -178,7 +178,7 @@ namespace Altaxo.Graph.GUI
 
     public static bool EhAxisScaleEdit(IHitTestObject hit)
     {
-      G2DAxisLineStyle style = hit.HittedObject as G2DAxisLineStyle;
+      AxisLineStyle style = hit.HittedObject as AxisLineStyle;
       if(style==null || hit.ParentLayer==null)
         return false;
    
@@ -190,7 +190,7 @@ namespace Altaxo.Graph.GUI
 
     public static bool EhAxisStyleEdit(IHitTestObject hit)
     {
-      G2DAxisLineStyle style = hit.HittedObject as G2DAxisLineStyle;
+      AxisLineStyle style = hit.HittedObject as AxisLineStyle;
       if(style==null || hit.ParentLayer==null)
         return false;
 
@@ -201,7 +201,7 @@ namespace Altaxo.Graph.GUI
 
     public static bool EhAxisLabelStyleEdit(IHitTestObject hit)
     {
-      XYAxisLabelStyle style = hit.HittedObject as XYAxisLabelStyle;
+      AxisLabelStyle style = hit.HittedObject as AxisLabelStyle;
       if(style==null || hit.ParentLayer==null)
         return false;
 
@@ -467,7 +467,7 @@ namespace Altaxo.Graph.GUI
         {
           if (!_MajorLabelController.ContainsKey(_currentAxisID))
           {
-            Altaxo.Gui.Graph.XYAxisLabelStyleController newCtrl = new Altaxo.Gui.Graph.XYAxisLabelStyleController((XYAxisLabelStyle)_layer.ScaleStyles.AxisStyleEnsured(_currentAxisID).MajorLabelStyle);
+            Altaxo.Gui.Graph.XYAxisLabelStyleController newCtrl = new Altaxo.Gui.Graph.XYAxisLabelStyleController((AxisLabelStyle)_layer.ScaleStyles.AxisStyleEnsured(_currentAxisID).MajorLabelStyle);
             newCtrl.View = new Altaxo.Gui.Graph.XYAxisLabelStyleControl();
             _MajorLabelController.Add(_currentAxisID, newCtrl);
             m_CurrentController = newCtrl;
@@ -478,7 +478,7 @@ namespace Altaxo.Graph.GUI
         {
           if (!_MinorLabelController.ContainsKey(_currentAxisID))
           {
-            Altaxo.Gui.Graph.XYAxisLabelStyleController newCtrl = new Altaxo.Gui.Graph.XYAxisLabelStyleController((XYAxisLabelStyle)_layer.ScaleStyles.AxisStyleEnsured(_currentAxisID).MinorLabelStyle);
+            Altaxo.Gui.Graph.XYAxisLabelStyleController newCtrl = new Altaxo.Gui.Graph.XYAxisLabelStyleController((AxisLabelStyle)_layer.ScaleStyles.AxisStyleEnsured(_currentAxisID).MinorLabelStyle);
             newCtrl.View = new Altaxo.Gui.Graph.XYAxisLabelStyleControl();
             m_CurrentController = newCtrl;
             View.SetCurrentContentWithEnable(m_CurrentController.ViewObject, pageEnabled, "Show title and format");

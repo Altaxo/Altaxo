@@ -33,9 +33,9 @@ namespace Altaxo.Graph.Gdi.Axis
   /// <summary>
   /// XYAxisStyle is responsible for painting the axes on rectangular two dimensional layers.
   /// </summary>
-  [SerializationSurrogate(0,typeof(G2DAxisLineStyle.SerializationSurrogate0))]
+  [SerializationSurrogate(0,typeof(AxisLineStyle.SerializationSurrogate0))]
   [SerializationVersion(0)]
-  public class G2DAxisLineStyle 
+  public class AxisLineStyle 
     : 
     System.Runtime.Serialization.IDeserializationCallback,
     Main.IChangedEventSource,
@@ -82,7 +82,7 @@ namespace Altaxo.Graph.Gdi.Axis
       /// <param name="context">The streaming context.</param>
       public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context  )
       {
-        G2DAxisLineStyle s = (G2DAxisLineStyle)obj;
+        AxisLineStyle s = (AxisLineStyle)obj;
         info.AddValue("AxisPen",s._axisPen);  
         info.AddValue("MajorPen",s._majorTickPen);  
         info.AddValue("MinorPen",s._minorTickPen);
@@ -104,7 +104,7 @@ namespace Altaxo.Graph.Gdi.Axis
       /// <returns>The deserialized linear axis.</returns>
       public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
       {
-        G2DAxisLineStyle s = (G2DAxisLineStyle)obj;
+        AxisLineStyle s = (AxisLineStyle)obj;
 
         s._axisPen      = (PenHolder)info.GetValue("AxisPen",typeof(PenHolder));
         s._majorTickPen = (PenHolder)info.GetValue("MajorPen",typeof(PenHolder));
@@ -146,7 +146,7 @@ namespace Altaxo.Graph.Gdi.Axis
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
         
-        G2DAxisLineStyle s = null!=o ? (G2DAxisLineStyle)o : new G2DAxisLineStyle();
+        AxisLineStyle s = null!=o ? (AxisLineStyle)o : new AxisLineStyle();
         
         Edge edge         = (Edge)info.GetValue("Edge",s);
         s._axisPen      = (PenHolder)info.GetValue("AxisPen",s);
@@ -184,12 +184,12 @@ namespace Altaxo.Graph.Gdi.Axis
 
 
     // 2006-09-08 Renaming XYAxisStyle in G2DAxisLineStyle
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(G2DAxisLineStyle), 1)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AxisLineStyle), 1)]
     public class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        G2DAxisLineStyle s = (G2DAxisLineStyle)obj;
+        AxisLineStyle s = (AxisLineStyle)obj;
         info.AddValue("AxisPen", s._axisPen);
         info.AddValue("MajorPen", s._majorTickPen);
         info.AddValue("MinorPen", s._minorTickPen);
@@ -204,7 +204,7 @@ namespace Altaxo.Graph.Gdi.Axis
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
 
-        G2DAxisLineStyle s = null != o ? (G2DAxisLineStyle)o : new G2DAxisLineStyle();
+        AxisLineStyle s = null != o ? (AxisLineStyle)o : new AxisLineStyle();
 
         s._axisPen = (PenHolder)info.GetValue("AxisPen", s);
         s._majorTickPen = (PenHolder)info.GetValue("MajorPen", s);
@@ -259,7 +259,7 @@ namespace Altaxo.Graph.Gdi.Axis
     /// Creates a default axis style.
     /// </summary>
    
-    public G2DAxisLineStyle()
+    public AxisLineStyle()
     {
     
       WireEventChain(true);
@@ -271,7 +271,7 @@ namespace Altaxo.Graph.Gdi.Axis
     /// Copy constructor.
     /// </summary>
     /// <param name="from">The AxisStyle to copy from</param>
-    public G2DAxisLineStyle(G2DAxisLineStyle from)
+    public AxisLineStyle(AxisLineStyle from)
     {
       CopyFrom(from);
     }
@@ -279,7 +279,7 @@ namespace Altaxo.Graph.Gdi.Axis
     /// Copy operation.
     /// </summary>
     /// <param name="from">The AxisStyle to copy from</param>
-    public void CopyFrom(G2DAxisLineStyle from)
+    public void CopyFrom(AxisLineStyle from)
     {
       if (_axisPen != null)
         WireEventChain(false);
@@ -307,7 +307,7 @@ namespace Altaxo.Graph.Gdi.Axis
     /// <returns>The cloned object.</returns>
     public  object Clone()
     {
-      return new G2DAxisLineStyle(this);
+      return new AxisLineStyle(this);
     }
 
     public A2DAxisStyleIdentifier AxisStyleID

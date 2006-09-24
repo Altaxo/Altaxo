@@ -41,7 +41,7 @@ namespace Altaxo.Graph.Gdi.Axis
   {
 
 
-    G2DScaleStyle[] _styles;
+    ScaleStyle[] _styles;
 
     #region Serialization
 
@@ -73,9 +73,9 @@ namespace Altaxo.Graph.Gdi.Axis
         G2DScaleStyleCollection s = null != o ? (G2DScaleStyleCollection)o : new G2DScaleStyleCollection();
 
         int count = info.OpenArray();
-        s._styles = new G2DScaleStyle[count];
+        s._styles = new ScaleStyle[count];
         for (int i = 0; i < count; ++i)
-          s.SetScaleStyle((G2DScaleStyle)info.GetValue("e", s), i);
+          s.SetScaleStyle((ScaleStyle)info.GetValue("e", s), i);
         info.CloseArray(count);
 
         return s;
@@ -86,12 +86,12 @@ namespace Altaxo.Graph.Gdi.Axis
 
     public G2DScaleStyleCollection()
     {
-      _styles = new G2DScaleStyle[2];
+      _styles = new ScaleStyle[2];
 
-      this._styles[0] = new G2DScaleStyle();
+      this._styles[0] = new ScaleStyle();
       this._styles[0].Changed += new EventHandler(this.EhChildChanged);
 
-      this._styles[1] = new G2DScaleStyle();
+      this._styles[1] = new ScaleStyle();
       this._styles[1].Changed += new EventHandler(this.EhChildChanged);
 
       //TODO: Fill the styles with default
@@ -107,7 +107,7 @@ namespace Altaxo.Graph.Gdi.Axis
       // now clone
       for (int i = 0; i < from._styles.Length; ++i)
       {
-        this._styles[i] = from._styles[i] == null ? null : (G2DScaleStyle)from._styles[i].Clone();
+        this._styles[i] = from._styles[i] == null ? null : (ScaleStyle)from._styles[i].Clone();
         if (this._styles[i] != null)
           this._styles[i].Changed += new EventHandler(this.EhChildChanged);
       }
@@ -120,9 +120,9 @@ namespace Altaxo.Graph.Gdi.Axis
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    public G2DAxisStyle AxisStyle(A2DAxisStyleIdentifier id)
+    public AxisStyle AxisStyle(A2DAxisStyleIdentifier id)
     {
-      G2DScaleStyle scaleStyle = _styles[id.AxisNumber];
+      ScaleStyle scaleStyle = _styles[id.AxisNumber];
       return scaleStyle.AxisStyle(id);
     }
 
@@ -131,26 +131,26 @@ namespace Altaxo.Graph.Gdi.Axis
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    public G2DAxisStyle AxisStyleEnsured(A2DAxisStyleIdentifier id)
+    public AxisStyle AxisStyleEnsured(A2DAxisStyleIdentifier id)
     {
-      G2DScaleStyle scaleStyle = _styles[id.AxisNumber];
+      ScaleStyle scaleStyle = _styles[id.AxisNumber];
       return scaleStyle.AxisStyleEnsured(id);
     }
 
     public void RemoveAxisStyle(A2DAxisStyleIdentifier id)
     {
-      G2DScaleStyle scaleStyle = _styles[id.AxisNumber];
+      ScaleStyle scaleStyle = _styles[id.AxisNumber];
       scaleStyle.RemoveAxisStyle(id);
     }
 
 
-    public IEnumerable<G2DAxisStyle> AxisStyles
+    public IEnumerable<AxisStyle> AxisStyles
     {
       get
       {
         for (int i = 0; i < _styles.Length; i++)
         {
-          foreach (G2DAxisStyle style in _styles[i].AxisStyles)
+          foreach (AxisStyle style in _styles[i].AxisStyles)
             yield return style;
         }
       }
@@ -158,23 +158,23 @@ namespace Altaxo.Graph.Gdi.Axis
 
     public bool ContainsAxisStyle(A2DAxisStyleIdentifier id)
     {
-      G2DScaleStyle scalestyle = _styles[id.AxisNumber];
+      ScaleStyle scalestyle = _styles[id.AxisNumber];
       return scalestyle.ContainsAxisStyle(id);
     }
 
-    public G2DScaleStyle ScaleStyle(int i)
+    public ScaleStyle ScaleStyle(int i)
     {
       return _styles[i];
     }
 
-    public void SetScaleStyle(G2DScaleStyle value, int i)
+    public void SetScaleStyle(ScaleStyle value, int i)
     {
       if (i < 0)
         throw new ArgumentOutOfRangeException("Index i is negative");
       if (i >= _styles.Length)
         throw new ArgumentOutOfRangeException("Index i is greater than length of internal array");
 
-      G2DScaleStyle oldvalue = _styles[i];
+      ScaleStyle oldvalue = _styles[i];
       _styles[i] = value;
 
       if (null != oldvalue)
@@ -186,7 +186,7 @@ namespace Altaxo.Graph.Gdi.Axis
         OnChanged();
     }
 
-    public G2DScaleStyle X
+    public ScaleStyle X
     {
       get
       {
@@ -194,7 +194,7 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
 
-    public G2DScaleStyle Y
+    public ScaleStyle Y
     {
       get
       {
@@ -221,7 +221,7 @@ namespace Altaxo.Graph.Gdi.Axis
 
     public void SetParentLayer(XYPlotLayer layer, bool suppressEvents)
     {
-      foreach (G2DScaleStyle style in _styles)
+      foreach (ScaleStyle style in _styles)
         style.SetParentLayer(layer, suppressEvents);
     }
 

@@ -35,7 +35,7 @@ namespace Altaxo.Graph.Gdi.Axis
   /// <summary>
   /// This class summarizes all members that are belonging to one edge of the layer.
   /// </summary>
-  public class G2DAxisStyle : Main.IChangedEventSource, Main.IChildChangedEventSink, ICloneable
+  public class AxisStyle : Main.IChangedEventSource, Main.IChildChangedEventSink, ICloneable
   {
     /// <summary>
     /// Identifies the axis style.
@@ -43,15 +43,15 @@ namespace Altaxo.Graph.Gdi.Axis
     A2DAxisStyleIdentifier _styleID;
 
     /// <summary>Style of axis. Determines the line width and color of the axis and the ticks.</summary>
-    protected G2DAxisLineStyle _axisLineStyle;
+    protected AxisLineStyle _axisLineStyle;
     /// <summary>
     /// Determines the style of the major labels.
     /// </summary>
-    AbstractXYAxisLabelStyle _majorLabelStyle;
+    AxisLabelStyleBase _majorLabelStyle;
     /// <summary>
     /// Determines the style of the minor labels.
     /// </summary>
-    AbstractXYAxisLabelStyle _minorLabelStyle;
+    AxisLabelStyleBase _minorLabelStyle;
     /// <summary>
     /// The title of the axis.
     /// </summary>
@@ -86,25 +86,25 @@ namespace Altaxo.Graph.Gdi.Axis
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        G2DAxisStyle s = SDeserialize(o, info, parent);
+        AxisStyle s = SDeserialize(o, info, parent);
         return s;
       }
 
 
-      protected virtual G2DAxisStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected virtual AxisStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        G2DAxisStyle s = null != o ? (G2DAxisStyle)o : new G2DAxisStyle();
+        AxisStyle s = null != o ? (AxisStyle)o : new AxisStyle();
 
         // Styles
         bool showAxis = info.GetBoolean("ShowAxis");
         EdgeType edge = (EdgeType)info.GetEnum("Edge", typeof(EdgeType));
-        s.AxisLineStyle = (G2DAxisLineStyle)info.GetValue("AxisStyle", s);
+        s.AxisLineStyle = (AxisLineStyle)info.GetValue("AxisStyle", s);
         bool showMajorLabels = info.GetBoolean("ShowMajorLabels");
         if (showMajorLabels)
-          s.MajorLabelStyle = (AbstractXYAxisLabelStyle)info.GetValue("MajorLabelStyle", s);
+          s.MajorLabelStyle = (AxisLabelStyleBase)info.GetValue("MajorLabelStyle", s);
         bool showMinorLabels = info.GetBoolean("ShowMinorLabels");
         if (showMinorLabels)
-          s.MinorLabelStyle = (AbstractXYAxisLabelStyle)info.GetValue("MinorLabelStyle", s);
+          s.MinorLabelStyle = (AxisLabelStyleBase)info.GetValue("MinorLabelStyle", s);
         s.Title = (TextGraphics)info.GetValue("AxisTitle", s);
 
         switch (edge)
@@ -129,12 +129,12 @@ namespace Altaxo.Graph.Gdi.Axis
     }
 
     // 2006-09-06 renaming to G2DAxisStyle
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(G2DAxisStyle), 1)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AxisStyle), 1)]
     public class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        G2DAxisStyle s = (G2DAxisStyle)obj;
+        AxisStyle s = (AxisStyle)obj;
 
         info.AddValue("StyleID", s._styleID);
         info.AddValue("AxisStyle", s._axisLineStyle);
@@ -145,20 +145,20 @@ namespace Altaxo.Graph.Gdi.Axis
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        G2DAxisStyle s = SDeserialize(o, info, parent);
+        AxisStyle s = SDeserialize(o, info, parent);
         return s;
       }
 
 
-      protected virtual G2DAxisStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected virtual AxisStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        G2DAxisStyle s = null != o ? (G2DAxisStyle)o : new G2DAxisStyle();
+        AxisStyle s = null != o ? (AxisStyle)o : new AxisStyle();
 
         // Styles
         s._styleID = (A2DAxisStyleIdentifier)info.GetValue("StyleID", s);
-        s.AxisLineStyle = (G2DAxisLineStyle)info.GetValue("AxisStyle", s);
-        s.MajorLabelStyle = (AbstractXYAxisLabelStyle)info.GetValue("MajorLabelStyle", s);
-        s.MinorLabelStyle = (AbstractXYAxisLabelStyle)info.GetValue("MinorLabelStyle", s);
+        s.AxisLineStyle = (AxisLineStyle)info.GetValue("AxisStyle", s);
+        s.MajorLabelStyle = (AxisLabelStyleBase)info.GetValue("MajorLabelStyle", s);
+        s.MinorLabelStyle = (AxisLabelStyleBase)info.GetValue("MinorLabelStyle", s);
         s.Title = (TextGraphics)info.GetValue("AxisTitle", s);
 
 
@@ -167,11 +167,11 @@ namespace Altaxo.Graph.Gdi.Axis
     }
     #endregion
 
-    protected G2DAxisStyle()
+    protected AxisStyle()
     {
     }
 
-    void CopyFrom(G2DAxisStyle from)
+    void CopyFrom(AxisStyle from)
     {
       this._styleID = from._styleID;
 
@@ -184,9 +184,9 @@ namespace Altaxo.Graph.Gdi.Axis
       if (null != _axisTitle)
         _axisTitle.Changed -= new EventHandler(EhChildChanged);
 
-      this._axisLineStyle = from._axisLineStyle == null ? null : (G2DAxisLineStyle)from._axisLineStyle.Clone();
-      this._majorLabelStyle = from._majorLabelStyle == null ? null : (AbstractXYAxisLabelStyle)from._majorLabelStyle.Clone();
-      this._minorLabelStyle = from._minorLabelStyle == null ? null : (AbstractXYAxisLabelStyle)from._minorLabelStyle.Clone();
+      this._axisLineStyle = from._axisLineStyle == null ? null : (AxisLineStyle)from._axisLineStyle.Clone();
+      this._majorLabelStyle = from._majorLabelStyle == null ? null : (AxisLabelStyleBase)from._majorLabelStyle.Clone();
+      this._minorLabelStyle = from._minorLabelStyle == null ? null : (AxisLabelStyleBase)from._minorLabelStyle.Clone();
       this._axisTitle = from._axisTitle == null ? null : (TextGraphics)from._axisTitle.Clone();
 
 
@@ -200,13 +200,13 @@ namespace Altaxo.Graph.Gdi.Axis
         _axisTitle.Changed += new EventHandler(EhChildChanged);
     }
 
-    public G2DAxisStyle(A2DAxisStyleIdentifier id)
+    public AxisStyle(A2DAxisStyleIdentifier id)
     {
       _styleID = id;
-      _axisLineStyle = new G2DAxisLineStyle();
+      _axisLineStyle = new AxisLineStyle();
       _axisLineStyle.Changed += new EventHandler(EhChildChanged);
 
-      _majorLabelStyle = new XYAxisLabelStyle();
+      _majorLabelStyle = new AxisLabelStyle();
       _majorLabelStyle.Changed += new EventHandler(EhChildChanged);
     }
 
@@ -290,7 +290,7 @@ namespace Altaxo.Graph.Gdi.Axis
         if (value == false)
           AxisLineStyle = null;
         else if (_axisLineStyle == null)
-          AxisLineStyle = new G2DAxisLineStyle();
+          AxisLineStyle = new AxisLineStyle();
       }
     }
 
@@ -308,7 +308,7 @@ namespace Altaxo.Graph.Gdi.Axis
         if (value == false)
           MajorLabelStyle = null;
         else if (_majorLabelStyle == null)
-          MajorLabelStyle = new XYAxisLabelStyle();
+          MajorLabelStyle = new AxisLabelStyle();
       }
     }
 
@@ -326,12 +326,12 @@ namespace Altaxo.Graph.Gdi.Axis
         if (value == false)
           MinorLabelStyle = null;
         else if (_minorLabelStyle == null)
-          MinorLabelStyle = new XYAxisLabelStyle();
+          MinorLabelStyle = new AxisLabelStyle();
       }
     }
 
     /// <summary>Style of axis. Determines the line width and color of the axis and the ticks.</summary>
-    public G2DAxisLineStyle AxisLineStyle
+    public AxisLineStyle AxisLineStyle
     {
       get
       {
@@ -339,7 +339,7 @@ namespace Altaxo.Graph.Gdi.Axis
       }
       set
       {
-        G2DAxisLineStyle oldvalue = _axisLineStyle;
+        AxisLineStyle oldvalue = _axisLineStyle;
         _axisLineStyle = value;
 
         if (!object.ReferenceEquals(value, oldvalue))
@@ -357,18 +357,18 @@ namespace Altaxo.Graph.Gdi.Axis
     /// <summary>
     /// Determines the style of the major labels.
     /// </summary>
-    public AbstractXYAxisLabelStyle MajorLabelStyle
+    public AxisLabelStyleBase MajorLabelStyle
     {
       get
       {
         if (null == _majorLabelStyle)
-          this.MajorLabelStyle = new XYAxisLabelStyle();
+          this.MajorLabelStyle = new AxisLabelStyle();
 
         return _majorLabelStyle;
       }
       set
       {
-        AbstractXYAxisLabelStyle oldvalue = _majorLabelStyle;
+        AxisLabelStyleBase oldvalue = _majorLabelStyle;
         _majorLabelStyle = value;
 
         if (!object.ReferenceEquals(value, oldvalue))
@@ -387,18 +387,18 @@ namespace Altaxo.Graph.Gdi.Axis
     /// <summary>
     /// Determines the style of the minor labels.
     /// </summary>
-    public AbstractXYAxisLabelStyle MinorLabelStyle
+    public AxisLabelStyleBase MinorLabelStyle
     {
       get
       {
         if (_minorLabelStyle == null)
-          this.MinorLabelStyle = new XYAxisLabelStyle();
+          this.MinorLabelStyle = new AxisLabelStyle();
 
         return _minorLabelStyle;
       }
       set
       {
-        AbstractXYAxisLabelStyle oldvalue = _minorLabelStyle;
+        AxisLabelStyleBase oldvalue = _minorLabelStyle;
         _minorLabelStyle = value;
 
         if (!object.ReferenceEquals(value, oldvalue))
@@ -502,7 +502,7 @@ namespace Altaxo.Graph.Gdi.Axis
 
     public object Clone()
     {
-      G2DAxisStyle res = new G2DAxisStyle(_styleID);
+      AxisStyle res = new AxisStyle(_styleID);
       res.CopyFrom(this);
       return res;
     }

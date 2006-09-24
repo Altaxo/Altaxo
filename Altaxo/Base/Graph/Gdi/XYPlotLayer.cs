@@ -352,16 +352,16 @@ namespace Altaxo.Graph.Gdi
         bool showRight = info.GetBoolean("ShowRightAxis");
         bool showTop = info.GetBoolean("ShowTopAxis");
 
-        s._scaleStyles.AxisStyleEnsured(A2DAxisStyleIdentifier.Y0).AxisLineStyle = (G2DAxisLineStyle)info.GetValue("LeftAxisStyle", typeof(G2DAxisLineStyle));
-        s._scaleStyles.AxisStyleEnsured(A2DAxisStyleIdentifier.X0).AxisLineStyle = (G2DAxisLineStyle)info.GetValue("BottomAxisStyle", typeof(G2DAxisLineStyle));
-        s._scaleStyles.AxisStyleEnsured(A2DAxisStyleIdentifier.Y1).AxisLineStyle = (G2DAxisLineStyle)info.GetValue("RightAxisStyle", typeof(G2DAxisLineStyle));
-        s._scaleStyles.AxisStyleEnsured(A2DAxisStyleIdentifier.X1).AxisLineStyle = (G2DAxisLineStyle)info.GetValue("TopAxisStyle", typeof(G2DAxisLineStyle));
+        s._scaleStyles.AxisStyleEnsured(A2DAxisStyleIdentifier.Y0).AxisLineStyle = (AxisLineStyle)info.GetValue("LeftAxisStyle", typeof(AxisLineStyle));
+        s._scaleStyles.AxisStyleEnsured(A2DAxisStyleIdentifier.X0).AxisLineStyle = (AxisLineStyle)info.GetValue("BottomAxisStyle", typeof(AxisLineStyle));
+        s._scaleStyles.AxisStyleEnsured(A2DAxisStyleIdentifier.Y1).AxisLineStyle = (AxisLineStyle)info.GetValue("RightAxisStyle", typeof(AxisLineStyle));
+        s._scaleStyles.AxisStyleEnsured(A2DAxisStyleIdentifier.X1).AxisLineStyle = (AxisLineStyle)info.GetValue("TopAxisStyle", typeof(AxisLineStyle));
 
 
-        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.Y0).MajorLabelStyle = (AbstractXYAxisLabelStyle)info.GetValue("LeftLabelStyle", typeof(AbstractXYAxisLabelStyle));
-        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.X0).MajorLabelStyle = (AbstractXYAxisLabelStyle)info.GetValue("BottomLabelStyle", typeof(AbstractXYAxisLabelStyle));
-        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.Y1).MajorLabelStyle = (AbstractXYAxisLabelStyle)info.GetValue("RightLabelStyle", typeof(AbstractXYAxisLabelStyle));
-        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.X1).MajorLabelStyle = (AbstractXYAxisLabelStyle)info.GetValue("TopLabelStyle", typeof(AbstractXYAxisLabelStyle));
+        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.Y0).MajorLabelStyle = (AxisLabelStyleBase)info.GetValue("LeftLabelStyle", typeof(AxisLabelStyleBase));
+        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.X0).MajorLabelStyle = (AxisLabelStyleBase)info.GetValue("BottomLabelStyle", typeof(AxisLabelStyleBase));
+        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.Y1).MajorLabelStyle = (AxisLabelStyleBase)info.GetValue("RightLabelStyle", typeof(AxisLabelStyleBase));
+        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.X1).MajorLabelStyle = (AxisLabelStyleBase)info.GetValue("TopLabelStyle", typeof(AxisLabelStyleBase));
       
       
         // Titles and legend
@@ -544,16 +544,16 @@ namespace Altaxo.Graph.Gdi
         bool showRight = info.GetBoolean("ShowRightAxis");
         bool showTop = info.GetBoolean("ShowTopAxis");
 
-        s._scaleStyles.AxisStyleEnsured(A2DAxisStyleIdentifier.Y0).AxisLineStyle = (G2DAxisLineStyle)info.GetValue("LeftAxisStyle", typeof(G2DAxisLineStyle));
-        s._scaleStyles.AxisStyleEnsured(A2DAxisStyleIdentifier.X0).AxisLineStyle = (G2DAxisLineStyle)info.GetValue("BottomAxisStyle", typeof(G2DAxisLineStyle));
-        s._scaleStyles.AxisStyleEnsured(A2DAxisStyleIdentifier.Y1).AxisLineStyle = (G2DAxisLineStyle)info.GetValue("RightAxisStyle", typeof(G2DAxisLineStyle));
-        s._scaleStyles.AxisStyleEnsured(A2DAxisStyleIdentifier.X1).AxisLineStyle = (G2DAxisLineStyle)info.GetValue("TopAxisStyle", typeof(G2DAxisLineStyle));
+        s._scaleStyles.AxisStyleEnsured(A2DAxisStyleIdentifier.Y0).AxisLineStyle = (AxisLineStyle)info.GetValue("LeftAxisStyle", typeof(AxisLineStyle));
+        s._scaleStyles.AxisStyleEnsured(A2DAxisStyleIdentifier.X0).AxisLineStyle = (AxisLineStyle)info.GetValue("BottomAxisStyle", typeof(AxisLineStyle));
+        s._scaleStyles.AxisStyleEnsured(A2DAxisStyleIdentifier.Y1).AxisLineStyle = (AxisLineStyle)info.GetValue("RightAxisStyle", typeof(AxisLineStyle));
+        s._scaleStyles.AxisStyleEnsured(A2DAxisStyleIdentifier.X1).AxisLineStyle = (AxisLineStyle)info.GetValue("TopAxisStyle", typeof(AxisLineStyle));
 
 
-        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.Y0).MajorLabelStyle = (AbstractXYAxisLabelStyle)info.GetValue("LeftLabelStyle", typeof(AbstractXYAxisLabelStyle));
-        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.X0).MajorLabelStyle = (AbstractXYAxisLabelStyle)info.GetValue("BottomLabelStyle", typeof(AbstractXYAxisLabelStyle));
-        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.Y1).MajorLabelStyle = (AbstractXYAxisLabelStyle)info.GetValue("RightLabelStyle", typeof(AbstractXYAxisLabelStyle));
-        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.X1).MajorLabelStyle = (AbstractXYAxisLabelStyle)info.GetValue("TopLabelStyle", typeof(AbstractXYAxisLabelStyle));
+        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.Y0).MajorLabelStyle = (AxisLabelStyleBase)info.GetValue("LeftLabelStyle", typeof(AxisLabelStyleBase));
+        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.X0).MajorLabelStyle = (AxisLabelStyleBase)info.GetValue("BottomLabelStyle", typeof(AxisLabelStyleBase));
+        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.Y1).MajorLabelStyle = (AxisLabelStyleBase)info.GetValue("RightLabelStyle", typeof(AxisLabelStyleBase));
+        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.X1).MajorLabelStyle = (AxisLabelStyleBase)info.GetValue("TopLabelStyle", typeof(AxisLabelStyleBase));
 
 
         // Titles and legend
@@ -1255,7 +1255,7 @@ namespace Altaxo.Graph.Gdi
     /// <param name="yscale">The ratio the layer has changed its size in vertical direction.</param>
     public void RescaleInnerItemPositions(double xscale, double yscale)
     {
-      foreach (G2DAxisStyle style in this.ScaleStyles.AxisStyles)
+      foreach (AxisStyle style in this.ScaleStyles.AxisStyles)
       {
         GraphicsObject.ScalePosition(style.Title, xscale, yscale);
       }
@@ -2019,7 +2019,7 @@ namespace Altaxo.Graph.Gdi
     {
       get
       {
-        foreach (G2DAxisStyle style in this._scaleStyles.AxisStyles)
+        foreach (AxisStyle style in this._scaleStyles.AxisStyles)
           yield return style.StyleID;
       }
     }
@@ -2038,7 +2038,7 @@ namespace Altaxo.Graph.Gdi
 
     private void SetAxisTitleString(A2DAxisStyleIdentifier id, string value)
     {
-      G2DAxisStyle style = _scaleStyles.AxisStyle(id);
+      AxisStyle style = _scaleStyles.AxisStyle(id);
       string oldtitle = (style==null ||  style.Title == null) ? null : style.Title.Text;
       string newtitle = (value == null || value == String.Empty) ? null : value;
 
@@ -2070,7 +2070,7 @@ namespace Altaxo.Graph.Gdi
           double angle = Math.Atan2(normDirection.Y, normDirection.X) * 180 / Math.PI;
 
           float distance = 0;
-          G2DAxisStyle axisStyle = _scaleStyles.AxisStyle(id);
+          AxisStyle axisStyle = _scaleStyles.AxisStyle(id);
           if (null != axisStyle.AxisLineStyle)
             distance += axisStyle.AxisLineStyle.GetOuterDistance(info.PreferedLabelSide);
           float labelFontSize = 0;
@@ -2234,7 +2234,7 @@ namespace Altaxo.Graph.Gdi
 
 
       List<GraphicsObject> specObjects = new List<GraphicsObject>();
-      foreach(G2DAxisStyle style in _scaleStyles.AxisStyles)
+      foreach(AxisStyle style in _scaleStyles.AxisStyles)
         specObjects.Add(style.Title);
       specObjects.Add(_legend);
 
@@ -2275,7 +2275,7 @@ namespace Altaxo.Graph.Gdi
 
         // hit testing the axes - first a small area around the axis line
         // if hitting this, the editor for scaling the axis should be shown
-        foreach (G2DAxisStyle style in this._scaleStyles.AxisStyles)
+        foreach (AxisStyle style in this._scaleStyles.AxisStyles)
         {
           if (style.ShowAxisLine && null != (hit = style.AxisLineStyle.HitTest(this, layerC, false)))
           {
@@ -2287,7 +2287,7 @@ namespace Altaxo.Graph.Gdi
 
         // hit testing the axes - secondly now wiht the ticks
         // in this case the TitleAndFormat editor for the axis should be shown
-        foreach (G2DAxisStyle style in this._scaleStyles.AxisStyles)
+        foreach (AxisStyle style in this._scaleStyles.AxisStyles)
         {
           if (style.ShowAxisLine && null != (hit = style.AxisLineStyle.HitTest(this, layerC, true)))
           {
@@ -2298,7 +2298,7 @@ namespace Altaxo.Graph.Gdi
        
 
         // hit testing the axes labels
-        foreach (G2DAxisStyle style in this._scaleStyles.AxisStyles)
+        foreach (AxisStyle style in this._scaleStyles.AxisStyles)
         {
           if (style.ShowAxisLine && null != (hit = style.MajorLabelStyle.HitTest(this, layerC)))
           {
@@ -2395,7 +2395,7 @@ namespace Altaxo.Graph.Gdi
         layer._legend=null;
         return true;
       }
-        foreach(G2DAxisStyle style in layer._scaleStyles.AxisStyles)
+        foreach(AxisStyle style in layer._scaleStyles.AxisStyles)
         {
           if(object.ReferenceEquals(go, style.Title))
           {

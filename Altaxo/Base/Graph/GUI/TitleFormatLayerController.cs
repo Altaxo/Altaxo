@@ -80,7 +80,7 @@ namespace Altaxo.Graph.GUI
   public class TitleFormatLayerController : ITitleFormatLayerController
   {
     protected ITitleFormatLayerView m_View;
-    protected G2DAxisStyle _doc;
+    protected AxisStyle _doc;
 
     protected bool    m_ShowAxis;
     protected bool    m_Original_ShowAxis;
@@ -111,7 +111,7 @@ namespace Altaxo.Graph.GUI
 
     protected bool    m_AxisPositionValueEnabled = true;
 
-    public TitleFormatLayerController(G2DAxisStyle doc)
+    public TitleFormatLayerController(AxisStyle doc)
     {
       _doc = doc;
       this.SetElements(true);
@@ -124,7 +124,7 @@ namespace Altaxo.Graph.GUI
 
 
 
-      G2DAxisLineStyle axstyle=_doc.AxisLineStyle;
+      AxisLineStyle axstyle=_doc.AxisLineStyle;
       string title = _doc.TitleText;
       bool bAxisEnabled=_doc.ShowAxisLine;
 
@@ -338,7 +338,7 @@ namespace Altaxo.Graph.GUI
 
     public bool Apply()
     {
-      G2DAxisLineStyle axstyle=_doc.AxisLineStyle;
+      AxisLineStyle axstyle=_doc.AxisLineStyle;
 
       try
       {

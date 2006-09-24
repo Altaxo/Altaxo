@@ -36,7 +36,7 @@ namespace Altaxo.Graph.Gdi.Axis
   /// <summary>
   /// Summary description for AbstractLabelFormatting.
   /// </summary>
-  public class XYAxisLabelStyle : AbstractXYAxisLabelStyle,
+  public class AxisLabelStyle : AxisLabelStyleBase,
     ICloneable,
     Main.IChangedEventSource,
     Main.IChildChangedEventSink
@@ -77,7 +77,7 @@ namespace Altaxo.Graph.Gdi.Axis
       /// <param name="context">The streaming context.</param>
       public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context  )
       {
-        XYAxisLabelStyle s = (XYAxisLabelStyle)obj;
+        AxisLabelStyle s = (AxisLabelStyle)obj;
         info.AddValue("Font",s._font);  
       }
       /// <summary>
@@ -90,14 +90,14 @@ namespace Altaxo.Graph.Gdi.Axis
       /// <returns>The deserialized XYAxisLabelStyle.</returns>
       public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
       {
-        XYAxisLabelStyle s = (XYAxisLabelStyle)obj;
+        AxisLabelStyle s = (AxisLabelStyle)obj;
 
         s._font = (Font)info.GetValue("Font",typeof(Font));
         return s;
       }
     }
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYAxisLabelStyle),0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AxisLabelStyle),0)]
       public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -112,7 +112,7 @@ namespace Altaxo.Graph.Gdi.Axis
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
         
-        XYAxisLabelStyle s = null!=o ? (XYAxisLabelStyle)o : new XYAxisLabelStyle();
+        AxisLabelStyle s = null!=o ? (AxisLabelStyle)o : new AxisLabelStyle();
 
         //s._edge = (Edge)info.GetValue("Edge",s);
         s._font = (Font)info.GetValue("Font",s);
@@ -122,7 +122,7 @@ namespace Altaxo.Graph.Gdi.Axis
     }
 
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYAxisLabelStyle),1)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AxisLabelStyle),1)]
       public class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -150,7 +150,7 @@ namespace Altaxo.Graph.Gdi.Axis
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
         
-        XYAxisLabelStyle s = null!=o ? (XYAxisLabelStyle)o : new XYAxisLabelStyle();
+        AxisLabelStyle s = null!=o ? (AxisLabelStyle)o : new AxisLabelStyle();
 
         //s._edge = (Edge)info.GetValue("Edge",s);
         s._font = (Font)info.GetValue("Font",s);
@@ -180,13 +180,13 @@ namespace Altaxo.Graph.Gdi.Axis
     }
 
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYAxisLabelStyle), 2)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AxisLabelStyle), 2)]
     public class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
 
-        XYAxisLabelStyle s = (XYAxisLabelStyle)obj;
+        AxisLabelStyle s = (AxisLabelStyle)obj;
         info.AddValue("Font",s._font);  
         info.AddValue("Brush",s._brush);
         info.AddValue("Background",s._backgroundStyle);
@@ -204,7 +204,7 @@ namespace Altaxo.Graph.Gdi.Axis
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
 
-        XYAxisLabelStyle s = null != o ? (XYAxisLabelStyle)o : new XYAxisLabelStyle();
+        AxisLabelStyle s = null != o ? (AxisLabelStyle)o : new AxisLabelStyle();
 
         s._font = (Font)info.GetValue("Font", s);
         s._brush = (BrushHolder)info.GetValue("Brush", s);
@@ -243,12 +243,12 @@ namespace Altaxo.Graph.Gdi.Axis
 
 
 
-    public XYAxisLabelStyle()
+    public AxisLabelStyle()
     {
       SetStringFormat();
     }
 
-    public XYAxisLabelStyle(XYAxisLabelStyle from)
+    public AxisLabelStyle(AxisLabelStyle from)
     {
       _font = null==from._font ? null : (Font)from._font.Clone();
       _stringFormat = (StringFormat)from._stringFormat.Clone(); 
@@ -265,7 +265,7 @@ namespace Altaxo.Graph.Gdi.Axis
 
     public override object Clone()
     {
-      return new XYAxisLabelStyle(this);
+      return new AxisLabelStyle(this);
     }
 
     private void SetStringFormat()
@@ -549,7 +549,7 @@ namespace Altaxo.Graph.Gdi.Axis
     }
 
     private GraphicsPath _enclosingPath = new GraphicsPath(); // with Winding also overlapping rectangles are selected
-    public override void Paint(Graphics g, XYPlotLayer layer, A2DAxisStyleInformation styleInfo, G2DAxisLineStyle axisstyle, bool useMinorTicks)
+    public override void Paint(Graphics g, XYPlotLayer layer, A2DAxisStyleInformation styleInfo, AxisLineStyle axisstyle, bool useMinorTicks)
     {
       _cachedStyleID = styleInfo.Identifier;
       A2DAxisStyleIdentifier styleID = styleInfo.Identifier;
