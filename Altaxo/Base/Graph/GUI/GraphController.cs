@@ -318,8 +318,8 @@ namespace Altaxo.Graph.GUI
       // register here editor methods
       LayerController.RegisterEditHandlers();
       XYPlotLayer.PlotItemEditorMethod = new DoubleClickHandler(EhEditPlotItem);
-      TextGraphics.PlotItemEditorMethod = new DoubleClickHandler(EhEditPlotItem);
-      TextGraphics.TextGraphicsEditorMethod = new DoubleClickHandler(EhEditTextGraphics);
+      TextGraphic.PlotItemEditorMethod = new DoubleClickHandler(EhEditPlotItem);
+      TextGraphic.TextGraphicsEditorMethod = new DoubleClickHandler(EhEditTextGraphics);
     }
 
     #endregion // Constructors
@@ -1214,7 +1214,7 @@ namespace Altaxo.Graph.GUI
     protected static bool EhEditTextGraphics(IHitTestObject hit)
     {
       XYPlotLayer layer = hit.ParentLayer;
-      TextGraphics tg = (TextGraphics)hit.HittedObject;
+      TextGraphic tg = (TextGraphic)hit.HittedObject;
 
       bool shouldDeleted = false;
 
@@ -1682,8 +1682,8 @@ namespace Altaxo.Graph.GUI
           ArrayList list = (ArrayList)obj;
           foreach (object item in list)
           {
-            if(item is ShapeBase)
-              this.ActiveLayer.GraphObjects.Add(item as ShapeBase);
+            if(item is GraphicBase)
+              this.ActiveLayer.GraphObjects.Add(item as GraphicBase);
           }
         }
         return;

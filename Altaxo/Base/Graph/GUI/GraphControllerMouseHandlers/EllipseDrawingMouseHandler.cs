@@ -46,7 +46,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     protected override void FinishDrawing()
     {
       RectangleF rect = GetNormalRectangle(_Points[0].layerCoord,_Points[1].layerCoord);
-      EllipseGraphic go =  new EllipseGraphic(rect.X,rect.Y,rect.Width,rect.Height);
+      EllipseShape go =  new EllipseShape(rect.X,rect.Y,rect.Width,rect.Height);
 
       // deselect the text tool
       this._grac.CurrentGraphToolType = typeof(GraphControllerMouseHandlers.ObjectPointerMouseHandler);

@@ -21,41 +21,28 @@
 #endregion
 
 using System;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Collections;
-using System.ComponentModel;
-using System.Windows.Forms;
-using Altaxo.Graph.Gdi;
-using Altaxo.Graph.Gdi.Shapes;
-using Altaxo.Serialization;
+using System.Collections.Generic;
+using System.Text;
 
-namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers 
+namespace Altaxo.Graph
 {
-  /// <summary>
-  /// Summary description for RectangleDrawingMouseHandler.
-  /// </summary>
-  public class RectangleDrawingMouseHandler : AbstractRectangularToolMouseHandler
+  [Serializable]
+  public enum XAnchorPositionType { Left, Center, Right }
+
+  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.TextGraphics+XAnchorPositionType", 0)]
+  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XAnchorPositionType), 0)]
+  public class XAnchorPositionTypeXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
   {
-    public RectangleDrawingMouseHandler(GraphController grac)
-      : base(grac)
+    public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
     {
-      
+      info.SetNodeContent(obj.ToString());
     }
-
-    protected override void FinishDrawing()
+    public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
     {
-      RectangleF rect = GetNormalRectangle(_Points[0].layerCoord,_Points[1].layerCoord);
-      RectangleShape go =  new RectangleShape(rect.X,rect.Y,rect.Width,rect.Height);
 
-      // deselect the text tool
-      this._grac.CurrentGraphToolType = typeof(GraphControllerMouseHandlers.ObjectPointerMouseHandler);
-      _grac.Layers[_grac.CurrentLayerNumber].GraphObjects.Add(go);
-      _grac.RefreshGraph();
+      string val = info.GetNodeContent();
+      return System.Enum.Parse(typeof(XAnchorPositionType), val, true);
     }
- 
   }
 
-
- 
 }

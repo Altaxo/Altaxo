@@ -60,7 +60,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
       // with knowledge of the current active layer, calculate the layer coordinates from them
       PointF layerCoord = _grac.Layers[_grac.CurrentLayerNumber].GraphToLayerCoordinates(printAreaCoord);
 
-      TextGraphics tgo = new TextGraphics();
+      TextGraphic tgo = new TextGraphic();
       tgo.Position = layerCoord;
 
       // deselect the text tool

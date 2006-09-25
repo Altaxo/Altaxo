@@ -45,7 +45,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
 
     protected override void FinishDrawing()
     {
-      LineGraphic go = new LineGraphic(_Points[0].layerCoord,_Points[1].layerCoord);
+      LineShape go = new LineShape(_Points[0].layerCoord,_Points[1].layerCoord);
       //go.Pen.EndCap = new System.Drawing.Drawing2D.AdjustableArrowCap(2,1,true);
       LineCapEx cap = LineCapEx.FromName("ArrowF10");
       cap.Size = 10;

@@ -161,7 +161,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
 
     protected virtual void FinishDrawing()
     {
-      LineGraphic go = new LineGraphic(_Points[0].layerCoord,_Points[1].layerCoord);
+      LineShape go = new LineShape(_Points[0].layerCoord,_Points[1].layerCoord);
 
       // deselect the text tool
       this._grac.CurrentGraphToolType = typeof(GraphControllerMouseHandlers.ObjectPointerMouseHandler);

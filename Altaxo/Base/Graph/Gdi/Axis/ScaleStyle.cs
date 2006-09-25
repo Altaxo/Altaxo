@@ -250,7 +250,7 @@ namespace Altaxo.Graph.Gdi.Axis
     }
 
 
-    public bool Remove(ShapeBase go)
+    public bool Remove(GraphicBase go)
     {
       for (int i = 0; i < this._axisStyles.Count; ++i)
         if (_axisStyles[i] != null && _axisStyles[i].Remove(go))

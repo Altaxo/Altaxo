@@ -60,7 +60,7 @@ namespace Altaxo.Graph.GUI
     private System.Windows.Forms.TextBox m_edText;
     private System.Windows.Forms.Panel m_pnPreview;
     private XYPlotLayer m_Layer; // parent layer
-    private TextGraphics m_TextObject;
+    private TextGraphic m_TextObject;
     private float  m_PositionX; // original x position of textobject
     private float  m_PositionY; // original y position of textobject
     private float  m_Rotation; // original rotation of textobject
@@ -72,7 +72,7 @@ namespace Altaxo.Graph.GUI
     private Altaxo.Gui.Common.Drawing.ColorComboBox m_cbFontColor;
     private IContainer components;
 
-    public TextControlDialog(XYPlotLayer layer, TextGraphics tgo)
+    public TextControlDialog(XYPlotLayer layer, TextGraphic tgo)
     {
       //
       // Required for Windows Form Designer support
@@ -83,7 +83,7 @@ namespace Altaxo.Graph.GUI
       m_Layer = layer;
 
       if(null==tgo)
-        m_TextObject = new TextGraphics();
+        m_TextObject = new TextGraphic();
       else
         m_TextObject = tgo;
 
@@ -96,7 +96,7 @@ namespace Altaxo.Graph.GUI
     }
 
 
-    public TextGraphics SimpleTextGraphics
+    public TextGraphic SimpleTextGraphics
     {
       get { return m_TextObject; }
     }

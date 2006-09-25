@@ -55,7 +55,7 @@ namespace Altaxo.Graph.Gdi.Axis
     /// <summary>
     /// The title of the axis.
     /// </summary>
-    TextGraphics _axisTitle;
+    TextGraphic _axisTitle;
 
     A2DAxisStyleInformation _cachedAxisInfo;
 
@@ -105,7 +105,7 @@ namespace Altaxo.Graph.Gdi.Axis
         bool showMinorLabels = info.GetBoolean("ShowMinorLabels");
         if (showMinorLabels)
           s.MinorLabelStyle = (AxisLabelStyleBase)info.GetValue("MinorLabelStyle", s);
-        s.Title = (TextGraphics)info.GetValue("AxisTitle", s);
+        s.Title = (TextGraphic)info.GetValue("AxisTitle", s);
 
         switch (edge)
         {
@@ -159,7 +159,7 @@ namespace Altaxo.Graph.Gdi.Axis
         s.AxisLineStyle = (AxisLineStyle)info.GetValue("AxisStyle", s);
         s.MajorLabelStyle = (AxisLabelStyleBase)info.GetValue("MajorLabelStyle", s);
         s.MinorLabelStyle = (AxisLabelStyleBase)info.GetValue("MinorLabelStyle", s);
-        s.Title = (TextGraphics)info.GetValue("AxisTitle", s);
+        s.Title = (TextGraphic)info.GetValue("AxisTitle", s);
 
 
         return s;
@@ -187,7 +187,7 @@ namespace Altaxo.Graph.Gdi.Axis
       this._axisLineStyle = from._axisLineStyle == null ? null : (AxisLineStyle)from._axisLineStyle.Clone();
       this._majorLabelStyle = from._majorLabelStyle == null ? null : (AxisLabelStyleBase)from._majorLabelStyle.Clone();
       this._minorLabelStyle = from._minorLabelStyle == null ? null : (AxisLabelStyleBase)from._minorLabelStyle.Clone();
-      this._axisTitle = from._axisTitle == null ? null : (TextGraphics)from._axisTitle.Clone();
+      this._axisTitle = from._axisTitle == null ? null : (TextGraphic)from._axisTitle.Clone();
 
 
       if (null != _axisLineStyle)
@@ -249,7 +249,7 @@ namespace Altaxo.Graph.Gdi.Axis
     /// <param name="go">The object to remove.</param>
     /// <returns> If the provided object is a child object and
     /// the child object could be removed, the return value is true.</returns>
-    public bool Remove(ShapeBase go)
+    public bool Remove(GraphicBase go)
     {
       // test our own objects for removal (only that that _are_ removable)
       if (object.ReferenceEquals(go, this._axisTitle))
@@ -428,18 +428,18 @@ namespace Altaxo.Graph.Gdi.Axis
           Title = null;
         else if (_axisTitle == null)
         {
-          Title = new TextGraphics();
+          Title = new TextGraphic();
           Title.Text = "axis title";
         }
       }
     }
 
-    public TextGraphics Title
+    public TextGraphic Title
     {
       get { return _axisTitle; }
       set
       {
-        TextGraphics oldvalue = _axisTitle;
+        TextGraphic oldvalue = _axisTitle;
         _axisTitle = value;
 
         if (!object.ReferenceEquals(_axisTitle, oldvalue))
@@ -464,7 +464,7 @@ namespace Altaxo.Graph.Gdi.Axis
           else
           {
             if (_axisTitle == null)
-              _axisTitle = new TextGraphics();
+              _axisTitle = new TextGraphic();
 
             _axisTitle.Text = value;
           }

@@ -90,13 +90,13 @@ namespace Altaxo.Graph.Gdi
     /// <summary>If true, the data are clipped to the frame.</summary>
     protected bool _clipDataToFrame=true;
   
-    protected TextGraphics _legend;
+    protected TextGraphic _legend;
 
     G2DScaleStyleCollection _scaleStyles;
 
     XYPlotLayerAxisPropertiesCollection _axisProperties;
 
-    protected ShapeCollection _graphObjects;
+    protected GraphicCollection _graphObjects;
 
     protected PlotItemCollection _plotItems;
 
@@ -365,10 +365,10 @@ namespace Altaxo.Graph.Gdi
       
       
         // Titles and legend
-        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.Y0).Title = (TextGraphics)info.GetValue("LeftAxisTitle", typeof(TextGraphics));
-        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.X0).Title = (TextGraphics)info.GetValue("BottomAxisTitle", typeof(TextGraphics));
-        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.Y1).Title = (TextGraphics)info.GetValue("RightAxisTitle", typeof(TextGraphics));
-        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.X1).Title = (TextGraphics)info.GetValue("TopAxisTitle", typeof(TextGraphics));
+        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.Y0).Title = (TextGraphic)info.GetValue("LeftAxisTitle", typeof(TextGraphic));
+        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.X0).Title = (TextGraphic)info.GetValue("BottomAxisTitle", typeof(TextGraphic));
+        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.Y1).Title = (TextGraphic)info.GetValue("RightAxisTitle", typeof(TextGraphic));
+        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.X1).Title = (TextGraphic)info.GetValue("TopAxisTitle", typeof(TextGraphic));
         
         if(!showLeft)
           s._scaleStyles.RemoveAxisStyle(A2DAxisStyleIdentifier.Y0);
@@ -380,14 +380,14 @@ namespace Altaxo.Graph.Gdi
           s._scaleStyles.RemoveAxisStyle(A2DAxisStyleIdentifier.X1);
         
         
-        s._legend = (TextGraphics)info.GetValue("Legend",typeof(TextGraphics));
+        s._legend = (TextGraphic)info.GetValue("Legend",typeof(TextGraphic));
       
 
 
         // XYPlotLayer specific
         s._linkedLayer.SetDocNode((XYPlotLayer)info.GetValue("LinkedLayer", typeof(XYPlotLayer)), s);
 
-        s._graphObjects = (ShapeCollection)info.GetValue("GraphObjects",typeof(ShapeCollection));
+        s._graphObjects = (GraphicCollection)info.GetValue("GraphObjects",typeof(GraphicCollection));
 
         s._plotItems = (PlotItemCollection)info.GetValue("Plots",typeof(PlotItemCollection));
 
@@ -557,10 +557,10 @@ namespace Altaxo.Graph.Gdi
 
 
         // Titles and legend
-        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.Y0).Title = (TextGraphics)info.GetValue("LeftAxisTitle", typeof(TextGraphics));
-        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.X0).Title = (TextGraphics)info.GetValue("BottomAxisTitle", typeof(TextGraphics));
-        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.Y1).Title = (TextGraphics)info.GetValue("RightAxisTitle", typeof(TextGraphics));
-        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.X1).Title = (TextGraphics)info.GetValue("TopAxisTitle", typeof(TextGraphics));
+        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.Y0).Title = (TextGraphic)info.GetValue("LeftAxisTitle", typeof(TextGraphic));
+        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.X0).Title = (TextGraphic)info.GetValue("BottomAxisTitle", typeof(TextGraphic));
+        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.Y1).Title = (TextGraphic)info.GetValue("RightAxisTitle", typeof(TextGraphic));
+        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.X1).Title = (TextGraphic)info.GetValue("TopAxisTitle", typeof(TextGraphic));
 
         if (!showLeft)
           s._scaleStyles.RemoveAxisStyle(A2DAxisStyleIdentifier.Y0);
@@ -573,7 +573,7 @@ namespace Altaxo.Graph.Gdi
 
 
 
-        s._legend = (TextGraphics)info.GetValue("Legend",typeof(TextGraphics));
+        s._legend = (TextGraphic)info.GetValue("Legend",typeof(TextGraphic));
       
         // XYPlotLayer specific
         Main.DocumentPath linkedLayer = (Main.DocumentPath)info.GetValue("LinkedLayer",typeof(XYPlotLayer));
@@ -585,7 +585,7 @@ namespace Altaxo.Graph.Gdi
           info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.EhDeserializationFinished);
         }
 
-        s._graphObjects = (ShapeCollection)info.GetValue("GraphObjects",typeof(ShapeCollection));
+        s._graphObjects = (GraphicCollection)info.GetValue("GraphObjects",typeof(GraphicCollection));
 
         s._plotItems = (PlotItemCollection)info.GetValue("Plots",typeof(PlotItemCollection));
     
@@ -714,7 +714,7 @@ namespace Altaxo.Graph.Gdi
 
         // Legends
         count = info.OpenArray("Legends");
-        s._legend = (TextGraphics)info.GetValue("e", s._legend);
+        s._legend = (TextGraphic)info.GetValue("e", s._legend);
         info.CloseArray(count);
 
         // XYPlotLayer specific
@@ -722,7 +722,7 @@ namespace Altaxo.Graph.Gdi
         s._linkedLayer = (Main.RelDocNodeProxy)info.GetValue("e", s);
         info.CloseArray(count);
 
-        s._graphObjects = (ShapeCollection)info.GetValue("GraphicGlyphs", s);
+        s._graphObjects = (GraphicCollection)info.GetValue("GraphicGlyphs", s);
 
         s._plotItems = (PlotItemCollection)info.GetValue("Plots", s);
 
@@ -777,12 +777,12 @@ namespace Altaxo.Graph.Gdi
 
       this.ScaleStyles = (G2DScaleStyleCollection)from._scaleStyles.Clone();
 
-      this.Legend = null==from._legend ? null : (TextGraphics)from._legend.Clone();
+      this.Legend = null==from._legend ? null : (TextGraphic)from._legend.Clone();
       
       // XYPlotLayer specific
       this.LinkedLayerLink = from._linkedLayer.ClonePathOnly(this);
       
-      this.GraphObjects = null==from._graphObjects ? null : new ShapeCollection(from._graphObjects);
+      this.GraphObjects = null==from._graphObjects ? null : new GraphicCollection(from._graphObjects);
 
       this.PlotItems = null==from._plotItems ? null : new PlotItemCollection(this,from._plotItems);
 
@@ -844,7 +844,7 @@ namespace Altaxo.Graph.Gdi
       this.CoordinateSystem = new G2DCartesicCoordinateSystem();
       this.ScaleStyles = new G2DScaleStyleCollection();
       this.AxisProperties = new XYPlotLayerAxisPropertiesCollection();
-      this.GraphObjects = new ShapeCollection();
+      this.GraphObjects = new GraphicCollection();
       this._location = new XYPlotLayerPositionAndSize();
      
     }
@@ -867,7 +867,7 @@ namespace Altaxo.Graph.Gdi
      
       this.ScaleStyles = new G2DScaleStyleCollection();
       this.AxisProperties = new XYPlotLayerAxisPropertiesCollection();
-      this.GraphObjects = new ShapeCollection();
+      this.GraphObjects = new GraphicCollection();
       
 
       CalculateMatrix();
@@ -905,12 +905,12 @@ namespace Altaxo.Graph.Gdi
       get { return _parentLayerCollection as XYPlotLayerCollection; }
     }
 
-    public ShapeCollection GraphObjects
+    public GraphicCollection GraphObjects
     {
       get { return _graphObjects; }
       protected set
       {
-        ShapeCollection oldvalue = _graphObjects;
+        GraphicCollection oldvalue = _graphObjects;
         _graphObjects = value;
         if (!object.ReferenceEquals(value, oldvalue))
         {
@@ -925,7 +925,7 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
-    public TextGraphics Legend
+    public TextGraphic Legend
     {
       get
       {
@@ -933,7 +933,7 @@ namespace Altaxo.Graph.Gdi
       }
       set
       {
-        TextGraphics oldvalue = _legend;
+        TextGraphic oldvalue = _legend;
         _legend = value;
         if (!object.ReferenceEquals(value, oldvalue))
         {
@@ -952,7 +952,7 @@ namespace Altaxo.Graph.Gdi
     }
     
 
-    public void Remove(ShapeBase go)
+    public void Remove(GraphicBase go)
     {
       if (_scaleStyles.Remove(go))
         return;
@@ -1097,12 +1097,12 @@ namespace Altaxo.Graph.Gdi
         return;
       }
 
-      TextGraphics tgo;
+      TextGraphic tgo;
 
       if(_legend!=null)
-        tgo = new TextGraphics(_legend);
+        tgo = new TextGraphic(_legend);
       else
-        tgo = new TextGraphics();
+        tgo = new TextGraphic();
 
 
       System.Text.StringBuilder strg = new System.Text.StringBuilder();
@@ -1257,10 +1257,10 @@ namespace Altaxo.Graph.Gdi
     {
       foreach (AxisStyle style in this.ScaleStyles.AxisStyles)
       {
-        ShapeBase.ScalePosition(style.Title, xscale, yscale);
+        GraphicBase.ScalePosition(style.Title, xscale, yscale);
       }
 
-      ShapeBase.ScalePosition(this._legend,xscale,yscale);
+      GraphicBase.ScalePosition(this._legend,xscale,yscale);
       this._graphObjects.ScalePosition(xscale,yscale);
     }
 
@@ -2055,7 +2055,7 @@ namespace Altaxo.Graph.Gdi
         }
         else
         {
-          TextGraphics tg = new TextGraphics();
+          TextGraphic tg = new TextGraphic();
           A2DAxisStyleInformation info = CoordinateSystem.GetAxisStyleInformation(id);
 
           // find out the position and orientation of the item
@@ -2085,24 +2085,24 @@ namespace Altaxo.Graph.Gdi
           {
             //case EdgeType.Right:
             tg.Rotation = -90;
-            tg.XAnchor = TextGraphics.XAnchorPositionType.Center;
-            tg.YAnchor = TextGraphics.YAnchorPositionType.Top;
+            tg.XAnchor = XAnchorPositionType.Center;
+            tg.YAnchor = YAnchorPositionType.Top;
             distance += scaleFontWidth * labelFontSize;
           }
           else if (angle <= -45 && angle >= -135)
           {
             //case Top:
             tg.Rotation = 0;
-            tg.XAnchor = TextGraphics.XAnchorPositionType.Center;
-            tg.YAnchor = TextGraphics.YAnchorPositionType.Bottom;
+            tg.XAnchor = XAnchorPositionType.Center;
+            tg.YAnchor = YAnchorPositionType.Bottom;
             distance += scaleFontHeight * labelFontSize;
           }
           else if (angle <= 135 && angle >= 45)
           {
             //case EdgeType.Bottom:
             tg.Rotation = 0;
-            tg.XAnchor = TextGraphics.XAnchorPositionType.Center;
-            tg.YAnchor = TextGraphics.YAnchorPositionType.Top;
+            tg.XAnchor = XAnchorPositionType.Center;
+            tg.YAnchor = YAnchorPositionType.Top;
             distance += scaleFontHeight * labelFontSize;
           }
           else
@@ -2110,8 +2110,8 @@ namespace Altaxo.Graph.Gdi
             //case EdgeType.Left:
 
             tg.Rotation = -90;
-            tg.XAnchor = TextGraphics.XAnchorPositionType.Center;
-            tg.YAnchor = TextGraphics.YAnchorPositionType.Bottom;
+            tg.XAnchor = XAnchorPositionType.Center;
+            tg.YAnchor = YAnchorPositionType.Bottom;
             distance += scaleFontWidth * labelFontSize;
           }
 
@@ -2233,7 +2233,7 @@ namespace Altaxo.Graph.Gdi
       PointF layerC = GraphToLayerCoordinates(pageC);
 
 
-      List<ShapeBase> specObjects = new List<ShapeBase>();
+      List<GraphicBase> specObjects = new List<GraphicBase>();
       foreach(AxisStyle style in _scaleStyles.AxisStyles)
         specObjects.Add(style.Title);
       specObjects.Add(_legend);
@@ -2242,14 +2242,14 @@ namespace Altaxo.Graph.Gdi
       {
 
         // do the hit test first for the special objects of the layer
-        foreach (ShapeBase go in specObjects)
+        foreach (GraphicBase go in specObjects)
         {
           if (null != go)
           {
             hit = go.HitTest(layerC);
             if (null != hit)
             {
-              if (null == hit.Remove && (hit.HittedObject is ShapeBase))
+              if (null == hit.Remove && (hit.HittedObject is GraphicBase))
                 hit.Remove = new DoubleClickHandler(EhTitlesOrLegend_Remove);
               return ForwardTransform(hit);
             }
@@ -2309,12 +2309,12 @@ namespace Altaxo.Graph.Gdi
 
       
         // now hit testing the other objects in the layer
-        foreach (ShapeBase go in _graphObjects)
+        foreach (GraphicBase go in _graphObjects)
         {
           hit = go.HitTest(layerC);
           if (null != hit)
           {
-            if (null == hit.Remove && (hit.HittedObject is ShapeBase))
+            if (null == hit.Remove && (hit.HittedObject is GraphicBase))
               hit.Remove = new DoubleClickHandler(EhGraphicsObject_Remove);
             return ForwardTransform(hit);
           }
@@ -2381,13 +2381,13 @@ namespace Altaxo.Graph.Gdi
 
     static bool EhGraphicsObject_Remove(IHitTestObject o)
     {
-      ShapeBase go = (ShapeBase)o.HittedObject;
+      GraphicBase go = (GraphicBase)o.HittedObject;
       o.ParentLayer.GraphObjects.Remove(go);
       return true;
     }
     static bool EhTitlesOrLegend_Remove(IHitTestObject o)
     {
-      ShapeBase go = (ShapeBase)o.HittedObject;
+      GraphicBase go = (GraphicBase)o.HittedObject;
       XYPlotLayer layer = o.ParentLayer;
 
       if(object.ReferenceEquals(go,layer._legend))

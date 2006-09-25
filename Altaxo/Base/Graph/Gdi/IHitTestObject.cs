@@ -138,7 +138,7 @@ namespace Altaxo.Graph.Gdi
     public virtual void ShiftPosition(float x, float y)
     {
     
-      if(_hitobject is ShapeBase)
+      if(_hitobject is GraphicBase)
       {
         Matrix mat = new Matrix();
         mat.Translate(x,y);
@@ -147,8 +147,8 @@ namespace Altaxo.Graph.Gdi
         PointF[] pos = new PointF[]{new PointF(x,y)};
         _inversematrix.TransformVectors(pos);
 
-        ((ShapeBase)_hitobject).X += pos[0].X;
-        ((ShapeBase)_hitobject).Y += pos[0].Y;
+        ((GraphicBase)_hitobject).X += pos[0].X;
+        ((GraphicBase)_hitobject).Y += pos[0].Y;
       }
     }
 

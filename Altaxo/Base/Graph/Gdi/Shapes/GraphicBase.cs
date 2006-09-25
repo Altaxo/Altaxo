@@ -33,7 +33,7 @@ namespace Altaxo.Graph.Gdi.Shapes
   /// for instance text elements, lines, pictures, rectangles and so on.
   /// </summary>
   [Serializable]
-  public abstract class ShapeBase 
+  public abstract class GraphicBase 
     :
     System.Runtime.Serialization.ISerializable,
     System.Runtime.Serialization.IDeserializationCallback,
@@ -67,7 +67,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// The parent collection this graphical object belongs to.
     /// </summary>
     [NonSerialized]
-    protected ShapeCollection _parentCollection = null;
+    protected GraphicCollection _parentCollection = null;
 
     [field:NonSerialized]
     public event System.EventHandler Changed;
@@ -76,7 +76,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     #region Serialization
 
-    protected ShapeBase(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
+    protected GraphicBase(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
     {
       SetObjectData(this,info,context,null);
     }
@@ -98,12 +98,12 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Graph.GraphicsObject", 0)]
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ShapeBase),1)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GraphicBase),1)]
       public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        ShapeBase s = (ShapeBase)obj;
+        GraphicBase s = (GraphicBase)obj;
         info.AddValue("Position",s._position);  
         info.AddValue("Bounds",s._bounds);
         info.AddValue("Rotation",s._rotation);
@@ -112,7 +112,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
         
-        ShapeBase s = (ShapeBase)o;
+        GraphicBase s = (GraphicBase)o;
 
         s._position = (PointF)info.GetValue("Position",s);  
         s._bounds = (RectangleF)info.GetValue("Bounds",s);
@@ -137,7 +137,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// Copy constructor.
     /// </summary>
     /// <param name="from">The object to copy the data from.</param>
-    protected ShapeBase(ShapeBase from)
+    protected GraphicBase(GraphicBase from)
     {
       this._autoSize = from._autoSize;
       this._bounds  = from._bounds;
@@ -149,7 +149,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <summary>
     /// Initializes with default values.
     /// </summary>
-    protected ShapeBase()
+    protected GraphicBase()
     {
     }
 
@@ -157,7 +157,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// Initializes with a certain position in points (1/72 inch).
     /// </summary>
     /// <param name="graphicPosition">The initial position of the graphical object.</param>
-    protected ShapeBase(PointF graphicPosition)
+    protected GraphicBase(PointF graphicPosition)
     {
       SetPosition(graphicPosition);
     }
@@ -167,56 +167,56 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// </summary>
     /// <param name="posX">The initial x position of the graphical object.</param>
     /// <param name="posY">The initial y position of the graphical object.</param>
-    protected ShapeBase(float posX, float posY)
+    protected GraphicBase(float posX, float posY)
       : this(new PointF(posX,posY))
     {
     }
 
-    protected ShapeBase(PointF graphicPosition, SizeF graphicSize)
+    protected GraphicBase(PointF graphicPosition, SizeF graphicSize)
       : this(graphicPosition)
     {
       SetSize(graphicSize);
       this.AutoSize = false;
     }
-    protected ShapeBase(float posX, float posY, SizeF graphicSize)
+    protected GraphicBase(float posX, float posY, SizeF graphicSize)
       : this(new PointF(posX, posY), graphicSize)
     {
     }
 
-    protected ShapeBase(float posX, float posY,
+    protected GraphicBase(float posX, float posY,
       float width, float height)
       : this(new PointF(posX, posY), new SizeF(width, height))
     {
     }
 
-    protected ShapeBase(PointF graphicPosition, float Rotation)
+    protected GraphicBase(PointF graphicPosition, float Rotation)
     {
       this.SetPosition(graphicPosition);
       this.Rotation = Rotation;
     }
 
-    protected ShapeBase(float posX, float posY, float Rotation)
+    protected GraphicBase(float posX, float posY, float Rotation)
       : this(new PointF(posX, posY), Rotation)
     {
     }
 
-    protected ShapeBase(PointF graphicPosition, SizeF graphicSize, float Rotation)
+    protected GraphicBase(PointF graphicPosition, SizeF graphicSize, float Rotation)
       : this(graphicPosition, Rotation)
     {
       this.SetSize(graphicSize);
       this.AutoSize = false;
     }
-    protected ShapeBase(float posX, float posY, SizeF graphicSize, float Rotation)
+    protected GraphicBase(float posX, float posY, SizeF graphicSize, float Rotation)
       : this(new PointF(posX, posY), graphicSize, Rotation)
     {
     }
 
-    protected ShapeBase(float posX, float posY, float width, float height, float Rotation)
+    protected GraphicBase(float posX, float posY, float width, float height, float Rotation)
       : this(new PointF(posX, posY), new SizeF(width, height), Rotation)
     {
     }
 
-    public ShapeCollection Container
+    public GraphicCollection Container
     {
       get
       {
@@ -343,7 +343,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <param name="o">The graphics object whose position is scaled.</param>
     /// <param name="xscale">The xscale ratio.</param>
     /// <param name="yscale">The yscale ratio.</param>
-    public static void ScalePosition(ShapeBase o, double xscale, double yscale)
+    public static void ScalePosition(GraphicBase o, double xscale, double yscale)
     {
       if(o!=null)
       {
@@ -759,13 +759,13 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     protected class SizeMoveGripHandle : IGripManipulationHandle
     {
-      ShapeBase _parent;
+      GraphicBase _parent;
       PointF _drawrPosition;
       PointF _fixrPosition;
       PointF _fixaPosition;
       bool _allowNegativeSize;
 
-      public SizeMoveGripHandle(ShapeBase parent, PointF relPos)
+      public SizeMoveGripHandle(GraphicBase parent, PointF relPos)
       {
         _parent = parent;
         _drawrPosition = relPos;
@@ -782,12 +782,12 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     protected class RotationGripHandle : IGripManipulationHandle
     {
-      ShapeBase _parent;
+      GraphicBase _parent;
       PointF _drawrPosition;
       PointF _fixrPosition;
       PointF _fixaPosition;
 
-      public RotationGripHandle(ShapeBase parent, PointF relPos)
+      public RotationGripHandle(GraphicBase parent, PointF relPos)
       {
         _parent = parent;
         _drawrPosition = relPos;

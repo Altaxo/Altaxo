@@ -1287,12 +1287,17 @@
     <Compile Include="Graph\Gdi\Plot\XYColumnPlotItem.cs" />
     <Compile Include="Graph\Gdi\Plot\XYColumnPlotItemLabelTextStyle.cs" />
     <Compile Include="Graph\Gdi\Plot\XYFunctionPlotItem.cs" />
-    <Compile Include="Graph\Gdi\Shapes\ImageGraphics.cs" />
-    <Compile Include="Graph\Gdi\Shapes\ShapeBase.cs" />
-    <Compile Include="Graph\Gdi\Shapes\ShapeCollection.cs" />
-    <Compile Include="Graph\Gdi\Shapes\ShapeGraphics.cs" />
-    <Compile Include="Graph\Gdi\Shapes\SimpleTextGraphics.cs" />
-    <Compile Include="Graph\Gdi\Shapes\TextGraphics.cs" />
+    <Compile Include="Graph\Gdi\Shapes\EllipseShape.cs" />
+    <Compile Include="Graph\Gdi\Shapes\EmbeddedImageGraphic.cs" />
+    <Compile Include="Graph\Gdi\Shapes\GraphicBase.cs" />
+    <Compile Include="Graph\Gdi\Shapes\GraphicCollection.cs" />
+    <Compile Include="Graph\Gdi\Shapes\ImageGraphic.cs" />
+    <Compile Include="Graph\Gdi\Shapes\LineShape.cs" />
+    <Compile Include="Graph\Gdi\Shapes\LinkedImageGraphic.cs" />
+    <Compile Include="Graph\Gdi\Shapes\RectangleShape.cs" />
+    <Compile Include="Graph\Gdi\Shapes\ShapeGraphic.cs" />
+    <Compile Include="Graph\Gdi\Shapes\SimpleTextGraphic.cs" />
+    <Compile Include="Graph\Gdi\Shapes\TextGraphic.cs" />
     <Compile Include="Graph\Gdi\XYPlotLayer.cs" />
     <Compile Include="Graph\Gdi\XYPlotLayerAxisProperties.cs" />
     <Compile Include="Graph\Gdi\XYPlotLayerCollection.cs" />
@@ -1330,6 +1335,8 @@
     <Compile Include="Graph\Scales\Rescaling\NumericAxisRescaleConditions.cs" />
     <Compile Include="Graph\Scales\Scale.cs" />
     <Compile Include="Graph\Scales\ScaleLinkType.cs" />
+    <Compile Include="Graph\XAnchorPositionType.cs" />
+    <Compile Include="Graph\YAnchorPositionType.cs" />
     <Compile Include="Gui\Common\Drawing\FontComboBox.cs">
       <SubType>Component</SubType>
     </Compile>
