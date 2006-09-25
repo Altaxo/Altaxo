@@ -136,19 +136,19 @@ namespace Altaxo.Gui.Graph
   /// <summary>
   /// Summary description for XYPlotScatterStyleController.
   /// </summary>
-  [UserControllerForObject(typeof(XYPlotScatterStyle))]
+  [UserControllerForObject(typeof(ScatterPlotStyle))]
   public class XYPlotScatterStyleController : IXYPlotScatterStyleViewEventSink, IXYPlotScatterStyleController
   {
-    XYPlotScatterStyle _doc;
-    XYPlotScatterStyle _tempDoc;
+    ScatterPlotStyle _doc;
+    ScatterPlotStyle _tempDoc;
     IXYPlotScatterStyleView _view;
 
 
-    public XYPlotScatterStyleController(XYPlotScatterStyle doc)
+    public XYPlotScatterStyleController(ScatterPlotStyle doc)
     {
 
       _doc = doc;
-      _tempDoc = (XYPlotScatterStyle)_doc.Clone();
+      _tempDoc = (ScatterPlotStyle)_doc.Clone();
     }
 
     public static string [] GetPlotColorNames()

@@ -135,18 +135,18 @@ namespace Altaxo.Gui.Graph
   /// <summary>
   /// Summary description for XYPlotLineStyleController.
   /// </summary>
-  [UserControllerForObject(typeof(XYPlotLineStyle))]
+  [UserControllerForObject(typeof(LinePlotStyle))]
   public class XYPlotLineStyleController : IXYPlotLineStyleViewEventSink, IXYPlotLineStyleController
   {
     IXYPlotLineStyleView _view;
-    XYPlotLineStyle _doc;
-    XYPlotLineStyle _tempDoc;
+    LinePlotStyle _doc;
+    LinePlotStyle _tempDoc;
     IColorTypeThicknessPenController _penController;
 
-    public XYPlotLineStyleController(XYPlotLineStyle doc)
+    public XYPlotLineStyleController(LinePlotStyle doc)
     {
       _doc = doc;
-      _tempDoc = (XYPlotLineStyle)_doc.Clone();
+      _tempDoc = (LinePlotStyle)_doc.Clone();
       _penController = new ColorTypeThicknessPenController(_tempDoc.PenHolder);
     }
 

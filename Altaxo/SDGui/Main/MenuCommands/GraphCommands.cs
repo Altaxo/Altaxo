@@ -399,7 +399,7 @@ namespace Altaxo.Graph.Commands
     public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
     {
       ctrl.EnsureValidityOfCurrentLayerNumber();
-      ctrl.Doc.Layers[ctrl.CurrentLayerNumber].PlotItems.Add(new XYFunctionPlotItem(new XYFunctionPlotData(new PolynomialFunction(new double[]{0,0,1})),new XYPlotStyleCollection(LineScatterPlotStyleKind.Line)));
+      ctrl.Doc.Layers[ctrl.CurrentLayerNumber].PlotItems.Add(new XYFunctionPlotItem(new XYFunctionPlotData(new PolynomialFunction(new double[]{0,0,1})),new G2DPlotStyleCollection(LineScatterPlotStyleKind.Line)));
     }
   }
 
@@ -469,7 +469,7 @@ namespace Altaxo.Graph.Commands
         ctrl.EnsureValidityOfCurrentLayerNumber();
 
         script = (FunctionEvaluationScript)args[0];
-        XYFunctionPlotItem functItem = new XYFunctionPlotItem(new XYFunctionPlotData(script),new XYPlotStyleCollection(LineScatterPlotStyleKind.Line));
+        XYFunctionPlotItem functItem = new XYFunctionPlotItem(new XYFunctionPlotData(script),new G2DPlotStyleCollection(LineScatterPlotStyleKind.Line));
         ctrl.Doc.Layers[ctrl.CurrentLayerNumber].PlotItems.Add(functItem);
       }
     }

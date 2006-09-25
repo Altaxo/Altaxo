@@ -33,15 +33,16 @@ namespace Altaxo.Graph.Gdi.Plot.Data
   /// <summary>
   /// Summary description for XYColumnPlotData.
   /// </summary>
-  [SerializationSurrogate(0,typeof(XYZEquidistantMeshColumnPlotData.SerializationSurrogate0))]
+  [SerializationSurrogate(0,typeof(XYZMeshedColumnPlotData.SerializationSurrogate0))]
   [SerializationVersion(0)]
-  public class XYZEquidistantMeshColumnPlotData 
+  public class XYZMeshedColumnPlotData 
     :
     System.Runtime.Serialization.IDeserializationCallback,
     Main.IChangedEventSource,
     System.ICloneable,
     Main.IDocumentNode
   {
+    [NonSerialized]
     protected object m_Parent;
 
     protected Altaxo.Data.IReadableColumn[] m_DataColumns; // the columns that are involved in the picture
@@ -51,8 +52,11 @@ namespace Altaxo.Graph.Gdi.Plot.Data
     protected Altaxo.Data.INumericColumn m_YColumn;
 
     // cached or temporary data
+    [NonSerialized]
     protected NumericalBoundaries m_xBoundaries; 
+    [NonSerialized]
     protected NumericalBoundaries m_yBoundaries;
+    [NonSerialized]
     protected NumericalBoundaries m_vBoundaries;
 
 
@@ -63,14 +67,18 @@ namespace Altaxo.Graph.Gdi.Plot.Data
     protected bool   m_bCachedDataValid=false;
 
     // events
+    [field:NonSerialized]
     public event BoundaryChangedHandler  XBoundariesChanged;
+    [field:NonSerialized]
     public event BoundaryChangedHandler  YBoundariesChanged;
+    [field:NonSerialized]
     public event BoundaryChangedHandler  VBoundariesChanged;
 
 
     /// <summary>
     /// Fired if either the data of this XYColumnPlotData changed or if the bounds changed
     /// </summary>
+    [field:NonSerialized]
     public event System.EventHandler Changed;
 
 
@@ -86,7 +94,7 @@ namespace Altaxo.Graph.Gdi.Plot.Data
       /// <param name="context">The streaming context.</param>
       public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context  )
       {
-        XYZEquidistantMeshColumnPlotData s = (XYZEquidistantMeshColumnPlotData)obj;
+        XYZMeshedColumnPlotData s = (XYZMeshedColumnPlotData)obj;
         
         info.AddValue("XColumn",s.m_XColumn);
         info.AddValue("YColumn",s.m_YColumn);
@@ -107,7 +115,7 @@ namespace Altaxo.Graph.Gdi.Plot.Data
       /// <returns>The deserialized XYZEquidistantMeshColumnPlotData.</returns>
       public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
       {
-        XYZEquidistantMeshColumnPlotData s = (XYZEquidistantMeshColumnPlotData)obj;
+        XYZMeshedColumnPlotData s = (XYZMeshedColumnPlotData)obj;
 
 
         s.m_XColumn = (Altaxo.Data.INumericColumn)info.GetValue("XColumn",typeof(Altaxo.Data.INumericColumn));
@@ -122,12 +130,13 @@ namespace Altaxo.Graph.Gdi.Plot.Data
       }
     }
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYZEquidistantMeshColumnPlotData),0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Graph.XYZEquidistantMeshColumnPlotData", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYZMeshedColumnPlotData),1)]
       public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        XYZEquidistantMeshColumnPlotData s = (XYZEquidistantMeshColumnPlotData)obj;
+        XYZMeshedColumnPlotData s = (XYZMeshedColumnPlotData)obj;
     
         if(s.m_XColumn is Main.IDocumentNode && !s.Equals(((Main.IDocumentNode)s.m_XColumn).ParentObject))
         {
@@ -170,13 +179,13 @@ namespace Altaxo.Graph.Gdi.Plot.Data
       Main.DocumentPath _xColumn = null;
       Main.DocumentPath _yColumn = null;
       Main.DocumentPath[] _vColumns=null;
-      XYZEquidistantMeshColumnPlotData _plotAssociation = null;
+      XYZMeshedColumnPlotData _plotAssociation = null;
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
         bool bSurrogateUsed = false;
         
-        XYZEquidistantMeshColumnPlotData s = null!=o ? (XYZEquidistantMeshColumnPlotData)o : new XYZEquidistantMeshColumnPlotData();
+        XYZMeshedColumnPlotData s = null!=o ? (XYZMeshedColumnPlotData)o : new XYZMeshedColumnPlotData();
 
         XmlSerializationSurrogate0 surr = new XmlSerializationSurrogate0();
 
@@ -335,11 +344,11 @@ namespace Altaxo.Graph.Gdi.Plot.Data
     /// <summary>
     /// Deserialization constructor.
     /// </summary>
-    protected XYZEquidistantMeshColumnPlotData()
+    protected XYZMeshedColumnPlotData()
     {
     }
 
-    public XYZEquidistantMeshColumnPlotData(Altaxo.Data.DataColumnCollection coll, IAscendingIntegerCollection selected)
+    public XYZMeshedColumnPlotData(Altaxo.Data.DataColumnCollection coll, IAscendingIntegerCollection selected)
     {
       m_XColumn = new Altaxo.Data.IndexerColumn();
       m_YColumn = new Altaxo.Data.IndexerColumn();
@@ -369,7 +378,7 @@ namespace Altaxo.Graph.Gdi.Plot.Data
     /// </summary>
     /// <param name="from">The object to copy from.</param>
     /// <remarks>Only clones the references to the data columns, not the columns itself.</remarks>
-    public XYZEquidistantMeshColumnPlotData(XYZEquidistantMeshColumnPlotData from)
+    public XYZMeshedColumnPlotData(XYZMeshedColumnPlotData from)
     {
       if(from.m_XColumn is Altaxo.Data.DataColumn && ((Altaxo.Data.DataColumn)from.m_XColumn).ParentObject!=null)
         m_XColumn = from.m_XColumn;
@@ -408,7 +417,7 @@ namespace Altaxo.Graph.Gdi.Plot.Data
     /// <remarks>The data columns refered by this object are <b>not</b> cloned, only the reference is cloned here.</remarks>
     public object Clone()
     {
-      return new XYZEquidistantMeshColumnPlotData(this);
+      return new XYZMeshedColumnPlotData(this);
     }
 
     public void MergeXBoundsInto(IPhysicalBoundaries pb)

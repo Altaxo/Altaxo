@@ -72,7 +72,7 @@ namespace Altaxo.Graph.Gdi.Plot
         XYFunctionPlotItem s = (XYFunctionPlotItem)obj;
 
         s._plotData = (XYFunctionPlotData)info.GetValue("Data",typeof(XYColumnPlotData));
-        s._plotStyles = (XYPlotStyleCollection)info.GetValue("Style", typeof(XYPlotStyleCollection));
+        s._plotStyles = (G2DPlotStyleCollection)info.GetValue("Style", typeof(G2DPlotStyleCollection));
     
         return s;
       }
@@ -95,7 +95,7 @@ namespace Altaxo.Graph.Gdi.Plot
 
         // TODO this must be implemented again
         throw new NotImplementedException("This must be implemented here");
-        XYPlotStyleCollection ps = new XYPlotStyleCollection();
+        G2DPlotStyleCollection ps = new G2DPlotStyleCollection();
         //G2DPlotStyleCollection ps = new G2DPlotStyleCollection(new I2DPlotStyle[] { lsps.XYLineStyle, lsps.XYScatterStyle });
         
         if(null==o)
@@ -126,7 +126,7 @@ namespace Altaxo.Graph.Gdi.Plot
       {
 
         XYFunctionPlotData pa = (XYFunctionPlotData)info.GetValue("Data", typeof(XYColumnPlotData));
-        XYPlotStyleCollection ps = (XYPlotStyleCollection)info.GetValue("Style", typeof(XYPlotStyleCollection));
+        G2DPlotStyleCollection ps = (G2DPlotStyleCollection)info.GetValue("Style", typeof(G2DPlotStyleCollection));
 
         if (null == o)
         {
@@ -165,7 +165,7 @@ namespace Altaxo.Graph.Gdi.Plot
 
 
 
-    public XYFunctionPlotItem(XYFunctionPlotData pa, XYPlotStyleCollection ps)
+    public XYFunctionPlotItem(XYFunctionPlotData pa, G2DPlotStyleCollection ps)
     {
       this.Data = pa;
       this.Style = ps;

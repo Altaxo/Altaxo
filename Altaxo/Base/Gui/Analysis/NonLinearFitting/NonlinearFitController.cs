@@ -290,7 +290,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
             {
               FitFunctionToScalarFunctionDDWrapper wrapper = new FitFunctionToScalarFunctionDDWrapper(fitEle.FitFunction, k, _doc.GetParametersForFitElement(i));
               XYFunctionPlotData plotdata = new XYFunctionPlotData(wrapper);
-              XYFunctionPlotItem plotItem = new XYFunctionPlotItem(plotdata, new XYPlotStyleCollection(LineScatterPlotStyleKind.Line));
+              XYFunctionPlotItem plotItem = new XYFunctionPlotItem(plotdata, new G2DPlotStyleCollection(LineScatterPlotStyleKind.Line));
               graph.ActiveLayer.PlotItems.Add(plotItem);
               _functionPlotItems.Add(plotItem);
             }

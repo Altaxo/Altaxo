@@ -40,7 +40,7 @@ namespace Altaxo.Graph.Gdi.Plot
   [SerializationVersion(0)]
   public class DensityImagePlotItem : PlotItem, System.Runtime.Serialization.IDeserializationCallback, IXBoundsHolder, IYBoundsHolder
   {
-    protected XYZEquidistantMeshColumnPlotData m_PlotAssociation;
+    protected XYZMeshedColumnPlotData m_PlotAssociation;
     protected DensityImagePlotStyle       m_PlotStyle;
 
     #region Serialization
@@ -71,7 +71,7 @@ namespace Altaxo.Graph.Gdi.Plot
       {
         DensityImagePlotItem s = (DensityImagePlotItem)obj;
 
-        s.m_PlotAssociation = (XYZEquidistantMeshColumnPlotData)info.GetValue("Data",typeof(XYZEquidistantMeshColumnPlotData));
+        s.m_PlotAssociation = (XYZMeshedColumnPlotData)info.GetValue("Data",typeof(XYZMeshedColumnPlotData));
         s.m_PlotStyle = (DensityImagePlotStyle)info.GetValue("Style",typeof(DensityImagePlotStyle));
     
         return s;
@@ -92,7 +92,7 @@ namespace Altaxo.Graph.Gdi.Plot
       {
 
         
-        XYZEquidistantMeshColumnPlotData pa = (XYZEquidistantMeshColumnPlotData)info.GetValue("Data",o);
+        XYZMeshedColumnPlotData pa = (XYZMeshedColumnPlotData)info.GetValue("Data",o);
         DensityImagePlotStyle ps = (DensityImagePlotStyle)info.GetValue("Style",o);
 
         if(o==null)
@@ -131,7 +131,7 @@ namespace Altaxo.Graph.Gdi.Plot
 
 
 
-    public DensityImagePlotItem(XYZEquidistantMeshColumnPlotData pa, DensityImagePlotStyle ps)
+    public DensityImagePlotItem(XYZMeshedColumnPlotData pa, DensityImagePlotStyle ps)
     {
       this.Data = pa;
       this.Style = ps;
@@ -167,7 +167,7 @@ namespace Altaxo.Graph.Gdi.Plot
       {
         if(null==value)
           throw new System.ArgumentNullException();
-        else if(!(value is XYZEquidistantMeshColumnPlotData))
+        else if(!(value is XYZMeshedColumnPlotData))
           throw new System.ArgumentException("The provided data object is not of the type " + m_PlotAssociation.GetType().ToString() + ", but of type " + value.GetType().ToString() + "!");
         else
         {
@@ -181,7 +181,7 @@ namespace Altaxo.Graph.Gdi.Plot
 
             }
 
-            m_PlotAssociation = (XYZEquidistantMeshColumnPlotData)value;
+            m_PlotAssociation = (XYZMeshedColumnPlotData)value;
           
             if(null!=m_PlotAssociation )
             {

@@ -44,7 +44,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       Top = 3
     }
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FillDirection), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Graph.XYPlotLineStyles.FillDirection", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FillDirection), 1)]
     public class FillDirectionXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -73,7 +74,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       StepHorzCenter,
       StepVertCenter
     }
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ConnectionStyle), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Graph.XYPlotLineStyles.ConnectionStyle", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ConnectionStyle), 1)]
     public class ConnectionStyleXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -94,9 +96,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
   /// <summary>
   /// Summary description for XYPlotLineStyle.
   /// </summary>
-  [SerializationSurrogate(0, typeof(XYPlotLineStyle.SerializationSurrogate0))]
+  [SerializationSurrogate(0, typeof(LinePlotStyle.SerializationSurrogate0))]
   [SerializationVersion(0)]
-  public class XYPlotLineStyle
+  public class LinePlotStyle
     :
     ICloneable,
     Main.IChangedEventSource,
@@ -149,7 +151,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       /// <param name="context">The streaming context.</param>
       public void GetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
       {
-        XYPlotLineStyle s = (XYPlotLineStyle)obj;
+        LinePlotStyle s = (LinePlotStyle)obj;
         info.AddValue("Pen", s._penHolder);
         info.AddValue("Connection", s._connectionStyle);
         info.AddValue("LineSymbolGap", s._useLineSymbolGap);
@@ -168,7 +170,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       /// <returns>The deserialized XYPlotLineStyle.</returns>
       public object SetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context, System.Runtime.Serialization.ISurrogateSelector selector)
       {
-        XYPlotLineStyle s = (XYPlotLineStyle)obj;
+        LinePlotStyle s = (LinePlotStyle)obj;
 
         s._penHolder = (PenHolder)info.GetValue("Pen", typeof(PenHolder));
         s.Connection = (XYPlotLineStyles.ConnectionStyle)info.GetValue("Connection", typeof(XYPlotLineStyles.ConnectionStyle));
@@ -182,13 +184,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotLineStyle), 0)]
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotLineStyle), 1)] // by accident, it was never different from 0
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Graph.XYPlotLineStyle", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotLineStyle", 1)] // by accident, it was never different from 0
     public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        XYPlotLineStyle s = (XYPlotLineStyle)obj;
+        LinePlotStyle s = (LinePlotStyle)obj;
         info.AddValue("Pen", s._penHolder);
         info.AddValue("Connection", s._connectionStyle);
         info.AddValue("LineSymbolGap", s._useLineSymbolGap);
@@ -200,15 +202,15 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        XYPlotLineStyle s = SDeserialize(o, info, parent);
+        LinePlotStyle s = SDeserialize(o, info, parent);
         s.CreateEventChain();
         return s;
       }
 
-      public virtual XYPlotLineStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public virtual LinePlotStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
 
-        XYPlotLineStyle s = null != o ? (XYPlotLineStyle)o : new XYPlotLineStyle();
+        LinePlotStyle s = null != o ? (LinePlotStyle)o : new LinePlotStyle();
 
         s._penHolder = (PenHolder)info.GetValue("Pen", typeof(PenHolder));
         s.Connection = (XYPlotLineStyles.ConnectionStyle)info.GetValue("Connection", typeof(XYPlotLineStyles.ConnectionStyle));
@@ -240,19 +242,20 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotLineStyle), 2)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotLineStyle", 2)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LinePlotStyle), 3)]
     public class XmlSerializationSurrogate2 : XmlSerializationSurrogate0
     {
       public override void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         base.Serialize(obj, info);
-        XYPlotLineStyle s = (XYPlotLineStyle)obj;
+        LinePlotStyle s = (LinePlotStyle)obj;
         info.AddValue("IndependentColor", s._independentColor);
 
       }
-      public override XYPlotLineStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public override LinePlotStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        XYPlotLineStyle s = base.SDeserialize(o, info, parent);
+        LinePlotStyle s = base.SDeserialize(o, info, parent);
         s._independentColor = info.GetBoolean("IndependentColor");
         return s;
       }
@@ -272,7 +275,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 
 
-    public XYPlotLineStyle()
+    public LinePlotStyle()
     {
       _penHolder = new PenHolder(Color.Black);
       _useLineSymbolGap = true;
@@ -288,7 +291,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     }
 
 
-    public void CopyFrom(XYPlotLineStyle from, bool suppressChangeEvent)
+    public void CopyFrom(LinePlotStyle from, bool suppressChangeEvent)
     {
       this._penHolder = null == from._penHolder ? null : (PenHolder)from._penHolder.Clone();
       this._useLineSymbolGap = from._useLineSymbolGap;
@@ -305,7 +308,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         OnChanged();
     }
 
-    public XYPlotLineStyle(XYPlotLineStyle from)
+    public LinePlotStyle(LinePlotStyle from)
     {
 
       CopyFrom(from, true);
@@ -484,7 +487,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     public object Clone()
     {
-      return new XYPlotLineStyle(this);
+      return new LinePlotStyle(this);
     }
 
     public virtual void PaintLine(Graphics g, PointF beg, PointF end)

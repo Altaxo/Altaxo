@@ -76,7 +76,7 @@ namespace Altaxo.Graph.Gdi.Plot
         XYColumnPlotItem s = (XYColumnPlotItem)obj;
 
         s.Data = (XYColumnPlotData)info.GetValue("Data", typeof(XYColumnPlotData));
-        s.Style = (XYPlotStyleCollection)info.GetValue("Style", typeof(XYPlotStyleCollection));
+        s.Style = (G2DPlotStyleCollection)info.GetValue("Style", typeof(G2DPlotStyleCollection));
 
         return s;
       }
@@ -86,7 +86,7 @@ namespace Altaxo.Graph.Gdi.Plot
     public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       XYColumnPlotData _item;
-      XYPlotLabelStyle _label;
+      LabelPlotStyle _label;
 
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
@@ -102,7 +102,7 @@ namespace Altaxo.Graph.Gdi.Plot
         if (lsps.XYPlotLineStyle != null)
           lsps.XYPlotLineStyle.LineSymbolGap = lsps.LineSymbolGap; // this has changed and is now hosted in the LineStyle itself
 
-        XYPlotStyleCollection ps = new XYPlotStyleCollection(new IG2DPlotStyle[] { lsps.XYPlotLineStyle, lsps.ScatterStyle, lsps.XYPlotLabelStyle });
+        G2DPlotStyleCollection ps = new G2DPlotStyleCollection(new IG2DPlotStyle[] { lsps.XYPlotLineStyle, lsps.ScatterStyle, lsps.XYPlotLabelStyle });
         if (lsps.XYPlotLabelStyle != null)
         {
           XmlSerializationSurrogate0 surr = new XmlSerializationSurrogate0();
@@ -153,7 +153,7 @@ namespace Altaxo.Graph.Gdi.Plot
       {
 
         XYColumnPlotData pa = (XYColumnPlotData)info.GetValue("Data", typeof(XYColumnPlotData));
-        XYPlotStyleCollection ps = (XYPlotStyleCollection)info.GetValue("Style", typeof(XYPlotStyleCollection));
+        G2DPlotStyleCollection ps = (G2DPlotStyleCollection)info.GetValue("Style", typeof(G2DPlotStyleCollection));
 
         if (null == o)
         {
@@ -192,7 +192,7 @@ namespace Altaxo.Graph.Gdi.Plot
   
 
 
-    public XYColumnPlotItem(XYColumnPlotData pa, XYPlotStyleCollection ps)
+    public XYColumnPlotItem(XYColumnPlotData pa, G2DPlotStyleCollection ps)
     {
       this.Data = pa;
       this.Style = ps;

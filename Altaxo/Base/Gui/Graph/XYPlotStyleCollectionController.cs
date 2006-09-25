@@ -62,11 +62,11 @@ namespace Altaxo.Gui.Graph
  
   #endregion
 
-  [UserControllerForObject(typeof(XYPlotStyleCollection))]
+  [UserControllerForObject(typeof(G2DPlotStyleCollection))]
   public class XYPlotStyleCollectionController : IXYPlotStyleCollectionViewEventSink, IXYPlotStyleCollectionController
   {
     protected IXYPlotStyleCollectionView _view;
-    protected XYPlotStyleCollection _doc;
+    protected G2DPlotStyleCollection _doc;
     protected System.Collections.ArrayList _tempdoc;
 
     System.Type[] _plotStyleTypes;
@@ -74,7 +74,7 @@ namespace Altaxo.Gui.Graph
     
 
 
-    public XYPlotStyleCollectionController(XYPlotStyleCollection doc)
+    public XYPlotStyleCollectionController(G2DPlotStyleCollection doc)
     {
       _doc = doc;
       _tempdoc = new System.Collections.ArrayList();
@@ -116,8 +116,8 @@ namespace Altaxo.Gui.Graph
     public void InitializePredefinedStyles()
     {
    
-      string[] names = XYPlotStyleCollectionTemplates.GetAvailableNamesPlusCustom();
-      int idx = XYPlotStyleCollectionTemplates.GetIndexOfAvailableNamesPlusCustom(_doc);
+      string[] names = G2DPlotStyleCollectionTemplates.GetAvailableNamesPlusCustom();
+      int idx = G2DPlotStyleCollectionTemplates.GetIndexOfAvailableNamesPlusCustom(_doc);
       if(_view!=null)
         _view.InitializePredefinedStyles(names,idx);
     }
@@ -197,7 +197,7 @@ namespace Altaxo.Gui.Graph
       if (selectedindex == 0)
         return;
 
-      XYPlotStyleCollection template = XYPlotStyleCollectionTemplates.GetTemplate(selectedindex - 1);
+      G2DPlotStyleCollection template = G2DPlotStyleCollectionTemplates.GetTemplate(selectedindex - 1);
       _tempdoc.Clear();
       for (int i = 0; i < template.Count; i++)
         _tempdoc.Add(template[i]);

@@ -46,6 +46,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
   {
 
 
+    [NonSerialized]
     protected object m_Parent;
 
     /// <summary>
@@ -129,7 +130,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DensityImagePlotStyle),0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Graph.DensityImagePlotStyle",0)]
       public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -149,7 +150,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DensityImagePlotStyle),1)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Graph.DensityImagePlotStyle",1)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DensityImagePlotStyle),2)]
       public class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -380,10 +382,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <param name="plotObject">The data to plot.</param>
     public void Paint(Graphics gfrx, IPlotArea gl, object plotObject) // plots the curve with the choosen style
     {
-      if(!(plotObject is XYZEquidistantMeshColumnPlotData))
+      if(!(plotObject is XYZMeshedColumnPlotData))
         return; // we cannot plot any other than a TwoDimMeshDataAssociation now
 
-      XYZEquidistantMeshColumnPlotData myPlotAssociation = (XYZEquidistantMeshColumnPlotData)plotObject;
+      XYZMeshedColumnPlotData myPlotAssociation = (XYZMeshedColumnPlotData)plotObject;
 
       Altaxo.Data.INumericColumn xColumn = myPlotAssociation.XColumn as Altaxo.Data.INumericColumn;
       Altaxo.Data.INumericColumn yColumn = myPlotAssociation.YColumn as Altaxo.Data.INumericColumn;
@@ -519,6 +521,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     
     #region IChangedEventSource Members
 
+    [field:NonSerialized]
     public event System.EventHandler Changed;
 
     protected virtual void OnChanged()

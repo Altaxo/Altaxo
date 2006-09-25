@@ -15,28 +15,29 @@ namespace Altaxo.Graph.Gdi.Plot.Data
   [Serializable]
   public class PlotRange
   {
-    int m_LowerBound;
-    int m_UpperBound;
-    int m_OffsetToOriginal;
+    int _lowerBound;
+    int _upperBound;
+    int _offsetToOriginal;
 
     #region Serialization
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PlotRange), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Graph.PlotRange", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PlotRange), 1)]
     public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         PlotRange s = (PlotRange)obj;
-        info.AddValue("LowerBound", s.m_LowerBound);
-        info.AddValue("UpperBound", s.m_UpperBound);
+        info.AddValue("LowerBound", s._lowerBound);
+        info.AddValue("UpperBound", s._upperBound);
       }
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
 
         PlotRange s = null != o ? (PlotRange)o : new PlotRange(0, 0);
 
-        s.m_LowerBound = info.GetInt32("LowerBound");
-        s.m_UpperBound = info.GetInt32("UpperBound");
+        s._lowerBound = info.GetInt32("LowerBound");
+        s._upperBound = info.GetInt32("UpperBound");
 
         return s;
       }
@@ -47,23 +48,23 @@ namespace Altaxo.Graph.Gdi.Plot.Data
 
     public PlotRange(int lower, int upper)
     {
-      m_LowerBound = lower;
-      m_UpperBound = upper;
-      m_OffsetToOriginal = 0;
+      _lowerBound = lower;
+      _upperBound = upper;
+      _offsetToOriginal = 0;
     }
 
     public PlotRange(int lower, int upper, int offset)
     {
-      m_LowerBound = lower;
-      m_UpperBound = upper;
-      m_OffsetToOriginal = offset;
+      _lowerBound = lower;
+      _upperBound = upper;
+      _offsetToOriginal = offset;
     }
 
     public PlotRange(PlotRange a)
     {
-      m_LowerBound = a.m_LowerBound;
-      m_UpperBound = a.m_UpperBound;
-      m_OffsetToOriginal = a.m_OffsetToOriginal;
+      _lowerBound = a._lowerBound;
+      _upperBound = a._upperBound;
+      _offsetToOriginal = a._offsetToOriginal;
     }
 
     /// <summary>
@@ -71,7 +72,7 @@ namespace Altaxo.Graph.Gdi.Plot.Data
     /// </summary>
     public int Length
     {
-      get { return m_UpperBound - m_LowerBound; }
+      get { return _upperBound - _lowerBound; }
     }
 
     /// <summary>
@@ -79,8 +80,8 @@ namespace Altaxo.Graph.Gdi.Plot.Data
     /// </summary>
     public int LowerBound
     {
-      get { return m_LowerBound; }
-      set { m_LowerBound = value; }
+      get { return _lowerBound; }
+      set { _lowerBound = value; }
     }
 
     /// <summary>
@@ -88,8 +89,8 @@ namespace Altaxo.Graph.Gdi.Plot.Data
     /// </summary>
     public int UpperBound
     {
-      get { return m_UpperBound; }
-      set { m_UpperBound = value; }
+      get { return _upperBound; }
+      set { _upperBound = value; }
     }
 
     /// <summary>
@@ -101,18 +102,18 @@ namespace Altaxo.Graph.Gdi.Plot.Data
     /// from row index 4+5=9, i.e. from row index 9 in the DataColumn.</example>
     public int OffsetToOriginal
     {
-      get { return m_OffsetToOriginal; }
-      set { m_OffsetToOriginal = value; }
+      get { return _offsetToOriginal; }
+      set { _offsetToOriginal = value; }
     }
 
 
     public int OriginalFirstPoint
     {
-      get { return m_LowerBound + m_OffsetToOriginal; }
+      get { return _lowerBound + _offsetToOriginal; }
     }
     public int OriginalLastPoint
     {
-      get { return m_UpperBound + m_OffsetToOriginal -1; }
+      get { return _upperBound + _offsetToOriginal -1; }
     }
 
   }

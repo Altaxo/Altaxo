@@ -57,13 +57,13 @@ namespace Altaxo.Worksheet.Commands
     /// <param name="bScatter">If true, the scatter style is activated (the points are plotted as symbols).</param>
     public static void PlotLine(DataTable table, Altaxo.Collections.IAscendingIntegerCollection selectedColumns, bool bLine, bool bScatter)
     {
-      XYPlotStyleCollection templatePlotStyle;
+      G2DPlotStyleCollection templatePlotStyle;
       if(bLine && bScatter)
-        templatePlotStyle  = new XYPlotStyleCollection(LineScatterPlotStyleKind.LineAndScatter);
+        templatePlotStyle  = new G2DPlotStyleCollection(LineScatterPlotStyleKind.LineAndScatter);
       else if (bLine)
-        templatePlotStyle = new XYPlotStyleCollection(LineScatterPlotStyleKind.Line);
+        templatePlotStyle = new G2DPlotStyleCollection(LineScatterPlotStyleKind.Line);
       else
-        templatePlotStyle = new XYPlotStyleCollection(LineScatterPlotStyleKind.Scatter);
+        templatePlotStyle = new G2DPlotStyleCollection(LineScatterPlotStyleKind.Scatter);
 
       // first, create a plot association for every selected column in
       // the data grid
@@ -71,9 +71,9 @@ namespace Altaxo.Worksheet.Commands
       int len = selectedColumns.Count;
 
       XYColumnPlotData[] pa = new XYColumnPlotData[len];
-      XYPlotStyleCollection[] ps = new XYPlotStyleCollection[len];
+      G2DPlotStyleCollection[] ps = new G2DPlotStyleCollection[len];
       for(int i=0;i<len;++i)
-        ps[i] = (XYPlotStyleCollection)templatePlotStyle.Clone();
+        ps[i] = (G2DPlotStyleCollection)templatePlotStyle.Clone();
 
 
       int nNumberOfPlotData=0;
@@ -93,7 +93,7 @@ namespace Altaxo.Worksheet.Commands
         // if the next column is a label column, add it also
         if((i+1)<len && ColumnKind.Label==table.DataColumns.GetColumnKind(selectedColumns[i+1]))
         {
-          XYPlotLabelStyle labelStyle = new XYPlotLabelStyle(table.DataColumns[i]);
+          LabelPlotStyle labelStyle = new LabelPlotStyle(table.DataColumns[i]);
           ps[i].Add(labelStyle);
           i++;
         }
@@ -135,7 +135,7 @@ namespace Altaxo.Worksheet.Commands
       // if nothing is selected, assume that the whole table should be plotted
       int len = dg.SelectedDataColumns.Count;
 
-      XYZEquidistantMeshColumnPlotData assoc = new XYZEquidistantMeshColumnPlotData(dg.Doc.DataColumns,len==0 ? null : dg.SelectedDataColumns);
+      XYZMeshedColumnPlotData assoc = new XYZMeshedColumnPlotData(dg.Doc.DataColumns,len==0 ? null : dg.SelectedDataColumns);
 
       
       // now create a new Graph with this plot associations

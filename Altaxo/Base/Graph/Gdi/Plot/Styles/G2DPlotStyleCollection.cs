@@ -34,7 +34,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
   using Plot.Groups;
   using Data;
 
-  public class XYPlotStyleCollection
+  public class G2DPlotStyleCollection
     :
     IEnumerable<IG2DPlotStyle>,
     IG2DPlotStyle,
@@ -58,12 +58,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     #region Serialization
 
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotStyleCollection), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Graph.XYPlotStyleCollection", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(G2DPlotStyleCollection), 1)]
     public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        XYPlotStyleCollection s = (XYPlotStyleCollection)obj;
+        G2DPlotStyleCollection s = (G2DPlotStyleCollection)obj;
 
         info.CreateArray("Styles", s._innerList.Count);
         for (int i = 0; i < s._innerList.Count; i++)
@@ -82,11 +83,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
         if (o == null)
         {
-          return new XYPlotStyleCollection(array);
+          return new G2DPlotStyleCollection(array);
         }
         else
         {
-          XYPlotStyleCollection s = (XYPlotStyleCollection)o;
+          G2DPlotStyleCollection s = (G2DPlotStyleCollection)o;
           for (int i = 0; i < count; i++)
             s.Add(array[i]);
           return s;
@@ -97,7 +98,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     #endregion
 
 
-    public XYPlotStyleCollection(IG2DPlotStyle[] styles)
+    public G2DPlotStyleCollection(IG2DPlotStyle[] styles)
     {
       _innerList = new List<IG2DPlotStyle>();
       for (int i = 0; i < styles.Length; ++i)
@@ -107,7 +108,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       this.InternalGetProviders();
     }
 
-    public XYPlotStyleCollection(LineScatterPlotStyleKind kind)
+    public G2DPlotStyleCollection(LineScatterPlotStyleKind kind)
     {
       _innerList = new List<IG2DPlotStyle>();
       
@@ -115,31 +116,31 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       switch (kind)
       {
         case LineScatterPlotStyleKind.Line:
-          Add(new XYPlotLineStyle());
+          Add(new LinePlotStyle());
           break;
 
         case LineScatterPlotStyleKind.Scatter:
-          Add(new XYPlotScatterStyle());
+          Add(new ScatterPlotStyle());
           break;
 
         case LineScatterPlotStyleKind.LineAndScatter:
-          Add(new XYPlotLineStyle());
-          Add(new XYPlotScatterStyle());
+          Add(new LinePlotStyle());
+          Add(new ScatterPlotStyle());
           break;
 
       }
     }
 
-    public XYPlotStyleCollection()
+    public G2DPlotStyleCollection()
       : this(LineScatterPlotStyleKind.Scatter)
     {
     }
 
-    public XYPlotStyleCollection(XYPlotStyleCollection from)
+    public G2DPlotStyleCollection(G2DPlotStyleCollection from)
     {
       CopyFrom(from);
     }
-    public void CopyFrom(XYPlotStyleCollection from)
+    public void CopyFrom(G2DPlotStyleCollection from)
     {
       Suspend();
 
@@ -321,11 +322,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     object ICloneable.Clone()
     {
-      return new XYPlotStyleCollection(this);
+      return new G2DPlotStyleCollection(this);
     }
-    public XYPlotStyleCollection Clone()
+    public G2DPlotStyleCollection Clone()
     {
-      return new XYPlotStyleCollection(this);
+      return new G2DPlotStyleCollection(this);
     }
 
 

@@ -35,7 +35,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
   using Plot.Groups;
   using Plot.Data;
 
-  public class XYPlotLabelStyle :
+  public class LabelPlotStyle :
     ICloneable,
     Main.IChangedEventSource,
     System.Runtime.Serialization.IDeserializationCallback,
@@ -103,7 +103,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       return null;
     }
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotLabelStyle), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Graph.XYPlotLabelStyle", 0)]
     public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public static A2DAxisStyleIdentifier GetDirection(EdgeType fillDir)
@@ -153,7 +153,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       public static object SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent, bool nativeCall)
       {
 
-        XYPlotLabelStyle s = null != o ? (XYPlotLabelStyle)o : new XYPlotLabelStyle();
+        LabelPlotStyle s = null != o ? (LabelPlotStyle)o : new LabelPlotStyle();
 
         s.m_Font = (Font)info.GetValue("Font", s);
         s.m_IndependentColor = info.GetBoolean("IndependentColor");
@@ -190,7 +190,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     }
 
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotLabelStyle), 1)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotLabelStyle", 1)]
     public class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -207,7 +207,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
 
-        XYPlotLabelStyle s = (XYPlotLabelStyle)XmlSerializationSurrogate0.SDeserialize(o, info, parent, false);
+        LabelPlotStyle s = (LabelPlotStyle)XmlSerializationSurrogate0.SDeserialize(o, info, parent, false);
 
         s.m_LabelColumn = (Altaxo.Data.ReadableColumnProxy)info.GetValue("LabelColumn", parent);
 
@@ -219,7 +219,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotLabelStyle), 2)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotLabelStyle", 2)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LabelPlotStyle), 3)]
     public class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -253,7 +254,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       public static object SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent, bool nativeCall)
       {
 
-        XYPlotLabelStyle s = null != o ? (XYPlotLabelStyle)o : new XYPlotLabelStyle();
+        LabelPlotStyle s = null != o ? (LabelPlotStyle)o : new LabelPlotStyle();
 
         s.m_Font = (Font)info.GetValue("Font", s);
         s.m_IndependentColor = info.GetBoolean("IndependentColor");
@@ -300,14 +301,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <summary>
     /// For deserialization purposes.
     /// </summary>
-    protected XYPlotLabelStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+    protected LabelPlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
       this.m_CachedStringFormat = new StringFormat(StringFormatFlags.NoWrap);
       this.m_CachedStringFormat.Alignment = System.Drawing.StringAlignment.Center;
       this.m_CachedStringFormat.LineAlignment = System.Drawing.StringAlignment.Center;
     }
 
-    public XYPlotLabelStyle(XYPlotLabelStyle from)
+    public LabelPlotStyle(LabelPlotStyle from)
     {
       this.m_Font = (Font)from.m_Font.Clone();
       this.m_IndependentColor = from.m_IndependentColor;
@@ -323,12 +324,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       CreateEventChain();
     }
 
-    public XYPlotLabelStyle()
+    public LabelPlotStyle()
       : this((Altaxo.Data.IReadableColumn)null)
     {
     }
 
-    public XYPlotLabelStyle(Altaxo.Data.IReadableColumn labelColumn)
+    public LabelPlotStyle(Altaxo.Data.IReadableColumn labelColumn)
     {
       this.m_Font = new Font(System.Drawing.FontFamily.GenericSansSerif, 8, GraphicsUnit.World);
       this.m_IndependentColor = false;
@@ -671,7 +672,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     public object Clone()
     {
-      return new XYPlotLabelStyle(this);
+      return new LabelPlotStyle(this);
     }
 
     #region IChangedEventSource Members

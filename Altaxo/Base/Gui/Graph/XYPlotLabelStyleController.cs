@@ -210,11 +210,11 @@ namespace Altaxo.Gui.Graph
   /// <summary>
   /// Summary description for LinkAxisController.
   /// </summary>
-  [UserControllerForObject(typeof(XYPlotLabelStyle))]
+  [UserControllerForObject(typeof(LabelPlotStyle))]
   public class XYPlotLabelStyleController : IXYPlotLabelStyleViewEventSink, IXYPlotLabelStyleController
   {
     IXYPlotLabelStyleView _view;
-    XYPlotLabelStyle _doc;
+    LabelPlotStyle _doc;
 
     /// <summary>The font of the label.</summary>
     protected Font _font;
@@ -254,7 +254,7 @@ namespace Altaxo.Gui.Graph
 
     protected BackgroundStyleController _backgroundStyleController;
 
-    public XYPlotLabelStyleController(XYPlotLabelStyle plotStyle)
+    public XYPlotLabelStyleController(LabelPlotStyle plotStyle)
     {
       _doc = plotStyle;
       Initialize(true);

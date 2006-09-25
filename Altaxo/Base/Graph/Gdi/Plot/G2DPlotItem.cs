@@ -14,7 +14,7 @@ namespace Altaxo.Graph.Gdi.Plot
   public abstract class G2DPlotItem : PlotItem
   {
 
-    protected XYPlotStyleCollection _plotStyles;
+    protected G2DPlotStyleCollection _plotStyles;
 
     [NonSerialized]
     Processed2DPlotData _cachedPlotDataUsedForPainting;
@@ -25,11 +25,11 @@ namespace Altaxo.Graph.Gdi.Plot
     public override object StyleObject
     {
       get { return _plotStyles; }
-      set { this.Style = (XYPlotStyleCollection)value; }
+      set { this.Style = (G2DPlotStyleCollection)value; }
     }
 
 
-    public XYPlotStyleCollection Style
+    public G2DPlotStyleCollection Style
     {
       get
       {
@@ -50,7 +50,7 @@ namespace Altaxo.Graph.Gdi.Plot
               _plotStyles.ParentObject = null;
             }
 
-            _plotStyles = (XYPlotStyleCollection)value;
+            _plotStyles = (G2DPlotStyleCollection)value;
 
             // create event wire to new Plotstyle
             if (null != _plotStyles)

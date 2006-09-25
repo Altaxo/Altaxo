@@ -154,8 +154,8 @@ namespace Altaxo.Graph.Gdi.Plot.Data
     #endregion
 
     #region Xml 0 und 1
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYColumnPlotData),0)]
-      [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYColumnPlotData),1)] // by mistake the data of version 0 and 1 are identical
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYColumnPlotData", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYColumnPlotData", 1)] // by mistake the data of version 0 and 1 are identical
       public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -267,8 +267,8 @@ namespace Altaxo.Graph.Gdi.Plot.Data
 
     #region Xml2
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYColumnPlotData),2)]
-      public class XmlSerializationSurrogate2 : XmlSerializationSurrogate0
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYColumnPlotData", 2)]
+    public class XmlSerializationSurrogate2 : XmlSerializationSurrogate0
     {
       public override void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {

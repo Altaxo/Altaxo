@@ -28,8 +28,13 @@ namespace Altaxo.Graph.Gdi.Plot.Data
   /// <summary>
   /// Provides information about a single scatter point, like coordinates, row index, index into plot and so on.
   /// </summary>
+  [Serializable]
   public class XYScatterPointInformation
   {
+    PointF _layerCoordinates;
+    int _rowIndex;
+    int _plotIndex;
+
     /// <summary>
     /// Constructor.
     /// </summary>
@@ -43,7 +48,7 @@ namespace Altaxo.Graph.Gdi.Plot.Data
       _plotIndex = plotIndex;
     }
 
-    PointF _layerCoordinates;
+  
 
     /// <summary>
     /// Layer coordinates of the plot point.
@@ -59,7 +64,7 @@ namespace Altaxo.Graph.Gdi.Plot.Data
         _layerCoordinates = value;
       }
     }
-    int    _rowIndex;
+   
 
     /// <summary>
     /// Index into the row (of a DataColumn for instance) that represents this scatter point.
@@ -75,7 +80,7 @@ namespace Altaxo.Graph.Gdi.Plot.Data
         _rowIndex = value;
       }
     }
-    int    _plotIndex;
+   
 
     /// <summary>
     /// Index of plot point, i.e. the number of points plotted before the point. Since it is possible that

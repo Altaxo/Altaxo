@@ -185,9 +185,9 @@ namespace Altaxo.Gui.Graph
 
       if (_tempdoc.Style.Count > 0)
       {
-        if (_tempdoc.Style[0] is XYPlotLineStyle && (_tempdoc.Style.Count == 1 || !(_tempdoc.Style[1] is XYPlotScatterStyle)))
+        if (_tempdoc.Style[0] is LinePlotStyle && (_tempdoc.Style.Count == 1 || !(_tempdoc.Style[1] is ScatterPlotStyle)))
         {
-          XYPlotScatterStyle scatterStyle = new XYPlotScatterStyle();
+          ScatterPlotStyle scatterStyle = new ScatterPlotStyle();
           _additionalPlotStyle = scatterStyle;
           scatterStyle.Shape = Altaxo.Graph.Gdi.Plot.Styles.XYPlotScatterStyles.Shape.NoSymbol;
 
@@ -195,9 +195,9 @@ namespace Altaxo.Gui.Graph
           lineScatterPair[0] = _tempdoc.Style[0];
           lineScatterPair[1] = _additionalPlotStyle;
         }
-        else if (_tempdoc.Style[0] is XYPlotScatterStyle && (_tempdoc.Style.Count == 1 || !(_tempdoc.Style[1] is XYPlotLineStyle)))
+        else if (_tempdoc.Style[0] is ScatterPlotStyle && (_tempdoc.Style.Count == 1 || !(_tempdoc.Style[1] is LinePlotStyle)))
         {
-          XYPlotLineStyle lineStyle = new XYPlotLineStyle();
+          LinePlotStyle lineStyle = new LinePlotStyle();
           _additionalPlotStyle = lineStyle;
           lineStyle.Connection = Altaxo.Graph.Gdi.Plot.Styles.XYPlotLineStyles.ConnectionStyle.NoLine;
 
@@ -207,8 +207,8 @@ namespace Altaxo.Gui.Graph
         }
         else if (_tempdoc.Style.Count >= 2 &&
           (
-          ((_tempdoc.Style[0] is XYPlotLineStyle) && (_tempdoc.Style[1] is XYPlotScatterStyle)) ||
-          ((_tempdoc.Style[0] is XYPlotScatterStyle) && (_tempdoc.Style[1] is XYPlotLineStyle))
+          ((_tempdoc.Style[0] is LinePlotStyle) && (_tempdoc.Style[1] is ScatterPlotStyle)) ||
+          ((_tempdoc.Style[0] is ScatterPlotStyle) && (_tempdoc.Style[1] is LinePlotStyle))
           )
           )
         {
@@ -303,10 +303,10 @@ namespace Altaxo.Gui.Graph
       }
 
       bool bAdditionalStyleIsVisible = false;
-      if (_additionalPlotStyle is XYPlotScatterStyle)
-        bAdditionalStyleIsVisible = ((XYPlotScatterStyle)_additionalPlotStyle).IsVisible;
-      if (_additionalPlotStyle is XYPlotLineStyle)
-        bAdditionalStyleIsVisible = ((XYPlotLineStyle)_additionalPlotStyle).IsVisible;
+      if (_additionalPlotStyle is ScatterPlotStyle)
+        bAdditionalStyleIsVisible = ((ScatterPlotStyle)_additionalPlotStyle).IsVisible;
+      if (_additionalPlotStyle is LinePlotStyle)
+        bAdditionalStyleIsVisible = ((LinePlotStyle)_additionalPlotStyle).IsVisible;
 
       if (bAdditionalStyleIsVisible)
       {

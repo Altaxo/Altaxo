@@ -52,7 +52,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     }
 
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Shape), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Graph.XYPlotScatterStyles.Shape", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Shape), 1)]
     public class ShapeXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -80,7 +81,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       BarVert
     }
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Style), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Graph.XYPlotScatterStyles.Style", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Style), 1)]
     public class StyleXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -174,7 +176,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       All = Top | Bottom | Left | Right
     }
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DropLine), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotScatterStyles.DropLine", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DropLine), 1)]
     public class DropLineXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -193,9 +196,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 
 
-  [SerializationSurrogate(0, typeof(XYPlotScatterStyle.SerializationSurrogate0))]
+  [SerializationSurrogate(0, typeof(ScatterPlotStyle.SerializationSurrogate0))]
   [SerializationVersion(0)]
-  public class XYPlotScatterStyle
+  public class ScatterPlotStyle
     :
     IG2DPlotStyle,
     ICloneable,
@@ -233,7 +236,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       /// <param name="context">The streaming context.</param>
       public void GetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
       {
-        XYPlotScatterStyle s = (XYPlotScatterStyle)obj;
+        ScatterPlotStyle s = (ScatterPlotStyle)obj;
         info.AddValue("Shape", s._shape);
         info.AddValue("Style", s._style);
         info.AddValue("DropLine", s._dropLine);
@@ -251,7 +254,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       /// <returns>The deserialized A2DPlotScatterStyle.</returns>
       public object SetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context, System.Runtime.Serialization.ISurrogateSelector selector)
       {
-        XYPlotScatterStyle s = (XYPlotScatterStyle)obj;
+        ScatterPlotStyle s = (ScatterPlotStyle)obj;
         s._shape = (XYPlotScatterStyles.Shape)info.GetValue("Shape", typeof(XYPlotScatterStyles.Shape));
         s._style = (XYPlotScatterStyles.Style)info.GetValue("Style", typeof(XYPlotScatterStyles.Style));
         s._dropLine = (List<A2DAxisStyleIdentifier>)info.GetValue("DropLine", typeof(List<A2DAxisStyleIdentifier>));
@@ -263,8 +266,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     }
 
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotScatterStyle), 0)]
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotScatterStyle), 1)] // by accident this was never different from 0
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Graph.XYPlotScatterStyle", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotScatterStyle", 1)] // by accident this was never different from 0
     public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -281,9 +284,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         */
       }
 
-      protected virtual XYPlotScatterStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected virtual ScatterPlotStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        XYPlotScatterStyle s = null != o ? (XYPlotScatterStyle)o : new XYPlotScatterStyle();
+        ScatterPlotStyle s = null != o ? (ScatterPlotStyle)o : new ScatterPlotStyle();
 
         s._shape = (XYPlotScatterStyles.Shape)info.GetValue("Shape", typeof(XYPlotScatterStyles.Shape));
         s._style = (XYPlotScatterStyles.Style)info.GetValue("Style", typeof(XYPlotScatterStyles.Style));
@@ -308,7 +311,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        XYPlotScatterStyle s = SDeserialize(o, info, parent);
+        ScatterPlotStyle s = SDeserialize(o, info, parent);
 
         // restore the cached values
         s.SetCachedValues();
@@ -318,7 +321,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotScatterStyle), 2)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotScatterStyle", 2)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ScatterPlotStyle), 3)]
     public class XmlSerializationSurrogate2 : XmlSerializationSurrogate0
     {
       public override void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -334,9 +338,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
 
 
-      protected override XYPlotScatterStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected override ScatterPlotStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        XYPlotScatterStyle s = base.SDeserialize(o, info, parent);
+        ScatterPlotStyle s = base.SDeserialize(o, info, parent);
         s._independentColor = info.GetBoolean("IndependentColor");
         s._independentSymbolSize = info.GetBoolean("IndependentSymbolSize");
         s._skipFreq = info.GetInt32("SkipFreq");
@@ -357,7 +361,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     #endregion
 
 
-    public void CopyFrom(XYPlotScatterStyle from, bool suppressChangeEvent)
+    public void CopyFrom(ScatterPlotStyle from, bool suppressChangeEvent)
     {
       this._shape = from._shape;
       this._style = from._style;
@@ -382,13 +386,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         OnChanged();
     }
 
-    public XYPlotScatterStyle(XYPlotScatterStyle from)
+    public ScatterPlotStyle(ScatterPlotStyle from)
     {
       CopyFrom(from, true);
       CreateEventChain();
     }
 
-    public XYPlotScatterStyle(XYPlotScatterStyles.Shape shape, XYPlotScatterStyles.Style style, float size, float penWidth, Color penColor)
+    public ScatterPlotStyle(XYPlotScatterStyles.Shape shape, XYPlotScatterStyles.Style style, float size, float penWidth, Color penColor)
     {
       _shape = shape;
       _style = style;
@@ -406,7 +410,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     }
 
 
-    public XYPlotScatterStyle()
+    public ScatterPlotStyle()
     {
       this._shape = XYPlotScatterStyles.Shape.Square;
       this._style = XYPlotScatterStyles.Style.Solid;
@@ -608,7 +612,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     public object Clone()
     {
-      return new XYPlotScatterStyle(this);
+      return new ScatterPlotStyle(this);
     }
 
     public static GraphicsPath GetPath(XYPlotScatterStyles.Shape sh, XYPlotScatterStyles.Style st, float size)

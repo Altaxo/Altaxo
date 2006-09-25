@@ -32,14 +32,20 @@ namespace Altaxo.Graph.Gdi.Plot.Data
   /// <summary>
   /// Summary description for XYFunctionPlotData.
   /// </summary>
+  [Serializable]
   public class XYFunctionPlotData : ICloneable, Calc.IScalarFunctionDD, Main.IChangedEventSource
   {
     Altaxo.Calc.IScalarFunctionDD _function;
 
+    [field:NonSerialized]
+    public event System.EventHandler Changed;
+
+
     #region Serialization
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYFunctionPlotData), 0)]
-      public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYFunctionPlotData", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYFunctionPlotData), 1)]
+    public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
@@ -155,7 +161,6 @@ namespace Altaxo.Graph.Gdi.Plot.Data
       }
     }
 
-    public event System.EventHandler Changed;
 
     #endregion
 
@@ -289,6 +294,7 @@ namespace Altaxo.Graph.Gdi.Plot.Data
   /// <para>Evaluates a polynomial a0 + a1*x + a2*x^2 ...</para>
   /// <para>Special serializable version for plotting purposes.</para>
   /// </summary>
+  [Serializable]
   public class PolynomialFunction : Altaxo.Calc.IScalarFunctionDD, ICloneable, Main.IChangedEventSource
   {
     /// <summary>
@@ -296,25 +302,32 @@ namespace Altaxo.Graph.Gdi.Plot.Data
     /// </summary>
     double[] _coefficients;
 
+    /// <summary>
+    /// Event fired when the coefficients of the polynomial changed.
+    /// </summary>
+    [field:NonSerialized]
+    public event System.EventHandler Changed;
+
     #region Serialization
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PolynomialFunction),0)]
-      public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.PolynomialFunction", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PolynomialFunction), 1)]
+    public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         PolynomialFunction s = (PolynomialFunction)obj;
-        
-        info.AddArray("Coefficients",s._coefficients,s._coefficients.Length);
+
+        info.AddArray("Coefficients", s._coefficients, s._coefficients.Length);
       }
 
       public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        PolynomialFunction s = null!=o ? (PolynomialFunction)o : new PolynomialFunction();
-       
+        PolynomialFunction s = null != o ? (PolynomialFunction)o : new PolynomialFunction();
+
         info.GetArray("Coefficients", out s._coefficients);
-      
-        
+
+
         return s;
       }
     }
@@ -328,7 +341,7 @@ namespace Altaxo.Graph.Gdi.Plot.Data
     {
     }
 
-    
+
 
     /// <summary>
     /// Constructor by providing the array of coefficients (a0 is the first element of the array).
@@ -336,7 +349,7 @@ namespace Altaxo.Graph.Gdi.Plot.Data
     /// <param name="coefficients">The coefficient array, starting with coefficient a0.</param>
     public PolynomialFunction(double[] coefficients)
     {
-      if(coefficients!=null)
+      if (coefficients != null)
         _coefficients = (double[])coefficients.Clone();
     }
 
@@ -346,7 +359,7 @@ namespace Altaxo.Graph.Gdi.Plot.Data
     /// <param name="from">Another polynomial function to clone from.</param>
     public PolynomialFunction(PolynomialFunction from)
     {
-      if(from._coefficients!=null)  
+      if (from._coefficients != null)
         _coefficients = (double[])from._coefficients.Clone();
     }
 
@@ -356,13 +369,13 @@ namespace Altaxo.Graph.Gdi.Plot.Data
     /// <value>The coefficient array of the polynomial, starting with a0.</value>
     public double[] Coefficients
     {
-      get 
+      get
       {
         return (double[])_coefficients.Clone();
       }
       set
       {
-        if(value!=null)
+        if (value != null)
         {
           _coefficients = (double[])value.Clone();
           OnChanged();
@@ -372,9 +385,9 @@ namespace Altaxo.Graph.Gdi.Plot.Data
 
     public int Order
     {
-      get 
+      get
       {
-        return _coefficients==null ? 0 : _coefficients.Length-1;
+        return _coefficients == null ? 0 : _coefficients.Length - 1;
       }
     }
 
@@ -393,11 +406,11 @@ namespace Altaxo.Graph.Gdi.Plot.Data
     /// <returns>The value of the polynomial, a0+a1*x+a2*x^2+...</returns>
     public double Evaluate(double x)
     {
-      if(null==_coefficients)
+      if (null == _coefficients)
         return 0;
-    
-      double result=0;
-      for(int i=_coefficients.Length-1;i>=0;i--)
+
+      double result = 0;
+      for (int i = _coefficients.Length - 1; i >= 0; i--)
       {
         result *= x;
         result += _coefficients[i];
@@ -427,16 +440,13 @@ namespace Altaxo.Graph.Gdi.Plot.Data
     /// </summary>
     protected virtual void OnChanged()
     {
-      if(Changed!=null)
+      if (Changed != null)
       {
-        Changed(this,EventArgs.Empty);
+        Changed(this, EventArgs.Empty);
       }
     }
 
-    /// <summary>
-    /// Event fired when the coefficients of the polynomial changed.
-    /// </summary>
-    public event System.EventHandler Changed;
+    
 
     #endregion
   }
@@ -450,6 +460,7 @@ namespace Altaxo.Graph.Gdi.Plot.Data
   /// <para>Evaluates the square root of another function</para>
   /// <para>Special serializable version for plotting purposes.</para>
   /// </summary>
+  [Serializable]
   public class SquareRootFunction : Altaxo.Calc.IScalarFunctionDD, ICloneable, Main.IChangedEventSource
   {
     /// <summary>
@@ -457,25 +468,33 @@ namespace Altaxo.Graph.Gdi.Plot.Data
     /// </summary>
     Altaxo.Calc.IScalarFunctionDD _baseFunction;
 
+
+    /// <summary>
+    /// Event fired when the coefficients of the polynomial changed.
+    /// </summary>
+    [field:NonSerialized]
+    public event System.EventHandler Changed;
+
     #region Serialization
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SquareRootFunction),0)]
-      public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.SquareRootFunction", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SquareRootFunction), 1)]
+    public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         SquareRootFunction s = (SquareRootFunction)obj;
-        
-        info.AddValue("BaseFunction",s._baseFunction);
+
+        info.AddValue("BaseFunction", s._baseFunction);
       }
 
       public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        SquareRootFunction s = null!=o ? (SquareRootFunction)o : new SquareRootFunction();
-       
+        SquareRootFunction s = null != o ? (SquareRootFunction)o : new SquareRootFunction();
+
         s._baseFunction = (Altaxo.Calc.IScalarFunctionDD)info.GetValue("BaseFunction");
-      
-        
+
+
         return s;
       }
     }
@@ -489,7 +508,7 @@ namespace Altaxo.Graph.Gdi.Plot.Data
     {
     }
 
-    
+
 
     /// <summary>
     /// Constructor by providing the array of coefficients (a0 is the first element of the array).
@@ -497,8 +516,8 @@ namespace Altaxo.Graph.Gdi.Plot.Data
     /// <param name="baseFunction">The function whose square root is evaluated.</param>
     public SquareRootFunction(Altaxo.Calc.IScalarFunctionDD baseFunction)
     {
-      if(baseFunction is ICloneable)
-        _baseFunction  = (Altaxo.Calc.IScalarFunctionDD)((ICloneable)baseFunction).Clone();
+      if (baseFunction is ICloneable)
+        _baseFunction = (Altaxo.Calc.IScalarFunctionDD)((ICloneable)baseFunction).Clone();
       else
         _baseFunction = baseFunction;
     }
@@ -509,7 +528,7 @@ namespace Altaxo.Graph.Gdi.Plot.Data
     /// <param name="from">Another polynomial function to clone from.</param>
     public SquareRootFunction(SquareRootFunction from)
     {
-      if(from._baseFunction is ICloneable)
+      if (from._baseFunction is ICloneable)
         this._baseFunction = (Altaxo.Calc.IScalarFunctionDD)((ICloneable)from._baseFunction).Clone();
       else
         this._baseFunction = from._baseFunction;
@@ -521,20 +540,20 @@ namespace Altaxo.Graph.Gdi.Plot.Data
     /// <value>The base function, from which the square root is evaluated.</value>
     public Altaxo.Calc.IScalarFunctionDD BaseFunction
     {
-      get 
+      get
       {
-        if(_baseFunction is ICloneable)
+        if (_baseFunction is ICloneable)
           return (Altaxo.Calc.IScalarFunctionDD)((ICloneable)_baseFunction).Clone();
         else
           return _baseFunction;
       }
       set
       {
-        if(value!=null)
+        if (value != null)
         {
-          if(value is ICloneable)
+          if (value is ICloneable)
             _baseFunction = (Altaxo.Calc.IScalarFunctionDD)((ICloneable)value).Clone();
-          else 
+          else
             _baseFunction = value;
 
           OnChanged();
@@ -542,12 +561,12 @@ namespace Altaxo.Graph.Gdi.Plot.Data
       }
     }
 
-    
+
 
     public override string ToString()
     {
-      if(_baseFunction!=null)
-        return "Sqrt(" + _baseFunction.ToString() +  ")";
+      if (_baseFunction != null)
+        return "Sqrt(" + _baseFunction.ToString() + ")";
       else
         return "Sqrt(InvalidFunction)";
     }
@@ -562,7 +581,7 @@ namespace Altaxo.Graph.Gdi.Plot.Data
     /// <returns>The value of the polynomial, a0+a1*x+a2*x^2+...</returns>
     public double Evaluate(double x)
     {
-      
+
       return Math.Sqrt(_baseFunction.Evaluate(x));
     }
 
@@ -588,16 +607,13 @@ namespace Altaxo.Graph.Gdi.Plot.Data
     /// </summary>
     protected virtual void OnChanged()
     {
-      if(Changed!=null)
+      if (Changed != null)
       {
-        Changed(this,EventArgs.Empty);
+        Changed(this, EventArgs.Empty);
       }
     }
 
-    /// <summary>
-    /// Event fired when the coefficients of the polynomial changed.
-    /// </summary>
-    public event System.EventHandler Changed;
+   
 
     #endregion
   }
@@ -611,6 +627,7 @@ namespace Altaxo.Graph.Gdi.Plot.Data
   /// <para>Evaluates a scaled sum of other functions f(x) = a1*f1(x)+ a2*f2(x)+...</para>
   /// <para>Special serializable version for plotting purposes.</para>
   /// </summary>
+  [Serializable]
   public class ScaledSumFunction : Altaxo.Calc.IScalarFunctionDD, ICloneable, Main.IChangedEventSource
   {
     /// <summary>
@@ -619,35 +636,42 @@ namespace Altaxo.Graph.Gdi.Plot.Data
     double[] _coefficients;
     Altaxo.Calc.IScalarFunctionDD[] _functions;
 
+    /// <summary>
+    /// Event fired when the coefficients of the polynomial changed.
+    /// </summary>
+    [field:NonSerialized]
+    public event System.EventHandler Changed;
+
     #region Serialization
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ScaledSumFunction),0)]
-      public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.ScaledSumFunction", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ScaledSumFunction), 1)]
+    public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         ScaledSumFunction s = (ScaledSumFunction)obj;
-        
-        info.AddArray("Coefficients",s._coefficients,s._coefficients.Length);
-        info.CreateArray("Functions",s._functions.Length);
-        for(int i=0;i<s._functions.Length;i++)
-          info.AddValue("e",s._functions[i]);
+
+        info.AddArray("Coefficients", s._coefficients, s._coefficients.Length);
+        info.CreateArray("Functions", s._functions.Length);
+        for (int i = 0; i < s._functions.Length; i++)
+          info.AddValue("e", s._functions[i]);
         info.CommitArray();
       }
 
       public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        ScaledSumFunction s = null!=o ? (ScaledSumFunction)o : new ScaledSumFunction();
-       
+        ScaledSumFunction s = null != o ? (ScaledSumFunction)o : new ScaledSumFunction();
+
         info.GetArray("Coefficients", out s._coefficients);
-      
+
         int cnt = info.OpenArray();
         s._functions = new Altaxo.Calc.IScalarFunctionDD[cnt];
-        for(int i=0;i<cnt;i++)
-          s._functions[i] = (Altaxo.Calc.IScalarFunctionDD)info.GetValue("e",parent);
+        for (int i = 0; i < cnt; i++)
+          s._functions[i] = (Altaxo.Calc.IScalarFunctionDD)info.GetValue("e", parent);
 
         info.CloseArray(cnt);
-        
+
         return s;
       }
     }
@@ -661,7 +685,7 @@ namespace Altaxo.Graph.Gdi.Plot.Data
     {
     }
 
-    
+
 
     /// <summary>
     /// Constructor by providing the array of coefficients (a0 is the first element of the array).
@@ -670,22 +694,22 @@ namespace Altaxo.Graph.Gdi.Plot.Data
     /// <param name="functions">The array of functions to sum up.</param>
     public ScaledSumFunction(double[] coefficients, Altaxo.Calc.IScalarFunctionDD[] functions)
     {
-      if(coefficients!=null)
+      if (coefficients != null)
         _coefficients = (double[])coefficients.Clone();
 
-      if(functions!=null)
+      if (functions != null)
       {
         _functions = new Altaxo.Calc.IScalarFunctionDD[functions.Length];
-        for(int i=0;i<functions.Length;i++)
+        for (int i = 0; i < functions.Length; i++)
         {
-          if(functions[i] is ICloneable)
+          if (functions[i] is ICloneable)
             _functions[i] = (Altaxo.Calc.IScalarFunctionDD)((ICloneable)functions[i]).Clone();
           else
             _functions[i] = functions[i];
         }
       }
 
-     
+
     }
 
     /// <summary>
@@ -694,17 +718,17 @@ namespace Altaxo.Graph.Gdi.Plot.Data
     /// <param name="from">Another polynomial function to clone from.</param>
     public ScaledSumFunction(ScaledSumFunction from)
     {
-      if(from._coefficients!=null)  
+      if (from._coefficients != null)
         _coefficients = (double[])from._coefficients.Clone();
       else
-        _coefficients=null;
+        _coefficients = null;
 
-      if(from._functions!=null)
+      if (from._functions != null)
       {
         _functions = new Altaxo.Calc.IScalarFunctionDD[from._functions.Length];
-        for(int i=0;i<from._functions.Length;i++)
+        for (int i = 0; i < from._functions.Length; i++)
         {
-          if(from._functions[i] is ICloneable)
+          if (from._functions[i] is ICloneable)
             _functions[i] = (Altaxo.Calc.IScalarFunctionDD)((ICloneable)from._functions[i]).Clone();
           else
             _functions[i] = from._functions[i];
@@ -712,7 +736,7 @@ namespace Altaxo.Graph.Gdi.Plot.Data
       }
       else
       {
-        _functions=null;
+        _functions = null;
       }
 
     }
@@ -723,20 +747,20 @@ namespace Altaxo.Graph.Gdi.Plot.Data
     /// <value>The coefficient array of the polynomial, starting with a0.</value>
     public double[] Coefficients
     {
-      get 
+      get
       {
         return (double[])_coefficients.Clone();
       }
       set
       {
-        if(value!=null)
+        if (value != null)
         {
           _coefficients = (double[])value.Clone();
           OnChanged();
         }
       }
     }
-   
+
 
     public override string ToString()
     {
@@ -753,14 +777,14 @@ namespace Altaxo.Graph.Gdi.Plot.Data
     /// <returns>The value of the polynomial, a0+a1*x+a2*x^2+...</returns>
     public double Evaluate(double x)
     {
-      if(null==_coefficients)
+      if (null == _coefficients)
         return 0;
-    
-      double result=0;
-      double end = Math.Min(_coefficients.Length,_functions.Length);
-      for(int i= 0; i<end;i++)
+
+      double result = 0;
+      double end = Math.Min(_coefficients.Length, _functions.Length);
+      for (int i = 0; i < end; i++)
       {
-        result += _coefficients[i]*_functions[i].Evaluate(x);
+        result += _coefficients[i] * _functions[i].Evaluate(x);
       }
       return result;
     }
@@ -787,16 +811,13 @@ namespace Altaxo.Graph.Gdi.Plot.Data
     /// </summary>
     protected virtual void OnChanged()
     {
-      if(Changed!=null)
+      if (Changed != null)
       {
-        Changed(this,EventArgs.Empty);
+        Changed(this, EventArgs.Empty);
       }
     }
 
-    /// <summary>
-    /// Event fired when the coefficients of the polynomial changed.
-    /// </summary>
-    public event System.EventHandler Changed;
+   
 
     #endregion
   }
@@ -810,6 +831,7 @@ namespace Altaxo.Graph.Gdi.Plot.Data
   /// <para>Evaluates the product of other functions f(x) = f1(x)^a1*f2(x)^a2*...</para>
   /// <para>Special serializable version for plotting purposes.</para>
   /// </summary>
+  [Serializable]
   public class ProductFunction : Altaxo.Calc.IScalarFunctionDD, ICloneable, Main.IChangedEventSource
   {
     /// <summary>
@@ -818,35 +840,42 @@ namespace Altaxo.Graph.Gdi.Plot.Data
     double[] _coefficients;
     Altaxo.Calc.IScalarFunctionDD[] _functions;
 
+    /// <summary>
+    /// Event fired when the coefficients of the polynomial changed.
+    /// </summary>
+    [field:NonSerialized]
+    public event System.EventHandler Changed;
+
     #region Serialization
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ProductFunction),0)]
-      public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.ProductFunction", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ProductFunction), 1)]
+    public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         ProductFunction s = (ProductFunction)obj;
-        
-        info.AddArray("Coefficients",s._coefficients,s._coefficients.Length);
-        info.CreateArray("Functions",s._functions.Length);
-        for(int i=0;i<s._functions.Length;i++)
-          info.AddValue("e",s._functions[i]);
+
+        info.AddArray("Coefficients", s._coefficients, s._coefficients.Length);
+        info.CreateArray("Functions", s._functions.Length);
+        for (int i = 0; i < s._functions.Length; i++)
+          info.AddValue("e", s._functions[i]);
         info.CommitArray();
       }
 
       public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        ProductFunction s = null!=o ? (ProductFunction)o : new ProductFunction();
-       
+        ProductFunction s = null != o ? (ProductFunction)o : new ProductFunction();
+
         info.GetArray("Coefficients", out s._coefficients);
-      
+
         int cnt = info.OpenArray();
         s._functions = new Altaxo.Calc.IScalarFunctionDD[cnt];
-        for(int i=0;i<cnt;i++)
-          s._functions[i] = (Altaxo.Calc.IScalarFunctionDD)info.GetValue("e",parent);
+        for (int i = 0; i < cnt; i++)
+          s._functions[i] = (Altaxo.Calc.IScalarFunctionDD)info.GetValue("e", parent);
 
         info.CloseArray(cnt);
-        
+
         return s;
       }
     }
@@ -860,7 +889,7 @@ namespace Altaxo.Graph.Gdi.Plot.Data
     {
     }
 
-    
+
 
     /// <summary>
     /// Constructor by providing the array of coefficients (a0 is the first element of the array).
@@ -869,22 +898,22 @@ namespace Altaxo.Graph.Gdi.Plot.Data
     /// <param name="functions">The array of functions to sum up.</param>
     public ProductFunction(double[] coefficients, Altaxo.Calc.IScalarFunctionDD[] functions)
     {
-      if(coefficients!=null)
+      if (coefficients != null)
         _coefficients = (double[])coefficients.Clone();
 
-      if(functions!=null)
+      if (functions != null)
       {
         _functions = new Altaxo.Calc.IScalarFunctionDD[functions.Length];
-        for(int i=0;i<functions.Length;i++)
+        for (int i = 0; i < functions.Length; i++)
         {
-          if(functions[i] is ICloneable)
+          if (functions[i] is ICloneable)
             _functions[i] = (Altaxo.Calc.IScalarFunctionDD)((ICloneable)functions[i]).Clone();
           else
             _functions[i] = functions[i];
         }
       }
 
-     
+
     }
 
     /// <summary>
@@ -893,17 +922,17 @@ namespace Altaxo.Graph.Gdi.Plot.Data
     /// <param name="from">Another polynomial function to clone from.</param>
     public ProductFunction(ProductFunction from)
     {
-      if(from._coefficients!=null)  
+      if (from._coefficients != null)
         _coefficients = (double[])from._coefficients.Clone();
       else
-        _coefficients=null;
+        _coefficients = null;
 
-      if(from._functions!=null)
+      if (from._functions != null)
       {
         _functions = new Altaxo.Calc.IScalarFunctionDD[from._functions.Length];
-        for(int i=0;i<from._functions.Length;i++)
+        for (int i = 0; i < from._functions.Length; i++)
         {
-          if(from._functions[i] is ICloneable)
+          if (from._functions[i] is ICloneable)
             _functions[i] = (Altaxo.Calc.IScalarFunctionDD)((ICloneable)from._functions[i]).Clone();
           else
             _functions[i] = from._functions[i];
@@ -911,7 +940,7 @@ namespace Altaxo.Graph.Gdi.Plot.Data
       }
       else
       {
-        _functions=null;
+        _functions = null;
       }
 
     }
@@ -922,20 +951,20 @@ namespace Altaxo.Graph.Gdi.Plot.Data
     /// <value>The coefficient array of the polynomial, starting with a0.</value>
     public double[] Coefficients
     {
-      get 
+      get
       {
         return (double[])_coefficients.Clone();
       }
       set
       {
-        if(value!=null)
+        if (value != null)
         {
           _coefficients = (double[])value.Clone();
           OnChanged();
         }
       }
     }
-   
+
 
     public override string ToString()
     {
@@ -952,25 +981,25 @@ namespace Altaxo.Graph.Gdi.Plot.Data
     /// <returns>The value of the polynomial, a0+a1*x+a2*x^2+...</returns>
     public double Evaluate(double x)
     {
-      if(null==_coefficients)
+      if (null == _coefficients)
         return 0;
-    
-      double result=1;
+
+      double result = 1;
       double term;
       double coeff;
-      double end = Math.Min(_coefficients.Length,_functions.Length);
-      for(int i= 0; i<end;i++)
+      double end = Math.Min(_coefficients.Length, _functions.Length);
+      for (int i = 0; i < end; i++)
       {
         coeff = _coefficients[i];
-        if(coeff==1)
-          term=_functions[i].Evaluate(x);
-        else if(coeff==0)
-          term=1;
-        else if(coeff==0.5)
+        if (coeff == 1)
+          term = _functions[i].Evaluate(x);
+        else if (coeff == 0)
+          term = 1;
+        else if (coeff == 0.5)
           term = Math.Sqrt(_functions[i].Evaluate(x));
         else
-          term = Math.Pow(_functions[i].Evaluate(x),coeff);
-        
+          term = Math.Pow(_functions[i].Evaluate(x), coeff);
+
         result *= term;
       }
       return result;
@@ -998,16 +1027,13 @@ namespace Altaxo.Graph.Gdi.Plot.Data
     /// </summary>
     protected virtual void OnChanged()
     {
-      if(Changed!=null)
+      if (Changed != null)
       {
-        Changed(this,EventArgs.Empty);
+        Changed(this, EventArgs.Empty);
       }
     }
 
-    /// <summary>
-    /// Event fired when the coefficients of the polynomial changed.
-    /// </summary>
-    public event System.EventHandler Changed;
+   
 
     #endregion
   }

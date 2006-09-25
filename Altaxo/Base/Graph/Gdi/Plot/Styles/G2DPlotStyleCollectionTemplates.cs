@@ -26,12 +26,12 @@ using System.Collections;
 
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
-  public class XYPlotStyleCollectionTemplates
+  public class G2DPlotStyleCollectionTemplates
   {
 
     #region Inner Classes
 
-    public delegate XYPlotStyleCollection CreateCollectionProcedure();
+    public delegate G2DPlotStyleCollection CreateCollectionProcedure();
 
     class TypeArray
     {
@@ -66,7 +66,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     static Hashtable _NamesByTypeArray ;
     static Hashtable _CreationProcByName;
     static ArrayList _NamesInOrder;
-    static XYPlotStyleCollectionTemplates()
+    static G2DPlotStyleCollectionTemplates()
     {
       _NamesByTypeArray = new Hashtable();
       _CreationProcByName = new Hashtable();
@@ -79,12 +79,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       Add("Label only", new CreateCollectionProcedure(CreateLabelStyle));
     }
 
-    public static string GetName(XYPlotStyleCollection coll)
+    public static string GetName(G2DPlotStyleCollection coll)
     {
       return (string)_NamesByTypeArray[GetTypeArray(coll)];
     }
 
-    static TypeArray GetTypeArray(XYPlotStyleCollection coll)
+    static TypeArray GetTypeArray(G2DPlotStyleCollection coll)
     {
       System.Type[] types = new Type[coll.Count];
       for (int i = 0; i < types.Length; i++)
@@ -113,7 +113,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       return result < 0 ? 0 : result + 1;
     }
 
-    public static int GetIndexOfAvailableNamesPlusCustom(XYPlotStyleCollection coll)
+    public static int GetIndexOfAvailableNamesPlusCustom(G2DPlotStyleCollection coll)
     {
       string name = GetName(coll);
       if (null == name)
@@ -123,7 +123,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       return result < 0 ? 0 : result + 1;
     }
 
-    public static XYPlotStyleCollection GetTemplate(string name)
+    public static G2DPlotStyleCollection GetTemplate(string name)
     {
       CreateCollectionProcedure proc = (CreateCollectionProcedure)_CreationProcByName[name];
       if (null != proc)
@@ -132,7 +132,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         return null;
     }
 
-    public static XYPlotStyleCollection GetTemplate(int idx)
+    public static G2DPlotStyleCollection GetTemplate(int idx)
     {
       return GetTemplate((string)_NamesInOrder[idx]);
     }
@@ -142,7 +142,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       if (_CreationProcByName.ContainsKey(name))
         throw new Exception(string.Format("Template {0} is already present in the template collection", name));
 
-      XYPlotStyleCollection coll = procedure();
+      G2DPlotStyleCollection coll = procedure();
       if (coll == null || coll.Count == 0)
         throw new Exception(string.Format("Procedure for template {0} creates no or an empty collection.", name));
 
@@ -152,39 +152,39 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     }
 
 
-    static XYPlotStyleCollection CreateLineStyle()
+    static G2DPlotStyleCollection CreateLineStyle()
     {
-      XYPlotStyleCollection coll = new XYPlotStyleCollection(LineScatterPlotStyleKind.Empty);
-      coll.Add(new XYPlotLineStyle());
+      G2DPlotStyleCollection coll = new G2DPlotStyleCollection(LineScatterPlotStyleKind.Empty);
+      coll.Add(new LinePlotStyle());
       return coll;
     }
-    static XYPlotStyleCollection CreateScatterStyle()
+    static G2DPlotStyleCollection CreateScatterStyle()
     {
-      XYPlotStyleCollection coll = new XYPlotStyleCollection(LineScatterPlotStyleKind.Empty);
-      coll.Add(new XYPlotScatterStyle());
+      G2DPlotStyleCollection coll = new G2DPlotStyleCollection(LineScatterPlotStyleKind.Empty);
+      coll.Add(new ScatterPlotStyle());
       return coll;
     }
-    static XYPlotStyleCollection CreateLineAndScatterStyle()
+    static G2DPlotStyleCollection CreateLineAndScatterStyle()
     {
-      XYPlotStyleCollection coll = new XYPlotStyleCollection(LineScatterPlotStyleKind.Empty);
-      coll.Add(new XYPlotLineStyle());
-      coll.Add(new XYPlotScatterStyle());
-      return coll;
-    }
-
-    static XYPlotStyleCollection CreateLineAndScatterAndLabelStyle()
-    {
-      XYPlotStyleCollection coll = new XYPlotStyleCollection(LineScatterPlotStyleKind.Empty);
-      coll.Add(new XYPlotLineStyle());
-      coll.Add(new XYPlotScatterStyle());
-      coll.Add(new XYPlotLabelStyle());
+      G2DPlotStyleCollection coll = new G2DPlotStyleCollection(LineScatterPlotStyleKind.Empty);
+      coll.Add(new LinePlotStyle());
+      coll.Add(new ScatterPlotStyle());
       return coll;
     }
 
-    static XYPlotStyleCollection CreateLabelStyle()
+    static G2DPlotStyleCollection CreateLineAndScatterAndLabelStyle()
     {
-      XYPlotStyleCollection coll = new XYPlotStyleCollection(LineScatterPlotStyleKind.Empty);
-      coll.Add(new XYPlotLabelStyle());
+      G2DPlotStyleCollection coll = new G2DPlotStyleCollection(LineScatterPlotStyleKind.Empty);
+      coll.Add(new LinePlotStyle());
+      coll.Add(new ScatterPlotStyle());
+      coll.Add(new LabelPlotStyle());
+      return coll;
+    }
+
+    static G2DPlotStyleCollection CreateLabelStyle()
+    {
+      G2DPlotStyleCollection coll = new G2DPlotStyleCollection(LineScatterPlotStyleKind.Empty);
+      coll.Add(new LabelPlotStyle());
       return coll;
     }
   }
