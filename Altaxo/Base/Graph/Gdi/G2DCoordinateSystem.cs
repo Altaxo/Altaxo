@@ -8,6 +8,7 @@ namespace Altaxo.Graph.Gdi
 {
   public abstract class G2DCoordinateSystem : ICloneable
   {
+    [NonSerialized]
     IPlotArea _parent;
     /// <summary>
     /// Is the normal position of x and y axes interchanged, for instance x is vertical and y horizontal.
@@ -51,7 +52,8 @@ namespace Altaxo.Graph.Gdi
     public abstract bool IsOrthogonal { get; }
 
     /// <summary>
-    /// Returns true if the plot coordinates can be calculated as a linear transformation of the physical values.
+    /// Returns true if the plot coordinates can be calculated as a linear transformation of the physical values. This means that all lines
+    /// will keep being lines.
     /// Returns false if this is for instance a polar diagram. 
     /// </summary>
     public abstract bool IsAffine { get; }

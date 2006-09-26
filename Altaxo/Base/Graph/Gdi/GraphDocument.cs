@@ -21,7 +21,7 @@
 #endregion
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Data;
@@ -70,6 +70,7 @@ namespace Altaxo.Graph.Gdi
 
     string _name;
 
+    [NonSerialized]
     object _parent;
 
     /// <summary>
@@ -95,10 +96,24 @@ namespace Altaxo.Graph.Gdi
     /// <summary>
     /// The graph properties, key is a string, value is a property (arbitrary object) you want to store here.
     /// </summary>
-    /// <remarks>The properties are saved on disc (with exception of those who starts with "tmp/".
+    /// <remarks>The properties are saved on disc (with exception of those that starts with "tmp/".
     /// If the property you want to store is only temporary, the properties name should therefore
     /// start with "tmp/".</remarks>
-    protected System.Collections.Hashtable _graphProperties;
+    protected Dictionary<string,object> _graphProperties;
+
+    /// <summary>Event fired when anything here changed.</summary>
+    [field: NonSerialized]
+    public event System.EventHandler Changed;
+
+    /// <summary>Event fired when the name changed.</summary>
+    [field: NonSerialized]
+    public event NameChangedEventHandler NameChanged;
+
+    /// <summary>Event fired if either the PageBounds or the PrintableBounds changed.</summary>
+    [field: NonSerialized]
+    public event EventHandler BoundsChanged;
+
+
 
     #region "Serialization"
 
@@ -165,8 +180,8 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GraphDocument),0)]
-      public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.GraphDocument", 0)]
+    public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
@@ -198,9 +213,9 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
-   
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GraphDocument),1)]
-      public class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.GraphDocument", 1)]
+    public class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
@@ -268,7 +283,8 @@ namespace Altaxo.Graph.Gdi
     }
 
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GraphDocument), 2)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Graph.GraphDocument", 2)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GraphDocument), 3)]
     public class XmlSerializationSurrogate2 : XmlSerializationSurrogate1
     {
       public override void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -361,7 +377,7 @@ namespace Altaxo.Graph.Gdi
     }
     
 
-    public event NameChangedEventHandler NameChanged;
+    
     public virtual void OnNameChanged(object sender, string oldValue, string newValue)
     {
       if(NameChanged!=null)
@@ -436,7 +452,7 @@ namespace Altaxo.Graph.Gdi
     public void   SetGraphProperty(string key, object val)
     {
       if(_graphProperties ==null)
-        _graphProperties = new System.Collections.Hashtable();
+        _graphProperties = new Dictionary<string,object>();
 
       if(_graphProperties[key]==null)
         _graphProperties.Add(key,val);
@@ -445,10 +461,6 @@ namespace Altaxo.Graph.Gdi
     }
 
 
-    /// <summary>
-    /// Event fired if either the PageBounds or the PrintableBounds changed
-    /// </summary>
-    public event EventHandler BoundsChanged;
 
     /// <summary>
     /// Fires the <see cref="BoundsChanged" /> event.
@@ -785,7 +797,6 @@ namespace Altaxo.Graph.Gdi
 
     #region IChangedEventSource Members
 
-    public event System.EventHandler Changed;
 
     #endregion
   } // end of class GraphDocument

@@ -102,24 +102,46 @@ namespace Altaxo.Graph.Gdi.Axis
         bool showMajorLabels = info.GetBoolean("ShowMajorLabels");
         if (showMajorLabels)
           s.MajorLabelStyle = (AxisLabelStyleBase)info.GetValue("MajorLabelStyle", s);
+        else s.MajorLabelStyle = null;
+
         bool showMinorLabels = info.GetBoolean("ShowMinorLabels");
         if (showMinorLabels)
           s.MinorLabelStyle = (AxisLabelStyleBase)info.GetValue("MinorLabelStyle", s);
+        else
+          s.MinorLabelStyle = null;
+
         s.Title = (TextGraphic)info.GetValue("AxisTitle", s);
+
+        if (!showAxis)
+        {
+          s.MajorLabelStyle = null;
+          s.MinorLabelStyle = null;
+          s.AxisLineStyle = null;
+          s.Title = null;
+        }
+
+
+                  double offset = 0;
+                  if (s.AxisLineStyle != null && s.AxisLineStyle.Position.IsRelative)
+                  {
+                    offset = s.AxisLineStyle.Position.Value;
+                    // Note here: Absolute values are no longer supported
+                    // and so this problem can not be fixed here.
+                  }
 
         switch (edge)
         {
           case EdgeType.Bottom:
-            s._styleID = new A2DAxisStyleIdentifier(0, 0);
+            s._styleID = new A2DAxisStyleIdentifier(0, -offset);
             break;
           case EdgeType.Top:
-            s._styleID = new A2DAxisStyleIdentifier(0, 1);
+            s._styleID = new A2DAxisStyleIdentifier(0, 1+offset);
             break;
           case EdgeType.Left:
-            s._styleID = new A2DAxisStyleIdentifier(1, 0);
+            s._styleID = new A2DAxisStyleIdentifier(1, -offset);
             break;
           case EdgeType.Right:
-            s._styleID = new A2DAxisStyleIdentifier(1, 1);
+            s._styleID = new A2DAxisStyleIdentifier(1, 1+offset);
             break;
         }
 

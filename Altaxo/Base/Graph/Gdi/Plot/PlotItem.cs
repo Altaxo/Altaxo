@@ -7,6 +7,7 @@ namespace Altaxo.Graph.Gdi.Plot
 {
   using Groups;
 
+  [Serializable]
   public abstract class PlotItem
   :
     IGPlotItem,
@@ -19,6 +20,7 @@ namespace Altaxo.Graph.Gdi.Plot
     /// <summary>
     /// The parent object.
     /// </summary>
+    [NonSerialized]
     protected object _parent;
 
     protected virtual void CopyFrom(PlotItem from)
@@ -174,7 +176,6 @@ namespace Altaxo.Graph.Gdi.Plot
     /// <returns>The object with the specified name.</returns>
     public virtual object GetChildObjectNamed(string name)
     {
-
       return null;
     }
 
@@ -223,5 +224,6 @@ namespace Altaxo.Graph.Gdi.Plot
     }
 
     #endregion
+
   } // end of class PlotItem
 }

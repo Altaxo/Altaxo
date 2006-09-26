@@ -21,6 +21,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using Altaxo;
 using Altaxo.Main;
 
@@ -28,7 +29,7 @@ namespace Altaxo.Graph.Gdi
 {
   public class GraphDocumentCollection : 
     System.Runtime.Serialization.IDeserializationCallback,
-    System.Collections.ICollection,
+    IEnumerable<GraphDocument>,
     Altaxo.Main.IDocumentNode,
     Altaxo.Main.IChangedEventSource,
     Altaxo.Main.IChildChangedEventSink,
@@ -129,11 +130,13 @@ namespace Altaxo.Graph.Gdi
     #endregion
 
     // Data
-    protected System.Collections.SortedList m_GraphsByName = new System.Collections.SortedList();
-    protected object m_Parent=null;
+    protected SortedDictionary<string,GraphDocument> m_GraphsByName = new SortedDictionary<string,GraphDocument>();
     protected bool bIsDirty=false;
 
-    [NonSerialized()]
+    [NonSerialized]
+    protected object m_Parent = null;
+
+    [NonSerialized]
     protected ChangedEventArgs m_ChangeData=null;
 
     // Events
@@ -184,7 +187,7 @@ namespace Altaxo.Graph.Gdi
       {
         GraphDocumentCollection s = (GraphDocumentCollection)obj;
         // s.parent = (AltaxoDocument)(info.GetValue("Parent",typeof(AltaxoDocument)));
-        s.m_GraphsByName = (System.Collections.SortedList)(info.GetValue("Graphs",typeof(System.Collections.SortedList)));
+        s.m_GraphsByName = (SortedDictionary<string,GraphDocument>)(info.GetValue("Graphs",typeof(SortedDictionary<string,GraphDocument>)));
       
         return s;
       }
@@ -196,36 +199,7 @@ namespace Altaxo.Graph.Gdi
 
     #endregion
 
-
-    #region "ICollection support"
-
-    public void CopyTo(Array array, int index)
-    {
-      m_GraphsByName.Values.CopyTo(array,index);
-    }
-
-    public int Count 
-    {
-      get { return m_GraphsByName.Count; }
-    }
-
-    public bool IsSynchronized
-    {
-      get { return m_GraphsByName.IsSynchronized; }
-    }
-
-    public object SyncRoot
-    {
-      get { return m_GraphsByName.SyncRoot; }
-    }
-
-    public System.Collections.IEnumerator GetEnumerator()
-    {
-      return m_GraphsByName.Values.GetEnumerator();
-    }
-
-    #endregion
-
+    
 
 
     public bool IsDirty
@@ -260,9 +234,9 @@ namespace Altaxo.Graph.Gdi
 
     public void Add(GraphDocument theGraph)
     {
-      if(null!=theGraph.Name && string.Empty!=theGraph.Name && theGraph.Equals(m_GraphsByName[theGraph.Name]))
+      if(!string.IsNullOrEmpty(theGraph.Name) && m_GraphsByName.ContainsKey(theGraph.Name) && theGraph.Equals(m_GraphsByName[theGraph.Name]))
         return; // do silently nothing if the graph (the same!) is already registered
-      if(null==theGraph.Name || string.Empty==theGraph.Name) // if no table name provided
+      if(string.IsNullOrEmpty(theGraph.Name)) // if no table name provided
         theGraph.Name = FindNewName();                  // find a new one
       else if(m_GraphsByName.ContainsKey(theGraph.Name)) // else if this table name is already in use
         theGraph.Name = FindNewName(theGraph.Name); // find a new table name based on the original name
@@ -292,7 +266,7 @@ namespace Altaxo.Graph.Gdi
     protected void EhChild_NameChanged(object sender, NameChangedEventArgs e)
     {
       // we remove the old value from the hash and store it under the new value
-      object graph = m_GraphsByName[e.OldName];
+      GraphDocument graph = m_GraphsByName[e.OldName];
       if(graph!=null)
       {
         if(m_GraphsByName.ContainsKey(e.NewName))
@@ -319,7 +293,7 @@ namespace Altaxo.Graph.Gdi
     {
       for(int i=0;;i++)
       {
-        if(null==m_GraphsByName[basicname+i.ToString()])
+        if(!m_GraphsByName.ContainsKey(basicname+i.ToString()))
           return basicname+i; 
       }
     } 
@@ -487,6 +461,25 @@ namespace Altaxo.Graph.Gdi
     {
       return (GraphDocumentCollection)Main.DocumentPath.GetRootNodeImplementing(child, typeof(GraphDocumentCollection));
     }
+
+
   
+    #region IEnumerable<GraphDocument> Members
+
+    IEnumerator<GraphDocument> IEnumerable<GraphDocument>.GetEnumerator()
+    {
+      return m_GraphsByName.Values.GetEnumerator();
+    }
+
+    #endregion
+
+    #region IEnumerable Members
+
+    public System.Collections.IEnumerator GetEnumerator()
+    {
+      return m_GraphsByName.Values.GetEnumerator();
+    }
+
+    #endregion
   }
 }

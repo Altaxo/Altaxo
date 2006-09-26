@@ -11,6 +11,7 @@ namespace Altaxo.Graph.Gdi.Plot
   using Styles;
   using Data;
 
+  [Serializable]
   public abstract class G2DPlotItem : PlotItem
   {
 
@@ -138,7 +139,9 @@ namespace Altaxo.Graph.Gdi.Plot
 
     public override void Paint(Graphics g, IPlotArea layer)
     {
-      Paint(g, layer, GetRangesAndPoints(layer));
+      Processed2DPlotData pdata = GetRangesAndPoints(layer);
+      if(pdata!=null)
+        Paint(g, layer, GetRangesAndPoints(layer));
     }
 
 

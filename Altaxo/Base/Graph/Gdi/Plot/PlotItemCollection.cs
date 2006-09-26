@@ -11,6 +11,7 @@ namespace Altaxo.Graph.Gdi.Plot
   using Plot.Groups;
   using PlotGroups;
 
+  [Serializable]
   public class PlotItemCollection 
     :
     IGPlotItem, 
@@ -29,11 +30,12 @@ namespace Altaxo.Graph.Gdi.Plot
     IGPlotItem[] _cachedPlotItemsFlattened;
 
     /// <summary>The parent layer of this list.</summary>
+    [NonSerialized]
     private object _parent;
 
     #region Serialization
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PlotItemCollection), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.PlotItemCollection", 0)]
     public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -144,7 +146,8 @@ namespace Altaxo.Graph.Gdi.Plot
     }
 
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PlotItemCollection), 1)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Graph.PlotItemCollection", 1)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PlotItemCollection), 2)]
     public class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)

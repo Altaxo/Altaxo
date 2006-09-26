@@ -56,10 +56,13 @@ namespace Altaxo.Graph.Gdi
     /// <summary>
     /// Fired if either the layer collection changed or something in the layers changed
     /// </summary>
+    [field:NonSerialized]
     public event System.EventHandler Changed;
 
+    [NonSerialized]
     private object m_Parent;
 
+    [NonSerialized]
     private RectangleF m_PrintableBounds; // do not serialize this value, its only cached
 
 
@@ -97,7 +100,8 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotLayerCollection),0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Graph.XYPlotLayerCollection", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotLayerCollection),1)]
       public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)

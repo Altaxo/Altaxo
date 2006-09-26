@@ -1243,6 +1243,7 @@
     <Compile Include="Graph\Gdi\G2DCoordinateSystem.cs" />
     <Compile Include="Graph\Gdi\GraphDocument.cs" />
     <Compile Include="Graph\Gdi\GraphDocumentCollection.cs" />
+    <Compile Include="Graph\Gdi\IGripManipulationHandle.cs" />
     <Compile Include="Graph\Gdi\IGrippableObject.cs" />
     <Compile Include="Graph\Gdi\IHitTestObject.cs" />
     <Compile Include="Graph\Gdi\IPlotArea.cs" />
@@ -1299,6 +1300,7 @@
     <Compile Include="Graph\Gdi\Shapes\TextGraphic.cs" />
     <Compile Include="Graph\Gdi\XYPlotLayer.cs" />
     <Compile Include="Graph\Gdi\XYPlotLayerAxisProperties.cs" />
+    <Compile Include="Graph\Gdi\XYPlotLayerAxisPropertiesCollection.cs" />
     <Compile Include="Graph\Gdi\XYPlotLayerCollection.cs" />
     <Compile Include="Graph\Gdi\XYPlotLayerPositionAndSize.cs" />
     <Compile Include="Graph\Gdi\XYPlotLayerPositionType.cs" />

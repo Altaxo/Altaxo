@@ -97,8 +97,8 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AxisLabelStyle),0)]
-      public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYAxisLabelStyle", 0)]
+    public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
@@ -114,7 +114,7 @@ namespace Altaxo.Graph.Gdi.Axis
         
         AxisLabelStyle s = null!=o ? (AxisLabelStyle)o : new AxisLabelStyle();
 
-        //s._edge = (Edge)info.GetValue("Edge",s);
+        Edge edge = (Edge)info.GetValue("Edge",s);
         s._font = (Font)info.GetValue("Font",s);
         s.SetStringFormat();
         return s;
@@ -122,8 +122,8 @@ namespace Altaxo.Graph.Gdi.Axis
     }
 
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AxisLabelStyle),1)]
-      public class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYAxisLabelStyle", 1)]
+    public class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
@@ -152,7 +152,7 @@ namespace Altaxo.Graph.Gdi.Axis
         
         AxisLabelStyle s = null!=o ? (AxisLabelStyle)o : new AxisLabelStyle();
 
-        //s._edge = (Edge)info.GetValue("Edge",s);
+        Edge edge = (Edge)info.GetValue("Edge",s);
         s._font = (Font)info.GetValue("Font",s);
         s._brush = (BrushHolder)info.GetValue("Brush",s);
         s._backgroundStyle = (IBackgroundStyle)info.GetValue("Background");
@@ -180,7 +180,8 @@ namespace Altaxo.Graph.Gdi.Axis
     }
 
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AxisLabelStyle), 2)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYAxisLabelStyle", 2)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AxisLabelStyle), 3)]
     public class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)

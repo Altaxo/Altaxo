@@ -325,7 +325,7 @@ namespace Altaxo.Graph.Gdi
 
     #endregion
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PenHolder), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.PenHolder", 0)]
     public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -463,7 +463,8 @@ namespace Altaxo.Graph.Gdi
     }
 
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PenHolder), 1)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Graph.PenHolder", 1)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PenHolder), 2)]
     public class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)

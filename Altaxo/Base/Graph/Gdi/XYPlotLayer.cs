@@ -395,9 +395,9 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotLayer),0)]
-      [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotLayer), 1)] // by accident this was never different from version 0
-      public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotLayer", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotLayer", 1)]
+    public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
@@ -512,6 +512,7 @@ namespace Altaxo.Graph.Gdi
         s._location.Width  = info.GetDouble("Width");
         s._location.Height = info.GetDouble("Height");
         s._cachedLayerSize   = (SizeF)info.GetValue("CachedSize",typeof(SizeF));
+        s._coordinateSystem.UpdateAreaSize(s._cachedLayerSize);
 
         s._location.XPositionType = (XYPlotLayerPositionType)info.GetValue("XPositionType",typeof(XYPlotLayerPositionType));
         s._location.YPositionType = (XYPlotLayerPositionType)info.GetValue("YPositionType",typeof(XYPlotLayerPositionType));
@@ -615,9 +616,9 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
-    
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotLayer),2)]
-      public class XmlSerializationSurrogate2 : XmlSerializationSurrogate0
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotLayer", 2)]
+    public class XmlSerializationSurrogate2 : XmlSerializationSurrogate0
     {
       public override void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
@@ -640,7 +641,8 @@ namespace Altaxo.Graph.Gdi
     }
 
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotLayer), 3)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Graph.XYPlotLayer", 3)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotLayer), 4)]
     public class XmlSerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -701,6 +703,7 @@ namespace Altaxo.Graph.Gdi
         s._location = (XYPlotLayerPositionAndSize)info.GetValue("LocationAndSize", s);
         s._cachedLayerSize   = (SizeF)info.GetValue("CachedSize",typeof(SizeF));
         s._cachedLayerPosition = (PointF)info.GetValue("CachedPosition",typeof(PointF));
+        s._coordinateSystem.UpdateAreaSize(s._cachedLayerSize);
 
 
         // LayerProperties

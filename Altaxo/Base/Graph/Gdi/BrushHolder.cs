@@ -37,7 +37,8 @@ namespace Altaxo.Graph.Gdi
     PathGradientBrush
   };
 
-  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(BrushType), 0)]
+  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Graph.BrushType", 0)]
+  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(BrushType), 1)]
   public class BrushTypeXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
   {
     public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -105,9 +106,9 @@ namespace Altaxo.Graph.Gdi
 
     #region "Serialization"
 
-   
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(BrushHolder), 0)]
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.BrushHolder", 0)]
     public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -148,7 +149,8 @@ namespace Altaxo.Graph.Gdi
     }
 
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(BrushHolder), 1)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Graph.BrushHolder", 1)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(BrushHolder), 2)]
     public class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)

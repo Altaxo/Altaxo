@@ -47,7 +47,8 @@ namespace Altaxo.Graph.Gdi
   }
 
   [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Graph.XYPlotLayer+SizeType", 0)]
-  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotLayerSizeType), 1)]
+  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotLayerSizeType", 1)]
+  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotLayerSizeType), 2)]
   public class SizeTypeXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
   {
     public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
