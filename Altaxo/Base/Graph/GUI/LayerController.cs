@@ -116,11 +116,14 @@ namespace Altaxo.Graph.GUI
       // collect the AxisStyleIdentifier from the actual layer and also all possible AxisStyleIdentifier
       _axisStyleIds = new Dictionary<A2DAxisStyleIdentifier, A2DAxisStyleInformation>();
       _axisStyleInfoSortedByName = new List<A2DAxisStyleInformation>();
-      foreach (A2DAxisStyleInformation info in _layer.CoordinateSystem.AxisStyles)
+      foreach (A2DAxisStyleIdentifier ids in _layer.CoordinateSystem.GetJoinedAxisStyleIdentifier(_layer.ScaleStyles.AxisStyleIDs, new A2DAxisStyleIdentifier[] { id }))
       {
+        A2DAxisStyleInformation info = _layer.CoordinateSystem.GetAxisStyleInformation(ids);
         _axisStyleIds.Add(info.Identifier, info);
         _axisStyleInfoSortedByName.Add(info);
       }
+
+
       _currentScale = axisScaleIdx;
       _currentAxisID = id;
 

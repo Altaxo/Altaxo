@@ -156,6 +156,19 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
 
+    public IEnumerable<A2DAxisStyleIdentifier> AxisStyleIDs
+    {
+      get
+      {
+        for (int i = 0; i < _styles.Length; i++)
+        {
+          foreach (AxisStyle style in _styles[i].AxisStyles)
+            yield return style.StyleID;
+        }
+      }
+    }
+
+
     public bool ContainsAxisStyle(A2DAxisStyleIdentifier id)
     {
       ScaleStyle scalestyle = _styles[id.AxisNumber];

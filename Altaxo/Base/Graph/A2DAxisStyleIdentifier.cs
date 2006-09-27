@@ -41,12 +41,37 @@ namespace Altaxo.Graph
       _usePhysicalValue = false;
     }
 
-    public A2DAxisStyleIdentifier(int axisNumber, AltaxoVariant physicalValue)
+    private A2DAxisStyleIdentifier()
     {
-      _axisNumber = axisNumber;
-      _usePhysicalValue = true;
-      _physicalValue = physicalValue;
     }
+
+    public static A2DAxisStyleIdentifier FromPhysicalValue(int axisNumber, double physicalValue)
+    {
+      if (!(physicalValue == physicalValue))
+        throw new ArgumentException("You can not set physical values that return false when compared to itself, value is: " + physicalValue.ToString());
+
+      A2DAxisStyleIdentifier id = new A2DAxisStyleIdentifier();
+      id._axisNumber = axisNumber;
+      id._physicalValue = physicalValue;
+      id._logicalValue = double.NaN;
+      id._usePhysicalValue = true;
+      return id;
+    }
+
+    public static A2DAxisStyleIdentifier FromPhysicalVariant(int axisNumber, AltaxoVariant physicalValue)
+    {
+      if (!(physicalValue == physicalValue))
+        throw new ArgumentException("You can not set physical values that return false when compared to itself, value is: " + physicalValue.ToString());
+
+      
+      A2DAxisStyleIdentifier id = new A2DAxisStyleIdentifier();
+      id._axisNumber = axisNumber;
+      id._physicalValue = physicalValue;
+      id._logicalValue = double.NaN;
+      id._usePhysicalValue = true;
+      return id;
+    }
+
 
     /// <summary>
     /// Number of axis: 0==X-Axis, 1==Y-Axis, 2==Z-Axis
@@ -54,9 +79,18 @@ namespace Altaxo.Graph
     public int AxisNumber { get { return _axisNumber; } }
 
     /// <summary>
-    /// The logical value of the isoline.
+    /// The logical value of the isoline. It can be set only in the constructor, or if the UsePhysicalValue property is true.
     /// </summary>
-    public double LogicalValue { get { return _logicalValue; } }
+    public double LogicalValue { 
+      get { return _logicalValue; }
+      set
+      {
+        if (_usePhysicalValue)
+          _logicalValue = value;
+        else
+          throw new NotSupportedException("You must not set the logical value of this identifier unless the property UsePhysicalValue is true");
+      }
+    }
 
     /// <summary>
     /// True when the isoline of this axis is determined by a physical value together with the corresponding axis scale

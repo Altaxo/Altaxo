@@ -1813,6 +1813,9 @@ namespace Altaxo.Graph.Gdi
 
     public void RescaleXAxis()
     {
+      if (null == this.PlotItems)
+        return; // can happen during deserialization
+
       // we have to disable our own Handler since if we change one DataBound of a association,
       //it generates a OnBoundaryChanged, and then all boundaries are merges into the axis boundary, 
       //but (alas!) not all boundaries are now of the new type!
@@ -1828,6 +1831,14 @@ namespace Altaxo.Graph.Gdi
           ((IXBoundsHolder)pa).MergeXBoundsInto(_axisProperties.X.Scale.DataBoundsObject); // merge all x-boundaries in the x-axis boundary object
         }
       }
+
+      // take also the axis styles with physical values into account
+      foreach (A2DAxisStyleIdentifier id in _scaleStyles.AxisStyleIDs)
+      {
+        if (id.AxisNumber == 0 && id.UsePhysicalValue)
+          _axisProperties.X.Scale.DataBoundsObject.Add(id.PhysicalValue);
+      }
+
       _plotAssociationXBoundariesChanged_EventSuspendCount = Math.Max(0,_plotAssociationXBoundariesChanged_EventSuspendCount-1);
       _axisProperties.X.Scale.DataBoundsObject.EndUpdate();
       _axisProperties.X.Scale.ProcessDataBounds();
@@ -1880,6 +1891,9 @@ namespace Altaxo.Graph.Gdi
 
     public void RescaleYAxis()
     {
+      if (null == this.PlotItems)
+        return; // can happen during deserialization
+
       // we have to disable our own Handler since if we change one DataBound of a association,
       //it generates a OnBoundaryChanged, and then all boundaries are merges into the axis boundary, 
       //but (alas!) not all boundaries are now of the new type!
@@ -1895,6 +1909,13 @@ namespace Altaxo.Graph.Gdi
           ((IYBoundsHolder)pa).MergeYBoundsInto(_axisProperties.Y.Scale.DataBoundsObject); // merge all x-boundaries in the x-axis boundary object
         }
       }
+      // take also the axis styles with physical values into account
+      foreach (A2DAxisStyleIdentifier id in _scaleStyles.AxisStyleIDs)
+      {
+        if (id.AxisNumber == 1 && id.UsePhysicalValue)
+          _axisProperties.Y.Scale.DataBoundsObject.Add(id.PhysicalValue);
+      }
+
       _plotAssociationYBoundariesChanged_EventSuspendCount = Math.Max(0,_plotAssociationYBoundariesChanged_EventSuspendCount-1);
       _axisProperties.Y.Scale.DataBoundsObject.EndUpdate();
       _axisProperties.Y.Scale.ProcessDataBounds();
@@ -2165,9 +2186,20 @@ namespace Altaxo.Graph.Gdi
 
     public virtual void PreparePainting()
     {
+
+      // update the logical values of the physical axes before
+      foreach (A2DAxisStyleIdentifier id in _scaleStyles.AxisStyleIDs)
+      {
+        if (id.UsePhysicalValue)
+        {
+          // then update the logical value of this identifier
+          double logicalValue = this._axisProperties.Scale(id.AxisNumber).PhysicalVariantToNormal(id.PhysicalValue);
+          id.LogicalValue = logicalValue;
+        }
+      }
+      
       // Before we paint the axis, we have to make sure that all plot items
       // had their data updated, so that the axes are updated before they are drawn!
-
       _plotItems.PrepareStyles(null);
       _plotItems.ApplyStyles(null);
       _plotItems.PreparePainting(this);

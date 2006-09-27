@@ -1239,7 +1239,7 @@
     <Compile Include="Graph\Gdi\Background\IBackgroundStyle.cs" />
     <Compile Include="Graph\Gdi\Background\RectangleWithShadow.cs" />
     <Compile Include="Graph\Gdi\Background\WhiteOut.cs" />
-    <Compile Include="Graph\Gdi\BrushHolder.cs" />
+    <Compile Include="Graph\Gdi\BrushX.cs" />
     <Compile Include="Graph\Gdi\G2DCoordinateSystem.cs" />
     <Compile Include="Graph\Gdi\GraphDocument.cs" />
     <Compile Include="Graph\Gdi\GraphDocumentCollection.cs" />
@@ -1257,7 +1257,7 @@
     <Compile Include="Graph\Gdi\LabelFormatting\NumericLabelFormattingScientific.cs" />
     <Compile Include="Graph\Gdi\LineCaps\ArrowF10LineCap.cs" />
     <Compile Include="Graph\Gdi\LineCaps\ArrowF20LineCap.cs" />
-    <Compile Include="Graph\Gdi\PenHolder.cs" />
+    <Compile Include="Graph\Gdi\PenX.cs" />
     <Compile Include="Graph\Gdi\Plot\Data\PlotRange.cs" />
     <Compile Include="Graph\Gdi\Plot\Data\Processed2DPlotData.cs" />
     <Compile Include="Graph\Gdi\Plot\Data\XYColumnPlotData.cs" />
@@ -1301,8 +1301,6 @@
     <Compile Include="Graph\Gdi\Shapes\SimpleTextGraphic.cs" />
     <Compile Include="Graph\Gdi\Shapes\TextGraphic.cs" />
     <Compile Include="Graph\Gdi\XYPlotLayer.cs" />
-    <Compile Include="Graph\Gdi\XYPlotLayerAxisProperties.cs" />
-    <Compile Include="Graph\Gdi\XYPlotLayerAxisPropertiesCollection.cs" />
     <Compile Include="Graph\Gdi\XYPlotLayerCollection.cs" />
     <Compile Include="Graph\Gdi\XYPlotLayerPositionAndSize.cs" />
     <Compile Include="Graph\Gdi\XYPlotLayerPositionType.cs" />
@@ -1330,6 +1328,8 @@
     <Compile Include="Graph\Scales\Boundaries\PositiveFiniteNumericalBoundaries.cs" />
     <Compile Include="Graph\Scales\DateTimeScale.cs" />
     <Compile Include="Graph\Scales\LinearScale.cs" />
+    <Compile Include="Graph\Scales\LinkedScale.cs" />
+    <Compile Include="Graph\Scales\LinkedScaleCollection.cs" />
     <Compile Include="Graph\Scales\Log10Scale.cs" />
     <Compile Include="Graph\Scales\NumericalScale.cs" />
     <Compile Include="Graph\Scales\Rescaling\BoundaryRescaling.cs" />

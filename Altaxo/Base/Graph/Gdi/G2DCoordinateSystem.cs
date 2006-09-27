@@ -387,6 +387,9 @@ namespace Altaxo.Graph.Gdi
       {
         if (styleID.AxisNumber == info.Identifier.AxisNumber)
         {
+          if (styleID == info.Identifier)
+            return info; // this covers also situations when the axis uses physical values
+
           double dist = Math.Abs(styleID.LogicalValue - info.Identifier.LogicalValue);
           if (dist < minDistance)
           {
@@ -529,6 +532,26 @@ namespace Altaxo.Graph.Gdi
       info.NameOfLeftSide = horzRev ? "Inner" : "Outer";
       info.NameOfRightSide = horzRev ? "Outer" : "Inner";
       info.PreferedLabelSide = horzRev ? A2DAxisSide.Right : A2DAxisSide.Left;
+
+
+      // Y=0
+      info = new A2DAxisStyleInformation(A2DAxisStyleIdentifier.FromPhysicalValue(horzAx, 0));
+      _axisStyleInformation.Add(info);
+      info.NameOfAxisStyle = "Y=0";
+      info.NameOfLeftSide = horzRev ? "Below" : "Above";
+      info.NameOfRightSide = horzRev ? "Above" : "Below";
+      info.PreferedLabelSide = horzRev ? A2DAxisSide.Left : A2DAxisSide.Right;
+
+      // X=0
+      info = new A2DAxisStyleInformation(A2DAxisStyleIdentifier.FromPhysicalValue(vertAx, 0));
+      _axisStyleInformation.Add(info);
+      info.NameOfAxisStyle = "X=0";
+      info.NameOfLeftSide = vertRev ? "Right" : "Left";
+      info.NameOfRightSide = vertRev ? "Left" : "Right";
+      info.PreferedLabelSide = vertRev ? A2DAxisSide.Right : A2DAxisSide.Left;
+
+
+    
     }
 
     /// <summary>
