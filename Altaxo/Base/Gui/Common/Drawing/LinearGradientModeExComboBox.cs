@@ -97,7 +97,7 @@ namespace Altaxo.Gui.Common.Drawing
       LinearGradientModeEx item = e.Index >= 0 ? (LinearGradientModeEx)Items[e.Index] : LinearGradientModeEx.Horizontal;
       LinearGradientMode lgm;
       bool reverse;
-      BrushHolder.ToLinearGradientMode(item, out lgm, out reverse);
+      BrushX.ToLinearGradientMode(item, out lgm, out reverse);
       
       using (LinearGradientBrush br = new LinearGradientBrush(rectColor, reverse ? e.BackColor:e.ForeColor, reverse? e.ForeColor:e.BackColor, lgm))
       {

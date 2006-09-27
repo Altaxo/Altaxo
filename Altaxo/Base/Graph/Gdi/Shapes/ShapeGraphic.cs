@@ -30,8 +30,8 @@ namespace Altaxo.Graph.Gdi.Shapes
   [Serializable]
   public abstract class ShapeGraphic : GraphicBase
   {
-    protected BrushHolder _fillBrush;
-    protected PenHolder _linePen;
+    protected BrushX _fillBrush;
+    protected PenX _linePen;
 
     #region Serialization
 
@@ -55,8 +55,8 @@ namespace Altaxo.Graph.Gdi.Shapes
     {
       ShapeGraphic s = (ShapeGraphic)base.SetObjectData(obj, info, context, selector);
 
-      s.Pen = (PenHolder)info.GetValue("LinePen", typeof(PenHolder));
-      s.Brush = (BrushHolder)info.GetValue("FillBrush", typeof(BrushHolder));
+      s.Pen = (PenX)info.GetValue("LinePen", typeof(PenX));
+      s.Brush = (BrushX)info.GetValue("FillBrush", typeof(BrushX));
 
       return s;
     } // end of SetObjectData
@@ -89,9 +89,9 @@ namespace Altaxo.Graph.Gdi.Shapes
         info.GetBaseValueEmbedded(s, typeof(ShapeGraphic).BaseType, parent);
 
 
-        s.Pen = (PenHolder)info.GetValue("LinePen", s);
+        s.Pen = (PenX)info.GetValue("LinePen", s);
         bool fill = info.GetBoolean("Fill");
-        s.Brush = (BrushHolder)info.GetValue("FillBrush", s);
+        s.Brush = (BrushX)info.GetValue("FillBrush", s);
         return s;
       }
     }
@@ -101,20 +101,20 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     public ShapeGraphic()
     {
-      Brush = new BrushHolder(Color.Transparent);
-      Pen = new PenHolder(Color.Black);
+      Brush = new BrushX(Color.Transparent);
+      Pen = new PenX(Color.Black);
     }
 
     public ShapeGraphic(ShapeGraphic from)
       :
       base(from)
     {
-      this._fillBrush = (BrushHolder)from._fillBrush.Clone();
-      this._linePen = (PenHolder)from._linePen.Clone();
+      this._fillBrush = (BrushX)from._fillBrush.Clone();
+      this._linePen = (PenX)from._linePen.Clone();
     }
 
 
-    public virtual PenHolder Pen
+    public virtual PenX Pen
     {
       get
       {
@@ -129,14 +129,14 @@ namespace Altaxo.Graph.Gdi.Shapes
           _linePen.Changed -= this.EhChildChanged;
 
 
-        _linePen = (PenHolder)value.Clone();
+        _linePen = (PenX)value.Clone();
         _linePen.Changed += this.EhChildChanged;
         OnChanged();
 
       }
     }
 
-    public virtual BrushHolder Brush
+    public virtual BrushX Brush
     {
       get
       {
@@ -152,7 +152,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 
 
-        _fillBrush = (BrushHolder)value.Clone();
+        _fillBrush = (BrushX)value.Clone();
         _fillBrush.Changed += this.EhChildChanged;
         OnChanged();
 

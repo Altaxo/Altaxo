@@ -31,7 +31,7 @@ namespace Altaxo.Gui.Common.Drawing
   public interface IColorTypeThicknessPenView
   {
     IColorTypeThicknessPenViewEventSink Controller { get; set; }
-    PenHolder DocPen  { get; set; }
+    PenX DocPen  { get; set; }
   }
 
   public interface IColorTypeThicknessPenViewEventSink
@@ -49,15 +49,15 @@ namespace Altaxo.Gui.Common.Drawing
   /// </summary>
   public class ColorTypeThicknessPenController : IColorTypeThicknessPenController
   {
-    PenHolder _doc;
-    PenHolder _tempDoc;
+    PenX _doc;
+    PenX _tempDoc;
     IColorTypeThicknessPenView _view;
 
-    public ColorTypeThicknessPenController(PenHolder doc)
+    public ColorTypeThicknessPenController(PenX doc)
     {
       if(doc == null) throw new ArgumentNullException("doc");
       _doc = doc;
-      _tempDoc = (PenHolder)doc.Clone();
+      _tempDoc = (PenX)doc.Clone();
     }
 
 

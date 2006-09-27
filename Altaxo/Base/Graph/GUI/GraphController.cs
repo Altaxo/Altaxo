@@ -79,12 +79,12 @@ namespace Altaxo.Graph.GUI
     /// Brush to fill the page ground. Since the printable area is filled with another brush, in effect
     /// this brush fills only the non printable margins of the page. 
     /// </summary>
-    protected BrushHolder m_PageGroundBrush;
+    protected BrushX m_PageGroundBrush;
 
     /// <summary>
     /// Brush to fill the printable area of the graph.
     /// </summary>
-    protected BrushHolder m_PrintableAreaBrush;
+    protected BrushX m_PrintableAreaBrush;
 
     /// <summary>Current horizontal resolution of the paint method.</summary>
     protected float m_HorizRes;
@@ -249,9 +249,9 @@ namespace Altaxo.Graph.GUI
     {
       m_NonPageAreaColor = Color.Gray;
     
-      m_PageGroundBrush = new BrushHolder(Color.LightGray);
+      m_PageGroundBrush = new BrushX(Color.LightGray);
 
-      m_PrintableAreaBrush = new BrushHolder(Color.Snow);
+      m_PrintableAreaBrush = new BrushX(Color.Snow);
 
       m_HorizRes  = 300;
     

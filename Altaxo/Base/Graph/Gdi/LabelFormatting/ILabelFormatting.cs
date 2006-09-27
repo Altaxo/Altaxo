@@ -57,7 +57,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
     /// <param name="strfmt">String format.</param>
     /// <param name="item">The item to draw.</param>
     /// <param name="morg">The location where the item is drawn to.</param>
-    void DrawItem(Graphics g, BrushHolder brush, System.Drawing.Font font, System.Drawing.StringFormat strfmt, AltaxoVariant item, PointF morg);
+    void DrawItem(Graphics g, BrushX brush, System.Drawing.Font font, System.Drawing.StringFormat strfmt, AltaxoVariant item, PointF morg);
 
     /// <summary>
     /// Measured a couple of items and prepares them for being drawn.

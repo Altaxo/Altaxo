@@ -30,7 +30,7 @@ namespace Altaxo.Graph.Gdi.Background
   [Serializable]
   public class FilledRectangle : IBackgroundStyle
   {
-    protected BrushHolder _brush;
+    protected BrushX _brush;
 
     #region Serialization
 
@@ -47,7 +47,7 @@ namespace Altaxo.Graph.Gdi.Background
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
         FilledRectangle s = null!=o ? (FilledRectangle)o : new FilledRectangle();
-        s._brush = (BrushHolder)info.GetValue("Brush",parent);
+        s._brush = (BrushX)info.GetValue("Brush",parent);
 
         return s;
       }
@@ -62,7 +62,7 @@ namespace Altaxo.Graph.Gdi.Background
 
     public FilledRectangle(Color c)
     {
-      _brush = new BrushHolder(c);
+      _brush = new BrushX(c);
     }
 
     public FilledRectangle(FilledRectangle from)
@@ -100,7 +100,7 @@ namespace Altaxo.Graph.Gdi.Background
 
     public bool SupportsBrush { get { return true; }}
 
-    public BrushHolder Brush
+    public BrushX Brush
     {
       get
       {

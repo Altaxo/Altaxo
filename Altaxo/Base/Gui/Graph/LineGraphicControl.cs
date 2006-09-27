@@ -43,7 +43,7 @@ namespace Altaxo.Gui.Graph
 
     #region ILineGraphicView Members
 
-    public PenHolder DocPen
+    public PenX DocPen
     {
       get
       {

@@ -82,7 +82,7 @@ namespace Altaxo.Graph.Gdi
   /// can be made serializable.
   /// </summary>
   [Serializable]
-  public class BrushHolder : System.ICloneable, System.IDisposable, Main.IChangedEventSource
+  public class BrushX : System.ICloneable, System.IDisposable, Main.IChangedEventSource
   {
 
     protected BrushType _brushType; // Type of the brush
@@ -113,7 +113,7 @@ namespace Altaxo.Graph.Gdi
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        BrushHolder s = (BrushHolder)obj;
+        BrushX s = (BrushX)obj;
         info.AddValue("Type", s._brushType);
         switch (s._brushType)
         {
@@ -130,7 +130,7 @@ namespace Altaxo.Graph.Gdi
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
 
-        BrushHolder s = null != o ? (BrushHolder)o : new BrushHolder(Color.Black);
+        BrushX s = null != o ? (BrushX)o : new BrushX(Color.Black);
 
         s._brushType = (BrushType)info.GetValue("Type", s);
         switch (s._brushType)
@@ -150,12 +150,12 @@ namespace Altaxo.Graph.Gdi
 
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Graph.BrushHolder", 1)]
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(BrushHolder), 2)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(BrushX), 2)]
     public class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        BrushHolder s = (BrushHolder)obj;
+        BrushX s = (BrushX)obj;
         info.AddValue("Type", s._brushType);
         switch (s._brushType)
         {
@@ -191,7 +191,7 @@ namespace Altaxo.Graph.Gdi
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
 
-        BrushHolder s = null != o ? (BrushHolder)o : new BrushHolder(Color.Black);
+        BrushX s = null != o ? (BrushX)o : new BrushX(Color.Black);
 
         s._brushType = (BrushType)info.GetValue("Type", s);
         switch (s._brushType)
@@ -232,7 +232,7 @@ namespace Altaxo.Graph.Gdi
    
     #endregion
 
-    public BrushHolder(BrushHolder from)
+    public BrushX(BrushX from)
     {
       _brushType = from._brushType; // Type of the brush
       _cachedBrush = null;      // this is the cached brush object
@@ -250,13 +250,13 @@ namespace Altaxo.Graph.Gdi
     }
 
 
-    public BrushHolder(Color c)
+    public BrushX(Color c)
     {
       this._brushType = BrushType.SolidBrush;
       this._foreColor = c;
     }
 
-    public static implicit operator System.Drawing.Brush(BrushHolder bh)
+    public static implicit operator System.Drawing.Brush(BrushX bh)
     {
       return bh.Brush;
     }
@@ -577,7 +577,7 @@ namespace Altaxo.Graph.Gdi
               LinearGradientBrush lgb;
               LinearGradientMode lgmode;
               bool reverse;
-              BrushHolder.ToLinearGradientMode(_gradientMode, out lgmode, out reverse);
+              BrushX.ToLinearGradientMode(_gradientMode, out lgmode, out reverse);
               br = lgb = new LinearGradientBrush(_brushBoundingRectangle, reverse ? _backColor : _foreColor, reverse ? _foreColor : _backColor, lgmode);
               if (_wrapMode != WrapMode.Clamp)
                 lgb.WrapMode = _wrapMode;
@@ -652,12 +652,12 @@ namespace Altaxo.Graph.Gdi
 
     object ICloneable.Clone()
     {
-      return new BrushHolder(this);
+      return new BrushX(this);
     }
 
-    public BrushHolder Clone()
+    public BrushX Clone()
     {
-      return new BrushHolder(this);
+      return new BrushX(this);
     }
 
     public void Dispose()

@@ -47,7 +47,7 @@ namespace Altaxo.Graph.Gdi.Axis
     protected StringAlignment _verticalAlignment;
 
     protected StringFormat _stringFormat;
-    protected BrushHolder _brush = new BrushHolder(Color.Black);
+    protected BrushX _brush = new BrushX(Color.Black);
     
     /// <summary>The x offset in EM units.</summary>
     protected double _xOffset;
@@ -154,7 +154,7 @@ namespace Altaxo.Graph.Gdi.Axis
 
         Edge edge = (Edge)info.GetValue("Edge",s);
         s._font = (Font)info.GetValue("Font",s);
-        s._brush = (BrushHolder)info.GetValue("Brush",s);
+        s._brush = (BrushX)info.GetValue("Brush",s);
         s._backgroundStyle = (IBackgroundStyle)info.GetValue("Background");
         s._automaticRotationShift = info.GetBoolean("AutoAlignment");
         s._horizontalAlignment = (StringAlignment)info.GetEnum("HorzAlignment",typeof(StringAlignment));
@@ -208,7 +208,7 @@ namespace Altaxo.Graph.Gdi.Axis
         AxisLabelStyle s = null != o ? (AxisLabelStyle)o : new AxisLabelStyle();
 
         s._font = (Font)info.GetValue("Font", s);
-        s._brush = (BrushHolder)info.GetValue("Brush", s);
+        s._brush = (BrushX)info.GetValue("Brush", s);
         s._backgroundStyle = (IBackgroundStyle)info.GetValue("Background");
         s._automaticRotationShift = info.GetBoolean("AutoAlignment");
         s._horizontalAlignment = (StringAlignment)info.GetEnum("HorzAlignment", typeof(StringAlignment));
@@ -255,7 +255,7 @@ namespace Altaxo.Graph.Gdi.Axis
       _stringFormat = (StringFormat)from._stringFormat.Clone(); 
       _horizontalAlignment = from._horizontalAlignment;
       _verticalAlignment = from._verticalAlignment;
-      _brush = (BrushHolder)from._brush.Clone();
+      _brush = (BrushX)from._brush.Clone();
       _automaticRotationShift = from._automaticRotationShift;
       _xOffset = from._xOffset;
       _xOffset = from._xOffset;
@@ -348,7 +348,7 @@ namespace Altaxo.Graph.Gdi.Axis
     }
 
     /// <summary>The brush. During setting, the brush is cloned.</summary>
-    public BrushHolder Brush
+    public BrushX Brush
     {
       get 
       {
@@ -357,7 +357,7 @@ namespace Altaxo.Graph.Gdi.Axis
       set
       {
        
-        this._brush = (BrushHolder)value.Clone();
+        this._brush = (BrushX)value.Clone();
         OnChanged(); // Fire Changed event
       }
     }

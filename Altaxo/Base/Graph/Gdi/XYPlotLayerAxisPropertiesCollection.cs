@@ -29,18 +29,18 @@ using Altaxo.Serialization;
 using Altaxo.Graph.Scales;
 using Altaxo.Graph.Scales.Boundaries;
 
-namespace Altaxo.Graph.Gdi
+namespace Altaxo.Graph.Scales
 {
   [Serializable]
-  public class XYPlotLayerAxisPropertiesCollection : Main.IChangedEventSource
+  public class LinkedScaleCollection : Main.IChangedEventSource
   {
-    XYPlotLayerAxisProperties[] _props = new XYPlotLayerAxisProperties[2];
+    LinkedScale[] _linkedScales = new LinkedScale[2];
 
     /// <summary>
-    /// Fired if one of the axis has changed (or its boundaries).
+    /// Fired if one of the scale has changed (or its boundaries).
     /// </summary>
     [field: NonSerialized]
-    public event EventHandler AxesChanged;
+    public event EventHandler ScalesChanged;
 
     /// <summary>
     /// Fired if something in this class or in its child has changed.
@@ -51,34 +51,34 @@ namespace Altaxo.Graph.Gdi
     #region Serialization
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Graph.XYPlotLayerAxisPropertiesCollection", 0)]
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotLayerAxisPropertiesCollection), 1)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LinkedScaleCollection), 1)]
     public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        XYPlotLayerAxisPropertiesCollection s = (XYPlotLayerAxisPropertiesCollection)obj;
+        LinkedScaleCollection s = (LinkedScaleCollection)obj;
 
-        info.CreateArray("Properties", s._props.Length);
-        for (int i = 0; i < s._props.Length; ++i)
-          info.AddValue("e", s._props[i]);
+        info.CreateArray("Properties", s._linkedScales.Length);
+        for (int i = 0; i < s._linkedScales.Length; ++i)
+          info.AddValue("e", s._linkedScales[i]);
         info.CommitArray();
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        XYPlotLayerAxisPropertiesCollection s = SDeserialize(o, info, parent);
+        LinkedScaleCollection s = SDeserialize(o, info, parent);
         return s;
       }
 
 
-      protected virtual XYPlotLayerAxisPropertiesCollection SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected virtual LinkedScaleCollection SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        XYPlotLayerAxisPropertiesCollection s = null != o ? (XYPlotLayerAxisPropertiesCollection)o : new XYPlotLayerAxisPropertiesCollection();
+        LinkedScaleCollection s = null != o ? (LinkedScaleCollection)o : new LinkedScaleCollection();
 
         int count = info.OpenArray("Properties");
-        s._props = new XYPlotLayerAxisProperties[count];
+        s._linkedScales = new LinkedScale[count];
         for (int i = 0; i < count; ++i)
-          s.SetAxisProperties((XYPlotLayerAxisProperties)info.GetValue("e", s), i);
+          s.SetLinkedScale((LinkedScale)info.GetValue("e", s), i);
         info.CloseArray(count);
 
         return s;
@@ -86,98 +86,98 @@ namespace Altaxo.Graph.Gdi
     }
     #endregion
 
-    public XYPlotLayerAxisPropertiesCollection()
+    public LinkedScaleCollection()
     {
-      _props = new XYPlotLayerAxisProperties[2];
-      this.SetAxisProperties(new XYPlotLayerAxisProperties(), 0);
-      this.SetAxisProperties(new XYPlotLayerAxisProperties(), 1);
+      _linkedScales = new LinkedScale[2];
+      this.SetLinkedScale(new LinkedScale(), 0);
+      this.SetLinkedScale(new LinkedScale(), 1);
     }
 
-    public XYPlotLayerAxisPropertiesCollection(XYPlotLayerAxisPropertiesCollection from)
+    public LinkedScaleCollection(LinkedScaleCollection from)
     {
       CopyFrom(from);
     }
 
-    public void CopyFrom(XYPlotLayerAxisPropertiesCollection from)
+    public void CopyFrom(LinkedScaleCollection from)
     {
-      if (_props != null)
+      if (_linkedScales != null)
       {
-        for (int i = 0; i < _props.Length; ++i)
+        for (int i = 0; i < _linkedScales.Length; ++i)
         {
-          if (_props[i] != null)
-            _props[i].AxisPropertiesChanged -= new EventHandler(EhAxisPropertiesChanged);
-          _props[i] = null;
+          if (_linkedScales[i] != null)
+            _linkedScales[i].LinkPropertiesChanged -= new EventHandler(EhLinkPropertiesChanged);
+          _linkedScales[i] = null;
         }
       }
 
-      _props = new XYPlotLayerAxisProperties[from._props.Length];
-      for (int i = 0; i < from._props.Length; i++)
+      _linkedScales = new LinkedScale[from._linkedScales.Length];
+      for (int i = 0; i < from._linkedScales.Length; i++)
       {
-        _props[i] = from._props[i].Clone();
-        _props[i].AxisPropertiesChanged += new EventHandler(EhAxisPropertiesChanged);
+        _linkedScales[i] = from._linkedScales[i].Clone();
+        _linkedScales[i].LinkPropertiesChanged += new EventHandler(EhLinkPropertiesChanged);
       }
 
       OnChanged();
     }
 
-    public XYPlotLayerAxisPropertiesCollection Clone()
+    public LinkedScaleCollection Clone()
     {
-      return new XYPlotLayerAxisPropertiesCollection(this);
+      return new LinkedScaleCollection(this);
     }
 
-    public XYPlotLayerAxisProperties X
+    public LinkedScale X
     {
       get
       {
-        return _props[0];
+        return _linkedScales[0];
       }
     }
 
-    public XYPlotLayerAxisProperties Y
+    public LinkedScale Y
     {
       get
       {
-        return _props[1];
+        return _linkedScales[1];
       }
     }
 
-    public Scale Axis(int i)
+    public Scale Scale(int i)
     {
-      return _props[i].Axis;
+      return _linkedScales[i].Scale;
     }
-    public void SetAxis(int i, Scale ax)
+    public void SetScale(int i, Scale ax)
     {
-      _props[i].Axis = ax;
+      _linkedScales[i].Scale = ax;
     }
     public int IndexOf(Scale ax)
     {
-      for (int i = 0; i < _props.Length; i++)
+      for (int i = 0; i < _linkedScales.Length; i++)
       {
-        if (_props[i].Axis == ax)
+        if (_linkedScales[i].Scale == ax)
           return i;
       }
 
       return -1;
     }
 
-    protected void SetAxisProperties(XYPlotLayerAxisProperties newvalue, int i)
+    protected void SetLinkedScale(LinkedScale newvalue, int i)
     {
-      XYPlotLayerAxisProperties oldvalue = _props[i];
-      _props[i] = newvalue;
+      LinkedScale oldvalue = _linkedScales[i];
+      _linkedScales[i] = newvalue;
 
       if (!object.ReferenceEquals(oldvalue, newvalue))
       {
         if (null != oldvalue)
-          oldvalue.AxisPropertiesChanged -= new EventHandler(EhAxisPropertiesChanged);
+          oldvalue.LinkPropertiesChanged -= new EventHandler(EhLinkPropertiesChanged);
         if (null != newvalue)
-          newvalue.AxisPropertiesChanged += new EventHandler(EhAxisPropertiesChanged);
+          newvalue.LinkPropertiesChanged += new EventHandler(EhLinkPropertiesChanged);
       }
     }
 
-    private void EhAxisPropertiesChanged(object sender, EventArgs e)
+    private void EhLinkPropertiesChanged(object sender, EventArgs e)
     {
-      if (AxesChanged != null)
-        AxesChanged(this, EventArgs.Empty);
+      if (ScalesChanged != null)
+        ScalesChanged(this, EventArgs.Empty);
 
       OnChanged();
     }

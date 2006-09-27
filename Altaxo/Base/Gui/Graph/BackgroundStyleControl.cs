@@ -83,7 +83,7 @@ namespace Altaxo.Gui.Graph
 
   
 
-    public void BackgroundBrush_Initialize(BrushHolder brush)
+    public void BackgroundBrush_Initialize(BrushX brush)
     {
       this._cbColors.Brush = brush;
     }

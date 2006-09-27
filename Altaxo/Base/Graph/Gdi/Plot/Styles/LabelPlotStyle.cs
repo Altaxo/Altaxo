@@ -51,7 +51,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     protected bool m_IndependentColor;
 
     /// <summary>The brush for the label.</summary>
-    protected BrushHolder m_Brush;
+    protected BrushX m_Brush;
 
     /// <summary>The x offset in EM units.</summary>
     protected double m_XOffset;
@@ -157,7 +157,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
         s.m_Font = (Font)info.GetValue("Font", s);
         s.m_IndependentColor = info.GetBoolean("IndependentColor");
-        s.m_Brush = (BrushHolder)info.GetValue("Brush", s);
+        s.m_Brush = (BrushX)info.GetValue("Brush", s);
         s.m_XOffset = info.GetDouble("XOffset");
         s.m_YOffset = info.GetDouble("YOffset");
         s.m_Rotation = info.GetDouble("Rotation");
@@ -166,7 +166,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         bool attachToAxis = info.GetBoolean("AttachToAxis");
         EdgeType attachedAxis = (EdgeType)info.GetValue("AttachedAxis", parent);
         bool whiteOut = info.GetBoolean("WhiteOut");
-        BrushHolder backgroundBrush = (BrushHolder)info.GetValue("BackgroundBrush", s);
+        BrushX backgroundBrush = (BrushX)info.GetValue("BackgroundBrush", s);
 
         if (attachToAxis)
           s.m_AttachedAxis = GetDirection(attachedAxis);
@@ -258,7 +258,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
         s.m_Font = (Font)info.GetValue("Font", s);
         s.m_IndependentColor = info.GetBoolean("IndependentColor");
-        s.m_Brush = (BrushHolder)info.GetValue("Brush", s);
+        s.m_Brush = (BrushX)info.GetValue("Brush", s);
         s.m_XOffset = info.GetDouble("XOffset");
         s.m_YOffset = info.GetDouble("YOffset");
         s.m_Rotation = info.GetDouble("Rotation");
@@ -312,7 +312,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     {
       this.m_Font = (Font)from.m_Font.Clone();
       this.m_IndependentColor = from.m_IndependentColor;
-      this.m_Brush = (BrushHolder)from.m_Brush.Clone();
+      this.m_Brush = (BrushX)from.m_Brush.Clone();
       this.m_XOffset = from.m_XOffset;
       this.m_YOffset = from.m_YOffset;
       this.m_Rotation = from.m_Rotation;
@@ -333,7 +333,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     {
       this.m_Font = new Font(System.Drawing.FontFamily.GenericSansSerif, 8, GraphicsUnit.World);
       this.m_IndependentColor = false;
-      this.m_Brush = new BrushHolder(Color.Black);
+      this.m_Brush = new BrushX(Color.Black);
       this.m_XOffset = 0;
       this.m_YOffset = 0;
       this.m_Rotation = 0;

@@ -16,7 +16,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     double _width;
     double _position;
 
-    BrushHolder _fillBrush = new BrushHolder(Color.Red);
+    BrushX _fillBrush = new BrushX(Color.Red);
     object _parent;
 
 

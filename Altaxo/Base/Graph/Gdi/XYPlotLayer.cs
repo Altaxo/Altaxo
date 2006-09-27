@@ -94,7 +94,7 @@ namespace Altaxo.Graph.Gdi
 
     G2DScaleStyleCollection _scaleStyles;
 
-    XYPlotLayerAxisPropertiesCollection _axisProperties;
+    LinkedScaleCollection _axisProperties;
 
     protected GraphicCollection _graphObjects;
 
@@ -159,7 +159,7 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
-    public XYPlotLayerAxisPropertiesCollection AxisProperties
+    public LinkedScaleCollection AxisProperties
     {
       get
       {
@@ -167,21 +167,21 @@ namespace Altaxo.Graph.Gdi
       }
       protected set
       {
-        XYPlotLayerAxisPropertiesCollection oldvalue = _axisProperties;
+        LinkedScaleCollection oldvalue = _axisProperties;
         _axisProperties = value;
         if (oldvalue != value)
         {
           if(null!=oldvalue)
           {
             oldvalue.Changed -= new EventHandler(OnChildChangedEventHandler);
-            oldvalue.X.AxisInstanceChanged -= new EventHandler(EhXAxisInstanceChanged);
-            oldvalue.Y.AxisInstanceChanged -= new EventHandler(EhYAxisInstanceChanged);
+            oldvalue.X.ScaleInstanceChanged -= new EventHandler(EhXAxisInstanceChanged);
+            oldvalue.Y.ScaleInstanceChanged -= new EventHandler(EhYAxisInstanceChanged);
           }
           if (null != value)
           {
             value.Changed += new EventHandler(OnChildChangedEventHandler);
-            value.X.AxisInstanceChanged += new EventHandler(EhXAxisInstanceChanged);
-            value.Y.AxisInstanceChanged += new EventHandler(EhYAxisInstanceChanged);
+            value.X.ScaleInstanceChanged += new EventHandler(EhXAxisInstanceChanged);
+            value.Y.ScaleInstanceChanged += new EventHandler(EhYAxisInstanceChanged);
           }
           OnInvalidate();
         }
@@ -306,7 +306,7 @@ namespace Altaxo.Graph.Gdi
       
         // XYPlotLayer style
         bool fillLayerArea = info.GetBoolean("FillLayerArea");
-        BrushHolder layerAreaFillBrush = (BrushHolder)info.GetValue("LayerAreaFillBrush",typeof(BrushHolder));
+        BrushX layerAreaFillBrush = (BrushX)info.GetValue("LayerAreaFillBrush",typeof(BrushX));
 
         if (fillLayerArea)
           s._layerBackground = new FilledRectangle(layerAreaFillBrush.Color);
@@ -332,18 +332,18 @@ namespace Altaxo.Graph.Gdi
 
         // axis related
 
-        s._axisProperties.X.Axis = (Scale)info.GetValue("XAxis",typeof(Scale));
-        s._axisProperties.Y.Axis = (Scale)info.GetValue("YAxis",typeof(Scale));
+        s._axisProperties.X.Scale = (Scale)info.GetValue("XAxis",typeof(Scale));
+        s._axisProperties.Y.Scale = (Scale)info.GetValue("YAxis",typeof(Scale));
         s.AxisProperties.X.IsLinked = info.GetBoolean("LinkXAxis");
         s.AxisProperties.Y.IsLinked = info.GetBoolean("LinkYAxis");
-        s.AxisProperties.X.LinkAxisOrgA = info.GetDouble("LinkXAxisOrgA");
-        s.AxisProperties.X.LinkAxisOrgB = info.GetDouble("LinkXAxisOrgB");
-        s.AxisProperties.X.LinkAxisEndA = info.GetDouble("LinkXAxisEndA");
-        s.AxisProperties.X.LinkAxisEndB = info.GetDouble("LinkXAxisEndB");
-        s.AxisProperties.Y.LinkAxisOrgA = info.GetDouble("LinkYAxisOrgA");
-        s.AxisProperties.Y.LinkAxisOrgB = info.GetDouble("LinkYAxisOrgB");
-        s.AxisProperties.Y.LinkAxisEndA = info.GetDouble("LinkYAxisEndA");
-        s.AxisProperties.Y.LinkAxisEndB = info.GetDouble("LinkYAxisEndB");
+        s.AxisProperties.X.LinkOrgA = info.GetDouble("LinkXAxisOrgA");
+        s.AxisProperties.X.LinkOrgB = info.GetDouble("LinkXAxisOrgB");
+        s.AxisProperties.X.LinkEndA = info.GetDouble("LinkXAxisEndA");
+        s.AxisProperties.X.LinkEndB = info.GetDouble("LinkXAxisEndB");
+        s.AxisProperties.Y.LinkOrgA = info.GetDouble("LinkYAxisOrgA");
+        s.AxisProperties.Y.LinkOrgB = info.GetDouble("LinkYAxisOrgB");
+        s.AxisProperties.Y.LinkEndA = info.GetDouble("LinkYAxisEndA");
+        s.AxisProperties.Y.LinkEndB = info.GetDouble("LinkYAxisEndB");
 
 
         // Styles
@@ -497,7 +497,7 @@ namespace Altaxo.Graph.Gdi
         XYPlotLayer s = null!=o ? (XYPlotLayer)o : new XYPlotLayer();
 
         bool fillLayerArea = info.GetBoolean("FillLayerArea");
-        BrushHolder layerAreaFillBrush = (BrushHolder)info.GetValue("LayerAreaFillBrush", typeof(BrushHolder));
+        BrushX layerAreaFillBrush = (BrushX)info.GetValue("LayerAreaFillBrush", typeof(BrushX));
 
         if (fillLayerArea)
           s._layerBackground = new FilledRectangle(layerAreaFillBrush.Color);
@@ -525,18 +525,18 @@ namespace Altaxo.Graph.Gdi
 
         // axis related
 
-        s._axisProperties.X.Axis = (Scale)info.GetValue("XAxis",typeof(Scale));
-        s._axisProperties.Y.Axis = (Scale)info.GetValue("YAxis",typeof(Scale));
+        s._axisProperties.X.Scale = (Scale)info.GetValue("XAxis",typeof(Scale));
+        s._axisProperties.Y.Scale = (Scale)info.GetValue("YAxis",typeof(Scale));
         s._axisProperties.X.IsLinked = info.GetBoolean("LinkXAxis");
         s._axisProperties.Y.IsLinked = info.GetBoolean("LinkYAxis");
-        s._axisProperties.X.LinkAxisOrgA = info.GetDouble("LinkXAxisOrgA");
-        s._axisProperties.X.LinkAxisOrgB = info.GetDouble("LinkXAxisOrgB");
-        s._axisProperties.X.LinkAxisEndA = info.GetDouble("LinkXAxisEndA");
-        s._axisProperties.X.LinkAxisEndB = info.GetDouble("LinkXAxisEndB");
-        s._axisProperties.Y.LinkAxisOrgA = info.GetDouble("LinkYAxisOrgA");
-        s._axisProperties.Y.LinkAxisOrgB = info.GetDouble("LinkYAxisOrgB");
-        s._axisProperties.Y.LinkAxisEndA = info.GetDouble("LinkYAxisEndA");
-        s._axisProperties.Y.LinkAxisEndB = info.GetDouble("LinkYAxisEndB");
+        s._axisProperties.X.LinkOrgA = info.GetDouble("LinkXAxisOrgA");
+        s._axisProperties.X.LinkOrgB = info.GetDouble("LinkXAxisOrgB");
+        s._axisProperties.X.LinkEndA = info.GetDouble("LinkXAxisEndA");
+        s._axisProperties.X.LinkEndB = info.GetDouble("LinkXAxisEndB");
+        s._axisProperties.Y.LinkOrgA = info.GetDouble("LinkYAxisOrgA");
+        s._axisProperties.Y.LinkOrgB = info.GetDouble("LinkYAxisOrgB");
+        s._axisProperties.Y.LinkEndA = info.GetDouble("LinkYAxisEndA");
+        s._axisProperties.Y.LinkEndB = info.GetDouble("LinkYAxisEndB");
 
 
         // Styles
@@ -710,7 +710,7 @@ namespace Altaxo.Graph.Gdi
          s._clipDataToFrame = info.GetBoolean("ClipDataToFrame");
 
         // axis related
-        s._axisProperties = (XYPlotLayerAxisPropertiesCollection)info.GetValue("AxisProperties", s);
+        s._axisProperties = (LinkedScaleCollection)info.GetValue("AxisProperties", s);
  
         // Styles
         s._scaleStyles = (G2DScaleStyleCollection)info.GetValue("AxisStyles", s);
@@ -774,7 +774,7 @@ namespace Altaxo.Graph.Gdi
 
       // axis related
 
-      this.AxisProperties = (XYPlotLayerAxisPropertiesCollection)from._axisProperties.Clone();
+      this.AxisProperties = (LinkedScaleCollection)from._axisProperties.Clone();
 
       // Styles
 
@@ -805,8 +805,8 @@ namespace Altaxo.Graph.Gdi
       if (null != _axisProperties)
       {
         _axisProperties.Changed += new EventHandler(OnChildChangedEventHandler);
-        _axisProperties.X.AxisInstanceChanged += new EventHandler(EhXAxisInstanceChanged);
-        _axisProperties.Y.AxisInstanceChanged += new EventHandler(EhYAxisInstanceChanged);
+        _axisProperties.X.ScaleInstanceChanged += new EventHandler(EhXAxisInstanceChanged);
+        _axisProperties.Y.ScaleInstanceChanged += new EventHandler(EhYAxisInstanceChanged);
       }
 
       if (null != _legend) _legend.Changed += new EventHandler(this.OnChildChangedEventHandler);
@@ -846,7 +846,7 @@ namespace Altaxo.Graph.Gdi
     {
       this.CoordinateSystem = new G2DCartesicCoordinateSystem();
       this.ScaleStyles = new G2DScaleStyleCollection();
-      this.AxisProperties = new XYPlotLayerAxisPropertiesCollection();
+      this.AxisProperties = new LinkedScaleCollection();
       this.GraphObjects = new GraphicCollection();
       this._location = new XYPlotLayerPositionAndSize();
      
@@ -869,7 +869,7 @@ namespace Altaxo.Graph.Gdi
    
      
       this.ScaleStyles = new G2DScaleStyleCollection();
-      this.AxisProperties = new XYPlotLayerAxisPropertiesCollection();
+      this.AxisProperties = new LinkedScaleCollection();
       this.GraphObjects = new GraphicCollection();
       
 
@@ -1765,11 +1765,11 @@ namespace Altaxo.Graph.Gdi
     {
       get 
       {
-        return _axisProperties.X.Axis; 
+        return _axisProperties.X.Scale; 
       }
       set
       {
-        _axisProperties.X.Axis = value;
+        _axisProperties.X.Scale = value;
       }
     }
 
@@ -1804,7 +1804,7 @@ namespace Altaxo.Graph.Gdi
 
       // now we have to inform all the PlotItems that a new axis was loaded
       if (this.IsXAxisLinked)
-        this._axisProperties.X.EhLinkedLayerAxesChanged(LinkedLayer.AxisProperties.X.Axis);
+        this._axisProperties.X.EhLinkedLayerAxesChanged(LinkedLayer.AxisProperties.X.Scale);
       else
         RescaleXAxis();
     }
@@ -1818,19 +1818,19 @@ namespace Altaxo.Graph.Gdi
       //but (alas!) not all boundaries are now of the new type!
       _plotAssociationXBoundariesChanged_EventSuspendCount++; 
         
-      _axisProperties.X.Axis.DataBoundsObject.BeginUpdate(); // Suppress events from the y-axis now
-      _axisProperties.X.Axis.DataBoundsObject.Reset();
+      _axisProperties.X.Scale.DataBoundsObject.BeginUpdate(); // Suppress events from the y-axis now
+      _axisProperties.X.Scale.DataBoundsObject.Reset();
       foreach(IGPlotItem pa in this.PlotItems)
       {
         if(pa is IXBoundsHolder)
         {
           // merge the bounds with x and yAxis
-          ((IXBoundsHolder)pa).MergeXBoundsInto(_axisProperties.X.Axis.DataBoundsObject); // merge all x-boundaries in the x-axis boundary object
+          ((IXBoundsHolder)pa).MergeXBoundsInto(_axisProperties.X.Scale.DataBoundsObject); // merge all x-boundaries in the x-axis boundary object
         }
       }
       _plotAssociationXBoundariesChanged_EventSuspendCount = Math.Max(0,_plotAssociationXBoundariesChanged_EventSuspendCount-1);
-      _axisProperties.X.Axis.DataBoundsObject.EndUpdate();
-      _axisProperties.X.Axis.ProcessDataBounds();
+      _axisProperties.X.Scale.DataBoundsObject.EndUpdate();
+      _axisProperties.X.Scale.ProcessDataBounds();
     }
    
   
@@ -1840,11 +1840,11 @@ namespace Altaxo.Graph.Gdi
     {
       get 
       {
-        return _axisProperties.Y.Axis;
+        return _axisProperties.Y.Scale;
       }
       set
       {
-        _axisProperties.Y.Axis = value;
+        _axisProperties.Y.Scale = value;
       }
     }
 
@@ -1873,7 +1873,7 @@ namespace Altaxo.Graph.Gdi
 
       // now we have to inform all the PlotItems that a new axis was loaded
       if (this.IsYAxisLinked)
-        this._axisProperties.Y.EhLinkedLayerAxesChanged(LinkedLayer.AxisProperties.X.Axis);
+        this._axisProperties.Y.EhLinkedLayerAxesChanged(LinkedLayer.AxisProperties.X.Scale);
       else
         RescaleYAxis();
     }
@@ -1885,19 +1885,19 @@ namespace Altaxo.Graph.Gdi
       //but (alas!) not all boundaries are now of the new type!
       _plotAssociationYBoundariesChanged_EventSuspendCount++; 
 
-      _axisProperties.Y.Axis.DataBoundsObject.BeginUpdate();
-      _axisProperties.Y.Axis.DataBoundsObject.Reset();
+      _axisProperties.Y.Scale.DataBoundsObject.BeginUpdate();
+      _axisProperties.Y.Scale.DataBoundsObject.Reset();
       foreach(IGPlotItem pa in this.PlotItems)
       {
         if(pa is IYBoundsHolder)
         {
           // merge the bounds with x and yAxis
-          ((IYBoundsHolder)pa).MergeYBoundsInto(_axisProperties.Y.Axis.DataBoundsObject); // merge all x-boundaries in the x-axis boundary object
+          ((IYBoundsHolder)pa).MergeYBoundsInto(_axisProperties.Y.Scale.DataBoundsObject); // merge all x-boundaries in the x-axis boundary object
         }
       }
       _plotAssociationYBoundariesChanged_EventSuspendCount = Math.Max(0,_plotAssociationYBoundariesChanged_EventSuspendCount-1);
-      _axisProperties.Y.Axis.DataBoundsObject.EndUpdate();
-      _axisProperties.Y.Axis.ProcessDataBounds();
+      _axisProperties.Y.Scale.DataBoundsObject.EndUpdate();
+      _axisProperties.Y.Scale.ProcessDataBounds();
     }
     
 
@@ -1924,7 +1924,7 @@ namespace Altaxo.Graph.Gdi
         {
           oldValue.SizeChanged -= new System.EventHandler(EhLinkedLayerSizeChanged);
           oldValue.PositionChanged -= new System.EventHandler(EhLinkedLayerPositionChanged);
-          oldValue.AxisProperties.AxesChanged -= new System.EventHandler(EhLinkedLayerAxesChanged);
+          oldValue.AxisProperties.ScalesChanged -= new System.EventHandler(EhLinkedLayerAxesChanged);
         }
 
         // link the events to the new layer
@@ -1932,7 +1932,7 @@ namespace Altaxo.Graph.Gdi
         {
           newValue.SizeChanged += new System.EventHandler(EhLinkedLayerSizeChanged);
           newValue.PositionChanged += new System.EventHandler(EhLinkedLayerPositionChanged);
-          newValue.AxisProperties.AxesChanged += new System.EventHandler(EhLinkedLayerAxesChanged);
+          newValue.AxisProperties.ScalesChanged += new System.EventHandler(EhLinkedLayerAxesChanged);
         }
       }
     }
@@ -1951,12 +1951,12 @@ namespace Altaxo.Graph.Gdi
       {
         if (_axisProperties.X.IsLinked && null != LinkedLayer)
         {
-          _axisProperties.X.EhLinkedLayerAxesChanged(LinkedLayer.AxisProperties.X.Axis);
+          _axisProperties.X.EhLinkedLayerAxesChanged(LinkedLayer.AxisProperties.X.Scale);
         }
 
         if (_axisProperties.Y.IsLinked && null != LinkedLayer)
         {
-          _axisProperties.Y.EhLinkedLayerAxesChanged(LinkedLayer.AxisProperties.Y.Axis);
+          _axisProperties.Y.EhLinkedLayerAxesChanged(LinkedLayer.AxisProperties.Y.Scale);
         }
       }
       catch (Exception )
@@ -2424,17 +2424,17 @@ namespace Altaxo.Graph.Gdi
       if(0==_plotAssociationXBoundariesChanged_EventSuspendCount)
       {
         // now we have to inform all the PlotAssociations that a new axis was loaded
-        _axisProperties.X.Axis.DataBoundsObject.BeginUpdate();
-        _axisProperties.X.Axis.DataBoundsObject.Reset();
+        _axisProperties.X.Scale.DataBoundsObject.BeginUpdate();
+        _axisProperties.X.Scale.DataBoundsObject.Reset();
         foreach(IGPlotItem pa in this.PlotItems)
         {
           if(pa is IXBoundsHolder)
           {
             // merge the bounds with x and yAxis
-            ((IXBoundsHolder)pa).MergeXBoundsInto(_axisProperties.X.Axis.DataBoundsObject); // merge all x-boundaries in the x-axis boundary object
+            ((IXBoundsHolder)pa).MergeXBoundsInto(_axisProperties.X.Scale.DataBoundsObject); // merge all x-boundaries in the x-axis boundary object
           }
         }
-        _axisProperties.X.Axis.DataBoundsObject.EndUpdate();
+        _axisProperties.X.Scale.DataBoundsObject.EndUpdate();
       }
     }
 
@@ -2453,18 +2453,18 @@ namespace Altaxo.Graph.Gdi
       if(0==_plotAssociationYBoundariesChanged_EventSuspendCount)
       {
         // now we have to inform all the PlotAssociations that a new axis was loaded
-        _axisProperties.Y.Axis.DataBoundsObject.BeginUpdate();
-        _axisProperties.Y.Axis.DataBoundsObject.Reset();
+        _axisProperties.Y.Scale.DataBoundsObject.BeginUpdate();
+        _axisProperties.Y.Scale.DataBoundsObject.Reset();
         foreach(IGPlotItem pa in this.PlotItems)
         {
           if(pa is IYBoundsHolder)
           {
             // merge the bounds with x and yAxis
-            ((IYBoundsHolder)pa).MergeYBoundsInto(_axisProperties.Y.Axis.DataBoundsObject); // merge all x-boundaries in the x-axis boundary object
+            ((IYBoundsHolder)pa).MergeYBoundsInto(_axisProperties.Y.Scale.DataBoundsObject); // merge all x-boundaries in the x-axis boundary object
         
           }
         }
-        _axisProperties.Y.Axis.DataBoundsObject.EndUpdate();
+        _axisProperties.Y.Scale.DataBoundsObject.EndUpdate();
       }
     }
     

@@ -241,7 +241,7 @@ namespace Altaxo.Gui.Common.Drawing
       set { _controller = value; }
     }
 
-    public PenHolder DocPen
+    public PenX DocPen
     {
       get
       {

@@ -32,8 +32,8 @@ namespace Altaxo.Gui.Graph
 {
   public interface IShapeGraphicView
   {
-    PenHolder DocPen { get; set; }
-    BrushHolder DocBrush { get; set; }
+    PenX DocPen { get; set; }
+    BrushX DocBrush { get; set; }
     bool IsFilled { get; set; }
     System.Drawing.PointF DocPosition { get; set; }
     System.Drawing.SizeF DocSize { get; set; }

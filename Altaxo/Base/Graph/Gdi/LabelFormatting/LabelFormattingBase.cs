@@ -130,7 +130,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
     /// <param name="strfmt">String format.</param>
     /// <param name="item">The item to draw.</param>
     /// <param name="morg">The location where the item is drawn to.</param>
-    public virtual void DrawItem(System.Drawing.Graphics g, BrushHolder brush, System.Drawing.Font font, System.Drawing.StringFormat strfmt, Altaxo.Data.AltaxoVariant item, PointF morg)
+    public virtual void DrawItem(System.Drawing.Graphics g, BrushX brush, System.Drawing.Font font, System.Drawing.StringFormat strfmt, Altaxo.Data.AltaxoVariant item, PointF morg)
     {
       string text = FormatItem(item);
       g.DrawString(text, font, brush, morg, strfmt);
@@ -187,7 +187,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
         }
       }
 
-      public virtual void Draw(Graphics g, BrushHolder brush, PointF point)
+      public virtual void Draw(Graphics g, BrushX brush, PointF point)
       {
         g.DrawString(_text, _font, brush, point, _strfmt);
       }

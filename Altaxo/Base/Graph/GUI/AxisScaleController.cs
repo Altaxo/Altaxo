@@ -83,7 +83,7 @@ namespace Altaxo.Graph.GUI
     {
       m_Layer = layer;
       m_axisNumber = axisnumber;
-      m_Axis = m_Layer.AxisProperties.Axis(axisnumber);
+      m_Axis = m_Layer.AxisProperties.Scale(axisnumber);
       _tempAxis = (Scale)m_Axis.Clone();
 
 
@@ -186,7 +186,7 @@ namespace Altaxo.Graph.GUI
       // note: the order is essential here
       // first set the axis in the layer, _then_ apply the RescaleConditions
 
-      m_Layer.AxisProperties.SetAxis(m_axisNumber, _tempAxis);
+      m_Layer.AxisProperties.SetScale(m_axisNumber, _tempAxis);
 
    
 

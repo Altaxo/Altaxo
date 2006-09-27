@@ -42,13 +42,13 @@ namespace Altaxo.Worksheet
   public abstract class ColumnStyle : System.ICloneable, System.Runtime.Serialization.IDeserializationCallback // pendant to DataGridColumnStyle
   {
 
-    protected static BrushHolder _defaultNormalBackgroundBrush = new BrushHolder(SystemColors.Window);
-    protected static BrushHolder _defaultHeaderBackgroundBrush = new BrushHolder(SystemColors.Control);
-    protected static BrushHolder _defaultSelectedBackgroundBrush = new BrushHolder(SystemColors.Highlight);
-    protected static BrushHolder _defaultNormalTextBrush = new BrushHolder(SystemColors.WindowText);
-    protected static BrushHolder _defaultSelectedTextBrush = new BrushHolder(SystemColors.HighlightText);
+    protected static BrushX _defaultNormalBackgroundBrush = new BrushX(SystemColors.Window);
+    protected static BrushX _defaultHeaderBackgroundBrush = new BrushX(SystemColors.Control);
+    protected static BrushX _defaultSelectedBackgroundBrush = new BrushX(SystemColors.Highlight);
+    protected static BrushX _defaultNormalTextBrush = new BrushX(SystemColors.WindowText);
+    protected static BrushX _defaultSelectedTextBrush = new BrushX(SystemColors.HighlightText);
     protected static Font _defaultTextFont = new Font("Arial", 8);
-    protected static PenHolder _defaultCellPen = new PenHolder(SystemColors.InactiveBorder, 1);
+    protected static PenX _defaultCellPen = new PenX(SystemColors.InactiveBorder, 1);
 
     protected ColumnStyleType _columnStyleType;
 
@@ -56,15 +56,15 @@ namespace Altaxo.Worksheet
     protected StringFormat m_TextFormat = new StringFormat();
 
     protected bool _isCellPenCustom;
-    protected PenHolder m_CellPen = new PenHolder(SystemColors.InactiveBorder,1);
+    protected PenX m_CellPen = new PenX(SystemColors.InactiveBorder,1);
     
     protected Font m_TextFont = new Font("Arial",8);
 
     protected bool _isTextBrushCustom;
-    protected BrushHolder m_TextBrush = new BrushHolder(SystemColors.WindowText);
+    protected BrushX m_TextBrush = new BrushX(SystemColors.WindowText);
 
     protected bool _isBackgroundBrushCustom;
-    protected BrushHolder m_BackgroundBrush = new BrushHolder(SystemColors.Window);
+    protected BrushX m_BackgroundBrush = new BrushX(SystemColors.Window);
 
     
 
@@ -93,9 +93,9 @@ namespace Altaxo.Worksheet
        
         
         s.m_Size = (int)info.GetSingle("Size");
-        s.m_CellPen = (PenHolder)info.GetValue("Pen",typeof(PenHolder));
-        s.m_TextBrush = (BrushHolder)info.GetValue("TextBrush",typeof(BrushHolder));
-        s.m_BackgroundBrush = (BrushHolder)info.GetValue("BkgBrush",typeof(BrushHolder));
+        s.m_CellPen = (PenX)info.GetValue("Pen",typeof(PenX));
+        s.m_TextBrush = (BrushX)info.GetValue("TextBrush",typeof(BrushX));
+        s.m_BackgroundBrush = (BrushX)info.GetValue("BkgBrush",typeof(BrushX));
         s.m_TextFormat = new StringFormat();
         s.m_TextFormat.Alignment = (StringAlignment)info.GetValue("Alignment",typeof(StringAlignment));
 
@@ -187,7 +187,7 @@ namespace Altaxo.Worksheet
         s._isCellPenCustom = info.GetBoolean("CustomPen");
         if (s._isCellPenCustom)
         {
-          s.CellBorder = (PenHolder)info.GetValue("Pen", s);
+          s.CellBorder = (PenX)info.GetValue("Pen", s);
         }
         else
         {
@@ -197,7 +197,7 @@ namespace Altaxo.Worksheet
         s._isTextBrushCustom = info.GetBoolean("CustomText");
         if (s._isTextBrushCustom)
         {
-          s.TextBrush = (BrushHolder)info.GetValue("TextBrush", s);
+          s.TextBrush = (BrushX)info.GetValue("TextBrush", s);
         }
         else
         {
@@ -207,7 +207,7 @@ namespace Altaxo.Worksheet
         s._isBackgroundBrushCustom = info.GetBoolean("CustomBkg");
         if (s._isBackgroundBrushCustom)
         {
-          s.BackgroundBrush = (BrushHolder)info.GetValue("BkgBrush", s);
+          s.BackgroundBrush = (BrushX)info.GetValue("BkgBrush", s);
         }
         else
         {
@@ -271,27 +271,27 @@ namespace Altaxo.Worksheet
       m_Size = s.m_Size;
 
       _isCellPenCustom = s._isCellPenCustom;
-      m_CellPen = (PenHolder)s.m_CellPen.Clone();
+      m_CellPen = (PenX)s.m_CellPen.Clone();
       m_TextFormat = (StringFormat)s.m_TextFormat.Clone();
       m_TextFont = (Font)s.m_TextFont.Clone();
       
       _isTextBrushCustom = s._isTextBrushCustom;
-      m_TextBrush = (BrushHolder)s.m_TextBrush.Clone();
+      m_TextBrush = (BrushX)s.m_TextBrush.Clone();
 
       _isBackgroundBrushCustom = s._isBackgroundBrushCustom;
-      m_BackgroundBrush = (BrushHolder)s.m_BackgroundBrush.Clone();
+      m_BackgroundBrush = (BrushX)s.m_BackgroundBrush.Clone();
     }
 
     /// <summary>
     /// Get a clone of the default cell border.
     /// </summary>
     /// <returns></returns>
-    public static PenHolder GetDefaultCellBorder(ColumnStyleType type)
+    public static PenX GetDefaultCellBorder(ColumnStyleType type)
     {
       if(type==ColumnStyleType.DataCell || type==ColumnStyleType.PropertyCell)
-        return (PenHolder)_defaultCellPen.Clone();
+        return (PenX)_defaultCellPen.Clone();
       else      
-        return new PenHolder(SystemColors.ControlDarkDark, 1);
+        return new PenX(SystemColors.ControlDarkDark, 1);
     }
 
     public void SetDefaultCellBorder()
@@ -300,12 +300,12 @@ namespace Altaxo.Worksheet
       this._isCellPenCustom = false;
     }
 
-    public static BrushHolder GetDefaultTextBrush(ColumnStyleType type)
+    public static BrushX GetDefaultTextBrush(ColumnStyleType type)
     {
       if (type == ColumnStyleType.DataCell || type == ColumnStyleType.PropertyCell)
-        return (BrushHolder)_defaultNormalTextBrush.Clone();
+        return (BrushX)_defaultNormalTextBrush.Clone();
       else
-        return new BrushHolder(SystemColors.ControlText);
+        return new BrushX(SystemColors.ControlText);
     }
     public void SetDefaultTextBrush()
     {
@@ -313,12 +313,12 @@ namespace Altaxo.Worksheet
       this._isTextBrushCustom = false;
     }
 
-    public static BrushHolder GetDefaultBackgroundBrush(ColumnStyleType type)
+    public static BrushX GetDefaultBackgroundBrush(ColumnStyleType type)
     {
       if (type == ColumnStyleType.DataCell)
-        return (BrushHolder)_defaultNormalBackgroundBrush.Clone();
+        return (BrushX)_defaultNormalBackgroundBrush.Clone();
       else
-        return (BrushHolder)_defaultHeaderBackgroundBrush.Clone();
+        return (BrushX)_defaultHeaderBackgroundBrush.Clone();
     }
     public void SetDefaultBackgroundBrush()
     {
@@ -351,7 +351,7 @@ namespace Altaxo.Worksheet
       } 
     }
 
-    public PenHolder CellBorder
+    public PenX CellBorder
     {
       get
       {
@@ -363,7 +363,7 @@ namespace Altaxo.Worksheet
         if (value == null)
           throw new ArgumentNullException();
 
-        PenHolder oldValue = m_CellPen;
+        PenX oldValue = m_CellPen;
         m_CellPen = value;
         if(!object.ReferenceEquals(value,oldValue))
         {
@@ -378,7 +378,7 @@ namespace Altaxo.Worksheet
       _isCellPenCustom = true;
     }
 
-    public BrushHolder BackgroundBrush
+    public BrushX BackgroundBrush
     {
       get
       {
@@ -388,7 +388,7 @@ namespace Altaxo.Worksheet
       {
         if (value == null)
           throw new ArgumentNullException();
-        BrushHolder oldValue = m_BackgroundBrush;
+        BrushX oldValue = m_BackgroundBrush;
         m_BackgroundBrush = value;
         if (!object.ReferenceEquals(value, oldValue))
         {
@@ -403,7 +403,7 @@ namespace Altaxo.Worksheet
       _isBackgroundBrushCustom = true;
     }
 
-    public BrushHolder TextBrush
+    public BrushX TextBrush
     {
       get
       {
@@ -413,7 +413,7 @@ namespace Altaxo.Worksheet
       {
         if (value == null)
           throw new ArgumentNullException();
-        BrushHolder oldValue = m_TextBrush;
+        BrushX oldValue = m_TextBrush;
         m_TextBrush = value;
         if (!object.ReferenceEquals(value, oldValue))
         {

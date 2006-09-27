@@ -27,7 +27,7 @@ using System.Runtime.Serialization;
 
 namespace Altaxo.Graph.Gdi
 {
-  #region PenHolder
+  #region PenX
   /// <summary>
   /// PenHolder is a serializable surrogate for a Pen object.
   /// you can implicitly or explicitly convert it to a pen, but you must
@@ -37,12 +37,12 @@ namespace Altaxo.Graph.Gdi
   /// the PenHolder is holding a Pen object 
   /// </summary>
   [Serializable]
-  public class PenHolder : ICloneable, IDisposable, ISerializable, IDeserializationCallback, Main.IChangedEventSource
+  public class PenX : ICloneable, IDisposable, ISerializable, IDeserializationCallback, Main.IChangedEventSource
   {
-    protected PenHolder.Configured m_ConfiguredProperties; // ORed collection of the configured properties (i.e. non-standard properties) 
+    protected PenX.Configured m_ConfiguredProperties; // ORed collection of the configured properties (i.e. non-standard properties) 
     protected PenType m_PenType; // the type of the pen
     protected PenAlignment m_Alignment; // Alignment of the Pen
-    protected BrushHolder m_Brush; // the brush of this pen
+    protected BrushX m_Brush; // the brush of this pen
     protected Color m_Color; // Color of this Pen object
     protected float[] m_CompoundArray;
     protected DashCap m_DashCap;
@@ -137,7 +137,7 @@ namespace Altaxo.Graph.Gdi
 
       return c;
     }
-    protected static Configured _GetConfiguredPropertiesVariable(PenHolder pen)
+    protected static Configured _GetConfiguredPropertiesVariable(PenX pen)
     {
       Configured c = Configured.IsNull;
       if (null == pen || pen.m_ConfiguredProperties == 0)
@@ -171,108 +171,108 @@ namespace Altaxo.Graph.Gdi
 
     #region Clipboard serialization
 
-    protected PenHolder(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
+    protected PenX(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
     {
       SetObjectData(this, info, context, null);
     }
 
     public void GetObjectData(SerializationInfo info, StreamingContext context)
     {
-      PenHolder s = this;
-      Configured cp = PenHolder._GetConfiguredPropertiesVariable(s);
-      if (s.Cached) cp |= PenHolder.Configured.InCachedMode;
+      PenX s = this;
+      Configured cp = PenX._GetConfiguredPropertiesVariable(s);
+      if (s.Cached) cp |= PenX.Configured.InCachedMode;
 
       info.AddValue("Configured", (int)cp);
-      if (0 != (cp & PenHolder.Configured.PenType))
+      if (0 != (cp & PenX.Configured.PenType))
         info.AddValue("Type", s.PenType);
-      if (0 != (cp & PenHolder.Configured.Alignment))
+      if (0 != (cp & PenX.Configured.Alignment))
         info.AddValue("Alignment", s.Alignment);
-      if (0 != (cp & PenHolder.Configured.Brush))
+      if (0 != (cp & PenX.Configured.Brush))
         info.AddValue("Brush", s.BrushHolder);
-      if (0 != (cp & PenHolder.Configured.Color))
+      if (0 != (cp & PenX.Configured.Color))
         info.AddValue("Color", s.Color);
-      if (0 != (cp & PenHolder.Configured.CompoundArray))
+      if (0 != (cp & PenX.Configured.CompoundArray))
         info.AddValue("CompoundArray", s.CompoundArray);
-      if (0 != (cp & PenHolder.Configured.DashStyle))
+      if (0 != (cp & PenX.Configured.DashStyle))
         info.AddValue("DashStyle", s.DashStyle);
-      if (0 != (cp & PenHolder.Configured.DashCap))
+      if (0 != (cp & PenX.Configured.DashCap))
         info.AddValue("DashCap", s.DashCap);
-      if (0 != (cp & PenHolder.Configured.DashOffset))
+      if (0 != (cp & PenX.Configured.DashOffset))
         info.AddValue("DashOffset", s.DashOffset);
-      if (0 != (cp & PenHolder.Configured.DashPattern))
+      if (0 != (cp & PenX.Configured.DashPattern))
         info.AddValue("DashPattern", s.DashPattern);
-      if (0 != (cp & PenHolder.Configured.EndCap))
+      if (0 != (cp & PenX.Configured.EndCap))
       {
         info.AddValue("EndCap", s.m_EndCap.Name);
         info.AddValue("EndCapSize", s.m_EndCap.Size);
       }
-      if (0 != (cp & PenHolder.Configured.LineJoin))
+      if (0 != (cp & PenX.Configured.LineJoin))
         info.AddValue("LineJoin", s.LineJoin);
-      if (0 != (cp & PenHolder.Configured.MiterLimit))
+      if (0 != (cp & PenX.Configured.MiterLimit))
         info.AddValue("MiterLimit", s.MiterLimit);
-      if (0 != (cp & PenHolder.Configured.StartCap))
+      if (0 != (cp & PenX.Configured.StartCap))
       {
         info.AddValue("StartCap", s.m_StartCap.Name);
         info.AddValue("StartCapSize", s.m_StartCap.Size);
       }
-      if (0 != (cp & PenHolder.Configured.Transform))
+      if (0 != (cp & PenX.Configured.Transform))
         info.AddValue("Transform", s.Transform.Elements);
-      if (0 != (cp & PenHolder.Configured.Width))
+      if (0 != (cp & PenX.Configured.Width))
         info.AddValue("Width", s.Width);
     }
     public object SetObjectData(object obj, SerializationInfo info, StreamingContext context, ISurrogateSelector selector)
     {
-      PenHolder s = (PenHolder)obj;
+      PenX s = (PenX)obj;
       s.m_ConfiguredProperties = (Configured)info.GetInt32("Configured");
       Configured cp = s.m_ConfiguredProperties;
 
      
-      if (0 != (cp & PenHolder.Configured.PenType))
+      if (0 != (cp & PenX.Configured.PenType))
         s.m_PenType = (PenType)info.GetValue("Type", typeof(PenType));
       else
         s.m_PenType = PenType.SolidColor;
 
-      if (0 != (cp & PenHolder.Configured.Alignment))
+      if (0 != (cp & PenX.Configured.Alignment))
         s.m_Alignment = (PenAlignment)info.GetValue("Alignment", typeof(PenAlignment));
       else
         s.m_Alignment = PenAlignment.Center;
 
-      if (0 != (cp & PenHolder.Configured.Brush))
-        s.m_Brush = (BrushHolder)info.GetValue("Brush", typeof(BrushHolder));
+      if (0 != (cp & PenX.Configured.Brush))
+        s.m_Brush = (BrushX)info.GetValue("Brush", typeof(BrushX));
       else
-        s.m_Brush = new BrushHolder(Color.Black);
+        s.m_Brush = new BrushX(Color.Black);
 
-      if (0 != (cp & PenHolder.Configured.Color))
+      if (0 != (cp & PenX.Configured.Color))
         s.m_Color = (Color)info.GetValue("Color", typeof(Color));
       else
         s.m_Color = Color.Black;
 
-      if (0 != (cp & PenHolder.Configured.CompoundArray))
+      if (0 != (cp & PenX.Configured.CompoundArray))
         s.m_CompoundArray = (float[])info.GetValue("CompoundArray", typeof(float[]));
       else
         s.m_CompoundArray = new float[0];
 
-      if (0 != (cp & PenHolder.Configured.DashStyle))
+      if (0 != (cp & PenX.Configured.DashStyle))
         s.m_DashStyle = (DashStyle)info.GetValue("DashStyle", typeof(DashStyle));
       else
         s.m_DashStyle = DashStyle.Solid;
 
-      if (0 != (cp & PenHolder.Configured.DashCap))
+      if (0 != (cp & PenX.Configured.DashCap))
         s.m_DashCap = (DashCap)info.GetValue("DashCap", typeof(DashCap));
       else
         s.m_DashCap = DashCap.Flat;
 
-      if (0 != (cp & PenHolder.Configured.DashOffset))
+      if (0 != (cp & PenX.Configured.DashOffset))
         s.m_DashOffset = (float)info.GetSingle("DashOffset");
       else
         s.m_DashOffset = 0;
 
-      if (0 != (cp & PenHolder.Configured.DashPattern))
+      if (0 != (cp & PenX.Configured.DashPattern))
         s.m_DashPattern = (float[])info.GetValue("DashPattern", typeof(float[]));
       else
         s.m_DashPattern = null;
 
-      if (0 != (cp & PenHolder.Configured.EndCap))
+      if (0 != (cp & PenX.Configured.EndCap))
       {
         string name = info.GetString("EndCap");
         float size = info.GetSingle("EndCapSize");
@@ -281,17 +281,17 @@ namespace Altaxo.Graph.Gdi
       else
         s.m_EndCap = LineCapEx.Flat;
 
-      if (0 != (cp & PenHolder.Configured.LineJoin))
+      if (0 != (cp & PenX.Configured.LineJoin))
         s.m_LineJoin = (LineJoin)info.GetValue("LineJoin", typeof(LineJoin));
       else
         s.m_LineJoin = LineJoin.Miter;
 
-      if (0 != (cp & PenHolder.Configured.MiterLimit))
+      if (0 != (cp & PenX.Configured.MiterLimit))
         s.m_MiterLimit = info.GetSingle("MiterLimit");
       else
         s.m_MiterLimit = 10;
 
-      if (0 != (cp & PenHolder.Configured.StartCap))
+      if (0 != (cp & PenX.Configured.StartCap))
       {
         string name = info.GetString("StartCap");
         float size = info.GetSingle("StartCapSize");
@@ -300,7 +300,7 @@ namespace Altaxo.Graph.Gdi
       else
         s.m_StartCap = LineCapEx.Flat;
 
-      if (0 != (cp & PenHolder.Configured.Transform))
+      if (0 != (cp & PenX.Configured.Transform))
       {
         float[] el = (float[])info.GetValue("Transform", typeof(float[]));
         s.m_Transform = new Matrix(el[0], el[1], el[2], el[3], el[4], el[5]);
@@ -308,7 +308,7 @@ namespace Altaxo.Graph.Gdi
       else
         s.m_Transform = new Matrix();
 
-      if (0 != (cp & PenHolder.Configured.Width))
+      if (0 != (cp & PenX.Configured.Width))
         s.m_Width = info.GetSingle("Width");
       else
         s.m_Width = 1;
@@ -372,79 +372,79 @@ namespace Altaxo.Graph.Gdi
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
 
-        PenHolder s = null != o ? (PenHolder)o : new PenHolder();
+        PenX s = null != o ? (PenX)o : new PenX();
 
         s.m_ConfiguredProperties = (Configured)info.GetInt32("Configured");
         Configured cp = s.m_ConfiguredProperties;
 
        
 
-        if (0 != (cp & PenHolder.Configured.PenType))
+        if (0 != (cp & PenX.Configured.PenType))
           s.m_PenType = (PenType)info.GetEnum("Type", typeof(PenType));
         else
           s.m_PenType = PenType.SolidColor;
 
-        if (0 != (cp & PenHolder.Configured.Alignment))
+        if (0 != (cp & PenX.Configured.Alignment))
           s.m_Alignment = (PenAlignment)info.GetEnum("Alignment", typeof(PenAlignment));
         else
           s.m_Alignment = PenAlignment.Center;
 
-        if (0 != (cp & PenHolder.Configured.Brush))
-          s.m_Brush = (BrushHolder)info.GetValue("Brush", typeof(BrushHolder));
+        if (0 != (cp & PenX.Configured.Brush))
+          s.m_Brush = (BrushX)info.GetValue("Brush", typeof(BrushX));
         else
-          s.m_Brush = new BrushHolder(Color.Black);
+          s.m_Brush = new BrushX(Color.Black);
 
-        if (0 != (cp & PenHolder.Configured.Color))
+        if (0 != (cp & PenX.Configured.Color))
           s.m_Color = (Color)info.GetValue("Color", typeof(Color));
         else
           s.m_Color = Color.Black;
 
-        if (0 != (cp & PenHolder.Configured.CompoundArray))
+        if (0 != (cp & PenX.Configured.CompoundArray))
           info.GetArray(out s.m_CompoundArray);
         else
           s.m_CompoundArray = new float[0];
 
-        if (0 != (cp & PenHolder.Configured.DashStyle))
+        if (0 != (cp & PenX.Configured.DashStyle))
           s.m_DashStyle = (DashStyle)info.GetEnum("DashStyle", typeof(DashStyle));
         else
           s.m_DashStyle = DashStyle.Solid;
 
-        if (0 != (cp & PenHolder.Configured.DashCap))
+        if (0 != (cp & PenX.Configured.DashCap))
           s.m_DashCap = (DashCap)info.GetEnum("DashCap", typeof(DashCap));
         else
           s.m_DashCap = DashCap.Flat;
 
-        if (0 != (cp & PenHolder.Configured.DashOffset))
+        if (0 != (cp & PenX.Configured.DashOffset))
           s.m_DashOffset = (float)info.GetSingle("DashOffset");
         else
           s.m_DashOffset = 0;
 
-        if (0 != (cp & PenHolder.Configured.DashPattern))
+        if (0 != (cp & PenX.Configured.DashPattern))
           info.GetArray(out s.m_DashPattern);
         else
           s.m_DashPattern = null;
 
-        if (0 != (cp & PenHolder.Configured.EndCap))
+        if (0 != (cp & PenX.Configured.EndCap))
           s.m_EndCap = new LineCapEx((LineCap)info.GetEnum("EndCap", typeof(LineCap)));
         else
           s.m_EndCap = LineCapEx.Flat;
 
-        if (0 != (cp & PenHolder.Configured.LineJoin))
+        if (0 != (cp & PenX.Configured.LineJoin))
           s.m_LineJoin = (LineJoin)info.GetEnum("LineJoin", typeof(LineJoin));
         else
           s.m_LineJoin = LineJoin.Miter;
 
-        if (0 != (cp & PenHolder.Configured.MiterLimit))
+        if (0 != (cp & PenX.Configured.MiterLimit))
           s.m_MiterLimit = info.GetSingle("MiterLimit");
         else
           s.m_MiterLimit = 10;
 
-        if (0 != (cp & PenHolder.Configured.StartCap))
+        if (0 != (cp & PenX.Configured.StartCap))
           s.m_StartCap = new LineCapEx((LineCap)info.GetEnum("StartCap", typeof(LineCap)));
         else
           s.m_StartCap = LineCapEx.Flat;
 
-        if (0 != (cp & PenHolder.Configured.Transform))
+        if (0 != (cp & PenX.Configured.Transform))
         {
           float[] el;
           info.GetArray(out el);
@@ -453,7 +453,7 @@ namespace Altaxo.Graph.Gdi
         else
           s.m_Transform = new Matrix();
 
-        if (0 != (cp & PenHolder.Configured.Width))
+        if (0 != (cp & PenX.Configured.Width))
           s.m_Width = info.GetSingle("Width");
         else
           s.m_Width = 1;
@@ -464,109 +464,109 @@ namespace Altaxo.Graph.Gdi
 
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Graph.PenHolder", 1)]
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PenHolder), 2)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PenX), 2)]
     public class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        PenHolder s = (PenHolder)obj;
-        Configured cp = PenHolder._GetConfiguredPropertiesVariable(s);
-        if (s.Cached) cp |= PenHolder.Configured.InCachedMode;
+        PenX s = (PenX)obj;
+        Configured cp = PenX._GetConfiguredPropertiesVariable(s);
+        if (s.Cached) cp |= PenX.Configured.InCachedMode;
 
         info.AddValue("Configured", (int)cp);
-        if (0 != (cp & PenHolder.Configured.PenType))
+        if (0 != (cp & PenX.Configured.PenType))
           info.AddEnum("Type", s.PenType);
-        if (0 != (cp & PenHolder.Configured.Alignment))
+        if (0 != (cp & PenX.Configured.Alignment))
           info.AddEnum("Alignment", s.Alignment);
-        if (0 != (cp & PenHolder.Configured.Brush))
+        if (0 != (cp & PenX.Configured.Brush))
           info.AddValue("Brush", s.BrushHolder);
-        if (0 != (cp & PenHolder.Configured.Color))
+        if (0 != (cp & PenX.Configured.Color))
           info.AddValue("Color", s.Color);
-        if (0 != (cp & PenHolder.Configured.CompoundArray))
+        if (0 != (cp & PenX.Configured.CompoundArray))
           info.AddArray("CompoundArray", s.CompoundArray, s.CompoundArray.Length);
-        if (0 != (cp & PenHolder.Configured.DashStyle))
+        if (0 != (cp & PenX.Configured.DashStyle))
           info.AddEnum("DashStyle", s.DashStyle);
-        if (0 != (cp & PenHolder.Configured.DashCap))
+        if (0 != (cp & PenX.Configured.DashCap))
           info.AddEnum("DashCap", s.DashCap);
-        if (0 != (cp & PenHolder.Configured.DashOffset))
+        if (0 != (cp & PenX.Configured.DashOffset))
           info.AddValue("DashOffset", s.DashOffset);
-        if (0 != (cp & PenHolder.Configured.DashPattern))
+        if (0 != (cp & PenX.Configured.DashPattern))
           info.AddArray("DashPattern", s.DashPattern, s.DashPattern.Length);
-        if (0 != (cp & PenHolder.Configured.EndCap))
+        if (0 != (cp & PenX.Configured.EndCap))
         {
           info.AddValue("EndCap", s.EndCap.Name);
           info.AddValue("EndCapSize", s.m_EndCap.Size);
         }
-        if (0 != (cp & PenHolder.Configured.LineJoin))
+        if (0 != (cp & PenX.Configured.LineJoin))
           info.AddEnum("LineJoin", s.LineJoin);
-        if (0 != (cp & PenHolder.Configured.MiterLimit))
+        if (0 != (cp & PenX.Configured.MiterLimit))
           info.AddValue("MiterLimit", s.MiterLimit);
-        if (0 != (cp & PenHolder.Configured.StartCap))
+        if (0 != (cp & PenX.Configured.StartCap))
         {
           info.AddValue("StartCap", s.StartCap.Name);
           info.AddValue("StartCapSize", s.m_StartCap.Size);
         }
-        if (0 != (cp & PenHolder.Configured.Transform))
+        if (0 != (cp & PenX.Configured.Transform))
           info.AddArray("Transform", s.Transform.Elements, s.Transform.Elements.Length);
-        if (0 != (cp & PenHolder.Configured.Width))
+        if (0 != (cp & PenX.Configured.Width))
           info.AddValue("Width", s.Width);
       }
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
 
-        PenHolder s = null != o ? (PenHolder)o : new PenHolder();
+        PenX s = null != o ? (PenX)o : new PenX();
 
         s.m_ConfiguredProperties = (Configured)info.GetInt32("Configured");
         Configured cp = s.m_ConfiguredProperties;
 
         
 
-        if (0 != (cp & PenHolder.Configured.PenType))
+        if (0 != (cp & PenX.Configured.PenType))
           s.m_PenType = (PenType)info.GetEnum("Type", typeof(PenType));
         else
           s.m_PenType = PenType.SolidColor;
 
-        if (0 != (cp & PenHolder.Configured.Alignment))
+        if (0 != (cp & PenX.Configured.Alignment))
           s.m_Alignment = (PenAlignment)info.GetEnum("Alignment", typeof(PenAlignment));
         else
           s.m_Alignment = PenAlignment.Center;
 
-        if (0 != (cp & PenHolder.Configured.Brush))
-          s.m_Brush = (BrushHolder)info.GetValue("Brush", typeof(BrushHolder));
+        if (0 != (cp & PenX.Configured.Brush))
+          s.m_Brush = (BrushX)info.GetValue("Brush", typeof(BrushX));
         else
-          s.m_Brush = new BrushHolder(Color.Black);
+          s.m_Brush = new BrushX(Color.Black);
 
-        if (0 != (cp & PenHolder.Configured.Color))
+        if (0 != (cp & PenX.Configured.Color))
           s.m_Color = (Color)info.GetValue("Color", typeof(Color));
         else
           s.m_Color = Color.Black;
 
-        if (0 != (cp & PenHolder.Configured.CompoundArray))
+        if (0 != (cp & PenX.Configured.CompoundArray))
           info.GetArray(out s.m_CompoundArray);
         else
           s.m_CompoundArray = new float[0];
 
-        if (0 != (cp & PenHolder.Configured.DashStyle))
+        if (0 != (cp & PenX.Configured.DashStyle))
           s.m_DashStyle = (DashStyle)info.GetEnum("DashStyle", typeof(DashStyle));
         else
           s.m_DashStyle = DashStyle.Solid;
 
-        if (0 != (cp & PenHolder.Configured.DashCap))
+        if (0 != (cp & PenX.Configured.DashCap))
           s.m_DashCap = (DashCap)info.GetEnum("DashCap", typeof(DashCap));
         else
           s.m_DashCap = DashCap.Flat;
 
-        if (0 != (cp & PenHolder.Configured.DashOffset))
+        if (0 != (cp & PenX.Configured.DashOffset))
           s.m_DashOffset = (float)info.GetSingle("DashOffset");
         else
           s.m_DashOffset = 0;
 
-        if (0 != (cp & PenHolder.Configured.DashPattern))
+        if (0 != (cp & PenX.Configured.DashPattern))
           info.GetArray(out s.m_DashPattern);
         else
           s.m_DashPattern = null;
 
-        if (0 != (cp & PenHolder.Configured.EndCap))
+        if (0 != (cp & PenX.Configured.EndCap))
         {
           string name = info.GetString("EndCap");
           float size = info.GetSingle("EndCapSize");
@@ -575,17 +575,17 @@ namespace Altaxo.Graph.Gdi
         else
           s.m_EndCap = LineCapEx.Flat;
 
-        if (0 != (cp & PenHolder.Configured.LineJoin))
+        if (0 != (cp & PenX.Configured.LineJoin))
           s.m_LineJoin = (LineJoin)info.GetEnum("LineJoin", typeof(LineJoin));
         else
           s.m_LineJoin = LineJoin.Miter;
 
-        if (0 != (cp & PenHolder.Configured.MiterLimit))
+        if (0 != (cp & PenX.Configured.MiterLimit))
           s.m_MiterLimit = info.GetSingle("MiterLimit");
         else
           s.m_MiterLimit = 10;
 
-        if (0 != (cp & PenHolder.Configured.StartCap))
+        if (0 != (cp & PenX.Configured.StartCap))
         {
           string name = info.GetString("StartCap");
           float size = info.GetSingle("StartCapSize");
@@ -594,7 +594,7 @@ namespace Altaxo.Graph.Gdi
         else
           s.m_StartCap = LineCapEx.Flat;
 
-        if (0 != (cp & PenHolder.Configured.Transform))
+        if (0 != (cp & PenX.Configured.Transform))
         {
           float[] el;
           info.GetArray(out el);
@@ -603,7 +603,7 @@ namespace Altaxo.Graph.Gdi
         else
           s.m_Transform = new Matrix();
 
-        if (0 != (cp & PenHolder.Configured.Width))
+        if (0 != (cp & PenX.Configured.Width))
           s.m_Width = info.GetSingle("Width");
         else
           s.m_Width = 1;
@@ -617,28 +617,28 @@ namespace Altaxo.Graph.Gdi
 
     #endregion
 
-    public PenHolder()
+    public PenX()
     {
     }
 
-    public PenHolder(Color c)
+    public PenX(Color c)
       : this(c, 1, false)
     {
     }
 
-    public PenHolder(Color c, float width)
+    public PenX(Color c, float width)
       : this(c, width, false)
     {
     }
 
-    public PenHolder(Color c, float width, bool bCachedMode)
+    public PenX(Color c, float width, bool bCachedMode)
     {
      
       this.m_PenType = PenType.SolidColor;
       this.m_Color = c;
       this.m_Width = width;
 
-      _SetProp(PenHolder.Configured.IsNotNull, true);
+      _SetProp(PenX.Configured.IsNotNull, true);
       _SetProp(Configured.Color, Color.Black.ToArgb() != c.ToArgb());
       _SetProp(Configured.Width, 1 != width);
 
@@ -651,7 +651,7 @@ namespace Altaxo.Graph.Gdi
     /// Copy constructor of PenHolder
     /// </summary>
     /// <param name="pen">the PenHolder object to copy</param>
-    public PenHolder(PenHolder pen)
+    public PenX(PenX pen)
     {
       CopyFrom(pen);
     }
@@ -660,7 +660,7 @@ namespace Altaxo.Graph.Gdi
     /// Copies the properties of another instance to this instance.
     /// </summary>
     /// <param name="pen">the PenHolder object to copy</param>
-    public void CopyFrom(PenHolder pen)
+    public void CopyFrom(PenX pen)
     {
       _SetPenVariable(null);
 
@@ -669,7 +669,7 @@ namespace Altaxo.Graph.Gdi
       this.m_Alignment = pen.Alignment;
 
       if (0 != (this.m_ConfiguredProperties & Configured.Brush))
-        this.m_Brush = new BrushHolder(pen.m_Brush);
+        this.m_Brush = new BrushX(pen.m_Brush);
 
       this.m_Color = pen.Color;
 
@@ -725,7 +725,7 @@ namespace Altaxo.Graph.Gdi
     }
     */
 
-    public static implicit operator System.Drawing.Pen(PenHolder ph)
+    public static implicit operator System.Drawing.Pen(PenX ph)
     {
       ph.Cached = true; // if implicit conversion, we maybe are not aware that the pen is never destroyed, so _we_ control the pen by caching it
       return ph.Pen;
@@ -785,42 +785,42 @@ namespace Altaxo.Graph.Gdi
     {
       Configured cp = this.m_ConfiguredProperties;
 
-      if (0 == (cp & PenHolder.Configured.IsNotNull))
+      if (0 == (cp & PenX.Configured.IsNotNull))
         return null;
 
       Pen pen = new Pen(Color.Black);
 
       // now set the optional Pen properties
-      if (0 != (cp & PenHolder.Configured.Width))
+      if (0 != (cp & PenX.Configured.Width))
         pen.Width = this.m_Width;
 
-      if (0 != (cp & PenHolder.Configured.Alignment))
+      if (0 != (cp & PenX.Configured.Alignment))
         pen.Alignment = m_Alignment;
 
-      if (0 != (cp & PenHolder.Configured.Color))
+      if (0 != (cp & PenX.Configured.Color))
         pen.Color = this.m_Color;
-      if (0 != (cp & PenHolder.Configured.Brush))
+      if (0 != (cp & PenX.Configured.Brush))
         pen.Brush = this.m_Brush;
     
-      if (0 != (cp & PenHolder.Configured.CompoundArray))
+      if (0 != (cp & PenX.Configured.CompoundArray))
         pen.CompoundArray = this.m_CompoundArray;
-      if (0 != (cp & PenHolder.Configured.DashStyle))
+      if (0 != (cp & PenX.Configured.DashStyle))
         pen.DashStyle = this.m_DashStyle;
-      if (0 != (cp & PenHolder.Configured.DashCap))
+      if (0 != (cp & PenX.Configured.DashCap))
         pen.DashCap = this.m_DashCap;
-      if (0 != (cp & PenHolder.Configured.DashOffset))
+      if (0 != (cp & PenX.Configured.DashOffset))
         pen.DashOffset = this.m_DashOffset;
-      if (0 != (cp & PenHolder.Configured.DashPattern))
+      if (0 != (cp & PenX.Configured.DashPattern))
         pen.DashPattern = this.m_DashPattern;
-      if (0 != (cp & PenHolder.Configured.EndCap))
+      if (0 != (cp & PenX.Configured.EndCap))
         this.m_EndCap.SetPenEndCap(pen);
-      if (0 != (cp & PenHolder.Configured.LineJoin))
+      if (0 != (cp & PenX.Configured.LineJoin))
         pen.LineJoin = this.m_LineJoin;
-      if (0 != (cp & PenHolder.Configured.MiterLimit))
+      if (0 != (cp & PenX.Configured.MiterLimit))
         pen.MiterLimit = this.m_MiterLimit;
-      if (0 != (cp & PenHolder.Configured.StartCap))
+      if (0 != (cp & PenX.Configured.StartCap))
         this.m_StartCap.SetPenStartCap(pen);
-      if (0 != (cp & PenHolder.Configured.Transform))
+      if (0 != (cp & PenX.Configured.Transform))
         pen.Transform = this.m_Transform;
    
 
@@ -828,7 +828,7 @@ namespace Altaxo.Graph.Gdi
       return pen;
     }
 
-    private void _SetBrushVariable(BrushHolder bh)
+    private void _SetBrushVariable(BrushX bh)
     {
       if (null != m_Brush)
         m_Brush.Dispose();
@@ -861,12 +861,12 @@ namespace Altaxo.Graph.Gdi
     }
 
 
-    public BrushHolder BrushHolder
+    public BrushX BrushHolder
     {
       get
       {
         if (m_Brush == null)
-          return new BrushHolder(this.m_Color);
+          return new BrushX(this.m_Color);
         else
            return m_Brush;
       }
@@ -892,7 +892,7 @@ namespace Altaxo.Graph.Gdi
         else if (value.BrushType == BrushType.HatchBrush)
         {
           m_PenType = PenType.HatchFill;
-          _SetBrushVariable(new BrushHolder(value));
+          _SetBrushVariable(new BrushX(value));
 
           _SetProp(Configured.PenType, true);
           _SetProp(Configured.Color, false);
@@ -901,7 +901,7 @@ namespace Altaxo.Graph.Gdi
         else if (value.BrushType == BrushType.TextureBrush)
         {
           m_PenType = PenType.TextureFill;
-          _SetBrushVariable(new BrushHolder(value));
+          _SetBrushVariable(new BrushX(value));
 
           _SetProp(Configured.PenType, true);
           _SetProp(Configured.Color, false);
@@ -910,7 +910,7 @@ namespace Altaxo.Graph.Gdi
         else if (value.BrushType == BrushType.LinearGradientBrush)
         {
           m_PenType = PenType.LinearGradient;
-          _SetBrushVariable(new BrushHolder(value));
+          _SetBrushVariable(new BrushX(value));
 
           _SetProp(Configured.PenType, true);
           _SetProp(Configured.Color, false);
@@ -919,7 +919,7 @@ namespace Altaxo.Graph.Gdi
         else if (value.BrushType == BrushType.PathGradientBrush)
         {
           m_PenType = PenType.PathGradient;
-          _SetBrushVariable(new BrushHolder(value));
+          _SetBrushVariable(new BrushX(value));
 
           _SetProp(Configured.PenType, true);
           _SetProp(Configured.Color, false);
@@ -1143,7 +1143,7 @@ namespace Altaxo.Graph.Gdi
 
     public object Clone()
     {
-      return new PenHolder(this);
+      return new PenX(this);
     }
 
     public void Dispose()
@@ -1483,9 +1483,9 @@ namespace Altaxo.Graph.Gdi
 
       // now the other linecaps
       LineCapExtension more;
-      more = new ArrowF10LineCap();
+      more = new LineCaps.ArrowF10LineCap();
       _registeredStyles.Add(more.Name, more);
-      more = new ArrowF20LineCap();
+      more = new LineCaps.ArrowF20LineCap();
       _registeredStyles.Add(more.Name, more);
     }
 
@@ -1703,98 +1703,6 @@ namespace Altaxo.Graph.Gdi
   #endregion
 
 
-  public class ArrowF10LineCap : LineCapExtension
-  {
-    CustomLineCap _cap;
-    const float _designWidth = 2;
-
-    public ArrowF10LineCap()
-    {
-      GraphicsPath hPath = new GraphicsPath();
-
-      // Create the outline for our custom end cap.
-      hPath.AddLine(new PointF(0, -_designWidth), new PointF(-_designWidth/2,-_designWidth));
-      hPath.AddLine(new PointF(-_designWidth/2, -_designWidth), new PointF(0, 0));
-      hPath.AddLine(new PointF(0, 0), new PointF(_designWidth/2, -_designWidth));
-      hPath.AddLine(new PointF(_designWidth/2,-_designWidth), new PointF(0, -_designWidth));
-
-      // Construct the hook-shaped end cap.
-      _cap = new CustomLineCap(hPath,null);
-      _cap.BaseInset = _designWidth;
-    }
-
-    public override string Name { get { return "ArrowF10"; } }
-    public override float DefaultSize { get { return 8; } }
-
-    CustomLineCap GetClone(Pen pen, float size)
-    {
-      CustomLineCap clone = (CustomLineCap)_cap.Clone();
-      if (pen.Width * _designWidth < size)
-        clone.WidthScale = pen.Width == 0 ? 1 : size / (pen.Width * _designWidth);
-      else
-        clone.WidthScale = 1;
-      
-      //clone.WidthScale = 1;
-      return clone;
-    }
-
-    public override void SetStartCap(Pen pen, float size)
-    {
-      pen.StartCap = LineCap.Custom;
-      pen.CustomStartCap = GetClone(pen,size);
-    }
-    public override void SetEndCap(Pen pen, float size)
-    {
-      pen.EndCap = LineCap.Custom;
-      pen.CustomEndCap = GetClone(pen,size);
-    }
-  }
-  public class ArrowF20LineCap : LineCapExtension
-  {
-    CustomLineCap _cap;
-    const float _designWidth = 2;
-
-    public ArrowF20LineCap()
-    {
-      GraphicsPath hPath = new GraphicsPath();
-
-      // Create the outline for our custom end cap.
-      hPath.AddLine(new PointF(0, -2*_designWidth), new PointF(-_designWidth/2, -2*_designWidth));
-      hPath.AddLine(new PointF(-_designWidth/2, -2*_designWidth), new PointF(0, 0));
-      hPath.AddLine(new PointF(0, 0), new PointF(_designWidth/2, -2*_designWidth));
-      hPath.AddLine(new PointF(_designWidth/2, -2*_designWidth), new PointF(0, -2*_designWidth));
-
-      // Construct the hook-shaped end cap.
-      _cap = new CustomLineCap(hPath, null);
-      _cap.BaseInset = _designWidth*2;
-    }
-
-    public override string Name { get { return "ArrowF20"; } }
-    public override float DefaultSize { get { return 8; } }
-
-    CustomLineCap GetClone(Pen pen, float size)
-    {
-      CustomLineCap clone = (CustomLineCap)_cap.Clone();
-      if (pen.Width * _designWidth < size)
-        clone.WidthScale = pen.Width==0 ? 1 : size / (pen.Width * _designWidth);
-      else
-        clone.WidthScale = 1;
-
-      //clone.WidthScale = 1;
-      return clone;
-    }
-
-    public override void SetStartCap(Pen pen, float size)
-    {
-      pen.StartCap = LineCap.Custom;
-      pen.CustomStartCap = GetClone(pen, size);
-    }
-    public override void SetEndCap(Pen pen, float size)
-    {
-      pen.EndCap = LineCap.Custom;
-      pen.CustomEndCap = GetClone(pen, size);
-    }
-
-   
-  }
+ 
+ 
 }

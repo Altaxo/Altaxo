@@ -40,7 +40,7 @@ namespace Altaxo.Gui.Common.Drawing
       InitializeComponent();
     }
 
-    public PenHolder Pen
+    public PenX Pen
     {
       get 
       {

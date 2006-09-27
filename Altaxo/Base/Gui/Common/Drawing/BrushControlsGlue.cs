@@ -52,9 +52,9 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
-    BrushHolder _brush;
+    BrushX _brush;
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-    public BrushHolder Brush
+    public BrushX Brush
     {
       get { return _brush; }
       set 

@@ -88,7 +88,7 @@ namespace Altaxo.Graph.Gdi.Background
 
     public bool SupportsBrush { get { return false; } }
 
-    public BrushHolder Brush
+    public BrushX Brush
     {
       get
       {

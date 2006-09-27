@@ -91,7 +91,7 @@ namespace Altaxo.Gui.Graph
     /// </summary>
     /// <param name="arr">String array of possible selections</param>
     /// <param name="sel">Current selection.</param>
-    void InitializeFillColor(BrushHolder sel);
+    void InitializeFillColor(BrushX sel);
   
 
     #region Getter
@@ -104,7 +104,7 @@ namespace Altaxo.Gui.Graph
   
     bool   LineFillArea { get; }
     ListNode LineFillDirection { get; }
-    BrushHolder LineFillColor {get; }
+    BrushX LineFillColor {get; }
 
     
 

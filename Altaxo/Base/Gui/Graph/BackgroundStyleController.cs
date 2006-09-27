@@ -39,7 +39,7 @@ namespace Altaxo.Gui.Graph
     /// Called if the background color is changed.
     /// </summary>
     /// <param name="newValue">The new selected item of the combo box.</param>
-    void EhView_BackgroundBrushChanged(BrushHolder newValue);
+    void EhView_BackgroundBrushChanged(BrushX newValue);
 
     /// <summary>
     /// Called if the background style changed.
@@ -59,7 +59,7 @@ namespace Altaxo.Gui.Graph
     /// <summary>
     /// Initializes the content of the background color combo box.
     /// </summary>
-    void BackgroundBrush_Initialize(BrushHolder brush);
+    void BackgroundBrush_Initialize(BrushX brush);
 
     /// <summary>
     /// Initializes the enable state of the background color combo box.
@@ -121,7 +121,7 @@ namespace Altaxo.Gui.Graph
       if (this._tempDoc != null && this._tempDoc.SupportsBrush)
         _view.BackgroundBrush_Initialize(this._tempDoc.Brush);
       else
-        _view.BackgroundBrush_Initialize(new BrushHolder(Color.Transparent));
+        _view.BackgroundBrush_Initialize(new BrushX(Color.Transparent));
 
       _view.BackgroundBrushEnable_Initialize(this._tempDoc != null && this._tempDoc.SupportsBrush);
 
@@ -178,7 +178,7 @@ namespace Altaxo.Gui.Graph
 
     #region IPlotRangeViewEventSink Members
 
-    public void EhView_BackgroundBrushChanged(BrushHolder brush)
+    public void EhView_BackgroundBrushChanged(BrushX brush)
     {
       if (this._tempDoc != null && this._tempDoc.SupportsBrush)
       {
@@ -194,7 +194,7 @@ namespace Altaxo.Gui.Graph
     public void EhView_BackgroundStyleChanged(int newValue)
     {
 
-      BrushHolder backgroundColor = new BrushHolder(Color.Transparent);
+      BrushX backgroundColor = new BrushX(Color.Transparent);
 
       if (newValue != 0)
       {

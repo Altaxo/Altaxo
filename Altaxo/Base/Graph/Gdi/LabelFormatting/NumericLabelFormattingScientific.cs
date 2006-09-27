@@ -133,7 +133,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
       return new SizeF(size1.Width + size2.Width, size1.Height);
     }
 
-    public override void DrawItem(Graphics g, BrushHolder brush, Font font, StringFormat strfmt, Altaxo.Data.AltaxoVariant item, PointF morg)
+    public override void DrawItem(Graphics g, BrushX brush, Font font, StringFormat strfmt, Altaxo.Data.AltaxoVariant item, PointF morg)
     {
       string firstpart, exponent;
       SplitInFirstPartAndExponent((double)item, out firstpart, out exponent);
@@ -223,7 +223,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
         }
       }
 
-      public virtual void Draw(Graphics g, BrushHolder brush, PointF point)
+      public virtual void Draw(Graphics g, BrushX brush, PointF point)
       {
         g.DrawString(_firstpart, _font1, brush, point, _strfmt);
 

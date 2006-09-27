@@ -30,8 +30,8 @@ namespace Altaxo.Graph.Gdi.Axis
 {
   public class GridStyle : ICloneable, Main.IChangedEventSource
   {
-    PenHolder _minorPen;
-    PenHolder _majorPen;
+    PenX _minorPen;
+    PenX _majorPen;
     bool _showGrid;
 
    
@@ -76,10 +76,10 @@ namespace Altaxo.Graph.Gdi.Axis
         if (s._showGrid)
         {
           s._showZeroOnly = info.GetBoolean("ZeroOnly");
-          s._majorPen = (PenHolder)info.GetValue("MajorPen", s);
+          s._majorPen = (PenX)info.GetValue("MajorPen", s);
           s._showMinor = info.GetBoolean("ShowMinor");
           if (s._showMinor)
-            s._minorPen = (PenHolder)info.GetValue("MinorPen", s);
+            s._minorPen = (PenX)info.GetValue("MinorPen", s);
         }
 
         return s;
@@ -99,26 +99,26 @@ namespace Altaxo.Graph.Gdi.Axis
 
     public void CopyFrom(GridStyle from)
     {
-      this.MajorPen = from._majorPen == null ? null : (PenHolder)(from._majorPen.Clone());
-      this.MinorPen = from._minorPen == null ? null : (PenHolder)(from._minorPen.Clone());
+      this.MajorPen = from._majorPen == null ? null : (PenX)(from._majorPen.Clone());
+      this.MinorPen = from._minorPen == null ? null : (PenX)(from._minorPen.Clone());
       this._showGrid = from._showGrid;
       this._showMinor = from._showMinor;
       this._showZeroOnly = from._showZeroOnly;
     }
 
 
-    public PenHolder MajorPen
+    public PenX MajorPen
     {
       get
       {
         if (null == _majorPen)
-          _majorPen = new PenHolder(Color.Blue);
+          _majorPen = new PenX(Color.Blue);
         return _majorPen;
 
       }
       set
       {
-        PenHolder oldvalue = _majorPen;
+        PenX oldvalue = _majorPen;
         _majorPen = value;
 
         if (!object.ReferenceEquals(value, oldvalue))
@@ -134,18 +134,18 @@ namespace Altaxo.Graph.Gdi.Axis
     }
 
 
-    public PenHolder MinorPen
+    public PenX MinorPen
     {
       get
       {
         if (null == _minorPen)
-          _minorPen = new PenHolder(Color.LightBlue);
+          _minorPen = new PenX(Color.LightBlue);
 
         return _minorPen;
       }
       set
       {
-        PenHolder oldvalue = _minorPen;
+        PenX oldvalue = _minorPen;
         _minorPen = value;
 
         if (!object.ReferenceEquals(value, oldvalue))

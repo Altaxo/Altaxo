@@ -43,7 +43,7 @@ namespace Altaxo.Gui.Graph
 
     #region IShapeGraphicView Members
 
-    public PenHolder DocPen
+    public PenX DocPen
     {
       get
       {
@@ -69,7 +69,7 @@ namespace Altaxo.Gui.Graph
     }
 
 
-    public BrushHolder DocBrush
+    public BrushX DocBrush
     {
       get
       {

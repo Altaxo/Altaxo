@@ -43,11 +43,11 @@ namespace Altaxo.Graph.Gdi.Axis
   {
 
     /// <summary>Pen used for painting of the axis.</summary>
-    protected PenHolder _axisPen = new PenHolder(Color.Black,1);
+    protected PenX _axisPen = new PenX(Color.Black,1);
     /// <summary>Pen used for painting of the major ticks.</summary>
-    protected PenHolder _majorTickPen =  new PenHolder(Color.Black,1);
+    protected PenX _majorTickPen =  new PenX(Color.Black,1);
     /// <summary>Pen used for painting of the minor ticks.</summary>
-    protected PenHolder _minorTickPen =  new PenHolder(Color.Black,1);
+    protected PenX _minorTickPen =  new PenX(Color.Black,1);
     /// <summary>Length of the major ticks in points (1/72 inch).</summary>
     protected float _majorTickLength = 8;
     /// <summary>Length of the minor ticks in points (1/72 inch).</summary>
@@ -106,9 +106,9 @@ namespace Altaxo.Graph.Gdi.Axis
       {
         AxisLineStyle s = (AxisLineStyle)obj;
 
-        s._axisPen      = (PenHolder)info.GetValue("AxisPen",typeof(PenHolder));
-        s._majorTickPen = (PenHolder)info.GetValue("MajorPen",typeof(PenHolder));
-        s._minorTickPen = (PenHolder)info.GetValue("MinorPen",typeof(PenHolder));
+        s._axisPen      = (PenX)info.GetValue("AxisPen",typeof(PenX));
+        s._majorTickPen = (PenX)info.GetValue("MajorPen",typeof(PenX));
+        s._minorTickPen = (PenX)info.GetValue("MinorPen",typeof(PenX));
 
         s._majorTickLength = (float)info.GetSingle("MajorLength");
         s._minorTickLength = (float)info.GetSingle("MinorLength");
@@ -149,9 +149,9 @@ namespace Altaxo.Graph.Gdi.Axis
         AxisLineStyle s = null!=o ? (AxisLineStyle)o : new AxisLineStyle();
         
         Edge edge         = (Edge)info.GetValue("Edge",s);
-        s._axisPen      = (PenHolder)info.GetValue("AxisPen",s);
-        s._majorTickPen = (PenHolder)info.GetValue("MajorPen",s);
-        s._minorTickPen = (PenHolder)info.GetValue("MinorPen",s);
+        s._axisPen      = (PenX)info.GetValue("AxisPen",s);
+        s._majorTickPen = (PenX)info.GetValue("MajorPen",s);
+        s._minorTickPen = (PenX)info.GetValue("MinorPen",s);
 
         s._majorTickLength = (float)info.GetSingle("MajorLength");
         s._minorTickLength = (float)info.GetSingle("MinorLength");
@@ -206,9 +206,9 @@ namespace Altaxo.Graph.Gdi.Axis
 
         AxisLineStyle s = null != o ? (AxisLineStyle)o : new AxisLineStyle();
 
-        s._axisPen = (PenHolder)info.GetValue("AxisPen", s);
-        s._majorTickPen = (PenHolder)info.GetValue("MajorPen", s);
-        s._minorTickPen = (PenHolder)info.GetValue("MinorPen", s);
+        s._axisPen = (PenX)info.GetValue("AxisPen", s);
+        s._majorTickPen = (PenX)info.GetValue("MajorPen", s);
+        s._minorTickPen = (PenX)info.GetValue("MinorPen", s);
 
         s._majorTickLength = (float)info.GetSingle("MajorLength");
         s._minorTickLength = (float)info.GetSingle("MinorLength");
@@ -284,16 +284,16 @@ namespace Altaxo.Graph.Gdi.Axis
       if (_axisPen != null)
         WireEventChain(false);
      
-      this._axisPen = null == from._axisPen ? null : (PenHolder)from._axisPen.Clone();
+      this._axisPen = null == from._axisPen ? null : (PenX)from._axisPen.Clone();
       this._axisPosition = from._axisPosition;
       this._showLeftMajorTicks = from._showLeftMajorTicks;
       this._showLeftMinorTicks = from._showLeftMinorTicks;
       this._showRightMajorTicks = from._showRightMajorTicks;
       this._showRightMinorTicks = from._showRightMinorTicks;
       this._majorTickLength  = from._majorTickLength;
-      this._majorTickPen     = null==from._majorTickPen ? null : (PenHolder)from._majorTickPen;
+      this._majorTickPen     = null==from._majorTickPen ? null : (PenX)from._majorTickPen;
       this._minorTickLength  = from._minorTickLength;
-      this._minorTickPen     = (null==from._minorTickPen) ? null : (PenHolder)from._minorTickPen;
+      this._minorTickPen     = (null==from._minorTickPen) ? null : (PenX)from._minorTickPen;
 
       // Rewire the event chain
       WireEventChain(true);

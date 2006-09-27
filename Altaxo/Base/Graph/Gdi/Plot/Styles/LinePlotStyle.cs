@@ -124,13 +124,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 
 
-    protected PenHolder _penHolder;
+    protected PenX _penHolder;
     protected XYPlotLineStyles.ConnectionStyle _connectionStyle;
     protected bool _useLineSymbolGap;
     protected float _symbolGap;
     protected bool _ignoreMissingPoints; // treat missing points as if not present (connect lines over missing points) 
     protected bool _fillArea;
-    protected BrushHolder _fillBrush; // brush to fill the area under the line
+    protected BrushX _fillBrush; // brush to fill the area under the line
     protected A2DAxisStyleIdentifier _fillDirection; // the direction to fill
     protected bool _independentColor;
 
@@ -172,12 +172,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       {
         LinePlotStyle s = (LinePlotStyle)obj;
 
-        s._penHolder = (PenHolder)info.GetValue("Pen", typeof(PenHolder));
+        s._penHolder = (PenX)info.GetValue("Pen", typeof(PenX));
         s.Connection = (XYPlotLineStyles.ConnectionStyle)info.GetValue("Connection", typeof(XYPlotLineStyles.ConnectionStyle));
         s._useLineSymbolGap = info.GetBoolean("LineSymbolGap");
         s._ignoreMissingPoints = info.GetBoolean("IgnoreMissingPoints");
         s._fillArea = info.GetBoolean("FillArea");
-        s._fillBrush = (BrushHolder)info.GetValue("FillBrush", typeof(BrushHolder));
+        s._fillBrush = (BrushX)info.GetValue("FillBrush", typeof(BrushX));
         s._fillDirection = (A2DAxisStyleIdentifier)info.GetValue("FillDirection", typeof(A2DAxisStyleIdentifier));
 
         return s;
@@ -212,12 +212,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
         LinePlotStyle s = null != o ? (LinePlotStyle)o : new LinePlotStyle();
 
-        s._penHolder = (PenHolder)info.GetValue("Pen", typeof(PenHolder));
+        s._penHolder = (PenX)info.GetValue("Pen", typeof(PenX));
         s.Connection = (XYPlotLineStyles.ConnectionStyle)info.GetValue("Connection", typeof(XYPlotLineStyles.ConnectionStyle));
         s._useLineSymbolGap = info.GetBoolean("LineSymbolGap");
         s._ignoreMissingPoints = info.GetBoolean("IgnoreMissingPoints");
         s._fillArea = info.GetBoolean("FillArea");
-        s._fillBrush = (BrushHolder)info.GetValue("FillBrush", typeof(BrushHolder));
+        s._fillBrush = (BrushX)info.GetValue("FillBrush", typeof(BrushX));
         XYPlotLineStyles.FillDirection fillDir = (XYPlotLineStyles.FillDirection)info.GetValue("FillDirection", typeof(XYPlotLineStyles.FillDirection));
         if (s._fillArea)
           s._fillDirection = GetFillDirection(fillDir);
@@ -277,11 +277,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     public LinePlotStyle()
     {
-      _penHolder = new PenHolder(Color.Black);
+      _penHolder = new PenX(Color.Black);
       _useLineSymbolGap = true;
       _ignoreMissingPoints = false;
       _fillArea = false;
-      _fillBrush = new BrushHolder(Color.Black);
+      _fillBrush = new BrushX(Color.Black);
       _fillDirection = null;
       _connectionStyle = XYPlotLineStyles.ConnectionStyle.Straight;
       _cachedPaintOneRange = new PaintOneRangeTemplate(StraightConnection_PaintOneRange);
@@ -293,12 +293,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     public void CopyFrom(LinePlotStyle from, bool suppressChangeEvent)
     {
-      this._penHolder = null == from._penHolder ? null : (PenHolder)from._penHolder.Clone();
+      this._penHolder = null == from._penHolder ? null : (PenX)from._penHolder.Clone();
       this._useLineSymbolGap = from._useLineSymbolGap;
       this._symbolGap = from._symbolGap;
       this._ignoreMissingPoints = from._ignoreMissingPoints;
       this._fillArea = from._fillArea;
-      this._fillBrush = null == from._fillBrush ? null : (BrushHolder)from._fillBrush.Clone();
+      this._fillBrush = null == from._fillBrush ? null : (BrushX)from._fillBrush.Clone();
       this._fillDirection = from._fillDirection;
       this.Connection = from._connectionStyle; // beachte links nur Connection, damit das Template mit gesetzt wird
       this._independentColor = from._independentColor;
@@ -422,7 +422,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       OnChanged(); // Fire Changed event
     }
 
-    public PenHolder PenHolder
+    public PenX PenHolder
     {
       get { return _penHolder; }
     }
@@ -435,7 +435,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         this._fillArea = value;
         // ensure that if value is true, there is a fill brush which is not null
         if (true == value && null == this._fillBrush)
-          this._fillBrush = new BrushHolder(Color.White);
+          this._fillBrush = new BrushX(Color.White);
 
         OnChanged(); // Fire Changed event
       }
@@ -455,7 +455,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
-    public BrushHolder FillBrush
+    public BrushX FillBrush
     {
       get { return this._fillBrush; }
       set
@@ -463,7 +463,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         // copy the brush only if not null
         if (null != value)
         {
-          this._fillBrush = (BrushHolder)value.Clone();
+          this._fillBrush = (BrushX)value.Clone();
           this._fillBrush.Changed += new EventHandler(this.EhChildChanged);
           OnChanged(); // Fire Changed event
         }

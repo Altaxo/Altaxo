@@ -209,7 +209,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     protected XYPlotScatterStyles.Shape _shape;
     protected XYPlotScatterStyles.Style _style;
     protected List<A2DAxisStyleIdentifier> _dropLine;
-    protected PenHolder _pen;
+    protected PenX _pen;
     protected bool _independentColor;
 
     protected float _symbolSize;
@@ -220,7 +220,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     // cached values:
     protected GraphicsPath _cachedPath;
     protected bool _cachedFillPath;
-    protected BrushHolder _cachedFillBrush;
+    protected BrushX _cachedFillBrush;
 
     protected object _parent;
 
@@ -258,7 +258,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         s._shape = (XYPlotScatterStyles.Shape)info.GetValue("Shape", typeof(XYPlotScatterStyles.Shape));
         s._style = (XYPlotScatterStyles.Style)info.GetValue("Style", typeof(XYPlotScatterStyles.Style));
         s._dropLine = (List<A2DAxisStyleIdentifier>)info.GetValue("DropLine", typeof(List<A2DAxisStyleIdentifier>));
-        s._pen = (PenHolder)info.GetValue("Pen", typeof(PenHolder));
+        s._pen = (PenX)info.GetValue("Pen", typeof(PenX));
         s._symbolSize = info.GetSingle("SymbolSize");
         s._relativePenWidth = info.GetSingle("RelativePenWidth");
         return s;
@@ -291,7 +291,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         s._shape = (XYPlotScatterStyles.Shape)info.GetValue("Shape", typeof(XYPlotScatterStyles.Shape));
         s._style = (XYPlotScatterStyles.Style)info.GetValue("Style", typeof(XYPlotScatterStyles.Style));
         XYPlotScatterStyles.DropLine dropLine = (XYPlotScatterStyles.DropLine)info.GetValue("DropLine", typeof(XYPlotScatterStyles.DropLine));
-        s._pen = (PenHolder)info.GetValue("Pen", typeof(PenHolder));
+        s._pen = (PenX)info.GetValue("Pen", typeof(PenX));
         s._symbolSize = info.GetSingle("SymbolSize");
         s._relativePenWidth = info.GetSingle("RelativePenWidth");
 
@@ -370,14 +370,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       else 
         this._dropLine.Clear();
       this._dropLine.AddRange(from._dropLine);
-      this._pen = null == from._pen ? null : (PenHolder)from._pen.Clone();
+      this._pen = null == from._pen ? null : (PenX)from._pen.Clone();
       this._independentColor = from._independentColor;
       this._independentSymbolSize = from._independentSymbolSize;
 
 
       this._cachedPath = null == from._cachedPath ? null : (GraphicsPath)from._cachedPath.Clone();
       this._cachedFillPath = from._cachedFillPath;
-      this._cachedFillBrush = null == from._cachedFillBrush ? null : (BrushHolder)from._cachedFillBrush.Clone();
+      this._cachedFillBrush = null == from._cachedFillBrush ? null : (BrushX)from._cachedFillBrush.Clone();
       this._symbolSize = from._symbolSize;
       this._relativePenWidth = from._relativePenWidth;
       this._skipFreq = from._skipFreq;
@@ -397,7 +397,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       _shape = shape;
       _style = style;
       _dropLine = new List<A2DAxisStyleIdentifier>();
-      _pen = new PenHolder(penColor, penWidth);
+      _pen = new PenX(penColor, penWidth);
       _symbolSize = size;
       this._independentSymbolSize = true;
 
@@ -415,7 +415,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       this._shape = XYPlotScatterStyles.Shape.Square;
       this._style = XYPlotScatterStyles.Style.Solid;
       this._dropLine = new List<A2DAxisStyleIdentifier>();
-      this._pen = new PenHolder(Color.Black);
+      this._pen = new PenX(Color.Black);
       this._independentColor = false;
 
       this._symbolSize = 8;
@@ -424,7 +424,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       this._relativePenWidth = 0.1f;
       this._skipFreq = 1;
       this._cachedFillPath = true; // since default is solid
-      this._cachedFillBrush = new BrushHolder(Color.Black);
+      this._cachedFillBrush = new BrushX(Color.Black);
       this._cachedPath = GetPath(_shape, _style, _symbolSize);
       CreateEventChain();
     }
@@ -446,7 +446,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
           // ensure that a pen is set if Shape is other than nosymbol
           if (value != XYPlotScatterStyles.Shape.NoSymbol && null == this._pen)
-            _pen = new PenHolder(Color.Black);
+            _pen = new PenX(Color.Black);
 
           SetCachedValues();
 
@@ -505,7 +505,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
-    public PenHolder Pen
+    public PenX Pen
     {
       get { return this._pen; }
       set
@@ -513,7 +513,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         // ensure pen can be only set to null if NoSymbol
         if (value != null || XYPlotScatterStyles.Shape.NoSymbol == this._shape)
         {
-          _pen = null == value ? null : (PenHolder)value.Clone();
+          _pen = null == value ? null : (PenX)value.Clone();
           _pen.Changed += new EventHandler(this.EhChildChanged);
           OnChanged(); // Fire Changed event
         }
@@ -600,11 +600,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       _cachedFillPath = _style == XYPlotScatterStyles.Style.Solid || _style == XYPlotScatterStyles.Style.Open || _style == XYPlotScatterStyles.Style.DotCenter;
 
       if (this._style != XYPlotScatterStyles.Style.Solid)
-        _cachedFillBrush = new BrushHolder(Color.White);
+        _cachedFillBrush = new BrushX(Color.White);
       else if (this._pen.PenType == PenType.SolidColor)
-        _cachedFillBrush = new BrushHolder(_pen.Color);
+        _cachedFillBrush = new BrushX(_pen.Color);
       else
-        _cachedFillBrush = new BrushHolder(_pen.BrushHolder);
+        _cachedFillBrush = new BrushX(_pen.BrushHolder);
     }
 
 

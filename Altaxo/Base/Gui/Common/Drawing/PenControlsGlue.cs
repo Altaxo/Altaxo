@@ -41,9 +41,9 @@ namespace Altaxo.Gui.Common.Drawing
 
     #region Pen
 
-    PenHolder _pen;
+    PenX _pen;
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-    public PenHolder Pen
+    public PenX Pen
     {
       get
       {

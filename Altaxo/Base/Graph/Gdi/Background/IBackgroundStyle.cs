@@ -54,6 +54,6 @@ namespace Altaxo.Graph.Gdi.Background
     /// <summary>
     /// Get/sets the color.
     /// </summary>
-    BrushHolder Brush { get; set; }
+    BrushX Brush { get; set; }
   }
 }

@@ -50,7 +50,7 @@ namespace Altaxo.Gui.Common.Drawing
       _colorType = ColorType.KnownAndSystemColor;
     }
 
-    public BrushColorComboBox(BrushHolder selectedBrush)
+    public BrushColorComboBox(BrushX selectedBrush)
       : this()
     {
       SetDataSource(selectedBrush);
@@ -85,7 +85,7 @@ namespace Altaxo.Gui.Common.Drawing
     void EhShowCustomBrushDialog(object sender, EventArgs e)
     {
       BrushAllPropertiesControl ctrl = new BrushAllPropertiesControl();
-      ctrl.Brush = (BrushHolder)this.Brush.Clone();
+      ctrl.Brush = (BrushX)this.Brush.Clone();
       if (Current.Gui.ShowDialog(ctrl, "Brush properties"))
       {
         this.Brush = ctrl.Brush;
@@ -95,7 +95,7 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
-    void SetDataSource(BrushHolder selectedBrush)
+    void SetDataSource(BrushX selectedBrush)
     {
       this.BeginUpdate();
 
@@ -125,16 +125,16 @@ namespace Altaxo.Gui.Common.Drawing
     }
   
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-    public BrushHolder Brush
+    public BrushX Brush
     {
       get
       {
         if (SelectedItem is Color)
-          return new BrushHolder((Color)SelectedItem);
-        else if (SelectedItem is BrushHolder)
-          return (BrushHolder)SelectedItem;
+          return new BrushX((Color)SelectedItem);
+        else if (SelectedItem is BrushX)
+          return (BrushX)SelectedItem;
         else
-          return new BrushHolder(Color.Black);
+          return new BrushX(Color.Black);
       }
       set
       {
@@ -182,7 +182,7 @@ namespace Altaxo.Gui.Common.Drawing
         }
         else
         {
-          BrushHolder itemBrush = (BrushHolder)Items[e.Index];
+          BrushX itemBrush = (BrushX)Items[e.Index];
           itemBrush.Rectangle = rectColor;
           grfx.FillRectangle(itemBrush, rectColor);
           text = "Custom Brush";
@@ -199,7 +199,7 @@ namespace Altaxo.Gui.Common.Drawing
       _colorDialog.Color = this.Brush.Color;
       if (DialogResult.OK == _colorDialog.ShowDialog(this))
       {
-        this.Brush = new BrushHolder(_colorDialog.Color);
+        this.Brush = new BrushX(_colorDialog.Color);
         OnSelectedItemChanged(EventArgs.Empty);
         OnSelectedValueChanged(EventArgs.Empty);
         OnSelectionChangeCommitted(EventArgs.Empty);
@@ -210,7 +210,7 @@ namespace Altaxo.Gui.Common.Drawing
     {
       ToolStripItem item = (ToolStripItem)sender;
       int alpha = (int)item.Tag;
-      this.Brush = new BrushHolder(Color.FromArgb(alpha, this.Brush.Color));
+      this.Brush = new BrushX(Color.FromArgb(alpha, this.Brush.Color));
       OnSelectedItemChanged(EventArgs.Empty);
       OnSelectedValueChanged(EventArgs.Empty);
       OnSelectionChangeCommitted(EventArgs.Empty);

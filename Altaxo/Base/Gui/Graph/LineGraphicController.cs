@@ -32,7 +32,7 @@ namespace Altaxo.Gui.Graph
 {
   public interface ILineGraphicView
   {
-    PenHolder DocPen { get; set; }
+    PenX DocPen { get; set; }
     System.Drawing.PointF DocPosition { get; set; }
     System.Drawing.SizeF DocSize { get; set; }
     float DocRotation { get; set; }

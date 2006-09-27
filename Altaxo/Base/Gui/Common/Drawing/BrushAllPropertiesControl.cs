@@ -39,7 +39,7 @@ namespace Altaxo.Gui.Common.Drawing
       InitializeComponent();
     }
 
-    public BrushHolder Brush
+    public BrushX Brush
     {
       get
       {

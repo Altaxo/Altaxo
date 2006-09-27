@@ -29,76 +29,76 @@ using Altaxo.Serialization;
 using Altaxo.Graph.Scales;
 using Altaxo.Graph.Scales.Boundaries;
 
-namespace Altaxo.Graph.Gdi
+namespace Altaxo.Graph.Scales
 {
   [Serializable]
-  public class XYPlotLayerAxisProperties
+  public class LinkedScale
   {
     /// <summary>
     /// The axis.
     /// </summary>
-    private Scale _axis; // the X-Axis
+    private Scale _scale; // the X-Axis
 
     /// <summary>Indicate if x-axis is linked to the linked layer x axis.</summary>
     private bool _isLinked;
 
     /// <summary>The value a of x-axis link for link of origin: org' = a + b*org.</summary>
-    private double _linkAxisOrgA;
+    private double _linkOrgA;
     /// <summary>The value b of x-axis link for link of origin: org' = a + b*org.</summary>
-    private double _linkAxisOrgB;
+    private double _linkOrgB;
     /// <summary>The value a of x-axis link for link of end: end' = a + b*end.</summary>
-    private double _linkAxisEndA;
+    private double _linkEndA;
     /// <summary>The value b of x-axis link for link of end: end' = a + b*end.</summary>
-    private double _linkAxisEndB;
+    private double _linkEndB;
 
     /// <summary>
     /// Fired if the axis changed or the axis boundaries changed.
     /// </summary>
     [field:NonSerialized]
-    public event EventHandler AxisInstanceChanged;
+    public event EventHandler ScaleInstanceChanged;
     /// <summary>
     /// Fired if the axis properties changed.
     /// </summary>
     [field:NonSerialized]
-    public event EventHandler AxisPropertiesChanged;
+    public event EventHandler LinkPropertiesChanged;
 
     #region Serialization
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Graph.XYPlotLayerAxisProperties", 0)]
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotLayerAxisProperties), 1)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LinkedScale), 1)]
     public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        XYPlotLayerAxisProperties s = (XYPlotLayerAxisProperties)obj;
+        LinkedScale s = (LinkedScale)obj;
        
 
-        info.AddValue("Axis", s._axis);
+        info.AddValue("Axis", s._scale);
         info.AddValue("Link", s._isLinked);
-        info.AddValue("OrgA", s._linkAxisOrgA);
-        info.AddValue("OrgB", s._linkAxisOrgB);
-        info.AddValue("EndA", s._linkAxisEndA);
-        info.AddValue("EndB", s._linkAxisEndB);
+        info.AddValue("OrgA", s._linkOrgA);
+        info.AddValue("OrgB", s._linkOrgB);
+        info.AddValue("EndA", s._linkEndA);
+        info.AddValue("EndB", s._linkEndB);
 
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        XYPlotLayerAxisProperties s = SDeserialize(o, info, parent);
+        LinkedScale s = SDeserialize(o, info, parent);
         return s;
       }
 
 
-      protected virtual XYPlotLayerAxisProperties SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected virtual LinkedScale SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        XYPlotLayerAxisProperties s = null != o ? (XYPlotLayerAxisProperties)o : new XYPlotLayerAxisProperties();
+        LinkedScale s = null != o ? (LinkedScale)o : new LinkedScale();
 
-        s.Axis = (Scale)info.GetValue("Axis", typeof(Scale));
+        s.Scale = (Scale)info.GetValue("Axis", typeof(Scale));
         s._isLinked = info.GetBoolean("Link");
-        s._linkAxisOrgA = info.GetDouble("OrgA");
-        s._linkAxisOrgB = info.GetDouble("OrgB");
-        s._linkAxisEndA = info.GetDouble("EndA");
-        s._linkAxisEndB = info.GetDouble("EndB");
+        s._linkOrgA = info.GetDouble("OrgA");
+        s._linkOrgB = info.GetDouble("OrgB");
+        s._linkEndA = info.GetDouble("EndA");
+        s._linkEndB = info.GetDouble("EndB");
        
         return s;
       }
@@ -107,29 +107,29 @@ namespace Altaxo.Graph.Gdi
 
 
 
-    public XYPlotLayerAxisProperties()
+    public LinkedScale()
     {
-      Axis = new LinearScale();
+      Scale = new LinearScale();
       _isLinked = false;
-      _linkAxisOrgA = 0;
-      _linkAxisOrgB = 1;
-      _linkAxisEndA = 0;
-      _linkAxisEndB = 1;
+      _linkOrgA = 0;
+      _linkOrgB = 1;
+      _linkEndA = 0;
+      _linkEndB = 1;
     }
     
-    void CopyFrom(XYPlotLayerAxisProperties from)
+    void CopyFrom(LinkedScale from)
     {
-      this.Axis = from._axis == null ? null : (Scale)from._axis.Clone();
+      this.Scale = from._scale == null ? null : (Scale)from._scale.Clone();
       this._isLinked = from._isLinked;
-      this._linkAxisOrgA = from._linkAxisOrgA;
-      this._linkAxisOrgB = from._linkAxisOrgB;
-      this._linkAxisEndA = from._linkAxisEndA;
-      this._linkAxisEndB = from._linkAxisEndB;
+      this._linkOrgA = from._linkOrgA;
+      this._linkOrgB = from._linkOrgB;
+      this._linkEndA = from._linkEndA;
+      this._linkEndB = from._linkEndB;
     }
 
-    public XYPlotLayerAxisProperties Clone()
+    public LinkedScale Clone()
     {
-      XYPlotLayerAxisProperties result = new XYPlotLayerAxisProperties();
+      LinkedScale result = new LinkedScale();
       result.CopyFrom(this);
       return result;
     }
@@ -141,12 +141,12 @@ namespace Altaxo.Graph.Gdi
       {
         bool oldValue = _isLinked;
         _isLinked = value;
-        _axis.IsLinked = value;
+        _scale.IsLinked = value;
 
         if (value != oldValue && value == true)
         {
           // simulate the event, that the axis has changed
-          this.OnAxisInstanceChanged();  // this will cause the axis to update with the linked axis
+          this.OnScaleInstanceChanged();  // this will cause the axis to update with the linked axis
         }
       }
     }
@@ -159,7 +159,7 @@ namespace Altaxo.Graph.Gdi
       {
         if (!IsLinked)
           return ScaleLinkType.None;
-        else if (LinkAxisOrgA == 0 && LinkAxisOrgB == 1 && LinkAxisEndA == 0 && LinkAxisEndB == 1)
+        else if (LinkOrgA == 0 && LinkOrgB == 1 && LinkEndA == 0 && LinkEndB == 1)
           return ScaleLinkType.Straight;
         else return ScaleLinkType.Custom;
       }
@@ -173,10 +173,10 @@ namespace Altaxo.Graph.Gdi
         {
           if (value == ScaleLinkType.Straight)
           {
-            _linkAxisOrgA = 0;
-            _linkAxisOrgB = 1;
-            _linkAxisEndA = 0;
-            _linkAxisEndB = 1;
+            _linkOrgA = 0;
+            _linkOrgB = 1;
+            _linkEndA = 0;
+            _linkEndB = 1;
           }
 
           IsLinked = true;
@@ -193,7 +193,7 @@ namespace Altaxo.Graph.Gdi
     /// <param name="orgB">The value b of x-axis link for link of axis origin: org' = a + b*org.</param>
     /// <param name="endA">The value a of x-axis link for link of axis end: end' = a + b*end.</param>
     /// <param name="endB">The value b of x-axis link for link of axis end: end' = a + b*end.</param>
-    public void SetAxisLinkParameter(ScaleLinkType linktype, double orgA, double orgB, double endA, double endB)
+    public void SetLinkParameter(ScaleLinkType linktype, double orgA, double orgB, double endA, double endB)
     {
       if (linktype == ScaleLinkType.Straight)
       {
@@ -207,103 +207,103 @@ namespace Altaxo.Graph.Gdi
 
       if (
         (linkaxis != this.IsLinked) ||
-        (orgA != this.LinkAxisOrgA) ||
-        (orgB != this.LinkAxisOrgB) ||
-        (endA != this.LinkAxisEndA) ||
-        (endB != this.LinkAxisEndB))
+        (orgA != this.LinkOrgA) ||
+        (orgB != this.LinkOrgB) ||
+        (endA != this.LinkEndA) ||
+        (endB != this.LinkEndB))
       {
         this._isLinked = linkaxis;
-        this._linkAxisOrgA = orgA;
-        this._linkAxisOrgB = orgB;
-        this._linkAxisEndA = endA;
-        this._linkAxisEndB = endB;
+        this._linkOrgA = orgA;
+        this._linkOrgB = orgB;
+        this._linkEndA = endA;
+        this._linkEndB = endB;
 
         if (IsLinked)
-          OnAxisInstanceChanged();
+          OnScaleInstanceChanged();
       }
     }
 
-    public double LinkAxisOrgA
+    public double LinkOrgA
     {
-      get { return _linkAxisOrgA; }
+      get { return _linkOrgA; }
       set
       {
-        _linkAxisOrgA = value;
+        _linkOrgA = value;
         if (_isLinked)
-          OnAxisInstanceChanged();
+          OnScaleInstanceChanged();
       }
     }
 
 
 
-    public double LinkAxisOrgB
+    public double LinkOrgB
     {
-      get { return _linkAxisOrgB; }
+      get { return _linkOrgB; }
       set
       {
-        _linkAxisOrgB = value;
+        _linkOrgB = value;
         if (_isLinked)
-          OnAxisInstanceChanged();
+          OnScaleInstanceChanged();
       }
     }
 
 
 
-    public double LinkAxisEndA
+    public double LinkEndA
     {
-      get { return _linkAxisEndA; }
+      get { return _linkEndA; }
       set
       {
-        _linkAxisEndA = value;
+        _linkEndA = value;
         if (_isLinked)
-          OnAxisInstanceChanged();
+          OnScaleInstanceChanged();
       }
     }
 
 
 
-    public double LinkAxisEndB
+    public double LinkEndB
     {
-      get { return _linkAxisEndB; }
+      get { return _linkEndB; }
       set
       {
-        _linkAxisEndB = value;
+        _linkEndB = value;
         if (_isLinked)
-          OnAxisInstanceChanged();
+          OnScaleInstanceChanged();
       }
     }
 
-    public Scale Axis
+    public Scale Scale
     {
       get
       {
-        return _axis;
+        return _scale;
       }
       set
       {
-        Scale oldvalue = _axis;
-        _axis = value;
+        Scale oldvalue = _scale;
+        _scale = value;
         if (!object.ReferenceEquals(value, oldvalue))
         {
           if (null != oldvalue)
           {
-            oldvalue.Changed -= new EventHandler(this.EhAxisPropertiesChanged);
+            oldvalue.Changed -= new EventHandler(this.EhScaleChanged);
             oldvalue.IsLinked = false;
           }
           if (null != value)
           {
-            value.Changed += new EventHandler(this.EhAxisPropertiesChanged);
+            value.Changed += new EventHandler(this.EhScaleChanged);
             value.IsLinked = this._isLinked;
           }
 
-          OnAxisInstanceChanged();
+          OnScaleInstanceChanged();
         }
       }
     }
 
-    void EhAxisPropertiesChanged(object sender, EventArgs e)
+    void EhScaleChanged(object sender, EventArgs e)
     {
-      OnAxisPropertiesChanged();
+      OnLinkPropertiesChanged();
     }
 
     /// <summary>
@@ -315,28 +315,28 @@ namespace Altaxo.Graph.Gdi
       if (_isLinked)
       {
         // we must disable our own interrogator because otherwise we can not change the axis
-        _axis.IsLinked = false;
-        _axis.ProcessDataBounds(
-          LinkAxisOrgA + LinkAxisOrgB * linkedAxis.OrgAsVariant, true,
-          LinkAxisEndA + LinkAxisEndB * linkedAxis.EndAsVariant, true);
-        _axis.IsLinked = true; // restore the linked state of the axis
+        _scale.IsLinked = false;
+        _scale.ProcessDataBounds(
+          LinkOrgA + LinkOrgB * linkedAxis.OrgAsVariant, true,
+          LinkEndA + LinkEndB * linkedAxis.EndAsVariant, true);
+        _scale.IsLinked = true; // restore the linked state of the axis
 
-        this.OnAxisPropertiesChanged(); // indicate that the axes boundaries have changed
+        this.OnLinkPropertiesChanged(); // indicate that the axes boundaries have changed
 
       }
     }
 
 
-    protected virtual void OnAxisInstanceChanged()
+    protected virtual void OnScaleInstanceChanged()
     {
-      if (AxisInstanceChanged != null)
-        AxisInstanceChanged(this, EventArgs.Empty);
+      if (ScaleInstanceChanged != null)
+        ScaleInstanceChanged(this, EventArgs.Empty);
     }
 
-    protected virtual void OnAxisPropertiesChanged()
+    protected virtual void OnLinkPropertiesChanged()
     {
-      if (AxisPropertiesChanged != null)
-        AxisPropertiesChanged(this, EventArgs.Empty);
+      if (LinkPropertiesChanged != null)
+        LinkPropertiesChanged(this, EventArgs.Empty);
     }
 
   }

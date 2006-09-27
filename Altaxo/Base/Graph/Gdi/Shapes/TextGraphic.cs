@@ -48,7 +48,7 @@ namespace Altaxo.Graph.Gdi.Shapes
   {
     protected string _text = ""; // the text, which contains the formatting symbols
     protected Font _font;
-    protected BrushHolder _textBrush = new BrushHolder(Color.Black);
+    protected BrushX _textBrush = new BrushX(Color.Black);
     protected IBackgroundStyle _background = null;
     protected float _lineSpacingFactor=1.25f; // multiplicator for the line space, i.e. 1, 1.5 or 2
     protected XAnchorPositionType _xAnchorType = XAnchorPositionType.Left;
@@ -92,7 +92,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
       _text = info.GetString("Text");
       _font = (Font)info.GetValue("Font", typeof(Font));
-      _textBrush = (BrushHolder)info.GetValue("Brush", typeof(BrushHolder));
+      _textBrush = (BrushX)info.GetValue("Brush", typeof(BrushX));
       _background = (IBackgroundStyle)info.GetValue("BackgroundStyle", typeof(IBackgroundStyle));
       _lineSpacingFactor = info.GetSingle("LineSpacing");
       _xAnchorType = (XAnchorPositionType)info.GetValue("XAnchor", typeof(XAnchorPositionType));
@@ -151,7 +151,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
         s._text = info.GetString("Text");
         s._font = (Font)info.GetValue("Font",typeof(Font));
-        s._textBrush = (BrushHolder)info.GetValue("Brush",typeof(BrushHolder));
+        s._textBrush = (BrushX)info.GetValue("Brush",typeof(BrushX));
         s.BackgroundStyleOld = (BackgroundStyle)info.GetValue("BackgroundStyle",typeof(BackgroundStyle));
         s._lineSpacingFactor = info.GetSingle("LineSpacing");
         info.GetSingle("ShadowLength");
@@ -189,7 +189,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
         s._text = info.GetString("Text");
         s._font = (Font)info.GetValue("Font", typeof(Font));
-        s._textBrush = (BrushHolder)info.GetValue("Brush", typeof(BrushHolder));
+        s._textBrush = (BrushX)info.GetValue("Brush", typeof(BrushX));
         s._background = (IBackgroundStyle)info.GetValue("BackgroundStyle", typeof(IBackgroundStyle));
         s._lineSpacingFactor = info.GetSingle("LineSpacing");
         s._xAnchorType = (XAnchorPositionType)info.GetValue("XAnchor", typeof(XAnchorPositionType));
@@ -212,7 +212,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     {
       _text = from._text;
       _font = null==from.Font ? null : (Font)from.Font.Clone();
-      _textBrush = null==_textBrush ? new BrushHolder(Color.Black):(BrushHolder)from._textBrush.Clone();
+      _textBrush = null==_textBrush ? new BrushX(Color.Black):(BrushX)from._textBrush.Clone();
       _background = from._background==null ? null : (IBackgroundStyle)from._background.Clone();
       _lineSpacingFactor = from._lineSpacingFactor;
       _xAnchorType = from._xAnchorType;
@@ -268,7 +268,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     {
       this._text = from._text;
       this._font = from._font==null ? null : (Font)from._font.Clone();
-      this._textBrush = from._textBrush==null ? null : (BrushHolder)from._textBrush.Clone();
+      this._textBrush = from._textBrush==null ? null : (BrushX)from._textBrush.Clone();
       this._background = from._background == null ? null : (IBackgroundStyle)from._background.Clone();
       this._lineSpacingFactor = from._lineSpacingFactor;
       _xAnchorType = from._xAnchorType;
@@ -948,7 +948,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
       set
       {
-        _textBrush = new BrushHolder(value);
+        _textBrush = new BrushX(value);
       }
     }
 
