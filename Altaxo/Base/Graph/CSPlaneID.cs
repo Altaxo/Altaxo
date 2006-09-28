@@ -1,18 +1,27 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+
 using Altaxo.Data;
+
 namespace Altaxo.Graph
 {
   /// <summary>
-  /// This is an immutable class used to identify axis styles. You can safely use it without cloning.
+  /// This is an immutable class used to identify axis lines in 2D or planes in 3D. You can safely use it without cloning.
+  /// A plane or axis is specified by the axis that is perpendicular to this plane or axis, and by the logical value along the
+  /// perpendicular axis.
   /// </summary>
-  public sealed class A2DAxisStyleIdentifier 
+  /// <remarks>
+  /// The axis numbering is intended for the coordinate system. For cartesic coordinate systems
+  /// in 2D this means 0==X-Axis (normally horizontal), and 1==Y-Axis (vertical).
+  /// For 3D this means 0==X-Axis (horizontal), 1==Y-Axis (vertical, and 2==Z-Axis (points in the screen).
+  /// </remarks>
+  public sealed class CSPlaneID
   {
     /// <summary>
     /// Number of axis: 0==X-Axis, 1==Y-Axis, 2==Z-Axis
     /// </summary>
-    int _axisNumber;
+    int _perpendicularAxisNumber;
 
     /// <summary>
     /// The logical value of the isoline.
@@ -29,43 +38,43 @@ namespace Altaxo.Graph
     /// </summary>
     AltaxoVariant _physicalValue;
 
-    public A2DAxisStyleIdentifier(int axisNumber, int logicalValue)
-      : this(axisNumber,(double)logicalValue)
+    public CSPlaneID(int perpendicularAxisNumber, int logicalValue)
+      : this(perpendicularAxisNumber, (double)logicalValue)
     {
     }
-    
-    public A2DAxisStyleIdentifier(int axisNumber, double logicalValue)
+
+    public CSPlaneID(int perpendicularAxisNumber, double logicalValue)
     {
-      _axisNumber = axisNumber;
+      _perpendicularAxisNumber = perpendicularAxisNumber;
       _logicalValue = logicalValue;
       _usePhysicalValue = false;
     }
 
-    private A2DAxisStyleIdentifier()
+    private CSPlaneID()
     {
     }
 
-    public static A2DAxisStyleIdentifier FromPhysicalValue(int axisNumber, double physicalValue)
+    public static CSPlaneID FromPhysicalValue(int perpendicularAxisNumber, double physicalValue)
     {
       if (!(physicalValue == physicalValue))
         throw new ArgumentException("You can not set physical values that return false when compared to itself, value is: " + physicalValue.ToString());
 
-      A2DAxisStyleIdentifier id = new A2DAxisStyleIdentifier();
-      id._axisNumber = axisNumber;
+      CSPlaneID id = new CSPlaneID();
+      id._perpendicularAxisNumber = perpendicularAxisNumber;
       id._physicalValue = physicalValue;
       id._logicalValue = double.NaN;
       id._usePhysicalValue = true;
       return id;
     }
 
-    public static A2DAxisStyleIdentifier FromPhysicalVariant(int axisNumber, AltaxoVariant physicalValue)
+    public static CSPlaneID FromPhysicalVariant(int perpendicularAxisNumber, AltaxoVariant physicalValue)
     {
       if (!(physicalValue == physicalValue))
         throw new ArgumentException("You can not set physical values that return false when compared to itself, value is: " + physicalValue.ToString());
 
-      
-      A2DAxisStyleIdentifier id = new A2DAxisStyleIdentifier();
-      id._axisNumber = axisNumber;
+
+      CSPlaneID id = new CSPlaneID();
+      id._perpendicularAxisNumber = perpendicularAxisNumber;
       id._physicalValue = physicalValue;
       id._logicalValue = double.NaN;
       id._usePhysicalValue = true;
@@ -76,12 +85,13 @@ namespace Altaxo.Graph
     /// <summary>
     /// Number of axis: 0==X-Axis, 1==Y-Axis, 2==Z-Axis
     /// </summary>
-    public int AxisNumber { get { return _axisNumber; } }
+    public int PerpendicularAxisNumber { get { return _perpendicularAxisNumber; } }
 
     /// <summary>
     /// The logical value of the isoline. It can be set only in the constructor, or if the UsePhysicalValue property is true.
     /// </summary>
-    public double LogicalValue { 
+    public double LogicalValue
+    {
       get { return _logicalValue; }
       set
       {
@@ -105,12 +115,12 @@ namespace Altaxo.Graph
 
     public override bool Equals(object obj)
     {
-      if (!(obj is A2DAxisStyleIdentifier))
+      if (!(obj is CSPlaneID))
         return false;
-      A2DAxisStyleIdentifier from = (A2DAxisStyleIdentifier)obj;
+      CSPlaneID from = (CSPlaneID)obj;
 
       bool result = true;
-      result &= this._axisNumber == from._axisNumber;
+      result &= this._perpendicularAxisNumber == from._perpendicularAxisNumber;
       result &= this._usePhysicalValue == from._usePhysicalValue;
       if (result == false)
         return result;
@@ -123,7 +133,7 @@ namespace Altaxo.Graph
 
     public override int GetHashCode()
     {
-      int result = _axisNumber.GetHashCode();
+      int result = _perpendicularAxisNumber.GetHashCode();
       result += _usePhysicalValue.GetHashCode();
       if (_usePhysicalValue)
         result += _physicalValue.GetHashCode();
@@ -133,7 +143,7 @@ namespace Altaxo.Graph
       return result;
     }
 
-    public static bool operator ==(A2DAxisStyleIdentifier a, A2DAxisStyleIdentifier b)
+    public static bool operator ==(CSPlaneID a, CSPlaneID b)
     {
       // If both are null, or both are same instance, return true.
       if (System.Object.ReferenceEquals(a, b))
@@ -150,29 +160,58 @@ namespace Altaxo.Graph
       // Return true if the fields match:
       return a.Equals(b);
     }
-     
-    public static bool operator !=(A2DAxisStyleIdentifier x, A2DAxisStyleIdentifier y)
+
+    public static bool operator !=(CSPlaneID x, CSPlaneID y)
     {
-        return !(x==y);
+      return !(x == y);
     }
 
-    public static A2DAxisStyleIdentifier X0
+    public static CSPlaneID Left
     {
-      get { return new A2DAxisStyleIdentifier(0, 0); }
+      get { return new CSPlaneID(0, 0); }
     }
-    public static A2DAxisStyleIdentifier X1
+    public static CSPlaneID Right
     {
-      get { return new A2DAxisStyleIdentifier(0, 1); }
+      get { return new CSPlaneID(0, 1); }
     }
-    public static A2DAxisStyleIdentifier Y0
+    public static CSPlaneID Bottom
     {
-      get { return new A2DAxisStyleIdentifier(1, 0); }
+      get { return new CSPlaneID(1, 0); }
     }
-    public static A2DAxisStyleIdentifier Y1
+    public static CSPlaneID Top
     {
-      get { return new A2DAxisStyleIdentifier(1, 1); }
+      get { return new CSPlaneID(1, 1); }
     }
-   
+    public static CSPlaneID Front
+    {
+      get { return new CSPlaneID(2, 0); }
+    }
+    public static CSPlaneID Back
+    {
+      get { return new CSPlaneID(2, 0); }
+    }
+
+    public static implicit operator CS2DLineID(CSPlaneID plane)
+    {
+      if (plane._perpendicularAxisNumber < 0)
+        throw new ArgumentOutOfRangeException("Axis number of plane is negative");
+      if (plane._perpendicularAxisNumber > 1)
+        throw new ArgumentOutOfRangeException("Axis number is greater than 1. You can only convert to a line if the axis number is 0 or 1");
+
+      if (plane.UsePhysicalValue)
+        return CS2DLineID.FromPhysicalVariant(plane.PerpendicularAxisNumber == 0 ? 1 : 0, plane.PhysicalValue);
+      else
+        return new CS2DLineID(plane.PerpendicularAxisNumber == 0 ? 1 : 0, plane.LogicalValue);
+    }
+
+    public static implicit operator CSPlaneID(CS2DLineID line)
+    {
+      if (line.UsePhysicalValueOther)
+        return CSPlaneID.FromPhysicalVariant(line.ParallelAxisNumber == 0 ? 1 : 0, line.PhysicalValueOther);
+      else
+        return new CSPlaneID(line.ParallelAxisNumber == 0 ? 1 : 0, line.LogicalValueOther);
+    }
+
+
   }
-
 }

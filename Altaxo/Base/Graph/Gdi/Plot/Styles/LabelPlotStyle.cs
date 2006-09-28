@@ -74,7 +74,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
    
 
     /// <summary>The axis where the label is attached to (if it is attached).</summary>
-    protected A2DAxisStyleIdentifier m_AttachedAxis;
+    protected CS2DLineID m_AttachedAxis;
 
     protected Altaxo.Data.ReadableColumnProxy m_LabelColumn;
 
@@ -87,18 +87,18 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     #region Serialization
 
 
-    private A2DAxisStyleIdentifier GetDirection(EdgeType fillDir)
+    private CS2DLineID GetDirection(EdgeType fillDir)
     {
       switch (fillDir)
       {
         case EdgeType.Bottom:
-          return A2DAxisStyleIdentifier.X0;
+          return CS2DLineID.X0;
         case EdgeType.Top:
-          return A2DAxisStyleIdentifier.X1;
+          return CS2DLineID.X1;
         case EdgeType.Left:
-          return A2DAxisStyleIdentifier.Y0;
+          return CS2DLineID.Y0;
         case EdgeType.Right:
-          return A2DAxisStyleIdentifier.Y1;
+          return CS2DLineID.Y1;
       }
       return null;
     }
@@ -106,18 +106,18 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Graph.XYPlotLabelStyle", 0)]
     public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public static A2DAxisStyleIdentifier GetDirection(EdgeType fillDir)
+      public static CS2DLineID GetDirection(EdgeType fillDir)
       {
         switch (fillDir)
         {
           case EdgeType.Bottom:
-            return A2DAxisStyleIdentifier.X0;
+            return CS2DLineID.X0;
           case EdgeType.Top:
-            return A2DAxisStyleIdentifier.X1;
+            return CS2DLineID.X1;
           case EdgeType.Left:
-            return A2DAxisStyleIdentifier.Y0;
+            return CS2DLineID.Y0;
           case EdgeType.Right:
-            return A2DAxisStyleIdentifier.Y1;
+            return CS2DLineID.Y1;
         }
         return null;
       }
@@ -536,12 +536,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 
     /// <summary>If axis the label is attached to if the value of <see cref="AttachToAxis" /> is true.</summary>
-    public A2DAxisStyleIdentifier AttachedAxis
+    public CS2DLineID AttachedAxis
     {
       get { return this.m_AttachedAxis; }
       set
       {
-        A2DAxisStyleIdentifier oldValue = this.m_AttachedAxis;
+        CS2DLineID oldValue = this.m_AttachedAxis;
         this.m_AttachedAxis = value;
         if (value != oldValue)
         {

@@ -499,8 +499,8 @@ namespace Altaxo.Graph.Gdi.Axis
 
     #endregion
 
-    A2DAxisStyleIdentifier _cachedStyleID;
-    public A2DAxisStyleIdentifier AxisStyleID
+    CS2DLineID _cachedStyleID;
+    public CS2DLineID AxisStyleID
     {
       get
       {
@@ -553,8 +553,8 @@ namespace Altaxo.Graph.Gdi.Axis
     public override void Paint(Graphics g, XYPlotLayer layer, A2DAxisStyleInformation styleInfo, AxisLineStyle axisstyle, bool useMinorTicks)
     {
       _cachedStyleID = styleInfo.Identifier;
-      A2DAxisStyleIdentifier styleID = styleInfo.Identifier;
-      Scale raxis = styleID.AxisNumber==0 ? layer.XAxis : layer.YAxis;
+      CS2DLineID styleID = styleInfo.Identifier;
+      Scale raxis = styleID.ParallelAxisNumber==0 ? layer.XAxis : layer.YAxis;
 
       _enclosingPath.Reset();
       _enclosingPath.FillMode = FillMode.Winding; // with Winding also overlapping rectangles are selected
@@ -563,10 +563,10 @@ namespace Altaxo.Graph.Gdi.Axis
 
       double rx0 = 0, rx1 = 1;
       double ry0 = 0, ry1 = 1;
-      if (styleID.AxisNumber == 0)
-        ry0 = ry1 = styleID.LogicalValue;
+      if (styleID.ParallelAxisNumber == 0)
+        ry0 = ry1 = styleID.LogicalValueOther;
       else
-        rx0 = rx1 = styleID.LogicalValue;
+        rx0 = rx1 = styleID.LogicalValueOther;
 
 
       SizeF layerSize = layer.Size;

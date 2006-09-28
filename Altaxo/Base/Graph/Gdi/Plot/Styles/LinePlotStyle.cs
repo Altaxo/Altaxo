@@ -131,7 +131,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     protected bool _ignoreMissingPoints; // treat missing points as if not present (connect lines over missing points) 
     protected bool _fillArea;
     protected BrushX _fillBrush; // brush to fill the area under the line
-    protected A2DAxisStyleIdentifier _fillDirection; // the direction to fill
+    protected CS2DLineID _fillDirection; // the direction to fill
     protected bool _independentColor;
 
 
@@ -178,7 +178,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         s._ignoreMissingPoints = info.GetBoolean("IgnoreMissingPoints");
         s._fillArea = info.GetBoolean("FillArea");
         s._fillBrush = (BrushX)info.GetValue("FillBrush", typeof(BrushX));
-        s._fillDirection = (A2DAxisStyleIdentifier)info.GetValue("FillDirection", typeof(A2DAxisStyleIdentifier));
+        s._fillDirection = (CS2DLineID)info.GetValue("FillDirection", typeof(CS2DLineID));
 
         return s;
       }
@@ -225,18 +225,18 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         return s;
       }
 
-      protected A2DAxisStyleIdentifier GetFillDirection(XYPlotLineStyles.FillDirection fillDir)
+      protected CS2DLineID GetFillDirection(XYPlotLineStyles.FillDirection fillDir)
       {
         switch (fillDir)
         {
           case XYPlotLineStyles.FillDirection.Bottom:
-            return A2DAxisStyleIdentifier.X0;
+            return CS2DLineID.X0;
           case XYPlotLineStyles.FillDirection.Top:
-            return A2DAxisStyleIdentifier.X1;
+            return CS2DLineID.X1;
           case XYPlotLineStyles.FillDirection.Left:
-            return A2DAxisStyleIdentifier.Y0;
+            return CS2DLineID.Y0;
           case XYPlotLineStyles.FillDirection.Right:
-            return A2DAxisStyleIdentifier.Y1;
+            return CS2DLineID.Y1;
         }
         return null;
       }
@@ -441,12 +441,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
-    public A2DAxisStyleIdentifier FillDirection
+    public CS2DLineID FillDirection
     {
       get { return this._fillDirection; }
       set
       {
-        A2DAxisStyleIdentifier oldvalue = _fillDirection;
+        CS2DLineID oldvalue = _fillDirection;
         _fillDirection = value;
         if (oldvalue != value)
         {

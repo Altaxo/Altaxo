@@ -73,7 +73,7 @@ namespace Altaxo.Graph.GUI
     enum TabType { Unique, Scales, Styles };
     TabType _primaryChoice; // which tab type is currently choosen
     private int _currentScale; // which scale is choosen 0==X-AxisScale, 1==Y-AxisScale
-    private A2DAxisStyleIdentifier _currentAxisID; // which style is currently choosen
+    private CS2DLineID _currentAxisID; // which style is currently choosen
 
   
 
@@ -88,35 +88,35 @@ namespace Altaxo.Graph.GUI
     protected Altaxo.Gui.Graph.IXYAxisLabelStyleController[] m_MinorLabelStyleController;
     protected Altaxo.Main.GUI.IMVCAController[] _GridStyleController;
 
-    Dictionary<A2DAxisStyleIdentifier, A2DAxisStyleInformation> _axisStyleIds;
+    Dictionary<CS2DLineID, A2DAxisStyleInformation> _axisStyleIds;
     List<A2DAxisStyleInformation> _axisStyleInfoSortedByName;
     
-    Dictionary<A2DAxisStyleIdentifier, ITitleFormatLayerController> _TitleFormatController;
-    Dictionary<A2DAxisStyleIdentifier, Altaxo.Gui.Graph.IXYAxisLabelStyleController> _MajorLabelController;
-    Dictionary<A2DAxisStyleIdentifier, Altaxo.Gui.Graph.IXYAxisLabelStyleController> _MinorLabelController;
+    Dictionary<CS2DLineID, ITitleFormatLayerController> _TitleFormatController;
+    Dictionary<CS2DLineID, Altaxo.Gui.Graph.IXYAxisLabelStyleController> _MajorLabelController;
+    Dictionary<CS2DLineID, Altaxo.Gui.Graph.IXYAxisLabelStyleController> _MinorLabelController;
 
-    Dictionary<A2DAxisStyleIdentifier, bool> _enableMajorLabels;
-    Dictionary<A2DAxisStyleIdentifier, bool> _enableMinorLabels;
+    Dictionary<CS2DLineID, bool> _enableMajorLabels;
+    Dictionary<CS2DLineID, bool> _enableMinorLabels;
   
   
     public LayerController(XYPlotLayer layer)
       : this(layer,"Scale",1,null)
     {
     }
-    public LayerController(XYPlotLayer layer, string currentPage, A2DAxisStyleIdentifier id)
-      : this(layer,currentPage,id.AxisNumber,id)
+    public LayerController(XYPlotLayer layer, string currentPage, CS2DLineID id)
+      : this(layer,currentPage,id.ParallelAxisNumber,id)
     {
     }
 
 
-    LayerController(XYPlotLayer layer, string currentPage, int axisScaleIdx, A2DAxisStyleIdentifier id)
+    LayerController(XYPlotLayer layer, string currentPage, int axisScaleIdx, CS2DLineID id)
     {
       _layer = layer;
 
       // collect the AxisStyleIdentifier from the actual layer and also all possible AxisStyleIdentifier
-      _axisStyleIds = new Dictionary<A2DAxisStyleIdentifier, A2DAxisStyleInformation>();
+      _axisStyleIds = new Dictionary<CS2DLineID, A2DAxisStyleInformation>();
       _axisStyleInfoSortedByName = new List<A2DAxisStyleInformation>();
-      foreach (A2DAxisStyleIdentifier ids in _layer.CoordinateSystem.GetJoinedAxisStyleIdentifier(_layer.ScaleStyles.AxisStyleIDs, new A2DAxisStyleIdentifier[] { id }))
+      foreach (CS2DLineID ids in _layer.CoordinateSystem.GetJoinedAxisStyleIdentifier(_layer.ScaleStyles.AxisStyleIDs, new CS2DLineID[] { id }))
       {
         A2DAxisStyleInformation info = _layer.CoordinateSystem.GetAxisStyleInformation(ids);
         _axisStyleIds.Add(info.Identifier, info);
@@ -130,13 +130,13 @@ namespace Altaxo.Graph.GUI
 
       m_AxisScaleController = new AxisScaleController[2];
       _GridStyleController = new Altaxo.Main.GUI.IMVCAController[2];
-      _TitleFormatController = new Dictionary<A2DAxisStyleIdentifier, ITitleFormatLayerController>();
-      _MajorLabelController = new Dictionary<A2DAxisStyleIdentifier, Altaxo.Gui.Graph.IXYAxisLabelStyleController>();
-      _MinorLabelController = new Dictionary<A2DAxisStyleIdentifier, Altaxo.Gui.Graph.IXYAxisLabelStyleController>();
+      _TitleFormatController = new Dictionary<CS2DLineID, ITitleFormatLayerController>();
+      _MajorLabelController = new Dictionary<CS2DLineID, Altaxo.Gui.Graph.IXYAxisLabelStyleController>();
+      _MinorLabelController = new Dictionary<CS2DLineID, Altaxo.Gui.Graph.IXYAxisLabelStyleController>();
 
-      _enableMajorLabels = new Dictionary<A2DAxisStyleIdentifier, bool>();
-      _enableMinorLabels = new Dictionary<A2DAxisStyleIdentifier, bool>();
-      foreach(A2DAxisStyleIdentifier ident in _axisStyleIds.Keys)
+      _enableMajorLabels = new Dictionary<CS2DLineID, bool>();
+      _enableMinorLabels = new Dictionary<CS2DLineID, bool>();
+      foreach(CS2DLineID ident in _axisStyleIds.Keys)
       {
         AxisStyle prop = layer.ScaleStyles.AxisStyle(ident);
         if(prop==null)
@@ -528,14 +528,14 @@ namespace Altaxo.Graph.GUI
 
     public static bool ShowDialog(System.Windows.Forms.Form parentWindow, XYPlotLayer layer)
     {
-      return ShowDialog(parentWindow,layer,"Scale", new A2DAxisStyleIdentifier(0,0) );
+      return ShowDialog(parentWindow,layer,"Scale", new CS2DLineID(0,0) );
     }
     public static bool ShowDialog(System.Windows.Forms.Form parentWindow, XYPlotLayer layer, string currentPage)
     {
-      return ShowDialog(parentWindow, layer, currentPage, new A2DAxisStyleIdentifier(0,0));
+      return ShowDialog(parentWindow, layer, currentPage, new CS2DLineID(0,0));
     }
 
-    public static bool ShowDialog(System.Windows.Forms.Form parentWindow, XYPlotLayer layer, string currentPage, A2DAxisStyleIdentifier currentEdge)
+    public static bool ShowDialog(System.Windows.Forms.Form parentWindow, XYPlotLayer layer, string currentPage, CS2DLineID currentEdge)
     {
      
       LayerController ctrl = new LayerController(layer,currentPage,currentEdge);
@@ -571,7 +571,7 @@ namespace Altaxo.Graph.GUI
       }
 
 
-      foreach (A2DAxisStyleIdentifier id in _TitleFormatController.Keys)
+      foreach (CS2DLineID id in _TitleFormatController.Keys)
       {
         if(!_TitleFormatController[id].Apply())
         {
@@ -579,7 +579,7 @@ namespace Altaxo.Graph.GUI
         }
       }
 
-      foreach (A2DAxisStyleIdentifier id in _axisStyleIds.Keys)
+      foreach (CS2DLineID id in _axisStyleIds.Keys)
       {
         if (this._enableMajorLabels[id])
         {
@@ -595,7 +595,7 @@ namespace Altaxo.Graph.GUI
         }
       }
 
-      foreach (A2DAxisStyleIdentifier id in _axisStyleIds.Keys)
+      foreach (CS2DLineID id in _axisStyleIds.Keys)
       {
         if (this._enableMinorLabels[id])
         {

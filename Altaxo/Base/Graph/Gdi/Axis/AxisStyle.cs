@@ -40,7 +40,7 @@ namespace Altaxo.Graph.Gdi.Axis
     /// <summary>
     /// Identifies the axis style.
     /// </summary>
-    A2DAxisStyleIdentifier _styleID;
+    CS2DLineID _styleID;
 
     /// <summary>Style of axis. Determines the line width and color of the axis and the ticks.</summary>
     protected AxisLineStyle _axisLineStyle;
@@ -132,16 +132,16 @@ namespace Altaxo.Graph.Gdi.Axis
         switch (edge)
         {
           case EdgeType.Bottom:
-            s._styleID = new A2DAxisStyleIdentifier(0, -offset);
+            s._styleID = new CS2DLineID(0, -offset);
             break;
           case EdgeType.Top:
-            s._styleID = new A2DAxisStyleIdentifier(0, 1+offset);
+            s._styleID = new CS2DLineID(0, 1+offset);
             break;
           case EdgeType.Left:
-            s._styleID = new A2DAxisStyleIdentifier(1, -offset);
+            s._styleID = new CS2DLineID(1, -offset);
             break;
           case EdgeType.Right:
-            s._styleID = new A2DAxisStyleIdentifier(1, 1+offset);
+            s._styleID = new CS2DLineID(1, 1+offset);
             break;
         }
 
@@ -177,7 +177,7 @@ namespace Altaxo.Graph.Gdi.Axis
         AxisStyle s = null != o ? (AxisStyle)o : new AxisStyle();
 
         // Styles
-        s._styleID = (A2DAxisStyleIdentifier)info.GetValue("StyleID", s);
+        s._styleID = (CS2DLineID)info.GetValue("StyleID", s);
         s.AxisLineStyle = (AxisLineStyle)info.GetValue("AxisStyle", s);
         s.MajorLabelStyle = (AxisLabelStyleBase)info.GetValue("MajorLabelStyle", s);
         s.MinorLabelStyle = (AxisLabelStyleBase)info.GetValue("MinorLabelStyle", s);
@@ -222,7 +222,7 @@ namespace Altaxo.Graph.Gdi.Axis
         _axisTitle.Changed += new EventHandler(EhChildChanged);
     }
 
-    public AxisStyle(A2DAxisStyleIdentifier id)
+    public AxisStyle(CS2DLineID id)
     {
       _styleID = id;
       _axisLineStyle = new AxisLineStyle();
@@ -235,7 +235,7 @@ namespace Altaxo.Graph.Gdi.Axis
     /// <summary>
     /// Identifies the axis style.
     /// </summary>
-    public A2DAxisStyleIdentifier StyleID
+    public CS2DLineID StyleID
     {
       get
       {

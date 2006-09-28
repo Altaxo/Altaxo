@@ -120,9 +120,9 @@ namespace Altaxo.Graph.Gdi.Axis
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    public AxisStyle AxisStyle(A2DAxisStyleIdentifier id)
+    public AxisStyle AxisStyle(CS2DLineID id)
     {
-      ScaleStyle scaleStyle = _styles[id.AxisNumber];
+      ScaleStyle scaleStyle = _styles[id.ParallelAxisNumber];
       return scaleStyle.AxisStyle(id);
     }
 
@@ -131,15 +131,15 @@ namespace Altaxo.Graph.Gdi.Axis
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    public AxisStyle AxisStyleEnsured(A2DAxisStyleIdentifier id)
+    public AxisStyle AxisStyleEnsured(CS2DLineID id)
     {
-      ScaleStyle scaleStyle = _styles[id.AxisNumber];
+      ScaleStyle scaleStyle = _styles[id.ParallelAxisNumber];
       return scaleStyle.AxisStyleEnsured(id);
     }
 
-    public void RemoveAxisStyle(A2DAxisStyleIdentifier id)
+    public void RemoveAxisStyle(CS2DLineID id)
     {
-      ScaleStyle scaleStyle = _styles[id.AxisNumber];
+      ScaleStyle scaleStyle = _styles[id.ParallelAxisNumber];
       scaleStyle.RemoveAxisStyle(id);
     }
 
@@ -156,7 +156,7 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
 
-    public IEnumerable<A2DAxisStyleIdentifier> AxisStyleIDs
+    public IEnumerable<CS2DLineID> AxisStyleIDs
     {
       get
       {
@@ -169,9 +169,9 @@ namespace Altaxo.Graph.Gdi.Axis
     }
 
 
-    public bool ContainsAxisStyle(A2DAxisStyleIdentifier id)
+    public bool ContainsAxisStyle(CS2DLineID id)
     {
-      ScaleStyle scalestyle = _styles[id.AxisNumber];
+      ScaleStyle scalestyle = _styles[id.ParallelAxisNumber];
       return scalestyle.ContainsAxisStyle(id);
     }
 

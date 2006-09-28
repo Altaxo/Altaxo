@@ -208,7 +208,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
   {
     protected XYPlotScatterStyles.Shape _shape;
     protected XYPlotScatterStyles.Style _style;
-    protected List<A2DAxisStyleIdentifier> _dropLine;
+    protected List<CS2DLineID> _dropLine;
     protected PenX _pen;
     protected bool _independentColor;
 
@@ -257,7 +257,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         ScatterPlotStyle s = (ScatterPlotStyle)obj;
         s._shape = (XYPlotScatterStyles.Shape)info.GetValue("Shape", typeof(XYPlotScatterStyles.Shape));
         s._style = (XYPlotScatterStyles.Style)info.GetValue("Style", typeof(XYPlotScatterStyles.Style));
-        s._dropLine = (List<A2DAxisStyleIdentifier>)info.GetValue("DropLine", typeof(List<A2DAxisStyleIdentifier>));
+        s._dropLine = (List<CS2DLineID>)info.GetValue("DropLine", typeof(List<CS2DLineID>));
         s._pen = (PenX)info.GetValue("Pen", typeof(PenX));
         s._symbolSize = info.GetSingle("SymbolSize");
         s._relativePenWidth = info.GetSingle("RelativePenWidth");
@@ -296,13 +296,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         s._relativePenWidth = info.GetSingle("RelativePenWidth");
 
         if (0 != (dropLine & XYPlotScatterStyles.DropLine.Bottom))
-          s._dropLine.Add(A2DAxisStyleIdentifier.X0);
+          s._dropLine.Add(CS2DLineID.X0);
         if (0 != (dropLine & XYPlotScatterStyles.DropLine.Top))
-          s._dropLine.Add(A2DAxisStyleIdentifier.X1);
+          s._dropLine.Add(CS2DLineID.X1);
         if (0 != (dropLine & XYPlotScatterStyles.DropLine.Left))
-          s._dropLine.Add(A2DAxisStyleIdentifier.Y0);
+          s._dropLine.Add(CS2DLineID.Y0);
         if (0 != (dropLine & XYPlotScatterStyles.DropLine.Right))
-          s._dropLine.Add(A2DAxisStyleIdentifier.Y1);
+          s._dropLine.Add(CS2DLineID.Y1);
 
 
 
@@ -366,7 +366,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       this._shape = from._shape;
       this._style = from._style;
       if(null==this._dropLine)
-        this._dropLine = new List<A2DAxisStyleIdentifier>();
+        this._dropLine = new List<CS2DLineID>();
       else 
         this._dropLine.Clear();
       this._dropLine.AddRange(from._dropLine);
@@ -396,7 +396,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     {
       _shape = shape;
       _style = style;
-      _dropLine = new List<A2DAxisStyleIdentifier>();
+      _dropLine = new List<CS2DLineID>();
       _pen = new PenX(penColor, penWidth);
       _symbolSize = size;
       this._independentSymbolSize = true;
@@ -414,7 +414,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     {
       this._shape = XYPlotScatterStyles.Shape.Square;
       this._style = XYPlotScatterStyles.Style.Solid;
-      this._dropLine = new List<A2DAxisStyleIdentifier>();
+      this._dropLine = new List<CS2DLineID>();
       this._pen = new PenX(Color.Black);
       this._independentColor = false;
 
@@ -487,7 +487,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
-    public IList<A2DAxisStyleIdentifier> DropLine
+    public IList<CS2DLineID> DropLine
     {
       get { return _dropLine; }
     }
@@ -799,7 +799,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
            double rx = layer.XAxis.PhysicalVariantToNormal(pdata.GetXPhysical(j+range.OffsetToOriginal));
            double ry = layer.YAxis.PhysicalVariantToNormal(pdata.GetYPhysical(j+range.OffsetToOriginal));
 
-           foreach(A2DAxisStyleIdentifier id in _dropLine)
+           foreach(CS2DLineID id in _dropLine)
             layer.CoordinateSystem.DrawIsolineFromPointToAxis(g,this._pen,rx,ry,id);
           }
 

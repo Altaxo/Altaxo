@@ -37,16 +37,15 @@ namespace Altaxo.Graph.Gdi.Axis
   /// AxisStylesSummary collects all styles that correspond to one axis scale (i.e. either x-axis or y-axis)
   /// in one class. This contains the grid style of the axis, and one or more axis styles
   /// </summary>
-  public class ScaleStyle : ICloneable, Main.IChangedEventSource
+  public class AxisStyleCollection : ICloneable, Main.IChangedEventSource
   {
-    GridStyle _gridStyle;
     List<AxisStyle> _axisStyles;
 
     G2DCoordinateSystem _cachedCoordinateSystem;
 
     #region Serialization
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Graph.XYPlotLayerAxisStylesSummary", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotLayerAxisStylesSummary", 0)]
     public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -70,16 +69,15 @@ namespace Altaxo.Graph.Gdi.Axis
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        ScaleStyle s = SDeserialize(o, info, parent);
+        AxisStyleCollection s = SDeserialize(o, info, parent);
         return s;
       }
 
 
-      protected virtual ScaleStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected virtual AxisStyleCollection SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        ScaleStyle s = null != o ? (ScaleStyle)o : new ScaleStyle();
+        AxisStyleCollection s = null != o ? (AxisStyleCollection)o : new AxisStyleCollection();
 
-        s.GridStyle = (GridStyle)info.GetValue("Grid", s);
 
         int count = info.OpenArray();
         //s._edges = new EdgeType[count];
@@ -98,15 +96,14 @@ namespace Altaxo.Graph.Gdi.Axis
     }
 
     // 2006-09-08 - renaming to G2DScaleStyle
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ScaleStyle), 1)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AxisStyleCollection), 1)]
     public class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        ScaleStyle s = (ScaleStyle)obj;
+        AxisStyleCollection s = (AxisStyleCollection)obj;
 
 
-        info.AddValue("Grid", s._gridStyle);
 
         info.CreateArray("AxisStyles", s._axisStyles.Count);
         for (int i = 0; i < s._axisStyles.Count; ++i)
@@ -116,16 +113,14 @@ namespace Altaxo.Graph.Gdi.Axis
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        ScaleStyle s = SDeserialize(o, info, parent);
+        AxisStyleCollection s = SDeserialize(o, info, parent);
         return s;
       }
 
 
-      protected virtual ScaleStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      protected virtual AxisStyleCollection SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        ScaleStyle s = null != o ? (ScaleStyle)o : new ScaleStyle();
-
-        s.GridStyle = (GridStyle)info.GetValue("Grid", s);
+        AxisStyleCollection s = null != o ? (AxisStyleCollection)o : new AxisStyleCollection();
 
         int count = info.OpenArray();
         //s._axisStyles = new XYPlotLayerAxisStyleProperties[count];
@@ -142,16 +137,14 @@ namespace Altaxo.Graph.Gdi.Axis
     /// <summary>
     /// Default constructor. Defines neither a grid style nor an axis style.
     /// </summary>
-    public ScaleStyle()
+    public AxisStyleCollection()
     {
       _axisStyles = new List<AxisStyle>();
     }
 
 
-    void CopyFrom(ScaleStyle from)
+    void CopyFrom(AxisStyleCollection from)
     {
-      this.GridStyle = from._gridStyle == null ? null : (GridStyle)from._gridStyle.Clone();
-
       this._axisStyles.Clear();
       for (int i = 0; i < _axisStyles.Count; ++i)
       {
@@ -206,8 +199,8 @@ namespace Altaxo.Graph.Gdi.Axis
     public AxisStyle AxisStyle(CS2DLineID id)
     {
 
-      foreach(AxisStyle p in _axisStyles)
-        if(p.StyleID==id)
+      foreach (AxisStyle p in _axisStyles)
+        if (p.StyleID == id)
           return p;
 
       return null;
@@ -221,26 +214,17 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
 
-
-    public GridStyle GridStyle
+    public IEnumerable<CS2DLineID> AxisStyleIDs
     {
-      get { return _gridStyle; }
-      set
+      get
       {
-        GridStyle oldvalue = _gridStyle;
-        _gridStyle = value;
-        if (!object.ReferenceEquals(value, oldvalue))
-        {
-          if (oldvalue != null)
-            oldvalue.Changed -= new EventHandler(this.EhChildChanged);
-          if (value != null)
-            value.Changed += new EventHandler(this.EhChildChanged);
-
-          OnChanged();
-        }
+          foreach (AxisStyle style in _axisStyles)
+            yield return style.StyleID;
       }
     }
 
+
+ 
     public void SetParentLayer(XYPlotLayer layer, bool suppressEvents)
     {
       _cachedCoordinateSystem = layer.CoordinateSystem;
@@ -261,24 +245,9 @@ namespace Altaxo.Graph.Gdi.Axis
 
     public void Paint(Graphics g, XYPlotLayer layer, int axisnumber)
     {
-      PaintGrid(g, layer, axisnumber);
-      PaintAxes(g, layer, axisnumber);
-    }
-    public void PaintGrid(Graphics g, XYPlotLayer layer, int axisnumber)
-    {
-      Scale axis = axisnumber == 0 ? layer.XAxis : layer.YAxis;
-
-      if (null != _gridStyle)
-        _gridStyle.Paint(g, layer, axisnumber);
-    }
-
-    public void PaintAxes(Graphics g, XYPlotLayer layer, int axisnumber)
-    {
-
       for (int i = 0; i < _axisStyles.Count; ++i)
         _axisStyles[i].Paint(g, layer, axisnumber);
     }
-
 
     #region IChangedEventSource Members
 
@@ -301,7 +270,7 @@ namespace Altaxo.Graph.Gdi.Axis
 
     public object Clone()
     {
-      ScaleStyle result = new ScaleStyle();
+      AxisStyleCollection result = new AxisStyleCollection();
       result.CopyFrom(this);
       return result;
     }
@@ -309,5 +278,5 @@ namespace Altaxo.Graph.Gdi.Axis
     #endregion
   }
 
- 
+
 }

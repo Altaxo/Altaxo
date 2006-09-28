@@ -1224,10 +1224,13 @@
     <Compile Include="Collections\NamedItem.cs" />
     <Compile Include="Graph\A2DAxisStyleIdentifier.cs" />
     <Compile Include="Graph\A2DAxisStyleInformation.cs" />
+    <Compile Include="Graph\CSPlaneID.cs" />
     <Compile Include="Graph\Gdi\Axis\AxisLabelStyle.cs" />
     <Compile Include="Graph\Gdi\Axis\AxisLabelStyleBase.cs" />
     <Compile Include="Graph\Gdi\Axis\AxisLineStyle.cs" />
     <Compile Include="Graph\Gdi\Axis\AxisStyle.cs" />
+    <Compile Include="Graph\Gdi\Axis\AxisStyleCollection.cs" />
+    <Compile Include="Graph\Gdi\Axis\GridPlane.cs" />
     <Compile Include="Graph\Gdi\Axis\GridStyle.cs" />
     <Compile Include="Graph\Gdi\Axis\ScaleStyle.cs" />
     <Compile Include="Graph\Gdi\Axis\ScaleStyleCollection.cs" />
@@ -1240,6 +1243,8 @@
     <Compile Include="Graph\Gdi\Background\RectangleWithShadow.cs" />
     <Compile Include="Graph\Gdi\Background\WhiteOut.cs" />
     <Compile Include="Graph\Gdi\BrushX.cs" />
+    <Compile Include="Graph\Gdi\CS\G2DCartesicCoordinateSystem.cs" />
+    <Compile Include="Graph\Gdi\CS\G2DPolarCoordinateSystem.cs" />
     <Compile Include="Graph\Gdi\G2DCoordinateSystem.cs" />
     <Compile Include="Graph\Gdi\GraphDocument.cs" />
     <Compile Include="Graph\Gdi\GraphDocumentCollection.cs" />

@@ -309,7 +309,7 @@ namespace Altaxo.Gui.Graph
         // Fill Area
         _doc.FillArea = _view.LineFillArea;
         // Line fill direction
-        A2DAxisStyleIdentifier id = null;
+        CS2DLineID id = null;
         if(_doc.FillArea && null!=_view.LineFillDirection)
           id = ((A2DAxisStyleInformation)_view.LineFillDirection.Item).Identifier;
 

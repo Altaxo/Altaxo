@@ -240,7 +240,7 @@ namespace Altaxo.Gui.Graph
 
       List<SelectableListNode> names = new List<SelectableListNode>();
 
-      foreach (A2DAxisStyleIdentifier id in layer.CoordinateSystem.GetJoinedAxisStyleIdentifier(layer.UsedAxisStyleIdentifier, _tempDoc.DropLine))
+      foreach (CS2DLineID id in layer.CoordinateSystem.GetJoinedAxisStyleIdentifier(layer.UsedAxisStyleIdentifier, _tempDoc.DropLine))
       {
 
         bool sel = _tempDoc.DropLine.Contains(id);
@@ -318,7 +318,7 @@ namespace Altaxo.Gui.Graph
         // Drop line left
         _doc.DropLine.Clear();
         foreach (SelectableListNode node in _view.DropLines)
-          _doc.DropLine.Add((A2DAxisStyleIdentifier)node.Item);
+          _doc.DropLine.Add((CS2DLineID)node.Item);
 
         // Skip points
 

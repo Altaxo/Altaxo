@@ -237,7 +237,7 @@ namespace Altaxo.Gui.Graph
     protected bool _attachToEdge;
 
     /// <summary>The axis where the label is attached to (if it is attached).</summary>
-    protected A2DAxisStyleIdentifier _attachedEdge;
+    protected CS2DLineID _attachedEdge;
 
    
 

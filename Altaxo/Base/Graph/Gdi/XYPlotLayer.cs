@@ -352,32 +352,32 @@ namespace Altaxo.Graph.Gdi
         bool showRight = info.GetBoolean("ShowRightAxis");
         bool showTop = info.GetBoolean("ShowTopAxis");
 
-        s._scaleStyles.AxisStyleEnsured(A2DAxisStyleIdentifier.Y0).AxisLineStyle = (AxisLineStyle)info.GetValue("LeftAxisStyle", typeof(AxisLineStyle));
-        s._scaleStyles.AxisStyleEnsured(A2DAxisStyleIdentifier.X0).AxisLineStyle = (AxisLineStyle)info.GetValue("BottomAxisStyle", typeof(AxisLineStyle));
-        s._scaleStyles.AxisStyleEnsured(A2DAxisStyleIdentifier.Y1).AxisLineStyle = (AxisLineStyle)info.GetValue("RightAxisStyle", typeof(AxisLineStyle));
-        s._scaleStyles.AxisStyleEnsured(A2DAxisStyleIdentifier.X1).AxisLineStyle = (AxisLineStyle)info.GetValue("TopAxisStyle", typeof(AxisLineStyle));
+        s._scaleStyles.AxisStyleEnsured(CS2DLineID.Y0).AxisLineStyle = (AxisLineStyle)info.GetValue("LeftAxisStyle", typeof(AxisLineStyle));
+        s._scaleStyles.AxisStyleEnsured(CS2DLineID.X0).AxisLineStyle = (AxisLineStyle)info.GetValue("BottomAxisStyle", typeof(AxisLineStyle));
+        s._scaleStyles.AxisStyleEnsured(CS2DLineID.Y1).AxisLineStyle = (AxisLineStyle)info.GetValue("RightAxisStyle", typeof(AxisLineStyle));
+        s._scaleStyles.AxisStyleEnsured(CS2DLineID.X1).AxisLineStyle = (AxisLineStyle)info.GetValue("TopAxisStyle", typeof(AxisLineStyle));
 
 
-        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.Y0).MajorLabelStyle = (AxisLabelStyleBase)info.GetValue("LeftLabelStyle", typeof(AxisLabelStyleBase));
-        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.X0).MajorLabelStyle = (AxisLabelStyleBase)info.GetValue("BottomLabelStyle", typeof(AxisLabelStyleBase));
-        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.Y1).MajorLabelStyle = (AxisLabelStyleBase)info.GetValue("RightLabelStyle", typeof(AxisLabelStyleBase));
-        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.X1).MajorLabelStyle = (AxisLabelStyleBase)info.GetValue("TopLabelStyle", typeof(AxisLabelStyleBase));
+        s._scaleStyles.AxisStyle(CS2DLineID.Y0).MajorLabelStyle = (AxisLabelStyleBase)info.GetValue("LeftLabelStyle", typeof(AxisLabelStyleBase));
+        s._scaleStyles.AxisStyle(CS2DLineID.X0).MajorLabelStyle = (AxisLabelStyleBase)info.GetValue("BottomLabelStyle", typeof(AxisLabelStyleBase));
+        s._scaleStyles.AxisStyle(CS2DLineID.Y1).MajorLabelStyle = (AxisLabelStyleBase)info.GetValue("RightLabelStyle", typeof(AxisLabelStyleBase));
+        s._scaleStyles.AxisStyle(CS2DLineID.X1).MajorLabelStyle = (AxisLabelStyleBase)info.GetValue("TopLabelStyle", typeof(AxisLabelStyleBase));
       
       
         // Titles and legend
-        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.Y0).Title = (TextGraphic)info.GetValue("LeftAxisTitle", typeof(TextGraphic));
-        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.X0).Title = (TextGraphic)info.GetValue("BottomAxisTitle", typeof(TextGraphic));
-        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.Y1).Title = (TextGraphic)info.GetValue("RightAxisTitle", typeof(TextGraphic));
-        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.X1).Title = (TextGraphic)info.GetValue("TopAxisTitle", typeof(TextGraphic));
+        s._scaleStyles.AxisStyle(CS2DLineID.Y0).Title = (TextGraphic)info.GetValue("LeftAxisTitle", typeof(TextGraphic));
+        s._scaleStyles.AxisStyle(CS2DLineID.X0).Title = (TextGraphic)info.GetValue("BottomAxisTitle", typeof(TextGraphic));
+        s._scaleStyles.AxisStyle(CS2DLineID.Y1).Title = (TextGraphic)info.GetValue("RightAxisTitle", typeof(TextGraphic));
+        s._scaleStyles.AxisStyle(CS2DLineID.X1).Title = (TextGraphic)info.GetValue("TopAxisTitle", typeof(TextGraphic));
         
         if(!showLeft)
-          s._scaleStyles.RemoveAxisStyle(A2DAxisStyleIdentifier.Y0);
+          s._scaleStyles.RemoveAxisStyle(CS2DLineID.Y0);
         if (!showRight)
-          s._scaleStyles.RemoveAxisStyle(A2DAxisStyleIdentifier.Y1);
+          s._scaleStyles.RemoveAxisStyle(CS2DLineID.Y1);
         if (!showBottom)
-          s._scaleStyles.RemoveAxisStyle(A2DAxisStyleIdentifier.X0);
+          s._scaleStyles.RemoveAxisStyle(CS2DLineID.X0);
         if (!showTop)
-          s._scaleStyles.RemoveAxisStyle(A2DAxisStyleIdentifier.X1);
+          s._scaleStyles.RemoveAxisStyle(CS2DLineID.X1);
         
         
         s._legend = (TextGraphic)info.GetValue("Legend",typeof(TextGraphic));
@@ -545,32 +545,32 @@ namespace Altaxo.Graph.Gdi
         bool showRight = info.GetBoolean("ShowRightAxis");
         bool showTop = info.GetBoolean("ShowTopAxis");
 
-        s._scaleStyles.AxisStyleEnsured(A2DAxisStyleIdentifier.Y0).AxisLineStyle = (AxisLineStyle)info.GetValue("LeftAxisStyle", typeof(AxisLineStyle));
-        s._scaleStyles.AxisStyleEnsured(A2DAxisStyleIdentifier.X0).AxisLineStyle = (AxisLineStyle)info.GetValue("BottomAxisStyle", typeof(AxisLineStyle));
-        s._scaleStyles.AxisStyleEnsured(A2DAxisStyleIdentifier.Y1).AxisLineStyle = (AxisLineStyle)info.GetValue("RightAxisStyle", typeof(AxisLineStyle));
-        s._scaleStyles.AxisStyleEnsured(A2DAxisStyleIdentifier.X1).AxisLineStyle = (AxisLineStyle)info.GetValue("TopAxisStyle", typeof(AxisLineStyle));
+        s._scaleStyles.AxisStyleEnsured(CS2DLineID.Y0).AxisLineStyle = (AxisLineStyle)info.GetValue("LeftAxisStyle", typeof(AxisLineStyle));
+        s._scaleStyles.AxisStyleEnsured(CS2DLineID.X0).AxisLineStyle = (AxisLineStyle)info.GetValue("BottomAxisStyle", typeof(AxisLineStyle));
+        s._scaleStyles.AxisStyleEnsured(CS2DLineID.Y1).AxisLineStyle = (AxisLineStyle)info.GetValue("RightAxisStyle", typeof(AxisLineStyle));
+        s._scaleStyles.AxisStyleEnsured(CS2DLineID.X1).AxisLineStyle = (AxisLineStyle)info.GetValue("TopAxisStyle", typeof(AxisLineStyle));
 
 
-        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.Y0).MajorLabelStyle = (AxisLabelStyleBase)info.GetValue("LeftLabelStyle", typeof(AxisLabelStyleBase));
-        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.X0).MajorLabelStyle = (AxisLabelStyleBase)info.GetValue("BottomLabelStyle", typeof(AxisLabelStyleBase));
-        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.Y1).MajorLabelStyle = (AxisLabelStyleBase)info.GetValue("RightLabelStyle", typeof(AxisLabelStyleBase));
-        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.X1).MajorLabelStyle = (AxisLabelStyleBase)info.GetValue("TopLabelStyle", typeof(AxisLabelStyleBase));
+        s._scaleStyles.AxisStyle(CS2DLineID.Y0).MajorLabelStyle = (AxisLabelStyleBase)info.GetValue("LeftLabelStyle", typeof(AxisLabelStyleBase));
+        s._scaleStyles.AxisStyle(CS2DLineID.X0).MajorLabelStyle = (AxisLabelStyleBase)info.GetValue("BottomLabelStyle", typeof(AxisLabelStyleBase));
+        s._scaleStyles.AxisStyle(CS2DLineID.Y1).MajorLabelStyle = (AxisLabelStyleBase)info.GetValue("RightLabelStyle", typeof(AxisLabelStyleBase));
+        s._scaleStyles.AxisStyle(CS2DLineID.X1).MajorLabelStyle = (AxisLabelStyleBase)info.GetValue("TopLabelStyle", typeof(AxisLabelStyleBase));
 
 
         // Titles and legend
-        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.Y0).Title = (TextGraphic)info.GetValue("LeftAxisTitle", typeof(TextGraphic));
-        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.X0).Title = (TextGraphic)info.GetValue("BottomAxisTitle", typeof(TextGraphic));
-        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.Y1).Title = (TextGraphic)info.GetValue("RightAxisTitle", typeof(TextGraphic));
-        s._scaleStyles.AxisStyle(A2DAxisStyleIdentifier.X1).Title = (TextGraphic)info.GetValue("TopAxisTitle", typeof(TextGraphic));
+        s._scaleStyles.AxisStyle(CS2DLineID.Y0).Title = (TextGraphic)info.GetValue("LeftAxisTitle", typeof(TextGraphic));
+        s._scaleStyles.AxisStyle(CS2DLineID.X0).Title = (TextGraphic)info.GetValue("BottomAxisTitle", typeof(TextGraphic));
+        s._scaleStyles.AxisStyle(CS2DLineID.Y1).Title = (TextGraphic)info.GetValue("RightAxisTitle", typeof(TextGraphic));
+        s._scaleStyles.AxisStyle(CS2DLineID.X1).Title = (TextGraphic)info.GetValue("TopAxisTitle", typeof(TextGraphic));
 
         if (!showLeft)
-          s._scaleStyles.RemoveAxisStyle(A2DAxisStyleIdentifier.Y0);
+          s._scaleStyles.RemoveAxisStyle(CS2DLineID.Y0);
         if (!showRight)
-          s._scaleStyles.RemoveAxisStyle(A2DAxisStyleIdentifier.Y1);
+          s._scaleStyles.RemoveAxisStyle(CS2DLineID.Y1);
         if (!showBottom)
-          s._scaleStyles.RemoveAxisStyle(A2DAxisStyleIdentifier.X0);
+          s._scaleStyles.RemoveAxisStyle(CS2DLineID.X0);
         if (!showTop)
-          s._scaleStyles.RemoveAxisStyle(A2DAxisStyleIdentifier.X1);
+          s._scaleStyles.RemoveAxisStyle(CS2DLineID.X1);
 
 
 
@@ -844,7 +844,7 @@ namespace Altaxo.Graph.Gdi
     /// </summary>
     protected XYPlotLayer()
     {
-      this.CoordinateSystem = new G2DCartesicCoordinateSystem();
+      this.CoordinateSystem = new CS.G2DCartesicCoordinateSystem();
       this.ScaleStyles = new G2DScaleStyleCollection();
       this.AxisProperties = new LinkedScaleCollection();
       this.GraphObjects = new GraphicCollection();
@@ -860,7 +860,7 @@ namespace Altaxo.Graph.Gdi
     {
       this._location = new XYPlotLayerPositionAndSize();
 
-      this.CoordinateSystem = new G2DCartesicCoordinateSystem();
+      this.CoordinateSystem = new CS.G2DCartesicCoordinateSystem();
      // this.CoordinateSystem = new G2DPolarCoordinateSystem();
 
       this.Size = size;
@@ -1141,7 +1141,7 @@ namespace Altaxo.Graph.Gdi
 
           if (info.HasTitleByDefault)
           {
-            this.SetAxisTitleString(info.Identifier, info.Identifier.AxisNumber==0 ? "X axis" : "Y axis");
+            this.SetAxisTitleString(info.Identifier, info.Identifier.ParallelAxisNumber==0 ? "X axis" : "Y axis");
           }
         }
        
@@ -1833,10 +1833,10 @@ namespace Altaxo.Graph.Gdi
       }
 
       // take also the axis styles with physical values into account
-      foreach (A2DAxisStyleIdentifier id in _scaleStyles.AxisStyleIDs)
+      foreach (CS2DLineID id in _scaleStyles.AxisStyleIDs)
       {
-        if (id.AxisNumber == 0 && id.UsePhysicalValue)
-          _axisProperties.X.Scale.DataBoundsObject.Add(id.PhysicalValue);
+        if (id.AxisNumberOther == 0 && id.UsePhysicalValueOther)
+          _axisProperties.X.Scale.DataBoundsObject.Add(id.PhysicalValueOther);
       }
 
       _plotAssociationXBoundariesChanged_EventSuspendCount = Math.Max(0,_plotAssociationXBoundariesChanged_EventSuspendCount-1);
@@ -1910,10 +1910,10 @@ namespace Altaxo.Graph.Gdi
         }
       }
       // take also the axis styles with physical values into account
-      foreach (A2DAxisStyleIdentifier id in _scaleStyles.AxisStyleIDs)
+      foreach (CS2DLineID id in _scaleStyles.AxisStyleIDs)
       {
-        if (id.AxisNumber == 1 && id.UsePhysicalValue)
-          _axisProperties.Y.Scale.DataBoundsObject.Add(id.PhysicalValue);
+        if (id.AxisNumberOther == 1 && id.UsePhysicalValueOther)
+          _axisProperties.Y.Scale.DataBoundsObject.Add(id.PhysicalValueOther);
       }
 
       _plotAssociationYBoundariesChanged_EventSuspendCount = Math.Max(0,_plotAssociationYBoundariesChanged_EventSuspendCount-1);
@@ -2039,7 +2039,7 @@ namespace Altaxo.Graph.Gdi
 
 
 
-    public IEnumerable<A2DAxisStyleIdentifier> UsedAxisStyleIdentifier
+    public IEnumerable<CS2DLineID> UsedAxisStyleIdentifier
     {
       get
       {
@@ -2055,12 +2055,12 @@ namespace Altaxo.Graph.Gdi
     
 
 
-    private string GetAxisTitleString(A2DAxisStyleIdentifier id)
+    private string GetAxisTitleString(CS2DLineID id)
     {
       return _scaleStyles.AxisStyle(id) !=null && _scaleStyles.AxisStyle(id).Title != null ? _scaleStyles.AxisStyle(id).Title.Text : null; 
     }
 
-    private void SetAxisTitleString(A2DAxisStyleIdentifier id, string value)
+    private void SetAxisTitleString(CS2DLineID id, string value)
     {
       AxisStyle style = _scaleStyles.AxisStyle(id);
       string oldtitle = (style==null ||  style.Title == null) ? null : style.Title.Text;
@@ -2084,10 +2084,10 @@ namespace Altaxo.Graph.Gdi
 
           // find out the position and orientation of the item
           double rx0 = 0, rx1 = 1, ry0 = 0, ry1 = 1;
-          if (id.AxisNumber == 0)
-            ry0 = ry1 = id.LogicalValue;
+          if (id.ParallelAxisNumber == 0)
+            ry0 = ry1 = id.LogicalValueOther;
           else
-            rx0 = rx1 = id.LogicalValue;
+            rx0 = rx1 = id.LogicalValueOther;
 
           PointF normDirection;
           PointF location = CoordinateSystem.GetNormalizedDirection(rx0, ry0, rx1, ry1, 0.5, info.PreferedLabelSide == A2DAxisSide.Left ? 90 : -90, out normDirection);
@@ -2150,11 +2150,11 @@ namespace Altaxo.Graph.Gdi
     {
       get
       {
-        return GetAxisTitleString(A2DAxisStyleIdentifier.Y0);
+        return GetAxisTitleString(CS2DLineID.Y0);
       }
       set
       {
-        SetAxisTitleString(A2DAxisStyleIdentifier.Y0, value);
+        SetAxisTitleString(CS2DLineID.Y0, value);
       }
     }
 
@@ -2166,11 +2166,11 @@ namespace Altaxo.Graph.Gdi
     {
       get
       {
-        return GetAxisTitleString(A2DAxisStyleIdentifier.X0);
+        return GetAxisTitleString(CS2DLineID.X0);
       }
       set
       {
-        SetAxisTitleString(A2DAxisStyleIdentifier.X0, value);
+        SetAxisTitleString(CS2DLineID.X0, value);
       }
     }
 
@@ -2188,13 +2188,13 @@ namespace Altaxo.Graph.Gdi
     {
 
       // update the logical values of the physical axes before
-      foreach (A2DAxisStyleIdentifier id in _scaleStyles.AxisStyleIDs)
+      foreach (CS2DLineID id in _scaleStyles.AxisStyleIDs)
       {
-        if (id.UsePhysicalValue)
+        if (id.UsePhysicalValueOther)
         {
           // then update the logical value of this identifier
-          double logicalValue = this._axisProperties.Scale(id.AxisNumber).PhysicalVariantToNormal(id.PhysicalValue);
-          id.LogicalValue = logicalValue;
+          double logicalValue = this._axisProperties.Scale(id.AxisNumberOther).PhysicalVariantToNormal(id.PhysicalValueOther);
+          id.LogicalValueOther = logicalValue;
         }
       }
       
