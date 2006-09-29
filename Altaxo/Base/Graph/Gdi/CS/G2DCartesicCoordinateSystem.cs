@@ -49,7 +49,7 @@ namespace Altaxo.Graph.Gdi.CS
       A2DAxisStyleInformation info;
 
       // Left
-      info = new A2DAxisStyleInformation(new CS2DLineID(vertAx, horzRev ? 1 : 0));
+      info = new A2DAxisStyleInformation(new CSLineID(vertAx, horzRev ? 1 : 0));
       _axisStyleInformation.Add(info);
       info.NameOfAxisStyle = "Left";
       info.NameOfLeftSide = vertRev ? "Inner" : "Outer";
@@ -60,7 +60,7 @@ namespace Altaxo.Graph.Gdi.CS
 
 
       // Right
-      info = new A2DAxisStyleInformation(new CS2DLineID(vertAx, horzRev ? 0 : 1));
+      info = new A2DAxisStyleInformation(new CSLineID(vertAx, horzRev ? 0 : 1));
       _axisStyleInformation.Add(info);
       info.NameOfAxisStyle = "Right";
       info.NameOfLeftSide = vertRev ? "Outer" : "Inner";
@@ -68,7 +68,7 @@ namespace Altaxo.Graph.Gdi.CS
       info.PreferedLabelSide = vertRev ? A2DAxisSide.Left : A2DAxisSide.Right;
 
       // Bottom
-      info = new A2DAxisStyleInformation(new CS2DLineID(horzAx, vertRev ? 1 : 0));
+      info = new A2DAxisStyleInformation(new CSLineID(horzAx, vertRev ? 1 : 0));
       _axisStyleInformation.Add(info);
       info.NameOfAxisStyle = "Bottom";
       info.NameOfLeftSide = horzRev ? "Outer" : "Inner";
@@ -78,7 +78,7 @@ namespace Altaxo.Graph.Gdi.CS
       info.HasTitleByDefault = true;
 
       // Top
-      info = new A2DAxisStyleInformation(new CS2DLineID(horzAx, vertRev ? 0 : 1));
+      info = new A2DAxisStyleInformation(new CSLineID(horzAx, vertRev ? 0 : 1));
       _axisStyleInformation.Add(info);
       info.NameOfAxisStyle = "Top";
       info.NameOfLeftSide = horzRev ? "Inner" : "Outer";
@@ -87,7 +87,7 @@ namespace Altaxo.Graph.Gdi.CS
 
 
       // Y=0
-      info = new A2DAxisStyleInformation(CS2DLineID.FromPhysicalValue(horzAx, 0));
+      info = new A2DAxisStyleInformation(CSLineID.FromPhysicalValue(horzAx, 0));
       _axisStyleInformation.Add(info);
       info.NameOfAxisStyle = "Y=0";
       info.NameOfLeftSide = horzRev ? "Below" : "Above";
@@ -95,7 +95,7 @@ namespace Altaxo.Graph.Gdi.CS
       info.PreferedLabelSide = horzRev ? A2DAxisSide.Left : A2DAxisSide.Right;
 
       // X=0
-      info = new A2DAxisStyleInformation(CS2DLineID.FromPhysicalValue(vertAx, 0));
+      info = new A2DAxisStyleInformation(CSLineID.FromPhysicalValue(vertAx, 0));
       _axisStyleInformation.Add(info);
       info.NameOfAxisStyle = "X=0";
       info.NameOfLeftSide = vertRev ? "Right" : "Left";

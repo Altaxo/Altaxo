@@ -83,7 +83,7 @@ namespace Altaxo.Graph.GUI
     {
       m_Layer = layer;
       m_axisNumber = axisnumber;
-      m_Axis = m_Layer.AxisProperties.Scale(axisnumber);
+      m_Axis = m_Layer.LinkedScales.Scale(axisnumber);
       _tempAxis = (Scale)m_Axis.Clone();
 
 
@@ -93,7 +93,7 @@ namespace Altaxo.Graph.GUI
     public AxisScaleController(XYPlotLayer layer, Scale ax)
     {
       m_Layer = layer;
-      m_axisNumber = layer.AxisProperties.IndexOf(ax);
+      m_axisNumber = layer.LinkedScales.IndexOf(ax);
       if (m_axisNumber < 0)
         throw new ArgumentException("Provided axis is not member of the layer");
 
@@ -186,7 +186,7 @@ namespace Altaxo.Graph.GUI
       // note: the order is essential here
       // first set the axis in the layer, _then_ apply the RescaleConditions
 
-      m_Layer.AxisProperties.SetScale(m_axisNumber, _tempAxis);
+      m_Layer.LinkedScales.SetScale(m_axisNumber, _tempAxis);
 
    
 

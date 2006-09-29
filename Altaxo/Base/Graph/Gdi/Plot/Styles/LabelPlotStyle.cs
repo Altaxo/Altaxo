@@ -74,7 +74,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
    
 
     /// <summary>The axis where the label is attached to (if it is attached).</summary>
-    protected CS2DLineID m_AttachedAxis;
+    protected CSLineID m_AttachedAxis;
 
     protected Altaxo.Data.ReadableColumnProxy m_LabelColumn;
 
@@ -87,18 +87,18 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     #region Serialization
 
 
-    private CS2DLineID GetDirection(EdgeType fillDir)
+    private CSLineID GetDirection(EdgeType fillDir)
     {
       switch (fillDir)
       {
         case EdgeType.Bottom:
-          return CS2DLineID.X0;
+          return CSLineID.X0;
         case EdgeType.Top:
-          return CS2DLineID.X1;
+          return CSLineID.X1;
         case EdgeType.Left:
-          return CS2DLineID.Y0;
+          return CSLineID.Y0;
         case EdgeType.Right:
-          return CS2DLineID.Y1;
+          return CSLineID.Y1;
       }
       return null;
     }
@@ -106,18 +106,18 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Graph.XYPlotLabelStyle", 0)]
     public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public static CS2DLineID GetDirection(EdgeType fillDir)
+      public static CSLineID GetDirection(EdgeType fillDir)
       {
         switch (fillDir)
         {
           case EdgeType.Bottom:
-            return CS2DLineID.X0;
+            return CSLineID.X0;
           case EdgeType.Top:
-            return CS2DLineID.X1;
+            return CSLineID.X1;
           case EdgeType.Left:
-            return CS2DLineID.Y0;
+            return CSLineID.Y0;
           case EdgeType.Right:
-            return CS2DLineID.Y1;
+            return CSLineID.Y1;
         }
         return null;
       }
@@ -536,12 +536,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 
     /// <summary>If axis the label is attached to if the value of <see cref="AttachToAxis" /> is true.</summary>
-    public CS2DLineID AttachedAxis
+    public CSLineID AttachedAxis
     {
       get { return this.m_AttachedAxis; }
       set
       {
-        CS2DLineID oldValue = this.m_AttachedAxis;
+        CSLineID oldValue = this.m_AttachedAxis;
         this.m_AttachedAxis = value;
         if (value != oldValue)
         {

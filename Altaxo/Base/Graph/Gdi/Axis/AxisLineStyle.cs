@@ -310,7 +310,7 @@ namespace Altaxo.Graph.Gdi.Axis
       return new AxisLineStyle(this);
     }
 
-    public CS2DLineID AxisStyleID
+    public CSLineID AxisStyleID
     {
       get
       {
@@ -515,11 +515,11 @@ namespace Altaxo.Graph.Gdi.Axis
 
       if (_cachedAxisStyleInfo.Identifier.ParallelAxisNumber == 0)
       {
-        ry0 = ry1 = _cachedAxisStyleInfo.Identifier.LogicalValueOther;
+        ry0 = ry1 = _cachedAxisStyleInfo.Identifier.LogicalValueOtherFirst;
       }
       else
       {
-        rx0 = rx1 = _cachedAxisStyleInfo.Identifier.LogicalValueOther;
+        rx0 = rx1 = _cachedAxisStyleInfo.Identifier.LogicalValueOtherFirst;
       }
       GraphicsPath gp = new GraphicsPath();
       layer.CoordinateSystem.GetIsoline(gp, rx0, ry0, rx1, ry1);
@@ -548,16 +548,16 @@ namespace Altaxo.Graph.Gdi.Axis
     /// <param name="axis">The axis this axis style is used for.</param>
     public void Paint(Graphics g, XYPlotLayer layer, A2DAxisStyleInformation styleInfo)
     {
-      CS2DLineID styleID = styleInfo.Identifier;
+      CSLineID styleID = styleInfo.Identifier;
       _cachedAxisStyleInfo = styleInfo.Clone();
       Scale axis = styleID.ParallelAxisNumber == 0 ? layer.XAxis : layer.YAxis;
       
       double rx0 = 0, rx1 = 1;
       double ry0 = 0, ry1 = 1;
       if (styleID.ParallelAxisNumber == 0)
-        ry0 = ry1 = styleID.LogicalValueOther;
+        ry0 = ry1 = styleID.LogicalValueOtherFirst;
       else
-        rx0 = rx1 = styleID.LogicalValueOther;
+        rx0 = rx1 = styleID.LogicalValueOtherFirst;
 
       layer.CoordinateSystem.DrawIsoline(g, _axisPen, rx0,ry0,rx1,ry1);
 

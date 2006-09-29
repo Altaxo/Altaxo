@@ -40,7 +40,7 @@ namespace Altaxo.Graph.Gdi.Axis
     /// <summary>
     /// Identifies the axis style.
     /// </summary>
-    CS2DLineID _styleID;
+    CSLineID _styleID;
 
     /// <summary>Style of axis. Determines the line width and color of the axis and the ticks.</summary>
     protected AxisLineStyle _axisLineStyle;
@@ -132,16 +132,16 @@ namespace Altaxo.Graph.Gdi.Axis
         switch (edge)
         {
           case EdgeType.Bottom:
-            s._styleID = new CS2DLineID(0, -offset);
+            s._styleID = new CSLineID(0, -offset);
             break;
           case EdgeType.Top:
-            s._styleID = new CS2DLineID(0, 1+offset);
+            s._styleID = new CSLineID(0, 1+offset);
             break;
           case EdgeType.Left:
-            s._styleID = new CS2DLineID(1, -offset);
+            s._styleID = new CSLineID(1, -offset);
             break;
           case EdgeType.Right:
-            s._styleID = new CS2DLineID(1, 1+offset);
+            s._styleID = new CSLineID(1, 1+offset);
             break;
         }
 
@@ -177,7 +177,7 @@ namespace Altaxo.Graph.Gdi.Axis
         AxisStyle s = null != o ? (AxisStyle)o : new AxisStyle();
 
         // Styles
-        s._styleID = (CS2DLineID)info.GetValue("StyleID", s);
+        s._styleID = (CSLineID)info.GetValue("StyleID", s);
         s.AxisLineStyle = (AxisLineStyle)info.GetValue("AxisStyle", s);
         s.MajorLabelStyle = (AxisLabelStyleBase)info.GetValue("MajorLabelStyle", s);
         s.MinorLabelStyle = (AxisLabelStyleBase)info.GetValue("MinorLabelStyle", s);
@@ -222,7 +222,7 @@ namespace Altaxo.Graph.Gdi.Axis
         _axisTitle.Changed += new EventHandler(EhChildChanged);
     }
 
-    public AxisStyle(CS2DLineID id)
+    public AxisStyle(CSLineID id)
     {
       _styleID = id;
       _axisLineStyle = new AxisLineStyle();
@@ -235,7 +235,7 @@ namespace Altaxo.Graph.Gdi.Axis
     /// <summary>
     /// Identifies the axis style.
     /// </summary>
-    public CS2DLineID StyleID
+    public CSLineID StyleID
     {
       get
       {
@@ -282,8 +282,9 @@ namespace Altaxo.Graph.Gdi.Axis
       return false;
     }
 
-    public void Paint(Graphics g, XYPlotLayer layer, int axisnumber)
+    public void Paint(Graphics g, XYPlotLayer layer)
     {
+      int axisnumber = _styleID.ParallelAxisNumber;
       A2DAxisStyleInformation styleinfo = layer.CoordinateSystem.GetAxisStyleInformation(_styleID);
       _cachedAxisInfo = styleinfo;
 

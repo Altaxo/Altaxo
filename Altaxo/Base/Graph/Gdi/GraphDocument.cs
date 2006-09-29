@@ -454,10 +454,10 @@ namespace Altaxo.Graph.Gdi
       if(_graphProperties ==null)
         _graphProperties = new Dictionary<string,object>();
 
-      if(_graphProperties[key]==null)
-        _graphProperties.Add(key,val);
-      else
+      if(_graphProperties.ContainsKey(key))
         _graphProperties[key]=val;
+      else
+      _graphProperties.Add(key,val);
     }
 
 
@@ -603,7 +603,7 @@ namespace Altaxo.Graph.Gdi
       newlayer.LinkedLayer = (linklayernumber>=0 && linklayernumber<Layers.Count)? Layers[linklayernumber] : null;
       newlayer.SetPosition(0,XYPlotLayerPositionType.RelativeThisNearToLinkedLayerNear,0,XYPlotLayerPositionType.RelativeThisNearToLinkedLayerNear);
       newlayer.SetSize(1,XYPlotLayerSizeType.RelativeToLinkedLayer,1,XYPlotLayerSizeType.RelativeToLinkedLayer);
-      newlayer.ScaleStyles.AxisStyleEnsured(new CS2DLineID(0, 1));
+      newlayer.AxisStyles.AxisStyleEnsured(new CSLineID(0, 1));
     }
 
     /// <summary>
@@ -619,7 +619,7 @@ namespace Altaxo.Graph.Gdi
       newlayer.SetSize(1,XYPlotLayerSizeType.RelativeToLinkedLayer,1,XYPlotLayerSizeType.RelativeToLinkedLayer);
 
       // set enabling of axis
-      newlayer.ScaleStyles.AxisStyleEnsured(new CS2DLineID(1, 1));
+      newlayer.AxisStyles.AxisStyleEnsured(new CSLineID(1, 1));
     }
 
     /// <summary>
@@ -635,8 +635,8 @@ namespace Altaxo.Graph.Gdi
       newlayer.SetSize(1,XYPlotLayerSizeType.RelativeToLinkedLayer,1,XYPlotLayerSizeType.RelativeToLinkedLayer);
 
       // set enabling of axis
-      newlayer.ScaleStyles.AxisStyleEnsured(new CS2DLineID(0, 1));
-      newlayer.ScaleStyles.AxisStyleEnsured(new CS2DLineID(1, 1));
+      newlayer.AxisStyles.AxisStyleEnsured(new CSLineID(0, 1));
+      newlayer.AxisStyles.AxisStyleEnsured(new CSLineID(1, 1));
      
     }
 
@@ -654,11 +654,11 @@ namespace Altaxo.Graph.Gdi
       newlayer.SetSize(1,XYPlotLayerSizeType.RelativeToLinkedLayer,1,XYPlotLayerSizeType.RelativeToLinkedLayer);
 
       // set enabling of axis
-      newlayer.ScaleStyles.AxisStyleEnsured(new CS2DLineID(0, 1));
-      newlayer.ScaleStyles.AxisStyleEnsured(new CS2DLineID(1, 1));
+      newlayer.AxisStyles.AxisStyleEnsured(new CSLineID(0, 1));
+      newlayer.AxisStyles.AxisStyleEnsured(new CSLineID(1, 1));
       
 
-      newlayer.AxisProperties.X.AxisLinkType = ScaleLinkType.Straight;
+      newlayer.LinkedScales.X.AxisLinkType = ScaleLinkType.Straight;
     }
 
 

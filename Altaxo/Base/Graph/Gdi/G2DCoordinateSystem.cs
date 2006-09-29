@@ -178,15 +178,15 @@ namespace Altaxo.Graph.Gdi
     /// <param name="id">The axis to start drawing.</param>
     /// <param name="rx">Logical x coordinate of the end point.</param>
     /// <param name="ry">Logical y coordinate of the end point.</param>
-    public virtual void GetIsolineFromAxisToPoint(GraphicsPath path, CS2DLineID id, double rx, double ry)
+    public virtual void GetIsolineFromAxisToPoint(GraphicsPath path, CSLineID id, double rx, double ry)
     {
       if (id.ParallelAxisNumber == 0)
       {
-        GetIsoline(path, rx, id.LogicalValueOther, rx, ry);
+        GetIsoline(path, rx, id.LogicalValueOtherFirst, rx, ry);
       }
       else
       {
-        GetIsoline(path, id.LogicalValueOther, ry, rx, ry);
+        GetIsoline(path, id.LogicalValueOtherFirst, ry, rx, ry);
       }
     }
 
@@ -197,15 +197,15 @@ namespace Altaxo.Graph.Gdi
     /// <param name="rx">Logical x coordinate of the start point.</param>
     /// <param name="ry">Logical y coordinate of the start point.</param>
     /// <param name="id">The axis to end the isoline.</param>
-    public virtual void GetIsolineFromPointToAxis(GraphicsPath path, double rx, double ry, CS2DLineID id)
+    public virtual void GetIsolineFromPointToAxis(GraphicsPath path, double rx, double ry, CSLineID id)
     {
       if (id.ParallelAxisNumber == 0)
       {
-        GetIsoline(path, rx, ry, rx, id.LogicalValueOther);
+        GetIsoline(path, rx, ry, rx, id.LogicalValueOtherFirst);
       }
       else
       {
-        GetIsoline(path, rx, ry, id.LogicalValueOther, ry);
+        GetIsoline(path, rx, ry, id.LogicalValueOtherFirst, ry);
       }
     }
 
@@ -217,15 +217,15 @@ namespace Altaxo.Graph.Gdi
     /// <param name="rx">Logical x coordinate of the start point.</param>
     /// <param name="ry">Logical y coordinate of the start point.</param>
     /// <param name="id">The axis to end the isoline.</param>
-    public virtual void DrawIsolineFromPointToAxis(Graphics g, System.Drawing.Pen pen, double rx, double ry, CS2DLineID id)
+    public virtual void DrawIsolineFromPointToAxis(Graphics g, System.Drawing.Pen pen, double rx, double ry, CSLineID id)
     {
       if (id.ParallelAxisNumber == 0)
       {
-        DrawIsoline(g, pen, rx, ry, rx, id.LogicalValueOther);
+        DrawIsoline(g, pen, rx, ry, rx, id.LogicalValueOtherFirst);
       }
       else
       {
-        DrawIsoline(g, pen, rx, ry, id.LogicalValueOther, ry);
+        DrawIsoline(g, pen, rx, ry, id.LogicalValueOtherFirst, ry);
       }
     }
 
@@ -239,24 +239,24 @@ namespace Altaxo.Graph.Gdi
     /// <param name="rx0">Logical x coordinate of the start point.</param>
     /// <param name="ry1">Logical y coordinate of the start point.</param>
     /// <param name="id">The axis to end the isoline.</param>
-    public virtual void GetIsolineOnAxis(GraphicsPath path, CS2DLineID id, double rx0, double ry0, double rx1, double ry1)
+    public virtual void GetIsolineOnAxis(GraphicsPath path, CSLineID id, double rx0, double ry0, double rx1, double ry1)
     {
       if (id.ParallelAxisNumber == 0)
       {
-        GetIsoline(path, rx0, id.LogicalValueOther, rx1, id.LogicalValueOther);
+        GetIsoline(path, rx0, id.LogicalValueOtherFirst, rx1, id.LogicalValueOtherFirst);
       }
       else
       {
-        GetIsoline(path, id.LogicalValueOther, ry0, id.LogicalValueOther, ry1);
+        GetIsoline(path, id.LogicalValueOtherFirst, ry0, id.LogicalValueOtherFirst, ry1);
       }
     }
 
-    public PointF GetPointOnAxis(CS2DLineID id, double rx, double ry)
+    public PointF GetPointOnAxis(CSLineID id, double rx, double ry)
     {
       if (id.ParallelAxisNumber == 0)
-        return LogicalToLayerCoordinates(rx, id.LogicalValueOther);
+        return LogicalToLayerCoordinates(rx, id.LogicalValueOtherFirst);
       else
-        return LogicalToLayerCoordinates(id.LogicalValueOther, ry);
+        return LogicalToLayerCoordinates(id.LogicalValueOtherFirst, ry);
     }
 
     /// <summary>
@@ -266,15 +266,15 @@ namespace Altaxo.Graph.Gdi
     /// <param name="id">Axis to draw the isoline along.</param>
     /// <param name="r0">Start point of the isoline. The logical value of the other coordinate.</param>
     /// <param name="r1">End point of the isoline. The logical value of the other coordinate.</param>
-    public virtual void GetIsolineFromTo(GraphicsPath path, CS2DLineID id, double r0, double r1)
+    public virtual void GetIsolineFromTo(GraphicsPath path, CSLineID id, double r0, double r1)
     {
       if (id.ParallelAxisNumber == 0)
       {
-        GetIsoline(path, r0, id.LogicalValueOther, r1, id.LogicalValueOther);
+        GetIsoline(path, r0, id.LogicalValueOtherFirst, r1, id.LogicalValueOtherFirst);
       }
       else
       {
-        GetIsoline(path, id.LogicalValueOther, r0, id.LogicalValueOther, r1);
+        GetIsoline(path, id.LogicalValueOtherFirst, r0, id.LogicalValueOtherFirst, r1);
       }
     }
 
@@ -359,7 +359,7 @@ namespace Altaxo.Graph.Gdi
     /// </summary>
     /// <param name="id">The id to find.</param>
     /// <returns>Index of the style, or -1 if not found.</returns>
-    public int IndexOfAxisStyle(CS2DLineID id)
+    public int IndexOfAxisStyle(CSLineID id)
     {
       if (id == null)
         return -1;
@@ -374,7 +374,7 @@ namespace Altaxo.Graph.Gdi
       return -1;
     }
 
-    public A2DAxisStyleInformation GetAxisStyleInformation(CS2DLineID styleID)
+    public A2DAxisStyleInformation GetAxisStyleInformation(CSLineID styleID)
     {
       if (_axisStyleInformation == null || _axisStyleInformation.Count == 0)
         UpdateAxisInfo();
@@ -390,7 +390,7 @@ namespace Altaxo.Graph.Gdi
           if (styleID == info.Identifier)
             return info; // this covers also situations when the axis uses physical values
 
-          double dist = Math.Abs(styleID.LogicalValueOther - info.Identifier.LogicalValueOther);
+          double dist = Math.Abs(styleID.LogicalValueOtherFirst - info.Identifier.LogicalValueOtherFirst);
           if (dist < minDistance)
           {
             minDistance = dist;
@@ -415,9 +415,9 @@ namespace Altaxo.Graph.Gdi
       return result;
     }
 
-    public IEnumerable<CS2DLineID> GetJoinedAxisStyleIdentifier(IEnumerable<CS2DLineID> list1, IEnumerable<CS2DLineID> list2)
+    public IEnumerable<CSLineID> GetJoinedAxisStyleIdentifier(IEnumerable<CSLineID> list1, IEnumerable<CSLineID> list2)
     {
-      Dictionary<CS2DLineID, object> dict = new Dictionary<CS2DLineID, object>();
+      Dictionary<CSLineID, object> dict = new Dictionary<CSLineID, object>();
 
       foreach (A2DAxisStyleInformation info in AxisStyles)
       {
@@ -427,7 +427,7 @@ namespace Altaxo.Graph.Gdi
 
       if (list1 != null)
       {
-        foreach (CS2DLineID id in list1)
+        foreach (CSLineID id in list1)
         {
           if (!dict.ContainsKey(id))
           {
@@ -439,7 +439,7 @@ namespace Altaxo.Graph.Gdi
 
       if (list2 != null)
       {
-        foreach (CS2DLineID id in list2)
+        foreach (CSLineID id in list2)
         {
           if (!dict.ContainsKey(id))
           {

@@ -4,8 +4,12 @@ using System.Text;
 
 namespace Altaxo.Graph.Gdi.Axis
 {
+ 
+
   [Serializable]
-  public class GridPlane : ICloneable
+  public class GridPlane : 
+    ICloneable,
+    Main.IChangedEventSource
   {
 
     /// <summary>
@@ -30,20 +34,28 @@ namespace Altaxo.Graph.Gdi.Axis
     /// </summary>
     Background.IBackgroundStyle _background;
 
+    [field:NonSerialized]
+    public event EventHandler Changed;
+
+    [NonSerialized]
+    GridIndexer _cachedIndexer;
+
 
     void CopyFrom(GridPlane from)
     {
       this._planeID = from._planeID;
-      this.Grid1 = from._grid1 == null ? null : (GridStyle)from._grid1.Clone();
-      this.Grid2 = from._grid2 == null ? null : (GridStyle)from._grid2.Clone();
+      this.GridStyleFirst = from._grid1 == null ? null : (GridStyle)from._grid1.Clone();
+      this.GridStyleSecond = from._grid2 == null ? null : (GridStyle)from._grid2.Clone();
       this.BackgroundStyle = from._background == null ? null : (Background.IBackgroundStyle)from._background.Clone();
     }
     public GridPlane(CSPlaneID id)
     {
+      _cachedIndexer = new GridIndexer(this);
       _planeID = id;
     }
     public GridPlane(GridPlane from)
     {
+      _cachedIndexer = new GridIndexer(this);
       CopyFrom(from);
     }
 
@@ -58,17 +70,23 @@ namespace Altaxo.Graph.Gdi.Axis
 
 
 
-    public GridStyle Grid1
+    public GridStyle GridStyleFirst
     {
       get { return _grid1; }
       set { _grid1 = value; }
     }
 
-    public GridStyle Grid2
+    public GridStyle GridStyleSecond
     {
       get { return _grid2; }
       set { _grid2 = value; }
     }
+
+    public Altaxo.Collections.IArray<GridStyle> GridStyle
+    {
+      get { return _cachedIndexer; }
+    }
+
 
     public Background.IBackgroundStyle BackgroundStyle
     {
@@ -76,5 +94,50 @@ namespace Altaxo.Graph.Gdi.Axis
       set { _background = value; }
     }
 
+    private class GridIndexer : Altaxo.Collections.IArray<GridStyle>
+    {
+      GridPlane _parent;
+      public GridIndexer(GridPlane parent)
+      {
+        _parent = parent;
+      }
+
+
+
+      #region IArray<GridStyle> Members
+
+      public GridStyle this[int i]
+      {
+        get
+        {
+          return 0 == i ? _parent._grid1 : _parent._grid2;
+        }
+        set
+        {
+          if (0 == i)
+            _parent.GridStyleFirst = value;
+          else
+            _parent.GridStyleSecond = value;
+        }
+      }
+
+      public int Count
+      {
+        get { return 2; }
+      }
+
+      #endregion
+    }
+
+
+    #region IChangedEventSource Members
+
+    void OnChanged()
+    {
+      if (null != Changed)
+        Changed(this, EventArgs.Empty);
+    }
+
+    #endregion
   }
 }

@@ -54,7 +54,7 @@ namespace Altaxo.Graph.Gdi.CS
       A2DAxisStyleInformation info;
 
       // Right
-      info = new A2DAxisStyleInformation(new CS2DLineID(vertAx, 0));
+      info = new A2DAxisStyleInformation(new CSLineID(vertAx, 0));
       _axisStyleInformation.Add(info);
       info.NameOfAxisStyle = "RightDirection";
       info.NameOfLeftSide = vertRev ? "Below" : "Above";
@@ -64,7 +64,7 @@ namespace Altaxo.Graph.Gdi.CS
       info.HasTitleByDefault = true;
 
       // Left
-      info = new A2DAxisStyleInformation(new CS2DLineID(vertAx, 0.5));
+      info = new A2DAxisStyleInformation(new CSLineID(vertAx, 0.5));
       _axisStyleInformation.Add(info);
       info.NameOfAxisStyle = "LeftDirection";
       info.NameOfLeftSide = vertRev ? "Above" : "Below";
@@ -72,7 +72,7 @@ namespace Altaxo.Graph.Gdi.CS
       info.PreferedLabelSide = vertRev ? A2DAxisSide.Right : A2DAxisSide.Left;
 
       // Top
-      info = new A2DAxisStyleInformation(new CS2DLineID(vertAx, horzRev ? 0.75 : 0.25));
+      info = new A2DAxisStyleInformation(new CSLineID(vertAx, horzRev ? 0.75 : 0.25));
       _axisStyleInformation.Add(info);
       info.NameOfAxisStyle = "TopDirection";
       info.NameOfLeftSide = vertRev ? "Right" : "Left";
@@ -80,7 +80,7 @@ namespace Altaxo.Graph.Gdi.CS
       info.PreferedLabelSide = vertRev ? A2DAxisSide.Right : A2DAxisSide.Left;
 
       // Bottom
-      info = new A2DAxisStyleInformation(new CS2DLineID(vertAx, horzRev ? 0.25 : 0.75));
+      info = new A2DAxisStyleInformation(new CSLineID(vertAx, horzRev ? 0.25 : 0.75));
       _axisStyleInformation.Add(info);
       info.NameOfAxisStyle = "BottomDirection";
       info.NameOfLeftSide = vertRev ? "Left" : "Right";
@@ -88,7 +88,7 @@ namespace Altaxo.Graph.Gdi.CS
       info.PreferedLabelSide = vertRev ? A2DAxisSide.Left : A2DAxisSide.Right;
 
       // Outer circle
-      info = new A2DAxisStyleInformation(new CS2DLineID(horzAx, vertRev ? 0 : 1));
+      info = new A2DAxisStyleInformation(new CSLineID(horzAx, vertRev ? 0 : 1));
       _axisStyleInformation.Add(info);
       info.NameOfAxisStyle = "OuterCircle";
       info.NameOfLeftSide = horzRev ? "Outer" : "Inner";
@@ -98,7 +98,7 @@ namespace Altaxo.Graph.Gdi.CS
       info.HasTitleByDefault = true;
 
       // Inner circle
-      info = new A2DAxisStyleInformation(new CS2DLineID(horzAx, vertRev ? 1 : 0));
+      info = new A2DAxisStyleInformation(new CSLineID(horzAx, vertRev ? 1 : 0));
       _axisStyleInformation.Add(info);
       info.NameOfAxisStyle = "Inner circle";
       info.NameOfLeftSide = horzRev ? "Inner" : "Outer";

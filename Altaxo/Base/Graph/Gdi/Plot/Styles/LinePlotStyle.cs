@@ -131,7 +131,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     protected bool _ignoreMissingPoints; // treat missing points as if not present (connect lines over missing points) 
     protected bool _fillArea;
     protected BrushX _fillBrush; // brush to fill the area under the line
-    protected CS2DLineID _fillDirection; // the direction to fill
+    protected CSLineID _fillDirection; // the direction to fill
     protected bool _independentColor;
 
 
@@ -178,7 +178,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         s._ignoreMissingPoints = info.GetBoolean("IgnoreMissingPoints");
         s._fillArea = info.GetBoolean("FillArea");
         s._fillBrush = (BrushX)info.GetValue("FillBrush", typeof(BrushX));
-        s._fillDirection = (CS2DLineID)info.GetValue("FillDirection", typeof(CS2DLineID));
+        s._fillDirection = (CSLineID)info.GetValue("FillDirection", typeof(CSLineID));
 
         return s;
       }
@@ -225,18 +225,18 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         return s;
       }
 
-      protected CS2DLineID GetFillDirection(XYPlotLineStyles.FillDirection fillDir)
+      protected CSLineID GetFillDirection(XYPlotLineStyles.FillDirection fillDir)
       {
         switch (fillDir)
         {
           case XYPlotLineStyles.FillDirection.Bottom:
-            return CS2DLineID.X0;
+            return CSLineID.X0;
           case XYPlotLineStyles.FillDirection.Top:
-            return CS2DLineID.X1;
+            return CSLineID.X1;
           case XYPlotLineStyles.FillDirection.Left:
-            return CS2DLineID.Y0;
+            return CSLineID.Y0;
           case XYPlotLineStyles.FillDirection.Right:
-            return CS2DLineID.Y1;
+            return CSLineID.Y1;
         }
         return null;
       }
@@ -441,12 +441,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
-    public CS2DLineID FillDirection
+    public CSLineID FillDirection
     {
       get { return this._fillDirection; }
       set
       {
-        CS2DLineID oldvalue = _fillDirection;
+        CSLineID oldvalue = _fillDirection;
         _fillDirection = value;
         if (oldvalue != value)
         {

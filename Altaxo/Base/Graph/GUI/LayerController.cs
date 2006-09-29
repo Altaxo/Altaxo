@@ -73,7 +73,7 @@ namespace Altaxo.Graph.GUI
     enum TabType { Unique, Scales, Styles };
     TabType _primaryChoice; // which tab type is currently choosen
     private int _currentScale; // which scale is choosen 0==X-AxisScale, 1==Y-AxisScale
-    private CS2DLineID _currentAxisID; // which style is currently choosen
+    private CSLineID _currentAxisID; // which style is currently choosen
 
   
 
@@ -88,35 +88,35 @@ namespace Altaxo.Graph.GUI
     protected Altaxo.Gui.Graph.IXYAxisLabelStyleController[] m_MinorLabelStyleController;
     protected Altaxo.Main.GUI.IMVCAController[] _GridStyleController;
 
-    Dictionary<CS2DLineID, A2DAxisStyleInformation> _axisStyleIds;
+    Dictionary<CSLineID, A2DAxisStyleInformation> _axisStyleIds;
     List<A2DAxisStyleInformation> _axisStyleInfoSortedByName;
     
-    Dictionary<CS2DLineID, ITitleFormatLayerController> _TitleFormatController;
-    Dictionary<CS2DLineID, Altaxo.Gui.Graph.IXYAxisLabelStyleController> _MajorLabelController;
-    Dictionary<CS2DLineID, Altaxo.Gui.Graph.IXYAxisLabelStyleController> _MinorLabelController;
+    Dictionary<CSLineID, ITitleFormatLayerController> _TitleFormatController;
+    Dictionary<CSLineID, Altaxo.Gui.Graph.IXYAxisLabelStyleController> _MajorLabelController;
+    Dictionary<CSLineID, Altaxo.Gui.Graph.IXYAxisLabelStyleController> _MinorLabelController;
 
-    Dictionary<CS2DLineID, bool> _enableMajorLabels;
-    Dictionary<CS2DLineID, bool> _enableMinorLabels;
+    Dictionary<CSLineID, bool> _enableMajorLabels;
+    Dictionary<CSLineID, bool> _enableMinorLabels;
   
   
     public LayerController(XYPlotLayer layer)
       : this(layer,"Scale",1,null)
     {
     }
-    public LayerController(XYPlotLayer layer, string currentPage, CS2DLineID id)
+    public LayerController(XYPlotLayer layer, string currentPage, CSLineID id)
       : this(layer,currentPage,id.ParallelAxisNumber,id)
     {
     }
 
 
-    LayerController(XYPlotLayer layer, string currentPage, int axisScaleIdx, CS2DLineID id)
+    LayerController(XYPlotLayer layer, string currentPage, int axisScaleIdx, CSLineID id)
     {
       _layer = layer;
 
       // collect the AxisStyleIdentifier from the actual layer and also all possible AxisStyleIdentifier
-      _axisStyleIds = new Dictionary<CS2DLineID, A2DAxisStyleInformation>();
+      _axisStyleIds = new Dictionary<CSLineID, A2DAxisStyleInformation>();
       _axisStyleInfoSortedByName = new List<A2DAxisStyleInformation>();
-      foreach (CS2DLineID ids in _layer.CoordinateSystem.GetJoinedAxisStyleIdentifier(_layer.ScaleStyles.AxisStyleIDs, new CS2DLineID[] { id }))
+      foreach (CSLineID ids in _layer.CoordinateSystem.GetJoinedAxisStyleIdentifier(_layer.AxisStyles.AxisStyleIDs, new CSLineID[] { id }))
       {
         A2DAxisStyleInformation info = _layer.CoordinateSystem.GetAxisStyleInformation(ids);
         _axisStyleIds.Add(info.Identifier, info);
@@ -130,15 +130,15 @@ namespace Altaxo.Graph.GUI
 
       m_AxisScaleController = new AxisScaleController[2];
       _GridStyleController = new Altaxo.Main.GUI.IMVCAController[2];
-      _TitleFormatController = new Dictionary<CS2DLineID, ITitleFormatLayerController>();
-      _MajorLabelController = new Dictionary<CS2DLineID, Altaxo.Gui.Graph.IXYAxisLabelStyleController>();
-      _MinorLabelController = new Dictionary<CS2DLineID, Altaxo.Gui.Graph.IXYAxisLabelStyleController>();
+      _TitleFormatController = new Dictionary<CSLineID, ITitleFormatLayerController>();
+      _MajorLabelController = new Dictionary<CSLineID, Altaxo.Gui.Graph.IXYAxisLabelStyleController>();
+      _MinorLabelController = new Dictionary<CSLineID, Altaxo.Gui.Graph.IXYAxisLabelStyleController>();
 
-      _enableMajorLabels = new Dictionary<CS2DLineID, bool>();
-      _enableMinorLabels = new Dictionary<CS2DLineID, bool>();
-      foreach(CS2DLineID ident in _axisStyleIds.Keys)
+      _enableMajorLabels = new Dictionary<CSLineID, bool>();
+      _enableMinorLabels = new Dictionary<CSLineID, bool>();
+      foreach(CSLineID ident in _axisStyleIds.Keys)
       {
-        AxisStyle prop = layer.ScaleStyles.AxisStyle(ident);
+        AxisStyle prop = layer.AxisStyles.AxisStyle(ident);
         if(prop==null)
         {
           _enableMajorLabels.Add(ident, false);
@@ -308,7 +308,7 @@ namespace Altaxo.Graph.GUI
             SetHorzVertSecondaryChoice();
           }
 
-          if (_layer.ScaleStyles.ContainsAxisStyle(_currentAxisID))
+          if (_layer.AxisStyles.Contains(_currentAxisID))
           {
             if (null != _GridStyleController[_currentScale])
             {
@@ -333,7 +333,7 @@ namespace Altaxo.Graph.GUI
             SetEdgeSecondaryChoice();
           }
 
-          if (_layer.ScaleStyles.ContainsAxisStyle(_currentAxisID))
+          if (_layer.AxisStyles.Contains(_currentAxisID))
           {
             if (_TitleFormatController.ContainsKey(_currentAxisID))
             {
@@ -357,7 +357,7 @@ namespace Altaxo.Graph.GUI
             View.SelectTab(m_CurrentPage);
             SetEdgeSecondaryChoice();
           }
-          if (_layer.ScaleStyles.ContainsAxisStyle(_currentAxisID))
+          if (_layer.AxisStyles.Contains(_currentAxisID))
           {
             if (_MajorLabelController.ContainsKey(_currentAxisID))
             {
@@ -384,7 +384,7 @@ namespace Altaxo.Graph.GUI
             View.SelectTab(m_CurrentPage);
             SetEdgeSecondaryChoice();
           }
-          if (_layer.ScaleStyles.ContainsAxisStyle(_currentAxisID))
+          if (_layer.AxisStyles.Contains(_currentAxisID))
           {
             if (_MinorLabelController.ContainsKey(_currentAxisID))
             {
@@ -459,7 +459,7 @@ namespace Altaxo.Graph.GUI
           if (!_TitleFormatController.ContainsKey(_currentAxisID))
           {
 
-            TitleFormatLayerController newCtrl = new TitleFormatLayerController(_layer.ScaleStyles.AxisStyleEnsured(_currentAxisID));
+            TitleFormatLayerController newCtrl = new TitleFormatLayerController(_layer.AxisStyles.AxisStyleEnsured(_currentAxisID));
             newCtrl.View = new TitleFormatLayerControl();
             _TitleFormatController.Add(_currentAxisID, newCtrl);
             m_CurrentController = newCtrl;
@@ -470,7 +470,7 @@ namespace Altaxo.Graph.GUI
         {
           if (!_MajorLabelController.ContainsKey(_currentAxisID))
           {
-            Altaxo.Gui.Graph.XYAxisLabelStyleController newCtrl = new Altaxo.Gui.Graph.XYAxisLabelStyleController((AxisLabelStyle)_layer.ScaleStyles.AxisStyleEnsured(_currentAxisID).MajorLabelStyle);
+            Altaxo.Gui.Graph.XYAxisLabelStyleController newCtrl = new Altaxo.Gui.Graph.XYAxisLabelStyleController((AxisLabelStyle)_layer.AxisStyles.AxisStyleEnsured(_currentAxisID).MajorLabelStyle);
             newCtrl.View = new Altaxo.Gui.Graph.XYAxisLabelStyleControl();
             _MajorLabelController.Add(_currentAxisID, newCtrl);
             m_CurrentController = newCtrl;
@@ -481,7 +481,7 @@ namespace Altaxo.Graph.GUI
         {
           if (!_MinorLabelController.ContainsKey(_currentAxisID))
           {
-            Altaxo.Gui.Graph.XYAxisLabelStyleController newCtrl = new Altaxo.Gui.Graph.XYAxisLabelStyleController((AxisLabelStyle)_layer.ScaleStyles.AxisStyleEnsured(_currentAxisID).MinorLabelStyle);
+            Altaxo.Gui.Graph.XYAxisLabelStyleController newCtrl = new Altaxo.Gui.Graph.XYAxisLabelStyleController((AxisLabelStyle)_layer.AxisStyles.AxisStyleEnsured(_currentAxisID).MinorLabelStyle);
             newCtrl.View = new Altaxo.Gui.Graph.XYAxisLabelStyleControl();
             m_CurrentController = newCtrl;
             View.SetCurrentContentWithEnable(m_CurrentController.ViewObject, pageEnabled, "Show title and format");
@@ -492,10 +492,10 @@ namespace Altaxo.Graph.GUI
         {
           if (null==_GridStyleController[_currentScale])
           {
-            if (_layer.ScaleStyles.ScaleStyle(_currentScale).GridStyle == null)
-              _layer.ScaleStyles.ScaleStyle(_currentScale).GridStyle = new GridStyle();
+            if (_layer.GridPlane.GridStyle[_currentScale] == null)
+              _layer.GridPlane.GridStyle[_currentScale] = new GridStyle();
 
-            Altaxo.Gui.Graph.XYGridStyleController newCtrl = new Altaxo.Gui.Graph.XYGridStyleController(_layer.ScaleStyles.ScaleStyle(_currentScale).GridStyle);
+            Altaxo.Gui.Graph.XYGridStyleController newCtrl = new Altaxo.Gui.Graph.XYGridStyleController(_layer.GridPlane.GridStyle[_currentScale]);
             newCtrl.ViewObject = new Altaxo.Gui.Graph.XYGridStyleControl();
             _GridStyleController[_currentScale] = newCtrl;
 
@@ -528,14 +528,14 @@ namespace Altaxo.Graph.GUI
 
     public static bool ShowDialog(System.Windows.Forms.Form parentWindow, XYPlotLayer layer)
     {
-      return ShowDialog(parentWindow,layer,"Scale", new CS2DLineID(0,0) );
+      return ShowDialog(parentWindow,layer,"Scale", new CSLineID(0,0) );
     }
     public static bool ShowDialog(System.Windows.Forms.Form parentWindow, XYPlotLayer layer, string currentPage)
     {
-      return ShowDialog(parentWindow, layer, currentPage, new CS2DLineID(0,0));
+      return ShowDialog(parentWindow, layer, currentPage, new CSLineID(0,0));
     }
 
-    public static bool ShowDialog(System.Windows.Forms.Form parentWindow, XYPlotLayer layer, string currentPage, CS2DLineID currentEdge)
+    public static bool ShowDialog(System.Windows.Forms.Form parentWindow, XYPlotLayer layer, string currentPage, CSLineID currentEdge)
     {
      
       LayerController ctrl = new LayerController(layer,currentPage,currentEdge);
@@ -571,7 +571,7 @@ namespace Altaxo.Graph.GUI
       }
 
 
-      foreach (CS2DLineID id in _TitleFormatController.Keys)
+      foreach (CSLineID id in _TitleFormatController.Keys)
       {
         if(!_TitleFormatController[id].Apply())
         {
@@ -579,7 +579,7 @@ namespace Altaxo.Graph.GUI
         }
       }
 
-      foreach (CS2DLineID id in _axisStyleIds.Keys)
+      foreach (CSLineID id in _axisStyleIds.Keys)
       {
         if (this._enableMajorLabels[id])
         {
@@ -590,12 +590,12 @@ namespace Altaxo.Graph.GUI
         }
         else
         {
-          if(_layer.ScaleStyles.ContainsAxisStyle(id))
-            _layer.ScaleStyles.AxisStyle(id).ShowMajorLabels = false;
+          if(_layer.AxisStyles.Contains(id))
+            _layer.AxisStyles.AxisStyle(id).ShowMajorLabels = false;
         }
       }
 
-      foreach (CS2DLineID id in _axisStyleIds.Keys)
+      foreach (CSLineID id in _axisStyleIds.Keys)
       {
         if (this._enableMinorLabels[id])
         {
@@ -606,8 +606,8 @@ namespace Altaxo.Graph.GUI
         }
         else
         {
-          if (_layer.ScaleStyles.ContainsAxisStyle(id))
-            this._layer.ScaleStyles.AxisStyle(id).ShowMinorLabels = false;
+          if (_layer.AxisStyles.Contains(id))
+            this._layer.AxisStyles.AxisStyle(id).ShowMinorLabels = false;
         }
       }
 
@@ -616,7 +616,7 @@ namespace Altaxo.Graph.GUI
         if (_GridStyleController[i] != null)
         {
           if (_GridStyleController[i].Apply())
-            this._layer.ScaleStyles.ScaleStyle(i).GridStyle = (GridStyle)_GridStyleController[i].ModelObject;
+            this._layer.GridPlane.GridStyle[i] = (GridStyle)_GridStyleController[i].ModelObject;
           else
             return false;
         }

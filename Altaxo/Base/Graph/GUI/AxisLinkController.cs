@@ -148,19 +148,19 @@ namespace Altaxo.Graph.GUI
       {
         if(m_bXAxis)
         {
-          m_LinkType = m_Layer.AxisProperties.X.AxisLinkType;
-          m_OrgA      = m_Layer.AxisProperties.X.LinkOrgA;
-          m_OrgB = m_Layer.AxisProperties.X.LinkOrgB;
-          m_EndA = m_Layer.AxisProperties.X.LinkEndA;
-          m_EndB = m_Layer.AxisProperties.X.LinkEndB;
+          m_LinkType = m_Layer.LinkedScales.X.AxisLinkType;
+          m_OrgA      = m_Layer.LinkedScales.X.LinkOrgA;
+          m_OrgB = m_Layer.LinkedScales.X.LinkOrgB;
+          m_EndA = m_Layer.LinkedScales.X.LinkEndA;
+          m_EndB = m_Layer.LinkedScales.X.LinkEndB;
         }
         else
         {
-          m_LinkType  = m_Layer.AxisProperties.Y.AxisLinkType;
-          m_OrgA = m_Layer.AxisProperties.Y.LinkOrgA;
-          m_OrgB = m_Layer.AxisProperties.Y.LinkOrgB;
-          m_EndA = m_Layer.AxisProperties.Y.LinkEndA;
-          m_EndB = m_Layer.AxisProperties.Y.LinkEndB;
+          m_LinkType  = m_Layer.LinkedScales.Y.AxisLinkType;
+          m_OrgA = m_Layer.LinkedScales.Y.LinkOrgA;
+          m_OrgB = m_Layer.LinkedScales.Y.LinkOrgB;
+          m_EndA = m_Layer.LinkedScales.Y.LinkEndA;
+          m_EndB = m_Layer.LinkedScales.Y.LinkEndB;
         }
       }
 
@@ -232,11 +232,11 @@ namespace Altaxo.Graph.GUI
     {
       if(this.m_bXAxis)
       {
-        m_Layer.AxisProperties.X.SetLinkParameter(m_LinkType, m_OrgA,m_OrgB,m_EndA,m_EndB);
+        m_Layer.LinkedScales.X.SetLinkParameter(m_LinkType, m_OrgA,m_OrgB,m_EndA,m_EndB);
       }
       else
       {
-        m_Layer.AxisProperties.Y.SetLinkParameter(m_LinkType, m_OrgA,m_OrgB,m_EndA,m_EndB);
+        m_Layer.LinkedScales.Y.SetLinkParameter(m_LinkType, m_OrgA,m_OrgB,m_EndA,m_EndB);
       }
       return true;
     }

@@ -43,6 +43,10 @@ namespace Altaxo.Graph.Gdi.Axis
 
     G2DCoordinateSystem _cachedCoordinateSystem;
 
+    [field: NonSerialized]
+    public event EventHandler Changed;
+
+
     #region Serialization
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotLayerAxisStylesSummary", 0)]
@@ -148,11 +152,11 @@ namespace Altaxo.Graph.Gdi.Axis
       this._axisStyles.Clear();
       for (int i = 0; i < _axisStyles.Count; ++i)
       {
-        this.AddAxisStyle((AxisStyle)from._axisStyles[i].Clone());
+        this.Add((AxisStyle)from._axisStyles[i].Clone());
       }
     }
 
-    public void AddAxisStyle(AxisStyle value)
+    public void Add(AxisStyle value)
     {
       if (value != null)
       {
@@ -162,7 +166,7 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
 
-    public void RemoveAxisStyle(CS2DLineID id)
+    public void Remove(CSLineID id)
     {
       int idx = -1;
       for (int i = 0; i < _axisStyles.Count; i++)
@@ -178,25 +182,25 @@ namespace Altaxo.Graph.Gdi.Axis
         _axisStyles.RemoveAt(idx);
     }
 
-    public AxisStyle AxisStyleEnsured(CS2DLineID id)
+    public AxisStyle AxisStyleEnsured(CSLineID id)
     {
       AxisStyle prop = AxisStyle(id);
       if (prop == null)
       {
         prop = new AxisStyle(id);
         prop.CachedAxisInformation = _cachedCoordinateSystem.GetAxisStyleInformation(id);
-        AddAxisStyle(prop);
+        Add(prop);
       }
       return prop;
     }
 
 
-    public bool ContainsAxisStyle(CS2DLineID id)
+    public bool Contains(CSLineID id)
     {
       return null != AxisStyle(id);
     }
 
-    public AxisStyle AxisStyle(CS2DLineID id)
+    public AxisStyle AxisStyle(CSLineID id)
     {
 
       foreach (AxisStyle p in _axisStyles)
@@ -214,7 +218,7 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
 
-    public IEnumerable<CS2DLineID> AxisStyleIDs
+    public IEnumerable<CSLineID> AxisStyleIDs
     {
       get
       {
@@ -243,15 +247,13 @@ namespace Altaxo.Graph.Gdi.Axis
       return false;
     }
 
-    public void Paint(Graphics g, XYPlotLayer layer, int axisnumber)
+    public void Paint(Graphics g, XYPlotLayer layer)
     {
       for (int i = 0; i < _axisStyles.Count; ++i)
-        _axisStyles[i].Paint(g, layer, axisnumber);
+        _axisStyles[i].Paint(g, layer);
     }
 
     #region IChangedEventSource Members
-
-    public event EventHandler Changed;
 
     protected virtual void OnChanged()
     {

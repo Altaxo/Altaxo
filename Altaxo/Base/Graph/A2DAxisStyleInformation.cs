@@ -8,7 +8,7 @@ namespace Altaxo.Graph
 
   public class A2DAxisStyleInformation : ICloneable
   {
-    CS2DLineID _identifier;
+    CSLineID _identifier;
 
     string _nameOfAxisStyle;
     string _nameOfLeftSide;
@@ -21,7 +21,7 @@ namespace Altaxo.Graph
 
    
 
-    public A2DAxisStyleInformation(CS2DLineID identifier)
+    public A2DAxisStyleInformation(CSLineID identifier)
     {
       _identifier = identifier;
     }
@@ -62,7 +62,7 @@ namespace Altaxo.Graph
           break;
       }
 
-      _nameOfAxisStyle += string.Format(" (at L={0})",_identifier.LogicalValueOther.ToString());
+      _nameOfAxisStyle += string.Format(" (at L={0})",_identifier.LogicalValueOtherFirst.ToString());
       _nameOfLeftSide = "LeftSide";
       _nameOfRightSide = "RightSide";
       _preferedLabelSide = A2DAxisSide.Right;
@@ -79,7 +79,7 @@ namespace Altaxo.Graph
       return new A2DAxisStyleInformation(this);
     }
 
-    public CS2DLineID Identifier
+    public CSLineID Identifier
     {
       get { return _identifier; }
     }

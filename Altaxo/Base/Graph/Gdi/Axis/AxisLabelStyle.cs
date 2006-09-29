@@ -499,8 +499,8 @@ namespace Altaxo.Graph.Gdi.Axis
 
     #endregion
 
-    CS2DLineID _cachedStyleID;
-    public CS2DLineID AxisStyleID
+    CSLineID _cachedStyleID;
+    public CSLineID AxisStyleID
     {
       get
       {
@@ -553,7 +553,7 @@ namespace Altaxo.Graph.Gdi.Axis
     public override void Paint(Graphics g, XYPlotLayer layer, A2DAxisStyleInformation styleInfo, AxisLineStyle axisstyle, bool useMinorTicks)
     {
       _cachedStyleID = styleInfo.Identifier;
-      CS2DLineID styleID = styleInfo.Identifier;
+      CSLineID styleID = styleInfo.Identifier;
       Scale raxis = styleID.ParallelAxisNumber==0 ? layer.XAxis : layer.YAxis;
 
       _enclosingPath.Reset();
@@ -564,9 +564,9 @@ namespace Altaxo.Graph.Gdi.Axis
       double rx0 = 0, rx1 = 1;
       double ry0 = 0, ry1 = 1;
       if (styleID.ParallelAxisNumber == 0)
-        ry0 = ry1 = styleID.LogicalValueOther;
+        ry0 = ry1 = styleID.LogicalValueOtherFirst;
       else
-        rx0 = rx1 = styleID.LogicalValueOther;
+        rx0 = rx1 = styleID.LogicalValueOtherFirst;
 
 
       SizeF layerSize = layer.Size;

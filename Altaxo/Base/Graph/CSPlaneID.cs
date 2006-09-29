@@ -188,10 +188,10 @@ namespace Altaxo.Graph
     }
     public static CSPlaneID Back
     {
-      get { return new CSPlaneID(2, 0); }
+      get { return new CSPlaneID(2, 1); }
     }
 
-    public static implicit operator CS2DLineID(CSPlaneID plane)
+    public static implicit operator CSLineID(CSPlaneID plane)
     {
       if (plane._perpendicularAxisNumber < 0)
         throw new ArgumentOutOfRangeException("Axis number of plane is negative");
@@ -199,17 +199,17 @@ namespace Altaxo.Graph
         throw new ArgumentOutOfRangeException("Axis number is greater than 1. You can only convert to a line if the axis number is 0 or 1");
 
       if (plane.UsePhysicalValue)
-        return CS2DLineID.FromPhysicalVariant(plane.PerpendicularAxisNumber == 0 ? 1 : 0, plane.PhysicalValue);
+        return CSLineID.FromPhysicalVariant(plane.PerpendicularAxisNumber == 0 ? 1 : 0, plane.PhysicalValue);
       else
-        return new CS2DLineID(plane.PerpendicularAxisNumber == 0 ? 1 : 0, plane.LogicalValue);
+        return new CSLineID(plane.PerpendicularAxisNumber == 0 ? 1 : 0, plane.LogicalValue);
     }
 
-    public static implicit operator CSPlaneID(CS2DLineID line)
+    public static implicit operator CSPlaneID(CSLineID line)
     {
-      if (line.UsePhysicalValueOther)
-        return CSPlaneID.FromPhysicalVariant(line.ParallelAxisNumber == 0 ? 1 : 0, line.PhysicalValueOther);
+      if (line.UsePhysicalValueOtherFirst)
+        return CSPlaneID.FromPhysicalVariant(line.ParallelAxisNumber == 0 ? 1 : 0, line.PhysicalValueOtherFirst);
       else
-        return new CSPlaneID(line.ParallelAxisNumber == 0 ? 1 : 0, line.LogicalValueOther);
+        return new CSPlaneID(line.ParallelAxisNumber == 0 ? 1 : 0, line.LogicalValueOtherFirst);
     }
 
 

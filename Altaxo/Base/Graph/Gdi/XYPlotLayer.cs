@@ -92,9 +92,11 @@ namespace Altaxo.Graph.Gdi
   
     protected TextGraphic _legend;
 
-    G2DScaleStyleCollection _scaleStyles;
+    protected GridPlane _gridPlane;
 
-    LinkedScaleCollection _axisProperties;
+    protected AxisStyleCollection _axisStyles;
+
+    LinkedScaleCollection _linkedScales;
 
     protected GraphicCollection _graphObjects;
 
@@ -119,7 +121,8 @@ namespace Altaxo.Graph.Gdi
     /// </summary>
     protected Main.RelDocNodeProxy _linkedLayer;
 
-   
+    protected G2DCoordinateSystem _coordinateSystem;
+
 
 
     /// <summary>Number of times this event is disables, or 0 if it is enabled.</summary>
@@ -132,13 +135,13 @@ namespace Altaxo.Graph.Gdi
     /// <summary>
     /// Collection of the axis styles for the left, bottom, right, and top axis.
     /// </summary>
-    public G2DScaleStyleCollection ScaleStyles
+    public AxisStyleCollection AxisStyles
     {
-      get { return _scaleStyles; }
+      get { return _axisStyles; }
       protected set
       {
-        G2DScaleStyleCollection oldvalue = _scaleStyles;
-        _scaleStyles = value;
+        AxisStyleCollection oldvalue = _axisStyles;
+        _axisStyles = value;
         if (value != oldvalue)
         {
           if (null != oldvalue)
@@ -159,16 +162,16 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
-    public LinkedScaleCollection AxisProperties
+    public LinkedScaleCollection LinkedScales
     {
       get
       {
-        return _axisProperties;
+        return _linkedScales;
       }
       protected set
       {
-        LinkedScaleCollection oldvalue = _axisProperties;
-        _axisProperties = value;
+        LinkedScaleCollection oldvalue = _linkedScales;
+        _linkedScales = value;
         if (oldvalue != value)
         {
           if(null!=oldvalue)
@@ -332,18 +335,18 @@ namespace Altaxo.Graph.Gdi
 
         // axis related
 
-        s._axisProperties.X.Scale = (Scale)info.GetValue("XAxis",typeof(Scale));
-        s._axisProperties.Y.Scale = (Scale)info.GetValue("YAxis",typeof(Scale));
-        s.AxisProperties.X.IsLinked = info.GetBoolean("LinkXAxis");
-        s.AxisProperties.Y.IsLinked = info.GetBoolean("LinkYAxis");
-        s.AxisProperties.X.LinkOrgA = info.GetDouble("LinkXAxisOrgA");
-        s.AxisProperties.X.LinkOrgB = info.GetDouble("LinkXAxisOrgB");
-        s.AxisProperties.X.LinkEndA = info.GetDouble("LinkXAxisEndA");
-        s.AxisProperties.X.LinkEndB = info.GetDouble("LinkXAxisEndB");
-        s.AxisProperties.Y.LinkOrgA = info.GetDouble("LinkYAxisOrgA");
-        s.AxisProperties.Y.LinkOrgB = info.GetDouble("LinkYAxisOrgB");
-        s.AxisProperties.Y.LinkEndA = info.GetDouble("LinkYAxisEndA");
-        s.AxisProperties.Y.LinkEndB = info.GetDouble("LinkYAxisEndB");
+        s._linkedScales.X.Scale = (Scale)info.GetValue("XAxis",typeof(Scale));
+        s._linkedScales.Y.Scale = (Scale)info.GetValue("YAxis",typeof(Scale));
+        s.LinkedScales.X.IsLinked = info.GetBoolean("LinkXAxis");
+        s.LinkedScales.Y.IsLinked = info.GetBoolean("LinkYAxis");
+        s.LinkedScales.X.LinkOrgA = info.GetDouble("LinkXAxisOrgA");
+        s.LinkedScales.X.LinkOrgB = info.GetDouble("LinkXAxisOrgB");
+        s.LinkedScales.X.LinkEndA = info.GetDouble("LinkXAxisEndA");
+        s.LinkedScales.X.LinkEndB = info.GetDouble("LinkXAxisEndB");
+        s.LinkedScales.Y.LinkOrgA = info.GetDouble("LinkYAxisOrgA");
+        s.LinkedScales.Y.LinkOrgB = info.GetDouble("LinkYAxisOrgB");
+        s.LinkedScales.Y.LinkEndA = info.GetDouble("LinkYAxisEndA");
+        s.LinkedScales.Y.LinkEndB = info.GetDouble("LinkYAxisEndB");
 
 
         // Styles
@@ -352,32 +355,32 @@ namespace Altaxo.Graph.Gdi
         bool showRight = info.GetBoolean("ShowRightAxis");
         bool showTop = info.GetBoolean("ShowTopAxis");
 
-        s._scaleStyles.AxisStyleEnsured(CS2DLineID.Y0).AxisLineStyle = (AxisLineStyle)info.GetValue("LeftAxisStyle", typeof(AxisLineStyle));
-        s._scaleStyles.AxisStyleEnsured(CS2DLineID.X0).AxisLineStyle = (AxisLineStyle)info.GetValue("BottomAxisStyle", typeof(AxisLineStyle));
-        s._scaleStyles.AxisStyleEnsured(CS2DLineID.Y1).AxisLineStyle = (AxisLineStyle)info.GetValue("RightAxisStyle", typeof(AxisLineStyle));
-        s._scaleStyles.AxisStyleEnsured(CS2DLineID.X1).AxisLineStyle = (AxisLineStyle)info.GetValue("TopAxisStyle", typeof(AxisLineStyle));
+        s._axisStyles.AxisStyleEnsured(CSLineID.Y0).AxisLineStyle = (AxisLineStyle)info.GetValue("LeftAxisStyle", typeof(AxisLineStyle));
+        s._axisStyles.AxisStyleEnsured(CSLineID.X0).AxisLineStyle = (AxisLineStyle)info.GetValue("BottomAxisStyle", typeof(AxisLineStyle));
+        s._axisStyles.AxisStyleEnsured(CSLineID.Y1).AxisLineStyle = (AxisLineStyle)info.GetValue("RightAxisStyle", typeof(AxisLineStyle));
+        s._axisStyles.AxisStyleEnsured(CSLineID.X1).AxisLineStyle = (AxisLineStyle)info.GetValue("TopAxisStyle", typeof(AxisLineStyle));
 
 
-        s._scaleStyles.AxisStyle(CS2DLineID.Y0).MajorLabelStyle = (AxisLabelStyleBase)info.GetValue("LeftLabelStyle", typeof(AxisLabelStyleBase));
-        s._scaleStyles.AxisStyle(CS2DLineID.X0).MajorLabelStyle = (AxisLabelStyleBase)info.GetValue("BottomLabelStyle", typeof(AxisLabelStyleBase));
-        s._scaleStyles.AxisStyle(CS2DLineID.Y1).MajorLabelStyle = (AxisLabelStyleBase)info.GetValue("RightLabelStyle", typeof(AxisLabelStyleBase));
-        s._scaleStyles.AxisStyle(CS2DLineID.X1).MajorLabelStyle = (AxisLabelStyleBase)info.GetValue("TopLabelStyle", typeof(AxisLabelStyleBase));
+        s._axisStyles.AxisStyle(CSLineID.Y0).MajorLabelStyle = (AxisLabelStyleBase)info.GetValue("LeftLabelStyle", typeof(AxisLabelStyleBase));
+        s._axisStyles.AxisStyle(CSLineID.X0).MajorLabelStyle = (AxisLabelStyleBase)info.GetValue("BottomLabelStyle", typeof(AxisLabelStyleBase));
+        s._axisStyles.AxisStyle(CSLineID.Y1).MajorLabelStyle = (AxisLabelStyleBase)info.GetValue("RightLabelStyle", typeof(AxisLabelStyleBase));
+        s._axisStyles.AxisStyle(CSLineID.X1).MajorLabelStyle = (AxisLabelStyleBase)info.GetValue("TopLabelStyle", typeof(AxisLabelStyleBase));
       
       
         // Titles and legend
-        s._scaleStyles.AxisStyle(CS2DLineID.Y0).Title = (TextGraphic)info.GetValue("LeftAxisTitle", typeof(TextGraphic));
-        s._scaleStyles.AxisStyle(CS2DLineID.X0).Title = (TextGraphic)info.GetValue("BottomAxisTitle", typeof(TextGraphic));
-        s._scaleStyles.AxisStyle(CS2DLineID.Y1).Title = (TextGraphic)info.GetValue("RightAxisTitle", typeof(TextGraphic));
-        s._scaleStyles.AxisStyle(CS2DLineID.X1).Title = (TextGraphic)info.GetValue("TopAxisTitle", typeof(TextGraphic));
+        s._axisStyles.AxisStyle(CSLineID.Y0).Title = (TextGraphic)info.GetValue("LeftAxisTitle", typeof(TextGraphic));
+        s._axisStyles.AxisStyle(CSLineID.X0).Title = (TextGraphic)info.GetValue("BottomAxisTitle", typeof(TextGraphic));
+        s._axisStyles.AxisStyle(CSLineID.Y1).Title = (TextGraphic)info.GetValue("RightAxisTitle", typeof(TextGraphic));
+        s._axisStyles.AxisStyle(CSLineID.X1).Title = (TextGraphic)info.GetValue("TopAxisTitle", typeof(TextGraphic));
         
         if(!showLeft)
-          s._scaleStyles.RemoveAxisStyle(CS2DLineID.Y0);
+          s._axisStyles.Remove(CSLineID.Y0);
         if (!showRight)
-          s._scaleStyles.RemoveAxisStyle(CS2DLineID.Y1);
+          s._axisStyles.Remove(CSLineID.Y1);
         if (!showBottom)
-          s._scaleStyles.RemoveAxisStyle(CS2DLineID.X0);
+          s._axisStyles.Remove(CSLineID.X0);
         if (!showTop)
-          s._scaleStyles.RemoveAxisStyle(CS2DLineID.X1);
+          s._axisStyles.Remove(CSLineID.X1);
         
         
         s._legend = (TextGraphic)info.GetValue("Legend",typeof(TextGraphic));
@@ -525,18 +528,18 @@ namespace Altaxo.Graph.Gdi
 
         // axis related
 
-        s._axisProperties.X.Scale = (Scale)info.GetValue("XAxis",typeof(Scale));
-        s._axisProperties.Y.Scale = (Scale)info.GetValue("YAxis",typeof(Scale));
-        s._axisProperties.X.IsLinked = info.GetBoolean("LinkXAxis");
-        s._axisProperties.Y.IsLinked = info.GetBoolean("LinkYAxis");
-        s._axisProperties.X.LinkOrgA = info.GetDouble("LinkXAxisOrgA");
-        s._axisProperties.X.LinkOrgB = info.GetDouble("LinkXAxisOrgB");
-        s._axisProperties.X.LinkEndA = info.GetDouble("LinkXAxisEndA");
-        s._axisProperties.X.LinkEndB = info.GetDouble("LinkXAxisEndB");
-        s._axisProperties.Y.LinkOrgA = info.GetDouble("LinkYAxisOrgA");
-        s._axisProperties.Y.LinkOrgB = info.GetDouble("LinkYAxisOrgB");
-        s._axisProperties.Y.LinkEndA = info.GetDouble("LinkYAxisEndA");
-        s._axisProperties.Y.LinkEndB = info.GetDouble("LinkYAxisEndB");
+        s._linkedScales.X.Scale = (Scale)info.GetValue("XAxis",typeof(Scale));
+        s._linkedScales.Y.Scale = (Scale)info.GetValue("YAxis",typeof(Scale));
+        s._linkedScales.X.IsLinked = info.GetBoolean("LinkXAxis");
+        s._linkedScales.Y.IsLinked = info.GetBoolean("LinkYAxis");
+        s._linkedScales.X.LinkOrgA = info.GetDouble("LinkXAxisOrgA");
+        s._linkedScales.X.LinkOrgB = info.GetDouble("LinkXAxisOrgB");
+        s._linkedScales.X.LinkEndA = info.GetDouble("LinkXAxisEndA");
+        s._linkedScales.X.LinkEndB = info.GetDouble("LinkXAxisEndB");
+        s._linkedScales.Y.LinkOrgA = info.GetDouble("LinkYAxisOrgA");
+        s._linkedScales.Y.LinkOrgB = info.GetDouble("LinkYAxisOrgB");
+        s._linkedScales.Y.LinkEndA = info.GetDouble("LinkYAxisEndA");
+        s._linkedScales.Y.LinkEndB = info.GetDouble("LinkYAxisEndB");
 
 
         // Styles
@@ -545,32 +548,32 @@ namespace Altaxo.Graph.Gdi
         bool showRight = info.GetBoolean("ShowRightAxis");
         bool showTop = info.GetBoolean("ShowTopAxis");
 
-        s._scaleStyles.AxisStyleEnsured(CS2DLineID.Y0).AxisLineStyle = (AxisLineStyle)info.GetValue("LeftAxisStyle", typeof(AxisLineStyle));
-        s._scaleStyles.AxisStyleEnsured(CS2DLineID.X0).AxisLineStyle = (AxisLineStyle)info.GetValue("BottomAxisStyle", typeof(AxisLineStyle));
-        s._scaleStyles.AxisStyleEnsured(CS2DLineID.Y1).AxisLineStyle = (AxisLineStyle)info.GetValue("RightAxisStyle", typeof(AxisLineStyle));
-        s._scaleStyles.AxisStyleEnsured(CS2DLineID.X1).AxisLineStyle = (AxisLineStyle)info.GetValue("TopAxisStyle", typeof(AxisLineStyle));
+        s._axisStyles.AxisStyleEnsured(CSLineID.Y0).AxisLineStyle = (AxisLineStyle)info.GetValue("LeftAxisStyle", typeof(AxisLineStyle));
+        s._axisStyles.AxisStyleEnsured(CSLineID.X0).AxisLineStyle = (AxisLineStyle)info.GetValue("BottomAxisStyle", typeof(AxisLineStyle));
+        s._axisStyles.AxisStyleEnsured(CSLineID.Y1).AxisLineStyle = (AxisLineStyle)info.GetValue("RightAxisStyle", typeof(AxisLineStyle));
+        s._axisStyles.AxisStyleEnsured(CSLineID.X1).AxisLineStyle = (AxisLineStyle)info.GetValue("TopAxisStyle", typeof(AxisLineStyle));
 
 
-        s._scaleStyles.AxisStyle(CS2DLineID.Y0).MajorLabelStyle = (AxisLabelStyleBase)info.GetValue("LeftLabelStyle", typeof(AxisLabelStyleBase));
-        s._scaleStyles.AxisStyle(CS2DLineID.X0).MajorLabelStyle = (AxisLabelStyleBase)info.GetValue("BottomLabelStyle", typeof(AxisLabelStyleBase));
-        s._scaleStyles.AxisStyle(CS2DLineID.Y1).MajorLabelStyle = (AxisLabelStyleBase)info.GetValue("RightLabelStyle", typeof(AxisLabelStyleBase));
-        s._scaleStyles.AxisStyle(CS2DLineID.X1).MajorLabelStyle = (AxisLabelStyleBase)info.GetValue("TopLabelStyle", typeof(AxisLabelStyleBase));
+        s._axisStyles.AxisStyle(CSLineID.Y0).MajorLabelStyle = (AxisLabelStyleBase)info.GetValue("LeftLabelStyle", typeof(AxisLabelStyleBase));
+        s._axisStyles.AxisStyle(CSLineID.X0).MajorLabelStyle = (AxisLabelStyleBase)info.GetValue("BottomLabelStyle", typeof(AxisLabelStyleBase));
+        s._axisStyles.AxisStyle(CSLineID.Y1).MajorLabelStyle = (AxisLabelStyleBase)info.GetValue("RightLabelStyle", typeof(AxisLabelStyleBase));
+        s._axisStyles.AxisStyle(CSLineID.X1).MajorLabelStyle = (AxisLabelStyleBase)info.GetValue("TopLabelStyle", typeof(AxisLabelStyleBase));
 
 
         // Titles and legend
-        s._scaleStyles.AxisStyle(CS2DLineID.Y0).Title = (TextGraphic)info.GetValue("LeftAxisTitle", typeof(TextGraphic));
-        s._scaleStyles.AxisStyle(CS2DLineID.X0).Title = (TextGraphic)info.GetValue("BottomAxisTitle", typeof(TextGraphic));
-        s._scaleStyles.AxisStyle(CS2DLineID.Y1).Title = (TextGraphic)info.GetValue("RightAxisTitle", typeof(TextGraphic));
-        s._scaleStyles.AxisStyle(CS2DLineID.X1).Title = (TextGraphic)info.GetValue("TopAxisTitle", typeof(TextGraphic));
+        s._axisStyles.AxisStyle(CSLineID.Y0).Title = (TextGraphic)info.GetValue("LeftAxisTitle", typeof(TextGraphic));
+        s._axisStyles.AxisStyle(CSLineID.X0).Title = (TextGraphic)info.GetValue("BottomAxisTitle", typeof(TextGraphic));
+        s._axisStyles.AxisStyle(CSLineID.Y1).Title = (TextGraphic)info.GetValue("RightAxisTitle", typeof(TextGraphic));
+        s._axisStyles.AxisStyle(CSLineID.X1).Title = (TextGraphic)info.GetValue("TopAxisTitle", typeof(TextGraphic));
 
         if (!showLeft)
-          s._scaleStyles.RemoveAxisStyle(CS2DLineID.Y0);
+          s._axisStyles.Remove(CSLineID.Y0);
         if (!showRight)
-          s._scaleStyles.RemoveAxisStyle(CS2DLineID.Y1);
+          s._axisStyles.Remove(CSLineID.Y1);
         if (!showBottom)
-          s._scaleStyles.RemoveAxisStyle(CS2DLineID.X0);
+          s._axisStyles.Remove(CSLineID.X0);
         if (!showTop)
-          s._scaleStyles.RemoveAxisStyle(CS2DLineID.X1);
+          s._axisStyles.Remove(CSLineID.X1);
 
 
 
@@ -647,6 +650,8 @@ namespace Altaxo.Graph.Gdi
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
+        throw new NotSupportedException("Serialization of old versions is not supported");
+        /*
         XYPlotLayer s = (XYPlotLayer)obj;
 
         // Background
@@ -679,6 +684,7 @@ namespace Altaxo.Graph.Gdi
         info.AddValue("GraphicGlyphs", s._graphObjects);
 
         info.AddValue("Plots", s._plotItems);
+        */
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -710,10 +716,16 @@ namespace Altaxo.Graph.Gdi
          s._clipDataToFrame = info.GetBoolean("ClipDataToFrame");
 
         // axis related
-        s._axisProperties = (LinkedScaleCollection)info.GetValue("AxisProperties", s);
+        s._linkedScales = (LinkedScaleCollection)info.GetValue("AxisProperties", s);
  
         // Styles
-        s._scaleStyles = (G2DScaleStyleCollection)info.GetValue("AxisStyles", s);
+        G2DScaleStyleCollection ssc = (G2DScaleStyleCollection)info.GetValue("AxisStyles", s);
+        s.GridPlane = new GridPlane(CSPlaneID.Front);
+        s._gridPlane.GridStyle[0] = ssc.ScaleStyle(0).GridStyle;
+        s._gridPlane.GridStyle[1] = ssc.ScaleStyle(1).GridStyle;
+        foreach (AxisStyle ax in ssc.AxisStyles)
+          s._axisStyles.Add(ax);
+       
 
         // Legends
         count = info.OpenArray("Legends");
@@ -774,11 +786,12 @@ namespace Altaxo.Graph.Gdi
 
       // axis related
 
-      this.AxisProperties = (LinkedScaleCollection)from._axisProperties.Clone();
+      this.LinkedScales = (LinkedScaleCollection)from._linkedScales.Clone();
+      this.GridPlane = (GridPlane)from._gridPlane.Clone();
 
       // Styles
 
-      this.ScaleStyles = (G2DScaleStyleCollection)from._scaleStyles.Clone();
+      this.AxisStyles = (AxisStyleCollection)from._axisStyles.Clone();
 
       this.Legend = null==from._legend ? null : (TextGraphic)from._legend.Clone();
       
@@ -800,13 +813,13 @@ namespace Altaxo.Graph.Gdi
     void CreateEventLinks()
     {
 
-      if (null != _scaleStyles) _scaleStyles.Changed += new EventHandler(this.OnChildChangedEventHandler);
+      if (null != _axisStyles) _axisStyles.Changed += new EventHandler(this.OnChildChangedEventHandler);
 
-      if (null != _axisProperties)
+      if (null != _linkedScales)
       {
-        _axisProperties.Changed += new EventHandler(OnChildChangedEventHandler);
-        _axisProperties.X.ScaleInstanceChanged += new EventHandler(EhXAxisInstanceChanged);
-        _axisProperties.Y.ScaleInstanceChanged += new EventHandler(EhYAxisInstanceChanged);
+        _linkedScales.Changed += new EventHandler(OnChildChangedEventHandler);
+        _linkedScales.X.ScaleInstanceChanged += new EventHandler(EhXAxisInstanceChanged);
+        _linkedScales.Y.ScaleInstanceChanged += new EventHandler(EhYAxisInstanceChanged);
       }
 
       if (null != _legend) _legend.Changed += new EventHandler(this.OnChildChangedEventHandler);
@@ -845,10 +858,11 @@ namespace Altaxo.Graph.Gdi
     protected XYPlotLayer()
     {
       this.CoordinateSystem = new CS.G2DCartesicCoordinateSystem();
-      this.ScaleStyles = new G2DScaleStyleCollection();
-      this.AxisProperties = new LinkedScaleCollection();
+      this.AxisStyles = new AxisStyleCollection();
+      this.LinkedScales = new LinkedScaleCollection();
       this.GraphObjects = new GraphicCollection();
       this._location = new XYPlotLayerPositionAndSize();
+      this.GridPlane = new GridPlane(CSPlaneID.Front);
      
     }
     /// <summary>
@@ -868,8 +882,9 @@ namespace Altaxo.Graph.Gdi
 
    
      
-      this.ScaleStyles = new G2DScaleStyleCollection();
-      this.AxisProperties = new LinkedScaleCollection();
+      this.AxisStyles = new AxisStyleCollection();
+      this.LinkedScales = new LinkedScaleCollection();
+      this.GridPlane = new GridPlane(CSPlaneID.Front);
       this.GraphObjects = new GraphicCollection();
       
 
@@ -957,7 +972,7 @@ namespace Altaxo.Graph.Gdi
 
     public void Remove(GraphicBase go)
     {
-      if (_scaleStyles.Remove(go))
+      if (_axisStyles.Remove(go))
         return;
       
       else if(object.ReferenceEquals(go,this._legend))
@@ -1137,7 +1152,7 @@ namespace Altaxo.Graph.Gdi
       {
         if (info.IsShownByDefault)
         {
-          this.ScaleStyles.AxisStyleEnsured(info.Identifier);
+          this.AxisStyles.AxisStyleEnsured(info.Identifier);
 
           if (info.HasTitleByDefault)
           {
@@ -1258,7 +1273,7 @@ namespace Altaxo.Graph.Gdi
     /// <param name="yscale">The ratio the layer has changed its size in vertical direction.</param>
     public void RescaleInnerItemPositions(double xscale, double yscale)
     {
-      foreach (AxisStyle style in this.ScaleStyles.AxisStyles)
+      foreach (AxisStyle style in this.AxisStyles.AxisStyles)
       {
         GraphicBase.ScalePosition(style.Title, xscale, yscale);
       }
@@ -1765,11 +1780,11 @@ namespace Altaxo.Graph.Gdi
     {
       get 
       {
-        return _axisProperties.X.Scale; 
+        return _linkedScales.X.Scale; 
       }
       set
       {
-        _axisProperties.X.Scale = value;
+        _linkedScales.X.Scale = value;
       }
     }
 
@@ -1779,11 +1794,11 @@ namespace Altaxo.Graph.Gdi
     {
       get
       {
-        return this._axisProperties.X.IsLinked; 
+        return this._linkedScales.X.IsLinked; 
       }
       set
       {
-        _axisProperties.X.IsLinked = value;
+        _linkedScales.X.IsLinked = value;
       }
     }
 
@@ -1804,7 +1819,7 @@ namespace Altaxo.Graph.Gdi
 
       // now we have to inform all the PlotItems that a new axis was loaded
       if (this.IsXAxisLinked)
-        this._axisProperties.X.EhLinkedLayerAxesChanged(LinkedLayer.AxisProperties.X.Scale);
+        this._linkedScales.X.EhLinkedLayerAxesChanged(LinkedLayer.LinkedScales.X.Scale);
       else
         RescaleXAxis();
     }
@@ -1821,27 +1836,27 @@ namespace Altaxo.Graph.Gdi
       //but (alas!) not all boundaries are now of the new type!
       _plotAssociationXBoundariesChanged_EventSuspendCount++; 
         
-      _axisProperties.X.Scale.DataBoundsObject.BeginUpdate(); // Suppress events from the y-axis now
-      _axisProperties.X.Scale.DataBoundsObject.Reset();
+      _linkedScales.X.Scale.DataBoundsObject.BeginUpdate(); // Suppress events from the y-axis now
+      _linkedScales.X.Scale.DataBoundsObject.Reset();
       foreach(IGPlotItem pa in this.PlotItems)
       {
         if(pa is IXBoundsHolder)
         {
           // merge the bounds with x and yAxis
-          ((IXBoundsHolder)pa).MergeXBoundsInto(_axisProperties.X.Scale.DataBoundsObject); // merge all x-boundaries in the x-axis boundary object
+          ((IXBoundsHolder)pa).MergeXBoundsInto(_linkedScales.X.Scale.DataBoundsObject); // merge all x-boundaries in the x-axis boundary object
         }
       }
 
       // take also the axis styles with physical values into account
-      foreach (CS2DLineID id in _scaleStyles.AxisStyleIDs)
+      foreach (CSLineID id in _axisStyles.AxisStyleIDs)
       {
-        if (id.AxisNumberOther == 0 && id.UsePhysicalValueOther)
-          _axisProperties.X.Scale.DataBoundsObject.Add(id.PhysicalValueOther);
+        if (id.AxisNumberOther == 0 && id.UsePhysicalValueOtherFirst)
+          _linkedScales.X.Scale.DataBoundsObject.Add(id.PhysicalValueOtherFirst);
       }
 
       _plotAssociationXBoundariesChanged_EventSuspendCount = Math.Max(0,_plotAssociationXBoundariesChanged_EventSuspendCount-1);
-      _axisProperties.X.Scale.DataBoundsObject.EndUpdate();
-      _axisProperties.X.Scale.ProcessDataBounds();
+      _linkedScales.X.Scale.DataBoundsObject.EndUpdate();
+      _linkedScales.X.Scale.ProcessDataBounds();
     }
    
   
@@ -1851,11 +1866,11 @@ namespace Altaxo.Graph.Gdi
     {
       get 
       {
-        return _axisProperties.Y.Scale;
+        return _linkedScales.Y.Scale;
       }
       set
       {
-        _axisProperties.Y.Scale = value;
+        _linkedScales.Y.Scale = value;
       }
     }
 
@@ -1865,11 +1880,11 @@ namespace Altaxo.Graph.Gdi
     {
       get 
       { 
-        return this._axisProperties.Y.IsLinked; 
+        return this._linkedScales.Y.IsLinked; 
       }
       set
       {
-        _axisProperties.Y.IsLinked = value;
+        _linkedScales.Y.IsLinked = value;
         
       }
     }
@@ -1884,7 +1899,7 @@ namespace Altaxo.Graph.Gdi
 
       // now we have to inform all the PlotItems that a new axis was loaded
       if (this.IsYAxisLinked)
-        this._axisProperties.Y.EhLinkedLayerAxesChanged(LinkedLayer.AxisProperties.X.Scale);
+        this._linkedScales.Y.EhLinkedLayerAxesChanged(LinkedLayer.LinkedScales.X.Scale);
       else
         RescaleYAxis();
     }
@@ -1899,26 +1914,26 @@ namespace Altaxo.Graph.Gdi
       //but (alas!) not all boundaries are now of the new type!
       _plotAssociationYBoundariesChanged_EventSuspendCount++; 
 
-      _axisProperties.Y.Scale.DataBoundsObject.BeginUpdate();
-      _axisProperties.Y.Scale.DataBoundsObject.Reset();
+      _linkedScales.Y.Scale.DataBoundsObject.BeginUpdate();
+      _linkedScales.Y.Scale.DataBoundsObject.Reset();
       foreach(IGPlotItem pa in this.PlotItems)
       {
         if(pa is IYBoundsHolder)
         {
           // merge the bounds with x and yAxis
-          ((IYBoundsHolder)pa).MergeYBoundsInto(_axisProperties.Y.Scale.DataBoundsObject); // merge all x-boundaries in the x-axis boundary object
+          ((IYBoundsHolder)pa).MergeYBoundsInto(_linkedScales.Y.Scale.DataBoundsObject); // merge all x-boundaries in the x-axis boundary object
         }
       }
       // take also the axis styles with physical values into account
-      foreach (CS2DLineID id in _scaleStyles.AxisStyleIDs)
+      foreach (CSLineID id in _axisStyles.AxisStyleIDs)
       {
-        if (id.AxisNumberOther == 1 && id.UsePhysicalValueOther)
-          _axisProperties.Y.Scale.DataBoundsObject.Add(id.PhysicalValueOther);
+        if (id.AxisNumberOther == 1 && id.UsePhysicalValueOtherFirst)
+          _linkedScales.Y.Scale.DataBoundsObject.Add(id.PhysicalValueOtherFirst);
       }
 
       _plotAssociationYBoundariesChanged_EventSuspendCount = Math.Max(0,_plotAssociationYBoundariesChanged_EventSuspendCount-1);
-      _axisProperties.Y.Scale.DataBoundsObject.EndUpdate();
-      _axisProperties.Y.Scale.ProcessDataBounds();
+      _linkedScales.Y.Scale.DataBoundsObject.EndUpdate();
+      _linkedScales.Y.Scale.ProcessDataBounds();
     }
     
 
@@ -1945,7 +1960,7 @@ namespace Altaxo.Graph.Gdi
         {
           oldValue.SizeChanged -= new System.EventHandler(EhLinkedLayerSizeChanged);
           oldValue.PositionChanged -= new System.EventHandler(EhLinkedLayerPositionChanged);
-          oldValue.AxisProperties.ScalesChanged -= new System.EventHandler(EhLinkedLayerAxesChanged);
+          oldValue.LinkedScales.ScalesChanged -= new System.EventHandler(EhLinkedLayerAxesChanged);
         }
 
         // link the events to the new layer
@@ -1953,7 +1968,7 @@ namespace Altaxo.Graph.Gdi
         {
           newValue.SizeChanged += new System.EventHandler(EhLinkedLayerSizeChanged);
           newValue.PositionChanged += new System.EventHandler(EhLinkedLayerPositionChanged);
-          newValue.AxisProperties.ScalesChanged += new System.EventHandler(EhLinkedLayerAxesChanged);
+          newValue.LinkedScales.ScalesChanged += new System.EventHandler(EhLinkedLayerAxesChanged);
         }
       }
     }
@@ -1970,14 +1985,14 @@ namespace Altaxo.Graph.Gdi
 
       try
       {
-        if (_axisProperties.X.IsLinked && null != LinkedLayer)
+        if (_linkedScales.X.IsLinked && null != LinkedLayer)
         {
-          _axisProperties.X.EhLinkedLayerAxesChanged(LinkedLayer.AxisProperties.X.Scale);
+          _linkedScales.X.EhLinkedLayerAxesChanged(LinkedLayer.LinkedScales.X.Scale);
         }
 
-        if (_axisProperties.Y.IsLinked && null != LinkedLayer)
+        if (_linkedScales.Y.IsLinked && null != LinkedLayer)
         {
-          _axisProperties.Y.EhLinkedLayerAxesChanged(LinkedLayer.AxisProperties.Y.Scale);
+          _linkedScales.Y.EhLinkedLayerAxesChanged(LinkedLayer.LinkedScales.Y.Scale);
         }
       }
       catch (Exception )
@@ -2038,31 +2053,34 @@ namespace Altaxo.Graph.Gdi
     }
 
 
-
-    public IEnumerable<CS2DLineID> UsedAxisStyleIdentifier
+    public GridPlane GridPlane
     {
       get
       {
-        foreach (AxisStyle style in this._scaleStyles.AxisStyles)
-          yield return style.StyleID;
+        return _gridPlane;
+      }
+      set
+      {
+        GridPlane oldvalue = _gridPlane;
+        _gridPlane = value;
+
+        if (!object.ReferenceEquals(value, oldvalue))
+        {
+          oldvalue.Changed -= this.OnChildChangedEventHandler;
+          value.Changed += this.OnChildChangedEventHandler;
+        }
       }
     }
-   
-    
-  
-
-    
-    
 
 
-    private string GetAxisTitleString(CS2DLineID id)
+    private string GetAxisTitleString(CSLineID id)
     {
-      return _scaleStyles.AxisStyle(id) !=null && _scaleStyles.AxisStyle(id).Title != null ? _scaleStyles.AxisStyle(id).Title.Text : null; 
+      return _axisStyles.AxisStyle(id) !=null && _axisStyles.AxisStyle(id).Title != null ? _axisStyles.AxisStyle(id).Title.Text : null; 
     }
 
-    private void SetAxisTitleString(CS2DLineID id, string value)
+    private void SetAxisTitleString(CSLineID id, string value)
     {
-      AxisStyle style = _scaleStyles.AxisStyle(id);
+      AxisStyle style = _axisStyles.AxisStyle(id);
       string oldtitle = (style==null ||  style.Title == null) ? null : style.Title.Text;
       string newtitle = (value == null || value == String.Empty) ? null : value;
 
@@ -2073,9 +2091,9 @@ namespace Altaxo.Graph.Gdi
           if(style!=null)
             style.Title = null;
         }
-        else if (_scaleStyles.AxisStyleEnsured(id).Title != null)
+        else if (_axisStyles.AxisStyleEnsured(id).Title != null)
         {
-          _scaleStyles.AxisStyle(id).Title.Text = newtitle;
+          _axisStyles.AxisStyle(id).Title.Text = newtitle;
         }
         else
         {
@@ -2085,16 +2103,16 @@ namespace Altaxo.Graph.Gdi
           // find out the position and orientation of the item
           double rx0 = 0, rx1 = 1, ry0 = 0, ry1 = 1;
           if (id.ParallelAxisNumber == 0)
-            ry0 = ry1 = id.LogicalValueOther;
+            ry0 = ry1 = id.LogicalValueOtherFirst;
           else
-            rx0 = rx1 = id.LogicalValueOther;
+            rx0 = rx1 = id.LogicalValueOtherFirst;
 
           PointF normDirection;
           PointF location = CoordinateSystem.GetNormalizedDirection(rx0, ry0, rx1, ry1, 0.5, info.PreferedLabelSide == A2DAxisSide.Left ? 90 : -90, out normDirection);
           double angle = Math.Atan2(normDirection.Y, normDirection.X) * 180 / Math.PI;
 
           float distance = 0;
-          AxisStyle axisStyle = _scaleStyles.AxisStyle(id);
+          AxisStyle axisStyle = _axisStyles.AxisStyle(id);
           if (null != axisStyle.AxisLineStyle)
             distance += axisStyle.AxisLineStyle.GetOuterDistance(info.PreferedLabelSide);
           float labelFontSize = 0;
@@ -2141,7 +2159,7 @@ namespace Altaxo.Graph.Gdi
 
           tg.Position = new PointF(location.X + distance * normDirection.X, location.Y + distance * normDirection.Y);
           tg.Text = newtitle;
-          _scaleStyles.AxisStyleEnsured(id).Title = tg;
+          _axisStyles.AxisStyleEnsured(id).Title = tg;
         }
       }
     }
@@ -2150,11 +2168,11 @@ namespace Altaxo.Graph.Gdi
     {
       get
       {
-        return GetAxisTitleString(CS2DLineID.Y0);
+        return GetAxisTitleString(CSLineID.Y0);
       }
       set
       {
-        SetAxisTitleString(CS2DLineID.Y0, value);
+        SetAxisTitleString(CSLineID.Y0, value);
       }
     }
 
@@ -2166,11 +2184,11 @@ namespace Altaxo.Graph.Gdi
     {
       get
       {
-        return GetAxisTitleString(CS2DLineID.X0);
+        return GetAxisTitleString(CSLineID.X0);
       }
       set
       {
-        SetAxisTitleString(CS2DLineID.X0, value);
+        SetAxisTitleString(CSLineID.X0, value);
       }
     }
 
@@ -2188,13 +2206,13 @@ namespace Altaxo.Graph.Gdi
     {
 
       // update the logical values of the physical axes before
-      foreach (CS2DLineID id in _scaleStyles.AxisStyleIDs)
+      foreach (CSLineID id in _axisStyles.AxisStyleIDs)
       {
-        if (id.UsePhysicalValueOther)
+        if (id.UsePhysicalValueOtherFirst)
         {
           // then update the logical value of this identifier
-          double logicalValue = this._axisProperties.Scale(id.AxisNumberOther).PhysicalVariantToNormal(id.PhysicalValueOther);
-          id.LogicalValueOther = logicalValue;
+          double logicalValue = this._linkedScales.Scale(id.AxisNumberOther).PhysicalVariantToNormal(id.PhysicalValueOtherFirst);
+          id.LogicalValueOtherFirst = logicalValue;
         }
       }
       
@@ -2222,7 +2240,7 @@ namespace Altaxo.Graph.Gdi
 
       RectangleF layerBounds = new RectangleF(_cachedLayerPosition,_cachedLayerSize);
 
-      _scaleStyles.Paint(g, this);
+      _axisStyles.Paint(g, this);
 
       if (ClipDataToFrame)
       {
@@ -2269,7 +2287,7 @@ namespace Altaxo.Graph.Gdi
 
 
       List<GraphicBase> specObjects = new List<GraphicBase>();
-      foreach(AxisStyle style in _scaleStyles.AxisStyles)
+      foreach(AxisStyle style in _axisStyles.AxisStyles)
         specObjects.Add(style.Title);
       specObjects.Add(_legend);
 
@@ -2310,7 +2328,7 @@ namespace Altaxo.Graph.Gdi
 
         // hit testing the axes - first a small area around the axis line
         // if hitting this, the editor for scaling the axis should be shown
-        foreach (AxisStyle style in this._scaleStyles.AxisStyles)
+        foreach (AxisStyle style in this._axisStyles.AxisStyles)
         {
           if (style.ShowAxisLine && null != (hit = style.AxisLineStyle.HitTest(this, layerC, false)))
           {
@@ -2322,7 +2340,7 @@ namespace Altaxo.Graph.Gdi
 
         // hit testing the axes - secondly now wiht the ticks
         // in this case the TitleAndFormat editor for the axis should be shown
-        foreach (AxisStyle style in this._scaleStyles.AxisStyles)
+        foreach (AxisStyle style in this._axisStyles.AxisStyles)
         {
           if (style.ShowAxisLine && null != (hit = style.AxisLineStyle.HitTest(this, layerC, true)))
           {
@@ -2333,7 +2351,7 @@ namespace Altaxo.Graph.Gdi
        
 
         // hit testing the axes labels
-        foreach (AxisStyle style in this._scaleStyles.AxisStyles)
+        foreach (AxisStyle style in this._axisStyles.AxisStyles)
         {
           if (style.ShowAxisLine && null != (hit = style.MajorLabelStyle.HitTest(this, layerC)))
           {
@@ -2430,7 +2448,7 @@ namespace Altaxo.Graph.Gdi
         layer._legend=null;
         return true;
       }
-        foreach(AxisStyle style in layer._scaleStyles.AxisStyles)
+        foreach(AxisStyle style in layer._axisStyles.AxisStyles)
         {
           if(object.ReferenceEquals(go, style.Title))
           {
@@ -2456,17 +2474,17 @@ namespace Altaxo.Graph.Gdi
       if(0==_plotAssociationXBoundariesChanged_EventSuspendCount)
       {
         // now we have to inform all the PlotAssociations that a new axis was loaded
-        _axisProperties.X.Scale.DataBoundsObject.BeginUpdate();
-        _axisProperties.X.Scale.DataBoundsObject.Reset();
+        _linkedScales.X.Scale.DataBoundsObject.BeginUpdate();
+        _linkedScales.X.Scale.DataBoundsObject.Reset();
         foreach(IGPlotItem pa in this.PlotItems)
         {
           if(pa is IXBoundsHolder)
           {
             // merge the bounds with x and yAxis
-            ((IXBoundsHolder)pa).MergeXBoundsInto(_axisProperties.X.Scale.DataBoundsObject); // merge all x-boundaries in the x-axis boundary object
+            ((IXBoundsHolder)pa).MergeXBoundsInto(_linkedScales.X.Scale.DataBoundsObject); // merge all x-boundaries in the x-axis boundary object
           }
         }
-        _axisProperties.X.Scale.DataBoundsObject.EndUpdate();
+        _linkedScales.X.Scale.DataBoundsObject.EndUpdate();
       }
     }
 
@@ -2485,18 +2503,18 @@ namespace Altaxo.Graph.Gdi
       if(0==_plotAssociationYBoundariesChanged_EventSuspendCount)
       {
         // now we have to inform all the PlotAssociations that a new axis was loaded
-        _axisProperties.Y.Scale.DataBoundsObject.BeginUpdate();
-        _axisProperties.Y.Scale.DataBoundsObject.Reset();
+        _linkedScales.Y.Scale.DataBoundsObject.BeginUpdate();
+        _linkedScales.Y.Scale.DataBoundsObject.Reset();
         foreach(IGPlotItem pa in this.PlotItems)
         {
           if(pa is IYBoundsHolder)
           {
             // merge the bounds with x and yAxis
-            ((IYBoundsHolder)pa).MergeYBoundsInto(_axisProperties.Y.Scale.DataBoundsObject); // merge all x-boundaries in the x-axis boundary object
+            ((IYBoundsHolder)pa).MergeYBoundsInto(_linkedScales.Y.Scale.DataBoundsObject); // merge all x-boundaries in the x-axis boundary object
         
           }
         }
-        _axisProperties.Y.Scale.DataBoundsObject.EndUpdate();
+        _linkedScales.Y.Scale.DataBoundsObject.EndUpdate();
       }
     }
     
@@ -2548,7 +2566,6 @@ namespace Altaxo.Graph.Gdi
     public bool IsLinear { get { return XAxis is LinearScale && YAxis is LinearScale; }}
    
 
-    G2DCoordinateSystem _coordinateSystem;
     public G2DCoordinateSystem CoordinateSystem
     {
       get
@@ -2583,6 +2600,527 @@ namespace Altaxo.Graph.Gdi
 
     #endregion
 
-  
+    #region Old types no longer in use but needed for deserialization
+    /// <summary>
+    /// AxisStylesSummary collects all styles that correspond to one axis scale (i.e. either x-axis or y-axis)
+    /// in one class. This contains the grid style of the axis, and one or more axis styles
+    /// </summary>
+    class ScaleStyle : ICloneable, Main.IChangedEventSource
+    {
+      GridStyle _gridStyle;
+      List<AxisStyle> _axisStyles;
+
+      G2DCoordinateSystem _cachedCoordinateSystem;
+
+      #region Serialization
+
+      [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotLayerAxisStylesSummary", 0)]
+      public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+      {
+        public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+        {
+          throw new NotSupportedException("Serialization of old versions not supported - probably a programming error");
+          /*
+          XYPlotLayerAxisStylesSummary s = (XYPlotLayerAxisStylesSummary)obj;
+          info.AddValue("Grid", s._gridStyle);
+
+          info.CreateArray("Edges", s._edges.Length);
+          for (int i = 0; i < s._edges.Length; ++i)
+            info.AddEnum("e", s._edges[i]);
+          info.CommitArray();
+
+          info.CreateArray("AxisStyles",s._axisStyles.Length);
+          for(int i=0;i<s._axisStyles.Length;++i)
+            info.AddValue("e",s._axisStyles[i]);
+          info.CommitArray();
+          */
+        }
+
+        public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+        {
+          ScaleStyle s = SDeserialize(o, info, parent);
+          return s;
+        }
+
+
+        protected virtual ScaleStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+        {
+          ScaleStyle s = null != o ? (ScaleStyle)o : new ScaleStyle();
+
+          s.GridStyle = (GridStyle)info.GetValue("Grid", s);
+
+          int count = info.OpenArray();
+          //s._edges = new EdgeType[count];
+          for (int i = 0; i < count; ++i)
+            info.GetEnum("e", typeof(EdgeType));
+          info.CloseArray(count);
+
+          count = info.OpenArray();
+          //s._axisStyles = new XYPlotLayerAxisStyleProperties[count];
+          for (int i = 0; i < count; ++i)
+            s._axisStyles.Add((AxisStyle)info.GetValue("e", s));
+          info.CloseArray(count);
+
+          return s;
+        }
+      }
+
+      // 2006-09-08 - renaming to G2DScaleStyle
+      [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ScaleStyle), 1)]
+      public class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+      {
+        public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+        {
+          throw new NotImplementedException("Serialization of old versions is not supported");
+          /*
+          ScaleStyle s = (ScaleStyle)obj;
+
+
+          info.AddValue("Grid", s._gridStyle);
+
+          info.CreateArray("AxisStyles", s._axisStyles.Count);
+          for (int i = 0; i < s._axisStyles.Count; ++i)
+            info.AddValue("e", s._axisStyles[i]);
+          info.CommitArray();
+          */
+        }
+
+        public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+        {
+          ScaleStyle s = SDeserialize(o, info, parent);
+          return s;
+        }
+
+
+        protected virtual ScaleStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+        {
+          ScaleStyle s = null != o ? (ScaleStyle)o : new ScaleStyle();
+
+          s.GridStyle = (GridStyle)info.GetValue("Grid", s);
+
+          int count = info.OpenArray();
+          //s._axisStyles = new XYPlotLayerAxisStyleProperties[count];
+          for (int i = 0; i < count; ++i)
+            s._axisStyles.Add((AxisStyle)info.GetValue("e", s));
+          info.CloseArray(count);
+
+          return s;
+        }
+      }
+
+      #endregion
+
+      /// <summary>
+      /// Default constructor. Defines neither a grid style nor an axis style.
+      /// </summary>
+      public ScaleStyle()
+      {
+        _axisStyles = new List<AxisStyle>();
+      }
+
+
+      void CopyFrom(ScaleStyle from)
+      {
+        this.GridStyle = from._gridStyle == null ? null : (GridStyle)from._gridStyle.Clone();
+
+        this._axisStyles.Clear();
+        for (int i = 0; i < _axisStyles.Count; ++i)
+        {
+          this.AddAxisStyle((AxisStyle)from._axisStyles[i].Clone());
+        }
+      }
+
+      public void AddAxisStyle(AxisStyle value)
+      {
+        if (value != null)
+        {
+          _axisStyles.Add(value);
+          value.Changed += new EventHandler(this.EhChildChanged);
+          OnChanged();
+        }
+      }
+
+      public void RemoveAxisStyle(CSLineID id)
+      {
+        int idx = -1;
+        for (int i = 0; i < _axisStyles.Count; i++)
+        {
+          if (_axisStyles[i].StyleID == id)
+          {
+            idx = i;
+            break;
+          }
+        }
+
+        if (idx > 0)
+          _axisStyles.RemoveAt(idx);
+      }
+
+      public AxisStyle AxisStyleEnsured(CSLineID id)
+      {
+        AxisStyle prop = AxisStyle(id);
+        if (prop == null)
+        {
+          prop = new AxisStyle(id);
+          prop.CachedAxisInformation = _cachedCoordinateSystem.GetAxisStyleInformation(id);
+          AddAxisStyle(prop);
+        }
+        return prop;
+      }
+
+
+      public bool ContainsAxisStyle(CSLineID id)
+      {
+        return null != AxisStyle(id);
+      }
+
+      public AxisStyle AxisStyle(CSLineID id)
+      {
+
+        foreach (AxisStyle p in _axisStyles)
+          if (p.StyleID == id)
+            return p;
+
+        return null;
+      }
+
+      public IEnumerable<AxisStyle> AxisStyles
+      {
+        get
+        {
+          return _axisStyles;
+        }
+      }
+
+
+      public GridStyle GridStyle
+      {
+        get { return _gridStyle; }
+        set
+        {
+          GridStyle oldvalue = _gridStyle;
+          _gridStyle = value;
+          if (!object.ReferenceEquals(value, oldvalue))
+          {
+            if (oldvalue != null)
+              oldvalue.Changed -= new EventHandler(this.EhChildChanged);
+            if (value != null)
+              value.Changed += new EventHandler(this.EhChildChanged);
+
+            OnChanged();
+          }
+        }
+      }
+
+      public void SetParentLayer(XYPlotLayer layer, bool suppressEvents)
+      {
+        _cachedCoordinateSystem = layer.CoordinateSystem;
+
+        foreach (AxisStyle style in this._axisStyles)
+          style.CachedAxisInformation = _cachedCoordinateSystem.GetAxisStyleInformation(style.StyleID);
+      }
+
+
+      public bool Remove(GraphicBase go)
+      {
+        for (int i = 0; i < this._axisStyles.Count; ++i)
+          if (_axisStyles[i] != null && _axisStyles[i].Remove(go))
+            return true;
+
+        return false;
+      }
+
+      public void Paint(Graphics g, XYPlotLayer layer, int axisnumber)
+      {
+        PaintGrid(g, layer, axisnumber);
+        PaintAxes(g, layer, axisnumber);
+      }
+      public void PaintGrid(Graphics g, XYPlotLayer layer, int axisnumber)
+      {
+        Scale axis = axisnumber == 0 ? layer.XAxis : layer.YAxis;
+
+        if (null != _gridStyle)
+          _gridStyle.Paint(g, layer, axisnumber);
+      }
+
+      public void PaintAxes(Graphics g, XYPlotLayer layer, int axisnumber)
+      {
+
+        for (int i = 0; i < _axisStyles.Count; ++i)
+          _axisStyles[i].Paint(g, layer);
+      }
+
+
+      #region IChangedEventSource Members
+
+      public event EventHandler Changed;
+
+      protected virtual void OnChanged()
+      {
+        if (null != Changed)
+          Changed(this, EventArgs.Empty);
+      }
+
+      void EhChildChanged(object sender, EventArgs e)
+      {
+        OnChanged();
+      }
+
+      #endregion
+
+      #region ICloneable Members
+
+      public object Clone()
+      {
+        ScaleStyle result = new ScaleStyle();
+        result.CopyFrom(this);
+        return result;
+      }
+
+      #endregion
+    }
+
+    /// <summary>
+    /// This class holds the (normally two for 2D) AxisStylesSummaries - for every axis scale one summary.
+    /// </summary>
+    class G2DScaleStyleCollection : Main.IChildChangedEventSink, Main.IChangedEventSource, ICloneable
+    {
+
+
+      ScaleStyle[] _styles;
+
+      #region Serialization
+
+      [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotLayerAxisStylesSummaryCollection", 0)]
+      // 2006-09-08 renamed to G2DScaleStyleCollection
+      [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(G2DScaleStyleCollection), 1)]
+      public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+      {
+        public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+        {
+          throw new NotImplementedException("Serialization of old versions is not supported");
+          /*
+          G2DScaleStyleCollection s = (G2DScaleStyleCollection)obj;
+
+          info.CreateArray("Styles", s._styles.Length);
+          for (int i = 0; i < s._styles.Length; ++i)
+            info.AddValue("e", s._styles[i]);
+          info.CommitArray();
+          */
+        }
+
+        public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+        {
+          G2DScaleStyleCollection s = SDeserialize(o, info, parent);
+          return s;
+        }
+
+
+        protected virtual G2DScaleStyleCollection SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+        {
+          G2DScaleStyleCollection s = null != o ? (G2DScaleStyleCollection)o : new G2DScaleStyleCollection();
+
+          int count = info.OpenArray();
+          s._styles = new ScaleStyle[count];
+          for (int i = 0; i < count; ++i)
+            s.SetScaleStyle((ScaleStyle)info.GetValue("e", s), i);
+          info.CloseArray(count);
+
+          return s;
+        }
+      }
+      #endregion
+
+
+      public G2DScaleStyleCollection()
+      {
+        _styles = new ScaleStyle[2];
+
+        this._styles[0] = new ScaleStyle();
+        this._styles[0].Changed += new EventHandler(this.EhChildChanged);
+
+        this._styles[1] = new ScaleStyle();
+        this._styles[1].Changed += new EventHandler(this.EhChildChanged);
+
+        //TODO: Fill the styles with default
+      }
+
+      void CopyFrom(G2DScaleStyleCollection from)
+      {
+        // Remove old event handlers
+        for (int i = 0; i < this._styles.Length; ++i)
+          if (_styles[i] != null)
+            _styles[i].Changed -= new EventHandler(this.EhChildChanged);
+
+        // now clone
+        for (int i = 0; i < from._styles.Length; ++i)
+        {
+          this._styles[i] = from._styles[i] == null ? null : (ScaleStyle)from._styles[i].Clone();
+          if (this._styles[i] != null)
+            this._styles[i].Changed += new EventHandler(this.EhChildChanged);
+        }
+      }
+
+
+
+      /// <summary>
+      /// Return the axis style with the given id. If this style is not present, the return value is null.
+      /// </summary>
+      /// <param name="id"></param>
+      /// <returns></returns>
+      public AxisStyle AxisStyle(CSLineID id)
+      {
+        ScaleStyle scaleStyle = _styles[id.ParallelAxisNumber];
+        return scaleStyle.AxisStyle(id);
+      }
+
+      /// <summary>
+      /// This will return an axis style with the given id. If not present, this axis style will be created, added to the collection, and returned.
+      /// </summary>
+      /// <param name="id"></param>
+      /// <returns></returns>
+      public AxisStyle AxisStyleEnsured(CSLineID id)
+      {
+        ScaleStyle scaleStyle = _styles[id.ParallelAxisNumber];
+        return scaleStyle.AxisStyleEnsured(id);
+      }
+
+      public void RemoveAxisStyle(CSLineID id)
+      {
+        ScaleStyle scaleStyle = _styles[id.ParallelAxisNumber];
+        scaleStyle.RemoveAxisStyle(id);
+      }
+
+
+      public IEnumerable<AxisStyle> AxisStyles
+      {
+        get
+        {
+          for (int i = 0; i < _styles.Length; i++)
+          {
+            foreach (AxisStyle style in _styles[i].AxisStyles)
+              yield return style;
+          }
+        }
+      }
+
+      public IEnumerable<CSLineID> AxisStyleIDs
+      {
+        get
+        {
+          for (int i = 0; i < _styles.Length; i++)
+          {
+            foreach (AxisStyle style in _styles[i].AxisStyles)
+              yield return style.StyleID;
+          }
+        }
+      }
+
+
+      public bool ContainsAxisStyle(CSLineID id)
+      {
+        ScaleStyle scalestyle = _styles[id.ParallelAxisNumber];
+        return scalestyle.ContainsAxisStyle(id);
+      }
+
+      public ScaleStyle ScaleStyle(int i)
+      {
+        return _styles[i];
+      }
+
+      public void SetScaleStyle(ScaleStyle value, int i)
+      {
+        if (i < 0)
+          throw new ArgumentOutOfRangeException("Index i is negative");
+        if (i >= _styles.Length)
+          throw new ArgumentOutOfRangeException("Index i is greater than length of internal array");
+
+        ScaleStyle oldvalue = _styles[i];
+        _styles[i] = value;
+
+        if (null != oldvalue)
+          oldvalue.Changed -= new EventHandler(this.EhChildChanged);
+        if (null != value)
+          value.Changed += new EventHandler(this.EhChildChanged);
+
+        if (!object.ReferenceEquals(oldvalue, value))
+          OnChanged();
+      }
+
+      public ScaleStyle X
+      {
+        get
+        {
+          return _styles[0];
+        }
+      }
+
+      public ScaleStyle Y
+      {
+        get
+        {
+          return _styles[1];
+        }
+      }
+
+      public bool Remove(GraphicBase go)
+      {
+        for (int i = 0; i < this._styles.Length; ++i)
+          if (_styles[i] != null && _styles[i].Remove(go))
+            return true;
+
+        return false;
+      }
+
+      public void Paint(Graphics g, XYPlotLayer layer)
+      {
+        _styles[0].PaintGrid(g, layer, 0);
+        _styles[1].PaintGrid(g, layer, 1);
+        _styles[0].PaintAxes(g, layer, 0);
+        _styles[1].PaintAxes(g, layer, 1);
+      }
+
+      public void SetParentLayer(XYPlotLayer layer, bool suppressEvents)
+      {
+        foreach (ScaleStyle style in _styles)
+          style.SetParentLayer(layer, suppressEvents);
+      }
+
+      #region IChildChangedEventSink Members
+
+      public void EhChildChanged(object child, EventArgs e)
+      {
+        OnChanged();
+      }
+
+      #endregion
+
+      #region IChangedEventSource Members
+
+      public event EventHandler Changed;
+
+      public void OnChanged()
+      {
+        if (Changed != null)
+          Changed(this, EventArgs.Empty);
+      }
+
+      #endregion
+
+      #region ICloneable Members
+
+      public object Clone()
+      {
+        G2DScaleStyleCollection res = new G2DScaleStyleCollection();
+        res.CopyFrom(this);
+        return res;
+      }
+
+      #endregion
+    }
+
+    #endregion
+
+
   }
 }

@@ -1220,10 +1220,11 @@
     <None Include="Calc\FitFunctions\Relaxation\.svn\entries" />
     <None Include="Calc\FitFunctions\Relaxation\.svn\format" />
     <None Include="Calc\FitFunctions\Relaxation\.svn\text-base\HavriliakNegamiFunction.cs.svn-base" />
+    <Compile Include="Collections\IArray.cs" />
     <Compile Include="Collections\ListNode.cs" />
     <Compile Include="Collections\NamedItem.cs" />
-    <Compile Include="Graph\A2DAxisStyleIdentifier.cs" />
     <Compile Include="Graph\A2DAxisStyleInformation.cs" />
+    <Compile Include="Graph\CSLineID.cs" />
     <Compile Include="Graph\CSPlaneID.cs" />
     <Compile Include="Graph\Gdi\Axis\AxisLabelStyle.cs" />
     <Compile Include="Graph\Gdi\Axis\AxisLabelStyleBase.cs" />
@@ -1232,8 +1233,6 @@
     <Compile Include="Graph\Gdi\Axis\AxisStyleCollection.cs" />
     <Compile Include="Graph\Gdi\Axis\GridPlane.cs" />
     <Compile Include="Graph\Gdi\Axis\GridStyle.cs" />
-    <Compile Include="Graph\Gdi\Axis\ScaleStyle.cs" />
-    <Compile Include="Graph\Gdi\Axis\ScaleStyleCollection.cs" />
     <Compile Include="Graph\Gdi\Background\BlackLine.cs" />
     <Compile Include="Graph\Gdi\Background\BlackOut.cs" />
     <Compile Include="Graph\Gdi\Background\Circle.cs" />
