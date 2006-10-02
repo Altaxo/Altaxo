@@ -6,10 +6,13 @@ using System.Drawing.Drawing2D;
 
 namespace Altaxo.Graph.Gdi
 {
-  public abstract class G2DCoordinateSystem : ICloneable
+  public abstract class G2DCoordinateSystem 
+    :
+    ICloneable,
+    Main.IDocumentNode
   {
     [NonSerialized]
-    IPlotArea _parent;
+    object _parent;
     /// <summary>
     /// Is the normal position of x and y axes interchanged, for instance x is vertical and y horizontal.
     /// </summary>
@@ -129,17 +132,7 @@ namespace Altaxo.Graph.Gdi
     public abstract Region GetRegion();
 
 
-    /// <summary>
-    /// Get/ sets the parent of this object.
-    /// </summary>
-    public IPlotArea Parent
-    {
-      get { return _parent; }
-      set
-      {
-        _parent = value;
-      }
-    }
+  
 
 
     /// <summary>
@@ -171,23 +164,35 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
+    public virtual void GetIsolineFromPlaneToPoint(GraphicsPath path, CSPlaneID id, Logical3D r)
+    {
+      GetIsolineFromPlaneToPoint(path, id, r.RX, r.RY, r.RZ);
+    }
+
     /// <summary>
-    /// Draws an isoline beginning from the axis to the given point.
+    /// Draws an isoline beginning from a plane to the given point.
     /// </summary>
     /// <param name="path">Graphics path to fill with the isoline.</param>
     /// <param name="id">The axis to start drawing.</param>
     /// <param name="rx">Logical x coordinate of the end point.</param>
     /// <param name="ry">Logical y coordinate of the end point.</param>
-    public virtual void GetIsolineFromAxisToPoint(GraphicsPath path, CSLineID id, double rx, double ry)
+    /// <param name="rz">Logical z coordinate of the end point (not used for 2D coordinate systems).</param>
+    public virtual void GetIsolineFromPlaneToPoint(GraphicsPath path, CSPlaneID id, double rx, double ry, double rz)
     {
-      if (id.ParallelAxisNumber == 0)
+      if (id.PerpendicularAxisNumber == 0)
       {
-        GetIsoline(path, rx, id.LogicalValueOtherFirst, rx, ry);
+        GetIsoline(path, id.LogicalValue, ry, rx, ry);
       }
       else
       {
-        GetIsoline(path, id.LogicalValueOtherFirst, ry, rx, ry);
+        GetIsoline(path, rx, id.LogicalValue, rx, ry);
       }
+    }
+
+
+    public virtual void GetIsolineFromPointToPlane(GraphicsPath path, CSPlaneID id, Logical3D r)
+    {
+      GetIsolineFromPointToPlane(path, r.RX, r.RY, id);
     }
 
     /// <summary>
@@ -197,40 +202,53 @@ namespace Altaxo.Graph.Gdi
     /// <param name="rx">Logical x coordinate of the start point.</param>
     /// <param name="ry">Logical y coordinate of the start point.</param>
     /// <param name="id">The axis to end the isoline.</param>
-    public virtual void GetIsolineFromPointToAxis(GraphicsPath path, double rx, double ry, CSLineID id)
+    public virtual void GetIsolineFromPointToPlane(GraphicsPath path, double rx, double ry, CSPlaneID id)
     {
-      if (id.ParallelAxisNumber == 0)
+      if (id.PerpendicularAxisNumber == 0)
       {
-        GetIsoline(path, rx, ry, rx, id.LogicalValueOtherFirst);
+        GetIsoline(path, rx, ry, id.LogicalValue, ry);
       }
       else
       {
-        GetIsoline(path, rx, ry, id.LogicalValueOtherFirst, ry);
+        GetIsoline(path, rx, ry, rx, id.LogicalValue);
       }
     }
 
+    public virtual void DrawIsolineFromPointToPlane(Graphics g, System.Drawing.Pen pen, CSPlaneID id, Logical3D r)
+    {
+      DrawIsolineFromPointToPlane(g, pen, r.RX, r.RY, id);
+    }
+
+
     /// <summary>
-    /// Draws an isoline beginning from a given point to the axis.
+    /// Draws an isoline beginning from a given point to a plane.
     /// </summary>
     /// <param name="g">Graphics to draw the isoline to.</param>
     /// <param name="pen">The pen to use.</param>
     /// <param name="rx">Logical x coordinate of the start point.</param>
     /// <param name="ry">Logical y coordinate of the start point.</param>
-    /// <param name="id">The axis to end the isoline.</param>
-    public virtual void DrawIsolineFromPointToAxis(Graphics g, System.Drawing.Pen pen, double rx, double ry, CSLineID id)
+    /// <param name="id">The plane to end the isoline.</param>
+    public virtual void DrawIsolineFromPointToPlane(Graphics g, System.Drawing.Pen pen, double rx, double ry, CSPlaneID id)
     {
-      if (id.ParallelAxisNumber == 0)
+      if (id.PerpendicularAxisNumber == 0)
       {
-        DrawIsoline(g, pen, rx, ry, rx, id.LogicalValueOtherFirst);
+        DrawIsoline(g, pen, rx, ry, id.LogicalValue, ry);
       }
       else
       {
-        DrawIsoline(g, pen, rx, ry, id.LogicalValueOtherFirst, ry);
+        DrawIsoline(g, pen, rx, ry, rx, id.LogicalValue);
       }
     }
 
+
+    public virtual void GetIsolineOnPlane(GraphicsPath path, CSPlaneID id, Logical3D r0, Logical3D r1)
+    {
+      GetIsolineOnPlane(path, id, r0.RX, r0.RY, r1.RX, r1.RY);
+    }
+
+
     /// <summary>
-    /// Draws an isoline on the axis beginning from r0 to r1. For r0,r1 either ry0,ry1 is used (if it is an x-axis),
+    /// Draws an isoline on a plane beginning from r0 to r1. For r0,r1 either ry0,ry1 is used (if it is an x-axis),
     /// otherwise rx0,ry1 is used. The other parameter pair is not used.
     /// </summary>
     /// <param name="path">Graphics path to fill with the isoline.</param>
@@ -239,25 +257,26 @@ namespace Altaxo.Graph.Gdi
     /// <param name="rx0">Logical x coordinate of the start point.</param>
     /// <param name="ry1">Logical y coordinate of the start point.</param>
     /// <param name="id">The axis to end the isoline.</param>
-    public virtual void GetIsolineOnAxis(GraphicsPath path, CSLineID id, double rx0, double ry0, double rx1, double ry1)
+    public virtual void GetIsolineOnPlane(GraphicsPath path, CSPlaneID id, double rx0, double ry0, double rx1, double ry1)
     {
-      if (id.ParallelAxisNumber == 0)
+      if (id.PerpendicularAxisNumber == 0)
       {
-        GetIsoline(path, rx0, id.LogicalValueOtherFirst, rx1, id.LogicalValueOtherFirst);
+        GetIsoline(path, id.LogicalValue, ry0, id.LogicalValue, ry1);
       }
       else
       {
-        GetIsoline(path, id.LogicalValueOtherFirst, ry0, id.LogicalValueOtherFirst, ry1);
+        GetIsoline(path, rx0, id.LogicalValue, rx1, id.LogicalValue);
       }
     }
 
-    public PointF GetPointOnAxis(CSLineID id, double rx, double ry)
+    public PointF GetPointOnPlane(CSPlaneID id, Logical3D r)
     {
-      if (id.ParallelAxisNumber == 0)
-        return LogicalToLayerCoordinates(rx, id.LogicalValueOtherFirst);
+      if (id.PerpendicularAxisNumber == 0)
+        return LogicalToLayerCoordinates(id.LogicalValue, r.RY);
       else
-        return LogicalToLayerCoordinates(id.LogicalValueOtherFirst, ry);
+        return LogicalToLayerCoordinates(r.RX, id.LogicalValue);
     }
+
 
     /// <summary>
     /// Get a line along the axis designated by the argument id from the logical values r0 to r1.
@@ -415,6 +434,17 @@ namespace Altaxo.Graph.Gdi
       return result;
     }
 
+
+    public CSPlaneInformation GetPlaneInformation(CSPlaneID planeID)
+    {
+      CSLineID lineID = (CSLineID)planeID;
+      A2DAxisStyleInformation lineInfo = GetAxisStyleInformation(lineID);
+
+      CSPlaneInformation result = new CSPlaneInformation(planeID);
+      result.Name = lineInfo.NameOfAxisStyle;
+      return result;
+    }
+
     public IEnumerable<CSLineID> GetJoinedAxisStyleIdentifier(IEnumerable<CSLineID> list1, IEnumerable<CSLineID> list2)
     {
       Dictionary<CSLineID, object> dict = new Dictionary<CSLineID, object>();
@@ -449,11 +479,65 @@ namespace Altaxo.Graph.Gdi
         }
       }
     }
+
+
+
+    public IEnumerable<CSPlaneID> GetJoinedPlaneIdentifier(IEnumerable<CSLineID> list1, IEnumerable<CSPlaneID> list2)
+    {
+      Dictionary<CSPlaneID, object> dict = new Dictionary<CSPlaneID, object>();
+
+      foreach (A2DAxisStyleInformation info in AxisStyles)
+      {
+        CSPlaneID p1 = (CSPlaneID)info.Identifier;
+        dict.Add(p1, null);
+        yield return p1;
+      }
+
+      if (list1 != null)
+      {
+        foreach (CSLineID id in list1)
+        {
+          CSPlaneID p2 = (CSPlaneID)id;
+          if (!dict.ContainsKey(p2))
+          {
+            dict.Add(p2, null);
+            yield return p2;
+          }
+        }
+      }
+
+      if (list2 != null)
+      {
+        foreach (CSPlaneID id in list2)
+        {
+          if (null!=id && !dict.ContainsKey(id))
+          {
+            dict.Add(id, null);
+            yield return id;
+          }
+        }
+      }
+    }
+
+    #region IDocumentNode Members
+
+    /// <summary>
+    /// Get/ sets the parent of this object.
+    /// </summary>
+    public object ParentObject
+    {
+      get { return _parent; }
+      set
+      {
+        _parent = value;
+      }
+    }
+
+    public string Name
+    {
+      get { return this.GetType().ToString(); }
+    }
+
+    #endregion
   }
-      
-    
-
-
-
- 
 }

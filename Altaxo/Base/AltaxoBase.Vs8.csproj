@@ -1226,12 +1226,14 @@
     <Compile Include="Graph\A2DAxisStyleInformation.cs" />
     <Compile Include="Graph\CSLineID.cs" />
     <Compile Include="Graph\CSPlaneID.cs" />
+    <Compile Include="Graph\CSPlaneInformation.cs" />
     <Compile Include="Graph\Gdi\Axis\AxisLabelStyle.cs" />
     <Compile Include="Graph\Gdi\Axis\AxisLabelStyleBase.cs" />
     <Compile Include="Graph\Gdi\Axis\AxisLineStyle.cs" />
     <Compile Include="Graph\Gdi\Axis\AxisStyle.cs" />
     <Compile Include="Graph\Gdi\Axis\AxisStyleCollection.cs" />
     <Compile Include="Graph\Gdi\Axis\GridPlane.cs" />
+    <Compile Include="Graph\Gdi\Axis\GridPlaneCollection.cs" />
     <Compile Include="Graph\Gdi\Axis\GridStyle.cs" />
     <Compile Include="Graph\Gdi\Background\BlackLine.cs" />
     <Compile Include="Graph\Gdi\Background\BlackOut.cs" />
@@ -1259,9 +1261,11 @@
     <Compile Include="Graph\Gdi\LabelFormatting\NumericLabelFormattingFixed.cs" />
     <Compile Include="Graph\Gdi\LabelFormatting\NumericLabelFormattingMantissa.cs" />
     <Compile Include="Graph\Gdi\LabelFormatting\NumericLabelFormattingScientific.cs" />
+    <Compile Include="Graph\Gdi\LayerBackground.cs" />
     <Compile Include="Graph\Gdi\LineCaps\ArrowF10LineCap.cs" />
     <Compile Include="Graph\Gdi\LineCaps\ArrowF20LineCap.cs" />
     <Compile Include="Graph\Gdi\PenX.cs" />
+    <Compile Include="Graph\I3DPhysicalVariantAccessor.cs" />
     <Compile Include="Graph\Gdi\Plot\Data\PlotRange.cs" />
     <Compile Include="Graph\Gdi\Plot\Data\Processed2DPlotData.cs" />
     <Compile Include="Graph\Gdi\Plot\Data\XYColumnPlotData.cs" />
@@ -1310,6 +1314,8 @@
     <Compile Include="Graph\Gdi\XYPlotLayerPositionType.cs" />
     <Compile Include="Graph\Gdi\XYPlotLayerSizeType.cs" />
     <Compile Include="Graph\ImageProxy.cs" />
+    <Compile Include="Graph\LayerDataClipping.cs" />
+    <Compile Include="Graph\Logical3D.cs" />
     <Compile Include="Graph\PlotGroups\BarWidthPositionGroupStyle.cs" />
     <Compile Include="Graph\PlotGroups\ColorPlotGroupStyle.cs" />
     <Compile Include="Graph\PlotGroups\IPlotGroupStyle.cs" />

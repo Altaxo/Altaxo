@@ -492,10 +492,10 @@ namespace Altaxo.Graph.GUI
         {
           if (null==_GridStyleController[_currentScale])
           {
-            if (_layer.GridPlane.GridStyle[_currentScale] == null)
-              _layer.GridPlane.GridStyle[_currentScale] = new GridStyle();
+            if (_layer.GridPlanes[0].GridStyle[_currentScale] == null)
+              _layer.GridPlanes[0].GridStyle[_currentScale] = new GridStyle();
 
-            Altaxo.Gui.Graph.XYGridStyleController newCtrl = new Altaxo.Gui.Graph.XYGridStyleController(_layer.GridPlane.GridStyle[_currentScale]);
+            Altaxo.Gui.Graph.XYGridStyleController newCtrl = new Altaxo.Gui.Graph.XYGridStyleController(_layer.GridPlanes[0].GridStyle[_currentScale]);
             newCtrl.ViewObject = new Altaxo.Gui.Graph.XYGridStyleControl();
             _GridStyleController[_currentScale] = newCtrl;
 
@@ -616,7 +616,7 @@ namespace Altaxo.Graph.GUI
         if (_GridStyleController[i] != null)
         {
           if (_GridStyleController[i].Apply())
-            this._layer.GridPlane.GridStyle[i] = (GridStyle)_GridStyleController[i].ModelObject;
+            this._layer.GridPlanes[0].GridStyle[i] = (GridStyle)_GridStyleController[i].ModelObject;
           else
             return false;
         }

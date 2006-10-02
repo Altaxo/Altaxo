@@ -259,19 +259,16 @@ namespace Altaxo.Gui.Graph
       int idx = -1;
       if (layer != null)
       {
-        foreach (A2DAxisStyleInformation info in layer.CoordinateSystem.AxisStyles)
-          names.Add(new ListNode(info.NameOfAxisStyle, info));
-
-        idx = layer.CoordinateSystem.IndexOfAxisStyle(_tempDoc.FillDirection);
-
-
-        if (idx < 0 && _tempDoc.FillDirection != null)
+        int count = -1;
+        foreach (CSPlaneID id in layer.CoordinateSystem.GetJoinedPlaneIdentifier(layer.AxisStyleIDs, new CSPlaneID[] { _doc.FillDirection }))
         {
-          A2DAxisStyleInformation info = layer.CoordinateSystem.GetAxisStyleInformation(_tempDoc.FillDirection);
-          names.Add(new ListNode(info.NameOfAxisStyle, info));
-          idx = names.Count - 1;
-        }
+          count++;
+          if (id == _doc.FillDirection)
+            idx = count;
 
+          CSPlaneInformation info = layer.CoordinateSystem.GetPlaneInformation(id);
+          names.Add(new ListNode(info.Name, id));
+        }
       }
       _view.InitializeFillDirection(names,Math.Max(idx,0)); // _tempDoc.FillDirection.ToString());
     }
@@ -309,9 +306,9 @@ namespace Altaxo.Gui.Graph
         // Fill Area
         _doc.FillArea = _view.LineFillArea;
         // Line fill direction
-        CSLineID id = null;
-        if(_doc.FillArea && null!=_view.LineFillDirection)
-          id = ((A2DAxisStyleInformation)_view.LineFillDirection.Item).Identifier;
+        CSPlaneID id = null;
+        if (_doc.FillArea && null != _view.LineFillDirection)
+          id = ((CSPlaneID)_view.LineFillDirection.Item);
 
         _doc.FillDirection = id;
         // Line fill color

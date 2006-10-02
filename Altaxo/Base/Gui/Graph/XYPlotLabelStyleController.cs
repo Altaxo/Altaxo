@@ -237,7 +237,7 @@ namespace Altaxo.Gui.Graph
     protected bool _attachToEdge;
 
     /// <summary>The axis where the label is attached to (if it is attached).</summary>
-    protected CSLineID _attachedEdge;
+    protected CSPlaneID _attachedEdge;
 
    
 
@@ -307,17 +307,19 @@ namespace Altaxo.Gui.Graph
 
       List<ListNode> names = new List<ListNode>();
 
-      foreach (A2DAxisStyleInformation info in layer.CoordinateSystem.AxisStyles)
-        names.Add(new ListNode(info.NameOfAxisStyle, info));
-
-      int idx = layer.CoordinateSystem.IndexOfAxisStyle(_attachedEdge);
-
-
-      if (idx < 0 && _attachedEdge != null)
+      int idx = -1;
+      if (layer != null)
       {
-        A2DAxisStyleInformation info = layer.CoordinateSystem.GetAxisStyleInformation(_attachedEdge);
-        names.Add(new ListNode(info.NameOfAxisStyle, info));
-        idx = names.Count - 1;
+        int count = -1;
+        foreach (CSPlaneID id in layer.CoordinateSystem.GetJoinedPlaneIdentifier(layer.AxisStyleIDs, new CSPlaneID[] { _doc.AttachedAxis }))
+        {
+          count++;
+          if (id == _doc.AttachedAxis)
+            idx = count;
+
+          CSPlaneInformation info = layer.CoordinateSystem.GetPlaneInformation(id);
+          names.Add(new ListNode(info.Name, id));
+        }
       }
 
       _view.AttachedAxis_Initialize(names, Math.Max(idx, 0)); 
@@ -386,7 +388,7 @@ namespace Altaxo.Gui.Graph
 
     public void EhView_AttachedAxisChanged(ListNode newValue)
     {
-      _attachedEdge = ((A2DAxisStyleInformation)newValue.Item).Identifier;
+      _attachedEdge = ((CSPlaneID)newValue.Item);
     }
 
     public void EhView_IndependentColorChanged(bool newValue)

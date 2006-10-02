@@ -240,12 +240,12 @@ namespace Altaxo.Gui.Graph
 
       List<SelectableListNode> names = new List<SelectableListNode>();
 
-      foreach (CSLineID id in layer.CoordinateSystem.GetJoinedAxisStyleIdentifier(layer.AxisStyles.AxisStyleIDs, _tempDoc.DropLine))
+      foreach (CSPlaneID id in layer.CoordinateSystem.GetJoinedPlaneIdentifier(layer.AxisStyles.AxisStyleIDs, _tempDoc.DropLine))
       {
 
         bool sel = _tempDoc.DropLine.Contains(id);
-        A2DAxisStyleInformation info = layer.CoordinateSystem.GetAxisStyleInformation(id);
-        names.Add(new SelectableListNode(info.NameOfAxisStyle, id, sel));
+        CSPlaneInformation info = layer.CoordinateSystem.GetPlaneInformation(id);
+        names.Add(new SelectableListNode(info.Name, id, sel));
       }
 
       _view.InitializeDropLineConditions(names); 
@@ -318,7 +318,7 @@ namespace Altaxo.Gui.Graph
         // Drop line left
         _doc.DropLine.Clear();
         foreach (SelectableListNode node in _view.DropLines)
-          _doc.DropLine.Add((CSLineID)node.Item);
+          _doc.DropLine.Add((CSPlaneID)node.Item);
 
         // Skip points
 

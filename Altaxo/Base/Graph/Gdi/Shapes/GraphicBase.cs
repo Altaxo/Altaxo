@@ -38,6 +38,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     System.Runtime.Serialization.ISerializable,
     System.Runtime.Serialization.IDeserializationCallback,
     Main.IChangedEventSource,
+    Main.IDocumentNode,
     System.ICloneable,
     IGrippableObject
   {
@@ -67,7 +68,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// The parent collection this graphical object belongs to.
     /// </summary>
     [NonSerialized]
-    protected GraphicCollection _parentCollection = null;
+    protected object _parent = null;
 
     [field:NonSerialized]
     public event System.EventHandler Changed;
@@ -141,7 +142,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     {
       this._autoSize = from._autoSize;
       this._bounds  = from._bounds;
-      this._parentCollection = null;
+      this._parent = null;
       this._position  = from._position;
       this._rotation  = from._rotation;
     }
@@ -216,20 +217,6 @@ namespace Altaxo.Graph.Gdi.Shapes
     {
     }
 
-    public GraphicCollection Container
-    {
-      get
-      {
-        return _parentCollection;
-      }
-      set
-      {
-        _parentCollection = value;
-      }
-    }
-
-
-  
 
     public virtual bool AutoSize
     {
@@ -422,8 +409,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     protected virtual void OnChanged()
     {
-      if(null!=this._parentCollection )
-        _parentCollection.EhChildChanged(this,new Main.ChangedEventArgs(this,null));
+      if(this._parent is Main.IChildChangedEventSink)
+        ((Main.IChildChangedEventSink)_parent).EhChildChanged(this,new Main.ChangedEventArgs(this,null));
 
       if(null!=Changed)
         Changed(this,new Main.ChangedEventArgs(this,null));
@@ -807,5 +794,20 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     #endregion
 
+
+    #region IDocumentNode Members
+
+    public object ParentObject
+    {
+      get { return _parent; }
+      set { _parent = value; }
+    }
+
+    public virtual string Name
+    {
+      get { return this.GetType().ToString(); }
+    }
+
+    #endregion
   }
 }

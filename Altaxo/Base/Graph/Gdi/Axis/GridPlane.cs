@@ -9,7 +9,8 @@ namespace Altaxo.Graph.Gdi.Axis
   [Serializable]
   public class GridPlane : 
     ICloneable,
-    Main.IChangedEventSource
+    Main.IChangedEventSource,
+    Main.IDocumentNode
   {
 
     /// <summary>
@@ -36,6 +37,9 @@ namespace Altaxo.Graph.Gdi.Axis
 
     [field:NonSerialized]
     public event EventHandler Changed;
+
+    [NonSerialized]
+    object _parent;
 
     [NonSerialized]
     GridIndexer _cachedIndexer;
@@ -73,13 +77,47 @@ namespace Altaxo.Graph.Gdi.Axis
     public GridStyle GridStyleFirst
     {
       get { return _grid1; }
-      set { _grid1 = value; }
+      set 
+      {
+        GridStyle oldvalue = _grid1;
+        _grid1 = value;
+
+        if (null != value)
+          value.ParentObject = this;
+
+        if (!object.ReferenceEquals(value, oldvalue))
+        {
+          if (null != oldvalue)
+            oldvalue.Changed -= EhChildChanged;
+          if (null != value)
+            value.Changed += EhChildChanged;
+
+          OnChanged();
+        }
+      }
     }
 
     public GridStyle GridStyleSecond
     {
       get { return _grid2; }
-      set { _grid2 = value; }
+      set 
+      {
+        GridStyle oldvalue = _grid2;
+        _grid2 = value;
+
+        if (null != value)
+          value.ParentObject = this;
+
+        if (!object.ReferenceEquals(value, oldvalue))
+        {
+          if (null != oldvalue)
+            oldvalue.Changed -= EhChildChanged;
+          if (null != value)
+            value.Changed += EhChildChanged;
+
+          OnChanged();
+        }
+      }
     }
 
     public Altaxo.Collections.IArray<GridStyle> GridStyle
@@ -132,10 +170,30 @@ namespace Altaxo.Graph.Gdi.Axis
 
     #region IChangedEventSource Members
 
+    public void EhChildChanged(object sender, EventArgs e)
+    {
+      OnChanged();
+    }
+
     void OnChanged()
     {
       if (null != Changed)
         Changed(this, EventArgs.Empty);
+    }
+
+    #endregion
+
+    #region IDocumentNode Members
+
+    public object ParentObject
+    {
+      get { return _parent; }
+      set { _parent = value; }
+    }
+
+    public string Name
+    {
+      get { return "GridPlane" + this._planeID.ToString(); }
     }
 
     #endregion

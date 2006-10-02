@@ -23,7 +23,7 @@
 using System;
 using System.Drawing;
 using Altaxo.Graph.Scales;
-
+using System.Drawing;
 
 namespace Altaxo.Graph.Gdi
 {
@@ -32,7 +32,11 @@ namespace Altaxo.Graph.Gdi
   /// </summary>
   public interface IPlotArea
   {
-  
+
+    /// <summary>
+    /// Returns true when this is a 3D area, i.e. it utilizes 3 Scales and a 3D Coordinate system.
+    /// </summary>
+    bool Is3D { get; }
 
     /// <summary>
     /// Gets the axis of the independent variable.
@@ -52,5 +56,20 @@ namespace Altaxo.Graph.Gdi
     /// Returns the size of the rectangular layer area.
     /// </summary>
     SizeF Size { get; }
+
+    Logical3D GetLogical3D(I3DPhysicalVariantAccessor acc, int idx);
+
+    /// <summary>
+    /// Returns a list of the used axis style ids for this layer.
+    /// </summary>
+    System.Collections.Generic.IEnumerable<CSLineID> AxisStyleIDs { get; }
+
+    /// <summary>
+    /// Updates the logical value of a plane id in case it uses a physical value.
+    /// </summary>
+    /// <param name="id">The plane identifier</param>
+    void UpdateCSPlaneID(CSPlaneID id);
+
+
   }
 }

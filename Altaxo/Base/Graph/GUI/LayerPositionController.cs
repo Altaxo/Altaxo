@@ -122,7 +122,7 @@ namespace Altaxo.Graph.GUI
         m_Top       = m_Layer.UserYPosition;
         m_Rotation  = m_Layer.Rotation;
         m_Scale     = m_Layer.Scale;
-        m_ClipDataToFrame = m_Layer.ClipDataToFrame;
+        m_ClipDataToFrame = m_Layer.ClipDataToFrame == LayerDataClipping.StrictToCS;
 
         m_LeftType = m_Layer.UserXPositionType;
         m_TopType  = m_Layer.UserYPositionType;
@@ -207,7 +207,7 @@ namespace Altaxo.Graph.GUI
         // now update the layer
         m_Layer.Rotation = (float)m_Rotation;
         m_Layer.Scale    = (float)m_Scale;
-        m_Layer.ClipDataToFrame = m_ClipDataToFrame;
+        m_Layer.ClipDataToFrame = m_ClipDataToFrame?LayerDataClipping.StrictToCS:LayerDataClipping.None;
 
         m_Layer.SetSize(m_Width,m_WidthType,m_Height,m_HeightType);
         m_Layer.SetPosition(m_Left,m_LeftType,m_Top,m_TopType);

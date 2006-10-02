@@ -572,7 +572,7 @@ namespace Altaxo.Graph.Gdi.Axis
       SizeF layerSize = layer.Size;
       PointF outVector;
       double outer;
-      float outerDistance = axisstyle.GetOuterDistance(styleInfo.PreferedLabelSide);
+      float outerDistance = null==axisstyle? 0 : axisstyle.GetOuterDistance(styleInfo.PreferedLabelSide);
       float dist_x = outerDistance; // Distance from axis tick point to label
       float dist_y = outerDistance; // y distance from axis tick point to label
 

@@ -9,12 +9,16 @@ namespace Altaxo.Graph.Gdi.Plot.Data
   /// Allows access not only to the original physical plot data,
   /// but also to the plot ranges and to the plot points in absolute layer coordiates.
   /// </summary>
-  public abstract class Processed2DPlotData
+  public abstract class Processed2DPlotData : I3DPhysicalVariantAccessor
   {
     public PlotRangeList RangeList;
     public PointF[] PlotPointsInAbsoluteLayerCoordinates;
 
     public abstract AltaxoVariant GetXPhysical(int originalRowIndex);
     public abstract AltaxoVariant GetYPhysical(int originalRowIndex);
+    public virtual AltaxoVariant GetZPhysical(int originalRowIndex)
+    {
+      return new AltaxoVariant(0.0);
+    }
   }
 }

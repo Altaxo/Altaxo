@@ -131,7 +131,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     protected bool _ignoreMissingPoints; // treat missing points as if not present (connect lines over missing points) 
     protected bool _fillArea;
     protected BrushX _fillBrush; // brush to fill the area under the line
-    protected CSLineID _fillDirection; // the direction to fill
+    protected CSPlaneID _fillDirection; // the direction to fill
     protected bool _independentColor;
 
 
@@ -178,7 +178,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         s._ignoreMissingPoints = info.GetBoolean("IgnoreMissingPoints");
         s._fillArea = info.GetBoolean("FillArea");
         s._fillBrush = (BrushX)info.GetValue("FillBrush", typeof(BrushX));
-        s._fillDirection = (CSLineID)info.GetValue("FillDirection", typeof(CSLineID));
+        s._fillDirection = (CSPlaneID)info.GetValue("FillDirection", typeof(CSPlaneID));
 
         return s;
       }
@@ -225,18 +225,18 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         return s;
       }
 
-      protected CSLineID GetFillDirection(XYPlotLineStyles.FillDirection fillDir)
+      protected CSPlaneID GetFillDirection(XYPlotLineStyles.FillDirection fillDir)
       {
         switch (fillDir)
         {
           case XYPlotLineStyles.FillDirection.Bottom:
-            return CSLineID.X0;
+            return CSPlaneID.Bottom;
           case XYPlotLineStyles.FillDirection.Top:
-            return CSLineID.X1;
+            return CSPlaneID.Top;
           case XYPlotLineStyles.FillDirection.Left:
-            return CSLineID.Y0;
+            return CSPlaneID.Left;
           case XYPlotLineStyles.FillDirection.Right:
-            return CSLineID.Y1;
+            return CSPlaneID.Right;
         }
         return null;
       }
@@ -441,12 +441,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
-    public CSLineID FillDirection
+    public CSPlaneID FillDirection
     {
       get { return this._fillDirection; }
       set
       {
-        CSLineID oldvalue = _fillDirection;
+        CSPlaneID oldvalue = _fillDirection;
         _fillDirection = value;
         if (oldvalue != value)
         {
@@ -532,8 +532,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
       // ensure that brush and pen are cached
       if (null != _penHolder) _penHolder.Cached = true;
-      if (null != _fillBrush)
-        _fillBrush.Rectangle = new RectangleF(PointF.Empty, layer.Size);
+    
+      if (_fillArea)
+      {
+        if (null != _fillBrush)
+          _fillBrush.Rectangle = new RectangleF(PointF.Empty, layer.Size);
+
+        layer.UpdateCSPlaneID(_fillDirection);
+      }
 
       int rangelistlen = rangeList.Count;
      
@@ -580,14 +586,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
    
       if (_fillArea)
       {
-        double rx0 = layer.XAxis.PhysicalVariantToNormal(pdata.GetXPhysical(range.OriginalFirstPoint));
-        double ry0 = layer.YAxis.PhysicalVariantToNormal(pdata.GetYPhysical(range.OriginalFirstPoint));
-        layer.CoordinateSystem.GetIsolineFromAxisToPoint(gp, _fillDirection, rx0, ry0);
+        Logical3D r0 = layer.GetLogical3D(pdata, range.OriginalFirstPoint);
+        layer.CoordinateSystem.GetIsolineFromPlaneToPoint(gp, _fillDirection, r0);
         gp.AddLines(linepts);
-        double rx1 = layer.XAxis.PhysicalVariantToNormal(pdata.GetXPhysical(range.OriginalLastPoint));
-        double ry1 = layer.YAxis.PhysicalVariantToNormal(pdata.GetYPhysical(range.OriginalLastPoint));
-        layer.CoordinateSystem.GetIsolineFromPointToAxis(gp, rx1, ry1, _fillDirection);
-        layer.CoordinateSystem.GetIsolineOnAxis(gp, _fillDirection, rx1, ry1, rx0, ry0);
+        Logical3D r1 = layer.GetLogical3D(pdata, range.OriginalLastPoint);
+        layer.CoordinateSystem.GetIsolineFromPointToPlane(gp, _fillDirection, r1);
+        layer.CoordinateSystem.GetIsolineOnPlane(gp, _fillDirection, r1, r0);
 
         gp.CloseFigure();
         g.FillPath(this._fillBrush, gp);
@@ -647,14 +651,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
       if (_fillArea)
       {
-        double rx0 = layer.XAxis.PhysicalVariantToNormal(pdata.GetXPhysical(range.OriginalFirstPoint));
-        double ry0 = layer.YAxis.PhysicalVariantToNormal(pdata.GetYPhysical(range.OriginalFirstPoint));
-        layer.CoordinateSystem.GetIsolineFromAxisToPoint(gp, _fillDirection, rx0, ry0);
+        Logical3D r0 = layer.GetLogical3D(pdata, range.OriginalFirstPoint);
+        layer.CoordinateSystem.GetIsolineFromPlaneToPoint(gp, _fillDirection, r0);
         gp.AddCurve(linepts);
-        double rx1 = layer.XAxis.PhysicalVariantToNormal(pdata.GetXPhysical(range.OriginalLastPoint));
-        double ry1 = layer.YAxis.PhysicalVariantToNormal(pdata.GetYPhysical(range.OriginalLastPoint));
-        layer.CoordinateSystem.GetIsolineFromPointToAxis(gp, rx1, ry1, _fillDirection);
-        layer.CoordinateSystem.GetIsolineOnAxis(gp, _fillDirection, rx1, ry1, rx0, ry0);
+        Logical3D r1 = layer.GetLogical3D(pdata, range.OriginalLastPoint);
+        layer.CoordinateSystem.GetIsolineFromPointToPlane(gp, _fillDirection, r1);
+        layer.CoordinateSystem.GetIsolineOnPlane(gp, _fillDirection, r1, r0);
 
         gp.CloseFigure();
         g.FillPath(this._fillBrush, gp);
@@ -691,14 +693,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
       if (_fillArea)
       {
-        double rx0 = layer.XAxis.PhysicalVariantToNormal(pdata.GetXPhysical(range.OriginalFirstPoint));
-        double ry0 = layer.YAxis.PhysicalVariantToNormal(pdata.GetYPhysical(range.OriginalFirstPoint));
-        layer.CoordinateSystem.GetIsolineFromAxisToPoint(gp, _fillDirection, rx0, ry0);
+        Logical3D r0 = layer.GetLogical3D(pdata, range.OriginalFirstPoint);
+        layer.CoordinateSystem.GetIsolineFromPlaneToPoint(gp, _fillDirection, r0);
         gp.AddBeziers(linepts);
-        double rx1 = layer.XAxis.PhysicalVariantToNormal(pdata.GetXPhysical(range.OriginalLastPoint));
-        double ry1 = layer.YAxis.PhysicalVariantToNormal(pdata.GetYPhysical(range.OriginalLastPoint));
-        layer.CoordinateSystem.GetIsolineFromPointToAxis(gp, rx1, ry1, _fillDirection);
-        layer.CoordinateSystem.GetIsolineOnAxis(gp, _fillDirection, rx1, ry1, rx0, ry0);
+        Logical3D r1 = layer.GetLogical3D(pdata, range.OriginalLastPoint);
+        layer.CoordinateSystem.GetIsolineFromPointToPlane(gp, _fillDirection, r1);
+        layer.CoordinateSystem.GetIsolineOnPlane(gp, _fillDirection, r1, r0);
 
         gp.CloseFigure();
         g.FillPath(this._fillBrush, gp);
@@ -740,14 +740,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
       if (_fillArea)
       {
-        double rx0 = layer.XAxis.PhysicalVariantToNormal(pdata.GetXPhysical(range.OriginalFirstPoint));
-        double ry0 = layer.YAxis.PhysicalVariantToNormal(pdata.GetYPhysical(range.OriginalFirstPoint));
-        layer.CoordinateSystem.GetIsolineFromAxisToPoint(gp, _fillDirection, rx0, ry0);
+        Logical3D r0 = layer.GetLogical3D(pdata, range.OriginalFirstPoint);
+        layer.CoordinateSystem.GetIsolineFromPlaneToPoint(gp, _fillDirection, r0);
         gp.AddLines(linepts);
-        double rx1 = layer.XAxis.PhysicalVariantToNormal(pdata.GetXPhysical(range.OriginalLastPoint));
-        double ry1 = layer.YAxis.PhysicalVariantToNormal(pdata.GetYPhysical(range.OriginalLastPoint));
-        layer.CoordinateSystem.GetIsolineFromPointToAxis(gp, rx1, ry1, _fillDirection);
-        layer.CoordinateSystem.GetIsolineOnAxis(gp, _fillDirection, rx1, ry1, rx0, ry0);
+        Logical3D r1 = layer.GetLogical3D(pdata, range.OriginalLastPoint);
+        layer.CoordinateSystem.GetIsolineFromPointToPlane(gp, _fillDirection, r1);
+        layer.CoordinateSystem.GetIsolineOnPlane(gp, _fillDirection, r1, r0);
 
         gp.CloseFigure();
         g.FillPath(this._fillBrush, gp);
@@ -822,14 +820,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
       if (_fillArea)
       {
-        double rx0 = layer.XAxis.PhysicalVariantToNormal(pdata.GetXPhysical(range.OriginalFirstPoint));
-        double ry0 = layer.YAxis.PhysicalVariantToNormal(pdata.GetYPhysical(range.OriginalFirstPoint));
-        layer.CoordinateSystem.GetIsolineFromAxisToPoint(gp, _fillDirection, rx0, ry0);
+        Logical3D r0 = layer.GetLogical3D(pdata, range.OriginalFirstPoint);
+        layer.CoordinateSystem.GetIsolineFromPlaneToPoint(gp, _fillDirection, r0);
         gp.AddLines(linepts);
-        double rx1 = layer.XAxis.PhysicalVariantToNormal(pdata.GetXPhysical(range.OriginalLastPoint));
-        double ry1 = layer.YAxis.PhysicalVariantToNormal(pdata.GetYPhysical(range.OriginalLastPoint));
-        layer.CoordinateSystem.GetIsolineFromPointToAxis(gp, rx1, ry1, _fillDirection);
-        layer.CoordinateSystem.GetIsolineOnAxis(gp, _fillDirection, rx1, ry1, rx0, ry0);
+        Logical3D r1 = layer.GetLogical3D(pdata, range.OriginalLastPoint);
+        layer.CoordinateSystem.GetIsolineFromPointToPlane(gp, _fillDirection, r1);
+        layer.CoordinateSystem.GetIsolineOnPlane(gp, _fillDirection, r1, r0);
 
         gp.CloseFigure();
         g.FillPath(this._fillBrush, gp);
@@ -906,14 +902,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
       if (_fillArea)
       {
-        double rx0 = layer.XAxis.PhysicalVariantToNormal(pdata.GetXPhysical(range.OriginalFirstPoint));
-        double ry0 = layer.YAxis.PhysicalVariantToNormal(pdata.GetYPhysical(range.OriginalFirstPoint));
-        layer.CoordinateSystem.GetIsolineFromAxisToPoint(gp, _fillDirection, rx0, ry0);
+        Logical3D r0 = layer.GetLogical3D(pdata, range.OriginalFirstPoint);
+        layer.CoordinateSystem.GetIsolineFromPlaneToPoint(gp, _fillDirection, r0);
         gp.AddLines(linepts);
-        double rx1 = layer.XAxis.PhysicalVariantToNormal(pdata.GetXPhysical(range.OriginalLastPoint));
-        double ry1 = layer.YAxis.PhysicalVariantToNormal(pdata.GetYPhysical(range.OriginalLastPoint));
-        layer.CoordinateSystem.GetIsolineFromPointToAxis(gp, rx1, ry1, _fillDirection);
-        layer.CoordinateSystem.GetIsolineOnAxis(gp, _fillDirection, rx1, ry1, rx0, ry0);
+        Logical3D r1 = layer.GetLogical3D(pdata, range.OriginalLastPoint);
+        layer.CoordinateSystem.GetIsolineFromPointToPlane(gp, _fillDirection, r1);
+        layer.CoordinateSystem.GetIsolineOnPlane(gp, _fillDirection, r1, r0);
 
         gp.CloseFigure();
         g.FillPath(this._fillBrush, gp);
@@ -985,14 +979,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
       if (_fillArea)
       {
-        double rx0 = layer.XAxis.PhysicalVariantToNormal(pdata.GetXPhysical(range.OriginalFirstPoint));
-        double ry0 = layer.YAxis.PhysicalVariantToNormal(pdata.GetYPhysical(range.OriginalFirstPoint));
-        layer.CoordinateSystem.GetIsolineFromAxisToPoint(gp, _fillDirection, rx0, ry0);
+        Logical3D r0 = layer.GetLogical3D(pdata, range.OriginalFirstPoint);
+        layer.CoordinateSystem.GetIsolineFromPlaneToPoint(gp, _fillDirection, r0);
         gp.AddLines(linepts);
-        double rx1 = layer.XAxis.PhysicalVariantToNormal(pdata.GetXPhysical(range.OriginalLastPoint));
-        double ry1 = layer.YAxis.PhysicalVariantToNormal(pdata.GetYPhysical(range.OriginalLastPoint));
-        layer.CoordinateSystem.GetIsolineFromPointToAxis(gp, rx1, ry1, _fillDirection);
-        layer.CoordinateSystem.GetIsolineOnAxis(gp, _fillDirection, rx1, ry1, rx0, ry0);
+        Logical3D r1 = layer.GetLogical3D(pdata, range.OriginalLastPoint);
+        layer.CoordinateSystem.GetIsolineFromPointToPlane(gp, _fillDirection, r1);
+        layer.CoordinateSystem.GetIsolineOnPlane(gp, _fillDirection, r1, r0);
 
         gp.CloseFigure();
         g.FillPath(this._fillBrush, gp);
@@ -1055,14 +1047,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
             int offs = range.LowerBound;
             for (i = 0; i < lastIdx; i += 2)
             {
-              double rx0 = layer.XAxis.PhysicalVariantToNormal(pdata.GetXPhysical(i + range.OriginalFirstPoint));
-              double ry0 = layer.YAxis.PhysicalVariantToNormal(pdata.GetYPhysical(i + range.OriginalFirstPoint));
-              layer.CoordinateSystem.GetIsolineFromAxisToPoint(gp, _fillDirection, rx0, ry0);
+              Logical3D r0 = layer.GetLogical3D(pdata, i + range.OriginalFirstPoint);
+              layer.CoordinateSystem.GetIsolineFromPlaneToPoint(gp, _fillDirection, r0);
               gp.AddLine(linepts[i].X, linepts[i].Y, linepts[i+1].X, linepts[i+1].Y);
-              double rx1 = layer.XAxis.PhysicalVariantToNormal(pdata.GetXPhysical(i + 1 + range.OriginalFirstPoint));
-              double ry1 = layer.YAxis.PhysicalVariantToNormal(pdata.GetYPhysical(i + 1 + range.OriginalFirstPoint));
-              layer.CoordinateSystem.GetIsolineFromPointToAxis(gp, rx1, ry1, _fillDirection);
-              layer.CoordinateSystem.GetIsolineOnAxis(gp, _fillDirection, rx1, ry1, rx0, ry0);
+              Logical3D r1 = layer.GetLogical3D(pdata, i + 1 + range.OriginalFirstPoint);
+              layer.CoordinateSystem.GetIsolineFromPointToPlane(gp, _fillDirection, r1);
+              layer.CoordinateSystem.GetIsolineOnPlane(gp, _fillDirection, r1, r0);
               gp.StartFigure();
             }
 
@@ -1133,16 +1123,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         int offs = range.LowerBound;
             for (i = 0; i < lastIdx; i += 3)
             {
-              double rx0 = layer.XAxis.PhysicalVariantToNormal(pdata.GetXPhysical(i + range.OriginalFirstPoint));
-              double ry0 = layer.YAxis.PhysicalVariantToNormal(pdata.GetYPhysical(i + range.OriginalFirstPoint));
-              layer.CoordinateSystem.GetIsolineFromAxisToPoint(gp, _fillDirection, rx0, ry0);
+              Logical3D r0 = layer.GetLogical3D(pdata, i + range.OriginalFirstPoint);
+              layer.CoordinateSystem.GetIsolineFromPlaneToPoint(gp, _fillDirection, r0);
               gp.AddLine(linepts[i].X, linepts[i].Y, linepts[i + 1].X, linepts[i + 1].Y);
               gp.AddLine(linepts[i+1].X, linepts[i+1].Y, linepts[i + 2].X, linepts[i + 2].Y);
 
-              double rx1 = layer.XAxis.PhysicalVariantToNormal(pdata.GetXPhysical(i + 2 + range.OriginalFirstPoint));
-              double ry1 = layer.YAxis.PhysicalVariantToNormal(pdata.GetYPhysical(i + 2 + range.OriginalFirstPoint));
-              layer.CoordinateSystem.GetIsolineFromPointToAxis(gp, rx1, ry1, _fillDirection);
-              layer.CoordinateSystem.GetIsolineOnAxis(gp, _fillDirection, rx1, ry1, rx0, ry0);
+              Logical3D r1 = layer.GetLogical3D(pdata, i + 2 + range.OriginalFirstPoint);
+              layer.CoordinateSystem.GetIsolineFromPointToPlane(gp, _fillDirection, r1);
+              layer.CoordinateSystem.GetIsolineOnPlane(gp, _fillDirection, r1, r0);
               gp.StartFigure();
             }
         gp.CloseFigure();

@@ -1,5 +1,5 @@
-Microsoft Visual Studio Solution File, Format Version 9.00
-# Visual Studio 2005
+﻿Microsoft Visual Studio Solution File, Format Version 9.00
+# SharpDevelop 2.1.0.1825
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AltaxoBase.Vs8", "Altaxo\Base\AltaxoBase.Vs8.csproj", "{CA928A5C-9673-4FBB-A60E-F91364CC9DB5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AltaxoCoreTest.Vs8", "Altaxo\CoreTest\AltaxoCoreTest.Vs8.csproj", "{95A2BF58-8568-4512-BD82-F0240FFC7558}"
@@ -152,6 +152,10 @@ Global
 		{1F1AC7CD-D154-45BB-8EAF-804CA8055F5A}.DesignTimeDebugging|Any CPU.Build.0 = Debug|Any CPU
 		{1F1AC7CD-D154-45BB-8EAF-804CA8055F5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1F1AC7CD-D154-45BB-8EAF-804CA8055F5A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3B2A9A3B-5EBC-4C38-8B73-B4DCA6BFB1C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C0AE96C-6D0A-423E-8E4A-62120F6B8061}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C0AE96C-6D0A-423E-8E4A-62120F6B8061}.Release|Any CPU.Build.0 = Release|Any CPU
+		{95A2BF58-8568-4512-BD82-F0240FFC7558}.Debug|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

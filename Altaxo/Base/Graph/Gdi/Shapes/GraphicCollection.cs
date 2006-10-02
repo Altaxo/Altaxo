@@ -33,12 +33,21 @@ namespace Altaxo.Graph.Gdi.Shapes
   /// Summary description for GraphicsObjectCollection.
   /// </summary>
   [Serializable]
-  public class GraphicCollection : Altaxo.Data.CollectionBase, Main.IChangedEventSource, Main.IChildChangedEventSink
+  public class GraphicCollection 
+    :
+    Altaxo.Data.CollectionBase, 
+    Main.IChangedEventSource,
+    Main.IChildChangedEventSink,
+    Main.IDocumentNode
   {
 
     [field:NonSerialized]
     public event System.EventHandler Changed;
 
+    [NonSerialized]
+    object _parent;
+
+   
 
     #region "Serialization"
 
@@ -152,7 +161,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
       set
       {
-        value.Container = this;
+        value.ParentObject = this;
         List[index] = value;
 
         OnChanged();
@@ -166,7 +175,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     public int Add(GraphicBase go, bool fireChangedEvent)
     {
-      go.Container = this;
+      go.ParentObject = this;
       int result =  List.Add(go);
 
       if (fireChangedEvent)
@@ -239,6 +248,21 @@ namespace Altaxo.Graph.Gdi.Shapes
       if(null!=Changed)
         Changed(this, new Main.ChangedEventArgs(this,null));
     }
+    #endregion
+
+    #region IDocumentNode Members
+
+    public object ParentObject
+    {
+      get { return _parent; }
+      set { _parent = value; }
+    }
+
+    public string Name
+    {
+      get { return "GraphicCollection"; }
+    }
+
     #endregion
   } // end class GraphicsObjectCollection
 

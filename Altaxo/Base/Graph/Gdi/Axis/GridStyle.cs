@@ -28,7 +28,12 @@ using System.Drawing;
 
 namespace Altaxo.Graph.Gdi.Axis
 {
-  public class GridStyle : ICloneable, Main.IChangedEventSource
+  [Serializable]
+  public class GridStyle
+    :
+    ICloneable,
+    Main.IChangedEventSource,
+    Main.IDocumentNode
   {
     PenX _minorPen;
     PenX _majorPen;
@@ -37,6 +42,11 @@ namespace Altaxo.Graph.Gdi.Axis
    
     bool _showMinor;
     bool _showZeroOnly;
+
+    [field:NonSerialized]
+    event EventHandler _changed;
+    [NonSerialized]
+    object _parent;
 
 
     #region Serialization
@@ -277,11 +287,31 @@ namespace Altaxo.Graph.Gdi.Axis
 
     protected virtual void OnChanged()
     {
-      if (null != Changed)
-        Changed(this, EventArgs.Empty);
+      if (null != _changed)
+        _changed(this, EventArgs.Empty);
     }
 
-    public event EventHandler Changed;
+
+    public event EventHandler Changed
+    {
+      add { _changed += value; }
+      remove { _changed -= value; }
+    }
+
+    #endregion
+
+    #region IDocumentNode Members
+
+    public object ParentObject
+    {
+      get { return _parent; }
+      set { _parent = value; }
+    }
+
+    public string Name
+    {
+      get { return "GridStyle"; }
+    }
 
     #endregion
   }

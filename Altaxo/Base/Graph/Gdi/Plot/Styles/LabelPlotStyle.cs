@@ -74,7 +74,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
    
 
     /// <summary>The axis where the label is attached to (if it is attached).</summary>
-    protected CSLineID m_AttachedAxis;
+    protected CSPlaneID m_AttachedAxis;
 
     protected Altaxo.Data.ReadableColumnProxy m_LabelColumn;
 
@@ -106,18 +106,18 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Graph.XYPlotLabelStyle", 0)]
     public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public static CSLineID GetDirection(EdgeType fillDir)
+      public static CSPlaneID GetDirection(EdgeType fillDir)
       {
         switch (fillDir)
         {
           case EdgeType.Bottom:
-            return CSLineID.X0;
+            return CSPlaneID.Bottom;
           case EdgeType.Top:
-            return CSLineID.X1;
+            return CSPlaneID.Top;
           case EdgeType.Left:
-            return CSLineID.Y0;
+            return CSPlaneID.Left;
           case EdgeType.Right:
-            return CSLineID.Y1;
+            return CSPlaneID.Right;
         }
         return null;
       }
@@ -536,12 +536,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 
     /// <summary>If axis the label is attached to if the value of <see cref="AttachToAxis" /> is true.</summary>
-    public CSLineID AttachedAxis
+    public CSPlaneID AttachedAxis
     {
       get { return this.m_AttachedAxis; }
       set
       {
-        CSLineID oldValue = this.m_AttachedAxis;
+        CSPlaneID oldValue = this.m_AttachedAxis;
         this.m_AttachedAxis = value;
         if (value != oldValue)
         {
@@ -604,6 +604,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       if (this.m_LabelColumn.Document == null)
         return;
 
+      if (null != m_AttachedAxis)
+        layer.UpdateCSPlaneID(m_AttachedAxis);
+
+
       PlotRangeList rangeList = pdata.RangeList;
       PointF[] ptArray = pdata.PlotPointsInAbsoluteLayerCoordinates;
       Altaxo.Data.IReadableColumn labelColumn = this.m_LabelColumn.Document;
@@ -639,10 +643,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
           if (null!=this.m_AttachedAxis)
           {
-            double rx = layer.XAxis.PhysicalVariantToNormal(pdata.GetXPhysical(j + offset));
-            double ry = layer.YAxis.PhysicalVariantToNormal(pdata.GetYPhysical(j + offset));
-
-            PointF pp = layer.CoordinateSystem.GetPointOnAxis(this.m_AttachedAxis,rx,ry);
+            Logical3D r3d = layer.GetLogical3D(pdata, j + offset);
+            PointF pp = layer.CoordinateSystem.GetPointOnPlane(this.m_AttachedAxis,r3d);
             xpre = pp.X;
             ypre = pp.Y;
           }
