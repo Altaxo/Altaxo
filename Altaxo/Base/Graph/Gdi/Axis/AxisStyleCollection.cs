@@ -37,14 +37,22 @@ namespace Altaxo.Graph.Gdi.Axis
   /// AxisStylesSummary collects all styles that correspond to one axis scale (i.e. either x-axis or y-axis)
   /// in one class. This contains the grid style of the axis, and one or more axis styles
   /// </summary>
-  public class AxisStyleCollection : ICloneable, Main.IChangedEventSource
+  public class AxisStyleCollection 
+    :
+    ICloneable, 
+    Main.IChangedEventSource,
+    Main.IDocumentNode
+
   {
     List<AxisStyle> _axisStyles;
 
     G2DCoordinateSystem _cachedCoordinateSystem;
 
     [field: NonSerialized]
-    public event EventHandler Changed;
+    event EventHandler _changed;
+
+    [NonSerialized]
+    object _parent;
 
 
     #region Serialization
@@ -160,8 +168,8 @@ namespace Altaxo.Graph.Gdi.Axis
     {
       if (value != null)
       {
+        value.ParentObject = this;
         _axisStyles.Add(value);
-        value.Changed += new EventHandler(this.EhChildChanged);
         OnChanged();
       }
     }
@@ -255,10 +263,20 @@ namespace Altaxo.Graph.Gdi.Axis
 
     #region IChangedEventSource Members
 
+    [field:NonSerialized]
+    public event EventHandler Changed
+    {
+      add { _changed += value; }
+      remove { _changed -= value; }
+    }
+
     protected virtual void OnChanged()
     {
-      if (null != Changed)
-        Changed(this, EventArgs.Empty);
+      if (_parent is Main.IChildChangedEventSink)
+        ((Main.IChildChangedEventSink)_parent).EhChildChanged(this, EventArgs.Empty);
+
+      if (null != _changed)
+        _changed(this, EventArgs.Empty);
     }
 
     void EhChildChanged(object sender, EventArgs e)
@@ -275,6 +293,22 @@ namespace Altaxo.Graph.Gdi.Axis
       AxisStyleCollection result = new AxisStyleCollection();
       result.CopyFrom(this);
       return result;
+    }
+
+    #endregion
+
+   
+    #region IDocumentNode Members
+
+    public object ParentObject
+    {
+      get { return _parent; }
+      set { _parent = value; }
+    }
+
+    public string Name
+    {
+      get { return "AxisStyles"; }
     }
 
     #endregion

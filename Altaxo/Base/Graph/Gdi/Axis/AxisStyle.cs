@@ -35,7 +35,12 @@ namespace Altaxo.Graph.Gdi.Axis
   /// <summary>
   /// This class summarizes all members that are belonging to one edge of the layer.
   /// </summary>
-  public class AxisStyle : Main.IChangedEventSource, Main.IChildChangedEventSink, ICloneable
+  public class AxisStyle 
+    :
+    Main.IChangedEventSource,
+    Main.IChildChangedEventSink, 
+    Main.IDocumentNode,
+    ICloneable
   {
     /// <summary>
     /// Identifies the axis style.
@@ -59,6 +64,11 @@ namespace Altaxo.Graph.Gdi.Axis
 
     A2DAxisStyleInformation _cachedAxisInfo;
 
+    [field:NonSerialized]
+    event EventHandler _changed;
+
+    [NonSerialized]
+    object _parent;
 
     #region Serialization
 
@@ -502,12 +512,19 @@ namespace Altaxo.Graph.Gdi.Axis
 
     #region IChangedEventSource Members
 
-    public event EventHandler Changed;
+    public event EventHandler Changed
+    {
+      add { _changed += value; }
+      remove { _changed -= value; }
+    }
 
     protected void OnChanged()
     {
-      if (Changed != null)
-        Changed(this, EventArgs.Empty);
+      if (_parent is Main.IChildChangedEventSink)
+        ((Main.IChildChangedEventSink)_parent).EhChildChanged(this, EventArgs.Empty);
+
+      if (_changed != null)
+        _changed(this, EventArgs.Empty);
     }
 
     #endregion
@@ -531,6 +548,26 @@ namespace Altaxo.Graph.Gdi.Axis
     }
 
     #endregion
+
+    #region IDocumentNode Members
+
+    public object ParentObject
+    {
+      get { return _parent; }
+      set { _parent = value; }
+    }
+
+    public string Name
+    {
+      get { return "AxisStyle"; }
+    }
+
+    #endregion
+
+   
+
+
+   
   }
 
 }

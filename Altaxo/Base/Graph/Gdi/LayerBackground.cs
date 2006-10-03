@@ -8,13 +8,24 @@ namespace Altaxo.Graph.Gdi
 {
   using Background;
 
-  public class LayerBackground : ICloneable
+  public class LayerBackground
+    :
+    ICloneable,
+    Main.IChangedEventSource,
+    Main.IChildChangedEventSink,
+    Main.IDocumentNode
   {
     IBackgroundStyle _background;
     double _leftPadding;
     double _rightPadding;
     double _topPadding;
     double _bottomPadding;
+
+    [field:NonSerialized]
+    event EventHandler _changed;
+
+    [NonSerialized]
+    object _parent;
 
     void CopyFrom(LayerBackground from)
     {
@@ -50,5 +61,48 @@ namespace Altaxo.Graph.Gdi
     public void Draw(Graphics g, RectangleF rect)
     {
     }
-  }
+  
+#region IChangedEventSource Members
+
+public event EventHandler Changed
+{
+	add { _changed += value;}	
+	remove { _changed -= value; }
+}
+
+    protected virtual void OnChanged()
+    {
+      if(_parent is Main.IChildChangedEventSink)
+        ((Main.IChildChangedEventSink)_parent).EhChildChanged(this,EventArgs.Empty);
+
+      if(null!=_changed)
+        _changed(this,EventArgs.Empty);
+    }
+
+#endregion
+
+#region IChildChangedEventSink Members
+
+public void  EhChildChanged(object child, EventArgs e)
+{
+ 	OnChanged();
+}
+
+#endregion
+
+#region IDocumentNode Members
+
+public object  ParentObject
+{
+	get { return _parent; }
+  set { _parent = value; }
+}
+
+public string  Name
+{
+	get { return "LayerBackground"; }
+}
+
+#endregion
+}
 }

@@ -32,7 +32,10 @@ using Altaxo.Graph.Scales.Boundaries;
 namespace Altaxo.Graph.Scales
 {
   [Serializable]
-  public class LinkedScaleCollection : Main.IChangedEventSource
+  public class LinkedScaleCollection 
+    :
+    Main.IChangedEventSource,
+    Main.IDocumentNode
   {
     LinkedScale[] _linkedScales = new LinkedScale[2];
 
@@ -46,7 +49,10 @@ namespace Altaxo.Graph.Scales
     /// Fired if something in this class or in its child has changed.
     /// </summary>
     [field: NonSerialized]
-    public event EventHandler Changed;
+    event EventHandler _changed;
+
+    [NonSerialized]
+    object _parent;
 
     #region Serialization
 
@@ -182,12 +188,43 @@ namespace Altaxo.Graph.Scales
       OnChanged();
     }
 
-    protected virtual void OnChanged()
+
+    public event EventHandler Changed
     {
-      if (null != Changed)
-        Changed(this, EventArgs.Empty);
+      add { _changed += value; }
+      remove { _changed -= value; }
     }
 
+
+    protected virtual void OnChanged()
+    {
+      if (_parent is Main.IChildChangedEventSink)
+        ((Main.IChildChangedEventSink)_parent).EhChildChanged(this, EventArgs.Empty);
+
+      if (null != _changed)
+        _changed(this, EventArgs.Empty);
+    }
+
+
+    #region IDocumentNode Members
+
+    public object ParentObject
+    {
+      get { return _parent; }
+      set { _parent = value; }
+    }
+
+    public string Name
+    {
+      get { return "LinkedScaleCollection"; }
+    }
+
+    #endregion
+
+   
+
+  
+   
   }
 
 

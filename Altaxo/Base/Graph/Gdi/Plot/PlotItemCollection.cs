@@ -33,6 +33,10 @@ namespace Altaxo.Graph.Gdi.Plot
     [NonSerialized]
     private object _parent;
 
+    [field: NonSerialized]
+    public event System.EventHandler Changed;
+
+
     #region Serialization
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.PlotItemCollection", 0)]
@@ -600,18 +604,19 @@ namespace Altaxo.Graph.Gdi.Plot
 
     #region IChangedEventSource Members
 
-    public event System.EventHandler Changed;
 
 
 
     public virtual void EhChildChanged(object child, EventArgs e)
     {
-      if (null != Changed)
-        Changed(this, e);
+      OnChanged();
     }
 
     protected virtual void OnChanged()
     {
+      if (_parent is Main.IChildChangedEventSink)
+        ((Main.IChildChangedEventSink)_parent).EhChildChanged(this, EventArgs.Empty);
+
       if (null != Changed)
         Changed(this, new Main.ChangedEventArgs(this, null));
     }

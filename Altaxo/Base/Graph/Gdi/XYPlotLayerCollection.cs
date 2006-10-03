@@ -60,7 +60,7 @@ namespace Altaxo.Graph.Gdi
     public event System.EventHandler Changed;
 
     [NonSerialized]
-    private object m_Parent;
+    private object _parent;
 
     [NonSerialized]
     private RectangleF m_PrintableBounds; // do not serialize this value, its only cached
@@ -426,9 +426,9 @@ namespace Altaxo.Graph.Gdi
       if(m_ResumeInProgress || IsSuspended)
         return;
 
-      if(m_Parent is Main.IChildChangedEventSink )
+      if(_parent is Main.IChildChangedEventSink )
       {
-        ((Main.IChildChangedEventSink)m_Parent).EhChildChanged(this, m_ChangeData);
+        ((Main.IChildChangedEventSink)_parent).EhChildChanged(this, m_ChangeData);
         if(IsSuspended) // maybe parent has suspended us now
         {
           this.EhChildChanged(sender, e); // we call the function recursively, but now we are suspended
@@ -456,11 +456,11 @@ namespace Altaxo.Graph.Gdi
       get
       {
         // TODO:  Add XYPlotLayerCollection.ParentObject getter implementation
-        return m_Parent;
+        return _parent;
       }
       set 
       {
-        m_Parent = value;
+        _parent = value;
       }
     }
 

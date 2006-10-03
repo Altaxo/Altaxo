@@ -9,10 +9,10 @@ namespace Altaxo.Graph.Gdi
   public abstract class G2DCoordinateSystem 
     :
     ICloneable,
-    Main.IDocumentNode
+    Main.IDocumentNode,
+    Main.IChangedEventSource
   {
-    [NonSerialized]
-    object _parent;
+  
     /// <summary>
     /// Is the normal position of x and y axes interchanged, for instance x is vertical and y horizontal.
     /// </summary>
@@ -30,6 +30,13 @@ namespace Altaxo.Graph.Gdi
     protected double _layerHeight;
 
     protected List<A2DAxisStyleInformation> _axisStyleInformation = new List<A2DAxisStyleInformation>();
+
+    [NonSerialized]
+    object _parent;
+
+    [field: NonSerialized]
+    event EventHandler _changed;
+
 
     /// <summary>
     /// Copies the member variables from another coordinate system.
@@ -527,15 +534,31 @@ namespace Altaxo.Graph.Gdi
     public object ParentObject
     {
       get { return _parent; }
-      set
-      {
-        _parent = value;
-      }
+      set { _parent = value; }
     }
 
     public string Name
     {
       get { return this.GetType().ToString(); }
+    }
+
+    #endregion
+
+    #region IChangedEventSource Members
+
+    event EventHandler Altaxo.Main.IChangedEventSource.Changed
+    {
+      add { _changed += value; }
+      remove { _changed -= value; }
+    }
+
+    public virtual void OnChanged()
+    {
+      if (_parent is Main.IChildChangedEventSink)
+        ((Main.IChildChangedEventSink)_parent).EhChildChanged(this, EventArgs.Empty);
+
+      if (null != _changed)
+        _changed(this, EventArgs.Empty);
     }
 
     #endregion

@@ -31,7 +31,12 @@ using Altaxo.Graph.Scales.Boundaries;
 
 namespace Altaxo.Graph.Gdi
 {
-  public class XYPlotLayerPositionAndSize : System.ICloneable, Altaxo.Main.IChangedEventSource
+  public class XYPlotLayerPositionAndSize 
+    :
+    System.ICloneable,
+    Altaxo.Main.IChangedEventSource,
+    Altaxo.Main.IDocumentNode
+
   {
     /// <summary>
     /// The layers x position value, either absolute or relative, as determined by <see cref="_layerXPositionType"/>.
@@ -77,6 +82,11 @@ namespace Altaxo.Graph.Gdi
     /// <summary>The scaling factor of the layer, normally 1.</summary>
     private double _layerScale = 1;  // Scale
 
+    [field: NonSerialized]
+    event EventHandler _changed;
+
+    [NonSerialized]
+    object _parent;
 
     #region Serialization
 
@@ -355,14 +365,40 @@ namespace Altaxo.Graph.Gdi
 
     #region IChangedEventSource Members
 
-    public event EventHandler Changed;
-
-    protected void OnChanged()
+    event EventHandler Altaxo.Main.IChangedEventSource.Changed
     {
-      if (null != Changed)
-        Changed(this, EventArgs.Empty);
+      add { _changed += value; }
+      remove { _changed -= value; }
+    }
+
+
+    protected virtual void OnChanged()
+    {
+      if (_parent is Main.IChildChangedEventSink)
+        ((Main.IChildChangedEventSink)_parent).EhChildChanged(this, EventArgs.Empty);
+
+      if (null != _changed)
+        _changed(this, EventArgs.Empty);
     }
 
     #endregion
+
+    #region IDocumentNode Members
+
+    public object ParentObject
+    {
+      get { return _parent; }
+      set { _parent = value; }
+    }
+
+    public string Name
+    {
+      get { return "Layer Position and Size"; }
+    }
+
+    #endregion
+
+
+  
   }
 }
