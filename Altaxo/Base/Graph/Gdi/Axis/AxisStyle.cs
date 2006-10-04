@@ -207,39 +207,20 @@ namespace Altaxo.Graph.Gdi.Axis
     {
       this._styleID = from._styleID;
 
-      if (null != _axisLineStyle)
-        _axisLineStyle.Changed -= new EventHandler(EhChildChanged);
-      if (null != _majorLabelStyle)
-        _majorLabelStyle.Changed -= new EventHandler(EhChildChanged);
-      if (null != _minorLabelStyle)
-        _minorLabelStyle.Changed -= new EventHandler(EhChildChanged);
-      if (null != _axisTitle)
-        _axisTitle.Changed -= new EventHandler(EhChildChanged);
-
-      this._axisLineStyle = from._axisLineStyle == null ? null : (AxisLineStyle)from._axisLineStyle.Clone();
-      this._majorLabelStyle = from._majorLabelStyle == null ? null : (AxisLabelStyleBase)from._majorLabelStyle.Clone();
-      this._minorLabelStyle = from._minorLabelStyle == null ? null : (AxisLabelStyleBase)from._minorLabelStyle.Clone();
-      this._axisTitle = from._axisTitle == null ? null : (TextGraphic)from._axisTitle.Clone();
+      this.AxisLineStyle = from._axisLineStyle == null ? null : (AxisLineStyle)from._axisLineStyle.Clone();
+      this.MajorLabelStyle = from._majorLabelStyle == null ? null : (AxisLabelStyleBase)from._majorLabelStyle.Clone();
+      this.MinorLabelStyle = from._minorLabelStyle == null ? null : (AxisLabelStyleBase)from._minorLabelStyle.Clone();
+      this.Title = from._axisTitle == null ? null : (TextGraphic)from._axisTitle.Clone();
 
 
-      if (null != _axisLineStyle)
-        _axisLineStyle.Changed += new EventHandler(EhChildChanged);
-      if (null != _majorLabelStyle)
-        _majorLabelStyle.Changed += new EventHandler(EhChildChanged);
-      if (null != _minorLabelStyle)
-        _minorLabelStyle.Changed += new EventHandler(EhChildChanged);
-      if (null != _axisTitle)
-        _axisTitle.Changed += new EventHandler(EhChildChanged);
     }
 
     public AxisStyle(CSLineID id)
     {
       _styleID = id;
-      _axisLineStyle = new AxisLineStyle();
-      _axisLineStyle.Changed += new EventHandler(EhChildChanged);
 
-      _majorLabelStyle = new AxisLabelStyle();
-      _majorLabelStyle.Changed += new EventHandler(EhChildChanged);
+      //AxisLineStyle = new AxisLineStyle();
+      //MajorLabelStyle = new AxisLabelStyle();
     }
 
     /// <summary>
@@ -375,13 +356,11 @@ namespace Altaxo.Graph.Gdi.Axis
         AxisLineStyle oldvalue = _axisLineStyle;
         _axisLineStyle = value;
 
+        if (null != value)
+          value.ParentObject = this;
+
         if (!object.ReferenceEquals(value, oldvalue))
         {
-          if (null != oldvalue)
-            oldvalue.Changed -= new EventHandler(EhChildChanged);
-          if (null != value)
-            value.Changed += new EventHandler(EhChildChanged);
-
           OnChanged();
         }
       }
@@ -394,9 +373,6 @@ namespace Altaxo.Graph.Gdi.Axis
     {
       get
       {
-        if (null == _majorLabelStyle)
-          this.MajorLabelStyle = new AxisLabelStyle();
-
         return _majorLabelStyle;
       }
       set
@@ -404,13 +380,11 @@ namespace Altaxo.Graph.Gdi.Axis
         AxisLabelStyleBase oldvalue = _majorLabelStyle;
         _majorLabelStyle = value;
 
+        if (null != value)
+          value.ParentObject = this;
+
         if (!object.ReferenceEquals(value, oldvalue))
         {
-          if (null != oldvalue)
-            oldvalue.Changed -= new EventHandler(EhChildChanged);
-          if (null != value)
-            value.Changed += new EventHandler(EhChildChanged);
-
           OnChanged();
         }
       }
@@ -424,9 +398,6 @@ namespace Altaxo.Graph.Gdi.Axis
     {
       get
       {
-        if (_minorLabelStyle == null)
-          this.MinorLabelStyle = new AxisLabelStyle();
-
         return _minorLabelStyle;
       }
       set
@@ -434,13 +405,11 @@ namespace Altaxo.Graph.Gdi.Axis
         AxisLabelStyleBase oldvalue = _minorLabelStyle;
         _minorLabelStyle = value;
 
+        if (null != value)
+          value.ParentObject = this;
+
         if (!object.ReferenceEquals(value, oldvalue))
         {
-          if (null != oldvalue)
-            oldvalue.Changed -= new EventHandler(EhChildChanged);
-          if (null != value)
-            value.Changed += new EventHandler(EhChildChanged);
-
           OnChanged();
         }
       }
@@ -475,6 +444,9 @@ namespace Altaxo.Graph.Gdi.Axis
         TextGraphic oldvalue = _axisTitle;
         _axisTitle = value;
 
+        if (null != value)
+          value.ParentObject = this;
+
         if (!object.ReferenceEquals(_axisTitle, oldvalue))
         {
           OnChanged();
@@ -497,7 +469,7 @@ namespace Altaxo.Graph.Gdi.Axis
           else
           {
             if (_axisTitle == null)
-              _axisTitle = new TextGraphic();
+              this.Title = new TextGraphic();
 
             _axisTitle.Text = value;
           }

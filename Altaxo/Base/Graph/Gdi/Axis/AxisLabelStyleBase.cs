@@ -30,10 +30,17 @@ namespace Altaxo.Graph.Gdi.Axis
 {
 
   /// <remarks>AbstractXYAxisLabelStyle is the abstract base class of all LabelStyles.</remarks>
-  public abstract class AxisLabelStyleBase : Main.IChangedEventSource, System.ICloneable
+  public abstract class AxisLabelStyleBase 
+    :
+    Main.IChangedEventSource, 
+    Main.IDocumentNode,
+    System.ICloneable
   {
     [field:NonSerialized]
-    public event System.EventHandler Changed;
+    event System.EventHandler _changed;
+
+    [NonSerialized]
+    object _parent;
 
     /// <summary>
     /// Abstract paint function for the AbstractXYAxisLabelStyle.
@@ -47,12 +54,20 @@ namespace Altaxo.Graph.Gdi.Axis
  
     #region IChangedEventSource Members
 
+    event EventHandler Altaxo.Main.IChangedEventSource.Changed
+    {
+      add { _changed += value; }
+      remove { _changed -= value; }
+    }
 
 
     protected virtual void OnChanged()
     {
-      if(null!=Changed)
-        Changed(this,new EventArgs());
+      if (_parent is Main.IChildChangedEventSink)
+        ((Main.IChildChangedEventSink)_parent).EhChildChanged(this, EventArgs.Empty);
+
+      if(null!=_changed)
+        _changed(this,new EventArgs());
     }
 
     #endregion
@@ -66,7 +81,21 @@ namespace Altaxo.Graph.Gdi.Axis
     public abstract IHitTestObject HitTest(XYPlotLayer layer, PointF pt);
 
     public abstract float FontSize { get; set; }
-    
+
+    #region IDocumentNode Members
+
+    public object ParentObject
+    {
+      get { return _parent; }
+      set { _parent = value; }
+    }
+
+    public string Name
+    {
+      get { return this.GetType().Name; }
+    }
+
+    #endregion
   }
 
 

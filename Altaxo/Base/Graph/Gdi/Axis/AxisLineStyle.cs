@@ -39,6 +39,7 @@ namespace Altaxo.Graph.Gdi.Axis
     : 
     System.Runtime.Serialization.IDeserializationCallback,
     Main.IChangedEventSource,
+    Main.IDocumentNode,
     ICloneable   
   {
 
@@ -66,7 +67,11 @@ namespace Altaxo.Graph.Gdi.Axis
     protected A2DAxisStyleInformation _cachedAxisStyleInfo;
 
     /// <summary>Fired if anything on this style changed</summary>
-    public event System.EventHandler Changed;
+    [field:NonSerialized]
+    event System.EventHandler _changed;
+
+    [NonSerialized]
+    object _parent;
 
 
   
@@ -627,8 +632,32 @@ namespace Altaxo.Graph.Gdi.Axis
 
     protected virtual void OnChanged()
     {
-      if(null!=Changed)
-        Changed(this,new EventArgs());
+      if (_parent is Main.IChildChangedEventSink)
+        ((Main.IChildChangedEventSink)_parent).EhChildChanged(this, EventArgs.Empty);
+
+      if(null!=_changed)
+        _changed(this,new EventArgs());
     }
+
+    public event EventHandler Changed
+    {
+      add { _changed += value; }
+      remove { _changed -= value; }
+    }
+
+    #region IDocumentNode Members
+
+    public object ParentObject
+    {
+      get { return _parent; }
+      set { _parent = value; }
+    }
+
+    public string Name
+    {
+      get { return this.GetType().Name; }
+    }
+
+    #endregion
   }
 }

@@ -7,6 +7,70 @@ namespace Altaxo.Graph.Gdi.CS
 {
   public class G2DCartesicCoordinateSystem : G2DCoordinateSystem
   {
+    /// <summary>
+    /// Is the normal position of x and y axes interchanged, for instance x is vertical and y horizontal.
+    /// </summary>
+    protected bool _isXYInterchanged;
+    /// <summary>
+    /// Is the direction of the x axis reverse, for instance runs from right to left.
+    /// </summary>
+    protected bool _isXreverse;
+    /// <summary>
+    /// Is the direction of the y axis reverse, for instance runs from top to bottom.
+    /// </summary>
+    protected bool _isYreverse;
+
+
+    /// <summary>
+    /// Copies the member variables from another coordinate system.
+    /// </summary>
+    /// <param name="from">The coordinate system to copy from.</param>
+    public override void CopyFrom(G2DCoordinateSystem fromb)
+    {
+      base.CopyFrom(fromb);
+      if (fromb is G2DCartesicCoordinateSystem)
+      {
+        G2DCartesicCoordinateSystem from = (G2DCartesicCoordinateSystem)fromb;
+        this._isXYInterchanged = from._isXYInterchanged;
+        this._isXreverse = from._isXreverse;
+        this._isYreverse = from._isYreverse;
+      }
+    }
+
+    #region Serialization
+    #region Version 0
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(G2DCartesicCoordinateSystem), 0)]
+    public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        G2DCartesicCoordinateSystem s = (G2DCartesicCoordinateSystem)obj;
+
+        info.AddValue("XYInterchanged", s._isXYInterchanged);
+        info.AddValue("XReverse", s._isXreverse);
+        info.AddValue("YReverse", s._isYreverse);
+      }
+      protected virtual G2DCartesicCoordinateSystem SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        G2DCartesicCoordinateSystem s = (o == null ? new G2DCartesicCoordinateSystem() : (G2DCartesicCoordinateSystem)o);
+
+        s._isXYInterchanged = info.GetBoolean("XYInterchanged");
+        s._isXreverse = info.GetBoolean("XReverse");
+        s._isYreverse = info.GetBoolean("YReverse");
+
+        return s;
+      }
+
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+
+        G2DCartesicCoordinateSystem s = SDeserialize(o, info, parent);
+        return s;
+      }
+    }
+    #endregion
+    #endregion
+
     public G2DCartesicCoordinateSystem()
     {
     }

@@ -33,6 +33,47 @@ namespace Altaxo.Graph.Gdi.Axis
 
     }
 
+    #region Serialization
+    #region Version 0
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GridPlaneCollection), 0)]
+    public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        GridPlaneCollection s = (GridPlaneCollection)obj;
+
+        info.CreateArray("GridPlanes", s.Count);
+        foreach (GridPlane plane in s)
+          info.AddValue("e", plane);
+        info.CommitArray();
+
+      }
+      protected virtual GridPlaneCollection SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        GridPlaneCollection s = (o == null ? new GridPlaneCollection() : (GridPlaneCollection)o);
+
+        int count = info.OpenArray("GridPlanes");
+        for (int i = 0; i < count; i++)
+        {
+          GridPlane plane = (GridPlane)info.GetValue("e", s);
+          s.Add(plane);
+        }
+        info.CloseArray(count);
+
+        return s;
+      }
+
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+
+        GridPlaneCollection s = SDeserialize(o, info, parent);
+        return s;
+      }
+    }
+    #endregion
+    #endregion
+
+
     public GridPlaneCollection()
     {
     }

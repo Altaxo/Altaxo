@@ -6,6 +6,7 @@ using System.Drawing.Drawing2D;
 
 namespace Altaxo.Graph.Gdi
 {
+  [Serializable]
   public abstract class G2DCoordinateSystem 
     :
     ICloneable,

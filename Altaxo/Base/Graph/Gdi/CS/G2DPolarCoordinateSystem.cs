@@ -6,11 +6,82 @@ using System.Drawing.Drawing2D;
 
 namespace Altaxo.Graph.Gdi.CS
 {
+  [Serializable]
   public class G2DPolarCoordinateSystem : G2DCoordinateSystem
   {
+    /// <summary>
+    /// Is the normal position of x and y axes interchanged, for instance x is vertical and y horizontal.
+    /// </summary>
+    protected bool _isXYInterchanged;
+    /// <summary>
+    /// Is the direction of the x axis reverse, for instance runs from right to left.
+    /// </summary>
+    protected bool _isXreverse;
+    /// <summary>
+    /// Is the direction of the y axis reverse, for instance runs from top to bottom.
+    /// </summary>
+    protected bool _isYreverse;
+
+
     protected double _radius;
     protected double _midX;
     protected double _midY;
+
+    /// <summary>
+    /// Copies the member variables from another coordinate system.
+    /// </summary>
+    /// <param name="from">The coordinate system to copy from.</param>
+    public override void CopyFrom(G2DCoordinateSystem fromb)
+    {
+      base.CopyFrom(fromb);
+      if (fromb is G2DPolarCoordinateSystem)
+      {
+        G2DPolarCoordinateSystem from = (G2DPolarCoordinateSystem)fromb;
+        this._isXYInterchanged = from._isXYInterchanged;
+        this._isXreverse = from._isXreverse;
+        this._isYreverse = from._isYreverse;
+
+        this._radius = from._radius;
+        this._midX = from._midX;
+        this._midY = from._midY;
+      }
+    }
+
+    #region Serialization
+    #region Version 0
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(G2DPolarCoordinateSystem), 0)]
+    public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        G2DPolarCoordinateSystem s = (G2DPolarCoordinateSystem)obj;
+
+        info.AddValue("Rotation", 0.0);
+        info.AddValue("XYInterchanged", s._isXYInterchanged);
+        info.AddValue("XReverse", s._isXreverse);
+        info.AddValue("YReverse", s._isYreverse);
+      }
+      protected virtual G2DPolarCoordinateSystem SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        G2DPolarCoordinateSystem s = (o == null ? new G2DPolarCoordinateSystem() : (G2DPolarCoordinateSystem)o);
+
+        double rotation = info.GetDouble("Rotation");
+        s._isXYInterchanged = info.GetBoolean("XYInterchanged");
+        s._isXreverse = info.GetBoolean("XReverse");
+        s._isYreverse = info.GetBoolean("YReverse");
+
+        return s;
+      }
+
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+
+        G2DPolarCoordinateSystem s = SDeserialize(o, info, parent);
+        return s;
+      }
+    }
+       #endregion
+    #endregion
 
     public G2DPolarCoordinateSystem()
     {
@@ -284,15 +355,7 @@ namespace Altaxo.Graph.Gdi.CS
       _radius = Math.Min(_midX, _midY);
     }
 
-    public override void CopyFrom(G2DCoordinateSystem bfrom)
-    {
-      base.CopyFrom(bfrom);
-
-      G2DPolarCoordinateSystem from = (G2DPolarCoordinateSystem)bfrom;
-      _radius = from._radius;
-      _midX = from._midX;
-      _midY = from._midY;
-    }
+   
 
     public override object Clone()
     {

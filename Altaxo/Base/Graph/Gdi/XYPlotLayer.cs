@@ -443,7 +443,6 @@ namespace Altaxo.Graph.Gdi
 
 
         s.CalculateMatrix();
-        s.CreateEventLinks();
 
         return s;
       }
@@ -458,7 +457,7 @@ namespace Altaxo.Graph.Gdi
         BrushX layerAreaFillBrush = (BrushX)info.GetValue("LayerAreaFillBrush", typeof(BrushX));
 
         if (fillLayerArea)
-          s._layerBackground = new LayerBackground(new FilledRectangle(layerAreaFillBrush.Color));
+          s.LayerBackground = new LayerBackground(new FilledRectangle(layerAreaFillBrush.Color));
 
 
 
@@ -581,11 +580,14 @@ namespace Altaxo.Graph.Gdi
     {
       public override void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
+        throw new NotSupportedException("Serialization of old versions not supported, maybe a programming error");
+        /*
         base.Serialize(obj, info);
 
         XYPlotLayer s = (XYPlotLayer)obj;
         // XYPlotLayer style
         info.AddValue("ClipDataToFrame", s._dataClipping);
+        */
       }
 
       protected override XYPlotLayer SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -594,7 +596,7 @@ namespace Altaxo.Graph.Gdi
         XYPlotLayer s = base.SDeserialize(o, info, parent);
 
         bool clipDataToFrame = info.GetBoolean("ClipDataToFrame");
-        s._dataClipping = clipDataToFrame ? LayerDataClipping.StrictToCS : LayerDataClipping.None;
+        s.ClipDataToFrame = clipDataToFrame ? LayerDataClipping.StrictToCS : LayerDataClipping.None;
 
         return s;
       }
@@ -649,7 +651,6 @@ namespace Altaxo.Graph.Gdi
 
         XYPlotLayer s = SDeserialize(o, info, parent);
         s.CalculateMatrix();
-        s.CreateEventLinks();
         return s;
       }
 
@@ -660,10 +661,10 @@ namespace Altaxo.Graph.Gdi
         int count;
 
         // Background
-        s._layerBackground = new LayerBackground((IBackgroundStyle)info.GetValue("Background", s));
+        s.LayerBackground = new LayerBackground((IBackgroundStyle)info.GetValue("Background", s));
 
         // size, position, rotation and scale
-        s._location = (XYPlotLayerPositionAndSize)info.GetValue("LocationAndSize", s);
+        s.Location = (XYPlotLayerPositionAndSize)info.GetValue("LocationAndSize", s);
         s._cachedLayerSize = (SizeF)info.GetValue("CachedSize", typeof(SizeF));
         s._cachedLayerPosition = (PointF)info.GetValue("CachedPosition", typeof(PointF));
         s._coordinateSystem.UpdateAreaSize(s._cachedLayerSize);
@@ -674,7 +675,7 @@ namespace Altaxo.Graph.Gdi
         s._dataClipping = clipDataToFrame ? LayerDataClipping.StrictToCS : LayerDataClipping.None;
 
         // axis related
-        s._linkedScales = (LinkedScaleCollection)info.GetValue("AxisProperties", s);
+        s.LinkedScales = (LinkedScaleCollection)info.GetValue("AxisProperties", s);
 
         // Styles
         G2DScaleStyleCollection ssc = (G2DScaleStyleCollection)info.GetValue("AxisStyles", s);
@@ -693,12 +694,12 @@ namespace Altaxo.Graph.Gdi
 
         // XYPlotLayer specific
         count = info.OpenArray("LinkedLayers");
-        s._linkedLayer = (Main.RelDocNodeProxy)info.GetValue("e", s);
+        s.LinkedLayerLink = (Main.RelDocNodeProxy)info.GetValue("e", s);
         info.CloseArray(count);
 
-        s._graphObjects = (GraphicCollection)info.GetValue("GraphicGlyphs", s);
+        s.GraphObjects = (GraphicCollection)info.GetValue("GraphicGlyphs", s);
 
-        s._plotItems = (PlotItemCollection)info.GetValue("Plots", s);
+        s.PlotItems = (PlotItemCollection)info.GetValue("Plots", s);
 
         return s;
       }
@@ -757,7 +758,7 @@ namespace Altaxo.Graph.Gdi
         int count;
 
         // size, position, rotation and scale
-        s._location = (XYPlotLayerPositionAndSize)info.GetValue("LocationAndSize", s);
+        s.Location = (XYPlotLayerPositionAndSize)info.GetValue("LocationAndSize", s);
         s._cachedLayerSize = (SizeF)info.GetValue("CachedSize", typeof(SizeF));
         s._cachedLayerPosition = (PointF)info.GetValue("CachedPosition", typeof(PointF));
 
@@ -789,7 +790,7 @@ namespace Altaxo.Graph.Gdi
         s.GraphObjects = (GraphicCollection)info.GetValue("GraphObjects", s);
 
         // Data Clipping
-        s.ClipDataToFrame = (LayerDataClipping)info.GetEnum("DataClipping", typeof(LayerDataClipping));
+        s.ClipDataToFrame = (LayerDataClipping)info.GetValue("DataClipping", s);
       
         // PlotItemCollection
         s.PlotItems = (PlotItemCollection)info.GetValue("Plots", s);
@@ -802,7 +803,6 @@ namespace Altaxo.Graph.Gdi
 
         XYPlotLayer s = SDeserialize(o, info, parent);
         s.CalculateMatrix();
-        s.CreateEventLinks();
         return s;
       }
     }
@@ -817,8 +817,6 @@ namespace Altaxo.Graph.Gdi
       _cachedForwardMatrix = new Matrix();
       _cachedReverseMatrix = new Matrix();
       CalculateMatrix();
-
-      CreateEventLinks();
     }
     #endregion
 
@@ -836,10 +834,10 @@ namespace Altaxo.Graph.Gdi
     public void CopyFrom(XYPlotLayer from)
     {
       // XYPlotLayer style
-      this._layerBackground = from._layerBackground == null ? null : (LayerBackground)from._layerBackground.Clone();
+      this.LayerBackground = from._layerBackground == null ? null : (LayerBackground)from._layerBackground.Clone();
 
       // size, position, rotation and scale
-      this._location = from._location.Clone();
+      this.Location = from._location.Clone();
       this._cachedLayerSize = from._cachedLayerSize;
       this._cachedLayerPosition = from._cachedLayerPosition;
 
@@ -872,32 +870,6 @@ namespace Altaxo.Graph.Gdi
       CalculateMatrix();
     }
 
-    void CreateEventLinks()
-    {
-
-
-      if (null != _linkedScales)
-      {
-        _linkedScales.Changed += EhChildChanged;
-        _linkedScales.X.ScaleInstanceChanged += new EventHandler(EhXAxisInstanceChanged);
-        _linkedScales.Y.ScaleInstanceChanged += new EventHandler(EhYAxisInstanceChanged);
-      }
-
-
-      if (null != _linkedLayer)
-        _linkedLayer.DocumentInstanceChanged += new Main.DocumentInstanceChangedEventHandler(this.EhLinkedLayerInstanceChanged);
-
-      if (null != _graphObjects) _graphObjects.Changed += EhChildChanged;
-
-
-      if (null != _plotItems)
-      {
-        _plotItems.SetParentLayer(this, true); // sets the parent layer, but suppresses the events following this.
-        _plotItems.Changed += EhChildChanged;
-      }
-    }
-
-
     public virtual object Clone()
     {
       return new XYPlotLayer(this);
@@ -921,7 +893,8 @@ namespace Altaxo.Graph.Gdi
       this.AxisStyles = new AxisStyleCollection();
       this.LinkedScales = new LinkedScaleCollection();
       this.GraphObjects = new GraphicCollection();
-      this._location = new XYPlotLayerPositionAndSize();
+      this.Legends = new GraphicCollection();
+      this.Location = new XYPlotLayerPositionAndSize();
       this.GridPlanes = new GridPlaneCollection();
       this.GridPlanes.Add(new GridPlane(CSPlaneID.Front));
 
@@ -933,7 +906,7 @@ namespace Altaxo.Graph.Gdi
     /// <param name="size">The size of the layer in points (1/72 inch).</param>
     public XYPlotLayer(PointF position, SizeF size)
     {
-      this._location = new XYPlotLayerPositionAndSize();
+      this.Location = new XYPlotLayerPositionAndSize();
 
       this.CoordinateSystem = new CS.G2DCartesicCoordinateSystem();
       // this.CoordinateSystem = new G2DPolarCoordinateSystem();
@@ -948,18 +921,14 @@ namespace Altaxo.Graph.Gdi
       this.GridPlanes = new GridPlaneCollection();
       this.GridPlanes.Add( new GridPlane(CSPlaneID.Front));
       this.GraphObjects = new GraphicCollection();
+      this.Legends = new GraphicCollection();
 
 
       CalculateMatrix();
 
       LinkedLayerLink = new Main.RelDocNodeProxy(null, this);
       PlotItems = new PlotItemCollection(this);
-
-
-      // CreateDefaultAxes();
-
-      //DefaultYAxisTitleString = "Y axis";
-      //DefaultXAxisTitleString = "X axis";
+      
     }
 
 
@@ -1029,6 +998,24 @@ namespace Altaxo.Graph.Gdi
 
     #region XYPlotLayer properties and methods
 
+
+    public XYPlotLayerPositionAndSize Location
+    {
+      get
+      {
+        return _location;
+      }
+      set
+      {
+        XYPlotLayerPositionAndSize oldvalue = _location;
+        _location = value;
+        value.ParentObject = this;
+
+        if (!object.ReferenceEquals(oldvalue, value))
+          OnChanged();
+      }
+    }
+
     /// <summary>
     /// Collection of the axis styles for the left, bottom, right, and top axis.
     /// </summary>
@@ -1040,6 +1027,7 @@ namespace Altaxo.Graph.Gdi
         AxisStyleCollection oldvalue = _axisStyles;
         _axisStyles = value;
         value.ParentObject = this;
+        value.UpdateCoordinateSystem(this.CoordinateSystem);
 
         if (!object.ReferenceEquals(oldvalue, value))
         {
@@ -2784,6 +2772,10 @@ namespace Altaxo.Graph.Gdi
         if (oldValue != value)
         {
           _coordinateSystem.UpdateAreaSize(this.Size);
+
+          if (null != AxisStyles)
+            AxisStyles.UpdateCoordinateSystem(value);
+
           OnChanged();
         }
 

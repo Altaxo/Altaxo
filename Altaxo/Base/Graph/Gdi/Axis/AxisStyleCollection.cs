@@ -57,59 +57,8 @@ namespace Altaxo.Graph.Gdi.Axis
 
     #region Serialization
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotLayerAxisStylesSummary", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AxisStyleCollection), 0)]
     public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-    {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-      {
-        throw new NotSupportedException("Serialization of old versions not supported - probably a programming error");
-        /*
-        XYPlotLayerAxisStylesSummary s = (XYPlotLayerAxisStylesSummary)obj;
-        info.AddValue("Grid", s._gridStyle);
-
-        info.CreateArray("Edges", s._edges.Length);
-        for (int i = 0; i < s._edges.Length; ++i)
-          info.AddEnum("e", s._edges[i]);
-        info.CommitArray();
-
-        info.CreateArray("AxisStyles",s._axisStyles.Length);
-        for(int i=0;i<s._axisStyles.Length;++i)
-          info.AddValue("e",s._axisStyles[i]);
-        info.CommitArray();
-        */
-      }
-
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-      {
-        AxisStyleCollection s = SDeserialize(o, info, parent);
-        return s;
-      }
-
-
-      protected virtual AxisStyleCollection SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-      {
-        AxisStyleCollection s = null != o ? (AxisStyleCollection)o : new AxisStyleCollection();
-
-
-        int count = info.OpenArray();
-        //s._edges = new EdgeType[count];
-        for (int i = 0; i < count; ++i)
-          info.GetEnum("e", typeof(EdgeType));
-        info.CloseArray(count);
-
-        count = info.OpenArray();
-        //s._axisStyles = new XYPlotLayerAxisStyleProperties[count];
-        for (int i = 0; i < count; ++i)
-          s._axisStyles.Add((AxisStyle)info.GetValue("e", s));
-        info.CloseArray(count);
-
-        return s;
-      }
-    }
-
-    // 2006-09-08 - renaming to G2DScaleStyle
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AxisStyleCollection), 1)]
-    public class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
@@ -123,11 +72,7 @@ namespace Altaxo.Graph.Gdi.Axis
         info.CommitArray();
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-      {
-        AxisStyleCollection s = SDeserialize(o, info, parent);
-        return s;
-      }
+    
 
 
       protected virtual AxisStyleCollection SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -135,11 +80,16 @@ namespace Altaxo.Graph.Gdi.Axis
         AxisStyleCollection s = null != o ? (AxisStyleCollection)o : new AxisStyleCollection();
 
         int count = info.OpenArray();
-        //s._axisStyles = new XYPlotLayerAxisStyleProperties[count];
         for (int i = 0; i < count; ++i)
           s._axisStyles.Add((AxisStyle)info.GetValue("e", s));
         info.CloseArray(count);
 
+        return s;
+      }
+
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        AxisStyleCollection s = SDeserialize(o, info, parent);
         return s;
       }
     }
@@ -237,9 +187,9 @@ namespace Altaxo.Graph.Gdi.Axis
 
 
  
-    public void SetParentLayer(XYPlotLayer layer, bool suppressEvents)
+    public void UpdateCoordinateSystem(G2DCoordinateSystem cs)
     {
-      _cachedCoordinateSystem = layer.CoordinateSystem;
+      _cachedCoordinateSystem = cs;
 
       foreach (AxisStyle style in this._axisStyles)
         style.CachedAxisInformation = _cachedCoordinateSystem.GetAxisStyleInformation(style.StyleID);
@@ -263,7 +213,7 @@ namespace Altaxo.Graph.Gdi.Axis
 
     #region IChangedEventSource Members
 
-    [field:NonSerialized]
+    
     public event EventHandler Changed
     {
       add { _changed += value; }

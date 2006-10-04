@@ -31,6 +31,7 @@ using Altaxo.Graph.Scales.Boundaries;
 
 namespace Altaxo.Graph.Gdi
 {
+  [Serializable]
   public class XYPlotLayerPositionAndSize 
     :
     System.ICloneable,

@@ -52,6 +52,44 @@ namespace Altaxo.Graph.Gdi.Axis
       this.GridStyleSecond = from._grid2 == null ? null : (GridStyle)from._grid2.Clone();
       this.BackgroundStyle = from._background == null ? null : (Background.IBackgroundStyle)from._background.Clone();
     }
+
+    #region Serialization
+    #region Version 0
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GridPlane), 0)]
+    public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        GridPlane s = (GridPlane)obj;
+
+        info.AddValue("ID", s._planeID);
+        info.AddValue("Grid1", s._grid1);
+        info.AddValue("Grid2", s._grid2);
+        info.AddValue("Background", s._background);
+
+      }
+      protected virtual GridPlane SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        CSPlaneID id = (CSPlaneID)info.GetValue("ID",null);
+        GridPlane s = (o == null ? new GridPlane(id) : (GridPlane)o);
+        s.GridStyleFirst = (GridStyle)info.GetValue("Grid1", s);
+        s.GridStyleSecond = (GridStyle)info.GetValue("Grid2", s);
+        s.BackgroundStyle = (Background.IBackgroundStyle)info.GetValue("Background", s);
+
+        return s;
+      }
+
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+
+        GridPlane s = SDeserialize(o, info, parent);
+        return s;
+      }
+    }
+    #endregion
+    #endregion
+
+
     public GridPlane(CSPlaneID id)
     {
       _cachedIndexer = new GridIndexer(this);

@@ -34,8 +34,49 @@ namespace Altaxo.Graph.Gdi
       this._rightPadding = from._rightPadding;
       this._topPadding = from._topPadding;
       this._bottomPadding = from._bottomPadding;
-
     }
+
+    #region Serialization
+    #region Version 0
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LayerBackground), 0)]
+    public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        LayerBackground s = (LayerBackground)obj;
+
+        info.AddValue("Background", s._background);
+        info.AddValue("LeftPadding", s._leftPadding);
+        info.AddValue("TopPadding", s._topPadding);
+        info.AddValue("RightPadding", s._rightPadding);
+        info.AddValue("BottomPadding", s._bottomPadding);
+
+      }
+      protected virtual LayerBackground SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        LayerBackground s = (o == null ? new LayerBackground() : (LayerBackground)o);
+
+        s._background = (Background.IBackgroundStyle)info.GetValue("Background", s);
+        s._leftPadding = info.GetDouble("LeftPadding");
+        s._topPadding = info.GetDouble("TopPadding");
+        s._rightPadding = info.GetDouble("RightPadding");
+        s._bottomPadding = info.GetDouble("BottomPadding");
+        
+
+        return s;
+      }
+
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+
+        LayerBackground s = SDeserialize(o, info, parent);
+        return s;
+      }
+    }
+    #endregion
+    #endregion
+
+
     public LayerBackground()
     {
     }
