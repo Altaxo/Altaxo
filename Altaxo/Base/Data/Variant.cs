@@ -109,6 +109,72 @@ namespace Altaxo.Data
     public double m_Double;
     public object m_Object;
 
+
+    #region Serialization
+    #region Version 0
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AltaxoVariant), 0)]
+    public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        AltaxoVariant s = (AltaxoVariant)obj;
+        info.AddEnum("Content", s.m_Content);
+        switch (s.m_Content)
+        {
+          case Content.VNull:
+            break;
+          case Content.VDouble:
+            info.AddValue("Value", s.m_Double);
+            break;
+          case Content.VDateTime:
+            info.AddValue("Value", (DateTime)s.m_Object);
+            break;
+          case Content.VString:
+            info.AddValue("Value", (string)s.m_Object);
+            break;
+          default:
+            info.AddValue("Value", s.m_Object);
+            break;
+        }
+      }
+
+      protected virtual AltaxoVariant SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        AltaxoVariant s = (o == null ? new AltaxoVariant() : (AltaxoVariant)o);
+        Content c = (Content)info.GetEnum("Content", typeof(Content));
+        s.m_Content = c;
+
+        switch(c)
+        {
+          case Content.VNull:
+            break;
+          case Content.VDouble:
+            s.m_Double = info.GetDouble("Value");
+            break;
+          case Content.VDateTime:
+            s.m_Object = info.GetDateTime("Value");
+            break;
+          case Content.VString:
+            s.m_Object = info.GetString("Value");
+            break;
+          default:
+            s.m_Object = info.GetValue("Value",s);
+            break;
+        }
+
+        return s;
+      }
+
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+
+        AltaxoVariant s = SDeserialize(o, info, parent);
+        return s;
+      }
+    }
+    #endregion
+    #endregion
+
     
 
     public AltaxoVariant(AltaxoVariant a)

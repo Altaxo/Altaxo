@@ -1226,6 +1226,7 @@
     <Compile Include="Graph\A2DAxisStyleInformation.cs" />
     <Compile Include="Graph\CSLineID.cs" />
     <Compile Include="Graph\CSPlaneID.cs" />
+    <Compile Include="Graph\CSPlaneIDList.cs" />
     <Compile Include="Graph\CSPlaneInformation.cs" />
     <Compile Include="Graph\Gdi\Axis\AxisLabelStyle.cs" />
     <Compile Include="Graph\Gdi\Axis\AxisLabelStyleBase.cs" />

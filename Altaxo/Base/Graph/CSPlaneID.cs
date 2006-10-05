@@ -7,7 +7,7 @@ using Altaxo.Data;
 namespace Altaxo.Graph
 {
   /// <summary>
-  /// This is an immutable class used to identify axis lines in 2D or planes in 3D. You can safely use it without cloning.
+  /// This is a class used to identify axis lines in 2D or planes in 3D.
   /// A plane or axis is specified by the axis that is perpendicular to this plane or axis, and by the logical value along the
   /// perpendicular axis.
   /// </summary>
@@ -16,7 +16,7 @@ namespace Altaxo.Graph
   /// in 2D this means 0==X-Axis (normally horizontal), and 1==Y-Axis (vertical).
   /// For 3D this means 0==X-Axis (horizontal), 1==Y-Axis (vertical, and 2==Z-Axis (points in the screen).
   /// </remarks>
-  public sealed class CSPlaneID
+  public sealed class CSPlaneID : ICloneable
   {
     /// <summary>
     /// Number of axis: 0==X-Axis, 1==Y-Axis, 2==Z-Axis
@@ -38,6 +38,44 @@ namespace Altaxo.Graph
     /// </summary>
     AltaxoVariant _physicalValue;
 
+
+    #region Serialization
+    #region Version 0
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CSPlaneID), 0)]
+    public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        CSPlaneID s = (CSPlaneID)obj;
+        info.AddValue("Axis", s._perpendicularAxisNumber);
+        info.AddValue("Logical", s._logicalValue);
+        info.AddValue("UsePhysical", s._usePhysicalValue);
+        if(s._usePhysicalValue)
+          info.AddValue("Physical", (object)s._physicalValue);
+      }
+      protected virtual CSPlaneID SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        CSPlaneID s = (o == null ? new CSPlaneID() : (CSPlaneID)o);
+
+        s._perpendicularAxisNumber = info.GetInt32("Axis");
+        s._logicalValue = info.GetDouble("Logical");
+        s._usePhysicalValue = info.GetBoolean("UsePhysical");
+        if (s._usePhysicalValue)
+          s._physicalValue = (AltaxoVariant)info.GetValue("Physical", s);
+
+        return s;
+      }
+
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+
+        CSPlaneID s = SDeserialize(o, info, parent);
+        return s;
+      }
+    }
+    #endregion
+    #endregion
+
     public CSPlaneID(int perpendicularAxisNumber, int logicalValue)
       : this(perpendicularAxisNumber, (double)logicalValue)
     {
@@ -53,6 +91,23 @@ namespace Altaxo.Graph
     private CSPlaneID()
     {
     }
+
+    public CSPlaneID(CSPlaneID from)
+    {
+      this._perpendicularAxisNumber = from._perpendicularAxisNumber;
+      this._logicalValue = from._logicalValue;
+      this._usePhysicalValue = from._usePhysicalValue;
+      this._physicalValue = from._physicalValue;
+    }
+    object ICloneable.Clone()
+    {
+      return new CSPlaneID(this);
+    }
+    public CSPlaneID Clone()
+    {
+      return new CSPlaneID(this);
+    }
+
 
     public static CSPlaneID FromPhysicalValue(int perpendicularAxisNumber, double physicalValue)
     {

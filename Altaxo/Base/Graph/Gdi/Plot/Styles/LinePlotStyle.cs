@@ -243,7 +243,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     }
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotLineStyle", 2)]
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LinePlotStyle), 3)]
     public class XmlSerializationSurrogate2 : XmlSerializationSurrogate0
     {
       public override void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -255,13 +254,39 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
       public override LinePlotStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        LinePlotStyle s = base.SDeserialize(o, info, parent);
+        LinePlotStyle s = null != o ? (LinePlotStyle)o : new LinePlotStyle();
+
+        base.SDeserialize(o, info, parent);
         s._independentColor = info.GetBoolean("IndependentColor");
         return s;
       }
     }
 
-    // TODO new version add here because FillDirection changed the type
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LinePlotStyle), 3)]
+    public class XmlSerializationSurrogate3 : XmlSerializationSurrogate0
+    {
+      public override void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        base.Serialize(obj, info);
+        LinePlotStyle s = (LinePlotStyle)obj;
+        info.AddValue("IndependentColor", s._independentColor);
+
+      }
+      public override LinePlotStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        LinePlotStyle s = null != o ? (LinePlotStyle)o : new LinePlotStyle();
+
+        s._penHolder = (PenX)info.GetValue("Pen", typeof(PenX));
+        s.Connection = (XYPlotLineStyles.ConnectionStyle)info.GetValue("Connection", typeof(XYPlotLineStyles.ConnectionStyle));
+        s._useLineSymbolGap = info.GetBoolean("LineSymbolGap");
+        s._ignoreMissingPoints = info.GetBoolean("IgnoreMissingPoints");
+        s._fillArea = info.GetBoolean("FillArea");
+        s._fillBrush = (BrushX)info.GetValue("FillBrush", typeof(BrushX));
+        s._fillDirection = (CSPlaneID)info.GetValue("FillDirection", s);
+        s._independentColor = info.GetBoolean("IndependentColor");
+        return s;
+      }
+    }
 
     /// <summary>
     /// Finale measures after deserialization.
@@ -299,7 +324,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       this._ignoreMissingPoints = from._ignoreMissingPoints;
       this._fillArea = from._fillArea;
       this._fillBrush = null == from._fillBrush ? null : (BrushX)from._fillBrush.Clone();
-      this._fillDirection = from._fillDirection;
+      this._fillDirection = null==from._fillDirection ? null : from._fillDirection.Clone();
       this.Connection = from._connectionStyle; // beachte links nur Connection, damit das Template mit gesetzt wird
       this._independentColor = from._independentColor;
 

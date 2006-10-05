@@ -205,7 +205,7 @@ namespace Altaxo.Graph.Gdi.Axis
 
     void CopyFrom(AxisStyle from)
     {
-      this._styleID = from._styleID;
+      this._styleID = from._styleID.Clone();
 
       this.AxisLineStyle = from._axisLineStyle == null ? null : (AxisLineStyle)from._axisLineStyle.Clone();
       this.MajorLabelStyle = from._majorLabelStyle == null ? null : (AxisLabelStyleBase)from._majorLabelStyle.Clone();
@@ -218,9 +218,6 @@ namespace Altaxo.Graph.Gdi.Axis
     public AxisStyle(CSLineID id)
     {
       _styleID = id;
-
-      //AxisLineStyle = new AxisLineStyle();
-      //MajorLabelStyle = new AxisLabelStyle();
     }
 
     /// <summary>

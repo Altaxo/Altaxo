@@ -220,7 +220,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     }
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotLabelStyle", 2)]
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LabelPlotStyle), 3)]
     public class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -286,6 +285,65 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     }
 
 
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LabelPlotStyle), 3)]
+    public class XmlSerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        SSerialize(obj, info);
+      }
+      public static void SSerialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        LabelPlotStyle s = (LabelPlotStyle)obj;
+        info.AddValue("Font", s.m_Font);
+        info.AddValue("IndependentColor", s.m_IndependentColor);
+        info.AddValue("Brush", s.m_Brush);
+        info.AddValue("XOffset", s.m_XOffset);
+        info.AddValue("YOffset", s.m_YOffset);
+        info.AddValue("Rotation", s.m_Rotation);
+        info.AddEnum("HorizontalAlignment", s.HorizontalAlignment);
+        info.AddEnum("VerticalAlignment", s.VerticalAlignment);
+        info.AddValue("AttachedAxis", s.m_AttachedAxis);
+        info.AddValue("Background", s._backgroundStyle);
+        info.AddValue("LabelColumn", s.m_LabelColumn);
+
+      }
+
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        return SDeserialize(o, info, parent, true);
+      }
+      public static object SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent, bool nativeCall)
+      {
+
+        LabelPlotStyle s = null != o ? (LabelPlotStyle)o : new LabelPlotStyle();
+
+        s.m_Font = (Font)info.GetValue("Font", s);
+        s.m_IndependentColor = info.GetBoolean("IndependentColor");
+        s.m_Brush = (BrushX)info.GetValue("Brush", s);
+        s.m_XOffset = info.GetDouble("XOffset");
+        s.m_YOffset = info.GetDouble("YOffset");
+        s.m_Rotation = info.GetDouble("Rotation");
+        s.HorizontalAlignment = (System.Drawing.StringAlignment)info.GetEnum("HorizontalAlignment", typeof(System.Drawing.StringAlignment));
+        s.VerticalAlignment = (System.Drawing.StringAlignment)info.GetEnum("VerticalAlignment", typeof(System.Drawing.StringAlignment));
+        s.AttachedAxis = (CSPlaneID)info.GetValue("AttachedAxis", s);
+        s._backgroundStyle = (IBackgroundStyle)info.GetValue("Background", s);
+        s.m_LabelColumn = (Altaxo.Data.ReadableColumnProxy)info.GetValue("LabelColumn", parent);
+
+
+        if (nativeCall)
+        {
+          // restore the cached values
+          s.SetCachedValues();
+          s.CreateEventChain();
+        }
+
+        return s;
+      }
+    }
+
+
     /// <summary>
     /// Finale measures after deserialization of the linear axis.
     /// </summary>
@@ -318,7 +376,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       this.m_Rotation = from.m_Rotation;
       this._backgroundStyle = null == from._backgroundStyle ? null : (IBackgroundStyle)from._backgroundStyle.Clone();
       this.m_CachedStringFormat = (System.Drawing.StringFormat)from.m_CachedStringFormat.Clone();
-      this.m_AttachedAxis = from.m_AttachedAxis;
+      this.m_AttachedAxis = null==from.m_AttachedAxis ? null : from.m_AttachedAxis.Clone();
       this.m_LabelColumn = (Altaxo.Data.ReadableColumnProxy)from.m_LabelColumn.Clone();
 
       CreateEventChain();

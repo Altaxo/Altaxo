@@ -5,10 +5,9 @@ using Altaxo.Data;
 namespace Altaxo.Graph
 {
   /// <summary>
-  /// This is an immutable class used to identify axis line positions in 2D and 3D coordinate systems. 
-  /// Since it is immutable, you can safely use it without cloning.
+  /// This is a class used to identify axis line positions in 2D and 3D coordinate systems. 
   /// </summary>
-  public sealed class CSLineID 
+  public sealed class CSLineID : ICloneable
   {
     /// <summary>
     /// Number of axis: 0==X-Axis, 1==Y-Axis
@@ -46,6 +45,97 @@ namespace Altaxo.Graph
     /// </summary>
     AltaxoVariant _physicalValueSecondOther;
 
+   
+    #region Serialization
+    #region Version 0
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CSLineID), 0)]
+    public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        CSLineID s = (CSLineID)obj;
+
+
+        info.AddValue("Axis", s._parallelAxisNumber);
+        
+        info.AddValue("Logical1", s._logicalValueFirstOther);
+        info.AddValue("UsePhysical1", s._usePhysicalValueFirstOther);
+        if (s._usePhysicalValueFirstOther)
+          info.AddValue("Physical1", (object)(s._physicalValueFirstOther));
+
+        bool is3D = s.Is3DIdentifier;
+        info.AddValue("Is3DIdentifier", is3D);
+
+        if (is3D)
+        {
+          info.AddValue("Logical2", s._logicalValueSecondOther);
+          info.AddValue("UsePhysical2", s._usePhysicalValueSecondOther);
+          if (s._usePhysicalValueSecondOther)
+            info.AddValue("Physical2", (object)(s._physicalValueSecondOther));
+        }
+      }
+      protected virtual CSLineID SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        CSLineID s = (o == null ? new CSLineID() : (CSLineID)o);
+
+        s._parallelAxisNumber = info.GetInt32("Axis");
+        
+        s._logicalValueFirstOther = info.GetDouble("Logical1");
+        s._usePhysicalValueFirstOther = info.GetBoolean("UsePhysical1");
+        if (s._usePhysicalValueFirstOther)
+          s._physicalValueFirstOther = (AltaxoVariant)info.GetValue("Physical1", s);
+
+        bool is3D = info.GetBoolean("Is3D");
+        if (is3D)
+        {
+          s._logicalValueSecondOther = info.GetDouble("Logical1");
+          s._usePhysicalValueSecondOther = info.GetBoolean("UsePhysical2");
+          if (s._usePhysicalValueSecondOther)
+            s._physicalValueSecondOther = (AltaxoVariant)info.GetValue("Physical2", s);
+        }
+
+        return s;
+      }
+
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+
+        CSLineID s = SDeserialize(o, info, parent);
+        return s;
+      }
+    }
+    #endregion
+    #endregion
+
+    public CSLineID(CSLineID from)
+    {
+      this._parallelAxisNumber = from._parallelAxisNumber;
+      this._logicalValueFirstOther = from._logicalValueFirstOther;
+      this._usePhysicalValueFirstOther = from._usePhysicalValueFirstOther;
+      this._physicalValueFirstOther = from._physicalValueFirstOther;
+
+      this._logicalValueSecondOther = from._logicalValueSecondOther;
+      this._usePhysicalValueSecondOther = from._usePhysicalValueSecondOther;
+      this._physicalValueSecondOther = from._physicalValueSecondOther;
+    }
+
+    object ICloneable.Clone()
+    {
+      return new CSLineID(this);
+    }
+    public CSLineID Clone()
+    {
+      return new CSLineID(this);
+    }
+
+
+    /// <summary>
+    /// Only for deserialization purposes.
+    /// </summary>
+    private CSLineID()
+    {
+      _logicalValueSecondOther = double.NaN; 
+    }
 
     /// <summary>
     /// Initialized a 2D identifier from the parallel axis and the physical value of the perpendicular axis.
@@ -80,9 +170,7 @@ namespace Altaxo.Graph
       _logicalValueSecondOther = logicalValueOtherSecond;
     }
 
-    private CSLineID()
-    {
-    }
+  
 
     /// <summary>
     /// Initialized a 2D identifier from the parallel axis and the physical value of the perpendicular axis.

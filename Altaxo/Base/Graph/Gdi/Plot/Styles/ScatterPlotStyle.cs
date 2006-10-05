@@ -208,7 +208,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
   {
     protected XYPlotScatterStyles.Shape _shape;
     protected XYPlotScatterStyles.Style _style;
-    protected List<CSPlaneID> _dropLine;
+    protected CSPlaneIDList _dropLine;
     protected PenX _pen;
     protected bool _independentColor;
 
@@ -257,7 +257,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         ScatterPlotStyle s = (ScatterPlotStyle)obj;
         s._shape = (XYPlotScatterStyles.Shape)info.GetValue("Shape", typeof(XYPlotScatterStyles.Shape));
         s._style = (XYPlotScatterStyles.Style)info.GetValue("Style", typeof(XYPlotScatterStyles.Style));
-        s._dropLine = (List<CSPlaneID>)info.GetValue("DropLine", typeof(List<CSPlaneID>));
+        s._dropLine = (CSPlaneIDList)info.GetValue("DropLine", typeof(List<CSPlaneID>));
         s._pen = (PenX)info.GetValue("Pen", typeof(PenX));
         s._symbolSize = info.GetSingle("SymbolSize");
         s._relativePenWidth = info.GetSingle("RelativePenWidth");
@@ -322,7 +322,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     }
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotScatterStyle", 2)]
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ScatterPlotStyle), 3)]
     public class XmlSerializationSurrogate2 : XmlSerializationSurrogate0
     {
       public override void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -348,6 +347,52 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ScatterPlotStyle), 3)]
+    public class XmlSerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        ScatterPlotStyle s = (ScatterPlotStyle)obj;
+        info.AddValue("Shape", s._shape);
+        info.AddValue("Style", s._style);
+        info.AddValue("DropLine", s._dropLine);
+        info.AddValue("Pen", s._pen);
+        info.AddValue("SymbolSize", s._symbolSize);
+        info.AddValue("RelativePenWidth", s._relativePenWidth);
+     
+        info.AddValue("IndependentColor", s._independentColor);
+        info.AddValue("IndependentSymbolSize", s._independentSymbolSize);
+        info.AddValue("SkipFreq", s._skipFreq);
+      }
+      protected virtual ScatterPlotStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        ScatterPlotStyle s = null != o ? (ScatterPlotStyle)o : new ScatterPlotStyle();
+
+        s._shape = (XYPlotScatterStyles.Shape)info.GetValue("Shape", s);
+        s._style = (XYPlotScatterStyles.Style)info.GetValue("Style", s);
+        s._dropLine = (CSPlaneIDList)info.GetValue("DropLine", s);
+        s._pen = (PenX)info.GetValue("Pen", s);
+        s._symbolSize = info.GetSingle("SymbolSize");
+        s._relativePenWidth = info.GetSingle("RelativePenWidth");
+        s._independentColor = info.GetBoolean("IndependentColor");
+        s._independentSymbolSize = info.GetBoolean("IndependentSymbolSize");
+        s._skipFreq = info.GetInt32("SkipFreq");
+        return s;
+      }
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        ScatterPlotStyle s = SDeserialize(o, info, parent);
+
+        // restore the cached values
+        s.SetCachedValues();
+        s.CreateEventChain();
+
+        return s;
+      }
+    
+    }
+
+
     /// <summary>
     /// Finale measures after deserialization of the linear axis.
     /// </summary>
@@ -366,10 +411,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       this._shape = from._shape;
       this._style = from._style;
       if(null==this._dropLine)
-        this._dropLine = new List<CSPlaneID>();
+        this._dropLine = new CSPlaneIDList();
       else 
         this._dropLine.Clear();
-      this._dropLine.AddRange(from._dropLine);
+      this._dropLine.AddClonedRange(from._dropLine);
       this._pen = null == from._pen ? null : (PenX)from._pen.Clone();
       this._independentColor = from._independentColor;
       this._independentSymbolSize = from._independentSymbolSize;
@@ -396,7 +441,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     {
       _shape = shape;
       _style = style;
-      _dropLine = new List<CSPlaneID>();
+      _dropLine = new CSPlaneIDList();
       _pen = new PenX(penColor, penWidth);
       _symbolSize = size;
       this._independentSymbolSize = true;
@@ -414,7 +459,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     {
       this._shape = XYPlotScatterStyles.Shape.Square;
       this._style = XYPlotScatterStyles.Style.Solid;
-      this._dropLine = new List<CSPlaneID>();
+      this._dropLine = new CSPlaneIDList();
       this._pen = new PenX(Color.Black);
       this._independentColor = false;
 
