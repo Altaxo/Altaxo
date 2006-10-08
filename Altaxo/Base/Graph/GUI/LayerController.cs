@@ -79,7 +79,8 @@ namespace Altaxo.Graph.GUI
 
     Main.GUI.IMVCController m_CurrentController;
 
-  
+
+    protected Altaxo.Gui.Graph.CoordinateSystemController _coordinateController;
     protected ILayerPositionController m_LayerPositionController;
     protected ILineScatterLayerContentsController m_LayerContentsController;
     protected IAxisScaleController[] m_AxisScaleController;
@@ -240,6 +241,7 @@ namespace Altaxo.Graph.GUI
 
       // add all necessary Tabs
       View.AddTab("Scale","Scale");
+      View.AddTab("CS", "Coord.System");
       View.AddTab("TitleAndFormat","Title&&Format");
       View.AddTab("Contents","Contents");
       View.AddTab("Position","Position");
@@ -301,6 +303,22 @@ namespace Altaxo.Graph.GUI
           m_CurrentController = m_AxisScaleController[_currentScale];
           View.CurrentContent = m_CurrentController.ViewObject;
           break;
+
+        case "CS":
+          if (pageChanged)
+          {
+            View.SelectTab(m_CurrentPage);
+            SetLayerSecondaryChoice();
+          }
+          if (null == this._coordinateController)
+          {
+            this._coordinateController = new Altaxo.Gui.Graph.CoordinateSystemController(_layer.CoordinateSystem);
+            Current.Gui.FindAndAttachControlTo(this._coordinateController);
+          }
+          m_CurrentController = this._coordinateController;
+          View.CurrentContent = this._coordinateController.ViewObject;
+          break;
+
         case "GridStyle":
           if (pageChanged)
           {
@@ -554,6 +572,14 @@ namespace Altaxo.Graph.GUI
     public bool Apply()
     {
       int i;
+
+      if (null != this._coordinateController)
+      {
+        if (this._coordinateController.Apply())
+          _layer.CoordinateSystem = (G2DCoordinateSystem)_coordinateController.ModelObject;
+        else
+          return false;
+      }
 
       if(null!=this.m_LayerContentsController && !this.m_LayerContentsController.Apply())
         return false;

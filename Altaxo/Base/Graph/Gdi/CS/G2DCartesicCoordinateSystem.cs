@@ -10,7 +10,9 @@ namespace Altaxo.Graph.Gdi.CS
     /// <summary>
     /// Is the normal position of x and y axes interchanged, for instance x is vertical and y horizontal.
     /// </summary>
-    protected bool _isXYInterchanged;
+    private bool _isXYInterchanged;
+
+   
     /// <summary>
     /// Is the direction of the x axis reverse, for instance runs from right to left.
     /// </summary>
@@ -46,7 +48,7 @@ namespace Altaxo.Graph.Gdi.CS
       {
         G2DCartesicCoordinateSystem s = (G2DCartesicCoordinateSystem)obj;
 
-        info.AddValue("XYInterchanged", s._isXYInterchanged);
+        info.AddValue("XYInterchanged", s.IsXYInterchanged);
         info.AddValue("XReverse", s._isXreverse);
         info.AddValue("YReverse", s._isYreverse);
       }
@@ -54,7 +56,7 @@ namespace Altaxo.Graph.Gdi.CS
       {
         G2DCartesicCoordinateSystem s = (o == null ? new G2DCartesicCoordinateSystem() : (G2DCartesicCoordinateSystem)o);
 
-        s._isXYInterchanged = info.GetBoolean("XYInterchanged");
+        s.IsXYInterchanged = info.GetBoolean("XYInterchanged");
         s._isXreverse = info.GetBoolean("XReverse");
         s._isYreverse = info.GetBoolean("YReverse");
 
@@ -75,6 +77,42 @@ namespace Altaxo.Graph.Gdi.CS
     {
     }
 
+    /// <summary>
+    /// Is the normal position of x and y axes interchanged, for instance x is vertical and y horizontal.
+    /// </summary>
+    public bool IsXYInterchanged
+    {
+      get { return _isXYInterchanged; }
+      set { 
+        _isXYInterchanged = value;
+        ClearCachedObjects();
+      }
+    }
+
+    /// <summary>
+    /// Is the direction of the x axis reverse, for instance runs from right to left.
+    /// </summary>
+    public bool IsXReverse
+    {
+      get { return _isXreverse; }
+      set { 
+        _isXreverse = value;
+        ClearCachedObjects();
+      }
+
+    }
+
+    /// <summary>
+    /// Is the direction of the y axis reverse, for instance runs from top to bottom.
+    /// </summary>
+    public bool IsYReverse
+    {
+      get { return _isYreverse; }
+      set { 
+        _isYreverse = value;
+        ClearCachedObjects();
+      }
+    }
     /// <summary>
     /// Returns true if the plot area is orthogonal, i.e. if the x and the y axis are orthogonal to each other.
     /// </summary>
@@ -108,7 +146,10 @@ namespace Altaxo.Graph.Gdi.CS
         horzRev = _isXreverse;
       }
 
-      _axisStyleInformation.Clear();
+      if (null == _axisStyleInformation)
+        _axisStyleInformation = new List<A2DAxisStyleInformation>();
+      else
+        _axisStyleInformation.Clear();
 
       A2DAxisStyleInformation info;
 

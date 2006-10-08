@@ -44,7 +44,7 @@ namespace Altaxo.Main.Services
     /// <returns>The controller for that document when found. The controller is already initialized with the document. If not found, null is returned.</returns>
     public IMVCController GetController(object[] args, System.Type expectedControllerType)
     {
-      return (IMVCController)ReflectionService.GetClassForClassInstanceByAttribute(typeof(UserControllerForObjectAttribute),expectedControllerType,args, ref _cachedControllerList);
+      return (IMVCController)ReflectionService.GetClassForClassInstanceByAttribute(typeof(UserControllerForObjectAttribute), new Type[] { expectedControllerType }, args, ref _cachedControllerList);
     }
 
     /// <summary>
@@ -74,18 +74,12 @@ namespace Altaxo.Main.Services
       if(!ReflectionService.IsSubClassOfOrImplements(expectedControllerType,typeof(IMVCController)))
         throw new ArgumentException("Expected controller type has to be IMVCController or a subclass or derived class of this");
 
-      IMVCController controller = (IMVCController)ReflectionService.GetClassForClassInstanceByAttribute(typeof(UserControllerForObjectAttribute),expectedControllerType,args,overrideArg0Type, ref _cachedControllerList);
+      IMVCController controller = (IMVCController)ReflectionService.GetClassForClassInstanceByAttribute(typeof(UserControllerForObjectAttribute), new Type[] { expectedControllerType }, args, overrideArg0Type, ref _cachedControllerList);
       if(controller==null)
         return null;
 
-      
 
-      System.Windows.Forms.UserControl control = (System.Windows.Forms.UserControl)ReflectionService.GetClassForClassInstanceByAttribute(typeof(UserControlForControllerAttribute),typeof(System.Windows.Forms.UserControl),new object[]{controller}, ref _cachedControlList);
-
-      if(control==null)
-        return null;
-
-      controller.ViewObject = control;
+      FindAndAttachControlTo(controller);
 
       return controller;
     }
@@ -98,9 +92,15 @@ namespace Altaxo.Main.Services
     /// <param name="controller">The controller a control is searched for.</param>
     /// <param name="expectedType">The expected type of the control.</param>
     /// <returns>The control with the type provided as expectedType argument, or null if no such controller was found.</returns>
-    public object GetControl(IMVCController controller, System.Type expectedType)
+    /// <remarks>This function is used externally, so we add the restriction here that the expected type
+    /// has to be a System.Windows.Forms.Control.</remarks>
+    public object FindAndAttachControlTo(IMVCController controller, System.Type expectedType)
     {
-      return ReflectionService.GetClassForClassInstanceByAttribute(typeof(UserControlForControllerAttribute), expectedType, new object[] { controller },ref _cachedControlList);
+      return ReflectionService.GetClassForClassInstanceByAttribute(
+        typeof(UserControlForControllerAttribute), 
+        new Type[] { typeof(System.Windows.Forms.Control), expectedType},
+        new object[] { controller },
+        ref _cachedControlList);
     }
 
 
@@ -108,9 +108,63 @@ namespace Altaxo.Main.Services
     /// Searchs for a appropriate control for a given controller and attaches the control to the controller.
     /// </summary>
     /// <param name="controller">The controller a control is searched for.</param>
-    public void GetControl(IMVCController controller)
+    public void FindAndAttachControlTo(IMVCController controller)
     {
-      System.Windows.Forms.UserControl control = (System.Windows.Forms.UserControl)ReflectionService.GetClassForClassInstanceByAttribute(typeof(UserControlForControllerAttribute),typeof(System.Windows.Forms.UserControl),new object[]{controller},ref _cachedControlList);
+      // if the controller has 
+      System.Type ct = controller.GetType();
+      object[] viewattributes = ct.GetCustomAttributes(typeof(Main.GUI.ExpectedTypeOfViewAttribute), false);
+
+      if (viewattributes != null && viewattributes.Length > 0)
+      {
+        if (viewattributes.Length > 1)
+        {
+          // You should sort the items by priority
+          throw new NotImplementedException("Sorting by priority has to be implemented here");
+        }
+
+        foreach(Main.GUI.ExpectedTypeOfViewAttribute attr in viewattributes)
+        {
+          Type[] controltypes = ReflectionService.GetNonAbstractSubclassesOf(new System.Type[] { typeof(System.Windows.Forms.Control), attr.TargetType });
+          foreach (Type controltype in controltypes)
+          {
+            // test if the control has a special preference for a controller...
+            object[] controlForAttributes = controltype.GetCustomAttributes(typeof(Main.GUI.UserControlForControllerAttribute), false);
+            if (controlForAttributes.Length > 0)
+            {
+              bool containsControllerType = false;
+              foreach (Main.GUI.UserControlForControllerAttribute controlForAttr in controlForAttributes)
+              {
+                if (controlForAttr.TargetType == ct)
+                {
+                  containsControllerType = true;
+                  break;
+                }
+              }
+              if (!containsControllerType)
+                continue; // then this view is not intended for our controller
+            }
+
+            // all seems ok, so we can try to create the control
+            object controlinstance = System.Activator.CreateInstance(controltype);
+            if(null==controlinstance)
+              throw new ApplicationException(string.Format("Searching a control for controller of type {0}. Find control type {1}, but it was not possible to create a instance of this type.",ct,controltype));
+
+            controller.ViewObject = controlinstance;
+
+            if(controller.ViewObject == null)
+              throw new ApplicationException(string.Format("Searching a control for controller of type {0}. Find control type {1}, but the controller did not accept this control.",ct,controltype));
+
+            return;
+          }
+        }
+      }
+
+      System.Windows.Forms.UserControl control = 
+        (System.Windows.Forms.UserControl)ReflectionService.GetClassForClassInstanceByAttribute(
+        typeof(UserControlForControllerAttribute),
+        new System.Type[]{typeof(System.Windows.Forms.UserControl)},
+        new object[]{controller},
+        ref _cachedControlList);
 
       if(control==null)
         return;
@@ -142,7 +196,7 @@ namespace Altaxo.Main.Services
 
       if (controller.ViewObject == null)
       {
-        GetControl(controller);
+        FindAndAttachControlTo(controller);
       }
 
       if (controller.ViewObject == null)

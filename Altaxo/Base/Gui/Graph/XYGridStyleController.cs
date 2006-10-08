@@ -68,7 +68,15 @@ namespace Altaxo.Gui.Graph
     public XYGridStyleController(GridStyle doc)
     {
       _doc = doc;
-      _tempdoc = (GridStyle)doc.Clone();
+      if(_doc!=null)
+      {
+        _tempdoc = (GridStyle)doc.Clone();
+      }
+      else
+      {
+        _tempdoc = new GridStyle();
+        _tempdoc.ShowGrid = false;
+      }
 
       _majorController = new ColorTypeThicknessPenController(_tempdoc.MajorPen);
       _minorController = new ColorTypeThicknessPenController(_tempdoc.MinorPen);

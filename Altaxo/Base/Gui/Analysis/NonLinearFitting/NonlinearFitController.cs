@@ -80,7 +80,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       _fitEnsembleController = (IFitEnsembleController)Current.Gui.GetControllerAndControl(new object[] { _doc.FitEnsemble }, typeof(IFitEnsembleController));
 
       _funcselController = new FitFunctionSelectionController(_doc.FitEnsemble.Count == 0 ? null : _doc.FitEnsemble[0].FitFunction);
-      Current.Gui.GetControl(_funcselController);
+      Current.Gui.FindAndAttachControlTo(_funcselController);
 
       _doc.FitEnsemble.Changed += new EventHandler(EhFitEnsemble_Changed);
     }

@@ -110,7 +110,7 @@ namespace Altaxo.Gui.Graph
 
       if (bStandard && _groupStyles!=null)
       {
-        _plotGroupView = (IXYPlotGroupView)Current.Gui.GetControl(this, typeof(IXYPlotGroupView));
+        _plotGroupView = (IXYPlotGroupView)Current.Gui.FindAndAttachControlTo(this, typeof(IXYPlotGroupView));
         _plotGroupView.InitializePlotGroupConditions(
             color,
             linestyle,
@@ -243,7 +243,7 @@ namespace Altaxo.Gui.Graph
         }
         arr.Add(new ControlViewElement(string.Empty,this,this._plotGroupView));
         Common.MultiChildController mctrl = new Common.MultiChildController((ControlViewElement[])arr.ToArray(typeof(ControlViewElement)), true);
-        Current.Gui.GetControl(mctrl);
+        Current.Gui.FindAndAttachControlTo(mctrl);
 
         AddTab(_additionalPlotStyle == null ? "Style 1&&2" : "Style 1", mctrl, mctrl.ViewObject);
 

@@ -86,6 +86,23 @@ namespace Altaxo.Main.Services
     }
 
 
+        /// <summary>
+    /// Determines whether or not a given subtype is derived from a basetype or implements the interface basetypes.
+    /// </summary>
+    /// <param name="subtype">The subtype.</param>
+    /// <param name="basetype">The basetypes. To return true, the subclass must implement all the types given here.</param>
+    /// <returns>If basetype is a class type, the return value is true if subtype derives from basetype. If basetype is an interface, the return value is true if subtype implements the interface basetype.
+    /// If subtype don't implement one of the types given in basetypes, the return value is false.</returns>
+    public static bool IsSubClassOfOrImplements(System.Type subtype, System.Type[] basetypes)
+    {
+      foreach(System.Type t in basetypes)
+      {
+        if(!IsSubClassOfOrImplements(subtype,t))
+          return false;
+      }
+      return true;
+    }
+
     /// <summary>
     /// Determines whether or not a given AssemblyName is contained in a list of names.
     /// This is done here by comparing the FullNames.
@@ -134,6 +151,49 @@ namespace Altaxo.Main.Services
       }
     }
 
+
+    /// <summary>
+    /// Gets a list of currently loaded assemblies that are dependend on the given types. This includes also the assembly itself, where the type(s) are defined, and all
+    /// assemblies dependent on that.
+    /// </summary>
+    /// <param name="types">One or more types.</param>
+    /// <param name="start">Index into the <c>_loadedAssemblies</c> array where to start the search. Set it to 0 if you want a full search.</param>
+    /// <returns>All assemblies, that are currently loaded and that references the given base assembly. The base assembly is also in the returned list.</returns>
+    public static System.Reflection.Assembly[] GetDependendAssemblies(System.Type[] types, int start)
+    {
+      if (start >= _loadedAssemblies.Count)
+      {
+        return new Assembly[0];
+      }
+      else
+      {
+        ArrayList list = new ArrayList();
+
+        List<AssemblyName> nameList = new List<AssemblyName>();
+        foreach (Type t in types)
+        {
+          AssemblyName name = Assembly.GetAssembly(t).GetName();
+          if (!nameList.Contains(name))
+            nameList.Add(name);
+        }
+        for (int i = start; i < _loadedAssemblies.Count; i++)
+        {
+          Assembly testassembly = _loadedAssemblies[i];
+          AssemblyName testassemblyname = testassembly.GetName();
+          bool insert = false;
+          foreach (AssemblyName name in nameList)
+          {
+            if (testassemblyname.FullName == name.FullName || Contains(testassembly.GetReferencedAssemblies(), name))
+            {
+              list.Add(testassembly);
+              break;
+            }
+          }
+        }
+        return (Assembly[])list.ToArray(typeof(System.Reflection.Assembly));
+      }
+    }
+
     /// <summary>
     /// Returns true if <c>testAssembly</c> is dependent on <c>baseAssembly.</c>
     /// </summary>
@@ -170,7 +230,7 @@ namespace Altaxo.Main.Services
       return (System.Type[])list.ToArray(typeof(System.Type));
     }
 
-    /// <summary>
+     /// <summary>
     /// This will return a list of types that are subclasses of type basetype or (when basetype is an interface)
     /// implements basetype.
     /// </summary>
@@ -178,16 +238,27 @@ namespace Altaxo.Main.Services
     /// <returns></returns>
     public static System.Type[] GetNonAbstractSubclassesOf(System.Type basetype)
     {
+      return GetNonAbstractSubclassesOf(new System.Type[] { basetype });
+    }
+
+    /// <summary>
+    /// This will return a list of types that are subclasses of type basetype or (when basetype is an interface)
+    /// implements basetype.
+    /// </summary>
+    /// <param name="basetype">The basetype.</param>
+    /// <returns></returns>
+    public static System.Type[] GetNonAbstractSubclassesOf(System.Type[] basetypes)
+    {
       ArrayList list = new ArrayList();
 
-      Assembly[] assemblies = GetDependendAssemblies(basetype.Assembly,0);
+      Assembly[] assemblies = GetDependendAssemblies(basetypes,0);
       foreach(Assembly assembly in assemblies)
       {
         Type[] definedtypes = assembly.GetTypes();
         foreach(Type definedtype in definedtypes)
         {
           if(!definedtype.IsAbstract && 
-            IsSubClassOfOrImplements(definedtype,basetype))
+            IsSubClassOfOrImplements(definedtype,basetypes))
             list.Add(definedtype);
         } // end foreach type
       } // end foreach assembly 
@@ -538,14 +609,14 @@ namespace Altaxo.Main.Services
     /// to implement <see cref="IClassForClassAttribute" />, and creationArg[0] has to match the type in <see cref="IClassForClassAttribute.TargetType" />
     /// </summary>
     /// <param name="attributeType">The type of attribute  the class(es) to instantiate must be assigned to.</param>
-    /// <param name="expectedType">The expected type of return value.</param>
+    /// <param name="expectedTypes">The expected type(s) of return value.</param>
     /// <param name="creationArgs">The creation arguments used to instantiate a class.</param>
     /// <returns>The instance of the first class for which the instantiation was successfull and results in the expectedType. Otherwise null.</returns>
     /// <remarks>The instantiation is tried first with the full argument list. If that fails, the last element of the argument list is chopped and the instantiation is tried again.
     /// This process is repeated until the instantiation was successfull or the argument list is empty (empty constructor is tried at last).</remarks>
-    public static object GetClassForClassInstanceByAttribute(System.Type attributeType, System.Type expectedType, object[] creationArgs, ref IAttributeForClassListCollection cachedList)
+    public static object GetClassForClassInstanceByAttribute(System.Type attributeType, System.Type[] expectedTypes, object[] creationArgs, ref IAttributeForClassListCollection cachedList)
     {
-      return GetClassForClassInstanceByAttribute(attributeType, expectedType,  creationArgs, null, ref cachedList);
+      return GetClassForClassInstanceByAttribute(attributeType, expectedTypes,  creationArgs, null, ref cachedList);
     }
    
 
@@ -562,12 +633,9 @@ namespace Altaxo.Main.Services
     /// <returns>The instance of the first class for which the instantiation was successfull and results in the expectedType. Otherwise null.</returns>
     /// <remarks>The instantiation is tried first with the full argument list. If that fails, the last element of the argument list is chopped and the instantiation is tried again.
     /// This process is repeated until the instantiation was successfull or the argument list is empty (empty constructor is tried at last).</remarks>
-    public static object GetClassForClassInstanceByAttribute(System.Type attributeType, System.Type expectedType, object[] creationArgs, System.Type overrideArgs0Type, ref IAttributeForClassListCollection cachedList)
+    public static object GetClassForClassInstanceByAttribute(System.Type attributeType, System.Type[] expectedTypes, object[] creationArgs, System.Type overrideArgs0Type, ref IAttributeForClassListCollection cachedList)
     {
       object result=null;
-
-     
-
 
       // 1st search for all classes that wear the UserControllerForObject attribute
       IAttributeForClassList list = ReflectionService.GetAttributeInstancesAndClassTypesForClass(attributeType,creationArgs[0],overrideArgs0Type, ref cachedList);
@@ -587,7 +655,7 @@ namespace Altaxo.Main.Services
 
       for(int i=list.Count-1;i>=0;i--)
       {
-        if(!IsSubClassOfOrImplements( (System.Type)list[i].Value,expectedType))
+        if(!IsSubClassOfOrImplements( (System.Type)list[i].Value, expectedTypes))
           continue;
         // try to create the class
 

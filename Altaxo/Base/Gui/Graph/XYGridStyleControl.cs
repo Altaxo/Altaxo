@@ -42,10 +42,8 @@ namespace Altaxo.Gui.Graph
     private System.Windows.Forms.CheckBox _cbShowZeroOnly;
     private Altaxo.Gui.Common.Drawing.ColorTypeThicknessPenControl _majorStyle;
     private Altaxo.Gui.Common.Drawing.ColorTypeThicknessPenControl _minorStyle;
-    /// <summary> 
-    /// Required designer variable.
-    /// </summary>
-    private System.ComponentModel.Container components = null;
+    private TableLayoutPanel _tableLayout;
+    private IContainer components;
 
     public XYGridStyleControl()
     {
@@ -78,40 +76,52 @@ namespace Altaxo.Gui.Graph
     /// </summary>
     private void InitializeComponent()
     {
+      this.components = new System.ComponentModel.Container();
       this._majorStyle = new Altaxo.Gui.Common.Drawing.ColorTypeThicknessPenControl();
       this._minorStyle = new Altaxo.Gui.Common.Drawing.ColorTypeThicknessPenControl();
       this._cbEnable = new System.Windows.Forms.CheckBox();
       this._cbShowMinor = new System.Windows.Forms.CheckBox();
       this._cbShowZeroOnly = new System.Windows.Forms.CheckBox();
+      this._tableLayout = new System.Windows.Forms.TableLayoutPanel();
+      this._tableLayout.SuspendLayout();
       this.SuspendLayout();
       // 
       // _majorStyle
       // 
+      this._majorStyle.AutoSize = true;
+      this._majorStyle.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+      this._majorStyle.ColorType = Altaxo.Graph.ColorType.KnownAndSystemColor;
       this._majorStyle.Controller = null;
-      this._majorStyle.Location = new System.Drawing.Point(0, 64);
+      this._majorStyle.DocPen = null;
+      this._majorStyle.Location = new System.Drawing.Point(3, 63);
       this._majorStyle.Name = "_majorStyle";
-      this._majorStyle.Size = new System.Drawing.Size(184, 96);
+      this._majorStyle.Size = new System.Drawing.Size(198, 87);
       this._majorStyle.TabIndex = 0;
       // 
       // _minorStyle
       // 
+      this._minorStyle.AutoSize = true;
+      this._minorStyle.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+      this._minorStyle.ColorType = Altaxo.Graph.ColorType.KnownAndSystemColor;
       this._minorStyle.Controller = null;
-      this._minorStyle.Location = new System.Drawing.Point(200, 64);
+      this._minorStyle.DocPen = null;
+      this._minorStyle.Location = new System.Drawing.Point(207, 63);
       this._minorStyle.Name = "_minorStyle";
-      this._minorStyle.Size = new System.Drawing.Size(184, 96);
+      this._minorStyle.Size = new System.Drawing.Size(198, 87);
       this._minorStyle.TabIndex = 1;
       // 
       // _cbEnable
       // 
-      this._cbEnable.Location = new System.Drawing.Point(0, 0);
+      this._cbEnable.Location = new System.Drawing.Point(3, 3);
       this._cbEnable.Name = "_cbEnable";
+      this._cbEnable.Size = new System.Drawing.Size(104, 24);
       this._cbEnable.TabIndex = 2;
       this._cbEnable.Text = "Enable";
       this._cbEnable.CheckedChanged += new System.EventHandler(this._cbEnable_CheckedChanged);
       // 
       // _cbShowMinor
       // 
-      this._cbShowMinor.Location = new System.Drawing.Point(264, 40);
+      this._cbShowMinor.Location = new System.Drawing.Point(207, 33);
       this._cbShowMinor.Name = "_cbShowMinor";
       this._cbShowMinor.Size = new System.Drawing.Size(112, 24);
       this._cbShowMinor.TabIndex = 3;
@@ -120,22 +130,45 @@ namespace Altaxo.Gui.Graph
       // 
       // _cbShowZeroOnly
       // 
-      this._cbShowZeroOnly.Location = new System.Drawing.Point(64, 40);
+      this._cbShowZeroOnly.Location = new System.Drawing.Point(3, 33);
       this._cbShowZeroOnly.Name = "_cbShowZeroOnly";
+      this._cbShowZeroOnly.Size = new System.Drawing.Size(104, 24);
       this._cbShowZeroOnly.TabIndex = 4;
       this._cbShowZeroOnly.Text = "At zero only";
       this._cbShowZeroOnly.CheckedChanged += new System.EventHandler(this._cbShowZeroOnly_CheckedChanged);
       // 
+      // _tableLayout
+      // 
+      this._tableLayout.AutoSize = true;
+      this._tableLayout.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+      this._tableLayout.ColumnCount = 2;
+      this._tableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+      this._tableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+      this._tableLayout.Controls.Add(this._majorStyle, 0, 2);
+      this._tableLayout.Controls.Add(this._cbEnable, 0, 0);
+      this._tableLayout.Controls.Add(this._cbShowMinor, 1, 1);
+      this._tableLayout.Controls.Add(this._minorStyle, 1, 2);
+      this._tableLayout.Controls.Add(this._cbShowZeroOnly, 0, 1);
+      this._tableLayout.Location = new System.Drawing.Point(0, 3);
+      this._tableLayout.Name = "_tableLayout";
+      this._tableLayout.RowCount = 3;
+      this._tableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle());
+      this._tableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle());
+      this._tableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle());
+      this._tableLayout.Size = new System.Drawing.Size(408, 153);
+      this._tableLayout.TabIndex = 5;
+      // 
       // XYGridStyleControl
       // 
-      this.Controls.Add(this._cbShowZeroOnly);
-      this.Controls.Add(this._cbShowMinor);
-      this.Controls.Add(this._cbEnable);
-      this.Controls.Add(this._minorStyle);
-      this.Controls.Add(this._majorStyle);
+      this.AutoSize = true;
+      this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+      this.Controls.Add(this._tableLayout);
       this.Name = "XYGridStyleControl";
-      this.Size = new System.Drawing.Size(392, 168);
+      this.Size = new System.Drawing.Size(411, 159);
+      this._tableLayout.ResumeLayout(false);
+      this._tableLayout.PerformLayout();
       this.ResumeLayout(false);
+      this.PerformLayout();
 
     }
     #endregion

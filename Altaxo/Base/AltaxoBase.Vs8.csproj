@@ -1079,6 +1079,14 @@
       <SubType>Designer</SubType>
       <DependentUpon>BackgroundStyleControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\G2DCartesicCSControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>G2DCartesicCSControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Common\TypeAndInstanceControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>TypeAndInstanceControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Gui\Graph\PlottingRangeControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>PlottingRangeControl.cs</DependentUpon>
@@ -1369,9 +1377,26 @@
     <Compile Include="Gui\Graph\BackgroundControlsGlue.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Gui\Graph\CoordinateSystemController.cs" />
+    <Compile Include="Gui\Graph\G2DCartesicCSControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\G2DCartesicCSControl.Designer.cs">
+      <DependentUpon>G2DCartesicCSControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\G2DCartesicCSController.cs" />
+    <Compile Include="Gui\Graph\G2DPolarCSController.cs" />
+    <Compile Include="Gui\Common\TypeAndInstanceControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\TypeAndInstanceControl.Designer.cs">
+      <DependentUpon>TypeAndInstanceControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\GridPlaneController.cs" />
     <Compile Include="Gui\Graph\Scales\Rescaling\DateTimeAxisRescaleController.cs" />
     <Compile Include="Gui\Graph\Scales\Rescaling\LogarithmicAxisRescaleController.cs" />
     <Compile Include="Gui\Graph\Scales\Rescaling\NumericAxisRescaleController.cs" />
+    <Compile Include="Main\GUI\ExpectedTypeOfView.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Calc\FitFunctions\Relaxation\.svn\prop-base\" />

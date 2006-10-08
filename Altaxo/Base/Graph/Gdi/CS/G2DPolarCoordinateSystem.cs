@@ -88,6 +88,46 @@ namespace Altaxo.Graph.Gdi.CS
     }
 
     /// <summary>
+    /// Is the normal position of x and y axes interchanged, for instance x is vertical and y horizontal.
+    /// </summary>
+    public bool IsXYInterchanged
+    {
+      get { return _isXYInterchanged; }
+      set
+      {
+        _isXYInterchanged = value;
+        ClearCachedObjects();
+      }
+    }
+
+    /// <summary>
+    /// Is the direction of the x axis reverse, for instance runs from right to left.
+    /// </summary>
+    public bool IsXReverse
+    {
+      get { return _isXreverse; }
+      set
+      {
+        _isXreverse = value;
+        ClearCachedObjects();
+      }
+
+    }
+
+    /// <summary>
+    /// Is the direction of the y axis reverse, for instance runs from top to bottom.
+    /// </summary>
+    public bool IsYReverse
+    {
+      get { return _isYreverse; }
+      set
+      {
+        _isYreverse = value;
+        ClearCachedObjects();
+      }
+    }
+
+    /// <summary>
     /// Returns true if the plot area is orthogonal, i.e. if the x and the y axis are orthogonal to each other.
     /// </summary>
     public override bool IsOrthogonal { get { return true; } }

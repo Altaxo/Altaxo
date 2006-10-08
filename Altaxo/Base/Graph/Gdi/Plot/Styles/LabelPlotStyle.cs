@@ -43,43 +43,35 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     IG2DPlotStyle
   {
     /// <summary>The font of the label.</summary>
-    protected System.Drawing.Font m_Font;
+    protected System.Drawing.Font _font;
 
     /// <summary>
     /// True if the color of the label is not dependent on the color of the parent plot style.
     /// </summary>
-    protected bool m_IndependentColor;
+    protected bool _independentColor;
 
     /// <summary>The brush for the label.</summary>
-    protected BrushX m_Brush;
+    protected BrushX _brush;
 
     /// <summary>The x offset in EM units.</summary>
-    protected double m_XOffset;
+    protected double _xOffset;
 
     /// <summary>The y offset in EM units.</summary>
-    protected double m_YOffset;
+    protected double _yOffset;
 
     /// <summary>The rotation of the label.</summary>
-    protected double m_Rotation;
-
-    // <summary>If true, the label is painted on a background.</summary>
-    //protected bool m_WhiteOut;
-
+    protected double _rotation;
+   
     /// <summary>The style for the background.</summary>
     protected Gdi.Background.IBackgroundStyle _backgroundStyle;
 
-    // <summary>The brush for the background.</summary>
-    //protected BrushHolder  m_BackgroundBrush;
-
-   
-
     /// <summary>The axis where the label is attached to (if it is attached).</summary>
-    protected CSPlaneID m_AttachedAxis;
+    protected CSPlaneID _attachedPlane;
 
-    protected Altaxo.Data.ReadableColumnProxy m_LabelColumn;
+    protected Altaxo.Data.ReadableColumnProxy _labelColumn;
 
     // cached values:
-    protected System.Drawing.StringFormat m_CachedStringFormat;
+    protected System.Drawing.StringFormat _cachedStringFormat;
 
     protected object _parent;
 
@@ -155,12 +147,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
         LabelPlotStyle s = null != o ? (LabelPlotStyle)o : new LabelPlotStyle();
 
-        s.m_Font = (Font)info.GetValue("Font", s);
-        s.m_IndependentColor = info.GetBoolean("IndependentColor");
-        s.m_Brush = (BrushX)info.GetValue("Brush", s);
-        s.m_XOffset = info.GetDouble("XOffset");
-        s.m_YOffset = info.GetDouble("YOffset");
-        s.m_Rotation = info.GetDouble("Rotation");
+        s._font = (Font)info.GetValue("Font", s);
+        s._independentColor = info.GetBoolean("IndependentColor");
+        s._brush = (BrushX)info.GetValue("Brush", s);
+        s._xOffset = info.GetDouble("XOffset");
+        s._yOffset = info.GetDouble("YOffset");
+        s._rotation = info.GetDouble("Rotation");
         s.HorizontalAlignment = (System.Drawing.StringAlignment)info.GetEnum("HorizontalAlignment", typeof(System.Drawing.StringAlignment));
         s.VerticalAlignment = (System.Drawing.StringAlignment)info.GetEnum("VerticalAlignment", typeof(System.Drawing.StringAlignment));
         bool attachToAxis = info.GetBoolean("AttachToAxis");
@@ -169,9 +161,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         BrushX backgroundBrush = (BrushX)info.GetValue("BackgroundBrush", s);
 
         if (attachToAxis)
-          s.m_AttachedAxis = GetDirection(attachedAxis);
+          s._attachedPlane = GetDirection(attachedAxis);
         else
-          s.m_AttachedAxis = null;
+          s._attachedPlane = null;
 
         if (whiteOut)
           s._backgroundStyle = new FilledRectangle(backgroundBrush.Color);
@@ -209,7 +201,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
         LabelPlotStyle s = (LabelPlotStyle)XmlSerializationSurrogate0.SDeserialize(o, info, parent, false);
 
-        s.m_LabelColumn = (Altaxo.Data.ReadableColumnProxy)info.GetValue("LabelColumn", parent);
+        s._labelColumn = (Altaxo.Data.ReadableColumnProxy)info.GetValue("LabelColumn", parent);
 
         // restore the cached values
         s.SetCachedValues();
@@ -255,23 +247,23 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
         LabelPlotStyle s = null != o ? (LabelPlotStyle)o : new LabelPlotStyle();
 
-        s.m_Font = (Font)info.GetValue("Font", s);
-        s.m_IndependentColor = info.GetBoolean("IndependentColor");
-        s.m_Brush = (BrushX)info.GetValue("Brush", s);
-        s.m_XOffset = info.GetDouble("XOffset");
-        s.m_YOffset = info.GetDouble("YOffset");
-        s.m_Rotation = info.GetDouble("Rotation");
+        s._font = (Font)info.GetValue("Font", s);
+        s._independentColor = info.GetBoolean("IndependentColor");
+        s._brush = (BrushX)info.GetValue("Brush", s);
+        s._xOffset = info.GetDouble("XOffset");
+        s._yOffset = info.GetDouble("YOffset");
+        s._rotation = info.GetDouble("Rotation");
         s.HorizontalAlignment = (System.Drawing.StringAlignment)info.GetEnum("HorizontalAlignment", typeof(System.Drawing.StringAlignment));
         s.VerticalAlignment = (System.Drawing.StringAlignment)info.GetEnum("VerticalAlignment", typeof(System.Drawing.StringAlignment));
         bool attachToAxis = info.GetBoolean("AttachToAxis");
         EdgeType attachedAxis = (EdgeType)info.GetValue("AttachedAxis", parent);
         s._backgroundStyle = (IBackgroundStyle)info.GetValue("Background", s);
-        s.m_LabelColumn = (Altaxo.Data.ReadableColumnProxy)info.GetValue("LabelColumn", parent);
+        s._labelColumn = (Altaxo.Data.ReadableColumnProxy)info.GetValue("LabelColumn", parent);
 
         if (attachToAxis)
-          s.m_AttachedAxis = XmlSerializationSurrogate0.GetDirection(attachedAxis);
+          s._attachedPlane = XmlSerializationSurrogate0.GetDirection(attachedAxis);
         else
-          s.m_AttachedAxis = null;
+          s._attachedPlane = null;
 
         if (nativeCall)
         {
@@ -296,17 +288,17 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       public static void SSerialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         LabelPlotStyle s = (LabelPlotStyle)obj;
-        info.AddValue("Font", s.m_Font);
-        info.AddValue("IndependentColor", s.m_IndependentColor);
-        info.AddValue("Brush", s.m_Brush);
-        info.AddValue("XOffset", s.m_XOffset);
-        info.AddValue("YOffset", s.m_YOffset);
-        info.AddValue("Rotation", s.m_Rotation);
+        info.AddValue("Font", s._font);
+        info.AddValue("IndependentColor", s._independentColor);
+        info.AddValue("Brush", s._brush);
+        info.AddValue("XOffset", s._xOffset);
+        info.AddValue("YOffset", s._yOffset);
+        info.AddValue("Rotation", s._rotation);
         info.AddEnum("HorizontalAlignment", s.HorizontalAlignment);
         info.AddEnum("VerticalAlignment", s.VerticalAlignment);
-        info.AddValue("AttachedAxis", s.m_AttachedAxis);
+        info.AddValue("AttachedAxis", s._attachedPlane);
         info.AddValue("Background", s._backgroundStyle);
-        info.AddValue("LabelColumn", s.m_LabelColumn);
+        info.AddValue("LabelColumn", s._labelColumn);
 
       }
 
@@ -319,17 +311,17 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
         LabelPlotStyle s = null != o ? (LabelPlotStyle)o : new LabelPlotStyle();
 
-        s.m_Font = (Font)info.GetValue("Font", s);
-        s.m_IndependentColor = info.GetBoolean("IndependentColor");
-        s.m_Brush = (BrushX)info.GetValue("Brush", s);
-        s.m_XOffset = info.GetDouble("XOffset");
-        s.m_YOffset = info.GetDouble("YOffset");
-        s.m_Rotation = info.GetDouble("Rotation");
+        s._font = (Font)info.GetValue("Font", s);
+        s._independentColor = info.GetBoolean("IndependentColor");
+        s._brush = (BrushX)info.GetValue("Brush", s);
+        s._xOffset = info.GetDouble("XOffset");
+        s._yOffset = info.GetDouble("YOffset");
+        s._rotation = info.GetDouble("Rotation");
         s.HorizontalAlignment = (System.Drawing.StringAlignment)info.GetEnum("HorizontalAlignment", typeof(System.Drawing.StringAlignment));
         s.VerticalAlignment = (System.Drawing.StringAlignment)info.GetEnum("VerticalAlignment", typeof(System.Drawing.StringAlignment));
         s.AttachedAxis = (CSPlaneID)info.GetValue("AttachedAxis", s);
         s._backgroundStyle = (IBackgroundStyle)info.GetValue("Background", s);
-        s.m_LabelColumn = (Altaxo.Data.ReadableColumnProxy)info.GetValue("LabelColumn", parent);
+        s._labelColumn = (Altaxo.Data.ReadableColumnProxy)info.GetValue("LabelColumn", parent);
 
 
         if (nativeCall)
@@ -361,23 +353,23 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// </summary>
     protected LabelPlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
-      this.m_CachedStringFormat = new StringFormat(StringFormatFlags.NoWrap);
-      this.m_CachedStringFormat.Alignment = System.Drawing.StringAlignment.Center;
-      this.m_CachedStringFormat.LineAlignment = System.Drawing.StringAlignment.Center;
+      this._cachedStringFormat = new StringFormat(StringFormatFlags.NoWrap);
+      this._cachedStringFormat.Alignment = System.Drawing.StringAlignment.Center;
+      this._cachedStringFormat.LineAlignment = System.Drawing.StringAlignment.Center;
     }
 
     public LabelPlotStyle(LabelPlotStyle from)
     {
-      this.m_Font = (Font)from.m_Font.Clone();
-      this.m_IndependentColor = from.m_IndependentColor;
-      this.m_Brush = (BrushX)from.m_Brush.Clone();
-      this.m_XOffset = from.m_XOffset;
-      this.m_YOffset = from.m_YOffset;
-      this.m_Rotation = from.m_Rotation;
+      this._font = (Font)from._font.Clone();
+      this._independentColor = from._independentColor;
+      this._brush = (BrushX)from._brush.Clone();
+      this._xOffset = from._xOffset;
+      this._yOffset = from._yOffset;
+      this._rotation = from._rotation;
       this._backgroundStyle = null == from._backgroundStyle ? null : (IBackgroundStyle)from._backgroundStyle.Clone();
-      this.m_CachedStringFormat = (System.Drawing.StringFormat)from.m_CachedStringFormat.Clone();
-      this.m_AttachedAxis = null==from.m_AttachedAxis ? null : from.m_AttachedAxis.Clone();
-      this.m_LabelColumn = (Altaxo.Data.ReadableColumnProxy)from.m_LabelColumn.Clone();
+      this._cachedStringFormat = (System.Drawing.StringFormat)from._cachedStringFormat.Clone();
+      this._attachedPlane = null==from._attachedPlane ? null : from._attachedPlane.Clone();
+      this._labelColumn = (Altaxo.Data.ReadableColumnProxy)from._labelColumn.Clone();
 
       CreateEventChain();
     }
@@ -389,18 +381,18 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     public LabelPlotStyle(Altaxo.Data.IReadableColumn labelColumn)
     {
-      this.m_Font = new Font(System.Drawing.FontFamily.GenericSansSerif, 8, GraphicsUnit.World);
-      this.m_IndependentColor = false;
-      this.m_Brush = new BrushX(Color.Black);
-      this.m_XOffset = 0;
-      this.m_YOffset = 0;
-      this.m_Rotation = 0;
+      this._font = new Font(System.Drawing.FontFamily.GenericSansSerif, 8, GraphicsUnit.World);
+      this._independentColor = false;
+      this._brush = new BrushX(Color.Black);
+      this._xOffset = 0;
+      this._yOffset = 0;
+      this._rotation = 0;
       this._backgroundStyle = null;
-      this.m_CachedStringFormat = new StringFormat(StringFormatFlags.NoWrap);
-      this.m_CachedStringFormat.Alignment = System.Drawing.StringAlignment.Center;
-      this.m_CachedStringFormat.LineAlignment = System.Drawing.StringAlignment.Center;
-      this.m_AttachedAxis = null;
-      this.m_LabelColumn = new Altaxo.Data.ReadableColumnProxy(labelColumn);
+      this._cachedStringFormat = new StringFormat(StringFormatFlags.NoWrap);
+      this._cachedStringFormat.Alignment = System.Drawing.StringAlignment.Center;
+      this._cachedStringFormat.LineAlignment = System.Drawing.StringAlignment.Center;
+      this._attachedPlane = null;
+      this._labelColumn = new Altaxo.Data.ReadableColumnProxy(labelColumn);
 
       CreateEventChain();
     }
@@ -408,7 +400,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     protected void CreateEventChain()
     {
-      this.m_LabelColumn.Changed += new EventHandler(LabelColumnProxy_Changed);
+      this._labelColumn.Changed += new EventHandler(LabelColumnProxy_Changed);
     }
 
     void LabelColumnProxy_Changed(object sender, EventArgs e)
@@ -420,11 +412,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     {
       get
       {
-        return m_LabelColumn == null ? null : m_LabelColumn.Document;
+        return _labelColumn == null ? null : _labelColumn.Document;
       }
       set
       {
-        m_LabelColumn.SetDocNode(value);
+        _labelColumn.SetDocNode(value);
         OnChanged();
       }
     }
@@ -432,10 +424,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <summary>The font of the label.</summary>
     public Font Font
     {
-      get { return m_Font; }
+      get { return _font; }
       set
       {
-        m_Font = value;
+        _font = value;
         OnChanged();
       }
     }
@@ -443,7 +435,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <summary>The font size of the label.</summary>
     public float FontSize
     {
-      get { return m_Font.Size; }
+      get { return _font.Size; }
       set
       {
         float oldValue = FontSize;
@@ -451,8 +443,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
         if (newValue != oldValue)
         {
-          Font oldFont = m_Font;
-          m_Font = new Font(oldFont.FontFamily.Name, newValue, oldFont.Style, GraphicsUnit.World);
+          Font oldFont = _font;
+          _font = new Font(oldFont.FontFamily.Name, newValue, oldFont.Style, GraphicsUnit.World);
           oldFont.Dispose();
 
           OnChanged(); // Fire Changed event
@@ -465,11 +457,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// </summary>
     public bool IndependentColor
     {
-      get { return m_IndependentColor; }
+      get { return _independentColor; }
       set
       {
-        bool oldValue = m_IndependentColor;
-        m_IndependentColor = value;
+        bool oldValue = _independentColor;
+        _independentColor = value;
         if (value != oldValue)
         {
           OnChanged();
@@ -480,13 +472,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <summary>The brush color.</summary>
     public System.Drawing.Color Color
     {
-      get { return this.m_Brush.Color; }
+      get { return this._brush.Color; }
       set
       {
         Color oldColor = this.Color;
         if (value != oldColor)
         {
-          this.m_Brush.SetSolidBrush(value);
+          this._brush.SetSolidBrush(value);
           OnChanged(); // Fire Changed event
         }
       }
@@ -514,11 +506,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <summary>The x offset relative to font size, i.e. a value of 1 is 1*FontSize.</summary>
     public double XOffset
     {
-      get { return this.m_XOffset; }
+      get { return this._xOffset; }
       set
       {
-        double oldValue = this.m_XOffset;
-        this.m_XOffset = value;
+        double oldValue = this._xOffset;
+        this._xOffset = value;
         if (value != oldValue)
         {
           OnChanged();
@@ -529,11 +521,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <summary>The y offset relative to font size, i.e. a value of 1 is 1*FontSize.</summary>
     public double YOffset
     {
-      get { return this.m_YOffset; }
+      get { return this._yOffset; }
       set
       {
-        double oldValue = this.m_YOffset;
-        this.m_YOffset = value;
+        double oldValue = this._yOffset;
+        this._yOffset = value;
         if (value != oldValue)
         {
           OnChanged();
@@ -544,11 +536,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <summary>The angle of the label.</summary>
     public double Rotation
     {
-      get { return this.m_Rotation; }
+      get { return this._rotation; }
       set
       {
-        double oldValue = this.m_Rotation;
-        this.m_Rotation = value;
+        double oldValue = this._rotation;
+        this._rotation = value;
         if (value != oldValue)
         {
           OnChanged();
@@ -563,12 +555,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     {
       get
       {
-        return this.m_CachedStringFormat.Alignment;
+        return this._cachedStringFormat.Alignment;
       }
       set
       {
         System.Drawing.StringAlignment oldValue = this.HorizontalAlignment;
-        this.m_CachedStringFormat.Alignment = value;
+        this._cachedStringFormat.Alignment = value;
         if (value != oldValue)
         {
           OnChanged();
@@ -579,11 +571,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <summary>Vertical aligment of the label.</summary>
     public System.Drawing.StringAlignment VerticalAlignment
     {
-      get { return this.m_CachedStringFormat.LineAlignment; }
+      get { return this._cachedStringFormat.LineAlignment; }
       set
       {
         System.Drawing.StringAlignment oldValue = this.VerticalAlignment;
-        this.m_CachedStringFormat.LineAlignment = value;
+        this._cachedStringFormat.LineAlignment = value;
         if (value != oldValue)
         {
           OnChanged();
@@ -596,11 +588,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <summary>If axis the label is attached to if the value of <see cref="AttachToAxis" /> is true.</summary>
     public CSPlaneID AttachedAxis
     {
-      get { return this.m_AttachedAxis; }
+      get { return this._attachedPlane; }
       set
       {
-        CSPlaneID oldValue = this.m_AttachedAxis;
-        this.m_AttachedAxis = value;
+        CSPlaneID oldValue = this._attachedPlane;
+        this._attachedPlane = value;
         if (value != oldValue)
         {
           OnChanged();
@@ -622,14 +614,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     public void Paint(Graphics g, string label)
     {
       float fontSize = this.FontSize;
-      float xpos = (float)(m_XOffset * fontSize);
-      float ypos = (float)(-m_YOffset * fontSize);
-      SizeF stringsize = g.MeasureString(label, this.m_Font, new PointF(xpos, ypos), m_CachedStringFormat);
+      float xpos = (float)(_xOffset * fontSize);
+      float ypos = (float)(-_yOffset * fontSize);
+      SizeF stringsize = g.MeasureString(label, this._font, new PointF(xpos, ypos), _cachedStringFormat);
 
       if (this._backgroundStyle != null)
       {
         float x = xpos, y = ypos;
-        switch (m_CachedStringFormat.Alignment)
+        switch (_cachedStringFormat.Alignment)
         {
           case StringAlignment.Center:
             x -= stringsize.Width / 2;
@@ -638,7 +630,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
             x -= stringsize.Width;
             break;
         }
-        switch (m_CachedStringFormat.LineAlignment)
+        switch (_cachedStringFormat.LineAlignment)
         {
           case StringAlignment.Center:
             y -= stringsize.Height / 2;
@@ -650,8 +642,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         this._backgroundStyle.Draw(g, new RectangleF(x, y, stringsize.Width, stringsize.Height));
       }
 
-      m_Brush.Rectangle = new RectangleF(new PointF(xpos, ypos), stringsize);
-      g.DrawString(label, m_Font, m_Brush, xpos, ypos, m_CachedStringFormat);
+      _brush.Rectangle = new RectangleF(new PointF(xpos, ypos), stringsize);
+      g.DrawString(label, _font, _brush, xpos, ypos, _cachedStringFormat);
     }
 
 
@@ -659,16 +651,16 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
      IPlotArea layer,
      Processed2DPlotData pdata)
     {
-      if (this.m_LabelColumn.Document == null)
+      if (this._labelColumn.Document == null)
         return;
 
-      if (null != m_AttachedAxis)
-        layer.UpdateCSPlaneID(m_AttachedAxis);
+      if (null != _attachedPlane)
+        layer.UpdateCSPlaneID(_attachedPlane);
 
 
       PlotRangeList rangeList = pdata.RangeList;
       PointF[] ptArray = pdata.PlotPointsInAbsoluteLayerCoordinates;
-      Altaxo.Data.IReadableColumn labelColumn = this.m_LabelColumn.Document;
+      Altaxo.Data.IReadableColumn labelColumn = this._labelColumn.Document;
 
 
       // save the graphics stat since we have to translate the origin
@@ -699,10 +691,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
           xpre = ptArray[j].X;
           ypre = ptArray[j].Y;
 
-          if (null!=this.m_AttachedAxis)
+          if (null!=this._attachedPlane)
           {
             Logical3D r3d = layer.GetLogical3D(pdata, j + offset);
-            PointF pp = layer.CoordinateSystem.GetPointOnPlane(this.m_AttachedAxis,r3d);
+            PointF pp = layer.CoordinateSystem.GetPointOnPlane(this._attachedPlane,r3d);
             xpre = pp.X;
             ypre = pp.Y;
           }
@@ -713,11 +705,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
           xpos = xpre;
           ypos = ypre;
           g.TranslateTransform((float)xdiff, (float)ydiff);
-          if (this.m_Rotation != 0)
-            g.RotateTransform((float)-this.m_Rotation);
+          if (this._rotation != 0)
+            g.RotateTransform((float)-this._rotation);
           this.Paint(g, label);
-          if (this.m_Rotation != 0)
-            g.RotateTransform((float)this.m_Rotation);
+          if (this._rotation != 0)
+            g.RotateTransform((float)this._rotation);
         } // end for
       }
 

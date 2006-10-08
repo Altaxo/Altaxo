@@ -13,20 +13,6 @@ namespace Altaxo.Graph.Gdi
     Main.IDocumentNode,
     Main.IChangedEventSource
   {
-  
-    /// <summary>
-    /// Is the normal position of x and y axes interchanged, for instance x is vertical and y horizontal.
-    /// </summary>
-    protected bool _isXYInterchanged;
-    /// <summary>
-    /// Is the direction of the x axis reverse, for instance runs from right to left.
-    /// </summary>
-    protected bool _isXreverse;
-    /// <summary>
-    /// Is the direction of the y axis reverse, for instance runs from top to bottom.
-    /// </summary>
-    protected bool _isYreverse;
-
     protected double _layerWidth;
     protected double _layerHeight;
 
@@ -45,9 +31,6 @@ namespace Altaxo.Graph.Gdi
     /// <param name="from">The coordinate system to copy from.</param>
     public virtual void CopyFrom(G2DCoordinateSystem from)
     {
-      this._isXYInterchanged = from._isXYInterchanged;
-      this._isXreverse = from._isXreverse;
-      this._isYreverse = from._isYreverse;
       this._layerWidth = from._layerWidth;
       this._layerHeight = from._layerHeight;
       this._axisStyleInformation.Clear();
@@ -125,6 +108,11 @@ namespace Altaxo.Graph.Gdi
     /// Fills the list of axis information with new values.
     /// </summary>
     protected abstract void UpdateAxisInfo();
+
+    protected virtual void ClearCachedObjects()
+    {
+      this._axisStyleInformation = null;
+    }
 
     #region ICloneable Members
 
