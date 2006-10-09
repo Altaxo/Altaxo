@@ -21,8 +21,8 @@
 #endregion
 
 using System;
-using Altaxo.Main.GUI;
-using Altaxo.Graph.GUI;
+using Altaxo.Gui.Common;
+using Altaxo.Gui.Graph;
 using Altaxo.Data;
 using Altaxo.Calc.Regression.Nonlinear;
 
@@ -169,7 +169,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     }
     public void EhView_ChooseErrorFunction(int idx)
     {
-      Altaxo.Main.GUI.SingleInstanceChoice choice = new SingleInstanceChoice(typeof(IVarianceScaling),_doc.ErrorEvaluation(idx));
+      SingleInstanceChoice choice = new SingleInstanceChoice(typeof(IVarianceScaling),_doc.ErrorEvaluation(idx));
 
       object choiceAsObject = choice;
       if(Current.Gui.ShowDialog(ref choiceAsObject, "Select error norm"))

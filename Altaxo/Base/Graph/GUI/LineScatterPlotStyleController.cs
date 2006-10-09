@@ -27,7 +27,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
 
-namespace Altaxo.Graph.GUI
+namespace Altaxo.Gui.Graph
 {
   #region Interfaces
   /// <summary>
@@ -199,7 +199,7 @@ namespace Altaxo.Graph.GUI
   /// <summary>
   /// Summary description for LineScatterPlotStyleController.
   /// </summary>
-  public class LineScatterPlotStyleController : ILineScatterPlotStyleController, Main.GUI.IApplyController
+  public class LineScatterPlotStyleController : ILineScatterPlotStyleController, IApplyController
   {
     protected AbstractXYPlotStyle m_MasterItemPlotStyle;
     protected AbstractXYPlotStyle m_PlotItemPlotStyle;
@@ -241,8 +241,8 @@ namespace Altaxo.Graph.GUI
       LineScatterPlotStyleControl view = new LineScatterPlotStyleControl();
       ctrl.View = view;
 
-      Main.GUI.DialogShellController dsc = new Main.GUI.DialogShellController(
-        new Main.GUI.DialogShellView(view), ctrl);
+      DialogShellController dsc = new DialogShellController(
+        new DialogShellView(view), ctrl);
 
       return dsc.ShowDialog(parentWindow);
     }

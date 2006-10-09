@@ -32,7 +32,7 @@ using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Gui.Common.Drawing
 {
-  public partial class BrushAllPropertiesControl : UserControl, Altaxo.Main.GUI.IMVCAController
+  public partial class BrushAllPropertiesControl : UserControl, IMVCAController
   {
     public BrushAllPropertiesControl()
     {

@@ -21,8 +21,9 @@
 #endregion
 
 using System;
+using Altaxo.Gui;
 
-namespace Altaxo.Main.GUI
+namespace Altaxo.Gui.Common
 {
   #region Interfaces
 

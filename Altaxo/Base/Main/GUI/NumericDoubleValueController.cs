@@ -22,7 +22,7 @@
 
 using System;
 
-namespace Altaxo.Main.GUI
+namespace Altaxo.Gui.Common
 {
   /// <summary>
   /// Summary description for NumericDoubleValueController.

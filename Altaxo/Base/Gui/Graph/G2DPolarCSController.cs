@@ -5,9 +5,9 @@ using Altaxo.Graph.Gdi.CS;
 
 namespace Altaxo.Gui.Graph
 {
-  [Main.GUI.UserControllerForObject(typeof(G2DPolarCoordinateSystem),101)]
-  [Main.GUI.ExpectedTypeOfView(typeof(IG2DCartesicCSView))]
-  public class G2DPolarCSController : Main.GUI.IMVCAController
+  [UserControllerForObject(typeof(G2DPolarCoordinateSystem),101)]
+  [ExpectedTypeOfView(typeof(IG2DCartesicCSView))]
+  public class G2DPolarCSController : IMVCAController
   {
     IG2DCartesicCSView _view;
     G2DPolarCoordinateSystem _doc;

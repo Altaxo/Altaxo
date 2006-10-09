@@ -29,6 +29,8 @@ using System.Windows.Forms;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Shapes;
 using Altaxo.Serialization;
+using Altaxo.Gui.Graph;
+
 namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
 {
  

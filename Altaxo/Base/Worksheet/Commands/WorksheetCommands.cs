@@ -21,6 +21,7 @@
 #endregion
 
 using Altaxo.Worksheet.GUI;
+using Altaxo.Gui.Common;
 
 namespace Altaxo.Worksheet.Commands
 {
@@ -31,9 +32,9 @@ namespace Altaxo.Worksheet.Commands
   {
     public static void Rename(WorksheetController ctrl)
     {
-      Main.GUI.TextValueInputController tvctrl = new Main.GUI.TextValueInputController(
+      TextValueInputController tvctrl = new TextValueInputController(
         ctrl.Doc.Name,
-        new Main.GUI.SingleValueDialog("Rename Worksheet","Enter a name for the worksheet:")
+        new SingleValueDialog("Rename Worksheet","Enter a name for the worksheet:")
         );
 
       tvctrl.Validator = new WorksheetRenameValidator(ctrl.Doc,ctrl);
@@ -41,7 +42,7 @@ namespace Altaxo.Worksheet.Commands
         ctrl.Doc.Name = tvctrl.InputText.Trim();
     }
 
-    protected class WorksheetRenameValidator : Main.GUI.TextValueInputController.NonEmptyStringValidator
+    protected class WorksheetRenameValidator : TextValueInputController.NonEmptyStringValidator
     {
       Altaxo.Data.DataTable m_Table;
       WorksheetController m_Ctrl;
@@ -131,8 +132,8 @@ namespace Altaxo.Worksheet.Commands
       Worksheet.GUI.TransposeWorksheetControl transposeview = new Worksheet.GUI.TransposeWorksheetControl();
       Worksheet.GUI.TransposeWorksheetController transposectrl = new Worksheet.GUI.TransposeWorksheetController(ctrl.DataTable,transposeview);
       
-      Altaxo.Main.GUI.DialogShellController dsc = new Altaxo.Main.GUI.DialogShellController(
-        new Altaxo.Main.GUI.DialogShellView(transposeview),transposectrl,"Transpose worksheet",false);
+      DialogShellController dsc = new DialogShellController(
+        new DialogShellView(transposeview),transposectrl,"Transpose worksheet",false);
 
       dsc.ShowDialog(Current.MainWindow);
     }
@@ -140,12 +141,12 @@ namespace Altaxo.Worksheet.Commands
 
     public static void AddDataColumns(WorksheetController ctrl)
     {
-      Altaxo.Main.GUI.DialogFactory.ShowAddColumnsDialog(ctrl.View.TableViewForm,ctrl.DataTable,false);
+      DialogFactory.ShowAddColumnsDialog(ctrl.View.TableViewForm,ctrl.DataTable,false);
     }
 
     public static void AddPropertyColumns(WorksheetController ctrl)
     {
-      Altaxo.Main.GUI.DialogFactory.ShowAddColumnsDialog(ctrl.View.TableViewForm,ctrl.DataTable,true);
+      DialogFactory.ShowAddColumnsDialog(ctrl.View.TableViewForm,ctrl.DataTable,true);
     }
     
 

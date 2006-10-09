@@ -26,7 +26,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
 
-namespace Altaxo.Main.GUI
+namespace Altaxo.Gui.Common
 {
   /// <summary>
   /// Summary description for SingleValueDialog.

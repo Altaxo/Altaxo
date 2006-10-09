@@ -22,7 +22,7 @@
 
 using System;
 
-namespace Altaxo.Main.GUI
+namespace Altaxo.Gui
 {
   /// <summary>
   /// The interface that a controller of the MVC (Model-View-Controller) model must implement.

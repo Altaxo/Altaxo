@@ -26,7 +26,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
 
-namespace Altaxo.Main.GUI
+namespace Altaxo.Gui.Common
 {
   /// <summary>
   /// This view is intended to be used as Dialog. It hosts an arbitrary UserControl in its client area,

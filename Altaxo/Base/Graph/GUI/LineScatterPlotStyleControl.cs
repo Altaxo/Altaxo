@@ -27,7 +27,7 @@ using System.Drawing;
 using System.Data;
 using System.Windows.Forms;
 
-namespace Altaxo.Graph.GUI
+namespace Altaxo.Gui.Graph
 {
 #if false
   /// <summary>

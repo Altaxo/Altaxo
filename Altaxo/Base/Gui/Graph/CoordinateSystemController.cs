@@ -8,15 +8,15 @@ using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.Graph
 {
-  [Main.GUI.UserControllerForObject(typeof(G2DCoordinateSystem))]
-  [Main.GUI.ExpectedTypeOfView(typeof(ITypeAndInstanceView))]
-  public class CoordinateSystemController : Main.GUI.IMVCAController
+  [UserControllerForObject(typeof(G2DCoordinateSystem))]
+  [ExpectedTypeOfView(typeof(ITypeAndInstanceView))]
+  public class CoordinateSystemController : IMVCAController
   {
     ITypeAndInstanceView _view;
     G2DCoordinateSystem _doc;
     G2DCoordinateSystem _tempdoc;
 
-    Main.GUI.IMVCAController _instanceController;
+    IMVCAController _instanceController;
 
     public CoordinateSystemController(G2DCoordinateSystem doc)
     {
@@ -42,7 +42,7 @@ namespace Altaxo.Gui.Graph
           list.Add(new ListNode(Current.Gui.GetUserFriendlyClassName(t), t));
 
         // look for a controller-control
-        _instanceController = (Main.GUI.IMVCAController)Current.Gui.GetControllerAndControl(new object[]{_tempdoc},typeof(Main.GUI.IMVCAController));
+        _instanceController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[]{_tempdoc},typeof(IMVCAController));
         _view.TypeLabel="Type";
         _view.InitializeTypeNames(list, list.IndexOfObject(_tempdoc.GetType()));
         _view.SetInstanceControl(_instanceController.ViewObject);

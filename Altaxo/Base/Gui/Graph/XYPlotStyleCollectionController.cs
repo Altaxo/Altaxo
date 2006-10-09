@@ -23,7 +23,7 @@
 using System;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Plot.Styles;
-using Altaxo.Main.GUI;
+
 
 namespace Altaxo.Gui.Graph
 {
@@ -53,7 +53,7 @@ namespace Altaxo.Gui.Graph
   /// <summary>
   /// Summary description for XYPlotStyleCollectionController.
   /// </summary>
-  public interface IXYPlotStyleCollectionController : Main.GUI.IMVCAController
+  public interface IXYPlotStyleCollectionController : IMVCAController
   {
     event EventHandler CollectionChangeCommit;
     void OnCollectionChangeCommit();

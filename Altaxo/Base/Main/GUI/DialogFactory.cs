@@ -24,10 +24,11 @@ using System;
 
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.GUI;
+using Altaxo.Gui.Graph;
 using Altaxo.Graph.Gdi.Plot;
 using Altaxo.Graph.Gdi.Plot.Groups;
 
-namespace Altaxo.Main.GUI
+namespace Altaxo.Gui.Common
 {
   /// <summary>
   /// DialogFactory contains static methods for building and showing dialogs.
@@ -58,8 +59,8 @@ namespace Altaxo.Main.GUI
       SpinAndComboBoxControl panel = new SpinAndComboBoxControl();
       ct.View = panel;
 
-      GUI.DialogShellController dsc = new GUI.DialogShellController(
-        new GUI.DialogShellView(panel),ct,"Add new column(s)",false);
+      DialogShellController dsc = new DialogShellController(
+        new DialogShellView(panel),ct,"Add new column(s)",false);
 
       
       if(true==dsc.ShowDialog(owner))
@@ -176,9 +177,9 @@ namespace Altaxo.Main.GUI
       DensityImagePlotStyleControl      styleview = new DensityImagePlotStyleControl();
       stylectrl.View = styleview;
 
-      GUI.TabbedDialogController tdcctrl = new GUI.TabbedDialogController("Density Image Plot",true);
+      TabbedDialogController tdcctrl = new TabbedDialogController("Density Image Plot",true);
       tdcctrl.AddTab("Style",stylectrl,styleview);
-      GUI.TabbedDialogView  tdcview = new GUI.TabbedDialogView();
+      TabbedDialogView  tdcview = new TabbedDialogView();
       tdcctrl.View = tdcview;
 
       return tdcctrl.ShowDialog(parentWindow);
@@ -193,13 +194,13 @@ namespace Altaxo.Main.GUI
     /// <param name="parentWindow">The window in whose context the dialog is shown.</param>
     /// <param name="controller">The polynomial fit controller. Contains the user choices at the end of this routine.</param>
     /// <returns>True if the user has pressed OK.</returns>
-    public static bool ShowPolynomialFitDialog(System.Windows.Forms.Form parentWindow, Graph.GUI.IFitPolynomialDialogController controller)
+    public static bool ShowPolynomialFitDialog(System.Windows.Forms.Form parentWindow, Altaxo.Gui.Graph.IFitPolynomialDialogController controller)
     {
-      Graph.GUI.FitPolynomialDialogControl panel = new Graph.GUI.FitPolynomialDialogControl();
+      FitPolynomialDialogControl panel = new FitPolynomialDialogControl();
       controller.ViewObject = panel;
 
-      GUI.DialogShellController dsc = new GUI.DialogShellController(
-        new GUI.DialogShellView(panel),controller,"Polynomial fit",false);
+      DialogShellController dsc = new DialogShellController(
+        new DialogShellView(panel),controller,"Polynomial fit",false);
  
 
       return dsc.ShowDialog(parentWindow);

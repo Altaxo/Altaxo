@@ -22,13 +22,15 @@
 
 using System;
 using Altaxo.Serialization;
+using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
+using Altaxo.Gui;
 
-namespace Altaxo.Graph.GUI
+namespace Altaxo.Gui.Graph
 {
 
   #region Interfaces
-  public interface ILayerPositionController : Main.GUI.IApplyController, Main.GUI.IMVCController
+  public interface ILayerPositionController : IApplyController, IMVCController
   {
     /// <summary>
     /// Get/sets the view this controller controls.
@@ -51,7 +53,7 @@ namespace Altaxo.Graph.GUI
     void EhView_ClipDataToFrameChanged(bool value);
   }
 
-  public interface ILayerPositionView : Main.GUI.IMVCView
+  public interface ILayerPositionView : IMVCView
   {
 
     /// <summary>

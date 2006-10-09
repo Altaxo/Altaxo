@@ -22,7 +22,7 @@
 
 using System;
 
-using Altaxo.Main.GUI;
+
 using Altaxo.Calc.Regression.Nonlinear;
 
 
@@ -41,7 +41,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     void EhView_VarySelectionChanged(bool value);
   }
 
-  public interface IParameterSetElementController : Altaxo.Main.GUI.IMVCAController, IParameterSetElementViewEventSink , Altaxo.Gui.IRefreshable
+  public interface IParameterSetElementController : IMVCAController, IParameterSetElementViewEventSink , Altaxo.Gui.IRefreshable
   {
   }
 

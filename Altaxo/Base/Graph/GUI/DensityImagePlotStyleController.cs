@@ -24,11 +24,12 @@ using System;
 using Altaxo.Serialization;
 using Altaxo.Graph.Gdi.Plot;
 using Altaxo.Graph.Gdi.Plot.Styles;
+using Altaxo.Gui;
 
-namespace Altaxo.Graph.GUI
+namespace Altaxo.Gui.Graph
 {
   #region Interfaces
-  public interface IDensityImagePlotStyleController : Main.GUI.IApplyController, Main.GUI.IMVCController
+  public interface IDensityImagePlotStyleController : IApplyController, IMVCController
   {
     /// <summary>
     /// Get/sets the view this controller controls.
@@ -64,7 +65,7 @@ namespace Altaxo.Graph.GUI
 
   }
 
-  public interface IDensityImagePlotStyleView : Main.GUI.IMVCView
+  public interface IDensityImagePlotStyleView : IMVCView
   {
 
     /// <summary>

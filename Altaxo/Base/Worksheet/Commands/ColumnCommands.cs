@@ -23,6 +23,7 @@
 using System;
 using System.Text.RegularExpressions;
 using Altaxo.Worksheet.GUI;
+using Altaxo.Gui.Common;
 
 namespace Altaxo.Worksheet.Commands
 {
@@ -42,9 +43,9 @@ namespace Altaxo.Worksheet.Commands
       if(ctrl.SelectedDataColumns.Count==1 && ctrl.SelectedPropertyColumns.Count==0)
       {
         Altaxo.Data.DataColumn col = ctrl.Doc.DataColumns[ctrl.SelectedDataColumns[0]];
-        Main.GUI.TextValueInputController tvctrl = new Main.GUI.TextValueInputController(
+        TextValueInputController tvctrl = new TextValueInputController(
           col.Name,
-          new Main.GUI.RenameColumnDialog()
+          new RenameColumnDialog()
           );
 
         tvctrl.Validator = new DataColumnRenameValidator(col,ctrl);
@@ -54,9 +55,9 @@ namespace Altaxo.Worksheet.Commands
       if(ctrl.SelectedDataColumns.Count==0 && ctrl.SelectedPropertyColumns.Count==1)
       {
         Altaxo.Data.DataColumn col = ctrl.Doc.PropCols[ctrl.SelectedPropertyColumns[0]];
-        Main.GUI.TextValueInputController tvctrl = new Main.GUI.TextValueInputController(
+        TextValueInputController tvctrl = new TextValueInputController(
           col.Name,
-          new Main.GUI.RenameColumnDialog()
+          new RenameColumnDialog()
           );
 
         tvctrl.Validator = new PropertyColumnRenameValidator(col,ctrl);
@@ -69,7 +70,7 @@ namespace Altaxo.Worksheet.Commands
     /// <summary>
     /// Helper class to make sure that user choosen data column name does not already exists.
     /// </summary>
-    public class DataColumnRenameValidator : Main.GUI.TextValueInputController.NonEmptyStringValidator
+    public class DataColumnRenameValidator : TextValueInputController.NonEmptyStringValidator
     {
       Altaxo.Data.DataColumn m_Col;
       WorksheetController m_Ctrl;
@@ -101,7 +102,7 @@ namespace Altaxo.Worksheet.Commands
     /// <summary>
     /// Helper class to make sure that user choosen property column name does not already exists.
     /// </summary>
-    public class PropertyColumnRenameValidator : Main.GUI.TextValueInputController.NonEmptyStringValidator
+    public class PropertyColumnRenameValidator : TextValueInputController.NonEmptyStringValidator
     {
       Altaxo.Data.DataColumn m_Col;
       WorksheetController m_Ctrl;
@@ -148,12 +149,12 @@ namespace Altaxo.Worksheet.Commands
         else if(ctrl.SelectedPropertyColumns.Count>0)
           grpNumber = ctrl.DataTable.PropertyColumns.GetColumnGroup(ctrl.SelectedPropertyColumns[0]);
         
-        Main.GUI.IntegerValueInputController ivictrl = new Main.GUI.IntegerValueInputController(
+        IntegerValueInputController ivictrl = new IntegerValueInputController(
           grpNumber,
-          new Main.GUI.SingleValueDialog("Set group number","Please enter a group number (>=0):")
+          new SingleValueDialog("Set group number","Please enter a group number (>=0):")
           );
 
-        ivictrl.Validator = new Altaxo.Main.GUI.IntegerValueInputController.ZeroOrPositiveIntegerValidator();
+        ivictrl.Validator = new IntegerValueInputController.ZeroOrPositiveIntegerValidator();
         if(ivictrl.ShowDialog(ctrl.View.TableViewForm))
         {
           SetSelectedColumnGroupNumber(ctrl,ivictrl.EnteredContents);
@@ -201,12 +202,12 @@ namespace Altaxo.Worksheet.Commands
 
       int newposition = int.MinValue;
         
-      Main.GUI.IntegerValueInputController ivictrl = new Main.GUI.IntegerValueInputController(
+      IntegerValueInputController ivictrl = new IntegerValueInputController(
         0,
-        new Main.GUI.SingleValueDialog("New column position","Please enter the new position (>=0):")
+        new SingleValueDialog("New column position","Please enter the new position (>=0):")
         );
 
-      ivictrl.Validator = new Altaxo.Main.GUI.IntegerValueInputController.ZeroOrPositiveIntegerValidator();
+      ivictrl.Validator = new IntegerValueInputController.ZeroOrPositiveIntegerValidator();
       if(ivictrl.ShowDialog(ctrl.View.TableViewForm))
       {
         newposition = ivictrl.EnteredContents;
@@ -426,7 +427,7 @@ namespace Altaxo.Worksheet.Commands
 
       Data.ColumnScript colScript = (Data.ColumnScript)(ctrl.DataTable.DataColumns.ColumnScripts[dataCol]);
 
-      Altaxo.Main.GUI.DialogFactory.ShowColumnScriptDialog(ctrl.View.TableViewForm,ctrl.DataTable,dataCol,colScript);
+      DialogFactory.ShowColumnScriptDialog(ctrl.View.TableViewForm,ctrl.DataTable,dataCol,colScript);
     }
      */
 

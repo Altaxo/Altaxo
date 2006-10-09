@@ -21,13 +21,14 @@
 #endregion
 
 using System;
+using Altaxo.Gui;
 
 namespace Altaxo.Worksheet.GUI
 {
   /// <summary>
   /// Summary description for PLSPredictValueController.
   /// </summary>
-  public class PLSPredictValueController : Altaxo.Main.GUI.IApplyController
+  public class PLSPredictValueController : IApplyController
 
   {
     PLSPredictValueControl _view;

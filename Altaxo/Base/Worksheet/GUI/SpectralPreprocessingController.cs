@@ -22,13 +22,14 @@
 
 using System;
 using Altaxo.Calc.Regression.Multivariate;
+using Altaxo.Gui;
 
 namespace Altaxo.Worksheet.GUI
 {
   /// <summary>
   /// Controls the SpectralPreprocessingControl GUI for choosing <see cref="SpectralPreprocessingOptions" />
   /// </summary>
-  public class SpectralPreprocessingController : Main.GUI.IApplyController
+  public class SpectralPreprocessingController : IApplyController
   {
     SpectralPreprocessingControl _view;
     SpectralPreprocessingOptions _doc;

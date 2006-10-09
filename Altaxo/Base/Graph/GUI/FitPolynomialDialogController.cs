@@ -21,13 +21,14 @@
 #endregion
 
 using System;
+using Altaxo.Gui;
 
-namespace Altaxo.Graph.GUI
+namespace Altaxo.Gui.Graph
 {
   /// <summary>
   /// Interface for controlling the polynomial fit view.
   /// </summary>
-  public interface IFitPolynomialDialogController : Main.GUI.IMVCController, Main.GUI.IApplyController
+  public interface IFitPolynomialDialogController : IMVCController, IApplyController
   {
     /// <summary>Returns the fitting order.</summary>
     int Order { get; }

@@ -25,7 +25,7 @@ using System.Collections.Generic;
 using System.Text;
 
 using Altaxo.Calc;
-using Altaxo.Main.GUI;
+
 using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Gui.Graph
@@ -66,7 +66,7 @@ namespace Altaxo.Gui.Graph
   /// Summary description.
   /// </summary>
   [UserControllerForObject(typeof(PositiveIntegerRange))]
-  public class PlottingRangeController : IPlottingRangeViewEventSink, Main.GUI.IMVCAController
+  public class PlottingRangeController : IPlottingRangeViewEventSink, IMVCAController
   {
     IPlottingRangeView _view;
     PositiveIntegerRange _doc;

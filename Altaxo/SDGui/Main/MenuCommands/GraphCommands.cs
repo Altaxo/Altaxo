@@ -30,6 +30,9 @@ using Altaxo.Graph.Gdi.Plot;
 using Altaxo.Graph.Gdi.Plot.Styles;
 using Altaxo.Graph.Gdi.Plot.Data;
 using Altaxo.Graph.GUI;
+using Altaxo.Gui.Graph;
+using Altaxo.Gui;
+using Altaxo.Gui.Common;
 using Altaxo.Gui.Scripting;
 using Altaxo.Scripting;
 using ICSharpCode.SharpZipLib.Zip;
@@ -433,8 +436,8 @@ namespace Altaxo.Graph.Commands
   {
     public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
     {
-      Altaxo.Graph.GUI.IFitPolynomialDialogController dlg = new Altaxo.Graph.GUI.FitPolynomialDialogController(2,double.NegativeInfinity,double.PositiveInfinity,false);
-      if(Main.GUI.DialogFactory.ShowPolynomialFitDialog(Current.MainWindow,dlg))
+      IFitPolynomialDialogController dlg = new FitPolynomialDialogController(2,double.NegativeInfinity,double.PositiveInfinity,false);
+      if(DialogFactory.ShowPolynomialFitDialog(Current.MainWindow,dlg))
       {
         Altaxo.Graph.Procedures.PolynomialFitting.Fit(ctrl,dlg.Order,dlg.FitCurveXmin,dlg.FitCurveXmax,dlg.ShowFormulaOnGraph);
       }

@@ -21,7 +21,7 @@
 #endregion
 
 using System;
-using Altaxo.Main.GUI;
+
 using Altaxo.Graph.Gdi;
 using Altaxo.Scripting;
 using Altaxo.Gui.Scripting;
@@ -62,12 +62,12 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
   /// Summary description for NonlinearFitController.
   /// </summary>
   [UserControllerForObject(typeof(NonlinearFitDocument))]
-  public class NonlinearFitController : INonlinearFitViewEventSink, Main.GUI.IMVCAController
+  public class NonlinearFitController : INonlinearFitViewEventSink, IMVCAController
   {
     NonlinearFitDocument _doc;
     INonlinearFitView _view;
 
-    Main.GUI.IMVCAController _parameterController;
+    IMVCAController _parameterController;
     FitFunctionSelectionController _funcselController;
     IFitEnsembleController _fitEnsembleController;
 
@@ -76,7 +76,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     public NonlinearFitController(NonlinearFitDocument doc)
     {
       _doc = doc;
-      _parameterController = (Main.GUI.IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _doc.CurrentParameters }, typeof(Main.GUI.IMVCAController));
+      _parameterController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _doc.CurrentParameters }, typeof(IMVCAController));
       _fitEnsembleController = (IFitEnsembleController)Current.Gui.GetControllerAndControl(new object[] { _doc.FitEnsemble }, typeof(IFitEnsembleController));
 
       _funcselController = new FitFunctionSelectionController(_doc.FitEnsemble.Count == 0 ? null : _doc.FitEnsemble[0].FitFunction);

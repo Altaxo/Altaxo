@@ -21,19 +21,20 @@
 #endregion
 
 using System;
-using Altaxo.Main.GUI;
+
 using Altaxo.Graph.Scales;
 using Altaxo.Graph.Gdi;
+using Altaxo.Gui;
 
-namespace Altaxo.Graph.GUI
+namespace Altaxo.Gui.Graph
 {
   #region Interfaces
-  public interface IAxisScaleController : Main.GUI.IApplyController, Main.GUI.IMVCController
+  public interface IAxisScaleController : IApplyController, IMVCController
   {
     void EhView_AxisTypeChanged(string text);
   }
 
-  public interface IAxisScaleView : Main.GUI.IMVCView
+  public interface IAxisScaleView : IMVCView
   {
 
     IAxisScaleController Controller { get; set; }

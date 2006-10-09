@@ -22,13 +22,14 @@
 
 using System;
 using Altaxo.Calc.Regression.Multivariate;
+using Altaxo.Gui;
 
 namespace Altaxo.Worksheet.GUI
 {
   /// <summary>
   /// Summary description for PLSStartAnalysisController.
   /// </summary>
-  public class PLSStartAnalysisController : Altaxo.Main.GUI.IApplyController
+  public class PLSStartAnalysisController : IApplyController
   {
     MultivariateAnalysisOptions _doc;
     PLSStartAnalysisControl _view;

@@ -27,7 +27,7 @@ using Altaxo.Graph.Gdi.Plot;
 using Altaxo.Graph.Gdi.Plot.Styles;
 using Altaxo.Graph.Gdi.Plot.Groups;
 using Altaxo.Graph.PlotGroups;
-using Altaxo.Main.GUI;
+
 using System.Collections;
 
 namespace Altaxo.Gui.Graph
@@ -37,7 +37,7 @@ namespace Altaxo.Gui.Graph
   /// Summary description for XYColumnPlotItemController.
   /// </summary>
   [UserControllerForObject(typeof(G2DPlotItem))]
-  public class G2DPlotItemController : TabbedElementController, Main.GUI.IMVCAController, IXYPlotGroupViewEventSink
+  public class G2DPlotItemController : TabbedElementController, IMVCAController, IXYPlotGroupViewEventSink
   {
     G2DPlotItem _doc;
     G2DPlotItem _tempdoc;

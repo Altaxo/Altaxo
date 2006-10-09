@@ -23,7 +23,7 @@
 using System;
 
 using Altaxo.Scripting;
-using Altaxo.Main.GUI;
+
 
 namespace Altaxo.Gui.Scripting
 {
@@ -44,7 +44,7 @@ namespace Altaxo.Gui.Scripting
   }
 
 
-  public interface IPureScriptController : Main.GUI.IMVCAController
+  public interface IPureScriptController : IMVCAController
   {
 
     // Initializes or reinitializes the script controller.

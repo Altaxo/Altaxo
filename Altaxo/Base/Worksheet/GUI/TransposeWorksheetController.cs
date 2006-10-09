@@ -21,13 +21,14 @@
 #endregion
 
 using System;
+using Altaxo.Gui;
 
 namespace Altaxo.Worksheet.GUI
 {
   /// <summary>
   /// Summary description for TransposeWorksheetController.
   /// </summary>
-  public class TransposeWorksheetController : Altaxo.Main.GUI.IApplyController
+  public class TransposeWorksheetController : IApplyController
   {
     Altaxo.Data.DataTable _table;
     TransposeWorksheetControl _view;

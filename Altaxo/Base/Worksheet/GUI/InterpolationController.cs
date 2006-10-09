@@ -22,7 +22,7 @@
 
 using System;
 using Altaxo.Calc.Regression;
-using Altaxo.Main.GUI;
+using Altaxo.Gui;
 
 namespace Altaxo.Worksheet.GUI
 {
@@ -63,7 +63,7 @@ namespace Altaxo.Worksheet.GUI
   /// Summary description for InterpolationParameterController.
   /// </summary>
   [UserControllerForObject(typeof(InterpolationParameters),100)]
-  public class InterpolationParameterController : Main.GUI.IMVCAController, IInterpolationParameterViewEventSink
+  public class InterpolationParameterController : IMVCAController, IInterpolationParameterViewEventSink
   {
     InterpolationParameters _doc;
     IInterpolationParameterView _view;

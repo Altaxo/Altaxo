@@ -27,7 +27,7 @@ using Altaxo.Serialization;
 using System.Drawing;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.GUI;
-using Altaxo.Main.GUI;
+
 using Altaxo.Data;
 
 using Altaxo.Graph;
@@ -201,7 +201,7 @@ namespace Altaxo.Gui.Graph
     void IndependentColor_Initialize(bool bIndependent);
   }
 
-  public interface IXYPlotLabelStyleController : Main.GUI.IMVCAController
+  public interface IXYPlotLabelStyleController : IMVCAController
   {
   }
 

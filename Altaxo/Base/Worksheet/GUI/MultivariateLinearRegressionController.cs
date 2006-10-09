@@ -22,17 +22,19 @@
 
 using System;
 using Altaxo.Calc.Regression.Multivariate;
-using Altaxo.Main.GUI;
+
+using Altaxo.Gui;
+using Altaxo.Gui.Common;
 
 namespace Altaxo.Worksheet.GUI
 {
-  [Altaxo.Main.GUI.UserControllerForObject(typeof(MultivariateLinearFitParameters),100)]
-  public class MultivariateLinearRegressionController : Altaxo.Main.GUI.MultiChildController
+  [UserControllerForObject(typeof(MultivariateLinearFitParameters),100)]
+  public class MultivariateLinearRegressionController : Altaxo.Gui.Common.MultiChildController
   {
     MultivariateLinearFitParameters _param;
-    IMVCAController[] _controller = new IMVCAController[4];
-    Main.GUI.SingleChoiceController _ctrl0;
-    Main.GUI.BooleanValueController _ctrl1,_ctrl2, _ctrl3;
+    ControlViewElement[] _elements = new ControlViewElement[4];
+    SingleChoiceController _ctrl0;
+    BooleanValueController _ctrl1,_ctrl2, _ctrl3;
     public MultivariateLinearRegressionController(MultivariateLinearFitParameters param)
     {
       _param = param;
@@ -43,22 +45,25 @@ namespace Altaxo.Worksheet.GUI
 
      
       
-      _controller[0] = _ctrl0 = new Main.GUI.SingleChoiceController(names,0);
-      _controller[1] = _ctrl1 = new Main.GUI.BooleanValueController(_param.IncludeIntercept);
-      _controller[2] = _ctrl2 = new Main.GUI.BooleanValueController(_param.GenerateRegressionValues);
-      _controller[3] = _ctrl3 = new Main.GUI.BooleanValueController(_param.GenerateRegressionValues);
+      _elements[0].Controller = _ctrl0 = new SingleChoiceController(names,0);
+      _elements[1].Controller = _ctrl1 = new BooleanValueController(_param.IncludeIntercept);
+      _elements[2].Controller = _ctrl2 = new BooleanValueController(_param.GenerateRegressionValues);
+      _elements[3].Controller = _ctrl3 = new BooleanValueController(_param.GenerateRegressionValues);
 
       _ctrl0.DescriptionText = "Choose the dependent variable:";
       _ctrl1.DescriptionText = "Include intercept";
       _ctrl2.DescriptionText = "Generate prediction values";
       _ctrl3.DescriptionText = "Generate residual values";
 
-      for(int i=0;i<_controller.Length;i++)
+      for(int i=0;i<_elements.Length;i++)
       {
-        Current.Gui.FindAndAttachControlTo(_controller[i]);
+        Current.Gui.FindAndAttachControlTo((IMVCController)_elements[i].Controller);
+        _elements[i].View = ((IMVCController)_elements[i]).ViewObject;
+        _elements[i].Title = null;
       }
 
-      base.Initialize(_controller);
+
+      base.Initialize(_elements,false);
     }
 
     public override object ModelObject

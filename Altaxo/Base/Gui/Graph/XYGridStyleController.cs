@@ -25,7 +25,7 @@ using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Axis;
 
 using Altaxo.Gui.Common.Drawing;
-using Altaxo.Main.GUI;
+
 
 namespace Altaxo.Gui.Graph
 {
@@ -57,7 +57,7 @@ namespace Altaxo.Gui.Graph
   /// Summary description for XYGridStyleController.
   /// </summary>
   [UserControllerForObject(typeof(GridStyle))]
-  public class XYGridStyleController : Main.GUI.IMVCAController, IXYGridStyleViewEventSink
+  public class XYGridStyleController : IMVCAController, IXYGridStyleViewEventSink
   {
     IXYGridStyleView _view;
     GridStyle _doc;

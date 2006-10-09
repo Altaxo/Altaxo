@@ -57,12 +57,12 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     void EhView_RemoveItem(IFitFunctionInformation selectedtag);
   }
 
-  public interface IFitFunctionSelectionController : Main.GUI.IMVCAController
+  public interface IFitFunctionSelectionController : IMVCAController
   {
     void Refresh();
   }
 
-  public class FitFunctionSelectionController : IFitFunctionSelectionViewEventSink, Main.GUI.IMVCAController
+  public class FitFunctionSelectionController : IFitFunctionSelectionViewEventSink, IMVCAController
   {
     IFitFunction _doc;
     IFitFunctionInformation _tempdoc;

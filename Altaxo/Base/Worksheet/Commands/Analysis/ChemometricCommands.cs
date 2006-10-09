@@ -27,7 +27,7 @@ using Altaxo.Worksheet.GUI;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression.Multivariate;
 using Altaxo.Data;
-using Altaxo.Main.GUI;
+using Altaxo.Gui.Common;
 
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Background;
@@ -161,12 +161,12 @@ namespace Altaxo.Worksheet.Commands.Analysis
     public static void PCAOnRows(WorksheetController ctrl)
     {
       int maxFactors = 3;
-      Main.GUI.IntegerValueInputController ivictrl = new Main.GUI.IntegerValueInputController(
+      IntegerValueInputController ivictrl = new IntegerValueInputController(
         maxFactors,
-        new Main.GUI.SingleValueDialog("Set maximum number of factors","Please enter the maximum number of factors to calculate:")
+        new SingleValueDialog("Set maximum number of factors","Please enter the maximum number of factors to calculate:")
         );
 
-      ivictrl.Validator = new Altaxo.Main.GUI.IntegerValueInputController.ZeroOrPositiveIntegerValidator();
+      ivictrl.Validator = new IntegerValueInputController.ZeroOrPositiveIntegerValidator();
       if(ivictrl.ShowDialog(ctrl.View.TableViewForm))
       {
         string err= PrincipalComponentAnalysis(Current.Project,ctrl.Doc,ctrl.SelectedDataColumns,ctrl.SelectedDataRows,true,ivictrl.EnteredContents);
@@ -178,12 +178,12 @@ namespace Altaxo.Worksheet.Commands.Analysis
     public static void PCAOnColumns(WorksheetController ctrl)
     {
       int maxFactors = 3;
-      Main.GUI.IntegerValueInputController ivictrl = new Main.GUI.IntegerValueInputController(
+      IntegerValueInputController ivictrl = new IntegerValueInputController(
         maxFactors,
-        new Main.GUI.SingleValueDialog("Set maximum number of factors","Please enter the maximum number of factors to calculate:")
+        new SingleValueDialog("Set maximum number of factors","Please enter the maximum number of factors to calculate:")
         );
 
-      ivictrl.Validator = new Altaxo.Main.GUI.IntegerValueInputController.ZeroOrPositiveIntegerValidator();
+      ivictrl.Validator = new IntegerValueInputController.ZeroOrPositiveIntegerValidator();
       if(ivictrl.ShowDialog(ctrl.View.TableViewForm))
       {
         string err= PrincipalComponentAnalysis(Current.Project,ctrl.Doc,ctrl.SelectedDataColumns,ctrl.SelectedDataRows,false,ivictrl.EnteredContents);
@@ -481,12 +481,12 @@ namespace Altaxo.Worksheet.Commands.Analysis
     public static void ExportPLSCalibration(Altaxo.Data.DataTable table)
     {
       // quest the number of factors to export
-      Main.GUI.IntegerValueInputController ivictrl = new Main.GUI.IntegerValueInputController(
+      IntegerValueInputController ivictrl = new IntegerValueInputController(
         1,
-        new Main.GUI.SingleValueDialog("Number of factors","Please choose number of factors to export (>0):")
+        new SingleValueDialog("Number of factors","Please choose number of factors to export (>0):")
         );
 
-      ivictrl.Validator = new Altaxo.Main.GUI.IntegerValueInputController.ZeroOrPositiveIntegerValidator();
+      ivictrl.Validator = new IntegerValueInputController.ZeroOrPositiveIntegerValidator();
       if(!ivictrl.ShowDialog(Current.MainWindow))
         return;
 
@@ -601,8 +601,8 @@ namespace Altaxo.Worksheet.Commands.Analysis
       Altaxo.Worksheet.GUI.PLSPredictValueControl viewctrl = new PLSPredictValueControl();
       ctrl.View = viewctrl;
 
-      Altaxo.Main.GUI.DialogShellController dlgctrl = new Altaxo.Main.GUI.DialogShellController(
-        new Altaxo.Main.GUI.DialogShellView(viewctrl),ctrl);
+      DialogShellController dlgctrl = new DialogShellController(
+        new DialogShellView(viewctrl),ctrl);
 
       if(dlgctrl.ShowDialog(Current.MainWindow))
       {
@@ -835,12 +835,12 @@ namespace Altaxo.Worksheet.Commands.Analysis
     public static void QuestPreferredNumberOfFactors(MultivariateContentMemento plsMemo)
     {
       // quest the number of factors to export
-      Main.GUI.IntegerValueInputController ivictrl = new Main.GUI.IntegerValueInputController(
+      IntegerValueInputController ivictrl = new IntegerValueInputController(
         1,
-        new Main.GUI.SingleValueDialog("Number of factors","Please choose preferred number of factors(>0):")
+        new SingleValueDialog("Number of factors","Please choose preferred number of factors(>0):")
         );
 
-      ivictrl.Validator = new Altaxo.Main.GUI.IntegerValueInputController.ZeroOrPositiveIntegerValidator();
+      ivictrl.Validator = new IntegerValueInputController.ZeroOrPositiveIntegerValidator();
       if(!ivictrl.ShowDialog(Current.MainWindow))
         return;
 

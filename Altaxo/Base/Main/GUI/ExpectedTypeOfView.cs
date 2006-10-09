@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Altaxo.Main.GUI
+namespace Altaxo.Gui
 {
   /// <summary>
   /// Can be used for a controller to denote which type can be controlled by this.

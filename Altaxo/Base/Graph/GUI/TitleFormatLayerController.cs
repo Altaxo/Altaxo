@@ -23,11 +23,13 @@
 using System;
 using System.Drawing;
 using Altaxo.Graph.Gdi.Axis;
+using Altaxo.Gui;
+using Altaxo.Graph;
 
-namespace Altaxo.Graph.GUI
+namespace Altaxo.Gui.Graph
 {
   #region Interfaces
-  public interface ITitleFormatLayerController : Main.GUI.IApplyController, Main.GUI.IMVCController
+  public interface ITitleFormatLayerController : IApplyController, IMVCController
   {
     ITitleFormatLayerView View { get; set; }
     void EhView_ShowAxisChanged(bool bShow);
@@ -42,7 +44,7 @@ namespace Altaxo.Graph.GUI
 
   }
 
-  public interface ITitleFormatLayerView : Main.GUI.IMVCView
+  public interface ITitleFormatLayerView : IMVCView
   {
 
     ITitleFormatLayerController Controller { get; set; }

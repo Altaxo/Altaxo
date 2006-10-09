@@ -28,7 +28,7 @@ using System.Data;
 using System.Windows.Forms;
 
 using Altaxo.Data;
-using Altaxo.Main.GUI;
+
 using Altaxo.Calc.Regression.Nonlinear;
 
 

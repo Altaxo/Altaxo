@@ -33,7 +33,7 @@ using Altaxo.Graph.Gdi.Shapes;
 
 
 
-namespace Altaxo.Graph.GUI
+namespace Altaxo.Gui.Graph
 {
   /// <summary>
   /// Summary description for TextControlDialog.

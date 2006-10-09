@@ -23,7 +23,7 @@
 using System;
 using Altaxo.Graph.GUI;
 using Altaxo.Serialization;
-using Altaxo.Main.GUI;
+
 using Altaxo.Graph.Scales;
 using Altaxo.Graph.Scales.Rescaling;
 

@@ -30,13 +30,15 @@ using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Plot;
 using Altaxo.Graph.Gdi.Plot.Data;
 using Altaxo.Graph.Gdi.Plot.Styles;
+using Altaxo.Gui;
+using Altaxo.Gui.Common;
 
 
 
-namespace Altaxo.Graph.GUI
+namespace Altaxo.Gui.Graph
 {
   #region Interfaces
-  public interface ILineScatterLayerContentsController : Main.GUI.IApplyController, Main.GUI.IMVCController
+  public interface ILineScatterLayerContentsController : IApplyController, IMVCController
   {
     ILineScatterLayerContentsView View { get; set; }
 
@@ -57,7 +59,7 @@ namespace Altaxo.Graph.GUI
 
   }
 
-  public interface ILineScatterLayerContentsView : Main.GUI.IMVCView
+  public interface ILineScatterLayerContentsView : IMVCView
   {
 
     /// <summary>
@@ -319,7 +321,7 @@ namespace Altaxo.Graph.GUI
      
       if (null != pa)
       {
-        Main.GUI.DialogFactory.ShowPlotStyleAndDataDialog(View.Form, pa, pa.ParentCollection.GroupStyles);
+        DialogFactory.ShowPlotStyleAndDataDialog(View.Form, pa, pa.ParentCollection.GroupStyles);
       }
     }
     
@@ -520,7 +522,7 @@ namespace Altaxo.Graph.GUI
         if (selNodes[0].Tag is IGPlotItem)
         {
           IGPlotItem pi = (IGPlotItem)selNodes[0].Tag;
-          Altaxo.Main.GUI.DialogFactory.ShowPlotStyleAndDataDialog(Current.MainWindow, pi, pi.ParentCollection.GroupStyles);
+          DialogFactory.ShowPlotStyleAndDataDialog(Current.MainWindow, pi, pi.ParentCollection.GroupStyles);
         }
       }
       

@@ -22,7 +22,7 @@
 
 using System;
 
-namespace Altaxo.Main.GUI
+namespace Altaxo.Gui
 {
   /// <summary>
   /// Implemented by class attributes, where one class (that has the attribute assigned to) is responsible for another type of class (the destination class type).

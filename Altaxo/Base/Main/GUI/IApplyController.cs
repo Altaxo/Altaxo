@@ -22,7 +22,7 @@
 
 using System;
 
-namespace Altaxo.Main.GUI
+namespace Altaxo.Gui
 {
   /// <summary>
   /// This interface can be used by all controllers where the user input needs to

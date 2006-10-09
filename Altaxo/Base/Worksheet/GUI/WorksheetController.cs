@@ -2918,7 +2918,7 @@ namespace Altaxo.Worksheet.GUI
     #region IWorkbenchContentController Members
 
 #if FormerGuiState
-    Altaxo.Main.GUI.IWorkbenchContentView Altaxo.Main.GUI.IWorkbenchContentController.WorkbenchContentView
+    IWorkbenchContentView IWorkbenchContentController.WorkbenchContentView
     {
       get
       {
@@ -2931,9 +2931,9 @@ namespace Altaxo.Worksheet.GUI
     }
 
     protected ICSharpCode.SharpDevelop.Gui.IWorkbenchWindow m_ParentWorkbenchWindowController;
-    public Main.GUI.IWorkbenchWindowController ParentWorkbenchWindowController 
+    public IWorkbenchWindowController ParentWorkbenchWindowController 
     { 
-      get { return m_ParentWorkbenchWindowController as Main.GUI.IWorkbenchWindowController; }
+      get { return m_ParentWorkbenchWindowController as IWorkbenchWindowController; }
       set { m_ParentWorkbenchWindowController = value; }
     }
 

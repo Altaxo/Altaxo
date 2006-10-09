@@ -28,7 +28,7 @@ using System.Data;
 using System.Windows.Forms;
 
 using Altaxo.Serialization;
-using Altaxo.Main.GUI;
+
 
 namespace Altaxo.Gui.Graph
 {

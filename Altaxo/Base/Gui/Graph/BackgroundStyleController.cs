@@ -26,7 +26,7 @@ using System.Text;
 using System.Drawing;
 
 using Altaxo.Calc;
-using Altaxo.Main.GUI;
+
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Background;
 
@@ -83,7 +83,7 @@ namespace Altaxo.Gui.Graph
   /// Controls a IBackgroundStyle instance.
   /// </summary>
   [UserControllerForObject(typeof(IBackgroundStyle))]
-  public class BackgroundStyleController : IBackgroundStyleViewEventSink, Main.GUI.IMVCAController
+  public class BackgroundStyleController : IBackgroundStyleViewEventSink, IMVCAController
   {
     IBackgroundStyleView _view;
     IBackgroundStyle _doc;

@@ -27,7 +27,7 @@ using System.Drawing;
 using System.Data;
 using System.Windows.Forms;
 using Altaxo.Collections;
-using Altaxo.Main.GUI;
+
 using Altaxo.Gui.Common.Drawing;
 
 namespace Altaxo.Gui.Graph

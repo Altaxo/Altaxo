@@ -27,7 +27,7 @@ using System.Drawing;
 using System.Data;
 using System.Windows.Forms;
 
-using Altaxo.Main.GUI;
+using Altaxo.Gui;
 using Altaxo.Gui.Scripting;
 
 using ICSharpCode.Core;

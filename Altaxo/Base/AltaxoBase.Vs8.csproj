@@ -667,12 +667,6 @@
     <Compile Include="Main\GUI\ModelViewController.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Main\GUI\MultiChildControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Main\GUI\MultiChildController.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Main\GUI\MultipleChoiceController.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -1152,9 +1146,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Main\GUI\MinMaxIntegerControl.resx">
       <DependentUpon>MinMaxIntegerControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Main\GUI\MultiChildControl.resx">
-      <DependentUpon>MultiChildControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Main\GUI\MWControls\EditorHatchStyleUI.resx">
       <DependentUpon>EditorHatchStyleUI.cs</DependentUpon>

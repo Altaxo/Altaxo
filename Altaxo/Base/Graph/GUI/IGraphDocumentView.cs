@@ -28,6 +28,7 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using Altaxo.Graph.Gdi;
 using Altaxo.Serialization;
+using Altaxo.Gui;
 
 namespace Altaxo.Graph.GUI
 {
@@ -80,7 +81,7 @@ namespace Altaxo.Graph.GUI
   /// <summary>
   /// Interface to be implemented by a form or a control to be able to show a graph. This can either be a control or a form.
   /// </summary>
-  public interface IGraphView /* : Main.GUI.IWorkbenchContentView */
+  public interface IGraphView /* : IWorkbenchContentView */
   {
     /// <summary>Returns the windows of this view. In case the view is a Form, it returns the form. But if the view is only a control
     /// on a form, it returns the control window.
@@ -201,7 +202,7 @@ namespace Altaxo.Graph.GUI
   /// <summary>
   /// This interface has to be implemented by any controller that wants to control a GraphView
   /// </summary>
-  public interface IGraphController : /* Main.GUI.IWorkbenchContentController, */ Main.GUI.IMVCControllerEx
+  public interface IGraphController : /* IWorkbenchContentController, */ IMVCControllerEx
   {
 
     /// <summary>

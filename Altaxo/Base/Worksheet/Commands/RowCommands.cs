@@ -23,6 +23,7 @@
 using System;
 using System.Text.RegularExpressions;
 using Altaxo.Worksheet.GUI;
+using Altaxo.Gui.Common;
 
 namespace Altaxo.Worksheet.Commands
 {
@@ -44,12 +45,12 @@ namespace Altaxo.Worksheet.Commands
 
       int newposition = int.MinValue;
         
-      Main.GUI.IntegerValueInputController ivictrl = new Main.GUI.IntegerValueInputController(
+      IntegerValueInputController ivictrl = new IntegerValueInputController(
         0,
-        new Main.GUI.SingleValueDialog("New row position","Please enter the new position (>=0):")
+        new SingleValueDialog("New row position","Please enter the new position (>=0):")
         );
 
-      ivictrl.Validator = new Altaxo.Main.GUI.IntegerValueInputController.ZeroOrPositiveIntegerValidator();
+      ivictrl.Validator = new IntegerValueInputController.ZeroOrPositiveIntegerValidator();
       if(ivictrl.ShowDialog(ctrl.View.TableViewForm))
       {
         newposition = ivictrl.EnteredContents;

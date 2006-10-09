@@ -29,7 +29,7 @@ using System.Data;
 using System.Reflection;
 
 using Altaxo.Serialization;
-using Altaxo.Main.GUI;
+using Altaxo.Gui.Common;
 
 
 namespace Altaxo

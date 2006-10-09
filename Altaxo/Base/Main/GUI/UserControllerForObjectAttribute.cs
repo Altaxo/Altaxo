@@ -22,7 +22,7 @@
 
 using System;
 
-namespace Altaxo.Main.GUI
+namespace Altaxo.Gui
 {
   /// <summary>
   /// Can be used for a controller to denote which type can be controlled by this.

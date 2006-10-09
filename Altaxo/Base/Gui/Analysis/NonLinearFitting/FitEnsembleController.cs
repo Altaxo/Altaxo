@@ -22,7 +22,7 @@
 
 using System;
 
-using Altaxo.Main.GUI;
+
 using Altaxo.Calc.Regression.Nonlinear;
 
 

@@ -26,7 +26,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Data;
 using System.Windows.Forms;
-using Altaxo.Main.GUI;
+
 
 using Altaxo.Graph.PlotGroups;
 

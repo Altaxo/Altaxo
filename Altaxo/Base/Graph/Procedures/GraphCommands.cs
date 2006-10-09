@@ -27,6 +27,7 @@ using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 
 using Altaxo.Graph.Gdi;
+using Altaxo.Gui.Common;
 
 namespace Altaxo.Graph.Procedures
 {
@@ -37,9 +38,9 @@ namespace Altaxo.Graph.Procedures
   {
     public static void Rename(GraphController ctrl)
     {
-      Main.GUI.TextValueInputController tvctrl = new Main.GUI.TextValueInputController(
+      TextValueInputController tvctrl = new TextValueInputController(
         ctrl.Doc.Name,
-        new Main.GUI.SingleValueDialog("Rename graph", "Enter a name for the graph:")
+        new SingleValueDialog("Rename graph", "Enter a name for the graph:")
         );
 
       tvctrl.Validator = new GraphRenameValidator(ctrl.Doc, ctrl);
@@ -47,7 +48,7 @@ namespace Altaxo.Graph.Procedures
         ctrl.Doc.Name = tvctrl.InputText.Trim();
     }
 
-    protected class GraphRenameValidator : Main.GUI.TextValueInputController.NonEmptyStringValidator
+    protected class GraphRenameValidator : TextValueInputController.NonEmptyStringValidator
     {
       GraphDocument _doc;
       GraphController _controller;

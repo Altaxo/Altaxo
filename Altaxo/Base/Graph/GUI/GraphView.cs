@@ -363,7 +363,7 @@ namespace Altaxo.Graph.GUI
       {
         m_Menu = value;
 #if FormerGuiState
-        if(this.ParentForm is Altaxo.Main.GUI.WorkbenchForm && null!=m_Menu)
+        if(this.ParentForm is WorkbenchForm && null!=m_Menu)
         {
           if(null!=this.ParentForm.Menu)
             this.ParentForm.Menu.MergeMenu( m_Menu ); // do not clone the menu

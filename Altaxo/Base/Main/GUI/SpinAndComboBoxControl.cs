@@ -27,7 +27,7 @@ using System.Drawing;
 using System.Data;
 using System.Windows.Forms;
 
-namespace Altaxo.Main.GUI
+namespace Altaxo.Gui.Common
 {
   /// <summary>
   /// Summary description for SpinAndComboBoxControl.

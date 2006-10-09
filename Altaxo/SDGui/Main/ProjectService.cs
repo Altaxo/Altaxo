@@ -28,10 +28,10 @@ using System.Windows.Forms;
 
 
 using ICSharpCode.SharpDevelop.Gui;
-
 using ICSharpCode.Core;
-
 using ICSharpCode.SharpZipLib.Zip;
+
+using Altaxo.Gui;
 
 namespace Altaxo.Main
 {
@@ -177,7 +177,7 @@ namespace Altaxo.Main
 
       foreach (IViewContent viewcontent in restoredControllers)
       {
-        Main.GUI.IMVCControllerEx ctrl = viewcontent as Main.GUI.IMVCControllerEx;
+        IMVCControllerEx ctrl = viewcontent as IMVCControllerEx;
         if (ctrl != null)
           ctrl.CreateDefaultViewObject();
 
@@ -503,9 +503,9 @@ namespace Altaxo.Main
 
       foreach (IViewContent content in Current.Workbench.ViewContentCollection)
       {
-        if (content is Altaxo.Main.GUI.IMVCController)
+        if (content is Altaxo.Gui.IMVCController)
         {
-          if (object.ReferenceEquals(((Altaxo.Main.GUI.IMVCController)content).ModelObject, document))
+          if (object.ReferenceEquals(((Altaxo.Gui.IMVCController)content).ModelObject, document))
             contentList.Add(content);
         }
       }
@@ -522,9 +522,9 @@ namespace Altaxo.Main
     {
       foreach (IViewContent content in Current.Workbench.ViewContentCollection)
       {
-        if (content is Altaxo.Main.GUI.IMVCController)
+        if (content is Altaxo.Gui.IMVCController)
         {
-          if (object.ReferenceEquals(((Altaxo.Main.GUI.IMVCController)content).ModelObject, document))
+          if (object.ReferenceEquals(((Altaxo.Gui.IMVCController)content).ModelObject, document))
             return true;
         }
       }

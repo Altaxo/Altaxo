@@ -26,10 +26,11 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Data;
 using System.Windows.Forms;
+using Altaxo.Gui;
 
-using Altaxo.Main.GUI;
 
-namespace Altaxo.Graph.GUI
+
+namespace Altaxo.Gui.Graph
 {
   /// <summary>
   /// Summary description for SingleColumnChoiceControl.

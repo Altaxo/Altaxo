@@ -23,11 +23,12 @@
 using System;
 
 using Altaxo.Graph.Gdi.Plot.Data;
+using Altaxo.Gui;
 
-namespace Altaxo.Graph.GUI
+namespace Altaxo.Gui.Graph
 {
   #region Interfaces
-  public interface ILineScatterPlotDataController : Main.GUI.IApplyController, Main.GUI.IMVCController
+  public interface ILineScatterPlotDataController : IApplyController, IMVCController
   {
     ILineScatterPlotDataView View { get; set; }
   
@@ -46,7 +47,7 @@ namespace Altaxo.Graph.GUI
     bool EhView_RangeTo(int val);
   }
 
-  public interface ILineScatterPlotDataView : Main.GUI.IMVCView
+  public interface ILineScatterPlotDataView : IMVCView
   {
 
     /// <summary>

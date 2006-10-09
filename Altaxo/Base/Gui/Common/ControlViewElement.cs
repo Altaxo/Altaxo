@@ -29,7 +29,7 @@ namespace Altaxo.Gui.Common
   public class ControlViewElement : ICloneable
   {
     public string Title;
-    public Main.GUI.IApplyController Controller;
+    public IApplyController Controller;
     public object View;
 
     public ControlViewElement(ControlViewElement from)
@@ -39,14 +39,14 @@ namespace Altaxo.Gui.Common
       this.View = from.View;
     }
 
-    public ControlViewElement(string title, Main.GUI.IApplyController controller, object view)
+    public ControlViewElement(string title, IApplyController controller, object view)
     {
       this.Title = title;
       this.Controller = controller;
       this.View = view;
     }
 
-    public ControlViewElement(string title, Main.GUI.IMVCAController controller)
+    public ControlViewElement(string title, IMVCAController controller)
     {
       this.Title = title;
       this.Controller = controller;

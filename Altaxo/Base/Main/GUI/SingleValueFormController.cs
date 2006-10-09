@@ -24,7 +24,7 @@ using System;
 using System.Windows.Forms;
 using System.ComponentModel;
 
-namespace Altaxo.Main.GUI
+namespace Altaxo.Gui.Common
 {
   #region Interfaces
 

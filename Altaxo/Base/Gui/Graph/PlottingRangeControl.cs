@@ -29,7 +29,7 @@ using System.Text;
 using System.Windows.Forms;
 
 
-using Altaxo.Main.GUI;
+
 namespace Altaxo.Gui.Graph
 {
   [UserControlForController(typeof(IPlottingRangeViewEventSink))]

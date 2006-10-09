@@ -5,7 +5,7 @@ using System.Text;
 using Altaxo.Graph.Gdi.Background;
 using Altaxo.Graph.Gdi.Axis;
 using Altaxo.Gui.Common;
-using Altaxo.Main.GUI;
+
 
 namespace Altaxo.Gui.Graph
 {

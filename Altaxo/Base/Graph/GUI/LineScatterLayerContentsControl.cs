@@ -28,7 +28,7 @@ using System.Data;
 using System.Windows.Forms;
 using Altaxo.Collections;
 
-namespace Altaxo.Graph.GUI
+namespace Altaxo.Gui.Graph
 {
   /// <summary>
   /// Summary description for LineScatterLayerContentsControl.

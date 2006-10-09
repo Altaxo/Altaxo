@@ -26,6 +26,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Data;
 using System.Windows.Forms;
+using Altaxo.Gui.Common;
 
 namespace Altaxo.Worksheet.GUI
 {
@@ -34,8 +35,8 @@ namespace Altaxo.Worksheet.GUI
   /// </summary>
   public class TransposeWorksheetControl : System.Windows.Forms.UserControl
   {
-    private Altaxo.Main.GUI.MinMaxIntegerControl ctrlNumMovedDataCols;
-    private Altaxo.Main.GUI.MinMaxIntegerControl ctrlNumMovedPropCols;
+    private MinMaxIntegerControl ctrlNumMovedDataCols;
+    private MinMaxIntegerControl ctrlNumMovedPropCols;
     private System.Windows.Forms.GroupBox groupBox1;
     private System.Windows.Forms.GroupBox groupBox2;
     /// <summary> 
@@ -110,8 +111,8 @@ namespace Altaxo.Worksheet.GUI
     /// </summary>
     private void InitializeComponent()
     {
-      this.ctrlNumMovedDataCols = new Altaxo.Main.GUI.MinMaxIntegerControl();
-      this.ctrlNumMovedPropCols = new Altaxo.Main.GUI.MinMaxIntegerControl();
+      this.ctrlNumMovedDataCols = new MinMaxIntegerControl();
+      this.ctrlNumMovedPropCols = new MinMaxIntegerControl();
       this.groupBox1 = new System.Windows.Forms.GroupBox();
       this.groupBox2 = new System.Windows.Forms.GroupBox();
       this.groupBox1.SuspendLayout();

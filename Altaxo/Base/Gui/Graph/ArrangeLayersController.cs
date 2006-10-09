@@ -23,7 +23,7 @@
 using System;
 
 using Altaxo.Serialization;
-using Altaxo.Main.GUI;
+
 using Altaxo.Graph.Procedures;
 
 namespace Altaxo.Gui.Graph
@@ -61,7 +61,7 @@ namespace Altaxo.Gui.Graph
   /// Controller for the <see cref="ArrangeLayersDocument" />.
   /// </summary>
   [UserControllerForObject(typeof(ArrangeLayersDocument))]
-  public class ArrangeLayersController : IArrangeLayersViewEventSink, Main.GUI.IMVCAController
+  public class ArrangeLayersController : IArrangeLayersViewEventSink, IMVCAController
   {
     ArrangeLayersDocument _doc;
     ArrangeLayersDocument _tempDoc;

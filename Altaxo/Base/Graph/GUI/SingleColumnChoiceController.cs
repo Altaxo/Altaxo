@@ -23,10 +23,10 @@
 using System;
 using System.Windows.Forms;
 
-using Altaxo.Main.GUI;
+using Altaxo.Gui;
 using Altaxo.Data;
 
-namespace Altaxo.Graph.GUI
+namespace Altaxo.Gui.Graph
 {
   #region SingleColumnChoice document
 
@@ -83,7 +83,7 @@ namespace Altaxo.Graph.GUI
       {
         System.Collections.ArrayList arr = new System.Collections.ArrayList();
         TreeNode node = null;
-        if(_doc.Environment is GUI.GraphController)
+        if(_doc.Environment is Altaxo.Graph.GUI.GraphController)
         {
           node = new TreeNode("Graph",new TreeNode[1]{new TreeNode()});
           node.Tag = _doc.Environment;

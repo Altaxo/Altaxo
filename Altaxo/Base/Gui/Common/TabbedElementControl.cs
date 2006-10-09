@@ -25,7 +25,7 @@ using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
-using Altaxo.Main.GUI;
+
 
 namespace Altaxo.Gui.Common
 {
@@ -35,7 +35,7 @@ namespace Altaxo.Gui.Common
   /// The only elements it itself is shown are the 3 buttons OK, Cancel, and Apply.
   /// </summary>
   [UserControlForController(typeof(ITabbedElementViewEventSink))]
-  public class TabbedDialogView : System.Windows.Forms.UserControl, ITabbedElementView
+  public class TabbedElementControl : System.Windows.Forms.UserControl, ITabbedElementView
   {
     private ITabbedElementViewEventSink _controller;
     private System.Windows.Forms.Panel m_ButtonPanel;
@@ -45,7 +45,7 @@ namespace Altaxo.Gui.Common
     /// </summary>
     private System.ComponentModel.Container components = null;
 
-    public TabbedDialogView()
+    public TabbedElementControl()
     {
       //
       // Required for Windows Form Designer support

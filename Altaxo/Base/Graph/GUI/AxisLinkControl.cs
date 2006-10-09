@@ -29,7 +29,7 @@ using System.Windows.Forms;
 
 using Altaxo.Graph.Scales;
 
-namespace Altaxo.Graph.GUI
+namespace Altaxo.Gui.Graph
 {
   /// <summary>
   /// Summary description for LinkAxisControl.

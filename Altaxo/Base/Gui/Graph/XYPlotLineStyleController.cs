@@ -31,7 +31,7 @@ using Altaxo.Collections;
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Plot.Styles;
-using Altaxo.Main.GUI;
+
 using Altaxo.Gui.Common.Drawing;
 
 namespace Altaxo.Gui.Graph
@@ -120,7 +120,7 @@ namespace Altaxo.Gui.Graph
 
   }
 
-  public interface IXYPlotLineStyleController : Main.GUI.IMVCAController
+  public interface IXYPlotLineStyleController : IMVCAController
   {
     /// <summary>
     /// If activated, this causes the view to disable all gui elements if neither a line style nor a fill style is choosen.

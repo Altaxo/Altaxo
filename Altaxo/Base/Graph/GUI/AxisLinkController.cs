@@ -24,11 +24,12 @@ using System;
 using Altaxo.Serialization;
 using Altaxo.Graph.Scales;
 using Altaxo.Graph.Gdi;
+using Altaxo.Gui;
 
-namespace Altaxo.Graph.GUI
+namespace Altaxo.Gui.Graph
 {
   #region Interfaces
-  public interface IAxisLinkController : Main.GUI.IApplyController, Main.GUI.IMVCController
+  public interface IAxisLinkController : IApplyController, IMVCController
   {
     /// <summary>
     /// Get/sets the view this controller controls.
@@ -69,7 +70,7 @@ namespace Altaxo.Graph.GUI
 
   }
 
-  public interface IAxisLinkView : Main.GUI.IMVCView
+  public interface IAxisLinkView : IMVCView
   {
 
     /// <summary>

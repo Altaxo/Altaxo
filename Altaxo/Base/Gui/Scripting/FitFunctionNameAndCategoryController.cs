@@ -22,12 +22,13 @@
 
 using System;
 using System.Text;
-using Altaxo.Main.GUI;
+
+using Altaxo.Gui.Common;
 using Altaxo.Scripting;
 
 namespace Altaxo.Gui.Scripting
 {
-  public class FitFunctionNameAndCategoryController : MultiChildController
+  public class FitFunctionNameAndCategoryController : Altaxo.Gui.Common.MultiChildController
   {
     FitFunctionScript _doc;
     string _tempName;
@@ -58,7 +59,12 @@ namespace Altaxo.Gui.Scripting
       _controllerDescription.DescriptionText = "Enter fit function description:";
       _controllerShouldSaveInUserData.DescriptionText = "Save in user fit functions directory?";
 
-      base.Initialize(new IMVCAController[] { _controllerName, _controllerCategory, _controllerDescription, _controllerShouldSaveInUserData });
+      base.Initialize(new ControlViewElement[]{
+        new ControlViewElement( null, _controllerName, _controllerName.ViewObject),
+        new ControlViewElement( null, _controllerCategory, _controllerCategory.ViewObject),
+        new ControlViewElement( null, _controllerDescription, _controllerDescription.ViewObject),
+        new ControlViewElement( null, _controllerShouldSaveInUserData, _controllerShouldSaveInUserData.ViewObject) },
+        false);
     }
 
     public override object ModelObject

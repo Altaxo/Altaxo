@@ -27,7 +27,8 @@ using System.Drawing;
 using System.Data;
 using System.Windows.Forms;
 
-using Altaxo.Main.GUI;
+using Altaxo.Gui;
+using Altaxo.Gui.Common;
 
 namespace Altaxo.Worksheet.GUI
 {

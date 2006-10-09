@@ -43,7 +43,7 @@ namespace Altaxo.Gui
   /// <summary>
   /// This is the a Workspace with a multiple document interface.
   /// </summary>
-  public class AltaxoSDWorkbench : DefaultWorkbench, Altaxo.Main.GUI.IWorkbench
+  public class AltaxoSDWorkbench : DefaultWorkbench, Altaxo.Gui.Common.IWorkbench
   {
 
    
@@ -180,7 +180,7 @@ namespace Altaxo.Gui
     }
     #region Altaxo.Main.Gui.IWorkbench Members
 
-    ICollection Altaxo.Main.GUI.IWorkbench.ViewContentCollection
+    ICollection Altaxo.Gui.Common.IWorkbench.ViewContentCollection
     {
       get
       {
@@ -196,7 +196,7 @@ namespace Altaxo.Gui
       }
     }
 
-    object Altaxo.Main.GUI.IWorkbench.ActiveViewContent
+    object Altaxo.Gui.Common.IWorkbench.ActiveViewContent
     {
       get
       {
@@ -204,17 +204,17 @@ namespace Altaxo.Gui
       }
     }
 
-    void Altaxo.Main.GUI.IWorkbench.ShowView(object o)
+    void Altaxo.Gui.Common.IWorkbench.ShowView(object o)
     {
       base.ShowView((IViewContent)o);
     }
 
-    void Altaxo.Main.GUI.IWorkbench.CloseContent(object o)
+    void Altaxo.Gui.Common.IWorkbench.CloseContent(object o)
     {
       base.CloseContent((IViewContent)o);
     }
 
-    void Altaxo.Main.GUI.IWorkbench.CloseAllViews()
+    void Altaxo.Gui.Common.IWorkbench.CloseAllViews()
     {
       base.CloseAllViews();
     }

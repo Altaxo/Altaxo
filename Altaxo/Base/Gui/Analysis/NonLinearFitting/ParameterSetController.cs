@@ -21,7 +21,8 @@
 #endregion
 
 using System;
-using Altaxo.Main.GUI;
+
+using Altaxo.Gui.Common;
 using Altaxo.Calc.Regression.Nonlinear;
 
 namespace Altaxo.Gui.Analysis.NonLinearFitting
@@ -30,7 +31,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
   /// Summary description for ParameterSetController.
   /// </summary>
   [UserControllerForObject(typeof(ParameterSet))]
-  public class ParameterSetController : Altaxo.Main.GUI.MultiChildController
+  public class ParameterSetController : Altaxo.Gui.Common.MultiChildController
   {
     ParameterSet _doc;
 
@@ -39,23 +40,24 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       _doc = doc;
       _doc.InitializationFinished += new EventHandler(EhInitializationFinished);
 
-      IMVCAController[] childs = new IMVCAController[_doc.Count];
-      for(int i=0;i<childs.Length;i++)
-        childs[i] = (IMVCAController)Current.Gui.GetControllerAndControl(new object[]{_doc[i]},typeof(IParameterSetElementController));
-
-      base.DescriptionText =  "ParameterName                                      Value                     Vary?       Variance\r\n" +
-                              "-------------------------------------------------------------------------------------------------------";
-      base.Initialize(childs);
+      base.DescriptionText = "ParameterName                                      Value                     Vary?       Variance\r\n" +
+                        "-------------------------------------------------------------------------------------------------------";
+      
+      EhInitializationFinished(this, EventArgs.Empty);
     }
 
   
     private void EhInitializationFinished(object sender, EventArgs e)
     {
-      IMVCAController[] childs = new IMVCAController[_doc.Count];
-      for(int i=0;i<childs.Length;i++)
-        childs[i] = (IMVCAController)Current.Gui.GetControllerAndControl(new object[]{_doc[i]},typeof(IMVCAController));
+      ControlViewElement[] childs = new ControlViewElement[_doc.Count];
+      for (int i = 0; i < childs.Length; i++)
+      {
+        IMVCAController ctrl = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _doc[i] }, typeof(IParameterSetElementController));
+        childs[i].Controller = ctrl;
+        childs[i].View = ctrl.ViewObject;
+      }
 
-      base.Initialize(childs);
+      base.Initialize(childs, false);
     }
   }
 }

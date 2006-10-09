@@ -21,8 +21,9 @@
 #endregion
 
 using System;
-using Altaxo.Main.GUI;
 using Altaxo.Calc.Interpolation;
+using Altaxo.Gui;
+using Altaxo.Gui.Common;
 
 namespace Altaxo.Worksheet.GUI
 {

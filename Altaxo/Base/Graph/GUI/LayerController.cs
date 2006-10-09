@@ -23,16 +23,19 @@
 using System;
 using System.Collections.Generic;
 
+using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Axis;
 using Altaxo.Graph.Gdi.Plot;
 using Altaxo.Graph.Gdi.Plot.Data;
 using Altaxo.Graph.Gdi.Plot.Styles;
+using Altaxo.Gui;
+using Altaxo.Gui.Common;
 
-namespace Altaxo.Graph.GUI
+namespace Altaxo.Gui.Graph
 {
   #region Interfaces
-  public interface ILayerController: Main.GUI.IApplyController
+  public interface ILayerController: IApplyController
   {
     void EhView_PageChanged(string firstChoice);
     void EhView_SecondChoiceChanged(int index, string item);
@@ -77,7 +80,7 @@ namespace Altaxo.Graph.GUI
 
   
 
-    Main.GUI.IMVCController m_CurrentController;
+    IMVCController m_CurrentController;
 
 
     protected Altaxo.Gui.Graph.CoordinateSystemController _coordinateController;
@@ -87,7 +90,7 @@ namespace Altaxo.Graph.GUI
     protected ITitleFormatLayerController[] m_TitleFormatLayerController;
     protected Altaxo.Gui.Graph.IXYAxisLabelStyleController[] m_LabelStyleController;
     protected Altaxo.Gui.Graph.IXYAxisLabelStyleController[] m_MinorLabelStyleController;
-    protected Altaxo.Main.GUI.IMVCAController[] _GridStyleController;
+    protected IMVCAController[] _GridStyleController;
 
     Dictionary<CSLineID, A2DAxisStyleInformation> _axisStyleIds;
     List<A2DAxisStyleInformation> _axisStyleInfoSortedByName;
@@ -130,7 +133,7 @@ namespace Altaxo.Graph.GUI
 
 
       m_AxisScaleController = new AxisScaleController[2];
-      _GridStyleController = new Altaxo.Main.GUI.IMVCAController[2];
+      _GridStyleController = new IMVCAController[2];
       _TitleFormatController = new Dictionary<CSLineID, ITitleFormatLayerController>();
       _MajorLabelController = new Dictionary<CSLineID, Altaxo.Gui.Graph.IXYAxisLabelStyleController>();
       _MinorLabelController = new Dictionary<CSLineID, Altaxo.Gui.Graph.IXYAxisLabelStyleController>();
@@ -560,8 +563,8 @@ namespace Altaxo.Graph.GUI
       LayerControl view = new LayerControl();
       ctrl.View = view;
 
-      Main.GUI.DialogShellController dsc = new Main.GUI.DialogShellController(
-        new Main.GUI.DialogShellView(view), ctrl);
+      DialogShellController dsc = new DialogShellController(
+        new DialogShellView(view), ctrl);
 
       return dsc.ShowDialog(parentWindow);
     }

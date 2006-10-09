@@ -24,7 +24,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
-using Altaxo.Main.GUI;
+using Altaxo.Gui;
 
 namespace Altaxo.Main.Services
 {

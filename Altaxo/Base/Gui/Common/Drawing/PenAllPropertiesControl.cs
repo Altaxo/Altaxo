@@ -31,7 +31,7 @@ using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Gui.Common.Drawing
 {
-  public partial class PenAllPropertiesControl : UserControl, Altaxo.Main.GUI.IMVCAController
+  public partial class PenAllPropertiesControl : UserControl, IMVCAController
   {
     
 

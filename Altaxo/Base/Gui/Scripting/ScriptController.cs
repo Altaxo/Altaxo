@@ -22,7 +22,7 @@
 
 using System;
 using Altaxo.Data;
-using Altaxo.Main.GUI;
+using Altaxo.Gui;
 using System.Text.RegularExpressions;
 using Altaxo.Main.Services;
 using Altaxo.Scripting;
@@ -50,7 +50,7 @@ namespace Altaxo.Gui.Scripting
     void EhView_GotoCompilerError(string message);
   }
 
-  public interface IScriptController : Main.GUI.IMVCAController
+  public interface IScriptController : IMVCAController
   {
     void SetText(string text);
     void Compile();

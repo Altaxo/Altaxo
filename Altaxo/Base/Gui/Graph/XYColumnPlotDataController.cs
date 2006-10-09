@@ -23,7 +23,7 @@
 using System;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Plot.Data;
-using Altaxo.Main.GUI;
+
 
 namespace Altaxo.Gui.Graph
 {
@@ -67,7 +67,7 @@ namespace Altaxo.Gui.Graph
 
   }
 
-  public interface IXYColumnPlotDataController : Main.GUI.IMVCAController
+  public interface IXYColumnPlotDataController : IMVCAController
   {
     void SetElements(bool bInit);
   }

@@ -35,7 +35,8 @@ using Altaxo.Graph.Gdi.Plot.Groups;
 using Altaxo.Graph.PlotGroups;
 using Altaxo.Serialization;
 using Altaxo.Graph.GUI.GraphControllerMouseHandlers;
-
+using Altaxo.Gui.Common;
+using Altaxo.Gui.Graph;
 
 namespace Altaxo.Graph.GUI
 {
@@ -756,7 +757,7 @@ namespace Altaxo.Graph.GUI
         
         
         //LineScatterPlotStyleController.ShowPlotStyleDialog(this.m_View.Form,pa,plotGroup);
-        Main.GUI.DialogFactory.ShowPlotStyleAndDataDialog(this.m_View.Form,pa,plotGroup);
+        DialogFactory.ShowPlotStyleAndDataDialog(this.m_View.Form,pa,plotGroup);
       }
       
         
@@ -1201,7 +1202,7 @@ namespace Altaxo.Graph.GUI
         
         
       //LineScatterPlotStyleController.ShowPlotStyleDialog(this.m_View.Form,pa,plotGroup);
-      Main.GUI.DialogFactory.ShowPlotStyleAndDataDialog(Current.MainWindow,pa,plotGroup);
+      DialogFactory.ShowPlotStyleAndDataDialog(Current.MainWindow,pa,plotGroup);
 
       return false;
     }

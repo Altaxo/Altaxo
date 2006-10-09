@@ -22,10 +22,10 @@
 
 using System;
 
-namespace Altaxo.Main.GUI
+namespace Altaxo.Gui.Common
 {
   #region Interfaces
-  public interface IIntegerAndComboBoxController : Main.GUI.IMVCController, Main.GUI.IApplyController
+  public interface IIntegerAndComboBoxController : IMVCController, IApplyController
   {
     /// <summary>
     /// Get/sets the view this controller controls.
@@ -38,7 +38,7 @@ namespace Altaxo.Main.GUI
 
   }
 
-  public interface IIntegerAndComboBoxView : Main.GUI.IMVCView
+  public interface IIntegerAndComboBoxView : IMVCView
   {
 
     /// <summary>

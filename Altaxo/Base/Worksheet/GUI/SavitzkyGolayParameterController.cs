@@ -22,7 +22,7 @@
 
 using System;
 using Altaxo.Calc.Regression;
-using Altaxo.Main.GUI;
+using Altaxo.Gui;
 
 namespace Altaxo.Worksheet.GUI
 {
@@ -54,7 +54,7 @@ namespace Altaxo.Worksheet.GUI
   /// Summary description for SavitzkyGolayParameterController.
   /// </summary>
   [UserControllerForObject(typeof(SavitzkyGolayParameters),100)]
-  public class SavitzkyGolayParameterController : Main.GUI.IMVCAController, ISavitzkyGolayParameterViewEventSink
+  public class SavitzkyGolayParameterController : IMVCAController, ISavitzkyGolayParameterViewEventSink
   {
     SavitzkyGolayParameters _doc;
     ISavitzkyGolayParameterView _view;

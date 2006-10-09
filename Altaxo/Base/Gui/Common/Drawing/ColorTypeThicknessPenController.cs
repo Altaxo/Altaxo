@@ -39,7 +39,7 @@ namespace Altaxo.Gui.Common.Drawing
     void EhView_ShowFullPenDialog();
   }
 
-  public interface IColorTypeThicknessPenController : IColorTypeThicknessPenViewEventSink, Main.GUI.IMVCAController
+  public interface IColorTypeThicknessPenController : IColorTypeThicknessPenViewEventSink, IMVCAController
   {
   }
 
