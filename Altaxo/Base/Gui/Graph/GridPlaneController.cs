@@ -11,7 +11,7 @@ namespace Altaxo.Gui.Graph
 {
 
   [UserControllerForObject(typeof(GridPlane))]
-  public class GridPlaneController : Altaxo.Gui.Common.MultiChildController
+  public class GridPlaneController : MultiChildController
   {
     GridPlane _doc;
 
@@ -20,7 +20,7 @@ namespace Altaxo.Gui.Graph
     IMVCAController _background;
 
 
-    GridPlaneController(GridPlane doc)
+    public GridPlaneController(GridPlane doc)
     {
       _doc = doc;
 
@@ -37,6 +37,14 @@ namespace Altaxo.Gui.Graph
       ControlViewElement c3 = new ControlViewElement("Background", _background, _background.ViewObject);
 
       base.Initialize(new ControlViewElement[] { c1, c2, c3 }, false);
+    }
+
+    public override object ModelObject
+    {
+      get
+      {
+        return _doc;
+      }
     }
 
     public override bool Apply()

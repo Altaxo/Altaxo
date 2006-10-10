@@ -209,7 +209,7 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
 
-    public void Paint(Graphics g, XYPlotLayer layer, int axisnumber)
+    public void Paint(Graphics g, IPlotArea layer, int axisnumber)
     {
       if (!_showGrid)
         return;

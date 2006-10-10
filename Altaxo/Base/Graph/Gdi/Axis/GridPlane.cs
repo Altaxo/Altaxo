@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Drawing;
+using System.Drawing.Drawing2D;
 
 namespace Altaxo.Graph.Gdi.Axis
 {
@@ -110,7 +112,13 @@ namespace Altaxo.Graph.Gdi.Axis
       return new GridPlane(this);
     }
 
-
+    public CSPlaneID PlaneID
+    {
+      get
+      {
+        return _planeID;
+      }
+    }
 
     public GridStyle GridStyleFirst
     {
@@ -169,6 +177,35 @@ namespace Altaxo.Graph.Gdi.Axis
       get { return _background; }
       set { _background = value; }
     }
+
+    /// <summary>
+    /// Indicates if this grid is used, i.e. hase some visible elements. Returns false
+    /// if Grid1 and Grid2 and Background are null.
+    /// </summary>
+    public bool IsUsed
+    {
+      get
+      {
+        return _grid1 != null || _grid2 != null || _background != null;
+      }
+    }
+
+    public void Paint(Graphics g, IPlotArea layer)
+    {
+      if (_background != null)
+      {
+              Region region = layer.CoordinateSystem.GetRegion();
+      RectangleF innerArea = region.GetBounds(g);
+        _background.Draw(g, innerArea);
+      }
+
+      if (null != _grid1)
+        _grid1.Paint(g, layer, _planeID.InPlaneAxisNumber1);
+      if (null != _grid2)
+        _grid2.Paint(g, layer, _planeID.InPlaneAxisNumber2);
+    }
+
+
 
     private class GridIndexer : Altaxo.Collections.IArray<GridStyle>
     {

@@ -73,11 +73,12 @@ namespace Altaxo.Gui.Graph
 
     private string   m_CurrentPage;
 
-    enum TabType { Unique, Scales, Styles };
+    enum TabType { Unique, Scales, Styles, Planes };
     TabType _primaryChoice; // which tab type is currently choosen
     private int _currentScale; // which scale is choosen 0==X-AxisScale, 1==Y-AxisScale
-    private CSLineID _currentAxisID; // which style is currently choosen
 
+    private CSLineID _currentAxisID; // which style is currently choosen
+    private CSPlaneID _currentPlaneID; // which plane is currently chosen for the grid
   
 
     IMVCController m_CurrentController;
@@ -90,14 +91,17 @@ namespace Altaxo.Gui.Graph
     protected ITitleFormatLayerController[] m_TitleFormatLayerController;
     protected Altaxo.Gui.Graph.IXYAxisLabelStyleController[] m_LabelStyleController;
     protected Altaxo.Gui.Graph.IXYAxisLabelStyleController[] m_MinorLabelStyleController;
-    protected IMVCAController[] _GridStyleController;
+    //protected IMVCAController[] _GridStyleController;
 
     Dictionary<CSLineID, A2DAxisStyleInformation> _axisStyleIds;
     List<A2DAxisStyleInformation> _axisStyleInfoSortedByName;
+    List<CSPlaneID> _planeIdentifier;
     
     Dictionary<CSLineID, ITitleFormatLayerController> _TitleFormatController;
     Dictionary<CSLineID, Altaxo.Gui.Graph.IXYAxisLabelStyleController> _MajorLabelController;
     Dictionary<CSLineID, Altaxo.Gui.Graph.IXYAxisLabelStyleController> _MinorLabelController;
+
+    Dictionary<CSPlaneID, IMVCAController> _GridStyleController;
 
     Dictionary<CSLineID, bool> _enableMajorLabels;
     Dictionary<CSLineID, bool> _enableMinorLabels;
@@ -127,13 +131,17 @@ namespace Altaxo.Gui.Graph
         _axisStyleInfoSortedByName.Add(info);
       }
 
+      _planeIdentifier = new List<CSPlaneID>();
+      _planeIdentifier.Add(CSPlaneID.Front);
+
 
       _currentScale = axisScaleIdx;
       _currentAxisID = id;
+      _currentPlaneID = CSPlaneID.Front;
 
 
       m_AxisScaleController = new AxisScaleController[2];
-      _GridStyleController = new IMVCAController[2];
+      _GridStyleController = new Dictionary<CSPlaneID, IMVCAController>();
       _TitleFormatController = new Dictionary<CSLineID, ITitleFormatLayerController>();
       _MajorLabelController = new Dictionary<CSLineID, Altaxo.Gui.Graph.IXYAxisLabelStyleController>();
       _MinorLabelController = new Dictionary<CSLineID, Altaxo.Gui.Graph.IXYAxisLabelStyleController>();
@@ -154,6 +162,8 @@ namespace Altaxo.Gui.Graph
           _enableMinorLabels.Add(ident, prop.ShowMinorLabels);
         }
       }
+
+
 
       m_CurrentPage = currentPage;
 
@@ -326,105 +336,65 @@ namespace Altaxo.Gui.Graph
           if (pageChanged)
           {
             View.SelectTab(m_CurrentPage);
-            SetHorzVertSecondaryChoice();
+            SetPlaneSecondaryChoice();
           }
 
-          if (_layer.AxisStyles.Contains(_currentAxisID))
+          if (!_GridStyleController.ContainsKey(_currentPlaneID))
           {
-            if (null != _GridStyleController[_currentScale])
-            {
-              m_CurrentController = _GridStyleController[_currentScale];
-              View.SetCurrentContentWithEnable(m_CurrentController.ViewObject, true, "Show grid");
-            }
-            else
-            {
-              EhView_PageEnabledChanged(true);
-            }
+            GridPlane p = _layer.GridPlanes.Contains(_currentPlaneID) ? _layer.GridPlanes[_currentPlaneID] : new GridPlane(_currentPlaneID);
+            GridPlaneController ctrl = new GridPlaneController(p);
+            Current.Gui.FindAndAttachControlTo(ctrl);
+            _GridStyleController.Add(_currentPlaneID, ctrl);
           }
-          else
-          {
-            View.SetCurrentContentWithEnable(null, false, "Show grid");
-          }
+          m_CurrentController = _GridStyleController[_currentPlaneID];
+          View.CurrentContent = this.m_CurrentController.ViewObject;
+          
+          
           break;
 
         case "TitleAndFormat":
-          if(pageChanged)
-          {
-            View.SelectTab(m_CurrentPage);
-            SetEdgeSecondaryChoice();
-          }
-
-          if (_layer.AxisStyles.Contains(_currentAxisID))
-          {
-            if (_TitleFormatController.ContainsKey(_currentAxisID))
-            {
-              m_CurrentController = _TitleFormatController[_currentAxisID];
-              View.SetCurrentContentWithEnable(m_CurrentController.ViewObject, true, "Show axis");
-            }
-            else
-            {
-              EhView_PageEnabledChanged(true);
-            }
-          }
-          else
-          {
-            View.SetCurrentContentWithEnable(null, false, "Show axis");
-          }
-          break;
-       
         case "MajorLabels":
-          if(pageChanged)
-          {
-            View.SelectTab(m_CurrentPage);
-            SetEdgeSecondaryChoice();
-          }
-          if (_layer.AxisStyles.Contains(_currentAxisID))
-          {
-            if (_MajorLabelController.ContainsKey(_currentAxisID))
-            {
-              m_CurrentController = _MajorLabelController[_currentAxisID];
-              View.SetCurrentContentWithEnable(m_CurrentController.ViewObject, _enableMajorLabels[_currentAxisID], "Show major labels");
-            }
-            else if(_enableMajorLabels[_currentAxisID])
-            {
-              EhView_PageEnabledChanged(_enableMajorLabels[_currentAxisID]);
-            }
-            else
-            {
-              View.SetCurrentContentWithEnable(null, false, "Show minor labels");
-            }
-          }
-          else
-          {
-            View.SetCurrentContentWithEnable(null, false, "Show major labels");
-          }
-          break;
         case "MinorLabels":
           if(pageChanged)
           {
             View.SelectTab(m_CurrentPage);
             SetEdgeSecondaryChoice();
           }
-          if (_layer.AxisStyles.Contains(_currentAxisID))
+
+          if (!_TitleFormatController.ContainsKey(_currentAxisID))
           {
-            if (_MinorLabelController.ContainsKey(_currentAxisID))
-            {
-              m_CurrentController = _MinorLabelController[_currentAxisID];
-              View.SetCurrentContentWithEnable(m_CurrentController.ViewObject, _enableMinorLabels[_currentAxisID], "Show minor labels");
-            }
-            else if(_enableMinorLabels[_currentAxisID])
-            {
-              EhView_PageEnabledChanged(_enableMinorLabels[_currentAxisID]);
-            }
-            else
-            {
-              View.SetCurrentContentWithEnable(null, false, "Show minor labels");
-            }
+            AxisStyle ast = _layer.AxisStyles.Contains(_currentAxisID) ? _layer.AxisStyles.AxisStyle(_currentAxisID) : new AxisStyle(_currentAxisID);
+            _TitleFormatController.Add(_currentAxisID, new TitleFormatLayerController(ast));
+            if (ast.MajorLabelStyle == null)
+              ast.ShowMajorLabels = true;
+            _MajorLabelController.Add(_currentAxisID, new XYAxisLabelStyleController((AxisLabelStyle)ast.MajorLabelStyle));
+
+            if (ast.MinorLabelStyle == null)
+              ast.ShowMinorLabels = true;
+            _MinorLabelController.Add(_currentAxisID, new XYAxisLabelStyleController((AxisLabelStyle)ast.MinorLabelStyle));
           }
+
+          if (m_CurrentPage == "TitleAndFormat")
+          {
+            m_CurrentController = _TitleFormatController[_currentAxisID];
+            if (m_CurrentController.ViewObject == null)
+              m_CurrentController.ViewObject = new TitleFormatLayerControl();
+          }
+          else if (m_CurrentPage == "MajorLabels")
+            m_CurrentController = _MajorLabelController[_currentAxisID];
           else
-          {
-            View.SetCurrentContentWithEnable(null, false, "Show minor labels");
-          }
+            m_CurrentController = _MinorLabelController[_currentAxisID];
+
+          if (m_CurrentController.ViewObject == null)
+            Current.Gui.FindAndAttachControlTo(m_CurrentController);
+
+          if (m_CurrentPage == "TitleAndFormat")
+            View.CurrentContent = this.m_CurrentController.ViewObject;
+          else if (m_CurrentPage == "MajorLabels")
+            View.SetCurrentContentWithEnable(this.m_CurrentController.ViewObject, _enableMajorLabels[_currentAxisID], "Enable major labels");
+          else 
+            View.SetCurrentContentWithEnable(this.m_CurrentController.ViewObject, _enableMinorLabels[_currentAxisID], "Enable minor labels");
+
           break;
       }
     }
@@ -459,6 +429,25 @@ namespace Altaxo.Gui.Graph
       this._primaryChoice = TabType.Styles;
       View.InitializeSecondaryChoice(names,name);
     }
+
+    void SetPlaneSecondaryChoice()
+    {
+      /*
+      string[] names = new string[_axisStyleInfoSortedByName.Count];
+      string name = string.Empty;
+      for (int i = 0; i < names.Length; i++)
+      {
+        names[i] = _axisStyleInfoSortedByName[i].NameOfAxisStyle;
+        if (_axisStyleInfoSortedByName[i].Identifier == _currentAxisID)
+          name = _axisStyleInfoSortedByName[i].NameOfAxisStyle;
+      }
+      this._primaryChoice = TabType.Styles;
+      */
+      this._primaryChoice = TabType.Planes;
+      string[] names = new string[] { "Front" };
+      string name = "Front";
+      View.InitializeSecondaryChoice(names, name);
+    }
   
     public void EhView_PageChanged(string firstChoice)
     {
@@ -472,64 +461,6 @@ namespace Altaxo.Gui.Graph
         this._enableMajorLabels[_currentAxisID] = pageEnabled;
       if(m_CurrentPage=="MinorLabels")
         this._enableMinorLabels[_currentAxisID] = pageEnabled;
-
-      if (pageEnabled)
-      {
-        if (m_CurrentPage == "TitleAndFormat")
-        {
-          if (!_TitleFormatController.ContainsKey(_currentAxisID))
-          {
-
-            TitleFormatLayerController newCtrl = new TitleFormatLayerController(_layer.AxisStyles.AxisStyleEnsured(_currentAxisID));
-            newCtrl.View = new TitleFormatLayerControl();
-            _TitleFormatController.Add(_currentAxisID, newCtrl);
-            m_CurrentController = newCtrl;
-            View.SetCurrentContentWithEnable(m_CurrentController.ViewObject, pageEnabled, "Show title and format");
-          }
-        }
-        else if (m_CurrentPage == "MajorLabels")
-        {
-          if (!_MajorLabelController.ContainsKey(_currentAxisID))
-          {
-            Altaxo.Gui.Graph.XYAxisLabelStyleController newCtrl = new Altaxo.Gui.Graph.XYAxisLabelStyleController((AxisLabelStyle)_layer.AxisStyles.AxisStyleEnsured(_currentAxisID).MajorLabelStyle);
-            newCtrl.View = new Altaxo.Gui.Graph.XYAxisLabelStyleControl();
-            _MajorLabelController.Add(_currentAxisID, newCtrl);
-            m_CurrentController = newCtrl;
-            View.SetCurrentContentWithEnable(m_CurrentController.ViewObject, pageEnabled, "Show title and format");
-          }
-        }
-        else if (m_CurrentPage == "MinorLabels")
-        {
-          if (!_MinorLabelController.ContainsKey(_currentAxisID))
-          {
-            Altaxo.Gui.Graph.XYAxisLabelStyleController newCtrl = new Altaxo.Gui.Graph.XYAxisLabelStyleController((AxisLabelStyle)_layer.AxisStyles.AxisStyleEnsured(_currentAxisID).MinorLabelStyle);
-            newCtrl.View = new Altaxo.Gui.Graph.XYAxisLabelStyleControl();
-            m_CurrentController = newCtrl;
-            View.SetCurrentContentWithEnable(m_CurrentController.ViewObject, pageEnabled, "Show title and format");
-            _MinorLabelController.Add(_currentAxisID, newCtrl);
-          }
-        }
-        else if (m_CurrentPage == "GridStyle")
-        {
-          if (null==_GridStyleController[_currentScale])
-          {
-            if (_layer.GridPlanes[0].GridStyle[_currentScale] == null)
-              _layer.GridPlanes[0].GridStyle[_currentScale] = new GridStyle();
-
-            Altaxo.Gui.Graph.XYGridStyleController newCtrl = new Altaxo.Gui.Graph.XYGridStyleController(_layer.GridPlanes[0].GridStyle[_currentScale]);
-            newCtrl.ViewObject = new Altaxo.Gui.Graph.XYGridStyleControl();
-            _GridStyleController[_currentScale] = newCtrl;
-
-            m_CurrentController = newCtrl;
-            View.SetCurrentContentWithEnable(m_CurrentController.ViewObject, pageEnabled, "Show grid");
-          }
-        }
-      }
-      else // if !PageEnabled
-      {
-
-      }
-
     }
 
     public void EhView_SecondChoiceChanged(int index, string item)
@@ -541,6 +472,10 @@ namespace Altaxo.Gui.Graph
       else if (_primaryChoice == TabType.Styles)
       {
         _currentAxisID = _axisStyleInfoSortedByName[index].Identifier;
+      }
+      else if (_primaryChoice == TabType.Planes)
+      {
+        _currentPlaneID = _planeIdentifier[index];
       }
 
       SetCurrentTabController(false);
@@ -640,12 +575,15 @@ namespace Altaxo.Gui.Graph
         }
       }
 
-      for(i=0;i<2;i++)
+      foreach(KeyValuePair<CSPlaneID,IMVCAController> gpair in _GridStyleController)
       {
-        if (_GridStyleController[i] != null)
+        if (gpair.Value != null)
         {
-          if (_GridStyleController[i].Apply())
-            this._layer.GridPlanes[0].GridStyle[i] = (GridStyle)_GridStyleController[i].ModelObject;
+          if (gpair.Value.Apply())
+          {
+            GridPlane gp = (GridPlane)gpair.Value.ModelObject;
+            this._layer.GridPlanes[gpair.Key] = gp.IsUsed ? gp : null;
+          }
           else
             return false;
         }

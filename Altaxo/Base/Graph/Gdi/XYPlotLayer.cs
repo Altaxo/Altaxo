@@ -2434,9 +2434,9 @@ namespace Altaxo.Graph.Gdi
       if (_layerBackground != null)
         _layerBackground.Draw(g, new RectangleF(0, 0, _cachedLayerSize.Width, _cachedLayerSize.Height));
 
-
-
       RectangleF layerBounds = new RectangleF(_cachedLayerPosition, _cachedLayerSize);
+
+      _gridPlanes.Paint(g, this);
 
       _axisStyles.Paint(g, this);
 

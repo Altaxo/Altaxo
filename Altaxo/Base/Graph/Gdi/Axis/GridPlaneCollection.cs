@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Drawing;
+using System.Drawing.Drawing2D;
 
 namespace Altaxo.Graph.Gdi.Axis
 {
@@ -99,8 +101,37 @@ namespace Altaxo.Graph.Gdi.Axis
         return _innerList[idx];
       }
     }
+    public GridPlane this[CSPlaneID planeid]
+    {
+      get
+      {
+        foreach (GridPlane plane in _innerList)
+        {
+          if (plane.PlaneID == planeid)
+            return plane;
+        }
+        return null;
+      }
+      set
+      {
+        for (int i = 0; i < Count; i++)
+        {
+          if (_innerList[i].PlaneID == planeid)
+          {
+            if (value == null)
+              _innerList.RemoveAt(i);
+            else
+              _innerList[i] = value;
+            return;
+          }
+        }
+        // if not found, we add the value to the collection
+        if(null!=value)
+          Add(value);
+      }
+    }
 
-    public void Add(GridPlane plane)
+      public void Add(GridPlane plane)
     {
       plane.ParentObject = this;
       plane.Changed += EhPlaneChanged;
@@ -115,7 +146,22 @@ namespace Altaxo.Graph.Gdi.Axis
       _innerList.Clear();
     }
 
-  
+    public bool Contains(CSPlaneID planeid)
+    {
+      foreach (GridPlane plane in _innerList)
+      {
+        if (plane.PlaneID == planeid)
+          return true;
+      }
+      return false;
+    }
+
+    public void Paint(Graphics g, IPlotArea layer)
+    {
+      for (int i = 0; i < _innerList.Count; ++i)
+        _innerList[i].Paint(g, layer);
+    }
+
 
 
 

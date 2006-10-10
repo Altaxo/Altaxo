@@ -209,6 +209,22 @@ namespace Altaxo.Calc.LinearAlgebra
         SetDimension(rows,cols);
       }
 
+      /// <summary>
+      /// Constructs an RE matrix from an array of double vectors. Attention! The double vectors (the second) dimensions are here
+      /// the columns (!) of the matrix. The data is not copied.
+      /// </summary>
+      /// <param name="from"></param>
+      public REMatrix(double[][] from)
+      {
+        m_Cols = from.Length;
+        m_Rows = from[0].Length;
+        for (int i = 1; i < m_Cols; i++)
+          if (from[i].Length != m_Rows)
+            throw new ArgumentException("The columns of the provided array (second dimension here) are not of equal length");
+
+        m_Array = from;
+      }
+
       public void Clear()
       {
         SetDimension(0,0);
@@ -1457,6 +1473,16 @@ namespace Altaxo.Calc.LinearAlgebra
     public static IMatrix ToROMatrix(double[][] x)
     {
       return new BEMatrix(x);
+    }
+
+    /// <summary>
+    /// Constructs an RE matrix from an array of double vectors. Attention! The double vectors (the second) dimensions are here
+    /// the columns (!) of the matrix. The data is not copied.
+    /// </summary>
+    /// <param name="x">Array of columns (!) of the matrix.</param>
+    public static IROMatrix ToROMatrixFromJaggedColumns(double[][] x)
+    {
+      return new REMatrix(x);
     }
 
     /// <summary>

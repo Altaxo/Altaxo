@@ -139,7 +139,7 @@ namespace Altaxo.Calc.Regression
     /// </summary>
     /// <param name="xbase">The matrix of x values of the data set. Dimensions: numberOfData x numberOfParameters. The matrix is changed during calculation!</param>
     /// <param name="yarr">The array of y values of the data set.</param>
-    /// <param name="stddev">The array of y standard deviations of the data set.</param>
+    /// <param name="stddev">The array of y standard deviations of the data set. Can be null if the standard deviation is unkown.</param>
     /// <param name="numberOfData">The number of data points (may be smaller than the array sizes of the data arrays).</param>
     /// <param name="numberOfParameter">The number of parameters to fit == size of the function base.</param>
     /// <param name="threshold">A treshold value (usually 1E-5) used to chop the unimportant singular values away.</param>
@@ -168,16 +168,28 @@ namespace Altaxo.Calc.Regression
       MatrixMath.BEMatrix u = new MatrixMath.BEMatrix(numberOfData,numberOfParameter);
       // Fill the function base matrix (rows: numberOfData, columns: numberOfParameter)
       // and scale also y
-      for(int i=0;i<numberOfData;i++)
+      if (null == stddev)
       {
-        double scale = 1/stddev[i];
+        for (int i = 0; i < numberOfData; i++)
+        {
+          for (int j = 0; j < numberOfParameter; j++)
+            u[i, j] = xbase[i, j];
 
-        for(int j=0;j<numberOfParameter;j++)
-          u[i,j] = scale*xbase[i,j];
-        
-        scaledY[i] = scale*yarr[i];
+          scaledY[i] = yarr[i];
+        }
       }
+      else
+      {
+        for (int i = 0; i < numberOfData; i++)
+        {
+          double scale = 1 / stddev[i];
 
+          for (int j = 0; j < numberOfParameter; j++)
+            u[i, j] = scale * xbase[i, j];
+
+          scaledY[i] = scale * yarr[i];
+        }
+      }
       _decomposition = MatrixMath.GetSingularValueDecomposition(u);
 
       // set singular values < thresholdLevel to zero

@@ -167,6 +167,21 @@ namespace Altaxo.Graph
     /// </summary>
     public AltaxoVariant PhysicalValue { get { return _physicalValue; } }
 
+    /// <summary>
+    /// Returns the axis number of the first axis that lies on the plane.
+    /// </summary>
+    public int InPlaneAxisNumber1
+    {
+      get { return _perpendicularAxisNumber == 0 ? 1 : 0; }
+    }
+
+    /// <summary>
+    /// Returns the axis number of the second axis that lies on the plane.
+    /// </summary>
+    public int InPlaneAxisNumber2
+    {
+      get { return _perpendicularAxisNumber == 2 ? 1 : 2; }
+    }
 
     public override bool Equals(object obj)
     {

@@ -174,7 +174,10 @@ namespace Altaxo.Gui.Graph
       if(!this._minorController.Apply())
         return false;
 
-      _doc.CopyFrom(_tempdoc);
+      if (_doc != null)
+        _doc.CopyFrom(_tempdoc);
+      else
+        _doc = _tempdoc;
       
       return true;
     }

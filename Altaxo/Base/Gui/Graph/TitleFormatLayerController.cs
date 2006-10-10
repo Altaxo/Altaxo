@@ -129,12 +129,19 @@ namespace Altaxo.Gui.Graph
       AxisLineStyle axstyle=_doc.AxisLineStyle;
       string title = _doc.TitleText;
       bool bAxisEnabled=_doc.ShowAxisLine;
+      if (!bAxisEnabled)
+      {
+        _doc.ShowAxisLine = true; // in order to get the axis line != null
+        axstyle = _doc.AxisLineStyle;
+      }
 
       // Show Axis
       if(bInit)
         m_ShowAxis = m_Original_ShowAxis = bAxisEnabled ;
       if(null!=View)
         View.InitializeShowAxis(m_ShowAxis);
+
+      
 
       // fill axis title box
       if(bInit)
