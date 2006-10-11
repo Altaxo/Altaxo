@@ -917,6 +917,10 @@
     <EmbeddedResource Include="Gui\Graph\ArrangeLayersControl.resx">
       <DependentUpon>ArrangeLayersControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\AxisLineStyleControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>AxisLineStyleControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Gui\Graph\AxisLinkControl.resx">
       <DependentUpon>AxisLinkControl.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -1277,6 +1281,13 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Gui\ExpectedTypeOfView.cs" />
+    <Compile Include="Gui\Graph\AxisLineStyleControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\AxisLineStyleControl.Designer.cs">
+      <DependentUpon>AxisLineStyleControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\AxisLineStyleController.cs" />
     <Compile Include="Gui\Graph\AxisLinkControl.cs">
       <SubType>UserControl</SubType>
     </Compile>

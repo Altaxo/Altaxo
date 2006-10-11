@@ -60,5 +60,25 @@ namespace Altaxo.Collections
     }
   }
 
+  public class SelectableListNodeList : List<SelectableListNode>
+  {
+    public SelectableListNodeList() { }
+    public SelectableListNodeList(int capacity) : base(capacity) { }
+    public SelectableListNodeList(IEnumerable<SelectableListNode> from) : base(from) { }
+
+    public int IndexOfObject(object o)
+    {
+      int i = -1;
+      foreach (SelectableListNode n in this)
+      {
+        i++;
+        if (n.Item == o)
+          return i;
+      }
+      return -1;
+    }
+
+  }
+
 
 }

@@ -361,7 +361,64 @@ namespace Altaxo.Graph.Gdi.Axis
       throw new NotImplementedException("Old stuff");
       //return (float)m_AxisPosition.GetValueRelativeTo(m_Edge.GetOppositeEdgeLength(layerSize));
     }
-    
+
+    public PenX AxisPen
+    {
+      get { return _axisPen; }
+      set
+      {
+        PenX oldvalue = _axisPen;
+        _axisPen = value;
+        if (!object.ReferenceEquals(oldvalue, value))
+        {
+          if (null != oldvalue)
+            oldvalue.Changed -= OnPenChangedEventHandler;
+          if (null != value)
+            value.Changed += OnPenChangedEventHandler;
+
+          OnChanged();
+        }
+      }
+    }
+
+    public PenX MajorPen
+    {
+      get { return _majorTickPen; }
+      set
+      {
+        PenX oldvalue = _majorTickPen;
+        _majorTickPen = value;
+        if (!object.ReferenceEquals(oldvalue, value))
+        {
+          if (null != oldvalue)
+            oldvalue.Changed -= OnPenChangedEventHandler;
+          if (null != value)
+            value.Changed += OnPenChangedEventHandler;
+
+          OnChanged();
+        }
+      }
+    }
+
+    public PenX MinorPen
+    {
+      get { return _minorTickPen; }
+      set
+      {
+        PenX oldvalue = _minorTickPen;
+        _minorTickPen = value;
+        if (!object.ReferenceEquals(oldvalue, value))
+        {
+          if (null != oldvalue)
+            oldvalue.Changed -= OnPenChangedEventHandler;
+          if (null != value)
+            value.Changed += OnPenChangedEventHandler;
+
+          OnChanged();
+        }
+      }
+    }
+
     /// <summary>Get/sets the major tick length.</summary>
     /// <value>The major tick length in point units (1/72 inch).</value>
     public float MajorTickLength
