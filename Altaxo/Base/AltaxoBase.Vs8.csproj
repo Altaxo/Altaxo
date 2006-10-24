@@ -1096,7 +1096,7 @@
     <Compile Include="Collections\IArray.cs" />
     <Compile Include="Collections\ListNode.cs" />
     <Compile Include="Collections\NamedItem.cs" />
-    <Compile Include="Graph\A2DAxisStyleInformation.cs" />
+    <Compile Include="Graph\CSAxisInformation.cs" />
     <Compile Include="Graph\CSLineID.cs" />
     <Compile Include="Graph\CSPlaneID.cs" />
     <Compile Include="Graph\CSPlaneIDList.cs" />
@@ -1239,6 +1239,7 @@
     <Compile Include="Gui\Common\DialogShellView.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Gui\Common\Drawing\BrushController.cs" />
     <Compile Include="Gui\Common\Drawing\FontComboBox.cs">
       <SubType>Component</SubType>
     </Compile>

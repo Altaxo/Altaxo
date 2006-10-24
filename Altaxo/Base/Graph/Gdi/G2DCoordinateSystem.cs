@@ -461,7 +461,11 @@ namespace Altaxo.Graph.Gdi
         if (styleID.ParallelAxisNumber == info.Identifier.ParallelAxisNumber)
         {
           if (styleID == info.Identifier)
-            return info; // this covers also situations when the axis uses physical values
+          {
+            minDistance = 0;
+            nearestInfo = info;
+            break;
+          }
 
           double dist = Math.Abs(styleID.LogicalValueOtherFirst - info.Identifier.LogicalValueOtherFirst);
           if (dist < minDistance)

@@ -149,7 +149,7 @@ namespace Altaxo.Gui.Common
       this.Controls.Add(m_Label1);
 
 
-      _childs = new UserControl[childs.Length];
+      _childs = new Control[childs.Length];
       for(int i=0;i<_childs.Length;i++)
       {
         _childs[i] = (Control)childs[i];

@@ -455,7 +455,7 @@ namespace Altaxo.Graph.Gdi
         {
           if(!s.GridPlanes.Contains(CSPlaneID.Front))
             s.GridPlanes.Add(new GridPlane(CSPlaneID.Front));
-          s.GridPlanes[CSPlaneID.Front].BackgroundStyle = new Gdi.Background.FilledRectangle(layerAreaFillBrush);
+          s.GridPlanes[CSPlaneID.Front].Background = layerAreaFillBrush;
         }
 
 
@@ -665,7 +665,7 @@ namespace Altaxo.Graph.Gdi
         {
           if (!s.GridPlanes.Contains(CSPlaneID.Front))
             s.GridPlanes.Add(new GridPlane(CSPlaneID.Front));
-          s.GridPlanes[CSPlaneID.Front].BackgroundStyle = bgs;
+          s.GridPlanes[CSPlaneID.Front].Background = bgs.Brush;
         }
 
 
@@ -868,6 +868,8 @@ namespace Altaxo.Graph.Gdi
       _cachedForwardMatrix = new Matrix();
       _cachedReverseMatrix = new Matrix();
       CalculateMatrix();
+
+      OnChanged();
     }
 
     public virtual object Clone()
@@ -941,6 +943,11 @@ namespace Altaxo.Graph.Gdi
     public bool Is3D { get { return false; } }
 
     public Scale ZAxis { get { return null; } }
+
+    public Scale Scales(int i)
+    {
+      return _linkedScales.Scale(i);
+    }
 
     public Logical3D GetLogical3D(I3DPhysicalVariantAccessor acc, int idx)
     {

@@ -156,7 +156,7 @@ namespace Altaxo.Graph.Gdi.Axis
         }
       }
 
-      if (idx > 0)
+      if (idx >= 0)
         _axisStyles.RemoveAt(idx);
     }
 

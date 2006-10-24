@@ -24,7 +24,7 @@ namespace Altaxo.Graph
 
     public CSAxisInformation(CSLineID identifier)
     {
-      _identifier = identifier;
+      _identifier = identifier.Clone();
     }
     public CSAxisInformation(CSAxisInformation from)
     {
@@ -32,7 +32,7 @@ namespace Altaxo.Graph
     }
     public void CopyFrom(CSAxisInformation from)
     {
-      this._identifier = from._identifier;
+      this._identifier = from._identifier.Clone();
       CopyWithoutIdentifierFrom(from);
     }
     public void CopyWithoutIdentifierFrom(CSAxisInformation from)

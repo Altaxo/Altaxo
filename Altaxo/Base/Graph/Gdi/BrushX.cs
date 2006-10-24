@@ -729,5 +729,18 @@ namespace Altaxo.Graph.Gdi
     }
 
     #endregion
+
+
+    #region static members
+
+    public static BrushX Empty
+    {
+      get
+      {
+        return new BrushX(Color.Transparent);
+      }
+    }
+
+    #endregion
   } // end of class BrushHolder
 } // end of namespace

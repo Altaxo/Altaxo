@@ -276,6 +276,14 @@ namespace Altaxo.Graph.Gdi.Axis
 
     public void Paint(Graphics g, XYPlotLayer layer)
     {
+      // update the logical values of the physical axes before
+        if (_styleID.UsePhysicalValueOtherFirst)
+        {
+          // then update the logical value of this identifier
+          double logicalValue = layer.Scales(_styleID.AxisNumberOther).PhysicalVariantToNormal(_styleID.PhysicalValueOtherFirst);
+          _styleID.LogicalValueOtherFirst = logicalValue;
+        }
+
       int axisnumber = _styleID.ParallelAxisNumber;
       CSAxisInformation styleinfo = layer.CoordinateSystem.GetAxisStyleInformation(_styleID);
       _cachedAxisInfo = styleinfo;

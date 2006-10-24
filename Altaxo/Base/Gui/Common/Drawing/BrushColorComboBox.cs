@@ -32,7 +32,7 @@ using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Gui.Common.Drawing
 {
-  public class BrushColorComboBox : ComboBox
+  public class BrushColorComboBox : ComboBox, IBrushViewSimple
   {
 
     ContextMenuStrip _contextStrip;
@@ -135,12 +135,11 @@ namespace Altaxo.Gui.Common.Drawing
 
     void SetDataSource(BrushX selectedBrush)
     {
-      if (Items.Count > 1)
-        Items.Clear();
-      if (Items.Count == 0)
-        Items.Add(selectedBrush);
+      Items.Clear();
+      if (selectedBrush.BrushType == BrushType.SolidBrush)
+        Items.Add(selectedBrush.Color);
       else
-        Items[0] = selectedBrush;
+        Items.Add(selectedBrush);
 
       SelectedIndex = 0;
     }

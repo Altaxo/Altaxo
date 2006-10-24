@@ -6,10 +6,10 @@ using System.Drawing.Drawing2D;
 
 namespace Altaxo.Graph.Gdi.Axis
 {
- 
+
 
   [Serializable]
-  public class GridPlane : 
+  public class GridPlane :
     ICloneable,
     Main.IChangedEventSource,
     Main.IDocumentNode
@@ -25,19 +25,19 @@ namespace Altaxo.Graph.Gdi.Axis
     /// </summary>
     GridStyle _grid1;
 
-  
+
     /// <summary>
     /// Gridstyle of the greater axis number.
     /// </summary>
     GridStyle _grid2;
 
-   
+
     /// <summary>
     /// Background of the grid plane.
     /// </summary>
-    Background.IBackgroundStyle _background;
+    BrushX _background;
 
-    [field:NonSerialized]
+    [field: NonSerialized]
     public event EventHandler Changed;
 
     [NonSerialized]
@@ -52,7 +52,7 @@ namespace Altaxo.Graph.Gdi.Axis
       this._planeID = from._planeID;
       this.GridStyleFirst = from._grid1 == null ? null : (GridStyle)from._grid1.Clone();
       this.GridStyleSecond = from._grid2 == null ? null : (GridStyle)from._grid2.Clone();
-      this.BackgroundStyle = from._background == null ? null : (Background.IBackgroundStyle)from._background.Clone();
+      this.Background = from._background == null ? null : (BrushX)from._background.Clone();
     }
 
     #region Serialization
@@ -72,11 +72,11 @@ namespace Altaxo.Graph.Gdi.Axis
       }
       protected virtual GridPlane SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        CSPlaneID id = (CSPlaneID)info.GetValue("ID",null);
+        CSPlaneID id = (CSPlaneID)info.GetValue("ID", null);
         GridPlane s = (o == null ? new GridPlane(id) : (GridPlane)o);
         s.GridStyleFirst = (GridStyle)info.GetValue("Grid1", s);
         s.GridStyleSecond = (GridStyle)info.GetValue("Grid2", s);
-        s.BackgroundStyle = (Background.IBackgroundStyle)info.GetValue("Background", s);
+        s.Background = (BrushX)info.GetValue("Background", s);
 
         return s;
       }
@@ -123,7 +123,7 @@ namespace Altaxo.Graph.Gdi.Axis
     public GridStyle GridStyleFirst
     {
       get { return _grid1; }
-      set 
+      set
       {
         GridStyle oldvalue = _grid1;
         _grid1 = value;
@@ -146,7 +146,7 @@ namespace Altaxo.Graph.Gdi.Axis
     public GridStyle GridStyleSecond
     {
       get { return _grid2; }
-      set 
+      set
       {
         GridStyle oldvalue = _grid2;
         _grid2 = value;
@@ -172,10 +172,24 @@ namespace Altaxo.Graph.Gdi.Axis
     }
 
 
-    public Background.IBackgroundStyle BackgroundStyle
+    public BrushX Background
     {
       get { return _background; }
-      set { _background = value; }
+      set
+      {
+        BrushX oldvalue = _background;
+        _background = value;
+
+        if (!object.ReferenceEquals(oldvalue, value))
+        {
+          if (oldvalue != null)
+            oldvalue.Changed -= EhChildChanged;
+          if (value != null)
+            value.Changed += EhChildChanged;
+
+          OnChanged();
+        }
+      }
     }
 
     /// <summary>
@@ -194,9 +208,10 @@ namespace Altaxo.Graph.Gdi.Axis
     {
       if (_background != null)
       {
-              Region region = layer.CoordinateSystem.GetRegion();
-      RectangleF innerArea = region.GetBounds(g);
-        _background.Draw(g, innerArea);
+        Region region = layer.CoordinateSystem.GetRegion();
+        RectangleF innerArea = region.GetBounds(g);
+        _background.Rectangle = innerArea;
+        g.FillRegion(_background, region);
       }
 
       if (null != _grid1)

@@ -2,10 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
+using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Background;
 using Altaxo.Graph.Gdi.Axis;
 using Altaxo.Gui.Common;
-
+using Altaxo.Gui.Common.Drawing;
 
 namespace Altaxo.Gui.Graph
 {
@@ -57,7 +58,7 @@ namespace Altaxo.Gui.Graph
       Current.Gui.FindAndAttachControlTo(_grid2);
       ControlViewElement c2 = new ControlViewElement("Grid2", _grid2, _grid2.ViewObject);
 
-      _background = new BackgroundStyleController(_doc.BackgroundStyle);
+      _background = new BrushControllerSimple(_doc.Background);
       Current.Gui.FindAndAttachControlTo(_background);
       ControlViewElement c3 = new ControlViewElement("Background", _background, _background.ViewObject);
       
@@ -82,7 +83,7 @@ namespace Altaxo.Gui.Graph
 
       _doc.GridStyleFirst = (GridStyle)_grid1.ModelObject;
       _doc.GridStyleSecond = (GridStyle)_grid2.ModelObject;
-      _doc.BackgroundStyle = (IBackgroundStyle)_background.ModelObject;
+      _doc.Background = (BrushX)_background.ModelObject;
 
       return true;
     }
