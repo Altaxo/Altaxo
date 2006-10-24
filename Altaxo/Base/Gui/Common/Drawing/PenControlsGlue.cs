@@ -53,19 +53,42 @@ namespace Altaxo.Gui.Common.Drawing
       }
       set
       {
+        PenX oldvalue = _pen;
         _pen = value;
 
-        BrushGlue = _brushGlue;
-        CbLineThickness = _cbThickness;
-        CbDashStyle = _cbDashStyle;
-        CbDashCap = _cbDashCap;
-        CbStartCap = _cbStartCap;
-        CbStartCapSize = _cbStartCapSize;
-        CbEndCap = _cbEndCap;
-        CbEndCapSize = _cbEndCapSize;
-        CbLineJoin = _cbLineJoin;
-        CbMiterLimit = _cbMiterLimit;
+        bool areEqual = PenX.AreEqual(oldvalue, value);
+
+        if (!areEqual)
+        {
+          if (null != oldvalue)
+            oldvalue.Changed -= EhPenChanged;
+          if (null != value)
+            value.Changed += EhPenChanged;
+        }
+
+        if (_pen != null && !areEqual)
+        {
+          InitControlProperties();
+        }
+
+        if(!areEqual)
+          OnPenChanged();
       }
+    }
+
+
+    void InitControlProperties()
+    {
+      BrushGlue = _brushGlue;
+      CbLineThickness = _cbThickness;
+      CbDashStyle = _cbDashStyle;
+      CbDashCap = _cbDashCap;
+      CbStartCap = _cbStartCap;
+      CbStartCapSize = _cbStartCapSize;
+      CbEndCap = _cbEndCap;
+      CbEndCapSize = _cbEndCapSize;
+      CbLineJoin = _cbLineJoin;
+      CbMiterLimit = _cbMiterLimit;
     }
 
     public event EventHandler PenChanged;
@@ -73,6 +96,22 @@ namespace Altaxo.Gui.Common.Drawing
     {
       if (PenChanged != null)
         PenChanged(this, EventArgs.Empty);
+    }
+
+    void BeginPenUpdate()
+    {
+      _pen.Changed -= EhPenChanged;
+    }
+    void EndPenUpdate()
+    {
+      _pen.Changed += EhPenChanged;
+    }
+
+
+    void EhPenChanged(object sender, EventArgs e)
+    {
+      InitControlProperties();
+      OnPenChanged();
     }
 
     #endregion
@@ -194,27 +233,30 @@ namespace Altaxo.Gui.Common.Drawing
       {
         if (_cbThickness != null)
         {
-          _cbThickness.SelectionChangeCommitted -= EhThickness_SelectionChangeCommitted;
+          _cbThickness.PenWidthChoiceChanged -= EhThickness_ChoiceChanged;
           _cbThickness.TextUpdate -= EhThickness_TextChanged;
         }
 
         _cbThickness = value;
         if (_pen != null && _cbThickness != null)
-          _cbThickness.Thickness = _pen.Width;
+          _cbThickness.PenWidthChoice = _pen.Width;
 
         if (_cbThickness != null)
         {
-          _cbThickness.SelectionChangeCommitted += EhThickness_SelectionChangeCommitted;
+          _cbThickness.PenWidthChoiceChanged += EhThickness_ChoiceChanged;
           _cbThickness.TextUpdate += EhThickness_TextChanged;
         }
       }
     }
 
-    void EhThickness_SelectionChangeCommitted(object sender, EventArgs e)
+    void EhThickness_ChoiceChanged(object sender, EventArgs e)
     {
       if (_pen != null)
       {
-        _pen.Width = _cbThickness.Thickness;
+        BeginPenUpdate();
+        _pen.Width = _cbThickness.PenWidthChoice;
+        EndPenUpdate();
+
         OnPenChanged();
       }
     }
@@ -222,7 +264,10 @@ namespace Altaxo.Gui.Common.Drawing
     {
       if (_pen != null)
       {
-        _pen.Width = _cbThickness.Thickness;
+        BeginPenUpdate();
+        _pen.Width = _cbThickness.PenWidthChoice;
+        EndPenUpdate();
+
         OnPenChanged();
       }
     }
@@ -258,7 +303,9 @@ namespace Altaxo.Gui.Common.Drawing
         if (_userChangedStartCapSize && _cbStartCapSize != null)
           cap.Size = _cbStartCapSize.Thickness;
 
+        BeginPenUpdate();
         _pen.StartCap = cap;
+        EndPenUpdate();
 
         if (_cbStartCapSize != null)
           _cbStartCapSize.Thickness = cap.Size;
@@ -301,7 +348,10 @@ namespace Altaxo.Gui.Common.Drawing
       {
         LineCapEx cap = _pen.StartCap;
         cap.Size = _cbStartCapSize.Thickness;
+
+        BeginPenUpdate();
         _pen.StartCap = cap;
+        EndPenUpdate();
 
         OnPenChanged();
       }
@@ -345,7 +395,9 @@ namespace Altaxo.Gui.Common.Drawing
         if (_userChangedEndCapSize && _cbEndCapSize != null)
           cap.Size = _cbEndCapSize.Thickness;
 
+        BeginPenUpdate();
         _pen.EndCap = cap;
+        EndPenUpdate();
 
         if (_cbEndCapSize != null)
           _cbEndCapSize.Thickness = cap.Size;
@@ -389,7 +441,10 @@ namespace Altaxo.Gui.Common.Drawing
       {
         LineCapEx cap = _pen.EndCap;
         cap.Size = _cbEndCapSize.Thickness;
+
+        BeginPenUpdate();
         _pen.EndCap = cap;
+        EndPenUpdate();
 
         OnPenChanged();
       }
@@ -430,7 +485,10 @@ namespace Altaxo.Gui.Common.Drawing
     {
       if (_pen != null)
       {
+        BeginPenUpdate();
         _pen.LineJoin = _cbLineJoin.LineJoin;
+        EndPenUpdate();
+
         OnPenChanged();
       }
     }
@@ -467,7 +525,10 @@ namespace Altaxo.Gui.Common.Drawing
     {
       if (_pen != null)
       {
+        BeginPenUpdate();
         _pen.MiterLimit = _cbMiterLimit.MiterValue;
+        EndPenUpdate();
+
         OnPenChanged();
       }
     }
@@ -475,7 +536,10 @@ namespace Altaxo.Gui.Common.Drawing
     {
       if (_pen != null)
       {
+        BeginPenUpdate();
         _pen.MiterLimit = _cbMiterLimit.MiterValue;
+        EndPenUpdate();
+
         OnPenChanged();
       }
     }
@@ -488,7 +552,7 @@ namespace Altaxo.Gui.Common.Drawing
     void EhShowCustomPenDialog(object sender, EventArgs e)
     {
       PenAllPropertiesControl ctrl = new PenAllPropertiesControl();
-      ctrl.Pen = this.Pen;
+      ctrl.Pen = (PenX)this.Pen.Clone();
       if (Current.Gui.ShowDialog(ctrl, "Pen properties"))
       {
         this.Pen = ctrl.Pen;

@@ -41,8 +41,11 @@ namespace Altaxo.Gui.Graph
       set
       {
         _majorPenGlue.Pen = value;
-        CustomMajorColor = (value != _linePenGlue.Pen);
-        CustomMajorThickness = (value.Width != _linePenGlue.Pen.Width);
+        if (value != null)
+        {
+          CustomMajorColor = !PenX.AreEqualUnlessWidth(value,_linePenGlue.Pen);
+          CustomMajorThickness = (value.Width != _linePenGlue.Pen.Width);
+        }
       }
     }
 
@@ -55,8 +58,11 @@ namespace Altaxo.Gui.Graph
       set
       {
         _minorPenGlue.Pen = value;
-        CustomMinorColor = (value != _linePenGlue.Pen);
-        CustomMinorThickness = (value.Width != _linePenGlue.Pen.Width);
+        if (value != null)
+        {
+          CustomMinorColor = !PenX.AreEqualUnlessWidth(value, _linePenGlue.Pen);
+          CustomMinorThickness = (value.Width != _linePenGlue.Pen.Width);
+        }
       }
     }
 
@@ -64,11 +70,11 @@ namespace Altaxo.Gui.Graph
     {
       get
       {
-        return _lineMajorLength.Thickness;
+        return _lineMajorLength.PenWidthChoice;
       }
       set
       {
-        _lineMajorLength.Thickness = value;
+        _lineMajorLength.PenWidthChoice = value;
       }
     }
 
@@ -76,11 +82,11 @@ namespace Altaxo.Gui.Graph
     {
       get
       {
-        return _lineMinorLength.Thickness;
+        return _lineMinorLength.PenWidthChoice;
       }
       set
       {
-        _lineMinorLength.Thickness = value;
+        _lineMinorLength.PenWidthChoice = value;
       }
     }
     public bool ShowLine
@@ -94,34 +100,13 @@ namespace Altaxo.Gui.Graph
         _chkEnableLine.Checked = value;
       }
     }
-    public bool ShowMajor
-    {
-      get
-      {
-        return _chkEnableMajor.Checked;
-      }
-      set
-      {
-        _chkEnableMajor.Checked = value;
-      }
-    }
-    public bool ShowMinor
-    {
-      get
-      {
-        return _chkEnableMinor.Checked;
-      }
-      set
-      {
-        _chkEnableMinor.Checked = value;
-      }
-    }
+   
     bool CustomMajorThickness
     {
       set
       {
         _chkCustomMajorThickness.Checked = value;
-        _lineMajorThickness.Enabled = (value && ShowMajor);
+        _lineMajorThickness.Enabled = value ;
 
       }
     }
@@ -130,7 +115,7 @@ namespace Altaxo.Gui.Graph
       set
       {
         _chkCustomMinorThickness.Checked = value;
-        _lineMinorThickness.Enabled = (value && ShowMinor);
+        _lineMinorThickness.Enabled = value;
 
       }
     }
@@ -140,7 +125,7 @@ namespace Altaxo.Gui.Graph
       set
       {
         this._chkCustomMajorColor.Checked = value;
-        this._majorLineColor.Enabled = (value && ShowMajor);
+        this._majorLineColor.Enabled = value;
       }
     }
     bool CustomMinorColor
@@ -148,7 +133,7 @@ namespace Altaxo.Gui.Graph
       set
       {
         this._chkCustomMinorColor.Checked = value;
-        this._minorLineColor.Enabled = (value && ShowMinor);
+        this._minorLineColor.Enabled = value;
       }
     }
 
@@ -199,19 +184,68 @@ namespace Altaxo.Gui.Graph
           chk.Text = n.Name;
           chk.Tag = n.Item;
           chk.Checked = n.Selected;
-          _majorWhichTicksLayout.Controls.Add(chk);
+          _minorWhichTicksLayout.Controls.Add(chk);
         }
       }
     }
 
     #endregion
+
+    private void EhIndividualMajorColor_CheckChanged(object sender, EventArgs e)
+    {
+      if (!_chkCustomMajorColor.Checked)
+        _majorLineColor.ColorChoice = _lineBrushColor.ColorChoice;
+      _majorLineColor.Enabled = _chkCustomMajorColor.Checked;
+    }
+
+    private void EhIndividualMinorColor_CheckChanged(object sender, EventArgs e)
+    {
+      if (!_chkCustomMinorColor.Checked)
+        _minorLineColor.ColorChoice = _lineBrushColor.ColorChoice;
+      _minorLineColor.Enabled = _chkCustomMinorColor.Checked;
+    }
+
+    private void EhIndividualMajorThickness_CheckChanged(object sender, EventArgs e)
+    {
+      if (!_chkCustomMajorThickness.Checked)
+        _lineMajorThickness.PenWidthChoice = _lineLineThickness.PenWidthChoice;
+      _lineMajorThickness.Enabled = _chkCustomMajorThickness.Checked;
+    }
+
+    private void EhIndividualMinorThickness_CheckChanged(object sender, EventArgs e)
+    {
+      if (!_chkCustomMinorThickness.Checked)
+        _lineMinorThickness.PenWidthChoice = _lineLineThickness.PenWidthChoice;
+      _lineMinorThickness.Enabled = _chkCustomMinorThickness.Checked;
+    }
+
+    private void EhLinePen_Changed(object sender, EventArgs e)
+    {
+      
+      if (!_chkCustomMajorColor.Checked)
+      {
+        if(this._majorPenGlue.Pen!=null)
+          this._majorPenGlue.Pen.BrushHolder = _linePenGlue.Pen.BrushHolder;
+      }
+      if (!_chkCustomMinorColor.Checked)
+      {
+        if(this._minorPenGlue.Pen!=null)
+          this._minorPenGlue.Pen.BrushHolder = _linePenGlue.Pen.BrushHolder;
+      }
+    }
+
+    private void EhLineThickness_Changed(object sender, EventArgs e)
+    {
+      if (!_chkCustomMajorThickness.Checked)
+        _lineMajorThickness.PenWidthChoice = _lineLineThickness.PenWidthChoice;
+      if (!_chkCustomMinorThickness.Checked)
+        _lineMinorThickness.PenWidthChoice = _lineLineThickness.PenWidthChoice;
+    }
   }
 
   public interface IAxisLineStyleView
   {
     bool ShowLine { get; set; }
-    bool ShowMajor { get; set; }
-    bool ShowMinor { get; set; }
     PenX LinePen { get; set; }
     PenX MajorPen{get; set; }
     PenX MinorPen{ get; set; }

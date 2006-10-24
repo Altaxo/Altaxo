@@ -147,65 +147,65 @@ namespace Altaxo.Graph.Gdi.CS
       }
 
       if (null == _axisStyleInformation)
-        _axisStyleInformation = new List<A2DAxisStyleInformation>();
+        _axisStyleInformation = new List<CSAxisInformation>();
       else
         _axisStyleInformation.Clear();
 
-      A2DAxisStyleInformation info;
+      CSAxisInformation info;
 
       // Left
-      info = new A2DAxisStyleInformation(new CSLineID(vertAx, horzRev ? 1 : 0));
+      info = new CSAxisInformation(new CSLineID(vertAx, horzRev ? 1 : 0));
       _axisStyleInformation.Add(info);
       info.NameOfAxisStyle = "Left";
-      info.NameOfLeftSide = vertRev ? "Inner" : "Outer";
-      info.NameOfRightSide = vertRev ? "Outer" : "Inner";
-      info.PreferedLabelSide = vertRev ? A2DAxisSide.Right : A2DAxisSide.Left;
+      info.NameOfFirstDownSide = horzRev ? "Inner" : "Outer";
+      info.NameOfFirstUpSide = horzRev ? "Outer" : "Inner";
+      info.PreferedLabelSide = horzRev ? CSAxisSide.FirstUp : CSAxisSide.FirstDown;
       info.IsShownByDefault = true;
       info.HasTitleByDefault = true;
 
 
       // Right
-      info = new A2DAxisStyleInformation(new CSLineID(vertAx, horzRev ? 0 : 1));
+      info = new CSAxisInformation(new CSLineID(vertAx, horzRev ? 0 : 1));
       _axisStyleInformation.Add(info);
       info.NameOfAxisStyle = "Right";
-      info.NameOfLeftSide = vertRev ? "Outer" : "Inner";
-      info.NameOfRightSide = vertRev ? "Inner" : "Outer";
-      info.PreferedLabelSide = vertRev ? A2DAxisSide.Left : A2DAxisSide.Right;
+      info.NameOfFirstDownSide = horzRev ? "Outer" : "Inner";
+      info.NameOfFirstUpSide = horzRev ? "Inner" : "Outer";
+      info.PreferedLabelSide = horzRev ? CSAxisSide.FirstDown : CSAxisSide.FirstUp;
 
       // Bottom
-      info = new A2DAxisStyleInformation(new CSLineID(horzAx, vertRev ? 1 : 0));
+      info = new CSAxisInformation(new CSLineID(horzAx, vertRev ? 1 : 0));
       _axisStyleInformation.Add(info);
       info.NameOfAxisStyle = "Bottom";
-      info.NameOfLeftSide = horzRev ? "Outer" : "Inner";
-      info.NameOfRightSide = horzRev ? "Inner" : "Outer";
-      info.PreferedLabelSide = horzRev ? A2DAxisSide.Left : A2DAxisSide.Right;
+      info.NameOfFirstDownSide = vertRev ? "Inner" : "Outer";
+      info.NameOfFirstUpSide = vertRev ?  "Outer" : "Inner";
+      info.PreferedLabelSide = vertRev ? CSAxisSide.FirstUp : CSAxisSide.FirstDown;
       info.IsShownByDefault = true;
       info.HasTitleByDefault = true;
 
       // Top
-      info = new A2DAxisStyleInformation(new CSLineID(horzAx, vertRev ? 0 : 1));
+      info = new CSAxisInformation(new CSLineID(horzAx, vertRev ? 0 : 1));
       _axisStyleInformation.Add(info);
       info.NameOfAxisStyle = "Top";
-      info.NameOfLeftSide = horzRev ? "Inner" : "Outer";
-      info.NameOfRightSide = horzRev ? "Outer" : "Inner";
-      info.PreferedLabelSide = horzRev ? A2DAxisSide.Right : A2DAxisSide.Left;
+      info.NameOfFirstDownSide = vertRev ? "Outer" : "Inner";
+      info.NameOfFirstUpSide = vertRev ? "Inner" : "Outer";
+      info.PreferedLabelSide = vertRev ? CSAxisSide.FirstDown : CSAxisSide.FirstUp;
 
 
       // Y=0
-      info = new A2DAxisStyleInformation(CSLineID.FromPhysicalValue(horzAx, 0));
+      info = new CSAxisInformation(CSLineID.FromPhysicalValue(horzAx, 0));
       _axisStyleInformation.Add(info);
       info.NameOfAxisStyle = "Y=0";
-      info.NameOfLeftSide = horzRev ? "Below" : "Above";
-      info.NameOfRightSide = horzRev ? "Above" : "Below";
-      info.PreferedLabelSide = horzRev ? A2DAxisSide.Left : A2DAxisSide.Right;
+      info.NameOfFirstUpSide = vertRev ? "Below" : "Above";
+      info.NameOfFirstDownSide = vertRev ? "Above" : "Below";
+      info.PreferedLabelSide = vertRev ? CSAxisSide.FirstUp : CSAxisSide.FirstDown;
 
       // X=0
-      info = new A2DAxisStyleInformation(CSLineID.FromPhysicalValue(vertAx, 0));
+      info = new CSAxisInformation(CSLineID.FromPhysicalValue(vertAx, 0));
       _axisStyleInformation.Add(info);
       info.NameOfAxisStyle = "X=0";
-      info.NameOfLeftSide = vertRev ? "Right" : "Left";
-      info.NameOfRightSide = vertRev ? "Left" : "Right";
-      info.PreferedLabelSide = vertRev ? A2DAxisSide.Right : A2DAxisSide.Left;
+      info.NameOfFirstDownSide = horzRev ? "Right" : "Left";
+      info.NameOfFirstUpSide = horzRev ? "Left" : "Right";
+      info.PreferedLabelSide = horzRev ? CSAxisSide.FirstUp : CSAxisSide.FirstDown;
 
 
 
@@ -238,6 +238,9 @@ namespace Altaxo.Graph.Gdi.CS
       ylocation = _layerHeight * (1 - ry);
       return !double.IsNaN(xlocation) && !double.IsNaN(ylocation);
     }
+
+
+    
 
 
     public override bool LogicalToLayerCoordinatesAndDirection(

@@ -254,7 +254,7 @@
     </Condition>
     <Condition name = "WindowActive" activewindow="Altaxo.Graph.GUI.SDGraphController" action="Exclude">
       <MenuItem id="Graph" label="${res:XML.MainMenu.GraphMenu}"  type="Menu">
-        <MenuItem id="NewLayer" label="${res:XML.MainMenu.NewLayerMenu}">
+        <MenuItem id="NewLayer" label="${res:XML.MainMenu.NewLayerMenu}" type="Menu">
           <MenuItem id="NormalBottomXLeftY" label="${res:XML.MainMenu.NewLayerMenu.NormalBottomXLeftY}"
 						description="${res:XML.MainMenu.NewLayerMenu.NormalBottomXLeftY.Description}" class="Altaxo.Graph.Commands.NewLayerNormalBottomXLeftY" />
           <MenuItem id="LinkedTopXRightY" label="${res:XML.MainMenu.NewLayerMenu.LinkedTopXRightY}"

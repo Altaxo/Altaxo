@@ -50,7 +50,7 @@ namespace Altaxo.Graph.Gdi.Axis
     /// <param name="styleInfo">The information which identifies the axis styles.</param>
     /// <param name="axisstyle">The axis style the axis is formatted with.</param>
     /// <param name="useMinorTicks">If true, the minor ticks where used instead of the (default) major ticks.</param>
-    public abstract void Paint(Graphics g, XYPlotLayer layer, A2DAxisStyleInformation styleInfo, AxisLineStyle axisstyle, bool useMinorTicks);
+    public abstract void Paint(Graphics g, XYPlotLayer layer, CSAxisInformation styleInfo, AxisLineStyle axisstyle, bool useMinorTicks);
  
     #region IChangedEventSource Members
 

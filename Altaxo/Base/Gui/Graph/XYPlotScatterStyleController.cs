@@ -137,6 +137,7 @@ namespace Altaxo.Gui.Graph
   /// Summary description for XYPlotScatterStyleController.
   /// </summary>
   [UserControllerForObject(typeof(ScatterPlotStyle))]
+  [ExpectedTypeOfView(typeof(IXYPlotScatterStyleView))]
   public class XYPlotScatterStyleController : IXYPlotScatterStyleViewEventSink, IXYPlotScatterStyleController
   {
     ScatterPlotStyle _doc;

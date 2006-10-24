@@ -243,6 +243,21 @@ namespace Altaxo.Graph.Gdi
       OnLayerCollectionChanged();
     }
 
+    /// <summary>
+    /// Replace the old layer by the new one.
+    /// </summary>
+    /// <param name="oldlayer">Old layer, which should be replaced.</param>
+    /// <param name="newlayer">New layer to replace the old one.</param>
+    public virtual void Replace(XYPlotLayer oldlayer, XYPlotLayer newlayer)
+    {
+      int i = base.InnerList.IndexOf(oldlayer);
+      if (i >= 0)
+      {
+        base.InnerList[i] = newlayer;
+        newlayer.SetParentAndNumber(this, i);
+        newlayer.SetPrintableGraphBounds(m_PrintableBounds, false);
+      }
+    }
 
     /// <summary>
     /// Adds a layer to this layer collection.

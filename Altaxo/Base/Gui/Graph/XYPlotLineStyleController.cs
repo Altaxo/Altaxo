@@ -136,6 +136,7 @@ namespace Altaxo.Gui.Graph
   /// Summary description for XYPlotLineStyleController.
   /// </summary>
   [UserControllerForObject(typeof(LinePlotStyle))]
+  [ExpectedTypeOfView(typeof(IXYPlotLineStyleView))]
   public class XYPlotLineStyleController : IXYPlotLineStyleViewEventSink, IXYPlotLineStyleController
   {
     IXYPlotLineStyleView _view;

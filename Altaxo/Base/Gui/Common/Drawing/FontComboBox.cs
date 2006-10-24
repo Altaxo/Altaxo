@@ -85,27 +85,43 @@ namespace Altaxo.Gui.Common.Drawing
     }
 
 
+    protected override void OnDropDown(EventArgs e)
+    {
+      if (Items.Count <= 1)
+      {
+        Font selected = this.Font;
 
+        this.BeginUpdate();
+
+        Items.Clear();
+
+        foreach (FontFamily ff in FontFamily.Families)
+        {
+          foreach (FontStyle style in Enum.GetValues(typeof(FontStyle)))
+          {
+            if (ff.IsStyleAvailable(style))
+              Items.Add(new FontAndStyle(ff, style));
+          }
+        }
+
+        SelectedItem = new FontAndStyle(selected.FontFamily, selected.Style);
+
+        this.EndUpdate();
+      }
+
+      base.OnDropDown(e);
+    }
 
     void SetDataSource(Font selected)
     {
-      this.BeginUpdate();
+      if (Items.Count > 1)
+        Items.Clear();
+      if(Items.Count==0)
+        Items.Add(new FontAndStyle(selected.FontFamily,selected.Style));
+      else
+        Items[0] = new FontAndStyle(selected.FontFamily,selected.Style);
 
-      Items.Clear();
-
-      foreach (FontFamily ff in FontFamily.Families)
-      {
-        
-        foreach(FontStyle style in Enum.GetValues(typeof(FontStyle)))
-        {
-          if (ff.IsStyleAvailable(style))
-          Items.Add(new FontAndStyle(ff,style));
-        }
-      }
-
-      SelectedItem = new FontAndStyle(selected.FontFamily,selected.Style);
-
-      this.EndUpdate();
+      SelectedIndex = 0;
     }
 
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]

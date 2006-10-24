@@ -62,7 +62,7 @@ namespace Altaxo.Graph.Gdi.Axis
     /// </summary>
     TextGraphic _axisTitle;
 
-    A2DAxisStyleInformation _cachedAxisInfo;
+    CSAxisInformation _cachedAxisInfo;
 
     [field:NonSerialized]
     event EventHandler _changed;
@@ -212,6 +212,8 @@ namespace Altaxo.Graph.Gdi.Axis
       this.MinorLabelStyle = from._minorLabelStyle == null ? null : (AxisLabelStyleBase)from._minorLabelStyle.Clone();
       this.Title = from._axisTitle == null ? null : (TextGraphic)from._axisTitle.Clone();
 
+      // Cached values
+      this._cachedAxisInfo = from._cachedAxisInfo;
 
     }
 
@@ -231,7 +233,7 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
 
-    public A2DAxisStyleInformation CachedAxisInformation
+    public CSAxisInformation CachedAxisInformation
     {
       get
       {
@@ -240,6 +242,8 @@ namespace Altaxo.Graph.Gdi.Axis
       set
       {
         _cachedAxisInfo = value;
+        if (_axisLineStyle != null)
+          _axisLineStyle.CachedAxisInformation = value;
       }
     }
 
@@ -273,7 +277,7 @@ namespace Altaxo.Graph.Gdi.Axis
     public void Paint(Graphics g, XYPlotLayer layer)
     {
       int axisnumber = _styleID.ParallelAxisNumber;
-      A2DAxisStyleInformation styleinfo = layer.CoordinateSystem.GetAxisStyleInformation(_styleID);
+      CSAxisInformation styleinfo = layer.CoordinateSystem.GetAxisStyleInformation(_styleID);
       _cachedAxisInfo = styleinfo;
 
       if (ShowAxisLine)
@@ -353,8 +357,12 @@ namespace Altaxo.Graph.Gdi.Axis
         AxisLineStyle oldvalue = _axisLineStyle;
         _axisLineStyle = value;
 
+
         if (null != value)
+        {
           value.ParentObject = this;
+          value.CachedAxisInformation = this._cachedAxisInfo;
+        }
 
         if (!object.ReferenceEquals(value, oldvalue))
         {

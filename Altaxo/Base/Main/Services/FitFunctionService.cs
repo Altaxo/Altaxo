@@ -132,14 +132,12 @@ namespace Altaxo.Main.Services
 
       void Initialize()
       {
-        DictionaryEntry[] classentries = Altaxo.Main.Services.ReflectionService.GetAttributeInstancesAndClassTypes(typeof(FitFunctionClassAttribute));
+        IEnumerable<Type> classentries = Altaxo.Main.Services.ReflectionService.GetUnsortedClassTypesHavingAttribute(typeof(FitFunctionClassAttribute),true);
 
         SortedList<FitFunctionCreatorAttribute,System.Reflection.MethodInfo> list = new SortedList<FitFunctionCreatorAttribute,System.Reflection.MethodInfo>();
 
-        foreach (DictionaryEntry entry in classentries)
+        foreach (Type definedtype in classentries)
         {
-          System.Type definedtype = (System.Type)entry.Value;
-
           System.Reflection.MethodInfo[] methods = definedtype.GetMethods(System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public);
           foreach (System.Reflection.MethodInfo method in methods)
           {

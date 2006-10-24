@@ -49,6 +49,7 @@ namespace Altaxo.Gui.Common
   /// Controller for a single value. This is a string here, but in derived classes, that can be anything that can be converted to and from a string.
   /// </summary>
   [UserControllerForObject(typeof(string),100)]
+  [ExpectedTypeOfView(typeof(ISingleValueView))]
   public class SingleValueController : ISingleValueController, ISingleValueViewEventSink
   {
     protected ISingleValueView _view;

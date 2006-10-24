@@ -16,7 +16,7 @@ namespace Altaxo.Graph.Gdi
     protected double _layerWidth;
     protected double _layerHeight;
 
-    protected List<A2DAxisStyleInformation> _axisStyleInformation = new List<A2DAxisStyleInformation>();
+    protected List<CSAxisInformation> _axisStyleInformation = new List<CSAxisInformation>();
 
     [NonSerialized]
     object _parent;
@@ -34,8 +34,7 @@ namespace Altaxo.Graph.Gdi
       this._layerWidth = from._layerWidth;
       this._layerHeight = from._layerHeight;
       this._axisStyleInformation.Clear();
-      foreach (A2DAxisStyleInformation info in from._axisStyleInformation)
-        this._axisStyleInformation.Add(info.Clone());
+      
     }
 
 
@@ -62,6 +61,7 @@ namespace Altaxo.Graph.Gdi
     /// <param name="ylocation">On return, gives the y coordinate of the converted value (for instance location).</param>
     /// <returns>True if the conversion was successfull, false if the conversion was not possible.</returns>
     public abstract bool LogicalToLayerCoordinates(double rx, double ry, out double xlocation, out double ylocation);
+  
 
     /// <summary>
     /// Converts logical coordinates along an isoline to layer coordinates and the appropriate derivative.
@@ -356,9 +356,67 @@ namespace Altaxo.Graph.Gdi
     }
 
     /// <summary>
+    /// Converts logical coordinates along an isoline to layer coordinates and returns the direction of the isoline at this point.
+    /// </summary>
+    /// <param name="rx0">Logical x of starting point of the isoline.</param>
+    /// <param name="ry0">Logical y of starting point of the isoline.</param>
+    /// <param name="rx1">Logical x of end point of the isoline.</param>
+    /// <param name="ry1">Logical y of end point of the isoline.</param>
+    /// <param name="t">Parameter between 0 and 1 that determines the point on the isoline.
+    /// A value of 0 denotes the starting point of the isoline, a value of 1 the end point. The logical
+    /// coordinates are linear interpolated between starting point and end point.</param>
+    /// <param name="side">The side to which the direction should go.</param>
+    /// <param name="normalizeddirection">Returns the normalized direction vector,i.e. a vector of norm 1, that
+    /// has the angle <paramref name="angle"/> to the tangent of the isoline. </param>
+    /// <returns>The location (in layer coordinates) of the isoline point.</returns>
+    public PointF GetNormalizedDirection(
+      double rx0, double ry0, double rx1, double ry1,
+      double t,
+      Logical3D direction,
+      out PointF normalizeddirection)
+    {
+      double ax, ay, adx, ady;
+      double rxx0 = rx0 + t * (rx1 - rx0);
+      double ryy0 = ry0 + t * (ry1 - ry0);
+      double rxx1 = rxx0 + direction.RX;
+      double ryy1 = ryy0 + direction.RY;
+
+      this.LogicalToLayerCoordinatesAndDirection(rxx0, ryy0, rxx1, ryy1, 0, out ax, out ay, out adx, out ady);
+
+      // Normalize the vector
+      double rr = Calc.RMath.Hypot(adx, ady);
+      if (rr > 0)
+      {
+        adx /= rr;
+        ady /= rr;
+      }
+
+      normalizeddirection = new PointF((float)adx, (float)ady);
+
+
+      return new PointF((float)ax, (float)ay);
+    }
+
+    public Logical3D GetLogicalDirection(int parallelAxisNumber, CSAxisSide side)
+    {
+      switch (side)
+      {
+        default:
+        case CSAxisSide.FirstDown:
+          return 0 == parallelAxisNumber ? new Logical3D(0, -1, 0) : new Logical3D(-1, 0, 0);
+        case CSAxisSide.FirstUp:
+          return 0 == parallelAxisNumber ? new Logical3D(0, 1, 0) : new Logical3D(1, 0, 0);
+        case CSAxisSide.SecondDown:
+          return 2 == parallelAxisNumber ? new Logical3D(0, -1, 0) : new Logical3D(0, 0, -1);
+        case CSAxisSide.SecondUp:
+          return 2 == parallelAxisNumber ? new Logical3D(0, 1, 0) : new Logical3D(0, 0, 1);
+      }
+    }
+
+    /// <summary>
     /// Enumerators all axis style information.
     /// </summary>
-    public IEnumerable<A2DAxisStyleInformation> AxisStyles
+    public IEnumerable<CSAxisInformation> AxisStyles
     {
       get
       {
@@ -389,16 +447,16 @@ namespace Altaxo.Graph.Gdi
       return -1;
     }
 
-    public A2DAxisStyleInformation GetAxisStyleInformation(CSLineID styleID)
+    public CSAxisInformation GetAxisStyleInformation(CSLineID styleID)
     {
       if (_axisStyleInformation == null || _axisStyleInformation.Count == 0)
         UpdateAxisInfo();
 
       // search for the same axis first, then for the style with the nearest logical value
       double minDistance = double.MaxValue;
-      A2DAxisStyleInformation nearestInfo = null;
+      CSAxisInformation nearestInfo = null;
 
-      foreach (A2DAxisStyleInformation info in this._axisStyleInformation)
+      foreach (CSAxisInformation info in this._axisStyleInformation)
       {
         if (styleID.ParallelAxisNumber == info.Identifier.ParallelAxisNumber)
         {
@@ -417,7 +475,7 @@ namespace Altaxo.Graph.Gdi
 
       }
 
-      A2DAxisStyleInformation result = new A2DAxisStyleInformation(styleID);
+      CSAxisInformation result = new CSAxisInformation(styleID);
       if (nearestInfo == null)
       {
         result.SetDefaultValues();
@@ -434,7 +492,7 @@ namespace Altaxo.Graph.Gdi
     public CSPlaneInformation GetPlaneInformation(CSPlaneID planeID)
     {
       CSLineID lineID = (CSLineID)planeID;
-      A2DAxisStyleInformation lineInfo = GetAxisStyleInformation(lineID);
+      CSAxisInformation lineInfo = GetAxisStyleInformation(lineID);
 
       CSPlaneInformation result = new CSPlaneInformation(planeID);
       result.Name = lineInfo.NameOfAxisStyle;
@@ -445,7 +503,7 @@ namespace Altaxo.Graph.Gdi
     {
       Dictionary<CSLineID, object> dict = new Dictionary<CSLineID, object>();
 
-      foreach (A2DAxisStyleInformation info in AxisStyles)
+      foreach (CSAxisInformation info in AxisStyles)
       {
         dict.Add(info.Identifier, null);
         yield return info.Identifier;
@@ -467,7 +525,7 @@ namespace Altaxo.Graph.Gdi
       {
         foreach (CSLineID id in list2)
         {
-          if (!dict.ContainsKey(id))
+          if (null!=id && !dict.ContainsKey(id))
           {
             dict.Add(id, null);
             yield return id;
@@ -482,7 +540,7 @@ namespace Altaxo.Graph.Gdi
     {
       Dictionary<CSPlaneID, object> dict = new Dictionary<CSPlaneID, object>();
 
-      foreach (A2DAxisStyleInformation info in AxisStyles)
+      foreach (CSAxisInformation info in AxisStyles)
       {
         CSPlaneID p1 = (CSPlaneID)info.Identifier;
         dict.Add(p1, null);

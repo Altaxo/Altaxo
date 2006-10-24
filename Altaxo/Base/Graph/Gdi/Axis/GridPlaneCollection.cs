@@ -131,19 +131,39 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
 
-      public void Add(GridPlane plane)
+    void Attach(GridPlane plane)
     {
       plane.ParentObject = this;
       plane.Changed += EhPlaneChanged;
+    }
+    void Detach(GridPlane plane)
+    {
+      plane.Changed -= EhPlaneChanged;
+    }
+      public void Add(GridPlane plane)
+    {
+      Attach(plane);
       _innerList.Add(plane);
     }
 
     public void Clear()
     {
       foreach (GridPlane plane in _innerList)
-        plane.Changed -= EhPlaneChanged;
+        Detach(plane);
 
       _innerList.Clear();
+    }
+
+    public void RemoveUnused()
+    {
+      for (int i = _innerList.Count - 1; i >= 0; i--)
+      {
+        if (!_innerList[i].IsUsed)
+        {
+          Detach(_innerList[i]);
+          _innerList.RemoveAt(i);
+        }
+      }
     }
 
     public bool Contains(CSPlaneID planeid)

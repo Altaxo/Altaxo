@@ -83,6 +83,7 @@ namespace Altaxo.Gui.Graph
   /// Controls a IBackgroundStyle instance.
   /// </summary>
   [UserControllerForObject(typeof(IBackgroundStyle))]
+  [ExpectedTypeOfView(typeof(IBackgroundStyleView))]
   public class BackgroundStyleController : IBackgroundStyleViewEventSink, IMVCAController
   {
     IBackgroundStyleView _view;

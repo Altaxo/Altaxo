@@ -49,6 +49,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
   /// Summary description for ParameterSetElementControl.
   /// </summary>
   [UserControllerForObject(typeof(ParameterSetElement),100)]
+  [ExpectedTypeOfView(typeof(IParameterSetElementView))]
   public class ParameterSetElementController : IParameterSetElementController 
   {
     ParameterSetElement _doc;

@@ -37,6 +37,7 @@ namespace Altaxo.Gui.Common.Drawing
     ColorType _colorType;
     ContextMenuStrip _contextStrip;
     static ColorDialog _colorDialog;
+    public event EventHandler ColorChoiceChanged;
 
     public ColorComboBox()
     {
@@ -92,31 +93,69 @@ namespace Altaxo.Gui.Common.Drawing
       }
       set
       {
+        ColorType oldvalue = _colorType;
         _colorType = value;
-        SetDataSource(this.Color);
+
+        if (oldvalue != value)
+        {
+          SetDataSource(this.ColorChoice);
+        }
       }
     }
 
+    protected virtual void OnColorChoiceChanged()
+    {
+      if (null != ColorChoiceChanged)
+        ColorChoiceChanged(this, EventArgs.Empty);
+    }
+
+    protected override void OnSelectionChangeCommitted(EventArgs e)
+    {
+      base.OnSelectionChangeCommitted(e);
+      OnColorChoiceChanged();
+    }
+
+    protected override void OnDropDown(EventArgs e)
+    {
+      if (Items.Count <= 1)
+      {
+        Color selectedColor = this.ColorChoice;
+
+        this.BeginUpdate();
+
+        Items.Clear();
+
+        if (!ColorDictionary.IsColorOfType(selectedColor, _colorType))
+          Items.Add(selectedColor);
+
+        foreach (Color c in ColorDictionary.GetColorsOfType(_colorType))
+          Items.Add(c);
+
+        SelectedItem = ColorDictionary.GetNormalizedColor(selectedColor, _colorType);
+
+        this.EndUpdate();
+      }
+
+      base.OnDropDown(e);
+    }
 
     void SetDataSource(Color selectedColor)
     {
-      this.BeginUpdate();
+      if (Items.Count > 1)
+        Items.Clear();
 
-      Items.Clear();
-
-      if(!ColorDictionary.IsColorOfType(selectedColor,_colorType))
+      if (Items.Count == 0)
         Items.Add(selectedColor);
+      else
+        Items[0] = selectedColor;
 
-      foreach(Color c in ColorDictionary.GetColorsOfType(_colorType))
-        Items.Add(c);
-      
-      SelectedItem = ColorDictionary.GetNormalizedColor(selectedColor,_colorType);
+      SelectedIndex = 0;
 
-      this.EndUpdate();
+      OnColorChoiceChanged();
     }
 
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-    public Color Color
+    public Color ColorChoice
     {
       get
       {
@@ -127,7 +166,10 @@ namespace Altaxo.Gui.Common.Drawing
       }
       set
       {
-        SetDataSource(value);
+        if ((SelectedItem is Color) && ((Color)SelectedItem) == value)
+          return;
+        else
+          SetDataSource(value);
       }
     }
 
@@ -169,10 +211,10 @@ namespace Altaxo.Gui.Common.Drawing
       if(null==_colorDialog)
         _colorDialog = new ColorDialog();
 
-      _colorDialog.Color = this.Color;
+      _colorDialog.Color = this.ColorChoice;
       if (DialogResult.OK == _colorDialog.ShowDialog(this))
       {
-        this.Color = _colorDialog.Color;
+        this.ColorChoice = _colorDialog.Color;
         OnSelectedItemChanged(EventArgs.Empty);
         OnSelectedValueChanged(EventArgs.Empty);
         OnSelectionChangeCommitted(EventArgs.Empty);
@@ -183,7 +225,7 @@ namespace Altaxo.Gui.Common.Drawing
     {
       ToolStripItem item = (ToolStripItem)sender;
       int alpha = (int)item.Tag;
-      this.Color = Color.FromArgb(alpha, this.Color);
+      this.ColorChoice = Color.FromArgb(alpha, this.ColorChoice);
       OnSelectedItemChanged(EventArgs.Empty);
       OnSelectedValueChanged(EventArgs.Empty);
       OnSelectionChangeCommitted(EventArgs.Empty);

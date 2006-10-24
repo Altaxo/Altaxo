@@ -382,11 +382,11 @@ namespace Altaxo.Gui.Graph
   
     public void InitializePlotStyleColor(Color sel)
     {
-      _cbColor.Color = sel;
+      _cbColor.ColorChoice = sel;
     }
     public Color SymbolColor
     {
-      get { return _cbColor.Color; }
+      get { return _cbColor.ColorChoice; }
     }
 
     public void InitializeSkipPoints(int freq)

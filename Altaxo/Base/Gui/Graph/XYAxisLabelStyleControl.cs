@@ -312,7 +312,7 @@ namespace Altaxo.Gui.Graph
       // 
       // m_cbColor
       // 
-      this.m_cbColor.Color = System.Drawing.Color.Black;
+      this.m_cbColor.ColorChoice = System.Drawing.Color.Black;
       this.m_cbColor.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
       this.m_cbColor.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.m_cbColor.FormattingEnabled = true;
@@ -397,7 +397,7 @@ namespace Altaxo.Gui.Graph
       if(null!=Controller)
       {
        
-          Controller.EhView_ColorChanged(m_cbColor.Color);
+          Controller.EhView_ColorChanged(m_cbColor.ColorChoice);
         
       }
     }
@@ -512,7 +512,7 @@ namespace Altaxo.Gui.Graph
 
     public void Color_Initialize(System.Drawing.Color color)
     {
-      this.m_cbColor.Color=color;
+      this.m_cbColor.ColorChoice=color;
     }
 
     public object BackgroundControl_Initialize(BackgroundStyleController controller)

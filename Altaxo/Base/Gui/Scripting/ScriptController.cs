@@ -67,6 +67,7 @@ namespace Altaxo.Gui.Scripting
   /// Summary description for ScriptController.
   /// </summary>
   [UserControllerForObject(typeof(IScriptText),200)]
+  [ExpectedTypeOfView(typeof(IScriptView))]
   public class ScriptController : IScriptViewEventSink, IScriptController
   {
     IScriptView _view;
@@ -89,7 +90,7 @@ namespace Altaxo.Gui.Scripting
       _tempDoc = _doc.CloneForModification();
       _compiledDoc=null;
 
-      _pureScriptController = (IPureScriptController)Current.Gui.GetControllerAndControl(new object[]{_tempDoc},typeof(IPureScriptText),typeof(IPureScriptController));
+      _pureScriptController = (IPureScriptController)Current.Gui.GetControllerAndControl(new object[]{_tempDoc},typeof(IPureScriptText),typeof(IPureScriptController),UseDocument.Copy);
       _scriptExecutionHandler = exec;
     }
 

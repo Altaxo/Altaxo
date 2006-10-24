@@ -36,6 +36,7 @@ namespace Altaxo.Main.Services
 
     ReflectionService.IAttributeForClassListCollection _cachedControllerList;
     ReflectionService.IAttributeForClassListCollection _cachedControlList;
+
     /// <summary>
     /// Gets an <see cref="IMVCController" />  for a given document type.
     /// </summary>
@@ -45,7 +46,59 @@ namespace Altaxo.Main.Services
     /// <returns>The controller for that document when found. The controller is already initialized with the document. If not found, null is returned.</returns>
     public IMVCController GetController(object[] args, System.Type expectedControllerType)
     {
-      return (IMVCController)ReflectionService.GetClassForClassInstanceByAttribute(typeof(UserControllerForObjectAttribute), new Type[] { expectedControllerType }, args, ref _cachedControllerList);
+      return GetController(args, null, expectedControllerType,UseDocument.Copy);
+    }
+    
+    /// <summary>
+    /// Gets an <see cref="IMVCController" />  for a given document type.
+    /// </summary>
+    /// <param name="args">The argument list. The first element args[0] is the document for which the controller is searched. The following elements are
+    /// optional, and are usually the parents of this document.</param>
+    /// <param name="expectedControllerType">Type of controller that you expect to return.</param>
+    /// <returns>The controller for that document when found. The controller is already initialized with the document. If not found, null is returned.</returns>
+    public IMVCController GetController(object[] args, System.Type expectedControllerType, UseDocument copyDocument)
+    {
+      return GetController(args, null, expectedControllerType, copyDocument);
+    }
+
+    /// <summary>
+    /// Gets an <see cref="IMVCController" />  for a given document type.
+    /// </summary>
+    /// <param name="creationArgs">The argument list. The first element args[0] is the document for which the controller is searched. The following elements are
+    /// optional, and are usually the parents of this document.</param>
+    /// <param name="overrideArg0Type">If this parameter is not null, this given type is used instead of determining the type of the <c>arg[0]</c> argument.</param>
+    /// <param name="expectedControllerType">Type of controller that you expect to return.</param>
+    /// <returns>The controller for that document when found.</returns>
+    public IMVCController GetController(object[] creationArgs, System.Type overrideArg0Type, System.Type expectedControllerType, UseDocument copyDocument)
+    {
+
+      if (!ReflectionService.IsSubClassOfOrImplements(expectedControllerType, typeof(IMVCController)))
+        throw new ArgumentException("Expected controller type has to be IMVCController or a subclass or derived class of this");
+
+      object result = null;
+
+      // 1st search for all classes that wear the UserControllerForObject attribute
+      ReflectionService.IAttributeForClassList list = ReflectionService.GetAttributeInstancesAndClassTypesForClass(typeof(UserControllerForObjectAttribute), creationArgs[0], overrideArg0Type);
+
+      foreach (Type definedType in list.Types)
+      {
+        if (ReflectionService.IsSubClassOfOrImplements(definedType, typeof(IMVCANController)))
+        {
+          IMVCANController mvcan = (IMVCANController)Activator.CreateInstance(definedType);
+          mvcan.UseDocumentCopy = copyDocument;
+          if(mvcan.InitializeDocument(creationArgs))
+            result = mvcan;
+        }
+        else
+        {
+          result = ReflectionService.CreateInstanceFromList(list, new Type[] { expectedControllerType }, creationArgs);
+        }
+
+        if (result is IMVCController)
+          break;
+      }
+
+      return (IMVCController)result;
     }
 
     /// <summary>
@@ -57,7 +110,20 @@ namespace Altaxo.Main.Services
     /// <returns>The controller for that document when found. The controller is already initialized with the document. If no controller is found for the document, or if no GUI control is found for the controller, the return value is null.</returns>
     public IMVCController GetControllerAndControl(object[] args, System.Type expectedControllerType)
     {
-      return GetControllerAndControl(args,null,expectedControllerType);
+      return GetControllerAndControl(args, null, expectedControllerType, UseDocument.Copy);
+    }
+
+
+    /// <summary>
+    /// Gets an <see cref="IMVCController" />  for a given document type, and finding the right GUI user control for it.
+    /// </summary>
+    /// <param name="args">The argument list. The first element args[0] is the document for which the controller is searched. The following elements are
+    /// optional, and are usually the parents of this document.</param>
+    /// <param name="expectedControllerType">Type of controller that you expect to return.</param>
+    /// <returns>The controller for that document when found. The controller is already initialized with the document. If no controller is found for the document, or if no GUI control is found for the controller, the return value is null.</returns>
+    public IMVCController GetControllerAndControl(object[] args, System.Type expectedControllerType, UseDocument copyDocument)
+    {
+      return GetControllerAndControl(args, null, expectedControllerType, copyDocument);
     }
 
 
@@ -69,16 +135,15 @@ namespace Altaxo.Main.Services
     /// <param name="overrideArg0Type">If this parameter is not null, this given type is used instead of determining the type of the <c>arg[0]</c> argument.</param>
     /// <param name="expectedControllerType">Type of controller that you expect to return.</param>
     /// <returns>The controller for that document when found. The controller is already initialized with the document. If no controller is found for the document, or if no GUI control is found for the controller, the return value is null.</returns>
-    public IMVCController GetControllerAndControl(object[] args, System.Type overrideArg0Type, System.Type expectedControllerType)
+    public IMVCController GetControllerAndControl(object[] args, System.Type overrideArg0Type, System.Type expectedControllerType, UseDocument copyDocument)
     {
 
-      if(!ReflectionService.IsSubClassOfOrImplements(expectedControllerType,typeof(IMVCController)))
+      if (!ReflectionService.IsSubClassOfOrImplements(expectedControllerType, typeof(IMVCController)))
         throw new ArgumentException("Expected controller type has to be IMVCController or a subclass or derived class of this");
 
-      IMVCController controller = (IMVCController)ReflectionService.GetClassForClassInstanceByAttribute(typeof(UserControllerForObjectAttribute), new Type[] { expectedControllerType }, args, overrideArg0Type, ref _cachedControllerList);
-      if(controller==null)
+      IMVCController controller = GetController(args, overrideArg0Type, typeof(IMVCController), copyDocument);
+      if (controller == null)
         return null;
-
 
       FindAndAttachControlTo(controller);
 
@@ -98,10 +163,9 @@ namespace Altaxo.Main.Services
     public object FindAndAttachControlTo(IMVCController controller, System.Type expectedType)
     {
       return ReflectionService.GetClassForClassInstanceByAttribute(
-        typeof(UserControlForControllerAttribute), 
-        new Type[] { typeof(System.Windows.Forms.Control), expectedType},
-        new object[] { controller },
-        ref _cachedControlList);
+        typeof(UserControlForControllerAttribute),
+        new Type[] { typeof(System.Windows.Forms.Control), expectedType },
+        new object[] { controller });
     }
 
 
@@ -119,11 +183,10 @@ namespace Altaxo.Main.Services
       {
         if (viewattributes.Length > 1)
         {
-          // You should sort the items by priority
-          throw new NotImplementedException("Sorting by priority has to be implemented here");
+          Array.Sort(viewattributes);
         }
 
-        foreach(ExpectedTypeOfViewAttribute attr in viewattributes)
+        foreach (ExpectedTypeOfViewAttribute attr in viewattributes)
         {
           Type[] controltypes = ReflectionService.GetNonAbstractSubclassesOf(new System.Type[] { typeof(System.Windows.Forms.Control), attr.TargetType });
           foreach (Type controltype in controltypes)
@@ -135,7 +198,7 @@ namespace Altaxo.Main.Services
               bool containsControllerType = false;
               foreach (UserControlForControllerAttribute controlForAttr in controlForAttributes)
               {
-                if (controlForAttr.TargetType == ct)
+                if (ReflectionService.IsSubClassOfOrImplements(ct,controlForAttr.TargetType))
                 {
                   containsControllerType = true;
                   break;
@@ -147,33 +210,34 @@ namespace Altaxo.Main.Services
 
             // all seems ok, so we can try to create the control
             object controlinstance = System.Activator.CreateInstance(controltype);
-            if(null==controlinstance)
-              throw new ApplicationException(string.Format("Searching a control for controller of type {0}. Find control type {1}, but it was not possible to create a instance of this type.",ct,controltype));
+            if (null == controlinstance)
+              throw new ApplicationException(string.Format("Searching a control for controller of type {0}. Find control type {1}, but it was not possible to create a instance of this type.", ct, controltype));
 
             controller.ViewObject = controlinstance;
 
-            if(controller.ViewObject == null)
-              throw new ApplicationException(string.Format("Searching a control for controller of type {0}. Find control type {1}, but the controller did not accept this control.",ct,controltype));
+            if (controller.ViewObject == null)
+              throw new ApplicationException(string.Format("Searching a control for controller of type {0}. Find control type {1}, but the controller did not accept this control.", ct, controltype));
 
             return;
           }
         }
       }
+      else // Controller has no ExpectedTypeOfView attribute
+      {
+        System.Windows.Forms.UserControl control =
+          (System.Windows.Forms.UserControl)ReflectionService.GetClassForClassInstanceByAttribute(
+          typeof(UserControlForControllerAttribute),
+          new System.Type[] { typeof(System.Windows.Forms.UserControl) },
+          new object[] { controller });
 
-      System.Windows.Forms.UserControl control = 
-        (System.Windows.Forms.UserControl)ReflectionService.GetClassForClassInstanceByAttribute(
-        typeof(UserControlForControllerAttribute),
-        new System.Type[]{typeof(System.Windows.Forms.UserControl)},
-        new object[]{controller},
-        ref _cachedControlList);
+        if (control == null)
+          return;
 
-      if(control==null)
-        return;
-
-      controller.ViewObject = control;
+        controller.ViewObject = control;
+      }
     }
 
-    
+
     /// <summary>
     /// Shows a configuration dialog for an object (without "Apply" button).
     /// </summary>
@@ -182,7 +246,7 @@ namespace Altaxo.Main.Services
     /// <returns>True if the object was successfully configured, false otherwise.</returns>
     public bool ShowDialog(IMVCAController controller, string title)
     {
-      return ShowDialog(controller,title,false);
+      return ShowDialog(controller, title, false);
     }
 
     /// <summary>
@@ -235,7 +299,7 @@ namespace Altaxo.Main.Services
     /// </remarks>
     public bool ShowDialog(object[] args, string title)
     {
-      return ShowDialog(args,title,false);
+      return ShowDialog(args, title, false);
     }
 
     /// <summary>
@@ -256,9 +320,9 @@ namespace Altaxo.Main.Services
     /// </remarks>
     public bool ShowDialog(object[] args, string title, bool showApplyButton)
     {
-      IMVCAController controller = (IMVCAController)Current.Gui.GetControllerAndControl(args,typeof(IMVCAController));
-      
-      if(null==controller)
+      IMVCAController controller = (IMVCAController)Current.Gui.GetControllerAndControl(args, typeof(IMVCAController));
+
+      if (null == controller)
         return false;
 
       if (ShowDialog(controller, title, showApplyButton))
@@ -278,15 +342,15 @@ namespace Altaxo.Main.Services
       System.Type type = arg.GetType();
       System.Array arr = System.Enum.GetValues(type);
       int i;
-      for(i=0;i<arr.Length;++i)
-        if(arg.ToString()==arr.GetValue(i).ToString())
+      for (i = 0; i < arr.Length; ++i)
+        if (arg.ToString() == arr.GetValue(i).ToString())
           break;
-      if(i==arr.Length)
-        throw new ArgumentException("The enumeration is not of integer type","arg");
+      if (i == arr.Length)
+        throw new ArgumentException("The enumeration is not of integer type", "arg");
 
-      object obj = new SingleChoiceObject(System.Enum.GetNames(type),i);
+      object obj = new SingleChoiceObject(System.Enum.GetNames(type), i);
 
-      if(ShowDialog(ref obj,title))
+      if (ShowDialog(ref obj, title))
       {
         arg = (System.Enum)arr.GetValue((obj as SingleChoiceObject).Selection);
         return true;
@@ -311,7 +375,7 @@ namespace Altaxo.Main.Services
     /// </remarks>
     public bool ShowDialog(ref object arg, string title)
     {
-      return ShowDialog(ref arg, title,false);
+      return ShowDialog(ref arg, title, false);
     }
     /// <summary>
     /// Shows a configuration dialog for an object.
@@ -332,7 +396,7 @@ namespace Altaxo.Main.Services
     {
       object[] args = new object[1];
       args[0] = arg;
-      bool result = Current.Gui.ShowDialog(args,title,showApplyButton);
+      bool result = Current.Gui.ShowDialog(args, title, showApplyButton);
       arg = args[0];
       return result;
     }
@@ -344,7 +408,7 @@ namespace Altaxo.Main.Services
     /// <param name="errortxt">The error text.</param>
     public void ErrorMessageBox(string errortxt)
     {
-      System.Windows.Forms.MessageBox.Show(Current.MainWindow,errortxt,"Error(s)!", System.Windows.Forms.MessageBoxButtons.OK,System.Windows.Forms.MessageBoxIcon.Error);
+      System.Windows.Forms.MessageBox.Show(Current.MainWindow, errortxt, "Error(s)!", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
     }
 
     /// <summary>
@@ -356,7 +420,7 @@ namespace Altaxo.Main.Services
     /// <returns>True if the user answered with Yes, otherwise false.</returns>
     public bool YesNoMessageBox(string txt, string caption, bool defaultanswer)
     {
-      return System.Windows.Forms.DialogResult.Yes==System.Windows.Forms.MessageBox.Show(Current.MainWindow, txt, caption, System.Windows.Forms.MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Question,defaultanswer ? System.Windows.Forms.MessageBoxDefaultButton.Button1: System.Windows.Forms.MessageBoxDefaultButton.Button2);
+      return System.Windows.Forms.DialogResult.Yes == System.Windows.Forms.MessageBox.Show(Current.MainWindow, txt, caption, System.Windows.Forms.MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Question, defaultanswer ? System.Windows.Forms.MessageBoxDefaultButton.Button1 : System.Windows.Forms.MessageBoxDefaultButton.Button2);
     }
 
 
@@ -400,23 +464,23 @@ namespace Altaxo.Main.Services
     /// </remarks>
     public string GetUserFriendlyClassName(System.Type definedtype)
     {
-      string result=null;
-      
+      string result = null;
+
       try
       {
-        result = Current.ResourceService.GetString("ClassNames."+definedtype.FullName);
+        result = Current.ResourceService.GetString("ClassNames." + definedtype.FullName);
       }
-      catch(Exception)
+      catch (Exception)
       {
       }
-      if(result!=null)
+      if (result != null)
         return result;
 
-      Attribute[] attributes = Attribute.GetCustomAttributes(definedtype,typeof(System.ComponentModel.DescriptionAttribute));
-      if(attributes.Length>0)
+      Attribute[] attributes = Attribute.GetCustomAttributes(definedtype, typeof(System.ComponentModel.DescriptionAttribute));
+      if (attributes.Length > 0)
         return ((System.ComponentModel.DescriptionAttribute)attributes[0]).Description;
 
-      return string.Format("{0} ({1})",definedtype.Name,definedtype.Namespace);
+      return string.Format("{0} ({1})", definedtype.Name, definedtype.Namespace);
     }
 
     /// <summary>
@@ -427,17 +491,17 @@ namespace Altaxo.Main.Services
     /// <returns>Array of strings with the user friendly class names.</returns>
     public string[] GetUserFriendlyClassName(System.Type[] types, bool withStartingNone)
     {
-      string[] result = new string[types.Length + (withStartingNone ? 1 :0) ];
+      string[] result = new string[types.Length + (withStartingNone ? 1 : 0)];
 
-      int offset=0;
-      if(withStartingNone)
+      int offset = 0;
+      if (withStartingNone)
       {
-        offset=1;
-        result[0]="None";
+        offset = 1;
+        result[0] = "None";
       }
 
-      for(int i=0;i<types.Length;++i)
-        result[i+offset] = GetUserFriendlyClassName(types[i]);
+      for (int i = 0; i < types.Length; ++i)
+        result[i + offset] = GetUserFriendlyClassName(types[i]);
 
       return result;
     }

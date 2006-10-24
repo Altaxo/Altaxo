@@ -138,7 +138,7 @@ namespace Altaxo.Gui.Graph
 
 
       // fill the color dialog box
-      this.m_cbFontColor.Color = this.m_TextObject.Color;
+      this.m_cbFontColor.ColorChoice = this.m_TextObject.Color;
     
     
       // indicate that all elements are now filled -
@@ -404,7 +404,7 @@ namespace Altaxo.Gui.Graph
       // 
       // m_cbFontColor
       // 
-      this.m_cbFontColor.Color = System.Drawing.Color.Black;
+      this.m_cbFontColor.ColorChoice = System.Drawing.Color.Black;
       this.m_cbFontColor.ColorType = Altaxo.Graph.ColorType.KnownAndSystemColor;
       this.m_cbFontColor.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
       this.m_cbFontColor.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -785,7 +785,7 @@ namespace Altaxo.Gui.Graph
       {
 
 
-        this.m_TextObject.Color = m_cbFontColor.Color;
+        this.m_TextObject.Color = m_cbFontColor.ColorChoice;
           this.m_pnPreview.Invalidate();
        
       }   

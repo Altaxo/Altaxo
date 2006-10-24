@@ -38,7 +38,7 @@ using Altaxo.Gui.Common;
 namespace Altaxo.Gui.Graph
 {
   #region Interfaces
-  public interface ILineScatterLayerContentsController : IApplyController, IMVCController
+  public interface ILineScatterLayerContentsController : IMVCAController
   {
     ILineScatterLayerContentsView View { get; set; }
 

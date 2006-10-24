@@ -29,7 +29,7 @@ using Altaxo.Gui;
 namespace Altaxo.Gui.Graph
 {
   #region Interfaces
-  public interface IAxisScaleController : IApplyController, IMVCController
+  public interface IAxisScaleController : IMVCAController
   {
     void EhView_AxisTypeChanged(string text);
   }

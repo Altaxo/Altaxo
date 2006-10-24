@@ -11,7 +11,7 @@ namespace Altaxo.Gui.Graph
 {
 
   [UserControllerForObject(typeof(GridPlane))]
-  public class GridPlaneController : MultiChildController
+  public class GridPlaneController : MultiChildController, IMVCANController
   {
     GridPlane _doc;
 
@@ -19,11 +19,36 @@ namespace Altaxo.Gui.Graph
     IMVCAController _grid2;
     IMVCAController _background;
 
+    public GridPlaneController()
+    {
+    }
 
     public GridPlaneController(GridPlane doc)
     {
-      _doc = doc;
+      InitializeDocument(doc);
+    }
 
+    UseDocument _useDocument;
+    public UseDocument UseDocumentCopy { set { _useDocument = value; } }
+
+    public bool InitializeDocument(params object[] args)
+    {
+      if (args.Length == 0 || !(args[0] is GridPlane))
+        return false;
+
+      bool isVirgin = null == _doc;
+
+      _doc = (GridPlane)args[0];
+
+      Initialize(true);
+      return true;
+    }
+
+
+    void Initialize(bool bInit)
+    {
+      if(bInit)
+      {
       _grid1 = new XYGridStyleController(_doc.GridStyleFirst);
       Current.Gui.FindAndAttachControlTo(_grid1);
       ControlViewElement c1 = new ControlViewElement("Grid1", _grid1, _grid1.ViewObject);
@@ -35,9 +60,12 @@ namespace Altaxo.Gui.Graph
       _background = new BackgroundStyleController(_doc.BackgroundStyle);
       Current.Gui.FindAndAttachControlTo(_background);
       ControlViewElement c3 = new ControlViewElement("Background", _background, _background.ViewObject);
-
-      base.Initialize(new ControlViewElement[] { c1, c2, c3 }, false);
+      
+        base.Initialize(new ControlViewElement[] { c1, c2, c3 }, false);
+      }
     }
+
+   
 
     public override object ModelObject
     {

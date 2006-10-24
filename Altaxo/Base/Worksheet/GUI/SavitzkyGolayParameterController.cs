@@ -54,6 +54,7 @@ namespace Altaxo.Worksheet.GUI
   /// Summary description for SavitzkyGolayParameterController.
   /// </summary>
   [UserControllerForObject(typeof(SavitzkyGolayParameters),100)]
+  [ExpectedTypeOfView(typeof(ISavitzkyGolayParameterView))]
   public class SavitzkyGolayParameterController : IMVCAController, ISavitzkyGolayParameterViewEventSink
   {
     SavitzkyGolayParameters _doc;

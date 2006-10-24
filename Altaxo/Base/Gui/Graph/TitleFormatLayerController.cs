@@ -29,48 +29,20 @@ using Altaxo.Graph;
 namespace Altaxo.Gui.Graph
 {
   #region Interfaces
-  public interface ITitleFormatLayerController : IApplyController, IMVCController
+
+  public interface ITitleFormatLayerView 
   {
-    ITitleFormatLayerView View { get; set; }
-    void EhView_ShowAxisChanged(bool bShow);
-    void EhView_TitleChanged(string text);
-    void EhView_ColorChanged(string text);
-    void EhView_ThicknessChanged(string text);
-    void EhView_MajorTickLengthChanged(string text);
-    void EhView_MajorTicksChanged(int sel);
-    void EhView_MinorTicksChanged(int sel);
-    void EhView_AxisPositionChanged(int sel);
-    void EhView_AxisPositionValueChanged( string text);
+    bool ShowAxisLine { get; set; }
+    bool ShowMajorLabels { get; set; }
+    bool ShowMinorLabels { get; set; }
 
-  }
+    event EventHandler ShowAxisLineChanged;
 
-  public interface ITitleFormatLayerView : IMVCView
-  {
+    object LineStyleView { set; }
 
-    ITitleFormatLayerController Controller { get; set; }
+    string AxisTitle { get; set; }
 
-    System.Windows.Forms.Form Form  { get; }
-
-    void InitializeShowAxis(bool bShow);
-
-    void InitializeTitle(string org);
-
-    void InitializeColor(string[] arr, string sel);
-
-    void InitializeThickness(string[] arr, string sel);
-
-    void InitializeMajorTickLength(string[] arr, string sel);
-
-    void InitializeMajorTicks(string[] arr, int sel);
-
-    void InitializeMinorTicks(string[] arr, int sel);
-
-    void InitializeAxisPosition(string[] arr, int sel);
-
-    void InitializeAxisPositionValue(string end);
-
-    void InitializeAxisPositionValueEnabled(bool bEnab);
-
+    double PositionOffset { get; }
 
   }
   #endregion
@@ -79,7 +51,9 @@ namespace Altaxo.Gui.Graph
   /// <summary>
   /// Summary description for TitleFormatLayerController.
   /// </summary>
-  public class TitleFormatLayerController : ITitleFormatLayerController
+  [UserControllerForObject(typeof(AxisStyle),90)]
+  [ExpectedTypeOfView(typeof(ITitleFormatLayerView))]
+  public class TitleFormatLayerController : IMVCANController
   {
     protected ITitleFormatLayerView m_View;
     protected AxisStyle _doc;
@@ -90,21 +64,6 @@ namespace Altaxo.Gui.Graph
     protected string  m_Title;
     protected string  m_Original_Title;
 
-    protected string  m_Color;
-    protected string  m_Original_Color;
-
-    protected string  m_Thickness;
-    protected string  m_Original_Thickness;
-
-    protected string  m_MajorTickLength;
-    protected string  m_Original_MajorTickLength;
-
-    protected int     m_MajorTicks;
-    protected int     m_Original_MajorTicks;
-
-    protected int     m_MinorTicks;
-    protected int     m_Original_MinorTicks;
-
     protected int     m_AxisPosition;
     protected int     m_Original_AxisPosition;
 
@@ -113,233 +72,84 @@ namespace Altaxo.Gui.Graph
 
     protected bool    m_AxisPositionValueEnabled = true;
 
-    public TitleFormatLayerController(AxisStyle doc)
+    protected IMVCAController _axisLineStyleController;
+
+    public bool InitializeDocument(params object[] args)
     {
-      _doc = doc;
+      if (args.Length == 0 || !(args[0] is AxisStyle))
+        return false;
+      _doc = (AxisStyle)args[0];
       this.SetElements(true);
+      return true;
     }
+
+    public UseDocument UseDocumentCopy { set { } }
 
     public void SetElements(bool bInit)
     {
       int i;
       System.Collections.ArrayList arr = new System.Collections.ArrayList();
 
-
-
-      AxisLineStyle axstyle=_doc.AxisLineStyle;
-      string title = _doc.TitleText;
-      bool bAxisEnabled=_doc.ShowAxisLine;
-      if (!bAxisEnabled)
+      if (bInit)
       {
-        _doc.ShowAxisLine = true; // in order to get the axis line != null
-        axstyle = _doc.AxisLineStyle;
-      }
-
-      // Show Axis
-      if(bInit)
-        m_ShowAxis = m_Original_ShowAxis = bAxisEnabled ;
-      if(null!=View)
-        View.InitializeShowAxis(m_ShowAxis);
-
-      
-
-      // fill axis title box
-      if(bInit)
-        m_Title = m_Original_Title = (null!=title ? title : "");
-      if(null!=View)
-        View.InitializeTitle(m_Title);
-
-      // Color
-      if(bInit)
-      {
-        this.m_Original_Color = PlotColors.Colors.GetPlotColorName(axstyle.Color);
-        if(null==this.m_Original_Color)
-          this.m_Original_Color = "Custom";
-        m_Color = m_Original_Color;
-      }
-      if(null!=View)
-      {
-        arr.Clear();
-        arr.Add("Custom");
-        foreach(PlotColor c in PlotColors.Colors)
-        {
-          arr.Add(c.Name);
-        }
-        object sarr = arr.ToArray(typeof(string));
-        View.InitializeColor((string[])sarr,this.m_Color);
-      }
-
-
-      // Thickness
-      if(bInit)
-        this.m_Thickness = m_Original_Thickness = axstyle.Thickness.ToString();
-      if(null!=View)
-      {
-        // fill axis thickness combo box
-        double[] thicknesses = new double[]{0.0,0.2,0.5,1.0,1.5,2.0,3.0,4.0,5.0};
-        string[] s_thicknesses = new string[thicknesses.Length];
-        for(i=0;i<s_thicknesses.Length;i++)
-          s_thicknesses[i] = thicknesses[i].ToString();
-        View.InitializeThickness(s_thicknesses,this.m_Thickness);
-      }
-
-      // Major tick length
-      if(bInit)
-        this.m_MajorTickLength = this.m_Original_MajorTickLength = axstyle.MajorTickLength.ToString();
-      if(null!=View)
-      {
-        double[] ticklengths = new double[]{3,4,5,6,8,10,12,15,18,24,32};
-        string[] s_ticklengths = new string[ticklengths.Length];
-        for(i=0;i<s_ticklengths.Length;i++)
-          s_ticklengths[i] = ticklengths[i].ToString();
-        View.InitializeMajorTickLength(s_ticklengths,this.m_MajorTickLength);
-      }
-
-
-      // Major ticks
-      if(bInit)
-        this.m_MajorTicks = this.m_Original_MajorTicks = (axstyle.LeftSideMajorTicks?1:0) + (axstyle.RightSideMajorTicks?2:0); 
-      if(null!=View)
-      {
-      if(_doc.CachedAxisInformation!=null)
-        View.InitializeMajorTicks(new string[]{"None",_doc.CachedAxisInformation.NameOfLeftSide,_doc.CachedAxisInformation.NameOfRightSide,
-          _doc.CachedAxisInformation.NameOfLeftSide+"&"+_doc.CachedAxisInformation.NameOfRightSide}, this.m_MajorTicks);
-      else
-       View.InitializeMajorTicks(new string[]{"None","LeftSide","RightSide","LeftSide&RightSide"},this.m_MajorTicks);
-      }
-      // Minor ticks
-      if(bInit)
-        this.m_MinorTicks = this.m_Original_MinorTicks = (axstyle.LeftSideMinorTicks?1:0) + (axstyle.RightSideMinorTicks?2:0); 
-      if(null!=View)
-      {
-      if(_doc.CachedAxisInformation!=null)
-        View.InitializeMinorTicks(new string[]{"None",_doc.CachedAxisInformation.NameOfLeftSide,_doc.CachedAxisInformation.NameOfRightSide,
-          _doc.CachedAxisInformation.NameOfLeftSide+"&"+_doc.CachedAxisInformation.NameOfRightSide},this.m_MinorTicks);
-      else
-        View.InitializeMinorTicks(new string[]{"None","In","Out","In&Out"},this.m_MinorTicks);
-      }
-
-
-      // Position and PositionValue
-      if(bInit)
-      {
-        if(axstyle.Position.Value==0)
-        {
-          this.m_Original_AxisPosition=0;
-          this.m_Original_AxisPositionValue = "";
-          this.m_AxisPositionValueEnabled = false;
-        }
-        else if(axstyle.Position.IsRelative)
-        {
-          this.m_Original_AxisPosition=1;
-          this.m_Original_AxisPositionValue= (100.0*axstyle.Position.Value).ToString();
-          this.m_AxisPositionValueEnabled = true;
-        }
+        if (_doc.AxisLineStyle != null)
+          _axisLineStyleController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _doc.AxisLineStyle }, typeof(IMVCAController), UseDocument.Directly);
         else
-        {
-          this.m_Original_AxisPosition=2;
-          this.m_Original_AxisPositionValue = axstyle.Position.Value.ToString();
-          this.m_AxisPositionValueEnabled = true;
-        }
+          _axisLineStyleController = null;
 
-        m_AxisPosition = m_Original_AxisPosition;
-        m_AxisPositionValue = m_Original_AxisPositionValue;
       }
 
-      if(null!=View)
+      if (m_View != null)
       {
-        View.InitializeAxisPosition(new string[] {
-                                                   "Default",
-                                                   "% from default"
-                                                 }, this.m_AxisPosition);
-
-        View.InitializeAxisPositionValue(this.m_AxisPositionValue);
-
-        View.InitializeAxisPositionValueEnabled(this.m_AxisPositionValueEnabled);
+        m_View.AxisTitle = _doc.TitleText;
+        m_View.ShowAxisLine = _doc.ShowAxisLine;
+        m_View.ShowMajorLabels = _doc.ShowMajorLabels;
+        m_View.ShowMinorLabels = _doc.ShowMinorLabels;
+        m_View.LineStyleView = _axisLineStyleController == null ? null : _axisLineStyleController.ViewObject;
       }
     }
+
+    private void EhShowAxisLineChanged(object sender, EventArgs e)
+    {
+      if (m_View.ShowAxisLine && null==_doc.AxisLineStyle)
+      {
+        _doc.ShowAxisLine = true;
+        this._axisLineStyleController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _doc.AxisLineStyle }, typeof(IMVCAController));
+        m_View.LineStyleView = _axisLineStyleController.ViewObject;
+      }
+    }
+  
 
 
     #region ITitleFormatLayerController Members
 
-    public ITitleFormatLayerView View 
-    { 
-      get 
+    public object ViewObject
+    {
+      get { return m_View; }
+      set 
       {
-        return m_View;
-      }
+        ITitleFormatLayerView oldvalue = m_View;
+        m_View = value as ITitleFormatLayerView;
 
-      set
-      {
-        if(null!=m_View)
-          m_View.Controller = null;
-        
-        m_View = value;
-
-        if(null!=m_View)
+        if(!object.ReferenceEquals(oldvalue,value))
         {
-          m_View.Controller = this;
-          SetElements(false); // set only the view elements, dont't initialize the variables
+          if (null != oldvalue)
+            oldvalue.ShowAxisLineChanged -= EhShowAxisLineChanged;
+          if (null != value)
+            m_View.ShowAxisLineChanged += EhShowAxisLineChanged;
+
+        SetElements(false);
         }
       }
     }
 
-    public object ViewObject
-    {
-      get { return View; }
-      set { View = value as ITitleFormatLayerView; }
-    }
+    
     public object ModelObject
     {
       get { return this._doc; }
     }
 
-    public void EhView_ShowAxisChanged(bool bShow)
-    {
-      m_ShowAxis = bShow;
-    }
-
-    public void EhView_TitleChanged(string text)
-    {
-      m_Title = text;
-    }
-
-    public void EhView_ColorChanged(string text)
-    {
-      m_Color = text;
-    }
-
-    public void EhView_ThicknessChanged(string text)
-    {
-      m_Thickness = text;
-    }
-
-    public void EhView_MajorTickLengthChanged(string text)
-    {
-      m_MajorTickLength = text;
-    }
-
-    public void EhView_MajorTicksChanged(int sel)
-    {
-      m_MajorTicks = sel;
-    }
-
-    public void EhView_MinorTicksChanged(int sel)
-    {
-      m_MinorTicks = sel;
-    }
-
-    public void EhView_AxisPositionChanged(int sel)
-    {
-      m_AxisPosition = sel;
-      if(null!=View)
-        View.InitializeAxisPositionValueEnabled(m_AxisPosition!=0);
-    }
-
-    public void EhView_AxisPositionValueChanged(string text)
-    {
-      m_AxisPositionValue = text;
-    }
+   
 
     #endregion
 
@@ -347,77 +157,19 @@ namespace Altaxo.Gui.Graph
 
     public bool Apply()
     {
-      AxisLineStyle axstyle=_doc.AxisLineStyle;
-
-      try
-      {
-
         // read axis title
-        if(null!=m_Title && m_Title.Length==0)
-          m_Title=null;
+        _doc.TitleText = m_View.AxisTitle;
 
-        // Axis enable and title
-        _doc.ShowAxisLine = m_ShowAxis;
-        _doc.TitleText = m_Title;
-
-
-        // axis color
-        if(m_Color!="Custom" && m_Color!=m_Original_Color)
-          axstyle.Color = Color.FromName(m_Color);
-
-
-        // read axis thickness
-        if(m_Thickness != m_Original_Thickness)
-          axstyle.Thickness = System.Convert.ToSingle(m_Thickness);
-
-        // read major thick length
-        if(m_MajorTickLength != m_Original_MajorTickLength)
-          axstyle.MajorTickLength = System.Convert.ToSingle(m_MajorTickLength);
-
-        // read major ticks
-        if(m_MajorTicks != m_Original_MajorTicks)
+        if (null != _axisLineStyleController)
         {
-          axstyle.LeftSideMajorTicks = 0!=(1&m_MajorTicks);
-          axstyle.RightSideMajorTicks = 0!=(2&m_MajorTicks);
-        }
-        // read minor ticks
-        if(m_MinorTicks != m_Original_MinorTicks)
-        {
-          axstyle.LeftSideMinorTicks = 0!=(1&m_MinorTicks);
-          axstyle.RightSideMinorTicks = 0!=(2&m_MinorTicks);
+          if (!_axisLineStyleController.Apply())
+            return false;
+          else
+            _doc.AxisLineStyle = (AxisLineStyle)_axisLineStyleController.ModelObject;
         }
 
-
-        // read axis position
-        if(m_AxisPosition!=m_Original_AxisPosition || m_AxisPositionValue != m_Original_AxisPositionValue)
-        {
-          double posval;
-          switch(m_AxisPosition)
-          {
-            case 0:
-              axstyle.Position = new Calc.RelativeOrAbsoluteValue(0,false);
-              break;
-            case 1:
-              posval = System.Convert.ToDouble(m_AxisPositionValue);
-              axstyle.Position = new Calc.RelativeOrAbsoluteValue(posval/100,true);
-              break;
-            case 2:
-              posval = System.Convert.ToDouble(this.m_AxisPositionValue);
-              axstyle.Position = new Calc.RelativeOrAbsoluteValue(posval,false);
-              break;
-            
-          }
-        }
-      
-
-        SetElements(true); // refill the Controller with the newly set values to ensure synchronization
-
-      }
-      catch(Exception)
-      {
-        return false; // failed
-      }
-
+        _doc.ShowMajorLabels = m_View.ShowMajorLabels;
+        _doc.ShowMinorLabels = m_View.ShowMinorLabels;
 
       return true; // all ok
     }

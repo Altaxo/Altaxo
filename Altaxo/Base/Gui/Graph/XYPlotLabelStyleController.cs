@@ -211,6 +211,7 @@ namespace Altaxo.Gui.Graph
   /// Summary description for LinkAxisController.
   /// </summary>
   [UserControllerForObject(typeof(LabelPlotStyle))]
+  [ExpectedTypeOfView(typeof(IXYPlotLabelStyleView))]
   public class XYPlotLabelStyleController : IXYPlotLabelStyleViewEventSink, IXYPlotLabelStyleController
   {
     IXYPlotLabelStyleView _view;

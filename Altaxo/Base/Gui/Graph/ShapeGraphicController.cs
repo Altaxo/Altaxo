@@ -44,6 +44,7 @@ namespace Altaxo.Gui.Graph
   }
 
   [UserControllerForObject(typeof(ShapeGraphic))]
+  [ExpectedTypeOfView(typeof(IShapeGraphicView))]
   public class ShapeGraphicController : IShapeGraphicViewEventSink, IMVCAController
   {
     IShapeGraphicView _view;

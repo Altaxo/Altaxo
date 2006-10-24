@@ -72,6 +72,7 @@ namespace Altaxo.Gui.Scripting
   /// Summary description for PureScriptController.
   /// </summary>
   [UserControllerForObject(typeof(IPureScriptText))]
+  [ExpectedTypeOfView(typeof(IPureScriptView))]
   public class PureScriptController : IPureScriptController, IPureScriptViewEventSink
   {
     IPureScriptView _view;

@@ -50,6 +50,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
   /// Summary description for FitEnsembleController.
   /// </summary>
   [UserControllerForObject(typeof(FitEnsemble))]
+  [ExpectedTypeOfView(typeof(IFitElementView))]
   public class FitEnsembleController : IFitEnsembleController, IFitEnsembleViewEventSink
   {
     IFitEnsembleView _view;

@@ -32,6 +32,7 @@ namespace Altaxo.Gui.Common.Drawing
 {
   public class LineThicknessComboBox : ComboBox
   {
+    public event EventHandler PenWidthChoiceChanged;
     static List<float> _thicknessValues;
 
     public LineThicknessComboBox()
@@ -75,10 +76,12 @@ namespace Altaxo.Gui.Common.Drawing
       SelectedItem = thickness;
 
       this.EndUpdate();
+
+      OnPenWidthChoiceChanged();
     }
 
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-    public float Thickness
+    public float PenWidthChoice
     {
       get
       {
@@ -94,7 +97,16 @@ namespace Altaxo.Gui.Common.Drawing
         SetDataSource(value);
       }
     }
-
+    protected virtual void OnPenWidthChoiceChanged()
+    {
+      if (null != PenWidthChoiceChanged)
+        PenWidthChoiceChanged(this, EventArgs.Empty);
+    }
+    protected override void OnSelectionChangeCommitted(EventArgs e)
+    {
+      base.OnSelectionChangeCommitted(e);
+      OnPenWidthChoiceChanged();
+    }
 
     protected override void OnDrawItem(DrawItemEventArgs e)
     {

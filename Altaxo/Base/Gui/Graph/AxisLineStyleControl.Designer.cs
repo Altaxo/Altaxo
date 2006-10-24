@@ -32,18 +32,14 @@ namespace Altaxo.Gui.Graph
       this._verticalPanel = new System.Windows.Forms.FlowLayoutPanel();
       this._lineGroupBox = new System.Windows.Forms.GroupBox();
       this._lineLayoutTable = new System.Windows.Forms.TableLayoutPanel();
-      this._lineBrushColor = new Altaxo.Gui.Common.Drawing.ColorComboBox();
-      this._lineLineThickness = new Altaxo.Gui.Common.Drawing.LineThicknessComboBox();
       this._lblLineColor = new System.Windows.Forms.Label();
       this._lblLineThickness = new System.Windows.Forms.Label();
+      this._chkEnableLine = new System.Windows.Forms.CheckBox();
       this._majorGroupBox = new System.Windows.Forms.GroupBox();
       this._majorLayoutTable = new System.Windows.Forms.TableLayoutPanel();
       this._chkCustomMajorColor = new System.Windows.Forms.CheckBox();
       this._chkCustomMajorThickness = new System.Windows.Forms.CheckBox();
       this._lblMajorLength = new System.Windows.Forms.Label();
-      this._majorLineColor = new Altaxo.Gui.Common.Drawing.ColorComboBox();
-      this._lineMajorThickness = new Altaxo.Gui.Common.Drawing.LineThicknessComboBox();
-      this._lineMajorLength = new Altaxo.Gui.Common.Drawing.LineThicknessComboBox();
       this._majorWhichTicksLayout = new System.Windows.Forms.FlowLayoutPanel();
       this._chkWhichMajor1 = new System.Windows.Forms.CheckBox();
       this._chkWhichMajor2 = new System.Windows.Forms.CheckBox();
@@ -52,18 +48,20 @@ namespace Altaxo.Gui.Graph
       this._chkCustomMinorColor = new System.Windows.Forms.CheckBox();
       this._chkCustomMinorThickness = new System.Windows.Forms.CheckBox();
       this._lblMinorLength = new System.Windows.Forms.Label();
-      this._minorLineColor = new Altaxo.Gui.Common.Drawing.ColorComboBox();
-      this._lineMinorThickness = new Altaxo.Gui.Common.Drawing.LineThicknessComboBox();
-      this._lineMinorLength = new Altaxo.Gui.Common.Drawing.LineThicknessComboBox();
       this._minorWhichTicksLayout = new System.Windows.Forms.FlowLayoutPanel();
       this._chkWhichMinor1 = new System.Windows.Forms.CheckBox();
       this._chkWhichMinor2 = new System.Windows.Forms.CheckBox();
+      this._lineBrushColor = new Altaxo.Gui.Common.Drawing.ColorComboBox();
+      this._lineLineThickness = new Altaxo.Gui.Common.Drawing.LineThicknessComboBox();
+      this._majorLineColor = new Altaxo.Gui.Common.Drawing.ColorComboBox();
+      this._lineMajorThickness = new Altaxo.Gui.Common.Drawing.LineThicknessComboBox();
+      this._lineMajorLength = new Altaxo.Gui.Common.Drawing.LineThicknessComboBox();
+      this._minorLineColor = new Altaxo.Gui.Common.Drawing.ColorComboBox();
+      this._lineMinorThickness = new Altaxo.Gui.Common.Drawing.LineThicknessComboBox();
+      this._lineMinorLength = new Altaxo.Gui.Common.Drawing.LineThicknessComboBox();
       this._linePenGlue = new Altaxo.Gui.Common.Drawing.PenControlsGlue();
       this._majorPenGlue = new Altaxo.Gui.Common.Drawing.PenControlsGlue();
       this._minorPenGlue = new Altaxo.Gui.Common.Drawing.PenControlsGlue();
-      this._chkEnableLine = new System.Windows.Forms.CheckBox();
-      this._chkEnableMajor = new System.Windows.Forms.CheckBox();
-      this._chkEnableMinor = new System.Windows.Forms.CheckBox();
       this._verticalPanel.SuspendLayout();
       this._lineGroupBox.SuspendLayout();
       this._lineLayoutTable.SuspendLayout();
@@ -86,7 +84,7 @@ namespace Altaxo.Gui.Graph
       this._verticalPanel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
       this._verticalPanel.Location = new System.Drawing.Point(0, 0);
       this._verticalPanel.Name = "_verticalPanel";
-      this._verticalPanel.Size = new System.Drawing.Size(409, 323);
+      this._verticalPanel.Size = new System.Drawing.Size(409, 277);
       this._verticalPanel.TabIndex = 0;
       // 
       // _lineGroupBox
@@ -125,6 +123,242 @@ namespace Altaxo.Gui.Graph
       this._lineLayoutTable.RowStyles.Add(new System.Windows.Forms.RowStyle());
       this._lineLayoutTable.Size = new System.Drawing.Size(397, 48);
       this._lineLayoutTable.TabIndex = 0;
+      // 
+      // _lblLineColor
+      // 
+      this._lblLineColor.Anchor = System.Windows.Forms.AnchorStyles.Right;
+      this._lblLineColor.AutoSize = true;
+      this._lblLineColor.Location = new System.Drawing.Point(3, 29);
+      this._lblLineColor.Name = "_lblLineColor";
+      this._lblLineColor.Padding = new System.Windows.Forms.Padding(18, 0, 0, 0);
+      this._lblLineColor.Size = new System.Drawing.Size(52, 13);
+      this._lblLineColor.TabIndex = 2;
+      this._lblLineColor.Text = "Color:";
+      // 
+      // _lblLineThickness
+      // 
+      this._lblLineThickness.Anchor = System.Windows.Forms.AnchorStyles.Right;
+      this._lblLineThickness.AutoSize = true;
+      this._lblLineThickness.Location = new System.Drawing.Point(208, 29);
+      this._lblLineThickness.Name = "_lblLineThickness";
+      this._lblLineThickness.Size = new System.Drawing.Size(59, 13);
+      this._lblLineThickness.TabIndex = 3;
+      this._lblLineThickness.Text = "Thickness:";
+      // 
+      // _chkEnableLine
+      // 
+      this._chkEnableLine.AutoSize = true;
+      this._chkEnableLine.Location = new System.Drawing.Point(61, 3);
+      this._chkEnableLine.Name = "_chkEnableLine";
+      this._chkEnableLine.Size = new System.Drawing.Size(59, 17);
+      this._chkEnableLine.TabIndex = 4;
+      this._chkEnableLine.Text = "Enable";
+      this._chkEnableLine.UseVisualStyleBackColor = true;
+      // 
+      // _majorGroupBox
+      // 
+      this._majorGroupBox.AutoSize = true;
+      this._majorGroupBox.Controls.Add(this._majorLayoutTable);
+      this._majorGroupBox.Location = new System.Drawing.Point(3, 76);
+      this._majorGroupBox.Name = "_majorGroupBox";
+      this._majorGroupBox.Size = new System.Drawing.Size(403, 96);
+      this._majorGroupBox.TabIndex = 1;
+      this._majorGroupBox.TabStop = false;
+      this._majorGroupBox.Text = "Major Ticks";
+      // 
+      // _majorLayoutTable
+      // 
+      this._majorLayoutTable.AutoSize = true;
+      this._majorLayoutTable.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+      this._majorLayoutTable.ColumnCount = 4;
+      this._majorLayoutTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+      this._majorLayoutTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+      this._majorLayoutTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+      this._majorLayoutTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+      this._majorLayoutTable.Controls.Add(this._chkCustomMajorColor, 0, 0);
+      this._majorLayoutTable.Controls.Add(this._chkCustomMajorThickness, 2, 0);
+      this._majorLayoutTable.Controls.Add(this._lblMajorLength, 0, 1);
+      this._majorLayoutTable.Controls.Add(this._majorLineColor, 1, 0);
+      this._majorLayoutTable.Controls.Add(this._lineMajorThickness, 3, 0);
+      this._majorLayoutTable.Controls.Add(this._lineMajorLength, 1, 1);
+      this._majorLayoutTable.Controls.Add(this._majorWhichTicksLayout, 3, 1);
+      this._majorLayoutTable.Dock = System.Windows.Forms.DockStyle.Fill;
+      this._majorLayoutTable.Location = new System.Drawing.Point(3, 16);
+      this._majorLayoutTable.Name = "_majorLayoutTable";
+      this._majorLayoutTable.RowCount = 2;
+      this._majorLayoutTable.RowStyles.Add(new System.Windows.Forms.RowStyle());
+      this._majorLayoutTable.RowStyles.Add(new System.Windows.Forms.RowStyle());
+      this._majorLayoutTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+      this._majorLayoutTable.Size = new System.Drawing.Size(397, 77);
+      this._majorLayoutTable.TabIndex = 0;
+      // 
+      // _chkCustomMajorColor
+      // 
+      this._chkCustomMajorColor.Anchor = System.Windows.Forms.AnchorStyles.Right;
+      this._chkCustomMajorColor.AutoSize = true;
+      this._chkCustomMajorColor.Location = new System.Drawing.Point(3, 4);
+      this._chkCustomMajorColor.Name = "_chkCustomMajorColor";
+      this._chkCustomMajorColor.Size = new System.Drawing.Size(53, 17);
+      this._chkCustomMajorColor.TabIndex = 0;
+      this._chkCustomMajorColor.Text = "Color:";
+      this._chkCustomMajorColor.UseVisualStyleBackColor = true;
+      this._chkCustomMajorColor.CheckedChanged += new System.EventHandler(this.EhIndividualMajorColor_CheckChanged);
+      // 
+      // _chkCustomMajorThickness
+      // 
+      this._chkCustomMajorThickness.Anchor = System.Windows.Forms.AnchorStyles.Right;
+      this._chkCustomMajorThickness.AutoSize = true;
+      this._chkCustomMajorThickness.Location = new System.Drawing.Point(189, 4);
+      this._chkCustomMajorThickness.Name = "_chkCustomMajorThickness";
+      this._chkCustomMajorThickness.Size = new System.Drawing.Size(78, 17);
+      this._chkCustomMajorThickness.TabIndex = 1;
+      this._chkCustomMajorThickness.Text = "Thickness:";
+      this._chkCustomMajorThickness.UseVisualStyleBackColor = true;
+      this._chkCustomMajorThickness.CheckedChanged += new System.EventHandler(this.EhIndividualMajorThickness_CheckChanged);
+      // 
+      // _lblMajorLength
+      // 
+      this._lblMajorLength.Anchor = System.Windows.Forms.AnchorStyles.Right;
+      this._lblMajorLength.AutoSize = true;
+      this._lblMajorLength.Location = new System.Drawing.Point(13, 44);
+      this._lblMajorLength.Name = "_lblMajorLength";
+      this._lblMajorLength.Size = new System.Drawing.Size(43, 13);
+      this._lblMajorLength.TabIndex = 2;
+      this._lblMajorLength.Text = "Length:";
+      // 
+      // _majorWhichTicksLayout
+      // 
+      this._majorWhichTicksLayout.AutoSize = true;
+      this._majorWhichTicksLayout.Controls.Add(this._chkWhichMajor1);
+      this._majorWhichTicksLayout.Controls.Add(this._chkWhichMajor2);
+      this._majorWhichTicksLayout.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
+      this._majorWhichTicksLayout.Location = new System.Drawing.Point(273, 28);
+      this._majorWhichTicksLayout.Name = "_majorWhichTicksLayout";
+      this._majorWhichTicksLayout.Size = new System.Drawing.Size(49, 46);
+      this._majorWhichTicksLayout.TabIndex = 6;
+      // 
+      // _chkWhichMajor1
+      // 
+      this._chkWhichMajor1.AutoSize = true;
+      this._chkWhichMajor1.Location = new System.Drawing.Point(3, 3);
+      this._chkWhichMajor1.Name = "_chkWhichMajor1";
+      this._chkWhichMajor1.Size = new System.Drawing.Size(35, 17);
+      this._chkWhichMajor1.TabIndex = 0;
+      this._chkWhichMajor1.Text = "In";
+      this._chkWhichMajor1.UseVisualStyleBackColor = true;
+      // 
+      // _chkWhichMajor2
+      // 
+      this._chkWhichMajor2.AutoSize = true;
+      this._chkWhichMajor2.Location = new System.Drawing.Point(3, 26);
+      this._chkWhichMajor2.Name = "_chkWhichMajor2";
+      this._chkWhichMajor2.Size = new System.Drawing.Size(43, 17);
+      this._chkWhichMajor2.TabIndex = 1;
+      this._chkWhichMajor2.Text = "Out";
+      this._chkWhichMajor2.UseVisualStyleBackColor = true;
+      // 
+      // _minorGroupBox
+      // 
+      this._minorGroupBox.AutoSize = true;
+      this._minorGroupBox.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+      this._minorGroupBox.Controls.Add(this._minorLayoutTable);
+      this._minorGroupBox.Location = new System.Drawing.Point(3, 178);
+      this._minorGroupBox.Name = "_minorGroupBox";
+      this._minorGroupBox.Size = new System.Drawing.Size(403, 96);
+      this._minorGroupBox.TabIndex = 2;
+      this._minorGroupBox.TabStop = false;
+      this._minorGroupBox.Text = "Minor Ticks";
+      // 
+      // _minorLayoutTable
+      // 
+      this._minorLayoutTable.AutoSize = true;
+      this._minorLayoutTable.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+      this._minorLayoutTable.ColumnCount = 4;
+      this._minorLayoutTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+      this._minorLayoutTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+      this._minorLayoutTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+      this._minorLayoutTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+      this._minorLayoutTable.Controls.Add(this._chkCustomMinorColor, 0, 0);
+      this._minorLayoutTable.Controls.Add(this._chkCustomMinorThickness, 2, 0);
+      this._minorLayoutTable.Controls.Add(this._lblMinorLength, 0, 1);
+      this._minorLayoutTable.Controls.Add(this._minorLineColor, 1, 0);
+      this._minorLayoutTable.Controls.Add(this._lineMinorThickness, 3, 0);
+      this._minorLayoutTable.Controls.Add(this._lineMinorLength, 1, 1);
+      this._minorLayoutTable.Controls.Add(this._minorWhichTicksLayout, 3, 1);
+      this._minorLayoutTable.Dock = System.Windows.Forms.DockStyle.Fill;
+      this._minorLayoutTable.Location = new System.Drawing.Point(3, 16);
+      this._minorLayoutTable.Name = "_minorLayoutTable";
+      this._minorLayoutTable.RowCount = 2;
+      this._minorLayoutTable.RowStyles.Add(new System.Windows.Forms.RowStyle());
+      this._minorLayoutTable.RowStyles.Add(new System.Windows.Forms.RowStyle());
+      this._minorLayoutTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+      this._minorLayoutTable.Size = new System.Drawing.Size(397, 77);
+      this._minorLayoutTable.TabIndex = 3;
+      // 
+      // _chkCustomMinorColor
+      // 
+      this._chkCustomMinorColor.Anchor = System.Windows.Forms.AnchorStyles.Right;
+      this._chkCustomMinorColor.AutoSize = true;
+      this._chkCustomMinorColor.Location = new System.Drawing.Point(3, 4);
+      this._chkCustomMinorColor.Name = "_chkCustomMinorColor";
+      this._chkCustomMinorColor.Size = new System.Drawing.Size(53, 17);
+      this._chkCustomMinorColor.TabIndex = 0;
+      this._chkCustomMinorColor.Text = "Color:";
+      this._chkCustomMinorColor.UseVisualStyleBackColor = true;
+      this._chkCustomMinorColor.CheckedChanged += new System.EventHandler(this.EhIndividualMinorColor_CheckChanged);
+      // 
+      // _chkCustomMinorThickness
+      // 
+      this._chkCustomMinorThickness.Anchor = System.Windows.Forms.AnchorStyles.Right;
+      this._chkCustomMinorThickness.AutoSize = true;
+      this._chkCustomMinorThickness.Location = new System.Drawing.Point(189, 4);
+      this._chkCustomMinorThickness.Name = "_chkCustomMinorThickness";
+      this._chkCustomMinorThickness.Size = new System.Drawing.Size(78, 17);
+      this._chkCustomMinorThickness.TabIndex = 1;
+      this._chkCustomMinorThickness.Text = "Thickness:";
+      this._chkCustomMinorThickness.UseVisualStyleBackColor = true;
+      this._chkCustomMinorThickness.CheckedChanged += new System.EventHandler(this.EhIndividualMinorThickness_CheckChanged);
+      // 
+      // _lblMinorLength
+      // 
+      this._lblMinorLength.Anchor = System.Windows.Forms.AnchorStyles.Right;
+      this._lblMinorLength.AutoSize = true;
+      this._lblMinorLength.Location = new System.Drawing.Point(13, 44);
+      this._lblMinorLength.Name = "_lblMinorLength";
+      this._lblMinorLength.Size = new System.Drawing.Size(43, 13);
+      this._lblMinorLength.TabIndex = 2;
+      this._lblMinorLength.Text = "Length:";
+      // 
+      // _minorWhichTicksLayout
+      // 
+      this._minorWhichTicksLayout.AutoSize = true;
+      this._minorWhichTicksLayout.Controls.Add(this._chkWhichMinor1);
+      this._minorWhichTicksLayout.Controls.Add(this._chkWhichMinor2);
+      this._minorWhichTicksLayout.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
+      this._minorWhichTicksLayout.Location = new System.Drawing.Point(273, 28);
+      this._minorWhichTicksLayout.Name = "_minorWhichTicksLayout";
+      this._minorWhichTicksLayout.Size = new System.Drawing.Size(49, 46);
+      this._minorWhichTicksLayout.TabIndex = 6;
+      // 
+      // _chkWhichMinor1
+      // 
+      this._chkWhichMinor1.AutoSize = true;
+      this._chkWhichMinor1.Location = new System.Drawing.Point(3, 3);
+      this._chkWhichMinor1.Name = "_chkWhichMinor1";
+      this._chkWhichMinor1.Size = new System.Drawing.Size(35, 17);
+      this._chkWhichMinor1.TabIndex = 2;
+      this._chkWhichMinor1.Text = "In";
+      this._chkWhichMinor1.UseVisualStyleBackColor = true;
+      // 
+      // _chkWhichMinor2
+      // 
+      this._chkWhichMinor2.AutoSize = true;
+      this._chkWhichMinor2.Location = new System.Drawing.Point(3, 26);
+      this._chkWhichMinor2.Name = "_chkWhichMinor2";
+      this._chkWhichMinor2.Size = new System.Drawing.Size(43, 17);
+      this._chkWhichMinor2.TabIndex = 3;
+      this._chkWhichMinor2.Text = "Out";
+      this._chkWhichMinor2.UseVisualStyleBackColor = true;
       // 
       // _lineBrushColor
       // 
@@ -323,97 +557,7 @@ namespace Altaxo.Gui.Graph
       this._lineLineThickness.Name = "_lineLineThickness";
       this._lineLineThickness.Size = new System.Drawing.Size(121, 19);
       this._lineLineThickness.TabIndex = 1;
-      // 
-      // _lblLineColor
-      // 
-      this._lblLineColor.Anchor = System.Windows.Forms.AnchorStyles.Right;
-      this._lblLineColor.AutoSize = true;
-      this._lblLineColor.Location = new System.Drawing.Point(3, 29);
-      this._lblLineColor.Name = "_lblLineColor";
-      this._lblLineColor.Padding = new System.Windows.Forms.Padding(18, 0, 0, 0);
-      this._lblLineColor.Size = new System.Drawing.Size(52, 13);
-      this._lblLineColor.TabIndex = 2;
-      this._lblLineColor.Text = "Color:";
-      // 
-      // _lblLineThickness
-      // 
-      this._lblLineThickness.Anchor = System.Windows.Forms.AnchorStyles.Right;
-      this._lblLineThickness.AutoSize = true;
-      this._lblLineThickness.Location = new System.Drawing.Point(208, 29);
-      this._lblLineThickness.Name = "_lblLineThickness";
-      this._lblLineThickness.Size = new System.Drawing.Size(59, 13);
-      this._lblLineThickness.TabIndex = 3;
-      this._lblLineThickness.Text = "Thickness:";
-      // 
-      // _majorGroupBox
-      // 
-      this._majorGroupBox.AutoSize = true;
-      this._majorGroupBox.Controls.Add(this._majorLayoutTable);
-      this._majorGroupBox.Location = new System.Drawing.Point(3, 76);
-      this._majorGroupBox.Name = "_majorGroupBox";
-      this._majorGroupBox.Size = new System.Drawing.Size(403, 119);
-      this._majorGroupBox.TabIndex = 1;
-      this._majorGroupBox.TabStop = false;
-      this._majorGroupBox.Text = "Major Ticks";
-      // 
-      // _majorLayoutTable
-      // 
-      this._majorLayoutTable.AutoSize = true;
-      this._majorLayoutTable.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-      this._majorLayoutTable.ColumnCount = 4;
-      this._majorLayoutTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-      this._majorLayoutTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-      this._majorLayoutTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-      this._majorLayoutTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-      this._majorLayoutTable.Controls.Add(this._chkCustomMajorColor, 0, 1);
-      this._majorLayoutTable.Controls.Add(this._chkCustomMajorThickness, 2, 1);
-      this._majorLayoutTable.Controls.Add(this._lblMajorLength, 0, 2);
-      this._majorLayoutTable.Controls.Add(this._majorLineColor, 1, 1);
-      this._majorLayoutTable.Controls.Add(this._lineMajorThickness, 3, 1);
-      this._majorLayoutTable.Controls.Add(this._lineMajorLength, 1, 2);
-      this._majorLayoutTable.Controls.Add(this._majorWhichTicksLayout, 3, 2);
-      this._majorLayoutTable.Controls.Add(this._chkEnableMajor, 1, 0);
-      this._majorLayoutTable.Dock = System.Windows.Forms.DockStyle.Fill;
-      this._majorLayoutTable.Location = new System.Drawing.Point(3, 16);
-      this._majorLayoutTable.Name = "_majorLayoutTable";
-      this._majorLayoutTable.RowCount = 3;
-      this._majorLayoutTable.RowStyles.Add(new System.Windows.Forms.RowStyle());
-      this._majorLayoutTable.RowStyles.Add(new System.Windows.Forms.RowStyle());
-      this._majorLayoutTable.RowStyles.Add(new System.Windows.Forms.RowStyle());
-      this._majorLayoutTable.Size = new System.Drawing.Size(397, 100);
-      this._majorLayoutTable.TabIndex = 0;
-      // 
-      // _chkCustomMajorColor
-      // 
-      this._chkCustomMajorColor.Anchor = System.Windows.Forms.AnchorStyles.Right;
-      this._chkCustomMajorColor.AutoSize = true;
-      this._chkCustomMajorColor.Location = new System.Drawing.Point(3, 27);
-      this._chkCustomMajorColor.Name = "_chkCustomMajorColor";
-      this._chkCustomMajorColor.Size = new System.Drawing.Size(53, 17);
-      this._chkCustomMajorColor.TabIndex = 0;
-      this._chkCustomMajorColor.Text = "Color:";
-      this._chkCustomMajorColor.UseVisualStyleBackColor = true;
-      // 
-      // _chkCustomMajorThickness
-      // 
-      this._chkCustomMajorThickness.Anchor = System.Windows.Forms.AnchorStyles.Right;
-      this._chkCustomMajorThickness.AutoSize = true;
-      this._chkCustomMajorThickness.Location = new System.Drawing.Point(189, 27);
-      this._chkCustomMajorThickness.Name = "_chkCustomMajorThickness";
-      this._chkCustomMajorThickness.Size = new System.Drawing.Size(78, 17);
-      this._chkCustomMajorThickness.TabIndex = 1;
-      this._chkCustomMajorThickness.Text = "Thickness:";
-      this._chkCustomMajorThickness.UseVisualStyleBackColor = true;
-      // 
-      // _lblMajorLength
-      // 
-      this._lblMajorLength.Anchor = System.Windows.Forms.AnchorStyles.Right;
-      this._lblMajorLength.AutoSize = true;
-      this._lblMajorLength.Location = new System.Drawing.Point(13, 67);
-      this._lblMajorLength.Name = "_lblMajorLength";
-      this._lblMajorLength.Size = new System.Drawing.Size(43, 13);
-      this._lblMajorLength.TabIndex = 2;
-      this._lblMajorLength.Text = "Length:";
+      this._lineLineThickness.PenWidthChoiceChanged += new System.EventHandler(this.EhLineThickness_Changed);
       // 
       // _majorLineColor
       // 
@@ -598,7 +742,7 @@ namespace Altaxo.Gui.Graph
             System.Drawing.SystemColors.GradientInactiveCaption,
             System.Drawing.SystemColors.MenuBar,
             System.Drawing.SystemColors.MenuHighlight});
-      this._majorLineColor.Location = new System.Drawing.Point(62, 26);
+      this._majorLineColor.Location = new System.Drawing.Point(62, 3);
       this._majorLineColor.Name = "_majorLineColor";
       this._majorLineColor.Size = new System.Drawing.Size(121, 19);
       this._majorLineColor.TabIndex = 3;
@@ -610,7 +754,7 @@ namespace Altaxo.Gui.Graph
       this._lineMajorThickness.Enabled = false;
       this._lineMajorThickness.FormattingEnabled = true;
       this._lineMajorThickness.ItemHeight = 13;
-      this._lineMajorThickness.Location = new System.Drawing.Point(273, 26);
+      this._lineMajorThickness.Location = new System.Drawing.Point(273, 3);
       this._lineMajorThickness.Name = "_lineMajorThickness";
       this._lineMajorThickness.Size = new System.Drawing.Size(121, 19);
       this._lineMajorThickness.TabIndex = 4;
@@ -621,112 +765,10 @@ namespace Altaxo.Gui.Graph
       this._lineMajorLength.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
       this._lineMajorLength.FormattingEnabled = true;
       this._lineMajorLength.ItemHeight = 13;
-      this._lineMajorLength.Location = new System.Drawing.Point(62, 64);
+      this._lineMajorLength.Location = new System.Drawing.Point(62, 41);
       this._lineMajorLength.Name = "_lineMajorLength";
       this._lineMajorLength.Size = new System.Drawing.Size(121, 19);
       this._lineMajorLength.TabIndex = 5;
-      // 
-      // _majorWhichTicksLayout
-      // 
-      this._majorWhichTicksLayout.AutoSize = true;
-      this._majorWhichTicksLayout.Controls.Add(this._chkWhichMajor1);
-      this._majorWhichTicksLayout.Controls.Add(this._chkWhichMajor2);
-      this._majorWhichTicksLayout.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-      this._majorWhichTicksLayout.Location = new System.Drawing.Point(273, 51);
-      this._majorWhichTicksLayout.Name = "_majorWhichTicksLayout";
-      this._majorWhichTicksLayout.Size = new System.Drawing.Size(49, 46);
-      this._majorWhichTicksLayout.TabIndex = 6;
-      // 
-      // _chkWhichMajor1
-      // 
-      this._chkWhichMajor1.AutoSize = true;
-      this._chkWhichMajor1.Location = new System.Drawing.Point(3, 3);
-      this._chkWhichMajor1.Name = "_chkWhichMajor1";
-      this._chkWhichMajor1.Size = new System.Drawing.Size(35, 17);
-      this._chkWhichMajor1.TabIndex = 0;
-      this._chkWhichMajor1.Text = "In";
-      this._chkWhichMajor1.UseVisualStyleBackColor = true;
-      // 
-      // _chkWhichMajor2
-      // 
-      this._chkWhichMajor2.AutoSize = true;
-      this._chkWhichMajor2.Location = new System.Drawing.Point(3, 26);
-      this._chkWhichMajor2.Name = "_chkWhichMajor2";
-      this._chkWhichMajor2.Size = new System.Drawing.Size(43, 17);
-      this._chkWhichMajor2.TabIndex = 1;
-      this._chkWhichMajor2.Text = "Out";
-      this._chkWhichMajor2.UseVisualStyleBackColor = true;
-      // 
-      // _minorGroupBox
-      // 
-      this._minorGroupBox.AutoSize = true;
-      this._minorGroupBox.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-      this._minorGroupBox.Controls.Add(this._minorLayoutTable);
-      this._minorGroupBox.Location = new System.Drawing.Point(3, 201);
-      this._minorGroupBox.Name = "_minorGroupBox";
-      this._minorGroupBox.Size = new System.Drawing.Size(403, 119);
-      this._minorGroupBox.TabIndex = 2;
-      this._minorGroupBox.TabStop = false;
-      this._minorGroupBox.Text = "Minor Ticks";
-      // 
-      // _minorLayoutTable
-      // 
-      this._minorLayoutTable.AutoSize = true;
-      this._minorLayoutTable.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-      this._minorLayoutTable.ColumnCount = 4;
-      this._minorLayoutTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-      this._minorLayoutTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-      this._minorLayoutTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-      this._minorLayoutTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-      this._minorLayoutTable.Controls.Add(this._chkCustomMinorColor, 0, 1);
-      this._minorLayoutTable.Controls.Add(this._chkCustomMinorThickness, 2, 1);
-      this._minorLayoutTable.Controls.Add(this._lblMinorLength, 0, 2);
-      this._minorLayoutTable.Controls.Add(this._minorLineColor, 1, 1);
-      this._minorLayoutTable.Controls.Add(this._lineMinorThickness, 3, 1);
-      this._minorLayoutTable.Controls.Add(this._lineMinorLength, 1, 2);
-      this._minorLayoutTable.Controls.Add(this._minorWhichTicksLayout, 3, 2);
-      this._minorLayoutTable.Controls.Add(this._chkEnableMinor, 1, 0);
-      this._minorLayoutTable.Dock = System.Windows.Forms.DockStyle.Fill;
-      this._minorLayoutTable.Location = new System.Drawing.Point(3, 16);
-      this._minorLayoutTable.Name = "_minorLayoutTable";
-      this._minorLayoutTable.RowCount = 3;
-      this._minorLayoutTable.RowStyles.Add(new System.Windows.Forms.RowStyle());
-      this._minorLayoutTable.RowStyles.Add(new System.Windows.Forms.RowStyle());
-      this._minorLayoutTable.RowStyles.Add(new System.Windows.Forms.RowStyle());
-      this._minorLayoutTable.Size = new System.Drawing.Size(397, 100);
-      this._minorLayoutTable.TabIndex = 3;
-      // 
-      // _chkCustomMinorColor
-      // 
-      this._chkCustomMinorColor.Anchor = System.Windows.Forms.AnchorStyles.Right;
-      this._chkCustomMinorColor.AutoSize = true;
-      this._chkCustomMinorColor.Location = new System.Drawing.Point(3, 27);
-      this._chkCustomMinorColor.Name = "_chkCustomMinorColor";
-      this._chkCustomMinorColor.Size = new System.Drawing.Size(53, 17);
-      this._chkCustomMinorColor.TabIndex = 0;
-      this._chkCustomMinorColor.Text = "Color:";
-      this._chkCustomMinorColor.UseVisualStyleBackColor = true;
-      // 
-      // _chkCustomMinorThickness
-      // 
-      this._chkCustomMinorThickness.Anchor = System.Windows.Forms.AnchorStyles.Right;
-      this._chkCustomMinorThickness.AutoSize = true;
-      this._chkCustomMinorThickness.Location = new System.Drawing.Point(189, 27);
-      this._chkCustomMinorThickness.Name = "_chkCustomMinorThickness";
-      this._chkCustomMinorThickness.Size = new System.Drawing.Size(78, 17);
-      this._chkCustomMinorThickness.TabIndex = 1;
-      this._chkCustomMinorThickness.Text = "Thickness:";
-      this._chkCustomMinorThickness.UseVisualStyleBackColor = true;
-      // 
-      // _lblMinorLength
-      // 
-      this._lblMinorLength.Anchor = System.Windows.Forms.AnchorStyles.Right;
-      this._lblMinorLength.AutoSize = true;
-      this._lblMinorLength.Location = new System.Drawing.Point(13, 67);
-      this._lblMinorLength.Name = "_lblMinorLength";
-      this._lblMinorLength.Size = new System.Drawing.Size(43, 13);
-      this._lblMinorLength.TabIndex = 2;
-      this._lblMinorLength.Text = "Length:";
       // 
       // _minorLineColor
       // 
@@ -911,7 +953,7 @@ namespace Altaxo.Gui.Graph
             System.Drawing.SystemColors.GradientInactiveCaption,
             System.Drawing.SystemColors.MenuBar,
             System.Drawing.SystemColors.MenuHighlight});
-      this._minorLineColor.Location = new System.Drawing.Point(62, 26);
+      this._minorLineColor.Location = new System.Drawing.Point(62, 3);
       this._minorLineColor.Name = "_minorLineColor";
       this._minorLineColor.Size = new System.Drawing.Size(121, 19);
       this._minorLineColor.TabIndex = 3;
@@ -923,7 +965,7 @@ namespace Altaxo.Gui.Graph
       this._lineMinorThickness.Enabled = false;
       this._lineMinorThickness.FormattingEnabled = true;
       this._lineMinorThickness.ItemHeight = 13;
-      this._lineMinorThickness.Location = new System.Drawing.Point(273, 26);
+      this._lineMinorThickness.Location = new System.Drawing.Point(273, 3);
       this._lineMinorThickness.Name = "_lineMinorThickness";
       this._lineMinorThickness.Size = new System.Drawing.Size(121, 19);
       this._lineMinorThickness.TabIndex = 4;
@@ -934,41 +976,10 @@ namespace Altaxo.Gui.Graph
       this._lineMinorLength.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
       this._lineMinorLength.FormattingEnabled = true;
       this._lineMinorLength.ItemHeight = 13;
-      this._lineMinorLength.Location = new System.Drawing.Point(62, 64);
+      this._lineMinorLength.Location = new System.Drawing.Point(62, 41);
       this._lineMinorLength.Name = "_lineMinorLength";
       this._lineMinorLength.Size = new System.Drawing.Size(121, 19);
       this._lineMinorLength.TabIndex = 5;
-      // 
-      // _minorWhichTicksLayout
-      // 
-      this._minorWhichTicksLayout.AutoSize = true;
-      this._minorWhichTicksLayout.Controls.Add(this._chkWhichMinor1);
-      this._minorWhichTicksLayout.Controls.Add(this._chkWhichMinor2);
-      this._minorWhichTicksLayout.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-      this._minorWhichTicksLayout.Location = new System.Drawing.Point(273, 51);
-      this._minorWhichTicksLayout.Name = "_minorWhichTicksLayout";
-      this._minorWhichTicksLayout.Size = new System.Drawing.Size(49, 46);
-      this._minorWhichTicksLayout.TabIndex = 6;
-      // 
-      // _chkWhichMinor1
-      // 
-      this._chkWhichMinor1.AutoSize = true;
-      this._chkWhichMinor1.Location = new System.Drawing.Point(3, 3);
-      this._chkWhichMinor1.Name = "_chkWhichMinor1";
-      this._chkWhichMinor1.Size = new System.Drawing.Size(35, 17);
-      this._chkWhichMinor1.TabIndex = 2;
-      this._chkWhichMinor1.Text = "In";
-      this._chkWhichMinor1.UseVisualStyleBackColor = true;
-      // 
-      // _chkWhichMinor2
-      // 
-      this._chkWhichMinor2.AutoSize = true;
-      this._chkWhichMinor2.Location = new System.Drawing.Point(3, 26);
-      this._chkWhichMinor2.Name = "_chkWhichMinor2";
-      this._chkWhichMinor2.Size = new System.Drawing.Size(43, 17);
-      this._chkWhichMinor2.TabIndex = 3;
-      this._chkWhichMinor2.Text = "Out";
-      this._chkWhichMinor2.UseVisualStyleBackColor = true;
       // 
       // _linePenGlue
       // 
@@ -986,6 +997,7 @@ namespace Altaxo.Gui.Graph
       this._linePenGlue.CbStartCap = null;
       this._linePenGlue.CbStartCapSize = null;
       this._linePenGlue.ColorType = Altaxo.Graph.ColorType.KnownAndSystemColor;
+      this._linePenGlue.PenChanged += new System.EventHandler(this.EhLinePen_Changed);
       // 
       // _majorPenGlue
       // 
@@ -1021,36 +1033,6 @@ namespace Altaxo.Gui.Graph
       this._minorPenGlue.CbStartCapSize = null;
       this._minorPenGlue.ColorType = Altaxo.Graph.ColorType.KnownAndSystemColor;
       // 
-      // _chkEnableLine
-      // 
-      this._chkEnableLine.AutoSize = true;
-      this._chkEnableLine.Location = new System.Drawing.Point(61, 3);
-      this._chkEnableLine.Name = "_chkEnableLine";
-      this._chkEnableLine.Size = new System.Drawing.Size(59, 17);
-      this._chkEnableLine.TabIndex = 4;
-      this._chkEnableLine.Text = "Enable";
-      this._chkEnableLine.UseVisualStyleBackColor = true;
-      // 
-      // _chkEnableMajor
-      // 
-      this._chkEnableMajor.AutoSize = true;
-      this._chkEnableMajor.Location = new System.Drawing.Point(62, 3);
-      this._chkEnableMajor.Name = "_chkEnableMajor";
-      this._chkEnableMajor.Size = new System.Drawing.Size(59, 17);
-      this._chkEnableMajor.TabIndex = 7;
-      this._chkEnableMajor.Text = "Enable";
-      this._chkEnableMajor.UseVisualStyleBackColor = true;
-      // 
-      // _chkEnableMinor
-      // 
-      this._chkEnableMinor.AutoSize = true;
-      this._chkEnableMinor.Location = new System.Drawing.Point(62, 3);
-      this._chkEnableMinor.Name = "_chkEnableMinor";
-      this._chkEnableMinor.Size = new System.Drawing.Size(59, 17);
-      this._chkEnableMinor.TabIndex = 7;
-      this._chkEnableMinor.Text = "Enable";
-      this._chkEnableMinor.UseVisualStyleBackColor = true;
-      // 
       // AxisLineStyleControl
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1059,7 +1041,7 @@ namespace Altaxo.Gui.Graph
       this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
       this.Controls.Add(this._verticalPanel);
       this.Name = "AxisLineStyleControl";
-      this.Size = new System.Drawing.Size(409, 323);
+      this.Size = new System.Drawing.Size(409, 277);
       this._verticalPanel.ResumeLayout(false);
       this._verticalPanel.PerformLayout();
       this._lineGroupBox.ResumeLayout(false);
@@ -1118,7 +1100,5 @@ namespace Altaxo.Gui.Graph
     private System.Windows.Forms.CheckBox _chkWhichMinor1;
     private System.Windows.Forms.CheckBox _chkWhichMinor2;
     private System.Windows.Forms.CheckBox _chkEnableLine;
-    private System.Windows.Forms.CheckBox _chkEnableMajor;
-    private System.Windows.Forms.CheckBox _chkEnableMinor;
   }
 }

@@ -62,6 +62,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
   /// Summary description for NonlinearFitController.
   /// </summary>
   [UserControllerForObject(typeof(NonlinearFitDocument))]
+  [ExpectedTypeOfView(typeof(INonlinearFitView))]
   public class NonlinearFitController : INonlinearFitViewEventSink, IMVCAController
   {
     NonlinearFitDocument _doc;

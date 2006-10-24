@@ -258,7 +258,7 @@ namespace Altaxo.Graph.Gdi.Axis
       _brush = (BrushX)from._brush.Clone();
       _automaticRotationShift = from._automaticRotationShift;
       _xOffset = from._xOffset;
-      _xOffset = from._xOffset;
+      _yOffset = from._yOffset;
       _rotation = from._rotation;
       _backgroundStyle = null==from._backgroundStyle ? null : (IBackgroundStyle)from._backgroundStyle.Clone();
       _labelFormatting = (ILabelFormatting)from._labelFormatting.Clone();
@@ -550,7 +550,7 @@ namespace Altaxo.Graph.Gdi.Axis
     }
 
     private GraphicsPath _enclosingPath = new GraphicsPath(); // with Winding also overlapping rectangles are selected
-    public override void Paint(Graphics g, XYPlotLayer layer, A2DAxisStyleInformation styleInfo, AxisLineStyle axisstyle, bool useMinorTicks)
+    public override void Paint(Graphics g, XYPlotLayer layer, CSAxisInformation styleInfo, AxisLineStyle axisstyle, bool useMinorTicks)
     {
       _cachedStyleID = styleInfo.Identifier;
       CSLineID styleID = styleInfo.Identifier;
@@ -571,7 +571,7 @@ namespace Altaxo.Graph.Gdi.Axis
 
       SizeF layerSize = layer.Size;
       PointF outVector;
-      double outer;
+      Logical3D outer;
       float outerDistance = null==axisstyle? 0 : axisstyle.GetOuterDistance(styleInfo.PreferedLabelSide);
       float dist_x = outerDistance; // Distance from axis tick point to label
       float dist_y = outerDistance; // y distance from axis tick point to label
@@ -604,8 +604,8 @@ namespace Altaxo.Graph.Gdi.Axis
       {
         double r = relpositions[i];
 
-        outer = styleInfo.PreferedLabelSide==A2DAxisSide.Left? 90 : -90;
-        PointF tickorg = layer.CoordinateSystem.GetNormalizedDirection(rx0, ry0, rx1, ry1, r, outer, out outVector);
+        outer = layer.CoordinateSystem.GetLogicalDirection(styleID.ParallelAxisNumber, styleInfo.PreferedLabelSide);
+        PointF tickorg = layer.CoordinateSystem.GetNormalizedDirection(rx0,ry0,rx1,ry1, r, outer, out outVector);
         PointF tickend = tickorg;
         tickend.X += outVector.X * outerDistance;
         tickend.Y += outVector.Y * outerDistance;

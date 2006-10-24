@@ -65,6 +65,7 @@ namespace Altaxo.Gui.Graph
   #endregion
 
   [UserControllerForObject(typeof(SingleColumnChoice))]
+  [ExpectedTypeOfView(typeof(ISingleColumnChoiceView))]
   public class SingleColumnChoiceController : IMVCAController, ISingleColumnChoiceViewEventSink
   {
     ISingleColumnChoiceView _view;

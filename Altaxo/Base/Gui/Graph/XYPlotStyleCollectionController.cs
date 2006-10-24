@@ -63,6 +63,7 @@ namespace Altaxo.Gui.Graph
   #endregion
 
   [UserControllerForObject(typeof(G2DPlotStyleCollection))]
+  [ExpectedTypeOfView(typeof(IXYPlotStyleCollectionView))]
   public class XYPlotStyleCollectionController : IXYPlotStyleCollectionViewEventSink, IXYPlotStyleCollectionController
   {
     protected IXYPlotStyleCollectionView _view;

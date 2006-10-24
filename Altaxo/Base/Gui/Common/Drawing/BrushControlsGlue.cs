@@ -213,7 +213,7 @@ namespace Altaxo.Gui.Common.Drawing
       {
         if (_cbColor1 != null)
         {
-          _cbColor1.SelectionChangeCommitted -= EhColor1_SelectionChangeCommitted;
+          _cbColor1.ColorChoiceChanged -= EhColor1_ColorChoiceChanged;
 
           foreach (ToolStripItem item in _customContextMenuItems)
             _cbColor1.ContextMenuStrip.Items.Remove(item);
@@ -223,11 +223,11 @@ namespace Altaxo.Gui.Common.Drawing
         if (_cbColor1 != null)
           _cbColor1.ColorType = _colorType;
         if (_brush != null && _cbColor1 != null)
-          _cbColor1.Color = _brush.Color;
+          _cbColor1.ColorChoice = _brush.Color;
 
         if (_cbColor1 != null)
         {
-          _cbColor1.SelectionChangeCommitted += EhColor1_SelectionChangeCommitted;
+          _cbColor1.ColorChoiceChanged += EhColor1_ColorChoiceChanged;
 
 
           foreach (ToolStripItem item in _customContextMenuItems)
@@ -236,11 +236,11 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
-    void EhColor1_SelectionChangeCommitted(object sender, EventArgs e)
+    void EhColor1_ColorChoiceChanged(object sender, EventArgs e)
     {
       if (_brush != null)
       {
-        _brush.Color = _cbColor1.Color;
+        _brush.Color = _cbColor1.ColorChoice;
         OnBrushChanged();
       }
     }
@@ -256,24 +256,24 @@ namespace Altaxo.Gui.Common.Drawing
       set 
       {
         if (_cbColor2 != null)
-          _cbColor2.SelectionChangeCommitted -= EhColor2_SelectionChangeCommitted;
+          _cbColor2.ColorChoiceChanged -= EhColor2_ColorChoiceChanged;
 
         _cbColor2 = value;
         if (_brush != null && _cbColor2 != null)
-          _cbColor2.Color = _brush.BackColor;
+          _cbColor2.ColorChoice = _brush.BackColor;
 
         if (_cbColor2 != null)
-          _cbColor2.SelectionChangeCommitted += EhColor2_SelectionChangeCommitted;
+          _cbColor2.ColorChoiceChanged += EhColor2_ColorChoiceChanged;
 
         UpdateColor2State();
       }
     }
 
-    void EhColor2_SelectionChangeCommitted(object sender, EventArgs e)
+    void EhColor2_ColorChoiceChanged(object sender, EventArgs e)
     {
       if (_brush != null)
       {
-        _brush.BackColor = _cbColor2.Color;
+        _brush.BackColor = _cbColor2.ColorChoice;
         OnBrushChanged();
       }
     }

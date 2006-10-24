@@ -4,16 +4,17 @@ using System.Text;
 
 namespace Altaxo.Graph
 {
-  public enum A2DAxisSide { Left, Right };
-
-  public class A2DAxisStyleInformation : ICloneable
+  [Serializable]
+  public class CSAxisInformation : ICloneable
   {
     CSLineID _identifier;
 
     string _nameOfAxisStyle;
-    string _nameOfLeftSide;
-    string _nameOfRightSide;
-    A2DAxisSide _preferedLabelSide;
+    string _nameOfFirstDownSide;
+    string _nameOfFirstUpSide;
+    string _nameOfSecondDownSide;
+    string _nameOfSecondUpSide;
+    CSAxisSide _preferedLabelSide;
     bool _isShownByDefault;
 
    
@@ -21,24 +22,26 @@ namespace Altaxo.Graph
 
    
 
-    public A2DAxisStyleInformation(CSLineID identifier)
+    public CSAxisInformation(CSLineID identifier)
     {
       _identifier = identifier;
     }
-    public A2DAxisStyleInformation(A2DAxisStyleInformation from)
+    public CSAxisInformation(CSAxisInformation from)
     {
       CopyFrom(from);
     }
-    public void CopyFrom(A2DAxisStyleInformation from)
+    public void CopyFrom(CSAxisInformation from)
     {
       this._identifier = from._identifier;
       CopyWithoutIdentifierFrom(from);
     }
-    public void CopyWithoutIdentifierFrom(A2DAxisStyleInformation from)
+    public void CopyWithoutIdentifierFrom(CSAxisInformation from)
     {
       this._nameOfAxisStyle = from._nameOfAxisStyle;
-      this._nameOfLeftSide = from._nameOfLeftSide;
-      this._nameOfRightSide = from._nameOfRightSide;
+      this._nameOfFirstDownSide = from._nameOfFirstDownSide;
+      this._nameOfFirstUpSide = from._nameOfFirstUpSide;
+      this._nameOfSecondDownSide = from._nameOfSecondDownSide;
+      this._nameOfSecondUpSide = from._nameOfSecondUpSide;
       this._preferedLabelSide = from._preferedLabelSide;
       this._isShownByDefault = from._isShownByDefault;
       this._hasTitleByDefault = from._hasTitleByDefault;
@@ -63,20 +66,22 @@ namespace Altaxo.Graph
       }
 
       _nameOfAxisStyle += string.Format(" (at L={0})",_identifier.LogicalValueOtherFirst.ToString());
-      _nameOfLeftSide = "LeftSide";
-      _nameOfRightSide = "RightSide";
-      _preferedLabelSide = A2DAxisSide.Right;
+      _nameOfFirstDownSide = "FirstDown";
+      _nameOfFirstUpSide = "FirstUp";
+      _nameOfSecondDownSide = null;
+      _nameOfSecondUpSide = null;
+      _preferedLabelSide = CSAxisSide.FirstDown;
 
 
     }
 
-    public A2DAxisStyleInformation Clone()
+    public CSAxisInformation Clone()
     {
-      return new A2DAxisStyleInformation(this);
+      return new CSAxisInformation(this);
     }
     object ICloneable.Clone()
     {
-      return new A2DAxisStyleInformation(this);
+      return new CSAxisInformation(this);
     }
 
     public CSLineID Identifier
@@ -94,27 +99,46 @@ namespace Altaxo.Graph
     }
 
     /// <summary>
-    /// Name of the left side of an axis style. For the bottom axis, this is for instance "inner".
+    /// Name of the side (in the first alternate direction) of an axis style to lower logical values. For the bottom axis, this is for instance "outer".
     /// </summary>
-    public string NameOfLeftSide
+    public string NameOfFirstDownSide
     {
-      get { return _nameOfLeftSide; }
-      set { _nameOfLeftSide = value; }
+      get { return _nameOfFirstDownSide; }
+      set { _nameOfFirstDownSide = value; }
     }
 
     /// <summary>
-    /// Name of the left side of an axis style. For the bottom axis, this is for instance "outer".
+    /// Name of the side (in the first alternate direction) of an axis style to higher logical values. For the bottom axis, this is for instance "inner".
     /// </summary>
-    public string NameOfRightSide
+    public string NameOfFirstUpSide
     {
-      get { return _nameOfRightSide; }
-      set { _nameOfRightSide = value; }
+      get { return _nameOfFirstUpSide; }
+      set { _nameOfFirstUpSide = value; }
     }
+
+    /// <summary>
+    /// Name of the side (in the second alternate direction) of an axis style to lower logical values. For the bottom axis, this would be in the direction to the viewer.
+    /// </summary>
+    public string NameOfSecondDownSide
+    {
+      get { return _nameOfFirstDownSide; }
+      set { _nameOfFirstDownSide = value; }
+    }
+
+    /// <summary>
+    /// Name of the side (in the second alternate direction) of an axis style to higher logical values. For the bottom axis, this would be in the direction away from the viewer.
+    /// </summary>
+    public string NameOfSecondUpSide
+    {
+      get { return _nameOfFirstUpSide; }
+      set { _nameOfFirstUpSide = value; }
+    }
+
 
     /// <summary>
     /// Side of an axis style where the label is probably shown. For the bottom axis, this is for instance the right side, i.e. the outer side.
     /// </summary>
-    public A2DAxisSide PreferedLabelSide
+    public CSAxisSide PreferedLabelSide
     {
       get { return _preferedLabelSide; }
       set { _preferedLabelSide = value; }

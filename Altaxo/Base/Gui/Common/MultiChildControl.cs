@@ -114,6 +114,15 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    public void InitializeBegin()
+    {
+      SuspendLayout();
+    }
+    public void InitializeEnd()
+    {
+      ResumeLayout();
+    }
+
     bool _horizontalLayout;
     public void InitializeLayout(bool bHorizontalLayout)
     {

@@ -54,17 +54,17 @@ namespace Altaxo.Graph.Gdi.Axis
     /// <summary>Length of the minor ticks in points (1/72 inch).</summary>
     protected float _minorTickLength = 4;
     /// <summary>True if major ticks should be painted outside of the layer.</summary>
-    protected bool  _showRightMajorTicks=true; // true if right major ticks should be visible
+    protected bool  _showFirstUpMajorTicks=true; // true if right major ticks should be visible
     /// <summary>True if major ticks should be painted inside of the layer.</summary>
-    protected bool  _showLeftMajorTicks=true; // true if left major ticks should be visible
+    protected bool  _showFirstDownMajorTicks=true; // true if left major ticks should be visible
     /// <summary>True if minor ticks should be painted outside of the layer.</summary>
-    protected bool  _showRightMinorTicks=true; // true if right minor ticks should be visible
+    protected bool  _showFirstUpMinorTicks=true; // true if right minor ticks should be visible
     /// <summary>True if major ticks should be painted inside of the layer.</summary>
-    protected bool  _showLeftMinorTicks=true; // true if left minor ticks should be visible
+    protected bool  _showFirstDownMinorTicks=true; // true if left minor ticks should be visible
     /// <summary>Axis shift position, either provide as absolute values in point units, or as relative value relative to the layer size.</summary>
     protected Calc.RelativeOrAbsoluteValue _axisPosition; // if relative, then relative to layer size, if absolute then in points
 
-    protected A2DAxisStyleInformation _cachedAxisStyleInfo;
+    protected CSAxisInformation _cachedAxisStyleInfo;
 
     /// <summary>Fired if anything on this style changed</summary>
     [field:NonSerialized]
@@ -93,10 +93,10 @@ namespace Altaxo.Graph.Gdi.Axis
         info.AddValue("MinorPen",s._minorTickPen);
         info.AddValue("MajorLength",s._majorTickLength);
         info.AddValue("MinorLength",s._minorTickLength);
-        info.AddValue("MajorRight",s._showRightMajorTicks);
-        info.AddValue("MajorLeft",s._showLeftMajorTicks);
-        info.AddValue("MinorRight",s._showRightMinorTicks);
-        info.AddValue("MinorLeft",s._showLeftMinorTicks);
+        info.AddValue("MajorRight",s._showFirstUpMajorTicks);
+        info.AddValue("MajorLeft",s._showFirstDownMajorTicks);
+        info.AddValue("MinorRight",s._showFirstUpMinorTicks);
+        info.AddValue("MinorLeft",s._showFirstDownMinorTicks);
         info.AddValue("AxisPosition",s._axisPosition);
       }
       /// <summary>
@@ -117,10 +117,10 @@ namespace Altaxo.Graph.Gdi.Axis
 
         s._majorTickLength = (float)info.GetSingle("MajorLength");
         s._minorTickLength = (float)info.GetSingle("MinorLength");
-        s._showRightMajorTicks = (bool)info.GetBoolean("MajorRight");
-        s._showLeftMajorTicks = (bool)info.GetBoolean("MajorLeft");
-        s._showRightMinorTicks = (bool)info.GetBoolean("MinorRight");
-        s._showLeftMinorTicks = (bool)info.GetBoolean("MinorLeft");
+        s._showFirstUpMajorTicks = (bool)info.GetBoolean("MajorRight");
+        s._showFirstDownMajorTicks = (bool)info.GetBoolean("MajorLeft");
+        s._showFirstUpMinorTicks = (bool)info.GetBoolean("MinorRight");
+        s._showFirstDownMinorTicks = (bool)info.GetBoolean("MinorLeft");
         s._axisPosition = (Calc.RelativeOrAbsoluteValue)info.GetValue("AxisPosition",typeof(Calc.RelativeOrAbsoluteValue));
     
         return s;
@@ -166,19 +166,19 @@ namespace Altaxo.Graph.Gdi.Axis
         bool bInnerMinorTicks = (bool)info.GetBoolean("MinorInner");
         s._axisPosition = (Calc.RelativeOrAbsoluteValue)info.GetValue("AxisPosition",s);
 
-        if (edge.TypeOfEdge == EdgeType.Bottom || edge.TypeOfEdge == EdgeType.Right)
+        if (edge.TypeOfEdge == EdgeType.Top || edge.TypeOfEdge == EdgeType.Right)
         {
-          s._showRightMajorTicks = bOuterMajorTicks;
-          s._showLeftMajorTicks = bInnerMajorTicks;
-          s._showRightMinorTicks = bOuterMinorTicks;
-          s._showLeftMinorTicks = bInnerMinorTicks;
+          s._showFirstUpMajorTicks = bOuterMajorTicks;
+          s._showFirstDownMajorTicks = bInnerMajorTicks;
+          s._showFirstUpMinorTicks = bOuterMinorTicks;
+          s._showFirstDownMinorTicks = bInnerMinorTicks;
         }
         else
         {
-          s._showRightMajorTicks = bInnerMajorTicks;
-          s._showLeftMajorTicks = bOuterMajorTicks;
-          s._showRightMinorTicks = bInnerMinorTicks;
-          s._showLeftMinorTicks = bOuterMinorTicks;
+          s._showFirstUpMajorTicks = bInnerMajorTicks;
+          s._showFirstDownMajorTicks = bOuterMajorTicks;
+          s._showFirstUpMinorTicks = bInnerMinorTicks;
+          s._showFirstDownMinorTicks = bOuterMinorTicks;
         }
 
         s.WireEventChain(true);
@@ -200,11 +200,12 @@ namespace Altaxo.Graph.Gdi.Axis
         info.AddValue("MinorPen", s._minorTickPen);
         info.AddValue("MajorLength", s._majorTickLength);
         info.AddValue("MinorLength", s._minorTickLength);
-        info.AddValue("MajorRight", s._showRightMajorTicks);
-        info.AddValue("MajorLeft", s._showLeftMajorTicks);
-        info.AddValue("MinorRight", s._showRightMinorTicks);
-        info.AddValue("MinorLeft", s._showLeftMinorTicks);
         info.AddValue("AxisPosition", s._axisPosition);
+        info.AddValue("Major1Up", s._showFirstUpMajorTicks);
+        info.AddValue("Major1Dw", s._showFirstDownMajorTicks);
+        info.AddValue("Minor1Up", s._showFirstUpMinorTicks);
+        info.AddValue("Minor1Dw", s._showFirstDownMinorTicks);
+
       }
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
@@ -217,11 +218,11 @@ namespace Altaxo.Graph.Gdi.Axis
 
         s._majorTickLength = (float)info.GetSingle("MajorLength");
         s._minorTickLength = (float)info.GetSingle("MinorLength");
-        s._showRightMajorTicks = (bool)info.GetBoolean("MajorRight");
-        s._showLeftMajorTicks = (bool)info.GetBoolean("MajorLeft");
-        s._showRightMinorTicks = (bool)info.GetBoolean("MinorRight");
-        s._showLeftMinorTicks = (bool)info.GetBoolean("MinorLeft");
         s._axisPosition = (Calc.RelativeOrAbsoluteValue)info.GetValue("AxisPosition", s);
+        s._showFirstUpMajorTicks = (bool)info.GetBoolean("Major1Up");
+        s._showFirstDownMajorTicks = (bool)info.GetBoolean("Major1Dw");
+        s._showFirstUpMinorTicks = (bool)info.GetBoolean("Minor1Up");
+        s._showFirstDownMinorTicks = (bool)info.GetBoolean("Minor1Dw");
 
         s.WireEventChain(true);
 
@@ -291,14 +292,17 @@ namespace Altaxo.Graph.Gdi.Axis
      
       this._axisPen = null == from._axisPen ? null : (PenX)from._axisPen.Clone();
       this._axisPosition = from._axisPosition;
-      this._showLeftMajorTicks = from._showLeftMajorTicks;
-      this._showLeftMinorTicks = from._showLeftMinorTicks;
-      this._showRightMajorTicks = from._showRightMajorTicks;
-      this._showRightMinorTicks = from._showRightMinorTicks;
+      this._showFirstDownMajorTicks = from._showFirstDownMajorTicks;
+      this._showFirstDownMinorTicks = from._showFirstDownMinorTicks;
+      this._showFirstUpMajorTicks = from._showFirstUpMajorTicks;
+      this._showFirstUpMinorTicks = from._showFirstUpMinorTicks;
       this._majorTickLength  = from._majorTickLength;
       this._majorTickPen     = null==from._majorTickPen ? null : (PenX)from._majorTickPen;
       this._minorTickLength  = from._minorTickLength;
       this._minorTickPen     = (null==from._minorTickPen) ? null : (PenX)from._minorTickPen;
+
+      this._cachedAxisStyleInfo = from._cachedAxisStyleInfo;
+      this._parent = from._parent;
 
       // Rewire the event chain
       WireEventChain(true);
@@ -322,6 +326,18 @@ namespace Altaxo.Graph.Gdi.Axis
         return _cachedAxisStyleInfo == null ? null : _cachedAxisStyleInfo.Identifier;
       }
     }
+
+    public CSAxisInformation CachedAxisInformation
+    {
+      get
+      {
+          return _cachedAxisStyleInfo;
+      }
+      set
+      {
+        _cachedAxisStyleInfo = value;
+      }
+    }
     public virtual IHitTestObject HitTest(XYPlotLayer layer, PointF pt, bool withTicks)
     {
       GraphicsPath gp = GetSelectionPath(layer,withTicks);
@@ -334,18 +350,22 @@ namespace Altaxo.Graph.Gdi.Axis
     /// of the axis thickness)
     /// </summary>
     /// <param name="side">The side of the axis at which the outer distance is returned.</param>
-    public float GetOuterDistance(A2DAxisSide side)
+    public float GetOuterDistance(CSAxisSide side)
     {
         float retVal = _axisPen.Width/2; // half of the axis thickness
-        if (A2DAxisSide.Right == side)
+        if (CSAxisSide.FirstUp == side)
         {
-          retVal = System.Math.Max(retVal, _showRightMajorTicks ? _majorTickLength : 0);
-          retVal = System.Math.Max(retVal, _showRightMinorTicks ? _minorTickLength : 0);
+          retVal = System.Math.Max(retVal, _showFirstUpMajorTicks ? _majorTickLength : 0);
+          retVal = System.Math.Max(retVal, _showFirstUpMinorTicks ? _minorTickLength : 0);
+        }
+        else if (CSAxisSide.FirstDown == side)
+        {
+          retVal = System.Math.Max(retVal, _showFirstDownMajorTicks ? _majorTickLength : 0);
+          retVal = System.Math.Max(retVal, _showFirstDownMinorTicks ? _minorTickLength : 0);
         }
         else
         {
-          retVal = System.Math.Max(retVal, _showLeftMajorTicks ? _majorTickLength : 0);
-          retVal = System.Math.Max(retVal, _showLeftMinorTicks ? _minorTickLength : 0);
+          retVal = 0;
         }
         return retVal;
     }
@@ -451,14 +471,14 @@ namespace Altaxo.Graph.Gdi.Axis
 
     /// <summary>Get/sets if outer major ticks are drawn.</summary>
     /// <value>True if outer major ticks are drawn.</value>
-    public bool RightSideMajorTicks
+    public bool FirstUpMajorTicks
     {
-      get { return this._showRightMajorTicks; }
+      get { return this._showFirstUpMajorTicks; }
       set 
       {
-        if(value!=_showRightMajorTicks)
+        if(value!=_showFirstUpMajorTicks)
         {
-          this._showRightMajorTicks = value; 
+          this._showFirstUpMajorTicks = value; 
           OnChanged(); // fire the changed event
         }
       }
@@ -466,14 +486,14 @@ namespace Altaxo.Graph.Gdi.Axis
 
     /// <summary>Get/sets if inner major ticks are drawn.</summary>
     /// <value>True if inner major ticks are drawn.</value>
-    public bool LeftSideMajorTicks
+    public bool FirstDownMajorTicks
     {
-      get { return this._showLeftMajorTicks; }
+      get { return this._showFirstDownMajorTicks; }
       set
       {
-        if(value!=_showLeftMajorTicks)
+        if(value!=_showFirstDownMajorTicks)
         {
-          this._showLeftMajorTicks = value; 
+          this._showFirstDownMajorTicks = value; 
           OnChanged(); // fire the changed event
         }
       }
@@ -481,14 +501,14 @@ namespace Altaxo.Graph.Gdi.Axis
 
     /// <summary>Get/sets if outer minor ticks are drawn.</summary>
     /// <value>True if outer minor ticks are drawn.</value>
-    public bool RightSideMinorTicks
+    public bool FirstUpMinorTicks
     {
-      get { return this._showRightMinorTicks; }
+      get { return this._showFirstUpMinorTicks; }
       set 
       { 
-        if(value!=_showRightMinorTicks)
+        if(value!=_showFirstUpMinorTicks)
         {
-          this._showRightMinorTicks = value;
+          this._showFirstUpMinorTicks = value;
           OnChanged(); // fire the changed event
         }
       }
@@ -496,14 +516,14 @@ namespace Altaxo.Graph.Gdi.Axis
 
     /// <summary>Get/sets if inner minor ticks are drawn.</summary>
     /// <value>True if inner minor ticks are drawn.</value>
-    public bool LeftSideMinorTicks
+    public bool FirstDownMinorTicks
     {
-      get { return this._showLeftMinorTicks; }
+      get { return this._showFirstDownMinorTicks; }
       set 
       { 
-        if(value!=_showLeftMinorTicks)
+        if(value!=_showFirstDownMinorTicks)
         {
-          this._showLeftMinorTicks = value;
+          this._showFirstDownMinorTicks = value;
           OnChanged(); // fire the changed event
         }
       }
@@ -589,9 +609,9 @@ namespace Altaxo.Graph.Gdi.Axis
       float inflateby = 3;
       if(withTicks)
       {
-        if(this._showLeftMajorTicks || this._showRightMajorTicks)
+        if(this._showFirstDownMajorTicks || this._showFirstUpMajorTicks)
           inflateby = Math.Max(inflateby,this._majorTickLength);
-        if(this._showLeftMinorTicks || this._showRightMinorTicks)
+        if(this._showFirstDownMinorTicks || this._showFirstUpMinorTicks)
           inflateby = Math.Max(inflateby,this._minorTickLength);
       }
 
@@ -608,7 +628,7 @@ namespace Altaxo.Graph.Gdi.Axis
     /// <param name="g">The graphics context painting to.</param>
     /// <param name="layer">The layer the axis belongs to.</param>
     /// <param name="axis">The axis this axis style is used for.</param>
-    public void Paint(Graphics g, XYPlotLayer layer, A2DAxisStyleInformation styleInfo)
+    public void Paint(Graphics g, XYPlotLayer layer, CSAxisInformation styleInfo)
     {
       CSLineID styleID = styleInfo.Identifier;
       _cachedAxisStyleInfo = styleInfo.Clone();
@@ -623,7 +643,7 @@ namespace Altaxo.Graph.Gdi.Axis
 
       layer.CoordinateSystem.DrawIsoline(g, _axisPen, rx0,ry0,rx1,ry1);
 
-      double outer = 0;
+      Logical3D outer;
      
 
 
@@ -634,18 +654,18 @@ namespace Altaxo.Graph.Gdi.Axis
       {
         double r = majorticks[i];
 
-        if(_showRightMajorTicks)
+        if(_showFirstUpMajorTicks)
         {
-          outer = -90;
+          outer = layer.CoordinateSystem.GetLogicalDirection(styleID.ParallelAxisNumber,CSAxisSide.FirstUp);
           PointF tickorg = layer.CoordinateSystem.GetNormalizedDirection(rx0, ry0, rx1, ry1, r, outer, out outVector);
           PointF tickend = tickorg;
           tickend.X += outVector.X * _majorTickLength;
           tickend.Y += outVector.Y * _majorTickLength;
           g.DrawLine(_majorTickPen,tickorg,tickend);
         }
-        if(_showLeftMajorTicks)
+        if(_showFirstDownMajorTicks)
         {
-          outer = 90;
+          outer = layer.CoordinateSystem.GetLogicalDirection(styleID.ParallelAxisNumber, CSAxisSide.FirstDown);
           PointF tickorg = layer.CoordinateSystem.GetNormalizedDirection(rx0, ry0, rx1, ry1, r, outer, out outVector);
           PointF tickend = tickorg;
           tickend.X += outVector.X * _majorTickLength;
@@ -659,18 +679,18 @@ namespace Altaxo.Graph.Gdi.Axis
       {
         double r = minorticks[i];
         
-        if(_showRightMinorTicks)
+        if(_showFirstUpMinorTicks)
         {
-          outer = -90;
+          outer = layer.CoordinateSystem.GetLogicalDirection(styleID.ParallelAxisNumber, CSAxisSide.FirstUp);
           PointF tickorg = layer.CoordinateSystem.GetNormalizedDirection(rx0, ry0, rx1, ry1, r, outer, out outVector);
           PointF tickend = tickorg;
           tickend.X += outVector.X * _minorTickLength;
           tickend.Y += outVector.Y * _minorTickLength;
           g.DrawLine(_minorTickPen,tickorg,tickend);
         }
-        if(_showLeftMinorTicks)
+        if(_showFirstDownMinorTicks)
         {
-          outer = 90;
+          outer = layer.CoordinateSystem.GetLogicalDirection(styleID.ParallelAxisNumber, CSAxisSide.FirstDown);
           PointF tickorg = layer.CoordinateSystem.GetNormalizedDirection(rx0, ry0, rx1, ry1, r, outer, out outVector);
           PointF tickend = tickorg;
           tickend.X += outVector.X * _minorTickLength;

@@ -77,6 +77,7 @@ namespace Altaxo.Gui.Graph
   /// Summary description for LineScatterPlotDataController.
   /// </summary>
   [UserControllerForObject(typeof(XYColumnPlotData))]
+  [ExpectedTypeOfView(typeof(IXYColumnPlotDataView))]
   public class XYColumnPlotDataController :  IXYColumnPlotDataViewEventSink, IXYColumnPlotDataController
   {
     IXYColumnPlotDataView _view=null;

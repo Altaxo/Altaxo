@@ -12,14 +12,12 @@ namespace Altaxo.Gui.Graph
   public class AxisLineStyleController : IMVCAController
   {
     AxisLineStyle _doc;
-    AxisLineStyle _tempDoc;
     IAxisLineStyleView _view;
 
 
     public AxisLineStyleController(AxisLineStyle doc)
     {
-      _doc = doc;
-      _tempDoc = (AxisLineStyle)doc.Clone();
+      _doc = (AxisLineStyle)doc.Clone();
       Initialize(true);
     }
 
@@ -32,28 +30,31 @@ namespace Altaxo.Gui.Graph
       if (_view != null)
       {
         _view.ShowLine = true;
-        _view.ShowMajor = _tempDoc.MajorTickLength > 0;
-        _view.ShowMinor = _tempDoc.MinorTickLength > 0;
 
-        _view.LinePen = _tempDoc.AxisPen;
-        _view.MajorPen = _tempDoc.MajorPen;
-        _view.MinorPen = _tempDoc.MinorPen;
+        _view.LinePen = _doc.AxisPen;
+        _view.MajorPen = _doc.MajorPen;
+        _view.MinorPen = _doc.MinorPen;
 
-        _view.MajorTickLength = _tempDoc.MajorTickLength;
-        _view.MinorTickLength = _tempDoc.MinorTickLength;
+        _view.MajorTickLength = _doc.MajorTickLength;
+        _view.MinorTickLength = _doc.MinorTickLength;
 
         SelectableListNodeList list = new SelectableListNodeList();
 
         list.Clear();
-        list.Add(new SelectableListNode("Left", null, _tempDoc.LeftSideMajorTicks));
-        list.Add(new SelectableListNode("Right", null, _tempDoc.RightSideMajorTicks));
-
+        if (_doc.CachedAxisInformation != null)
+        {
+          list.Add(new SelectableListNode(_doc.CachedAxisInformation.NameOfFirstDownSide, null, _doc.FirstDownMajorTicks));
+          list.Add(new SelectableListNode(_doc.CachedAxisInformation.NameOfFirstUpSide, null, _doc.FirstUpMajorTicks));
+        }
         _view.MajorPenTicks = list;
 
 
         list.Clear();
-        list.Add(new SelectableListNode("Left", null, _tempDoc.LeftSideMinorTicks));
-        list.Add(new SelectableListNode("Right", null, _tempDoc.RightSideMinorTicks));
+        if (_doc.CachedAxisInformation != null)
+        {
+          list.Add(new SelectableListNode(_doc.CachedAxisInformation.NameOfFirstDownSide, null, _doc.FirstDownMinorTicks));
+          list.Add(new SelectableListNode(_doc.CachedAxisInformation.NameOfFirstUpSide, null, _doc.FirstUpMinorTicks));
+        }
         _view.MinorPenTicks = list;
 
       }
@@ -91,12 +92,12 @@ namespace Altaxo.Gui.Graph
 
       SelectableListNodeList list;
       list = _view.MajorPenTicks;
-      _doc.LeftSideMajorTicks = list[0].Selected;
-      _doc.RightSideMajorTicks = list[1].Selected;
+      _doc.FirstDownMajorTicks = list[0].Selected;
+      _doc.FirstUpMajorTicks = list[1].Selected;
 
       list = _view.MinorPenTicks;
-      _doc.LeftSideMinorTicks = list[0].Selected;
-      _doc.RightSideMinorTicks = list[1].Selected;
+      _doc.FirstDownMinorTicks = list[0].Selected;
+      _doc.FirstUpMinorTicks = list[1].Selected;
 
 
       return true;

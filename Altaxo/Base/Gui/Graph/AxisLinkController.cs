@@ -29,7 +29,7 @@ using Altaxo.Gui;
 namespace Altaxo.Gui.Graph
 {
   #region Interfaces
-  public interface IAxisLinkController : IApplyController, IMVCController
+  public interface IAxisLinkController : IMVCAController
   {
     /// <summary>
     /// Get/sets the view this controller controls.

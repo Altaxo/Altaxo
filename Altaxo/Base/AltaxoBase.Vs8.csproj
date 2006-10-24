@@ -1210,6 +1210,7 @@
     <Compile Include="Graph\Scales\Boundaries\IYBoundsHolder.cs" />
     <Compile Include="Graph\Scales\Boundaries\NumericalBoundaries.cs" />
     <Compile Include="Graph\Scales\Boundaries\PositiveFiniteNumericalBoundaries.cs" />
+    <Compile Include="Graph\CSAxisSide.cs" />
     <Compile Include="Graph\Scales\DateTimeScale.cs" />
     <Compile Include="Graph\Scales\LinearScale.cs" />
     <Compile Include="Graph\Scales\LinkedScale.cs" />
@@ -1228,6 +1229,11 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Gui\Common\BooleanValueController.cs" />
+    <Compile Include="Gui\Common\CheckableGroupBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\CollapsibleGroupBox.cs">
+    </Compile>
     <Compile Include="Gui\Common\DialogFactory.cs" />
     <Compile Include="Gui\Common\DialogShellController.cs" />
     <Compile Include="Gui\Common\DialogShellView.cs">

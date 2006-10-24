@@ -33,6 +33,7 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
   /// Summary description for DateTimeAxisRescaleController.
   /// </summary>
   [UserControllerForObject(typeof(DateTimeAxisRescaleConditions))]
+  [ExpectedTypeOfView(typeof(IOrgEndSpanView))]
   public class DateTimeAxisRescaleController 
     :
     IOrgEndSpanViewEventReceiver,

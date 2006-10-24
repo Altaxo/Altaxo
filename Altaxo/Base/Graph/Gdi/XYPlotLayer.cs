@@ -96,7 +96,7 @@ namespace Altaxo.Graph.Gdi
     /// <summary>
     /// The background style of the layer.
     /// </summary>
-    protected LayerBackground _layerBackground;
+    //protected LayerBackground _layerBackground;
 
     /// <summary>If true, the data are clipped to the frame.</summary>
     protected LayerDataClipping _dataClipping = LayerDataClipping.StrictToCS;
@@ -264,11 +264,6 @@ namespace Altaxo.Graph.Gdi
         bool fillLayerArea = info.GetBoolean("FillLayerArea");
         BrushX layerAreaFillBrush = (BrushX)info.GetValue("LayerAreaFillBrush", typeof(BrushX));
 
-        if (fillLayerArea)
-          s._layerBackground = new LayerBackground(new FilledRectangle(layerAreaFillBrush.Color));
-
-
-
         // size, position, rotation and scale
 
         s._location.WidthType = (XYPlotLayerSizeType)info.GetValue("WidthType", typeof(XYPlotLayerSizeType));
@@ -314,17 +309,17 @@ namespace Altaxo.Graph.Gdi
         s._axisStyles.AxisStyleEnsured(CSLineID.X1).AxisLineStyle = (AxisLineStyle)info.GetValue("TopAxisStyle", typeof(AxisLineStyle));
 
 
-        s._axisStyles.AxisStyle(CSLineID.Y0).MajorLabelStyle = (AxisLabelStyleBase)info.GetValue("LeftLabelStyle", typeof(AxisLabelStyleBase));
-        s._axisStyles.AxisStyle(CSLineID.X0).MajorLabelStyle = (AxisLabelStyleBase)info.GetValue("BottomLabelStyle", typeof(AxisLabelStyleBase));
-        s._axisStyles.AxisStyle(CSLineID.Y1).MajorLabelStyle = (AxisLabelStyleBase)info.GetValue("RightLabelStyle", typeof(AxisLabelStyleBase));
-        s._axisStyles.AxisStyle(CSLineID.X1).MajorLabelStyle = (AxisLabelStyleBase)info.GetValue("TopLabelStyle", typeof(AxisLabelStyleBase));
+        s._axisStyles[CSLineID.Y0].MajorLabelStyle = (AxisLabelStyleBase)info.GetValue("LeftLabelStyle", typeof(AxisLabelStyleBase));
+        s._axisStyles[CSLineID.X0].MajorLabelStyle = (AxisLabelStyleBase)info.GetValue("BottomLabelStyle", typeof(AxisLabelStyleBase));
+        s._axisStyles[CSLineID.Y1].MajorLabelStyle = (AxisLabelStyleBase)info.GetValue("RightLabelStyle", typeof(AxisLabelStyleBase));
+        s._axisStyles[CSLineID.X1].MajorLabelStyle = (AxisLabelStyleBase)info.GetValue("TopLabelStyle", typeof(AxisLabelStyleBase));
 
 
         // Titles and legend
-        s._axisStyles.AxisStyle(CSLineID.Y0).Title = (TextGraphic)info.GetValue("LeftAxisTitle", typeof(TextGraphic));
-        s._axisStyles.AxisStyle(CSLineID.X0).Title = (TextGraphic)info.GetValue("BottomAxisTitle", typeof(TextGraphic));
-        s._axisStyles.AxisStyle(CSLineID.Y1).Title = (TextGraphic)info.GetValue("RightAxisTitle", typeof(TextGraphic));
-        s._axisStyles.AxisStyle(CSLineID.X1).Title = (TextGraphic)info.GetValue("TopAxisTitle", typeof(TextGraphic));
+        s._axisStyles[CSLineID.Y0].Title = (TextGraphic)info.GetValue("LeftAxisTitle", typeof(TextGraphic));
+        s._axisStyles[CSLineID.X0].Title = (TextGraphic)info.GetValue("BottomAxisTitle", typeof(TextGraphic));
+        s._axisStyles[CSLineID.Y1].Title = (TextGraphic)info.GetValue("RightAxisTitle", typeof(TextGraphic));
+        s._axisStyles[CSLineID.X1].Title = (TextGraphic)info.GetValue("TopAxisTitle", typeof(TextGraphic));
 
         if (!showLeft)
           s._axisStyles.Remove(CSLineID.Y0);
@@ -457,7 +452,11 @@ namespace Altaxo.Graph.Gdi
         BrushX layerAreaFillBrush = (BrushX)info.GetValue("LayerAreaFillBrush", typeof(BrushX));
 
         if (fillLayerArea)
-          s.LayerBackground = new LayerBackground(new FilledRectangle(layerAreaFillBrush.Color));
+        {
+          if(!s.GridPlanes.Contains(CSPlaneID.Front))
+            s.GridPlanes.Add(new GridPlane(CSPlaneID.Front));
+          s.GridPlanes[CSPlaneID.Front].BackgroundStyle = new Gdi.Background.FilledRectangle(layerAreaFillBrush);
+        }
 
 
 
@@ -508,17 +507,17 @@ namespace Altaxo.Graph.Gdi
         s._axisStyles.AxisStyleEnsured(CSLineID.X1).AxisLineStyle = (AxisLineStyle)info.GetValue("TopAxisStyle", typeof(AxisLineStyle));
 
 
-        s._axisStyles.AxisStyle(CSLineID.Y0).MajorLabelStyle = (AxisLabelStyleBase)info.GetValue("LeftLabelStyle", typeof(AxisLabelStyleBase));
-        s._axisStyles.AxisStyle(CSLineID.X0).MajorLabelStyle = (AxisLabelStyleBase)info.GetValue("BottomLabelStyle", typeof(AxisLabelStyleBase));
-        s._axisStyles.AxisStyle(CSLineID.Y1).MajorLabelStyle = (AxisLabelStyleBase)info.GetValue("RightLabelStyle", typeof(AxisLabelStyleBase));
-        s._axisStyles.AxisStyle(CSLineID.X1).MajorLabelStyle = (AxisLabelStyleBase)info.GetValue("TopLabelStyle", typeof(AxisLabelStyleBase));
+        s._axisStyles[CSLineID.Y0].MajorLabelStyle = (AxisLabelStyleBase)info.GetValue("LeftLabelStyle", typeof(AxisLabelStyleBase));
+        s._axisStyles[CSLineID.X0].MajorLabelStyle = (AxisLabelStyleBase)info.GetValue("BottomLabelStyle", typeof(AxisLabelStyleBase));
+        s._axisStyles[CSLineID.Y1].MajorLabelStyle = (AxisLabelStyleBase)info.GetValue("RightLabelStyle", typeof(AxisLabelStyleBase));
+        s._axisStyles[CSLineID.X1].MajorLabelStyle = (AxisLabelStyleBase)info.GetValue("TopLabelStyle", typeof(AxisLabelStyleBase));
 
 
         // Titles and legend
-        s._axisStyles.AxisStyle(CSLineID.Y0).Title = (TextGraphic)info.GetValue("LeftAxisTitle", typeof(TextGraphic));
-        s._axisStyles.AxisStyle(CSLineID.X0).Title = (TextGraphic)info.GetValue("BottomAxisTitle", typeof(TextGraphic));
-        s._axisStyles.AxisStyle(CSLineID.Y1).Title = (TextGraphic)info.GetValue("RightAxisTitle", typeof(TextGraphic));
-        s._axisStyles.AxisStyle(CSLineID.X1).Title = (TextGraphic)info.GetValue("TopAxisTitle", typeof(TextGraphic));
+        s._axisStyles[CSLineID.Y0].Title = (TextGraphic)info.GetValue("LeftAxisTitle", typeof(TextGraphic));
+        s._axisStyles[CSLineID.X0].Title = (TextGraphic)info.GetValue("BottomAxisTitle", typeof(TextGraphic));
+        s._axisStyles[CSLineID.Y1].Title = (TextGraphic)info.GetValue("RightAxisTitle", typeof(TextGraphic));
+        s._axisStyles[CSLineID.X1].Title = (TextGraphic)info.GetValue("TopAxisTitle", typeof(TextGraphic));
 
         if (!showLeft)
           s._axisStyles.Remove(CSLineID.Y0);
@@ -661,7 +660,14 @@ namespace Altaxo.Graph.Gdi
         int count;
 
         // Background
-        s.LayerBackground = new LayerBackground((IBackgroundStyle)info.GetValue("Background", s));
+        IBackgroundStyle bgs = (IBackgroundStyle)info.GetValue("Background", s);
+        if (null!=bgs)
+        {
+          if (!s.GridPlanes.Contains(CSPlaneID.Front))
+            s.GridPlanes.Add(new GridPlane(CSPlaneID.Front));
+          s.GridPlanes[CSPlaneID.Front].BackgroundStyle = bgs;
+        }
+
 
         // size, position, rotation and scale
         s.Location = (XYPlotLayerPositionAndSize)info.GetValue("LocationAndSize", s);
@@ -730,9 +736,6 @@ namespace Altaxo.Graph.Gdi
         // Scales
         info.AddValue("Scales", s._linkedScales);
 
-        // Background
-        info.AddValue("Background", s._layerBackground);
-
         // Grid planes
         info.AddValue("GridPlanes", s._gridPlanes);
 
@@ -773,9 +776,6 @@ namespace Altaxo.Graph.Gdi
 
         // Scales
         s.LinkedScales = (LinkedScaleCollection)info.GetValue("Scales", s);
-
-        // Background
-        s.LayerBackground = (LayerBackground)info.GetValue("Background", s);
 
         // Grid planes
         s.GridPlanes = (GridPlaneCollection)info.GetValue("GridPlanes",s);
@@ -822,6 +822,7 @@ namespace Altaxo.Graph.Gdi
 
     #region Constructors
 
+    #region Copying
     /// <summary>
     /// The copy constructor.
     /// </summary>
@@ -834,7 +835,7 @@ namespace Altaxo.Graph.Gdi
     public void CopyFrom(XYPlotLayer from)
     {
       // XYPlotLayer style
-      this.LayerBackground = from._layerBackground == null ? null : (LayerBackground)from._layerBackground.Clone();
+      //this.LayerBackground = from._layerBackground == null ? null : (LayerBackground)from._layerBackground.Clone();
 
       // size, position, rotation and scale
       this.Location = from._location.Clone();
@@ -862,8 +863,7 @@ namespace Altaxo.Graph.Gdi
 
       this.PlotItems = null == from._plotItems ? null : new PlotItemCollection(this, from._plotItems);
 
-      // special way neccessary to handle plot groups
-      //this.m_PlotGroups = null==from.m_PlotGroups ? null : from.m_PlotGroups.Clone(this._plotItems,from._plotItems);
+      this._parent = from._parent;
 
       _cachedForwardMatrix = new Matrix();
       _cachedReverseMatrix = new Matrix();
@@ -874,6 +874,8 @@ namespace Altaxo.Graph.Gdi
     {
       return new XYPlotLayer(this);
     }
+
+    #endregion
 
     /// <summary>
     /// Creates a layer with standard position and size using the size of the printable area.
@@ -897,7 +899,6 @@ namespace Altaxo.Graph.Gdi
       this.Location = new XYPlotLayerPositionAndSize();
       this.GridPlanes = new GridPlaneCollection();
       this.GridPlanes.Add(new GridPlane(CSPlaneID.Front));
-
     }
     /// <summary>
     /// Creates a layer with position <paramref name="position"/> and size <paramref name="size"/>.
@@ -1065,23 +1066,7 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
-    public LayerBackground LayerBackground
-    {
-      get
-      {
-        return _layerBackground;
-      }
-      set
-      {
-        LayerBackground oldvalue = _layerBackground;
-        _layerBackground = value;
-        if (null != value)
-          value.ParentObject = this;
-
-        if (!object.ReferenceEquals(oldvalue, value))
-          OnChanged();
-      }
-    }
+   
 
     /// <summary>
     /// The layer number.
@@ -1337,11 +1322,11 @@ namespace Altaxo.Graph.Gdi
     /// </summary>
     public void CreateDefaultAxes()
     {
-      foreach (A2DAxisStyleInformation info in CoordinateSystem.AxisStyles)
+      foreach (CSAxisInformation info in CoordinateSystem.AxisStyles)
       {
         if (info.IsShownByDefault)
         {
-          this.AxisStyles.AxisStyleEnsured(info.Identifier);
+          this.AxisStyles.CreateDefault(info.Identifier);
 
           if (info.HasTitleByDefault)
           {
@@ -1462,7 +1447,7 @@ namespace Altaxo.Graph.Gdi
     /// <param name="yscale">The ratio the layer has changed its size in vertical direction.</param>
     public void RescaleInnerItemPositions(double xscale, double yscale)
     {
-      foreach (AxisStyle style in this.AxisStyles.AxisStyles)
+      foreach (AxisStyle style in this.AxisStyles)
       {
         GraphicBase.ScalePosition(style.Title, xscale, yscale);
       }
@@ -1961,7 +1946,7 @@ namespace Altaxo.Graph.Gdi
 
     #endregion // Position and Size
 
-    #region Axis related
+    #region Scale related
 
     /// <summary>Gets or sets the x axis of this layer.</summary>
     /// <value>The x axis of the layer.</value>
@@ -2270,15 +2255,14 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
-
     private string GetAxisTitleString(CSLineID id)
     {
-      return _axisStyles.AxisStyle(id) != null && _axisStyles.AxisStyle(id).Title != null ? _axisStyles.AxisStyle(id).Title.Text : null;
+      return _axisStyles[id] != null && _axisStyles[id].Title != null ? _axisStyles[id].Title.Text : null;
     }
 
     private void SetAxisTitleString(CSLineID id, string value)
     {
-      AxisStyle style = _axisStyles.AxisStyle(id);
+      AxisStyle style = _axisStyles[id];
       string oldtitle = (style == null || style.Title == null) ? null : style.Title.Text;
       string newtitle = (value == null || value == String.Empty) ? null : value;
 
@@ -2291,12 +2275,12 @@ namespace Altaxo.Graph.Gdi
         }
         else if (_axisStyles.AxisStyleEnsured(id).Title != null)
         {
-          _axisStyles.AxisStyle(id).Title.Text = newtitle;
+          _axisStyles[id].Title.Text = newtitle;
         }
         else
         {
           TextGraphic tg = new TextGraphic();
-          A2DAxisStyleInformation info = CoordinateSystem.GetAxisStyleInformation(id);
+          CSAxisInformation info = CoordinateSystem.GetAxisStyleInformation(id);
 
           // find out the position and orientation of the item
           double rx0 = 0, rx1 = 1, ry0 = 0, ry1 = 1;
@@ -2306,11 +2290,12 @@ namespace Altaxo.Graph.Gdi
             rx0 = rx1 = id.LogicalValueOtherFirst;
 
           PointF normDirection;
-          PointF location = CoordinateSystem.GetNormalizedDirection(rx0, ry0, rx1, ry1, 0.5, info.PreferedLabelSide == A2DAxisSide.Left ? 90 : -90, out normDirection);
+          Logical3D tdirection = CoordinateSystem.GetLogicalDirection(info.Identifier.ParallelAxisNumber, info.PreferedLabelSide);
+          PointF location = CoordinateSystem.GetNormalizedDirection(rx0, ry0, rx1, ry1, 0.5, tdirection, out normDirection);
           double angle = Math.Atan2(normDirection.Y, normDirection.X) * 180 / Math.PI;
 
           float distance = 0;
-          AxisStyle axisStyle = _axisStyles.AxisStyle(id);
+          AxisStyle axisStyle = _axisStyles[id];
           if (null != axisStyle.AxisLineStyle)
             distance += axisStyle.AxisLineStyle.GetOuterDistance(info.PreferedLabelSide);
           float labelFontSize = 0;
@@ -2431,9 +2416,6 @@ namespace Altaxo.Graph.Gdi
 
       g.MultiplyTransform(_cachedForwardMatrix);
 
-      if (_layerBackground != null)
-        _layerBackground.Draw(g, new RectangleF(0, 0, _cachedLayerSize.Width, _cachedLayerSize.Height));
-
       RectangleF layerBounds = new RectangleF(_cachedLayerPosition, _cachedLayerSize);
 
       _gridPlanes.Paint(g, this);
@@ -2475,7 +2457,7 @@ namespace Altaxo.Graph.Gdi
 
 
       List<GraphicBase> specObjects = new List<GraphicBase>();
-      foreach (AxisStyle style in _axisStyles.AxisStyles)
+      foreach (AxisStyle style in _axisStyles)
         specObjects.Add(style.Title);
       foreach(GraphicBase gb in _legends)
         specObjects.Add(gb);
@@ -2517,7 +2499,7 @@ namespace Altaxo.Graph.Gdi
 
         // hit testing the axes - first a small area around the axis line
         // if hitting this, the editor for scaling the axis should be shown
-        foreach (AxisStyle style in this._axisStyles.AxisStyles)
+        foreach (AxisStyle style in this._axisStyles)
         {
           if (style.ShowAxisLine && null != (hit = style.AxisLineStyle.HitTest(this, layerC, false)))
           {
@@ -2529,7 +2511,7 @@ namespace Altaxo.Graph.Gdi
 
         // hit testing the axes - secondly now wiht the ticks
         // in this case the TitleAndFormat editor for the axis should be shown
-        foreach (AxisStyle style in this._axisStyles.AxisStyles)
+        foreach (AxisStyle style in this._axisStyles)
         {
           if (style.ShowAxisLine && null != (hit = style.AxisLineStyle.HitTest(this, layerC, true)))
           {
@@ -2539,15 +2521,21 @@ namespace Altaxo.Graph.Gdi
         }
 
 
-        // hit testing the axes labels
-        foreach (AxisStyle style in this._axisStyles.AxisStyles)
+        // hit testing the major and minor labels
+        foreach (AxisStyle style in this._axisStyles)
         {
-          if (style.ShowAxisLine && null != (hit = style.MajorLabelStyle.HitTest(this, layerC)))
+          if (style.ShowMajorLabels && null != (hit = style.MajorLabelStyle.HitTest(this, layerC)))
+          {
+            hit.DoubleClick = AxisLabelStyleEditorMethod;
+            return ForwardTransform(hit);
+          }
+          if (style.ShowMinorLabels && null != (hit = style.MinorLabelStyle.HitTest(this, layerC)))
           {
             hit.DoubleClick = AxisLabelStyleEditorMethod;
             return ForwardTransform(hit);
           }
         }
+
 
 
         // now hit testing the other objects in the layer
@@ -2644,7 +2632,7 @@ namespace Altaxo.Graph.Gdi
         layer.Legend = null;
         return true;
       }
-      foreach (AxisStyle style in layer._axisStyles.AxisStyles)
+      foreach (AxisStyle style in layer._axisStyles)
       {
         if (object.ReferenceEquals(go, style.Title))
         {

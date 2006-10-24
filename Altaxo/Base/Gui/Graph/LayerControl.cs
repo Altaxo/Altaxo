@@ -126,21 +126,24 @@ namespace Altaxo.Gui.Graph
       }
     }
 
-    public Form Form
-    {
-      get
-      {
-        return this.ParentForm;
-      }
-    }
+   
 
     public void AddTab(string name, string text)
     {
       System.Windows.Forms.TabPage tc = new System.Windows.Forms.TabPage();
       tc.Name = name;
       tc.Text = text;
+      tc.CausesValidation = true;
+      tc.Validating += EhTabControl_Validating;
       
       this.m_TabCtrl.Controls.Add( tc );
+    }
+
+    public event CancelEventHandler TabValidating;
+    void EhTabControl_Validating(object sender, CancelEventArgs e)
+    {
+      if (TabValidating != null)
+        TabValidating(this, e);
     }
 
     public void SelectTab(string name)
@@ -187,6 +190,8 @@ namespace Altaxo.Gui.Graph
           ctrl.Location = new Point(0, 0);
           ctrl.Dock = DockStyle.Fill;
           tp.Controls.Add(ctrl);
+          ctrl.CausesValidation = true;
+          
         }
         
       }

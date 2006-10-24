@@ -616,6 +616,58 @@ namespace Altaxo.Graph.Gdi
       } // end of get
     } // end of prop. Brush
 
+    public static bool AreEqual(BrushX b1, BrushX b2)
+    {
+      if (b1._brushType != b2._brushType)
+        return false;
+
+      // Brush types are equal - we have to go into details...
+      switch (b1._brushType)
+      {
+
+        case BrushType.SolidBrush:
+          if (b1._foreColor != b2._foreColor)
+            return false;
+          break;
+        case BrushType.HatchBrush:
+          if (b1._foreColor != b2._foreColor)
+            return false;
+          if (b1._backColor != b2._backColor)
+            return false;
+          if (b1._hatchStyle != b2._hatchStyle)
+            return false;
+          break;
+        case BrushType.LinearGradientBrush:
+          if (b1._foreColor != b2._foreColor)
+            return false;
+          if (b1._backColor != b2._backColor)
+            return false;
+          if (b1._gradientMode != b2._gradientMode)
+            return false;
+          if (b1._wrapMode != b2._wrapMode)
+            return false;
+          if (b1._gradientShape != b2._gradientShape)
+            return false;
+          break;
+        case BrushType.PathGradientBrush:
+          if (b1._foreColor != b2._foreColor)
+            return false;
+          if (b1._backColor != b2._backColor)
+            return false;
+          if (b1._wrapMode != b2._wrapMode)
+            return false;
+          break;
+        case BrushType.TextureBrush:
+          if (b1._wrapMode != b2._wrapMode)
+            return false;
+          if (b1._scale != b2._scale)
+            return false;
+          if (b1._textureImage.ToString() != b2._textureImage.ToString())
+            return false;
+          break;
+      } // end of switch
+      return true;
+    }
 
 
     public void SetSolidBrush(Color c)

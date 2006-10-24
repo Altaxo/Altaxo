@@ -34,13 +34,13 @@ namespace Altaxo.Gui.Graph
   public interface IXYGridStyleView
   {
     IXYGridStyleViewEventSink Controller { get; set; }
+    void InitializeBegin();
+    void InitializeEnd();
     void InitializeMajorGridStyle( IColorTypeThicknessPenController controller);
     void InitializeMinorGridStyle( IColorTypeThicknessPenController controller);
-
     void InitializeShowGrid(bool value);
     void InitializeShowMinorGrid(bool value);
     void InitializeShowZeroOnly(bool value);
-
     void InitializeElementEnabling(bool majorstyle, bool minorstyle, bool showminor, bool showzeroonly);
   }
 
@@ -57,7 +57,8 @@ namespace Altaxo.Gui.Graph
   /// Summary description for XYGridStyleController.
   /// </summary>
   [UserControllerForObject(typeof(GridStyle))]
-  public class XYGridStyleController : IMVCAController, IXYGridStyleViewEventSink
+  [ExpectedTypeOfView(typeof(IXYGridStyleView))]
+  public class XYGridStyleController : IMVCANController, IXYGridStyleViewEventSink
   {
     IXYGridStyleView _view;
     GridStyle _doc;
@@ -65,34 +66,63 @@ namespace Altaxo.Gui.Graph
     IColorTypeThicknessPenController _majorController;
     IColorTypeThicknessPenController _minorController;
 
-    public XYGridStyleController(GridStyle doc)
-    {
-      _doc = doc;
-      if(_doc!=null)
-      {
-        _tempdoc = (GridStyle)doc.Clone();
-      }
-      else
-      {
-        _tempdoc = new GridStyle();
-        _tempdoc.ShowGrid = false;
-      }
+    UseDocument _useDocument;
+    public UseDocument UseDocumentCopy { set { _useDocument = value; } }
 
-      _majorController = new ColorTypeThicknessPenController(_tempdoc.MajorPen);
-      _minorController = new ColorTypeThicknessPenController(_tempdoc.MinorPen);
+    public XYGridStyleController() 
+    {
     }
 
-    public void Initialize()
+    public XYGridStyleController(GridStyle doc)
     {
+      if (!InitializeDocument(doc))
+        throw new ApplicationException("Programming error");
+    }
+
+    public bool InitializeDocument(params object[] args)
+    {
+      if (args.Length == 0 || (args[0]!=null && !(args[0] is GridStyle)))
+        return false;
+
+      bool isVirgin = null == _doc;
+      _doc = (GridStyle)args[0];
+      _tempdoc = _doc;
+
+      if(_useDocument == UseDocument.Copy && null!=_doc)
+      {
+        _tempdoc = (GridStyle)_doc.Clone();
+      }
+      if (null == _doc)
+      {
+        _doc = _tempdoc = new GridStyle();
+        _tempdoc.ShowGrid = false;
+        _useDocument = UseDocument.Directly;
+      }
+
+      Initialize(true);
+      return true;
+    }
+
+    public void Initialize(bool init)
+    {
+      if (init)
+      {
+        _majorController = new ColorTypeThicknessPenController(_tempdoc.MajorPen);
+        _minorController = new ColorTypeThicknessPenController(_tempdoc.MinorPen);
+      }
+
       if(_view!=null)
       {
+        _view.InitializeBegin();
+        
         _view.InitializeMajorGridStyle(_majorController);
         _view.InitializeMinorGridStyle(_minorController);
         _view.InitializeShowMinorGrid(_tempdoc.ShowMinor);
         _view.InitializeShowZeroOnly(_tempdoc.ShowZeroOnly);
         _view.InitializeShowGrid(_tempdoc.ShowGrid);
-
         InitializeElementEnabling();
+        
+        _view.InitializeEnd();
       }
     }
 
@@ -147,7 +177,7 @@ namespace Altaxo.Gui.Graph
 
         _view = value as IXYGridStyleView;
         
-        Initialize();
+        Initialize(false);
 
         if(_view!=null)
           _view.Controller = this;
@@ -174,10 +204,10 @@ namespace Altaxo.Gui.Graph
       if(!this._minorController.Apply())
         return false;
 
-      if (_doc != null)
+      if (_useDocument == UseDocument.Copy)
+      {
         _doc.CopyFrom(_tempdoc);
-      else
-        _doc = _tempdoc;
+      }
       
       return true;
     }

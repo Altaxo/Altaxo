@@ -63,6 +63,7 @@ namespace Altaxo.Worksheet.GUI
   /// Summary description for InterpolationParameterController.
   /// </summary>
   [UserControllerForObject(typeof(InterpolationParameters),100)]
+  [ExpectedTypeOfView(typeof(IInterpolationParameterView))]
   public class InterpolationParameterController : IMVCAController, IInterpolationParameterViewEventSink
   {
     InterpolationParameters _doc;

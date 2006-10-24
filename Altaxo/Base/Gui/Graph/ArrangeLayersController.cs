@@ -61,6 +61,7 @@ namespace Altaxo.Gui.Graph
   /// Controller for the <see cref="ArrangeLayersDocument" />.
   /// </summary>
   [UserControllerForObject(typeof(ArrangeLayersDocument))]
+  [ExpectedTypeOfView(typeof(IArrangeLayersView))]
   public class ArrangeLayersController : IArrangeLayersViewEventSink, IMVCAController
   {
     ArrangeLayersDocument _doc;

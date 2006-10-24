@@ -42,6 +42,7 @@ namespace Altaxo.Gui.Graph
   }
 
   [UserControllerForObject(typeof(LineShape),101)]
+  [ExpectedTypeOfView(typeof(ILineGraphicView))]
   public class LineGraphicController : ILineGraphicViewEventSink, IMVCAController
   {
     ILineGraphicView _view;

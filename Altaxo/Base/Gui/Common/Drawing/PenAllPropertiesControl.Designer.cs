@@ -234,7 +234,7 @@ namespace Altaxo.Gui.Common.Drawing
       // 
       // _cbColor
       // 
-      this._cbColor.Color = System.Drawing.Color.Black;
+      this._cbColor.ColorChoice = System.Drawing.Color.Black;
       this._cbColor.ColorType = Altaxo.Graph.ColorType.KnownAndSystemColor;
       this._cbColor.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
       this._cbColor.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -503,7 +503,7 @@ namespace Altaxo.Gui.Common.Drawing
       this._cbThickness.Name = "_cbThickness";
       this._cbThickness.Size = new System.Drawing.Size(121, 19);
       this._cbThickness.TabIndex = 12;
-      this._cbThickness.Thickness = 1F;
+      this._cbThickness.PenWidthChoice = 1F;
       // 
       // _cbStartCap
       // 
@@ -623,7 +623,7 @@ namespace Altaxo.Gui.Common.Drawing
       // 
       // _cbBackColor
       // 
-      this._cbBackColor.Color = System.Drawing.Color.Black;
+      this._cbBackColor.ColorChoice = System.Drawing.Color.Black;
       this._cbBackColor.ColorType = Altaxo.Graph.ColorType.KnownAndSystemColor;
       this._cbBackColor.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
       this._cbBackColor.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;

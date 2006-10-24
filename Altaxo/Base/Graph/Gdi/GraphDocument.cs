@@ -603,7 +603,7 @@ namespace Altaxo.Graph.Gdi
       newlayer.LinkedLayer = (linklayernumber>=0 && linklayernumber<Layers.Count)? Layers[linklayernumber] : null;
       newlayer.SetPosition(0,XYPlotLayerPositionType.RelativeThisNearToLinkedLayerNear,0,XYPlotLayerPositionType.RelativeThisNearToLinkedLayerNear);
       newlayer.SetSize(1,XYPlotLayerSizeType.RelativeToLinkedLayer,1,XYPlotLayerSizeType.RelativeToLinkedLayer);
-      newlayer.AxisStyles.AxisStyleEnsured(new CSLineID(0, 1));
+      newlayer.AxisStyles.CreateDefault(new CSLineID(0, 1));
     }
 
     /// <summary>
@@ -619,7 +619,7 @@ namespace Altaxo.Graph.Gdi
       newlayer.SetSize(1,XYPlotLayerSizeType.RelativeToLinkedLayer,1,XYPlotLayerSizeType.RelativeToLinkedLayer);
 
       // set enabling of axis
-      newlayer.AxisStyles.AxisStyleEnsured(new CSLineID(1, 1));
+      newlayer.AxisStyles.CreateDefault(new CSLineID(1, 1));
     }
 
     /// <summary>
@@ -635,8 +635,8 @@ namespace Altaxo.Graph.Gdi
       newlayer.SetSize(1,XYPlotLayerSizeType.RelativeToLinkedLayer,1,XYPlotLayerSizeType.RelativeToLinkedLayer);
 
       // set enabling of axis
-      newlayer.AxisStyles.AxisStyleEnsured(new CSLineID(0, 1));
-      newlayer.AxisStyles.AxisStyleEnsured(new CSLineID(1, 1));
+      newlayer.AxisStyles.CreateDefault(new CSLineID(0, 1));
+      newlayer.AxisStyles.CreateDefault(new CSLineID(1, 1));
      
     }
 
@@ -654,8 +654,8 @@ namespace Altaxo.Graph.Gdi
       newlayer.SetSize(1,XYPlotLayerSizeType.RelativeToLinkedLayer,1,XYPlotLayerSizeType.RelativeToLinkedLayer);
 
       // set enabling of axis
-      newlayer.AxisStyles.AxisStyleEnsured(new CSLineID(0, 1));
-      newlayer.AxisStyles.AxisStyleEnsured(new CSLineID(1, 1));
+      newlayer.AxisStyles.CreateDefault(new CSLineID(0, 1));
+      newlayer.AxisStyles.CreateDefault(new CSLineID(1, 1));
       
 
       newlayer.LinkedScales.X.AxisLinkType = ScaleLinkType.Straight;

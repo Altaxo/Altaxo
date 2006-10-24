@@ -65,8 +65,11 @@ namespace Altaxo.Gui.Common.Drawing
       }
       set
       {
+        ColorType oldvalue = _colorType;
         _colorType = value;
-        SetDataSource(this.Brush);
+
+        if(oldvalue!=value)
+          SetDataSource(this.Brush);
       }
     }
 
@@ -95,33 +98,51 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
+    protected override void OnDropDown(EventArgs e)
+    {
+      if (Items.Count <= 1)
+      {
+        BrushX selectedBrush = this.Brush;
+        this.BeginUpdate();
+
+        Items.Clear();
+        bool knownColorBrush = false;
+        if (selectedBrush.BrushType == BrushType.SolidBrush)
+        {
+          if (!ColorDictionary.IsColorOfType(selectedBrush.Color, _colorType))
+            Items.Add(selectedBrush.Color);
+          else
+            knownColorBrush = true;
+        }
+        else
+        {
+          Items.Add(selectedBrush);
+        }
+
+        foreach (Color c in ColorDictionary.GetColorsOfType(_colorType))
+          Items.Add(c);
+
+        if (selectedBrush.BrushType == BrushType.SolidBrush)
+          SelectedItem = ColorDictionary.GetNormalizedColor(selectedBrush.Color, _colorType);
+        else
+          SelectedItem = selectedBrush;
+
+        this.EndUpdate();
+      }
+
+      base.OnDropDown(e);
+    }
+
     void SetDataSource(BrushX selectedBrush)
     {
-      this.BeginUpdate();
-
-      Items.Clear();
-      bool knownColorBrush=false;
-      if(selectedBrush.BrushType == BrushType.SolidBrush)
-      {
-      if (!ColorDictionary.IsColorOfType(selectedBrush.Color, _colorType))
-        Items.Add(selectedBrush.Color);
-      else
-        knownColorBrush = true;
-      }
-      else
-      {
+      if (Items.Count > 1)
+        Items.Clear();
+      if (Items.Count == 0)
         Items.Add(selectedBrush);
-      }
-    
-      foreach (Color c in ColorDictionary.GetColorsOfType(_colorType))
-        Items.Add(c);
-
-      if (selectedBrush.BrushType == BrushType.SolidBrush)
-        SelectedItem = ColorDictionary.GetNormalizedColor(selectedBrush.Color,_colorType);
       else
-         SelectedItem = selectedBrush;
+        Items[0] = selectedBrush;
 
-      this.EndUpdate();
+      SelectedIndex = 0;
     }
   
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -160,11 +181,10 @@ namespace Altaxo.Gui.Common.Drawing
       grfx.DrawRectangle(new Pen(e.ForeColor), rectColor);
 
       string text = string.Empty;
-      if (e.Index >= 0)
-      {
-        if (Items[e.Index] is Color)
+      object objAtIndex = e.Index >= 0 ? Items[e.Index] : SelectedItem;
+        if (objAtIndex is Color)
         {
-          Color itemColor = e.Index < 0 ? Color.Black : (Color)Items[e.Index];
+          Color itemColor = (Color)objAtIndex;
           grfx.FillRectangle(new SolidBrush(itemColor), rectColor);
           if (itemColor.IsNamedColor)
           {
@@ -180,14 +200,14 @@ namespace Altaxo.Gui.Common.Drawing
             text = "Custom Color";
           }
         }
-        else
+        else if(objAtIndex is BrushX)
         {
-          BrushX itemBrush = (BrushX)Items[e.Index];
+          BrushX itemBrush = (BrushX)objAtIndex;
           itemBrush.Rectangle = rectColor;
           grfx.FillRectangle(itemBrush, rectColor);
           text = "Custom Brush";
         }
-      }
+      
       grfx.DrawString(text, Font, new SolidBrush(e.ForeColor), rectText);
     }
 

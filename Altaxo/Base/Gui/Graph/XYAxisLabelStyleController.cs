@@ -182,7 +182,7 @@ namespace Altaxo.Gui.Graph
 
   }
 
-  public interface IXYAxisLabelStyleController : IMVCAController
+  public interface IXYAxisLabelStyleController : IMVCANController
   {
   }
 
@@ -192,6 +192,7 @@ namespace Altaxo.Gui.Graph
   /// Summary description.
   /// </summary>
   [UserControllerForObject(typeof(AxisLabelStyle))]
+  [ExpectedTypeOfView(typeof(IXYAxisLabelStyleView))]
   public class XYAxisLabelStyleController : IXYAxisLabelStyleViewEventSink, IXYAxisLabelStyleController
   {
     IXYAxisLabelStyleView _view;
@@ -230,12 +231,18 @@ namespace Altaxo.Gui.Graph
 
     protected BackgroundStyleController _backgroundStyleController;
 
-    public XYAxisLabelStyleController(AxisLabelStyle style)
+    public bool InitializeDocument(params object[] args)
     {
-      _doc = style;
-      Initialize(true);
-      _backgroundStyleController = new BackgroundStyleController(_doc.BackgroundStyle);
+      if (args.Length == 0 || !(args[0] is AxisLabelStyle))
+        return false;
+
+      bool isFirstTime = null == _doc;
+      _doc = (AxisLabelStyle)args[0];
+      Initialize(isFirstTime);
+      return true;
     }
+
+    public UseDocument UseDocumentCopy { set { } } // not used here
 
 
     void Initialize(bool bInit)
@@ -252,6 +259,7 @@ namespace Altaxo.Gui.Graph
         _xOffset      = _doc.XOffset;
         _yOffset      = _doc.YOffset;
         _currentLabelStyleInstance = _doc.LabelFormat;
+        _backgroundStyleController = new BackgroundStyleController(_doc.BackgroundStyle);
       }
 
       if(null!=View)

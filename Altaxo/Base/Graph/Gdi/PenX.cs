@@ -828,6 +828,132 @@ namespace Altaxo.Graph.Gdi
       return pen;
     }
 
+    static Configured SetProp(Configured allprop, Configured prop, bool bSet)
+    {
+      allprop &= (Configured.All ^ prop);
+      if (bSet)
+        allprop |= prop;
+
+      return allprop;
+    }
+    static bool AreEqual(float[] x1, float[] x2)
+    {
+      if (x1 == null && x2 == null)
+        return true;
+      if (x1 == null || x2 == null)
+        return false;
+      if (x1.Length != x2.Length)
+        return false;
+      for (int i = 0; i < x1.Length; i++)
+        if (x1[i] != x2[i])
+          return false;
+
+      return true;
+    }
+
+
+    /// <summary>
+    /// Returns all differences between two pens as a flagged enum.
+    /// </summary>
+    /// <param name="p1">First pen to compare.</param>
+    /// <param name="p2">Second pen to comare.</param>
+    /// <returns>A enum where all those bits are set where the two pens are different.</returns>
+    public static Configured GetDifferences(PenX p1, PenX p2)
+    {
+      Configured cp1 = p1.m_ConfiguredProperties;
+      Configured cp2 = p2.m_ConfiguredProperties;
+
+      Configured cp = cp1 & cp2;
+
+      // for all properties that are configured both in p1 and p2, test if they are equal
+      // now set the optional Pen properties
+      if(0!=(cp & PenX.Configured.IsNotNull))
+        cp = SetProp(cp,Configured.IsNotNull,false);
+
+      if (0 != (cp & PenX.Configured.Width))
+        cp = SetProp(cp, PenX.Configured.Width, p1.m_Width != p2.m_Width);
+
+      if (0 != (cp & PenX.Configured.Alignment))
+        cp = SetProp(cp, PenX.Configured.Alignment, p1.m_Alignment != p2.m_Alignment);
+
+      if (0 != (cp & PenX.Configured.Color))
+        cp = SetProp(cp, PenX.Configured.Color, p1.m_Color != p2.m_Color);
+
+      if (0 != (cp & PenX.Configured.Brush))
+        cp = SetProp(cp, PenX.Configured.Brush, !BrushX.AreEqual(p1.m_Brush, p2.m_Brush));
+
+      if (0 != (cp & PenX.Configured.CompoundArray))
+        cp = SetProp(cp, PenX.Configured.CompoundArray, !AreEqual(p1.m_CompoundArray, p2.m_CompoundArray));
+
+      if (0 != (cp & PenX.Configured.DashStyle))
+        cp = SetProp(cp, PenX.Configured.DashStyle, p1.m_DashStyle != p2.m_DashStyle);
+      
+      if (0 != (cp & PenX.Configured.DashCap))
+        cp = SetProp(cp, PenX.Configured.DashCap, p1.m_DashCap != p2.m_DashCap);
+      
+      if (0 != (cp & PenX.Configured.DashOffset))
+        cp = SetProp(cp, PenX.Configured.DashOffset, p1.m_DashOffset != p2.m_DashOffset);
+      
+      if (0 != (cp & PenX.Configured.DashPattern))
+        cp = SetProp(cp, PenX.Configured.DashPattern, !AreEqual(p1.m_DashPattern, p2.m_DashPattern));
+      
+      if (0 != (cp & PenX.Configured.EndCap))
+        cp = SetProp(cp, PenX.Configured.EndCap, p1.m_EndCap != p2.m_EndCap);
+      
+      if (0 != (cp & PenX.Configured.LineJoin))
+        cp = SetProp(cp, PenX.Configured.LineJoin, p1.m_LineJoin != p2.m_LineJoin); 
+      
+      if (0 != (cp & PenX.Configured.MiterLimit))
+        cp = SetProp(cp, PenX.Configured.MiterLimit, p1.m_MiterLimit != p2.m_MiterLimit);
+      
+      if (0 != (cp & PenX.Configured.StartCap))
+        cp = SetProp(cp, PenX.Configured.StartCap, p1.m_StartCap != p2.m_StartCap);
+      
+      if (0 != (cp & PenX.Configured.Transform))
+        cp = SetProp(cp, PenX.Configured.Transform, p1.m_Transform != p2.m_Transform);
+
+      return cp | (cp1 ^ cp2);
+    }
+
+    public static bool AreEqual(PenX p1, PenX p2)
+    {
+      if (p1 == null && p2 == null)
+        return true;
+      if (p1 == null || p2 == null)
+        return false;
+      if (object.ReferenceEquals(p1, p2))
+        return true;
+
+      if (p1.m_ConfiguredProperties != p2.m_ConfiguredProperties)
+        return false;
+
+      Configured diff = GetDifferences(p1, p2);
+      return diff == 0;
+    }
+
+    public static bool AreEqualUnlessWidth(PenX p1, PenX p2)
+    {
+      if (p1 == null && p2 == null)
+        return true;
+      if (p1 == null || p2 == null)
+        return false;
+      if (object.ReferenceEquals(p1, p2))
+        return true;
+
+      Configured c1 = p1.m_ConfiguredProperties;
+      Configured c2 = p2.m_ConfiguredProperties;
+      c1 = SetProp(c1, Configured.Width, false);
+      c2 = SetProp(c2, Configured.Width, false);
+
+      if (c1 != c2)
+        return false;
+
+      Configured diff = GetDifferences(p1, p2);
+      diff = SetProp(diff, Configured.Width, false);
+      return diff == 0;
+    }
+
+
     private void _SetBrushVariable(BrushX bh)
     {
       if (null != m_Brush)

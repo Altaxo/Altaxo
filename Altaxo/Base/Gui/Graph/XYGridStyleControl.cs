@@ -189,6 +189,15 @@ namespace Altaxo.Gui.Graph
       }
     }
 
+    public void InitializeBegin()
+    {
+      this.SuspendLayout();
+    }
+    public void InitializeEnd()
+    {
+      this.ResumeLayout();
+    }
+
     public void InitializeMajorGridStyle(Altaxo.Gui.Common.Drawing.IColorTypeThicknessPenController controller)
     {
       controller.ViewObject = this._majorStyle;

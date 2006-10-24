@@ -63,6 +63,7 @@ namespace Altaxo.Gui.Scripting
   /// Summary description for TableScriptController.
   /// </summary>
   [UserControllerForObject(typeof(IFitFunctionScriptText),300)]
+  [ExpectedTypeOfView(typeof(IFitFunctionScriptView))]
   public class FitFunctionScriptController : IFitFunctionScriptViewEventSink, IScriptController
   {
     protected ScriptExecutionHandler m_ScriptExecution;

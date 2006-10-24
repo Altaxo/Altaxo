@@ -50,6 +50,7 @@ namespace Altaxo.Gui.Common
   /// Controller for a boolean value.
   /// </summary>
   [UserControllerForObject(typeof(bool),100)]
+  [ExpectedTypeOfView(typeof(IBooleanValueView))]
   public class BooleanValueController : IBooleanValueController, IBooleanValueViewEventSink
   {
     protected IBooleanValueView _view;

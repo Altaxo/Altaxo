@@ -66,6 +66,7 @@ namespace Altaxo.Gui.Graph
   /// Summary description.
   /// </summary>
   [UserControllerForObject(typeof(PositiveIntegerRange))]
+  [ExpectedTypeOfView(typeof(IPlottingRangeView))]
   public class PlottingRangeController : IPlottingRangeViewEventSink, IMVCAController
   {
     IPlottingRangeView _view;

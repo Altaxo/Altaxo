@@ -41,7 +41,8 @@ namespace Altaxo.Graph.Gdi.Axis
     :
     ICloneable, 
     Main.IChangedEventSource,
-    Main.IDocumentNode
+    Main.IDocumentNode,
+    IEnumerable<AxisStyle>
 
   {
     List<AxisStyle> _axisStyles;
@@ -107,18 +108,37 @@ namespace Altaxo.Graph.Gdi.Axis
 
     void CopyFrom(AxisStyleCollection from)
     {
+
       this._axisStyles.Clear();
-      for (int i = 0; i < _axisStyles.Count; ++i)
+      for (int i = 0; i < from._axisStyles.Count; ++i)
       {
         this.Add((AxisStyle)from._axisStyles[i].Clone());
       }
+
+      this._parent = from._parent;
+      this._cachedCoordinateSystem = from._cachedCoordinateSystem;
     }
+
+    public AxisStyle this[CSLineID id]
+  {
+    get
+    {
+      foreach (AxisStyle p in _axisStyles)
+        if (p.StyleID == id)
+          return p;
+
+      return null;
+    }
+  }
 
     public void Add(AxisStyle value)
     {
       if (value != null)
       {
         value.ParentObject = this;
+        if(_cachedCoordinateSystem!=null)
+          value.CachedAxisInformation = _cachedCoordinateSystem.GetAxisStyleInformation(value.StyleID);
+
         _axisStyles.Add(value);
         OnChanged();
       }
@@ -142,7 +162,7 @@ namespace Altaxo.Graph.Gdi.Axis
 
     public AxisStyle AxisStyleEnsured(CSLineID id)
     {
-      AxisStyle prop = AxisStyle(id);
+      AxisStyle prop = this[id];
       if (prop == null)
       {
         prop = new AxisStyle(id);
@@ -152,28 +172,31 @@ namespace Altaxo.Graph.Gdi.Axis
       return prop;
     }
 
+    /// <summary>
+    /// Creates the axis style with ShowAxisLine = true and ShowMajorLabels = true
+    /// </summary>
+    /// <param name="id">The axis style identifier.</param>
+    /// <returns>The newly created axis style, if it was not in the collection before. Returns the unchanged axis style, if it was present already in the collection.</returns>
+    public AxisStyle CreateDefault(CSLineID id)
+    {
+      AxisStyle prop = this[id];
+      if (prop == null)
+      {
+        prop = new AxisStyle(id);
+        prop.CachedAxisInformation = _cachedCoordinateSystem.GetAxisStyleInformation(id);
+
+        prop.ShowAxisLine = true;
+        prop.ShowMajorLabels = true;
+
+        Add(prop);
+      }
+      return prop;
+    }
+
 
     public bool Contains(CSLineID id)
     {
-      return null != AxisStyle(id);
-    }
-
-    public AxisStyle AxisStyle(CSLineID id)
-    {
-
-      foreach (AxisStyle p in _axisStyles)
-        if (p.StyleID == id)
-          return p;
-
-      return null;
-    }
-
-    public IEnumerable<AxisStyle> AxisStyles
-    {
-      get
-      {
-        return _axisStyles;
-      }
+      return null != this[id];
     }
 
     public IEnumerable<CSLineID> AxisStyleIDs
@@ -259,6 +282,24 @@ namespace Altaxo.Graph.Gdi.Axis
     public string Name
     {
       get { return "AxisStyles"; }
+    }
+
+    #endregion
+
+    #region IEnumerable<AxisStyle> Members
+
+    public IEnumerator<AxisStyle> GetEnumerator()
+    {
+      return _axisStyles.GetEnumerator();
+    }
+
+    #endregion
+
+    #region IEnumerable Members
+
+    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+    {
+      return _axisStyles.GetEnumerator();
     }
 
     #endregion

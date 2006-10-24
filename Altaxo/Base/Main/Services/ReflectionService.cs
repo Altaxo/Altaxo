@@ -28,39 +28,41 @@ using Altaxo.Gui;
 
 namespace Altaxo.Main.Services
 {
+
   /// <summary>
   /// Static functions for searching by attributes.
   /// </summary>
   public class ReflectionService
   {
+    #region Construction
+
     static List<Assembly> _loadedAssemblies;
+    static SubClassTypeListCollection _subClassTypeListCollection;
+    static ClassesHavingAttributeListCollection _classesHavingAttributeCollection;
     static ReflectionService()
     {
       AppDomain currentDomain = AppDomain.CurrentDomain;
       _loadedAssemblies = new List<Assembly>();
       _loadedAssemblies.AddRange(currentDomain.GetAssemblies());
       currentDomain.AssemblyLoad += new AssemblyLoadEventHandler(EhAssemblyLoaded);
+      _subClassTypeListCollection = new SubClassTypeListCollection();
+      _classesHavingAttributeCollection = new ClassesHavingAttributeListCollection();
     }
 
+    /// <summary>
+    /// Called when a new assembly is loaded into our current application domain.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     static void EhAssemblyLoaded(object sender, AssemblyLoadEventArgs e)
     {
       _loadedAssemblies.Add(e.LoadedAssembly);
     }
 
-    private class DictEntryKeyComparer : IComparer
-    {
-      #region IComparer Members
+    #endregion
 
-      public int Compare(object x, object y)
-      {
-        IComparable xx = (IComparable) ((DictionaryEntry)x).Key;
-        IComparable yy = (IComparable) ((DictionaryEntry)y).Key;
+    #region Subclass checking and searching
 
-        return xx.CompareTo(yy);
-      }
-
-      #endregion
-    }
 
     /// <summary>
     /// Determines whether or not a given subtype is derived from a basetype or implements the interface basetype.
@@ -70,23 +72,23 @@ namespace Altaxo.Main.Services
     /// <returns>If basetype is a class type, the return value is true if subtype derives from basetype. If basetype is an interface, the return value is true if subtype implements the interface basetype. In all other cases the return value is false.</returns>
     public static bool IsSubClassOfOrImplements(System.Type subtype, System.Type basetype)
     {
-      if(basetype.IsInterface)
+      if (basetype.IsInterface)
       {
         if (subtype == basetype)
           return true;
         else
-          return null!=subtype.GetInterface(basetype.ToString());
-          //return Array.IndexOf(subtype.GetInterfaces(),basetype)>=0;
+          return null != subtype.GetInterface(basetype.ToString());
+        //return Array.IndexOf(subtype.GetInterfaces(),basetype)>=0;
       }
       else
       {
-        return subtype.IsSubclassOf(basetype) || subtype==basetype;
+        return subtype.IsSubclassOf(basetype) || subtype == basetype;
       }
 
     }
 
 
-        /// <summary>
+    /// <summary>
     /// Determines whether or not a given subtype is derived from a basetype or implements the interface basetypes.
     /// </summary>
     /// <param name="subtype">The subtype.</param>
@@ -95,13 +97,266 @@ namespace Altaxo.Main.Services
     /// If subtype don't implement one of the types given in basetypes, the return value is false.</returns>
     public static bool IsSubClassOfOrImplements(System.Type subtype, System.Type[] basetypes)
     {
-      foreach(System.Type t in basetypes)
+      foreach (System.Type t in basetypes)
       {
-        if(!IsSubClassOfOrImplements(subtype,t))
+        if (!IsSubClassOfOrImplements(subtype, t))
           return false;
       }
       return true;
     }
+
+
+
+    #endregion
+
+    #region Subclass searching
+
+    /// <summary>
+    /// This will return a list of types that are subclasses of type basetype or (when basetype is an interface)
+    /// implements basetype.
+    /// </summary>
+    /// <param name="basetype">The basetype.</param>
+    /// <returns></returns>
+    public static System.Type[] GetSubclassesOf(System.Type basetype)
+    {
+      return GetSubclassesOf(new Type[] { basetype });
+    }
+
+
+    /// <summary>
+    /// This will return a list of types that are subclasses of all types in basetypes or (when basetype[i] is an interface)
+    /// implements basetypes[i].
+    /// </summary>
+    /// <param name="basetypes">The basetypes.</param>
+    /// <returns></returns>
+    public static System.Type[] GetSubclassesOf(System.Type[] basetypes)
+    {
+      SubClassTypeList tlist = _subClassTypeListCollection[basetypes];
+      List<Type> list = new List<Type>();
+      list.AddRange(tlist);
+      return list.ToArray();
+    }
+
+    /// <summary>
+    /// This will return a list of types that are subclasses of type basetype or (when basetype is an interface)
+    /// implements basetype.
+    /// </summary>
+    /// <param name="basetype">The basetype.</param>
+    /// <returns></returns>
+    public static System.Type[] GetNonAbstractSubclassesOf(System.Type basetype)
+    {
+      return GetNonAbstractSubclassesOf(new System.Type[] { basetype });
+    }
+
+    /// <summary>
+    /// This will return a list of types that are subclasses of type basetype or (when basetype is an interface)
+    /// implements basetype.
+    /// </summary>
+    /// <param name="basetype">The basetype.</param>
+    /// <returns></returns>
+    public static System.Type[] GetNonAbstractSubclassesOf(System.Type[] basetypes)
+    {
+      SubClassTypeList tlist = _subClassTypeListCollection[basetypes];
+
+      List<Type> list = new List<Type>();
+
+      foreach (Type definedtype in tlist)
+      {
+        if (!definedtype.IsAbstract)
+          list.Add(definedtype);
+      } // end foreach type
+      return list.ToArray();
+    }
+
+    #endregion
+
+    #region Subclass lists
+
+    /// <summary>
+    /// Holds a list of class types that implement a given base type. If the base type is a class type (i.e. not an interface
+    /// type), the base type itself is also included in this list.
+    /// </summary>
+    private class SubClassTypeList : IEnumerable<Type>
+    {
+      /// <summary>
+      /// How many assemblies are currently cached into this list.
+      /// </summary>
+      int _currentAssemblyCount;
+
+      System.Type _baseType;
+      System.Type[] _moreTypes;
+
+      List<System.Type> _listOfTypes;
+      List<int> _listOfAssemblies;
+
+      SubClassTypeListCollection _parent;
+
+      public SubClassTypeList(SubClassTypeListCollection parent, System.Type[] basetypes)
+      {
+        _baseType = basetypes[0];
+        _listOfTypes = new List<Type>();
+        _parent = parent;
+
+        if (basetypes.Length == 1)
+        {
+          _listOfAssemblies = new List<int>();
+        }
+        else
+        {
+          _moreTypes = new Type[basetypes.Length - 1];
+          Array.Copy(basetypes, 1, _moreTypes, 0, basetypes.Length - 1);
+        }
+
+      }
+
+      private void UpdateForOneBasetype()
+      {
+        int loadedAssemblyCount = _loadedAssemblies.Count;
+        if (_currentAssemblyCount == loadedAssemblyCount)
+          return;
+
+        Assembly baseassembly = _baseType.Assembly;
+        for (int i = _currentAssemblyCount; i < loadedAssemblyCount; i++)
+        {
+          Assembly assembly = _loadedAssemblies[i];
+          if (!IsDependentAssembly(baseassembly, assembly))
+            continue;
+
+          Type[] definedtypes = assembly.GetTypes();
+          foreach (Type definedtype in definedtypes)
+          {
+            if (IsSubClassOfOrImplements(definedtype, _baseType))
+            {
+              _listOfTypes.Add(definedtype);
+              _listOfAssemblies.Add(i);
+            }
+          }
+        }
+        _currentAssemblyCount = loadedAssemblyCount;
+      }
+
+      private void UpdateForManyBasetypes()
+      {
+        int loadedAssemblyCount = _loadedAssemblies.Count;
+        if (_currentAssemblyCount == loadedAssemblyCount)
+          return;
+
+        SubClassTypeList tl = _parent[new Type[] { _baseType }];
+
+        foreach (Type definedtype in tl.GetSubTypeRange(_currentAssemblyCount, loadedAssemblyCount - _currentAssemblyCount))
+        {
+          if (IsSubClassOfOrImplements(definedtype, _moreTypes))
+            _listOfTypes.Add(definedtype);
+        }
+
+        _currentAssemblyCount = loadedAssemblyCount;
+      }
+
+      public void Update()
+      {
+        if (null != _moreTypes)
+          UpdateForManyBasetypes();
+        else
+          UpdateForOneBasetype();
+      }
+
+      public IEnumerator<Type> GetEnumerator()
+      {
+        return _listOfTypes.GetEnumerator();
+      }
+      IEnumerator IEnumerable.GetEnumerator()
+      {
+        return _listOfTypes.GetEnumerator();
+      }
+
+
+      IEnumerable<Type> GetSubTypeRange(int firstAssembly, int count)
+      {
+        int nextAssembly = firstAssembly + count;
+        int upper, lower;
+        for (upper = _listOfAssemblies.Count - 1; upper >= 0; upper--)
+          if (_listOfAssemblies[upper] < nextAssembly)
+            break;
+
+        for (lower = upper; lower >= 0; lower--)
+          if (_listOfAssemblies[lower] < firstAssembly)
+            break;
+
+        if (lower < 0) lower = 0;
+
+        for (int i = lower; i <= upper; i++)
+          yield return _listOfTypes[i];
+      }
+
+      public int Count
+      {
+        get { return _listOfTypes == null ? 0 : _listOfTypes.Count; }
+      }
+
+
+
+
+
+
+    }
+
+    private class SubClassTypeListCollection
+    {
+      private class TypeArrayComparer : IEqualityComparer<Type[]>
+      {
+        #region IEqualityComparer<Type[]> Members
+
+        public bool Equals(Type[] x, Type[] y)
+        {
+          if (x.Length != y.Length)
+            return false;
+          for (int i = 0; i < x.Length; i++)
+            if (x[i] != y[i])
+              return false;
+
+          return true;
+        }
+
+        public int GetHashCode(Type[] obj)
+        {
+          int result = 0;
+          foreach (Type t in obj)
+            result += t.GetHashCode();
+
+          return result;
+        }
+
+        #endregion
+      }
+
+      Dictionary<Type[], SubClassTypeList> _list = new Dictionary<Type[], SubClassTypeList>(new TypeArrayComparer());
+
+      public SubClassTypeList this[Type[] types]
+      {
+        get
+        {
+          if (!_list.ContainsKey(types))
+            CreateList(types);
+
+          SubClassTypeList result = _list[types];
+          result.Update();
+          return result;
+        }
+      }
+
+      private void CreateList(Type[] types)
+      {
+        SubClassTypeList list = new SubClassTypeList(this, types);
+        list.Update();
+        _list.Add(types, list);
+      }
+
+
+    }
+
+    #endregion
+
+    #region Assembly dependency checking
 
     /// <summary>
     /// Determines whether or not a given AssemblyName is contained in a list of names.
@@ -112,9 +367,9 @@ namespace Altaxo.Main.Services
     /// <returns>True if it is contained in the list.</returns>
     public static bool Contains(AssemblyName[] assemblyNames, AssemblyName searchedName)
     {
-      foreach(AssemblyName assName in assemblyNames)
+      foreach (AssemblyName assName in assemblyNames)
       {
-        if(assName.FullName == searchedName.FullName)
+        if (assName.FullName == searchedName.FullName)
           return true;
       }
 
@@ -135,7 +390,7 @@ namespace Altaxo.Main.Services
       }
       else
       {
-        ArrayList list = new ArrayList();
+        List<Assembly> list = new List<Assembly>();
 
         AssemblyName baseAssemblyName = baseAssembly.GetName();
 
@@ -147,9 +402,32 @@ namespace Altaxo.Main.Services
           else if (assembly == baseAssembly)
             list.Add(assembly);
         }
-         return (Assembly[])list.ToArray(typeof(System.Reflection.Assembly));
+        return list.ToArray();
       }
     }
+
+    /// <summary>
+    /// Gets a list of currently loaded assemblies that are dependend on the given base assembly. The base assembly is also in the returned list.
+    /// </summary>
+    /// <param name="baseAssembly">The base assembly.</param>
+    /// <param name="start">Index into the <c>_loadedAssemblies</c> array where to start the search. Set it to 0 if you want a full search.</param>
+    /// <returns>All assemblies, that are currently loaded and that references the given base assembly. The base assembly is also in the returned list.</returns>
+    public static IEnumerable<Assembly> GetDependendAssemblies(Assembly baseAssembly, IEnumerable<Assembly> assembliesToTest)
+    {
+      List<Assembly> list = new List<Assembly>();
+
+      AssemblyName baseAssemblyName = baseAssembly.GetName();
+
+      foreach (Assembly assembly in assembliesToTest)
+      {
+        if (Contains(assembly.GetReferencedAssemblies(), baseAssemblyName))
+          list.Add(assembly);
+        else if (assembly == baseAssembly)
+          list.Add(assembly);
+      }
+      return list;
+    }
+
 
 
     /// <summary>
@@ -167,7 +445,7 @@ namespace Altaxo.Main.Services
       }
       else
       {
-        ArrayList list = new ArrayList();
+        List<Assembly> list = new List<Assembly>();
 
         List<AssemblyName> nameList = new List<AssemblyName>();
         foreach (Type t in types)
@@ -190,7 +468,7 @@ namespace Altaxo.Main.Services
             }
           }
         }
-        return (Assembly[])list.ToArray(typeof(System.Reflection.Assembly));
+        return list.ToArray();
       }
     }
 
@@ -202,100 +480,70 @@ namespace Altaxo.Main.Services
     /// <returns>True if <c>testAssembly</c> is dependent on <c>baseAssembly.</returns>
     public static bool IsDependentAssembly(Assembly baseAssembly, Assembly testAssembly)
     {
-      return baseAssembly==testAssembly || Contains(testAssembly.GetReferencedAssemblies(), baseAssembly.GetName());
+      return baseAssembly == testAssembly || Contains(testAssembly.GetReferencedAssemblies(), baseAssembly.GetName());
+    }
+
+    #endregion
+
+    #region Attribute handling - class searching
+
+    public interface IAttributeForClassList : IEnumerable<KeyValuePair<Attribute,Type>>
+    {
+      IEnumerable<Type> Types { get; }
     }
 
 
-    /// <summary>
-    /// This will return a list of types that are subclasses of type basetype or (when basetype is an interface)
-    /// implements basetype.
-    /// </summary>
-    /// <param name="basetype">The basetype.</param>
-    /// <returns></returns>
-    public static System.Type[] GetSubclassesOf(System.Type basetype)
+    private class AttributeDictEntryComparer : IComparer<KeyValuePair<Attribute, Type>>
     {
-      ArrayList list = new ArrayList();
-
-      Assembly[] assemblies = GetDependendAssemblies(basetype.Assembly,0);
-      foreach(Assembly assembly in assemblies)
+      public int Compare(KeyValuePair<Attribute, Type> x, KeyValuePair<Attribute, Type> y)
       {
-        Type[] definedtypes = assembly.GetTypes();
-        foreach(Type definedtype in definedtypes)
-        {
-          if(IsSubClassOfOrImplements(definedtype,basetype))
-            list.Add(definedtype);
-        } // end foreach type
-      } // end foreach assembly 
+        IComparable xx = (IComparable)x.Key;
+        IComparable yy = (IComparable)y.Key;
 
-      return (System.Type[])list.ToArray(typeof(System.Type));
+        return xx.CompareTo(yy);
+      }
     }
 
-     /// <summary>
-    /// This will return a list of types that are subclasses of type basetype or (when basetype is an interface)
-    /// implements basetype.
-    /// </summary>
-    /// <param name="basetype">The basetype.</param>
-    /// <returns></returns>
-    public static System.Type[] GetNonAbstractSubclassesOf(System.Type basetype)
-    {
-      return GetNonAbstractSubclassesOf(new System.Type[] { basetype });
-    }
 
     /// <summary>
-    /// This will return a list of types that are subclasses of type basetype or (when basetype is an interface)
-    /// implements basetype.
-    /// </summary>
-    /// <param name="basetype">The basetype.</param>
-    /// <returns></returns>
-    public static System.Type[] GetNonAbstractSubclassesOf(System.Type[] basetypes)
-    {
-      ArrayList list = new ArrayList();
-
-      Assembly[] assemblies = GetDependendAssemblies(basetypes,0);
-      foreach(Assembly assembly in assemblies)
-      {
-        Type[] definedtypes = assembly.GetTypes();
-        foreach(Type definedtype in definedtypes)
-        {
-          if(!definedtype.IsAbstract && 
-            IsSubClassOfOrImplements(definedtype,basetypes))
-            list.Add(definedtype);
-        } // end foreach type
-      } // end foreach assembly 
-
-      return (System.Type[])list.ToArray(typeof(System.Type));
-    }
-
-    /// <summary>
-    /// For a given type of attribute, attributeType, this function returns the attribute instances and the class
-    /// types this attributes apply to. If the attribute implements the IComparable interface, the list is sorted.
+    /// For a given type of attribute, attributeType, this function returns the class
+    /// types this attributes apply to. The list is not sorted.
     /// </summary>
     /// <param name="attributeType">The type of attribute (this has to be a class attribute type).</param>
-    /// <returns>A list of dictionary entries. The keys are the attribute instances, the values are the class types this attributes apply to.</returns>
-    public static DictionaryEntry[] GetAttributeInstancesAndClassTypes(System.Type attributeType)
+    /// <returns>A list of types that have the provided attribute type.</returns>
+    public static IEnumerable<Type> GetUnsortedClassTypesHavingAttribute(System.Type attributeType, bool inherit)
     {
-      ArrayList list = new ArrayList();
-
-      System.Reflection.Assembly[] assemblies = GetDependendAssemblies(attributeType.Assembly,0);
-      foreach(Assembly assembly in assemblies)
-      {
-        Type[] definedtypes = assembly.GetTypes();
-        foreach(Type definedtype in definedtypes)
-        {
-          Attribute[] attributes = Attribute.GetCustomAttributes(definedtype,attributeType);
-            
-          foreach(Attribute att in attributes)
-          {
-            list.Add(new DictionaryEntry(att,definedtype));
-          }
-        } // end foreach type
-      } // end foreach assembly 
-
-      if(list.Count>1 && IsSubClassOfOrImplements(attributeType,typeof(IComparable)))
-        list.Sort(new DictEntryKeyComparer());
-
-      return (DictionaryEntry[])list.ToArray(typeof(DictionaryEntry));
+      return _classesHavingAttributeCollection[attributeType].GetAllClassesWithMyAttribute();
     }
+
+
+    /// <summary>
+    /// For a given type of attribute, attributeType, this function returns the class
+    /// types this attributes apply to. The list is sorted if attributeType implements the IComparable interface.
+    /// </summary>
+    /// <param name="attributeType">The type of attribute (this has to be a class attribute type).</param>
+    /// <returns>A list of types that have the provided attribute type.</returns>
+    public static IEnumerable<Type> GetSortedClassTypesHavingAttribute(System.Type attributeType, bool inherit)
+    {
+      if(IsSubClassOfOrImplements(attributeType,typeof(IComparable)))
+      {
+        IEnumerable<Type> types = _classesHavingAttributeCollection[attributeType].GetAllClassesWithMyAttribute();
+        SortedDictionary<Attribute, Type> _sortedList = new SortedDictionary<Attribute,Type>();
+        foreach (Type definedtype in types)
+        {
+          Attribute.GetCustomAttributes(definedtype, attributeType, inherit);
+          object[] attributes = definedtype.GetCustomAttributes(attributeType, inherit);
+          foreach (Attribute attribute in attributes)
+            _sortedList.Add(attribute, definedtype);
+        }
+        return new List<Type>(_sortedList.Values);
+      }
+      else
+      {
+        return GetUnsortedClassTypesHavingAttribute(attributeType, inherit);        
+      }
+    }
+ 
 
     /// <summary>
     /// For a given type of attribute, attributeType, this function returns the attribute instances and the class
@@ -309,189 +557,8 @@ namespace Altaxo.Main.Services
     /// <returns>A list of dictionary entries. The keys are the attribute instances, the values are the class types this attributes apply to.</returns>
     public static IAttributeForClassList GetAttributeInstancesAndClassTypesForClass(System.Type attributeType, object target, ref IAttributeForClassListCollection cachedList)
     {
-      return GetAttributeInstancesAndClassTypesForClass(attributeType, target, null, ref cachedList);
+      return GetAttributeInstancesAndClassTypesForClass(attributeType, target, null);
     }
-
-  
-    public interface IAttributeForClassList
-    {
-      KeyValuePair<Attribute, System.Type> this[int i] { get; }
-      int Count { get; }
-    }
-
-    public interface IAttributeForClassListCollection
-    {
-    }
-
-    private class AttributeForClassList : IAttributeForClassList
-    {
-      private class DictEntryKeyComparer : IComparer<KeyValuePair<Attribute,System.Type>>
-      {
-        #region IComparer Members
-
-        public int Compare(KeyValuePair<Attribute, System.Type> x, KeyValuePair<Attribute, System.Type> y)
-        {
-          IComparable xx = (IComparable)x.Key;
-          IComparable yy = (IComparable)y.Key;
-
-          return xx.CompareTo(yy);
-        }
-
-        #endregion
-      }
-
-      /// <summary>
-      /// How many assemblies are currently cached into this list.
-      /// </summary>
-      public int _currentAssemblyCount;
-
-      /// <summary>
-      /// The type of the attribute this assembly caches.
-      /// </summary>
-      public System.Type _attributeType;
-
-      public System.Type _targetType;
-
-      bool _isSortable;
-
-      List<KeyValuePair<Attribute, System.Type>> _list;
-
-      public AttributeForClassList(System.Type attributeType, System.Type targettype)
-      {
-        _attributeType = attributeType;
-        _targetType = targettype;
-        _isSortable = IsSubClassOfOrImplements(_attributeType, typeof(IComparable));
-      }
-
-
-
-      public void Add(Attribute attr, System.Type target)
-      {
-        if (null == _list)
-          _list = new List<KeyValuePair<Attribute, Type>>();
-        _list.Add(new KeyValuePair<Attribute, Type>(attr, target));
-      }
-
-
-      public void Sort()
-      {
-        if (_list!=null && _list.Count > 1 && _isSortable)
-          _list.Sort(new DictEntryKeyComparer());
-      }
-
-      #region IAttributeForClassList Members
-
-      public KeyValuePair<Attribute, Type> this[int i]
-      {
-        get { return _list[i]; }
-      }
-
-      public int Count
-      {
-        get { return _list == null ? 0 : _list.Count; }
-      }
-
-      #endregion
-    }
-
-    private class AttributeForClassListCollection : IAttributeForClassListCollection
-    {
-      /// <summary>
-      /// The attribute type this list collection is intended for.
-      /// </summary>
-      private System.Type _attributeType;
-      private List<List<System.Type>> _classesWithMyAttribute = new List<List<Type>>();
-      private Dictionary<System.Type, AttributeForClassList> _attributeForClassListCollection;
-
-      public AttributeForClassListCollection(System.Type attributeType)
-      {
-        _attributeType = attributeType;
-      }
-
-      public Type AttributeType { get { return _attributeType; } }
-      public int CurrentAssemblyCount { get { return _classesWithMyAttribute.Count; } }
-
-
-      /// <summary>
-      /// Get all classes with the attribute <c>AttributeType</c> starting from a certain assembly.
-      /// </summary>
-      /// <param name="startAssembly">Index of the first assembly to search for.</param>
-      /// <returns>A list of all classes that have the attribute.</returns>
-      public List<Type> GetClasses(int startAssembly)
-      {
-        Update();
-        List<Type> list = new List<Type>();
-        for (int i = startAssembly; i < _classesWithMyAttribute.Count; i++)
-        {
-          list.AddRange(_classesWithMyAttribute[i]);
-        }
-        return list;
-      }
-
-      public IAttributeForClassList GetAttributeForClassList(Type myTargetType)
-      {
-        AttributeForClassList list;
-        if (_attributeForClassListCollection == null)
-          _attributeForClassListCollection = new Dictionary<Type, AttributeForClassList>();
-
-        if (_attributeForClassListCollection.ContainsKey(myTargetType))
-        {
-          list = _attributeForClassListCollection[myTargetType];
-        }
-        else
-        {
-          list = new AttributeForClassList(_attributeType, myTargetType);
-          _attributeForClassListCollection.Add(myTargetType, list);
-        }
-
-        if (this._attributeType != list._attributeType)
-          throw new ApplicationException("Programming error (attributeType did not match), please inform the author that this exception happened");
-        if (list._targetType != myTargetType)
-          throw new ApplicationException("Programming error (targetType did not match), please inform the author that this exception happened");
-
-        List<Type> definedtypes = GetClasses(list._currentAssemblyCount);
-        list._currentAssemblyCount = CurrentAssemblyCount;
-
-        foreach (Type definedtype in definedtypes)
-        {
-          Attribute[] attributes = Attribute.GetCustomAttributes(definedtype, _attributeType);
-
-          foreach (Attribute att in attributes)
-          {
-            if (att is IClassForClassAttribute)
-            {
-                         
-                if (IsSubClassOfOrImplements(myTargetType, ((IClassForClassAttribute)att).TargetType))
-                  list.Add(att, definedtype);
-            }
-          }
-        } // end foreach type
-        list.Sort();
-        return list;
-      }
-
-      void Update()
-      {
-        for (int i = _classesWithMyAttribute.Count; i < _loadedAssemblies.Count; i++)
-        {
-          Assembly assembly = _loadedAssemblies[i];
-          List<Type> typesWithMyAttribute = new List<Type>();
-          if (IsDependentAssembly(_attributeType.Assembly, assembly))
-          {
-            Type[] definedtypes = assembly.GetTypes();
-            foreach (Type definedtype in definedtypes)
-            {
-              Attribute[] attributes = Attribute.GetCustomAttributes(definedtype, _attributeType);
-              if (attributes.Length > 0)
-                typesWithMyAttribute.Add(definedtype);
-            }
-          }
-          _classesWithMyAttribute.Add(typesWithMyAttribute);
-        }
-        System.Diagnostics.Debug.Assert(_loadedAssemblies.Count == _classesWithMyAttribute.Count);
-      }
-    }
-
 
     /// <summary>
     /// For a given type of attribute, attributeType, this function returns the attribute instances and the class
@@ -503,73 +570,19 @@ namespace Altaxo.Main.Services
     /// <param name="target">Only necessary if the attributeType is an <see cref="IClassForClassAttribute" />. In this case only
     /// those attribute instances are returned, where the target object meets the target type of the <see cref="IClassForClassAttribute" />.</param>
     /// <returns>A list of dictionary entries. The keys are the attribute instances, the values are the class types this attributes apply to.</returns>
-    public static IAttributeForClassList GetAttributeInstancesAndClassTypesForClass(System.Type attributeType, object target, System.Type overrideObjectType, ref IAttributeForClassListCollection cachedList)
+    public static IAttributeForClassList GetAttributeInstancesAndClassTypesForClass(
+      System.Type attributeType,
+      object target,
+      System.Type overrideObjectType)
     {
-      System.Diagnostics.Debug.Assert(IsSubClassOfOrImplements(attributeType,typeof(IClassForClassAttribute)));
+      System.Diagnostics.Debug.Assert(IsSubClassOfOrImplements(attributeType, typeof(IClassForClassAttribute)));
       System.Type myTargetType = overrideObjectType != null ? overrideObjectType : target.GetType();
-
-      AttributeForClassListCollection listColl = cachedList as AttributeForClassListCollection;
-      if (listColl == null)
-      {
-        cachedList = listColl = new AttributeForClassListCollection(attributeType);
-      }
-      else
-      {
-        if (listColl.AttributeType != attributeType)
-          throw new ApplicationException("Programming error (attributeType did not match), please inform the author that this exception happened");
-      }
-
-      return listColl.GetAttributeForClassList(myTargetType);
-
-      /*
-       AttributeForClassList list;
-       if (listColl.ContainsKey(myTargetType))
-       {
-         list = listColl[myTargetType];
-       }
-       else
-       {
-         list = new AttributeForClassList(attributeType,myTargetType);
-         listColl.Add(myTargetType, list);
-       }
-
-         if (attributeType != list._attributeType)
-           throw new ApplicationException("Programming error (attributeType did not match), please inform the author that this exception happened");
-         if (list._targetType != (overrideObjectType != null ? overrideObjectType : target.GetType()))
-           throw new ApplicationException("Programming error (targetType did not match), please inform the author that this exception happened");
-     
-        List<Type> definedtypes = listColl.GetClasses(list._currentAssemblyCount);
-        list._currentAssemblyCount = listColl.CurrentAssemblyCount;
-       
-        foreach (Type definedtype in definedtypes)
-        {
-          Attribute[] attributes = Attribute.GetCustomAttributes(definedtype, attributeType);
-
-          foreach (Attribute att in attributes)
-          {
-            if (att is IClassForClassAttribute)
-            {
-              if (overrideObjectType == null)
-              {
-                if (((IClassForClassAttribute)att).TargetType.IsInstanceOfType(target))
-                  list.Add(att, definedtype);
-              }
-              else
-              {
-                if (IsSubClassOfOrImplements(overrideObjectType, ((IClassForClassAttribute)att).TargetType))
-                  list.Add(att, definedtype);
-              }
-            }
-          }
-        } // end foreach type
-   
-
-      
-      list.Sort();
-
-      return list;
-       */
+      return _classesHavingAttributeCollection[attributeType, myTargetType];
     }
+
+    #endregion
+
+    #region Attribute handling - class instantiating
 
     /// <summary>
     /// Tries to get a class instance for a given attribute type. All loaded assemblies are searched for classes that attributeType applies to,
@@ -581,21 +594,21 @@ namespace Altaxo.Main.Services
     /// <returns>The instance of the first class for which the instantiation was successfull and results in the expectedType. Otherwise null.</returns>
     public static object GetClassInstanceByAttribute(System.Type attributeType, System.Type expectedType, object[] creationArgs)
     {
-      object result=null;
+      object result = null;
       // 1st search for all classes that wear the UserControllerForObject attribute
-      DictionaryEntry[] list = ReflectionService.GetAttributeInstancesAndClassTypes(attributeType);
+      IEnumerable<Type> list = ReflectionService.GetSortedClassTypesHavingAttribute(attributeType, false);
 
-      for(int i=list.Length-1;i>=0;i--)
+      foreach(Type definedType in list)
       {
-        if(IsSubClassOfOrImplements( ((System.Type)list[i].Value),expectedType))
+        if (IsSubClassOfOrImplements(definedType, expectedType))
         {
           // try to create the class
           try
           {
-            result = Activator.CreateInstance((System.Type)list[i].Value,creationArgs);
+            result = Activator.CreateInstance(definedType, creationArgs);
             break;
           }
-          catch(Exception)
+          catch (Exception)
           {
           }
         }
@@ -614,11 +627,12 @@ namespace Altaxo.Main.Services
     /// <returns>The instance of the first class for which the instantiation was successfull and results in the expectedType. Otherwise null.</returns>
     /// <remarks>The instantiation is tried first with the full argument list. If that fails, the last element of the argument list is chopped and the instantiation is tried again.
     /// This process is repeated until the instantiation was successfull or the argument list is empty (empty constructor is tried at last).</remarks>
-    public static object GetClassForClassInstanceByAttribute(System.Type attributeType, System.Type[] expectedTypes, object[] creationArgs, ref IAttributeForClassListCollection cachedList)
+    public static object GetClassForClassInstanceByAttribute(System.Type attributeType, System.Type[] expectedTypes, object[] creationArgs)
     {
-      return GetClassForClassInstanceByAttribute(attributeType, expectedTypes,  creationArgs, null, ref cachedList);
+      return GetClassForClassInstanceByAttribute(attributeType, expectedTypes, creationArgs, null);
     }
-   
+
+
 
     /// <summary>
     /// Tries to get a class instance for a given attribute type. All loaded assemblies are searched for classes that attributeType applies to,
@@ -633,12 +647,27 @@ namespace Altaxo.Main.Services
     /// <returns>The instance of the first class for which the instantiation was successfull and results in the expectedType. Otherwise null.</returns>
     /// <remarks>The instantiation is tried first with the full argument list. If that fails, the last element of the argument list is chopped and the instantiation is tried again.
     /// This process is repeated until the instantiation was successfull or the argument list is empty (empty constructor is tried at last).</remarks>
-    public static object GetClassForClassInstanceByAttribute(System.Type attributeType, System.Type[] expectedTypes, object[] creationArgs, System.Type overrideArgs0Type, ref IAttributeForClassListCollection cachedList)
+    public static object GetClassForClassInstanceByAttribute(System.Type attributeType, System.Type[] expectedTypes, object[] creationArgs, System.Type overrideArgs0Type)
     {
-      object result=null;
-
       // 1st search for all classes that wear the UserControllerForObject attribute
-      IAttributeForClassList list = ReflectionService.GetAttributeInstancesAndClassTypesForClass(attributeType,creationArgs[0],overrideArgs0Type, ref cachedList);
+      IAttributeForClassList list = ReflectionService.GetAttributeInstancesAndClassTypesForClass(attributeType, creationArgs[0], overrideArgs0Type);
+      return CreateInstanceFromList(list, expectedTypes, creationArgs);
+    }
+
+    /// <summary>
+    /// Tries to get a class instance for a given attribute type. All loaded assemblies are searched for classes that attributeType applies to,
+    /// then for all found classes the instantiation of a class is tried, until a instance is created successfully. Here, the attributeType has
+    /// to implement <see cref="IClassForClassAttribute" />, and creationArg[0] has to match the type in <see cref="IClassForClassAttribute.TargetType" />
+    /// </summary>
+    /// <param name="list">The list of types to try for creation.</param>
+    /// <param name="expectedTypes">The expected types of return value.</param>
+    /// <param name="creationArgs">The creation arguments used to instantiate a class.</param>
+    /// <returns>The instance of the first class for which the instantiation was successfull and results in the expectedType. Otherwise null.</returns>
+    /// <remarks>The instantiation is tried first with the full argument list. If that fails, the last element of the argument list is chopped and the instantiation is tried again.
+    /// This process is repeated until the instantiation was successfull or the argument list is empty (empty constructor is tried at last).</remarks>
+    public static object CreateInstanceFromList(IAttributeForClassList list, System.Type[] expectedTypes, object[] creationArgs)
+    {
+      object result = null;
 
       // evaluate the len of the creation args without null's as arguments
       int trueArgLen = creationArgs.Length;
@@ -651,30 +680,26 @@ namespace Altaxo.Main.Services
         }
       }
 
-      System.Type[][] creationTypes = new Type[trueArgLen+1][];
+      System.Type[][] creationTypes = new Type[trueArgLen + 1][];
 
-      for(int i=list.Count-1;i>=0;i--)
+      foreach(Type definedType in list.Types)
       {
-        if(!IsSubClassOfOrImplements( (System.Type)list[i].Value, expectedTypes))
+        if (!IsSubClassOfOrImplements(definedType, expectedTypes))
           continue;
         // try to create the class
 
-        System.Type type = (System.Type)list[i].Value;
-
-        //ConstructorInfo[] cinfos = type.GetConstructors();
-
         for (int j = trueArgLen; j >= 0; j--)
         {
-          if(creationTypes[j]==null)
+          if (creationTypes[j] == null)
           {
-            creationTypes[j]=new Type[j];
-            for (int k = j-1; k >=0; k--)
+            creationTypes[j] = new Type[j];
+            for (int k = j - 1; k >= 0; k--)
             {
-                creationTypes[j][k] = creationArgs[k].GetType();
+              creationTypes[j][k] = creationArgs[k].GetType();
             }
           }
 
-          ConstructorInfo cinfo = type.GetConstructor(creationTypes[j]);
+          ConstructorInfo cinfo = definedType.GetConstructor(creationTypes[j]);
           if (cinfo != null)
           {
             object[] chopped = null;
@@ -684,7 +709,7 @@ namespace Altaxo.Main.Services
               Array.Copy(creationArgs, chopped, j);
             }
 
-            result = cinfo.Invoke(j==creationArgs.Length ? creationArgs : chopped);
+            result = cinfo.Invoke(j == creationArgs.Length ? creationArgs : chopped);
 
             if (result != null)
               return result;
@@ -693,6 +718,324 @@ namespace Altaxo.Main.Services
       }
       return result;
     }
+
+    #endregion
+
+    #region Attribute lists
+
+
+
+
+    /// <summary>
+    /// Maintains all classes that have a special attribute.
+    /// </summary>
+    private class ClassesHavingAttributeList
+    {
+      /// <summary>
+      /// The attribute type this list collection is intended for.
+      /// </summary>
+      /// <example>Most used in Altaxo is the UserControllerForObject attribute.</example>
+      protected System.Type _attributeType;
+
+      /// <summary>
+      /// Maintains a list of all classes in all assemblies that have the attribute of type _attributeType applied.
+      /// Outer list is numbered by the assemblies which contains the classes. Inner list is the list of class types that have the attribute.
+      /// </summary>
+      protected List<List<System.Type>> _classesWithMyAttribute = new List<List<Type>>();
+
+
+      public ClassesHavingAttributeList(System.Type attributeType)
+      {
+        _attributeType = attributeType;
+      }
+
+      public Type AttributeType { get { return _attributeType; } }
+      public int CurrentAssemblyCount { get { return _classesWithMyAttribute.Count; } }
+
+
+      /// <summary>
+      /// Get all classes with the attribute <c>AttributeType</c>.
+      /// </summary>
+      /// <returns>A list of all classes that have the attribute.</returns>
+      public IEnumerable<Type> GetAllClassesWithMyAttribute()
+      {
+        return GetClassesWithMyAttribute(0);
+      }
+
+      /// <summary>
+      /// Get all classes with the attribute <c>AttributeType</c> starting from a certain assembly.
+      /// </summary>
+      /// <param name="startAssembly">Index of the first assembly to search for.</param>
+      /// <returns>A list of all classes that have the attribute.</returns>
+      public IEnumerable<Type> GetClassesWithMyAttribute(int startAssembly)
+      {
+        Update();
+        List<Type> list = new List<Type>();
+        for (int i = startAssembly; i < _classesWithMyAttribute.Count; i++)
+        {
+          list.AddRange(_classesWithMyAttribute[i]);
+        }
+        return list;
+      }
+
+      public void Update()
+      {
+        for (int i = _classesWithMyAttribute.Count; i < _loadedAssemblies.Count; i++)
+        {
+          Assembly assembly = _loadedAssemblies[i];
+          List<Type> typesWithMyAttribute = new List<Type>();
+          if (IsDependentAssembly(_attributeType.Assembly, assembly))
+          {
+            Type[] definedtypes = assembly.GetTypes();
+            foreach (Type definedtype in definedtypes)
+            {
+              Attribute[] attributes = Attribute.GetCustomAttributes(definedtype, _attributeType, true);
+              if (attributes.Length > 0)
+                typesWithMyAttribute.Add(definedtype);
+            }
+          }
+          _classesWithMyAttribute.Add(typesWithMyAttribute);
+        }
+        System.Diagnostics.Debug.Assert(_loadedAssemblies.Count == _classesWithMyAttribute.Count);
+      }
+    }
+
+
+    /// <summary>
+    /// Maintains a list of ClassForClass attributes and the appropriate target types of this attribute.
+    /// If the attribute type allows sorting, the list is sorted.
+    /// </summary>
+    /// <example>A prominent class-for-class attribute type is the 
+    /// UserControllerForObjectAttribute attribute.
+    /// The list is collection all classes with the same target type (for instance some plot item type).
+    /// The list maintains the class types (i.e. all controllers that can cope with the plot item) and the
+    /// instance of the attribute that this class is applied to.
+    ///</example>
+    private class ClassesHavingCfCAttributeTargetingTypeList : IAttributeForClassList
+    {
+
+      /// <summary>
+      /// How many assemblies are currently cached into this list.
+      /// </summary>
+      public int _currentAssemblyCount;
+
+      /// <summary>
+      /// The type of the attribute this assembly caches.
+      /// </summary>
+      /// <example>A prominent class-for-class attribute type is the 
+      /// UserControllerForObjectAttribute attribute.</example>
+      public System.Type _attributeType;
+
+      /// <summary>
+      /// The class type the attribute targets.
+      /// </summary>
+      public System.Type _targetType;
+
+      bool _isSortable;
+
+      /// <summary>
+      /// Maintains a list of attribute instances and the class type this attribute is applied to.
+      /// </summary>
+      List<KeyValuePair<Attribute, System.Type>> _list;
+
+      public ClassesHavingCfCAttributeTargetingTypeList(System.Type attributeType, System.Type targettype)
+      {
+        _attributeType = attributeType;
+        _targetType = targettype;
+        _isSortable = IsSubClassOfOrImplements(_attributeType, typeof(IComparable));
+      }
+
+
+
+      public void Add(Attribute attr, System.Type target)
+      {
+        if (null == _list)
+          _list = new List<KeyValuePair<Attribute, Type>>();
+        _list.Add(new KeyValuePair<Attribute, Type>(attr, target));
+      }
+
+
+      public void Sort()
+      {
+        if (_list != null && _list.Count > 1 && _isSortable)
+          _list.Sort(new AttributeDictEntryComparer());
+      }
+     
+      #region IEnumerable<KeyValuePair<Attribute,Type>> Members
+
+      public IEnumerator<KeyValuePair<Attribute, Type>> GetEnumerator()
+      {
+        return _list.GetEnumerator();
+      }
+
+      #endregion
+
+      #region IEnumerable Members
+
+      IEnumerator IEnumerable.GetEnumerator()
+      {
+        return _list.GetEnumerator();
+      }
+
+      #endregion
+
+      #region IAttributeForClassList Members
+
+      public IEnumerable<Type> Types
+      {
+        get
+        {
+          foreach (KeyValuePair<Attribute, Type> entry in _list)
+            yield return entry.Value;
+        }
+      }
+
+      #endregion
+    }
+
+    /// <summary>
+    /// This interface is merely for filtering the argument of different functions.
+    /// </summary>
+    public interface IAttributeForClassListCollection
+    {
+    }
+
+    private class ClassesHavingClassForClassAttributeList : ClassesHavingAttributeList, IAttributeForClassListCollection
+    {
+      /// <summary>
+      /// Dictionary: Key is the target type of the attribute. Value is a list of objects that have the attribute
+      /// of type _attributeType, and this attribute targets the type given in the key.
+      /// </summary>
+      private Dictionary<System.Type, ClassesHavingCfCAttributeTargetingTypeList> _attributeForClassListCollection;
+
+      public ClassesHavingClassForClassAttributeList(System.Type attributeType)
+        : base(attributeType)
+      {
+      }
+
+      /// <summary>
+      /// Gets a list of classes that have a attribute of type _attributeType, that targets the type given in the argument myTargetType.
+      /// </summary>
+      /// <param name="myTargetType">Type the attribute instances of the classes to return targets.</param>
+      /// <returns>List of classes that have the attribute of type _attributeType, that targets myTargetType. If the attribute
+      /// is sortable, the list returned is sorted by the attribute instances.</returns>
+      public IAttributeForClassList GetClassesTargeting(Type myTargetType)
+      {
+        ClassesHavingCfCAttributeTargetingTypeList list;
+        if (_attributeForClassListCollection == null)
+          _attributeForClassListCollection = new Dictionary<Type, ClassesHavingCfCAttributeTargetingTypeList>();
+
+        if (_attributeForClassListCollection.ContainsKey(myTargetType))
+        {
+          list = _attributeForClassListCollection[myTargetType];
+        }
+        else
+        {
+          list = new ClassesHavingCfCAttributeTargetingTypeList(_attributeType, myTargetType);
+          _attributeForClassListCollection.Add(myTargetType, list);
+        }
+
+        if (this._attributeType != list._attributeType)
+          throw new ApplicationException("Programming error (attributeType did not match), please inform the author that this exception happened");
+        if (list._targetType != myTargetType)
+          throw new ApplicationException("Programming error (targetType did not match), please inform the author that this exception happened");
+
+
+        // Update the list
+        IEnumerable<Type> definedtypes = GetClassesWithMyAttribute(list._currentAssemblyCount);
+        list._currentAssemblyCount = CurrentAssemblyCount;
+
+        foreach (Type definedtype in definedtypes)
+        {
+          Attribute[] attributes = Attribute.GetCustomAttributes(definedtype, _attributeType);
+
+          foreach (Attribute att in attributes)
+          {
+            if (att is IClassForClassAttribute)
+            {
+
+              if (IsSubClassOfOrImplements(myTargetType, ((IClassForClassAttribute)att).TargetType))
+                list.Add(att, definedtype);
+            }
+          }
+        } // end foreach type
+        list.Sort();
+        return list;
+      }
+    }
+
+    private class ClassesHavingAttributeListCollection
+    {
+      private class TypeArrayComparer : IEqualityComparer<Type[]>
+      {
+        #region IEqualityComparer<Type[]> Members
+
+        public bool Equals(Type[] x, Type[] y)
+        {
+          if (x.Length != y.Length)
+            return false;
+          for (int i = 0; i < x.Length; i++)
+            if (x[i] != y[i])
+              return false;
+
+          return true;
+        }
+
+        public int GetHashCode(Type[] obj)
+        {
+          int result = 0;
+          foreach (Type t in obj)
+            result += t.GetHashCode();
+
+          return result;
+        }
+
+        #endregion
+      }
+
+      Dictionary<Type, ClassesHavingAttributeList> _list = new Dictionary<Type, ClassesHavingAttributeList>();
+
+      public ClassesHavingAttributeList this[Type attributetype]
+      {
+        get
+        {
+          if (!_list.ContainsKey(attributetype))
+            CreateList(attributetype);
+
+          ClassesHavingAttributeList result = _list[attributetype];
+          result.Update();
+          return result;
+        }
+      }
+
+      public IAttributeForClassList this[Type attributetype, Type myTargetType]
+      {
+        get
+        {
+          if (!_list.ContainsKey(attributetype))
+          {
+            if (!IsSubClassOfOrImplements(attributetype, typeof(IClassForClassAttribute)))
+              throw new ArgumentException("This function must only be called with attribute types which implement the IClassForClassAttribute interface.");
+            CreateList(attributetype);
+          }
+
+          ClassesHavingClassForClassAttributeList result = (ClassesHavingClassForClassAttributeList)_list[attributetype];
+          return result.GetClassesTargeting(myTargetType);
+        }
+      }
+
+      private void CreateList(Type attributetype)
+      {
+        if (IsSubClassOfOrImplements(attributetype, typeof(IClassForClassAttribute)))
+          _list.Add(attributetype, new ClassesHavingClassForClassAttributeList(attributetype));
+        else
+          _list.Add(attributetype, new ClassesHavingAttributeList(attributetype));
+      }
+
+
+    }
+
+    #endregion
   }
 }
 

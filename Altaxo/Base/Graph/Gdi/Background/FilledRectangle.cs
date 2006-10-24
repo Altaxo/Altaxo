@@ -65,6 +65,11 @@ namespace Altaxo.Graph.Gdi.Background
       _brush = new BrushX(c);
     }
 
+    public FilledRectangle(BrushX brush)
+    {
+      _brush = (BrushX)brush.Clone();
+    }
+
     public FilledRectangle(FilledRectangle from)
     {
       CopyFrom(from);

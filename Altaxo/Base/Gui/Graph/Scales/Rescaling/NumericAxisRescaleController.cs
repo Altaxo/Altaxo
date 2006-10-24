@@ -33,6 +33,7 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
   /// Summary description for NumericAxisRescaleController.
   /// </summary>
   [UserControllerForObject(typeof(NumericAxisRescaleConditions))]
+  [ExpectedTypeOfView(typeof(IOrgEndSpanView))]
   public class NumericAxisRescaleController 
     :
     IOrgEndSpanViewEventReceiver,
