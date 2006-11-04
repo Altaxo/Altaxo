@@ -71,10 +71,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     protected Altaxo.Data.ReadableColumnProxy _labelColumn;
 
     // cached values:
+    [NonSerialized]
     protected System.Drawing.StringFormat _cachedStringFormat;
 
+    [NonSerialized]
     protected object _parent;
 
+    [field: NonSerialized]
+    public event System.EventHandler Changed;
 
     #region Serialization
 
@@ -370,6 +374,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       this._cachedStringFormat = (System.Drawing.StringFormat)from._cachedStringFormat.Clone();
       this._attachedPlane = null==from._attachedPlane ? null : from._attachedPlane.Clone();
       this._labelColumn = (Altaxo.Data.ReadableColumnProxy)from._labelColumn.Clone();
+      this._parent = from._parent;
 
       CreateEventChain();
     }
@@ -729,10 +734,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     #region IChangedEventSource Members
 
-    public event System.EventHandler Changed;
+   
 
     protected virtual void OnChanged()
     {
+      if (_parent is Main.IChildChangedEventSink)
+        ((Main.IChildChangedEventSink)_parent).EhChildChanged(this, EventArgs.Empty);
+
       if (null != Changed)
         Changed(this, new EventArgs());
     }
@@ -744,6 +752,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     public void EhChildChanged(object child, EventArgs e)
     {
+
       if (null != Changed)
         Changed(this, e);
     }
@@ -788,20 +797,26 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     #region IG2DPlotStyle Members
 
-    public void AddLocalGroupStyles(G2DPlotGroupStyleCollection externalGroups, G2DPlotGroupStyleCollection localGroups)
+    public void CollectExternalGroupStyles(PlotGroupStyleCollection externalGroups)
+    {
+      if (this.IsColorProvider)
+        ColorGroupStyle.AddExternalGroupStyle(externalGroups);
+    }
+
+    public void CollectLocalGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
     {
       if(this.IsColorProvider)
         ColorGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
     }
 
-    public void PrepareGroupStyles(G2DPlotGroupStyleCollection externalGroups, G2DPlotGroupStyleCollection localGroups)
+    public void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups, IPlotArea layer, Processed2DPlotData pdata)
     {
       if (this.IsColorProvider)
         ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate() { return PlotColors.Colors.GetPlotColor(this.Color); });
 
     }
 
-    public void ApplyGroupStyles(G2DPlotGroupStyleCollection externalGroups, G2DPlotGroupStyleCollection localGroups)
+    public void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
     {
       if (this.IsColorReceiver)
         ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(PlotColor c) { this.Color = c; });

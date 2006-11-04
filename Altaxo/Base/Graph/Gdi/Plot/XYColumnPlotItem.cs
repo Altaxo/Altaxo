@@ -369,7 +369,7 @@ namespace Altaxo.Graph.Gdi.Plot
     /// it must be ensured that the axes are scaled correctly before the plots are painted.
     /// </summary>
     /// <param name="layer">The plot layer.</param>
-    public override void PreparePainting(IPlotArea layer)
+    public override void PrepareScales(IPlotArea layer)
     {
       if (null != this._plotData)
         _plotData.CalculateCachedData(layer.XAxis.DataBoundsObject, layer.YAxis.DataBoundsObject);

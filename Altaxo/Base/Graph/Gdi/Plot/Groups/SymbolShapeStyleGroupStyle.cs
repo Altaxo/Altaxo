@@ -132,6 +132,16 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 
     #region Static helpers
 
+    public static void AddExternalGroupStyle(IPlotGroupStyleCollection externalGroups)
+    {
+      if (PlotGroupStyle.ShouldAddExternalGroupStyle(externalGroups, typeof(SymbolShapeStyleGroupStyle)))
+      {
+        SymbolShapeStyleGroupStyle gstyle = new SymbolShapeStyleGroupStyle();
+        gstyle.IsStepEnabled = true;
+        externalGroups.Add(gstyle);
+      }
+    }
+
     public static void AddLocalGroupStyle(
      IPlotGroupStyleCollection externalGroups,
      IPlotGroupStyleCollection localGroups)

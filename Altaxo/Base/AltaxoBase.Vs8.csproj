@@ -973,6 +973,10 @@
       <DependentUpon>OrgEndSpanControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\PlotGroupCollectionControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>PlotGroupCollectionControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Gui\Graph\PlottingRangeControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>PlottingRangeControl.cs</DependentUpon>
@@ -1351,6 +1355,13 @@
     <Compile Include="Gui\Graph\OrgEndSpanControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Gui\Graph\PlotGroupCollectionControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\PlotGroupCollectionControl.Designer.cs">
+      <DependentUpon>PlotGroupCollectionControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\PlotGroupCollectionController.cs" />
     <Compile Include="Gui\Graph\Scales\Rescaling\DateTimeAxisRescaleController.cs" />
     <Compile Include="Gui\Graph\Scales\Rescaling\LogarithmicAxisRescaleController.cs" />
     <Compile Include="Gui\Graph\Scales\Rescaling\NumericAxisRescaleController.cs" />

@@ -137,6 +137,14 @@ namespace Altaxo.Main
       return type.IsInstanceOfType(root) ? root : null;
     }
 
+    public static T GetRootNodeImplementing<T>(IDocumentNode node)
+    {
+      object root = node.ParentObject;
+      while (root != null && root is IDocumentNode && !(root is T))
+        root = ((IDocumentNode)root).ParentObject;
+
+      return (root is T) ?  (T)root : default(T);
+    }
    
 
     /// <summary>

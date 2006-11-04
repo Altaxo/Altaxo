@@ -5,20 +5,20 @@ using System.Text;
 using Altaxo.Graph.PlotGroups;
 namespace Altaxo.Graph.Gdi.Plot.Groups
 {
-  public class G2DPlotGroupStyleCollection 
+  public class PlotGroupStyleCollection 
     :
-    PlotGroupStyleCollection,
+    PlotGroupStyleCollectionBase,
     ICloneable // is already implemented in base but is hidden because of inheritance
   {
-    IG2DCoordinateTransformingGroupStyle _coordinateTransformingStyle;
+    ICoordinateTransformingGroupStyle _coordinateTransformingStyle;
 
     #region Serialization
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(G2DPlotGroupStyleCollection), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PlotGroupStyleCollection), 0)]
     public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        G2DPlotGroupStyleCollection s = (G2DPlotGroupStyleCollection)obj;
+        PlotGroupStyleCollection s = (PlotGroupStyleCollection)obj;
 
         info.AddValue("TransformingStyle", s._coordinateTransformingStyle);
 
@@ -54,9 +54,9 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
 
-        G2DPlotGroupStyleCollection s = null != o ? (G2DPlotGroupStyleCollection)o : new G2DPlotGroupStyleCollection();
+        PlotGroupStyleCollection s = null != o ? (PlotGroupStyleCollection)o : new PlotGroupStyleCollection();
 
-        s._coordinateTransformingStyle = (IG2DCoordinateTransformingGroupStyle)info.GetValue("TransformingStyle", s);
+        s._coordinateTransformingStyle = (ICoordinateTransformingGroupStyle)info.GetValue("TransformingStyle", s);
 
         Type parentStyleType = null;
         int count = info.OpenArray();
@@ -76,24 +76,24 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
     #endregion
 
     #region Constructors
-    public G2DPlotGroupStyleCollection()
+    public PlotGroupStyleCollection()
     {
     }
 
-    public G2DPlotGroupStyleCollection(G2DPlotGroupStyleCollection from)
+    public PlotGroupStyleCollection(PlotGroupStyleCollection from)
     {
       CopyFrom(from);
     }
 
-    public override void CopyFrom(PlotGroupStyleCollection fromb)
+    public override void CopyFrom(PlotGroupStyleCollectionBase fromb)
     {
       base.CopyFrom(fromb);
 
-      if (fromb is G2DPlotGroupStyleCollection)
+      if (fromb is PlotGroupStyleCollection)
       {
-        G2DPlotGroupStyleCollection from = (G2DPlotGroupStyleCollection)fromb;
+        PlotGroupStyleCollection from = (PlotGroupStyleCollection)fromb;
 
-        _coordinateTransformingStyle = null == from._coordinateTransformingStyle ? null : (IG2DCoordinateTransformingGroupStyle)from._coordinateTransformingStyle.Clone();
+        _coordinateTransformingStyle = null == from._coordinateTransformingStyle ? null : (ICoordinateTransformingGroupStyle)from._coordinateTransformingStyle.Clone();
 
       }
     }
@@ -102,21 +102,17 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 
     #region ICloneable Members
 
-    public new G2DPlotGroupStyleCollection Clone()
+    public new PlotGroupStyleCollection Clone()
     {
-      return new G2DPlotGroupStyleCollection(this);
+      return new PlotGroupStyleCollection(this);
     }
 
     object ICloneable.Clone()
     {
-      return new G2DPlotGroupStyleCollection(this);
+      return new PlotGroupStyleCollection(this);
     }
 
     #endregion
-
-
-
-
 
     public override void Clear()
     {
@@ -124,9 +120,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
       _coordinateTransformingStyle = null;
     }
 
-   
-
-    public IG2DCoordinateTransformingGroupStyle CoordinateTransformingStyle
+    public ICoordinateTransformingGroupStyle CoordinateTransformingStyle
     {
       get
       {

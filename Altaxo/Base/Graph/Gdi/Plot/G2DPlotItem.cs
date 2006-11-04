@@ -21,7 +21,7 @@ namespace Altaxo.Graph.Gdi.Plot
     Processed2DPlotData _cachedPlotDataUsedForPainting;
 
     [NonSerialized]
-    G2DPlotGroupStyleCollection _localGroups;
+    PlotGroupStyleCollection _localGroups;
 
     public override object StyleObject
     {
@@ -102,28 +102,29 @@ namespace Altaxo.Graph.Gdi.Plot
 
     #region IPlotItem Members
 
-    public override void CollectStyles(G2DPlotGroupStyleCollection styles)
+    public override void CollectStyles(PlotGroupStyleCollection styles)
     {
       // first add missing local group styles
       foreach (IG2DPlotStyle sps in _plotStyles)
-        sps.AddLocalGroupStyles(null, styles);
+        sps.CollectExternalGroupStyles(styles);
     }
 
-    public override void PrepareStyles(G2DPlotGroupStyleCollection externalGroups)
+    public override void PrepareStyles(PlotGroupStyleCollection externalGroups, IPlotArea layer)
     {
-      _localGroups = new G2DPlotGroupStyleCollection();
+      Processed2DPlotData pdata = GetRangesAndPoints(layer);
+      _localGroups = new PlotGroupStyleCollection();
       
       // first add missing local group styles
       foreach (IG2DPlotStyle sps in _plotStyles)
-        sps.AddLocalGroupStyles(externalGroups, _localGroups);
+        sps.CollectLocalGroupStyles(externalGroups, _localGroups);
 
       // now prepare the groups
       
       foreach (IG2DPlotStyle sps in _plotStyles)
-        sps.PrepareGroupStyles(externalGroups, _localGroups);
+        sps.PrepareGroupStyles(externalGroups, _localGroups, layer, pdata);
     }
 
-    public override void ApplyStyles(G2DPlotGroupStyleCollection externalGroups)
+    public override void ApplyStyles(PlotGroupStyleCollection externalGroups)
     {
       
       foreach (IG2DPlotStyle sps in _plotStyles)

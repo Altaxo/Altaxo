@@ -13,7 +13,7 @@ namespace Altaxo.Graph.Gdi.Plot.Data
   /// <remarks>For use in a list, the UpperBound property is somewhat useless, since it should be equal
   /// to the LowerBound property of the next item.</remarks>
   [Serializable]
-  public class PlotRange
+  public class PlotRange 
   {
     int _lowerBound;
     int _upperBound;
@@ -115,14 +115,26 @@ namespace Altaxo.Graph.Gdi.Plot.Data
     {
       get { return _upperBound + _offsetToOriginal -1; }
     }
+   
 
+    /// <summary>
+    /// Enumerates through the original row indices in this plot range.
+    /// </summary>
+    /// <returns>A enumerable that enumerates through the orginal row indices.</returns>
+    public IEnumerable<int> OriginalRowIndices()
+    {
+      for (int i = _lowerBound; i < _upperBound; i++)
+      {
+        yield return i + _offsetToOriginal;
+      }
+    }
   }
 
   /// <summary>
   /// Holds a list of plot ranges. The list is not sorted automatically, but is assumed to be sorted.
   /// </summary>
   [Serializable]
-  public class PlotRangeList 
+  public class PlotRangeList : IEnumerable<PlotRange>
   {
     List<PlotRange> InnerList = new List<PlotRange>();
     /// <summary>
@@ -194,6 +206,24 @@ namespace Altaxo.Graph.Gdi.Plot.Data
           yield return j+r.OffsetToOriginal;
       }
     }
+
+    #region IEnumerable<PlotRange> Members
+
+    public IEnumerator<PlotRange> GetEnumerator()
+    {
+      return InnerList.GetEnumerator();
+    }
+
+    #endregion
+
+    #region IEnumerable Members
+
+    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+    {
+      return InnerList.GetEnumerator();
+    }
+
+    #endregion
   }
 
 }

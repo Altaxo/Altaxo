@@ -64,7 +64,7 @@ namespace Altaxo.Graph.Gdi.Plot
     /// it must be ensured that the axes are scaled correctly before the plots are painted.
     /// </summary>
     /// <param name="layer">The plot layer.</param>
-    public abstract void PreparePainting(IPlotArea layer);
+    public abstract void PrepareScales(IPlotArea layer);
 
     /// <summary>
     /// Creates a cloned copy of this object.
@@ -208,11 +208,11 @@ namespace Altaxo.Graph.Gdi.Plot
 
     #region IPlotItem Members
 
-    public abstract void CollectStyles(G2DPlotGroupStyleCollection styles);
+    public abstract void CollectStyles(PlotGroupStyleCollection styles);
 
-    public abstract void PrepareStyles(G2DPlotGroupStyleCollection externalGroups);
+    public abstract void PrepareStyles(PlotGroupStyleCollection externalGroups, IPlotArea layer);
 
-    public abstract void ApplyStyles(G2DPlotGroupStyleCollection externalGroups);
+    public abstract void ApplyStyles(PlotGroupStyleCollection externalGroups);
 
     /// <summary>
     /// Paints a symbol for this plot item for use in a legend.

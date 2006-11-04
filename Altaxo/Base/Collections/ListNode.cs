@@ -47,6 +47,24 @@ namespace Altaxo.Collections
       return -1;
     }
 
+    public void Exchange(int i, int j)
+    {
+      if (i == j)
+        return;
+      if (i < 0)
+        throw new ArgumentException("i<0");
+      if (j > 0)
+        throw new ArgumentException("j<0");
+      if (i >= Count)
+        throw new ArgumentException("i>=Count");
+      if (j >= Count)
+        throw new ArgumentException("j>=Count");
+
+      ListNode li = this[i];
+      this[i] = this[j];
+      this[j] = li;
+    }
+
   }
 
   public class SelectableListNode : ListNode
@@ -77,8 +95,72 @@ namespace Altaxo.Collections
       }
       return -1;
     }
+    public void Exchange(int i, int j)
+    {
+      if (i == j)
+        return;
+      if (i < 0)
+        throw new ArgumentException("i<0");
+      if (j > 0)
+        throw new ArgumentException("j<0");
+      if (i >= Count)
+        throw new ArgumentException("i>=Count");
+      if (j >= Count)
+        throw new ArgumentException("j>=Count");
+
+      SelectableListNode li = this[i];
+      this[i] = this[j];
+      this[j] = li;
+    }
 
   }
 
+  public class CheckableSelectableListNode : SelectableListNode
+  {
+    public bool Checked;
+
+    public CheckableSelectableListNode(string name, object item, bool selected, bool ischecked)
+      : base(name, item, selected)
+    {
+      this.Checked = ischecked;
+    }
+  }
+
+  public class CheckableSelectableListNodeList : List<CheckableSelectableListNode>
+  {
+    public CheckableSelectableListNodeList() { }
+    public CheckableSelectableListNodeList(int capacity) : base(capacity) { }
+    public CheckableSelectableListNodeList(IEnumerable<CheckableSelectableListNode> from) : base(from) { }
+
+    public int IndexOfObject(object o)
+    {
+      int i = -1;
+      foreach (CheckableSelectableListNode n in this)
+      {
+        i++;
+        if (n.Item == o)
+          return i;
+      }
+      return -1;
+    }
+    public void Exchange(int i, int j)
+    {
+      if (i == j)
+        return;
+      if (i < 0)
+        throw new ArgumentException("i<0");
+      if (j < 0)
+        throw new ArgumentException("j<0");
+      if (i >= Count)
+        throw new ArgumentException("i>=Count");
+      if (j >= Count)
+        throw new ArgumentException("j>=Count");
+
+      CheckableSelectableListNode li = this[i];
+      this[i] = this[j];
+      this[j] = li;
+    }
+
+  }
 
 }

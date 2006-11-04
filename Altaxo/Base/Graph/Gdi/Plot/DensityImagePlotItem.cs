@@ -263,7 +263,7 @@ namespace Altaxo.Graph.Gdi.Plot
     /// it must be ensured that the axes are scaled correctly before the plots are painted.
     /// </summary>
     /// <param name="layer">The plot layer.</param>
-    public override void PreparePainting(IPlotArea layer)
+    public override void PrepareScales(IPlotArea layer)
     {
       if(null!=this.m_PlotAssociation)
         m_PlotAssociation.CalculateCachedData();
@@ -329,17 +329,17 @@ namespace Altaxo.Graph.Gdi.Plot
 
     #endregion
 
-    public override void CollectStyles(G2DPlotGroupStyleCollection styles)
+    public override void CollectStyles(PlotGroupStyleCollection styles)
     {
       
     }
 
-    public override void PrepareStyles(G2DPlotGroupStyleCollection externalGroups)
+    public override void PrepareStyles(PlotGroupStyleCollection externalGroups, IPlotArea layer)
     {
       
     }
 
-    public override void ApplyStyles(G2DPlotGroupStyleCollection externalGroups)
+    public override void ApplyStyles(PlotGroupStyleCollection externalGroups)
     {
       
     }

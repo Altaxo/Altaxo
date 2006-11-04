@@ -8,7 +8,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 {
   using Plot.Data;
 
-  public class RelativeStackTransform : IG2DCoordinateTransformingGroupStyle
+  public class RelativeStackTransform : ICoordinateTransformingGroupStyle
   {
     public RelativeStackTransform()
     {
@@ -55,61 +55,35 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
         return;
       }
 
-      AltaxoVariant[] yArray = null;
-      int idx = -1;
+      AltaxoVariant[] ysumArray = null;
       foreach (IGPlotItem pi in coll)
       {
         if (pi is G2DPlotItem)
         {
-          idx++;
-
           G2DPlotItem gpi = pi as G2DPlotItem;
           Processed2DPlotData pdata = plotDataDict[gpi];
-
-
-          if (yArray == null)
-          {
-            yArray = new AltaxoVariant[pdata.RangeList.PlotPointCount];
-
-            int j = -1;
-            foreach (int originalIndex in pdata.RangeList.OriginalRowIndices())
-            {
-              j++;
-              yArray[j] = pdata.GetYPhysical(originalIndex);
-            }
-          }
-          else // this is not the first item
-          {
-            int j = -1;
-            foreach (int originalIndex in pdata.RangeList.OriginalRowIndices())
-            {
-              j++;
-              yArray[j] += pdata.GetYPhysical(originalIndex);
-            }
-          }
+          ysumArray = AbsoluteStackTransform.AddUp(ysumArray, pdata);
         }
       }
 
 
+     
+
       // now plot the data - the summed up y is in yArray
+      AltaxoVariant[] yArray = null;
       foreach (IGPlotItem pi in coll)
       {
         if (pi is G2DPlotItem)
         {
-          idx++;
-
           G2DPlotItem gpi = pi as G2DPlotItem;
           Processed2DPlotData pdata = plotDataDict[gpi];
-
-
+          yArray = AbsoluteStackTransform.AddUp(yArray, pdata);
 
           int j = -1;
           foreach (int originalIndex in pdata.RangeList.OriginalRowIndices())
           {
             j++;
-
-
-            AltaxoVariant y = 100*(pdata.GetYPhysical(originalIndex) / yArray[j]);
+            AltaxoVariant y = 100*yArray[j]/ysumArray[j];
             double yrel = layer.YAxis.PhysicalVariantToNormal(y);
             double xrel = layer.XAxis.PhysicalVariantToNormal(pdata.GetXPhysical(originalIndex));
 
@@ -126,6 +100,8 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
         }
       }
     }
+
+    
 
     #endregion
 

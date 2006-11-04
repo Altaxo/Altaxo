@@ -23,7 +23,7 @@ namespace Altaxo.Graph.Gdi.Plot
     IXBoundsHolder,
     IYBoundsHolder
   {
-    G2DPlotGroupStyleCollection _styles;
+    PlotGroupStyleCollection _styles;
     List<IGPlotItem> _plotItems;
 
     [NonSerialized]
@@ -180,7 +180,7 @@ namespace Altaxo.Graph.Gdi.Plot
         }
         info.CloseArray(count);
 
-        s._styles = (G2DPlotGroupStyleCollection)info.GetValue("GroupStyles", s);
+        s._styles = (PlotGroupStyleCollection)info.GetValue("GroupStyles", s);
 
         return s;
       }
@@ -206,13 +206,13 @@ namespace Altaxo.Graph.Gdi.Plot
     {
       _parent = owner;
       _plotItems = new List<IGPlotItem>();
-      _styles = new G2DPlotGroupStyleCollection();
+      _styles = new PlotGroupStyleCollection();
     }
 
     public PlotItemCollection()
     {
       _plotItems = new List<IGPlotItem>();
-      _styles = new G2DPlotGroupStyleCollection();
+      _styles = new PlotGroupStyleCollection();
     }
 
     /// <summary>
@@ -220,7 +220,7 @@ namespace Altaxo.Graph.Gdi.Plot
     /// </summary>
     protected PlotItemCollection(int x)
     {
-      _styles = new G2DPlotGroupStyleCollection();
+      _styles = new PlotGroupStyleCollection();
     }
 
     /// <summary>
@@ -241,7 +241,7 @@ namespace Altaxo.Graph.Gdi.Plot
     public PlotItemCollection(XYPlotLayer owner, PlotItemCollection from)
     {
       _parent = owner;
-      _styles = new G2DPlotGroupStyleCollection();
+      _styles = new PlotGroupStyleCollection();
       _plotItems = new List<IGPlotItem>();
 
 
@@ -269,7 +269,10 @@ namespace Altaxo.Graph.Gdi.Plot
 
     public XYPlotLayer ParentLayer
     {
-      get { return _parent as XYPlotLayer; }
+      get 
+      {
+        return Main.DocumentPath.GetRootNodeImplementing<XYPlotLayer>(this); 
+      }
       set
       {
         SetParentLayer(value, false);
@@ -290,7 +293,7 @@ namespace Altaxo.Graph.Gdi.Plot
       set { _parent = value; }
     }
 
-    public G2DPlotGroupStyleCollection GroupStyles
+    public PlotGroupStyleCollection GroupStyles
     {
       get
       {
@@ -329,31 +332,37 @@ namespace Altaxo.Graph.Gdi.Plot
     /// styles.
     /// </summary>
     /// <param name="styles">The collection of group styles.</param>
-    public void CollectStyles(G2DPlotGroupStyleCollection styles)
+    public void CollectStyles(PlotGroupStyleCollection styles)
     {
       foreach (IGPlotItem pi in _plotItems)
         pi.CollectStyles(styles);
     }
 
-    public void PrepareStyles(G2DPlotGroupStyleCollection styles)
+    public void PrepareScales(IPlotArea layer)
+    {
+      foreach (IGPlotItem pi in _plotItems)
+        pi.PrepareScales(layer);
+    }
+
+    public void PrepareStyles(PlotGroupStyleCollection styles, IPlotArea layer)
     {
         _styles.BeginPrepare();
 
         foreach (IGPlotItem pi in _plotItems)
         {
-          pi.PrepareStyles(_styles);
+          pi.PrepareStyles(_styles,layer);
           _styles.PrepareStep();
         }
 
         _styles.EndPrepare();
     }
 
-    public void ApplyStyles(G2DPlotGroupStyleCollection styles)
+    public void ApplyStyles(PlotGroupStyleCollection styles)
     {
       ApplyStyles(styles, 0);
     }
 
-    public void ApplyStyles(G2DPlotGroupStyleCollection styles, IGPlotItem pivot)
+    public void ApplyStyles(PlotGroupStyleCollection styles, IGPlotItem pivot)
     {
       int pivotidx = _plotItems.IndexOf(pivot);
       if (pivotidx < 0)
@@ -362,7 +371,7 @@ namespace Altaxo.Graph.Gdi.Plot
     }
 
 
-    protected void ApplyStyles(G2DPlotGroupStyleCollection styles, int pivotidx)
+    protected void ApplyStyles(PlotGroupStyleCollection styles, int pivotidx)
     {
       _styles.BeginApply();
       for(int i=pivotidx;i<_plotItems.Count;i++)
@@ -406,17 +415,15 @@ namespace Altaxo.Graph.Gdi.Plot
       return string.Format("<Collection of {0} plot items>", this._plotItems.Count);
     }
 
-    public void PreparePainting(IPlotArea layer)
-    {
-      foreach (IGPlotItem pi in _plotItems)
-        pi.PreparePainting(layer);
-    }
+  
 
     public void Paint(System.Drawing.Graphics g, IPlotArea layer)
     {
-      IG2DCoordinateTransformingGroupStyle coordTransStyle;
+      ICoordinateTransformingGroupStyle coordTransStyle;
       if (null != (coordTransStyle = _styles.CoordinateTransformingStyle))
+      {
         coordTransStyle.Paint(g, layer, this);
+      }
       else
       {
         foreach (IGPlotItem pi in _plotItems)
@@ -716,7 +723,7 @@ namespace Altaxo.Graph.Gdi.Plot
 
     public void MergeXBoundsInto(IPhysicalBoundaries pb)
     {
-      IG2DCoordinateTransformingGroupStyle coordTransStyle;
+      ICoordinateTransformingGroupStyle coordTransStyle;
       if (null != (coordTransStyle = _styles.CoordinateTransformingStyle))
         coordTransStyle.MergeXBoundsInto(this.ParentLayer, pb, this);
       else
@@ -732,7 +739,7 @@ namespace Altaxo.Graph.Gdi.Plot
 
     public void MergeYBoundsInto(IPhysicalBoundaries pb)
     {
-      IG2DCoordinateTransformingGroupStyle coordTransStyle;
+      ICoordinateTransformingGroupStyle coordTransStyle;
       if (null != (coordTransStyle = _styles.CoordinateTransformingStyle))
         coordTransStyle.MergeYBoundsInto(this.ParentLayer, pb, this);
       else

@@ -885,8 +885,11 @@ namespace Altaxo.Main.Services
       {
         get
         {
-          foreach (KeyValuePair<Attribute, Type> entry in _list)
-            yield return entry.Value;
+          if (_list != null)
+          {
+            foreach (KeyValuePair<Attribute, Type> entry in _list)
+              yield return entry.Value;
+          }
         }
       }
 

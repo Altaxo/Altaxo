@@ -105,7 +105,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         if (styles[i] != null)
           this.Add(styles[i], false);
 
-      this.InternalGetProviders();
+     
     }
 
     public G2DPlotStyleCollection(LineScatterPlotStyleKind kind)
@@ -146,11 +146,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
       Clear();
 
-      this._changeEventPending = false;
-      this._eventSuspendCount = 0;
       this._innerList = new List<IG2DPlotStyle>();
       for (int i = 0; i < from._innerList.Count; ++i)
         Add((IG2DPlotStyle)from[i].Clone());
+
+      this._parent = from._parent;
 
       Resume();
     }
@@ -187,14 +187,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       if (toadd != null)
       {
         this._innerList.Add(toadd);
-        toadd.Changed += new EventHandler(this.EhChildChanged);
         toadd.ParentObject = this;
        
 
         if (withReorganizationAndEvents)
         {
-          InternalGetProviders();
-
           OnChanged();
         }
       }
@@ -204,18 +201,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     {
       if (ps != null)
       {
-        IG2DPlotStyle oldStyle = this[idx];
-        oldStyle.Changed -= new EventHandler(this.EhChildChanged);
-        oldStyle.ParentObject =null;
-
-        ps.Changed += new EventHandler(this.EhChildChanged);
         this._innerList[idx] = ps;
         ps.ParentObject=this;
 
         if (withReorganizationAndEvents)
         {
-          InternalGetProviders();
-
           OnChanged();
         }
       }
@@ -228,11 +218,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         for (int i = 0; i < toadd.Length; i++)
         {
           this._innerList.Add(toadd[i]);
-          toadd[i].Changed += new EventHandler(this.EhChildChanged);
           toadd[i].ParentObject=this;
         }
 
-        InternalGetProviders();
+      
 
         OnChanged();
 
@@ -244,11 +233,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       if (toinsert != null)
       {
         this._innerList.Insert(whichposition, toinsert);
-        toinsert.Changed += new EventHandler(this.EhChildChanged);
         toinsert.ParentObject=this;
 
 
-        InternalGetProviders();
+       
 
         OnChanged();
 
@@ -259,15 +247,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     {
       if (_innerList != null)
       {
-        for (int i = 0; i < Count; i++)
-        {
-          this[i].Changed -= new EventHandler(this.EhChildChanged);
-          this[i].ParentObject= null;
-        }
-
         this._innerList.Clear();
-
-        InternalGetProviders();
+      
         OnChanged();
       }
     }
@@ -276,10 +257,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     {
       IG2DPlotStyle removed = this[idx];
       _innerList.RemoveAt(idx);
-      removed.Changed -= new EventHandler(this.EhChildChanged);
-      removed.ParentObject=null;
-
-      InternalGetProviders();
+   
       OnChanged();
     }
 
@@ -289,14 +267,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       _innerList[pos1] = _innerList[pos2];
       _innerList[pos2] = item1;
 
-      InternalGetProviders();
+   
       OnChanged();
 
     }
 
-    void InternalGetProviders()
-    {
-    }
+   
 
     public void BeginUpdate()
     {
@@ -352,14 +328,22 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     #region IChangedEventSource Members
 
+    [field:NonSerialized]
     public event EventHandler Changed;
 
     protected virtual void OnChanged()
     {
-      if (_eventSuspendCount == 0 && null != Changed)
-        Changed(this, new EventArgs());
-      else
+      if (_eventSuspendCount > 0)
+      {
         _changeEventPending = true;
+        return;
+      }
+
+      if (_parent is Main.IChildChangedEventSink)
+        ((Main.IChildChangedEventSink)_parent).EhChildChanged(this, EventArgs.Empty);
+
+      if (null != Changed)
+        Changed(this, EventArgs.Empty);
     }
 
     #endregion
@@ -368,11 +352,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     public void EhChildChanged(object child, EventArgs e)
     {
-      if (this._eventSuspendCount == 0)
-        InternalGetProviders();
-
-      if (null != Changed)
-        Changed(this, e);
+      OnChanged();
     }
 
     #endregion
@@ -399,19 +379,26 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     #region IPlotStyle Members
 
-    public void AddLocalGroupStyles(G2DPlotGroupStyleCollection externalGroups, G2DPlotGroupStyleCollection localGroups)
+    public void CollectExternalGroupStyles(PlotGroupStyleCollection externalGroups)
     {
       foreach (IG2DPlotStyle ps in this)
-        ps.AddLocalGroupStyles(externalGroups, localGroups);
+        ps.CollectExternalGroupStyles(externalGroups);
     }
 
-    public void PrepareGroupStyles(G2DPlotGroupStyleCollection externalGroups, G2DPlotGroupStyleCollection localGroups)
+
+    public void CollectLocalGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
     {
       foreach (IG2DPlotStyle ps in this)
-        ps.PrepareGroupStyles(externalGroups, localGroups);
+        ps.CollectLocalGroupStyles(externalGroups, localGroups);
     }
 
-    public void ApplyGroupStyles(G2DPlotGroupStyleCollection externalGroups, G2DPlotGroupStyleCollection localGroups)
+    public void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups, IPlotArea layer, Processed2DPlotData pdata)
+    {
+      foreach (IG2DPlotStyle ps in this)
+        ps.PrepareGroupStyles(externalGroups, localGroups,layer,pdata);
+    }
+
+    public void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
     {
       foreach (IG2DPlotStyle ps in this)
         ps.ApplyGroupStyles(externalGroups, localGroups);

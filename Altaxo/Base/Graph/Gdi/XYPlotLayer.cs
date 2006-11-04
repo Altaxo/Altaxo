@@ -2408,9 +2408,11 @@ namespace Altaxo.Graph.Gdi
 
       // Before we paint the axis, we have to make sure that all plot items
       // had their data updated, so that the axes are updated before they are drawn!
-      _plotItems.PrepareStyles(null);
+      _plotItems.PrepareScales(this);
+
+      _plotItems.PrepareStyles(null,this);
       _plotItems.ApplyStyles(null);
-      _plotItems.PreparePainting(this);
+     
 
     }
 

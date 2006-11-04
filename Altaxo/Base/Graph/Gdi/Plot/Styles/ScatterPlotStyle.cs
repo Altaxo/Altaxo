@@ -218,11 +218,19 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     protected int _skipFreq;
 
     // cached values:
+    [NonSerialized]
     protected GraphicsPath _cachedPath;
+    [NonSerialized]
     protected bool _cachedFillPath;
+    [NonSerialized]
     protected BrushX _cachedFillBrush;
 
+    [NonSerialized]
     protected object _parent;
+
+    [field: NonSerialized]
+    public event System.EventHandler Changed;
+
 
     #region Serialization
     /// <summary>Used to serialize the A2DPlotScatterStyle Version 0.</summary>
@@ -420,12 +428,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       this._independentSymbolSize = from._independentSymbolSize;
 
 
-      this._cachedPath = null == from._cachedPath ? null : (GraphicsPath)from._cachedPath.Clone();
-      this._cachedFillPath = from._cachedFillPath;
-      this._cachedFillBrush = null == from._cachedFillBrush ? null : (BrushX)from._cachedFillBrush.Clone();
       this._symbolSize = from._symbolSize;
       this._relativePenWidth = from._relativePenWidth;
       this._skipFreq = from._skipFreq;
+
+      this._cachedPath = null == from._cachedPath ? null : (GraphicsPath)from._cachedPath.Clone();
+      this._cachedFillPath = from._cachedFillPath;
+      this._cachedFillBrush = null == from._cachedFillBrush ? null : (BrushX)from._cachedFillBrush.Clone();
+      this._parent = from._parent;
 
       if (!suppressChangeEvent)
         OnChanged();
@@ -755,10 +765,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     }
     #region IChangedEventSource Members
 
-    public event System.EventHandler Changed;
 
     protected virtual void OnChanged()
     {
+      if (_parent is Main.IChildChangedEventSink)
+        ((Main.IChildChangedEventSink)_parent).EhChildChanged(this, EventArgs.Empty);
+
       if (null != Changed)
         Changed(this, new EventArgs());
     }
@@ -897,14 +909,24 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     #region IPlotStyle Members
 
-    public void AddLocalGroupStyles(G2DPlotGroupStyleCollection externalGroups, G2DPlotGroupStyleCollection localGroups)
+    public void CollectExternalGroupStyles(PlotGroupStyleCollection externalGroups)
+    {
+      if (this.IsColorProvider)
+        ColorGroupStyle.AddExternalGroupStyle(externalGroups);
+      if(this.IsSymbolSizeProvider)
+        SymbolSizeGroupStyle.AddExternalGroupStyle(externalGroups);
+
+      SymbolShapeStyleGroupStyle.AddExternalGroupStyle(externalGroups);
+    }
+
+    public void CollectLocalGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
     {
       ColorGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
       SymbolSizeGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
       SymbolShapeStyleGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
     }
 
-    public void PrepareGroupStyles(G2DPlotGroupStyleCollection externalGroups, G2DPlotGroupStyleCollection localGroups)
+    public void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups, IPlotArea layer, Processed2DPlotData pdata)
     {
       if(this.IsColorProvider)
         ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate() { return PlotColors.Colors.GetPlotColor(this.Color); });
@@ -916,7 +938,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       
     }
 
-    public void ApplyGroupStyles(G2DPlotGroupStyleCollection externalGroups, G2DPlotGroupStyleCollection localGroups)
+    public void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
     {
       if (this.IsColorReceiver)
         ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(PlotColor c) { this.Color = c; });

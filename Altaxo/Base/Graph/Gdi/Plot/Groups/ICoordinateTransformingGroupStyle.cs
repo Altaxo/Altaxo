@@ -6,7 +6,7 @@ using Altaxo.Graph.Scales.Boundaries;
 
 namespace Altaxo.Graph.Gdi.Plot.Groups
 {
-  public interface IG2DCoordinateTransformingGroupStyle : ICloneable
+  public interface ICoordinateTransformingGroupStyle : ICloneable
   {
     void MergeXBoundsInto(IPlotArea layer, IPhysicalBoundaries pb, PlotItemCollection coll);
     void MergeYBoundsInto(IPlotArea layer, IPhysicalBoundaries pb, PlotItemCollection coll);

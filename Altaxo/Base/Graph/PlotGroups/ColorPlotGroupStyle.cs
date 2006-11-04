@@ -135,6 +135,18 @@ namespace Altaxo.Graph.PlotGroups
 
     #region Static helpers
 
+
+    public static void AddExternalGroupStyle(IPlotGroupStyleCollection externalGroups)
+    {
+      if (PlotGroupStyle.ShouldAddExternalGroupStyle(externalGroups, typeof(ColorGroupStyle)))
+      {
+        ColorGroupStyle gstyle = new ColorGroupStyle();
+        gstyle.IsStepEnabled = true;
+        externalGroups.Add(gstyle);
+      }
+    }
+
+
     public static void AddLocalGroupStyle(
       IPlotGroupStyleCollection externalGroups,
       IPlotGroupStyleCollection localGroups)

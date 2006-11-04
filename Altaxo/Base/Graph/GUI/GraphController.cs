@@ -753,7 +753,7 @@ namespace Altaxo.Graph.GUI
         
 
         // get plot group
-        G2DPlotGroupStyleCollection plotGroup = pa.ParentCollection.GroupStyles;
+        PlotGroupStyleCollection plotGroup = pa.ParentCollection.GroupStyles;
         
         
         //LineScatterPlotStyleController.ShowPlotStyleDialog(this.m_View.Form,pa,plotGroup);
@@ -1198,7 +1198,7 @@ namespace Altaxo.Graph.GUI
 
 
       // get plot group
-      G2DPlotGroupStyleCollection plotGroup = pa.ParentCollection.GroupStyles;
+      PlotGroupStyleCollection plotGroup = pa.ParentCollection.GroupStyles;
         
         
       //LineScatterPlotStyleController.ShowPlotStyleDialog(this.m_View.Form,pa,plotGroup);

@@ -46,8 +46,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
   {
 
 
-    [NonSerialized]
-    protected object m_Parent;
+  
 
     /// <summary>
     /// The image which is shown during paint.
@@ -92,6 +91,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     /// <summary>The style for scaling of the values between from and to.</summary>
     ScalingStyle m_ScalingStyle = ScalingStyle.Linear;
+
+    [NonSerialized]
+    protected object m_Parent;
+
+    [field: NonSerialized]
+    public event System.EventHandler Changed;
 
 
 
@@ -226,6 +231,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       this.m_ColorBelow = from.m_ColorBelow;
       this.m_ColorInvalid = from.m_ColorInvalid;
       this.m_ScalingStyle = from.m_ScalingStyle;
+
+      this.m_Parent = from.m_Parent;
 
       this.m_bCachedDataValid = false;
     }
@@ -521,11 +528,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     
     #region IChangedEventSource Members
 
-    [field:NonSerialized]
-    public event System.EventHandler Changed;
 
     protected virtual void OnChanged()
     {
+      if (m_Parent is Main.IChildChangedEventSink)
+        ((Main.IChildChangedEventSink)m_Parent).EhChildChanged(this, EventArgs.Empty);
       if(null!=Changed)
         Changed(this,new EventArgs());
     }

@@ -89,7 +89,7 @@ namespace Altaxo.Gui.Common
     }
 
 
-    public static bool ShowPlotStyleAndDataDialog(System.Windows.Forms.Form parentWindow, IGPlotItem pa, G2DPlotGroupStyleCollection plotGroup)
+    public static bool ShowPlotStyleAndDataDialog(System.Windows.Forms.Form parentWindow, IGPlotItem pa, PlotGroupStyleCollection plotGroup)
     {
       if(pa is XYColumnPlotItem || pa is XYFunctionPlotItem)
         return ShowLineScatterPlotStyleAndDataDialog(parentWindow,pa,plotGroup);
@@ -102,7 +102,7 @@ namespace Altaxo.Gui.Common
       }
     }
 
-    public static bool ShowLineScatterPlotStyleAndDataDialog(System.Windows.Forms.Form parentWindow, IGPlotItem pa, G2DPlotGroupStyleCollection plotGroup)
+    public static bool ShowLineScatterPlotStyleAndDataDialog(System.Windows.Forms.Form parentWindow, IGPlotItem pa, PlotGroupStyleCollection plotGroup)
     {
       return Current.Gui.ShowDialog(new object[]{pa,plotGroup},string.Format("#{0}: {1}",pa.Name,pa.ToString()), true);
     }
@@ -170,7 +170,7 @@ namespace Altaxo.Gui.Common
         }
 
     */
-    public static bool ShowDensityImagePlotStyleAndDataDialog(System.Windows.Forms.Form parentWindow, IGPlotItem pa, G2DPlotGroupStyleCollection plotGroup)
+    public static bool ShowDensityImagePlotStyleAndDataDialog(System.Windows.Forms.Form parentWindow, IGPlotItem pa, PlotGroupStyleCollection plotGroup)
     {
       // Plot Style
       DensityImagePlotStyleController stylectrl = new DensityImagePlotStyleController(((DensityImagePlotItem)pa).Style);

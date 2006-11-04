@@ -195,6 +195,23 @@ namespace Altaxo.Worksheet.Commands
     }
   }
 
+  public class PlotHorizontalBarGraph : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
+    {
+      Altaxo.Worksheet.Commands.PlotCommands.PlotHorizontalBarGraph(ctrl);
+    }
+  }
+
+  public class PlotVerticalBarGraph : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
+    {
+      Altaxo.Worksheet.Commands.PlotCommands.PlotVerticalBarGraph(ctrl);
+    }
+  }
+
+
   public class PlotDensityImage : AbstractWorksheetControllerCommand
   {
     public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
@@ -202,6 +219,7 @@ namespace Altaxo.Worksheet.Commands
       Altaxo.Worksheet.Commands.PlotCommands.PlotDensityImage(ctrl, true, true);
     }
   }
+
 
 
   #endregion

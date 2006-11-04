@@ -37,30 +37,68 @@ namespace Altaxo.Gui.Graph
   /// Summary description for XYColumnPlotItemController.
   /// </summary>
   [UserControllerForObject(typeof(G2DPlotItem))]
-  public class G2DPlotItemController : TabbedElementController, IMVCAController, IXYPlotGroupViewEventSink
+  public class G2DPlotItemController 
+    :
+    TabbedElementController,
+    IMVCANController, 
+    IXYPlotGroupViewEventSink
   {
+    UseDocument _useDocument;
     G2DPlotItem _doc;
     G2DPlotItem _tempdoc;
-    G2DPlotGroupStyleCollection _groupStyles;
+    PlotGroupStyleCollection _groupStyles;
     
     IG2DPlotStyle _additionalPlotStyle;
     int _insertAdditionalPlotStyle=-1;
     IXYPlotGroupView _plotGroupView;
+    IMVCAController _plotGroupController;
 
     IXYPlotStyleCollectionController _styleCollectionController;
+
+    public G2DPlotItemController()
+    {
+    }
+
     public G2DPlotItemController(G2DPlotItem doc)
       : this(doc,null)
     {
     }
-    public G2DPlotItemController(G2DPlotItem doc, G2DPlotGroupStyleCollection parent)
+    public G2DPlotItemController(G2DPlotItem doc, PlotGroupStyleCollection parent)
     {
-      _groupStyles = parent;
-      _doc = doc;
-      _tempdoc = (G2DPlotItem)_doc.Clone();
+      if (!InitializeDocument(doc, parent))
+        throw new ArgumentException();
+    }
+
+    public bool InitializeDocument(params object[] args)
+    {
+      if (args == null || args.Length <= 1)
+        return false;
+      
+      if (!(args[0] is G2DPlotItem))
+        return false;
+      else
+        _doc = _tempdoc = (G2DPlotItem)args[0];
+
+      if (args.Length >= 2 && args[1] != null)
+      {
+        if (!(args[1] is PlotGroupStyleCollection))
+          return false;
+        else
+          _groupStyles = (PlotGroupStyleCollection)args[1];
+      }
+      if(_useDocument==UseDocument.Copy)
+        _tempdoc = (G2DPlotItem)_doc.Clone();
 
       InitializeCollectionAndData();
       InitializeStyles();
       BringTabToFront(2);
+
+      return true;
+    }
+
+    public UseDocument UseDocumentCopy
+    {
+      set { _useDocument = value; }
     }
 
     void InitializeCollectionAndData()
@@ -71,6 +109,10 @@ namespace Altaxo.Gui.Graph
       _styleCollectionController.CollectionChangeCommit += new EventHandler(_styleCollectionController_CollectionChangeCommit);
 
       InitializePlotGroupView();
+      if (_plotGroupController != null)
+      {
+        AddTab("Grouping", _plotGroupController, _plotGroupController.ViewObject);
+      }
      
 
       IMVCAController ctrl = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _tempdoc.DataObject, _tempdoc }, typeof(IMVCAController));
@@ -119,6 +161,10 @@ namespace Altaxo.Gui.Graph
             PlotGroupStrictness.Normal //_parentPlotGroup.ChangeStylesStrictly
             );
       }
+      else if (_groupStyles != null)
+      {
+        _plotGroupController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _groupStyles }, typeof(IMVCAController));
+      }
     }
 
     void ApplyPlotGroupView()
@@ -166,7 +212,7 @@ namespace Altaxo.Gui.Graph
       // now distribute the new style to the other plot items
       if (_doc.ParentCollection != null)
       {
-        _doc.ParentCollection.PrepareStyles(_groupStyles);
+        _doc.ParentCollection.PrepareStyles(_groupStyles,_doc.ParentCollection.ParentLayer);
         _doc.ParentCollection.ApplyStyles(_groupStyles, _doc);
       }
     }
@@ -188,6 +234,7 @@ namespace Altaxo.Gui.Graph
         if (_tempdoc.Style[0] is LinePlotStyle && (_tempdoc.Style.Count == 1 || !(_tempdoc.Style[1] is ScatterPlotStyle)))
         {
           ScatterPlotStyle scatterStyle = new ScatterPlotStyle();
+          scatterStyle.ParentObject = _tempdoc.Style;
           _additionalPlotStyle = scatterStyle;
           scatterStyle.Shape = Altaxo.Graph.Gdi.Plot.Styles.XYPlotScatterStyles.Shape.NoSymbol;
 
@@ -198,6 +245,7 @@ namespace Altaxo.Gui.Graph
         else if (_tempdoc.Style[0] is ScatterPlotStyle && (_tempdoc.Style.Count == 1 || !(_tempdoc.Style[1] is LinePlotStyle)))
         {
           LinePlotStyle lineStyle = new LinePlotStyle();
+          lineStyle.ParentObject = _tempdoc.Style;
           _additionalPlotStyle = lineStyle;
           lineStyle.Connection = Altaxo.Graph.Gdi.Plot.Styles.XYPlotLineStyles.ConnectionStyle.NoLine;
 
@@ -241,7 +289,8 @@ namespace Altaxo.Gui.Graph
             }
           }
         }
-        arr.Add(new ControlViewElement(string.Empty,this,this._plotGroupView));
+        if(this._plotGroupView!=null)
+          arr.Add(new ControlViewElement(string.Empty,this,this._plotGroupView));
         Common.MultiChildController mctrl = new Common.MultiChildController((ControlViewElement[])arr.ToArray(typeof(ControlViewElement)), true);
         Current.Gui.FindAndAttachControlTo(mctrl);
 
@@ -313,7 +362,8 @@ namespace Altaxo.Gui.Graph
         _tempdoc.Style.Insert(_insertAdditionalPlotStyle,_additionalPlotStyle);
       }
 
-      _doc.CopyFrom(_tempdoc);
+      if(!object.ReferenceEquals(_doc,_tempdoc))
+        _doc.CopyFrom(_tempdoc);
 
       ApplyPlotGroupView();
 
@@ -364,5 +414,7 @@ namespace Altaxo.Gui.Graph
 
       }
     }
+
+   
   }
 }

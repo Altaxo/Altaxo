@@ -8,15 +8,23 @@ namespace Altaxo.Graph.PlotGroups
 
   public static class PlotGroupStyle
   {
+    public static bool ShouldAddExternalGroupStyle(
+  IPlotGroupStyleCollection externalGroups,
+  System.Type type)
+    {
+      return !externalGroups.ContainsType(type);
+    }
+
+    
     public static bool ShouldAddLocalGroupStyle(
       IPlotGroupStyleCollection externalGroups,
       IPlotGroupStyleCollection localGroups,
       System.Type type)
     {
       bool found = false;
-      if (externalGroups != null && externalGroups.ContainsType(typeof(ColorGroupStyle)))
+      if (externalGroups != null && externalGroups.ContainsType(type))
         found = true;
-      if (!found && localGroups != null && localGroups.ContainsType(typeof(ColorGroupStyle)))
+      if (!found && localGroups != null && localGroups.ContainsType(type))
         found = true;
 
       return (!found && localGroups != null);

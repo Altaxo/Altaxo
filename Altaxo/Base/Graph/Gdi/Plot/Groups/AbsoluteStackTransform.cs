@@ -8,7 +8,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 {
   using Plot.Data;
 
-  public class AbsoluteStackTransform : IG2DCoordinateTransformingGroupStyle
+  public class AbsoluteStackTransform : ICoordinateTransformingGroupStyle
   {
 
     public AbsoluteStackTransform()
@@ -47,6 +47,10 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 
           G2DPlotItem gpi = (G2DPlotItem)pi;
           Processed2DPlotData pdata = plotDataList[gpi];
+
+          // Note: we can not use AddUp function here, since
+          // when we have positive/negative items, the intermediate bounds
+          // might be wider than the bounds of the end result
 
           if (ySumArray == null)
           {
@@ -126,6 +130,32 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
       return idx >= 1;
     }
 
+
+    public static AltaxoVariant[] AddUp(AltaxoVariant[] yArray, Processed2DPlotData pdata)
+    {
+      if (yArray == null)
+      {
+        yArray = new AltaxoVariant[pdata.RangeList.PlotPointCount];
+
+        int j = -1;
+        foreach (int originalIndex in pdata.RangeList.OriginalRowIndices())
+        {
+          j++;
+          yArray[j] = pdata.GetYPhysical(originalIndex);
+        }
+      }
+      else // this is not the first item
+      {
+        int j = -1;
+        foreach (int originalIndex in pdata.RangeList.OriginalRowIndices())
+        {
+          j++;
+          yArray[j] += pdata.GetYPhysical(originalIndex);
+        }
+      }
+      return yArray;
+    }
+
     public void Paint(System.Drawing.Graphics g, IPlotArea layer, PlotItemCollection coll)
     {
       Dictionary<G2DPlotItem, Processed2DPlotData> plotDataDict;
@@ -145,36 +175,20 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 
           G2DPlotItem gpi = pi as G2DPlotItem;
           Processed2DPlotData pdata = plotDataDict[gpi];
-
-
-          if (yArray == null)
-          {
-            yArray = new AltaxoVariant[pdata.RangeList.PlotPointCount];
-
-            int j = -1;
-            foreach (int originalIndex in pdata.RangeList.OriginalRowIndices())
-            {
-              j++;
-              yArray[j] = pdata.GetYPhysical(originalIndex);
-            }
-          }
-          else // this is not the first item
+          yArray = AddUp(yArray, pdata);
+        
+          if(idx>0) // this is not the first item
           {
             int j = -1;
             foreach (int originalIndex in pdata.RangeList.OriginalRowIndices())
             {
               j++;
-
-
-              yArray[j] += pdata.GetYPhysical(originalIndex);
               double yrel = layer.YAxis.PhysicalVariantToNormal(yArray[j]);
               double xrel = layer.XAxis.PhysicalVariantToNormal(pdata.GetXPhysical(originalIndex));
 
               double xabs, yabs;
               layer.CoordinateSystem.LogicalToLayerCoordinates(xrel, yrel, out xabs, out yabs);
               pdata.PlotPointsInAbsoluteLayerCoordinates[j] = new System.Drawing.PointF((float)xabs, (float)yabs);
-
-
             }
           }
           gpi.Paint(g, layer, pdata);

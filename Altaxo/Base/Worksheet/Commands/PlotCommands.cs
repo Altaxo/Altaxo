@@ -20,12 +20,16 @@
 /////////////////////////////////////////////////////////////////////////////
 #endregion
 
-using Altaxo.Data;
+using System.Collections.Generic;
 
+using Altaxo.Data;
+using Altaxo.Collections;
+using Altaxo.Graph.Gdi.CS;
 using Altaxo.Graph.Gdi.Plot;
 using Altaxo.Graph.Gdi.Plot.Styles;
 using Altaxo.Graph.Gdi.Plot.Data;
 using Altaxo.Graph.Gdi.Plot.Groups;
+using Altaxo.Graph.GUI;
 
 
 
@@ -37,6 +41,67 @@ namespace Altaxo.Worksheet.Commands
   /// </summary>
   public class PlotCommands
   {
+
+    public static List<IGPlotItem> CreatePlotAssociations(DataTable table, IAscendingIntegerCollection selectedColumns, G2DPlotStyleCollection templatePlotStyle)
+    {
+      int len = selectedColumns.Count;
+      List<IGPlotItem> result = new List<IGPlotItem>();
+
+      for (int i = 0; i < len; i++)
+      {
+        Altaxo.Data.DataColumn ycol = table[selectedColumns[i]];
+        Altaxo.Data.DataColumn xcol = table.DataColumns.FindXColumnOf(ycol);
+        XYColumnPlotData pa;
+        if (null != xcol)
+          pa = new XYColumnPlotData(xcol, ycol);
+        else
+          pa = new XYColumnPlotData(new Altaxo.Data.IndexerColumn(), ycol);
+
+        G2DPlotStyleCollection ps = templatePlotStyle!=null? (G2DPlotStyleCollection)templatePlotStyle.Clone() : new G2DPlotStyleCollection();
+
+        // if the next column is a label column, add it also
+        if ((i + 1) < len && ColumnKind.Label == table.DataColumns.GetColumnKind(selectedColumns[i + 1]))
+        {
+          LabelPlotStyle labelStyle = new LabelPlotStyle(table.DataColumns[i]);
+          ps.Add(labelStyle);
+          i++;
+        }
+
+        result.Add(new XYColumnPlotItem(pa,ps));
+      }
+
+      return result;
+    }
+
+    /// <summary>
+    /// Plots selected data columns of a table.
+    /// </summary>
+    /// <param name="table">The source table.</param>
+    /// <param name="selectedColumns">The data columns of the table that should be plotted.</param>
+    /// <param name="bLine">If true, the line style is activated (the points are connected by lines).</param>
+    /// <param name="bScatter">If true, the scatter style is activated (the points are plotted as symbols).</param>
+    public static IGraphController Plot(DataTable table, 
+      IAscendingIntegerCollection selectedColumns,
+       G2DPlotStyleCollection templatePlotStyle)
+    {
+      List<IGPlotItem> pilist = CreatePlotAssociations(table, selectedColumns, templatePlotStyle);
+
+      // now create a new Graph with this plot associations
+      Altaxo.Graph.GUI.IGraphController gc = Current.ProjectService.CreateNewGraph();
+      PlotItemCollection newPlotGroup = new PlotItemCollection(gc.Doc.Layers[0].PlotItems);
+      foreach (IGPlotItem pi in pilist)
+      {
+        newPlotGroup.Add(pi);
+      }
+
+      newPlotGroup.CollectStyles(newPlotGroup.GroupStyles);
+      gc.Doc.Layers[0].PlotItems.Add(newPlotGroup);
+
+      return gc;
+    }
+
+
+
     /// <summary>
     /// Plots the currently selected data columns of a worksheet.
     /// </summary>
@@ -65,60 +130,32 @@ namespace Altaxo.Worksheet.Commands
       else
         templatePlotStyle = new G2DPlotStyleCollection(LineScatterPlotStyleKind.Scatter);
 
-      // first, create a plot association for every selected column in
-      // the data grid
 
-      int len = selectedColumns.Count;
-
-      XYColumnPlotData[] pa = new XYColumnPlotData[len];
-      G2DPlotStyleCollection[] ps = new G2DPlotStyleCollection[len];
-      for(int i=0;i<len;++i)
-        ps[i] = (G2DPlotStyleCollection)templatePlotStyle.Clone();
-
-
-      int nNumberOfPlotData=0;
-      for(int i=0;i<len;i++)
-      {
-        Altaxo.Data.DataColumn ycol = table[selectedColumns[i]];
-
-        Altaxo.Data.DataColumn xcol = table.DataColumns.FindXColumnOf(ycol);
-      
-        if(null!=xcol)
-          pa[i] = new XYColumnPlotData(xcol,ycol);
-        else
-          pa[i] = new XYColumnPlotData( new Altaxo.Data.IndexerColumn(), ycol);
-
-        nNumberOfPlotData++;
-
-        // if the next column is a label column, add it also
-        if((i+1)<len && ColumnKind.Label==table.DataColumns.GetColumnKind(selectedColumns[i+1]))
-        {
-          LabelPlotStyle labelStyle = new LabelPlotStyle(table.DataColumns[i]);
-          ps[i].Add(labelStyle);
-          i++;
-        }
-
-
-      }
-      
-      // now create a new Graph with this plot associations
-
-      Altaxo.Graph.GUI.IGraphController gc = Current.ProjectService.CreateNewGraph();
-
-      PlotItemCollection newPlotGroup = new PlotItemCollection(gc.Doc.Layers[0].PlotItems);
-
-      for(int i=0;i<nNumberOfPlotData;i++)
-      {
-        IGPlotItem pi = new XYColumnPlotItem(pa[i],ps[i]);
-        newPlotGroup.Add(pi);
-      }
-
-      newPlotGroup.CollectStyles(newPlotGroup.GroupStyles);
-
-      gc.Doc.Layers[0].PlotItems.Add(newPlotGroup);
+      Plot(table, selectedColumns, templatePlotStyle);
     }
 
 
+    /// <summary>
+    /// Plots the currently selected data columns of a worksheet as horzizontal bar diagram.
+    /// </summary>
+    /// <param name="dg">The worksheet controller where the columns are selected in.</param>
+    public static void PlotHorizontalBarGraph(GUI.WorksheetController dg)
+    {
+      G2DPlotStyleCollection templatePlotStyle = new G2DPlotStyleCollection();
+      templatePlotStyle.Add(new BarGraphPlotStyle());
+      IGraphController gc = Plot(dg.DataTable, dg.SelectedDataColumns, templatePlotStyle);
+      ((G2DCartesicCoordinateSystem)gc.Doc.Layers[0].CoordinateSystem).IsXYInterchanged = true;
+    }
+    /// <summary>
+    /// Plots the currently selected data columns of a worksheet as horzizontal bar diagram.
+    /// </summary>
+    /// <param name="dg">The worksheet controller where the columns are selected in.</param>
+    public static void PlotVerticalBarGraph(GUI.WorksheetController dg)
+    {
+      G2DPlotStyleCollection templatePlotStyle = new G2DPlotStyleCollection();
+      templatePlotStyle.Add(new BarGraphPlotStyle());
+      IGraphController gc = Plot(dg.DataTable, dg.SelectedDataColumns, templatePlotStyle);
+    }
 
 
 

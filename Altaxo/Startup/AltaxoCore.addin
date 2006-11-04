@@ -199,6 +199,10 @@
 						class="Altaxo.Worksheet.Commands.PlotLineAndScatter" />
           <MenuItem id="PlotDensityImage" label="${res:XML.MainMenu.PlotMenu.PlotDensityImage}" description="${res:XML.MainMenu.PlotMenu.PlotDensityImage.Description}"
 						class="Altaxo.Worksheet.Commands.PlotDensityImage" />
+          <MenuItem id="PlotBarHorizontal" label="${res:XML.MainMenu.PlotMenu.PlotBarHorizontal}" description="${res:XML.MainMenu.PlotMenu.PlotBarHorizontal.Description}"
+						class="Altaxo.Worksheet.Commands.PlotHorizontalBarGraph" />
+          <MenuItem id="PlotBarVertical" label="${res:XML.MainMenu.PlotMenu.PlotBarVertical}" description="${res:XML.MainMenu.PlotMenu.PlotBarVertical.Description}"
+						class="Altaxo.Worksheet.Commands.PlotVerticalBarGraph" />
         </Condition>
         <Condition name="ContainsPLSModelData" ContainsPLSModelData="*" action="Exclude">
           <MenuItem id="PLS" label="${res:XML.MainMenu.PLSPlotMenu}" type="Menu">

@@ -11,15 +11,67 @@ namespace Altaxo.Graph.PlotGroups
     bool _isInitialized;
     bool _isStepEnabled;
 
-
-    bool _intendToApply;
+    /// <summary>Is set to true if a BarPlotStyle has touched the group style during a prepare step.
+    /// Helps to prevent the counting of more than one item per step (in case there is more than one
+    /// BarStyle in a PlotItem.</summary>
+    bool _wasTouchedInThisPrepareStep;
+    
     int _numberOfItems;
 
+    /// <summary>
+    /// Relative gap between the bars belonging to the same x-value.
+    /// A value of 0.5 means that the gap has half of the width of one bar.
+    /// </summary>
+    double _relInnerGapWidth;
+    
+    /// <summary>
+    /// Relative gap between the bars between two consecutive x-values.
+    /// A value of 1 means that the gap has the same width than one bar.
+    /// </summary>
+    double _relOuterGapWidth;
 
-    double _relGapWidth;
-    double _relBoundWidth;
+    /// <summary>
+    /// The width of one cluster of bars (including the gaps) in units of logical scale values.
+    /// </summary>
+    double _logicalClusterWidth;
+
     double _width;
     double _positionX;
+
+    void CopyFrom(BarWidthPositionGroupStyle from)
+    {
+      _isInitialized = from._isInitialized;
+      _isStepEnabled = from._isStepEnabled;
+      _wasTouchedInThisPrepareStep = from._wasTouchedInThisPrepareStep;
+      _numberOfItems = from._numberOfItems;
+      _relInnerGapWidth = from._relInnerGapWidth;
+      _relOuterGapWidth = from._relOuterGapWidth;
+      _logicalClusterWidth = from._logicalClusterWidth;
+      _width = from._width;
+      _positionX = from._positionX;
+    }
+
+
+
+    #region ICloneable Members
+
+    public BarWidthPositionGroupStyle Clone()
+    {
+      BarWidthPositionGroupStyle result = new BarWidthPositionGroupStyle();
+      result.CopyFrom(this);
+      return result;
+    }
+
+    object ICloneable.Clone()
+    {
+      BarWidthPositionGroupStyle result = new BarWidthPositionGroupStyle();
+      result.CopyFrom(this);
+      return result;
+    }
+
+
+    #endregion
+
 
     #region IPlotGroupStyle Members
 
@@ -27,20 +79,28 @@ namespace Altaxo.Graph.PlotGroups
     {
       _isInitialized = false;
       _numberOfItems = 0;
-      _intendToApply = false;
+      _wasTouchedInThisPrepareStep = false;
+      _logicalClusterWidth = 0.5; // in case there is only one item, it takes half of the width of the x-scale
     }
 
     public void EndPrepare()
     {
-      _intendToApply = false;
+      _wasTouchedInThisPrepareStep = false;
+
+      int tnumberOfItems = Math.Max(1, _numberOfItems);
+      _width = 1.0 / (tnumberOfItems + (tnumberOfItems - 1) * _relInnerGapWidth + _relOuterGapWidth);
+      _width *= _logicalClusterWidth;
+
+      _positionX = 0.5 * (_width * _relOuterGapWidth - _logicalClusterWidth);
+
     }
 
     public void PrepareStep()
     {
-      if (_intendToApply)
+      if (_wasTouchedInThisPrepareStep)
         _numberOfItems++;
 
-      _intendToApply = false;
+      _wasTouchedInThisPrepareStep = false;
     }
 
     public bool CanHaveChilds()
@@ -50,7 +110,7 @@ namespace Altaxo.Graph.PlotGroups
 
     public int Step(int step)
     {
-      _positionX += step * _width * (1 + _relGapWidth);
+      _positionX += step * _width * (1 + _relInnerGapWidth);
       return 0;
     }
 
@@ -68,15 +128,7 @@ namespace Altaxo.Graph.PlotGroups
 
     #endregion
 
-    #region ICloneable Members
-
-    public object Clone()
-    {
-      throw new Exception("The method or operation is not implemented.");
-    }
-
-    #endregion
-
+  
     public bool IsInitialized
     {
       get
@@ -85,43 +137,61 @@ namespace Altaxo.Graph.PlotGroups
       }
     }
 
-    void IntendToApply()
+    /// <summary>
+    /// Call this function during a prepare step in case the plot item has a BarGraphPlotStyle.
+    /// You can safely call it more than once in each prepare step. Only one item is counted per prepare step.
+    /// </summary>
+    void IntendToApply(
+      int numberOfClusterItems,
+      double minimumLogicalXValue,
+      double maximumLogicalXValue)
     {
-      _intendToApply = true;
+      _wasTouchedInThisPrepareStep = true;
+
+      if (numberOfClusterItems > 1)
+      {
+        double logicalclusterwidth = (maximumLogicalXValue - minimumLogicalXValue) / (numberOfClusterItems - 1);
+        if (logicalclusterwidth < _logicalClusterWidth)
+          _logicalClusterWidth = logicalclusterwidth;
+      }
     }
 
-    public void Initialize(double relGap, double relBound)
+    /// <summary>
+    /// Is initialized is called the first time a BarGraphPlotStyle.PrepareStyle was called.
+    /// The BarGraphPlotStyle has stored two properties relGap and relBound, which are transferred
+    /// to the group style in this process.
+    /// </summary>
+    /// <param name="relGap"></param>
+    /// <param name="relBound"></param>
+    public void Initialize(double relInnerGapWidth, double relOuterGapWidth)
     {
       _isInitialized = true;
-      _relGapWidth = relGap;
-      _relBoundWidth = relBound;
-      _width = 1.0 / (_numberOfItems + (_numberOfItems - 1) * _relGapWidth + _relBoundWidth);
-      _positionX = _relBoundWidth*_width / 2;
+      _relInnerGapWidth = relInnerGapWidth;
+      _relOuterGapWidth = relOuterGapWidth;
     }
 
-    public void Apply(out double relGap, out double relBound, out double width, out double pos)
+    public void Apply(out double relInnerGapWidth, out double relOuterGapWidth, out double width, out double pos)
     {
-      relGap = _relGapWidth;
-      relBound = _relBoundWidth;
+      relInnerGapWidth = _relInnerGapWidth;
+      relOuterGapWidth = _relOuterGapWidth;
       width = _width;
       pos = _positionX;
     }
 
 
-    #region ICloneable Members
-
-    object ICloneable.Clone()
-    {
-      throw new Exception("The method or operation is not implemented.");
-    }
-
-
-
-
-    #endregion
+  
 
     #region Static Helpers
-  
+
+    public static void AddExternalGroupStyle(IPlotGroupStyleCollection externalGroups)
+    {
+      if (PlotGroupStyle.ShouldAddExternalGroupStyle(externalGroups, typeof(BarWidthPositionGroupStyle)))
+      {
+        BarWidthPositionGroupStyle gstyle = new BarWidthPositionGroupStyle();
+        gstyle.IsStepEnabled = true;
+        externalGroups.Add(gstyle);
+      }
+    }
 
     public static void AddLocalGroupStyle(
      IPlotGroupStyleCollection externalGroups,
@@ -131,11 +201,17 @@ namespace Altaxo.Graph.PlotGroups
         localGroups.Add(new BarWidthPositionGroupStyle());
     }
 
-    public static void IntendToApply(IPlotGroupStyleCollection externalGroups, IPlotGroupStyleCollection localGroups)
+    public static void IntendToApply(
+      IPlotGroupStyleCollection externalGroups,
+      IPlotGroupStyleCollection localGroups,
+      int numberOfItems,
+      double minimumLogicalXValue,
+      double maximumLogicalXValue
+      )
     {
       if (externalGroups != null && externalGroups.ContainsType(typeof(BarWidthPositionGroupStyle)))
       {
-        ((BarWidthPositionGroupStyle)externalGroups.GetPlotGroupStyle(typeof(BarWidthPositionGroupStyle))).IntendToApply();
+        ((BarWidthPositionGroupStyle)externalGroups.GetPlotGroupStyle(typeof(BarWidthPositionGroupStyle))).IntendToApply(numberOfItems,minimumLogicalXValue,maximumLogicalXValue);
       }
     }
 

@@ -20,5 +20,15 @@ namespace Altaxo.Graph.Gdi.Plot.Data
     {
       return new AltaxoVariant(0.0);
     }
+
+    /// <summary>
+    /// Returns true if the z coordinate is used. Return false if the z coordinate is always 0 (zero), so we can
+    /// </summary>
+    public virtual bool IsZUsed { get { return false; } }
+    /// <summary>
+    /// Returns true if the z-value is constant. In this case some optimizations can be made.
+    /// </summary>
+    public virtual bool IsZConstant { get { return true; } }
+
   }
 }

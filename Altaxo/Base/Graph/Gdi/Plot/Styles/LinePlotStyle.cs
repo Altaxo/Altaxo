@@ -136,8 +136,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 
     // cached values
+    [NonSerialized]
     protected PaintOneRangeTemplate _cachedPaintOneRange; // subroutine to paint a single range
+    [NonSerialized]
     protected Main.IDocumentNode _parentObject;
+    [field: NonSerialized]
+    public event System.EventHandler Changed;
 
     #region Serialization
     /// <summary>Used to serialize the XYPlotLineStyle Version 0.</summary>
@@ -328,6 +332,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       this.Connection = from._connectionStyle; // beachte links nur Connection, damit das Template mit gesetzt wird
       this._independentColor = from._independentColor;
 
+      this._parentObject = from._parentObject;
 
       if (!suppressChangeEvent)
         OnChanged();
@@ -1210,9 +1215,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     } // end function PaintOneRange Segment3LineStyle
     #region IChangedEventSource Members
 
-    public event System.EventHandler Changed;
+   
+
     protected virtual void OnChanged()
     {
+      if (_parentObject is Main.IChildChangedEventSink)
+        ((Main.IChildChangedEventSink)_parentObject).EhChildChanged(this, EventArgs.Empty);
+
       if (null != Changed)
         Changed(this, new EventArgs());
     }
@@ -1273,13 +1282,18 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     #region IG2DPlotStyle Members
 
-    public void AddLocalGroupStyles(G2DPlotGroupStyleCollection externalGroups, G2DPlotGroupStyleCollection localGroups)
+    public void CollectExternalGroupStyles(PlotGroupStyleCollection externalGroups)
+    {
+
+    }
+
+    public void CollectLocalGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
     {
       ColorGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
       LineStyleGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
     }
 
-    public void PrepareGroupStyles(G2DPlotGroupStyleCollection externalGroups, G2DPlotGroupStyleCollection localGroups)
+    public void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups, IPlotArea layer, Processed2DPlotData pdata)
     {
       if (this.IsColorProvider)
         ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate() { return PlotColors.Colors.GetPlotColor(this.Color); });
@@ -1287,7 +1301,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       LineStyleGroupStyle.PrepareStyle(externalGroups, localGroups, delegate { return this.PenHolder.DashStyle; });
     }
 
-    public void ApplyGroupStyles(G2DPlotGroupStyleCollection externalGroups, G2DPlotGroupStyleCollection localGroups)
+    public void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
     {
       if (this.IsColorReceiver)
         ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(PlotColor c) { this.Color = c; });

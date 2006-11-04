@@ -11,13 +11,21 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
   public interface IG2DPlotStyle : ICloneable, Main.IChangedEventSource, Main.IDocumentNode
   {
+
+    /// <summary>
+    /// Adds all plot group styles that are not already in the externalGroups collection, and that
+    /// are appropriate for this plot style. Furthermore, the group style must be intended for use as external group style.
+    /// </summary>
+    /// <param name="externalGroups">The collection of external group styles.</param>
+    void CollectExternalGroupStyles(PlotGroupStyleCollection externalGroups);
+
     /// <summary>
     /// Looks in externalGroups and localGroups to find PlotGroupStyles that are appropriate for this style.
     /// If such PlotGroupStyles where not found, the function adds them to the localGroups collection.
     /// </summary>
-    /// <param name="ExternalGroups">External plot groups. This collection remains unchanged.</param>
+    /// <param name="externalGroups">External plot groups. This collection remains unchanged and is provided here only to check whether or not the group style is already present in the externalGroups.</param>
     /// <param name="localGroups">Local plot groups. To this collection PlotGroupStyles are added if neccessary.</param>
-    void AddLocalGroupStyles(G2DPlotGroupStyleCollection externalGroups, G2DPlotGroupStyleCollection localGroups);
+    void CollectLocalGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups);
 
 
     /// <summary>
@@ -25,15 +33,15 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// </summary>
     /// <param name="externalGroups"></param>
     /// <param name="localGroups"></param>
-    void PrepareGroupStyles(G2DPlotGroupStyleCollection externalGroups, G2DPlotGroupStyleCollection localGroups);
+    void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups, IPlotArea layer, Processed2DPlotData pdata);
 
 
     /// <summary>
-    /// Applies the Group styles to the plot styles.
+    /// Applies the group styles to the plot styles.
     /// </summary>
     /// <param name="externalGroups"></param>
     /// <param name="localGroups"></param>
-    void ApplyGroupStyles(G2DPlotGroupStyleCollection externalGroups, G2DPlotGroupStyleCollection localGroups);
+    void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups);
 
     /// <summary>
     /// Paints the style.

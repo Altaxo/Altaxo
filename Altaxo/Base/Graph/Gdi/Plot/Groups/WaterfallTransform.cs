@@ -9,7 +9,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 {
   using Plot.Data;
 
-  public class WaterfallTransform : IG2DCoordinateTransformingGroupStyle
+  public class WaterfallTransform : ICoordinateTransformingGroupStyle
   {
     double _xinc=0;
     double _yinc=0;
@@ -75,7 +75,49 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 
     public void MergeYBoundsInto(IPlotArea layer, IPhysicalBoundaries pb, PlotItemCollection coll)
     {
-      throw new Exception("The method or operation is not implemented.");
+      if (!(pb is NumericalBoundaries))
+      {
+        CoordinateTransformingStyleBase.MergeYBoundsInto(pb, coll);
+        return;
+      }
+
+      NumericalBoundaries ybounds = (NumericalBoundaries)pb.Clone();
+      ybounds.Reset();
+
+      int nItems = 0;
+      foreach (IGPlotItem pi in coll)
+      {
+        if (pi is IYBoundsHolder)
+        {
+          IYBoundsHolder ybpi = (IYBoundsHolder)pi;
+          ybpi.MergeYBoundsInto(ybounds);
+        }
+        if (pi is G2DPlotItem)
+          nItems++;
+
+      }
+
+
+      if (nItems == 0)
+        _yinc = 0;
+      else
+        _yinc = (ybounds.UpperBound - ybounds.LowerBound) / nItems;
+
+      int idx = 0;
+      foreach (IGPlotItem pi in coll)
+      {
+        if (pi is IYBoundsHolder)
+        {
+          IYBoundsHolder ybpi = (IYBoundsHolder)pi;
+          ybounds.Reset();
+          ybpi.MergeYBoundsInto(ybounds);
+          ybounds.Shift(_yinc * idx);
+          pb.Add(ybounds);
+        }
+        if (pi is G2DPlotItem)
+          idx++;
+      }
+
     }
 
 
@@ -109,9 +151,8 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
             double xabs, yabs;
             layer.CoordinateSystem.LogicalToLayerCoordinates(xrel, yrel, out xabs, out yabs);
             plotdata.PlotPointsInAbsoluteLayerCoordinates[j] = new System.Drawing.PointF((float)xabs, (float)yabs);
-
-            gpi.Paint(g, layer, plotdata);
           }
+          gpi.Paint(g, layer, plotdata);
         }
         else
         {

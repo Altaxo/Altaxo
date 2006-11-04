@@ -34,32 +34,34 @@ namespace Altaxo.Graph.Gdi.Plot
 
     /// <summary>
     /// Collects all possible group styles that can be applied to this plot item in
-    /// styles.
+    /// styles. The styles collected here should be only external styles, i.e. such styles
+    /// that are indended to be share between different plot items.
     /// </summary>
-    /// <param name="styles">The collection of group styles.</param>
-    void CollectStyles(G2DPlotGroupStyleCollection styles);
+    /// <param name="styles">The collection of group styles where to add external group styles.</param>
+    void CollectStyles(PlotGroupStyleCollection styles);
 
     /// <summary>
     /// Prepare the group styles before applying them. This function is called for <b>all</b> plot items in a group <b>before</b>
     /// the ApplyStyle function is called.
     /// </summary>
     /// <param name="styles">The collection of group styles.</param>
-    void PrepareStyles(G2DPlotGroupStyleCollection styles);
+    void PrepareStyles(PlotGroupStyleCollection styles, IPlotArea layer);
 
     /// <summary>
     /// Applies the group styles to this plot item. This function is called for all plot items in a group before
     /// the next function (for instance PreparePainting) is called.
     /// </summary>
     /// <param name="styles">The collection of group styles.</param>
-    void ApplyStyles(G2DPlotGroupStyleCollection styles);
+    void ApplyStyles(PlotGroupStyleCollection styles);
 
     /// <summary>
     /// This routine ensures that the plot item updates all its cached data and send the appropriate
     /// events if something has changed. Called before the layer paint routine paints the axes because
-    /// it must be ensured that the axes are scaled correctly before the plots are painted.
+    /// it must be ensured that the axes scales are scaled correctly before the plots are painted.
+    /// This function is called before the call to PrepareStyles.
     /// </summary>
     /// <param name="layer">The plot layer.</param>
-    void PreparePainting(IPlotArea layer);
+    void PrepareScales(IPlotArea layer);
 
     /// <summary>
     /// This paints the plot to the layer.
