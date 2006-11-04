@@ -2,22 +2,15 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.Collections;
-using System.ComponentModel;
-using System.Drawing;
+using System.CodeDom.Compiler;
+using System.IO;
 using System.Reflection;
-using System.Diagnostics;
-using System.Resources;
-using System.Windows.Forms;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Xml;
-using System.IO;
-using System.CodeDom.Compiler;
 
 using ICSharpCode.Core;
 
@@ -33,6 +26,8 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 		
 		public string CompileScript(FileTemplate item, FileDescriptionTemplate file)
 		{
+			if (file.Content == null)
+				throw new ArgumentException("file must have textual content");
 			Match m = scriptRegex.Match(file.Content);
 			m = m.NextMatch();
 			if (m.Success) {

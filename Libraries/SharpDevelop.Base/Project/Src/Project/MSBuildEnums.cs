@@ -2,27 +2,26 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1010 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
 using System.ComponentModel;
-using System.Diagnostics;
-using System.IO;
-using ICSharpCode.Core;
 
 namespace ICSharpCode.SharpDevelop.Project
 {
-	public enum RunPostBuildEvent {
+	public enum RunPostBuildEvent
+	{
+		[Description("${res:Dialog.ProjectOptions.RunPostBuildEvent.OnSuccessfulBuild}")]
+		OnBuildSuccess,
 		[Description("${res:Dialog.ProjectOptions.RunPostBuildEvent.Always}")]
 		Always,
-		[Description("${res:Dialog.ProjectOptions.RunPostBuildEvent.OnSuccessfulBuild}")]
-		OnSuccessfulBuild,
 		[Description("${res:Dialog.ProjectOptions.RunPostBuildEvent.OnOutputUpdated}")]
 		OnOutputUpdated
 	}
 	
-	public enum DebugSymbolType {
+	public enum DebugSymbolType
+	{
 		[Description("${res:Dialog.ProjectOptions.DebugSymbolType.None}")]
 		None,
 		[Description("${res:Dialog.ProjectOptions.DebugSymbolType.Full}")]
@@ -31,7 +30,8 @@ namespace ICSharpCode.SharpDevelop.Project
 		PdbOnly
 	}
 	
-	public enum StartAction {
+	public enum StartAction
+	{
 		Project,
 		Program,
 		StartURL

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1388 $</version>
+//     <version>$Revision: 1624 $</version>
 // </file>
 
 using System;
@@ -49,8 +49,7 @@ namespace ICSharpCode.Core
 		
 		/// <summary>
 		/// Gets/Sets the custom error reporter. If this property is null, the default
-		/// messagebox is used (except for debug builds of ICSharpCode.Core, where the
-		/// message is only logged to the LoggingService).
+		/// messagebox is used.
 		/// </summary>
 		public static ShowErrorDelegate CustomErrorReporter {
 			get {
@@ -81,7 +80,22 @@ namespace ICSharpCode.Core
 				msg += "Exception occurred: " + ex.ToString();
 			}
 			
-			MessageBox.Show(MessageService.MainForm, StringParser.Parse(msg), StringParser.Parse("${res:Global.ErrorText}"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+			if (MessageService.MainForm == null) {
+				// let's try this; don't know if it's threadsafe?  I expect
+				// that MainForm.InvokeRequired can be assumed to be false
+				// if MainForm doesn't exist yet...
+				MessageBox.Show(StringParser.Parse(msg), StringParser.Parse("SharpDevelop: ${res:Global.ErrorText}"), MessageBoxButtons.OK, MessageBoxIcon.Error);			
+			} else {
+			
+			MethodInvoker showError = delegate {
+				MessageBox.Show(MessageService.MainForm, StringParser.Parse(msg), StringParser.Parse("${res:Global.ErrorText}"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+			};
+			if (MessageService.MainForm.InvokeRequired) {
+				MessageService.MainForm.BeginInvoke(showError);;
+			} else {
+				showError();
+			}
+			}
 		}
 		
 		public static void ShowWarning(string message)

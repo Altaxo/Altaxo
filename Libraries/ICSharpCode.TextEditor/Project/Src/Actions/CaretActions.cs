@@ -2,13 +2,12 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
+using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Windows.Forms;
-using System;
 
 using ICSharpCode.TextEditor.Document;
 
@@ -39,14 +38,7 @@ namespace ICSharpCode.TextEditor.Actions
 					position = new Point(lineAbove.Length, position.Y - 1);
 				}
 			}
-//			ArrayList foldings = textArea.Document.FoldingManager.GetFoldingsFromPosition(position.Y, position.X);
-//			foreach (FoldMarker foldMarker in foldings) {
-//				if (foldMarker.IsFolded) {
-//					if (foldMarker.StartLine < position.Y || foldMarker.StartLine == position.Y && foldMarker.StartColumn < position.X) {
-//						position = new Point(foldMarker.StartColumn, foldMarker.StartLine);
-//					}
-//				}
-//			}
+			
 			textArea.Caret.Position = position;
 			textArea.SetDesiredColumn();
 		}

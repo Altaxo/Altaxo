@@ -2,18 +2,16 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1105 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
 using System.Collections;
-using System.Collections.Specialized;
 using System.Windows.Forms;
 
-using ICSharpCode.Core;
-using ICSharpCode.TextEditor.Document;
-using ICSharpCode.TextEditor;
 using ICSharpCode.SharpDevelop.Dom;
+using ICSharpCode.TextEditor;
+using ICSharpCode.TextEditor.Document;
 using ICSharpCode.TextEditor.Gui.CompletionWindow;
 
 namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
@@ -65,9 +63,30 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		/// <summary>
 		/// Gets if pressing 'key' should trigger the insertion of the currently selected element.
 		/// </summary>
-		public virtual bool IsInsertionKey(char key)
+		public virtual CompletionDataProviderKeyResult ProcessKey(char key)
 		{
-			return !char.IsLetterOrDigit(key) && key != '_';
+			CompletionDataProviderKeyResult res;
+			if (key == ' ' && insertSpace) {
+				insertSpace = false; // insert space only once
+				res = CompletionDataProviderKeyResult.BeforeStartKey;
+			} else if (char.IsLetterOrDigit(key) || key == '_') {
+				insertSpace = false; // don't insert space if user types normally
+				res = CompletionDataProviderKeyResult.NormalKey;
+			} else {
+				// do not reset insertSpace when doing an insertion!
+				res = CompletionDataProviderKeyResult.InsertionKey;
+			}
+			return res;
+		}
+		
+		public virtual bool InsertAction(ICompletionData data, TextArea textArea, int insertionOffset, char key)
+		{
+			if (InsertSpace) {
+				textArea.Document.Insert(insertionOffset++, " ");
+			}
+			textArea.Caret.Position = textArea.Document.OffsetToPosition(insertionOffset);
+			
+			return data.InsertAction(textArea, key);
 		}
 		
 		/// <summary>
@@ -75,7 +94,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		/// </summary>
 		public abstract ICompletionData[] GenerateCompletionData(string fileName, TextArea textArea, char charTyped);
 	}
-	
+
 	public abstract class AbstractCodeCompletionDataProvider : AbstractCompletionDataProvider
 	{
 		Hashtable insertedElements           = new Hashtable();

@@ -2,24 +2,20 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1334 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
 using System.Collections;
-using System.IO;
 using System.ComponentModel;
 using System.Drawing;
-using System.Reflection;
-using System.Resources;
+using System.IO;
 using System.Windows.Forms;
-using System.Xml;
 
 using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.Gui;
-using ICSharpCode.SharpDevelop.Project;
-using ICSharpCode.SharpDevelop.Internal.Templates;
 using ICSharpCode.SharpDevelop.Gui.XmlForms;
+using ICSharpCode.SharpDevelop.Internal.Templates;
 
 namespace ICSharpCode.SharpDevelop.Project.Dialogs
 {
@@ -196,7 +192,7 @@ namespace ICSharpCode.SharpDevelop.Project.Dialogs
 		void NameTextChanged(object sender, EventArgs e)
 		{
 			if (!((CheckBox)ControlDictionary["createSeparateDirCheckBox"]).Checked) {
-				((TextBox)ControlDictionary["solutionNameTextBox"]).Text = ((TextBox)ControlDictionary["nameTextBox"]).Text;
+				((TextBox)ControlDictionary["solutionNameTextBox"]).Text = ((TextBox)ControlDictionary["nameTextBox"]).Text.Trim();
 			}
 		}
 		
@@ -204,7 +200,7 @@ namespace ICSharpCode.SharpDevelop.Project.Dialogs
 			get {
 				string name = String.Empty;
 				if (((CheckBox)ControlDictionary["createSeparateDirCheckBox"]).Checked) {
-					name += Path.DirectorySeparatorChar + ((TextBox)ControlDictionary["solutionNameTextBox"]).Text;
+					name += Path.DirectorySeparatorChar + ((TextBox)ControlDictionary["solutionNameTextBox"]).Text.Trim();
 				}
 				return ProjectLocation + name;
 			}
@@ -213,8 +209,8 @@ namespace ICSharpCode.SharpDevelop.Project.Dialogs
 		string ProjectLocation {
 			get {
 				string location = ((TextBox)ControlDictionary["locationTextBox"]).Text.TrimEnd('\\', '/', Path.DirectorySeparatorChar);
-				string name     = ((TextBox)ControlDictionary["nameTextBox"]).Text;
-				return location + (((CheckBox)ControlDictionary["autoCreateSubDirCheckBox"]).Checked ? Path.DirectorySeparatorChar + name : "");
+				string name     = ((TextBox)ControlDictionary["nameTextBox"]).Text.Trim();
+				return location.Trim() + (((CheckBox)ControlDictionary["autoCreateSubDirCheckBox"]).Checked ? Path.DirectorySeparatorChar + name : String.Empty);
 			}
 		}
 		
@@ -251,11 +247,6 @@ namespace ICSharpCode.SharpDevelop.Project.Dialogs
 			((ListView)ControlDictionary["templateListView"]).View = ((RadioButton)ControlDictionary["smallIconsRadioButton"]).Checked ? View.List : View.LargeIcon;
 		}
 		
-		public bool IsFilenameAvailable(string fileName)
-		{
-			return true;
-		}
-		
 		public string NewProjectLocation;
 		public string NewCombineLocation;
 		
@@ -268,13 +259,26 @@ namespace ICSharpCode.SharpDevelop.Project.Dialogs
 			}
 			
 			
-			string solution = ((TextBox)ControlDictionary["solutionNameTextBox"]).Text;
-			string name     = ((TextBox)ControlDictionary["nameTextBox"]).Text;
-			string location = ((TextBox)ControlDictionary["locationTextBox"]).Text;
-			if (!FileUtility.IsValidFileName(solution) || solution.IndexOf(Path.DirectorySeparatorChar) >= 0 ||
-			    !FileUtility.IsValidFileName(name)     || name.IndexOf(Path.DirectorySeparatorChar) >= 0 ||
-			    !FileUtility.IsValidFileName(location)) {
+			string solution = ((TextBox)ControlDictionary["solutionNameTextBox"]).Text.Trim();
+			string name     = ((TextBox)ControlDictionary["nameTextBox"]).Text.Trim();
+			string location = ((TextBox)ControlDictionary["locationTextBox"]).Text.Trim();
+			if (!FileUtility.IsValidFileName(solution)
+			    || solution.IndexOf(Path.DirectorySeparatorChar) >= 0
+			    || solution.IndexOf(Path.AltDirectorySeparatorChar) >= 0
+			    || !FileUtility.IsValidFileName(name)
+			    || name.IndexOf(Path.AltDirectorySeparatorChar) >= 0
+			    || name.IndexOf(Path.DirectorySeparatorChar) >= 0
+			    || !FileUtility.IsValidFileName(location))
+			{
 				MessageService.ShowError("${res:ICSharpCode.SharpDevelop.Gui.Dialogs.NewProjectDialog.IllegalProjectNameError}");
+				return;
+			}
+			if (!char.IsLetter(name[0]) && name[0] != '_') {
+				MessageService.ShowError("${res:ICSharpCode.SharpDevelop.Gui.Dialogs.NewProjectDialog.ProjectNameMustStartWithLetter}");
+				return;
+			}
+			if (name.EndsWith(".")) {
+				MessageService.ShowError("${res:ICSharpCode.SharpDevelop.Gui.Dialogs.NewProjectDialog.ProjectNameMustNotEndWithDot}");
 				return;
 			}
 			
@@ -294,7 +298,7 @@ namespace ICSharpCode.SharpDevelop.Project.Dialogs
 				cinfo.CombinePath     = ProjectLocation;
 				cinfo.ProjectBasePath = ProjectSolution;
 				
-				cinfo.ProjectName     = ((TextBox)ControlDictionary["nameTextBox"]).Text;
+				cinfo.ProjectName     = name;
 				
 				NewCombineLocation = item.Template.CreateProject(cinfo);
 				if (NewCombineLocation == null || NewCombineLocation.Length == 0) {
@@ -305,49 +309,14 @@ namespace ICSharpCode.SharpDevelop.Project.Dialogs
 				}
 				
 				NewProjectLocation = cinfo.CreatedProjects.Count > 0 ? cinfo.CreatedProjects[0] : "";
-				
 				DialogResult = DialogResult.OK;
-				/*
-						if (item.Template.LanguageName != null && item.Template.LanguageName.Length > 0)  {
-							
-						}
-						
-						if (item.Template.WizardPath != null) {
-							Properties customizer = new Properties();
-							customizer.Set("Template", item.Template);
-							customizer.Set("Creator",  this);
-							WizardDialog wizard = new WizardDialog("Project Wizard", customizer, item.Template.WizardPath);
-							if (wizard.ShowDialog(ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.MainForm) == DialogResult.OK) {
-								DialogResult = DialogResult.OK;
-							}
-						}
-						
-						NewCombineLocation = FileUtility.GetDirectoryNameWithSeparator(ProjectLocation) + ((TextBox)ControlDictionary["nameTextBox"]).Text + ".cmbx";
-						
-						if (File.Exists(NewCombineLocation)) {
-							DialogResult result = MessageBox.Show("Combine file " + NewCombineLocation + " already exists, do you want to overwrite\nthe existing file ?", "File already exists", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
-							switch(result) {
-								case DialogResult.Yes:
-									cmb.SaveCombine(NewCombineLocation);
-									break;
-								case DialogResult.No:
-									break;
-							}
-						} else {
-							cmb.SaveCombine(NewCombineLocation);
-						}
-					} else {
-						MessageBox.Show(ResourceService.GetString("Dialog.NewProject.EmptyProjectFieldWarning"), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-					}
-				 */
 			}
 		}
 		
 		void BrowseDirectories(object sender, EventArgs e)
 		{
-			// Changes Shankar
 			FolderDialog fd = new FolderDialog();
-			if (fd.DisplayDialog("Select the directory in which the project will be created.") == DialogResult.OK) {
+			if (fd.DisplayDialog("${res:Dialog.NewProject.SelectDirectoryForProject}") == DialogResult.OK) {
 				((TextBox)ControlDictionary["locationTextBox"]).Text = fd.Path;
 			}
 			// End

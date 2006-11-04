@@ -2,14 +2,13 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1301 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
 using System.IO;
 using System.Xml;
-using System.Collections;
-using System.Diagnostics;
+
 using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.Project;
 
@@ -19,7 +18,11 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 	{
 		string name;
 		string language;
+		
+		// Either content or contentData is set, the other is null
 		string content;
+		byte[] contentData;
+		
 		string buildAction;
 		string copyToOutputDirectory;
 		string dependentUpon;
@@ -42,7 +45,11 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 			if (xml.HasAttribute("src")) {
 				string fileName = Path.Combine(hintPath, StringParser.Parse(xml.GetAttribute("src")));
 				try {
-					content = File.ReadAllText(fileName);
+					if (xml.HasAttribute("binary") && bool.Parse(xml.GetAttribute("binary"))) {
+						contentData = File.ReadAllBytes(fileName);
+					} else {
+						content = File.ReadAllText(fileName);
+					}
 				} catch (Exception e) {
 					content = "Error reading content from " + fileName + ":\n" + e.ToString();
 					LoggingService.Warn(content);
@@ -92,6 +99,12 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 		public string Content {
 			get {
 				return content;
+			}
+		}
+		
+		public byte[] ContentData {
+			get {
+				return contentData;
 			}
 		}
 		

@@ -2,14 +2,15 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1963 $</version>
 // </file>
 
 using System;
 using System.Text;
 
 using ICSharpCode.SharpDevelop.Dom;
-namespace ICSharpCode.Core
+
+namespace ICSharpCode.SharpDevelop
 {
 	public class NetAmbience :  AbstractAmbience
 	{
@@ -232,29 +233,12 @@ namespace ICSharpCode.Core
 			}
 			StringBuilder builder = new StringBuilder();
 			
-			bool linkSet = false;
-			
-			if (UseLinkArrayList) {
-//		TODO: Find some replacement for OLD SharpAssembly dependency:
-//				SharpAssemblyReturnType ret = returnType as SharpAssemblyReturnType;
-//				if (ret != null) {
-//					if (ret.UnderlyingClass != null) {
-//						builder.Append("<a href='as://" + linkArrayList.Add(ret.UnderlyingClass) + "'>");
-//						linkSet = true;
-//					}
-//				}
-			}
-			
 			string name = returnType.DotNetName;
 			if (UseFullyQualifiedNames) {
 				builder.Append(name);
 			} else {
 				int pos = returnType.Namespace.Length;
 				builder.Append(name, pos, name.Length - pos);
-			}
-			
-			if (linkSet) {
-				builder.Append("</a>");
 			}
 			
 			return builder.ToString();

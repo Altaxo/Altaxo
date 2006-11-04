@@ -2,17 +2,14 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1751 $</version>
 // </file>
 
 using System;
 using System.Collections;
-using System.Diagnostics;
-
 using ICSharpCode.Core;
-using ICSharpCode.SharpDevelop.Project;
 
-namespace ICSharpCode.Core
+namespace ICSharpCode.SharpDevelop
 {
 	/// <summary>
 	/// Creates ParserDescriptor objects for the parsing service.
@@ -30,7 +27,7 @@ namespace ICSharpCode.Core
 	/// <returns>
 	/// An ParserDescriptor object that wraps the IParser object.
 	/// </returns>
-	public class ParserDoozer : IDoozer
+	public sealed class ParserDoozer : IDoozer
 	{
 		/// <summary>
 		/// Gets if the doozer handles codon conditions on its own.

@@ -2,33 +2,33 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 975 $</version>
+//     <version>$Revision: 1899 $</version>
 // </file>
 
 using System;
 using System.Collections.Generic;
 
-namespace NRefactoryASTGenerator.AST
+namespace NRefactoryASTGenerator.Ast
 {
 	[CustomImplementation]
-	abstract class Expression : AbstractNode {}
+	abstract class Expression : AbstractNode, INullable {}
 	
 	[CustomImplementation]
 	class PrimitiveExpression : Expression {}
 	
-	enum ParamModifier { In }
+	enum ParameterModifiers { In }
 	
 	class ParameterDeclarationExpression : Expression {
 		List<AttributeSection> attributes;
 		[QuestionMarkDefault]
 		string         parameterName;
 		TypeReference  typeReference;
-		ParamModifier  paramModifier;
+		ParameterModifiers  paramModifier;
 		Expression     defaultValue;
 		
 		public ParameterDeclarationExpression(TypeReference typeReference, string parameterName) {}
-		public ParameterDeclarationExpression(TypeReference typeReference, string parameterName, ParamModifier paramModifier) {}
-		public ParameterDeclarationExpression(TypeReference typeReference, string parameterName, ParamModifier paramModifier, Expression defaultValue) {}
+		public ParameterDeclarationExpression(TypeReference typeReference, string parameterName, ParameterModifiers paramModifier) {}
+		public ParameterDeclarationExpression(TypeReference typeReference, string parameterName, ParameterModifiers paramModifier, Expression defaultValue) {}
 	}
 	
 	class NamedArgumentExpression : Expression {
@@ -156,6 +156,7 @@ namespace NRefactoryASTGenerator.AST
 	class AnonymousMethodExpression : Expression {
 		List<ParameterDeclarationExpression> parameters;
 		BlockStatement body;
+		bool hasParameterList;
 	}
 	
 	class CheckedExpression : Expression {
@@ -189,9 +190,9 @@ namespace NRefactoryASTGenerator.AST
 	
 	class IndexerExpression : Expression {
 		Expression       targetObject;
-		List<Expression> indices;
+		List<Expression> indexes;
 		
-		public IndexerExpression(Expression targetObject, List<Expression> indices) {}
+		public IndexerExpression(Expression targetObject, List<Expression> indexes) {}
 	}
 	
 	class PointerReferenceExpression : Expression {

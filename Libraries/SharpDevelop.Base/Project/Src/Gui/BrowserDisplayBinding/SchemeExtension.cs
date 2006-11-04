@@ -2,13 +2,13 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
 using System.Collections;
-using System.Drawing;
 using System.Windows.Forms;
+
 using ICSharpCode.Core;
 
 namespace ICSharpCode.SharpDevelop.BrowserDisplayBinding

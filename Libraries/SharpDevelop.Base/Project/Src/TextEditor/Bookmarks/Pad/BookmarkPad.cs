@@ -2,24 +2,15 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1199 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text;
-using System.Threading;
 using System.Windows.Forms;
-using System.Drawing;
-using System.CodeDom.Compiler;
-using System.IO;
-using System.Diagnostics;
+
 using ICSharpCode.Core;
-using ICSharpCode.SharpDevelop.Gui.OptionPanels;
-using ICSharpCode.SharpDevelop.Project;
 using ICSharpCode.SharpDevelop.Gui;
-using ICSharpCode.SharpDevelop.DefaultEditor.Commands;
 
 namespace ICSharpCode.SharpDevelop.Bookmarks
 {

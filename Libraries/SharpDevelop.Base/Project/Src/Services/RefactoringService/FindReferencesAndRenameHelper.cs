@@ -2,12 +2,13 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1391 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+
 using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor;
 using ICSharpCode.SharpDevelop.Dom;
@@ -89,10 +90,10 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 			RenameMember(member, newName);
 		}
 		
-		public static void RenameMember(IMember member, string newName)
+		public static bool RenameMember(IMember member, string newName)
 		{
 			List<Reference> list = RefactoringService.FindReferences(member, null);
-			if (list == null) return;
+			if (list == null) return false;
 			FindReferencesAndRenameHelper.RenameReferences(list, newName);
 			
 			if (member is IField) {
@@ -109,6 +110,7 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 					}
 				}
 			}
+			return true;
 		}
 		
 		internal static IProperty FindProperty(IField field)
@@ -132,8 +134,7 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 		{
 			foreach (IViewContent content in WorkbenchSingleton.Workbench.ViewContentCollection) {
 				if (content is ITextEditorControlProvider &&
-				    content.FileName != null &&
-				    FileUtility.IsEqualFileName(content.FileName, fileName))
+				    FileUtility.IsEqualFileName(content.IsUntitled ? content.UntitledName : content.FileName, fileName))
 				{
 					return new ProvidedDocumentInformation(((ITextEditorControlProvider)content).TextEditorControl.Document, fileName, 0);
 				}
@@ -144,7 +145,7 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 		
 		public static bool IsReadOnly(IClass c)
 		{
-			return c.CompilationUnit.FileName == null;
+			return c.CompilationUnit.FileName == null || c.GetCompoundClass().IsSynthetic;
 		}
 		
 		public static TextEditorControl JumpToDefinition(IMember member)
@@ -255,8 +256,7 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 			List<IViewContent> modifiedContents = new List<IViewContent>();
 			List<Modification> modifications = new List<Modification>();
 			foreach (Reference r in list) {
-				FileService.OpenFile(r.FileName);
-				IViewContent viewContent = FileService.GetOpenFile(r.FileName).ViewContent;
+				IViewContent viewContent = FileService.OpenFile(r.FileName).ViewContent;
 				if (!modifiedContents.Contains(viewContent)) {
 					modifiedContents.Add(viewContent);
 				}

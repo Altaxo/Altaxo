@@ -2,14 +2,12 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.Collections;
-
-using ICSharpCode.SharpDevelop.Gui;
 using ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor;
+using ICSharpCode.SharpDevelop.Gui;
 using ICSharpCode.TextEditor;
 using ICSharpCode.TextEditor.Document;
 
@@ -18,7 +16,8 @@ namespace SearchAndReplace
 	public class AllOpenDocumentIterator : IDocumentIterator
 	{
 		int  startIndex = -1;
-		bool resetted    = true;
+		int  curIndex   = -1;
+		bool resetted   = true;
 		
 		public AllOpenDocumentIterator()
 		{
@@ -27,45 +26,60 @@ namespace SearchAndReplace
 		
 		public string CurrentFileName {
 			get {
-				if (!SearchReplaceUtilities.IsTextAreaSelected) {
-					return null;
+				IViewContent viewContent = GetCurrentTextEditorViewContent();
+				if (viewContent != null) {
+					if (viewContent.FileName == null) {
+						return viewContent.UntitledName;
+					}
+					return viewContent.FileName;
 				}
-				
-				if (WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent.FileName == null) {
-					return WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent.UntitledName;
-				}
-				
-				return WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent.FileName;
+				return null;
 			}
+		}
+		
+		IViewContent GetCurrentTextEditorViewContent()
+		{
+			GetCurIndex();
+			if (curIndex >= 0) {
+				IViewContent viewContent = WorkbenchSingleton.Workbench.ViewContentCollection[curIndex];
+				if (viewContent is ITextEditorControlProvider) {
+					return viewContent;
+				}
+			}
+			return null;
 		}
 		
 		public ProvidedDocumentInformation Current {
 			get {
-				if (!SearchReplaceUtilities.IsTextAreaSelected) {
-					return null;
+				IViewContent viewContent = GetCurrentTextEditorViewContent();
+				if (viewContent != null) {
+					TextEditorControl textEditor = (((ITextEditorControlProvider)viewContent).TextEditorControl);
+					IDocument document = textEditor.Document;
+					return new ProvidedDocumentInformation(document,
+				    	CurrentFileName,
+				   		textEditor.ActiveTextAreaControl);
 				}
-				TextEditorControl textEditor = (((ITextEditorControlProvider)WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent).TextEditorControl);
-				
-				IDocument document = textEditor.Document;
-				return new ProvidedDocumentInformation(document,
-				                                       CurrentFileName,
-				                                       textEditor.ActiveTextAreaControl);
+				return null;
 			}
 		}
 		
-		int GetCurIndex()
+		void GetCurIndex()
 		{
-			for (int i = 0; i < WorkbenchSingleton.Workbench.ViewContentCollection.Count; ++i) {
-				if (WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent == WorkbenchSingleton.Workbench.ViewContentCollection[i]) {
-					return i;
+			int viewCount = WorkbenchSingleton.Workbench.ViewContentCollection.Count;
+			if (curIndex == -1 || curIndex >= viewCount) {
+				for (int i = 0; i < viewCount; ++i) {
+					if (WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent == WorkbenchSingleton.Workbench.ViewContentCollection[i]) {
+						curIndex = i;
+						return;
+					}
 				}
+				curIndex = -1;
 			}
-			return -1;
 		}
 		
 		public bool MoveForward() 
 		{
-			int curIndex =  GetCurIndex();
+			GetCurIndex();
 			if (curIndex < 0) {
 				return false;
 			}
@@ -75,17 +89,16 @@ namespace SearchAndReplace
 				return true;
 			}
 			
-			int nextIndex = (curIndex + 1) % WorkbenchSingleton.Workbench.ViewContentCollection.Count;
-			if (nextIndex == startIndex) {
+			curIndex = (curIndex + 1) % WorkbenchSingleton.Workbench.ViewContentCollection.Count;
+			if (curIndex == startIndex) {
 				return false;
 			}
-			WorkbenchSingleton.Workbench.ViewContentCollection[nextIndex].WorkbenchWindow.SelectWindow();
 			return true;
 		}
 		
 		public bool MoveBackward()
 		{
-			int curIndex =  GetCurIndex();
+			GetCurIndex();
 			if (curIndex < 0) {
 				return false;
 			}
@@ -100,7 +113,6 @@ namespace SearchAndReplace
 			
 			if (curIndex > 0) {
 				--curIndex;
-				WorkbenchSingleton.Workbench.ViewContentCollection[curIndex].WorkbenchWindow.SelectWindow();
 				return true;
 			}
 			return false;
@@ -108,7 +120,9 @@ namespace SearchAndReplace
 		
 		public void Reset() 
 		{
-			startIndex = GetCurIndex();
+			curIndex = -1;
+			GetCurIndex();
+			startIndex = curIndex;
 			resetted = true;
 		}
 	}

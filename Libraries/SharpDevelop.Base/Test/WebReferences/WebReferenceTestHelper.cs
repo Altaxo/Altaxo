@@ -2,9 +2,10 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Matthew Ward" email="mrward@users.sourceforge.net"/>
-//     <version>$Revision: 955 $</version>
+//     <version>$Revision: 1665 $</version>
 // </file>
 
+using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.Project;
 using System;
 using System.Collections.Generic;
@@ -14,10 +15,24 @@ namespace ICSharpCode.SharpDevelop.Tests.WebReferences
 	/// <summary>
 	/// Helper methods used when testing web references
 	/// </summary>
-	public class WebReferenceTestHelper
+	public static class WebReferenceTestHelper
 	{
-		WebReferenceTestHelper()
+		public static void InitializeLanguageBindings()
 		{
+			Properties prop = new Properties();
+			prop["id"] = "C#";
+			prop["supportedextensions"] = ".cs";
+			prop["projectfileextension"] = ".csproj";
+			Codon codon1 = new Codon(null, "LanguageBinding", prop, new Condition[0]);
+			prop = new Properties();
+			prop["id"] = "VBNet";
+			prop["supportedextensions"] = ".vb";
+			prop["projectfileextension"] = ".vbproj";
+			Codon codon2 = new Codon(null, "LanguageBinding", prop, new Condition[0]);
+			LanguageBindingService.SetBindings(new LanguageBindingDescriptor[] {
+			                                   	new LanguageBindingDescriptor(codon1),
+			                                   	new LanguageBindingDescriptor(codon2)
+			                                   });
 		}
 		
 		public static ProjectItem GetProjectItem(List<ProjectItem> items, string include, ItemType itemType) {

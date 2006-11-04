@@ -2,19 +2,14 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1018 $</version>
+//     <version>$Revision: 1943 $</version>
 // </file>
 
 using System;
-using System.Drawing;
-using System.IO;
-
+using ICSharpCode.NRefactory.Ast;
 using NUnit.Framework;
 
-using ICSharpCode.NRefactory.Parser;
-using ICSharpCode.NRefactory.Parser.AST;
-
-namespace ICSharpCode.NRefactory.Tests.AST
+namespace ICSharpCode.NRefactory.Tests.Ast
 {
 	[TestFixture]
 	public class MethodDeclarationTests
@@ -189,6 +184,18 @@ namespace ICSharpCode.NRefactory.Tests.AST
 			Assert.AreEqual("MyInterface", md.InterfaceImplementations[0].InterfaceType.Type);
 			Assert.AreEqual("System.String", md.InterfaceImplementations[0].InterfaceType.GenericTypes[0].SystemType);
 		}
+		
+		[Test]
+		public void CSharpIncompleteConstraintsTest()
+		{
+			MethodDeclaration md = ParseUtilCSharp.ParseTypeMember<MethodDeclaration>(
+				"void a<T>() where T { }", true /* expect errors */
+			);
+			Assert.AreEqual("a", md.Name);
+			Assert.AreEqual(1, md.Templates.Count);
+			Assert.AreEqual("T", md.Templates[0].Name);
+			Assert.AreEqual(0, md.Templates[0].Bases.Count);
+		}
 		#endregion
 		
 		#region VB.NET
@@ -227,7 +234,7 @@ namespace ICSharpCode.NRefactory.Tests.AST
 			end sub";
 			
 			MethodDeclaration md = ParseUtilVBNet.ParseTypeMember<MethodDeclaration>(program);
-			Assert.AreEqual(Modifier.Public | Modifier.Static, md.Modifier);
+			Assert.AreEqual(Modifiers.Public | Modifiers.Static, md.Modifier);
 			Assert.AreEqual(2, md.StartLocation.Y, "StartLocation.Y");
 			Assert.AreEqual(2, md.EndLocation.Y, "EndLocation.Y");
 			Assert.AreEqual(2, md.StartLocation.X, "StartLocation.X");

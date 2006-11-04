@@ -2,19 +2,15 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.IO;
-using System.Drawing;
 using System.Collections;
-using System.ComponentModel;
+using System.Collections.Generic;
+using System.Drawing;
 using System.Windows.Forms;
-using System.Xml;
 
-using ICSharpCode.SharpDevelop.Gui.OptionPanels;
-using ICSharpCode.SharpDevelop.Project;
 using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.Gui.XmlForms;
 
@@ -38,7 +34,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			DialogResult = DialogResult.OK;
 		}
 		
-		void AddOptionPanels(ArrayList dialogPanelDescriptors)
+		void AddOptionPanels(IEnumerable<IDialogPanelDescriptor> dialogPanelDescriptors)
 		{
 			foreach (IDialogPanelDescriptor descriptor in dialogPanelDescriptors) {
 				if (descriptor != null && descriptor.DialogPanel != null && descriptor.DialogPanel.Control != null) { // may be null, if it is only a "path"
@@ -70,7 +66,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			Icon = null;
 			Owner = (Form)WorkbenchSingleton.Workbench;
 			
-			AddOptionPanels(node.BuildChildItems(this));
+			AddOptionPanels(node.BuildChildItems<IDialogPanelDescriptor>(this));
 		}
 	}
 }

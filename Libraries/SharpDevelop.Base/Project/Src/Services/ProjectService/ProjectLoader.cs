@@ -2,11 +2,10 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1167 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using ICSharpCode.SharpDevelop.Project;
 
 namespace ICSharpCode.SharpDevelop.Project
 {

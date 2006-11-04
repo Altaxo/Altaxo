@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>8.0.50215</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{35CEF10F-2D4C-45F2-9DD1-161E0FEC583C}</ProjectGuid>
     <RootNamespace>ICSharpCode.Core</RootNamespace>
@@ -12,25 +12,28 @@
     <NoConfig>False</NoConfig>
     <OutputType>Library</OutputType>
     <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>Resources\ICSharpCode.Core.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>..\..\ICSharpCode.SharpDevelop.snk</AssemblyOriginatorKeyFile>
     <BaseAddress>83886080</BaseAddress>
+    <RunPostBuildEvent>Always</RunPostBuildEvent>
+    <DelaySign>False</DelaySign>
+    <AssemblyOriginatorKeyMode>File</AssemblyOriginatorKeyMode>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <Optimize>False</Optimize>
     <DebugType>Full</DebugType>
-    <DocumentationFile>bin\debug\ICSharpCode.Core.xml</DocumentationFile>
+    <DocumentationFile>..\..\..\..\bin\ICSharpCode.Core.xml</DocumentationFile>
     <NoWarn>1591</NoWarn>
-    <DefineConstants>DEBUG;ModifiedForAltaxo</DefineConstants>
+    <DefineConstants>DEBUG</DefineConstants>
     <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
-    <OutputPath>bin\debug\</OutputPath>
+    <OutputPath>..\..\..\..\bin\</OutputPath>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>False</DebugSymbols>
     <Optimize>True</Optimize>
     <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
-    <OutputPath>bin\release\</OutputPath>
+    <OutputPath>..\..\..\..\bin\</OutputPath>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
@@ -39,27 +42,19 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.XML" />
+    <Reference Include="log4net">
+      <HintPath>..\..\..\Libraries\log4net\bin\net\2.0\release\log4net.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\ICSharpCode.Core.doc" />
-    <None Include="Resources\ICSharpCode.Core.snk" />
     <Compile Include="Configuration\AssemblyInfo.cs" />
     <Compile Include="Src\AddInTree\AddIn\AddIn.cs" />
     <Compile Include="Src\AddInTree\AddIn\AddInLoadException.cs" />
     <Compile Include="Src\AddInTree\AddIn\Codon.cs" />
     <Compile Include="Src\AddInTree\AddIn\ComplexCondition.cs" />
     <Compile Include="Src\AddInTree\AddIn\Condition.cs" />
-    <Compile Include="Src\AddInTree\AddIn\DefaultDoozers\ToolBarItem\AbstractTextBoxCommand.cs" />
-    <Compile Include="Src\AddInTree\AddIn\DefaultDoozers\ToolBarItem\Gui\ToolBarLabel.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Src\AddInTree\AddIn\DefaultDoozers\ToolBarItem\Gui\ToolBarSplitButton.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Src\AddInTree\AddIn\DefaultDoozers\ToolBarItem\Gui\ToolBarTextBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Src\AddInTree\AddIn\DefaultDoozers\ToolBarItem\ITextBoxCommand.cs" />
     <Compile Include="Src\AddInTree\AddIn\ExtensionPath.cs" />
     <Compile Include="Src\AddInTree\AddIn\IConditionEvaluator.cs" />
     <Compile Include="Src\AddInTree\AddIn\ICondition.cs" />
@@ -136,7 +131,6 @@
     <Compile Include="Src\Services\StringParser\StringParser.cs" />
     <Compile Include="Src\Services\ToolBarService\ToolBarService.cs" />
     <Compile Include="Src\Util\AbstractCommand.cs" />
-    <Compile Include="Src\Util\AppDomainLaunchHelper.cs" />
     <Compile Include="Src\Util\ICommand.cs" />
     <Compile Include="Src\Util\RightToLeftConverter.cs" />
     <Compile Include="Src\Services\MessageService\InputBox.cs">
@@ -151,12 +145,24 @@
     <Compile Include="Src\AddInTree\CoreStartup.cs" />
     <Compile Include="Src\AddInTree\AddInManager.cs" />
     <Compile Include="Src\AddInTree\AddIn\DefaultDoozers\StringDoozer.cs" />
+    <Compile Include="..\..\GlobalAssemblyInfo.cs">
+      <Link>Configuration\GlobalAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="Src\Util\AppDomainLaunchHelper.cs" />
+    <Compile Include="Src\AddInTree\AddIn\DefaultDoozers\ToolBarItem\Gui\ToolBarLabel.cs" />
+    <Compile Include="Src\AddInTree\AddIn\DefaultDoozers\ToolBarItem\Gui\ToolBarSplitButton.cs" />
+    <Compile Include="Src\AddInTree\AddIn\DefaultDoozers\ToolBarItem\Gui\ToolBarTextBox.cs" />
+    <Compile Include="Src\AddInTree\AddIn\DefaultDoozers\ToolBarItem\AbstractTextBoxCommand.cs" />
+    <Compile Include="Src\AddInTree\AddIn\DefaultDoozers\ToolBarItem\ITextBoxCommand.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\log4net\src\log4net.csproj">
-      <Project>{F6A02431-167E-4347-BC43-65532C31CDB7}</Project>
-      <Name>log4net</Name>
-    </ProjectReference>
+    <Folder Include="Src\Services\LoggingService" />
+    <Content Include="..\..\..\..\data\schemas\AddIn.xsd">
+      <Link>Src\AddInTree\AddIn\AddIn.xsd</Link>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSHARP.Targets" />
+  <PropertyGroup>
+    <PreBuildEvent>..\src\Tools\UpdateAssemblyInfo\bin\Debug\UpdateAssemblyInfo.exe</PreBuildEvent>
+  </PropertyGroup>
 </Project>

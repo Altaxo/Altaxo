@@ -2,19 +2,17 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1233 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
-using System.CodeDom.Compiler;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Collections;
-using System.Collections.Generic;
+
 using ICSharpCode.Core;
-using ICSharpCode.SharpDevelop.Gui;
 
 namespace ICSharpCode.SharpDevelop.Project
 {
@@ -213,10 +211,15 @@ namespace ICSharpCode.SharpDevelop.Project
 			return null;
 		}
 		
-		
 		public void Save()
 		{
-			Save(fileName);
+			try {
+				Save(fileName);
+			} catch (IOException ex) {
+				MessageService.ShowError("Could not save " + fileName + ":\n" + ex.Message);
+			} catch (UnauthorizedAccessException ex) {
+				MessageService.ShowError("Could not save " + fileName + ":\n" + ex.Message + "\n\nEnsure the file is writable.");
+			}
 		}
 		
 		public SolutionFolder CreateFolder(string folderName)
@@ -313,9 +316,9 @@ namespace ICSharpCode.SharpDevelop.Project
 			
 			// we need to specify UTF8 because MsBuild needs the BOM
 			using (StreamWriter sw = new StreamWriter(fileName, false, Encoding.UTF8)) {
+				sw.WriteLine();
 				sw.WriteLine("Microsoft Visual Studio Solution File, Format Version 9.00");
-				Version v = System.Reflection.Assembly.GetEntryAssembly().GetName().Version;
-				sw.WriteLine("# SharpDevelop " + v.Major + "." + v.Minor + "." + v.Build + "." + v.Revision);
+				sw.WriteLine("# SharpDevelop " + RevisionClass.FullVersion);
 				sw.Write(projectSection.ToString());
 				
 				sw.Write(globalSection.ToString());
@@ -401,7 +404,8 @@ namespace ICSharpCode.SharpDevelop.Project
 			
 			bool needsConversion = false;
 			
-			using (StreamReader sr = File.OpenText(fileName)) {
+			// read solution files using system encoding, but detect UTF8 if BOM is present
+			using (StreamReader sr = new StreamReader(fileName, Encoding.Default, true)) {
 				string line = GetFirstNonCommentLine(sr);
 				Match match = versionPattern.Match(line);
 				if (!match.Success) {
@@ -491,12 +495,21 @@ namespace ICSharpCode.SharpDevelop.Project
 		
 		public ProjectSection GetSolutionConfigurationsSection()
 		{
-			foreach (ProjectSection sec in Sections) {
+			foreach (ProjectSection sec in this.Sections) {
 				if (sec.Name == "SolutionConfigurationPlatforms")
 					return sec;
 			}
 			ProjectSection newSec = new ProjectSection("SolutionConfigurationPlatforms", "preSolution");
-			Sections.Insert(0, newSec);
+			this.Sections.Insert(0, newSec);
+			foreach (ProjectSection sec in this.Sections) {
+				if (sec.Name == "SolutionConfiguration") {
+					this.Sections.Remove(sec);
+					foreach (SolutionItem item in sec.Items) {
+						newSec.Items.Add(new SolutionItem(item.Name + "|Any CPU", item.Location + "|Any CPU"));
+					}
+					break;
+				}
+			}
 			return newSec;
 		}
 		
@@ -508,6 +521,49 @@ namespace ICSharpCode.SharpDevelop.Project
 			}
 			ProjectSection newSec = new ProjectSection("ProjectConfigurationPlatforms", "postSolution");
 			Sections.Add(newSec);
+			foreach (ProjectSection sec in this.Sections) {
+				if (sec.Name == "ProjectConfiguration") {
+					this.Sections.Remove(sec);
+					foreach (SolutionItem item in sec.Items) {
+						string name = item.Name;
+						string location = item.Location;
+						if (!name.Contains("|")) {
+							int pos = name.LastIndexOf('.');
+							if (pos > 0) {
+								string firstpart = name.Substring(0, pos);
+								string lastpart = name.Substring(pos);
+								if (lastpart == ".0") {
+									pos = firstpart.LastIndexOf('.');
+									if (pos > 0) {
+										lastpart = name.Substring(pos);
+										firstpart = name.Substring(0, pos);
+									}
+								}
+								name = firstpart + "|Any CPU" + lastpart;
+							}
+							
+							pos = location.LastIndexOf('|');
+							if (pos < 0) {
+								location += "|Any CPU";
+							} else {
+								string platform = location.Substring(pos+1);
+								bool found = false;
+								foreach (IProject p in this.Projects) {
+									if (p.GetPlatformNames().Contains(platform)) {
+										found = true;
+										break;
+									}
+								}
+								if (!found) {
+									location = location.Substring(0, pos) + "|Any CPU";
+								}
+							}
+						}
+						newSec.Items.Add(new SolutionItem(name, location));
+					}
+					break;
+				}
+			}
 			return newSec;
 		}
 		
@@ -568,20 +624,68 @@ namespace ICSharpCode.SharpDevelop.Project
 			return platformNames;
 		}
 		
-		public void ApplySolutionConfigurationToProjects()
+		public void ApplySolutionConfigurationAndPlatformToProjects()
 		{
-			// TODO: Use assignments from project configuration section
-			foreach (IProject p in Projects) {
-				p.Configuration = preferences.ActiveConfiguration;
+			foreach (ProjectConfigurationPlatformMatching l in
+			         GetActiveConfigurationsAndPlatformsForProjects(preferences.ActiveConfiguration,
+			                                                        preferences.ActivePlatform))
+			{
+				l.Project.Configuration = l.Configuration;
+				l.Project.Platform = l.Platform;
 			}
 		}
 		
-		public void ApplySolutionPlatformToProjects()
+		internal class ProjectConfigurationPlatformMatching
 		{
-			// TODO: Use assignments from project configuration section
-			foreach (IProject p in Projects) {
-				p.Platform = preferences.ActivePlatform;
+			public readonly IProject Project;
+			public string Configuration;
+			public string Platform;
+			public SolutionItem SolutionItem;
+			
+			public ProjectConfigurationPlatformMatching(IProject project, string configuration, string platform, SolutionItem solutionItem)
+			{
+				this.Project = project;
+				this.Configuration = configuration;
+				this.Platform = platform;
+				this.SolutionItem = solutionItem;
 			}
+		}
+		
+		internal List<ProjectConfigurationPlatformMatching>
+			GetActiveConfigurationsAndPlatformsForProjects(string solutionConfiguration, string solutionPlatform)
+		{
+			List<ProjectConfigurationPlatformMatching> results = new List<ProjectConfigurationPlatformMatching>();
+			ProjectSection prjSec = GetProjectConfigurationsSection();
+			Dictionary<string, SolutionItem> dict = new Dictionary<string, SolutionItem>();
+			foreach (SolutionItem item in prjSec.Items) {
+				dict[item.Name] = item;
+			}
+			string searchKeyPostFix = "." + solutionConfiguration + "|" + solutionPlatform + ".Build.0";
+			foreach (IProject p in Projects) {
+				string searchKey = p.IdGuid + searchKeyPostFix;
+				SolutionItem solutionItem;
+				if (dict.TryGetValue(searchKey, out solutionItem)) {
+					string targetConfPlat = solutionItem.Location;
+					if (targetConfPlat.IndexOf('|') > 0) {
+						string conf = AbstractProject.GetConfigurationNameFromKey(targetConfPlat);
+						string plat = AbstractProject.GetPlatformNameFromKey(targetConfPlat);
+						results.Add(new ProjectConfigurationPlatformMatching(p, conf, plat, solutionItem));
+					} else {
+						results.Add(new ProjectConfigurationPlatformMatching(p, targetConfPlat, solutionPlatform, solutionItem));
+					}
+				} else {
+					results.Add(new ProjectConfigurationPlatformMatching(p, solutionConfiguration, solutionPlatform, null));
+				}
+			}
+			return results;
+		}
+		
+		internal SolutionItem CreateMatchingItem(string solutionConfiguration, string solutionPlatform, IProject project)
+		{
+			SolutionItem item = new SolutionItem(project.IdGuid + "." + solutionConfiguration + "|"
+			                                     + solutionPlatform + ".Build.0", "");
+			GetProjectConfigurationsSection().Items.Add(item);
+			return item;
 		}
 		
 		static Solution solutionBeingLoaded;

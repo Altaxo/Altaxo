@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="David Alpert" email="david@spinthemoose.com"/>
-//     <version>$Revision: 1048 $</version>
+//     <version>$Revision: 1963 $</version>
 // </file>
 
 // much of TaskView's code has been refactored from
@@ -10,10 +10,15 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
+using System.Text;
 using System.Windows.Forms;
 
-namespace ICSharpCode.Core
+using ICSharpCode.Core;
+
+namespace ICSharpCode.SharpDevelop
 {
 	public enum TaskViewCols : int {
 		Icon = 0,
@@ -47,6 +52,48 @@ namespace ICSharpCode.Core
 		public bool TaskIsSelected {
 			get {
 				return this.FocusedItem!=null;
+			}
+		}
+		
+		public IEnumerable<Task> SelectedTasks {
+			get {
+				foreach (ListViewItem item in this.SelectedItems) {
+					yield return (Task)item.Tag;
+				}
+			}
+		}
+		
+		public void CopySelectionToClipboard()
+		{
+			StringBuilder b = new StringBuilder();
+			foreach (Task t in this.SelectedTasks) {
+				if (b.Length > 0) b.AppendLine();
+				b.Append(t.Description);
+				if (!string.IsNullOrEmpty(t.FileName)) {
+					b.Append(" - ");
+					b.Append(t.FileName);
+					if (t.Line >= 0) {
+						b.Append(':');
+						b.Append(t.Line + 1);
+						if (t.Column > 0) {
+							b.Append(',');
+							b.Append(t.Column + 1);
+						}
+					}
+				}
+			}
+			ClipboardWrapper.SetText(b.ToString());
+		}
+		
+		public void SelectAll()
+		{
+			BeginUpdate();
+			try {
+				foreach (ListViewItem item in this.Items) {
+					item.Selected = true;
+				}
+			} finally {
+				EndUpdate();
 			}
 		}
 		
@@ -154,6 +201,35 @@ namespace ICSharpCode.Core
 				currentListViewItem = item;
 			}
 		}
+		
+		protected override void WndProc(ref Message m)
+		{
+			if (m.Msg == 0x007B) { // handle WM_CONTEXTMENU
+				if (this.SelectedItems.Count > 0) {
+					long lParam = m.LParam.ToInt64();
+					int x = unchecked((short)(lParam & 0xffff));
+					int y = unchecked((short)((lParam & 0xffff0000) >> 16));
+					Point pos;
+					if (x == -1 && y == -1) {
+						pos = this.SelectedItems[0].Bounds.Location;
+						pos.X += 30;
+						pos.Y += 4;
+					} else {
+						pos = PointToClient(new Point(x, y));
+					}
+					string entry = ((Task)this.SelectedItems[0].Tag).ContextMenuAddInTreeEntry;
+					for (int i = 1; i < this.SelectedItems.Count; i++) {
+						string entry2 = ((Task)this.SelectedItems[i].Tag).ContextMenuAddInTreeEntry;
+						if (entry2 != entry) {
+							entry = Task.DefaultContextMenuAddInTreeEntry;
+							break;
+						}
+					}
+					MenuService.ShowContextMenu(this, entry, this, pos.X, pos.Y);
+				}
+			}
+			base.WndProc(ref m);
+		}
 		#endregion
 		
 		#region Task Management
@@ -165,22 +241,15 @@ namespace ICSharpCode.Core
 		
 		public void AddTask(Task task)
 		{
-			string tmpPath;
-			if (task.Project != null && task.FileName != null) {
-				tmpPath = FileUtility.GetRelativePath(task.Project.Directory, task.FileName);
-			} else {
-				tmpPath = task.FileName;
-			}
-			
-			string fileName = tmpPath;
-			string path     = tmpPath;
+			string fileName = task.FileName;
+			string path     = task.FileName;
 			
 			try {
-				fileName = Path.GetFileName(tmpPath);
+				fileName = Path.GetFileName(fileName);
 			} catch (Exception) {}
 			
 			try {
-				path = Path.GetDirectoryName(tmpPath);
+				path = Path.GetDirectoryName(path);
 			} catch (Exception) {}
 			
 			ListViewItem item = new ListViewItem(new string[] {
@@ -231,7 +300,7 @@ namespace ICSharpCode.Core
 			}
 		}
 		
-		public void UpdateResults(System.Collections.Generic.IEnumerable<ICSharpCode.Core.Task> taskSet)
+		public void UpdateResults(IEnumerable<Task> taskSet)
 		{
 			this.BeginUpdate();
 			this.ClearTasks();

@@ -2,18 +2,13 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1051 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.IO;
-using System.Threading;
-using System.Drawing;
-using System.Drawing.Printing;
 using System.Collections.Generic;
-using System.ComponentModel;
+using System.IO;
 using System.Windows.Forms;
-using System.Diagnostics;
 
 using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.Gui;
@@ -50,7 +45,7 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 	
 	public class ExcludeFileFromProject : AbstractMenuCommand
 	{
-		void ExcludeFileNode(FileNode fileNode)
+		public static void ExcludeFileNode(FileNode fileNode)
 		{
 			List<FileNode> dependentNodes = new List<FileNode>();
 			foreach (TreeNode subNode in fileNode.Nodes) {
@@ -60,15 +55,22 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 			}
 			dependentNodes.ForEach(ExcludeFileNode);
 			
-			ProjectService.RemoveProjectItem(fileNode.Project, fileNode.ProjectItem);
-			fileNode.ProjectItem = null;
-			fileNode.FileNodeStatus = FileNodeStatus.None;
-			if (fileNode.Parent is ExtTreeNode) {
-				((ExtTreeNode)fileNode.Parent).UpdateVisibility();
+			bool isLink = fileNode.IsLink;
+			if (fileNode.ProjectItem != null) { // don't try to exclude same node twice
+				ProjectService.RemoveProjectItem(fileNode.Project, fileNode.ProjectItem);
+			}
+			if (isLink) {
+				fileNode.Remove();
+			} else {
+				fileNode.ProjectItem = null;
+				fileNode.FileNodeStatus = FileNodeStatus.None;
+				if (fileNode.Parent is ExtTreeNode) {
+					((ExtTreeNode)fileNode.Parent).UpdateVisibility();
+				}
 			}
 		}
 		
-		void ExcludeDirectoryNode(DirectoryNode directoryNode)
+		static void ExcludeDirectoryNode(DirectoryNode directoryNode)
 		{
 			if (directoryNode.ProjectItem != null) {
 				ProjectService.RemoveProjectItem(directoryNode.Project, directoryNode.ProjectItem);

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1935 $</version>
 // </file>
 
 using System;
@@ -15,10 +15,10 @@ namespace ICSharpCode.TextEditor.Document
 	/// </summary>
 	public class DefaultSelection : ISelection
 	{
-		IDocument document = null;
-		bool      isRectangularSelection = false;
-		Point     startPosition = new Point(-1, -1);
-		Point     endPosition   = new Point(-1, -1);
+		IDocument document;
+		bool      isRectangularSelection;
+		Point     startPosition;
+		Point     endPosition;
 		
 		public Point StartPosition {
 			get {
@@ -95,7 +95,7 @@ namespace ICSharpCode.TextEditor.Document
 		
 		/// <summary>
 		/// Creates a new instance of <see cref="DefaultSelection"/>
-		/// </summary>	
+		/// </summary>
 		public DefaultSelection(IDocument document, Point startPosition, Point endPosition)
 		{
 			this.document      = document;
@@ -112,9 +112,11 @@ namespace ICSharpCode.TextEditor.Document
 		}
 		public bool ContainsPosition(Point position)
 		{
+			if (this.IsEmpty)
+				return false;
 			return startPosition.Y < position.Y && position.Y  < endPosition.Y ||
-			       startPosition.Y == position.Y && startPosition.X <= position.X && (startPosition.Y != endPosition.Y || position.X <= endPosition.X) ||
-			       endPosition.Y == position.Y && startPosition.Y != endPosition.Y && position.X <= endPosition.X;
+				startPosition.Y == position.Y && startPosition.X <= position.X && (startPosition.Y != endPosition.Y || position.X <= endPosition.X) ||
+				endPosition.Y == position.Y && startPosition.Y != endPosition.Y && position.X <= endPosition.X;
 		}
 		
 		public bool ContainsOffset(int offset)

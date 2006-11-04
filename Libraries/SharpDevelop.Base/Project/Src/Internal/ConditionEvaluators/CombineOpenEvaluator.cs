@@ -2,17 +2,14 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1963 $</version>
 // </file>
 
 using System;
-using System.Xml;
-
-
+using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.Project;
-using ICSharpCode.SharpDevelop.Gui;
 
-namespace ICSharpCode.Core
+namespace ICSharpCode.SharpDevelop
 {
 	/// <summary>
 	/// Tests if a solution is open.

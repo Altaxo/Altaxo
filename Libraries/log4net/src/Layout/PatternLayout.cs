@@ -1,6 +1,6 @@
 #region Copyright & License
 //
-// Copyright 2001-2005 The Apache Software Foundation
+// Copyright 2001-2006 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@
 using System;
 using System.Collections;
 using System.IO;
-using System.Text;
 
 using log4net.Core;
 using log4net.Layout.Pattern;
@@ -49,7 +48,7 @@ namespace log4net.Layout
 	/// <para>
 	/// Each conversion specifier starts with a percent sign (%) and is
 	/// followed by optional <i>format modifiers</i> and a <i>conversion
-	/// character</i>. The conversion character specifies the type of
+	/// pattern name</i>. The conversion pattern name specifies the type of
 	/// data, e.g. logger, level, date, thread name. The format
 	/// modifiers control such things as field width, padding, left and
 	/// right justification. The following is a simple example.
@@ -78,11 +77,11 @@ namespace log4net.Layout
 	/// justified to a width of five characters.
 	/// </para>
 	/// <para>
-	/// The recognized conversion characters are:
+	/// The recognized conversion pattern names are:
 	/// </para>
 	/// <list type="table">
 	///     <listheader>
-	///         <term>Conversion Character</term>
+	///         <term>Conversion Pattern Name</term>
 	///         <description>Effect</description>
 	///     </listheader>
 	///     <item>
@@ -127,7 +126,7 @@ namespace log4net.Layout
 	/// 			</para>
 	/// 			<para>
 	/// 			The date format specifier admits the same syntax as the
-	/// 			time pattern string of the <see cref="DateTime.ToString"/>.
+	/// 			time pattern string of the <see cref="DateTime.ToString(string)"/>.
 	/// 			</para>
 	/// 			<para>
 	/// 			For better results it is recommended to use the log4net date
@@ -174,7 +173,7 @@ namespace log4net.Layout
 	///				</para>
 	///				<para>
 	///				<b>WARNING</b> Generating caller location information is
-	///				extremely slow. It's use should be avoided unless execution speed
+	///				extremely slow. Its use should be avoided unless execution speed
 	///				is not an issue.
 	///				</para>
 	/// 			<para>
@@ -191,7 +190,7 @@ namespace log4net.Layout
 	///				</para>
 	///				<para>
 	///				<b>WARNING</b> Generating caller information is
-	///				extremely slow. It's use should be avoided unless execution speed
+	///				extremely slow. Its use should be avoided unless execution speed
 	///				is not an issue.
 	///				</para>
 	///			</description>
@@ -218,8 +217,8 @@ namespace log4net.Layout
 	/// 			number between parentheses.
 	/// 			</para>
 	/// 			<para>
-	/// 			The location information can be very useful. However, it's
-	/// 			generation is <b>extremely</b> slow. It's use should be avoided
+	/// 			The location information can be very useful. However, its
+	/// 			generation is <b>extremely</b> slow. Its use should be avoided
 	/// 			unless execution speed is not an issue.
 	/// 			</para>
 	/// 			<para>
@@ -244,7 +243,7 @@ namespace log4net.Layout
 	///				</para>
 	///				<para>
 	///				<b>WARNING</b> Generating caller location information is
-	///				extremely slow. It's use should be avoided unless execution speed
+	///				extremely slow. Its use should be avoided unless execution speed
 	///				is not an issue.
 	///				</para>
 	/// 			<para>
@@ -308,7 +307,7 @@ namespace log4net.Layout
 	///				</para>
 	///				<para>
 	///				<b>WARNING</b> Generating caller location information is
-	///				extremely slow. It's use should be avoided unless execution speed
+	///				extremely slow. Its use should be avoided unless execution speed
 	///				is not an issue.
 	///				</para>
 	/// 			<para>
@@ -328,7 +327,7 @@ namespace log4net.Layout
 	/// 			characters.
 	/// 			</para>
 	/// 			<para>
-	/// 			This conversion character offers the same performance as using 
+	/// 			This conversion pattern offers the same performance as using 
 	/// 			non-portable line separator strings such as	"\n", or "\r\n". 
 	/// 			Thus, it is the preferred way of specifying a line separator.
 	/// 			</para> 
@@ -448,7 +447,7 @@ namespace log4net.Layout
 	/// 			</para>
 	/// 			<para>
 	/// 			<b>WARNING</b> Generating the caller class information is
-	/// 			slow. Thus, it's use should be avoided unless execution speed is
+	/// 			slow. Thus, its use should be avoided unless execution speed is
 	/// 			not an issue.
 	/// 			</para>
 	/// 			<para>
@@ -469,7 +468,7 @@ namespace log4net.Layout
 	///				</para>
 	///				<para>
 	///				<b>WARNING</b> Generating caller WindowsIdentity information is
-	///				extremely slow. It's use should be avoided unless execution speed
+	///				extremely slow. Its use should be avoided unless execution speed
 	///				is not an issue.
 	///				</para>
 	///			</description>
@@ -488,7 +487,7 @@ namespace log4net.Layout
 	/// 			</para>
 	/// 			<para>
 	/// 			The date format specifier admits the same syntax as the
-	/// 			time pattern string of the <see cref="DateTime.ToString"/>.
+	/// 			time pattern string of the <see cref="DateTime.ToString(string)"/>.
 	/// 			</para>
 	/// 			<para>
 	/// 			For better results it is recommended to use the log4net date
@@ -528,7 +527,7 @@ namespace log4net.Layout
 	/// </list>
 	/// <para>
 	/// The single letter patterns are deprecated in favor of the 
-	/// longer more descriptive patterns.
+	/// longer more descriptive pattern names.
 	/// </para>
 	/// <para>
 	/// By default the relevant information is output as is. However,
@@ -537,7 +536,7 @@ namespace log4net.Layout
 	/// </para>
 	/// <para>
 	/// The optional format modifier is placed between the percent sign
-	/// and the conversion character.
+	/// and the conversion pattern name.
 	/// </para>
 	/// <para>
 	/// The first optional format modifier is the <i>left justification
@@ -673,7 +672,7 @@ namespace log4net.Layout
 	/// </note>
 	/// <para>
 	/// Additional pattern converters may be registered with a specific <see cref="PatternLayout"/>
-	/// instance using the <see cref="AddConverter"/> methods.
+	/// instance using the <see cref="AddConverter(string, Type)"/> method.
 	/// </para>
 	/// </remarks>
 	/// <example>
@@ -766,7 +765,7 @@ namespace log4net.Layout
 		/// </remarks>
 		static PatternLayout()
 		{
-			s_globalRulesRegistry = new Hashtable(35);
+			s_globalRulesRegistry = new Hashtable(45);
 
 			s_globalRulesRegistry.Add("literal", typeof(log4net.Util.PatternStringConverters.LiteralPatternConverter));
 			s_globalRulesRegistry.Add("newline", typeof(log4net.Util.PatternStringConverters.NewLinePatternConverter));

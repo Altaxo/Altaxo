@@ -2,23 +2,19 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1388 $</version>
+//     <version>$Revision: 1958 $</version>
 // </file>
 
 using System;
-using System.ComponentModel;
-using System.CodeDom.Compiler;
-using System.Diagnostics;
-using System.IO;
-using System.Globalization;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.IO;
 using System.Reflection;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Xml;
+
 using ICSharpCode.Core;
+using ICSharpCode.SharpDevelop.Dom;
 using ICSharpCode.SharpDevelop.Gui;
-using ICSharpCode.SharpDevelop.Internal.Templates;
 
 namespace ICSharpCode.SharpDevelop.Project
 {
@@ -27,8 +23,7 @@ namespace ICSharpCode.SharpDevelop.Project
 		protected Dictionary<string, PropertyGroup> configurations     = new Dictionary<string, PropertyGroup>();
 		protected Dictionary<string, PropertyGroup> userConfigurations = new Dictionary<string, PropertyGroup>();
 		
-		protected List<ProjectItem> items   = new List<ProjectItem>();
-		protected List<string>      imports = new List<string>();
+		readonly List<ProjectItem>    items           = new List<ProjectItem>();
 		readonly List<ProjectSection> projectSections = new List<ProjectSection>();
 		
 		string fileName;
@@ -117,7 +112,7 @@ namespace ICSharpCode.SharpDevelop.Project
 			}
 		}
 		
-		protected bool isDirty = false;
+		bool isDirty = false;
 		
 		[Browsable(false)]
 		public bool IsDirty {
@@ -161,19 +156,6 @@ namespace ICSharpCode.SharpDevelop.Project
 		public List<ProjectSection> ProjectSections {
 			get {
 				return projectSections;
-			}
-		}
-		
-		/// <summary>
-		/// Gets the list of MSBuild Imports.
-		/// </summary>
-		/// <returns>
-		/// List of Import filenames, <example>$(MSBuildBinPath)\Microsoft.VisualBasic.targets</example>
-		/// </returns>
-		[Browsable(false)]
-		public List<string> Imports {
-			get {
-				return imports;
 			}
 		}
 		
@@ -240,7 +222,7 @@ namespace ICSharpCode.SharpDevelop.Project
 		
 		[ReadOnly(true)]
 		[LocalizedProperty("${res:Dialog.ProjectOptions.Platform}")]
-		public string Platform {
+		public virtual string Platform {
 			get {
 				return activePlatform;
 			}
@@ -258,7 +240,7 @@ namespace ICSharpCode.SharpDevelop.Project
 		
 		[ReadOnly(true)]
 		[LocalizedProperty("${res:Dialog.ProjectOptions.Configuration}")]
-		public string Configuration {
+		public virtual string Configuration {
 			get {
 				return activeConfiguration;
 			}
@@ -314,6 +296,21 @@ namespace ICSharpCode.SharpDevelop.Project
 			get {
 				string outputPath = GetProperty("OutputPath");
 				return Path.Combine(Path.Combine(Directory, outputPath), AssemblyName + GetExtension(OutputType));
+			}
+		}
+		
+		[Browsable(false)]
+		public string IntermediateOutputFullPath {
+			get {
+				string outputPath = GetProperty("IntermediateOutputPath");
+				if (string.IsNullOrEmpty(outputPath)) {
+					outputPath = GetProperty("BaseIntermediateOutputPath");
+					if (string.IsNullOrEmpty(outputPath)) {
+						outputPath = "obj";
+					}
+					outputPath = Path.Combine(outputPath, activeConfiguration);
+				}
+				return Path.Combine(Directory, outputPath);
 			}
 		}
 		
@@ -722,8 +719,6 @@ namespace ICSharpCode.SharpDevelop.Project
 				item.Dispose();
 			}
 			items.Clear();
-			
-			imports.Clear();
 		}
 		#endregion
 		

@@ -2,12 +2,12 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Shinsaku Nakagawa" email="shinsaku@users.sourceforge.jp"/>
-//     <version>$Revision: 1388 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.Runtime.InteropServices;
 using System.Drawing;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace ICSharpCode.TextEditor

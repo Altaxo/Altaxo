@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision$</version>
+//     <version>$Revision: 1634 $</version>
 // </file>
 
 using System;
@@ -47,7 +47,7 @@ namespace ICSharpCode.NRefactory.Tests.Lexer.CSharp
 			ILexer lexer = GenerateLexer(new StringReader("{}+"));
 			Assert.AreEqual(Tokens.OpenCurlyBrace, lexer.NextToken().kind);
 			lexer.NextToken();
-			lexer.SkipCurrentBlock();
+			lexer.SkipCurrentBlock(Tokens.CloseCurlyBrace);
 			Assert.AreEqual(Tokens.CloseCurlyBrace, lexer.LookAhead.kind);
 			Assert.AreEqual(Tokens.Plus, lexer.NextToken().kind);
 			Assert.AreEqual(Tokens.EOF, lexer.NextToken().kind);
@@ -59,7 +59,7 @@ namespace ICSharpCode.NRefactory.Tests.Lexer.CSharp
 			ILexer lexer = GenerateLexer(new StringReader("{ TestMethod('}'); /* }}} */ while(1) {break;} }+"));
 			Assert.AreEqual(Tokens.OpenCurlyBrace, lexer.NextToken().kind);
 			lexer.NextToken();
-			lexer.SkipCurrentBlock();
+			lexer.SkipCurrentBlock(Tokens.CloseCurlyBrace);
 			Assert.AreEqual(Tokens.CloseCurlyBrace, lexer.LookAhead.kind);
 			Assert.AreEqual(Tokens.Plus, lexer.NextToken().kind);
 			Assert.AreEqual(Tokens.EOF, lexer.NextToken().kind);
@@ -76,7 +76,7 @@ namespace ICSharpCode.NRefactory.Tests.Lexer.CSharp
 			lexer.Peek();
 			lexer.Peek();
 			lexer.Peek();
-			lexer.SkipCurrentBlock();
+			lexer.SkipCurrentBlock(Tokens.CloseCurlyBrace);
 			Assert.AreEqual(Tokens.CloseCurlyBrace, lexer.LookAhead.kind);
 			Assert.AreEqual(Tokens.Plus, lexer.NextToken().kind);
 			Assert.AreEqual(Tokens.EOF, lexer.NextToken().kind);
@@ -92,7 +92,7 @@ namespace ICSharpCode.NRefactory.Tests.Lexer.CSharp
 			lexer.Peek();
 			lexer.Peek();
 			lexer.Peek();
-			lexer.SkipCurrentBlock();
+			lexer.SkipCurrentBlock(Tokens.CloseCurlyBrace);
 			Assert.AreEqual(Tokens.CloseCurlyBrace, lexer.LookAhead.kind);
 			Assert.AreEqual(Tokens.Plus, lexer.NextToken().kind);
 			Assert.AreEqual(Tokens.EOF, lexer.NextToken().kind);

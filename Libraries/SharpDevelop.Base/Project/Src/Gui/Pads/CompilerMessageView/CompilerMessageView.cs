@@ -2,24 +2,18 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1334 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text;
+using System.Drawing;
+using System.IO;
 using System.Threading;
 using System.Windows.Forms;
-using System.Drawing;
-using System.CodeDom.Compiler;
-using System.IO;
-using System.Diagnostics;
+
 using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.Gui.OptionPanels;
-using ICSharpCode.SharpDevelop.Project;
-using ICSharpCode.TextEditor;
-using ICSharpCode.TextEditor.Document;
 
 namespace ICSharpCode.SharpDevelop.Gui
 {
@@ -38,7 +32,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		public static CompilerMessageView Instance {
 			get {
 				if (instance == null)
-					WorkbenchSingleton.SafeThreadCall((MethodInvoker)InitializeInstance);
+					WorkbenchSingleton.SafeThreadCall(InitializeInstance);
 				return instance;
 			}
 		}
@@ -63,7 +57,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			set {
 				if (selectedCategory != value) {
 					selectedCategory = value;
-					textEditorControl.Text = (value < 0) ? "" : messageCategories[value].Text;
+					textEditorControl.Text = (value < 0) ? "" : StringParser.Parse(messageCategories[value].Text);
 					//textEditorControl.Refresh();
 					OnSelectedCategoryIndexChanged(EventArgs.Empty);
 				}
@@ -127,7 +121,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			
 			properties = (Properties)PropertyService.Get(OutputWindowOptionsPanel.OutputWindowsProperty, new Properties());
 			
-			textEditorControl.Font = FontSelectionPanel.ParseFont(properties.Get("DefaultFont", ResourceService.CourierNew10.ToString()).ToString());
+			textEditorControl.Font = FontSelectionPanel.ParseFont(properties.Get("DefaultFont", ResourceService.DefaultMonospacedFont.ToString()).ToString());
 			properties.PropertyChanged += new PropertyChangedEventHandler(PropertyChanged);
 			
 			//textEditorControl.ActiveTextAreaControl.TextArea.DoubleClick += TextEditorControlDoubleClick;
@@ -149,9 +143,9 @@ namespace ICSharpCode.SharpDevelop.Gui
 			bool wordWrap = this.WordWrap;
 			textEditorControl.WordWrap = wordWrap;
 			if (wordWrap) {
-				textEditorControl.ScrollBars = RichTextBoxScrollBars.ForcedBoth;
-			} else {
 				textEditorControl.ScrollBars = RichTextBoxScrollBars.ForcedVertical;
+			} else {
+				textEditorControl.ScrollBars = RichTextBoxScrollBars.ForcedBoth;
 			}
 		}
 		
@@ -183,7 +177,8 @@ namespace ICSharpCode.SharpDevelop.Gui
 		
 		void CategoryTextCleared(object sender, EventArgs e)
 		{
-			WorkbenchSingleton.SafeThreadAsyncCall(this, "ClearText", sender);
+			WorkbenchSingleton.SafeThreadAsyncCall(new Action<MessageViewCategory>(ClearText),
+			                                       (MessageViewCategory)sender);
 		}
 		void ClearText(MessageViewCategory category)
 		{
@@ -195,7 +190,8 @@ namespace ICSharpCode.SharpDevelop.Gui
 		
 		void CategoryTextSet(object sender, TextEventArgs e)
 		{
-			WorkbenchSingleton.SafeThreadAsyncCall(this, "SetText", (MessageViewCategory)sender, e.Text);
+			WorkbenchSingleton.SafeThreadAsyncCall(new Action<MessageViewCategory, string>(SetText),
+			                                       (MessageViewCategory)sender, e.Text);
 		}
 		
 		object appendCallLock = new object();
@@ -205,10 +201,13 @@ namespace ICSharpCode.SharpDevelop.Gui
 		{
 			lock (appendCallLock) {
 				pendingAppendCalls += 1;
+				MessageViewCategory cat = (MessageViewCategory)sender;
 				if (pendingAppendCalls < 5) {
-					WorkbenchSingleton.SafeThreadAsyncCall(this, "AppendText", sender, ((MessageViewCategory)sender).Text, e.Text);
+					WorkbenchSingleton.SafeThreadAsyncCall(new Action<MessageViewCategory, string, string>(AppendText),
+					                                       cat, cat.Text, e.Text);
 				} else if (pendingAppendCalls == 5) {
-					WorkbenchSingleton.SafeThreadAsyncCall(this, "AppendTextCombined", sender);
+					WorkbenchSingleton.SafeThreadAsyncCall(new Action<MessageViewCategory>(AppendTextCombined),
+					                                       cat);
 				}
 			}
 		}
@@ -234,9 +233,12 @@ namespace ICSharpCode.SharpDevelop.Gui
 				SetText(category, category.Text);
 				SetUpdate(true);
 				textEditorControl.SelectionStart = textEditorControl.TextLength;
-				LoggingService.Debug("Replaced " + pendingAppendCalls + " appends with one set call");
+				if (LoggingService.IsDebugEnabled) {
+					LoggingService.Debug("Replaced " + pendingAppendCalls + " appends with one set call");
+				}
 				pendingAppendCalls = 0;
 			}
+			textEditorControl.Refresh();
 		}
 		
 		void AppendText(MessageViewCategory category, string fullText, string text)
@@ -298,7 +300,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 				MessageViewCategory category = (MessageViewCategory)messageCategories[i];
 				if (category.Category == categoryName) {
 					selectedCategory = i;
-					textEditorControl.Text = text;
+					textEditorControl.Text = StringParser.Parse(text);
 					//textEditorControl.Refresh();
 					OnSelectedCategoryIndexChanged(EventArgs.Empty);
 					break;
@@ -364,7 +366,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 				ToolbarService.UpdateToolbar(toolStrip);
 			}
 			if (e.Key == "DefaultFont") {
-				textEditorControl.Font = FontSelectionPanel.ParseFont(properties.Get("DefaultFont", ResourceService.CourierNew10.ToString()).ToString());
+				textEditorControl.Font = FontSelectionPanel.ParseFont(properties.Get("DefaultFont", ResourceService.DefaultMonospacedFont.ToString()).ToString());
 			}
 		}
 		

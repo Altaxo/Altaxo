@@ -2,20 +2,17 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1301 $</version>
+//     <version>$Revision: 1974 $</version>
 // </file>
 
 using System;
-using System.IO;
 using System.Collections;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Diagnostics;
-using System.CodeDom.Compiler;
+using System.IO;
 using System.Windows.Forms;
-using System.Reflection;
 
 using ICSharpCode.Core;
+using ICSharpCode.SharpDevelop.Widgets.AutoHide;
 using WeifenLuo.WinFormsUI;
 
 namespace ICSharpCode.SharpDevelop.Gui
@@ -32,14 +29,28 @@ namespace ICSharpCode.SharpDevelop.Gui
 		ToolStripContainer toolStripContainer;
 		AutoHideMenuStripContainer mainMenuContainer;
 		AutoHideStatusStripContainer statusStripContainer;
+		#if DEBUG
+		static bool firstTimeError = true; // TODO: Debug statement only, remove me
+		#endif
 		
 		public IWorkbenchWindow ActiveWorkbenchwindow {
 			get {
-				if (dockPanel == null || dockPanel.ActiveDocument == null)  {
+				if (dockPanel == null)  {
 					return null;
 				}
+				
+				// TODO: Debug statements only, remove me
+				#if DEBUG
+				if (dockPanel.ActiveDocument != null && !(dockPanel.ActiveDocument is IWorkbenchWindow)) {
+					if (firstTimeError) {
+						MessageBox.Show("ActiveDocument was " + dockPanel.ActiveDocument.GetType().FullName);
+						firstTimeError = false;
+					}
+				}
+				#endif
+				
 				IWorkbenchWindow window = dockPanel.ActiveDocument as IWorkbenchWindow;
-				if (window.IsDisposed) {
+				if (window == null || window.IsDisposed) {
 					return null;
 				}
 				return window;
@@ -131,14 +142,14 @@ namespace ICSharpCode.SharpDevelop.Gui
 					case "HideToolbars":
 						RedrawToolbars();
 						break;
-					//case "HideTabs":
-					//case "HideVerticalScrollbar":
-					//case "HideHorizontalScrollbar":
+						//case "HideTabs":
+						//case "HideVerticalScrollbar":
+						//case "HideHorizontalScrollbar":
 					case "HideStatusBar":
 					case "ShowStatusBarOnMouseMove":
 						RedrawStatusBar();
 						break;
-					//case "HideWindowsTaskbar":
+						//case "HideWindowsTaskbar":
 				}
 			}
 		}
@@ -167,7 +178,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		{
 			try {
 				if (File.Exists(LayoutConfiguration.CurrentLayoutFileName)) {
-					dockPanel.LoadFromXml(LayoutConfiguration.CurrentLayoutFileName, new DeserializeDockContent(GetContent));
+					LoadDockPanelLayout(LayoutConfiguration.CurrentLayoutFileName);
 				} else {
 					LoadDefaultLayoutConfiguration();
 				}
@@ -179,7 +190,17 @@ namespace ICSharpCode.SharpDevelop.Gui
 		void LoadDefaultLayoutConfiguration()
 		{
 			if (File.Exists(LayoutConfiguration.CurrentLayoutTemplateFileName)) {
-				dockPanel.LoadFromXml(LayoutConfiguration.CurrentLayoutTemplateFileName, new DeserializeDockContent(GetContent));
+				LoadDockPanelLayout(LayoutConfiguration.CurrentLayoutTemplateFileName);
+			}
+		}
+		
+		void LoadDockPanelLayout(string fileName)
+		{
+			// LoadFromXml(fileName, ...) locks the file against simultanous read access
+			// -> we would loose the layout when starting two SharpDevelop instances
+			//    at the same time => open stream with shared read access.
+			using (FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read)) {
+				dockPanel.LoadFromXml(fs, new DeserializeDockContent(GetContent));
 			}
 		}
 		
@@ -235,8 +256,8 @@ namespace ICSharpCode.SharpDevelop.Gui
 					IViewContent activeView = GetActiveView();
 					dockPanel.ActiveDocumentChanged -= new EventHandler(ActiveMdiChanged);
 					
-					DetachPadContents(true);
-					DetachViewContents(true);
+					DetachPadContents(false);
+					DetachViewContents(false);
 					dockPanel.ActiveDocumentChanged += new EventHandler(ActiveMdiChanged);
 					
 					LoadLayoutConfiguration();
@@ -423,7 +444,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			Properties properties = (Properties)PropertyService.Get("Workspace.ViewMementos", new Properties());
 			
 			PadContentWrapper newContent = new PadContentWrapper(content);
-			if (content.Icon != null) {
+			if (!string.IsNullOrEmpty(content.Icon)) {
 				newContent.Icon = IconService.GetIcon(content.Icon);
 			}
 			newContent.Text = StringParser.Parse(content.Title);
@@ -438,6 +459,9 @@ namespace ICSharpCode.SharpDevelop.Gui
 			}
 			if (!contentHash.ContainsKey(content.Class)) {
 				DockContent newContent = CreateContent(content);
+				// TODO: read the default dock state from the PadDescriptor
+				// we'll also need to allow for default-hidden (HideOnClose) contents
+				// which seems to be not possible using any Show overload.
 				newContent.Show(dockPanel);
 			} else {
 				contentHash[content.Class].Show();
@@ -456,6 +480,15 @@ namespace ICSharpCode.SharpDevelop.Gui
 		{
 			if (padContent != null && contentHash.ContainsKey(padContent.Class)) {
 				contentHash[padContent.Class].Hide();
+			}
+		}
+		
+		public void UnloadPad(PadDescriptor padContent)
+		{
+			if (padContent != null && contentHash.ContainsKey(padContent.Class)) {
+				contentHash[padContent.Class].Close();
+				contentHash[padContent.Class].Dispose();
+				contentHash.Remove(padContent.Class);
 			}
 		}
 		

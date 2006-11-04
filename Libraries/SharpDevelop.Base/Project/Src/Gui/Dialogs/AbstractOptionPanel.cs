@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1512 $</version>
 // </file>
 
 using System;
@@ -115,8 +115,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		
 		protected void ConnectBrowseFolder(string browseButton, string target)
 		{
-			// TODO: Translation:
-			ConnectBrowseFolder(browseButton, target, "Select folder");
+			ConnectBrowseFolder(browseButton, target, "${res:Dialog.ProjectOptions.SelectFolderTitle}");
 		}
 		protected void ConnectBrowseFolder(string browseButton, string target, string description)
 		{

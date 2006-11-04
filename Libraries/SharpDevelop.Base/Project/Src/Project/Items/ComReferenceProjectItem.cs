@@ -2,13 +2,12 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1252 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
 using System.ComponentModel;
 using System.IO;
-using System.Reflection;
 
 namespace ICSharpCode.SharpDevelop.Project
 {
@@ -107,6 +106,18 @@ namespace ICSharpCode.SharpDevelop.Project
 					if (Project != null && Project.OutputAssemblyFullPath != null) {
 						string outputFolder = Path.GetDirectoryName(Project.OutputAssemblyFullPath);
 						string interopFileName = Path.Combine(outputFolder, String.Concat("Interop.", Include, ".dll"));
+						if (File.Exists(interopFileName)) {
+							return interopFileName;
+						}
+						// Look for ActiveX interop.
+						interopFileName = GetActiveXInteropFileName(outputFolder, Include);
+						if (File.Exists(interopFileName)) {
+							return interopFileName;
+						}
+						
+						// look in obj\Debug:
+						outputFolder = Project.IntermediateOutputFullPath;
+						interopFileName = Path.Combine(outputFolder, String.Concat("Interop.", Include, ".dll"));
 						if (File.Exists(interopFileName)) {
 							return interopFileName;
 						}

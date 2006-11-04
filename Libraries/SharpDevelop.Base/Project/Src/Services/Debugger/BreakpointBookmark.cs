@@ -2,23 +2,18 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1085 $</version>
+//     <version>$Revision: 1968 $</version>
 // </file>
 
 using System;
-using System.Windows.Forms;
 using System.Drawing;
-using System.CodeDom.Compiler;
-using System.Collections;
-using System.IO;
-using System.Diagnostics;
-using ICSharpCode.SharpDevelop.Bookmarks;
 using ICSharpCode.TextEditor;
 using ICSharpCode.TextEditor.Document;
+using ICSharpCode.SharpDevelop.Bookmarks;
 
-namespace ICSharpCode.Core
+namespace ICSharpCode.SharpDevelop.Debugging
 {
-	public class BreakpointBookmark: SDMarkerBookmark
+	public class BreakpointBookmark : SDMarkerBookmark
 	{
 		bool willBeHit = true;
 		

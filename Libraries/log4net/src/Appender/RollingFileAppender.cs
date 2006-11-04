@@ -1,6 +1,6 @@
 #region Copyright & License
 //
-// Copyright 2001-2005 The Apache Software Foundation
+// Copyright 2001-2006 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,17 +20,15 @@ using System;
 using System.Collections;
 using System.Globalization;
 using System.IO;
-using System.Text.RegularExpressions;
 
 using log4net.Util;
-using log4net.Layout;
 using log4net.Core;
 
 namespace log4net.Appender
 {
 #if CONFIRM_WIN32_FILE_SHAREMODES
-	The following sounds good, and I though it was the case, but after
-	further testing on Windows I have not been able to confirm it.
+	// The following sounds good, and I though it was the case, but after
+	// further testing on Windows I have not been able to confirm it.
 
 	/// On the Windows platform if another process has a write lock on the file 
 	/// that is to be deleted, but allows shared read access to the file then the
@@ -475,12 +473,45 @@ namespace log4net.Appender
 		/// <param name="loggingEvent">the event to write to file.</param>
 		/// <remarks>
 		/// <para>
-		/// Handles append time behavior for CompositeRollingAppender.  This checks
+		/// Handles append time behavior for RollingFileAppender.  This checks
 		/// if a roll over either by date (checked first) or time (checked second)
 		/// is need and then appends to the file last.
 		/// </para>
 		/// </remarks>
 		override protected void Append(LoggingEvent loggingEvent) 
+		{
+			AdjustFileBeforeAppend();
+			base.Append(loggingEvent);
+		}
+  
+ 		/// <summary>
+		/// Write out an array of logging events.
+		/// </summary>
+		/// <param name="loggingEvents">the events to write to file.</param>
+		/// <remarks>
+		/// <para>
+		/// Handles append time behavior for RollingFileAppender.  This checks
+		/// if a roll over either by date (checked first) or time (checked second)
+		/// is need and then appends to the file last.
+		/// </para>
+		/// </remarks>
+		override protected void Append(LoggingEvent[] loggingEvents) 
+		{
+			AdjustFileBeforeAppend();
+			base.Append(loggingEvents);
+		}
+
+		/// <summary>
+		/// Performs any required rolling before outputting the next event
+		/// </summary>
+		/// <remarks>
+		/// <para>
+		/// Handles append time behavior for RollingFileAppender.  This checks
+		/// if a roll over either by date (checked first) or time (checked second)
+		/// is need and then appends to the file last.
+		/// </para>
+		/// </remarks>
+		virtual protected void AdjustFileBeforeAppend()
 		{
 			if (m_rollDate) 
 			{
@@ -501,11 +532,8 @@ namespace log4net.Appender
 					RollOverSize();
 				}
 			}
-
-			base.Append(loggingEvent);
 		}
-  
-  
+
 		/// <summary>
 		/// Creates and opens the file for logging.  If <see cref="StaticLogFileName"/>
 		/// is false then the fully qualified name is determined and used.
@@ -552,11 +580,6 @@ namespace log4net.Appender
 				if (!m_staticLogFileName) 
 				{
 					m_scheduledFilename = fileName;
-
-					if (m_countDirection >= 0) 
-					{
-						m_curSizeRollBackups++;
-					}
 				}
 
 				// Open the file (call the base class to do it)
@@ -592,7 +615,7 @@ namespace log4net.Appender
 
 				if (m_countDirection >= 0) 
 				{
-					fileName = fileName + '.' + (m_curSizeRollBackups + 1);
+					fileName = fileName + '.' + m_curSizeRollBackups;
 				}
 			}
 
@@ -800,7 +823,6 @@ namespace log4net.Appender
 			try 
 			{
 				// Bump the counter up to the highest count seen so far
-//				int backup = int.Parse(curFileName.Substring(index + 1), System.Globalization.NumberFormatInfo.InvariantInfo);
 				int backup;
 				if (SystemInfo.TryParse(curFileName.Substring(index + 1), out backup))
 				{
@@ -948,11 +970,6 @@ namespace log4net.Appender
 					ErrorHandler.Error("Either DatePattern or rollingStyle options are not set for ["+Name+"].");
 				}
 			}
-	
-			if (m_rollDate && File != null && m_scheduledFilename == null)
-			{
-				m_scheduledFilename = File + m_now.ToString(m_datePattern, System.Globalization.DateTimeFormatInfo.InvariantInfo);
-			}
 
 			if (SecurityContext == null)
 			{
@@ -961,7 +978,18 @@ namespace log4net.Appender
 
 			using(SecurityContext.Impersonate(this))
 			{
-				m_baseFileName = ConvertToFullPath(base.File.Trim());
+				// Must convert the FileAppender's m_filePath to an absolute path before we
+				// call ExistingInit(). This will be done by the base.ActivateOptions() but
+				// we need to duplicate that functionality here first.
+				base.File = ConvertToFullPath(base.File.Trim());
+
+				// Store fully qualified base file name
+				m_baseFileName = base.File;
+			}
+
+			if (m_rollDate && File != null && m_scheduledFilename == null)
+			{
+				m_scheduledFilename = File + m_now.ToString(m_datePattern, System.Globalization.DateTimeFormatInfo.InvariantInfo);
 			}
 
 			ExistingInit();
@@ -1160,7 +1188,7 @@ namespace log4net.Appender
 		/// <para>
 		/// If the maximum number of size based backups is reached
 		/// (<c>curSizeRollBackups == maxSizeRollBackups</c>) then the oldest
-		/// file is deleted -- it's index determined by the sign of countDirection.
+		/// file is deleted -- its index determined by the sign of countDirection.
 		/// If <c>countDirection</c> &lt; 0, then files
 		/// {<c>File.1</c>, ..., <c>File.curSizeRollBackups -1</c>}
 		/// are renamed to {<c>File.2</c>, ...,
@@ -1190,6 +1218,11 @@ namespace log4net.Appender
 
 			RollOverRenameFiles(File);
 	
+			if (!m_staticLogFileName && m_countDirection >= 0) 
+			{
+				m_curSizeRollBackups++;
+			}
+
 			// This will also close the file. This is OK since multiple close operations are safe.
 			SafeOpenFile(m_baseFileName, false);
 		}
@@ -1202,7 +1235,7 @@ namespace log4net.Appender
 		/// <para>
 		/// If the maximum number of size based backups is reached
 		/// (<c>curSizeRollBackups == maxSizeRollBackups</c>) then the oldest
-		/// file is deleted -- it's index determined by the sign of countDirection.
+		/// file is deleted -- its index determined by the sign of countDirection.
 		/// If <c>countDirection</c> &lt; 0, then files
 		/// {<c>File.1</c>, ..., <c>File.curSizeRollBackups -1</c>}
 		/// are renamed to {<c>File.2</c>, ...,
@@ -1247,12 +1280,33 @@ namespace log4net.Appender
 				} 
 				else 
 				{
-					//countDirection > 0
+					//countDirection >= 0
 					if (m_curSizeRollBackups >= m_maxSizeRollBackups && m_maxSizeRollBackups > 0) 
 					{
 						//delete the first and keep counting up.
-						int oldestFileIndex = m_curSizeRollBackups - m_maxSizeRollBackups + 1;
-						DeleteFile(baseFileName + '.' + oldestFileIndex);
+						int oldestFileIndex = m_curSizeRollBackups - m_maxSizeRollBackups;
+
+						// If static then there is 1 file without a number, therefore 1 less archive
+						if (m_staticLogFileName)
+						{
+							oldestFileIndex++;
+						}
+
+						// If using a static log file then the base for the numbered sequence is the baseFileName passed in
+						// If not using a static log file then the baseFileName will already have a numbered postfix which
+						// we must remove, however it may have a date postfix which we must keep!
+						string archiveFileBaseName = baseFileName;
+						if (!m_staticLogFileName)
+						{
+							int lastDotIndex = archiveFileBaseName.LastIndexOf(".");
+							if (lastDotIndex >= 0) 
+							{
+								archiveFileBaseName = archiveFileBaseName.Substring(0, lastDotIndex);
+							}
+						}
+
+						// Delete the archive file
+						DeleteFile(archiveFileBaseName + '.' + oldestFileIndex);
 					}
 	
 					if (m_staticLogFileName) 
@@ -1269,15 +1323,20 @@ namespace log4net.Appender
 		#region NextCheckDate
 
 		/// <summary>
-		/// Roll on to the next interval after the date passed
+		/// Get the start time of the next window for the current rollpoint
 		/// </summary>
 		/// <param name="currentDateTime">the current date</param>
 		/// <param name="rollPoint">the type of roll point we are working with</param>
-		/// <returns>the next roll point an interval after the currentDateTime date</returns>
+		/// <returns>the start time for the next roll point an interval after the currentDateTime date</returns>
 		/// <remarks>
 		/// <para>
-		/// Advances the date to the next roll point after the 
-		/// currentDateTime date passed to the method.
+		/// Returns the date of the next roll point after the currentDateTime date passed to the method.
+		/// </para>
+		/// <para>
+		/// The basic strategy is to subtract the time parts that are less significant
+		/// than the rollpoint from the current time. This should roll the time back to
+		/// the start of the time window for the current rollpoint. Then we add 1 window
+		/// worth of time and get the start time of the next window for the rollpoint.
 		/// </para>
 		/// </remarks>
 		protected DateTime NextCheckDate(DateTime currentDateTime, RollPoint rollPoint) 
@@ -1285,7 +1344,7 @@ namespace log4net.Appender
 			// Local variable to work on (this does not look very efficient)
 			DateTime current = currentDateTime;
 
-			// Do different things depending on what the type of roll point we are going for is
+			// Do slightly different things depending on what the type of roll point we want.
 			switch(rollPoint) 
 			{
 				case RollPoint.TopOfMinute:
@@ -1338,6 +1397,7 @@ namespace log4net.Appender
 					current = current.AddSeconds(-current.Second);
 					current = current.AddMinutes(-current.Minute);
 					current = current.AddHours(-current.Hour);
+					current = current.AddDays(1 - current.Day); /* first day of month is 1 not 0 */
 					current = current.AddMonths(1);
 					break;
 			}	  

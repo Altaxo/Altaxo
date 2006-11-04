@@ -2,12 +2,14 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1958 $</version>
 // </file>
 
 using System;
+using ICSharpCode.Core;
+using ICSharpCode.SharpDevelop.Dom;
 
-namespace ICSharpCode.Core
+namespace ICSharpCode.SharpDevelop
 {
 	public static class AmbienceService
 	{

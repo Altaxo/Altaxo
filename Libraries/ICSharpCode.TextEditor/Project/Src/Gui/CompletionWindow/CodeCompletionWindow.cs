@@ -2,17 +2,12 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1186 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Reflection;
-using System.Collections;
-using System.Diagnostics;
-
-using ICSharpCode.TextEditor;
 
 namespace ICSharpCode.TextEditor.Gui.CompletionWindow
 {
@@ -151,17 +146,19 @@ namespace ICSharpCode.TextEditor.Gui.CompletionWindow
 		
 		public override bool ProcessKeyEvent(char ch)
 		{
-			if (dataProvider.IsInsertionKey(ch)) {
-				if (ch == ' ' && dataProvider.InsertSpace) {
-					// increment start + end and process as normal space
+			switch (dataProvider.ProcessKey(ch)) {
+				case CompletionDataProviderKeyResult.BeforeStartKey:
+					// increment start + end and process as normal char
 					++startOffset;
-				} else {
+					goto case CompletionDataProviderKeyResult.NormalKey;
+				case CompletionDataProviderKeyResult.NormalKey:
+					++endOffset;
+					return base.ProcessKeyEvent(ch);
+				case CompletionDataProviderKeyResult.InsertionKey:
 					return InsertSelectedItem(ch);
-				}
+				default:
+					throw new InvalidOperationException("Invalid return value of dataProvider.ProcessKey");
 			}
-			dataProvider.InsertSpace = false;
-			++endOffset;
-			return base.ProcessKeyEvent(ch);
 		}
 		
 		protected override void CaretOffsetChanged(object sender, EventArgs e)
@@ -258,16 +255,14 @@ namespace ICSharpCode.TextEditor.Gui.CompletionWindow
 			if (data != null) {
 				control.BeginUpdate();
 				
-				if (endOffset - startOffset > 0) {
-					control.Document.Remove(startOffset, endOffset - startOffset);
+				try {
+					if (endOffset - startOffset > 0) {
+						control.Document.Remove(startOffset, endOffset - startOffset);
+					}
+					result = dataProvider.InsertAction(data, control.ActiveTextAreaControl.TextArea, startOffset, ch);
+				} finally {
+					control.EndUpdate();
 				}
-				if (dataProvider.InsertSpace) {
-					control.Document.Insert(startOffset++, " ");
-				}
-				control.ActiveTextAreaControl.Caret.Position = control.Document.OffsetToPosition(startOffset);
-				
-				result = data.InsertAction(control.ActiveTextAreaControl.TextArea, ch);
-				control.EndUpdate();
 			}
 			Close();
 			return result;

@@ -2,22 +2,20 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.Collections;
-using System.Xml;
-
-
-using ICSharpCode.SharpDevelop.Gui;
 using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.Project;
 
-namespace ICSharpCode.Core
+namespace ICSharpCode.SharpDevelop
 {
 	/// <summary>
 	/// Tests if any project is active or if a project of a specific language is active.
+	/// Can also be used to test the type of the project passed as caller to the condition
+	/// - when a project is passed as caller, the language of that project is tested; otherwise
+	/// the language of the active project is tested.
 	/// </summary>
 	/// <attribute name="activeproject">
 	/// The language name the project should have.
@@ -35,7 +33,7 @@ namespace ICSharpCode.Core
 		{
 			string activeproject = condition.Properties["activeproject"];
 			
-			IProject project = ProjectService.CurrentProject;
+			IProject project = (caller as IProject) ?? ProjectService.CurrentProject;
 			if (activeproject == "*") {
 				return project != null;
 			}

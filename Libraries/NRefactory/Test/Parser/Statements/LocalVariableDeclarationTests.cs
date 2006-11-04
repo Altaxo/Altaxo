@@ -2,16 +2,16 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1076 $</version>
+//     <version>$Revision: 1609 $</version>
 // </file>
 
 using System;
 using System.IO;
 using NUnit.Framework;
 using ICSharpCode.NRefactory.Parser;
-using ICSharpCode.NRefactory.Parser.AST;
+using ICSharpCode.NRefactory.Ast;
 
-namespace ICSharpCode.NRefactory.Tests.AST
+namespace ICSharpCode.NRefactory.Tests.Ast
 {
 	[TestFixture]
 	public class LocalVariableDeclarationTests
@@ -32,13 +32,13 @@ namespace ICSharpCode.NRefactory.Tests.AST
 		[Test]
 		public void CSharpComplexGenericLocalVariableDeclarationTest()
 		{
-			LocalVariableDeclaration lvd = ParseUtilCSharp.ParseStatement<LocalVariableDeclaration>("Generic<Printable, G<Printable[]> > where = new Generic<Printable, G<Printable[]>>();");
+			LocalVariableDeclaration lvd = ParseUtilCSharp.ParseStatement<LocalVariableDeclaration>("Generic<Namespace.Printable, G<Printable[]> > where = new Generic<Namespace.Printable, G<Printable[]>>();");
 			Assert.AreEqual(1, lvd.Variables.Count);
 			Assert.AreEqual("where", ((VariableDeclaration)lvd.Variables[0]).Name);
 			TypeReference type = lvd.GetTypeForVariable(0);
 			Assert.AreEqual("Generic", type.Type);
 			Assert.AreEqual(2, type.GenericTypes.Count);
-			Assert.AreEqual("Printable", type.GenericTypes[0].Type);
+			Assert.AreEqual("Namespace.Printable", type.GenericTypes[0].Type);
 			Assert.AreEqual(0, type.GenericTypes[0].GenericTypes.Count);
 			Assert.AreEqual("G", type.GenericTypes[1].Type);
 			Assert.AreEqual(1, type.GenericTypes[1].GenericTypes.Count);

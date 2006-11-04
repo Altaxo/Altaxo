@@ -2,18 +2,15 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
+using System.Drawing;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
-using System.Collections;
-using System.ComponentModel;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Drawing.Text;
+
 using ICSharpCode.TextEditor.Document;
 
 namespace ICSharpCode.TextEditor
@@ -84,7 +81,7 @@ namespace ICSharpCode.TextEditor
 					
 					if (curLine < textArea.Document.TotalNumberOfLines) {
 						g.DrawString((curLine + 1).ToString(),
-						             lineNumberPainterColor.Font,
+						             lineNumberPainterColor.GetFont(TextEditorProperties.FontContainer),
 						             drawBrush,
 						             backgroundRectangle,
 						             numberStringFormat);
@@ -92,81 +89,67 @@ namespace ICSharpCode.TextEditor
 				}
 			}
 		}
-		
-		Point selectionStartPos;
-		bool selectionComeFromGutter = false;
-		bool selectionGutterDirectionDown = false; // direction of gutter selection affects whether a selection starts at the start of a line or at the end of a line
+
 		public override void HandleMouseDown(Point mousepos, MouseButtons mouseButtons)
 		{
-			selectionComeFromGutter = true;
+			Point selectionStartPos;
+
+			textArea.SelectionManager.selectFrom.where = WhereFrom.Gutter;
 			int realline = textArea.TextView.GetLogicalLine(mousepos);
 			if (realline >= 0 && realline < textArea.Document.TotalNumberOfLines) {
-				if((Control.ModifierKeys & Keys.Shift) != 0 && textArea.SelectionManager.HasSomethingSelected) {
-					// let MouseMove handle a shift-click in a gutter
-					HandleMouseMove(mousepos, mouseButtons);
-				} else {
-					selectionGutterDirectionDown = false; // reset the flag for handling in mousemove
+				// shift-select
+				if((Control.ModifierKeys & Keys.Shift) != 0) {
+					if(!textArea.SelectionManager.HasSomethingSelected && realline != textArea.Caret.Position.Y) {
+						if (realline >= textArea.Caret.Position.Y)
+						{ // at or below starting selection, place the cursor on the next line
+							// nothing is selected so make a new selection from cursor
+							selectionStartPos = textArea.Caret.Position;
+							// whole line selection - start of line to start of next line
+							if (realline < textArea.Document.TotalNumberOfLines - 1)
+							{
+								textArea.SelectionManager.SetSelection(new DefaultSelection(textArea.Document, selectionStartPos, new Point(0, realline + 1)));
+								textArea.Caret.Position = new Point(0, realline + 1);
+							}
+							else
+							{
+								textArea.SelectionManager.SetSelection(new DefaultSelection(textArea.Document, selectionStartPos, new Point(textArea.Document.GetLineSegment(realline).Length + 1, realline)));
+								textArea.Caret.Position = new Point(textArea.Document.GetLineSegment(realline).Length + 1, realline);
+							}
+						}
+						else
+						{ // prior lines to starting selection, place the cursor on the same line as the new selection
+							// nothing is selected so make a new selection from cursor
+							selectionStartPos = textArea.Caret.Position;
+							// whole line selection - start of line to start of next line
+							textArea.SelectionManager.SetSelection(new DefaultSelection(textArea.Document, selectionStartPos, new Point(selectionStartPos.X, selectionStartPos.Y)));
+							textArea.SelectionManager.ExtendSelection(new Point(selectionStartPos.X, selectionStartPos.Y), new Point(0, realline));
+							textArea.Caret.Position = new Point(0, realline);
+						}
+					}
+					else
+					{
+						// let MouseMove handle a shift-click in a gutter
+						MouseEventArgs e = new MouseEventArgs(mouseButtons, 1, mousepos.X, mousepos.Y, 0);
+						textArea.RaiseMouseMove(e);
+					}
+				} else { // this is a new selection with no shift-key
+					// sync the textareamousehandler mouse location
+					// (fixes problem with clicking out into a menu then back to the gutter whilst
+					// there is a selection)
+					textArea.mousepos = mousepos;
+
 					selectionStartPos = new Point(0, realline);
 					textArea.SelectionManager.ClearSelection();
-					textArea.SelectionManager.SetSelection(new DefaultSelection(textArea.Document, selectionStartPos, new Point(textArea.Document.GetLineSegment(realline).Length + 1, realline)));
-					textArea.Caret.Position = selectionStartPos;
-				}
-			}
-		}
-		
-		public override void HandleMouseLeave(EventArgs e)
-		{
-			selectionComeFromGutter = false;
-		}
-		
-		public override void HandleMouseMove(Point mousepos, MouseButtons mouseButtons)
-		{
-			if (mouseButtons == MouseButtons.Left) {
-				if (selectionComeFromGutter) {
-					//TODO: Fix handling of mouse moving off to the left of the gutter before moving the selection down.  Behaviour of selection changes after mouse moves left of gutter while selecting lines
-					int realline       = textArea.TextView.GetLogicalLine(mousepos);
-					Point realmousepos = new Point(0, realline);
-					if (realmousepos.Y < textArea.Document.TotalNumberOfLines) {
-						if (selectionStartPos.Y == realmousepos.Y) {
-							// this setselection defaults for a upward moving selection
-							textArea.SelectionManager.SetSelection(new DefaultSelection(textArea.Document, realmousepos, new Point(0, realmousepos.Y + 1)));
-							selectionGutterDirectionDown = false;
-						} else if (selectionStartPos.Y < realmousepos.Y && textArea.SelectionManager.HasSomethingSelected) {
-							// this fixes the selection for moving the selection down
-							if (! selectionGutterDirectionDown) { //realmousepos.Y - selectionStartPos.Y == 1) {
-								selectionGutterDirectionDown = true;
-								textArea.SelectionManager.SetSelection(new DefaultSelection(textArea.Document, selectionStartPos, new Point(0, selectionStartPos.Y)));
-								// this enforces the screen area update
-								textArea.SelectionManager.ExtendSelection(textArea.SelectionManager.SelectionCollection[0].EndPosition, new Point(0, realmousepos.Y + 1));
-							} else {
-								// selection is extended to the end of the current line
-								textArea.SelectionManager.ExtendSelection(textArea.SelectionManager.SelectionCollection[0].EndPosition, new Point(0, realmousepos.Y + 1));
-							}
-						} else {
-							if(textArea.SelectionManager.HasSomethingSelected) {
-								// this fixes the selection for moving the selection up
-								if (selectionGutterDirectionDown) { // selectionStartPos.Y - realmousepos.Y == 1) { // only fix for first line movement
-									selectionGutterDirectionDown = false;
-									textArea.SelectionManager.SetSelection(new DefaultSelection(textArea.Document, selectionStartPos, new Point(0, realmousepos.Y + 1)));
-									// move the extendselection to here to fix textarea update issues
-									textArea.SelectionManager.ExtendSelection(selectionStartPos, realmousepos);
-								} else {
-									textArea.SelectionManager.ExtendSelection(textArea.Caret.Position, realmousepos);
-								}
-							}
-						}
-						
-						textArea.Caret.Position = realmousepos;
+					// whole line selection - start of line to start of next line
+					if (realline < textArea.Document.TotalNumberOfLines - 1)
+					{
+						textArea.SelectionManager.SetSelection(new DefaultSelection(textArea.Document, selectionStartPos, new Point(selectionStartPos.X, selectionStartPos.Y + 1)));
+						textArea.Caret.Position = new Point(selectionStartPos.X, selectionStartPos.Y + 1);
 					}
-				} else {
-					if (textArea.SelectionManager.HasSomethingSelected) {
-						selectionStartPos  = textArea.Document.OffsetToPosition(textArea.SelectionManager.SelectionCollection[0].Offset);
-						int realline       = textArea.TextView.GetLogicalLine(mousepos);
-						Point realmousepos = new Point(0, realline);
-						if (realmousepos.Y < textArea.Document.TotalNumberOfLines) {
-							textArea.SelectionManager.ExtendSelection(textArea.Caret.Position, realmousepos);
-						}
-						textArea.Caret.Position = realmousepos;
+					else
+					{
+						textArea.SelectionManager.SetSelection(new DefaultSelection(textArea.Document, new Point(0, realline), new Point(textArea.Document.GetLineSegment(realline).Length + 1, selectionStartPos.Y)));
+						textArea.Caret.Position = new Point(textArea.Document.GetLineSegment(realline).Length + 1, selectionStartPos.Y);
 					}
 				}
 			}

@@ -2,18 +2,14 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1096 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.IO;
-using System.Text;
 using System.Drawing;
-using System.Collections;
-using System.ComponentModel;
+using System.IO;
 using System.Windows.Forms;
-using MSjogren.GacTool.FusionNative;
-using ICSharpCode.SharpDevelop.Project;
+
 using ICSharpCode.Core;
 
 namespace ICSharpCode.SharpDevelop.Gui

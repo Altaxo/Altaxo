@@ -2,13 +2,14 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Matthew Ward" email="mrward@users.sourceforge.net"/>
-//     <version>$Revision: 1092 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
-using ICSharpCode.Core;
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+
+using ICSharpCode.Core;
 
 namespace ICSharpCode.SharpDevelop.Util
 {
@@ -166,11 +167,20 @@ namespace ICSharpCode.SharpDevelop.Util
 			
 			if (ProcessExited != null) {
 				process.EnableRaisingEvents = true;
-				process.Exited += new EventHandler(OnProcessExited);
+				process.Exited += OnProcessExited;
 			}
 
-			process.Start();
-			
+			bool started = false;
+			try {
+				process.Start();
+				started = true;
+			} finally {
+				if (!started) {
+					process.Exited -= OnProcessExited;			
+					process = null;
+				}
+			}
+				
 			standardOutputReader = new OutputReader(process.StandardOutput);
 			if (OutputLineReceived != null) {
 				standardOutputReader.LineReceived += new LineReceivedEventHandler(OnOutputLineReceived);

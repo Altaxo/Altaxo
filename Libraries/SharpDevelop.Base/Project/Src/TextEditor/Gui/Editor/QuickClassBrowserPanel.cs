@@ -2,18 +2,18 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="none" email=""/>
-//     <version>$Revision: 1301 $</version>
+//     <version>$Revision: 1418 $</version>
 // </file>
 
 // created on 07.03.2004 at 19:12
 using System;
-using System.Threading;
 using System.Collections;
-using System.IO;
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
-using ICSharpCode.SharpDevelop.Dom;
+
 using ICSharpCode.Core;
+using ICSharpCode.SharpDevelop.Dom;
 
 namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 {

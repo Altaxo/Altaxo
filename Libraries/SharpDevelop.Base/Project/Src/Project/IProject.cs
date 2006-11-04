@@ -2,13 +2,13 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1233 $</version>
+//     <version>$Revision: 1958 $</version>
 // </file>
 
 using System;
-using System.ComponentModel;
-using System.CodeDom.Compiler;
 using System.Collections.Generic;
+using System.ComponentModel;
+
 using ICSharpCode.Core;
 
 namespace ICSharpCode.SharpDevelop.Project
@@ -24,7 +24,8 @@ namespace ICSharpCode.SharpDevelop.Project
 		Module
 	}
 	
-	public interface IProject : ISolutionFolder, IDisposable, IMementoCapable
+	public interface IProject : ISolutionFolder, IDisposable, IMementoCapable,
+		ICSharpCode.SharpDevelop.Dom.IDomProject
 	{
 		List<ProjectItem> Items {
 			get;
@@ -44,15 +45,12 @@ namespace ICSharpCode.SharpDevelop.Project
 			get;
 			set;
 		}
-		string Language {
-			get;
-		}
 		
 		ICSharpCode.SharpDevelop.Dom.LanguageProperties LanguageProperties {
 			get;
 		}
 		
-		ICSharpCode.Core.IAmbience Ambience {
+		ICSharpCode.SharpDevelop.Dom.IAmbience Ambience {
 			get;
 		}
 		
@@ -82,16 +80,11 @@ namespace ICSharpCode.SharpDevelop.Project
 			get;
 		}
 		
-		string OutputAssemblyFullPath {
+		string IntermediateOutputFullPath {
 			get;
 		}
 		
 		OutputType OutputType {
-			get;
-			set;
-		}
-		
-		string RootNamespace {
 			get;
 			set;
 		}

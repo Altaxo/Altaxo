@@ -2,20 +2,12 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.IO;
-using System.Collections;
-using System.Threading;
-using System.Resources;
-using System.Drawing;
-using System.Diagnostics;
-using System.Reflection;
-using System.Xml;
 
-namespace ICSharpCode.Core
+namespace ICSharpCode.SharpDevelop
 {
 	public class Language
 	{

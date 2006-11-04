@@ -2,19 +2,18 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1389 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 
-using ICSharpCode.NRefactory.Parser.AST;
-using ICSharpCode.TextEditor;
+using ICSharpCode.NRefactory.Ast;
 using ICSharpCode.SharpDevelop.Dom;
-using ICSharpCode.Core;
+using ICSharpCode.SharpDevelop.Dom.Refactoring;
 using ICSharpCode.SharpDevelop.Refactoring;
+using ICSharpCode.TextEditor;
 
 namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 {
@@ -22,7 +21,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 	{
 		ArrayList content = new ArrayList();
 		protected IClass currentClass;
-		protected ICSharpCode.SharpDevelop.Refactoring.CodeGenerator codeGen;
+		protected ICSharpCode.SharpDevelop.Dom.Refactoring.CodeGenerator codeGen;
 		protected ClassFinder classFinderContext;
 		
 		public void Initialize(IClass currentClass)
@@ -72,7 +71,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 		{
 			List<AbstractNode> nodes = new List<AbstractNode>();
 			GenerateCode(nodes, items);
-			codeGen.InsertCodeInClass(currentClass, textArea.Document, textArea.Caret.Line, nodes.ToArray());
+			codeGen.InsertCodeInClass(currentClass, new TextEditorDocument(textArea.Document), textArea.Caret.Line, nodes.ToArray());
 			ParserService.ParseCurrentViewContent();
 		}
 		

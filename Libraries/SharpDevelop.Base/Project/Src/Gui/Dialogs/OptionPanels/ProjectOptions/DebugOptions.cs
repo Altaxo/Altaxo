@@ -2,17 +2,12 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="none" email=""/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
 using System.Windows.Forms;
-
-using ICSharpCode.SharpDevelop.Internal.ExternalTool;
-using ICSharpCode.Core;
-using ICSharpCode.SharpDevelop.Gui;
 using ICSharpCode.SharpDevelop.Project;
-
 using RadioBinding = System.Collections.Generic.KeyValuePair<ICSharpCode.SharpDevelop.Project.StartAction, System.Windows.Forms.RadioButton>;
 
 namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
@@ -22,7 +17,7 @@ namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 		public override void LoadPanelContents()
 		{
 			SetupFromXmlResource("ProjectOptions.DebugOptions.xfrm");
-			ConnectBrowseButton("startExternalProgramBrowseButton", "startExternalProgramTextBox", "${res:SharpDevelop.FileFilter.AllFiles}|*.*");
+			ConnectBrowseButton("startExternalProgramBrowseButton", "startExternalProgramTextBox", "${res:SharpDevelop.FileFilter.ExecutableFiles}|*.exe;*.com;*.pif;*.bat;*.cmd");
 			ConnectBrowseFolder("workingDirectoryBrowseButton", "workingDirectoryTextBox");
 			
 			InitializeHelper();

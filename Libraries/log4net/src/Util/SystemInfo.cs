@@ -1,6 +1,6 @@
 #region Copyright & License
 //
-// Copyright 2001-2005 The Apache Software Foundation
+// Copyright 2001-2006 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,10 +17,12 @@
 #endregion
 
 using System;
+using System.Configuration;
 using System.Reflection;
 using System.Text;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Collections;
 
 namespace log4net.Util
 {
@@ -37,6 +39,13 @@ namespace log4net.Util
 	/// <author>Alexey Solofnenko</author>
 	public sealed class SystemInfo
 	{
+		#region Private Constants
+
+		private const string DEFAULT_NULL_TEXT = "(null)";
+		private const string DEFAULT_NOT_AVAILABLE_TEXT = "NOT AVAILABLE";
+
+		#endregion
+
 		#region Private Instance Constructors
 
 		/// <summary>
@@ -52,6 +61,44 @@ namespace log4net.Util
 		}
 
 		#endregion Private Instance Constructors
+
+		#region Public Static Constructor
+
+		/// <summary>
+		/// Initialize default values for private static fields.
+		/// </summary>
+		/// <remarks>
+		/// <para>
+		/// Only static methods are exposed from this type.
+		/// </para>
+		/// </remarks>
+		static SystemInfo()
+		{
+			string nullText = DEFAULT_NULL_TEXT;
+			string notAvailableText = DEFAULT_NOT_AVAILABLE_TEXT;
+
+#if !NETCF
+			// Look for log4net.NullText in AppSettings
+			string nullTextAppSettingsKey = SystemInfo.GetAppSetting("log4net.NullText");
+			if (nullTextAppSettingsKey != null && nullTextAppSettingsKey.Length > 0)
+			{
+				LogLog.Debug("SystemInfo: Initializing NullText value to [" + nullTextAppSettingsKey + "].");
+				nullText = nullTextAppSettingsKey;
+			}
+
+			// Look for log4net.NotAvailableText in AppSettings
+			string notAvailableTextAppSettingsKey = SystemInfo.GetAppSetting("log4net.NotAvailableText");
+			if (notAvailableTextAppSettingsKey != null && notAvailableTextAppSettingsKey.Length > 0)
+			{
+				LogLog.Debug("SystemInfo: Initializing NotAvailableText value to [" + notAvailableTextAppSettingsKey + "].");
+				notAvailableText = notAvailableTextAppSettingsKey;
+			}
+#endif
+			s_notAvailableText = notAvailableText;
+			s_nullText = nullText;
+		}
+
+		#endregion
 
 		#region Public Static Properties
 
@@ -165,6 +212,11 @@ namespace log4net.Util
 		/// <c>GetCurrentThreadId</c> is implemented inline in a header file
 		/// and cannot be called.
 		/// </para>
+		/// <para>
+		/// On the .NET Framework 2.0 the <c>Thread.ManagedThreadId</c> is used as this
+		/// gives a stable id unrelated to the operating system thread ID which may 
+		/// change if the runtime is using fibers.
+		/// </para>
 		/// </remarks>
 		public static int CurrentThreadId
 		{
@@ -172,6 +224,8 @@ namespace log4net.Util
 			{
 #if NETCF
 				return System.Threading.Thread.CurrentThread.GetHashCode();
+#elif NET_2_0
+				return System.Threading.Thread.CurrentThread.ManagedThreadId;
 #else
 				return AppDomain.GetCurrentThreadId();
 #endif
@@ -239,7 +293,7 @@ namespace log4net.Util
 					// Couldn't find a value
 					if (s_hostName == null || s_hostName.Length == 0)
 					{
-						s_hostName = "NOT AVAILABLE";
+						s_hostName = s_notAvailableText;
 					}
 				}
 				return s_hostName;
@@ -295,56 +349,75 @@ namespace log4net.Util
 
 					if (s_appFriendlyName == null || s_appFriendlyName.Length == 0)
 					{
-						s_appFriendlyName = "NOT AVAILABLE";
+						s_appFriendlyName = s_notAvailableText;
 					}
 				}
 				return s_appFriendlyName;
 			}
 		}
 
-		private static DateTime s_processStartTime = DateTime.MinValue;
-
 		/// <summary>
 		/// Get the start time for the current process.
 		/// </summary>
 		/// <remarks>
 		/// <para>
-		/// Tries to get the start time for the current process.
-		/// Failing that it returns the time of the first call to
-		/// this property.
+		/// This is the time at which the log4net library was loaded into the
+		/// AppDomain. Due to reports of a hang in the call to <c>System.Diagnostics.Process.StartTime</c>
+		/// this is not the start time for the current process.
+		/// </para>
+		/// <para>
+		/// The log4net library should be loaded by an application early during its
+		/// startup, therefore this start time should be a good approximation for
+		/// the actual start time.
 		/// </para>
 		/// <para>
 		/// Note that AppDomains may be loaded and unloaded within the
-		/// same process without the process terminating and therefore
-		/// without the process start time being reset.
+		/// same process without the process terminating, however this start time
+		/// will be set per AppDomain.
 		/// </para>
 		/// </remarks>
 		public static DateTime ProcessStartTime
 		{
-			get
-			{
-				if (s_processStartTime == DateTime.MinValue)
-				{
-#if (NETCF || SSCLI)
-					// NETCF does not have the System.Diagnostics.Process class
-					// SSCLI does not support StartTime property in System.Diagnostics.Process
+			get { return s_processStartTime; }
+		}
 
-					// Use the time of the first call as the start time
-					s_processStartTime = DateTime.Now;
-#else
-					try
-					{
-						s_processStartTime = System.Diagnostics.Process.GetCurrentProcess().StartTime;
-					}
-					catch
-					{
-						// Unable to get the start time, use now as the start time
-						s_processStartTime = DateTime.Now;
-					}
-#endif
-				}
-				return s_processStartTime;
-			}
+		/// <summary>
+		/// Text to output when a <c>null</c> is encountered.
+		/// </summary>
+		/// <remarks>
+		/// <para>
+		/// Use this value to indicate a <c>null</c> has been encountered while
+		/// outputting a string representation of an item.
+		/// </para>
+		/// <para>
+		/// The default value is <c>(null)</c>. This value can be overridden by specifying
+		/// a value for the <c>log4net.NullText</c> appSetting in the application's
+		/// .config file.
+		/// </para>
+		/// </remarks>
+		public static string NullText
+		{
+			get { return s_nullText; }
+			set { s_nullText = value; }
+		}
+
+		/// <summary>
+		/// Text to output when an unsupported feature is requested.
+		/// </summary>
+		/// <remarks>
+		/// <para>
+		/// Use this value when an unsupported feature is requested.
+		/// </para>
+		/// <para>
+		/// The default value is <c>NOT AVAILABLE</c>. This value can be overridden by specifying
+		/// a value for the <c>log4net.NotAvailableText</c> appSetting in the application's
+		/// .config file.
+		/// </para>
+		/// </remarks>
+		public static string NotAvailableText
+		{
+			get { return s_notAvailableText; }
+			set { s_notAvailableText = value; }
 		}
 
 		#endregion Public Static Properties
@@ -757,6 +830,36 @@ namespace log4net.Util
 		}
 
 		/// <summary>
+		/// Lookup an application setting
+		/// </summary>
+		/// <param name="key">the application settings key to lookup</param>
+		/// <returns>the value for the key, or <c>null</c></returns>
+		/// <remarks>
+		/// <para>
+		/// Configuration APIs are not supported under the Compact Framework
+		/// </para>
+		/// </remarks>
+		public static string GetAppSetting(string key)
+		{
+			try
+			{
+#if NETCF
+				// Configuration APIs are not suported under the Compact Framework
+#elif NET_2_0
+				return ConfigurationManager.AppSettings[key];
+#else
+				return ConfigurationSettings.AppSettings[key];
+#endif
+			}
+			catch(Exception ex)
+			{
+				// If an exception is thrown here then it looks like the config file does not parse correctly.
+				LogLog.Error("DefaultRepositorySelector: Exception while reading ConfigurationSettings. Check your .config file is well formed XML.", ex);
+			}
+			return null;
+		}
+
+		/// <summary>
 		/// Convert a path into a fully qualified local file path.
 		/// </summary>
 		/// <param name="path">The path to convert.</param>
@@ -795,7 +898,7 @@ namespace log4net.Util
 			}
 			catch
 			{
-				// ignore uri exceptions
+				// Ignore URI exceptions & SecurityExceptions from SystemInfo.ApplicationBaseDirectory
 			}
 
 			if (baseDirectory != null && baseDirectory.Length > 0)
@@ -804,6 +907,24 @@ namespace log4net.Util
 				return Path.GetFullPath(Path.Combine(baseDirectory, path));
 			}
 			return Path.GetFullPath(path);
+		}
+
+		/// <summary>
+		/// Creates a new case-insensitive instance of the <see cref="Hashtable"/> class with the default initial capacity. 
+		/// </summary>
+		/// <returns>A new case-insensitive instance of the <see cref="Hashtable"/> class with the default initial capacity</returns>
+		/// <remarks>
+		/// <para>
+		/// The new Hashtable instance uses the default load factor, the CaseInsensitiveHashCodeProvider, and the CaseInsensitiveComparer.
+		/// </para>
+		/// </remarks>
+		public static Hashtable CreateCaseInsensitiveHashtable()
+		{
+#if NETCF
+			return new Hashtable(CaseInsensitiveHashCodeProvider.Default, CaseInsensitiveComparer.Default);
+#else
+			return System.Collections.Specialized.CollectionsUtil.CreateCaseInsensitiveHashtable();
+#endif
 		}
 
 		#endregion Public Static Methods
@@ -876,6 +997,21 @@ namespace log4net.Util
 		/// </summary>
 		private static string s_appFriendlyName;
 
+		/// <summary>
+		/// Text to output when a <c>null</c> is encountered.
+		/// </summary>
+		private static string s_nullText;
+
+		/// <summary>
+		/// Text to output when an unsupported feature is requested.
+		/// </summary>
+		private static string s_notAvailableText;
+
+		/// <summary>
+		/// Start time for the current process.
+		/// </summary>
+		private static DateTime s_processStartTime = DateTime.Now;
+
 		#endregion
 
 		#region Compact Framework Helper Classes
@@ -902,13 +1038,13 @@ namespace log4net.Util
 				NameBased = 0x03,
 				Random = 0x04
 			}
-         
+
 			// constants that are used in the class
 			private class Const
 			{
 				// number of bytes in guid
 				public const int ByteArraySize = 16;
-         
+
 				// multiplex variant info
 				public const int VariantByte = 8;
 				public const int VariantByteMask = 0x3f;
@@ -926,25 +1062,25 @@ namespace log4net.Util
 				public const uint PROV_RSA_FULL = 1;
 				public const uint CRYPT_VERIFYCONTEXT = 0xf0000000;
 
-				[DllImport("coredll.dll")] 
+				[DllImport("CoreDll.dll")] 
 				public static extern bool CryptAcquireContext(
 					ref IntPtr phProv, string pszContainer, string pszProvider,
 					uint dwProvType, uint dwFlags);
 
-				[DllImport("coredll.dll")] 
+				[DllImport("CoreDll.dll")] 
 				public static extern bool CryptReleaseContext( 
 					IntPtr hProv, uint dwFlags);
 
-				[DllImport("coredll.dll")] 
+				[DllImport("CoreDll.dll")] 
 				public static extern bool CryptGenRandom(
 					IntPtr hProv, int dwLen, byte[] pbBuffer);
 			}
-      
+
 			// all static methods
 			private PocketGuid()
 			{
 			}
-      
+
 			/// <summary>
 			/// Return a new System.Guid object.
 			/// </summary>
@@ -952,7 +1088,7 @@ namespace log4net.Util
 			{
 				IntPtr hCryptProv = IntPtr.Zero;
 				Guid guid = Guid.Empty;
-         
+
 				try
 				{
 					// holds random bits for guid
@@ -965,14 +1101,14 @@ namespace log4net.Util
 						throw new SystemException(
 							"Failed to acquire cryptography handle.");
 					}
-      
+
 					// generate a 128 bit (16 byte) cryptographically random number
 					if (!WinApi.CryptGenRandom(hCryptProv, bits.Length, bits))
 					{
 						throw new SystemException(
 							"Failed to generate cryptography random bytes.");
 					}
-            
+
 					// set the variant
 					bits[Const.VariantByte] &= Const.VariantByteMask;
 					bits[Const.VariantByte] |= 
@@ -982,7 +1118,7 @@ namespace log4net.Util
 					bits[Const.VersionByte] &= Const.VersionByteMask;
 					bits[Const.VersionByte] |= 
 						((int)GuidVersion.Random << Const.VersionByteShift);
-         
+
 					// create the new System.Guid object
 					guid = new Guid(bits);
 				}
@@ -992,7 +1128,7 @@ namespace log4net.Util
 					if (hCryptProv != IntPtr.Zero)
 						WinApi.CryptReleaseContext(hCryptProv, 0);
 				}
-         
+
 				return guid;
 			}
 		}

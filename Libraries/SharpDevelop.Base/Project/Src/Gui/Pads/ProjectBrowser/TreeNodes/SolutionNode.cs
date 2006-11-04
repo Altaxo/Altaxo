@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1228 $</version>
+//     <version>$Revision: 1576 $</version>
 // </file>
 
 using System;
@@ -37,7 +37,7 @@ namespace ICSharpCode.SharpDevelop.Project
 		{
 			sortOrder = -1;
 			this.solution = solution;
-			Text = "Solution " + solution.Name;
+			UpdateText();;
 			autoClearNodes = false;
 			canLabelEdit = true;
 			
@@ -60,21 +60,24 @@ namespace ICSharpCode.SharpDevelop.Project
 				if (!FileService.CheckFileName(newName))
 					return;
 				string newFileName = Path.Combine(solution.Directory, newName + ".sln");
-				if (File.Exists(newFileName)) {
-					MessageService.ShowError("The file " + newFileName + " already exists.");
+				if (!FileService.RenameFile(solution.FileName, newFileName, false)) {
 					return;
 				}
-				FileService.RenameFile(solution.FileName, newFileName, false);
 				solution.FileName = newFileName;
 				solution.Name = newName;
 			} finally {
-				Text = "Solution " + solution.Name;
+				UpdateText();
 			}
+		}
+		
+		void UpdateText()
+		{
+			Text = ResourceService.GetString("ICSharpCode.SharpDevelop.Commands.ProjectBrowser.SolutionNodeText") + " " + solution.Name;
 		}
 		
 		public void AddItem(string fileName)
 		{
-			const string folderName = "Solution Items";
+			string folderName = ResourceService.GetString("ICSharpCode.SharpDevelop.Commands.ProjectBrowser.SolutionItemsNodeText");
 			SolutionFolderNode node = null;
 			foreach (TreeNode n in Nodes) {
 				node = n as SolutionFolderNode;

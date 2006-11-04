@@ -202,7 +202,7 @@ namespace log4net.Appender
 		}
 
 		/// <summary>
-		/// This method is called by the <see cref="AppenderSkeleton.DoAppend"/>
+		/// This method is called by the <see cref="AppenderSkeleton.DoAppend(LoggingEvent)"/>
 		/// method. 
 		/// </summary>
 		/// <param name="loggingEvent">The event to log.</param>
@@ -223,7 +223,31 @@ namespace log4net.Appender
 			{
 				m_qtw.Flush();
 			} 
-		} 
+		}
+
+		/// <summary>
+		/// This method is called by the <see cref="AppenderSkeleton.DoAppend(LoggingEvent[])"/>
+		/// method. 
+		/// </summary>
+		/// <param name="loggingEvents">The array of events to log.</param>
+		/// <remarks>
+		/// <para>
+		/// This method writes all the bulk logged events to the output writer
+		/// before flushing the stream.
+		/// </para>
+		/// </remarks>
+		override protected void Append(LoggingEvent[] loggingEvents) 
+		{
+			foreach(LoggingEvent loggingEvent in loggingEvents)
+			{
+				RenderLoggingEvent(m_qtw, loggingEvent);
+			}
+
+			if (m_immediateFlush) 
+			{
+				m_qtw.Flush();
+			} 
+		}
 
 		/// <summary>
 		/// Close this appender instance. The underlying stream or writer is also closed.

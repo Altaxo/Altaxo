@@ -2,22 +2,13 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1392 $</version>
+//     <version>$Revision: 1751 $</version>
 // </file>
 
 using System;
-using System.Collections;
-using System.Diagnostics;
-using System.IO;
-
-using ICSharpCode.Core;
-
 using ICSharpCode.SharpDevelop.Dom;
-using ICSharpCode.SharpDevelop.Project;
 
-using ICSharpCode.SharpDevelop.Gui;
-
-namespace ICSharpCode.Core
+namespace ICSharpCode.SharpDevelop
 {
 	public delegate void ParseInformationEventHandler(object sender, ParseInformationEventArgs e);
 	

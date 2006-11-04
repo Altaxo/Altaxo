@@ -2,16 +2,13 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.Windows.Forms;
-using System.Collections;
-using System.ComponentModel;
 using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Drawing.Text;
+using System.Windows.Forms;
+
 using ICSharpCode.TextEditor.Document;
 
 namespace ICSharpCode.TextEditor
@@ -24,8 +21,12 @@ namespace ICSharpCode.TextEditor
 	/// </summary>
 	public abstract class AbstractMargin
 	{
+		Cursor cursor = Cursors.Default;
+		
+		[CLSCompliant(false)]
 		protected Rectangle drawingPosition = new Rectangle(0, 0, 0, 0);
-		protected TextArea  textArea;
+		[CLSCompliant(false)]
+		protected TextArea textArea;
 		
 		public Rectangle DrawingPosition {
 			get {
@@ -56,7 +57,10 @@ namespace ICSharpCode.TextEditor
 		
 		public virtual Cursor Cursor {
 			get {
-				return Cursors.Default;
+				return cursor;
+			}
+			set {
+				cursor = value;
 			}
 		}
 		

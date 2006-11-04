@@ -2,18 +2,16 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1185 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.IO;
-using System.Xml;
-using System.Xml.XPath;
-using System.Xml.Xsl;
+using System.Text;
 using System.Windows.Forms;
+using System.Xml;
+using System.Xml.Xsl;
 
 using ICSharpCode.Core;
 
@@ -167,7 +165,7 @@ namespace ICSharpCode.SharpDevelop.Project.Converter
 			
 			public string Negate(string booleanString)
 			{
-				return (!bool.Parse(booleanString)).ToString();
+				return "false".Equals(booleanString, StringComparison.OrdinalIgnoreCase).ToString();
 			}
 			
 			public string GetFileName(string fileName)
@@ -236,7 +234,7 @@ namespace ICSharpCode.SharpDevelop.Project.Converter
 			}
 			// We have to use the stringWriter for writing because xslt.Transform doesn't use
 			// writer.Formatting. Also, we need to remove some unwanted whitespace from the beginning.
-			using (MSBuildFileWriter writer = new MSBuildFileWriter(outFile, Encoding.UTF8)) {
+			using (XmlTextWriter writer = new XmlTextWriter(outFile, Encoding.UTF8)) {
 				writer.Formatting = Formatting.Indented;
 				using (XmlTextReader reader = new XmlTextReader(new StringReader(stringWriter.ToString()))) {
 					reader.WhitespaceHandling = WhitespaceHandling.Significant;

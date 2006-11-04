@@ -2,16 +2,15 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 975 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using ICSharpCode.NRefactory.Parser.AST;
 
+using ICSharpCode.NRefactory.Ast;
 using ICSharpCode.SharpDevelop.Dom;
-using ICSharpCode.Core;
 
 namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 {
@@ -19,14 +18,14 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 	{
 		public override string CategoryName {
 			get {
-				return "Generate Equals and GetHashCode methods";
+				return "${res:ICSharpCode.SharpDevelop.CodeGenerator.GenerateEqualsAndGetHashCode}";
 			}
 		}
 		
 		public override void GenerateCode(List<AbstractNode> nodes, IList items)
 		{
 			TypeReference intReference = new TypeReference("System.Int32");
-			MethodDeclaration method = new MethodDeclaration("GetHashCode", Modifier.Public | Modifier.Override, intReference, null, null);
+			MethodDeclaration method = new MethodDeclaration("GetHashCode", Modifiers.Public | Modifiers.Override, intReference, null, null);
 			Expression expr = CallGetHashCode(new IdentifierExpression(currentClass.Fields[0].Name));
 			for (int i = 1; i < currentClass.Fields.Count; i++) {
 				IdentifierExpression identifier = new IdentifierExpression(currentClass.Fields[i].Name);
@@ -40,7 +39,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 			TypeReference boolReference = new TypeReference("System.Boolean");
 			TypeReference objectReference = new TypeReference("System.Object");
 			
-			method = new MethodDeclaration("Equals", Modifier.Public | Modifier.Override, boolReference, null, null);
+			method = new MethodDeclaration("Equals", Modifiers.Public | Modifiers.Override, boolReference, null, null);
 			method.Parameters.Add(new ParameterDeclarationExpression(objectReference, "obj"));
 			method.Body = new BlockStatement();
 			

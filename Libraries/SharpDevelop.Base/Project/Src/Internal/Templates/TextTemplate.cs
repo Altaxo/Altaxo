@@ -2,15 +2,12 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.IO;
-using System.Xml;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Xml;
 
 using ICSharpCode.Core;
 
@@ -23,10 +20,10 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 	/// </summary>
 	public class TextTemplate
 	{
-		public static ArrayList TextTemplates = new ArrayList();
+		public static List<TextTemplate> TextTemplates = new List<TextTemplate>();
 		
-		string    name    = null;
-		ArrayList entries = new ArrayList();
+		string name = null;
+		List<Entry> entries = new List<Entry>();
 		
 		public string Name {
 			get {
@@ -34,7 +31,7 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 			}
 		}
 		
-		public ArrayList Entries {
+		public List<Entry> Entries {
 			get {
 				return entries;
 			}

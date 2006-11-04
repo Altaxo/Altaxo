@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1388 $</version>
+//     <version>$Revision: 1944 $</version>
 // </file>
 
 using System;
@@ -87,6 +87,13 @@ namespace ICSharpCode.Core
 			this.ResumeLayout(false);
 		}
 		
+		protected override void OnKeyDown(KeyEventArgs e)
+		{
+			if (cancelButton == -1 && e.KeyCode == Keys.Escape) {
+				this.Close();
+			}
+		}
+		
 		void ButtonClick(object sender, EventArgs e) 
 		{
 			result = (int)((Control)sender).Tag;
@@ -133,6 +140,7 @@ namespace ICSharpCode.Core
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.Name = "CustomDialog";
+			this.KeyPreview = true;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
 			this.Text = "CustomDialog";
 		}

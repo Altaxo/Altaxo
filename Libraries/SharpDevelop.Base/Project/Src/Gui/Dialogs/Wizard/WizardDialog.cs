@@ -2,17 +2,14 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.Diagnostics;
-using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Collections;
-using System.ComponentModel;
+using System.Collections.Generic;
+using System.Drawing;
 using System.Windows.Forms;
-using System.Xml;
 
 using ICSharpCode.Core;
 
@@ -115,7 +112,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			finishButton.Enabled = CanFinish;
 		}
 		
-		void AddNodes(object customizer, ArrayList dialogPanelDescriptors)
+		void AddNodes(object customizer, IEnumerable<IDialogPanelDescriptor> dialogPanelDescriptors)
 		{
 			foreach (IDialogPanelDescriptor descriptor in dialogPanelDescriptors) {
 				
@@ -198,7 +195,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			this.Text = title;
 			
 			if (node != null) {
-				AddNodes(customizer, node.BuildChildItems(this));
+				AddNodes(customizer, node.BuildChildItems<IDialogPanelDescriptor>(this));
 			}
 			InitializeComponents();
 			

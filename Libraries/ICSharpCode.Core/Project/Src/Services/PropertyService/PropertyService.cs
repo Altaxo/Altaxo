@@ -2,11 +2,10 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 948 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.Reflection;
 using System.IO;
 using System.Text;
 using System.Xml;
@@ -23,6 +22,14 @@ namespace ICSharpCode.Core
 		
 		static Properties properties;
 		
+		public static bool Initialized
+		{
+			get
+			{
+				return properties != null;
+			}
+		}
+
 		public static void InitializeService(string configDirectory, string dataDirectory, string propertiesName)
 		{
 			if (properties != null)

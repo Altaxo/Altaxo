@@ -2,11 +2,10 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using ICSharpCode.TextEditor.Undo;
 
 namespace ICSharpCode.TextEditor.Document
 {
@@ -15,7 +14,9 @@ namespace ICSharpCode.TextEditor.Document
 	/// </summary>
 	public class AbstractSegment : ISegment
 	{
+		[CLSCompliant(false)]
 		protected int offset = -1;
+		[CLSCompliant(false)]
 		protected int length = -1;
 		
 		#region ICSharpCode.TextEditor.Document.ISegment interface implementation

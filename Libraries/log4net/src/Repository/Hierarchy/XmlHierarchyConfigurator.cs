@@ -23,8 +23,6 @@ using System.Reflection;
 using System.Xml;
 
 using log4net.Appender;
-using log4net.Layout;
-using log4net.Filter;
 using log4net.Util;
 using log4net.Core;
 using log4net.ObjectRenderer;
@@ -137,11 +135,8 @@ namespace log4net.Repository.Hierarchy
 				}
 			}
 
-#if (!NETCF)
-			LogLog.Debug("XmlHierarchyConfigurator: Configuration update mode [" + configUpdateMode.ToString(CultureInfo.InvariantCulture) + "].");
-#else
+			// IMPL: The IFormatProvider argument to Enum.ToString() is deprecated in .NET 2.0
 			LogLog.Debug("XmlHierarchyConfigurator: Configuration update mode [" + configUpdateMode.ToString() + "].");
-#endif
 
 			// Only reset configuration if overwrite flag specified
 			if (configUpdateMode == ConfigUpdateMode.Overwrite)
@@ -591,10 +586,33 @@ namespace log4net.Repository.Hierarchy
 			}
 			else
 			{
+				string propertyValue = null;
+
 				if (element.GetAttributeNode(VALUE_ATTR) != null)
 				{
-					string propertyValue = element.GetAttribute(VALUE_ATTR);
+					propertyValue = element.GetAttribute(VALUE_ATTR);
+				}
+				else if (element.HasChildNodes)
+				{
+					// Concatenate the CDATA and Text nodes together
+					foreach(XmlNode childNode in element.ChildNodes)
+					{
+						if (childNode.NodeType == XmlNodeType.CDATA || childNode.NodeType == XmlNodeType.Text)
+						{
+							if (propertyValue == null)
+							{
+								propertyValue = childNode.InnerText;
+							}
+							else
+							{
+								propertyValue += childNode.InnerText;
+							}
+						}
+					}
+				}
 
+				if(propertyValue != null)
+				{
 #if !NETCF	
 					try
 					{
@@ -704,14 +722,28 @@ namespace log4net.Repository.Hierarchy
 				}
 				else
 				{
-					// No value specified
-					Type defaultObjectType = null;
-					if (propertyType.IsClass && !propertyType.IsAbstract)
-					{
-						defaultObjectType = propertyType;
-					}
+					object createdObject = null;
 
-					object createdObject = CreateObjectFromXml(element, defaultObjectType, propertyType);
+					if (propertyType == typeof(string) && !HasAttributesOrElements(element))
+					{
+						// If the property is a string and the element is empty (no attributes
+						// or child elements) then we special case the object value to an empty string.
+						// This is necessary because while the String is a class it does not have
+						// a default constructor that creates an empty string, which is the behavior
+						// we are trying to simulate and would be expected from CreateObjectFromXml
+						createdObject = "";
+					}
+					else
+					{
+						// No value specified
+						Type defaultObjectType = null;
+						if (IsTypeConstructible(propertyType))
+						{
+							defaultObjectType = propertyType;
+						}
+
+						createdObject = CreateObjectFromXml(element, defaultObjectType, propertyType);
+					}
 
 					if (createdObject == null)
 					{
@@ -752,6 +784,41 @@ namespace log4net.Repository.Hierarchy
 					}
 				}
 			}
+		}
+
+		/// <summary>
+		/// Test if an element has no attributes or child elements
+		/// </summary>
+		/// <param name="element">the element to inspect</param>
+		/// <returns><c>true</c> if the element has any attributes or child elements, <c>false</c> otherwise</returns>
+		private bool HasAttributesOrElements(XmlElement element)
+		{
+			foreach(XmlNode node in element.ChildNodes)
+			{
+				if (node.NodeType == XmlNodeType.Attribute || node.NodeType == XmlNodeType.Element)
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+
+		/// <summary>
+		/// Test if a <see cref="Type"/> is constructible with <c>Activator.CreateInstance</c>.
+		/// </summary>
+		/// <param name="type">the type to inspect</param>
+		/// <returns><c>true</c> if the type is creatable using a default constructor, <c>false</c> otherwise</returns>
+		private static bool IsTypeConstructible(Type type)
+		{
+			if (type.IsClass && !type.IsAbstract)
+			{
+				ConstructorInfo defaultConstructor = type.GetConstructor(new Type[0]);
+				if (defaultConstructor != null && !defaultConstructor.IsAbstract && !defaultConstructor.IsPrivate)
+				{
+					return true;
+				}
+			}
+			return false;
 		}
 
 		/// <summary>
@@ -809,7 +876,7 @@ namespace log4net.Repository.Hierarchy
 		protected object ConvertStringTo(Type type, string value)
 		{
 			// Hack to allow use of Level in property
-			if (type.IsAssignableFrom(typeof(Level)))
+			if (typeof(Level) == type)
 			{
 				// Property wants a level
 				Level levelValue = m_hierarchy.LevelMap[value];
@@ -853,7 +920,7 @@ namespace log4net.Repository.Hierarchy
 			{
 				if (defaultTargetType == null)
 				{
-					LogLog.Error("XmlHierarchyConfigurator: Object type not specified. Cannot create object.");
+					LogLog.Error("XmlHierarchyConfigurator: Object type not specified. Cannot create object of type ["+typeConstraint.FullName+"]. Missing Value or Type.");
 					return null;
 				}
 				else

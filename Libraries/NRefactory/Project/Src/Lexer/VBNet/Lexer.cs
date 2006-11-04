@@ -2,23 +2,19 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Andrea Paatz" email="andrea@icsharpcode.net"/>
-//     <version>$Revision: 1018 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.IO;
-using System.Collections;
-using System.Drawing;
-using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Text;
-using ICSharpCode.NRefactory.Parser;
 
 namespace ICSharpCode.NRefactory.Parser.VB
 {
 	internal class Lexer : AbstractLexer
 	{
-		bool lineEnd = false;
+		bool lineEnd = true;
 		
 		public Lexer(TextReader reader) : base(reader)
 		{
@@ -62,7 +58,11 @@ namespace ICSharpCode.NRefactory.Parser.VB
 						int x = Col - 1;
 						int y = Line;
 						if (HandleLineEnd(ch)) {
-							if (!lineEnd) {
+							if (lineEnd) {
+								// second line end before getting to a token
+								// -> here was a blank line
+								specialTracker.AddEndOfLine(new Location(x, y));
+							} else {
 								lineEnd = true;
 								return new Token(Tokens.EOL, x, y);
 							}
@@ -247,6 +247,7 @@ namespace ICSharpCode.NRefactory.Parser.VB
 			return Char.ToUpper((char)ReaderPeek(), CultureInfo.InvariantCulture);
 		}
 		
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1818:DoNotConcatenateStringsInsideLoops")]
 		Token ReadDigit(char ch, int x)
 		{
 			sb.Length = 0;
@@ -469,10 +470,10 @@ namespace ICSharpCode.NRefactory.Parser.VB
 		
 		void ReadPreprocessorDirective()
 		{
-			Point start = new Point(Col - 1, Line);
+			Location start = new Location(Col - 1, Line);
 			string directive = ReadIdent('#');
-			string argument  = ReadToEOL();
-			this.specialTracker.AddPreProcessingDirective(directive, argument.Trim(), start, new Point(start.X + directive.Length + argument.Length, start.Y));
+			string argument  = ReadToEndOfLine();
+			this.specialTracker.AddPreprocessingDirective(directive, argument.Trim(), start, new Location(start.X + directive.Length + argument.Length, start.Y));
 		}
 		
 		string ReadDate()
@@ -524,12 +525,10 @@ namespace ICSharpCode.NRefactory.Parser.VB
 		
 		void ReadComment()
 		{
-			Point startPos = new Point(Col, Line);
+			Location startPos = new Location(Col, Line);
 			sb.Length = 0;
 			StringBuilder curWord = specialCommentHash != null ? new StringBuilder() : null;
 			int missingApostrophes = 2; // no. of ' missing until it is a documentation comment
-			int x = Col;
-			int y = Line;
 			int nextChar;
 			while ((nextChar = ReaderRead()) != -1) {
 				char ch = (char)nextChar;
@@ -559,9 +558,9 @@ namespace ICSharpCode.NRefactory.Parser.VB
 						string tag = curWord.ToString();
 						curWord.Length = 0;
 						if (specialCommentHash.ContainsKey(tag)) {
-							Point p = new Point(Col, Line);
-							string comment = ch + ReadToEOL();
-							tagComments.Add(new TagComment(tag, comment, p, new Point(Col, Line)));
+							Location p = new Location(Col, Line);
+							string comment = ch + ReadToEndOfLine();
+							this.TagComments.Add(new TagComment(tag, comment, p, new Location(Col, Line)));
 							sb.Append(comment);
 							break;
 						}
@@ -572,7 +571,7 @@ namespace ICSharpCode.NRefactory.Parser.VB
 				specialTracker.StartComment(CommentType.SingleLine, startPos);
 			}
 			specialTracker.AddString(sb.ToString());
-			specialTracker.FinishComment(new Point(Col, Line));
+			specialTracker.FinishComment(new Location(Col, Line));
 		}
 		
 		Token ReadOperator(char ch)
@@ -707,6 +706,19 @@ namespace ICSharpCode.NRefactory.Parser.VB
 					return new Token(Tokens.QuestionMark, x, y);
 			}
 			return null;
+		}
+		
+		public override void SkipCurrentBlock(int targetToken)
+		{
+			int lastKind = -1;
+			int kind = base.lastToken.kind;
+			while (kind != Tokens.EOF &&
+			       !(lastKind == Tokens.End && kind == targetToken))
+			{
+				lastKind = kind;
+				NextToken();
+				kind = lastToken.kind;
+			}
 		}
 	}
 }

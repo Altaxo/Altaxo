@@ -2,16 +2,13 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.IO;
-using System.Drawing;
-using System.Collections;
+using System.Collections.Generic;
 using System.Windows.Forms;
 
-using ICSharpCode.SharpDevelop.Internal.ExternalTool;
 using ICSharpCode.Core;
 
 namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
@@ -47,7 +44,7 @@ namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 		
 		public override bool StorePanelContents()
 		{
-			ArrayList tokens = new ArrayList();
+			List<string> tokens = new List<string>();
 			
 			foreach (ListViewItem item in taskList.Items) {
 				string text = item.Text.Trim();
@@ -56,7 +53,7 @@ namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 				}
 			}
 			
-			PropertyService.Set("SharpDevelop.TaskListTokens", tokens.ToArray(typeof(string)));
+			PropertyService.Set("SharpDevelop.TaskListTokens", tokens.ToArray());
 			
 			return true;
 		}

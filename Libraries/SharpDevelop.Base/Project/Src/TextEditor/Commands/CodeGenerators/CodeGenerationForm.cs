@@ -2,16 +2,17 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 964 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
 using System.Collections;
 using System.Drawing;
 using System.Windows.Forms;
-using ICSharpCode.TextEditor;
-using ICSharpCode.SharpDevelop.Dom;
+
 using ICSharpCode.Core;
+using ICSharpCode.SharpDevelop.Dom;
+using ICSharpCode.TextEditor;
 
 namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 {
@@ -71,7 +72,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 			
 			foreach (CodeGeneratorBase codeGenerator in codeGenerators) {
 				if (codeGenerator.IsActive) {
-					ListViewItem newItem = new ListViewItem(codeGenerator.CategoryName);
+					ListViewItem newItem = new ListViewItem(StringParser.Parse(codeGenerator.CategoryName));
 					newItem.ImageIndex = codeGenerator.ImageIndex;
 					newItem.Tag        = codeGenerator;
 					categoryListView.Items.Add(newItem);
@@ -124,7 +125,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 				return;
 			}
 			
-			statusLabel.Text = codeGenerator.Hint;
+			statusLabel.Text = StringParser.Parse(codeGenerator.Hint);
 			selectionListBox.BeginUpdate();
 			selectionListBox.Items.Clear();
 			if (codeGenerator.Content.Count > 0) {
@@ -217,7 +218,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 			this.statusLabel.Name = "statusLabel";
 			this.statusLabel.Size = new System.Drawing.Size(262, 16);
 			this.statusLabel.TabIndex = 1;
-			this.statusLabel.Text = "Choose fields to generate getters and setters";
+			this.statusLabel.Text = "statusLabel";
 			this.statusLabel.UseCompatibleTextRendering = true;
 			// 
 			// categoryListView

@@ -2,20 +2,24 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1391 $</version>
+//     <version>$Revision: 1958 $</version>
 // </file>
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using ICSharpCode.Core;
-using ICSharpCode.TextEditor.Gui.CompletionWindow;
-using ICSharpCode.TextEditor.Document;
-using ICSharpCode.SharpDevelop;
-using ICSharpCode.SharpDevelop.Dom;
-using ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor;
-using ICSharpCode.SharpDevelop.Dom.NRefactoryResolver;
+using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.Parser;
+using ICSharpCode.NRefactory.Visitors;
+using ICSharpCode.SharpDevelop;
+using ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor;
+using ICSharpCode.SharpDevelop.Dom;
+using ICSharpCode.SharpDevelop.Dom.CSharp;
+using ICSharpCode.SharpDevelop.Dom.NRefactoryResolver;
+using ICSharpCode.SharpDevelop.Dom.Refactoring;
+using ICSharpCode.TextEditor.Document;
+using ICSharpCode.TextEditor.Gui.CompletionWindow;
+using AST = ICSharpCode.NRefactory.Ast;
 using CSTokens = ICSharpCode.NRefactory.Parser.CSharp.Tokens;
 
 namespace CSharpBinding
@@ -24,7 +28,7 @@ namespace CSharpBinding
 	{
 		public override bool HandleKeyPress(SharpDevelopTextAreaControl editor, char ch)
 		{
-			Parser.ExpressionFinder ef = new Parser.ExpressionFinder(editor.FileName);
+			CSharpExpressionFinder ef = new CSharpExpressionFinder(editor.FileName);
 			int cursor = editor.ActiveTextAreaControl.Caret.Offset;
 			ExpressionContext context = null;
 			if (ch == '(') {
@@ -35,10 +39,10 @@ namespace CSharpBinding
 							context = ExpressionContext.Default;
 							break;
 						case "using":
-							context = ExpressionContext.TypeDerivingFrom(ReflectionReturnType.Disposable.GetUnderlyingClass(), false);
+							context = ExpressionContext.TypeDerivingFrom(ParserService.CurrentProjectContent.GetClass("System.IDisposable"), false);
 							break;
 						case "catch":
-							context = ExpressionContext.TypeDerivingFrom(ReflectionReturnType.Exception.GetUnderlyingClass(), false);
+							context = ExpressionContext.TypeDerivingFrom(ParserService.CurrentProjectContent.GetClass("System.Exception"), false);
 							break;
 						case "foreach":
 						case "typeof":
@@ -62,7 +66,7 @@ namespace CSharpBinding
 				if (TextUtilities.FindPrevWordStart(editor.Document, cursor) <= line.Offset) {
 					// [ is first character on the line
 					// -> Attribute completion
-					editor.ShowCompletionWindow(new AttributesDataProvider(), ch);
+					editor.ShowCompletionWindow(new AttributesDataProvider(ParserService.CurrentProjectContent), ch);
 					return true;
 				}
 			} else if (ch == ',' && CodeCompletionOptions.InsightRefreshOnComma && CodeCompletionOptions.InsightEnabled) {
@@ -108,10 +112,21 @@ namespace CSharpBinding
 						ResolveResult resolveResult = ParserService.Resolve(result, editor.ActiveTextAreaControl.Caret.Line + 1, editor.ActiveTextAreaControl.Caret.Column + 1, editor.FileName, documentText);
 						if (resolveResult != null && resolveResult.ResolvedType != null) {
 							IClass underlyingClass = resolveResult.ResolvedType.GetUnderlyingClass();
-							if (underlyingClass != null && underlyingClass.IsTypeInInheritanceTree(ProjectContentRegistry.Mscorlib.GetClass("System.MulticastDelegate"))) {
+							if (underlyingClass != null && underlyingClass.IsTypeInInheritanceTree(ParserService.CurrentProjectContent.GetClass("System.MulticastDelegate"))) {
 								EventHandlerCompletitionDataProvider eventHandlerProvider = new EventHandlerCompletitionDataProvider(result.Expression, resolveResult);
 								eventHandlerProvider.InsertSpace = true;
 								editor.ShowCompletionWindow(eventHandlerProvider, ch);
+							}
+						}
+					}
+				} else if (position > 0) {
+					ExpressionResult result = ef.FindFullExpression(documentText, position);
+					
+					if(result.Expression != null) {
+						ResolveResult resolveResult = ParserService.Resolve(result, editor.ActiveTextAreaControl.Caret.Line + 1, editor.ActiveTextAreaControl.Caret.Column + 1, editor.FileName, documentText);
+						if (resolveResult != null && resolveResult.ResolvedType != null) {
+							if (ProvideContextCompletion(editor, resolveResult.ResolvedType, ch)) {
+								return true;
 							}
 						}
 					}
@@ -142,7 +157,7 @@ namespace CSharpBinding
 						                                         editor.Document.TextContent);
 						if (rr != null && rr.ResolvedType != null) {
 							ClassFinder context = new ClassFinder(editor.FileName, editor.ActiveTextAreaControl.Caret.Line, t.col);
-							if (ICSharpCode.SharpDevelop.Refactoring.CodeGenerator.CanUseShortTypeName(rr.ResolvedType, context))
+							if (CodeGenerator.CanUseShortTypeName(rr.ResolvedType, context))
 								CSharpAmbience.Instance.ConversionFlags = ConversionFlags.None;
 							else
 								CSharpAmbience.Instance.ConversionFlags = ConversionFlags.UseFullyQualifiedNames;
@@ -157,6 +172,7 @@ namespace CSharpBinding
 			return false;
 		}
 		
+		#region Re-show insight window
 		void ShowInsight(SharpDevelopTextAreaControl editor, MethodInsightDataProvider dp, Stack<ResolveResult> parameters, char charTyped)
 		{
 			int paramCount = parameters.Count;
@@ -202,14 +218,15 @@ namespace CSharpBinding
 			}
 		}
 		
-		void ProvideContextCompletion(SharpDevelopTextAreaControl editor, IReturnType expected, char charTyped)
+		bool ProvideContextCompletion(SharpDevelopTextAreaControl editor, IReturnType expected, char charTyped)
 		{
 			IClass c = expected.GetUnderlyingClass();
-			if (c == null) return;
+			if (c == null) return false;
 			if (c.ClassType == ClassType.Enum) {
 				CtrlSpaceCompletionDataProvider cdp = new CtrlSpaceCompletionDataProvider();
 				cdp.ForceNewExpression = true;
-				CachedCompletionDataProvider cache = new CachedCompletionDataProvider(cdp);
+				ContextCompletionDataProvider cache = new ContextCompletionDataProvider(cdp);
+				cache.activationKey = charTyped;
 				cache.GenerateCompletionData(editor.FileName, editor.ActiveTextAreaControl.TextArea, charTyped);
 				ICompletionData[] completionData = cache.CompletionData;
 				Array.Sort(completionData);
@@ -223,15 +240,35 @@ namespace CSharpBinding
 					}
 				}
 				if (cache.DefaultIndex >= 0) {
-					cache.InsertSpace = true;
+					if (charTyped != ' ') cdp.InsertSpace = true;
 					editor.ShowCompletionWindow(cache, charTyped);
+					return true;
 				}
 			}
+			return false;
 		}
+		
+		private class ContextCompletionDataProvider : CachedCompletionDataProvider
+		{
+			internal char activationKey;
+			
+			internal ContextCompletionDataProvider(ICompletionDataProvider baseProvider) : base(baseProvider)
+			{
+			}
+			
+			public override CompletionDataProviderKeyResult ProcessKey(char key)
+			{
+				if (key == '=' && activationKey == '=')
+					return CompletionDataProviderKeyResult.BeforeStartKey;
+				activationKey = '\0';
+				return base.ProcessKey(key);
+			}
+		}
+		#endregion
 		
 		bool IsInComment(SharpDevelopTextAreaControl editor)
 		{
-			Parser.ExpressionFinder ef = new Parser.ExpressionFinder(editor.FileName);
+			CSharpExpressionFinder ef = new CSharpExpressionFinder(editor.FileName);
 			int cursor = editor.ActiveTextAreaControl.Caret.Offset - 1;
 			return ef.FilterComments(editor.Document.GetText(0, cursor + 1), ref cursor) == null;
 		}
@@ -258,6 +295,15 @@ namespace CSharpBinding
 					return true;
 				case "new":
 					return ShowNewCompletion(editor);
+				case "case":
+					return DoCaseCompletion(editor);
+				case "return":
+					IMember m = GetCurrentMember(editor);
+					if (m != null) {
+						return ProvideContextCompletion(editor, m.ReturnType, ' ');
+					} else {
+						goto default;
+					}
 				default:
 					return base.HandleKeyword(editor, word);
 			}
@@ -265,7 +311,7 @@ namespace CSharpBinding
 		
 		bool ShowNewCompletion(SharpDevelopTextAreaControl editor)
 		{
-			Parser.ExpressionFinder ef = new Parser.ExpressionFinder(editor.FileName);
+			CSharpExpressionFinder ef = new CSharpExpressionFinder(editor.FileName);
 			int cursor = editor.ActiveTextAreaControl.Caret.Offset;
 			ExpressionContext context = ef.FindExpression(editor.Document.GetText(0, cursor) + " T.", cursor + 2).Context;
 			if (context.IsObjectCreation) {
@@ -274,5 +320,58 @@ namespace CSharpBinding
 			}
 			return false;
 		}
+		
+		IMember GetCurrentMember(SharpDevelopTextAreaControl editor)
+		{
+			ICSharpCode.TextEditor.Caret caret = editor.ActiveTextAreaControl.Caret;
+			NRefactoryResolver r = new NRefactoryResolver(ParserService.CurrentProjectContent);
+			if (r.Initialize(editor.FileName, caret.Line + 1, caret.Column + 1)) {
+				return r.CallingMember;
+			} else {
+				return null;
+			}
+		}
+		
+		#region "case"-keyword completion
+		bool DoCaseCompletion(SharpDevelopTextAreaControl editor)
+		{
+			ICSharpCode.TextEditor.Caret caret = editor.ActiveTextAreaControl.Caret;
+			NRefactoryResolver r = new NRefactoryResolver(ParserService.CurrentProjectContent);
+			if (r.Initialize(editor.FileName, caret.Line + 1, caret.Column + 1)) {
+				AST.INode currentMember = r.ParseCurrentMember(editor.Text);
+				if (currentMember != null) {
+					CaseCompletionSwitchFinder ccsf = new CaseCompletionSwitchFinder(caret.Line + 1, caret.Column + 1);
+					currentMember.AcceptVisitor(ccsf, null);
+					if (ccsf.bestStatement != null) {
+						r.RunLookupTableVisitor(currentMember);
+						ResolveResult rr = r.ResolveInternal(ccsf.bestStatement.SwitchExpression, ExpressionContext.Default);
+						if (rr != null && rr.ResolvedType != null) {
+							return ProvideContextCompletion(editor, rr.ResolvedType, ' ');
+						}
+					}
+				}
+			}
+			return false;
+		}
+		
+		private class CaseCompletionSwitchFinder : AbstractAstVisitor
+		{
+			Location caretLocation;
+			internal AST.SwitchStatement bestStatement;
+			
+			public CaseCompletionSwitchFinder(int caretLine, int caretColumn)
+			{
+				caretLocation = new Location(caretColumn, caretLine);
+			}
+			
+			public override object VisitSwitchStatement(AST.SwitchStatement switchStatement, object data)
+			{
+				if (switchStatement.StartLocation < caretLocation && caretLocation < switchStatement.EndLocation) {
+					bestStatement = switchStatement;
+				}
+				return base.VisitSwitchStatement(switchStatement, data);
+			}
+		}
+		#endregion
 	}
 }

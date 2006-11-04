@@ -2,14 +2,14 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1301 $</version>
+//     <version>$Revision: 1968 $</version>
 // </file>
 
 using System;
-using System.Diagnostics;
 using ICSharpCode.Core;
-using ICSharpCode.SharpDevelop.Gui;
 using ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor;
+using ICSharpCode.SharpDevelop.Gui;
+using ICSharpCode.SharpDevelop.Debugging;
 using ICSharpCode.TextEditor;
 
 namespace ICSharpCode.SharpDevelop.Project.Commands

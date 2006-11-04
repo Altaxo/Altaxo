@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1391 $</version>
+//     <version>$Revision: 1872 $</version>
 // </file>
 
 using System;
@@ -77,7 +77,7 @@ class TestClass {
 			Assert.IsTrue(result is MemberResolveResult);
 			IMethod m = (IMethod)((MemberResolveResult)result).ResolvedMember;
 			Assert.AreEqual("TestClass", m.ReturnType.FullyQualifiedName);
-			Assert.AreEqual(1, m.ReturnType.ArrayDimensions);
+			Assert.AreEqual(1, m.ReturnType.CastToArrayReturnType().ArrayDimensions);
 		}
 		
 		[Test]

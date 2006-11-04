@@ -2,24 +2,144 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1957 $</version>
 // </file>
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Collections;
 using System.Windows.Forms;
-using System.Text;
 
 using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.Gui;
-using ICSharpCode.SharpDevelop.Project;
-
 using ICSharpCode.SharpDevelop.Internal.ExternalTool;
+using ICSharpCode.SharpDevelop.Project;
 
 namespace ICSharpCode.SharpDevelop.Commands
 {
+	public class NavigationHistoryMenuBuilder : ISubmenuBuilder
+	{
+		// TODO: refactor BuildSubmenu to add a choice between flat and perfile, eventually per class/method sorting of the list
+		
+		ToolStripItem[] BuildMenuFlat(ICollection<INavigationPoint> points, int additionalItems)
+		{
+			ToolStripItem[] items = new ToolStripItem[points.Count+additionalItems];
+			MenuCommand cmd = null;
+			INavigationPoint p = null;
+			List<INavigationPoint> list = new List<INavigationPoint>(points);
+			
+			int n = points.Count-1; // the last point
+			int i = 0;
+			while (i<points.Count) {
+				p = list[n-i];
+				cmd = new MenuCommand(p.Description, new EventHandler(NavigateTo));
+				cmd.Tag = p;
+//					if (p == NavigationService.CurrentPosition) {
+//						cmd.Text = "*** "+cmd.Text;
+//					}
+				items[i++] = cmd;
+			}
+			return items;
+		}
+		ToolStripItem[] BuildMenuByFile(ICollection<INavigationPoint> points, int additionalItems)
+		{
+			Dictionary<string, List<INavigationPoint>> files =
+				new Dictionary<string, List<INavigationPoint>>();
+			List<string> fileNames = new List<string>();
+			
+			foreach (INavigationPoint p in points) {
+				if (p.FileName==null) {
+					throw new ApplicationException("should not get here!");
+				}
+				if (!fileNames.Contains(p.FileName)) {
+					fileNames.Add(p.FileName);
+					files.Add(p.FileName, new List<INavigationPoint>());
+				}
+				if (!files[p.FileName].Contains(p)) {
+					files[p.FileName].Add(p);
+				}
+			}
+			
+			fileNames.Sort();
+			
+			ToolStripItem[] items =
+				new ToolStripItem[fileNames.Count + additionalItems];
+			ToolStripMenuItem containerItem = null;
+			MenuCommand cmd = null;
+			int i = 0;
+			
+			foreach (string fname in fileNames) {
+				
+				// create a menu bucket
+				containerItem = new ToolStripMenuItem();
+				containerItem.Text = System.IO.Path.GetFileName(fname);
+				containerItem.ToolTipText = fname;
+				
+				// sort and populate the bucket's contents
+//				files[fname].Sort();
+				foreach(INavigationPoint p in files[fname]) {
+					cmd = new MenuCommand(p.Description, new EventHandler(NavigateTo));
+					cmd.Tag = p;
+					containerItem.DropDownItems.Add(cmd);
+				}
+				
+				// if there's only one nested item, add it 
+				// to the result directly, ignoring the bucket
+//				if (containerItem.DropDownItems.Count==1) {
+//					items[i] = containerItem.DropDownItems[0];
+//					items[i].Text = ((INavigationPoint)items[i].Tag).FullDescription;
+//					i++;
+//				} else {
+//					// add the bucket to the result
+//					items[i++] = containerItem;
+//				}
+					// add the bucket to the result
+					items[i++] = containerItem;
+			}
+			
+			return items;
+		}
+
+		public ToolStripItem[] BuildSubmenu(Codon codon, object owner)
+		{
+			MenuCommand cmd = null;
+			if (NavigationService.CanNavigateBack || NavigationService.CanNavigateForwards) {
+				ICollection<INavigationPoint> points = NavigationService.Points;
+
+				//ToolStripItem[] items = BuildMenuFlat(points, numberOfAdditionalItems);
+				ToolStripItem[] items = BuildMenuByFile(points, numberOfAdditionalItems);
+				
+				int i = items.Length - numberOfAdditionalItems;
+				
+				// additional item 1
+				items[i++] = new ToolStripSeparator();
+				
+				// additional item 2
+				cmd = new MenuCommand("${res:XML.MainMenu.Navigation.ClearHistory}", new EventHandler(ClearHistory));
+				items[i++] = cmd;
+				
+				return items;
+			}
+			
+			// default is to disable the dropdown feature...
+			return null;
+		}
+
+		int numberOfAdditionalItems = 2;
+		
+		public void NavigateTo(object sender, EventArgs e)
+		{
+			MenuCommand item = (MenuCommand)sender;
+			NavigationService.Go((INavigationPoint)item.Tag);
+		}
+		
+		public void ClearHistory(object sender, EventArgs e)
+		{
+			NavigationService.ClearHistory();
+		}
+	}
+	
 	public class RecentFilesMenuBuilder : ISubmenuBuilder
 	{
 		public ToolStripItem[] BuildSubmenu(Codon codon, object owner)
@@ -104,15 +224,12 @@ namespace ICSharpCode.SharpDevelop.Commands
 			Process p = (Process)sender;
 			string output = p.StandardOutput.ReadToEnd();
 			
-			TaskService.BuildMessageViewCategory.AppendText(Environment.NewLine + "Exited with code:" + p.ExitCode + Environment.NewLine);
+			TaskService.BuildMessageViewCategory.AppendText(output + Environment.NewLine + "${res:XML.MainMenu.ToolMenu.ExternalTools.ExitedWithCode} " + p.ExitCode + Environment.NewLine);
 		}
 		
 		void ToolEvt(object sender, EventArgs e)
 		{
 			MenuCommand item = (MenuCommand)sender;
-			
-			
-			
 			
 			for (int i = 0; i < ToolLoader.Tool.Count; ++i) {
 				if (item.Text == ToolLoader.Tool[i].ToString()) {
@@ -149,6 +266,16 @@ namespace ICSharpCode.SharpDevelop.Commands
 					string command = StringParser.Parse(tool.Command);
 					string args    = StringParser.Parse(tool.Arguments);
 					
+					if (tool.PromptForArguments) {
+						InputBox box = new InputBox();
+						box.Text = tool.MenuCommand;
+						box.Label.Text = ResourceService.GetString("XML.MainMenu.ToolMenu.ExternalTools.EnterArguments");
+						box.TextBox.Text = args;
+						if (box.ShowDialog() != DialogResult.OK)
+							return;
+						args = box.TextBox.Text;
+					}
+					
 					try {
 						ProcessStartInfo startinfo;
 						if (args == null || args.Length == 0 || args.Trim('"', ' ').Length == 0) {
@@ -170,7 +297,7 @@ namespace ICSharpCode.SharpDevelop.Commands
 						}
 						process.Start();
 					} catch (Exception ex) {
-						MessageService.ShowError("External program execution failed.\nError while starting:\n '" + command + " " + args + "'\n" + ex.Message);
+						MessageService.ShowError("${res:XML.MainMenu.ToolMenu.ExternalTools.ExecutionFailed} '" + command + " " + args + "'\n" + ex.Message);
 					}
 					break;
 				}
@@ -353,7 +480,7 @@ namespace ICSharpCode.SharpDevelop.Commands
 				this.padDescriptor = padDescriptor;
 				Text = StringParser.Parse(padDescriptor.Title);
 				
-				if (padDescriptor.Icon != null) {
+				if (!string.IsNullOrEmpty(padDescriptor.Icon)) {
 					base.Image = IconService.GetBitmap(padDescriptor.Icon);
 				}
 				
@@ -375,13 +502,13 @@ namespace ICSharpCode.SharpDevelop.Commands
 		
 		public ToolStripItem[] BuildSubmenu(Codon codon, object owner)
 		{
-			ArrayList items = new ArrayList();
+			List<ToolStripItem> items = new List<ToolStripItem>();
 			foreach (PadDescriptor padContent in WorkbenchSingleton.Workbench.PadContentCollection) {
 				if (padContent.Category == Category) {
 					items.Add(new MyMenuItem(padContent));
 				}
 			}
-			return (ToolStripItem[])items.ToArray(typeof(ToolStripItem));
+			return items.ToArray();
 		}
 	}
 }

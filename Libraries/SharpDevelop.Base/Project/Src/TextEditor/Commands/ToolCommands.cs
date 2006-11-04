@@ -2,29 +2,22 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 988 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.IO;
-using System.Threading;
 using System.Drawing;
-using System.Drawing.Printing;
-using System.Collections;
-using System.ComponentModel;
-using System.Windows.Forms;
-using System.Diagnostics;
+using System.IO;
 using System.Text;
+using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Xsl;
-using System.Xml.XPath;
 
 using ICSharpCode.Core;
-
-using ICSharpCode.SharpDevelop.Gui;
-using ICSharpCode.TextEditor.Document;
 using ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor;
+using ICSharpCode.SharpDevelop.Gui;
 using ICSharpCode.TextEditor;
+using ICSharpCode.TextEditor.Document;
 
 namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 {
@@ -39,7 +32,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 			}
 			TextEditorControl textarea = ((ITextEditorControlProvider)window.ViewContent).TextEditorControl;
 			
-			using (ColorDialog cd = new ColorDialog()) {
+			using (SharpDevelopColorDialog cd = new SharpDevelopColorDialog()) {
 				if (cd.ShowDialog(ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.MainForm) == DialogResult.OK) {
 					string ext = Path.GetExtension(textarea.FileName).ToLowerInvariant();
 					string colorstr;
@@ -87,14 +80,14 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 
 			LineSegment line = textAreaControl.Document.GetLineSegment(startLine);
 			string curLine   = textAreaControl.Document.GetText(line.Offset, line.Length).Trim();
-			if (!curLine.StartsWith("///") && ! curLine.StartsWith("'@")) {
+			if (!curLine.StartsWith("///") && ! curLine.StartsWith("'''")) {
 				return;
 			}
 
 			while (startLine > 0) {
 				line    = textAreaControl.Document.GetLineSegment(startLine);
 				curLine = textAreaControl.Document.GetText(line.Offset, line.Length).Trim();
-				if (curLine.StartsWith("///") || curLine.StartsWith("'@")) {
+				if (curLine.StartsWith("///") || curLine.StartsWith("'''")) {
 					--startLine;
 				} else {
 					break;
@@ -104,7 +97,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 			while (endLine < textAreaControl.Document.TotalNumberOfLines - 1) {
 				line    = textAreaControl.Document.GetLineSegment(endLine);
 				curLine = textAreaControl.Document.GetText(line.Offset, line.Length).Trim();
-				if (curLine.StartsWith("///") || curLine.StartsWith("'@")) {
+				if (curLine.StartsWith("///") || curLine.StartsWith("'''")) {
 					++endLine;
 				} else {
 					break;

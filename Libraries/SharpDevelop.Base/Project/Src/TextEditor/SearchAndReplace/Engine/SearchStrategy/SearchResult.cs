@@ -2,15 +2,11 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.IO;
 using System.Drawing;
-
-using ICSharpCode.Core;
-using ICSharpCode.SharpDevelop.Internal.Undo;
 using ICSharpCode.TextEditor.Document;
 
 namespace SearchAndReplace
@@ -57,6 +53,10 @@ namespace SearchAndReplace
 		
 		public SearchResult(int offset, int length)
 		{
+			if (length < 0)
+				throw new ArgumentOutOfRangeException("length");
+			if (offset < 0)
+				throw new ArgumentOutOfRangeException("offset");
 			this.offset   = offset;
 			this.length   = length;
 		}

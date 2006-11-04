@@ -2,21 +2,20 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1388 $</version>
+//     <version>$Revision: 1751 $</version>
 // </file>
 
 using System;
-using System.IO;
 using System.Collections;
 using System.Diagnostics;
 using System.Drawing;
 using System.Text;
 
+using ICSharpCode.SharpDevelop;
 using ICSharpCode.SharpDevelop.Dom;
 using ICSharpCode.TextEditor;
 using ICSharpCode.TextEditor.Actions;
 using ICSharpCode.TextEditor.Document;
-using ICSharpCode.Core;
 
 namespace CSharpBinding.FormattingStrategy
 {
@@ -311,6 +310,7 @@ namespace CSharpBinding.FormattingStrategy
 		{
 			LineSegment curLine   = textArea.Document.GetLineSegment(lineNr);
 			LineSegment lineAbove = lineNr > 0 ? textArea.Document.GetLineSegment(lineNr - 1) : null;
+			string terminator = textArea.TextEditorProperties.LineTerminator;
 			
 			//// local string for curLine segment
 			string curLineText="";
@@ -322,9 +322,11 @@ namespace CSharpBinding.FormattingStrategy
 					object member = GetMemberAfter(textArea, lineNr);
 					if (member != null) {
 						StringBuilder sb = new StringBuilder();
-						sb.Append(" <summary>\n");
+						sb.Append(" <summary>");
+						sb.Append(terminator);
 						sb.Append(indentation);
-						sb.Append("/// \n");
+						sb.Append("/// ");
+						sb.Append(terminator);
 						sb.Append(indentation);
 						sb.Append("/// </summary>");
 						
@@ -332,7 +334,7 @@ namespace CSharpBinding.FormattingStrategy
 							IMethod method = (IMethod)member;
 							if (method.Parameters != null && method.Parameters.Count > 0) {
 								for (int i = 0; i < method.Parameters.Count; ++i) {
-									sb.Append("\n");
+									sb.Append(terminator);
 									sb.Append(indentation);
 									sb.Append("/// <param name=\"");
 									sb.Append(method.Parameters[i].Name);
@@ -340,7 +342,7 @@ namespace CSharpBinding.FormattingStrategy
 								}
 							}
 							if (method.ReturnType != null && !method.IsConstructor && method.ReturnType.FullyQualifiedName != "System.Void") {
-								sb.Append("\n");
+								sb.Append(terminator);
 								sb.Append(indentation);
 								sb.Append("/// <returns></returns>");
 							}
@@ -348,7 +350,7 @@ namespace CSharpBinding.FormattingStrategy
 						textArea.Document.Insert(cursorOffset, sb.ToString());
 						
 						textArea.Refresh();
-						textArea.Caret.Position = textArea.Document.OffsetToPosition(cursorOffset + indentation.Length + "/// ".Length + " <summary>\n".Length);
+						textArea.Caret.Position = textArea.Document.OffsetToPosition(cursorOffset + indentation.Length + "/// ".Length + " <summary>".Length + terminator.Length);
 						return 0;
 					}
 				}
@@ -391,15 +393,13 @@ namespace CSharpBinding.FormattingStrategy
 				case ':':
 				case ')':
 				case ']':
-					
 				case '}':
 				case '{':
-					return textArea.Document.FormattingStrategy.IndentLine(textArea, lineNr);
-				case '\n':
-					if (lineNr <= 0) {
-						return IndentLine(textArea, lineNr);
+					if (textArea.Document.TextEditorProperties.IndentStyle == IndentStyle.Smart) {
+						return textArea.Document.FormattingStrategy.IndentLine(textArea, lineNr);
 					}
-					
+					break;
+				case '\n':
 					string  lineAboveText = lineAbove == null ? "" : textArea.Document.GetText(lineAbove);
 					//// curLine might have some text which should be added to indentation
 					curLineText = "";
@@ -417,8 +417,8 @@ namespace CSharpBinding.FormattingStrategy
 						return IndentLine(textArea, lineNr) + "#endregion".Length;
 					}
 					
-					if (lineAbove.HighlightSpanStack != null && lineAbove.HighlightSpanStack.Count > 0) {
-						if (!((Span)lineAbove.HighlightSpanStack.Peek()).StopEOL) {	// case for /* style comments
+					if (lineAbove.HighlightSpanStack != null && !lineAbove.HighlightSpanStack.IsEmpty) {
+						if (!lineAbove.HighlightSpanStack.Peek().StopEOL) {	// case for /* style comments
 							int index = lineAboveText.IndexOf("/*");
 							if (index > 0) {
 								StringBuilder indentation = new StringBuilder(GetIndentation(textArea, lineNr - 1));
@@ -469,7 +469,7 @@ namespace CSharpBinding.FormattingStrategy
 						string oldLineText = TextUtilities.GetLineAsString(textArea.Document, lineNr - 1);
 						if (oldLineText.EndsWith("{")) {
 							if (NeedCurlyBracket(textArea.Document.TextContent)) {
-								textArea.Document.Insert(curLine.Offset + curLine.Length, "\n}");
+								textArea.Document.Insert(curLine.Offset + curLine.Length, terminator + "}");
 								IndentLine(textArea, lineNr + 1);
 							}
 						}

@@ -2,14 +2,16 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1963 $</version>
 // </file>
 
 using System;
 using System.Collections;
-using System.Reflection;
+using System.Collections.Generic;
 
-namespace ICSharpCode.Core
+using ICSharpCode.Core;
+
+namespace ICSharpCode.SharpDevelop
 {
 	/// <summary>
 	/// Creates DefaultDialogPanelDescriptor objects that are used in option dialogs.
@@ -56,7 +58,12 @@ namespace ICSharpCode.Core
 				}
 			}
 			
-			return new DefaultDialogPanelDescriptor(codon.Id, StringParser.Parse(label), subItems);
+			List<IDialogPanelDescriptor> newList = new List<IDialogPanelDescriptor>();
+			foreach (IDialogPanelDescriptor d in subItems) {
+				newList.Add(d);
+			}
+			
+			return new DefaultDialogPanelDescriptor(codon.Id, StringParser.Parse(label), newList);
 		}
 	}
 }

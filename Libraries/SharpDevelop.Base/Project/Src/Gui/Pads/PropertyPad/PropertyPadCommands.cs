@@ -2,20 +2,11 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1995 $</version>
 // </file>
 
 using System;
-using System.Collections;
-using System.ComponentModel;
-using System.ComponentModel.Design;
-using System.Drawing;
-using System.Drawing.Design;
-using System.Windows.Forms;
-using System.Windows.Forms.Design;
-
 using ICSharpCode.Core;
-using ICSharpCode.SharpDevelop.Gui;
 
 namespace ICSharpCode.SharpDevelop.Gui
 {
@@ -26,7 +17,8 @@ namespace ICSharpCode.SharpDevelop.Gui
 			try {
 				PropertyPad.Grid.ResetSelectedProperty();
 			} catch (Exception e) {
-				MessageService.ShowError(e, "${res:ICSharpCode.SharpDevelop.Gui.Pads.PropertyPadResetCommand}");
+				MessageService.ShowError("${res:ICSharpCode.SharpDevelop.Gui.Pads.PropertyPadResetCommand}"
+				                         + Environment.NewLine + e.Message);
 			}
 		}
 	}

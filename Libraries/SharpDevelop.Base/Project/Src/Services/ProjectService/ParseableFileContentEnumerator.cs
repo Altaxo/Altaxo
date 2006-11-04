@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1022 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
@@ -10,6 +10,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+
 using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.Gui;
 
@@ -81,9 +82,11 @@ namespace ICSharpCode.SharpDevelop.Project
 		{
 			// Loading the source files is done asynchronously:
 			// While one file is parsed, the next is already loaded from disk.
-			string res = project.GetParseableFileContent(fileName);
-			if (res != null)
-				return res;
+			if (project != null) {
+				string res = project.GetParseableFileContent(fileName);
+				if (res != null)
+					return res;
+			}
 			
 			// load file
 			Encoding tmp = defaultEncoding;
@@ -134,7 +137,7 @@ namespace ICSharpCode.SharpDevelop.Project
 				if (isOnMainThread)
 					content = GetFileContentFromOpenFile(fileName);
 				else
-					content = (string)WorkbenchSingleton.SafeThreadCall(this, "GetFileContentFromOpenFile", fileName);
+					content = WorkbenchSingleton.SafeThreadFunction<string, string>(GetFileContentFromOpenFile, fileName);
 				if (content != null)
 					return content;
 			}
@@ -151,7 +154,7 @@ namespace ICSharpCode.SharpDevelop.Project
 		bool IsFileOpen(string fileName)
 		{
 			if (viewContentCollection == null) {
-				viewContentCollection = (IViewContent[])WorkbenchSingleton.SafeThreadCall(this, "GetViewContentCollection");
+				viewContentCollection = WorkbenchSingleton.SafeThreadFunction<IViewContent[]>(GetViewContentCollection);
 			}
 			foreach (IViewContent content in viewContentCollection) {
 				string contentName = content.IsUntitled ? content.UntitledName : content.FileName;

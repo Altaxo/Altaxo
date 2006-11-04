@@ -2,30 +2,21 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1334 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
-
-using System.ComponentModel;
 using System.Drawing;
-using System.Reflection;
-using System.Diagnostics;
-using System.Resources;
-using System.Windows.Forms;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Xml;
 using System.IO;
-using System.CodeDom.Compiler;
+using System.Text;
+using System.Windows.Forms;
 
 using ICSharpCode.Core;
-using ICSharpCode.SharpDevelop.Project;
-using ICSharpCode.SharpDevelop.Gui;
-using ICSharpCode.SharpDevelop.Internal.Templates;
 using ICSharpCode.SharpDevelop.Gui.XmlForms;
+using ICSharpCode.SharpDevelop.Internal.Templates;
+using ICSharpCode.SharpDevelop.Project;
 
 namespace ICSharpCode.SharpDevelop.Gui
 {
@@ -196,6 +187,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		void CategoryChange(object sender, TreeViewEventArgs e)
 		{
 			((ListView)ControlDictionary["templateListView"]).Items.Clear();
+			HidePropertyGrid();
 			if (((TreeView)ControlDictionary["categoryTreeView"]).SelectedNode != null) {
 				foreach (TemplateItem item in ((Category)((TreeView)ControlDictionary["categoryTreeView"]).SelectedNode).Templates) {
 					((ListView)ControlDictionary["templateListView"]).Items.Add(item);
@@ -310,9 +302,15 @@ namespace ICSharpCode.SharpDevelop.Gui
 						StringParser.Properties["Number"] = curNumber.ToString();
 						string fileName = StringParser.Parse(SelectedTemplate.DefaultName);
 						if (allowUntitledFiles) {
-							if (!FileService.IsOpen(fileName)) {
-								break;
+							bool found = false;
+							foreach (string openFile in FileService.GetOpenFiles()) {
+								if (Path.GetFileName(openFile) == fileName) {
+									found = true;
+									break;
+								}
 							}
+							if (found == false)
+								break;
 						} else if (!File.Exists(Path.Combine(basePath, fileName))) {
 							break;
 						}
@@ -367,17 +365,25 @@ namespace ICSharpCode.SharpDevelop.Gui
 			return true;
 		}
 		
-		public void SaveFile(FileDescriptionTemplate newfile, string content)
+		public void SaveFile(FileDescriptionTemplate newfile, string content, byte[] binaryContent)
 		{
 			string parsedFileName = StringParser.Parse(newfile.Name);
-			string parsedContent = StringParser.Parse(content);
+			// Parse twice so that tags used in included standard header are parsed
+			string parsedContent = StringParser.Parse(StringParser.Parse(content));
 			if (parsedFileName.StartsWith("/") || parsedFileName.StartsWith("\\"))
 				parsedFileName = parsedFileName.Substring(1);
 			if (newfile.IsDependentFile && Path.IsPathRooted(parsedFileName)) {
 				Directory.CreateDirectory(Path.GetDirectoryName(parsedFileName));
-				File.WriteAllText(parsedFileName, parsedContent, ParserService.DefaultFileEncoding);
+				if (binaryContent != null)
+					File.WriteAllBytes(parsedFileName, binaryContent);
+				else
+					File.WriteAllText(parsedFileName, parsedContent, ParserService.DefaultFileEncoding);
 				ParserService.ParseFile(parsedFileName, parsedContent);
 			} else {
+				if (binaryContent != null) {
+					LoggingService.Warn("binary file was skipped");
+					return;
+				}
 				IWorkbenchWindow window = FileService.NewFile(Path.GetFileName(parsedFileName), StringParser.Parse(newfile.Language), parsedContent);
 				if (window == null) {
 					return;
@@ -428,7 +434,14 @@ namespace ICSharpCode.SharpDevelop.Gui
 				if (allowUntitledFiles) {
 					fileName = GenerateCurrentFileName();
 				} else {
-					fileName = ControlDictionary["fileNameTextBox"].Text;
+					fileName = ControlDictionary["fileNameTextBox"].Text.Trim();
+					if (!FileUtility.IsValidFileName(fileName)
+					    || fileName.IndexOf(Path.AltDirectorySeparatorChar) >= 0
+					    || fileName.IndexOf(Path.DirectorySeparatorChar) >= 0)
+					{
+						MessageService.ShowError(StringParser.Parse("${res:ICSharpCode.SharpDevelop.Commands.SaveFile.InvalidFileNameError}", new string[,] {{"FileName", fileName}}));
+						return;
+					}
 					if (Path.GetExtension(fileName).Length == 0) {
 						fileName += Path.GetExtension(item.Template.DefaultName);
 					}
@@ -479,7 +492,11 @@ namespace ICSharpCode.SharpDevelop.Gui
 					ScriptRunner scriptRunner = new ScriptRunner();
 					
 					foreach (FileDescriptionTemplate newfile in item.Template.FileDescriptionTemplates) {
-						SaveFile(newfile, scriptRunner.CompileScript(item.Template, newfile));
+						if (newfile.ContentData != null) {
+							SaveFile(newfile, null, newfile.ContentData);
+						} else {
+							SaveFile(newfile, scriptRunner.CompileScript(item.Template, newfile), null);
+						}
 					}
 					DialogResult = DialogResult.OK;
 				}

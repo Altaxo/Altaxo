@@ -1,8 +1,8 @@
 ﻿// <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
+//     <version>$Revision: 1624 $</version>
 // </file>
 
 using System;
@@ -10,8 +10,11 @@ using System.Runtime.Serialization;
 
 namespace ICSharpCode.Core
 {
+	/// <summary>
+	/// Base class for exceptions thrown by the SharpDevelop core.
+	/// </summary>
 	[Serializable()]
-	public class CoreException : ApplicationException
+	public class CoreException : Exception
 	{
 		public CoreException() : base()
 		{

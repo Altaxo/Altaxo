@@ -1,6 +1,6 @@
 #region Copyright & License
 //
-// Copyright 2001-2005 The Apache Software Foundation
+// Copyright 2001-2006 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -134,7 +134,7 @@ namespace log4net.Appender
 			}
 			public override void EndWrite(IAsyncResult asyncResult) 
 			{
-				//No-op, it's already been handled
+				//No-op, it has already been handled
 			}
 			public override void Flush() 
 			{
@@ -810,7 +810,7 @@ namespace log4net.Appender
  		}
 
 		/// <summary>
-		/// This method is called by the <see cref="AppenderSkeleton.DoAppend"/>
+		/// This method is called by the <see cref="AppenderSkeleton.DoAppend(LoggingEvent)"/>
 		/// method. 
 		/// </summary>
 		/// <param name="loggingEvent">The event to log.</param>
@@ -830,6 +830,32 @@ namespace log4net.Appender
 				try
 				{
 					base.Append(loggingEvent);
+				}
+				finally
+				{
+					m_stream.ReleaseLock();
+				}
+			}
+		}
+
+		/// <summary>
+		/// This method is called by the <see cref="AppenderSkeleton.DoAppend(LoggingEvent[])"/>
+		/// method. 
+		/// </summary>
+		/// <param name="loggingEvents">The array of events to log.</param>
+		/// <remarks>
+		/// <para>
+		/// Acquires the output file locks once before writing all the events to
+		/// the stream.
+		/// </para>
+		/// </remarks>
+		override protected void Append(LoggingEvent[] loggingEvents) 
+		{
+			if (m_stream.AcquireLock())
+			{
+				try
+				{
+					base.Append(loggingEvents);
 				}
 				finally
 				{
@@ -1026,7 +1052,7 @@ namespace log4net.Appender
 		/// <param name="fileStream">the file stream that has been opened for writing</param>
 		/// <remarks>
 		/// <para>
-		/// This implementation of <see cref="SetQWForFiles"/> creates a <see cref="StreamWriter"/>
+		/// This implementation of <see cref="SetQWForFiles(Stream)"/> creates a <see cref="StreamWriter"/>
 		/// over the <paramref name="fileStream"/> and passes it to the 
 		/// <see cref="SetQWForFiles(TextWriter)"/> method.
 		/// </para>

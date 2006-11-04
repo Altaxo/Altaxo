@@ -6,7 +6,6 @@ Created by Ivo Kovacka.
 Doozers automatically updated by "BuildAddinDocumentation".
 GNU General Public License.
 
-
 appconfig.xsd
 -------------
 
@@ -21,14 +20,12 @@ Schema for .manifest files.
 Created by Matt Ward
 GNU General Public License.
 
-
 NAnt.xsd
 --------
 
-NAnt 0.85 RC 3 schema.
-http://nant.sourceforge.net/release/0.85-rc3/nant.xsd
+NAnt 0.85 schema.
+http://nant.sourceforge.net/release/0.85/nant.xsd
 GNU General Public License.
-
 
 Wix.xsd
 -------
@@ -36,6 +33,11 @@ Wix.xsd
 http://sourceforge.net/projects/wix/
 Common Public License 1.0 (http://opensource.org/licenses/cpl.php)
 
+wixloc.xsd
+----------
+
+http://sourceforge.net/projects/wix/
+Common Public License 1.0 (http://opensource.org/licenses/cpl.php)
 
 XMLSchema.xsd
 -------------

@@ -2,15 +2,13 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1968 $</version>
 // </file>
 
 using System;
-using System.Xml;
+using ICSharpCode.Core;
 
-using ICSharpCode.SharpDevelop.Gui;
-
-namespace ICSharpCode.Core
+namespace ICSharpCode.SharpDevelop.Debugging
 {
 	/// <summary>
 	/// Tests the values of DebuggerService.CurrentDebugger.IsDebugging (debugger attached to a process)

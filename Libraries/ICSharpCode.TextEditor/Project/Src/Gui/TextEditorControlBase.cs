@@ -2,27 +2,20 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1392 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.ComponentModel;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Drawing.Printing;
 using System.Diagnostics;
-using System.Windows.Forms;
-using System.Threading;
-using System.Runtime.Remoting;
-using System.Runtime.InteropServices;
-using System.Xml;
+using System.Drawing;
+using System.IO;
 using System.Text;
+using System.Windows.Forms;
 
-using ICSharpCode.TextEditor.Gui.CompletionWindow;
-using ICSharpCode.TextEditor.Document;
 using ICSharpCode.TextEditor.Actions;
+using ICSharpCode.TextEditor.Document;
 
 namespace ICSharpCode.TextEditor
 {
@@ -59,6 +52,8 @@ namespace ICSharpCode.TextEditor
 		/// <value>
 		/// Current file's character encoding
 		/// </value>
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public Encoding Encoding {
 			get {
 				if (encoding == null)
@@ -114,6 +109,7 @@ namespace ICSharpCode.TextEditor
 		}
 		
 		[Browsable(true)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
 		public override string Text {
 			get {
 				return Document.TextContent;
@@ -510,9 +506,14 @@ namespace ICSharpCode.TextEditor
 			}
 		}
 		
+		public bool IsEditAction(Keys keyData)
+		{
+			return editactions.ContainsKey(keyData);
+		}
+		
 		internal IEditAction GetEditAction(Keys keyData)
 		{
-			if (!editactions.ContainsKey(keyData)) {
+			if (!IsEditAction(keyData)) {
 				return null;
 			}
 			return (IEditAction)editactions[keyData];

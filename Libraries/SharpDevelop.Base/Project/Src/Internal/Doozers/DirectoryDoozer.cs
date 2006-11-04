@@ -2,14 +2,16 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1963 $</version>
 // </file>
 
 using System;
 using System.Collections;
 using System.IO;
 
-namespace ICSharpCode.Core
+using ICSharpCode.Core;
+
+namespace ICSharpCode.SharpDevelop
 {
 	/// <summary>
 	/// Creates path names using a relative to the folder containing the addin file.

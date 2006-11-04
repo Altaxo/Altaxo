@@ -2,13 +2,12 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
+using System.Collections.Generic;
 using System.IO;
-using System.Collections;
-using System.Diagnostics;
 using System.Xml;
 
 using ICSharpCode.Core;
@@ -23,15 +22,16 @@ namespace ICSharpCode.SharpDevelop.Internal.ExternalTool
 		static string TOOLFILE        = "SharpDevelop-tools.xml";
 		static string TOOLFILEVERSION = "1";
 		
-		static ArrayList tool         = new ArrayList();
+		static List<ExternalTool> tool = new List<ExternalTool>();
 		
-		public static  ArrayList Tool {
+		public static List<ExternalTool> Tool
+		{
 			get {
 				return tool;
 			}
 			set {
 				tool = value;
-				System.Diagnostics.Debug.Assert(tool != null, "SharpDevelop.Tool.Data.ToolLoader : set ArrayList Tool (value == null)");
+				System.Diagnostics.Debug.Assert(tool != null, "SharpDevelop.Tool.Data.ToolLoader : set List Tool (value == null)");
 			}
 		}
 		
@@ -42,18 +42,23 @@ namespace ICSharpCode.SharpDevelop.Internal.ExternalTool
 			}
 			
 			XmlDocument doc = new XmlDocument();
-			try {
+			try
+			{
 				doc.Load(filename);
 				
 				if (doc.DocumentElement.Attributes["VERSION"].InnerText != TOOLFILEVERSION)
 					return false;
 				
-				tool = new ArrayList();
+				tool = new List<ExternalTool>();
 				
 				XmlNodeList nodes  = doc.DocumentElement.ChildNodes;
 				foreach (XmlElement el in nodes)
+				{
 					tool.Add(new ExternalTool(el));
-			} catch (Exception) {
+				}
+			}
+			catch (Exception)
+			{
 				return false;
 			}
 			return true;

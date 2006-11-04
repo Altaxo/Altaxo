@@ -2,18 +2,15 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="none" email=""/>
-//     <version>$Revision: 1252 $</version>
+//     <version>$Revision: 1990 $</version>
 // </file>
 
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 
-using ICSharpCode.SharpDevelop.Internal.ExternalTool;
 using ICSharpCode.Core;
-using ICSharpCode.SharpDevelop.Gui;
 using ICSharpCode.SharpDevelop.Project;
 
 namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
@@ -72,16 +69,19 @@ namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 		
 		void ApplicationIconComboBoxTextChanged(object sender, EventArgs e)
 		{
-			string applicationIcon = Path.Combine(baseDirectory, Get<ComboBox>("applicationIcon").Text);
-			if (File.Exists(applicationIcon)) {
-				try {
-					Get<PictureBox>("applicationIcon").Image = Image.FromFile(applicationIcon);
-				} catch (OutOfMemoryException) {
+			if(FileUtility.IsValidFileName(Get<ComboBox>("applicationIcon").Text))
+			{
+				string applicationIcon = Path.Combine(baseDirectory, Get<ComboBox>("applicationIcon").Text);
+				if (File.Exists(applicationIcon)) {
+					try {
+						Get<PictureBox>("applicationIcon").Image = Image.FromFile(applicationIcon);
+					} catch (OutOfMemoryException) {
+						Get<PictureBox>("applicationIcon").Image = null;
+						MessageService.ShowErrorFormatted("${res:Dialog.ProjectOptions.ApplicationSettings.InvalidIconFile}", Path.GetFullPath(applicationIcon));
+					}
+				} else {
 					Get<PictureBox>("applicationIcon").Image = null;
-					MessageService.ShowErrorFormatted("${res:Dialog.ProjectOptions.ApplicationSettings.InvalidIconFile}", Path.GetFullPath(applicationIcon));
 				}
-			} else {
-				Get<PictureBox>("applicationIcon").Image = null;
 			}
 		}
 	}

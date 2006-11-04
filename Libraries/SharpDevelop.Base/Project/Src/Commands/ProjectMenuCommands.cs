@@ -2,15 +2,12 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1010 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.Drawing;
 using System.Diagnostics;
 using System.IO;
-using System.Collections;
-using System.Windows.Forms;
 
 using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.Gui;
@@ -42,8 +39,7 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 				ProjectOptionsView projectOptions = new ProjectOptionsView(projectOptionsNode, project);
 				WorkbenchSingleton.Workbench.ShowView(projectOptions);
 			} catch (TreePathNotFoundException) {
-				// TODO: Translate me!
-				MessageService.ShowError("No installed project options panels were found.");
+				MessageService.ShowError("${res:Dialog.ProjectOptions.NoPanelsInstalledForProject}");
 			}
 		}
 	}

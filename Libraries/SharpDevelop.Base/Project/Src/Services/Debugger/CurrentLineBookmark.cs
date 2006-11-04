@@ -2,23 +2,18 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1968 $</version>
 // </file>
 
 using System;
-using System.Windows.Forms;
 using System.Drawing;
-using System.CodeDom.Compiler;
-using System.Collections;
-using System.IO;
-using System.Diagnostics;
+using ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor;
 using ICSharpCode.SharpDevelop.Gui;
-using ICSharpCode.SharpDevelop.Bookmarks;
 using ICSharpCode.TextEditor;
 using ICSharpCode.TextEditor.Document;
-using ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor;
+using ICSharpCode.SharpDevelop.Bookmarks;
 
-namespace ICSharpCode.Core
+namespace ICSharpCode.SharpDevelop.Debugging
 {
 	public class CurrentLineBookmark: SDMarkerBookmark
 	{
@@ -48,10 +43,9 @@ namespace ICSharpCode.Core
 			endColumn   = makerEndColumn;
 			
 			LineSegment line = document.GetLineSegment(startLine - 1);
-			int offset = line.Offset + startColumn;
 			instance = new CurrentLineBookmark(fileName, document, startLine - 1);
 			document.BookmarkManager.AddMark(instance);
-			document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.SingleLine, startLine - 1));
+			document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.LinesBetween, startLine - 1, endLine - 1));
 			document.CommitUpdate();
 		}
 		
@@ -84,7 +78,7 @@ namespace ICSharpCode.Core
 		protected override TextMarker CreateMarker()
 		{
 			LineSegment lineSeg = Document.GetLineSegment(startLine - 1);
-			TextMarker marker = new TextMarker(lineSeg.Offset + startColumn, endColumn - startColumn, TextMarkerType.SolidBlock, Color.Yellow, Color.Blue);
+			TextMarker marker = new TextMarker(lineSeg.Offset + startColumn - 1, Math.Max(endColumn - startColumn, 1), TextMarkerType.SolidBlock, Color.Yellow, Color.Blue);
 			Document.MarkerStrategy.InsertMarker(0, marker);
 			return marker;
 		}

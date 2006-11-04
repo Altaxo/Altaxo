@@ -2,21 +2,15 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1018 $</version>
+//     <version>$Revision: 1661 $</version>
 // </file>
 
 using System;
-using System.Drawing;
-using System.ComponentModel;
-using System.Windows.Forms;
-using System.Resources;
-using System.IO;
-using System.Text;
 using System.Reflection;
-using System.Runtime.CompilerServices;
+using System.Runtime.Serialization;
+using System.Text;
+using System.Windows.Forms;
 
-using ICSharpCode.SharpDevelop.Gui;
-using ICSharpCode.SharpDevelop.Project;
 using ICSharpCode.Core;
 
 namespace ICSharpCode.SharpDevelop.Gui
@@ -35,9 +29,8 @@ namespace ICSharpCode.SharpDevelop.Gui
 		
 		public AboutSharpDevelopTabPage()
 		{
-			Version v = Assembly.GetEntryAssembly().GetName().Version;
-			versionTextBox.Text = v.Major + "." + v.Minor + "." + v.Build;
-			buildTextBox.Text   = v.Revision.ToString();
+			versionTextBox.Text = RevisionClass.Major + "." + RevisionClass.Minor + "." + RevisionClass.Build;
+			buildTextBox.Text   = RevisionClass.Revision;
 			
 			versionLabel.Location = new System.Drawing.Point(8, 8);
 			versionLabel.Text = ResourceService.GetString("Dialog.About.label1Text");
@@ -85,8 +78,24 @@ namespace ICSharpCode.SharpDevelop.Gui
 			}
 		}
 		
+		[Serializable()]
 		class ClownFishException : System.Exception
 		{
+			public ClownFishException() : base()
+			{
+			}
+			
+			public ClownFishException(string message) : base(message)
+			{
+			}
+			
+			public ClownFishException(string message, Exception innerException) : base(message, innerException)
+			{
+			}
+			
+			protected ClownFishException(SerializationInfo info, StreamingContext context) : base(info, context)
+			{
+			}
 		}
 		
 		void ThrowExceptionButtonClick(object sender, EventArgs e)

@@ -2,23 +2,23 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1928 $</version>
 // </file>
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Text;
 
 namespace CSharpBinding.FormattingStrategy
 {
-	public class IndentationSettings
+	public sealed class IndentationSettings
 	{
 		public string IndentString = "\t";
 		/// <summary>Leave empty lines empty.</summary>
 		public bool LeaveEmptyLines = true;
 	}
 	
-	public class IndentationReformatter
+	public sealed class IndentationReformatter
 	{
 		public struct Block
 		{
@@ -46,7 +46,7 @@ namespace CSharpBinding.FormattingStrategy
 		}
 		
 		StringBuilder wordBuilder;
-		Stack blocks; // blocks contains all blocks outside of the current
+		Stack<Block> blocks; // blocks contains all blocks outside of the current
 		Block block;  // block is the current block
 		
 		bool inString = false;
@@ -71,7 +71,7 @@ namespace CSharpBinding.FormattingStrategy
 		public void Init()
 		{
 			wordBuilder = new StringBuilder();
-			blocks = new Stack();
+			blocks = new Stack<Block>();
 			block = new Block();
 			block.InnerIndent = "";
 			block.OuterIndent = "";
@@ -215,19 +215,32 @@ namespace CSharpBinding.FormattingStrategy
 						block.OneLineBlock = false;
 						blocks.Push(block);
 						block.StartLine = doc.LineNumber;
-						if (block.LastWord == "switch")
+						if (block.LastWord == "switch") {
 							block.Indent(set, set.IndentString + set.IndentString);
-						else
+							/* oldBlock refers to the previous line, not the previous block
+							 * The block we want is not available anymore because it was never pushed.
+							 * } else if (oldBlock.OneLineBlock) {
+							// Inside a one-line-block is another statement
+							// with a full block: indent the inner full block
+							// by one additional level
+							block.Indent(set, set.IndentString + set.IndentString);
+							block.OuterIndent += set.IndentString;
+							// Indent current line if it starts with the '{' character
+							if (i == 0) {
+								oldBlock.InnerIndent += set.IndentString;
+							}*/
+						} else {
 							block.Indent(set);
+						}
 						block.Bracket = '{';
 						break;
 					case '}':
 						while (block.Bracket != '{') {
 							if (blocks.Count == 0) break;
-							block = (Block)blocks.Pop();
+							block = blocks.Pop();
 						}
 						if (blocks.Count == 0) break;
-						block = (Block)blocks.Pop();
+						block = blocks.Pop();
 						block.Continuation = false;
 						block.OneLineBlock = false;
 						break;
@@ -241,13 +254,13 @@ namespace CSharpBinding.FormattingStrategy
 						block.Indent(set,
 						             (oldBlock.OneLineBlock ? set.IndentString : "") +
 						             (oldBlock.Continuation ? set.IndentString : "") +
-						             new String(' ', i + 1));
+						             (i == line.Length - 1 ? set.IndentString : new String(' ', i + 1)));
 						block.Bracket = c;
 						break;
 					case ')':
 						if (blocks.Count == 0) break;
 						if (block.Bracket == '(') {
-							block = (Block)blocks.Pop();
+							block = blocks.Pop();
 							if (IsSingleStatementKeyword(block.LastWord))
 								block.Continuation = false;
 						}
@@ -255,7 +268,7 @@ namespace CSharpBinding.FormattingStrategy
 					case ']':
 						if (blocks.Count == 0) break;
 						if (block.Bracket == '[')
-							block = (Block)blocks.Pop();
+							block = blocks.Pop();
 						break;
 					case ';':
 					case ',':
@@ -321,7 +334,8 @@ namespace CSharpBinding.FormattingStrategy
 				// statement).
 				if (!oldBlock.Continuation && !oldBlock.OneLineBlock &&
 				    oldBlock.StartLine == block.StartLine &&
-				    block.StartLine < doc.LineNumber && lastRealChar != ':') {
+				    block.StartLine < doc.LineNumber && lastRealChar != ':')
+				{
 					// use indent StringBuilder to get the indentation of the current line
 					indent.Length = 0;
 					line = doc.Text; // get untrimmed line
@@ -329,6 +343,11 @@ namespace CSharpBinding.FormattingStrategy
 						if (!Char.IsWhiteSpace(line[i]))
 							break;
 						indent.Append(line[i]);
+					}
+					// /* */ multiline comments have an extra space - do not count it
+					// for the block's indentation.
+					if (startInComment && indent.Length > 0 && indent[indent.Length - 1] == ' ') {
+						indent.Length -= 1;
 					}
 					block.InnerIndent = indent.ToString();
 				}

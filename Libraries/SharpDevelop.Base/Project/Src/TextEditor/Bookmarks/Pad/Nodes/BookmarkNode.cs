@@ -2,17 +2,16 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1252 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
 using System.Drawing;
-using System.Collections.Generic;
 using System.Windows.Forms;
-using ICSharpCode.Core;
+
+using ICSharpCode.SharpDevelop.Gui;
 using ICSharpCode.TextEditor;
 using ICSharpCode.TextEditor.Document;
-using ICSharpCode.SharpDevelop.Gui;
 
 namespace ICSharpCode.SharpDevelop.Bookmarks
 {
@@ -133,7 +132,7 @@ namespace ICSharpCode.SharpDevelop.Bookmarks
 							xPos += DrawDocumentWord(g,
 							                         word.Word,
 							                         new PointF(xPos, yPos),
-							                         word.Font.Style == FontStyle.Bold ? BoldMonospacedFont : MonospacedFont,
+							                         word.Bold ? BoldMonospacedFont : MonospacedFont,
 							                         GetTextColor(state, word.Color)
 							                        );
 							logicalX += word.Word.Length;

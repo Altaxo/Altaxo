@@ -1,25 +1,23 @@
-﻿// <file>
+// <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1334 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.IO;
 using System.Collections;
 using System.Collections.Generic;
-using System.Drawing;
+using System.ComponentModel;
 using System.Diagnostics;
+using System.Drawing;
 using System.Globalization;
+using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
-using System.ComponentModel;
-using System.Xml;
 
-using ICSharpCode.SharpDevelop.Project;
-using ICSharpCode.SharpDevelop.Gui;
 using ICSharpCode.Core;
+using ICSharpCode.SharpDevelop.Project;
 
 namespace ICSharpCode.SharpDevelop.Gui
 {
@@ -39,6 +37,8 @@ namespace ICSharpCode.SharpDevelop.Gui
 		
 		List<PadDescriptor>  viewContentCollection    = new List<PadDescriptor>();
 		List<IViewContent> workbenchContentCollection = new List<IViewContent>();
+		
+		bool isActiveWindow; // Gets whether SharpDevelop is the active application in Windows
 		
 		bool closeAll = false;
 		
@@ -81,6 +81,15 @@ namespace ICSharpCode.SharpDevelop.Gui
 			}
 			set {
 				Text = value;
+			}
+		}
+		
+		/// <summary>
+		/// Gets whether SharpDevelop is the active application in Windows.
+		/// </summary>
+		public bool IsActiveWindow {
+			get {
+				return isActiveWindow;
 			}
 		}
 		
@@ -210,9 +219,9 @@ namespace ICSharpCode.SharpDevelop.Gui
 				} else {
 					m.Result = new IntPtr(RESULT_FILES_HANDLED);
 					try {
-						WorkbenchSingleton.SafeThreadAsyncCall((MethodInvoker)delegate { SetForegroundWindow(WorkbenchSingleton.MainForm.Handle) ; });
+						WorkbenchSingleton.SafeThreadAsyncCall(delegate { SetForegroundWindow(WorkbenchSingleton.MainForm.Handle) ; });
 						foreach (string file in File.ReadAllLines(Path.Combine(Path.GetTempPath(), "sd" + fileNumber + ".tmp"))) {
-							WorkbenchSingleton.SafeThreadAsyncCall(new Converter<string, IWorkbenchWindow>(FileService.OpenFile), new object[] { file });
+							WorkbenchSingleton.SafeThreadAsyncCall(delegate(string openFileName) { FileService.OpenFile(openFileName); }, file);
 						}
 					} catch (Exception ex) {
 						LoggingService.Warn(ex);
@@ -235,7 +244,8 @@ namespace ICSharpCode.SharpDevelop.Gui
 			
 			ProjectService.CurrentProjectChanged += new ProjectEventHandler(SetProjectTitle);
 
-			FileService.FileRemoved += CheckRemovedFile;
+			FileService.FileRemoved += CheckRemovedOrReplacedFile;
+			FileService.FileReplaced += CheckRemovedOrReplacedFile;
 			FileService.FileRenamed += CheckRenamedFile;
 			
 			FileService.FileRemoved += FileService.RecentOpen.FileRemoved;
@@ -317,6 +327,19 @@ namespace ICSharpCode.SharpDevelop.Gui
 			if (layout != null) {
 				layout.ShowPad(content);
 			}
+		}
+		
+		/// <summary>
+		/// Closes and disposes a <see cref="IPadContent"/>.
+		/// </summary>
+		public void UnloadPad(PadDescriptor content)
+		{
+			PadContentCollection.Remove(content);
+			
+			if (layout != null) {
+				layout.UnloadPad(content);
+			}
+			content.Dispose();
 		}
 		
 		public void UpdateRenderer()
@@ -454,7 +477,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			}
 		}
 		
-		void CheckRemovedFile(object sender, FileEventArgs e)
+		void CheckRemovedOrReplacedFile(object sender, FileEventArgs e)
 		{
 			for (int i = 0; i < ViewContentCollection.Count;) {
 				if (FileUtility.IsBaseDirectory(e.FileName, ViewContentCollection[i].FileName)) {
@@ -469,8 +492,8 @@ namespace ICSharpCode.SharpDevelop.Gui
 		{
 			if (e.IsDirectory) {
 				foreach (IViewContent content in ViewContentCollection) {
-					if (content.FileName != null && content.FileName.StartsWith(e.SourceFile)) {
-						content.FileName = e.TargetFile + content.FileName.Substring(e.SourceFile.Length);
+					if (content.FileName != null && FileUtility.IsBaseDirectory(e.SourceFile, content.FileName)) {
+						content.FileName = FileUtility.RenameBaseDirectory(content.FileName, e.SourceFile, e.TargetFile);
 					}
 				}
 			} else {
@@ -684,5 +707,17 @@ namespace ICSharpCode.SharpDevelop.Gui
 		public event ViewContentEventHandler ViewOpened;
 		public event ViewContentEventHandler ViewClosed;
 		public event EventHandler ActiveWorkbenchWindowChanged;
+		
+		protected override void OnActivated(EventArgs e)
+		{
+			isActiveWindow = true;
+			base.OnActivated(e);
+		}
+		
+		protected override void OnDeactivate(EventArgs e)
+		{
+			isActiveWindow = false;
+			base.OnDeactivate(e);
+		}
 	}
 }

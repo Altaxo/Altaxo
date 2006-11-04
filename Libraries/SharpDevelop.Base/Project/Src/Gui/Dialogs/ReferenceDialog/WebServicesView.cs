@@ -2,13 +2,14 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Matthew Ward" email="mrward@users.sourceforge.net"/>
-//     <version>$Revision: 955 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
-using ICSharpCode.Core;
 using System;
 using System.Web.Services.Description;
 using System.Windows.Forms;
+
+using ICSharpCode.Core;
 
 namespace ICSharpCode.SharpDevelop.Gui
 {

@@ -2,14 +2,11 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1388 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.Drawing;
-using System.Collections;
 using System.Collections.Generic;
-using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.Dom;
 using ICSharpCode.TextEditor.Document;
 
@@ -26,7 +23,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			if (cRegion.IsEmpty) cRegion = c.Region;
 			if (cRegion.BeginLine < cRegion.EndLine) {
 				FoldMarker newFoldMarker = new FoldMarker(document, cRegion.BeginLine - 1, cRegion.BeginColumn - 1,
-				                               cRegion.EndLine - 1, cRegion.EndColumn, FoldType.TypeBody);
+				                                          cRegion.EndLine - 1, cRegion.EndColumn, c.ClassType == ClassType.Enum ? FoldType.MemberBody : FoldType.TypeBody);
 				if (newFoldMarker.Length > 0) {
 					foldMarkers.Add(newFoldMarker);
 				}

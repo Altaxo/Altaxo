@@ -1,6 +1,6 @@
 #region Copyright & License
 //
-// Copyright 2001-2005 The Apache Software Foundation
+// Copyright 2001-2006 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ using System;
 using System.Globalization;
 
 using log4net.Repository;
+using log4net.Util;
 
 namespace log4net.Core
 {
@@ -39,7 +40,7 @@ namespace log4net.Core
 	///   <item>
 	///     <term>DEBUG</term>
 	///     <description>
-	///     The <see cref="Debug"/> and <see cref="DebugFormat"/> methods log messages
+	///     The <see cref="Debug(object)"/> and <see cref="DebugFormat(string, object[])"/> methods log messages
 	///     at the <c>DEBUG</c> level. That is the level with that name defined in the
 	///     repositories <see cref="ILoggerRepository.LevelMap"/>. The default value
 	///     for this level is <see cref="Level.Debug"/>. The <see cref="IsDebugEnabled"/>
@@ -49,7 +50,7 @@ namespace log4net.Core
 	///   <item>
 	///     <term>INFO</term>
 	///     <description>
-	///     The <see cref="Info"/> and <see cref="InfoFormat"/> methods log messages
+	///     The <see cref="Info(object)"/> and <see cref="InfoFormat(string, object[])"/> methods log messages
 	///     at the <c>INFO</c> level. That is the level with that name defined in the
 	///     repositories <see cref="ILoggerRepository.LevelMap"/>. The default value
 	///     for this level is <see cref="Level.Info"/>. The <see cref="IsInfoEnabled"/>
@@ -59,7 +60,7 @@ namespace log4net.Core
 	///   <item>
 	///     <term>WARN</term>
 	///     <description>
-	///     The <see cref="Warn"/> and <see cref="WarnFormat"/> methods log messages
+	///     The <see cref="Warn(object)"/> and <see cref="WarnFormat(string, object[])"/> methods log messages
 	///     at the <c>WARN</c> level. That is the level with that name defined in the
 	///     repositories <see cref="ILoggerRepository.LevelMap"/>. The default value
 	///     for this level is <see cref="Level.Warn"/>. The <see cref="IsWarnEnabled"/>
@@ -69,7 +70,7 @@ namespace log4net.Core
 	///   <item>
 	///     <term>ERROR</term>
 	///     <description>
-	///     The <see cref="Error"/> and <see cref="ErrorFormat"/> methods log messages
+	///     The <see cref="Error(object)"/> and <see cref="ErrorFormat(string, object[])"/> methods log messages
 	///     at the <c>ERROR</c> level. That is the level with that name defined in the
 	///     repositories <see cref="ILoggerRepository.LevelMap"/>. The default value
 	///     for this level is <see cref="Level.Error"/>. The <see cref="IsErrorEnabled"/>
@@ -79,7 +80,7 @@ namespace log4net.Core
 	///   <item>
 	///     <term>FATAL</term>
 	///     <description>
-	///     The <see cref="Fatal"/> and <see cref="FatalFormat"/> methods log messages
+	///     The <see cref="Fatal(object)"/> and <see cref="FatalFormat(string, object[])"/> methods log messages
 	///     at the <c>FATAL</c> level. That is the level with that name defined in the
 	///     repositories <see cref="ILoggerRepository.LevelMap"/>. The default value
 	///     for this level is <see cref="Level.Fatal"/>. The <see cref="IsFatalEnabled"/>
@@ -196,7 +197,7 @@ namespace log4net.Core
 		/// <param name="args">An Object array containing zero or more objects to format</param>
 		/// <remarks>
 		/// <para>
-		/// The message is formatted using the <see cref="String.Format"/> method. See
+		/// The message is formatted using the <see cref="String.Format(IFormatProvider, string, object[])"/> method. See
 		/// <c>String.Format</c> for details of the syntax of the format string and the behavior
 		/// of the formatting.
 		/// </para>
@@ -207,13 +208,109 @@ namespace log4net.Core
 		/// </para>
 		/// <para>
 		/// This method does not take an <see cref="Exception"/> object to include in the
-		/// log event. To pass an <see cref="Exception"/> use one of the <see cref="Debug"/>
+		/// log event. To pass an <see cref="Exception"/> use one of the <see cref="Debug(object)"/>
 		/// methods instead.
 		/// </para>
 		/// </remarks>
 		virtual public void DebugFormat(string format, params object[] args) 
 		{
-			Logger.Log(ThisDeclaringType, m_levelDebug, String.Format(CultureInfo.InvariantCulture, format, args), null);
+			if (IsDebugEnabled)
+			{
+				Logger.Log(ThisDeclaringType, m_levelDebug, new SystemStringFormat(CultureInfo.InvariantCulture, format, args), null);
+			}
+		}
+
+		/// <summary>
+		/// Logs a formatted message string with the <c>DEBUG</c> level.
+		/// </summary>
+		/// <param name="format">A String containing zero or more format items</param>
+		/// <param name="arg0">An Object to format</param>
+		/// <remarks>
+		/// <para>
+		/// The message is formatted using the <see cref="String.Format(IFormatProvider, string, object[])"/> method. See
+		/// <c>String.Format</c> for details of the syntax of the format string and the behavior
+		/// of the formatting.
+		/// </para>
+		/// <para>
+		/// The string is formatted using the <see cref="CultureInfo.InvariantCulture"/>
+		/// format provider. To specify a localized provider use the
+		/// <see cref="DebugFormat(IFormatProvider,string,object[])"/> method.
+		/// </para>
+		/// <para>
+		/// This method does not take an <see cref="Exception"/> object to include in the
+		/// log event. To pass an <see cref="Exception"/> use one of the <see cref="Debug(object)"/>
+		/// methods instead.
+		/// </para>
+		/// </remarks>
+		virtual public void DebugFormat(string format, object arg0) 
+		{
+			if (IsDebugEnabled)
+			{
+				Logger.Log(ThisDeclaringType, m_levelDebug, new SystemStringFormat(CultureInfo.InvariantCulture, format, new object[] { arg0 }), null);
+			}
+		}
+
+		/// <summary>
+		/// Logs a formatted message string with the <c>DEBUG</c> level.
+		/// </summary>
+		/// <param name="format">A String containing zero or more format items</param>
+		/// <param name="arg0">An Object to format</param>
+		/// <param name="arg1">An Object to format</param>
+		/// <remarks>
+		/// <para>
+		/// The message is formatted using the <see cref="String.Format(IFormatProvider, string, object[])"/> method. See
+		/// <c>String.Format</c> for details of the syntax of the format string and the behavior
+		/// of the formatting.
+		/// </para>
+		/// <para>
+		/// The string is formatted using the <see cref="CultureInfo.InvariantCulture"/>
+		/// format provider. To specify a localized provider use the
+		/// <see cref="DebugFormat(IFormatProvider,string,object[])"/> method.
+		/// </para>
+		/// <para>
+		/// This method does not take an <see cref="Exception"/> object to include in the
+		/// log event. To pass an <see cref="Exception"/> use one of the <see cref="Debug(object)"/>
+		/// methods instead.
+		/// </para>
+		/// </remarks>
+		virtual public void DebugFormat(string format, object arg0, object arg1) 
+		{
+			if (IsDebugEnabled)
+			{
+				Logger.Log(ThisDeclaringType, m_levelDebug, new SystemStringFormat(CultureInfo.InvariantCulture, format, new object[] { arg0, arg1 }), null);
+			}
+		}
+
+		/// <summary>
+		/// Logs a formatted message string with the <c>DEBUG</c> level.
+		/// </summary>
+		/// <param name="format">A String containing zero or more format items</param>
+		/// <param name="arg0">An Object to format</param>
+		/// <param name="arg1">An Object to format</param>
+		/// <param name="arg2">An Object to format</param>
+		/// <remarks>
+		/// <para>
+		/// The message is formatted using the <see cref="String.Format(IFormatProvider, string, object[])"/> method. See
+		/// <c>String.Format</c> for details of the syntax of the format string and the behavior
+		/// of the formatting.
+		/// </para>
+		/// <para>
+		/// The string is formatted using the <see cref="CultureInfo.InvariantCulture"/>
+		/// format provider. To specify a localized provider use the
+		/// <see cref="DebugFormat(IFormatProvider,string,object[])"/> method.
+		/// </para>
+		/// <para>
+		/// This method does not take an <see cref="Exception"/> object to include in the
+		/// log event. To pass an <see cref="Exception"/> use one of the <see cref="Debug(object)"/>
+		/// methods instead.
+		/// </para>
+		/// </remarks>
+		virtual public void DebugFormat(string format, object arg0, object arg1, object arg2) 
+		{
+			if (IsDebugEnabled)
+			{
+				Logger.Log(ThisDeclaringType, m_levelDebug, new SystemStringFormat(CultureInfo.InvariantCulture, format, new object[] { arg0, arg1, arg2 }), null);
+			}
 		}
 
 		/// <summary>
@@ -224,19 +321,22 @@ namespace log4net.Core
 		/// <param name="args">An Object array containing zero or more objects to format</param>
 		/// <remarks>
 		/// <para>
-		/// The message is formatted using the <see cref="String.Format"/> method. See
+		/// The message is formatted using the <see cref="String.Format(IFormatProvider, string, object[])"/> method. See
 		/// <c>String.Format</c> for details of the syntax of the format string and the behavior
 		/// of the formatting.
 		/// </para>
 		/// <para>
 		/// This method does not take an <see cref="Exception"/> object to include in the
-		/// log event. To pass an <see cref="Exception"/> use one of the <see cref="Debug"/>
+		/// log event. To pass an <see cref="Exception"/> use one of the <see cref="Debug(object)"/>
 		/// methods instead.
 		/// </para>
 		/// </remarks>
 		virtual public void DebugFormat(IFormatProvider provider, string format, params object[] args) 
 		{
-			Logger.Log(ThisDeclaringType, m_levelDebug, String.Format(provider, format, args), null);
+			if (IsDebugEnabled)
+			{
+				Logger.Log(ThisDeclaringType, m_levelDebug, new SystemStringFormat(provider, format, args), null);
+			}
 		}
 
 		/// <summary>
@@ -295,7 +395,7 @@ namespace log4net.Core
 		/// <param name="args">An Object array containing zero or more objects to format</param>
 		/// <remarks>
 		/// <para>
-		/// The message is formatted using the <see cref="String.Format"/> method. See
+		/// The message is formatted using the <see cref="String.Format(IFormatProvider, string, object[])"/> method. See
 		/// <c>String.Format</c> for details of the syntax of the format string and the behavior
 		/// of the formatting.
 		/// </para>
@@ -306,13 +406,109 @@ namespace log4net.Core
 		/// </para>
 		/// <para>
 		/// This method does not take an <see cref="Exception"/> object to include in the
-		/// log event. To pass an <see cref="Exception"/> use one of the <see cref="Info"/>
+		/// log event. To pass an <see cref="Exception"/> use one of the <see cref="Info(object)"/>
 		/// methods instead.
 		/// </para>
 		/// </remarks>
 		virtual public void InfoFormat(string format, params object[] args) 
 		{
-			Logger.Log(ThisDeclaringType, m_levelInfo, String.Format(CultureInfo.InvariantCulture, format, args), null);
+			if (IsInfoEnabled)
+			{
+				Logger.Log(ThisDeclaringType, m_levelInfo, new SystemStringFormat(CultureInfo.InvariantCulture, format, args), null);
+			}
+		}
+
+		/// <summary>
+		/// Logs a formatted message string with the <c>INFO</c> level.
+		/// </summary>
+		/// <param name="format">A String containing zero or more format items</param>
+		/// <param name="arg0">An Object to format</param>
+		/// <remarks>
+		/// <para>
+		/// The message is formatted using the <see cref="String.Format(IFormatProvider, string, object[])"/> method. See
+		/// <c>String.Format</c> for details of the syntax of the format string and the behavior
+		/// of the formatting.
+		/// </para>
+		/// <para>
+		/// The string is formatted using the <see cref="CultureInfo.InvariantCulture"/>
+		/// format provider. To specify a localized provider use the
+		/// <see cref="InfoFormat(IFormatProvider,string,object[])"/> method.
+		/// </para>
+		/// <para>
+		/// This method does not take an <see cref="Exception"/> object to include in the
+		/// log event. To pass an <see cref="Exception"/> use one of the <see cref="Info(object)"/>
+		/// methods instead.
+		/// </para>
+		/// </remarks>
+		virtual public void InfoFormat(string format, object arg0) 
+		{
+			if (IsInfoEnabled)
+			{
+				Logger.Log(ThisDeclaringType, m_levelInfo, new SystemStringFormat(CultureInfo.InvariantCulture, format, new object[] { arg0 }), null);
+			}
+		}
+
+		/// <summary>
+		/// Logs a formatted message string with the <c>INFO</c> level.
+		/// </summary>
+		/// <param name="format">A String containing zero or more format items</param>
+		/// <param name="arg0">An Object to format</param>
+		/// <param name="arg1">An Object to format</param>
+		/// <remarks>
+		/// <para>
+		/// The message is formatted using the <see cref="String.Format(IFormatProvider, string, object[])"/> method. See
+		/// <c>String.Format</c> for details of the syntax of the format string and the behavior
+		/// of the formatting.
+		/// </para>
+		/// <para>
+		/// The string is formatted using the <see cref="CultureInfo.InvariantCulture"/>
+		/// format provider. To specify a localized provider use the
+		/// <see cref="InfoFormat(IFormatProvider,string,object[])"/> method.
+		/// </para>
+		/// <para>
+		/// This method does not take an <see cref="Exception"/> object to include in the
+		/// log event. To pass an <see cref="Exception"/> use one of the <see cref="Info(object)"/>
+		/// methods instead.
+		/// </para>
+		/// </remarks>
+		virtual public void InfoFormat(string format, object arg0, object arg1) 
+		{
+			if (IsInfoEnabled)
+			{
+				Logger.Log(ThisDeclaringType, m_levelInfo, new SystemStringFormat(CultureInfo.InvariantCulture, format, new object[] { arg0, arg1 }), null);
+			}
+		}
+
+		/// <summary>
+		/// Logs a formatted message string with the <c>INFO</c> level.
+		/// </summary>
+		/// <param name="format">A String containing zero or more format items</param>
+		/// <param name="arg0">An Object to format</param>
+		/// <param name="arg1">An Object to format</param>
+		/// <param name="arg2">An Object to format</param>
+		/// <remarks>
+		/// <para>
+		/// The message is formatted using the <see cref="String.Format(IFormatProvider, string, object[])"/> method. See
+		/// <c>String.Format</c> for details of the syntax of the format string and the behavior
+		/// of the formatting.
+		/// </para>
+		/// <para>
+		/// The string is formatted using the <see cref="CultureInfo.InvariantCulture"/>
+		/// format provider. To specify a localized provider use the
+		/// <see cref="InfoFormat(IFormatProvider,string,object[])"/> method.
+		/// </para>
+		/// <para>
+		/// This method does not take an <see cref="Exception"/> object to include in the
+		/// log event. To pass an <see cref="Exception"/> use one of the <see cref="Info(object)"/>
+		/// methods instead.
+		/// </para>
+		/// </remarks>
+		virtual public void InfoFormat(string format, object arg0, object arg1, object arg2) 
+		{
+			if (IsInfoEnabled)
+			{
+				Logger.Log(ThisDeclaringType, m_levelInfo, new SystemStringFormat(CultureInfo.InvariantCulture, format, new object[] { arg0, arg1, arg2 }), null);
+			}
 		}
 
 		/// <summary>
@@ -323,19 +519,22 @@ namespace log4net.Core
 		/// <param name="args">An Object array containing zero or more objects to format</param>
 		/// <remarks>
 		/// <para>
-		/// The message is formatted using the <see cref="String.Format"/> method. See
+		/// The message is formatted using the <see cref="String.Format(IFormatProvider, string, object[])"/> method. See
 		/// <c>String.Format</c> for details of the syntax of the format string and the behavior
 		/// of the formatting.
 		/// </para>
 		/// <para>
 		/// This method does not take an <see cref="Exception"/> object to include in the
-		/// log event. To pass an <see cref="Exception"/> use one of the <see cref="Info"/>
+		/// log event. To pass an <see cref="Exception"/> use one of the <see cref="Info(object)"/>
 		/// methods instead.
 		/// </para>
 		/// </remarks>
 		virtual public void InfoFormat(IFormatProvider provider, string format, params object[] args) 
 		{
-			Logger.Log(ThisDeclaringType, m_levelInfo, String.Format(provider, format, args), null);
+			if (IsInfoEnabled)
+			{
+				Logger.Log(ThisDeclaringType, m_levelInfo, new SystemStringFormat(provider, format, args), null);
+			}
 		}
 
 		/// <summary>
@@ -394,7 +593,7 @@ namespace log4net.Core
 		/// <param name="args">An Object array containing zero or more objects to format</param>
 		/// <remarks>
 		/// <para>
-		/// The message is formatted using the <see cref="String.Format"/> method. See
+		/// The message is formatted using the <see cref="String.Format(IFormatProvider, string, object[])"/> method. See
 		/// <c>String.Format</c> for details of the syntax of the format string and the behavior
 		/// of the formatting.
 		/// </para>
@@ -405,13 +604,109 @@ namespace log4net.Core
 		/// </para>
 		/// <para>
 		/// This method does not take an <see cref="Exception"/> object to include in the
-		/// log event. To pass an <see cref="Exception"/> use one of the <see cref="Warn"/>
+		/// log event. To pass an <see cref="Exception"/> use one of the <see cref="Warn(object)"/>
 		/// methods instead.
 		/// </para>
 		/// </remarks>
 		virtual public void WarnFormat(string format, params object[] args) 
 		{
-			Logger.Log(ThisDeclaringType, m_levelWarn, String.Format(CultureInfo.InvariantCulture, format, args), null);
+			if (IsWarnEnabled)
+			{
+				Logger.Log(ThisDeclaringType, m_levelWarn, new SystemStringFormat(CultureInfo.InvariantCulture, format, args), null);
+			}
+		}
+
+		/// <summary>
+		/// Logs a formatted message string with the <c>WARN</c> level.
+		/// </summary>
+		/// <param name="format">A String containing zero or more format items</param>
+		/// <param name="arg0">An Object to format</param>
+		/// <remarks>
+		/// <para>
+		/// The message is formatted using the <see cref="String.Format(IFormatProvider, string, object[])"/> method. See
+		/// <c>String.Format</c> for details of the syntax of the format string and the behavior
+		/// of the formatting.
+		/// </para>
+		/// <para>
+		/// The string is formatted using the <see cref="CultureInfo.InvariantCulture"/>
+		/// format provider. To specify a localized provider use the
+		/// <see cref="WarnFormat(IFormatProvider,string,object[])"/> method.
+		/// </para>
+		/// <para>
+		/// This method does not take an <see cref="Exception"/> object to include in the
+		/// log event. To pass an <see cref="Exception"/> use one of the <see cref="Warn(object)"/>
+		/// methods instead.
+		/// </para>
+		/// </remarks>
+		virtual public void WarnFormat(string format, object arg0) 
+		{
+			if (IsWarnEnabled)
+			{
+				Logger.Log(ThisDeclaringType, m_levelWarn, new SystemStringFormat(CultureInfo.InvariantCulture, format, new object[] { arg0 }), null);
+			}
+		}
+
+		/// <summary>
+		/// Logs a formatted message string with the <c>WARN</c> level.
+		/// </summary>
+		/// <param name="format">A String containing zero or more format items</param>
+		/// <param name="arg0">An Object to format</param>
+		/// <param name="arg1">An Object to format</param>
+		/// <remarks>
+		/// <para>
+		/// The message is formatted using the <see cref="String.Format(IFormatProvider, string, object[])"/> method. See
+		/// <c>String.Format</c> for details of the syntax of the format string and the behavior
+		/// of the formatting.
+		/// </para>
+		/// <para>
+		/// The string is formatted using the <see cref="CultureInfo.InvariantCulture"/>
+		/// format provider. To specify a localized provider use the
+		/// <see cref="WarnFormat(IFormatProvider,string,object[])"/> method.
+		/// </para>
+		/// <para>
+		/// This method does not take an <see cref="Exception"/> object to include in the
+		/// log event. To pass an <see cref="Exception"/> use one of the <see cref="Warn(object)"/>
+		/// methods instead.
+		/// </para>
+		/// </remarks>
+		virtual public void WarnFormat(string format, object arg0, object arg1) 
+		{
+			if (IsWarnEnabled)
+			{
+				Logger.Log(ThisDeclaringType, m_levelWarn, new SystemStringFormat(CultureInfo.InvariantCulture, format, new object[] { arg0, arg1 }), null);
+			}
+		}
+
+		/// <summary>
+		/// Logs a formatted message string with the <c>WARN</c> level.
+		/// </summary>
+		/// <param name="format">A String containing zero or more format items</param>
+		/// <param name="arg0">An Object to format</param>
+		/// <param name="arg1">An Object to format</param>
+		/// <param name="arg2">An Object to format</param>
+		/// <remarks>
+		/// <para>
+		/// The message is formatted using the <see cref="String.Format(IFormatProvider, string, object[])"/> method. See
+		/// <c>String.Format</c> for details of the syntax of the format string and the behavior
+		/// of the formatting.
+		/// </para>
+		/// <para>
+		/// The string is formatted using the <see cref="CultureInfo.InvariantCulture"/>
+		/// format provider. To specify a localized provider use the
+		/// <see cref="WarnFormat(IFormatProvider,string,object[])"/> method.
+		/// </para>
+		/// <para>
+		/// This method does not take an <see cref="Exception"/> object to include in the
+		/// log event. To pass an <see cref="Exception"/> use one of the <see cref="Warn(object)"/>
+		/// methods instead.
+		/// </para>
+		/// </remarks>
+		virtual public void WarnFormat(string format, object arg0, object arg1, object arg2) 
+		{
+			if (IsWarnEnabled)
+			{
+				Logger.Log(ThisDeclaringType, m_levelWarn, new SystemStringFormat(CultureInfo.InvariantCulture, format, new object[] { arg0, arg1, arg2 }), null);
+			}
 		}
 
 		/// <summary>
@@ -422,19 +717,22 @@ namespace log4net.Core
 		/// <param name="args">An Object array containing zero or more objects to format</param>
 		/// <remarks>
 		/// <para>
-		/// The message is formatted using the <see cref="String.Format"/> method. See
+		/// The message is formatted using the <see cref="String.Format(IFormatProvider, string, object[])"/> method. See
 		/// <c>String.Format</c> for details of the syntax of the format string and the behavior
 		/// of the formatting.
 		/// </para>
 		/// <para>
 		/// This method does not take an <see cref="Exception"/> object to include in the
-		/// log event. To pass an <see cref="Exception"/> use one of the <see cref="Warn"/>
+		/// log event. To pass an <see cref="Exception"/> use one of the <see cref="Warn(object)"/>
 		/// methods instead.
 		/// </para>
 		/// </remarks>
 		virtual public void WarnFormat(IFormatProvider provider, string format, params object[] args) 
 		{
-			Logger.Log(ThisDeclaringType, m_levelWarn, String.Format(provider, format, args), null);
+			if (IsWarnEnabled)
+			{
+				Logger.Log(ThisDeclaringType, m_levelWarn, new SystemStringFormat(provider, format, args), null);
+			}
 		}
 
 		/// <summary>
@@ -493,7 +791,7 @@ namespace log4net.Core
 		/// <param name="args">An Object array containing zero or more objects to format</param>
 		/// <remarks>
 		/// <para>
-		/// The message is formatted using the <see cref="String.Format"/> method. See
+		/// The message is formatted using the <see cref="String.Format(IFormatProvider, string, object[])"/> method. See
 		/// <c>String.Format</c> for details of the syntax of the format string and the behavior
 		/// of the formatting.
 		/// </para>
@@ -504,13 +802,109 @@ namespace log4net.Core
 		/// </para>
 		/// <para>
 		/// This method does not take an <see cref="Exception"/> object to include in the
-		/// log event. To pass an <see cref="Exception"/> use one of the <see cref="Error"/>
+		/// log event. To pass an <see cref="Exception"/> use one of the <see cref="Error(object)"/>
 		/// methods instead.
 		/// </para>
 		/// </remarks>
 		virtual public void ErrorFormat(string format, params object[] args) 
 		{
-			Logger.Log(ThisDeclaringType, m_levelError, String.Format(CultureInfo.InvariantCulture, format, args), null);
+			if (IsErrorEnabled)
+			{
+				Logger.Log(ThisDeclaringType, m_levelError, new SystemStringFormat(CultureInfo.InvariantCulture, format, args), null);
+			}
+		}
+
+		/// <summary>
+		/// Logs a formatted message string with the <c>ERROR</c> level.
+		/// </summary>
+		/// <param name="format">A String containing zero or more format items</param>
+		/// <param name="arg0">An Object to format</param>
+		/// <remarks>
+		/// <para>
+		/// The message is formatted using the <see cref="String.Format(IFormatProvider, string, object[])"/> method. See
+		/// <c>String.Format</c> for details of the syntax of the format string and the behavior
+		/// of the formatting.
+		/// </para>
+		/// <para>
+		/// The string is formatted using the <see cref="CultureInfo.InvariantCulture"/>
+		/// format provider. To specify a localized provider use the
+		/// <see cref="ErrorFormat(IFormatProvider,string,object[])"/> method.
+		/// </para>
+		/// <para>
+		/// This method does not take an <see cref="Exception"/> object to include in the
+		/// log event. To pass an <see cref="Exception"/> use one of the <see cref="Error(object)"/>
+		/// methods instead.
+		/// </para>
+		/// </remarks>
+		virtual public void ErrorFormat(string format, object arg0) 
+		{
+			if (IsErrorEnabled)
+			{
+				Logger.Log(ThisDeclaringType, m_levelError, new SystemStringFormat(CultureInfo.InvariantCulture, format, new object[] { arg0 }), null);
+			}
+		}
+
+		/// <summary>
+		/// Logs a formatted message string with the <c>ERROR</c> level.
+		/// </summary>
+		/// <param name="format">A String containing zero or more format items</param>
+		/// <param name="arg0">An Object to format</param>
+		/// <param name="arg1">An Object to format</param>
+		/// <remarks>
+		/// <para>
+		/// The message is formatted using the <see cref="String.Format(IFormatProvider, string, object[])"/> method. See
+		/// <c>String.Format</c> for details of the syntax of the format string and the behavior
+		/// of the formatting.
+		/// </para>
+		/// <para>
+		/// The string is formatted using the <see cref="CultureInfo.InvariantCulture"/>
+		/// format provider. To specify a localized provider use the
+		/// <see cref="ErrorFormat(IFormatProvider,string,object[])"/> method.
+		/// </para>
+		/// <para>
+		/// This method does not take an <see cref="Exception"/> object to include in the
+		/// log event. To pass an <see cref="Exception"/> use one of the <see cref="Error(object)"/>
+		/// methods instead.
+		/// </para>
+		/// </remarks>
+		virtual public void ErrorFormat(string format, object arg0, object arg1) 
+		{
+			if (IsErrorEnabled)
+			{
+				Logger.Log(ThisDeclaringType, m_levelError, new SystemStringFormat(CultureInfo.InvariantCulture, format, new object[] { arg0, arg1 }), null);
+			}
+		}
+
+		/// <summary>
+		/// Logs a formatted message string with the <c>ERROR</c> level.
+		/// </summary>
+		/// <param name="format">A String containing zero or more format items</param>
+		/// <param name="arg0">An Object to format</param>
+		/// <param name="arg1">An Object to format</param>
+		/// <param name="arg2">An Object to format</param>
+		/// <remarks>
+		/// <para>
+		/// The message is formatted using the <see cref="String.Format(IFormatProvider, string, object[])"/> method. See
+		/// <c>String.Format</c> for details of the syntax of the format string and the behavior
+		/// of the formatting.
+		/// </para>
+		/// <para>
+		/// The string is formatted using the <see cref="CultureInfo.InvariantCulture"/>
+		/// format provider. To specify a localized provider use the
+		/// <see cref="ErrorFormat(IFormatProvider,string,object[])"/> method.
+		/// </para>
+		/// <para>
+		/// This method does not take an <see cref="Exception"/> object to include in the
+		/// log event. To pass an <see cref="Exception"/> use one of the <see cref="Error(object)"/>
+		/// methods instead.
+		/// </para>
+		/// </remarks>
+		virtual public void ErrorFormat(string format, object arg0, object arg1, object arg2) 
+		{
+			if (IsErrorEnabled)
+			{
+				Logger.Log(ThisDeclaringType, m_levelError, new SystemStringFormat(CultureInfo.InvariantCulture, format, new object[] { arg0, arg1, arg2 }), null);
+			}
 		}
 
 		/// <summary>
@@ -521,19 +915,22 @@ namespace log4net.Core
 		/// <param name="args">An Object array containing zero or more objects to format</param>
 		/// <remarks>
 		/// <para>
-		/// The message is formatted using the <see cref="String.Format"/> method. See
+		/// The message is formatted using the <see cref="String.Format(IFormatProvider, string, object[])"/> method. See
 		/// <c>String.Format</c> for details of the syntax of the format string and the behavior
 		/// of the formatting.
 		/// </para>
 		/// <para>
 		/// This method does not take an <see cref="Exception"/> object to include in the
-		/// log event. To pass an <see cref="Exception"/> use one of the <see cref="Error"/>
+		/// log event. To pass an <see cref="Exception"/> use one of the <see cref="Error(object)"/>
 		/// methods instead.
 		/// </para>
 		/// </remarks>
 		virtual public void ErrorFormat(IFormatProvider provider, string format, params object[] args) 
 		{
-			Logger.Log(ThisDeclaringType, m_levelError, String.Format(provider, format, args), null);
+			if (IsErrorEnabled)
+			{
+				Logger.Log(ThisDeclaringType, m_levelError, new SystemStringFormat(provider, format, args), null);
+			}
 		}
 
 		/// <summary>
@@ -592,7 +989,7 @@ namespace log4net.Core
 		/// <param name="args">An Object array containing zero or more objects to format</param>
 		/// <remarks>
 		/// <para>
-		/// The message is formatted using the <see cref="String.Format"/> method. See
+		/// The message is formatted using the <see cref="String.Format(IFormatProvider, string, object[])"/> method. See
 		/// <c>String.Format</c> for details of the syntax of the format string and the behavior
 		/// of the formatting.
 		/// </para>
@@ -603,13 +1000,109 @@ namespace log4net.Core
 		/// </para>
 		/// <para>
 		/// This method does not take an <see cref="Exception"/> object to include in the
-		/// log event. To pass an <see cref="Exception"/> use one of the <see cref="Fatal"/>
+		/// log event. To pass an <see cref="Exception"/> use one of the <see cref="Fatal(object)"/>
 		/// methods instead.
 		/// </para>
 		/// </remarks>
 		virtual public void FatalFormat(string format, params object[] args) 
 		{
-			Logger.Log(ThisDeclaringType, m_levelFatal, String.Format(CultureInfo.InvariantCulture, format, args), null);
+			if (IsFatalEnabled)
+			{
+				Logger.Log(ThisDeclaringType, m_levelFatal, new SystemStringFormat(CultureInfo.InvariantCulture, format, args), null);
+			}
+		}
+
+		/// <summary>
+		/// Logs a formatted message string with the <c>FATAL</c> level.
+		/// </summary>
+		/// <param name="format">A String containing zero or more format items</param>
+		/// <param name="arg0">An Object to format</param>
+		/// <remarks>
+		/// <para>
+		/// The message is formatted using the <see cref="String.Format(IFormatProvider, string, object[])"/> method. See
+		/// <c>String.Format</c> for details of the syntax of the format string and the behavior
+		/// of the formatting.
+		/// </para>
+		/// <para>
+		/// The string is formatted using the <see cref="CultureInfo.InvariantCulture"/>
+		/// format provider. To specify a localized provider use the
+		/// <see cref="FatalFormat(IFormatProvider,string,object[])"/> method.
+		/// </para>
+		/// <para>
+		/// This method does not take an <see cref="Exception"/> object to include in the
+		/// log event. To pass an <see cref="Exception"/> use one of the <see cref="Fatal(object)"/>
+		/// methods instead.
+		/// </para>
+		/// </remarks>
+		virtual public void FatalFormat(string format, object arg0) 
+		{
+			if (IsFatalEnabled)
+			{
+				Logger.Log(ThisDeclaringType, m_levelFatal, new SystemStringFormat(CultureInfo.InvariantCulture, format, new object[] { arg0 }), null);
+			}
+		}
+
+		/// <summary>
+		/// Logs a formatted message string with the <c>FATAL</c> level.
+		/// </summary>
+		/// <param name="format">A String containing zero or more format items</param>
+		/// <param name="arg0">An Object to format</param>
+		/// <param name="arg1">An Object to format</param>
+		/// <remarks>
+		/// <para>
+		/// The message is formatted using the <see cref="String.Format(IFormatProvider, string, object[])"/> method. See
+		/// <c>String.Format</c> for details of the syntax of the format string and the behavior
+		/// of the formatting.
+		/// </para>
+		/// <para>
+		/// The string is formatted using the <see cref="CultureInfo.InvariantCulture"/>
+		/// format provider. To specify a localized provider use the
+		/// <see cref="FatalFormat(IFormatProvider,string,object[])"/> method.
+		/// </para>
+		/// <para>
+		/// This method does not take an <see cref="Exception"/> object to include in the
+		/// log event. To pass an <see cref="Exception"/> use one of the <see cref="Fatal(object)"/>
+		/// methods instead.
+		/// </para>
+		/// </remarks>
+		virtual public void FatalFormat(string format, object arg0, object arg1) 
+		{
+			if (IsFatalEnabled)
+			{
+				Logger.Log(ThisDeclaringType, m_levelFatal, new SystemStringFormat(CultureInfo.InvariantCulture, format, new object[] { arg0, arg1 }), null);
+			}
+		}
+
+		/// <summary>
+		/// Logs a formatted message string with the <c>FATAL</c> level.
+		/// </summary>
+		/// <param name="format">A String containing zero or more format items</param>
+		/// <param name="arg0">An Object to format</param>
+		/// <param name="arg1">An Object to format</param>
+		/// <param name="arg2">An Object to format</param>
+		/// <remarks>
+		/// <para>
+		/// The message is formatted using the <see cref="String.Format(IFormatProvider, string, object[])"/> method. See
+		/// <c>String.Format</c> for details of the syntax of the format string and the behavior
+		/// of the formatting.
+		/// </para>
+		/// <para>
+		/// The string is formatted using the <see cref="CultureInfo.InvariantCulture"/>
+		/// format provider. To specify a localized provider use the
+		/// <see cref="FatalFormat(IFormatProvider,string,object[])"/> method.
+		/// </para>
+		/// <para>
+		/// This method does not take an <see cref="Exception"/> object to include in the
+		/// log event. To pass an <see cref="Exception"/> use one of the <see cref="Fatal(object)"/>
+		/// methods instead.
+		/// </para>
+		/// </remarks>
+		virtual public void FatalFormat(string format, object arg0, object arg1, object arg2) 
+		{
+			if (IsFatalEnabled)
+			{
+				Logger.Log(ThisDeclaringType, m_levelFatal, new SystemStringFormat(CultureInfo.InvariantCulture, format, new object[] { arg0, arg1, arg2 }), null);
+			}
 		}
 
 		/// <summary>
@@ -620,19 +1113,22 @@ namespace log4net.Core
 		/// <param name="args">An Object array containing zero or more objects to format</param>
 		/// <remarks>
 		/// <para>
-		/// The message is formatted using the <see cref="String.Format"/> method. See
+		/// The message is formatted using the <see cref="String.Format(IFormatProvider, string, object[])"/> method. See
 		/// <c>String.Format</c> for details of the syntax of the format string and the behavior
 		/// of the formatting.
 		/// </para>
 		/// <para>
 		/// This method does not take an <see cref="Exception"/> object to include in the
-		/// log event. To pass an <see cref="Exception"/> use one of the <see cref="Fatal"/>
+		/// log event. To pass an <see cref="Exception"/> use one of the <see cref="Fatal(object)"/>
 		/// methods instead.
 		/// </para>
 		/// </remarks>
 		virtual public void FatalFormat(IFormatProvider provider, string format, params object[] args) 
 		{
-			Logger.Log(ThisDeclaringType, m_levelFatal, String.Format(provider, format, args), null);
+			if (IsFatalEnabled)
+			{
+				Logger.Log(ThisDeclaringType, m_levelFatal, new SystemStringFormat(provider, format, args), null);
+			}
 		}
 
 		/// <summary>

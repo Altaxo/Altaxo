@@ -92,9 +92,10 @@
 
  	<!-- The beginning symbol of a Span -->
 	<xsd:complexType name="Begin">
-        <xsd:simpleContent>
+		<xsd:simpleContent>
             <xsd:extension base="xsd:string">
-				<!-- The default rendering style for the Begin symbol. If not specified
+		        <xsd:attribute name="singleword" type="xsd:boolean" />
+            	<!-- The default rendering style for the Begin symbol. If not specified
 					 the defaul rendering style for the span will be used. -->
 		        <xsd:attribute name="bold" type="xsd:boolean" />
 		        <xsd:attribute name="italic" type="xsd:boolean" />
@@ -106,8 +107,9 @@
  
  	<!-- The end symbol of a Span -->
     <xsd:complexType name="End">
-        <xsd:simpleContent>
+    	<xsd:simpleContent>
             <xsd:extension base="xsd:string">
+		        <xsd:attribute name="singleword" type="xsd:boolean" />
 				<!-- The default rendering style for the End symbol. If not specified
 					 the defaul rendering style for the span will be used. -->
 		        <xsd:attribute name="bold" type="xsd:boolean" />
@@ -127,7 +129,7 @@
 			<xsd:element name="End" minOccurs="0" type="End" />
 		</xsd:sequence>
 		<!-- The name of the span definition -->
-        <xsd:attribute name="name" type="xsd:string" />
+        <xsd:attribute name="name" type="xsd:string" use="required" />
         <!-- Defines the rule set that is applicable in the Span. May be omitted. -->
         <xsd:attribute name="rule" type="xsd:string" />
         <!-- Defines wether the Span should terminate automatically at the end of line. Typical examples

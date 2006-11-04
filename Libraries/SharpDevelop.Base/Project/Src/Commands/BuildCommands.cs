@@ -2,17 +2,16 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1388 $</version>
+//     <version>$Revision: 1968 $</version>
 // </file>
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.CodeDom.Compiler;
 using System.Windows.Forms;
-using ICSharpCode.SharpDevelop.Project;
-using ICSharpCode.SharpDevelop.Gui;
+
 using ICSharpCode.Core;
+using ICSharpCode.SharpDevelop.Gui;
+using ICSharpCode.SharpDevelop.Debugging;
 
 namespace ICSharpCode.SharpDevelop.Project.Commands
 {
@@ -53,7 +52,7 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 			}
 		}
 		
-		protected void CallbackMethod(CompilerResults results)
+		protected void CallbackMethod(BuildResults results)
 		{
 			MSBuildEngine.ShowResults(results);
 			AfterBuild();
@@ -66,28 +65,35 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 		public event EventHandler BuildComplete;
 	}
 	
-	public class Build : AbstractBuildMenuCommand
+	public sealed class Build : AbstractBuildMenuCommand
 	{
 		public override void StartBuild()
 		{
+			ProjectService.RaiseEventStartBuild();
 			ProjectService.OpenSolution.Build(CallbackMethod);
 		}
 		
 		public override void AfterBuild()
 		{
-			ProjectService.OnEndBuild();
+			ProjectService.RaiseEventEndBuild();
 		}
 	}
 	
-	public class Rebuild : Build
+	public sealed class Rebuild : AbstractBuildMenuCommand
 	{
 		public override void StartBuild()
 		{
+			ProjectService.RaiseEventStartBuild();
 			ProjectService.OpenSolution.Rebuild(CallbackMethod);
+		}
+		
+		public override void AfterBuild()
+		{
+			ProjectService.RaiseEventEndBuild();
 		}
 	}
 	
-	public class Clean : AbstractBuildMenuCommand
+	public sealed class Clean : AbstractBuildMenuCommand
 	{
 		public override void StartBuild()
 		{
@@ -95,7 +101,7 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 		}
 	}
 	
-	public class Publish : AbstractBuildMenuCommand
+	public sealed class Publish : AbstractBuildMenuCommand
 	{
 		public override void StartBuild()
 		{
@@ -138,22 +144,24 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 		
 		public override void StartBuild()
 		{
+			ProjectService.RaiseEventStartBuild();
 			this.ProjectToBuild.Build(CallbackMethod, AdditionalProperties);
 		}
 		
 		public override void AfterBuild()
 		{
-			ProjectService.OnEndBuild();
+			ProjectService.RaiseEventEndBuild();
 		}
 	}
 	
-	public class RebuildProject : BuildProject
+	public sealed class RebuildProject : BuildProject
 	{
 		public RebuildProject() {}
 		public RebuildProject(IProject targetProject) : base(targetProject) {}
 		
 		public override void StartBuild()
 		{
+			ProjectService.RaiseEventStartBuild();
 			this.ProjectToBuild.Rebuild(CallbackMethod, AdditionalProperties);
 		}
 	}
@@ -195,7 +203,19 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 		{
 			ToolStripMenuItem item = (ToolStripMenuItem)sender;
 			ProjectService.OpenSolution.Preferences.ActiveConfiguration = item.Text;
-			ProjectService.OpenSolution.ApplySolutionConfigurationToProjects();
+			ProjectService.OpenSolution.ApplySolutionConfigurationAndPlatformToProjects();
+		}
+	}
+	
+	public class EditConfigurationsCommand : AbstractMenuCommand
+	{
+		public override void Run()
+		{
+			using (SolutionConfigurationEditor sce = new SolutionConfigurationEditor()) {
+				sce.ShowDialog();
+				ProjectService.OpenSolution.Save();
+				ProjectService.OpenSolution.ApplySolutionConfigurationAndPlatformToProjects();
+			}
 		}
 	}
 }

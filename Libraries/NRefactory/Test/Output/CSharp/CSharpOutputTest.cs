@@ -2,14 +2,14 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1080 $</version>
+//     <version>$Revision: 1899 $</version>
 // </file>
 
 using System;
 using System.IO;
 using NUnit.Framework;
 using ICSharpCode.NRefactory.Parser;
-using ICSharpCode.NRefactory.Parser.AST;
+using ICSharpCode.NRefactory.Ast;
 using ICSharpCode.NRefactory.PrettyPrinter;
 
 namespace ICSharpCode.NRefactory.Tests.PrettyPrinter
@@ -23,7 +23,7 @@ namespace ICSharpCode.NRefactory.Tests.PrettyPrinter
 			parser.Parse();
 			Assert.AreEqual("", parser.Errors.ErrorOutput);
 			CSharpOutputVisitor outputVisitor = new CSharpOutputVisitor();
-			outputVisitor.Visit(parser.CompilationUnit, null);
+			outputVisitor.VisitCompilationUnit(parser.CompilationUnit, null);
 			Assert.AreEqual("", outputVisitor.Errors.ErrorOutput);
 			Assert.AreEqual(StripWhitespace(program), StripWhitespace(outputVisitor.Text));
 		}
@@ -67,6 +67,12 @@ namespace ICSharpCode.NRefactory.Tests.PrettyPrinter
 			               " add { obj.Click += value; }" +
 			               " remove { obj.Click -= value; } " +
 			               "}");
+		}
+		
+		[Test]
+		public void EventWithInitializer()
+		{
+			TestTypeMember("public event EventHandler Click = delegate { };");
 		}
 		
 		[Test]
@@ -314,10 +320,23 @@ namespace ICSharpCode.NRefactory.Tests.PrettyPrinter
 		}
 		
 		[Test]
+		public void SetOnlyProperty()
+		{
+			TestTypeMember("public bool ExpectsValue { set { DoSomething(value); } }");
+		}
+		
+		[Test]
 		public void AbstractMethod()
 		{
 			TestTypeMember("public abstract void Run();");
 			TestTypeMember("public abstract bool Run();");
+		}
+		
+		[Test]
+		public void AnonymousMethod()
+		{
+			TestStatement("Func b = delegate { return true; };");
+			TestStatement("Func a = delegate() { return false; };");
 		}
 		
 		[Test]
@@ -337,6 +356,80 @@ namespace ICSharpCode.NRefactory.Tests.PrettyPrinter
 		{
 			TestTypeMember("public string this[int index] { get { return index.ToString(); } set { } }");
 			TestTypeMember("public string IList.this[int index] { get { return index.ToString(); } set { } }");
+		}
+		
+		[Test]
+		public void OverloadedConversionOperators()
+		{
+			TestTypeMember("public static explicit operator TheBug(XmlNode xmlNode) { }");
+			TestTypeMember("public static implicit operator XmlNode(TheBug bugNode) { }");
+		}
+		
+		[Test]
+		public void OverloadedTrueFalseOperators()
+		{
+			TestTypeMember("public static bool operator true(TheBug bugNode) { }");
+			TestTypeMember("public static bool operator false(TheBug bugNode) { }");
+		}
+		
+		[Test]
+		public void OverloadedOperators()
+		{
+			TestTypeMember("public static TheBug operator +(TheBug bugNode, TheBug bugNode2) { }");
+			TestTypeMember("public static TheBug operator >>(TheBug bugNode, int b) { }");
+		}
+		
+		[Test]
+		public void PropertyWithAccessorAccessModifiers()
+		{
+			TestTypeMember("public bool ExpectsValue {\n" +
+			               "\tinternal get {\n" +
+			               "\t}\n" +
+			               "\tprotected set {\n" +
+			               "\t}\n" +
+			               "}");
+		}
+		
+		[Test]
+		public void UsingStatementForExistingVariable()
+		{
+			TestStatement("using (obj) {\n}");
+		}
+		
+		[Test]
+		public void NewConstraint()
+		{
+			TestProgram("public struct Rational<T, O> where O : IRationalMath<T>, new()\n{\n}");
+		}
+		
+		[Test]
+		public void StructConstraint()
+		{
+			TestProgram("public struct Rational<T, O> where O : struct\n{\n}");
+		}
+		
+		[Test]
+		public void ClassConstraint()
+		{
+			TestProgram("public struct Rational<T, O> where O : class\n{\n}");
+		}
+		
+		[Test]
+		public void FixedStructField()
+		{
+			TestProgram(@"unsafe struct CrudeMessage
+{
+	public fixed byte data[256];
+}");
+		}
+		
+		[Test]
+		public void FixedStructField2()
+		{
+			TestProgram(@"unsafe struct CrudeMessage
+{
+	fixed byte data[4 * sizeof(int)], data2[10];
+}");
 		}
 	}
 }

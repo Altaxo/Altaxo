@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 946 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
@@ -10,10 +10,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
-using ICSharpCode.NRefactory.Parser.AST;
-using ICSharpCode.TextEditor;
-using ICSharpCode.SharpDevelop.Dom;
-using ICSharpCode.Core;
+using ICSharpCode.NRefactory.Ast;
 
 namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 {
@@ -23,7 +20,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 		{
 			TypeReference stringReference = new TypeReference("System.String");
 			MethodDeclaration method = new MethodDeclaration("ToString",
-			                                                 Modifier.Public | Modifier.Override,
+			                                                 Modifiers.Public | Modifiers.Override,
 			                                                 stringReference,
 			                                                 null, null);
 			method.Body = new BlockStatement();
@@ -51,13 +48,13 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 		
 		public override string CategoryName {
 			get {
-				return "Generate default ToString() method";
+				return "${res:ICSharpCode.SharpDevelop.CodeGenerator.ToString}";
 			}
 		}
 		
 		public override string Hint {
 			get {
-				return "Choose Properties to include in the description";
+				return "${res:ICSharpCode.SharpDevelop.CodeGenerator.ToString.Hint}";
 			}
 		}
 		public override int ImageIndex {

@@ -2,15 +2,15 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1391 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
 using System.Windows.Forms;
 using ICSharpCode.Core;
+using ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor;
 using ICSharpCode.SharpDevelop.Dom;
 using ICSharpCode.TextEditor;
-using ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor;
 
 namespace ICSharpCode.SharpDevelop.Gui
 {
@@ -62,8 +62,8 @@ namespace ICSharpCode.SharpDevelop.Gui
 			ResolveResult res = ResolveAtCaret(e);
 			if (res == null) return;
 			FilePosition pos = res.GetDefinitionPosition();
-			if (pos == null) return;
-			ctl.Invoke(new OpenFileDelegate(OpenFile), pos);
+			if (pos.IsEmpty) return;
+			WorkbenchSingleton.SafeThreadAsyncCall(OpenFile, pos);
 		}
 		
 		ResolveResult ResolveAtCaret(ParserUpdateStepEventArgs e)
@@ -86,16 +86,14 @@ namespace ICSharpCode.SharpDevelop.Gui
 			return ParserService.Resolve(expr, caret.Line + 1, caret.Column + 1, fileName, content);
 		}
 		
-		delegate void OpenFileDelegate(FilePosition pos);
-		
 		FilePosition oldPosition;
 		
 		void OpenFile(FilePosition pos)
 		{
 			if (pos.Equals(oldPosition)) return;
 			oldPosition = pos;
-			if (pos.Filename != ctl.FileName)
-				ctl.LoadFile(pos.Filename, true, true); // TODO: get AutoDetectEncoding from settings
+			if (pos.FileName != ctl.FileName)
+				ctl.LoadFile(pos.FileName, true, true); // TODO: get AutoDetectEncoding from settings
 			ctl.ActiveTextAreaControl.ScrollTo(int.MaxValue); // scroll completely down
 			ctl.ActiveTextAreaControl.Caret.Line = pos.Line - 1;
 			ctl.ActiveTextAreaControl.ScrollToCaret(); // scroll up to search position

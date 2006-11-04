@@ -2,20 +2,16 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1082 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-
-using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.Dom;
+using ICSharpCode.SharpDevelop.Dom.Refactoring;
 using ICSharpCode.TextEditor;
 using ICSharpCode.TextEditor.Document;
 using ICSharpCode.TextEditor.Gui.CompletionWindow;
-using ICSharpCode.SharpDevelop.Refactoring;
-using ICSharpCode.NRefactory.Parser.AST;
 
 namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 {

@@ -2,13 +2,12 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1177 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.Resources;
-using System.IO;
 using System.Collections.Generic;
+using System.IO;
 using System.Xml;
 
 namespace ICSharpCode.Core
@@ -192,7 +191,9 @@ namespace ICSharpCode.Core
 								throw new AddInLoadException("Cannot use include nodes when hintPath was not specified (e.g. when AddInManager reads a .addin file)!");
 							}
 							string fileName = Path.Combine(hintPath, reader.GetAttribute(0));
-							using (XmlTextReader includeReader = new XmlTextReader(fileName)) {
+							XmlReaderSettings xrs = new XmlReaderSettings();
+							xrs.ConformanceLevel = ConformanceLevel.Fragment;
+							using (XmlReader includeReader = XmlTextReader.Create(fileName, xrs)) {
 								SetupAddIn(includeReader, addIn, Path.GetDirectoryName(fileName));
 							}
 							break;

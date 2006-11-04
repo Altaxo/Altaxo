@@ -2,15 +2,11 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1047 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
 using System.Collections;
-using System.Drawing;
-using System.Diagnostics;
-using System.Drawing.Text;
-using System.Drawing.Imaging;
 using System.Windows.Forms;
 
 namespace ICSharpCode.Core
@@ -24,6 +20,7 @@ namespace ICSharpCode.Core
 		
 		public Menu(Codon codon, object caller, ArrayList subItems)
 		{
+			if (subItems == null) subItems = new ArrayList(); // don't crash when item has no children
 			this.codon    = codon;
 			this.caller   = caller;
 			this.subItems = subItems;

@@ -2,14 +2,13 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1233 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
 using System.Windows.Forms;
+
 using ICSharpCode.Core;
 
 namespace ICSharpCode.SharpDevelop.Gui
@@ -283,7 +282,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		void BrowseButtonClick(object sender, EventArgs e)
 		{
 			FolderDialog fdiag = new FolderDialog();
-			if (fdiag.DisplayDialog("Select folder") == DialogResult.OK) {
+			if (fdiag.DisplayDialog("${res:Dialog.ProjectOptions.SelectFolderTitle}") == DialogResult.OK) {
 				string path = fdiag.Path;
 				if (!path.EndsWith("\\") && !path.EndsWith("/"))
 					path += "\\";

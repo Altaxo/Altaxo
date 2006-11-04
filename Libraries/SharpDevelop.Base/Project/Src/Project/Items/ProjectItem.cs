@@ -2,14 +2,17 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1388 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.IO;
-using System.ComponentModel;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Globalization;
+using System.IO;
+using System.Text;
 using System.Xml;
+
 using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.Gui;
 
@@ -82,11 +85,7 @@ namespace ICSharpCode.SharpDevelop.Project
 			item.Include = newInclude;
 		}
 		
-		public virtual ProjectItem Clone()
-		{
-			// TODO: Make me abstract in SD 2.1
-			throw new NotSupportedException();
-		}
+		public abstract ProjectItem Clone();
 		
 		object ICloneable.Clone()
 		{
@@ -105,6 +104,8 @@ namespace ICSharpCode.SharpDevelop.Project
 		[Browsable(false)]
 		public virtual string FileName {
 			get {
+				if (project == null)
+					return Include;
 				if (fileNameCache == null)
 					fileNameCache = Path.Combine(project.Directory, include);
 				return fileNameCache;
@@ -140,10 +141,65 @@ namespace ICSharpCode.SharpDevelop.Project
 			                     Properties);
 		}
 		
+		public static string MSBuildEscape(string text)
+		{
+			return MSBuildEscape(text, false);
+		}
+		
+		public static string MSBuildEscape(string text, bool escapeSemicolon)
+		{
+			StringBuilder b = null;
+			for (int i = 0; i < text.Length; i++) {
+				char c = text[i];
+				if (c == '%') {
+					if (b == null) b = new StringBuilder(text, 0, i, text.Length + 6);
+					b.Append("%25");
+				} else if (escapeSemicolon && c == ';') {
+					if (b == null) b = new StringBuilder(text, 0, i, text.Length + 6);
+					b.Append("%3b");
+				} else {
+					if (b != null) {
+						b.Append(c);
+					}
+				}
+			}
+			if (b != null)
+				return b.ToString();
+			else
+				return text;
+		}
+		
+		public static string MSBuildUnescape(string text)
+		{
+			StringBuilder b = null;
+			for (int i = 0; i < text.Length; i++) {
+				char c = text[i];
+				if (c == '%' && i + 2 < text.Length) {
+					if (b == null) b = new StringBuilder(text, 0, i, text.Length);
+					string a = text[i + 1].ToString() + text[i + 2].ToString();
+					int num;
+					if (int.TryParse(a, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out num)) {
+						b.Append((char)num);
+						i += 2;
+					} else {
+						b.Append('%');
+					}
+				} else {
+					if (b != null) {
+						b.Append(c);
+					}
+				}
+			}
+			if (b != null)
+				return b.ToString();
+			else
+				return text;
+		}
+		
 		public static ProjectItem ReadItem(XmlReader reader, IProject project, string itemType)
 		{
 			ProjectItem newItem = project != null ? project.CreateProjectItem(itemType) : ProjectItemFactory.CreateProjectItem(project, itemType);
-			newItem.Include  = reader.GetAttribute("Include");
+			newItem.Include = MSBuildUnescape(reader.GetAttribute("Include"));
 			if (!reader.IsEmptyElement) {
 				PropertyGroup.ReadProperties(reader, newItem.Properties, itemType);
 			}
@@ -154,12 +210,12 @@ namespace ICSharpCode.SharpDevelop.Project
 		internal void WriteItem(XmlWriter writer)
 		{
 			writer.WriteStartElement(Tag);
-			writer.WriteAttributeString("Include", Include);
-			Properties.WriteProperties(writer);
+			writer.WriteAttributeString("Include", MSBuildEscape(Include, true));
+			this.Properties.WriteProperties(writer);
 			writer.WriteEndElement();
 		}
 		
-		internal static void ReadItemGroup(XmlTextReader reader, IProject project, List<ProjectItem> items)
+		internal static void ReadItemGroup(XmlReader reader, IProject project, List<ProjectItem> items)
 		{
 			if (reader.IsEmptyElement) {
 				return;

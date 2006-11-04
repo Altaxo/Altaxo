@@ -2,25 +2,18 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.ComponentModel;
-using System.Drawing;
-using System.Threading;
-using System.Drawing.Text;
-using System.Drawing.Drawing2D;
-using System.Drawing.Printing;
 using System.Diagnostics;
-using System.Windows.Forms;
-using System.Runtime.Remoting;
-using System.Runtime.InteropServices;
+using System.Drawing;
+using System.Drawing.Text;
 using System.Text;
-using System.Xml;
+using System.Windows.Forms;
+
 using ICSharpCode.TextEditor.Actions;
 using ICSharpCode.TextEditor.Document;
 using ICSharpCode.TextEditor.Gui.CompletionWindow;
@@ -55,7 +48,10 @@ namespace ICSharpCode.TextEditor
 		
 		SelectionManager selectionManager;
 		Caret            caret;
-		
+
+		internal Point mousepos = new Point(0, 0);
+		//public Point selectionStartPos = new Point(0,0);
+
 		bool disposed;
 		
 		[Browsable(false)]
@@ -179,7 +175,7 @@ namespace ICSharpCode.TextEditor
 			this.motherTextEditorControl    = motherTextEditorControl;
 			
 			caret            = new Caret(this);
-			selectionManager = new SelectionManager(Document);
+			selectionManager = new SelectionManager(Document, this);
 			
 			this.textAreaClipboardHandler = new TextAreaClipboardHandler(this);
 			
@@ -229,42 +225,39 @@ namespace ICSharpCode.TextEditor
 				textView.Highlight = null;
 				return;
 			}
-			bool changed = false;
-			if (caret.Offset == 0) {
-				if (textView.Highlight != null) {
-					int line  = textView.Highlight.OpenBrace.Y;
-					int line2 = textView.Highlight.CloseBrace.Y;
-					textView.Highlight = null;
-					UpdateLine(line);
-					UpdateLine(line2);
-				}
-				return;
+			int oldLine1 = -1, oldLine2 = -1;
+			if (textView.Highlight != null && textView.Highlight.OpenBrace.Y >=0 && textView.Highlight.OpenBrace.Y < Document.TotalNumberOfLines) {
+				oldLine1 = textView.Highlight.OpenBrace.Y;
 			}
+			if (textView.Highlight != null && textView.Highlight.CloseBrace.Y >=0 && textView.Highlight.CloseBrace.Y < Document.TotalNumberOfLines) {
+				oldLine2 = textView.Highlight.CloseBrace.Y;
+			}
+			textView.Highlight = FindMatchingBracketHighlight();
+			if (oldLine1 >= 0)
+				UpdateLine(oldLine1);
+			if (oldLine2 >= 0 && oldLine2 != oldLine1)
+				UpdateLine(oldLine2);
+			if (textView.Highlight != null) {
+				int newLine1 = textView.Highlight.OpenBrace.Y;
+				int newLine2 = textView.Highlight.CloseBrace.Y;
+				if (newLine1 != oldLine1 && newLine1 != oldLine2)
+					UpdateLine(newLine1);
+				if (newLine2 != oldLine1 && newLine2 != oldLine2 && newLine2 != newLine1)
+					UpdateLine(newLine2);
+			}
+		}
+		
+		public Highlight FindMatchingBracketHighlight()
+		{
+			if (Caret.Offset == 0)
+				return null;
 			foreach (BracketHighlightingSheme bracketsheme in bracketshemes) {
-//				if (bracketsheme.IsInside(textareapainter.Document, textareapainter.Document.Caret.Offset)) {
 				Highlight highlight = bracketsheme.GetHighlight(Document, Caret.Offset - 1);
-				if (textView.Highlight != null && textView.Highlight.OpenBrace.Y >=0 && textView.Highlight.OpenBrace.Y < Document.TotalNumberOfLines) {
-					UpdateLine(textView.Highlight.OpenBrace.Y);
-				}
-				if (textView.Highlight != null && textView.Highlight.CloseBrace.Y >=0 && textView.Highlight.CloseBrace.Y < Document.TotalNumberOfLines) {
-					UpdateLine(textView.Highlight.CloseBrace.Y);
-				}
-				textView.Highlight = highlight;
 				if (highlight != null) {
-					changed = true;
-					break;
+					return highlight;
 				}
-//				}
 			}
-			if (changed || textView.Highlight != null) {
-				int line = textView.Highlight.OpenBrace.Y;
-				int line2 = textView.Highlight.CloseBrace.Y;
-				if (!changed) {
-					textView.Highlight = null;
-				}
-				UpdateLine(line);
-				UpdateLine(line2);
-			}
+			return null;
 		}
 		
 		public void SetDesiredColumn()
@@ -301,8 +294,13 @@ namespace ICSharpCode.TextEditor
 		
 		protected override void OnMouseDown(System.Windows.Forms.MouseEventArgs e)
 		{
+			// this corrects weird problems when text is selected,
+			// then a menu item is selected, then the text is
+			// clicked again - it correctly synchronises the
+			// click position
+			mousepos = new Point(e.X, e.Y);
+
 			base.OnMouseDown(e);
-			
 			CloseToolTip();
 			
 			foreach (AbstractMargin margin in leftMargins) {
@@ -407,6 +405,12 @@ namespace ICSharpCode.TextEditor
 			}
 		}
 		
+		// external interface to the attached event
+		internal void RaiseMouseMove(MouseEventArgs e)
+		{
+			OnMouseMove(e);
+		}
+
 		protected override void OnMouseMove(MouseEventArgs e)
 		{
 			base.OnMouseMove(e);
@@ -506,7 +510,7 @@ namespace ICSharpCode.TextEditor
 			}
 			
 			if (adjustScrollBars) {
-				this.motherTextAreaControl.AdjustScrollBars(null, null);
+				this.motherTextAreaControl.AdjustScrollBars();
 			}
 			
 			Caret.UpdateCaretPosition();
@@ -516,7 +520,7 @@ namespace ICSharpCode.TextEditor
 		void DocumentFoldingsChanged(object sender, EventArgs e)
 		{
 			Invalidate();
-			this.motherTextAreaControl.AdjustScrollBars(null, null);
+			this.motherTextAreaControl.AdjustScrollBars();
 		}
 		
 		#region keyboard handling methods
@@ -534,6 +538,12 @@ namespace ICSharpCode.TextEditor
 				return KeyEventHandler(ch);
 			}
 			return false;
+		}
+		
+		// Fixes SD2-747: Form containing the text editor and a button with a shortcut
+		protected override bool IsInputChar(char charCode)
+		{
+			return true;
 		}
 		
 		public void SimulateKeyPress(char ch)

@@ -2,14 +2,17 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1971 $</version>
 // </file>
 
 using System;
+using System.Reflection;
 using System.Collections.Generic;
 using NUnit.Framework;
 using CSharpBinding.Parser;
+using ICSharpCode.SharpDevelop;
 using ICSharpCode.SharpDevelop.Dom;
+using ICSharpCode.SharpDevelop.Dom.CSharp;
 
 namespace CSharpBinding.Tests
 {
@@ -37,15 +40,21 @@ class Main {
 		foreach (TypeName varName in ((CastTo)castTarget).PropertyOnCastExpression) {
 			
 		}
+		throw new NotFoundException();
 	}
 }";
 		
-		ExpressionFinder ef;
+		CSharpExpressionFinder ef;
 		
 		[SetUp]
 		public void Init()
 		{
-			ef = new ExpressionFinder("test.cs");
+			HostCallback.GetParseInformation = ParserService.GetParseInformation;
+			HostCallback.GetCurrentProjectContent = delegate {
+				return ParserService.CurrentProjectContent;
+			};
+			
+			ef = new CSharpExpressionFinder("test.cs");
 		}
 		
 		void FindFull(string location, string expectedExpression, ExpressionContext expectedContext)
@@ -126,6 +135,12 @@ class Main {
 		public void IdentifierBeforeKeyword()
 		{
 			FindFull(program2, "arName", "varName", ExpressionContext.Default);
+		}
+		
+		[Test]
+		public void NewException()
+		{
+			FindFull(program2, "otFoundException", "NotFoundException()", ExpressionContext.TypeDerivingFrom(ParserService.DefaultProjectContentRegistry.Mscorlib.GetClass("System.Exception"), true));
 		}
 	}
 }

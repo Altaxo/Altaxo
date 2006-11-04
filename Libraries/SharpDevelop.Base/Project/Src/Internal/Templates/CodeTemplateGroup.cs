@@ -2,13 +2,12 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1959 $</version>
 // </file>
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Xml;
-using System.Diagnostics;
 
 namespace ICSharpCode.SharpDevelop.Internal.Templates
 {
@@ -17,16 +16,16 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 	/// </summary>
 	public class CodeTemplateGroup
 	{
-		ArrayList extensions = new ArrayList();
-		ArrayList templates  = new ArrayList();
+		List<string> extensions = new List<string>();
+		List<CodeTemplate> templates  = new List<CodeTemplate>();
 		
-		public ArrayList Extensions {
+		public List<string> Extensions {
 			get {
 				return extensions;
 			}
 		}
 		
-		public ArrayList Templates {
+		public List<CodeTemplate> Templates {
 			get {
 				return templates;
 			}
@@ -60,8 +59,11 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 			foreach (string ext in exts) {
 				extensions.Add(ext);
 			}
-			foreach (XmlElement childElement in el.ChildNodes) {
-				templates.Add(new CodeTemplate(childElement));
+			foreach (XmlNode childNode in el.ChildNodes) {
+				XmlElement childElement = childNode as XmlElement;
+				if (childElement != null) {
+					templates.Add(new CodeTemplate(childElement));
+				}
 			}
 		}
 		

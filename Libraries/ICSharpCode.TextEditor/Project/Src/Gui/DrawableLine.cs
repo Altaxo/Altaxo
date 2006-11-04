@@ -2,12 +2,13 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1252 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+
 using ICSharpCode.TextEditor.Document;
 
 namespace ICSharpCode.TextEditor
@@ -53,7 +54,7 @@ namespace ICSharpCode.TextEditor
 					} else if (word.Type == TextWordType.Tab) {
 						words.Add(SimpleTextWord.Tab);
 					} else {
-						words.Add(new SimpleTextWord(TextWordType.Word, word.Word, word.Font.Bold, word.Color));
+						words.Add(new SimpleTextWord(TextWordType.Word, word.Word, word.Bold, word.Color));
 					}
 				}
 			} else {

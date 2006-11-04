@@ -2,16 +2,15 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 946 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using ICSharpCode.NRefactory.Parser.AST;
 
 using ICSharpCode.SharpDevelop.Dom;
-using ICSharpCode.Core;
+using ICSharpCode.NRefactory.Ast;
 
 namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 {
@@ -49,13 +48,13 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 	{
 		public override string CategoryName {
 			get {
-				return "Interface implementation";
+				return "${res:ICSharpCode.SharpDevelop.CodeGenerator.ImplementInterface}";
 			}
 		}
 		
 		public override string Hint {
 			get {
-				return "Choose interfaces to implement";
+				return "${res:ICSharpCode.SharpDevelop.CodeGenerator.ImplementInterface.Hint}";
 			}
 		}
 		

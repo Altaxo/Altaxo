@@ -1,8 +1,8 @@
-﻿// <file>
+// <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1394 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
@@ -29,12 +29,26 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		readonly static string advancedHighlighterPath = "/AddIns/DefaultTextEditor/AdvancedHighlighter";
 		
 		QuickClassBrowserPanel quickClassBrowserPanel = null;
+		Control customQuickClassBrowserPanel = null;
 		ErrorDrawer errorDrawer;
 		IAdvancedHighlighter advancedHighlighter;
 		
 		public QuickClassBrowserPanel QuickClassBrowserPanel {
 			get {
 				return quickClassBrowserPanel;
+			}
+		}
+		public Control CustomQuickClassBrowserPanel {
+			get	{
+				return customQuickClassBrowserPanel;
+			}
+			set	{
+				if (customQuickClassBrowserPanel != null) {
+					RemoveQuickClassBrowserPanel();
+					customQuickClassBrowserPanel.Dispose();
+				}
+				customQuickClassBrowserPanel = value;
+				ActivateQuickClassBrowserOnDemand();
 			}
 		}
 		
@@ -74,7 +88,6 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 				MenuService.ShowContextMenu(this, contextMenuPath, (Control)sender, e.X, e.Y);
 			};
 			newControl.TextArea.KeyEventHandler += new ICSharpCode.TextEditor.KeyEventHandler(HandleKeyPress);
-			newControl.Caret.PositionChanged += new EventHandler(CaretPositionChanged);
 			newControl.TextArea.ClipboardHandler.CopyText += new CopyTextEventHandler(ClipboardHandlerCopyText);
 			
 //			newControl.TextArea.IconBarMargin.Painted   += new MarginPaintEventHandler(PaintIconBarBreakPoints);
@@ -95,6 +108,10 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 				if (quickClassBrowserPanel != null) {
 					quickClassBrowserPanel.Dispose();
 					quickClassBrowserPanel = null;
+				}
+				if (customQuickClassBrowserPanel != null) {
+					customQuickClassBrowserPanel.Dispose();
+					customQuickClassBrowserPanel = null;
 				}
 				if (advancedHighlighter != null) {
 					advancedHighlighter.Dispose();
@@ -153,11 +170,6 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			}
 		}
 		
-		void CaretPositionChanged(object sender, EventArgs e)
-		{
-			StatusBarService.SetCaretPosition(ActiveTextAreaControl.TextArea.TextView.GetVisualColumn(ActiveTextAreaControl.Caret.Line, ActiveTextAreaControl.Caret.Column), ActiveTextAreaControl.Caret.Line, ActiveTextAreaControl.Caret.Column);
-		}
-		
 		void GenerateEditActions()
 		{
 			#if DEBUG
@@ -184,6 +196,13 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 				quickClassBrowserPanel = null;
 				textAreaPanel.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			}
+			if (customQuickClassBrowserPanel != null) {
+				if (Controls.Contains(customQuickClassBrowserPanel)) {
+					Controls.Remove(customQuickClassBrowserPanel);
+					customQuickClassBrowserPanel.Enabled = false;
+					textAreaPanel.BorderStyle = System.Windows.Forms.BorderStyle.None;
+				}
+			}
 		}
 		void ShowQuickClassBrowserPanel()
 		{
@@ -191,6 +210,16 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 				quickClassBrowserPanel = new QuickClassBrowserPanel(this);
 				Controls.Add(quickClassBrowserPanel);
 				textAreaPanel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+			}
+			if (customQuickClassBrowserPanel != null) {
+				if (quickClassBrowserPanel != null)
+					RemoveQuickClassBrowserPanel();
+				if (!Controls.Contains(customQuickClassBrowserPanel)) {
+					Controls.Add(customQuickClassBrowserPanel);
+					customQuickClassBrowserPanel.Enabled = true;
+					textAreaPanel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+				}
+				return;
 			}
 		}
 		public void ActivateQuickClassBrowserOnDemand()
@@ -239,23 +268,26 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		
 		InsightWindow insightWindow = null;
 		CodeCompletionWindow codeCompletionWindow = null;
+		bool inHandleKeyPress;
 		
 		bool HandleKeyPress(char ch)
 		{
-			string fileName = FileName;
-			if (codeCompletionWindow != null && !codeCompletionWindow.IsDisposed) {
-				if (codeCompletionWindow.ProcessKeyEvent(ch)) {
-					return true;
-				}
-				if (codeCompletionWindow != null && !codeCompletionWindow.IsDisposed) {
-					// code-completion window is still opened but did not want to handle
-					// the keypress -> don't try to restart code-completion
-					return false;
-				}
-			}
-			
+			if (inHandleKeyPress)
+				return false;
+			inHandleKeyPress = true;
 			try {
-				if (ICSharpCode.SharpDevelop.Dom.CodeCompletionOptions.EnableCodeCompletion) {
+				if (codeCompletionWindow != null && !codeCompletionWindow.IsDisposed) {
+					if (codeCompletionWindow.ProcessKeyEvent(ch)) {
+						return true;
+					}
+					if (codeCompletionWindow != null && !codeCompletionWindow.IsDisposed) {
+						// code-completion window is still opened but did not want to handle
+						// the keypress -> don't try to restart code-completion
+						return false;
+					}
+				}
+				
+				if (CodeCompletionOptions.EnableCodeCompletion) {
 					foreach (ICodeCompletionBinding ccBinding in CodeCompletionBindings) {
 						if (ccBinding.HandleKeyPress(this, ch))
 							return false;
@@ -283,6 +315,8 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 				}
 			} catch (Exception ex) {
 				LogException(ex);
+			} finally {
+				inHandleKeyPress = false;
 			}
 			return false;
 		}
@@ -349,53 +383,36 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 				ActiveTextAreaControl.TextArea.Caret.Position = ActiveTextAreaControl.TextArea.SelectionManager.SelectionCollection[0].StartPosition;
 				base.ActiveTextAreaControl.TextArea.SelectionManager.RemoveSelectedText();
 			}
-			int newCaretOffset   = ActiveTextAreaControl.TextArea.Caret.Offset;
-			int finalCaretOffset = newCaretOffset;
-			int firstLine        = Document.GetLineNumberForOffset(newCaretOffset);
 			
 			// save old properties, these properties cause strange effects, when not
 			// be turned off (like insert curly braces or other formatting stuff)
-			bool save1         = TextEditorProperties.AutoInsertCurlyBracket;
-			IndentStyle save2  = TextEditorProperties.IndentStyle;
-			TextEditorProperties.AutoInsertCurlyBracket = false;
-			TextEditorProperties.IndentStyle            = IndentStyle.Auto;
-			
 			
 			string templateText = StringParser.Parse(template.Text, new string[,] { { "Selection", selectedText } });
+			int finalCaretOffset = templateText.IndexOf('|');
+			if (finalCaretOffset >= 0) {
+				templateText = templateText.Remove(finalCaretOffset, 1);
+			} else {
+				finalCaretOffset = templateText.Length;
+			}
+			int caretOffset = ActiveTextAreaControl.TextArea.Caret.Offset;
 			
 			BeginUpdate();
-			for (int i =0; i < templateText.Length; ++i) {
-				switch (templateText[i]) {
-					case '|':
-						finalCaretOffset = newCaretOffset;
-						break;
-					case '\r':
-						break;
-					case '\t':
-//						new Tab().Execute(ActiveTextAreaControl.TextArea);
-						break;
-					case '\n':
-						ActiveTextAreaControl.TextArea.Caret.Position = Document.OffsetToPosition(newCaretOffset);
-						new Return().Execute(ActiveTextAreaControl.TextArea);
-						newCaretOffset = ActiveTextAreaControl.TextArea.Caret.Offset;
-						break;
-					default:
-						ActiveTextAreaControl.TextArea.InsertChar(templateText[i]);
-						newCaretOffset = ActiveTextAreaControl.TextArea.Caret.Offset;
-						break;
-				}
-			}
-			int lastLine = Document.GetLineNumberForOffset(newCaretOffset);
-			EndUpdate();
-			Document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.LinesBetween, firstLine, lastLine));
-			Document.CommitUpdate();
-			ActiveTextAreaControl.TextArea.Caret.Position = Document.OffsetToPosition(finalCaretOffset);
+			int beginLine = ActiveTextAreaControl.TextArea.Caret.Line;
+			Document.Insert(caretOffset, templateText);
+			
+			ActiveTextAreaControl.TextArea.Caret.Position = Document.OffsetToPosition(caretOffset + finalCaretOffset);
+			int endLine = Document.OffsetToPosition(caretOffset + templateText.Length).Y;
+			
+			IndentStyle save1 = TextEditorProperties.IndentStyle;
 			TextEditorProperties.IndentStyle = IndentStyle.Smart;
-			Document.FormattingStrategy.IndentLines(ActiveTextAreaControl.TextArea, firstLine, lastLine);
+			Console.WriteLine("Indent between {0} and {1}", beginLine, endLine);
+			Document.FormattingStrategy.IndentLines(ActiveTextAreaControl.TextArea, beginLine, endLine);
+			EndUpdate();
+			Document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.WholeTextArea));
+			Document.CommitUpdate();
 			
 			// restore old property settings
-			TextEditorProperties.AutoInsertCurlyBracket = save1;
-			TextEditorProperties.IndentStyle            = save2;
+			TextEditorProperties.IndentStyle = save1;
 		}
 		
 		protected override void OnReloadHighlighting(object sender, EventArgs e)

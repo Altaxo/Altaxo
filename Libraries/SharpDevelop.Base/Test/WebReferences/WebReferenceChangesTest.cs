@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Matthew Ward" email="mrward@users.sourceforge.net"/>
-//     <version>$Revision: 955 $</version>
+//     <version>$Revision: 1665 $</version>
 // </file>
 
 using SD = ICSharpCode.SharpDevelop.Gui;
@@ -77,6 +77,8 @@ namespace ICSharpCode.SharpDevelop.Tests.WebReferences
 			ServiceDescription desc = new ServiceDescription();
 			contractRef.ClientProtocol.Documents.Add(contractRef.Url, desc);
 			protocol.References.Add(contractRef);
+			
+			WebReferenceTestHelper.InitializeLanguageBindings();
 			
 			SD.WebReference webReference = new SD.WebReference(project, "http://localhost/new.asmx", "localhost", "ProxyNamespace", protocol);
 			changes = webReference.GetChanges(project);

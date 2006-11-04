@@ -2,26 +2,24 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1967 $</version>
 // </file>
 
 using System;
-using System.IO;
+using System.Collections.Generic;
 using System.Drawing;
-using System.ComponentModel;
+using System.IO;
 using System.Windows.Forms;
-using System.Collections;
 
-using ICSharpCode.SharpDevelop.Project;
 using ICSharpCode.Core;
-
 using ICSharpCode.SharpDevelop.Gui.XmlForms;
+using ICSharpCode.SharpDevelop.Project;
 
 namespace ICSharpCode.SharpDevelop.Gui
 {
 	public class WordCountDialog : BaseSharpDevelopForm
 	{
-		ArrayList items;
+		List<Report> items;
 		Report total;
 		
 		internal class Report
@@ -85,7 +83,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		
 		void startEvent(object sender, System.EventArgs e)
 		{
-			items = new ArrayList();
+			items = new List<Report>();
 			total = null;
 			
 			switch (((ComboBox)ControlDictionary["locationComboBox"]).SelectedIndex) {
@@ -182,7 +180,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			
 		}
 		
-		internal class ReportComparer : IComparer
+		internal class ReportComparer : IComparer<Report>
 		{
 			int sortKey;
 			
@@ -191,22 +189,19 @@ namespace ICSharpCode.SharpDevelop.Gui
 				sortKey = SortKey;
 			}
 			
-			public int Compare(object x, object y)
+			public int Compare(Report x, Report y)
 			{
-				Report xr = x as Report;
-				Report yr = y as Report;
-				
 				if (x == null || y == null) return 1;
 				
 				switch (sortKey) {
 					case 0:  // files
-						return String.Compare(xr.name, yr.name);
+						return String.Compare(x.name, y.name);
 					case 1:  // chars
-						return xr.chars.CompareTo(yr.chars);
+						return x.chars.CompareTo(y.chars);
 					case 2:  // words
-						return xr.words.CompareTo(yr.words);
+						return x.words.CompareTo(y.words);
 					case 3:  // lines
-						return xr.lines.CompareTo(yr.lines);
+						return x.lines.CompareTo(y.lines);
 					default:
 						return 1;
 				}

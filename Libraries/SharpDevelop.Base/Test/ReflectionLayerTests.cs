@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1391 $</version>
+//     <version>$Revision: 1872 $</version>
 // </file>
 
 using System;
@@ -12,6 +12,7 @@ using System.Reflection;
 
 using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.Dom;
+using ICSharpCode.SharpDevelop.Dom.ReflectionLayer;
 using NUnit.Framework;
 
 namespace ICSharpCode.SharpDevelop.Tests
@@ -19,7 +20,7 @@ namespace ICSharpCode.SharpDevelop.Tests
 	[TestFixture]
 	public class ReflectionLayerTests
 	{
-		IProjectContent pc = ProjectContentRegistry.Mscorlib;
+		IProjectContent pc = ParserService.DefaultProjectContentRegistry.Mscorlib;
 		
 		[Test]
 		public void InheritanceTest()
@@ -28,7 +29,8 @@ namespace ICSharpCode.SharpDevelop.Tests
 			IClass c2 = pc.GetClass("System.Exception");
 			Assert.IsNotNull(c, "c is null");
 			Assert.IsNotNull(c2, "c2 is null");
-			Assert.AreEqual(3, c.BaseTypes.Count); // 2 interfaces
+			//Assert.AreEqual(3, c.BaseTypes.Count); // Inherited interfaces are not reported by Cecil
+			// which matches the behaviour of our C#/VB parsers
 			Assert.AreEqual("System.Exception", c.BaseTypes[0].FullyQualifiedName);
 			Assert.AreSame(c2, c.BaseClass);
 			
@@ -39,9 +41,15 @@ namespace ICSharpCode.SharpDevelop.Tests
 			Assert.AreEqual(5, subClasses.Count, "ClassInheritanceTree length");
 			Assert.AreEqual("System.SystemException", subClasses[0].FullyQualifiedName);
 			Assert.AreEqual("System.Exception", subClasses[1].FullyQualifiedName);
-			Assert.AreEqual("System.Runtime.Serialization.ISerializable", subClasses[2].FullyQualifiedName);
-			Assert.AreEqual("System.Runtime.InteropServices._Exception", subClasses[3].FullyQualifiedName);
-			Assert.AreEqual("System.Object", subClasses[4].FullyQualifiedName);
+			if (subClasses[2].FullyQualifiedName == "System.Object") {
+				Assert.AreEqual("System.Object", subClasses[2].FullyQualifiedName);
+				Assert.AreEqual("System.Runtime.Serialization.ISerializable", subClasses[3].FullyQualifiedName);
+				Assert.AreEqual("System.Runtime.InteropServices._Exception", subClasses[4].FullyQualifiedName);
+			} else {
+				Assert.AreEqual("System.Runtime.Serialization.ISerializable", subClasses[2].FullyQualifiedName);
+				Assert.AreEqual("System.Runtime.InteropServices._Exception", subClasses[3].FullyQualifiedName);
+				Assert.AreEqual("System.Object", subClasses[4].FullyQualifiedName);
+			}
 		}
 		
 		[Test]
@@ -102,7 +110,7 @@ namespace ICSharpCode.SharpDevelop.Tests
 		{
 			IClass c = pc.GetClass("System.Void");
 			Assert.IsNotNull(c, "System.Void not found");
-			Assert.AreSame(c.DefaultReturnType, ReflectionReturnType.Void, "ReflectionReturnType.Void is c.DefaultReturnType");
+			Assert.AreSame(c.DefaultReturnType, VoidReturnType.Instance, "VoidReturnType.Instance is c.DefaultReturnType");
 		}
 		
 		class TestClass<A, B> where A : B {
@@ -114,18 +122,16 @@ namespace ICSharpCode.SharpDevelop.Tests
 		[Test]
 		public void ReflectionParserTest()
 		{
-			ICompilationUnit cu = new ReflectionProjectContent("TestName", "testlocation", new AssemblyName[0]).AssemblyCompilationUnit;
+			ICompilationUnit cu = new ReflectionProjectContent("TestName", "testlocation", new AssemblyName[0], ParserService.DefaultProjectContentRegistry).AssemblyCompilationUnit;
 			IClass c = new ReflectionClass(cu, typeof(TestClass<,>), typeof(TestClass<,>).FullName, null);
 			cu.ProjectContent.AddClassToNamespaceList(c);
 			
 			CheckClass(c);
 			MemoryStream memory = new MemoryStream();
-			DomPersistence.ReadWriteHelper helper = new DomPersistence.ReadWriteHelper(new BinaryWriter(memory));
-			helper.WriteProjectContent((ReflectionProjectContent)cu.ProjectContent);
+			DomPersistence.WriteProjectContent((ReflectionProjectContent)cu.ProjectContent, memory);
 			
 			memory.Position = 0;
-			helper = new DomPersistence.ReadWriteHelper(new BinaryReader(memory));
-			foreach (IClass c2 in helper.ReadProjectContent().Classes) {
+			foreach (IClass c2 in DomPersistence.LoadProjectContent(memory, ParserService.DefaultProjectContentRegistry).Classes) {
 				CheckClass(c2);
 			}
 		}
@@ -154,8 +160,8 @@ namespace ICSharpCode.SharpDevelop.Tests
 			
 			Assert.AreEqual("IEquatable", m.TypeParameters[0].Constraints[0].Name);
 			Assert.AreEqual(1, m.TypeParameters[0].Constraints[0].TypeParameterCount);
-			Assert.AreEqual(1, m.TypeParameters[0].Constraints[0].TypeArguments.Count);
-			GenericReturnType grt = (GenericReturnType)m.TypeParameters[0].Constraints[0].TypeArguments[0];
+			Assert.AreEqual(1, m.TypeParameters[0].Constraints[0].CastToConstructedReturnType().TypeArguments.Count);
+			GenericReturnType grt = (GenericReturnType)m.TypeParameters[0].Constraints[0].CastToConstructedReturnType().TypeArguments[0];
 			Assert.AreSame(m.TypeParameters[0], grt.TypeParameter);
 		}
 	}

@@ -1,25 +1,20 @@
 ﻿// <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1392 $</version>
+//     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.IO;
-using System.Drawing;
-using System.Windows.Forms;
 using System.Drawing.Printing;
+using System.IO;
+using System.Windows.Forms;
 
+using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.Dom;
-
 using ICSharpCode.SharpDevelop.Gui;
 using ICSharpCode.TextEditor;
 using ICSharpCode.TextEditor.Document;
-using ICSharpCode.SharpDevelop.Project;
-using ICSharpCode.SharpDevelop.Internal.Undo;
-
-using ICSharpCode.Core;
 
 namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 {
@@ -71,7 +66,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		{
 			TextEditorDisplayBindingWrapper b2 = new TextEditorDisplayBindingWrapper();
 			
-			b2.textAreaControl.Document.TextContent = StringParser.Parse(content);
+			b2.textAreaControl.Document.TextContent = content;
 			b2.textAreaControl.Document.HighlightingStrategy = HighlightingStrategyFactory.CreateHighlightingStrategy(language);
 			b2.textAreaControl.InitializeAdvancedHighlighter();
 			b2.textAreaControl.InitializeFormatter();
@@ -83,6 +78,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 	public class TextEditorDisplayBindingWrapper : AbstractViewContent, IMementoCapable, IPrintable, IEditable, IUndoHandler, IPositionable, ITextEditorControlProvider, IParseInformationListener, IClipboardHandler, IContextHelpProvider
 	{
 		public SharpDevelopTextAreaControl textAreaControl = null;
+		FileChangeWatcher watcher;
 		
 		public TextEditorControl TextEditorControl {
 			get {
@@ -90,10 +86,86 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			}
 		}
 		
-		// KSL Start, New lines
-		protected FileSystemWatcher watcher;
-		protected bool wasChangedExternally = false;
-		// KSL End
+		public sealed class FileChangeWatcher : IDisposable
+		{
+			FileSystemWatcher watcher;
+			bool wasChangedExternally = false;
+			string fileName;
+			AbstractViewContent viewContent;
+			
+			public FileChangeWatcher(AbstractViewContent viewContent)
+			{
+				this.viewContent = viewContent;
+				WorkbenchSingleton.MainForm.Activated += GotFocusEvent;
+			}
+			
+			public void Dispose()
+			{
+				WorkbenchSingleton.MainForm.Activated -= GotFocusEvent;
+				if (watcher != null) {
+					watcher.Dispose();
+				}
+			}
+			
+			public void Disable()
+			{
+				if (watcher != null) {
+					watcher.EnableRaisingEvents = false;
+				}
+			}
+			
+			public void SetWatcher(string fileName)
+			{
+				this.fileName = fileName;
+				try {
+					if (this.watcher == null) {
+						this.watcher = new FileSystemWatcher();
+						this.watcher.SynchronizingObject = WorkbenchSingleton.MainForm;
+						this.watcher.Changed += new FileSystemEventHandler(this.OnFileChangedEvent);
+					} else {
+						this.watcher.EnableRaisingEvents = false;
+					}
+					this.watcher.Path = Path.GetDirectoryName(fileName);
+					this.watcher.Filter = Path.GetFileName(fileName);
+					this.watcher.NotifyFilter = NotifyFilters.LastWrite;
+					this.watcher.EnableRaisingEvents = true;
+				} catch (PlatformNotSupportedException) {
+					if (watcher != null) {
+						watcher.Dispose();
+					}
+					watcher = null;
+				}
+			}
+			
+			void OnFileChangedEvent(object sender, FileSystemEventArgs e)
+			{
+				if(e.ChangeType != WatcherChangeTypes.Deleted) {
+					wasChangedExternally = true;
+					if (ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.Workbench.IsActiveWindow) {
+						GotFocusEvent(this, EventArgs.Empty);
+					}
+				}
+			}
+			
+			void GotFocusEvent(object sender, EventArgs e)
+			{
+				if (wasChangedExternally) {
+					wasChangedExternally = false;
+					
+					string message = StringParser.Parse("${res:ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor.TextEditorDisplayBinding.FileAlteredMessage}", new string[,] {{"File", Path.GetFullPath(fileName)}});
+					if (viewContent.IsDirty == false ||
+					    MessageBox.Show(message,
+					                    StringParser.Parse("${res:MainWindow.DialogName}"),
+					                    MessageBoxButtons.YesNo,
+					                    MessageBoxIcon.Question) == DialogResult.Yes)
+					{
+						viewContent.Load(fileName);
+					} else {
+						viewContent.IsDirty = true;
+					}
+				}
+			}
+		}
 		
 		public bool EnableUndo {
 			get {
@@ -122,13 +194,13 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		public string Text {
 			get {
 				if (WorkbenchSingleton.InvokeRequired)
-					return (string)WorkbenchSingleton.SafeThreadCall(this, "GetText", null);
+					return WorkbenchSingleton.SafeThreadFunction<string>(GetText);
 				else
 					return GetText();
 			}
 			set {
 				if (WorkbenchSingleton.InvokeRequired)
-					WorkbenchSingleton.SafeThreadCall(this, "SetText", value);
+					WorkbenchSingleton.SafeThreadCall(SetText, value);
 				else
 					SetText(value);
 			}
@@ -168,6 +240,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		{
 			base.OnFileNameChanged(e);
 			textAreaControl.FileName = base.FileName;
+			watcher.SetWatcher(textAreaControl.FileName); // update file name the watcher looks at
 		}
 		
 		public void Undo()
@@ -192,15 +265,9 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			textAreaControl.Document.DocumentChanged += new DocumentEventHandler(TextAreaChangedEvent);
 			textAreaControl.ActiveTextAreaControl.Caret.CaretModeChanged += new EventHandler(CaretModeChanged);
 			textAreaControl.ActiveTextAreaControl.Enter += new EventHandler(CaretUpdate);
-			
-			// KSL Start, New lines
-//			textAreaControl.FileNameChanged += new EventHandler(FileNameChangedEvent);
-			((Form)ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.Workbench).Activated += new EventHandler(GotFocusEvent);
-			// KSL End
-			
-			
+			textAreaControl.ActiveTextAreaControl.Caret.PositionChanged += CaretUpdate;
+			watcher = new FileChangeWatcher(this);
 		}
-		// KSL Start, new event handlers
 		
 		public void ShowHelp()
 		{
@@ -218,73 +285,19 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 				ResolveResult result = ParserService.Resolve(expressionResult, textArea.Caret.Line + 1, textArea.Caret.Column + 1, textAreaControl.FileName, textContent);
 				TypeResolveResult trr = result as TypeResolveResult;
 				if (trr != null) {
-					ICSharpCode.SharpDevelop.Dom.HelpProvider.ShowHelp(trr.ResolvedClass);
+					HelpProvider.ShowHelp(trr.ResolvedClass);
 				}
 				MemberResolveResult mrr = result as MemberResolveResult;
 				if (mrr != null) {
-					ICSharpCode.SharpDevelop.Dom.HelpProvider.ShowHelp(mrr.ResolvedMember);
+					HelpProvider.ShowHelp(mrr.ResolvedMember);
 				}
 			}
 		}
-		
-		protected void SetWatcher()
-		{
-			try {
-				if (this.watcher == null) {
-					this.watcher = new FileSystemWatcher();
-					this.watcher.Changed += new FileSystemEventHandler(this.OnFileChangedEvent);
-				} else {
-					this.watcher.EnableRaisingEvents = false;
-				}
-				this.watcher.Path = Path.GetDirectoryName(textAreaControl.FileName);
-				this.watcher.Filter = Path.GetFileName(textAreaControl.FileName);
-				this.watcher.NotifyFilter = NotifyFilters.LastWrite;
-				this.watcher.EnableRaisingEvents = true;
-			} catch (Exception) {
-				if (watcher != null) {
-					watcher.Dispose();
-				}
-				watcher = null;
-			}
-		}
-		protected virtual void GotFocusEvent(object sender, EventArgs e)
-		{
-			if (wasChangedExternally) {
-				wasChangedExternally = false;
-				
-				string message = StringParser.Parse("${res:ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor.TextEditorDisplayBinding.FileAlteredMessage}", new string[,] {{"File", Path.GetFullPath(textAreaControl.FileName)}});
-				if (MessageBox.Show(message,
-				                    StringParser.Parse("${res:MainWindow.DialogName}"),
-				                    MessageBoxButtons.YesNo,
-				                    MessageBoxIcon.Question) == DialogResult.Yes) {
-					Load(textAreaControl.FileName);
-				} else {
-					IsDirty = true;
-				}
-			}
-		}
-		
-		void OnFileChangedEvent(object sender, FileSystemEventArgs e)
-		{
-			if(e.ChangeType != WatcherChangeTypes.Deleted) {
-				wasChangedExternally = true;
-				if (textAreaControl.IsHandleCreated)
-					textAreaControl.BeginInvoke(new MethodInvoker(OnFileChangedEventInvoked));
-			}
-		}
-		
-		void OnFileChangedEventInvoked()
-		{
-			if (((Form)ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.Workbench).Focused) {
-				GotFocusEvent(this, EventArgs.Empty);
-			}
-		}
-		
-		// KSL End
 		
 		void TextAreaChangedEvent(object sender, DocumentEventArgs e)
 		{
 			IsDirty = true;
+			NavigationService.ContentChanging(this.textAreaControl, e);
 		}
 		
 		public override void RedrawContent()
@@ -298,13 +311,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			if (this.IsUntitled) {
 				ParserService.ClearParseInformation(this.UntitledName);
 			}
-			if (WorkbenchSingleton.MainForm != null) {
-				WorkbenchSingleton.MainForm.Activated -= new EventHandler(GotFocusEvent);
-			}
-			if (this.watcher != null) {
-				this.watcher.Dispose();
-				this.watcher = null;
-			}
+			watcher.Dispose();
 			textAreaControl.Dispose();
 			base.Dispose();
 		}
@@ -318,11 +325,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		public override void Save(string fileName)
 		{
 			OnSaving(EventArgs.Empty);
-			// KSL, Start new line
-			if (watcher != null) {
-				this.watcher.EnableRaisingEvents = false;
-			}
-			// KSL End
+			watcher.Disable();
 			
 			if (!textAreaControl.CanSaveWithCurrentEncoding()) {
 				if (MessageService.AskQuestion("The file cannot be saved with the current encoding " +
@@ -341,7 +344,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			TitleName = Path.GetFileName(fileName);
 			IsDirty   = false;
 			
-			SetWatcher();
+			watcher.SetWatcher(this.FileName);
 			OnSaved(new SaveEventArgs(true));
 		}
 		
@@ -354,7 +357,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			FileName  = fileName;
 			TitleName = Path.GetFileName(fileName);
 			IsDirty     = false;
-			SetWatcher();
+			watcher.SetWatcher(fileName);
 			foreach (Bookmarks.SDBookmark mark in Bookmarks.BookmarkManager.GetBookmarks(fileName)) {
 				mark.Document = textAreaControl.Document;
 				textAreaControl.Document.BookmarkManager.Marks.Add(mark);
@@ -395,6 +398,14 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 //			textAreaControl.Refresh();
 		}
 		
+		public override INavigationPoint BuildNavPoint()
+		{
+			int lineNumber = this.Line;
+			LineSegment lineSegment = textAreaControl.Document.GetLineSegment(lineNumber);
+			string txt = textAreaControl.Document.GetText(lineSegment);
+			return new TextNavigationPoint(this.FileName, lineNumber, this.Column, txt);
+		}
+		
 		void CaretUpdate(object sender, EventArgs e)
 		{
 			CaretChanged(null, null);
@@ -403,15 +414,15 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		
 		void CaretChanged(object sender, EventArgs e)
 		{
-			Point    pos       = textAreaControl.Document.OffsetToPosition(textAreaControl.ActiveTextAreaControl.Caret.Offset);
-			LineSegment line   = textAreaControl.Document.GetLineSegment(pos.Y);
-			
-			StatusBarService.SetCaretPosition(pos.X + 1, pos.Y + 1, textAreaControl.ActiveTextAreaControl.Caret.Offset - line.Offset + 1);
+			TextAreaControl activeTextAreaControl = textAreaControl.ActiveTextAreaControl;
+			int line = activeTextAreaControl.Caret.Line;
+			int col = activeTextAreaControl.Caret.Column;
+			StatusBarService.SetCaretPosition(activeTextAreaControl.TextArea.TextView.GetVisualColumn(line, col), line, col);
+			NavigationService.Log(this.BuildNavPoint());
 		}
 		
 		void CaretModeChanged(object sender, EventArgs e)
 		{
-			
 			StatusBarService.SetInsertMode(textAreaControl.ActiveTextAreaControl.Caret.CaretMode == CaretMode.InsertMode);
 		}
 		
@@ -427,10 +438,26 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 				base.TitleName = Path.GetFileName(value);
 			}
 		}
+		
+		#region IPositionable implementation
 		public void JumpTo(int line, int column)
 		{
 			textAreaControl.ActiveTextAreaControl.JumpTo(line, column);
 		}
+		
+		public int Line {
+			get {
+				return textAreaControl.ActiveTextAreaControl.Caret.Line;
+			}
+		}
+		
+		public int Column {
+			get {
+				return textAreaControl.ActiveTextAreaControl.Caret.Column;
+			}
+		}
+		
+		#endregion
 		
 		public void ForceFoldingUpdate()
 		{
@@ -449,7 +476,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		public void ParseInformationUpdated(ParseInformation parseInfo)
 		{
 			if (textAreaControl.TextEditorProperties.EnableFolding) {
-				WorkbenchSingleton.SafeThreadAsyncCall(this, "ParseInformationUpdatedInvoked", parseInfo);
+				WorkbenchSingleton.SafeThreadAsyncCall(ParseInformationUpdatedInvoked, parseInfo);
 			}
 		}
 		

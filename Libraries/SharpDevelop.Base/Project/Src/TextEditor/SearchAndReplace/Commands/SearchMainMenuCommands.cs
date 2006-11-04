@@ -2,28 +2,13 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1301 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.IO;
-using System.Threading;
-using System.Drawing;
-using System.Drawing.Printing;
-using System.Collections;
-using System.ComponentModel;
-using System.Windows.Forms;
-using System.Diagnostics;
-using System.Text;
-
 using ICSharpCode.Core;
 using ICSharpCode.TextEditor;
-using ICSharpCode.TextEditor.Actions;
-
-using ICSharpCode.SharpDevelop.Gui;
 using ICSharpCode.TextEditor.Document;
-using ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor;
-using ICSharpCode.SharpDevelop;
 
 namespace SearchAndReplace
 {
@@ -47,7 +32,7 @@ namespace SearchAndReplace
 			SearchAndReplaceDialog.ShowSingleInstance(SearchAndReplaceMode.Search);
 		}
 		
-		static bool IsMultipleLines(string text)
+		public static bool IsMultipleLines(string text)
 		{
 			return text.IndexOf('\n') != -1;
 		}
@@ -62,6 +47,56 @@ namespace SearchAndReplace
 			} else {
 				Find find = new Find();
 				find.Run();
+			}
+		}
+	}
+	
+	/// <summary>
+	/// Finds the next text match based on the text currently
+	/// selected. It uses the currently active search options and only changes
+	/// the current find pattern. If the currently active search is inside the 
+	/// current text selection then the quick find will change the search so it is
+	/// across the active document, otherwise it will not change the current setting.
+	/// </summary>
+	/// <remarks>
+	/// If there is a piece of text selected on a single line then the quick
+	/// find will search for that. If multiple lines of text are selected then
+	/// the word at the start of the selection is determined and searche for.
+	/// If no text is selected then the word next to the caret is used. If
+	/// no text is selected, but the caret is immediately surrounded by whitespace
+	/// then quick find does nothing.
+	/// </remarks>
+	public class FindNextSelected : AbstractMenuCommand
+	{
+		public override void Run()
+		{
+			TextEditorControl textArea = SearchReplaceUtilities.GetActiveTextEditor();
+			if (textArea == null) {
+				return;
+			}
+			
+			// Determine what text we should search for.
+			string textToFind;
+			
+			string selectedText = textArea.ActiveTextAreaControl.TextArea.SelectionManager.SelectedText;
+			if (selectedText.Length > 0) {
+				if (Find.IsMultipleLines(selectedText)) {
+					// Locate the nearest word at the selection start.
+					textToFind = TextUtilities.GetWordAt(textArea.Document, textArea.ActiveTextAreaControl.TextArea.SelectionManager.SelectionCollection[0].Offset);
+				} else {
+					// Search for selected text.
+					textToFind = selectedText;		
+				}
+			} else {
+				textToFind = TextUtilities.GetWordAt(textArea.Document, textArea.ActiveTextAreaControl.Caret.Offset);
+			}
+			
+			if (textToFind != null && textToFind.Length > 0) {
+				SearchOptions.CurrentFindPattern = textToFind;
+				if (SearchOptions.DocumentIteratorType == DocumentIteratorType.CurrentSelection) {
+					SearchOptions.DocumentIteratorType = DocumentIteratorType.CurrentDocument;
+				}
+				SearchReplaceManager.FindNext();
 			}
 		}
 	}

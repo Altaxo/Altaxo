@@ -2,16 +2,15 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.IO;
-using System.Collections;
+using System.Collections.Generic;
 using System.Windows.Forms;
 
-using ICSharpCode.SharpDevelop.Internal.ExternalTool;
 using ICSharpCode.Core;
+using ICSharpCode.SharpDevelop.Internal.ExternalTool;
 
 namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 {
@@ -146,7 +145,7 @@ namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 		
 		public override bool StorePanelContents()
 		{
-			ArrayList newlist = new ArrayList();
+			List<ExternalTool> newlist = new List<ExternalTool>();
 			foreach (ExternalTool tool in ((ListBox)ControlDictionary["toolListBox"]).Items) {
 				if (!FileUtility.IsValidFileName(tool.Command)) {
 					MessageService.ShowError(String.Format("The command of tool \"{0}\" is invalid.", tool.MenuCommand));

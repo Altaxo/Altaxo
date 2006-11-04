@@ -2,10 +2,8 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1966 $</version>
 // </file>
-
-using ICSharpCode.TextEditor.Undo;
 
 namespace ICSharpCode.TextEditor.Document
 {

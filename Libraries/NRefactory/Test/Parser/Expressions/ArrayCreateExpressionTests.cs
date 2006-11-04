@@ -2,16 +2,16 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1669 $</version>
 // </file>
 
 using System;
 using System.IO;
 using NUnit.Framework;
 using ICSharpCode.NRefactory.Parser;
-using ICSharpCode.NRefactory.Parser.AST;
+using ICSharpCode.NRefactory.Ast;
 
-namespace ICSharpCode.NRefactory.Tests.AST
+namespace ICSharpCode.NRefactory.Tests.Ast
 {
 	[TestFixture]
 	public class ArrayCreateExpressionTests
@@ -28,6 +28,7 @@ namespace ICSharpCode.NRefactory.Tests.AST
 		#endregion
 		
 		#region VB.NET
+		
 		[Test]
 		public void VBNetArrayCreateExpressionTest1()
 		{
@@ -35,6 +36,17 @@ namespace ICSharpCode.NRefactory.Tests.AST
 			
 			Assert.AreEqual("Integer", ace.CreateType.Type);
 			Assert.AreEqual(0, ace.Arguments.Count);
+			Assert.AreEqual(new int[] {0}, ace.CreateType.RankSpecifier);
+		}
+		
+		[Test]
+		public void VBNetArrayCreateExpressionTest2()
+		{
+			ArrayCreateExpression ace = ParseUtilVBNet.ParseExpression<ArrayCreateExpression>("New Integer(0 To 5){0, 1, 2, 3, 4, 5}");
+			
+			Assert.AreEqual("Integer", ace.CreateType.Type);
+			Assert.AreEqual(1, ace.Arguments.Count);
+			Assert.AreEqual(5, (ace.Arguments[0] as PrimitiveExpression).Value);
 			Assert.AreEqual(new int[] {0}, ace.CreateType.RankSpecifier);
 		}
 		#endregion

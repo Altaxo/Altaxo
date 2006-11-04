@@ -2,14 +2,13 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1040 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.Drawing;
-using System.Collections;
 using System.Collections.Generic;
 using System.Windows.Forms;
+
 using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.Gui;
 
@@ -60,7 +59,7 @@ namespace ICSharpCode.SharpDevelop.Project.Dialogs
 //			tabControl.Alignment = TabAlignment.Left;
 			
 			tabControl.HandleCreated += TabControlHandleCreated;
-			AddOptionPanels(node.BuildChildItems(this));
+			AddOptionPanels(node.BuildChildItems<IDialogPanelDescriptor>(this));
 		}
 		
 		void TabControlHandleCreated(object sender, EventArgs e)
@@ -82,7 +81,7 @@ namespace ICSharpCode.SharpDevelop.Project.Dialogs
 			}
 		}
 		
-		void AddOptionPanels(ArrayList dialogPanelDescriptors)
+		void AddOptionPanels(IEnumerable<IDialogPanelDescriptor> dialogPanelDescriptors)
 		{
 			Properties newProperties = new Properties();
 			newProperties.Set("Project", project);
@@ -123,6 +122,11 @@ namespace ICSharpCode.SharpDevelop.Project.Dialogs
 				}
 			}
 			this.IsDirty = dirty;
+		}
+		
+		public override void Load(string fileName)
+		{
+			// TODO: reload project file
 		}
 		
 		public override void Save(string fileName)

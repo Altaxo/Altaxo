@@ -2,19 +2,16 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1334 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.Text;
-using System.IO;
-using System.Xml;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Reflection;
+using System.IO;
+using System.Text;
+using System.Xml;
+
 using ICSharpCode.Core;
-using ICSharpCode.SharpDevelop.Gui;
 using ICSharpCode.SharpDevelop.Project;
 
 namespace ICSharpCode.SharpDevelop.Internal.Templates
@@ -120,21 +117,24 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 				
 				// filter 'illegal' chars from standard namespace
 				if (newProjectName != null && newProjectName.Length > 0) {
-					char ch = newProjectName[0];
-					// can only begin with a letter or '_'
-					if (!Char.IsLetter(ch)) {
-						standardNamespace.Append('_');
-					} else {
-						standardNamespace.Append(ch);
-					}
-					for (int i = 1; i < newProjectName.Length; ++i) {
-						ch = newProjectName[i];
-						// can only contain letters, digits or '_'
-						if (!Char.IsLetterOrDigit(ch) && ch != '.') {
-							standardNamespace.Append('_');
+					char ch = '.';
+					for (int i = 0; i < newProjectName.Length; ++i) {
+						if (ch == '.') {
+							// at beginning or after '.', only a letter or '_' is allowed
+							ch = newProjectName[i];
+							if (!Char.IsLetter(ch)) {
+								standardNamespace.Append('_');
+							} else {
+								standardNamespace.Append(ch);
+							}
 						} else {
-							standardNamespace.Append(ch);
-							
+							ch = newProjectName[i];
+							// can only contain letters, digits or '_'
+							if (!Char.IsLetterOrDigit(ch) && ch != '.') {
+								standardNamespace.Append('_');
+							} else {
+								standardNamespace.Append(ch);
+							}
 						}
 					}
 				}
@@ -158,11 +158,13 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 				}
 				
 				// Add Imports
-				if (clearExistingImports) {
-					((AbstractProject)project).Imports.Clear();
-				}
-				foreach(string projectImport in projectImports) {
-					((AbstractProject)project).Imports.Add(projectImport);
+				if (project is MSBuildProject) {
+					if (clearExistingImports) {
+						((MSBuildProject)project).Imports.Clear();
+					}
+					foreach (string projectImport in projectImports) {
+						((MSBuildProject)project).Imports.Add(new MSBuildImport(projectImport));
+					}
 				}
 				
 				foreach (PropertyGroup pg in propertyGroups) {
@@ -202,11 +204,15 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 						if (!Directory.Exists(Path.GetDirectoryName(fileName))) {
 							Directory.CreateDirectory(Path.GetDirectoryName(fileName));
 						}
-						Properties properties = ((Properties)PropertyService.Get("ICSharpCode.TextEditor.Document.Document.DefaultDocumentAggregatorProperties", new Properties()));
-						
-						StreamWriter sr = new StreamWriter(File.Create(fileName), Encoding.GetEncoding(properties.Get("Encoding", 1252)));
-						sr.Write(StringParser.Parse(StringParser.Parse(file.Content, new string[,] { {"ProjectName", projectCreateInformation.ProjectName}, {"FileName", fileName}})));
-						sr.Close();
+						if (file.ContentData != null) {
+							// Binary content
+							File.WriteAllBytes(fileName, file.ContentData);
+						} else {
+							// Textual content
+							StreamWriter sr = new StreamWriter(File.Create(fileName), ParserService.DefaultFileEncoding);
+							sr.Write(StringParser.Parse(StringParser.Parse(file.Content, new string[,] { {"ProjectName", projectCreateInformation.ProjectName}, {"FileName", fileName}})));
+							sr.Close();
+						}
 					} catch (Exception ex) {
 						StringParser.Properties["fileName"] = fileName;
 						MessageService.ShowError(ex, "${res:ICSharpCode.SharpDevelop.Internal.Templates.ProjectDescriptor.FileCouldntBeWrittenError}");

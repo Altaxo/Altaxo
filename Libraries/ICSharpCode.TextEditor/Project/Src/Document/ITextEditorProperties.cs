@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="none" email=""/>
-//     <version>$Revision: 1118 $</version>
+//     <version>$Revision: 1893 $</version>
 // </file>
 
 using System;
@@ -146,6 +146,10 @@ namespace ICSharpCode.TextEditor.Document
 		Font Font { // is wrapped in text editor control
 			get;
 			set;
+		}
+		
+		FontContainer FontContainer {
+			get;
 		}
 		
 		BracketMatchingStyle  BracketMatchingStyle { // is wrapped in text editor control

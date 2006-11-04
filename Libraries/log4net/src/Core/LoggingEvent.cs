@@ -340,6 +340,7 @@ namespace log4net.Core
 		/// the stack boundary into the logging system for this call.</param>
 		/// <param name="repository">The repository this event is logged in.</param>
 		/// <param name="data">Data used to initialize the logging event.</param>
+		/// <param name="fixedData">The fields in the <paranref name="data"/> struct that have already been fixed.</param>
 		/// <remarks>
 		/// <para>
 		/// This constructor is provided to allow a <see cref="LoggingEvent" />
@@ -347,15 +348,50 @@ namespace log4net.Core
 		/// be useful if you require a custom serialization scheme.
 		/// </para>
 		/// <para>
-		/// Use the <see cref="GetLoggingEventData"/> method to obtain an 
-		/// instance of the <see cref="LoggingEventData"/> class.</para>
+		/// Use the <see cref="GetLoggingEventData(FixFlags)"/> method to obtain an 
+		/// instance of the <see cref="LoggingEventData"/> class.
+		/// </para>
+		/// <para>
+		/// The <paramref name="fixedData"/> parameter should be used to specify which fields in the
+		/// <paramref name="data"/> struct have been preset. Fields not specified in the <paramref name="fixedData"/>
+		/// will be captured from the environment if requested or fixed.
+		/// </para>
 		/// </remarks>
-		public LoggingEvent(Type callerStackBoundaryDeclaringType, log4net.Repository.ILoggerRepository repository, LoggingEventData data) 
+		public LoggingEvent(Type callerStackBoundaryDeclaringType, log4net.Repository.ILoggerRepository repository, LoggingEventData data, FixFlags fixedData) 
 		{
 			m_callerStackBoundaryDeclaringType = callerStackBoundaryDeclaringType;
 			m_repository = repository;
 
 			m_data = data;
+			m_fixFlags = fixedData;
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="LoggingEvent" /> class 
+		/// using specific data.
+		/// </summary>
+		/// <param name="callerStackBoundaryDeclaringType">The declaring type of the method that is
+		/// the stack boundary into the logging system for this call.</param>
+		/// <param name="repository">The repository this event is logged in.</param>
+		/// <param name="data">Data used to initialize the logging event.</param>
+		/// <remarks>
+		/// <para>
+		/// This constructor is provided to allow a <see cref="LoggingEvent" />
+		/// to be created independently of the log4net framework. This can
+		/// be useful if you require a custom serialization scheme.
+		/// </para>
+		/// <para>
+		/// Use the <see cref="GetLoggingEventData(FixFlags)"/> method to obtain an 
+		/// instance of the <see cref="LoggingEventData"/> class.
+		/// </para>
+		/// <para>
+		/// This constructor sets this objects <see cref="Fix"/> flags to <see cref="FixFlags.All"/>,
+		/// this assumes that all the data relating to this event is passed in via the <paramref name="data"/>
+		/// parameter and no other data should be captured from the environment.
+		/// </para>
+		/// </remarks>
+		public LoggingEvent(Type callerStackBoundaryDeclaringType, log4net.Repository.ILoggerRepository repository, LoggingEventData data) : this(callerStackBoundaryDeclaringType, repository, data, FixFlags.All)
+		{
 		}
 
 		/// <summary>
@@ -370,8 +406,14 @@ namespace log4net.Core
 		/// be useful if you require a custom serialization scheme.
 		/// </para>
 		/// <para>
-		/// Use the <see cref="GetLoggingEventData"/> method to obtain an 
-		/// instance of the <see cref="LoggingEventData"/> class.</para>
+		/// Use the <see cref="GetLoggingEventData(FixFlags)"/> method to obtain an 
+		/// instance of the <see cref="LoggingEventData"/> class.
+		/// </para>
+		/// <para>
+		/// This constructor sets this objects <see cref="Fix"/> flags to <see cref="FixFlags.All"/>,
+		/// this assumes that all the data relating to this event is passed in via the <paramref name="data"/>
+		/// parameter and no other data should be captured from the environment.
+		/// </para>
 		/// </remarks>
 		public LoggingEvent(LoggingEventData data) : this(null, null, data)
 		{
@@ -414,6 +456,10 @@ namespace log4net.Core
 			m_data.Properties = (PropertiesDictionary) info.GetValue("Properties", typeof(PropertiesDictionary));
 			m_data.Domain = info.GetString("Domain");
 			m_data.Identity = info.GetString("Identity");
+
+			// We have restored all the values of this instance, i.e. all the values are fixed
+			// Set the fix flags otherwise the data values may be overwritten from the current environment.
+			m_fixFlags = FixFlags.All;
 		}
 
 #endif
@@ -516,7 +562,7 @@ namespace log4net.Core
 		{
 			get
 			{
-				if (m_data.LocationInfo == null) 
+				if (m_data.LocationInfo == null  && this.m_cacheUpdatable) 
 				{
 					m_data.LocationInfo = new LocationInfo(m_callerStackBoundaryDeclaringType);
 				}
@@ -614,7 +660,7 @@ namespace log4net.Core
 		{
 			get 
 			{ 
-				if (m_data.Message == null)
+				if (m_data.Message == null && this.m_cacheUpdatable)
 				{
 					if (m_message == null)
 					{
@@ -694,7 +740,7 @@ namespace log4net.Core
 		{
 			get
 			{
-				if (m_data.ThreadName == null)
+				if (m_data.ThreadName == null && this.m_cacheUpdatable)
 				{
 #if NETCF
 					// Get thread ID only
@@ -777,11 +823,11 @@ namespace log4net.Core
 		{
 			get
 			{
-				if (m_data.UserName == null) 
+				if (m_data.UserName == null  && this.m_cacheUpdatable) 
 				{
 #if (NETCF || SSCLI)
 					// On compact framework there's no notion of current Windows user
-					m_data.UserName = "NOT AVAILABLE";
+					m_data.UserName = SystemInfo.NotAvailableText;
 #else
 					try
 					{
@@ -825,11 +871,11 @@ namespace log4net.Core
 		{
 			get
 			{
-				if (m_data.Identity == null)
+				if (m_data.Identity == null  && this.m_cacheUpdatable)
 				{
 #if (NETCF || SSCLI)
 					// On compact framework there's no notion of current thread principals
-					m_data.Identity = "NOT AVAILABLE";
+					m_data.Identity = SystemInfo.NotAvailableText;
 #else
 					try
 					{
@@ -873,7 +919,7 @@ namespace log4net.Core
 		{
 			get 
 			{ 
-				if (m_data.Domain == null)
+				if (m_data.Domain == null  && this.m_cacheUpdatable)
 				{
 					m_data.Domain = SystemInfo.ApplicationFriendlyName;
 				}
@@ -959,7 +1005,7 @@ namespace log4net.Core
 		/// The data in this event must be fixed before it can be serialized.
 		/// </para>
 		/// <para>
-		/// The <see cref="FixVolatileData"/> method must be called during the
+		/// The <see cref="FixVolatileData()"/> method must be called during the
 		/// <see cref="log4net.Appender.IAppender.DoAppend"/> method call if this event 
 		/// is to be used outside that method.
 		/// </para>
@@ -1058,7 +1104,7 @@ namespace log4net.Core
 		/// </remarks>
 		public string GetExceptionString() 
 		{
-			if (m_data.ExceptionString == null)
+			if (m_data.ExceptionString == null  && this.m_cacheUpdatable)
 			{
 				if (m_thrownException != null)
 				{
@@ -1165,29 +1211,29 @@ namespace log4net.Core
 		/// </remarks>
 		protected void FixVolatileData(FixFlags flags)
 		{
+			object forceCreation = null;
+
+			//Unlock the cache so that new values can be stored
+			//This may not be ideal if we are no longer in the correct context
+			//and someone calls fix. 
+			m_cacheUpdatable=true;
+
 			// determine the flags that we are actually fixing
 			FixFlags updateFlags = (FixFlags)((flags ^ m_fixFlags) & flags);
 
-			if (updateFlags > 0)
+			if (updateFlags > 0) 
 			{
 				if ((updateFlags & FixFlags.Message) != 0)
 				{
 					// Force the message to be rendered
-					string forceCreation = this.RenderedMessage;
-
-					m_fixFlags |= FixFlags.Message;
-				}
-				if ((updateFlags & FixFlags.Message) != 0)
-				{
-					// Force the message to be rendered
-					string forceCreation = this.RenderedMessage;
+					forceCreation = this.RenderedMessage;
 
 					m_fixFlags |= FixFlags.Message;
 				}
 				if ((updateFlags & FixFlags.ThreadName) != 0)
 				{
 					// Grab the thread name
-					string forceCreation = this.ThreadName;
+					forceCreation = this.ThreadName;
 
 					m_fixFlags |= FixFlags.ThreadName;
 				}
@@ -1195,28 +1241,28 @@ namespace log4net.Core
 				if ((updateFlags & FixFlags.LocationInfo) != 0)
 				{
 					// Force the location information to be loaded
-					LocationInfo forceCreation = this.LocationInformation;
+					forceCreation = this.LocationInformation;
 
 					m_fixFlags |= FixFlags.LocationInfo;
 				}
 				if ((updateFlags & FixFlags.UserName) != 0)
 				{
 					// Grab the user name
-					string forceCreation = this.UserName;
+					forceCreation = this.UserName;
 
 					m_fixFlags |= FixFlags.UserName;
 				}
 				if ((updateFlags & FixFlags.Domain) != 0)
 				{
 					// Grab the domain name
-					string forceCreation = this.Domain;
+					forceCreation = this.Domain;
 
 					m_fixFlags |= FixFlags.Domain;
 				}
 				if ((updateFlags & FixFlags.Identity) != 0)
 				{
 					// Grab the identity
-					string forceCreation = this.Identity;
+					forceCreation = this.Identity;
 
 					m_fixFlags |= FixFlags.Identity;
 				}
@@ -1224,7 +1270,7 @@ namespace log4net.Core
 				if ((updateFlags & FixFlags.Exception) != 0)
 				{
 					// Force the exception text to be loaded
-					string forceCreation = GetExceptionString();
+					forceCreation = GetExceptionString();
 
 					m_fixFlags |= FixFlags.Exception;
 				}
@@ -1236,6 +1282,14 @@ namespace log4net.Core
 					m_fixFlags |= FixFlags.Properties;
 				}
 			}
+
+			// avoid warning CS0219
+			if (forceCreation != null) 
+			{
+			}
+
+			//Finaly lock everything we've cached.
+			m_cacheUpdatable=false;
 		}
 
 		#endregion Public Instance Methods
@@ -1270,7 +1324,7 @@ namespace log4net.Core
 
 		private void CacheProperties()
 		{
-			if (m_data.Properties == null)
+			if (m_data.Properties == null  && this.m_cacheUpdatable)
 			{
 				if (m_compositeProperties == null)
 				{
@@ -1281,19 +1335,28 @@ namespace log4net.Core
 
 				PropertiesDictionary fixedProperties = new PropertiesDictionary();
 
-				// Fix any IFixingRequired objects
+				// Validate properties
 				foreach(DictionaryEntry entry in flattenedProperties)
 				{
-					string key = (string)entry.Key;
-					object val = entry.Value;
+					string key = entry.Key as string;
 
-					IFixingRequired fixingRequired = val as IFixingRequired;
-					if (fixingRequired != null)
+					if (key != null)
 					{
-						val = fixingRequired.GetFixedObject();
-					}
+						object val = entry.Value;
 
-					fixedProperties[key] = val;
+						// Fix any IFixingRequired objects
+						IFixingRequired fixingRequired = val as IFixingRequired;
+						if (fixingRequired != null)
+						{
+							val = fixingRequired.GetFixedObject();
+						}
+
+						// Strip keys with null values
+						if (val != null)
+						{
+							fixedProperties[key] = val;
+						}
+					}
 				}
 
 				m_data.Properties = fixedProperties;
@@ -1429,6 +1492,15 @@ namespace log4net.Core
 		/// Not serialized.
 		/// </remarks>
 		private FixFlags m_fixFlags = FixFlags.None;
+
+		/// <summary>
+		/// Indicated that the internal cache is updateable (ie not fixed)
+		/// </summary>
+		/// <remarks>
+		/// This is a seperate flag to m_fixFlags as it allows incrementel fixing and simpler
+		/// changes in the caching strategy.
+		/// </remarks>
+		private bool m_cacheUpdatable = true;
 
 		#endregion Private Instance Fields
 

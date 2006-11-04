@@ -2,20 +2,14 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.IO;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Reflection;
-using System.Collections;
-using System.Runtime.InteropServices;
 
-using ICSharpCode.TextEditor.Document;
 using ICSharpCode.TextEditor.Util;
-using ICSharpCode.TextEditor;
 
 namespace ICSharpCode.TextEditor.Gui.CompletionWindow
 {

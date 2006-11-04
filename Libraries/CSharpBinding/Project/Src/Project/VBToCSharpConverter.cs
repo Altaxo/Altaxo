@@ -2,19 +2,20 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1006 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
 using System.Collections.Generic;
 using System.IO;
-using ICSharpCode.Core;
+
+using ICSharpCode.NRefactory;
+using ICSharpCode.NRefactory.Ast;
+using ICSharpCode.NRefactory.PrettyPrinter;
+using ICSharpCode.NRefactory.Visitors;
+using ICSharpCode.SharpDevelop.Internal.Templates;
 using ICSharpCode.SharpDevelop.Project;
 using ICSharpCode.SharpDevelop.Project.Converter;
-using ICSharpCode.SharpDevelop.Internal.Templates;
-using ICSharpCode.NRefactory.Parser;
-using ICSharpCode.NRefactory.Parser.AST;
-using ICSharpCode.NRefactory.PrettyPrinter;
 
 namespace CSharpBinding
 {
@@ -40,8 +41,8 @@ namespace CSharpBinding
 		
 		protected override void ConvertAst(CompilationUnit compilationUnit, List<ISpecial> specials)
 		{
-			PreProcessingDirective.VBToCSharp(specials);
-			new VBNetToCSharpConvertVisitor().Visit(compilationUnit, null);
+			PreprocessingDirective.VBToCSharp(specials);
+			compilationUnit.AcceptVisitor(new VBNetToCSharpConvertVisitor(), null);
 		}
 		
 		protected override IProject CreateProject(string targetProjectDirectory, IProject sourceProject)

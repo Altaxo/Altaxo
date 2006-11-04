@@ -2,12 +2,11 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
 using System.Collections.Generic;
-using System.Windows.Forms;
 
 namespace ICSharpCode.SharpDevelop.Gui
 {
@@ -28,6 +27,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			this.successful = successful;
 		}
 	}
+	
 	/// <summary>
 	/// IViewContent is the base interface for all editable data
 	/// inside SharpDevelop.
@@ -110,9 +110,16 @@ namespace ICSharpCode.SharpDevelop.Gui
 		void Load(string fileName);
 		
 		/// <summary>
+		/// Builds an <see cref="INavigationPoint"/> for the current position.
+		/// </summary>
+		INavigationPoint BuildNavPoint();
+		
+		/// <summary>
 		/// Is called each time the name for the content has changed.
 		/// </summary>
 		event EventHandler TitleNameChanged;
+		
+		event EventHandler FileNameChanged;
 		
 		event EventHandler     Saving;
 		event SaveEventHandler Saved;

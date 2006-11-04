@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1392 $</version>
+//     <version>$Revision: 1927 $</version>
 // </file>
 
 using System;
@@ -10,6 +10,7 @@ using System.Reflection;
 using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor;
 using ICSharpCode.SharpDevelop.Dom;
+using ICSharpCode.SharpDevelop.Dom.Refactoring;
 using ICSharpCode.SharpDevelop.Gui;
 using ICSharpCode.TextEditor;
 
@@ -41,6 +42,8 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 				return false;
 			LanguageProperties language = ParserService.CurrentProjectContent.Language;
 			if (language == null)
+				return false;
+			if (string.IsNullOrEmpty(provider.TextEditorControl.FileName))
 				return false;
 			
 			RefactoringProvider rp = language.RefactoringProvider;
@@ -115,7 +118,7 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 				if (c == null) {
 					ShowUnknownSymbolError();
 				} else if (c.CompilationUnit.FileName == null) {
-					MessageService.ShowMessage("The type cannot be renamed because it is not defined in user code.");
+					ShowNoUserCodeError();
 				} else {
 					FindReferencesAndRenameHelper.RenameClass(c);
 				}
@@ -130,7 +133,11 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 		
 		static void ShowUnknownSymbolError()
 		{
-			MessageService.ShowMessage("The element at the caret position cannot be renamed.");
+			MessageService.ShowMessage("${res:SharpDevelop.Refactoring.CannotRenameElement}");
+		}
+		static void ShowNoUserCodeError()
+		{
+			MessageService.ShowMessage("${res:SharpDevelop.Refactoring.CannotRenameBecauseNotUserCode}");
 		}
 		
 		static void Rename(IMember member)
@@ -138,7 +145,7 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 			if (member == null) {
 				ShowUnknownSymbolError();
 			} else if (member.DeclaringType.CompilationUnit.FileName == null) {
-				MessageService.ShowMessage("The member cannot be renamed because it is not defined in user code.");
+				ShowNoUserCodeError();
 			} else {
 				FindReferencesAndRenameHelper.RenameMember(member);
 			}

@@ -1,18 +1,14 @@
 ﻿// <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.IO;
-using System.Collections;
-using System.CodeDom.Compiler;
 using ICSharpCode.SharpDevelop.Project;
-using ICSharpCode.SharpDevelop.Gui;
 
-namespace ICSharpCode.Core
+namespace ICSharpCode.SharpDevelop
 {
 	public enum TaskType {
 		Error,
@@ -24,13 +20,15 @@ namespace ICSharpCode.Core
 	
 	public class Task
 	{
+		public const string DefaultContextMenuAddInTreeEntry = "/SharpDevelop/Pads/ErrorList/TaskContextMenu";
+		
 		string   description;
 		string   fileName;
 		TaskType type;
-		IProject project;
 		int      line;
 		int      column;
-		
+		string contextMenuAddInTreeEntry = DefaultContextMenuAddInTreeEntry;
+		object tag;
 
 		public override string ToString()
 		{
@@ -40,12 +38,6 @@ namespace ICSharpCode.Core
 			                     column,
 			                     type,
 			                     description);
-		}
-		
-		public IProject Project {
-			get {
-				return project;
-			}
 		}
 		
 		/// <summary>
@@ -87,10 +79,22 @@ namespace ICSharpCode.Core
 			}
 		}
 		
-		public Task(string fileName, string description, int column, int line, TaskType type, IProject project)
-			: this(fileName, description, column, line, type)
-		{
-			this.project = project;
+		public string ContextMenuAddInTreeEntry {
+			get {
+				return contextMenuAddInTreeEntry;
+			}
+			set {
+				contextMenuAddInTreeEntry = value;
+			}
+		}
+		
+		public object Tag {
+			get {
+				return tag;
+			}
+			set {
+				tag = value;
+			}
 		}
 		
 		public Task(string fileName, string description, int column, int line, TaskType type)
@@ -102,13 +106,21 @@ namespace ICSharpCode.Core
 			this.line        = line;
 		}
 		
-		public Task(CompilerError error)
+		public Task(BuildError error)
 		{
 			type         = error.IsWarning ? TaskType.Warning : TaskType.Error;
 			column       = Math.Max(error.Column - 1, 0);
 			line         = Math.Max(error.Line - 1, 0);
-			description  = error.ErrorText + "(" + error.ErrorNumber + ")";
 			fileName     = error.FileName;
+			if (string.IsNullOrEmpty(error.ErrorCode)) {
+				description = error.ErrorText;
+			} else {
+				description = error.ErrorText + " (" + error.ErrorCode + ")";
+			}
+			if (error.ContextMenuAddInTreeEntry != null) {
+				contextMenuAddInTreeEntry = error.ContextMenuAddInTreeEntry;
+			}
+			tag = error.Tag;
 		}
 		
 		public void JumpToPosition()

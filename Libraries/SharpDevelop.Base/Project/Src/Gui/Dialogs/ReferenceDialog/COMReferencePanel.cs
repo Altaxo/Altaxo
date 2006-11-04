@@ -2,22 +2,13 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Poul Staugaard" email="poul@staugaard.dk"/>
-//     <version>$Revision: 1228 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.Drawing;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.IO;
 using System.Windows.Forms;
-using System.Reflection;
-using System.Reflection.Emit;
-using System.Runtime.InteropServices;
-
-using Microsoft.Win32;
-using ICSharpCode.SharpDevelop.Project;
 using ICSharpCode.Core;
+using ICSharpCode.SharpDevelop.Project;
 
 namespace ICSharpCode.SharpDevelop.Gui
 {

@@ -2,19 +2,16 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1096 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.IO;
-using System.Drawing;
 using System.Collections;
-using System.Diagnostics;
-using System.ComponentModel;
+using System.IO;
 using System.Windows.Forms;
 
-using ICSharpCode.SharpDevelop.Project;
 using ICSharpCode.Core;
+using ICSharpCode.SharpDevelop.Project;
 
 namespace ICSharpCode.SharpDevelop.Gui
 {
@@ -104,9 +101,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 					newItem.Tag = new ProjectReferenceProjectItem(configureProject, (IProject)tag);
 					break;
 				case ReferenceType.Gac:
-					ReferenceProjectItem gacReference = new ReferenceProjectItem(configureProject);
-					gacReference.Include = referenceLocation;
-					newItem.Tag = gacReference;
+					newItem.Tag = new ReferenceProjectItem(configureProject, referenceLocation);
 					break;
 				case ReferenceType.Assembly:
 					ReferenceProjectItem assemblyReference = new ReferenceProjectItem(configureProject);

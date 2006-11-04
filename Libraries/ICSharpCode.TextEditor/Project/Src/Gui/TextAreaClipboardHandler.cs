@@ -2,26 +2,16 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1118 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.Collections;
-using System.IO;
-using System.ComponentModel;
 using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Drawing.Printing;
-using System.Diagnostics;
-using System.Windows.Forms;
-using System.Threading;
-using System.Runtime.Remoting;
+using System.IO;
 using System.Runtime.InteropServices;
-using System.Xml;
-using System.Text;
+using System.Windows.Forms;
 
 using ICSharpCode.TextEditor.Document;
-using ICSharpCode.TextEditor.Undo;
 using ICSharpCode.TextEditor.Util;
 
 namespace ICSharpCode.TextEditor

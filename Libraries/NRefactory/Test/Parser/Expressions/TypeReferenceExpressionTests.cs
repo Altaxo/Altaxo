@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1301 $</version>
+//     <version>$Revision: 1609 $</version>
 // </file>
 
 /*
@@ -18,9 +18,9 @@ using System;
 using System.IO;
 using NUnit.Framework;
 using ICSharpCode.NRefactory.Parser;
-using ICSharpCode.NRefactory.Parser.AST;
+using ICSharpCode.NRefactory.Ast;
 
-namespace ICSharpCode.NRefactory.Tests.AST
+namespace ICSharpCode.NRefactory.Tests.Ast
 {
 	[TestFixture]
 	public class TypeReferenceExpressionTests
@@ -81,7 +81,25 @@ namespace ICSharpCode.NRefactory.Tests.AST
 			Assert.AreEqual("", fre.FieldName);
 			Assert.AreEqual("System.Int32", ((TypeReferenceExpression)fre.TargetObject).TypeReference.SystemType);
 		}
-		#endregion
 		
+		[Test]
+		public void VBObjectReferenceExpression()
+		{
+			FieldReferenceExpression fre = ParseUtilVBNet.ParseExpression<FieldReferenceExpression>("Object.ReferenceEquals");
+			Assert.AreEqual("ReferenceEquals", fre.FieldName);
+			Assert.AreEqual("System.Object", ((TypeReferenceExpression)fre.TargetObject).TypeReference.SystemType);
+		}
+		
+		[Test]
+		public void VBStandaloneObjectReferenceExpression()
+		{
+			// this is propably not what really should be returned for a standalone int
+			// reference, but it has to stay consistent because NRefactoryResolver depends
+			// on this trick.
+			FieldReferenceExpression fre = ParseUtilVBNet.ParseExpression<FieldReferenceExpression>("obJeCt", true);
+			Assert.AreEqual("", fre.FieldName);
+			Assert.AreEqual("System.Object", ((TypeReferenceExpression)fre.TargetObject).TypeReference.SystemType);
+		}
+		#endregion
 	}
 }

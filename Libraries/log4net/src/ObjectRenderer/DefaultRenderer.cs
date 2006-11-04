@@ -1,6 +1,6 @@
 #region Copyright & License
 //
-// Copyright 2001-2005 The Apache Software Foundation
+// Copyright 2001-2006 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -40,8 +40,6 @@ namespace log4net.ObjectRenderer
 	/// <author>Gert Driesen</author>
 	public sealed class DefaultRenderer : IObjectRenderer
 	{
-		private static readonly string NewLine = SystemInfo.NewLine;
-
 		#region Constructors
 
 		/// <summary>
@@ -74,7 +72,7 @@ namespace log4net.ObjectRenderer
 		/// The <paramref name="rendererMap"/> parameter is
 		/// provided to lookup and render other objects. This is
 		/// very useful where <paramref name="obj"/> contains
-		/// nested objects of unknown type. The <see cref="RendererMap.FindAndRender"/>
+		/// nested objects of unknown type. The <see cref="RendererMap.FindAndRender(object)"/>
 		/// method can be used to render these objects.
 		/// </para>
 		/// <para>
@@ -98,8 +96,10 @@ namespace log4net.ObjectRenderer
 		///			For a one dimensional array this is the
 		///			array type name, an open brace, followed by a comma
 		///			separated list of the elements (using the appropriate
-		///			renderer), followed by a close brace. For example:
-		///			<c>int[] {1, 2, 3}</c>.
+		///			renderer), followed by a close brace. 
+		///			</para>
+		///			<para>
+		///			For example: <c>int[] {1, 2, 3}</c>.
 		///			</para>
 		///			<para>
 		///			If the array is not one dimensional the 
@@ -108,13 +108,19 @@ namespace log4net.ObjectRenderer
 		///			</description>
 		///		</item>
 		///		<item>
-		///			<term><see cref="ICollection"/></term>
+		///			<term><see cref="IEnumerable"/>, <see cref="ICollection"/> &amp; <see cref="IEnumerator"/></term>
 		///			<description>
 		///			<para>
 		///			Rendered as an open brace, followed by a comma
 		///			separated list of the elements (using the appropriate
-		///			renderer), followed by a close brace. For example:
-		///			<c>{a, b, c}</c>.
+		///			renderer), followed by a close brace.
+		///			</para>
+		///			<para>
+		///			For example: <c>{a, b, c}</c>.
+		///			</para>
+		///			<para>
+		///			All collection classes that implement <see cref="ICollection"/> its subclasses, 
+		///			or generic equivalents all implement the <see cref="IEnumerable"/> interface.
 		///			</para>
 		///			</description>
 		///		</item>		
@@ -123,7 +129,10 @@ namespace log4net.ObjectRenderer
 		///			<description>
 		///			<para>
 		///			Rendered as the key, an equals sign ('='), and the value (using the appropriate
-		///			renderer). For example: <c>key=value</c>.
+		///			renderer). 
+		///			</para>
+		///			<para>
+		///			For example: <c>key=value</c>.
 		///			</para>
 		///			</description>
 		///		</item>		
@@ -144,7 +153,7 @@ namespace log4net.ObjectRenderer
 
 			if (obj == null)
 			{
-				writer.Write("(null)");
+				writer.Write(SystemInfo.NullText);
 				return;
 			}
 			
@@ -154,11 +163,40 @@ namespace log4net.ObjectRenderer
 				RenderArray(rendererMap, objArray, writer);
 				return;
 			}
-			
-			ICollection objCollection = obj as ICollection;
-			if (objCollection != null)
+
+			// Test if we are dealing with some form of collection object
+			IEnumerable objEnumerable = obj as IEnumerable;
+			if (objEnumerable != null)
 			{
-				RenderCollection(rendererMap, objCollection, writer);
+				// Get a collection interface if we can as its .Count property may be more
+				// performant than getting the IEnumerator object and trying to advance it.
+				ICollection objCollection = obj as ICollection;
+				if (objCollection != null && objCollection.Count == 0)
+				{
+					writer.Write("{}");
+					return;
+				}
+				
+				// This is a special check to allow us to get the enumerator from the IDictionary
+				// interface as this guarantees us DictionaryEntry objects. Note that in .NET 2.0
+				// the generic IDictionary<> interface enumerates KeyValuePair objects rather than
+				// DictionaryEntry ones. However the implementation of the plain IDictionary 
+				// interface on the generic Dictionary<> still returns DictionaryEntry objects.
+				IDictionary objDictionary = obj as IDictionary;
+				if (objDictionary != null)
+				{
+					RenderEnumerator(rendererMap, objDictionary.GetEnumerator(), writer);
+					return;
+				}
+
+				RenderEnumerator(rendererMap, objEnumerable.GetEnumerator(), writer);
+				return;
+			}
+
+			IEnumerator objEnumerator = obj as IEnumerator;
+			if (objEnumerator != null)
+			{
+				RenderEnumerator(rendererMap, objEnumerator, writer);
 				return;
 			}
 			
@@ -169,7 +207,7 @@ namespace log4net.ObjectRenderer
 			}
 
 			string str = obj.ToString();
-			writer.Write( (str==null) ? "(null)" : str );
+			writer.Write( (str==null) ? SystemInfo.NullText : str );
 		}
 
 		#endregion
@@ -218,10 +256,10 @@ namespace log4net.ObjectRenderer
 		}
 
 		/// <summary>
-		/// Render the collection argument into a string
+		/// Render the enumerator argument into a string
 		/// </summary>
 		/// <param name="rendererMap">The map used to lookup renderers</param>
-		/// <param name="collection">the collection to render</param>
+		/// <param name="enumerator">the enumerator to render</param>
 		/// <param name="writer">The writer to render to</param>
 		/// <remarks>
 		/// <para>
@@ -231,22 +269,18 @@ namespace log4net.ObjectRenderer
 		///	<c>{a, b, c}</c>.
 		///	</para>
 		/// </remarks>
-		private void RenderCollection(RendererMap rendererMap, ICollection collection, TextWriter writer)
+		private void RenderEnumerator(RendererMap rendererMap, IEnumerator enumerator, TextWriter writer)
 		{
 			writer.Write("{");
 
-			if (collection.Count > 0)
+			if (enumerator != null && enumerator.MoveNext())
 			{
-				IEnumerator enumerator = collection.GetEnumerator();
-				if (enumerator != null && enumerator.MoveNext())
-				{
-					rendererMap.FindAndRender(enumerator.Current, writer);
+				rendererMap.FindAndRender(enumerator.Current, writer);
 
-					while(enumerator.MoveNext())
-					{
-						writer.Write(", ");
-						rendererMap.FindAndRender(enumerator.Current, writer);
-					}
+				while (enumerator.MoveNext())
+				{
+					writer.Write(", ");
+					rendererMap.FindAndRender(enumerator.Current, writer);
 				}
 			}
 

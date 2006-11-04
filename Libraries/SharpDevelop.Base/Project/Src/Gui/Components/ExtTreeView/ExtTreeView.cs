@@ -2,12 +2,13 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1388 $</version>
+//     <version>$Revision: 1584 $</version>
 // </file>
 
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Text;
 using System.Windows.Forms;
 
 using ICSharpCode.Core;
@@ -151,10 +152,15 @@ namespace ICSharpCode.SharpDevelop.Gui
 		
 		protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
 		{
-			switch (keyData) {
-				case Keys.F2:
-					StartLabelEdit(SelectedNode as ExtTreeNode);
-					break;
+			if (SelectedNode == null || !SelectedNode.IsEditing) {
+				switch (keyData) {
+					case Keys.F2:
+						StartLabelEdit(SelectedNode as ExtTreeNode);
+						break;
+					case Keys.Delete:
+						DeleteNode(SelectedNode as ExtTreeNode);
+						break;
+				}
 			}
 			return base.ProcessCmdKey(ref msg, keyData);
 		}
@@ -181,9 +187,15 @@ namespace ICSharpCode.SharpDevelop.Gui
 		bool inRefresh;
 		protected override void OnBeforeExpand(TreeViewCancelEventArgs e)
 		{
-			base.OnBeforeExpand(e);
-			if (e.Node == null)
+			if (mouseClickNum == 2) {
+				mouseClickNum = 0; // only intercept first occurrance, don't prevent expansion by ActivateItem on double click
+				e.Cancel = true;
 				return;
+			}
+			base.OnBeforeExpand(e);
+			if (e.Node == null) {
+				return;
+			}
 			try {
 				if (e.Node is ExtTreeNode) {
 					if (((ExtTreeNode)e.Node).IsInitialized == false) {
@@ -219,9 +231,13 @@ namespace ICSharpCode.SharpDevelop.Gui
 			}
 		}
 		
-		
 		protected override void OnBeforeCollapse(TreeViewCancelEventArgs e)
 		{
+			if (mouseClickNum == 2) {
+				mouseClickNum = 0; // only intercept first occurrance, don't prevent collapsing by ActivateItem on double click
+				e.Cancel = true;
+				return;
+			}
 			base.OnBeforeCollapse(e);
 			if (e.Node is ExtTreeNode) {
 				((ExtTreeNode)e.Node).Collapsing();
@@ -263,8 +279,11 @@ namespace ICSharpCode.SharpDevelop.Gui
 			}
 		}
 		
+		int mouseClickNum; // 0 if mouse button is not pressed, otherwise click number (1=normal, 2=double click)
+		
 		protected override void OnMouseDown(MouseEventArgs e)
 		{
+			mouseClickNum = e.Clicks;
 			base.OnMouseDown(e);
 			TreeNode node = GetNodeAt(e.X, e.Y);
 			if (node != null) {
@@ -276,6 +295,12 @@ namespace ICSharpCode.SharpDevelop.Gui
 					SelectedNode = null;
 				}
 			}
+		}
+		
+		protected override void OnMouseUp(MouseEventArgs e)
+		{
+			mouseClickNum = 0;
+			base.OnMouseUp(e);
 		}
 		
 		protected override void OnBeforeSelect(TreeViewCancelEventArgs e)
@@ -386,5 +411,85 @@ namespace ICSharpCode.SharpDevelop.Gui
 			}
 			return imageIndexTable[imageKey];
 		}
+		
+		void DeleteNode(ExtTreeNode node)
+		{
+			if (node == null) {
+				return;
+			}
+			
+			if (node.EnableDelete) {
+				node.EnsureVisible();
+				SelectedNode = node;
+				node.Delete();
+			}
+		}
+		
+		#region Static methods for saving/restoring expanded state
+		// example ViewStateString:
+		// [Main[ICSharpCode.SharpDevelop[Src[Gui[Pads[ProjectBrowser[]]]]Services[]]]]
+		// -> every node name is terminated by opening bracket
+		// -> only expanded nodes are included in the view state string
+		// -> after an opening bracket, an identifier or closing bracket must follow
+		// -> after a closing bracket, an identifier or closing bracket must follow
+		// -> nodes whose text contains '[' can not be saved
+		public static string GetViewStateString(TreeView treeView)
+		{
+			if (treeView.Nodes.Count == 0) return "";
+			StringBuilder b = new StringBuilder();
+			WriteViewStateString(b, treeView.Nodes[0]);
+			return b.ToString();
+		}
+		static void WriteViewStateString(StringBuilder b, TreeNode node)
+		{
+			b.Append('[');
+			foreach (TreeNode subNode in node.Nodes) {
+				if (subNode.IsExpanded && subNode.Text.IndexOf('[') < 0) {
+					b.Append(subNode.Text);
+					WriteViewStateString(b, subNode);
+				}
+			}
+			b.Append(']');
+		}
+		public static void ApplyViewStateString(string viewState, TreeView treeView)
+		{
+			if (viewState.Length == 0)
+				return;
+			int i = 0;
+			ApplyViewStateString(treeView.Nodes[0], viewState, ref i);
+			System.Diagnostics.Debug.Assert(i == viewState.Length - 1);
+		}
+		static void ApplyViewStateString(TreeNode node, string viewState, ref int pos)
+		{
+			if (viewState[pos++] != '[')
+				throw new ArgumentException("pos must point to '['");
+			// expect an identifier or an closing bracket
+			while (viewState[pos] != ']') {
+				StringBuilder nameBuilder = new StringBuilder();
+				char ch;
+				while ((ch = viewState[pos++]) != '[') {
+					nameBuilder.Append(ch);
+				}
+				pos -= 1; // go back to '[' character
+				string nodeText = nameBuilder.ToString();
+				// find the node in question
+				TreeNode subNode = null;
+				if (node != null) {
+					foreach (TreeNode n in node.Nodes) {
+						if (n.Text == nodeText) {
+							subNode = n;
+							break;
+						}
+					}
+				}
+				if (subNode != null) {
+					subNode.Expand();
+				}
+				ApplyViewStateString(subNode, viewState, ref pos);
+				// pos now points to the closing bracket of the inner view state
+				pos += 1; // move to next character
+			}
+		}
+		#endregion
 	}
 }

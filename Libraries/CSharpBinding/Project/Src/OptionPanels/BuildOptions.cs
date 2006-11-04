@@ -2,21 +2,13 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1228 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.Collections.Generic;
-using System.Windows.Forms;
-
-using ICSharpCode.SharpDevelop.Project;
-using ICSharpCode.Core;
-using ICSharpCode.SharpDevelop;
-using ICSharpCode.SharpDevelop.Gui;
-using ICSharpCode.SharpDevelop.Gui.XmlForms;
 using ICSharpCode.SharpDevelop.Gui.OptionPanels;
-
-using StringPair = System.Collections.Generic.KeyValuePair<string, string>;
+using ICSharpCode.SharpDevelop.Project;
+using StringPair = System.Collections.Generic.KeyValuePair<System.String, System.String>;
 
 namespace CSharpBinding.OptionPanels
 {

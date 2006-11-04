@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1177 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
@@ -10,9 +10,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 using System.Text;
-using System.Text.RegularExpressions;
-
-using ICSharpCode.Core;
 
 namespace ICSharpCode.Core
 {
@@ -42,16 +39,18 @@ namespace ICSharpCode.Core
 		
 		static StringParser()
 		{
-			Assembly entryAssembly = Assembly.GetEntryAssembly();
 			properties         = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
 			stringTagProviders = new Dictionary<string, IStringTagProvider>(StringComparer.InvariantCultureIgnoreCase);
 			propertyObjects    = new Dictionary<string, object>();
+			
 			// entryAssembly == null might happen in unit test mode
+			Assembly entryAssembly = Assembly.GetEntryAssembly();
 			if (entryAssembly != null) {
 				string exeName = entryAssembly.Location;
 				propertyObjects["exe"] = FileVersionInfo.GetVersionInfo(exeName);
 			}
 			properties["USER"] = Environment.UserName;
+			properties["Version"] = RevisionClass.FullVersion;
 			
 			// Maybe test for Mono?
 			if (IntPtr.Size == 4) {
@@ -183,6 +182,8 @@ namespace ICSharpCode.Core
 				return DateTime.Now.ToShortTimeString();
 			if (propertyName.Equals("ProductName", StringComparison.OrdinalIgnoreCase))
 				return MessageService.ProductName;
+			if (propertyName.Equals("GUID", StringComparison.OrdinalIgnoreCase))
+				return Guid.NewGuid().ToString().ToUpperInvariant();
 			
 			if (customTags != null) {
 				for (int j = 0; j < customTags.GetLength(0); ++j) {
@@ -222,13 +223,45 @@ namespace ICSharpCode.Core
 						return null;
 					}
 				case "PROPERTY":
-					return PropertyService.Get(propertyName);
+					return GetProperty(propertyName);
 				default:
 					if (propertyObjects.ContainsKey(prefix)) {
 						return Get(propertyObjects[prefix], propertyName);
 					} else {
 						return null;
 					}
+			}
+		}
+		
+		/// <summary>
+		/// Allow special syntax to retrieve property values:
+		/// ${property:PropertyName}
+		/// ${property:PropertyName??DefaultValue}
+		/// ${property:ContainerName/PropertyName}
+		/// ${property:ContainerName/PropertyName??DefaultValue}
+		/// A container is a Properties instance stored in the PropertyService. This is
+		/// used by many AddIns to group all their properties into one container.
+		/// </summary>
+		static string GetProperty(string propertyName)
+		{
+			string defaultValue = "";
+			int pos = propertyName.LastIndexOf("??");
+			if (pos >= 0) {
+				defaultValue = propertyName.Substring(pos + 2);
+				propertyName = propertyName.Substring(0, pos);
+			}
+			pos = propertyName.IndexOf('/');
+			if (pos >= 0) {
+				Properties properties = PropertyService.Get(propertyName.Substring(0, pos), new Properties());
+				propertyName = propertyName.Substring(pos + 1);
+				pos = propertyName.IndexOf('/');
+				while (pos >= 0) {
+					properties = properties.Get(propertyName.Substring(0, pos), new Properties());
+					propertyName = propertyName.Substring(pos + 1);
+				}
+				return properties.Get(propertyName, defaultValue);
+			} else {
+				return PropertyService.Get(propertyName, defaultValue);
 			}
 		}
 		

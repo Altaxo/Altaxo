@@ -2,18 +2,17 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1228 $</version>
+//     <version>$Revision: 1769 $</version>
 // </file>
 
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
-using ICSharpCode.SharpDevelop.Project.Commands;
 
 using ICSharpCode.Core;
+using ICSharpCode.SharpDevelop.Gui;
+using ICSharpCode.SharpDevelop.Project.Commands;
 
 namespace ICSharpCode.SharpDevelop.Project
 {
@@ -412,14 +411,29 @@ namespace ICSharpCode.SharpDevelop.Project
 				}
 				AbstractProjectBrowserTreeNode parentNode = fileNodeDictionary[fileName];
 				pair.Key.Parent.Nodes.Remove(pair.Key);
-				pair.Key.AddTo(parentNode);
-				if (pair.Key.FileNodeStatus != FileNodeStatus.Missing) {
-					pair.Key.FileNodeStatus = FileNodeStatus.BehindFile;
+				if (NodeIsParent(parentNode, pair.Key)) {
+					// is pair.Key a parent of parentNode?
+					// if yes, we have a parent cycle - break it by adding one node to the directory
+					pair.Key.AddTo(this);
+				} else {
+					pair.Key.AddTo(parentNode);
+					if (pair.Key.FileNodeStatus != FileNodeStatus.Missing) {
+						pair.Key.FileNodeStatus = FileNodeStatus.BehindFile;
+					}
 				}
 			}
 			base.Initialize();
 		}
-
+		
+		static bool NodeIsParent(TreeNode childNode, TreeNode parentNode)
+		{
+			do {
+				if (childNode == parentNode) return true;
+				childNode = childNode.Parent;
+			} while (childNode != null);
+			return false;
+		}
+		
 		protected void BaseInitialize()
 		{
 			base.Initialize();
@@ -545,14 +559,14 @@ namespace ICSharpCode.SharpDevelop.Project
 				}
 				if (dataObject.GetDataPresent(typeof(FileNode))) {
 					FileOperationClipboardObject clipboardObject = (FileOperationClipboardObject)dataObject.GetData(typeof(FileNode).ToString());
-					return !FileUtility.IsEqualFileName(Directory, clipboardObject.FileName) && !FileUtility.IsEqualFileName(Directory, Path.GetDirectoryName(clipboardObject.FileName)) && File.Exists(clipboardObject.FileName);
+					return File.Exists(clipboardObject.FileName);
 				}
 				if (dataObject.GetDataPresent(typeof(DirectoryNode))) {
 					FileOperationClipboardObject clipboardObject = (FileOperationClipboardObject)dataObject.GetData(typeof(DirectoryNode).ToString());
 					if (FileUtility.IsBaseDirectory(clipboardObject.FileName, Directory)) {
 						return false;
 					}
-					return !FileUtility.IsEqualFileName(Directory, clipboardObject.FileName) && !FileUtility.IsEqualFileName(Directory, Path.GetDirectoryName(clipboardObject.FileName)) && System.IO.Directory.Exists(clipboardObject.FileName);
+					return System.IO.Directory.Exists(clipboardObject.FileName);
 				}
 				return false;
 			}
@@ -595,11 +609,21 @@ namespace ICSharpCode.SharpDevelop.Project
 			ProjectService.SaveSolution();
 		}
 		
-		public void CopyDirectoryHere(string fileName, bool performMove)
+		public void CopyDirectoryHere(string directoryName, bool performMove)
 		{
-			AddExistingItemsToProject.CopyDirectory(fileName, this, true);
+			string copiedName = Path.Combine(Directory, Path.GetFileName(directoryName));
+			if (FileUtility.IsEqualFileName(directoryName, copiedName))
+				return;
+			AddExistingItemsToProject.CopyDirectory(directoryName, this, true);
 			if (performMove) {
-				FileService.RemoveFile(fileName, true);
+				foreach (IViewContent content in WorkbenchSingleton.Workbench.ViewContentCollection) {
+					if (content.FileName != null &&
+					    FileUtility.IsBaseDirectory(directoryName, content.FileName))
+					{
+						content.FileName = FileUtility.RenameBaseDirectory(content.FileName, directoryName, Path.Combine(this.directory, Path.GetFileName(directoryName)));
+					}
+				}
+				FileService.RemoveFile(directoryName, true);
 			}
 		}
 		
@@ -614,6 +638,17 @@ namespace ICSharpCode.SharpDevelop.Project
 			string copiedFileName = Path.Combine(Directory, shortFileName);
 			if (FileUtility.IsEqualFileName(fileName, copiedFileName))
 				return;
+			bool wasFileReplacement = false;
+			if (File.Exists(copiedFileName)) {
+				if (!FileService.FireFileReplacing(copiedFileName, false))
+					return;
+				if (AddExistingItemsToProject.ShowReplaceExistingFileDialog(null, copiedFileName, false) == AddExistingItemsToProject.ReplaceExistingFile.Yes) {
+					wasFileReplacement = true;
+				} else {
+					// don't replace file
+					return;
+				}
+			}
 			
 			FileProjectItem newItem = AddExistingItemsToProject.CopyFile(fileName, this, true);
 			IProject sourceProject = Solution.FindProjectContainingFile(fileName);
@@ -640,7 +675,18 @@ namespace ICSharpCode.SharpDevelop.Project
 					RecreateSubNodes();
 			}
 			if (performMove) {
+				foreach (IViewContent content in WorkbenchSingleton.Workbench.ViewContentCollection) {
+					if (content.FileName != null &&
+					    FileUtility.IsEqualFileName(content.FileName, fileName))
+					{
+						content.FileName  = copiedFileName;
+						content.TitleName = shortFileName;
+					}
+				}
 				FileService.RemoveFile(fileName, false);
+			}
+			if (wasFileReplacement) {
+				FileService.FireFileReplaced(copiedFileName, false);
 			}
 		}
 		

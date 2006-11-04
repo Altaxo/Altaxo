@@ -2,21 +2,16 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
-using System.Drawing;
-using System.Windows.Forms;
 using System;
-
 using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor;
-using ICSharpCode.TextEditor.Document;
-using ICSharpCode.TextEditor.Actions;
-using ICSharpCode.TextEditor;
-using ICSharpCode.TextEditor.Gui.CompletionWindow;
-using ICSharpCode.SharpDevelop.Gui;
 using ICSharpCode.SharpDevelop.Dom;
+using ICSharpCode.TextEditor;
+using ICSharpCode.TextEditor.Actions;
+using ICSharpCode.TextEditor.Document;
 
 namespace ICSharpCode.SharpDevelop.DefaultEditor.Actions
 {
@@ -73,14 +68,14 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Actions
 			ResolveResult result = ParserService.Resolve(expression, caretLineNumber, caretColumn, textEditorControl.FileName, textContent);
 			if (result != null) {
 				FilePosition pos = result.GetDefinitionPosition();
-				if (pos != null) {
+				if (pos.IsEmpty == false) {
 					try {
 						if (pos.Position.IsEmpty)
-							FileService.OpenFile(pos.Filename);
+							FileService.OpenFile(pos.FileName);
 						else
-							FileService.JumpToFilePosition(pos.Filename, pos.Position.X - 1, pos.Position.Y - 1);
+							FileService.JumpToFilePosition(pos.FileName, pos.Line - 1, pos.Column - 1);
 					} catch (Exception ex) {
-						MessageService.ShowError(ex, "Error jumping to '" + pos.Filename + "'.");
+						MessageService.ShowError(ex, "Error jumping to '" + pos.FileName + "'.");
 					}
 				}
 			}

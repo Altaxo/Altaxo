@@ -2,17 +2,15 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="none" email=""/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1968 $</version>
 // </file>
 
 using System;
-
-using ICSharpCode.Core;
+using System.Diagnostics;
 using ICSharpCode.SharpDevelop.Gui;
 using ICSharpCode.SharpDevelop.Project;
-using System.Diagnostics;
 
-namespace ICSharpCode.Core 
+namespace ICSharpCode.SharpDevelop.Debugging
 {
 	public class DefaultDebugger : IDebugger
 	{
@@ -58,7 +56,8 @@ namespace ICSharpCode.Core
 			attachedProcess.Exited -= new EventHandler(AttachedProcessExited);
 			attachedProcess.Dispose();
 			attachedProcess = null;
-			WorkbenchSingleton.SafeThreadAsyncCall(this, "OnDebugStopped", EventArgs.Empty);
+			WorkbenchSingleton.SafeThreadAsyncCall(new Action<EventArgs>(OnDebugStopped),
+			                                       EventArgs.Empty);
 		}
 		
 		public void StartWithoutDebugging(ProcessStartInfo processStartInfo)
@@ -135,7 +134,7 @@ namespace ICSharpCode.Core
 		
 		public event EventHandler DebugStarted;
 		
-		protected virtual void OnDebugStarted(EventArgs e) 
+		protected virtual void OnDebugStarted(EventArgs e)
 		{
 			if (DebugStarted != null) {
 				DebugStarted(this, e);
@@ -155,14 +154,14 @@ namespace ICSharpCode.Core
 
 		public event EventHandler DebugStopped;
 
-		protected virtual void OnDebugStopped(EventArgs e) 
+		protected virtual void OnDebugStopped(EventArgs e)
 		{
 			if (DebugStopped != null) {
 				DebugStopped(this, e);
 			}
 		}
 		
-		public void Dispose() 
+		public void Dispose()
 		{
 			Stop();
 		}

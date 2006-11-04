@@ -2,18 +2,19 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1069 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.IO;
 using System.Collections.Generic;
+using System.IO;
 
+using ICSharpCode.Core;
+using ICSharpCode.SharpDevelop.Dom;
 using ICSharpCode.SharpDevelop.Gui;
 using ICSharpCode.SharpDevelop.Project;
-using ICSharpCode.SharpDevelop.Dom;
 
-namespace ICSharpCode.Core
+namespace ICSharpCode.SharpDevelop
 {
 	public class TaskService
 	{
@@ -158,18 +159,18 @@ namespace ICSharpCode.Core
 			}
 		}
 		
-		public static void UpdateCommentTags(string fileName, List<Tag> tagComments)
+		public static void UpdateCommentTags(string fileName, List<TagComment> tagComments)
 		{
 			if (fileName == null || tagComments == null) {
 				return;
 			}
-			WorkbenchSingleton.SafeThreadAsyncCall(typeof(TaskService), "UpdateCommentTagsInvoked", fileName, tagComments);
+			WorkbenchSingleton.SafeThreadAsyncCall(UpdateCommentTagsInvoked, fileName, tagComments);
 		}
 		
-		static void UpdateCommentTagsInvoked(string fileName, List<Tag> tagComments)
+		static void UpdateCommentTagsInvoked(string fileName, List<TagComment> tagComments)
 		{
 			List<Task> newTasks = new List<Task>();
-			foreach (Tag tag in tagComments) {
+			foreach (TagComment tag in tagComments) {
 				newTasks.Add(new Task(fileName,
 				                      tag.Key + tag.CommentString,
 				                      tag.Region.BeginColumn - 1,

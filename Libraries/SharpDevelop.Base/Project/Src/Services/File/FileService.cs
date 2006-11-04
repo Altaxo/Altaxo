@@ -2,18 +2,18 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1117 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.Diagnostics;
+using System.Collections.Generic;
 using System.IO;
-using System.Xml;
 
-using ICSharpCode.SharpDevelop.Project;
+using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.Gui;
+using ICSharpCode.SharpDevelop.Project;
 
-namespace ICSharpCode.Core
+namespace ICSharpCode.SharpDevelop
 {
 	public class FileService
 	{
@@ -128,6 +128,17 @@ namespace ICSharpCode.Core
 			}
 		}
 		
+		public static IList<string> GetOpenFiles()
+		{
+			List<string> fileNames = new List<string>();
+			foreach (IViewContent content in WorkbenchSingleton.Workbench.ViewContentCollection) {
+				string contentName = content.IsUntitled ? content.UntitledName : content.FileName;
+				if (contentName != null)
+					fileNames.Add(contentName);
+			}
+			return fileNames;
+		}
+		
 		public static IWorkbenchWindow GetOpenFile(string fileName)
 		{
 			if (fileName != null && fileName.Length > 0) {
@@ -182,14 +193,20 @@ namespace ICSharpCode.Core
 				return false;
 			if (!eargs.OperationAlreadyDone) {
 				try {
-					if (isDirectory) {
-						if (Directory.Exists(oldName)) {
-							Directory.Move(oldName, newName);
+					if (isDirectory && Directory.Exists(oldName)) {
+						
+						if (Directory.Exists(newName)) {
+							MessageService.ShowMessage(StringParser.Parse("${res:Gui.ProjectBrowser.FileInUseError}"));
+							return false;
 						}
-					} else {
-						if (File.Exists(oldName)) {
-							File.Move(oldName, newName);
+						Directory.Move(oldName, newName);
+						
+					} else if (File.Exists(oldName)) {
+						if (File.Exists(newName)) {
+							MessageService.ShowMessage(StringParser.Parse("${res:Gui.ProjectBrowser.FileInUseError}"));
+							return false;
 						}
+						File.Move(oldName, newName);
 					}
 				} catch (Exception e) {
 					if (isDirectory) {
@@ -215,9 +232,11 @@ namespace ICSharpCode.Core
 			}
 			IViewContent content = window.ViewContent;
 			if (content is IPositionable) {
+				// TODO: enable jumping to a particular view
 				window.SwitchView(0);
 				((IPositionable)content).JumpTo(Math.Max(0, line), Math.Max(0, column));
 			}
+			NavigationService.Log(content.BuildNavPoint());
 			return content;
 		}
 		
@@ -248,10 +267,38 @@ namespace ICSharpCode.Core
 			}
 		}
 		
+		public static bool FireFileReplacing(string fileName, bool isDirectory)
+		{
+			FileCancelEventArgs e = new FileCancelEventArgs(fileName, isDirectory);
+			if (FileReplacing != null) {
+				FileReplacing(null, e);
+			}
+			return !e.Cancel;
+		}
+		
+		public static void FireFileReplaced(string fileName, bool isDirectory)
+		{
+			if (FileReplaced != null) {
+				FileReplaced(null, new FileEventArgs(fileName, isDirectory));
+			}
+		}
+		
+		public static void OnJumpedToFilePosition(string fileName)
+		{
+			if (JumpedToFilePosition != null) {
+				JumpedToFilePosition(null, new FileEventArgs(fileName, false));
+			}
+		}
+		
 		public static event EventHandler<FileRenamingEventArgs> FileRenaming;
 		public static event EventHandler<FileRenameEventArgs> FileRenamed;
 		
 		public static event EventHandler<FileCancelEventArgs> FileRemoving;
 		public static event EventHandler<FileEventArgs> FileRemoved;
+		
+		public static event EventHandler<FileCancelEventArgs> FileReplacing;
+		public static event EventHandler<FileEventArgs> FileReplaced;
+		
+		public static event EventHandler<FileEventArgs> JumpedToFilePosition;
 	}
 }

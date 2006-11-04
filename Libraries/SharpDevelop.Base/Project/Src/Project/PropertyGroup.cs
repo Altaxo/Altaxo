@@ -2,13 +2,13 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1006 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
-using System.Collections.Generic;
 using System.Xml;
 
 namespace ICSharpCode.SharpDevelop.Project
@@ -19,6 +19,7 @@ namespace ICSharpCode.SharpDevelop.Project
 	public sealed class PropertyGroup : IEnumerable<KeyValuePair<string, string>>, ICloneable
 	{
 		// TODO: Isn't MSBuild case-insensitive ???
+		// TODO: merge both dictionaries into one using a custom class
 		Dictionary<string, bool>   isGuardedProperty   = new Dictionary<string, bool>();
 		Dictionary<string, string> properties          = new Dictionary<string, string>();
 		
@@ -37,6 +38,12 @@ namespace ICSharpCode.SharpDevelop.Project
 			}
 			set {
 				Set(property, String.Empty, value);
+			}
+		}
+		
+		internal Dictionary<string, bool> IsGuardedProperty {
+			get {
+				return isGuardedProperty;
 			}
 		}
 		
@@ -161,7 +168,7 @@ namespace ICSharpCode.SharpDevelop.Project
 								properties[propertyName] = null;
 								goto reLoop;
 							}
-							properties[propertyName] = reader.Value.Trim();
+							properties[propertyName] = ProjectItem.MSBuildUnescape(reader.Value.Trim());
 						}
 						break;
 				}
@@ -170,7 +177,32 @@ namespace ICSharpCode.SharpDevelop.Project
 		
 		internal void WriteProperties(XmlWriter writer)
 		{
+			WriteProperties(writer, null, properties, isGuardedProperty);
+		}
+		
+		/// <summary>
+		/// Writes a set of properties into the XmlWriter.
+		/// A &lt;PropertyGroup&gt; tag is created around the properties
+		/// if there are more than 0 properties. This PropertyGroup has the specified condition,
+		/// or no condition if condition is string.Empty.
+		/// <b>If condition is null, no &lt;PropertyGroup&gt; tag is created!!</b>
+		/// </summary>
+		internal static void WriteProperties(XmlWriter writer,
+		                                     string condition,
+		                                     IEnumerable<KeyValuePair<string, string>> properties,
+		                                     Dictionary<string, bool> isGuardedProperty)
+		{
+			bool first = true;
 			foreach (KeyValuePair<string, string> entry in properties) {
+				if (first) {
+					first = false;
+					if (condition != null) {
+						writer.WriteStartElement("PropertyGroup");
+						if (condition.Length > 0) {
+							writer.WriteAttributeString("Condition", condition);
+						}
+					}
+				}
 				writer.WriteStartElement(entry.Key);
 				
 				if (isGuardedProperty.ContainsKey(entry.Key) && isGuardedProperty[entry.Key]) {
@@ -178,8 +210,12 @@ namespace ICSharpCode.SharpDevelop.Project
 				}
 				
 				if (entry.Value != null) {
-					writer.WriteValue(entry.Value);
+					writer.WriteValue(ProjectItem.MSBuildEscape(entry.Value));
 				}
+				writer.WriteEndElement();
+			}
+			if (!first && condition != null) {
+				// a property group was created, so close it:
 				writer.WriteEndElement();
 			}
 		}

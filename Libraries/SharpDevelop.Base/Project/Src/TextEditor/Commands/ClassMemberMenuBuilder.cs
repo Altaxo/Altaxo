@@ -2,24 +2,22 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1391 $</version>
+//     <version>$Revision: 1661 $</version>
 // </file>
 
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
+
 using ICSharpCode.Core;
-using ICSharpCode.TextEditor;
-using ICSharpCode.TextEditor.Document;
-using ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor;
-using ICSharpCode.SharpDevelop.Dom;
 using ICSharpCode.SharpDevelop.Bookmarks;
-using ICSharpCode.SharpDevelop.Gui;
+using ICSharpCode.SharpDevelop.Dom;
+using ICSharpCode.SharpDevelop.Dom.Refactoring;
 using ICSharpCode.SharpDevelop.Gui.ClassBrowser;
-using SearchAndReplace;
 using ICSharpCode.SharpDevelop.Refactoring;
+using ICSharpCode.TextEditor;
+using SearchAndReplace;
 
 namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 {
@@ -69,7 +67,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 			cmd.Tag = member;
 			list.Add(cmd);
 			
-			if (member is IField) {
+			if (member is IField && member.DeclaringType.ClassType != ClassType.Enum) {
 				IProperty foundProperty = FindReferencesAndRenameHelper.FindProperty(member as IField);
 				if (foundProperty != null) {
 					cmd = new MenuCommand("${res:SharpDevelop.Refactoring.GoToProperty}", GotoTagMember);
@@ -121,7 +119,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 			TextEditorControl textEditor = FindReferencesAndRenameHelper.JumpBehindDefinition(member);
 			
 			CodeGenerator codeGen = member.DeclaringType.ProjectContent.Language.CodeGenerator;
-			codeGen.InsertCodeAfter(member, textEditor.Document,
+			codeGen.InsertCodeAfter(member, new TextEditorDocument(textEditor.Document),
 			                        codeGen.CreateProperty(member, true, includeSetter));
 			ParserService.ParseCurrentViewContent();
 		}
@@ -131,7 +129,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 			MenuCommand item = (MenuCommand)sender;
 			IProperty member = (IProperty)item.Tag;
 			TextEditorControl textEditor = FindReferencesAndRenameHelper.JumpBehindDefinition(member);
-			member.DeclaringType.ProjectContent.Language.CodeGenerator.CreateChangedEvent(member, textEditor.Document);
+			member.DeclaringType.ProjectContent.Language.CodeGenerator.CreateChangedEvent(member, new TextEditorDocument(textEditor.Document));
 			ParserService.ParseCurrentViewContent();
 		}
 		
@@ -141,7 +139,8 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 			IEvent member = (IEvent)item.Tag;
 			TextEditorControl textEditor = FindReferencesAndRenameHelper.JumpBehindDefinition(member);
 			CodeGenerator codeGen = member.DeclaringType.ProjectContent.Language.CodeGenerator;
-			codeGen.InsertCodeAfter(member, textEditor.Document, codeGen.CreateOnEventMethod(member));
+			codeGen.InsertCodeAfter(member, new TextEditorDocument(textEditor.Document),
+			                        codeGen.CreateOnEventMethod(member));
 			ParserService.ParseCurrentViewContent();
 		}
 		

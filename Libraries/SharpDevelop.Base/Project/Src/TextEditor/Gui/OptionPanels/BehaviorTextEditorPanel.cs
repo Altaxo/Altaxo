@@ -2,21 +2,16 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1118 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.IO;
-using System.Collections;
 using System.Windows.Forms;
-
-using ICSharpCode.SharpDevelop.Internal.ExternalTool;
-using ICSharpCode.SharpDevelop.Internal.Templates;
 using ICSharpCode.Core;
+using ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor;
+using ICSharpCode.SharpDevelop.Gui;
 using ICSharpCode.TextEditor;
 using ICSharpCode.TextEditor.Document;
-using ICSharpCode.SharpDevelop.Gui;
-using ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor;
 
 namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.OptionPanels
 {

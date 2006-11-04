@@ -2,12 +2,11 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1391 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
 using System.Collections.Generic;
-using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.Dom;
 using ICSharpCode.TextEditor.Document;
 
@@ -83,7 +82,7 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 				}
 			}
 			
-			cu.ProjectContent.Language.CodeGenerator.ReplaceUsings(document, cu.Usings, newUsings);
+			cu.ProjectContent.Language.CodeGenerator.ReplaceUsings(new TextEditorDocument(document), cu.Usings, newUsings);
 		}
 	}
 }

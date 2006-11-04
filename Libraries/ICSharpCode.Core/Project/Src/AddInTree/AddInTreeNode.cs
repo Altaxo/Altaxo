@@ -2,11 +2,10 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1185 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -154,6 +153,12 @@ namespace ICSharpCode.Core
 				}
 			}
 			return items;
+		}
+		
+		// Workaround for Boo compiler (it cannot distinguish between the generic and non-generic method)
+		public ArrayList BuildChildItemsArrayList(object caller)
+		{
+			return BuildChildItems(caller);
 		}
 		
 		public ArrayList BuildChildItems(object caller)

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
@@ -10,14 +10,10 @@ using System.Collections;
 using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Drawing;
-using System.Drawing.Design;
 using System.Windows.Forms;
-using System.Windows.Forms.Design;
 
-
-using ICSharpCode.SharpDevelop.Project;
-using ICSharpCode.SharpDevelop.Gui;
 using ICSharpCode.Core;
+using ICSharpCode.SharpDevelop.Project;
 
 namespace ICSharpCode.SharpDevelop.Gui
 {
@@ -329,15 +325,15 @@ namespace ICSharpCode.SharpDevelop.Gui
 			if (gridItem != null) {
 				Type component = gridItem.PropertyDescriptor.ComponentType;
 				if (component != null) {
-					ICSharpCode.SharpDevelop.Dom.IClass c = ProjectContentRegistry.WinForms.GetClass(component.FullName);
+					ICSharpCode.SharpDevelop.Dom.IClass c = ParserService.CurrentProjectContent.GetClass(component.FullName);
 					if (c != null) {
 						foreach (ICSharpCode.SharpDevelop.Dom.IProperty p in c.DefaultReturnType.GetProperties()) {
 							if (gridItem.PropertyDescriptor.Name == p.Name) {
-								ICSharpCode.SharpDevelop.Dom.HelpProvider.ShowHelp(p);
+								HelpProvider.ShowHelp(p);
 								return;
 							}
 						}
-						ICSharpCode.SharpDevelop.Dom.HelpProvider.ShowHelp(c);
+						HelpProvider.ShowHelp(c);
 					}
 				}
 			}

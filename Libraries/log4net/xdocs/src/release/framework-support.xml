@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <!--
-Copyright 2004-2005 The Apache Software Foundation
+Copyright 2004-2006 The Apache Software Foundation
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -24,11 +24,34 @@ limitations under the License.
 	<meta name="keywords" content="log4net supported frameworks, mono, sscli, .net, log4net" />
 
 	<body>
-		<section name="log4net Supported Frameworks">
+		<section id="main" name="log4net Supported Frameworks">
 		
 			<sectionMenu name="Contents" />
 			
-			<section name="Summary of .NET frameworks supported by log4net">
+			<section id="summary" name="Summary of .NET frameworks supported by log4net">
+				<p>
+					log4net is built on a number of different frameworks. Each new version of the frameworks add
+					new features. To take advantage of these new features we must build log4net using the
+					appropriate framework. We also maintain builds compatible with older versions of the frameworks.
+				</p>
+				<p>
+					It is important to remember that the .NET frameworks support backward compatibility, that is
+					a new version of the framework will run binary assemblies that were targeted to previous versions
+					of the framework.
+				</p>
+				<p>
+					While the number of different builds available may seem confusing, you only need to select the
+					nearest build for your platform that is equal to or earlier than your chosen deployment framework.
+					If you intend to deploy your application on the Microsoft .NET Framework 1.0 don't pick the
+					log4net build that is built against the Microsoft .NET Framework 1.1 because the .NET framework
+					does not guarantee forward compatibility only backward compatibility.
+				</p>
+				<p>
+					The lowest common denominator build is the CLI 1.0 Compatible build. This build is compatible with
+					the ECMA/ISO CLI 1.0 standard APIs and will run on all frameworks that support the standard. (Note
+					that the Microsoft .NET Compact Framework does not support this standard). Use this build if you
+					intend to deploy you application on both the Microsoft .NET Frameworks and the Mono frameworks.
+				</p>
 				<p>
 					log4net now builds on 6 frameworks:
 				</p>
@@ -52,11 +75,15 @@ limitations under the License.
 							<td><a href="http://msdn.microsoft.com/net">http://msdn.microsoft.com/net</a></td>
 						</tr>
 						<tr style="vertical-align: top;">
+							<td>Microsoft .NET Framework 2.0 (2.0.50727)</td>
+							<td><a href="http://msdn.microsoft.com/net">http://msdn.microsoft.com/net</a></td>
+						</tr>
+						<tr style="vertical-align: top;">
 							<td>Microsoft .NET Compact Framework 1.0 (1.0.5000)</td>
 							<td><a href="http://msdn.microsoft.com/vstudio/device/compactfx.asp">http://msdn.microsoft.com/vstudio/device/compactfx.asp</a></td>
 						</tr>
 						<tr style="vertical-align: top;">
-							<td>Mono 1.0</td>
+							<td>Mono 1.1.13</td>
 							<td><a href="http://www.mono-project.com">http://www.mono-project.com</a></td>
 						</tr>
 						<tr style="vertical-align: top;">
@@ -78,7 +105,7 @@ limitations under the License.
 				</p>
 			</section>
 			
-			<section name="Appenders">
+			<section id="appenders" name="Appenders">
 				<p>
 					The appenders available to each framework depend on the functionality of the 
 					framework and the platform it runs on:
@@ -98,13 +125,15 @@ limitations under the License.
 							<th>Appender</th>
 							<th>.NET Framework 1.0</th>
 							<th>.NET Framework 1.1</th>
+							<th>.NET Framework 2.0</th>
 							<th>.NET Compact Framework 1.0</th>
-							<th>Mono 1.0</th>
+							<th>Mono 1.1</th>
 							<th>Shared Source CLI 1.0</th>
 							<th>CLI 1.0 Compatible</th>
 						</tr>
 						<tr>
 							<td>AdoNetAppender</td>
+							<td>x</td>
 							<td>x</td>
 							<td>x</td>
 							<td>x</td>
@@ -120,9 +149,11 @@ limitations under the License.
 							<td>x</td>
 							<td>x</td>
 							<td>x</td>
+							<td>x</td>
 						</tr>
 						<tr>
 							<td>AspNetTraceAppender</td>
+							<td>x</td>
 							<td>x</td>
 							<td>x</td>
 							<td></td>
@@ -138,9 +169,11 @@ limitations under the License.
 							<td>x</td>
 							<td>x</td>
 							<td>x</td>
+							<td>x</td>
 						</tr>
 						<tr>
 							<td>ColoredConsoleAppender</td>
+							<td>x</td>
 							<td>x</td>
 							<td>x</td>
 							<td></td>
@@ -156,9 +189,11 @@ limitations under the License.
 							<td>x</td>
 							<td>x</td>
 							<td>x</td>
+							<td>x</td>
 						</tr>
 						<tr>
 							<td>DebugAppender</td>
+							<td>x</td>
 							<td>x</td>
 							<td>x</td>
 							<td>x</td>
@@ -170,13 +205,15 @@ limitations under the License.
 							<td>EventLogAppender</td>
 							<td>x</td>
 							<td>x</td>
+							<td>x</td>
 							<td></td>
+							<td>x</td>
 							<td></td>
-							<td></td>
-							<td></td>
+							<td>x</td>
 						</tr>
 						<tr>
 							<td>FileAppender</td>
+							<td>x</td>
 							<td>x</td>
 							<td>x</td>
 							<td>x</td>
@@ -192,9 +229,11 @@ limitations under the License.
 							<td>x</td>
 							<td>x</td>
 							<td>x</td>
+							<td>x</td>
 						</tr>
 						<tr>
 							<td>LocalSyslogAppender</td>
+							<td>x</td>
 							<td>x</td>
 							<td>x</td>
 							<td></td>
@@ -210,9 +249,11 @@ limitations under the License.
 							<td>x</td>
 							<td>x</td>
 							<td>x</td>
+							<td>x</td>
 						</tr>
 						<tr>
 							<td>NetSendAppender</td>
+							<td>x</td>
 							<td>x</td>
 							<td>x</td>
 							<td></td>
@@ -222,6 +263,7 @@ limitations under the License.
 						</tr>
 						<tr>
 							<td>OutputDebugStringAppender</td>
+							<td>x</td>
 							<td>x</td>
 							<td>x</td>
 							<td>x</td>
@@ -237,9 +279,11 @@ limitations under the License.
 							<td>x</td>
 							<td>x</td>
 							<td>x</td>
+							<td>x</td>
 						</tr>
 						<tr>
 							<td>RemotingAppender</td>
+							<td>x</td>
 							<td>x</td>
 							<td>x</td>
 							<td></td>
@@ -255,9 +299,11 @@ limitations under the License.
 							<td>x</td>
 							<td>x</td>
 							<td>x</td>
+							<td>x</td>
 						</tr>
 						<tr>
 							<td>SmtpAppender</td>
+							<td>x</td>
 							<td>x</td>
 							<td>x</td>
 							<td></td>
@@ -273,9 +319,11 @@ limitations under the License.
 							<td>x</td>
 							<td>x</td>
 							<td>x</td>
+							<td>x</td>
 						</tr>
 						<tr>
 							<td>TelnetAppender</td>
+							<td>x</td>
 							<td>x</td>
 							<td>x</td>
 							<td>x</td>
@@ -291,9 +339,11 @@ limitations under the License.
 							<td>x</td>
 							<td>x</td>
 							<td>x</td>
+							<td>x</td>
 						</tr>
 						<tr>
 							<td>UdpAppender</td>
+							<td>x</td>
 							<td>x</td>
 							<td>x</td>
 							<td>x</td>
@@ -305,20 +355,26 @@ limitations under the License.
 				</div>
 			</section>
 			
-			<section name="Framework Specific Notes">
-				<section name="Microsoft .NET Framework 1.0 (1.0.3705)">
+			<section id="notes" name="Framework Specific Notes">
+				<section id="net1.0" name="Microsoft .NET Framework 1.0 (1.0.3705)">
 					<p>
 						none
 					</p>
 				</section>
 				
-				<section name="Microsoft .NET Framework 1.1 (1.1.4322)">
+				<section id="net1.1" name="Microsoft .NET Framework 1.1 (1.1.4322)">
 					<p>
 						none
 					</p>
 				</section>
 				
-				<section name="Microsoft .NET Compact Framework 1.0 (1.0.5000)">
+				<section id="net2.0" name="Microsoft .NET Framework 2.0 (2.0.50727)">
+					<p>
+						none
+					</p>
+				</section>
+				
+				<section id="netcf1.0" name="Microsoft .NET Compact Framework 1.0 (1.0.5000)">
 					<ul>
 						<li>
 							<h4>Assembly attributes</h4>
@@ -348,7 +404,7 @@ namespace TestApp
 		public static void Main() 
 		{
 			// Uncomment the next line to enable log4net internal debugging
-			// log4net.helpers.LogLog.InternalDebugging = true;
+			// log4net.Util.LogLog.InternalDebugging = true;
 
 			// This will instruct log4net to look for a configuration file
 			// called config.log4net in the root directory of the device
@@ -439,13 +495,27 @@ namespace TestApp
 					</ul>
 				</section>
 				
-				<section name="Mono 1.0">
+				<section id="mono" name="Mono">
 					<p>
-						none
+						There are 2 separate builds of log4net for mono; Mono 1.0, built using the C# compiler in a mode 
+						which is compatible with the CLI 1.0 language specification, and; Mono 2.0, built using the .NET 
+						2.0 extensions to the C# language.
 					</p>
+				
+					<section id="mono1.0" name="Mono 1.0">
+						<p>
+							none
+						</p>
+					</section>
+					<section id="mono2.0" name="Mono 2.0">
+						<p>
+							none
+						</p>
+					</section>
+					
 				</section>
 				
-				<section name="Microsoft Shared Source CLI 1.0">
+				<section id="sscli1.0" name="Microsoft Shared Source CLI 1.0">
 					<ul>
 						<li>
 							<h4>FileSystemWatcher</h4>
@@ -483,7 +553,7 @@ namespace TestApp
 					</ul>
 				</section>
 				
-				<section name="CLI 1.0 Compatible">
+				<section id="cli1.0" name="CLI 1.0 Compatible">
 					<p>
 						This build of log4net is designed to run on any ECMA CLI 1.0 compatible runtime.
 						The assembly does not support any platform specific features. The build includes

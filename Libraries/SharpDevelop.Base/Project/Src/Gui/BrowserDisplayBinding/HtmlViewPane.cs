@@ -2,16 +2,13 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
 using System.Collections;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Drawing.Printing;
-
-using ICSharpCode.SharpDevelop.Internal.Undo;
 
 using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.Gui;
@@ -98,9 +95,17 @@ namespace ICSharpCode.SharpDevelop.BrowserDisplayBinding
 			if (title != null)
 				title = title.Trim();
 			if (title == null || title.Length == 0)
-				TitleName = "Browser";
+				TitleName = ResourceService.GetString("ICSharpCode.SharpDevelop.BrowserDisplayBinding.Browser");
 			else
 				TitleName = title;
+		}
+		
+		// TODO: Navigation - implement browser navigation points?
+		public override INavigationPoint BuildNavPoint()
+		{
+			// returning null disables navigation for this IViewContent as
+			// requests to log null points are ignored.
+			return null;
 		}
 	}
 	

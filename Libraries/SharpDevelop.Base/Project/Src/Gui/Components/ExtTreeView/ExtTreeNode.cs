@@ -2,14 +2,14 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1252 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Diagnostics;
 using System.Windows.Forms;
+
 using ICSharpCode.Core;
 using ICSharpCode.TextEditor;
 
@@ -71,6 +71,12 @@ namespace ICSharpCode.SharpDevelop.Gui
 			AddTo(view.Nodes);
 		}
 		
+		public void Insert(int index, TreeNode parentNode)
+		{
+			internalParent = parentNode;
+			parentNode.Nodes.Insert(index, this);
+		}
+		
 		void AddTo(TreeNodeCollection nodes)
 		{
 			nodes.Add(this);
@@ -99,6 +105,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		
 		public virtual void ActivateItem()
 		{
+			this.Toggle();
 		}
 		
 		public virtual void CheckedChanged()
@@ -332,9 +339,9 @@ namespace ICSharpCode.SharpDevelop.Gui
 			boldFont            = ResourceService.LoadFont("Tahoma", 9, FontStyle.Bold);
 			italicFont          = ResourceService.LoadFont("Tahoma", 9, FontStyle.Italic);
 			
-			monospacedFont       = ResourceService.LoadFont("Courier New", 10);
-			boldMonospacedFont   = ResourceService.LoadFont("Courier New", 10, FontStyle.Bold);
-			italicMonospacedFont = ResourceService.LoadFont("Courier New", 10, FontStyle.Italic);
+			monospacedFont       = ResourceService.DefaultMonospacedFont;
+			boldMonospacedFont   = ResourceService.LoadDefaultMonospacedFont(FontStyle.Bold);
+			italicMonospacedFont = ResourceService.LoadDefaultMonospacedFont(FontStyle.Italic);
 		}
 		#endregion
 		

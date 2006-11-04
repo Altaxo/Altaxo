@@ -2,22 +2,17 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1388 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.IO;
-using System.Text;
-using System.Runtime.InteropServices;
-using System.ComponentModel;
-using System.Windows.Forms;
-using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Collections;
-using System.Reflection;
+using System.Drawing;
+using System.IO;
 using System.Resources;
-using System.Threading;
-using System.Xml;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Windows.Forms;
 
 using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.Project;
@@ -146,18 +141,19 @@ namespace ICSharpCode.SharpDevelop.Gui
 			
 			switch(GetDriveType(drive)) {
 				case DriveType.Removeable:
-					text += " (Removeable)";
+					text += " (${res:MainWindow.Windows.FileScout.DriveType.Removeable})";
 					break;
 				case DriveType.Fixed:
-					text += " (Fixed)";
+					text += " (${res:MainWindow.Windows.FileScout.DriveType.Fixed})";
 					break;
 				case DriveType.Cdrom:
-					text += " (CD)";
+					text += " (${res:MainWindow.Windows.FileScout.DriveType.CD})";
 					break;
 				case DriveType.Remote:
-					text += " (Remote)";
+					text += " (${res:MainWindow.Windows.FileScout.DriveType.Remote})";
 					break;
 			}
+			text = StringParser.Parse(text);
 		}
 		
 		public override string ToString()
@@ -256,7 +252,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		
 		void fileDeleted(object sender, FileSystemEventArgs e)
 		{
-			MethodInvoker method = delegate {
+			Action method = delegate {
 				foreach(FileListItem fileItem in Items)
 				{
 					if(fileItem.FullName.Equals(e.FullPath, StringComparison.OrdinalIgnoreCase)) {
@@ -270,7 +266,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		
 		void fileChanged(object sender, FileSystemEventArgs e)
 		{
-			MethodInvoker method = delegate {
+			Action method = delegate {
 				foreach(FileListItem fileItem in Items)
 				{
 					if(fileItem.FullName.Equals(e.FullPath, StringComparison.OrdinalIgnoreCase)) {
@@ -292,7 +288,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		
 		void fileCreated(object sender, FileSystemEventArgs e)
 		{
-			MethodInvoker method = delegate {
+			Action method = delegate {
 				FileInfo info = new FileInfo(e.FullPath);
 				
 				ListViewItem fileItem = Items.Add(new FileListItem(e.FullPath));
@@ -308,7 +304,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		
 		void fileRenamed(object sender, RenamedEventArgs e)
 		{
-			MethodInvoker method = delegate {
+			Action method = delegate {
 				foreach(FileListItem fileItem in Items)
 				{
 					if(fileItem.FullName.Equals(e.OldFullPath, StringComparison.OrdinalIgnoreCase)) {
@@ -330,7 +326,13 @@ namespace ICSharpCode.SharpDevelop.Gui
 		
 		void deleteFiles(object sender, EventArgs e)
 		{
-			if (MessageService.AskQuestion("Are you sure ?", "Delete files")) {
+			string fileName = "";
+			foreach(FileListItem fileItem in SelectedItems) {
+				fileName = fileItem.FullName;
+				break;
+			}
+			if (MessageService.AskQuestion(StringParser.Parse("${res:ProjectComponent.ContextMenu.Delete.Question}", new string[,] {{"FileName", fileName}}),
+			                               "${Global.Delete}")) {
 				foreach(FileListItem fileItem in SelectedItems)
 				{
 					try {
@@ -358,21 +360,18 @@ namespace ICSharpCode.SharpDevelop.Gui
 		{
 			base.OnAfterLabelEdit(e);
 			
-			if(e.Label == null) {
+			if (e.Label == null || !FileService.CheckFileName(e.Label)) {
 				e.CancelEdit = true;
 				return;
 			}
 			
-			string filename = ((FileListItem)Items[e.Item]).FullName;
-			string newname = Path.GetDirectoryName(filename) + Path.DirectorySeparatorChar + e.Label;
+			string oldFileName = ((FileListItem)Items[e.Item]).FullName;
+			string newFileName = Path.Combine(Path.GetDirectoryName(oldFileName), e.Label);
 			
-			try {
-				File.Move(filename, newname);
-				((FileListItem)Items[e.Item]).FullName = newname;
-			} catch(Exception ex) {
+			if (FileService.RenameFile(oldFileName, newFileName, false)) {
+				((FileListItem)Items[e.Item]).FullName = newFileName;
+			} else {
 				e.CancelEdit = true;
-				
-				MessageService.ShowError(ex, "Rename failed");
 			}
 		}
 		
@@ -516,12 +515,12 @@ namespace ICSharpCode.SharpDevelop.Gui
 		public ShellTree()
 		{
 			Sorted = true;
-			TreeNode rootNode = Nodes.Add("Desktop");
+			TreeNode rootNode = Nodes.Add(Path.GetFileName(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory)));
 			rootNode.ImageIndex = 6;
 			rootNode.SelectedImageIndex = 6;
 			rootNode.Tag = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
 			
-			TreeNode myFilesNode = rootNode.Nodes.Add("My Documents");
+			TreeNode myFilesNode = rootNode.Nodes.Add(ResourceService.GetString("MainWindow.Windows.FileScout.MyDocuments"));
 			myFilesNode.ImageIndex = 7;
 			myFilesNode.SelectedImageIndex = 7;
 			try {
@@ -532,7 +531,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			
 			myFilesNode.Nodes.Add("");
 			
-			TreeNode computerNode = rootNode.Nodes.Add("My Computer");
+			TreeNode computerNode = rootNode.Nodes.Add(ResourceService.GetString("MainWindow.Windows.FileScout.MyComputer"));
 			computerNode.ImageIndex = 8;
 			computerNode.SelectedImageIndex = 8;
 			try {

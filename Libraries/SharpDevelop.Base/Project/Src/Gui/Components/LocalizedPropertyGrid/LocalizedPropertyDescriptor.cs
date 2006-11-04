@@ -2,15 +2,11 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="none" email=""/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1989 $</version>
 // </file>
 
 using System;
 using System.ComponentModel;
-using System.Globalization;
-using System.Resources;
-using System.Reflection;
-
 using ICSharpCode.Core;
 
 namespace ICSharpCode.SharpDevelop.Gui
@@ -140,6 +136,5 @@ namespace ICSharpCode.SharpDevelop.Gui
 				((LocalizedObject)component).InformSetValue(this, component, value);
 			}
 		}
-		
 	}
 }

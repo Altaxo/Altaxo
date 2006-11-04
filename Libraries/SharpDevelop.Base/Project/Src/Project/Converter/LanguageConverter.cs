@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1252 $</version>
+//     <version>$Revision: 1612 $</version>
 // </file>
 
 using System;
@@ -10,11 +10,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
+
 using ICSharpCode.Core;
-using ICSharpCode.SharpDevelop.Project.Commands;
-using ICSharpCode.NRefactory.Parser;
-using ICSharpCode.NRefactory.Parser.AST;
+using ICSharpCode.NRefactory;
+using ICSharpCode.NRefactory.Ast;
 using ICSharpCode.NRefactory.PrettyPrinter;
+using ICSharpCode.SharpDevelop.Project.Commands;
 
 namespace ICSharpCode.SharpDevelop.Project.Converter
 {
@@ -117,17 +118,21 @@ namespace ICSharpCode.SharpDevelop.Project.Converter
 		public override void Run()
 		{
 			conversionLog = new StringBuilder();
-			conversionLog.AppendLine("SharpDevelop Project Converter");
-			conversionLog.AppendLine("==============================");
-			conversionLog.AppendLine("");
+			string translatedTitle = ResourceService.GetString("ICSharpCode.SharpDevelop.Commands.Convert.ProjectConverter");
+			conversionLog.AppendLine(translatedTitle);
+			conversionLog.Append('=', translatedTitle.Length);
+			conversionLog.AppendLine();
+			conversionLog.AppendLine();
 			IProject sourceProject = ProjectService.CurrentProject;
 			string targetProjectDirectory = sourceProject.Directory + ".ConvertedTo" + TargetLanguageName;
 			if (Directory.Exists(targetProjectDirectory)) {
-				MessageService.ShowMessage(targetProjectDirectory + " already exists, cannot convert.");
+				MessageService.ShowMessageFormatted(translatedTitle, "${res:ICSharpCode.SharpDevelop.Commands.Convert.TargetAlreadyExists}", targetProjectDirectory);
 				return;
 			}
-			conversionLog.AppendLine("Source: " + sourceProject.Directory);
-			conversionLog.AppendLine("Target: " + targetProjectDirectory);
+			conversionLog.Append(ResourceService.GetString("ICSharpCode.SharpDevelop.Commands.Convert.SourceDirectory")).Append(": ");
+			conversionLog.AppendLine(sourceProject.Directory);
+			conversionLog.Append(ResourceService.GetString("ICSharpCode.SharpDevelop.Commands.Convert.TargetDirectory")).Append(": ");
+			conversionLog.AppendLine(targetProjectDirectory);
 			
 			Directory.CreateDirectory(targetProjectDirectory);
 			IProject targetProject = CreateProject(targetProjectDirectory, sourceProject);
@@ -136,7 +141,7 @@ namespace ICSharpCode.SharpDevelop.Project.Converter
 			CopyItems(sourceProject, targetProject);
 			conversionLog.AppendLine();
 			AfterConversion(targetProject);
-			conversionLog.AppendLine("Conversion complete.");
+			conversionLog.AppendLine(ResourceService.GetString("ICSharpCode.SharpDevelop.Commands.Convert.ConversionComplete"));
 			targetProject.Save();
 			targetProject.Dispose();
 			TreeNode node = ProjectBrowserPad.Instance.SelectedNode;
@@ -151,7 +156,11 @@ namespace ICSharpCode.SharpDevelop.Project.Converter
 				}
 				node = node.Parent;
 			}
-			FileService.NewFile("Conversion Results", "Text", conversionLog.ToString());
+			ICSharpCode.SharpDevelop.Gui.IWorkbenchWindow newFileWindow;
+			newFileWindow = FileService.NewFile(ResourceService.GetString("ICSharpCode.SharpDevelop.Commands.Convert.ConversionResults"), "Text", conversionLog.ToString());
+			if (newFileWindow != null) {
+				newFileWindow.ViewContent.IsDirty = false;
+			}
 		}
 	}
 	
@@ -161,17 +170,19 @@ namespace ICSharpCode.SharpDevelop.Project.Converter
 		
 		protected void ConvertFile(FileProjectItem sourceItem, FileProjectItem targetItem,
 		                           string sourceExtension, string targetExtension,
-		                           SupportedLanguage sourceLanguage, IOutputASTVisitor outputVisitor)
+		                           SupportedLanguage sourceLanguage, IOutputAstVisitor outputVisitor)
 		{
 			FixExtensionOfExtraProperties(targetItem, sourceExtension, targetExtension);
 			if (sourceExtension.Equals(Path.GetExtension(sourceItem.FileName), StringComparison.OrdinalIgnoreCase)) {
 				string code = ParserService.GetParseableFileContent(sourceItem.FileName);
 				IParser p = ParserFactory.CreateParser(sourceLanguage, new StringReader(code));
 				p.Parse();
-				if (p.Errors.count > 0) {
+				if (p.Errors.Count > 0) {
 					conversionLog.AppendLine();
-					conversionLog.AppendLine(sourceItem.FileName + " is not converted:");
-					conversionLog.AppendLine("Parser found " + p.Errors.count + " error(s)");
+					conversionLog.AppendLine(StringParser.Parse("${res:ICSharpCode.SharpDevelop.Commands.Convert.IsNotConverted}",
+					                                            new string[,] {{"FileName", sourceItem.FileName}}));
+					conversionLog.AppendLine(StringParser.Parse("${res:ICSharpCode.SharpDevelop.Commands.Convert.ParserErrorCount}",
+					                                            new string[,] {{"ErrorCount", p.Errors.Count.ToString()}}));
 					conversionLog.AppendLine(p.Errors.ErrorOutput);
 					base.ConvertFile(sourceItem, targetItem);
 					return;
@@ -182,14 +193,18 @@ namespace ICSharpCode.SharpDevelop.Project.Converter
 				ConvertAst(p.CompilationUnit, specials);
 				
 				using (SpecialNodesInserter.Install(specials, outputVisitor)) {
-					outputVisitor.Visit(p.CompilationUnit, null);
+					outputVisitor.VisitCompilationUnit(p.CompilationUnit, null);
 				}
 				
 				p.Dispose();
 				
-				if (outputVisitor.Errors.count > 0) {
+				if (outputVisitor.Errors.Count > 0) {
 					conversionLog.AppendLine();
-					conversionLog.AppendLine(outputVisitor.Errors.count + " error(s) converting " + sourceItem.FileName + ":");
+					conversionLog.AppendLine(StringParser.Parse("${res:ICSharpCode.SharpDevelop.Commands.Convert.ConverterErrorCount}",
+					                                            new string[,] {
+					                                            	{"FileName", sourceItem.FileName},
+					                                            	{"ErrorCount", outputVisitor.Errors.Count.ToString()}
+					                                            }));
 					conversionLog.AppendLine(outputVisitor.Errors.ErrorOutput);
 				}
 				

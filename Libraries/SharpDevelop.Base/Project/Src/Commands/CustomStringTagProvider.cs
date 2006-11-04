@@ -2,18 +2,12 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 988 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
 using System.IO;
-using System.Threading;
-using System.Drawing;
-using System.Drawing.Printing;
-using System.Collections;
-using System.ComponentModel;
 using System.Windows.Forms;
-using System.Diagnostics;
 
 using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.Gui;
@@ -71,8 +65,10 @@ namespace ICSharpCode.SharpDevelop.Commands
 				case "TaskService.Messages":
 					return TaskService.GetCount(TaskType.Message).ToString();
 				case "CurrentProjectName":
-					// TODO: Translate "<empty>"!!!!
-					return ProjectService.CurrentProject == null ? "<empty>" : ProjectService.CurrentProject.Name;
+					if (ProjectService.CurrentProject == null)
+						return "<no current project>";
+					else
+						return ProjectService.CurrentProject.Name;
 					
 			}
 			switch (tag.ToUpperInvariant()) {

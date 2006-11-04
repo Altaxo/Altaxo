@@ -2,14 +2,12 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1388 $</version>
+//     <version>$Revision: 2003 $</version>
 // </file>
 
 using System;
 using System.Drawing;
-using System.Collections;
 using System.IO;
-using System.Threading;
 using System.Windows.Forms;
 
 using ICSharpCode.Core;
@@ -56,6 +54,10 @@ namespace ICSharpCode.SharpDevelop.Gui
 			}
 		}
 		
+		/// <summary>
+		/// The current view content which is shown inside this window.
+		/// This method is thread-safe.
+		/// </summary>
 		public IBaseViewContent ActiveViewContent {
 			get {
 				if (viewTabControl != null) {
@@ -63,7 +65,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 					if (WorkbenchSingleton.InvokeRequired) {
 						// the window might have been disposed just here, invoke on the
 						// Workbench instead
-						selectedIndex = (int)WorkbenchSingleton.SafeThreadCall(this, "GetSelectedIndex");
+						selectedIndex = WorkbenchSingleton.SafeThreadFunction<int>(GetSelectedIndex);
 					} else {
 						selectedIndex = GetSelectedIndex();
 					}
@@ -203,7 +205,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		void LoadSolutionProjectsThreadEndedEvent(object sender, EventArgs e)
 		{
 			// do not invoke on this: it's possible that "this" is disposed while this method is executing
-			WorkbenchSingleton.SafeThreadAsyncCall(new MethodInvoker(this.RefreshSecondaryViewContents));
+			WorkbenchSingleton.SafeThreadAsyncCall(this.RefreshSecondaryViewContents);
 		}
 		
 		public IViewContent ViewContent {
@@ -235,12 +237,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 				return;
 			}
 			SetToolTipText();
-			string newTitle;
-			if (content.TitleName == null) {
-				newTitle = Path.GetFileName(content.UntitledName);
-			} else {
-				newTitle = content.TitleName;
-			}
+			string newTitle = content.TitleName;
 			
 			if (content.IsDirty) {
 				newTitle += "*";
@@ -317,7 +314,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		
 		IBaseViewContent GetSubViewContent(int index)
 		{
-			if (index == 0)
+			if (index == 0 || content == null)
 				return content;
 			else
 				return content.SecondaryViewContents[index - 1];
@@ -328,7 +325,6 @@ namespace ICSharpCode.SharpDevelop.Gui
 			if (e.Action == TabControlAction.Selected && e.TabPageIndex >= 0) {
 				IBaseViewContent secondaryViewContent = GetSubViewContent(e.TabPageIndex);
 				if (secondaryViewContent != null) {
-					secondaryViewContent.Deselected();
 					secondaryViewContent.SwitchedTo();
 					secondaryViewContent.Selected();
 				}

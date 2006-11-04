@@ -2,22 +2,20 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Markus Palme" email="MarkusPalme@gmx.de"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1967 $</version>
 // </file>
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Text;
-using System.Windows.Forms;
-using ICSharpCode.TextEditor;
+
 using ICSharpCode.Core;
-using ICSharpCode.TextEditor.Gui.CompletionWindow;
-using ICSharpCode.TextEditor.Document;
 using ICSharpCode.SharpDevelop;
-using ICSharpCode.SharpDevelop.Dom;
 using ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor;
-using ICSharpCode.SharpDevelop.Dom.NRefactoryResolver;
+using ICSharpCode.SharpDevelop.Dom;
+using ICSharpCode.SharpDevelop.Dom.CSharp;
+using ICSharpCode.TextEditor;
+using ICSharpCode.TextEditor.Gui.CompletionWindow;
 
 namespace CSharpBinding
 {
@@ -39,7 +37,7 @@ namespace CSharpBinding
 		/// </summary>
 		public override ICompletionData[] GenerateCompletionData(string fileName, TextArea textArea, char charTyped)
 		{
-			ArrayList completionData = new ArrayList();
+			List<ICompletionData> completionData = new List<ICompletionData>();
 			completionData.Add(new DelegateCompletionData("new " + resolveResult.ResolvedType.Name + "();", 2,
 			                                              "delegate " + resolvedClass.FullyQualifiedName + "\n" + CodeCompletionData.GetDocumentation(resolvedClass.Documentation)));
 			completionData.Add(new DelegateCompletionData("delegate {  };", 3,
@@ -97,7 +95,7 @@ namespace CSharpBinding
 					}
 				}
 			}
-			return (ICompletionData[])completionData.ToArray(typeof(ICompletionData));
+			return completionData.ToArray();
 		}
 		
 		private class DelegateCompletionData : DefaultCompletionData

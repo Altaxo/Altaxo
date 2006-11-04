@@ -2,19 +2,14 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1611 $</version>
 // </file>
 
 using System;
-using System.Drawing;
-using System.IO;
-
+using ICSharpCode.NRefactory.Ast;
 using NUnit.Framework;
 
-using ICSharpCode.NRefactory.Parser;
-using ICSharpCode.NRefactory.Parser.AST;
-
-namespace ICSharpCode.NRefactory.Tests.AST
+namespace ICSharpCode.NRefactory.Tests.Ast
 {
 	[TestFixture]
 	public class ConstructorDeclarationTests
@@ -61,7 +56,7 @@ namespace ICSharpCode.NRefactory.Tests.AST
 			Assert.AreEqual(2, cd.Parameters.Count);
 			Assert.AreEqual("Integer", cd.Parameters[0].TypeReference.Type);
 			Assert.AreEqual("String", cd.Parameters[1].TypeReference.Type);
-			Assert.AreEqual(ParamModifier.Optional, cd.Parameters[1].ParamModifier & ParamModifier.Optional);
+			Assert.AreEqual(ParameterModifiers.Optional, cd.Parameters[1].ParamModifier & ParameterModifiers.Optional);
 		}
 		#endregion 
 	}

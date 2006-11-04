@@ -2,13 +2,12 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
+using System.Collections.Generic;
 using System.Drawing;
-using System.Diagnostics;
-using System.Collections;
 
 namespace ICSharpCode.TextEditor.Undo
 {
@@ -17,8 +16,8 @@ namespace ICSharpCode.TextEditor.Undo
 	/// </summary>
 	public class UndoStack
 	{
-		Stack undostack = new Stack();
-		Stack redostack = new Stack();
+		Stack<IUndoableOperation> undostack = new Stack<IUndoableOperation>();
+		Stack<IUndoableOperation> redostack = new Stack<IUndoableOperation>();
 		
 		public TextEditorControlBase TextEditorControl = null;
 		
@@ -36,7 +35,7 @@ namespace ICSharpCode.TextEditor.Undo
 		/// <summary>
 		/// This property is EXCLUSIVELY for the UndoQueue class, don't USE it
 		/// </summary>
-		internal Stack _UndoStack {
+		internal Stack<IUndoableOperation> _UndoStack {
 			get {
 				return undostack;
 			}

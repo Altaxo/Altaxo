@@ -2,21 +2,14 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1020 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.Xml;
-using System.IO;
-using System.Collections;
-using System.Reflection;
-using System.CodeDom.Compiler;
-
-using ICSharpCode.SharpDevelop.Project;
-
+using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.Gui;
 
-namespace ICSharpCode.Core
+namespace ICSharpCode.SharpDevelop
 {
 	/// <summary>
 	/// This class handles the installed display bindings

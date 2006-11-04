@@ -1,19 +1,13 @@
-﻿// <file>
+// <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1069 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.Reflection;
-using System.CodeDom.Compiler;
 using System.Windows.Forms;
-
 using ICSharpCode.Core;
-using ICSharpCode.SharpDevelop.Gui;
-using ICSharpCode.SharpDevelop.Project;
-using ICSharpCode.SharpDevelop.Internal.Templates;
 
 namespace ICSharpCode.SharpDevelop.Gui
 {
@@ -52,12 +46,6 @@ namespace ICSharpCode.SharpDevelop.Gui
 			}
 		}
 		
-		static WorkbenchSingleton()
-		{
-			PropertyService.PropertyChanged += new PropertyChangedEventHandler(TrackPropertyChanges);
-			ResourceService.LanguageChanged += delegate { workbench.RedrawAllComponents(); };
-		}
-		
 		/// <remarks>
 		/// This method handles the redraw all event for specific changed IDE properties
 		/// </remarks>
@@ -80,13 +68,26 @@ namespace ICSharpCode.SharpDevelop.Gui
 #if ModifiedForAltaxo
  		public static void InitializeWorkbench(DefaultWorkbench wb)
 		{
+			LayoutConfiguration.LoadLayoutConfiguration();
+			StatusBarService.Initialize();
+			DomHostCallback.Register(); // must be called after StatusBarService.Initialize()
+			ParserService.InitializeParserService();
+			
     workbench = wb;
 #else
     public static void InitializeWorkbench()
     {
-      workbench = new DefaultWorkbench();
+			LayoutConfiguration.LoadLayoutConfiguration();
+			StatusBarService.Initialize();
+			DomHostCallback.Register(); // must be called after StatusBarService.Initialize()
+			ParserService.InitializeParserService();
+			
+			workbench = new DefaultWorkbench();
 #endif
 			MessageService.MainForm = workbench;
+			
+			PropertyService.PropertyChanged += new PropertyChangedEventHandler(TrackPropertyChanges);
+			ResourceService.LanguageChanged += delegate { workbench.RedrawAllComponents(); };
 			
 			caller = new STAThreadCaller(workbench);
 			
@@ -105,19 +106,11 @@ namespace ICSharpCode.SharpDevelop.Gui
 		/// </summary>
 		private class STAThreadCaller
 		{
-			delegate object PerformCallDelegate(object target, string methodName, object[] arguments);
-			
 			Control ctl;
-			PerformCallDelegate performCallDelegate;
-			
-			#if DEBUG
-			string callerStack;
-			#endif
 			
 			public STAThreadCaller(Control ctl)
 			{
 				this.ctl = ctl;
-				performCallDelegate = new PerformCallDelegate(DoPerformCall);
 			}
 			
 			public object Call(Delegate method, object[] arguments)
@@ -128,69 +121,12 @@ namespace ICSharpCode.SharpDevelop.Gui
 				return ctl.Invoke(method, arguments);
 			}
 			
-			public object Call(object target, string methodName, object[] arguments)
-			{
-				if (target == null) {
-					throw new ArgumentNullException("target");
-				}
-				
-				#if DEBUG
-				callerStack = Environment.StackTrace;
-				#endif
-				
-				return ctl.Invoke(performCallDelegate, new object[] {target, methodName, arguments});
-			}
-			
 			public void BeginCall(Delegate method, object[] arguments)
 			{
 				if (method == null) {
 					throw new ArgumentNullException("method");
 				}
 				ctl.BeginInvoke(method, arguments);
-			}
-			
-			public void BeginCall(object target, string methodName, object[] arguments)
-			{
-				if (target == null) {
-					throw new ArgumentNullException("target");
-				}
-				
-				#if DEBUG
-				callerStack = Environment.StackTrace;
-				#endif
-				
-				ctl.BeginInvoke(performCallDelegate, new object[] {target, methodName, arguments});
-			}
-			
-			object DoPerformCall(object target, string methodName, object[] arguments)
-			{
-				MethodInfo methodInfo = null;
-				if (target is Type) {
-					methodInfo = ((Type)target).GetMethod(methodName, BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic);
-				} else {
-					methodInfo = target.GetType().GetMethod(methodName, BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
-				}
-				
-				if (methodInfo == null) {
-					throw new System.ArgumentException("method not found : " + methodName);
-				} else {
-					try {
-						if (target is Type) {
-							return methodInfo.Invoke(null, arguments);
-						} else {
-							return methodInfo.Invoke(target, arguments);
-						}
-					} catch (Exception ex) {
-						if (ex is TargetInvocationException && ex.InnerException != null) {
-							ex = ex.InnerException;
-						}
-						MessageService.ShowError(ex, "Exception got.");
-						#if DEBUG
-						LoggingService.Info("Stacktrace of source thread:\n" + callerStack);
-						#endif
-					}
-				}
-				return null;
 			}
 		}
 		
@@ -205,9 +141,9 @@ namespace ICSharpCode.SharpDevelop.Gui
 		/// operation, which can result in a dead-lock when the main thread waits for a lock
 		/// held by this thread!
 		/// </summary>
-		public static object SafeThreadCall(object target, string methodName, params object[] arguments)
+		public static R SafeThreadFunction<R>(Func<R> method)
 		{
-			return caller.Call(target, methodName, arguments);
+			return (R)caller.Call(method, new object[0]);
 		}
 		
 		/// <summary>
@@ -215,25 +151,81 @@ namespace ICSharpCode.SharpDevelop.Gui
 		/// operation, which can result in a dead-lock when the main thread waits for a lock
 		/// held by this thread!
 		/// </summary>
-		public static object SafeThreadCall(Delegate method, params object[] arguments)
+		public static R SafeThreadFunction<A, R>(Func<A, R> method, A arg1)
 		{
-			return caller.Call(method, arguments);
+			return (R)caller.Call(method, new object[] { arg1 });
+		}
+		
+		/// <summary>
+		/// Makes a call GUI threadsafe. WARNING: This method waits for the result of the
+		/// operation, which can result in a dead-lock when the main thread waits for a lock
+		/// held by this thread!
+		/// </summary>
+		public static void SafeThreadCall(Action method)
+		{
+			caller.Call(method, new object[0]);
+		}
+		
+		/// <summary>
+		/// Makes a call GUI threadsafe. WARNING: This method waits for the result of the
+		/// operation, which can result in a dead-lock when the main thread waits for a lock
+		/// held by this thread!
+		/// </summary>
+		public static void SafeThreadCall<A>(Action<A> method, A arg1)
+		{
+			caller.Call(method, new object[] { arg1 });
+		}
+		
+		/// <summary>
+		/// Makes a call GUI threadsafe. WARNING: This method waits for the result of the
+		/// operation, which can result in a dead-lock when the main thread waits for a lock
+		/// held by this thread!
+		/// </summary>
+		public static void SafeThreadCall<A, B>(Action<A, B> method, A arg1, B arg2)
+		{
+			caller.Call(method, new object[] { arg1, arg2 });
+		}
+		
+		/// <summary>
+		/// Makes a call GUI threadsafe. WARNING: This method waits for the result of the
+		/// operation, which can result in a dead-lock when the main thread waits for a lock
+		/// held by this thread!
+		/// </summary>
+		public static void SafeThreadCall<A, B, C>(Action<A, B, C> method, A arg1, B arg2, C arg3)
+		{
+			caller.Call(method, new object[] { arg1, arg2, arg3 });
 		}
 		
 		/// <summary>
 		/// Makes a call GUI threadsafe without waiting for the returned value.
 		/// </summary>
-		public static void SafeThreadAsyncCall(object target, string methodName, params object[] arguments)
+		public static void SafeThreadAsyncCall(Action method)
 		{
-			caller.BeginCall(target, methodName, arguments);
+			caller.BeginCall(method, new object[0]);
 		}
 		
 		/// <summary>
 		/// Makes a call GUI threadsafe without waiting for the returned value.
 		/// </summary>
-		public static void SafeThreadAsyncCall(Delegate method, params object[] arguments)
+		public static void SafeThreadAsyncCall<A>(Action<A> method, A arg1)
 		{
-			caller.BeginCall(method, arguments);
+			caller.BeginCall(method, new object[] { arg1 });
+		}
+		
+		/// <summary>
+		/// Makes a call GUI threadsafe without waiting for the returned value.
+		/// </summary>
+		public static void SafeThreadAsyncCall<A, B>(Action<A, B> method, A arg1, B arg2)
+		{
+			caller.BeginCall(method, new object[] { arg1, arg2 });
+		}
+		
+		/// <summary>
+		/// Makes a call GUI threadsafe without waiting for the returned value.
+		/// </summary>
+		public static void SafeThreadAsyncCall<A, B, C>(Action<A, B, C> method, A arg1, B arg2, C arg3)
+		{
+			caller.BeginCall(method, new object[] { arg1, arg2, arg3 });
 		}
 		#endregion
 		

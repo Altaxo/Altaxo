@@ -2,11 +2,10 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.Collections;
 
 namespace SearchAndReplace
 {
@@ -26,7 +25,7 @@ namespace SearchAndReplace
 	/// backward is called but they're not mixed. After a reset the move operation
 	/// can be switched.
 	/// </summary>
-	public interface IDocumentIterator 
+	public interface IDocumentIterator
 	{
 		/// <value>
 		/// Returns the current ProvidedDocumentInformation. This method
@@ -59,5 +58,37 @@ namespace SearchAndReplace
 		/// Resets the iterator to the start position.
 		/// </remarks>
 		void Reset();
+	}
+	
+	/// <summary>
+	/// A document iterator which never returns any results.
+	/// </summary>
+	public sealed class DummyDocumentIterator : IDocumentIterator
+	{
+		public ProvidedDocumentInformation Current {
+			get {
+				return null;
+			}
+		}
+		
+		public string CurrentFileName {
+			get {
+				return null;
+			}
+		}
+		
+		public bool MoveForward()
+		{
+			return false;
+		}
+		
+		public bool MoveBackward()
+		{
+			return false;
+		}
+		
+		public void Reset()
+		{
+		}
 	}
 }

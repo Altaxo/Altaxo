@@ -2,20 +2,16 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1228 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.Collections.Generic;
+using System.IO;
 using System.Windows.Forms;
 
-using ICSharpCode.SharpDevelop.Project;
 using ICSharpCode.Core;
-using ICSharpCode.SharpDevelop;
-using ICSharpCode.SharpDevelop.Gui;
-using ICSharpCode.SharpDevelop.Gui.XmlForms;
-
-using StringPair = System.Collections.Generic.KeyValuePair<string, string>;
+using ICSharpCode.SharpDevelop.Project;
+using StringPair = System.Collections.Generic.KeyValuePair<System.String, System.String>;
 
 namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 {
@@ -23,13 +19,26 @@ namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 	{
 		protected void InitBaseIntermediateOutputPath()
 		{
-			helper.BindString("baseIntermediateOutputPathTextBox", "BaseIntermediateOutputPath").CreateLocationButton("baseIntermediateOutputPathTextBox");
+			helper.BindString(Get<TextBox>("baseIntermediateOutputPath"),
+			                  "BaseIntermediateOutputPath",
+			                  delegate { return @"obj\"; }
+			                 ).CreateLocationButton("baseIntermediateOutputPathTextBox");
 			ConnectBrowseFolder("baseIntermediateOutputPathBrowseButton", "baseIntermediateOutputPathTextBox", "${res:Dialog.Options.PrjOptions.Configuration.FolderBrowserDescription}");
 		}
 		
 		protected void InitIntermediateOutputPath()
 		{
-			helper.BindString("intermediateOutputPathTextBox", "IntermediateOutputPath").CreateLocationButton("intermediateOutputPathTextBox");
+			ConfigurationGuiBinding binding = helper.BindString(
+				Get<TextBox>("intermediateOutputPath"),
+				"IntermediateOutputPath",
+				delegate {
+					PropertyStorageLocations l;
+					return Path.Combine(helper.GetProperty("BaseIntermediateOutputPath", @"obj\", out l),
+					                    helper.Configuration);
+				}
+			);
+			binding.DefaultLocation = PropertyStorageLocations.ConfigurationSpecific;
+			binding.CreateLocationButton("intermediateOutputPathTextBox");
 			ConnectBrowseFolder("intermediateOutputPathBrowseButton", "intermediateOutputPathTextBox", "${res:Dialog.Options.PrjOptions.Configuration.FolderBrowserDescription}");
 		}
 		
@@ -61,7 +70,7 @@ namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 			Get<TextBox>("xmlDocumentation").Enabled = Get<CheckBox>("xmlDocumentation").Checked;
 			if (Get<CheckBox>("xmlDocumentation").Checked) {
 				if (Get<TextBox>("xmlDocumentation").Text.Length == 0) {
-					Get<TextBox>("xmlDocumentation").Text = FileUtility.GetRelativePath(baseDirectory, project.OutputAssemblyFullPath) + ".xml";
+					Get<TextBox>("xmlDocumentation").Text = Path.ChangeExtension(FileUtility.GetRelativePath(baseDirectory, project.OutputAssemblyFullPath), ".xml");
 				}
 			} else {
 				Get<TextBox>("xmlDocumentation").Text = "";
@@ -217,9 +226,11 @@ namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 			targetFrameworkBinding = helper.BindStringEnum("targetFrameworkComboBox", TargetFrameworkProperty,
 			                                               "",
 			                                               new StringPair("", "Default (.NET 2.0)"),
-			                                               new StringPair("v1.0", ".NET 1.0"),
-			                                               new StringPair("v1.1", ".NET 1.1"),
-			                                               new StringPair("v2.0", ".NET 2.0"),
+			                                               new StringPair("v1.0", ".NET Framework 1.0"),
+			                                               new StringPair("v1.1", ".NET Framework 1.1"),
+			                                               new StringPair("v2.0", ".NET Framework 2.0"),
+			                                               new StringPair("CF 1.0", "Compact Framework 1.0"),
+			                                               new StringPair("CF 2.0", "Compact Framework 2.0"),
 			                                               new StringPair("Mono v1.1", "Mono 1.1"),
 			                                               new StringPair("Mono v2.0", "Mono 2.0"));
 			targetFrameworkBinding.CreateLocationButton("targetFrameworkLabel");
@@ -236,13 +247,13 @@ namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 						}
 					}
 				}
-				for (int i = 0; i < project.Imports.Count; i++) {
+				foreach (MSBuildImport import in project.Imports) {
 					if (needExtensions) {
-						if (defaultTargets.Equals(project.Imports[i], StringComparison.InvariantCultureIgnoreCase))
-							project.Imports[i] = extendedTargets;
+						if (defaultTargets.Equals(import.Project, StringComparison.InvariantCultureIgnoreCase))
+							import.Project = extendedTargets;
 					} else {
-						if (extendedTargets.Equals(project.Imports[i], StringComparison.InvariantCultureIgnoreCase))
-							project.Imports[i] = defaultTargets;
+						if (extendedTargets.Equals(import.Project, StringComparison.InvariantCultureIgnoreCase))
+							import.Project = defaultTargets;
 					}
 				}
 			};

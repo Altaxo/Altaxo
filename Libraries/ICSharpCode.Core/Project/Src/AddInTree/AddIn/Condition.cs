@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1177 $</version>
+//     <version>$Revision: 1751 $</version>
 // </file>
 
 using System;
@@ -11,9 +11,7 @@ using System.Xml;
 
 namespace ICSharpCode.Core
 {
-	/// <summary>
-	/// Description of Codon.
-	/// </summary>
+	
 	public class Condition : ICondition
 	{
 		string                name;

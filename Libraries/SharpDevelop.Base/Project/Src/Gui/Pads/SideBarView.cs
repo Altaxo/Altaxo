@@ -2,17 +2,16 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1117 $</version>
+//     <version>$Revision: 1976 $</version>
 // </file>
 
 using System;
 using System.IO;
 using System.Windows.Forms;
 using System.Xml;
-using System.Drawing;
 
-using ICSharpCode.SharpDevelop.Gui;
 using ICSharpCode.Core;
+using ICSharpCode.SharpDevelop.Widgets.SideBar;
 
 namespace ICSharpCode.SharpDevelop.Gui
 {
@@ -63,12 +62,14 @@ namespace ICSharpCode.SharpDevelop.Gui
 		void GenerateStandardSideBar()
 		{
 			sideBar = new SharpDevelopSideBar();
-			AxSideTab tab = new AxSideTab(sideBar, "${res:SharpDevelop.SideBar.GeneralCategory}");
+			SideTab tab = new SideTab(sideBar, "${res:SharpDevelop.SideBar.GeneralCategory}");
+			tab.DisplayName = StringParser.Parse(tab.Name);
 			
 			sideBar.Tabs.Add(tab);
 			sideBar.ActiveTab = tab;
 			
-			tab = new AxSideTab(sideBar, "${res:SharpDevelop.SideBar.ClipboardRing}");
+			tab = new SideTab(sideBar, "${res:SharpDevelop.SideBar.ClipboardRing}");
+			tab.DisplayName = StringParser.Parse(tab.Name);
 			tab.IsClipboardRing = true;
 			tab.CanBeDeleted = false;
 			tab.CanDragDrop  = false;
@@ -92,7 +93,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 				doc.LoadXml("<SideBarConfig version=\"1.0\"/>");
 				doc.DocumentElement.AppendChild(sideBar.ToXmlElement(doc));
 				
-				FileUtility.ObservedSave(new NamedFileOperationDelegate(doc.Save), 
+				FileUtility.ObservedSave(new NamedFileOperationDelegate(doc.Save),
 				                         Path.Combine(PropertyService.ConfigDirectory, "SideBarConfig.xml"),
 				                         FileErrorPolicy.ProvideAlternative);
 			}

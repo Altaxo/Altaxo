@@ -2,15 +2,15 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.IO;
-using System.ComponentModel;
-using System.Text;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.IO;
+using System.Text;
 using System.Xml;
 
 namespace ICSharpCode.Core
@@ -49,6 +49,17 @@ namespace ICSharpCode.Core
 				Set(property, value);
 			}
 		}
+
+		public string[] Elements
+		{
+			get
+			{
+				List<string> ret = new List<string>();
+				foreach (KeyValuePair<string, object> property in properties)
+					ret.Add(property.Key);
+				return ret.ToArray();
+			}
+		}
 		
 		public object Get(string property)
 		{
@@ -73,6 +84,14 @@ namespace ICSharpCode.Core
 		public bool Contains(string property)
 		{
 			return properties.ContainsKey(property);
+		}
+
+		public int Count
+		{
+			get
+			{
+				return properties.Count;
+			}
 		}
 		
 		public bool Remove(string property)
@@ -161,7 +180,7 @@ namespace ICSharpCode.Core
 			return l;
 		}
 		
-		public void WriteProperties(XmlTextWriter writer)
+		public void WriteProperties(XmlWriter writer)
 		{
 			foreach (KeyValuePair<string, object> entry in properties) {
 				object val = entry.Value;
@@ -187,7 +206,7 @@ namespace ICSharpCode.Core
 			}
 		}
 		
-		void WriteValue(XmlTextWriter writer, object val)
+		void WriteValue(XmlWriter writer, object val)
 		{
 			if (val != null) {
 				if (val is string) {
@@ -267,6 +286,9 @@ namespace ICSharpCode.Core
 				}
 				o = arr;
 				properties[property] = o; // store for future look up
+			} else if (!(o is string) && typeof(T) == typeof(string)) {
+				TypeConverter c = TypeDescriptor.GetConverter(typeof(T));
+				o = c.ConvertToInvariantString(o);
 			}
 			try {
 				return (T)o;

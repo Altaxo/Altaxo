@@ -2,14 +2,14 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="none" email=""/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1968 $</version>
 // </file>
 
 using System;
-using ICSharpCode.SharpDevelop.Project;
 using System.Diagnostics;
+using ICSharpCode.SharpDevelop.Project;
 
-namespace ICSharpCode.Core
+namespace ICSharpCode.SharpDevelop.Debugging
 {
 	public interface IDebugger : IDisposable
 	{

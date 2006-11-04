@@ -2,22 +2,17 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1199 $</version>
+//     <version>$Revision: 1959 $</version>
 // </file>
 
-using Microsoft.Win32;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Collections;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Reflection;
-using System.Resources;
-using System.Diagnostics;
 using System.Windows.Forms;
-using System.Xml;
+
+using Microsoft.Win32;
 
 namespace ICSharpCode.Core
 {
@@ -45,7 +40,7 @@ namespace ICSharpCode.Core
 		// Call it only when necessary. (see IsEqualFile)
 		
 		readonly static char[] separators = { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar, Path.VolumeSeparatorChar };
-		static string applicationRootPath = Environment.CurrentDirectory;
+		static string applicationRootPath = AppDomain.CurrentDomain.BaseDirectory;
 		const string fileNameRegEx = @"^([a-zA-Z]:)?[^:]+$";
 		
 		public static string ApplicationRootPath {
@@ -80,14 +75,14 @@ namespace ICSharpCode.Core
 			string   installRoot = NETFrameworkInstallRoot;
 			string[] files       = Directory.GetDirectories(installRoot);
 			
-			ArrayList runtimes = new ArrayList();
+			List<string> runtimes = new List<string>();
 			foreach (string file in files) {
 				string runtime = Path.GetFileName(file);
 				if (runtime.StartsWith("v")) {
 					runtimes.Add(runtime);
 				}
 			}
-			return (string[])runtimes.ToArray(typeof(string));
+			return runtimes.ToArray();
 		}
 		
 		public static string Combine(params string[] paths)
@@ -165,7 +160,7 @@ namespace ICSharpCode.Core
 			// Optimized for performance:
 			//return Path.GetFullPath(fileName1.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)).ToLower() == Path.GetFullPath(fileName2.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)).ToLower();
 			
-			if (fileName1.Length == 0 || fileName2.Length == 0) return false;
+			if (string.IsNullOrEmpty(fileName1) || string.IsNullOrEmpty(fileName2)) return false;
 			
 			char lastChar;
 			lastChar = fileName1[fileName1.Length - 1];

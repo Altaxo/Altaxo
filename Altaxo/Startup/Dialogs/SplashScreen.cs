@@ -1,17 +1,14 @@
-﻿// <file>
+// <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1139 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.Collections;
-using System.IO;
-using System.Windows.Forms;
+using System.Collections.Generic;
 using System.Drawing;
-using System.Reflection;
-using System.Resources;
+using System.Windows.Forms;
 
 namespace ICSharpCode.SharpDevelop
 {
@@ -40,17 +37,14 @@ namespace ICSharpCode.SharpDevelop
 #else
 		public const string VersionText = "Serralongue build " + RevisionClass.Revision;
 #endif
-
-    static SplashScreenForm splashScreen;
-		static ArrayList requestedFileList = new ArrayList();
-		static ArrayList parameterList = new ArrayList();
+		
+		static SplashScreenForm splashScreen;
+		static List<string> requestedFileList = new List<string>();
+		static List<string> parameterList = new List<string>();
 		Bitmap bitmap;
 		
 		public static SplashScreenForm SplashScreen {
 			get {
-				if (splashScreen == null) {
-					splashScreen = new SplashScreenForm();
-				}
 				return splashScreen;
 			}
 		}
@@ -68,9 +62,8 @@ namespace ICSharpCode.SharpDevelop
 			#else
 			string versionText = VersionText;
 			#endif
-			using (Stream stream = Assembly.GetEntryAssembly().GetManifestResourceStream("Resources.SplashScreen.jpg")) {
-				bitmap = new Bitmap(stream);
-			}
+			// Stream must be kept open for the lifetime of the bitmap
+			bitmap = new Bitmap(typeof(SplashScreenForm).Assembly.GetManifestResourceStream("Resources.SplashScreen.jpg"));
 			this.ClientSize = bitmap.Size;
 			using (Font font = new Font("Sans Serif", 4)) {
 				using (Graphics g = Graphics.FromImage(bitmap)) {
@@ -82,6 +75,12 @@ namespace ICSharpCode.SharpDevelop
 				}
 			}
 			BackgroundImage = bitmap;
+		}
+		
+		public static void ShowSplashScreen()
+		{
+			splashScreen = new SplashScreenForm();
+			splashScreen.Show();
 		}
 		
 		protected override void Dispose(bool disposing)
@@ -97,17 +96,12 @@ namespace ICSharpCode.SharpDevelop
 		
 		public static string[] GetParameterList()
 		{
-			return GetStringArray(parameterList);
+			return parameterList.ToArray();
 		}
 		
 		public static string[] GetRequestedFileList()
 		{
-			return GetStringArray(requestedFileList);
-		}
-		
-		static string[] GetStringArray(ArrayList list)
-		{
-			return (string[])list.ToArray(typeof(string));
+			return requestedFileList.ToArray();
 		}
 		
 		public static void SetCommandLineArgs(string[] args)
@@ -116,6 +110,7 @@ namespace ICSharpCode.SharpDevelop
 			parameterList.Clear();
 			
 			foreach (string arg in args) {
+				if (arg.Length == 0) continue;
 				if (arg[0] == '-' || arg[0] == '/') {
 					int markerLength = 1;
 					

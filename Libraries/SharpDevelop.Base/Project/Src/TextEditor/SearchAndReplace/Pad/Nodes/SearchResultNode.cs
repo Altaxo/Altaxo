@@ -2,16 +2,17 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1252 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.IO;
 using System.Drawing;
-using System.Collections.Generic;
+using System.IO;
 using System.Windows.Forms;
-using ICSharpCode.SharpDevelop.Gui;
+
 using ICSharpCode.Core;
+using ICSharpCode.SharpDevelop;
+using ICSharpCode.SharpDevelop.Gui;
 using ICSharpCode.TextEditor;
 using ICSharpCode.TextEditor.Document;
 
@@ -63,7 +64,9 @@ namespace SearchAndReplace
 			LineSegment line = document.GetLineSegment(startPosition.Y);
 			drawableLine = new DrawableLine(document, line, MonospacedFont, BoldMonospacedFont);
 			drawableLine.SetBold(0, drawableLine.LineLength, false);
-			drawableLine.SetBold(startPosition.X, endPosition.X, true);
+			if (startPosition.Y == endPosition.Y) {
+				drawableLine.SetBold(startPosition.X, endPosition.X, true);
+			}
 			
 			specialText = result.DisplayText;
 			if (specialText != null) {

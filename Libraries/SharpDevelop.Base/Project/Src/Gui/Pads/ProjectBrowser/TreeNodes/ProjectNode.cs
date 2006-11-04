@@ -2,15 +2,14 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1228 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
 using System.IO;
 using System.Windows.Forms;
+
 using ICSharpCode.Core;
-using ICSharpCode.SharpDevelop.Gui;
-using ICSharpCode.SharpDevelop.Project.Dialogs;
 
 namespace ICSharpCode.SharpDevelop.Project
 {
@@ -56,8 +55,10 @@ namespace ICSharpCode.SharpDevelop.Project
 			
 			if (project is MissingProject) {
 				OpenedImage = ClosedImage = "ProjectBrowser.MissingProject";
+				this.ContextmenuAddinTreePath = "/SharpDevelop/Pads/ProjectBrowser/ContextMenu/MissingProjectNode";
 			} else if (project is UnknownProject) {
 				OpenedImage = ClosedImage = "ProjectBrowser.ProjectWarning";
+				this.ContextmenuAddinTreePath = "/SharpDevelop/Pads/ProjectBrowser/ContextMenu/UnknownProjectNode";
 			} else {
 				OpenedImage = ClosedImage = IconService.GetImageForProjectType(project.Language);
 			}
@@ -145,13 +146,12 @@ namespace ICSharpCode.SharpDevelop.Project
 //				}
 //			}
 			string newFileName = Path.Combine(project.Directory, newName + Path.GetExtension(project.FileName));
-			if (File.Exists(newFileName)) {
-				MessageService.ShowError("The file " + newFileName + " already exists.");
+			
+			if (!FileService.RenameFile(project.FileName, newFileName, false)) {
 				return;
 			}
 			if (project.AssemblyName == project.Name)
 				project.AssemblyName = newName;
-			FileService.RenameFile(project.FileName, newFileName, false);
 			if (File.Exists(project.FileName + ".user"))
 				FileService.RenameFile(project.FileName + ".user", newFileName + ".user", false);
 			foreach (IProject p in ProjectService.OpenSolution.Projects) {
@@ -173,6 +173,12 @@ namespace ICSharpCode.SharpDevelop.Project
 		public override object AcceptVisitor(ProjectBrowserTreeNodeVisitor visitor, object data)
 		{
 			return visitor.Visit(this, data);
+		}
+		
+		public virtual void AddNewItemsToProject()
+		{
+			new Project.Commands.AddNewItemsToProject().Run();
+			return;
 		}
 	}
 }

@@ -2,16 +2,15 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using ICSharpCode.Core;
 
 namespace ICSharpCode.SharpDevelop.Gui
 {
 	/// <summary>
-	/// The IWorkbenchLayout object is responsible for the layout of 
+	/// The IWorkbenchLayout object is responsible for the layout of
 	/// the workspace, it shows the contents, chooses the IWorkbenchWindow
 	/// implementation etc. it could be attached/detached at the runtime
 	/// to a workbench.
@@ -48,9 +47,14 @@ namespace ICSharpCode.SharpDevelop.Gui
 		void ActivatePad(string fullyQualifiedTypeName);
 		
 		/// <summary>
-		/// Hides a new <see cref="IPadContent"/>.
+		/// Hides a <see cref="IPadContent"/>.
 		/// </summary>
 		void HidePad(PadDescriptor content);
+		
+		/// <summary>
+		/// Closes and disposes a <see cref="IPadContent"/>.
+		/// </summary>
+		void UnloadPad(PadDescriptor content);
 		
 		/// <summary>
 		/// returns true, if padContent is visible;

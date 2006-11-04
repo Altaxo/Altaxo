@@ -2,17 +2,11 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1256 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.IO;
 using System.Windows.Forms;
-using System.Diagnostics;
-using System.Drawing;
-using System.Reflection;
-using System.Collections.Generic;
-
 using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.Dom;
 using ICSharpCode.SharpDevelop.Project;
@@ -45,12 +39,12 @@ namespace ICSharpCode.SharpDevelop.Gui.ClassBrowser
 			sortOrder = -1;
 			
 			this.project = project;
-			Text = "References";
+			Text = ResourceService.GetString("ICSharpCode.SharpDevelop.Commands.ProjectBrowser.ReferencesNodeText");
 			
 			OpenedIcon = "ProjectBrowser.ReferenceFolder.Open";
 			ClosedIcon = "ProjectBrowser.ReferenceFolder.Closed";
 			
-			Nodes.Add(new TreeNode(StringParser.Parse("${res:ICSharpCode.SharpDevelop.Gui.Pads.ClassScout.LoadingNode}")));
+			Nodes.Add(new TreeNode(ResourceService.GetString("ICSharpCode.SharpDevelop.Gui.Pads.ClassScout.LoadingNode")));
 		}
 		
 		protected override void Initialize()
@@ -88,7 +82,7 @@ namespace ICSharpCode.SharpDevelop.Gui.ClassBrowser
 		{
 			isInitialized = true;
 			
-			IProjectContent pc = ProjectContentRegistry.GetProjectContentForReference(item);
+			IProjectContent pc = ParserService.GetProjectContentForReference(item);
 			if (pc != null) {
 				Nodes.Clear();
 				foreach (IClass c in pc.Classes) {

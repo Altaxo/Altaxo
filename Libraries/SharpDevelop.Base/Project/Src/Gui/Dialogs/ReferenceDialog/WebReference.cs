@@ -2,11 +2,9 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Matthew Ward" email="mrward@users.sourceforge.net"/>
-//     <version>$Revision: 1388 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
-using ICSharpCode.Core;
-using ICSharpCode.SharpDevelop.Project;
 using System;
 using System.CodeDom;
 using System.CodeDom.Compiler;
@@ -18,10 +16,13 @@ using System.Web.Services.Discovery;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 
+using ICSharpCode.Core;
+using ICSharpCode.SharpDevelop.Project;
+
 namespace ICSharpCode.SharpDevelop.Gui
 {
 	public class WebReference
-	{	
+	{
 		List<ProjectItem> items;
 		string url = String.Empty;
 		string relativePath = String.Empty;
@@ -41,7 +42,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			this.name = name;
 			GetRelativePath();
 		}
-			
+		
 		public static bool ProjectContainsWebReferencesFolder(IProject project)
 		{
 			return GetWebReferencesProjectItem(project) != null;
@@ -70,12 +71,12 @@ namespace ICSharpCode.SharpDevelop.Gui
 		}
 		
 		/// <summary>
-		/// Returns the reference name.  If the folder that will contain the 
-		/// web reference already exists this method looks for a new folder by 
+		/// Returns the reference name.  If the folder that will contain the
+		/// web reference already exists this method looks for a new folder by
 		/// adding a digit to the end of the reference name.
 		/// </summary>
 		public static string GetReferenceName(string webReferenceFolder, string name)
-		{						
+		{
 			// If it is already in the project, or it does exists we get a new name.
 			int count = 1;
 			string referenceName = name;
@@ -84,7 +85,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 				referenceName = String.Concat(name, count.ToString());
 				folder = Path.Combine(webReferenceFolder, referenceName);
 				++count;
-			}	
+			}
 			return referenceName;
 		}
 		
@@ -95,13 +96,13 @@ namespace ICSharpCode.SharpDevelop.Gui
 		/// <param name="name">The name of the web reference to look for.  This is
 		/// not the full path of the web reference, just the last folder's name.</param>
 		/// <remarks>
-		/// This method does not return the WebReferenceUrl project item only the 
+		/// This method does not return the WebReferenceUrl project item only the
 		/// files that are part of the web reference.
 		/// </remarks>
 		public static List<ProjectItem> GetFileItems(IProject project, string name)
 		{
 			List<ProjectItem> items = new List<ProjectItem>();
-						
+			
 			// Find web references folder.
 			WebReferencesProjectItem webReferencesProjectItem = GetWebReferencesProjectItem(project);
 			if (webReferencesProjectItem != null) {
@@ -137,7 +138,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		}
 		
 		/// <summary>
-		/// Gets the web references directory which is the parent folder for 
+		/// Gets the web references directory which is the parent folder for
 		/// this web reference.
 		/// </summary>
 		public string WebReferencesDirectory {
@@ -269,23 +270,14 @@ namespace ICSharpCode.SharpDevelop.Gui
 			codeUnit.Namespaces.Add(codeNamespace);
 			ServiceDescriptionImportWarnings warnings = importer.Import(codeNamespace, codeUnit);
 			
-			CodeDomProvider provider;
+			CodeDomProvider provider = null;
 			
-			switch(Path.GetExtension(fileName).ToLowerInvariant()) {
-				case ".cs":
-					provider = new Microsoft.CSharp.CSharpCodeProvider();
-					break;
-				case ".vb":
-					provider = new Microsoft.VisualBasic.VBCodeProvider();					
-					break;
-							
-				default:
-					// extension not supported
-					provider = null;			
-					break;
+			ICSharpCode.SharpDevelop.Dom.IParser parser = ParserService.GetParser(fileName);
+			if (parser != null) {
+				provider = parser.Language.CodeDomProvider;
 			}
 			
-			if(provider != null) {				
+			if (provider != null) {
 				StreamWriter sw = new StreamWriter(fileName);
 				CodeGeneratorOptions options = new CodeGeneratorOptions();
 				options.BracingStyle = "C";
@@ -307,14 +299,14 @@ namespace ICSharpCode.SharpDevelop.Gui
 		
 		string GetProxyFileNameExtension(string language)
 		{
-			switch (language) {
-				case "C#":
-					return ".cs";
-				case "VBNet":
-					return ".vb";
-				default:
-					throw new NotImplementedException(String.Concat("Unhandled language: ", language));
+			LanguageBindingDescriptor binding = LanguageBindingService.GetCodonPerLanguageName(language);
+			if (binding != null) {
+				string[] extensions = binding.CodeFileExtensions;
+				if (extensions.Length > 0) {
+					return extensions[0];
+				}
 			}
+			throw new NotSupportedException("Unsupported language: " + language);
 		}
 		
 		static WebReferencesProjectItem GetWebReferencesProjectItem(List<ProjectItem> items)
@@ -359,7 +351,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		List<ProjectItem> CreateProjectItems()
 		{
 			List<ProjectItem> items = new List<ProjectItem>();
-				
+			
 			// Web references item.
 			if (!ProjectContainsWebReferencesFolder(project)) {
 				WebReferencesProjectItem webReferencesItem = new WebReferencesProjectItem(project);
@@ -429,7 +421,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		
 		/// <summary>
 		/// Checks the file project items against the file items this web reference
-		/// has and adds any items that have been removed but still exist in the 
+		/// has and adds any items that have been removed but still exist in the
 		/// project.
 		/// </summary>
 		List<ProjectItem> GetRemovedItems(List<ProjectItem> projectWebReferenceItems)

@@ -2,18 +2,10 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.Drawing;
-using System.Diagnostics;
-using System.Collections.Specialized;
-using System.Collections;
-using System.Globalization;
-using System.IO;
-using System.Reflection;
-using System.Windows.Forms;
 using System.Xml;
 
 namespace ICSharpCode.TextEditor.Document
@@ -30,6 +22,9 @@ namespace ICSharpCode.TextEditor.Document
 		string      rule  = null;
 		HighlightRuleSet ruleSet = null;
 		bool        noEscapeSequences = false;
+		bool		ignoreCase = false;
+		bool        isBeginSingleWord = false;
+		bool        isEndSingleWord = false;
 		
 		internal HighlightRuleSet RuleSet {
 			get {
@@ -40,9 +35,30 @@ namespace ICSharpCode.TextEditor.Document
 			}
 		}
 
+		public bool IgnoreCase	{
+			get	{
+				return ignoreCase;
+			}
+			set	{
+				ignoreCase = value;
+			}
+		}
+
 		public bool StopEOL {
 			get {
 				return stopEOL;
+			}
+		}
+		
+		public bool IsBeginSingleWord {
+			get {
+				return isBeginSingleWord;
+			}
+		}
+		
+		public bool IsEndSingleWord {
+			get {
+				return isEndSingleWord;
 			}
 		}
 		
@@ -53,7 +69,7 @@ namespace ICSharpCode.TextEditor.Document
 		}
 		
 		public HighlightColor BeginColor {
-			get {		
+			get {
 				if(beginColor != null) {
 					return beginColor;
 				} else {
@@ -102,22 +118,34 @@ namespace ICSharpCode.TextEditor.Document
 		{
 			color   = new HighlightColor(span);
 			
-			if (span.Attributes["rule"] != null) {
-				rule = span.Attributes["rule"].InnerText;
+			if (span.HasAttribute("rule")) {
+				rule = span.GetAttribute("rule");
 			}
 			
-			if (span.Attributes["noescapesequences"] != null) {
-				noEscapeSequences = Boolean.Parse(span.Attributes["noescapesequences"].InnerText);
+			if (span.HasAttribute("noescapesequences")) {
+				noEscapeSequences = Boolean.Parse(span.GetAttribute("noescapesequences"));
 			}
 			
-			name    = span.Attributes["name"].InnerText;
-			stopEOL = Boolean.Parse(span.Attributes["stopateol"].InnerText);
+			name = span.GetAttribute("name");
+			if (span.HasAttribute("stopateol")) {
+				stopEOL = Boolean.Parse(span.GetAttribute("stopateol"));
+			}
+			
 			begin   = span["Begin"].InnerText.ToCharArray();
 			beginColor = new HighlightColor(span["Begin"], color);
+			
+			if (span["Begin"].HasAttribute("singleword")) {
+				this.isBeginSingleWord = Boolean.Parse(span["Begin"].GetAttribute("singleword"));
+			}
+			
 			
 			if (span["End"] != null) {
 				end  = span["End"].InnerText.ToCharArray();
 				endColor = new HighlightColor(span["End"], color);
+				if (span["End"].HasAttribute("singleword")) {
+					this.isEndSingleWord = Boolean.Parse(span["End"].GetAttribute("singleword"));
+				}
+
 			}
 		}
 	}

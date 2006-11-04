@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1391 $</version>
+//     <version>$Revision: 1872 $</version>
 // </file>
 
 using System;
@@ -15,11 +15,13 @@ namespace ICSharpCode.SharpDevelop.Tests
 	[TestFixture]
 	public class SearchClassTests
 	{
+		ProjectContentRegistry projectContentRegistry = ParserService.DefaultProjectContentRegistry;
+		
 		#region Helper methods
 		ICompilationUnit Prepare(LanguageProperties language)
 		{
 			DefaultProjectContent pc = new DefaultProjectContent();
-			pc.ReferencedContents.Add(ProjectContentRegistry.Mscorlib);
+			pc.ReferencedContents.Add(projectContentRegistry.Mscorlib);
 			pc.Language = language;
 			DefaultCompilationUnit cu = new DefaultCompilationUnit(pc);
 			if (language == LanguageProperties.VBNet)

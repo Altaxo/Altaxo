@@ -2,19 +2,15 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1096 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.Text;
-using System.Drawing;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Windows.Forms;
-using MSjogren.GacTool.FusionNative;
-using ICSharpCode.SharpDevelop.Project;
 
 using ICSharpCode.Core;
+using ICSharpCode.SharpDevelop.Dom;
 
 namespace ICSharpCode.SharpDevelop.Gui
 {
@@ -145,25 +141,10 @@ namespace ICSharpCode.SharpDevelop.Gui
 		
 		protected virtual List<ListViewItem> GetCacheContent()
 		{
-			IApplicationContext applicationContext = null;
-			IAssemblyEnum assemblyEnum = null;
-			IAssemblyName assemblyName = null;
-			
 			List<ListViewItem> itemList = new List<ListViewItem>();
-			Fusion.CreateAssemblyEnum(out assemblyEnum, null, null, 2, 0);
-			while (assemblyEnum.GetNextAssembly(out applicationContext, out assemblyName, 0) == 0) {
-				uint nChars = 0;
-				assemblyName.GetDisplayName(null, ref nChars, 0);
-				
-				StringBuilder sb = new StringBuilder((int)nChars);
-				assemblyName.GetDisplayName(sb, ref nChars, 0);
-				
-				string[] info = sb.ToString().Split(',');
-				
-				string aName    = info[0];
-				string aVersion = info[1].Substring(info[1].LastIndexOf('=') + 1);
-				ListViewItem item = new ListViewItem(new string[] {aName, aVersion});
-				item.Tag = sb.ToString();
+			foreach (GacInterop.AssemblyListEntry asm in GacInterop.GetAssemblyList()) {
+				ListViewItem item = new ListViewItem(new string[] {asm.Name, asm.Version});
+				item.Tag = asm.FullName;
 				itemList.Add(item);
 			}
 			return itemList;

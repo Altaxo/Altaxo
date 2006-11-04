@@ -2,14 +2,12 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="David Srbecký" email="dsrbecky@gmail.com"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1968 $</version>
 // </file>
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace ICSharpCode.Core
+namespace ICSharpCode.SharpDevelop.Debugging
 {
 	public class BreakpointBookmarkEventArgs: EventArgs
 	{

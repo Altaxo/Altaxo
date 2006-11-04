@@ -2,16 +2,13 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.Collections;
-using System.Reflection;
-
 using ICSharpCode.SharpDevelop.Dom;
 
-namespace ICSharpCode.Core
+namespace ICSharpCode.SharpDevelop
 {
 	/// <summary>
 	/// This class wraps a ILanguageConversion to System.Reflection
@@ -85,45 +82,6 @@ namespace ICSharpCode.Core
 				throw new System.ArgumentNullException("conv");
 			}
 			this.conv = conv;
-		}
-		
-		public string Convert(Type type)
-		{
-			return conv.Convert(new ReflectionClass(null, type, type.FullName.Replace('+', '.'), null));
-		}
-		
-		public string Convert(FieldInfo field)
-		{
-			return conv.Convert(new ReflectionField(field, null));
-		}
-		
-		public string Convert(PropertyInfo property)
-		{
-			return conv.Convert(new ReflectionProperty(property, null));
-		}
-		
-		public string Convert(EventInfo e)
-		{
-			return conv.Convert(new ReflectionEvent(e, null));
-		}
-		
-		public string Convert(MethodBase m)
-		{
-			return conv.Convert(new ReflectionMethod(m, null));
-		}
-		
-		public string Convert(ParameterInfo param)
-		{
-			return conv.Convert(new ReflectionParameter(param, null));
-		}
-		
-		public ArrayList LinkArrayList {
-			get {
-				return conv.LinkArrayList;
-			}
-			set {
-				conv.LinkArrayList = value;
-			}
 		}
 		
 		public string WrapAttribute(string attribute)

@@ -2,15 +2,13 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="none" email=""/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1968 $</version>
 // </file>
 
 using System;
-using System.Xml;
+using ICSharpCode.Core;
 
-using ICSharpCode.SharpDevelop.Gui;
-
-namespace ICSharpCode.Core
+namespace ICSharpCode.SharpDevelop.Debugging
 {
 	/// <summary>
 	/// Tests if the debugger supports a certain feature.

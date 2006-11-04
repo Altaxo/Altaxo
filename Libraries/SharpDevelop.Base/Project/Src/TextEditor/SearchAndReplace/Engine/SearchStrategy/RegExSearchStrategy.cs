@@ -2,14 +2,12 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1301 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
 using System.Text.RegularExpressions;
-
 using ICSharpCode.Core;
-using ICSharpCode.SharpDevelop.Internal.Undo;
 
 namespace SearchAndReplace
 {
@@ -27,7 +25,7 @@ namespace SearchAndReplace
 				regex = new Regex(SearchOptions.FindPattern, regexOptions);
 				return true;
 			} catch (ArgumentException ex) {
-				MessageService.ShowError("Error parsing regular expression:\n" + ex.Message);
+				MessageService.ShowError("${res:Dialog.NewProject.SearchReplace.ErrorParsingRegex}\n" + ex.Message);
 				return false;
 			}
 		}

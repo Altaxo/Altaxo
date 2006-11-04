@@ -2,19 +2,16 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 988 $</version>
+//     <version>$Revision: 1963 $</version>
 // </file>
 
 using System;
-using System.Xml;
-using System.Diagnostics;
 using System.Collections.Generic;
 using System.IO;
 
+using ICSharpCode.Core;
 
-using ICSharpCode.SharpDevelop.Project;
-
-namespace ICSharpCode.Core
+namespace ICSharpCode.SharpDevelop
 {
 	/// <summary>
 	/// This class handles the recent open files and the recent open project files of SharpDevelop

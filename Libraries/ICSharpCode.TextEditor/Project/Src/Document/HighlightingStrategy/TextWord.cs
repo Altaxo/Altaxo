@@ -2,12 +2,12 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1301 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.Drawing;
 using System.Diagnostics;
+using System.Drawing;
 
 namespace ICSharpCode.TextEditor.Document
 {
@@ -18,7 +18,7 @@ namespace ICSharpCode.TextEditor.Document
 	}
 	
 	/// <summary>
-	/// This class represents single words with color information, two special versions of a word are 
+	/// This class represents single words with color information, two special versions of a word are
 	/// spaces and tabs.
 	/// </summary>
 	public class TextWord
@@ -43,10 +43,9 @@ namespace ICSharpCode.TextEditor.Document
 				base.SyntaxColor = color;
 			}
 			
-			public override Font Font {
-				get {
-					return null;
-				}
+			public override Font GetFont(FontContainer fontContainer)
+			{
+				return null;
 			}
 			
 			public override TextWordType Type {
@@ -73,10 +72,9 @@ namespace ICSharpCode.TextEditor.Document
 				base.SyntaxColor = color;
 			}
 			
-			public override Font Font {
-				get {
-					return null;
-				}
+			public override Font GetFont(FontContainer fontContainer)
+			{
+				return null;
 			}
 			
 			public override TextWordType Type {
@@ -94,15 +92,15 @@ namespace ICSharpCode.TextEditor.Document
 		static TextWord spaceWord = new SpaceTextWord();
 		static TextWord tabWord   = new TabTextWord();
 		
-		public bool hasDefaultColor;
+		bool hasDefaultColor;
 		
-		static public TextWord Space {
+		public static TextWord Space {
 			get {
 				return spaceWord;
 			}
 		}
 		
-		static public TextWord Tab {
+		public static TextWord Tab {
 			get {
 				return tabWord;
 			}
@@ -118,6 +116,25 @@ namespace ICSharpCode.TextEditor.Document
 			get {
 				return length;
 			}
+		}
+		
+		/// <summary>
+		/// Splits the <paramref name="word"/> into two parts: the part before <paramref name="pos"/> is assigned to
+		/// the reference parameter <paramref name="word"/>, the part after <paramref name="pos"/> is returned.
+		/// </summary>
+		public static TextWord Split(ref TextWord word, int pos)
+		{
+			#if DEBUG
+			if (word.Type != TextWordType.Word)
+				throw new ArgumentException("word.Type must be Word");
+			if (pos <= 0)
+				throw new ArgumentOutOfRangeException("pos", pos, "pos must be > 0");
+			if (pos >= word.Length)
+				throw new ArgumentOutOfRangeException("pos", pos, "pos must be < word.Length");
+			#endif
+			TextWord after = new TextWord(word.document, word.line, word.offset + pos, word.length - pos, word.color, word.hasDefaultColor);
+			word = new TextWord(word.document, word.line, word.offset, pos, word.color, word.hasDefaultColor);
+			return after;
 		}
 		
 		public bool HasDefaultColor {
@@ -141,15 +158,35 @@ namespace ICSharpCode.TextEditor.Document
 			}
 		}
 		
-		public virtual Font Font {
-			get {
-				return color.Font;
-			}
+		public virtual Font GetFont(FontContainer fontContainer)
+		{
+			return color.GetFont(fontContainer);
 		}
 		
 		public Color Color {
 			get {
-				return color.Color;
+				if (color == null)
+					return Color.Black;
+				else
+					return color.Color;
+			}
+		}
+		
+		public bool Bold {
+			get {
+				if (color == null)
+					return false;
+				else
+					return color.Bold;
+			}
+		}
+		
+		public bool Italic {
+			get {
+				if (color == null)
+					return false;
+				else
+					return color.Italic;
 			}
 		}
 		
@@ -193,7 +230,7 @@ namespace ICSharpCode.TextEditor.Document
 		/// </summary>
 		public override string ToString()
 		{
-			return "[TextWord: Word = " + Word + ", Font = " + Font + ", Color = " + Color + "]";
+			return "[TextWord: Word = " + Word + ", Color = " + Color + "]";
 		}
 	}
 }

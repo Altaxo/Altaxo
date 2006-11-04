@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1080 $</version>
+//     <version>$Revision: 1872 $</version>
 // </file>
 
 using System;
@@ -10,8 +10,9 @@ using System.Text;
 using System.IO;
 using NUnit.Framework;
 using ICSharpCode.NRefactory.Parser;
-using ICSharpCode.NRefactory.Parser.AST;
+using ICSharpCode.NRefactory.Ast;
 using ICSharpCode.NRefactory.PrettyPrinter;
+using ICSharpCode.NRefactory.Visitors;
 
 namespace ICSharpCode.NRefactory.Tests.PrettyPrinter
 {
@@ -25,7 +26,7 @@ namespace ICSharpCode.NRefactory.Tests.PrettyPrinter
 			Assert.AreEqual("", parser.Errors.ErrorOutput);
 			parser.CompilationUnit.AcceptVisitor(new CSharpToVBNetConvertVisitor(), null);
 			VBNetOutputVisitor outputVisitor = new VBNetOutputVisitor();
-			outputVisitor.Visit(parser.CompilationUnit, null);
+			outputVisitor.VisitCompilationUnit(parser.CompilationUnit, null);
 			Assert.AreEqual("", outputVisitor.Errors.ErrorOutput);
 			Assert.AreEqual(expectedOutput, outputVisitor.Text);
 		}
@@ -60,6 +61,51 @@ namespace ICSharpCode.NRefactory.Tests.PrettyPrinter
 			b.AppendLine("\tEnd Sub");
 			b.AppendLine("End Class");
 			TestProgram("class tmp1 { void tmp2() {\n" + input + "\n}}", b.ToString());
+		}
+		
+		[Test]
+		public void MoveImportsStatement()
+		{
+			TestProgram("namespace test { using SomeNamespace; }",
+			            "Imports SomeNamespace\r\n" +
+			            "Namespace test\r\n" +
+			            "End Namespace\r\n");
+		}
+		
+		[Test]
+		public void ClassImplementsInterface()
+		{
+			TestProgram("class test : IComparable { }",
+			            "Class test\r\n" +
+			            "\tImplements IComparable\r\n" +
+			            "End Class\r\n");
+		}
+		
+		[Test]
+		public void ClassImplementsInterface2()
+		{
+			TestProgram("class test : System.IComparable { }",
+			            "Class test\r\n" +
+			            "\tImplements System.IComparable\r\n" +
+			            "End Class\r\n");
+		}
+		
+		[Test]
+		public void ClassInheritsClass()
+		{
+			TestProgram("class test : InvalidDataException { }",
+			            "Class test\r\n" +
+			            "\tInherits InvalidDataException\r\n" +
+			            "End Class\r\n");
+		}
+		
+		[Test]
+		public void ClassInheritsClass2()
+		{
+			TestProgram("class test : System.IO.InvalidDataException { }",
+			            "Class test\r\n" +
+			            "\tInherits System.IO.InvalidDataException\r\n" +
+			            "End Class\r\n");
 		}
 		
 		[Test]
@@ -166,16 +212,16 @@ namespace ICSharpCode.NRefactory.Tests.PrettyPrinter
 			           "End Sub");
 		}
 		
-		[Test]
+		[Test, Ignore("NRefactory cannot guess the anonymous method's return type")]
 		public void AnonymousMethodInVarDeclaration()
 		{
-			TestMember("void A() { SomeDelegate i = delegate(int argument) { return argument * 2; }; }",
+			TestMember("void A() { Converter<int, int> i = delegate(int argument) { return argument * 2; }; }",
 			           "Private Sub A()\n" +
-			           "\tDim i As SomeDelegate = AddressOf ConvertedAnonymousMethod1\n" +
+			           "\tDim i As Converter(Of Integer, Integer) = AddressOf ConvertedAnonymousMethod1\n" +
 			           "End Sub\n" +
-			           "Private Sub ConvertedAnonymousMethod1(ByVal argument As Integer)\n" +
+			           "Private Function ConvertedAnonymousMethod1(ByVal argument As Integer) As Integer\n" +
 			           "\tReturn argument * 2\n" +
-			           "End Sub");
+			           "End Function");
 		}
 		
 		[Test]
@@ -226,6 +272,13 @@ namespace ICSharpCode.NRefactory.Tests.PrettyPrinter
 		}
 		
 		[Test]
+		public void StaticConstructor()
+		{
+			TestMember("static tmp1() { }",
+			           "Shared Sub New()\nEnd Sub");
+		}
+		
+		[Test]
 		public void Destructor()
 		{
 			TestMember("~tmp1() { Dead(); }",
@@ -236,6 +289,17 @@ namespace ICSharpCode.NRefactory.Tests.PrettyPrinter
 			           "\t\tMyBase.Finalize()\n" +
 			           "\tEnd Try\n" +
 			           "End Sub");
+		}
+		
+		[Test]
+		public void Indexer()
+		{
+			TestMember("public CategoryInfo this[int index] { get { return List[index] as CategoryInfo; } }",
+			           "Public Default ReadOnly Property Item(ByVal index As Integer) As CategoryInfo\n" +
+			           "\tGet\n" +
+			           "\t\tReturn TryCast(List(index), CategoryInfo)\n" +
+			           "\tEnd Get\n" +
+			           "End Property");
 		}
 		
 		[Test]
@@ -265,6 +329,111 @@ namespace ICSharpCode.NRefactory.Tests.PrettyPrinter
 			           "\t\tcount = 3\n" +
 			           "\tNext\n" +
 			           "End Sub");
+		}
+		
+		[Test]
+		public void NullCoalescing()
+		{
+			TestStatement("c = a ?? b;",
+			              "c = IIf(a Is Nothing, b, a)");
+		}
+		
+		[Test]
+		public void ConvertedLoop()
+		{
+			TestStatement("while (cond) example();",
+			              "While cond\n" +
+			              "\texample()\n" +
+			              "End While");
+		}
+		
+		[Test]
+		public void UIntVariableDeclaration()
+		{
+			TestStatement("uint s = 0;", "Dim s As UInteger = 0");
+		}
+		
+		[Test]
+		public void BreakInWhileLoop()
+		{
+			TestStatement("while (test != null) { break; }",
+			              "While test IsNot Nothing\n" +
+			              "\tExit While\n" +
+			              "End While");
+		}
+		
+		[Test]
+		public void BreakInDoLoop()
+		{
+			TestStatement("do { break; } while (test != null);",
+			              "Do\n" +
+			              "\tExit Do\n" +
+			              "Loop While test IsNot Nothing");
+		}
+		
+		[Test]
+		public void StructFieldVisibility()
+		{
+			TestMember("public struct A { int field; }",
+			           "Public Structure A\n" +
+			           "\tPrivate field As Integer\n" +
+			           "End Structure");
+		}
+		
+		[Test]
+		public void InnerClassVisibility()
+		{
+			TestMember("class Inner\n{\n}",
+			           "Private Class Inner\n" +
+			           "End Class");
+		}
+		
+		[Test]
+		public void InnerDelegateVisibility()
+		{
+			TestMember("delegate void Test();",
+			           "Private Delegate Sub Test()");
+		}
+		
+		[Test]
+		public void InterfaceVisibility()
+		{
+			TestMember("public interface ITest {\n" +
+			           "  void Test();\n" +
+			           "  string Name { get; set; }\n" +
+			           "}",
+			           "Public Interface ITest\n" +
+			           "\tSub Test()\n" +
+			           "\tProperty Name() As String\n" +
+			           "End Interface");
+		}
+		
+		[Test]
+		public void ImportAliasPrimitiveType()
+		{
+			TestProgram("using T = System.Boolean;", "Imports T = System.Boolean\r\n");
+		}
+		
+		[Test]
+		public void DefaultExpression()
+		{
+			TestStatement("T oldValue = default(T);", "Dim oldValue As T = Nothing");
+		}
+		
+		[Test]
+		public void StaticClass()
+		{
+			TestProgram("public static class Test {}", @"Public NotInheritable Class Test
+	Private Sub New()
+	End Sub
+End Class
+");
+		}
+		
+		[Test]
+		public void GlobalTypeReference()
+		{
+			TestStatement("global::System.String a;", "Dim a As Global.System.String");
 		}
 	}
 }

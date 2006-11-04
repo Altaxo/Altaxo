@@ -2,23 +2,20 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.Drawing;
 using System.Diagnostics;
-using System.Collections.Generic;
+using System.Drawing;
 using System.Globalization;
-using System.IO;
 using System.Reflection;
-using System.Windows.Forms;
 using System.Xml;
 
 namespace ICSharpCode.TextEditor.Document
 {
 	/// <summary>
-	/// A color used for highlighting 
+	/// A color used for highlighting
 	/// </summary>
 	public class HighlightColor
 	{
@@ -33,12 +30,12 @@ namespace ICSharpCode.TextEditor.Document
 		
 		bool   bold   = false;
 		bool   italic = false;
-		bool   hasForgeground = false;
+		bool   hasForeground = false;
 		bool   hasBackground = false;
 		
-		public bool HasForgeground {
+		public bool HasForeground {
 			get {
-				return hasForgeground;
+				return hasForeground;
 			}
 		}
 		
@@ -94,21 +91,20 @@ namespace ICSharpCode.TextEditor.Document
 		/// <value>
 		/// The font used
 		/// </value>
-		public Font Font {
-			get {
-				if (Bold) {
-					return Italic ? FontContainer.BoldItalicFont : FontContainer.BoldFont;
-				}
-				return Italic ? FontContainer.ItalicFont : FontContainer.DefaultFont;
+		public Font GetFont(FontContainer fontContainer)
+		{
+			if (Bold) {
+				return Italic ? fontContainer.BoldItalicFont : fontContainer.BoldFont;
 			}
+			return Italic ? fontContainer.ItalicFont : fontContainer.RegularFont;
 		}
 		
 		Color ParseColorString(string colorName)
 		{
 			string[] cNames = colorName.Split('*');
-			PropertyInfo myPropInfo = typeof(System.Drawing.SystemColors).GetProperty(cNames[0], BindingFlags.Public | 
-			                                                                                     BindingFlags.Instance | 
-			                                                                                     BindingFlags.Static);
+			PropertyInfo myPropInfo = typeof(System.Drawing.SystemColors).GetProperty(cNames[0], BindingFlags.Public |
+			                                                                          BindingFlags.Instance |
+			                                                                          BindingFlags.Static);
 			Color c = (Color)myPropInfo.GetValue(null, null);
 			
 			if (cNames.Length == 2) {
@@ -144,7 +140,7 @@ namespace ICSharpCode.TextEditor.Document
 				} else {
 					color = (Color)(Color.GetType()).InvokeMember(c, BindingFlags.GetProperty, null, Color, new object[0]);
 				}
-				hasForgeground = true;
+				hasForeground = true;
 			} else {
 				color = Color.Transparent; // to set it to the default value.
 			}
@@ -191,7 +187,7 @@ namespace ICSharpCode.TextEditor.Document
 				} else {
 					color = (Color)(Color.GetType()).InvokeMember(c, BindingFlags.GetProperty, null, Color, new object[0]);
 				}
-				hasForgeground = true;
+				hasForeground = true;
 			} else {
 				color = defaultColor.color;
 			}
@@ -217,7 +213,7 @@ namespace ICSharpCode.TextEditor.Document
 		/// </summary>
 		public HighlightColor(Color color, bool bold, bool italic)
 		{
-			hasForgeground = true;
+			hasForeground = true;
 			this.color  = color;
 			this.bold   = bold;
 			this.italic = italic;
@@ -228,7 +224,7 @@ namespace ICSharpCode.TextEditor.Document
 		/// </summary>
 		public HighlightColor(Color color, Color backgroundcolor, bool bold, bool italic)
 		{
-			hasForgeground = true;
+			hasForeground = true;
 			hasBackground  = true;
 			this.color            = color;
 			this.backgroundcolor  = backgroundcolor;
@@ -242,12 +238,12 @@ namespace ICSharpCode.TextEditor.Document
 		/// </summary>
 		public HighlightColor(string systemColor, string systemBackgroundColor, bool bold, bool italic)
 		{
-			hasForgeground = true;
+			hasForeground = true;
 			hasBackground  = true;
 			
 			this.systemColor  = true;
 			systemColorName   = systemColor;
-		
+			
 			systemBgColor     = true;
 			systemBgColorName = systemBackgroundColor;
 			
@@ -275,10 +271,10 @@ namespace ICSharpCode.TextEditor.Document
 		/// </summary>
 		public override string ToString()
 		{
-			return "[HighlightColor: Bold = " + Bold + 
-			                      ", Italic = " + Italic + 
-			                      ", Color = " + Color + 
-			                      ", BackgroundColor = " + BackgroundColor + "]";
+			return "[HighlightColor: Bold = " + Bold +
+				", Italic = " + Italic +
+				", Color = " + Color +
+				", BackgroundColor = " + BackgroundColor + "]";
 		}
 	}
 }

@@ -2,16 +2,12 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1256 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.IO;
-using System.Windows.Forms;
-using System.Diagnostics;
-using System.Drawing;
-using System.Reflection;
 using System.Collections.Generic;
+using System.Windows.Forms;
 
 using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.Dom;
@@ -48,12 +44,12 @@ namespace ICSharpCode.SharpDevelop.Gui.ClassBrowser
 			
 			this.project = project;
 			this.c       = c;
-			Text         = "Derived types";
+			Text         = ResourceService.GetString("MainWindow.Windows.ClassBrowser.DerivedTypes");
 			
 			OpenedIcon = "ProjectBrowser.Folder.Open";
 			ClosedIcon = "ProjectBrowser.Folder.Closed";
 			
-			Nodes.Add(new TreeNode(StringParser.Parse("${res:ICSharpCode.SharpDevelop.Gui.Pads.ClassScout.LoadingNode}")));
+			Nodes.Add(new TreeNode(ResourceService.GetString("ICSharpCode.SharpDevelop.Gui.Pads.ClassScout.LoadingNode")));
 		}
 		
 		protected override void Initialize()

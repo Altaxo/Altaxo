@@ -2,12 +2,10 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-
-using ICSharpCode.TextEditor;
 using ICSharpCode.TextEditor.Actions;
 
 namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
@@ -21,12 +19,4 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 			}
 		}
 	}
-	/*
-			IWorkbenchWindow window = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow;
-			
-			if (window == null || !(window.ViewContent is ITextEditorControlProvider)) {
-				return;
-			}
-			TextEditorControl textEditorControl = ((ITextEditorControlProvider)window.ViewContent).TextEditorControl;
-	*/
 }

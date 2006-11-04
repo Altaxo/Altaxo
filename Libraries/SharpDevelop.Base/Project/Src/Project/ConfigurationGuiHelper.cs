@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1209 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
@@ -11,6 +11,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Globalization;
 using System.Windows.Forms;
+
 using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.Gui;
 
@@ -206,15 +207,22 @@ namespace ICSharpCode.SharpDevelop.Project
 		#endregion
 		
 		#region Bind string to TextBox or ComboBox
+		static Func<string> GetEmptyString = delegate { return ""; };
+		
 		public ConfigurationGuiBinding BindString(string control, string property)
 		{
-			return BindString(controlDictionary[control], property);
+			return BindString(controlDictionary[control], property, GetEmptyString);
 		}
 		
 		public ConfigurationGuiBinding BindString(Control control, string property)
 		{
+			return BindString(control, property, GetEmptyString);
+		}
+		
+		public ConfigurationGuiBinding BindString(Control control, string property, Func<string> defaultValueProvider)
+		{
 			if (control is TextBoxBase || control is ComboBox) {
-				SimpleTextBinding binding = new SimpleTextBinding(control);
+				SimpleTextBinding binding = new SimpleTextBinding(control, defaultValueProvider);
 				AddBinding(property, binding);
 				control.TextChanged += ControlValueChanged;
 				if (control is ComboBox) {
@@ -237,20 +245,25 @@ namespace ICSharpCode.SharpDevelop.Project
 		class SimpleTextBinding : ConfigurationGuiBinding
 		{
 			Control control;
+			Func<string> defaultValueProvider;
 			
-			public SimpleTextBinding(Control control)
+			public SimpleTextBinding(Control control, Func<string> defaultValueProvider)
 			{
+				this.defaultValueProvider = defaultValueProvider;
 				this.control = control;
 			}
 			
 			public override void Load()
 			{
-				control.Text = Get("");
+				control.Text = Get(defaultValueProvider());
 			}
 			
 			public override bool Save()
 			{
-				Set(control.Text);
+				if (control.Text == defaultValueProvider())
+					Set("");
+				else
+					Set(control.Text);
 				return true;
 			}
 		}
@@ -346,8 +359,7 @@ namespace ICSharpCode.SharpDevelop.Project
 				int val;
 				if (!int.TryParse(txt, style, NumberFormatInfo.InvariantInfo, out val)) {
 					textBox.Focus();
-					// TODO: Translate Please enter a valid number.
-					MessageService.ShowMessage("Please enter a valid number.");
+					MessageService.ShowMessage("${res:Dialog.ProjectOptions.PleaseEnterValidNumber}");
 					return false;
 				}
 				Set(val.ToString(NumberFormatInfo.InvariantInfo));
@@ -358,7 +370,7 @@ namespace ICSharpCode.SharpDevelop.Project
 		
 		#region Bind enum to ComboBox
 		/// <summary>
-		/// Bind enum to ComboBox
+		/// Bind enum to ComboBox. Assumes the first enum member is the default.
 		/// </summary>
 		public ConfigurationGuiBinding BindEnum<T>(string control, string property, params T[] values) where T : struct
 		{
@@ -366,7 +378,7 @@ namespace ICSharpCode.SharpDevelop.Project
 		}
 		
 		/// <summary>
-		/// Bind enum to ComboBox
+		/// Bind enum to ComboBox. Assumes the first enum member is the default.
 		/// </summary>
 		public ConfigurationGuiBinding BindEnum<T>(Control control, string property, params T[] values) where T : struct
 		{

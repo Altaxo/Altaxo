@@ -2,17 +2,13 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Andrea Paatz" email="andrea@icsharpcode.net"/>
-//     <version>$Revision: 1388 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.IO;
-using System.Collections;
-using System.Drawing;
-using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Text;
-using ICSharpCode.NRefactory.Parser;
 
 namespace ICSharpCode.NRefactory.Parser.CSharp
 {
@@ -24,16 +20,19 @@ namespace ICSharpCode.NRefactory.Parser.CSharp
 		
 		void ReadPreProcessingDirective()
 		{
-			Point start = new Point(Col - 1, Line);
+			Location start = new Location(Col - 1, Line);
 			string directive = ReadIdent('#');
-			string argument  = ReadToEOL();
-			this.specialTracker.AddPreProcessingDirective(directive, argument.Trim(), start, new Point(start.X + directive.Length + argument.Length, start.Y));
+			string argument  = ReadToEndOfLine();
+			this.specialTracker.AddPreprocessingDirective(directive, argument.Trim(), start, new Location(start.X + directive.Length + argument.Length, start.Y));
 		}
 		
 		protected override Token Next()
 		{
 			int nextChar;
 			char ch;
+			bool hadLineEnd = false;
+			if (Line == 1 && Col == 1) hadLineEnd = true; // beginning of document
+			
 			while ((nextChar = ReaderRead()) != -1) {
 				Token token;
 				
@@ -43,7 +42,13 @@ namespace ICSharpCode.NRefactory.Parser.CSharp
 						continue;
 					case '\r':
 					case '\n':
+						if (hadLineEnd) {
+							// second line end before getting to a token
+							// -> here was a blank line
+							specialTracker.AddEndOfLine(new Location(Col, Line));
+						}
 						HandleLineEnd((char)nextChar);
+						hadLineEnd = true;
 						continue;
 					case '/':
 						int peek = ReaderPeek();
@@ -254,25 +259,28 @@ namespace ICSharpCode.NRefactory.Parser.CSharp
 				string stringValue = prefix + digit + suffix;
 				
 				if (isfloat) {
-					try {
-						return new Token(Tokens.Literal, x, y, stringValue, Single.Parse(digit, CultureInfo.InvariantCulture));
-					} catch (Exception) {
+					float num;
+					if (float.TryParse(digit, NumberStyles.Any, CultureInfo.InvariantCulture, out num)) {
+						return new Token(Tokens.Literal, x, y, stringValue, num);
+					} else {
 						errors.Error(y, x, String.Format("Can't parse float {0}", digit));
 						return new Token(Tokens.Literal, x, y, stringValue, 0f);
 					}
 				}
 				if (isdecimal) {
-					try {
-						return new Token(Tokens.Literal, x, y, stringValue, Decimal.Parse(digit, NumberStyles.Any, CultureInfo.InvariantCulture));
-					} catch (Exception) {
+					decimal num;
+					if (decimal.TryParse(digit, NumberStyles.Any, CultureInfo.InvariantCulture, out num)) {
+						return new Token(Tokens.Literal, x, y, stringValue, num);
+					} else {
 						errors.Error(y, x, String.Format("Can't parse decimal {0}", digit));
 						return new Token(Tokens.Literal, x, y, stringValue, 0m);
 					}
 				}
 				if (isdouble) {
-					try {
-						return new Token(Tokens.Literal, x, y, stringValue, Double.Parse(digit, CultureInfo.InvariantCulture));
-					} catch (Exception) {
+					double num;
+					if (double.TryParse(digit, NumberStyles.Any, CultureInfo.InvariantCulture, out num)) {
+						return new Token(Tokens.Literal, x, y, stringValue, num);
+					} else {
 						errors.Error(y, x, String.Format("Can't parse double {0}", digit));
 						return new Token(Tokens.Literal, x, y, stringValue, 0d);
 					}
@@ -302,32 +310,36 @@ namespace ICSharpCode.NRefactory.Parser.CSharp
 				
 				if (islong) {
 					if (isunsigned) {
-						try {
-							token = new Token(Tokens.Literal, x, y, stringValue, UInt64.Parse(digit, ishex ? NumberStyles.HexNumber : NumberStyles.Number));
-						} catch (Exception) {
+						ulong num;
+						if (ulong.TryParse(digit, ishex ? NumberStyles.HexNumber : NumberStyles.Number, CultureInfo.InvariantCulture, out num)) {
+							token = new Token(Tokens.Literal, x, y, stringValue, num);
+						} else {
 							errors.Error(y, x, String.Format("Can't parse unsigned long {0}", digit));
 							token = new Token(Tokens.Literal, x, y, stringValue, 0UL);
 						}
 					} else {
-						try {
-							token = new Token(Tokens.Literal, x, y, stringValue, Int64.Parse(digit, ishex ? NumberStyles.HexNumber : NumberStyles.Number));
-						} catch (Exception) {
+						long num;
+						if (long.TryParse(digit, ishex ? NumberStyles.HexNumber : NumberStyles.Number, CultureInfo.InvariantCulture, out num)) {
+							token = new Token(Tokens.Literal, x, y, stringValue, num);
+						} else {
 							errors.Error(y, x, String.Format("Can't parse long {0}", digit));
 							token = new Token(Tokens.Literal, x, y, stringValue, 0L);
 						}
 					}
 				} else {
 					if (isunsigned) {
-						try {
-							token = new Token(Tokens.Literal, x, y, stringValue, UInt32.Parse(digit, ishex ? NumberStyles.HexNumber : NumberStyles.Number));
-						} catch (Exception) {
+						uint num;
+						if (uint.TryParse(digit, ishex ? NumberStyles.HexNumber : NumberStyles.Number, CultureInfo.InvariantCulture, out num)) {
+							token = new Token(Tokens.Literal, x, y, stringValue, num);
+						} else {
 							errors.Error(y, x, String.Format("Can't parse unsigned int {0}", digit));
-							token = new Token(Tokens.Literal, x, y, stringValue, 0U);
+							token = new Token(Tokens.Literal, x, y, stringValue, (uint)0);
 						}
 					} else {
-						try {
-							token = new Token(Tokens.Literal, x, y, stringValue, Int32.Parse(digit, ishex ? NumberStyles.HexNumber : NumberStyles.Number));
-						} catch (Exception) {
+						int num;
+						if (int.TryParse(digit, ishex ? NumberStyles.HexNumber : NumberStyles.Number, CultureInfo.InvariantCulture, out num)) {
+							token = new Token(Tokens.Literal, x, y, stringValue, num);
+						} else {
 							errors.Error(y, x, String.Format("Can't parse int {0}", digit));
 							token = new Token(Tokens.Literal, x, y, stringValue, 0);
 						}
@@ -707,7 +719,7 @@ namespace ICSharpCode.NRefactory.Parser.CSharp
 		string ReadCommentToEOL()
 		{
 			if (specialCommentHash == null) {
-				return ReadToEOL();
+				return ReadToEndOfLine();
 			}
 			sb.Length = 0;
 			StringBuilder curWord = new StringBuilder();
@@ -727,9 +739,9 @@ namespace ICSharpCode.NRefactory.Parser.CSharp
 					string tag = curWord.ToString();
 					curWord.Length = 0;
 					if (specialCommentHash.ContainsKey(tag)) {
-						Point p = new Point(Col, Line);
-						string comment = ch + ReadToEOL();
-						tagComments.Add(new TagComment(tag, comment, p, new Point(Col, Line)));
+						Location p = new Location(Col, Line);
+						string comment = ch + ReadToEndOfLine();
+						this.TagComments.Add(new TagComment(tag, comment, p, new Location(Col, Line)));
 						sb.Append(comment);
 						break;
 					}
@@ -740,45 +752,47 @@ namespace ICSharpCode.NRefactory.Parser.CSharp
 		
 		void ReadSingleLineComment(CommentType commentType)
 		{
-			if (skipAllComments) {
-				SkipToEOL();
+			if (this.SkipAllComments) {
+				SkipToEndOfLine();
 			} else {
-				specialTracker.StartComment(commentType, new Point(Col, Line));
+				specialTracker.StartComment(commentType, new Location(Col, Line));
 				specialTracker.AddString(ReadCommentToEOL());
-				specialTracker.FinishComment(new Point(Col, Line));
+				specialTracker.FinishComment(new Location(Col, Line));
 			}
 		}
 		
 		void ReadMultiLineComment()
 		{
 			int nextChar;
-			if (skipAllComments) {
+			if (this.SkipAllComments) {
 				while ((nextChar = ReaderRead()) != -1) {
 					char ch = (char)nextChar;
 					if (ch == '*' && ReaderPeek() == '/') {
 						ReaderRead();
 						return;
+					} else {
+						HandleLineEnd(ch);
 					}
 				}
 			} else {
-				specialTracker.StartComment(CommentType.Block, new Point(Col, Line));
+				specialTracker.StartComment(CommentType.Block, new Location(Col, Line));
 				while ((nextChar = ReaderRead()) != -1) {
 					char ch = (char)nextChar;
 					
 					if (HandleLineEnd(ch)) {
-						specialTracker.AddChar('\n');
+						specialTracker.AddString(Environment.NewLine);
 						continue;
 					}
 					
 					// End of multiline comment reached ?
 					if (ch == '*' && ReaderPeek() == '/') {
 						ReaderRead();
-						specialTracker.FinishComment(new Point(Col, Line));
+						specialTracker.FinishComment(new Location(Col, Line));
 						return;
 					}
 					specialTracker.AddChar(ch);
 				}
-				specialTracker.FinishComment(new Point(Col, Line));
+				specialTracker.FinishComment(new Location(Col, Line));
 			}
 			// Reached EOF before end of multiline comment.
 			errors.Error(Line, Col, String.Format("Reached EOF before the end of a multiline comment"));
@@ -790,7 +804,7 @@ namespace ICSharpCode.NRefactory.Parser.CSharp
 		/// block (so that Lexer.Token is the block-opening token, not Lexer.LookAhead).
 		/// After the call, Lexer.LookAhead will be the block-closing token.
 		/// </summary>
-		public override void SkipCurrentBlock()
+		public override void SkipCurrentBlock(int targetToken)
 		{
 			int braceCount = 0;
 			while (curToken != null) {

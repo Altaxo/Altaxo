@@ -2,16 +2,14 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1301 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.IO;
-using System.Xml;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Reflection;
+using System.IO;
+using System.Xml;
 
 using ICSharpCode.Core;
 
@@ -136,7 +134,7 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 	/// </summary>
 	public class FileTemplate : IComparable
 	{
-		public static ArrayList FileTemplates = new ArrayList();
+		public static List<FileTemplate> FileTemplates = new List<FileTemplate>();
 		
 		string author       = null;
 		string name         = null;
@@ -150,10 +148,10 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 
 		bool   newFileDialogVisible = true;
 		
-		ArrayList files       = new ArrayList(); // contains FileDescriptionTemplate classes
-		ArrayList properties  = new ArrayList();
-		ArrayList scripts     = new ArrayList();
-		ArrayList customTypes = new ArrayList();
+		List<FileDescriptionTemplate> files = new List<FileDescriptionTemplate>();
+		List<TemplateProperty> properties  = new List<TemplateProperty>();
+		List<TemplateScript> scripts = new List<TemplateScript>();
+		List<TemplateType> customTypes = new List<TemplateType>();
 		
 		XmlElement fileoptions = null;
 		
@@ -222,19 +220,19 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 			}
 		}
 		
-		public ArrayList FileDescriptionTemplates {
+		public List<FileDescriptionTemplate> FileDescriptionTemplates {
 			get {
 				return files;
 			}
 		}
 		
-		public ArrayList Properties {
+		public List<TemplateProperty> Properties {
 			get {
 				return properties;
 			}
 		}
 		
-		public ArrayList CustomTypes {
+		public List<TemplateType> CustomTypes {
 			get {
 				return customTypes;
 			}
@@ -246,7 +244,7 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 			}
 		}
 		
-		public ArrayList Scripts {
+		public List<TemplateScript> Scripts {
 			get {
 				return scripts;
 			}

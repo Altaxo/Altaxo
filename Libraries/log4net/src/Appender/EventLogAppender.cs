@@ -271,13 +271,13 @@ namespace log4net.Appender
 					// the application / logfile association
 					//
 					EventLog.DeleteEventSource(m_applicationName, m_machineName);
-					EventLog.CreateEventSource(m_applicationName, m_logName, m_machineName);
+					CreateEventSource(m_applicationName, m_logName, m_machineName);
 
 					registeredLogName = EventLog.LogNameFromSourceName(m_applicationName, m_machineName);
 				}
 				else if (!sourceAlreadyExists)
 				{
-					EventLog.CreateEventSource(m_applicationName, m_logName, m_machineName);
+					CreateEventSource(m_applicationName, m_logName, m_machineName);
 
 					registeredLogName = EventLog.LogNameFromSourceName(m_applicationName, m_machineName);
 				}
@@ -290,10 +290,28 @@ namespace log4net.Appender
 
 		#endregion // Implementation of IOptionHandler
 
+		/// <summary>
+		/// Create an event log source
+		/// </summary>
+		/// <remarks>
+		/// Uses different API calls under NET_2_0
+		/// </remarks>
+		private static void CreateEventSource(string source, string logName, string machineName)
+		{
+#if NET_2_0
+			EventSourceCreationData eventSourceCreationData = new EventSourceCreationData(source, logName);
+			eventSourceCreationData.MachineName = machineName;
+			EventLog.CreateEventSource(eventSourceCreationData);
+#else
+			EventLog.CreateEventSource(source, logName, machineName);
+#endif
+		}
+ 
+
 		#region Override implementation of AppenderSkeleton
 
 		/// <summary>
-		/// This method is called by the <see cref="AppenderSkeleton.DoAppend"/>
+		/// This method is called by the <see cref="AppenderSkeleton.DoAppend(LoggingEvent)"/>
 		/// method. 
 		/// </summary>
 		/// <param name="loggingEvent">the event to log</param>

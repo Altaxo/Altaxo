@@ -2,12 +2,13 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
 using System.Drawing;
 using System.Windows.Forms;
+
 using ICSharpCode.Core;
 
 namespace ICSharpCode.SharpDevelop.Gui
@@ -101,6 +102,19 @@ namespace ICSharpCode.SharpDevelop.Gui
 		
 		public void SetMessage(string message)
 		{
+			SetMessage(message, false);
+		}
+		
+		public void SetMessage(string message, bool highlighted)
+		{
+			if (highlighted) {
+				txtStatusBarPanel.BackColor = SystemColors.Highlight;
+				txtStatusBarPanel.ForeColor = Color.White;		
+			} else if (txtStatusBarPanel.BackColor == SystemColors.Highlight) {
+				txtStatusBarPanel.BackColor = SystemColors.Control;
+				txtStatusBarPanel.ForeColor = SystemColors.ControlText;
+			}
+
 			currentMessage = message;
 			if (this.IsHandleCreated)
 				BeginInvoke(new MethodInvoker(UpdateText));
@@ -132,7 +146,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		{
 			statusProgressBar.Value = 0;
 			statusProgressBar.Maximum = totalWork;
-			jobNamePanel.Text = taskName;
+			SetTaskName();
 			jobNamePanel.Visible = true;
 			statusProgressBar.Visible = true;
 		}
@@ -187,7 +201,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		
 		void SetTaskName()
 		{
-			jobNamePanel.Text = taskName;
+			jobNamePanel.Text = StringParser.Parse(taskName);
 		}
 	}
 }

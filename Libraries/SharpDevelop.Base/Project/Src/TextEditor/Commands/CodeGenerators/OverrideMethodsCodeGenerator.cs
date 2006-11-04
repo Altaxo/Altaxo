@@ -2,16 +2,15 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 946 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using ICSharpCode.NRefactory.Parser.AST;
 
 using ICSharpCode.SharpDevelop.Dom;
-using ICSharpCode.Core;
+using ICSharpCode.NRefactory.Ast;
 
 namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 {
@@ -19,13 +18,13 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 	{
 		public override string CategoryName {
 			get {
-				return "Override methods";
+				return "${res:ICSharpCode.SharpDevelop.CodeGenerator.OverrideMethods}";
 			}
 		}
 		
 		public override string Hint {
 			get {
-				return "Choose methods to override";
+				return "${res:ICSharpCode.SharpDevelop.CodeGenerator.OverrideMethods.Hint}";
 			}
 		}
 		
@@ -84,7 +83,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 				MethodWrapper other = (MethodWrapper)obj;
 				if (method.Name != other.method.Name)
 					return false;
-				return 0 == ICSharpCode.SharpDevelop.DiffUtility.Compare(method.Parameters, other.method.Parameters);
+				return 0 == DiffUtility.Compare(method.Parameters, other.method.Parameters);
 			}
 			
 			public override int GetHashCode()

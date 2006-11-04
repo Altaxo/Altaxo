@@ -2,12 +2,11 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1388 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
 using System.ComponentModel;
-using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -121,20 +120,23 @@ namespace ICSharpCode.SharpDevelop.Project
 		public override string FileName {
 			get {
 				if (Project != null) {
+					string projectDir = Project.Directory;
 					string hintPath = HintPath;
-					if (hintPath != null && hintPath.Length > 0) {
-						return Path.Combine(Project.Directory, hintPath);
-					}
-					string name = Path.Combine(Project.Directory, Include);
-					if (File.Exists(name)) {
-						return name;
-					}
-					if (File.Exists(name + ".dll")) {
-						return name + ".dll";
-					}
-					if (File.Exists(name + ".exe")) {
-						return name + ".exe";
-					}
+					try {
+						if (hintPath != null && hintPath.Length > 0) {
+							return Path.GetFullPath(Path.Combine(projectDir, hintPath));
+						}
+						string name = Path.GetFullPath(Path.Combine(projectDir, Include));
+						if (File.Exists(name)) {
+							return name;
+						}
+						if (File.Exists(name + ".dll")) {
+							return name + ".dll";
+						}
+						if (File.Exists(name + ".exe")) {
+							return name + ".exe";
+						}
+					} catch {} // ignore errors when path is invalid
 				}
 				return Include;
 			}

@@ -2,21 +2,18 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 944 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.Drawing;
 using System.Collections;
 using System.Collections.Generic;
 
 using ICSharpCode.Core;
-using ICSharpCode.TextEditor.Document;
 using ICSharpCode.SharpDevelop.Dom;
-using ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor;
 using ICSharpCode.TextEditor;
+using ICSharpCode.TextEditor.Document;
 using ICSharpCode.TextEditor.Gui.InsightWindow;
-
 
 namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 {
@@ -126,7 +123,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		protected virtual void SetupDataProvider(string fileName, IDocument document, ExpressionResult expressionResult, int caretLineNumber, int caretColumn)
 		{
 			bool constructorInsight = false;
-			if (expressionResult.Context == ExpressionContext.Attribute) {
+			if (expressionResult.Context.IsAttributeContext) {
 				constructorInsight = true;
 			} else if (expressionResult.Context.IsObjectCreation) {
 				constructorInsight = true;

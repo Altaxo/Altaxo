@@ -19,7 +19,6 @@
 using System;
 using System.Collections;
 using System.IO;
-using System.Text;
 
 using log4net.Util;
 using log4net.Util.PatternStringConverters;
@@ -39,15 +38,15 @@ namespace log4net.Util
 	/// This class functions similarly to the <see cref="log4net.Layout.PatternLayout"/>
 	/// in that it accepts a pattern and renders it to a string. Unlike the 
 	/// <see cref="log4net.Layout.PatternLayout"/> however the <c>PatternString</c>
-	/// does does not render properties of a specific <see cref="LoggingEvent"/> but
+	/// does not render the properties of a specific <see cref="LoggingEvent"/> but
 	/// of the process in general.
 	/// </para>
 	/// <para>
-	/// The recognized conversion characters are:
+	/// The recognized conversion pattern names are:
 	/// </para>
 	/// <list type="table">
 	///     <listheader>
-	///         <term>Conversion Character</term>
+	///         <term>Conversion Pattern Name</term>
 	///         <description>Effect</description>
 	///     </listheader>
 	///     <item>
@@ -73,7 +72,7 @@ namespace log4net.Util
 	/// 			</para>
 	/// 			<para>
 	/// 			The date format specifier admits the same syntax as the
-	/// 			time pattern string of the <see cref="DateTime.ToString"/>.
+	/// 			time pattern string of the <see cref="DateTime.ToString(string)"/>.
 	/// 			</para>
 	/// 			<para>
 	/// 			For better results it is recommended to use the log4net date
@@ -121,7 +120,7 @@ namespace log4net.Util
 	/// 			characters.
 	/// 			</para>
 	/// 			<para>
-	/// 			This conversion character offers the same performance as using 
+	/// 			This conversion pattern name offers the same performance as using 
 	/// 			non-portable line separator strings such as	"\n", or "\r\n". 
 	/// 			Thus, it is the preferred way of specifying a line separator.
 	/// 			</para> 
@@ -208,7 +207,7 @@ namespace log4net.Util
 	/// 			</para>
 	/// 			<para>
 	/// 			The date format specifier admits the same syntax as the
-	/// 			time pattern string of the <see cref="DateTime.ToString"/>.
+	/// 			time pattern string of the <see cref="DateTime.ToString(string)"/>.
 	/// 			</para>
 	/// 			<para>
 	/// 			For better results it is recommended to use the log4net date
@@ -236,7 +235,8 @@ namespace log4net.Util
 	/// </list>
 	/// <para>
 	/// Additional pattern converters may be registered with a specific <see cref="PatternString"/>
-	/// instance using the <see cref="AddConverter"/> methods.
+	/// instance using <see cref="AddConverter(PatternString.ConverterInfo)"/> or
+	/// <see cref="AddConverter(string, Type)" />.
 	/// </para>
 	/// <para>
 	/// See the <see cref="log4net.Layout.PatternLayout"/> for details on the 
@@ -281,7 +281,7 @@ namespace log4net.Util
 		/// </summary>
 		static PatternString()
 		{
-			s_globalRulesRegistry = new Hashtable(10);
+			s_globalRulesRegistry = new Hashtable(15);
 
 			s_globalRulesRegistry.Add("appdomain", typeof(AppDomainPatternConverter));
 			s_globalRulesRegistry.Add("date", typeof(DatePatternConverter));
@@ -387,7 +387,7 @@ namespace log4net.Util
 		/// <para>
 		/// Returns PatternParser used to parse the conversion string. Subclasses
 		/// may override this to return a subclass of PatternParser which recognize
-		/// custom conversion characters.
+		/// custom conversion pattern name.
 		/// </para>
 		/// </remarks>
 		private PatternParser CreatePatternParser(string pattern) 

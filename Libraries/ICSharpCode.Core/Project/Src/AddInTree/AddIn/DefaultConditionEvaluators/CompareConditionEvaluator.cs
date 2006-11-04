@@ -2,16 +2,15 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1048 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.Collections;
 
 namespace ICSharpCode.Core
 {
 	/// <summary>
-	/// Compares two strings (case sensitive).
+	/// Compares two strings.
 	/// The strings are passed through the StringParser, so it is possible to compare
 	/// SharpDevelop properties.<br/>
 	/// Useful if you want to run a command only when a setting is active to prevent

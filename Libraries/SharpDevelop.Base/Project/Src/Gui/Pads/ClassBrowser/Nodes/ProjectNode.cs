@@ -2,15 +2,12 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1301 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.IO;
-using System.Windows.Forms;
-using System.Diagnostics;
-using System.Drawing;
 using System.Collections.Generic;
+using System.Windows.Forms;
 
 using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.Dom;
@@ -98,7 +95,7 @@ namespace ICSharpCode.SharpDevelop.Gui.ClassBrowser
 				Nodes.Clear();
 				ReferenceFolderNode referencesNode = new ReferenceFolderNode(Project);
 				referencesNode.AddTo(this);
-				projectContent.ReferencedContentsChanged += delegate { referencesNode.UpdateReferenceNodes(); };
+				projectContent.ReferencedContentsChanged += delegate { WorkbenchSingleton.SafeThreadAsyncCall(referencesNode.UpdateReferenceNodes); };
 				foreach (ProjectItem item in Project.Items) {
 					switch (item.ItemType) {
 						case ItemType.Reference:

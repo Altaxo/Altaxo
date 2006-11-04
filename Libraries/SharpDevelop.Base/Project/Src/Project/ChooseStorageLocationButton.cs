@@ -2,12 +2,13 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
 using System.Drawing;
 using System.Windows.Forms;
+
 using ICSharpCode.Core;
 
 namespace ICSharpCode.SharpDevelop.Project
@@ -127,16 +128,6 @@ namespace ICSharpCode.SharpDevelop.Project
 			}
 			return bmp;
 		}
-		
-		/*
-		static void DrawC(Graphics g, int x, int y)
-		{
-			g.DrawLine(Pens.Red, x + 1, y, x + 4, y);
-			g.DrawLine(Pens.Red, x, y + 1, x, y + 5);
-			g.DrawLine(Pens.Red, x, y + 1, x, y + 5);
-			g.DrawLine(Pens.Red, x + 1, y + 6, x + 4, y + 6);
-		}
-		 */
 		
 		/// <summary>draws the letter 'U'</summary>
 		static void DrawU(Graphics g, int x, int y)

@@ -1,0 +1,36 @@
+﻿<project schemaVersion="1.3">
+    <assemblies>
+        <assembly assemblyPath="V:\C\Altaxo\src\Altaxo\Base\bin\Debug\AltaxoBase.dll" xmlCommentsPath="V:\C\Altaxo\src\Altaxo\Base\bin\Debug\AltaxoBase.xml" />
+        <assembly assemblyPath="V:\C\Altaxo\src\Altaxo\Base\bin\Debug\AltaxoCore.dll" xmlCommentsPath="V:\C\Altaxo\src\Altaxo\Base\bin\Debug\AltaxoCore.xml" />
+    </assemblies>
+    <namespaceSummaries>
+        <namespaceSummaryItem name="" isDocumented="False" />
+    </namespaceSummaries>
+    <contentPlacement>AboveNamespaces</contentPlacement>
+    <dependencies>
+        <dependencyItem depPath="V:\C\Altaxo\src\rtdebug\bin\*.*" />
+    </dependencies>
+    <projectSummary />
+    <sandcastlePath />
+    <hhcPath />
+    <hxcompPath />
+    <outputPath>..\..\..\tempsource\AltaxoClassRef\</outputPath>
+    <helpFileFormat>HtmlHelp1x</helpFileFormat>
+    <cleanIntermediates>True</cleanIntermediates>
+    <purgeDuplicateTopics>True</purgeDuplicateTopics>
+    <binaryTOC>True</binaryTOC>
+    <includeFavorites>False</includeFavorites>
+    <preliminary>False</preliminary>
+    <rootNSContainer>False</rootNSContainer>
+    <helpTitle>Altaxo(Core+Base) class reference (0.53.0.429, 2005/12/22)</helpTitle>
+    <htmlHelpName>AltaxoClassRef</htmlHelpName>
+    <language>en-US</language>
+    <copyrightHref />
+    <copyrightText />
+    <feedbackEMailAddress />
+    <headerText />
+    <projectLinks>Local</projectLinks>
+    <sdkLinks>Msdn</sdkLinks>
+    <documentAttributes>False</documentAttributes>
+    <documentInternals>False</documentInternals>
+</project>

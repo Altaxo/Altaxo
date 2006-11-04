@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <!--
-Copyright 2004-2005 The Apache Software Foundation
+Copyright 2004-2006 The Apache Software Foundation
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -24,11 +24,11 @@ limitations under the License.
 	<meta name="keywords" content="log4net features, log4net" />
 
 	<body>
-		<section name="log4net Features">
+		<section id="main" name="log4net Features">
 		
 			<sectionMenu name="Contents" />
 
-			<section name="Overview">
+			<section id="overview" name="Overview">
 				<p>
 					log4net is a tool to help the programmer output log statements to a 
 					variety of output targets. In case of problems with an application, 
@@ -50,7 +50,7 @@ limitations under the License.
 				</p>
 			</section>
 			
-			<section name="Features">
+			<section id="features" name="Features">
 				<ul>
 					<li><h3>Support for multiple frameworks</h3></li>
 					<li><h3>Output to multiple logging targets</h3></li>
@@ -64,21 +64,27 @@ limitations under the License.
 				</ul>
 			</section>
 
-			<section name="Support for multiple frameworks">
+			<section id="frameworks" name="Support for multiple frameworks">
 				<p>
-					log4net supports the following frameworks:
+					log4net runs on all ECMA CLI 1.0 compatible runtimes.
+					log4net has specific builds for the following frameworks:
 				</p>
 				<ul>
 					<li>Microsoft .NET Framework 1.0 (1.0.3705)</li>
 					<li>Microsoft .NET Framework 1.1 (1.1.4322)</li>
+					<li>Microsoft .NET Framework 2.0 (2.0.50727)</li>
 					<li>Microsoft .NET Compact Framework 1.0 (1.0.5000)</li>
 					<li>Mono 1.0</li>
 					<li>Microsoft Shared Source CLI 1.0</li>
 					<li>CLI 1.0 Compatible</li>
 				</ul>
+				<p>
+					Note: Due to the .NET frameworks support for backward compatibility 
+					log4net will run on future versions of the runtimes listed above.
+				</p>
 			</section>
 
-			<section name="Output to multiple logging targets">
+			<section id="appenders" name="Output to multiple logging targets">
 				<p>
 					log4net ships with the following appenders (not on all frameworks):
 				</p>
@@ -136,7 +142,7 @@ limitations under the License.
 							</td>
 						</tr>
 						<tr>
-							<td>log4net.LocalSyslogAppender</td>
+							<td>log4net.Appender.LocalSyslogAppender</td>
 							<td>
 								Writes logging events to the local syslog service (UNIX only).
 							</td>
@@ -212,7 +218,7 @@ limitations under the License.
 				<p />
 			</section>
 
-			<section name="Hierarchical logging architecture">
+			<section id="hierarchy" name="Hierarchical logging architecture">
 				<p>
 					Hierarchical logging is an ideal fit with component based development. 
 					Each component has its own of logger. When individually tested, the 
@@ -226,7 +232,7 @@ limitations under the License.
 				</p>
 			</section>
 
-			<section name="XML Configuration">
+			<section id="xml-config" name="XML Configuration">
 				<p>
 					log4net is configured using an XML configuration file. The configuration 
 					information can be embedded within other XML configuration files
@@ -239,7 +245,7 @@ limitations under the License.
 				</p>
 			</section>
 
-			<section name="Dynamic Configuration">
+			<section id="dynamic-config" name="Dynamic Configuration">
 				<p>
 					log4net can monitor its configuration file for changes and dynamically
 					apply changes made by the configurator. The logging levels, appenders, 
@@ -250,7 +256,7 @@ limitations under the License.
 				</p>
 			</section>
 
-			<section name="Logging Context">
+			<section id="context" name="Logging Context">
 				<p>
 					log4net can collect logging context data in a way that is transparent 
 					to the developer at the point of logging. The GlobalContext and the 
@@ -262,7 +268,7 @@ limitations under the License.
 				</p>
 			</section>
 
-			<section name="Proven architecture">
+			<section id="history" name="Proven architecture">
 				<p>
 					log4net is based on the highly successful log4j logging library,
 					in development since 1996. This popular and proven architecture has 

@@ -2,24 +2,12 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.Drawing;
-using System.Windows.Forms;
-using System.Reflection;
-using System.Collections;
-using System.Collections.Generic;
-
-using ICSharpCode.SharpDevelop.Internal.Templates;
-using ICSharpCode.Core;
-using ICSharpCode.TextEditor.Document;
 using ICSharpCode.SharpDevelop.Dom;
-using ICSharpCode.TextEditor;
-using ICSharpCode.TextEditor.Gui.InsightWindow;
-using ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor;
-
+using ICSharpCode.TextEditor.Document;
 
 namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 {
@@ -49,47 +37,5 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 				}
 			}
 		}
-		
-		/*
-		public bool CaretOffsetChanged()
-		{
-			bool closeDataProvider = textArea.Caret.Offset <= initialOffset;
-			
-			if (!closeDataProvider) {
-				bool insideChar   = false;
-				bool insideString = false;
-				for (int offset = initialOffset; offset < Math.Min(textArea.Caret.Offset, document.TextLength); ++offset) {
-					char ch = document.GetCharAt(offset);
-					switch (ch) {
-						case '\'':
-							insideChar = !insideChar;
-							break;
-						case '"':
-							insideString = !insideString;
-							break;
-						case ']':
-						case '}':
-						case '{':
-						case ';':
-							if (!(insideChar || insideString)) {
-								return true;
-							}
-							break;
-					}
-				}
-			}
-			
-			return closeDataProvider;
-		}
-		
-		public bool CharTyped()
-		{
-			int offset = textArea.Caret.Offset - 1;
-			if (offset >= 0) {
-				return document.GetCharAt(offset) == ']';
-			}
-			return false;
-		}
-		 */
 	}
 }

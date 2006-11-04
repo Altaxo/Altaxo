@@ -1,24 +1,36 @@
 ﻿// <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1199 $</version>
+//     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
+//     <version>$Revision: 1963 $</version>
 // </file>
 
 using System;
-using System.Xml;
+using System.Collections.Generic;
 using System.IO;
-using System.Collections;
-using System.Reflection;
-using System.CodeDom.Compiler;
+using System.Xml;
 
+using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.Project;
 
-namespace ICSharpCode.Core
+namespace ICSharpCode.SharpDevelop
 {
-	public class LanguageBindingService
+	public static class LanguageBindingService
 	{
-		static LanguageBindingDescriptor[] bindings = null;
+		static IList<LanguageBindingDescriptor> bindings;
+		
+		static LanguageBindingService()
+		{
+			bindings = AddInTree.BuildItems<LanguageBindingDescriptor>("/SharpDevelop/Workbench/LanguageBindings", null, false);
+		}
+		
+		/// <summary>
+		/// Overwrites the list of used bindings. Used for unit tests.
+		/// </summary>
+		public static void SetBindings(IList<LanguageBindingDescriptor> bindings)
+		{
+			LanguageBindingService.bindings = bindings;
+		}
 		
 		public static string GetProjectFileExtension(string languageName)
 		{
@@ -32,9 +44,9 @@ namespace ICSharpCode.Core
 			return descriptor == null ? null : descriptor.Binding;
 		}
 		
-		public static ILanguageBinding GetBindingPerFileName(string filename)
+		public static ILanguageBinding GetBindingCodePerFileName(string filename)
 		{
-			LanguageBindingDescriptor descriptor = GetCodonPerFileName(filename);
+			LanguageBindingDescriptor descriptor = GetCodonPerCodeFileName(filename);
 			return descriptor == null ? null : descriptor.Binding;
 		}
 		
@@ -47,17 +59,18 @@ namespace ICSharpCode.Core
 		public static LanguageBindingDescriptor GetCodonPerLanguageName(string languagename)
 		{
 			foreach (LanguageBindingDescriptor binding in bindings) {
-				if (binding.Binding.Language == languagename) {
+				if (binding.Language == languagename) {
 					return binding;
 				}
 			}
 			return null;
 		}
 		
-		public static LanguageBindingDescriptor GetCodonPerFileName(string filename)
+		public static LanguageBindingDescriptor GetCodonPerCodeFileName(string filename)
 		{
+			string extension = Path.GetExtension(filename).ToLowerInvariant();
 			foreach (LanguageBindingDescriptor binding in bindings) {
-				if (binding.Binding.CanCompile(filename)) {
+				if (Array.IndexOf(binding.CodeFileExtensions, extension) >= 0) {
 					return binding;
 				}
 			}
@@ -95,6 +108,10 @@ namespace ICSharpCode.Core
 						MessageService.ShowError("Error loading " + location + ":\n" + ex.Message);
 						newProject = new UnknownProject(location, title);
 						newProject.TypeGuid = projectTypeGuid;
+					} catch (UnauthorizedAccessException ex) {
+						MessageService.ShowError("Error loading " + location + ":\n" + ex.Message);
+						newProject = new UnknownProject(location, title);
+						newProject.TypeGuid = projectTypeGuid;
 					}
 				} else {
 					newProject = new UnknownProject(location, title);
@@ -102,16 +119,6 @@ namespace ICSharpCode.Core
 				}
 			}
 			return newProject;
-		}
-		
-		static LanguageBindingService()
-		{
-			try {
-				AddInTreeNode treeNode = AddInTree.GetTreeNode("/SharpDevelop/Workbench/LanguageBindings");
-				bindings = (LanguageBindingDescriptor[])(treeNode.BuildChildItems(null)).ToArray(typeof(LanguageBindingDescriptor));
-			} catch (TreePathNotFoundException) {
-				bindings = new LanguageBindingDescriptor[] {};
-			}
 		}
 	}
 }

@@ -1,6 +1,6 @@
 #region Copyright & License
 //
-// Copyright 2001-2005 The Apache Software Foundation
+// Copyright 2001-2006 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@
 using System;
 using System.Text;
 using System.Xml;
+using System.Text.RegularExpressions;
 
 namespace log4net.Util
 {
@@ -50,21 +51,23 @@ namespace log4net.Util
 
 		#endregion Private Instance Constructors
 
-		#region Public Static Methods
+		#region XML String Methods
 
 		/// <summary>
 		/// Write a string to an <see cref="XmlWriter"/>
 		/// </summary>
 		/// <param name="writer">the writer to write to</param>
-		/// <param name="stringData">the string to write</param>
+		/// <param name="textData">the string to write</param>
+		/// <param name="invalidCharReplacement">The string to replace non XML compliant chars with</param>
 		/// <remarks>
 		/// <para>
 		/// The test is escaped either using XML escape entities
 		/// or using CDATA sections.
 		/// </para>
 		/// </remarks>
-		public static void WriteEscapedXmlString(XmlWriter writer, string stringData)
+		public static void WriteEscapedXmlString(XmlWriter writer, string textData, string invalidCharReplacement)
 		{
+			string stringData = MaskXmlInvalidCharacters(textData, invalidCharReplacement);
 			// Write either escaped text or CDATA sections
 
 			int weightCData = 12 * (1 + CountSubstrings(stringData, CDATA_END));
@@ -113,7 +116,28 @@ namespace log4net.Util
 			}
 		}
 
-		#endregion Public Static Methods
+		/// <summary>
+		/// Replace invalid XML characters in text string
+		/// </summary>
+		/// <param name="textData">the XML text input string</param>
+		/// <param name="mask">the string to use in place of invalid characters</param>
+		/// <returns>A string that does not contain invalid XML characters.</returns>
+		/// <remarks>
+		/// <para>
+		/// Certain Unicode code points are not allowed in the XML InfoSet, for
+		/// details see: <a href="http://www.w3.org/TR/REC-xml/#charsets">http://www.w3.org/TR/REC-xml/#charsets</a>.
+		/// </para>
+		/// <para>
+		/// This method replaces any illegal characters in the input string
+		/// with the mask string specified.
+		/// </para>
+		/// </remarks>
+		public static string MaskXmlInvalidCharacters(string textData, string mask)
+		{
+			return INVALIDCHARS.Replace(textData, mask);
+		}
+
+		#endregion XML String Methods
 
 		#region Private Helper Methods
 
@@ -166,6 +190,7 @@ namespace log4net.Util
 		private const string CDATA_END	= "]]>";
 		private const string CDATA_UNESCAPABLE_TOKEN	= "]]";
 
+		private static Regex INVALIDCHARS=new Regex(@"[^\x09\x0A\x0D\x20-\xFF\u00FF-\u07FF\uE000-\uFFFD]",RegexOptions.Compiled);
 		#endregion Private Static Fields
 	}
 }

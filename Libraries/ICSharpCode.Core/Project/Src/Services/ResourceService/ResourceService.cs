@@ -1,23 +1,19 @@
-﻿// <file>
+// <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1388 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.IO;
-using System.Windows.Forms;
 using System.Collections;
 using System.Collections.Generic;
-using System.Threading;
-using System.Resources;
 using System.Drawing;
-using System.Diagnostics;
+using System.IO;
 using System.Reflection;
-using System.Xml;
-
-using ICSharpCode.Core;
+using System.Resources;
+using System.Threading;
+using System.Windows.Forms;
 
 namespace ICSharpCode.Core
 {
@@ -46,7 +42,6 @@ namespace ICSharpCode.Core
 			PropertyService.PropertyChanged += new PropertyChangedEventHandler(OnPropertyChange);
 			LoadLanguageResources(ResourceService.Language);
 		}
-
 #if ModifiedForAltaxo
     public static void LoadUserStrings(string filename)
     {
@@ -242,13 +237,28 @@ namespace ICSharpCode.Core
 		}
 		
 		#region Font loading
-		static Font courierNew10;
+		static Font defaultMonospacedFont;
 		
-		public static Font CourierNew10 {
+		public static Font DefaultMonospacedFont {
 			get {
-				if (courierNew10 == null)
-					courierNew10 = LoadFont("Courier New", 10);
-				return courierNew10;
+				if (defaultMonospacedFont == null) {
+					defaultMonospacedFont = LoadDefaultMonospacedFont(FontStyle.Regular);
+				}
+				return defaultMonospacedFont;
+			}
+		}
+		
+		/// <summary>
+		/// Loads the default monospaced font (Consolas or Courier New).
+		/// </summary>
+		public static Font LoadDefaultMonospacedFont(FontStyle style)
+		{
+			if (Environment.OSVersion.Platform == PlatformID.Win32NT
+			    && Environment.OSVersion.Version.Major >= 6)
+			{
+				return LoadFont("Consolas", 10, style);
+			} else {
+				return LoadFont("Courier New", 10, style);
 			}
 		}
 		
@@ -423,14 +433,12 @@ namespace ICSharpCode.Core
 		/// instead of an icon in the dabase. It is converted automatically.
 		/// </summary>
 		/// <returns>
-		/// The icon in the (localized) resource database.
+		/// The icon in the (localized) resource database, or null, if the icon cannot
+		/// be found.
 		/// </returns>
 		/// <param name="name">
 		/// The name of the requested icon.
 		/// </param>
-		/// <exception cref="ResourceNotFoundException">
-		/// Is thrown when the GlobalResource manager can't find a requested resource.
-		/// </exception>
 		public static Icon GetIcon(string name)
 		{
 			lock (iconCache) {
@@ -472,12 +480,13 @@ namespace ICSharpCode.Core
 				if (bitmapCache.TryGetValue(name, out bmp))
 					return bmp;
 				bmp = (Bitmap)GetImageResource(name);
-				Debug.Assert(bmp != null, "Resource " + name);
+				if (bmp == null) {
+					throw new ResourceNotFoundException(name);
+				}
 				bitmapCache[name] = bmp;
 				return bmp;
 			}
 		}
-
 #if ModifiedForAltaxo
     public static Cursor GetCursor(string name)
     {

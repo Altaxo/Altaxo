@@ -2,13 +2,12 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Collections;
 using System.Windows.Forms;
 
 using ICSharpCode.Core;
@@ -55,17 +54,6 @@ namespace ICSharpCode.SharpDevelop.Commands
 				}
 			} else {
 				FileService.OpenFile(site);
-			}
-		}
-	}
-	
-	public class ViewTipOfTheDay : AbstractMenuCommand
-	{
-		public override void Run()
-		{
-			using (TipOfTheDayDialog totdd = new TipOfTheDayDialog()) {
-				totdd.Owner = (Form)WorkbenchSingleton.Workbench;
-				totdd.ShowDialog(ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.MainForm);
 			}
 		}
 	}

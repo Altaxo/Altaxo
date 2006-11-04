@@ -2,19 +2,13 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1334 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.IO;
-using System.Windows.Forms;
 using System.Collections;
-using System.Threading;
-using System.Resources;
 using System.Drawing;
-using System.Diagnostics;
-using System.Reflection;
-using System.Xml;
+using System.Windows.Forms;
 
 namespace ICSharpCode.Core
 {
@@ -90,7 +84,10 @@ namespace ICSharpCode.Core
 		
 		public static void ShowContextMenu(object owner, string addInTreePath, Control parent, int x, int y)
 		{
-			CreateContextMenu(owner, addInTreePath).Show(parent, new Point(x, y));
+			ContextMenuStrip menu = CreateContextMenu(owner, addInTreePath);
+			if (menu != null) {
+				menu.Show(parent, new Point(x, y));
+			}
 		}
 		
 		class QuickInsertMenuHandler

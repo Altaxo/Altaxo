@@ -2,12 +2,10 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.Drawing;
-using System.IO;
 using ICSharpCode.Core;
 
 namespace ICSharpCode.SharpDevelop.Project
@@ -23,7 +21,7 @@ namespace ICSharpCode.SharpDevelop.Project
 			this.project = project;
 
 			ContextmenuAddinTreePath = "/SharpDevelop/Pads/ProjectBrowser/ContextMenu/ReferenceFolderNode";
-			Text = "References";
+			Text = StringParser.Parse("${res:ICSharpCode.SharpDevelop.Commands.ProjectBrowser.ReferencesNodeText}");
 			OpenedImage = "ProjectBrowser.ReferenceFolder.Open";
 			ClosedImage = "ProjectBrowser.ReferenceFolder.Closed";
 			

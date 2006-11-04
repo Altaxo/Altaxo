@@ -2,19 +2,15 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1209 $</version>
+//     <version>$Revision: 1968 $</version>
 // </file>
 
 using System;
-using System.IO;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Text;
-
-using ICSharpCode.TextEditor.Document;
 using ICSharpCode.Core;
-using ICSharpCode.SharpDevelop.Gui;
 using ICSharpCode.TextEditor;
+using ICSharpCode.TextEditor.Document;
+using ICSharpCode.SharpDevelop.Debugging;
 
 namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 {
@@ -35,7 +31,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			: base(offset, length, TextMarkerType.WaveLine, (task.TaskType == TaskType.Error) ? Color.Red : Color.Orange)
 		{
 			this.task = task;
-			base.ToolTip = task.Description.Replace("&", "&&&");
+			base.ToolTip = task.Description;
 		}
 	}
 	
@@ -149,21 +145,19 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			if (task.Line >= 0 && task.Line < textEditor.Document.TotalNumberOfLines) {
 				LineSegment line = textEditor.Document.GetLineSegment(task.Line);
 				int offset = line.Offset + task.Column;
+				int length = 1;
 				if (line.Words != null) {
 					foreach (TextWord tw in line.Words) {
-						if (task.Column >= tw.Offset && task.Column < (tw.Offset + tw.Length)) {
-							textEditor.Document.MarkerStrategy.AddMarker(new VisualError(offset, tw.Length, task));
-							if (refresh) {
-								textEditor.Refresh();
-							}
-							return;
+						if (task.Column == tw.Offset) {
+							length = tw.Length;
+							break;
 						}
 					}
 				}
-				offset = Math.Min(offset, textEditor.Document.TextLength);
-				int startOffset = offset;
-				int endOffset   = Math.Max(1, TextUtilities.FindWordEnd(textEditor.Document, offset));
-				textEditor.Document.MarkerStrategy.AddMarker(new VisualError(startOffset, endOffset - startOffset + 1, task));
+				if (length == 1 && task.Column < line.Length) {
+					length = 2; // use minimum length
+				}
+				textEditor.Document.MarkerStrategy.AddMarker(new VisualError(offset, length, task));
 				if (refresh) {
 					textEditor.Refresh();
 				}

@@ -2,18 +2,12 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.Collections;
-using System.Collections.Specialized;
-using System.Windows.Forms;
-
-using ICSharpCode.Core;
-using ICSharpCode.TextEditor.Document;
-using ICSharpCode.TextEditor;
 using ICSharpCode.SharpDevelop.Dom;
+using ICSharpCode.TextEditor;
 using ICSharpCode.TextEditor.Gui.CompletionWindow;
 
 namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
@@ -23,8 +17,8 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 	/// </summary>
 	public class AttributesDataProvider : CtrlSpaceCompletionDataProvider
 	{
-		public AttributesDataProvider()
-			: this(ExpressionContext.TypeDerivingFrom(ProjectContentRegistry.Mscorlib.GetClass("System.Attribute"), true))
+		public AttributesDataProvider(IProjectContent pc)
+			: this(ExpressionContext.TypeDerivingFrom(pc.GetClass("System.Attribute"), true))
 		{
 		}
 		

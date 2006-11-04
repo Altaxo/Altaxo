@@ -2,25 +2,19 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1388 $</version>
+//     <version>$Revision: 1963 $</version>
 // </file>
 
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Text;
-using System.Runtime.InteropServices;
-using System.Collections;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Resources;
-using System.Diagnostics;
 using System.Threading;
-using System.Windows.Forms;
-using System.Xml;
 
-namespace ICSharpCode.Core
+using ICSharpCode.Core;
+
+namespace ICSharpCode.SharpDevelop
 {
 	public static class IconService
 	{
@@ -32,6 +26,7 @@ namespace ICSharpCode.Core
 		static IconService()
 		{
 			Thread myThread = new Thread(new ThreadStart(LoadThread));
+			myThread.Name = "IconLoader";
 			myThread.IsBackground = true;
 			myThread.Priority = ThreadPriority.Normal;
 			myThread.Start();

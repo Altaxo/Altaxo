@@ -2,24 +2,24 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1609 $</version>
 // </file>
 
 using System;
-using ICSharpCode.NRefactory.Parser.AST;
+using ICSharpCode.NRefactory.Ast;
 
-namespace ICSharpCode.NRefactory.Parser
+namespace ICSharpCode.NRefactory
 {
 	/// <summary>
-	/// Description of IParser.
+	/// Parser interface.
 	/// </summary>
 	public interface IParser : IDisposable
 	{
-		Errors Errors {
+		Parser.Errors Errors {
 			get;
 		}
 		
-		ILexer Lexer {
+		Parser.ILexer Lexer {
 			get;
 		}
 		

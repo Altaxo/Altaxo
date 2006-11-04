@@ -2,12 +2,13 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 934 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
 using System.Drawing;
 using System.Windows.Forms;
+
 using ICSharpCode.Core;
 
 namespace ICSharpCode.SharpDevelop.Gui
@@ -28,7 +29,9 @@ namespace ICSharpCode.SharpDevelop.Gui
 			}
 			form.Closing += delegate {
 				if (isResizable) {
-					PropertyService.Set(propertyName, form.Bounds);
+					if (form.WindowState == FormWindowState.Normal) {
+						PropertyService.Set(propertyName, form.Bounds);
+					}
 				} else {
 					PropertyService.Set(propertyName, form.Location);
 				}

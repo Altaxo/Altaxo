@@ -1,40 +1,81 @@
-﻿// <file>
+// <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1069 $</version>
+//     <version>$Revision: 1963 $</version>
 // </file>
 
 using System;
+using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.Gui;
 
-namespace ICSharpCode.Core
+namespace ICSharpCode.SharpDevelop
 {
 	/// <summary>
-	/// Description of PadDescriptor.
+	/// Describes a pad.
 	/// </summary>
 	public class PadDescriptor : IDisposable
 	{
-		Codon       codon;
+		string @class;
+		string title;
+		string icon;
+		string category;
+		string shortcut;
+		
+		AddIn addIn;
+		Type padType;
+		
 		IPadContent padContent;
 		bool        padContentCreated;
+		
+		/// <summary>
+		/// Creates a new pad descriptor from the AddIn tree.
+		/// </summary>
+		public PadDescriptor(Codon codon)
+		{
+			addIn = codon.AddIn;
+			shortcut = codon.Properties["shortcut"];
+			category = codon.Properties["category"];
+			icon = codon.Properties["icon"];
+			title = codon.Properties["title"];
+			@class = codon.Properties["class"];
+#if ModifiedForAltaxo
+      // neccessary in order to load some pads on startup (such pads that are services, like the message output pad)
+      string precreate = codon.Properties["precreated"];
+      if (precreate != null && precreate.ToLower() == "true")
+        CreatePad();
+#endif
+		}
+		
+		/// <summary>
+		/// Creates a pad descriptor for the specified pad type.
+		/// </summary>
+		public PadDescriptor(Type padType, string title, string icon)
+		{
+			this.padType = padType;
+			this.@class = padType.FullName;
+			this.title = title;
+			this.icon = icon;
+			this.category = "none";
+			this.shortcut = "";
+		}
 		
 		/// <summary>
 		/// Returns the title of the pad.
 		/// </summary>
 		public string Title {
 			get {
-				return codon.Properties["title"];
+				return title;
 			}
 		}
 		
 		/// <summary>
-		/// Returns the icon bitmap resource name of the pad. May be null, if the pad has no
-		/// icon defined.
+		/// Returns the icon bitmap resource name of the pad. May be an empty string
+		/// if the pad has no icon defined.
 		/// </summary>
 		public string Icon {
 			get {
-				return codon.Properties["icon"];
+				return icon;
 			}
 		}
 		
@@ -44,7 +85,12 @@ namespace ICSharpCode.Core
 		/// </summary>
 		public string Category {
 			get {
-				return codon.Properties["category"];
+				return category;
+			}
+			set {
+				if (value == null)
+					throw new ArgumentNullException("value");
+				category = value;
 			}
 		}
 		
@@ -53,13 +99,21 @@ namespace ICSharpCode.Core
 		/// </summary>
 		public string Shortcut {
 			get {
-				return codon.Properties["shortcut"];
+				return shortcut;
+			}
+			set {
+				if (value == null)
+					throw new ArgumentNullException("value");
+				shortcut = value;
 			}
 		}
 		
+		/// <summary>
+		/// Gets the name of the pad class.
+		/// </summary>
 		public string Class {
 			get {
-				return codon.Properties["class"];
+				return @class;
 			}
 		}
 		
@@ -99,7 +153,11 @@ namespace ICSharpCode.Core
 			#endif
 			if (!padContentCreated) {
 				padContentCreated = true;
-				padContent = (IPadContent)codon.AddIn.CreateObject(Class);
+				if (addIn != null) {
+					padContent = (IPadContent)addIn.CreateObject(Class);
+				} else {
+					padContent = (IPadContent)Activator.CreateInstance(padType);
+				}
 			}
 		}
 		
@@ -111,17 +169,6 @@ namespace ICSharpCode.Core
 				WorkbenchSingleton.Workbench.WorkbenchLayout.ShowPad(this);
 			}
 			WorkbenchSingleton.Workbench.WorkbenchLayout.ActivatePad(this);
-		}
-		
-		public PadDescriptor(Codon codon)
-		{
-			this.codon = codon;
-#if ModifiedForAltaxo
-      // neccessary in order to load some pads on startup (such pads that are services, like the message output pad)
-      string precreate = codon.Properties["precreated"];
-      if (precreate != null && precreate.ToLower() == "true")
-        CreatePad();
-#endif
 		}
 	}
 }

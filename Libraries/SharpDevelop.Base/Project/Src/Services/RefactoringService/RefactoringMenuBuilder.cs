@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1334 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
@@ -10,11 +10,11 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 
 using ICSharpCode.Core;
-using ICSharpCode.SharpDevelop;
 using ICSharpCode.SharpDevelop.Bookmarks;
 using ICSharpCode.SharpDevelop.Dom;
 using ICSharpCode.SharpDevelop.Gui;
 using ICSharpCode.SharpDevelop.Gui.ClassBrowser;
+using ICSharpCode.SharpDevelop.Project;
 using ICSharpCode.TextEditor;
 using ICSharpCode.TextEditor.Document;
 
@@ -182,7 +182,7 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 				if (definitions.Contains(c.DotNetName)) return null;
 				definitions.Add(c.DotNetName);
 			}
-			return MakeItem(c.FullyQualifiedName, new ClassNode(c.ProjectContent.Project, c), c.CompilationUnit, c.Region);
+			return MakeItem(c.FullyQualifiedName, new ClassNode((IProject)c.ProjectContent.Project, c), c.CompilationUnit, c.Region);
 		}
 		
 		ToolStripMenuItem MakeItemInternal(string title, int imageIndex, ICompilationUnit cu, DomRegion region)

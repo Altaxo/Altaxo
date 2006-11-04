@@ -2,15 +2,15 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Matthew Ward" email="mrward@users.sourceforge.net"/>
-//     <version>$Revision: 990 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
-using ICSharpCode.Core;
-using ICSharpCode.SharpDevelop;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
+
+using ICSharpCode.Core;
 
 namespace ICSharpCode.SharpDevelop.Internal.Templates
 {

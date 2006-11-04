@@ -2,16 +2,16 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1609 $</version>
 // </file>
 
 using System;
 using System.IO;
 using NUnit.Framework;
 using ICSharpCode.NRefactory.Parser;
-using ICSharpCode.NRefactory.Parser.AST;
+using ICSharpCode.NRefactory.Ast;
 
-namespace ICSharpCode.NRefactory.Tests.AST
+namespace ICSharpCode.NRefactory.Tests.Ast
 {
 	[TestFixture]
 	public class IdentifierExpressionTests
@@ -50,10 +50,9 @@ namespace ICSharpCode.NRefactory.Tests.AST
 		[Test]
 		public void VBNetAssemblyIdentifierExpressionTest()
 		{
-			IdentifierExpression ie = ParseUtilVBNet.ParseExpression<IdentifierExpression>("Assembly");
-			Assert.AreEqual("Assembly", ie.Identifier);
+			Assert.AreEqual("Assembly", ParseUtilVBNet.ParseExpression<IdentifierExpression>("Assembly").Identifier);
+			Assert.AreEqual("Custom", ParseUtilVBNet.ParseExpression<IdentifierExpression>("Custom").Identifier);
 		}
 		#endregion
-		
 	}
 }

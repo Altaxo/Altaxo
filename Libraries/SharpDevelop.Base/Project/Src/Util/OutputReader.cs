@@ -2,11 +2,10 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Matthew Ward" email="mrward@users.sourceforge.net"/>
-//     <version>$Revision: 1092 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Threading;
@@ -36,6 +35,7 @@ namespace ICSharpCode.SharpDevelop.Util
 		public void Start()
 		{
 			thread = new Thread(new ThreadStart(ReadOutput));
+			thread.Name = "OutputReader";
 			thread.Start();
 		}
 		

@@ -2,21 +2,15 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1209 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.IO;
 using System.Collections;
 using System.Windows.Forms;
 
-using ICSharpCode.SharpDevelop.Internal.ExternalTool;
-using ICSharpCode.SharpDevelop.Internal.Templates;
-
 using ICSharpCode.Core;
-
-using ICSharpCode.TextEditor;
-using ICSharpCode.TextEditor.Document;
+using ICSharpCode.SharpDevelop.Internal.Templates;
 
 namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 {
@@ -48,7 +42,7 @@ namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 			ControlDictionary["removeGroupButton"].Click += new System.EventHandler(RemoveGroupEvent);
 			
 			
-			((TextBox)ControlDictionary["templateTextBox"]).Font = ResourceService.CourierNew10;
+			((TextBox)ControlDictionary["templateTextBox"]).Font = ResourceService.DefaultMonospacedFont;
 			((TextBox)ControlDictionary["templateTextBox"]).TextChanged += new EventHandler(TextChange);
 			
 			((ListView)ControlDictionary["templateListView"]).Activation = ItemActivation.Standard;
@@ -213,9 +207,9 @@ namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 			int i = GetCurrentIndex();
 			
 			if (i != -1) {
-				ControlDictionary["templateTextBox"].Text    = ((CodeTemplate)((ListView)ControlDictionary["templateListView"]).SelectedItems[0].Tag).Text;
+				ControlDictionary["templateTextBox"].Text = ((CodeTemplate)((ListView)ControlDictionary["templateListView"]).SelectedItems[0].Tag).Text;
 			} else {
-				ControlDictionary["templateTextBox"].Text    = String.Empty;
+				ControlDictionary["templateTextBox"].Text = String.Empty;
 			}
 			SetEnabledStatus();
 		}
@@ -233,7 +227,7 @@ namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 			if (CurrentTemplateGroup != null) {
 				CurrentTemplateGroup.Templates.Clear();
 				foreach (ListViewItem item in ((ListView)ControlDictionary["templateListView"]).Items) {
-					CurrentTemplateGroup.Templates.Add(item.Tag);
+					CurrentTemplateGroup.Templates.Add((CodeTemplate)item.Tag);
 				}
 			}
 		}

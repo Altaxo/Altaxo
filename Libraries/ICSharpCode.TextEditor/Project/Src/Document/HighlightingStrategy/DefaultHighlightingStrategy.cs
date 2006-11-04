@@ -2,19 +2,13 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1394 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.Drawing;
-using System.Diagnostics;
 using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Reflection;
+using System.Drawing;
 using System.Windows.Forms;
-using System.Xml;
-using System.Text;
 
 namespace ICSharpCode.TextEditor.Document
 {
@@ -264,7 +258,7 @@ namespace ICSharpCode.TextEditor.Document
 		protected int currentLineNumber;
 		
 		// Span stack state variable
-		protected Stack<Span> currentSpanStack;
+		protected SpanStack currentSpanStack;
 
 		public virtual void MarkTokens(IDocument document)
 		{
@@ -280,14 +274,14 @@ namespace ICSharpCode.TextEditor.Document
 					break;                                                // then the last line is not in the collection :)
 				}
 				
-				currentSpanStack = ((previousLine != null && previousLine.HighlightSpanStack != null) ? new Stack<Span>(previousLine.HighlightSpanStack.ToArray()) : null);
+				currentSpanStack = ((previousLine != null && previousLine.HighlightSpanStack != null) ? previousLine.HighlightSpanStack.Clone() : null);
 				
 				if (currentSpanStack != null) {
-					while (currentSpanStack.Count > 0 && ((Span)currentSpanStack.Peek()).StopEOL)
+					while (!currentSpanStack.IsEmpty && currentSpanStack.Peek().StopEOL)
 					{
 						currentSpanStack.Pop();
 					}
-					if (currentSpanStack.Count == 0) currentSpanStack = null;
+					if (currentSpanStack.IsEmpty) currentSpanStack = null;
 				}
 				
 				currentLine = (LineSegment)document.LineSegmentCollection[lineNumber];
@@ -303,7 +297,7 @@ namespace ICSharpCode.TextEditor.Document
 					currentLine.Words.Clear();
 				}
 				currentLine.Words = words;
-				currentLine.HighlightSpanStack = (currentSpanStack==null || currentSpanStack.Count==0) ? null : currentSpanStack;
+				currentLine.HighlightSpanStack = (currentSpanStack==null || currentSpanStack.IsEmpty) ? null : currentSpanStack;
 				
 				++lineNumber;
 			}
@@ -318,12 +312,12 @@ namespace ICSharpCode.TextEditor.Document
 			bool processNextLine = false;
 			LineSegment previousLine = (lineNumber > 0 ? document.GetLineSegment(lineNumber - 1) : null);
 			
-			currentSpanStack = ((previousLine != null && previousLine.HighlightSpanStack != null) ? new Stack<Span>(previousLine.HighlightSpanStack.ToArray()) : null);
+			currentSpanStack = ((previousLine != null && previousLine.HighlightSpanStack != null) ? previousLine.HighlightSpanStack.Clone() : null);
 			if (currentSpanStack != null) {
-				while (currentSpanStack.Count > 0 && currentSpanStack.Peek().StopEOL) {
+				while (!currentSpanStack.IsEmpty && currentSpanStack.Peek().StopEOL) {
 					currentSpanStack.Pop();
 				}
-				if (currentSpanStack.Count == 0) {
+				if (currentSpanStack.IsEmpty) {
 					currentSpanStack = null;
 				}
 			}
@@ -336,13 +330,13 @@ namespace ICSharpCode.TextEditor.Document
 			
 			List<TextWord> words = ParseLine(document);
 			
-			if (currentSpanStack != null && currentSpanStack.Count == 0) {
+			if (currentSpanStack != null && currentSpanStack.IsEmpty) {
 				currentSpanStack = null;
 			}
 			
 			// Check if the span state has changed, if so we must re-render the next line
 			// This check may seem utterly complicated but I didn't want to introduce any function calls
-			// or alllocations here for perf reasons.
+			// or allocations here for perf reasons.
 			if(currentLine.HighlightSpanStack != currentSpanStack) {
 				if (currentLine.HighlightSpanStack == null) {
 					processNextLine = false;
@@ -363,8 +357,8 @@ namespace ICSharpCode.TextEditor.Document
 						}
 					}
 				} else {
-					IEnumerator<Span> e1 = currentSpanStack.GetEnumerator();
-					IEnumerator<Span> e2 = currentLine.HighlightSpanStack.GetEnumerator();
+					SpanStack.Enumerator e1 = currentSpanStack.GetEnumerator();
+					SpanStack.Enumerator e2 = currentLine.HighlightSpanStack.GetEnumerator();
 					bool done = false;
 					while (!done) {
 						bool blockSpanIn1 = false;
@@ -406,7 +400,7 @@ namespace ICSharpCode.TextEditor.Document
 			//// Alex: remove old words
 			if (currentLine.Words!=null) currentLine.Words.Clear();
 			currentLine.Words = words;
-			currentLine.HighlightSpanStack = (currentSpanStack != null && currentSpanStack.Count > 0) ? currentSpanStack : null;
+			currentLine.HighlightSpanStack = (currentSpanStack != null && !currentSpanStack.IsEmpty) ? currentSpanStack : null;
 			
 			return processNextLine;
 		}
@@ -466,8 +460,8 @@ namespace ICSharpCode.TextEditor.Document
 		
 		void UpdateSpanStateVariables()
 		{
-			inSpan = (currentSpanStack != null && currentSpanStack.Count > 0);
-			activeSpan = inSpan ? (Span)currentSpanStack.Peek() : null;
+			inSpan = (currentSpanStack != null && !currentSpanStack.IsEmpty);
+			activeSpan = inSpan ? currentSpanStack.Peek() : null;
 			activeRuleSet = GetRuleSet(activeSpan);
 		}
 
@@ -600,7 +594,7 @@ namespace ICSharpCode.TextEditor.Document
 						// Check for SPAN ENDs
 						if (inSpan) {
 							if (activeSpan.End != null && !activeSpan.End.Equals("")) {
-								if (currentLine.MatchExpr(activeSpan.End, i, document)) {
+								if (currentLine.MatchExpr(activeSpan.End, i, document, activeSpan.IgnoreCase)) {
 									PushCurWord(document, ref markNext, words);
 									string regex = currentLine.GetRegString(activeSpan.End, i, document);
 									currentLength += regex.Length;
@@ -618,7 +612,7 @@ namespace ICSharpCode.TextEditor.Document
 						// check for SPAN BEGIN
 						if (activeRuleSet != null) {
 							foreach (Span span in activeRuleSet.Spans) {
-								if (currentLine.MatchExpr(span.Begin, i, document)) {
+								if ((!span.IsBeginSingleWord || currentLength == 0) && currentLine.MatchExpr(span.Begin, i, document, activeRuleSet.IgnoreCase)) {
 									PushCurWord(document, ref markNext, words);
 									string regex = currentLine.GetRegString(span.Begin, i, document);
 									
@@ -630,9 +624,10 @@ namespace ICSharpCode.TextEditor.Document
 										
 										i += regex.Length - 1;
 										if (currentSpanStack == null) {
-											currentSpanStack = new Stack<Span>();
+											currentSpanStack = new SpanStack();
 										}
 										currentSpanStack.Push(span);
+										span.IgnoreCase = activeRuleSet.IgnoreCase;
 										
 										UpdateSpanStateVariables();
 									}

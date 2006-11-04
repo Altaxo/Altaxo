@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1925 $</version>
 // </file>
 
 using System;
@@ -12,11 +12,11 @@ using System.Windows.Forms;
 namespace ICSharpCode.TextEditor
 {
 	/// <summary>
-	/// Description of HRuler.	
+	/// Horizontal ruler - text column measuring ruler at the top of the text area.
 	/// </summary>
-	public class HRuler : UserControl
+	public class HRuler : Control
 	{
-		TextArea   textArea;
+		TextArea textArea;
 		
 		public HRuler(TextArea textArea)
 		{
@@ -49,10 +49,6 @@ namespace ICSharpCode.TextEditor
 			                                       0,
 			                                       Width,
 			                                       Height));
-			
 		}
-		
-		
-		
 	}
 }

@@ -2,22 +2,22 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1388 $</version>
+//     <version>$Revision: 1968 $</version>
 // </file>
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using System.Globalization;
-using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
-using System.Xml.Xsl;
+
 using ICSharpCode.Core;
-using ICSharpCode.SharpDevelop.Internal.Templates;
 using ICSharpCode.SharpDevelop.Gui;
+using ICSharpCode.SharpDevelop.Internal.Templates;
+using ICSharpCode.SharpDevelop.Debugging;
 
 namespace ICSharpCode.SharpDevelop.Project
 {
@@ -25,7 +25,37 @@ namespace ICSharpCode.SharpDevelop.Project
 	{
 		List<string> unknownXmlSections     = new List<string>();
 		List<string> userUnknownXmlSections = new List<string>();
+		List<MSBuildImport> imports         = new List<MSBuildImport>();
+		
 		protected char BuildConstantSeparator = ';';
+		
+		/// <summary>
+		/// A list of project properties whose change causes reparsing of references and
+		/// files.
+		/// </summary>
+		protected readonly List<string> reparseSensitiveProperties = new List<string>();
+		
+		/// <summary>
+		/// A list of project properties that are saved after the normal properties.
+		/// Use this for properties that could reference other properties, e.g.
+		/// PostBuildEvent references OutputPath.
+		/// </summary>
+		protected readonly List<string> lastSavedProperties = new List<string>(new string[]
+		                                                                       {"PostBuildEvent",
+		                                                                       	"PreBuildEvent"});
+		
+		/// <summary>
+		/// Gets the list of MSBuild Imports.
+		/// </summary>
+		/// <returns>
+		/// List of Import filenames, <example>$(MSBuildBinPath)\Microsoft.VisualBasic.targets</example>
+		/// </returns>
+		[Browsable(false)]
+		public List<MSBuildImport> Imports {
+			get {
+				return imports;
+			}
+		}
 		
 		public MSBuildProject()
 		{
@@ -44,8 +74,6 @@ namespace ICSharpCode.SharpDevelop.Project
 			BaseConfiguration.SetIsGuarded("Platform", true);
 			
 			configurations["Debug|*"] = new PropertyGroup();
-			configurations["Debug|*"]["BaseIntermediateOutputPath"] = @"obj\";
-			configurations["Debug|*"]["IntermediateOutputPath"] = @"obj\Debug\";
 			if (information.CreateProjectWithDefaultOutputPath) {
 				configurations["Debug|*"]["OutputPath"] = @"bin\Debug\";
 			}
@@ -55,8 +83,6 @@ namespace ICSharpCode.SharpDevelop.Project
 			configurations["Debug|*"]["DebugType"] = "Full";
 			
 			configurations["Release|*"] = new PropertyGroup();
-			configurations["Release|*"]["BaseIntermediateOutputPath"] = @"obj\";
-			configurations["Release|*"]["IntermediateOutputPath"] = @"obj\Release\";
 			if (information.CreateProjectWithDefaultOutputPath) {
 				configurations["Release|*"]["OutputPath"] = @"bin\Release\";
 			}
@@ -91,7 +117,7 @@ namespace ICSharpCode.SharpDevelop.Project
 		protected void SetupProject(string projectFileName)
 		{
 			this.FileName = Path.GetFullPath(projectFileName);
-			using (MSBuildFileReader reader = new MSBuildFileReader(projectFileName)) {
+			using (XmlTextReader reader = new XmlTextReader(projectFileName)) {
 				reader.WhitespaceHandling = WhitespaceHandling.Significant;
 				reader.Namespaces = false;
 				reader.MoveToContent(); // we have to skip over the XmlDeclaration (if it exists)
@@ -111,7 +137,11 @@ namespace ICSharpCode.SharpDevelop.Project
 								ProjectItem.ReadItemGroup(reader, this, Items);
 								break;
 							case "Import":
-								string import = reader.GetAttribute("Project");
+								string project = reader.GetAttribute("Project");
+								MSBuildImport import = new MSBuildImport(ProjectItem.MSBuildUnescape(project));
+								if (reader.GetAttribute("Condition") != null) {
+									import.Condition = reader.GetAttribute("Condition");
+								}
 								Imports.Add(import);
 								break;
 							default:
@@ -125,8 +155,9 @@ namespace ICSharpCode.SharpDevelop.Project
 			
 			string userSettingsFileName = projectFileName + ".user";
 			if (File.Exists(userSettingsFileName)) {
-				using (MSBuildFileReader reader = new MSBuildFileReader(userSettingsFileName)) {
+				using (XmlTextReader reader = new XmlTextReader(userSettingsFileName)) {
 					reader.WhitespaceHandling = WhitespaceHandling.Significant;
+					reader.Namespaces = false;
 					reader.MoveToContent(); // we have to skip over the XmlDeclaration (if it exists)
 					while (reader.Read()){
 						if (reader.IsStartElement()) {
@@ -146,16 +177,16 @@ namespace ICSharpCode.SharpDevelop.Project
 		
 		void ExpandWildcards()
 		{
-			for (int i = 0; i < items.Count; i++) {
-				ProjectItem item = items[i];
+			for (int i = 0; i < Items.Count; i++) {
+				ProjectItem item = Items[i];
 				if (item.Include.IndexOf('*') >= 0 && item is FileProjectItem) {
-					items.RemoveAt(i--);
+					Items.RemoveAt(i--);
 					try {
 						string path = Path.Combine(this.Directory, Path.GetDirectoryName(item.Include));
 						foreach (string file in System.IO.Directory.GetFiles(path, Path.GetFileName(item.Include))) {
 							ProjectItem n = item.Clone();
 							n.Include = FileUtility.GetRelativePath(this.Directory, file);
-							items.Insert(++i, n);
+							Items.Insert(++i, n);
 						}
 					} catch (Exception ex) {
 						MessageService.ShowError(ex, "Error expanding wildcards in " + item.Include);
@@ -179,7 +210,7 @@ namespace ICSharpCode.SharpDevelop.Project
 				Dictionary<string, PropertyGroup> configurations = isUserFile ? this.userConfigurations : this.configurations;
 				
 				string conditionProperty = match.Result("${property}");
-				string configuration = match.Result("${value}");
+				string configuration = ProjectItem.MSBuildUnescape(match.Result("${value}"));
 				if (conditionProperty == "$(Configuration)|$(Platform)") {
 					// configuration is ok
 				} else if (conditionProperty == "$(Configuration)") {
@@ -211,7 +242,7 @@ namespace ICSharpCode.SharpDevelop.Project
 			if (!System.IO.Directory.Exists(outputDirectory)) {
 				System.IO.Directory.CreateDirectory(outputDirectory);
 			}
-			using (MSBuildFileWriter writer = new MSBuildFileWriter(fileName, Encoding.UTF8)) {
+			using (XmlTextWriter writer = new XmlTextWriter(fileName, Encoding.UTF8)) {
 				writer.Formatting = Formatting.Indented;
 				writer.Namespaces = false;
 				
@@ -221,14 +252,14 @@ namespace ICSharpCode.SharpDevelop.Project
 				writer.WriteAttributeString("xmlns", "http://schemas.microsoft.com/developer/msbuild/2003");
 				BaseConfiguration["ProjectGuid"] = IdGuid;
 				
-				SaveProperties(writer, BaseConfiguration, configurations);
+				SaveProperties(writer, BaseConfiguration, configurations, 1);
 				
 				List<ProjectItem> references   = new List<ProjectItem>();
 				List<ProjectItem> imports      = new List<ProjectItem>();
 				List<ProjectItem> projectFiles = new List<ProjectItem>();
 				List<ProjectItem> other        = new List<ProjectItem>();
 				
-				foreach (ProjectItem item in this.items) {
+				foreach (ProjectItem item in this.Items) {
 					switch (item.ItemType) {
 						case ItemType.Reference:
 							references.Add(item);
@@ -265,61 +296,82 @@ namespace ICSharpCode.SharpDevelop.Project
 				
 				SaveUnknownXmlSections(writer, unknownXmlSections);
 				
-				foreach (string import in Imports) {
+				foreach (MSBuildImport import in Imports) {
 					writer.WriteStartElement("Import");
-					writer.WriteAttributeString("Project", import);
+					writer.WriteAttributeString("Project", ProjectItem.MSBuildEscape(import.Project));
+					if (import.Condition != null) {
+						writer.WriteAttributeString("Condition", import.Condition);
+					}
 					writer.WriteEndElement();
 				}
+				
+				SaveProperties(writer, BaseConfiguration, configurations, 2);
 				
 				writer.WriteEndElement();
 			}
 			
 			string userSettingsFileName = fileName + ".user";
 			if (userConfigurations.Count > 0 || UserBaseConfiguration.PropertyCount > 0 || File.Exists(userSettingsFileName)) {
-				using (MSBuildFileWriter writer = new MSBuildFileWriter(userSettingsFileName, Encoding.UTF8)) {
+				using (XmlTextWriter writer = new XmlTextWriter(userSettingsFileName, Encoding.UTF8)) {
 					writer.Formatting = Formatting.Indented;
 					writer.Namespaces = false;
 					writer.WriteStartElement("Project");
 					writer.WriteAttributeString("xmlns", "http://schemas.microsoft.com/developer/msbuild/2003");
 					
-					SaveProperties(writer, UserBaseConfiguration, userConfigurations);
+					SaveProperties(writer, UserBaseConfiguration, userConfigurations, 1);
 					SaveUnknownXmlSections(writer, userUnknownXmlSections);
+					SaveProperties(writer, UserBaseConfiguration, userConfigurations, 2);
+					
 					
 					writer.WriteEndElement();
 				}
 			}
 		}
 		
-		static void SaveProperties(MSBuildFileWriter writer, PropertyGroup baseConfiguration, Dictionary<string, PropertyGroup> configurations)
+		void SaveProperties(XmlWriter writer, PropertyGroup baseConfiguration, Dictionary<string, PropertyGroup> configurations, int runNumber)
 		{
+			Predicate<KeyValuePair<string, string>> filterPredicate;
+			if (runNumber == 1) {
+				filterPredicate = delegate(KeyValuePair<string, string> property) {
+					return !lastSavedProperties.Contains(property.Key);
+				};
+			} else {
+				filterPredicate = delegate(KeyValuePair<string, string> property) {
+					return lastSavedProperties.Contains(property.Key);
+				};
+			}
+			
 			if (baseConfiguration.PropertyCount > 0) {
-				writer.WriteStartElement("PropertyGroup");
-				baseConfiguration.WriteProperties(writer);
-				writer.WriteEndElement();
+				PropertyGroup.WriteProperties(writer,
+				                              string.Empty,
+				                              Linq.Where(baseConfiguration, filterPredicate),
+				                              baseConfiguration.IsGuardedProperty);
 			}
 			foreach (KeyValuePair<string, PropertyGroup> entry in configurations) {
 				// Skip empty groups
 				if (entry.Value.PropertyCount == 0) {
 					continue;
 				}
-				writer.WriteStartElement("PropertyGroup");
+				string condition;
 				if (entry.Key.StartsWith("*|")) {
-					writer.WriteAttributeString("Condition", " '$(Platform)' == '" + entry.Key.Substring(2) + "' ");
+					condition = " '$(Platform)' == '" + ProjectItem.MSBuildEscape(entry.Key.Substring(2)) + "' ";
 				} else if (entry.Key.EndsWith("|*")) {
-					writer.WriteAttributeString("Condition", " '$(Configuration)' == '" + entry.Key.Substring(0, entry.Key.Length - 2) + "' ");
+					condition = " '$(Configuration)' == '" + ProjectItem.MSBuildEscape(entry.Key.Substring(0, entry.Key.Length - 2)) + "' ";
 				} else {
-					writer.WriteAttributeString("Condition", " '$(Configuration)|$(Platform)' == '" + entry.Key + "' ");
+					condition = " '$(Configuration)|$(Platform)' == '" + ProjectItem.MSBuildEscape(entry.Key) + "' ";
 				}
-				entry.Value.WriteProperties(writer);
-				writer.WriteEndElement();
+				PropertyGroup.WriteProperties(writer,
+				                              condition,
+				                              Linq.Where(entry.Value, filterPredicate),
+				                              entry.Value.IsGuardedProperty);
 			}
 		}
 		
-		static void SaveUnknownXmlSections(MSBuildFileWriter writer, List<string> unknownElements)
+		static void SaveUnknownXmlSections(XmlWriter writer, List<string> unknownElements)
 		{
 			foreach (string element in unknownElements) {
 				// round-trip xml text again for better formatting
-				MSBuildFileReader reader = new MSBuildFileReader(new StringReader(element));
+				XmlTextReader reader = new XmlTextReader(new StringReader(element));
 				writer.WriteNode(reader, false);
 				reader.Close();
 			}
@@ -341,7 +393,7 @@ namespace ICSharpCode.SharpDevelop.Project
 			}
 		}
 		
-		void Start(string program, bool withDebugging)
+		protected void Start(string program, bool withDebugging)
 		{
 			ProcessStartInfo psi = new ProcessStartInfo();
 			psi.FileName = Path.Combine(Directory, program);
@@ -480,7 +532,7 @@ namespace ICSharpCode.SharpDevelop.Project
 		public override void Clean(MSBuildEngineCallback callback, IDictionary<string, string> additionalProperties)
 		{
 			RunMSBuild("Clean", callback, additionalProperties);
-			isDirty = true;
+			this.IsDirty = true;
 		}
 		
 		public override void Publish(MSBuildEngineCallback callback, IDictionary<string, string> additionalProperties)
@@ -494,6 +546,66 @@ namespace ICSharpCode.SharpDevelop.Project
 			                     FileName,
 			                     Name,
 			                     Items.Count);
+		}
+		
+		[ReadOnly(true)]
+		[LocalizedProperty("${res:Dialog.ProjectOptions.Platform}")]
+		public override string Platform {
+			get {
+				return base.Platform;
+			}
+			set {
+				if (base.Platform != value) {
+					SetPlatformOrConfiguration(true, value);
+				}
+			}
+		}
+		
+		[ReadOnly(true)]
+		[LocalizedProperty("${res:Dialog.ProjectOptions.Configuration}")]
+		public override string Configuration {
+			get {
+				return base.Configuration;
+			}
+			set {
+				if (base.Configuration != value) {
+					SetPlatformOrConfiguration(false, value);
+				}
+			}
+		}
+		
+		void SetPlatformOrConfiguration(bool platform, string newValue)
+		{
+			Dictionary<string, string> reparseSensitiveValues = new Dictionary<string, string>();
+			foreach (string p in reparseSensitiveProperties) {
+				reparseSensitiveValues[p] = GetProperty(p);
+			}
+			
+			if (platform)
+				base.Platform = newValue;
+			else
+				base.Configuration = newValue;
+			
+			foreach (string p in reparseSensitiveProperties) {
+				if (reparseSensitiveValues[p] != GetProperty(p)) {
+					ParserService.Reparse(this, true, true);
+					break;
+				}
+			}
+		}
+		
+		public override void SetProperty<T>(string configurationName, string platform, string property, T value, PropertyStorageLocations location)
+		{
+			if (reparseSensitiveProperties.Contains(property)) {
+				string oldValue = GetProperty(property);
+				base.SetProperty(configurationName, platform, property, value, location);
+				if (oldValue != GetProperty(property)) {
+					// change had an effect on current configuration
+					ParserService.Reparse(this, true, true);
+				}
+			} else {
+				base.SetProperty(configurationName, platform, property, value, location);
+			}
 		}
 	}
 }

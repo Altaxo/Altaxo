@@ -2,21 +2,22 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Matthew Ward" email="mrward@users.sourceforge.net"/>
-//     <version>$Revision: 1199 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
-using ICSharpCode.Core;
-using ICSharpCode.SharpDevelop.Project;
-using Microsoft.Win32;
 using System;
 using System.Collections;
 using System.Drawing;
 using System.IO;
-using System.Runtime.Remoting.Messaging;
 using System.Net;
+using System.Runtime.Remoting.Messaging;
 using System.Web.Services.Description;
 using System.Web.Services.Discovery;
 using System.Windows.Forms;
+
+using ICSharpCode.Core;
+using ICSharpCode.SharpDevelop.Project;
+using Microsoft.Win32;
 
 namespace ICSharpCode.SharpDevelop.Gui
 {

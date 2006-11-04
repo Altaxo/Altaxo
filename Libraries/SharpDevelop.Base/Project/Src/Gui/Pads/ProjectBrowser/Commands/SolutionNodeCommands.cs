@@ -2,22 +2,14 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1301 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
 using System.IO;
-using System.Threading;
-using System.Drawing;
-using System.Drawing.Printing;
-using System.Collections;
-using System.ComponentModel;
 using System.Windows.Forms;
-using System.Diagnostics;
 
 using ICSharpCode.Core;
-using ICSharpCode.SharpDevelop.Project;
-using ICSharpCode.SharpDevelop.Gui;
 using ICSharpCode.SharpDevelop.Project.Dialogs;
 
 namespace ICSharpCode.SharpDevelop.Project.Commands
@@ -52,8 +44,7 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 				newProject.Location = FileUtility.GetRelativePath(solutionFolderNode.Solution.Directory, fileName);
 				ProjectService.AddProject(solutionFolderNode, newProject);
 				NodeBuilders.AddProjectNode((TreeNode)solutionFolderNode, newProject).EnsureVisible();
-				solutionFolderNode.Solution.ApplySolutionConfigurationToProjects();
-				solutionFolderNode.Solution.ApplySolutionPlatformToProjects();
+				solutionFolderNode.Solution.ApplySolutionConfigurationAndPlatformToProjects();
 			}
 		}
 		
@@ -64,7 +55,7 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 			if (node != null) {
 				using (OpenFileDialog fdiag = new OpenFileDialog()) {
 					fdiag.AddExtension    = true;
-					fdiag.Filter = StringParser.Parse("${res:SharpDevelop.FileFilter.AllFiles}|*.*");
+					fdiag.Filter = ProjectService.GetAllProjectsFilter(this);
 					fdiag.Multiselect     = true;
 					fdiag.CheckFileExists = true;
 					if (fdiag.ShowDialog(ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.MainForm) == DialogResult.OK) {

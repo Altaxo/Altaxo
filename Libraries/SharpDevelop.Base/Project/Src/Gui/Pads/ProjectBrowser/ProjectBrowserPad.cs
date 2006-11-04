@@ -2,13 +2,13 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1388 $</version>
+//     <version>$Revision: 2003 $</version>
 // </file>
 
 using System;
 using System.Windows.Forms;
-using ICSharpCode.SharpDevelop.Gui;
 using ICSharpCode.Core;
+using ICSharpCode.SharpDevelop.Gui;
 
 namespace ICSharpCode.SharpDevelop.Project
 {
@@ -21,7 +21,14 @@ namespace ICSharpCode.SharpDevelop.Project
 		public static ProjectBrowserPad Instance {
 			get {
 				if (instance == null) {
-					WorkbenchSingleton.Workbench.GetPad(typeof(ProjectBrowserPad)).CreatePad();
+					PadDescriptor pad = WorkbenchSingleton.Workbench.GetPad(typeof(ProjectBrowserPad));
+					if (pad != null) {
+						pad.CreatePad();
+					} else {
+						// Pad is not used (stripped-down SD version, e.g. SharpReport)
+						// Create dummy pad to prevent NullReferenceExceptions
+						instance = new ProjectBrowserPad();
+					}
 				}
 				return instance;
 			}
@@ -33,7 +40,14 @@ namespace ICSharpCode.SharpDevelop.Project
 				return projectBrowserPanel.SelectedNode;
 			}
 		}
-		
+		public ProjectNode CurrentProject {
+			get {
+				AbstractProjectBrowserTreeNode node = SelectedNode;
+				while (node != null && !(node is ProjectNode))
+					node = (AbstractProjectBrowserTreeNode)node.Parent;
+				return (ProjectNode)node;
+			}
+		}
 		/// <summary>
 		/// Gets the root node of the project tree view.
 		/// </summary>

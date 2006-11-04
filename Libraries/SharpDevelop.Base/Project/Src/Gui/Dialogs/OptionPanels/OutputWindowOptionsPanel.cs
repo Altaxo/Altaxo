@@ -2,16 +2,10 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Matthew Ward" email="mrward@users.sourceforge.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
-using System.IO;
-using System.Drawing;
-using System.Drawing.Text;
-using System.Collections;
 using System.Windows.Forms;
-
-using ICSharpCode.SharpDevelop.Internal.ExternalTool;
 using ICSharpCode.Core;
 
 namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
@@ -39,7 +33,7 @@ namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 			ControlDictionary["FontGroupBox"].Controls.Add(fontSelectionPanel);
 			((CheckBox)ControlDictionary["wordWrapCheckBox"]).Checked = properties.Get("WordWrap", true);
 			
-			fontSelectionPanel.CurrentFontString = properties.Get("DefaultFont", ResourceService.CourierNew10.ToString()).ToString();
+			fontSelectionPanel.CurrentFontString = properties.Get("DefaultFont", ResourceService.DefaultMonospacedFont.ToString()).ToString();
 		}
 		
 		public override bool StorePanelContents()

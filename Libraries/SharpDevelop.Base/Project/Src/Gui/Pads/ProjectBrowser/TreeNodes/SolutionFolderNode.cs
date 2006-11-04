@@ -2,16 +2,15 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1334 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
 using System.Diagnostics;
-using System.IO;
 using System.Windows.Forms;
+
 using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.Gui;
-using ICSharpCode.SharpDevelop.Project.Dialogs;
 
 namespace ICSharpCode.SharpDevelop.Project
 {
@@ -172,6 +171,11 @@ namespace ICSharpCode.SharpDevelop.Project
 		
 		public static void DoPaste(ISolutionFolderNode folderNode)
 		{
+			if (!DoEnablePaste(folderNode)) {
+				LoggingService.Warn("SolutionFolderNode.DoPaste: Pasting was not enabled.");
+				return;
+			}
+			
 			ExtTreeNode folderTreeNode = (ExtTreeNode)folderNode;
 			IDataObject dataObject = ClipboardWrapper.GetDataObject();
 			

@@ -2,27 +2,23 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1388 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Drawing;
-using System.ComponentModel;
+using System.IO;
 using System.Windows.Forms;
-using System.Resources;
 
-using ICSharpCode.TextEditor.Document;
-using ICSharpCode.TextEditor.Gui.CompletionWindow;
-using ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor;
 using ICSharpCode.Core;
+using ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor;
 using ICSharpCode.SharpDevelop.Dom;
-using ICSharpCode.SharpDevelop.Project;
-
-using ICSharpCode.TextEditor;
 using ICSharpCode.SharpDevelop.Gui.XmlForms;
+using ICSharpCode.SharpDevelop.Project;
+using ICSharpCode.TextEditor;
+using ICSharpCode.TextEditor.Gui.CompletionWindow;
 
 namespace ICSharpCode.SharpDevelop.Gui
 {

@@ -1,9 +1,14 @@
+// <file>
+//     <copyright see="prj:///doc/copyright.txt"/>
+//     <license see="prj:///doc/license.txt"/>
+//     <owner name="Robert Zaunere" email=""/>
+//     <version>$Revision: 1965 $</version>
+// </file>
+
 using System;
-using System.IO;
-using ICSharpCode.Core;
 using System.Windows.Forms;
-using ICSharpCode.SharpDevelop.Project;
 using ICSharpCode.SharpDevelop.Dom;
+using ICSharpCode.SharpDevelop.Project;
 
 namespace ICSharpCode.SharpDevelop.Gui.ClassBrowser
 {

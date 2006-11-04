@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1336 $</version>
+//     <version>$Revision: 1885 $</version>
 // </file>
 
 using System;
@@ -20,6 +20,12 @@ namespace ICSharpCode.Core
 		public ICheckableMenuCommand MenuCommand {
 			get {
 				return menuCommand;
+			}
+		}
+		
+		public object Caller {
+			get {
+				return caller;
 			}
 		}
 		
@@ -50,6 +56,7 @@ namespace ICSharpCode.Core
 			if (menuCommand == null) {
 				MessageService.ShowError("Can't create toolbar checkbox : " + codon.Id);
 			}
+			menuCommand.Owner = this;
 			
 			if (codon.Properties.Contains("label")){
 				Text = StringParser.Parse(codon.Properties["label"]);

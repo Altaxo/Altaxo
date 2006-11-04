@@ -2,22 +2,17 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1963 $</version>
 // </file>
 
 using System;
-using System.IO;
-using System.Runtime.InteropServices;
-using System.Collections;
-using System.Drawing;
 using System.Reflection;
-using System.Resources;
-using System.Diagnostics;
 using System.Windows.Forms;
+
+using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.Dom;
 
-
-namespace ICSharpCode.Core
+namespace ICSharpCode.SharpDevelop
 {
 	public static class ClassBrowserIconService
 	{

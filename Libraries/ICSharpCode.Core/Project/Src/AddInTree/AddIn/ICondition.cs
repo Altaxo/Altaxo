@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1751 $</version>
 // </file>
 
 using System;
@@ -19,7 +19,7 @@ namespace ICSharpCode.Core
 	}
 		
 	/// <summary>
-	/// Description of ICondition.
+	/// Interface for single condition or complex condition.
 	/// </summary>
 	public interface ICondition
 	{

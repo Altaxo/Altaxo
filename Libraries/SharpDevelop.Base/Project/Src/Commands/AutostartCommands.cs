@@ -1,45 +1,23 @@
 ﻿// <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1334 $</version>
+//     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
+//     <version>$Revision: 1946 $</version>
 // </file>
 
 using System;
-using System.IO;
-using System.Collections;
-using System.CodeDom.Compiler;
+using System.Collections.Generic;
 using System.Windows.Forms;
-using System.Reflection;
-using System.Threading;
-using System.Runtime.Remoting;
-using System.Security.Policy;
 
 using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.Gui;
 using ICSharpCode.SharpDevelop.Project;
 
-using ICSharpCode.SharpDevelop.Dom;
-
 namespace ICSharpCode.SharpDevelop.Commands
 {
-	public class StartWorkbenchCommand // : AbstractCommand
+	public class StartWorkbenchCommand
 	{
 		const string workbenchMemento = "WorkbenchMemento";
-		
-		/// <remarks>
-		/// The worst workaround in the whole project
-		/// </remarks>
-		void ShowTipOfTheDay(object sender, EventArgs e)
-		{
-			Application.Idle -= ShowTipOfTheDay;
-			
-			// show tip of the day
-			if (PropertyService.Get("ShowTipsAtStartup", true)) {
-				ViewTipOfTheDay dview = new ViewTipOfTheDay();
-				dview.Run();
-			}
-		}
 		
 		class FormKeyHandler : IMessageFilter
 		{
@@ -97,12 +75,10 @@ namespace ICSharpCode.SharpDevelop.Commands
 			}
 		}
 		
-		public void Run(string[] fileList)
+		public void Run(IList<string> fileList)
 		{
 			Form f = (Form)WorkbenchSingleton.Workbench;
 			f.Show();
-			
-			Application.Idle += ShowTipOfTheDay;
 			
 			bool didLoadCombineOrFile = false;
 			

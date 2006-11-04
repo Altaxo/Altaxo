@@ -2,14 +2,15 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Andrea Paatz" email="andrea@icsharpcode.net"/>
-//     <version>$Revision: 1076 $</version>
+//     <version>$Revision: 1609 $</version>
 // </file>
 
 using System;
 using System.Reflection;
 using NUnit.Framework;
-using ICSharpCode.NRefactory.Parser.AST;
+using ICSharpCode.NRefactory.Ast;
 using ICSharpCode.NRefactory.Parser;
+using ICSharpCode.NRefactory.Visitors;
 
 namespace ICSharpCode.NRefactory.Tests
 {
@@ -29,11 +30,29 @@ namespace ICSharpCode.NRefactory.Tests
 			}
 		}
 		
+		[Test]
+		public void TestUnitTests()
+		{
+			Type[] allTypes = typeof(StructuralTest).Assembly.GetTypes();
+			
+			foreach (Type type in allTypes) {
+				if (type.GetCustomAttributes(typeof(TestFixtureAttribute), true).Length > 0) {
+					foreach (MethodInfo m in type.GetMethods()) {
+						if (m.IsPublic && m.ReturnType == typeof(void) && m.GetParameters().Length == 0) {
+							if (m.GetCustomAttributes(typeof(TestAttribute), true).Length == 0) {
+								Assert.Fail(type.Name + "." + m.Name + " should have the [Test] attribute!");
+							}
+						}
+					}
+				}
+			}
+		}
+		
 //		[Test]
 //		public void TestAcceptVisitorMethods()
 //		{
 //			Type[] allTypes = typeof(AbstractNode).Assembly.GetTypes();
-//			
+//
 //			foreach (Type type in allTypes) {
 //				if (type.IsClass && !type.IsAbstract && type.GetInterface(typeof(INode).FullName) != null) {
 //					MethodInfo methodInfo = type.GetMethod("AcceptVisitor", BindingFlags.Instance | BindingFlags.DeclaredOnly | BindingFlags.Public);
@@ -43,14 +62,14 @@ namespace ICSharpCode.NRefactory.Tests
 //		}
 		
 		[Test]
-		public void TestIASTVisitor()
+		public void TestIAstVisitor()
 		{
 			Type[] allTypes = typeof(AbstractNode).Assembly.GetTypes();
 			Type visitor = typeof(IAstVisitor);
 			
 			foreach (Type type in allTypes) {
 				if (type.IsClass && !type.IsAbstract && type.GetInterface(typeof(INode).FullName) != null && !type.Name.StartsWith("Null")) {
-					MethodInfo methodInfo = visitor.GetMethod("Visit", BindingFlags.Instance | BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.ExactBinding, null, new Type[] {type, typeof(object)}, null);
+					MethodInfo methodInfo = visitor.GetMethod("Visit" + type.Name, BindingFlags.Instance | BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.ExactBinding, null, new Type[] {type, typeof(object)}, null);
 					Assert.IsNotNull(methodInfo, "Visit with parameter " + type.FullName + " not found");
 					Assert.AreEqual(2, methodInfo.GetParameters().Length);
 					ParameterInfo first = methodInfo.GetParameters()[0];
@@ -71,7 +90,7 @@ namespace ICSharpCode.NRefactory.Tests
 			
 			foreach (Type type in allTypes) {
 				if (type.IsClass && !type.IsAbstract && type.GetInterface(typeof(INode).FullName) != null && !type.Name.StartsWith("Null")) {
-					MethodInfo methodInfo = visitor.GetMethod("Visit", BindingFlags.Instance | BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.ExactBinding, null, new Type[] {type, typeof(object)}, null);
+					MethodInfo methodInfo = visitor.GetMethod("Visit" + type.Name, BindingFlags.Instance | BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.ExactBinding, null, new Type[] {type, typeof(object)}, null);
 					Assert.IsNotNull(methodInfo, "Visit with parameter " + type.FullName + " not found");
 					
 					Assert.AreEqual(2, methodInfo.GetParameters().Length);

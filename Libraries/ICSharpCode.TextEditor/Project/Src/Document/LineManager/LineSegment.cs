@@ -2,12 +2,12 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.Drawing;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Text;
 
 namespace ICSharpCode.TextEditor.Document
@@ -17,7 +17,7 @@ namespace ICSharpCode.TextEditor.Document
 		int delimiterLength;
 		
 		List<TextWord> words              = null;
-		Stack<Span>    highlightSpanStack = null;
+		SpanStack highlightSpanStack = null;
 		
 		public TextWord GetWord(int column)
 		{
@@ -83,7 +83,7 @@ namespace ICSharpCode.TextEditor.Document
 			return new HighlightColor(Color.Black, false, false);
 		}
 		
-		public Stack<Span> HighlightSpanStack {
+		public SpanStack HighlightSpanStack {
 			get {
 				return highlightSpanStack;
 			}
@@ -160,7 +160,7 @@ namespace ICSharpCode.TextEditor.Document
 		/// <summary>
 		/// returns true, if the get the string s2 at index matches the expression expr
 		/// </summary>
-		internal bool MatchExpr(char[] expr, int index, IDocument document)
+		internal bool MatchExpr(char[] expr, int index, IDocument document, bool ignoreCase)
 		{
 			for (int i = 0, j = 0; i < expr.Length; ++i, ++j) {
 				switch (expr[i]) {
@@ -168,6 +168,16 @@ namespace ICSharpCode.TextEditor.Document
 						++i;
 						if (i < expr.Length) {
 							switch (expr[i]) {
+								case 'C': // match whitespace or punctuation
+									if (index + j == this.Offset || index + j >= this.Offset + this.Length) {
+										// nothing (EOL or SOL)
+									} else {
+										char ch = document.GetCharAt(this.Offset + index + j);
+										if (!Char.IsWhiteSpace(ch) && !Char.IsPunctuation(ch)) {
+											return false;
+										} 
+									}
+									break;
 								case '!': // don't match the following expression
 								{
 									StringBuilder whatmatch = new StringBuilder();
@@ -178,7 +188,9 @@ namespace ICSharpCode.TextEditor.Document
 									if (this.Offset + index + j + whatmatch.Length < document.TextLength) {
 										int k = 0;
 										for (; k < whatmatch.Length; ++k) {
-											if (document.GetCharAt(this.Offset + index + j + k) != whatmatch[k]) {
+											char docChar = ignoreCase ? Char.ToUpperInvariant(document.GetCharAt(this.Offset + index + j + k)) : document.GetCharAt(this.Offset + index + j + k);
+											char spanChar = ignoreCase ? Char.ToUpperInvariant(whatmatch[k]) : whatmatch[k];
+											if (docChar != spanChar) {
 												break;
 											}
 										}
@@ -198,9 +210,12 @@ namespace ICSharpCode.TextEditor.Document
 									}
 									if (index - whatmatch.Length >= 0) {
 										int k = 0;
-										for (; k < whatmatch.Length; ++k)
-											if (document.GetCharAt(this.Offset + index - whatmatch.Length + k) != whatmatch[k])
+										for (; k < whatmatch.Length; ++k) {
+											char docChar = ignoreCase ? Char.ToUpperInvariant(document.GetCharAt(this.Offset + index - whatmatch.Length + k)) : document.GetCharAt(this.Offset + index - whatmatch.Length + k);
+											char spanChar = ignoreCase ? Char.ToUpperInvariant(whatmatch[k]) : whatmatch[k];
+											if (docChar != spanChar)
 												break;
+										}
 										if (k >= whatmatch.Length) {
 											return false;
 										}
@@ -217,10 +232,17 @@ namespace ICSharpCode.TextEditor.Document
 						}
 						break;
 					default:
-						if (index + j >= this.Length || expr[i] != document.GetCharAt(this.Offset + index + j)) {
+					{
+						if (index + j >= this.Length) {
+							return false;
+						}
+						char docChar = ignoreCase ? Char.ToUpperInvariant(document.GetCharAt(this.Offset + index + j)) : document.GetCharAt(this.Offset + index + j);
+						char spanChar = ignoreCase ? Char.ToUpperInvariant(expr[i]) : expr[i];
+						if (docChar != spanChar) {
 							return false;
 						}
 						break;
+					}
 				}
 			}
 			return true;

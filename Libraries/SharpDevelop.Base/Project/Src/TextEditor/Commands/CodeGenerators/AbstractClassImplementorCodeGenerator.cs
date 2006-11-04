@@ -2,17 +2,16 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 946 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using ICSharpCode.NRefactory.Parser.AST;
 
+using ICSharpCode.NRefactory.Ast;
 using ICSharpCode.SharpDevelop.Dom;
-using ICSharpCode.SharpDevelop.Refactoring;
-using ICSharpCode.Core;
+using ICSharpCode.SharpDevelop.Dom.Refactoring;
 
 namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 {
@@ -20,13 +19,13 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 	{
 		public override string CategoryName {
 			get {
-				return "Abstract class overridings";
+				return "${res:ICSharpCode.SharpDevelop.CodeGenerator.AbstractClass}";
 			}
 		}
 		
 		public override string Hint {
 			get {
-				return "Choose abstract class to override";
+				return "${res:ICSharpCode.SharpDevelop.CodeGenerator.AbstractClass.Hint}";
 			}
 		}
 		
@@ -35,16 +34,16 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 			foreach (IProperty property in currentClass.DefaultReturnType.GetProperties()) {
 				if (property.IsAbstract) {
 					AttributedNode node = CodeGenerator.ConvertMember(property, classFinderContext);
-					node.Modifier &= ~Modifier.Abstract;
-					node.Modifier |= Modifier.Override;
+					node.Modifier &= ~(Modifiers.Abstract | Modifiers.Virtual);
+					node.Modifier |= Modifiers.Override;
 					nodes.Add(node);
 				}
 			}
 			foreach (IMethod method in currentClass.DefaultReturnType.GetMethods()) {
 				if (method.IsAbstract) {
 					AttributedNode node = CodeGenerator.ConvertMember(method, classFinderContext);
-					node.Modifier &= ~Modifier.Abstract;
-					node.Modifier |= Modifier.Override;
+					node.Modifier &= ~(Modifiers.Abstract | Modifiers.Virtual);
+					node.Modifier |= Modifiers.Override;
 					nodes.Add(node);
 				}
 			}

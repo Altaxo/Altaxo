@@ -2,11 +2,13 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1388 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
 using System.IO;
+using System.Text;
+
 using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.Gui;
 
@@ -56,12 +58,12 @@ namespace ICSharpCode.SharpDevelop.Project
 		
 		public static void InitializeService()
 		{
-			if (initialized)
-				throw new InvalidOperationException("ProjectService already is initialized");
-			initialized = true;
-			WorkbenchSingleton.Workbench.ActiveWorkbenchWindowChanged += ActiveWindowChanged;
-			FileService.FileRenamed += FileServiceFileRenamed;
-			FileService.FileRemoved += FileServiceFileRemoved;
+			if (!initialized) {
+				initialized = true;
+				WorkbenchSingleton.Workbench.ActiveWorkbenchWindowChanged += ActiveWindowChanged;
+				FileService.FileRenamed += FileServiceFileRenamed;
+				FileService.FileRemoved += FileServiceFileRemoved;
+			}
 		}
 
 		/// <summary>
@@ -92,7 +94,7 @@ namespace ICSharpCode.SharpDevelop.Project
 			}
 			return null;
 		}
-
+		
 		public static void LoadSolutionOrProject(string fileName)
 		{
 			IProjectLoader loader = GetProjectLoader(fileName);
@@ -278,8 +280,7 @@ namespace ICSharpCode.SharpDevelop.Project
 		
 		static void ApplyConfigurationAndReadPreferences()
 		{
-			openSolution.ApplySolutionConfigurationToProjects();
-			openSolution.ApplySolutionPlatformToProjects();
+			openSolution.ApplySolutionConfigurationAndPlatformToProjects();
 			foreach (IProject project in openSolution.Projects) {
 				string file = GetPreferenceFileName(project.FileName);
 				if (FileUtility.IsValidFileName(file) && File.Exists(file)) {
@@ -296,19 +297,52 @@ namespace ICSharpCode.SharpDevelop.Project
 			string solutionFile = Path.ChangeExtension(fileName, ".sln");
 			if (File.Exists(solutionFile)) {
 				LoadSolution(solutionFile);
-				return;
+				
+				if (openSolution != null) {
+					bool found = false;
+					foreach (IProject p in openSolution.Projects) {
+						if (FileUtility.IsEqualFileName(fileName, p.FileName)) {
+							found = true;
+							break;
+						}
+					}
+					if (found == false) {
+						string[,] parseArgs = {{"SolutionName", Path.GetFileName(solutionFile)}, {"ProjectName", Path.GetFileName(fileName)}};
+						int res = MessageService.ShowCustomDialog(MessageService.ProductName,
+						                                          StringParser.Parse("${res:ICSharpCode.SharpDevelop.Commands.OpenCombine.SolutionDoesNotContainProject}", parseArgs),
+						                                          0, 2,
+						                                          StringParser.Parse("${res:ICSharpCode.SharpDevelop.Commands.OpenCombine.SolutionDoesNotContainProject.AddProjectToSolution}", parseArgs),
+						                                          StringParser.Parse("${res:ICSharpCode.SharpDevelop.Commands.OpenCombine.SolutionDoesNotContainProject.CreateNewSolution}", parseArgs),
+						                                          "${res:Global.IgnoreButtonText}");
+						if (res == 0) {
+							// Add project to solution
+							Commands.AddExitingProjectToSolution.AddProject((ISolutionFolderNode)ProjectBrowserPad.Instance.SolutionNode, fileName);
+							SaveSolution();
+							return;
+						} else if (res == 1) {
+							CloseSolution();
+							try {
+								File.Copy(solutionFile, Path.ChangeExtension(solutionFile, ".old.sln"), true);
+							} catch (IOException){}
+						} else {
+							// ignore, just open the solution
+							return;
+						}
+					} else {
+						// opened solution instead and correctly found the project
+						return;
+					}
+				} else {
+					// some problem during opening, abort
+					return;
+				}
 			}
 			Solution solution = new Solution();
 			solution.Name = Path.GetFileNameWithoutExtension(fileName);
 			ILanguageBinding binding = LanguageBindingService.GetBindingPerProjectFile(fileName);
 			IProject project;
 			if (binding != null) {
-				try {
-					project = LanguageBindingService.LoadProject(fileName, solution.Name);
-				} catch (UnauthorizedAccessException ex) {
-					MessageService.ShowError(ex.Message);
-					return;
-				}
+				project = LanguageBindingService.LoadProject(fileName, solution.Name);
 			} else {
 				MessageService.ShowError(StringParser.Parse("${res:ICSharpCode.SharpDevelop.Commands.OpenCombine.InvalidProjectOrCombine}", new string[,] {{"FileName", fileName}}));
 				return;
@@ -327,9 +361,11 @@ namespace ICSharpCode.SharpDevelop.Project
 				}
 			}
 			solution.FixSolutionConfiguration(new IProject[] { project });
-			solution.Save(solutionFile);
 			
-			LoadSolution(solutionFile);
+			if (FileUtility.ObservedSave((NamedFileOperationDelegate)solution.Save, solutionFile) == FileOperationResult.OK) {
+				// only load when saved succesfully
+				LoadSolution(solutionFile);
+			}
 		}
 		
 		public static void SaveSolution()
@@ -341,6 +377,32 @@ namespace ICSharpCode.SharpDevelop.Project
 				}
 				OnSolutionSaved(new SolutionEventArgs(openSolution));
 			}
+		}
+		
+		/// <summary>
+		/// Returns a File Dialog filter that can be used to filter on all registered project formats
+		/// </summary>
+		public static string GetAllProjectsFilter(object caller)
+		{
+			AddInTreeNode addinTreeNode = AddInTree.GetTreeNode("/SharpDevelop/Workbench/Combine/FileFilter");
+			StringBuilder b = new StringBuilder(StringParser.Parse("${res:SharpDevelop.Solution.AllKnownProjectFormats}|"));
+			bool first = true;
+			foreach (Codon c in addinTreeNode.Codons) {
+				string ext = c.Properties.Get("extensions", "");
+				if (ext != "*.*" && ext.Length > 0) {
+					if (!first) {
+						b.Append(';');
+					} else {
+						first = false;
+					}
+					b.Append(ext);
+				}
+			}
+			foreach (string entry in addinTreeNode.BuildChildItems(caller)) {
+				b.Append('|');
+				b.Append(entry);
+			}
+			return b.ToString();
 		}
 		
 		static string GetPreferenceFileName(string projectFileName)
@@ -459,22 +521,17 @@ namespace ICSharpCode.SharpDevelop.Project
 			}
 		}
 		
-		static void OnStartBuild(EventArgs e)
+		public static void RaiseEventStartBuild()
 		{
 			if (StartBuild != null) {
-				StartBuild(null, e);
+				StartBuild(null, EventArgs.Empty);
 			}
 		}
 		
-		public static void OnEndBuild()
-		{
-			OnEndBuild(new EventArgs());
-		}
-		
-		static void OnEndBuild(EventArgs e)
+		public static void RaiseEventEndBuild()
 		{
 			if (EndBuild != null) {
-				EndBuild(null, e);
+				EndBuild(null, EventArgs.Empty);
 			}
 		}
 		

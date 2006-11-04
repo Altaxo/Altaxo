@@ -2,20 +2,14 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1199 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.ComponentModel;
-
-using System.CodeDom.Compiler;
-using System.IO;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Collections;
 using System.Collections.Generic;
-using ICSharpCode.Core;
-using ICSharpCode.SharpDevelop.Gui;
+using System.ComponentModel;
+using System.IO;
+using System.Text.RegularExpressions;
 
 namespace ICSharpCode.SharpDevelop.Project
 {

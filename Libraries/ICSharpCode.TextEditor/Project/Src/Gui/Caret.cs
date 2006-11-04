@@ -2,24 +2,13 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1106 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.ComponentModel;
 using System.Drawing;
-using System.Threading;
-using System.Drawing.Text;
-using System.Drawing.Drawing2D;
-using System.Drawing.Printing;
-using System.Diagnostics;
-using System.Windows.Forms;
-using System.Runtime.Remoting;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Xml;
 
 using ICSharpCode.TextEditor.Document;
 
@@ -285,8 +274,26 @@ namespace ICSharpCode.TextEditor
 		static extern bool HideCaret(IntPtr hWnd);
 		#endregion
 		
+		bool firePositionChangedAfterUpdateEnd;
+		
+		void FirePositionChangedAfterUpdateEnd(object sender, EventArgs e)
+		{
+			OnPositionChanged(EventArgs.Empty);
+		}
+		
 		protected virtual void OnPositionChanged(EventArgs e)
 		{
+			if (this.textArea.MotherTextEditorControl.IsInUpdate) {
+				if (firePositionChangedAfterUpdateEnd == false) {
+					firePositionChangedAfterUpdateEnd = true;
+					this.textArea.Document.UpdateCommited += FirePositionChangedAfterUpdateEnd;
+				}
+				return;
+			} else if (firePositionChangedAfterUpdateEnd) {
+				this.textArea.Document.UpdateCommited -= FirePositionChangedAfterUpdateEnd;
+				firePositionChangedAfterUpdateEnd = false;
+			}
+			
 			List<FoldMarker> foldings = textArea.Document.FoldingManager.GetFoldingsFromPosition(line, column);
 			bool  shouldUpdate = false;
 			foreach (FoldMarker foldMarker in foldings) {

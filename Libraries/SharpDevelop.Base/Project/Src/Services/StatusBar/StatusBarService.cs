@@ -2,23 +2,23 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 1965 $</version>
 // </file>
 
 using System;
-using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 
+using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.Gui;
 
-namespace ICSharpCode.Core
+namespace ICSharpCode.SharpDevelop
 {
-	public class StatusBarService
+	public static class StatusBarService
 	{
 		static SdStatusBar statusBar = null;
 		
-		static StatusBarService()
+		internal static void Initialize()
 		{
 			statusBar = new SdStatusBar();
 		}
@@ -88,6 +88,11 @@ namespace ICSharpCode.Core
 		{
 			System.Diagnostics.Debug.Assert(statusBar != null);
 			statusBar.SetMessage(image, StringParser.Parse(message));
+		}
+		
+		public static void SetMessage(string message, bool highlighted)
+		{
+			statusBar.SetMessage(message, highlighted);
 		}
 		
 		static bool   wasError    = false;
