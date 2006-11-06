@@ -432,6 +432,16 @@ namespace Altaxo.Worksheet.GUI
       }
     }
 
+    /// <summary>
+    /// Builds an <see cref="INavigationPoint"/> for the current position.
+    /// </summary>
+    public ICSharpCode.SharpDevelop.INavigationPoint BuildNavPoint()
+    {
+      return null;
+    }
+
+    public event EventHandler FileNameChanged;
+
     #endregion
 
    

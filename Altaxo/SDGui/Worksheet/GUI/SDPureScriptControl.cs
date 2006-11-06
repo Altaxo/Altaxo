@@ -31,6 +31,7 @@ using Altaxo.Gui;
 using Altaxo.Gui.Scripting;
 
 using ICSharpCode.Core;
+using ICSharpCode.SharpDevelop;
 
 namespace Altaxo.Worksheet.GUI
 {
@@ -185,9 +186,12 @@ namespace Altaxo.Worksheet.GUI
         {
           this.edFormula.Text = value;
 
+
           // The following line is a trick to re-get the complete folding of the text
           // otherwise, when you change the text here, the folding will be disabled
-          this.edFormula.Document.FoldingManager.FoldMarker.Clear(); 
+
+          // TODO 2006-11-06test if this works without the following line
+        //  this.edFormula.Document.FoldingManager.FoldMarker.Clear(); 
         }
       }
     }

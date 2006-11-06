@@ -113,25 +113,22 @@ namespace ICSharpCode.SharpDevelop
 				Assembly exe = typeof(SharpDevelopMain).Assembly;
 				startup.ApplicationRootPath = Path.Combine(Path.GetDirectoryName(exe.Location), "..");
 				startup.AllowUserAddIns = true;
+#if ModifiedForAltaxo
+        startup.ConfigDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                                               "Altaxo/Altaxo2");
+        startup.ResourceAssemblyName = "AltaxoStartup";
+#else
 				startup.ConfigDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
 				                                       "ICSharpCode/SharpDevelop2.1");
-				
+#endif				
 				startup.AddAddInsFromDirectory(Path.Combine(startup.ApplicationRootPath, "AddIns"));
-#if ModifiedForAltaxo				
-//				CoreStartup c = new CoreStartup("Altaxo");
-//        c.ConfigDirectory = FileUtility.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".Altaxo", "Altaxo2") + Path.DirectorySeparatorChar;
-#else
-//				CoreStartup c = new CoreStartup("SharpDevelop");
-//				c.ConfigDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-			                                 ".ICSharpCode/SharpDevelop2.1");
-#endif
-//        LoggingService.Info("Starting core services...");
-//				c.StartCoreServices();
+
+        SharpDevelopHost host = new SharpDevelopHost(AppDomain.CurrentDomain, startup);
+
 #if ModifiedForAltaxo
-//          ResourceService.LoadUserStrings("AltaxoString.resources");
-//          ResourceService.LoadUserIcons("AltaxoBitmap.resources");
+          ResourceService.LoadUserStrings("AltaxoString.resources");
+          ResourceService.LoadUserIcons("AltaxoBitmap.resources");
 #endif
-				SharpDevelopHost host = new SharpDevelopHost(AppDomain.CurrentDomain, startup);
 				
 				string[] fileList = SplashScreenForm.GetRequestedFileList();
 				if (fileList.Length > 0) {
@@ -147,9 +144,8 @@ namespace ICSharpCode.SharpDevelop
 					}
 				};
 #if ModifiedForAltaxo
-        Altaxo.Gui.AltaxoSDWorkbench wb = new Altaxo.Gui.AltaxoSDWorkbench();
-        Altaxo.Current.SetWorkbench(wb);
-				WorkbenchSingleton.InitializeWorkbench(wb);
+				WorkbenchSingleton.InitializeWorkbench(typeof(Altaxo.Gui.AltaxoSDWorkbench));
+        Altaxo.Current.SetWorkbench((Altaxo.Gui.Common.IWorkbench)WorkbenchSingleton.Workbench);
         new Altaxo.Main.Commands.AutostartCommand().Run();
 #else
 				WorkbenchSingleton.InitializeWorkbench();

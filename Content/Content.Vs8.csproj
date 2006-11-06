@@ -93,6 +93,7 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Content Include="data\templates\project\CSharp\DefaultAssemblyInfo.cs" />
     <Compile Include="HelpSetup.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -174,23 +175,34 @@
     <Content Include="data\templates\project\CSharp\WebpageProject.xpt" />
     <Content Include="data\templates\project\CSharp\WPFApplication.xpt" />
     <Content Include="data\templates\project\CSharp\WPFNavigationApplication.xpt" />
+    <Content Include="data\templates\project\VBNet\DefaultAssemblyInfo.vb" />
     <Content Include="data\templates\project\VBNet\ProjectCategorySortOrder.xml" />
     <Content Include="data\templates\project\VBNet\SharpDevelopAddin.xpt" />
     <Content Include="data\templates\project\VBNet\SharpDevelopMacro.xpt" />
     <Content Include="data\templates\file\VBNet\VBNet.Gtk.Window.xft" />
     <Content Include="data\templates\project\VBNet\GtkProject.xpt" />
+    <Content Include="data\schemas\wixloc.xsd">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="data\templates\file\CSharp\CSharp.Struct.xft" />
+    <Content Include="data\templates\project\CSharp\CompactFormsProject.xpt" />
+    <Content Include="data\templates\project\CSharp\NotifyIcon.xpt" />
+    <Content Include="data\templates\project\CSharp\SharedAddin.xpt" />
+    <Content Include="data\templates\project\CSharp\WebService.xpt" />
+    <Content Include="data\templates\project\VBNet\SharedAddin.xpt" />
     <None Include="HelpConverter.InstallState" />
     <Content Include="data\resources\StringResources.no.resources" />
+    <Content Include="data\templates\project\CSharp\NotifyIconResources.resx">
+      <SubType>Designer</SubType>
+    </Content>
     <EmbeddedResource Include="HelpSetup.resx">
       <DependentUpon>HelpSetup.cs</DependentUpon>
     </EmbeddedResource>
-    <Content Include="data\ConversionStyleSheets\ConvertPrjx10to11.xsl" />
     <Content Include="data\ConversionStyleSheets\ShowChangeLog.xsl" />
     <Content Include="data\ConversionStyleSheets\ShowXmlDocumentation.xsl" />
     <Content Include="data\ConversionStyleSheets\SVNChangelogToXml.xsl" />
     <Content Include="data\modes\C64CSharp.xshd" />
     <Content Include="data\modes\CSharp-Mode-VSEnh.xshd" />
-    <Content Include="data\modes\Jay-Mode.xshd" />
     <Content Include="data\options\SharpDevelopControlLibrary.sdcl" />
     <Content Include="data\options\SharpDevelopProperties.xml" />
     <Content Include="data\options\SharpDevelop-templates.xml" />
@@ -200,7 +212,6 @@
     <Content Include="data\options\TextLib\CSharpDocumentationTags.xml" />
     <Content Include="data\options\TextLib\Licenses.xml" />
     <Content Include="data\options\TextLib\XSLT.xml" />
-    <Content Include="data\options\TipsOfTheDay.xml" />
     <Content Include="data\resources\AltaxoBitmap.resources" />
     <Content Include="data\resources\AltaxoString.resources" />
     <Content Include="data\resources\css\MsdnHelp.css" />
@@ -270,11 +281,9 @@
     <Content Include="data\resources\StringResources.fr.resources" />
     <Content Include="data\resources\StringResources.hu.resources" />
     <Content Include="data\resources\StringResources.it.resources" />
-    <Content Include="data\resources\StringResources.jp.resources" />
     <Content Include="data\resources\StringResources.kr.resources" />
     <Content Include="data\resources\StringResources.nl.resources" />
     <Content Include="data\resources\StringResources.pl.resources" />
-    <Content Include="data\resources\StringResources.pt.resources" />
     <Content Include="data\resources\StringResources.pt-br.resources" />
     <Content Include="data\resources\StringResources.ro.resources" />
     <Content Include="data\resources\StringResources.se.resources" />
@@ -297,8 +306,6 @@
     <Content Include="data\templates\file\Misc\EmptyResourceFile.xft" />
     <Content Include="data\templates\file\Misc\EmptyTextFile.xft" />
     <Content Include="data\templates\file\Misc\EmptyXMLFile.xft" />
-    <Content Include="data\templates\file\Misc\EmptyXmlForm.xft" />
-    <Content Include="data\templates\file\Misc\EmptyXmlUserControl.xft" />
     <Content Include="data\templates\file\SharpDevelop\ExampleMenuCommand.xft" />
     <Content Include="data\templates\file\SharpDevelop\ExampleOptionPanel.xft" />
     <Content Include="data\templates\file\SharpDevelop\ExamplePad.xft" />

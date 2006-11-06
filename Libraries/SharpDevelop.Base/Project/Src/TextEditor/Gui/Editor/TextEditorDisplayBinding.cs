@@ -117,24 +117,40 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			public void SetWatcher(string fileName)
 			{
 				this.fileName = fileName;
-				try {
-					if (this.watcher == null) {
-						this.watcher = new FileSystemWatcher();
-						this.watcher.SynchronizingObject = WorkbenchSingleton.MainForm;
-						this.watcher.Changed += new FileSystemEventHandler(this.OnFileChangedEvent);
-					} else {
-						this.watcher.EnableRaisingEvents = false;
-					}
-					this.watcher.Path = Path.GetDirectoryName(fileName);
-					this.watcher.Filter = Path.GetFileName(fileName);
-					this.watcher.NotifyFilter = NotifyFilters.LastWrite;
-					this.watcher.EnableRaisingEvents = true;
-				} catch (PlatformNotSupportedException) {
-					if (watcher != null) {
-						watcher.Dispose();
-					}
-					watcher = null;
-				}
+        try
+        {
+          if (this.watcher == null)
+          {
+            this.watcher = new FileSystemWatcher();
+            this.watcher.SynchronizingObject = WorkbenchSingleton.MainForm;
+            this.watcher.Changed += new FileSystemEventHandler(this.OnFileChangedEvent);
+          }
+          else
+          {
+            this.watcher.EnableRaisingEvents = false;
+          }
+          this.watcher.Path = Path.GetDirectoryName(fileName);
+          this.watcher.Filter = Path.GetFileName(fileName);
+          this.watcher.NotifyFilter = NotifyFilters.LastWrite;
+          this.watcher.EnableRaisingEvents = true;
+        }
+        catch (PlatformNotSupportedException)
+        {
+          if (watcher != null)
+          {
+            watcher.Dispose();
+          }
+          watcher = null;
+        }
+#if ModifiedForAltaxo
+          // modified because Altaxo's file names are not real files on disk, so the watcher can't find them
+        catch (ArgumentException ex)
+        {
+          if (watcher != null)
+            watcher.Dispose();
+          watcher = null;
+        }
+#endif
 			}
 			
 			void OnFileChangedEvent(object sender, FileSystemEventArgs e)

@@ -576,16 +576,16 @@ namespace ICSharpCode.SharpDevelop
 			//LoggingService.Debug("Stacktrace is:\n" + Environment.StackTrace);
 			defaultProjectContent = new DefaultProjectContent();
 			defaultProjectContent.AddReferencedContent(defaultProjectContentRegistry.Mscorlib);
-			Thread t = new Thread(new ThreadStart(CreateDefaultProjectContentReferences));
+      #if ModifiedForAltaxo
+      //defaultProjectContent.AddReferencedContent(ProjectContentRegistry.GetProjectContentForReference("AltaxoCore","AltaxoCore"));
+      //defaultProjectContent.AddReferencedContent(defaultProjectContentRegistry.GetExistingProjectContent("AltaxoBase","AltaxoBase"));
+      //defaultProjectContent.AddReferencedContent(defaultProjectContentRegistry.GetExistingProjectContent("AltaxoSDGui","AltaxoSDGui"));
+      #endif
+      Thread t = new Thread(new ThreadStart(CreateDefaultProjectContentReferences));
 			t.IsBackground = true;
 			t.Priority = ThreadPriority.BelowNormal;
 			t.Name = "CreateDefaultPC";
 			t.Start();
-#if ModifiedForAltaxo
-        "AltaxoCore",
-        "AltaxoBase",
-        "AltaxoSDGui",
-#endif
 		}
 		
 		static void CreateDefaultProjectContentReferences()

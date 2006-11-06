@@ -26,6 +26,7 @@ using ICSharpCode.Core;
 using Altaxo;
 using Altaxo.Main;
 using ICSharpCode.SharpZipLib.Zip;
+using ICSharpCode.SharpDevelop;
 using ICSharpCode.SharpDevelop.Gui;
 
 namespace Altaxo.Main.Commands

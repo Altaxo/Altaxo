@@ -66,14 +66,14 @@ namespace ICSharpCode.SharpDevelop.Gui
 		}
 		
 #if ModifiedForAltaxo
- 		public static void InitializeWorkbench(DefaultWorkbench wb)
+ 		public static void InitializeWorkbench(System.Type workbenchtype)
 		{
 			LayoutConfiguration.LoadLayoutConfiguration();
 			StatusBarService.Initialize();
 			DomHostCallback.Register(); // must be called after StatusBarService.Initialize()
 			ParserService.InitializeParserService();
-			
-    workbench = wb;
+
+      workbench = (ICSharpCode.SharpDevelop.Gui.DefaultWorkbench)Activator.CreateInstance(workbenchtype);
 #else
     public static void InitializeWorkbench()
     {

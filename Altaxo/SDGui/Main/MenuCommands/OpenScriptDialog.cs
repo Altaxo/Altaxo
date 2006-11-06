@@ -30,6 +30,7 @@ using Altaxo.Worksheet;
 using Altaxo.Worksheet.GUI;
 
 using ICSharpCode.SharpZipLib.Zip;
+using ICSharpCode.SharpDevelop;
 using ICSharpCode.SharpDevelop.Gui;
 using ICSharpCode.Core;
 

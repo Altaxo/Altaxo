@@ -29,9 +29,6 @@ rmdir /S /Q .\Content\bin
 rmdir /S /Q .\Libraries\AssemblySvnVersion\obj
 rmdir /S /Q .\Libraries\AssemblySvnVersion\bin
 
-rmdir /S /Q .\Libraries\CommandBar\obj
-rmdir /S /Q .\Libraries\CommandBar\bin
-
 rmdir /S /Q .\Libraries\CSharpBinding\Project\obj
 rmdir /S /Q .\Libraries\CSharpBinding\Project\bin
 rmdir /S /Q .\Libraries\CSharpBinding\Test\obj
@@ -41,6 +38,15 @@ rmdir /S /Q .\Libraries\ICSharpCode.Core\Project\obj
 rmdir /S /Q .\Libraries\ICSharpCode.Core\Project\bin
 rmdir /S /Q .\Libraries\ICSharpCode.Core\Test\obj
 rmdir /S /Q .\Libraries\ICSharpCode.Core\Test\bin
+
+rmdir /S /Q .\Libraries\ICSharpCode.SharpDevelop.Dom\Project\obj
+rmdir /S /Q .\Libraries\ICSharpCode.SharpDevelop.Dom\Project\bin
+
+rmdir /S /Q .\Libraries\ICSharpCode.SharpDevelop.Sda\obj
+rmdir /S /Q .\Libraries\ICSharpCode.SharpDevelop.Sda\bin
+
+rmdir /S /Q .\Libraries\ICSharpCode.SharpDevelop.Widgets\Project\obj
+rmdir /S /Q .\Libraries\ICSharpCode.SharpDevelop.Widgets\Project\bin
 
 rmdir /S /Q .\Libraries\ICSharpCode.TextEditor\Project\obj
 rmdir /S /Q .\Libraries\ICSharpCode.TextEditor\project\bin
@@ -64,7 +70,6 @@ rmdir /S /Q .\Libraries\SharpDevelop.Base\Project\obj
 rmdir /S /Q .\Libraries\SharpDevelop.Base\Project\bin
 rmdir /S /Q .\Libraries\SharpDevelop.Base\Test\obj
 rmdir /S /Q .\Libraries\SharpDevelop.Base\Test\bin
-
 
 
 rmdir /S /Q .\Libraries\SharpZipLib\src\obj
