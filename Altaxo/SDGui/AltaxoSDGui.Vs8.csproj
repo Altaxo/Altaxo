@@ -117,23 +117,26 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Gui\AltaxoSDWorkbench.cs">
-      <SubType>Form</SubType>
+    <Compile Include="Gui\Pads\DataDisplayController.cs" />
+    <Compile Include="Gui\Pads\FileScout.cs">
+      <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Gui\Pads\OutputWindowController.cs" />
     <Compile Include="Gui\Pads\ProjectBrowser\ProjectTree.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Gui\SharpDevelop\SDGraphViewContent.cs" />
-    <Compile Include="Gui\SharpDevelop\SDWorksheetViewContent.cs" />
-    <Compile Include="Main\GUI\DataDisplayController.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Main\GUI\FileScout.cs">
+    <Compile Include="Gui\Scripting\SDPureScriptControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Main\GUI\OutputWindowController.cs">
-      <SubType>Code</SubType>
+    <Compile Include="Gui\Scripting\SDTableScriptControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Gui\Scripting\SDTableScriptController.cs" />
+    <Compile Include="Gui\SharpDevelop\AltaxoSDWorkbench.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Gui\SharpDevelop\SDGraphViewContent.cs" />
+    <Compile Include="Gui\SharpDevelop\SDWorksheetViewContent.cs" />
     <Compile Include="Gui\Pads\ProjectBrowser\ProjectScout.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -168,30 +171,18 @@
     <Compile Include="Main\ZippedStreamWrapper.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Worksheet\GUI\SDPureScriptControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Worksheet\GUI\TableScriptControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Worksheet\GUI\TableScriptController.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <EmbeddedResource Include="Gui\Pads\ProjectBrowser\ProjectScout.resx">
       <DependentUpon>ProjectScout.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Worksheet\GUI\SDPureScriptControl.resx">
+    <EmbeddedResource Include="Gui\Scripting\SDPureScriptControl.resx">
       <DependentUpon>SDPureScriptControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Worksheet\GUI\TableScriptControl.resx">
-      <DependentUpon>TableScriptControl.cs</DependentUpon>
+    <EmbeddedResource Include="Gui\Scripting\SDTableScriptControl.resx">
+      <DependentUpon>SDTableScriptControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Graph\GUI\" />
-    <Folder Include="Gui\Scripting\" />
-    <Folder Include="Root\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
