@@ -34,6 +34,7 @@ using ICSharpCode.SharpDevelop.Gui;
 using ICSharpCode.SharpDevelop.Commands;
 
 using Altaxo.Gui;
+using Altaxo.Gui.SharpDevelop;
 
 namespace Altaxo.Main.Commands // ICSharpCode.SharpDevelop.Commands
 {

@@ -70,7 +70,7 @@ namespace Altaxo.Worksheet.GUI
   /// <summary>
   /// Summary description for TableScriptController.
   /// </summary>
-  public class TableScriptController : ITableScriptController
+  public class SDTableScriptController : ITableScriptController
   {
     protected Altaxo.Data.DataTable m_DataTable;
     protected ScriptExecutionHandler m_ScriptExecution;
@@ -78,7 +78,7 @@ namespace Altaxo.Worksheet.GUI
 
     protected ITableScriptView m_View;
 
-    public TableScriptController(Altaxo.Data.DataTable dataTable, TableScript tableScript)
+    public SDTableScriptController(Altaxo.Data.DataTable dataTable, TableScript tableScript)
     {
       this.m_DataTable = dataTable;
 
@@ -95,7 +95,7 @@ namespace Altaxo.Worksheet.GUI
 
     }
 
-    public TableScriptController(ScriptExecutionHandler exec, IScriptText script)
+    public SDTableScriptController(ScriptExecutionHandler exec, IScriptText script)
     {
       this.m_ScriptExecution = exec;
 

@@ -34,7 +34,7 @@ namespace Altaxo.Worksheet.GUI
   /// <summary>
   /// Summary description for TableScriptControl.
   /// </summary>
-  public class TableScriptControl : System.Windows.Forms.UserControl, ITableScriptView
+  public class SDTableScriptControl : System.Windows.Forms.UserControl, ITableScriptView
   {
     //private System.Windows.Forms.TextBox edFormula;
     private ICSharpCode.TextEditor.TextEditorControl edFormula;
@@ -52,7 +52,7 @@ namespace Altaxo.Worksheet.GUI
 
     private ITableScriptController m_Controller;
 
-    public TableScriptControl()
+    public SDTableScriptControl()
     {
       // This call is required by the Windows.Forms Form Designer.
       InitializeComponent();

@@ -48,11 +48,11 @@ namespace Altaxo.Worksheet.Commands
 
       if (Current.Workbench.ActiveViewContent == null)
         return false;
-      if (!(Current.Workbench.ActiveViewContent is Altaxo.Worksheet.GUI.SDWorksheetViewContent))
+      if (!(Current.Workbench.ActiveViewContent is Altaxo.Gui.SharpDevelop.SDWorksheetViewContent))
         return false;
 
-      Altaxo.Worksheet.GUI.SDWorksheetViewContent ctrl
-        = Current.Workbench.ActiveViewContent as Altaxo.Worksheet.GUI.SDWorksheetViewContent;
+      Altaxo.Gui.SharpDevelop.SDWorksheetViewContent ctrl
+        = Current.Workbench.ActiveViewContent as Altaxo.Gui.SharpDevelop.SDWorksheetViewContent;
 
       int val = ctrl.Controller.SelectedDataColumns.Count;
 

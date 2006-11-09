@@ -47,9 +47,9 @@ namespace Altaxo.Worksheet.Commands
     /// </summary>
     public override void Run()
     {
-      Altaxo.Worksheet.GUI.SDWorksheetViewContent ctrl 
-        = Current.Workbench.ActiveViewContent 
-        as Altaxo.Worksheet.GUI.SDWorksheetViewContent;
+      Altaxo.Gui.SharpDevelop.SDWorksheetViewContent ctrl 
+        = Current.Workbench.ActiveViewContent
+        as Altaxo.Gui.SharpDevelop.SDWorksheetViewContent;
 
       if(null!=ctrl)
         Run(ctrl.Controller);

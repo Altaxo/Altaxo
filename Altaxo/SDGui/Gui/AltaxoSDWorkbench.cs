@@ -38,7 +38,7 @@ using ICSharpCode.SharpDevelop.Gui;
 
 
 
-namespace Altaxo.Gui
+namespace Altaxo.Gui.SharpDevelop
 {
   /// <summary>
   /// This is the a Workspace with a multiple document interface.

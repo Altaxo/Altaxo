@@ -117,13 +117,14 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Graph\GUI\SDGraphController.cs" />
     <Compile Include="Gui\AltaxoSDWorkbench.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Gui\Pads\ProjectBrowser\ProjectTree.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Gui\SharpDevelop\SDGraphViewContent.cs" />
+    <Compile Include="Gui\SharpDevelop\SDWorksheetViewContent.cs" />
     <Compile Include="Main\GUI\DataDisplayController.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -135,12 +136,6 @@
     </Compile>
     <Compile Include="Gui\Pads\ProjectBrowser\ProjectScout.cs">
       <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Main\GUI\WindowsMdiWorkbenchLayout.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Main\GUI\WorkbenchViewController.cs">
-      <SubType>Code</SubType>
     </Compile>
     <Compile Include="Main\MenuCommands\AutostartCommands.cs">
       <SubType>Code</SubType>
@@ -173,14 +168,8 @@
     <Compile Include="Main\ZippedStreamWrapper.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Root\MainController.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Worksheet\GUI\SDPureScriptControl.cs">
       <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Worksheet\GUI\SDWorksheetController.cs">
-      <SubType>Code</SubType>
     </Compile>
     <Compile Include="Worksheet\GUI\TableScriptControl.cs">
       <SubType>UserControl</SubType>
@@ -198,6 +187,11 @@
     <EmbeddedResource Include="Worksheet\GUI\TableScriptControl.resx">
       <DependentUpon>TableScriptControl.cs</DependentUpon>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Graph\GUI\" />
+    <Folder Include="Gui\Scripting\" />
+    <Folder Include="Root\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

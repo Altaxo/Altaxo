@@ -32,7 +32,7 @@ using Altaxo.Worksheet.GUI;
 using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.Gui;
 
-namespace Altaxo.Worksheet.GUI
+namespace Altaxo.Gui.SharpDevelop
 {
 #if true
 

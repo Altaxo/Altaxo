@@ -29,11 +29,12 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
+using Altaxo.Graph.GUI;
 using Altaxo.Serialization;
 using ICSharpCode.SharpDevelop.Gui;
 
 
-namespace Altaxo.Graph.GUI
+namespace Altaxo.Gui.SharpDevelop
 {
 #if true
 
