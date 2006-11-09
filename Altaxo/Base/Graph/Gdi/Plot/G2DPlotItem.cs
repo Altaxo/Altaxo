@@ -6,10 +6,11 @@ using System.Drawing.Drawing2D;
 
 namespace Altaxo.Graph.Gdi.Plot
 {
-  using PlotGroups;
+  using Graph.Plot.Groups;
   using Groups;
   using Styles;
   using Data;
+  using Graph.Plot.Data;
 
   [Serializable]
   public abstract class G2DPlotItem : PlotItem

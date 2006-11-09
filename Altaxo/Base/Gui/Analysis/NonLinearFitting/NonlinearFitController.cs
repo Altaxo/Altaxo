@@ -30,6 +30,7 @@ using Altaxo.Calc.Regression.Nonlinear;
 using Altaxo.Graph.Gdi.Plot;
 using Altaxo.Graph.Gdi.Plot.Data;
 using Altaxo.Graph.Gdi.Plot.Styles;
+using Altaxo.Graph.Plot.Data;
 
 namespace Altaxo.Gui.Analysis.NonLinearFitting
 {

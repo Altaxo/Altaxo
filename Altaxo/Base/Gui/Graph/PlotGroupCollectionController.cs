@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 
 using Altaxo.Collections;
-using Altaxo.Graph.PlotGroups;
+using Altaxo.Graph.Plot.Groups;
 using Altaxo.Graph.Gdi.Plot;
 using Altaxo.Graph.Gdi.Plot.Groups;
 using Altaxo.Main.Services;

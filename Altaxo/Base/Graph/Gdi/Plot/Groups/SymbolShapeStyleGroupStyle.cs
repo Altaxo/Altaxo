@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Altaxo.Graph.Gdi.Plot.Groups
 {
-  using PlotGroups;
+  using Graph.Plot.Groups;
 
   using Plot.Styles.XYPlotScatterStyles;
 

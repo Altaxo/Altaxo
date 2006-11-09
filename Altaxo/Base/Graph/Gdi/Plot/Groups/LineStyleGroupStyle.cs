@@ -6,7 +6,7 @@ using System.Drawing.Drawing2D;
 
 namespace Altaxo.Graph.Gdi.Plot.Groups
 {
-  using PlotGroups;
+  using Graph.Plot.Groups;
 
   public class LineStyleGroupStyle : IPlotGroupStyle
   {

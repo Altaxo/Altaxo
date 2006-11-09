@@ -28,6 +28,7 @@ using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Plot;
 using Altaxo.Graph.Gdi.Plot.Data;
 using Altaxo.Graph.Gdi.Plot.Styles;
+using Altaxo.Graph.Plot.Data;
 
 
 namespace Altaxo.Graph.Procedures

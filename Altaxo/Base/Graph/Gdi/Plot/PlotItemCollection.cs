@@ -9,7 +9,7 @@ using Altaxo.Graph.Scales.Boundaries;
 namespace Altaxo.Graph.Gdi.Plot
 {
   using Plot.Groups;
-  using PlotGroups;
+  using Graph.Plot.Groups;
 
   [Serializable]
   public class PlotItemCollection 

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Altaxo.Graph.PlotGroups
+namespace Altaxo.Graph.Plot.Groups
 {
   /// <summary>
   /// Enumerates the strictness of the coupling between plot items into a plot group.

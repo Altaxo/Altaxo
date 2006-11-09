@@ -21,6 +21,7 @@
 #endregion
 
 using System;
+using Altaxo.Graph.Plot.Data;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Plot.Data;
 

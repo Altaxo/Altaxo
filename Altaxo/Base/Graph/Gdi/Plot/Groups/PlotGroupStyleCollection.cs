@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-using Altaxo.Graph.PlotGroups;
+using Altaxo.Graph.Plot.Groups;
 namespace Altaxo.Graph.Gdi.Plot.Groups
 {
   public class PlotGroupStyleCollection 

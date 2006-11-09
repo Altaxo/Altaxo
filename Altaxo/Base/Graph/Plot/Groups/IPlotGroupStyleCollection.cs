@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Altaxo.Graph.PlotGroups
+namespace Altaxo.Graph.Plot.Groups
 {
   public interface IPlotGroupStyleCollection : IEnumerable<IPlotGroupStyle>, ICloneable
   {

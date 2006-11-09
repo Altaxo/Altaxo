@@ -29,6 +29,7 @@ using Altaxo.Calc.Regression.Multivariate;
 using Altaxo.Data;
 using Altaxo.Gui.Common;
 
+using Altaxo.Graph.Plot.Data;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Background;
 using Altaxo.Graph.Gdi.Plot;

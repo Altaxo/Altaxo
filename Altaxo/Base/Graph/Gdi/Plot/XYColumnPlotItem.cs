@@ -32,6 +32,7 @@ namespace Altaxo.Graph.Gdi.Plot
 {
   using Styles;
   using Data;
+  using Graph.Plot.Data;
 
   /// <summary>
   /// Association of data and style specialized for x-y-plots of column data.

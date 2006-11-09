@@ -29,6 +29,7 @@ using Altaxo.Graph.Scales.Boundaries;
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
   using Plot.Data;
+  using Graph.Plot.Data;
 
   /// <summary>
   /// This plot style is responsible for showing density plots as pixel image. Because of the limitation to a pixel image, each pixel is correlated

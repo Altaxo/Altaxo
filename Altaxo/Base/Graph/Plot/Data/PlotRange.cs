@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Altaxo.Graph.Gdi.Plot.Data
+namespace Altaxo.Graph.Plot.Data
 {
   /// <summary>
   /// PlotRange represents a range of plotting points from index 

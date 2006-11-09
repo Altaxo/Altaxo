@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Altaxo.Graph.PlotGroups
+namespace Altaxo.Graph.Plot.Groups
 {
   /// <summary>
   /// Support of plotting properties, that can be grouped together, for instance color or line style.

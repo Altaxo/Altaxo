@@ -28,7 +28,7 @@ using System.Data;
 using System.Windows.Forms;
 
 
-using Altaxo.Graph.PlotGroups;
+using Altaxo.Graph.Plot.Groups;
 
 namespace Altaxo.Gui.Graph
 {
@@ -222,7 +222,7 @@ namespace Altaxo.Gui.Graph
  
     
 
-    public void InitializePlotGroupConditions(bool bColor, bool bLineType, bool bSymbol, bool bConcurrently, Altaxo.Graph.PlotGroups.PlotGroupStrictness bStrict)
+    public void InitializePlotGroupConditions(bool bColor, bool bLineType, bool bSymbol, bool bConcurrently, Altaxo.Graph.Plot.Groups.PlotGroupStrictness bStrict)
     {
       this._rbtConcurrently.Checked=  bConcurrently;
       this._rbtSequential.Checked = !bConcurrently;
@@ -256,7 +256,7 @@ namespace Altaxo.Gui.Graph
     {
       get { return m_chkPlotGroupSymbol.Checked; }
     }
-    public Altaxo.Graph.PlotGroups.PlotGroupStrictness PlotGroupStrict
+    public Altaxo.Graph.Plot.Groups.PlotGroupStrictness PlotGroupStrict
     {
       get 
       {

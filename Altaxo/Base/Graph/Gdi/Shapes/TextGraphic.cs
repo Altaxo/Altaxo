@@ -33,6 +33,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 {
   using Plot;
   using Plot.Data;
+  using Graph.Plot.Data;
   using Background;
 
 

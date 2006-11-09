@@ -24,9 +24,10 @@ using System;
 using System.Drawing;
 
 
-namespace Altaxo.Graph.Gdi.Plot.Data
+namespace Altaxo.Graph.Plot.Data
 {
   using Scales;
+  using Gdi.Plot.Data;
 
   #region XYFunctionPlotData
   /// <summary>
@@ -194,7 +195,7 @@ namespace Altaxo.Graph.Gdi.Plot.Data
     /// <param name="ptArray">On return, this is an array of plot points in layer coordinates.</param>
     /// <returns>True if the function is successfull, otherwise false.</returns>
     public Processed2DPlotData GetRangesAndPoints(
-      IPlotArea layer)
+      Gdi.IPlotArea layer)
     {
       const int functionPoints = 1000;
       const double MaxRelativeValue = 1E6;
@@ -220,7 +221,7 @@ namespace Altaxo.Graph.Gdi.Plot.Data
       int rangeStart = 0;
       PlotRangeList rangeList = new PlotRangeList();
       result.RangeList = rangeList;
-      G2DCoordinateSystem coordsys = layer.CoordinateSystem;
+      Gdi.G2DCoordinateSystem coordsys = layer.CoordinateSystem;
 
       NumericalScale xaxis = layer.XAxis as NumericalScale;
       NumericalScale yaxis = layer.YAxis as NumericalScale;

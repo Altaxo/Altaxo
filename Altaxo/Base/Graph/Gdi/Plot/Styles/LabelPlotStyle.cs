@@ -31,9 +31,10 @@ using Altaxo.Graph.Gdi.Background;
 
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
-  using PlotGroups;
+  using Graph.Plot.Groups;
   using Plot.Groups;
   using Plot.Data;
+  using Graph.Plot.Data;
 
   public class LabelPlotStyle :
     ICloneable,

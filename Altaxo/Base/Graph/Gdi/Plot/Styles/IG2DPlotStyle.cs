@@ -6,7 +6,7 @@ using Altaxo.Graph.Gdi.Plot.Data;
 
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
-  using PlotGroups;
+  using Graph.Plot.Groups;
   using Groups;
 
   public interface IG2DPlotStyle : ICloneable, Main.IChangedEventSource, Main.IDocumentNode

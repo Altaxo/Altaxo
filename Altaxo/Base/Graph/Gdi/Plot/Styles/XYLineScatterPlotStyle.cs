@@ -30,6 +30,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 {
   using Scales;
   using Plot.Data;
+  using Graph.Plot.Data;
 
   /// <summary>
   /// Used for constructor of <see cref="XYLineScatterPlotStyle" /> to choose between Line, Scatter and both.

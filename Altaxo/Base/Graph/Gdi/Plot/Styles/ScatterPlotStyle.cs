@@ -29,7 +29,9 @@ using Altaxo.Serialization;
 
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
-  using PlotGroups;
+  using Graph.Plot.Groups;
+  using Graph.Plot.Data;
+
   using Plot.Groups;
   using Plot.Data;
 

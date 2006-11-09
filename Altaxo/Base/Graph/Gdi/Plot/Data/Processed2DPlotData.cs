@@ -5,6 +5,7 @@ using System.Drawing;
 using Altaxo.Data;
 namespace Altaxo.Graph.Gdi.Plot.Data
 {
+  using Graph.Plot.Data;
   /// <summary>
   /// Allows access not only to the original physical plot data,
   /// but also to the plot ranges and to the plot points in absolute layer coordiates.

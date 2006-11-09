@@ -27,11 +27,9 @@ using Altaxo.Data;
 using Altaxo.Graph.Scales;
 using Altaxo.Graph.Scales.Boundaries;
 
-namespace Altaxo.Graph.Gdi.Plot.Data
+namespace Altaxo.Graph.Plot.Data
 {
-
-  
- 
+  using Gdi.Plot.Data;
 
   /// <summary>
   /// Summary description for XYColumnPlotData.
@@ -902,7 +900,7 @@ namespace Altaxo.Graph.Gdi.Plot.Data
     /// <param name="ptArray">On return, this is an array of plot points in layer coordinates.</param>
     /// <returns>True if the function is successfull, otherwise false.</returns>
     public Processed2DPlotData GetRangesAndPoints(
-      IPlotArea layer)
+      Gdi.IPlotArea layer)
     {
       const double MaxRelativeValue = 1E2;
       MyPlotData result = new MyPlotData();
@@ -943,7 +941,7 @@ namespace Altaxo.Graph.Gdi.Plot.Data
 
       Scale xAxis = layer.XAxis;
       Scale yAxis = layer.YAxis;
-      G2DCoordinateSystem coordsys = layer.CoordinateSystem;
+      Gdi.G2DCoordinateSystem coordsys = layer.CoordinateSystem;
 
 
       int len = this.PlotRangeEnd;
