@@ -609,7 +609,7 @@ namespace Altaxo.Main
     public Altaxo.Worksheet.GUI.IWorksheetController CreateNewWorksheet(Altaxo.Data.DataTable table, Altaxo.Worksheet.WorksheetLayout layout)
     {
       layout.DataTable = table;
-      Altaxo.Worksheet.GUI.SDWorksheetController ctrl = new Altaxo.Worksheet.GUI.SDWorksheetController(layout);
+      Altaxo.Worksheet.GUI.SDWorksheetViewContent ctrl = new Altaxo.Worksheet.GUI.SDWorksheetViewContent(layout);
       Altaxo.Worksheet.GUI.WorksheetView view = new Altaxo.Worksheet.GUI.WorksheetView();
       ctrl.Controller.View = view;
 
@@ -719,7 +719,7 @@ namespace Altaxo.Main
       if (graph == null)
         graph = this.CurrentOpenProject.CreateNewGraphDocument();
 
-      Altaxo.Graph.GUI.SDGraphController ctrl = new Altaxo.Graph.GUI.SDGraphController(graph);
+      Altaxo.Graph.GUI.SDGraphViewContent ctrl = new Altaxo.Graph.GUI.SDGraphViewContent(graph);
       Altaxo.Graph.GUI.GraphView view = new Altaxo.Graph.GUI.GraphView();
       ctrl.Controller.View = view;
 

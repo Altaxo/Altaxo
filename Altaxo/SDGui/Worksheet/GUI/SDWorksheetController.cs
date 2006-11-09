@@ -36,7 +36,7 @@ namespace Altaxo.Worksheet.GUI
 {
 #if true
 
-  public class SDWorksheetController : AbstractViewContent, Altaxo.Gui.IMVCControllerWrapper, IEditable, IClipboardHandler
+  public class SDWorksheetViewContent : AbstractViewContent, Altaxo.Gui.IMVCControllerWrapper, IEditable, IClipboardHandler
   {
     Altaxo.Worksheet.GUI.WorksheetController _controller;
 
@@ -56,7 +56,7 @@ namespace Altaxo.Worksheet.GUI
         WorksheetController s = new WorksheetController(null, true);
         info.GetBaseValueEmbedded(s, typeof(WorksheetController), parent);
 
-        return new SDWorksheetController(s);
+        return new SDWorksheetViewContent(s);
       }
     }
     #endregion
@@ -66,7 +66,7 @@ namespace Altaxo.Worksheet.GUI
     /// Creates a GraphController which shows the <see cref="GraphDocument"/> <paramref name="graphdoc"/>.    
     /// </summary>
     /// <param name="graphdoc">The graph which holds the graphical elements.</param>
-    public SDWorksheetController(Altaxo.Worksheet.WorksheetLayout layout)
+    public SDWorksheetViewContent(Altaxo.Worksheet.WorksheetLayout layout)
       : this(layout, false)
     {
     }
@@ -77,19 +77,19 @@ namespace Altaxo.Worksheet.GUI
     /// </summary>
     /// <param name="layout">The worksheet layout.</param>
     /// <param name="bDeserializationConstructor">If true, no layout has to be provided, since this is used as deserialization constructor.</param>
-    protected SDWorksheetController(Altaxo.Worksheet.WorksheetLayout layout, bool bDeserializationConstructor)
+    protected SDWorksheetViewContent(Altaxo.Worksheet.WorksheetLayout layout, bool bDeserializationConstructor)
     {
       _controller = new WorksheetController(layout);
     }
 
-    protected SDWorksheetController(WorksheetController ctrl)
+    protected SDWorksheetViewContent(WorksheetController ctrl)
     {
       _controller = ctrl;
     }
 
     #endregion
 
-    public static implicit operator Altaxo.Worksheet.GUI.WorksheetController(SDWorksheetController ctrl)
+    public static implicit operator Altaxo.Worksheet.GUI.WorksheetController(SDWorksheetViewContent ctrl)
     {
       return ctrl._controller;
     }

@@ -38,7 +38,7 @@ namespace Altaxo.Graph.GUI
 #if true
 
 
-  public class SDGraphController : AbstractViewContent, Altaxo.Gui.IMVCControllerWrapper, IEditable, IClipboardHandler
+  public class SDGraphViewContent : AbstractViewContent, Altaxo.Gui.IMVCControllerWrapper, IEditable, IClipboardHandler
   {
     Altaxo.Graph.GUI.GraphController _controller;
 
@@ -58,7 +58,7 @@ namespace Altaxo.Graph.GUI
         GraphController s = new GraphController(null,true);
         info.GetBaseValueEmbedded(s,typeof(GraphController),parent);
 
-        return new SDGraphController(s);
+        return new SDGraphViewContent(s);
       }
     }
     #endregion
@@ -68,7 +68,7 @@ namespace Altaxo.Graph.GUI
     /// Creates a GraphController which shows the <see cref="GraphDocument"/> <paramref name="graphdoc"/>.    
     /// </summary>
     /// <param name="graphdoc">The graph which holds the graphical elements.</param>
-    public SDGraphController(GraphDocument graphdoc)
+    public SDGraphViewContent(GraphDocument graphdoc)
       : this(graphdoc,false)
     {
     }
@@ -78,19 +78,19 @@ namespace Altaxo.Graph.GUI
     /// </summary>
     /// <param name="graphdoc">The graph which holds the graphical elements.</param>
     /// <param name="bDeserializationConstructor">If true, this is a special constructor used only for deserialization, where no graphdoc needs to be supplied.</param>
-    protected SDGraphController(GraphDocument graphdoc, bool bDeserializationConstructor)
+    protected SDGraphViewContent(GraphDocument graphdoc, bool bDeserializationConstructor)
     {
       _controller = new GraphController(graphdoc);
     }
 
-    protected SDGraphController(GraphController ctrl)
+    protected SDGraphViewContent(GraphController ctrl)
     {
       _controller = ctrl;
     }
 
     #endregion
 
-    public static implicit operator Altaxo.Graph.GUI.GraphController(SDGraphController ctrl)
+    public static implicit operator Altaxo.Graph.GUI.GraphController(SDGraphViewContent ctrl)
     {
       return ctrl._controller;
     }

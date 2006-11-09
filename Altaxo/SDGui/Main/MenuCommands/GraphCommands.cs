@@ -55,9 +55,9 @@ namespace Altaxo.Graph.Commands
     /// </summary>
     public override void Run()
     {
-      Altaxo.Graph.GUI.SDGraphController ctrl 
+      Altaxo.Graph.GUI.SDGraphViewContent ctrl 
         = Current.Workbench.ActiveViewContent 
-        as Altaxo.Graph.GUI.SDGraphController;
+        as Altaxo.Graph.GUI.SDGraphViewContent;
       
       if(null!=ctrl)
         Run(ctrl.Controller);
@@ -497,7 +497,7 @@ namespace Altaxo.Graph.Commands
       {
         if (null != Current.Workbench && null != Current.Workbench.ActiveViewContent)
         {
-          Altaxo.Graph.GUI.SDGraphController ct = Current.Workbench.ActiveViewContent as Altaxo.Graph.GUI.SDGraphController;
+          Altaxo.Graph.GUI.SDGraphViewContent ct = Current.Workbench.ActiveViewContent as Altaxo.Graph.GUI.SDGraphViewContent;
           return ct.Controller;
         }
         else

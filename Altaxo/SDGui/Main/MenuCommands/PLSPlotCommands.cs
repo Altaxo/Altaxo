@@ -47,11 +47,11 @@ namespace Altaxo.Worksheet.Commands
 
       if(Current.Workbench.ActiveViewContent==null)
         return false;
-      if(!(Current.Workbench.ActiveViewContent is Altaxo.Worksheet.GUI.SDWorksheetController))
+      if(!(Current.Workbench.ActiveViewContent is Altaxo.Worksheet.GUI.SDWorksheetViewContent))
         return false;
 
-      Altaxo.Worksheet.GUI.SDWorksheetController ctrl 
-        = Current.Workbench.ActiveViewContent as Altaxo.Worksheet.GUI.SDWorksheetController; 
+      Altaxo.Worksheet.GUI.SDWorksheetViewContent ctrl 
+        = Current.Workbench.ActiveViewContent as Altaxo.Worksheet.GUI.SDWorksheetViewContent; 
 
       return ctrl.Controller.DataTable.GetTableProperty("Content") is Altaxo.Calc.Regression.Multivariate.MultivariateContentMemento;
     }
