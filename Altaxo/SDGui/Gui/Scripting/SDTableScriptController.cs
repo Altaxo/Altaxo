@@ -26,7 +26,7 @@ using Altaxo.Data;
 using Altaxo.Gui.Scripting;
 using Altaxo.Scripting;
 
-namespace Altaxo.Worksheet.GUI
+namespace Altaxo.Gui.Scripting
 {
   #region Interfaces
   public interface ITableScriptView

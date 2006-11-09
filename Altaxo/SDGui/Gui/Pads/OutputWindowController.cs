@@ -26,7 +26,7 @@ using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.Gui;
 
 
-namespace Altaxo.Main.GUI
+namespace Altaxo.Gui.Pads
 {
   /// <summary>
   /// Controls the Output window pad which shows the Altaxo text output.

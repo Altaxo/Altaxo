@@ -25,7 +25,7 @@ using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.Gui;
 
 
-namespace Altaxo.Main.GUI
+namespace Altaxo.Gui.Pads
 {
   /// <summary>
   /// Controls the data display window pad that shows the data obtained from the data reader.

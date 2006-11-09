@@ -29,7 +29,7 @@ using System.Windows.Forms;
 
 using Altaxo.Data;
 
-namespace Altaxo.Worksheet.GUI
+namespace Altaxo.Gui.Scripting
 {
   /// <summary>
   /// Summary description for TableScriptControl.

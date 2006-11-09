@@ -66,7 +66,7 @@
 		     title    = "${res:MainWindow.Windows.FileScoutLabel}"
 		     icon     = "PadIcons.FileBrowser"
 		     shortcut = "Control|Alt|F"
-		     class    = "Altaxo.Main.GUI.FileScout"/>
+		     class    = "Altaxo.Gui.Pads.FileScout"/>
 
     <Pad id       = "AltaxoProjectScout"
         category = "Main"
@@ -81,7 +81,7 @@
         icon     = "PadIcons.Output"
         shortcut = "Control|Alt|O"
         precreated ="true" 
-        class    = "Altaxo.Main.GUI.OutputWindowController"/>
+        class    = "Altaxo.Gui.Pads.OutputWindowController"/>
 
     <Pad id       = "AltaxoDataDisplayWindow"
         category = "Main"
@@ -89,7 +89,7 @@
         icon     = "Icons.16x16.ReadData"
         shortcut = "Control|Alt|D"
         precreated ="true" 
-        class    = "Altaxo.Main.GUI.DataDisplayController"/>
+        class    = "Altaxo.Gui.Pads.DataDisplayController"/>
 
   </Path>
 

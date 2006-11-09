@@ -41,7 +41,7 @@ using ICSharpCode.SharpDevelop.Gui;
 
 
 
-namespace Altaxo.Main.GUI
+namespace Altaxo.Gui.Pads
 {
   public class FileScout : UserControl, ICSharpCode.SharpDevelop.Gui.IPadContent
   {

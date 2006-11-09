@@ -25,7 +25,6 @@ using System.Windows.Forms;
 using System.Collections.Generic;
 using Altaxo;
 using Altaxo.Main;
-using Altaxo.Main.GUI;
 using Altaxo.Worksheet;
 using Altaxo.Worksheet.GUI;
 
@@ -59,7 +58,26 @@ namespace Altaxo.Gui.SharpDevelop
         return new SDWorksheetViewContent(s);
       }
     }
-    #endregion
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SDWorksheetViewContent), 1)]
+    public class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        SDWorksheetViewContent s = (SDWorksheetViewContent)obj;
+        info.AddValue("Controller", s._controller);
+      }
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+       WorksheetController wc = (WorksheetController)info.GetValue("Controller",parent);
+       SDWorksheetViewContent s = null != o ? (SDWorksheetViewContent)o : new SDWorksheetViewContent(wc);
+       s._controller = wc;
+       return s;
+      }
+    }
+
+
+#endregion
 
     #region Constructors
     /// <summary>

@@ -62,6 +62,23 @@ namespace Altaxo.Gui.SharpDevelop
         return new SDGraphViewContent(s);
       }
     }
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SDGraphViewContent), 1)]
+    public class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        SDGraphViewContent s = (SDGraphViewContent)obj;
+        info.AddValue("Controller", s._controller);
+      }
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        GraphController wc = (GraphController)info.GetValue("Controller", parent);
+        SDGraphViewContent s = null != o ? (SDGraphViewContent)o : new SDGraphViewContent(wc);
+        s._controller = wc;
+        return s;
+      }
+    }
     #endregion
 
     #region Constructors

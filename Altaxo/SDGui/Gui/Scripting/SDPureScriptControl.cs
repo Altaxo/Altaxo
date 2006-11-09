@@ -33,7 +33,7 @@ using Altaxo.Gui.Scripting;
 using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop;
 
-namespace Altaxo.Worksheet.GUI
+namespace Altaxo.Gui.Scripting
 {
   /// <summary>
   /// Summary description for PureScriptControl.
