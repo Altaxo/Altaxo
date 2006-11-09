@@ -22,7 +22,6 @@
 
 using System;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using Altaxo.Serialization;
 using Altaxo.Data;
 using Altaxo.Collections;
@@ -627,8 +626,11 @@ namespace Altaxo.Graph.Gdi.Plot.Data
 
     protected virtual void OnChanged()
     {
+      if (m_Parent is Main.IChildChangedEventSink)
+        ((Main.IChildChangedEventSink)m_Parent).EhChildChanged(this, EventArgs.Empty);
+
       if(null!=Changed)
-        Changed(this,new System.EventArgs());
+        Changed(this,EventArgs.Empty);
     }
 
     public virtual object ParentObject

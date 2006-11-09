@@ -211,29 +211,17 @@ namespace Altaxo.Graph.Gdi.Plot
           throw new System.ArgumentNullException();
         else
         {
+          XYFunctionPlotData oldvalue = _plotData;
+          _plotData = value;
+          _plotData.ParentObject = this;
+
           if(!object.ReferenceEquals(_plotData,value))
           {
-            if(null!=_plotData)
-            {
-              _plotData.Changed -= new EventHandler(OnDataChangedEventHandler);
-            }
-
-            _plotData = (XYFunctionPlotData)value;
-          
-            if(null!=_plotData)
-            {
-              _plotData.Changed += new EventHandler(OnDataChangedEventHandler);
-            }
-
             OnDataChanged();
           }
         }
       }
     }
-
-   
-    
-
 
     public override string GetName(int level)
     {

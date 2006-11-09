@@ -105,4 +105,13 @@ namespace Altaxo.Gui
     /// </summary>
     object ControllerObject { get; set; }
   }
+
+  /// <summary>
+  /// Wraps an IMVCController in a wrapper class
+  /// </summary>
+  public interface IMVCControllerWrapper
+  {
+    Altaxo.Gui.IMVCController MVCController { get; }
+  }
+
 }

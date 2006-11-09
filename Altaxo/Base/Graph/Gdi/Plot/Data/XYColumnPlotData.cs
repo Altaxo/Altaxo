@@ -22,7 +22,6 @@
 
 using System;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using Altaxo.Serialization;
 using Altaxo.Data;
 using Altaxo.Graph.Scales;
@@ -354,7 +353,6 @@ namespace Altaxo.Graph.Gdi.Plot.Data
 
     #region Xml 3
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYColumnPlotData", 3)]
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYColumnPlotData), 4)]
       public class XmlSerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -406,7 +404,68 @@ namespace Altaxo.Graph.Gdi.Plot.Data
 
     }
     #endregion
-    
+
+
+    #region Xml 4 und 5
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYColumnPlotData",4)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYColumnPlotData), 5)]
+    public class XmlSerializationSurrogate4 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        XYColumnPlotData s = (XYColumnPlotData)obj;
+
+        info.AddValue("XColumn", s.m_xColumn);
+        info.AddValue("YColumn", s.m_yColumn);
+
+        info.AddValue("XBoundaries", s.m_xBoundaries);
+        info.AddValue("YBoundaries", s.m_yBoundaries);
+
+        info.AddValue("RangeStart", s.m_PlotRangeStart);
+        info.AddValue("RangeLength", s.m_PlotRangeLength);
+      }
+
+      public virtual XYColumnPlotData SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        XYColumnPlotData s = null != o ? (XYColumnPlotData)o : new XYColumnPlotData();
+
+        s.m_xColumn = (ReadableColumnProxy)info.GetValue("XColumn", parent);
+        s.m_yColumn = (ReadableColumnProxy)info.GetValue("YColumn", parent);
+
+        s.m_xBoundaries = (IPhysicalBoundaries)info.GetValue("XBoundaries", parent);
+        s.m_yBoundaries = (IPhysicalBoundaries)info.GetValue("YBoundaries", parent);
+
+        s.m_PlotRangeStart = info.GetInt32("RangeStart");
+        s.m_PlotRangeLength = info.GetInt32("RangeLength");
+
+        return s;
+      }
+
+      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        XYColumnPlotData s = SDeserialize(o, info, parent);
+        CreateEventChain(s);
+        return s;
+      }
+
+      public virtual void CreateEventChain(XYColumnPlotData s)
+      {
+        if (null != s.m_xColumn)
+          s.m_xColumn.Changed += new EventHandler(s.EhColumnDataChangedEventHandler);
+        if (null != s.m_yColumn)
+          s.m_yColumn.Changed += new EventHandler(s.EhColumnDataChangedEventHandler);
+
+        if (null != s.m_xBoundaries)
+          s.m_xBoundaries.BoundaryChanged += new BoundaryChangedHandler(s.EhXBoundariesChanged);
+
+        if (null != s.m_yBoundaries)
+          s.m_yBoundaries.BoundaryChanged += new BoundaryChangedHandler(s.EhYBoundariesChanged);
+      }
+
+
+
+    }
+    #endregion
     #endregion
 
 

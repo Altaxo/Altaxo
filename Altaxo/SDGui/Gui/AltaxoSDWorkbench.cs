@@ -77,69 +77,10 @@ namespace Altaxo.Gui
       
       Icon = ResourceService.GetIcon("Icons.MainApplicationIcon");
     }
-    /*
-    public new void InitializeWorkspace()
-    {
-      Menu = null;
-
-      ActiveWorkbenchWindowChanged += new EventHandler(EhAltaxoFireContentChanged);
-      
-      ActiveWorkbenchWindowChanged += new EventHandler(UpdateMenu);
-      
-      MenuComplete += new EventHandler(SetStandardStatusBar);
-      SetStandardStatusBar(null, null);
-      
-     
-      CreateMainMenu();
-      CreateToolBars();
-    }
-    */
-
-    void UpdateMenu(object sender, EventArgs e)
-    {
-      /*
-      UpdateMenus();
-      UpdateToolbars();
-       */
-    }
-
-    void SetStandardStatusBar(object sender, EventArgs e)
-    {
-      
-      StatusBarService.SetMessage("${res:MainWindow.StatusBar.ReadyMessage}");
-    }
-    /*
-    void CreateMainMenu()
-    {
-      TopMenu = new CommandBar(CommandBarStyle.Menu);
-      CommandBarItem[] items = (CommandBarItem[])(AddInTreeSingleton.AddInTree.GetTreeNode(mainMenuPath).BuildChildItems(this)).ToArray(typeof(CommandBarItem));
-      TopMenu.Items.Clear();
-      TopMenu.Items.AddRange(items);
-    }
-
-    // this method simply copies over the enabled state of the toolbar,
-    // this assumes that no item is inserted or removed.
-    // TODO : make this method more add-in tree like, currently with Windows.Forms
-    //        toolbars this is not possible. (drawing fragments, slow etc.)
-    void CreateToolBars()
-    {
-      if (ToolBars == null) 
-      {
-#if OriginalSharpDevelopCode
-        ToolbarService toolBarService = (ToolbarService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(ToolbarService));
-#else
-        // Note: original ToolbarService don't support checked toolbar items
-        AltaxoToolbarService toolBarService = (AltaxoToolbarService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(AltaxoToolbarService));
-#endif
-        CommandBar[] toolBars = ToolBarService.CreateToolbars();
-        ToolBars = toolBars;
-      }
-    }
-    */
    
     public void EhProjectChanged(object sender, Altaxo.Main.ProjectEventArgs e)
     {
-      UpdateMenu(null, null);
+      // UpdateMenu(null, null); // 2006-11-07 hope this is not needed any longer because of the menu update timer
       System.Text.StringBuilder title = new System.Text.StringBuilder();
       title.Append(ResourceService.GetString("MainWindow.DialogName"));
       if (Altaxo.Current.ProjectService != null) 
@@ -166,8 +107,6 @@ namespace Altaxo.Gui
       
       if (projectService != null)
       {
-        // projectService.SaveCombinePreferences();
-      
         if(projectService.CurrentOpenProject != null && projectService.CurrentOpenProject.IsDirty)
         {
           projectService.AskForSavingOfProject(e);
@@ -178,7 +117,9 @@ namespace Altaxo.Gui
         base.OnClosing(e);
       }
     }
-    #region Altaxo.Main.Gui.IWorkbench Members
+
+
+    #region Adapter to the Altaxo.Main.Gui.IWorkbench interface
 
     ICollection Altaxo.Gui.Common.IWorkbench.ViewContentCollection
     {
@@ -188,7 +129,7 @@ namespace Altaxo.Gui
       }
     }
 
-    public object ViewObject
+    object Altaxo.Gui.Common.IWorkbench.ViewObject
     {
       get
       {
@@ -220,12 +161,16 @@ namespace Altaxo.Gui
     }
 
     /// <summary>Fired if the current view (and so the view content) changed.</summary>
-    public event EventHandler ActiveViewContentChanged;
-
-    protected void EhAltaxoFireContentChanged(object o, EventArgs e)
+    event EventHandler Altaxo.Gui.Common.IWorkbench.ActiveWorkbenchWindowChanged
     {
-      if(null!=ActiveViewContentChanged)
-        ActiveViewContentChanged(this,e);
+      add 
+      {
+        base.ActiveWorkbenchWindowChanged += value; 
+      }
+      remove 
+      {
+        base.ActiveWorkbenchWindowChanged -= value; 
+      }
     }
 
     #endregion

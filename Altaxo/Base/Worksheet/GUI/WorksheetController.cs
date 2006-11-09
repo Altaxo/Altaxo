@@ -41,11 +41,11 @@ namespace Altaxo.Worksheet.GUI
   /// </summary>
   [SerializationSurrogate(0,typeof(WorksheetController.SerializationSurrogate0))]
   [SerializationVersion(0)]
+  [Altaxo.Gui.UserControllerForObject(typeof(Altaxo.Worksheet.WorksheetLayout))]
+  [Altaxo.Gui.ExpectedTypeOfView(typeof(IWorksheetView))]
   public class WorksheetController :
     IWorksheetController,
     System.Runtime.Serialization.IDeserializationCallback
-    //ICSharpCode.SharpDevelop.Gui.IEditable,
-    //ICSharpCode.SharpDevelop.Gui.IClipboardHandler
   {
     public enum SelectionType { Nothing, DataRowSelection, DataColumnSelection, PropertyColumnSelection, PropertyRowSelection }
 
@@ -374,7 +374,7 @@ namespace Altaxo.Worksheet.GUI
     /// </summary>
     /// <param name="layout">The worksheet layout.</param>
     /// <param name="bDeserializationConstructor">If true, no layout has to be provided, since this is used as deserialization constructor.</param>
-    protected WorksheetController(Altaxo.Worksheet.WorksheetLayout layout, bool bDeserializationConstructor)
+    public WorksheetController(Altaxo.Worksheet.WorksheetLayout layout, bool bDeserializationConstructor)
     {
       SetMemberVariablesToDefault();
 
@@ -2950,6 +2950,102 @@ namespace Altaxo.Worksheet.GUI
     }
 
     #endregion
+
+    #region ClipboardHandler Members
+
+    public bool EnableCut
+    {
+      get { return m_CellEdit_IsArmed; }
+    }
+
+    public bool EnableCopy
+    {
+      get { return true; }
+    }
+
+    public bool EnablePaste
+    {
+      get { return true; }
+    }
+
+    public bool EnableDelete
+    {
+      get { return true; }
+    }
+
+    public bool EnableSelectAll
+    {
+      get { return true; }
+    }
+
+    public void Cut()
+    {
+      if (this.m_CellEdit_IsArmed)
+      {
+        this.m_CellEditControl.Cut();
+      }
+      else if (this.AreColumnsOrRowsSelected)
+      {
+        // Copy the selected Columns to the clipboard
+        Commands.EditCommands.CopyToClipboard(this);
+      }
+    }
+
+    public void Copy()
+    {
+      if (this.m_CellEdit_IsArmed)
+      {
+        this.m_CellEditControl.Copy();
+      }
+      else if (this.AreColumnsOrRowsSelected)
+      {
+        // Copy the selected Columns to the clipboard
+        Commands.EditCommands.CopyToClipboard(this);
+      }
+
+    }
+
+    public void Paste()
+    {
+      if (this.m_CellEdit_IsArmed)
+      {
+        this.m_CellEditControl.Paste();
+      }
+      else
+      {
+        Commands.EditCommands.PasteFromClipboard(this);
+      }
+    }
+
+    public void Delete()
+    {
+      if (this.m_CellEdit_IsArmed)
+      {
+        this.m_CellEditControl.Clear();
+      }
+      else if (this.AreColumnsOrRowsSelected)
+      {
+        this.RemoveSelected();
+      }
+      else
+      {
+        // nothing is selected, we assume that the user wants to delete the worksheet itself
+        Current.ProjectService.DeleteTable(this.DataTable, false);
+      }
+    }
+    public void SelectAll()
+    {
+      if (this.DataTable.DataColumns.ColumnCount > 0)
+      {
+        this.SelectedDataColumns.Select(0, false, false);
+        this.SelectedDataColumns.Select(this.DataTable.DataColumns.ColumnCount - 1, true, false);
+        if (View != null)
+          View.TableAreaInvalidate();
+      }
+    }
+
+    #endregion
+
 
 #if FormerGuiState
 

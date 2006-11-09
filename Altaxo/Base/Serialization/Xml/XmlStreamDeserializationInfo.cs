@@ -291,7 +291,7 @@ namespace Altaxo.Serialization.Xml
         {
           default:
             for(int i=0;i<count;i++)
-              val[i] = XmlConvert.ToDouble(m_Reader.ReadElementString());
+              val[i] = m_Reader.ReadElementContentAsDouble();
             break;
           case "Base64":
             GetArrayOfPrimitiveTypeBase64(val,count,_size_of_double);
@@ -327,7 +327,7 @@ namespace Altaxo.Serialization.Xml
         {
           default:
             for(int i=0;i<count;i++)
-              val[i] = XmlConvert.ToInt32(m_Reader.ReadElementString());
+              val[i] = m_Reader.ReadElementContentAsInt();
             break;
           case "Base64":
             GetArrayOfPrimitiveTypeBase64(val,count,_size_of_int);
@@ -355,7 +355,7 @@ namespace Altaxo.Serialization.Xml
         {
           default:
             for(int i=0;i<count;i++)
-              val[i] = XmlConvert.ToDateTime(m_Reader.ReadElementString());
+              val[i] = m_Reader.ReadElementContentAsDateTime();
             break;
           case "Base64":
             GetArrayOfPrimitiveTypeBase64(val,count,_size_of_DateTime);

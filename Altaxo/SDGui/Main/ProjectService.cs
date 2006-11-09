@@ -22,6 +22,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
@@ -178,13 +179,13 @@ namespace Altaxo.Main
 
       foreach (IViewContent viewcontent in restoredControllers)
       {
-        IMVCControllerEx ctrl = viewcontent as IMVCControllerEx;
-        if (ctrl != null)
-          ctrl.CreateDefaultViewObject();
+        IMVCControllerWrapper wrapper = viewcontent as IMVCControllerWrapper;
+        if (wrapper != null && wrapper.MVCController.ViewObject==null)
+          Current.Gui.FindAndAttachControlTo(wrapper.MVCController);
 
         if (viewcontent.Control != null)
         {
-          Current.Workbench.ShowView(ctrl);
+          Current.Workbench.ShowView(viewcontent);
         }
       }
 
@@ -493,25 +494,34 @@ namespace Altaxo.Main
 
     /// <summary>
     /// Returns all currently open views that show the given document object <code>document</code>.
-    /// The IViewContent must implement <see cref="Altaxo.Main.GUI.IMVCController" /> in order to be found by this routine.
+    /// The IViewContent must implement <see cref="Altaxo.Gui.IMVCControllerWrapper" /> in order to be found by this routine.
     /// </summary>
     /// <param name="document">The document for which views must be found.</param>
     /// <returns>An array containing all views that show the document table. If no view is found, an empty array is returned.</returns>
-    public IViewContent[] SearchContentForDocument(object document)
+    public List<IViewContent> SearchContentForDocument(object document, int maxNumber)
     {
-      System.Collections.ArrayList contentList = new System.Collections.ArrayList();
+      List<IViewContent> contentList = new List<IViewContent>();
       // first step : look in all views
 
       foreach (IViewContent content in Current.Workbench.ViewContentCollection)
       {
-        if (content is Altaxo.Gui.IMVCController)
+        if (content is Altaxo.Gui.IMVCControllerWrapper)
+        {
+          if (object.ReferenceEquals(((Altaxo.Gui.IMVCControllerWrapper)content).MVCController.ModelObject, document))
+            contentList.Add(content);
+        }
+          // TODO can be removed after WorksheetController has also wrapper class
+        else if (content is Altaxo.Gui.IMVCController)
         {
           if (object.ReferenceEquals(((Altaxo.Gui.IMVCController)content).ModelObject, document))
             contentList.Add(content);
         }
+
+        if (contentList.Count >= maxNumber)
+          break;
       }
 
-      return (IViewContent[])contentList.ToArray(typeof(IViewContent));
+      return contentList;
     }
 
     /// <summary>
@@ -521,17 +531,26 @@ namespace Altaxo.Main
     /// <returns>True if there is at least one open view for the document.</returns>
     public bool HasDocumentAnOpenView(object document)
     {
-      foreach (IViewContent content in Current.Workbench.ViewContentCollection)
-      {
-        if (content is Altaxo.Gui.IMVCController)
-        {
-          if (object.ReferenceEquals(((Altaxo.Gui.IMVCController)content).ModelObject, document))
-            return true;
-        }
-      }
-      return false;
+      return SearchContentForDocument(document, 1).Count > 0;
     }
 
+    void SelectFirstAvailableView()
+    {
+      // the following sequence is related to a bug encountered when closing a tabbed window by the program:
+      // the active view content is not updated because the dockpanel lost the focus
+      // to circumvent this, we focus on a new viewcontent, in this case the first one
+      IViewContent firstView = null;
+      foreach (IViewContent v in Current.Workbench.ViewContentCollection)
+      {
+        firstView = v;
+        break;
+      }
+
+      if (firstView != null)
+        WorkbenchSingleton.Workbench.WorkbenchLayout.ShowView(firstView);
+    }
+
+    #region Worksheet functions
 
 
     /// <summary>
@@ -592,13 +611,13 @@ namespace Altaxo.Main
       layout.DataTable = table;
       Altaxo.Worksheet.GUI.SDWorksheetController ctrl = new Altaxo.Worksheet.GUI.SDWorksheetController(layout);
       Altaxo.Worksheet.GUI.WorksheetView view = new Altaxo.Worksheet.GUI.WorksheetView();
-      ctrl.View = view;
+      ctrl.Controller.View = view;
 
 
       if (null != Current.Workbench)
         Current.Workbench.ShowView(ctrl);
 
-      return ctrl;
+      return ctrl.Controller;
     }
 
     /// <summary>
@@ -611,8 +630,8 @@ namespace Altaxo.Main
     {
 
       // if a content exist that show that table, activate that content
-      IViewContent[] foundContent = SearchContentForDocument(table);
-      if (foundContent.Length > 0)
+      List<IViewContent> foundContent = SearchContentForDocument(table,1);
+      if (foundContent.Count > 0)
       {
         foundContent[0].WorkbenchWindow.SelectWindow();
         return foundContent[0];
@@ -636,7 +655,7 @@ namespace Altaxo.Main
         return;
 
       // close all windows
-      IViewContent[] foundContent = SearchContentForDocument(table);
+      List<IViewContent> foundContent = SearchContentForDocument(table,int.MaxValue);
       foreach (IViewContent content in foundContent)
       {
         content.WorkbenchWindow.CloseWindow(true);
@@ -644,7 +663,36 @@ namespace Altaxo.Main
 
       Current.Project.DataTableCollection.Remove(table);
 
+
+      // the following sequence is related to a bug encountered when closing a tabbed window by the program:
+      // the active view content is not updated because the dockpanel lost the focus
+      // to circumvent this, we focus on a new viewcontent, in this case the first one
+      SelectFirstAvailableView();
     }
+
+    /// <summary>This will remove the Worksheet <paramref>ctrl</paramref> from the corresponding forms collection.</summary>
+    /// <param name="ctrl">The Worksheet to remove.</param>
+    /// <remarks>No exception is thrown if the Form frm is not a member of the worksheet forms collection.</remarks>
+    public void RemoveWorksheet(Altaxo.Worksheet.GUI.WorksheetController ctrl)
+    {
+      foreach (IViewContent content in WorkbenchSingleton.Workbench.ViewContentCollection)
+      {
+        if ((content is Altaxo.Gui.IMVCControllerWrapper) &&
+          object.ReferenceEquals(((Altaxo.Gui.IMVCControllerWrapper)content).MVCController, ctrl)) 
+          {
+            WorkbenchSingleton.Workbench.CloseContent(content);
+            break;
+          }
+        
+      }
+
+    }
+
+
+
+    #endregion
+
+    #region Graph functions
 
     /// <summary>
     /// Creates a new graph document and the view content..
@@ -671,9 +719,9 @@ namespace Altaxo.Main
       if (graph == null)
         graph = this.CurrentOpenProject.CreateNewGraphDocument();
 
-      Altaxo.Graph.GUI.GraphController ctrl = new Altaxo.Graph.GUI.SDGraphController(graph);
+      Altaxo.Graph.GUI.SDGraphController ctrl = new Altaxo.Graph.GUI.SDGraphController(graph);
       Altaxo.Graph.GUI.GraphView view = new Altaxo.Graph.GUI.GraphView();
-      ctrl.View = view;
+      ctrl.Controller.View = view;
 
 
       //wbv_controller.Content = ctrl;
@@ -683,7 +731,7 @@ namespace Altaxo.Main
 
       if (null != Current.Workbench)
         Current.Workbench.ShowView(ctrl);
-      return ctrl;
+      return ctrl.Controller;
     }
 
     /// <summary>
@@ -696,8 +744,8 @@ namespace Altaxo.Main
     {
 
       // if a content exist that show that graph, activate that content
-      IViewContent[] foundContent = SearchContentForDocument(graph);
-      if (foundContent.Length > 0)
+      List<IViewContent> foundContent = SearchContentForDocument(graph,1);
+      if (foundContent.Count > 0)
       {
         foundContent[0].WorkbenchWindow.SelectWindow();
         return foundContent[0];
@@ -717,14 +765,15 @@ namespace Altaxo.Main
     /// if false, the user is ask before the graph document is deleted.</param>
     public void DeleteGraphDocument(Altaxo.Graph.Gdi.GraphDocument graph, bool force)
     {
+     
       if (!force &&
         System.Windows.Forms.DialogResult.No == System.Windows.Forms.MessageBox.Show(
         Current.MainWindow,
         "Are you sure to remove the graph document and the corresponding views?", "Attention", System.Windows.Forms.MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Warning))
         return;
-
+      
       // close all windows
-      IViewContent[] foundContent = SearchContentForDocument(graph);
+      List<IViewContent> foundContent = SearchContentForDocument(graph,int.MaxValue);
       foreach (IViewContent content in foundContent)
       {
         content.WorkbenchWindow.CloseWindow(true);
@@ -732,31 +781,38 @@ namespace Altaxo.Main
 
       Current.Project.GraphDocumentCollection.Remove(graph);
 
+      
+
+      // the following sequence is related to a bug encountered when closing a tabbed window by the program:
+      // the active view content is not updated because the dockpanel lost the focus
+      // to circumvent this, we focus on a new viewcontent, in this case the first one
+      SelectFirstAvailableView();
     }
+
+
+   
+    
 
     /// <summary>This will remove the GraphController <paramref>ctrl</paramref> from the graph forms collection.</summary>
     /// <param name="ctrl">The GraphController to remove.</param>
     /// <remarks>No exception is thrown if the Form frm is not a member of the graph forms collection.</remarks>
     public void RemoveGraph(Altaxo.Graph.GUI.GraphController ctrl)
     {
-      if (null != Current.Workbench)
-        Current.Workbench.CloseContent(ctrl);
-
-      //if(this.m_WorkbenchViews.Contains(ctrl))
-      //this.m_WorkbenchViews.Remove(ctrl);
-      //else if(ctrl.ParentWorkbenchWindowController !=null && this.m_WorkbenchViews.Contains(ctrl.ParentWorkbenchWindowController))
-      //this.m_WorkbenchViews.Remove(ctrl.ParentWorkbenchWindowController);
+      foreach (IViewContent content in WorkbenchSingleton.Workbench.ViewContentCollection)
+      {
+        if ((content is Altaxo.Gui.IMVCControllerWrapper) &&
+            object.ReferenceEquals(((Altaxo.Gui.IMVCControllerWrapper)content).MVCController, ctrl))
+        {
+          WorkbenchSingleton.Workbench.CloseContent(content);
+          break;
+        }
+      }
     }
+    
 
-    /// <summary>This will remove the Worksheet <paramref>ctrl</paramref> from the corresponding forms collection.</summary>
-    /// <param name="ctrl">The Worksheet to remove.</param>
-    /// <remarks>No exception is thrown if the Form frm is not a member of the worksheet forms collection.</remarks>
-    public void RemoveWorksheet(Altaxo.Worksheet.GUI.WorksheetController ctrl)
-    {
-      if (null != Current.Workbench)
-        Current.Workbench.CloseContent(ctrl);
-    }
+    #endregion
 
+   
 
     void EhProjectDirtyChanged(object sender, EventArgs e)
     {

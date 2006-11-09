@@ -55,12 +55,12 @@ namespace Altaxo.Graph.Commands
     /// </summary>
     public override void Run()
     {
-      Altaxo.Graph.GUI.GraphController ctrl 
+      Altaxo.Graph.GUI.SDGraphController ctrl 
         = Current.Workbench.ActiveViewContent 
-        as Altaxo.Graph.GUI.GraphController;
+        as Altaxo.Graph.GUI.SDGraphController;
       
       if(null!=ctrl)
-        Run(ctrl);
+        Run(ctrl.Controller);
     }
   
     /// <summary>
@@ -495,8 +495,11 @@ namespace Altaxo.Graph.Commands
     {
       get 
       {
-        if(null!=Current.Workbench && null!=Current.Workbench.ActiveViewContent)
-          return Current.Workbench.ActiveViewContent as Altaxo.Graph.GUI.GraphController;
+        if (null != Current.Workbench && null != Current.Workbench.ActiveViewContent)
+        {
+          Altaxo.Graph.GUI.SDGraphController ct = Current.Workbench.ActiveViewContent as Altaxo.Graph.GUI.SDGraphController;
+          return ct.Controller;
+        }
         else
           return null;
       }
@@ -523,7 +526,7 @@ namespace Altaxo.Graph.Commands
     {
       if(null!=Current.Workbench)
       {
-        Current.Workbench.ActiveViewContentChanged += new EventHandler(this.EhWorkbenchContentChanged);
+        Current.Workbench.ActiveWorkbenchWindowChanged += new EventHandler(this.EhWorkbenchContentChanged);
         this.EhWorkbenchContentChanged(this,EventArgs.Empty);
       }
     }

@@ -45,6 +45,8 @@ namespace Altaxo.Graph.GUI
   /// </summary>
   [SerializationSurrogate(0,typeof(GraphController.SerializationSurrogate0))]
   [SerializationVersion(0)]
+  [Altaxo.Gui.UserControllerForObject(typeof(GraphDocument))]
+  [Altaxo.Gui.ExpectedTypeOfView(typeof(IGraphView))]
   public class GraphController 
     :
     IGraphController,
@@ -296,7 +298,7 @@ namespace Altaxo.Graph.GUI
     /// </summary>
     /// <param name="graphdoc">The graph which holds the graphical elements.</param>
     /// <param name="bDeserializationConstructor">If true, this is a special constructor used only for deserialization, where no graphdoc needs to be supplied.</param>
-    protected GraphController(GraphDocument graphdoc, bool bDeserializationConstructor)
+    public GraphController(GraphDocument graphdoc, bool bDeserializationConstructor)
     {
       SetMemberVariablesToDefault();
     

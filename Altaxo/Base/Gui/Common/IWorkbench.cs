@@ -58,7 +58,7 @@ namespace Altaxo.Gui.Common
     void CloseAllViews();
 
     /// <summary>Fired if the current view (and so the view content) changed.</summary>
-    event EventHandler ActiveViewContentChanged;
+    event EventHandler ActiveWorkbenchWindowChanged;
   }
 
 }

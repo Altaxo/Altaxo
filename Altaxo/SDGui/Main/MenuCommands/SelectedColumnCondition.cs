@@ -48,13 +48,13 @@ namespace Altaxo.Worksheet.Commands
 
       if (Current.Workbench.ActiveViewContent == null)
         return false;
-      if (!(Current.Workbench.ActiveViewContent is Altaxo.Worksheet.GUI.WorksheetController))
+      if (!(Current.Workbench.ActiveViewContent is Altaxo.Worksheet.GUI.SDWorksheetController))
         return false;
 
-      Altaxo.Worksheet.GUI.WorksheetController ctrl
-        = Current.Workbench.ActiveViewContent as Altaxo.Worksheet.GUI.WorksheetController;
+      Altaxo.Worksheet.GUI.SDWorksheetController ctrl
+        = Current.Workbench.ActiveViewContent as Altaxo.Worksheet.GUI.SDWorksheetController;
 
-      int val = ctrl.SelectedDataColumns.Count;
+      int val = ctrl.Controller.SelectedDataColumns.Count;
 
       switch (selectedData)
       {
@@ -65,7 +65,7 @@ namespace Altaxo.Worksheet.Commands
         case "two":
           return val == 2;
         case "all":
-          return val == ctrl.Doc.DataColumnCount;
+          return val == ctrl.Controller.Doc.DataColumnCount;
         case "any":
           return val > 0;
         case "*":

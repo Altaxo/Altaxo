@@ -33,12 +33,15 @@ namespace Altaxo.Graph.Gdi.Plot.Data
   /// Summary description for XYFunctionPlotData.
   /// </summary>
   [Serializable]
-  public class XYFunctionPlotData : ICloneable, Calc.IScalarFunctionDD, Main.IChangedEventSource
+  public class XYFunctionPlotData : ICloneable, Calc.IScalarFunctionDD, Main.IChangedEventSource, Main.IDocumentNode
   {
     Altaxo.Calc.IScalarFunctionDD _function;
 
     [field:NonSerialized]
     public event System.EventHandler Changed;
+
+    [NonSerialized]
+    object _parent;
 
 
     #region Serialization
@@ -155,10 +158,11 @@ namespace Altaxo.Graph.Gdi.Plot.Data
     /// </summary>
     protected virtual void OnChanged()
     {
+      if (_parent is Main.IChildChangedEventSink)
+        ((Main.IChildChangedEventSink)_parent).EhChildChanged(this, EventArgs.Empty);
+      
       if (Changed != null)
-      {
         Changed(this, EventArgs.Empty);
-      }
     }
 
 
@@ -285,6 +289,21 @@ namespace Altaxo.Graph.Gdi.Plot.Data
     }
 
 
+
+    #region IDocumentNode Members
+
+    public object ParentObject
+    {
+      get { return _parent; }
+      set { _parent = value; }
+    }
+
+    public string Name
+    {
+      get { return "FunctionPlotData"; }
+    }
+
+    #endregion
   }
   #endregion
 

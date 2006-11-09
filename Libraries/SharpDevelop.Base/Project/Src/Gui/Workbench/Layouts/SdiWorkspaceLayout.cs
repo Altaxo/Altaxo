@@ -620,7 +620,9 @@ namespace ICSharpCode.SharpDevelop.Gui
 		public virtual void OnActiveWorkbenchWindowChanged(EventArgs e)
 		{
 			IWorkbenchWindow newWindow = this.ActiveWorkbenchwindow;
-			if (newWindow == null || newWindow.ViewContent != null) {
+      System.Diagnostics.Debug.WriteLine(string.Format("ActiveWBChanged, old={0}, new={1}", oldSelectedWindow, newWindow));
+      if (newWindow == null || newWindow.ViewContent != null)
+      {
 				if (ActiveWorkbenchWindowChanged != null) {
 					ActiveWorkbenchWindowChanged(this, e);
 				}

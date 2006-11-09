@@ -30,9 +30,219 @@ using Altaxo.Worksheet;
 using Altaxo.Worksheet.GUI;
 
 using ICSharpCode.Core;
+using ICSharpCode.SharpDevelop.Gui;
 
 namespace Altaxo.Worksheet.GUI
 {
+#if true
+
+  public class SDWorksheetController : AbstractViewContent, Altaxo.Gui.IMVCControllerWrapper, IEditable, IClipboardHandler
+  {
+    Altaxo.Worksheet.GUI.WorksheetController _controller;
+
+
+    #region Serialization
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoSDGui", "Altaxo.Worksheet.GUI.SDWorksheetController", 0)]
+    public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        throw new NotImplementedException("Serialization of old versions is not supported");
+        //        info.AddBaseValueEmbedded(obj,typeof(SDGraphController).BaseType);
+      }
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+
+        WorksheetController s = new WorksheetController(null, true);
+        info.GetBaseValueEmbedded(s, typeof(WorksheetController), parent);
+
+        return new SDWorksheetController(s);
+      }
+    }
+    #endregion
+
+    #region Constructors
+    /// <summary>
+    /// Creates a GraphController which shows the <see cref="GraphDocument"/> <paramref name="graphdoc"/>.    
+    /// </summary>
+    /// <param name="graphdoc">The graph which holds the graphical elements.</param>
+    public SDWorksheetController(Altaxo.Worksheet.WorksheetLayout layout)
+      : this(layout, false)
+    {
+    }
+
+    /// <summary>
+    /// Creates a WorksheetController which shows the table data into the 
+    /// View <paramref name="view"/>.
+    /// </summary>
+    /// <param name="layout">The worksheet layout.</param>
+    /// <param name="bDeserializationConstructor">If true, no layout has to be provided, since this is used as deserialization constructor.</param>
+    protected SDWorksheetController(Altaxo.Worksheet.WorksheetLayout layout, bool bDeserializationConstructor)
+    {
+      _controller = new WorksheetController(layout);
+    }
+
+    protected SDWorksheetController(WorksheetController ctrl)
+    {
+      _controller = ctrl;
+    }
+
+    #endregion
+
+    public static implicit operator Altaxo.Worksheet.GUI.WorksheetController(SDWorksheetController ctrl)
+    {
+      return ctrl._controller;
+    }
+
+    public Altaxo.Worksheet.GUI.WorksheetController Controller
+    {
+      get { return _controller; }
+    }
+
+    public Altaxo.Gui.IMVCController MVCController
+    {
+      get { return _controller; }
+    }
+
+    #region Abstract View Content overrides
+    #region Required
+    public override Control Control
+    {
+      get { return (Control)_controller.ViewObject; }
+    }
+    #endregion
+
+
+    #region Optional
+
+    /// <summary>
+    /// A generic name for the file, when it does have no file name
+    /// (e.g. newly created files)
+    /// </summary>
+    public override string UntitledName
+    {
+      get { return "UntitledTable"; }
+      set { }
+    }
+
+    /// <summary>
+    /// This is the whole name of the content, e.g. the file name or
+    /// the url depending on the type of the content.
+    /// </summary>
+    /// <returns>
+    /// Title Name, if not set it returns UntitledName
+    /// </returns>
+    public override string TitleName
+    {
+      get
+      {
+        return _controller.Doc.Name;
+      }
+      set
+      {
+      }
+    }
+
+    /// <summary>
+    /// Returns the file name (if any) assigned to this view.
+    /// </summary>
+    public override string FileName
+    {
+      get
+      {
+        return _controller.Doc.Name;
+      }
+      set
+      {
+      }
+    }
+
+    /// <summary>
+    /// The text on the tab page when more than one view content
+    /// is attached to a single window.
+    /// </summary>
+    public override string TabPageText
+    {
+      get { return TitleName; }
+    }
+
+    #endregion
+
+    #endregion
+
+    #region IEditable Members
+
+    public string Text
+    {
+      get
+      {
+        return null;
+      }
+      set
+      {
+      }
+    }
+
+    #endregion
+
+    #region IClipboardHandler Members
+
+    public bool EnableCut
+    {
+      get { return _controller.EnableCut; }
+    }
+
+    public bool EnableCopy
+    {
+      get { return _controller.EnableCopy; }
+    }
+
+    public bool EnablePaste
+    {
+      get { return _controller.EnablePaste; }
+    }
+
+    public bool EnableDelete
+    {
+      get { return _controller.EnableDelete; }
+    }
+
+    public bool EnableSelectAll
+    {
+      get { return _controller.EnableSelectAll; }
+    }
+
+    public void Cut()
+    {
+      _controller.Cut();
+    }
+
+    public void Copy()
+    {
+      _controller.Copy();
+    }
+
+    public void Paste()
+    {
+      _controller.Paste();
+    }
+
+    public void Delete()
+    {
+      _controller.Delete();
+    }
+
+    public void SelectAll()
+    {
+      _controller.SelectAll();
+    }
+
+    #endregion
+  }
+
+
+#else
+
   /// <summary>
   /// Summary description for SDWorksheetController.
   /// </summary>
@@ -447,4 +657,6 @@ namespace Altaxo.Worksheet.GUI
    
    
   }
+
+#endif
 }

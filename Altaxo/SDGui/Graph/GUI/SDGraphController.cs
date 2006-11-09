@@ -35,6 +35,221 @@ using ICSharpCode.SharpDevelop.Gui;
 
 namespace Altaxo.Graph.GUI
 {
+#if true
+
+
+  public class SDGraphController : AbstractViewContent, Altaxo.Gui.IMVCControllerWrapper, IEditable, IClipboardHandler
+  {
+    Altaxo.Graph.GUI.GraphController _controller;
+
+
+    #region Serialization
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoSDGui","Altaxo.Graph.GUI.SDGraphController",0)]
+      public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        throw new NotImplementedException("Serialization of old versions is not supported");
+//        info.AddBaseValueEmbedded(obj,typeof(SDGraphController).BaseType);
+      }
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+
+        GraphController s = new GraphController(null,true);
+        info.GetBaseValueEmbedded(s,typeof(GraphController),parent);
+
+        return new SDGraphController(s);
+      }
+    }
+    #endregion
+
+    #region Constructors
+    /// <summary>
+    /// Creates a GraphController which shows the <see cref="GraphDocument"/> <paramref name="graphdoc"/>.    
+    /// </summary>
+    /// <param name="graphdoc">The graph which holds the graphical elements.</param>
+    public SDGraphController(GraphDocument graphdoc)
+      : this(graphdoc,false)
+    {
+    }
+
+    /// <summary>
+    /// Creates a GraphController which shows the <see cref="GraphDocument"/> <paramref name="graphdoc"/>.
+    /// </summary>
+    /// <param name="graphdoc">The graph which holds the graphical elements.</param>
+    /// <param name="bDeserializationConstructor">If true, this is a special constructor used only for deserialization, where no graphdoc needs to be supplied.</param>
+    protected SDGraphController(GraphDocument graphdoc, bool bDeserializationConstructor)
+    {
+      _controller = new GraphController(graphdoc);
+    }
+
+    protected SDGraphController(GraphController ctrl)
+    {
+      _controller = ctrl;
+    }
+
+    #endregion
+
+    public static implicit operator Altaxo.Graph.GUI.GraphController(SDGraphController ctrl)
+    {
+      return ctrl._controller;
+    }
+
+    public Altaxo.Graph.GUI.GraphController Controller
+    {
+      get { return _controller; }
+    }
+   
+    public Altaxo.Gui.IMVCController MVCController 
+      {
+      get { return _controller; }
+    }
+
+    #region Abstract View Content overrides
+    #region Required
+    public override Control Control
+    {
+      get { return (Control)_controller.ViewObject; }
+    }
+    #endregion
+
+
+    #region Optional
+
+    /// <summary>
+    /// A generic name for the file, when it does have no file name
+    /// (e.g. newly created files)
+    /// </summary>
+    public override string UntitledName
+    {
+      get { return "UntitledGraph"; }
+      set { }
+    }
+
+    /// <summary>
+    /// This is the whole name of the content, e.g. the file name or
+    /// the url depending on the type of the content.
+    /// </summary>
+    /// <returns>
+    /// Title Name, if not set it returns UntitledName
+    /// </returns>
+    public override string TitleName
+    {
+      get
+      {
+        return _controller.Doc.Name;
+      }
+      set
+      {
+      }
+    }
+
+    /// <summary>
+    /// Returns the file name (if any) assigned to this view.
+    /// </summary>
+    public override string FileName
+    {
+      get
+      {
+        return _controller.Doc.Name;
+      }
+      set
+      {
+      }
+    }
+
+    /// <summary>
+    /// The text on the tab page when more than one view content
+    /// is attached to a single window.
+    /// </summary>
+    public override string TabPageText
+    {
+      get { return TitleName; }
+    }
+
+    #endregion
+
+    #endregion
+
+    #region IEditable Members
+
+    public string Text
+    {
+      get
+      {
+        return null;
+      }
+      set
+      {
+      }
+    }
+
+    #endregion
+
+    #region IClipboardHandler Members
+
+    public bool EnableCut
+    {
+      get { return true; }
+    }
+
+    public bool EnableCopy
+    {
+      get { return true; }
+    }
+
+    public bool EnablePaste
+    {
+      get { return true; }
+    }
+
+    public bool EnableDelete
+    {
+      get { return true; }
+    }
+
+    public bool EnableSelectAll
+    {
+      get { return false; }
+    }
+
+    public void Cut()
+    {
+      _controller.CutSelectedObjectsToClipboard();
+    }
+
+    public void Copy()
+    {
+      _controller.CopySelectedObjectsToClipboard();
+    }
+
+    public void Paste()
+    {
+      _controller.PasteObjectsFromClipboard();
+    }
+
+    public void Delete()
+    {
+      if (_controller.NumberOfSelectedObjects > 0)
+      {
+        _controller.RemoveSelectedObjects();
+      }
+      else
+      {
+        // nothing is selected, we assume that the user wants to delete the worksheet itself
+        Current.ProjectService.DeleteGraphDocument(_controller.Doc, false);
+      }
+    }
+
+    public void SelectAll()
+    {
+    }
+
+    #endregion
+  }
+
+#else
+
   /// <summary>
   /// Summary description for SDGraphControl.
   /// </summary>
@@ -437,4 +652,5 @@ namespace Altaxo.Graph.GUI
 
     #endregion
   }
+#endif
 }
