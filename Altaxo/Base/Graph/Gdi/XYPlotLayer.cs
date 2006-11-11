@@ -78,6 +78,9 @@ namespace Altaxo.Graph.Gdi
     protected Matrix _cachedForwardMatrix = new Matrix();  // forward transformation m_ForwardMatrix
     protected Matrix _cachedReverseMatrix = new Matrix(); // inverse transformation m_ForwardMatrix
 
+    [NonSerialized]
+    protected Main.EventSuppressor _changeEventSuppressor;
+
     #endregion // Cached member variables
 
     #region Member variables
@@ -829,6 +832,7 @@ namespace Altaxo.Graph.Gdi
     /// <param name="from"></param>
     public XYPlotLayer(XYPlotLayer from)
     {
+      _changeEventSuppressor = new Altaxo.Main.EventSuppressor(EhChangeEventResumed);
       CopyFrom(from);
     }
 
@@ -893,6 +897,7 @@ namespace Altaxo.Graph.Gdi
     /// </summary>
     protected XYPlotLayer()
     {
+      this._changeEventSuppressor = new Altaxo.Main.EventSuppressor(EhChangeEventResumed);
       this.CoordinateSystem = new CS.G2DCartesicCoordinateSystem();
       this.AxisStyles = new AxisStyleCollection();
       this.LinkedScales = new LinkedScaleCollection();
@@ -909,6 +914,7 @@ namespace Altaxo.Graph.Gdi
     /// <param name="size">The size of the layer in points (1/72 inch).</param>
     public XYPlotLayer(PointF position, SizeF size)
     {
+      this._changeEventSuppressor = new Altaxo.Main.EventSuppressor(EhChangeEventResumed);
       this.Location = new XYPlotLayerPositionAndSize();
 
       this.CoordinateSystem = new CS.G2DCartesicCoordinateSystem();
@@ -2607,10 +2613,28 @@ namespace Altaxo.Graph.Gdi
       OnChanged();
     }
 
-    protected void OnChanged()
+    public IDisposable BeginUpdate()
+    {
+      return _changeEventSuppressor.Suspend();
+    }
+    public void EndUpdate(ref IDisposable locker)
+    {
+      _changeEventSuppressor.Resume(ref locker);
+    }
+
+    protected void EhChangeEventResumed()
     {
       if (_parent is Main.IChildChangedEventSink)
         ((Main.IChildChangedEventSink)this._parent).EhChildChanged(this, EventArgs.Empty);
+    }
+
+    protected void OnChanged()
+    {
+      if (_changeEventSuppressor.GetEnabledWithCounting())
+      {
+        if (_parent is Main.IChildChangedEventSink)
+          ((Main.IChildChangedEventSink)this._parent).EhChildChanged(this, EventArgs.Empty);
+      }
 
     }
 

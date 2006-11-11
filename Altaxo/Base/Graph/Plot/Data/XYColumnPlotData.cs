@@ -403,7 +403,6 @@ namespace Altaxo.Graph.Plot.Data
     }
     #endregion
 
-
     #region Xml 4 und 5
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYColumnPlotData",4)]
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYColumnPlotData), 5)]

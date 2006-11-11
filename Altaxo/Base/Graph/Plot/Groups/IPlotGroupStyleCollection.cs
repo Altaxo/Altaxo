@@ -62,6 +62,10 @@ namespace Altaxo.Graph.Plot.Groups
     /// <returns>The instance of the given type, if it is contained in the collection. Throws an exeption, if no such instance (of the given type) is contained in the collection.</returns>
     IPlotGroupStyle GetPlotGroupStyle(Type groupStyleType);
 
+    /// <summary>
+    /// Returns the plot group strictness of this plot group, i.e. how the plot group is updated.
+    /// </summary>
+    PlotGroupStrictness PlotGroupStrictness { get; }
   
     void BeginPrepare();
 

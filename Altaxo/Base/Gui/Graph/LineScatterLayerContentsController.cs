@@ -39,7 +39,7 @@ using Altaxo.Gui.Common;
 namespace Altaxo.Gui.Graph
 {
   #region Interfaces
-  public interface ILineScatterLayerContentsController : IMVCAController
+  public interface ILineScatterLayerContentsController : IMVCANController
   {
     ILineScatterLayerContentsView View { get; set; }
 
@@ -114,19 +114,39 @@ namespace Altaxo.Gui.Graph
   /// </summary>
   public class LineScatterLayerContentsController : ILineScatterLayerContentsController
   {
-    protected ILineScatterLayerContentsView m_View;
-    protected XYPlotLayer m_Layer;
+    protected ILineScatterLayerContentsView _view;
+    protected PlotItemCollection _doc;
+    protected PlotItemCollection _originalDoc;
 
-    NGTreeNode m_RootNode = new NGTreeNode();
-    NGTreeNodeCollection m_ItemArray;
+    NGTreeNode _plotItemsRootNode = new NGTreeNode();
+    NGTreeNodeCollection _plotItemsTree;
     
     bool m_bDirty=false;
-
-    public LineScatterLayerContentsController(XYPlotLayer layer)
+    UseDocument _useDocument;
+    public UseDocument UseDocumentCopy { set { _useDocument = value; } }
+    public LineScatterLayerContentsController()
     {
-      m_Layer = layer;
-      m_ItemArray = m_RootNode.Nodes;
+    }
+
+    /// <summary>
+    /// Initialize the controller with the document. If successfull, the function has to return true.
+    /// </summary>
+    /// <param name="args">The arguments neccessary to create the controller. Normally, the first argument is the document, the second can be the parent of the document and so on.</param>
+    /// <returns>True if successfull, else false.</returns>
+    public bool InitializeDocument(params object[] args)
+    {
+      if (args == null || args.Length == 0)
+        return false;
+      _doc = _originalDoc = args[0] as PlotItemCollection;
+      if (null == _originalDoc)
+        return false;
+
+      if (_useDocument == UseDocument.Copy)
+        _doc = _originalDoc.Clone();
+
+      _plotItemsTree = _plotItemsRootNode.Nodes;
       SetElements(true);
+      return true;
     }
 
     public void SetDirty()
@@ -141,7 +161,6 @@ namespace Altaxo.Gui.Graph
       {
         int nTables = Current.Project.DataTableCollection.Count;
         NGTreeNode no = new NGTreeNode();
-        int i=0;
         foreach(Data.DataTable dt in Current.Project.DataTableCollection)
         {
           no.Nodes.Add( new NGTreeNode(dt.Name,new NGTreeNode[1]{new NGTreeNode()}));
@@ -150,15 +169,15 @@ namespace Altaxo.Gui.Graph
         View.DataAvailable_Initialize(no.Nodes);
       }
 
-      // now fill the list box with all plot associations currently inside
+      // now fill the tree view  with all plot associations currently inside
       if(bInit)
       {
-        m_ItemArray.Clear();
-        AddToNGTreeNode(m_RootNode, m_Layer.PlotItems);
+        _plotItemsTree.Clear();
+        AddToNGTreeNode(_plotItemsRootNode, _doc);
       }
 
       if(null!=View)
-        View.Contents_SetItems(m_ItemArray);
+        View.Contents_SetItems(_plotItemsTree);
 
 
       // if initializing set dirty to false
@@ -218,11 +237,15 @@ namespace Altaxo.Gui.Graph
         if(null!=ycol)
         {
           Data.DataColumn xcol = tab.DataColumns.FindXColumnOf(ycol);
+
+          XYColumnPlotItem result;
           if(null==xcol)
-            return  new XYColumnPlotItem(new XYColumnPlotData(new Altaxo.Data.IndexerColumn(),ycol),new G2DPlotStyleCollection(LineScatterPlotStyleKind.Scatter));
+            result = new XYColumnPlotItem(new XYColumnPlotData(new Altaxo.Data.IndexerColumn(),ycol),new G2DPlotStyleCollection(LineScatterPlotStyleKind.Scatter));
           else
-            return  new XYColumnPlotItem(new XYColumnPlotData(xcol,ycol),new G2DPlotStyleCollection(LineScatterPlotStyleKind.LineAndScatter));
-          // now enter the plotassociation back into the layer's plot association list
+            result = new XYColumnPlotItem(new XYColumnPlotData(xcol,ycol),new G2DPlotStyleCollection(LineScatterPlotStyleKind.LineAndScatter));
+
+
+          return result;
         }
       }
       return null;
@@ -239,19 +262,19 @@ namespace Altaxo.Gui.Graph
     { 
       get 
       {
-        return m_View;
+        return _view;
       }
 
       set
       {
-        if(null!=m_View)
-          m_View.Controller = null;
+        if(null!=_view)
+          _view.Controller = null;
         
-        m_View = value;
+        _view = value;
 
-        if(null!=m_View)
+        if(null!=_view)
         {
-          m_View.Controller = this;
+          _view.Controller = this;
           SetElements(false); // set only the view elements, dont't initialize the variables
         }
       }
@@ -285,14 +308,18 @@ namespace Altaxo.Gui.Graph
       {
         if(null!=sn.Parent)
         {
+       
+          IGPlotItem newItem = this.NewPlotItemFromPLCon(sn.Parent.Text,sn.Text);
+          _doc.Add(newItem);
+          
           NGTreeNode newNode = new NGTreeNode();
-          newNode.Text = sn.Text;
-          newNode.Tag = this.NewPlotItemFromPLCon(sn.Parent.Text,sn.Text);
-           m_ItemArray.Add(newNode);
+          newNode.Text = newItem.GetName(2);
+          newNode.Tag = newItem;
+          _plotItemsTree.Add(newNode);
         }
       }
 
-      View.Contents_SetItems(m_ItemArray);
+      View.Contents_SetItems(_plotItemsTree);
       View.DataAvailable_ClearSelection();
       SetDirty();
     }
@@ -347,7 +374,7 @@ namespace Altaxo.Gui.Graph
       if (NGTreeNode.HaveSameParent(selNodes))
       {
         NGTreeNode.MoveUpDown(iDelta, selNodes);
-        View.Contents_SetItems(this.m_ItemArray);
+        View.Contents_SetItems(this._plotItemsTree);
         SetDirty();
       }
     }
@@ -374,9 +401,9 @@ namespace Altaxo.Gui.Graph
           NGTreeNode helpSeg;
           int iSeg=selidxs[i];
 
-          helpSeg = m_ItemArray[iSeg-1];
-          m_ItemArray[iSeg-1] = m_ItemArray[iSeg];
-          m_ItemArray[iSeg] = helpSeg;
+          helpSeg = _plotItemsTree[iSeg-1];
+          _plotItemsTree[iSeg-1] = _plotItemsTree[iSeg];
+          _plotItemsTree[iSeg] = helpSeg;
 
           View.Contents_InvalidateItems(iSeg-1,iSeg);
           View.Contents_SetSelected(iSeg-1,true); // select upper item,
@@ -385,7 +412,7 @@ namespace Altaxo.Gui.Graph
       } // end if iDelta==-1
       else if(iDelta==1) // move one position down
       {
-        if(selidxs[selidxs.Length-1]==m_ItemArray.Count-1)    // if last item is selected, we can't move downwards
+        if(selidxs[selidxs.Length-1]==_plotItemsTree.Count-1)    // if last item is selected, we can't move downwards
         {
           return;
         }
@@ -395,9 +422,9 @@ namespace Altaxo.Gui.Graph
           NGTreeNode helpSeg;
           int iSeg=selidxs[i];
 
-          helpSeg = m_ItemArray[iSeg+1];
-          m_ItemArray[iSeg+1]=m_ItemArray[iSeg];
-          m_ItemArray[iSeg]=helpSeg;
+          helpSeg = _plotItemsTree[iSeg+1];
+          _plotItemsTree[iSeg+1]=_plotItemsTree[iSeg];
+          _plotItemsTree[iSeg]=helpSeg;
 
           View.Contents_InvalidateItems(iSeg+1,iSeg);
           View.Contents_SetSelected(iSeg+1,true);
@@ -468,12 +495,12 @@ namespace Altaxo.Gui.Graph
              newNode.Nodes.Add(node);
            }
          } // end for
-         m_RootNode.Nodes.Add(newNode);
+         _plotItemsRootNode.Nodes.Add(newNode);
        }
       // now all items are in the new group
 
       // so update the list box:
-       View.Contents_SetItems(this.m_ItemArray);
+       View.Contents_SetItems(this._plotItemsTree);
 
       SetDirty();
     }
@@ -510,7 +537,7 @@ namespace Altaxo.Gui.Graph
           selNodes[i].Remove();
         }
       } // end for
-      View.Contents_SetItems(m_ItemArray);
+      View.Contents_SetItems(_plotItemsTree);
       SetDirty();
 
     }
@@ -545,9 +572,11 @@ namespace Altaxo.Gui.Graph
       if(!this.m_bDirty)
         return true; // not dirty - so no need to apply something
 
-      m_Layer.PlotItems.Clear(); // first, clear all Plot items
-      AddToPlotItemCollection(m_Layer.PlotItems, m_RootNode);
-      
+      _originalDoc.Clear(); // first, clear all Plot items
+      AddToPlotItemCollection(_originalDoc, _plotItemsRootNode);
+
+      if (_useDocument== UseDocument.Copy)
+        _doc = _originalDoc.Clone();
       SetElements(true); // Reload the applied contents to make sure it is synchronized
      
       return true; // all ok
@@ -571,7 +600,7 @@ namespace Altaxo.Gui.Graph
 
     public object ModelObject
     {
-      get { return this.m_Layer; }
+      get { return this._originalDoc; }
     }
 
     #endregion

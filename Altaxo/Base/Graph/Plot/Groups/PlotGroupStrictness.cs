@@ -19,11 +19,11 @@ namespace Altaxo.Graph.Plot.Groups
     /// are set to the same values.
     ///
     /// </summary>
-    Exact,
+    Exact = 1,
 
     /// <summary>
     /// The style of the master item is copyied exactly to the style of the slave items (including all substyles).
     /// </summary>
-    Strict
+    Strict = 2
   }
 }

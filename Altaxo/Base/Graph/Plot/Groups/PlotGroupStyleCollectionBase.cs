@@ -39,10 +39,9 @@ namespace Altaxo.Graph.Plot.Groups
     }
     #endregion
 
-
-    //IG2DCoordinateTransformingGroupStyle _coordinateTransformingStyle;
     protected Dictionary<System.Type, IPlotGroupStyle> _typeToInstance;
     protected Dictionary<System.Type, GroupInfo> _typeToInfo;
+    protected PlotGroupStrictness _plotGroupStrictness;
 
     #region Serialization
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PlotGroupStyleCollectionBase), 0)]
@@ -78,6 +77,7 @@ namespace Altaxo.Graph.Plot.Groups
         if (s.Count != savedStyles)
           throw new ApplicationException("Inconsistency in parent-child relationship in this PlotGroupStyleCollection. Please inform the author");
 
+        info.AddEnum("Strictness", s._plotGroupStrictness);
       }
 
 
@@ -96,6 +96,8 @@ namespace Altaxo.Graph.Plot.Groups
           parentStyleType = hasChild ? style.GetType() : null;
         }
         info.CloseArray(count);
+
+        s._plotGroupStrictness = (PlotGroupStrictness)info.GetEnum("Strictness", typeof(PlotGroupStrictness));
 
         return s;
       }
@@ -143,6 +145,18 @@ namespace Altaxo.Graph.Plot.Groups
     }
 
     #endregion
+
+
+ 
+
+    /// <summary>
+    /// Returns the plot group strictness of this plot group, i.e. how the plot group is updated.
+    /// </summary>
+    public PlotGroupStrictness PlotGroupStrictness
+    {
+      get { return _plotGroupStrictness; }
+      set { _plotGroupStrictness = value; }
+    }
 
     public bool ContainsType(System.Type groupStyleType)
     {

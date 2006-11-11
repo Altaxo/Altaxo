@@ -73,6 +73,7 @@ namespace Altaxo.Gui.Graph
     protected ILayerView _view;
 
     protected XYPlotLayer _doc;
+    protected IDisposable _docSuspendLock;
     protected XYPlotLayer _originalDoc;
 
     private string _currentPageName;
@@ -122,6 +123,7 @@ namespace Altaxo.Gui.Graph
     {
       _originalDoc = layer;
       _doc = (XYPlotLayer)layer.Clone();
+      _docSuspendLock = _doc.BeginUpdate();
 
       SetCoordinateSystemDependentObjects(id);
 
@@ -286,7 +288,9 @@ namespace Altaxo.Gui.Graph
           }
           if (null == _layerContentsController)
           {
-            _layerContentsController = new LineScatterLayerContentsController(_doc);
+            _layerContentsController = new LineScatterLayerContentsController();
+            _layerContentsController.UseDocumentCopy = UseDocument.Directly;
+            _layerContentsController.InitializeDocument(_doc);
             _layerContentsController.View = new LineScatterLayerContentsControl();
           }
           _currentController = _layerContentsController;
@@ -688,8 +692,8 @@ namespace Altaxo.Gui.Graph
 
       _doc.GridPlanes.RemoveUnused(); // Remove unused grid planes
 
-      _originalDoc.CopyFrom(_doc);
-
+      _originalDoc.CopyFrom(_doc); // _doc remains suspended
+    
       return true;
     }
 
