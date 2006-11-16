@@ -109,9 +109,12 @@ namespace Altaxo.Gui.Graph
 
   }
   #endregion
+
   /// <summary>
-  /// Summary description for LineScatterLayerContentsController.
+  /// Controls the content of a <see cref="PlotItemCollection" />
   /// </summary>
+  [UserControllerForObject(typeof(PlotItemCollection))]
+  [ExpectedTypeOfView(typeof(ILineScatterLayerContentsView))]
   public class LineScatterLayerContentsController : ILineScatterLayerContentsController
   {
     protected ILineScatterLayerContentsView _view;
@@ -156,6 +159,9 @@ namespace Altaxo.Gui.Graph
 
     public void SetElements(bool bInit)
     {
+      if (_doc == null)
+        throw new ApplicationException("Doc was not set before!");
+
       // Available Items
       if(null!=View)
       {
@@ -211,22 +217,23 @@ namespace Altaxo.Gui.Graph
       }
     }
 
-    private void AddToPlotItemCollection(PlotItemCollection picoll, NGTreeNode rootnode)
+    private void TransferTreeToDoc(NGTreeNode rootnode, PlotItemCollection picoll)
     {
       picoll.Clear();
       foreach (NGTreeNode node in rootnode.Nodes)
       {
         IGPlotItem item = (IGPlotItem)node.Tag;
         if (item is PlotItemCollection) // if this is a plot item collection
-          AddToPlotItemCollection((PlotItemCollection)item, node);
+          TransferTreeToDoc(node, (PlotItemCollection)item);
 
         picoll.Add(item);
-
       }
     }
 
+   
 
-    private IGPlotItem NewPlotItemFromPLCon(string tablename, string columnname)
+
+    private IGPlotItem CreatePlotItem(string tablename, string columnname)
     {
       // create a new plotassociation from the column
       // first, get the y column from table and name
@@ -298,18 +305,20 @@ namespace Altaxo.Gui.Graph
     }
 
 
-
+    /// <summary>
+    /// Puts the selected data columns into the plot content.
+    /// </summary>
+    /// <param name="selNodes"></param>
     public void EhView_PutData(NGTreeNode[] selNodes)
     {
 
       // first, put the selected node into the list, even if it is not checked
-
       foreach (NGTreeNode sn  in selNodes)
       {
         if(null!=sn.Parent)
         {
        
-          IGPlotItem newItem = this.NewPlotItemFromPLCon(sn.Parent.Text,sn.Text);
+          IGPlotItem newItem = this.CreatePlotItem(sn.Parent.Text,sn.Text);
           _doc.Add(newItem);
           
           NGTreeNode newNode = new NGTreeNode();
@@ -328,9 +337,11 @@ namespace Altaxo.Gui.Graph
     {
       View.Contents_RemoveItems(selNodes);
 
-      foreach(NGTreeNode node in selNodes)
+      foreach (NGTreeNode node in selNodes)
         node.Remove();
-     
+
+      TransferTreeToDoc(_plotItemsRootNode, _doc);
+      View.Contents_SetItems(_plotItemsTree);
       SetDirty();
     }
 
@@ -338,21 +349,7 @@ namespace Altaxo.Gui.Graph
 
 
 
-    public void EhView_ContentsDoubleClick(NGTreeNode selNode)
-    {
-      object tag = selNode.Tag;
-      IGPlotItem pa = null;
-      if (tag is IGPlotItem)
-      {
-        pa = tag as IGPlotItem;
-      }
-     
-      if (null != pa)
-      {
-        DialogFactory.ShowPlotStyleAndDataDialog(View.Form, pa, pa.ParentCollection.GroupStyles);
-      }
-    }
-    
+   
 
 
     public void EhView_ListSelUpClick(NGTreeNode[] selNodes)
@@ -374,6 +371,7 @@ namespace Altaxo.Gui.Graph
       if (NGTreeNode.HaveSameParent(selNodes))
       {
         NGTreeNode.MoveUpDown(iDelta, selNodes);
+        TransferTreeToDoc(_plotItemsRootNode, _doc);
         View.Contents_SetItems(this._plotItemsTree);
         SetDirty();
       }
@@ -431,6 +429,8 @@ namespace Altaxo.Gui.Graph
           View.Contents_SetSelected(iSeg,false);
         }
       } // end if iDelta==1
+
+      TransferTreeToDoc(_plotItemsRootNode, _doc);
     }
 
 
@@ -467,10 +467,8 @@ namespace Altaxo.Gui.Graph
              selNodes[foundindex].Nodes.Add(selNodes[i]);
            }
        }
-       // else use a new PLCon to add the items to
-       else
+       else // if we found no group to add to, we have to create a new group
        {
-         
          NGTreeNode newNode = new NGTreeNode();
          newNode.Tag = new PlotItemCollection();
          newNode.Text = "PlotGroup";
@@ -499,6 +497,7 @@ namespace Altaxo.Gui.Graph
        }
       // now all items are in the new group
 
+       TransferTreeToDoc(_plotItemsRootNode, _doc);
       // so update the list box:
        View.Contents_SetItems(this._plotItemsTree);
 
@@ -513,7 +512,7 @@ namespace Altaxo.Gui.Graph
 
       selNodes = NGTreeNode.FilterIndependentNodes(selNodes);
 
-      for(int i=selNodes.Length-1;i>=0;i--)
+      for(int i=0;i<selNodes.Length;i++)
       {
         if (selNodes[i].Nodes.Count==0 && selNodes[i].Parent!=null && selNodes[i].Parent.Parent!=null)
         {
@@ -537,28 +536,42 @@ namespace Altaxo.Gui.Graph
           selNodes[i].Remove();
         }
       } // end for
+
+      TransferTreeToDoc(_plotItemsRootNode, _doc);
       View.Contents_SetItems(_plotItemsTree);
       SetDirty();
 
     }
 
 
-    public void EhView_EditRangeClick(NGTreeNode[] selNodes)
+
+    public void EhView_ContentsDoubleClick(NGTreeNode selNode)
     {
-      if (selNodes.Length == 1)
+      IGPlotItem pi = selNode.Tag as IGPlotItem;
+      if (null != pi)
       {
-        if (selNodes[0].Tag is IGPlotItem)
+        if (pi is PlotItemCollection)
         {
-          IGPlotItem pi = (IGPlotItem)selNodes[0].Tag;
-          DialogFactory.ShowPlotStyleAndDataDialog(Current.MainWindow, pi, pi.ParentCollection.GroupStyles);
+          // show not the dialog for PlotItemCollection, but only those for the group styles into that collection
+          Current.Gui.ShowDialog(new object[] { ((PlotItemCollection)pi).GroupStyles }, pi.Name);
+        }
+        else
+        {
+          Current.Gui.ShowDialog(new object[] { pi }, pi.GetName(2));
         }
       }
-      
+    }
+    
+    public void EhView_EditRangeClick(NGTreeNode[] selNodes)
+    {
+      if (selNodes.Length == 1 && selNodes[0].Tag is IGPlotItem)
+        EhView_ContentsDoubleClick(selNodes[0]);
     }
 
     public void EhView_PlotAssociationsClick(NGTreeNode[] selNodes)
     {
-      EhView_EditRangeClick(selNodes);
+      if (selNodes.Length == 1)
+        EhView_ContentsDoubleClick(selNodes[0]);
     }
 
 
@@ -573,7 +586,7 @@ namespace Altaxo.Gui.Graph
         return true; // not dirty - so no need to apply something
 
       _originalDoc.Clear(); // first, clear all Plot items
-      AddToPlotItemCollection(_originalDoc, _plotItemsRootNode);
+      TransferTreeToDoc(_plotItemsRootNode, _originalDoc);
 
       if (_useDocument== UseDocument.Copy)
         _doc = _originalDoc.Clone();

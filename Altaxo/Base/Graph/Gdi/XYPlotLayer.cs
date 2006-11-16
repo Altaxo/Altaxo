@@ -2037,7 +2037,7 @@ namespace Altaxo.Graph.Gdi
       // take also the axis styles with physical values into account
       foreach (CSLineID id in _axisStyles.AxisStyleIDs)
       {
-        if (id.AxisNumberOther == 0 && id.UsePhysicalValueOtherFirst)
+        if (id.ParallelAxisNumber!=0 && id.UsePhysicalValueOtherFirst)
           _linkedScales.X.Scale.DataBoundsObject.Add(id.PhysicalValueOtherFirst);
       }
 
@@ -2114,8 +2114,10 @@ namespace Altaxo.Graph.Gdi
       // take also the axis styles with physical values into account
       foreach (CSLineID id in _axisStyles.AxisStyleIDs)
       {
-        if (id.AxisNumberOther == 1 && id.UsePhysicalValueOtherFirst)
+        if (id.ParallelAxisNumber == 0 && id.UsePhysicalValueOtherFirst)
           _linkedScales.Y.Scale.DataBoundsObject.Add(id.PhysicalValueOtherFirst);
+        else if(id.ParallelAxisNumber == 2 && id.UsePhysicalValueOtherSecond)
+          _linkedScales.Y.Scale.DataBoundsObject.Add(id.PhysicalValueOtherSecond);
       }
 
       _plotAssociationYBoundariesChanged_EventSuspendCount = Math.Max(0, _plotAssociationYBoundariesChanged_EventSuspendCount - 1);
@@ -2304,7 +2306,7 @@ namespace Altaxo.Graph.Gdi
 
           PointF normDirection;
           Logical3D tdirection = CoordinateSystem.GetLogicalDirection(info.Identifier.ParallelAxisNumber, info.PreferedLabelSide);
-          PointF location = CoordinateSystem.GetNormalizedDirection(rx0, ry0, rx1, ry1, 0.5, tdirection, out normDirection);
+          PointF location = CoordinateSystem.GetNormalizedDirection(new Logical3D(rx0, ry0), new Logical3D(rx1, ry1), 0.5, tdirection, out normDirection);
           double angle = Math.Atan2(normDirection.Y, normDirection.X) * 180 / Math.PI;
 
           float distance = 0;
@@ -2401,16 +2403,7 @@ namespace Altaxo.Graph.Gdi
     public virtual void PreparePainting()
     {
 
-      // update the logical values of the physical axes before
-      foreach (CSLineID id in _axisStyles.AxisStyleIDs)
-      {
-        if (id.UsePhysicalValueOtherFirst)
-        {
-          // then update the logical value of this identifier
-          double logicalValue = this._linkedScales.Scale(id.AxisNumberOther).PhysicalVariantToNormal(id.PhysicalValueOtherFirst);
-          id.LogicalValueOtherFirst = logicalValue;
-        }
-      }
+    
 
       // Before we paint the axis, we have to make sure that all plot items
       // had their data updated, so that the axes are updated before they are drawn!

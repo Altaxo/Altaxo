@@ -31,6 +31,38 @@ using ICSharpCode.SharpDevelop.Gui;
 
 namespace Altaxo.Main.Commands
 {
+  /// <summary>
+  /// Loader for altaxo project files
+  /// </summary>
+  public class LoadProject : ICSharpCode.SharpDevelop.Project.IProjectLoader
+  {
+    public void Load(string fileName)
+    {
+      Current.ProjectService.OpenProject(fileName);
+    }
+  }
+  /// <summary>
+  /// Loader for altaxo project files
+  /// </summary>
+  public class LoadWorksheet : ICSharpCode.SharpDevelop.Project.IProjectLoader
+  {
+    public void Load(string fileName)
+    {
+      CreateNewWorksheetOrGraphFromFile.OpenWorksheetOrGraph(fileName);
+    }
+  }
+  /// <summary>
+  /// Loader for altaxo project files
+  /// </summary>
+  public class LoadGraph : ICSharpCode.SharpDevelop.Project.IProjectLoader
+  {
+    public void Load(string fileName)
+    {
+      CreateNewWorksheetOrGraphFromFile.OpenWorksheetOrGraph(fileName);
+    }
+  }
+
+
   public class CreateNewWorksheet : AbstractMenuCommand
   {
     public override void Run()
@@ -59,74 +91,84 @@ namespace Altaxo.Main.Commands
 
   public class CreateNewWorksheetOrGraphFromFile : AbstractMenuCommand
   {
+    public static void OpenWorksheetOrGraph(string filename)
+    {
+      object deserObject;
+      Altaxo.Serialization.Xml.XmlStreamDeserializationInfo info;
+      using (System.IO.Stream myStream = new System.IO.FileStream(filename, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.Read))
+      {
+        info = new Altaxo.Serialization.Xml.XmlStreamDeserializationInfo();
+        info.BeginReading(myStream);
+        deserObject = info.GetValue("Table", null);
+        info.EndReading();
+        myStream.Close();
+      }
+
+      // if it is a table, add it to the DataTableCollection
+      if (deserObject is Altaxo.Data.DataTable)
+      {
+        Altaxo.Data.DataTable table = deserObject as Altaxo.Data.DataTable;
+        if (table.Name == null || table.Name == string.Empty)
+          table.Name = Current.Project.DataTableCollection.FindNewTableName();
+        else if (Current.Project.DataTableCollection.ContainsTable(table.Name))
+          table.Name = Current.Project.DataTableCollection.FindNewTableName(table.Name);
+
+        Current.Project.DataTableCollection.Add(table);
+        info.AnnounceDeserializationEnd(Current.Project); // fire the event to resolve path references
+
+        Current.ProjectService.CreateNewWorksheet(table);
+      }
+      // if it is a table, add it to the DataTableCollection
+      else if (deserObject is Altaxo.Worksheet.TablePlusLayout)
+      {
+        Altaxo.Worksheet.TablePlusLayout tableAndLayout = deserObject as Altaxo.Worksheet.TablePlusLayout;
+        Altaxo.Data.DataTable table = tableAndLayout.Table;
+        if (table.Name == null || table.Name == string.Empty)
+          table.Name = Current.Project.DataTableCollection.FindNewTableName();
+        else if (Current.Project.DataTableCollection.ContainsTable(table.Name))
+          table.Name = Current.Project.DataTableCollection.FindNewTableName(table.Name);
+        Current.Project.DataTableCollection.Add(table);
+
+        if (tableAndLayout.Layout != null)
+          Current.Project.TableLayouts.Add(tableAndLayout.Layout);
+
+        info.AnnounceDeserializationEnd(Current.Project); // fire the event to resolve path references
+
+        tableAndLayout.Layout.DataTable = table; // this is the table for the layout now
+
+        Current.ProjectService.CreateNewWorksheet(table, tableAndLayout.Layout);
+      }
+      else if (deserObject is Altaxo.Graph.Gdi.GraphDocument)
+      {
+        Altaxo.Graph.Gdi.GraphDocument graph = deserObject as Altaxo.Graph.Gdi.GraphDocument;
+        if (graph.Name == null || graph.Name == string.Empty)
+          graph.Name = Current.Project.GraphDocumentCollection.FindNewName();
+        else if (Current.Project.GraphDocumentCollection.Contains(graph.Name))
+          graph.Name = Current.Project.GraphDocumentCollection.FindNewName(graph.Name);
+
+        Current.Project.GraphDocumentCollection.Add(graph);
+        info.AnnounceDeserializationEnd(Current.Project); // fire the event to resolve path references in the graph
+
+        Current.ProjectService.CreateNewGraph(graph);
+      }
+    }
+      
+    
+
     public override void Run()
     {
-      System.IO.Stream myStream ;
+     
       OpenFileDialog openFileDialog1 = new OpenFileDialog();
  
-      openFileDialog1.Filter = "Xml files (*.xml)|*.xml|All files (*.*)|*.*"  ;
+      openFileDialog1.Filter = "Worksheet or graph files (*.axowks;*.axogrp)|*.axowks;*.axogrp|All files (*.*)|*.*"  ;
       openFileDialog1.FilterIndex = 1 ;
       openFileDialog1.RestoreDirectory = true ;
  
-      if(openFileDialog1.ShowDialog() == DialogResult.OK)
+      if (openFileDialog1.ShowDialog() == DialogResult.OK)
       {
-        if((myStream = openFileDialog1.OpenFile()) != null)
-        {
-          Altaxo.Serialization.Xml.XmlStreamDeserializationInfo info = new Altaxo.Serialization.Xml.XmlStreamDeserializationInfo();
-          info.BeginReading(myStream);
-          object deserObject = info.GetValue("Table",null);
-          info.EndReading();
-          myStream.Close();
-
-          // if it is a table, add it to the DataTableCollection
-          if(deserObject is Altaxo.Data.DataTable)
-          {
-            Altaxo.Data.DataTable table = deserObject as Altaxo.Data.DataTable;
-            if(table.Name==null || table.Name==string.Empty)
-              table.Name = Current.Project.DataTableCollection.FindNewTableName();
-            else if( Current.Project.DataTableCollection.ContainsTable(table.Name))
-              table.Name = Current.Project.DataTableCollection.FindNewTableName(table.Name);
-
-            Current.Project.DataTableCollection.Add(table);
-            info.AnnounceDeserializationEnd(Current.Project); // fire the event to resolve path references
-            
-            Current.ProjectService.CreateNewWorksheet(table);
-          }
-            // if it is a table, add it to the DataTableCollection
-          else if(deserObject is Altaxo.Worksheet.TablePlusLayout)
-          {
-            Altaxo.Worksheet.TablePlusLayout tableAndLayout = deserObject as Altaxo.Worksheet.TablePlusLayout;
-            Altaxo.Data.DataTable table = tableAndLayout.Table;
-            if(table.Name==null || table.Name==string.Empty)
-              table.Name = Current.Project.DataTableCollection.FindNewTableName();
-            else if( Current.Project.DataTableCollection.ContainsTable(table.Name))
-              table.Name = Current.Project.DataTableCollection.FindNewTableName(table.Name);
-            Current.Project.DataTableCollection.Add(table);
-
-            if(tableAndLayout.Layout!=null)
-              Current.Project.TableLayouts.Add(tableAndLayout.Layout);
-
-            info.AnnounceDeserializationEnd(Current.Project); // fire the event to resolve path references
-
-            tableAndLayout.Layout.DataTable = table; // this is the table for the layout now
-            
-            Current.ProjectService.CreateNewWorksheet(table,tableAndLayout.Layout);
-          }
-          else if (deserObject is Altaxo.Graph.Gdi.GraphDocument)
-          {
-            Altaxo.Graph.Gdi.GraphDocument graph = deserObject as Altaxo.Graph.Gdi.GraphDocument;
-            if(graph.Name==null || graph.Name==string.Empty)
-              graph.Name = Current.Project.GraphDocumentCollection.FindNewName();
-            else if( Current.Project.GraphDocumentCollection.Contains(graph.Name))
-              graph.Name = Current.Project.GraphDocumentCollection.FindNewName(graph.Name);
-
-            Current.Project.GraphDocumentCollection.Add(graph);
-            info.AnnounceDeserializationEnd(Current.Project); // fire the event to resolve path references in the graph
-
-            Current.ProjectService.CreateNewGraph(graph);
-          }
-        }
+        OpenWorksheetOrGraph(openFileDialog1.FileName);
       }
+     
     }
   }
 
@@ -331,4 +373,98 @@ namespace Altaxo.Main.Commands
       }
     }
   }
+
+
+  public class NewInstanceScript : AbstractMenuCommand
+  {
+   
+    public override void Run()
+    {
+      Altaxo.Scripting.IScriptText script = null; // or load it from somewhere
+
+      if (script == null)
+        script = new Altaxo.Scripting.ProgramInstanceScript();
+
+      OpenFileDialog odlg = new OpenFileDialog();
+      odlg.Title = "Open a script or press Cancel to create a new script";
+      odlg.Filter = "C# files (*.cs)|*.cs|All files (*.*)|*.*";
+      odlg.FilterIndex = 1;
+      if (DialogResult.OK == odlg.ShowDialog(Current.MainWindow))
+      {
+        string scripttext;
+        string err = OpenScriptText(odlg.FileName, out scripttext);
+        if (null != err)
+          MessageBox.Show(err);
+        else
+          script.ScriptText = scripttext;
+      }
+
+
+
+      object[] args = new object[] { script, new Altaxo.Gui.Scripting.ScriptExecutionHandler(this.EhScriptExecution) };
+      if (Current.Gui.ShowDialog(args, "New instance script"))
+      {
+        string errors = null;
+        do
+        {
+          errors = null;
+          // store the script somewhere m_Table.TableScript = (TableScript)args[0];
+          SaveFileDialog dlg = new SaveFileDialog();
+          dlg.Title = "Save your script";
+          dlg.Filter = "C# files (*.cs)|*.cs|All files (*.*)|*.*";
+          dlg.FilterIndex = 1;
+          if (DialogResult.OK == dlg.ShowDialog(Current.MainWindow))
+          {
+            errors = SaveScriptText(dlg.FileName, script.ScriptText);
+            if (null != errors)
+              MessageBox.Show(Current.MainWindow, errors);
+          }
+        } while (null != errors);
+      }
+    }
+    public bool EhScriptExecution(Altaxo.Scripting.IScriptText script)
+    {
+      return ((Altaxo.Scripting.ProgramInstanceScript)script).Execute();
+    }
+
+    string SaveScriptText(string filename, string text)
+    {
+      try
+      {
+        using (System.IO.FileStream stream = new System.IO.FileStream(filename, System.IO.FileMode.Create, System.IO.FileAccess.Write, System.IO.FileShare.Read))
+        {
+          System.IO.StreamWriter wr = new System.IO.StreamWriter(stream);
+          wr.Write(text);
+          wr.Close();
+          stream.Close();
+        }
+      }
+      catch (Exception ex)
+      {
+        return ex.Message;
+      }
+      return null;
+    }
+
+    string OpenScriptText(string filename, out string scripttext)
+    {
+      scripttext = null;
+      try
+      {
+        using (System.IO.FileStream stream = new System.IO.FileStream(filename, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.Read))
+        {
+          System.IO.StreamReader sr = new System.IO.StreamReader(stream);
+          scripttext = sr.ReadToEnd();
+          sr.Close();
+          stream.Close();
+        }
+      }
+      catch (Exception ex)
+      {
+        return ex.Message;
+      }
+      return null;
+    }
+  }
+
 }

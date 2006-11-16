@@ -138,6 +138,12 @@ namespace Altaxo.Graph.Gdi.CS
     /// </summary>
     public override bool IsAffine { get { return false; } }
 
+    /// <summary>
+    /// Returns true when this is a 3D coordinate system. Returns false in all other cases.
+    /// </summary>
+    public override bool Is3D { get { return false; } }
+
+
     protected override void UpdateAxisInfo()
     {
       int horzAx;
@@ -229,62 +235,62 @@ namespace Altaxo.Graph.Gdi.CS
     /// <param name="xlocation">On return, gives the x coordinate of the converted value (for instance location).</param>
     /// <param name="ylocation">On return, gives the y coordinate of the converted value (for instance location).</param>
     /// <returns>True if the conversion was successfull, false if the conversion was not possible.</returns>
-    public override bool LogicalToLayerCoordinates(double rx, double ry, out double xlocation, out double ylocation)
+    public override bool LogicalToLayerCoordinates(Logical3D r, out double xlocation, out double ylocation)
     {
       if (_isXreverse)
-        rx = 1 - rx;
+        r.RX = 1 - r.RX;
       if (_isYreverse)
-        ry = 1 - ry;
+        r.RY = 1 - r.RY;
       if (_isXYInterchanged)
       {
-        double hr = rx;
-        rx = ry;
-        ry = hr;
+        double hr = r.RX;
+        r.RX = r.RY;
+        r.RY = hr;
       }
 
-      double phi = rx * 2 * Math.PI;
-      double rad = _radius * ry;
+      double phi = r.RX * 2 * Math.PI;
+      double rad = _radius * r.RY;
       xlocation = _midX + rad * Math.Cos(phi);
       ylocation = _midY - rad * Math.Sin(phi);
       return !double.IsNaN(xlocation) && !double.IsNaN(ylocation);
     }
 
     public override bool LogicalToLayerCoordinatesAndDirection(
-      double rx0, double ry0, double rx1, double ry1,
+      Logical3D r0, Logical3D r1,
       double t,
       out double ax, out double ay, out double adx, out double ady)
     {
       if (_isXreverse)
       {
-        rx0 = 1 - rx0;
-        rx1 = 1 - rx1;
+        r0.RX = 1 - r0.RX;
+        r1.RX = 1 - r1.RX;
       }
       if (_isYreverse)
       {
-        ry0 = 1 - ry0;
-        ry1 = 1 - ry1;
+        r0.RY = 1 - r0.RY;
+        r1.RY = 1 - r1.RY;
       }
       if (_isXYInterchanged)
       {
-        double hr0 = rx0;
-        rx0 = ry0;
-        ry0 = hr0;
+        double hr0 = r0.RX;
+        r0.RX = r0.RY;
+        r0.RY = hr0;
 
-        double hr1 = rx1;
-        rx1 = ry1;
-        ry1 = hr1;
+        double hr1 = r1.RX;
+        r1.RX = r1.RY;
+        r1.RY = hr1;
       }
 
-      double rx = rx0 + t * (rx1 - rx0);
-      double ry = ry0 + t * (ry1 - ry0);
+      double rx = r0.RX + t * (r1.RX - r0.RX);
+      double ry = r0.RY + t * (r1.RY - r0.RY);
       double phi = -2 * Math.PI * rx;
       double rad = _radius * ry;
 
       ax = _midX + rad * Math.Cos(phi);
       ay = _midY + rad * Math.Sin(phi);
 
-      adx = _radius * ((ry1 - ry0) * Math.Cos(phi) + 2 * Math.PI * (rx1 - rx0) * ry * Math.Sin(phi));
-      ady = _radius * ((ry1 - ry0) * Math.Sin(phi) - 2 * Math.PI * (rx1 - rx0) * ry * Math.Cos(phi));
+      adx = _radius * ((r1.RY - r0.RY) * Math.Cos(phi) + 2 * Math.PI * (r1.RX - r0.RX) * ry * Math.Sin(phi));
+      ady = _radius * ((r1.RY - r0.RY) * Math.Sin(phi) - 2 * Math.PI * (r1.RX - r0.RX) * ry * Math.Cos(phi));
 
       return !double.IsNaN(ax) && !double.IsNaN(ay);
     }
@@ -300,57 +306,58 @@ namespace Altaxo.Graph.Gdi.CS
     /// <param name="rx">The logical x value.</param>
     /// <param name="ry">The logical y value.</param>
     /// <returns>True if the conversion was successfull, false if the conversion was not possible.</returns>
-    public override bool LayerToLogicalCoordinates(double xlocation, double ylocation, out double rx, out double ry)
+    public override bool LayerToLogicalCoordinates(double xlocation, double ylocation, out Logical3D r)
     {
+      r = new Logical3D();
       double wx = xlocation - _midX;
       double wy = -ylocation + _midY;
       if (wx == 0 && wy == 0)
       {
-        rx = 0;
-        ry = 0;
+        r.RX = 0;
+        r.RY = 0;
       }
       else
       {
-        rx = Math.Atan2(wy, wx) / (2 * Math.PI);
-        ry = 2 * Math.Sqrt(wx * wx + wy * wy) / _radius;
+        r.RX = Math.Atan2(wy, wx) / (2 * Math.PI);
+        r.RY = 2 * Math.Sqrt(wx * wx + wy * wy) / _radius;
       }
 
       if (_isXreverse)
-        rx = 1 - rx;
+        r.RX = 1 - r.RX;
       if (_isYreverse)
-        ry = 1 - ry;
+        r.RY = 1 - r.RY;
       if (_isXYInterchanged)
       {
-        double hr = rx;
-        rx = ry;
-        ry = hr;
+        double hr = r.RX;
+        r.RX = r.RY;
+        r.RY = hr;
       }
 
-      return !double.IsNaN(rx) && !double.IsNaN(ry);
+      return !double.IsNaN(r.RX) && !double.IsNaN(r.RY);
     }
 
-    public override void GetIsoline(System.Drawing.Drawing2D.GraphicsPath g, double rx0, double ry0, double rx1, double ry1)
+    public override void GetIsoline(System.Drawing.Drawing2D.GraphicsPath g, Logical3D r0, Logical3D r1)
     {
       double ax0, ax1, ay0, ay1;
-      if (LogicalToLayerCoordinates(rx0, ry0, out ax0, out ay0) && LogicalToLayerCoordinates(rx1, ry1, out ax1, out ay1))
+      if (LogicalToLayerCoordinates(r0, out ax0, out ay0) && LogicalToLayerCoordinates(r1, out ax1, out ay1))
       {
-        if (((rx0 == rx1) && !_isXYInterchanged) || ((ry0 == ry1) && _isXYInterchanged))
+        if (((r0.RX == r1.RX) && !_isXYInterchanged) || ((r0.RY == r1.RY) && _isXYInterchanged))
         {
           g.AddLine((float)ax0, (float)ay0, (float)ax1, (float)ay1);
         }
-        if (((ry0 == ry1) && !_isXYInterchanged) || ((rx0 == rx1) && _isXYInterchanged))
+        if (((r0.RY == r1.RY) && !_isXYInterchanged) || ((r0.RX == r1.RX) && _isXYInterchanged))
         {
           double startAngle = 180 * Math.Atan2(_midY - ay0, ax0 - _midX) / Math.PI;
           double sweepAngle;
           if (_isXYInterchanged)
           {
-            sweepAngle = (ry1 - ry0) * 360;
+            sweepAngle = (r1.RY - r0.RY) * 360;
             if (_isYreverse)
               sweepAngle = -sweepAngle;
           }
           else
           {
-            sweepAngle = (rx1 - rx0) * 360;
+            sweepAngle = (r1.RX - r0.RX) * 360;
             if (_isXreverse)
               sweepAngle = -sweepAngle;
           }
@@ -360,15 +367,14 @@ namespace Altaxo.Graph.Gdi.CS
         }
         else
         {
-          int points = _isXYInterchanged ? (int)(Math.Abs(ry1 - ry0) * 360) : (int)(Math.Abs(rx1 - rx0) * 360);
+          int points = _isXYInterchanged ? (int)(Math.Abs(r1.RY - r0.RY) * 360) : (int)(Math.Abs(r1.RX - r0.RX) * 360);
           points = Math.Max(1, Math.Min(points, 3600)); // in case there is a rotation more than one turn limit the number of points
           PointF[] pts = new PointF[points + 1];
           for (int i = 0; i <= points; i++)
           {
-            double rx = rx0 + i * (rx1 - rx0) / points;
-            double ry = ry0 + i * (ry1 - ry0) / points;
+            Logical3D r = new Logical3D(r0.RX + i * (r1.RX - r0.RX) / points, r0.RY + i * (r1.RY - r0.RY) / points);
             double ax, ay;
-            LogicalToLayerCoordinates(rx, ry, out ax, out ay);
+            LogicalToLayerCoordinates(r, out ax, out ay);
             pts[i] = new PointF((float)ax, (float)ay);
           }
           g.AddLines(pts);

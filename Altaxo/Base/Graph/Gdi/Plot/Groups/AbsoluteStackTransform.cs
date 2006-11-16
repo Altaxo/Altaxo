@@ -183,11 +183,12 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
             foreach (int originalIndex in pdata.RangeList.OriginalRowIndices())
             {
               j++;
-              double yrel = layer.YAxis.PhysicalVariantToNormal(yArray[j]);
-              double xrel = layer.XAxis.PhysicalVariantToNormal(pdata.GetXPhysical(originalIndex));
+              Logical3D rel = new Logical3D(
+              layer.YAxis.PhysicalVariantToNormal(yArray[j]),
+              layer.XAxis.PhysicalVariantToNormal(pdata.GetXPhysical(originalIndex)));
 
               double xabs, yabs;
-              layer.CoordinateSystem.LogicalToLayerCoordinates(xrel, yrel, out xabs, out yabs);
+              layer.CoordinateSystem.LogicalToLayerCoordinates(rel, out xabs, out yabs);
               pdata.PlotPointsInAbsoluteLayerCoordinates[j] = new System.Drawing.PointF((float)xabs, (float)yabs);
             }
           }

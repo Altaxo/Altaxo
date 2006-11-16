@@ -159,7 +159,7 @@ namespace Altaxo.Graph
     {
       // test arguments
       if (parallelAxisNumber < 0 || parallelAxisNumber > 2)
-        throw new ArgumentOutOfRangeException("AxisNumber must be either 0,1, or 2, but you provide: " + parallelAxisNumber.ToString());
+        throw new ArgumentOutOfRangeException("AxisNumber must be either 0, 1, or 2, but you provide: " + parallelAxisNumber.ToString());
       if (double.IsNaN(logicalValueOtherFirst))
         throw new ArgumentOutOfRangeException("LogicalValueFirst is NaN, but it must be a valid number.");
       if (double.IsNaN(logicalValueOtherSecond))
@@ -180,8 +180,8 @@ namespace Altaxo.Graph
     /// <returns>A freshly created 2D line identifier.</returns>
     public static CSLineID FromPhysicalValue(int parallelAxisNumber, double physicalValueOther)
     {
-      if (parallelAxisNumber < 0 || parallelAxisNumber > 1)
-        throw new ArgumentOutOfRangeException("AxisNumber must be either 0 or 1, but you provide: " + parallelAxisNumber.ToString());
+      if (parallelAxisNumber < 0 || parallelAxisNumber > 2)
+        throw new ArgumentOutOfRangeException("AxisNumber must be either 0, 1, or 2, but you provide: " + parallelAxisNumber.ToString());
 
       if (double.IsNaN(physicalValueOther))
         throw new ArgumentException("Physical value is NaN, but it must be a valid number.");
@@ -204,8 +204,8 @@ namespace Altaxo.Graph
     /// <returns>A freshly created 2D line identifier.</returns>
     public static CSLineID FromPhysicalVariant(int parallelAxisNumber, AltaxoVariant physicalValueOther)
     {
-      if (parallelAxisNumber < 0 || parallelAxisNumber > 1)
-        throw new ArgumentOutOfRangeException("AxisNumber must be either 0 or 1, but you provide: " + parallelAxisNumber.ToString());
+      if (parallelAxisNumber < 0 || parallelAxisNumber > 2)
+        throw new ArgumentOutOfRangeException("AxisNumber must be either 0, 1, or 2, but you provide: " + parallelAxisNumber.ToString());
 
       if (!physicalValueOther.Equals(physicalValueOther))
         throw new ArgumentException("You can not set physical values that return false when compared to itself, value is: " + physicalValueOther.ToString());
@@ -250,18 +250,27 @@ namespace Altaxo.Graph
     public int ParallelAxisNumber { get { return _parallelAxisNumber; } }
 
     /// <summary>
-    /// Number of axis: 0==X-Axis, 1==Y-Axis, 2==Z-Axis
+    /// Number of first alternate axis: 0==X-Axis, 1==Y-Axis, 2==Z-Axis
     /// </summary>
-    public int AxisNumberOther 
+    public int AxisNumberOtherFirst 
     {
       get 
       {
-        if (Is3DIdentifier)
-          throw new NotSupportedException("This function is only supported for 2D mode.");
-
-        return 0==_parallelAxisNumber ? 1 : 0; 
+        return _parallelAxisNumber==0 ? 1 : 0; 
       } 
     }
+
+    /// <summary>
+    /// Number of first alternate axis: 0==X-Axis, 1==Y-Axis, 2==Z-Axis
+    /// </summary>
+    public int AxisNumberOtherSecond
+    {
+      get
+      {
+        return _parallelAxisNumber == 2 ? 1 : 2;
+      }
+    }
+
 
     /// <summary>
     /// The logical value of the isoline. It can be set only in the constructor, or if the UsePhysicalValue property is true.
@@ -282,6 +291,24 @@ namespace Altaxo.Graph
     }
 
     /// <summary>
+    /// The logical value of the isoline. It can be set only in the constructor, or if the UsePhysicalValue property is true.
+    /// </summary>
+    public double LogicalValueOtherSecond
+    {
+      get
+      {
+        return _logicalValueSecondOther;
+      }
+      set
+      {
+        if (_usePhysicalValueSecondOther)
+          _logicalValueSecondOther = value;
+        else
+          throw new NotSupportedException("You must not set the logical value of this identifier unless the property UsePhysicalValue is true");
+      }
+    }
+
+    /// <summary>
     /// True when the isoline of this axis is determined by a physical value together with the corresponding axis scale
     /// </summary>
     public bool UsePhysicalValueOtherFirst
@@ -291,11 +318,62 @@ namespace Altaxo.Graph
         return _usePhysicalValueFirstOther;
       } 
     }
+    /// <summary>
+    /// True when the isoline of this axis is determined by a physical value together with the corresponding axis scale
+    /// </summary>
+    public bool UsePhysicalValueOtherSecond
+    {
+      get
+      {
+        return _usePhysicalValueSecondOther;
+      }
+    }
 
     /// <summary>
-    /// The physical value of this axis.
+    /// The physical value of the first alternate plane.
     /// </summary>
     public AltaxoVariant PhysicalValueOtherFirst { get { return _physicalValueFirstOther; } }
+
+    /// <summary>
+    /// The physical value of the second alternate plane.
+    /// </summary>
+    public AltaxoVariant PhysicalValueOtherSecond { get { return _physicalValueSecondOther; } }
+
+    /// <summary>
+    /// Gets a logical point on the line.
+    /// </summary>
+    /// <param name="logicalCoordOnLine">Is the coordinate of the axis[parallelaxisnumber]. The other two values are determined by the values stored internally.</param>
+    /// <returns>The logical point on the axis.</returns>
+    public Logical3D GetLogicalPoint(double logicalCoordOnLine)
+    {
+      if (Is2DIdentifier)
+      {
+        switch (_parallelAxisNumber)
+        {
+          case 0:
+            return new Logical3D(logicalCoordOnLine, _logicalValueFirstOther);
+          case 1:
+          default:
+            return new Logical3D(_logicalValueFirstOther, logicalCoordOnLine);
+        }
+      }
+      else
+      {
+        switch (_parallelAxisNumber)
+        {
+          case 0:
+            return new Logical3D(logicalCoordOnLine, _logicalValueFirstOther, _logicalValueSecondOther);
+          case 1:
+            return new Logical3D(_logicalValueFirstOther, logicalCoordOnLine, _logicalValueSecondOther);
+          case 2:
+          default:
+            return new Logical3D(_logicalValueFirstOther, _logicalValueSecondOther, logicalCoordOnLine);
+        }
+      }
+    }
+
+    public Logical3D Begin { get { return GetLogicalPoint(0); } }
+    public Logical3D End { get { return GetLogicalPoint(1); } }
 
 
     public override bool Equals(object obj)

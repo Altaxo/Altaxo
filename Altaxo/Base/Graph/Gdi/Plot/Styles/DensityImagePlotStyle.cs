@@ -511,8 +511,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       double y_rel_top = gl.YAxis.PhysicalVariantToNormal(yColumn[cols-1]);
 
       double xleft, xright, ytop, ybottom;
-      if (gl.CoordinateSystem.LogicalToLayerCoordinates(x_rel_left, y_rel_top, out xleft, out ytop) &&
-        gl.CoordinateSystem.LogicalToLayerCoordinates(x_rel_right, y_rel_bottom, out xright, out ybottom))
+      if (gl.CoordinateSystem.LogicalToLayerCoordinates(new Logical3D(x_rel_left, y_rel_top), out xleft, out ytop) &&
+        gl.CoordinateSystem.LogicalToLayerCoordinates(new Logical3D(x_rel_right, y_rel_bottom), out xright, out ybottom))
       {
 
         GraphicsState savedGraphicsState = gfrx.Save();

@@ -288,10 +288,7 @@ namespace Altaxo.Gui.Graph
           }
           if (null == _layerContentsController)
           {
-            _layerContentsController = new LineScatterLayerContentsController();
-            _layerContentsController.UseDocumentCopy = UseDocument.Directly;
-            _layerContentsController.InitializeDocument(_doc);
-            _layerContentsController.View = new LineScatterLayerContentsControl();
+            _layerContentsController = (ILineScatterLayerContentsController)Current.Gui.GetControllerAndControl(new object[] { _doc.PlotItems }, typeof(ILineScatterLayerContentsController), UseDocument.Directly);
           }
           _currentController = _layerContentsController;
           View.CurrentContent = _currentController.ViewObject;

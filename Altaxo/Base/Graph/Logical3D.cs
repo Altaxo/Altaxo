@@ -26,5 +26,27 @@ namespace Altaxo.Graph
       RY = ry;
       RZ = 0;
     }
+
+
+    public Logical3D InterpolateTo(Logical3D to, double t)
+    {
+      return new Logical3D
+        (
+        this.RX+t*(to.RX-this.RX),
+        this.RY+t*(to.RY-this.RY),
+        this.RZ+t*(to.RZ-this.RZ)
+        );
+    }
+
+    public static Logical3D Interpolate(Logical3D from, Logical3D to, double t)
+    {
+      return new Logical3D
+        (
+        from.RX + t * (to.RX - from.RX),
+        from.RY + t * (to.RY - from.RY),
+        from.RZ + t * (to.RZ - from.RZ)
+        );
+    }
+
   }
 }

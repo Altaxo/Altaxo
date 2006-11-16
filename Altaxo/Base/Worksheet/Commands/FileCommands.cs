@@ -59,7 +59,7 @@ namespace Altaxo.Worksheet.Commands
       System.IO.Stream myStream ;
       SaveFileDialog saveFileDialog1 = new SaveFileDialog();
  
-      saveFileDialog1.Filter = "Xml files (*.xml)|*.xml|All files (*.*)|*.*"  ;
+      saveFileDialog1.Filter = "Altaxo worksheet files (*.axowks)|*.axowks|All files (*.*)|*.*"  ;
       saveFileDialog1.FilterIndex = 1 ;
       saveFileDialog1.RestoreDirectory = true ;
  
@@ -125,8 +125,8 @@ namespace Altaxo.Worksheet.Commands
     {
       using(OpenFileDialog openFileDialog1 = new OpenFileDialog())
       {
-        openFileDialog1.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*" ;
-        openFileDialog1.FilterIndex = 2 ;
+        openFileDialog1.Filter = "Text files (*.csv;*.dat;*.txt)|*.csv;*.dat;*.txt|All files (*.*)|*.*" ;
+        openFileDialog1.FilterIndex = 1 ;
         openFileDialog1.RestoreDirectory = true ;
         openFileDialog1.Multiselect = true;
 
@@ -145,9 +145,9 @@ namespace Altaxo.Worksheet.Commands
     {
       System.IO.Stream myStream ;
       SaveFileDialog saveFileDialog1 = new SaveFileDialog();
- 
-      saveFileDialog1.Filter = "Ascii files (*.txt)|*.txt|All files (*.*)|*.*"  ;
-      saveFileDialog1.FilterIndex = 2 ;
+
+      saveFileDialog1.Filter = "Text files (*.csv;*.dat;*.txt)|*.csv;*.dat;*.txt|All files (*.*)|*.*";
+      saveFileDialog1.FilterIndex = 1 ;
       saveFileDialog1.RestoreDirectory = true ;
  
       if(saveFileDialog1.ShowDialog() == DialogResult.OK)
@@ -209,8 +209,8 @@ namespace Altaxo.Worksheet.Commands
       OpenFileDialog openFileDialog1 = new OpenFileDialog();
 
       openFileDialog1.InitialDirectory = "c:\\" ;
-      openFileDialog1.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*" ;
-      openFileDialog1.FilterIndex = 2 ;
+      openFileDialog1.Filter = "Image files (*.bmp;*.jpg;*.png,*.tif)|*.bmp;*.jpg;*.png,*.tif|All files (*.*)|*.*";
+      openFileDialog1.FilterIndex = 1 ;
       openFileDialog1.RestoreDirectory = true ;
 
       if(openFileDialog1.ShowDialog() == DialogResult.OK)

@@ -592,19 +592,10 @@ namespace Altaxo.Graph.Gdi.Axis
     public virtual GraphicsPath GetSelectionPath(XYPlotLayer layer, bool withTicks)
     {
 
-      double rx0 = 0, rx1 = 1;
-      double ry0 = 0, ry1 = 1;
-
-      if (_cachedAxisStyleInfo.Identifier.ParallelAxisNumber == 0)
-      {
-        ry0 = ry1 = _cachedAxisStyleInfo.Identifier.LogicalValueOtherFirst;
-      }
-      else
-      {
-        rx0 = rx1 = _cachedAxisStyleInfo.Identifier.LogicalValueOtherFirst;
-      }
+      Logical3D r0 = _cachedAxisStyleInfo.Identifier.Begin;
+      Logical3D r1 = _cachedAxisStyleInfo.Identifier.End;
       GraphicsPath gp = new GraphicsPath();
-      layer.CoordinateSystem.GetIsoline(gp, rx0, ry0, rx1, ry1);
+      layer.CoordinateSystem.GetIsoline(gp, r0, r1);
      
       float inflateby = 3;
       if(withTicks)
@@ -634,14 +625,10 @@ namespace Altaxo.Graph.Gdi.Axis
       _cachedAxisStyleInfo = styleInfo.Clone();
       Scale axis = styleID.ParallelAxisNumber == 0 ? layer.XAxis : layer.YAxis;
       
-      double rx0 = 0, rx1 = 1;
-      double ry0 = 0, ry1 = 1;
-      if (styleID.ParallelAxisNumber == 0)
-        ry0 = ry1 = styleID.LogicalValueOtherFirst;
-      else
-        rx0 = rx1 = styleID.LogicalValueOtherFirst;
+      Logical3D r0 = styleID.Begin;
+      Logical3D r1 = styleID.End;
 
-      layer.CoordinateSystem.DrawIsoline(g, _axisPen, rx0,ry0,rx1,ry1);
+      layer.CoordinateSystem.DrawIsoline(g, _axisPen, r0, r1);
 
       Logical3D outer;
      
@@ -657,7 +644,7 @@ namespace Altaxo.Graph.Gdi.Axis
         if(_showFirstUpMajorTicks)
         {
           outer = layer.CoordinateSystem.GetLogicalDirection(styleID.ParallelAxisNumber,CSAxisSide.FirstUp);
-          PointF tickorg = layer.CoordinateSystem.GetNormalizedDirection(rx0, ry0, rx1, ry1, r, outer, out outVector);
+          PointF tickorg = layer.CoordinateSystem.GetNormalizedDirection(r0, r1, r, outer, out outVector);
           PointF tickend = tickorg;
           tickend.X += outVector.X * _majorTickLength;
           tickend.Y += outVector.Y * _majorTickLength;
@@ -666,7 +653,7 @@ namespace Altaxo.Graph.Gdi.Axis
         if(_showFirstDownMajorTicks)
         {
           outer = layer.CoordinateSystem.GetLogicalDirection(styleID.ParallelAxisNumber, CSAxisSide.FirstDown);
-          PointF tickorg = layer.CoordinateSystem.GetNormalizedDirection(rx0, ry0, rx1, ry1, r, outer, out outVector);
+          PointF tickorg = layer.CoordinateSystem.GetNormalizedDirection(r0, r1, r, outer, out outVector);
           PointF tickend = tickorg;
           tickend.X += outVector.X * _majorTickLength;
           tickend.Y += outVector.Y * _majorTickLength;
@@ -682,7 +669,7 @@ namespace Altaxo.Graph.Gdi.Axis
         if(_showFirstUpMinorTicks)
         {
           outer = layer.CoordinateSystem.GetLogicalDirection(styleID.ParallelAxisNumber, CSAxisSide.FirstUp);
-          PointF tickorg = layer.CoordinateSystem.GetNormalizedDirection(rx0, ry0, rx1, ry1, r, outer, out outVector);
+          PointF tickorg = layer.CoordinateSystem.GetNormalizedDirection(r0, r1, r, outer, out outVector);
           PointF tickend = tickorg;
           tickend.X += outVector.X * _minorTickLength;
           tickend.Y += outVector.Y * _minorTickLength;
@@ -691,7 +678,7 @@ namespace Altaxo.Graph.Gdi.Axis
         if(_showFirstDownMinorTicks)
         {
           outer = layer.CoordinateSystem.GetLogicalDirection(styleID.ParallelAxisNumber, CSAxisSide.FirstDown);
-          PointF tickorg = layer.CoordinateSystem.GetNormalizedDirection(rx0, ry0, rx1, ry1, r, outer, out outVector);
+          PointF tickorg = layer.CoordinateSystem.GetNormalizedDirection(r0, r1, r, outer, out outVector);
           PointF tickend = tickorg;
           tickend.X += outVector.X * _minorTickLength;
           tickend.Y += outVector.Y * _minorTickLength;

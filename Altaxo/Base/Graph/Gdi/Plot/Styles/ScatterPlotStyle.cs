@@ -861,7 +861,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
            Logical3D r3d = layer.GetLogical3D(pdata, j + range.OffsetToOriginal);
            foreach(CSPlaneID id in _dropLine)
-            layer.CoordinateSystem.DrawIsolineFromPointToPlane(g,this._pen,id, r3d);
+            layer.CoordinateSystem.DrawIsolineFromPointToPlane(g,this._pen, r3d, id);
           }
 
 

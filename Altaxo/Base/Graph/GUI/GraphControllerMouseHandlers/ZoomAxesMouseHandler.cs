@@ -59,11 +59,16 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     {
 
       // we must deduce from layer coordinates back to physical coordinates
-      double xr0,yr0,xr1,yr1;
+      Logical3D r0, r1;
       XYPlotLayer layer = this._grac.ActiveLayer;
-      layer.CoordinateSystem.LayerToLogicalCoordinates(_Points[0].layerCoord.X, _Points[0].layerCoord.Y, out xr0, out yr0);
-      layer.CoordinateSystem.LayerToLogicalCoordinates(_Points[1].layerCoord.X, _Points[1].layerCoord.Y, out xr1, out yr1);
+      layer.CoordinateSystem.LayerToLogicalCoordinates(_Points[0].layerCoord.X, _Points[0].layerCoord.Y, out r0);
+      layer.CoordinateSystem.LayerToLogicalCoordinates(_Points[1].layerCoord.X, _Points[1].layerCoord.Y, out r1);
 
+      double xr0 = r0.RX;
+      double yr0 = r0.RY;
+
+      double xr1 = r1.RX;
+      double yr1 = r1.RY;
 
       if(xr0>xr1)
         Swap(ref xr0, ref xr1);

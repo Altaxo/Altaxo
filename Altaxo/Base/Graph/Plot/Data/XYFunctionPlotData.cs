@@ -259,7 +259,7 @@ namespace Altaxo.Graph.Plot.Data
         // (for instance negative values on a logarithmic axis)
         // in this case the returned value is NaN
         double xcoord, ycoord;
-        if (coordsys.LogicalToLayerCoordinates(x_rel, y_rel, out xcoord, out ycoord))
+        if (coordsys.LogicalToLayerCoordinates(new Logical3D(x_rel, y_rel), out xcoord, out ycoord))
         {
           if (bInPlotSpace)
           {

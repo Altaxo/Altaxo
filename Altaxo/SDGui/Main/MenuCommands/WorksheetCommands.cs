@@ -317,7 +317,7 @@ namespace Altaxo.Worksheet.Commands
       if(script==null)
         script = new TableScript();
 
-      object[] args = new object[]{script,new ScriptExecutionHandler(this.EhScriptExecution)};
+      object[] args = new object[]{script,new Altaxo.Gui.Scripting.ScriptExecutionHandler(this.EhScriptExecution)};
       if(Current.Gui.ShowDialog(args, "WorksheetScript of " + m_Table.Name))
       {
         m_Table.TableScript = (TableScript)args[0];

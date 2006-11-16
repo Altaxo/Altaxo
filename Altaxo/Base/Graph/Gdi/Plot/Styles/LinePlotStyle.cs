@@ -621,7 +621,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         layer.CoordinateSystem.GetIsolineFromPlaneToPoint(gp, _fillDirection, r0);
         gp.AddLines(linepts);
         Logical3D r1 = layer.GetLogical3D(pdata, range.OriginalLastPoint);
-        layer.CoordinateSystem.GetIsolineFromPointToPlane(gp, _fillDirection, r1);
+        layer.CoordinateSystem.GetIsolineFromPointToPlane(gp, r1, _fillDirection);
         layer.CoordinateSystem.GetIsolineOnPlane(gp, _fillDirection, r1, r0);
 
         gp.CloseFigure();
@@ -686,7 +686,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         layer.CoordinateSystem.GetIsolineFromPlaneToPoint(gp, _fillDirection, r0);
         gp.AddCurve(linepts);
         Logical3D r1 = layer.GetLogical3D(pdata, range.OriginalLastPoint);
-        layer.CoordinateSystem.GetIsolineFromPointToPlane(gp, _fillDirection, r1);
+        layer.CoordinateSystem.GetIsolineFromPointToPlane(gp, r1, _fillDirection);
         layer.CoordinateSystem.GetIsolineOnPlane(gp, _fillDirection, r1, r0);
 
         gp.CloseFigure();
@@ -728,7 +728,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         layer.CoordinateSystem.GetIsolineFromPlaneToPoint(gp, _fillDirection, r0);
         gp.AddBeziers(linepts);
         Logical3D r1 = layer.GetLogical3D(pdata, range.OriginalLastPoint);
-        layer.CoordinateSystem.GetIsolineFromPointToPlane(gp, _fillDirection, r1);
+        layer.CoordinateSystem.GetIsolineFromPointToPlane(gp, r1, _fillDirection);
         layer.CoordinateSystem.GetIsolineOnPlane(gp, _fillDirection, r1, r0);
 
         gp.CloseFigure();
@@ -775,7 +775,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         layer.CoordinateSystem.GetIsolineFromPlaneToPoint(gp, _fillDirection, r0);
         gp.AddLines(linepts);
         Logical3D r1 = layer.GetLogical3D(pdata, range.OriginalLastPoint);
-        layer.CoordinateSystem.GetIsolineFromPointToPlane(gp, _fillDirection, r1);
+        layer.CoordinateSystem.GetIsolineFromPointToPlane(gp, r1, _fillDirection);
         layer.CoordinateSystem.GetIsolineOnPlane(gp, _fillDirection, r1, r0);
 
         gp.CloseFigure();
@@ -855,7 +855,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         layer.CoordinateSystem.GetIsolineFromPlaneToPoint(gp, _fillDirection, r0);
         gp.AddLines(linepts);
         Logical3D r1 = layer.GetLogical3D(pdata, range.OriginalLastPoint);
-        layer.CoordinateSystem.GetIsolineFromPointToPlane(gp, _fillDirection, r1);
+        layer.CoordinateSystem.GetIsolineFromPointToPlane(gp, r1, _fillDirection);
         layer.CoordinateSystem.GetIsolineOnPlane(gp, _fillDirection, r1, r0);
 
         gp.CloseFigure();
@@ -937,7 +937,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         layer.CoordinateSystem.GetIsolineFromPlaneToPoint(gp, _fillDirection, r0);
         gp.AddLines(linepts);
         Logical3D r1 = layer.GetLogical3D(pdata, range.OriginalLastPoint);
-        layer.CoordinateSystem.GetIsolineFromPointToPlane(gp, _fillDirection, r1);
+        layer.CoordinateSystem.GetIsolineFromPointToPlane(gp, r1, _fillDirection);
         layer.CoordinateSystem.GetIsolineOnPlane(gp, _fillDirection, r1, r0);
 
         gp.CloseFigure();
@@ -1014,7 +1014,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         layer.CoordinateSystem.GetIsolineFromPlaneToPoint(gp, _fillDirection, r0);
         gp.AddLines(linepts);
         Logical3D r1 = layer.GetLogical3D(pdata, range.OriginalLastPoint);
-        layer.CoordinateSystem.GetIsolineFromPointToPlane(gp, _fillDirection, r1);
+        layer.CoordinateSystem.GetIsolineFromPointToPlane(gp, r1, _fillDirection);
         layer.CoordinateSystem.GetIsolineOnPlane(gp, _fillDirection, r1, r0);
 
         gp.CloseFigure();
@@ -1082,7 +1082,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
               layer.CoordinateSystem.GetIsolineFromPlaneToPoint(gp, _fillDirection, r0);
               gp.AddLine(linepts[i].X, linepts[i].Y, linepts[i+1].X, linepts[i+1].Y);
               Logical3D r1 = layer.GetLogical3D(pdata, i + 1 + range.OriginalFirstPoint);
-              layer.CoordinateSystem.GetIsolineFromPointToPlane(gp, _fillDirection, r1);
+              layer.CoordinateSystem.GetIsolineFromPointToPlane(gp, r1, _fillDirection);
               layer.CoordinateSystem.GetIsolineOnPlane(gp, _fillDirection, r1, r0);
               gp.StartFigure();
             }
@@ -1160,7 +1160,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
               gp.AddLine(linepts[i+1].X, linepts[i+1].Y, linepts[i + 2].X, linepts[i + 2].Y);
 
               Logical3D r1 = layer.GetLogical3D(pdata, i + 2 + range.OriginalFirstPoint);
-              layer.CoordinateSystem.GetIsolineFromPointToPlane(gp, _fillDirection, r1);
+              layer.CoordinateSystem.GetIsolineFromPointToPlane(gp, r1, _fillDirection);
               layer.CoordinateSystem.GetIsolineOnPlane(gp, _fillDirection, r1, r0);
               gp.StartFigure();
             }

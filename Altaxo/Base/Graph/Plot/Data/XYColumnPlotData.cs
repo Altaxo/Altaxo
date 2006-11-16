@@ -980,7 +980,7 @@ namespace Altaxo.Graph.Plot.Data
         // that with the choosen axis the point is undefined 
         // (for instance negative values on a logarithmic axis)
         // in this case the returned value is NaN
-        if(coordsys.LogicalToLayerCoordinates(x_rel,y_rel, out xcoord, out ycoord))
+        if(coordsys.LogicalToLayerCoordinates(new Logical3D(x_rel,y_rel), out xcoord, out ycoord))
         {
           if(bInPlotSpace)
           {

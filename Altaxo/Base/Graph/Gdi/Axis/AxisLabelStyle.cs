@@ -561,13 +561,8 @@ namespace Altaxo.Graph.Gdi.Axis
       GraphicsPath helperPath = new GraphicsPath();
       Matrix math = new Matrix();
 
-      double rx0 = 0, rx1 = 1;
-      double ry0 = 0, ry1 = 1;
-      if (styleID.ParallelAxisNumber == 0)
-        ry0 = ry1 = styleID.LogicalValueOtherFirst;
-      else
-        rx0 = rx1 = styleID.LogicalValueOtherFirst;
-
+      Logical3D r0 = _cachedStyleID.Begin;
+      Logical3D r1 = _cachedStyleID.End;
 
       SizeF layerSize = layer.Size;
       PointF outVector;
@@ -605,7 +600,7 @@ namespace Altaxo.Graph.Gdi.Axis
         double r = relpositions[i];
 
         outer = layer.CoordinateSystem.GetLogicalDirection(styleID.ParallelAxisNumber, styleInfo.PreferedLabelSide);
-        PointF tickorg = layer.CoordinateSystem.GetNormalizedDirection(rx0,ry0,rx1,ry1, r, outer, out outVector);
+        PointF tickorg = layer.CoordinateSystem.GetNormalizedDirection(r0, r1, r, outer, out outVector);
         PointF tickend = tickorg;
         tickend.X += outVector.X * outerDistance;
         tickend.Y += outVector.Y * outerDistance;

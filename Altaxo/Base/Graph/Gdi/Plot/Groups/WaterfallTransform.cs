@@ -145,11 +145,9 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
             AltaxoVariant xx = plotdata.GetXPhysical(rowIndex) + currxinc;
             AltaxoVariant yy = plotdata.GetYPhysical(rowIndex) + curryinc;
 
-            double xrel = layer.XAxis.PhysicalVariantToNormal(xx);
-            double yrel = layer.YAxis.PhysicalVariantToNormal(yy);
-
+            Logical3D rel = new Logical3D(layer.XAxis.PhysicalVariantToNormal(xx), layer.YAxis.PhysicalVariantToNormal(yy));
             double xabs, yabs;
-            layer.CoordinateSystem.LogicalToLayerCoordinates(xrel, yrel, out xabs, out yabs);
+            layer.CoordinateSystem.LogicalToLayerCoordinates(rel, out xabs, out yabs);
             plotdata.PlotPointsInAbsoluteLayerCoordinates[j] = new System.Drawing.PointF((float)xabs, (float)yabs);
           }
           gpi.Paint(g, layer, plotdata);

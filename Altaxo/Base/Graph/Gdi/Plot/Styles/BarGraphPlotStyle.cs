@@ -109,8 +109,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 
       double xleft, xright, ytop, ybottom;
-      layer.CoordinateSystem.LogicalToLayerCoordinates(0, 0, out xleft, out ybottom);
-      layer.CoordinateSystem.LogicalToLayerCoordinates(1, 1, out xright, out ytop);
+      layer.CoordinateSystem.LogicalToLayerCoordinates(new Logical3D(0, 0), out xleft, out ybottom);
+      layer.CoordinateSystem.LogicalToLayerCoordinates(new Logical3D(1, 1), out xright, out ytop);
       float xe = (float)xright;
       float ye = (float)ybottom;
 
@@ -130,10 +130,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 
         path.Reset();
-        layer.CoordinateSystem.GetIsoline(path, xln, ynbase, xln, ycn);
-        layer.CoordinateSystem.GetIsoline(path, xln, ycn, xrn, ycn);
-        layer.CoordinateSystem.GetIsoline(path, xrn, ycn, xrn, ynbase);
-        layer.CoordinateSystem.GetIsoline(path, xrn, ynbase, xln, ynbase);
+        layer.CoordinateSystem.GetIsoline(path, new Logical3D(xln, ynbase), new Logical3D(xln, ycn));
+        layer.CoordinateSystem.GetIsoline(path, new Logical3D(xln, ycn), new Logical3D(xrn, ycn));
+        layer.CoordinateSystem.GetIsoline(path, new Logical3D(xrn, ycn), new Logical3D(xrn, ynbase));
+        layer.CoordinateSystem.GetIsoline(path, new Logical3D(xrn, ynbase), new Logical3D(xln, ynbase));
 
         g.FillPath(Brushes.Red, path);
       }

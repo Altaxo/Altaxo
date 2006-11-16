@@ -42,10 +42,22 @@ namespace Altaxo.Gui.Graph
           list.Add(new ListNode(Current.Gui.GetUserFriendlyClassName(t), t));
 
         // look for a controller-control
-        _instanceController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[]{_tempdoc},typeof(IMVCAController));
         _view.TypeLabel="Type";
         _view.InitializeTypeNames(list, list.IndexOfObject(_tempdoc.GetType()));
-        _view.SetInstanceControl(_instanceController.ViewObject);
+
+        // To avoid looping when a dedicated controller is unavailable, we first instantiate the controller alone and compare the types
+        _instanceController = (IMVCAController)Current.Gui.GetController(new object[] { _tempdoc }, typeof(IMVCAController));
+        if (_instanceController != null && (_instanceController.GetType() != this.GetType()))
+        {
+          Current.Gui.FindAndAttachControlTo(_instanceController);
+          if (_instanceController.ViewObject != null)
+            _view.SetInstanceControl(_instanceController.ViewObject);
+        }
+        else
+        {
+          _instanceController = null;
+          _view.SetInstanceControl(null);
+        }
       }
     }
 
@@ -96,7 +108,8 @@ namespace Altaxo.Gui.Graph
 
     public bool Apply()
     {
-      bool result = _instanceController.Apply();
+      
+      bool result = _instanceController==null || _instanceController.Apply();
       if (true == result)
       {
         _doc = _tempdoc;

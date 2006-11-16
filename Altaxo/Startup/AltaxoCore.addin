@@ -108,6 +108,9 @@
         <MenuItem id="WksGraphFromFile" label="${res:XML.MainMenu.FileMenu.New.WksGraphFromFile}"
 					icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.New.WksGraphFromFile.Description}"
 					shortcut="Control|N" class="Altaxo.Main.Commands.CreateNewWorksheetOrGraphFromFile" />
+        <MenuItem id="InstanceScript" label="${res:XML.MainMenu.FileMenu.New.InstanceScript}"
+					icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.New.InstanceScript.Description}"
+					class="Altaxo.Main.Commands.NewInstanceScript" />
         <MenuItem id="File" label="${res:XML.MainMenu.FileMenu.New.File}" icon="Icons.16x16.NewDocumentIcon"
 					description="${res:XML.MainMenu.FileMenu.New.File.Description}" shortcut="Control|N" class="ICSharpCode.SharpDevelop.Commands.CreateNewFile" />
       </MenuItem>
@@ -122,21 +125,21 @@
       <MenuItem id="SaveProjectAs" label="${res:XML.MainMenu.FileMenu.SaveProjectAs}" icon="Icons.16x16.SaveAllIcon"
 				description="${res:XML.MainMenu.FileMenu.SaveProjectAs.Description}" class="Altaxo.Main.Commands.FileSaveAs" />
       <MenuItem id="SaveProjectSeparator" type = "Separator"/>
-      <Condition name = "WindowActive" activewindow="Altaxo.Worksheet.GUI.SDWorksheetController" action="Exclude">
+      <Condition name = "WindowActive" activewindow="Altaxo.Gui.SharpDevelop.SDWorksheetViewContent" action="Exclude">
         <MenuItem id="SaveWorksheetAs" label="${res:XML.MainMenu.FileMenu.SaveWorksheetAs}" icon="Icons.16x16.SaveIcon"
 					description="${res:XML.MainMenu.FileMenu.SaveWorksheetAs.Description}" class="Altaxo.Worksheet.Commands.SaveAs" />
         <MenuItem id="SaveWorksheetAsTemplate" label="${res:XML.MainMenu.FileMenu.SaveWorksheetAsTemplate}"
 					icon="Icons.16x16.SaveIcon" description="${res:XML.MainMenu.FileMenu.SaveWorksheetAsTemplate.Description}"
 					class="Altaxo.Worksheet.Commands.SaveAsTemplate" />
       </Condition>
-      <Condition name = "WindowActive" activewindow="Altaxo.Graph.GUI.SDGraphController" action="Exclude">
+      <Condition name = "WindowActive" activewindow="Altaxo.Gui.SharpDevelop.SDGraphViewContent" action="Exclude">
         <MenuItem id="SaveGraphAsTemplate" label="${res:XML.MainMenu.FileMenu.SaveGraphAsTemplate}"
 					icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.SaveGraphAsTemplate.Description}"
 					class="Altaxo.Graph.Commands.SaveGraphAsTemplate" />
       </Condition>
       <MenuItem id="SaveWindowSeparator"  type = "Separator"/>
       <MenuItem id="PrintSeparator" type = "Separator"/>
-      <Condition name = "WindowActive" activewindow="Altaxo.Graph.GUI.SDGraphController" action="Exclude">
+      <Condition name = "WindowActive" activewindow="Altaxo.Gui.SharpDevelop.SDGraphViewContent" action="Exclude">
         <MenuItem id="GraphPageSetup" label="${res:XML.MainMenu.FileMenu.PageSetup}" icon="Icons.16x16.NewDocumentIcon"
 					description="${res:XML.MainMenu.FileMenu.PageSetup.Description}" class="Altaxo.Graph.Commands.PageSetup" />
         <MenuItem id="GraphPrintPreview" label="${res:XML.MainMenu.FileMenu.PrintPreview}" icon="Icons.16x16.PreView"
@@ -144,7 +147,7 @@
         <MenuItem id="GraphPrint" label="${res:XML.MainMenu.FileMenu.Print}" icon="Icons.16x16.Printer"
 					description="${res:XML.MainMenu.FileMenu.Print.Description}" class="Altaxo.Graph.Commands.Print" />
       </Condition>
-      <Condition name = "WindowActive" activewindow="Altaxo.Worksheet.GUI.SDWorksheetController" action="Exclude">
+      <Condition name = "WindowActive" activewindow="Altaxo.Gui.SharpDevelop.SDWorksheetViewContent" action="Exclude">
         <MenuItem id="ImportExportSeparator" type = "Separator"/>
         <MenuItem id="Import" label="${res:XML.MainMenu.FileMenu.Import}" type="Menu">
           <MenuItem id="WorksheetImportAscii" label="${res:XML.MainMenu.FileMenu.Import.Ascii}" icon="Icons.16x16.ImportAscii"
@@ -169,7 +172,7 @@
 						class="Altaxo.Worksheet.Commands.ExportGalacticSPC" />
         </MenuItem>
       </Condition>
-      <Condition name = "WindowActive" activewindow="Altaxo.Graph.GUI.SDGraphController" action="Exclude">
+      <Condition name = "WindowActive" activewindow="Altaxo.Gui.SharpDevelop.SDGraphViewContent" action="Exclude">
         <MenuItem id="GraphImportExportSeparator"  type = "Separator"/>
         <MenuItem id="GraphExport" label="${res:XML.MainMenu.FileMenu.Export}" type="Menu">
           <MenuItem id="GraphExportMetafile" label="${res:XML.MainMenu.FileMenu.Export.WindowsMetaFile}" icon="Icons.16x16.NewDocumentIcon"
@@ -202,11 +205,11 @@
       <MenuItem id="SelectAll" label="${res:XML.MainMenu.EditMenu.SelectAll}" description="${res:XML.MainMenu.EditMenu.SelectAll.Description}"
 				shortcut="Control|A" class="ICSharpCode.SharpDevelop.Commands.SelectAll" />
 
-      <Condition name = "WindowActive" activewindow="Altaxo.Graph.GUI.SDGraphController" action="Exclude">
+      <Condition name = "WindowActive" activewindow="Altaxo.Gui.SharpDevelop.SDGraphViewContent" action="Exclude">
         <MenuItem id="GraphCopyPage" label="${res:XML.MainMenu.EditMenu.CopyPage}" icon="Icons.16x16.NewDocumentIcon"
           description="${res:XML.MainMenu.EditMenu.CopyPage.Description}" class="Altaxo.Graph.Commands.CopyPage" />
       </Condition>
-      <Condition name = "WindowActive" activewindow="Altaxo.Worksheet.GUI.SDWorksheetController" action="Exclude">
+      <Condition name = "WindowActive" activewindow="Altaxo.Gui.SharpDevelop.SDWorksheetViewContent" action="Exclude">
         <MenuItem id="XYVToMatrix" label="${res:XML.MainMenu.EditMenu.XYVToMatrix}"
           description="${res:XML.MainMenu.EditMenu.XYVToMatrix.Description}" class="Altaxo.Worksheet.Commands.XYVToMatrix" />
       </Condition>
@@ -221,7 +224,7 @@
       <MenuItem id="FullScreen" label="${res:XML.MainMenu.ViewMenu.FullScreen}" icon="Icons.16x16.FullScreen"
 				description="${res:XML.MainMenu.ViewMenu.FullScreen.Description}" class="ICSharpCode.SharpDevelop.Commands.ToggleFullscreenCommand" />
     </MenuItem>
-    <Condition name = "WindowActive" activewindow="Altaxo.Worksheet.GUI.SDWorksheetController" action="Exclude">
+    <Condition name = "WindowActive" activewindow="Altaxo.Gui.SharpDevelop.SDWorksheetViewContent" action="Exclude">
       <MenuItem id="Plot" label="${res:XML.MainMenu.PlotMenu}"  type="Menu">
         <Condition name ="SelectedDataColumns" selecteddatacolumns="*" action="Disable">
           <MenuItem id="PlotLine" label="${res:XML.MainMenu.PlotMenu.PlotLine}" icon="Icons.16x16.PlotLine"
@@ -268,7 +271,7 @@
         </Condition>
       </MenuItem>
     </Condition>
-    <Condition name = "WindowActive" activewindow="Altaxo.Worksheet.GUI.SDWorksheetController" action="Exclude">
+    <Condition name = "WindowActive" activewindow="Altaxo.Gui.SharpDevelop.SDWorksheetViewContent" action="Exclude">
       <MenuItem id="Worksheet" label="${res:XML.MainMenu.WorksheetMenu}"  type="Menu">
         <MenuItem id="AddDataColumns" label="${res:XML.MainMenu.WorksheetMenu.AddDataColumns}" description="${res:XML.MainMenu.WorksheetMenu.AddDataColumns.Description}"
 					class="Altaxo.Worksheet.Commands.AddDataColumns" />
@@ -290,7 +293,7 @@
 					class="Altaxo.Worksheet.Commands.SetRowPosition" />
       </MenuItem>
     </Condition>
-    <Condition name = "WindowActive" activewindow="Altaxo.Graph.GUI.SDGraphController" action="Exclude">
+    <Condition name = "WindowActive" activewindow="Altaxo.Gui.SharpDevelop.SDGraphViewContent" action="Exclude">
       <MenuItem id="Graph" label="${res:XML.MainMenu.GraphMenu}"  type="Menu">
         <MenuItem id="NewLayer" label="${res:XML.MainMenu.NewLayerMenu}" type="Menu">
           <MenuItem id="NormalBottomXLeftY" label="${res:XML.MainMenu.NewLayerMenu.NormalBottomXLeftY}"
@@ -322,7 +325,7 @@
 					description="${res:XML.MainMenu.GraphMenu.Duplicate.Description}" class="Altaxo.Graph.Commands.DuplicateGraph" />
       </MenuItem>
     </Condition>
-    <Condition name = "WindowActive" activewindow="Altaxo.Worksheet.GUI.SDWorksheetController" action="Exclude">
+    <Condition name = "WindowActive" activewindow="Altaxo.Gui.SharpDevelop.SDWorksheetViewContent" action="Exclude">
       <MenuItem id="Column" label="${res:XML.MainMenu.ColumnMenu}"  type="Menu">
         <MenuItem id="SetColumnAsX" label="${res:XML.MainMenu.ColumnMenu.SetColumnAsX}" description="${res:XML.MainMenu.ColumnMenu.SetColumnAsX.Description}"
 					class="Altaxo.Worksheet.Commands.SetColumnAsX" />
@@ -344,7 +347,7 @@
 					class="Altaxo.Worksheet.Commands.SetColumnValues" />
       </MenuItem>
     </Condition>
-    <Condition name = "WindowActive" activewindow="Altaxo.Worksheet.GUI.SDWorksheetController" action="Exclude">
+    <Condition name = "WindowActive" activewindow="Altaxo.Gui.SharpDevelop.SDWorksheetViewContent" action="Exclude">
       <MenuItem id="WorksheetAnalysis" label="${res:XML.MainMenu.AnalysisMenu}"  type="Menu">
         <MenuItem id="DiffSmooth" label="${res:XML.MainMenu.AnalysisMenu.DifferentiateSmooth}" description="${res:XML.MainMenu.AnalysisMenu.DiffSmooth.Description}"
 					class="Altaxo.Worksheet.Commands.AnalysisDifferentiateSmooth" />
@@ -380,7 +383,7 @@
 					description="${res:XML.MainMenu.AnalysisMenu.MultiplyColumnsToMatrix.Description}" class="Altaxo.Worksheet.Commands.AnalysisMultiplyColumnsToMatrix" />
       </MenuItem>
     </Condition>
-    <Condition name = "WindowActive" activewindow="Altaxo.Graph.GUI.SDGraphController" action="Exclude">
+    <Condition name = "WindowActive" activewindow="Altaxo.Gui.SharpDevelop.SDGraphViewContent" action="Exclude">
       <MenuItem id="GraphAnalysis" label="${res:XML.MainMenu.AnalysisMenu}"  type="Menu">
         <MenuItem id="FitPolynomial" label="${res:XML.MainMenu.AnalysisMenu.FitPolynomial}" description="${res:XML.MainMenu.AnalysisMenu.FitPolynomial.Description}"
 					class="Altaxo.Graph.Commands.FitPolynomial" />
@@ -495,11 +498,11 @@
       class="Altaxo.Main.Commands.CreateNewStandardWorksheet" />
     <ToolbarItem id="EmptyWorksheet" icon="Icons.16x16.EmptyWorksheet" tooltip="${res:XML.MainMenu.FileMenu.New.Worksheet.Description}"
       class="Altaxo.Main.Commands.CreateNewWorksheet" />
-    <Condition name = "WindowActive" activewindow="Altaxo.Graph.GUI.SDGraphController" action="Disable">
+    <Condition name = "WindowActive" activewindow="Altaxo.Gui.SharpDevelop.SDGraphViewContent" action="Disable">
       <ToolbarItem id="GraphPrint" icon="Icons.16x16.Printer" tooltip="${res:XML.MainMenu.FileMenu.Print.Description}"
         class="Altaxo.Graph.Commands.Print" />
     </Condition>
-    <Condition name = "WindowActive" activewindow="Altaxo.Worksheet.GUI.SDWorksheetController" action="Disable">
+    <Condition name = "WindowActive" activewindow="Altaxo.Gui.SharpDevelop.SDWorksheetViewContent" action="Disable">
       <ToolbarItem id="ImportAscii" icon="Icons.16x16.ImportAscii" tooltip="${res:XML.MainMenu.FileMenu.Import.Ascii.Description}"
         class="Altaxo.Worksheet.Commands.ImportAscii" />
     </Condition>
@@ -518,7 +521,7 @@
     </Condition>
     <ToolbarItem id="CutSeparator"  type = "Separator"/>
     <ToolbarItem id="GraphToolSeparator"  type = "Separator"/>
-    <Condition name = "WindowActive" activewindow="Altaxo.Graph.GUI.SDGraphController" action="Disable">
+    <Condition name = "WindowActive" activewindow="Altaxo.Gui.SharpDevelop.SDGraphViewContent" action="Disable">
       <ToolbarItem id="GraphPointer" icon="Icons.16x16.GraphPointerTool" tooltip="${res:XML.MainMenu.GraphMenu.Tools.Pointer.Description}"
         loadclasslazy="false" class="Altaxo.Graph.Commands.SelectPointerTool" />
       <ToolbarItem id="TextPointer" icon="Icons.16x16.TextTool" tooltip="${res:XML.MainMenu.GraphMenu.Tools.TextTool.Description}"
@@ -544,7 +547,7 @@
         class="Altaxo.Graph.Commands.RescaleAxes" />
     </Condition>
     <ToolbarItem id="PlotSeparator"  type = "Separator"/>
-    <Condition name = "WindowActive" activewindow="Altaxo.Worksheet.GUI.SDWorksheetController" action="Disable">
+    <Condition name = "WindowActive" activewindow="Altaxo.Gui.SharpDevelop.SDWorksheetViewContent" action="Disable">
 
       <ToolbarItem id="PlotLine" icon="Icons.16x16.PlotLine" tooltip="${res:XML.MainMenu.PlotMenu.PlotLine.Description}"
         class="Altaxo.Worksheet.Commands.PlotLine" />
@@ -554,7 +557,7 @@
         class="Altaxo.Worksheet.Commands.PlotLineAndScatter" />
     </Condition>
     <ToolbarItem id="ArrangeSeparator"  type = "Separator"/>
-    <Condition name = "WindowActive" activewindow="Altaxo.Graph.GUI.SDGraphController" action="Disable">
+    <Condition name = "WindowActive" activewindow="Altaxo.Gui.SharpDevelop.SDGraphViewContent" action="Disable">
       <ToolbarItem id="ArrangeTop" icon="Icons.16x16.ArrangeTop" tooltip="${res:XML.MainMenu.GraphMenu.ArrangeTop.Description}"
         class="Altaxo.Graph.Commands.ArrangeTop" />
       <ToolbarItem id="ArrangeBottom" icon="Icons.16x16.ArrangeBottom" tooltip="${res:XML.MainMenu.GraphMenu.ArrangeBottom.Description}"
@@ -690,6 +693,21 @@
 	</Path>
 	
 	<Path name = "/SharpDevelop/Workbench/Combine/FileFilter">
+    <FileFilter id         = "AltaxoProject"
+		            name       = "Altaxo project file (*.axoprj)"
+		            class      = "Altaxo.Main.Commands.LoadProject"
+		            extensions = "*.axoprj"/>
+
+    <FileFilter id         = "AltaxoWorksheet"
+              name       = "Altaxo worksheet file/template (*.axowks)"
+              class      = "Altaxo.Main.Commands.LoadWorksheet"
+              extensions = "*.axowks"/>
+
+    <FileFilter id         = "AltaxoGraph"
+              name       = "Altaxo graph file (*.axogrp)"
+              class      = "Altaxo.Main.Commands.LoadGraph"
+              extensions = "*.axogrp"/>
+    
 		<FileFilter id         = "Solution"
 		            name       = "Solutions (*.sln)"
 		            class      = "ICSharpCode.SharpDevelop.Project.LoadSolution"

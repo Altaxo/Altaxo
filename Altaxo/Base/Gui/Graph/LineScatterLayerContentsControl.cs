@@ -480,6 +480,7 @@ namespace Altaxo.Gui.Graph
       foreach (DictionaryEntry dict in hash)
         result[i++] = ((MWControlSuite.MWTreeNodeWrapper)dict.Value).Node.Tag as NGTreeNode;
 
+      NGTreeNode.SortByOrder(result);
       return result;
     }
 

@@ -1,0 +1,45 @@
+﻿<project schemaVersion="1.3.2.0">
+    <assemblies>
+        <assembly assemblyPath="V:\C\Altaxo\src\Altaxo\Core\bin\Debug\AltaxoCore.dll" xmlCommentsPath="V:\C\Altaxo\src\Altaxo\Core\bin\Debug\AltaxoCore.xml" commentsOnly="False" />
+    </assemblies>
+    <namespaceSummaries>
+        <namespaceSummaryItem name="" isDocumented="False" />
+        <namespaceSummaryItem name="Altaxo.Calc" isDocumented="True" />
+        <namespaceSummaryItem name="Altaxo.Calc.Fourier" isDocumented="True" />
+        <namespaceSummaryItem name="Altaxo.Calc.Interpolation" isDocumented="True" />
+        <namespaceSummaryItem name="Altaxo.Calc.LinearAlgebra" isDocumented="True" />
+        <namespaceSummaryItem name="Altaxo.Calc.LinearAlgebra.Blas" isDocumented="True" />
+        <namespaceSummaryItem name="Altaxo.Calc.LinearAlgebra.Lapack" isDocumented="True" />
+        <namespaceSummaryItem name="Altaxo.Calc.Optimization" isDocumented="True" />
+        <namespaceSummaryItem name="Altaxo.Calc.Probability" isDocumented="True" />
+        <namespaceSummaryItem name="Altaxo.Calc.Regression" isDocumented="True" />
+        <namespaceSummaryItem name="Altaxo.Calc.Regression.Multivariate" isDocumented="True" />
+    </namespaceSummaries>
+    <contentPlacement>AboveNamespaces</contentPlacement>
+    <projectSummary />
+    <sandcastlePath />
+    <hhcPath />
+    <hxcompPath />
+    <outputPath>..\..\..\tempsource\CoreClassRef\</outputPath>
+    <helpFileFormat>HtmlHelp1x</helpFileFormat>
+    <cleanIntermediates>True</cleanIntermediates>
+    <purgeDuplicateTopics>True</purgeDuplicateTopics>
+    <frameworkVersion>2.0.50727</frameworkVersion>
+    <binaryTOC>True</binaryTOC>
+    <includeFavorites>False</includeFavorites>
+    <preliminary>False</preliminary>
+    <rootNSContainer>False</rootNSContainer>
+    <helpTitle>AltaxoCore class reference (0.53.0.429, 2005/12/22)</helpTitle>
+    <htmlHelpName>AltaxoCore class reference</htmlHelpName>
+    <language>en-US</language>
+    <copyrightHref />
+    <copyrightText />
+    <feedbackEMailAddress />
+    <headerText />
+    <projectLinks>Local</projectLinks>
+    <sdkLinks>Msdn</sdkLinks>
+    <presentationStyle>VS2005</presentationStyle>
+    <namingMethod>Guid</namingMethod>
+    <missingTags>Summary, Parameter, Returns, AutoDocumentCtors</missingTags>
+    <visibleItems>InheritedMembers, InheritedFrameworkMembers, Protected, SealedProtected</visibleItems>
+</project>

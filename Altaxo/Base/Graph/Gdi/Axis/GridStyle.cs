@@ -225,9 +225,9 @@ namespace Altaxo.Graph.Gdi.Axis
         if (rel >= 0 && rel <= 1)
         {
           if (axisnumber == 0)
-            layer.CoordinateSystem.DrawIsoline(g, MajorPen, rel, 0, rel, 1);
+            layer.CoordinateSystem.DrawIsoline(g, MajorPen, new Logical3D(rel, 0), new Logical3D(rel, 1));
           else
-            layer.CoordinateSystem.DrawIsoline(g, MajorPen, 0, rel, 1, rel);
+            layer.CoordinateSystem.DrawIsoline(g, MajorPen, new Logical3D(0, rel), new Logical3D(1, rel));
 
           //layer.DrawIsoLine(g, MajorPen, axisnumber, rel, 0, 1);
         }
@@ -243,9 +243,9 @@ namespace Altaxo.Graph.Gdi.Axis
           for (int i = 0; i < ticks.Length; ++i)
           {
             if (axisnumber == 0)
-              layer.CoordinateSystem.DrawIsoline(g, MinorPen, ticks[i], 0, ticks[i], 1);
+              layer.CoordinateSystem.DrawIsoline(g, MinorPen, new Logical3D(ticks[i], 0), new Logical3D(ticks[i], 1));
             else
-              layer.CoordinateSystem.DrawIsoline(g, MinorPen, 0, ticks[i], 1, ticks[i]);
+              layer.CoordinateSystem.DrawIsoline(g, MinorPen, new Logical3D(0, ticks[i]), new Logical3D(1, ticks[i]));
             
             //layer.DrawIsoLine(g, MinorPen, axisnumber, ticks[i], 0, 1);
           }
@@ -258,9 +258,9 @@ namespace Altaxo.Graph.Gdi.Axis
         for (int i = 0; i < ticks.Length; ++i)
         {
           if(axisnumber==0)
-            layer.CoordinateSystem.DrawIsoline(g, MajorPen, ticks[i], 0, ticks[i], 1);
+            layer.CoordinateSystem.DrawIsoline(g, MajorPen, new Logical3D(ticks[i], 0), new Logical3D(ticks[i], 1));
           else
-            layer.CoordinateSystem.DrawIsoline(g, MajorPen, 0, ticks[i], 1, ticks[i]);
+            layer.CoordinateSystem.DrawIsoline(g, MajorPen, new Logical3D(0, ticks[i]), new Logical3D(1, ticks[i]));
           
           //layer.DrawIsoLine(g, MajorPen, axisnumber, ticks[i], 0, 1);
         }

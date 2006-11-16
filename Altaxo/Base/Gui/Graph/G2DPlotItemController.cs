@@ -71,7 +71,7 @@ namespace Altaxo.Gui.Graph
 
     public bool InitializeDocument(params object[] args)
     {
-      if (args == null || args.Length <= 1)
+      if (args == null || args.Length == 0)
         return false;
       
       if (!(args[0] is G2DPlotItem))
@@ -86,6 +86,12 @@ namespace Altaxo.Gui.Graph
         else
           _groupStyles = (PlotGroupStyleCollection)args[1];
       }
+      else
+      {
+        if(_doc.ParentCollection!=null)
+          _groupStyles = _doc.ParentCollection.GroupStyles;
+      }
+
       if(_useDocument==UseDocument.Copy)
         _tempdoc = (G2DPlotItem)_doc.Clone();
 

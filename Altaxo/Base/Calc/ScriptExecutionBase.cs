@@ -433,6 +433,20 @@ namespace Altaxo.Calc
   }
 
   /// <summary>
+  /// Base class for a program instance script.
+  /// </summary>
+  public class ProgramInstanceExeBase : ScriptExecutionBase
+  {
+    /// <summary>
+    /// This method which must be overriden by the script in order to be able to execute the script.
+    /// This method is the entry point of the  script
+    /// </summary>
+    public virtual void Execute()
+    {
+    }
+  }
+
+  /// <summary>
   /// Base class of all "extract table values "table scripts.
   /// </summary>
   /// <remarks>

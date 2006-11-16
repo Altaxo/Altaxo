@@ -166,7 +166,7 @@ namespace Altaxo.Graph.Commands
       System.IO.Stream myStream ;
       SaveFileDialog saveFileDialog1 = new SaveFileDialog();
  
-      saveFileDialog1.Filter = "Xml files (*.xml)|*.xml|All files (*.*)|*.*"  ;
+      saveFileDialog1.Filter = "Altaxo graph files (*.axogrp)|*.axogrp|All files (*.*)|*.*"  ;
       saveFileDialog1.FilterIndex = 1 ;
       saveFileDialog1.RestoreDirectory = true ;
  

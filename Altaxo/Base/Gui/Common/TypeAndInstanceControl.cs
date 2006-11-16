@@ -38,8 +38,11 @@ namespace Altaxo.Gui.Common
       _panelForSubControl.Controls.Clear();
 
       Control ctrl = (Control)instanceControl;
-      ctrl.Location = new Point(0, 0);
-      _panelForSubControl.Controls.Add(ctrl);
+      if (ctrl != null)
+      {
+        ctrl.Location = new Point(0, 0);
+        _panelForSubControl.Controls.Add(ctrl);
+      }
     }
 
     #endregion

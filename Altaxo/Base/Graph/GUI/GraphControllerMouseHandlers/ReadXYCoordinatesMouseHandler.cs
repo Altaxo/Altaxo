@@ -93,13 +93,12 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
 
       PointF layerXY = layer.GraphToLayerCoordinates(m_Cross);
 
-      double xr;
-      double yr;
+     
 
-
-      layer.CoordinateSystem.LayerToLogicalCoordinates(layerXY.X,layerXY.Y,out xr, out yr);
-      Altaxo.Data.AltaxoVariant xphys = layer.XAxis.NormalToPhysicalVariant(xr);
-      Altaxo.Data.AltaxoVariant yphys = layer.YAxis.NormalToPhysicalVariant(yr);
+      Logical3D r;
+      layer.CoordinateSystem.LayerToLogicalCoordinates(layerXY.X,layerXY.Y, out r);
+      Altaxo.Data.AltaxoVariant xphys = layer.XAxis.NormalToPhysicalVariant(r.RX);
+      Altaxo.Data.AltaxoVariant yphys = layer.YAxis.NormalToPhysicalVariant(r.RY);
 
       this.DisplayData(_grac.CurrentLayerNumber,xphys,yphys);
     }

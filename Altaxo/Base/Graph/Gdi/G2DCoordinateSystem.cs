@@ -51,6 +51,13 @@ namespace Altaxo.Graph.Gdi
     /// </summary>
     public abstract bool IsAffine { get; }
 
+
+    /// <summary>
+    /// Returns true when this is a 3D coordinate system. Returns false in all other cases.
+    /// </summary>
+    public abstract bool Is3D { get; }
+
+
     /// <summary>
     /// Calculates from two logical values (values between 0 and 1) the coordinates of the point. Returns true if the conversion
     /// is possible, otherwise false.
@@ -60,7 +67,7 @@ namespace Altaxo.Graph.Gdi
     /// <param name="xlocation">On return, gives the x coordinate of the converted value (for instance location).</param>
     /// <param name="ylocation">On return, gives the y coordinate of the converted value (for instance location).</param>
     /// <returns>True if the conversion was successfull, false if the conversion was not possible.</returns>
-    public abstract bool LogicalToLayerCoordinates(double rx, double ry, out double xlocation, out double ylocation);
+    public abstract bool LogicalToLayerCoordinates(Logical3D r, out double xlocation, out double ylocation);
   
 
     /// <summary>
@@ -79,7 +86,7 @@ namespace Altaxo.Graph.Gdi
     /// <param name="ady">Derivative of layer coordinate y with respect to parameter t at the point (ax,ay).</param>
     /// <returns>True if the conversion was sucessfull, otherwise false.</returns>
     public abstract bool LogicalToLayerCoordinatesAndDirection(
-      double rx0, double ry0, double rx1, double ry1,
+      Logical3D r0, Logical3D r1,
       double t,
       out double ax, out double ay, out double adx, out double ady);
 
@@ -91,8 +98,9 @@ namespace Altaxo.Graph.Gdi
     /// <param name="ylocation">The y coordinate of the converted value (for instance location).</param>
     /// <param name="rx">The logical x value.</param>
     /// <param name="ry">The logical y value.</param>
-    /// <returns>True if the conversion was successfull, false if the conversion was not possible.</returns>
-    public abstract bool LayerToLogicalCoordinates(double xlocation, double ylocation, out double rx, out double ry);
+    /// <returns>True if the conversion was successfull, false if the conversion was not possible. For 3D coordinate systems,
+    /// the relative values of x and y with z=0 should be returned.</returns>
+    public abstract bool LayerToLogicalCoordinates(double xlocation, double ylocation, out Logical3D r);
 
     /// <summary>
     /// Gets a iso line in a path object.
@@ -102,7 +110,7 @@ namespace Altaxo.Graph.Gdi
     /// <param name="ry0">Relative starting point y.</param>
     /// <param name="rx1">Relative end point x.</param>
     /// <param name="ry1">Relative end point y.</param>
-    public abstract void GetIsoline(System.Drawing.Drawing2D.GraphicsPath path, double rx0, double ry0, double rx1, double ry1);
+    public abstract void GetIsoline(System.Drawing.Drawing2D.GraphicsPath path, Logical3D r0, Logical3D r1);
 
     /// <summary>
     /// Fills the list of axis information with new values.
@@ -151,19 +159,16 @@ namespace Altaxo.Graph.Gdi
     /// <param name="ry0">Relative coordinate y of the starting point.</param>
     /// <param name="rx1">Relative coordinate x of the end point.</param>
     /// <param name="ry1">Relative coordinate y of the end point.</param>
-    public virtual void DrawIsoline(System.Drawing.Graphics g, System.Drawing.Pen pen, double rx0, double ry0, double rx1, double ry1)
+    public virtual void DrawIsoline(System.Drawing.Graphics g, System.Drawing.Pen pen, Logical3D r0, Logical3D r1)
     {
       using (GraphicsPath path = new GraphicsPath())
       {
-        GetIsoline(path, rx0, ry0, rx1, ry1);
+        GetIsoline(path, r0, r1);
         g.DrawPath(pen, path);
       }
     }
 
-    public virtual void GetIsolineFromPlaneToPoint(GraphicsPath path, CSPlaneID id, Logical3D r)
-    {
-      GetIsolineFromPlaneToPoint(path, id, r.RX, r.RY, r.RZ);
-    }
+    
 
     /// <summary>
     /// Draws an isoline beginning from a plane to the given point.
@@ -173,23 +178,24 @@ namespace Altaxo.Graph.Gdi
     /// <param name="rx">Logical x coordinate of the end point.</param>
     /// <param name="ry">Logical y coordinate of the end point.</param>
     /// <param name="rz">Logical z coordinate of the end point (not used for 2D coordinate systems).</param>
-    public virtual void GetIsolineFromPlaneToPoint(GraphicsPath path, CSPlaneID id, double rx, double ry, double rz)
+    public virtual void GetIsolineFromPlaneToPoint(GraphicsPath path, CSPlaneID id, Logical3D r)
     {
       if (id.PerpendicularAxisNumber == 0)
       {
-        GetIsoline(path, id.LogicalValue, ry, rx, ry);
+        GetIsoline(path, new Logical3D(id.LogicalValue, r.RY, r.RZ), r);
+      }
+      else if (id.PerpendicularAxisNumber == 1)
+      {
+        GetIsoline(path, new Logical3D(r.RX, id.LogicalValue, r.RZ), r);
       }
       else
       {
-        GetIsoline(path, rx, id.LogicalValue, rx, ry);
+        GetIsoline(path, new Logical3D(r.RX, r.RY, id.LogicalValue), r);
       }
     }
 
 
-    public virtual void GetIsolineFromPointToPlane(GraphicsPath path, CSPlaneID id, Logical3D r)
-    {
-      GetIsolineFromPointToPlane(path, r.RX, r.RY, id);
-    }
+   
 
     /// <summary>
     /// Draws an isoline beginning from a given point to the axis.
@@ -198,22 +204,23 @@ namespace Altaxo.Graph.Gdi
     /// <param name="rx">Logical x coordinate of the start point.</param>
     /// <param name="ry">Logical y coordinate of the start point.</param>
     /// <param name="id">The axis to end the isoline.</param>
-    public virtual void GetIsolineFromPointToPlane(GraphicsPath path, double rx, double ry, CSPlaneID id)
+    public virtual void GetIsolineFromPointToPlane(GraphicsPath path, Logical3D r, CSPlaneID id)
     {
       if (id.PerpendicularAxisNumber == 0)
       {
-        GetIsoline(path, rx, ry, id.LogicalValue, ry);
+        GetIsoline(path, r, new Logical3D(id.LogicalValue, r.RY, r.RZ));
+      }
+      else if (id.PerpendicularAxisNumber == 1)
+      {
+        GetIsoline(path, r, new Logical3D(r.RX, id.LogicalValue,r.RZ));
       }
       else
       {
-        GetIsoline(path, rx, ry, rx, id.LogicalValue);
+        GetIsoline(path, r, new Logical3D(r.RX, r.RY, id.LogicalValue));
       }
     }
 
-    public virtual void DrawIsolineFromPointToPlane(Graphics g, System.Drawing.Pen pen, CSPlaneID id, Logical3D r)
-    {
-      DrawIsolineFromPointToPlane(g, pen, r.RX, r.RY, id);
-    }
+  
 
 
     /// <summary>
@@ -224,23 +231,24 @@ namespace Altaxo.Graph.Gdi
     /// <param name="rx">Logical x coordinate of the start point.</param>
     /// <param name="ry">Logical y coordinate of the start point.</param>
     /// <param name="id">The plane to end the isoline.</param>
-    public virtual void DrawIsolineFromPointToPlane(Graphics g, System.Drawing.Pen pen, double rx, double ry, CSPlaneID id)
+    public virtual void DrawIsolineFromPointToPlane(Graphics g, System.Drawing.Pen pen, Logical3D r, CSPlaneID id)
     {
       if (id.PerpendicularAxisNumber == 0)
       {
-        DrawIsoline(g, pen, rx, ry, id.LogicalValue, ry);
+        DrawIsoline(g, pen, r, new Logical3D(id.LogicalValue, r.RY, r.RZ));
+      }
+      else if (id.PerpendicularAxisNumber == 1)
+      {
+        DrawIsoline(g, pen, r, new Logical3D(r.RX, id.LogicalValue, r.RZ));
       }
       else
       {
-        DrawIsoline(g, pen, rx, ry, rx, id.LogicalValue);
+        DrawIsoline(g, pen, r, new Logical3D(r.RX, r.RY, id.LogicalValue));
       }
     }
 
 
-    public virtual void GetIsolineOnPlane(GraphicsPath path, CSPlaneID id, Logical3D r0, Logical3D r1)
-    {
-      GetIsolineOnPlane(path, id, r0.RX, r0.RY, r1.RX, r1.RY);
-    }
+  
 
 
     /// <summary>
@@ -253,24 +261,33 @@ namespace Altaxo.Graph.Gdi
     /// <param name="rx0">Logical x coordinate of the start point.</param>
     /// <param name="ry1">Logical y coordinate of the start point.</param>
     /// <param name="id">The axis to end the isoline.</param>
-    public virtual void GetIsolineOnPlane(GraphicsPath path, CSPlaneID id, double rx0, double ry0, double rx1, double ry1)
+    public virtual void GetIsolineOnPlane(GraphicsPath path, CSPlaneID id, Logical3D r0, Logical3D r1)
     {
       if (id.PerpendicularAxisNumber == 0)
       {
-        GetIsoline(path, id.LogicalValue, ry0, id.LogicalValue, ry1);
+        GetIsoline(path, new Logical3D(id.LogicalValue, r0.RY, r0.RZ), new Logical3D(id.LogicalValue, r1.RY, r1.RZ));
+      }
+      else if (id.PerpendicularAxisNumber == 1)
+      {
+        GetIsoline(path, new Logical3D(r0.RX, id.LogicalValue, r0.RZ), new Logical3D( r1.RX, id.LogicalValue, r1.RZ));
       }
       else
       {
-        GetIsoline(path, rx0, id.LogicalValue, rx1, id.LogicalValue);
+        GetIsoline(path, new Logical3D(r0.RX, r0.RY, id.LogicalValue), new Logical3D(r1.RX, r1.RY, id.LogicalValue));
       }
     }
 
     public PointF GetPointOnPlane(CSPlaneID id, Logical3D r)
     {
+      double x, y;
       if (id.PerpendicularAxisNumber == 0)
-        return LogicalToLayerCoordinates(id.LogicalValue, r.RY);
+        LogicalToLayerCoordinates(new Logical3D(id.LogicalValue, r.RY,r.RZ), out x, out y);
+      else if(id.PerpendicularAxisNumber == 1)
+        LogicalToLayerCoordinates(new Logical3D(r.RX, id.LogicalValue,r.RZ), out x, out y);
       else
-        return LogicalToLayerCoordinates(r.RX, id.LogicalValue);
+        LogicalToLayerCoordinates(new Logical3D(r.RX, r.RY, id.LogicalValue), out x, out y);
+
+      return new PointF((float)x, (float)y);
     }
 
 
@@ -285,24 +302,39 @@ namespace Altaxo.Graph.Gdi
     {
       if (id.ParallelAxisNumber == 0)
       {
-        GetIsoline(path, r0, id.LogicalValueOtherFirst, r1, id.LogicalValueOtherFirst);
+        GetIsoline(path, new Logical3D(r0, id.LogicalValueOtherFirst,id.LogicalValueOtherSecond), new Logical3D(r1, id.LogicalValueOtherFirst,id.LogicalValueOtherSecond));
+      }
+      else if (id.ParallelAxisNumber == 1)
+      {
+        GetIsoline(path, new Logical3D(id.LogicalValueOtherFirst, r0, id.LogicalValueOtherSecond), new Logical3D(id.LogicalValueOtherFirst, r1,id.LogicalValueOtherSecond));
       }
       else
       {
-        GetIsoline(path, id.LogicalValueOtherFirst, r0, id.LogicalValueOtherFirst, r1);
+        GetIsoline(path, new Logical3D(id.LogicalValueOtherFirst, id.LogicalValueOtherSecond, r0), new Logical3D(id.LogicalValueOtherFirst, id.LogicalValueOtherSecond, r1));
       }
     }
-
-
-
-
-    public PointF LogicalToLayerCoordinates(double rx, double ry)
+    /// <summary>
+    /// Get a line along the axis designated by the argument id from the logical values r0 to r1.
+    /// </summary>
+    /// <param name="path">Graphics path.</param>
+    /// <param name="id">Axis to draw the isoline along.</param>
+    /// <param name="r0">Start point of the isoline. The logical value of the other coordinate.</param>
+    /// <param name="r1">End point of the isoline. The logical value of the other coordinate.</param>
+    public virtual void DrawIsolineFromTo(Graphics g, Pen pen, CSLineID id, double r0, double r1)
     {
-      double ax, ay;
-      LogicalToLayerCoordinates(rx, ry, out ax, out ay);
-      return new PointF((float)ax, (float)ay);
+      if (id.ParallelAxisNumber == 0)
+      {
+        DrawIsoline(g, pen, new Logical3D(r0, id.LogicalValueOtherFirst, id.LogicalValueOtherSecond), new Logical3D(r1, id.LogicalValueOtherFirst, id.LogicalValueOtherSecond));
+      }
+      else if (id.ParallelAxisNumber == 1)
+      {
+        DrawIsoline(g, pen, new Logical3D(id.LogicalValueOtherFirst, r0, id.LogicalValueOtherSecond), new Logical3D(id.LogicalValueOtherFirst, r1, id.LogicalValueOtherSecond));
+      }
+      else
+      {
+        DrawIsoline(g, pen, new Logical3D(id.LogicalValueOtherFirst, id.LogicalValueOtherSecond, r0), new Logical3D(id.LogicalValueOtherFirst, id.LogicalValueOtherSecond, r1));
+      }
     }
-
 
 
     /// <summary>
@@ -320,14 +352,14 @@ namespace Altaxo.Graph.Gdi
     /// has the angle <paramref name="angle"/> to the tangent of the isoline. </param>
     /// <returns>The location (in layer coordinates) of the isoline point.</returns>
     public PointF GetNormalizedDirection(
-      double rx0, double ry0, double rx1, double ry1,
+      Logical3D r0, Logical3D r1,
       double t,
       double angle,
       out PointF normalizeddirection)
     {
       double ax, ay, adx, ady;
       this.LogicalToLayerCoordinatesAndDirection(
-        rx0, ry0, rx1, ry1,
+        r0, r1,
         t,
         out ax, out ay, out adx, out ady);
 
@@ -370,18 +402,20 @@ namespace Altaxo.Graph.Gdi
     /// has the angle <paramref name="angle"/> to the tangent of the isoline. </param>
     /// <returns>The location (in layer coordinates) of the isoline point.</returns>
     public PointF GetNormalizedDirection(
-      double rx0, double ry0, double rx1, double ry1,
+      Logical3D r0,Logical3D r1,
       double t,
       Logical3D direction,
       out PointF normalizeddirection)
     {
       double ax, ay, adx, ady;
-      double rxx0 = rx0 + t * (rx1 - rx0);
-      double ryy0 = ry0 + t * (ry1 - ry0);
+      double rxx0 = r0.RX + t * (r1.RX - r0.RX);
+      double ryy0 = r0.RY + t * (r1.RY - r0.RY);
+      double rzz0 = r0.RZ + t * (r1.RZ - r0.RZ);
       double rxx1 = rxx0 + direction.RX;
       double ryy1 = ryy0 + direction.RY;
+      double rzz1 = rzz0 + direction.RZ;
 
-      this.LogicalToLayerCoordinatesAndDirection(rxx0, ryy0, rxx1, ryy1, 0, out ax, out ay, out adx, out ady);
+      this.LogicalToLayerCoordinatesAndDirection(new Logical3D(rxx0, ryy0,rzz0), new Logical3D(rxx1, ryy1,rzz1), 0, out ax, out ay, out adx, out ady);
 
       // Normalize the vector
       double rr = Calc.RMath.Hypot(adx, ady);
@@ -468,6 +502,9 @@ namespace Altaxo.Graph.Gdi
           }
 
           double dist = Math.Abs(styleID.LogicalValueOtherFirst - info.Identifier.LogicalValueOtherFirst);
+          if(styleID.Is3DIdentifier && info.Identifier.Is3DIdentifier)
+            dist += Math.Abs(styleID.LogicalValueOtherSecond - info.Identifier.LogicalValueOtherSecond);
+
           if (dist < minDistance)
           {
             minDistance = dist;

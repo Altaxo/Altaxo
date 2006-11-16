@@ -1124,6 +1124,7 @@
     <Compile Include="Graph\Gdi\BrushX.cs" />
     <Compile Include="Graph\Gdi\CS\G2DCartesicCoordinateSystem.cs" />
     <Compile Include="Graph\Gdi\CS\G2DPolarCoordinateSystem.cs" />
+    <Compile Include="Graph\Gdi\CS\G3DCartesicCoordinateSystem.cs" />
     <Compile Include="Graph\Gdi\G2DCoordinateSystem.cs" />
     <Compile Include="Graph\Gdi\GraphDocument.cs" />
     <Compile Include="Graph\Gdi\GraphDocumentCollection.cs" />
@@ -1382,6 +1383,7 @@
     <Compile Include="Gui\UserControlForControllerAttribute.cs" />
     <Compile Include="Gui\UserControllerForObjectAttribute.cs" />
     <Compile Include="Main\EventSuppressor.cs" />
+    <Compile Include="Scripting\ProgramInstanceScript.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Calc\FitFunctions\Relaxation\.svn\prop-base\" />
