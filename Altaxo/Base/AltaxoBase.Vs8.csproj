@@ -1097,6 +1097,7 @@
     <None Include="Calc\FitFunctions\Relaxation\.svn\entries" />
     <None Include="Calc\FitFunctions\Relaxation\.svn\format" />
     <None Include="Calc\FitFunctions\Relaxation\.svn\text-base\HavriliakNegamiFunction.cs.svn-base" />
+    <Compile Include="Collections\AltaxoSet.cs" />
     <Compile Include="Collections\IArray.cs" />
     <Compile Include="Collections\ListNode.cs" />
     <Compile Include="Collections\NamedItem.cs" />
@@ -1216,6 +1217,7 @@
     <Compile Include="Graph\Scales\Boundaries\NumericalBoundaries.cs" />
     <Compile Include="Graph\Scales\Boundaries\PositiveFiniteNumericalBoundaries.cs" />
     <Compile Include="Graph\CSAxisSide.cs" />
+    <Compile Include="Graph\Scales\Boundaries\TextBoundaries.cs" />
     <Compile Include="Graph\Scales\DateTimeScale.cs" />
     <Compile Include="Graph\Scales\LinearScale.cs" />
     <Compile Include="Graph\Scales\LinkedScale.cs" />
@@ -1228,6 +1230,7 @@
     <Compile Include="Graph\Scales\Rescaling\NumericAxisRescaleConditions.cs" />
     <Compile Include="Graph\Scales\Scale.cs" />
     <Compile Include="Graph\Scales\ScaleLinkType.cs" />
+    <Compile Include="Graph\Scales\TextScale.cs" />
     <Compile Include="Graph\XAnchorPositionType.cs" />
     <Compile Include="Graph\YAnchorPositionType.cs" />
     <Compile Include="Gui\Common\BooleanValueControl.cs">

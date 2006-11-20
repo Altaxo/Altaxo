@@ -2522,8 +2522,12 @@ namespace Altaxo.Worksheet.GUI
     {
     }
 
+    [field:NonSerialized]
+    public event EventHandler<ClickedCellInfo> DataColumnHeaderRightClicked;
     protected virtual void OnRightClickDataColumnHeader(ClickedCellInfo clickedCell)
     {
+      if (null != DataColumnHeaderRightClicked)
+        DataColumnHeaderRightClicked(this, clickedCell);
     }
 
     protected virtual void OnRightClickDataRowHeader(ClickedCellInfo clickedCell)

@@ -159,6 +159,8 @@ namespace Altaxo.Graph.Gdi
     /// <param name="from">The collection to clone from.</param>
     public XYPlotLayerCollection(XYPlotLayerCollection from)
     {
+      this.m_PrintableBounds = from.m_PrintableBounds;
+
       for(int i=0;i<from.Count;i++)
         this.Add((XYPlotLayer)from[i].Clone());
   

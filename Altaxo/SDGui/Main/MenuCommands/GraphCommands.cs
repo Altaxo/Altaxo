@@ -499,7 +499,7 @@ namespace Altaxo.Graph.Commands
         if (null != Current.Workbench && null != Current.Workbench.ActiveViewContent)
         {
           Altaxo.Gui.SharpDevelop.SDGraphViewContent ct = Current.Workbench.ActiveViewContent as Altaxo.Gui.SharpDevelop.SDGraphViewContent;
-          return ct.Controller;
+          return ct==null ? null : ct.Controller;
         }
         else
           return null;

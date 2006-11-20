@@ -332,8 +332,6 @@ namespace Altaxo.Graph.Gdi
 
     public GraphDocument(GraphDocument from)
     {
-      this._layers = (XYPlotLayerCollection)from._layers.Clone();
-      this._layers.ParentObject = this;
       this._pageBounds = from._pageBounds;
       this._printableBounds = from._printableBounds;
       _creationTime = _lastChangeTime = DateTime.UtcNow;
@@ -350,6 +348,12 @@ namespace Altaxo.Graph.Gdi
             this.SetGraphProperty(key,val.Clone());
         }
       }
+
+      // the order is important here: clone the layers only before setting the printable graph bounds and other
+      // properties, otherwise some errors will happen
+      this._layers = (XYPlotLayerCollection)from._layers.Clone();
+      this._layers.ParentObject = this;
+
     }
 
     public object Clone()

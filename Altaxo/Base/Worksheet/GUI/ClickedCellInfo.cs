@@ -28,7 +28,7 @@ namespace Altaxo.Worksheet.GUI
   /// <remarks>
   /// ClickedCellInfo retrieves (from mouse coordinates of a click), which cell has clicked onto. 
   /// </remarks>
-  public class ClickedCellInfo
+  public class ClickedCellInfo : System.EventArgs
   {
     private System.Windows.Forms.MouseButtons m_LastMouseButtons;
     /// <summary>

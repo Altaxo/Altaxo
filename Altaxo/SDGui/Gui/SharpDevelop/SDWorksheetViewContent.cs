@@ -96,14 +96,18 @@ namespace Altaxo.Gui.SharpDevelop
     /// <param name="layout">The worksheet layout.</param>
     /// <param name="bDeserializationConstructor">If true, no layout has to be provided, since this is used as deserialization constructor.</param>
     protected SDWorksheetViewContent(Altaxo.Worksheet.WorksheetLayout layout, bool bDeserializationConstructor)
+    :
+      this(new WorksheetController(layout))
     {
-      _controller = new WorksheetController(layout);
     }
 
     protected SDWorksheetViewContent(WorksheetController ctrl)
     {
       _controller = ctrl;
+      _controller.DataColumnHeaderRightClicked += EhDataColumnHeaderRightClicked;
     }
+
+    
 
     #endregion
 
@@ -121,6 +125,21 @@ namespace Altaxo.Gui.SharpDevelop
     {
       get { return _controller; }
     }
+
+    #region Context menu handlers
+    protected void EhDataColumnHeaderRightClicked(object sender, ClickedCellInfo clickedCell)
+    {
+      if (!(_controller.SelectedDataColumns.Contains(clickedCell.Column)))
+      {
+        _controller.ClearAllSelections();
+        _controller.SelectedDataColumns.Add(clickedCell.Column);
+        _controller.View.TableAreaInvalidate();
+      }
+      ContextMenuStrip mnu = MenuService.CreateContextMenu(this, "/Altaxo/Views/Worksheet/DataColumnHeader/ContextMenu");
+      mnu.Show((Control)_controller.ViewObject, clickedCell.MousePositionFirstDown);
+    }
+
+    #endregion
 
     #region Abstract View Content overrides
     #region Required

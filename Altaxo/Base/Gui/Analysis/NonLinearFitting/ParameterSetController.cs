@@ -53,8 +53,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       for (int i = 0; i < childs.Length; i++)
       {
         IMVCAController ctrl = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _doc[i] }, typeof(IParameterSetElementController));
-        childs[i].Controller = ctrl;
-        childs[i].View = ctrl.ViewObject;
+        childs[i] = new ControlViewElement("Quack", ctrl, ctrl.ViewObject);
       }
 
       base.Initialize(childs, false);

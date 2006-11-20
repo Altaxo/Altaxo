@@ -208,9 +208,9 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       if (this._useFlowTerm)
       {
         if (this._isDielectricData)
-          Y[1] = -result.Im - P[4] / (x * 8.854187817e-12);
+          Y[1] = -result.Im + P[4] / (x * 8.854187817e-12);
         else
-          Y[1] = -result.Im - P[4] / (x);
+          Y[1] = -result.Im + P[4] / (x);
       }
       else
       {

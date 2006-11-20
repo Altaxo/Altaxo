@@ -333,11 +333,11 @@ namespace Altaxo.Main.Commands
   {
     public override void Run()
     {
-      if(Current.Workbench.ActiveViewContent is Altaxo.Worksheet.GUI.IWorksheetController)
+      if(Current.Workbench.ActiveViewContent is Altaxo.Gui.SharpDevelop.SDWorksheetViewContent)
       {
         new Altaxo.Worksheet.Commands.WorksheetDuplicate().Run();
       }
-      else if (Current.Workbench.ActiveViewContent is Altaxo.Graph.GUI.IGraphController)
+      else if (Current.Workbench.ActiveViewContent is Altaxo.Gui.SharpDevelop.SDGraphViewContent)
       {
         new Altaxo.Graph.Commands.DuplicateGraph().Run();
       }
