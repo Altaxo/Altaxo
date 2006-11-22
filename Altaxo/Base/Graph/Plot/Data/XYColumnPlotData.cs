@@ -909,8 +909,8 @@ namespace Altaxo.Graph.Plot.Data
       
 
 
-      Altaxo.Data.INumericColumn xColumn = this.XColumn as Altaxo.Data.INumericColumn;
-      Altaxo.Data.INumericColumn yColumn = this.YColumn as Altaxo.Data.INumericColumn;
+      Altaxo.Data.IReadableColumn xColumn = this.XColumn;
+      Altaxo.Data.IReadableColumn yColumn = this.YColumn;
 
       if(null==xColumn || null==yColumn)
         return null; // this plotitem is only for x and y double columns
@@ -946,7 +946,7 @@ namespace Altaxo.Graph.Plot.Data
       int len = this.PlotRangeEnd;
       for(i=this.PlotRangeStart,j=0;i<len;i++)
       {
-        if(Double.IsNaN(xColumn[i]) || Double.IsNaN(yColumn[i]))
+        if(xColumn.IsElementEmpty(i) || yColumn.IsElementEmpty(i))
         {
           if(!bInPlotSpace)
           {

@@ -30,6 +30,7 @@ using Altaxo.Graph.Gdi.Plot.Styles;
 using Altaxo.Graph.Gdi.Plot.Data;
 using Altaxo.Graph.Gdi.Plot.Groups;
 using Altaxo.Graph.Plot.Data;
+using Altaxo.Graph.Plot.Groups;
 using Altaxo.Graph.GUI;
 
 
@@ -43,7 +44,7 @@ namespace Altaxo.Worksheet.Commands
   public class PlotCommands
   {
 
-    public static List<IGPlotItem> CreatePlotAssociations(DataTable table, IAscendingIntegerCollection selectedColumns, G2DPlotStyleCollection templatePlotStyle)
+    public static List<IGPlotItem> CreatePlotItems(DataTable table, IAscendingIntegerCollection selectedColumns, G2DPlotStyleCollection templatePlotStyle)
     {
       int len = selectedColumns.Count;
       List<IGPlotItem> result = new List<IGPlotItem>();
@@ -74,26 +75,218 @@ namespace Altaxo.Worksheet.Commands
       return result;
     }
 
+    #region Predefined plot style collections
+
+    public static G2DPlotStyleCollection PlotStyle_Line
+    {
+      get
+      {
+        G2DPlotStyleCollection result = new G2DPlotStyleCollection();
+        result.Add(new LinePlotStyle());
+        return result;
+      }
+    }
+     public static G2DPlotStyleCollection PlotStyle_Symbol
+    {
+      get
+      {
+        G2DPlotStyleCollection result = new G2DPlotStyleCollection();
+        result.Add(new ScatterPlotStyle());
+        return result;
+      }
+    }
+     public static G2DPlotStyleCollection PlotStyle_Line_Symbol
+    {
+      get
+      {
+        G2DPlotStyleCollection result = new G2DPlotStyleCollection();
+        result.Add(new LinePlotStyle());
+        result.Add(new ScatterPlotStyle());
+        return result;
+      }
+    }
+    public static G2DPlotStyleCollection PlotStyle_LineArea
+    {
+      get
+      {
+        G2DPlotStyleCollection result = new G2DPlotStyleCollection();
+        LinePlotStyle ps1 = new LinePlotStyle();
+        ps1.FillArea = true;
+        ps1.FillDirection = Graph.CSPlaneID.Bottom;
+        result.Add(ps1);
+        return result;
+      }
+    }
+    public static G2DPlotStyleCollection PlotStyle_Bar
+    {
+      get
+      {
+        G2DPlotStyleCollection result = new G2DPlotStyleCollection();
+        BarGraphPlotStyle ps1 = new BarGraphPlotStyle();
+        result.Add(ps1);
+        return result;
+      }
+    }
+
+    #endregion
+
+    #region Predefined group styles
+    public static PlotGroupStyleCollection GroupStyle_Color_Line
+    {
+      get
+      {
+        PlotGroupStyleCollection c = new PlotGroupStyleCollection();
+        IPlotGroupStyle s1 = new ColorGroupStyle();
+        c.Add(s1);
+        IPlotGroupStyle s2 = new LineStyleGroupStyle();
+        c.Add(s2,s1.GetType());
+        return c;
+      }
+    }
+
+    public static PlotGroupStyleCollection GroupStyle_Stack_Color_Line
+    {
+      get
+      {
+        PlotGroupStyleCollection c = GroupStyle_Color_Line;
+        c.CoordinateTransformingStyle = new AbsoluteStackTransform();
+        return c;
+      }
+    }
+    public static PlotGroupStyleCollection GroupStyle_RelativeStack_Color_Line
+    {
+      get
+      {
+        PlotGroupStyleCollection c = GroupStyle_Color_Line;
+        c.CoordinateTransformingStyle = new RelativeStackTransform();
+        return c;
+      }
+    }
+    public static PlotGroupStyleCollection GroupStyle_Waterfall_Color_Line
+    {
+      get
+      {
+        PlotGroupStyleCollection c = GroupStyle_Color_Line;
+        c.CoordinateTransformingStyle = new WaterfallTransform();
+        return c;
+      }
+    }
+    public static PlotGroupStyleCollection GroupStyle_Color_Symbol
+    {
+      get
+      {
+        PlotGroupStyleCollection c = new PlotGroupStyleCollection();
+        IPlotGroupStyle s1 = new ColorGroupStyle();
+        c.Add(s1);
+        IPlotGroupStyle s2 = new SymbolShapeStyleGroupStyle();
+        c.Add(s2, s1.GetType());
+        return c;
+      }
+    }
+    public static PlotGroupStyleCollection GroupStyle_Color_Line_Symbol
+    {
+      get
+      {
+        PlotGroupStyleCollection c = new PlotGroupStyleCollection();
+        IPlotGroupStyle s1 = new ColorGroupStyle();
+        c.Add(s1);
+        IPlotGroupStyle s2 = new LineStyleGroupStyle();
+        c.Add(s2, s1.GetType());
+        IPlotGroupStyle s3 = new SymbolShapeStyleGroupStyle();
+        c.Add(s3, s2.GetType());
+        return c;
+      }
+    }
+
+    public static PlotGroupStyleCollection GroupStyle_Bar
+    {
+      get
+      {
+        PlotGroupStyleCollection c = new PlotGroupStyleCollection();
+        IPlotGroupStyle s1 = new BarWidthPositionGroupStyle();
+        c.Add(s1);
+        
+        IPlotGroupStyle s2 = new ColorGroupStyle();
+        c.Add(s2);
+        return c;
+      }
+    }
+    public static PlotGroupStyleCollection GroupStyle_Stack_Bar
+    {
+      get
+      {
+        PlotGroupStyleCollection c = new PlotGroupStyleCollection();
+        IPlotGroupStyle s1 = new BarWidthPositionGroupStyle();
+        s1.IsStepEnabled = false;
+        c.Add(s1);
+
+        IPlotGroupStyle s2 = new ColorGroupStyle();
+        c.Add(s2);
+
+        c.CoordinateTransformingStyle = new AbsoluteStackTransform();
+        return c;
+      }
+    }
+    public static PlotGroupStyleCollection GroupStyle_RelativeStack_Bar
+    {
+      get
+      {
+        PlotGroupStyleCollection c = new PlotGroupStyleCollection();
+        IPlotGroupStyle s1 = new BarWidthPositionGroupStyle();
+        s1.IsStepEnabled = false;
+        c.Add(s1);
+
+        IPlotGroupStyle s2 = new ColorGroupStyle();
+        c.Add(s2);
+
+        c.CoordinateTransformingStyle = new RelativeStackTransform();
+        return c;
+      }
+    }
+
+    #endregion
+
+
     /// <summary>
     /// Plots selected data columns of a table.
     /// </summary>
     /// <param name="table">The source table.</param>
     /// <param name="selectedColumns">The data columns of the table that should be plotted.</param>
-    /// <param name="bLine">If true, the line style is activated (the points are connected by lines).</param>
-    /// <param name="bScatter">If true, the scatter style is activated (the points are plotted as symbols).</param>
+    /// <param name="templatePlotStyle">The plot style which is the template for all plot items.</param>
+    /// <param name="groupStyles">The group styles for the newly built plot item collection.</param>
     public static IGraphController Plot(DataTable table, 
       IAscendingIntegerCollection selectedColumns,
-       G2DPlotStyleCollection templatePlotStyle)
+       G2DPlotStyleCollection templatePlotStyle,
+      PlotGroupStyleCollection groupStyles)
     {
-      List<IGPlotItem> pilist = CreatePlotAssociations(table, selectedColumns, templatePlotStyle);
+      List<IGPlotItem> pilist = CreatePlotItems(table, selectedColumns, templatePlotStyle);
 
       // now create a new Graph with this plot associations
       Altaxo.Graph.GUI.IGraphController gc = Current.ProjectService.CreateNewGraph();
+
+      // Set x and y axes according to the first plot item in the list
+      if(pilist.Count>0 && (pilist[0] is XYColumnPlotItem))
+      {
+        XYColumnPlotItem firstitem = (XYColumnPlotItem)pilist[0];
+        if (firstitem.Data.XColumn is TextColumn)
+          gc.Doc.Layers[0].LinkedScales.SetScale(0, new Graph.Scales.TextScale());
+        else if (firstitem.Data.XColumn is DateTimeColumn)
+          gc.Doc.Layers[0].LinkedScales.SetScale(0, new Graph.Scales.DateTimeScale());
+
+        if (firstitem.Data.YColumn is TextColumn)
+          gc.Doc.Layers[0].LinkedScales.SetScale(1, new Graph.Scales.TextScale());
+        else if (firstitem.Data.YColumn is DateTimeColumn)
+          gc.Doc.Layers[0].LinkedScales.SetScale(1, new Graph.Scales.DateTimeScale());
+      }
+
+
       PlotItemCollection newPlotGroup = new PlotItemCollection(gc.Doc.Layers[0].PlotItems);
       foreach (IGPlotItem pi in pilist)
       {
         newPlotGroup.Add(pi);
       }
+      if(groupStyles!=null)
+        newPlotGroup.GroupStyles = groupStyles;
 
       newPlotGroup.CollectStyles(newPlotGroup.GroupStyles);
       gc.Doc.Layers[0].PlotItems.Add(newPlotGroup);
@@ -123,41 +316,126 @@ namespace Altaxo.Worksheet.Commands
     /// <param name="bScatter">If true, the scatter style is activated (the points are plotted as symbols).</param>
     public static void PlotLine(DataTable table, Altaxo.Collections.IAscendingIntegerCollection selectedColumns, bool bLine, bool bScatter)
     {
-      G2DPlotStyleCollection templatePlotStyle;
-      if(bLine && bScatter)
-        templatePlotStyle  = new G2DPlotStyleCollection(LineScatterPlotStyleKind.LineAndScatter);
+      if (bLine && bScatter)
+        Plot(table, selectedColumns, PlotStyle_Line_Symbol, GroupStyle_Color_Line_Symbol);
       else if (bLine)
-        templatePlotStyle = new G2DPlotStyleCollection(LineScatterPlotStyleKind.Line);
+        Plot(table, selectedColumns, PlotStyle_Line, GroupStyle_Color_Line);
       else
-        templatePlotStyle = new G2DPlotStyleCollection(LineScatterPlotStyleKind.Scatter);
-
-
-      Plot(table, selectedColumns, templatePlotStyle);
+        Plot(table, selectedColumns, PlotStyle_Symbol, GroupStyle_Color_Symbol);
     }
 
+    /// <summary>
+    /// Plots the currently selected data columns of a worksheet.
+    /// </summary>
+    /// <param name="dg">The worksheet controller where the columns are selected in.</param>
+    /// <param name="bLine">If true, a line is plotted.</param>
+    /// <param name="bScatter">If true, scatter symbols are plotted.</param>
+    public static void PlotLineArea(GUI.WorksheetController dg)
+    {
+      Plot(dg.DataTable, dg.SelectedDataColumns, PlotStyle_LineArea, GroupStyle_Color_Line);
+    }
+    /// <summary>
+    /// Plots the currently selected data columns of a worksheet.
+    /// </summary>
+    /// <param name="dg">The worksheet controller where the columns are selected in.</param>
+    /// <param name="bLine">If true, a line is plotted.</param>
+    /// <param name="bScatter">If true, scatter symbols are plotted.</param>
+    public static void PlotLineStack(GUI.WorksheetController dg)
+    {
+      Plot(dg.DataTable, dg.SelectedDataColumns, PlotStyle_Line, GroupStyle_Stack_Color_Line);
+    }
+
+    /// <summary>
+    /// Plots the currently selected data columns of a worksheet.
+    /// </summary>
+    /// <param name="dg">The worksheet controller where the columns are selected in.</param>
+    /// <param name="bLine">If true, a line is plotted.</param>
+    /// <param name="bScatter">If true, scatter symbols are plotted.</param>
+    public static void PlotLineRelativeStack(GUI.WorksheetController dg)
+    {
+      Plot(dg.DataTable, dg.SelectedDataColumns, PlotStyle_Line, GroupStyle_RelativeStack_Color_Line);
+    }
+
+    /// <summary>
+    /// Plots the currently selected data columns of a worksheet.
+    /// </summary>
+    /// <param name="dg">The worksheet controller where the columns are selected in.</param>
+    /// <param name="bLine">If true, a line is plotted.</param>
+    /// <param name="bScatter">If true, scatter symbols are plotted.</param>
+    public static void PlotLineWaterfall(GUI.WorksheetController dg)
+    {
+      Plot(dg.DataTable, dg.SelectedDataColumns, PlotStyle_Line, GroupStyle_Waterfall_Color_Line);
+    }
+
+    /// <summary>
+    /// Plots the currently selected data columns of a worksheet.
+    /// </summary>
+    /// <param name="dg">The worksheet controller where the columns are selected in.</param>
+    /// <param name="bLine">If true, a line is plotted.</param>
+    /// <param name="bScatter">If true, scatter symbols are plotted.</param>
+    public static void PlotLinePolar(GUI.WorksheetController dg)
+    {
+      IGraphController gc = Plot(dg.DataTable, dg.SelectedDataColumns, PlotStyle_Line, GroupStyle_Color_Line);
+      gc.Doc.Layers[0].CoordinateSystem = new G2DPolarCoordinateSystem();
+    }
 
     /// <summary>
     /// Plots the currently selected data columns of a worksheet as horzizontal bar diagram.
     /// </summary>
     /// <param name="dg">The worksheet controller where the columns are selected in.</param>
-    public static void PlotHorizontalBarGraph(GUI.WorksheetController dg)
+    public static void PlotBarChartNormal(GUI.WorksheetController dg)
     {
-      G2DPlotStyleCollection templatePlotStyle = new G2DPlotStyleCollection();
-      templatePlotStyle.Add(new BarGraphPlotStyle());
-      IGraphController gc = Plot(dg.DataTable, dg.SelectedDataColumns, templatePlotStyle);
+      IGraphController gc = Plot(dg.DataTable, dg.SelectedDataColumns, PlotStyle_Bar, GroupStyle_Bar);
       ((G2DCartesicCoordinateSystem)gc.Doc.Layers[0].CoordinateSystem).IsXYInterchanged = true;
     }
+
     /// <summary>
     /// Plots the currently selected data columns of a worksheet as horzizontal bar diagram.
     /// </summary>
     /// <param name="dg">The worksheet controller where the columns are selected in.</param>
-    public static void PlotVerticalBarGraph(GUI.WorksheetController dg)
+    public static void PlotBarChartStack(GUI.WorksheetController dg)
     {
-      G2DPlotStyleCollection templatePlotStyle = new G2DPlotStyleCollection();
-      templatePlotStyle.Add(new BarGraphPlotStyle());
-      IGraphController gc = Plot(dg.DataTable, dg.SelectedDataColumns, templatePlotStyle);
+      IGraphController gc = Plot(dg.DataTable, dg.SelectedDataColumns, PlotStyle_Bar, GroupStyle_Stack_Bar);
+      ((G2DCartesicCoordinateSystem)gc.Doc.Layers[0].CoordinateSystem).IsXYInterchanged = true;
     }
 
+    /// <summary>
+    /// Plots the currently selected data columns of a worksheet as horzizontal bar diagram.
+    /// </summary>
+    /// <param name="dg">The worksheet controller where the columns are selected in.</param>
+    public static void PlotBarChartRelativeStack(GUI.WorksheetController dg)
+    {
+      IGraphController gc = Plot(dg.DataTable, dg.SelectedDataColumns, PlotStyle_Bar, GroupStyle_RelativeStack_Bar);
+      ((G2DCartesicCoordinateSystem)gc.Doc.Layers[0].CoordinateSystem).IsXYInterchanged = true;
+    }
+
+
+    /// <summary>
+    /// Plots the currently selected data columns of a worksheet as horzizontal bar diagram.
+    /// </summary>
+    /// <param name="dg">The worksheet controller where the columns are selected in.</param>
+    public static void PlotColumnChartNormal(GUI.WorksheetController dg)
+    {
+      Plot(dg.DataTable, dg.SelectedDataColumns, PlotStyle_Bar, GroupStyle_Bar);
+    }
+
+    /// <summary>
+    /// Plots the currently selected data columns of a worksheet as horzizontal bar diagram.
+    /// </summary>
+    /// <param name="dg">The worksheet controller where the columns are selected in.</param>
+    public static void PlotColumnChartStack(GUI.WorksheetController dg)
+    {
+      Plot(dg.DataTable, dg.SelectedDataColumns, PlotStyle_Bar, GroupStyle_Stack_Bar);
+    }
+
+    /// <summary>
+    /// Plots the currently selected data columns of a worksheet as horzizontal bar diagram.
+    /// </summary>
+    /// <param name="dg">The worksheet controller where the columns are selected in.</param>
+    public static void PlotColumnChartRelativeStack(GUI.WorksheetController dg)
+    {
+      Plot(dg.DataTable, dg.SelectedDataColumns, PlotStyle_Bar, GroupStyle_RelativeStack_Bar);
+    }
 
 
     /// <summary>

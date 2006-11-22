@@ -1205,6 +1205,7 @@
     <Compile Include="Graph\Plot\Groups\PlotGroupStyleCollectionBase.cs" />
     <Compile Include="Graph\Plot\Groups\SymbolSizeGroupStyle.cs" />
     <Compile Include="Graph\PointD.cs" />
+    <Compile Include="Graph\Scales\AngularScale.cs" />
     <Compile Include="Graph\Scales\Boundaries\AbstractPhysicalBoundaries.cs" />
     <Compile Include="Graph\Scales\Boundaries\BoundariesChangedEventArgs.cs" />
     <Compile Include="Graph\Scales\Boundaries\EventHandlers.cs" />

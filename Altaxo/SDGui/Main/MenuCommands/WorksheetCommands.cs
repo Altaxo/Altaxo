@@ -178,6 +178,41 @@ namespace Altaxo.Worksheet.Commands
       Altaxo.Worksheet.Commands.PlotCommands.PlotLine(ctrl, true, false);
     }
   }
+  public class PlotLineArea : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
+    {
+      Altaxo.Worksheet.Commands.PlotCommands.PlotLineArea(ctrl);
+    }
+  }
+  public class PlotLineStack : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
+    {
+      Altaxo.Worksheet.Commands.PlotCommands.PlotLineStack(ctrl);
+    }
+  }
+  public class PlotLineRelativeStack : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
+    {
+      Altaxo.Worksheet.Commands.PlotCommands.PlotLineRelativeStack(ctrl);
+    }
+  }
+  public class PlotLineWaterfall : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
+    {
+      Altaxo.Worksheet.Commands.PlotCommands.PlotLineWaterfall(ctrl);
+    }
+  }
+  public class PlotLinePolar : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
+    {
+      Altaxo.Worksheet.Commands.PlotCommands.PlotLinePolar(ctrl);
+    }
+  }
 
   public class PlotScatter : AbstractWorksheetControllerCommand
   {
@@ -195,19 +230,49 @@ namespace Altaxo.Worksheet.Commands
     }
   }
 
-  public class PlotHorizontalBarGraph : AbstractWorksheetControllerCommand
+  
+
+  public class PlotBarChartNormal : AbstractWorksheetControllerCommand
   {
     public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
     {
-      Altaxo.Worksheet.Commands.PlotCommands.PlotHorizontalBarGraph(ctrl);
+      Altaxo.Worksheet.Commands.PlotCommands.PlotBarChartNormal(ctrl);
+    }
+  }
+  public class PlotBarChartStack : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
+    {
+      Altaxo.Worksheet.Commands.PlotCommands.PlotBarChartStack(ctrl);
+    }
+  }
+  public class PlotBarChartRelativeStack : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
+    {
+      Altaxo.Worksheet.Commands.PlotCommands.PlotBarChartRelativeStack(ctrl);
     }
   }
 
-  public class PlotVerticalBarGraph : AbstractWorksheetControllerCommand
+  public class PlotColumnChartNormal : AbstractWorksheetControllerCommand
   {
     public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
     {
-      Altaxo.Worksheet.Commands.PlotCommands.PlotVerticalBarGraph(ctrl);
+      Altaxo.Worksheet.Commands.PlotCommands.PlotColumnChartNormal(ctrl);
+    }
+  }
+  public class PlotColumnChartStack : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
+    {
+      Altaxo.Worksheet.Commands.PlotCommands.PlotColumnChartStack(ctrl);
+    }
+  }
+  public class PlotColumnChartRelativeStack : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
+    {
+      Altaxo.Worksheet.Commands.PlotCommands.PlotColumnChartRelativeStack(ctrl);
     }
   }
 

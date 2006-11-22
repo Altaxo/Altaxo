@@ -38,10 +38,12 @@ namespace Altaxo.Graph.Plot.Groups
 
     public ColorGroupStyle()
     {
+      _isStepEnabled = true;
     }
 
     public ColorGroupStyle(ColorGroupStyle from)
     {
+      this._isStepEnabled = from._isStepEnabled;
       this._isInitialized = from._isInitialized;
       this._color = from._color;
     }

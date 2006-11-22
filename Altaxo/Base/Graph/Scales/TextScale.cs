@@ -32,9 +32,9 @@ namespace Altaxo.Graph.Scales
   public class TextScale : Scale
   {
     /// <summary>Holds the <see cref="TextBoundaries"/> for that axis.</summary>
-    protected TextBoundaries _dataBounds = new TextBoundaries();
+    protected TextBoundaries _dataBounds;
 
-    protected NumericAxisRescaleConditions _rescaling = new NumericAxisRescaleConditions();
+    protected NumericAxisRescaleConditions _rescaling;
 
 
     // cached values
@@ -48,9 +48,42 @@ namespace Altaxo.Graph.Scales
     protected double _cachedOneByAxisSpan = 1;
 
 
+    public TextScale()
+    {
+      _dataBounds = new TextBoundaries();
+      _dataBounds.BoundaryChanged += EhBoundariesChanged;
+      
+      _rescaling = new NumericAxisRescaleConditions();
+    }
+
+    public TextScale(TextScale from)
+    {
+      CopyFrom(from);
+    }
+
+    void CopyFrom(TextScale from)
+    {
+      _dataBounds = (TextBoundaries)from._dataBounds.Clone();
+      _dataBounds.BoundaryChanged += EhBoundariesChanged;
+
+      _rescaling = from._rescaling == null ? null : (NumericAxisRescaleConditions)from._rescaling.Clone();
+
+      _cachedAxisOrg = from._cachedAxisOrg;
+      _cachedAxisEnd = from._cachedAxisEnd;
+      _cachedAxisSpan = from._cachedAxisSpan;
+      _cachedOneByAxisSpan = from._cachedOneByAxisSpan;
+    }
+
     public override object Clone()
     {
-      throw new Exception("The method or operation is not implemented.");
+      TextScale result = new TextScale();
+      result.CopyFrom(this);
+      return result;
+    }
+
+    protected void EhBoundariesChanged(object sender, BoundariesChangedEventArgs e)
+    {
+      ProcessDataBounds(); // calculate new bounds and fire AxisChanged event
     }
 
     public override double PhysicalVariantToNormal(Altaxo.Data.AltaxoVariant x)
@@ -88,7 +121,9 @@ namespace Altaxo.Graph.Scales
     {
       double[] result = new double[_dataBounds.NumberOfItems];
       for (int i = 0; i < result.Length; i++)
-        result[i] = i + 1;
+      {
+        result[i] = ((i + 1) - _cachedAxisOrg) * _cachedOneByAxisSpan;
+      }
 
       return result;
     }
@@ -106,14 +141,17 @@ namespace Altaxo.Graph.Scales
     {
       double[] result = new double[_dataBounds.NumberOfItems + 1];
       for (int i = 0; i < result.Length; i++)
-        result[i] = (i + 0.5);
+        result[i] = ((i + 0.5) - _cachedAxisOrg) * _cachedOneByAxisSpan;
 
       return result;
     }
 
     public override object RescalingObject
     {
-      get { throw new Exception("The method or operation is not implemented."); }
+      get
+      {
+        return _rescaling;
+      }
     }
 
     public override IPhysicalBoundaries DataBoundsObject
@@ -177,10 +215,21 @@ namespace Altaxo.Graph.Scales
         dend = Math.Floor(dend) + 0.5;
       }
 
+      bool changed = false;
+      changed |= _cachedAxisOrg != dorg;
       _cachedAxisOrg = dorg;
+
+      changed |= _cachedAxisEnd != dend;
       _cachedAxisEnd = dend;
+
+      changed |= _cachedAxisSpan != (dend - dorg);
       _cachedAxisSpan = dend - dorg;
+
+      changed |= _cachedOneByAxisSpan != (1 / _cachedAxisSpan);
       _cachedOneByAxisSpan = 1 / _cachedAxisSpan;
+
+      if(changed)
+        OnChanged();
     }
   }
  

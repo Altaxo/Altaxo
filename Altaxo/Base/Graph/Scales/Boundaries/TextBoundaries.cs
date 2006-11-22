@@ -6,21 +6,35 @@ using Altaxo.Collections;
 
 namespace Altaxo.Graph.Scales.Boundaries
 {
-  public class TextBoundaries : AbstractPhysicalBoundaries
+  public class TextBoundaries : IPhysicalBoundaries
   {
-    AltaxoSet<string> _itemList = new AltaxoSet<string>();
-    
-    [NonSerialized]
-    int _savedNumberOfItems;
-    [NonSerialized]
-    int _eventSuspendCount;
+    AltaxoSet<string> _itemList;
 
-    void CopyFrom(TextBoundaries from)
+    [NonSerialized]
+    protected int _eventSuspendCount;
+    [NonSerialized]
+    protected int _savedNumberOfItems;
+
+    [field:NonSerialized]
+    public event BoundaryChangedHandler BoundaryChanged;
+    [field:NonSerialized]
+    public event ItemNumberChangedHandler NumberOfItemsChanged;
+
+    public TextBoundaries()
     {
-      _itemList.Clear();
+      _itemList = new AltaxoSet<string>();
+    }
+
+    public TextBoundaries(TextBoundaries from)
+    {
+      _itemList = new AltaxoSet<string>();
+      BeginUpdate();
       foreach (string s in from._itemList)
         _itemList.Add(s);
+      EndUpdate();
     }
+
+   
 
     /// <summary>
     /// Try to find the text item and returns the index in the collection. If the 
@@ -40,7 +54,7 @@ namespace Altaxo.Graph.Scales.Boundaries
 
     #region AbstractPhysicalBoundaries implementation
 
-    public override void BeginUpdate()
+    public  void BeginUpdate()
     {
       ++_eventSuspendCount;
       if (_eventSuspendCount == 1) // events are freshly disabled
@@ -49,11 +63,11 @@ namespace Altaxo.Graph.Scales.Boundaries
       }
     }
 
-    public override void EndUpdate()
+    public  void EndUpdate()
     {
-      if (_eventSuspendCount > 0)
+      --_eventSuspendCount;
+      if (_eventSuspendCount == 0)
       {
-        --_eventSuspendCount;
         // if anything changed in the meantime, fire the event
         if (this._savedNumberOfItems != this._itemList.Count)
         {
@@ -73,7 +87,7 @@ namespace Altaxo.Graph.Scales.Boundaries
     /// <param name="col">The data column</param>
     /// <param name="idx">The index into this data column where the data value is located.</param>
     /// <returns>True if data is in the tracked range, false if the data is not in the tracked range.</returns>
-    public override bool Add(Altaxo.Data.IReadableColumn col, int idx)
+    public  bool Add(Altaxo.Data.IReadableColumn col, int idx)
     {
       return Add(col[idx]);
     }
@@ -87,7 +101,7 @@ namespace Altaxo.Graph.Scales.Boundaries
     /// </summary>
     /// <param name="item">The data item.</param>
     /// <returns>True if data is in the tracked range, false if the data is not in the tracked range.</returns>
-    public override bool Add(Altaxo.Data.AltaxoVariant item)
+    public  bool Add(Altaxo.Data.AltaxoVariant item)
     {
       if(item.IsType(Altaxo.Data.AltaxoVariant.Content.VString))
       {
@@ -95,32 +109,87 @@ namespace Altaxo.Graph.Scales.Boundaries
         if (!_itemList.Contains(s))
         {
           _itemList.Add(s);
+
+          if (_eventSuspendCount == 0)
+          {
+            OnNumberOfItemsChanged();
+            OnBoundaryChanged(false, true);
+          }
+
           return true;
         }
       }
       return false;
     }
 
-    public override void Add(IPhysicalBoundaries b)
+    public  void Add(IPhysicalBoundaries b)
     {
       if (b is TextBoundaries)
       {
+        this.BeginUpdate();
         TextBoundaries from = (TextBoundaries)b;
         foreach (string s in from._itemList)
         {
           if (!_itemList.Contains(s))
             _itemList.Add(s);
         }
+        this.EndUpdate();
       }
     }
 
-    public override object Clone()
+    public object Clone()
     {
-      TextBoundaries result = new TextBoundaries();
-      result.CopyFrom(this);
-      return result;
+      return new TextBoundaries(this);
     }
 
     #endregion
+
+    #region IPhysicalBoundaries Members
+
+   
+
+    public bool EventsEnabled
+    {
+      get
+      {
+        return _eventSuspendCount == 0;
+      }
+    }
+
+    public void Reset()
+    {
+      _itemList.Clear();
+    }
+
+    public int NumberOfItems
+    {
+      get 
+      {
+        return _itemList.Count;
+      }
+    }
+
+    public bool IsEmpty
+    {
+      get 
+      {
+        return _itemList.Count == 0;
+      }
+    }
+
+    #endregion
+
+    protected virtual void OnBoundaryChanged(bool bLowerBoundChanged, bool bUpperBoundChanged)
+    {
+      if (null != BoundaryChanged)
+        BoundaryChanged(this, new BoundariesChangedEventArgs(bLowerBoundChanged, bUpperBoundChanged));
+    }
+
+    protected virtual void OnNumberOfItemsChanged()
+    {
+      if (null != NumberOfItemsChanged)
+        NumberOfItemsChanged(this, new System.EventArgs());
+    }
+
   }
 }

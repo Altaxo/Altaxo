@@ -97,6 +97,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     #endregion
 
+    /// <summary>
+    /// Creates an empty collection, i.e. without any styles (so the item is not visible). You must manually add styles to make the plot item visible.
+    /// </summary>
+    public G2DPlotStyleCollection()
+    {
+      _innerList = new List<IG2DPlotStyle>();
+    }
+
 
     public G2DPlotStyleCollection(IG2DPlotStyle[] styles)
     {
@@ -104,14 +112,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       for (int i = 0; i < styles.Length; ++i)
         if (styles[i] != null)
           this.Add(styles[i], false);
-
-     
     }
 
     public G2DPlotStyleCollection(LineScatterPlotStyleKind kind)
     {
       _innerList = new List<IG2DPlotStyle>();
-      
 
       switch (kind)
       {
@@ -131,10 +136,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
-    public G2DPlotStyleCollection()
-      : this(LineScatterPlotStyleKind.Scatter)
-    {
-    }
 
     public G2DPlotStyleCollection(G2DPlotStyleCollection from)
     {

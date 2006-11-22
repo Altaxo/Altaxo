@@ -51,6 +51,10 @@ namespace Altaxo.Graph.Plot.Groups
       _positionX = from._positionX;
     }
 
+    public BarWidthPositionGroupStyle()
+    {
+      _isStepEnabled = true;
+    }
 
 
     #region ICloneable Members

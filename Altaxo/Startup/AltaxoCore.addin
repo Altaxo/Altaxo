@@ -236,10 +236,32 @@
 						class="Altaxo.Worksheet.Commands.PlotLineAndScatter" />
           <MenuItem id="PlotDensityImage" label="${res:XML.MainMenu.PlotMenu.PlotDensityImage}" description="${res:XML.MainMenu.PlotMenu.PlotDensityImage.Description}"
 						class="Altaxo.Worksheet.Commands.PlotDensityImage" />
-          <MenuItem id="PlotBarHorizontal" label="${res:XML.MainMenu.PlotMenu.PlotBarHorizontal}" description="${res:XML.MainMenu.PlotMenu.PlotBarHorizontal.Description}"
-						class="Altaxo.Worksheet.Commands.PlotHorizontalBarGraph" />
-          <MenuItem id="PlotBarVertical" label="${res:XML.MainMenu.PlotMenu.PlotBarVertical}" description="${res:XML.MainMenu.PlotMenu.PlotBarVertical.Description}"
-						class="Altaxo.Worksheet.Commands.PlotVerticalBarGraph" />
+          <MenuItem id="PlotArea" label="${res:XML.MainMenu.PlotMenu.PlotLineArea}" description="${res:XML.MainMenu.PlotMenu.PlotLineArea.Description}"
+						class="Altaxo.Worksheet.Commands.PlotLineArea" />
+          <MenuItem id="PlotLineStack" label="${res:XML.MainMenu.PlotMenu.PlotLineStack}" description="${res:XML.MainMenu.PlotMenu.PlotLineStack.Description}"
+						class="Altaxo.Worksheet.Commands.PlotLineStack" />
+          <MenuItem id="PlotLineRelStack" label="${res:XML.MainMenu.PlotMenu.PlotLineRelStack}" description="${res:XML.MainMenu.PlotMenu.PlotLineRelStack.Description}"
+						class="Altaxo.Worksheet.Commands.PlotLineRelativeStack" />
+          <MenuItem id="PlotLineWaterfall" label="${res:XML.MainMenu.PlotMenu.PlotLineWaterfall}" description="${res:XML.MainMenu.PlotMenu.PlotLineWaterfall.Description}"
+						class="Altaxo.Worksheet.Commands.PlotLineWaterfall" />
+          <MenuItem id="PlotPolar" label="${res:XML.MainMenu.PlotMenu.PlotPolar}" description="${res:XML.MainMenu.PlotMenu.PlotPolar.Description}"
+						class="Altaxo.Worksheet.Commands.PlotLinePolar" />
+          <MenuItem id="BarChart" label="${res:XML.MainMenu.Plot.BarChartMenu}"  type="Menu">
+            <MenuItem id="PlotBarChartNormal" label="${res:XML.MainMenu.PlotMenu.PlotBarChartNormal}" description="${res:XML.MainMenu.PlotMenu.PlotBarChartNormal.Description}"
+              class="Altaxo.Worksheet.Commands.PlotBarChartNormal" />
+            <MenuItem id="PlotBarChartStack" label="${res:XML.MainMenu.PlotMenu.PlotBarChartStack}" description="${res:XML.MainMenu.PlotMenu.PlotBarChartStack.Description}"
+              class="Altaxo.Worksheet.Commands.PlotBarChartStack" />
+            <MenuItem id="PlotBarChartRelStack" label="${res:XML.MainMenu.PlotMenu.PlotBarChartRelStack}" description="${res:XML.MainMenu.PlotMenu.PlotBarChartRelStack.Description}"
+              class="Altaxo.Worksheet.Commands.PlotBarChartRelativeStack" />
+          </MenuItem>
+          <MenuItem id="ColumnChart" label="${res:XML.MainMenu.Plot.ColumnChartMenu}"  type="Menu">
+            <MenuItem id="PlotColumnChartNormal" label="${res:XML.MainMenu.PlotMenu.PlotColumnChartNormal}" description="${res:XML.MainMenu.PlotMenu.PlotColumnChartNormal.Description}"
+              class="Altaxo.Worksheet.Commands.PlotColumnChartNormal" />
+            <MenuItem id="PlotBarColumnChartStack" label="${res:XML.MainMenu.PlotMenu.PlotColumnChartStack}" description="${res:XML.MainMenu.PlotMenu.PlotColumnChartStack.Description}"
+              class="Altaxo.Worksheet.Commands.PlotColumnChartStack" />
+            <MenuItem id="PlotColumnChartRelStack" label="${res:XML.MainMenu.PlotMenu.PlotColumnChartRelStack}" description="${res:XML.MainMenu.PlotMenu.PlotColumnChartRelStack.Description}"
+              class="Altaxo.Worksheet.Commands.PlotColumnChartRelativeStack" />
+          </MenuItem>
         </Condition>
         <Condition name="ContainsPLSModelData" ContainsPLSModelData="*" action="Exclude">
           <MenuItem id="PLS" label="${res:XML.MainMenu.PLSPlotMenu}" type="Menu">

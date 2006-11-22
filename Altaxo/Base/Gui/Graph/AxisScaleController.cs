@@ -174,7 +174,11 @@ namespace Altaxo.Gui.Graph
     {
       if(bInit)
       {
-        m_BoundaryController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[]{_tempAxis.RescalingObject,_tempAxis},typeof(IMVCAController));
+        object rescalingObject = _tempAxis.RescalingObject;
+        if (rescalingObject != null)
+          m_BoundaryController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { rescalingObject, _tempAxis }, typeof(IMVCAController));
+        else
+          m_BoundaryController = null;
       }
       if(null!=View)
       {

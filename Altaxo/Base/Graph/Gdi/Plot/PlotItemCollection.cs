@@ -299,6 +299,12 @@ namespace Altaxo.Graph.Gdi.Plot
       {
         return this._styles;
       }
+      set
+      {
+        if (value == null)
+          throw new ArgumentNullException();
+        this._styles = value;
+      }
     }
 
     public virtual string Name
