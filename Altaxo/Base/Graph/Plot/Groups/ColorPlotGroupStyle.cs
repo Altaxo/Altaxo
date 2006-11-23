@@ -130,6 +130,8 @@ namespace Altaxo.Graph.Plot.Groups
     {
       get
       {
+        if (null == _color) // then it seems that no color provider has given us a color, so we initialize with black
+          _color = PlotColors.Colors.GetPlotColor(System.Drawing.Color.Black);
         return _color;
       }
     }

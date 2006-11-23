@@ -170,16 +170,16 @@ namespace Altaxo.Graph.Plot.Data
     #endregion
 
 
-    class MyPlotData : Processed2DPlotData
+    class MyPlotData
     {
       public double[] _xPhysical;
       public double[] _yPhysical;
 
-      public override Altaxo.Data.AltaxoVariant GetXPhysical(int originalRowIndex)
+      public Altaxo.Data.AltaxoVariant GetXPhysical(int originalRowIndex)
       {
         return _xPhysical[originalRowIndex];
       }
-      public override Altaxo.Data.AltaxoVariant GetYPhysical(int originalRowIndex)
+      public Altaxo.Data.AltaxoVariant GetYPhysical(int originalRowIndex)
       {
         return _yPhysical[originalRowIndex];
       }
@@ -203,12 +203,15 @@ namespace Altaxo.Graph.Plot.Data
 
       // allocate an array PointF to hold the line points
       PointF[] ptArray = new PointF[functionPoints];
-      MyPlotData result = new MyPlotData();
+      Processed2DPlotData result = new Processed2DPlotData();
+      MyPlotData pdata = new MyPlotData();
       result.PlotPointsInAbsoluteLayerCoordinates = ptArray;
       double[] xPhysArray = new double[functionPoints];
       double[] yPhysArray = new double[functionPoints];
-      result._xPhysical = xPhysArray;
-      result._yPhysical = yPhysArray;
+      pdata._xPhysical = xPhysArray;
+      pdata._yPhysical = yPhysArray;
+      result.XPhysicalAccessor = new IndexedPhysicalValueAccessor(pdata.GetXPhysical);
+      result.YPhysicalAccessor = new IndexedPhysicalValueAccessor(pdata.GetYPhysical);
 
       // double xorg = layer.XAxis.Org;
       // double xend = layer.XAxis.End;

@@ -11,4 +11,6 @@ namespace Altaxo.Graph
     AltaxoVariant GetYPhysical(int originalRowIndex);
     AltaxoVariant GetZPhysical(int originalRowIndex);
   }
+
+  public delegate AltaxoVariant IndexedPhysicalValueAccessor(int i);
 }

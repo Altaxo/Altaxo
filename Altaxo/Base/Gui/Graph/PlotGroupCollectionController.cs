@@ -18,6 +18,7 @@ namespace Altaxo.Gui.Graph
     void InitializeAvailableNormalGroupStyles(SelectableListNodeList list);
     void InitializeCurrentCoordinateTransformingGroupStyle(string val);
     void InitializeCurrentNormalGroupStyles(CheckableSelectableListNodeList list);
+    void SynchronizeCurrentNormalGroupStyles();
 
     
   }
@@ -254,6 +255,13 @@ namespace Altaxo.Gui.Graph
         _doc.CoordinateTransformingStyle = (ICoordinateTransformingGroupStyle)Activator.CreateInstance(_currentTransfoStyle);
       else
         _doc.CoordinateTransformingStyle = null;
+
+      _view.SynchronizeCurrentNormalGroupStyles(); // synchronize the checked state of the items
+      foreach (CheckableSelectableListNode node in _currentNormalStyles)
+      {
+        IPlotGroupStyle style = _doc.GetPlotGroupStyle((Type)node.Item);
+        style.IsStepEnabled = node.Checked;
+      }
 
       if (_useDocument == UseDocument.Copy)
         _origdoc.CopyFrom(_doc);

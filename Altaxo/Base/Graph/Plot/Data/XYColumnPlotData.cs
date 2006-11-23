@@ -43,43 +43,47 @@ namespace Altaxo.Graph.Plot.Data
     System.ICloneable,
     Main.IDocumentNode
   {
-    /// <summary>
-    /// The parent object.
-    /// </summary>
-    protected object m_Parent;
+    
    
-    protected Altaxo.Data.ReadableColumnProxy m_xColumn; // the X-Column
-    protected Altaxo.Data.ReadableColumnProxy m_yColumn; // the Y-Column
+    protected Altaxo.Data.ReadableColumnProxy _xColumn; // the X-Column
+    protected Altaxo.Data.ReadableColumnProxy _yColumn; // the Y-Column
 
     /// <summary>This is here only for backward deserialization compatibility. Do not use it.</summary>
-    private  Altaxo.Data.IReadableColumn m_LabelColumn; // the label column
+    private  Altaxo.Data.IReadableColumn _deprecatedLabelColumn; // the label column
 
-    protected int m_PlotRangeStart = 0;
-    protected int m_PlotRangeLength  = int.MaxValue;
+    protected int _plotRangeStart = 0;
+    protected int _plotRangeLength  = int.MaxValue;
 
     // cached or temporary data
-    protected IPhysicalBoundaries m_xBoundaries;
-    protected IPhysicalBoundaries m_yBoundaries;
+    protected IPhysicalBoundaries _xBoundaries;
+    protected IPhysicalBoundaries _yBoundaries;
 
     /// <summary>
     /// Number of valid pairs of plot data.
     /// </summary>
-    protected int    m_PlottablePoints; // number of plottable points
+    protected int    _plottablePoints; // number of plottable points
     /// <summary>
     /// One more that the index to the last valid pair of plot data. 
     /// </summary>
-    protected int    m_PointCount;
-    protected bool   m_bCachedDataValid=false;
+    protected int    _pointCount;
+
+    protected bool   _isCachedDataValid=false;
+
+    /// <summary>The parent object.</summary>
+    [NonSerialized]
+    protected object _parent;
+
+    [NonSerialized]
     protected int   _SupressBoundaryChangeEvents;
 
     // events
+    [field:NonSerialized]
     public event BoundaryChangedHandler  XBoundariesChanged;
+    [field:NonSerialized]
     public event BoundaryChangedHandler  YBoundariesChanged;
-
-
-    /// <summary>
-    /// Fired if either the data of this XYColumnPlotData changed or if the bounds changed
-    /// </summary>
+    
+    /// <summary>Fired if either the data of this XYColumnPlotData changed or if the bounds changed.</summary>
+    [field:NonSerialized]
     public event System.EventHandler Changed;
 
 
@@ -99,11 +103,11 @@ namespace Altaxo.Graph.Plot.Data
       {
         XYColumnPlotData s = (XYColumnPlotData)obj;
         
-        info.AddValue("XColumn",s.m_xColumn);
-        info.AddValue("YColumn",s.m_yColumn);
+        info.AddValue("XColumn",s._xColumn);
+        info.AddValue("YColumn",s._yColumn);
 
-        info.AddValue("XBoundaries",s.m_xBoundaries);
-        info.AddValue("YBoundaries",s.m_yBoundaries);
+        info.AddValue("XBoundaries",s._xBoundaries);
+        info.AddValue("YBoundaries",s._yBoundaries);
 
       }
       /// <summary>
@@ -118,11 +122,11 @@ namespace Altaxo.Graph.Plot.Data
       {
         XYColumnPlotData s = (XYColumnPlotData)obj;
 
-        s.m_xColumn = (ReadableColumnProxy)info.GetValue("XColumn",typeof(ReadableColumnProxy));
-        s.m_yColumn = (ReadableColumnProxy)info.GetValue("YColumn",typeof(ReadableColumnProxy));
+        s._xColumn = (ReadableColumnProxy)info.GetValue("XColumn",typeof(ReadableColumnProxy));
+        s._yColumn = (ReadableColumnProxy)info.GetValue("YColumn",typeof(ReadableColumnProxy));
 
-        s.m_xBoundaries = (IPhysicalBoundaries)info.GetValue("XBoundaries",typeof(IPhysicalBoundaries));
-        s.m_yBoundaries = (IPhysicalBoundaries)info.GetValue("YBoundaries",typeof(IPhysicalBoundaries));
+        s._xBoundaries = (IPhysicalBoundaries)info.GetValue("XBoundaries",typeof(IPhysicalBoundaries));
+        s._yBoundaries = (IPhysicalBoundaries)info.GetValue("YBoundaries",typeof(IPhysicalBoundaries));
   
         return s;
       }
@@ -136,17 +140,17 @@ namespace Altaxo.Graph.Plot.Data
     public virtual void OnDeserialization(object obj)
     {
       // restore the event chain
-      if (m_xColumn != null)
-        m_xColumn.Changed += new EventHandler(EhColumnDataChangedEventHandler);
+      if (_xColumn != null)
+        _xColumn.Changed += new EventHandler(EhColumnDataChangedEventHandler);
 
-      if (m_yColumn != null)
-        m_yColumn.Changed += new EventHandler(EhColumnDataChangedEventHandler);
+      if (_yColumn != null)
+        _yColumn.Changed += new EventHandler(EhColumnDataChangedEventHandler);
 
-      if (null != m_xBoundaries)
-        m_xBoundaries.BoundaryChanged += new BoundaryChangedHandler(this.EhXBoundariesChanged);
+      if (null != _xBoundaries)
+        _xBoundaries.BoundaryChanged += new BoundaryChangedHandler(this.EhXBoundariesChanged);
 
-      if (null != m_yBoundaries)
-        m_yBoundaries.BoundaryChanged += new BoundaryChangedHandler(this.EhYBoundariesChanged);
+      if (null != _yBoundaries)
+        _yBoundaries.BoundaryChanged += new BoundaryChangedHandler(this.EhYBoundariesChanged);
     }
     #endregion
 
@@ -211,13 +215,13 @@ namespace Altaxo.Graph.Plot.Data
 
 
 
-        s.m_xBoundaries = (IPhysicalBoundaries)info.GetValue("XBoundaries",typeof(IPhysicalBoundaries));
-        if(null!=s.m_xBoundaries)
-          s.m_xBoundaries.BoundaryChanged += new BoundaryChangedHandler(s.EhXBoundariesChanged);
+        s._xBoundaries = (IPhysicalBoundaries)info.GetValue("XBoundaries",typeof(IPhysicalBoundaries));
+        if(null!=s._xBoundaries)
+          s._xBoundaries.BoundaryChanged += new BoundaryChangedHandler(s.EhXBoundariesChanged);
 
-        s.m_yBoundaries = (IPhysicalBoundaries)info.GetValue("YBoundaries",typeof(IPhysicalBoundaries));
-        if(null!=s.m_yBoundaries)
-          s.m_yBoundaries.BoundaryChanged += new BoundaryChangedHandler(s.EhYBoundariesChanged);
+        s._yBoundaries = (IPhysicalBoundaries)info.GetValue("YBoundaries",typeof(IPhysicalBoundaries));
+        if(null!=s._yBoundaries)
+          s._yBoundaries.BoundaryChanged += new BoundaryChangedHandler(s.EhYBoundariesChanged);
 
 
 
@@ -310,7 +314,7 @@ namespace Altaxo.Graph.Plot.Data
           labelColumn = info.GetValue(parent);
 
           if(labelColumn is Altaxo.Data.IReadableColumn)
-            s.m_LabelColumn = (Altaxo.Data.IReadableColumn)labelColumn;
+            s._deprecatedLabelColumn = (Altaxo.Data.IReadableColumn)labelColumn;
           else if (labelColumn is Main.DocumentPath)
             bNeedsCallback = true;
         }
@@ -340,7 +344,7 @@ namespace Altaxo.Graph.Plot.Data
           object labelColumn = Main.DocumentPath.GetObject(this._labelColumn, this._plotAssociation, documentRoot);
           bAllResolved &= (null!=labelColumn);
           if(labelColumn is Altaxo.Data.IReadableColumn)
-            _plotAssociation.m_LabelColumn = (Altaxo.Data.IReadableColumn)labelColumn;
+            _plotAssociation._deprecatedLabelColumn = (Altaxo.Data.IReadableColumn)labelColumn;
         }
 
         if(bAllResolved)
@@ -357,22 +361,22 @@ namespace Altaxo.Graph.Plot.Data
       {
         XYColumnPlotData s = (XYColumnPlotData)obj;
 
-        info.AddValue("XColumn", s.m_xColumn);
-        info.AddValue("YColumn", s.m_yColumn);
+        info.AddValue("XColumn", s._xColumn);
+        info.AddValue("YColumn", s._yColumn);
 
-        info.AddValue("XBoundaries", s.m_xBoundaries);
-        info.AddValue("YBoundaries", s.m_yBoundaries);
+        info.AddValue("XBoundaries", s._xBoundaries);
+        info.AddValue("YBoundaries", s._yBoundaries);
       }
 
       public virtual XYColumnPlotData SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
         XYColumnPlotData s = null != o ? (XYColumnPlotData)o : new XYColumnPlotData();
 
-        s.m_xColumn = (ReadableColumnProxy)info.GetValue("XColumn", parent);
-        s.m_yColumn = (ReadableColumnProxy)info.GetValue("YColumn", parent);
+        s._xColumn = (ReadableColumnProxy)info.GetValue("XColumn", parent);
+        s._yColumn = (ReadableColumnProxy)info.GetValue("YColumn", parent);
 
-        s.m_xBoundaries = (IPhysicalBoundaries)info.GetValue("XBoundaries", parent);
-        s.m_yBoundaries = (IPhysicalBoundaries)info.GetValue("YBoundaries", parent);
+        s._xBoundaries = (IPhysicalBoundaries)info.GetValue("XBoundaries", parent);
+        s._yBoundaries = (IPhysicalBoundaries)info.GetValue("YBoundaries", parent);
 
         return s;
       }
@@ -386,16 +390,16 @@ namespace Altaxo.Graph.Plot.Data
 
       public virtual void CreateEventChain(XYColumnPlotData s)
       {
-        if (null != s.m_xColumn)
-          s.m_xColumn.Changed += new EventHandler(s.EhColumnDataChangedEventHandler);
-        if (null != s.m_yColumn)
-          s.m_yColumn.Changed += new EventHandler(s.EhColumnDataChangedEventHandler);
+        if (null != s._xColumn)
+          s._xColumn.Changed += new EventHandler(s.EhColumnDataChangedEventHandler);
+        if (null != s._yColumn)
+          s._yColumn.Changed += new EventHandler(s.EhColumnDataChangedEventHandler);
 
-        if (null != s.m_xBoundaries)
-          s.m_xBoundaries.BoundaryChanged += new BoundaryChangedHandler(s.EhXBoundariesChanged);
+        if (null != s._xBoundaries)
+          s._xBoundaries.BoundaryChanged += new BoundaryChangedHandler(s.EhXBoundariesChanged);
 
-        if (null != s.m_yBoundaries)
-          s.m_yBoundaries.BoundaryChanged += new BoundaryChangedHandler(s.EhYBoundariesChanged);
+        if (null != s._yBoundaries)
+          s._yBoundaries.BoundaryChanged += new BoundaryChangedHandler(s.EhYBoundariesChanged);
       }
 
 
@@ -412,28 +416,28 @@ namespace Altaxo.Graph.Plot.Data
       {
         XYColumnPlotData s = (XYColumnPlotData)obj;
 
-        info.AddValue("XColumn", s.m_xColumn);
-        info.AddValue("YColumn", s.m_yColumn);
+        info.AddValue("XColumn", s._xColumn);
+        info.AddValue("YColumn", s._yColumn);
 
-        info.AddValue("XBoundaries", s.m_xBoundaries);
-        info.AddValue("YBoundaries", s.m_yBoundaries);
+        info.AddValue("XBoundaries", s._xBoundaries);
+        info.AddValue("YBoundaries", s._yBoundaries);
 
-        info.AddValue("RangeStart", s.m_PlotRangeStart);
-        info.AddValue("RangeLength", s.m_PlotRangeLength);
+        info.AddValue("RangeStart", s._plotRangeStart);
+        info.AddValue("RangeLength", s._plotRangeLength);
       }
 
       public virtual XYColumnPlotData SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
         XYColumnPlotData s = null != o ? (XYColumnPlotData)o : new XYColumnPlotData();
 
-        s.m_xColumn = (ReadableColumnProxy)info.GetValue("XColumn", parent);
-        s.m_yColumn = (ReadableColumnProxy)info.GetValue("YColumn", parent);
+        s._xColumn = (ReadableColumnProxy)info.GetValue("XColumn", parent);
+        s._yColumn = (ReadableColumnProxy)info.GetValue("YColumn", parent);
 
-        s.m_xBoundaries = (IPhysicalBoundaries)info.GetValue("XBoundaries", parent);
-        s.m_yBoundaries = (IPhysicalBoundaries)info.GetValue("YBoundaries", parent);
+        s._xBoundaries = (IPhysicalBoundaries)info.GetValue("XBoundaries", parent);
+        s._yBoundaries = (IPhysicalBoundaries)info.GetValue("YBoundaries", parent);
 
-        s.m_PlotRangeStart = info.GetInt32("RangeStart");
-        s.m_PlotRangeLength = info.GetInt32("RangeLength");
+        s._plotRangeStart = info.GetInt32("RangeStart");
+        s._plotRangeLength = info.GetInt32("RangeLength");
 
         return s;
       }
@@ -447,16 +451,16 @@ namespace Altaxo.Graph.Plot.Data
 
       public virtual void CreateEventChain(XYColumnPlotData s)
       {
-        if (null != s.m_xColumn)
-          s.m_xColumn.Changed += new EventHandler(s.EhColumnDataChangedEventHandler);
-        if (null != s.m_yColumn)
-          s.m_yColumn.Changed += new EventHandler(s.EhColumnDataChangedEventHandler);
+        if (null != s._xColumn)
+          s._xColumn.Changed += new EventHandler(s.EhColumnDataChangedEventHandler);
+        if (null != s._yColumn)
+          s._yColumn.Changed += new EventHandler(s.EhColumnDataChangedEventHandler);
 
-        if (null != s.m_xBoundaries)
-          s.m_xBoundaries.BoundaryChanged += new BoundaryChangedHandler(s.EhXBoundariesChanged);
+        if (null != s._xBoundaries)
+          s._xBoundaries.BoundaryChanged += new BoundaryChangedHandler(s.EhXBoundariesChanged);
 
-        if (null != s.m_yBoundaries)
-          s.m_yBoundaries.BoundaryChanged += new BoundaryChangedHandler(s.EhYBoundariesChanged);
+        if (null != s._yBoundaries)
+          s._yBoundaries.BoundaryChanged += new BoundaryChangedHandler(s.EhYBoundariesChanged);
       }
 
 
@@ -492,8 +496,25 @@ namespace Altaxo.Graph.Plot.Data
       XColumn = from.XColumn; // also wires event, do not clone the column data here!!!
       YColumn = from.YColumn; // wires event, do not clone the column data here!!!
 
-      this.m_PlotRangeStart = from.m_PlotRangeStart;
-      this.m_PlotRangeLength  = from.m_PlotRangeLength;
+      this._plotRangeStart = from._plotRangeStart;
+      this._plotRangeLength = from._plotRangeLength;
+
+      // cached or temporary data
+      if (from._xBoundaries != null)
+      {
+        this._xBoundaries = (IPhysicalBoundaries)from._xBoundaries.Clone();
+        this._xBoundaries.BoundaryChanged += new BoundaryChangedHandler(this.EhXBoundariesChanged);
+      }
+      if (from._yBoundaries != null)
+      {
+        this._yBoundaries =  (IPhysicalBoundaries)from._yBoundaries.Clone();
+        this._yBoundaries.BoundaryChanged += new BoundaryChangedHandler(this.EhYBoundariesChanged);
+      }
+
+      this._plottablePoints = from._plottablePoints;
+      this._pointCount = from._pointCount;
+      this._isCachedDataValid = from._isCachedDataValid;
+      this._parent = from._parent;
     }
 
     /// <summary>
@@ -508,8 +529,8 @@ namespace Altaxo.Graph.Plot.Data
 
     public object ParentObject
     {
-      get { return m_Parent; }
-      set { m_Parent = value; }
+      get { return _parent; }
+      set { _parent = value; }
     }
 
     public string Name
@@ -524,7 +545,7 @@ namespace Altaxo.Graph.Plot.Data
 
     public string GetXName(int level)
     {
-      IReadableColumn col = this.m_xColumn.Document;
+      IReadableColumn col = this._xColumn.Document;
       if (col is Altaxo.Data.DataColumn)
       {
         Altaxo.Data.DataTable table = Altaxo.Data.DataTable.GetParentDataTableOf((DataColumn)col);
@@ -543,13 +564,13 @@ namespace Altaxo.Graph.Plot.Data
       }
       else
       {
-        return m_xColumn.GetName(level) + " (broken)";
+        return _xColumn.GetName(level) + " (broken)";
       }
     }
 
     public string GetYName(int level)
     {
-      IReadableColumn col = this.m_yColumn.Document;
+      IReadableColumn col = this._yColumn.Document;
       if (col is Altaxo.Data.DataColumn)
       {
         Altaxo.Data.DataTable table = Altaxo.Data.DataTable.GetParentDataTableOf((DataColumn)col);
@@ -568,36 +589,36 @@ namespace Altaxo.Graph.Plot.Data
       }
       else
       {
-        return m_yColumn.GetName(level) + " (broken)";
+        return _yColumn.GetName(level) + " (broken)";
       }
     }
 
     public void MergeXBoundsInto(IPhysicalBoundaries pb)
     {
-       if(null==m_xBoundaries || pb.GetType() != m_xBoundaries.GetType())
+       if(null==_xBoundaries || pb.GetType() != _xBoundaries.GetType())
          this.SetXBoundsFromTemplate(pb);
 
-      if (!this.m_bCachedDataValid)
+      if (!this._isCachedDataValid)
       {
         _SupressBoundaryChangeEvents++;
         this.CalculateCachedData();
         _SupressBoundaryChangeEvents--;
       }
-      pb.Add(m_xBoundaries);
+      pb.Add(_xBoundaries);
     }
 
     public void MergeYBoundsInto(IPhysicalBoundaries pb)
     {
-      if (null == m_yBoundaries || pb.GetType() != m_yBoundaries.GetType())
+      if (null == _yBoundaries || pb.GetType() != _yBoundaries.GetType())
         this.SetYBoundsFromTemplate(pb);
 
-      if(!this.m_bCachedDataValid)
+      if(!this._isCachedDataValid)
       {
         _SupressBoundaryChangeEvents++;
         this.CalculateCachedData();
         _SupressBoundaryChangeEvents--;
       }
-      pb.Add(m_yBoundaries);
+      pb.Add(_yBoundaries);
     }
 
     /// <summary>
@@ -609,15 +630,15 @@ namespace Altaxo.Graph.Plot.Data
     {
       
 
-      if(null==m_xBoundaries || val.GetType() != m_xBoundaries.GetType())
+      if(null==_xBoundaries || val.GetType() != _xBoundaries.GetType())
       {
-        if(null!=m_xBoundaries)
+        if(null!=_xBoundaries)
         {
-          m_xBoundaries.BoundaryChanged -= new BoundaryChangedHandler(this.EhXBoundariesChanged);
+          _xBoundaries.BoundaryChanged -= new BoundaryChangedHandler(this.EhXBoundariesChanged);
         }
-        m_xBoundaries = (IPhysicalBoundaries)val.Clone();
-        m_xBoundaries.BoundaryChanged += new BoundaryChangedHandler(this.EhXBoundariesChanged);
-        m_bCachedDataValid = false;
+        _xBoundaries = (IPhysicalBoundaries)val.Clone();
+        _xBoundaries.BoundaryChanged += new BoundaryChangedHandler(this.EhXBoundariesChanged);
+        _isCachedDataValid = false;
 
         OnChanged();
       }
@@ -631,15 +652,15 @@ namespace Altaxo.Graph.Plot.Data
     protected void SetYBoundsFromTemplate(IPhysicalBoundaries val)
     {
       
-      if(null==m_yBoundaries || val.GetType() != m_yBoundaries.GetType())
+      if(null==_yBoundaries || val.GetType() != _yBoundaries.GetType())
       {
-        if(null!=m_yBoundaries)
+        if(null!=_yBoundaries)
         {
-          m_yBoundaries.BoundaryChanged -= new BoundaryChangedHandler(this.EhYBoundariesChanged);
+          _yBoundaries.BoundaryChanged -= new BoundaryChangedHandler(this.EhYBoundariesChanged);
         }
-        m_yBoundaries = (IPhysicalBoundaries)val.Clone();
-        m_yBoundaries.BoundaryChanged += new BoundaryChangedHandler(this.EhYBoundariesChanged);
-        m_bCachedDataValid = false;
+        _yBoundaries = (IPhysicalBoundaries)val.Clone();
+        _yBoundaries.BoundaryChanged += new BoundaryChangedHandler(this.EhYBoundariesChanged);
+        _isCachedDataValid = false;
 
         OnChanged();
       }
@@ -677,9 +698,9 @@ namespace Altaxo.Graph.Plot.Data
     {
       get
       {
-        if(!this.m_bCachedDataValid)
+        if(!this._isCachedDataValid)
           this.CalculateCachedData();
-        return this.m_PlottablePoints;
+        return this._plottablePoints;
       }
     }
 
@@ -693,9 +714,9 @@ namespace Altaxo.Graph.Plot.Data
     {
       get
       {
-        if(!this.m_bCachedDataValid)
+        if(!this._isCachedDataValid)
           this.CalculateCachedData();
-        return this.m_PointCount;
+        return this._pointCount;
       }
     }
 
@@ -703,21 +724,21 @@ namespace Altaxo.Graph.Plot.Data
     {
       get
       {
-        return m_xColumn == null ? null : m_xColumn.Document;
+        return _xColumn == null ? null : _xColumn.Document;
       }
       set
       {
-        if (null == m_xColumn)
+        if (null == _xColumn)
         {
-          m_xColumn = new ReadableColumnProxy(value);
-          m_xColumn.Changed += new EventHandler(this.EhColumnDataChangedEventHandler);
+          _xColumn = new ReadableColumnProxy(value);
+          _xColumn.Changed += new EventHandler(this.EhColumnDataChangedEventHandler);
         }
         else
         {
-          m_xColumn.SetDocNode(value);
+          _xColumn.SetDocNode(value);
         }
 
-        m_bCachedDataValid = false;
+        _isCachedDataValid = false;
         OnChanged();
       }
     }
@@ -726,21 +747,21 @@ namespace Altaxo.Graph.Plot.Data
     {
       get
       {
-        return m_yColumn == null ? null : m_yColumn.Document;
+        return _yColumn == null ? null : _yColumn.Document;
       }
       set
       {
-        if (null == m_yColumn)
+        if (null == _yColumn)
         {
-          m_yColumn = new ReadableColumnProxy(value);
-          m_yColumn.Changed += new EventHandler(this.EhColumnDataChangedEventHandler);
+          _yColumn = new ReadableColumnProxy(value);
+          _yColumn.Changed += new EventHandler(this.EhColumnDataChangedEventHandler);
         }
         else
         {
-          m_yColumn.SetDocNode(value);
+          _yColumn.SetDocNode(value);
         }
 
-        m_bCachedDataValid = false;
+        _isCachedDataValid = false;
         
         OnChanged();
       }
@@ -753,21 +774,21 @@ namespace Altaxo.Graph.Plot.Data
     {
       get
       {
-        return m_LabelColumn;
+        return _deprecatedLabelColumn;
       }
     }
 
     public override string ToString()
     {
-      return String.Format("{0}(X), {1}(Y)",m_xColumn.ToString(),m_yColumn.ToString());
+      return String.Format("{0}(X), {1}(Y)",_xColumn.ToString(),_yColumn.ToString());
     }
 
     public void CalculateCachedData(IPhysicalBoundaries xBounds, IPhysicalBoundaries yBounds)
     {
-      if (m_xBoundaries == null || m_xBoundaries.GetType() != xBounds.GetType())
+      if (_xBoundaries == null || _xBoundaries.GetType() != xBounds.GetType())
         this.SetXBoundsFromTemplate(xBounds);
 
-      if (m_yBoundaries == null || m_yBoundaries.GetType() != yBounds.GetType())
+      if (_yBoundaries == null || _yBoundaries.GetType() != yBounds.GetType())
         this.SetYBoundsFromTemplate(yBounds);
 
       CalculateCachedData();
@@ -776,72 +797,72 @@ namespace Altaxo.Graph.Plot.Data
     public void CalculateCachedData()
     {
       // we can calulate the bounds only if they are set before
-      if(null==m_xBoundaries || null==m_yBoundaries)
+      if(null==_xBoundaries || null==_yBoundaries)
         return;
 
 
-      m_PlottablePoints = 0;
+      _plottablePoints = 0;
 
       
-      this.m_xBoundaries.BeginUpdate(); // disable events
-      this.m_yBoundaries.BeginUpdate(); // disable events
+      this._xBoundaries.BeginUpdate(); // disable events
+      this._yBoundaries.BeginUpdate(); // disable events
       
-      this.m_xBoundaries.Reset();
-      this.m_yBoundaries.Reset();
+      this._xBoundaries.Reset();
+      this._yBoundaries.Reset();
 
-      System.Diagnostics.Debug.Assert(m_PlotRangeStart>=0);
-      System.Diagnostics.Debug.Assert(m_PlotRangeLength>=0);
+      System.Diagnostics.Debug.Assert(_plotRangeStart>=0);
+      System.Diagnostics.Debug.Assert(_plotRangeLength>=0);
 
 
-      m_PointCount = m_PlotRangeLength == int.MaxValue ? int.MaxValue : m_PlotRangeStart + m_PlotRangeLength;
+      _pointCount = _plotRangeLength == int.MaxValue ? int.MaxValue : _plotRangeStart + _plotRangeLength;
 
       IReadableColumn xColumn = this.XColumn;
       IReadableColumn yColumn = this.YColumn;
 
       if (xColumn == null || yColumn == null)
       {
-        m_PointCount=0;
-        m_PlottablePoints = 0;
+        _pointCount=0;
+        _plottablePoints = 0;
       }
       else
       {
 
         if (xColumn is IDefinedCount)
-          m_PointCount = System.Math.Min(m_PointCount, ((IDefinedCount)xColumn).Count);
+          _pointCount = System.Math.Min(_pointCount, ((IDefinedCount)xColumn).Count);
         if (yColumn is IDefinedCount)
-          m_PointCount = System.Math.Min(m_PointCount, ((IDefinedCount)yColumn).Count);
+          _pointCount = System.Math.Min(_pointCount, ((IDefinedCount)yColumn).Count);
 
         // if both columns are indefinite long, we set the length to zero
-        if (m_PointCount == int.MaxValue || m_PointCount < 0)
-          m_PointCount = 0;
+        if (_pointCount == int.MaxValue || _pointCount < 0)
+          _pointCount = 0;
 
 
-        for (int i = m_PlotRangeStart; i < m_PointCount; i++)
+        for (int i = _plotRangeStart; i < _pointCount; i++)
         {
           if (!xColumn.IsElementEmpty(i) && !yColumn.IsElementEmpty(i))
           {
-            bool x_added = this.m_xBoundaries.Add(xColumn, i);
-            bool y_added = this.m_yBoundaries.Add(yColumn, i);
+            bool x_added = this._xBoundaries.Add(xColumn, i);
+            bool y_added = this._yBoundaries.Add(yColumn, i);
             if (x_added && y_added)
-              m_PlottablePoints++;
+              _plottablePoints++;
           }
         }
       }
 
       // now the cached data are valid
-      m_bCachedDataValid = true;
+      _isCachedDataValid = true;
 
 
       // now when the cached data are valid, we can reenable the events
-      this.m_xBoundaries.EndUpdate(); // enable events
-      this.m_yBoundaries.EndUpdate(); // enable events
+      this._xBoundaries.EndUpdate(); // enable events
+      this._yBoundaries.EndUpdate(); // enable events
     }
 
     void EhColumnDataChangedEventHandler(object sender, EventArgs e)
     {
       // !!!todo!!! : special case if only data added to a column should
       // be handeld separately to save computing time
-      this.m_bCachedDataValid = false;
+      this._isCachedDataValid = false;
     
       OnChanged();
     }
@@ -857,10 +878,10 @@ namespace Altaxo.Graph.Plot.Data
     /// </summary>
     public int PlotRangeStart
     {
-      get { return this.m_PlotRangeStart; }
+      get { return this._plotRangeStart; }
       set
       {
-        m_PlotRangeStart = value<0 ? 0 : value;
+        _plotRangeStart = value<0 ? 0 : value;
       }
     }
 
@@ -870,20 +891,25 @@ namespace Altaxo.Graph.Plot.Data
     /// </summary>
     public int PlotRangeLength
     {
-      get { return this.m_PlotRangeLength; }
-      set { this.m_PlotRangeLength = value<0 ? 0 : value; }
+      get { return this._plotRangeLength; }
+      set { this._plotRangeLength = value<0 ? 0 : value; }
     }
 
-    class MyPlotData : Processed2DPlotData
+    class MyPlotData
     {
-      public IReadableColumn _xColumn;
-      public IReadableColumn _yColumm;
+      IReadableColumn _xColumn;
+      IReadableColumn _yColumm;
 
-      public override AltaxoVariant GetXPhysical(int originalRowIndex)
+      public MyPlotData(IReadableColumn xc, IReadableColumn yc)
+      {
+        _xColumn = xc;
+        _yColumm = yc;
+      }
+      public AltaxoVariant GetXPhysical(int originalRowIndex)
       {
         return _xColumn[originalRowIndex];
       }
-      public override AltaxoVariant GetYPhysical(int originalRowIndex)
+      public AltaxoVariant GetYPhysical(int originalRowIndex)
       {
         return _yColumm[originalRowIndex];
       }
@@ -902,12 +928,6 @@ namespace Altaxo.Graph.Plot.Data
       Gdi.IPlotArea layer)
     {
       const double MaxRelativeValue = 1E2;
-      MyPlotData result = new MyPlotData();
-
-      PlotRangeList rangeList=null;
-      PointF[] ptArray=null;
-      
-
 
       Altaxo.Data.IReadableColumn xColumn = this.XColumn;
       Altaxo.Data.IReadableColumn yColumn = this.YColumn;
@@ -918,13 +938,19 @@ namespace Altaxo.Graph.Plot.Data
       if(this.PlottablePoints<=0)
         return null;
 
+
+      Processed2DPlotData result = new Processed2DPlotData();
+      MyPlotData myPlotData = new MyPlotData(xColumn, yColumn);
+      result.XPhysicalAccessor = new IndexedPhysicalValueAccessor(myPlotData.GetXPhysical);
+      result.YPhysicalAccessor = new IndexedPhysicalValueAccessor(myPlotData.GetYPhysical);
+      PlotRangeList rangeList = null;
+      PointF[] ptArray = null;
+
+
+
       // allocate an array PointF to hold the line points
       ptArray = new PointF[this.PlottablePoints];
       result.PlotPointsInAbsoluteLayerCoordinates = ptArray;
-
-      // allocate  the physical points
-      result._xColumn = this.XColumn;
-      result._yColumm = this.YColumn;
 
       // Fill the array with values
       // only the points where x and y are not NaNs are plotted!

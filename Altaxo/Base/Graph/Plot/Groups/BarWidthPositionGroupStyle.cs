@@ -91,7 +91,10 @@ namespace Altaxo.Graph.Plot.Groups
     {
       _wasTouchedInThisPrepareStep = false;
 
-      int tnumberOfItems = Math.Max(1, _numberOfItems);
+      int tnumberOfItems = 1;
+      if(this._isStepEnabled)
+        tnumberOfItems = Math.Max(tnumberOfItems, _numberOfItems);
+
       _width = 1.0 / (tnumberOfItems + (tnumberOfItems - 1) * _relInnerGapWidth + _relOuterGapWidth);
       _width *= _logicalClusterWidth;
 

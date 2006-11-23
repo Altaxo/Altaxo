@@ -135,7 +135,7 @@ namespace Altaxo.Gui.Graph
       this._btUp.Name = "_btUp";
       this._btUp.Size = new System.Drawing.Size(20, 20);
       this._btUp.TabIndex = 9;
-      this._btUp.Text = "\u039B";
+      this._btUp.Text = "?";
       this._btUp.UseVisualStyleBackColor = true;
       this._btUp.Click += new System.EventHandler(this._btUp_Click);
       // 

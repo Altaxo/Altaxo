@@ -30,7 +30,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     double _position;
 
     BrushX _fillBrush = new BrushX(Color.Red);
-    
+    bool _independentColor;
+
     [NonSerialized]
     object _parent;
 
@@ -53,6 +54,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       this._parent = from._parent;
     }
 
+    public bool IsColorReceiver
+    {
+      get { return !this._independentColor; }
+    }
 
     #region IG2DPlotStyle Members
 
@@ -89,6 +94,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       BarWidthPositionGroupStyle bwp = PlotGroupStyle.GetStyleToInitialize<BarWidthPositionGroupStyle>(externalGroups, localGroups);
       if (null != bwp)
         bwp.Initialize(_relInnerGapWidth, _relOuterGapWidth);
+
+      if (this.IsColorReceiver)
+        ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate() { return PlotColors.Colors.GetPlotColor(this._fillBrush.Color); });
+
     }
 
     public void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
@@ -97,6 +106,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       BarWidthPositionGroupStyle bwp = PlotGroupStyle.GetStyleToApply<BarWidthPositionGroupStyle>(externalGroups, localGroups);
       if (null != bwp)
         bwp.Apply(out _relInnerGapWidth, out _relOuterGapWidth, out _width, out _position);
+
+      if (this.IsColorReceiver)
+        ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(PlotColor c) { this._fillBrush.Color = c; });
+
 
     }
 
@@ -135,7 +148,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         layer.CoordinateSystem.GetIsoline(path, new Logical3D(xrn, ycn), new Logical3D(xrn, ynbase));
         layer.CoordinateSystem.GetIsoline(path, new Logical3D(xrn, ynbase), new Logical3D(xln, ynbase));
 
-        g.FillPath(Brushes.Red, path);
+        g.FillPath(_fillBrush, path);
       }
 
 
@@ -145,6 +158,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     public RectangleF PaintSymbol(Graphics g, RectangleF bounds)
     {
+      bounds.Inflate(0, -bounds.Height / 4);
+      _fillBrush.Rectangle = bounds;
+      g.FillRectangle(_fillBrush, bounds);
       return bounds;
     }
 

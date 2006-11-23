@@ -171,6 +171,12 @@ namespace Altaxo.Gui.Graph
       InitializeCheckedListBox(_lbGroupStyles, list);
     }
 
+    public void SynchronizeCurrentNormalGroupStyles()
+    {
+      SynchronizeListBoxWithCheckableSelectableListNodes(_lbGroupStyles);
+    }
+
     #endregion
+
   }
 }
