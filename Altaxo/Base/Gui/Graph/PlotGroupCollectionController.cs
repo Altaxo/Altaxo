@@ -105,6 +105,7 @@ namespace Altaxo.Gui.Graph
           }
           else
           {
+            node.Checked = s.IsStepEnabled;
             _currentNormalStyles.Add(node);
           }
         }

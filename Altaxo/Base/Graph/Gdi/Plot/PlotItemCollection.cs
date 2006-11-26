@@ -273,10 +273,6 @@ namespace Altaxo.Graph.Gdi.Plot
       {
         return Main.DocumentPath.GetRootNodeImplementing<XYPlotLayer>(this); 
       }
-      set
-      {
-        SetParentLayer(value, false);
-      }
     }
 
     public PlotItemCollection ParentCollection
@@ -311,24 +307,7 @@ namespace Altaxo.Graph.Gdi.Plot
     {
       get { return "PlotItems"; }
     }
-
-    /// <summary>
-    /// Sets the parent layer.
-    /// </summary>
-    /// <param name="parent">The parent layer to set for this collection.</param>
-    /// <param name="bSuppressEvents">If true, only the parent layer will set, but nothing else. If false, the boundaries of the items in the collection are merged into the parent layer collection.</param>
-    /// <remarks>Use this with bSuppressEvents = true if you are in constructor or deserialization code where not all variables are currently initalized.</remarks>
-    public void SetParentLayer(XYPlotLayer parent, bool bSuppressEvents)
-    {
-      if (null == parent)
-      {
-        throw new ArgumentNullException();
-      }
-      else
-      {
-        _parent = parent;
-      }
-    }
+   
     #endregion
  
     #region IG2DPlotItem Members
@@ -432,8 +411,10 @@ namespace Altaxo.Graph.Gdi.Plot
       }
       else
       {
-        foreach (IGPlotItem pi in _plotItems)
-          pi.Paint(g, layer);
+        for (int i = _plotItems.Count - 1; i >= 0; i--)
+        {
+          _plotItems[i].Paint(g, layer);
+        }
       }
     }
 
