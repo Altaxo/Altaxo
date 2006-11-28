@@ -300,7 +300,10 @@ namespace Altaxo.Graph.Gdi
   
     public object GetChildObjectNamed(string name)
     {
-      return m_GraphsByName[name];
+      GraphDocument result=null;
+      if (m_GraphsByName.TryGetValue(name, out result))
+        return result;
+      else return null;
     }
 
     public string GetNameOfChildObject(object o)

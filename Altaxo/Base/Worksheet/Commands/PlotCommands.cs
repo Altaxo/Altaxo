@@ -259,13 +259,36 @@ namespace Altaxo.Worksheet.Commands
        G2DPlotStyleCollection templatePlotStyle,
       PlotGroupStyleCollection groupStyles)
     {
+      Altaxo.Graph.Gdi.GraphDocument graph = new Altaxo.Graph.Gdi.GraphDocument();
+      Altaxo.Graph.Gdi.XYPlotLayer layer = new Altaxo.Graph.Gdi.XYPlotLayer(graph.DefaultLayerPosition, graph.DefaultLayerSize);
+      layer.CreateDefaultAxes();
+      graph.Layers.Add(layer);
+      Current.Project.GraphDocumentCollection.Add(graph);
+
+      return Plot(table, selectedColumns, graph, templatePlotStyle, groupStyles);
+    }
+
+
+    /// <summary>
+    /// Plots selected data columns of a table.
+    /// </summary>
+    /// <param name="table">The source table.</param>
+    /// <param name="selectedColumns">The data columns of the table that should be plotted.</param>
+    /// <param name="templatePlotStyle">The plot style which is the template for all plot items.</param>
+    /// <param name="groupStyles">The group styles for the newly built plot item collection.</param>
+    public static IGraphController Plot(DataTable table,
+      IAscendingIntegerCollection selectedColumns,
+      Graph.Gdi.GraphDocument graph,
+      G2DPlotStyleCollection templatePlotStyle,
+      PlotGroupStyleCollection groupStyles)
+    {
       List<IGPlotItem> pilist = CreatePlotItems(table, selectedColumns, templatePlotStyle);
 
       // now create a new Graph with this plot associations
-      Altaxo.Graph.GUI.IGraphController gc = Current.ProjectService.CreateNewGraph();
+      Altaxo.Graph.GUI.IGraphController gc = Current.ProjectService.CreateNewGraph(graph);
 
       // Set x and y axes according to the first plot item in the list
-      if(pilist.Count>0 && (pilist[0] is XYColumnPlotItem))
+      if (pilist.Count > 0 && (pilist[0] is XYColumnPlotItem))
       {
         XYColumnPlotItem firstitem = (XYColumnPlotItem)pilist[0];
         if (firstitem.Data.XColumn is TextColumn)
@@ -285,7 +308,7 @@ namespace Altaxo.Worksheet.Commands
       {
         newPlotGroup.Add(pi);
       }
-      if(groupStyles!=null)
+      if (groupStyles != null)
         newPlotGroup.GroupStyles = groupStyles;
 
       newPlotGroup.CollectStyles(newPlotGroup.GroupStyles);
@@ -293,7 +316,6 @@ namespace Altaxo.Worksheet.Commands
 
       return gc;
     }
-
 
 
     /// <summary>
@@ -375,8 +397,12 @@ namespace Altaxo.Worksheet.Commands
     /// <param name="bScatter">If true, scatter symbols are plotted.</param>
     public static void PlotLinePolar(GUI.WorksheetController dg)
     {
-      IGraphController gc = Plot(dg.DataTable, dg.SelectedDataColumns, PlotStyle_Line, GroupStyle_Color_Line);
-      gc.Doc.Layers[0].CoordinateSystem = new G2DPolarCoordinateSystem();
+      Altaxo.Graph.Gdi.GraphDocument graph = new Altaxo.Graph.Gdi.GraphDocument();
+      Altaxo.Graph.Gdi.XYPlotLayer layer = new Altaxo.Graph.Gdi.XYPlotLayer(graph.DefaultLayerPosition,graph.DefaultLayerSize,new Altaxo.Graph.Gdi.CS.G2DPolarCoordinateSystem());
+      layer.CreateDefaultAxes();
+      graph.Layers.Add(layer);
+      Current.Project.GraphDocumentCollection.Add(graph);
+      IGraphController gc = Plot(dg.DataTable, dg.SelectedDataColumns, graph, PlotStyle_Line, GroupStyle_Color_Line);
     }
 
     /// <summary>

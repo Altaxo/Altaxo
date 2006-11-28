@@ -907,19 +907,29 @@ namespace Altaxo.Graph.Gdi
       this.GridPlanes = new GridPlaneCollection();
       this.GridPlanes.Add(new GridPlane(CSPlaneID.Front));
     }
-    /// <summary>
+
+     /// <summary>
     /// Creates a layer with position <paramref name="position"/> and size <paramref name="size"/>.
     /// </summary>
     /// <param name="position">The position of the layer on the printable area in points (1/72 inch).</param>
     /// <param name="size">The size of the layer in points (1/72 inch).</param>
     public XYPlotLayer(PointF position, SizeF size)
+      : this(position,size,new CS.G2DCartesicCoordinateSystem())
+    {
+    }
+
+    /// <summary>
+    /// Creates a layer with position <paramref name="position"/> and size <paramref name="size"/>.
+    /// </summary>
+    /// <param name="position">The position of the layer on the printable area in points (1/72 inch).</param>
+    /// <param name="size">The size of the layer in points (1/72 inch).</param>
+    /// <param name="coordinateSystem">The coordinate system to use for the layer.</param>
+    public XYPlotLayer(PointF position, SizeF size, G2DCoordinateSystem coordinateSystem)
     {
       this._changeEventSuppressor = new Altaxo.Main.EventSuppressor(EhChangeEventResumed);
       this.Location = new XYPlotLayerPositionAndSize();
 
-      this.CoordinateSystem = new CS.G2DCartesicCoordinateSystem();
-      // this.CoordinateSystem = new G2DPolarCoordinateSystem();
-
+      this.CoordinateSystem = coordinateSystem;
       this.Size = size;
       this.Position = position;
 

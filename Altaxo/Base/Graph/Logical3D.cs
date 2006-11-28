@@ -48,5 +48,10 @@ namespace Altaxo.Graph
         );
     }
 
+    public static Logical3D operator +(Logical3D r, Logical3D s)
+    {
+      return new Logical3D(r.RX + s.RX, r.RY + s.RY, r.RZ + s.RZ);
+    }
+
   }
 }

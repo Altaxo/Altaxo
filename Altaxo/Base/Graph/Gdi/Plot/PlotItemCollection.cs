@@ -331,20 +331,20 @@ namespace Altaxo.Graph.Gdi.Plot
 
     public void PrepareStyles(PlotGroupStyleCollection styles, IPlotArea layer)
     {
-        _styles.BeginPrepare();
-
-        foreach (IGPlotItem pi in _plotItems)
-        {
-          pi.PrepareStyles(_styles,layer);
-          _styles.PrepareStep();
-        }
-
-        _styles.EndPrepare();
+      PrepareStyles(styles, layer, 0);
     }
 
     public void ApplyStyles(PlotGroupStyleCollection styles)
     {
       ApplyStyles(styles, 0);
+    }
+
+    public void PrepareStyles(PlotGroupStyleCollection styles, IPlotArea layer, IGPlotItem pivot)
+    {
+      int pivotidx = _plotItems.IndexOf(pivot);
+      if (pivotidx < 0)
+        pivotidx = 0;
+      PrepareStyles(styles, layer, pivotidx);
     }
 
     public void ApplyStyles(PlotGroupStyleCollection styles, IGPlotItem pivot)
@@ -356,29 +356,72 @@ namespace Altaxo.Graph.Gdi.Plot
     }
 
 
+    protected void PrepareStyles(PlotGroupStyleCollection styles, IPlotArea layer, int pivotidx)
+    {
+        _styles.BeginPrepare();
+        int count = _plotItems.Count;
+        for (int i = 0; i < count; i++)
+        {
+          IGPlotItem pi = _plotItems[(i+pivotidx)%count];
+          pi.PrepareStyles(_styles,layer);
+          _styles.PrepareStep();
+        }
+        _styles.EndPrepare();
+    }
+
+
     protected void ApplyStyles(PlotGroupStyleCollection styles, int pivotidx)
     {
       _styles.BeginApply();
-      for(int i=pivotidx;i<_plotItems.Count;i++)
+
+      // if the pivot is lower than 0, we first distibute all changes to the first item and
+      // then from the first item again down the line
+      if (pivotidx > 0)
+      {
+        for (int i = pivotidx; i >= 0; i--)
+        {
+          IGPlotItem pi = _plotItems[i];
+          pi.ApplyStyles(_styles);
+          
+          if(i!=0)
+            _styles.Step(-1);
+        }
+      }
+      
+      // now distibute the styles from the first item down to the last item
+      for(int i=0;i<_plotItems.Count;i++)
       {
         IGPlotItem pi = _plotItems[i];
         pi.ApplyStyles(_styles);
         _styles.Step(1);
       }
-      _styles.EndApply();
 
-      if (pivotidx > 0)
+      _styles.EndApply();
+    }
+
+    /// <summary>
+    /// Does nothing because a plot item collection doesn't distibute item styles from members of the outer group into it's own members.
+    /// </summary>
+    /// <param name="template">Ignored.</param>
+    /// <param name="strictness">Ignored.</param>
+    public void SetPlotStyleFromTemplate(IGPlotItem template, PlotGroupStrictness strictness)
+    {
+    }
+
+    /// <summary>
+    /// Sets the plot style (or sub plot styles) of all plot items in this collection according to a template provided by the plot item in the template argument.
+    /// </summary>
+    /// <param name="template">The template item to copy the plot styles from.</param>
+    /// <param name="strictness">Denotes the strictness the styles are copied from the template. See <see cref="PlotGroupStrictness" /see> for more information.</param>
+    public void DistributePlotStyleFromTemplate(IGPlotItem template, PlotGroupStrictness strictness)
+    {
+      foreach(IGPlotItem pi in this._plotItems)
       {
-        _styles.BeginApply();
-        for (int i = pivotidx; i >=0; i--)
-        {
-          IGPlotItem pi = _plotItems[i];
-          pi.ApplyStyles(_styles);
-          _styles.Step(-1);
-        }
-        _styles.EndApply();
+        if (!object.ReferenceEquals(pi, template))
+          pi.SetPlotStyleFromTemplate(template, strictness);
       }
     }
+
 
 
     /// <summary>

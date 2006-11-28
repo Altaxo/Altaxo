@@ -6,6 +6,7 @@ using System.Drawing;
 namespace Altaxo.Graph.Gdi.Plot
 {
   using Groups;
+  using Graph.Plot.Groups;
 
   [Serializable]
   public abstract class PlotItem
@@ -213,6 +214,13 @@ namespace Altaxo.Graph.Gdi.Plot
     public abstract void PrepareStyles(PlotGroupStyleCollection externalGroups, IPlotArea layer);
 
     public abstract void ApplyStyles(PlotGroupStyleCollection externalGroups);
+
+    /// <summary>
+    /// Sets the plot style (or sub plot styles) in this item according to a template provided by the plot item in the template argument.
+    /// </summary>
+    /// <param name="template">The template item to copy the plot styles from.</param>
+    /// <param name="strictness">Denotes the strictness the styles are copied from the template. See <see cref="PlotGroupStrictness" /see> for more information.</param>
+    public abstract void SetPlotStyleFromTemplate(IGPlotItem template, PlotGroupStrictness strictness);
 
     /// <summary>
     /// Paints a symbol for this plot item for use in a legend.

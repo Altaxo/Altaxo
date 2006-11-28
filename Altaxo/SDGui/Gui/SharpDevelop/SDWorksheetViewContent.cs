@@ -105,6 +105,7 @@ namespace Altaxo.Gui.SharpDevelop
     {
       _controller = ctrl;
       _controller.DataColumnHeaderRightClicked += EhDataColumnHeaderRightClicked;
+      _controller.TitleNameChanged += EhTitleNameChanged;
     }
 
     
@@ -178,6 +179,10 @@ namespace Altaxo.Gui.SharpDevelop
       set
       {
       }
+    }
+    void EhTitleNameChanged(object sender, EventArgs e)
+    {
+      base.OnTitleNameChanged(e);
     }
 
     /// <summary>

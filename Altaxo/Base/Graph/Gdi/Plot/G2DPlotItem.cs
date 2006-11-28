@@ -132,6 +132,19 @@ namespace Altaxo.Graph.Gdi.Plot
         sps.ApplyGroupStyles(externalGroups, _localGroups);
     }
 
+    /// <summary>
+    /// Sets the plot style (or sub plot styles) in this item according to a template provided by the plot item in the template argument.
+    /// </summary>
+    /// <param name="template">The template item to copy the plot styles from.</param>
+    /// <param name="strictness">Denotes the strictness the styles are copied from the template. See <see cref="PlotGroupStrictness" /see> for more information.</param>
+    public override void SetPlotStyleFromTemplate(IGPlotItem template, PlotGroupStrictness strictness)
+    {
+      if (!(template is G2DPlotItem) || object.ReferenceEquals(this,template))
+        return;
+      G2DPlotItem from = (G2DPlotItem)template;
+      this._plotStyles.SetFromTemplate(from._plotStyles, strictness);
+     }
+
     public override void PaintSymbol(Graphics g, RectangleF location)
     {
       _plotStyles.PaintSymbol(g, location);     

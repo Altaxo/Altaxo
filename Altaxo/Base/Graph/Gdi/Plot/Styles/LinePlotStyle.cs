@@ -134,6 +134,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     protected BrushX _fillBrush; // brush to fill the area under the line
     protected CSPlaneID _fillDirection; // the direction to fill
     protected bool _independentColor;
+    /// <summary>If true, the fill color is not set by the color group style, but is independent.</summary>
+    protected bool _independentFillColor;
+    /// <summary>If true, the start and the end point of the line are connected too.</summary>
+    protected bool _connectCircular;
 
 
     // cached values
@@ -275,7 +279,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         base.Serialize(obj, info);
         LinePlotStyle s = (LinePlotStyle)obj;
         info.AddValue("IndependentColor", s._independentColor);
-
+        info.AddValue("IndependentFillColor", s._independentFillColor);
+        info.AddValue("ConnectCircular", s._connectCircular);
       }
       public override LinePlotStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
@@ -289,6 +294,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         s._fillBrush = (BrushX)info.GetValue("FillBrush", typeof(BrushX));
         s._fillDirection = (CSPlaneID)info.GetValue("FillDirection", s);
         s._independentColor = info.GetBoolean("IndependentColor");
+        s._independentFillColor = info.GetBoolean("IndependentFillColor");
+        s._connectCircular = info.GetBoolean("ConnectCircular");
         return s;
       }
     }
@@ -332,6 +339,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       this._fillDirection = null==from._fillDirection ? null : from._fillDirection.Clone();
       this.Connection = from._connectionStyle; // beachte links nur Connection, damit das Template mit gesetzt wird
       this._independentColor = from._independentColor;
+      this._independentFillColor = from._independentFillColor;
+      this._connectCircular = from._connectCircular;
 
       this._parentObject = from._parentObject;
 
@@ -1262,8 +1271,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       get { return !this._independentColor; }
     }
 
-   
-
+    /// <summary>
+    /// Sets the fill brush color from a color, but leaves the opacity value unchanged.
+    /// </summary>
+    /// <param name="c">The color to set. Only the RGB values are used from here; the A value (opacity) is ignored and remains unchanged.</param>
+    public void SetFillColorRGB(Color c)
+    {
+      _fillBrush.Color = Color.FromArgb(_fillBrush.Color.A, c.R, c.G, c.B);
+    }
   
 
     float SymbolSize
@@ -1307,9 +1322,15 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       if (this.IsColorReceiver)
         ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(PlotColor c) { this.Color = c; });
 
+      if (this._fillArea && !this._independentFillColor)
+        ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(PlotColor c) { this.SetFillColorRGB(c.Color); });
+
       LineStyleGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(DashStyle c) { this.PenHolder.DashStyle = c; });
 
-      SymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(float size) { this._symbolGap = size; });
+      if (!SymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(float size) { this._symbolGap = size; }))
+      {
+        this._symbolGap = 0;
+      }
     }
 
    

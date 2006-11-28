@@ -175,7 +175,14 @@ namespace Altaxo.Graph.Plot.Groups
 
 
     public delegate void SymbolSizeSetter(float c);
-    public static void ApplyStyle(
+    /// <summary>
+    /// Try to apply the symbol size group style. Returns true if successfull applied.
+    /// </summary>
+    /// <param name="externalGroups"></param>
+    /// <param name="localGroups"></param>
+    /// <param name="setter"></param>
+    /// <returns></returns>
+    public static bool ApplyStyle(
       IPlotGroupStyleCollection externalGroups,
       IPlotGroupStyleCollection localGroups,
       SymbolSizeSetter setter)
@@ -192,6 +199,11 @@ namespace Altaxo.Graph.Plot.Groups
         grpStyle = (SymbolSizeGroupStyle)grpColl.GetPlotGroupStyle(typeof(SymbolSizeGroupStyle));
         grpColl.OnBeforeApplication(typeof(SymbolSizeGroupStyle));
         setter(grpStyle.SymbolSize);
+        return true;
+      }
+      else
+      {
+        return false;
       }
 
 

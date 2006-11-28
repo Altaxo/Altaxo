@@ -49,6 +49,10 @@ namespace Altaxo.Gui.Graph
     /// <param name="bStrict">True if the depending plot styles are enforced to have strictly the same properties than the parent style.</param>
     void InitializePlotGroupConditions(bool bColor, bool bLineType, bool bSymbol, bool bConcurrently, Altaxo.Graph.Plot.Groups.PlotGroupStrictness bStrict);
 
+    /// <summary>
+    /// Fired if user requires the full plot group control.
+    /// </summary>
+    event EventHandler AdvancedPlotGroupControl;
 
     #region Getter
 

@@ -33,6 +33,7 @@ namespace Altaxo.Graph.Gdi.Plot
   using Styles;
   using Data;
   using Graph.Plot.Data;
+  using Graph.Plot.Groups;
 
   /// <summary>
   /// Association of data and style specialized for x-y-plots of column data.
@@ -344,5 +345,19 @@ namespace Altaxo.Graph.Gdi.Plot
     {
       
     }
+
+    /// <summary>
+    /// Sets the plot style (or sub plot styles) in this item according to a template provided by the plot item in the template argument.
+    /// </summary>
+    /// <param name="template">The template item to copy the plot styles from.</param>
+    /// <param name="strictness">Denotes the strictness the styles are copied from the template. See <see cref="PlotGroupStrictness" /see> for more information.</param>
+    public override void SetPlotStyleFromTemplate(IGPlotItem template, PlotGroupStrictness strictness)
+    {
+      if (!(template is DensityImagePlotItem))
+        return;
+      DensityImagePlotItem from = (DensityImagePlotItem)template;
+//      m_PlotStyle.CopyFrom(from.m_PlotStyle);
+    }
+
   }
 }

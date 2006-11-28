@@ -42,12 +42,14 @@ namespace Altaxo.Graph.Plot.Groups
     protected Dictionary<System.Type, IPlotGroupStyle> _typeToInstance;
     protected Dictionary<System.Type, GroupInfo> _typeToInfo;
     protected PlotGroupStrictness _plotGroupStrictness;
+    protected bool _inheritFromParentGroups;
+    protected bool _distributeToChildGroups;
 
     #region Serialization
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PlotGroupStyleCollectionBase), 0)]
     public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         PlotGroupStyleCollectionBase s = (PlotGroupStyleCollectionBase)obj;
 
@@ -79,13 +81,15 @@ namespace Altaxo.Graph.Plot.Groups
 
         info.AddEnum("Strictness", s._plotGroupStrictness);
       }
-
-
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-
         PlotGroupStyleCollectionBase s = null != o ? (PlotGroupStyleCollectionBase)o : new PlotGroupStyleCollectionBase();
+        SDeserialize(s, info, parent);
+        return s;
+      }
 
+      public virtual void SDeserialize(PlotGroupStyleCollectionBase s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
         Type parentStyleType = null;
         int count = info.OpenArray();
         for (int i = 0; i < count; i++)
@@ -98,10 +102,29 @@ namespace Altaxo.Graph.Plot.Groups
         info.CloseArray(count);
 
         s._plotGroupStrictness = (PlotGroupStrictness)info.GetEnum("Strictness", typeof(PlotGroupStrictness));
-
-        return s;
       }
     }
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PlotGroupStyleCollectionBase), 1)]
+    public class XmlSerializationSurrogate1 : XmlSerializationSurrogate0
+    {
+      public override void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        base.Serialize(obj, info);
+        PlotGroupStyleCollectionBase s = (PlotGroupStyleCollectionBase)obj;
+        info.AddValue("InheritFromParent", s._inheritFromParentGroups);
+        info.AddValue("DistributeToChilds", s._distributeToChildGroups);
+      }
+      public override void SDeserialize(PlotGroupStyleCollectionBase s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        base.SDeserialize(s, info, parent);
+        s._inheritFromParentGroups = info.GetBoolean("InheritFromParent");
+        s._distributeToChildGroups = info.GetBoolean("DistributeToChilds");
+      }
+
+
+    }
+
 
     #endregion
 
@@ -110,6 +133,7 @@ namespace Altaxo.Graph.Plot.Groups
     {
       _typeToInstance = new Dictionary<Type, IPlotGroupStyle>();
       _typeToInfo = new Dictionary<Type, GroupInfo>();
+      _inheritFromParentGroups = true;
     }
 
     public PlotGroupStyleCollectionBase(PlotGroupStyleCollectionBase from)
@@ -128,6 +152,9 @@ namespace Altaxo.Graph.Plot.Groups
       foreach (KeyValuePair<System.Type, GroupInfo> entry in from._typeToInfo)
         this._typeToInfo.Add(entry.Key, entry.Value.Clone());
 
+      _plotGroupStrictness = from._plotGroupStrictness;
+      this._inheritFromParentGroups = from._inheritFromParentGroups;
+      this._distributeToChildGroups = from._distributeToChildGroups;
     }
 
     #endregion
@@ -156,6 +183,18 @@ namespace Altaxo.Graph.Plot.Groups
     {
       get { return _plotGroupStrictness; }
       set { _plotGroupStrictness = value; }
+    }
+
+    public bool InheritFromParentGroups
+    {
+      get { return _inheritFromParentGroups; }
+      set { _inheritFromParentGroups = value; }
+    }
+
+    public bool DistributeToChildGroups
+    {
+      get { return _distributeToChildGroups; }
+      set { _distributeToChildGroups = value; }
     }
 
     public bool ContainsType(System.Type groupStyleType)

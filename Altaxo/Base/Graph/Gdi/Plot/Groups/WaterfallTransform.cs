@@ -7,6 +7,8 @@ using System.Drawing.Drawing2D;
 using Altaxo.Data;
 using Altaxo.Graph.Scales.Boundaries;
 
+
+
 namespace Altaxo.Graph.Gdi.Plot.Groups
 {
   using Plot.Data;
@@ -37,6 +39,8 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
     }
 
     #region ICoordinateTransformingGroupStyle Members
+
+
 
     public void MergeXBoundsInto(IPlotArea layer, IPhysicalBoundaries pb, PlotItemCollection coll)
     {
@@ -84,6 +88,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
       }
 
     }
+
 
     public void MergeYBoundsInto(IPlotArea layer, IPhysicalBoundaries pb, PlotItemCollection coll)
     {

@@ -16,17 +16,17 @@ namespace Altaxo.Gui.Graph
     IPlotGroupCollectionViewEventSink Controller { set; }
     void InitializeAvailableCoordinateTransformingGroupStyles(SelectableListNodeList list);
     void InitializeAvailableNormalGroupStyles(SelectableListNodeList list);
-    void InitializeCurrentCoordinateTransformingGroupStyle(string val);
+    void InitializeUpdateMode(SelectableListNodeList list, bool inheritFromParent, bool distributeToChilds);
     void InitializeCurrentNormalGroupStyles(CheckableSelectableListNodeList list);
     void SynchronizeCurrentNormalGroupStyles();
-
+    void QueryUpdateMode(out bool inheritFromParent, out bool distributeToChilds);
     
   }
 
   public interface IPlotGroupCollectionViewEventSink
   {
-    void EhView_AddCoordinateTransformingGroupStyle();
-    void EhView_RemoveCoordinateTransformingGroupStyle();
+    void EhView_CoordinateTransformingGroupStyleChanged();
+    void EhView_CoordinateTransformingGroupStyleEdit();
     void EhView_AddNormalGroupStyle();
     void EhView_RemoveNormalGroupStyle();
 
@@ -50,6 +50,7 @@ namespace Altaxo.Gui.Graph
     SelectableListNodeList _availableTransfoStyles;
     SelectableListNodeList _availableNormalStyles;
     CheckableSelectableListNodeList _currentNormalStyles;
+    SelectableListNodeList _availableUpdateModes;
     Type _currentTransfoStyle;
     int _currentStepItems;
 
@@ -57,15 +58,20 @@ namespace Altaxo.Gui.Graph
     {
       if (initDoc)
       {
+        // available Update modes
+        _availableUpdateModes = new SelectableListNodeList();
+        foreach (object obj in Enum.GetValues(typeof(PlotGroupStrictness)))
+          _availableUpdateModes.Add(new SelectableListNode(obj.ToString(), obj, ((PlotGroupStrictness)obj) == PlotGroupStrictness.Normal));
+
         Type[] types;
         // Transfo-Styles
         _currentTransfoStyle = _doc.CoordinateTransformingStyle == null ? null : _doc.CoordinateTransformingStyle.GetType();
         _availableTransfoStyles = new SelectableListNodeList();
+        _availableTransfoStyles.Add(new SelectableListNode("None",null,null==_currentTransfoStyle));
          types = ReflectionService.GetNonAbstractSubclassesOf(typeof(ICoordinateTransformingGroupStyle));
         foreach (Type t in types)
         {
-          if (t != _currentTransfoStyle)
-            _availableTransfoStyles.Add(new SelectableListNode(Current.Gui.GetUserFriendlyClassName(t), t, false));
+            _availableTransfoStyles.Add(new SelectableListNode(Current.Gui.GetUserFriendlyClassName(t), t, t==_currentTransfoStyle));
         }
 
         // Normal Styles
@@ -114,10 +120,10 @@ namespace Altaxo.Gui.Graph
       }
       if (_view != null)
       {
-        _view.InitializeCurrentCoordinateTransformingGroupStyle(null == _currentTransfoStyle ? string.Empty : Current.Gui.GetUserFriendlyClassName(_currentTransfoStyle));
         _view.InitializeAvailableCoordinateTransformingGroupStyles(_availableTransfoStyles);
         _view.InitializeAvailableNormalGroupStyles(_availableNormalStyles);
         _view.InitializeCurrentNormalGroupStyles(_currentNormalStyles);
+        _view.InitializeUpdateMode(_availableUpdateModes, _doc.InheritFromParentGroups, _doc.DistributeToChildGroups);
       }
     }
 
@@ -264,6 +270,19 @@ namespace Altaxo.Gui.Graph
         style.IsStepEnabled = node.Checked;
       }
 
+      bool inherit, distribute;
+      _view.QueryUpdateMode(out inherit, out distribute);
+      _doc.InheritFromParentGroups = inherit;
+      _doc.DistributeToChildGroups = distribute;
+      foreach (SelectableListNode node in _availableUpdateModes)
+      {
+        if (node.Selected)
+        {
+          _doc.PlotGroupStrictness = (PlotGroupStrictness)node.Item;
+          break;
+        }
+      }
+
       if (_useDocument == UseDocument.Copy)
         _origdoc.CopyFrom(_doc);
       return true;
@@ -273,42 +292,17 @@ namespace Altaxo.Gui.Graph
 
     #region IPlotGroupCollectionViewEventSink Members
 
-    public void EhView_AddCoordinateTransformingGroupStyle()
+    public void EhView_CoordinateTransformingGroupStyleChanged()
     {
-      SelectableListNode selected = null;
-      foreach (SelectableListNode node in _availableTransfoStyles)
-      {
-        if (node.Selected)
-        {
-          selected = node;
-          break;
-        }
-      }
-      if (null != selected)
-      {
-        Type oldtransfostyle = _currentTransfoStyle;
-        _currentTransfoStyle = (Type)selected.Item;
-        _view.InitializeCurrentCoordinateTransformingGroupStyle(Current.Gui.GetUserFriendlyClassName(_currentTransfoStyle));
-        _availableTransfoStyles.Remove(selected);
-        if (null != oldtransfostyle)
-          _availableTransfoStyles.Add(new SelectableListNode(Current.Gui.GetUserFriendlyClassName(oldtransfostyle), oldtransfostyle, false));
-      
-        _view.InitializeAvailableCoordinateTransformingGroupStyles(_availableTransfoStyles);
 
-      }
     }
 
-    public void EhView_RemoveCoordinateTransformingGroupStyle()
+    public void EhView_CoordinateTransformingGroupStyleEdit()
     {
-      if (null != _currentTransfoStyle)
-      {
-        Type oldtransfostyle = _currentTransfoStyle;
-        _currentTransfoStyle = null;
-        _view.InitializeCurrentCoordinateTransformingGroupStyle(string.Empty);
-        _availableTransfoStyles.Add(new SelectableListNode(Current.Gui.GetUserFriendlyClassName(oldtransfostyle), oldtransfostyle, false));
-        _view.InitializeAvailableCoordinateTransformingGroupStyles(_availableTransfoStyles);
-      }
+
     }
+
+
 
     public void EhView_AddNormalGroupStyle()
     {

@@ -37,6 +37,8 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
         return;
       }
 
+      // we put zero into the y-Boundaries, since the addition starts with that value
+      pb.Add(new AltaxoVariant(0.0));
 
       AltaxoVariant[] ySumArray = null;
 

@@ -390,39 +390,47 @@ namespace Altaxo.Graph.Gdi
     /// <summary>
     /// Converts logical coordinates along an isoline to layer coordinates and returns the direction of the isoline at this point.
     /// </summary>
-    /// <param name="rx0">Logical x of starting point of the isoline.</param>
-    /// <param name="ry0">Logical y of starting point of the isoline.</param>
-    /// <param name="rx1">Logical x of end point of the isoline.</param>
-    /// <param name="ry1">Logical y of end point of the isoline.</param>
+    /// <param name="r0">Logical starting point of the isoline.</param>
+    /// <param name="r1">Logical end point of the isoline.</param>
     /// <param name="t">Parameter between 0 and 1 that determines the point on the isoline.
     /// A value of 0 denotes the starting point of the isoline, a value of 1 the end point. The logical
     /// coordinates are linear interpolated between starting point and end point.</param>
-    /// <param name="side">The side to which the direction should go.</param>
+    /// <param name="direction">Logical direction vector.</param>
     /// <param name="normalizeddirection">Returns the normalized direction vector,i.e. a vector of norm 1, that
-    /// has the angle <paramref name="angle"/> to the tangent of the isoline. </param>
+    /// goes in the logical direction provided by the previous argument. </param>
     /// <returns>The location (in layer coordinates) of the isoline point.</returns>
-    public PointF GetNormalizedDirection(
-      Logical3D r0,Logical3D r1,
-      double t,
-      Logical3D direction,
-      out PointF normalizeddirection)
+    public virtual PointF GetNormalizedDirection(
+        Logical3D r0, Logical3D r1,
+        double t,
+        Logical3D direction,
+        out PointF normalizeddirection)
     {
       double ax, ay, adx, ady;
-      double rxx0 = r0.RX + t * (r1.RX - r0.RX);
-      double ryy0 = r0.RY + t * (r1.RY - r0.RY);
-      double rzz0 = r0.RZ + t * (r1.RZ - r0.RZ);
-      double rxx1 = rxx0 + direction.RX;
-      double ryy1 = ryy0 + direction.RY;
-      double rzz1 = rzz0 + direction.RZ;
+      Logical3D rn0 = Logical3D.Interpolate(r0, r1, t);
+      Logical3D rn1 = rn0 + direction;
+      this.LogicalToLayerCoordinatesAndDirection(rn0, rn1, 0, out ax, out ay, out adx, out ady);
+      double hypot = Calc.RMath.Hypot(adx, ady);
+      if (0==hypot)
+      {
+        // then we look a little bit displaced - we might be at the midpoint where the directions are undefined
+        double displT = t;
+        if (displT < 0.5)
+          displT += 1E-6;
+        else
+          displT -= 1E-6;
 
-      this.LogicalToLayerCoordinatesAndDirection(new Logical3D(rxx0, ryy0,rzz0), new Logical3D(rxx1, ryy1,rzz1), 0, out ax, out ay, out adx, out ady);
+        Logical3D displR = Logical3D.Interpolate(r0, r1, displT);
+        Logical3D displD = displR + direction;
+        double dummyx, dummyy;
+        LogicalToLayerCoordinatesAndDirection(displR, displD, 0, out dummyx, out dummyy, out adx, out ady);
+        hypot = Calc.RMath.Hypot(adx, ady);
+      }
 
       // Normalize the vector
-      double rr = Calc.RMath.Hypot(adx, ady);
-      if (rr > 0)
+      if (hypot > 0)
       {
-        adx /= rr;
-        ady /= rr;
+        adx /= hypot;
+        ady /= hypot;
       }
 
       normalizeddirection = new PointF((float)adx, (float)ady);
@@ -430,7 +438,6 @@ namespace Altaxo.Graph.Gdi
 
       return new PointF((float)ax, (float)ay);
     }
-
     public Logical3D GetLogicalDirection(int parallelAxisNumber, CSAxisSide side)
     {
       switch (side)

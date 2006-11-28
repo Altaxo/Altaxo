@@ -16,20 +16,6 @@ namespace Altaxo.Gui.Graph
       InitializeComponent();
     }
 
-    private void _btRemoveCoordTransfoGroupStyle_Click(object sender, EventArgs e)
-    {
-      if (null != _controller)
-        _controller.EhView_RemoveCoordinateTransformingGroupStyle();
-    }
-
-    private void _btAddCoordTransfoGroupStyle_Click(object sender, EventArgs e)
-    {
-      if (null != _controller)
-      {
-        SynchronizeListBoxWithSelectableListNodes(this._lbCoordTransfoStylesAvailable);
-        _controller.EhView_AddCoordinateTransformingGroupStyle();
-      }
-    }
 
     private void _btRemoveNormalGroupStyle_Click(object sender, EventArgs e)
     {
@@ -116,6 +102,24 @@ namespace Altaxo.Gui.Graph
       box.EndUpdate();
     }
 
+    void InitializeComboBox(ComboBox box, SelectableListNodeList list)
+    {
+      box.BeginUpdate();
+      box.Items.Clear();
+
+
+      for (int i = 0; i < list.Count; i++)
+      {
+        SelectableListNode node = list[i];
+
+        box.Items.Add(node);
+        if (node.Selected)
+          box.SelectedIndex=i;
+      }
+
+      box.EndUpdate();
+    }
+
 
     void SynchronizeListBoxWithSelectableListNodes(ListBox box)
     {
@@ -123,6 +127,11 @@ namespace Altaxo.Gui.Graph
         node.Selected = false;
       foreach (SelectableListNode node in box.SelectedItems)
         node.Selected = true;
+    }
+    void SynchronizeComboBoxWithSelectableListNodes(ComboBox box)
+    {
+      foreach (SelectableListNode node in box.Items)
+        node.Selected = object.ReferenceEquals(node, box.SelectedItem);
     }
     void SynchronizeListBoxWithCheckableSelectableListNodes(CheckedListBox box)
     {
@@ -152,7 +161,7 @@ namespace Altaxo.Gui.Graph
 
     public void InitializeAvailableCoordinateTransformingGroupStyles(Altaxo.Collections.SelectableListNodeList list)
     {
-      InitializeListBox(_lbCoordTransfoStylesAvailable, list);
+      InitializeComboBox(this._cbCoordTransfoStyle, list);
     }
 
     public void InitializeAvailableNormalGroupStyles(Altaxo.Collections.SelectableListNodeList list)
@@ -161,15 +170,25 @@ namespace Altaxo.Gui.Graph
 
     }
 
-    public void InitializeCurrentCoordinateTransformingGroupStyle(string val)
-    {
-      _edCoordTransfoStyle.Text = val;
-    }
-
     public void InitializeCurrentNormalGroupStyles(Altaxo.Collections.CheckableSelectableListNodeList list)
     {
       InitializeCheckedListBox(_lbGroupStyles, list);
     }
+
+    public void InitializeUpdateMode(SelectableListNodeList list, bool inheritFromParent, bool distributeToChilds)
+    {
+      InitializeComboBox(_cbGroupStrictness, list);
+      _chkUpdateFromParentGroups.Checked = inheritFromParent;
+      _chkDistributeToSubGroups.Checked = distributeToChilds;
+    }
+    
+    public void QueryUpdateMode(out bool inheritFromParent, out bool distributeToChilds)
+    {
+      SynchronizeComboBoxWithSelectableListNodes(_cbGroupStrictness);
+      inheritFromParent = _chkUpdateFromParentGroups.Checked;
+      distributeToChilds = _chkDistributeToSubGroups.Checked;
+    }
+
 
     public void SynchronizeCurrentNormalGroupStyles()
     {
@@ -177,6 +196,11 @@ namespace Altaxo.Gui.Graph
     }
 
     #endregion
+
+    private void _btEditCSTransfoStyle_Click(object sender, EventArgs e)
+    {
+
+    }
 
   }
 }

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
 
+using Altaxo.Graph.Plot.Groups;
+
 namespace Altaxo.Graph.Gdi.Plot
 {
   using Plot.Groups;
@@ -53,6 +55,13 @@ namespace Altaxo.Graph.Gdi.Plot
     /// </summary>
     /// <param name="styles">The collection of group styles.</param>
     void ApplyStyles(PlotGroupStyleCollection styles);
+
+    /// <summary>
+    /// Sets the plot style (or sub plot styles) in this item according to a template provided by the plot item in the template argument.
+    /// </summary>
+    /// <param name="template">The template item to copy the plot styles from.</param>
+    /// <param name="strictness">Denotes the strictness the styles are copied from the template. See <see cref="PlotGroupStrictness" /see> for more information.</param>
+    void SetPlotStyleFromTemplate(IGPlotItem template, PlotGroupStrictness strictness);
 
     /// <summary>
     /// This routine ensures that the plot item updates all its cached data and send the appropriate

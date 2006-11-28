@@ -336,6 +336,9 @@ namespace Altaxo.Graph.Gdi.CS
       return !double.IsNaN(r.RX) && !double.IsNaN(r.RY);
     }
 
+   
+
+
     public override void GetIsoline(System.Drawing.Drawing2D.GraphicsPath g, Logical3D r0, Logical3D r1)
     {
       double ax0, ax1, ay0, ay1;

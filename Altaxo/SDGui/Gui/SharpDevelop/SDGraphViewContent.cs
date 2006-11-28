@@ -97,6 +97,7 @@ namespace Altaxo.Gui.SharpDevelop
     /// <param name="graphdoc">The graph which holds the graphical elements.</param>
     /// <param name="bDeserializationConstructor">If true, this is a special constructor used only for deserialization, where no graphdoc needs to be supplied.</param>
     protected SDGraphViewContent(GraphDocument graphdoc, bool bDeserializationConstructor)
+      : this(new GraphController(graphdoc))
     {
       _controller = new GraphController(graphdoc);
     }
@@ -104,6 +105,7 @@ namespace Altaxo.Gui.SharpDevelop
     protected SDGraphViewContent(GraphController ctrl)
     {
       _controller = ctrl;
+      _controller.TitleNameChanged += EhTitleNameChanged;
     }
 
     #endregion
@@ -160,6 +162,10 @@ namespace Altaxo.Gui.SharpDevelop
       set
       {
       }
+    }
+    void EhTitleNameChanged(object sender, EventArgs e)
+    {
+      base.OnTitleNameChanged(e);
     }
 
     /// <summary>

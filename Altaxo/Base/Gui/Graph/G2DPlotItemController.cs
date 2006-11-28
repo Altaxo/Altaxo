@@ -154,6 +154,8 @@ namespace Altaxo.Gui.Graph
           else
             bSerial = true;
         }
+        if (_groupStyles.CoordinateTransformingStyle != null)
+          bStandard = false;
       }
 
       if (bStandard && _groupStyles!=null)
@@ -166,6 +168,7 @@ namespace Altaxo.Gui.Graph
             !bSerial, //_parentPlotGroup.ChangeStylesConcurrently,
             PlotGroupStrictness.Normal //_parentPlotGroup.ChangeStylesStrictly
             );
+        _plotGroupView.AdvancedPlotGroupControl += EhAdvancedPlotGroupControlRequired;
       }
       else if (_groupStyles != null)
       {
@@ -173,52 +176,69 @@ namespace Altaxo.Gui.Graph
       }
     }
 
+    void EhAdvancedPlotGroupControlRequired(object sender, EventArgs e)
+    {
+      _plotGroupView.AdvancedPlotGroupControl -= EhAdvancedPlotGroupControlRequired;
+      ApplyPlotGroupView();
+      _plotGroupView = null;
+      if (_groupStyles != null)
+      {
+        _plotGroupController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _groupStyles }, typeof(IMVCAController));
+        // remove the tabs 2.., leaving only the style and data tab
+        RemoveTabRange(2, TabCount - 2);
+        InitializeStyles();
+      }
+    }
+
     void ApplyPlotGroupView()
     {
-      if (null == _groupStyles || null == _plotGroupView)
-        return;
 
-
-      bool color = _plotGroupView.PlotGroupColor;
-      bool linestyle = _plotGroupView.PlotGroupLineType;
-      bool symbol = _plotGroupView.PlotGroupSymbol;
-      bool serial = !_plotGroupView.PlotGroupConcurrently;
-
-      if (_groupStyles.ContainsType(typeof(ColorGroupStyle)))
-        _groupStyles.RemoveType(typeof(ColorGroupStyle));
-      if (_groupStyles.ContainsType(typeof(LineStyleGroupStyle)))
-        _groupStyles.RemoveType(typeof(LineStyleGroupStyle));
-      if (_groupStyles.ContainsType(typeof(SymbolShapeStyleGroupStyle)))
-        _groupStyles.RemoveType(typeof(SymbolShapeStyleGroupStyle));
-
-
-      if (color)
+      if (null != _plotGroupView)
       {
-        _groupStyles.Add(new ColorGroupStyle());
-      }
-      if (linestyle)
-      {
-        if (serial && color)
-          _groupStyles.Add(new LineStyleGroupStyle(), typeof(ColorGroupStyle));
-        else
-          _groupStyles.Add(new LineStyleGroupStyle());
-      }
-      if (symbol)
-      {
-        if (serial && linestyle)
-          _groupStyles.Add(new SymbolShapeStyleGroupStyle(), typeof(LineStyleGroupStyle));
-        else if (serial && color)
-          _groupStyles.Add(new SymbolShapeStyleGroupStyle(), typeof(ColorGroupStyle));
-        else
-          _groupStyles.Add(new SymbolShapeStyleGroupStyle());
-      }
 
+        bool color = _plotGroupView.PlotGroupColor;
+        bool linestyle = _plotGroupView.PlotGroupLineType;
+        bool symbol = _plotGroupView.PlotGroupSymbol;
+        bool serial = !_plotGroupView.PlotGroupConcurrently;
+
+        if (_groupStyles.ContainsType(typeof(ColorGroupStyle)))
+          _groupStyles.RemoveType(typeof(ColorGroupStyle));
+        if (_groupStyles.ContainsType(typeof(LineStyleGroupStyle)))
+          _groupStyles.RemoveType(typeof(LineStyleGroupStyle));
+        if (_groupStyles.ContainsType(typeof(SymbolShapeStyleGroupStyle)))
+          _groupStyles.RemoveType(typeof(SymbolShapeStyleGroupStyle));
+
+
+        if (color)
+        {
+          _groupStyles.Add(new ColorGroupStyle());
+        }
+        if (linestyle)
+        {
+          if (serial && color)
+            _groupStyles.Add(new LineStyleGroupStyle(), typeof(ColorGroupStyle));
+          else
+            _groupStyles.Add(new LineStyleGroupStyle());
+        }
+        if (symbol)
+        {
+          if (serial && linestyle)
+            _groupStyles.Add(new SymbolShapeStyleGroupStyle(), typeof(LineStyleGroupStyle));
+          else if (serial && color)
+            _groupStyles.Add(new SymbolShapeStyleGroupStyle(), typeof(ColorGroupStyle));
+          else
+            _groupStyles.Add(new SymbolShapeStyleGroupStyle());
+        }
+
+        _groupStyles.PlotGroupStrictness = _plotGroupView.PlotGroupStrict;
+      }
 
 
       // now distribute the new style to the other plot items
       if (_doc.ParentCollection != null)
       {
-        _doc.ParentCollection.PrepareStyles(_groupStyles,_doc.ParentCollection.ParentLayer);
+        _doc.ParentCollection.DistributePlotStyleFromTemplate(_doc, _groupStyles.PlotGroupStrictness);
+        _doc.ParentCollection.PrepareStyles(_groupStyles,_doc.ParentCollection.ParentLayer, _doc);
         _doc.ParentCollection.ApplyStyles(_groupStyles, _doc);
       }
     }
@@ -226,6 +246,9 @@ namespace Altaxo.Gui.Graph
 
     void InitializeStyles()
     {
+
+      if (_plotGroupController != null)
+        AddTab("Grouping", _plotGroupController, _plotGroupController.ViewObject);
 
       IMVCAController ctrl;
 

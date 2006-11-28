@@ -33,6 +33,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 {
   using Plot.Groups;
   using Data;
+  using Graph.Plot.Groups;
 
   public class G2DPlotStyleCollection
     :
@@ -154,6 +155,32 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       this._parent = from._parent;
 
       Resume();
+    }
+    public void SetFromTemplate(G2DPlotStyleCollection from, PlotGroupStrictness strictness)
+    {
+      if (strictness == PlotGroupStrictness.Strict)
+      {
+        CopyFrom(from);
+      }
+      else if (strictness == PlotGroupStrictness.Exact)
+      {
+        // note one sub style in the 'from' collection can update only one item in the 'this' collection
+        Suspend();
+        int myidx = 0;
+        foreach (IG2DPlotStyle style in from)
+        {
+          for (int i = myidx; i < this.Count; i++)
+          {
+            if (this[i].GetType() == style.GetType())
+            {
+              Replace((IG2DPlotStyle)from[i].Clone(), i, false);
+              myidx = i+1;
+              break;
+            }
+          }
+        }
+        Resume();
+      }
     }
 
     public virtual object ParentObject
