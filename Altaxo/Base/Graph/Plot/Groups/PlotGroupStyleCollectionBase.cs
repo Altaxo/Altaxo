@@ -383,6 +383,102 @@ namespace Altaxo.Graph.Plot.Groups
       }
     }
 
+    /// <summary>
+    /// Executes a prepare step only on those items, where in the own collection the stepping is enabled, but in the foreign collection it is present, but is not enabled.
+    /// </summary>
+    /// <param name="step"></param>
+    /// <param name="foreignStyles"></param>
+    public void PrepareStepIfForeignSteppingFalse(PlotGroupStyleCollectionBase foreignStyles)
+    {
+      foreach (KeyValuePair<Type, IPlotGroupStyle> entry in _typeToInstance)
+      {
+        Type groupType = entry.Key;
+        IPlotGroupStyle groupStyle = entry.Value;
+        GroupInfo groupInfo = _typeToInfo[groupType];
+
+        if (groupInfo.ParentGroupType == null
+          && groupInfo.WasApplied
+          && groupStyle.IsStepEnabled
+          && foreignStyles.ContainsType(groupType)
+          && !(foreignStyles.GetPlotGroupStyle(groupType).IsStepEnabled)
+          )
+        {
+          groupStyle.PrepareStep();
+        }
+      }
+    }
+
+
+    /// <summary>
+    /// Executes a step only on those items, where in the own collection the stepping is enabled, but in the foreign collection it is present, but is not enabled.
+    /// </summary>
+    /// <param name="step"></param>
+    /// <param name="foreignStyles"></param>
+    public void StepIfForeignSteppingFalse(int step, PlotGroupStyleCollectionBase foreignStyles)
+    {
+      foreach (KeyValuePair<Type, IPlotGroupStyle> entry in _typeToInstance)
+      {
+        Type groupType = entry.Key;
+        IPlotGroupStyle groupStyle = entry.Value;
+        GroupInfo groupInfo = _typeToInfo[groupType];
+
+        if (groupInfo.ParentGroupType == null
+          && groupInfo.WasApplied
+          && groupStyle.IsStepEnabled 
+          && foreignStyles.ContainsType(groupType)
+          && !(foreignStyles.GetPlotGroupStyle(groupType).IsStepEnabled)
+          )
+        {
+          int subStep = groupStyle.Step(step);
+          GroupInfo subGroupInfo = groupInfo;
+          for (Type subGroupType = subGroupInfo.ChildGroupType; subGroupType != null && subStep != 0; subGroupType = subGroupInfo.ChildGroupType)
+          {
+            subGroupInfo = _typeToInfo[subGroupType];
+            IPlotGroupStyle subGroupStyle = _typeToInstance[subGroupType];
+            subStep = subGroupStyle.IsStepEnabled ? subGroupStyle.Step(subStep) : 0;
+          }
+        }
+        groupInfo.WasApplied = false;
+      }
+    }
+
+    public static void TransferFromTo(PlotGroupStyleCollectionBase from, PlotGroupStyleCollectionBase tothis)
+    {
+      foreach (KeyValuePair<Type, IPlotGroupStyle> entry in from._typeToInstance)
+      {
+        Type groupType = entry.Key;
+        if (!tothis.ContainsType(groupType))
+          continue;
+
+        IPlotGroupStyle fromGroupStyle = entry.Value;
+        IPlotGroupStyle tothisGroupStyle = tothis.GetPlotGroupStyle(groupType);
+        tothisGroupStyle.TransferFrom(fromGroupStyle);
+      }
+    }
+    public static void TransferFromToIfBothSteppingEnabled(PlotGroupStyleCollectionBase from, PlotGroupStyleCollectionBase tothis)
+    {
+      foreach (KeyValuePair<Type, IPlotGroupStyle> entry in from._typeToInstance)
+      {
+        Type groupType = entry.Key;
+        if (!tothis.ContainsType(groupType))
+          continue;
+
+        IPlotGroupStyle fromGroupStyle = entry.Value;
+        if (false == fromGroupStyle.IsStepEnabled)
+          continue;
+
+        IPlotGroupStyle tothisGroupStyle = tothis.GetPlotGroupStyle(groupType);
+        if (false == tothisGroupStyle.IsStepEnabled)
+          continue;
+
+        tothisGroupStyle.TransferFrom(fromGroupStyle);
+      }
+    }
+    public void SetAllToApplied()
+    {
+      foreach (KeyValuePair<Type, GroupInfo> entry in _typeToInfo)
+        entry.Value.WasApplied = true;
+    }
 
     #region IEnumerable<IPlotGroup> Members
 

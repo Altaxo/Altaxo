@@ -933,6 +933,10 @@
       <SubType>Designer</SubType>
       <DependentUpon>BackgroundStyleControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\BarGraphPlotStyleControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>BarGraphPlotStyleControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Gui\Graph\DensityImagePlotStyleControl.resx">
       <DependentUpon>DensityImagePlotStyleControl.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -1315,6 +1319,13 @@
     <Compile Include="Gui\Graph\BackgroundControlsGlue.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Gui\Graph\BarGraphPlotStyleControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\BarGraphPlotStyleControl.Designer.cs">
+      <DependentUpon>BarGraphPlotStyleControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\BarGraphPlotStyleController.cs" />
     <Compile Include="Gui\Graph\CoordinateSystemController.cs" />
     <Compile Include="Gui\Graph\DensityImagePlotStyleControl.cs">
       <SubType>UserControl</SubType>

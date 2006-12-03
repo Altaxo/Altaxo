@@ -67,9 +67,18 @@ namespace Altaxo.Graph.Plot.Groups
 
     #region IGroupStyle Members
 
+    public void TransferFrom(IPlotGroupStyle fromb)
+    {
+      ColorGroupStyle from = (ColorGroupStyle)fromb;
+      System.Diagnostics.Debug.WriteLine(string.Format("ColorTransfer: myIni={0}, myCol={1}, fromI={2}, fromC={3}", _isInitialized, (_color==null?null:_color.Color.ToString()), from._isInitialized, (from._color==null?null:from._color.Color.ToString())));
+      this._isInitialized = from._isInitialized;
+      this._color = from._color;
+    }
+
     public void BeginPrepare()
     {
       _isInitialized = false;
+      System.Diagnostics.Debug.WriteLine(string.Format("ColorGroupStyle.BeginPrepare"));
     }
 
     public void PrepareStep()
@@ -78,6 +87,7 @@ namespace Altaxo.Graph.Plot.Groups
 
     public void EndPrepare()
     {
+      System.Diagnostics.Debug.WriteLine(string.Format("ColorGroupStyle.EndPrepare, ini={0}, col={1}",_isInitialized,(_color==null ? null:_color.Color.ToString())));
     }
 
    
@@ -125,6 +135,7 @@ namespace Altaxo.Graph.Plot.Groups
     {
       _isInitialized = true;
       _color = c;
+      System.Diagnostics.Debug.WriteLine(string.Format("ColorGroup.Initialize, col={0}", _color.Color));
     }
     public PlotColor Color
     {

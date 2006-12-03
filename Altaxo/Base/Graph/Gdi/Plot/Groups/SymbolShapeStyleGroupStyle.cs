@@ -66,6 +66,13 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 
     #region IGroupStyle Members
 
+    public void TransferFrom(IPlotGroupStyle fromb)
+    {
+      SymbolShapeStyleGroupStyle from = (SymbolShapeStyleGroupStyle)fromb;
+      this._isInitialized = from._isInitialized;
+      this._shapeAndStyle = new ShapeAndStyle(from._shapeAndStyle.Shape, from._shapeAndStyle.Style);
+    }
+
     public void BeginPrepare()
     {
       _isInitialized = false;

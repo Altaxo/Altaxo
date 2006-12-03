@@ -154,6 +154,13 @@ namespace Altaxo.Gui.Graph
           else
             bSerial = true;
         }
+
+        if (color && !((ColorGroupStyle)_groupStyles.GetPlotGroupStyle(typeof(ColorGroupStyle))).IsStepEnabled)
+          bStandard = false;
+        if (linestyle && !((LineStyleGroupStyle)_groupStyles.GetPlotGroupStyle(typeof(LineStyleGroupStyle))).IsStepEnabled)
+          bStandard = false;
+        if (symbol && !((SymbolShapeStyleGroupStyle)_groupStyles.GetPlotGroupStyle(typeof(SymbolShapeStyleGroupStyle))).IsStepEnabled)
+          bStandard = false;
         if (_groupStyles.CoordinateTransformingStyle != null)
           bStandard = false;
       }
@@ -238,8 +245,7 @@ namespace Altaxo.Gui.Graph
       if (_doc.ParentCollection != null)
       {
         _doc.ParentCollection.DistributePlotStyleFromTemplate(_doc, _groupStyles.PlotGroupStrictness);
-        _doc.ParentCollection.PrepareStyles(_groupStyles,_doc.ParentCollection.ParentLayer, _doc);
-        _doc.ParentCollection.ApplyStyles(_groupStyles, _doc);
+        _doc.ParentCollection.DistributeChanges(_doc);
       }
     }
 

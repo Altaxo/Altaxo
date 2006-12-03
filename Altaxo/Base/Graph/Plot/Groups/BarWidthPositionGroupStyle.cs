@@ -51,6 +51,18 @@ namespace Altaxo.Graph.Plot.Groups
       _positionX = from._positionX;
     }
 
+    public void TransferFrom(IPlotGroupStyle fromb)
+    {
+      BarWidthPositionGroupStyle from = (BarWidthPositionGroupStyle)fromb;
+      _isInitialized = from._isInitialized;
+      _numberOfItems = from._numberOfItems;
+      _relInnerGapWidth = from._relInnerGapWidth;
+      _relOuterGapWidth = from._relOuterGapWidth;
+      _logicalClusterWidth = from._logicalClusterWidth;
+      _width = from._width;
+      _positionX = from._positionX;
+    }
+
     public BarWidthPositionGroupStyle()
     {
       _isStepEnabled = true;
@@ -105,7 +117,12 @@ namespace Altaxo.Graph.Plot.Groups
     public void PrepareStep()
     {
       if (_wasTouchedInThisPrepareStep)
-        _numberOfItems++;
+      {
+        if (_isStepEnabled)
+          _numberOfItems++;
+        else
+          _numberOfItems = 1;
+      }
 
       _wasTouchedInThisPrepareStep = false;
     }

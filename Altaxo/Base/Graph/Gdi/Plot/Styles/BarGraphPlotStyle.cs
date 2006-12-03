@@ -31,6 +31,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     BrushX _fillBrush = new BrushX(Color.Red);
     bool _independentColor;
+    PenX _framePen;
+
+    bool _startAtPreviousItem;
+    double _previousItemYGap;
+
+    Altaxo.Data.AltaxoVariant _baseValue = new Altaxo.Data.AltaxoVariant(0.0);
+    bool _usePhysicalBaseValue;
 
     [NonSerialized]
     object _parent;
@@ -50,6 +57,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       this._relOuterGapWidth = from._relOuterGapWidth;
       this._width = from._width;
       this._position = from._position;
+      this._fillBrush = from._fillBrush.Clone();
+      this._framePen = from._framePen == null ? null : (PenX)from._framePen.Clone();
+      this._startAtPreviousItem = from._startAtPreviousItem;
+      this._previousItemYGap = from._previousItemYGap;
+      this._usePhysicalBaseValue = from._usePhysicalBaseValue;
+      this._baseValue = from._baseValue;
+
 
       this._parent = from._parent;
     }
@@ -57,6 +71,64 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     public bool IsColorReceiver
     {
       get { return !this._independentColor; }
+    }
+
+    public BrushX FillBrush
+    {
+      get { return _fillBrush; }
+      set
+      {
+        if (value == null)
+          throw new ArgumentNullException();
+
+        _fillBrush = value;
+      }
+    }
+
+    public PenX FramePen
+    {
+      get { return _framePen; }
+      set
+      {
+        _framePen = value;
+      }
+    }
+
+
+    public double InnerGap
+    {
+      get { return _relInnerGapWidth; }
+      set { _relInnerGapWidth = value; }
+    }
+
+    public double OuterGap
+    {
+      get { return _relOuterGapWidth; }
+      set { _relOuterGapWidth = value; }
+    }
+
+    public double PreviousItemYGap
+    {
+      get { return _previousItemYGap; }
+      set { _previousItemYGap = value; }
+    }
+
+    public bool StartAtPreviousItem
+    {
+      get { return _startAtPreviousItem; }
+      set { _startAtPreviousItem = value; }
+    }
+
+    public bool UsePhysicalBaseValue
+    {
+      get { return _usePhysicalBaseValue; }
+      set { _usePhysicalBaseValue = value; }
+    }
+
+    public Altaxo.Data.AltaxoVariant BaseValue
+    {
+      get { return _baseValue; }
+      set { _baseValue = value; }
     }
 
     #region IG2DPlotStyle Members
@@ -129,6 +201,19 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
       GraphicsPath path = new GraphicsPath();
 
+      double globalBaseValue;
+      if (_usePhysicalBaseValue)
+      {
+        globalBaseValue = layer.YAxis.PhysicalVariantToNormal(_baseValue);
+        if (double.IsNaN(globalBaseValue))
+          globalBaseValue = 0;
+      }
+      else
+      {
+        globalBaseValue = _baseValue.ToDouble();
+      }
+
+
       int j=-1;
       foreach(int originalRowIndex in pdata.RangeList.OriginalRowIndices())
       {
@@ -139,7 +224,17 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         double xrn = xln + _width;
 
         double ycn = layer.YAxis.PhysicalVariantToNormal(pdata.GetYPhysical(originalRowIndex));
-        double ynbase = 0;
+        double ynbase = globalBaseValue;
+
+        if (_startAtPreviousItem && pdata.PreviousItemData!=null)
+        {
+          double prevstart = layer.YAxis.PhysicalVariantToNormal(pdata.PreviousItemData.GetYPhysical(originalRowIndex));
+          if (!double.IsNaN(prevstart))
+          {
+            ynbase = prevstart;
+            ynbase += Math.Sign(ynbase - globalBaseValue) * _previousItemYGap;
+          }
+        }
 
 
         path.Reset();
@@ -147,8 +242,16 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         layer.CoordinateSystem.GetIsoline(path, new Logical3D(xln, ycn), new Logical3D(xrn, ycn));
         layer.CoordinateSystem.GetIsoline(path, new Logical3D(xrn, ycn), new Logical3D(xrn, ynbase));
         layer.CoordinateSystem.GetIsoline(path, new Logical3D(xrn, ynbase), new Logical3D(xln, ynbase));
+        path.CloseFigure();
 
+        _fillBrush.Rectangle = path.GetBounds();
         g.FillPath(_fillBrush, path);
+
+        if (_framePen != null)
+        {
+          _framePen.BrushRectangle = path.GetBounds();
+          g.DrawPath(_framePen, path);
+        }
       }
 
 

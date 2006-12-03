@@ -35,7 +35,6 @@ namespace Altaxo.Graph.Plot.Groups
 
     #endregion
 
-
     #region Constructors
 
     public SymbolSizeGroupStyle()
@@ -66,6 +65,13 @@ namespace Altaxo.Graph.Plot.Groups
     #endregion
 
     #region IGroupStyle Members
+
+    public void TransferFrom(IPlotGroupStyle fromb)
+    {
+      SymbolSizeGroupStyle from = (SymbolSizeGroupStyle)fromb;
+      this._isInitialized = from._isInitialized;
+      _symbolSize = from._symbolSize;
+    }
 
     public void BeginPrepare()
     {

@@ -331,73 +331,306 @@ namespace Altaxo.Graph.Gdi.Plot
 
     public void PrepareStyles(PlotGroupStyleCollection styles, IPlotArea layer)
     {
-      PrepareStyles(styles, layer, 0);
+      PrepareStylesForward_HierarchyUpOnly(styles,layer);
     }
 
     public void ApplyStyles(PlotGroupStyleCollection styles)
     {
-      ApplyStyles(styles, 0);
+      ApplyStylesForward_HierarchyUpOnly(styles);
     }
 
-    public void PrepareStyles(PlotGroupStyleCollection styles, IPlotArea layer, IGPlotItem pivot)
+
+    /// <summary>
+    /// Distribute the changes made to the plotitem 'pivotitem' to all other items in the collection and if neccessary, also up and down the plot item tree.
+    /// </summary>
+    /// <param name="pivotitem">The plot item where changes to the plot item's styles were made.</param>
+    public void DistributeChanges(IGPlotItem pivotitem)
     {
-      int pivotidx = _plotItems.IndexOf(pivot);
+      int pivotidx = _plotItems.IndexOf(pivotitem);
       if (pivotidx < 0)
-        pivotidx = 0;
-      PrepareStyles(styles, layer, pivotidx);
+        return;
+
+      // Distribute the changes backward to the first item
+      PrepareStylesIterativeBackward(pivotidx, this.ParentLayer);
+      PlotItemCollection rootCollection = ApplyStylesIterativeBackward(pivotidx);
+
+      // now prepare and apply the styles forward normally beginning from the root collection
+      // we can set the parent styles to null since rootCollection is the lowest collection that don't inherit from a lower group.
+      rootCollection.PrepareStylesForward_HierarchyUpOnly(null, this.ParentLayer);
+      rootCollection.ApplyStylesForward_HierarchyUpOnly(null);
     }
 
-    public void ApplyStyles(PlotGroupStyleCollection styles, IGPlotItem pivot)
+    /// <summary>
+    /// Prepare styles, beginning at item 'pivotidx' in this collection, iterative backwards up and down the hierarchy.
+    /// It stops at the first item of a collection here or down the hierarchy that do not inherit from it's parent collection.
+    /// </summary>
+    /// <param name="pivotidx">The index of the item where the application process starts.</param>
+    /// <param name="layer">The plot layer.</param>
+    protected void PrepareStylesIterativeBackward(int pivotidx, IPlotArea layer)
     {
-      int pivotidx = _plotItems.IndexOf(pivot);
-      if (pivotidx < 0)
-        pivotidx = 0;
-      ApplyStyles(styles, pivotidx);
-    }
-
-
-    protected void PrepareStyles(PlotGroupStyleCollection styles, IPlotArea layer, int pivotidx)
-    {
-        _styles.BeginPrepare();
-        int count = _plotItems.Count;
-        for (int i = 0; i < count; i++)
-        {
-          IGPlotItem pi = _plotItems[(i+pivotidx)%count];
-          pi.PrepareStyles(_styles,layer);
-          _styles.PrepareStep();
-        }
-        _styles.EndPrepare();
-    }
-
-
-    protected void ApplyStyles(PlotGroupStyleCollection styles, int pivotidx)
-    {
-      _styles.BeginApply();
-
       // if the pivot is lower than 0, we first distibute all changes to the first item and
       // then from the first item again down the line
       if (pivotidx > 0)
       {
+        _styles.BeginPrepare();
         for (int i = pivotidx; i >= 0; i--)
         {
           IGPlotItem pi = _plotItems[i];
-          pi.ApplyStyles(_styles);
-          
-          if(i!=0)
-            _styles.Step(-1);
+          if (pi is PlotItemCollection)
+          {
+            _styles.PrepareStep();
+            PlotItemCollection pic = (PlotItemCollection)pi;
+            pic.PrepareStylesBackward_HierarchyUpOnly(_styles,layer);
+          }
+          else
+          {
+            pi.PrepareStyles(_styles,layer);
+            if (i > 0) _styles.PrepareStep();
+          }
         }
-      }
-      
-      // now distibute the styles from the first item down to the last item
-      for(int i=0;i<_plotItems.Count;i++)
-      {
-        IGPlotItem pi = _plotItems[i];
-        pi.ApplyStyles(_styles);
-        _styles.Step(1);
+        _styles.EndPrepare();
       }
 
-      _styles.EndApply();
+
+      // now use this styles to copy to the parent
+      bool transferToParentStyles =
+      ParentCollection != null &&
+      ParentCollection._styles.Count != 0 &&
+      ParentCollection._styles.DistributeToChildGroups &&
+      this._styles.InheritFromParentGroups;
+
+      if (transferToParentStyles)
+      {
+        PlotGroupStyleCollection.TransferFromTo(_styles, ParentCollection._styles);
+        ParentCollection.ApplyStylesIterativeBackward(ParentCollection._styles.Count - 1);
+      }
     }
+
+
+    /// <summary>
+    /// Apply styles, beginning at item 'pivotidx' in this collection, iterative backwards up and down the hierarchy.
+    /// It stops at the first item of a collection here or down the hierarchy that do not inherit from it's parent collection.
+    /// </summary>
+    /// <param name="pivotidx">The index of the item where the application process starts.</param>
+    /// <returns>The plot item collection where the process stops.</returns>
+    protected PlotItemCollection ApplyStylesIterativeBackward(int pivotidx)
+    {
+      // if the pivot is lower than 0, we first distibute all changes to the first item and
+      // then from the first item again down the line
+      if (pivotidx > 0)
+      {
+        _styles.BeginApply();
+        for (int i = pivotidx; i >= 0; i--)
+        {
+          IGPlotItem pi = _plotItems[i];
+          if (pi is PlotItemCollection)
+          {
+            _styles.Step(-1);
+            PlotItemCollection pic = (PlotItemCollection)pi;
+            pic.ApplyStylesBackward_HierarchyUpOnly(_styles);
+          }
+          else
+          {
+            pi.ApplyStyles(_styles);
+             if(i>0) _styles.Step(-1);
+          }
+        }
+        _styles.EndApply();
+      }
+     
+
+      // now use this styles to copy to the parent
+      bool transferToParentStyles =
+      ParentCollection != null &&
+      ParentCollection._styles.Count!=0 &&
+      ParentCollection._styles.DistributeToChildGroups &&
+      this._styles.InheritFromParentGroups;
+
+      PlotItemCollection rootCollection = this;
+      if (transferToParentStyles)
+      {
+        PlotGroupStyleCollection.TransferFromTo(_styles, ParentCollection._styles);
+        rootCollection = ParentCollection.ApplyStylesIterativeBackward(ParentCollection._styles.Count - 1);
+      }
+
+      return rootCollection;
+    }
+
+    /// <summary>
+    /// Apply styles backward from the last item to the first, but only upwards in the hierarchy.
+    /// </summary>
+    /// <param name="styles"></param>
+    protected void PrepareStylesBackward_HierarchyUpOnly(PlotGroupStyleCollection styles, IPlotArea layer)
+    {
+      bool transferToLocalStyles =
+        styles != null &&
+        styles.Count != 0 &&
+        styles.DistributeToChildGroups &&
+        this._styles.InheritFromParentGroups;
+
+      if (!transferToLocalStyles)
+        return;
+
+      PlotGroupStyleCollection.TransferFromTo(styles, _styles);
+
+      _styles.BeginApply();
+      // now distibute the styles from the first item down to the last item
+      int last = _plotItems.Count - 1;
+      for (int i = last; i >= 0; i--)
+      {
+        IGPlotItem pi = _plotItems[i];
+        if (pi is PlotItemCollection)
+        {
+          _styles.PrepareStep();
+          ((PlotItemCollection)pi).PrepareStylesBackward_HierarchyUpOnly(_styles,layer);
+        }
+        else
+        {
+          pi.PrepareStyles(_styles,layer);
+          _styles.PrepareStep();
+        }
+      }
+      _styles.EndPrepare();
+
+      PlotGroupStyleCollection.TransferFromToIfBothSteppingEnabled(_styles, styles);
+    }
+
+    /// <summary>
+    /// Apply styles backward from the last item to the first, but only upwards in the hierarchy.
+    /// </summary>
+    /// <param name="styles"></param>
+    protected void ApplyStylesBackward_HierarchyUpOnly(PlotGroupStyleCollection styles)
+    {
+      bool transferToLocalStyles =
+        styles != null &&
+        styles.Count != 0 &&
+        styles.DistributeToChildGroups &&
+        this._styles.InheritFromParentGroups;
+
+      if (!transferToLocalStyles)
+        return;
+
+      PlotGroupStyleCollection.TransferFromTo(styles, _styles);
+
+      _styles.BeginApply();
+      // now distibute the styles from the first item down to the last item
+      int last = _plotItems.Count - 1;
+      for (int i = last; i >= 0; i--)
+      {
+        IGPlotItem pi = _plotItems[i];
+        if (pi is PlotItemCollection)
+        {
+          _styles.Step(-1);
+          ((PlotItemCollection)pi).ApplyStylesBackward_HierarchyUpOnly(_styles);
+        }
+        else
+        {
+          pi.ApplyStyles(_styles);
+          _styles.Step(-1);
+        }
+      }
+      _styles.EndApply();
+
+      PlotGroupStyleCollection.TransferFromToIfBothSteppingEnabled(_styles, styles);
+
+    }
+
+    /// <summary>
+    /// Prepare styles forward, but only up in the hierarchy.
+    /// </summary>
+    /// <param name="parentstyles">The parent group style collection.</param>
+    /// <param name="layer">The plot layer.</param>
+    protected void PrepareStylesForward_HierarchyUpOnly(PlotGroupStyleCollection parentstyles, IPlotArea layer)
+    {
+      bool transferFromParentStyles =
+       parentstyles != null &&
+       parentstyles.Count != 0 &&
+       parentstyles.DistributeToChildGroups &&
+       this._styles.InheritFromParentGroups;
+
+      _styles.BeginPrepare();
+
+      string thisname = Main.DocumentPath.GetPathString(this, int.MaxValue);
+      System.Diagnostics.Debug.WriteLine(string.Format("{0}:Begin:PrepareFWHUO",thisname));
+      if (transferFromParentStyles)
+      {
+        PlotGroupStyleCollection.TransferFromTo(parentstyles, _styles);
+        System.Diagnostics.Debug.WriteLine(string.Format("{0}:Begin:PrepareFWHUO (transfer from parent style", thisname));
+      }
+
+
+      // now distibute the styles from the first item down to the last item
+      int last = _plotItems.Count - 1;
+      for (int i = 0; i <= last; i++)
+      {
+        IGPlotItem pi = _plotItems[i];
+        if (pi is PlotItemCollection)
+        {
+          PlotItemCollection pic = (PlotItemCollection)pi;
+          pic.PrepareStylesForward_HierarchyUpOnly(_styles,layer);
+          _styles.PrepareStepIfForeignSteppingFalse(((PlotItemCollection)pi)._styles);
+        }
+        else
+        {
+          pi.PrepareStyles(_styles,layer);
+          _styles.PrepareStep();
+        }
+      }
+
+      if (transferFromParentStyles)
+      {
+        PlotGroupStyleCollection.TransferFromTo(_styles, parentstyles);
+        System.Diagnostics.Debug.WriteLine(string.Format("{0}:End:PrepareFWHUO (transfer back to parent style", thisname));
+      }
+
+      _styles.EndPrepare();
+      System.Diagnostics.Debug.WriteLine(string.Format("{0}:End:PrepareFWHUO", thisname));
+    }
+
+    /// <summary>
+    /// Apply styles forward, but only up in the hierarchy.
+    /// </summary>
+    /// <param name="parentstyles">The parent group style collection.</param>
+    protected void ApplyStylesForward_HierarchyUpOnly(PlotGroupStyleCollection parentstyles)
+    {
+      bool transferFromParentStyles =
+       parentstyles != null &&
+       parentstyles.Count != 0 &&
+       parentstyles.DistributeToChildGroups &&
+       this._styles.InheritFromParentGroups;
+
+      if (transferFromParentStyles)
+        PlotGroupStyleCollection.TransferFromTo(parentstyles, _styles);
+
+      _styles.BeginApply();
+
+      // now distibute the styles from the first item down to the last item
+      int last = _plotItems.Count - 1;
+      for(int i=0;i<=last;i++)
+      {
+        IGPlotItem pi = _plotItems[i];
+        if (pi is PlotItemCollection)
+        {
+          PlotItemCollection pic = (PlotItemCollection)pi;
+          pic.ApplyStylesForward_HierarchyUpOnly(_styles);
+          _styles.StepIfForeignSteppingFalse(1,((PlotItemCollection)pi)._styles);
+        }
+        else
+        {
+          pi.ApplyStyles(_styles);
+          _styles.Step(1);
+        }
+      }
+      _styles.EndApply();
+
+      if (transferFromParentStyles)
+      {
+        PlotGroupStyleCollection.TransferFromToIfBothSteppingEnabled(_styles, parentstyles);
+        parentstyles.SetAllToApplied(); // to indicate that we have applied this styles and so to enable stepping
+      }
+    }
+
+  
 
     /// <summary>
     /// Does nothing because a plot item collection doesn't distibute item styles from members of the outer group into it's own members.

@@ -48,5 +48,11 @@ namespace Altaxo.Graph.Plot.Groups
     /// You should set IsInitialized to false when BeginPrepare is called.
     /// </summary>
     bool IsInitialized { get; }
+
+    /// <summary>
+    /// Transfers the core properties (but not the adminstrative properties like isStepEnabled) from another instance to this instance.
+    /// </summary>
+    /// <param name="from">The instance to copy the core properties from.</param>
+    void TransferFrom(IPlotGroupStyle from);
   }
 }
