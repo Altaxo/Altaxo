@@ -67,6 +67,7 @@ namespace Altaxo.Gui.Common.Drawing
           CbHatchStyle = _cbHatchStyle;
           CbColor1 = _cbColor1;
           CbColor2 = _cbColor2;
+          ChkExchangeColors = _chkExchangeColors;
           CbGradientMode = _cbGradientMode;
           CbGradientShape = _cbGradientShape;
           CbWrapMode = _cbWrapMode;
@@ -308,6 +309,67 @@ namespace Altaxo.Gui.Common.Drawing
 
     #endregion
 
+    #region ExchangeColors
+    CheckBox _chkExchangeColors;
+
+    public CheckBox ChkExchangeColors
+    {
+      get { return _chkExchangeColors; }
+      set
+      {
+        if (_chkExchangeColors != null)
+          _chkExchangeColors.CheckedChanged -= EhChkExchangeColors_CheckedChanged;
+
+        _chkExchangeColors = value;
+        if (_brush != null && _cbColor2 != null)
+          _cbColor2.ColorChoice = _brush.BackColor;
+
+        if (_chkExchangeColors != null)
+          _chkExchangeColors.CheckedChanged += EhChkExchangeColors_CheckedChanged;
+
+        UpdateExchangeColorsState();
+      }
+    }
+
+    void EhChkExchangeColors_CheckedChanged(object sender, EventArgs e)
+    {
+      if (_brush != null)
+      {
+        _brush.ExchangeColors = _chkExchangeColors.Checked;
+        OnBrushChanged();
+      }
+    }
+
+
+    Control _lblExchangeColors;
+    public Control LabelExchangeColors
+    {
+      get
+      {
+        return _lblExchangeColors;
+      }
+      set
+      {
+        _lblExchangeColors = value;
+        UpdateExchangeColorsState();
+      }
+    }
+    void UpdateExchangeColorsState()
+    {
+      if (_brush != null)
+      {
+        BrushType btype = _brush.BrushType;
+        bool vis = (btype == BrushType.HatchBrush) || (btype == BrushType.LinearGradientBrush) || (btype==BrushType.PathGradientBrush);
+        if (_lblExchangeColors != null)
+          _lblExchangeColors.Visible = vis;
+        if (_chkExchangeColors != null)
+          _chkExchangeColors.Visible = vis;
+      }
+    }
+
+
+    #endregion
+
     #region Wrap Mode
     WrapModeComboBox _cbWrapMode;
     public WrapModeComboBox CbWrapMode
@@ -368,8 +430,8 @@ namespace Altaxo.Gui.Common.Drawing
 
     #region Gradient Mode
 
-    LinearGradientModeExComboBox _cbGradientMode;
-    public LinearGradientModeExComboBox CbGradientMode
+    LinearGradientModeComboBox _cbGradientMode;
+    public LinearGradientModeComboBox CbGradientMode
     {
       get { return _cbGradientMode; }
       set

@@ -100,8 +100,8 @@ namespace Altaxo.Worksheet.Commands
       get
       {
         G2DPlotStyleCollection result = new G2DPlotStyleCollection();
-        result.Add(new LinePlotStyle());
         result.Add(new ScatterPlotStyle());
+        result.Add(new LinePlotStyle());
         return result;
       }
     }
@@ -310,8 +310,9 @@ namespace Altaxo.Worksheet.Commands
       }
       if (groupStyles != null)
         newPlotGroup.GroupStyles = groupStyles;
-
-      newPlotGroup.CollectStyles(newPlotGroup.GroupStyles);
+      else
+        newPlotGroup.CollectStyles(newPlotGroup.GroupStyles);
+  
       gc.Doc.Layers[0].PlotItems.Add(newPlotGroup);
 
       return gc;

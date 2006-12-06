@@ -16,6 +16,20 @@ namespace Altaxo.Gui.Graph
       InitializeComponent();
     }
 
+    private void _cbCoordTransfoStyle_SelectionChangeCommitted(object sender, EventArgs e)
+    {
+      if (null != _controller)
+      {
+        SynchronizeComboBoxWithSelectableListNodes(_cbCoordTransfoStyle);
+        _controller.EhView_CoordinateTransformingGroupStyleChanged();
+      }
+    }
+  
+    private void _btEditCSTransfoStyle_Click(object sender, EventArgs e)
+    {
+
+    }
+
 
     private void _btRemoveNormalGroupStyle_Click(object sender, EventArgs e)
     {
@@ -197,10 +211,8 @@ namespace Altaxo.Gui.Graph
 
     #endregion
 
-    private void _btEditCSTransfoStyle_Click(object sender, EventArgs e)
-    {
+   
 
-    }
 
   }
 }

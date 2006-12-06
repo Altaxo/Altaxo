@@ -15,29 +15,62 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
   public class BarGraphPlotStyle : IG2DPlotStyle
   {
     /// <summary>
-    /// Relative gap between the bars belonging to the same x-value.
+    /// Relative gap between the bars belonging to the same x-value (relative to the width of a single bar).
     /// A value of 0.5 means that the gap has half of the width of one bar.
     /// </summary>
     double _relInnerGapWidth = 0.5;
     /// <summary>
-    /// Relative gap between the bars between two consecutive x-values.
+    /// Relative gap between the bars between two consecutive x-values (relative to the width of a single bar).
     /// A value of 1 means that the gap has the same width than one bar.
     /// </summary>
     double _relOuterGapWidth = 1.0;
 
-
-    double _width;
-    double _position;
-
-    BrushX _fillBrush = new BrushX(Color.Red);
+    /// <summary>
+    /// Indicates wether the fill color is dependent (can be set by the ColorGroupStyle) or not.
+    /// </summary>
     bool _independentColor;
+
+
+    /// <summary>
+    /// Brush to fill the bar.
+    /// </summary>
+    BrushX _fillBrush = new BrushX(Color.Red);
+    
+    /// <summary>
+    /// Pen used to frame the bar. Can be null.
+    /// </summary>
     PenX _framePen;
 
+    /// <summary>
+    /// Indicates whether _baseValue is a physical value or a logical value.
+    /// </summary>
+    bool _usePhysicalBaseValue;
+
+    /// <summary>
+    /// The y-value where the item normally starts. This is either a logical value (_usePhysicalBaseValue==false) or a physical value.
+    /// </summary>
+    Altaxo.Data.AltaxoVariant _baseValue = new Altaxo.Data.AltaxoVariant(0.0);
+
+    /// <summary>
+    /// If true, the bar starts at the y value of the previous plot item.
+    /// </summary>
     bool _startAtPreviousItem;
+    /// <summary>
+    /// Value in logical units, indicating the gap between previous item an this item.
+    /// </summary>
     double _previousItemYGap;
 
-    Altaxo.Data.AltaxoVariant _baseValue = new Altaxo.Data.AltaxoVariant(0.0);
-    bool _usePhysicalBaseValue;
+    
+
+    /// <summary>
+    /// Actual width of the item in logical coordinates.
+    /// </summary>
+    double _width;
+    /// <summary>
+    /// Actual position of the item in logical coordinates relative to the logical x coordinate of the item's point.
+    /// </summary>
+    double _position;
+
 
     [NonSerialized]
     object _parent;
@@ -45,6 +78,54 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     [field:NonSerialized]
     public event EventHandler Changed;
 
+
+    #region Serialization
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(BarGraphPlotStyle), 0)]
+    public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        BarGraphPlotStyle s = (BarGraphPlotStyle)obj;
+        info.AddValue("InnerGapWidth", s._relInnerGapWidth);
+        info.AddValue("OuterGapWidth", s._relOuterGapWidth);
+        info.AddValue("IndependentColor", s._independentColor);
+        info.AddValue("FillBrush", s._fillBrush);
+        info.AddValue("FramePen", s._framePen);
+        info.AddValue("UsePhysicalBaseValue", s._usePhysicalBaseValue);
+        info.AddValue("BaseValue", (object)s._baseValue);
+        info.AddValue("StartAtPrevious", s._startAtPreviousItem);
+        info.AddValue("PreviousItemGap", s._previousItemYGap);
+        info.AddValue("ActualWidth", s._width);
+        info.AddValue("ActaulPosition", s._position);
+      }
+      protected virtual BarGraphPlotStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        BarGraphPlotStyle s = null != o ? (BarGraphPlotStyle)o : new BarGraphPlotStyle();
+
+        s._relInnerGapWidth = info.GetDouble("InnerGapWidth");
+        s._relOuterGapWidth = info.GetDouble("OuterGapWidth");
+        s._independentColor = info.GetBoolean("IndependentColor");
+        s.FillBrush = (BrushX)info.GetValue("FillBrush", s);
+        s.FramePen = (PenX)info.GetValue("FramePen", s);
+        s._usePhysicalBaseValue = info.GetBoolean("UsePhysicalBaseValue");
+        s._baseValue = (Altaxo.Data.AltaxoVariant)info.GetValue("BaseValue", s);
+        s._startAtPreviousItem = info.GetBoolean("StartAtPrevious");
+        s._previousItemYGap = info.GetDouble("PreviousItemGap");
+        s._width = info.GetDouble("ActualWidth");
+        s._position = info.GetDouble("ActualPosition");
+
+        return s;
+      }
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        BarGraphPlotStyle s = SDeserialize(o, info, parent);
+
+        return s;
+      }
+
+    }
+
+    #endregion
 
 
     public BarGraphPlotStyle()

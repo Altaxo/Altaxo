@@ -229,9 +229,6 @@
     <Compile Include="Gui\Common\Drawing\HatchStyleComboBox.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Gui\Common\Drawing\LinearGradientModeExComboBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="Gui\Common\Drawing\LinearGradientShapeComboBox.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -1263,6 +1260,9 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Gui\Common\Drawing\FontSizeComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\Drawing\LinearGradientModeComboBox.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Gui\Common\Drawing\TextureScaleComboBox.cs">

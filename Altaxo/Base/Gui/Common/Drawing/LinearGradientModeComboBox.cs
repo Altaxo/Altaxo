@@ -35,16 +35,16 @@ namespace Altaxo.Gui.Common.Drawing
 
 
 
-  public class LinearGradientModeExComboBox : ComboBox
+  public class LinearGradientModeComboBox : ComboBox
   {
-    public LinearGradientModeExComboBox()
+    public LinearGradientModeComboBox()
     {
       DropDownStyle = ComboBoxStyle.DropDownList;
       DrawMode = DrawMode.OwnerDrawFixed;
       ItemHeight = Font.Height;
     }
 
-    public LinearGradientModeExComboBox(LinearGradientModeEx selected)
+    public LinearGradientModeComboBox(LinearGradientMode selected)
       : this()
     {
       SetDataSource(selected);
@@ -53,12 +53,12 @@ namespace Altaxo.Gui.Common.Drawing
 
 
 
-    void SetDataSource(LinearGradientModeEx selected)
+    void SetDataSource(LinearGradientMode selected)
     {
       this.BeginUpdate();
 
       Items.Clear();
-      foreach (LinearGradientModeEx o in Enum.GetValues(typeof(LinearGradientModeEx)))
+      foreach (LinearGradientMode o in Enum.GetValues(typeof(LinearGradientMode)))
         Items.Add(o);
 
       SelectedItem = selected;
@@ -67,11 +67,11 @@ namespace Altaxo.Gui.Common.Drawing
     }
 
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-    public LinearGradientModeEx LinearGradientMode
+    public LinearGradientMode LinearGradientMode
     {
       get
       {
-        return SelectedItem == null ? LinearGradientModeEx.Horizontal : (LinearGradientModeEx)SelectedItem;
+        return SelectedItem == null ? LinearGradientMode.Horizontal : (LinearGradientMode)SelectedItem;
       }
       set
       {
@@ -94,12 +94,9 @@ namespace Altaxo.Gui.Common.Drawing
       if (this.Enabled)
         e.DrawBackground();
 
-      LinearGradientModeEx item = e.Index >= 0 ? (LinearGradientModeEx)Items[e.Index] : LinearGradientModeEx.Horizontal;
-      LinearGradientMode lgm;
-      bool reverse;
-      BrushX.ToLinearGradientMode(item, out lgm, out reverse);
+      LinearGradientMode item = e.Index >= 0 ? (LinearGradientMode)Items[e.Index] : LinearGradientMode.Horizontal;
       
-      using (LinearGradientBrush br = new LinearGradientBrush(rectColor, reverse ? e.BackColor:e.ForeColor, reverse? e.ForeColor:e.BackColor, lgm))
+      using (LinearGradientBrush br = new LinearGradientBrush(rectColor, e.ForeColor, e.BackColor, item))
       {
         grfx.FillRectangle(br, rectColor);
       }

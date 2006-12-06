@@ -65,6 +65,48 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
+        throw new NotSupportedException("Serialization of old versions is not supported");
+        /*
+        G2DPlotStyleCollection s = (G2DPlotStyleCollection)obj;
+
+        info.CreateArray("Styles", s._innerList.Count);
+        for (int i = 0; i < s._innerList.Count; i++)
+          info.AddValue("e", s._innerList[i]);
+        info.CommitArray();
+        */
+
+      }
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+
+        int count = info.OpenArray();
+        IG2DPlotStyle[] array = new IG2DPlotStyle[count];
+        for (int i = 0; i < count; i++)
+          array[i] = (IG2DPlotStyle)info.GetValue("e", this);
+        info.CloseArray(count);
+
+        if (o == null)
+        {
+          return new G2DPlotStyleCollection(array);
+        }
+        else
+        {
+          G2DPlotStyleCollection s = (G2DPlotStyleCollection)o;
+          for (int i = count-1; i >=0; i--)
+            s.Add(array[i]);
+          return s;
+        }
+      }
+    }
+
+    /// <summary>
+    /// 2006-12-06 We changed the order in which the substyles are plotted.
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(G2DPlotStyleCollection), 2)]
+    public class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
         G2DPlotStyleCollection s = (G2DPlotStyleCollection)obj;
 
         info.CreateArray("Styles", s._innerList.Count);
@@ -95,6 +137,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         }
       }
     }
+
 
     #endregion
 
@@ -336,7 +379,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     public void Paint(Graphics g, IPlotArea layer, Processed2DPlotData pdata)
     {
-      for (int i = 0; i < _innerList.Count; i++)
+      for (int i = _innerList.Count - 1; i >= 0;  i--)
       {
         this[i].Paint(g, layer, pdata);
       }
@@ -345,8 +388,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     public RectangleF PaintSymbol(System.Drawing.Graphics g, System.Drawing.RectangleF bounds)
     {
-      foreach (IG2DPlotStyle ps in this)
-        bounds = ps.PaintSymbol(g, bounds);
+      for (int i = _innerList.Count - 1; i >= 0; i--)
+      {
+        bounds = this[i].PaintSymbol(g, bounds);
+      }
 
       return bounds;
     }

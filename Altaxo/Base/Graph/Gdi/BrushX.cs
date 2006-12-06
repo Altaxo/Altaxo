@@ -94,8 +94,8 @@ namespace Altaxo.Graph.Gdi
     protected RectangleF _brushBoundingRectangle;
     protected float _focus;
     protected float _scale;
-    protected bool _bool1;
-    protected LinearGradientModeEx _gradientMode;
+    protected bool _exchangeColors;
+    protected LinearGradientMode _gradientMode;
     protected LinearGradientShape _gradientShape;
 
     [field:NonSerialized]
@@ -208,7 +208,18 @@ namespace Altaxo.Graph.Gdi
              s._foreColor = (Color)info.GetValue("ForeColor",s);
              s._backColor = (Color)info.GetValue("BackColor", s);
              s._wrapMode = (WrapMode)info.GetEnum("WrapMode", typeof(WrapMode));
-             s._gradientMode = (LinearGradientModeEx)info.GetEnum("GradientMode", typeof(LinearGradientModeEx));
+             LinearGradientModeEx gm = (LinearGradientModeEx)info.GetEnum("GradientMode", typeof(LinearGradientModeEx));
+             string gmname = Enum.GetName(typeof(LinearGradientModeEx), gm);
+             if (gmname.StartsWith("Rev"))
+             {
+               s._exchangeColors = true;
+               s._gradientMode = (LinearGradientMode)Enum.Parse(typeof(LinearGradientMode), gmname.Substring(3));
+             }
+             else
+             {
+               s._gradientMode = (LinearGradientMode)Enum.Parse(typeof(LinearGradientMode), gmname);
+             }
+
             s._gradientShape = (LinearGradientShape)info.GetEnum("GradientShape", typeof(LinearGradientShape));
             s._scale = info.GetSingle("Scale");
             s._focus = info.GetSingle("Focus");
@@ -216,6 +227,90 @@ namespace Altaxo.Graph.Gdi
           case BrushType.PathGradientBrush:
             s._foreColor = (Color)info.GetValue("ForeColor", s);
             s._backColor = (Color)info.GetValue("BackColor", s);
+            s._wrapMode = (WrapMode)info.GetEnum("WrapMode", typeof(WrapMode));
+            break;
+          case BrushType.TextureBrush:
+            s.TextureImage = (ImageProxy)info.GetValue("Texture", s);
+            s._wrapMode = (WrapMode)info.GetEnum("WrapMode", typeof(WrapMode));
+            s._scale = info.GetSingle("Scale");
+            break;
+        }
+        return s;
+      }
+    }
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(BrushX), 3)]
+    public class XmlSerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        BrushX s = (BrushX)obj;
+        info.AddValue("Type", s._brushType);
+        switch (s._brushType)
+        {
+          case BrushType.SolidBrush:
+            info.AddValue("ForeColor", s._foreColor);
+            break;
+          case BrushType.HatchBrush:
+            info.AddValue("ForeColor", s._foreColor);
+            info.AddValue("BackColor", s._backColor);
+            info.AddValue("ExchangeColors", s._exchangeColors);
+            info.AddEnum("HatchStyle", s._hatchStyle);
+            break;
+          case BrushType.LinearGradientBrush:
+            info.AddValue("ForeColor", s._foreColor);
+            info.AddValue("BackColor", s._backColor);
+            info.AddValue("ExchangeColors", s._exchangeColors);
+            info.AddEnum("WrapMode", s._wrapMode);
+            info.AddEnum("GradientMode", s._gradientMode);
+            info.AddEnum("GradientShape", s._gradientShape);
+            info.AddValue("Scale", s._scale);
+            info.AddValue("Focus", s._focus);
+            break;
+          case BrushType.PathGradientBrush:
+            info.AddValue("ForeColor", s._foreColor);
+            info.AddValue("BackColor", s._backColor);
+            info.AddValue("ExchangeColors", s._exchangeColors);
+            info.AddEnum("WrapMode", s._wrapMode);
+            break;
+          case BrushType.TextureBrush:
+            info.AddValue("Texture", s._textureImage);
+            info.AddEnum("WrapMode", s._wrapMode);
+            info.AddValue("Scale", s._scale);
+            break;
+        } // end of switch
+      }
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+
+        BrushX s = null != o ? (BrushX)o : new BrushX(Color.Black);
+
+        s._brushType = (BrushType)info.GetValue("Type", s);
+        switch (s._brushType)
+        {
+          case BrushType.SolidBrush:
+            s._foreColor = (Color)info.GetValue("ForeColor", s);
+            break;
+          case BrushType.HatchBrush:
+            s._foreColor = (Color)info.GetValue("ForeColor", s);
+            s._backColor = (Color)info.GetValue("BackColor", s);
+            s._exchangeColors = info.GetBoolean("ExchangeColors");
+            s._hatchStyle = (HatchStyle)info.GetEnum("HatchStyle", typeof(HatchStyle));
+            break;
+          case BrushType.LinearGradientBrush:
+            s._foreColor = (Color)info.GetValue("ForeColor", s);
+            s._backColor = (Color)info.GetValue("BackColor", s);
+            s._exchangeColors = info.GetBoolean("ExchangeColors");
+            s._wrapMode = (WrapMode)info.GetEnum("WrapMode", typeof(WrapMode));
+            s._gradientMode = (LinearGradientMode)info.GetEnum("GradientMode", typeof(LinearGradientMode));
+            s._gradientShape = (LinearGradientShape)info.GetEnum("GradientShape", typeof(LinearGradientShape));
+            s._scale = info.GetSingle("Scale");
+            s._focus = info.GetSingle("Focus");
+            break;
+          case BrushType.PathGradientBrush:
+            s._foreColor = (Color)info.GetValue("ForeColor", s);
+            s._backColor = (Color)info.GetValue("BackColor", s);
+            s._exchangeColors = info.GetBoolean("ExchangeColors");
             s._wrapMode = (WrapMode)info.GetEnum("WrapMode", typeof(WrapMode));
             break;
           case BrushType.TextureBrush:
@@ -243,7 +338,7 @@ namespace Altaxo.Graph.Gdi
       _wrapMode = from._wrapMode; // für TextureBrush und LinearGradientBrush
       _brushBoundingRectangle = from._brushBoundingRectangle;
       _focus = from._focus;
-      _bool1 = from._bool1;
+      _exchangeColors = from._exchangeColors;
       this._gradientMode = from._gradientMode;
       this._gradientShape = from._gradientShape;
       this._scale = from._scale;
@@ -352,6 +447,24 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
+    public bool ExchangeColors
+    {
+      get
+      {
+        return _exchangeColors;
+      }
+      set
+      {
+        bool oldValue = _exchangeColors;
+        _exchangeColors = value;
+        if (value != oldValue)
+        {
+          _SetBrushVariable(null);
+          OnChanged();
+        }
+      }
+    }
+
     public HatchStyle HatchStyle
     {
       get
@@ -388,7 +501,7 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
-    public LinearGradientModeEx GradientMode
+    public LinearGradientMode GradientMode
     {
       get
       {
@@ -569,16 +682,16 @@ namespace Altaxo.Graph.Gdi
               br = new SolidBrush(_foreColor);
               break;
             case BrushType.HatchBrush:
-              br = new HatchBrush(_hatchStyle, _foreColor, _backColor);
+              if(_exchangeColors)
+                br = new HatchBrush(_hatchStyle, _backColor, _foreColor);
+              else
+                br = new HatchBrush(_hatchStyle, _foreColor, _backColor);
               break;
             case BrushType.LinearGradientBrush:
               if (_brushBoundingRectangle.IsEmpty)
                 _brushBoundingRectangle = new RectangleF(0, 0, 1000, 1000);
               LinearGradientBrush lgb;
-              LinearGradientMode lgmode;
-              bool reverse;
-              BrushX.ToLinearGradientMode(_gradientMode, out lgmode, out reverse);
-              br = lgb = new LinearGradientBrush(_brushBoundingRectangle, reverse ? _backColor : _foreColor, reverse ? _foreColor : _backColor, lgmode);
+              br = lgb = new LinearGradientBrush(_brushBoundingRectangle, _exchangeColors ? _backColor : _foreColor, _exchangeColors ? _foreColor : _backColor, _gradientMode);
               if (_wrapMode != WrapMode.Clamp)
                 lgb.WrapMode = _wrapMode;
               if (_gradientShape == LinearGradientShape.Triangular)
@@ -592,8 +705,16 @@ namespace Altaxo.Graph.Gdi
                 _brushBoundingRectangle = new RectangleF(0, 0, 1000, 1000);
               p.AddRectangle(_brushBoundingRectangle);
               PathGradientBrush pgb = new PathGradientBrush(p);
-              pgb.SurroundColors = new Color[] { _foreColor };
-              pgb.CenterColor = _backColor;
+              if (_exchangeColors)
+              {
+                pgb.SurroundColors = new Color[] { _backColor };
+                pgb.CenterColor = _foreColor;
+              }
+              else
+              {
+                pgb.SurroundColors = new Color[] { _foreColor };
+                pgb.CenterColor = _backColor;
+              }
               pgb.WrapMode = _wrapMode;
               br = pgb;
               break;

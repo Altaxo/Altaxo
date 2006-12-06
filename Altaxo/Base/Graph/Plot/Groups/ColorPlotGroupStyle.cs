@@ -135,7 +135,7 @@ namespace Altaxo.Graph.Plot.Groups
     {
       _isInitialized = true;
       _color = c;
-      System.Diagnostics.Debug.WriteLine(string.Format("ColorGroup.Initialize, col={0}", _color.Color));
+      //System.Diagnostics.Debug.WriteLine(string.Format("ColorGroup.Initialize, col={0}", _color.Color));
     }
     public PlotColor Color
     {

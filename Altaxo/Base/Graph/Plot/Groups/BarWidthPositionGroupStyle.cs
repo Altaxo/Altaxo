@@ -38,6 +38,28 @@ namespace Altaxo.Graph.Plot.Groups
     double _width;
     double _positionX;
 
+
+    #region Serialization
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(BarWidthPositionGroupStyle), 0)]
+    public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        BarWidthPositionGroupStyle s = (BarWidthPositionGroupStyle)obj;
+        info.AddValue("StepEnabled", s._isStepEnabled);
+      }
+
+
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        BarWidthPositionGroupStyle s = null != o ? (BarWidthPositionGroupStyle)o : new BarWidthPositionGroupStyle();
+        s._isStepEnabled = info.GetBoolean("StepEnabled");
+        return s;
+      }
+    }
+
+    #endregion
+
     void CopyFrom(BarWidthPositionGroupStyle from)
     {
       _isInitialized = from._isInitialized;

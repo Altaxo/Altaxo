@@ -550,10 +550,7 @@ namespace Altaxo.Graph.Gdi
         Layers[i].PreparePainting();
       }
 
-      
-
-
-      for(int i=0;i<Layers.Count;i++)
+      for(int i=Layers.Count-1;i>=0;i--)
       {
         Layers[i].Paint(g);
       }

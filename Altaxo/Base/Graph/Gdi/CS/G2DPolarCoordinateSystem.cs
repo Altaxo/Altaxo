@@ -344,11 +344,13 @@ namespace Altaxo.Graph.Gdi.CS
       double ax0, ax1, ay0, ay1;
       if (LogicalToLayerCoordinates(r0, out ax0, out ay0) && LogicalToLayerCoordinates(r1, out ax1, out ay1))
       {
+        // add a line when this is a radial ray
         if (((r0.RX == r1.RX) && !_isXYInterchanged) || ((r0.RY == r1.RY) && _isXYInterchanged))
         {
           g.AddLine((float)ax0, (float)ay0, (float)ax1, (float)ay1);
         }
-        if (((r0.RY == r1.RY) && !_isXYInterchanged) || ((r0.RX == r1.RX) && _isXYInterchanged))
+        // add an arc if this is a tangential ray
+        else if (((r0.RY == r1.RY) && !_isXYInterchanged) || ((r0.RX == r1.RX) && _isXYInterchanged))
         {
           double startAngle = 180 * Math.Atan2(_midY - ay0, ax0 - _midX) / Math.PI;
           double sweepAngle;
@@ -366,9 +368,9 @@ namespace Altaxo.Graph.Gdi.CS
           }
           double r = Calc.RMath.Hypot(_midY - ay0, ax0 - _midX);
           if (r > 0)
-            g.AddArc((float)(_midX - r), (float)(_midY - r), (float)(2 * r), (float)(2 * r), (float)startAngle, (float)sweepAngle);
+            g.AddArc((float)(_midX - r), (float)(_midY - r), (float)(2 * r), (float)(2 * r), (float)-startAngle, (float)-sweepAngle);
         }
-        else
+        else // if it is neither radial nor tangential
         {
           int points = _isXYInterchanged ? (int)(Math.Abs(r1.RY - r0.RY) * 360) : (int)(Math.Abs(r1.RX - r0.RX) * 360);
           points = Math.Max(1, Math.Min(points, 3600)); // in case there is a rotation more than one turn limit the number of points

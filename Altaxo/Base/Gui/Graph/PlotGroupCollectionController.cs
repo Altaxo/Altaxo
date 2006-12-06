@@ -258,6 +258,15 @@ namespace Altaxo.Gui.Graph
 
     public bool Apply()
     {
+      foreach (SelectableListNode node in _availableTransfoStyles)
+      {
+        if (node.Selected)
+        {
+          _currentTransfoStyle = (Type)node.Item;
+          break;
+        }
+      }
+
       if (null != _currentTransfoStyle)
         _doc.CoordinateTransformingStyle = (ICoordinateTransformingGroupStyle)Activator.CreateInstance(_currentTransfoStyle);
       else

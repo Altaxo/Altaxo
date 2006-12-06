@@ -138,7 +138,7 @@ namespace Altaxo.Gui.Graph
       this._cbCoordTransfoStyle.Name = "_cbCoordTransfoStyle";
       this._cbCoordTransfoStyle.Size = new System.Drawing.Size(179, 21);
       this._cbCoordTransfoStyle.TabIndex = 12;
-      this._cbCoordTransfoStyle.SelectionChangeCommitted += new System.EventHandler(this._btAddNormalGroupStyle_Click);
+      this._cbCoordTransfoStyle.SelectionChangeCommitted += new System.EventHandler(this._cbCoordTransfoStyle_SelectionChangeCommitted);
       // 
       // _cbGroupStrictness
       // 

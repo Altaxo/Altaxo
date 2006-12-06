@@ -44,7 +44,7 @@ namespace Altaxo.Gui.Common.Drawing
       this._lblHatchStyle = new System.Windows.Forms.Label();
       this._cbWrapMode = new Altaxo.Gui.Common.Drawing.WrapModeComboBox();
       this._cbHatchStyle = new Altaxo.Gui.Common.Drawing.HatchStyleComboBox();
-      this._cbGradientMode = new Altaxo.Gui.Common.Drawing.LinearGradientModeExComboBox();
+      this._cbGradientMode = new Altaxo.Gui.Common.Drawing.LinearGradientModeComboBox();
       this._lblGradientMode = new System.Windows.Forms.Label();
       this._cbGradientShape = new Altaxo.Gui.Common.Drawing.LinearGradientShapeComboBox();
       this._lblGradientShape = new System.Windows.Forms.Label();
@@ -55,6 +55,8 @@ namespace Altaxo.Gui.Common.Drawing
       this._cbTextureImage = new Altaxo.Gui.Common.Drawing.TextureImageComboBox();
       this._brushPreviewPanel = new System.Windows.Forms.Panel();
       this._brushGlue = new Altaxo.Gui.Common.Drawing.BrushControlsGlue();
+      this._lblExchangeColors = new System.Windows.Forms.Label();
+      this._chkExchangeColors = new System.Windows.Forms.CheckBox();
       this.flowLayoutPanel1.SuspendLayout();
       this.tableLayoutPanel1.SuspendLayout();
       this.SuspendLayout();
@@ -101,6 +103,8 @@ namespace Altaxo.Gui.Common.Drawing
       this.tableLayoutPanel1.Controls.Add(this._cbTextureScale, 1, 5);
       this.tableLayoutPanel1.Controls.Add(this._lblTextureImage, 2, 5);
       this.tableLayoutPanel1.Controls.Add(this._cbTextureImage, 3, 5);
+      this.tableLayoutPanel1.Controls.Add(this._lblExchangeColors, 2, 4);
+      this.tableLayoutPanel1.Controls.Add(this._chkExchangeColors, 3, 4);
       this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 3);
       this.tableLayoutPanel1.Name = "tableLayoutPanel1";
       this.tableLayoutPanel1.RowCount = 6;
@@ -110,6 +114,7 @@ namespace Altaxo.Gui.Common.Drawing
       this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
       this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
       this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+      this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
       this.tableLayoutPanel1.Size = new System.Drawing.Size(396, 162);
       this.tableLayoutPanel1.TabIndex = 0;
       // 
@@ -1066,8 +1071,10 @@ namespace Altaxo.Gui.Common.Drawing
       this._brushGlue.CbTextureImage = this._cbTextureImage;
       this._brushGlue.CbTextureScale = this._cbTextureScale;
       this._brushGlue.CbWrapMode = this._cbWrapMode;
+      this._brushGlue.ChkExchangeColors = this._chkExchangeColors;
       this._brushGlue.ColorType = Altaxo.Graph.ColorType.KnownAndSystemColor;
       this._brushGlue.LabelColor2 = this._lblBackColor;
+      this._brushGlue.LabelExchangeColors = this._lblExchangeColors;
       this._brushGlue.LabelGradientFocus = this._lblGradientFocus;
       this._brushGlue.LabelGradientMode = this._lblGradientMode;
       this._brushGlue.LabelGradientScale = this._lblGradientScale;
@@ -1077,6 +1084,26 @@ namespace Altaxo.Gui.Common.Drawing
       this._brushGlue.LabelTextureScale = this._lblTextureScale;
       this._brushGlue.LabelWrapMode = this._lblWrapMode;
       this._brushGlue.BrushChanged += new System.EventHandler(this.EhBrushChanged);
+      // 
+      // _lblExchangeColors
+      // 
+      this._lblExchangeColors.Anchor = System.Windows.Forms.AnchorStyles.Right;
+      this._lblExchangeColors.AutoSize = true;
+      this._lblExchangeColors.Location = new System.Drawing.Point(200, 115);
+      this._lblExchangeColors.Name = "_lblExchangeColors";
+      this._lblExchangeColors.Size = new System.Drawing.Size(66, 13);
+      this._lblExchangeColors.TabIndex = 22;
+      this._lblExchangeColors.Text = "Xchg colors:";
+      // 
+      // _chkExchangeColors
+      // 
+      this._chkExchangeColors.Anchor = System.Windows.Forms.AnchorStyles.Left;
+      this._chkExchangeColors.AutoSize = true;
+      this._chkExchangeColors.Location = new System.Drawing.Point(272, 114);
+      this._chkExchangeColors.Name = "_chkExchangeColors";
+      this._chkExchangeColors.Size = new System.Drawing.Size(15, 14);
+      this._chkExchangeColors.TabIndex = 23;
+      this._chkExchangeColors.UseVisualStyleBackColor = true;
       // 
       // BrushAllPropertiesControl
       // 
@@ -1111,7 +1138,7 @@ namespace Altaxo.Gui.Common.Drawing
     private BrushControlsGlue _brushGlue;
     private System.Windows.Forms.Label _lblWrapMode;
     private WrapModeComboBox _cbWrapMode;
-    private LinearGradientModeExComboBox _cbGradientMode;
+    private LinearGradientModeComboBox _cbGradientMode;
     private System.Windows.Forms.Label _lblGradientMode;
     private LinearGradientShapeComboBox _cbGradientShape;
     private System.Windows.Forms.Label _lblGradientShape;
@@ -1123,5 +1150,7 @@ namespace Altaxo.Gui.Common.Drawing
     private System.Windows.Forms.Label _lblTextureImage;
     private System.Windows.Forms.Label _lblTextureScale;
     private TextureScaleComboBox _cbTextureScale;
+    private System.Windows.Forms.Label _lblExchangeColors;
+    private System.Windows.Forms.CheckBox _chkExchangeColors;
   }
 }

@@ -74,8 +74,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
       Add("Line", new CreateCollectionProcedure(CreateLineStyle));
       Add("Scatter", new CreateCollectionProcedure(CreateScatterStyle));
-      Add("Line+Scatter", new CreateCollectionProcedure(CreateLineAndScatterStyle));
-      Add("Line+Scatter+Label",new CreateCollectionProcedure(CreateLineAndScatterAndLabelStyle));
+      Add("Scatter+Line", new CreateCollectionProcedure(CreateScatterAndLineStyle));
+      Add("Label+Scatter+Line",new CreateCollectionProcedure(CreateLabelAndScatterAndLineStyle));
       Add("Label only", new CreateCollectionProcedure(CreateLabelStyle));
     }
 
@@ -164,20 +164,20 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       coll.Add(new ScatterPlotStyle());
       return coll;
     }
-    static G2DPlotStyleCollection CreateLineAndScatterStyle()
+    static G2DPlotStyleCollection CreateScatterAndLineStyle()
     {
       G2DPlotStyleCollection coll = new G2DPlotStyleCollection(LineScatterPlotStyleKind.Empty);
-      coll.Add(new LinePlotStyle());
       coll.Add(new ScatterPlotStyle());
+      coll.Add(new LinePlotStyle());
       return coll;
     }
 
-    static G2DPlotStyleCollection CreateLineAndScatterAndLabelStyle()
+    static G2DPlotStyleCollection CreateLabelAndScatterAndLineStyle()
     {
       G2DPlotStyleCollection coll = new G2DPlotStyleCollection(LineScatterPlotStyleKind.Empty);
-      coll.Add(new LinePlotStyle());
-      coll.Add(new ScatterPlotStyle());
       coll.Add(new LabelPlotStyle());
+      coll.Add(new ScatterPlotStyle());
+      coll.Add(new LinePlotStyle());
       return coll;
     }
 
