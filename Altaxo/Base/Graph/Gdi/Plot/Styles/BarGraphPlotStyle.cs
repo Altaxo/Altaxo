@@ -145,7 +145,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       this._usePhysicalBaseValue = from._usePhysicalBaseValue;
       this._baseValue = from._baseValue;
 
-
       this._parent = from._parent;
     }
 

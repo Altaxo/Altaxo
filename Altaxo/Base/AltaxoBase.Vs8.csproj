@@ -938,6 +938,10 @@
       <DependentUpon>DensityImagePlotStyleControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\ErrorBarPlotStyleControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ErrorBarPlotStyleControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Gui\Graph\FitPolynomialDialogControl.resx">
       <DependentUpon>FitPolynomialDialogControl.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -1146,6 +1150,7 @@
     <Compile Include="Graph\Gdi\LineCaps\ArrowF10LineCap.cs" />
     <Compile Include="Graph\Gdi\LineCaps\ArrowF20LineCap.cs" />
     <Compile Include="Graph\Gdi\PenX.cs" />
+    <Compile Include="Graph\Gdi\Plot\Styles\ErrorBarPlotStyle.cs" />
     <Compile Include="Graph\I3DPhysicalVariantAccessor.cs" />
     <Compile Include="Graph\Gdi\Plot\Data\Processed2DPlotData.cs" />
     <Compile Include="Graph\Gdi\Plot\DensityImagePlotItem.cs" />
@@ -1331,6 +1336,13 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Gui\Graph\DensityImagePlotStyleController.cs" />
+    <Compile Include="Gui\Graph\ErrorBarPlotStyleControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\ErrorBarPlotStyleControl.Designer.cs">
+      <DependentUpon>ErrorBarPlotStyleControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\ErrorBarPlotStyleController.cs" />
     <Compile Include="Gui\Graph\FitPolynomialDialogControl.cs">
       <SubType>UserControl</SubType>
     </Compile>

@@ -38,6 +38,14 @@ namespace Altaxo.Graph
         );
     }
 
+    /// <summary>
+    /// Returns true if one of the three member variables RX, RY, or RZ has the value NaN.
+    /// </summary>
+    public bool IsNaN
+    {
+      get { return double.IsNaN(RX) || double.IsNaN(RY) || double.IsNaN(RZ); }
+    }
+
     public static Logical3D Interpolate(Logical3D from, Logical3D to, double t)
     {
       return new Logical3D

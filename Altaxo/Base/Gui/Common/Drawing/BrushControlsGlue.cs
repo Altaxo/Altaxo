@@ -132,6 +132,7 @@ namespace Altaxo.Gui.Common.Drawing
         OnBrushChanged();
 
         UpdateColor2State();
+        UpdateExchangeColorsState();
         UpdateHatchStyleState();
         UpdateWrapModeState();
         UpdateGradientModeState();
@@ -321,8 +322,8 @@ namespace Altaxo.Gui.Common.Drawing
           _chkExchangeColors.CheckedChanged -= EhChkExchangeColors_CheckedChanged;
 
         _chkExchangeColors = value;
-        if (_brush != null && _cbColor2 != null)
-          _cbColor2.ColorChoice = _brush.BackColor;
+        if (_brush != null && _chkExchangeColors!=null)
+          _chkExchangeColors.Checked = _brush.ExchangeColors;
 
         if (_chkExchangeColors != null)
           _chkExchangeColors.CheckedChanged += EhChkExchangeColors_CheckedChanged;

@@ -44,6 +44,7 @@ namespace Altaxo.Gui.Graph
       this._cbFillColor = new Altaxo.Gui.Common.Drawing.ColorComboBox();
       this._fillBrushGlue = new Altaxo.Gui.Common.Drawing.BrushControlsGlue();
       this._framePenGlue = new Altaxo.Gui.Common.Drawing.PenControlsGlue();
+      this._chkIndependentColor = new System.Windows.Forms.CheckBox();
       this.SuspendLayout();
       // 
       // _lblInnerGap
@@ -178,8 +179,10 @@ namespace Altaxo.Gui.Graph
       this._fillBrushGlue.CbTextureImage = null;
       this._fillBrushGlue.CbTextureScale = null;
       this._fillBrushGlue.CbWrapMode = null;
+      this._fillBrushGlue.ChkExchangeColors = null;
       this._fillBrushGlue.ColorType = Altaxo.Graph.ColorType.KnownAndSystemColor;
       this._fillBrushGlue.LabelColor2 = null;
+      this._fillBrushGlue.LabelExchangeColors = null;
       this._fillBrushGlue.LabelGradientFocus = null;
       this._fillBrushGlue.LabelGradientMode = null;
       this._fillBrushGlue.LabelGradientScale = null;
@@ -206,10 +209,21 @@ namespace Altaxo.Gui.Graph
       this._framePenGlue.CbStartCapSize = null;
       this._framePenGlue.ColorType = Altaxo.Graph.ColorType.KnownAndSystemColor;
       // 
+      // _chkIndependentColor
+      // 
+      this._chkIndependentColor.AutoSize = true;
+      this._chkIndependentColor.Location = new System.Drawing.Point(3, 6);
+      this._chkIndependentColor.Name = "_chkIndependentColor";
+      this._chkIndependentColor.Size = new System.Drawing.Size(82, 17);
+      this._chkIndependentColor.TabIndex = 13;
+      this._chkIndependentColor.Text = "Indep. color";
+      this._chkIndependentColor.UseVisualStyleBackColor = true;
+      // 
       // BarGraphPlotStyleControl
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+      this.Controls.Add(this._chkIndependentColor);
       this.Controls.Add(this._lblFillColor);
       this.Controls.Add(this._lblYGap);
       this.Controls.Add(this._chkUsePreviousItem);
@@ -247,5 +261,6 @@ namespace Altaxo.Gui.Graph
     private System.Windows.Forms.CheckBox _chkUsePreviousItem;
     private System.Windows.Forms.Label _lblYGap;
     private System.Windows.Forms.Label _lblFillColor;
+    private System.Windows.Forms.CheckBox _chkIndependentColor;
   }
 }

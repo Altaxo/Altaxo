@@ -852,6 +852,9 @@ namespace Altaxo.Graph.Gdi
       // axis related
 
       this.LinkedScales = (LinkedScaleCollection)from._linkedScales.Clone();
+
+      this._dataClipping = from._dataClipping;
+
       this.GridPlanes = from._gridPlanes.Clone();
 
       // Styles
