@@ -1713,7 +1713,7 @@ namespace Altaxo.Graph.GUI
               continue;
             }
           }
-          catch (Exception ex)
+          catch (Exception)
           {
           }
         }

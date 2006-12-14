@@ -178,7 +178,7 @@ namespace Altaxo.Gui.Common
 
 		#region Events
 
-		public event EventHandler Scroll;
+		public new event EventHandler Scroll;
 
 		#endregion
 

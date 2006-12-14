@@ -207,8 +207,8 @@ namespace Altaxo.Graph.Plot.Groups
     /// The BarGraphPlotStyle has stored two properties relGap and relBound, which are transferred
     /// to the group style in this process.
     /// </summary>
-    /// <param name="relGap"></param>
-    /// <param name="relBound"></param>
+    /// <param name="relInnerGapWidth">Gap between to bars in a group in units of one bar width.</param>
+    /// <param name="relOuterGapWidth">Gap between the items of two groups in units of one bar width.</param>
     public void Initialize(double relInnerGapWidth, double relOuterGapWidth)
     {
       _isInitialized = true;

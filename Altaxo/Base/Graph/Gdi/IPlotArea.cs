@@ -23,7 +23,6 @@
 using System;
 using System.Drawing;
 using Altaxo.Graph.Scales;
-using System.Drawing;
 
 namespace Altaxo.Graph.Gdi
 {

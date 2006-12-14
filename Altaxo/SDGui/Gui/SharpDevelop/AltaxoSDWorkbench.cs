@@ -32,7 +32,6 @@ using System.Xml;
 
 using ICSharpCode.SharpDevelop;
 using ICSharpCode.Core;
-using ICSharpCode.Core;
 
 using ICSharpCode.SharpDevelop.Gui;
 

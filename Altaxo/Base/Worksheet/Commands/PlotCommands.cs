@@ -274,6 +274,7 @@ namespace Altaxo.Worksheet.Commands
     /// </summary>
     /// <param name="table">The source table.</param>
     /// <param name="selectedColumns">The data columns of the table that should be plotted.</param>
+    /// <param name="graph">The graph document to plot into.</param>
     /// <param name="templatePlotStyle">The plot style which is the template for all plot items.</param>
     /// <param name="groupStyles">The group styles for the newly built plot item collection.</param>
     public static IGraphController Plot(DataTable table,
@@ -351,8 +352,6 @@ namespace Altaxo.Worksheet.Commands
     /// Plots the currently selected data columns of a worksheet.
     /// </summary>
     /// <param name="dg">The worksheet controller where the columns are selected in.</param>
-    /// <param name="bLine">If true, a line is plotted.</param>
-    /// <param name="bScatter">If true, scatter symbols are plotted.</param>
     public static void PlotLineArea(GUI.WorksheetController dg)
     {
       Plot(dg.DataTable, dg.SelectedDataColumns, PlotStyle_LineArea, GroupStyle_Color_Line);
@@ -361,8 +360,6 @@ namespace Altaxo.Worksheet.Commands
     /// Plots the currently selected data columns of a worksheet.
     /// </summary>
     /// <param name="dg">The worksheet controller where the columns are selected in.</param>
-    /// <param name="bLine">If true, a line is plotted.</param>
-    /// <param name="bScatter">If true, scatter symbols are plotted.</param>
     public static void PlotLineStack(GUI.WorksheetController dg)
     {
       Plot(dg.DataTable, dg.SelectedDataColumns, PlotStyle_Line, GroupStyle_Stack_Color_Line);
@@ -372,8 +369,6 @@ namespace Altaxo.Worksheet.Commands
     /// Plots the currently selected data columns of a worksheet.
     /// </summary>
     /// <param name="dg">The worksheet controller where the columns are selected in.</param>
-    /// <param name="bLine">If true, a line is plotted.</param>
-    /// <param name="bScatter">If true, scatter symbols are plotted.</param>
     public static void PlotLineRelativeStack(GUI.WorksheetController dg)
     {
       Plot(dg.DataTable, dg.SelectedDataColumns, PlotStyle_Line, GroupStyle_RelativeStack_Color_Line);
@@ -383,8 +378,6 @@ namespace Altaxo.Worksheet.Commands
     /// Plots the currently selected data columns of a worksheet.
     /// </summary>
     /// <param name="dg">The worksheet controller where the columns are selected in.</param>
-    /// <param name="bLine">If true, a line is plotted.</param>
-    /// <param name="bScatter">If true, scatter symbols are plotted.</param>
     public static void PlotLineWaterfall(GUI.WorksheetController dg)
     {
       Plot(dg.DataTable, dg.SelectedDataColumns, PlotStyle_Line, GroupStyle_Waterfall_Color_Line);
@@ -394,8 +387,6 @@ namespace Altaxo.Worksheet.Commands
     /// Plots the currently selected data columns of a worksheet.
     /// </summary>
     /// <param name="dg">The worksheet controller where the columns are selected in.</param>
-    /// <param name="bLine">If true, a line is plotted.</param>
-    /// <param name="bScatter">If true, scatter symbols are plotted.</param>
     public static void PlotLinePolar(GUI.WorksheetController dg)
     {
       Altaxo.Graph.Gdi.GraphDocument graph = new Altaxo.Graph.Gdi.GraphDocument();

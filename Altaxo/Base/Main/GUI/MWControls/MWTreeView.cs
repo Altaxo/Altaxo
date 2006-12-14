@@ -13,18 +13,18 @@ using System.Text.RegularExpressions;
 
 using System.Diagnostics;
 
-/// <summary>
-///	Mikael Wiberg, Copyright 2003, 2004
-///		My mikwib address can be found on hotmail.com (usual HoTMaiL spam filters)
-///		My mick address can be found on ar.com.au (heavy spam filters on, harldy anything gets through, START the subject with C# and it will probably go through)
-///		My mik address can be found on netatonce.net (heavy spam filters on, harldy anything gets through, START the subject with C# and it will probably go through)
-///	
-///	Feel free to use the MWTreeView as you wish, as long as you do not take credit for it yourself (see next line).
-///	However if it is used in commercial projects or applications it is NOT, I repeat NOT, free. Please contact me for further information.
-///		Note that this differs from previous versions of the MWTreeView and I have made this decision in order to be duly compensated for my work
-///			and time spent.
-///	Use the MWTreeView at your own risk. I take no responsibility for ill effects happening directly or indirectly through the use of the MWTreeView.
-/// </summary>
+// <summary>
+//	Mikael Wiberg, Copyright 2003, 2004
+//		My mikwib address can be found on hotmail.com (usual HoTMaiL spam filters)
+//		My mick address can be found on ar.com.au (heavy spam filters on, harldy anything gets through, START the subject with C# and it will probably go through)
+//		My mik address can be found on netatonce.net (heavy spam filters on, harldy anything gets through, START the subject with C# and it will probably go through)
+//	
+//	Feel free to use the MWTreeView as you wish, as long as you do not take credit for it yourself (see next line).
+//	However if it is used in commercial projects or applications it is NOT, I repeat NOT, free. Please contact me for further information.
+//		Note that this differs from previous versions of the MWTreeView and I have made this decision in order to be duly compensated for my work
+//			and time spent.
+//	Use the MWTreeView at your own risk. I take no responsibility for ill effects happening directly or indirectly through the use of the MWTreeView.
+// </summary>
 namespace MWControlSuite
 {
 	/// <summary>
@@ -1243,7 +1243,7 @@ namespace MWControlSuite
 		/// <summary>
 		/// Main method used when checking/unchecking TreeNodes using the mouse.
 		/// </summary>
-		/// <param name="tnMain">Node to be checked/unchecked.</param>
+		/// <param name="tn">Node to be checked/unchecked.</param>
 		/// <param name="bUpdate">True if the TreeNode's Checked property should be updated or false otherwise.</param>
 		private void BeforeCheckMethod(TreeNode tn, bool bUpdate)
 		{
@@ -8295,7 +8295,6 @@ namespace MWControlSuite
 		/// Min-value: 0
 		/// Max-value: 255
 		/// </summary>
-		/// </summary>
 		[
 		Browsable(true),
 		Category("Behavior, MW - Rubberband-Selection Border"),
@@ -13569,7 +13568,7 @@ namespace MWControlSuite
 		/// <summary>
 		/// Checks if the TreeNode's Text satisfies the regular expression or not, if it does the TreeNode can be checked otherwise not.
 		/// </summary>
-		/// <param name="strLabelText">TreeNode Text that should be checked against the regular expression in the CheckNodeRegEx property.</param>
+		/// <param name="strText">TreeNode Text that should be checked against the regular expression in the CheckNodeRegEx property.</param>
 		/// <returns>True if the TreeNode's Text satisfies the regular expression or false otherwise.</returns>
 		public bool IsCheckNodeRegExSatisfied(string strText)
 		{
@@ -13637,7 +13636,7 @@ namespace MWControlSuite
 		/// <summary>
 		/// Checks if the TreeNode's Text satisfies the regular expression or not, if it does the TreeNode can be selected otherwise not.
 		/// </summary>
-		/// <param name="strLabelText">TreeNode Text that should be checked against the regular expression in the SelectNodeRegEx property.</param>
+		/// <param name="strText">TreeNode Text that should be checked against the regular expression in the SelectNodeRegEx property.</param>
 		/// <returns>True if the TreeNode's Text satisfies the regular expression or false otherwise.</returns>
 		public bool IsSelectNodeRegExSatisfied(string strText)
 		{
@@ -14707,7 +14706,7 @@ namespace MWControlSuite
 		/// Remove a Hashtable of TreeNodes or a Hashtable of TreeNodes contained in MWTreeNodeWrappers. The TreeNodes are also removed from
 		///		the SelNodes property, the CheckedNodes property and/or the SelNode property.
 		/// </summary>
-		/// <param name="altn">Hashtable containing TreeNodes that should be removed or MWTreeNodeWrappers whose TreeNodes should be removed.</param>
+		/// <param name="httn">Hashtable containing TreeNodes that should be removed or MWTreeNodeWrappers whose TreeNodes should be removed.</param>
 		/// <returns>True if at least one TreeNode or one TreeNode from the MWTreeNodeWrappers was removed or false if no TreeNodes were removed.</returns>
 		public bool RemoveNodes(Hashtable httn)
 		{
@@ -17111,7 +17110,7 @@ namespace MWControlSuite
 		/// <summary>
 		/// Change the ImageIndex of the supplied MWTreeNodeWrapper's TreeNode.
 		/// </summary>
-		/// <param name="tn">MWTreeNodeWrapper whose TreeNode to change the ImageIndex of.</param>
+		/// <param name="mwtnw">MWTreeNodeWrapper whose TreeNode to change the ImageIndex of.</param>
 		/// <param name="iImageIndex">ImageIndex to change to.</param>
 		public static void ChangeTreeNodeImageIndex(MWTreeNodeWrapper mwtnw, int iImageIndex)
 		{
@@ -17168,7 +17167,7 @@ namespace MWControlSuite
 		/// <summary>
 		/// Change the ImageIndex and SelectedImageIndex of the supplied MWTreeNodeWrapper's TreeNode.
 		/// </summary>
-		/// <param name="tn">MWTreeNodeWrapper whose TreeNode to change the ImageIndex and SelectedImageIndex of.</param>
+		/// <param name="mwtnw">MWTreeNodeWrapper whose TreeNode to change the ImageIndex and SelectedImageIndex of.</param>
 		/// <param name="iImageIndex">ImageIndex to change to.</param>
 		/// <param name="iSelectedImageIndex">SelectedImageIndex to change to.</param>
 		public static void ChangeTreeNodeImageIndices(MWTreeNodeWrapper mwtnw, int iImageIndex, int iSelectedImageIndex)
@@ -17201,7 +17200,7 @@ namespace MWControlSuite
 		/// Change the SelectedImageIndex of the supplied TreeNode.
 		/// </summary>
 		/// <param name="tn">TreeNode to change the SelectedImageIndex of.</param>
-		/// <param name="iImageIndex">SelectedImageIndex to change to.</param>
+		/// <param name="iSelectedImageIndex">SelectedImageIndex to change to.</param>
 		public static void ChangeTreeNodeSelectedImageIndex(TreeNode tn, int iSelectedImageIndex)
 		{
 			if(tn != null)
@@ -17225,7 +17224,7 @@ namespace MWControlSuite
 		/// <summary>
 		/// Change the SelectedImageIndex of the supplied MWTreeNodeWrapper's TreeNode.
 		/// </summary>
-		/// <param name="tn">MWTreeNodeWrapper whose TreeNode to change the SelectedImageIndex of.</param>
+		/// <param name="mwtnw">MWTreeNodeWrapper whose TreeNode to change the SelectedImageIndex of.</param>
 		/// <param name="iSelectedImageIndex">SelectedImageIndex to change to.</param>
 		public static void ChangeTreeNodeSelectedImageIndex(MWTreeNodeWrapper mwtnw, int iSelectedImageIndex)
 		{
@@ -17555,6 +17554,7 @@ namespace MWControlSuite
 		/// Note that the Rectangle is changed by the thickness divided by two.
 		/// </summary>
 		/// <param name="rct">Rectangle that should be made positive.</param>
+    /// <param name="iThickness"></param>
 		/// <returns>Rectangle that has a positive Location and the same position and positive width minus thickness (supplied) divided by two and positive height minus thickness (supplied) divided by two as the Rectangle supplied.\nNote that the Rectangle is changed by the thickness divided by two.</returns>
 		public static Rectangle GetPositiveRectangleSmaller(Rectangle rct, int iThickness)
 		{
@@ -17592,6 +17592,7 @@ namespace MWControlSuite
 		/// Get a Rectangle that has a positive Location and the same position and positive width minus thickness (supplied) and positive height minus thickness (supplied) as the Rectangle supplied.
 		/// </summary>
 		/// <param name="rct">Rectangle that should be made positive.</param>
+    /// <param name="iThickness"></param>
 		/// <returns>Rectangle that has a positive Location and the same position and positive width minus thickness (supplied) and positive height minus thickness (supplied) as the Rectangle supplied.</returns>
 		public static Rectangle GetPositiveRectangleInside(Rectangle rct, int iThickness)
 		{

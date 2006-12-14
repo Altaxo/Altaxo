@@ -112,7 +112,7 @@ namespace Altaxo.Calc.Regression
     /// Gets the impulse response to a pulse at t=0, i.e. to x[0]==1, x[1]...x[n]==0. The background component is not taken into account.
     /// </summary>
     /// <param name="output">Used to store the output result. Can be of arbitrary size.</param>
-    /// <param name="yValueBeforePulse">This is the y-value (not x!) before the pulse. If the <c>NumberOfY</c> is set to zero, this parameter is ignored, since no information about y for t<0 is neccessary.</param>
+    /// <param name="yValueBeforePulse">This is the y-value (not x!) before the pulse. If the <c>NumberOfY</c> is set to zero, this parameter is ignored, since no information about y for t&lt;0 is neccessary.</param>
     public void GetTransferFunction(IVector output, double yValueBeforePulse)
     {
       double[] y = new double[_numY];

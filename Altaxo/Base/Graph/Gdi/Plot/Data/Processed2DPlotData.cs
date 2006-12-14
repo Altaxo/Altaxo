@@ -92,7 +92,7 @@ namespace Altaxo.Graph.Gdi.Plot.Data
 
     /// <summary>
     /// Returns always a AltaxoVariant with the content of 0.0 (a double value). This function can 
-    /// serve as an instance for the <see cref="IndexedPhysicalValueAccessor" /see> returning 0.
+    /// serve as an instance for the <see cref="IndexedPhysicalValueAccessor" /> returning 0.
     /// </summary>
     /// <param name="i">Index. This parameter is ignored here.</param>
     /// <returns>Zero.</returns>

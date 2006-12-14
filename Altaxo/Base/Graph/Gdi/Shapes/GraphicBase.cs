@@ -750,7 +750,6 @@ namespace Altaxo.Graph.Gdi.Shapes
       PointF _drawrPosition;
       PointF _fixrPosition;
       PointF _fixaPosition;
-      bool _allowNegativeSize;
 
       public SizeMoveGripHandle(GraphicBase parent, PointF relPos)
       {

@@ -47,6 +47,7 @@ namespace Altaxo.Graph.Gdi.Plot
     /// the ApplyStyle function is called.
     /// </summary>
     /// <param name="styles">The collection of group styles.</param>
+    /// <param name="layer">The plot layer.</param>
     void PrepareStyles(PlotGroupStyleCollection styles, IPlotArea layer);
 
     /// <summary>
@@ -60,7 +61,7 @@ namespace Altaxo.Graph.Gdi.Plot
     /// Sets the plot style (or sub plot styles) in this item according to a template provided by the plot item in the template argument.
     /// </summary>
     /// <param name="template">The template item to copy the plot styles from.</param>
-    /// <param name="strictness">Denotes the strictness the styles are copied from the template. See <see cref="PlotGroupStrictness" /see> for more information.</param>
+    /// <param name="strictness">Denotes the strictness the styles are copied from the template. See <see cref="PlotGroupStrictness" /> for more information.</param>
     void SetPlotStyleFromTemplate(IGPlotItem template, PlotGroupStrictness strictness);
 
     /// <summary>

@@ -110,12 +110,13 @@ namespace Altaxo.Serialization.Xml
 
     public double GetDouble()
     {
+
       return XmlConvert.ToDouble(m_Reader.ReadElementString());
     }
 
     public DateTime GetDateTime(string name)
     {
-      return XmlConvert.ToDateTime(m_Reader.ReadElementString());
+      return m_Reader.ReadElementContentAsDateTime();
     }
 
     public TimeSpan GetTimeSpan(string name)

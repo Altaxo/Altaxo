@@ -137,7 +137,6 @@ namespace Altaxo.Scripting
     /// Executes the script. If no instance of the script object exists, a error message will be stored and the return value is false.
     /// If the script object exists, the Execute function of this script object is called.
     /// </summary>
-    /// <param name="myColumn">The data table this script is working on.</param>
     /// <returns>True if executed without exceptions, otherwise false.</returns>
     /// <remarks>If exceptions were thrown during execution, the exception messages are stored
     /// inside the column script and can be recalled by the Errors property.</remarks>

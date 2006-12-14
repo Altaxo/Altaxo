@@ -92,7 +92,7 @@ namespace Altaxo.Main.Services
     /// Determines whether or not a given subtype is derived from a basetype or implements the interface basetypes.
     /// </summary>
     /// <param name="subtype">The subtype.</param>
-    /// <param name="basetype">The basetypes. To return true, the subclass must implement all the types given here.</param>
+    /// <param name="basetypes">The basetypes. To return true, the subclass must implement all the types given here.</param>
     /// <returns>If basetype is a class type, the return value is true if subtype derives from basetype. If basetype is an interface, the return value is true if subtype implements the interface basetype.
     /// If subtype don't implement one of the types given in basetypes, the return value is false.</returns>
     public static bool IsSubClassOfOrImplements(System.Type subtype, System.Type[] basetypes)
@@ -152,7 +152,7 @@ namespace Altaxo.Main.Services
     /// This will return a list of types that are subclasses of type basetype or (when basetype is an interface)
     /// implements basetype.
     /// </summary>
-    /// <param name="basetype">The basetype.</param>
+    /// <param name="basetypes">The basetype.</param>
     /// <returns></returns>
     public static System.Type[] GetNonAbstractSubclassesOf(System.Type[] basetypes)
     {
@@ -410,7 +410,7 @@ namespace Altaxo.Main.Services
     /// Gets a list of currently loaded assemblies that are dependend on the given base assembly. The base assembly is also in the returned list.
     /// </summary>
     /// <param name="baseAssembly">The base assembly.</param>
-    /// <param name="start">Index into the <c>_loadedAssemblies</c> array where to start the search. Set it to 0 if you want a full search.</param>
+    /// <param name="assembliesToTest">All assemblies that should be tested for dependence on the base assembly.</param>
     /// <returns>All assemblies, that are currently loaded and that references the given base assembly. The base assembly is also in the returned list.</returns>
     public static IEnumerable<Assembly> GetDependendAssemblies(Assembly baseAssembly, IEnumerable<Assembly> assembliesToTest)
     {
@@ -458,7 +458,6 @@ namespace Altaxo.Main.Services
         {
           Assembly testassembly = _loadedAssemblies[i];
           AssemblyName testassemblyname = testassembly.GetName();
-          bool insert = false;
           foreach (AssemblyName name in nameList)
           {
             if (testassemblyname.FullName == name.FullName || Contains(testassembly.GetReferencedAssemblies(), name))
@@ -477,7 +476,7 @@ namespace Altaxo.Main.Services
     /// </summary>
     /// <param name="baseAssembly">Base assembly.</param>
     /// <param name="testAssembly">Assembly to test.</param>
-    /// <returns>True if <c>testAssembly</c> is dependent on <c>baseAssembly.</returns>
+    /// <returns>True if <c>testAssembly</c> is dependent on <c>baseAssembly</c>.</returns>
     public static bool IsDependentAssembly(Assembly baseAssembly, Assembly testAssembly)
     {
       return baseAssembly == testAssembly || Contains(testAssembly.GetReferencedAssemblies(), baseAssembly.GetName());
@@ -510,6 +509,7 @@ namespace Altaxo.Main.Services
     /// types this attributes apply to. The list is not sorted.
     /// </summary>
     /// <param name="attributeType">The type of attribute (this has to be a class attribute type).</param>
+    /// <param name="inherit">If true, takes into account also classes that have the attribute not applied directly, but inherited from a base class.</param>
     /// <returns>A list of types that have the provided attribute type.</returns>
     public static IEnumerable<Type> GetUnsortedClassTypesHavingAttribute(System.Type attributeType, bool inherit)
     {
@@ -522,6 +522,7 @@ namespace Altaxo.Main.Services
     /// types this attributes apply to. The list is sorted if attributeType implements the IComparable interface.
     /// </summary>
     /// <param name="attributeType">The type of attribute (this has to be a class attribute type).</param>
+    /// <param name="inherit">If true, classes where taken into account, where the attribute is not applied directly to that class, but to a base class of that class.</param>
     /// <returns>A list of types that have the provided attribute type.</returns>
     public static IEnumerable<Type> GetSortedClassTypesHavingAttribute(System.Type attributeType, bool inherit)
     {
@@ -554,6 +555,7 @@ namespace Altaxo.Main.Services
     /// <param name="attributeType">The type of attribute (this has to be a class attribute type).</param>
     /// <param name="target">Only necessary if the attributeType is an <see cref="IClassForClassAttribute" />. In this case only
     /// those attribute instances are returned, where the target object meets the target type of the <see cref="IClassForClassAttribute" />.</param>
+    /// <param name="cachedList">Cached list of already observed classes.</param>
     /// <returns>A list of dictionary entries. The keys are the attribute instances, the values are the class types this attributes apply to.</returns>
     public static IAttributeForClassList GetAttributeInstancesAndClassTypesForClass(System.Type attributeType, object target, ref IAttributeForClassListCollection cachedList)
     {
@@ -569,6 +571,8 @@ namespace Altaxo.Main.Services
     /// <param name="attributeType">The type of attribute (this has to be a class attribute type).</param>
     /// <param name="target">Only necessary if the attributeType is an <see cref="IClassForClassAttribute" />. In this case only
     /// those attribute instances are returned, where the target object meets the target type of the <see cref="IClassForClassAttribute" />.</param>
+    /// <param name="overrideObjectType">If the target is null, or under special circumstances, the type to look for deviates from the type 
+    /// provided by the <c>target</c> argument. In this cases you can provide a override type that is used.</param>
     /// <returns>A list of dictionary entries. The keys are the attribute instances, the values are the class types this attributes apply to.</returns>
     public static IAttributeForClassList GetAttributeInstancesAndClassTypesForClass(
       System.Type attributeType,
@@ -640,7 +644,7 @@ namespace Altaxo.Main.Services
     /// to implement <see cref="IClassForClassAttribute" />, and creationArg[0] has to match the type in <see cref="IClassForClassAttribute.TargetType" />
     /// </summary>
     /// <param name="attributeType">The type of attribute  the class(es) to instantiate must be assigned to.</param>
-    /// <param name="expectedType">The expected type of return value.</param>
+    /// <param name="expectedTypes">The expected type of return value.</param>
     /// <param name="creationArgs">The creation arguments used to instantiate a class.</param>
     /// <param name="overrideArgs0Type">Usually null. If you provide a type here, it has to be a base type of the typeof(creationArgs[0]). By this you
     /// can "downgrade" creationArgs[0], so that only attributes for the base type are looked for.</param>

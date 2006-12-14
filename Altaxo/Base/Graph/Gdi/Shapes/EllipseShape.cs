@@ -43,7 +43,6 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <summary>
     /// Serializes EllipseGraphic Version 0.
     /// </summary>
-    /// <param name="obj">The EllipseGraphic to serialize.</param>
     /// <param name="info">The serialization info.</param>
     /// <param name="context">The streaming context.</param>
     public override void GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)

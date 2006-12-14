@@ -103,7 +103,6 @@ namespace Altaxo.Gui.Graph
 
     public void FillDialogElements()
     {
-      string name=null;
       _backgroundStyleController = new Altaxo.Gui.Graph.BackgroundStyleController(m_TextObject.Background);
       _backgroundStyleController.ViewObject = _ctrlBackgroundStyle;
       _ctrlBackgroundStyle.Controller = _backgroundStyleController;

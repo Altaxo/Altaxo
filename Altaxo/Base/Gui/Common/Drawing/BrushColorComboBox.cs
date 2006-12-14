@@ -106,13 +106,11 @@ namespace Altaxo.Gui.Common.Drawing
         this.BeginUpdate();
 
         Items.Clear();
-        bool knownColorBrush = false;
         if (selectedBrush.BrushType == BrushType.SolidBrush)
         {
           if (!ColorDictionary.IsColorOfType(selectedBrush.Color, _colorType))
             Items.Add(selectedBrush.Color);
-          else
-            knownColorBrush = true;
+         
         }
         else
         {

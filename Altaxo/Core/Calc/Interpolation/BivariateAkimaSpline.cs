@@ -206,7 +206,7 @@ namespace Altaxo.Calc.Interpolation
     double z54 { get { return zxy[11]; } set { zxy[11] = value; } }
     double p33 { get { return zxy[11]; } set { zxy[11] = value; } }
     double sw;
-    double iu0;
+    //double iu0;
     int[] equiv_59 = new int[1];
     int jx1 { get { return equiv_59[0]; } set { equiv_59[0] = value; } }
     int lx0;
@@ -1007,32 +1007,32 @@ namespace Altaxo.Calc.Interpolation
       /* ERROR EXIT */
       L710:
         throw new ArgumentException("LX = 1 OR LESS");
-      goto L800;
+      //goto L800;
       L720:
         throw new ArgumentException("LY = 1 OR LESS.");
-      goto L800;
+      //goto L800;
       L730:
         throw new ArgumentException("N = 0 OR LESS.");
-      goto L800;
+      //goto L800;
       L740:
         throw new ArgumentException("IDENTICAL X VALUES");
-      goto L760;
+      //goto L760;
       L750:
         throw new ArgumentException("X VALUES OUT OF SEQUENCE");
       L760:
         throw new ArgumentException(string.Format("ix ={0} x[ix]={1})",ix,x[ix]));
            
-      goto L800;
+      //goto L800;
       L770:
         throw new ArgumentException("IDENTICAL Y VALUES");
-      goto L790;
+      //goto L790;
       L780:
         throw new ArgumentException("Y VALUES OUT OF SEQUENCE");
       L790:
         throw new ArgumentException(string.Format("iy ={0} y[iy]={1})",iy,y[iy]));
       L800:
         throw new ArgumentException(string.Format("LX ={0} LY ={1} N ={2} ERROR DETECTED IN ROUTINE ITPLBV)", ix, iy, n));
-      return 0;
+      //return 0;
       /* FORMAT STATEMENTS */
 
       return 0;

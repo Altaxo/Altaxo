@@ -1574,8 +1574,6 @@ namespace Altaxo.Graph.Gdi
     }
     public object SetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context, System.Runtime.Serialization.ISurrogateSelector selector)
     {
-      LineCapEx s = new LineCapEx();
-
      string name =  info.GetString("Name");
       float size = info.GetSingle("Size");
       this.CopyFrom(new LineCapEx(name,size));

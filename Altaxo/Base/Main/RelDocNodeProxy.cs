@@ -92,6 +92,7 @@ namespace Altaxo.Main
     /// Copying constructor.
     /// </summary>
     /// <param name="from">Object to clone from.</param>
+    /// <param name="newparent"></param>
     public void CopyFrom(RelDocNodeProxy from, Main.IDocumentNode newparent)
     {
         this.SetDocNode(from._docNode, newparent); // than the new Proxy refers to the same document node
@@ -154,6 +155,7 @@ namespace Altaxo.Main
     /// </summary>
     /// <param name="docNode">The document node. If <c>docNode</c> implements <see cref="Main.IDocumentNode" />,
     /// the document path is stored for this object in addition to the object itself.</param>
+    /// <param name="parentNode"></param>
     public void SetDocNode(Main.IDocumentNode docNode, Main.IDocumentNode parentNode)
     {
       if (!IsValidDocument(docNode))

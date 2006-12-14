@@ -30,7 +30,7 @@ namespace Altaxo.Graph.Gdi.CS
     /// <summary>
     /// Copies the member variables from another coordinate system.
     /// </summary>
-    /// <param name="from">The coordinate system to copy from.</param>
+    /// <param name="fromb">The coordinate system to copy from.</param>
     public override void CopyFrom(G2DCoordinateSystem fromb)
     {
       base.CopyFrom(fromb);
@@ -230,8 +230,7 @@ namespace Altaxo.Graph.Gdi.CS
     /// Calculates from two logical values (values between 0 and 1) the coordinates of the point. Returns true if the conversion
     /// is possible, otherwise false.
     /// </summary>
-    /// <param name="rx">The logical x value.</param>
-    /// <param name="ry">The logical y value.</param>
+    /// <param name="r">The logical point to convert.</param>
     /// <param name="xlocation">On return, gives the x coordinate of the converted value (for instance location).</param>
     /// <param name="ylocation">On return, gives the y coordinate of the converted value (for instance location).</param>
     /// <returns>True if the conversion was successfull, false if the conversion was not possible.</returns>
@@ -303,8 +302,7 @@ namespace Altaxo.Graph.Gdi.CS
     /// </summary>
     /// <param name="xlocation">On return, gives the x coordinate of the converted value (for instance location).</param>
     /// <param name="ylocation">On return, gives the y coordinate of the converted value (for instance location).</param>
-    /// <param name="rx">The logical x value.</param>
-    /// <param name="ry">The logical y value.</param>
+    /// <param name="r">The logical coordinate as the result of the conversion.</param>
     /// <returns>True if the conversion was successfull, false if the conversion was not possible.</returns>
     public override bool LayerToLogicalCoordinates(double xlocation, double ylocation, out Logical3D r)
     {

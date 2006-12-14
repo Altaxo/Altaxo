@@ -29,7 +29,6 @@ using System.Text;
 using System.Windows.Forms;
 
 using Altaxo.Graph.Gdi;
-using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Gui.Graph
 {

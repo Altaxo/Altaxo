@@ -191,9 +191,7 @@ namespace Altaxo.Graph.Plot.Data
     /// by a function provided by the calling function.
     /// </summary>
     /// <param name="layer">The plot layer.</param>
-    /// <param name="rangeList">On return, this gives the list of plot ranges.</param>
-    /// <param name="ptArray">On return, this is an array of plot points in layer coordinates.</param>
-    /// <returns>True if the function is successfull, otherwise false.</returns>
+    /// <returns>An array of plot points in layer coordinates.</returns>
     public Processed2DPlotData GetRangesAndPoints(
       Gdi.IPlotArea layer)
     {

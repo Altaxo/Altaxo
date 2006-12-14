@@ -33,6 +33,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// </summary>
     /// <param name="externalGroups"></param>
     /// <param name="localGroups"></param>
+    /// <param name="layer"></param>
+    /// <param name="pdata"></param>
     void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups, IPlotArea layer, Processed2DPlotData pdata);
 
 
@@ -48,8 +50,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// </summary>
     /// <param name="g">The graphics.</param>
     /// <param name="layer">Area to plot to</param>
-    /// <param name="rangeList">Range list for the ptArray parameter.</param>
-    /// <param name="ptArray">Array of plotting points in relative coordinates.</param>
+    /// <param name="pdata">The preprocessed plot data used for plotting.</param>
     void Paint(Graphics g, IPlotArea layer, Processed2DPlotData pdata);
 
   
@@ -65,9 +66,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 
     /// <summary>
-    /// Sets the parent object of the style.
+    /// Sets the parent object
     /// </summary>
-    /// <param name="parent">The parent object.</param>
-    object ParentObject { set; }
+    new object ParentObject { set; }
   }
 }

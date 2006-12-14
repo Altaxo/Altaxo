@@ -1838,9 +1838,12 @@ namespace Altaxo.Calc.Regression
     /// <summary>
     /// This will compute the covariances at a given parameter set xvec.
     /// </summary>
-    /// <param name="func"></param>
-    /// <param name="xvec"></param>
-    /// <param name="covar"></param>
+    /// <param name="fcn">The function that was to minimize.</param>
+    /// <param name="x">Parameter vector.</param>
+    /// <param name="n">First dimension of the parameter vector.</param>
+    /// <param name="m">Second dimension of the parameter vector.</param>
+    /// <param name="covar">Array to hold the covariance matrix. Must be of dimension m*n.</param>
+    /// <param name="sumchisq">Outputs the sum of chi squared.</param>
     public static int ComputeCovariances(LMFunction fcn, double[] x, int n, int m, double[]covar, out double sumchisq)
     {
       int  info=0;

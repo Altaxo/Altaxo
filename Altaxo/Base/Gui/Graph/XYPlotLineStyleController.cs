@@ -82,14 +82,13 @@ namespace Altaxo.Gui.Graph
     /// <summary>
     /// Initializes the fill direction combobox.
     /// </summary>
-    /// <param name="arr">String array of possible selections</param>
-    /// <param name="sel">Current selection.</param>
+    /// <param name="list">List of possible selections.</param>
+    /// <param name="sel">Current selection index.</param>
     void InitializeFillDirection(List<ListNode> list, int sel);
 
     /// <summary>
     /// Initializes the fill color combobox.
     /// </summary>
-    /// <param name="arr">String array of possible selections</param>
     /// <param name="sel">Current selection.</param>
     void InitializeFillColor(BrushX sel);
   

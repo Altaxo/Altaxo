@@ -111,7 +111,7 @@ namespace Altaxo.Graph
 
     public static CSPlaneID FromPhysicalValue(int perpendicularAxisNumber, double physicalValue)
     {
-      if (!(physicalValue == physicalValue))
+      if (double.IsNaN(physicalValue))
         throw new ArgumentException("You can not set physical values that return false when compared to itself, value is: " + physicalValue.ToString());
 
       CSPlaneID id = new CSPlaneID();

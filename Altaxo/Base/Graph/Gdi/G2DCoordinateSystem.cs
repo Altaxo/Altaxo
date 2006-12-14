@@ -62,8 +62,7 @@ namespace Altaxo.Graph.Gdi
     /// Calculates from two logical values (values between 0 and 1) the coordinates of the point. Returns true if the conversion
     /// is possible, otherwise false.
     /// </summary>
-    /// <param name="rx">The logical x value.</param>
-    /// <param name="ry">The logical y value.</param>
+    /// <param name="r">The logical position value.</param>
     /// <param name="xlocation">On return, gives the x coordinate of the converted value (for instance location).</param>
     /// <param name="ylocation">On return, gives the y coordinate of the converted value (for instance location).</param>
     /// <returns>True if the conversion was successfull, false if the conversion was not possible.</returns>
@@ -73,10 +72,8 @@ namespace Altaxo.Graph.Gdi
     /// <summary>
     /// Converts logical coordinates along an isoline to layer coordinates and the appropriate derivative.
     /// </summary>
-    /// <param name="rx0">Logical x of starting point of the isoline.</param>
-    /// <param name="ry0">Logical y of starting point of the isoline.</param>
-    /// <param name="rx1">Logical x of end point of the isoline.</param>
-    /// <param name="ry1">Logical y of end point of the isoline.</param>
+    /// <param name="r0">Logical position of starting point of the isoline.</param>
+    /// <param name="r1">Logical position of end point of the isoline.</param>
     /// <param name="t">Parameter between 0 and 1 that determines the point on the isoline.
     /// A value of 0 denotes the starting point of the isoline, a value of 1 the end point. The logical
     /// coordinates are linear interpolated between starting point and end point.</param>
@@ -96,8 +93,7 @@ namespace Altaxo.Graph.Gdi
     /// </summary>
     /// <param name="xlocation">The x coordinate of the converted value (for instance location).</param>
     /// <param name="ylocation">The y coordinate of the converted value (for instance location).</param>
-    /// <param name="rx">The logical x value.</param>
-    /// <param name="ry">The logical y value.</param>
+    /// <param name="r">The computed logical position value.</param>
     /// <returns>True if the conversion was successfull, false if the conversion was not possible. For 3D coordinate systems,
     /// the relative values of x and y with z=0 should be returned.</returns>
     public abstract bool LayerToLogicalCoordinates(double xlocation, double ylocation, out Logical3D r);
@@ -106,10 +102,8 @@ namespace Altaxo.Graph.Gdi
     /// Gets a iso line in a path object.
     /// </summary>
     /// <param name="path">The graphics path.</param>
-    /// <param name="rx0">Relative starting point x.</param>
-    /// <param name="ry0">Relative starting point y.</param>
-    /// <param name="rx1">Relative end point x.</param>
-    /// <param name="ry1">Relative end point y.</param>
+    /// <param name="r0">Starting position in logical coordinates.</param>
+    /// <param name="r1">End position in logical coordinates.</param>
     public abstract void GetIsoline(System.Drawing.Drawing2D.GraphicsPath path, Logical3D r0, Logical3D r1);
 
     /// <summary>
@@ -155,10 +149,8 @@ namespace Altaxo.Graph.Gdi
     /// </summary>
     /// <param name="g">Graphics context.</param>
     /// <param name="pen">The style of the pen used to draw the line.</param>
-    /// <param name="rx0">Relative coordinate x of the starting point.</param>
-    /// <param name="ry0">Relative coordinate y of the starting point.</param>
-    /// <param name="rx1">Relative coordinate x of the end point.</param>
-    /// <param name="ry1">Relative coordinate y of the end point.</param>
+    /// <param name="r0">Starting point in logical coordinates.</param>
+    /// <param name="r1">End point in logical coordinates.</param>
     public virtual void DrawIsoline(System.Drawing.Graphics g, System.Drawing.Pen pen, Logical3D r0, Logical3D r1)
     {
       using (GraphicsPath path = new GraphicsPath())
@@ -174,10 +166,8 @@ namespace Altaxo.Graph.Gdi
     /// Draws an isoline beginning from a plane to the given point.
     /// </summary>
     /// <param name="path">Graphics path to fill with the isoline.</param>
-    /// <param name="id">The axis to start drawing.</param>
-    /// <param name="rx">Logical x coordinate of the end point.</param>
-    /// <param name="ry">Logical y coordinate of the end point.</param>
-    /// <param name="rz">Logical z coordinate of the end point (not used for 2D coordinate systems).</param>
+    /// <param name="id">The logical plane to start drawing from.</param>
+    /// <param name="r">Logical coordinates of the end point.</param>
     public virtual void GetIsolineFromPlaneToPoint(GraphicsPath path, CSPlaneID id, Logical3D r)
     {
       if (id.PerpendicularAxisNumber == 0)
@@ -201,9 +191,8 @@ namespace Altaxo.Graph.Gdi
     /// Draws an isoline beginning from a given point to the axis.
     /// </summary>
     /// <param name="path">Graphics path to fill with the isoline.</param>
-    /// <param name="rx">Logical x coordinate of the start point.</param>
-    /// <param name="ry">Logical y coordinate of the start point.</param>
-    /// <param name="id">The axis to end the isoline.</param>
+    /// <param name="r">Logical coordinate of the start point.</param>
+    /// <param name="id">The logical plane to end the isoline.</param>
     public virtual void GetIsolineFromPointToPlane(GraphicsPath path, Logical3D r, CSPlaneID id)
     {
       if (id.PerpendicularAxisNumber == 0)
@@ -228,9 +217,8 @@ namespace Altaxo.Graph.Gdi
     /// </summary>
     /// <param name="g">Graphics to draw the isoline to.</param>
     /// <param name="pen">The pen to use.</param>
-    /// <param name="rx">Logical x coordinate of the start point.</param>
-    /// <param name="ry">Logical y coordinate of the start point.</param>
-    /// <param name="id">The plane to end the isoline.</param>
+    /// <param name="r">Logical coordinate of the start point.</param>
+    /// <param name="id">The logical plane to end the isoline.</param>
     public virtual void DrawIsolineFromPointToPlane(Graphics g, System.Drawing.Pen pen, Logical3D r, CSPlaneID id)
     {
       if (id.PerpendicularAxisNumber == 0)
@@ -253,13 +241,11 @@ namespace Altaxo.Graph.Gdi
 
     /// <summary>
     /// Draws an isoline on a plane beginning from r0 to r1. For r0,r1 either ry0,ry1 is used (if it is an x-axis),
-    /// otherwise rx0,ry1 is used. The other parameter pair is not used.
+    /// otherwise rx0,rx1 is used. The other parameter pair is not used.
     /// </summary>
     /// <param name="path">Graphics path to fill with the isoline.</param>
-    /// <param name="rx0">Logical x coordinate of the start point.</param>
-    /// <param name="ry1">Logical y coordinate of the start point.</param>
-    /// <param name="rx0">Logical x coordinate of the start point.</param>
-    /// <param name="ry1">Logical y coordinate of the start point.</param>
+    /// <param name="r0">Logical coordinate of the start point.</param>
+    /// <param name="r1">Logical coordinate of the end point.</param>
     /// <param name="id">The axis to end the isoline.</param>
     public virtual void GetIsolineOnPlane(GraphicsPath path, CSPlaneID id, Logical3D r0, Logical3D r1)
     {
@@ -316,7 +302,8 @@ namespace Altaxo.Graph.Gdi
     /// <summary>
     /// Get a line along the axis designated by the argument id from the logical values r0 to r1.
     /// </summary>
-    /// <param name="path">Graphics path.</param>
+    /// <param name="g">Graphics context.</param>
+    /// <param name="pen">The pen required to draw the line.</param>
     /// <param name="id">Axis to draw the isoline along.</param>
     /// <param name="r0">Start point of the isoline. The logical value of the other coordinate.</param>
     /// <param name="r1">End point of the isoline. The logical value of the other coordinate.</param>
@@ -340,10 +327,8 @@ namespace Altaxo.Graph.Gdi
     /// <summary>
     /// Converts logical coordinates along an isoline to layer coordinates and returns the direction of the isoline at this point.
     /// </summary>
-    /// <param name="rx0">Logical x of starting point of the isoline.</param>
-    /// <param name="ry0">Logical y of starting point of the isoline.</param>
-    /// <param name="rx1">Logical x of end point of the isoline.</param>
-    /// <param name="ry1">Logical y of end point of the isoline.</param>
+    /// <param name="r0">Logical coordinates of starting point of the isoline.</param>
+    /// <param name="r1">Logical coordinates of end point of the isoline.</param>
     /// <param name="t">Parameter between 0 and 1 that determines the point on the isoline.
     /// A value of 0 denotes the starting point of the isoline, a value of 1 the end point. The logical
     /// coordinates are linear interpolated between starting point and end point.</param>

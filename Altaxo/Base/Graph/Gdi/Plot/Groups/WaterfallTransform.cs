@@ -274,7 +274,6 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
         if (id.UsePhysicalValue)
         {
           int scaleidx = id.PerpendicularAxisNumber;
-          double l = 0;
           switch (scaleidx)
           {
             case 0:

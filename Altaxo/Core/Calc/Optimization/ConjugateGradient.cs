@@ -73,7 +73,7 @@ namespace Altaxo.Calc.Optimization
     }
     
     DoubleVector g;
-    DoubleVector gold;
+    //DoubleVector gold;
     
     private int restartCount=0;
     private int restartCounter=0;

@@ -512,7 +512,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// </summary>
     public void Fit2Jac()
     {
-      int info = 0;
+      //int info = 0;
       object workingmemory=null;
 
       NonLinearFit2.LEVMAR_DER(

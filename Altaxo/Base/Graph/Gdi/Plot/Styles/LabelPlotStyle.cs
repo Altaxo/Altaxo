@@ -591,7 +591,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 
 
-    /// <summary>If axis the label is attached to if the value of <see cref="AttachToAxis" /> is true.</summary>
+    /// <summary>Gets/sets the axis this label is attached to. If set to null, the label is positioned normally.</summary>
     public CSPlaneID AttachedAxis
     {
       get { return this._attachedPlane; }

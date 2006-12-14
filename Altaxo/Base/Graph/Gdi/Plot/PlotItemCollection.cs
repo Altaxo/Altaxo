@@ -460,6 +460,7 @@ namespace Altaxo.Graph.Gdi.Plot
     /// Apply styles backward from the last item to the first, but only upwards in the hierarchy.
     /// </summary>
     /// <param name="styles"></param>
+    /// <param name="layer">The plot layer.</param>
     protected void PrepareStylesBackward_HierarchyUpOnly(PlotGroupStyleCollection styles, IPlotArea layer)
     {
       bool transferToLocalStyles =
@@ -645,7 +646,7 @@ namespace Altaxo.Graph.Gdi.Plot
     /// Sets the plot style (or sub plot styles) of all plot items in this collection according to a template provided by the plot item in the template argument.
     /// </summary>
     /// <param name="template">The template item to copy the plot styles from.</param>
-    /// <param name="strictness">Denotes the strictness the styles are copied from the template. See <see cref="PlotGroupStrictness" /see> for more information.</param>
+    /// <param name="strictness">Denotes the strictness the styles are copied from the template. See <see cref="PlotGroupStrictness" /> for more information.</param>
     public void DistributePlotStyleFromTemplate(IGPlotItem template, PlotGroupStrictness strictness)
     {
       foreach(IGPlotItem pi in this._plotItems)

@@ -85,9 +85,9 @@ namespace Altaxo.Gui.Graph
     void DataAvailable_ClearSelection();
 
     /// <summary>
-    /// Initializes the content list box by setting the number of items.
+    /// Initializes the content list box by setting the items.
     /// </summary>
-    /// <param name="itemcount">Number of items.</param>
+    /// <param name="items">Collection of items.</param>
     void Contents_SetItems(NGTreeNodeCollection items);
 
     void Contents_RemoveItems(NGTreeNode[] items);

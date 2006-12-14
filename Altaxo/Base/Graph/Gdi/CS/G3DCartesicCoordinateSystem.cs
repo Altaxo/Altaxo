@@ -16,9 +16,9 @@ namespace Altaxo.Graph.Gdi.CS
       public double M21;
       public double M22;
       public double M23;
-      public double M31;
-      public double M32;
-      public double M33;
+      //public double M31;
+      //public double M32;
+      //public double M33;
     }
 
     TMatrix _projectionMatrix;
@@ -27,7 +27,7 @@ namespace Altaxo.Graph.Gdi.CS
     /// <summary>
     /// Copies the member variables from another coordinate system.
     /// </summary>
-    /// <param name="from">The coordinate system to copy from.</param>
+    /// <param name="fromb">The coordinate system to copy from.</param>
     public override void CopyFrom(G2DCoordinateSystem fromb)
     {
       base.CopyFrom(fromb);

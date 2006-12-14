@@ -618,7 +618,7 @@ namespace Altaxo.Graph.Gdi.Axis
     /// </summary>
     /// <param name="g">The graphics context painting to.</param>
     /// <param name="layer">The layer the axis belongs to.</param>
-    /// <param name="axis">The axis this axis style is used for.</param>
+    /// <param name="styleInfo">The axis information of the axis to paint.</param>
     public void Paint(Graphics g, XYPlotLayer layer, CSAxisInformation styleInfo)
     {
       CSLineID styleID = styleInfo.Identifier;

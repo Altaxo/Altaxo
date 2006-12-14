@@ -1,18 +1,18 @@
 using System;
 using System.Drawing;
 
-/// <summary>
-///	Mikael Wiberg, Copyright 2003, 2004
-///		My mikwib address can be found on hotmail.com (usual HoTMaiL spam filters)
-///		My mick address can be found on ar.com.au (heavy spam filters on, harldy anything gets through, START the subject with C# and it will probably go through)
-///		My mik address can be found on netatonce.net (heavy spam filters on, harldy anything gets through, START the subject with C# and it will probably go through)
-///	
-///	Feel free to use the MWTreeView as you wish, as long as you do not take credit for it yourself (see next line).
-///	However if it is used in commercial projects or applications it is NOT, I repeat NOT, free. Please contact me for further information.
-///		Note that this differs from previous versions of the MWTreeView and I have made this decision in order to be duly compensated for my work
-///			and time spent.
-///	Use the MWTreeView at your own risk. I take no responsibility for ill effects happening directly or indirectly through the use of the MWTreeView.
-/// </summary>
+// <summary>
+//	Mikael Wiberg, Copyright 2003, 2004
+//		My mikwib address can be found on hotmail.com (usual HoTMaiL spam filters)
+//		My mick address can be found on ar.com.au (heavy spam filters on, harldy anything gets through, START the subject with C# and it will probably go through)
+//		My mik address can be found on netatonce.net (heavy spam filters on, harldy anything gets through, START the subject with C# and it will probably go through)
+//	
+//	Feel free to use the MWTreeView as you wish, as long as you do not take credit for it yourself (see next line).
+//	However if it is used in commercial projects or applications it is NOT, I repeat NOT, free. Please contact me for further information.
+//		Note that this differs from previous versions of the MWTreeView and I have made this decision in order to be duly compensated for my work
+//			and time spent.
+//	Use the MWTreeView at your own risk. I take no responsibility for ill effects happening directly or indirectly through the use of the MWTreeView.
+// </summary>
 namespace MWControlSuite
 {
 	/// <summary>
@@ -121,7 +121,7 @@ namespace MWControlSuite
 		/// <summary>
 		/// Get an array of color blend positions to be used for a gradient.
 		/// </summary>
-		/// <param name="amwrgb">Array of MWRubberbandGradientBlends where the positions should be extracted from.</param>
+		/// <param name="amwrgcb">Array of MWRubberbandGradientBlends where the positions should be extracted from.</param>
 		/// <returns>An array of color blend positions to be used for a gradient.</returns>
 		public static float[] GetPositionArray(MWRubberbandGradientColorBlend[] amwrgcb)
 		{

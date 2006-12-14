@@ -433,7 +433,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
 
 
     /// <summary>
-    /// Removes the currently selected objects (the <see>cref="IHitTestObject" /> of the selected object(s) must provide
+    /// Removes the currently selected objects (the <see cref="IHitTestObject" /> of the selected object(s) must provide
     /// a handler for deleting the object).
     /// </summary>
     public void RemoveSelectedObjects()
@@ -475,7 +475,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
       dao.SetData("Altaxo.Graph.GraphObjectList", objectList);
 
       // Test code to test if the object list can be serialized
-      if(false)
+#if false
       {
       System.Runtime.Serialization.Formatters.Binary.BinaryFormatter binform = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
         System.IO.MemoryStream stream = new System.IO.MemoryStream();
@@ -487,6 +487,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
         stream.Close();
         stream.Dispose();
       }
+#endif
 
       // now copy the data object to the clipboard
       System.Windows.Forms.Clipboard.SetDataObject(dao, true);

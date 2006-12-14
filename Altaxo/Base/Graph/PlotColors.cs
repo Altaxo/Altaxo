@@ -76,7 +76,7 @@ namespace Altaxo.Graph
           if (!c.IsSystemColor)
             _knownColors.Add(c);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
 
         }

@@ -49,12 +49,7 @@ namespace Altaxo.Graph.Plot.Groups
     /// <returns>Type of the child group style.</returns>
     Type GetChildTypeOf(Type groupStyleType);
 
-    /// <summary>
-    /// Gets an enumerator that enumerates through all group styles in this collection.
-    /// </summary>
-    /// <returns>An enumerator that enumerates through all group styles in this collection.</returns>
-    System.Collections.Generic.IEnumerator<IPlotGroupStyle> GetEnumerator();
-
+   
     /// <summary>
     /// Returns the group style instance of the type given.
     /// </summary>

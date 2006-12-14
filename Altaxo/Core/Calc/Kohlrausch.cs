@@ -210,7 +210,7 @@ namespace Altaxo.Calc
 
 
     /// <summary>
-    /// Real part of the Fourier transformed derivative of the Kohlrausch function for low frequencies, and beta<=1/20..
+    /// Real part of the Fourier transformed derivative of the Kohlrausch function for low frequencies, and beta&lt;=1/20..
     /// </summary>
     /// <param name="beta">Beta parameter.</param>
     /// <param name="z">Circular frequency, must be much lesser than one.</param>
@@ -449,7 +449,7 @@ namespace Altaxo.Calc
     }
 
     /// <summary>
-    /// Imaginary part of the Fourier transformed derivative of the Kohlrausch function for low frequencies, and beta<=1/20..
+    /// Imaginary part of the Fourier transformed derivative of the Kohlrausch function for low frequencies, and beta&lt;=1/20..
     /// </summary>
     /// <param name="beta">Beta parameter.</param>
     /// <param name="z">Circular frequency.</param>

@@ -36,7 +36,8 @@ namespace Altaxo.Gui.Graph
     /// <summary>
     /// Called if one of the value has changed.
     /// </summary>
-    /// <param name="newValue">The new selected item of the combo box.</param>
+    /// <param name="fromValue">The old value.</param>
+    /// <param name="toValue">The new selected item of the combo box.</param>
     void EhView_Changed(string fromValue, string toValue);
   }
 

@@ -42,7 +42,6 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <summary>
     /// Serializes LineGraphic. 
     /// </summary>
-    /// <param name="obj">The LineGraphic to serialize.</param>
     /// <param name="info">The serialization info.</param>
     /// <param name="context">The streaming context.</param>
     public override void GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)

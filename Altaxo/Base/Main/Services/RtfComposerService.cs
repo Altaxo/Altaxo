@@ -133,19 +133,19 @@ namespace Altaxo.Main.Services
     /// Use the EmfToWmfBits function in the GDI+ specification to convert a 
     /// Enhanced Metafile to a Windows Metafile
     /// </summary>
-    /// <param name="_hEmf">
+    /// <param name="hEmf">
     /// A handle to the Enhanced Metafile to be converted
     /// </param>
-    /// <param name="_bufferSize">
+    /// <param name="bufferSize">
     /// The size of the buffer used to store the Windows Metafile bits returned
     /// </param>
-    /// <param name="_buffer">
+    /// <param name="buffer">
     /// An array of bytes used to hold the Windows Metafile bits returned
     /// </param>
-    /// <param name="_mappingMode">
+    /// <param name="mappingMode">
     /// The mapping mode of the image.  This control uses MM_ANISOTROPIC.
     /// </param>
-    /// <param name="_flags">
+    /// <param name="flags">
     /// Flags used to specify the format of the Windows Metafile returned
     /// </param>
     [System.Runtime.InteropServices.DllImportAttribute("gdiplus.dll")]

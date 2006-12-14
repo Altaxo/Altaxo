@@ -386,7 +386,6 @@ namespace Altaxo.Graph.Plot.Groups
     /// <summary>
     /// Executes a prepare step only on those items, where in the own collection the stepping is enabled, but in the foreign collection it is present, but is not enabled.
     /// </summary>
-    /// <param name="step"></param>
     /// <param name="foreignStyles"></param>
     public void PrepareStepIfForeignSteppingFalse(PlotGroupStyleCollectionBase foreignStyles)
     {

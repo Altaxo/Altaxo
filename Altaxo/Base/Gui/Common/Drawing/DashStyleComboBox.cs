@@ -38,7 +38,6 @@ namespace Altaxo.Gui.Common.Drawing
   public class DashStyleComboBox : ComboBox
   {
     ContextMenuStrip _contextStrip;
-    static ColorDialog _colorDialog;
 
     static List<DashStyleEx> _dashStyles;
 

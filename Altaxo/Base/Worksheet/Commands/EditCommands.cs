@@ -149,14 +149,7 @@ namespace Altaxo.Worksheet.Commands
         int xidx = (int)xx[xcol[i]];
         int yidx = (int)yy[ycol[i]];
 
-        if (true)
-        {
-          vcols[yidx][xidx] = vcol[i];
-        }
-        else
-        {
-          return string.Format("The x-y pair in row {0} is present multiple times in the data",i);
-        }
+        vcols[yidx][xidx] = vcol[i];
       }
 
       // assemble all columns together in a table

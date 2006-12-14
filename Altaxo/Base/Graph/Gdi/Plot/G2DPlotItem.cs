@@ -136,7 +136,7 @@ namespace Altaxo.Graph.Gdi.Plot
     /// Sets the plot style (or sub plot styles) in this item according to a template provided by the plot item in the template argument.
     /// </summary>
     /// <param name="template">The template item to copy the plot styles from.</param>
-    /// <param name="strictness">Denotes the strictness the styles are copied from the template. See <see cref="PlotGroupStrictness" /see> for more information.</param>
+    /// <param name="strictness">Denotes the strictness the styles are copied from the template. See <see cref="PlotGroupStrictness" /> for more information.</param>
     public override void SetPlotStyleFromTemplate(IGPlotItem template, PlotGroupStrictness strictness)
     {
       if (!(template is G2DPlotItem) || object.ReferenceEquals(this,template))

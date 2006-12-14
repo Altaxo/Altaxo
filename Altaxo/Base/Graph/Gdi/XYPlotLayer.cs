@@ -96,9 +96,9 @@ namespace Altaxo.Graph.Gdi
 
     LinkedScaleCollection _linkedScales;
 
-    /// <summary>
-    /// The background style of the layer.
-    /// </summary>
+    // <summary>
+    // The background style of the layer.
+    // </summary>
     //protected LayerBackground _layerBackground;
 
     /// <summary>If true, the data are clipped to the frame.</summary>
@@ -1766,8 +1766,8 @@ namespace Altaxo.Graph.Gdi
 
     /// <summary>
     /// Sets the cached position value in <see cref="_cachedLayerPosition"/> by calculating it
-    /// from the position values (<see cref="_location.XPosition"/> and <see cref="_location.YPosition"/>) 
-    /// and the position types (<see cref="_location.XPositionType"/> and <see cref="_location.YPositionType"/>).
+    /// from the position values (<see cref="_location"/>.XPosition and .YPosition) 
+    /// and the position types (<see cref="_location"/>.XPositionType and YPositionType).
     /// </summary>
     protected void CalculateCachedPosition()
     {
@@ -1873,8 +1873,8 @@ namespace Altaxo.Graph.Gdi
 
     /// <summary>
     /// Sets the cached size value in <see cref="_cachedLayerSize"/> by calculating it
-    /// from the position values (<see cref="_location.Width"/> and <see cref="_location.Height"/>) 
-    /// and the size types (<see cref="_location.WidthType"/> and <see cref="_location.HeightType"/>).
+    /// from the position values (<see cref="_location"/>.Width and .Height) 
+    /// and the size types (<see cref="_location"/>.WidthType and .HeightType).
     /// </summary>
     protected void CalculateCachedSize()
     {
@@ -2150,7 +2150,8 @@ namespace Altaxo.Graph.Gdi
     /// Called by the proxy, when the instance of the linked layer has changed.
     /// </summary>
     /// <param name="sender"></param>
-    /// <param name="e"></param>
+    /// <param name="oldvalue">Instance of the plot layer that was linked before to this layer.</param>
+    /// <param name="newvalue">Instance of the plot layer that is linked now to this layer.</param>
     protected void EhLinkedLayerInstanceChanged(object sender, object oldvalue, object newvalue)
     {
       XYPlotLayer oldValue = (XYPlotLayer)oldvalue;
@@ -2832,7 +2833,7 @@ namespace Altaxo.Graph.Gdi
       GridStyle _gridStyle;
       List<AxisStyle> _axisStyles;
 
-      G2DCoordinateSystem _cachedCoordinateSystem;
+      //G2DCoordinateSystem _cachedCoordinateSystem;
 
       #region Serialization
 
@@ -2982,7 +2983,7 @@ namespace Altaxo.Graph.Gdi
         if (prop == null)
         {
           prop = new AxisStyle(id);
-          prop.CachedAxisInformation = _cachedCoordinateSystem.GetAxisStyleInformation(id);
+         // prop.CachedAxisInformation = _cachedCoordinateSystem.GetAxisStyleInformation(id);
           AddAxisStyle(prop);
         }
         return prop;

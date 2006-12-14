@@ -54,7 +54,6 @@ namespace Altaxo.Gui.Graph
     /// <summary>
     /// Initializes the plot style color combobox.
     /// </summary>
-    /// <param name="arr">String array of possible selections</param>
     /// <param name="sel">Current selection.</param>
     void InitializePlotStyleColor(Color sel);
 

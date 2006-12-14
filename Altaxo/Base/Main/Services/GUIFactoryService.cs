@@ -33,10 +33,6 @@ namespace Altaxo.Main.Services
   /// </summary>
   public class GUIFactoryService
   {
-
-    ReflectionService.IAttributeForClassListCollection _cachedControllerList;
-    ReflectionService.IAttributeForClassListCollection _cachedControlList;
-
     /// <summary>
     /// Gets an <see cref="IMVCController" />  for a given document type.
     /// </summary>
@@ -55,6 +51,7 @@ namespace Altaxo.Main.Services
     /// <param name="args">The argument list. The first element args[0] is the document for which the controller is searched. The following elements are
     /// optional, and are usually the parents of this document.</param>
     /// <param name="expectedControllerType">Type of controller that you expect to return.</param>
+    /// <param name="copyDocument">Determines whether to work directly with the document or use a copy.</param>
     /// <returns>The controller for that document when found. The controller is already initialized with the document. If not found, null is returned.</returns>
     public IMVCController GetController(object[] args, System.Type expectedControllerType, UseDocument copyDocument)
     {
@@ -68,6 +65,7 @@ namespace Altaxo.Main.Services
     /// optional, and are usually the parents of this document.</param>
     /// <param name="overrideArg0Type">If this parameter is not null, this given type is used instead of determining the type of the <c>arg[0]</c> argument.</param>
     /// <param name="expectedControllerType">Type of controller that you expect to return.</param>
+    /// <param name="copyDocument">Determines wether to use the document directly or use a clone of the document.</param>
     /// <returns>The controller for that document when found.</returns>
     public IMVCController GetController(object[] creationArgs, System.Type overrideArg0Type, System.Type expectedControllerType, UseDocument copyDocument)
     {
@@ -120,6 +118,7 @@ namespace Altaxo.Main.Services
     /// <param name="args">The argument list. The first element args[0] is the document for which the controller is searched. The following elements are
     /// optional, and are usually the parents of this document.</param>
     /// <param name="expectedControllerType">Type of controller that you expect to return.</param>
+    /// <param name="copyDocument">Determines whether to use the document directly or a cloned copy of the document.</param>
     /// <returns>The controller for that document when found. The controller is already initialized with the document. If no controller is found for the document, or if no GUI control is found for the controller, the return value is null.</returns>
     public IMVCController GetControllerAndControl(object[] args, System.Type expectedControllerType, UseDocument copyDocument)
     {
@@ -134,6 +133,7 @@ namespace Altaxo.Main.Services
     /// optional, and are usually the parents of this document.</param>
     /// <param name="overrideArg0Type">If this parameter is not null, this given type is used instead of determining the type of the <c>arg[0]</c> argument.</param>
     /// <param name="expectedControllerType">Type of controller that you expect to return.</param>
+    /// <param name="copyDocument">Determines whether to use the document directly or a cloned copy.</param>
     /// <returns>The controller for that document when found. The controller is already initialized with the document. If no controller is found for the document, or if no GUI control is found for the controller, the return value is null.</returns>
     public IMVCController GetControllerAndControl(object[] args, System.Type overrideArg0Type, System.Type expectedControllerType, UseDocument copyDocument)
     {

@@ -104,7 +104,7 @@ namespace Altaxo.Graph.Scales.Boundaries
     /// in this case. On the other hand, if the value is outside the range, the function has to
     /// return false.
     /// </summary>
-    /// <param name="col">The data value.</param>
+    /// <param name="item">The data value.</param>
     /// <returns>True if data is in the tracked range, false if the data is not in the tracked range.</returns>
     public abstract bool Add(Altaxo.Data.AltaxoVariant item);
 

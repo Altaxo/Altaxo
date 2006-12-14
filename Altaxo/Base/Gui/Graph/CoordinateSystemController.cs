@@ -37,7 +37,6 @@ namespace Altaxo.Gui.Graph
         Type[] subtypes = Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(G2DCoordinateSystem));
 
         ListNodeList list = new ListNodeList();
-        int selection = -1;
         foreach(Type t in subtypes)
           list.Add(new ListNode(Current.Gui.GetUserFriendlyClassName(t), t));
 

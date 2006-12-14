@@ -22,7 +22,6 @@
 
 using System;
 using Altaxo.Graph.Gdi;
-using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Gui.Common.Drawing
 {

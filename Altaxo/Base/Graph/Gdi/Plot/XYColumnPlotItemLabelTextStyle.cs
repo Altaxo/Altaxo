@@ -25,7 +25,7 @@ using System;
 namespace Altaxo.Graph.Gdi.Plot
 {
   /// <summary>
-  /// Enumerates the style how a <see cref="XYColumnPlotItem" /> is labeled into the <see cref="TextGraphics" />. 
+  /// Enumerates the style how a <see cref="XYColumnPlotItem" /> is labeled into the <see cref="Altaxo.Graph.Gdi.Shapes.TextGraphic" />. 
   /// </summary>
   public enum XYColumnPlotItemLabelTextStyle
   {

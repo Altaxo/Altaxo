@@ -850,7 +850,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
         int rangeidx = 0;
         PlotRange range = pdata.RangeList[rangeidx];
-         for (int j = 0, r=0; j < ptArray.Length; j += _skipFreq)
+         for (int j = 0; j < ptArray.Length; j += _skipFreq)
           {
            // syncronize range
             while (j >= range.UpperBound)

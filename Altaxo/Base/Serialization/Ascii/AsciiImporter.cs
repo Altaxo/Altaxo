@@ -506,7 +506,7 @@ namespace Altaxo.Serialization.Ascii
     /// </summary>
     /// <param name="values">An array of double values.</param>
     /// <param name="col">A double column to compare with the double array.</param>
-    /// <returns>True if the length of the array is equal to the length of the <see cref="DoubleColumn" /> and the values in 
+    /// <returns>True if the length of the array is equal to the length of the <see cref="Altaxo.Data.DoubleColumn" /> and the values in 
     /// both array match to each other, otherwise false.</returns>
     public static bool ValuesMatch(Altaxo.Data.DataColumn values, Altaxo.Data.DataColumn col)
     {
@@ -530,7 +530,7 @@ namespace Altaxo.Serialization.Ascii
     public static string ImportMultipleAscii(string[] filenames, Altaxo.Data.DataTable table)
     {
       Altaxo.Data.DataColumn xcol = null;
-      Altaxo.Data.DataColumn xvalues, yvalues;
+      Altaxo.Data.DataColumn xvalues;
       System.Text.StringBuilder errorList = new System.Text.StringBuilder();
       int lastColumnGroup = 0;
 

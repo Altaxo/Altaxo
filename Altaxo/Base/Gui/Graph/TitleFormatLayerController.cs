@@ -87,7 +87,6 @@ namespace Altaxo.Gui.Graph
 
     public void SetElements(bool bInit)
     {
-      int i;
       System.Collections.ArrayList arr = new System.Collections.ArrayList();
 
       if (bInit)

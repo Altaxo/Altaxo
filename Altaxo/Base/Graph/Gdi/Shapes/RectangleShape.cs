@@ -42,10 +42,9 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <summary>
     /// Serializes RectangleGraphic Version 0.
     /// </summary>
-    /// <param name="obj">The RectangleGraphic to serialize.</param>
     /// <param name="info">The serialization info.</param>
     /// <param name="context">The streaming context.</param>
-    public void GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
+    public new void GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
     {
       RectangleShape s = this;
       base.GetObjectData(info, context);
@@ -59,7 +58,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <param name="context">The streaming context.</param>
     /// <param name="selector">The deserialization surrogate selector.</param>
     /// <returns>The deserialized RectangleGraphic.</returns>
-    public object SetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context, System.Runtime.Serialization.ISurrogateSelector selector)
+    public new object SetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context, System.Runtime.Serialization.ISurrogateSelector selector)
     {
       RectangleShape s = (RectangleShape)base.SetObjectData(obj, info, context, selector);
       return s;

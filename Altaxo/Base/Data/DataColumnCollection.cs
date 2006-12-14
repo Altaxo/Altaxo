@@ -1118,7 +1118,7 @@ namespace Altaxo.Data
     /// Check if the named column is of the expected type.
     /// </summary>
     /// <param name="columnname">Name of the column.</param>
-    /// <param name="type">Expected type.</param>
+    /// <param name="expectedtype">Expected type of column.</param>
     /// <returns>True if the column exists and is exactly! of the expeced type. False otherwise.</returns>
     public bool IsColumnOfType(string columnname, System.Type expectedtype)
     {
