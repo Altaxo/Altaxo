@@ -207,7 +207,7 @@ namespace Altaxo.Data
     /// This class is responsible for the serialization of the DataColumn (version 0).
     /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Altaxo.Data.DataColumn),0)]
-      public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+      class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <summary>Serializes the DataColumn given by object obj.</summary>
       /// <param name="obj">The <see cref="DataColumn"/> instance which should be serialized.</param>

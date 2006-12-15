@@ -284,7 +284,6 @@ namespace Altaxo.Main.Services
       // For Visual Basic Compiler try this :
       //Microsoft.VisualBasic.VBCodeProvider
 
-      System.CodeDom.Compiler.ICodeCompiler compiler = codeProvider.CreateCompiler();
       System.CodeDom.Compiler.CompilerParameters parameters = new CompilerParameters();
 
       parameters.GenerateInMemory = true;
@@ -300,9 +299,9 @@ namespace Altaxo.Main.Services
 
       CompilerResults results;
       if(scriptText.Length==1)
-        results = compiler.CompileAssemblyFromSource(parameters, scriptText[0]);
+        results = codeProvider.CompileAssemblyFromSource(parameters, scriptText[0]);
       else
-        results = compiler.CompileAssemblyFromSourceBatch(parameters, scriptText);
+        results = codeProvider.CompileAssemblyFromSource(parameters, scriptText);
 
       if (results.Errors.Count > 0) 
       {

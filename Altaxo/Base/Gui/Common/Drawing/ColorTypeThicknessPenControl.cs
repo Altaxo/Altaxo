@@ -55,7 +55,6 @@ namespace Altaxo.Gui.Common.Drawing
       InitializeComponent();
 
 
-      // TODO: Add any initialization after the InitializeComponent call
 
     }
 

@@ -49,7 +49,6 @@ namespace Altaxo.Gui.Scripting
       // This call is required by the Windows.Forms Form Designer.
       InitializeComponent();
 
-      // TODO: Add any initialization after the InitializeComponent call
 
     }
 

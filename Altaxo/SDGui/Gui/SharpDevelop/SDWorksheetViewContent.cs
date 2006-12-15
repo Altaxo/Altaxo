@@ -42,7 +42,7 @@ namespace Altaxo.Gui.SharpDevelop
 
     #region Serialization
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoSDGui", "Altaxo.Worksheet.GUI.SDWorksheetController", 0)]
-    public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
@@ -60,7 +60,7 @@ namespace Altaxo.Gui.SharpDevelop
     }
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SDWorksheetViewContent), 1)]
-    public class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
@@ -81,9 +81,9 @@ namespace Altaxo.Gui.SharpDevelop
 
     #region Constructors
     /// <summary>
-    /// Creates a GraphController which shows the <see cref="GraphDocument"/> <paramref name="graphdoc"/>.    
+    /// Creates a GraphController which shows the <see cref="Altaxo.Graph.GraphDocument"/> in the <c>layout</c>.    
     /// </summary>
-    /// <param name="graphdoc">The graph which holds the graphical elements.</param>
+    /// <param name="layout">The graph layout which holds the graph document.</param>
     public SDWorksheetViewContent(Altaxo.Worksheet.WorksheetLayout layout)
       : this(layout, false)
     {

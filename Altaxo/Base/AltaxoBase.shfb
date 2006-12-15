@@ -9,6 +9,7 @@
     <contentPlacement>AboveNamespaces</contentPlacement>
     <dependencies>
         <dependencyItem depPath="V:\C\Altaxo\src\rtdebug\bin\*.*" />
+        <dependencyItem depPath="GAC:System.Configuration, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
     </dependencies>
     <projectSummary />
     <sandcastlePath />
@@ -27,13 +28,13 @@
     <htmlHelpName>AltaxoClassRef</htmlHelpName>
     <language>en-US</language>
     <copyrightHref />
-    <copyrightText />
+    <copyrightText>(C) Dr. D. Lellinger 2007</copyrightText>
     <feedbackEMailAddress />
     <headerText />
     <projectLinks>Local</projectLinks>
     <sdkLinks>Msdn</sdkLinks>
     <presentationStyle>Prototype</presentationStyle>
     <namingMethod>Guid</namingMethod>
-    <missingTags>Summary, Parameter, Returns, AutoDocumentCtors</missingTags>
+    <missingTags>AutoDocumentCtors</missingTags>
     <visibleItems>InheritedMembers, InheritedFrameworkMembers, Protected, SealedProtected</visibleItems>
 </project>

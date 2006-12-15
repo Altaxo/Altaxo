@@ -53,7 +53,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.GraphicsObjectCollection", 0)]
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GraphicCollection),1)]
-      public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+      class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
@@ -238,15 +238,16 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     public virtual void EhChildChanged(object child, EventArgs e)
     {
-      if(null!=Changed)
-        Changed(this, e);
-  
+        OnChanged();
     }
 
     protected virtual void OnChanged()
     {
-      if(null!=Changed)
-        Changed(this, new Main.ChangedEventArgs(this,null));
+      if (this._parent is Main.IChildChangedEventSink)
+        ((Main.IChildChangedEventSink)_parent).EhChildChanged(this, new Main.ChangedEventArgs(this, null));
+
+      if (null != Changed)
+        Changed(this, new Main.ChangedEventArgs(this, null));
     }
     #endregion
 

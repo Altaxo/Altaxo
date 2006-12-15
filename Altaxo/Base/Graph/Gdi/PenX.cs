@@ -326,7 +326,7 @@ namespace Altaxo.Graph.Gdi
     #endregion
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.PenHolder", 0)]
-    public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
@@ -465,7 +465,7 @@ namespace Altaxo.Graph.Gdi
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Graph.PenHolder", 1)]
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PenX), 2)]
-    public class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
@@ -1610,6 +1610,12 @@ namespace Altaxo.Graph.Gdi
       more = new LineCaps.ArrowF10LineCap();
       _registeredStyles.Add(more.Name, more);
       more = new LineCaps.ArrowF20LineCap();
+      _registeredStyles.Add(more.Name, more);
+      more = new LineCaps.LeftBarLineCap();
+      _registeredStyles.Add(more.Name, more);
+      more = new LineCaps.RightBarLineCap();
+      _registeredStyles.Add(more.Name, more);
+      more = new LineCaps.SymBarLineCap();
       _registeredStyles.Add(more.Name, more);
     }
 

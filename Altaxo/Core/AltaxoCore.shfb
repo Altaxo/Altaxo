@@ -33,13 +33,13 @@
     <htmlHelpName>AltaxoCore class reference</htmlHelpName>
     <language>en-US</language>
     <copyrightHref />
-    <copyrightText />
+    <copyrightText>Documentation built by Dr. D. Lellinger 2007</copyrightText>
     <feedbackEMailAddress />
     <headerText />
     <projectLinks>Local</projectLinks>
     <sdkLinks>Msdn</sdkLinks>
     <presentationStyle>VS2005</presentationStyle>
     <namingMethod>Guid</namingMethod>
-    <missingTags>Summary, Parameter, Returns, AutoDocumentCtors</missingTags>
+    <missingTags>AutoDocumentCtors</missingTags>
     <visibleItems>InheritedMembers, InheritedFrameworkMembers, Protected, SealedProtected</visibleItems>
 </project>

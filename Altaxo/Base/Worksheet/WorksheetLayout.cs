@@ -102,7 +102,7 @@ namespace Altaxo.Worksheet
     #region Serialization
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(WorksheetLayout),0)]
-      public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+      class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       protected WorksheetLayout                  m_TableLayout;
       protected System.Collections.Hashtable m_ColStyles;
@@ -224,7 +224,7 @@ namespace Altaxo.Worksheet
 
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(WorksheetLayout), 1)]
-    public class XmlSerializationSurrogate1 : XmlSerializationSurrogate0
+    class XmlSerializationSurrogate1 : XmlSerializationSurrogate0
     {
       public override void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {

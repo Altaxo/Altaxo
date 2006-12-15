@@ -51,7 +51,7 @@ namespace Altaxo.Gui.SharpDevelop
   
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoSDGui","ICSharpCode.SharpDevelop.Gui.Workbench1",0)]
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AltaxoSDWorkbench), 1)]
-      public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+      class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo  info)
       {

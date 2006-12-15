@@ -28,11 +28,12 @@ namespace Altaxo.Main
       {
         if (_parent != null)
         {
-          int oldLevel = _parent._suppressLevel--;
+          EventSuppressor parent = _parent;
           _parent = null;
+          int oldLevel = parent._suppressLevel--;
           if (1 == oldLevel)
           {
-            _parent.OnResume();
+            parent.OnResume();
           }
         }
       }
@@ -44,6 +45,14 @@ namespace Altaxo.Main
     VoidVoidEventHandler _resumeEventHandler;
     int _eventCount;
 
+    /// <summary>
+    /// Constructor. You have to provide a callback function, that is been called when the event handling resumes.
+    /// </summary>
+    /// <param name="resumeEventHandler">The callback function called when the events resume. See remarks when the callback function is called.</param>
+    /// <remarks>The callback function is called only (i) if the event resumes (exactly: the _suppressLevel changes from 1 to 0),
+    /// and (ii) in that moment the _eventCount is &gt;0.
+    /// To get the _eventCount&gt;0, someone must call either GetEnabledWithCounting or GetDisabledWithCounting
+    /// during the suspend period.</remarks>
     public EventSuppressor(VoidVoidEventHandler resumeEventHandler)
     {
       _resumeEventHandler = resumeEventHandler;
@@ -66,8 +75,11 @@ namespace Altaxo.Main
     /// <param name="token"></param>
     public void Resume(ref IDisposable token)
     {
-      token.Dispose(); // the OnResume function is called from the SuppressToken
-      token = null;
+      if (token != null)
+      {
+        token.Dispose(); // the OnResume function is called from the SuppressToken
+        token = null;
+      }
     }
 
     /// <summary>

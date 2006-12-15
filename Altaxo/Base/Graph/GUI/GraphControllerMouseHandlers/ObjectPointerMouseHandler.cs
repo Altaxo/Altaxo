@@ -58,6 +58,9 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     /// <summary>The graph controller this mouse handler belongs to.</summary>
     protected GraphController _grac;
 
+    /// <summary>Locker to suppress changed events during moving of objects.</summary>
+    IDisposable _graphDocumentChangedSuppressor;
+
     /// <summary>
     /// This is the structure to store information about an object that currently has its grip shown.
     /// </summary>
@@ -360,6 +363,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
         m_bMoveObjectsOnMouseMove=true;
         m_bObjectsWereMoved=false; // up to now no objects were really moved
         m_MoveObjectsLastMovePoint = currentMousePosition;
+        _graphDocumentChangedSuppressor = _grac.Doc.BeginUpdate();
 
         // create a frozen bitmap of the graph
         /*
@@ -382,7 +386,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
       m_bMoveObjectsOnMouseMove = false;
       m_bObjectsWereMoved=false;
       m_MoveObjectsLastMovePoint = new Point(0,0); // this is not neccessary, but only for "order"
-        
+      _grac.Doc.EndUpdate(ref _graphDocumentChangedSuppressor);        
         
       /*
         if(null!=grac.m_FrozenGraph) 

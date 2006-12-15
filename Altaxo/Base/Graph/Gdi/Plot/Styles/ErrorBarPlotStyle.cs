@@ -66,7 +66,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     #region Serialization
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ErrorBarPlotStyle), 0)]
-    public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
@@ -114,6 +114,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
 
     }
+
+    
 
     #endregion
 

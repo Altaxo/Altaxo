@@ -49,10 +49,7 @@ namespace Altaxo.Gui.Scripting
       //
       InitializeComponent();
 
-      //
-      // TODO: Add any constructor code after InitializeComponent call
-      //
-    }
+   }
 
     IScriptController _controller;
     public ScriptExecutionDialog(IScriptController controller)

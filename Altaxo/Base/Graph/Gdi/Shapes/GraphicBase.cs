@@ -100,7 +100,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Graph.GraphicsObject", 0)]
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GraphicBase),1)]
-      public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+      class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
@@ -226,8 +226,11 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
       set
       {
-        if(value != _autoSize)
+        if (value != _autoSize)
+        {
           _autoSize = value;
+          OnChanged();
+        }
       }
     }
     public virtual float X
@@ -238,7 +241,10 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
       set
       {
+        float oldvalue = _position.X;
         _position.X = value;
+        if (value != oldvalue)
+          OnChanged();
       }
     }
     public virtual float Y
@@ -249,7 +255,10 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
       set
       {
+        float oldvalue = _position.Y;
         _position.Y = value;
+        if (value != oldvalue)
+          OnChanged();
       }
     }
 
@@ -268,7 +277,10 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     public virtual void SetPosition(PointF Value)
     {
+      PointF oldvalue = _position;
       this._position = Value;
+      if (Value != oldvalue)
+        OnChanged();
     }
 
     public PointF Position
@@ -348,7 +360,10 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
       set
       {
+        float oldvalue = _bounds.Height;
         _bounds.Height = value;
+        if (value != oldvalue)
+          OnChanged();
       }
     }
     public virtual float Width
@@ -359,13 +374,19 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
       set
       {
+        float oldvalue = _bounds.Width;
         _bounds.Width = value;
+        if (value != oldvalue)
+          OnChanged();
       }
     }
 
     public virtual void SetSize(SizeF Value)
     {
+      SizeF oldvalue = _bounds.Size;
       _bounds.Size = Value;
+      if (Value != oldvalue)
+        OnChanged();
     }
     public virtual SizeF GetSize()
     {
@@ -392,7 +413,10 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
       set
       {
+        float oldvalue = _rotation;
         _rotation = value;
+        if (value != oldvalue)
+          OnChanged();
       }
     }
 

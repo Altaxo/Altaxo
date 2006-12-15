@@ -41,7 +41,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Graph.SimpleTextGraphics", 0)]
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SimpleTextGraphic),1)]
-      public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+      class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {

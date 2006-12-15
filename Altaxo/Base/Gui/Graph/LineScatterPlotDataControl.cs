@@ -61,7 +61,6 @@ namespace Altaxo.Gui.Graph
       // This call is required by the Windows.Forms Form Designer.
       InitializeComponent();
 
-      // TODO: Add any initialization after the InitializeComponent call
 
     }
 
@@ -425,12 +424,10 @@ namespace Altaxo.Gui.Graph
     {
       get
       {
-        // TODO:  Add LineScatterPlotDataControl.ControllerObject getter implementation
         return null;
       }
       set
       {
-        // TODO:  Add LineScatterPlotDataControl.ControllerObject setter implementation
       }
     }
 

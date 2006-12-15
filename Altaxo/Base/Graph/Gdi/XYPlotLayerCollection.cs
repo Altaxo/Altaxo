@@ -102,7 +102,7 @@ namespace Altaxo.Graph.Gdi
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Graph.XYPlotLayerCollection", 0)]
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotLayerCollection),1)]
-      public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+      class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
@@ -472,7 +472,6 @@ namespace Altaxo.Graph.Gdi
     {
       get
       {
-        // TODO:  Add XYPlotLayerCollection.ParentObject getter implementation
         return _parent;
       }
       set 

@@ -80,8 +80,8 @@ namespace Altaxo.Graph.Gdi.Plot
       }
     }
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYFunctionPlotItem", 2)]
-    public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYFunctionPlotItem", 0)]
+    class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
@@ -94,11 +94,10 @@ namespace Altaxo.Graph.Gdi.Plot
         
         XYFunctionPlotData pa  = (XYFunctionPlotData)info.GetValue("Data",typeof(XYColumnPlotData));
         XYLineScatterPlotStyle lsps = (XYLineScatterPlotStyle)info.GetValue("Style", typeof(XYLineScatterPlotStyle));
-
-        // TODO this must be implemented again
-        throw new NotImplementedException("This must be implemented here");
+       
         G2DPlotStyleCollection ps = new G2DPlotStyleCollection();
-        //G2DPlotStyleCollection ps = new G2DPlotStyleCollection(new I2DPlotStyle[] { lsps.XYLineStyle, lsps.XYScatterStyle });
+        ps.Add(new ScatterPlotStyle(lsps.ScatterStyle));
+        ps.Add(new LinePlotStyle(lsps.XYPlotLineStyle));
         
         if(null==o)
         {
@@ -117,7 +116,7 @@ namespace Altaxo.Graph.Gdi.Plot
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Graph.XYFunctionPlotItem", 1)]
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYFunctionPlotItem), 2)]
-      public class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+      class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {

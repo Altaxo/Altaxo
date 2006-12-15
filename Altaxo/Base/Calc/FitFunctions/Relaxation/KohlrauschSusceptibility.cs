@@ -38,7 +38,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     #region Serialization
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(KohlrauschSusceptibility), 0)]
-    public class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
@@ -62,9 +62,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
     public KohlrauschSusceptibility()
     {
-      //
-      // TODO: Add constructor logic here
-      //
+      
     }
 
     public override string ToString()

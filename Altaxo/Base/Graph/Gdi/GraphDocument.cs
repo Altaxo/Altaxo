@@ -105,6 +105,8 @@ namespace Altaxo.Graph.Gdi
     [field: NonSerialized]
     public event System.EventHandler Changed;
 
+    Main.EventSuppressor _changedEventSuppressor;
+
     /// <summary>Event fired when the name changed.</summary>
     [field: NonSerialized]
     public event NameChangedEventHandler NameChanged;
@@ -181,7 +183,7 @@ namespace Altaxo.Graph.Gdi
     }
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.GraphDocument", 0)]
-    public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
@@ -215,7 +217,7 @@ namespace Altaxo.Graph.Gdi
 
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.GraphDocument", 1)]
-    public class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
@@ -285,7 +287,7 @@ namespace Altaxo.Graph.Gdi
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Graph.GraphDocument", 2)]
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GraphDocument), 3)]
-    public class XmlSerializationSurrogate2 : XmlSerializationSurrogate1
+    class XmlSerializationSurrogate2 : XmlSerializationSurrogate1
     {
       public override void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
@@ -324,6 +326,7 @@ namespace Altaxo.Graph.Gdi
     /// </summary>
     public GraphDocument()
     {
+      this._changedEventSuppressor = new EventSuppressor(this.EhChangedEventResumes);
       this._layers = new XYPlotLayerCollection();
       this._layers.ParentObject = this;
       this._layers.SetPrintableGraphBounds(_printableBounds,false);
@@ -332,6 +335,7 @@ namespace Altaxo.Graph.Gdi
 
     public GraphDocument(GraphDocument from)
     {
+      this._changedEventSuppressor = new EventSuppressor(this.EhChangedEventResumes);
       this._pageBounds = from._pageBounds;
       this._printableBounds = from._printableBounds;
       _creationTime = _lastChangeTime = DateTime.UtcNow;
@@ -674,51 +678,24 @@ namespace Altaxo.Graph.Gdi
     protected bool             m_ResumeInProgress=false;
     protected System.Collections.ArrayList m_SuspendedChildCollection=new System.Collections.ArrayList();
 
+    public IDisposable BeginUpdate()
+    {
+      return _changedEventSuppressor.Suspend();
+    }
+    public void EndUpdate(ref IDisposable locker)
+    {
+      _changedEventSuppressor.Resume(ref locker);
+    }
     
     public bool IsSuspended
     {
       get 
       {
-        return false; // m_SuspendCount>0;
+        return _changedEventSuppressor.GetDisabledWithCounting();
       }
     }
 
-#if false
-    public void Suspend()
-    {
-      System.Diagnostics.Debug.Assert(m_SuspendCount>=0,"SuspendCount must always be greater or equal to zero");    
-
-      ++m_SuspendCount; // suspend one step higher
-    }
-
-    public void Resume()
-    {
-      System.Diagnostics.Debug.Assert(m_SuspendCount>=0,"SuspendCount must always be greater or equal to zero");    
-      if(m_SuspendCount>0 && (--m_SuspendCount)==0)
-      {
-        this.m_ResumeInProgress = true;
-        foreach(Main.ISuspendable obj in m_SuspendedChildCollection)
-          obj.Resume();
-        m_SuspendedChildCollection.Clear();
-        this.m_ResumeInProgress = false;
-
-        // send accumulated data if available and release it thereafter
-        if(null!=m_ChangeData)
-        {
-          if(m_Parent is Main.IChildChangedEventSink)
-          {
-            ((Main.IChildChangedEventSink)m_Parent).OnChildChanged(this, m_ChangeData);
-          }
-          if(!IsSuspended)
-          {
-            OnChanged(); // Fire the changed event
-          }   
-        }
-      }
-    }
-
-#endif
-
+  
 
     /// <summary>
     /// Fires the Invalidate event.
@@ -728,8 +705,6 @@ namespace Altaxo.Graph.Gdi
     {
       OnChanged();
     }
-
-  
 
 
     void AccumulateChildChangeData(object sender, EventArgs e)
@@ -786,12 +761,22 @@ namespace Altaxo.Graph.Gdi
       OnChanged(); // Fire the changed event
     }
 
+    void EhChangedEventResumes()
+    {
+      if (null != Changed)
+        Changed(this, m_ChangeData);
+      m_ChangeData = null;
+    }
+
     protected virtual void OnChanged()
     {
-      if(null!=Changed)
-        Changed(this, m_ChangeData);
+      if (_changedEventSuppressor.GetEnabledWithCounting())
+      {
+        if (null != Changed)
+          Changed(this, m_ChangeData);
 
-      m_ChangeData=null;
+        m_ChangeData = null;
+      }
     }
 
     #endregion

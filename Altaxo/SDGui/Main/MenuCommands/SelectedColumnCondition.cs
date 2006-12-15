@@ -77,7 +77,7 @@ namespace Altaxo.Worksheet.Commands
               int num = int.Parse(selectedData);
               return val == num;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
               return false;
             }

@@ -50,9 +50,7 @@ namespace Altaxo.Gui.Common
       //
       InitializeComponent();
 
-      //
-      // TODO: Add any constructor code after InitializeComponent call
-      //
+ 
     }
 
     /// <summary>

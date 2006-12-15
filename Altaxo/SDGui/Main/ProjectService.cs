@@ -497,6 +497,7 @@ namespace Altaxo.Main
     /// The IViewContent must implement <see cref="Altaxo.Gui.IMVCControllerWrapper" /> in order to be found by this routine.
     /// </summary>
     /// <param name="document">The document for which views must be found.</param>
+    /// <param name="maxNumber">Max number of <see cref="IViewContent" /> to return.</param>
     /// <returns>An array containing all views that show the document table. If no view is found, an empty array is returned.</returns>
     public List<IViewContent> SearchContentForDocument(object document, int maxNumber)
     {

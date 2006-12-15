@@ -91,6 +91,7 @@
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
+    <Reference Include="System.configuration" />
     <Reference Include="System.Data">
       <Name>System.Data</Name>
     </Reference>
@@ -1133,6 +1134,9 @@
     <Compile Include="Graph\Gdi\LayerBackground.cs" />
     <Compile Include="Graph\Gdi\LineCaps\ArrowF10LineCap.cs" />
     <Compile Include="Graph\Gdi\LineCaps\ArrowF20LineCap.cs" />
+    <Compile Include="Graph\Gdi\LineCaps\LeftBarLineCap.cs" />
+    <Compile Include="Graph\Gdi\LineCaps\RightBarLineCap.cs" />
+    <Compile Include="Graph\Gdi\LineCaps\SymBarLineCap.cs" />
     <Compile Include="Graph\Gdi\PenX.cs" />
     <Compile Include="Graph\Gdi\Plot\Styles\ErrorBarPlotStyle.cs" />
     <Compile Include="Graph\I3DPhysicalVariantAccessor.cs" />

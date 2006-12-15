@@ -36,7 +36,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     #region Serialization
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ParameterSetElement),0)]
-      public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+      class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
@@ -121,7 +121,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     #region Serialization
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ParameterSet),0)]
-      public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+      class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
@@ -151,9 +151,6 @@ namespace Altaxo.Calc.Regression.Nonlinear
     #endregion
     public ParameterSet()
     {
-      //
-      // TODO: Add constructor logic here
-      //
     }
 
     public void OnInitializationFinished()

@@ -45,8 +45,8 @@ namespace Altaxo.Main.Services
       string userFitFunctionDirectory = System.IO.Path.Combine(ICSharpCode.Core.PropertyService.ConfigDirectory, "FitFunctionScripts");
       _userFunctionService = new FileBasedFitFunctionService(userFitFunctionDirectory);
 
-
-      string appdir = System.Configuration.ConfigurationSettings.AppSettings.Get("ApplicationFitFunctionDirectory");
+      string appdir = System.Configuration.ConfigurationManager.AppSettings.Get("ApplicationFitFunctionDirectory");
+     
       _applicationFunctionService = new FileBasedFitFunctionService(appdir, true);
 
       _builtinFunctionService = new BuiltinFitFunctionService();
