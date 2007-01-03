@@ -42,12 +42,18 @@ namespace Altaxo.Gui.Common
     void InitializeLayout(bool horizontalLayout);
 
     void InitializeDescription(string value);
-    void InitializeChilds(object[] childs, int initialFocusedChild);
+    void InitializeChilds(ViewDescriptionElement[] childs, int initialFocusedChild);
+
+    /// <summary>Event fired when one of the child controls is leaved.</summary>
+    event EventHandler ChildControlEntered;
   }
   public interface IMultiChildController : IMVCAController
   {
     void Initialize(IMVCAController[] childs, bool horizontalLayout);
     string DescriptionText { get; set; }
+    
+    /// <summary>Event fired when one of the child controls is leaved and another entered.</summary>
+    event Main.InstanceChangedEventHandler<object> ChildControlChanged;
   }
 
   #endregion
@@ -62,6 +68,9 @@ namespace Altaxo.Gui.Common
     protected IMultiChildView _view;
     protected ControlViewElement[] _childController;
     protected bool _horizontalLayout;
+    /// <summary>Event fired when one of the child controls is leaved.</summary>
+    public event Main.InstanceChangedEventHandler<object> ChildControlChanged;
+
 
     protected string _descriptionText = string.Empty;
 
@@ -108,9 +117,9 @@ namespace Altaxo.Gui.Common
       {
         _view.InitializeBegin();
 
-        object[] controls = new object[_childController.Length];
+        ViewDescriptionElement[] controls = new ViewDescriptionElement[_childController.Length];
         for(int i=0;i<controls.Length;i++)
-          controls[i] = _childController[i].View;
+          controls[i] = new ViewDescriptionElement( _childController[i].Title,_childController[i].View);
 
         _view.InitializeLayout(_horizontalLayout);
         _view.InitializeDescription(_descriptionText);
@@ -144,6 +153,15 @@ namespace Altaxo.Gui.Common
         }
       }
     }
+
+    object _lastActiveChild;
+    protected virtual void EhView_ChildControlEntered(object sender, EventArgs e)
+    {
+      if (ChildControlChanged != null)
+        ChildControlChanged(sender, new Main.InstanceChangedEventArgs<object>(_lastActiveChild,sender));
+      _lastActiveChild = sender;
+    }
+
     #region IMVCController Members
 
     public virtual object ViewObject
@@ -155,15 +173,21 @@ namespace Altaxo.Gui.Common
       }
       set
       {
-        if(_view!=null)
+        if (_view != null)
+        {
           _view.Controller = null;
+          _view.ChildControlEntered -= this.EhView_ChildControlEntered;
+        }
 
         _view = value as IMultiChildView;
         
         Initialize();
 
-        if(_view!=null)
+        if (_view != null)
+        {
           _view.Controller = this;
+          _view.ChildControlEntered += this.EhView_ChildControlEntered;
+        }
       }
     }
 

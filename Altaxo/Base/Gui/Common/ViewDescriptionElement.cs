@@ -26,31 +26,26 @@ using System.Text;
 
 namespace Altaxo.Gui.Common
 {
-  public class ControlViewElement : ViewDescriptionElement, ICloneable
+  public class ViewDescriptionElement : ICloneable
   {
-    public IApplyController Controller;
+    public string Title;
+    public object View;
 
-    public ControlViewElement(ControlViewElement from)
-      : base(from)
+    public ViewDescriptionElement(ViewDescriptionElement from)
     {
-      this.Controller = from.Controller;
+      this.Title = from.Title;
+      this.View = from.View;
     }
 
-    public ControlViewElement(string title, IApplyController controller, object view)
-      : base(title,view)
+    public ViewDescriptionElement(string title, object view)
     {
-      this.Controller = controller;
+      this.Title = title;
+      this.View = view;
     }
 
-    public ControlViewElement(string title, IMVCAController controller)
-      : base(title,controller.ViewObject)
+    public ViewDescriptionElement Clone()
     {
-      this.Controller = controller;
-    }
-
-    public new ControlViewElement Clone()
-    {
-      return new ControlViewElement(this);
+      return new ViewDescriptionElement(this);
     }
 
     #region ICloneable Members
@@ -58,7 +53,7 @@ namespace Altaxo.Gui.Common
 
     object ICloneable.Clone()
     {
-      return new ControlViewElement(this);
+      return new ViewDescriptionElement(this);
     }
 
     #endregion

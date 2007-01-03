@@ -153,7 +153,7 @@ namespace Altaxo.Gui.Common
             this.ResumeLayout(false);
       */
       System.Windows.Forms.TabPage tab = new System.Windows.Forms.TabPage(title);
-
+      
 
       System.Windows.Forms.Control cc = (System.Windows.Forms.Control)view;
       
@@ -164,7 +164,7 @@ namespace Altaxo.Gui.Common
 
       if (null != cc)
       {
-
+        cc.Enter += EhChildControl_Entered;
         int diffx = Math.Max(0, cc.Width - m_TabControl.TabPages[0].ClientSize.Width);
         int diffy = Math.Max(0, cc.Height - m_TabControl.TabPages[0].ClientSize.Height);
 
@@ -179,6 +179,15 @@ namespace Altaxo.Gui.Common
     {
       m_TabControl.SelectedIndex = index;
       m_TabControl.TabPages[index].Focus();
+    }
+
+    public event EventHandler ChildControl_Entered;
+    void EhChildControl_Entered(object sender, EventArgs e)
+    {
+      if (ChildControl_Entered != null)
+      {
+        ChildControl_Entered(sender, e);
+      }
     }
     #endregion
   }

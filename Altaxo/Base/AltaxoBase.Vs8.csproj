@@ -1197,6 +1197,7 @@
     <Compile Include="Graph\Plot\Groups\PlotGroupStrictness.cs" />
     <Compile Include="Graph\Plot\Groups\PlotGroupStyle.cs" />
     <Compile Include="Graph\Plot\Groups\PlotGroupStyleCollectionBase.cs" />
+    <Compile Include="Graph\Plot\Groups\SkipFrequencyGroupStyle.cs" />
     <Compile Include="Graph\Plot\Groups\SymbolSizeGroupStyle.cs" />
     <Compile Include="Graph\PointD.cs" />
     <Compile Include="Graph\Scales\AngularScale.cs" />
@@ -1293,6 +1294,7 @@
     <Compile Include="Gui\Common\TabbedDialogView.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Gui\Common\ViewDescriptionElement.cs" />
     <Compile Include="Gui\ExpectedTypeOfView.cs" />
     <Compile Include="Gui\Graph\AxisLineStyleControl.cs">
       <SubType>UserControl</SubType>
@@ -1396,6 +1398,7 @@
     <Compile Include="Gui\UserControlForControllerAttribute.cs" />
     <Compile Include="Gui\UserControllerForObjectAttribute.cs" />
     <Compile Include="Main\EventSuppressor.cs" />
+    <Compile Include="Main\InstanceChangedEvent.cs" />
     <Compile Include="Scripting\ProgramInstanceScript.cs" />
   </ItemGroup>
   <ItemGroup>

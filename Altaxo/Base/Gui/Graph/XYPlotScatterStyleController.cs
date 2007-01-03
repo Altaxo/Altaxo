@@ -121,7 +121,7 @@ namespace Altaxo.Gui.Graph
   {
   }
 
-  public interface IXYPlotScatterStyleController : IMVCAController
+  public interface IXYPlotScatterStyleController : IMVCANController
   {
     /// <summary>
     /// If activated, this causes the view to disable all gui elements if neither a line style nor a fill style is choosen.
@@ -142,14 +142,35 @@ namespace Altaxo.Gui.Graph
     ScatterPlotStyle _doc;
     ScatterPlotStyle _tempDoc;
     IXYPlotScatterStyleView _view;
-
+    UseDocument _useDocumentCopy;
+    
+    public XYPlotScatterStyleController()
+    { 
+    }
 
     public XYPlotScatterStyleController(ScatterPlotStyle doc)
     {
+      if (doc == null)
+        throw new ArgumentNullException("doc is null");
 
-      _doc = doc;
-      _tempDoc = (ScatterPlotStyle)_doc.Clone();
+      if (!InitializeDocument(doc))
+        throw new ApplicationException("Programming error");
     }
+
+    public bool InitializeDocument(params object[] args)
+    {
+      if (args.Length == 0 || !(args[0] is ScatterPlotStyle))
+        return false;
+
+      bool isFirstTime = (null == _doc);
+      _doc = (ScatterPlotStyle)args[0];
+      _tempDoc = _useDocumentCopy == UseDocument.Directly ? _doc : (ScatterPlotStyle)_doc.Clone();
+      Initialize(isFirstTime);
+      return true;
+    }
+
+    public UseDocument UseDocumentCopy { set { _useDocumentCopy = value; } } // not used here
+
 
     public static string [] GetPlotColorNames()
     {
@@ -179,7 +200,7 @@ namespace Altaxo.Gui.Graph
         _view.SetEnableDisableMain(bActivate);
     }
 
-    void Initialize()
+    void Initialize(bool isFirstTime)
     {
       if(_view!=null)
       {
@@ -271,7 +292,7 @@ namespace Altaxo.Gui.Graph
 
         _view = value as IXYPlotScatterStyleView;
         
-        Initialize();
+        Initialize(false);
 
         if(_view!=null)
           _view.Controller = this;

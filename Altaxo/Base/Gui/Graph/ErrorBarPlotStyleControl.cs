@@ -121,6 +121,18 @@ namespace Altaxo.Gui.Graph
       }
     }
 
+    public string SkipFrequency
+    {
+      get
+      {
+        return _edSkipFrequency.Text;
+      }
+      set
+      {
+        _edSkipFrequency.Text = value;
+      }
+    }
+
     public bool IndependentNegativeError
     {
       get
@@ -166,6 +178,12 @@ namespace Altaxo.Gui.Graph
 
     public event CancelEventHandler VerifySymbolSize;
 
+    public event CancelEventHandler VerifySkipFrequency;
+
+    public event EventHandler ClearPositiveError;
+
+    public event EventHandler ClearNegativeError;
+
     #endregion
 
     private void _btSelectErrorColumn_Click(object sender, EventArgs e)
@@ -192,6 +210,24 @@ namespace Altaxo.Gui.Graph
     {
       if (null != VerifySymbolSize)
         VerifySymbolSize(this, e);
+    }
+
+    private void _edSkipFrequency_Validating(object sender, CancelEventArgs e)
+    {
+      if (null != VerifySkipFrequency)
+        VerifySkipFrequency(this, e);
+    }
+
+    private void _btClearPosError_Click(object sender, EventArgs e)
+    {
+      if (null != ClearPositiveError)
+        ClearPositiveError(this, EventArgs.Empty);
+    }
+
+    private void _btClearNegError_Click(object sender, EventArgs e)
+    {
+      if (null != ClearNegativeError)
+        ClearNegativeError(this, EventArgs.Empty);
     }
   }
 }

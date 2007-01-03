@@ -22,8 +22,8 @@
 
 using System;
 using Altaxo.Graph.Gdi;
+using Altaxo.Graph.Gdi.Plot;
 using Altaxo.Graph.Gdi.Plot.Styles;
-
 
 namespace Altaxo.Gui.Graph
 {
@@ -128,6 +128,11 @@ namespace Altaxo.Gui.Graph
     public virtual void EhView_AddStyle(int[] selindices, int nstyle)
     {
       IG2DPlotStyle style = (IG2DPlotStyle)Activator.CreateInstance(this._plotStyleTypes[nstyle]);
+      IPlotArea layer = Main.DocumentPath.GetRootNodeImplementing<IPlotArea>(_doc);
+      G2DPlotItem plotitem = Main.DocumentPath.GetRootNodeImplementing<G2DPlotItem>(_doc);
+      if(layer!=null && plotitem!=null)
+        _doc.PrepareNewSubStyle(style, layer, plotitem.GetRangesAndPoints(layer));
+
       _tempdoc.Add(style);
       UpdateStyleList(new int[]{});
 

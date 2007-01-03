@@ -456,7 +456,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       _dropLine = new CSPlaneIDList();
       _pen = new PenX(penColor, penWidth);
       _symbolSize = size;
-      this._independentSymbolSize = true;
 
       _relativePenWidth = penWidth / size;
       _skipFreq = 1;
@@ -476,7 +475,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       this._independentColor = false;
 
       this._symbolSize = 8;
-      this._independentSymbolSize = true;
 
       this._relativePenWidth = 0.1f;
       this._skipFreq = 1;
@@ -795,7 +793,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     {
       get
       {
-        return true;
+        return !this._independentColor;
       }
     }
 
@@ -926,6 +924,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       ColorGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
       SymbolSizeGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
       SymbolShapeStyleGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
+      SkipFrequencyGroupStyle.AddLocalGroupStyle(externalGroups, localGroups); // (local group style only)
     }
 
     public void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups, IPlotArea layer, Processed2DPlotData pdata)
@@ -937,6 +936,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
       if(this.IsSymbolSizeProvider)
         SymbolSizeGroupStyle.PrepareStyle(externalGroups, localGroups, delegate() { return SymbolSize; });
+
+      // SkipFrequency should be the same for all sub plot styles, so there is no "private" property
+      SkipFrequencyGroupStyle.PrepareStyle(externalGroups, localGroups, delegate() { return SkipFrequency; });
       
     }
 
@@ -950,7 +952,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
       if(!_independentSymbolSize)
         SymbolSizeGroupStyle.ApplyStyle(externalGroups,localGroups,delegate(float size) { this.SymbolSize = size; });
-    
+
+      // SkipFrequency should be the same for all sub plot styles, so there is no "private" property
+      SkipFrequencyGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(int c) { this.SkipFrequency=c; });
+
     }
 
     #endregion

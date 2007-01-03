@@ -51,6 +51,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// </summary>
     bool _doNotShiftHorizontalPosition;
 
+    /// <summary>
+    /// Skip frequency.
+    /// </summary>
+    protected int _skipFreq;
 
     /// <summary>
     /// When we deal with bar charts, this is the logical shift between real point
@@ -82,6 +86,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         info.AddValue("IndependentSymbolSize", s._independentSymbolSize);
         info.AddValue("SymbolSize", s._symbolSize);
         info.AddValue("SymbolGap", s._symbolGap);
+        info.AddValue("SkipFreq", s._skipFreq);
 
         info.AddValue("ShowEndBars", s._showEndBars);
         info.AddValue("NotShiftHorzPos", s._doNotShiftHorizontalPosition);
@@ -101,6 +106,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         s._independentSymbolSize = info.GetBoolean("IndependentSymbolSize");
         s._symbolSize = info.GetInt32("SymbolSize");
         s._symbolGap = info.GetBoolean("SymbolGap");
+        s._skipFreq = info.GetInt32("SkipFreq");
         s._showEndBars = info.GetBoolean("ShowEndBars");
         s._doNotShiftHorizontalPosition = info.GetBoolean("NotShiftHorzPos");
 
@@ -160,6 +166,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     {
       get { return _symbolSize; }
       set { _symbolSize = value; }
+    }
+
+    /// <summary>Controls the length of the end bar.</summary>
+    public int SkipFrequency
+    {
+      get { return _skipFreq; }
+      set { _skipFreq = value; }
     }
 
     /// <summary>
@@ -271,6 +284,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     {
       if (!_independentColor)
         Graph.Plot.Groups.ColorGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
+
+      SkipFrequencyGroupStyle.AddLocalGroupStyle(externalGroups, localGroups); // (local group only)
      
     }
 
@@ -278,6 +293,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     {
       if (!_independentColor)
         Graph.Plot.Groups.ColorGroupStyle.PrepareStyle(externalGroups,localGroups, delegate() { return PlotColors.Colors.GetPlotColor(this._strokePen.Color); });
+
+      // SkipFrequency should be the same for all sub plot styles, so there is no "private" property
+      SkipFrequencyGroupStyle.PrepareStyle(externalGroups, localGroups, delegate() { return SkipFrequency; });
+
 
       // note: symbol size and barposition are only applied, but not prepared
       // this item can not be used as provider of a symbol size
@@ -288,6 +307,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       // color
       if (!_independentColor)
         ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(PlotColor c) { this._strokePen.Color = c; });
+
+      // SkipFrequency should be the same for all sub plot styles, so there is no "private" property
+      SkipFrequencyGroupStyle.ApplyStyle(externalGroups, localGroups, delegate(int c) { this.SkipFrequency = c; });
 
       // symbol size
       if (!_independentSymbolSize)

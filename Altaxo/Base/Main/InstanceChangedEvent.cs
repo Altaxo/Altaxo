@@ -21,46 +21,31 @@
 #endregion
 
 using System;
-using System.Collections;
-using System.Text;
 
-namespace Altaxo.Gui.Common
+namespace Altaxo.Main
 {
-  public class ControlViewElement : ViewDescriptionElement, ICloneable
+
+  public class InstanceChangedEventArgs<T> : System.EventArgs
   {
-    public IApplyController Controller;
+    protected T _oldObject, _newObject;
 
-    public ControlViewElement(ControlViewElement from)
-      : base(from)
+    public InstanceChangedEventArgs(T oldObject, T newObject)
     {
-      this.Controller = from.Controller;
+      this._oldObject = oldObject;
+      this._newObject = newObject;
     }
 
-    public ControlViewElement(string title, IApplyController controller, object view)
-      : base(title,view)
+    public T NewInstance
     {
-      this.Controller = controller;
+      get { return this._newObject; }
     }
 
-    public ControlViewElement(string title, IMVCAController controller)
-      : base(title,controller.ViewObject)
+    public T OldInstance
     {
-      this.Controller = controller;
+      get { return this._oldObject; }
     }
-
-    public new ControlViewElement Clone()
-    {
-      return new ControlViewElement(this);
-    }
-
-    #region ICloneable Members
-
-
-    object ICloneable.Clone()
-    {
-      return new ControlViewElement(this);
-    }
-
-    #endregion
   }
+
+  public delegate void InstanceChangedEventHandler<T>(object sender, InstanceChangedEventArgs<T> e);
+
 }

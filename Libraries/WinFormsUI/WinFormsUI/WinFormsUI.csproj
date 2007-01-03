@@ -294,7 +294,9 @@
     <EmbeddedResource Include="Resources\DockPaneStrip.ScrollRightDisabled.bmp" />
     <EmbeddedResource Include="Resources\DockPaneStrip.ScrollRightEnabled.bmp" />
     <EmbeddedResource Include="Resources\MdiClientController.bmp" />
-    <EmbeddedResource Include="Strings.resX" />
+    <EmbeddedResource Include="Strings.resX">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Controls\CodeDoc\InertButton.xml" />

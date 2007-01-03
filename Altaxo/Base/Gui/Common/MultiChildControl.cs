@@ -41,6 +41,9 @@ namespace Altaxo.Gui.Common
     /// </summary>
     private System.ComponentModel.Container components = null;
 
+    /// <summary>Event fired when one of the child controls is leaved.</summary>
+    public event EventHandler ChildControlEntered;
+
     public MultiChildControl()
     {
       // This call is required by the Windows.Forms Form Designer.
@@ -137,11 +140,12 @@ namespace Altaxo.Gui.Common
     }
 
     Control[] _childs = new Control[0];
-    public void InitializeChilds(object[] childs, int initialfocused)
+    public void InitializeChilds(ViewDescriptionElement[] childs, int initialfocused)
     {
       for(int i=0;i<_childs.Length;i++)
       {
-        _childs[i].SizeChanged -= new EventHandler(EhChilds_SizeChanged);
+        _childs[i].SizeChanged -= EhChilds_SizeChanged;
+        _childs[i].Enter -= EhChilds_Enter;
       }
 
       this.Controls.Clear();
@@ -151,12 +155,37 @@ namespace Altaxo.Gui.Common
       _childs = new Control[childs.Length];
       for(int i=0;i<_childs.Length;i++)
       {
-        _childs[i] = (Control)childs[i];
-        _childs[i].SizeChanged += new EventHandler(EhChilds_SizeChanged);
+        if(string.IsNullOrEmpty(childs[i].Title))
+        {
+          _childs[i] = (Control)childs[i].View;
+          
+          _childs[i].SizeChanged += EhChilds_SizeChanged;
+          _childs[i].Enter += EhChilds_Enter;
+        }
+        else
+        {
+          GroupBox gbox = new GroupBox();
+          gbox.Text = childs[i].Title;
+          Control gboxchild = (Control)childs[i].View;
+          gbox.Padding = new Padding(gbox.Padding.Left, Math.Max(SystemInformation.CaptionHeight/2,gbox.Padding.Top), gbox.Padding.Right, gbox.Padding.Bottom);
+          gbox.AutoSize = true;
+          gboxchild.Location = new Point(gbox.Padding.Left, gbox.Padding.Top);
+          gbox.Controls.Add(gboxchild);
+          _childs[i] = gbox;
+
+          _childs[i].SizeChanged += EhChilds_SizeChanged;
+          gboxchild.Enter += EhChilds_Enter;
+        }
       }
     
       this.Controls.AddRange(_childs);
       LocateAndResize();
+    }
+
+    private void EhChilds_Enter(object sender, EventArgs e)
+    {
+      if (ChildControlEntered != null)
+        ChildControlEntered(sender, e);
     }
 
     private void EhChilds_SizeChanged(object sender, EventArgs e)

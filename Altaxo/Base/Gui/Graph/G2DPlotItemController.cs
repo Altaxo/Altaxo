@@ -21,6 +21,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using Altaxo.Gui.Common;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Plot;
@@ -49,11 +50,15 @@ namespace Altaxo.Gui.Graph
     PlotGroupStyleCollection _groupStyles;
     
     IG2DPlotStyle _additionalPlotStyle;
-    int _insertAdditionalPlotStyle=-1;
     IXYPlotGroupView _plotGroupView;
-    IMVCAController _plotGroupController;
 
+    IMVCAController _dataController;
+    IMVCAController _plotGroupController;
     IXYPlotStyleCollectionController _styleCollectionController;
+    List<IMVCANController> _styleControllerList = new List<IMVCANController>();
+    IMVCANController _additionalPlotStyleController;
+    Common.MultiChildController _combinedScatterLineGroupController;
+    
 
     public G2DPlotItemController()
     {
@@ -109,21 +114,23 @@ namespace Altaxo.Gui.Graph
 
     void InitializeCollectionAndData()
     {
+      _dataController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _tempdoc.DataObject, _tempdoc }, typeof(IMVCAController));
+      if (_dataController != null)
+        AddTab("Data", _dataController, _dataController.ViewObject);
 
-      _styleCollectionController = (IXYPlotStyleCollectionController)Current.Gui.GetControllerAndControl(new object[]{_tempdoc.Style},typeof(IXYPlotStyleCollectionController));
-      AddTab("Styles",_styleCollectionController,_styleCollectionController.ViewObject);
-      _styleCollectionController.CollectionChangeCommit += new EventHandler(_styleCollectionController_CollectionChangeCommit);
+
 
       InitializePlotGroupView();
+
       if (_plotGroupController != null)
       {
         AddTab("Grouping", _plotGroupController, _plotGroupController.ViewObject);
       }
-     
 
-      IMVCAController ctrl = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _tempdoc.DataObject, _tempdoc }, typeof(IMVCAController));
-      if(ctrl!=null)
-        AddTab("Data", ctrl, ctrl.ViewObject);
+
+      _styleCollectionController = (IXYPlotStyleCollectionController)Current.Gui.GetControllerAndControl(new object[] { _tempdoc.Style }, typeof(IXYPlotStyleCollectionController));
+      AddTab("Styles", _styleCollectionController, _styleCollectionController.ViewObject);
+      _styleCollectionController.CollectionChangeCommit += new EventHandler(_styleCollectionController_CollectionChangeCommit);
     }
 
     void InitializePlotGroupView()
@@ -191,9 +198,18 @@ namespace Altaxo.Gui.Graph
       if (_groupStyles != null)
       {
         _plotGroupController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _groupStyles }, typeof(IMVCAController));
-        // remove the tabs 2.., leaving only the style and data tab
-        RemoveTabRange(2, TabCount - 2);
+        // remove the tabs 1.., leaving only the style and data tab
+        if (_dataController == null)
+          RemoveTabRange(0, TabCount);
+        else
+          RemoveTabRange(1, TabCount - 1);
+
+        AddTab("Grouping", _plotGroupController, _plotGroupController.ViewObject);
+        AddTab("Styles", _styleCollectionController, _styleCollectionController.ViewObject);
+
         InitializeStyles();
+
+        BringTabToFront(_dataController == null ? 0 : 1);
       }
     }
 
@@ -249,101 +265,204 @@ namespace Altaxo.Gui.Graph
       }
     }
 
+    /// <summary>
+    /// Return true if we need a helper style (either line or scatter) to fill a combined tab.
+    /// </summary>
+    /// <returns>True if we need a helper style.</returns>
+    /// <remarks>
+    /// Presumption, that we add a helper style, is:
+    /// - first item must be either line or scatter
+    /// - second item must be neither line nor scatter
+    /// - the group view must be the simple group view
+    /// </remarks>
+    bool NeedsHelperStyle()
+    {
+      bool addHelperStyle;
+      addHelperStyle = (_tempdoc.Style[0] is LinePlotStyle) || (_tempdoc.Style[0] is ScatterPlotStyle);
+      if (_tempdoc.Style.Count > 1)
+        addHelperStyle &= !((_tempdoc.Style[1] is LinePlotStyle) || (_tempdoc.Style[1] is ScatterPlotStyle));
+
+      return addHelperStyle;
+    }
+
+    /// <summary>
+    /// Returns true if we can use a tab that combines line, scatter, and a simplified group view
+    /// </summary>
+    /// <returns></returns>
+    /// <remarks>
+    /// presumption for a combined tab is:
+    /// - the group view must be the simple group view
+    /// -either a helper style must be added or there are at least 2 preexisting substyles, namely scatter and line
+    /// </remarks>
+    bool UseCombinedScatterLineGroupTab()
+    {
+      bool useCombinedTab;
+      useCombinedTab = _plotGroupView != null;
+      useCombinedTab &= (_tempdoc.Style.Count >= 2 && (_tempdoc.Style[0] is ScatterPlotStyle) && (_tempdoc.Style[1] is LinePlotStyle)) || NeedsHelperStyle();
+
+      return useCombinedTab;
+    }
 
     void InitializeStyles()
     {
-
-      if (_plotGroupController != null)
-        AddTab("Grouping", _plotGroupController, _plotGroupController.ViewObject);
-
-      IMVCAController ctrl;
-
-      // prepare the style 
-      // if there is only one line style or one scatter style,
-      // then add an additional scatter or line style, but set this additional style initially to have no function
+      // Clear the previous controller cache
       _additionalPlotStyle = null;
-      IG2DPlotStyle[] lineScatterPair = new IG2DPlotStyle[2];
+      if (_combinedScatterLineGroupController != null)
+      {
+        _combinedScatterLineGroupController.ChildControlChanged -= EhView_ActiveChildControlChanged;
+        _combinedScatterLineGroupController = null;
+      }
+      _styleControllerList.Clear();
 
+
+      // start to create new controllers
       if (_tempdoc.Style.Count > 0)
       {
-        if (_tempdoc.Style[0] is LinePlotStyle && (_tempdoc.Style.Count == 1 || !(_tempdoc.Style[1] is ScatterPlotStyle)))
-        {
-          ScatterPlotStyle scatterStyle = new ScatterPlotStyle();
-          scatterStyle.ParentObject = _tempdoc.Style;
-          _additionalPlotStyle = scatterStyle;
-          scatterStyle.Shape = Altaxo.Graph.Gdi.Plot.Styles.XYPlotScatterStyles.Shape.NoSymbol;
-
-          _insertAdditionalPlotStyle = 1;
-          lineScatterPair[0] = _tempdoc.Style[0];
-          lineScatterPair[1] = _additionalPlotStyle;
-        }
-        else if (_tempdoc.Style[0] is ScatterPlotStyle && (_tempdoc.Style.Count == 1 || !(_tempdoc.Style[1] is LinePlotStyle)))
-        {
-          LinePlotStyle lineStyle = new LinePlotStyle();
-          lineStyle.ParentObject = _tempdoc.Style;
-          _additionalPlotStyle = lineStyle;
-          lineStyle.Connection = Altaxo.Graph.Gdi.Plot.Styles.XYPlotLineStyles.ConnectionStyle.NoLine;
-
-          _insertAdditionalPlotStyle = 0;
-          lineScatterPair[0] = _additionalPlotStyle;
-          lineScatterPair[1] = _tempdoc.Style[0];
-        }
-        else if (_tempdoc.Style.Count >= 2 &&
-          (
-          ((_tempdoc.Style[0] is LinePlotStyle) && (_tempdoc.Style[1] is ScatterPlotStyle)) ||
-          ((_tempdoc.Style[0] is ScatterPlotStyle) && (_tempdoc.Style[1] is LinePlotStyle))
-          )
-          )
-        {
-          lineScatterPair[0] = _tempdoc.Style[0];
-          lineScatterPair[1] = _tempdoc.Style[1];
-        }
-        else
-        {
-          lineScatterPair = null;
-        }
-      }
+        bool addHelperStyle = NeedsHelperStyle();
+        bool useCombinedTab = UseCombinedScatterLineGroupTab();
 
 
-      int continue_With_I = 0;
-      if (lineScatterPair != null)
-      {
-        ArrayList arr = new ArrayList();
-        for (int i = 0; i < lineScatterPair.Length; ++i)
+        if (useCombinedTab)
         {
-          IMVCAController ct = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { lineScatterPair[i] }, typeof(IMVCAController));
-          if(ct!=null)
+          List<ControlViewElement> combList = new List<ControlViewElement>();
+
+          // create the controllers
+          IMVCANController ct1 = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _tempdoc.Style[0] }, typeof(IMVCANController),UseDocument.Directly);
+          _styleControllerList.Add(ct1);
+
+
+          if (addHelperStyle)
           {
-            arr.Add(new ControlViewElement(string.Empty,ct));
-            if(i==_insertAdditionalPlotStyle)
+            IPlotArea layer = Main.DocumentPath.GetRootNodeImplementing<IPlotArea>(_doc);
+            // add either line or scatter
+            if (_tempdoc.Style[0] is LinePlotStyle)
             {
-              if(ct is IXYPlotLineStyleController)
-                (ct as IXYPlotLineStyleController).SetEnableDisableMain(true);
-              else if (ct is IXYPlotScatterStyleController)
-                (ct as IXYPlotScatterStyleController).SetEnableDisableMain(true);
+              ScatterPlotStyle scatterStyle = new ScatterPlotStyle();
+              scatterStyle.ParentObject = _tempdoc.Style;
+              _tempdoc.Style.PrepareNewSubStyle(scatterStyle, layer, _doc.GetRangesAndPoints(layer));
+              _additionalPlotStyle = scatterStyle;
+              scatterStyle.Shape = Altaxo.Graph.Gdi.Plot.Styles.XYPlotScatterStyles.Shape.NoSymbol;
+
+              _additionalPlotStyleController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _additionalPlotStyle }, typeof(IMVCANController),UseDocument.Directly);
+              combList.Add(new ControlViewElement("Line", _additionalPlotStyleController));
+              combList.Add(new ControlViewElement("Symbol", ct1));
+            }
+            else
+            {
+              LinePlotStyle lineStyle = new LinePlotStyle();
+              lineStyle.ParentObject = _tempdoc.Style;
+              _tempdoc.Style.PrepareNewSubStyle(lineStyle, layer, _doc.GetRangesAndPoints(layer));
+              _additionalPlotStyle = lineStyle;
+              lineStyle.Connection = Altaxo.Graph.Gdi.Plot.Styles.XYPlotLineStyles.ConnectionStyle.NoLine;
+
+              _additionalPlotStyleController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _additionalPlotStyle }, typeof(IMVCANController),UseDocument.Directly);
+              combList.Add(new ControlViewElement("Symbol", ct1));
+              combList.Add(new ControlViewElement("Line", _additionalPlotStyleController));
             }
           }
+          else // no helper style, i.e. second style is line style
+          {
+            // create the controllers
+            IMVCANController ct2 = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _tempdoc.Style[1] }, typeof(IMVCANController),UseDocument.Directly);
+            _styleControllerList.Add(ct2);
+            combList.Add(new ControlViewElement("Symbol", ct1));
+            combList.Add(new ControlViewElement("Line", ct2));
+          }
+
+          combList.Add(new ControlViewElement(string.Empty, this, this._plotGroupView));
+          _combinedScatterLineGroupController = new Common.MultiChildController(combList.ToArray(), true);
+          Current.Gui.FindAndAttachControlTo(_combinedScatterLineGroupController);
+          AddTab(_additionalPlotStyle == null ? "Style 1&&2" : "Style 1", _combinedScatterLineGroupController, _combinedScatterLineGroupController.ViewObject);
+          _combinedScatterLineGroupController.ChildControlChanged += this.EhView_ActiveChildControlChanged;
+        } // if use CombinedTab
+
+        // now the remaining styles
+        int start = useCombinedTab ? (addHelperStyle ? 1 : 2) : 0;
+        for (int i = start; i < _tempdoc.Style.Count; i++)
+        {
+          IMVCANController ctrl = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _tempdoc.Style[i] }, typeof(IMVCANController),UseDocument.Directly);
+          _styleControllerList.Add(ctrl);
+          AddTab("Style " + (i + 1).ToString(), ctrl, ctrl != null ? ctrl.ViewObject : null);
         }
-        if(this._plotGroupView!=null)
-          arr.Add(new ControlViewElement(string.Empty,this,this._plotGroupView));
-        Common.MultiChildController mctrl = new Common.MultiChildController((ControlViewElement[])arr.ToArray(typeof(ControlViewElement)), true);
-        Current.Gui.FindAndAttachControlTo(mctrl);
-
-        AddTab(_additionalPlotStyle == null ? "Style 1&&2" : "Style 1", mctrl, mctrl.ViewObject);
-
-        continue_With_I = _additionalPlotStyle == null ? 2 : 1;
       }
-
-
-      for (int i = continue_With_I; i < _tempdoc.Style.Count; i++)
-      {
-        ctrl = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _tempdoc.Style[i] }, typeof(IMVCAController));
-        AddTab("Style " + (i + 1).ToString(), ctrl, ctrl!=null ? ctrl.ViewObject : null);
-      }
-
       base.SetElements(false);
     }
 
+
+    protected override void EhView_ActiveChildControlChanged(object sender, Main.InstanceChangedEventArgs<object> e)
+    {
+      // first: test if this is the view of the additional style
+      if (_additionalPlotStyleController != null && object.ReferenceEquals(_additionalPlotStyleController.ViewObject, e.OldInstance))
+      {
+        if (!_additionalPlotStyleController.Apply())
+          return;
+
+        if (_additionalPlotStyle is LinePlotStyle && ((LinePlotStyle)_additionalPlotStyle).IsVisible)
+        {
+          MakeAdditionalPlotStylePermanent();
+        }
+        else if (_additionalPlotStyle is LinePlotStyle && ((ScatterPlotStyle)_additionalPlotStyle).IsVisible)
+        {
+          MakeAdditionalPlotStylePermanent();
+        }
+      }
+      else
+      {
+
+        // test if it is the view of the normal styles
+        for (int i = 0; i < _styleControllerList.Count; i++)
+        {
+          if (_styleControllerList[i] != null && object.ReferenceEquals(_styleControllerList[i].ViewObject, e.OldInstance))
+          {
+            if (!_styleControllerList[i].Apply())
+              return;
+
+            DistributeStyleChange(i);
+          }
+        }
+      }
+    }
+
+
+    void MakeAdditionalPlotStylePermanent()
+    {
+      IG2DPlotStyle additionalPlotStyle = _additionalPlotStyle;
+      _additionalPlotStyle = null;
+
+      if (additionalPlotStyle is LinePlotStyle)
+      {
+        _tempdoc.Style.Insert(1, additionalPlotStyle);
+        DistributeStyleChange(1);
+      }
+      else if(additionalPlotStyle is ScatterPlotStyle)
+      {
+        _tempdoc.Style.Insert(0, additionalPlotStyle);
+        DistributeStyleChange(0);
+      }
+    }
+
+    /// <summary>
+    /// This distributes changes made to one of the sub plot styles to all other plot styles. Additionally, the controller
+    /// for this styles are also updated.
+    /// </summary>
+    /// <param name="pivotelement"></param>
+    void DistributeStyleChange(int pivotelement)
+    {
+      IPlotArea layer = Main.DocumentPath.GetRootNodeImplementing<IPlotArea>(_doc);
+      _tempdoc.Style.DistributeSubStyleChange(pivotelement,layer,_doc.GetRangesAndPoints(layer));
+
+      // now all style controllers must be updated
+      for (int i = 0; i < _styleControllerList.Count; i++)
+      {
+        _styleControllerList[i].InitializeDocument(_tempdoc.Style[i]);
+      }
+
+      if (_additionalPlotStyle != null && _additionalPlotStyleController!=null)
+      {
+        _tempdoc.Style.PrepareNewSubStyle(_additionalPlotStyle, layer, _doc.GetRangesAndPoints(layer));
+        _additionalPlotStyleController.InitializeDocument(_additionalPlotStyle);
+      }
+    }
 
     #region IMVCController Members
 
@@ -384,17 +503,6 @@ namespace Altaxo.Gui.Graph
           applyResult = false;
           goto end_of_function;
         }
-      }
-
-      bool bAdditionalStyleIsVisible = false;
-      if (_additionalPlotStyle is ScatterPlotStyle)
-        bAdditionalStyleIsVisible = ((ScatterPlotStyle)_additionalPlotStyle).IsVisible;
-      if (_additionalPlotStyle is LinePlotStyle)
-        bAdditionalStyleIsVisible = ((LinePlotStyle)_additionalPlotStyle).IsVisible;
-
-      if (bAdditionalStyleIsVisible)
-      {
-        _tempdoc.Style.Insert(_insertAdditionalPlotStyle,_additionalPlotStyle);
       }
 
       if(!object.ReferenceEquals(_doc,_tempdoc))
@@ -439,14 +547,32 @@ namespace Altaxo.Gui.Graph
 
     #endregion
 
+    /// <summary>
+    /// Returns the tab index of the first style that is shown.
+    /// </summary>
+    /// <returns>Tab index of the first shown style.</returns>
+    private int GetFirstStyleTabIndex()
+    {
+      int result = 0;
+      if (_dataController != null)
+        ++result;
+      if (_plotGroupController != null)
+        ++result;
+      if (_styleCollectionController != null)
+        ++result;
+
+      return result;
+    }
+
     private void _styleCollectionController_CollectionChangeCommit(object sender, EventArgs e)
     {
       if(true==_styleCollectionController.Apply())
       {
         // remove the tabs 2..
-        RemoveTabRange(2,TabCount-2);
+        int firstStyle = GetFirstStyleTabIndex();
+        RemoveTabRange(firstStyle,TabCount-firstStyle);
         InitializeStyles();
-
+        BringTabToFront(GetFirstStyleTabIndex() - 1);
       }
     }
 

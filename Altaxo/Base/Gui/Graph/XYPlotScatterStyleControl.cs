@@ -39,8 +39,7 @@ namespace Altaxo.Gui.Graph
   {
     private IXYPlotScatterStyleViewEventSink _controller;
     private bool _EnableDisableAll=false;
-    private int m_SuppressEvents=0;
-    private System.Windows.Forms.GroupBox m_gbSymbol;
+    private int m_SuppressEvents = 0;
     private System.Windows.Forms.TextBox m_edSymbolSkipFrequency;
     private System.Windows.Forms.Label label6;
     private System.Windows.Forms.CheckBox m_chkSymbolSkipPoints;
@@ -87,7 +86,9 @@ namespace Altaxo.Gui.Graph
     private void InitializeComponent()
     {
       this.components = new System.ComponentModel.Container();
-      this.m_gbSymbol = new System.Windows.Forms.GroupBox();
+      this._lblDropLine = new System.Windows.Forms.Label();
+      this._lbDropLine = new System.Windows.Forms.CheckedListBox();
+      this._cbColor = new Altaxo.Gui.Common.Drawing.ColorComboBox();
       this._chkIndependentSize = new System.Windows.Forms.CheckBox();
       this.m_edSymbolSkipFrequency = new System.Windows.Forms.TextBox();
       this.label6 = new System.Windows.Forms.Label();
@@ -98,134 +99,25 @@ namespace Altaxo.Gui.Graph
       this.m_lblSymbolStyle = new System.Windows.Forms.Label();
       this.m_lblSymbolShape = new System.Windows.Forms.Label();
       this._chkIndependentColor = new System.Windows.Forms.CheckBox();
-      this._lbDropLine = new System.Windows.Forms.CheckedListBox();
-      this._lblDropLine = new System.Windows.Forms.Label();
-      this._cbColor = new Altaxo.Gui.Common.Drawing.ColorComboBox();
-      this.m_gbSymbol.SuspendLayout();
       this.SuspendLayout();
-      // 
-      // m_gbSymbol
-      // 
-      this.m_gbSymbol.Controls.Add(this._lblDropLine);
-      this.m_gbSymbol.Controls.Add(this._lbDropLine);
-      this.m_gbSymbol.Controls.Add(this._cbColor);
-      this.m_gbSymbol.Controls.Add(this._chkIndependentSize);
-      this.m_gbSymbol.Controls.Add(this.m_edSymbolSkipFrequency);
-      this.m_gbSymbol.Controls.Add(this.label6);
-      this.m_gbSymbol.Controls.Add(this.m_chkSymbolSkipPoints);
-      this.m_gbSymbol.Controls.Add(this.m_cbSymbolSize);
-      this.m_gbSymbol.Controls.Add(this.m_cbSymbolStyle);
-      this.m_gbSymbol.Controls.Add(this.m_cbSymbolShape);
-      this.m_gbSymbol.Controls.Add(this.m_lblSymbolStyle);
-      this.m_gbSymbol.Controls.Add(this.m_lblSymbolShape);
-      this.m_gbSymbol.Controls.Add(this._chkIndependentColor);
-      this.m_gbSymbol.Location = new System.Drawing.Point(8, 0);
-      this.m_gbSymbol.Name = "m_gbSymbol";
-      this.m_gbSymbol.Size = new System.Drawing.Size(224, 328);
-      this.m_gbSymbol.TabIndex = 24;
-      this.m_gbSymbol.TabStop = false;
-      this.m_gbSymbol.Text = "Symbol";
-      // 
-      // _chkIndependentSize
-      // 
-      this._chkIndependentSize.Location = new System.Drawing.Point(16, 176);
-      this._chkIndependentSize.Name = "_chkIndependentSize";
-      this._chkIndependentSize.Size = new System.Drawing.Size(80, 24);
-      this._chkIndependentSize.TabIndex = 27;
-      this._chkIndependentSize.Text = "indep. Size";
-      // 
-      // m_edSymbolSkipFrequency
-      // 
-      this.m_edSymbolSkipFrequency.Location = new System.Drawing.Point(128, 296);
-      this.m_edSymbolSkipFrequency.Name = "m_edSymbolSkipFrequency";
-      this.m_edSymbolSkipFrequency.Size = new System.Drawing.Size(72, 20);
-      this.m_edSymbolSkipFrequency.TabIndex = 9;
-      this.m_edSymbolSkipFrequency.Text = "textBox1";
-      // 
-      // label6
-      // 
-      this.label6.Location = new System.Drawing.Point(8, 296);
-      this.label6.Name = "label6";
-      this.label6.Size = new System.Drawing.Size(64, 16);
-      this.label6.TabIndex = 8;
-      this.label6.Text = "Skip Points";
-      // 
-      // m_chkSymbolSkipPoints
-      // 
-      this.m_chkSymbolSkipPoints.Location = new System.Drawing.Point(80, 296);
-      this.m_chkSymbolSkipPoints.Name = "m_chkSymbolSkipPoints";
-      this.m_chkSymbolSkipPoints.Size = new System.Drawing.Size(48, 16);
-      this.m_chkSymbolSkipPoints.TabIndex = 7;
-      this.m_chkSymbolSkipPoints.Text = "Freq";
-      this.m_chkSymbolSkipPoints.CheckedChanged += new System.EventHandler(this.m_chkSymbolSkipPoints_CheckedChanged);
-      // 
-      // m_cbSymbolSize
-      // 
-      this.m_cbSymbolSize.Location = new System.Drawing.Point(96, 176);
-      this.m_cbSymbolSize.Name = "m_cbSymbolSize";
-      this.m_cbSymbolSize.Size = new System.Drawing.Size(112, 21);
-      this.m_cbSymbolSize.TabIndex = 5;
-      this.m_cbSymbolSize.Text = "comboBox1";
-      // 
-      // m_cbSymbolStyle
-      // 
-      this.m_cbSymbolStyle.Location = new System.Drawing.Point(56, 144);
-      this.m_cbSymbolStyle.Name = "m_cbSymbolStyle";
-      this.m_cbSymbolStyle.Size = new System.Drawing.Size(152, 21);
-      this.m_cbSymbolStyle.TabIndex = 4;
-      this.m_cbSymbolStyle.Text = "comboBox1";
-      // 
-      // m_cbSymbolShape
-      // 
-      this.m_cbSymbolShape.Location = new System.Drawing.Point(56, 112);
-      this.m_cbSymbolShape.Name = "m_cbSymbolShape";
-      this.m_cbSymbolShape.Size = new System.Drawing.Size(152, 21);
-      this.m_cbSymbolShape.TabIndex = 3;
-      this.m_cbSymbolShape.Text = "comboBox1";
-      this.m_cbSymbolShape.SelectionChangeCommitted += new System.EventHandler(this.EhSymbolShape_SelectionChangeCommit);
-      // 
-      // m_lblSymbolStyle
-      // 
-      this.m_lblSymbolStyle.Location = new System.Drawing.Point(8, 152);
-      this.m_lblSymbolStyle.Name = "m_lblSymbolStyle";
-      this.m_lblSymbolStyle.Size = new System.Drawing.Size(40, 16);
-      this.m_lblSymbolStyle.TabIndex = 1;
-      this.m_lblSymbolStyle.Text = "Style";
-      // 
-      // m_lblSymbolShape
-      // 
-      this.m_lblSymbolShape.Location = new System.Drawing.Point(8, 120);
-      this.m_lblSymbolShape.Name = "m_lblSymbolShape";
-      this.m_lblSymbolShape.Size = new System.Drawing.Size(64, 16);
-      this.m_lblSymbolShape.TabIndex = 0;
-      this.m_lblSymbolShape.Text = "Shape";
-      // 
-      // _chkIndependentColor
-      // 
-      this._chkIndependentColor.Location = new System.Drawing.Point(8, 24);
-      this._chkIndependentColor.Name = "_chkIndependentColor";
-      this._chkIndependentColor.Size = new System.Drawing.Size(128, 16);
-      this._chkIndependentColor.TabIndex = 26;
-      this._chkIndependentColor.Text = "independent Color";
-      this._chkIndependentColor.CheckedChanged += new System.EventHandler(this._chkIndependentColor_CheckedChanged);
-      // 
-      // _lbDropLine
-      // 
-      this._lbDropLine.CheckOnClick = true;
-      this._lbDropLine.FormattingEnabled = true;
-      this._lbDropLine.Location = new System.Drawing.Point(80, 226);
-      this._lbDropLine.Name = "_lbDropLine";
-      this._lbDropLine.Size = new System.Drawing.Size(128, 64);
-      this._lbDropLine.TabIndex = 25;
       // 
       // _lblDropLine
       // 
-      this._lblDropLine.Location = new System.Drawing.Point(10, 226);
+      this._lblDropLine.Location = new System.Drawing.Point(6, 166);
       this._lblDropLine.Name = "_lblDropLine";
       this._lblDropLine.Size = new System.Drawing.Size(64, 16);
       this._lblDropLine.TabIndex = 29;
       this._lblDropLine.Text = "Drop Lines:";
       this._lblDropLine.Click += new System.EventHandler(this.label1_Click);
+      // 
+      // _lbDropLine
+      // 
+      this._lbDropLine.CheckOnClick = true;
+      this._lbDropLine.FormattingEnabled = true;
+      this._lbDropLine.Location = new System.Drawing.Point(76, 166);
+      this._lbDropLine.Name = "_lbDropLine";
+      this._lbDropLine.Size = new System.Drawing.Size(128, 64);
+      this._lbDropLine.TabIndex = 25;
       // 
       // _cbColor
       // 
@@ -235,6 +127,7 @@ namespace Altaxo.Gui.Graph
       this._cbColor.FormattingEnabled = true;
       this._cbColor.ItemHeight = 13;
       this._cbColor.Items.AddRange(new object[] {
+            System.Drawing.Color.Black,
             System.Drawing.Color.Black,
             System.Drawing.Color.Red,
             System.Drawing.Color.Green,
@@ -256,19 +149,113 @@ namespace Altaxo.Gui.Graph
             System.Drawing.Color.Magenta,
             System.Drawing.Color.Yellow,
             System.Drawing.Color.Coral});
-      this._cbColor.Location = new System.Drawing.Point(6, 46);
+      this._cbColor.Location = new System.Drawing.Point(12, 129);
       this._cbColor.Name = "_cbColor";
       this._cbColor.Size = new System.Drawing.Size(121, 19);
       this._cbColor.TabIndex = 28;
       // 
+      // _chkIndependentSize
+      // 
+      this._chkIndependentSize.Location = new System.Drawing.Point(12, 70);
+      this._chkIndependentSize.Name = "_chkIndependentSize";
+      this._chkIndependentSize.Size = new System.Drawing.Size(80, 24);
+      this._chkIndependentSize.TabIndex = 27;
+      this._chkIndependentSize.Text = "indep. Size";
+      // 
+      // m_edSymbolSkipFrequency
+      // 
+      this.m_edSymbolSkipFrequency.Location = new System.Drawing.Point(124, 236);
+      this.m_edSymbolSkipFrequency.Name = "m_edSymbolSkipFrequency";
+      this.m_edSymbolSkipFrequency.Size = new System.Drawing.Size(72, 20);
+      this.m_edSymbolSkipFrequency.TabIndex = 9;
+      this.m_edSymbolSkipFrequency.Text = "textBox1";
+      // 
+      // label6
+      // 
+      this.label6.Location = new System.Drawing.Point(4, 236);
+      this.label6.Name = "label6";
+      this.label6.Size = new System.Drawing.Size(64, 16);
+      this.label6.TabIndex = 8;
+      this.label6.Text = "Skip Points";
+      // 
+      // m_chkSymbolSkipPoints
+      // 
+      this.m_chkSymbolSkipPoints.Location = new System.Drawing.Point(76, 236);
+      this.m_chkSymbolSkipPoints.Name = "m_chkSymbolSkipPoints";
+      this.m_chkSymbolSkipPoints.Size = new System.Drawing.Size(48, 16);
+      this.m_chkSymbolSkipPoints.TabIndex = 7;
+      this.m_chkSymbolSkipPoints.Text = "Freq";
+      this.m_chkSymbolSkipPoints.CheckedChanged += new System.EventHandler(this.m_chkSymbolSkipPoints_CheckedChanged);
+      // 
+      // m_cbSymbolSize
+      // 
+      this.m_cbSymbolSize.Location = new System.Drawing.Point(92, 70);
+      this.m_cbSymbolSize.Name = "m_cbSymbolSize";
+      this.m_cbSymbolSize.Size = new System.Drawing.Size(112, 21);
+      this.m_cbSymbolSize.TabIndex = 5;
+      this.m_cbSymbolSize.Text = "comboBox1";
+      // 
+      // m_cbSymbolStyle
+      // 
+      this.m_cbSymbolStyle.Location = new System.Drawing.Point(52, 38);
+      this.m_cbSymbolStyle.Name = "m_cbSymbolStyle";
+      this.m_cbSymbolStyle.Size = new System.Drawing.Size(152, 21);
+      this.m_cbSymbolStyle.TabIndex = 4;
+      this.m_cbSymbolStyle.Text = "comboBox1";
+      // 
+      // m_cbSymbolShape
+      // 
+      this.m_cbSymbolShape.Location = new System.Drawing.Point(52, 6);
+      this.m_cbSymbolShape.Name = "m_cbSymbolShape";
+      this.m_cbSymbolShape.Size = new System.Drawing.Size(152, 21);
+      this.m_cbSymbolShape.TabIndex = 3;
+      this.m_cbSymbolShape.Text = "comboBox1";
+      this.m_cbSymbolShape.SelectionChangeCommitted += new System.EventHandler(this.EhSymbolShape_SelectionChangeCommit);
+      // 
+      // m_lblSymbolStyle
+      // 
+      this.m_lblSymbolStyle.Location = new System.Drawing.Point(4, 46);
+      this.m_lblSymbolStyle.Name = "m_lblSymbolStyle";
+      this.m_lblSymbolStyle.Size = new System.Drawing.Size(40, 16);
+      this.m_lblSymbolStyle.TabIndex = 1;
+      this.m_lblSymbolStyle.Text = "Style";
+      // 
+      // m_lblSymbolShape
+      // 
+      this.m_lblSymbolShape.Location = new System.Drawing.Point(4, 14);
+      this.m_lblSymbolShape.Name = "m_lblSymbolShape";
+      this.m_lblSymbolShape.Size = new System.Drawing.Size(42, 16);
+      this.m_lblSymbolShape.TabIndex = 0;
+      this.m_lblSymbolShape.Text = "Shape";
+      // 
+      // _chkIndependentColor
+      // 
+      this._chkIndependentColor.Location = new System.Drawing.Point(14, 107);
+      this._chkIndependentColor.Name = "_chkIndependentColor";
+      this._chkIndependentColor.Size = new System.Drawing.Size(128, 16);
+      this._chkIndependentColor.TabIndex = 26;
+      this._chkIndependentColor.Text = "independent Color";
+      this._chkIndependentColor.CheckedChanged += new System.EventHandler(this._chkIndependentColor_CheckedChanged);
+      // 
       // XYPlotScatterStyleControl
       // 
-      this.Controls.Add(this.m_gbSymbol);
+      this.Controls.Add(this._lblDropLine);
+      this.Controls.Add(this._lbDropLine);
+      this.Controls.Add(this.m_cbSymbolStyle);
+      this.Controls.Add(this._cbColor);
+      this.Controls.Add(this._chkIndependentColor);
+      this.Controls.Add(this._chkIndependentSize);
+      this.Controls.Add(this.m_lblSymbolShape);
+      this.Controls.Add(this.m_edSymbolSkipFrequency);
+      this.Controls.Add(this.m_lblSymbolStyle);
+      this.Controls.Add(this.label6);
+      this.Controls.Add(this.m_cbSymbolShape);
+      this.Controls.Add(this.m_chkSymbolSkipPoints);
+      this.Controls.Add(this.m_cbSymbolSize);
       this.Name = "XYPlotScatterStyleControl";
-      this.Size = new System.Drawing.Size(234, 336);
-      this.m_gbSymbol.ResumeLayout(false);
-      this.m_gbSymbol.PerformLayout();
+      this.Size = new System.Drawing.Size(232, 336);
       this.ResumeLayout(false);
+      this.PerformLayout();
 
     }
     #endregion

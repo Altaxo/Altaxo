@@ -201,7 +201,7 @@ namespace Altaxo.Gui.Graph
     void IndependentColor_Initialize(bool bIndependent);
   }
 
-  public interface IXYPlotLabelStyleController : IMVCAController
+  public interface IXYPlotLabelStyleController : IMVCANController
   {
   }
 
@@ -255,12 +255,33 @@ namespace Altaxo.Gui.Graph
 
     protected BackgroundStyleController _backgroundStyleController;
 
-    public XYPlotLabelStyleController(LabelPlotStyle plotStyle)
+    UseDocument _useDocumentCopy;
+
+    public XYPlotLabelStyleController()
     {
-      _doc = plotStyle;
-      Initialize(true);
-      _backgroundStyleController = new BackgroundStyleController(_doc.BackgroundStyle);
     }
+    public XYPlotLabelStyleController(LabelPlotStyle doc)
+    {
+      if (doc == null)
+        throw new ArgumentNullException("doc is null");
+
+      if (!InitializeDocument(doc))
+        throw new ApplicationException("Programming error");
+    }
+
+    public bool InitializeDocument(params object[] args)
+    {
+      if (args.Length == 0 || !(args[0] is LabelPlotStyle))
+        return false;
+
+      bool isFirstTime = (null == _doc);
+      _doc = (LabelPlotStyle)args[0];
+     // _tempDoc = _useDocumentCopy == UseDocument.Directly ? _doc : (LabelPlotStyle)_doc.Clone();
+      Initialize(true); // initialize always because we have to update the temporary variables
+      return true;
+    }
+
+    public UseDocument UseDocumentCopy { set { _useDocumentCopy = value; } } // not used here
 
 
     void Initialize(bool bInit)
@@ -279,6 +300,7 @@ namespace Altaxo.Gui.Graph
         _xOffset      = _doc.XOffset;
         _yOffset      = _doc.YOffset;
         _labelColumn = _doc.LabelColumn;
+        _backgroundStyleController = new BackgroundStyleController(_doc.BackgroundStyle);
       }
 
       if(null!=View)

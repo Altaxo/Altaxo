@@ -100,10 +100,12 @@ namespace Altaxo.Gui.Graph
    
  
     string LineConnect { get; }
+    bool ConnectCircular { get; set; }
   
     bool   LineFillArea { get; }
     ListNode LineFillDirection { get; }
     BrushX LineFillColor {get; }
+    bool IndependentFillColor { get; set; }
 
     
 
@@ -119,7 +121,7 @@ namespace Altaxo.Gui.Graph
 
   }
 
-  public interface IXYPlotLineStyleController : IMVCAController
+  public interface IXYPlotLineStyleController : IMVCANController
   {
     /// <summary>
     /// If activated, this causes the view to disable all gui elements if neither a line style nor a fill style is choosen.
@@ -143,13 +145,32 @@ namespace Altaxo.Gui.Graph
     LinePlotStyle _tempDoc;
     IColorTypeThicknessPenController _penController;
 
+    UseDocument _useDocumentCopy;
+    public XYPlotLineStyleController()
+    {
+    }
     public XYPlotLineStyleController(LinePlotStyle doc)
     {
-      _doc = doc;
-      _tempDoc = (LinePlotStyle)_doc.Clone();
-      _penController = new ColorTypeThicknessPenController(_tempDoc.PenHolder);
+      if(doc==null)
+        throw new ArgumentNullException("doc is null");
+
+      if (!InitializeDocument(doc))
+        throw new ApplicationException("Programming error");
     }
 
+    public bool InitializeDocument(params object[] args)
+    {
+      if (args.Length == 0 || !(args[0] is LinePlotStyle))
+        return false;
+
+      bool isFirstTime = (null == _doc);
+      _doc = (LinePlotStyle)args[0];
+      _tempDoc = _useDocumentCopy == UseDocument.Directly ? _doc : (LinePlotStyle)_doc.Clone();
+      Initialize(isFirstTime);
+      return true;
+    }
+
+    public UseDocument UseDocumentCopy { set { _useDocumentCopy = value; } } // not used here
 
    
     public object ViewObject
@@ -162,7 +183,7 @@ namespace Altaxo.Gui.Graph
 
         _view = value as IXYPlotLineStyleView;
         
-        Initialize();
+        Initialize(false);
 
         if(_view!=null)
           _view.Controller = this;
@@ -204,8 +225,9 @@ namespace Altaxo.Gui.Graph
         _view.SetEnableDisableMain(bActivate);
     }
 
-    void Initialize()
+    void Initialize(bool firstTime)
     {
+      _penController = new ColorTypeThicknessPenController(_tempDoc.PenHolder);
       if(_view!=null)
       {
         _view.InitializeIndependentColor(_tempDoc.IndependentColor);
@@ -220,6 +242,8 @@ namespace Altaxo.Gui.Graph
         SetFillCondition();
         SetFillDirection();
         SetFillColor();
+        _view.IndependentFillColor = _tempDoc.IndependentFillColor;
+        _view.ConnectCircular = _tempDoc.ConnectCircular;
         _view.SetEnableDisableMain(_ActivateEnableDisableMain);
       }
     }
@@ -295,13 +319,14 @@ namespace Altaxo.Gui.Graph
         _doc.LineSymbolGap = _view.LineSymbolGap;
 
         // Pen
+        _doc.IndependentColor = _view.IndependentColor;
         _penController.Apply();
         _doc.PenHolder.CopyFrom( _tempDoc.PenHolder );
 
        
         // Line Connect
         _doc.Connection = (Altaxo.Graph.Gdi.Plot.Styles.XYPlotLineStyles.ConnectionStyle)Enum.Parse(typeof(Altaxo.Graph.Gdi.Plot.Styles.XYPlotLineStyles.ConnectionStyle), _view.LineConnect);
-
+        _doc.ConnectCircular = _view.ConnectCircular;
 
         // Fill Area
         _doc.FillArea = _view.LineFillArea;
@@ -313,6 +338,7 @@ namespace Altaxo.Gui.Graph
         _doc.FillDirection = id;
         // Line fill color
         _doc.FillBrush = _view.LineFillColor;
+        _doc.IndependentFillColor = _view.IndependentFillColor;
 
       }
       catch(Exception ex)

@@ -396,12 +396,67 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       return bounds;
     }
 
-  
-    
+    /// <summary>
+    /// Distibute changes made to one group style of the collection (at index <c>pivot</c> to all other members of the collection.
+    /// </summary>
+    /// <param name="pivot">Index of the group style that was changed. This style keeps it's properties.</param>
+    /// <param name="layer"></param>
+    /// <param name="pdata"></param>
+    public void DistributeSubStyleChange(int pivot, IPlotArea layer, Processed2DPlotData pdata)
+    {
+      PlotGroupStyleCollection externGroup = new PlotGroupStyleCollection();
+      PlotGroupStyleCollection localGroup = new PlotGroupStyleCollection();
+      // because we don't step, the order is essential only for PrepareStyles
+      for (int i = 0; i < _innerList.Count; i++)
+        CollectLocalGroupStyles(externGroup, localGroup);
+
+      // prepare
+      this[pivot].PrepareGroupStyles(externGroup, localGroup, layer, pdata);
+      for (int i = 0; i < Count; i++)
+        if(i!=pivot)
+          this[i].PrepareGroupStyles(externGroup, localGroup, layer, pdata);
+
+      // apply
+      this[pivot].ApplyGroupStyles(externGroup, localGroup);
+      for (int i = 0; i < Count; i++)
+        if (i != pivot)
+          this[i].ApplyGroupStyles(externGroup, localGroup);
+    }
+
+    /// <summary>
+    /// Prepares a new substyle (one that is not already in the collection) for becoming member of the collection. The substyle will get
+    /// all distributes group properties (local only) of this style collection.
+    /// </summary>
+    /// <param name="newSubStyle">Sub style to prepare.</param>
+    /// <param name="layer"></param>
+    /// <param name="pdata"></param>
+    public void PrepareNewSubStyle(IG2DPlotStyle newSubStyle, IPlotArea layer, Processed2DPlotData pdata)
+    {
+      PlotGroupStyleCollection externGroup = new PlotGroupStyleCollection();
+      PlotGroupStyleCollection localGroup = new PlotGroupStyleCollection();
+      // because we don't step, the order is essential only for PrepareStyles
+      for (int i = 0; i < _innerList.Count; i++)
+        this[i].CollectLocalGroupStyles(externGroup, localGroup);
+      newSubStyle.CollectLocalGroupStyles(externGroup, localGroup);
+
+
+
+      // prepare
+      for (int i = 0; i < Count; i++)
+        this[i].PrepareGroupStyles(externGroup, localGroup, layer, pdata);
+      newSubStyle.PrepareGroupStyles(externGroup, localGroup, layer, pdata);
+
+      // apply
+      for (int i = 0; i < Count; i++)
+        this[i].ApplyGroupStyles(externGroup, localGroup);
+      newSubStyle.ApplyGroupStyles(externGroup, localGroup);
+    }
+
+
 
     #region IChangedEventSource Members
 
-    [field:NonSerialized]
+    [field: NonSerialized]
     public event EventHandler Changed;
 
     protected virtual void OnChanged()

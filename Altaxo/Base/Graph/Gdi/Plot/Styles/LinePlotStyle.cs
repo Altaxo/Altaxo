@@ -438,6 +438,35 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    public bool IndependentFillColor
+    {
+      get
+      {
+        return _independentFillColor;
+      }
+      set
+      {
+        bool oldValue = _independentFillColor;
+        _independentFillColor = value;
+        if (value != oldValue)
+          OnChanged();
+      }
+    }
+
+    public bool ConnectCircular
+    {
+      get
+      {
+        return _connectCircular;
+      }
+      set
+      {
+        bool oldValue = _connectCircular;
+        _connectCircular = value;
+        if (value != oldValue)
+          OnChanged();
+      }
+    }
 
 
 

@@ -59,6 +59,12 @@ namespace Altaxo.Gui.Common
     /// </summary>
     /// <param name="index">The index of the tab page to focus.</param>
     void BringTabToFront(int index);
+
+    /// <summary>
+    /// Occurs when the input focus leaves one of the child controls of the tabs. The sender
+    /// of this event is set to the child control that lost the input focus.
+    /// </summary>
+    event EventHandler ChildControl_Entered;
   }
 
   
@@ -135,6 +141,18 @@ namespace Altaxo.Gui.Common
       SetElements(false);
     }
 
+
+    object _lastActiveChildControl = null;
+    void EhView_ChildControlEntered(object sender, EventArgs e)
+    {
+      EhView_ActiveChildControlChanged(sender, new Main.InstanceChangedEventArgs<object>(_lastActiveChildControl,sender));
+      _lastActiveChildControl = sender;
+    }
+
+    protected virtual void EhView_ActiveChildControlChanged(object sender, Main.InstanceChangedEventArgs<object> e)
+    {
+    }
+
     /// <summary>
     /// Get / sets the view of this controller.
     /// </summary>
@@ -143,16 +161,21 @@ namespace Altaxo.Gui.Common
       get { return _view; }
       set
       {
-        if(_view!=null)
+        if (_view != null)
+        {
           _view.Controller = null;
+          _view.ChildControl_Entered -= EhView_ChildControlEntered;
+        }
 
         _view = value;
         
         SetElements(false);
 
-        if(_view!=null)
+        if (_view != null)
+        {
           _view.Controller = this;
-        
+          _view.ChildControl_Entered += EhView_ChildControlEntered;
+        }
       }
     }
     public object ViewObject
