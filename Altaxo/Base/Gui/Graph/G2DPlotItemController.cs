@@ -56,6 +56,7 @@ namespace Altaxo.Gui.Graph
     IMVCAController _plotGroupController;
     IXYPlotStyleCollectionController _styleCollectionController;
     List<IMVCANController> _styleControllerList = new List<IMVCANController>();
+    Dictionary<IG2DPlotStyle, IMVCANController> _styleControllerDictionary = new Dictionary<IG2DPlotStyle, IMVCANController>();
     IMVCANController _additionalPlotStyleController;
     Common.MultiChildController _combinedScatterLineGroupController;
     
@@ -303,6 +304,19 @@ namespace Altaxo.Gui.Graph
       return useCombinedTab;
     }
 
+    IMVCANController GetStyleController(IG2DPlotStyle style)
+    {
+      if (_styleControllerDictionary.ContainsKey(style))
+        return _styleControllerDictionary[style];
+
+      IMVCANController ct = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { style }, typeof(IMVCANController), UseDocument.Directly);
+
+      if (ct != null)
+        _styleControllerDictionary.Add(style, ct);
+
+      return ct;
+    }
+
     void InitializeStyles()
     {
       // Clear the previous controller cache
@@ -327,7 +341,7 @@ namespace Altaxo.Gui.Graph
           List<ControlViewElement> combList = new List<ControlViewElement>();
 
           // create the controllers
-          IMVCANController ct1 = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _tempdoc.Style[0] }, typeof(IMVCANController),UseDocument.Directly);
+          IMVCANController ct1 = GetStyleController(_tempdoc.Style[0]);
           _styleControllerList.Add(ct1);
 
 
@@ -343,9 +357,9 @@ namespace Altaxo.Gui.Graph
               _additionalPlotStyle = scatterStyle;
               scatterStyle.Shape = Altaxo.Graph.Gdi.Plot.Styles.XYPlotScatterStyles.Shape.NoSymbol;
 
-              _additionalPlotStyleController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _additionalPlotStyle }, typeof(IMVCANController),UseDocument.Directly);
-              combList.Add(new ControlViewElement("Line", _additionalPlotStyleController));
-              combList.Add(new ControlViewElement("Symbol", ct1));
+              _additionalPlotStyleController = GetStyleController( _additionalPlotStyle);
+              combList.Add(new ControlViewElement("Symbol", _additionalPlotStyleController));
+              combList.Add(new ControlViewElement("Line", ct1));
             }
             else
             {
@@ -355,7 +369,7 @@ namespace Altaxo.Gui.Graph
               _additionalPlotStyle = lineStyle;
               lineStyle.Connection = Altaxo.Graph.Gdi.Plot.Styles.XYPlotLineStyles.ConnectionStyle.NoLine;
 
-              _additionalPlotStyleController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _additionalPlotStyle }, typeof(IMVCANController),UseDocument.Directly);
+              _additionalPlotStyleController = GetStyleController( _additionalPlotStyle );
               combList.Add(new ControlViewElement("Symbol", ct1));
               combList.Add(new ControlViewElement("Line", _additionalPlotStyleController));
             }
@@ -363,7 +377,7 @@ namespace Altaxo.Gui.Graph
           else // no helper style, i.e. second style is line style
           {
             // create the controllers
-            IMVCANController ct2 = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _tempdoc.Style[1] }, typeof(IMVCANController),UseDocument.Directly);
+            IMVCANController ct2 = GetStyleController( _tempdoc.Style[1] );
             _styleControllerList.Add(ct2);
             combList.Add(new ControlViewElement("Symbol", ct1));
             combList.Add(new ControlViewElement("Line", ct2));
@@ -372,7 +386,12 @@ namespace Altaxo.Gui.Graph
           combList.Add(new ControlViewElement(string.Empty, this, this._plotGroupView));
           _combinedScatterLineGroupController = new Common.MultiChildController(combList.ToArray(), true);
           Current.Gui.FindAndAttachControlTo(_combinedScatterLineGroupController);
-          AddTab(_additionalPlotStyle == null ? "Style 1&&2" : "Style 1", _combinedScatterLineGroupController, _combinedScatterLineGroupController.ViewObject);
+          string title;
+          if(null!=_additionalPlotStyle)
+            title = string.Format("#{0}:{1}", 1, Current.Gui.GetUserFriendlyClassName(_tempdoc.Style[0].GetType()));
+          else
+            title = "#1&&2:Symbol&&Line";
+          AddTab(title, _combinedScatterLineGroupController, _combinedScatterLineGroupController.ViewObject);
           _combinedScatterLineGroupController.ChildControlChanged += this.EhView_ActiveChildControlChanged;
         } // if use CombinedTab
 
@@ -380,9 +399,10 @@ namespace Altaxo.Gui.Graph
         int start = useCombinedTab ? (addHelperStyle ? 1 : 2) : 0;
         for (int i = start; i < _tempdoc.Style.Count; i++)
         {
-          IMVCANController ctrl = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _tempdoc.Style[i] }, typeof(IMVCANController),UseDocument.Directly);
+          IMVCANController ctrl = GetStyleController( _tempdoc.Style[i] );
           _styleControllerList.Add(ctrl);
-          AddTab("Style " + (i + 1).ToString(), ctrl, ctrl != null ? ctrl.ViewObject : null);
+          string title = string.Format("#{0}:{1}", (i + 1),Current.Gui.GetUserFriendlyClassName(_tempdoc.Style[i].GetType()));
+          AddTab(title, ctrl, ctrl != null ? ctrl.ViewObject : null);
         }
       }
       base.SetElements(false);

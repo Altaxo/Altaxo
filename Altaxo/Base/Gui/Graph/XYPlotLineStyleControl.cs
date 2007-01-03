@@ -103,7 +103,7 @@ namespace Altaxo.Gui.Graph
       // _chkConnectCircular
       // 
       this._chkConnectCircular.AutoSize = true;
-      this._chkConnectCircular.Location = new System.Drawing.Point(66, 33);
+      this._chkConnectCircular.Location = new System.Drawing.Point(95, 33);
       this._chkConnectCircular.Name = "_chkConnectCircular";
       this._chkConnectCircular.Size = new System.Drawing.Size(117, 17);
       this._chkConnectCircular.TabIndex = 28;
@@ -127,7 +127,7 @@ namespace Altaxo.Gui.Graph
       this._ctrlColorTypeThickness.ColorType = Altaxo.Graph.ColorType.PlotColor;
       this._ctrlColorTypeThickness.Controller = null;
       this._ctrlColorTypeThickness.DocPen = null;
-      this._ctrlColorTypeThickness.Location = new System.Drawing.Point(19, 68);
+      this._ctrlColorTypeThickness.Location = new System.Drawing.Point(25, 68);
       this._ctrlColorTypeThickness.Name = "_ctrlColorTypeThickness";
       this._ctrlColorTypeThickness.Size = new System.Drawing.Size(198, 87);
       this._ctrlColorTypeThickness.TabIndex = 26;
@@ -694,7 +694,7 @@ namespace Altaxo.Gui.Graph
       // 
       // m_cbLineConnect
       // 
-      this.m_cbLineConnect.Location = new System.Drawing.Point(66, 6);
+      this.m_cbLineConnect.Location = new System.Drawing.Point(96, 6);
       this.m_cbLineConnect.Name = "m_cbLineConnect";
       this.m_cbLineConnect.Size = new System.Drawing.Size(121, 21);
       this.m_cbLineConnect.TabIndex = 3;
@@ -720,7 +720,7 @@ namespace Altaxo.Gui.Graph
       // 
       // m_chkLineSymbolGap
       // 
-      this.m_chkLineSymbolGap.Location = new System.Drawing.Point(66, 44);
+      this.m_chkLineSymbolGap.Location = new System.Drawing.Point(95, 45);
       this.m_chkLineSymbolGap.Name = "m_chkLineSymbolGap";
       this.m_chkLineSymbolGap.Size = new System.Drawing.Size(112, 24);
       this.m_chkLineSymbolGap.TabIndex = 22;
@@ -740,7 +740,7 @@ namespace Altaxo.Gui.Graph
       this.Controls.Add(this.m_cbLineConnect);
       this.Controls.Add(this.m_chkLineFillArea);
       this.Name = "XYPlotLineStyleControl";
-      this.Size = new System.Drawing.Size(232, 336);
+      this.Size = new System.Drawing.Size(226, 271);
       this.ResumeLayout(false);
       this.PerformLayout();
 
