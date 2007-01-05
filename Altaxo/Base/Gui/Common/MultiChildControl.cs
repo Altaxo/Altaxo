@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -167,10 +167,15 @@ namespace Altaxo.Gui.Common
           GroupBox gbox = new GroupBox();
           gbox.Text = childs[i].Title;
           Control gboxchild = (Control)childs[i].View;
-          gbox.Padding = new Padding(gbox.Padding.Left, Math.Max(SystemInformation.CaptionHeight/2,gbox.Padding.Top), gbox.Padding.Right, gbox.Padding.Bottom);
-          gbox.AutoSize = true;
-          gboxchild.Location = new Point(gbox.Padding.Left, gbox.Padding.Top);
+
+          int vertDistance = Math.Max(SystemInformation.CaptionHeight / 2, gbox.Padding.Top); 
+          gboxchild.Location = new Point(gbox.Padding.Left, vertDistance);
           gbox.Controls.Add(gboxchild);
+          gboxchild.Margin = new Padding(0, 0, 0, 0);
+          gbox.Padding = new Padding(gbox.Padding.Left, gbox.Padding.Top, gbox.Padding.Right, 0);
+          //gboxchild.BackColor = Color.Red;
+          gbox.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+          gbox.AutoSize = true;
           _childs[i] = gbox;
 
           _childs[i].SizeChanged += EhChilds_SizeChanged;

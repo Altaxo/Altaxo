@@ -1,3 +1,25 @@
+#region Copyright
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+#endregion
+
 namespace Altaxo.Gui.Graph
 {
   partial class BarGraphPlotStyleControl
@@ -39,7 +61,6 @@ namespace Altaxo.Gui.Graph
       this._edYGap = new System.Windows.Forms.TextBox();
       this._chkUsePreviousItem = new System.Windows.Forms.CheckBox();
       this._lblYGap = new System.Windows.Forms.Label();
-      this._lblFillColor = new System.Windows.Forms.Label();
       this._cbPenColor = new Altaxo.Gui.Common.Drawing.ColorComboBox();
       this._cbFillColor = new Altaxo.Gui.Common.Drawing.ColorComboBox();
       this._fillBrushGlue = new Altaxo.Gui.Common.Drawing.BrushControlsGlue();
@@ -68,7 +89,7 @@ namespace Altaxo.Gui.Graph
       // _chkFrameBar
       // 
       this._chkFrameBar.AutoSize = true;
-      this._chkFrameBar.Location = new System.Drawing.Point(66, 28);
+      this._chkFrameBar.Location = new System.Drawing.Point(12, 34);
       this._chkFrameBar.Name = "_chkFrameBar";
       this._chkFrameBar.Size = new System.Drawing.Size(87, 17);
       this._chkFrameBar.TabIndex = 4;
@@ -116,7 +137,7 @@ namespace Altaxo.Gui.Graph
       // _chkUsePreviousItem
       // 
       this._chkUsePreviousItem.AutoSize = true;
-      this._chkUsePreviousItem.Location = new System.Drawing.Point(28, 154);
+      this._chkUsePreviousItem.Location = new System.Drawing.Point(12, 151);
       this._chkUsePreviousItem.Name = "_chkUsePreviousItem";
       this._chkUsePreviousItem.Size = new System.Drawing.Size(109, 17);
       this._chkUsePreviousItem.TabIndex = 10;
@@ -133,25 +154,16 @@ namespace Altaxo.Gui.Graph
       this._lblYGap.TabIndex = 11;
       this._lblYGap.Text = "Y-gap (%) :";
       // 
-      // _lblFillColor
-      // 
-      this._lblFillColor.AutoSize = true;
-      this._lblFillColor.Location = new System.Drawing.Point(102, 6);
-      this._lblFillColor.Name = "_lblFillColor";
-      this._lblFillColor.Size = new System.Drawing.Size(51, 13);
-      this._lblFillColor.TabIndex = 12;
-      this._lblFillColor.Text = "Fill color :";
-      // 
       // _cbPenColor
       // 
       this._cbPenColor.ColorType = Altaxo.Graph.ColorType.KnownAndSystemColor;
       this._cbPenColor.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
       this._cbPenColor.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this._cbPenColor.FormattingEnabled = true;
-      this._cbPenColor.ItemHeight = 13;
-      this._cbPenColor.Location = new System.Drawing.Point(159, 28);
+      this._cbPenColor.ItemHeight = 15;
+      this._cbPenColor.Location = new System.Drawing.Point(159, 32);
       this._cbPenColor.Name = "_cbPenColor";
-      this._cbPenColor.Size = new System.Drawing.Size(121, 19);
+      this._cbPenColor.Size = new System.Drawing.Size(121, 21);
       this._cbPenColor.TabIndex = 1;
       // 
       // _cbFillColor
@@ -160,10 +172,10 @@ namespace Altaxo.Gui.Graph
       this._cbFillColor.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
       this._cbFillColor.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this._cbFillColor.FormattingEnabled = true;
-      this._cbFillColor.ItemHeight = 13;
-      this._cbFillColor.Location = new System.Drawing.Point(159, 3);
+      this._cbFillColor.ItemHeight = 15;
+      this._cbFillColor.Location = new System.Drawing.Point(159, 5);
       this._cbFillColor.Name = "_cbFillColor";
-      this._cbFillColor.Size = new System.Drawing.Size(121, 19);
+      this._cbFillColor.Size = new System.Drawing.Size(121, 21);
       this._cbFillColor.TabIndex = 0;
       // 
       // _fillBrushGlue
@@ -212,11 +224,11 @@ namespace Altaxo.Gui.Graph
       // _chkIndependentColor
       // 
       this._chkIndependentColor.AutoSize = true;
-      this._chkIndependentColor.Location = new System.Drawing.Point(3, 6);
+      this._chkIndependentColor.Location = new System.Drawing.Point(12, 7);
       this._chkIndependentColor.Name = "_chkIndependentColor";
-      this._chkIndependentColor.Size = new System.Drawing.Size(82, 17);
+      this._chkIndependentColor.Size = new System.Drawing.Size(97, 17);
       this._chkIndependentColor.TabIndex = 13;
-      this._chkIndependentColor.Text = "Indep. color";
+      this._chkIndependentColor.Text = "Indep. fill color:";
       this._chkIndependentColor.UseVisualStyleBackColor = true;
       // 
       // BarGraphPlotStyleControl
@@ -224,7 +236,6 @@ namespace Altaxo.Gui.Graph
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.Controls.Add(this._chkIndependentColor);
-      this.Controls.Add(this._lblFillColor);
       this.Controls.Add(this._lblYGap);
       this.Controls.Add(this._chkUsePreviousItem);
       this.Controls.Add(this._edYGap);
@@ -260,7 +271,6 @@ namespace Altaxo.Gui.Graph
     private System.Windows.Forms.TextBox _edYGap;
     private System.Windows.Forms.CheckBox _chkUsePreviousItem;
     private System.Windows.Forms.Label _lblYGap;
-    private System.Windows.Forms.Label _lblFillColor;
     private System.Windows.Forms.CheckBox _chkIndependentColor;
   }
 }

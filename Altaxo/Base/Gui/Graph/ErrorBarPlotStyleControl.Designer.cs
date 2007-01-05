@@ -1,3 +1,25 @@
+#region Copyright
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+#endregion
+
 namespace Altaxo.Gui.Graph
 {
   partial class ErrorBarPlotStyleControl
@@ -47,11 +69,11 @@ namespace Altaxo.Gui.Graph
       this._chkDoNotShift = new System.Windows.Forms.CheckBox();
       this._chkIsHorizontal = new System.Windows.Forms.CheckBox();
       this._dataGroupBox = new System.Windows.Forms.GroupBox();
+      this._btClearNegError = new System.Windows.Forms.Button();
+      this._btClearPosError = new System.Windows.Forms.Button();
       this._edSkipFrequency = new System.Windows.Forms.TextBox();
       this.label1 = new System.Windows.Forms.Label();
       this._styleGroupBox = new System.Windows.Forms.GroupBox();
-      this._btClearPosError = new System.Windows.Forms.Button();
-      this._btClearNegError = new System.Windows.Forms.Button();
       this._dataGroupBox.SuspendLayout();
       this._styleGroupBox.SuspendLayout();
       this.SuspendLayout();
@@ -61,23 +83,24 @@ namespace Altaxo.Gui.Graph
       this._chkIndependentColor.AutoSize = true;
       this._chkIndependentColor.Location = new System.Drawing.Point(6, 15);
       this._chkIndependentColor.Name = "_chkIndependentColor";
-      this._chkIndependentColor.Size = new System.Drawing.Size(82, 17);
+      this._chkIndependentColor.Size = new System.Drawing.Size(73, 17);
       this._chkIndependentColor.TabIndex = 14;
-      this._chkIndependentColor.Text = "Indep. color";
+      this._chkIndependentColor.Text = "Ind. color:";
       this._chkIndependentColor.UseVisualStyleBackColor = true;
       // 
       // _cbSymbolSize
       // 
-      this._cbSymbolSize.Location = new System.Drawing.Point(96, 149);
+      this._cbSymbolSize.ItemHeight = 13;
+      this._cbSymbolSize.Location = new System.Drawing.Point(125, 126);
       this._cbSymbolSize.Name = "_cbSymbolSize";
-      this._cbSymbolSize.Size = new System.Drawing.Size(112, 21);
+      this._cbSymbolSize.Size = new System.Drawing.Size(121, 21);
       this._cbSymbolSize.TabIndex = 15;
       this._cbSymbolSize.Text = "comboBox1";
       this._cbSymbolSize.Validating += new System.ComponentModel.CancelEventHandler(this._cbSymbolSize_Validating);
       // 
       // _chkIndependentSize
       // 
-      this._chkIndependentSize.Location = new System.Drawing.Point(10, 149);
+      this._chkIndependentSize.Location = new System.Drawing.Point(6, 126);
       this._chkIndependentSize.Name = "_chkIndependentSize";
       this._chkIndependentSize.Size = new System.Drawing.Size(80, 24);
       this._chkIndependentSize.TabIndex = 28;
@@ -85,7 +108,7 @@ namespace Altaxo.Gui.Graph
       // 
       // _chkLineSymbolGap
       // 
-      this._chkLineSymbolGap.Location = new System.Drawing.Point(10, 179);
+      this._chkLineSymbolGap.Location = new System.Drawing.Point(5, 156);
       this._chkLineSymbolGap.Name = "_chkLineSymbolGap";
       this._chkLineSymbolGap.Size = new System.Drawing.Size(112, 24);
       this._chkLineSymbolGap.TabIndex = 29;
@@ -150,7 +173,7 @@ namespace Altaxo.Gui.Graph
       // _chkShowEndBars
       // 
       this._chkShowEndBars.AutoSize = true;
-      this._chkShowEndBars.Location = new System.Drawing.Point(131, 183);
+      this._chkShowEndBars.Location = new System.Drawing.Point(125, 160);
       this._chkShowEndBars.Name = "_chkShowEndBars";
       this._chkShowEndBars.Size = new System.Drawing.Size(97, 17);
       this._chkShowEndBars.TabIndex = 46;
@@ -162,20 +185,20 @@ namespace Altaxo.Gui.Graph
       this._cbDashStyle.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
       this._cbDashStyle.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this._cbDashStyle.FormattingEnabled = true;
-      this._cbDashStyle.ItemHeight = 13;
-      this._cbDashStyle.Location = new System.Drawing.Point(87, 88);
+      this._cbDashStyle.ItemHeight = 15;
+      this._cbDashStyle.Location = new System.Drawing.Point(125, 69);
       this._cbDashStyle.Name = "_cbDashStyle";
-      this._cbDashStyle.Size = new System.Drawing.Size(121, 19);
+      this._cbDashStyle.Size = new System.Drawing.Size(121, 21);
       this._cbDashStyle.TabIndex = 32;
       // 
       // _cbThickness
       // 
       this._cbThickness.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
       this._cbThickness.FormattingEnabled = true;
-      this._cbThickness.ItemHeight = 13;
-      this._cbThickness.Location = new System.Drawing.Point(87, 63);
+      this._cbThickness.ItemHeight = 15;
+      this._cbThickness.Location = new System.Drawing.Point(125, 42);
       this._cbThickness.Name = "_cbThickness";
-      this._cbThickness.Size = new System.Drawing.Size(121, 19);
+      this._cbThickness.Size = new System.Drawing.Size(121, 21);
       this._cbThickness.TabIndex = 31;
       // 
       // _cbPenColor
@@ -184,12 +207,12 @@ namespace Altaxo.Gui.Graph
       this._cbPenColor.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
       this._cbPenColor.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this._cbPenColor.FormattingEnabled = true;
-      this._cbPenColor.ItemHeight = 13;
+      this._cbPenColor.ItemHeight = 15;
       this._cbPenColor.Items.AddRange(new object[] {
             System.Drawing.Color.Black});
-      this._cbPenColor.Location = new System.Drawing.Point(87, 38);
+      this._cbPenColor.Location = new System.Drawing.Point(125, 15);
       this._cbPenColor.Name = "_cbPenColor";
-      this._cbPenColor.Size = new System.Drawing.Size(121, 19);
+      this._cbPenColor.Size = new System.Drawing.Size(121, 21);
       this._cbPenColor.TabIndex = 30;
       // 
       // _strokePenGlue
@@ -211,7 +234,7 @@ namespace Altaxo.Gui.Graph
       // 
       // _chkDoNotShift
       // 
-      this._chkDoNotShift.Location = new System.Drawing.Point(234, 179);
+      this._chkDoNotShift.Location = new System.Drawing.Point(228, 156);
       this._chkDoNotShift.Name = "_chkDoNotShift";
       this._chkDoNotShift.Size = new System.Drawing.Size(137, 24);
       this._chkDoNotShift.TabIndex = 47;
@@ -219,7 +242,7 @@ namespace Altaxo.Gui.Graph
       // 
       // _chkIsHorizontal
       // 
-      this._chkIsHorizontal.Location = new System.Drawing.Point(87, 119);
+      this._chkIsHorizontal.Location = new System.Drawing.Point(6, 96);
       this._chkIsHorizontal.Name = "_chkIsHorizontal";
       this._chkIsHorizontal.Size = new System.Drawing.Size(137, 24);
       this._chkIsHorizontal.TabIndex = 48;
@@ -235,16 +258,36 @@ namespace Altaxo.Gui.Graph
       this._dataGroupBox.Controls.Add(this._edNegErrorColumn);
       this._dataGroupBox.Controls.Add(this._chkIndepNegErrorColumn);
       this._dataGroupBox.Controls.Add(this._btSelectNegErrorColumn);
-      this._dataGroupBox.Location = new System.Drawing.Point(3, 253);
+      this._dataGroupBox.Location = new System.Drawing.Point(3, 3);
       this._dataGroupBox.Name = "_dataGroupBox";
       this._dataGroupBox.Size = new System.Drawing.Size(490, 89);
       this._dataGroupBox.TabIndex = 49;
       this._dataGroupBox.TabStop = false;
       this._dataGroupBox.Text = "Data";
       // 
+      // _btClearNegError
+      // 
+      this._btClearNegError.Location = new System.Drawing.Point(435, 45);
+      this._btClearNegError.Name = "_btClearNegError";
+      this._btClearNegError.Size = new System.Drawing.Size(49, 20);
+      this._btClearNegError.TabIndex = 55;
+      this._btClearNegError.Text = "Clear!";
+      this._btClearNegError.UseVisualStyleBackColor = true;
+      this._btClearNegError.Click += new System.EventHandler(this._btClearNegError_Click);
+      // 
+      // _btClearPosError
+      // 
+      this._btClearPosError.Location = new System.Drawing.Point(435, 19);
+      this._btClearPosError.Name = "_btClearPosError";
+      this._btClearPosError.Size = new System.Drawing.Size(49, 20);
+      this._btClearPosError.TabIndex = 54;
+      this._btClearPosError.Text = "Clear!";
+      this._btClearPosError.UseVisualStyleBackColor = true;
+      this._btClearPosError.Click += new System.EventHandler(this._btClearPosError_Click);
+      // 
       // _edSkipFrequency
       // 
-      this._edSkipFrequency.Location = new System.Drawing.Point(72, 209);
+      this._edSkipFrequency.Location = new System.Drawing.Point(125, 183);
       this._edSkipFrequency.Name = "_edSkipFrequency";
       this._edSkipFrequency.Size = new System.Drawing.Size(54, 20);
       this._edSkipFrequency.TabIndex = 51;
@@ -253,11 +296,11 @@ namespace Altaxo.Gui.Graph
       // label1
       // 
       this.label1.AutoSize = true;
-      this.label1.Location = new System.Drawing.Point(11, 212);
+      this.label1.Location = new System.Drawing.Point(6, 190);
       this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(55, 13);
+      this.label1.Size = new System.Drawing.Size(84, 13);
       this.label1.TabIndex = 52;
-      this.label1.Text = "Skip freq.:";
+      this.label1.Text = "Skip frequency.:";
       // 
       // _styleGroupBox
       // 
@@ -273,32 +316,12 @@ namespace Altaxo.Gui.Graph
       this._styleGroupBox.Controls.Add(this._chkShowEndBars);
       this._styleGroupBox.Controls.Add(this._cbThickness);
       this._styleGroupBox.Controls.Add(this._cbDashStyle);
-      this._styleGroupBox.Location = new System.Drawing.Point(3, 3);
+      this._styleGroupBox.Location = new System.Drawing.Point(3, 98);
       this._styleGroupBox.Name = "_styleGroupBox";
-      this._styleGroupBox.Size = new System.Drawing.Size(373, 244);
+      this._styleGroupBox.Size = new System.Drawing.Size(490, 217);
       this._styleGroupBox.TabIndex = 53;
       this._styleGroupBox.TabStop = false;
       this._styleGroupBox.Text = "Style";
-      // 
-      // _btClearPosError
-      // 
-      this._btClearPosError.Location = new System.Drawing.Point(435, 19);
-      this._btClearPosError.Name = "_btClearPosError";
-      this._btClearPosError.Size = new System.Drawing.Size(49, 20);
-      this._btClearPosError.TabIndex = 54;
-      this._btClearPosError.Text = "Clear!";
-      this._btClearPosError.UseVisualStyleBackColor = true;
-      this._btClearPosError.Click += new System.EventHandler(this._btClearPosError_Click);
-      // 
-      // _btClearNegError
-      // 
-      this._btClearNegError.Location = new System.Drawing.Point(435, 45);
-      this._btClearNegError.Name = "_btClearNegError";
-      this._btClearNegError.Size = new System.Drawing.Size(49, 20);
-      this._btClearNegError.TabIndex = 55;
-      this._btClearNegError.Text = "Clear!";
-      this._btClearNegError.UseVisualStyleBackColor = true;
-      this._btClearNegError.Click += new System.EventHandler(this._btClearNegError_Click);
       // 
       // ErrorBarPlotStyleControl
       // 
@@ -307,7 +330,7 @@ namespace Altaxo.Gui.Graph
       this.Controls.Add(this._styleGroupBox);
       this.Controls.Add(this._dataGroupBox);
       this.Name = "ErrorBarPlotStyleControl";
-      this.Size = new System.Drawing.Size(502, 350);
+      this.Size = new System.Drawing.Size(497, 323);
       this._dataGroupBox.ResumeLayout(false);
       this._dataGroupBox.PerformLayout();
       this._styleGroupBox.ResumeLayout(false);

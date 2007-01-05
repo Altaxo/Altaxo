@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -421,7 +421,7 @@ namespace Altaxo.Gui.Graph
         {
           MakeAdditionalPlotStylePermanent();
         }
-        else if (_additionalPlotStyle is LinePlotStyle && ((ScatterPlotStyle)_additionalPlotStyle).IsVisible)
+        else if (_additionalPlotStyle is ScatterPlotStyle && ((ScatterPlotStyle)_additionalPlotStyle).IsVisible)
         {
           MakeAdditionalPlotStylePermanent();
         }
@@ -452,12 +452,18 @@ namespace Altaxo.Gui.Graph
       if (additionalPlotStyle is LinePlotStyle)
       {
         _tempdoc.Style.Insert(1, additionalPlotStyle);
+        _styleControllerList.Insert(1, _additionalPlotStyleController);
+        _additionalPlotStyleController = null;
         DistributeStyleChange(1);
+        _styleCollectionController.InitializeDocument(_tempdoc.Style);
       }
       else if(additionalPlotStyle is ScatterPlotStyle)
       {
         _tempdoc.Style.Insert(0, additionalPlotStyle);
+        _styleControllerList.Insert(0, _additionalPlotStyleController);
+        _additionalPlotStyleController = null;
         DistributeStyleChange(0);
+        _styleCollectionController.InitializeDocument(_tempdoc.Style);
       }
     }
 
@@ -510,6 +516,23 @@ namespace Altaxo.Gui.Graph
 
       bool applyResult = false;
 
+      if (_additionalPlotStyleController != null)
+      {
+        if (!_additionalPlotStyleController.Apply())
+        {
+          applyResult = false;
+          goto end_of_function;
+        }
+
+        if (_additionalPlotStyle is LinePlotStyle && ((LinePlotStyle)_additionalPlotStyle).IsVisible)
+        {
+          MakeAdditionalPlotStylePermanent();
+        }
+        else if (_additionalPlotStyle is ScatterPlotStyle && ((ScatterPlotStyle)_additionalPlotStyle).IsVisible)
+        {
+          MakeAdditionalPlotStylePermanent();
+        }
+      }
 
 
 
@@ -539,33 +562,12 @@ namespace Altaxo.Gui.Graph
 
     #endregion
 
-    #region IXYPlotGroupViewEventSink Members
-
-    public void EhView_PlotGroupIndependent_Changed(bool bPlotGroupIsIndependent)
-    {
-      
-    }
-
-    #endregion
-
-    #region Helper Controller classes
-
-    class MyPlotStyleCollectionController : XYPlotStyleCollectionController
-    {
-      G2DPlotItemController _parent;
-
-      public MyPlotStyleCollectionController(G2DPlotItemController parent)
-        : base(parent._tempdoc.Style)
-      {
-        _parent = parent;
-      }
-
-    }
-
+   
+  
     
 
 
-    #endregion
+   
 
     /// <summary>
     /// Returns the tab index of the first style that is shown.

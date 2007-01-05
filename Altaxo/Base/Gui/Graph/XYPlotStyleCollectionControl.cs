@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Data;
@@ -217,9 +218,9 @@ namespace Altaxo.Gui.Graph
     }
 
     MenuItem[] _availablePlotStyles;
-    public void InitializeAvailableStyleList(string[] names)
+    public void InitializeAvailableStyleList(List<string> names)
     {
-      _availablePlotStyles = new MenuItem[names.Length];
+      _availablePlotStyles = new MenuItem[names.Count];
       for(int i=0;i<_availablePlotStyles.Length;i++)
       {
         MenuItem item = new MenuItem(names[i],new EventHandler(this.EhAddSingleStyle_Click));

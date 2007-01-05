@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -162,16 +162,16 @@ namespace Altaxo.Gui.Graph
       // m_cbFontSize
       // 
       this.m_cbFontSize.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-      this.m_cbFontSize.ItemHeight = 13;
-      this.m_cbFontSize.Location = new System.Drawing.Point(128, 104);
+      this.m_cbFontSize.ItemHeight = 15;
+      this.m_cbFontSize.Location = new System.Drawing.Point(126, 98);
       this.m_cbFontSize.Name = "m_cbFontSize";
-      this.m_cbFontSize.Size = new System.Drawing.Size(136, 19);
+      this.m_cbFontSize.Size = new System.Drawing.Size(136, 21);
       this.m_cbFontSize.TabIndex = 21;
       this.m_cbFontSize.Text = "comboBox1";
       // 
       // m_cbHorizontalAlignment
       // 
-      this.m_cbHorizontalAlignment.Location = new System.Drawing.Point(128, 144);
+      this.m_cbHorizontalAlignment.Location = new System.Drawing.Point(126, 125);
       this.m_cbHorizontalAlignment.Name = "m_cbHorizontalAlignment";
       this.m_cbHorizontalAlignment.Size = new System.Drawing.Size(136, 21);
       this.m_cbHorizontalAlignment.TabIndex = 22;
@@ -182,10 +182,10 @@ namespace Altaxo.Gui.Graph
       // 
       this.m_cbFont.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
       this.m_cbFont.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.m_cbFont.ItemHeight = 13;
-      this.m_cbFont.Location = new System.Drawing.Point(128, 71);
+      this.m_cbFont.ItemHeight = 15;
+      this.m_cbFont.Location = new System.Drawing.Point(126, 71);
       this.m_cbFont.Name = "m_cbFont";
-      this.m_cbFont.Size = new System.Drawing.Size(136, 19);
+      this.m_cbFont.Size = new System.Drawing.Size(136, 21);
       this.m_cbFont.TabIndex = 23;
       // 
       // label1
@@ -208,7 +208,7 @@ namespace Altaxo.Gui.Graph
       // 
       // label4
       // 
-      this.label4.Location = new System.Drawing.Point(8, 144);
+      this.label4.Location = new System.Drawing.Point(13, 130);
       this.label4.Name = "label4";
       this.label4.Size = new System.Drawing.Size(112, 16);
       this.label4.TabIndex = 27;
@@ -217,10 +217,9 @@ namespace Altaxo.Gui.Graph
       // 
       // m_chkAttachToAxis
       // 
-      this.m_chkAttachToAxis.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-      this.m_chkAttachToAxis.Location = new System.Drawing.Point(16, 216);
+      this.m_chkAttachToAxis.Location = new System.Drawing.Point(24, 179);
       this.m_chkAttachToAxis.Name = "m_chkAttachToAxis";
-      this.m_chkAttachToAxis.Size = new System.Drawing.Size(96, 24);
+      this.m_chkAttachToAxis.Size = new System.Drawing.Size(96, 21);
       this.m_chkAttachToAxis.TabIndex = 28;
       this.m_chkAttachToAxis.Text = "Attach to axis:";
       this.m_chkAttachToAxis.CheckedChanged += new System.EventHandler(this.EhAttachToAxis_CheckedChanged);
@@ -231,7 +230,7 @@ namespace Altaxo.Gui.Graph
       this.groupBox1.Controls.Add(this.label23);
       this.groupBox1.Controls.Add(this.m_edYOffset);
       this.groupBox1.Controls.Add(this.label24);
-      this.groupBox1.Location = new System.Drawing.Point(280, 112);
+      this.groupBox1.Location = new System.Drawing.Point(296, 104);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(136, 96);
       this.groupBox1.TabIndex = 29;
@@ -240,7 +239,7 @@ namespace Altaxo.Gui.Graph
       // 
       // m_cbVerticalAlignment
       // 
-      this.m_cbVerticalAlignment.Location = new System.Drawing.Point(128, 176);
+      this.m_cbVerticalAlignment.Location = new System.Drawing.Point(126, 152);
       this.m_cbVerticalAlignment.Name = "m_cbVerticalAlignment";
       this.m_cbVerticalAlignment.Size = new System.Drawing.Size(136, 21);
       this.m_cbVerticalAlignment.TabIndex = 30;
@@ -249,7 +248,7 @@ namespace Altaxo.Gui.Graph
       // 
       // label5
       // 
-      this.label5.Location = new System.Drawing.Point(16, 176);
+      this.label5.Location = new System.Drawing.Point(8, 157);
       this.label5.Name = "label5";
       this.label5.Size = new System.Drawing.Size(112, 16);
       this.label5.TabIndex = 31;
@@ -258,7 +257,7 @@ namespace Altaxo.Gui.Graph
       // 
       // m_cbAttachedAxis
       // 
-      this.m_cbAttachedAxis.Location = new System.Drawing.Point(128, 216);
+      this.m_cbAttachedAxis.Location = new System.Drawing.Point(126, 179);
       this.m_cbAttachedAxis.Name = "m_cbAttachedAxis";
       this.m_cbAttachedAxis.Size = new System.Drawing.Size(136, 21);
       this.m_cbAttachedAxis.TabIndex = 32;
@@ -267,7 +266,7 @@ namespace Altaxo.Gui.Graph
       // 
       // m_edRotation
       // 
-      this.m_edRotation.Location = new System.Drawing.Point(352, 80);
+      this.m_edRotation.Location = new System.Drawing.Point(368, 67);
       this.m_edRotation.Name = "m_edRotation";
       this.m_edRotation.Size = new System.Drawing.Size(56, 20);
       this.m_edRotation.TabIndex = 20;
@@ -275,7 +274,7 @@ namespace Altaxo.Gui.Graph
       // 
       // label6
       // 
-      this.label6.Location = new System.Drawing.Point(320, 56);
+      this.label6.Location = new System.Drawing.Point(293, 49);
       this.label6.Name = "label6";
       this.label6.Size = new System.Drawing.Size(96, 16);
       this.label6.TabIndex = 20;
@@ -284,12 +283,11 @@ namespace Altaxo.Gui.Graph
       // 
       // m_chkIndependentColor
       // 
-      this.m_chkIndependentColor.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-      this.m_chkIndependentColor.Location = new System.Drawing.Point(24, 34);
+      this.m_chkIndependentColor.Location = new System.Drawing.Point(47, 44);
       this.m_chkIndependentColor.Name = "m_chkIndependentColor";
-      this.m_chkIndependentColor.Size = new System.Drawing.Size(96, 40);
+      this.m_chkIndependentColor.Size = new System.Drawing.Size(73, 21);
       this.m_chkIndependentColor.TabIndex = 34;
-      this.m_chkIndependentColor.Text = "Independent color";
+      this.m_chkIndependentColor.Text = "Ind. color:";
       this.m_chkIndependentColor.CheckedChanged += new System.EventHandler(this.EhIndependentColor_CheckChanged);
       // 
       // _edLabelColumn
@@ -320,7 +318,7 @@ namespace Altaxo.Gui.Graph
       // 
       // label7
       // 
-      this.label7.Location = new System.Drawing.Point(40, 256);
+      this.label7.Location = new System.Drawing.Point(44, 219);
       this.label7.Name = "label7";
       this.label7.Size = new System.Drawing.Size(72, 16);
       this.label7.TabIndex = 42;
@@ -331,7 +329,7 @@ namespace Altaxo.Gui.Graph
       // 
       this._ctrlBackground.AutoSize = true;
       this._ctrlBackground.Controller = null;
-      this._ctrlBackground.Location = new System.Drawing.Point(128, 256);
+      this._ctrlBackground.Location = new System.Drawing.Point(126, 219);
       this._ctrlBackground.Margin = new System.Windows.Forms.Padding(0);
       this._ctrlBackground.Name = "_ctrlBackground";
       this._ctrlBackground.Size = new System.Drawing.Size(262, 30);
@@ -1051,6 +1049,7 @@ namespace Altaxo.Gui.Graph
       // 
       this._fontControlsGlue.CbFont = this.m_cbFont;
       this._fontControlsGlue.CbFontSize = this.m_cbFontSize;
+      this._fontControlsGlue.FontUnit = System.Drawing.GraphicsUnit.World;
       this._fontControlsGlue.FontChanged += new System.EventHandler(this.EhFont_SelectionChangedCommitted);
       // 
       // XYPlotLabelStyleControl
@@ -1076,7 +1075,7 @@ namespace Altaxo.Gui.Graph
       this.Controls.Add(this.m_edRotation);
       this.Controls.Add(this.label6);
       this.Name = "XYPlotLabelStyleControl";
-      this.Size = new System.Drawing.Size(440, 360);
+      this.Size = new System.Drawing.Size(440, 253);
       this.groupBox1.ResumeLayout(false);
       this.groupBox1.PerformLayout();
       this.ResumeLayout(false);

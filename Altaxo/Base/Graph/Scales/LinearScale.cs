@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -418,11 +418,22 @@ namespace Altaxo.Graph.Scales
 
       _baseOrg = xorg;
       _baseEnd = xend;
-    
-     
 
+
+      if (!(xorgfixed && xendfixed))
+      {
+        CalculateTicks(xorg, xend, out _majorSpan, out _minorTicks);
+        double orgByMajor, endByMajor;
+        CalculateActualLimits(xorg, xorgfixed, xend, xendfixed, _majorSpan, _minorTicks, out orgByMajor, out endByMajor);
+        xorg = orgByMajor * _majorSpan;
+        xend = endByMajor * _majorSpan;
+      }
 
       CalculateTicks(xorg, xend, out _majorSpan, out _minorTicks);
+      _axisOrgByMajor = xorg / _majorSpan;
+      _axisEndByMajor = xend / _majorSpan;
+      
+      /*
       if (xend == xorg)
       {
         if(xorgfixed)
@@ -459,6 +470,7 @@ namespace Altaxo.Graph.Scales
         else
           _axisEndByMajor = System.Math.Floor(_minorTicks * xend /_majorSpan)/_minorTicks;
       }
+      */
 
       SetCachedValues();
 
@@ -493,6 +505,96 @@ namespace Altaxo.Graph.Scales
     }
 
 
+    void CalculateActualLimits(
+      double xorg, bool xorgfixed, double xend, bool xendfixed, 
+      double majorSpan, int minorTicks,
+      out double axisOrgByMajor, out double axisEndByMajor)
+    {
+      const double ZeroLever = 0.25;
+      const double minGrace = 1/16.0;
+      const double maxGrace = 1/16.0;
+
+      if (xend < xorg)
+        throw new ArgumentOutOfRangeException("xorg is greater than xend");
+
+      double range = xend - xorg;
+
+      // This is the zero-lever test.  If xorg is within the zero lever fraction
+      // of the data range, then use zero.
+
+      if (!xorgfixed && xorg > 0 && Math.Abs(xorg / range) < ZeroLever)
+        xorg = 0;
+
+      // Zero-lever test for cases where the xend value is less than zero
+      if (!xendfixed && xend < 0 && Math.Abs(xend / range) < ZeroLever)
+        xend = 0;
+
+
+      range = xend - xorg;
+
+      if (range==0)
+      {
+        if (xorgfixed)
+        {
+          axisOrgByMajor = xorg / majorSpan;
+        }
+        else
+        {
+          axisOrgByMajor = System.Math.Floor(minorTicks * xorg / majorSpan) / minorTicks - 3;
+        }
+
+        if (xendfixed)
+        {
+          axisEndByMajor = xend / majorSpan;
+        }
+        else
+        {
+          axisEndByMajor = System.Math.Ceiling(minorTicks * xend / majorSpan) / minorTicks + 3;
+        }
+      }
+      else // normal case where xorg < xend
+      {
+        if (xorgfixed)
+        {
+          axisOrgByMajor = xorg / majorSpan;
+        }
+        else
+        {
+          axisOrgByMajor = System.Math.Floor(minorTicks * xorg / majorSpan) / minorTicks;
+          double norg = axisOrgByMajor * majorSpan;
+
+          // Compare this new org with a value adjusted by grace
+           // Do not let the grace value extend the axis below zero when all the values were positive
+          double gorg = xorg;  
+          if ((xorg < 0 || xorg - minGrace * range >= 0.0))
+              gorg = xorg - minGrace * range;
+            
+          if(gorg<norg) // if the grace adjusted value exceeds the tick adjusted limit, than we adjust the limit further
+            axisOrgByMajor = System.Math.Floor(minorTicks * gorg / majorSpan) / minorTicks;
+        }
+      
+
+        if (xendfixed)
+        {
+          axisEndByMajor = xend / majorSpan;
+        }
+        else
+        {
+          axisEndByMajor = System.Math.Ceiling(minorTicks * xend / majorSpan) / minorTicks;
+          double nend = axisEndByMajor * majorSpan;
+
+          // Compare this new end with a value adjusted by grace
+          // Do not let the grace value extend the axis above zero when all the values are negative
+          double gend = xend;
+          if (xend > 0 || xend + maxGrace * range <= 0.0)
+            gend = xend + maxGrace * range;
+
+          if (gend > nend) // if the grace adjusted value exceeds the tick adjusted limit, than we adjust the limit further
+            axisEndByMajor = System.Math.Ceiling(minorTicks * gend / majorSpan) / minorTicks;
+        }
+      }
+    }
+
     static double TenToThePowerOf(int ii)
     {
       if(ii==0)
@@ -518,6 +620,12 @@ namespace Altaxo.Graph.Scales
       out int    minorticks      // number of ticks in a major tick span 
       )
     {
+      // Make sure that minVal and maxVal are legitimate values
+      if (Double.IsInfinity(min) || Double.IsNaN(min) || min == Double.MaxValue)
+        min = 0.0;
+      if (Double.IsInfinity(max) || Double.IsNaN(max) || max == Double.MaxValue)
+        max = 0.0;
+
       if(min>max) // should not happen, but can happen when there are no data and min and max are uninitialized 
       {
         min=max=0;

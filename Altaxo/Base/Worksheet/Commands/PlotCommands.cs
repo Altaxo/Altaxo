@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -47,11 +47,23 @@ namespace Altaxo.Worksheet.Commands
     public static List<IGPlotItem> CreatePlotItems(DataTable table, IAscendingIntegerCollection selectedColumns, G2DPlotStyleCollection templatePlotStyle)
     {
       int len = selectedColumns.Count;
-      List<IGPlotItem> result = new List<IGPlotItem>();
+      int numColumns = table.DataColumnCount;
 
-      for (int i = 0; i < len; i++)
+      List<IGPlotItem> result = new List<IGPlotItem>();
+      ErrorBarPlotStyle unpairedPositiveError = null;
+      ErrorBarPlotStyle unpairedNegativeError = null;
+      AscendingIntegerCollection processedColumns = new AscendingIntegerCollection();
+
+      int idx;
+      for (int sci = 0; sci < len; sci++)
       {
-        Altaxo.Data.DataColumn ycol = table[selectedColumns[i]];
+        idx = selectedColumns[sci];
+        if (processedColumns.Contains(idx))
+          continue;
+        else
+          processedColumns.Add(idx);
+
+        Altaxo.Data.DataColumn ycol = table[idx];
         Altaxo.Data.DataColumn xcol = table.DataColumns.FindXColumnOf(ycol);
         XYColumnPlotData pa;
         if (null != xcol)
@@ -61,13 +73,57 @@ namespace Altaxo.Worksheet.Commands
 
         G2DPlotStyleCollection ps = templatePlotStyle!=null? (G2DPlotStyleCollection)templatePlotStyle.Clone() : new G2DPlotStyleCollection();
 
-        // if the next column is a label column, add it also
-        if ((i + 1) < len && ColumnKind.Label == table.DataColumns.GetColumnKind(selectedColumns[i + 1]))
+        bool foundMoreColumns = true;
+        for(idx=idx+1;foundMoreColumns && idx<numColumns;idx++)
         {
-          LabelPlotStyle labelStyle = new LabelPlotStyle(table.DataColumns[i]);
-          ps.Add(labelStyle);
-          i++;
-        }
+          DataColumn col = table.DataColumns[idx];
+          switch (table.DataColumns.GetColumnKind(idx))
+          {
+            case ColumnKind.Label:
+              LabelPlotStyle labelStyle = new LabelPlotStyle(col);
+              ps.Insert(0, labelStyle);
+              break;
+            case ColumnKind.Err:
+              ErrorBarPlotStyle errStyle = new ErrorBarPlotStyle();
+              errStyle.PositiveErrorColumn = col as INumericColumn;
+              errStyle.NegativeErrorColumn = col as INumericColumn;
+              ps.Add(errStyle);
+              break;
+            case ColumnKind.pErr:
+              if (null != unpairedNegativeError)
+              {
+                unpairedNegativeError.PositiveErrorColumn = col as INumericColumn; ;
+                unpairedNegativeError = null;
+              }
+              else
+              {
+                unpairedPositiveError = new ErrorBarPlotStyle();
+                unpairedPositiveError.PositiveErrorColumn = col as INumericColumn;
+                ps.Add(unpairedPositiveError);
+              }
+              break;
+            case ColumnKind.mErr:
+              if (null != unpairedPositiveError)
+              {
+                unpairedPositiveError.NegativeErrorColumn = col as INumericColumn;
+                unpairedPositiveError = null;
+              }
+              else
+              {
+                unpairedNegativeError = new ErrorBarPlotStyle();
+                unpairedNegativeError.NegativeErrorColumn = col as INumericColumn;
+                ps.Add(unpairedNegativeError);
+              }
+              break;
+            default:
+              foundMoreColumns = false;
+              break;
+          }
+
+          if (foundMoreColumns)
+            processedColumns.Add(idx);
+
+        } 
 
         result.Add(new XYColumnPlotItem(pa,ps));
       }

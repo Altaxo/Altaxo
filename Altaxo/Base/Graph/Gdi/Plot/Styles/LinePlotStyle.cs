@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -647,9 +647,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       float symbolGap)
     {
       PointF[] linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
-      PointF[] linepts = new PointF[range.Length];
+      PointF[] linepts = new PointF[range.Length+(_connectCircular?1:0)];
       Array.Copy(linePoints, range.LowerBound, linepts, 0, range.Length); // Extract
-      int lastIdx = range.Length - 1;
+      if (_connectCircular) linepts[linepts.Length - 1] = linepts[0];
+      int lastIdx = range.Length - 1 + (_connectCircular ? 1 : 0);
       GraphicsPath gp = new GraphicsPath();
       SizeF layerSize = layer.Size;
    
@@ -658,7 +659,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         Logical3D r0 = layer.GetLogical3D(pdata, range.OriginalFirstPoint);
         layer.CoordinateSystem.GetIsolineFromPlaneToPoint(gp, _fillDirection, r0);
         gp.AddLines(linepts);
-        Logical3D r1 = layer.GetLogical3D(pdata, range.OriginalLastPoint);
+        Logical3D r1 = layer.GetLogical3D(pdata, _connectCircular ? range.OriginalFirstPoint: range.OriginalLastPoint);
         layer.CoordinateSystem.GetIsolineFromPointToPlane(gp, r1, _fillDirection);
         layer.CoordinateSystem.GetIsolineOnPlane(gp, _fillDirection, r1, r0);
 

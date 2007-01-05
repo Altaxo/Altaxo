@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -36,6 +36,9 @@ namespace Altaxo.Graph.Scales.Rescaling
     protected double _org;
     protected double _end;
     protected double _span;
+
+    protected double _minGrace=0.1;
+    protected double _maxGrace=0.1;
 
     [field:NonSerialized]
     public event EventHandler Changed;
@@ -89,6 +92,9 @@ namespace Altaxo.Graph.Scales.Rescaling
       this._end = from._end;
       this._span = from._span;
 
+      this._minGrace = from._minGrace;
+      this._maxGrace = from._maxGrace;
+
       if(!bEqual)
         OnChanged();
     }
@@ -118,6 +124,8 @@ namespace Altaxo.Graph.Scales.Rescaling
       }
     }
 
+
+
     public BoundaryRescaling OrgRescaling
     {
       get
@@ -142,6 +150,22 @@ namespace Altaxo.Graph.Scales.Rescaling
       }
     }
 
+
+    public double MinGrace
+    {
+      get
+      {
+        return _minGrace;
+      }
+    }
+
+    public double MaxGrace
+    {
+      get
+      {
+        return _maxGrace;
+      }
+    }
 
     #endregion
 

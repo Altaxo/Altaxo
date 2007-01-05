@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -510,6 +510,30 @@ namespace Altaxo.Worksheet.Commands
     public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.ColumnCommands.SetSelectedColumnAsValue(ctrl);
+    }
+  }
+
+  public class SetColumnAsError : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
+    {
+      Altaxo.Worksheet.Commands.ColumnCommands.SetSelectedColumnAsKind(ctrl,Altaxo.Data.ColumnKind.Err);
+    }
+  }
+
+  public class SetColumnAsPositiveError : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
+    {
+      Altaxo.Worksheet.Commands.ColumnCommands.SetSelectedColumnAsKind(ctrl, Altaxo.Data.ColumnKind.pErr);
+    }
+  }
+
+  public class SetColumnAsNegativeError : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
+    {
+      Altaxo.Worksheet.Commands.ColumnCommands.SetSelectedColumnAsKind(ctrl, Altaxo.Data.ColumnKind.mErr);
     }
   }
 

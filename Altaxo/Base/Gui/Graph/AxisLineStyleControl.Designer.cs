@@ -1,3 +1,25 @@
+#region Copyright
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+#endregion
+
 namespace Altaxo.Gui.Graph
 {
   partial class AxisLineStyleControl
@@ -84,7 +106,7 @@ namespace Altaxo.Gui.Graph
       this._verticalPanel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
       this._verticalPanel.Location = new System.Drawing.Point(0, 0);
       this._verticalPanel.Name = "_verticalPanel";
-      this._verticalPanel.Size = new System.Drawing.Size(409, 277);
+      this._verticalPanel.Size = new System.Drawing.Size(409, 223);
       this._verticalPanel.TabIndex = 0;
       // 
       // _lineGroupBox
@@ -107,7 +129,7 @@ namespace Altaxo.Gui.Graph
       this._lineLayoutTable.ColumnCount = 5;
       this._lineLayoutTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
       this._lineLayoutTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-      this._lineLayoutTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+      this._lineLayoutTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
       this._lineLayoutTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
       this._lineLayoutTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
       this._lineLayoutTable.Controls.Add(this._lineBrushColor, 1, 1);
@@ -161,7 +183,7 @@ namespace Altaxo.Gui.Graph
       this._majorGroupBox.Controls.Add(this._majorLayoutTable);
       this._majorGroupBox.Location = new System.Drawing.Point(3, 76);
       this._majorGroupBox.Name = "_majorGroupBox";
-      this._majorGroupBox.Size = new System.Drawing.Size(403, 96);
+      this._majorGroupBox.Size = new System.Drawing.Size(403, 69);
       this._majorGroupBox.TabIndex = 1;
       this._majorGroupBox.TabStop = false;
       this._majorGroupBox.Text = "Major Ticks";
@@ -189,7 +211,7 @@ namespace Altaxo.Gui.Graph
       this._majorLayoutTable.RowStyles.Add(new System.Windows.Forms.RowStyle());
       this._majorLayoutTable.RowStyles.Add(new System.Windows.Forms.RowStyle());
       this._majorLayoutTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-      this._majorLayoutTable.Size = new System.Drawing.Size(397, 77);
+      this._majorLayoutTable.Size = new System.Drawing.Size(397, 50);
       this._majorLayoutTable.TabIndex = 0;
       // 
       // _chkCustomMajorColor
@@ -220,7 +242,7 @@ namespace Altaxo.Gui.Graph
       // 
       this._lblMajorLength.Anchor = System.Windows.Forms.AnchorStyles.Right;
       this._lblMajorLength.AutoSize = true;
-      this._lblMajorLength.Location = new System.Drawing.Point(13, 44);
+      this._lblMajorLength.Location = new System.Drawing.Point(13, 31);
       this._lblMajorLength.Name = "_lblMajorLength";
       this._lblMajorLength.Size = new System.Drawing.Size(43, 13);
       this._lblMajorLength.TabIndex = 2;
@@ -228,13 +250,16 @@ namespace Altaxo.Gui.Graph
       // 
       // _majorWhichTicksLayout
       // 
+      this._majorWhichTicksLayout.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this._majorWhichTicksLayout.AutoSize = true;
       this._majorWhichTicksLayout.Controls.Add(this._chkWhichMajor1);
       this._majorWhichTicksLayout.Controls.Add(this._chkWhichMajor2);
-      this._majorWhichTicksLayout.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-      this._majorWhichTicksLayout.Location = new System.Drawing.Point(273, 28);
+      this._majorWhichTicksLayout.Location = new System.Drawing.Point(270, 25);
+      this._majorWhichTicksLayout.Margin = new System.Windows.Forms.Padding(0);
       this._majorWhichTicksLayout.Name = "_majorWhichTicksLayout";
-      this._majorWhichTicksLayout.Size = new System.Drawing.Size(49, 46);
+      this._majorWhichTicksLayout.Size = new System.Drawing.Size(127, 25);
       this._majorWhichTicksLayout.TabIndex = 6;
       // 
       // _chkWhichMajor1
@@ -250,7 +275,7 @@ namespace Altaxo.Gui.Graph
       // _chkWhichMajor2
       // 
       this._chkWhichMajor2.AutoSize = true;
-      this._chkWhichMajor2.Location = new System.Drawing.Point(3, 26);
+      this._chkWhichMajor2.Location = new System.Drawing.Point(44, 3);
       this._chkWhichMajor2.Name = "_chkWhichMajor2";
       this._chkWhichMajor2.Size = new System.Drawing.Size(43, 17);
       this._chkWhichMajor2.TabIndex = 1;
@@ -262,9 +287,9 @@ namespace Altaxo.Gui.Graph
       this._minorGroupBox.AutoSize = true;
       this._minorGroupBox.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
       this._minorGroupBox.Controls.Add(this._minorLayoutTable);
-      this._minorGroupBox.Location = new System.Drawing.Point(3, 178);
+      this._minorGroupBox.Location = new System.Drawing.Point(3, 151);
       this._minorGroupBox.Name = "_minorGroupBox";
-      this._minorGroupBox.Size = new System.Drawing.Size(403, 96);
+      this._minorGroupBox.Size = new System.Drawing.Size(403, 69);
       this._minorGroupBox.TabIndex = 2;
       this._minorGroupBox.TabStop = false;
       this._minorGroupBox.Text = "Minor Ticks";
@@ -292,7 +317,7 @@ namespace Altaxo.Gui.Graph
       this._minorLayoutTable.RowStyles.Add(new System.Windows.Forms.RowStyle());
       this._minorLayoutTable.RowStyles.Add(new System.Windows.Forms.RowStyle());
       this._minorLayoutTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-      this._minorLayoutTable.Size = new System.Drawing.Size(397, 77);
+      this._minorLayoutTable.Size = new System.Drawing.Size(397, 50);
       this._minorLayoutTable.TabIndex = 3;
       // 
       // _chkCustomMinorColor
@@ -323,7 +348,7 @@ namespace Altaxo.Gui.Graph
       // 
       this._lblMinorLength.Anchor = System.Windows.Forms.AnchorStyles.Right;
       this._lblMinorLength.AutoSize = true;
-      this._lblMinorLength.Location = new System.Drawing.Point(13, 44);
+      this._lblMinorLength.Location = new System.Drawing.Point(13, 31);
       this._lblMinorLength.Name = "_lblMinorLength";
       this._lblMinorLength.Size = new System.Drawing.Size(43, 13);
       this._lblMinorLength.TabIndex = 2;
@@ -331,13 +356,16 @@ namespace Altaxo.Gui.Graph
       // 
       // _minorWhichTicksLayout
       // 
+      this._minorWhichTicksLayout.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this._minorWhichTicksLayout.AutoSize = true;
       this._minorWhichTicksLayout.Controls.Add(this._chkWhichMinor1);
       this._minorWhichTicksLayout.Controls.Add(this._chkWhichMinor2);
-      this._minorWhichTicksLayout.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-      this._minorWhichTicksLayout.Location = new System.Drawing.Point(273, 28);
+      this._minorWhichTicksLayout.Location = new System.Drawing.Point(270, 25);
+      this._minorWhichTicksLayout.Margin = new System.Windows.Forms.Padding(0);
       this._minorWhichTicksLayout.Name = "_minorWhichTicksLayout";
-      this._minorWhichTicksLayout.Size = new System.Drawing.Size(49, 46);
+      this._minorWhichTicksLayout.Size = new System.Drawing.Size(127, 25);
       this._minorWhichTicksLayout.TabIndex = 6;
       // 
       // _chkWhichMinor1
@@ -353,7 +381,7 @@ namespace Altaxo.Gui.Graph
       // _chkWhichMinor2
       // 
       this._chkWhichMinor2.AutoSize = true;
-      this._chkWhichMinor2.Location = new System.Drawing.Point(3, 26);
+      this._chkWhichMinor2.Location = new System.Drawing.Point(44, 3);
       this._chkWhichMinor2.Name = "_chkWhichMinor2";
       this._chkWhichMinor2.Size = new System.Drawing.Size(43, 17);
       this._chkWhichMinor2.TabIndex = 3;
@@ -549,7 +577,7 @@ namespace Altaxo.Gui.Graph
       // 
       // _lineLineThickness
       // 
-      this._lineLineThickness.Anchor = System.Windows.Forms.AnchorStyles.None;
+      this._lineLineThickness.Anchor = System.Windows.Forms.AnchorStyles.Left;
       this._lineLineThickness.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
       this._lineLineThickness.FormattingEnabled = true;
       this._lineLineThickness.ItemHeight = 13;
@@ -749,7 +777,7 @@ namespace Altaxo.Gui.Graph
       // 
       // _lineMajorThickness
       // 
-      this._lineMajorThickness.Anchor = System.Windows.Forms.AnchorStyles.None;
+      this._lineMajorThickness.Anchor = System.Windows.Forms.AnchorStyles.Left;
       this._lineMajorThickness.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
       this._lineMajorThickness.Enabled = false;
       this._lineMajorThickness.FormattingEnabled = true;
@@ -765,7 +793,7 @@ namespace Altaxo.Gui.Graph
       this._lineMajorLength.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
       this._lineMajorLength.FormattingEnabled = true;
       this._lineMajorLength.ItemHeight = 13;
-      this._lineMajorLength.Location = new System.Drawing.Point(62, 41);
+      this._lineMajorLength.Location = new System.Drawing.Point(62, 28);
       this._lineMajorLength.Name = "_lineMajorLength";
       this._lineMajorLength.Size = new System.Drawing.Size(121, 19);
       this._lineMajorLength.TabIndex = 5;
@@ -960,7 +988,7 @@ namespace Altaxo.Gui.Graph
       // 
       // _lineMinorThickness
       // 
-      this._lineMinorThickness.Anchor = System.Windows.Forms.AnchorStyles.None;
+      this._lineMinorThickness.Anchor = System.Windows.Forms.AnchorStyles.Left;
       this._lineMinorThickness.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
       this._lineMinorThickness.Enabled = false;
       this._lineMinorThickness.FormattingEnabled = true;
@@ -976,7 +1004,7 @@ namespace Altaxo.Gui.Graph
       this._lineMinorLength.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
       this._lineMinorLength.FormattingEnabled = true;
       this._lineMinorLength.ItemHeight = 13;
-      this._lineMinorLength.Location = new System.Drawing.Point(62, 41);
+      this._lineMinorLength.Location = new System.Drawing.Point(62, 28);
       this._lineMinorLength.Name = "_lineMinorLength";
       this._lineMinorLength.Size = new System.Drawing.Size(121, 19);
       this._lineMinorLength.TabIndex = 5;
@@ -1041,7 +1069,7 @@ namespace Altaxo.Gui.Graph
       this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
       this.Controls.Add(this._verticalPanel);
       this.Name = "AxisLineStyleControl";
-      this.Size = new System.Drawing.Size(409, 277);
+      this.Size = new System.Drawing.Size(409, 223);
       this._verticalPanel.ResumeLayout(false);
       this._verticalPanel.PerformLayout();
       this._lineGroupBox.ResumeLayout(false);

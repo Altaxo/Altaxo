@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -21,6 +21,8 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
+using Altaxo.Collections;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Plot;
 using Altaxo.Graph.Gdi.Plot.Styles;
@@ -36,7 +38,7 @@ namespace Altaxo.Gui.Graph
     IXYPlotStyleCollectionViewEventSink Controller { get; set; }
     void InitializePredefinedStyles(string[] names, int selindex);
     void InitializeStyleList(string[] names, int[] selindices);
-    void InitializeAvailableStyleList(string[] names);
+    void InitializeAvailableStyleList(List<string> names);
   }
   /// <summary>
   /// Summary description for XYPlotStyleCollectionController.
@@ -53,7 +55,7 @@ namespace Altaxo.Gui.Graph
   /// <summary>
   /// Summary description for XYPlotStyleCollectionController.
   /// </summary>
-  public interface IXYPlotStyleCollectionController : IMVCAController
+  public interface IXYPlotStyleCollectionController : IMVCANController
   {
     event EventHandler CollectionChangeCommit;
     void OnCollectionChangeCommit();
@@ -70,10 +72,12 @@ namespace Altaxo.Gui.Graph
     protected G2DPlotStyleCollection _doc;
     protected System.Collections.ArrayList _tempdoc;
 
-    System.Type[] _plotStyleTypes;
+    List<System.Type> _plotStyleTypes;
 
-    
 
+    public XYPlotStyleCollectionController()
+    {
+    }
 
     public XYPlotStyleCollectionController(G2DPlotStyleCollection doc)
     {
@@ -83,6 +87,27 @@ namespace Altaxo.Gui.Graph
         _tempdoc.Add(_doc[i]);
     }
 
+    public bool InitializeDocument(params object[] args)
+    {
+      if (args == null || args.Length == 0)
+        return false;
+      G2DPlotStyleCollection doc = args[0] as G2DPlotStyleCollection;
+      if (doc == null)
+        return false;
+      
+      _doc = doc;
+      _tempdoc = new System.Collections.ArrayList();
+      for (int i = 0; i < _doc.Count; i++)
+        _tempdoc.Add(_doc[i]);
+
+      Initialize();
+      return true;
+    }
+
+    public UseDocument UseDocumentCopy
+    {
+      set { }
+    }
 
     public void Initialize()
     {
@@ -105,10 +130,17 @@ namespace Altaxo.Gui.Graph
 
     public void InitializeAvailableStyleList()
     {
-      _plotStyleTypes = Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IG2DPlotStyle));
-      string[] names = new string[_plotStyleTypes.Length];
-      for(int i=0;i<names.Length;i++)
-        names[i] = Current.Gui.GetUserFriendlyClassName(_plotStyleTypes[i]);
+      Type[] avtypes = Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IG2DPlotStyle));
+      _plotStyleTypes = new List<Type>();
+      List<string> names = new List<string>();
+      for (int i = 0; i < avtypes.Length; i++)
+      {
+        if (avtypes[i] != typeof(G2DPlotStyleCollection))
+        {
+          _plotStyleTypes.Add(avtypes[i]);
+          names.Add(Current.Gui.GetUserFriendlyClassName(avtypes[i]));
+        }
+      }
 
       if(_view!=null)
         _view.InitializeAvailableStyleList(names);

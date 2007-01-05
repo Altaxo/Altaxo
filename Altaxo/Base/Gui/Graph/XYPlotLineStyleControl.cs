@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -703,7 +703,7 @@ namespace Altaxo.Gui.Graph
       // 
       // label1
       // 
-      this.label1.Location = new System.Drawing.Point(5, 6);
+      this.label1.Location = new System.Drawing.Point(5, 10);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(48, 16);
       this.label1.TabIndex = 0;

@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -92,7 +92,7 @@ namespace Altaxo.Gui.Graph
       this._majorStyle.ColorType = Altaxo.Graph.ColorType.KnownAndSystemColor;
       this._majorStyle.Controller = null;
       this._majorStyle.DocPen = null;
-      this._majorStyle.Location = new System.Drawing.Point(3, 63);
+      this._majorStyle.Location = new System.Drawing.Point(3, 49);
       this._majorStyle.Name = "_majorStyle";
       this._majorStyle.Size = new System.Drawing.Size(198, 87);
       this._majorStyle.TabIndex = 0;
@@ -104,34 +104,37 @@ namespace Altaxo.Gui.Graph
       this._minorStyle.ColorType = Altaxo.Graph.ColorType.KnownAndSystemColor;
       this._minorStyle.Controller = null;
       this._minorStyle.DocPen = null;
-      this._minorStyle.Location = new System.Drawing.Point(207, 63);
+      this._minorStyle.Location = new System.Drawing.Point(207, 49);
       this._minorStyle.Name = "_minorStyle";
       this._minorStyle.Size = new System.Drawing.Size(198, 87);
       this._minorStyle.TabIndex = 1;
       // 
       // _cbEnable
       // 
+      this._cbEnable.AutoSize = true;
       this._cbEnable.Location = new System.Drawing.Point(3, 3);
       this._cbEnable.Name = "_cbEnable";
-      this._cbEnable.Size = new System.Drawing.Size(104, 24);
+      this._cbEnable.Size = new System.Drawing.Size(59, 17);
       this._cbEnable.TabIndex = 2;
       this._cbEnable.Text = "Enable";
       this._cbEnable.CheckedChanged += new System.EventHandler(this._cbEnable_CheckedChanged);
       // 
       // _cbShowMinor
       // 
-      this._cbShowMinor.Location = new System.Drawing.Point(207, 33);
+      this._cbShowMinor.AutoSize = true;
+      this._cbShowMinor.Location = new System.Drawing.Point(207, 26);
       this._cbShowMinor.Name = "_cbShowMinor";
-      this._cbShowMinor.Size = new System.Drawing.Size(112, 24);
+      this._cbShowMinor.Size = new System.Drawing.Size(101, 17);
       this._cbShowMinor.TabIndex = 3;
       this._cbShowMinor.Text = "Show minor grid";
       this._cbShowMinor.CheckedChanged += new System.EventHandler(this._cbShowMinor_CheckedChanged);
       // 
       // _cbShowZeroOnly
       // 
-      this._cbShowZeroOnly.Location = new System.Drawing.Point(3, 33);
+      this._cbShowZeroOnly.AutoSize = true;
+      this._cbShowZeroOnly.Location = new System.Drawing.Point(3, 26);
       this._cbShowZeroOnly.Name = "_cbShowZeroOnly";
-      this._cbShowZeroOnly.Size = new System.Drawing.Size(104, 24);
+      this._cbShowZeroOnly.Size = new System.Drawing.Size(81, 17);
       this._cbShowZeroOnly.TabIndex = 4;
       this._cbShowZeroOnly.Text = "At zero only";
       this._cbShowZeroOnly.CheckedChanged += new System.EventHandler(this._cbShowZeroOnly_CheckedChanged);
@@ -154,7 +157,7 @@ namespace Altaxo.Gui.Graph
       this._tableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle());
       this._tableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle());
       this._tableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle());
-      this._tableLayout.Size = new System.Drawing.Size(408, 153);
+      this._tableLayout.Size = new System.Drawing.Size(408, 139);
       this._tableLayout.TabIndex = 5;
       // 
       // XYGridStyleControl
@@ -163,7 +166,7 @@ namespace Altaxo.Gui.Graph
       this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
       this.Controls.Add(this._tableLayout);
       this.Name = "XYGridStyleControl";
-      this.Size = new System.Drawing.Size(411, 159);
+      this.Size = new System.Drawing.Size(411, 145);
       this._tableLayout.ResumeLayout(false);
       this._tableLayout.PerformLayout();
       this.ResumeLayout(false);

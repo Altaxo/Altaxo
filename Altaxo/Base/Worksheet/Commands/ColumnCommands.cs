@@ -1,7 +1,7 @@
 #region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2005 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -335,6 +335,29 @@ namespace Altaxo.Worksheet.Commands
         bChanged = true;
       }
       if(bChanged)
+        ctrl.UpdateTableView(); // draw new because 
+
+    }
+
+    /// <summary>
+    /// Sets the column kind of the first selected column to the specified column kind
+    /// </summary>
+    public static void SetSelectedColumnAsKind(WorksheetController ctrl, Altaxo.Data.ColumnKind kind)
+    {
+      bool bChanged = false;
+      if (ctrl.SelectedDataColumns.Count > 0)
+      {
+        for (int i = 0; i < ctrl.SelectedDataColumns.Count; i++)
+          ctrl.DataTable.DataColumns.SetColumnKind(ctrl.SelectedDataColumns[i], kind);
+        bChanged = true;
+      }
+      if (ctrl.SelectedPropertyColumns.Count > 0)
+      {
+        for (int i = 0; i < ctrl.SelectedPropertyColumns.Count; i++)
+          ctrl.DataTable.PropertyColumns.SetColumnKind(ctrl.SelectedPropertyColumns[i], kind);
+        bChanged = true;
+      }
+      if (bChanged)
         ctrl.UpdateTableView(); // draw new because 
 
     }

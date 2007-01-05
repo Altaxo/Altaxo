@@ -1,3 +1,6 @@
+#region Copyright
+#endregion
+
 using System;
 
 // <summary>
