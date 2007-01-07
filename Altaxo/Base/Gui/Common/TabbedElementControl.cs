@@ -21,6 +21,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
@@ -40,6 +41,8 @@ namespace Altaxo.Gui.Common
     private ITabbedElementViewEventSink _controller;
     private System.Windows.Forms.Panel m_ButtonPanel;
     private System.Windows.Forms.TabControl m_TabControl;
+
+
     /// <summary>
     /// Required designer variable.
     /// </summary>
@@ -165,6 +168,7 @@ namespace Altaxo.Gui.Common
       if (null != cc)
       {
         cc.Enter += EhChildControl_Entered;
+        cc.Validated += EhChildControl_Validated;
         int diffx = Math.Max(0, cc.Width - m_TabControl.TabPages[0].ClientSize.Width);
         int diffy = Math.Max(0, cc.Height - m_TabControl.TabPages[0].ClientSize.Height);
 
@@ -187,6 +191,14 @@ namespace Altaxo.Gui.Common
       if (ChildControl_Entered != null)
       {
         ChildControl_Entered(sender, e);
+      }
+    }
+    public event EventHandler ChildControl_Validated;
+    void EhChildControl_Validated(object sender, EventArgs e)
+    {
+      if (ChildControl_Validated != null)
+      {
+        ChildControl_Validated(sender, e);
       }
     }
     #endregion

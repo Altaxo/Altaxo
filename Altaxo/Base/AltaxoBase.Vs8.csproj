@@ -899,10 +899,6 @@
       <DependentUpon>SpinAndComboBoxControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Gui\Common\TabbedDialogView.resx">
-      <DependentUpon>TabbedDialogView.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="Gui\Common\TabbedElementControl.resx">
       <DependentUpon>TabbedElementControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -940,6 +936,10 @@
     <EmbeddedResource Include="Gui\Graph\FitPolynomialDialogControl.resx">
       <DependentUpon>FitPolynomialDialogControl.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\FunctionPlotDataControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>FunctionPlotDataControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Graph\G2DCartesicCSControl.resx">
       <SubType>Designer</SubType>
@@ -993,9 +993,9 @@
       <DependentUpon>SingleColumnChoiceControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Gui\Graph\TextControlDialog.resx">
-      <DependentUpon>TextControlDialog.cs</DependentUpon>
+    <EmbeddedResource Include="Gui\Graph\TextGraphicControl.resx">
       <SubType>Designer</SubType>
+      <DependentUpon>TextGraphicControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Graph\TitleFormatLayerControl.resx">
       <DependentUpon>TitleFormatLayerControl.cs</DependentUpon>
@@ -1290,10 +1290,6 @@
     <Compile Include="Gui\Common\SpinAndComboBoxControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Gui\Common\TabbedDialogController.cs" />
-    <Compile Include="Gui\Common\TabbedDialogView.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="Gui\Common\ViewDescriptionElement.cs" />
     <Compile Include="Gui\ExpectedTypeOfView.cs" />
     <Compile Include="Gui\Graph\AxisLineStyleControl.cs">
@@ -1322,6 +1318,7 @@
     </Compile>
     <Compile Include="Gui\Graph\BarGraphPlotStyleController.cs" />
     <Compile Include="Gui\Graph\CoordinateSystemController.cs" />
+    <Compile Include="Gui\Graph\DensityImagePlotItemController.cs" />
     <Compile Include="Gui\Graph\DensityImagePlotStyleControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -1337,6 +1334,13 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Gui\Graph\FitPolynomialDialogController.cs" />
+    <Compile Include="Gui\Graph\FunctionPlotDataControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\FunctionPlotDataControl.Designer.cs">
+      <DependentUpon>FunctionPlotDataControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\FunctionPlotDataController.cs" />
     <Compile Include="Gui\Graph\G2DCartesicCSControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -1385,9 +1389,13 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Gui\Graph\SingleColumnChoiceController.cs" />
-    <Compile Include="Gui\Graph\TextControlDialog.cs">
-      <SubType>Form</SubType>
+    <Compile Include="Gui\Graph\TextGraphicControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Gui\Graph\TextGraphicControl.Designer.cs">
+      <DependentUpon>TextGraphicControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\TextGraphicController.cs" />
     <Compile Include="Gui\Graph\TitleFormatLayerControl.cs">
       <SubType>UserControl</SubType>
     </Compile>

@@ -21,7 +21,7 @@
 #endregion
 
 using System;
-
+using System.Collections.Generic;
 
 namespace Altaxo.Gui.Common
 {
@@ -61,10 +61,16 @@ namespace Altaxo.Gui.Common
     void BringTabToFront(int index);
 
     /// <summary>
-    /// Occurs when the input focus leaves one of the child controls of the tabs. The sender
-    /// of this event is set to the child control that lost the input focus.
+    /// Occurs when the input focus enters one of the child controls of the tabs. The sender
+    /// of this event is set to the child control that received the input focus.
     /// </summary>
     event EventHandler ChildControl_Entered;
+    /// <summary>
+    /// Occurs when the input focus leaves one of the child controls and the control is validated.
+    /// The sender
+    /// of this event is set to the child control that lost the input focus.
+    /// </summary>
+    event EventHandler ChildControl_Validated;
   }
 
   
@@ -77,7 +83,7 @@ namespace Altaxo.Gui.Common
     
   }
 
-  public interface ITabbedElementController 
+  public interface ITabbedElementController : IMVCAController
   {
     void BringTabToFront(int i);
 
@@ -100,7 +106,7 @@ namespace Altaxo.Gui.Common
   
     protected int _frontTabIndex=0;
     private ITabbedElementView _view;
-    private System.Collections.ArrayList _tabs = new System.Collections.ArrayList();
+    private List<ControlViewElement> _tabs = new List<ControlViewElement>();
 
 
     /// <summary>
@@ -148,6 +154,11 @@ namespace Altaxo.Gui.Common
       EhView_ActiveChildControlChanged(sender, new Main.InstanceChangedEventArgs<object>(_lastActiveChildControl,sender));
       _lastActiveChildControl = sender;
     }
+    void EhView_ChildControlValidated(object sender, EventArgs e)
+    {
+      EhView_ActiveChildControlChanged(sender, new Main.InstanceChangedEventArgs<object>(sender, null));
+      _lastActiveChildControl = null;
+    }
 
     protected virtual void EhView_ActiveChildControlChanged(object sender, Main.InstanceChangedEventArgs<object> e)
     {
@@ -165,6 +176,7 @@ namespace Altaxo.Gui.Common
         {
           _view.Controller = null;
           _view.ChildControl_Entered -= EhView_ChildControlEntered;
+          _view.ChildControl_Validated -= EhView_ChildControlValidated;
         }
 
         _view = value;
@@ -175,6 +187,7 @@ namespace Altaxo.Gui.Common
         {
           _view.Controller = this;
           _view.ChildControl_Entered += EhView_ChildControlEntered;
+          _view.ChildControl_Validated += EhView_ChildControlValidated;
         }
       }
     }
@@ -215,6 +228,36 @@ namespace Altaxo.Gui.Common
     #region ITabbedDialogController Members
 
    
+
+    #endregion
+
+    #region IMVCController Members
+
+
+    public virtual object ModelObject
+    {
+      get
+      {
+        throw new Exception("The method or operation must be overriden in a derived class");
+      }
+    }
+
+    #endregion
+
+    #region IApplyController Members
+
+    public virtual bool Apply()
+    {
+      for (int i = 0; i < _tabs.Count; i++)
+      {
+        if (!_tabs[i].Controller.Apply())
+        {
+          BringTabToFront(i);
+          return false;
+        }
+      }
+      return true;
+    }
 
     #endregion
   }

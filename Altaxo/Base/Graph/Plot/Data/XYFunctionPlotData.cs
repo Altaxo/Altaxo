@@ -86,7 +86,15 @@ namespace Altaxo.Graph.Plot.Data
 
     public XYFunctionPlotData(XYFunctionPlotData from)
     {
-      this.Function = (Altaxo.Calc.IScalarFunctionDD)((ICloneable)_function).Clone();
+      CopyFrom(from);
+    }
+
+    public void CopyFrom(XYFunctionPlotData from)
+    {
+      if (from._function is ICloneable)
+        this.Function = (Altaxo.Calc.IScalarFunctionDD)((ICloneable)from._function).Clone();
+      else
+        this.Function = from._function;
     }
 
     public override string ToString()

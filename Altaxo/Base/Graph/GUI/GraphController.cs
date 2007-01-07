@@ -753,14 +753,7 @@ namespace Altaxo.Graph.GUI
         XYPlotLayer actLayer = this.Layers[actLayerNum];
         IGPlotItem pa = actLayer.PlotItems.Flattened[CurrentPlotNumber];
 
-        
-
-        // get plot group
-        PlotGroupStyleCollection plotGroup = pa.ParentCollection.GroupStyles;
-        
-        
-        //LineScatterPlotStyleController.ShowPlotStyleDialog(this.m_View.Form,pa,plotGroup);
-        DialogFactory.ShowPlotStyleAndDataDialog(this.m_View.Form,pa,plotGroup);
+        Current.Gui.ShowDialog(new object[] { pa }, string.Format("#{0}: {1}", pa.Name, pa.ToString()));
       }
       
         
@@ -1202,10 +1195,10 @@ namespace Altaxo.Graph.GUI
 
       // get plot group
       PlotGroupStyleCollection plotGroup = pa.ParentCollection.GroupStyles;
-        
-        
-      //LineScatterPlotStyleController.ShowPlotStyleDialog(this.m_View.Form,pa,plotGroup);
-      DialogFactory.ShowPlotStyleAndDataDialog(Current.MainWindow,pa,plotGroup);
+
+      Current.Gui.ShowDialog(new object[] { pa }, string.Format("#{0}: {1}", pa.Name, pa.ToString()));
+  
+     // DialogFactory.ShowPlotStyleAndDataDialog(Current.MainWindow,pa,plotGroup);
 
       return false;
     }
@@ -1222,6 +1215,24 @@ namespace Altaxo.Graph.GUI
 
       bool shouldDeleted = false;
 
+      object tgoo = tg;
+      if (Current.Gui.ShowDialog(ref tgoo, "Edit text", true))
+      {
+        tg = (TextGraphic)tgoo;
+        if (tg == null || tg.Empty)
+        {
+          if (null != hit.Remove)
+            shouldDeleted = hit.Remove(hit);
+          else
+            shouldDeleted = false;
+        }
+        else
+        {
+          if (layer.ParentLayerList != null)
+            layer.ParentLayerList.EhChildChanged(layer, EventArgs.Empty);
+        }
+      }
+      /*
       TextControlDialog dlg = new TextControlDialog(layer,tg);
       if(DialogResult.OK==dlg.ShowDialog(Current.MainWindow))
       {
@@ -1240,6 +1251,7 @@ namespace Altaxo.Graph.GUI
         if(layer.ParentLayerList!=null)
           layer.ParentLayerList.EhChildChanged(layer,EventArgs.Empty);
       }
+      */
 
 
       return shouldDeleted;

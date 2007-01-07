@@ -123,7 +123,7 @@ namespace Altaxo.Gui.Common.Drawing
       float rot = (float)Items[e.Index];
       PointF dest = new PointF(
         middle.X+(float)(0.5*minSize*Math.Cos(rot*Math.PI/180)),
-        middle.Y+(float)(0.5*minSize*Math.Sin(rot*Math.PI/180)));
+        middle.Y-(float)(0.5*minSize*Math.Sin(rot*Math.PI/180)));
       
 
       SolidBrush foreColorBrush = new SolidBrush(e.ForeColor);

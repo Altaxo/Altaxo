@@ -573,7 +573,16 @@ namespace Altaxo.Worksheet.Commands.Analysis
       SpectralPreprocessingControl     viewBB = new SpectralPreprocessingControl();
       ctrlBB.View = viewBB;
 
+      TabbedElementController tabController = new TabbedElementController();
+      tabController.AddTab("Factors",ctrlAA,viewAA);
+      tabController.AddTab("Preprocessing", ctrlBB, viewBB);
+      if (Current.Gui.ShowDialog(tabController, "Enter analysis parameters", false))
+      {
+        options = ctrlAA.Doc;
+        return true;
+      }
 
+      /*
       TabbedDialogController dialogctrl = new TabbedDialogController("PLS Analysis",false);
       dialogctrl.AddTab("Factors",ctrlAA,viewAA);
       dialogctrl.AddTab("Preprocessing",ctrlBB,viewBB);
@@ -586,6 +595,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
         return true;
       }
+      */
       return false;
     }
 

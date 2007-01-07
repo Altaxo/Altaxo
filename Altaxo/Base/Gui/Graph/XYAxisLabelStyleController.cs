@@ -54,7 +54,7 @@ namespace Altaxo.Gui.Graph
     /// Called if the font size is changed.
     /// </summary>
     /// <param name="newValue">The new selected item of the combo box.</param>
-    void EhView_FontSizeChanged(string newValue);
+    void EhView_FontSizeChanged(float newValue);
 
     /// <summary>
     /// Called if the horizontal aligment is changed.
@@ -82,14 +82,7 @@ namespace Altaxo.Gui.Graph
     /// <param name="bCancel">Normally false, this can be set to true if RangeFrom is not a valid entry.</param>
     void EhView_YOffsetValidating(string newValue, ref bool bCancel);
 
-    /// <summary>
-    /// Called when the contents of Rotation is changed.
-    /// </summary>
-    /// <param name="newValue">Contents of the edit field.</param>
-    /// <param name="bCancel">Normally false, this can be set to true if RangeFrom is not a valid entry.</param>
-    void EhView_RotationValidating(string newValue, ref bool bCancel);
-
-
+    
     /// <summary>
     /// Called if the label style was changed by the user.
     /// </summary>
@@ -125,19 +118,16 @@ namespace Altaxo.Gui.Graph
 
 
     /// <summary>
-    /// Initializes the background controll with the controller.
+    /// Initializes the background.
     /// </summary>
-    /// <param name="controller">Controller for this background control.</param>
-    /// <returns>The gui object (the control).</returns>
-    object BackgroundControl_Initialize(BackgroundStyleController controller);
+    IBackgroundStyle Background { get;set; }
   
 
     /// <summary>
     /// Initializes the font size combo box.
     /// </summary>
-    /// <param name="names">The possible choices.</param>
-    /// <param name="name">The actual name of the choice.</param>
-    void FontSize_Initialize(string[] names, string name);
+    /// <param name="val">Value for the font size.</param>
+    void FontSize_Initialize(float val);
 
     /// <summary>
     /// Initializes the horizontal aligment combo box.
@@ -160,7 +150,7 @@ namespace Altaxo.Gui.Graph
     /// <summary>
     /// Initializes the content of the Rotation edit box.
     /// </summary>
-    void Rotation_Initialize(string text);
+    float Rotation { get; set; }
 
 
     /// <summary>
@@ -220,16 +210,14 @@ namespace Altaxo.Gui.Graph
     /// <summary>The y offset in EM units.</summary>
     protected double _yOffset;
 
-    /// <summary>The rotation of the label.</summary>
-    protected double _rotation;
-
+    
     protected System.Type[] _labelTypes;
 
     protected int           _currentLabelStyle;
 
     protected Altaxo.Graph.Gdi.LabelFormatting.ILabelFormatting _currentLabelStyleInstance;
 
-    protected BackgroundStyleController _backgroundStyleController;
+    protected IBackgroundStyle _backgroundStyle;
 
     public bool InitializeDocument(params object[] args)
     {
@@ -255,11 +243,11 @@ namespace Altaxo.Gui.Graph
         _horizontalAlignment = _doc.HorizontalAlignment;
         _verticalAlignment = _doc.VerticalAlignment;
         _automaticAlignment = _doc.AutomaticAlignment;
-        _rotation     = _doc.Rotation;
+        
         _xOffset      = _doc.XOffset;
         _yOffset      = _doc.YOffset;
         _currentLabelStyleInstance = _doc.LabelFormat;
-        _backgroundStyleController = new BackgroundStyleController(_doc.BackgroundStyle);
+        _backgroundStyle = _doc.BackgroundStyle;
       }
 
       if(null!=View)
@@ -267,14 +255,14 @@ namespace Altaxo.Gui.Graph
         View.Font_Initialize(_fontFamily);
       
         View.Color_Initialize(_color);
-        View.FontSize_Initialize(new string[]{"6","8","10","12","16","24","32","48","72"},Serialization.NumberConversion.ToString(_fontSize));
+        View.FontSize_Initialize(_fontSize);
         View.HorizontalAlignment_Initialize(System.Enum.GetNames(typeof(System.Drawing.StringAlignment)),System.Enum.GetName(typeof(System.Drawing.StringAlignment),_horizontalAlignment));
         View.VerticalAlignment_Initialize(System.Enum.GetNames(typeof(System.Drawing.StringAlignment)),System.Enum.GetName(typeof(System.Drawing.StringAlignment),_verticalAlignment));
         View.AutomaticAlignment_Initialize(this._automaticAlignment);
-        View.Rotation_Initialize(Serialization.NumberConversion.ToString(_rotation));
+        View.Rotation = (float)_doc.Rotation;
         View.XOffset_Initialize(Serialization.NumberConversion.ToString(_xOffset*100));
         View.YOffset_Initialize(Serialization.NumberConversion.ToString(_yOffset*100));
-        _backgroundStyleController.ViewObject = View.BackgroundControl_Initialize(_backgroundStyleController);
+        View.Background = _backgroundStyle;
         InitializeLabelStyle();
       }
     }
@@ -332,11 +320,9 @@ namespace Altaxo.Gui.Graph
 
    
 
-    public void EhView_FontSizeChanged(string newValue)
+    public void EhView_FontSizeChanged(float newValue)
     {
-      double numValue;
-      if(NumberConversion.IsDouble(newValue, out numValue))
-        _fontSize = (float)numValue;
+      _fontSize = newValue;
     }
 
     public void EhView_LabelStyleChanged(int newValue)
@@ -366,12 +352,7 @@ namespace Altaxo.Gui.Graph
    
    
 
-    public void EhView_RotationValidating(string newValue, ref bool bCancel)
-    {
-      if(!NumberConversion.IsDouble(newValue, out _rotation))
-        bCancel = true;
-    }
-
+ 
     public void EhView_XOffsetValidating(string newValue, ref bool bCancel)
     {
       if(!NumberConversion.IsDouble(newValue, out _xOffset))
@@ -394,20 +375,17 @@ namespace Altaxo.Gui.Graph
 
     public bool Apply()
     {
-      if (!_backgroundStyleController.Apply())
-        return false;
-    
-      
+      _doc.BackgroundStyle = _view.Background;
+
       _doc.Font = new Font(_fontFamily.FontFamily,_fontSize,_fontFamily.Style,GraphicsUnit.World);
      
       _doc.Color = _color;
 
-      _doc.BackgroundStyle = (IBackgroundStyle)_backgroundStyleController.ModelObject;
       _doc.HorizontalAlignment = _horizontalAlignment;
       _doc.VerticalAlignment   = _verticalAlignment;
       _doc.AutomaticAlignment = _automaticAlignment;
-     
-      _doc.Rotation     = _rotation;
+
+      _doc.Rotation = _view.Rotation;
       _doc.XOffset      = _xOffset;
       _doc.YOffset      = _yOffset;
      

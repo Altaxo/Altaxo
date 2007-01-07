@@ -64,10 +64,23 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
 
       TextGraphic tgo = new TextGraphic();
       tgo.Position = layerCoord;
+      tgo.ParentObject = _grac.Layers[_grac.CurrentLayerNumber].GraphObjects;
 
       // deselect the text tool
       _grac.CurrentGraphToolType = typeof(GraphControllerMouseHandlers.ObjectPointerMouseHandler);
 
+      object tgoo = tgo;
+      if (Current.Gui.ShowDialog(ref tgoo, "Text", false))
+      {
+        tgo = (TextGraphic)tgoo;
+        if (tgo!=null && !tgo.Empty)
+        {
+          _grac.Layers[_grac.CurrentLayerNumber].GraphObjects.Add(tgo);
+          _grac.RefreshGraph();
+        }
+      }
+
+      /*
       TextControlDialog dlg = new TextControlDialog(_grac.Layers[_grac.CurrentLayerNumber],tgo);
       if(DialogResult.OK==dlg.ShowDialog(_grac.View.Window))
       {
@@ -78,6 +91,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
           _grac.RefreshGraph();
         }
       }
+      */
       _grac.CurrentGraphToolType = typeof(ObjectPointerMouseHandler);
     }
   }

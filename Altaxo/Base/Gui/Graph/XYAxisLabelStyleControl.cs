@@ -49,8 +49,6 @@ namespace Altaxo.Gui.Graph
     private System.Windows.Forms.Label label6;
     private System.Windows.Forms.TextBox m_edYOffset;
     private System.Windows.Forms.TextBox m_edXOffset;
-    private System.Windows.Forms.ComboBox m_cbFontSize;
-    private System.Windows.Forms.TextBox m_edRotation;
     private System.Windows.Forms.ComboBox m_cbHorizontalAlignment;
     private System.Windows.Forms.ComboBox m_cbVerticalAlignment;
     private System.Windows.Forms.Label label2;
@@ -58,8 +56,12 @@ namespace Altaxo.Gui.Graph
     private System.Windows.Forms.ComboBox m_cbLabelStyle;
     private System.Windows.Forms.CheckBox _chkAutomaticAlignment;
     private System.Windows.Forms.Label label8;
-    private BackgroundStyleControl _ctrlBackground;
     private Altaxo.Gui.Common.Drawing.ColorComboBox m_cbColor;
+    private BackgroundControlsGlue _backgroundGlue;
+    private ComboBox _cbBackgroundStyle;
+    private BrushColorComboBox _cbBackgroundBrush;
+    private RotationComboBox m_edRotation;
+    private FontSizeComboBox m_cbFontSize;
     private IContainer components;
 
     public XYAxisLabelStyleControl()
@@ -97,24 +99,26 @@ namespace Altaxo.Gui.Graph
       this.m_edYOffset = new System.Windows.Forms.TextBox();
       this.m_edXOffset = new System.Windows.Forms.TextBox();
       this.label23 = new System.Windows.Forms.Label();
-      this.m_cbFontSize = new System.Windows.Forms.ComboBox();
       this.m_cbHorizontalAlignment = new System.Windows.Forms.ComboBox();
-      this.m_cbFont = new FontComboBox();
       this.label1 = new System.Windows.Forms.Label();
       this.label3 = new System.Windows.Forms.Label();
       this.label4 = new System.Windows.Forms.Label();
       this.groupBox1 = new System.Windows.Forms.GroupBox();
       this.m_cbVerticalAlignment = new System.Windows.Forms.ComboBox();
       this.label5 = new System.Windows.Forms.Label();
-      this.m_edRotation = new System.Windows.Forms.TextBox();
       this.label6 = new System.Windows.Forms.Label();
       this.label2 = new System.Windows.Forms.Label();
       this.label7 = new System.Windows.Forms.Label();
       this.m_cbLabelStyle = new System.Windows.Forms.ComboBox();
       this._chkAutomaticAlignment = new System.Windows.Forms.CheckBox();
       this.label8 = new System.Windows.Forms.Label();
-      this._ctrlBackground = new Altaxo.Gui.Graph.BackgroundStyleControl();
+      this._cbBackgroundStyle = new System.Windows.Forms.ComboBox();
+      this._cbBackgroundBrush = new Altaxo.Gui.Common.Drawing.BrushColorComboBox();
       this.m_cbColor = new Altaxo.Gui.Common.Drawing.ColorComboBox();
+      this.m_cbFont = new Altaxo.Gui.Common.Drawing.FontComboBox();
+      this._backgroundGlue = new Altaxo.Gui.Graph.BackgroundControlsGlue();
+      this.m_edRotation = new Altaxo.Gui.Common.Drawing.RotationComboBox();
+      this.m_cbFontSize = new Altaxo.Gui.Common.Drawing.FontSizeComboBox();
       this.groupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -152,15 +156,6 @@ namespace Altaxo.Gui.Graph
       this.label23.Text = "X";
       this.label23.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
       // 
-      // m_cbFontSize
-      // 
-      this.m_cbFontSize.Location = new System.Drawing.Point(112, 72);
-      this.m_cbFontSize.Name = "m_cbFontSize";
-      this.m_cbFontSize.Size = new System.Drawing.Size(136, 21);
-      this.m_cbFontSize.TabIndex = 21;
-      this.m_cbFontSize.Validating += new System.ComponentModel.CancelEventHandler(this.m_cbFontSize_Validating);
-      this.m_cbFontSize.SelectionChangeCommitted += new System.EventHandler(this.EhFontSize_SelectionChangeCommitted);
-      // 
       // m_cbHorizontalAlignment
       // 
       this.m_cbHorizontalAlignment.Location = new System.Drawing.Point(112, 136);
@@ -169,15 +164,6 @@ namespace Altaxo.Gui.Graph
       this.m_cbHorizontalAlignment.TabIndex = 22;
       this.m_cbHorizontalAlignment.Text = "comboBox1";
       this.m_cbHorizontalAlignment.SelectionChangeCommitted += new System.EventHandler(this.EhHorizontalAlignment_SelectionChangeCommitted);
-      // 
-      // m_cbFont
-      // 
-      this.m_cbFont.Location = new System.Drawing.Point(112, 40);
-      this.m_cbFont.Name = "m_cbFont";
-      this.m_cbFont.Size = new System.Drawing.Size(136, 21);
-      this.m_cbFont.TabIndex = 23;
-      this.m_cbFont.Text = "comboBox1";
-      this.m_cbFont.SelectionChangeCommitted += new System.EventHandler(this.EhFont_SelectionChangedCommitted);
       // 
       // label1
       // 
@@ -237,22 +223,14 @@ namespace Altaxo.Gui.Graph
       this.label5.Text = "Vert. alignment:";
       this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
       // 
-      // m_edRotation
-      // 
-      this.m_edRotation.Location = new System.Drawing.Point(344, 40);
-      this.m_edRotation.Name = "m_edRotation";
-      this.m_edRotation.Size = new System.Drawing.Size(56, 20);
-      this.m_edRotation.TabIndex = 20;
-      this.m_edRotation.Validating += new System.ComponentModel.CancelEventHandler(this.EhRotation_Validating);
-      // 
       // label6
       // 
-      this.label6.Location = new System.Drawing.Point(312, 16);
+      this.label6.Location = new System.Drawing.Point(269, 53);
       this.label6.Name = "label6";
       this.label6.Size = new System.Drawing.Size(96, 16);
       this.label6.TabIndex = 20;
       this.label6.Text = "Rotation (deg.):";
-      this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+      this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
       // 
       // label2
       // 
@@ -301,32 +279,86 @@ namespace Altaxo.Gui.Graph
       this.label8.Text = "Background:";
       this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
       // 
-      // _ctrlBackground
+      // _cbBackgroundStyle
       // 
-      this._ctrlBackground.Controller = null;
-      this._ctrlBackground.Location = new System.Drawing.Point(110, 196);
-      this._ctrlBackground.Name = "_ctrlBackground";
-      this._ctrlBackground.Size = new System.Drawing.Size(262, 30);
-      this._ctrlBackground.TabIndex = 42;
+      this._cbBackgroundStyle.FormattingEnabled = true;
+      this._cbBackgroundStyle.Location = new System.Drawing.Point(110, 200);
+      this._cbBackgroundStyle.Name = "_cbBackgroundStyle";
+      this._cbBackgroundStyle.Size = new System.Drawing.Size(138, 21);
+      this._cbBackgroundStyle.TabIndex = 44;
+      // 
+      // _cbBackgroundBrush
+      // 
+      this._cbBackgroundBrush.ColorType = Altaxo.Graph.ColorType.KnownAndSystemColor;
+      this._cbBackgroundBrush.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+      this._cbBackgroundBrush.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this._cbBackgroundBrush.FormattingEnabled = true;
+      this._cbBackgroundBrush.ItemHeight = 15;
+      this._cbBackgroundBrush.Location = new System.Drawing.Point(272, 200);
+      this._cbBackgroundBrush.Name = "_cbBackgroundBrush";
+      this._cbBackgroundBrush.Size = new System.Drawing.Size(136, 21);
+      this._cbBackgroundBrush.TabIndex = 45;
       // 
       // m_cbColor
       // 
-      this.m_cbColor.ColorChoice = System.Drawing.Color.Black;
+      this.m_cbColor.ColorType = Altaxo.Graph.ColorType.KnownAndSystemColor;
       this.m_cbColor.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
       this.m_cbColor.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.m_cbColor.FormattingEnabled = true;
       this.m_cbColor.ItemHeight = 15;
-  
+      this.m_cbColor.Items.AddRange(new object[] {
+            System.Drawing.Color.Black});
       this.m_cbColor.Location = new System.Drawing.Point(112, 8);
       this.m_cbColor.Name = "m_cbColor";
       this.m_cbColor.Size = new System.Drawing.Size(136, 21);
       this.m_cbColor.TabIndex = 43;
       this.m_cbColor.SelectionChangeCommitted += new System.EventHandler(this.EhColor_SelectionChangeCommitted);
       // 
+      // m_cbFont
+      // 
+      this.m_cbFont.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+      this.m_cbFont.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.m_cbFont.ItemHeight = 15;
+      this.m_cbFont.Location = new System.Drawing.Point(112, 40);
+      this.m_cbFont.Name = "m_cbFont";
+      this.m_cbFont.Size = new System.Drawing.Size(136, 21);
+      this.m_cbFont.TabIndex = 23;
+      this.m_cbFont.SelectionChangeCommitted += new System.EventHandler(this.EhFont_SelectionChangedCommitted);
+      // 
+      // _backgroundGlue
+      // 
+      this._backgroundGlue.CbBrush = this._cbBackgroundBrush;
+      this._backgroundGlue.CbStyle = this._cbBackgroundStyle;
+      this._backgroundGlue.LabelBrush = null;
+      // 
+      // m_edRotation
+      // 
+      this.m_edRotation.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+      this.m_edRotation.FormattingEnabled = true;
+      this.m_edRotation.ItemHeight = 15;
+      this.m_edRotation.Location = new System.Drawing.Point(272, 72);
+      this.m_edRotation.Name = "m_edRotation";
+      this.m_edRotation.Size = new System.Drawing.Size(136, 21);
+      this.m_edRotation.TabIndex = 46;
+      // 
+      // m_cbFontSize
+      // 
+      this.m_cbFontSize.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+      this.m_cbFontSize.FormattingEnabled = true;
+      this.m_cbFontSize.ItemHeight = 15;
+      this.m_cbFontSize.Location = new System.Drawing.Point(110, 72);
+      this.m_cbFontSize.Name = "m_cbFontSize";
+      this.m_cbFontSize.Size = new System.Drawing.Size(138, 21);
+      this.m_cbFontSize.TabIndex = 47;
+      this.m_cbFontSize.FontSizeChanged += new System.EventHandler(this.EhFontSize_SelectionChangeCommitted);
+      // 
       // XYAxisLabelStyleControl
       // 
+      this.Controls.Add(this.m_cbFontSize);
+      this.Controls.Add(this.m_edRotation);
+      this.Controls.Add(this._cbBackgroundBrush);
+      this.Controls.Add(this._cbBackgroundStyle);
       this.Controls.Add(this.m_cbColor);
-      this.Controls.Add(this._ctrlBackground);
       this.Controls.Add(this.label8);
       this.Controls.Add(this._chkAutomaticAlignment);
       this.Controls.Add(this.m_cbLabelStyle);
@@ -340,15 +372,12 @@ namespace Altaxo.Gui.Graph
       this.Controls.Add(this.label1);
       this.Controls.Add(this.m_cbFont);
       this.Controls.Add(this.m_cbHorizontalAlignment);
-      this.Controls.Add(this.m_cbFontSize);
-      this.Controls.Add(this.m_edRotation);
       this.Controls.Add(this.label6);
       this.Name = "XYAxisLabelStyleControl";
       this.Size = new System.Drawing.Size(440, 360);
       this.groupBox1.ResumeLayout(false);
       this.groupBox1.PerformLayout();
       this.ResumeLayout(false);
-      this.PerformLayout();
 
     }
     #endregion
@@ -370,16 +399,6 @@ namespace Altaxo.Gui.Graph
       {
         bool bCancel = e.Cancel;
         Controller.EhView_YOffsetValidating(((TextBox)sender).Text,ref bCancel);
-        e.Cancel = bCancel;
-      }
-    }
-
-    private void EhRotation_Validating(object sender, System.ComponentModel.CancelEventArgs e)
-    {
-      if(null!=Controller)
-      {
-        bool bCancel = e.Cancel;
-        Controller.EhView_RotationValidating(((TextBox)sender).Text,ref bCancel);
         e.Cancel = bCancel;
       }
     }
@@ -407,19 +426,10 @@ namespace Altaxo.Gui.Graph
     {
       if(null!=Controller)
       {
-        string name = (string)this.m_cbFontSize.SelectedItem;
-        Controller.EhView_FontSizeChanged(name);
+        Controller.EhView_FontSizeChanged(m_cbFontSize.FontSize);
       }
     }
 
-    private void m_cbFontSize_Validating(object sender, System.ComponentModel.CancelEventArgs e)
-    {
-      if(null!=Controller)
-      {
-        string name = (string)this.m_cbFontSize.Text;
-        Controller.EhView_FontSizeChanged(name);
-      }
-    }
 
     private void m_cbLabelStyle_SelectionChangeCommitted(object sender, System.EventArgs e)
     {
@@ -514,15 +524,24 @@ namespace Altaxo.Gui.Graph
       this.m_cbColor.ColorChoice=color;
     }
 
-    public object BackgroundControl_Initialize(BackgroundStyleController controller)
+    public Altaxo.Graph.Gdi.Background.IBackgroundStyle Background
     {
-      _ctrlBackground.Controller = controller;
-      return _ctrlBackground;
+      get
+      {
+        return _backgroundGlue.BackgroundStyle;
+      }
+      
+        
+      set
+      {
+        _backgroundGlue.BackgroundStyle = value;
+      }
+      
     }
 
-    public void FontSize_Initialize(string[] names, string name)
+    public void FontSize_Initialize(float val)
     {
-      InitComboBox(this.m_cbFontSize,names,name);
+      m_cbFontSize.FontSize = val;
     }
     
     public void LabelStyle_Initialize(string[] names, string name)
@@ -549,9 +568,16 @@ namespace Altaxo.Gui.Graph
     }
    
 
-    public void Rotation_Initialize(string text)
+    public float Rotation
     {
-      this.m_edRotation.Text = text;
+      get
+      {
+        return this.m_edRotation.Rotation;
+      }
+      set
+      {
+        this.m_edRotation.Rotation = value;
+      }
     }
 
     public void XOffset_Initialize(string text)

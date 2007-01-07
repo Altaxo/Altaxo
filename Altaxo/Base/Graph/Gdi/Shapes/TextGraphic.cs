@@ -952,6 +952,20 @@ namespace Altaxo.Graph.Gdi.Shapes
         _textBrush = new BrushX(value);
       }
     }
+    public BrushX TextFillBrush
+    {
+      get
+      {
+        return _textBrush;
+      }
+      set
+      {
+        if (value == null)
+          throw new ArgumentNullException();
+
+        _textBrush = value.Clone();
+      }
+    }
 
     public XAnchorPositionType XAnchor
     {
@@ -1043,6 +1057,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
       float baseLineSpace, baseAscent, baseDescent;
       MeasureFont(g, _font, out baseLineSpace, out baseAscent, out baseDescent);
+      _textBrush.Rectangle = new RectangleF(_cachedTextOffset,new SizeF(_cachedTextWidth, _cachedTextHeight));
     
 
       float currPosY=_cachedTextOffset.Y + baseAscent;

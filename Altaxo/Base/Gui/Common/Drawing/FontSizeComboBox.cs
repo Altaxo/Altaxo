@@ -94,6 +94,13 @@ namespace Altaxo.Gui.Common.Drawing
         SetDataSource(value);
       }
     }
+    public event EventHandler FontSizeChanged;
+    protected void OnFontSizeChanged()
+    {
+      if (FontSizeChanged!=null)
+        FontSizeChanged(this, EventArgs.Empty);
+    }
+
 
 
     protected override void OnDrawItem(DrawItemEventArgs e)
@@ -140,6 +147,16 @@ namespace Altaxo.Gui.Common.Drawing
       }
 
       base.OnValidating(e);
+
+      if (e.Cancel == false)
+        OnFontSizeChanged();
+    }
+
+    protected override void OnSelectionChangeCommitted(EventArgs e)
+    {
+      base.OnSelectionChangeCommitted(e);
+
+      OnFontSizeChanged();
     }
 
 

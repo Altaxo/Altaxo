@@ -34,7 +34,7 @@ namespace Altaxo.Gui.Graph
   /// </summary>
   public class DensityImagePlotStyleControl : System.Windows.Forms.UserControl, IDensityImagePlotStyleView
   {
-    private IDensityImagePlotStyleController m_Ctrl;
+    private IDensityImagePlotStyleViewEventSink m_Ctrl;
     private System.Windows.Forms.Label label24;
     private System.Windows.Forms.Label label23;
     private System.Windows.Forms.TextBox m_edRangeTo;
@@ -313,7 +313,7 @@ namespace Altaxo.Gui.Graph
 
     #region ILinkAxisView Members
 
-    public IDensityImagePlotStyleController Controller
+    public IDensityImagePlotStyleViewEventSink Controller
     {
       get
       {
@@ -401,7 +401,7 @@ namespace Altaxo.Gui.Graph
       }
       set
       {
-        Controller = value as IDensityImagePlotStyleController;
+        Controller = value as IDensityImagePlotStyleViewEventSink;
       }
     }
 

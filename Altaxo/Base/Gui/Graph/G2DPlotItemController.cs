@@ -492,7 +492,7 @@ namespace Altaxo.Gui.Graph
 
     #region IMVCController Members
 
-    public object ModelObject
+    public override object ModelObject
     {
       get
       {
@@ -506,7 +506,7 @@ namespace Altaxo.Gui.Graph
 
     int _applySuspend; // to avoid multiple invoking here because some of the child controls
     // have this here as controller too     
-    public bool Apply()
+    public override bool Apply()
     {
       if(_applySuspend++ > 0)
       {

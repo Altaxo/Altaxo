@@ -46,6 +46,8 @@ namespace Altaxo.Gui.Common
 
     /// <summary>Event fired when one of the child controls is leaved.</summary>
     event EventHandler ChildControlEntered;
+    /// <summary>Event fired when one of the child controls is leaved.</summary>
+    event EventHandler ChildControlValidated;
   }
   public interface IMultiChildController : IMVCAController
   {
@@ -161,6 +163,12 @@ namespace Altaxo.Gui.Common
         ChildControlChanged(sender, new Main.InstanceChangedEventArgs<object>(_lastActiveChild,sender));
       _lastActiveChild = sender;
     }
+    protected virtual void EhView_ChildControlValidated(object sender, EventArgs e)
+    {
+      if (ChildControlChanged != null)
+        ChildControlChanged(sender, new Main.InstanceChangedEventArgs<object>(sender, null));
+      _lastActiveChild = null; // because now this was the last message from the child control
+    }
 
     #region IMVCController Members
 
@@ -177,6 +185,7 @@ namespace Altaxo.Gui.Common
         {
           _view.Controller = null;
           _view.ChildControlEntered -= this.EhView_ChildControlEntered;
+          _view.ChildControlValidated -= this.EhView_ChildControlValidated;
         }
 
         _view = value as IMultiChildView;
@@ -187,6 +196,7 @@ namespace Altaxo.Gui.Common
         {
           _view.Controller = this;
           _view.ChildControlEntered += this.EhView_ChildControlEntered;
+          _view.ChildControlValidated += this.EhView_ChildControlValidated;
         }
       }
     }

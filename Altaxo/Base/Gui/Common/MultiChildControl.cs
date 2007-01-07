@@ -41,8 +41,10 @@ namespace Altaxo.Gui.Common
     /// </summary>
     private System.ComponentModel.Container components = null;
 
-    /// <summary>Event fired when one of the child controls is leaved.</summary>
+    /// <summary>Event fired when one of the child controls is entered.</summary>
     public event EventHandler ChildControlEntered;
+    /// <summary>Event fired when one of the child controls is validated.</summary>
+    public event EventHandler ChildControlValidated;
 
     public MultiChildControl()
     {
@@ -146,6 +148,7 @@ namespace Altaxo.Gui.Common
       {
         _childs[i].SizeChanged -= EhChilds_SizeChanged;
         _childs[i].Enter -= EhChilds_Enter;
+        _childs[i].Validated -= EhChilds_Validated;
       }
 
       this.Controls.Clear();
@@ -161,6 +164,7 @@ namespace Altaxo.Gui.Common
           
           _childs[i].SizeChanged += EhChilds_SizeChanged;
           _childs[i].Enter += EhChilds_Enter;
+          _childs[i].Validated += EhChilds_Validated;
         }
         else
         {
@@ -180,6 +184,7 @@ namespace Altaxo.Gui.Common
 
           _childs[i].SizeChanged += EhChilds_SizeChanged;
           gboxchild.Enter += EhChilds_Enter;
+          gboxchild.Validated += EhChilds_Validated;
         }
       }
     
@@ -191,6 +196,11 @@ namespace Altaxo.Gui.Common
     {
       if (ChildControlEntered != null)
         ChildControlEntered(sender, e);
+    }
+    private void EhChilds_Validated(object sender, EventArgs e)
+    {
+      if (ChildControlValidated != null)
+        ChildControlValidated(sender, e);
     }
 
     private void EhChilds_SizeChanged(object sender, EventArgs e)

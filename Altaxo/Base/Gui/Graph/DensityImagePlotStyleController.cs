@@ -29,13 +29,8 @@ using Altaxo.Gui;
 namespace Altaxo.Gui.Graph
 {
   #region Interfaces
-  public interface IDensityImagePlotStyleController : IApplyController, IMVCController
+  public interface IDensityImagePlotStyleViewEventSink
   {
-    /// <summary>
-    /// Get/sets the view this controller controls.
-    /// </summary>
-    IDensityImagePlotStyleView View { get; set; }
-
     /// <summary>
     /// Called if the type of the scaling is changed.
     /// </summary>
@@ -65,18 +60,13 @@ namespace Altaxo.Gui.Graph
 
   }
 
-  public interface IDensityImagePlotStyleView : IMVCView
+  public interface IDensityImagePlotStyleView 
   {
 
     /// <summary>
     /// Get/sets the controller of this view.
     /// </summary>
-    IDensityImagePlotStyleController Controller { get; set; }
-
-    /// <summary>
-    /// Gets the hosting parent form of this view.
-    /// </summary>
-    System.Windows.Forms.Form Form  { get; }
+    IDensityImagePlotStyleViewEventSink Controller { get; set; }
 
     /// <summary>
     /// Initializes the type of the link.
@@ -120,12 +110,16 @@ namespace Altaxo.Gui.Graph
   #endregion
 
   /// <summary>
-  /// Summary description for LinkAxisController.
+  /// Controller for the density image plot style
   /// </summary>
-  public class DensityImagePlotStyleController : IDensityImagePlotStyleController
+  [UserControllerForObject(typeof(DensityImagePlotStyle))]
+  [ExpectedTypeOfView(typeof(IDensityImagePlotStyleView))]
+  public class DensityImagePlotStyleController : IMVCANController, IDensityImagePlotStyleViewEventSink
   {
     IDensityImagePlotStyleView m_View;
     DensityImagePlotStyle m_PlotStyle;
+
+    UseDocument _useDocumentCopy;
 
     DensityImagePlotStyle.ScalingStyle m_ScalingStyle;
     double m_RangeFrom;
@@ -140,6 +134,25 @@ namespace Altaxo.Gui.Graph
     {
       m_PlotStyle = plotStyle;
       SetElements(true);
+    }
+
+    public DensityImagePlotStyleController()
+    {
+    }
+
+    public bool InitializeDocument(params object[] args)
+    {
+      if (args.Length == 0 || !(args[0] is DensityImagePlotStyle))
+        return false;
+      m_PlotStyle = (DensityImagePlotStyle)args[0];
+      //_doc = _originalDoc; // _useDocumentCopy == UseDocument.Directly ? _originalDoc : (DensityImagePlotStyle)_originalDoc.Clone();
+      SetElements(true); // initialize always because we have to update the temporary variables
+      return true;
+    }
+
+    public UseDocument UseDocumentCopy
+    {
+      set { _useDocumentCopy = value; }
     }
 
 

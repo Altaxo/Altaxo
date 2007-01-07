@@ -106,10 +106,13 @@ namespace Altaxo.Gui.Graph
 
     void InitializeBackgroundStyle()
     {
+      if (this.DesignMode)
+        return;
+
       int sel = Array.IndexOf(this._backgroundStyles, this._doc == null ? null : this._doc.GetType());
       string[] names = Current.Gui.GetUserFriendlyClassName(this._backgroundStyles, true);
       _cbStyle.Items.Clear();
-      _cbStyle.Items.Add("<none>");
+      //_cbStyle.Items.Add("<none>");
       foreach(string name in names)
         _cbStyle.Items.Add(name);
 

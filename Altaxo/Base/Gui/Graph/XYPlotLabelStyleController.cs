@@ -100,13 +100,7 @@ namespace Altaxo.Gui.Graph
     /// <param name="bCancel">Normally false, this can be set to true if RangeFrom is not a valid entry.</param>
     void EhView_YOffsetValidating(string newValue, ref bool bCancel);
 
-    /// <summary>
-    /// Called when the contents of Rotation is changed.
-    /// </summary>
-    /// <param name="newValue">Contents of the edit field.</param>
-    /// <param name="bCancel">Normally false, this can be set to true if RangeFrom is not a valid entry.</param>
-    void EhView_RotationValidating(string newValue, ref bool bCancel);
-
+    
     /// <summary>
     /// Is called when the user wants to select a new label column.
     /// </summary>
@@ -140,11 +134,9 @@ namespace Altaxo.Gui.Graph
     void Color_Initialize(System.Drawing.Color color);
 
     /// <summary>
-    /// Initializes the background controll with the controller.
+    /// Initializes the background.
     /// </summary>
-    /// <param name="controller">Controller for this background control.</param>
-    /// <returns>The gui object (the control).</returns>
-    object BackgroundControl_Initialize(BackgroundStyleController controller);
+    IBackgroundStyle Background { get; set; }
   
 
     
@@ -179,7 +171,7 @@ namespace Altaxo.Gui.Graph
     /// <summary>
     /// Initializes the content of the Rotation edit box.
     /// </summary>
-    void Rotation_Initialize(string text);
+    float Rotation{get; set;}
 
 
     /// <summary>
@@ -248,12 +240,10 @@ namespace Altaxo.Gui.Graph
     /// <summary>The y offset in EM units.</summary>
     protected double _yOffset;
 
-    /// <summary>The rotation of the label.</summary>
-    protected double _rotation;
-
+   
     protected IReadableColumn _labelColumn;
 
-    protected BackgroundStyleController _backgroundStyleController;
+    protected IBackgroundStyle _backgroundStyle;
 
     UseDocument _useDocumentCopy;
 
@@ -296,11 +286,10 @@ namespace Altaxo.Gui.Graph
         _verticalAlignment = _doc.VerticalAlignment;
         _attachToEdge = _doc.AttachedAxis!=null;
         _attachedEdge = _doc.AttachedAxis;
-        _rotation     = _doc.Rotation;
         _xOffset      = _doc.XOffset;
         _yOffset      = _doc.YOffset;
         _labelColumn = _doc.LabelColumn;
-        _backgroundStyleController = new BackgroundStyleController(_doc.BackgroundStyle);
+        _backgroundStyle = _doc.BackgroundStyle;
       }
 
       if(null!=View)
@@ -312,12 +301,10 @@ namespace Altaxo.Gui.Graph
         View.VerticalAlignment_Initialize(System.Enum.GetNames(typeof(System.Drawing.StringAlignment)),System.Enum.GetName(typeof(System.Drawing.StringAlignment),_verticalAlignment));
         View.AttachToAxis_Initialize(_attachToEdge);
         SetAttachmentDirection();
-        View.Rotation_Initialize(Serialization.NumberConversion.ToString(_rotation));
+        View.Rotation = (float)_doc.Rotation;
         View.XOffset_Initialize(Serialization.NumberConversion.ToString(_xOffset*100));
         View.YOffset_Initialize(Serialization.NumberConversion.ToString(_yOffset*100));
-
-        _backgroundStyleController.ViewObject = View.BackgroundControl_Initialize(_backgroundStyleController);
-
+        View.Background = _backgroundStyle;
 
         InitializeLabelColumnText();
       }
@@ -419,11 +406,6 @@ namespace Altaxo.Gui.Graph
       _independentColor = newValue;
     }
 
-    public void EhView_RotationValidating(string newValue, ref bool bCancel)
-    {
-      if(!NumberConversion.IsDouble(newValue, out _rotation))
-        bCancel = true;
-    }
 
     public void EhView_XOffsetValidating(string newValue, ref bool bCancel)
     {
@@ -463,13 +445,10 @@ namespace Altaxo.Gui.Graph
 
     public bool Apply()
     {
-      if (!_backgroundStyleController.Apply())
-        return false;
-    
+      _doc.BackgroundStyle = _view.Background;
       _doc.Font = new Font(_font.FontFamily,_font.Size,_font.Style,GraphicsUnit.World);
       _doc.IndependentColor = _independentColor;
       _doc.Color = _color;
-      _doc.BackgroundStyle = (IBackgroundStyle)_backgroundStyleController.ModelObject;
       _doc.HorizontalAlignment = _horizontalAlignment;
       _doc.VerticalAlignment   = _verticalAlignment;
 
@@ -478,7 +457,7 @@ namespace Altaxo.Gui.Graph
       else
         _doc.AttachedAxis = null;
 
-      _doc.Rotation     = _rotation;
+      _doc.Rotation = _view.Rotation;
       _doc.XOffset      = _xOffset;
       _doc.YOffset      = _yOffset;
       _doc.LabelColumn  = _labelColumn;
