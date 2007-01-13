@@ -107,12 +107,20 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     public ShapeGraphic(ShapeGraphic from)
       :
-      base(from)
+      base(from) // all is done here, since CopyFrom is virtual!
     {
-      this._fillBrush = (BrushX)from._fillBrush.Clone();
-      this._linePen = (PenX)from._linePen.Clone();
     }
+    protected override void CopyFrom(GraphicBase bfrom)
+    {
+      base.CopyFrom(bfrom);
+      ShapeGraphic from = bfrom as ShapeGraphic;
+      if (from != null)
+      {
+        this._fillBrush = (BrushX)from._fillBrush.Clone();
+        this._linePen = (PenX)from._linePen.Clone();
+      }
 
+    }
 
     public virtual PenX Pen
     {

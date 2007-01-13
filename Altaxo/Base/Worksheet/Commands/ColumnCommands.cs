@@ -43,25 +43,17 @@ namespace Altaxo.Worksheet.Commands
       if(ctrl.SelectedDataColumns.Count==1 && ctrl.SelectedPropertyColumns.Count==0)
       {
         Altaxo.Data.DataColumn col = ctrl.Doc.DataColumns[ctrl.SelectedDataColumns[0]];
-        TextValueInputController tvctrl = new TextValueInputController(
-          col.Name,
-          new RenameColumnDialog()
-          );
-
+        TextValueInputController tvctrl = new TextValueInputController(col.Name,"new column name:");
         tvctrl.Validator = new DataColumnRenameValidator(col,ctrl);
-        if(tvctrl.ShowDialog(ctrl.View.TableViewForm))
+        if(Current.Gui.ShowDialog(tvctrl,"Rename column",false))
           ctrl.Doc.DataColumns.SetColumnName(col,tvctrl.InputText);
       }
       if(ctrl.SelectedDataColumns.Count==0 && ctrl.SelectedPropertyColumns.Count==1)
       {
         Altaxo.Data.DataColumn col = ctrl.Doc.PropCols[ctrl.SelectedPropertyColumns[0]];
-        TextValueInputController tvctrl = new TextValueInputController(
-          col.Name,
-          new RenameColumnDialog()
-          );
-
+        TextValueInputController tvctrl = new TextValueInputController(col.Name,"new property column name:");
         tvctrl.Validator = new PropertyColumnRenameValidator(col,ctrl);
-        if(tvctrl.ShowDialog(ctrl.View.TableViewForm))
+        if(Current.Gui.ShowDialog(tvctrl,"Rename property column",false))
           ctrl.Doc.PropCols.SetColumnName(col,tvctrl.InputText);
       }
     }
@@ -149,13 +141,11 @@ namespace Altaxo.Worksheet.Commands
         else if(ctrl.SelectedPropertyColumns.Count>0)
           grpNumber = ctrl.DataTable.PropertyColumns.GetColumnGroup(ctrl.SelectedPropertyColumns[0]);
         
-        IntegerValueInputController ivictrl = new IntegerValueInputController(
-          grpNumber,
-          new SingleValueDialog("Set group number","Please enter a group number (>=0):")
-          );
+        IntegerValueInputController ivictrl = new IntegerValueInputController(grpNumber,"Please enter a group number (>=0):");
+         
 
         ivictrl.Validator = new IntegerValueInputController.ZeroOrPositiveIntegerValidator();
-        if(ivictrl.ShowDialog(ctrl.View.TableViewForm))
+        if(Current.Gui.ShowDialog(ivictrl,"Set group number",false))
         {
           SetSelectedColumnGroupNumber(ctrl,ivictrl.EnteredContents);
         }
@@ -202,13 +192,9 @@ namespace Altaxo.Worksheet.Commands
 
       int newposition = int.MinValue;
         
-      IntegerValueInputController ivictrl = new IntegerValueInputController(
-        0,
-        new SingleValueDialog("New column position","Please enter the new position (>=0):")
-        );
-
+      IntegerValueInputController ivictrl = new IntegerValueInputController(0,"Please enter the new position (>=0):");
       ivictrl.Validator = new IntegerValueInputController.ZeroOrPositiveIntegerValidator();
-      if(ivictrl.ShowDialog(ctrl.View.TableViewForm))
+      if(Current.Gui.ShowDialog(ivictrl,"New column position",false))
       {
         newposition = ivictrl.EnteredContents;
       }

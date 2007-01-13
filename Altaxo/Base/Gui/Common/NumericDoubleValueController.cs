@@ -62,7 +62,7 @@ namespace Altaxo.Gui.Common
       return base.Apply();
     }
 
-    public override void EhValidatingValue1(string val, System.ComponentModel.CancelEventArgs e)
+    public override void EhView_ValidatingValue1(string val, System.ComponentModel.CancelEventArgs e)
     {
       double vald;
       if(Altaxo.Serialization.GUIConversion.IsDouble(val,out vald))
@@ -87,7 +87,7 @@ namespace Altaxo.Gui.Common
         e.Cancel = true;
       }
 
-      base.EhValidatingValue1(val,e);
+      base.EhView_ValidatingValue1(val,e);
     }
 
   }

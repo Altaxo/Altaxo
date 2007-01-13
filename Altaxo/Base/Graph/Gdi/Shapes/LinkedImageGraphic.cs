@@ -150,8 +150,16 @@ namespace Altaxo.Graph.Gdi.Shapes
       :
       base(from)
     {
-      this._imagePath = from._imagePath;
-      this._cachedImage = null == from._cachedImage ? null : (Image)from._cachedImage.Clone();
+    }
+    protected override void CopyFrom(GraphicBase bfrom)
+    {
+      base.CopyFrom(bfrom);
+      LinkedImageGraphic from = bfrom as LinkedImageGraphic;
+      if (from != null)
+      {
+        this._imagePath = from._imagePath;
+        this._cachedImage = null == from._cachedImage ? null : (Image)from._cachedImage.Clone();
+      }
     }
 
     #endregion
@@ -197,7 +205,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       GraphicsState gs = g.Save();
       g.TranslateTransform(X, Y);
       if (_rotation != 0)
-        g.RotateTransform(_rotation);
+        g.RotateTransform(-_rotation);
 
       Image myImage = this.GetImage();
 

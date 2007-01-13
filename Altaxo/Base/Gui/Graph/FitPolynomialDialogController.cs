@@ -28,7 +28,7 @@ namespace Altaxo.Gui.Graph
   /// <summary>
   /// Interface for controlling the polynomial fit view.
   /// </summary>
-  public interface IFitPolynomialDialogController : IMVCController, IApplyController
+  public interface IFitPolynomialDialogController : IMVCAController
   {
     /// <summary>Returns the fitting order.</summary>
     int Order { get; }
@@ -58,6 +58,7 @@ namespace Altaxo.Gui.Graph
   /// <summary>
   /// Controls the polynomial fit view.
   /// </summary>
+  [ExpectedTypeOfView(typeof(IFitPolynomialDialogControl))]
   public class FitPolynomialDialogController : IFitPolynomialDialogController
   {
     int _Order;

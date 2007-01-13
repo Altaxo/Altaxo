@@ -263,15 +263,17 @@ namespace Altaxo.Gui.Graph
         Control ctrl = value as Control;
         if (ctrl == null)
         {
-          _axisLineGroupBox.Controls.Clear();
           _axisLineGroupBox.Checked = false;
         }
         else
         {
+          _axisLineGroupBox.SuspendLayout();
           _axisLineGroupBox.Controls.Clear();
           ctrl.Dock = DockStyle.Fill;
           _axisLineGroupBox.Controls.Add(ctrl);
           _axisLineGroupBox.Checked = true;
+          _axisLineGroupBox.ResumeLayout(false);
+          _axisLineGroupBox.PerformLayout();
         }
       }
     }

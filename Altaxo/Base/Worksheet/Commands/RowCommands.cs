@@ -45,13 +45,11 @@ namespace Altaxo.Worksheet.Commands
 
       int newposition = int.MinValue;
         
-      IntegerValueInputController ivictrl = new IntegerValueInputController(
-        0,
-        new SingleValueDialog("New row position","Please enter the new position (>=0):")
-        );
+      IntegerValueInputController ivictrl = new IntegerValueInputController(0,"Please enter the new position (>=0):");
+      
 
       ivictrl.Validator = new IntegerValueInputController.ZeroOrPositiveIntegerValidator();
-      if(ivictrl.ShowDialog(ctrl.View.TableViewForm))
+      if(Current.Gui.ShowDialog(ivictrl,"New row position",false))
       {
         newposition = ivictrl.EnteredContents;
       }

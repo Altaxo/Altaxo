@@ -84,11 +84,20 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     public SimpleTextGraphic(SimpleTextGraphic from)
       :
-      base(from)
+      base(from) // all is done here, since CopyFrom is overridden
     {
-      this._font = null==from._font ? null : (Font)from._font.Clone();
-      this._text = from._text;
-      this._color = from._color;
+     
+    }
+    protected override void CopyFrom(GraphicBase bfrom)
+    {
+      base.CopyFrom(bfrom);
+      SimpleTextGraphic from = bfrom as SimpleTextGraphic;
+      if (from != null)
+      {
+        this._font = null == from._font ? null : (Font)from._font.Clone();
+        this._text = from._text;
+        this._color = from._color;
+      }
     }
 
     public SimpleTextGraphic(PointF graphicPosition, string text, 
@@ -170,7 +179,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
       System.Drawing.Drawing2D.GraphicsState gs = g.Save();
       g.TranslateTransform(X,Y);
-      g.RotateTransform(_rotation);
+      g.RotateTransform(-_rotation);
       
       // Modification of StringFormat is necessary to avoid 
       // too big spaces between successive words

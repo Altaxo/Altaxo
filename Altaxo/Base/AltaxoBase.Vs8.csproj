@@ -876,10 +876,6 @@
     <EmbeddedResource Include="Gui\Common\MultiChildControl.resx">
       <DependentUpon>MultiChildControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Gui\Common\RenameColumnDialog.resx">
-      <DependentUpon>RenameColumnDialog.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="Gui\Common\SingleChoiceComboBoxControl.resx">
       <DependentUpon>SingleChoiceComboBoxControl.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -889,10 +885,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Common\SingleValueControl.resx">
       <DependentUpon>SingleValueControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Gui\Common\SingleValueDialog.resx">
-      <DependentUpon>SingleValueDialog.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Common\SpinAndComboBoxControl.resx">
@@ -1238,7 +1230,6 @@
     </Compile>
     <Compile Include="Gui\Common\CollapsibleGroupBox.cs">
     </Compile>
-    <Compile Include="Gui\Common\DialogFactory.cs" />
     <Compile Include="Gui\Common\DialogShellController.cs" />
     <Compile Include="Gui\Common\DialogShellView.cs">
       <SubType>Form</SubType>
@@ -1263,16 +1254,13 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Gui\Common\IntegerAndComboBoxController.cs" />
+    <Compile Include="Gui\Common\IntegerValueInputController.cs" />
     <Compile Include="Gui\Common\IWorkbench.cs" />
-    <Compile Include="Gui\Common\ListBoxEntry.cs" />
     <Compile Include="Gui\Common\MinMaxIntegerControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Gui\Common\MultipleChoiceController.cs" />
     <Compile Include="Gui\Common\NumericDoubleValueController.cs" />
-    <Compile Include="Gui\Common\RenameColumnDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="Gui\Common\SingleChoiceComboBoxControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -1283,13 +1271,10 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Gui\Common\SingleValueController.cs" />
-    <Compile Include="Gui\Common\SingleValueDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Gui\Common\SingleValueFormController.cs" />
     <Compile Include="Gui\Common\SpinAndComboBoxControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Gui\Common\TextValueInputController.cs" />
     <Compile Include="Gui\Common\ViewDescriptionElement.cs" />
     <Compile Include="Gui\ExpectedTypeOfView.cs" />
     <Compile Include="Gui\Graph\AxisLineStyleControl.cs">

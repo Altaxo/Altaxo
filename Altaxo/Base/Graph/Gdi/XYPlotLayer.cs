@@ -1527,7 +1527,7 @@ namespace Altaxo.Graph.Gdi
       _cachedForwardMatrix.Reset();
       _cachedForwardMatrix.Translate(_cachedLayerPosition.X, _cachedLayerPosition.Y);
       _cachedForwardMatrix.Scale((float)_location.Scale, (float)_location.Scale);
-      _cachedForwardMatrix.Rotate((float)_location.Angle);
+      _cachedForwardMatrix.Rotate(-(float)_location.Angle);
       _cachedReverseMatrix = _cachedForwardMatrix.Clone();
       _cachedReverseMatrix.Invert();
     }
@@ -2335,15 +2335,15 @@ namespace Altaxo.Graph.Gdi
           const float scaleFontWidth = 4;
           const float scaleFontHeight = 1.5f;
 
-          if (angle <= 45 && angle >= -45)
+          if (-45<= angle && angle <= 45)
           {
             //case EdgeType.Right:
-            tg.Rotation = -90;
+            tg.Rotation = 90;
             tg.XAnchor = XAnchorPositionType.Center;
             tg.YAnchor = YAnchorPositionType.Top;
             distance += scaleFontWidth * labelFontSize;
           }
-          else if (angle <= -45 && angle >= -135)
+          else if (-135 <= angle && angle <= -45)
           {
             //case Top:
             tg.Rotation = 0;
@@ -2351,7 +2351,7 @@ namespace Altaxo.Graph.Gdi
             tg.YAnchor = YAnchorPositionType.Bottom;
             distance += scaleFontHeight * labelFontSize;
           }
-          else if (angle <= 135 && angle >= 45)
+          else if (45 <= angle && angle <= 135)
           {
             //case EdgeType.Bottom:
             tg.Rotation = 0;
@@ -2363,7 +2363,7 @@ namespace Altaxo.Graph.Gdi
           {
             //case EdgeType.Left:
 
-            tg.Rotation = -90;
+            tg.Rotation = 90;
             tg.XAnchor = XAnchorPositionType.Center;
             tg.YAnchor = YAnchorPositionType.Bottom;
             distance += scaleFontWidth * labelFontSize;

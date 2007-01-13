@@ -208,7 +208,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       GraphicsState gs = g.Save();
       g.TranslateTransform(X, Y);
       if (_rotation != -0)
-        g.RotateTransform(_rotation);
+        g.RotateTransform(-_rotation);
 
       if (Brush.IsVisible)
       {

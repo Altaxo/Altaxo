@@ -27,6 +27,7 @@ using System.Drawing;
 using System.Data;
 using System.Windows.Forms;
 
+using Altaxo.Collections;
 namespace Altaxo.Gui.Common
 {
   /// <summary>
@@ -172,10 +173,10 @@ namespace Altaxo.Gui.Common
       }
     }
 
-    public void ComboBox_Initialize(ListBoxEntry[] items, ListBoxEntry defaultItem)
+    public void ComboBox_Initialize(SelectableListNodeList items, SelectableListNode defaultItem)
     {
       m_ComboBox.Items.Clear();
-      m_ComboBox.Items.AddRange(items);
+      m_ComboBox.Items.AddRange(items.ToArray());
       m_ComboBox.SelectedItem = defaultItem;
     }
 
@@ -211,7 +212,7 @@ namespace Altaxo.Gui.Common
     private void EhComboBox_SelectionChangeCommit(object sender, System.EventArgs e)
     {
       if(null!=Controller)
-        Controller.EhView_ComboBoxSelectionChanged((ListBoxEntry)this.m_ComboBox.SelectedItem);
+        Controller.EhView_ComboBoxSelectionChanged((SelectableListNode)this.m_ComboBox.SelectedItem);
     }
 
     private void EhIntegerUpDown_Enter(object sender, System.EventArgs e)

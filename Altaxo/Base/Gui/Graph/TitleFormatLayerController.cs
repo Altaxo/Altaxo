@@ -94,7 +94,9 @@ namespace Altaxo.Gui.Graph
         if (_doc.AxisLineStyle != null)
           _axisLineStyleController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _doc.AxisLineStyle }, typeof(IMVCAController), UseDocument.Directly);
         else
+        {
           _axisLineStyleController = null;
+        }
 
       }
 

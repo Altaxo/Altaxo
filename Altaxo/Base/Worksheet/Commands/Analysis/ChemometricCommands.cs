@@ -162,34 +162,29 @@ namespace Altaxo.Worksheet.Commands.Analysis
     public static void PCAOnRows(WorksheetController ctrl)
     {
       int maxFactors = 3;
-      IntegerValueInputController ivictrl = new IntegerValueInputController(
-        maxFactors,
-        new SingleValueDialog("Set maximum number of factors","Please enter the maximum number of factors to calculate:")
-        );
+      IntegerValueInputController ivictrl = new IntegerValueInputController(maxFactors,"Please enter the maximum number of factors to calculate:");
 
       ivictrl.Validator = new IntegerValueInputController.ZeroOrPositiveIntegerValidator();
-      if(ivictrl.ShowDialog(ctrl.View.TableViewForm))
+      if(Current.Gui.ShowDialog(ivictrl,"Set maximum number of factors",false))
       {
         string err= PrincipalComponentAnalysis(Current.Project,ctrl.Doc,ctrl.SelectedDataColumns,ctrl.SelectedDataRows,true,ivictrl.EnteredContents);
         if(null!=err)
-          System.Windows.Forms.MessageBox.Show(ctrl.View.TableViewForm,err,"An error occured");
+          Current.Gui.ErrorMessageBox(err);
       }
     }
 
     public static void PCAOnColumns(WorksheetController ctrl)
     {
       int maxFactors = 3;
-      IntegerValueInputController ivictrl = new IntegerValueInputController(
-        maxFactors,
-        new SingleValueDialog("Set maximum number of factors","Please enter the maximum number of factors to calculate:")
-        );
+      IntegerValueInputController ivictrl = new IntegerValueInputController(maxFactors,"Please enter the maximum number of factors to calculate:");
+        
 
       ivictrl.Validator = new IntegerValueInputController.ZeroOrPositiveIntegerValidator();
-      if(ivictrl.ShowDialog(ctrl.View.TableViewForm))
+      if(Current.Gui.ShowDialog(ivictrl,"Set maximum number of factors",false))
       {
         string err= PrincipalComponentAnalysis(Current.Project,ctrl.Doc,ctrl.SelectedDataColumns,ctrl.SelectedDataRows,false,ivictrl.EnteredContents);
         if(null!=err)
-          System.Windows.Forms.MessageBox.Show(ctrl.View.TableViewForm,err,"An error occured");
+          Current.Gui.ErrorMessageBox(err);
       }
     }
 
@@ -482,13 +477,9 @@ namespace Altaxo.Worksheet.Commands.Analysis
     public static void ExportPLSCalibration(Altaxo.Data.DataTable table)
     {
       // quest the number of factors to export
-      IntegerValueInputController ivictrl = new IntegerValueInputController(
-        1,
-        new SingleValueDialog("Number of factors","Please choose number of factors to export (>0):")
-        );
-
+      IntegerValueInputController ivictrl = new IntegerValueInputController(1,"Please choose number of factors to export (>0):");
       ivictrl.Validator = new IntegerValueInputController.ZeroOrPositiveIntegerValidator();
-      if(!ivictrl.ShowDialog(Current.MainWindow))
+      if(!Current.Gui.ShowDialog(ivictrl,"Number of factors",false))
         return;
 
     
@@ -846,13 +837,11 @@ namespace Altaxo.Worksheet.Commands.Analysis
     public static void QuestPreferredNumberOfFactors(MultivariateContentMemento plsMemo)
     {
       // quest the number of factors to export
-      IntegerValueInputController ivictrl = new IntegerValueInputController(
-        1,
-        new SingleValueDialog("Number of factors","Please choose preferred number of factors(>0):")
-        );
+      IntegerValueInputController ivictrl = new IntegerValueInputController(1,"Please choose preferred number of factors(>0):");
+        
 
       ivictrl.Validator = new IntegerValueInputController.ZeroOrPositiveIntegerValidator();
-      if(!ivictrl.ShowDialog(Current.MainWindow))
+      if(!Current.Gui.ShowDialog(ivictrl,"Number of factors",false))
         return;
 
       plsMemo.PreferredNumberOfFactors = ivictrl.EnteredContents;

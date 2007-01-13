@@ -104,11 +104,14 @@ namespace Altaxo.Graph.Gdi.Shapes
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
+        throw new NotSupportedException("Can not serialize old versions, maybe this is a programming error");
+        /*
         GraphicBase s = (GraphicBase)obj;
         info.AddValue("Position",s._position);  
         info.AddValue("Bounds",s._bounds);
         info.AddValue("Rotation",s._rotation);
         info.AddValue("AutoSize",s._autoSize);
+        */
       }
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
@@ -117,6 +120,32 @@ namespace Altaxo.Graph.Gdi.Shapes
 
         s._position = (PointF)info.GetValue("Position",s);  
         s._bounds = (RectangleF)info.GetValue("Bounds",s);
+        s._rotation = -info.GetSingle("Rotation"); // meaning of rotation reversed in version 2
+        s._autoSize = info.GetBoolean("AutoSize");
+
+        return s;
+      }
+    }
+
+    // 2007-01-10 meaning of rotation was reversed
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GraphicBase), 2)]
+    class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        GraphicBase s = (GraphicBase)obj;
+        info.AddValue("Position", s._position);
+        info.AddValue("Bounds", s._bounds);
+        info.AddValue("Rotation", s._rotation);
+        info.AddValue("AutoSize", s._autoSize);
+      }
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+
+        GraphicBase s = (GraphicBase)o;
+
+        s._position = (PointF)info.GetValue("Position", s);
+        s._bounds = (RectangleF)info.GetValue("Bounds", s);
         s._rotation = info.GetSingle("Rotation");
         s._autoSize = info.GetBoolean("AutoSize");
 
@@ -140,11 +169,16 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <param name="from">The object to copy the data from.</param>
     protected GraphicBase(GraphicBase from)
     {
+      CopyFrom(from);
+    }
+
+    protected virtual void CopyFrom(GraphicBase from)
+    {
       this._autoSize = from._autoSize;
-      this._bounds  = from._bounds;
+      this._bounds = from._bounds;
       this._parent = null;
-      this._position  = from._position;
-      this._rotation  = from._rotation;
+      this._position = from._position;
+      this._rotation = from._rotation;
     }
 
     /// <summary>
@@ -323,7 +357,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       else
       {
         double cosphi = Math.Cos(_rotation * Math.PI / 180);
-        double sinphi = Math.Sin(_rotation * Math.PI / 180);
+        double sinphi = Math.Sin(-_rotation * Math.PI / 180);
         double dx = Value.X - this.X;
         double dy = Value.Y - this.Y;
         // now we have to rotate backward to get the endpoint
@@ -469,7 +503,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       gp.AddRectangle(new RectangleF(X + _bounds.X, Y + _bounds.Y, Width, Height));
       if (this.Rotation != 0)
       {
-        myMatrix.RotateAt(this.Rotation, new PointF(X, Y), MatrixOrder.Append);
+        myMatrix.RotateAt(-this._rotation, new PointF(X, Y), MatrixOrder.Append);
       }
 
       gp.Transform(myMatrix);
@@ -488,7 +522,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       gp.AddRectangle(new RectangleF(X + _bounds.X, Y + _bounds.Y, Width, Height));
       if (this.Rotation != 0)
       {
-        myMatrix.RotateAt(this.Rotation, new PointF(this.X, this.Y), MatrixOrder.Append);
+        myMatrix.RotateAt(-this._rotation, new PointF(this.X, this.Y), MatrixOrder.Append);
       }
       gp.Transform(myMatrix);
       RectangleF gpRect = gp.GetBounds();
@@ -518,7 +552,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       if (withRotation && _rotation != 0)
       {
         double cosphi = Math.Cos(_rotation * Math.PI / 180);
-        double sinphi = Math.Sin(_rotation * Math.PI / 180);
+        double sinphi = Math.Sin(-_rotation * Math.PI / 180);
 
         double helpdx = (dx * cosphi - dy * sinphi);
         dy = (dy * cosphi + dx * sinphi);
@@ -540,7 +574,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       if (_rotation != 0)
       {
         double cosphi = Math.Cos(_rotation * Math.PI / 180);
-        double sinphi = Math.Sin(_rotation * Math.PI / 180);
+        double sinphi = Math.Sin(-_rotation * Math.PI / 180);
         // now we have to rotate backward to get the endpoint
         double helpdx = (dx * cosphi + dy * sinphi);
         dy = (-dx * sinphi + dy * cosphi);
@@ -558,7 +592,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       if (_rotation != 0)
       {
         double cosphi = Math.Cos(_rotation * Math.PI / 180);
-        double sinphi = Math.Sin(_rotation * Math.PI / 180);
+        double sinphi = Math.Sin(-_rotation * Math.PI / 180);
         // now we have to rotate backward to get the endpoint
         double helpdx = (dx * cosphi + dy * sinphi);
         dy = (-dx * sinphi + dy * cosphi);
@@ -576,7 +610,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       if (_rotation != 0)
       {
         double cosphi = Math.Cos(_rotation * Math.PI / 180);
-        double sinphi = Math.Sin(_rotation * Math.PI / 180);
+        double sinphi = Math.Sin(-_rotation * Math.PI / 180);
         // now we have to rotate backward to get the endpoint
         double helpdx = (dx * cosphi - dy * sinphi);
         dy = (dx * sinphi + dy * cosphi);
@@ -629,7 +663,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       double a1 = Math.Atan2(dy, dx);
       double a2 = Math.Atan2(diff.Height, diff.Width);
 
-      this._rotation = (float)(180 * (a2 - a1) / Math.PI);
+      this._rotation = -(float)(180 * (a2 - a1) / Math.PI);
 
       //SizeF s = ToRotatedDifference(PointF.Empty, new PointF(-m_Bounds.Width / 2, -m_Bounds.Height / 2));
       SizeF s = ToRotatedDifference(RelativeToAbsolutePosition(relPivot, false), Point.Empty);
@@ -687,7 +721,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       GraphicsState gs = g.Save();
       g.TranslateTransform(X, Y);
       if (_rotation != 0)
-        g.RotateTransform(_rotation);
+        g.RotateTransform(-_rotation);
 
       DrawRectangularGrip(g, new PointF(0, 0));
       DrawRectangularGrip(g, new PointF(0, 1));

@@ -192,7 +192,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       gp.AddEllipse(new RectangleF(X + _bounds.X, Y + _bounds.Y, Width, Height));
       if (this.Rotation != 0)
       {
-        myMatrix.RotateAt(this.Rotation, new PointF(X, Y), MatrixOrder.Append);
+        myMatrix.RotateAt(-this._rotation, new PointF(X, Y), MatrixOrder.Append);
       }
 
       gp.Transform(myMatrix);
@@ -204,7 +204,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       GraphicsState gs = g.Save();
       g.TranslateTransform(X, Y);
       if (_rotation != 0)
-        g.RotateTransform(_rotation);
+        g.RotateTransform(-_rotation);
 
       if (Brush.IsVisible)
       {

@@ -140,9 +140,18 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     public EmbeddedImageGraphic(EmbeddedImageGraphic from)
       :
-      base(from)
+      base(from) // all is done here, since CopyFrom is overridden
     {
-      this._imageProxy = null == from._imageProxy ? null : from._imageProxy.Clone();
+    }
+
+    protected override void CopyFrom(GraphicBase bfrom)
+    {
+      base.CopyFrom(bfrom);
+      EmbeddedImageGraphic from = bfrom as EmbeddedImageGraphic;
+      if (from != null)
+      {
+        this._imageProxy = null == from._imageProxy ? null : from._imageProxy.Clone();
+      }
     }
 
     #endregion
@@ -177,7 +186,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       GraphicsState gs = g.Save();
       g.TranslateTransform(X, Y);
       if (_rotation != 0)
-        g.RotateTransform(_rotation);
+        g.RotateTransform(-_rotation);
 
       Image img = _imageProxy == null ? null : _imageProxy.GetImage();
 

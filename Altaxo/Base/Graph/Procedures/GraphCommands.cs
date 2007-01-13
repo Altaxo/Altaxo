@@ -38,13 +38,10 @@ namespace Altaxo.Graph.Procedures
   {
     public static void Rename(GraphController ctrl)
     {
-      TextValueInputController tvctrl = new TextValueInputController(
-        ctrl.Doc.Name,
-        new SingleValueDialog("Rename graph", "Enter a name for the graph:")
-        );
-
+      TextValueInputController tvctrl = new TextValueInputController(ctrl.Doc.Name,"Enter a name for the graph:");
       tvctrl.Validator = new GraphRenameValidator(ctrl.Doc, ctrl);
-      if (tvctrl.ShowDialog(Current.MainWindow))
+
+      if(Current.Gui.ShowDialog(tvctrl, "Rename graph", false))
         ctrl.Doc.Name = tvctrl.InputText.Trim();
     }
 

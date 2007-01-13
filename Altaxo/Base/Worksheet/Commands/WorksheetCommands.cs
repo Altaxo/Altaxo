@@ -32,13 +32,9 @@ namespace Altaxo.Worksheet.Commands
   {
     public static void Rename(WorksheetController ctrl)
     {
-      TextValueInputController tvctrl = new TextValueInputController(
-        ctrl.Doc.Name,
-        new SingleValueDialog("Rename Worksheet","Enter a name for the worksheet:")
-        );
-
+      TextValueInputController tvctrl = new TextValueInputController(ctrl.Doc.Name,"Enter a name for the worksheet:");
       tvctrl.Validator = new WorksheetRenameValidator(ctrl.Doc,ctrl);
-      if(tvctrl.ShowDialog(ctrl.View.TableViewForm))
+      if(Current.Gui.ShowDialog(tvctrl,"Rename worksheet",false))
         ctrl.Doc.Name = tvctrl.InputText.Trim();
     }
 
@@ -121,34 +117,66 @@ namespace Altaxo.Worksheet.Commands
 
     public static void Transpose(WorksheetController ctrl)
     {
-      /*
-      string msg = ctrl.DataTable.Transpose();
-
-      if(null!=msg)
-        System.Windows.Forms.MessageBox.Show(ctrl.View.TableViewForm,msg);
-        */
-
-
       Worksheet.GUI.TransposeWorksheetControl transposeview = new Worksheet.GUI.TransposeWorksheetControl();
-      Worksheet.GUI.TransposeWorksheetController transposectrl = new Worksheet.GUI.TransposeWorksheetController(ctrl.DataTable,transposeview);
-      
-      DialogShellController dsc = new DialogShellController(
-        new DialogShellView(transposeview),transposectrl,"Transpose worksheet",false);
-
-      dsc.ShowDialog(Current.MainWindow);
+      Worksheet.GUI.TransposeWorksheetController transposectrl = new Worksheet.GUI.TransposeWorksheetController(ctrl.DataTable);
+      transposectrl.ViewObject = transposeview;
+      Current.Gui.ShowDialog(transposectrl, "Transpose worksheet", false);
     }
     
 
     public static void AddDataColumns(WorksheetController ctrl)
     {
-      DialogFactory.ShowAddColumnsDialog(ctrl.View.TableViewForm,ctrl.DataTable,false);
+      ShowAddColumnsDialog(ctrl.DataTable,false);
     }
 
     public static void AddPropertyColumns(WorksheetController ctrl)
     {
-      DialogFactory.ShowAddColumnsDialog(ctrl.View.TableViewForm,ctrl.DataTable,true);
+      ShowAddColumnsDialog(ctrl.DataTable,true);
     }
-    
+
+    /// <summary>
+    /// Shows a dialog to add columns to a table.
+    /// </summary>
+    /// <param name="table">The table where to add the columns.</param>
+    /// <param name="bAddToPropertyColumns">If true, the columns are added to the property columns instead of the data columns collection.</param>
+    public static void ShowAddColumnsDialog(Altaxo.Data.DataTable table, bool bAddToPropertyColumns)
+    {
+      Altaxo.Collections.SelectableListNodeList lbitems = new Altaxo.Collections.SelectableListNodeList();
+      lbitems.Add(new Altaxo.Collections.SelectableListNode("Numeric", typeof(Altaxo.Data.DoubleColumn), true));
+      lbitems.Add(new Altaxo.Collections.SelectableListNode("Date/Time", typeof(Altaxo.Data.DateTimeColumn), false));
+      lbitems.Add(new Altaxo.Collections.SelectableListNode("Text", typeof(Altaxo.Data.TextColumn), false));
+
+      IntegerAndComboBoxController ct = new IntegerAndComboBoxController(
+        "Number of colums to add:", 1, int.MaxValue, 1,
+        "Type of columns to add:", lbitems, 0);
+
+      SpinAndComboBoxControl panel = new SpinAndComboBoxControl();
+      ct.View = panel;
+
+      if (true == Current.Gui.ShowDialog(ct,"Add new column(s)",false))
+      {
+        System.Type columntype = (System.Type)ct.SelectedItem.Item;
+
+        table.Suspend();
+
+        if (bAddToPropertyColumns)
+        {
+          for (int i = 0; i < ct.IntegerValue; i++)
+          {
+            table.PropCols.Add((Altaxo.Data.DataColumn)System.Activator.CreateInstance(columntype));
+          }
+        }
+        else
+        {
+          for (int i = 0; i < ct.IntegerValue; i++)
+          {
+            table.DataColumns.Add((Altaxo.Data.DataColumn)System.Activator.CreateInstance(columntype));
+          }
+        }
+
+        table.Resume();
+      }
+    }
 
 
   }

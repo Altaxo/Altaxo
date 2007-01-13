@@ -28,16 +28,14 @@ namespace Altaxo.Worksheet.GUI
   /// <summary>
   /// Summary description for TransposeWorksheetController.
   /// </summary>
-  public class TransposeWorksheetController : IApplyController
+  public class TransposeWorksheetController : IMVCAController
   {
     Altaxo.Data.DataTable _table;
     TransposeWorksheetControl _view;
 
-    public TransposeWorksheetController(Altaxo.Data.DataTable table, TransposeWorksheetControl view)
+    public TransposeWorksheetController(Altaxo.Data.DataTable table)
     {
       _table = table;
-      _view = view;
-      
     }
     #region IApplyController Members
 
@@ -92,6 +90,27 @@ namespace Altaxo.Worksheet.GUI
 
 
       return true;
+    }
+
+    #endregion
+
+    #region IMVCController Members
+
+    public object ViewObject
+    {
+      get
+      {
+        return _view;
+      }
+      set
+      {
+        _view = value as TransposeWorksheetControl;
+      }
+    }
+
+    public object ModelObject
+    {
+      get { return null; }
     }
 
     #endregion

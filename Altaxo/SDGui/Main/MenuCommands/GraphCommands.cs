@@ -437,11 +437,18 @@ namespace Altaxo.Graph.Commands
   {
     public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
     {
-      IFitPolynomialDialogController dlg = new FitPolynomialDialogController(2,double.NegativeInfinity,double.PositiveInfinity,false);
+      FitPolynomialDialogController dlg = new FitPolynomialDialogController(2,double.NegativeInfinity,double.PositiveInfinity,false);
+      if (Current.Gui.ShowDialog(dlg, "Polynomial fit", false))
+      {
+        Altaxo.Graph.Procedures.PolynomialFitting.Fit(ctrl, dlg.Order, dlg.FitCurveXmin, dlg.FitCurveXmax, dlg.ShowFormulaOnGraph);
+      }
+
+      /*
       if(DialogFactory.ShowPolynomialFitDialog(Current.MainWindow,dlg))
       {
         Altaxo.Graph.Procedures.PolynomialFitting.Fit(ctrl,dlg.Order,dlg.FitCurveXmin,dlg.FitCurveXmax,dlg.ShowFormulaOnGraph);
       }
+      */
     }
   }
 

@@ -29,7 +29,7 @@ namespace Altaxo.Gui.Common
   
   public interface ISingleValueViewEventSink
   {
-    void EhValidatingValue1(string val, System.ComponentModel.CancelEventArgs e);
+    void EhView_ValidatingValue1(string val, System.ComponentModel.CancelEventArgs e);
   }
   public interface ISingleValueView
   {
@@ -133,7 +133,7 @@ namespace Altaxo.Gui.Common
 
     #region ISingleValueViewEventSink Members
 
-    public virtual void EhValidatingValue1(string val, System.ComponentModel.CancelEventArgs e)
+    public virtual void EhView_ValidatingValue1(string val, System.ComponentModel.CancelEventArgs e)
     {
       _value1StringTemporary = val;
     }

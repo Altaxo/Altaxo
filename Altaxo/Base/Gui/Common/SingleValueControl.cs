@@ -149,7 +149,7 @@ namespace Altaxo.Gui.Common
     private void m_edEdit_Validating(object sender, System.ComponentModel.CancelEventArgs e)
     {
       if(null!=_controller)
-        _controller.EhValidatingValue1(this.m_edEdit.Text,e);
+        _controller.EhView_ValidatingValue1(this.m_edEdit.Text,e);
     }
   }
 }

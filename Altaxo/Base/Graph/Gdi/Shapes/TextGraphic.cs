@@ -150,6 +150,10 @@ namespace Altaxo.Graph.Gdi.Shapes
         TextGraphic s = null!=o ? (TextGraphic)o : new TextGraphic(); 
         info.GetBaseValueEmbedded(s,typeof(TextGraphic).BaseType,parent);
 
+        // we have changed the meaning of rotation in the meantime, This is not handled in GetBaseValueEmbedded, 
+        // since the former versions did not store the version number of embedded bases
+        s._rotation = -s._rotation;
+
         s._text = info.GetString("Text");
         s._font = (Font)info.GetValue("Font",typeof(Font));
         s._textBrush = (BrushX)info.GetValue("Brush",typeof(BrushX));
@@ -209,20 +213,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     public TextGraphic(TextGraphic from)
       :
-      base(from)
+      base(from) // all is done here, since CopyFrom is overridden
     {
-      _text = from._text;
-      _font = null==from.Font ? null : (Font)from.Font.Clone();
-      _textBrush = null==_textBrush ? new BrushX(Color.Black):(BrushX)from._textBrush.Clone();
-      _background = from._background==null ? null : (IBackgroundStyle)from._background.Clone();
-      _lineSpacingFactor = from._lineSpacingFactor;
-      _xAnchorType = from._xAnchorType;
-      _yAnchorType = from._yAnchorType;
-  
-      // don't clone the cached items
-      _cachedTextLines=null;
-      _isStructureInSync=false;
-      _isMeasureInSync=false;
     }
 
     public TextGraphic()
@@ -265,20 +257,29 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     #endregion
 
+    protected override void CopyFrom(GraphicBase bfrom)
+    {
+      base.CopyFrom(bfrom);
+      TextGraphic from = bfrom as TextGraphic;
+      if (from != null)
+      {
+        this._text = from._text;
+        this._font = from._font == null ? null : (Font)from._font.Clone();
+        this._textBrush = from._textBrush == null ? null : (BrushX)from._textBrush.Clone();
+        this._background = from._background == null ? null : (IBackgroundStyle)from._background.Clone();
+        this._lineSpacingFactor = from._lineSpacingFactor;
+        _xAnchorType = from._xAnchorType;
+        _yAnchorType = from._yAnchorType;
+
+        // don't clone the cached items
+        this._cachedTextLines = null;
+        this._isStructureInSync = false;
+        this._isMeasureInSync = false;
+      }
+    }
     public void CopyFrom(TextGraphic from)
     {
-      this._text = from._text;
-      this._font = from._font==null ? null : (Font)from._font.Clone();
-      this._textBrush = from._textBrush==null ? null : (BrushX)from._textBrush.Clone();
-      this._background = from._background == null ? null : (IBackgroundStyle)from._background.Clone();
-      this._lineSpacingFactor = from._lineSpacingFactor;
-      _xAnchorType = from._xAnchorType;
-      _yAnchorType = from._yAnchorType;
-
-      // don't clone the cached items
-      this._cachedTextLines=null;
-      this._isStructureInSync=false;
-      this._isMeasureInSync=false;
+      CopyFrom((GraphicBase)from);
     }
 
 
@@ -1027,13 +1028,13 @@ namespace Altaxo.Graph.Gdi.Shapes
 
       Matrix transformmatrix= new Matrix();
       transformmatrix.Translate(X,Y);
-      transformmatrix.Rotate(_rotation);
+      transformmatrix.Rotate(-_rotation);
       transformmatrix.Translate(_bounds.X,_bounds.Y);
 
       if(!bForPreview)
       {
         g.TranslateTransform(X,Y);
-        g.RotateTransform(_rotation);
+        g.RotateTransform(-_rotation);
         g.TranslateTransform(_bounds.X,_bounds.Y);
       }
 
@@ -1161,7 +1162,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       GraphicsState gs = g.Save();
       g.TranslateTransform(X, Y);
       if (_rotation != 0)
-        g.RotateTransform(_rotation);
+        g.RotateTransform(-_rotation);
 
       DrawRotationGrip(g,new PointF(1,1));
       g.DrawRectangle(Pens.Blue, _bounds.X, _bounds.Y, _bounds.Width, _bounds.Height);

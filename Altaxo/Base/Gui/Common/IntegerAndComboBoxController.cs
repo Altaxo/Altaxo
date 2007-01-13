@@ -21,11 +21,12 @@
 #endregion
 
 using System;
+using Altaxo.Collections;
 
 namespace Altaxo.Gui.Common
 {
   #region Interfaces
-  public interface IIntegerAndComboBoxController : IMVCController, IApplyController
+  public interface IIntegerAndComboBoxController : IMVCAController
   {
     /// <summary>
     /// Get/sets the view this controller controls.
@@ -34,7 +35,7 @@ namespace Altaxo.Gui.Common
 
     void EhView_IntegerChanged(int val, ref bool bCancel);
 
-    void EhView_ComboBoxSelectionChanged(ListBoxEntry selectedItem);
+    void EhView_ComboBoxSelectionChanged(SelectableListNode selectedItem);
 
   }
 
@@ -45,18 +46,10 @@ namespace Altaxo.Gui.Common
     /// Get/sets the controller of this view.
     /// </summary>
     IIntegerAndComboBoxController Controller { get; set; }
-
-    /// <summary>
-    /// Gets the hosting parent form of this view.
-    /// </summary>
-    System.Windows.Forms.Form Form  { get; }
-
     
-    void ComboBox_Initialize(ListBoxEntry[] items, ListBoxEntry defaultItem);
-
+    void ComboBox_Initialize(SelectableListNodeList items, SelectableListNode defaultItem);
   
     void ComboBoxLabel_Initialize(string text);
-
     
     void IntegerEdit_Initialize(int min, int max, int val);
 
@@ -78,11 +71,16 @@ namespace Altaxo.Gui.Common
     protected int m_IntegerMinimum;
     protected int m_IntegerMaximum;
     protected int m_IntegerValue;
-    protected ListBoxEntry[] m_ComboBoxItems;
-    protected ListBoxEntry m_SelectedItem;
+    protected SelectableListNodeList m_ComboBoxItems;
+    protected SelectableListNode m_SelectedItem;
 
     
-    public IntegerAndComboBoxController(string integerLabel, int intMin, int intMax, int intVal, string comboBoxLabel, ListBoxEntry[] items, int defaultItem)
+    public IntegerAndComboBoxController(string integerLabel,
+      int intMin, int intMax, 
+      int intVal,
+      string comboBoxLabel,
+      SelectableListNodeList items,
+      int defaultItem)
     {
       m_IntegerLabelText = integerLabel;
       m_IntegerMinimum = intMin;
@@ -134,7 +132,7 @@ namespace Altaxo.Gui.Common
       return true; // all is done on the fly, we don't need actions here
     }
 
-    public ListBoxEntry SelectedItem
+    public SelectableListNode SelectedItem
     {
       get { return m_SelectedItem; }
     }
@@ -174,7 +172,7 @@ namespace Altaxo.Gui.Common
       bCancel = false;
     }
 
-    public void EhView_ComboBoxSelectionChanged(ListBoxEntry selectedItem)
+    public void EhView_ComboBoxSelectionChanged(SelectableListNode selectedItem)
     {
       m_SelectedItem = selectedItem;
     }

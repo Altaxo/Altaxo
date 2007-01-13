@@ -153,13 +153,13 @@ namespace Altaxo.Graph.Gdi.Plot
               {
                 prev = curr;
                 curr = new LineStyleGroupStyle();
-                newColl.GroupStyles.Add(curr, serial ? prev.GetType() : null);
+                newColl.GroupStyles.Add(curr, serial ? (prev==null?null:prev.GetType()) : null);
               }
               if (0 != (plotGroups[foundidx].PlotGroup._plotGroupStyle & Version0PlotGroupStyle.Symbol))
               {
                 prev = curr;
                 curr = new SymbolShapeStyleGroupStyle();
-                newColl.GroupStyles.Add(curr, serial ? prev.GetType() : null);
+                newColl.GroupStyles.Add(curr, serial ? (prev == null ? null : prev.GetType()) : null);
               }
             }
             // now add the item to this collection

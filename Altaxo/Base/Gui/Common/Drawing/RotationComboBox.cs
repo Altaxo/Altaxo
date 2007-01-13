@@ -74,7 +74,10 @@ namespace Altaxo.Gui.Common.Drawing
       foreach (float val in _rotationValues)
         Items.Add(val);
 
-      SelectedItem = rotation;
+      if (_rotationValues.Contains(rotation))
+        SelectedItem = rotation;
+      else
+        this.Text = rotation.ToString();
 
       this.EndUpdate();
       

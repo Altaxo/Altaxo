@@ -187,7 +187,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
       if (this.Rotation != 0)
       {
-        myMatrix.RotateAt(this.Rotation, new PointF(X, Y), MatrixOrder.Append);
+        myMatrix.RotateAt(-this._rotation, new PointF(X, Y), MatrixOrder.Append);
       }
 
       gp.Transform(myMatrix);
@@ -227,7 +227,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       GraphicsState gs = g.Save();
       g.TranslateTransform(X, Y);
       if (_rotation != 0)
-        g.RotateTransform(_rotation);
+        g.RotateTransform(-_rotation);
       Pen.BrushRectangle = this._bounds;
       g.DrawLine(Pen, 0, 0, Width, Height);
       g.Restore(gs);
@@ -239,7 +239,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       GraphicsState gs = g.Save();
       g.TranslateTransform(X, Y);
       if (_rotation != 0)
-        g.RotateTransform(_rotation);
+        g.RotateTransform(-_rotation);
 
       DrawRectangularGrip(g, new PointF(0, 0));
       DrawRectangularGrip(g, new PointF(1, 1));
