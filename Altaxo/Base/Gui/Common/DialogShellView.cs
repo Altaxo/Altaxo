@@ -116,32 +116,36 @@ namespace Altaxo.Gui.Common
       // 
       this.m_btApply.Location = new System.Drawing.Point(192, 8);
       this.m_btApply.Name = "m_btApply";
-      this.m_btApply.Size = new System.Drawing.Size(72, 24);
+      this.m_btApply.Size = new System.Drawing.Size(59, 24);
       this.m_btApply.TabIndex = 2;
       this.m_btApply.Text = "Apply";
       this.m_btApply.Click += new System.EventHandler(this.EhButtonApply_Click);
       // 
       // m_btCancel
       // 
+      this.m_btCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
       this.m_btCancel.Location = new System.Drawing.Point(104, 8);
       this.m_btCancel.Name = "m_btCancel";
-      this.m_btCancel.Size = new System.Drawing.Size(64, 24);
+      this.m_btCancel.Size = new System.Drawing.Size(59, 24);
       this.m_btCancel.TabIndex = 1;
       this.m_btCancel.Text = "Cancel";
       this.m_btCancel.Click += new System.EventHandler(this.EhButtonCancel_Click);
       // 
       // m_btOK
       // 
+      this.m_btOK.DialogResult = System.Windows.Forms.DialogResult.OK;
       this.m_btOK.Location = new System.Drawing.Point(16, 8);
       this.m_btOK.Name = "m_btOK";
-      this.m_btOK.Size = new System.Drawing.Size(56, 24);
+      this.m_btOK.Size = new System.Drawing.Size(59, 24);
       this.m_btOK.TabIndex = 0;
       this.m_btOK.Text = "OK";
       this.m_btOK.Click += new System.EventHandler(this.EhButtonOK_Click);
       // 
       // DialogShellView
       // 
+      this.AcceptButton = this.m_btOK;
       this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+      this.CancelButton = this.m_btCancel;
       this.ClientSize = new System.Drawing.Size(292, 266);
       this.Controls.Add(this.m_ButtonPanel);
       this.Name = "DialogShellView";

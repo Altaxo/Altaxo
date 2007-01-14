@@ -108,8 +108,8 @@ namespace ICSharpCode.SharpDevelop.Sda
 			
 			LoggingService.Info("Initializing workbench...");
 #if ModifiedForAltaxo
-			WorkbenchSingleton.InitializeWorkbench(typeof(DefaultWorkbench));
-else
+			// TODO what to do here: WorkbenchSingleton.InitializeWorkbench(typeof(DefaultWorkbench));
+#else
 			WorkbenchSingleton.InitializeWorkbench();
 #endif
 

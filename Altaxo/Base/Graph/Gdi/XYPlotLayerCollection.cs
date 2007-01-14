@@ -21,6 +21,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;        
 using System.Reflection;
 using System.Drawing;
@@ -65,6 +66,11 @@ namespace Altaxo.Graph.Gdi
     [NonSerialized]
     private RectangleF m_PrintableBounds; // do not serialize this value, its only cached
 
+    [NonSerialized]
+    protected Main.EventSuppressor _changeEventSuppressor;
+
+    [NonSerialized]
+    protected Dictionary<XYPlotLayer, IDisposable> _suspendedChilds;
 
     #region "Serialization"
 
@@ -151,6 +157,7 @@ namespace Altaxo.Graph.Gdi
     /// </summary>
     public XYPlotLayerCollection()
     {
+      _changeEventSuppressor = new Altaxo.Main.EventSuppressor(this.EhChangeEventResumed);
     }
 
     /// <summary>
@@ -159,6 +166,7 @@ namespace Altaxo.Graph.Gdi
     /// <param name="from">The collection to clone from.</param>
     public XYPlotLayerCollection(XYPlotLayerCollection from)
     {
+      _changeEventSuppressor = new Altaxo.Main.EventSuppressor(this.EhChangeEventResumed);
       this.m_PrintableBounds = from.m_PrintableBounds;
 
       for(int i=0;i<from.Count;i++)
@@ -354,18 +362,7 @@ namespace Altaxo.Graph.Gdi
 
     #region Change event handling
 
-    protected System.EventArgs m_ChangeData=null;
-    protected bool             m_ResumeInProgress=false;
-    protected System.Collections.ArrayList m_SuspendedChildCollection=new System.Collections.ArrayList();
-
-    
-    public bool IsSuspended
-    {
-      get 
-      {
-        return false; // m_SuspendCount>0;
-      }
-    }
+  
 
 #if false
     public void Suspend()
@@ -403,23 +400,22 @@ namespace Altaxo.Graph.Gdi
 
 #endif
 
-
-    void AccumulateChildChangeData(object sender, EventArgs e)
+    public IDisposable BeginUpdate()
     {
-      if(sender!=null && m_ChangeData==null)
-        this.m_ChangeData=new EventArgs();
-    }   
-
-    protected bool HandleImmediateChildChangeCases(object sender, EventArgs e)
+      return _changeEventSuppressor.Suspend();
+    }
+    public void EndUpdate(ref IDisposable locker)
     {
-      return false; // not handled
+      _changeEventSuppressor.Resume(ref locker);
     }
 
-    protected virtual void OnSelfChanged()
+    public bool IsSuspended
     {
-      EhChildChanged(null,EventArgs.Empty);
+      get
+      {
+        return _changeEventSuppressor.PeekDisabled;
+      }
     }
-
 
     /// <summary>
     /// Handle the change notification from the child layers.
@@ -428,40 +424,51 @@ namespace Altaxo.Graph.Gdi
     /// <param name="e">The change details.</param>
     public void EhChildChanged(object sender, System.EventArgs e)
     {
-      if(HandleImmediateChildChangeCases(sender, e))
-        return;
-
-      if(this.IsSuspended &&  sender is Main.ISuspendable)
+      if (_changeEventSuppressor.PeekDisabled)
       {
-        m_SuspendedChildCollection.Add(sender); // add sender to suspended child
-        ((Main.ISuspendable)sender).Suspend();
-        return;
-      }
-
-      AccumulateChildChangeData(sender,e);  // AccumulateNotificationData
-      
-      if(m_ResumeInProgress || IsSuspended)
-        return;
-
-      if(_parent is Main.IChildChangedEventSink )
-      {
-        ((Main.IChildChangedEventSink)_parent).EhChildChanged(this, m_ChangeData);
-        if(IsSuspended) // maybe parent has suspended us now
+        XYPlotLayer child = sender as XYPlotLayer;
+        if (child != null)
         {
-          this.EhChildChanged(sender, e); // we call the function recursively, but now we are suspended
-          return;
+          if (_suspendedChilds == null)
+            _suspendedChilds = new Dictionary<XYPlotLayer, IDisposable>();
+
+          if (!_suspendedChilds.ContainsKey(child))
+            _suspendedChilds.Add(child, child.BeginUpdate());
         }
       }
-      
       OnChanged(); // Fire the changed event
+    }
+    protected void EhChangeEventResumed()
+    {
+      if (_suspendedChilds != null)
+      {
+        foreach (KeyValuePair<XYPlotLayer, IDisposable> entry in _suspendedChilds)
+        {
+          IDisposable val = entry.Value;
+          entry.Key.EndUpdate(ref val);
+        }
+
+        _suspendedChilds = null;
+      }
+
+
+      FireChangeEvent();
     }
 
     protected virtual void OnChanged()
     {
-      if(null!=Changed)
-        Changed(this, m_ChangeData);
+      if (_changeEventSuppressor.GetEnabledWithCounting())
+      {
+        FireChangeEvent();
+      }
+    }
+    protected void FireChangeEvent()
+    {
+      if (_parent is Main.IChildChangedEventSink)
+        ((Main.IChildChangedEventSink)this._parent).EhChildChanged(this, EventArgs.Empty);
 
-      m_ChangeData=null;
+      if (null != Changed)
+        Changed(this, EventArgs.Empty);
     }
 
     #endregion

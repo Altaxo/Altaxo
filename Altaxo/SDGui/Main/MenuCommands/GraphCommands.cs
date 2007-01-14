@@ -195,7 +195,7 @@ namespace Altaxo.Graph.Commands
       SaveFileDialog saveFileDialog1 = new SaveFileDialog();
  
       saveFileDialog1.Filter = "Windows Metafiles (*.emf)|*.emf|All files (*.*)|*.*"  ;
-      saveFileDialog1.FilterIndex = 2 ;
+      saveFileDialog1.FilterIndex = 1 ;
       saveFileDialog1.RestoreDirectory = true ;
  
       if(saveFileDialog1.ShowDialog() == DialogResult.OK)
@@ -221,7 +221,7 @@ namespace Altaxo.Graph.Commands
       SaveFileDialog saveFileDialog1 = new SaveFileDialog();
 
       saveFileDialog1.Filter = "Tiff files (*.tif)|*.tif|All files (*.*)|*.*";
-      saveFileDialog1.FilterIndex = 2;
+      saveFileDialog1.FilterIndex = 1;
       saveFileDialog1.RestoreDirectory = true;
 
       if (saveFileDialog1.ShowDialog() == DialogResult.OK)

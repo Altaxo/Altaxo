@@ -32,7 +32,6 @@ namespace Altaxo.Gui.Common
   /// <summary>
   /// Summary description for SingleValueControl.
   /// </summary>
-  [UserControlForController(typeof(ISingleValueViewEventSink))]
   public class SingleValueControl : System.Windows.Forms.UserControl, ISingleValueView
   {
     private System.Windows.Forms.TextBox m_edEdit;
@@ -111,45 +110,43 @@ namespace Altaxo.Gui.Common
 
     #region ISingleValueView Members
 
-    ISingleValueViewEventSink _controller;
-    public ISingleValueViewEventSink Controller
+    public string DescriptionText
+    {
+      set
+      {
+        SizeF size1, size2;
+        using (System.Drawing.Graphics grfx = this.CreateGraphics())
+        {
+          size1 = grfx.MeasureString(value, m_Label1.Font);
+          size2 = grfx.MeasureString(value, m_Label1.Font, m_Label1.ClientSize.Width);
+        }
+        m_Label1.Size = new Size(m_edEdit.Size.Width, (int)(m_Label1.PreferredHeight * Math.Ceiling(size2.Height / size1.Height)));
+        this.m_Label1.Text = value;
+
+        this.m_edEdit.Location = new Point(m_Label1.Location.X, m_Label1.Bounds.Bottom + m_edEdit.Size.Height / 2);
+        this.ClientSize = new Size(this.ClientSize.Width, m_edEdit.Bounds.Bottom);
+      }
+    }
+
+    public string ValueText
     {
       get
       {
-        return _controller;
+        return this.m_edEdit.Text;
       }
       set
       {
-        _controller = value;
+        this.m_edEdit.Text = value;
       }
-    }
-
-    public void InitializeDescription(string value)
-    {
-      SizeF size1, size2;
-      using(System.Drawing.Graphics grfx = this.CreateGraphics())
-      {
-        size1 = grfx.MeasureString(value,m_Label1.Font);
-        size2 = grfx.MeasureString(value,m_Label1.Font,m_Label1.ClientSize.Width);
-      }
-      m_Label1.Size = new Size(m_edEdit.Size.Width,(int)(m_Label1.PreferredHeight*Math.Ceiling(size2.Height/size1.Height)));
-      this.m_Label1.Text = value;
-
-      this.m_edEdit.Location = new Point(m_Label1.Location.X, m_Label1.Bounds.Bottom + m_edEdit.Size.Height/2);
-      this.ClientSize = new Size(this.ClientSize.Width, m_edEdit.Bounds.Bottom);
-    }
-
-    public void InitializeValue1(string value)
-    {
-      this.m_edEdit.Text = value;
     }
 
     #endregion
 
+    public event System.ComponentModel.CancelEventHandler ValueText_Validating;
     private void m_edEdit_Validating(object sender, System.ComponentModel.CancelEventArgs e)
     {
-      if(null!=_controller)
-        _controller.EhView_ValidatingValue1(this.m_edEdit.Text,e);
+      if (null != ValueText_Validating)
+        ValueText_Validating(this, e);
     }
   }
 }

@@ -180,7 +180,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     static bool EhHitDoubleClick(IHitTestObject o)
     {
       object hitted = o.HittedObject;
-      Current.Gui.ShowDialog(ref hitted, "Line properties");
+      Current.Gui.ShowDialog(ref hitted, "Shape properties", true);
       ((ShapeGraphic)hitted).OnChanged();
       return true;
     }

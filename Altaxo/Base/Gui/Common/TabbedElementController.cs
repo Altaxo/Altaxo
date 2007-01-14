@@ -99,7 +99,7 @@ namespace Altaxo.Gui.Common
   #endregion
 
   /// <summary>
-  /// Controls the <see cref="TabbedDialogView"/>.
+  /// Controls the <see cref="ITabbedElementView"/>.
   /// </summary>
   public class TabbedElementController : ITabbedElementViewEventSink, ITabbedElementController
   {

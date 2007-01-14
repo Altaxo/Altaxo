@@ -421,6 +421,7 @@ namespace Altaxo.Main
       {
         string filename = fdiag.FileName;
         SaveProject(filename);
+        FileService.RecentOpen.AddLastProject(filename);
 
         MessageService.ShowMessage(filename, ResourceService.GetString("Altaxo.Project.ProjectSavedMessage"));
       }

@@ -26,7 +26,7 @@ using System.ComponentModel;
 namespace Altaxo.Gui.Common
 {
   [ExpectedTypeOfView(typeof(ISingleValueView))]
-  public class IntegerValueInputController : IMVCAController, ISingleValueViewEventSink
+  public class IntegerValueInputController : IMVCAController
   {
     ISingleValueView m_View;
 
@@ -48,7 +48,7 @@ namespace Altaxo.Gui.Common
 
     void Initialize()
     {
-      m_View.InitializeDescription(_description);
+      m_View.DescriptionText=_description;
     }
 
     ISingleValueView View
@@ -56,10 +56,14 @@ namespace Altaxo.Gui.Common
       get { return m_View; }
       set
       {
+        if (m_View != null)
+          m_View.ValueText_Validating -= this.EhView_ValidatingValue1;
+        
         m_View = value;
         Initialize();
-        m_View.Controller = this;
-        
+
+        if (m_View != null)
+          m_View.ValueText_Validating += this.EhView_ValidatingValue1;
       }
     }
 
@@ -73,32 +77,32 @@ namespace Altaxo.Gui.Common
       set { m_Validator = value; }
     }
 
-   
-
-    #region ISingleValueFormController Members
-
-    public void EhView_ValidatingValue1(string value, CancelEventArgs e)
+    public bool Validate()
     {
+      string value = m_View.ValueText;
       string err = null;
-      try
+      if (Altaxo.Serialization.GUIConversion.IsInteger(value, out m_EnteredContents))
       {
-        m_EnteredContents = System.Convert.ToInt32(value);
-
         if (null != this.m_Validator)
           err = m_Validator.Validate(m_EnteredContents);
-
-        e.Cancel = null != err;
       }
-      catch (Exception)
+      else
       {
         err = "You must enter a integer value!";
-        e.Cancel = true;
       }
 
       if (null != err)
-      {
-        Current.Gui.ErrorMessageBox( err );
-      }
+        Current.Gui.ErrorMessageBox(err);
+
+      return null == err;
+    }
+
+
+    #region ISingleValueFormController Members
+
+    public void EhView_ValidatingValue1(object sender, CancelEventArgs e)
+    {
+      // we validate only during apply
     }
     #endregion
 
@@ -138,14 +142,13 @@ namespace Altaxo.Gui.Common
       set
       {
         if (m_View != null)
-        {
-          m_View.Controller = null;
-        }
+          m_View.ValueText_Validating -= this.EhView_ValidatingValue1;
+        
         m_View = value as ISingleValueView;
         if(m_View!=null)
         {
           Initialize();
-          m_View.Controller = this;
+          m_View.ValueText_Validating += this.EhView_ValidatingValue1;
         }
       }
     }
@@ -161,6 +164,9 @@ namespace Altaxo.Gui.Common
 
     public bool Apply()
     {
+      if (!Validate())
+        return false;
+
       m_InitialContents = m_EnteredContents;
       return true;
     }

@@ -24,11 +24,11 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyTrademark("(C) Dr. Dirk Lellinger 2002-2006")]
 [assembly: AssemblyCulture("")]
 
-[assembly: AssemblyVersion("0.53.0.543")]
+[assembly: AssemblyVersion("0.54.0.543")]
 
 [assembly: AssemblyDelaySign(false)]
 
 class RevisionClass {
-	public const string Version = "0.53.0";
-	public const string Revision = "462";
+	public const string Version = "0.54.0";
+	public const string Revision = "542";
 }

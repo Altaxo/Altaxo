@@ -593,7 +593,6 @@ namespace Altaxo.Graph.Gdi
     {
       XYPlotLayer newlayer= new XYPlotLayer(DefaultLayerPosition,DefaultLayerSize);
       newlayer.CreateDefaultAxes();
-    
       Layers.Add(newlayer);
     }
 

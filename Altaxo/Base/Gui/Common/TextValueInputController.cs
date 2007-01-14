@@ -26,7 +26,7 @@ using System.ComponentModel;
 namespace Altaxo.Gui.Common
 {
   [ExpectedTypeOfView(typeof(ISingleValueView))]
-  public class TextValueInputController : IMVCAController, ISingleValueViewEventSink
+  public class TextValueInputController : IMVCAController
   {
     ISingleValueView m_View;
     string _captionText;
@@ -48,8 +48,8 @@ namespace Altaxo.Gui.Common
     {
       if (m_View != null)
       {
-        m_View.InitializeDescription(_captionText);
-        m_View.InitializeValue1(m_InitialContents);
+        m_View.DescriptionText= _captionText;
+        m_View.ValueText = m_InitialContents;
       }
     }
 
@@ -58,10 +58,15 @@ namespace Altaxo.Gui.Common
       get { return m_View; }
       set
       {
-        m_View = value;
-        m_View.Controller = this;
+        if (m_View != null)
+          m_View.ValueText_Validating -= this.EhView_ValidatingValue1;
 
+        m_View = value;
         Initialize();
+
+        if (m_View != null)
+          m_View.ValueText_Validating += this.EhView_ValidatingValue1;
+
       }
     }
 
@@ -80,9 +85,9 @@ namespace Altaxo.Gui.Common
 
     #region ISingleValueFormController Members
 
-    public void EhView_ValidatingValue1(string value, CancelEventArgs e)
+    public void EhView_ValidatingValue1(object sender, CancelEventArgs e)
     {
-      m_Contents = value;
+      m_Contents = m_View.ValueText;
       if (m_Validator != null)
       {
         string err = m_Validator.Validate(m_Contents);
@@ -157,15 +162,13 @@ namespace Altaxo.Gui.Common
       set
       {
         if (m_View != null)
-        {
-          m_View.Controller = null;
-        }
+          m_View.ValueText_Validating -= this.EhView_ValidatingValue1;
+       
         m_View = value as ISingleValueView;
         if (m_View != null)
         {
           Initialize();
-          m_View.Controller = this;
-          
+          m_View.ValueText_Validating += this.EhView_ValidatingValue1;
         }
       }
     }

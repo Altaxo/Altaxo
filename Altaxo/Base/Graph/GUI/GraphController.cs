@@ -753,7 +753,7 @@ namespace Altaxo.Graph.GUI
         XYPlotLayer actLayer = this.Layers[actLayerNum];
         IGPlotItem pa = actLayer.PlotItems.Flattened[CurrentPlotNumber];
 
-        Current.Gui.ShowDialog(new object[] { pa }, string.Format("#{0}: {1}", pa.Name, pa.ToString()));
+        Current.Gui.ShowDialog(new object[] { pa }, string.Format("#{0}: {1}", pa.Name, pa.ToString()),true);
       }
       
         
@@ -1196,9 +1196,7 @@ namespace Altaxo.Graph.GUI
       // get plot group
       PlotGroupStyleCollection plotGroup = pa.ParentCollection.GroupStyles;
 
-      Current.Gui.ShowDialog(new object[] { pa }, string.Format("#{0}: {1}", pa.Name, pa.ToString()));
-  
-     // DialogFactory.ShowPlotStyleAndDataDialog(Current.MainWindow,pa,plotGroup);
+      Current.Gui.ShowDialog(new object[] { pa }, string.Format("#{0}: {1}", pa.Name, pa.ToString()),true);
 
       return false;
     }

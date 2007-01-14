@@ -1547,53 +1547,78 @@
 		             class = "ICSharpCode.SharpDevelop.Commands.ChooseLayoutCommand" />
 	</Path>
 	<!-- end toolbars -->
-	
+
+  <!-- ModifiedForAltaxo context menu of worksheet and graph tabs -->
 	<Path name = "/SharpDevelop/Workbench/OpenFileTab/ContextMenu">
-		<MenuItem id = "Close"
-		          label = "${res:OpenFileTabEventHandler.ContextMenu.Close}"
-		          icon  = "Icons.16x16.CloseFileIcon"
-		          class = "ICSharpCode.SharpDevelop.Commands.TabStrip.CloseFileTab"/>
-		<MenuItem id    = "CloseAll"
+
+    <!-- Graph menu -->
+    <Condition name = "WindowActive" activewindow="Altaxo.Gui.SharpDevelop.SDGraphViewContent" action="Exclude">
+      <MenuItem id="Rename"
+                label="${res:XML.MainMenu.GraphMenu.Rename}"
+                description="${res:XML.MainMenu.GraphMenu.Rename.Description}"
+                class="Altaxo.Graph.Commands.GraphRename" />
+
+      <MenuItem id="Duplicate"
+                label="${res:XML.MainMenu.GraphMenu.Duplicate}" 
+                icon="Icons.16x16.Duplicate"
+                description="${res:XML.MainMenu.GraphMenu.Duplicate.Description}" 
+                class="Altaxo.Graph.Commands.DuplicateGraph" />
+
+      <MenuItem id="SaveGraphAsTemplate" 
+                  label="${res:XML.MainMenu.FileMenu.SaveGraphAsTemplate}"
+                  icon="Icons.16x16.NewDocumentIcon" 
+                  description="${res:XML.MainMenu.FileMenu.SaveGraphAsTemplate.Description}"
+                  class="Altaxo.Graph.Commands.SaveGraphAsTemplate" />
+
+    </Condition>
+    <!-- Worksheet menu -->
+    <Condition name = "WindowActive" activewindow="Altaxo.Gui.SharpDevelop.SDWorksheetViewContent" action="Exclude">
+      <MenuItem id="Rename" label="${res:XML.MainMenu.WorksheetMenu.Rename}" description="${res:XML.MainMenu.WorksheetMenu.Rename.Description}"
+        class="Altaxo.Worksheet.Commands.WorksheetRename" />
+      <MenuItem id="Duplicate" label="${res:XML.MainMenu.WorksheetMenu.Duplicate}" description="${res:XML.MainMenu.WorksheetMenu.Duplicate.Description}"
+        class="Altaxo.Worksheet.Commands.WorksheetDuplicate" />
+      <MenuItem id="AddDataColumns" label="${res:XML.MainMenu.WorksheetMenu.AddDataColumns}" description="${res:XML.MainMenu.WorksheetMenu.AddDataColumns.Description}"
+					class="Altaxo.Worksheet.Commands.AddDataColumns" />
+        <MenuItem id="Transpose" label="${res:XML.MainMenu.WorksheetMenu.Transpose}" description="${res:XML.MainMenu.WorksheetMenu.Transpose.Description}"
+					class="Altaxo.Worksheet.Commands.WorksheetTranspose" />
+        <MenuItem id="TableScript" label="${res:XML.MainMenu.WorksheetMenu.TableScript}" description="${res:XML.MainMenu.WorksheetMenu.TableScript.Description}"
+					class="Altaxo.Worksheet.Commands.OpenTableScriptDialog" />
+        <MenuItem id="ExtractTableData" label="${res:XML.MainMenu.WorksheetMenu.ExtractTableData}" description="${res:XML.MainMenu.WorksheetMenu.ExtractTableData.Description}"
+					class="Altaxo.Worksheet.Commands.OpenExtractTableDataScriptDialog" />
+
+      <MenuItem id="SaveWorksheetAs" label="${res:XML.MainMenu.FileMenu.SaveWorksheetAs}" icon="Icons.16x16.SaveIcon"
+  description="${res:XML.MainMenu.FileMenu.SaveWorksheetAs.Description}" class="Altaxo.Worksheet.Commands.SaveAs" />
+      <MenuItem id="SaveWorksheetAsTemplate" label="${res:XML.MainMenu.FileMenu.SaveWorksheetAsTemplate}"
+        icon="Icons.16x16.SaveIcon" description="${res:XML.MainMenu.FileMenu.SaveWorksheetAsTemplate.Description}"
+        class="Altaxo.Worksheet.Commands.SaveAsTemplate" />
+
+
+    </Condition>
+
+    <MenuItem id = "CloseSeparator" type = "Separator" />
+
+
+    <MenuItem id = "Close"
+          label = "${res:OpenFileTabEventHandler.ContextMenu.Close}"
+          icon  = "Icons.16x16.CloseFileIcon"
+          class = "ICSharpCode.SharpDevelop.Commands.TabStrip.CloseFileTab"/>
+    <MenuItem id    = "CloseAll"
 		          icon  = "Icons.16x16.CloseAllDocuments"
 		          label = "${res:XML.MainMenu.FileMenu.CloseAll}"
 		          class = "ICSharpCode.SharpDevelop.Commands.CloseAllWindows" />
-		<MenuItem id    = "CloseAllButThis"
+    <MenuItem id    = "CloseAllButThis"
 		          label = "${res:OpenFileTabEventHandler.ContextMenu.CloseAllButThis}"
 		          class = "ICSharpCode.SharpDevelop.Commands.TabStrip.CloseAllButThisFileTab" />
-		
-		<MenuItem id = "CloseSeparator" type = "Separator" />
-		<ComplexCondition action="Disable">
-			<And>
-				<Condition name = "Ownerstate" ownerstate="FileDirty"/>
-				<Not>
-					<Condition name = "Ownerstate" ownerstate="FileUntitled"/>
-				</Not>
-			</And>
-			
-			<MenuItem id = "Save"
-			          label = "${res:OpenFileTabEventHandler.ContextMenu.Save}"
-			          icon  = "Icons.16x16.SaveIcon"
-			          class = "ICSharpCode.SharpDevelop.Commands.TabStrip.SaveFileTab"/>
-		</ComplexCondition>
-		<MenuItem id = "SaveAs"
-		          label = "${res:OpenFileTabEventHandler.ContextMenu.SaveAs}"
-		          class = "ICSharpCode.SharpDevelop.Commands.TabStrip.SaveFileAsTab"/>
-		<Condition name = "OpenWindowState" openwindowstate="Dirty" action="Disable">
-			<MenuItem id = "SaveAll"
-		          icon = "Icons.16x16.SaveAllIcon"
-		          label = "${res:XML.MainMenu.FileMenu.SaveAll.Description}"
-		          class = "ICSharpCode.SharpDevelop.Commands.SaveAllFiles"/>
-		</Condition>
-		<MenuItem id = "SaveSeparator" type = "Separator" />
-		<ComplexCondition action="Disable">
-			<Not>
-				<Condition name = "Ownerstate" ownerstate="FileUntitled" />
-			</Not>
-			<MenuItem id = "CopyPathName"
-			          label = "${res:OpenFileTabEventHandler.CopyPathName}"
-			          class = "ICSharpCode.SharpDevelop.Commands.TabStrip.CopyPathName"/>
-		</ComplexCondition>
-	</Path>
+
+    <MenuItem id="Delete"
+              icon="Icons.16x16.DeleteIcon"
+              label="${res:XML.MainMenu.EditMenu.Delete}"
+              class="ICSharpCode.SharpDevelop.Commands.Delete" />
+
+
+
+
+  </Path>
 	
 	<Path name = "/SharpDevelop/Views/PropertyPad/ContextMenu">
 		<MenuItem id    = "ResetProperty"

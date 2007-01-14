@@ -202,6 +202,7 @@ namespace Altaxo.Main.Commands
       if(openFileDialog1.ShowDialog() == DialogResult.OK)
       {
         Current.ProjectService.OpenProject(openFileDialog1.FileName);
+        FileService.RecentOpen.AddLastProject(openFileDialog1.FileName);
       }
       else // in case the user cancels the open file dialog
       {

@@ -142,8 +142,6 @@ namespace Altaxo.Worksheet.Commands
           grpNumber = ctrl.DataTable.PropertyColumns.GetColumnGroup(ctrl.SelectedPropertyColumns[0]);
         
         IntegerValueInputController ivictrl = new IntegerValueInputController(grpNumber,"Please enter a group number (>=0):");
-         
-
         ivictrl.Validator = new IntegerValueInputController.ZeroOrPositiveIntegerValidator();
         if(Current.Gui.ShowDialog(ivictrl,"Set group number",false))
         {

@@ -81,7 +81,7 @@ namespace Altaxo.Gui.SharpDevelop
 
     #region Constructors
     /// <summary>
-    /// Creates a GraphController which shows the <see cref="Altaxo.Graph.GraphDocument"/> in the <c>layout</c>.    
+    /// Creates a GraphController which shows the <see cref="Altaxo.Graph.Gdi.GraphDocument"/> in the <c>layout</c>.    
     /// </summary>
     /// <param name="layout">The graph layout which holds the graph document.</param>
     public SDWorksheetViewContent(Altaxo.Worksheet.WorksheetLayout layout)

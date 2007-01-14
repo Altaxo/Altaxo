@@ -27,16 +27,12 @@ namespace Altaxo.Gui.Common
 
   #region Interfaces
   
-  public interface ISingleValueViewEventSink
-  {
-    void EhView_ValidatingValue1(string val, System.ComponentModel.CancelEventArgs e);
-  }
+ 
   public interface ISingleValueView
   {
-    ISingleValueViewEventSink Controller { set; }
-
-    void InitializeDescription(string value);
-    void InitializeValue1(string value);
+    string DescriptionText { set; }
+    string ValueText { get; set; }
+    event System.ComponentModel.CancelEventHandler ValueText_Validating;
   }
   public interface ISingleValueController : IMVCAController
   {
@@ -50,7 +46,7 @@ namespace Altaxo.Gui.Common
   /// </summary>
   [UserControllerForObject(typeof(string),100)]
   [ExpectedTypeOfView(typeof(ISingleValueView))]
-  public class SingleValueController : ISingleValueController, ISingleValueViewEventSink
+  public class SingleValueController : ISingleValueController
   {
     protected ISingleValueView _view;
     protected string _value1String;
@@ -68,8 +64,8 @@ namespace Altaxo.Gui.Common
     {
       if(null!=_view)
       {
-        _view.InitializeDescription(_descriptionText);
-        _view.InitializeValue1(_value1StringTemporary);
+        _view.DescriptionText =_descriptionText;
+        _view.ValueText = _value1StringTemporary;
       }
     }
 
@@ -84,7 +80,7 @@ namespace Altaxo.Gui.Common
         _descriptionText = value;
         if(null!=_view)
         {
-          _view.InitializeDescription(_descriptionText);
+          _view.DescriptionText= _descriptionText;
         }
       }
     }
@@ -99,15 +95,17 @@ namespace Altaxo.Gui.Common
       }
       set
       {
-        if(_view!=null)
-          _view.Controller = null;
+        if (_view != null)
+          _view.ValueText_Validating -= this.EhView_ValidatingValue1;
 
         _view = value as ISingleValueView;
-        
-        Initialize();
 
-        if(_view!=null)
-          _view.Controller = this;
+
+        if (_view != null)
+        {
+          Initialize();
+          _view.ValueText_Validating += this.EhView_ValidatingValue1;
+        }
       }
     }
 
@@ -133,9 +131,9 @@ namespace Altaxo.Gui.Common
 
     #region ISingleValueViewEventSink Members
 
-    public virtual void EhView_ValidatingValue1(string val, System.ComponentModel.CancelEventArgs e)
+    public virtual void EhView_ValidatingValue1(object sender, System.ComponentModel.CancelEventArgs e)
     {
-      _value1StringTemporary = val;
+      _value1StringTemporary = _view.ValueText;
     }
 
     #endregion

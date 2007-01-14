@@ -557,7 +557,7 @@ namespace Altaxo.Gui.Graph
         }
         else
         {
-          Current.Gui.ShowDialog(new object[] { pi }, pi.GetName(2));
+          Current.Gui.ShowDialog(new object[] { pi }, pi.GetName(2),true);
         }
       }
     }

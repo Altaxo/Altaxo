@@ -44,10 +44,8 @@ namespace Altaxo.Worksheet.Commands
   {
     public override void Run()
     {
-
       throw new ApplicationException("This is a menu point to provoke an exception");
-      
-      
+      System.Diagnostics.Debug.WriteLine("Exception thrown");
     }
 
   }

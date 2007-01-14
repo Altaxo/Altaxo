@@ -37,76 +37,77 @@ namespace AltaxoTest.Data
     public void ZeroElements()
     {
       DoubleColumn d = new DoubleColumn();
-      Assertion.AssertEquals(d.Count,0);
-      Assertion.AssertEquals(d.IsDirty,false);
-      Assertion.AssertEquals(d.IsElementEmpty(0),true);
-      Assertion.AssertEquals(d.IsElementEmpty(1),true);       
+      
+      Assert.AreEqual(0,d.Count);
+      Assert.AreEqual(false,d.IsDirty);
+      Assert.AreEqual(true,d.IsElementEmpty(0));
+      Assert.AreEqual(true,d.IsElementEmpty(1));       
     }
 
     [Test]
     public void TenEmptyElements()
     {
       DoubleColumn d = new DoubleColumn(10);
-      Assertion.AssertEquals(d.Count,0);
-      Assertion.AssertEquals(d.IsDirty,false);
+      Assert.AreEqual(0,d.Count);
+      Assert.AreEqual(false, d.IsDirty);
       for(int i=0;i<11;i++)
-        Assertion.AssertEquals(d.IsElementEmpty(i),true);
+        Assert.AreEqual(true, d.IsElementEmpty(i));
     }
 
     [Test]
     public void TenElementsFirstFilled()
     {
       DoubleColumn d = new DoubleColumn(10);
-      Assertion.AssertEquals(d.Count,0);
+      Assert.AreEqual(0, d.Count);
       d[0]=77.0;
-      Assertion.AssertEquals(d.Count,1);
-      Assertion.AssertEquals(false,d.IsDirty);
-      Assertion.AssertEquals(d.IsElementEmpty(0),false);
-      Assertion.AssertEquals(d.IsElementEmpty(1),true);
+      Assert.AreEqual(1, d.Count);
+      Assert.AreEqual(false, d.IsDirty);
+      Assert.AreEqual(false, d.IsElementEmpty(0));
+      Assert.AreEqual(true, d.IsElementEmpty(1));
 
       // now delete again element 0
       d[0]=double.NaN;
-      Assertion.AssertEquals(d.Count,0);
-      Assertion.AssertEquals(d.IsDirty,false);
+      Assert.AreEqual(0,d.Count);
+      Assert.AreEqual(false,d.IsDirty);
       for(int i=0;i<11;i++)
-        Assertion.AssertEquals(d.IsElementEmpty(i),true);
-      
-      Assertion.AssertEquals(false,d.IsDirty);
+        Assert.AreEqual(true,d.IsElementEmpty(i));
+
+      Assert.AreEqual(false, d.IsDirty);
     }
 
     [Test]
     public void FiveElements89Filled()
     {
       DoubleColumn d = new DoubleColumn(5);
-      Assertion.AssertEquals(d.Count,0);
+      Assert.AreEqual(0,d.Count);
       d[8]=77.0;
       d[9]=88;
-      Assertion.AssertEquals(d.Count,10);
-      Assertion.AssertEquals(false,d.IsDirty);
+      Assert.AreEqual(10,d.Count);
+      Assert.AreEqual(false, d.IsDirty);
 
-      Assertion.AssertEquals(d.IsElementEmpty(7),true);
-      Assertion.AssertEquals(d.IsElementEmpty(8),false);
-      Assertion.AssertEquals(d.IsElementEmpty(9),false);
-      Assertion.AssertEquals(d.IsElementEmpty(10),true);
+      Assert.AreEqual(true,d.IsElementEmpty(7));
+      Assert.AreEqual(false,d.IsElementEmpty(8));
+      Assert.AreEqual(false,d.IsElementEmpty(9));
+      Assert.AreEqual(true,d.IsElementEmpty(10));
 
       d[9]=double.NaN;
 
-      Assertion.AssertEquals(d.Count,9);
-      Assertion.AssertEquals(d.IsElementEmpty(7),true);
-      Assertion.AssertEquals(d.IsElementEmpty(8),false);
-      Assertion.AssertEquals(d.IsElementEmpty(9),true);
-      Assertion.AssertEquals(d.IsElementEmpty(10),true);
+      Assert.AreEqual(9,d.Count, 9);
+      Assert.AreEqual(true,d.IsElementEmpty(7));
+      Assert.AreEqual(false,d.IsElementEmpty(8));
+      Assert.AreEqual(true,d.IsElementEmpty(9));
+      Assert.AreEqual(true,d.IsElementEmpty(10));
 
       d[8]=double.NaN;
-      Assertion.AssertEquals(d.Count,0);
-      Assertion.AssertEquals(d.IsElementEmpty(7),true);
-      Assertion.AssertEquals(d.IsElementEmpty(8),true);
-      Assertion.AssertEquals(d.IsElementEmpty(9),true);
-      Assertion.AssertEquals(d.IsElementEmpty(10),true);
+      Assert.AreEqual(0,d.Count, 0);
+      Assert.AreEqual(true,d.IsElementEmpty(7));
+      Assert.AreEqual(true,d.IsElementEmpty(8));
+      Assert.AreEqual(true,d.IsElementEmpty(9));
+      Assert.AreEqual(true,d.IsElementEmpty(10));
 
-      Assertion.AssertEquals(d.IsDirty,false);
+      Assert.AreEqual(false,d.IsDirty);
       for(int i=0;i<11;i++)
-        Assertion.AssertEquals(d.IsElementEmpty(i),true);
+        Assert.AreEqual(true, d.IsElementEmpty(i));
     }
 
 
@@ -125,7 +126,7 @@ namespace AltaxoTest.Data
 
       public void EhChildChanged(object sender, EventArgs e)
       {
-        Assertion.AssertNotNull("Test redirector for OnChildChange must not be null!", ChildChanged);
+        Assert.IsNotNull(ChildChanged,"Test redirector for OnChildChange must not be null!");
         ChildChanged(sender,e);
       }
 
@@ -141,33 +142,33 @@ namespace AltaxoTest.Data
 
       public void ExpectingNotToBeCalledBecauseSuspended(object sender, EventArgs e)
       {
-        Assertion.Fail("This must not be called, since the sender should be suspended!");
+        Assert.Fail("This must not be called, since the sender should be suspended!");
       }
 
       public void ExpectingNotToBeCalledBecauseNoChange(object sender, EventArgs e)
       {
-        Assertion.Fail("This must not be called, since no data change is expected!");
+        Assert.Fail("This must not be called, since no data change is expected!");
       }
 
       public void TestParentAddNotification(object sender, EventArgs e)
       {
-        Assertion.AssertNotNull(sender);
-        Assertion.AssertNotNull(e);
-        Assertion.Assert(e is Altaxo.Main.ParentChangedEventArgs);
+        Assert.IsNotNull(sender);
+        Assert.IsNotNull(e);
+        Assert.IsTrue(e is Altaxo.Main.ParentChangedEventArgs);
         Altaxo.Main.ParentChangedEventArgs ea = (Altaxo.Main.ParentChangedEventArgs)e;
-        Assertion.AssertEquals(null,ea.OldParent);
-        Assertion.AssertEquals(this,ea.NewParent);
+        Assert.AreEqual(null,ea.OldParent);
+        Assert.AreEqual(this,ea.NewParent);
         _CallCount++;;
       }
 
       public void TestParentRemoveNotification(object sender, EventArgs e)
       {
-        Assertion.AssertNotNull(sender);
-        Assertion.AssertNotNull(e);
-        Assertion.Assert(e is Altaxo.Main.ParentChangedEventArgs);
+        Assert.IsNotNull(sender);
+        Assert.IsNotNull(e);
+        Assert.IsTrue(e is Altaxo.Main.ParentChangedEventArgs);
         Altaxo.Main.ParentChangedEventArgs ea = (Altaxo.Main.ParentChangedEventArgs)e;
-        Assertion.AssertEquals(this,ea.OldParent);
-        Assertion.AssertEquals(null,ea.NewParent);
+        Assert.AreEqual(this,ea.OldParent);
+        Assert.AreEqual(null,ea.NewParent);
         _CallCount++;;
       }
 

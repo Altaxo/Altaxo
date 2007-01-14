@@ -113,8 +113,7 @@ namespace Altaxo.Graph.Procedures
           if(nLayer>=numPresentLayers)
           {
             graph.Layers.Add(new XYPlotLayer(layerPosition,layerSize));
-            graph.Layers[nLayer].AxisStyles.AxisStyleEnsured(CSLineID.X0);
-            graph.Layers[nLayer].AxisStyles.AxisStyleEnsured(CSLineID.Y0);
+            graph.Layers[nLayer].CreateDefaultAxes();
           }
           SizeF oldSize = graph.Layers[nLayer].Size;
           graph.Layers[nLayer].SetSize(relHorzSize/100,XYPlotLayerSizeType.RelativeToGraphDocument,relVertSize/100,XYPlotLayerSizeType.RelativeToGraphDocument);
