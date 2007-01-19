@@ -4,16 +4,16 @@
     </assemblies>
     <namespaceSummaries>
         <namespaceSummaryItem name="" isDocumented="False" />
-        <namespaceSummaryItem name="Altaxo.Calc" isDocumented="True" />
-        <namespaceSummaryItem name="Altaxo.Calc.Fourier" isDocumented="True" />
-        <namespaceSummaryItem name="Altaxo.Calc.Interpolation" isDocumented="True" />
-        <namespaceSummaryItem name="Altaxo.Calc.LinearAlgebra" isDocumented="True" />
-        <namespaceSummaryItem name="Altaxo.Calc.LinearAlgebra.Blas" isDocumented="True" />
-        <namespaceSummaryItem name="Altaxo.Calc.LinearAlgebra.Lapack" isDocumented="True" />
-        <namespaceSummaryItem name="Altaxo.Calc.Optimization" isDocumented="True" />
-        <namespaceSummaryItem name="Altaxo.Calc.Probability" isDocumented="True" />
-        <namespaceSummaryItem name="Altaxo.Calc.Regression" isDocumented="True" />
-        <namespaceSummaryItem name="Altaxo.Calc.Regression.Multivariate" isDocumented="True" />
+        <namespaceSummaryItem name="Altaxo.Calc" isDocumented="True">Contains basic and special functions, complex algebra, etc.</namespaceSummaryItem>
+        <namespaceSummaryItem name="Altaxo.Calc.Fourier" isDocumented="True">Contains methods related to fourier transformations, like FFT, correlation etc.</namespaceSummaryItem>
+        <namespaceSummaryItem name="Altaxo.Calc.Interpolation" isDocumented="True">Contains methods for data interpolation.</namespaceSummaryItem>
+        <namespaceSummaryItem name="Altaxo.Calc.LinearAlgebra" isDocumented="True">Contains methods for linear algebra.</namespaceSummaryItem>
+        <namespaceSummaryItem name="Altaxo.Calc.LinearAlgebra.Blas" isDocumented="True">Adaptor to BLAS package.</namespaceSummaryItem>
+        <namespaceSummaryItem name="Altaxo.Calc.LinearAlgebra.Lapack" isDocumented="True">Adaptor to LAPACK package.</namespaceSummaryItem>
+        <namespaceSummaryItem name="Altaxo.Calc.Optimization" isDocumented="True">Contains methods for finding minima and maxima of functions.</namespaceSummaryItem>
+        <namespaceSummaryItem name="Altaxo.Calc.Probability" isDocumented="True">Contains methods for generating random values and calculating distributions.</namespaceSummaryItem>
+        <namespaceSummaryItem name="Altaxo.Calc.Regression" isDocumented="True">Contains methods to fit data to a given function.</namespaceSummaryItem>
+        <namespaceSummaryItem name="Altaxo.Calc.Regression.Multivariate" isDocumented="True">Contains methods for multivariate data analysis, like the Partial Least Squares (PLS) method.</namespaceSummaryItem>
     </namespaceSummaries>
     <contentPlacement>AboveNamespaces</contentPlacement>
     <projectSummary />

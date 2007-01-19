@@ -172,6 +172,16 @@ namespace Altaxo.Gui.Graph
         _doc.ShowMajorLabels = m_View.ShowMajorLabels;
         _doc.ShowMinorLabels = m_View.ShowMinorLabels;
 
+        // if we have offset applying, create a brand new AxisStyle instance
+        double offset = m_View.PositionOffset/100;
+        if (0 != offset)
+        {
+          AxisStyle newDoc = new AxisStyle(CSLineID.FromIDandFirstLogicalOffset(_doc.StyleID, offset));
+          newDoc.CopyWithoutIdFrom(_doc);
+          _doc = newDoc;
+        }
+
+
       return true; // all ok
     }
 

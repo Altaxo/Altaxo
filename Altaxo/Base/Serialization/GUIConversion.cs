@@ -193,5 +193,141 @@ namespace Altaxo.Serialization
 
     #endregion
 
+    #region Length-Units (mm, cm, inch and so on)
+
+    static LengthUnit _lastLengthUnitUsed = LengthUnit.Point;
+    public static LengthUnit LastUsedLengthUnit
+    {
+      get
+      {
+        return _lastLengthUnitUsed;
+      }
+      set
+      {
+        _lastLengthUnitUsed = value;
+      }
+    }
+
+    /// <summary>
+    /// Converts a value (unit: points) in a given unit and returns it as text together with the unit.
+    /// </summary>
+    /// <param name="value">Value of length in points.</param>
+    /// <param name="lastUnit">The unit to convert to.</param>
+    /// <returns>A text string: the value together with the unit.</returns>
+    public static string GetLengthMeasureText(double value, LengthUnit lastUnit)
+    {
+      double v = lastUnit.ConvertFrom(value, LengthUnit.Point);
+      return GUIConversion.ToString(v, "G5") + " " + lastUnit.Shortcut;
+    }
+
+    /// <summary>
+    /// Converts a value (unit: points) in the length unit last used and returns it as text together with the unit.
+    /// </summary>
+    /// <param name="value">Value of length in points.</param>
+    /// <returns>A text string: the value together with the unit.</returns>
+    public static string GetLengthMeasureText(double value)
+    {
+      return GetLengthMeasureText(value, LastUsedLengthUnit);
+    }
+
+    /// <summary>
+    /// Get a length value from a text string.
+    /// </summary>
+    /// <param name="txt">Text string. Consists of a number and optionally a unit.</param>
+    /// <param name="unit">Gives the default unit to use if the text string don't contain a unit.
+    /// On return, contains the unit actually used.</param>
+    /// <param name="value">On return, gives the actual length (unit:points).</param>
+    /// <returns>True if the conversion was successful, false otherwise.</returns>
+    public static bool GetLengthMeasureValue(
+      string txt, 
+      ref LengthUnit unit,
+      ref double value)
+    {
+      txt = txt.Trim().ToLower();
+      LengthUnit tempUnit = unit;
+      foreach (string end in LengthUnit.Shortcuts)
+      {
+        if (txt.EndsWith(end))
+        {
+          tempUnit = LengthUnit.FromShortcut(end);
+          txt = txt.Substring(0, txt.Length - end.Length).TrimEnd();
+          break;
+        }
+      }
+
+
+      double v;
+      if (IsDouble(txt, out v))
+      {
+        value = LengthUnit.Point.ConvertFrom(v, tempUnit);
+        unit = tempUnit;
+        return true;
+      }
+      else
+      {
+        return false;
+      }
+    }
+
+
+      /// <summary>
+    /// Get a length value from a text string.
+    /// </summary>
+    /// <param name="txt">Text string. Consists of a number and optionally a unit.</param>
+    /// <param name="value">On return, gives the actual length (unit:points).</param>
+    /// <returns>True if the conversion was successful, false otherwise. The last used length unit is updated by this function.</returns>
+    public static bool GetLengthMeasureValue(
+      string txt,
+      ref double value)
+    {
+      return GetLengthMeasureValue(txt, ref _lastLengthUnitUsed, ref value);
+    }
+    
+    #endregion
+
+    #region Percent-Units
+
+    /// <summary>
+    /// Converts a value (0 to 1) in percents (i.e. 0 to 100) and returns it as text together with the percent char.
+    /// </summary>
+    /// <param name="value">Value (0..1)</param>
+    /// <returns>A text string: the value together with the unit.</returns>
+    public static string GetPercentMeasureText(double value)
+    {
+      return GUIConversion.ToString(value * 100, "G5") + " %";
+    }
+
+
+    /// <summary>
+    /// Get a percentage value from a text string.
+    /// </summary>
+    /// <param name="txt">Text string. Consists of a number and optionally a percent char.</param>
+    /// <param name="value">On return, gives the actual value, but in relative units (not 0..100, but 0..1).</param>
+    /// <returns>True if the conversion was successful, false otherwise.</returns>
+    public static bool GetPercentMeasureValue(
+      string txt,
+      ref double value)
+    {
+      txt = txt.Trim().ToLower();
+      string end = "%";
+      if (txt.EndsWith(end))
+        {
+          txt = txt.Substring(0, txt.Length - end.Length).TrimEnd();
+        }
+
+
+      double v;
+      if (IsDouble(txt, out v))
+      {
+        value = v / 100;
+        return true;
+      }
+      else
+      {
+        return false;
+      }
+    }
+    #endregion
+
   }
 }

@@ -845,6 +845,7 @@ namespace Altaxo.Graph.Gdi
       this.Location = from._location.Clone();
       this._cachedLayerSize = from._cachedLayerSize;
       this._cachedLayerPosition = from._cachedLayerPosition;
+      this._cachedPrintableGraphBounds = from._cachedPrintableGraphBounds;
 
       this.CoordinateSystem = (G2DCoordinateSystem)from.CoordinateSystem.Clone();
 
@@ -1704,7 +1705,7 @@ namespace Altaxo.Graph.Gdi
           break;
         case XYPlotLayerPositionType.RelativeThisNearToLinkedLayerNear:
           if (LinkedLayer != null)
-            x = (x - LinkedLayer.Position.X) / LinkedLayer.Size.Height;
+            x = (x - LinkedLayer.Position.X) / LinkedLayer.Size.Width;
           break;
         case XYPlotLayerPositionType.RelativeThisNearToLinkedLayerFar:
           if (LinkedLayer != null)
@@ -1794,7 +1795,7 @@ namespace Altaxo.Graph.Gdi
     }
 
 
-    protected double WidthToPointUnits(double width, XYPlotLayerSizeType widthtype)
+    public double WidthToPointUnits(double width, XYPlotLayerSizeType widthtype)
     {
       switch (widthtype)
       {
@@ -1809,7 +1810,7 @@ namespace Altaxo.Graph.Gdi
       return width;
     }
 
-    protected double HeightToPointUnits(double height, XYPlotLayerSizeType heighttype)
+    public double HeightToPointUnits(double height, XYPlotLayerSizeType heighttype)
     {
       switch (heighttype)
       {
@@ -1831,7 +1832,7 @@ namespace Altaxo.Graph.Gdi
     /// <param name="width">The height value to convert (in point units).</param>
     /// <param name="widthtype_to_convert_to">The user unit type to convert to.</param>
     /// <returns>The value of the width in user units.</returns>
-    protected double WidthToUserUnits(double width, XYPlotLayerSizeType widthtype_to_convert_to)
+    public double WidthToUserUnits(double width, XYPlotLayerSizeType widthtype_to_convert_to)
     {
 
       switch (widthtype_to_convert_to)
@@ -1854,7 +1855,7 @@ namespace Altaxo.Graph.Gdi
     /// <param name="height">The height value to convert (in point units).</param>
     /// <param name="heighttype_to_convert_to">The user unit type to convert to.</param>
     /// <returns>The value of the height in user units.</returns>
-    protected double HeightToUserUnits(double height, XYPlotLayerSizeType heighttype_to_convert_to)
+    public double HeightToUserUnits(double height, XYPlotLayerSizeType heighttype_to_convert_to)
     {
 
       switch (heighttype_to_convert_to)
@@ -2531,7 +2532,7 @@ namespace Altaxo.Graph.Gdi
         }
 
 
-        // hit testing the axes - secondly now wiht the ticks
+        // hit testing the axes - secondly now with the ticks
         // in this case the TitleAndFormat editor for the axis should be shown
         foreach (AxisStyle style in this._axisStyles)
         {
@@ -2548,12 +2549,14 @@ namespace Altaxo.Graph.Gdi
         {
           if (style.ShowMajorLabels && null != (hit = style.MajorLabelStyle.HitTest(this, layerC)))
           {
-            hit.DoubleClick = AxisLabelStyleEditorMethod;
+            hit.DoubleClick = AxisLabelMajorStyleEditorMethod;
+            hit.Remove = EhAxisLabelMajorStyleRemove;
             return ForwardTransform(hit);
           }
           if (style.ShowMinorLabels && null != (hit = style.MinorLabelStyle.HitTest(this, layerC)))
           {
-            hit.DoubleClick = AxisLabelStyleEditorMethod;
+            hit.DoubleClick = AxisLabelMinorStyleEditorMethod;
+            hit.Remove = EhAxisLabelMinorStyleRemove;
             return ForwardTransform(hit);
           }
         }
@@ -2589,9 +2592,33 @@ namespace Altaxo.Graph.Gdi
 
     public static DoubleClickHandler AxisScaleEditorMethod;
     public static DoubleClickHandler AxisStyleEditorMethod;
-    public static DoubleClickHandler AxisLabelStyleEditorMethod;
+    public static DoubleClickHandler AxisLabelMajorStyleEditorMethod;
+    public static DoubleClickHandler AxisLabelMinorStyleEditorMethod;
     public static DoubleClickHandler LayerPositionEditorMethod;
     public static DoubleClickHandler PlotItemEditorMethod;
+
+    bool EhAxisLabelMajorStyleRemove(IHitTestObject o)
+    {
+      AxisLabelStyle als = o.HittedObject as AxisLabelStyle;
+      AxisStyle axisStyle = als==null ? null : als.ParentObject as AxisStyle;
+      if (axisStyle != null)
+      {
+        axisStyle.ShowMajorLabels = false;
+        return true;
+      }
+      return false;
+    }
+    bool EhAxisLabelMinorStyleRemove(IHitTestObject o)
+    {
+      AxisLabelStyle als = o.HittedObject as AxisLabelStyle;
+      AxisStyle axisStyle = als == null ? null : als.ParentObject as AxisStyle;
+      if (axisStyle != null)
+      {
+        axisStyle.ShowMinorLabels = false;
+        return true;
+      }
+      return false;
+    }
 
     #endregion
 

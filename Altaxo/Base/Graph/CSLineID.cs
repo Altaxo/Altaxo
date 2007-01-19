@@ -192,7 +192,20 @@ namespace Altaxo.Graph
       _logicalValueSecondOther = logicalValueOtherSecond;
     }
 
-  
+
+    /// <summary>
+    /// Creates an instance from a given template instance and an offset to the first logical value.
+    /// </summary>
+    /// <param name="from">Instance to copy from.</param>
+    /// <param name="offset1">Offset to the first logical value. The value given here is added to the first logical value of the template instance.</param>
+    /// <returns>A new instance.</returns>
+    /// <remarks>If template is using physical values instead of logical values, the offset will have no effect.</remarks>
+    public static CSLineID FromIDandFirstLogicalOffset(CSLineID from, double offset1)
+    {
+      CSLineID retval = new CSLineID(from);
+      retval._logicalValueFirstOther += offset1;
+      return retval;
+    }
 
     /// <summary>
     /// Initialized a 2D identifier from the parallel axis and the physical value of the perpendicular axis.

@@ -103,6 +103,13 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
+    public event EventHandler RotationChanged;
+    protected virtual void OnRotationChanged()
+    {
+      if (null != RotationChanged)
+        RotationChanged(this, EventArgs.Empty);
+    }
+
 
     protected override void OnDrawItem(DrawItemEventArgs e)
     {
@@ -152,6 +159,14 @@ namespace Altaxo.Gui.Common.Drawing
       }
 
       base.OnValidating(e);
+
+      if (e.Cancel == false)
+        OnRotationChanged();
+    }
+    protected override void OnSelectionChangeCommitted(EventArgs e)
+    {
+      base.OnSelectionChangeCommitted(e);
+      OnRotationChanged();
     }
 
     protected override void OnTextChanged(EventArgs e)

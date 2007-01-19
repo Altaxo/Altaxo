@@ -394,7 +394,7 @@ namespace Altaxo.Graph.Commands
     {
       ctrl.EnsureValidityOfCurrentLayerNumber();
       if(null!=ctrl.ActiveLayer)
-        LayerController.ShowDialog(ctrl.View.Form,ctrl.ActiveLayer);
+        LayerController.ShowDialog(ctrl.ActiveLayer);
     }
   }
 

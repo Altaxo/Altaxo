@@ -259,7 +259,6 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     protected override void CopyFrom(GraphicBase bfrom)
     {
-      base.CopyFrom(bfrom);
       TextGraphic from = bfrom as TextGraphic;
       if (from != null)
       {
@@ -276,6 +275,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         this._isStructureInSync = false;
         this._isMeasureInSync = false;
       }
+      base.CopyFrom(bfrom);
     }
     public void CopyFrom(TextGraphic from)
     {

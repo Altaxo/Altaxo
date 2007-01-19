@@ -538,6 +538,9 @@ namespace Altaxo.Graph.Gdi
       else
       {
         result.CopyWithoutIdentifierFrom(nearestInfo);
+        if(minDistance!=0)
+          result.NameOfAxisStyle += string.Format(" ({0}% offs.)",minDistance*100);
+
       }
 
       return result;

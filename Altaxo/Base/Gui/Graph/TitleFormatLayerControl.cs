@@ -89,7 +89,7 @@ namespace Altaxo.Gui.Graph
       // 
       // m_Format_edAxisPositionValue
       // 
-      this.m_Format_edAxisPositionValue.Location = new System.Drawing.Point(319, 5);
+      this.m_Format_edAxisPositionValue.Location = new System.Drawing.Point(319, 3);
       this.m_Format_edAxisPositionValue.Name = "m_Format_edAxisPositionValue";
       this.m_Format_edAxisPositionValue.Size = new System.Drawing.Size(96, 20);
       this.m_Format_edAxisPositionValue.TabIndex = 33;
@@ -149,7 +149,7 @@ namespace Altaxo.Gui.Graph
       this._axisLineGroupBox.Controls.Add(this._lineStyleControl);
       this._axisLineGroupBox.Location = new System.Drawing.Point(3, 75);
       this._axisLineGroupBox.Name = "_axisLineGroupBox";
-      this._axisLineGroupBox.Size = new System.Drawing.Size(415, 296);
+      this._axisLineGroupBox.Size = new System.Drawing.Size(415, 242);
       this._axisLineGroupBox.TabIndex = 35;
       this._axisLineGroupBox.TabStop = false;
       this._axisLineGroupBox.Text = "Show axis line and ticks";
@@ -169,7 +169,7 @@ namespace Altaxo.Gui.Graph
       this._lineStyleControl.MinorTickLength = 1F;
       this._lineStyleControl.Name = "_lineStyleControl";
       this._lineStyleControl.ShowLine = false;
-      this._lineStyleControl.Size = new System.Drawing.Size(409, 277);
+      this._lineStyleControl.Size = new System.Drawing.Size(409, 223);
       this._lineStyleControl.TabIndex = 34;
       // 
       // TitleFormatLayerControl
@@ -184,7 +184,7 @@ namespace Altaxo.Gui.Graph
       this.Controls.Add(this.m_Format_edTitle);
       this.Controls.Add(this.label1);
       this.Name = "TitleFormatLayerControl";
-      this.Size = new System.Drawing.Size(421, 374);
+      this.Size = new System.Drawing.Size(421, 320);
       this._axisLineGroupBox.ResumeLayout(false);
       this._axisLineGroupBox.PerformLayout();
       this.ResumeLayout(false);

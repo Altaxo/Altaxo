@@ -177,7 +177,6 @@
     </Compile>
     <Compile Include="Data\NumericColumnProxy.cs" />
     <Compile Include="Data\ReadableColumnProxy.cs" />
-    <Compile Include="Graph\LengthUnit.cs" />
     <Compile Include="Graph\PlotColors.cs" />
     <Compile Include="Graph\Procedures\ArrangeLayers.cs" />
     <Compile Include="Graph\Procedures\Export.cs" />
@@ -1393,6 +1392,7 @@
     <Compile Include="Main\EventSuppressor.cs" />
     <Compile Include="Main\InstanceChangedEvent.cs" />
     <Compile Include="Scripting\ProgramInstanceScript.cs" />
+    <Compile Include="Serialization\LengthUnit.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Calc\FitFunctions\Relaxation\.svn\prop-base\" />

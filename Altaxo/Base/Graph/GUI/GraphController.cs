@@ -700,7 +700,7 @@ namespace Altaxo.Graph.GUI
     {
       EnsureValidityOfCurrentLayerNumber();
       if(null!=this.ActiveLayer)
-        LayerController.ShowDialog(this.View.Form,this.ActiveLayer);
+        LayerController.ShowDialog(this.ActiveLayer);
     }
 
     private void EhMenuGraphAddCurvePlot_OnClick(object sender, System.EventArgs e)
@@ -868,7 +868,7 @@ namespace Altaxo.Graph.GUI
       // if we have clicked the button already down then open the layer dialog
       if(null!=ActiveLayer && currLayer==oldCurrLayer && false==bAlternative)
       {
-        LayerController.ShowDialog(this.View.Form,ActiveLayer);
+        LayerController.ShowDialog(ActiveLayer);
         //LayerDialog dlg = new LayerDialog(ActiveLayer,LayerDialog.Tab.Scale,EdgeType.Bottom);
         //dlg.ShowDialog(this.m_View.Window);
       }

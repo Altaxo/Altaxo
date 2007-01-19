@@ -24,7 +24,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Altaxo.Graph
+namespace Altaxo.Serialization
 {
   public class LengthUnit
   {

@@ -153,13 +153,13 @@ namespace Altaxo.Graph.Gdi.Shapes
     }
     protected override void CopyFrom(GraphicBase bfrom)
     {
-      base.CopyFrom(bfrom);
       LinkedImageGraphic from = bfrom as LinkedImageGraphic;
       if (from != null)
       {
         this._imagePath = from._imagePath;
         this._cachedImage = null == from._cachedImage ? null : (Image)from._cachedImage.Clone();
       }
+      base.CopyFrom(bfrom);
     }
 
     #endregion

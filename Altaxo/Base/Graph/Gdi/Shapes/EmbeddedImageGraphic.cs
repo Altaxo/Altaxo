@@ -146,12 +146,12 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     protected override void CopyFrom(GraphicBase bfrom)
     {
-      base.CopyFrom(bfrom);
       EmbeddedImageGraphic from = bfrom as EmbeddedImageGraphic;
       if (from != null)
       {
         this._imageProxy = null == from._imageProxy ? null : from._imageProxy.Clone();
       }
+      base.CopyFrom(bfrom);
     }
 
     #endregion

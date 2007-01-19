@@ -206,15 +206,15 @@ namespace Altaxo.Graph.Gdi.Axis
     void CopyFrom(AxisStyle from)
     {
       this._styleID = from._styleID.Clone();
-
+      CopyWithoutIdFrom(from);
+      this._cachedAxisInfo = from._cachedAxisInfo;
+    }
+    public void CopyWithoutIdFrom(AxisStyle from)
+    {
       this.AxisLineStyle = from._axisLineStyle == null ? null : (AxisLineStyle)from._axisLineStyle.Clone();
       this.MajorLabelStyle = from._majorLabelStyle == null ? null : (AxisLabelStyleBase)from._majorLabelStyle.Clone();
       this.MinorLabelStyle = from._minorLabelStyle == null ? null : (AxisLabelStyleBase)from._minorLabelStyle.Clone();
       this.Title = from._axisTitle == null ? null : (TextGraphic)from._axisTitle.Clone();
-
-      // Cached values
-      this._cachedAxisInfo = from._cachedAxisInfo;
-
     }
 
     public AxisStyle(CSLineID id)

@@ -506,6 +506,31 @@ namespace Altaxo.Main.Services
       return result;
     }
 
+    /// <summary>
+    /// Retrieves the description of the enumeration value <b>value</b>.
+    /// </summary>
+    /// <param name="value">The enumeration value.</param>
+    /// <returns>The description of this value. If no description is available, the ToString() method is used
+    /// to return the name of the value.</returns>
+    public string GetUserFriendlyName(Enum value)
+    {
+      string result = null;
+      try
+      {
+        Type t = value.GetType();
+        result = Current.ResourceService.GetString("ClassNames." + t.FullName+"."+Enum.GetName(t,value));
+      }
+      catch (Exception)
+      {
+      }
+      if (null != result)
+        return result;
+
+      FieldInfo fi = value.GetType().GetField(value.ToString());
+      System.ComponentModel.DescriptionAttribute[] attributes =
+        (System.ComponentModel.DescriptionAttribute[])fi.GetCustomAttributes(typeof(System.ComponentModel.DescriptionAttribute), false);
+      return (attributes.Length > 0) ? attributes[0].Description : value.ToString();
+    }
 
     /// <summary>
     /// Retrieves the description of the enumeration value <b>value</b>.

@@ -112,14 +112,13 @@ namespace Altaxo.Graph.Gdi.Shapes
     }
     protected override void CopyFrom(GraphicBase bfrom)
     {
-      base.CopyFrom(bfrom);
       ShapeGraphic from = bfrom as ShapeGraphic;
       if (from != null)
       {
         this._fillBrush = (BrushX)from._fillBrush.Clone();
         this._linePen = (PenX)from._linePen.Clone();
       }
-
+      base.CopyFrom(bfrom);
     }
 
     public virtual PenX Pen

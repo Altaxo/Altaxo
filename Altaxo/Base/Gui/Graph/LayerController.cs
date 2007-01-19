@@ -90,7 +90,7 @@ namespace Altaxo.Gui.Graph
 
 
     protected Altaxo.Gui.Graph.CoordinateSystemController _coordinateController;
-    protected ILayerPositionController _layerPositionController;
+    protected IMVCAController _layerPositionController;
     protected ILineScatterLayerContentsController _layerContentsController;
     protected IAxisScaleController[] _axisScaleController;
 
@@ -130,10 +130,7 @@ namespace Altaxo.Gui.Graph
       _currentScale = axisScaleIdx;
       _currentAxisID = id;
       _currentPlaneID = CSPlaneID.Front;
-
-
       _currentPageName = currentPage;
-
       if (null != View)
         SetViewElements();
     }
@@ -156,9 +153,6 @@ namespace Altaxo.Gui.Graph
 
       _planeIdentifier = new List<CSPlaneID>();
       _planeIdentifier.Add(CSPlaneID.Front);
-
-
-     
 
 
       _axisScaleController = new AxisScaleController[2];
@@ -187,63 +181,6 @@ namespace Altaxo.Gui.Graph
           _enableMinorLabels.Add(ident, prop.ShowMinorLabels);
         }
       }
-    }
-
-
-    public static void RegisterEditHandlers()
-    {
-      // register here editor methods
-
-      XYPlotLayer.AxisScaleEditorMethod = new DoubleClickHandler(EhAxisScaleEdit);
-      XYPlotLayer.AxisStyleEditorMethod = new DoubleClickHandler(EhAxisStyleEdit);
-      XYPlotLayer.AxisLabelStyleEditorMethod = new DoubleClickHandler(EhAxisLabelStyleEdit);
-      XYPlotLayer.LayerPositionEditorMethod = new DoubleClickHandler(EhLayerPositionEdit);
-
-    }
-
-    public static bool EhLayerPositionEdit(IHitTestObject hit)
-    {
-      XYPlotLayer layer = hit.HittedObject as XYPlotLayer;
-      if (layer == null)
-        return false;
-
-      ShowDialog(Current.MainWindow, layer, "Position");
-
-      return false;
-    }
-
-    public static bool EhAxisScaleEdit(IHitTestObject hit)
-    {
-      AxisLineStyle style = hit.HittedObject as AxisLineStyle;
-      if (style == null || hit.ParentLayer == null)
-        return false;
-
-
-      ShowDialog(Current.MainWindow, hit.ParentLayer, "Scale", style.AxisStyleID);
-
-      return false;
-    }
-
-    public static bool EhAxisStyleEdit(IHitTestObject hit)
-    {
-      AxisLineStyle style = hit.HittedObject as AxisLineStyle;
-      if (style == null || hit.ParentLayer == null)
-        return false;
-
-      ShowDialog(Current.MainWindow, hit.ParentLayer, "TitleAndFormat", style.AxisStyleID);
-
-      return false;
-    }
-
-    public static bool EhAxisLabelStyleEdit(IHitTestObject hit)
-    {
-      AxisLabelStyle style = hit.HittedObject as AxisLabelStyle;
-      if (style == null || hit.ParentLayer == null)
-        return false;
-
-      ShowDialog(Current.MainWindow, hit.ParentLayer, "MajorLabels", style.AxisStyleID);
-
-      return false;
     }
 
     public ILayerView View
@@ -302,7 +239,7 @@ namespace Altaxo.Gui.Graph
           if (null == _layerPositionController)
           {
             _layerPositionController = new LayerPositionController(_doc);
-            _layerPositionController.View = new LayerPositionControl();
+            _layerPositionController.ViewObject = new LayerPositionControl();
           }
           _currentController = _layerPositionController;
           View.CurrentContent = _layerPositionController.ViewObject;
@@ -486,17 +423,6 @@ namespace Altaxo.Gui.Graph
 
     void SetPlaneSecondaryChoice()
     {
-      /*
-      string[] names = new string[_axisStyleInfoSortedByName.Count];
-      string name = string.Empty;
-      for (int i = 0; i < names.Length; i++)
-      {
-        names[i] = _axisStyleInfoSortedByName[i].NameOfAxisStyle;
-        if (_axisStyleInfoSortedByName[i].Identifier == _currentAxisID)
-          name = _axisStyleInfoSortedByName[i].NameOfAxisStyle;
-      }
-      this._primaryChoice = TabType.Styles;
-      */
       this._primaryChoice = TabType.Planes;
       string[] names = new string[] { "Front" };
       string name = "Front";
@@ -602,8 +528,20 @@ namespace Altaxo.Gui.Graph
       {
         // if we have enabled/disabled some items, we must update the enable states of the minor/major controllers
         AxisStyle axstyle = (AxisStyle)_currentController.ModelObject;
-        _enableMajorLabels[axstyle.StyleID] = axstyle.ShowMajorLabels;
-        _enableMinorLabels[axstyle.StyleID] = axstyle.ShowMinorLabels;
+        if (_currentAxisID == axstyle.StyleID)
+        {
+          _enableMajorLabels[axstyle.StyleID] = axstyle.ShowMajorLabels;
+          _enableMinorLabels[axstyle.StyleID] = axstyle.ShowMinorLabels;
+        }
+        else // than we have applied a position offset, and the old StyleID is no longer valid
+        {
+          _doc.AxisStyles.Remove(_currentAxisID);
+          _doc.AxisStyles.Add(axstyle);
+          _currentAxisID = axstyle.StyleID; // take this for axstyle
+          SetCoordinateSystemDependentObjects();
+          SetEdgeSecondaryChoice(); // update left side list of choices
+          SetCurrentTabController(true); // we must simulate a page change in order to update the title-format tab page
+        }
       }
       else if (_currentPageName == "MajorLabels")
       {
@@ -698,29 +636,97 @@ namespace Altaxo.Gui.Graph
 
     #region Dialog
 
-    public static bool ShowDialog(System.Windows.Forms.Form parentWindow, XYPlotLayer layer)
+    public static bool ShowDialog(XYPlotLayer layer)
     {
-      return ShowDialog(parentWindow, layer, "Scale", new CSLineID(0, 0));
+      return ShowDialog( layer, "Scale", new CSLineID(0, 0));
     }
-    public static bool ShowDialog(System.Windows.Forms.Form parentWindow, XYPlotLayer layer, string currentPage)
+    public static bool ShowDialog( XYPlotLayer layer, string currentPage)
     {
-      return ShowDialog(parentWindow, layer, currentPage, new CSLineID(0, 0));
+      return ShowDialog(layer, currentPage, new CSLineID(0, 0));
     }
-
-    public static bool ShowDialog(System.Windows.Forms.Form parentWindow, XYPlotLayer layer, string currentPage, CSLineID currentEdge)
+    public static bool ShowDialog(XYPlotLayer layer, string currentPage, CSLineID currentEdge)
     {
       LayerController ctrl = new LayerController(layer, currentPage, currentEdge);
       LayerControl view = new LayerControl();
       ctrl.View = view;
 
-      DialogShellController dsc = new DialogShellController(
-        new DialogShellView(view), ctrl);
-
-      bool result = dsc.ShowDialog(parentWindow);
-      return result;
+      return Current.Gui.ShowDialog(ctrl, layer.Name, true);
     }
 
 
     #endregion
+
+    #region Edit Handlers
+
+    public static void RegisterEditHandlers()
+    {
+      // register here editor methods
+
+      XYPlotLayer.AxisScaleEditorMethod = new DoubleClickHandler(EhAxisScaleEdit);
+      XYPlotLayer.AxisStyleEditorMethod = new DoubleClickHandler(EhAxisStyleEdit);
+      XYPlotLayer.AxisLabelMajorStyleEditorMethod = new DoubleClickHandler(EhAxisLabelMajorStyleEdit);
+      XYPlotLayer.AxisLabelMinorStyleEditorMethod = new DoubleClickHandler(EhAxisLabelMinorStyleEdit);
+      XYPlotLayer.LayerPositionEditorMethod = new DoubleClickHandler(EhLayerPositionEdit);
+
+    }
+
+    public static bool EhLayerPositionEdit(IHitTestObject hit)
+    {
+      XYPlotLayer layer = hit.HittedObject as XYPlotLayer;
+      if (layer == null)
+        return false;
+
+      ShowDialog( layer, "Position");
+
+      return false;
+    }
+
+    public static bool EhAxisScaleEdit(IHitTestObject hit)
+    {
+      AxisLineStyle style = hit.HittedObject as AxisLineStyle;
+      if (style == null || hit.ParentLayer == null)
+        return false;
+
+
+      ShowDialog( hit.ParentLayer, "Scale", style.AxisStyleID);
+
+      return false;
+    }
+
+    public static bool EhAxisStyleEdit(IHitTestObject hit)
+    {
+      AxisLineStyle style = hit.HittedObject as AxisLineStyle;
+      if (style == null || hit.ParentLayer == null)
+        return false;
+
+      ShowDialog(hit.ParentLayer, "TitleAndFormat", style.AxisStyleID);
+
+      return false;
+    }
+
+    public static bool EhAxisLabelMajorStyleEdit(IHitTestObject hit)
+    {
+      AxisLabelStyle style = hit.HittedObject as AxisLabelStyle;
+      if (style == null || hit.ParentLayer == null)
+        return false;
+
+      ShowDialog( hit.ParentLayer, "MajorLabels", style.AxisStyleID);
+
+      return false;
+    }
+    public static bool EhAxisLabelMinorStyleEdit(IHitTestObject hit)
+    {
+      AxisLabelStyle style = hit.HittedObject as AxisLabelStyle;
+      if (style == null || hit.ParentLayer == null)
+        return false;
+
+      ShowDialog(hit.ParentLayer, "MinorLabels", style.AxisStyleID);
+
+      return false;
+    }
+
+    #endregion
+
+
   }
 }

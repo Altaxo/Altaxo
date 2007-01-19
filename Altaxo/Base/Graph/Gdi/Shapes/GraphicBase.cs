@@ -176,9 +176,13 @@ namespace Altaxo.Graph.Gdi.Shapes
     {
       this._autoSize = from._autoSize;
       this._bounds = from._bounds;
-      this._parent = null;
       this._position = from._position;
       this._rotation = from._rotation;
+      bool wasUsed = (null != this._parent);
+      this._parent = from._parent;
+
+      if(wasUsed)
+        OnChanged();
     }
 
     /// <summary>

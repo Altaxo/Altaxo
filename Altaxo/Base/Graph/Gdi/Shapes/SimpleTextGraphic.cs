@@ -90,7 +90,6 @@ namespace Altaxo.Graph.Gdi.Shapes
     }
     protected override void CopyFrom(GraphicBase bfrom)
     {
-      base.CopyFrom(bfrom);
       SimpleTextGraphic from = bfrom as SimpleTextGraphic;
       if (from != null)
       {
@@ -98,6 +97,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         this._text = from._text;
         this._color = from._color;
       }
+      base.CopyFrom(bfrom);
     }
 
     public SimpleTextGraphic(PointF graphicPosition, string text, 

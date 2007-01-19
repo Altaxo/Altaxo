@@ -510,7 +510,10 @@ namespace Altaxo.Graph.Gdi.Axis
     public override IHitTestObject HitTest(XYPlotLayer layer, PointF pt)
     {
       GraphicsPath gp = GetSelectionPath(layer);
-      return gp.IsVisible(pt) ? new HitTestObject(gp,this) : null;
+      if(gp.IsVisible(pt))
+        return new HitTestObject(gp,this);
+      else
+        return null;
     }
 
 

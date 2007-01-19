@@ -27,6 +27,7 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using System.Drawing;
 
+using Altaxo.Serialization;
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 using Altaxo.Gui.Common.Drawing;
@@ -35,45 +36,16 @@ namespace Altaxo.Gui.Graph
 {
   public class ObjectPositionAndSizeGlue : Component
   {
-    static LengthUnit _lastUnit = LengthUnit.Point;
-
     #region Input/Output
     static void SetPositionText(TextBox t, double value)
     {
-      LengthUnit lastUnit = _lastUnit;
-      double v = lastUnit.ConvertFrom(value,LengthUnit.Point);
-      string txt = Altaxo.Serialization.GUIConversion.ToString(v,"G5") + " " + lastUnit.Shortcut;
-
-      if (t != null)
-        t.Text = txt;
+      if(t!=null)
+        t.Text = GUIConversion.GetLengthMeasureText(value);
     }
+
     static bool GetPositionValue(TextBox t, ref double value)
     {
-      string txt = t.Text.Trim().ToLower();
-
-      LengthUnit unit = _lastUnit;
-      foreach (string end in LengthUnit.Shortcuts)
-      {
-        if (txt.EndsWith(end))
-        {
-          unit = LengthUnit.FromShortcut(end);
-          txt = txt.Substring(0, txt.Length - end.Length).TrimEnd();
-          break;
-        }
-      }
-
-
-      double v;
-      if (Altaxo.Serialization.GUIConversion.IsDouble(txt, out v))
-      {
-        value = LengthUnit.Point.ConvertFrom(v, unit);
-        _lastUnit = unit;
-        return true;
-      }
-      else
-      {
-        return false;
-      }
+      return GUIConversion.GetLengthMeasureValue(t.Text, ref value);
     }
 
     static void SetSizeText(TextBox t, double value)
