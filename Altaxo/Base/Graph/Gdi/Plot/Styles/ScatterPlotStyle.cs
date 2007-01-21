@@ -806,7 +806,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     {
       get
       {
-        return this._shape != XYPlotScatterStyles.Shape.NoSymbol;
+        return this._shape != XYPlotScatterStyles.Shape.NoSymbol && !this._independentSymbolSize;
       }
     }
 

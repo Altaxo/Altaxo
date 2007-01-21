@@ -838,46 +838,51 @@ namespace Altaxo.Graph.Gdi
 
     public void CopyFrom(XYPlotLayer from)
     {
-      // XYPlotLayer style
-      //this.LayerBackground = from._layerBackground == null ? null : (LayerBackground)from._layerBackground.Clone();
+      using (IDisposable updateLock = BeginUpdate())
+      {
+        // XYPlotLayer style
+        //this.LayerBackground = from._layerBackground == null ? null : (LayerBackground)from._layerBackground.Clone();
 
-      // size, position, rotation and scale
-      this.Location = from._location.Clone();
-      this._cachedLayerSize = from._cachedLayerSize;
-      this._cachedLayerPosition = from._cachedLayerPosition;
-      this._cachedPrintableGraphBounds = from._cachedPrintableGraphBounds;
+        // size, position, rotation and scale
+        this.Location = from._location.Clone();
+        this._cachedLayerSize = from._cachedLayerSize;
+        this._cachedLayerPosition = from._cachedLayerPosition;
+        this._cachedPrintableGraphBounds = from._cachedPrintableGraphBounds;
 
-      this.CoordinateSystem = (G2DCoordinateSystem)from.CoordinateSystem.Clone();
+        this.CoordinateSystem = (G2DCoordinateSystem)from.CoordinateSystem.Clone();
 
 
-      // axis related
+        // axis related
 
-      this.LinkedScales = (LinkedScaleCollection)from._linkedScales.Clone();
+        this.LinkedScales = (LinkedScaleCollection)from._linkedScales.Clone();
 
-      this._dataClipping = from._dataClipping;
+        this._dataClipping = from._dataClipping;
 
-      this.GridPlanes = from._gridPlanes.Clone();
+        this.GridPlanes = from._gridPlanes.Clone();
 
-      // Styles
+        // Styles
 
-      this.AxisStyles = (AxisStyleCollection)from._axisStyles.Clone();
+        this.AxisStyles = (AxisStyleCollection)from._axisStyles.Clone();
 
-      this.Legends = from._legends==null ? new GraphicCollection() : new GraphicCollection(from._legends);
+        this.Legends = from._legends == null ? new GraphicCollection() : new GraphicCollection(from._legends);
 
-      // XYPlotLayer specific
-      this.LinkedLayerLink = from._linkedLayer.ClonePathOnly(this);
+        // XYPlotLayer specific
+        this.LinkedLayerLink = from._linkedLayer.ClonePathOnly(this);
 
-      this.GraphObjects = null == from._graphObjects ? null : new GraphicCollection(from._graphObjects);
+        this.GraphObjects = null == from._graphObjects ? null : new GraphicCollection(from._graphObjects);
 
-      this.PlotItems = null == from._plotItems ? null : new PlotItemCollection(this, from._plotItems);
+        this.PlotItems = null == from._plotItems ? null : new PlotItemCollection(this, from._plotItems);
 
-      this._parent = from._parent;
 
-      _cachedForwardMatrix = new Matrix();
-      _cachedReverseMatrix = new Matrix();
-      CalculateMatrix();
+        _cachedForwardMatrix = new Matrix();
+        _cachedReverseMatrix = new Matrix();
+        CalculateMatrix();
 
-      OnChanged();
+        OnChanged(); // make sure that the change event is called
+      }
+
+      this._parent = from._parent; // outside the update, because clone operations should not cause an update of the old parent
+
     }
 
     public virtual object Clone()
@@ -2447,7 +2452,7 @@ namespace Altaxo.Graph.Gdi
 
       if (ClipDataToFrame==LayerDataClipping.StrictToCS)
       {
-        g.SetClip(new RectangleF(new PointF(0, 0), this._cachedLayerSize));
+        g.Clip = CoordinateSystem.GetRegion();
       }
       foreach (IGPlotItem pi in _plotItems)
       {

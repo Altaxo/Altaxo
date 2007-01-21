@@ -228,18 +228,21 @@ namespace Altaxo.Graph.Gdi.Axis
 
     public void Paint(Graphics g, IPlotArea layer)
     {
+      Region region = layer.CoordinateSystem.GetRegion();
       if (_background != null)
       {
-        Region region = layer.CoordinateSystem.GetRegion();
         RectangleF innerArea = region.GetBounds(g);
         _background.Rectangle = innerArea;
         g.FillRegion(_background, region);
       }
 
+      Region oldClipRegion = g.Clip;
+      g.Clip = region;
       if (null != _grid1)
         _grid1.Paint(g, layer, _planeID.InPlaneAxisNumber1);
       if (null != _grid2)
         _grid2.Paint(g, layer, _planeID.InPlaneAxisNumber2);
+      g.Clip = oldClipRegion;
     }
 
 
