@@ -714,25 +714,18 @@ namespace Altaxo.Main
     /// <returns>The view content for the provided graph document.</returns>
     public Altaxo.Graph.GUI.IGraphController CreateNewGraph(Altaxo.Graph.Gdi.GraphDocument graph)
     {
-      //Altaxo.Main.GUI.IWorkbenchWindowController wbv_controller = new Altaxo.Main.GUI.WorkbenchWindowController();
-      //Altaxo.Main.GUI.WorkbenchForm wbvform = new Altaxo.Main.GUI.WorkbenchForm(this.View.Form);
-      //wbv_controller.View = wbvform;
-
       if (graph == null)
         graph = this.CurrentOpenProject.CreateNewGraphDocument();
 
       Altaxo.Gui.SharpDevelop.SDGraphViewContent ctrl = new Altaxo.Gui.SharpDevelop.SDGraphViewContent(graph);
+
       Altaxo.Graph.GUI.GraphView view = new Altaxo.Graph.GUI.GraphView();
+      
       ctrl.Controller.View = view;
-
-
-      //wbv_controller.Content = ctrl;
-
-      //this.m_WorkbenchViews.Add(wbv_controller);
-      //wbvform.Show();
 
       if (null != Current.Workbench)
         Current.Workbench.ShowView(ctrl);
+
       return ctrl.Controller;
     }
 

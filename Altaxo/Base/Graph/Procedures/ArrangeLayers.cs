@@ -29,30 +29,48 @@ namespace Altaxo.Graph.Procedures
 {
 
   /// <summary>
+  /// What happens to superfluous layers during the arrange layers action?
+  /// </summary>
+  public enum SuperfluousLayersAction 
+  {
+    /// <summary>Leave the layers untouched.</summary>
+    Untouched,
+    /// <summary>Remove the superfluous layers.</summary>
+    Remove,
+    /// <summary>The superfluous layers take the same position like the first layer.</summary>
+    OverlayFirstLayer,
+    /// <summary>The superfluous layers take the same position like the last regularly arranged layer.</summary>
+    OverlayLastLayer 
+  }
+
+
+  /// <summary>
   /// Document of the <see cref="Altaxo.Gui.Graph.ArrangeLayersController" /> controller.
   /// </summary>
   public class ArrangeLayersDocument
   {
     public int NumberOfRows=2;
     public int NumberOfColumns=1;
-    public double HorizontalSpacing=5;
-    public double VerticalSpacing=5;
+    public double RowSpacing=5;
+    public double ColumnSpacing=5;
     public double LeftMargin=15;
     public double TopMargin=10;
     public double RightMargin=10;
     public double BottomMargin=15;
+    public SuperfluousLayersAction SuperfluousLayersAction = SuperfluousLayersAction.Untouched;
 
   
     public void CopyFrom(ArrangeLayersDocument from)
     {
       this.NumberOfColumns = from.NumberOfColumns;
       this.NumberOfRows = from.NumberOfRows;
-      this.HorizontalSpacing = from.HorizontalSpacing;
-      this.VerticalSpacing = from.VerticalSpacing;
+      this.RowSpacing = from.RowSpacing;
+      this.ColumnSpacing = from.ColumnSpacing;
       this.LeftMargin = from.LeftMargin;
       this.TopMargin = from.TopMargin;
       this.RightMargin = from.RightMargin;
       this.BottomMargin = from.BottomMargin;
+      this.SuperfluousLayersAction = from.SuperfluousLayersAction;
     }
 
   
@@ -83,8 +101,8 @@ namespace Altaxo.Graph.Procedures
 
 
       // calculate the size of each layer
-      double relHorzSize = 100-(arrangement.LeftMargin + arrangement.RightMargin + (arrangement.NumberOfColumns-1)*arrangement.VerticalSpacing);
-      double relVertSize = 100-(arrangement.TopMargin + arrangement.BottomMargin + (arrangement.NumberOfRows-1)*arrangement.HorizontalSpacing);
+      double relHorzSize = 100-(arrangement.LeftMargin + arrangement.RightMargin + (arrangement.NumberOfColumns-1)*arrangement.ColumnSpacing);
+      double relVertSize = 100-(arrangement.TopMargin + arrangement.BottomMargin + (arrangement.NumberOfRows-1)*arrangement.RowSpacing);
       relHorzSize /= arrangement.NumberOfColumns;
       relVertSize /= arrangement.NumberOfRows;
 
@@ -94,21 +112,21 @@ namespace Altaxo.Graph.Procedures
       if(relVertSize<=0)
         throw new ArgumentException("The calculated vertical size of the resulting layers would be negative");
 
-      SizeF layerSize = new SizeF((float)(relHorzSize*graph.PrintableSize.Width),(float)(relVertSize*graph.PrintableSize.Height));
+      SizeF layerSize = new SizeF((float)(relHorzSize*graph.PrintableSize.Width/100),(float)(relVertSize*graph.PrintableSize.Height/100));
 
       int nLayer=-1;
       for(int i=0;i<arrangement.NumberOfRows;++i)
       {
-        double relVertPos = arrangement.TopMargin + i*(arrangement.HorizontalSpacing+relVertSize);
+        double relVertPos = arrangement.TopMargin + i*(arrangement.RowSpacing+relVertSize);
 
         for(int j=0;j<arrangement.NumberOfColumns;++j)
         {
           nLayer++;
 
-          double relHorzPos = arrangement.LeftMargin + j*(arrangement.VerticalSpacing+relHorzSize);
+          double relHorzPos = arrangement.LeftMargin + j*(arrangement.ColumnSpacing+relHorzSize);
 
           // calculate position
-          PointF layerPosition = new PointF((float)(relHorzPos*graph.PrintableSize.Width),(float)(relVertPos*graph.PrintableSize.Height));
+          PointF layerPosition = new PointF((float)(relHorzPos*graph.PrintableSize.Width/100),(float)(relVertPos*graph.PrintableSize.Height/100));
 
           if(nLayer>=numPresentLayers)
           {
@@ -125,6 +143,38 @@ namespace Altaxo.Graph.Procedures
 
         }
 
+      }
+
+      // act now on superfluous layers
+      if (numPresentLayers > numDestLayers)
+      {
+        switch (arrangement.SuperfluousLayersAction)
+        {
+          case SuperfluousLayersAction.Remove:
+            for (int i = numPresentLayers - 1; i >= numDestLayers; i--)
+              graph.Layers.RemoveAt(i);
+            break;
+          case SuperfluousLayersAction.OverlayFirstLayer:
+          case SuperfluousLayersAction.OverlayLastLayer:
+            SizeF size; PointF pos;
+            int template = arrangement.SuperfluousLayersAction == SuperfluousLayersAction.OverlayFirstLayer ? 0 : numDestLayers - 1;
+            size = graph.Layers[template].Size;
+            pos = graph.Layers[template].Position;
+
+            for (int i = numDestLayers; i < numPresentLayers; i++)
+            {
+              SizeF oldSize = graph.Layers[i].Size;
+              graph.Layers[i].SetSize(size.Width, XYPlotLayerSizeType.AbsoluteValue, size.Height, XYPlotLayerSizeType.AbsoluteValue);
+              SizeF newSize = graph.Layers[i].Size;
+
+              if (oldSize != newSize)
+                graph.Layers[i].RescaleInnerItemPositions(newSize.Width / oldSize.Width, newSize.Height / oldSize.Height);
+              graph.Layers[i].SetPosition(pos.X, XYPlotLayerPositionType.AbsoluteValue, pos.Y, XYPlotLayerPositionType.AbsoluteValue);
+            }
+
+            break;
+
+        }
       }
      
     }

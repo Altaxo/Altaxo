@@ -176,12 +176,25 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     public override GraphicsPath GetSelectionPath()
     {
+       if (Pen.Width <= 5)
+        return GetPath(5);
+      else
+        return GetPath(Pen.Width);
+    }
+
+    public override GraphicsPath GetObjectPath()
+    {
+      return GetPath(0);
+    }
+
+    protected GraphicsPath GetPath(float minWidth)
+    {
       GraphicsPath gp = new GraphicsPath();
       Matrix myMatrix = new Matrix();
 
       gp.AddLine(X + _bounds.X, Y + _bounds.Y, X + _bounds.X + Width, Y + _bounds.Y + Height);
-      if (Pen.Width < 5)
-        gp.Widen(new Pen(Color.Black, 5));
+      if (Pen.Width !=minWidth)
+        gp.Widen(new Pen(Color.Black, minWidth));
       else
         gp.Widen(Pen);
 
@@ -196,11 +209,17 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     public override IHitTestObject HitTest(PointF pt)
     {
-      IHitTestObject result = base.HitTest(pt);
+      HitTestObject result = null;
+      GraphicsPath gp = GetSelectionPath();
+      if (gp.IsVisible(pt))
+      {
+        result = new HitTestObject(GetObjectPath(),gp, this);
+      }
+
       if (result != null)
         result.DoubleClick = EhHitDoubleClick;
-      return result;
 
+      return result;
     }
 
     static bool EhHitDoubleClick(IHitTestObject o)

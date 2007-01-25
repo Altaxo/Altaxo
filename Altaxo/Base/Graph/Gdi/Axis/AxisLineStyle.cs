@@ -340,8 +340,9 @@ namespace Altaxo.Graph.Gdi.Axis
     }
     public virtual IHitTestObject HitTest(XYPlotLayer layer, PointF pt, bool withTicks)
     {
-      GraphicsPath gp = GetSelectionPath(layer,withTicks);
-      return gp.IsVisible(pt) ? new HitTestObject(gp,this) : null;
+
+      GraphicsPath selectionPath = GetSelectionPath(layer,withTicks);
+      return selectionPath.IsVisible(pt) ? new HitTestObject(GetObjectPath(layer,withTicks),selectionPath,this) : null;
     }
 
     /// <summary>
@@ -583,7 +584,19 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
 
+
     /// <summary>
+    /// Gives the path which encloses the axis line only.
+    /// </summary>
+    /// <param name="layer"></param>
+    /// <param name="withTicks">If true, the selection path is not only drawn around the axis, but around the axis and the ticks.</param>
+    /// <returns>The graphics path of the axis line.</returns>
+    public virtual GraphicsPath GetObjectPath(XYPlotLayer layer, bool withTicks)
+    {
+      return GetPath(layer, withTicks, 0);
+    }
+
+     /// <summary>
     /// Gives the path where the hit test is successfull.
     /// </summary>
     /// <param name="layer"></param>
@@ -591,13 +604,23 @@ namespace Altaxo.Graph.Gdi.Axis
     /// <returns>The graphics path of the selection rectangle.</returns>
     public virtual GraphicsPath GetSelectionPath(XYPlotLayer layer, bool withTicks)
     {
+      return GetPath(layer, withTicks, 3);
+    }
+
+    /// <summary>
+    /// Gives the path where the hit test is successfull.
+    /// </summary>
+    /// <param name="layer"></param>
+    /// <param name="withTicks">If true, the selection path is not only drawn around the axis, but around the axis and the ticks.</param>
+    /// <returns>The graphics path of the selection rectangle.</returns>
+    protected GraphicsPath GetPath(XYPlotLayer layer, bool withTicks, float inflateby)
+    {
 
       Logical3D r0 = _cachedAxisStyleInfo.Identifier.Begin;
       Logical3D r1 = _cachedAxisStyleInfo.Identifier.End;
       GraphicsPath gp = new GraphicsPath();
       layer.CoordinateSystem.GetIsoline(gp, r0, r1);
      
-      float inflateby = 3;
       if(withTicks)
       {
         if(this._showFirstDownMajorTicks || this._showFirstUpMajorTicks)
@@ -612,6 +635,7 @@ namespace Altaxo.Graph.Gdi.Axis
 
       return gp;
     }
+
 
     /// <summary>
     /// Paint the axis in the Graphics context.

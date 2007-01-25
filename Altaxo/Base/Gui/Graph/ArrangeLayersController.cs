@@ -37,20 +37,23 @@ namespace Altaxo.Gui.Graph
   {
     IArrangeLayersViewEventSink Controller { get; set; }
     void InitializeRowsColumns(int numRows, int numColumns);
-    void InitializeSpacing(double horzSpacing, double vertSpacing);
+    void InitializeSpacing(double rowSpacing, double columnSpacing);
     void InitializeMargins(double top, double left, double bottom, double right);
+    void InitializeSuperfluosLayersQuestion(Altaxo.Collections.SelectableListNodeList list);
+    void InitializeEnableConditions(bool rowSpacingEnabled, bool columnSpacingEnabled, bool superfluousEnabled);
   }
 
   public interface IArrangeLayersViewEventSink
   {
     bool EhNumberOfRowsChanged(string val);
     bool EhNumberOfColumnsChanged(string val);
-    bool EhHorizontalSpacingChanged(string val);
-    bool EhVerticalSpacingChanged(string val);
+    bool EhRowSpacingChanged(string val);
+    bool EhColumnSpacingChanged(string val);
     bool EhTopMarginChanged(string val);
     bool EhLeftMarginChanged(string val);
     bool EhBottomMarginChanged(string val);
     bool EhRightMarginChanged(string val);
+    void EhSuperfluousLayersActionChanged(Altaxo.Collections.SelectableListNode node);
   }
 
   #endregion
@@ -77,15 +80,33 @@ namespace Altaxo.Gui.Graph
       Initialize();
     }
 
+
     void Initialize()
     {
       if(_view!=null)
       {
         _view.InitializeRowsColumns(_tempDoc.NumberOfRows,_tempDoc.NumberOfColumns);
-        _view.InitializeSpacing(_tempDoc.HorizontalSpacing,_tempDoc.VerticalSpacing);
+        _view.InitializeSpacing(_tempDoc.RowSpacing,_tempDoc.ColumnSpacing);
         _view.InitializeMargins(_tempDoc.TopMargin,_tempDoc.LeftMargin,_tempDoc.BottomMargin,_tempDoc.RightMargin);
+        _view.InitializeSuperfluosLayersQuestion(Altaxo.Serialization.GUIConversion.GetListOfChoices(_tempDoc.SuperfluousLayersAction));
+        SetEnableConditions();
       }
     }
+
+    void SetEnableConditions()
+    {
+      if (_view != null)
+      {
+        // Note: the concept was not acceptable since the user can not hopp with the mouse
+        // into the ColumnSpacing or RowSpacing edit boxes because they are disabled
+        _view.InitializeEnableConditions(
+          true, // _tempDoc.NumberOfRows >= 2,
+          true, // _tempDoc.NumberOfColumns >= 2,
+          true
+        );
+      }
+    }
+
     #region IArrangeLayersViewEventSink Members
 
     public bool EhNumberOfRowsChanged(string val)
@@ -102,6 +123,7 @@ namespace Altaxo.Gui.Graph
         return true;
       }
       _tempDoc.NumberOfRows = v;
+      SetEnableConditions();
       return false;
     }
 
@@ -120,10 +142,11 @@ namespace Altaxo.Gui.Graph
       }
 
       _tempDoc.NumberOfColumns = v;
+      SetEnableConditions();
       return false;
     }
 
-    public bool EhHorizontalSpacingChanged(string val)
+    public bool EhRowSpacingChanged(string val)
     {
       double v;
       if(!GUIConversion.IsDouble(val, out v))
@@ -137,11 +160,11 @@ namespace Altaxo.Gui.Graph
         return true;
       }
 
-      _tempDoc.HorizontalSpacing = v;
+      _tempDoc.RowSpacing = v;
       return false;
     }
 
-    public bool EhVerticalSpacingChanged(string val)
+    public bool EhColumnSpacingChanged(string val)
     {
       double v;
       if(!GUIConversion.IsDouble(val, out v))
@@ -155,7 +178,7 @@ namespace Altaxo.Gui.Graph
         return true;
       }
 
-      _tempDoc.VerticalSpacing = v;
+      _tempDoc.ColumnSpacing = v;
       return false;  
     }
 
@@ -206,6 +229,12 @@ namespace Altaxo.Gui.Graph
       _tempDoc.RightMargin = v;
       return false;  
     }
+
+    public void EhSuperfluousLayersActionChanged(Altaxo.Collections.SelectableListNode node)
+    {
+      _tempDoc.SuperfluousLayersAction = (SuperfluousLayersAction)node.Item;
+    }
+
 
     #endregion
 

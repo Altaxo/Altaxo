@@ -174,28 +174,28 @@ namespace AltaxoTest.Data
 
       public void TestSetSlot5(object sender, EventArgs e)
       {
-        Assertion.AssertNotNull("Sender must be the column",sender);
-        Assertion.AssertEquals(typeof(Altaxo.Data.DoubleColumn),sender.GetType());
-        Assertion.AssertNotNull("Awaiting valid data change event args",e);
-        Assertion.AssertEquals(typeof(Altaxo.Data.DataColumn.ChangeEventArgs),e.GetType());
+        Assert.IsNotNull(sender,"Sender must be the column");
+        Assert.AreEqual(typeof(Altaxo.Data.DoubleColumn), sender.GetType());
+        Assert.IsNotNull(e,"Awaiting valid data change event args");
+        Assert.AreEqual(typeof(Altaxo.Data.DataColumn.ChangeEventArgs), e.GetType());
         Altaxo.Data.DataColumn.ChangeEventArgs ea = (Altaxo.Data.DataColumn.ChangeEventArgs)e;
-        Assertion.AssertEquals(5,ea.MinRowChanged);
-        Assertion.AssertEquals(6,ea.MaxRowChanged);
-        Assertion.AssertEquals(false,ea.RowCountDecreased);
+        Assert.AreEqual(5, ea.MinRowChanged);
+        Assert.AreEqual(6, ea.MaxRowChanged);
+        Assert.AreEqual(false, ea.RowCountDecreased);
         _CallCount++;;
         
       }
 
       public void TestResetSlot5(object sender, EventArgs e)
       {
-        Assertion.AssertNotNull("Sender must be the column",sender);
-        Assertion.AssertEquals(typeof(Altaxo.Data.DoubleColumn),sender.GetType());
-        Assertion.AssertNotNull("Awaiting valid data change event args",e);
-        Assertion.AssertEquals(typeof(Altaxo.Data.DataColumn.ChangeEventArgs),e.GetType());
+        Assert.IsNotNull(sender,"Sender must be the column");
+        Assert.AreEqual(typeof(Altaxo.Data.DoubleColumn), sender.GetType());
+        Assert.IsNotNull(e,"Awaiting valid data change event args");
+        Assert.AreEqual(typeof(Altaxo.Data.DataColumn.ChangeEventArgs), e.GetType());
         Altaxo.Data.DataColumn.ChangeEventArgs ea = (Altaxo.Data.DataColumn.ChangeEventArgs)e;
-        Assertion.AssertEquals(5,ea.MinRowChanged);
-        Assertion.AssertEquals(6,ea.MaxRowChanged);
-        Assertion.AssertEquals(true,ea.RowCountDecreased);
+        Assert.AreEqual(5, ea.MinRowChanged);
+        Assert.AreEqual(6, ea.MaxRowChanged);
+        Assert.AreEqual(true, ea.RowCountDecreased);
         _CallCount++;;
         
       }
@@ -203,14 +203,14 @@ namespace AltaxoTest.Data
 
       public void TestSetSlot7AndSuspend(object sender, EventArgs e)
       {
-        Assertion.AssertNotNull("Sender must be the column",sender);
-        Assertion.AssertEquals(typeof(Altaxo.Data.DoubleColumn),sender.GetType());
-        Assertion.AssertNotNull("Awaiting valid data change event args",e);
-        Assertion.AssertEquals(typeof(Altaxo.Data.DataColumn.ChangeEventArgs),e.GetType());
+        Assert.IsNotNull(sender,"Sender must be the column");
+        Assert.AreEqual(typeof(Altaxo.Data.DoubleColumn), sender.GetType());
+        Assert.IsNotNull(e,"Awaiting valid data change event args");
+        Assert.AreEqual(typeof(Altaxo.Data.DataColumn.ChangeEventArgs), e.GetType());
         Altaxo.Data.DataColumn.ChangeEventArgs ea = (Altaxo.Data.DataColumn.ChangeEventArgs)e;
-        Assertion.AssertEquals(7,ea.MinRowChanged);
-        Assertion.AssertEquals(8,ea.MaxRowChanged);
-        Assertion.AssertEquals(false,ea.RowCountDecreased);
+        Assert.AreEqual(7, ea.MinRowChanged);
+        Assert.AreEqual(8, ea.MaxRowChanged);
+        Assert.AreEqual(false, ea.RowCountDecreased);
         _CallCount++;;
         ((Altaxo.Main.ISuspendable)sender).Suspend();
       }
@@ -218,14 +218,14 @@ namespace AltaxoTest.Data
 
       public void CheckChange0To12_Decreased(object sender, EventArgs e)
       {
-        Assertion.AssertNotNull("Sender must be the column",sender);
-        Assertion.AssertEquals(typeof(Altaxo.Data.DoubleColumn),sender.GetType());
-        Assertion.AssertNotNull("Awaiting valid data change event args",e);
-        Assertion.AssertEquals(typeof(Altaxo.Data.DataColumn.ChangeEventArgs),e.GetType());
+        Assert.IsNotNull(sender,"Sender must be the column");
+        Assert.AreEqual(typeof(Altaxo.Data.DoubleColumn), sender.GetType());
+        Assert.IsNotNull(e,"Awaiting valid data change event args");
+        Assert.AreEqual(typeof(Altaxo.Data.DataColumn.ChangeEventArgs), e.GetType());
         Altaxo.Data.DataColumn.ChangeEventArgs ea = (Altaxo.Data.DataColumn.ChangeEventArgs)e;
-        Assertion.AssertEquals(0,ea.MinRowChanged);
-        Assertion.AssertEquals(13,ea.MaxRowChanged);
-        Assertion.AssertEquals(true,ea.RowCountDecreased);
+        Assert.AreEqual(0, ea.MinRowChanged);
+        Assert.AreEqual(13, ea.MaxRowChanged);
+        Assert.AreEqual(true, ea.RowCountDecreased);
         _CallCount++;;
           
       }
@@ -235,42 +235,42 @@ namespace AltaxoTest.Data
 
       public void ExpectingDataChange5To12_NoDecrease(object sender, EventArgs e)
       {
-        Assertion.AssertNotNull("Sender must be the column",sender);
-        Assertion.AssertEquals(typeof(Altaxo.Data.DoubleColumn),sender.GetType());
-        Assertion.AssertNotNull("Awaiting valid data change event args",e);
-        Assertion.AssertEquals(typeof(Altaxo.Data.DataColumn.ChangeEventArgs),e.GetType());
+        Assert.IsNotNull(sender,"Sender must be the column");
+        Assert.AreEqual(typeof(Altaxo.Data.DoubleColumn), sender.GetType());
+        Assert.IsNotNull(e,"Awaiting valid data change event args");
+        Assert.AreEqual(typeof(Altaxo.Data.DataColumn.ChangeEventArgs), e.GetType());
         Altaxo.Data.DataColumn.ChangeEventArgs ea = (Altaxo.Data.DataColumn.ChangeEventArgs)e;
-        Assertion.AssertEquals(5,ea.MinRowChanged);
-        Assertion.AssertEquals(13,ea.MaxRowChanged);
-        Assertion.AssertEquals(false,ea.RowCountDecreased);
+        Assert.AreEqual(5, ea.MinRowChanged);
+        Assert.AreEqual(13, ea.MaxRowChanged);
+        Assert.AreEqual(false, ea.RowCountDecreased);
         _CallCount++;;
         
       }
 
       public void ExpectingDataChange0To12_NoDecrease(object sender, EventArgs e)
       {
-        Assertion.AssertNotNull("Sender must be the column",sender);
-        Assertion.AssertEquals(typeof(Altaxo.Data.DoubleColumn),sender.GetType());
-        Assertion.AssertNotNull("Awaiting valid data change event args",e);
-        Assertion.AssertEquals(typeof(Altaxo.Data.DataColumn.ChangeEventArgs),e.GetType());
+        Assert.IsNotNull(sender,"Sender must be the column");
+        Assert.AreEqual(typeof(Altaxo.Data.DoubleColumn), sender.GetType());
+        Assert.IsNotNull(e,"Awaiting valid data change event args");
+        Assert.AreEqual(typeof(Altaxo.Data.DataColumn.ChangeEventArgs), e.GetType());
         Altaxo.Data.DataColumn.ChangeEventArgs ea = (Altaxo.Data.DataColumn.ChangeEventArgs)e;
-        Assertion.AssertEquals(0,ea.MinRowChanged);
-        Assertion.AssertEquals(13,ea.MaxRowChanged);
-        Assertion.AssertEquals(false,ea.RowCountDecreased);
+        Assert.AreEqual(0, ea.MinRowChanged);
+        Assert.AreEqual(13, ea.MaxRowChanged);
+        Assert.AreEqual(false, ea.RowCountDecreased);
         _CallCount++;;
           
       }
 
       public void ExpectingDataChange9To12_NoDecrease(object sender, EventArgs e)
       {
-        Assertion.AssertNotNull("Sender must be the column",sender);
-        Assertion.AssertEquals(typeof(Altaxo.Data.DoubleColumn),sender.GetType());
-        Assertion.AssertNotNull("Awaiting valid data change event args",e);
-        Assertion.AssertEquals(typeof(Altaxo.Data.DataColumn.ChangeEventArgs),e.GetType());
+        Assert.IsNotNull(sender,"Sender must be the column");
+        Assert.AreEqual(typeof(Altaxo.Data.DoubleColumn), sender.GetType());
+        Assert.IsNotNull(e,"Awaiting valid data change event args");
+        Assert.AreEqual(typeof(Altaxo.Data.DataColumn.ChangeEventArgs), e.GetType());
         Altaxo.Data.DataColumn.ChangeEventArgs ea = (Altaxo.Data.DataColumn.ChangeEventArgs)e;
-        Assertion.AssertEquals(9,ea.MinRowChanged);
-        Assertion.AssertEquals(13,ea.MaxRowChanged);
-        Assertion.AssertEquals(false,ea.RowCountDecreased);
+        Assert.AreEqual(9, ea.MinRowChanged);
+        Assert.AreEqual(13, ea.MaxRowChanged);
+        Assert.AreEqual(false, ea.RowCountDecreased);
         _CallCount++;;
         
       }
@@ -283,20 +283,20 @@ namespace AltaxoTest.Data
     public void ParentNotification()
     {
       DoubleColumn d = new DoubleColumn(10);
-      Assertion.AssertEquals(d.Count,0);
-      Assertion.AssertEquals(d.IsDirty,false);
+      Assert.AreEqual(0,d.Count);
+      Assert.AreEqual(false,d.IsDirty);
         
       // testing parent change notification
       MyColumnParent parent = new MyColumnParent();
       parent.ChildChanged = new EventHandler(parent.TestParentAddNotification);
       d.ParentObject = parent;
-      Assertion.AssertEquals("There was no parent add notification",1,parent.CallCount);
+      Assert.AreEqual(1,parent.CallCount,"There was no parent add notification");
       parent.Reset();
 
       // testing parent change notification resetting parent
       parent.ChildChanged = new EventHandler(parent.TestParentRemoveNotification);
       d.ParentObject = null;
-      Assertion.AssertEquals("There was no parent remove notification",1,parent.CallCount);
+      Assert.AreEqual(1,parent.CallCount,"There was no parent remove notification");
       parent.Reset();
     }
 
@@ -304,14 +304,14 @@ namespace AltaxoTest.Data
     public void DataChangeNotification()
     {
       DoubleColumn d = new DoubleColumn(10);
-      Assertion.AssertEquals(d.Count,0);
-      Assertion.AssertEquals(d.IsDirty,false);
+      Assert.AreEqual(0,d.Count);
+      Assert.AreEqual(false,d.IsDirty);
         
       // testing parent change notification
       MyColumnParent parent = new MyColumnParent();
       parent.ChildChanged = new EventHandler(parent.TestParentAddNotification);
       d.ParentObject = parent;
-      Assertion.AssertEquals("There was no parent add notification",1,parent.CallCount);
+      Assert.AreEqual(1,parent.CallCount,"There was no parent add notification");
       parent.Reset();
       
       
@@ -319,30 +319,30 @@ namespace AltaxoTest.Data
       parent.ChildChanged = new EventHandler(parent.TestSetSlot5);
       d.Changed += new EventHandler(parent.TestSetSlot5);
       d[5]=66;
-      Assertion.AssertEquals("There was no data change notification setting d[5]",2,parent.CallCount);
+      Assert.AreEqual(2,parent.CallCount,"There was no data change notification setting d[5]");
       d.Changed -= new EventHandler(parent.TestSetSlot5);
       parent.Reset();
 
       // testing data change notification resetting row5 -> count drops to zero
       parent.ChildChanged = new EventHandler(parent.TestResetSlot5);
       d[5]=double.NaN;
-      Assertion.AssertEquals("There was no data change notification setting d[5]",1,parent.CallCount);
+      Assert.AreEqual(1,parent.CallCount,"There was no data change notification setting d[5]");
       parent.Reset();
 
 
       // Test d[7] setting to NaN -> the column must not rise a change event
       parent.ChildChanged = new EventHandler(parent.TestSetSlot7AndSuspend);
       d[7]=double.NaN;
-      Assertion.AssertEquals("There is no data change notification expected setting d[7] to invalid",0,parent.CallCount);
-      Assertion.AssertEquals(false,d.IsDirty);
+      Assert.AreEqual(0,parent.CallCount,"There is no data change notification expected setting d[7] to invalid");
+      Assert.AreEqual(false, d.IsDirty);
       parent.Reset();
 
       // Set slot7 returning true -> the column must suspend
       parent.ChildChanged = new EventHandler(parent.TestSetSlot7AndSuspend);
       d.Changed += new EventHandler(parent.TestSetSlot7AndSuspend);
       d[7]=88;
-      Assertion.AssertEquals("There was no data change notification setting d[7]",1,parent.CallCount);
-      Assertion.AssertEquals(true,d.IsDirty);
+      Assert.AreEqual(1,parent.CallCount,"There was no data change notification setting d[7]");
+      Assert.AreEqual(true, d.IsDirty);
       d.Changed -= new EventHandler(parent.TestSetSlot7AndSuspend);
       parent.Reset();
 
@@ -364,8 +364,8 @@ namespace AltaxoTest.Data
       parent.ChildChanged = new EventHandler(parent.CheckChange0To12_Decreased);
       d.Changed += new EventHandler(parent.CheckChange0To12_Decreased);
       d.Resume();
-      Assertion.AssertEquals("There was no data change notification setting d[0] to d[12]",2,parent.CallCount);
-      Assertion.AssertEquals(false,d.IsDirty);
+      Assert.AreEqual(2,parent.CallCount,"There was no data change notification setting d[0] to d[12]");
+      Assert.AreEqual(false, d.IsDirty);
       d.Changed -= new EventHandler(parent.CheckChange0To12_Decreased);
       parent.Reset();
     }
@@ -375,38 +375,38 @@ namespace AltaxoTest.Data
     public void RowInsertionAtTheBeginning()
     {
       DoubleColumn d = new DoubleColumn(10);
-      Assertion.AssertEquals(d.Count,0);
-      Assertion.AssertEquals(d.IsDirty,false);
+      Assert.AreEqual(0,d.Count);
+      Assert.AreEqual(false,d.IsDirty);
         
       // set rows 0 to 9 to i
       for(int i=0;i<10;i++)
         d[i]=i;
-      Assertion.AssertEquals(10,d.Count);
+      Assert.AreEqual(10, d.Count);
 
 
       // testing parent change notification setting the parent
       MyColumnParent parent = new MyColumnParent();
       parent.ChildChanged = new EventHandler(parent.TestParentAddNotification);
       d.ParentObject = parent;
-      Assertion.AssertEquals("There was no parent add notification",1,parent.CallCount);
+      Assert.AreEqual(1,parent.CallCount,"There was no parent add notification");
       parent.Reset();
 
       parent.Reset();
       parent.ChildChanged = new EventHandler(parent.ExpectingDataChange0To12_NoDecrease);
       // now insert
       d.InsertRows(0,3);
-      Assertion.AssertEquals("There was no data change notification",1,parent.CallCount);
+      Assert.AreEqual(1,parent.CallCount,"There was no data change notification");
 
       // test the data
-      Assertion.AssertEquals(13,d.Count);
+      Assert.AreEqual(13, d.Count);
 
       for(int i=0;i<3;i++)
-        Assertion.AssertEquals(double.NaN,d[i]);
+        Assert.AreEqual(double.NaN, d[i]);
 
       for(int i=3;i<(10+3);i++)
-        Assertion.AssertEquals(i-3,d[i]);
+        Assert.AreEqual(i - 3, d[i]);
 
-      Assertion.AssertEquals(double.NaN,d[13]);
+      Assert.AreEqual(double.NaN, d[13]);
     }
 
 
@@ -414,97 +414,97 @@ namespace AltaxoTest.Data
     public void RowInsertionInTheMiddle()
     {
       DoubleColumn d = new DoubleColumn(10);
-      Assertion.AssertEquals(d.Count,0);
-      Assertion.AssertEquals(d.IsDirty,false);
+      Assert.AreEqual(0,d.Count);
+      Assert.AreEqual(false,d.IsDirty);
         
       // set rows 0 to 9 to i
       for(int i=0;i<10;i++)
         d[i]=i;
-      Assertion.AssertEquals(10,d.Count);
+      Assert.AreEqual(10, d.Count);
 
       // testing parent change notification setting the parent
       MyColumnParent parent = new MyColumnParent();
       parent.ChildChanged = new EventHandler(parent.TestParentAddNotification);
       d.ParentObject = parent;
-      Assertion.AssertEquals("There was no parent add notification",1,parent.CallCount);
+      Assert.AreEqual(1,parent.CallCount,"There was no parent add notification");
       parent.Reset();
 
       parent.Reset();
       parent.ChildChanged = new EventHandler(parent.ExpectingDataChange5To12_NoDecrease);
       // now insert
       d.InsertRows(5,3);
-      Assertion.AssertEquals("There was no data change notification",1,parent.CallCount);
+      Assert.AreEqual(1,parent.CallCount,"There was no data change notification");
 
       // test the data
-      Assertion.AssertEquals(13,d.Count);
+      Assert.AreEqual(13, d.Count);
 
       for(int i=0;i<5;i++)
-        Assertion.AssertEquals(i,d[i]);
+        Assert.AreEqual(i, d[i]);
 
-      Assertion.AssertEquals(double.NaN,d[5]);
-      Assertion.AssertEquals(double.NaN,d[6]);
-      Assertion.AssertEquals(double.NaN,d[7]);
+      Assert.AreEqual(double.NaN, d[5]);
+      Assert.AreEqual(double.NaN, d[6]);
+      Assert.AreEqual(double.NaN, d[7]);
 
       for(int i=8;i<(8+5);i++)
-        Assertion.AssertEquals(i-3,d[i]);
+        Assert.AreEqual(i - 3, d[i]);
     }
 
     [Test]
     public void RowInsertionOneBeforeEnd()
     {
       DoubleColumn d = new DoubleColumn(10);
-      Assertion.AssertEquals(d.Count,0);
-      Assertion.AssertEquals(d.IsDirty,false);
+      Assert.AreEqual(0,d.Count);
+      Assert.AreEqual(false,d.IsDirty);
         
       // set rows 0 to 9 to i
       for(int i=0;i<10;i++)
         d[i]=i;
-      Assertion.AssertEquals(10,d.Count);
+      Assert.AreEqual(10, d.Count);
 
       // testing parent change notification setting the parent
       MyColumnParent parent = new MyColumnParent();
       parent.ChildChanged = new EventHandler(parent.TestParentAddNotification);
       d.ParentObject = parent;
-      Assertion.AssertEquals("There was no parent add notification",1,parent.CallCount);
+      Assert.AreEqual(1,parent.CallCount,"There was no parent add notification");
       parent.Reset();
 
       parent.Reset();
       parent.ChildChanged = new EventHandler(parent.ExpectingDataChange9To12_NoDecrease);
       // now insert
       d.InsertRows(9,3);
-      Assertion.AssertEquals("There was no data change notification",1,parent.CallCount);
+      Assert.AreEqual(1,parent.CallCount,"There was no data change notification");
 
       // test the data
-      Assertion.AssertEquals(13,d.Count);
+      Assert.AreEqual(13, d.Count);
 
       for(int i=0;i<9;i++)
-        Assertion.AssertEquals(i,d[i]);
+        Assert.AreEqual(i, d[i]);
 
-      Assertion.AssertEquals(double.NaN,d[9]);
-      Assertion.AssertEquals(double.NaN,d[10]);
-      Assertion.AssertEquals(double.NaN,d[11]);
+      Assert.AreEqual(double.NaN, d[9]);
+      Assert.AreEqual(double.NaN, d[10]);
+      Assert.AreEqual(double.NaN, d[11]);
 
       for(int i=12;i<13;i++)
-        Assertion.AssertEquals(i-3,d[i]);
+        Assert.AreEqual(i - 3, d[i]);
     }
 
     [Test]
     public void RowInsertionAtTheEnd()
     {
       DoubleColumn d = new DoubleColumn(10);
-      Assertion.AssertEquals(d.Count,0);
-      Assertion.AssertEquals(d.IsDirty,false);
+      Assert.AreEqual(0,d.Count);
+      Assert.AreEqual(false,d.IsDirty);
         
       // set rows 0 to 9 to i
       for(int i=0;i<10;i++)
         d[i]=i;
-      Assertion.AssertEquals(10,d.Count);
+      Assert.AreEqual(10, d.Count);
 
       // testing parent change notification setting the parent
       MyColumnParent parent = new MyColumnParent();
       parent.ChildChanged = new EventHandler(parent.TestParentAddNotification);
       d.ParentObject = parent;
-      Assertion.AssertEquals("There was no parent add notification",1,parent.CallCount);
+      Assert.AreEqual(1,parent.CallCount,"There was no parent add notification");
       parent.Reset();
 
       parent.Reset();
@@ -513,12 +513,12 @@ namespace AltaxoTest.Data
       d.InsertRows(10,3);
     
       // test the data
-      Assertion.AssertEquals(10,d.Count);
+      Assert.AreEqual(10, d.Count);
 
       for(int i=0;i<10;i++)
-        Assertion.AssertEquals(i,d[i]);
+        Assert.AreEqual(i, d[i]);
 
-      Assertion.AssertEquals(double.NaN,d[10]);
+      Assert.AreEqual(double.NaN, d[10]);
     }
 
   }

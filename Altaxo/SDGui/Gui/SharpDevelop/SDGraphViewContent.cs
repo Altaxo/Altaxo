@@ -99,7 +99,6 @@ namespace Altaxo.Gui.SharpDevelop
     protected SDGraphViewContent(GraphDocument graphdoc, bool bDeserializationConstructor)
       : this(new GraphController(graphdoc))
     {
-      _controller = new GraphController(graphdoc);
     }
 
     protected SDGraphViewContent(GraphController ctrl)

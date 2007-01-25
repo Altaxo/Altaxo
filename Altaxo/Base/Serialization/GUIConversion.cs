@@ -329,5 +329,27 @@ namespace Altaxo.Serialization
     }
     #endregion
 
+
+    #region Selection lists
+
+    /// <summary>
+    /// For a given enum value, this gives the list of possible choices for that enumeration (must not be a flag enumeration).
+    /// </summary>
+    /// <param name="value">The enum value that is currently selected.</param>
+    /// <returns>List of all enumeration values. The current value is marked as (Selected is true for this list node).</returns>
+    public static Altaxo.Collections.SelectableListNodeList GetListOfChoices(Enum value)
+    {
+      Altaxo.Collections.SelectableListNodeList list = new Altaxo.Collections.SelectableListNodeList();
+      Type enumtype = value.GetType();
+      foreach (Enum v in Enum.GetValues(enumtype))
+      {
+        string name = Current.Gui.GetUserFriendlyName(v);
+        list.Add(new Altaxo.Collections.SelectableListNode(name, v, Enum.Equals(v,value)));
+      }
+      return list;
+    }
+
+
+    #endregion
   }
 }

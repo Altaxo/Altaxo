@@ -47,6 +47,7 @@
     <Import assembly=":AltaxoSDGui">
       <ConditionEvaluator name="SelectedDataColumns" class="Altaxo.Worksheet.Commands.SelectedDataConditionEvaluator"/>
       <ConditionEvaluator name="ContainsPLSModelData" class="Altaxo.Worksheet.Commands.PLSModelConditionEvaluator"/>
+      <Doozer name="Texture" class="Altaxo.Main.TextureDoozer"/>
     </Import>
 	</Runtime>
 
@@ -642,6 +643,11 @@
       class="Altaxo.Worksheet.Commands.SetColumnPosition"	/>
 
 
+  </Path>
+
+  <Path name = "/Altaxo/BuiltinTextures">
+    <Texture id="Marbel/RedMarbel" resource = "Icons.16x16.PasteIcon"/>
+    <Texture id="Marbel/DarkMarbel" resource = "Icons.16x16.CopyIcon"/>
   </Path>
 
   <!-- End of Altaxo stuff -->

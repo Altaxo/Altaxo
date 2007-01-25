@@ -1218,6 +1218,7 @@
     <Compile Include="Graph\Scales\Scale.cs" />
     <Compile Include="Graph\Scales\ScaleLinkType.cs" />
     <Compile Include="Graph\Scales\TextScale.cs" />
+    <Compile Include="Graph\TextureManager.cs" />
     <Compile Include="Graph\XAnchorPositionType.cs" />
     <Compile Include="Graph\YAnchorPositionType.cs" />
     <Compile Include="Gui\Common\BooleanValueControl.cs">

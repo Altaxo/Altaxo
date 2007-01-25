@@ -82,9 +82,9 @@ namespace Altaxo.Graph.Commands
     {
       try
       {
-        if(System.Windows.Forms.DialogResult.OK==Current.PrintingService.PageSetupDialog.ShowDialog(ctrl.View.Form))
+        if(Current.Gui.ShowPageSetupDialog())
         {
-          ctrl.SetGraphPageBoundsToPrinterSettings();
+          ctrl.Doc.SetGraphPageBoundsToPrinterSettings();
         }
       }
       catch(Exception exc)
@@ -104,7 +104,7 @@ namespace Altaxo.Graph.Commands
     {
       try
       {
-        if(DialogResult.OK==Current.PrintingService.PrintDialog.ShowDialog(ctrl.View.Form))
+        if(Current.Gui.ShowPrintDialog())
         {
           Current.PrintingService.PrintDocument.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(ctrl.EhPrintPage);
           Current.PrintingService.PrintDocument.Print();

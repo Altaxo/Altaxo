@@ -168,6 +168,7 @@
     <Compile Include="Main\ProjectService.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Main\TextureDoozer.cs" />
     <Compile Include="Main\ZippedStreamWrapper.cs">
       <SubType>Code</SubType>
     </Compile>

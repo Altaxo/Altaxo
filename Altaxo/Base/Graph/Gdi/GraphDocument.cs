@@ -51,6 +51,9 @@ namespace Altaxo.Graph.Gdi
     Main.IDocumentNode,
     Main.INameOwner
   {
+    // following default unit is point (1/72 inch)
+    /// <summary>For the graph elements all the units are in points. One point is 1/72 inch.</summary>
+    protected const float UnitPerInch = 72;
 
     /// <summary>
     /// Overall size of the page (usually the size of the sheet of paper that is selected as printing document) in point (1/72 inch)
@@ -329,7 +332,8 @@ namespace Altaxo.Graph.Gdi
       this._changedEventSuppressor = new EventSuppressor(this.EhChangedEventResumes);
       this._layers = new XYPlotLayerCollection();
       this._layers.ParentObject = this;
-      this._layers.SetPrintableGraphBounds(_printableBounds,false);
+      SetGraphPageBoundsToPrinterSettings();
+      this._layers.SetPrintableGraphBounds(_printableBounds, false);
       _creationTime = _lastChangeTime = DateTime.UtcNow;
     }
 
@@ -358,6 +362,34 @@ namespace Altaxo.Graph.Gdi
       this._layers = (XYPlotLayerCollection)from._layers.Clone();
       this._layers.ParentObject = this;
 
+    }
+
+    /// <summary>
+    /// Sets the page bounds of the graph document according to the current printer settings
+    /// </summary>
+    public void SetGraphPageBoundsToPrinterSettings()
+    {
+      if (null != Current.PrintingService) // if we are at design time, this is null and we use the default values above
+      {
+        RectangleF pageBounds = Current.PrintingService.PrintingBounds;
+        System.Drawing.Printing.Margins ma = Current.PrintingService.PrintingMargins;
+
+        // since Bounds are in 100th inch, we have to adjust them to points (72th inch)
+        pageBounds.X *= UnitPerInch / 100;
+        pageBounds.Y *= UnitPerInch / 100;
+        pageBounds.Width *= UnitPerInch / 100;
+        pageBounds.Height *= UnitPerInch / 100;
+
+        RectangleF printableBounds = new RectangleF();
+        printableBounds.X = ma.Left * UnitPerInch / 100;
+        printableBounds.Y = ma.Top * UnitPerInch / 100;
+        printableBounds.Width = pageBounds.Width - ((ma.Left + ma.Right) * UnitPerInch / 100);
+        printableBounds.Height = pageBounds.Height - ((ma.Top + ma.Bottom) * UnitPerInch / 100);
+
+
+        this.PageBounds = pageBounds;
+        this.PrintableBounds = printableBounds;
+      }
     }
 
     public object Clone()

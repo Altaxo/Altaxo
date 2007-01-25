@@ -489,7 +489,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     #region HitTesting
     public virtual IHitTestObject HitTest(PointF pt)
     {
-      GraphicsPath gp = GetSelectionPath();
+      GraphicsPath gp = GetObjectPath();
       if (gp.IsVisible(pt))
       {
         return new HitTestObject(gp, this);
@@ -500,6 +500,10 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 
     public virtual GraphicsPath GetSelectionPath()
+    {
+      return GetObjectPath();
+    }
+    public virtual GraphicsPath GetObjectPath()
     {
       GraphicsPath gp = new GraphicsPath();
       Matrix myMatrix = new Matrix();
@@ -513,7 +517,6 @@ namespace Altaxo.Graph.Gdi.Shapes
       gp.Transform(myMatrix);
       return gp;
     }
-
 
     public virtual bool HitTest(RectangleF rect)
     {

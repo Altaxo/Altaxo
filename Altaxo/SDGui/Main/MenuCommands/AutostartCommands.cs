@@ -48,8 +48,8 @@ namespace Altaxo.Main.Commands // ICSharpCode.SharpDevelop.Commands
     {
       Altaxo.Current.SetResourceService(new ResourceServiceWrapper());      
       Altaxo.Current.SetProjectService( new Altaxo.Main.ProjectService() );
-      Altaxo.Current.SetPrintingService( new Altaxo.Main.PrintingService() );
-      Altaxo.Current.SetGUIFactoryService( new Altaxo.Main.Services.GUIFactoryService() );
+      Altaxo.Current.SetGUIFactoryService(new Altaxo.Main.Services.GUIFactoryService());
+      Altaxo.Current.SetPrintingService(new Altaxo.Main.PrintingService());
       Altaxo.Current.ProjectService.ProjectChanged += new ProjectEventHandler(((AltaxoSDWorkbench)Altaxo.Current.Workbench).EhProjectChanged);
       
       // we construct the main document (for now)
@@ -57,6 +57,7 @@ namespace Altaxo.Main.Commands // ICSharpCode.SharpDevelop.Commands
       // less important services follow now
       Altaxo.Main.Services.FitFunctionService fitFunctionService = new Altaxo.Main.Services.FitFunctionService();
       Altaxo.Current.SetFitFunctionService(fitFunctionService);
+      AddInTree.GetTreeNode("/Altaxo/BuiltinTextures").BuildChildItems(this);
     }
 
     private class ResourceServiceWrapper : Altaxo.Main.Services.IResourceService
@@ -68,6 +69,11 @@ namespace Altaxo.Main.Commands // ICSharpCode.SharpDevelop.Commands
       public string GetString(string name)
       {
         return ICSharpCode.Core.ResourceService.GetString(name);
+      }
+
+      public System.Drawing.Bitmap GetBitmap(string name)
+      {
+        return ICSharpCode.Core.ResourceService.GetBitmap(name);
       }
     }
   }

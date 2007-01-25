@@ -340,10 +340,8 @@ namespace Altaxo.Worksheet.Commands
       PlotGroupStyleCollection groupStyles)
     {
       List<IGPlotItem> pilist = CreatePlotItems(table, selectedColumns, templatePlotStyle);
-
       // now create a new Graph with this plot associations
       Altaxo.Graph.GUI.IGraphController gc = Current.ProjectService.CreateNewGraph(graph);
-
       // Set x and y axes according to the first plot item in the list
       if (pilist.Count > 0 && (pilist[0] is XYColumnPlotItem))
       {

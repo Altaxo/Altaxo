@@ -43,11 +43,19 @@ namespace Altaxo.Graph.Gdi
     
 
     /// <summary>
-    /// This will return the selection path for the object.
+    /// This will return the selection path for the object. This is a closed
+    /// path where when hit into with the mouse, the object is selected.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>Selection path.</returns>
     GraphicsPath SelectionPath {get;}
 
+
+    /// <summary>
+    /// This will return the object path for the object. This is a closed
+    /// path which fully encloses the object. In case of lines, the width of this path is equal to the line width.
+    /// </summary>
+    /// <returns>Selection path.</returns>
+    GraphicsPath ObjectPath { get; }
 
     /// <summary>
     /// This will return the transformation matrix.
@@ -95,7 +103,9 @@ namespace Altaxo.Graph.Gdi
 
   public class HitTestObject : IHitTestObject
   {
-    GraphicsPath _gp;
+    GraphicsPath _objectPath;
+    GraphicsPath _selectionPath; // can be null, in this case the object path is used
+
     Matrix _matrix;
     Matrix _inversematrix;
     object _hitobject;
@@ -103,12 +113,19 @@ namespace Altaxo.Graph.Gdi
     #region IHitTestObject Members
 
     public HitTestObject(GraphicsPath gp, object hitobject)
+      : this(gp,null,hitobject)
     {
-      _gp = gp;
+    }
+
+    public HitTestObject(GraphicsPath gp, GraphicsPath selectionPath, object hitobject)
+    {
+      _objectPath = gp;
+      _selectionPath = selectionPath;
       _hitobject = hitobject;
       _matrix = new Matrix();
       _inversematrix = new Matrix();
     }
+
 
     public Matrix Transformation
     {
@@ -121,13 +138,26 @@ namespace Altaxo.Graph.Gdi
       _inversematrix = (Matrix)_matrix.Clone();
       _inversematrix.Invert();
 
-      _gp.Transform(x);
+      _objectPath.Transform(x);
+      if (_selectionPath != null) _selectionPath.Transform(x);
     }
 
     public GraphicsPath SelectionPath
     {
-      get { return _gp; }
+      get 
+      {
+        return _selectionPath!=null ? _selectionPath : _objectPath; 
+      }
     }
+
+    public GraphicsPath ObjectPath
+    {
+      get
+      {
+        return _objectPath;
+      }
+    }
+
 
     public object HittedObject
     {
@@ -142,7 +172,8 @@ namespace Altaxo.Graph.Gdi
       {
         Matrix mat = new Matrix();
         mat.Translate(x,y);
-        _gp.Transform(mat);
+        _objectPath.Transform(mat);
+        if (null != _selectionPath) _selectionPath.Transform(mat);
 
         PointF[] pos = new PointF[]{new PointF(x,y)};
         _inversematrix.TransformVectors(pos);

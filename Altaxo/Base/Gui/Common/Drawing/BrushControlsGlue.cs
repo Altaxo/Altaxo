@@ -703,7 +703,7 @@ namespace Altaxo.Gui.Common.Drawing
 
         _cbTextureImage = value;
         if (_brush != null && _cbTextureImage != null)
-          _cbTextureImage.TextureImage = _brush.TextureImage;
+          _cbTextureImage.ChoosenTexture = _brush.TextureImage;
 
         if (_cbTextureImage != null)
           _cbTextureImage.SelectionChangeCommitted += EhTextureImage_SelectionChangeCommitted;
@@ -717,7 +717,7 @@ namespace Altaxo.Gui.Common.Drawing
     {
       if (_brush != null)
       {
-        _brush.TextureImage = _cbTextureImage.TextureImage;
+        _brush.TextureImage = _cbTextureImage.ChoosenTexture;
         OnBrushChanged();
       }
     }

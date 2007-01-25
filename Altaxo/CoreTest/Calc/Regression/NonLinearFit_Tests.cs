@@ -256,9 +256,11 @@ namespace AltaxoTest.Calc.Regression
     /// <summary>
     /// Generates for values z=1,2,3..n the function p[0]+p[1]*z[i]
     /// </summary>
+    /// <param name="numberOfYs"></param>
+    /// <param name="numberOfParameter"></param>
     /// <param name="p"></param>
     /// <param name="x"></param>
-    /// <param name="data"></param>
+    /// <param name="info"></param>
     void poly2(int numberOfYs, int numberOfParameter, double[] p, double[] x, ref int info)
     {
       Assert.IsTrue(p.Length == 2);
@@ -304,9 +306,11 @@ namespace AltaxoTest.Calc.Regression
     /// <summary>
     /// Generates the values sum from i=1 to 9 of p[0]+p[1]*i - y
     /// </summary>
+    /// <param name="numberOfYs"></param>
+    /// <param name="numberOfParameter"></param>
     /// <param name="p"></param>
     /// <param name="x"></param>
-    /// <param name="data"></param>
+    /// <param name="info"></param>
     void poly3(int numberOfYs, int numberOfParameter, double[] p, double[] x, ref int info)
     {
       if (p.Length != 2)
@@ -358,9 +362,11 @@ namespace AltaxoTest.Calc.Regression
     /// <summary>
     /// Generates for values z=1,2,3..n the function p[0]+p[1]*z[i]
     /// </summary>
-    /// <param name="p"></param>
+    /// <param name="numberOfYs"></param>
+    /// <param name="numberOfParameter"></param>
+    /// /// <param name="p"></param>
     /// <param name="x"></param>
-    /// <param name="data"></param>
+    /// <param name="info"></param>
     void poly4(int numberOfYs, int numberOfParameter, double[] p, double[] x, ref int info)
     {
       Assert.IsTrue(p.Length == 2);
@@ -413,9 +419,12 @@ namespace AltaxoTest.Calc.Regression
     /// <summary>
     /// Generates for values z=1,2,3..n the function p[0]+p[1]*z[i]
     /// </summary>
+    /// <param name="numberOfParameter">
+    /// </param>
+    /// <param name="numberOfYs"></param>
     /// <param name="p"></param>
     /// <param name="x"></param>
-    /// <param name="data"></param>
+    /// <param name="info"></param>
     void poly5(int numberOfYs, int numberOfParameter, double[] p, double[] x, ref int info)
     {
       Assert.IsTrue(p.Length == 3);

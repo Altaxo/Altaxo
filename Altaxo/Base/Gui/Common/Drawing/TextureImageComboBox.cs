@@ -60,6 +60,7 @@ namespace Altaxo.Gui.Common.Drawing
         ImageProxy img = ImageProxy.FromFile(dlg.FileName);
         if (img.IsValid)
         {
+          TextureManager.UserTextures.Add(img);
           SetDataSource(img);
           OnSelectedItemChanged(EventArgs.Empty);
           OnSelectedValueChanged(EventArgs.Empty);
@@ -70,27 +71,45 @@ namespace Altaxo.Gui.Common.Drawing
 
     void SetDataSource(ImageProxy selected)
     {
+      string selHash = null==selected ? null : selected.ContentHash;
+
       this.BeginUpdate();
 
       Items.Clear();
 
-      Items.Add(ImageProxy.FromResource("Altaxo.Textures.Marbel.Marbel01.jpg"));
-
-      if (selected != null)
+      int selIndex = -1;
+      foreach (KeyValuePair<string, ImageProxy> pair in TextureManager.BuiltinTextures)
       {
-        Items.Add(selected);
-        SelectedItem = selected;
+        if (selIndex < 0 && pair.Value.ContentHash==selHash)
+          selIndex = Items.Count;
+
+        Items.Add(pair);
       }
+      foreach (KeyValuePair<string, ImageProxy> pair in TextureManager.UserTextures)
+      {
+        if (selIndex < 0 && pair.Value.ContentHash== selHash)
+          selIndex = Items.Count;
+
+        Items.Add(pair);
+      }
+
+      if (selIndex < 0 && selected!=null)
+      {
+        selIndex = Items.Count;
+        TextureManager.UserTextures.Add(selected);
+      }
+
+      SelectedIndex = selIndex;
 
       this.EndUpdate();
     }
 
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-    public ImageProxy TextureImage
+    public ImageProxy ChoosenTexture
     {
       get
       {
-        return SelectedItem == null ? null : (ImageProxy)SelectedItem;
+        return SelectedItem == null ? null : ((KeyValuePair<string,ImageProxy>)SelectedItem).Value;
       }
       set
       {
@@ -113,9 +132,14 @@ namespace Altaxo.Gui.Common.Drawing
       if (this.Enabled)
         e.DrawBackground();
 
-      ImageProxy item = e.Index >= 0 ? (ImageProxy)Items[e.Index] : null;
+      KeyValuePair<string, ImageProxy> item;
+      if (e.Index >= 0)
+        item = (KeyValuePair<string, ImageProxy>)Items[e.Index];
+      else
+        item = new KeyValuePair<string, ImageProxy>();
+
       SolidBrush foreColorBrush = new SolidBrush(e.ForeColor);
-      grfx.DrawString(item==null?"<No image>":item.ToString(), Font, foreColorBrush, rectText);
+      grfx.DrawString(item.Key==null?"<No image>":item.Key, Font, foreColorBrush, e.Bounds);
     }
 
 

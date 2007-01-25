@@ -309,8 +309,6 @@ namespace Altaxo.Graph.GUI
         throw new ArgumentNullException("graphdoc","GraphDoc must not be null");
 
       this.InitializeMenu();
-  
-      SetGraphPageBoundsToPrinterSettings();
 
       if(null!=Doc && 0==Doc.Layers.Count)
         Doc.CreateNewLayerNormalBottomXLeftY();
@@ -524,7 +522,7 @@ namespace Altaxo.Graph.GUI
     {
       try
       {
-        Current.PrintingService.PageSetupDialog.ShowDialog(this.m_View.Window);
+        Current.Gui.ShowPageSetupDialog();
       }
       catch(Exception exc)
       {
@@ -541,7 +539,7 @@ namespace Altaxo.Graph.GUI
     {
       try
       {
-        if(DialogResult.OK==Current.PrintingService.PrintDialog.ShowDialog(this.m_View.Window))
+        if(Current.Gui.ShowPrintDialog())
         {
           Current.PrintingService.PrintDocument.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(this.EhPrintPage);
           Current.PrintingService.PrintDocument.Print();
@@ -1260,48 +1258,7 @@ namespace Altaxo.Graph.GUI
     #region Methods
 
 
-    /// <summary>
-    /// Sets the page bounds of the graph document according to the current printer settings
-    /// </summary>
-    public void SetGraphPageBoundsToPrinterSettings()
-    {
-      if(null!=Current.PrintingService) // if we are at design time, this is null and we use the default values above
-      {
-        System.Drawing.Printing.PrintDocument doc = Current.PrintingService.PrintDocument;
-      
-        // Test whether or not a printer is installed
-        System.Drawing.Printing.PrinterSettings prnset = new System.Drawing.Printing.PrinterSettings();
-        RectangleF pageBounds;
-        System.Drawing.Printing.Margins ma;
-        if(prnset.IsValid)
-        {
-          pageBounds = doc.DefaultPageSettings.Bounds;
-          ma = doc.DefaultPageSettings.Margins;
-        }
-        else // obviously no printer installed, use A4 size (sorry, this is european size)
-        {
-          pageBounds = new RectangleF(0,0,1169,826);
-          ma = new System.Drawing.Printing.Margins(50,50,50,50);
-        }
-        // since Bounds are in 100th inch, we have to adjust them to points (72th inch)
-        pageBounds.X *= UnitPerInch/100;
-        pageBounds.Y *= UnitPerInch/100;
-        pageBounds.Width *= UnitPerInch/100;
-        pageBounds.Height *= UnitPerInch/100;
-
-        RectangleF printableBounds = new RectangleF();
-        printableBounds.X     = ma.Left * UnitPerInch/100;
-        printableBounds.Y     = ma.Top * UnitPerInch/100;
-        printableBounds.Width = pageBounds.Width - ((ma.Left+ma.Right)*UnitPerInch/100);
-        printableBounds.Height = pageBounds.Height - ((ma.Top+ma.Bottom)*UnitPerInch/100);
-      
-        if(null!=Doc)
-        {
-          Doc.PageBounds = pageBounds;
-          Doc.PrintableBounds = printableBounds;
-        }
-      }
-    }
+   
     /// <summary>
     /// Saves the graph as an enhanced windows metafile into the stream <paramref name="stream"/>.
     /// </summary>

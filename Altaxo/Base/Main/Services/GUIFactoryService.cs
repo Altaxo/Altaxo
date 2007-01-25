@@ -33,6 +33,11 @@ namespace Altaxo.Main.Services
   /// </summary>
   public class GUIFactoryService
   {
+    private System.Windows.Forms.PageSetupDialog _pageSetupDialog;
+    private System.Windows.Forms.PrintDialog _printDialog;
+
+
+
     /// <summary>
     /// Gets an <see cref="IMVCController" />  for a given document type.
     /// </summary>
@@ -448,6 +453,44 @@ namespace Altaxo.Main.Services
       }
       return false;
     }
+
+    /// <summary>
+    /// Shows a page setup dialog.
+    /// </summary>
+    /// <returns>True if the user close the dialog with OK, false otherwise.</returns>
+    public bool ShowPageSetupDialog()
+      {
+      bool result = System.Windows.Forms.DialogResult.OK == _pageSetupDialog.ShowDialog(Current.MainWindow);
+      if (true==result)
+      {
+        Current.PrintingService.UpdateBoundsAndMargins();
+      }
+      return result;
+    }
+    /// <summary>
+    /// Shows a print dialog.
+    /// </summary>
+    /// <returns>True if the user close the dialog with OK, false otherwise.</returns>
+    public bool ShowPrintDialog()
+    {
+      return System.Windows.Forms.DialogResult.OK == _printDialog.ShowDialog(Current.MainWindow);
+    }
+
+    /// <summary>
+    /// Sets the print document for both the page setup dialog and the print dialog.
+    /// </summary>
+    /// <param name="printDocument">The document to set.</param>
+    public void SetPrintDocument(System.Drawing.Printing.PrintDocument printDocument)
+    {
+      if (_pageSetupDialog == null)
+        _pageSetupDialog = new System.Windows.Forms.PageSetupDialog();
+      if (_printDialog == null)
+        _printDialog = new System.Windows.Forms.PrintDialog();
+
+      _pageSetupDialog.Document = printDocument;
+      _printDialog.Document = printDocument;
+    }
+
 
     /// <summary>
     /// Gets a user friendly class name. See remarks for a detailed description how it is been obtained.

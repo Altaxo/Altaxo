@@ -325,7 +325,11 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
         IEnumerator graphEnum = m_SelectedObjects.GetEnumerator(); // get the enumerator
         graphEnum.MoveNext(); // set the enumerator to the first item
         IHitTestObject graphObject = (IHitTestObject)graphEnum.Current;
-        
+
+        // Set the currently active layer to the layer the clicked object is belonging to.
+        if (graphObject.ParentLayer != null && !object.ReferenceEquals(_grac.ActiveLayer, graphObject.ParentLayer))
+          _grac.CurrentLayerNumber = graphObject.ParentLayer.Number; // Sets the current active layer
+
         if(graphObject.DoubleClick!=null)
         {
           //EndMovingObjects(); // this will resume the suspended graph so that pressing the "Apply" button in a dialog will result in a visible change
@@ -546,13 +550,13 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
         return;
 
 
-      RectangleF masterbound = m_SelectedObjects[m_SelectedObjects.Count - 1].SelectionPath.GetBounds();
+      RectangleF masterbound = m_SelectedObjects[m_SelectedObjects.Count - 1].ObjectPath.GetBounds();
 
       // now move each object to the new position, which is the difference in the position of the bounds.X
       for (int i = m_SelectedObjects.Count - 2; i >= 0; i--)
       {
         IHitTestObject o = m_SelectedObjects[i];
-        RectangleF bounds = o.SelectionPath.GetBounds();
+        RectangleF bounds = o.ObjectPath.GetBounds();
 
         arrange(o, bounds, masterbound);
       }

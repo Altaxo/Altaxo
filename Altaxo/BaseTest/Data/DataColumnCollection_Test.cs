@@ -37,10 +37,10 @@ namespace AltaxoTest.Data
     public void ZeroColumns()
     {
       DataColumnCollection d = new DataColumnCollection();
-      Assertion.AssertEquals(0,d.ColumnCount);
-      Assertion.AssertEquals(0,d.RowCount);
-      Assertion.AssertEquals(false,d.IsDirty);
-      Assertion.AssertEquals(false,d.IsSuspended);
+      Assert.AreEqual(0, d.ColumnCount);
+      Assert.AreEqual(0, d.RowCount);
+      Assert.AreEqual(false, d.IsDirty);
+      Assert.AreEqual(false, d.IsSuspended);
     }
 
     [Test]
@@ -55,32 +55,32 @@ namespace AltaxoTest.Data
         d.Add(cols[i]);
       }
 
-      Assertion.AssertEquals(10,d.ColumnCount);
-      Assertion.AssertEquals(0,d.RowCount);
-      Assertion.AssertEquals(false,d.IsDirty);
-      Assertion.AssertEquals(false,d.IsSuspended);
+      Assert.AreEqual(10, d.ColumnCount);
+      Assert.AreEqual(0, d.RowCount);
+      Assert.AreEqual(false, d.IsDirty);
+      Assert.AreEqual(false, d.IsSuspended);
 
-      Assertion.AssertEquals("A",d.GetColumnName(0));
-      Assertion.AssertEquals("A",d[0].Name);
-  
-      Assertion.AssertEquals("J",d.GetColumnName(9));
-      Assertion.AssertEquals("J",d[9].Name);
+      Assert.AreEqual("A", d.GetColumnName(0));
+      Assert.AreEqual("A", d[0].Name);
+
+      Assert.AreEqual("J", d.GetColumnName(9));
+      Assert.AreEqual("J", d[9].Name);
 
 
       // Test index to column resolution
       for(int i=0;i<10;i++)
-        Assertion.AssertEquals(cols[i],d[i]);
+        Assert.AreEqual(cols[i], d[i]);
 
       // test name to column resolution
 
       for(int i=0;i<10;i++)
       {
         char name = (char)('A'+i);
-        Assertion.AssertEquals("Column to name resolution of col " + name.ToString(), cols[i],d[name.ToString()]);
+        Assert.AreEqual(cols[i], d[name.ToString()],"Column to name resolution of col " + name.ToString());
       }
       // test column to number resolution
       for(int i=0;i<10;i++)
-        Assertion.AssertEquals(i,d.GetColumnNumber(cols[i]));
+        Assert.AreEqual(i, d.GetColumnNumber(cols[i]));
 
     }
 

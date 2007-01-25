@@ -34,5 +34,21 @@ namespace Altaxo.Main.Services
     /// <param name="resourceName">The name of the resource string.</param>
     /// <returns>The resource string.</returns>
     string GetString(string resourceName);
+
+
+    /// <summary>
+		/// Returns a bitmap from the resource database, it handles localization
+		/// transparent for the user.
+		/// </summary>
+		/// <returns>
+		/// The bitmap in the (localized) resource database.
+		/// </returns>
+		/// <param name="name">
+		/// The name of the requested bitmap.
+		/// </param>
+		/// <exception cref="ResourceNotFoundException">
+		/// Is thrown when the GlobalResource manager can't find a requested resource.
+		/// </exception>
+    System.Drawing.Bitmap GetBitmap(string name);
   }
 }

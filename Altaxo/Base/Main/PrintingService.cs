@@ -35,17 +35,18 @@ namespace Altaxo.Main
     /// This contains settings that store the current printer, paper size, orientation and so on.
     /// </summary>
     System.Drawing.Printing.PrintDocument PrintDocument { get ; }
-    
-    
-    /// <summary>
-    /// Returns the current printing page setup dialog for this instance of the application.
-    /// </summary>
-    System.Windows.Forms.PageSetupDialog PageSetupDialog  { get; }
 
-    /// <summary>
-    /// Returns the print dialog for the current instance of this application.
+    System.Drawing.Printing.Margins PrintingMargins { get; }
+
+    System.Drawing.RectangleF PrintingBounds { get; }
+
+        /// <summary>
+    /// Update the default bounds and margins after the printer settings changed.
+    /// This function must be called manually after a page setup dialog.
     /// </summary>
-    System.Windows.Forms.PrintDialog PrintDialog { get; }
+    void UpdateBoundsAndMargins();
+
+  
   }
 
 
@@ -54,50 +55,60 @@ namespace Altaxo.Main
   /// </summary>
   public class PrintingService :  IPrintingService
   {
-  
-    private System.Windows.Forms.PageSetupDialog m_PageSetupDialog;
-
-    private System.Drawing.Printing.PrintDocument m_PrintDocument;
-
-    private System.Windows.Forms.PrintDialog m_PrintDialog;
+    private System.Drawing.Printing.PrintDocument _printDocument;
+    System.Drawing.Printing.PrinterSettings _printerSettings;
+    System.Drawing.Printing.Margins _printerMargins;
+    System.Drawing.RectangleF _printerPageBounds;
 
     public PrintingService()
     {
-  
-
       // we initialize the printer variables
-      m_PrintDocument = new System.Drawing.Printing.PrintDocument();
+      _printDocument = new System.Drawing.Printing.PrintDocument();
       // we set the print document default orientation to landscape
-      m_PrintDocument.DefaultPageSettings.Landscape=true;
-      m_PageSetupDialog = new System.Windows.Forms.PageSetupDialog();
-      m_PageSetupDialog.Document = m_PrintDocument;
-      m_PrintDialog = new System.Windows.Forms.PrintDialog();
-      m_PrintDialog.Document = m_PrintDocument;
+      _printDocument.DefaultPageSettings.Landscape=true;
+      Current.Gui.SetPrintDocument(_printDocument);
+      _printerSettings = new System.Drawing.Printing.PrinterSettings();
+      UpdateBoundsAndMargins();
     }
+
+    /// <summary>
+    /// Update the default bounds and margins after the printer settings changed.
+    /// This function must be called manually after a page setup dialog.
+    /// </summary>
+    public void UpdateBoundsAndMargins()
+    {
+      if (_printerSettings.IsValid)
+      {
+        _printerPageBounds = _printDocument.DefaultPageSettings.Bounds;
+        _printerMargins = _printDocument.DefaultPageSettings.Margins;
+      }
+      else // obviously no printer installed, use A4 size (sorry, this is european size)
+      {
+        _printerPageBounds = new System.Drawing.RectangleF(0, 0, 1169, 826);
+        _printerMargins = new System.Drawing.Printing.Margins(50, 50, 50, 50);
+      }
+
+    }
+
+   
 
     #region Properties
 
-
-    
-
-    public  System.Windows.Forms.PageSetupDialog PageSetupDialog
+    public System.Drawing.Printing.Margins PrintingMargins 
     {
-      get { return m_PageSetupDialog; }
+      get { return _printerMargins; }
     }
+
+    public System.Drawing.RectangleF PrintingBounds 
+    {
+      get { return _printerPageBounds; }
+    }
+
 
     public  System.Drawing.Printing.PrintDocument PrintDocument
     {
-      get { return m_PrintDocument; }
+      get { return _printDocument; }
     }
-
-
-    public System.Windows.Forms.PrintDialog PrintDialog
-    {
-      get { return m_PrintDialog; }
-    }
-
-
-  
 
     #endregion
 

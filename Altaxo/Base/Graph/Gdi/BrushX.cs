@@ -334,7 +334,7 @@ namespace Altaxo.Graph.Gdi
       _foreColor = from._foreColor; // Color of the brush
       _backColor = from._backColor; // Backcolor of brush, f.i.f. HatchStyle brushes
       _hatchStyle = from._hatchStyle; // für HatchBrush
-      _textureImage = null == from._textureImage ? null : from._textureImage.Clone(); // für Texturebrush
+      _textureImage = null == from._textureImage ? null : (ImageProxy)from._textureImage.Clone(); // für Texturebrush
       _wrapMode = from._wrapMode; // für TextureBrush und LinearGradientBrush
       _brushBoundingRectangle = from._brushBoundingRectangle;
       _focus = from._focus;

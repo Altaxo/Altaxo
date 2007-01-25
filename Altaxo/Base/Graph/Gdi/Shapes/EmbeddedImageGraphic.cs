@@ -149,7 +149,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       EmbeddedImageGraphic from = bfrom as EmbeddedImageGraphic;
       if (from != null)
       {
-        this._imageProxy = null == from._imageProxy ? null : from._imageProxy.Clone();
+        this._imageProxy = null == from._imageProxy ? null : (ImageProxy)from._imageProxy.Clone();
       }
       base.CopyFrom(bfrom);
     }
