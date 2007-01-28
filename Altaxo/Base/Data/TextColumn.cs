@@ -273,6 +273,12 @@ namespace Altaxo.Data
     {
       return i<m_Count ? (null==m_Array[i]) : true;
     }
+    public override void SetElementEmpty(int i)
+    {
+      if (i < m_Count)
+        this[i] = NullValue;
+    }
+
 
     public new string this[int i]
     {

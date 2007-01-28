@@ -20,65 +20,70 @@
 /////////////////////////////////////////////////////////////////////////////
 #endregion
 
-
 using System;
-using Altaxo.Serialization;
-using Altaxo;
+using System.Collections.Generic;
+using System.Text;
 
-namespace Altaxo.Data
+namespace Altaxo.Graph.Scales.Boundaries
 {
-  /// <summary>
-  /// AltaxoDBNullColumn serves as a placeholder in case the column
-  /// type is not yet known, but some attibutes of the column must
-  /// already been set
-  /// </summary>
-  public class DBNullColumn : DataColumn
+  public class DummyBoundaries : IPhysicalBoundaries
   {
-    public DBNullColumn()
+    #region IPhysicalBoundaries Members
+
+    public event BoundaryChangedHandler BoundaryChanged;
+
+    public event ItemNumberChangedHandler NumberOfItemsChanged;
+
+    public bool EventsEnabled
+    {
+      get { return false; }
+    }
+
+    public void BeginUpdate()
     {
     }
 
-    public override object Clone()
+    public void EndUpdate()
     {
-      return new DBNullColumn();
     }
 
-    public override int Count
-    {
-      get
-      {
-        return 0;
-      }
-    }
-
-    public override System.Type GetColumnStyleType()
-    { 
-      return null;
-    }
-    public override void SetValueAt(int i, AltaxoVariant val)
-    {
-    }
-    public override AltaxoVariant GetVariantAt(int i)
-    {
-      return null;
-    }
-    public override bool IsElementEmpty(int i)
+    public bool Add(Altaxo.Data.IReadableColumn col, int idx)
     {
       return true;
     }
-    public override void SetElementEmpty(int i)
+
+    public bool Add(Altaxo.Data.AltaxoVariant item)
+    {
+      return true;
+    }
+
+    public void Reset()
     {
     }
 
+    public int NumberOfItems
+    {
+      get { return 0; }
+    }
 
-    public override void CopyDataFrom(Altaxo.Data.DataColumn v)
+    public bool IsEmpty
+    {
+      get { return true; }
+    }
+
+    public void Add(IPhysicalBoundaries b)
     {
     }
-    public override void RemoveRows(int nFirstRow, int nCount) // removes nCount rows starting from nFirstRow 
+
+    #endregion
+
+    #region ICloneable Members
+
+    public object Clone()
     {
+      return new DummyBoundaries();
     }
-    public override void InsertRows(int nBeforeRow, int nCount) // inserts additional empty rows
-    {
-    }
+
+    #endregion
   }
 }

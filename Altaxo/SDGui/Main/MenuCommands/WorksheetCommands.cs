@@ -142,6 +142,13 @@ namespace Altaxo.Worksheet.Commands
       Altaxo.Worksheet.Commands.EditCommands.RemoveSelected(ctrl);
     }
   }
+  public class EditClean : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
+    {
+      Altaxo.Worksheet.Commands.EditCommands.CleanSelected(ctrl);
+    }
+  }
   public class EditCopy : AbstractWorksheetControllerCommand
   {
     public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
@@ -567,6 +574,20 @@ namespace Altaxo.Worksheet.Commands
 
   
 
+ 
+
+  public class ExtractPropertyValues : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
+    {
+      Altaxo.Worksheet.Commands.ColumnCommands.ExtractPropertyValues(ctrl);
+    }
+  }
+
+  #endregion
+
+  #region Row commands
+
   public class SetRowPosition : AbstractWorksheetControllerCommand
   {
     public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
@@ -575,12 +596,19 @@ namespace Altaxo.Worksheet.Commands
     }
   }
 
-
-  public class ExtractPropertyValues : AbstractWorksheetControllerCommand
+  public class InsertOneDataRow : AbstractWorksheetControllerCommand
   {
     public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
     {
-      Altaxo.Worksheet.Commands.ColumnCommands.ExtractPropertyValues(ctrl);
+      Altaxo.Worksheet.Commands.RowCommands.InsertOneDataRow(ctrl);
+    }
+  }
+
+  public class InsertDataRows : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
+    {
+      Altaxo.Worksheet.Commands.RowCommands.InsertDataRows(ctrl);
     }
   }
 

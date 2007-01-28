@@ -323,6 +323,11 @@ namespace Altaxo.Data
     {
       return i<m_Count ? Double.IsNaN(m_Array[i]) : true;
     }
+    public override void SetElementEmpty(int i)
+    {
+      if (i < m_Count)
+        this[i] = NullValue;
+    }
 
     public new double this[int i]
     {

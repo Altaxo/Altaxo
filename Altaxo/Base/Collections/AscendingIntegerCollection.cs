@@ -29,7 +29,7 @@ namespace Altaxo.Collections
   /// </summary>
   public class AscendingIntegerCollection : IAscendingIntegerCollection, System.ICloneable
   {
-    protected System.Collections.SortedList _list = new System.Collections.SortedList();
+    protected System.Collections.Generic.SortedList<int,object> _list = new System.Collections.Generic.SortedList<int,object>();
 
     #region Serialization
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AscendingIntegerCollection),0)]
@@ -85,7 +85,7 @@ namespace Altaxo.Collections
     /// <param name="from"></param>
     public AscendingIntegerCollection(AscendingIntegerCollection from)
     {
-      _list = (System.Collections.SortedList)from._list.Clone();
+      _list = new System.Collections.Generic.SortedList<int,object>(from._list);
     }
 
     /// <summary>
@@ -128,7 +128,7 @@ namespace Altaxo.Collections
     /// </summary>
     public int this[int i]
     {
-      get { return (int)_list.GetKey(i); }
+      get { return _list.Keys[i]; }
     }
 
 
@@ -291,6 +291,24 @@ namespace Altaxo.Collections
     public object Clone()
     {
       return new AscendingIntegerCollection(this);
+    }
+
+    #endregion
+
+    #region IEnumerable<int> Members
+
+    public System.Collections.Generic.IEnumerator<int> GetEnumerator()
+    {
+      return _list.Keys.GetEnumerator();
+    }
+
+    #endregion
+
+    #region IEnumerable Members
+
+    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+    {
+      return _list.Keys.GetEnumerator();
     }
 
     #endregion

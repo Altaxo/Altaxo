@@ -193,5 +193,25 @@ namespace Altaxo.Collections
     }
 
     #endregion
+
+    #region IEnumerable<int> Members
+
+    public System.Collections.Generic.IEnumerator<int> GetEnumerator()
+    {
+      for (int i = 0; i < _count; i++)
+        yield return i + _start;
+    }
+
+    #endregion
+
+    #region IEnumerable Members
+
+    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+    {
+      for (int i = 0; i < _count; i++)
+        yield return i + _start;
+    }
+
+    #endregion
   }
 }

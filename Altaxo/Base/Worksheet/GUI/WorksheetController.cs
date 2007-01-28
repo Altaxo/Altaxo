@@ -2506,20 +2506,36 @@ namespace Altaxo.Worksheet.GUI
       this.View.TableAreaInvalidate();
     }
 
+    [field: NonSerialized]
+    public event EventHandler<ClickedCellInfo> TableHeaderLeftClicked;
     protected virtual void OnLeftClickTableHeader(ClickedCellInfo clickedCell)
     {
+      if (null != TableHeaderLeftClicked)
+        TableHeaderLeftClicked(this, clickedCell);
     }
 
+    [field: NonSerialized]
+    public event EventHandler<ClickedCellInfo> OutsideAllLeftClicked;
     protected virtual void OnLeftClickOutsideAll(ClickedCellInfo clickedCell)
     {
+      if (null != OutsideAllLeftClicked)
+        OutsideAllLeftClicked(this, clickedCell);
     }
 
+    [field: NonSerialized]
+    public event EventHandler<ClickedCellInfo> DataCellRightClicked;
     protected virtual void OnRightClickDataCell(ClickedCellInfo clickedCell)
     {
+      if (null != DataCellRightClicked)
+        DataCellRightClicked(this, clickedCell);
     }
 
+    [field: NonSerialized]
+    public event EventHandler<ClickedCellInfo> PropertyCellRightClicked;
     protected virtual void OnRightClickPropertyCell(ClickedCellInfo clickedCell)
     {
+      if (null != PropertyCellRightClicked)
+        PropertyCellRightClicked(this, clickedCell);
     }
 
     [field:NonSerialized]
@@ -2530,19 +2546,36 @@ namespace Altaxo.Worksheet.GUI
         DataColumnHeaderRightClicked(this, clickedCell);
     }
 
+    [field: NonSerialized]
+    public event EventHandler<ClickedCellInfo> DataRowHeaderRightClicked;
     protected virtual void OnRightClickDataRowHeader(ClickedCellInfo clickedCell)
     {
+      if (null != DataRowHeaderRightClicked)
+        DataRowHeaderRightClicked(this, clickedCell);
     }
 
+    [field: NonSerialized]
+    public event EventHandler<ClickedCellInfo> PropertyColumnHeaderRightClicked;
     protected virtual void OnRightClickPropertyColumnHeader(ClickedCellInfo clickedCell)
     {
-    }
-    protected virtual void OnRightClickTableHeader(ClickedCellInfo clickedCell)
-    {
+      if (null != PropertyColumnHeaderRightClicked)
+        PropertyColumnHeaderRightClicked(this, clickedCell);
     }
 
+    [field: NonSerialized]
+    public event EventHandler<ClickedCellInfo> TableHeaderRightClicked;
+    protected virtual void OnRightClickTableHeader(ClickedCellInfo clickedCell)
+    {
+      if (null != TableHeaderRightClicked)
+        TableHeaderRightClicked(this, clickedCell);
+    }
+
+    [field: NonSerialized]
+    public event EventHandler<ClickedCellInfo> OutsideAllRightClicked;
     protected virtual void OnRightClickOutsideAll(ClickedCellInfo clickedCell)
     {
+      if (null != OutsideAllRightClicked)
+        OutsideAllRightClicked(this, clickedCell);
     }
     #endregion
 

@@ -514,6 +514,12 @@ namespace Altaxo.Data
     /// <returns>True if the element is empty or not valid.</returns>
     public abstract bool IsElementEmpty(int i);
 
+    /// <summary>
+    /// This clears the cell at index i.
+    /// </summary>
+    /// <param name="i">The index where to clean.</param>
+    public abstract void SetElementEmpty(int i);
+
 
     /// <summary>
     /// Gets/sets the element at the index i by a value of type <see cref="AltaxoVariant"/>.

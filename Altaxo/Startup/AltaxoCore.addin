@@ -46,6 +46,7 @@
     <Import assembly=":AltaxoBase"/>
     <Import assembly=":AltaxoSDGui">
       <ConditionEvaluator name="SelectedDataColumns" class="Altaxo.Worksheet.Commands.SelectedDataConditionEvaluator"/>
+      <ConditionEvaluator name="SelectedPropertyColumns" class="Altaxo.Worksheet.Commands.SelectedPropertyConditionEvaluator"/>
       <ConditionEvaluator name="ContainsPLSModelData" class="Altaxo.Worksheet.Commands.PLSModelConditionEvaluator"/>
       <Doozer name="Texture" class="Altaxo.Main.TextureDoozer"/>
     </Import>
@@ -231,7 +232,7 @@
     <!-- Plot menu -->
     <Condition name = "WindowActive" activewindow="Altaxo.Gui.SharpDevelop.SDWorksheetViewContent" action="Exclude">
       <MenuItem id="Plot" label="${res:XML.MainMenu.PlotMenu}"  type="Menu">
-        <Condition name ="SelectedDataColumns" selecteddatacolumns="*" action="Disable">
+        <Condition name ="SelectedDataColumns" selected="*" action="Disable">
           <MenuItem id="PlotLine" label="${res:XML.MainMenu.PlotMenu.PlotLine}" icon="Icons.16x16.PlotLine"
 						description="${res:XML.MainMenu.PlotMenu.PlotLine.Description}" class="Altaxo.Worksheet.Commands.PlotLine" />
           <MenuItem id="PlotScatter" label="${res:XML.MainMenu.PlotMenu.PlotScatter}" icon="Icons.16x16.PlotScatter"
@@ -619,7 +620,7 @@
   </Path>
 
   <Path name = "/Altaxo/Views/Worksheet/DataColumnHeader/ContextMenu">
-    <Condition name="SelectedDataColumns" selecteddatacolumns="one" action="Disable">
+    <Condition name="SelectedDataColumns" selected="one" action="Disable">
       <MenuItem id="Rename" label="${res:XML.MainMenu.ColumnMenu.Rename}" description="${res:XML.MainMenu.ColumnMenu.Rename.Description}"
         class="Altaxo.Worksheet.Commands.RenameColumn" />
       <MenuItem	id="SetColumnValues" label="${res:XML.MainMenu.ColumnMenu.SetColumnValues}"	description="${res:XML.MainMenu.ColumnMenu.SetColumnValues.Description}"
@@ -642,18 +643,74 @@
     <MenuItem	id="MoveColumns" label="${res:XML.MainMenu.ColumnMenu.MoveColumns}"	description="${res:XML.MainMenu.ColumnMenu.MoveColumns.Description}"
       class="Altaxo.Worksheet.Commands.SetColumnPosition"	/>
 
+    <MenuItem id="CleanSeparator"  type = "Separator"/>
+    <MenuItem id="Clean" label="${res:XML.MainMenu.EditMenu.Clean}" icon="Icons.16x16.CleanWorksheetIcon"
+      description="${res:XML.MainMenu.EditMenu.Clean.Description}" class="Altaxo.Worksheet.Commands.EditClean" />
+    <MenuItem id="Delete" label="${res:XML.MainMenu.EditMenu.Delete}" icon="Icons.16x16.DeleteIcon"
+      description="${res:XML.MainMenu.EditMenu.Delete.Description}" class="Altaxo.Worksheet.Commands.EditRemove" />
+  </Path>
+
+  <Path name = "/Altaxo/Views/Worksheet/DataRowHeader/ContextMenu">
+
+    <MenuItem id="InsertOneRow" label="${res:XML.MainMenu.WorksheetMenu.InsertOneRow}" 
+      description="${res:XML.MainMenu.WorksheetMenu.InsertOneRow.Description}" class="Altaxo.Worksheet.Commands.InsertOneDataRow" />
+    <MenuItem id="InsertRows" label="${res:XML.MainMenu.WorksheetMenu.InsertDataRows}"
+      description="${res:XML.MainMenu.WorksheetMenu.InsertDataRows.Description}" class="Altaxo.Worksheet.Commands.InsertDataRows" />
+
+    <MenuItem id="CleanSeparator"  type = "Separator"/>
+    <MenuItem id="Clean" label="${res:XML.MainMenu.EditMenu.Clean}" icon="Icons.16x16.CleanWorksheetIcon"
+      description="${res:XML.MainMenu.EditMenu.Clean.Description}" class="Altaxo.Worksheet.Commands.EditClean" />
+    <MenuItem id="Delete" label="${res:XML.MainMenu.EditMenu.Delete}" icon="Icons.16x16.DeleteIcon"
+      description="${res:XML.MainMenu.EditMenu.Delete.Description}" class="Altaxo.Worksheet.Commands.EditRemove" />
 
   </Path>
 
+  <Path name = "/Altaxo/Views/Worksheet/PropertyColumnHeader/ContextMenu">
+    <Condition name="SelectedPropertyColumns" selected="one" action="Disable">
+      <MenuItem id="Rename" label="${res:XML.MainMenu.ColumnMenu.Rename}" description="${res:XML.MainMenu.ColumnMenu.Rename.Description}"
+        class="Altaxo.Worksheet.Commands.RenameColumn" />
+      <MenuItem	id="SetColumnValues" label="${res:XML.MainMenu.ColumnMenu.SetColumnValues}"	description="${res:XML.MainMenu.ColumnMenu.SetColumnValues.Description}"
+        class="Altaxo.Worksheet.Commands.SetColumnValues"	/>
+    </Condition>
+    <MenuItem	id="MoveColumns" label="${res:XML.MainMenu.ColumnMenu.MoveColumns}"	
+      description="${res:XML.MainMenu.ColumnMenu.MoveColumns.Description}" class="Altaxo.Worksheet.Commands.SetColumnPosition"	/>
+    <MenuItem id="ExtractPropertyValues" label="${res:XML.MainMenu.ColumnMenu.ExtractPropertyValues}"
+      description="${res:XML.MainMenu.ColumnMenu.ExtractPropertyValues.Description}" class="Altaxo.Worksheet.Commands.ExtractPropertyValues" />
+
+    <MenuItem id="CleanSeparator"  type = "Separator"/>
+    <MenuItem id="Clean" label="${res:XML.MainMenu.EditMenu.Clean}" icon="Icons.16x16.CleanWorksheetIcon"
+      description="${res:XML.MainMenu.EditMenu.Clean.Description}" class="Altaxo.Worksheet.Commands.EditClean" />
+    <MenuItem id="Delete" label="${res:XML.MainMenu.EditMenu.Delete}" icon="Icons.16x16.DeleteIcon"
+      description="${res:XML.MainMenu.EditMenu.Delete.Description}" class="Altaxo.Worksheet.Commands.EditRemove" />
+
+  </Path>
+
+  <Path name = "/Altaxo/Views/Worksheet/OutsideAll/ContextMenu">
+    <MenuItem id="AddDataColumns" label="${res:XML.MainMenu.WorksheetMenu.AddDataColumns}" description="${res:XML.MainMenu.WorksheetMenu.AddDataColumns.Description}"
+      class="Altaxo.Worksheet.Commands.AddDataColumns" />
+    <MenuItem id="AddPropertyColumns" label="${res:XML.MainMenu.WorksheetMenu.AddPropertyColumns}"
+      description="${res:XML.MainMenu.WorksheetMenu.AddPropertyColumns.Description}" class="Altaxo.Worksheet.Commands.AddPropertyColumns" />
+  </Path>
+
+  <Path name = "/Altaxo/Views/Worksheet/DataTableHeader/ContextMenu">
+    <MenuItem id="AddDataColumns" label="${res:XML.MainMenu.WorksheetMenu.AddDataColumns}" description="${res:XML.MainMenu.WorksheetMenu.AddDataColumns.Description}"
+      class="Altaxo.Worksheet.Commands.AddDataColumns" />
+    <MenuItem id="AddPropertyColumns" label="${res:XML.MainMenu.WorksheetMenu.AddPropertyColumns}"
+      description="${res:XML.MainMenu.WorksheetMenu.AddPropertyColumns.Description}" class="Altaxo.Worksheet.Commands.AddPropertyColumns" />
+  </Path>
+
   <Path name = "/Altaxo/BuiltinTextures">
-    <Texture id="Marbel/RedMarbel" resource = "Icons.16x16.PasteIcon"/>
-    <Texture id="Marbel/DarkMarbel" resource = "Icons.16x16.CopyIcon"/>
+    <Texture id="Marbel/RedMarble1" resource = "Textures.Marble.RedMarble1"/>
+    <Texture id="Marbel/RedMarble2" resource = "Textures.Marble.RedMarble2"/>
+    <Texture id="Caustics/BlueCaustic" resource = "Textures.Caustics.BlueCaustics"/>
+    <Texture id="Metal/ScratchedSilver" resource = "Textures.Metal.ScratchedSilver"/>
+
   </Path>
 
   <!-- End of Altaxo stuff -->
 
   <Path name = "/SharpDevelop/Workbench/Ambiences">
-		<Class id    = ".NET"
+    <Class id    = ".NET"
 		       class = "ICSharpCode.Core.NetAmbience"/>
 	</Path>
 	

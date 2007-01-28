@@ -31,16 +31,90 @@ namespace Altaxo.Graph.Scales
   /// </summary>
   public class AngularScale : NumericalScale
   {
-    /// <summary>If true, usse degree instead of radian.</summary>
+    /// <summary>
+    /// Denotes the possible dividers of 360° to form ticks.
+    /// </summary>
+    protected static readonly int[] _possibleDividers = 
+      {
+        1,   // 360°
+        2,   // 180°
+        3,   // 120°
+        4,   // 90°
+        6,   // 60°
+        8,   // 45°
+        12,  // 30°
+        16,  // 22.5°
+        24,  // 15°
+        36,  // 10°
+        72,  // 5°
+        360  // 1°
+      };
+
+    /// <summary>If true, use degree instead of radian.</summary>
     protected bool _useDegree;
+    /// <summary>Major tick divider. Should be one of the values of the table <see cref="_possibleDividers /></summary>
+    protected int _majorTickDivider=8;
+    /// <summary>Minor tick divider. Should be one of the values of the table <see cref="_possibleDividers /></summary>
+    protected int _minorTickDivider=24;
+    /// <summary>Origin of the scale in multiples of 90°</summary>
+    protected int _scaleOrigin; // in 90°
+    /// <summary>If true, the scale uses positive and negative values (-180..180°) instead of only positive values (0..360°).</summary>
+    protected bool _usePositiveNegativeAngles;
+
     
     /// <summary>
     /// The value where this scale starts. Default is 0. The user/programmer can set this value manually.
     /// </summary>
     protected double _cachedAxisOrg;
-
     protected double _cachedAxisSpan = 2 * Math.PI;
     protected double _cachedOneByAxisSpan = 1 / (2*Math.PI);
+    protected Boundaries.NumericalBoundaries _dataBounds = new Boundaries.DummyNumericalBoundaries();
+
+
+    #region Serialization
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AngularScale), 0)]
+    class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        AngularScale s = (AngularScale)obj;
+
+
+        info.AddValue("UseDegree", s._useDegree);
+        info.AddValue("MajorTickDiv", s._majorTickDivider);
+        info.AddValue("MinorTickDiv", s._minorTickDivider);
+        info.AddValue("Org90", s._scaleOrigin);
+        info.AddValue("PosNegAngles", s._usePositiveNegativeAngles);
+      }
+
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        AngularScale s = SDeserialize(o, info, parent);
+        OnAfterDeserialization(s);
+        return s;
+      }
+
+      protected virtual void OnAfterDeserialization(AngularScale s)
+      {
+        s.SetCachedValues();
+      }
+
+      protected virtual AngularScale SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        AngularScale s = null != o ? (AngularScale)o : new AngularScale();
+
+        s._useDegree = info.GetBoolean("UseDegree");
+        s._majorTickDivider = info.GetInt32("MajorTickDiv");
+        s._minorTickDivider = info.GetInt32("MinorTickDiv");
+        s._scaleOrigin = info.GetInt32("Org90");
+        s._usePositiveNegativeAngles = info.GetBoolean("PosNegAngles");
+        // set cached values is called by the enclosing function
+        return s;
+      }
+    }
+    #endregion
+
 
 
     public AngularScale()
@@ -49,9 +123,30 @@ namespace Altaxo.Graph.Scales
     public AngularScale(AngularScale from)
     {
       this._useDegree = from._useDegree;
+      this._majorTickDivider = from._majorTickDivider;
+      this._minorTickDivider = from._minorTickDivider;
+      this._scaleOrigin = from._scaleOrigin;
+      this._usePositiveNegativeAngles = from._usePositiveNegativeAngles;
       this._cachedAxisOrg = from._cachedAxisOrg;
       this._cachedAxisSpan = from._cachedAxisSpan;
       this._cachedOneByAxisSpan = from._cachedOneByAxisSpan;
+    }
+
+    void SetCachedValues()
+    {
+      _scaleOrigin %=4;
+      if (_useDegree)
+      {
+        _cachedAxisOrg = _scaleOrigin * 90;
+        _cachedAxisSpan = 360;
+        _cachedOneByAxisSpan = 1.0 / 360;
+      }
+      else
+      {
+        _cachedAxisOrg = _scaleOrigin * Math.PI/2;
+        _cachedAxisSpan = 2 * Math.PI;
+        _cachedOneByAxisSpan = 1 / (2 * Math.PI);
+      }
     }
 
     #region NumericalScale
@@ -71,25 +166,50 @@ namespace Altaxo.Graph.Scales
       return Math.Abs(x - y) < dev;
     }
 
+    private double GetOriginInDegrees()
+    {
+      _scaleOrigin = _scaleOrigin % 4;
+      return _scaleOrigin * 90;
+    }
+
     public override double[] GetMajorTicks()
     {
       List<double> result = new List<double>();
 
+      double start = GetOriginInDegrees();
+      for (int i = 0; i < _majorTickDivider; i++)
+      {
+        double angle = start + i*360.0 / _majorTickDivider;
+        angle = Math.IEEERemainder(angle, 360);
+        if (_usePositiveNegativeAngles)
+        {
+          if (angle > 180)
+            angle -= 360;
+        }
+        else
+        {
+          if (angle < 0)
+            angle += 360;
+        }
+        result.Add(_useDegree ? angle : angle * Math.PI / 180);
+      }
+
+      /*
       if (_useDegree)
       {
         // Major ticks at 0, 45, 90 degree, minor every 15°
         double start = 45*Math.Floor(_cachedAxisOrg / 45);
-        for (; start <= End; start += 45)
+        for (; start < End; start += 45)
           result.Add(start);
       }
       else
       {
-        // Major ticks at 0, Pi/4, Pi/2, minor every Pi/6
+        // Major ticks at 0, Pi/4, Pi/2, minor every Pi/12
         double istart =  Math.Floor(_cachedAxisOrg / (0.25*Math.PI));
         double iend = Math.Ceiling(End / (0.25 * Math.PI));
         double cachedAxisEnd = _cachedAxisOrg+_cachedAxisSpan;
 
-        for (double i=istart; i <= iend; i += 1)
+        for (double i=istart; i < iend; i += 1)
         {
           double val = i * 0.25 * Math.PI;
           if (val >= _cachedAxisOrg && val <= cachedAxisEnd)
@@ -100,7 +220,57 @@ namespace Altaxo.Graph.Scales
             result.Add(val);
         }
       }
+      */
+      return result.ToArray();
+    }
 
+
+    public override double[] GetMinorTicks()
+    {
+      if (_minorTickDivider <= 0)
+        return new double[0];
+      if (_minorTickDivider <= _majorTickDivider)
+        return new double[0];
+      if (_minorTickDivider % _majorTickDivider != 0)
+      {
+        // look for a minor tick divider greater than the _majortickdivider
+        for (int i = 0; i < _possibleDividers.Length; i++)
+        {
+          if (_possibleDividers[i] > _majorTickDivider && _possibleDividers[i] % _majorTickDivider == 0)
+          {
+            _minorTickDivider = _possibleDividers[i];
+            break;
+          }
+        }
+      }
+      if (_minorTickDivider % _majorTickDivider != 0)
+        return new double[0];
+
+      int majorTicksEvery = _minorTickDivider / _majorTickDivider;
+
+
+      List<double> result = new List<double>();
+
+      double start = GetOriginInDegrees();
+      for (int i = 1; i < _minorTickDivider; i++)
+      {
+        if (i % majorTicksEvery == 0)
+          continue;
+
+        double angle = start + i * 360.0 / _minorTickDivider;
+        angle = Math.IEEERemainder(angle, 360);
+        if (_usePositiveNegativeAngles)
+        {
+          if (angle > 180)
+            angle -= 360;
+        }
+        else
+        {
+          if (angle < 0)
+            angle += 360;
+        }
+        result.Add(_useDegree ? angle : angle * Math.PI / 180);
+      }
       return result.ToArray();
     }
 
@@ -116,7 +286,7 @@ namespace Altaxo.Graph.Scales
     {
       get
       {
-        return null;
+        return _dataBounds;
       }
     }
 
@@ -128,7 +298,12 @@ namespace Altaxo.Graph.Scales
       }
       set
       {
-        _cachedAxisOrg = value;
+        double angle = _useDegree ? value : value*180/Math.PI;
+        // round the angle to full 90°
+        angle = Math.Round(angle / 90);
+        angle = Math.IEEERemainder(angle, 4);
+        _scaleOrigin = (int)angle;
+        _cachedAxisOrg = _useDegree ? _scaleOrigin * 90 : _scaleOrigin * Math.PI / 2;
       }
     }
 

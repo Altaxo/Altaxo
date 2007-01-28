@@ -208,6 +208,93 @@ namespace Altaxo.Worksheet.Commands
 
     }
 
+    /// <summary>
+    /// This commands clean all selected cells.
+    /// </summary>
+    /// <param name="ctrl">The worksheet controller.</param>
+    public static void CleanSelected(WorksheetController ctrl)
+    {
+      ctrl.DataTable.Suspend();
+
+
+      // Property columns are only deleted, if selected alone or in conjunction with data row selection
+      if (ctrl.SelectedPropertyColumns.Count > 0 && ctrl.SelectedPropertyRows.Count == 0 && ctrl.SelectedDataColumns.Count == 0)
+      {
+        ctrl.DataTable.PropCols.RemoveColumns(ctrl.SelectedPropertyColumns);
+        ctrl.SelectedPropertyColumns.Clear();
+        ctrl.SelectedPropertyRows.Clear();
+      }
+      // note here: Property rows are only removed indirect by removing data columns
+
+
+
+
+      // clear whole columns when no specific
+      if (ctrl.SelectedPropertyColumns.Count > 0)
+      {
+        if (ctrl.SelectedPropertyRows.Count == 0) // if only data columns but not rows selected, we can clean the data columns complete
+        {
+          foreach (int colidx in ctrl.SelectedPropertyColumns)
+            ctrl.DataTable.PropertyColumns[colidx].Clear();
+        }
+        else // if property columns and also rows are selected, we have to clean the cells individually
+        {
+          foreach (int colidx in ctrl.SelectedPropertyColumns)
+          {
+            DataColumn col = ctrl.DataTable.PropertyColumns[colidx];
+            foreach (int rowidx in ctrl.SelectedPropertyRows)
+              col.SetElementEmpty(rowidx);
+          }
+        }
+      }
+      else if (ctrl.SelectedPropertyRows.Count > 0) // if only rows are selected, clean them complete
+      {
+        for (int colidx = ctrl.DataTable.PropertyColumnCount - 1; colidx >= 0; colidx--)
+        {
+          DataColumn col = ctrl.DataTable.PropertyColumns[colidx];
+          foreach (int rowidx in ctrl.SelectedPropertyRows)
+            col.SetElementEmpty(rowidx);
+        }
+      }
+
+
+
+
+
+      // clear whole columns when no specific
+      if (ctrl.SelectedDataColumns.Count > 0)
+      {
+        if (ctrl.SelectedDataRows.Count == 0) // if only data columns but not rows selected, we can clean the data columns complete
+        {
+          foreach (int colidx in ctrl.SelectedDataColumns)
+            ctrl.DataTable.DataColumns[colidx].Clear();
+        }
+        else // if data columns and also rows are selected, we have to clean the cells individually
+        {
+          foreach (int colidx in ctrl.SelectedDataColumns)
+          {
+            DataColumn col = ctrl.DataTable.DataColumns[colidx];
+            foreach (int rowidx in ctrl.SelectedDataRows)
+              col.SetElementEmpty(rowidx);
+          }
+        }
+      }
+      else if (ctrl.SelectedDataRows.Count > 0) // if only rows are selected, clean them complete
+      {
+        for(int colidx = ctrl.DataTable.DataColumnCount-1;colidx>=0;colidx--)
+        {
+          DataColumn col = ctrl.DataTable.DataColumns[colidx];
+          foreach (int rowidx in ctrl.SelectedDataRows)
+            col.SetElementEmpty(rowidx);
+        }
+      }
+
+
+      // end code for the selected rows
+      ctrl.DataTable.Resume();
+      ctrl.View.TableAreaInvalidate(); // necessary because we changed the selections
+    }
+
 
     public static void CopyToClipboard(GUI.WorksheetController dg)
     {

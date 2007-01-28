@@ -1121,6 +1121,7 @@
     <Compile Include="Graph\Gdi\LabelFormatting\NumericLabelFormattingBase.cs" />
     <Compile Include="Graph\Gdi\LabelFormatting\NumericLabelFormattingFixed.cs" />
     <Compile Include="Graph\Gdi\LabelFormatting\NumericLabelFormattingMantissa.cs" />
+    <Compile Include="Graph\Gdi\LabelFormatting\NumericLabelFormattingRadian.cs" />
     <Compile Include="Graph\Gdi\LabelFormatting\NumericLabelFormattingScientific.cs" />
     <Compile Include="Graph\Gdi\LayerBackground.cs" />
     <Compile Include="Graph\Gdi\LineCaps\ArrowF10LineCap.cs" />
@@ -1194,6 +1195,8 @@
     <Compile Include="Graph\Scales\AngularScale.cs" />
     <Compile Include="Graph\Scales\Boundaries\AbstractPhysicalBoundaries.cs" />
     <Compile Include="Graph\Scales\Boundaries\BoundariesChangedEventArgs.cs" />
+    <Compile Include="Graph\Scales\Boundaries\DummyBoundaries.cs" />
+    <Compile Include="Graph\Scales\Boundaries\DummyNumericalBoundaries.cs" />
     <Compile Include="Graph\Scales\Boundaries\EventHandlers.cs" />
     <Compile Include="Graph\Scales\Boundaries\FiniteDateTimeBoundaries.cs" />
     <Compile Include="Graph\Scales\Boundaries\FiniteNumericalBoundaries.cs" />

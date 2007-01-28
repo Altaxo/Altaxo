@@ -297,6 +297,11 @@ namespace Altaxo.Data
     {
       return i<m_Count ? (DateTime.MinValue==m_Array[i]) : true;
     }
+    public override void SetElementEmpty(int i)
+    {
+      if (i < m_Count)
+        this[i] = NullValue;
+    }
 
     public new DateTime this[int i]
     {

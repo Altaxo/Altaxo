@@ -80,6 +80,59 @@ namespace Altaxo.Worksheet.Commands
     }
     #endregion
 
+    /// <summary>
+    /// Insert a number of data rows into the controlled table.
+    /// </summary>
+    /// <param name="ctrl">The worksheet controller.</param>
+    /// <param name="rowBeforeToInsert">Number of the row before which to insert the additional rows.</param>
+    /// <param name="numberOfRows">Number of rows to insert.</param>
+    public static void InsertDataRows(WorksheetController ctrl, int rowBeforeToInsert, int numberOfRows)
+    {
+      if (numberOfRows <= 0 || rowBeforeToInsert<0)
+        return;
 
+      ctrl.Doc.DataColumns.InsertRows(rowBeforeToInsert, numberOfRows);
+      ctrl.ClearAllSelections();
+      ctrl.UpdateTableView();
+    }
+
+    /// <summary>
+    /// Ask the user for the number of data rows to insert in a data table.
+    /// </summary>
+    /// <param name="ctrl">The worksheet controller.</param>
+    /// <param name="rowBeforeToInsert">Number of the row before which to insert the rows.</param>
+    public static void InsertDataRows(WorksheetController ctrl,int rowBeforeToInsert)
+    {
+      // ask for the number of rows to insert
+      Altaxo.Gui.Common.IntegerValueInputController ictrl = new IntegerValueInputController(1, "Enter the number of rows to insert:");
+      if (Current.Gui.ShowDialog(ictrl, "Insert rows", false))
+        InsertDataRows(ctrl, rowBeforeToInsert, ictrl.EnteredContents);
+    }
+
+    /// <summary>
+    /// Inserts a single data row in a position just before the first selected row. 
+    /// If no row is selected, the row is inserted before the first row.
+    /// </summary>
+    /// <param name="ctrl">The worksheet controller.</param>
+    public static void InsertOneDataRow(WorksheetController ctrl)
+    {
+      if (ctrl.SelectedDataRows.Count > 0)
+        InsertDataRows(ctrl, ctrl.SelectedDataRows[0], 1);
+      else
+        InsertDataRows(ctrl, 0, 1);
+    }
+
+    /// <summary>
+    /// Inserts a user choosen number of rows just before the first selected row.
+    /// If no row is selected, the row is inserted before the first row.
+    /// </summary>
+    /// <param name="ctrl">The worksheet controller.</param>
+    public static void InsertDataRows(WorksheetController ctrl)
+    {
+      if (ctrl.SelectedDataRows.Count > 0)
+        InsertDataRows(ctrl, ctrl.SelectedDataRows[0]);
+      else
+        InsertDataRows(ctrl, 0);
+    }
   }
 }

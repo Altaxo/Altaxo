@@ -105,6 +105,11 @@ namespace Altaxo.Gui.SharpDevelop
     {
       _controller = ctrl;
       _controller.DataColumnHeaderRightClicked += EhDataColumnHeaderRightClicked;
+      _controller.DataRowHeaderRightClicked += EhDataRowHeaderRightClicked;
+      _controller.PropertyColumnHeaderRightClicked += EhPropertyColumnHeaderRightClicked;
+      _controller.TableHeaderRightClicked += EhTableHeaderRightClicked;
+      _controller.OutsideAllRightClicked += EhOutsideAllRightClicked;
+
       _controller.TitleNameChanged += EhTitleNameChanged;
     }
 
@@ -130,7 +135,8 @@ namespace Altaxo.Gui.SharpDevelop
     #region Context menu handlers
     protected void EhDataColumnHeaderRightClicked(object sender, ClickedCellInfo clickedCell)
     {
-      if (!(_controller.SelectedDataColumns.Contains(clickedCell.Column)))
+      if (!(_controller.SelectedDataColumns.Contains(clickedCell.Column)) &&
+          !(Controller.SelectedPropertyRows.Contains(clickedCell.Column)))
       {
         _controller.ClearAllSelections();
         _controller.SelectedDataColumns.Add(clickedCell.Column);
@@ -139,6 +145,42 @@ namespace Altaxo.Gui.SharpDevelop
       ContextMenuStrip mnu = MenuService.CreateContextMenu(this, "/Altaxo/Views/Worksheet/DataColumnHeader/ContextMenu");
       mnu.Show((Control)_controller.ViewObject, clickedCell.MousePositionFirstDown);
     }
+    protected void EhDataRowHeaderRightClicked(object sender, ClickedCellInfo clickedCell)
+    {
+      if (!(_controller.SelectedDataRows.Contains(clickedCell.Row)))
+      {
+        _controller.ClearAllSelections();
+        _controller.SelectedDataRows.Add(clickedCell.Row);
+        _controller.View.TableAreaInvalidate();
+      }
+      ContextMenuStrip mnu = MenuService.CreateContextMenu(this, "/Altaxo/Views/Worksheet/DataRowHeader/ContextMenu");
+      mnu.Show((Control)_controller.ViewObject, clickedCell.MousePositionFirstDown);
+    }
+
+    protected void EhPropertyColumnHeaderRightClicked(object sender, ClickedCellInfo clickedCell)
+    {
+      if (!(_controller.SelectedPropertyColumns.Contains(clickedCell.Column)))
+      {
+        _controller.ClearAllSelections();
+        _controller.SelectedPropertyColumns.Add(clickedCell.Column);
+        _controller.View.TableAreaInvalidate();
+      }
+      ContextMenuStrip mnu = MenuService.CreateContextMenu(this, "/Altaxo/Views/Worksheet/PropertyColumnHeader/ContextMenu");
+      mnu.Show((Control)_controller.ViewObject, clickedCell.MousePositionFirstDown);
+    }
+
+    protected void EhTableHeaderRightClicked(object sender, ClickedCellInfo clickedCell)
+    {
+      ContextMenuStrip mnu = MenuService.CreateContextMenu(this, "/Altaxo/Views/Worksheet/DataTableHeader/ContextMenu");
+      mnu.Show((Control)_controller.ViewObject, clickedCell.MousePositionFirstDown);
+    }
+
+    protected void EhOutsideAllRightClicked(object sender, ClickedCellInfo clickedCell)
+    {
+      ContextMenuStrip mnu = MenuService.CreateContextMenu(this, "/Altaxo/Views/Worksheet/OutsideAll/ContextMenu");
+      mnu.Show((Control)_controller.ViewObject, clickedCell.MousePositionFirstDown);
+    }
+
 
     #endregion
 

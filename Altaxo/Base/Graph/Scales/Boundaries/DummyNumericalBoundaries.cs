@@ -20,65 +20,36 @@
 /////////////////////////////////////////////////////////////////////////////
 #endregion
 
-
 using System;
-using Altaxo.Serialization;
-using Altaxo;
+using System.Collections.Generic;
+using System.Text;
 
-namespace Altaxo.Data
+namespace Altaxo.Graph.Scales.Boundaries
 {
-  /// <summary>
-  /// AltaxoDBNullColumn serves as a placeholder in case the column
-  /// type is not yet known, but some attibutes of the column must
-  /// already been set
-  /// </summary>
-  public class DBNullColumn : DataColumn
+  public class DummyNumericalBoundaries : NumericalBoundaries
   {
-    public DBNullColumn()
+    public DummyNumericalBoundaries()
     {
+    }
+
+    public DummyNumericalBoundaries(DummyNumericalBoundaries from)
+      : base(from)
+    {
+    }
+
+    public override bool Add(Altaxo.Data.IReadableColumn col, int idx)
+    {
+      return true;
+    }
+
+    public override bool Add(Altaxo.Data.AltaxoVariant item)
+    {
+      return true;
     }
 
     public override object Clone()
     {
-      return new DBNullColumn();
-    }
-
-    public override int Count
-    {
-      get
-      {
-        return 0;
-      }
-    }
-
-    public override System.Type GetColumnStyleType()
-    { 
-      return null;
-    }
-    public override void SetValueAt(int i, AltaxoVariant val)
-    {
-    }
-    public override AltaxoVariant GetVariantAt(int i)
-    {
-      return null;
-    }
-    public override bool IsElementEmpty(int i)
-    {
-      return true;
-    }
-    public override void SetElementEmpty(int i)
-    {
-    }
-
-
-    public override void CopyDataFrom(Altaxo.Data.DataColumn v)
-    {
-    }
-    public override void RemoveRows(int nFirstRow, int nCount) // removes nCount rows starting from nFirstRow 
-    {
-    }
-    public override void InsertRows(int nBeforeRow, int nCount) // inserts additional empty rows
-    {
+      return new DummyNumericalBoundaries(this);
     }
   }
 }
