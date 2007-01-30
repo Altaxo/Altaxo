@@ -170,8 +170,11 @@ namespace Altaxo.Graph.Scales
       sm_AvailableAxes = new System.Collections.Hashtable();
 
       System.Type[] types = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(Scale));
-      foreach(System.Type definedtype in types)
-        sm_AvailableAxes.Add(definedtype.Name,definedtype);
+      foreach (System.Type definedtype in types)
+      {
+        if(definedtype.IsVisible)
+          sm_AvailableAxes.Add(definedtype.Name, definedtype);
+      }
       
     }
 

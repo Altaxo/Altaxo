@@ -125,13 +125,6 @@ namespace Altaxo.Gui.Graph
       get { return Controller; }
       set { Controller = (IAxisScaleController)value; }
     }
-
-
-    public System.Windows.Forms.Form Form
-    {
-      get { return this.ParentForm; }
-    }
-
    
 
     public void InitializeAxisType(string[] arr, string sel)
@@ -142,7 +135,7 @@ namespace Altaxo.Gui.Graph
 
     [BrowsableAttribute(false)]
     private UserControl _boundaryControl=null;
-    public void SetBoundaryGUIObject(object guiobject)
+    public void SetBoundaryView(object guiobject)
     {
       if(null!=_boundaryControl)
         this.Controls.Remove(_boundaryControl);
@@ -153,12 +146,54 @@ namespace Altaxo.Gui.Graph
       {
         // find a good place for this object
         // right below the type
-        this.Controls.Add(_boundaryControl);
+
+        if(_scaleControl==null)
         _boundaryControl.Location = new Point(0,this.m_Scale_cbType.Bounds.Bottom + this.m_Scale_cbType.Bounds.Height);
-        this.Size = new Size(Math.Max(this.m_Scale_cbType.Bounds.Right,_boundaryControl.Bounds.Right),
-          _boundaryControl.Bounds.Bottom);
+        else
+        _boundaryControl.Location = new Point(0, this._scaleControl.Bounds.Bottom + this.m_Scale_cbType.Bounds.Height);
+
+      SetMySize();
+        this.Controls.Add(_boundaryControl);
       }
     }
+
+    [BrowsableAttribute(false)]
+    private Control _scaleControl = null;
+    public void SetScaleView(object guiobject)
+    {
+      if (null != _scaleControl)
+        this.Controls.Remove(_scaleControl);
+
+      _scaleControl = guiobject as Control;
+
+      if (_scaleControl != null)
+      {
+        // find a good place for this object
+        // right below the type
+       _scaleControl.Location = new Point(0, this.m_Scale_cbType.Bounds.Bottom + this.m_Scale_cbType.Bounds.Height);
+       SetMySize();
+       this.Controls.Add(_scaleControl);
+      }
+    }
+
+    void SetMySize()
+    {
+      int x = this.m_Scale_cbType.Bounds.Right;
+      int y = this.m_Scale_cbType.Bounds.Bottom;
+
+      if (null != _scaleControl)
+      {
+        x = Math.Max(x, _scaleControl.Bounds.Right);
+        y = Math.Max(y, _scaleControl.Bounds.Bottom);
+      }
+      if (null != _boundaryControl)
+      {
+        x = Math.Max(x, _boundaryControl.Bounds.Right);
+        y = Math.Max(y, _boundaryControl.Bounds.Bottom);
+      }
+      this.Size = new Size(x,y);
+    }
+
 
     #endregion
 

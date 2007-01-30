@@ -976,6 +976,10 @@
       <SubType>Designer</SubType>
       <DependentUpon>PositionSizeRotationScaleControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\Scales\AngularScaleControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>AngularScaleControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Gui\Graph\ShapeGraphicControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>ShapeGraphicControl.cs</DependentUpon>
@@ -1370,6 +1374,13 @@
       <DependentUpon>PlotGroupCollectionControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\PlotGroupCollectionController.cs" />
+    <Compile Include="Gui\Graph\Scales\AngularScaleControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\Scales\AngularScaleControl.Designer.cs">
+      <DependentUpon>AngularScaleControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\Scales\AngularScaleController.cs" />
     <Compile Include="Gui\Graph\Scales\Rescaling\DateTimeAxisRescaleController.cs" />
     <Compile Include="Gui\Graph\Scales\Rescaling\LogarithmicAxisRescaleController.cs" />
     <Compile Include="Gui\Graph\Scales\Rescaling\NumericAxisRescaleController.cs" />

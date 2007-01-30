@@ -589,5 +589,36 @@ namespace Altaxo.Main.Services
       return (attributes.Length > 0) ? attributes[0].Description : value.ToString();
     }
 
+
+    #region static Windows Form methods
+
+    public static void InitComboBox(System.Windows.Forms.ComboBox box, Altaxo.Collections.SelectableListNodeList names)
+    {
+      box.BeginUpdate();
+      box.Items.Clear();
+      foreach (Altaxo.Collections.SelectableListNode node in names)
+      {
+        box.Items.Add(node);
+      }
+      foreach (Altaxo.Collections.SelectableListNode node in names)
+      {
+        if (node.Selected)
+        {
+          box.SelectedItem = node;
+          break;
+        }
+      }
+      box.EndUpdate();
+    }
+    public static void SynchronizeSelectableListNodes(System.Windows.Forms.ComboBox box)
+    {
+      object sel = box.SelectedItem;
+      foreach (Altaxo.Collections.SelectableListNode node in box.Items)
+      {
+        node.Selected = object.ReferenceEquals(sel, node);
+      }
+    }
+
+    #endregion
   }
 }

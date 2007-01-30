@@ -117,6 +117,17 @@ namespace Altaxo.Collections
       }
       return -1;
     }
+    public SelectableListNode FirstSelectedNode
+    {
+      get
+      {
+        foreach (SelectableListNode node in this)
+          if (node.Selected)
+            return node;
+
+        return null;
+      }
+    }
     public void Exchange(int i, int j)
     {
       if (i == j)

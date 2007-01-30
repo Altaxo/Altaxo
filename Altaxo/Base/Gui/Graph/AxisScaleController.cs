@@ -39,14 +39,11 @@ namespace Altaxo.Gui.Graph
 
     IAxisScaleController Controller { get; set; }
 
-    System.Windows.Forms.Form Form  { get; }
-
-   
-
     void InitializeAxisType(string[] arr, string sel);
 
+    void SetBoundaryView(object guiobject);
+    void SetScaleView(object guiobject);
 
-    void SetBoundaryGUIObject(object guiobject);
   }
   #endregion
 
@@ -77,6 +74,7 @@ namespace Altaxo.Gui.Graph
     protected string  m_AxisRescale;
     protected string  m_Original_AxisRescale;
 
+    protected IMVCAController m_ScaleController;
     protected IMVCAController m_BoundaryController;
 
 
@@ -137,12 +135,14 @@ namespace Altaxo.Gui.Graph
     public void SetElements()
     {
       SetAxisType(true);
+      SetScaleController(true);
       SetBoundaryController(true);
     }
 
     public void SetViewElements()
     {
       SetAxisType(false);
+      SetScaleController(false);
       SetBoundaryController(false);
     }
 
@@ -169,6 +169,18 @@ namespace Altaxo.Gui.Graph
         View.InitializeAxisType(names,m_AxisType);
     }
 
+    public void SetScaleController(bool bInit)
+    {
+      if (bInit)
+      {
+        object scaleObject = _tempAxis;
+        m_ScaleController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { scaleObject }, typeof(IMVCAController));
+      }
+      if (null != View)
+      {
+        View.SetScaleView(null==m_ScaleController ? null : m_ScaleController.ViewObject);
+      }
+    }
 
     public void SetBoundaryController(bool bInit)
     {
@@ -182,7 +194,7 @@ namespace Altaxo.Gui.Graph
       }
       if(null!=View)
       {
-        View.SetBoundaryGUIObject(null!=m_BoundaryController ? m_BoundaryController.ViewObject : null);
+        View.SetBoundaryView(null!=m_BoundaryController ? m_BoundaryController.ViewObject : null);
       }
     }
 
@@ -193,7 +205,11 @@ namespace Altaxo.Gui.Graph
 
       m_Layer.LinkedScales.SetScale(m_axisNumber, _tempAxis);
 
-   
+      if (null != m_ScaleController)
+      {
+        if (false == m_ScaleController.Apply())
+          return false;
+      }
 
       if(null!=m_BoundaryController)
       {
@@ -237,6 +253,7 @@ namespace Altaxo.Gui.Graph
             {
             }
 
+            SetScaleController(true);
             // now we have also to replace the controller and the control for the axis boundaries
             SetBoundaryController(true);
           }

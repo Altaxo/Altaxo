@@ -149,6 +149,76 @@ namespace Altaxo.Graph.Scales
       }
     }
 
+    #region Properties
+
+    public bool UseDegrees
+    {
+      get
+      {
+        return _useDegree;
+      }
+      set
+      {
+        _useDegree = value;
+      }
+    }
+
+    public bool UseSignedValues
+    {
+      get
+      {
+        return _usePositiveNegativeAngles;
+      }
+      set
+      {
+        _usePositiveNegativeAngles = value;
+      }
+    }
+
+    public int ScaleOrigin
+    {
+      get
+      {
+        return _scaleOrigin;
+      }
+      set
+      {
+        _scaleOrigin = value;
+        SetCachedValues();
+      }
+    }
+
+    public int MajorTickDivider
+    {
+      get
+      {
+        return _majorTickDivider;
+      }
+      set
+      {
+        _majorTickDivider = value;
+      }
+    }
+    public int MinorTickDivider
+    {
+      get
+      {
+        return _minorTickDivider;
+      }
+      set
+      {
+        _minorTickDivider = value;
+      }
+    }
+
+    public int[] GetPossibleDividers() 
+    {
+      return (int[])_possibleDividers.Clone(); 
+    } 
+
+
+    #endregion
+
     #region NumericalScale
 
     public override double PhysicalToNormal(double x)
