@@ -405,7 +405,6 @@
     <Content Include="doc\help\SharpDevelop.chm" />
     <Content Include="doc\help\SharpDevelop.hhc" />
     <Content Include="doc\help\SharpDevelop2.hhc" />
-    <Content Include="doc\help\SharpDevelopHelp.zip" />
     <Content Include="doc\license.txt" />
     <Content Include="doc\SharpDevelopTODO.txt" />
   </ItemGroup>

@@ -100,14 +100,15 @@ namespace Altaxo.Gui.Pads
     
     Splitter      splitter1     = new Splitter();
     
-    FileList   filelister = new FileList();
+    //FileList   filelister = new FileList();
     ProjectTree  filetree   = new ProjectTree();
     
     public ProjectScout()
     {
       Dock      = DockStyle.Fill;
-      
-      filetree.Dock = DockStyle.Top;
+
+
+      filetree.Dock = DockStyle.Fill;
       filetree.BorderStyle = BorderStyle.Fixed3D;
       filetree.Location = new System.Drawing.Point(0, 22);
       filetree.Size = new System.Drawing.Size(184, 157);
@@ -127,6 +128,7 @@ namespace Altaxo.Gui.Pads
       
       filetree.ImageList = imglist;
       
+      /*
       filelister.Dock = DockStyle.Fill;
       filelister.BorderStyle = BorderStyle.Fixed3D;
       filelister.Location = new System.Drawing.Point(0, 184);
@@ -146,12 +148,13 @@ namespace Altaxo.Gui.Pads
       
       this.Controls.Add(filelister);
       this.Controls.Add(splitter1);
+      */
       this.Controls.Add(filetree);
     }
     
     void DirectorySelected(object sender, TreeViewEventArgs e)
     {
-      filelister.ShowFilesInPath(filetree.NodePath + Path.DirectorySeparatorChar);
+      //filelister.ShowFilesInPath(filetree.NodePath + Path.DirectorySeparatorChar);
     }
     
     void FileSelected(object sender, EventArgs e)

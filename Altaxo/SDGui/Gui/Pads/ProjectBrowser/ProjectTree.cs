@@ -41,8 +41,9 @@ namespace Altaxo.Gui.Pads
 {
   public class ProjectTree : MWControlSuite.MWTreeView
   {
-    protected TreeNode tablesNode;
-    protected TreeNode graphsNode;
+    protected TreeNode _rootNode;
+    protected TreeNode _tablesNode;
+    protected TreeNode _graphsNode;
 
 
     public string NodePath
@@ -60,48 +61,35 @@ namespace Altaxo.Gui.Pads
     public ProjectTree()
     {
       Sorted = true;
-      TreeNode rootNode = Nodes.Add("Project");
-      rootNode.ImageIndex = 6;
-      rootNode.SelectedImageIndex = 6;
-      rootNode.Tag = "Project";
+      _rootNode = Nodes.Add("Project");
+      _rootNode.ImageIndex = 6;
+      _rootNode.SelectedImageIndex = 6;
+      _rootNode.Tag = "Project";
 
-      TreeNode viewNodes = Nodes.Add("Views");
-      viewNodes.ImageIndex = 7;
-      viewNodes.SelectedImageIndex = 7;
-      viewNodes.Tag = "Views";
+      _tablesNode = _rootNode.Nodes.Add("Tables");
+      _tablesNode.ImageIndex = 7;
+      _tablesNode.SelectedImageIndex = 7;
+      _tablesNode.Tag = "Tables";
 
-
-      tablesNode = rootNode.Nodes.Add("Tables");
-      tablesNode.ImageIndex = 7;
-      tablesNode.SelectedImageIndex = 7;
-      tablesNode.Tag = "Tables";
-
-      graphsNode = rootNode.Nodes.Add("Graphs");
-      graphsNode.ImageIndex = 8;
-      graphsNode.SelectedImageIndex = 8;
-      graphsNode.Tag = "Graphs";
+      _graphsNode = _rootNode.Nodes.Add("Graphs");
+      _graphsNode.ImageIndex = 8;
+      _graphsNode.SelectedImageIndex = 8;
+      _graphsNode.Tag = "Graphs";
 
 
       foreach (Altaxo.Data.DataTable table in Current.Project.DataTableCollection)
       {
-        TreeNode node = tablesNode.Nodes.Add(table.Name);
+        TreeNode node = _tablesNode.Nodes.Add(table.Name);
         node.Tag = table.Name;
       }
 
       foreach (Altaxo.Graph.Gdi.GraphDocument graph in Current.Project.GraphDocumentCollection)
       {
-        TreeNode node = tablesNode.Nodes.Add(graph.Name);
+        TreeNode node = _graphsNode.Nodes.Add(graph.Name);
         node.Tag = graph.Name;
       }
 
-      foreach (ICSharpCode.SharpDevelop.Gui.IViewContent content in Current.Workbench.ViewContentCollection)
-      {
-        TreeNode node = viewNodes.Nodes.Add(content.TitleName);
-        node.Tag = content.TitleName;
-      }
-
-      rootNode.Expand();
-      viewNodes.Expand();
+      _rootNode.Expand();
 
       Current.ProjectService.ProjectOpened += new ProjectEventHandler(this.EhProjectOpened);
       Current.ProjectService.ProjectClosed += new ProjectEventHandler(this.EhProjectClosed);
@@ -265,10 +253,10 @@ namespace Altaxo.Gui.Pads
 
     private void DataTableCollection_Changed(object sender, EventArgs e)
     {
-      this.tablesNode.Nodes.Clear();
+      this._tablesNode.Nodes.Clear();
       foreach (Altaxo.Data.DataTable table in Current.Project.DataTableCollection)
       {
-        TreeNode node = tablesNode.Nodes.Add(table.Name);
+        TreeNode node = _tablesNode.Nodes.Add(table.Name);
         node.Tag = table.Name;
       }
 
@@ -276,10 +264,10 @@ namespace Altaxo.Gui.Pads
 
     private void GraphDocumentCollection_Changed(object sender, EventArgs e)
     {
-      this.graphsNode.Nodes.Clear();
+      this._graphsNode.Nodes.Clear();
       foreach (Altaxo.Graph.Gdi.GraphDocument item in Current.Project.GraphDocumentCollection)
       {
-        TreeNode node = graphsNode.Nodes.Add(item.Name);
+        TreeNode node = _graphsNode.Nodes.Add(item.Name);
         node.Tag = item.Name;
       }
 

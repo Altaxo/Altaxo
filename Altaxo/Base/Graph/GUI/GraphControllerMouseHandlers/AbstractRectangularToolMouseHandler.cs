@@ -147,16 +147,34 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
 
         if(bShiftKey && _currentPoint>0)
         {
-          double x = _currentMousePrintAreaCoord.X - _Points[_currentPoint-1].printAreaCoord.X;
-          double y = _currentMousePrintAreaCoord.Y - _Points[_currentPoint-1].printAreaCoord.Y;
+          if (_grac.ActiveLayer != null) // with an active layer, we transform to layer coordinates
+          {
+            PointF currMouseLayerCoord = _grac.ActiveLayer.GraphToLayerCoordinates(_currentMousePrintAreaCoord);
+            double x = currMouseLayerCoord.X - _Points[_currentPoint - 1].layerCoord.X;
+            double y = currMouseLayerCoord.Y - _Points[_currentPoint - 1].layerCoord.Y;
 
-          double r = Math.Sqrt(x*x+y*y);
-          
-          x = r * Math.Sign(x);
-          y = r * Math.Sign(y);
+            double r = Math.Sqrt(x * x + y * y);
 
-          _currentMousePrintAreaCoord.X = (float)(x + _Points[_currentPoint-1].printAreaCoord.X);
-          _currentMousePrintAreaCoord.Y = (float)(y + _Points[_currentPoint-1].printAreaCoord.Y);
+            x = r * Math.Sign(x);
+            y = r * Math.Sign(y);
+
+            currMouseLayerCoord.X = (float)(x + _Points[_currentPoint - 1].layerCoord.X);
+            currMouseLayerCoord.Y = (float)(y + _Points[_currentPoint - 1].layerCoord.Y);
+            _currentMousePrintAreaCoord = _grac.ActiveLayer.LayerToGraphCoordinates(currMouseLayerCoord);
+          }
+          else // without an active layer we use document coordinates
+          {
+            double x = _currentMousePrintAreaCoord.X - _Points[_currentPoint - 1].printAreaCoord.X;
+            double y = _currentMousePrintAreaCoord.Y - _Points[_currentPoint - 1].printAreaCoord.Y;
+
+            double r = Math.Sqrt(x * x + y * y);
+
+            x = r * Math.Sign(x);
+            y = r * Math.Sign(y);
+
+            _currentMousePrintAreaCoord.X = (float)(x + _Points[_currentPoint - 1].printAreaCoord.X);
+            _currentMousePrintAreaCoord.Y = (float)(y + _Points[_currentPoint - 1].printAreaCoord.Y);
+          }
         }
       }
     }
@@ -169,9 +187,20 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     {
       g.TranslateTransform(_grac.Doc.PrintableBounds.X,_grac.Doc.PrintableBounds.Y);
 
-      if(_currentPoint>=1)
-        DrawRectangleFromLTRB(g,_Points[0].printAreaCoord,_currentMousePrintAreaCoord);
-
+      if (_currentPoint >= 1)
+      {
+        if (null != _grac.ActiveLayer)
+        {
+          g.TranslateTransform(_grac.ActiveLayer.Position.X, _grac.ActiveLayer.Position.Y);
+          g.RotateTransform((float)-_grac.ActiveLayer.Rotation);
+          PointF currLayerCoord = _grac.ActiveLayer.GraphToLayerCoordinates(_currentMousePrintAreaCoord);
+          DrawRectangleFromLTRB(g, _Points[0].layerCoord, currLayerCoord);
+        }
+        else
+        {
+          DrawRectangleFromLTRB(g, _Points[0].printAreaCoord, _currentMousePrintAreaCoord);
+        }
+      }
     }
 
 
