@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2020 $</version>
 // </file>
 
 using System;
@@ -48,6 +48,11 @@ namespace ICSharpCode.SharpDevelop.Gui
 		{
 			this.category        = category;
 			this.displayCategory = displayCategory;
+		}
+		
+		public void AppendLine(string text)
+		{
+			AppendText(text + Environment.NewLine);
 		}
 		
 		public void AppendText(string text)

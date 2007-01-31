@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1751 $</version>
+//     <version>$Revision: 2075 $</version>
 // </file>
 
 using System;
@@ -18,10 +18,10 @@ namespace ICSharpCode.SharpDevelop.Dom
 			return "ReflectionLoader in " + AppDomain.CurrentDomain.FriendlyName;
 		}
 		
-		public Assembly ReflectionLoadGacAssembly(string partialName, bool reflectionOnly)
+		public static Assembly ReflectionLoadGacAssembly(string partialName, bool reflectionOnly)
 		{
 			if (reflectionOnly) {
-				AssemblyName name = GacInterop.FindBestMatchingAssemblyName(partialName);
+				GacAssemblyName name = GacInterop.FindBestMatchingAssemblyName(partialName);
 				if (name == null)
 					return null;
 				return Assembly.ReflectionOnlyLoad(name.FullName);
@@ -98,7 +98,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 				LoggingService.Warn("AssemblyResolve: ReflectionOnlyLoad failed for " + e.Name);
 				// We can't get the assembly we want.
 				// But propably we can get a similar version of it.
-				AssemblyName fixedName = GacInterop.FindBestMatchingAssemblyName(e.Name);
+				GacAssemblyName fixedName = GacInterop.FindBestMatchingAssemblyName(e.Name);
 				LoggingService.Info("AssemblyResolve: FixedName: " + fixedName);
 				return Assembly.ReflectionOnlyLoad(fixedName.FullName);
 			}

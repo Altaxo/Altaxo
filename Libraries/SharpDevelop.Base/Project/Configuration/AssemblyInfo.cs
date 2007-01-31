@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1388 $</version>
+//     <version>$Revision: 2078 $</version>
 // </file>
 
 using System;
@@ -17,10 +17,14 @@ using System.Runtime.CompilerServices;
 [assembly: Dependency("ICSharpCode.Core", LoadHint.Always)]
 [assembly: Dependency("ICSharpCode.TextEditor", LoadHint.Always)]
 [assembly: Dependency("ICSharpCode.NRefactory", LoadHint.Always)]
+[assembly: Dependency("ICSharpCode.SharpDevelop.Dom", LoadHint.Always)]
+[assembly: Dependency("ICSharpCode.SharpDevelop.Widgets", LoadHint.Always)]
 [assembly: Dependency("System.Drawing", LoadHint.Always)]
 [assembly: Dependency("System.Xml", LoadHint.Always)]
 [assembly: Dependency("System.Windows.Forms", LoadHint.Always)]
 [assembly: Dependency("WeifenLuo.WinFormsUI.Docking", LoadHint.Always)]
+[assembly: Dependency("Microsoft.Build.Framework", LoadHint.Always)]
+[assembly: Dependency("Microsoft.Build.Engine", LoadHint.Always)]
 
 [assembly: AssemblyTitle("SharpDevelopBase")]
 [assembly: AssemblyDescription("The base add-in of SharpDevelop")]

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2043 $</version>
 // </file>
 
 using System;
@@ -22,18 +22,14 @@ namespace CSharpBinding
 			}
 		}
 		
-		public IProject LoadProject(string fileName, string projectName)
+		public IProject LoadProject(IMSBuildEngineProvider engineProvider, string fileName, string projectName)
 		{
-			return new CSharpProject(fileName, projectName);
+			return new CSharpProject(engineProvider, fileName, projectName);
 		}
 		
-		public IProject CreateProject(ProjectCreateInformation info, XmlElement projectOptions)
+		public IProject CreateProject(ProjectCreateInformation info)
 		{
-			CSharpProject p = new CSharpProject(info);
-			if (projectOptions != null) {
-				p.ImportOptions(projectOptions.Attributes);
-			}
-			return p;
+			return new CSharpProject(info);
 		}
 	}
 }

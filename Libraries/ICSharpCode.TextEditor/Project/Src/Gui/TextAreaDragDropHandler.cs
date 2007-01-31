@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2161 $</version>
 // </file>
 
 using System;
@@ -52,8 +52,8 @@ namespace ICSharpCode.TextEditor
 		{
 			textArea.Document.Insert(offset, str);
 			
-			textArea.SelectionManager.SetSelection(new DefaultSelection(textArea.Document, 
-			                                                            textArea.Document.OffsetToPosition(offset), 
+			textArea.SelectionManager.SetSelection(new DefaultSelection(textArea.Document,
+			                                                            textArea.Document.OffsetToPosition(offset),
 			                                                            textArea.Document.OffsetToPosition(offset + str.Length)));
 			textArea.Caret.Position = textArea.Document.OffsetToPosition(offset + str.Length);
 			textArea.Refresh();
@@ -68,12 +68,24 @@ namespace ICSharpCode.TextEditor
 				textArea.BeginUpdate();
 				try {
 					int offset = textArea.Caret.Offset;
+					if (textArea.TextEditorProperties.UseCustomLine
+					    && textArea.Document.CustomLineManager.IsReadOnly(textArea.Caret.Line, false))
+					{
+						// prevent dragging text into readonly section
+						return;
+					}
 					if (e.Data.GetDataPresent(typeof(DefaultSelection))) {
 						ISelection sel = (ISelection)e.Data.GetData(typeof(DefaultSelection));
 						if (sel.ContainsPosition(textArea.Caret.Position)) {
 							return;
 						}
 						if (GetDragDropEffect(e) == DragDropEffects.Move) {
+							if (textArea.TextEditorProperties.UseCustomLine
+							    && textArea.Document.CustomLineManager.IsReadOnly(sel, false))
+							{
+								// prevent dragging text out of readonly section
+								return;
+							}
 							int len = sel.Length;
 							textArea.Document.Remove(sel.Offset, len);
 							if (sel.Offset < offset) {
@@ -85,7 +97,7 @@ namespace ICSharpCode.TextEditor
 					textArea.SelectionManager.ClearSelection();
 					InsertString(offset, (string)e.Data.GetData(typeof(string)));
 					if (two) {
-						textArea.Document.UndoStack.UndoLast(2);
+						textArea.Document.UndoStack.CombineLast(2);
 					}
 					textArea.Document.UpdateQueue.Clear();
 					textArea.Document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.WholeTextArea));

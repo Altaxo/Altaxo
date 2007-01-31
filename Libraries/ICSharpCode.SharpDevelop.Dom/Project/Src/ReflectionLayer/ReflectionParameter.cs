@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2116 $</version>
 // </file>
 
 using System;
@@ -10,7 +10,7 @@ using System.Reflection;
 
 namespace ICSharpCode.SharpDevelop.Dom.ReflectionLayer
 {
-	internal class ReflectionParameter : DefaultParameter
+	public class ReflectionParameter : DefaultParameter
 	{
 		public ReflectionParameter(ParameterInfo parameterInfo, IMember member) : base(parameterInfo.Name)
 		{

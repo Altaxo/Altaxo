@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1968 $</version>
+//     <version>$Revision: 2120 $</version>
 // </file>
 
 using System;
@@ -48,13 +48,20 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 				BeforeBuild();
 				StartBuild();
 			} else {
-				MSBuildEngine.AddNoSingleFileCompilationError();
+				AddNoSingleFileCompilationError();
 			}
+		}
+		
+		BuildResults lastBuildResults;
+		
+		public BuildResults LastBuildResults {
+			get { return lastBuildResults; }
 		}
 		
 		protected void CallbackMethod(BuildResults results)
 		{
-			MSBuildEngine.ShowResults(results);
+			lastBuildResults = results;
+			ShowResults(results);
 			AfterBuild();
 			if (BuildComplete != null)
 				BuildComplete(this, EventArgs.Empty);
@@ -63,6 +70,35 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 		public abstract void StartBuild();
 		
 		public event EventHandler BuildComplete;
+		
+		
+		
+		public static void ShowResults(BuildResults results)
+		{
+			if (results != null) {
+				TaskService.InUpdate = true;
+				foreach (BuildError error in results.Errors) {
+					TaskService.Add(new Task(error));
+				}
+				TaskService.InUpdate = false;
+				if (results.Errors.Count > 0 && ErrorListPad.ShowAfterBuild) {
+					WorkbenchSingleton.Workbench.GetPad(typeof(ErrorListPad)).BringPadToFront();
+				}
+			}
+		}
+		
+		/// <summary>
+		/// Notifies the user that #develp's internal MSBuildEngine
+		/// implementation only supports compiling solutions and projects;
+		/// it does not allow compiling individual files.
+		/// </summary>
+		/// <remarks>Adds a message to the <see cref="TaskService"/> and
+		/// shows the <see cref="ErrorListPad"/>.</remarks>
+		public static void AddNoSingleFileCompilationError()
+		{
+			TaskService.Add(new Task(null, StringParser.Parse("${res:BackendBindings.ExecutionManager.NoSingleFileCompilation}"), 0, 0, TaskType.Error));
+			WorkbenchSingleton.Workbench.GetPad(typeof(ErrorListPad)).BringPadToFront();
+		}
 	}
 	
 	public sealed class Build : AbstractBuildMenuCommand
@@ -70,7 +106,7 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 		public override void StartBuild()
 		{
 			ProjectService.RaiseEventStartBuild();
-			ProjectService.OpenSolution.Build(CallbackMethod);
+			ProjectService.OpenSolution.StartBuild(new BuildOptions(BuildTarget.Build, CallbackMethod));
 		}
 		
 		public override void AfterBuild()
@@ -84,7 +120,7 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 		public override void StartBuild()
 		{
 			ProjectService.RaiseEventStartBuild();
-			ProjectService.OpenSolution.Rebuild(CallbackMethod);
+			ProjectService.OpenSolution.StartBuild(new BuildOptions(BuildTarget.Rebuild, CallbackMethod));
 		}
 		
 		public override void AfterBuild()
@@ -97,15 +133,7 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 	{
 		public override void StartBuild()
 		{
-			ProjectService.OpenSolution.Clean(CallbackMethod);
-		}
-	}
-	
-	public sealed class Publish : AbstractBuildMenuCommand
-	{
-		public override void StartBuild()
-		{
-			ProjectService.OpenSolution.Publish(CallbackMethod);
+			ProjectService.OpenSolution.StartBuild(new BuildOptions(BuildTarget.Clean, CallbackMethod));
 		}
 	}
 	
@@ -145,7 +173,7 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 		public override void StartBuild()
 		{
 			ProjectService.RaiseEventStartBuild();
-			this.ProjectToBuild.Build(CallbackMethod, AdditionalProperties);
+			this.ProjectToBuild.StartBuild(new BuildOptions(BuildTarget.Build, CallbackMethod, AdditionalProperties));
 		}
 		
 		public override void AfterBuild()
@@ -162,7 +190,7 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 		public override void StartBuild()
 		{
 			ProjectService.RaiseEventStartBuild();
-			this.ProjectToBuild.Rebuild(CallbackMethod, AdditionalProperties);
+			this.ProjectToBuild.StartBuild(new BuildOptions(BuildTarget.Rebuild, CallbackMethod, AdditionalProperties));
 		}
 	}
 	
@@ -170,15 +198,7 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 	{
 		public override void StartBuild()
 		{
-			this.ProjectToBuild.Clean(CallbackMethod, null);
-		}
-	}
-	
-	public class PublishProject : AbstractProjectBuildMenuCommand
-	{
-		public override void StartBuild()
-		{
-			this.ProjectToBuild.Publish(CallbackMethod, null);
+			this.ProjectToBuild.StartBuild(new BuildOptions(BuildTarget.Clean, CallbackMethod, null));
 		}
 	}
 	
@@ -204,6 +224,7 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 			ToolStripMenuItem item = (ToolStripMenuItem)sender;
 			ProjectService.OpenSolution.Preferences.ActiveConfiguration = item.Text;
 			ProjectService.OpenSolution.ApplySolutionConfigurationAndPlatformToProjects();
+			ProjectBrowserPad.Instance.ProjectBrowserControl.RefreshView();
 		}
 	}
 	
@@ -213,8 +234,9 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 		{
 			using (SolutionConfigurationEditor sce = new SolutionConfigurationEditor()) {
 				sce.ShowDialog();
-				ProjectService.OpenSolution.Save();
+				ProjectService.SaveSolution();
 				ProjectService.OpenSolution.ApplySolutionConfigurationAndPlatformToProjects();
+				ProjectBrowserPad.Instance.ProjectBrowserControl.RefreshView();
 			}
 		}
 	}

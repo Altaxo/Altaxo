@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2028 $</version>
 // </file>
 
 using System;
@@ -68,13 +68,11 @@ namespace SearchAndReplace
 		
 		protected override int MeasureItemWidth(DrawTreeNodeEventArgs e)
 		{
-			return MeasureTextWidth(e.Graphics, GetText(), BoldFont);
+			return MeasureTextWidth(e.Graphics, GetText(), BoldBigFont);
 		}
 		protected override void DrawForeground(DrawTreeNodeEventArgs e)
 		{
-			Graphics g = e.Graphics;
-			float x = e.Bounds.X;
-			DrawText(g, GetText(), Brushes.Black, BoldFont, ref x, e.Bounds.Y);
+			DrawText(e, GetText(), SystemBrushes.WindowText, BoldBigFont);
 		}
 	}
 }

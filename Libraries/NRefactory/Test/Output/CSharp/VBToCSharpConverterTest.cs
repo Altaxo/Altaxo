@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1940 $</version>
+//     <version>$Revision: 2200 $</version>
 // </file>
 
 using System;
@@ -231,6 +231,15 @@ namespace ICSharpCode.NRefactory.Tests.PrettyPrinter
 		}
 		
 		[Test]
+		public void PInvokeSub()
+		{
+			TestMember("Private Declare Sub Sleep Lib \"kernel32\" (ByVal dwMilliseconds As Long)",
+			           "[DllImport(\"kernel32\", CharSet = CharSet.Ansi, SetLastError = true, ExactSpelling = true)]\n" +
+			           "private static extern void Sleep(long dwMilliseconds);",
+			           "System.Runtime.InteropServices");
+		}
+		
+		[Test]
 		public void Constructor()
 		{
 			TestMember("Sub New()\n\tMyBase.New(1)\nEnd Sub",
@@ -392,6 +401,18 @@ namespace ICSharpCode.NRefactory.Tests.PrettyPrinter
 		}
 		
 		[Test]
+		public void FunctionWithoutImplicitReturn()
+		{
+			TestMember("Public Function run(i As Integer) As Integer\n" +
+			           " Return 0\n" +
+			           "End Function",
+			           "public int run(int i)\n" +
+			           "{\n" +
+			           "\treturn 0;\n" +
+			           "}");
+		}
+		
+		[Test]
 		public void FunctionWithImplicitReturn()
 		{
 			TestMember("Public Function run(i As Integer) As Integer\n" +
@@ -418,6 +439,25 @@ namespace ICSharpCode.NRefactory.Tests.PrettyPrinter
 			           "\t\t" + VBNetConstructsConvertVisitor.FunctionReturnValueName + " += i;\n" +
 			           "\t}\n" +
 			           "\treturn " + VBNetConstructsConvertVisitor.FunctionReturnValueName + ";\n" +
+			           "}");
+		}
+		
+		[Test]
+		public void FunctionWithImplicitReturn2b()
+		{
+			const string ReturnValueName = VBNetConstructsConvertVisitor.FunctionReturnValueName;
+			TestMember("Public Function run(i As Integer) As Integer\n" +
+			           " While something\n" +
+			           "   run = run + run(i - 1)\n" +
+			           " End While\n" +
+			           "End Function",
+			           "public int run(int i)\n" +
+			           "{\n" +
+			           "\tint " + ReturnValueName + " = 0;\n" +
+			           "\twhile (something) {\n" +
+			           "\t\t" + ReturnValueName + " = " + ReturnValueName + " + run(i - 1);\n" +
+			           "\t}\n" +
+			           "\treturn " + ReturnValueName + ";\n" +
 			           "}");
 		}
 		
@@ -566,6 +606,19 @@ static int static_Test2_j = 0;");
 		public void FieldReferenceOnCastExpression()
 		{
 			TestStatement("CType(obj, IDisposable).Dispose()", "((IDisposable)obj).Dispose();");
+		}
+		
+		[Test]
+		public void ArrayCreationUpperBound()
+		{
+			TestStatement("Dim i As String() = New String(1) {}",
+			              "string[] i = new string[2];");
+			TestStatement("Dim i(1) As String",
+			              "string[] i = new string[2];");
+			TestStatement("Dim i As String() = New String(1) {\"0\", \"1\"}",
+			              "string[] i = new string[2] {\"0\", \"1\"};");
+			TestStatement("Dim i As String(,) = New String(5, 5) {}",
+			              "string[,] i = new string[6, 6];");
 		}
 	}
 }

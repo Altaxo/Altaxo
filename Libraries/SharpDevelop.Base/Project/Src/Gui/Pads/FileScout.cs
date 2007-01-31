@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2150 $</version>
 // </file>
 
 using System;
@@ -19,56 +19,6 @@ using ICSharpCode.SharpDevelop.Project;
 
 namespace ICSharpCode.SharpDevelop.Gui
 {
-	class FileIcon
-	{
-		[DllImport("shell32.dll")]
-		static extern IntPtr SHGetFileInfo(string pszPath,
-		                                   uint dwFileAttributes,
-		                                   out SHFILEINFO psfi,
-		                                   uint cbfileInfo,
-		                                   SHGFI uFlags);
-		
-		[StructLayout(LayoutKind.Sequential)]
-		struct SHFILEINFO
-		{
-			public IntPtr hIcon;
-			public int iIcon;
-			public uint dwAttributes;
-			
-			[MarshalAs(UnmanagedType.LPStr, SizeConst = 260)]
-			public string szDisplayName;
-			
-			[MarshalAs(UnmanagedType.LPStr, SizeConst = 80)]
-			public string szTypeName;
-		}
-		
-		enum SHGFI
-		{
-			SmallIcon			= 0x00000001,
-			LargeIcon			= 0x00000000,
-			Icon					= 0x00000100,
-			DisplayName			= 0x00000200,
-			Typename				= 0x00000400,
-			SysIconIndex		= 0x00004000,
-			UseFileAttributes	= 0x00000010
-		}
-		
-		public static Bitmap GetBitmap(string strPath, bool bSmall)
-		{
-			SHFILEINFO info = new SHFILEINFO();
-			int cbFileInfo = Marshal.SizeOf(info);
-			SHGFI flags;
-			
-			if(bSmall) {
-				flags = SHGFI.Icon|SHGFI.SmallIcon|SHGFI.UseFileAttributes;
-			} else {
-				flags = SHGFI.Icon|SHGFI.LargeIcon|SHGFI.UseFileAttributes;
-			}
-			
-			SHGetFileInfo(strPath, 256, out info, (uint)cbFileInfo, flags);
-			return Bitmap.FromHicon(info.hIcon);
-		}
-	}
 	public enum DriveType {
 		Unknown     = 0,
 		NoRoot      = 1,

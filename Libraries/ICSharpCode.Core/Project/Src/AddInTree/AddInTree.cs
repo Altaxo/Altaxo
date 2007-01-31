@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2107 $</version>
 // </file>
 
 using System;
@@ -288,7 +288,21 @@ namespace ICSharpCode.Core
 			Dictionary<string, Version> dict = new Dictionary<string, Version>();
 			Dictionary<string, AddIn> addInDict = new Dictionary<string, AddIn>();
 			foreach (string fileName in addInFiles) {
-				AddIn addIn = AddIn.Load(fileName);
+				AddIn addIn;
+				try {
+					addIn = AddIn.Load(fileName);
+				} catch (AddInLoadException ex) {
+					LoggingService.Error(ex);
+					if (ex.InnerException != null) {
+						MessageService.ShowError("Error loading AddIn " + fileName + ":\n"
+						                         + ex.InnerException.Message);
+					} else {
+						MessageService.ShowError("Error loading AddIn " + fileName + ":\n"
+						                         + ex.Message);
+					}
+					addIn = new AddIn();
+					addIn.CustomErrorMessage = ex.Message;
+				}
 				if (addIn.Action == AddInAction.CustomError) {
 					list.Add(addIn);
 					continue;

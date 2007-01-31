@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Robert Zaunere" email=""/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2040 $</version>
 // </file>
 
 using System;
@@ -22,6 +22,7 @@ namespace ICSharpCode.SharpDevelop.Gui.ClassBrowser
 		{
 			ProjectNode prjNode = new ProjectNode(project);
 			prjNode.AddTo(classBrowser);
+			classBrowser.Sort();
 			return prjNode;
 		}
 	}

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1963 $</version>
+//     <version>$Revision: 2164 $</version>
 // </file>
 
 using System;
@@ -40,7 +40,13 @@ namespace ICSharpCode.SharpDevelop
 				
 			}
 		}
+		
 		public static Bitmap GetGhostBitmap(string name)
+		{
+			return GetGhostBitmap(GetBitmap(name));
+		}
+		
+		public static Bitmap GetGhostBitmap(Bitmap bitmap)
 		{
 			ColorMatrix clrMatrix = new ColorMatrix(new float[][] {
 			                                        	new float[] {1, 0, 0, 0, 0},
@@ -55,7 +61,6 @@ namespace ICSharpCode.SharpDevelop
 			                             ColorMatrixFlag.Default,
 			                             ColorAdjustType.Bitmap);
 			
-			Bitmap bitmap = GetBitmap(name);
 			Bitmap ghostBitmap = new Bitmap(bitmap.Width, bitmap.Height, PixelFormat.Format32bppArgb);
 			
 			using (Graphics g = Graphics.FromImage(ghostBitmap)) {

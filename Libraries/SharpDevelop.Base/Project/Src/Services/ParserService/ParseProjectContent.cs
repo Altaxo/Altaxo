@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1938 $</version>
+//     <version>$Revision: 2104 $</version>
 // </file>
 
 using System;
@@ -28,7 +28,7 @@ namespace ICSharpCode.SharpDevelop
 		
 		IProject project;
 		
-		public override IDomProject Project {
+		public override object Project {
 			get {
 				return project;
 			}
@@ -43,18 +43,17 @@ namespace ICSharpCode.SharpDevelop
 		
 		internal void Initialize1()
 		{
-			ProjectItem[] items = project.Items.ToArray();
+			ICollection<ProjectItem> items = project.Items;
 			ProjectService.ProjectItemAdded   += OnProjectItemAdded;
 			ProjectService.ProjectItemRemoved += OnProjectItemRemoved;
 			UpdateDefaultImports(items);
 			foreach (ProjectItem item in items) {
 				if (!initializing) return; // abort initialization
-				switch (item.ItemType) {
-					case ItemType.Reference:
-					case ItemType.ProjectReference:
-					case ItemType.COMReference:
-						AddReference(item as ReferenceProjectItem, false);
-						break;
+				if (item.ItemType == ItemType.Reference
+				    || item.ItemType == ItemType.ProjectReference
+				    || item.ItemType == ItemType.COMReference)
+				{
+					AddReference(item as ReferenceProjectItem, false);
 				}
 			}
 			UpdateReferenceInterDependencies();
@@ -124,7 +123,7 @@ namespace ICSharpCode.SharpDevelop
 						// Compile project to ensure interop library is generated
 						project.Save(); // project is not yet saved when ItemAdded fires, so save it here
 						TaskService.BuildMessageViewCategory.AppendText("\n${res:MainWindow.CompilerMessages.CreatingCOMInteropAssembly}\n");
-						MSBuildEngineCallback callback = delegate {
+						BuildCallback callback = delegate {
 							System.Threading.ThreadPool.QueueUserWorkItem(AddReference, reference);
 							lock (callAfterAddComReference) {
 								if (callAfterAddComReference.Count > 0) {
@@ -134,11 +133,7 @@ namespace ICSharpCode.SharpDevelop
 								}
 							}
 						};
-						if (project is MSBuildProject) {
-							((MSBuildProject)project).RunMSBuild("ResolveComReferences", callback, null);
-						} else {
-							project.Build(callback, null);
-						}
+						project.StartBuild(new BuildOptions(BuildTarget.ResolveComReferences, callback));
 					};
 					lock (callAfterAddComReference) {
 						if (buildingComReference) {
@@ -152,13 +147,12 @@ namespace ICSharpCode.SharpDevelop
 					System.Threading.ThreadPool.QueueUserWorkItem(AddReference, reference);
 				}
 			}
-			switch (e.ProjectItem.ItemType) {
-				case ItemType.Import:
-					UpdateDefaultImports(project.Items.ToArray());
-					break;
-				case ItemType.Compile:
+			if (e.ProjectItem.ItemType == ItemType.Import) {
+				UpdateDefaultImports(project.Items);
+			} else if (e.ProjectItem.ItemType == ItemType.Compile) {
+				if (System.IO.File.Exists(e.ProjectItem.FileName)) {
 					ParserService.EnqueueForParsing(e.ProjectItem.FileName);
-					break;
+				}
 			}
 		}
 		
@@ -181,19 +175,16 @@ namespace ICSharpCode.SharpDevelop
 				}
 			}
 			
-			switch (e.ProjectItem.ItemType) {
-				case ItemType.Import:
-					UpdateDefaultImports(project.Items.ToArray());
-					break;
-				case ItemType.Compile:
-					ParserService.ClearParseInformation(e.ProjectItem.FileName);
-					break;
+			if (e.ProjectItem.ItemType == ItemType.Import) {
+				UpdateDefaultImports(project.Items);
+			} else if (e.ProjectItem.ItemType == ItemType.Compile) {
+				ParserService.ClearParseInformation(e.ProjectItem.FileName);
 			}
 		}
 		
 		int languageDefaultImportCount = -1;
 		
-		void UpdateDefaultImports(ProjectItem[] items)
+		void UpdateDefaultImports(ICollection<ProjectItem> items)
 		{
 			if (languageDefaultImportCount < 0) {
 				languageDefaultImportCount = (DefaultImports != null) ? DefaultImports.Usings.Count : 0;
@@ -252,7 +243,7 @@ namespace ICSharpCode.SharpDevelop
 					if ((i % 5) == 2)
 						StatusBarService.ProgressMonitor.WorkDone = progressStart + i;
 					
-					ParserService.ParseFile(this, enumerator.CurrentFileName, enumerator.CurrentFileContent, true, false);
+					ParserService.ParseFile(this, enumerator.CurrentFileName, enumerator.CurrentFileContent, true);
 					
 					if (!initializing) return;
 				}

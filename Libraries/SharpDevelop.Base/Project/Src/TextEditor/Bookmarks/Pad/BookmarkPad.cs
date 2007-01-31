@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2028 $</version>
 // </file>
 
 using System;
@@ -51,7 +51,7 @@ namespace ICSharpCode.SharpDevelop.Bookmarks
 			bookmarkTreeView.Dock = DockStyle.Fill;
 			bookmarkTreeView.CheckBoxes = true;
 			bookmarkTreeView.HideSelection = false;
-			bookmarkTreeView.Font = ExtTreeNode.Font;
+			bookmarkTreeView.Font = ExtTreeNode.RegularBigFont;
 			bookmarkTreeView.IsSorted = false;
 			
 			ToolStrip toolStrip = ToolbarService.CreateToolStrip(this, "/SharpDevelop/Pads/BookmarkPad/Toolbar");

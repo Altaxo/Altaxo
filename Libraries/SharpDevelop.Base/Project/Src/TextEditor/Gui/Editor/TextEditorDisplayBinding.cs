@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2159 $</version>
 // </file>
 
 using System;
@@ -99,6 +99,24 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 				WorkbenchSingleton.MainForm.Activated += GotFocusEvent;
 			}
 			
+			public static bool DetectExternalChangesOption {
+				get {
+					return PropertyService.Get("SharpDevelop.FileChangeWatcher.DetectExternalChanges", true);
+				}
+				set {
+					PropertyService.Set("SharpDevelop.FileChangeWatcher.DetectExternalChanges", value);
+				}
+			}
+			
+			public static bool AutoLoadExternalChangesOption {
+				get {
+					return PropertyService.Get("SharpDevelop.FileChangeWatcher.AutoLoadExternalChanges", true);
+				}
+				set {
+					PropertyService.Set("SharpDevelop.FileChangeWatcher.AutoLoadExternalChanges", value);
+				}
+			}
+			
 			public void Dispose()
 			{
 				WorkbenchSingleton.MainForm.Activated -= GotFocusEvent;
@@ -117,31 +135,26 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			public void SetWatcher(string fileName)
 			{
 				this.fileName = fileName;
-        try
-        {
-          if (this.watcher == null)
-          {
-            this.watcher = new FileSystemWatcher();
-            this.watcher.SynchronizingObject = WorkbenchSingleton.MainForm;
-            this.watcher.Changed += new FileSystemEventHandler(this.OnFileChangedEvent);
-          }
-          else
-          {
-            this.watcher.EnableRaisingEvents = false;
-          }
-          this.watcher.Path = Path.GetDirectoryName(fileName);
-          this.watcher.Filter = Path.GetFileName(fileName);
-          this.watcher.NotifyFilter = NotifyFilters.LastWrite;
-          this.watcher.EnableRaisingEvents = true;
-        }
-        catch (PlatformNotSupportedException)
-        {
-          if (watcher != null)
-          {
-            watcher.Dispose();
-          }
-          watcher = null;
-        }
+				if (DetectExternalChangesOption == false)
+					return;
+				try {
+					if (this.watcher == null) {
+						this.watcher = new FileSystemWatcher();
+						this.watcher.SynchronizingObject = WorkbenchSingleton.MainForm;
+						this.watcher.Changed += new FileSystemEventHandler(this.OnFileChangedEvent);
+					} else {
+						this.watcher.EnableRaisingEvents = false;
+					}
+					this.watcher.Path = Path.GetDirectoryName(fileName);
+					this.watcher.Filter = Path.GetFileName(fileName);
+					this.watcher.NotifyFilter = NotifyFilters.LastWrite;
+					this.watcher.EnableRaisingEvents = true;
+				} catch (PlatformNotSupportedException) {
+					if (watcher != null) {
+						watcher.Dispose();
+					}
+					watcher = null;
+				}
 #if ModifiedForAltaxo
           // modified because Altaxo's file names are not real files on disk, so the watcher can't find them
         catch (ArgumentException ex)
@@ -155,10 +168,12 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			
 			void OnFileChangedEvent(object sender, FileSystemEventArgs e)
 			{
-				if(e.ChangeType != WatcherChangeTypes.Deleted) {
+				if (e.ChangeType != WatcherChangeTypes.Deleted) {
 					wasChangedExternally = true;
 					if (ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.Workbench.IsActiveWindow) {
-						GotFocusEvent(this, EventArgs.Empty);
+						// delay showing message a bit, prevents showing two messages
+						// when the file changes twice in quick succession
+						WorkbenchSingleton.SafeThreadAsyncCall(GotFocusEvent, this, EventArgs.Empty);
 					}
 				}
 			}
@@ -169,13 +184,15 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 					wasChangedExternally = false;
 					
 					string message = StringParser.Parse("${res:ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor.TextEditorDisplayBinding.FileAlteredMessage}", new string[,] {{"File", Path.GetFullPath(fileName)}});
-					if (viewContent.IsDirty == false ||
-					    MessageBox.Show(message,
-					                    StringParser.Parse("${res:MainWindow.DialogName}"),
-					                    MessageBoxButtons.YesNo,
-					                    MessageBoxIcon.Question) == DialogResult.Yes)
+					if ((AutoLoadExternalChangesOption && viewContent.IsDirty == false)
+					    || MessageBox.Show(message,
+					                       StringParser.Parse("${res:MainWindow.DialogName}"),
+					                       MessageBoxButtons.YesNo,
+					                       MessageBoxIcon.Question) == DialogResult.Yes)
 					{
-						viewContent.Load(fileName);
+						if (File.Exists(fileName)) {
+							viewContent.Load(fileName);
+						}
 					} else {
 						viewContent.IsDirty = true;
 					}
@@ -459,6 +476,13 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		public void JumpTo(int line, int column)
 		{
 			textAreaControl.ActiveTextAreaControl.JumpTo(line, column);
+			
+			// we need to delay this call here because the text editor does not know its height if it was just created
+			WorkbenchSingleton.SafeThreadAsyncCall(
+				delegate {
+					textAreaControl.ActiveTextAreaControl.CenterViewOn(
+						line, (int)(0.3 * textAreaControl.ActiveTextAreaControl.TextArea.TextView.VisibleLineCount));
+				});
 		}
 		
 		public int Line {
@@ -482,7 +506,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 				ParseInformation parseInfo = ParserService.GetParseInformation(fileName);
 				if (parseInfo == null) {
 					parseInfo = ParserService.ParseFile(fileName,
-					                                    textAreaControl.Document.TextContent, false, false);
+					                                    textAreaControl.Document.TextContent, false);
 				}
 				textAreaControl.Document.FoldingManager.UpdateFoldings(fileName, parseInfo);
 				UpdateClassMemberBookmarks(parseInfo);

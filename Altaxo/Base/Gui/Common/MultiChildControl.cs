@@ -144,17 +144,18 @@ namespace Altaxo.Gui.Common
     Control[] _childs = new Control[0];
     public void InitializeChilds(ViewDescriptionElement[] childs, int initialfocused)
     {
+      // detach old childs from event chain
       for(int i=0;i<_childs.Length;i++)
       {
         _childs[i].SizeChanged -= EhChilds_SizeChanged;
         _childs[i].Enter -= EhChilds_Enter;
         _childs[i].Validated -= EhChilds_Validated;
       }
-
       this.Controls.Clear();
       this.Controls.Add(m_Label1);
 
 
+      // now attach the new childs
       _childs = new Control[childs.Length];
       for(int i=0;i<_childs.Length;i++)
       {

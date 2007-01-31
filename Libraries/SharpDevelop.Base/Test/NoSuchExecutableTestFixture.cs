@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Matthew Ward" email="mrward@users.sourceforge.net"/>
-//     <version>$Revision: 1391 $</version>
+//     <version>$Revision: 2043 $</version>
 // </file>
 
 using System;
@@ -32,8 +32,9 @@ namespace ICSharpCode.SharpDevelop.Tests
 		}
 		
 		[Test]
-		[ExpectedException(typeof(InvalidOperationException), 
-		                   "Cannot start process because a file name has not been provided.")]
+		[ExpectedException(typeof(InvalidOperationException))]
+		//                   "Cannot start process because a file name has not been provided.")]
+		//					 - Message depends on system language.
 		public void RunBlankProcessFilename()
 		{
 			runner.Start("");

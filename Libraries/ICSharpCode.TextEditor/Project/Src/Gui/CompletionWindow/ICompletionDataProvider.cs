@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2074 $</version>
 // </file>
 
 using System;
@@ -45,7 +45,7 @@ namespace ICSharpCode.TextEditor.Gui.CompletionWindow
 	public enum CompletionDataProviderKeyResult
 	{
 		/// <summary>
-		/// Normal key, used to choose 
+		/// Normal key, used to choose an entry from the completion list
 		/// </summary>
 		NormalKey,
 		/// <summary>
@@ -54,7 +54,8 @@ namespace ICSharpCode.TextEditor.Gui.CompletionWindow
 		InsertionKey,
 		/// <summary>
 		/// Increment both start and end offset of completion region when inserting this
-		/// key. Used to insert space.
+		/// key. Can be used to insert whitespace (or other characters) in front of the expression
+		/// while the completion window is open.
 		/// </summary>
 		BeforeStartKey
 	}

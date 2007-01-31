@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2161 $</version>
 // </file>
 
 using System;
@@ -105,7 +105,7 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 		{
 			int undoCount = actionCount;
 			actionCount = undoableActionCountStack.Pop();
-			doc.UndoStack.UndoLast(undoCount);
+			doc.UndoStack.CombineLast(undoCount);
 		}
 		
 		public void UpdateView()

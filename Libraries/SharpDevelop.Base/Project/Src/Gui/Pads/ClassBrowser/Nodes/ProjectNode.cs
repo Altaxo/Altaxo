@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2105 $</version>
 // </file>
 
 using System;
@@ -66,7 +66,7 @@ namespace ICSharpCode.SharpDevelop.Gui.ClassBrowser
 					
 					if (node != null) {
 						CompoundClass cc = c as CompoundClass;
-						if (cc != null && cc.Parts.Count > 0) {
+						if (cc != null) {
 							node.Class = cc; // update members after part has been removed
 						} else {
 							path.Nodes.Remove(node);
@@ -96,16 +96,10 @@ namespace ICSharpCode.SharpDevelop.Gui.ClassBrowser
 				ReferenceFolderNode referencesNode = new ReferenceFolderNode(Project);
 				referencesNode.AddTo(this);
 				projectContent.ReferencedContentsChanged += delegate { WorkbenchSingleton.SafeThreadAsyncCall(referencesNode.UpdateReferenceNodes); };
-				foreach (ProjectItem item in Project.Items) {
-					switch (item.ItemType) {
-						case ItemType.Reference:
-							break;
-						case ItemType.Compile:
-							ParseInformation parseInformation = ParserService.GetParseInformation(item.FileName);
-							if (parseInformation != null) {
-								InsertParseInformation(parseInformation.BestCompilationUnit as ICompilationUnit);
-							}
-							break;
+				foreach (ProjectItem item in Project.GetItemsOfType(ItemType.Compile)) {
+					ParseInformation parseInformation = ParserService.GetParseInformation(item.FileName);
+					if (parseInformation != null) {
+						InsertParseInformation(parseInformation.BestCompilationUnit as ICompilationUnit);
 					}
 				}
 			}

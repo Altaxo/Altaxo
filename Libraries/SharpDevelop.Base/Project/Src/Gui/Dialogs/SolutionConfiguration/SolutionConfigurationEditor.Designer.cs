@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1865 $</version>
+//     <version>$Revision: 2120 $</version>
 // </file>
 
 namespace ICSharpCode.SharpDevelop.Gui
@@ -79,7 +79,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(64, 23);
 			this.label2.TabIndex = 2;
-			this.label2.Text = "Platform:";
+			this.label2.Text = "${res:Dialog.ProjectOptions.Platform}:";
 			this.label2.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
 			// configurationComboBox
@@ -98,7 +98,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(138, 23);
 			this.label1.TabIndex = 0;
-			this.label1.Text = "Solution configuration:";
+			this.label1.Text = "${res:Dialog.Options.CombineOptions.Configurations.SolutionConfiguration}";
 			this.label1.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
 			// grid
@@ -112,27 +112,30 @@ namespace ICSharpCode.SharpDevelop.Gui
 									this.configurationColumn,
 									this.platformColumn});
 			this.grid.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.grid.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
 			this.grid.Location = new System.Drawing.Point(0, 37);
 			this.grid.Name = "grid";
 			this.grid.Size = new System.Drawing.Size(504, 192);
 			this.grid.TabIndex = 1;
 			this.grid.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.GridCellValueChanged);
 			this.grid.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.GridDataError);
+			this.grid.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.GridEditingControlShowing);
 			// 
 			// projectNameColumn
 			// 
-			this.projectNameColumn.HeaderText = "Project Name";
+			this.projectNameColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+			this.projectNameColumn.HeaderText = "${res:Dialog.SelectReferenceDialog.ProjectReferencePanel.NameHeader}";
 			this.projectNameColumn.Name = "projectNameColumn";
 			this.projectNameColumn.ReadOnly = true;
 			// 
 			// configurationColumn
 			// 
-			this.configurationColumn.HeaderText = "Configuration";
+			this.configurationColumn.HeaderText = "${res:Dialog.Options.CombineOptions.Configurations.ConfigurationColumnHeader}";
 			this.configurationColumn.Name = "configurationColumn";
 			// 
 			// platformColumn
 			// 
-			this.platformColumn.HeaderText = "Platform";
+			this.platformColumn.HeaderText = "${res:Dialog.Options.CombineOptions.Configurations.PlatformColumnHeader}";
 			this.platformColumn.Name = "platformColumn";
 			// 
 			// panel2
@@ -166,7 +169,8 @@ namespace ICSharpCode.SharpDevelop.Gui
 			this.Controls.Add(this.panel1);
 			this.MinimumSize = new System.Drawing.Size(457, 145);
 			this.Name = "SolutionConfigurationEditor";
-			this.Text = "Configuration Editor";
+			this.ShowInTaskbar = false;
+			this.Text = "${res:Dialog.Options.CombineOptions.Configurations.ConfigurationEditor}";
 			this.panel1.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.grid)).EndInit();
 			this.panel2.ResumeLayout(false);

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2161 $</version>
 // </file>
 
 using System;
@@ -111,6 +111,13 @@ namespace ICSharpCode.TextEditor
 		
 		public void Cut(object sender, EventArgs e)
 		{
+			if (textArea.TextEditorProperties.UseCustomLine == true) {
+				if (textArea.SelectionManager.HasSomethingSelected) {
+					if (textArea.SelectionManager.SelectionIsReadonly)
+						return;
+				} else if (textArea.Document.CustomLineManager.IsReadOnly(textArea.Caret.Line, false) == true)
+					return;
+			}
 			if (CopyTextToClipboard(textArea.SelectionManager.SelectedText)) {
 				// Remove text
 				textArea.BeginUpdate();
@@ -147,6 +154,13 @@ namespace ICSharpCode.TextEditor
 		
 		public void Paste(object sender, EventArgs e)
 		{
+			if (textArea.TextEditorProperties.UseCustomLine == true) {
+				if (textArea.SelectionManager.HasSomethingSelected) {
+					if (textArea.SelectionManager.SelectionIsReadonly)
+						return;
+				} else if (textArea.Document.CustomLineManager.IsReadOnly(textArea.Caret.Line, false) == true)
+					return;
+			}
 			// Clipboard.GetDataObject may throw an exception...
 			for (int i = 0;; i++) {
 				try {
@@ -170,7 +184,7 @@ namespace ICSharpCode.TextEditor
 								textArea.InsertString(text);
 							}
 							if (redocounter > 0) {
-								textArea.Document.UndoStack.UndoLast(redocounter + 1); // redo the whole operation
+								textArea.Document.UndoStack.CombineLast(redocounter + 1); // redo the whole operation
 							}
 						}
 					}

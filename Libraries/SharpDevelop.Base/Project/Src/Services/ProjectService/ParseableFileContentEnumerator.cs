@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2072 $</version>
 // </file>
 
 using System;
@@ -62,17 +62,17 @@ namespace ICSharpCode.SharpDevelop.Project
 		{
 		}
 		
-		ProjectItem[] projectItems;
+		IList<ProjectItem> projectItems;
 		bool isOnMainThread;
 		Encoding defaultEncoding;
 		
-		public ParseableFileContentEnumerator(IProject project) : this(project.Items.ToArray()) { }
+		public ParseableFileContentEnumerator(IProject project) : this(project.Items) { }
 		
-		public ParseableFileContentEnumerator(ProjectItem[] projectItems)
+		public ParseableFileContentEnumerator(IList<ProjectItem> projectItems)
 		{
 			isOnMainThread = !WorkbenchSingleton.InvokeRequired;
 			this.projectItems = projectItems;
-			if (projectItems.Length > 0) {
+			if (projectItems.Count > 0) {
 				nextItem = projectItems[0];
 			}
 			defaultEncoding = ParserService.DefaultFileEncoding;
@@ -82,11 +82,6 @@ namespace ICSharpCode.SharpDevelop.Project
 		{
 			// Loading the source files is done asynchronously:
 			// While one file is parsed, the next is already loaded from disk.
-			if (project != null) {
-				string res = project.GetParseableFileContent(fileName);
-				if (res != null)
-					return res;
-			}
 			
 			// load file
 			Encoding tmp = defaultEncoding;
@@ -98,7 +93,7 @@ namespace ICSharpCode.SharpDevelop.Project
 		
 		public int ItemCount {
 			get {
-				return projectItems.Length;
+				return projectItems.Count;
 			}
 		}
 		
@@ -111,7 +106,7 @@ namespace ICSharpCode.SharpDevelop.Project
 		public bool MoveNext()
 		{
 			ProjectItem item = nextItem;
-			nextItem = (++index < projectItems.Length) ? projectItems[index] : null;
+			nextItem = (++index < projectItems.Count) ? projectItems[index] : null;
 			if (item == null) return false;
 			if (item.ItemType != ItemType.Compile)
 				return MoveNext();

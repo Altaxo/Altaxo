@@ -50,7 +50,7 @@ namespace Altaxo.Gui.Scripting
     void EhView_GotoCompilerError(string message);
   }
 
-  public interface IScriptController : IMVCAController
+  public interface IScriptController : IMVCANController
   {
     void SetText(string text);
     void Compile();
@@ -80,19 +80,44 @@ namespace Altaxo.Gui.Scripting
     private Regex _compilerErrorRegex = new Regex(@".*\((?<line>\d+),(?<column>\d+)\) : (?<msg>.+)",RegexOptions.Compiled);
 
 
-    public ScriptController(IScriptText doc)
-      : this(doc,null)
+    public ScriptController()
     {
+    }
+    public ScriptController(IScriptText doc)
+    {
+      InitializeDocument(doc);
     }
     public ScriptController(IScriptText doc, ScriptExecutionHandler exec)
     {
+      InitializeDocument(doc, exec);
+    }
+
+    #region IMVCANController Members
+
+    public bool InitializeDocument(params object[] args)
+    {
+      if (args == null || args.Length == 0)
+        return false;
+      IScriptText doc = args[0] as IScriptText;
+      if (doc == null)
+        return false;
+
       _doc = doc;
       _tempDoc = _doc.CloneForModification();
-      _compiledDoc=null;
+      _compiledDoc = null;
 
-      _pureScriptController = (IPureScriptController)Current.Gui.GetControllerAndControl(new object[]{_tempDoc},typeof(IPureScriptText),typeof(IPureScriptController),UseDocument.Copy);
-      _scriptExecutionHandler = exec;
+      _pureScriptController = (IPureScriptController)Current.Gui.GetControllerAndControl(new object[] { _tempDoc }, typeof(IPureScriptText), typeof(IPureScriptController), UseDocument.Copy);
+      _scriptExecutionHandler = args.Length<=1 ?  null : args[1] as ScriptExecutionHandler;
+
+      return true;
     }
+
+    public UseDocument UseDocumentCopy
+    {
+      set {}
+    }
+
+    #endregion
 
     public void SetText(string text)
     {
@@ -282,5 +307,7 @@ namespace Altaxo.Gui.Scripting
     }
 
     #endregion
+
+  
   }
 }

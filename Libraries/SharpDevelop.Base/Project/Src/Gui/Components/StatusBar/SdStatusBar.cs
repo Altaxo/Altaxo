@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2059 $</version>
 // </file>
 
 using System;
@@ -32,17 +32,6 @@ namespace ICSharpCode.SharpDevelop.Gui
 		public ToolStripStatusLabel  ModeStatusBarPanel {
 			get {
 				return modeStatusBarPanel;
-			}
-		}
-		
-		bool cancelEnabled;
-		
-		public bool CancelEnabled {
-			get {
-				return cancelEnabled;
-			}
-			set {
-				cancelEnabled = value;
 			}
 		}
 		
@@ -133,7 +122,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		// Progress Monitor implementation
 		int totalWork;
 		
-		public void BeginTask(string name, int totalWork)
+		public void BeginTask(string name, int totalWork, bool allowCancel)
 		{
 			taskName = name;
 			this.totalWork = totalWork;
@@ -202,6 +191,17 @@ namespace ICSharpCode.SharpDevelop.Gui
 		void SetTaskName()
 		{
 			jobNamePanel.Text = StringParser.Parse(taskName);
+		}
+		
+		bool showingDialog;
+		
+		public bool ShowingDialog {
+			get { return showingDialog; }
+			set { showingDialog = value; }
+		}
+		
+		public bool IsCancelled {
+			get { return false; }
 		}
 	}
 }

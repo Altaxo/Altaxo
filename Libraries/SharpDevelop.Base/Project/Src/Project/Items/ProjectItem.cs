@@ -1,8 +1,8 @@
 ﻿// <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
+//     <version>$Revision: 2124 $</version>
 // </file>
 
 using System;
@@ -15,45 +15,50 @@ using System.Xml;
 
 using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.Gui;
+using Microsoft.Build.BuildEngine;
 
 namespace ICSharpCode.SharpDevelop.Project
 {
-	public enum ItemType {
-		Unknown,
-		
-		// ReferenceProjectItem
-		Reference,
-		ProjectReference,
-		COMReference,
-		
-		Import,
-		
-		WebReferenceUrl,
-		
-		// FileProjectItem
-		Compile,
-		EmbeddedResource,
-		Resource,
-		None,
-		Content,
-		Folder,
-		WebReferences,
-		
-		ApplicationDefinition,
-		Page,
-		
-		BootstrapperFile
-	}
-	
+	/// <summary>
+	/// A project item is based either on an MSBuild build item, or "manually" saves the
+	/// type/include/metadata. The project item is strictly bound to it's parent project.
+	/// The MSBuild build item is used while the item is added to the project (IsAddedToProject
+	/// is true). During that time, Include may not be an empty string.
+	/// However, prior to the item being added to the project, Include may be an empty string
+	/// (this is also the default for new items created using the (IProject, ItemType) constructor.
+	/// </summary>
 	public abstract class ProjectItem : LocalizedObject, IDisposable, ICloneable
 	{
-		string        include;
-		PropertyGroup properties = new PropertyGroup();
-		IProject      project    = null;
+		IProject project;
+		volatile string fileNameCache;
 		
-		[Browsable(false)]
-		public abstract ItemType ItemType {
-			get;
+		// either use: (bound mode)
+		BuildItem buildItem;
+		
+		// or: (virtual mode)
+		string virtualInclude;
+		ItemType virtualItemType;
+		Dictionary<string, string> virtualMetadata = new Dictionary<string, string>();
+		
+		protected ProjectItem(IProject project, BuildItem buildItem)
+		{
+			if (project == null)
+				throw new ArgumentNullException("project");
+			this.project = project;
+			this.buildItem = buildItem;
+		}
+		
+		protected ProjectItem(IProject project, ItemType itemType)
+			: this(project, itemType, null)
+		{
+		}
+		
+		protected ProjectItem(IProject project, ItemType itemType, string include)
+		{
+			this.project = project;
+			this.virtualItemType = itemType;
+			this.virtualInclude = include ?? "";
+			this.virtualMetadata = new Dictionary<string, string>();
 		}
 		
 		[Browsable(false)]
@@ -61,191 +66,361 @@ namespace ICSharpCode.SharpDevelop.Project
 			get {
 				return project;
 			}
+		}
+		
+		/// <summary>
+		/// Gets the object used for synchronization. This is project.SyncRoot for items inside a project; or
+		/// virtualMetadata for items without project.
+		/// </summary>
+		object SyncRoot {
+			get {
+				if (project != null)
+					return project.SyncRoot;
+				else
+					return virtualMetadata;
+			}
+		}
+		
+		/// <summary>
+		/// Gets if the item is added to it's owner project.
+		/// </summary>
+		[Browsable(false)]
+		public bool IsAddedToProject {
+			get {
+				return buildItem != null;
+			}
+		}
+		
+		[Browsable(false)]
+		internal BuildItem BuildItem {
+			get { return buildItem; }
 			set {
-				project = value;
-				fileNameCache = null;
+				if (project is AbstractProject) {
+					((AbstractProject)project).ClearFindFileCache();
+				}
+				
+				if (value != null) {
+					virtualMetadata = null;
+					virtualItemType = default(ItemType);
+					virtualInclude = null;
+				} else {
+					virtualItemType = this.ItemType;
+					virtualInclude = this.Include;
+					virtualMetadata = new Dictionary<string, string>();
+					foreach (string name in this.MetadataNames) {
+						virtualMetadata[name] = this.GetMetadata(name);
+					}
+				}
+				buildItem = value;
+			}
+		}
+		
+		[Browsable(false)]
+		public ItemType ItemType {
+			get {
+				lock (SyncRoot) {
+					if (buildItem != null)
+						return new ItemType(buildItem.Name);
+					else
+						return virtualItemType;
+				}
+			}
+			set {
+				lock (SyncRoot) {
+					if (buildItem != null)
+						buildItem.Name = value.ToString();
+					else
+						virtualItemType = value;
+				}
 			}
 		}
 		
 		[Browsable(false)]
 		public string Include {
 			get {
-				return include;
+				lock (SyncRoot) {
+					if (buildItem != null)
+						return buildItem.FinalItemSpec;
+					else
+						return virtualInclude;
+				}
 			}
 			set {
-				include = value;
-				fileNameCache = null;
+				lock (SyncRoot) {
+					if (project is AbstractProject) {
+						((AbstractProject)project).ClearFindFileCache();
+					}
+					
+					if (buildItem != null)
+						buildItem.Include = MSBuildInternals.Escape(value);
+					else
+						virtualInclude = value ?? "";
+					fileNameCache = null;
+				}
 			}
 		}
 		
-		public virtual void CopyExtraPropertiesTo(ProjectItem item)
+		#region Metadata access
+		public bool HasMetadata(string metadataName)
 		{
-			string newInclude = item.Include;
-			item.Properties.Merge(this.Properties);
-			item.Include = newInclude;
+			lock (SyncRoot) {
+				if (buildItem != null)
+					return buildItem.HasMetadata(metadataName);
+				else
+					return virtualMetadata.ContainsKey(metadataName);
+			}
 		}
 		
-		public abstract ProjectItem Clone();
+		/// <summary>
+		/// Gets the evaluated value of the metadata item with the specified name.
+		/// Returns an empty string for non-existing meta data items.
+		/// </summary>
+		public string GetEvaluatedMetadata(string metadataName)
+		{
+			lock (SyncRoot) {
+				if (buildItem != null) {
+					return buildItem.GetEvaluatedMetadata(metadataName) ?? "";
+				} else {
+					string val;
+					virtualMetadata.TryGetValue(metadataName, out val);
+					if (val == null)
+						return "";
+					else
+						return MSBuildInternals.Unescape(val);
+				}
+			}
+		}
+		
+		/// <summary>
+		/// Gets the value of the metadata item with the specified name.
+		/// Returns defaultValue for non-existing meta data items.
+		/// </summary>
+		public T GetEvaluatedMetadata<T>(string metadataName, T defaultValue)
+		{
+			return GenericConverter.FromString(GetEvaluatedMetadata(metadataName), defaultValue);
+		}
+		
+		/// <summary>
+		/// Gets the escaped/unevaluated value of the metadata item with the specified name.
+		/// Returns an empty string for non-existing meta data items.
+		/// </summary>
+		public string GetMetadata(string metadataName)
+		{
+			lock (SyncRoot) {
+				if (buildItem != null) {
+					return buildItem.GetMetadata(metadataName) ?? "";
+				} else {
+					string val;
+					virtualMetadata.TryGetValue(metadataName, out val);
+					return val ?? "";
+				}
+			}
+		}
+		
+		/// <summary>
+		/// Sets the value of the specified meta data item. The value is escaped before
+		/// setting it to ensure characters like ';' or '$' are not interpreted by MSBuild.
+		/// Setting value to null or an empty string results in removing the metadata item.
+		/// </summary>
+		public void SetEvaluatedMetadata(string metadataName, string value)
+		{
+			if (string.IsNullOrEmpty(value)) {
+				RemoveMetadata(metadataName);
+			} else {
+				lock (SyncRoot) {
+					if (buildItem != null)
+						buildItem.SetMetadata(metadataName, value, true);
+					else
+						virtualMetadata[metadataName] = MSBuildInternals.Escape(value);
+				}
+			}
+		}
+		
+		/// <summary>
+		/// Sets the value of the specified meta data item. The value is escaped before
+		/// setting it to ensure characters like ';' or '$' are not interpreted by MSBuild.
+		/// </summary>
+		public void SetEvaluatedMetadata<T>(string metadataName, T value)
+		{
+			SetEvaluatedMetadata(metadataName, GenericConverter.ToString(value));
+		}
+		
+		/// <summary>
+		/// Sets the value of the specified meta data item.
+		/// Setting value to null or an empty string results in removing the metadata item.
+		/// </summary>
+		public void SetMetadata(string metadataName, string value)
+		{
+			if (string.IsNullOrEmpty(value)) {
+				RemoveMetadata(metadataName);
+			} else {
+				lock (SyncRoot) {
+					if (buildItem != null)
+						buildItem.SetMetadata(metadataName, value);
+					else
+						virtualMetadata[metadataName] = value;
+				}
+			}
+		}
+		
+		/// <summary>
+		/// Removes the specified meta data item.
+		/// </summary>
+		public void RemoveMetadata(string metadataName)
+		{
+			lock (SyncRoot) {
+				if (buildItem != null)
+					buildItem.RemoveMetadata(metadataName);
+				else
+					virtualMetadata.Remove(metadataName);
+			}
+		}
+		
+		/// <summary>
+		/// Gets the names of all existing meta data items on this project item. The resulting collection
+		/// is a copy that will not be affected by future changes to the project item.
+		/// </summary>
+		[Browsable(false)]
+		public IEnumerable<string> MetadataNames {
+			get {
+				lock (SyncRoot) {
+					if (buildItem != null)
+						return MSBuildInternals.GetCustomMetadataNames(buildItem);
+					else
+						return Linq.ToArray(virtualMetadata.Keys);
+				}
+			}
+		}
+		#endregion
+		
+		/// <summary>
+		/// Copies all meta data from this item to the target item.
+		/// </summary>
+		public virtual void CopyMetadataTo(ProjectItem targetItem)
+		{
+			lock (SyncRoot) {
+				lock (targetItem.SyncRoot) {
+					if (this.buildItem != null && targetItem.buildItem != null) {
+						this.buildItem.CopyCustomMetadataTo(targetItem.buildItem);
+					} else {
+						foreach (string name in this.MetadataNames) {
+							targetItem.SetMetadata(name, this.GetMetadata(name));
+						}
+					}
+				}
+			}
+		}
+		
+		/// <summary>
+		/// Clones this project item. Unless overridden, cloning works by cloning the underlying
+		/// MSBuild item and creating a new project item for it.
+		/// Using the default Clone() implementation requires that the item is has the Project
+		/// property set - cloning a ProjectItem without a project will result in a NotSupportedException.
+		/// </summary>
+		public virtual ProjectItem Clone()
+		{
+			if (this.Project != null) {
+				return CloneFor(this.Project);
+			} else {
+				throw new NotSupportedException();
+			}
+		}
+		
+		/// <summary>
+		/// Clones this project item by cloning the underlying
+		/// MSBuild item and creating a new project item in the target project for it.
+		/// </summary>
+		public ProjectItem CloneFor(IProject targetProject)
+		{
+			if (targetProject == null)
+				throw new ArgumentNullException("project");
+			
+			// use CreateProjectItem to ensure the clone has the same class
+			//  (derived from ProjectItem)
+			ProjectItem copy = targetProject.CreateProjectItem(CloneBuildItem());
+			// remove reference to cloned item, leaving an unbound project item
+			copy.BuildItem = null;
+			return copy;
+			
+		}
+		
+		BuildItem CloneBuildItem()
+		{
+			lock (SyncRoot) {
+				if (buildItem != null) {
+					return buildItem.Clone();
+				} else {
+					BuildItem dummyItem = new BuildItem(this.ItemType.ToString(), this.Include);
+					foreach (string name in this.MetadataNames) {
+						dummyItem.SetMetadata(name, this.GetMetadata(name));
+					}
+					return dummyItem;
+				}
+			}
+		}
 		
 		object ICloneable.Clone()
 		{
 			return this.Clone();
 		}
 		
-		[Browsable(false)]
-		public PropertyGroup Properties {
-			get {
-				return properties;
-			}
-		}
-		
-		string fileNameCache;
-		
+		/// <summary>
+		/// Gets/Sets the full path of the file represented by "Include".
+		/// For ProjectItems that are not assigned to any project, the getter returns the value of Include
+		/// and the setter throws a NotSupportedException.
+		/// </summary>
 		[Browsable(false)]
 		public virtual string FileName {
 			get {
-				if (project == null)
-					return Include;
-				if (fileNameCache == null)
-					fileNameCache = Path.Combine(project.Directory, include);
-				return fileNameCache;
+				if (project == null) {
+					return this.Include;
+				}
+				string fileName = this.fileNameCache;
+				if (fileName == null) {
+					lock (SyncRoot) {
+						fileName = Path.Combine(project.Directory, this.Include);
+						try {
+							if (Path.IsPathRooted(fileName)) {
+								fileName = Path.GetFullPath(fileName);
+							}
+						} catch {}
+						fileNameCache = fileName;
+					}
+				}
+				return fileName;
 			}
 			set {
-				fileNameCache = null;
-				Include = FileUtility.GetRelativePath(project.Directory, value);
+				if (project == null) {
+					throw new NotSupportedException("Not supported for items without project.");
+				}
+				this.Include = FileUtility.GetRelativePath(project.Directory, value);
 			}
+		}
+		
+		bool disposed;
+		
+		public virtual void Dispose()
+		{
+			disposed = true;
 		}
 		
 		[Browsable(false)]
-		public virtual string Tag {
-			get {
-				return ItemType.ToString();
-			}
+		public bool IsDisposed {
+			get { return disposed; }
 		}
 		
-		public ProjectItem(IProject project)
-		{
-			this.project = project;
-		}
-		
-		#region System.IDisposable interface implementation
-		public virtual void Dispose()
-		{
-		}
-		#endregion
 		public override string ToString()
 		{
-			return String.Format("[ProjectItem: ItemType={0}, Include={1}, Properties={2}]",
-			                     ItemType,
-			                     Include,
-			                     Properties);
-		}
-		
-		public static string MSBuildEscape(string text)
-		{
-			return MSBuildEscape(text, false);
-		}
-		
-		public static string MSBuildEscape(string text, bool escapeSemicolon)
-		{
-			StringBuilder b = null;
-			for (int i = 0; i < text.Length; i++) {
-				char c = text[i];
-				if (c == '%') {
-					if (b == null) b = new StringBuilder(text, 0, i, text.Length + 6);
-					b.Append("%25");
-				} else if (escapeSemicolon && c == ';') {
-					if (b == null) b = new StringBuilder(text, 0, i, text.Length + 6);
-					b.Append("%3b");
-				} else {
-					if (b != null) {
-						b.Append(c);
-					}
-				}
-			}
-			if (b != null)
-				return b.ToString();
-			else
-				return text;
-		}
-		
-		public static string MSBuildUnescape(string text)
-		{
-			StringBuilder b = null;
-			for (int i = 0; i < text.Length; i++) {
-				char c = text[i];
-				if (c == '%' && i + 2 < text.Length) {
-					if (b == null) b = new StringBuilder(text, 0, i, text.Length);
-					string a = text[i + 1].ToString() + text[i + 2].ToString();
-					int num;
-					if (int.TryParse(a, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out num)) {
-						b.Append((char)num);
-						i += 2;
-					} else {
-						b.Append('%');
-					}
-				} else {
-					if (b != null) {
-						b.Append(c);
-					}
-				}
-			}
-			if (b != null)
-				return b.ToString();
-			else
-				return text;
-		}
-		
-		public static ProjectItem ReadItem(XmlReader reader, IProject project, string itemType)
-		{
-			ProjectItem newItem = project != null ? project.CreateProjectItem(itemType) : ProjectItemFactory.CreateProjectItem(project, itemType);
-			newItem.Include = MSBuildUnescape(reader.GetAttribute("Include"));
-			if (!reader.IsEmptyElement) {
-				PropertyGroup.ReadProperties(reader, newItem.Properties, itemType);
-			}
-			return newItem;
-		}
-		
-		
-		internal void WriteItem(XmlWriter writer)
-		{
-			writer.WriteStartElement(Tag);
-			writer.WriteAttributeString("Include", MSBuildEscape(Include, true));
-			this.Properties.WriteProperties(writer);
-			writer.WriteEndElement();
-		}
-		
-		internal static void ReadItemGroup(XmlReader reader, IProject project, List<ProjectItem> items)
-		{
-			if (reader.IsEmptyElement) {
-				return;
-			}
-			while (reader.Read()) {
-				switch (reader.NodeType) {
-					case XmlNodeType.EndElement:
-						if (reader.LocalName == "ItemGroup") {
-							return;
-						}
-						break;
-					case XmlNodeType.Element:
-						items.Add(ReadItem(reader, project, reader.LocalName));
-						break;
-				}
-			}
-		}
-		
-		internal static void WriteItemGroup(XmlWriter writer, List<ProjectItem> items)
-		{
-			writer.WriteStartElement("ItemGroup");
-			foreach (ProjectItem item in items) {
-				item.WriteItem(writer);
-			}
-			writer.WriteEndElement();
+			return String.Format("[{0}: <{1} Include='{2}'>]",
+			                     GetType().Name, this.ItemType.ItemName, this.Include);
 		}
 		
 		public override void InformSetValue(LocalizedPropertyDescriptor localizedPropertyDescriptor, object component, object value)
 		{
-			Project.Save();
+			base.InformSetValue(localizedPropertyDescriptor, component, value);
+			if (project != null) {
+				project.Save();
+			}
 		}
 	}
 }

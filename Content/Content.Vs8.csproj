@@ -94,6 +94,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Content Include="data\templates\project\CSharp\DefaultAssemblyInfo.cs" />
+    <Content Include="data\templates\file\CSharp\ConfigurationElement.cs" />
+    <Content Include="data\templates\file\CSharp\ConfigurationElementCollection.cs" />
+    <Content Include="data\templates\file\CSharp\ConfigurationSection.cs" />
     <Compile Include="HelpSetup.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -173,6 +176,7 @@
     <Content Include="data\templates\project\CSharp\GladeProject.xpt" />
     <Content Include="data\templates\project\CSharp\GtkProject.xpt" />
     <Content Include="data\templates\project\CSharp\SharpDevelopAddin.xpt" />
+    <Content Include="data\templates\project\CSharp\SharpDevelopCustomToolTemplate.xft.xml" />
     <Content Include="data\templates\project\CSharp\SharpDevelopMacro.xpt" />
     <Content Include="data\templates\project\CSharp\WebpageProject.xpt" />
     <Content Include="data\templates\project\CSharp\WPFApplication.xpt" />
@@ -192,11 +196,17 @@
     <Content Include="data\templates\project\CSharp\SharedAddin.xpt" />
     <Content Include="data\templates\project\CSharp\WebService.xpt" />
     <Content Include="data\templates\project\VBNet\SharedAddin.xpt" />
+    <Content Include="data\templates\file\CSharp\CSharp.ConfigurationElement.xft" />
+    <Content Include="data\templates\file\CSharp\CSharp.ConfigurationElementCollection.xft" />
+    <Content Include="data\templates\file\CSharp\CSharp.ConfigurationSection.xft" />
+    <Content Include="data\templates\project\CSharp\SharpDevelopCustomTool.xpt" />
+    <Content Include="data\templates\project\VBNet\CompactFormsProject.xpt" />
     <None Include="HelpConverter.InstallState" />
     <Content Include="data\resources\StringResources.no.resources" />
     <Content Include="data\templates\project\CSharp\NotifyIconResources.resx">
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="data\resources\StringResources.pt.resources" />
     <EmbeddedResource Include="HelpSetup.resx">
       <DependentUpon>HelpSetup.cs</DependentUpon>
       <SubType>Designer</SubType>

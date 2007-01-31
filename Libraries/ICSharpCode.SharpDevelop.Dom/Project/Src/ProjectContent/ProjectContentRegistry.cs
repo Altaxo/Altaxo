@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2138 $</version>
 // </file>
 
 using System;
@@ -23,6 +23,11 @@ namespace ICSharpCode.SharpDevelop.Dom
 	{
 		internal DomPersistence persistence;
 		internal Dictionary<string, IProjectContent> contents = new Dictionary<string, IProjectContent>(StringComparer.InvariantCultureIgnoreCase);
+		
+		/// <summary>
+		/// Redirects short names to long names. Used to redirect .NET libraries to the chosen .NET version
+		/// </summary>
+		protected Dictionary<string, string> redirectedAssemblyNames = new Dictionary<string, string>();
 		
 		/// <summary>
 		/// Disposes all project contents stored in this registry.
@@ -150,13 +155,14 @@ namespace ICSharpCode.SharpDevelop.Dom
 						}
 					}
 					if (mscorlibContent == null) {
-						// TODO: switch back to reflection for mscorlib
 						// We're using Cecil now for everything to find bugs in CecilReader faster
-						mscorlibContent = CecilReader.LoadAssembly(MscorlibAssembly.Location, this);
-						//mscorlibContent = new ReflectionProjectContent(MscorlibAssembly);
+						//mscorlibContent = CecilReader.LoadAssembly(MscorlibAssembly.Location, this);
+						
+						// After SD 2.1 Beta 2, we're back to Reflection
+						mscorlibContent = new ReflectionProjectContent(MscorlibAssembly, this);
 						if (time != 0) {
-							LoggingService.Debug("Loaded mscorlib with Cecil in " + (Environment.TickCount - time) + " ms");
-							//LoggingService.Debug("Loaded mscorlib with Reflection in " + (Environment.TickCount - time) + " ms");
+							//LoggingService.Debug("Loaded mscorlib with Cecil in " + (Environment.TickCount - time) + " ms");
+							LoggingService.Debug("Loaded mscorlib with Reflection in " + (Environment.TickCount - time) + " ms");
 						}
 						if (persistence != null) {
 							persistence.SaveProjectContent(mscorlibContent);
@@ -166,6 +172,9 @@ namespace ICSharpCode.SharpDevelop.Dom
 					contents["mscorlib"] = mscorlibContent;
 					contents[mscorlibContent.AssemblyFullName] = mscorlibContent;
 					contents[mscorlibContent.AssemblyLocation] = mscorlibContent;
+					lock (redirectedAssemblyNames) {
+						redirectedAssemblyNames.Add("mscorlib", mscorlibContent.AssemblyFullName);
+					}
 					return mscorlibContent;
 				}
 			}
@@ -185,6 +194,20 @@ namespace ICSharpCode.SharpDevelop.Dom
 		
 		public virtual IProjectContent GetExistingProjectContent(string itemInclude, string itemFileName)
 		{
+			if (itemFileName == itemInclude) {
+				string shortName = itemInclude;
+				int pos = shortName.IndexOf(',');
+				if (pos > 0)
+					shortName = shortName.Substring(0, pos);
+				
+				// redirect all references to .NET default assemblies to the .NET version this registry uses
+				lock (redirectedAssemblyNames) {
+					if (redirectedAssemblyNames.ContainsKey(shortName)) {
+						itemFileName = redirectedAssemblyNames[shortName];
+						itemInclude = shortName;
+					}
+				}
+			}
 			lock (contents) {
 				if (contents.ContainsKey(itemFileName)) {
 					return contents[itemFileName];
@@ -199,11 +222,9 @@ namespace ICSharpCode.SharpDevelop.Dom
 		public virtual IProjectContent GetProjectContentForReference(string itemInclude, string itemFileName)
 		{
 			lock (contents) {
-				if (contents.ContainsKey(itemFileName)) {
-					return contents[itemFileName];
-				}
-				if (contents.ContainsKey(itemInclude)) {
-					return contents[itemInclude];
+				IProjectContent pc = GetExistingProjectContent(itemInclude, itemFileName);
+				if (pc != null) {
+					return pc;
 				}
 				
 				LoggingService.Debug("Loading PC for " + itemInclude);
@@ -218,7 +239,6 @@ namespace ICSharpCode.SharpDevelop.Dom
 				int time = Environment.TickCount;
 				#endif
 				
-				IProjectContent pc = null;
 				try {
 					pc = LoadProjectContent(itemInclude, itemFileName);
 				} catch (Exception ex) {
@@ -257,21 +277,37 @@ namespace ICSharpCode.SharpDevelop.Dom
 				}
 				if (pc == null) {
 					pc = new ReflectionProjectContent(assembly, this);
-					persistence.SaveProjectContent(pc);
+					if (persistence != null) {
+						persistence.SaveProjectContent(pc);
+					}
+				}
+				if (pc != null) {
+					// add default .NET assemblies to redirected assemblies (both when loaded from persistence
+					// and when loaded using Reflection)
+					lock (redirectedAssemblyNames) {
+						redirectedAssemblyNames.Add(shortName, pc.AssemblyFullName);
+					}
 				}
 			} else {
 				// find real file name for cecil:
 				if (File.Exists(itemFileName)) {
 					pc = CecilReader.LoadAssembly(itemFileName, this);
 				} else {
-					AssemblyName asmName = GacInterop.FindBestMatchingAssemblyName(itemInclude);
-					if (asmName != null) {
+					GacAssemblyName asmName = GacInterop.FindBestMatchingAssemblyName(itemInclude);
+					if (persistence != null && asmName != null) {
+						//LoggingService.Debug("Looking up in DOM cache: " + asmName.FullName);
+						pc = persistence.LoadProjectContentByAssemblyName(asmName.FullName);
+					}
+					if (pc == null && asmName != null) {
 						string subPath = Path.Combine(asmName.Name, GetVersion__Token(asmName));
 						subPath = Path.Combine(subPath, asmName.Name + ".dll");
 						foreach (string dir in Directory.GetDirectories(GacInterop.GacRootPath, "GAC*")) {
 							itemFileName = Path.Combine(dir, subPath);
 							if (File.Exists(itemFileName)) {
 								pc = CecilReader.LoadAssembly(itemFileName, this);
+								if (persistence != null) {
+									persistence.SaveProjectContent(pc);
+								}
 								break;
 							}
 						}
@@ -284,13 +320,11 @@ namespace ICSharpCode.SharpDevelop.Dom
 			return pc;
 		}
 		
-		static string GetVersion__Token(AssemblyName asmName)
+		static string GetVersion__Token(GacAssemblyName asmName)
 		{
 			StringBuilder b = new StringBuilder(asmName.Version.ToString());
 			b.Append("__");
-			foreach (byte by in asmName.GetPublicKeyToken()) {
-				b.Append(by.ToString("x2"));
-			}
+			b.Append(asmName.PublicKey);
 			return b.ToString();
 		}
 		
@@ -317,24 +351,34 @@ namespace ICSharpCode.SharpDevelop.Dom
               return ass;
       }
 #endif	
-
-      return null; // TODO: remove this line when CecilReader was tested enough and we can use Reflection again for the BCL
-			
-			// These assemblies are already loaded by SharpDevelop, so we don't need to load
-			// them in a separate AppDomain.
+			// These assemblies are already loaded by SharpDevelop, so we
+			// don't need to load them in a separate AppDomain/with Cecil.
 			switch (shortName) {
 				case "System": // System != mscorlib !!!
 					return SystemAssembly;
+				case "System.Xml":
+				case "System.XML":
+					return typeof(XmlReader).Assembly;
 				case "System.Data":
 				case "System.Design":
 				case "System.Drawing":
 				case "System.Web.Services":
 				case "System.Windows.Forms":
-					return Assembly.Load(shortName);
-				case "System.Xml":
-				case "System.XML":
-					return typeof(XmlReader).Assembly;
-        default:
+				case "System.Web":
+				case "System.ServiceProcess":
+				case "System.Security":
+				case "System.Runtime.Remoting":
+				case "System.Messaging":
+				case "System.Management":
+				case "System.Drawing.Design":
+				case "System.Deployment":
+				case "System.Configuration":
+				case "Microsoft.VisualBasic":
+					// Is not necessarily loaded by Dom-using application, but
+					// is a default .NET assembly and should be loaded with
+					// Reflection.
+					return ReflectionLoader.ReflectionLoadGacAssembly(shortName, false);
+				default:
 					return null;
 			}
 		}

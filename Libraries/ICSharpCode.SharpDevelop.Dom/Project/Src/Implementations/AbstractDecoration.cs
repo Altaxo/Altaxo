@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2029 $</version>
 // </file>
 
 using System;
@@ -168,11 +168,6 @@ namespace ICSharpCode.SharpDevelop.Dom
 		public bool IsNew {
 			get {
 				return (modifiers & ModifierEnum.New) == ModifierEnum.New;
-			}
-		}
-		public bool IsPartial {
-			get {
-				return (modifiers & ModifierEnum.Partial) == ModifierEnum.Partial;
 			}
 		}
 		public bool IsSynthetic {

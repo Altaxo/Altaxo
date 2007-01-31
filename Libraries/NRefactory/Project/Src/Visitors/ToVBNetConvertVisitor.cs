@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2199 $</version>
 // </file>
 
 using System;
@@ -24,6 +24,8 @@ namespace ICSharpCode.NRefactory.Visitors
 		//   Anonymous methods are put into new methods
 		//   Simple event handler creation is replaced with AddressOfExpression
 		//   Move Imports-statements out of namespaces
+		//   Parenthesis around Cast expressions remove - these are syntax errors in VB.NET
+		//   Decrease array creation size - VB specifies upper bound instead of array length
 		
 		List<INode> nodesToMoveToCompilationUnit = new List<INode>();
 		
@@ -315,6 +317,23 @@ namespace ICSharpCode.NRefactory.Visitors
 			if ((constructorDeclaration.Modifier & (Modifiers.Visibility | Modifiers.Static)) == 0)
 				constructorDeclaration.Modifier |= Modifiers.Private;
 			return base.VisitConstructorDeclaration(constructorDeclaration, data);
+		}
+		
+		public override object VisitParenthesizedExpression(ParenthesizedExpression parenthesizedExpression, object data)
+		{
+			base.VisitParenthesizedExpression(parenthesizedExpression, data);
+			if (parenthesizedExpression.Expression is CastExpression) {
+				ReplaceCurrentNode(parenthesizedExpression.Expression); // remove parenthesis
+			}
+			return null;
+		}
+		
+		public override object VisitArrayCreateExpression(ArrayCreateExpression arrayCreateExpression, object data)
+		{
+			for (int i = 0; i < arrayCreateExpression.Arguments.Count; i++) {
+				arrayCreateExpression.Arguments[i] = Expression.AddInteger(arrayCreateExpression.Arguments[i], -1);
+			}
+			return base.VisitArrayCreateExpression(arrayCreateExpression, data);
 		}
 	}
 }

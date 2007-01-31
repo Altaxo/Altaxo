@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Andrea Paatz" email="andrea@icsharpcode.net"/>
-//     <version>$Revision: 1958 $</version>
+//     <version>$Revision: 2043 $</version>
 // </file>
 
 using System;
@@ -11,6 +11,7 @@ using ICSharpCode.SharpDevelop;
 using ICSharpCode.SharpDevelop.Dom;
 using ICSharpCode.SharpDevelop.Dom.CSharp;
 using ICSharpCode.SharpDevelop.Dom.NRefactoryResolver;
+using ICSharpCode.SharpDevelop.Project;
 
 namespace CSharpBinding.Parser
 {
@@ -44,7 +45,7 @@ namespace CSharpBinding.Parser
 			return Path.GetExtension(fileName).Equals(".CS", StringComparison.OrdinalIgnoreCase);
 		}
 		
-		public bool CanParse(IDomProject project)
+		public bool CanParse(IProject project)
 		{
 			return project.Language == "C#";
 		}
@@ -114,7 +115,7 @@ namespace CSharpBinding.Parser
 		
 		public IResolver CreateResolver()
 		{
-			return new NRefactoryResolver(ParserService.CurrentProjectContent);
+			return new NRefactoryResolver(ParserService.CurrentProjectContent, LanguageProperties.CSharp);
 		}
 		///////// IParser Interface END
 	}

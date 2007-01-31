@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2200 $</version>
 // </file>
 
 using System;
@@ -26,6 +26,7 @@ namespace ICSharpCode.NRefactory.Visitors
 		//   IIF(cond, true, false) => ConditionalExpression
 		//   Built-in methods => Prefix with class name
 		//   Function A() \n A = SomeValue \n End Function -> convert to return statement
+		//   Array creation => add 1 to upper bound to get array length
 		
 		Dictionary<string, string> usings;
 		List<UsingDeclaration> addedUsings;
@@ -132,6 +133,11 @@ namespace ICSharpCode.NRefactory.Visitors
 			if ((method.Modifier & Modifiers.Visibility) == 0)
 				method.Modifier |= Modifiers.Public;
 			method.Modifier |= Modifiers.Extern | Modifiers.Static;
+			
+			if (method.TypeReference.IsNull) {
+				method.TypeReference = new TypeReference("System.Void");
+			}
+			
 			Attribute att = new Attribute("DllImport", null, null);
 			att.PositionalArguments.Add(CreateStringLiteral(declareDeclaration.Library));
 			if (declareDeclaration.Alias.Length > 0) {
@@ -223,28 +229,31 @@ namespace ICSharpCode.NRefactory.Visitors
 					methodDeclaration.Body.Children.RemoveAt(methodDeclaration.Body.Children.Count - 1);
 					methodDeclaration.Body.AddChild(rs);
 				} else {
-					methodDeclaration.Body.AcceptVisitor(new ReturnStatementForFunctionAssignment(methodDeclaration.Name), null);
-					Expression init;
-					switch (methodDeclaration.TypeReference.SystemType) {
-						case "System.Int16":
-						case "System.Int32":
-						case "System.Int64":
-						case "System.Byte":
-						case "System.UInt16":
-						case "System.UInt32":
-						case "System.UInt64":
-							init = new PrimitiveExpression(0, "0");
-							break;
-						case "System.Boolean":
-							init = new PrimitiveExpression(false, "false");
-							break;
-						default:
-							init = new PrimitiveExpression(null, "null");
-							break;
+					ReturnStatementForFunctionAssignment visitor = new ReturnStatementForFunctionAssignment(methodDeclaration.Name);
+					methodDeclaration.Body.AcceptVisitor(visitor, null);
+					if (visitor.replacementCount > 0) {
+						Expression init;
+						switch (methodDeclaration.TypeReference.SystemType) {
+							case "System.Int16":
+							case "System.Int32":
+							case "System.Int64":
+							case "System.Byte":
+							case "System.UInt16":
+							case "System.UInt32":
+							case "System.UInt64":
+								init = new PrimitiveExpression(0, "0");
+								break;
+							case "System.Boolean":
+								init = new PrimitiveExpression(false, "false");
+								break;
+							default:
+								init = new PrimitiveExpression(null, "null");
+								break;
+						}
+						methodDeclaration.Body.Children.Insert(0, new LocalVariableDeclaration(new VariableDeclaration(FunctionReturnValueName, init, methodDeclaration.TypeReference)));
+						methodDeclaration.Body.Children[0].Parent = methodDeclaration.Body;
+						methodDeclaration.Body.AddChild(new ReturnStatement(new IdentifierExpression(FunctionReturnValueName)));
 					}
-					methodDeclaration.Body.Children.Insert(0, new LocalVariableDeclaration(new VariableDeclaration(FunctionReturnValueName, init, methodDeclaration.TypeReference)));
-					methodDeclaration.Body.Children[0].Parent = methodDeclaration.Body;
-					methodDeclaration.Body.AddChild(new ReturnStatement(new IdentifierExpression(FunctionReturnValueName)));
 				}
 			}
 			
@@ -273,21 +282,22 @@ namespace ICSharpCode.NRefactory.Visitors
 		class ReturnStatementForFunctionAssignment : AbstractAstTransformer
 		{
 			string functionName;
+			internal int replacementCount = 0;
 			
 			public ReturnStatementForFunctionAssignment(string functionName)
 			{
 				this.functionName = functionName;
 			}
 			
-			public override object VisitAssignmentExpression(AssignmentExpression assignmentExpression, object data)
+			public override object VisitIdentifierExpression(IdentifierExpression identifierExpression, object data)
 			{
-				IdentifierExpression ident = assignmentExpression.Left as IdentifierExpression;
-				if (ident != null) {
-					if (ident.Identifier.Equals(functionName, StringComparison.InvariantCultureIgnoreCase)) {
-						ident.Identifier = FunctionReturnValueName;
+				if (identifierExpression.Identifier.Equals(functionName, StringComparison.InvariantCultureIgnoreCase)) {
+					if (!(identifierExpression.Parent is AddressOfExpression) && !(identifierExpression.Parent is InvocationExpression)) {
+						identifierExpression.Identifier = FunctionReturnValueName;
+						replacementCount++;
 					}
 				}
-				return base.VisitAssignmentExpression(assignmentExpression, data);
+				return base.VisitIdentifierExpression(identifierExpression, data);
 			}
 		}
 		#endregion
@@ -451,6 +461,17 @@ namespace ICSharpCode.NRefactory.Visitors
 				}
 			}
 			return base.VisitUsingStatement(usingStatement, data);
+		}
+		
+		public override object VisitArrayCreateExpression(ArrayCreateExpression arrayCreateExpression, object data)
+		{
+			for (int i = 0; i < arrayCreateExpression.Arguments.Count; i++) {
+				arrayCreateExpression.Arguments[i] = Expression.AddInteger(arrayCreateExpression.Arguments[i], 1);
+			}
+			if (arrayCreateExpression.ArrayInitializer.CreateExpressions.Count == 0) {
+				arrayCreateExpression.ArrayInitializer = null;
+			}
+			return base.VisitArrayCreateExpression(arrayCreateExpression, data);
 		}
 	}
 }

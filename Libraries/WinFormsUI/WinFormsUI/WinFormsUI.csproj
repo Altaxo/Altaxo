@@ -3,7 +3,7 @@
     <ProjectType>Local</ProjectType>
     <ProductVersion>8.0.50727</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{E509019E-4028-4DB8-97B8-72FD390B3DB9}</ProjectGuid>
+    <ProjectGuid>{D3C782BA-178E-4235-A3BA-8C11DEBB6BEE}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <AssemblyName>WeifenLuo.WinFormsUI.Docking</AssemblyName>
@@ -294,9 +294,7 @@
     <EmbeddedResource Include="Resources\DockPaneStrip.ScrollRightDisabled.bmp" />
     <EmbeddedResource Include="Resources\DockPaneStrip.ScrollRightEnabled.bmp" />
     <EmbeddedResource Include="Resources\MdiClientController.bmp" />
-    <EmbeddedResource Include="Strings.resX">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
+    <EmbeddedResource Include="Strings.resX" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Controls\CodeDoc\InertButton.xml" />
@@ -330,9 +328,6 @@
     <Content Include="Docking\CodeDoc\Interfaces.xml" />
     <Content Include="Docking\CodeDoc\NestedDockingStatus.xml" />
     <Service Include="{967B4E0D-AD0C-4609-AB67-0FA40C0206D8}" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ICSharpCode.Core.snk" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

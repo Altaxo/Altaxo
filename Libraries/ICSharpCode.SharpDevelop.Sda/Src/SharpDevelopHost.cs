@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2124 $</version>
 // </file>
 
 using System;
@@ -284,13 +284,13 @@ namespace ICSharpCode.SharpDevelop.Sda
 		}
 		
 		/// <summary>
-		/// Event before the workbench has been unloaded.
+		/// Event before the workbench starts running.
 		/// </summary>
 		[SuppressMessage("Microsoft.Naming", "CA1713:EventsShouldNotHaveBeforeOrAfterPrefix")]
 		public event EventHandler BeforeRunWorkbench;
 		
 		/// <summary>
-		/// Event after the workbench has been unloaded. Occurs on the thread
+		/// Event after the workbench has been unloaded.
 		/// </summary>
 		public event EventHandler WorkbenchClosed;
 		

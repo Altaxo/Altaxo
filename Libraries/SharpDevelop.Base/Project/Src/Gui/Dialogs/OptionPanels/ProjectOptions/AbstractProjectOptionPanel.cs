@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2043 $</version>
 // </file>
 
 using System;
@@ -17,11 +17,11 @@ namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 	public abstract class AbstractProjectOptionPanel : AbstractOptionPanel, ICanBeDirty
 	{
 		protected ConfigurationGuiHelper helper;
-		protected MSBuildProject project;
+		protected MSBuildBasedProject project;
 		
 		protected void InitializeHelper()
 		{
-			project = (MSBuildProject)((Properties)CustomizationObject).Get("Project");
+			project = (MSBuildBasedProject)((Properties)CustomizationObject).Get("Project");
 			baseDirectory = project.Directory;
 			helper = new ConfigurationGuiHelper(project, this.ControlDictionary);
 		}

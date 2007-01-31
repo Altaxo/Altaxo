@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2043 $</version>
 // </file>
 
 using System;
@@ -40,7 +40,7 @@ namespace ICSharpCode.SharpDevelop.Project
 				} else {
 					CustomNode unknownNode = new CustomNode();
 					unknownNode.SetIcon("Icons.16x16.Warning");
-					unknownNode.Text = ResourceService.GetString("ICSharpCode.SharpDevelop.Commands.ProjectBrowser.NoBackendForProjectType");
+					unknownNode.Text = StringParser.Parse(((UnknownProject)project).WarningText);
 					unknownNode.AddTo(projectNode);
 				}
 			} else {

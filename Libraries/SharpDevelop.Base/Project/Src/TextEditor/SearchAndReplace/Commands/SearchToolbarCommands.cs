@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2154 $</version>
 // </file>
 
 using System;
@@ -44,7 +44,7 @@ namespace SearchAndReplace
 				LoggingService.Debug("FindComboBox.CommitSearch()");
 				SearchOptions.DocumentIteratorType = DocumentIteratorType.CurrentDocument;
 				SearchOptions.FindPattern = comboBox.Text;
-				SearchReplaceManager.FindNext();
+				SearchReplaceManager.FindNext(null);
 				comboBox.Focus();
 			}
 		}

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1876 $</version>
+//     <version>$Revision: 2167 $</version>
 // </file>
 
 using System;
@@ -43,6 +43,12 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 				c = bookmark.Class;
 			}
 			
+			ParserService.ParseCurrentViewContent();
+			c = c.ProjectContent.GetClass(c.FullyQualifiedName, c.TypeParameters.Count);
+			if (c == null) {
+				return new ToolStripMenuItem[0];
+			}
+			
 			LanguageProperties language = c.ProjectContent.Language;
 			
 			List<ToolStripItem> list = new List<ToolStripItem>();
@@ -57,6 +63,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 					string correctFileName = Path.Combine(Path.GetDirectoryName(c.CompilationUnit.FileName),
 					                                      c.Name + Path.GetExtension(c.CompilationUnit.FileName));
 					if (FileUtility.IsValidFileName(correctFileName)
+					    && Path.IsPathRooted(correctFileName)
 					    && !File.Exists(correctFileName))
 					{
 						if (c.CompilationUnit.Classes.Count == 1) {
@@ -174,7 +181,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 			return b.ToString();
 		}
 		
-		void AddImplementInterfaceCommandItems(List<ToolStripItem> subItems, IClass c, bool explicitImpl, ModifierEnum modifier)
+		void AddImplementInterfaceCommandItems(List<ToolStripItem> subItems, IClass c, bool explicitImpl)
 		{
 			CodeGenerator codeGen = c.ProjectContent.Language.CodeGenerator;
 			IAmbience ambience = AmbienceService.CurrentAmbience;
@@ -186,7 +193,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 					EventHandler eh = delegate {
 						TextEditorDocument d = new TextEditorDocument(GetDocument(c));
 						if (d != null)
-							codeGen.ImplementInterface(rtCopy, d, explicitImpl, modifier, c);
+							codeGen.ImplementInterface(rtCopy, d, explicitImpl, c);
 						ParserService.ParseCurrentViewContent();
 					};
 					subItems.Add(new MenuCommand(ambience.Convert(interf), eh));
@@ -200,16 +207,14 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 			if (codeGen == null) return;
 			List<ToolStripItem> subItems = new List<ToolStripItem>();
 			if (c.ProjectContent.Language.SupportsImplicitInterfaceImplementation) {
-				AddImplementInterfaceCommandItems(subItems, c, false, ModifierEnum.Public);
+				AddImplementInterfaceCommandItems(subItems, c, false);
 				if (subItems.Count > 0) {
 					list.Add(new ICSharpCode.Core.Menu("${res:SharpDevelop.Refactoring.ImplementInterfaceImplicit}", subItems.ToArray()));
 					subItems = new List<ToolStripItem>();
 				}
-				
-				AddImplementInterfaceCommandItems(subItems, c, true, ModifierEnum.None);
-			} else {
-				AddImplementInterfaceCommandItems(subItems, c, true, ModifierEnum.Public);
 			}
+			AddImplementInterfaceCommandItems(subItems, c, true);
+			
 			if (subItems.Count > 0) {
 				if (c.ProjectContent.Language.SupportsImplicitInterfaceImplementation) {
 					list.Add(new ICSharpCode.Core.Menu("${res:SharpDevelop.Refactoring.ImplementInterfaceExplicit}", subItems.ToArray()));
@@ -270,8 +275,14 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 		{
 			MenuCommand item = (MenuCommand)sender;
 			IClass c = (IClass)item.Tag;
-			FindReferencesAndRenameHelper.ShowAsSearchResults(StringParser.Parse("${res:SharpDevelop.Refactoring.ReferencesTo}", new string[,] {{ "Name", c.Name }}),
-			                                                  RefactoringService.FindReferences(c, null));
+			using (AsynchronousWaitDialog monitor = AsynchronousWaitDialog.ShowWaitDialog("${res:SharpDevelop.Refactoring.FindReferences}"))
+			{
+				FindReferencesAndRenameHelper.ShowAsSearchResults(
+					StringParser.Parse("${res:SharpDevelop.Refactoring.ReferencesTo}",
+					                   new string[,] {{ "Name", c.Name }}),
+					RefactoringService.FindReferences(c, monitor)
+				);
+			}
 		}
 	}
 }

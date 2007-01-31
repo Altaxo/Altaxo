@@ -1,17 +1,78 @@
-﻿<project schemaVersion="1.3.2.0">
+﻿<project schemaVersion="1.3.3.1">
     <assemblies>
         <assembly assemblyPath="V:\C\Altaxo\src\Altaxo\Base\bin\Debug\AltaxoBase.dll" xmlCommentsPath="V:\C\Altaxo\src\Altaxo\Base\bin\Debug\AltaxoBase.xml" commentsOnly="False" />
         <assembly assemblyPath="V:\C\Altaxo\src\Altaxo\Base\bin\Debug\AltaxoCore.dll" xmlCommentsPath="V:\C\Altaxo\src\Altaxo\Base\bin\Debug\AltaxoCore.xml" commentsOnly="False" />
     </assemblies>
     <namespaceSummaries>
         <namespaceSummaryItem name="" isDocumented="False" />
+        <namespaceSummaryItem name="Altaxo" isDocumented="True">Contains classes essential for the whole program.</namespaceSummaryItem>
+        <namespaceSummaryItem name="Altaxo.Calc" isDocumented="True">Contains basic and special functions, complex algebra, etc.</namespaceSummaryItem>
+        <namespaceSummaryItem name="Altaxo.Calc.FitFunctions.General" isDocumented="True">Very general fit functions.</namespaceSummaryItem>
+        <namespaceSummaryItem name="Altaxo.Calc.FitFunctions.Relaxation" isDocumented="True">Fit functions concerning relaxation behaviour, like Kohlrausch function or Havriliak-Negami.</namespaceSummaryItem>
+        <namespaceSummaryItem name="Altaxo.Calc.Fourier" isDocumented="True">Contains methods related to fourier transformations, like FFT, correlation etc.</namespaceSummaryItem>
+        <namespaceSummaryItem name="Altaxo.Calc.Interpolation" isDocumented="True">Contains methods for data interpolation.</namespaceSummaryItem>
+        <namespaceSummaryItem name="Altaxo.Calc.LinearAlgebra" isDocumented="True">Contains methods for linear algebra.</namespaceSummaryItem>
+        <namespaceSummaryItem name="Altaxo.Calc.LinearAlgebra.Blas" isDocumented="True">Adaptor to BLAS package.</namespaceSummaryItem>
+        <namespaceSummaryItem name="Altaxo.Calc.LinearAlgebra.Lapack" isDocumented="True">Adaptor to LAPACK package.</namespaceSummaryItem>
+        <namespaceSummaryItem name="Altaxo.Calc.Optimization" isDocumented="True">Contains methods for finding minima and maxima of functions.</namespaceSummaryItem>
+        <namespaceSummaryItem name="Altaxo.Calc.Probability" isDocumented="True">Contains methods for generating random values and calculating distributions.</namespaceSummaryItem>
+        <namespaceSummaryItem name="Altaxo.Calc.Regression" isDocumented="True">Contains methods to fit data to a given function.</namespaceSummaryItem>
+        <namespaceSummaryItem name="Altaxo.Calc.Regression.Multivariate" isDocumented="True">Contains methods for multivariate data analysis, like the Partial Least Squares (PLS) method.</namespaceSummaryItem>
+        <namespaceSummaryItem name="Altaxo.Calc.Regression.Nonlinear" isDocumented="True">Contains methods for non-linear fitting of data.</namespaceSummaryItem>
+        <namespaceSummaryItem name="Altaxo.Collections" isDocumented="True">Collections and collection items special to Altaxo.</namespaceSummaryItem>
+        <namespaceSummaryItem name="Altaxo.Data" isDocumented="True">Contains classes  to represend data in Altaxo, like DataTable and DataColumn.</namespaceSummaryItem>
+        <namespaceSummaryItem name="Altaxo.Graph" isDocumented="True">Root namespace of the classes to represent diagrams. Contains classes that are independent on the graphical subsystem used.</namespaceSummaryItem>
+        <namespaceSummaryItem name="Altaxo.Graph.Gdi" isDocumented="True">Contains classes for graphical representation, that build on the GDI+ graphical subsystem.</namespaceSummaryItem>
+        <namespaceSummaryItem name="Altaxo.Graph.Gdi.Axis" isDocumented="True">Axis related stuff, i.e. code to draw axis lines and ticks.</namespaceSummaryItem>
+        <namespaceSummaryItem name="Altaxo.Graph.Gdi.Background" isDocumented="True">Drawing of backgrounds (for instance for text items, labels, and so on).</namespaceSummaryItem>
+        <namespaceSummaryItem name="Altaxo.Graph.Gdi.CS" isDocumented="False">Contains different coordinate systems.</namespaceSummaryItem>
+        <namespaceSummaryItem name="Altaxo.Graph.Gdi.LabelFormatting" isDocumented="True">Classes to format labels.</namespaceSummaryItem>
+        <namespaceSummaryItem name="Altaxo.Graph.Gdi.LineCaps" isDocumented="True">Different start and end caps used for line drawing.</namespaceSummaryItem>
+        <namespaceSummaryItem name="Altaxo.Graph.Gdi.Plot" isDocumented="True">Contains different plot item classes.</namespaceSummaryItem>
+        <namespaceSummaryItem name="Altaxo.Graph.Gdi.Plot.Data" isDocumented="True">Data representation of plot items.</namespaceSummaryItem>
+        <namespaceSummaryItem name="Altaxo.Graph.Gdi.Plot.Groups" isDocumented="True">Grouping of plot items.</namespaceSummaryItem>
+        <namespaceSummaryItem name="Altaxo.Graph.Gdi.Plot.Styles" isDocumented="True">Contains different plot styles, like line, scatter, and bar graph.</namespaceSummaryItem>
+        <namespaceSummaryItem name="Altaxo.Graph.Gdi.Plot.Styles.XYPlotLineStyles" isDocumented="True">Different plot line styles.</namespaceSummaryItem>
+        <namespaceSummaryItem name="Altaxo.Graph.Gdi.Plot.Styles.XYPlotScatterStyles" isDocumented="True">Different plot scatter styles.</namespaceSummaryItem>
+        <namespaceSummaryItem name="Altaxo.Graph.Gdi.Shapes" isDocumented="True">Contains various shapes that can be used on a diagram, like rectangle, ellipse and arrows.</namespaceSummaryItem>
+        <namespaceSummaryItem name="Altaxo.Graph.GUI" isDocumented="True">Classes to represent a diagram on the screen and to provide an interface to the user.</namespaceSummaryItem>
+        <namespaceSummaryItem name="Altaxo.Graph.GUI.GraphControllerMouseHandlers" isDocumented="True">Contains classes for mouse handling when editing a graph.</namespaceSummaryItem>
+        <namespaceSummaryItem name="Altaxo.Graph.Plot.Data" isDocumented="True">Contains data representation of plot items that is not dependent on the graphical subsystem.</namespaceSummaryItem>
+        <namespaceSummaryItem name="Altaxo.Graph.Plot.Groups" isDocumented="True">Contains plot grouping logic that is not dependent on the graphical subsystem used.</namespaceSummaryItem>
+        <namespaceSummaryItem name="Altaxo.Graph.Procedures" isDocumented="True">Contains various procedures, mostly for user interfacing.</namespaceSummaryItem>
+        <namespaceSummaryItem name="Altaxo.Graph.Scales" isDocumented="True">Scales that can be used on a diagram.</namespaceSummaryItem>
+        <namespaceSummaryItem name="Altaxo.Graph.Scales.Boundaries" isDocumented="True">Logic used in conjunction with scales find the lower and upper limit of a scale automatically.</namespaceSummaryItem>
+        <namespaceSummaryItem name="Altaxo.Graph.Scales.Rescaling" isDocumented="True">Classes to fix the scale start and end to user defined values or to let the scale find those values automatically.</namespaceSummaryItem>
+        <namespaceSummaryItem name="Altaxo.Gui" isDocumented="True">Common namespace of all user interface classes (dialogs).</namespaceSummaryItem>
+        <namespaceSummaryItem name="Altaxo.Gui.Analysis.NonLinearFitting" isDocumented="True">User interface code (dialogs) for non-linear fitting.</namespaceSummaryItem>
+        <namespaceSummaryItem name="Altaxo.Gui.Common" isDocumented="True">User interface code commonly used or used by other gui classes.</namespaceSummaryItem>
+        <namespaceSummaryItem name="Altaxo.Gui.Common.Drawing" isDocumented="True">User interface classes for drawing stuff, i.e. special comboboxes for color, line thickness, fonts and so on.</namespaceSummaryItem>
+        <namespaceSummaryItem name="Altaxo.Gui.Graph" isDocumented="True">User interface code (dialogs) for graph, layers, plot items.</namespaceSummaryItem>
+        <namespaceSummaryItem name="Altaxo.Gui.Graph.Scales" isDocumented="True">User interface code (dialogs) for scales.</namespaceSummaryItem>
+        <namespaceSummaryItem name="Altaxo.Gui.Graph.Scales.Rescaling" isDocumented="True">User interface code (dialogs) for the rescaling behaviour of scales.</namespaceSummaryItem>
+        <namespaceSummaryItem name="Altaxo.Gui.Scripting" isDocumented="True">User interface code (dialogs) for all kind of scripts (column scripts, worksheet scripts, extraction scripts, application scripts).</namespaceSummaryItem>
+        <namespaceSummaryItem name="Altaxo.Main" isDocumented="True">Classes of common use for all other classes.</namespaceSummaryItem>
+        <namespaceSummaryItem name="Altaxo.Main.Services" isDocumented="True">Some service classes that can be used by other classes.</namespaceSummaryItem>
+        <namespaceSummaryItem name="Altaxo.Scripting" isDocumented="True">Helper classes for scripting code.</namespaceSummaryItem>
+        <namespaceSummaryItem name="Altaxo.Serialization" isDocumented="True">Root of the serialization namespace. Contains conversion logic from user supplied input to internal representation and vice versa.</namespaceSummaryItem>
+        <namespaceSummaryItem name="Altaxo.Serialization.Ascii" isDocumented="True">Logic to read ascii input data files and to store to ascii output files.</namespaceSummaryItem>
+        <namespaceSummaryItem name="Altaxo.Serialization.Galactic" isDocumented="True">Classes to read Galactic .spc files.</namespaceSummaryItem>
+        <namespaceSummaryItem name="Altaxo.Serialization.Galactic.Options" isDocumented="True">Helper classes for Galactic .spc files input.</namespaceSummaryItem>
+        <namespaceSummaryItem name="Altaxo.Serialization.Origin" isDocumented="True">Classes to read data (data only) from Origin .OPJ files.</namespaceSummaryItem>
+        <namespaceSummaryItem name="Altaxo.Serialization.Xml" isDocumented="True">Classes to serialize and deserialize Altaxo class instances to XML.</namespaceSummaryItem>
+        <namespaceSummaryItem name="Altaxo.Worksheet" isDocumented="True">Classes to represent Altaxo data tables. Logic to store column properties, width, color of data columns for representation.</namespaceSummaryItem>
+        <namespaceSummaryItem name="Altaxo.Worksheet.Commands" isDocumented="True">Contains various procedures in conjunction with worksheets.</namespaceSummaryItem>
+        <namespaceSummaryItem name="Altaxo.Worksheet.Commands.Analysis" isDocumented="True">Contains various procedures in conjunction with worksheets to process, transform and analyze data.</namespaceSummaryItem>
+        <namespaceSummaryItem name="Altaxo.Worksheet.GUI" isDocumented="True">Gui logic to represent Altaxo data tables on the screen.</namespaceSummaryItem>
+        <namespaceSummaryItem name="MWControlSuite" isDocumented="True">Namespace of the MWControlSuite.</namespaceSummaryItem>
+        <namespaceSummaryItem name="System.Drawing" isDocumented="True">Helper classes for serialization of some classes of the System.Drawing namespace.</namespaceSummaryItem>
     </namespaceSummaries>
     <contentPlacement>AboveNamespaces</contentPlacement>
     <dependencies>
         <dependencyItem depPath="V:\C\Altaxo\src\rtdebug\bin\*.*" />
         <dependencyItem depPath="GAC:System.Configuration, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
     </dependencies>
-    <projectSummary />
+    <projectSummary>Altaxo- data processing and plotting programm written in C# for the .NET framework.</projectSummary>
     <sandcastlePath />
     <hhcPath />
     <hxcompPath />
@@ -19,6 +80,7 @@
     <helpFileFormat>HtmlHelp1x</helpFileFormat>
     <cleanIntermediates>True</cleanIntermediates>
     <purgeDuplicateTopics>True</purgeDuplicateTopics>
+    <cppCommentsFixup>False</cppCommentsFixup>
     <frameworkVersion>2.0.50727</frameworkVersion>
     <binaryTOC>True</binaryTOC>
     <includeFavorites>False</includeFavorites>
@@ -35,6 +97,7 @@
     <sdkLinks>Msdn</sdkLinks>
     <presentationStyle>Prototype</presentationStyle>
     <namingMethod>Guid</namingMethod>
+    <syntaxFilters>Standard</syntaxFilters>
     <missingTags>AutoDocumentCtors</missingTags>
     <visibleItems>InheritedMembers, InheritedFrameworkMembers, Protected, SealedProtected</visibleItems>
 </project>

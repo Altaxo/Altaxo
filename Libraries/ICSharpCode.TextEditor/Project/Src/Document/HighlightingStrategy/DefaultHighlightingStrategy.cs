@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2115 $</version>
 // </file>
 
 using System;
@@ -500,156 +500,181 @@ namespace ICSharpCode.TextEditor.Document
 						}
 						++currentOffset;
 						break;
-					case '\\': // handle escape chars
-						if ((activeRuleSet != null && activeRuleSet.NoEscapeSequences) ||
-						    (activeSpan != null && activeSpan.NoEscapeSequences)) {
-							goto default;
-						}
-						++currentLength;
-						if (i + 1 < currentLine.Length) {
-							++currentLength;
-						}
-						PushCurWord(document, ref markNext, words);
-						++i;
-						continue;
-					default: {
-						// highlight digits
-						if (!inSpan && (Char.IsDigit(ch) || (ch == '.' && i + 1 < currentLine.Length && Char.IsDigit(document.GetCharAt(currentLine.Offset + i + 1)))) && currentLength == 0) {
-							bool ishex = false;
-							bool isfloatingpoint = false;
-							
-							if (ch == '0' && i + 1 < currentLine.Length && Char.ToUpper(document.GetCharAt(currentLine.Offset + i + 1)) == 'X') { // hex digits
-								const string hex = "0123456789ABCDEF";
-								++currentLength;
-								++i; // skip 'x'
-								++currentLength;
-								ishex = true;
-								while (i + 1 < currentLine.Length && hex.IndexOf(Char.ToUpper(document.GetCharAt(currentLine.Offset + i + 1))) != -1) {
-									++i;
-									++currentLength;
-								}
-							} else {
-								++currentLength;
-								while (i + 1 < currentLine.Length && Char.IsDigit(document.GetCharAt(currentLine.Offset + i + 1))) {
-									++i;
-									++currentLength;
-								}
+					default:
+						{
+							// handle escape characters
+							char escapeCharacter = '\0';
+							if (activeSpan != null && activeSpan.EscapeCharacter != '\0') {
+								escapeCharacter = activeSpan.EscapeCharacter;
+							} else if (activeRuleSet != null) {
+								escapeCharacter = activeRuleSet.EscapeCharacter;
 							}
-							if (!ishex && i + 1 < currentLine.Length && document.GetCharAt(currentLine.Offset + i + 1) == '.') {
-								isfloatingpoint = true;
-								++i;
-								++currentLength;
-								while (i + 1 < currentLine.Length && Char.IsDigit(document.GetCharAt(currentLine.Offset + i + 1))) {
-									++i;
+							if (escapeCharacter != '\0' && escapeCharacter == ch) {
+								// we found the escape character
+								if (activeSpan != null && activeSpan.End != null && activeSpan.End.Length == 1
+								    && escapeCharacter == activeSpan.End[0])
+								{
+									// the escape character is a end-doubling escape character
+									// it may count as escape only when the next character is the escape, too
+									if (i + 1 < currentLine.Length) {
+										if (document.GetCharAt(currentLine.Offset + i + 1) == escapeCharacter) {
+											currentLength += 2;
+											PushCurWord(document, ref markNext, words);
+											++i;
+											continue;
+										}
+									}
+								} else {
+									// this is a normal \-style escape
 									++currentLength;
+									if (i + 1 < currentLine.Length) {
+										++currentLength;
+									}
+									PushCurWord(document, ref markNext, words);
+									++i;
+									continue;
 								}
 							}
 							
-							if (i + 1 < currentLine.Length && Char.ToUpper(document.GetCharAt(currentLine.Offset + i + 1)) == 'E') {
-								isfloatingpoint = true;
-								++i;
-								++currentLength;
-								if (i + 1 < currentLine.Length && (document.GetCharAt(currentLine.Offset + i + 1) == '+' || document.GetCharAt(currentLine.Offset + i + 1) == '-')) {
-									++i;
+							// highlight digits
+							if (!inSpan && (Char.IsDigit(ch) || (ch == '.' && i + 1 < currentLine.Length && Char.IsDigit(document.GetCharAt(currentLine.Offset + i + 1)))) && currentLength == 0) {
+								bool ishex = false;
+								bool isfloatingpoint = false;
+								
+								if (ch == '0' && i + 1 < currentLine.Length && Char.ToUpper(document.GetCharAt(currentLine.Offset + i + 1)) == 'X') { // hex digits
+									const string hex = "0123456789ABCDEF";
 									++currentLength;
-								}
-								while (i + 1 < currentLine.Length && Char.IsDigit(document.GetCharAt(currentLine.Offset + i + 1))) {
-									++i;
+									++i; // skip 'x'
 									++currentLength;
-								}
-							}
-							
-							if (i + 1 < currentLine.Length) {
-								char nextch = Char.ToUpper(document.GetCharAt(currentLine.Offset + i + 1));
-								if (nextch == 'F' || nextch == 'M' || nextch == 'D') {
-									isfloatingpoint = true;
-									++i;
+									ishex = true;
+									while (i + 1 < currentLine.Length && hex.IndexOf(Char.ToUpper(document.GetCharAt(currentLine.Offset + i + 1))) != -1) {
+										++i;
+										++currentLength;
+									}
+								} else {
 									++currentLength;
-								}
-							}
-							
-							if (!isfloatingpoint) {
-								bool isunsigned = false;
-								if (i + 1 < currentLine.Length && Char.ToUpper(document.GetCharAt(currentLine.Offset + i + 1)) == 'U') {
-									++i;
-									++currentLength;
-									isunsigned = true;
-								}
-								if (i + 1 < currentLine.Length && Char.ToUpper(document.GetCharAt(currentLine.Offset + i + 1)) == 'L') {
-									++i;
-									++currentLength;
-									if (!isunsigned && i + 1 < currentLine.Length && Char.ToUpper(document.GetCharAt(currentLine.Offset + i + 1)) == 'U') {
+									while (i + 1 < currentLine.Length && Char.IsDigit(document.GetCharAt(currentLine.Offset + i + 1))) {
 										++i;
 										++currentLength;
 									}
 								}
-							}
-							
-							words.Add(new TextWord(document, currentLine, currentOffset, currentLength, DigitColor, false));
-							currentOffset += currentLength;
-							currentLength = 0;
-							continue;
-						}
-
-						// Check for SPAN ENDs
-						if (inSpan) {
-							if (activeSpan.End != null && !activeSpan.End.Equals("")) {
-								if (currentLine.MatchExpr(activeSpan.End, i, document, activeSpan.IgnoreCase)) {
-									PushCurWord(document, ref markNext, words);
-									string regex = currentLine.GetRegString(activeSpan.End, i, document);
-									currentLength += regex.Length;
-									words.Add(new TextWord(document, currentLine, currentOffset, currentLength, activeSpan.EndColor, false));
-									currentOffset += currentLength;
-									currentLength = 0;
-									i += regex.Length - 1;
-									currentSpanStack.Pop();
-									UpdateSpanStateVariables();
-									continue;
+								if (!ishex && i + 1 < currentLine.Length && document.GetCharAt(currentLine.Offset + i + 1) == '.') {
+									isfloatingpoint = true;
+									++i;
+									++currentLength;
+									while (i + 1 < currentLine.Length && Char.IsDigit(document.GetCharAt(currentLine.Offset + i + 1))) {
+										++i;
+										++currentLength;
+									}
 								}
+								
+								if (i + 1 < currentLine.Length && Char.ToUpper(document.GetCharAt(currentLine.Offset + i + 1)) == 'E') {
+									isfloatingpoint = true;
+									++i;
+									++currentLength;
+									if (i + 1 < currentLine.Length && (document.GetCharAt(currentLine.Offset + i + 1) == '+' || document.GetCharAt(currentLine.Offset + i + 1) == '-')) {
+										++i;
+										++currentLength;
+									}
+									while (i + 1 < currentLine.Length && Char.IsDigit(document.GetCharAt(currentLine.Offset + i + 1))) {
+										++i;
+										++currentLength;
+									}
+								}
+								
+								if (i + 1 < currentLine.Length) {
+									char nextch = Char.ToUpper(document.GetCharAt(currentLine.Offset + i + 1));
+									if (nextch == 'F' || nextch == 'M' || nextch == 'D') {
+										isfloatingpoint = true;
+										++i;
+										++currentLength;
+									}
+								}
+								
+								if (!isfloatingpoint) {
+									bool isunsigned = false;
+									if (i + 1 < currentLine.Length && Char.ToUpper(document.GetCharAt(currentLine.Offset + i + 1)) == 'U') {
+										++i;
+										++currentLength;
+										isunsigned = true;
+									}
+									if (i + 1 < currentLine.Length && Char.ToUpper(document.GetCharAt(currentLine.Offset + i + 1)) == 'L') {
+										++i;
+										++currentLength;
+										if (!isunsigned && i + 1 < currentLine.Length && Char.ToUpper(document.GetCharAt(currentLine.Offset + i + 1)) == 'U') {
+											++i;
+											++currentLength;
+										}
+									}
+								}
+								
+								words.Add(new TextWord(document, currentLine, currentOffset, currentLength, DigitColor, false));
+								currentOffset += currentLength;
+								currentLength = 0;
+								continue;
 							}
-						}
-						
-						// check for SPAN BEGIN
-						if (activeRuleSet != null) {
-							foreach (Span span in activeRuleSet.Spans) {
-								if ((!span.IsBeginSingleWord || currentLength == 0) && currentLine.MatchExpr(span.Begin, i, document, activeRuleSet.IgnoreCase)) {
-									PushCurWord(document, ref markNext, words);
-									string regex = currentLine.GetRegString(span.Begin, i, document);
-									
-									if (!OverrideSpan(regex, document, words, span, ref i)) {
+
+							// Check for SPAN ENDs
+							if (inSpan) {
+								if (activeSpan.End != null && activeSpan.End.Length > 0) {
+									if (currentLine.MatchExpr(activeSpan.End, i, document, activeSpan.IgnoreCase)) {
+										PushCurWord(document, ref markNext, words);
+										string regex = currentLine.GetRegString(activeSpan.End, i, document);
 										currentLength += regex.Length;
-										words.Add(new TextWord(document, currentLine, currentOffset, currentLength, span.BeginColor, false));
+										words.Add(new TextWord(document, currentLine, currentOffset, currentLength, activeSpan.EndColor, false));
 										currentOffset += currentLength;
 										currentLength = 0;
-										
 										i += regex.Length - 1;
-										if (currentSpanStack == null) {
-											currentSpanStack = new SpanStack();
-										}
-										currentSpanStack.Push(span);
-										span.IgnoreCase = activeRuleSet.IgnoreCase;
-										
+										currentSpanStack.Pop();
 										UpdateSpanStateVariables();
+										continue;
 									}
-									
+								}
+							}
+							
+							// check for SPAN BEGIN
+							if (activeRuleSet != null) {
+								foreach (Span span in activeRuleSet.Spans) {
+									if ((!span.IsBeginSingleWord || currentLength == 0)
+									    && (!span.IsBeginStartOfLine.HasValue || span.IsBeginStartOfLine.Value == (currentLength == 0 && words.TrueForAll(delegate(TextWord textWord) { return textWord.Type != TextWordType.Word; })))
+									    && currentLine.MatchExpr(span.Begin, i, document, activeRuleSet.IgnoreCase)) {
+										PushCurWord(document, ref markNext, words);
+										string regex = currentLine.GetRegString(span.Begin, i, document);
+										
+										if (!OverrideSpan(regex, document, words, span, ref i)) {
+											currentLength += regex.Length;
+											words.Add(new TextWord(document, currentLine, currentOffset, currentLength, span.BeginColor, false));
+											currentOffset += currentLength;
+											currentLength = 0;
+											
+											i += regex.Length - 1;
+											if (currentSpanStack == null) {
+												currentSpanStack = new SpanStack();
+											}
+											currentSpanStack.Push(span);
+											span.IgnoreCase = activeRuleSet.IgnoreCase;
+											
+											UpdateSpanStateVariables();
+										}
+										
+										goto skip;
+									}
+								}
+							}
+							
+							// check if the char is a delimiter
+							if (activeRuleSet != null && (int)ch < 256 && activeRuleSet.Delimiters[(int)ch]) {
+								PushCurWord(document, ref markNext, words);
+								if (currentOffset + currentLength +1 < currentLine.Length) {
+									++currentLength;
+									PushCurWord(document, ref markNext, words);
 									goto skip;
 								}
 							}
+							
+							++currentLength;
+							skip: continue;
 						}
-						
-						// check if the char is a delimiter
-						if (activeRuleSet != null && (int)ch < 256 && activeRuleSet.Delimiters[(int)ch]) {
-							PushCurWord(document, ref markNext, words);
-							if (currentOffset + currentLength +1 < currentLine.Length) {
-								++currentLength;
-								PushCurWord(document, ref markNext, words);
-								goto skip;
-							}
-						}
-						
-						++currentLength;
-						skip: continue;
-					}
 				}
 			}
 			

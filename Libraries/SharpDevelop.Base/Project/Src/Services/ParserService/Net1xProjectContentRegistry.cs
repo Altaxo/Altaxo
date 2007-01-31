@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2138 $</version>
 // </file>
 
 using System;
@@ -28,7 +28,7 @@ namespace ICSharpCode.SharpDevelop
 		protected override IProjectContent LoadProjectContent(string itemInclude, string itemFileName)
 		{
 			if (File.Exists(itemFileName)) {
-				return ParserService.DefaultProjectContentRegistry.GetProjectContentForReference(itemInclude, itemFileName);
+				return base.LoadProjectContent(itemInclude, itemFileName);
 			}
 			string netPath = Path.Combine(FileUtility.NETFrameworkInstallRoot, DotnetVersion);
 			if (File.Exists(Path.Combine(netPath, "mscorlib.dll"))) {
@@ -38,10 +38,18 @@ namespace ICSharpCode.SharpDevelop
 					shortName = shortName.Substring(0, pos);
 				
 				if (File.Exists(Path.Combine(netPath, shortName + ".dll"))) {
-					return CecilReader.LoadAssembly(Path.Combine(netPath, shortName + ".dll"), this);
+					ReflectionProjectContent rpc = CecilReader.LoadAssembly(Path.Combine(netPath, shortName + ".dll"), this);
+					if (rpc != null) {
+						redirectedAssemblyNames.Add(shortName, rpc.AssemblyFullName);
+					}
+					return rpc;
 				} else if (File.Exists(Path.Combine(netPath, shortName))) {
 					// perhaps shortName includes file extension
-					return CecilReader.LoadAssembly(Path.Combine(netPath, shortName), this);
+					ReflectionProjectContent rpc = CecilReader.LoadAssembly(Path.Combine(netPath, shortName), this);
+					if (rpc != null) {
+						redirectedAssemblyNames.Add(Path.GetFileNameWithoutExtension(shortName), rpc.AssemblyFullName);
+					}
+					return rpc;
 				}
 			} else {
 				string message = "Warning: Target .NET Framework version " + DotnetVersion + " is not installed." + Environment.NewLine;
@@ -49,7 +57,7 @@ namespace ICSharpCode.SharpDevelop
 					TaskService.BuildMessageViewCategory.AppendText(message);
 				}
 			}
-			return ParserService.DefaultProjectContentRegistry.GetProjectContentForReference(itemInclude, itemFileName);
+			return base.LoadProjectContent(itemInclude, itemFileName);
 		}
 	}
 	

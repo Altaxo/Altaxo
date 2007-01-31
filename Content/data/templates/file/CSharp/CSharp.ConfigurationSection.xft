@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<Template author="Justin Dearing" version="1.0">
+	<Config
+		name		= "${res:Templates.File.ConfigurationSection.Name}"
+		icon		= "C#.File.NewClass"
+		category	= "C#"
+		defaultname = "Class${Number}.cs"
+		language	= "C#"/>
+	<Description>${res:Templates.File.ConfigurationSection.Description}</Description>  
+	<!--
+	Special new file templates:
+		${StandardNamespace}		-> Standardnamespace of the current project or FileNameWithoutExtension
+		${FullName}				 -> Full generated path name
+		${FileName}				 -> File name with extension
+		${FileNameWithoutExtension} -> File name without extension
+		${Extension}				-> Extension in the form ".cs"
+		${Path}					 -> Full path of the file
+		${ClassName}				-> Class name (generally FileNameWithoutExtension w/o 'bad' characters)
+	 -->
+	 <Files>
+		<File name="${Path}/${FileNameWithoutExtension}Element.cs" language="C#" src="ConfigurationElement.cs" />
+		<File name="${Path}/${FileNameWithoutExtension}ElementCollection.cs" language="C#" src="ConfigurationElementCollection.cs" />
+		<File name="${Path}/${FileNameWithoutExtension}Section.cs" language="C#" src="ConfigurationSection.cs" />
+	</Files>
+	<AdditionalOptions/>
+</Template>

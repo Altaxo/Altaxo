@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2161 $</version>
 // </file>
 
 using System;
@@ -14,7 +14,7 @@ namespace ICSharpCode.SharpDevelop.Internal.Undo
 	/// This class stacks the last x operations from the undostack and makes
 	/// one undo/redo operation from it.
 	/// </summary>
-	public class UndoQueue : IUndoableOperation
+	internal class UndoQueue : IUndoableOperation
 	{
 		List<IUndoableOperation> undolist = new List<IUndoableOperation>();
 		

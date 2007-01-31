@@ -2,10 +2,11 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1898 $</version>
+//     <version>$Revision: 2151 $</version>
 // </file>
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace ICSharpCode.SharpDevelop
@@ -36,6 +37,107 @@ namespace ICSharpCode.SharpDevelop
 			foreach (T element in input) {
 				if (filter(element))
 					yield return element;
+			}
+		}
+		
+		/// <summary>
+		/// Returns the elements of type T inside input by running
+		/// "if (element is T) yield return (T)element;" on each element.
+		/// </summary>
+		public static IEnumerable<T> OfType<T>(IEnumerable input)
+		{
+			foreach (object element in input) {
+				if (element is T)
+					yield return (T)element;
+			}
+		}
+		
+		/// <summary>
+		/// Casts a non-generic enumeration into a generic enumeration.
+		/// </summary>
+		public static IEnumerable<T> CastTo<T>(IEnumerable input)
+		{
+			foreach (object element in input) {
+				yield return (T)element;
+			}
+		}
+		
+		/// <summary>
+		/// Returns the first element in input for which filter is true.
+		/// Returns default(T) if no element matches the filter.
+		/// </summary>
+		public static T Find<T>(IEnumerable<T> input, Predicate<T> filter)
+		{
+			foreach (T element in input) {
+				if (filter(element))
+					return element;
+			}
+			return default(T);
+		}
+		
+		public static List<T> ToList<T>(IEnumerable<T> input)
+		{
+			return new List<T>(input);
+		}
+		
+		public static T[] ToArray<T>(IEnumerable<T> input)
+		{
+			if (input is ICollection<T>) {
+				ICollection<T> c = (ICollection<T>)input;
+				T[] arr = new T[c.Count];
+				c.CopyTo(arr, 0);
+				return arr;
+			} else {
+				return new List<T>(input).ToArray();
+			}
+		}
+		
+		public static int Count<T>(IEnumerable<T> input)
+		{
+			if (input is ICollection<T>) {
+				return ((ICollection<T>)input).Count;
+			}
+			int count = 0;
+			using (IEnumerator<T> e = input.GetEnumerator()) {
+				while (e.MoveNext())
+					count++;
+			}
+			return count;
+		}
+		
+		/// <summary>
+		/// Concatenates the specified enumerables.
+		/// </summary>
+		public static IEnumerable<T> Concat<T>(params IEnumerable<T>[] inputs)
+		{
+			return Concat(inputs as IEnumerable<IEnumerable<T>>);
+		}
+		
+		/// <summary>
+		/// Concatenates the specified enumerables.
+		/// </summary>
+		public static IEnumerable<T> Concat<T>(IEnumerable<IEnumerable<T>> inputs)
+		{
+			foreach (IEnumerable<T> input in inputs) {
+				foreach (T element in input) {
+					yield return element;
+				}
+			}
+		}
+		
+		/// <summary>
+		/// Outputs distinct elements only, filtering all duplicates.
+		/// </summary>
+		public static IEnumerable<T> Distinct<T>(IEnumerable<T> input)
+		{
+			// store elements already seen
+			Dictionary<T, object> elements = new Dictionary<T, object>();
+			
+			foreach (T element in input) {
+				if (!elements.ContainsKey(element)) {
+					elements.Add(element, null);
+					yield return element;
+				}
 			}
 		}
 	}

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2102 $</version>
 // </file>
 
 using System;
@@ -43,15 +43,6 @@ namespace CSharpBinding
 		{
 			PreprocessingDirective.VBToCSharp(specials);
 			compilationUnit.AcceptVisitor(new VBNetToCSharpConvertVisitor(), null);
-		}
-		
-		protected override IProject CreateProject(string targetProjectDirectory, IProject sourceProject)
-		{
-			ProjectCreateInformation info = new ProjectCreateInformation();
-			info.ProjectBasePath = targetProjectDirectory;
-			info.ProjectName = sourceProject.Name;
-			info.OutputProjectFileName = Path.Combine(targetProjectDirectory, Path.GetFileNameWithoutExtension(sourceProject.FileName) + ".csproj");
-			return new CSharpProject(info);
 		}
 	}
 }

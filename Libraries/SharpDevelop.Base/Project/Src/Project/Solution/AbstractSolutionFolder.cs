@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1024 $</version>
+//     <version>$Revision: 2085 $</version>
 // </file>
 
 using System;
@@ -12,15 +12,43 @@ using ICSharpCode.SharpDevelop.Gui;
 namespace ICSharpCode.SharpDevelop.Project
 {
 	/// <summary>
-	/// Description of ISolutionFolderContainer.
+	/// Default implementation for ISolutionFolderContainer. Thread-safe.
 	/// </summary>
 	public abstract class AbstractSolutionFolder : LocalizedObject, ISolutionFolder
 	{
+		readonly object syncRoot = new object();
+		
 		ISolutionFolderContainer parent   = null;
 		string                   typeGuid = null;
 		string                   idGuid   = null;
 		string                   location = null;
 		string                   name     = null;
+		
+		/// <summary>
+		/// Gets the object used for thread-safe synchronization.
+		/// All members lock on this object, but if you manipulate underlying structures
+		/// (such as the MSBuild project for MSBuildBasedProjects) directly, you will have to lock on this object.
+		/// </summary>
+		[Browsable(false)]
+		public object SyncRoot {
+			get { return syncRoot; }
+		}
+		
+		/// <summary>
+		/// Gets the solution this project belongs to. Returns null for projects that are not (yet) added to
+		/// any solution; or are added to a solution folder that is not added to any solution.
+		/// </summary>
+		[Browsable(false)]
+		public virtual Solution ParentSolution {
+			get {
+				lock (syncRoot) {
+					if (parent != null)
+						return parent.ParentSolution;
+					else
+						return null;
+				}
+			}
+		}
 		
 		[Browsable(false)]
 		public string IdGuid {
@@ -58,7 +86,9 @@ namespace ICSharpCode.SharpDevelop.Project
 				return parent;
 			}
 			set {
-				parent = value;
+				lock (syncRoot) {
+					parent = value;
+				}
 			}
 		}
 		

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1938 $</version>
+//     <version>$Revision: 2151 $</version>
 // </file>
 
 using System;
@@ -66,7 +66,6 @@ namespace ICSharpCode.SharpDevelop
 				#endif
 				Directory.CreateDirectory(domPersistencePath);
 				defaultProjectContentRegistry.ActivatePersistence(domPersistencePath);
-				
 				ProjectService.SolutionClosed += ProjectServiceSolutionClosed;
 			}
 		}
@@ -110,12 +109,7 @@ namespace ICSharpCode.SharpDevelop
 		/// </summary>
 		public static IEnumerable<IProjectContent> AllProjectContentsWithReferences {
 			get {
-				foreach (IProjectContent pc in AllProjectContents) {
-					yield return pc;
-				}
-				foreach (IProjectContent pc in defaultProjectContentRegistry.GetLoadedProjectContents()) {
-					yield return pc;
-				}
+				return Linq.Distinct(Linq.Concat(AllProjectContents, defaultProjectContentRegistry.GetLoadedProjectContents()));
 			}
 		}
 		
@@ -134,6 +128,10 @@ namespace ICSharpCode.SharpDevelop
 				projectContents.Clear();
 				parsings.Clear();
 			}
+			lock (parseQueue) {
+				parseQueue.Clear();
+			}
+			lastUpdateHash.Clear();
 		}
 		
 		static Thread loadSolutionProjectsThread;
@@ -186,10 +184,12 @@ namespace ICSharpCode.SharpDevelop
 			foreach (IProject project in ProjectService.OpenSolution.Projects) {
 				try {
 					ParseProjectContent newContent = project.CreateProjectContent();
-					lock (projectContents) {
-						projectContents[project] = newContent;
+					if (newContent != null) {
+						lock (projectContents) {
+							projectContents[project] = newContent;
+						}
+						createdContents.Add(newContent);
 					}
-					createdContents.Add(newContent);
 				} catch (Exception e) {
 					MessageService.ShowError(e, "Error while retrieving project contents from " + project);
 				}
@@ -205,7 +205,7 @@ namespace ICSharpCode.SharpDevelop
 					MessageService.ShowError(e, "Error while initializing project references:" + newContent);
 				}
 			}
-			StatusBarService.ProgressMonitor.BeginTask("${res:ICSharpCode.SharpDevelop.Internal.ParserService.Parsing}...", workAmount);
+			StatusBarService.ProgressMonitor.BeginTask("${res:ICSharpCode.SharpDevelop.Internal.ParserService.Parsing}...", workAmount, false);
 			foreach (ParseProjectContent newContent in createdContents) {
 				if (abortLoadSolutionProjectsThread) break;
 				try {
@@ -221,19 +221,32 @@ namespace ICSharpCode.SharpDevelop
 		{
 			ParseProjectContent newContent = (ParseProjectContent)state;
 			newContent.Initialize1();
-			StatusBarService.ProgressMonitor.BeginTask("${res:ICSharpCode.SharpDevelop.Internal.ParserService.Parsing}...", newContent.GetInitializationWorkAmount());
+			StatusBarService.ProgressMonitor.BeginTask("${res:ICSharpCode.SharpDevelop.Internal.ParserService.Parsing}...", newContent.GetInitializationWorkAmount(), false);
 			newContent.Initialize2();
 			StatusBarService.ProgressMonitor.Done();
 		}
 		
 		#region Reparse projects
+		// queue of projects waiting to reparse references
 		static Queue<ParseProjectContent> reParse1 = new Queue<ParseProjectContent>();
+		
+		// queue of projects waiting to reparse code
 		static Queue<ParseProjectContent> reParse2 = new Queue<ParseProjectContent>();
 		static Thread reParseThread;
 		
 		static void ReparseProjects()
 		{
+			LoggingService.Info("reParse thread started");
 			Thread.Sleep(100); // enable main thread to fill the queues completely
+			try {
+				ReparseProjectsInternal();
+			} catch (Exception ex) {
+				MessageService.ShowError(ex);
+			}
+		}
+		
+		static void ReparseProjectsInternal()
+		{
 			bool parsing = false;
 			ParseProjectContent job;
 			
@@ -252,7 +265,7 @@ namespace ICSharpCode.SharpDevelop
 							foreach (ParseProjectContent ppc in reParse2) {
 								workAmount += ppc.GetInitializationWorkAmount();
 							}
-							StatusBarService.ProgressMonitor.BeginTask("${res:ICSharpCode.SharpDevelop.Internal.ParserService.Parsing}...", workAmount);
+							StatusBarService.ProgressMonitor.BeginTask("${res:ICSharpCode.SharpDevelop.Internal.ParserService.Parsing}...", workAmount, false);
 						}
 						parsing = true;
 						job = reParse2.Dequeue();
@@ -262,14 +275,17 @@ namespace ICSharpCode.SharpDevelop
 						if (parsing) {
 							StatusBarService.ProgressMonitor.Done();
 						}
+						LoggingService.Info("reParse thread finished all jobs");
 						return;
 					}
 				}
 				
 				// execute job
 				if (parsing) {
+					LoggingService.Info("reparsing code for " + job.Project);
 					job.ReInitialize2();
 				} else {
+					LoggingService.Debug("reloading references for " + job.Project);
 					job.ReInitialize1();
 				}
 			}
@@ -281,12 +297,15 @@ namespace ICSharpCode.SharpDevelop
 			if (pc != null) {
 				lock (reParse1) {
 					if (initReferences && !reParse1.Contains(pc)) {
+						LoggingService.Debug("Enqueue for reinitializing references: " + project);
 						reParse1.Enqueue(pc);
 					}
 					if (parseCode && !reParse2.Contains(pc)) {
+						LoggingService.Debug("Enqueue for reparsing code: " + project);
 						reParse2.Enqueue(pc);
 					}
 					if (reParseThread == null) {
+						LoggingService.Info("Starting reParse thread");
 						reParseThread = new Thread(new ThreadStart(ReparseProjects));
 						reParseThread.Name = "reParse";
 						reParseThread.Priority = ThreadPriority.BelowNormal;
@@ -298,12 +317,15 @@ namespace ICSharpCode.SharpDevelop
 		}
 		#endregion
 		
+		/// <remarks>Can return null.</remarks>
 		internal static IProjectContent CreateProjectContentForAddedProject(IProject project)
 		{
 			lock (projectContents) {
 				ParseProjectContent newContent = project.CreateProjectContent();
-				projectContents[project] = newContent;
-				ThreadPool.QueueUserWorkItem(InitAddedProject, newContent);
+				if (newContent != null) {
+					projectContents[project] = newContent;
+					ThreadPool.QueueUserWorkItem(InitAddedProject, newContent);
+				}
 				return newContent;
 			}
 		}
@@ -449,7 +471,7 @@ namespace ICSharpCode.SharpDevelop
             int hash = text.GetHashCode();
             if (!lastUpdateHash.ContainsKey(fileName) || lastUpdateHash[fileName] != hash)
             {
-              parseInformation = ParseFile(fileName, text, true, true);
+              parseInformation = ParseFile(fileName, text, true);
               lastUpdateHash[fileName] = hash;
               updated = true;
             }
@@ -493,7 +515,7 @@ namespace ICSharpCode.SharpDevelop
 						}
 						int hash = text.GetHashCode();
 						if (!lastUpdateHash.ContainsKey(fileName) || lastUpdateHash[fileName] != hash) {
-							parseInformation = ParseFile(fileName, text, !viewContent.IsUntitled, true);
+							parseInformation = ParseFile(fileName, text, !viewContent.IsUntitled);
 							lastUpdateHash[fileName] = hash;
 							updated = true;
 						}
@@ -512,7 +534,7 @@ namespace ICSharpCode.SharpDevelop
 		{
 			string text = ((IEditable)viewContent).Text;
 			ParseInformation parseInformation = ParseFile(viewContent.IsUntitled ? viewContent.UntitledName : viewContent.FileName,
-			                                              text, !viewContent.IsUntitled, true);
+			                                              text, !viewContent.IsUntitled);
 			if (parseInformation != null && viewContent is IParseInformationListener) {
 				((IParseInformationListener)viewContent).ParseInformationUpdated(parseInformation);
 			}
@@ -540,7 +562,7 @@ namespace ICSharpCode.SharpDevelop
 		
 		public static ParseInformation ParseFile(string fileName, string fileContent)
 		{
-			return ParseFile(fileName, fileContent, true, true);
+			return ParseFile(fileName, fileContent, true);
 		}
 		
 		static IProjectContent GetProjectContent(string fileName)
@@ -576,12 +598,7 @@ namespace ICSharpCode.SharpDevelop
 			//LoggingService.Debug("Stacktrace is:\n" + Environment.StackTrace);
 			defaultProjectContent = new DefaultProjectContent();
 			defaultProjectContent.AddReferencedContent(defaultProjectContentRegistry.Mscorlib);
-      #if ModifiedForAltaxo
-      //defaultProjectContent.AddReferencedContent(ProjectContentRegistry.GetProjectContentForReference("AltaxoCore","AltaxoCore"));
-      //defaultProjectContent.AddReferencedContent(defaultProjectContentRegistry.GetExistingProjectContent("AltaxoBase","AltaxoBase"));
-      //defaultProjectContent.AddReferencedContent(defaultProjectContentRegistry.GetExistingProjectContent("AltaxoSDGui","AltaxoSDGui"));
-      #endif
-      Thread t = new Thread(new ThreadStart(CreateDefaultProjectContentReferences));
+			Thread t = new Thread(new ThreadStart(CreateDefaultProjectContentReferences));
 			t.IsBackground = true;
 			t.Priority = ThreadPriority.BelowNormal;
 			t.Name = "CreateDefaultPC";
@@ -612,12 +629,12 @@ namespace ICSharpCode.SharpDevelop
 			}
 		}
 		
-		public static ParseInformation ParseFile(string fileName, string fileContent, bool updateCommentTags, bool fireUpdate)
+		public static ParseInformation ParseFile(string fileName, string fileContent, bool updateCommentTags)
 		{
-			return ParseFile(null, fileName, fileContent, updateCommentTags, fireUpdate);
+			return ParseFile(null, fileName, fileContent, updateCommentTags);
 		}
 		
-		public static ParseInformation ParseFile(IProjectContent fileProjectContent, string fileName, string fileContent, bool updateCommentTags, bool fireUpdate)
+		public static ParseInformation ParseFile(IProjectContent fileProjectContent, string fileName, string fileContent, bool updateCommentTags)
 		{
 			if (fileName == null) throw new ArgumentNullException("fileName");
 			
@@ -628,13 +645,6 @@ namespace ICSharpCode.SharpDevelop
 			
 			ICompilationUnit parserOutput = null;
 			
-			if (fileContent == null) {
-				if (ProjectService.OpenSolution != null) {
-					IProject project = ProjectService.OpenSolution.FindProjectContainingFile(fileName);
-					if (project != null)
-						fileContent = project.GetParseableFileContent(fileName);
-				}
-			}
 			try {
 				if (fileProjectContent == null) {
 					// GetProjectContent is expensive because it compares all file names, so
@@ -662,14 +672,14 @@ namespace ICSharpCode.SharpDevelop
 				if (updateCommentTags) {
 					TaskService.UpdateCommentTags(fileName, parserOutput.TagComments);
 				}
-				return UpdateParseInformation(parserOutput, fileName, updateCommentTags, fireUpdate);
+				return UpdateParseInformation(parserOutput, fileName, updateCommentTags);
 			} catch (Exception e) {
 				MessageService.ShowError(e);
 			}
 			return null;
 		}
 		
-		public static ParseInformation UpdateParseInformation(ICompilationUnit parserOutput, string fileName, bool updateCommentTags, bool fireEvent)
+		public static ParseInformation UpdateParseInformation(ICompilationUnit parserOutput, string fileName, bool updateCommentTags)
 		{
 			if (!parsings.ContainsKey(fileName)) {
 				parsings[fileName] = new ParseInformation();
@@ -677,12 +687,10 @@ namespace ICSharpCode.SharpDevelop
 			
 			ParseInformation parseInformation = parsings[fileName];
 			
-			if (fireEvent) {
-				try {
-					OnParseInformationUpdated(new ParseInformationEventArgs(fileName, parseInformation, parserOutput));
-				} catch (Exception e) {
-					MessageService.ShowError(e);
-				}
+			try {
+				OnParseInformationUpdated(new ParseInformationEventArgs(fileName, parseInformation, parserOutput));
+			} catch (Exception e) {
+				MessageService.ShowError(e);
 			}
 			
 			if (parserOutput.ErrorsDuringCompile) {

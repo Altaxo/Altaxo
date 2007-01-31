@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1661 $</version>
+//     <version>$Revision: 2011 $</version>
 // </file>
 
 using System;
@@ -85,6 +85,8 @@ namespace ICSharpCode.SharpDevelop.Dom
 		/// </remarks>
 		public bool IsInside(int row, int column)
 		{
+			if (IsEmpty)
+				return false;
 			return row >= BeginLine &&
 				(row <= EndLine   || EndLine == -1) &&
 				(row != BeginLine || column >= BeginColumn) &&

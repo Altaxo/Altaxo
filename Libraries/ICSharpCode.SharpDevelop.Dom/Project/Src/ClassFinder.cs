@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1875 $</version>
+//     <version>$Revision: 2066 $</version>
 // </file>
 
 using System;
@@ -29,6 +29,12 @@ namespace ICSharpCode.SharpDevelop.Dom
 		public IProjectContent ProjectContent {
 			get {
 				return projectContent;
+			}
+		}
+		
+		public LanguageProperties Language {
+			get {
+				return projectContent.Language;
 			}
 		}
 		

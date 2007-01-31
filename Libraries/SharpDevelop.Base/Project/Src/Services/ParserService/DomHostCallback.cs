@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2059 $</version>
 // </file>
 
 using System;
@@ -34,7 +34,7 @@ namespace ICSharpCode.SharpDevelop
 			HostCallback.BeginAssemblyLoad = delegate(string shortName) {
 				StatusBarService.ProgressMonitor.BeginTask(
 					StringParser.Parse("${res:ICSharpCode.SharpDevelop.LoadingFile}", new string[,] {{"Filename", shortName}}),
-					100
+					100, false
 				);
 			};
 			HostCallback.FinishAssemblyLoad = StatusBarService.ProgressMonitor.Done;

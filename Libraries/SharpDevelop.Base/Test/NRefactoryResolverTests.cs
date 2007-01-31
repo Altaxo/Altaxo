@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1872 $</version>
+//     <version>$Revision: 2175 $</version>
 // </file>
 
 using System;
@@ -38,6 +38,7 @@ namespace ICSharpCode.SharpDevelop.Tests
 			NRefactoryASTConvertVisitor visitor = new NRefactoryASTConvertVisitor(pc);
 			visitor.VisitCompilationUnit(p.CompilationUnit, null);
 			visitor.Cu.FileName = fileName;
+			Assert.AreEqual(0, p.Errors.Count, "Parse error preparing compilation unit");
 			visitor.Cu.ErrorsDuringCompile = p.Errors.Count > 0;
 			foreach (IClass c in visitor.Cu.Classes) {
 				pc.AddClassToNamespaceList(c);
@@ -64,6 +65,7 @@ namespace ICSharpCode.SharpDevelop.Tests
 			NRefactoryASTConvertVisitor visitor = new NRefactoryASTConvertVisitor(pc);
 			visitor.VisitCompilationUnit(p.CompilationUnit, null);
 			visitor.Cu.FileName = fileName;
+			Assert.AreEqual(0, p.Errors.Count, "Parse error preparing compilation unit");
 			visitor.Cu.ErrorsDuringCompile = p.Errors.Count > 0;
 			foreach (IClass c in visitor.Cu.Classes) {
 				pc.AddClassToNamespaceList(c);
@@ -75,14 +77,14 @@ namespace ICSharpCode.SharpDevelop.Tests
 		void AddCompilationUnit(ICompilationUnit parserOutput, string fileName)
 		{
 			HostCallback.GetParseInformation = ParserService.GetParseInformation;
-			ParserService.UpdateParseInformation(parserOutput, fileName, false, false);
+			ParserService.UpdateParseInformation(parserOutput, fileName, false);
 		}
 		
 		public ResolveResult Resolve(string program, string expression, int line)
 		{
 			AddCompilationUnit(Parse("a.cs", program), "a.cs");
 			
-			NRefactoryResolver resolver = new NRefactoryResolver(lastPC);
+			NRefactoryResolver resolver = new NRefactoryResolver(lastPC, LanguageProperties.CSharp);
 			return resolver.Resolve(new ExpressionResult(expression),
 			                        line, 0,
 			                        "a.cs",
@@ -93,7 +95,7 @@ namespace ICSharpCode.SharpDevelop.Tests
 		{
 			AddCompilationUnit(ParseVB("a.vb", program), "a.vb");
 			
-			NRefactoryResolver resolver = new NRefactoryResolver(lastPC);
+			NRefactoryResolver resolver = new NRefactoryResolver(lastPC, LanguageProperties.VBNet);
 			return resolver.Resolve(new ExpressionResult(expression),
 			                        line, 0,
 			                        "a.vb",
@@ -592,6 +594,27 @@ class A {
 			ResolveResult result = Resolve<TypeResolveResult>(program, "Environment.SpecialFolder", 3);
 			Assert.AreEqual("System.Environment.SpecialFolder", result.ResolvedType.FullyQualifiedName);
 		}
+		
+		[Test]
+		public void LoopVariableScopeTest()
+		{
+			string program = @"using System;
+class TestClass {
+	void Test() {
+		for (int i = 0; i < 10; i++) {
+			
+		}
+		for (long i = 0; i < 10; i++) {
+			
+		}
+	}
+}
+";
+			LocalResolveResult lr = Resolve<LocalResolveResult>(program, "i", 5);
+			Assert.AreEqual("System.Int32", lr.ResolvedType.FullyQualifiedName);
+			lr = Resolve<LocalResolveResult>(program, "i", 8);
+			Assert.AreEqual("System.Int64", lr.ResolvedType.FullyQualifiedName);
+		}
 		#endregion
 		
 		#region Import namespace tests
@@ -651,7 +674,7 @@ namespace Root.Child {
 ";
 			AddCompilationUnit(Parse("a.cs", program), "a.cs");
 			
-			NRefactoryResolver resolver = new NRefactoryResolver(lastPC);
+			NRefactoryResolver resolver = new NRefactoryResolver(lastPC, LanguageProperties.CSharp);
 			ArrayList m = resolver.CtrlSpace(7, 0, "a.cs", program, ExpressionContext.Default);
 			Assert.IsTrue(TypeExists(m, "Beta"), "Meta must exist");
 			Assert.IsTrue(TypeExists(m, "Alpha"), "Alpha must exist");
@@ -749,6 +772,26 @@ class TestClass {
 			Assert.AreEqual("System.Collections.ArrayList", rr.ResolvedClass.FullyQualifiedName, "COL");
 			LocalResolveResult lr = Resolve<LocalResolveResult>(program, "a", 5);
 			Assert.AreEqual("System.Collections.ArrayList", lr.ResolvedType.FullyQualifiedName, "a");
+		}
+		
+		[Test]
+		public void ResolveNamespaceSD2_863()
+		{
+			string program = @"using System;
+namespace A.C { class D {} }
+namespace A.B.C { class D {} }
+namespace A.B {
+	class TestClass {
+		void Test() {
+			
+		}
+	}
+}
+";
+			NamespaceResolveResult nrr = Resolve<NamespaceResolveResult>(program, "C", 7);
+			Assert.AreEqual("A.B.C", nrr.Name, "nrr.Name");
+			TypeResolveResult trr = Resolve<TypeResolveResult>(program, "C.D", 7);
+			Assert.AreEqual("A.B.C.D", trr.ResolvedClass.FullyQualifiedName, "trr.ResolvedClass.FullyQualifiedName");
 		}
 		#endregion
 		

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2028 $</version>
 // </file>
 
 using System;
@@ -325,6 +325,24 @@ namespace ICSharpCode.Core
 			} catch (Exception ex) {
 				LoggingService.Warn(ex);
 				return SystemInformation.MenuFont;
+			}
+		}
+		
+		/// <summary>
+		/// The LoadFont routines provide a safe way to load fonts.
+		/// </summary>
+		/// <param name="baseFont">The existing font from which to create the new font.</param>
+		/// <param name="newStyle">The new style of the font.</param>
+		/// <returns>
+		/// The font to load or the baseFont (if the requested font couldn't be loaded).
+		/// </returns>
+		public static Font LoadFont(Font baseFont, FontStyle newStyle)
+		{
+			try {
+				return new Font(baseFont, newStyle);
+			} catch (Exception ex) {
+				LoggingService.Warn(ex);
+				return baseFont;
 			}
 		}
 		#endregion

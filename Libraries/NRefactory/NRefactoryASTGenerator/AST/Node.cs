@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1703 $</version>
+//     <version>$Revision: 2032 $</version>
 // </file>
 
 using System;
@@ -44,9 +44,16 @@ namespace NRefactoryASTGenerator.Ast
 	}
 	
 	[CustomImplementation]
-	class TypeReference : AbstractNode {}
+	class TypeReference : AbstractNode
+	{
+		List<TypeReference> genericTypes;
+	}
+	
 	[CustomImplementation]
-	class InnerClassTypeReference : TypeReference {}
+	class InnerClassTypeReference : TypeReference 
+	{
+		TypeReference baseType;
+	}
 	
 	class AttributeSection : AbstractNode, INullable
 	{

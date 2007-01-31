@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1974 $</version>
+//     <version>$Revision: 2043 $</version>
 // </file>
 
 using System;
@@ -245,7 +245,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			return null;
 		}
 		
-		[System.Runtime.InteropServices.DllImport("User32.dll")]
+		[System.Runtime.InteropServices.DllImport("user32.dll")]
 		public static extern bool LockWindowUpdate(IntPtr hWnd);
 		
 		public void LoadConfiguration()
@@ -620,9 +620,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		public virtual void OnActiveWorkbenchWindowChanged(EventArgs e)
 		{
 			IWorkbenchWindow newWindow = this.ActiveWorkbenchwindow;
-      System.Diagnostics.Debug.WriteLine(string.Format("ActiveWBChanged, old={0}, new={1}", oldSelectedWindow, newWindow));
-      if (newWindow == null || newWindow.ViewContent != null)
-      {
+			if (newWindow == null || newWindow.ViewContent != null) {
 				if (ActiveWorkbenchWindowChanged != null) {
 					ActiveWorkbenchWindowChanged(this, e);
 				}

@@ -2,55 +2,81 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2049 $</version>
 // </file>
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing.Design;
 using System.IO;
+using System.Windows.Forms;
+using System.Windows.Forms.Design;
 
 using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.Gui;
+using ICSharpCode.SharpDevelop.Widgets.DesignTimeSupport;
 
 namespace ICSharpCode.SharpDevelop.Project
 {
 	public enum CopyToOutputDirectory {
-		[Description("test")]
 		Never,
 		Always,
 		PreserveNewest
 	}
-	/// <summary>
-	/// Description of CompileProjectItem.
-	/// </summary>
+	
 	public class FileProjectItem : ProjectItem
 	{
-		ItemType type;
-		
-		public override ItemType ItemType {
-			get {
-				return type;
-			}
+		/// <summary>
+		/// Creates a new FileProjectItem with the specified include.
+		/// </summary>
+		public FileProjectItem(IProject project, ItemType itemType, string include)
+			: base(project, itemType, include)
+		{
 		}
 		
-		public enum FileBuildAction {
-			None                  = ItemType.None,
-			Compile               = ItemType.Compile,
-			EmbeddedResource      = ItemType.EmbeddedResource,
-			Resource              = ItemType.Resource,
-			Content               = ItemType.Content,
-			ApplicationDefinition = ItemType.ApplicationDefinition,
-			Page                  = ItemType.Page
+		/// <summary>
+		/// Creates a new FileProjectItem including a dummy file.
+		/// </summary>
+		public FileProjectItem(IProject project, ItemType itemType)
+			: base(project, itemType)
+		{
+		}
+		
+		internal FileProjectItem(IProject project, Microsoft.Build.BuildEngine.BuildItem buildItem)
+			: base(project, buildItem)
+		{
 		}
 		
 		[LocalizedProperty("${res:ICSharpCode.SharpDevelop.Internal.Project.ProjectFile.BuildAction}",
 		                   Description ="${res:ICSharpCode.SharpDevelop.Internal.Project.ProjectFile.BuildAction.Description}")]
-		public FileBuildAction BuildAction {
+		[Editor(typeof(BuildActionEditor), typeof(UITypeEditor))]
+		public string BuildAction {
 			get {
-				return (FileBuildAction)type;
+				return this.ItemType.ItemName;
 			}
 			set {
-				type = (ItemType)value;
+				this.ItemType = new ItemType(value);
+			}
+		}
+		
+		sealed class BuildActionEditor : DropDownEditor
+		{
+			protected override Control CreateDropDownControl(ITypeDescriptorContext context, IWindowsFormsEditorService editorService)
+			{
+				FileProjectItem item = context.Instance as FileProjectItem;
+				if (item != null && item.Project != null) {
+					return new DropDownEditorListBox(editorService, GetNames(item.Project.AvailableFileItemTypes));
+				} else {
+					return new DropDownEditorListBox(editorService, GetNames(ItemType.DefaultFileItems));
+				}
+			}
+			
+			static IEnumerable<string> GetNames(IEnumerable<ItemType> itemTypes)
+			{
+				return Linq.Select<ItemType, string>(
+					itemTypes, delegate(ItemType it) { return it.ItemName; }
+				);
 			}
 		}
 		
@@ -58,21 +84,35 @@ namespace ICSharpCode.SharpDevelop.Project
 		                   Description = "${res:ICSharpCode.SharpDevelop.Internal.Project.ProjectFile.CopyToOutputDirectory.Description}")]
 		public CopyToOutputDirectory CopyToOutputDirectory {
 			get {
-				return base.Properties.Get("CopyToOutputDirectory", CopyToOutputDirectory.Never);
+				return GetEvaluatedMetadata("CopyToOutputDirectory", CopyToOutputDirectory.Never);
 			}
 			set {
-				base.Properties.Set("CopyToOutputDirectory", value);
+				SetEvaluatedMetadata("CopyToOutputDirectory", value);
 			}
 		}
 		
 		[LocalizedProperty("${res:ICSharpCode.SharpDevelop.Internal.Project.ProjectFile.CustomTool}",
 		                   Description ="${res:ICSharpCode.SharpDevelop.Internal.Project.ProjectFile.CustomTool.Description}")]
+		[Editor(typeof(CustomToolEditor), typeof(UITypeEditor))]
 		public string CustomTool {
 			get {
-				return base.Properties["Generator"];
+				return GetEvaluatedMetadata("Generator");
 			}
 			set {
-				base.Properties["Generator"] = value;
+				SetEvaluatedMetadata("Generator", value);
+			}
+		}
+		
+		sealed class CustomToolEditor : DropDownEditor
+		{
+			protected override Control CreateDropDownControl(ITypeDescriptorContext context, IWindowsFormsEditorService editorService)
+			{
+				FileProjectItem item = context.Instance as FileProjectItem;
+				if (item != null) {
+					return new DropDownEditorListBox(editorService, CustomToolsService.GetCompatibleCustomToolNames(item));
+				} else {
+					return new DropDownEditorListBox(editorService, CustomToolsService.GetCustomToolNames());
+				}
 			}
 		}
 		
@@ -80,37 +120,38 @@ namespace ICSharpCode.SharpDevelop.Project
 		                   Description ="${res:ICSharpCode.SharpDevelop.Internal.Project.ProjectFile.CustomToolNamespace.Description}")]
 		public string CustomToolNamespace {
 			get {
-				return base.Properties["CustomToolNamespace"];
+				return GetEvaluatedMetadata("CustomToolNamespace");
 			}
 			set {
-				base.Properties["CustomToolNamespace"] = value;
+				SetEvaluatedMetadata("CustomToolNamespace", value);
+				CustomToolsService.RunCustomTool(this, false);
 			}
 		}
 		
 		[Browsable(false)]
 		public string DependentUpon {
 			get {
-				return base.Properties["DependentUpon"];
+				return GetEvaluatedMetadata("DependentUpon");
 			}
 			set {
-				base.Properties["DependentUpon"] = value;
+				SetEvaluatedMetadata("DependentUpon", value);
 			}
 		}
 
 		[Browsable(false)]
 		public string SubType {
 			get {
-				return base.Properties["SubType"];
+				return GetEvaluatedMetadata("SubType");
 			}
 			set {
-				base.Properties["SubType"] = value;
+				SetEvaluatedMetadata("SubType", value);
 			}
 		}
 		
 		[Browsable(false)]
 		public bool IsLink {
 			get {
-				return base.Properties.IsSet("Link") || !FileUtility.IsBaseDirectory(this.Project.Directory, this.FileName);
+				return HasMetadata("Link") || !FileUtility.IsBaseDirectory(this.Project.Directory, this.FileName);
 			}
 		}
 		
@@ -122,26 +163,13 @@ namespace ICSharpCode.SharpDevelop.Project
 		/// </summary>
 		public string VirtualName {
 			get {
-				if (base.Properties.IsSet("Link"))
-					return base.Properties["Link"];
+				if (HasMetadata("Link"))
+					return GetEvaluatedMetadata("Link");
 				else if (FileUtility.IsBaseDirectory(this.Project.Directory, this.FileName))
 					return this.Include;
 				else
 					return Path.GetFileName(this.Include);
 			}
-		}
-		
-		public FileProjectItem(IProject project, ItemType type) : base(project)
-		{
-			this.type = type;
-		}
-		
-		public override ProjectItem Clone()
-		{
-			ProjectItem n = new FileProjectItem(this.Project, this.ItemType);
-			n.Include = this.Include;
-			this.CopyExtraPropertiesTo(n);
-			return n;
 		}
 	}
 }

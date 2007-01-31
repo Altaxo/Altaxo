@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="none" email=""/>
-//     <version>$Revision: 1418 $</version>
+//     <version>$Revision: 2029 $</version>
 // </file>
 
 // created on 07.03.2004 at 19:12
@@ -339,7 +339,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 				IClass currentPart = c;
 				if (c.IsPartial) {
 					CompoundClass cc = c.GetCompoundClass() as CompoundClass;
-					if (cc != null && cc.Parts.Count > 0) {
+					if (cc != null) {
 						partialMode = true;
 						c = cc;
 					}

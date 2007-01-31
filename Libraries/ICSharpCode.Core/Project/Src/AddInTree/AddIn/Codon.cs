@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2059 $</version>
 // </file>
 
 using System;
@@ -104,18 +104,17 @@ namespace ICSharpCode.Core
 //
 		public object BuildItem(object owner, ArrayList subItems)
 		{
-			try {
-				IDoozer doozer = AddInTree.Doozers[Name];
-				if (!doozer.HandleConditions && conditions.Length > 0) {
-					ConditionFailedAction action = GetFailedAction(owner);
-					if (action != ConditionFailedAction.Nothing) {
-						return null;
-					}
-				}
-				return doozer.BuildItem(owner, this, subItems);
-			} catch (KeyNotFoundException) {
+			IDoozer doozer;
+			if (!AddInTree.Doozers.TryGetValue(Name, out doozer))
 				throw new CoreException("Doozer " + Name + " not found!");
+			
+			if (!doozer.HandleConditions && conditions.Length > 0) {
+				ConditionFailedAction action = GetFailedAction(owner);
+				if (action != ConditionFailedAction.Nothing) {
+					return null;
+				}
 			}
+			return doozer.BuildItem(owner, this, subItems);
 		}
 		
 		public override string ToString()

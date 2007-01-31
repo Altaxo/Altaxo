@@ -2476,7 +2476,7 @@ out Statement stmt) {
 
 #line  1205 "cs.ATG" 
 		BlockStatement blockStmt = new BlockStatement();
-		blockStmt.StartLocation = t.EndLocation;
+		blockStmt.StartLocation = t.Location;
 		compilationUnit.BlockStart(blockStmt);
 		if (!ParseMethodBodies) lexer.SkipCurrentBlock(0);
 		
@@ -4723,7 +4723,7 @@ canBeUnbound && (la.kind == Tokens.GreaterThan || la.kind == Tokens.Comma)) {
 out type);
 
 #line  2007 "cs.ATG" 
-			types.Add(type); 
+			if (type != null) { types.Add(type); } 
 			while (la.kind == 14) {
 				lexer.NextToken();
 				Type(
@@ -4731,7 +4731,7 @@ out type);
 out type);
 
 #line  2008 "cs.ATG" 
-				types.Add(type); 
+				if (type != null) { types.Add(type); } 
 			}
 		} else SynErr(185);
 		Expect(22);

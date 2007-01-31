@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1957 $</version>
+//     <version>$Revision: 2043 $</version>
 // </file>
 
 using System;
@@ -246,7 +246,6 @@ namespace ICSharpCode.SharpDevelop.Commands
 					StringParser.Properties["CurCol"]          = "0";
 					StringParser.Properties["CurText"]         = "0";
 					
-					ILanguageBinding binding = ProjectService.CurrentProject == null ? null : LanguageBindingService.GetBindingPerLanguageName(ProjectService.CurrentProject.Language);
 					string targetPath = ProjectService.CurrentProject == null ? null : ProjectService.CurrentProject.OutputAssemblyFullPath;
 					StringParser.Properties["TargetPath"]      = targetPath == null ? String.Empty : targetPath;
 					StringParser.Properties["TargetDir"]       = targetPath == null ? String.Empty : Path.GetDirectoryName(targetPath);

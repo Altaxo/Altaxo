@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2159 $</version>
 // </file>
 
 using System;
@@ -108,6 +108,12 @@ namespace ICSharpCode.SharpDevelop
 			return GetOpenFile(fileName);
 		}
 		
+		/// <summary>
+		/// Opens a new unsaved file.
+		/// </summary>
+		/// <param name="defaultName">The (unsaved) name of the to open</param>
+		/// <param name="language">Name of the language used to choose the display binding.</param>
+		/// <param name="content">Content of the file to create</param>
 		public static IWorkbenchWindow NewFile(string defaultName, string language, string content)
 		{
 			IDisplayBinding binding = DisplayBindingService.GetBindingPerLanguageName(language);
@@ -283,12 +289,14 @@ namespace ICSharpCode.SharpDevelop
 			}
 		}
 		
-		public static void OnJumpedToFilePosition(string fileName)
+		public static void FireFileCreated(string fileName)
 		{
-			if (JumpedToFilePosition != null) {
-				JumpedToFilePosition(null, new FileEventArgs(fileName, false));
+			if (FileCreated != null) {
+				FileCreated(null, new FileEventArgs(fileName, false));
 			}
 		}
+		
+		public static event EventHandler<FileEventArgs> FileCreated;
 		
 		public static event EventHandler<FileRenamingEventArgs> FileRenaming;
 		public static event EventHandler<FileRenameEventArgs> FileRenamed;
@@ -298,7 +306,5 @@ namespace ICSharpCode.SharpDevelop
 		
 		public static event EventHandler<FileCancelEventArgs> FileReplacing;
 		public static event EventHandler<FileEventArgs> FileReplaced;
-		
-		public static event EventHandler<FileEventArgs> JumpedToFilePosition;
 	}
 }

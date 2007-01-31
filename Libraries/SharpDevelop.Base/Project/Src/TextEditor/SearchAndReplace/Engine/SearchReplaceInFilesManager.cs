@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1963 $</version>
+//     <version>$Revision: 2154 $</version>
 // </file>
 
 using System;
@@ -69,7 +69,7 @@ namespace SearchAndReplace
 			}
 		}
 		
-		public static void FindAll()
+		public static void FindAll(IProgressMonitor monitor)
 		{
 			if (!InitializeSearchInFiles()) {
 				return;
@@ -86,7 +86,7 @@ namespace SearchAndReplace
 			FinishSearchInFiles(results);
 		}
 		
-		public static void FindAll(int offset, int length)
+		public static void FindAll(int offset, int length, IProgressMonitor monitor)
 		{
 			if (!InitializeSearchInFiles()) {
 				return;

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1661 $</version>
+//     <version>$Revision: 2165 $</version>
 // </file>
 
 using System;
@@ -75,12 +75,18 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 					list.Add(cmd);
 				} else {
 					if (canGenerateCode) {
-						cmd = new MenuCommand("${res:SharpDevelop.Refactoring.CreateGetter}", CreateGetter);
-						cmd.Tag = member;
-						list.Add(cmd);
-						cmd = new MenuCommand("${res:SharpDevelop.Refactoring.CreateProperty}", CreateProperty);
-						cmd.Tag = member;
-						list.Add(cmd);
+						if (member.IsReadonly) {
+							cmd = new MenuCommand("${res:SharpDevelop.Refactoring.CreateProperty}", CreateGetter);
+							cmd.Tag = member;
+							list.Add(cmd);
+						} else {
+							cmd = new MenuCommand("${res:SharpDevelop.Refactoring.CreateGetter}", CreateGetter);
+							cmd.Tag = member;
+							list.Add(cmd);
+							cmd = new MenuCommand("${res:SharpDevelop.Refactoring.CreateProperty}", CreateProperty);
+							cmd.Tag = member;
+							list.Add(cmd);
+						}
 					}
 				}
 			}
@@ -181,7 +187,9 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 					results.Add(res);
 				}
 			}
-			SearchInFilesManager.ShowSearchResults("Overrides of " + member.Name, results);
+			SearchInFilesManager.ShowSearchResults(StringParser.Parse("${res:SharpDevelop.Refactoring.OverridesOf}",
+			                                                          new string[,] {{ "Name", member.Name }}),
+			                                       results);
 		}
 		
 		void FindReferences(object sender, EventArgs e)
@@ -196,7 +204,12 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 			} else {
 				memberName = member.Name;
 			}
-			FindReferencesAndRenameHelper.ShowAsSearchResults("References to " + memberName, RefactoringService.FindReferences(member, null));
+			using (AsynchronousWaitDialog monitor = AsynchronousWaitDialog.ShowWaitDialog("${res:SharpDevelop.Refactoring.FindReferences}"))
+			{
+				FindReferencesAndRenameHelper.ShowAsSearchResults(StringParser.Parse("${res:SharpDevelop.Refactoring.ReferencesTo}",
+				                                                                     new string[,] {{ "Name", memberName }}),
+				                                                  RefactoringService.FindReferences(member, monitor));
+			}
 		}
 	}
 }

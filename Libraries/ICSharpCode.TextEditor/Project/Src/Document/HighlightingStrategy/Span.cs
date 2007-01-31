@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2115 $</version>
 // </file>
 
 using System;
@@ -10,21 +10,22 @@ using System.Xml;
 
 namespace ICSharpCode.TextEditor.Document
 {
-	public class Span
+	public sealed class Span
 	{
 		bool        stopEOL;
 		HighlightColor color;
-		HighlightColor beginColor = null;
-		HighlightColor endColor = null;
-		char[]      begin = null;
-		char[]      end   = null;
-		string      name  = null;
-		string      rule  = null;
-		HighlightRuleSet ruleSet = null;
-		bool        noEscapeSequences = false;
-		bool		ignoreCase = false;
-		bool        isBeginSingleWord = false;
-		bool        isEndSingleWord = false;
+		HighlightColor beginColor;
+		HighlightColor endColor;
+		char[]      begin;
+		char[]      end;
+		string      name;
+		string      rule;
+		HighlightRuleSet ruleSet;
+		char escapeCharacter;
+		bool ignoreCase;
+		bool isBeginSingleWord;
+		bool? isBeginStartOfLine;
+		bool isEndSingleWord;
 		
 		internal HighlightRuleSet RuleSet {
 			get {
@@ -47,6 +48,12 @@ namespace ICSharpCode.TextEditor.Document
 		public bool StopEOL {
 			get {
 				return stopEOL;
+			}
+		}
+		
+		public bool? IsBeginStartOfLine {
+			get {
+				return isBeginStartOfLine;
 			}
 		}
 		
@@ -85,33 +92,29 @@ namespace ICSharpCode.TextEditor.Document
 		}
 		
 		public char[] Begin {
-			get {
-				return begin;
-			}
+			get { return begin; }
 		}
 		
 		public char[] End {
-			get {
-				return end;
-			}
+			get { return end; }
 		}
 		
 		public string Name {
-			get {
-				return name;
-			}
+			get { return name; }
 		}
 		
 		public string Rule {
-			get {
-				return rule;
-			}
+			get { return rule; }
 		}
 		
-		public bool NoEscapeSequences {
-			get {
-				return noEscapeSequences;
-			}
+		/// <summary>
+		/// Gets the escape character of the span. The escape character is a character that can be used in front
+		/// of the span end to make it not end the span. The escape character followed by another escape character
+		/// means the escape character was escaped like in @"a "" b" literals in C#.
+		/// The default value '\0' means no escape character is allowed.
+		/// </summary>
+		public char EscapeCharacter {
+			get { return escapeCharacter; }
 		}
 		
 		public Span(XmlElement span)
@@ -122,8 +125,8 @@ namespace ICSharpCode.TextEditor.Document
 				rule = span.GetAttribute("rule");
 			}
 			
-			if (span.HasAttribute("noescapesequences")) {
-				noEscapeSequences = Boolean.Parse(span.GetAttribute("noescapesequences"));
+			if (span.HasAttribute("escapecharacter")) {
+				escapeCharacter = span.GetAttribute("escapecharacter")[0];
 			}
 			
 			name = span.GetAttribute("name");
@@ -137,7 +140,9 @@ namespace ICSharpCode.TextEditor.Document
 			if (span["Begin"].HasAttribute("singleword")) {
 				this.isBeginSingleWord = Boolean.Parse(span["Begin"].GetAttribute("singleword"));
 			}
-			
+			if (span["Begin"].HasAttribute("startofline")) {
+				this.isBeginStartOfLine = Boolean.Parse(span["Begin"].GetAttribute("startofline"));
+			}
 			
 			if (span["End"] != null) {
 				end  = span["End"].InnerText.ToCharArray();

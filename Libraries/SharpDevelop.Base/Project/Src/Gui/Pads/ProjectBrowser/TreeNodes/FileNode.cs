@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1512 $</version>
+//     <version>$Revision: 2105 $</version>
 // </file>
 
 using System;
@@ -206,7 +206,9 @@ namespace ICSharpCode.SharpDevelop.Project
 					Project.Save();
 				}
 			} else if (!File.Exists(FileName)) {
-				FileService.RemoveFile(FileName, false);
+				// exclude this node, then remove it
+				Commands.ExcludeFileFromProject.ExcludeFileNode(this);
+				this.Remove();
 				Project.Save();
 			} else if (MessageService.AskQuestion(GetQuestionText("${res:ProjectComponent.ContextMenu.Delete.Question}"))) {
 				FileService.RemoveFile(FileName, false);

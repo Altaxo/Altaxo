@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Matthew Ward" email="mrward@users.sourceforge.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2043 $</version>
 // </file>
 
 using System;
@@ -309,7 +309,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			throw new NotSupportedException("Unsupported language: " + language);
 		}
 		
-		static WebReferencesProjectItem GetWebReferencesProjectItem(List<ProjectItem> items)
+		static WebReferencesProjectItem GetWebReferencesProjectItem(IEnumerable<ProjectItem> items)
 		{
 			foreach (ProjectItem item in items) {
 				if (item.ItemType == ItemType.WebReferences) {
@@ -380,16 +380,16 @@ namespace ICSharpCode.SharpDevelop.Gui
 			// Proxy
 			FileProjectItem proxyItem = new FileProjectItem(project, ItemType.Compile);
 			proxyItem.Include = GetProxyFileName();
-			proxyItem.Properties.Set("AutoGen", "True");
-			proxyItem.Properties.Set("DesignTime", "True");
+			proxyItem.SetEvaluatedMetadata("AutoGen", "True");
+			proxyItem.SetEvaluatedMetadata("DesignTime", "True");
 			proxyItem.DependentUpon = "Reference.map";
 			items.Add(proxyItem);
 			
 			// Reference map.
 			FileProjectItem mapItem = new FileProjectItem(project, ItemType.None);
 			mapItem.Include = Path.Combine(relativePath, "Reference.map");
-			mapItem.Properties.Set("Generator", "MSDiscoCodeGenerator");
-			mapItem.Properties.Set("LastGenOutput", "Reference.cs");
+			mapItem.SetEvaluatedMetadata("Generator", "MSDiscoCodeGenerator");
+			mapItem.SetEvaluatedMetadata("LastGenOutput", "Reference.cs");
 			items.Add(mapItem);
 			
 			// System.Web.Services reference.

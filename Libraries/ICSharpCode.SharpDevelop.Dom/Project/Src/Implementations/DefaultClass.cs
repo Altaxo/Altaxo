@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2029 $</version>
 // </file>
 
 using System;
@@ -118,6 +118,19 @@ namespace ICSharpCode.SharpDevelop.Dom
 				return new GetClassReturnType(ProjectContent, FullyQualifiedName, TypeParameters.Count);
 			} else {
 				return new DefaultReturnType(this);
+			}
+		}
+		
+		public bool IsPartial {
+			get {
+				return (this.Modifiers & ModifierEnum.Partial) == ModifierEnum.Partial;
+			}
+			set {
+				if (value)
+					this.Modifiers |= ModifierEnum.Partial;
+				else
+					this.Modifiers &= ~ModifierEnum.Partial;
+				defaultReturnType = null; // re-create default return type
 			}
 		}
 		

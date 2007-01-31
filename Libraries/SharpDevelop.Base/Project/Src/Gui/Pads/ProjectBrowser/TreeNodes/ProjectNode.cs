@@ -2,14 +2,16 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2035 $</version>
 // </file>
 
 using System;
+using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 
 using ICSharpCode.Core;
+using ICSharpCode.SharpDevelop.Gui;
 
 namespace ICSharpCode.SharpDevelop.Project
 {
@@ -63,6 +65,49 @@ namespace ICSharpCode.SharpDevelop.Project
 				OpenedImage = ClosedImage = IconService.GetImageForProjectType(project.Language);
 			}
 			Tag = project;
+			
+			if (project.ParentSolution != null) {
+				project.ParentSolution.Preferences.StartupProjectChanged += OnStartupProjectChanged;
+				OnStartupProjectChanged(null, null);
+			}
+		}
+		
+		public override void Dispose()
+		{
+			base.Dispose();
+			if (project.ParentSolution != null) {
+				project.ParentSolution.Preferences.StartupProjectChanged -= OnStartupProjectChanged;
+			}
+		}
+		
+		bool isStartupProject;
+		
+		void OnStartupProjectChanged(object sender, EventArgs e)
+		{
+			bool newIsStartupProject = (this.project == project.ParentSolution.Preferences.StartupProject);
+			if (newIsStartupProject != isStartupProject) {
+				isStartupProject = newIsStartupProject;
+				drawDefault = !isStartupProject;
+				if (this.TreeView != null) {
+					this.TreeView.Invalidate(this.Bounds);
+				}
+			}
+		}
+		
+		protected override int MeasureItemWidth(DrawTreeNodeEventArgs e)
+		{
+			if (isStartupProject) {
+				return MeasureTextWidth(e.Graphics, this.Text, BoldDefaultFont);
+			} else {
+				return base.MeasureItemWidth(e);
+			}
+		}
+		
+		protected override void DrawForeground(DrawTreeNodeEventArgs e)
+		{
+			if (isStartupProject) {
+				DrawText(e, this.Text, SystemBrushes.WindowText, BoldDefaultFont);
+			}
 		}
 		
 		public override void ActivateItem()

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2003 $</version>
+//     <version>$Revision: 2015 $</version>
 // </file>
 
 using System;
@@ -79,12 +79,6 @@ namespace ICSharpCode.SharpDevelop.Gui
 		int GetSelectedIndex()
 		{
 			return viewTabControl.SelectedIndex;
-		}
-		
-		protected override Size DefaultSize {
-			get {
-				return Size.Empty;
-			}
 		}
 		
 		public void SwitchView(int viewNumber)

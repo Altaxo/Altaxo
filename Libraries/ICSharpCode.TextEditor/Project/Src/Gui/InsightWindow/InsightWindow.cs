@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2150 $</version>
 // </file>
 
 using System;
@@ -17,7 +17,7 @@ namespace ICSharpCode.TextEditor.Gui.InsightWindow
 {
 	public class InsightWindow : AbstractCompletionWindow
 	{
-		public InsightWindow(Form parentForm, TextEditorControl control, string fileName) : base(parentForm, control, fileName)
+		public InsightWindow(Form parentForm, TextEditorControl control) : base(parentForm, control)
 		{
 			SetStyle(ControlStyles.UserPaint, true);
 			SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
@@ -166,7 +166,7 @@ namespace ICSharpCode.TextEditor.Gui.InsightWindow
 			}
 		}
 		
-		public void AddInsightDataProvider(IInsightDataProvider provider)
+		public void AddInsightDataProvider(IInsightDataProvider provider, string fileName)
 		{
 			provider.SetupDataProvider(fileName, control.ActiveTextAreaControl.TextArea);
 			if (provider.InsightDataCount > 0) {

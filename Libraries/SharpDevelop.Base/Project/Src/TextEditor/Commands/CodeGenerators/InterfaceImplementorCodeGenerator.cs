@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2066 $</version>
 // </file>
 
 using System;
@@ -63,7 +63,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 			foreach (ClassWrapper w in items) {
 				codeGen.ImplementInterface(nodes, w.ClassType,
 				                           !currentClass.ProjectContent.Language.SupportsImplicitInterfaceImplementation,
-				                           ModifierEnum.Public, currentClass);
+				                           currentClass);
 			}
 		}
 		

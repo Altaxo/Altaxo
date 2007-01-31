@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2140 $</version>
 // </file>
 
 using System;
@@ -159,13 +159,13 @@ namespace ICSharpCode.SharpDevelop.Project
 			
 			foreach (IProject project in OpenSolution.Projects) {
 				if (FileUtility.IsBaseDirectory(project.Directory, fileName)) {
-					for (int i = 0; i < project.Items.Count;) {
-						ProjectItem item =project.Items[i];
-						if (FileUtility.IsBaseDirectory(fileName, item.FileName)) {
-							project.Items.RemoveAt(i);
-							OnProjectItemRemoved(new ProjectItemEventArgs(project, item));
-						} else {
-							++i;
+					IProjectItemListProvider provider = project as IProjectItemListProvider;
+					if (provider != null) {
+						foreach (ProjectItem item in Linq.ToArray(provider.Items)) {
+							if (FileUtility.IsBaseDirectory(fileName, item.FileName)) {
+								provider.RemoveProjectItem(item);
+								OnProjectItemRemoved(new ProjectItemEventArgs(project, item));
+							}
 						}
 					}
 				}
@@ -210,22 +210,28 @@ namespace ICSharpCode.SharpDevelop.Project
 		{
 			if (project == null) throw new ArgumentNullException("project");
 			if (item == null)    throw new ArgumentNullException("item");
-			project.Items.Add(item);
-			OnProjectItemAdded(new ProjectItemEventArgs(project, item));
+			IProjectItemListProvider provider = project as IProjectItemListProvider;
+			if (provider != null) {
+				provider.AddProjectItem(item);
+				OnProjectItemAdded(new ProjectItemEventArgs(project, item));
+			}
 		}
 		
 		/// <summary>
 		/// Removes a project item from the project, raising the ProjectItemRemoved event.
 		/// Make sure you call project.Save() after removing items!
+		/// No action (not even raising the event) is taken when the item was already removed form the project.
 		/// </summary>
 		public static void RemoveProjectItem(IProject project, ProjectItem item)
 		{
 			if (project == null) throw new ArgumentNullException("project");
 			if (item == null)    throw new ArgumentNullException("item");
-			if (!project.Items.Remove(item)) {
-				throw new ArgumentException("The item was not found in the project!");
+			IProjectItemListProvider provider = project as IProjectItemListProvider;
+			if (provider != null) {
+				if (provider.RemoveProjectItem(item)) {
+					OnProjectItemRemoved(new ProjectItemEventArgs(project, item));
+				}
 			}
-			OnProjectItemRemoved(new ProjectItemEventArgs(project, item));
 		}
 		
 		static void BeforeLoadSolution()
@@ -256,6 +262,10 @@ namespace ICSharpCode.SharpDevelop.Project
 				} else {
 					(openSolution.Preferences as IMementoCapable).SetMemento(new Properties());
 				}
+			} catch (Exception ex) {
+				MessageService.ShowError(ex);
+			}
+			try {
 				ApplyConfigurationAndReadPreferences();
 			} catch (Exception ex) {
 				MessageService.ShowError(ex);
@@ -342,15 +352,21 @@ namespace ICSharpCode.SharpDevelop.Project
 			ILanguageBinding binding = LanguageBindingService.GetBindingPerProjectFile(fileName);
 			IProject project;
 			if (binding != null) {
-				project = LanguageBindingService.LoadProject(fileName, solution.Name);
+				project = LanguageBindingService.LoadProject(solution, fileName, solution.Name);
+				if (project is UnknownProject) {
+					if (((UnknownProject)project).WarningDisplayedToUser == false) {
+						((UnknownProject)project).ShowWarningMessageBox();
+					}
+					return;
+				}
 			} else {
 				MessageService.ShowError(StringParser.Parse("${res:ICSharpCode.SharpDevelop.Commands.OpenCombine.InvalidProjectOrCombine}", new string[,] {{"FileName", fileName}}));
 				return;
 			}
 			solution.AddFolder(project);
 			ProjectSection configSection = solution.GetSolutionConfigurationsSection();
-			foreach (string configuration in project.GetConfigurationNames()) {
-				foreach (string platform in project.GetPlatformNames()) {
+			foreach (string configuration in project.ConfigurationNames) {
+				foreach (string platform in project.PlatformNames) {
 					string key;
 					if (platform == "AnyCPU") { // Fix for SD2-786
 						key = configuration + "|Any CPU";

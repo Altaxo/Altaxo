@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 2073 $</version>
 // </file>
 
 using System;
@@ -35,8 +35,10 @@ namespace ICSharpCode.TextEditor.Gui.CompletionWindow
 				return firstItem;
 			}
 			set {
-				firstItem = value;
-				OnFirstItemChanged(EventArgs.Empty);
+				if (firstItem != value) {
+					firstItem = value;
+					OnFirstItemChanged(EventArgs.Empty);
+				}
 			}
 		}
 		
@@ -245,21 +247,6 @@ namespace ICSharpCode.TextEditor.Gui.CompletionWindow
 				yPos += itemHeight;
 				++curItem;
 			}
-		}
-		
-		protected override void OnMouseWheel(MouseEventArgs mea)
-		{
-			int numberOfLines = mea.Delta * SystemInformation.MouseWheelScrollLines / 120;
-			//BeginUpdate();
-			while (numberOfLines>0) {
-				SelectPrevItem();
-				numberOfLines--;
-			}
-			while (numberOfLines<0) {
-				SelectNextItem();
-				numberOfLines++;
-			}
-			//EndUpdate();
 		}
 		
 		protected override void OnPaintBackground(PaintEventArgs pe)

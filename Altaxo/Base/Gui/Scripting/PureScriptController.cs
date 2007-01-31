@@ -44,7 +44,7 @@ namespace Altaxo.Gui.Scripting
   }
 
 
-  public interface IPureScriptController : IMVCAController
+  public interface IPureScriptController : IMVCANController
   {
 
     // Initializes or reinitializes the script controller.
@@ -77,11 +77,40 @@ namespace Altaxo.Gui.Scripting
   {
     IPureScriptView _view;
     IPureScriptText _doc;
- 
+
+    public PureScriptController()
+    {
+    }
+
+
     public PureScriptController(IPureScriptText doc)
     {
-      _doc = doc;
+      InitializeDocument(doc);
     }
+
+
+    #region IMVCANController Members
+
+    public bool InitializeDocument(params object[] args)
+    {
+      if (args == null || args.Length == 0)
+        return false;
+      IPureScriptText doc = args[0] as IPureScriptText;
+      if (doc == null)
+        return false;
+
+      _doc = doc;
+
+      return true;
+    }
+
+    public UseDocument UseDocumentCopy
+    {
+      set {}
+    }
+
+    #endregion
+
 
     public void SetText(string text)
     {

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2139 $</version>
 // </file>
 
 using System;
@@ -12,6 +12,7 @@ using System.Windows.Forms;
 using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.Project;
 using StringPair = System.Collections.Generic.KeyValuePair<System.String, System.String>;
+using MSBuild = Microsoft.Build.BuildEngine;
 
 namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 {
@@ -32,8 +33,7 @@ namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 				Get<TextBox>("intermediateOutputPath"),
 				"IntermediateOutputPath",
 				delegate {
-					PropertyStorageLocations l;
-					return Path.Combine(helper.GetProperty("BaseIntermediateOutputPath", @"obj\", out l),
+					return Path.Combine(helper.GetProperty("BaseIntermediateOutputPath", @"obj\", true),
 					                    helper.Configuration);
 				}
 			);
@@ -132,8 +132,7 @@ namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 				if (bool.Parse(Get("false"))) {
 					all.Checked = true;
 				} else {
-					PropertyStorageLocations tmp;
-					if (this.Helper.GetProperty("WarningsAsErrors", "", out tmp).Length > 0) {
+					if (this.Helper.GetProperty("WarningsAsErrors", "", true).Length > 0) {
 						specific.Checked = true;
 					} else {
 						none.Checked = true;
@@ -199,12 +198,12 @@ namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 		void DebugSymbolsLoaded(object sender, EventArgs e)
 		{
 			PropertyStorageLocations location;
-			helper.GetProperty("DebugType", "", out location);
+			helper.GetProperty("DebugType", "", true, out location);
 			if (location == PropertyStorageLocations.Unknown) {
-				bool debug = helper.GetProperty("DebugSymbols", false, out location);
+				bool debug = helper.GetProperty("DebugSymbols", false, true, out location);
 				if (location != PropertyStorageLocations.Unknown) {
 					debugInfoBinding.Location = location;
-					helper.SetProperty("DebugType", debug ? DebugSymbolType.Full : DebugSymbolType.None, location);
+					helper.SetProperty("DebugType", debug ? DebugSymbolType.Full : DebugSymbolType.None, true, location);
 					debugInfoBinding.Load();
 				}
 			}
@@ -213,9 +212,9 @@ namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 		void DebugSymbolsSave(object sender, EventArgs e)
 		{
 			if ((DebugSymbolType)Get<ComboBox>("debugInfo").SelectedIndex == DebugSymbolType.Full) {
-				helper.SetProperty("DebugSymbols", "true", debugInfoBinding.Location);
+				helper.SetProperty("DebugSymbols", "true", true, debugInfoBinding.Location);
 			} else {
-				helper.SetProperty("DebugSymbols", "false", debugInfoBinding.Location);
+				helper.SetProperty("DebugSymbols", "false", true, debugInfoBinding.Location);
 			}
 		}
 		
@@ -226,7 +225,9 @@ namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 			targetFrameworkBinding = helper.BindStringEnum("targetFrameworkComboBox", TargetFrameworkProperty,
 			                                               "",
 			                                               new StringPair("", "Default (.NET 2.0)"),
-			                                               new StringPair("v1.0", ".NET Framework 1.0"),
+			                                               // We do not support .NET 1.0 anymore - compiling would still work,
+			                                               // but debugging, unit testing etc. are not supported.
+			                                               //new StringPair("v1.0", ".NET Framework 1.0"),
 			                                               new StringPair("v1.1", ".NET Framework 1.1"),
 			                                               new StringPair("v2.0", ".NET Framework 2.0"),
 			                                               new StringPair("CF 1.0", "Compact Framework 1.0"),
@@ -236,24 +237,27 @@ namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 			targetFrameworkBinding.CreateLocationButton("targetFrameworkLabel");
 			helper.Saved += delegate {
 				// Test if SharpDevelop-Build extensions are needed
-				MSBuildProject project = helper.Project;
+				MSBuildBasedProject project = helper.Project;
 				bool needExtensions = false;
-				PropertyStorageLocations location;
-				foreach (string configuration in project.GetConfigurationNames()) {
-					foreach (string platform in project.GetPlatformNames()) {
-						string value = project.GetProperty(configuration, platform, TargetFrameworkProperty, "", out location);
-						if (value.Length > 0) {
-							needExtensions = true;
-						}
+				foreach (MSBuild.BuildProperty p in project.GetAllProperties(TargetFrameworkProperty)) {
+					if (p.IsImported == false && p.Value.Length > 0) {
+						needExtensions = true;
+						break;
 					}
 				}
-				foreach (MSBuildImport import in project.Imports) {
+				foreach (MSBuild.Import import in project.MSBuildProject.Imports) {
 					if (needExtensions) {
-						if (defaultTargets.Equals(import.Project, StringComparison.InvariantCultureIgnoreCase))
-							import.Project = extendedTargets;
+						if (defaultTargets.Equals(import.ProjectPath, StringComparison.InvariantCultureIgnoreCase)) {
+							//import.ProjectPath = extendedTargets;
+							MSBuildInternals.SetImportProjectPath(project, import, extendedTargets);
+							break;
+						}
 					} else {
-						if (extendedTargets.Equals(import.Project, StringComparison.InvariantCultureIgnoreCase))
-							import.Project = defaultTargets;
+						if (extendedTargets.Equals(import.ProjectPath, StringComparison.InvariantCultureIgnoreCase)) {
+							//import.ProjectPath = defaultTargets;
+							MSBuildInternals.SetImportProjectPath(project, import, defaultTargets);
+							break;
+						}
 					}
 				}
 			};

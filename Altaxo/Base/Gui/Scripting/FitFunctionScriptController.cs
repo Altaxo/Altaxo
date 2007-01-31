@@ -79,18 +79,38 @@ namespace Altaxo.Gui.Scripting
     string _tempIndependentVariables;
     string _tempDependentVariables;
     string _tempUserDefinedParameters;
-
+    
+    public FitFunctionScriptController()
+    {
+    }
     public FitFunctionScriptController(IFitFunctionScriptText script)
     {
-      this.m_Script = script;
+      InitializeDocument(script);
+    }
+    #region IMVCANController Members
+
+    public bool InitializeDocument(params object[] args)
+    {
+      if (args == null || args.Length == 0)
+        return false;
+      IFitFunctionScriptText doc = args[0] as IFitFunctionScriptText;
+      if (doc == null)
+        return false;
+
+      this.m_Script = doc;
       m_TempScript = (IFitFunctionScriptText)m_Script.CloneForModification();
 
       SetElements(true);
 
+      return true;
     }
 
-  
+    public UseDocument UseDocumentCopy
+    {
+      set {}
+    }
 
+    #endregion
 
     protected void SetElements(bool bInit)
     {

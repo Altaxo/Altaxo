@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2066 $</version>
 // </file>
 
 using System;
@@ -12,10 +12,6 @@ namespace ICSharpCode.SharpDevelop.Dom
 {
 	public interface IMethodOrProperty : IMember
 	{
-		DomRegion BodyRegion {
-			get;
-		}
-		
 		IList<IParameter> Parameters {
 			get;
 		}

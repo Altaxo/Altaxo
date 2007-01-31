@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1612 $</version>
+//     <version>$Revision: 2146 $</version>
 // </file>
 
 using System;
@@ -16,6 +16,8 @@ using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.Ast;
 using ICSharpCode.NRefactory.PrettyPrinter;
 using ICSharpCode.SharpDevelop.Project.Commands;
+using MSBuild = Microsoft.Build.BuildEngine;
+using ICSharpCode.SharpDevelop.Internal.Templates;
 
 namespace ICSharpCode.SharpDevelop.Project.Converter
 {
@@ -24,10 +26,26 @@ namespace ICSharpCode.SharpDevelop.Project.Converter
 	/// </summary>
 	public abstract class LanguageConverter : AbstractMenuCommand
 	{
-		protected abstract IProject CreateProject(string targetProjectDirectory, IProject sourceProject);
 		protected virtual void AfterConversion(IProject targetProject) {}
 		
 		public abstract string TargetLanguageName { get; }
+		
+		protected virtual IProject CreateProject(string targetProjectDirectory, IProject sourceProject)
+		{
+			ProjectCreateInformation info = new ProjectCreateInformation();
+			info.Solution = sourceProject.ParentSolution;
+			info.ProjectBasePath = targetProjectDirectory;
+			info.ProjectName = sourceProject.Name + ".Converted";
+			info.RootNamespace = sourceProject.RootNamespace;
+			
+			LanguageBindingDescriptor descriptor = LanguageBindingService.GetCodonPerLanguageName(TargetLanguageName);
+			if (descriptor == null || descriptor.Binding == null)
+				throw new InvalidOperationException("Cannot get Language Binding for " + TargetLanguageName);
+			
+			info.OutputProjectFileName = Path.GetFullPath(Path.Combine(targetProjectDirectory, info.ProjectName + descriptor.ProjectFileExtension));
+			
+			return descriptor.Binding.CreateProject(info);
+		}
 		
 		protected virtual void ConvertFile(FileProjectItem sourceItem, FileProjectItem targetItem)
 		{
@@ -38,38 +56,38 @@ namespace ICSharpCode.SharpDevelop.Project.Converter
 		
 		protected virtual void CopyProperties(IProject sourceProject, IProject targetProject)
 		{
-			AbstractProject sp = sourceProject as AbstractProject;
-			AbstractProject tp = targetProject as AbstractProject;
+			MSBuildBasedProject sp = sourceProject as MSBuildBasedProject;
+			MSBuildBasedProject tp = targetProject as MSBuildBasedProject;
 			if (sp != null && tp != null) {
-				tp.Configurations.Clear();
-				tp.UserConfigurations.Clear();
-				foreach (KeyValuePair<string, PropertyGroup> pair in sp.Configurations) {
-					tp.Configurations.Add(pair.Key, pair.Value.Clone());
+				lock (sp.SyncRoot) {
+					lock (tp.SyncRoot) {
+						tp.MSBuildProject.RemoveAllPropertyGroups();
+						foreach (MSBuild.BuildPropertyGroup spg in sp.MSBuildProject.PropertyGroups) {
+							if (spg.IsImported) continue;
+							MSBuild.BuildPropertyGroup tpg = tp.MSBuildProject.AddNewPropertyGroup(false);
+							tpg.Condition = spg.Condition;
+							foreach (MSBuild.BuildProperty sprop in spg) {
+								MSBuild.BuildProperty tprop = tpg.AddNewProperty(sprop.Name, sprop.Value);
+								tprop.Condition = sprop.Condition;
+							}
+						}
+						
+						// use the newly created IdGuid instead of the copied one
+						tp.SetProperty(MSBuildBasedProject.ProjectGuidPropertyName, tp.IdGuid);
+					}
 				}
-				foreach (KeyValuePair<string, PropertyGroup> pair in sp.UserConfigurations) {
-					tp.UserConfigurations.Add(pair.Key, pair.Value.Clone());
-				}
-				tp.BaseConfiguration.Merge(sp.BaseConfiguration);
-				tp.UserBaseConfiguration.Merge(sp.UserBaseConfiguration);
 			}
 		}
 		
 		/// <summary>
-		/// Changes a property in the <paramref name="project"/> by applying a method to its value.
+		/// Changes all instances of a property in the <paramref name="project"/> by applying a method to its value.
 		/// </summary>
-		protected void FixProperty(AbstractProject project, string propertyName, Converter<string, string> method)
+		protected void FixProperty(MSBuildBasedProject project, string propertyName, Converter<string, string> method)
 		{
-			if (project.BaseConfiguration.IsSet(propertyName))
-				project.BaseConfiguration[propertyName] = method(project.BaseConfiguration[propertyName]);
-			if (project.UserBaseConfiguration.IsSet(propertyName))
-				project.UserBaseConfiguration[propertyName] = method(project.UserBaseConfiguration[propertyName]);
-			foreach (PropertyGroup pg in project.Configurations.Values) {
-				if (pg.IsSet(propertyName))
-					pg[propertyName] = method(pg[propertyName]);
-			}
-			foreach (PropertyGroup pg in project.UserConfigurations.Values) {
-				if (pg.IsSet(propertyName))
-					pg[propertyName] = method(pg[propertyName]);
+			lock (project.SyncRoot) {
+				foreach (MSBuild.BuildProperty p in project.GetAllProperties(propertyName)) {
+					p.Value = method(p.Value);
+				}
 			}
 		}
 		
@@ -78,25 +96,33 @@ namespace ICSharpCode.SharpDevelop.Project.Converter
 			sourceExtension = sourceExtension.ToLowerInvariant();
 			
 			List<KeyValuePair<string, string>> replacements = new List<KeyValuePair<string, string>>();
-			foreach (KeyValuePair<string, string> pair in item.Properties) {
-				if ("Include".Equals(pair.Key, StringComparison.OrdinalIgnoreCase))
+			foreach (string metadataName in item.MetadataNames) {
+				if ("Include".Equals(metadataName, StringComparison.OrdinalIgnoreCase))
 					continue;
-				if (pair.Value.ToLowerInvariant().EndsWith(sourceExtension)) {
-					replacements.Add(pair);
+				string value = item.GetMetadata(metadataName);
+				if (value.ToLowerInvariant().EndsWith(sourceExtension)) {
+					replacements.Add(new KeyValuePair<string, string>(metadataName, value));
 				}
 			}
 			foreach (KeyValuePair<string, string> pair in replacements) {
-				item.Properties[pair.Key] = Path.ChangeExtension(pair.Value, targetExtension);
+				item.SetMetadata(pair.Key, Path.ChangeExtension(pair.Value, targetExtension));
 			}
 		}
 		
 		protected virtual void CopyItems(IProject sourceProject, IProject targetProject)
 		{
+			if (sourceProject == null)
+				throw new ArgumentNullException("sourceProject");
+			if (targetProject == null)
+				throw new ArgumentNullException("targetProject");
+			IProjectItemListProvider targetProjectItems = targetProject as IProjectItemListProvider;
+			if (targetProjectItems == null)
+				throw new ArgumentNullException("targetProjectItems");
 			foreach (ProjectItem item in sourceProject.Items) {
 				FileProjectItem fileItem = item as FileProjectItem;
 				if (fileItem != null && FileUtility.IsBaseDirectory(sourceProject.Directory, fileItem.FileName)) {
 					FileProjectItem targetItem = new FileProjectItem(targetProject, fileItem.ItemType);
-					fileItem.CopyExtraPropertiesTo(targetItem);
+					fileItem.CopyMetadataTo(targetItem);
 					targetItem.Include = fileItem.Include;
 					if (File.Exists(fileItem.FileName)) {
 						if (!Directory.Exists(Path.GetDirectoryName(targetItem.FileName))) {
@@ -104,11 +130,9 @@ namespace ICSharpCode.SharpDevelop.Project.Converter
 						}
 						ConvertFile(fileItem, targetItem);
 					}
-					targetProject.Items.Add(targetItem);
+					targetProjectItems.AddProjectItem(targetItem);
 				} else {
-					// Adding the same item to two projects is only allowed because we will save and reload
-					// the target project.
-					targetProject.Items.Add(item);
+					targetProjectItems.AddProjectItem(item.CloneFor(targetProject));
 				}
 			}
 		}
@@ -123,7 +147,7 @@ namespace ICSharpCode.SharpDevelop.Project.Converter
 			conversionLog.Append('=', translatedTitle.Length);
 			conversionLog.AppendLine();
 			conversionLog.AppendLine();
-			IProject sourceProject = ProjectService.CurrentProject;
+			MSBuildBasedProject sourceProject = ProjectService.CurrentProject as MSBuildBasedProject;
 			string targetProjectDirectory = sourceProject.Directory + ".ConvertedTo" + TargetLanguageName;
 			if (Directory.Exists(targetProjectDirectory)) {
 				MessageService.ShowMessageFormatted(translatedTitle, "${res:ICSharpCode.SharpDevelop.Commands.Convert.TargetAlreadyExists}", targetProjectDirectory);
@@ -163,7 +187,7 @@ namespace ICSharpCode.SharpDevelop.Project.Converter
 			}
 		}
 	}
-	
+
 	public abstract class NRefactoryLanguageConverter : LanguageConverter
 	{
 		protected abstract void ConvertAst(CompilationUnit compilationUnit, List<ISpecial> specials);

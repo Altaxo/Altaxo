@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1751 $</version>
+//     <version>$Revision: 2067 $</version>
 // </file>
 
 using System;
@@ -33,11 +33,11 @@ namespace ICSharpCode.SharpDevelop
 	{
 		public bool IsValid(object caller, Condition condition)
 		{
-			AbstractProject project;
+			MSBuildBasedProject project;
 			if (caller is IProject) {
-				project = caller as AbstractProject;
+				project = caller as MSBuildBasedProject;
 			} else {
-				project = ProjectService.CurrentProject as AbstractProject;
+				project = ProjectService.CurrentProject as MSBuildBasedProject;
 			}
 			if (project == null) {
 				return false;
@@ -50,7 +50,7 @@ namespace ICSharpCode.SharpDevelop
 			else
 				comparisonType = (StringComparison)Enum.Parse(typeof(StringComparison), comparisonTypeText);
 			
-			return string.Equals(project.GetProperty(StringParser.Parse(condition.Properties["property"])),
+			return string.Equals(project.GetEvaluatedProperty(StringParser.Parse(condition.Properties["property"])),
 			                     StringParser.Parse(condition.Properties["equals"]),
 			                     comparisonType);
 		}

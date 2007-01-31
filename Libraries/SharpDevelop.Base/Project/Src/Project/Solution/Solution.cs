@@ -1,8 +1,8 @@
 ﻿// <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
+//     <version>$Revision: 2146 $</version>
 // </file>
 
 using System;
@@ -13,16 +13,36 @@ using System.Text;
 using System.Text.RegularExpressions;
 
 using ICSharpCode.Core;
+using MSBuild = Microsoft.Build.BuildEngine;
 
 namespace ICSharpCode.SharpDevelop.Project
 {
-	public class Solution : SolutionFolder, IDisposable
+	public interface IMSBuildEngineProvider
+	{
+		MSBuild.Engine BuildEngine {
+			get;
+		}
+	}
+	
+	public class Solution : SolutionFolder, IDisposable, IMSBuildEngineProvider
 	{
 		// contains <guid>, (IProject/ISolutionFolder) pairs.
 		Dictionary<string, ISolutionFolder> guidDictionary = new Dictionary<string, ISolutionFolder>();
 		
 		string fileName = String.Empty;
 		
+		MSBuild.Engine buildEngine = MSBuildInternals.CreateEngine();
+		
+		public Solution()
+		{
+			preferences = new SolutionPreferences(this);
+		}
+		
+		public MSBuild.Engine BuildEngine {
+			get { return buildEngine; }
+		}
+		
+		#region Enumerate projects/folders
 		public IProject FindProjectContainingFile(string fileName)
 		{
 			IProject currentProject = ProjectService.CurrentProject;
@@ -111,6 +131,10 @@ namespace ICSharpCode.SharpDevelop.Project
 			}
 		}
 		
+		/// <summary>
+		/// Returns the startup project. If no startup project is set in the solution preferences,
+		/// returns any project that is startable.
+		/// </summary>
 		[Browsable(false)]
 		public IProject StartupProject {
 			get {
@@ -129,6 +153,23 @@ namespace ICSharpCode.SharpDevelop.Project
 			}
 		}
 		
+		public ISolutionFolder GetSolutionFolder(string guid)
+		{
+			foreach (ISolutionFolder solutionFolder in SolutionFolders) {
+				if (solutionFolder.IdGuid == guid) {
+					return solutionFolder;
+				}
+			}
+			return null;
+		}
+		
+		public SolutionFolder CreateFolder(string folderName)
+		{
+			return new SolutionFolder(folderName, folderName, "{" + Guid.NewGuid().ToString().ToUpperInvariant() + "}");
+		}
+		#endregion
+		
+		#region Properties
 		[Browsable(false)]
 		public bool HasProjects {
 			get {
@@ -165,7 +206,22 @@ namespace ICSharpCode.SharpDevelop.Project
 			}
 		}
 		
+		SolutionPreferences preferences;
+		
+		[Browsable(false)]
+		public SolutionPreferences Preferences {
+			get {
+				return preferences;
+			}
+		}
+		#endregion
+		
 		#region ISolutionFolderContainer implementations
+		[Browsable(false)]
+		public override Solution ParentSolution {
+			get { return this; }
+		}
+		
 		public override ProjectSection SolutionItems {
 			get {
 				foreach (SolutionFolder folder in Folders) {
@@ -187,30 +243,7 @@ namespace ICSharpCode.SharpDevelop.Project
 		
 		#endregion
 		
-		SolutionPreferences preferences;
-		
-		[Browsable(false)]
-		public SolutionPreferences Preferences {
-			get {
-				return preferences;
-			}
-		}
-		
-		public Solution()
-		{
-			preferences = new SolutionPreferences(this);
-		}
-		
-		public ISolutionFolder GetSolutionFolder(string guid)
-		{
-			foreach (ISolutionFolder solutionFolder in SolutionFolders) {
-				if (solutionFolder.IdGuid == guid) {
-					return solutionFolder;
-				}
-			}
-			return null;
-		}
-		
+		#region Save
 		public void Save()
 		{
 			try {
@@ -221,12 +254,6 @@ namespace ICSharpCode.SharpDevelop.Project
 				MessageService.ShowError("Could not save " + fileName + ":\n" + ex.Message + "\n\nEnsure the file is writable.");
 			}
 		}
-		
-		public SolutionFolder CreateFolder(string folderName)
-		{
-			return new SolutionFolder(folderName, folderName, "{" + Guid.NewGuid().ToString().ToUpperInvariant() + "}");
-		}
-		
 		
 		public void Save(string fileName)
 		{
@@ -314,10 +341,11 @@ namespace ICSharpCode.SharpDevelop.Project
 				globalSection.Append(Environment.NewLine);
 			}
 			
-			// we need to specify UTF8 because MsBuild needs the BOM
+			// we need to specify UTF8 because MSBuild needs the BOM
 			using (StreamWriter sw = new StreamWriter(fileName, false, Encoding.UTF8)) {
 				sw.WriteLine();
 				sw.WriteLine("Microsoft Visual Studio Solution File, Format Version 9.00");
+				sw.WriteLine("# Visual Studio 2005");
 				sw.WriteLine("# SharpDevelop " + RevisionClass.FullVersion);
 				sw.Write(projectSection.ToString());
 				
@@ -348,7 +376,9 @@ namespace ICSharpCode.SharpDevelop.Project
 				projectSection.Append(Environment.NewLine);
 			}
 		}
+		#endregion
 		
+		#region Read/SetupSolution
 		static Regex versionPattern       = new Regex("Microsoft Visual Studio Solution File, Format Version\\s+(?<Version>.*)", RegexOptions.Compiled);
 		
 		static Regex projectLinePattern   = new Regex("Project\\(\"(?<ProjectGuid>.*)\"\\)\\s+=\\s+\"(?<Title>.*)\",\\s*\"(?<Location>.*)\",\\s*\"(?<Guid>.*)\"", RegexOptions.Compiled);
@@ -447,14 +477,14 @@ namespace ICSharpCode.SharpDevelop.Project
 						string guid         = match.Result("${Guid}");
 						
 						if (!FileUtility.IsUrl(location)) {
-							location = Path.Combine(solutionDirectory, location);
+							location = Path.GetFullPath(Path.Combine(solutionDirectory, location));
 						}
 						
 						if (projectGuid == FolderGuid) {
 							SolutionFolder newFolder = SolutionFolder.ReadFolder(sr, title, location, guid);
 							newSolution.AddFolder(newFolder);
 						} else {
-							IProject newProject = LanguageBindingService.LoadProject(location, title, projectGuid);
+							IProject newProject = LanguageBindingService.LoadProject(newSolution, location, title, projectGuid);
 							ReadProjectSections(sr, newProject.ProjectSections);
 							newProject.IdGuid = guid;
 							newSolution.AddFolder(newProject);
@@ -492,7 +522,10 @@ namespace ICSharpCode.SharpDevelop.Project
 			}
 			return true;
 		}
+		#endregion
 		
+		#region Configuration/Platform management
+		#region Section management
 		public ProjectSection GetSolutionConfigurationsSection()
 		{
 			foreach (ProjectSection sec in this.Sections) {
@@ -549,7 +582,7 @@ namespace ICSharpCode.SharpDevelop.Project
 								string platform = location.Substring(pos+1);
 								bool found = false;
 								foreach (IProject p in this.Projects) {
-									if (p.GetPlatformNames().Contains(platform)) {
+									if (p.PlatformNames.Contains(platform)) {
 										found = true;
 										break;
 									}
@@ -601,7 +634,9 @@ namespace ICSharpCode.SharpDevelop.Project
 			}
 			return changed;
 		}
+		#endregion
 		
+		#region GetProjectConfigurationsSection/GetPlatformNames
 		public IList<string> GetConfigurationNames()
 		{
 			List<string> configurationNames = new List<string>();
@@ -623,15 +658,42 @@ namespace ICSharpCode.SharpDevelop.Project
 			}
 			return platformNames;
 		}
+		#endregion
 		
+		#region Solution - project configuration matching
 		public void ApplySolutionConfigurationAndPlatformToProjects()
 		{
 			foreach (ProjectConfigurationPlatformMatching l in
 			         GetActiveConfigurationsAndPlatformsForProjects(preferences.ActiveConfiguration,
 			                                                        preferences.ActivePlatform))
 			{
-				l.Project.Configuration = l.Configuration;
-				l.Project.Platform = l.Platform;
+				l.Project.ActiveConfiguration = l.Configuration;
+				l.Project.ActivePlatform = FixPlatformNameForProject(l.Platform);
+			}
+		}
+		
+		/// <summary>
+		/// This is a special case in MSBuild we need to take care of.
+		/// </summary>
+		static string FixPlatformNameForProject(string platformName)
+		{
+			if (platformName == "Any CPU") {
+				return "AnyCPU";
+			} else {
+				return platformName;
+			}
+		}
+		
+		/// <summary>
+		/// This is a special case in MSBuild we need to take care of.
+		/// Opposite of FixPlatformNameForProject
+		/// </summary>
+		static string FixPlatformNameForSolution(string platformName)
+		{
+			if (platformName == "AnyCPU") {
+				return "Any CPU";
+			} else {
+				return platformName;
 			}
 		}
 		
@@ -649,6 +711,50 @@ namespace ICSharpCode.SharpDevelop.Project
 				this.Platform = platform;
 				this.SolutionItem = solutionItem;
 			}
+			
+			public void SetSolutionConfigurationPlatform(ProjectSection section, string newConfiguration, string newPlatform)
+			{
+				if (this.SolutionItem == null)
+					return;
+				string oldName = this.SolutionItem.Name;
+				this.SolutionItem.Name = this.Project.IdGuid + "." + newConfiguration + "|" + newPlatform + ".Build.0";
+				string newName = this.SolutionItem.Name;
+				if (StripBuild0(ref oldName) && StripBuild0(ref newName)) {
+					oldName += ".ActiveCfg";
+					newName += ".ActiveCfg";
+					foreach (SolutionItem item in section.Items) {
+						if (item.Name == oldName)
+							item.Name = newName;
+					}
+				}
+			}
+			
+			public void SetProjectConfigurationPlatform(ProjectSection section, string newConfiguration, string newPlatform)
+			{
+				this.Configuration = newConfiguration;
+				this.Platform = newPlatform;
+				if (this.SolutionItem == null)
+					return;
+				this.SolutionItem.Location = newConfiguration + "|" + newPlatform;
+				string thisName = this.SolutionItem.Name;
+				if (StripBuild0(ref thisName)) {
+					thisName += ".ActiveCfg";
+					foreach (SolutionItem item in section.Items) {
+						if (item.Name == thisName)
+							item.Location = this.SolutionItem.Location;
+					}
+				}
+			}
+			
+			internal static bool StripBuild0(ref string s)
+			{
+				if (s.EndsWith(".Build.0")) {
+					s = s.Substring(0, s.Length - ".Build.0".Length);
+					return true;
+				} else {
+					return false;
+				}
+			}
 		}
 		
 		internal List<ProjectConfigurationPlatformMatching>
@@ -656,7 +762,7 @@ namespace ICSharpCode.SharpDevelop.Project
 		{
 			List<ProjectConfigurationPlatformMatching> results = new List<ProjectConfigurationPlatformMatching>();
 			ProjectSection prjSec = GetProjectConfigurationsSection();
-			Dictionary<string, SolutionItem> dict = new Dictionary<string, SolutionItem>();
+			Dictionary<string, SolutionItem> dict = new Dictionary<string, SolutionItem>(StringComparer.InvariantCultureIgnoreCase);
 			foreach (SolutionItem item in prjSec.Items) {
 				dict[item.Name] = item;
 			}
@@ -680,14 +786,267 @@ namespace ICSharpCode.SharpDevelop.Project
 			return results;
 		}
 		
-		internal SolutionItem CreateMatchingItem(string solutionConfiguration, string solutionPlatform, IProject project)
+		internal SolutionItem CreateMatchingItem(string solutionConfiguration, string solutionPlatform, IProject project, string initialLocation)
 		{
 			SolutionItem item = new SolutionItem(project.IdGuid + "." + solutionConfiguration + "|"
-			                                     + solutionPlatform + ".Build.0", "");
+			                                     + solutionPlatform + ".Build.0", initialLocation);
 			GetProjectConfigurationsSection().Items.Add(item);
+			GetProjectConfigurationsSection().Items.Add(new SolutionItem(project.IdGuid + "." + solutionConfiguration + "|"
+			                                                             + solutionPlatform + ".ActiveCfg", initialLocation));
 			return item;
 		}
+		#endregion
 		
+		#region Rename Solution Configuration/Platform
+		public void RenameSolutionConfiguration(string oldName, string newName)
+		{
+			foreach (string platform in GetPlatformNames()) {
+				foreach (ProjectConfigurationPlatformMatching m
+				         in GetActiveConfigurationsAndPlatformsForProjects(oldName, platform))
+				{
+					m.SetSolutionConfigurationPlatform(GetProjectConfigurationsSection(), newName, platform);
+				}
+			}
+			foreach (SolutionItem item in GetSolutionConfigurationsSection().Items) {
+				if (AbstractProject.GetConfigurationNameFromKey(item.Name) == oldName) {
+					item.Name = newName + "|" + AbstractProject.GetPlatformNameFromKey(item.Name);
+					item.Location = item.Name;
+				}
+			}
+		}
+		
+		public void RenameSolutionPlatform(string oldName, string newName)
+		{
+			foreach (string configuration in GetConfigurationNames()) {
+				foreach (ProjectConfigurationPlatformMatching m
+				         in GetActiveConfigurationsAndPlatformsForProjects(configuration, oldName))
+				{
+					m.SetSolutionConfigurationPlatform(GetProjectConfigurationsSection(), configuration, newName);
+				}
+			}
+			foreach (SolutionItem item in GetSolutionConfigurationsSection().Items) {
+				if (AbstractProject.GetPlatformNameFromKey(item.Name) == oldName) {
+					item.Name = AbstractProject.GetConfigurationNameFromKey(item.Name) + "|" + newName;
+					item.Location = item.Name;
+				}
+			}
+		}
+		#endregion
+		
+		#region Rename Project Configuration/Platform
+		public bool RenameProjectConfiguration(IProject project, string oldName, string newName)
+		{
+			IProjectAllowChangeConfigurations pacc = project as IProjectAllowChangeConfigurations;
+			if (pacc == null)
+				return false;
+			if (!pacc.RenameProjectConfiguration(oldName, newName))
+				return false;
+			// project configuration was renamed successfully, adjust solution:
+			foreach (SolutionItem item in GetProjectConfigurationsSection().Items) {
+				if (item.Name.ToLowerInvariant().StartsWith(project.IdGuid.ToLowerInvariant())) {
+					if (AbstractProject.GetConfigurationNameFromKey(item.Location) == oldName) {
+						item.Location = newName + "|" + AbstractProject.GetPlatformNameFromKey(item.Location);
+					}
+				}
+			}
+			return true;
+		}
+		
+		public bool RenameProjectPlatform(IProject project, string oldName, string newName)
+		{
+			IProjectAllowChangeConfigurations pacc = project as IProjectAllowChangeConfigurations;
+			if (pacc == null)
+				return false;
+			if (!pacc.RenameProjectPlatform(FixPlatformNameForProject(oldName), FixPlatformNameForProject(newName)))
+				return false;
+			// project configuration was renamed successfully, adjust solution:
+			foreach (SolutionItem item in GetProjectConfigurationsSection().Items) {
+				if (item.Name.ToLowerInvariant().StartsWith(project.IdGuid.ToLowerInvariant())) {
+					if (AbstractProject.GetPlatformNameFromKey(item.Location) == oldName) {
+						item.Location = AbstractProject.GetConfigurationNameFromKey(item.Location) + "|" + newName;
+					}
+				}
+			}
+			return true;
+		}
+		#endregion
+		
+		#region Add Solution Configuration/Platform
+		/// <summary>
+		/// Creates a new solution configuration.
+		/// </summary>
+		/// <param name="newName">Name of the new configuration</param>
+		/// <param name="copyFrom">Name of existing configuration to copy values from, or null</param>
+		/// <param name="createInProjects">true to also create the new configuration in all projects</param>
+		public void AddSolutionConfiguration(string newName, string copyFrom, bool createInProjects)
+		{
+			foreach (string platform in this.GetPlatformNames()) {
+				AddSolutionConfigurationPlatform(newName, platform, copyFrom, createInProjects, false);
+			}
+		}
+		
+		public void AddSolutionPlatform(string newName, string copyFrom, bool createInProjects)
+		{
+			foreach (string configuration in this.GetConfigurationNames()) {
+				AddSolutionConfigurationPlatform(configuration, newName, copyFrom, createInProjects, true);
+			}
+		}
+		
+		void AddSolutionConfigurationPlatform(string newConfiguration, string newPlatform,
+		                                      string copyFrom, bool createInProjects, bool addPlatform)
+		{
+			List<ProjectConfigurationPlatformMatching> matchings;
+			if (string.IsNullOrEmpty(copyFrom)) {
+				matchings = new List<ProjectConfigurationPlatformMatching>();
+			} else {
+				if (addPlatform) {
+					matchings = GetActiveConfigurationsAndPlatformsForProjects(newConfiguration, copyFrom);
+				} else {
+					matchings = GetActiveConfigurationsAndPlatformsForProjects(copyFrom, newPlatform);
+				}
+			}
+			GetSolutionConfigurationsSection().Items.Add(new SolutionItem(newConfiguration + "|" + newPlatform,
+			                                                              newConfiguration + "|" + newPlatform));
+			foreach (IProject project in this.Projects) {
+				// get old project configuration and platform
+				string projectConfiguration, projectPlatform;
+				
+				ProjectConfigurationPlatformMatching matching = matchings.Find(
+					delegate(ProjectConfigurationPlatformMatching m) { return m.Project == project; });
+				if (matching != null) {
+					projectConfiguration = matching.Configuration;
+					projectPlatform = matching.Platform;
+				} else {
+					projectConfiguration = Linq.ToArray(project.ConfigurationNames)[0];
+					projectPlatform = FixPlatformNameForSolution(Linq.ToArray(project.PlatformNames)[0]);
+				}
+				if (createInProjects) {
+					ICollection<string> existingInProject = addPlatform ? project.PlatformNames : project.ConfigurationNames;
+					if (existingInProject.Contains(addPlatform ? newPlatform : newConfiguration)) {
+						// target platform/configuration already exists, so reference it
+						if (addPlatform) {
+							projectPlatform = newPlatform;
+						} else {
+							projectConfiguration = newConfiguration;
+						}
+					} else {
+						// create in project
+						IProjectAllowChangeConfigurations pacc = project as IProjectAllowChangeConfigurations;
+						if (pacc != null) {
+							if (addPlatform) {
+								if (pacc.AddProjectPlatform(FixPlatformNameForProject(newPlatform),
+								                            FixPlatformNameForProject(projectPlatform))) {
+									projectPlatform = newPlatform;
+								}
+							} else {
+								if (pacc.AddProjectConfiguration(newConfiguration, projectConfiguration)) {
+									projectConfiguration = newConfiguration;
+								}
+							}
+						}
+					}
+				}
+				
+				// create item combining solution configuration with project configuration
+				CreateMatchingItem(newConfiguration, newPlatform, project, projectConfiguration + "|" + projectPlatform);
+			}
+		}
+		#endregion
+		
+		#region Remove Solution Configuration/Platform
+		/// <summary>
+		/// Gets the configuration|platform name from a conf item, e.g.
+		/// "Release|Any CPU" from
+		/// "{7115F3A9-781C-4A95-90AE-B5AB53C4C588}.Release|Any CPU.Build.0"
+		/// </summary>
+		static string GetKeyFromProjectConfItem(string name)
+		{
+			int pos = name.IndexOf('.');
+			if (pos < 0) return null;
+			name = name.Substring(pos + 1);
+			if (!ProjectConfigurationPlatformMatching.StripBuild0(ref name)) {
+				pos = name.LastIndexOf('.');
+				if (pos < 0) return null;
+				name = name.Substring(0, pos);
+			}
+			return name;
+		}
+		
+		public void RemoveSolutionConfiguration(string name)
+		{
+			GetSolutionConfigurationsSection().Items.RemoveAll(
+				delegate(SolutionItem item) {
+					return AbstractProject.GetConfigurationNameFromKey(item.Name) == name;
+				});
+			GetProjectConfigurationsSection().Items.RemoveAll(
+				delegate(SolutionItem item) {
+					return AbstractProject.GetConfigurationNameFromKey(GetKeyFromProjectConfItem(item.Name)) == name;
+				});
+		}
+		
+		public void RemoveSolutionPlatform(string name)
+		{
+			GetSolutionConfigurationsSection().Items.RemoveAll(
+				delegate(SolutionItem item) {
+					return AbstractProject.GetPlatformNameFromKey(item.Name) == name;
+				});
+			GetProjectConfigurationsSection().Items.RemoveAll(
+				delegate(SolutionItem item) {
+					return AbstractProject.GetPlatformNameFromKey(GetKeyFromProjectConfItem(item.Name)) == name;
+				});
+		}
+		#endregion
+		
+		#region Remove Project Configuration/Platform
+		public bool RemoveProjectConfiguration(IProject project, string name)
+		{
+			IProjectAllowChangeConfigurations pacc = project as IProjectAllowChangeConfigurations;
+			if (pacc == null)
+				return false;
+			if (!pacc.RemoveProjectConfiguration(name))
+				return false;
+			string otherConfigurationName = "other";
+			foreach (string configName in project.ConfigurationNames) {
+				otherConfigurationName = configName;
+			}
+			// project configuration was removed successfully, adjust solution:
+			foreach (SolutionItem item in GetProjectConfigurationsSection().Items) {
+				if (item.Name.ToLowerInvariant().StartsWith(project.IdGuid.ToLowerInvariant())) {
+					if (AbstractProject.GetConfigurationNameFromKey(item.Location) == name) {
+						// removed configuration was in use here, replace with other configuration
+						item.Location = otherConfigurationName + "|" + AbstractProject.GetPlatformNameFromKey(item.Location);
+					}
+				}
+			}
+			return true;
+		}
+		
+		public bool RemoveProjectPlatform(IProject project, string name)
+		{
+			IProjectAllowChangeConfigurations pacc = project as IProjectAllowChangeConfigurations;
+			if (pacc == null)
+				return false;
+			if (!pacc.RemoveProjectPlatform(name))
+				return false;
+			string otherPlatformName = "other";
+			foreach (string platformName in project.PlatformNames) {
+				otherPlatformName = platformName;
+			}
+			// project configuration was removed successfully, adjust solution:
+			foreach (SolutionItem item in GetProjectConfigurationsSection().Items) {
+				if (item.Name.ToLowerInvariant().StartsWith(project.IdGuid.ToLowerInvariant())) {
+					if (AbstractProject.GetPlatformNameFromKey(item.Location) == name) {
+						// removed configuration was in use here, replace with other configuration
+						item.Location = AbstractProject.GetConfigurationNameFromKey(item.Location) + "|" + otherPlatformName;
+					}
+				}
+			}
+			return true;
+		}
+		#endregion
+		#endregion
+		
+		#region Load
 		static Solution solutionBeingLoaded;
 		
 		public static Solution SolutionBeingLoaded {
@@ -731,6 +1090,7 @@ namespace ICSharpCode.SharpDevelop.Project
 			solutionBeingLoaded = null;
 			return newSolution;
 		}
+		#endregion
 		
 		#region System.IDisposable interface implementation
 		public void Dispose()
@@ -738,32 +1098,19 @@ namespace ICSharpCode.SharpDevelop.Project
 			foreach (IProject project in Projects) {
 				project.Dispose();
 			}
+			if (buildEngine != null) {
+				buildEngine.UnloadAllProjects();
+				buildEngine = null;
+			}
 		}
 		#endregion
 		
-		public void RunMSBuild(string target, MSBuildEngineCallback callback, IDictionary<string, string> additionalProperties)
+		public void StartBuild(BuildOptions options)
 		{
-			MSBuildProject.RunMSBuild(FileName, target, preferences.ActiveConfiguration, preferences.ActivePlatform, false, callback, additionalProperties);
-		}
-		
-		public void Build(MSBuildEngineCallback callback)
-		{
-			RunMSBuild(null, callback, null);
-		}
-		
-		public void Rebuild(MSBuildEngineCallback callback)
-		{
-			RunMSBuild("Rebuild", callback, null);
-		}
-		
-		public void Clean(MSBuildEngineCallback callback)
-		{
-			RunMSBuild("Clean", callback, null);
-		}
-		
-		public void Publish(MSBuildEngineCallback callback)
-		{
-			RunMSBuild("Publish", callback, null);
+			MSBuildBasedProject.RunMSBuild(this, null,
+			                               this.Preferences.ActiveConfiguration,
+			                               this.Preferences.ActivePlatform,
+			                               options);
 		}
 	}
 }

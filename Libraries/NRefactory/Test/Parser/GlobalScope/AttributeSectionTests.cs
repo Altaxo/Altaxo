@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1609 $</version>
+//     <version>$Revision: 2101 $</version>
 // </file>
 
 using System;
@@ -70,6 +70,24 @@ public class Form1 {
 			TypeDeclaration decl = ParseUtilCSharp.ParseGlobal<TypeDeclaration>(program);
 			Assert.AreEqual("Microsoft.VisualBasic.CompilerServices.DesignerGenerated", decl.Attributes[0].Attributes[0].Name);
 			Assert.AreEqual("someprefix.DesignerGenerated", decl.Attributes[1].Attributes[0].Name);
+		}
+		
+		[Test]
+		public void AssemblyAttributeCSharp()
+		{
+			string program = @"[assembly: System.Attribute()]";
+			AttributeSection decl = ParseUtilCSharp.ParseGlobal<AttributeSection>(program);
+			Assert.AreEqual(new Location(1, 1), decl.StartLocation);
+			Assert.AreEqual("assembly", decl.AttributeTarget);
+		}
+		
+		[Test]
+		public void AssemblyAttributeVBNet()
+		{
+			string program = @"<assembly: System.Attribute()>";
+			AttributeSection decl = ParseUtilVBNet.ParseGlobal<AttributeSection>(program);
+			Assert.AreEqual(new Location(1, 1), decl.StartLocation);
+			Assert.AreEqual("assembly", decl.AttributeTarget);
 		}
 	}
 }

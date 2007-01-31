@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2167 $</version>
 // </file>
 
 using System;
@@ -35,7 +35,7 @@ namespace ICSharpCode.SharpDevelop
     }
 
 #else
-		public const string VersionText = "Serralongue build " + RevisionClass.Revision;
+		public const string VersionText = "SharpDevelop " + RevisionClass.FullVersion;
 #endif
 		
 		static SplashScreenForm splashScreen;
@@ -46,6 +46,9 @@ namespace ICSharpCode.SharpDevelop
 		public static SplashScreenForm SplashScreen {
 			get {
 				return splashScreen;
+			}
+			set {
+				splashScreen = value;
 			}
 		}
 		

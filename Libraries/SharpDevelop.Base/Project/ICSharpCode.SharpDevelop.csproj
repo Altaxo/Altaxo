@@ -1,4 +1,4 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -16,7 +16,7 @@
     <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
     <RegisterForComInterop>False</RegisterForComInterop>
     <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
-    <BaseAddress>84934656</BaseAddress>
+    <BaseAddress>88080384</BaseAddress>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <FileAlignment>4096</FileAlignment>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
@@ -24,7 +24,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <Optimize>False</Optimize>
-    <DefineConstants>DEBUG;ModifiedForAltaxo</DefineConstants>
+    <DefineConstants>DEBUG,TRACE;ModifiedForAltaxo</DefineConstants>
     <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
     <OutputPath>bin\debug\</OutputPath>
     <WarningLevel>4</WarningLevel>
@@ -54,6 +54,12 @@
     <Reference Include="Microsoft.Build.Engine" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Src\Gui\Dialogs\SolutionConfiguration\AddNewConfigurationDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Src\Gui\Dialogs\SolutionConfiguration\AddNewConfigurationDialog.Designer.cs">
+      <DependentUpon>AddNewConfigurationDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Src\Internal\ExternalTool\ExternalTool.cs" />
     <Compile Include="Src\Internal\Templates\CodeTemplate.cs" />
     <Compile Include="Src\Internal\Templates\Project\ProjectTemplate.cs" />
@@ -64,6 +70,8 @@
     <Compile Include="Src\Internal\Undo\IUndoableOperation.cs" />
     <Compile Include="Src\Internal\Undo\UndoQueue.cs" />
     <Compile Include="Src\Internal\Undo\UndoStack.cs" />
+    <Compile Include="Src\Project\MSBuildEngineWorker.cs" />
+    <Compile Include="Src\Project\ProjectPropertyChangedEventArgs.cs" />
     <Compile Include="Src\Services\Debugger\BreakpointBookmark.cs" />
     <Compile Include="Src\Services\Debugger\BreakpointBookmarkEventArgs.cs" />
     <Compile Include="Src\Services\File\RecentOpen.cs" />
@@ -154,7 +162,7 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Src\Gui\Dialogs\TreeViewOptions.cs">
-      <SubType>Component</SubType>
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="Src\Gui\Dialogs\WordCountDialog.cs">
       <SubType>Form</SubType>
@@ -291,10 +299,7 @@
     </Compile>
     <Compile Include="Src\Project\Items\FileProjectItem.cs" />
     <Compile Include="Src\Project\IProject.cs" />
-    <Compile Include="Src\Project\MSBuildProject.cs" />
     <Compile Include="Src\Project\Items\ProjectItem.cs" />
-    <Compile Include="Src\Project\Items\ProjectItemFactory.cs" />
-    <Compile Include="Src\Project\PropertyGroup.cs" />
     <Compile Include="Src\Project\Items\ReferenceProjectItem.cs" />
     <Compile Include="Src\Project\Solution\Solution.cs" />
     <Compile Include="Src\Services\ProjectService\ProjectService.cs" />
@@ -466,6 +471,7 @@
     <Compile Include="Src\TextEditor\Gui\Editor\InsightWindow\MethodInsightDataProvider.cs" />
     <Compile Include="Src\TextEditor\Gui\Editor\ErrorDrawer.cs" />
     <Compile Include="Src\TextEditor\Gui\Editor\ITextAreaControlProvider.cs" />
+    <Compile Include="Src\TextEditor\Gui\Editor\NRefactoryCodeCompletionBinding.cs" />
     <Compile Include="Src\TextEditor\Gui\Editor\ParserFoldingStrategy.cs" />
     <Compile Include="Src\TextEditor\Gui\Editor\QuickClassBrowserPanel.cs">
       <SubType>UserControl</SubType>
@@ -511,6 +517,12 @@
     <Compile Include="Src\TextEditor\SearchAndReplace\Engine\SearchReplaceInFilesManager.cs" />
     <Compile Include="Src\TextEditor\SearchAndReplace\Engine\SearchReplaceManager.cs" />
     <Compile Include="Src\TextEditor\SearchAndReplace\Engine\SearchReplaceUtilities.cs" />
+    <Compile Include="Src\TextEditor\SearchAndReplace\Gui\AsynchronousWaitDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Src\TextEditor\SearchAndReplace\Gui\AsynchronousWaitDialog.Designer.cs">
+      <DependentUpon>AsynchronousWaitDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Src\TextEditor\SearchAndReplace\Gui\SearchAndReplaceDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -527,7 +539,6 @@
     <Compile Include="Src\TextEditor\CharacterEncodings.cs" />
     <Compile Include="Src\TextEditor\XmlFormattingStrategy.cs" />
     <Compile Include="Src\Services\Tasks\TaskEventHandler.cs" />
-    <Compile Include="Src\Project\AbstractProject.cs" />
     <Compile Include="Src\TextEditor\Commands\NavigationCommands.cs" />
     <Compile Include="Src\Project\MSBuildEngine.cs" />
     <Compile Include="Src\TextEditor\Gui\Editor\CodeCompletionBinding.cs" />
@@ -699,20 +710,43 @@
     <Compile Include="Src\Gui\Dialogs\SolutionConfiguration\SolutionConfigurationEditor.cs">
       <SubType>Form</SubType>
     </Compile>
-    <EmbeddedResource Include="Src\Gui\Dialogs\SolutionConfiguration\SolutionConfigurationEditor.resx">
-      <DependentUpon>SolutionConfigurationEditor.cs</DependentUpon>
-    </EmbeddedResource>
     <Compile Include="Src\TextEditor\Gui\Editor\IncrementalSearch.cs" />
     <EmbeddedResource Include="Resources\IncrementalSearchCursor.cur" />
     <EmbeddedResource Include="Resources\ReverseIncrementalSearchCursor.cur" />
+    <EmbeddedResource Include="Src\TextEditor\SearchAndReplace\Gui\AsynchronousWaitDialog.resx">
+      <DependentUpon>AsynchronousWaitDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <Compile Include="Src\Gui\Dialogs\SharpDevelopColorDialog.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Src\Project\MSBuildImport.cs" />
     <Compile Include="Src\Util\Linq.cs" />
     <Compile Include="Src\Util\DebugTimer.cs" />
+    <Compile Include="Src\Project\CustomTool.cs" />
+    <Compile Include="Src\Gui\Dialogs\SolutionConfiguration\EditAvailableConfigurationsDialog.Designer.cs">
+      <DependentUpon>EditAvailableConfigurationsDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Src\Gui\Dialogs\SolutionConfiguration\EditAvailableConfigurationsDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Src\Project\MSBuildBasedProject.cs" />
+    <Compile Include="Src\Project\AbstractProject.cs" />
+    <Compile Include="Src\Project\BuildOptions.cs" />
+    <Compile Include="Src\Project\IParser.cs" />
+    <Compile Include="Src\Project\CompilableProject.cs" />
+    <Compile Include="Src\Project\MSBuildInternals.cs" />
+    <Compile Include="Src\Util\Pair.cs" />
+    <Compile Include="Src\Util\Set.cs" />
+    <Compile Include="Src\Util\ReadOnlyCollectionWrapper.cs" />
+    <Compile Include="Src\Project\Items\ItemType.cs" />
+    <Compile Include="Src\Project\BuildTarget.cs" />
+    <Compile Include="Src\Util\GenericConverter.cs" />
+    <Compile Include="Src\Internal\Templates\TemplateLoadException.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\WinFormsUI\WinFormsUI\WinFormsUI.csproj">
+      <Project>{D3C782BA-178E-4235-A3BA-8C11DEBB6BEE}</Project>
+      <Name>WinFormsUI</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\Libraries\ICSharpCode.TextEditor\Project\ICSharpCode.TextEditor.csproj">
       <Project>{2D18BE89-D210-49EB-A9DD-2246FBB3DF6D}</Project>
       <Name>ICSharpCode.TextEditor</Name>
@@ -736,10 +770,6 @@
       <Project>{8035765F-D51F-4A0C-A746-2FD100E19419}</Project>
       <Name>ICSharpCode.SharpDevelop.Widgets</Name>
       <Private>False</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\..\WinFormsUI\WinFormsUI\WinFormsUI.csproj">
-      <Project>{E509019E-4028-4DB8-97B8-72FD390B3DB9}</Project>
-      <Name>WinFormsUI</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSHARP.Targets" />

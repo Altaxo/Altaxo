@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2049 $</version>
 // </file>
 
 using System;
@@ -19,7 +19,7 @@ namespace CSharpBinding
 	/// <summary>
 	/// Description of CSharpProject.
 	/// </summary>
-	public class CSharpProject : MSBuildProject
+	public class CSharpProject : CompilableProject
 	{
 		[Browsable(false)]
 		public override IAmbience Ambience {
@@ -28,22 +28,30 @@ namespace CSharpBinding
 			}
 		}
 		
-		void Init()
-		{
-			Language = "C#";
-			reparseSensitiveProperties.Add("TargetFrameworkVersion");
-			reparseSensitiveProperties.Add("DefineConstants");
+		public override string Language {
+			get { return CSharpLanguageBinding.LanguageName; }
 		}
 		
-		public CSharpProject(string fileName, string projectName)
+		public override LanguageProperties LanguageProperties {
+			get { return LanguageProperties.CSharp; }
+		}
+		
+		void Init()
+		{
+			reparseReferencesSensitiveProperties.Add("TargetFrameworkVersion");
+			reparseCodeSensitiveProperties.Add("DefineConstants");
+		}
+		
+		public CSharpProject(IMSBuildEngineProvider engineProvider, string fileName, string projectName)
+			: base(engineProvider)
 		{
 			this.Name = projectName;
 			Init();
-			SetupProject(fileName);
-			IdGuid = BaseConfiguration["ProjectGuid"];
+			LoadProject(fileName);
 		}
 		
 		public CSharpProject(ProjectCreateInformation info)
+			: base(info.Solution)
 		{
 			Init();
 			Create(info);
@@ -54,14 +62,24 @@ namespace CSharpBinding
 		protected override void Create(ProjectCreateInformation information)
 		{
 			base.Create(information);
-			this.Imports.Add(new MSBuildImport(DefaultTargetsFile));
-			SetProperty("Debug", null, "CheckForOverflowUnderflow", "True", PropertyStorageLocations.ConfigurationSpecific);
-			SetProperty("Release", null, "CheckForOverflowUnderflow", "False", PropertyStorageLocations.ConfigurationSpecific);
+			this.AddImport(DefaultTargetsFile, null);
+			SetProperty("Debug", null, "CheckForOverflowUnderflow", "True",
+			            PropertyStorageLocations.ConfigurationSpecific, true);
+			SetProperty("Release", null, "CheckForOverflowUnderflow", "False",
+			            PropertyStorageLocations.ConfigurationSpecific, true);
+			
+			SetProperty("Debug", null, "DefineConstants", "DEBUG;TRACE",
+			            PropertyStorageLocations.ConfigurationSpecific, false);
+			SetProperty("Release", null, "DefineConstants", "TRACE",
+			            PropertyStorageLocations.ConfigurationSpecific, false);
 		}
 		
-		public override bool CanCompile(string fileName)
+		public override ItemType GetDefaultItemType(string fileName)
 		{
-			return string.Equals(Path.GetExtension(fileName), ".cs", StringComparison.OrdinalIgnoreCase);
+			if (string.Equals(Path.GetExtension(fileName), ".cs", StringComparison.OrdinalIgnoreCase))
+				return ItemType.Compile;
+			else
+				return base.GetDefaultItemType(fileName);
 		}
 	}
 }

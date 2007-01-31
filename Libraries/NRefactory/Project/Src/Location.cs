@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1634 $</version>
+//     <version>$Revision: 2087 $</version>
 // </file>
 
 using System;
@@ -12,7 +12,7 @@ namespace ICSharpCode.NRefactory
 	/// <summary>
 	/// A line/column position.
 	/// </summary>
-	public struct Location : IComparable<Location>
+	public struct Location : IComparable<Location>, IEquatable<Location>
 	{
 		public static readonly Location Empty = new Location(-1, -1);
 		
@@ -25,21 +25,23 @@ namespace ICSharpCode.NRefactory
 		int x, y;
 		
 		public int X {
-			get {
-				return x;
-			}
-			set {
-				x = value;
-			}
+			get { return x; }
+			set { x = value; }
 		}
 		
 		public int Y {
-			get {
-				return y;
-			}
-			set {
-				y = value;
-			}
+			get { return y; }
+			set { y = value; }
+		}
+		
+		public int Line {
+			get { return y; }
+			set { y = value; }
+		}
+		
+		public int Column {
+			get { return x; }
+			set { x = value; }
 		}
 		
 		public bool IsEmpty {
@@ -62,6 +64,11 @@ namespace ICSharpCode.NRefactory
 		{
 			if (!(obj is Location)) return false;
 			return (Location)obj == this;
+		}
+		
+		public bool Equals(Location other)
+		{
+			return this == other;
 		}
 		
 		public static bool operator ==(Location a, Location b)

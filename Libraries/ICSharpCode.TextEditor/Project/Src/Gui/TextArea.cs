@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2161 $</version>
 // </file>
 
 using System;
@@ -554,7 +554,7 @@ namespace ICSharpCode.TextEditor
 			
 			if (TextEditorProperties.UseCustomLine == true) {
 				if (SelectionManager.HasSomethingSelected) {
-					if (Document.CustomLineManager.IsReadOnly(SelectionManager.SelectionCollection[0], false))
+					if (SelectionManager.SelectionIsReadonly)
 						return;
 				} else if (Document.CustomLineManager.IsReadOnly(Caret.Line, false) == true)
 					return;
@@ -615,7 +615,7 @@ namespace ICSharpCode.TextEditor
 			if (keyData == Keys.Back || keyData == Keys.Delete || keyData == Keys.Enter) {
 				if (TextEditorProperties.UseCustomLine == true) {
 					if (SelectionManager.HasSomethingSelected) {
-						if (Document.CustomLineManager.IsReadOnly(SelectionManager.SelectionCollection[0], false))
+						if (SelectionManager.SelectionIsReadonly)
 							return true;
 					} else {
 						int curLineNr   = Document.GetLineNumberForOffset(Caret.Offset);
@@ -690,7 +690,7 @@ namespace ICSharpCode.TextEditor
 					return false;
 				if (TextEditorProperties.UseCustomLine == true) {
 					if (SelectionManager.HasSomethingSelected == true) {
-						if (Document.CustomLineManager.IsReadOnly(SelectionManager.SelectionCollection[0], false))
+						if (SelectionManager.SelectionIsReadonly)
 							return false;
 					}
 					if (Document.CustomLineManager.IsReadOnly(Caret.Line, false) == true)
@@ -738,7 +738,7 @@ namespace ICSharpCode.TextEditor
 			++Caret.Column;
 			
 			if (removedText) {
-				Document.UndoStack.UndoLast(2);
+				Document.UndoStack.CombineLast(2);
 			}
 			
 			if (!updating) {
@@ -780,7 +780,7 @@ namespace ICSharpCode.TextEditor
 					Caret.Position = Document.OffsetToPosition(oldOffset + str.Length);
 				}
 				if (removedText) {
-					Document.UndoStack.UndoLast(2);
+					Document.UndoStack.CombineLast(2);
 				}
 				if (oldLine != Caret.Line) {
 					UpdateToEnd(oldLine);

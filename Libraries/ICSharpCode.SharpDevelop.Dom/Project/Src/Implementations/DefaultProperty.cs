@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2066 $</version>
 // </file>
 
 using System;
@@ -12,7 +12,6 @@ namespace ICSharpCode.SharpDevelop.Dom {
 
 	public class DefaultProperty : AbstractMember, IProperty
 	{
-		DomRegion bodyRegion = DomRegion.Empty;
 		DomRegion getterRegion = DomRegion.Empty;
 		DomRegion setterRegion = DomRegion.Empty;
 		
@@ -49,17 +48,14 @@ namespace ICSharpCode.SharpDevelop.Dom {
 			}
 		}
 		
-		public virtual DomRegion BodyRegion {
-			get {
-				return bodyRegion;
-			}
-		}
-		
 		public override IMember Clone()
 		{
 			DefaultProperty p = new DefaultProperty(Name, ReturnType, Modifiers, Region, BodyRegion, DeclaringType);
 			p.parameters = DefaultParameter.Clone(this.Parameters);
 			p.accessFlags = this.accessFlags;
+			foreach (ExplicitInterfaceImplementation eii in InterfaceImplementations) {
+				p.InterfaceImplementations.Add(eii.Clone());
+			}
 			return p;
 		}
 		
@@ -101,7 +97,7 @@ namespace ICSharpCode.SharpDevelop.Dom {
 		{
 			this.ReturnType = type;
 			this.Region = region;
-			this.bodyRegion = bodyRegion;
+			this.BodyRegion = bodyRegion;
 			Modifiers = m;
 		}
 		

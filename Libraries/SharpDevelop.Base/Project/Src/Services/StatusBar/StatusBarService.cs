@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2059 $</version>
 // </file>
 
 using System;
@@ -45,16 +45,6 @@ namespace ICSharpCode.SharpDevelop
 			get { 
 				System.Diagnostics.Debug.Assert(statusBar != null);
 				return statusBar;
-			}
-		}
-		
-		public static bool CancelEnabled {
-			get {
-				return statusBar != null && statusBar.CancelEnabled;
-			}
-			set {
-				System.Diagnostics.Debug.Assert(statusBar != null);
-				statusBar.CancelEnabled = value;
 			}
 		}
 		

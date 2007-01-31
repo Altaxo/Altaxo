@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2159 $</version>
 // </file>
 
 using System;
@@ -17,6 +17,7 @@ using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.Gui.XmlForms;
 using ICSharpCode.SharpDevelop.Internal.Templates;
 using ICSharpCode.SharpDevelop.Project;
+using Microsoft.Build.BuildEngine;
 
 namespace ICSharpCode.SharpDevelop.Gui
 {
@@ -30,9 +31,9 @@ namespace ICSharpCode.SharpDevelop.Gui
 		Hashtable icons        = new Hashtable();
 		bool allowUntitledFiles;
 		string basePath;
-		List<KeyValuePair<string, PropertyGroup>> createdFiles = new List<KeyValuePair<string, PropertyGroup>>();
+		List<KeyValuePair<string, FileDescriptionTemplate>> createdFiles = new List<KeyValuePair<string, FileDescriptionTemplate>>();
 		
-		public List<KeyValuePair<string, PropertyGroup>> CreatedFiles {
+		public List<KeyValuePair<string, FileDescriptionTemplate>> CreatedFiles {
 			get {
 				return createdFiles;
 			}
@@ -370,8 +371,16 @@ namespace ICSharpCode.SharpDevelop.Gui
 			string parsedFileName = StringParser.Parse(newfile.Name);
 			// Parse twice so that tags used in included standard header are parsed
 			string parsedContent = StringParser.Parse(StringParser.Parse(content));
-			if (parsedFileName.StartsWith("/") || parsedFileName.StartsWith("\\"))
+			
+			// when newFile.Name is "${Path}/${FileName}", there might be a useless '/' in front of the file name
+			// if the file is created when no project is opened. So we remove single '/' or '\', but not double
+			// '\\' (project is saved on network share).
+			if (parsedFileName.StartsWith("/") && !parsedFileName.StartsWith("//")
+			    || parsedFileName.StartsWith("\\") && !parsedFileName.StartsWith("\\\\"))
+			{
 				parsedFileName = parsedFileName.Substring(1);
+			}
+			
 			if (newfile.IsDependentFile && Path.IsPathRooted(parsedFileName)) {
 				Directory.CreateDirectory(Path.GetDirectoryName(parsedFileName));
 				if (binaryContent != null)
@@ -393,10 +402,10 @@ namespace ICSharpCode.SharpDevelop.Gui
 					window.ViewContent.Save(parsedFileName);
 				}
 			}
-			createdFiles.Add(new KeyValuePair<string, PropertyGroup>(parsedFileName, newfile.CreateMSBuildProperties()));
+			createdFiles.Add(new KeyValuePair<string, FileDescriptionTemplate>(parsedFileName, newfile));
 		}
 		
-		string GenerateValidClassName(string className)
+		internal static string GenerateValidClassName(string className)
 		{
 			int idx = 0;
 			while (idx < className.Length && className[idx] != '_' && !Char.IsLetter(className[idx])) {
@@ -449,20 +458,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 					fileName = Path.GetFullPath(fileName);
 					IProject project = ProjectService.CurrentProject;
 					if (project != null) {
-						string relPath = FileUtility.GetRelativePath(project.Directory, Path.GetDirectoryName(fileName));
-						string[] subdirs = relPath.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
-						StringBuilder standardNameSpace = new StringBuilder(project.RootNamespace);
-						foreach(string subdir in subdirs) {
-							if (subdir == "." || subdir == ".." || subdir.Length == 0)
-								continue;
-							if (subdir.Equals("src", StringComparison.OrdinalIgnoreCase))
-								continue;
-							if (subdir.Equals("source", StringComparison.OrdinalIgnoreCase))
-								continue;
-							standardNameSpace.Append('.');
-							standardNameSpace.Append(GenerateValidClassName(subdir));
-						}
-						StringParser.Properties["StandardNamespace"] = standardNameSpace.ToString();
+						StringParser.Properties["StandardNamespace"] = CustomToolsService.GetDefaultNamespace(project, fileName);
 					}
 				}
 				StringParser.Properties["FullName"]                 = fileName;
@@ -499,6 +495,11 @@ namespace ICSharpCode.SharpDevelop.Gui
 						}
 					}
 					DialogResult = DialogResult.OK;
+					
+					// raise FileCreated event for the new files
+					foreach (KeyValuePair<string, FileDescriptionTemplate> entry in createdFiles) {
+						FileService.FireFileCreated(entry.Key);
+					}
 				}
 			}
 		}

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Matthew Ward" email="mrward@users.sourceforge.net"/>
-//     <version>$Revision: 1388 $</version>
+//     <version>$Revision: 2043 $</version>
 // </file>
 
 using ICSharpCode.SharpDevelop.Project;
@@ -18,7 +18,7 @@ namespace ICSharpCode.SharpDevelop.Tests.WebReferences
 		[Test]
 		public void FileName()
 		{
-			MSBuildProject project = new MSBuildProject();
+			MSBuildBasedProject project = WebReferenceTestHelper.CreateTestProject("C#");
 			project.FileName = "c:\\projects\\test\\foo.csproj";
 			WebReferenceUrl url = new WebReferenceUrl(project);
 			url.RelPath = "Web References\\localhost";
@@ -30,7 +30,7 @@ namespace ICSharpCode.SharpDevelop.Tests.WebReferences
 		[Test]
 		public void RelPathEndsWithSlash()
 		{
-			MSBuildProject project = new MSBuildProject();
+			MSBuildBasedProject project = WebReferenceTestHelper.CreateTestProject("C#");
 			project.FileName = "c:\\projects\\test\\foo.csproj";
 			WebReferenceUrl url = new WebReferenceUrl(project);
 			url.RelPath = "Web References\\localhost\\";
@@ -42,7 +42,7 @@ namespace ICSharpCode.SharpDevelop.Tests.WebReferences
 		[Test]
 		public void ChangeFileName()
 		{
-			MSBuildProject project = new MSBuildProject();
+			MSBuildBasedProject project = WebReferenceTestHelper.CreateTestProject("C#");
 			project.FileName = "c:\\projects\\test\\foo.csproj";
 			WebReferenceUrl url = new WebReferenceUrl(project);
 			url.RelPath = "Web References\\localhost";
@@ -58,7 +58,7 @@ namespace ICSharpCode.SharpDevelop.Tests.WebReferences
 		[Test]
 		public void NoNamespaceSpecified()
 		{
-			MSBuildProject project = new MSBuildProject();
+			MSBuildBasedProject project = WebReferenceTestHelper.CreateTestProject("C#");
 			project.FileName = "c:\\projects\\test\\foo.csproj";
 			project.RootNamespace = "TestRootNamespace";
 			WebReferenceUrl url = new WebReferenceUrl(project);
@@ -69,7 +69,7 @@ namespace ICSharpCode.SharpDevelop.Tests.WebReferences
 		[Test]
 		public void NamespaceSpecified()
 		{
-			MSBuildProject project = new MSBuildProject();
+			MSBuildBasedProject project = WebReferenceTestHelper.CreateTestProject("C#");
 			project.FileName = "c:\\projects\\test\\foo.csproj";
 			project.RootNamespace = "TestRootNamespace";
 			WebReferenceUrl url = new WebReferenceUrl(project);

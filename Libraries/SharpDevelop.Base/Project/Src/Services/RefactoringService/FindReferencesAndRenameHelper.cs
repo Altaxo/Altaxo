@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2153 $</version>
 // </file>
 
 using System;
@@ -27,7 +27,10 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 			string newName = MessageService.ShowInputBox("${res:SharpDevelop.Refactoring.Rename}", "${res:SharpDevelop.Refactoring.RenameClassText}", c.Name);
 			if (!FindReferencesAndRenameHelper.CheckName(newName, c.Name)) return;
 			
-			RenameClass(c, newName);
+			using (AsynchronousWaitDialog monitor = AsynchronousWaitDialog.ShowWaitDialog("${res:SharpDevelop.Refactoring.Rename}"))
+			{
+				RenameClass(c, newName);
+			}
 		}
 		
 		public static void RenameClass(IClass c, string newName)
@@ -56,7 +59,7 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 		{
 			CompoundClass cc = c as CompoundClass;
 			if (cc != null) {
-				return cc.Parts;
+				return cc.GetParts();
 			} else {
 				return new IClass[] {c};
 			}
@@ -69,9 +72,13 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 			ProvidedDocumentInformation documentInformation = FindReferencesAndRenameHelper.GetDocumentInformation(fileName);
 			int offset = documentInformation.CreateDocument().PositionToOffset(new Point(region.BeginColumn - 1, region.BeginLine - 1));
 			string text = documentInformation.TextBuffer.GetText(offset, Math.Min(name.Length + 30, documentInformation.TextBuffer.Length - offset - 1));
-			int offsetChange = text.IndexOf(name);
-			if (offsetChange < 0)
-				return;
+			int offsetChange = -1;
+			do {
+				offsetChange = text.IndexOf(name, offsetChange + 1);
+				if (offsetChange < 0 || offsetChange >= text.Length)
+					return;
+			} while (offsetChange + name.Length < text.Length
+			         && char.IsLetterOrDigit(text[offsetChange + name.Length]));
 			offset += offsetChange;
 			foreach (Reference r in list) {
 				if (r.Offset == offset)
@@ -92,9 +99,13 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 		
 		public static bool RenameMember(IMember member, string newName)
 		{
-			List<Reference> list = RefactoringService.FindReferences(member, null);
-			if (list == null) return false;
-			FindReferencesAndRenameHelper.RenameReferences(list, newName);
+			List<Reference> list;
+			using (AsynchronousWaitDialog monitor = AsynchronousWaitDialog.ShowWaitDialog("${res:SharpDevelop.Refactoring.Rename}"))
+			{
+				list = RefactoringService.FindReferences(member, monitor);
+				if (list == null) return false;
+				FindReferencesAndRenameHelper.RenameReferences(list, newName);
+			}
 			
 			if (member is IField) {
 				IProperty property = FindProperty((IField)member);
@@ -102,9 +113,12 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 					string newPropertyName = member.DeclaringType.ProjectContent.Language.CodeGenerator.GetPropertyName(newName);
 					if (newPropertyName != newName && newPropertyName != property.Name) {
 						if (MessageService.AskQuestionFormatted("${res:SharpDevelop.Refactoring.Rename}", "${res:SharpDevelop.Refactoring.RenameFieldAndProperty}", property.FullyQualifiedName, newPropertyName)) {
-							list = RefactoringService.FindReferences(property, null);
-							if (list != null) {
-								FindReferencesAndRenameHelper.RenameReferences(list, newPropertyName);
+							using (AsynchronousWaitDialog monitor = AsynchronousWaitDialog.ShowWaitDialog("${res:SharpDevelop.Refactoring.Rename}"))
+							{
+								list = RefactoringService.FindReferences(property, monitor);
+								if (list != null) {
+									FindReferencesAndRenameHelper.RenameReferences(list, newPropertyName);
+								}
 							}
 						}
 					}

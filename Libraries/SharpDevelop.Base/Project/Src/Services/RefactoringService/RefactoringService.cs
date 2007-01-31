@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2104 $</version>
 // </file>
 
 using System;
@@ -126,7 +126,9 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 		                                         IProgressMonitor progressMonitor)
 		{
 			if (ParserService.LoadSolutionProjectsThreadRunning) {
+				progressMonitor.ShowingDialog = true;
 				MessageService.ShowMessage("${res:SharpDevelop.Refactoring.LoadSolutionProjectsThreadRunning}");
+				progressMonitor.ShowingDialog = false;
 				return null;
 			}
 			List<ProjectItem> files;
@@ -141,7 +143,7 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 			List<Reference> references = new List<Reference>();
 			try {
 				if (progressMonitor != null) {
-					progressMonitor.BeginTask("${res:SharpDevelop.Refactoring.FindingReferences}", files.Count);
+					progressMonitor.BeginTask("${res:SharpDevelop.Refactoring.FindingReferences}", files.Count, true);
 				}
 				#if DEBUG
 				if (System.Windows.Forms.Control.ModifierKeys == System.Windows.Forms.Keys.Control) {
@@ -151,6 +153,9 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 				while (enumerator.MoveNext()) {
 					if (progressMonitor != null) {
 						progressMonitor.WorkDone = enumerator.Index;
+						if (progressMonitor.IsCancelled) {
+							return null;
+						}
 					}
 					
 					AddReferences(references, ownerClass, member, isLocal, enumerator.CurrentFileName, enumerator.CurrentFileContent);
@@ -192,6 +197,12 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 						searchedText = member.Name.ToLowerInvariant();
 					}
 				}
+			}
+			
+			// It is possible that a class or member does not have a name (when parsing incomplete class definitions)
+			// - in that case, we cannot find references.
+			if (searchedText.Length == 0) {
+				return;
 			}
 			
 			int pos = -1;
@@ -314,7 +325,7 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 			List<string> list = new List<string>();
 			CompoundClass cc = c as CompoundClass;
 			if (cc != null) {
-				foreach (IClass part in cc.Parts) {
+				foreach (IClass part in cc.GetParts()) {
 					string fileName = part.CompilationUnit.FileName;
 					if (fileName != null)
 						list.Add(fileName);

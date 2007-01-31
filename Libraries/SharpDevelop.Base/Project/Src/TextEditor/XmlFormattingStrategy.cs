@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2161 $</version>
 // </file>
 
 using System;
@@ -186,7 +186,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor
 				r.Close();
 			}
 			if (changedLines > 1)
-				document.UndoStack.UndoLast(changedLines);
+				document.UndoStack.CombineLast(changedLines);
 		}
 		#endregion
 	}

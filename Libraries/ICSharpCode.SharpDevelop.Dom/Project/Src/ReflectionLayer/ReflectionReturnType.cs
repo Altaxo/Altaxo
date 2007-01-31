@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1661 $</version>
+//     <version>$Revision: 2116 $</version>
 // </file>
 
 using System;
@@ -10,7 +10,7 @@ using System.Collections.Generic;
 
 namespace ICSharpCode.SharpDevelop.Dom.ReflectionLayer
 {
-	internal static class ReflectionReturnType
+	public static class ReflectionReturnType
 	{
 		public static bool IsDefaultType(Type type)
 		{

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1661 $</version>
+//     <version>$Revision: 2043 $</version>
 // </file>
 
 using System;
@@ -47,8 +47,9 @@ namespace ICSharpCode.SharpDevelop.Dom
 		
 		/// <summary>
 		/// Gets the project for this project content. Returns null for reflection project contents.
+		/// The type used for project objects depends on the host application.
 		/// </summary>
-		IDomProject Project {
+		object Project {
 			get;
 		}
 		

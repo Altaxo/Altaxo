@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1661 $</version>
+//     <version>$Revision: 2013 $</version>
 // </file>
 
 using System;
@@ -128,7 +128,9 @@ namespace ICSharpCode.SharpDevelop.Gui
 				newItem.SubItems.Add(name.Version.ToString());
 				try {
 					newItem.SubItems.Add(asm.Location);
-				} catch (Exception) {
+				} catch (NotSupportedException) {
+					// assembly.Location throws NotSupportedException for assemblies emitted using
+					// Reflection.Emit by custom controls used in the forms designer
 					newItem.SubItems.Add("dynamic");
 				}
 				
@@ -148,7 +150,9 @@ namespace ICSharpCode.SharpDevelop.Gui
 				versionInfo.Append(",");
 				try {
 					versionInfo.Append(asm.Location);
-				} catch (Exception) {
+				} catch (NotSupportedException) {
+					// assembly.Location throws NotSupportedException for assemblies emitted using
+					// Reflection.Emit by custom controls used in the forms designer
 					versionInfo.Append("dynamic");
 				}
 				

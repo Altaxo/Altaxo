@@ -113,7 +113,7 @@ namespace ICSharpCode.SharpDevelop.Sda
 			WorkbenchSingleton.InitializeWorkbench();
 #endif
 
-      // initialize workbench-dependent services:
+			// initialize workbench-dependent services:
 			Project.ProjectService.InitializeService();
 			
 			LoggingService.Info("Starting workbench...");

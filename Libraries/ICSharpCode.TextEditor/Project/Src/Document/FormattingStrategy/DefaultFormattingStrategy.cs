@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2161 $</version>
 // </file>
 
 using System;
@@ -115,7 +115,7 @@ namespace ICSharpCode.TextEditor.Document
 				}
 			}
 			if (redocounter > 0) {
-				textArea.Document.UndoStack.UndoLast(redocounter);
+				textArea.Document.UndoStack.CombineLast(redocounter);
 			}
 		}
 		
@@ -123,7 +123,7 @@ namespace ICSharpCode.TextEditor.Document
 		{
 			int brackets = -1;
 			// first try "quick find" - find the matching bracket if there is no string/comment in the way
-			for (int i = offset; i > 0; --i) {
+			for (int i = offset; i >= 0; --i) {
 				char ch = document.GetCharAt(i);
 				if (ch == openBracket) {
 					++brackets;

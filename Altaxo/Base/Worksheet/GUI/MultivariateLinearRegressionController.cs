@@ -45,21 +45,25 @@ namespace Altaxo.Worksheet.GUI
 
      
       
-      _elements[0].Controller = _ctrl0 = new SingleChoiceController(names,0);
-      _elements[1].Controller = _ctrl1 = new BooleanValueController(_param.IncludeIntercept);
-      _elements[2].Controller = _ctrl2 = new BooleanValueController(_param.GenerateRegressionValues);
-      _elements[3].Controller = _ctrl3 = new BooleanValueController(_param.GenerateRegressionValues);
+       _ctrl0 = new SingleChoiceController(names,0);
+       _ctrl1 = new BooleanValueController(_param.IncludeIntercept);
+       _ctrl2 = new BooleanValueController(_param.GenerateRegressionValues);
+       _ctrl3 = new BooleanValueController(_param.GenerateRegressionValues);
 
-      _ctrl0.DescriptionText = "Choose the dependent variable:";
-      _ctrl1.DescriptionText = "Include intercept";
-      _ctrl2.DescriptionText = "Generate prediction values";
-      _ctrl3.DescriptionText = "Generate residual values";
+        _ctrl0.DescriptionText = "Choose the dependent variable:";
+        _ctrl1.DescriptionText = "Include intercept";
+        _ctrl2.DescriptionText = "Generate prediction values";
+        _ctrl3.DescriptionText = "Generate residual values";
+
+      _elements[0] = new ControlViewElement(null,_ctrl0);
+      _elements[1] = new ControlViewElement(null, _ctrl1);
+      _elements[2] = new ControlViewElement(null, _ctrl2);
+      _elements[3] = new ControlViewElement(null, _ctrl3);
 
       for(int i=0;i<_elements.Length;i++)
       {
         Current.Gui.FindAndAttachControlTo((IMVCController)_elements[i].Controller);
-        _elements[i].View = ((IMVCController)_elements[i]).ViewObject;
-        _elements[i].Title = null;
+        _elements[i].View = ((IMVCController)_elements[i].Controller).ViewObject;
       }
 
 

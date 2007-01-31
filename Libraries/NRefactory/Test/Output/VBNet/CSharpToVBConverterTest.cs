@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1872 $</version>
+//     <version>$Revision: 2200 $</version>
 // </file>
 
 using System;
@@ -212,6 +212,7 @@ namespace ICSharpCode.NRefactory.Tests.PrettyPrinter
 			           "End Sub");
 		}
 		
+		/*
 		[Test, Ignore("NRefactory cannot guess the anonymous method's return type")]
 		public void AnonymousMethodInVarDeclaration()
 		{
@@ -223,6 +224,7 @@ namespace ICSharpCode.NRefactory.Tests.PrettyPrinter
 			           "\tReturn argument * 2\n" +
 			           "End Function");
 		}
+		 */
 		
 		[Test]
 		public void RegisterEvent()
@@ -260,6 +262,14 @@ namespace ICSharpCode.NRefactory.Tests.PrettyPrinter
 			TestMember("[DllImport(\"user32.dll\", SetLastError = true, ExactSpelling = true, EntryPoint = \"SendMessageW\")]\n" +
 			           "public static extern IntPtr SendMessage(IntPtr hWnd, int Msg, UIntPtr wParam, IntPtr lParam);",
 			           "Public Declare Auto Function SendMessage Lib \"user32.dll\" Alias \"SendMessageW\" (ByVal hWnd As IntPtr, ByVal Msg As Integer, ByVal wParam As UIntPtr, ByVal lParam As IntPtr) As IntPtr");
+		}
+		
+		[Test]
+		public void PInvokeSub()
+		{
+			TestMember("[DllImport(\"kernel32\", CharSet = CharSet.Ansi, SetLastError = true, ExactSpelling = true)]\n" +
+			           "private static extern void Sleep(long dwMilliseconds);",
+			           "Private Declare Ansi Sub Sleep Lib \"kernel32\" (ByVal dwMilliseconds As Long)");
 		}
 		
 		[Test]
@@ -434,6 +444,29 @@ End Class
 		public void GlobalTypeReference()
 		{
 			TestStatement("global::System.String a;", "Dim a As Global.System.String");
+		}
+		
+		[Test]
+		public void TestMethodCallOnCastExpression()
+		{
+			TestStatement("((IDisposable)o).Dispose();", "DirectCast(o, IDisposable).Dispose()");
+		}
+		
+		[Test]
+		public void PrimitiveCast()
+		{
+			TestStatement("a = (int)number;", "a = CInt(number)");
+		}
+		
+		[Test]
+		public void ArrayCreationUpperBound()
+		{
+			TestStatement("string[] i = new string[2];",
+			              "Dim i As String() = New String(1) {}");
+			TestStatement("string[] i = new string[2] { \"0\", \"1\" };",
+			              "Dim i As String() = New String(1) {\"0\", \"1\"}");
+			TestStatement("string[,] i = new string[6, 6];",
+			              "Dim i As String(,) = New String(5, 5) {}");
 		}
 	}
 }

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1751 $</version>
+//     <version>$Revision: 2104 $</version>
 // </file>
 
 using System;
@@ -24,11 +24,20 @@ namespace ICSharpCode.SharpDevelop
 			}
 		}
 		
+		/// <summary>
+		/// Gets the parse information. The new compilation unit has not yet been added to the parse information
+		/// (but will be immediately after the event was executed, be careful when invoking back to the main thread),
+		/// you can use this property to get the previous compilation unit.
+		/// </summary>
 		public ParseInformation ParseInformation {
 			get {
 				return parseInformation;
 			}
 		}
+		
+		/// <summary>
+		/// The new compilation unit.
+		/// </summary>
 		public ICompilationUnit CompilationUnit {
 			get {
 				return compilationUnit;

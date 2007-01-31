@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1040 $</version>
+//     <version>$Revision: 1139 $</version>
 // </file>
 
 using System;
@@ -24,11 +24,7 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyTrademark("(C) Dr. Dirk Lellinger 2002-2006")]
 [assembly: AssemblyCulture("")]
 
-[assembly: AssemblyVersion("0.54.0.551")]
+[assembly: AssemblyVersion("0.54.0.552")]
 
 [assembly: AssemblyDelaySign(false)]
 
-class RevisionClass {
-	public const string Version = "0.54.0";
-	public const string Revision = "542";
-}

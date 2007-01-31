@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2124 $</version>
 // </file>
 
 using System;
@@ -122,9 +122,8 @@ namespace ICSharpCode.SharpDevelop
 				                                       "ICSharpCode/SharpDevelop2.1");
 #endif				
 				startup.AddAddInsFromDirectory(Path.Combine(startup.ApplicationRootPath, "AddIns"));
-
-        SharpDevelopHost host = new SharpDevelopHost(AppDomain.CurrentDomain, startup);
-
+				
+				SharpDevelopHost host = new SharpDevelopHost(AppDomain.CurrentDomain, startup);
 #if ModifiedForAltaxo
           ResourceService.LoadUserStrings("AltaxoString.resources");
           ResourceService.LoadUserIcons("AltaxoBitmap.resources");
@@ -141,14 +140,13 @@ namespace ICSharpCode.SharpDevelop
 				host.BeforeRunWorkbench += delegate {
 					if (SplashScreenForm.SplashScreen != null) {
 						SplashScreenForm.SplashScreen.BeginInvoke(new MethodInvoker(SplashScreenForm.SplashScreen.Dispose));
+						SplashScreenForm.SplashScreen = null;
 					}
 				};
 #if ModifiedForAltaxo
 				WorkbenchSingleton.InitializeWorkbench(typeof(Altaxo.Gui.SharpDevelop.AltaxoSDWorkbench));
         Altaxo.Current.SetWorkbench((Altaxo.Gui.Common.IWorkbench)WorkbenchSingleton.Workbench);
         new Altaxo.Main.Commands.AutostartCommand().Run();
-#else
-				WorkbenchSingleton.InitializeWorkbench();
 #endif
 				
 				WorkbenchSettings workbenchSettings = new WorkbenchSettings();

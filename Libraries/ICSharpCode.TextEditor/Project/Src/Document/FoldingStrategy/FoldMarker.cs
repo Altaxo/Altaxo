@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1981 $</version>
+//     <version>$Revision: 2063 $</version>
 // </file>
 
 using System;
@@ -26,10 +26,16 @@ namespace ICSharpCode.TextEditor.Document
 		
 		static void GetPointForOffset(IDocument document, int offset, out int line, out int column)
 		{
-			if (offset < 0) offset = 0;
-			if (offset >= document.TextLength) offset = document.TextLength - 1;
-			line = document.GetLineNumberForOffset(offset);
-			column = offset - document.GetLineSegment(line).Offset;
+			if (offset > document.TextLength) {
+				line = document.TotalNumberOfLines + 1;
+				column = 1;
+			} else if (offset < 0) {
+				line = -1;
+				column = -1;
+			} else {
+				line = document.GetLineNumberForOffset(offset);
+				column = offset - document.GetLineSegment(line).Offset;
+			}
 		}
 		
 		public FoldType FoldType {
@@ -82,7 +88,7 @@ namespace ICSharpCode.TextEditor.Document
 		}
 		public override int Length {
 			get { return base.Length; }
-			set { 
+			set {
 				base.Length = value;
 				endLine = -1;
 			}

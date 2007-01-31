@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1875 $</version>
+//     <version>$Revision: 2066 $</version>
 // </file>
 
 using System;
@@ -114,7 +114,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 		}
 		
 		/// <summary>
-		/// Gets if namespaces can be imported (i.e. Imports System, Dim a As Collections.ArrayList)
+		/// Gets if namespaces are imported (i.e. Imports System, Dim a As Collections.ArrayList)
 		/// </summary>
 		public virtual bool ImportNamespaces {
 			get {
@@ -141,6 +141,16 @@ namespace ICSharpCode.SharpDevelop.Dom
 		}
 		
 		/// <summary>
+		/// Gets if the language allows partial classes where the partial modifier is not
+		/// used on any part.
+		/// </summary>
+		public virtual bool ImplicitPartialClasses {
+			get {
+				return false;
+			}
+		}
+		
+		/// <summary>
 		/// Allow invoking an object constructor outside of ExpressionContext.ObjectCreation.
 		/// Used for Boo, which creates instances like this: 'self.Size = Size(10, 20)'
 		/// </summary>
@@ -154,6 +164,27 @@ namespace ICSharpCode.SharpDevelop.Dom
 		/// Gets if the language supports implicit interface implementations.
 		/// </summary>
 		public virtual bool SupportsImplicitInterfaceImplementation {
+			get {
+				return false;
+			}
+		}
+		
+		/// <summary>
+		/// Gets if the language enforces that explicit interface implementations are uncallable except through
+		/// the interface itself.
+		/// If this property is false, code generators may assume that multiple explicit interface implementations
+		/// with conflicting return types are invalid unless they are renamed.
+		/// </summary>
+		public virtual bool ExplicitInterfaceImplementationIsPrivateScope {
+			get {
+				return false;
+			}
+		}
+		
+		/// <summary>
+		/// Gets if events explicitly implementing an interface require add {} remove {} regions.
+		/// </summary>
+		public virtual bool RequiresAddRemoveRegionInExplicitInterfaceImplementation {
 			get {
 				return false;
 			}
@@ -226,6 +257,21 @@ namespace ICSharpCode.SharpDevelop.Dom
 			}
 			
 			public override bool SupportsImplicitInterfaceImplementation {
+				get {
+					return true;
+				}
+			}
+			
+			public override bool ExplicitInterfaceImplementationIsPrivateScope {
+				get {
+					return true;
+				}
+			}
+			
+			/// <summary>
+			/// Gets if events explicitly implementing an interface require add {} remove {} regions.
+			/// </summary>
+			public override bool RequiresAddRemoveRegionInExplicitInterfaceImplementation {
 				get {
 					return true;
 				}
@@ -317,6 +363,12 @@ namespace ICSharpCode.SharpDevelop.Dom
 			public override CodeGenerator CodeGenerator {
 				get {
 					return VBNetCodeGenerator.Instance;
+				}
+			}
+			
+			public override System.CodeDom.Compiler.CodeDomProvider CodeDomProvider {
+				get {
+					return new Microsoft.VisualBasic.VBCodeProvider();
 				}
 			}
 			

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2067 $</version>
 // </file>
 
 using System;
@@ -72,15 +72,17 @@ namespace ICSharpCode.SharpDevelop.Gui
 			StatusBarService.Initialize();
 			DomHostCallback.Register(); // must be called after StatusBarService.Initialize()
 			ParserService.InitializeParserService();
+			Project.CustomToolsService.Initialize();
 
       workbench = (ICSharpCode.SharpDevelop.Gui.DefaultWorkbench)Activator.CreateInstance(workbenchtype);
 #else
-    public static void InitializeWorkbench()
-    {
+		public static void InitializeWorkbench()
+		{
 			LayoutConfiguration.LoadLayoutConfiguration();
 			StatusBarService.Initialize();
 			DomHostCallback.Register(); // must be called after StatusBarService.Initialize()
 			ParserService.InitializeParserService();
+			Project.CustomToolsService.Initialize();
 			
 			workbench = new DefaultWorkbench();
 #endif
@@ -132,7 +134,20 @@ namespace ICSharpCode.SharpDevelop.Gui
 		
 		public static bool InvokeRequired {
 			get {
-				return ((Form)workbench).InvokeRequired;
+				if (workbench == null)
+					return false; // unit test mode, don't crash
+				else
+					return ((Form)workbench).InvokeRequired;
+			}
+		}
+		
+		/// <summary>
+		/// Throws an exception if the current thread is not the main thread.
+		/// </summary>
+		internal static void AssertMainThread()
+		{
+			if (InvokeRequired) {
+				throw new InvalidOperationException("This operation can be called on the main thread only.");
 			}
 		}
 		

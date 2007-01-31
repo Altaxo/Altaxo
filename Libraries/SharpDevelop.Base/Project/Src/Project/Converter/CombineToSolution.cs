@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2043 $</version>
 // </file>
 
 using System;
@@ -79,7 +79,7 @@ namespace ICSharpCode.SharpDevelop.Project.Converter
 			}
 			foreach (string path in projectFiles) {
 				conversion.IsVisualBasic = IsVisualBasic(path);
-				IProject newProject = PrjxToSolutionProject.ConvertOldProject(path, conversion);
+				IProject newProject = PrjxToSolutionProject.ConvertOldProject(path, conversion, newSolution);
 				newSolution.AddFolder(newProject);
 			}
 			if (conversion.Resources != null) {

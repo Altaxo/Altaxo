@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2059 $</version>
 // </file>
 
 using System;
@@ -122,21 +122,25 @@ namespace ICSharpCode.SharpDevelop.Gui
 			base.OnClosed(e);
 		}
 		
-		Hashtable visibleEntries = new Hashtable();
+		Dictionary<string, object> visibleEntries = new Dictionary<string, object>();
 		double bestPriority;
 		ListViewItem bestItem;
 		
 		void TextBoxTextChanged(object sender, EventArgs e)
 		{
 			string text = textBox.Text.Trim();
+			listView.BeginUpdate();
 			listView.Items.Clear();
 			visibleEntries.Clear();
 			bestItem = null;
-			if (text.Length == 0)
+			if (text.Length == 0) {
+				listView.EndUpdate();
 				return;
-			if (text.Length == 1 && !char.IsDigit(text, 0))
+			}
+			if (text.Length == 1 && !char.IsDigit(text, 0)) {
+				listView.EndUpdate();
 				return;
-			listView.BeginUpdate();
+			}
 			int dotPos = text.IndexOf('.');
 			int commaPos = text.IndexOf(',');
 			if (commaPos < 0) {
@@ -195,13 +199,8 @@ namespace ICSharpCode.SharpDevelop.Gui
 			if (ProjectService.OpenSolution != null) {
 				foreach (IProject project in ProjectService.OpenSolution.Projects) {
 					foreach (ProjectItem item in project.Items) {
-						switch (item.ItemType) {
-							case ItemType.Compile:
-							case ItemType.Content:
-							case ItemType.EmbeddedResource:
-							case ItemType.None:
-								AddSourceFile(text, lineNumber, item);
-								break;
+						if (item is FileProjectItem) {
+							AddSourceFile(text, lineNumber, item);
 						}
 					}
 				}

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2200 $</version>
 // </file>
 
 using System;
@@ -19,6 +19,7 @@ namespace ICSharpCode.NRefactory.Visitors
 	{
 		// The following conversions are implemented:
 		//   Public Event EventName(param As String) -> automatic delegate declaration
+		//   static variables inside methods become fields
 		
 		public override object VisitEventDeclaration(EventDeclaration eventDeclaration, object data)
 		{

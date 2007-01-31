@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2137 $</version>
 // </file>
 
 // created on 04.08.2003 at 17:49
@@ -21,7 +21,7 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 	public class NRefactoryASTConvertVisitor : AbstractAstVisitor
 	{
 		ICompilationUnit cu;
-		Stack currentNamespace = new Stack();
+		Stack<string> currentNamespace = new Stack<string>();
 		Stack<DefaultClass> currentClass = new Stack<DefaultClass>();
 		
 		public ICompilationUnit Cu {
@@ -252,7 +252,7 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 			if (currentNamespace.Count == 0) {
 				name = namespaceDeclaration.Name;
 			} else {
-				name = (string)currentNamespace.Peek() + '.' + namespaceDeclaration.Name;
+				name = currentNamespace.Peek() + '.' + namespaceDeclaration.Name;
 			}
 			
 			currentNamespace.Push(name);
@@ -300,7 +300,7 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 				if (currentNamespace.Count == 0) {
 					c.FullyQualifiedName = typeDeclaration.Name;
 				} else {
-					c.FullyQualifiedName = (string)currentNamespace.Peek() + '.' + typeDeclaration.Name;
+					c.FullyQualifiedName = currentNamespace.Peek() + '.' + typeDeclaration.Name;
 				}
 				cu.Classes.Add(c);
 			}
@@ -403,7 +403,7 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 				if (currentNamespace.Count == 0) {
 					c.FullyQualifiedName = name;
 				} else {
-					c.FullyQualifiedName = (string)currentNamespace.Peek() + '.' + name;
+					c.FullyQualifiedName = currentNamespace.Peek() + '.' + name;
 				}
 				cu.Classes.Add(c);
 			}

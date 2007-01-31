@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Matthew Ward" email="mrward@users.sourceforge.net"/>
-//     <version>$Revision: 1665 $</version>
+//     <version>$Revision: 2043 $</version>
 // </file>
 
 using ICSharpCode.SharpDevelop;
@@ -28,7 +28,7 @@ namespace ICSharpCode.SharpDevelop.Tests.WebReferences
 		SD.WebReference webReference;
 		DiscoveryClientProtocol protocol;
 		WebReferencesProjectItem webReferencesProjectItem;
-		MSBuildProject project;
+		MSBuildBasedProject project;
 		
 		string name = "localhost";
 		string proxyNamespace = "WebReferenceNamespace";
@@ -37,9 +37,8 @@ namespace ICSharpCode.SharpDevelop.Tests.WebReferences
 		[TestFixtureSetUp]
 		public void SetUpFixture()
 		{
-			project = new MSBuildProject();
+			project = WebReferenceTestHelper.CreateTestProject("C#");
 			project.FileName = "C:\\projects\\test\\foo.csproj";
-			project.Language = "C#";
 
 			protocol = new DiscoveryClientProtocol();
 			DiscoveryDocumentReference discoveryRef = new DiscoveryDocumentReference();
@@ -58,7 +57,7 @@ namespace ICSharpCode.SharpDevelop.Tests.WebReferences
 			webReference = new SD.WebReference(project, updateFromUrl, name, proxyNamespace, protocol);
 			
 			foreach (ProjectItem item in webReference.Items) {
-				project.Items.Add(item);
+				ProjectService.AddProjectItem(project, item);
 			}
 			webReferencesProjectItem = webReference.WebReferencesProjectItem;
 		}

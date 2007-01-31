@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1634 $</version>
+//     <version>$Revision: 2051 $</version>
 // </file>
 
 using System;
@@ -16,7 +16,7 @@ namespace ICSharpCode.SharpDevelop.Project
 	/// </summary>
 	public interface IMSBuildAdditionalLogger
 	{
-		ILogger CreateLogger(MSBuildEngine engine);
+		ILogger CreateLogger(MSBuildEngineWorker engineWorker);
 	}
 	
 	/// <summary>
@@ -67,23 +67,23 @@ namespace ICSharpCode.SharpDevelop.Project
 				addIn = codon.AddIn;
 			}
 			
-			public ILogger CreateLogger(MSBuildEngine engine)
+			public ILogger CreateLogger(MSBuildEngineWorker engineWorker)
 			{
-				return new TaskBoundAdditionalLogger(this, engine);
+				return new TaskBoundAdditionalLogger(this, engineWorker);
 			}
 		}
 		
 		private class TaskBoundAdditionalLogger : ILogger
 		{
 			TaskBoundAdditionalLoggerDescriptor desc;
-			MSBuildEngine engine;
+			MSBuildEngineWorker engineWorker;
 			ILogger baseLogger;
 			bool isActive;
 			
-			public TaskBoundAdditionalLogger(TaskBoundAdditionalLoggerDescriptor desc, MSBuildEngine engine)
+			public TaskBoundAdditionalLogger(TaskBoundAdditionalLoggerDescriptor desc, MSBuildEngineWorker engineWorker)
 			{
 				this.desc = desc;
-				this.engine = engine;
+				this.engineWorker = engineWorker;
 			}
 			
 			void CreateBaseLogger()
@@ -93,7 +93,7 @@ namespace ICSharpCode.SharpDevelop.Project
 					baseLogger = obj as ILogger;
 					IMSBuildAdditionalLogger addLog = obj as IMSBuildAdditionalLogger;
 					if (addLog != null) {
-						baseLogger = addLog.CreateLogger(engine);
+						baseLogger = addLog.CreateLogger(engineWorker);
 					}
 				}
 			}

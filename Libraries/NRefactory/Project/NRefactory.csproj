@@ -1,4 +1,4 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -53,7 +53,6 @@
     <None Include="Resources\ICSharpCode.NRefactory.snk" />
     <None Include="Src\Lexer\BuildKeywords.pl" />
     <Compile Include="Configuration\AssemblyInfo.cs" />
-    <Compile Include="Configuration\GlobalAssemblyInfo.cs" />
     <Compile Include="Src\Lexer\AbstractLexer.cs" />
     <Compile Include="Src\Lexer\CSharp\Keywords.cs" />
     <Compile Include="Src\Lexer\CSharp\Lexer.cs" />

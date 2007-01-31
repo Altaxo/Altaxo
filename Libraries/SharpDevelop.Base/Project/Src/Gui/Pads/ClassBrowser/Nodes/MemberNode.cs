@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2039 $</version>
 // </file>
 
 using System;
@@ -112,7 +112,7 @@ namespace ICSharpCode.SharpDevelop.Gui.ClassBrowser
 			SelectedImageIndex = ImageIndex = ClassBrowserIconService.GetIcon(e);
 		}
 		
-		IAmbience GetAmbience()
+		protected virtual IAmbience GetAmbience()
 		{
 			IAmbience ambience = AmbienceService.CurrentAmbience;
 			ambience.ConversionFlags = ConversionFlags.None;

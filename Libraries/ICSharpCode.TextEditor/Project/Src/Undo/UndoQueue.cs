@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2161 $</version>
 // </file>
 
 using System;
@@ -15,24 +15,25 @@ namespace ICSharpCode.TextEditor.Undo
 	/// This class stacks the last x operations from the undostack and makes
 	/// one undo/redo operation from it.
 	/// </summary>
-	public class UndoQueue : IUndoableOperation
+	internal sealed class UndoQueue : IUndoableOperation
 	{
 		List<IUndoableOperation> undolist = new List<IUndoableOperation>();
 		
 		/// <summary>
 		/// </summary>
-		public UndoQueue(UndoStack stack, int numops)
+		public UndoQueue(Stack<IUndoableOperation> stack, int numops)
 		{
 			if (stack == null)  {
 				throw new ArgumentNullException("stack");
 			}
 			
 			Debug.Assert(numops > 0 , "ICSharpCode.TextEditor.Undo.UndoQueue : numops should be > 0");
+			if (numops > stack.Count) {
+				numops = stack.Count;
+			}
 			
 			for (int i = 0; i < numops; ++i) {
-				if (stack._UndoStack.Count > 0) {
-					undolist.Add(stack._UndoStack.Pop());
-				}
+				undolist.Add(stack.Pop());
 			}
 		}
 		public void Undo()
@@ -47,6 +48,6 @@ namespace ICSharpCode.TextEditor.Undo
 			for (int i = undolist.Count - 1 ; i >= 0 ; --i) {
 				undolist[i].Redo();
 			}
-		}		
+		}
 	}
 }

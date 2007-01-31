@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2014 $</version>
 // </file>
 
 using System;
@@ -444,7 +444,7 @@ namespace ICSharpCode.TextEditor
 		/// </value>
 		[Category("Behavior")]
 		[DefaultValue(false)]
-		[Description("Allows the caret to be places beyonde the end of line")]
+		[Description("Allows the caret to be placed beyond the end of line")]
 		public bool AllowCaretBeyondEOL {
 			get {
 				return document.TextEditorProperties.AllowCaretBeyondEOL;

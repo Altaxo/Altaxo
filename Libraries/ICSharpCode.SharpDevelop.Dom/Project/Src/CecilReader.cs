@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2165 $</version>
 // </file>
 
 using System;
@@ -23,14 +23,12 @@ namespace ICSharpCode.SharpDevelop.Dom
 			if (registry == null)
 				throw new ArgumentNullException("registry");
 			LoggingService.Info("Cecil: Load from " + fileName);
-			using (FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read)) {
-				AssemblyDefinition asm = AssemblyFactory.GetAssembly(fs);
-				List<AssemblyName> referencedAssemblies = new List<AssemblyName>();
-				foreach (AssemblyNameReference anr in asm.MainModule.AssemblyReferences) {
-					referencedAssemblies.Add(new AssemblyName(anr.FullName));
-				}
-				return new CecilProjectContent(asm.Name.FullName, fileName, referencedAssemblies.ToArray(), asm.MainModule.Types, registry);
+			AssemblyDefinition asm = AssemblyFactory.GetAssembly(fileName);
+			List<AssemblyName> referencedAssemblies = new List<AssemblyName>();
+			foreach (AssemblyNameReference anr in asm.MainModule.AssemblyReferences) {
+				referencedAssemblies.Add(new AssemblyName(anr.FullName));
 			}
+			return new CecilProjectContent(asm.Name.FullName, fileName, referencedAssemblies.ToArray(), asm.MainModule.Types, registry);
 		}
 		
 		static void AddAttributes(IProjectContent pc, IList<IAttribute> list, CustomAttributeCollection attributes)
@@ -328,7 +326,21 @@ namespace ICSharpCode.SharpDevelop.Dom
 						m.Modifiers = TranslateModifiers(method);
 					}
 					AddParameters(m, method.Parameters);
+					AddExplicitInterfaceImplementations(method.Overrides, m);
 					Methods.Add(m);
+				}
+			}
+			
+			void AddExplicitInterfaceImplementations(OverrideCollection overrides, IMember targetMember)
+			{
+				foreach (MethodReference overrideRef in overrides) {
+					if (overrideRef.Name == targetMember.Name && targetMember.IsPublic) {
+						continue; // is like implicit interface implementation / normal override
+					}
+					targetMember.InterfaceImplementations.Add(new ExplicitInterfaceImplementation(
+						CreateType(this.ProjectContent, targetMember, overrideRef.DeclaringType),
+						overrideRef.Name
+					));
 				}
 			}
 			

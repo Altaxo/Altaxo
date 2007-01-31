@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1968 $</version>
+//     <version>$Revision: 2013 $</version>
 // </file>
 
 using System;
@@ -112,6 +112,10 @@ namespace ICSharpCode.SharpDevelop.Widgets.TreeGrid
 				minimumWidth = Math.Max(minimumWidth, e.ItemWidth);
 			}
 			if (text.Length > 0) {
+				// Prevent GDI exception (forum-12284) when text is very long
+				if (text.Length > short.MaxValue) {
+					text = text.Substring(0, short.MaxValue - 1);
+				}
 				int width = 2 + (int)graphics.MeasureString(text, font, new PointF(0, 0), textFormat).Width;
 				minimumWidth = Math.Max(minimumWidth, width);
 			}

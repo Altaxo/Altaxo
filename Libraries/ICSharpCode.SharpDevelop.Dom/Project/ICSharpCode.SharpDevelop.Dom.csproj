@@ -1,4 +1,4 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <OutputType>Library</OutputType>
     <RootNamespace>ICSharpCode.SharpDevelop.Dom</RootNamespace>
@@ -80,10 +80,12 @@
     <Compile Include="Src\Implementations\ProxyReturnType.cs" />
     <Compile Include="Src\Implementations\SearchClassReturnType.cs" />
     <Compile Include="Src\Implementations\SystemTypes.cs" />
+    <Compile Include="Src\Interfaces\ExplicitInterfaceImplementation.cs" />
     <Compile Include="Src\NRefactoryResolver\NRefactoryASTConvertVisitor.cs" />
     <Compile Include="Src\NRefactoryResolver\NRefactoryInformationProvider.cs" />
     <Compile Include="Src\NRefactoryResolver\NRefactoryResolver.cs" />
     <Compile Include="Src\NRefactoryResolver\TypeVisitor.cs" />
+    <Compile Include="Src\Refactoring\CodeGeneratorOptions.cs" />
     <Compile Include="Src\ReflectionLayer\DomPersistence.cs" />
     <Compile Include="Src\ReflectionLayer\ReflectionClass.cs" />
     <Compile Include="Src\ReflectionLayer\ReflectionEvent.cs" />
@@ -104,7 +106,6 @@
     <Compile Include="Src\MemberLookupHelper.cs" />
     <Compile Include="Src\LanguageProperties.cs" />
     <Compile Include="Src\IResolver.cs" />
-    <Compile Include="Src\IParser.cs" />
     <Compile Include="Src\IExpressionFinder.cs" />
     <Compile Include="Src\Interfaces\ClassType.cs" />
     <Compile Include="Src\Interfaces\IAttribute.cs" />
@@ -126,7 +127,6 @@
     <Compile Include="Src\ProjectContent\DefaultProjectContent.cs" />
     <Compile Include="Src\ProjectContent\IProjectContent.cs" />
     <Compile Include="Src\ProjectContent\ReflectionProjectContent.cs" />
-    <Compile Include="Src\ProjectContent\IDomProject.cs" />
     <Compile Include="Src\LoggingService.cs" />
     <Compile Include="Src\ProjectContent\ProjectContentRegistry.cs" />
     <Compile Include="Src\FusionNative.cs" />
@@ -147,6 +147,7 @@
     <Compile Include="Src\CSharp\ExpressionFinder.cs" />
     <Compile Include="Src\VBNet\VBNetAmbience.cs" />
     <Compile Include="Src\VBNet\ExpressionFinder.cs" />
+    <Compile Include="Src\EasyCodeDom.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Libraries\NRefactory\Project\NRefactory.csproj">

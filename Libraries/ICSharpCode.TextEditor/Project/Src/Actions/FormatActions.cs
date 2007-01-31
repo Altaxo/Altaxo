@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2161 $</version>
 // </file>
 
 using System;
@@ -72,7 +72,7 @@ namespace ICSharpCode.TextEditor.Actions
 				}
 			}
 			if (redocounter > 0) {
-				document.UndoStack.UndoLast(redocounter); // redo the whole operation (not the single deletes)
+				document.UndoStack.CombineLast(redocounter); // redo the whole operation (not the single deletes)
 			}
 		}
 	}
@@ -94,7 +94,7 @@ namespace ICSharpCode.TextEditor.Actions
 				}
 			}
 			if (redocounter > 0) {
-				document.UndoStack.UndoLast(redocounter); // redo the whole operation (not the single deletes)
+				document.UndoStack.CombineLast(redocounter); // redo the whole operation (not the single deletes)
 			}
 		}
 	}
@@ -192,7 +192,7 @@ namespace ICSharpCode.TextEditor.Actions
 			}
 			
 			if (redocounter > 0) {
-				document.UndoStack.UndoLast(redocounter); // redo the whole operation (not the single deletes)
+				document.UndoStack.CombineLast(redocounter); // redo the whole operation (not the single deletes)
 			}
 		}
 	}
@@ -215,7 +215,7 @@ namespace ICSharpCode.TextEditor.Actions
 			}
 			
 			if (redocounter > 0) {
-				document.UndoStack.UndoLast(redocounter); // redo the whole operation (not the single deletes)
+				document.UndoStack.CombineLast(redocounter); // redo the whole operation (not the single deletes)
 			}
 		}
 	}

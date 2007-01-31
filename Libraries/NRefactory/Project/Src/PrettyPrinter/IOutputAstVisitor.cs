@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2198 $</version>
 // </file>
 
 using System;
@@ -27,9 +27,8 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 			get;
 		}
 		
-		object Options {
+		AbstractPrettyPrintOptions Options {
 			get;
-			set;
 		}
 		IOutputFormatter OutputFormatter {
 			get;

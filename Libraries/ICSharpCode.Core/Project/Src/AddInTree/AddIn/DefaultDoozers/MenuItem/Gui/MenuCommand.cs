@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2051 $</version>
 // </file>
 
 using System;
@@ -153,7 +153,9 @@ namespace ICSharpCode.Core
 		{
 			if (codon != null) {
 				if (Image == null && codon.Properties.Contains("icon")) {
-					Image = ResourceService.GetBitmap(codon.Properties["icon"]);
+					try {
+						Image = ResourceService.GetBitmap(codon.Properties["icon"]);
+					} catch (ResourceNotFoundException) {}
 				}
 				Visible = GetVisible();
 			}

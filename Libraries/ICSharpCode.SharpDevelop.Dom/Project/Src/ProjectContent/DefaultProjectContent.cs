@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1938 $</version>
+//     <version>$Revision: 2137 $</version>
 // </file>
 
 using System;
@@ -38,7 +38,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 			}
 		}
 		
-		public virtual IDomProject Project {
+		public virtual object Project {
 			get {
 				return null;
 			}
@@ -305,29 +305,44 @@ namespace ICSharpCode.SharpDevelop.Dom
 		protected void AddClassToNamespaceListInternal(IClass addClass)
 		{
 			string fullyQualifiedName = addClass.FullyQualifiedName;
-			if (addClass.IsPartial) {
-				LoggingService.Debug("Adding partial class " + addClass.Name + " from " + Path.GetFileName(addClass.CompilationUnit.FileName));
-				CompoundClass compound = GetClassInternal(fullyQualifiedName, addClass.TypeParameters.Count, language) as CompoundClass;
+			IClass existingClass = GetClassInternal(fullyQualifiedName, addClass.TypeParameters.Count, language);
+			if (existingClass != null && existingClass.TypeParameters.Count == addClass.TypeParameters.Count) {
+				//LoggingService.Debug("Adding partial class " + addClass.Name + " from " + Path.GetFileName(addClass.CompilationUnit.FileName));
+				CompoundClass compound = existingClass as CompoundClass;
 				if (compound != null) {
+					// mark the class as partial
+					// (VB allows specifying the 'partial' modifier only on one part)
+					addClass.IsPartial = true;
+					
 					// possibly replace existing class (look for CU with same filename)
 					lock (compound) {
-						for (int i = 0; i < compound.Parts.Count; i++) {
-							if (compound.Parts[i].CompilationUnit.FileName == addClass.CompilationUnit.FileName) {
-								compound.Parts[i] = addClass;
+						for (int i = 0; i < compound.parts.Count; i++) {
+							if (compound.parts[i].CompilationUnit.FileName == addClass.CompilationUnit.FileName) {
+								compound.parts[i] = addClass;
 								compound.UpdateInformationFromParts();
-								LoggingService.Debug("Replaced old part!");
+								//LoggingService.Debug("Replaced old part!");
 								return;
 							}
 						}
-						compound.Parts.Add(addClass);
+						compound.parts.Add(addClass);
 						compound.UpdateInformationFromParts();
 					}
-					LoggingService.Debug("Added new part!");
+					//LoggingService.Debug("Added new part!");
 					return;
-				} else {
-					addClass = new CompoundClass(addClass);
-					LoggingService.Debug("Compound created!");
+				} else if (addClass.IsPartial || language.ImplicitPartialClasses) {
+					// Merge existing non-partial class with addClass
+					
+					// Ensure partial modifier is set everywhere:
+					addClass.IsPartial = true;
+					existingClass.IsPartial = true;
+					
+					addClass = compound = new CompoundClass(addClass);
+					compound.parts.Add(existingClass);
+					compound.UpdateInformationFromParts();
 				}
+			} else if (addClass.IsPartial) {
+				addClass = new CompoundClass(addClass);
+				//LoggingService.Debug("Compound created!");
 			}
 			
 			IClass oldDictionaryClass;
@@ -450,10 +465,15 @@ namespace ICSharpCode.SharpDevelop.Dom
 		{
 			foreach (IClass c in oldUnit.Classes) {
 				bool found = false;
-				foreach (IClass c2 in newUnit.Classes) {
-					if (c.FullyQualifiedName == c2.FullyQualifiedName) {
-						found = true;
-						break;
+				// Partial classes always have to be removed. Otherwise editing the type
+				// arguments of a partial would leave the class registered in the wrong compound
+				// class. See SD2-1149.
+				if (!c.IsPartial) {
+					foreach (IClass c2 in newUnit.Classes) {
+						if (c.FullyQualifiedName == c2.FullyQualifiedName) {
+							found = true;
+							break;
+						}
 					}
 				}
 				if (!found) {
@@ -465,14 +485,16 @@ namespace ICSharpCode.SharpDevelop.Dom
 		void RemoveClass(IClass @class)
 		{
 			string fullyQualifiedName = @class.FullyQualifiedName;
+			int typeParameterCount = @class.TypeParameters.Count;
 			if (@class.IsPartial) {
 				// remove a part of a partial class
 				// Use "as" cast to fix SD2-680: the stored class might be a part not marked as partial
-				CompoundClass compound = GetClassInternal(fullyQualifiedName, @class.TypeParameters.Count, language) as CompoundClass;
+				CompoundClass compound = GetClassInternal(fullyQualifiedName, typeParameterCount, language) as CompoundClass;
 				if (compound == null) return;
+				typeParameterCount = compound.TypeParameters.Count;
 				lock (compound) {
-					compound.Parts.Remove(@class);
-					if (compound.Parts.Count > 0) {
+					compound.parts.Remove(@class);
+					if (compound.parts.Count > 0) {
 						compound.UpdateInformationFromParts();
 						return;
 					} else {
@@ -488,7 +510,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 			
 			GenericClassContainer gcc = classInDictionary as GenericClassContainer;
 			if (gcc != null) {
-				gcc.Remove(@class.TypeParameters.Count);
+				gcc.Remove(typeParameterCount);
 				if (gcc.RealClassCount > 0) {
 					return;
 				}
@@ -715,22 +737,19 @@ namespace ICSharpCode.SharpDevelop.Dom
 				}
 			}
 			if (curType != null) {
-				// Try parent namespaces of the current class
+				// Try relative to current namespace and relative to parent namespaces
 				string fullname = curType.Namespace;
-				if (fullname != null && fullname.Length > 0) {
-					string[] namespaces = fullname.Split('.');
-					StringBuilder curnamespace = new StringBuilder();
-					for (int i = 0; i < namespaces.Length; ++i) {
-						curnamespace.Append(namespaces[i]);
-						curnamespace.Append('.');
-						
-						curnamespace.Append(name);
-						string nameSpace = curnamespace.ToString();
-						if (NamespaceExists(nameSpace)) {
-							return nameSpace;
-						}
-						// remove class name again to try next namespace
-						curnamespace.Length -= name.Length;
+				while (fullname != null && fullname.Length > 0) {
+					string nameSpace = fullname + '.' + name;
+					if (NamespaceExists(nameSpace)) {
+						return nameSpace;
+					}
+					
+					int pos = fullname.LastIndexOf('.');
+					if (pos < 0) {
+						fullname = null;
+					} else {
+						fullname = fullname.Substring(0, pos);
 					}
 				}
 			}
@@ -789,8 +808,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 				// Combine name with usings
 				foreach (IUsing u in request.CurrentCompilationUnit.Usings) {
 					if (u != null) {
-						IReturnType r = u.SearchType(name, request.TypeParameterCount);
-						if (r != null) {
+						foreach (IReturnType r in u.SearchType(name, request.TypeParameterCount)) {
 							if (r.TypeParameterCount == request.TypeParameterCount) {
 								return new SearchTypeResult(r, u);
 							} else {
@@ -801,8 +819,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 				}
 			}
 			if (defaultImports != null) {
-				IReturnType r = defaultImports.SearchType(name, request.TypeParameterCount);
-				if (r != null) {
+				foreach (IReturnType r in defaultImports.SearchType(name, request.TypeParameterCount)) {
 					if (r.TypeParameterCount == request.TypeParameterCount) {
 						return new SearchTypeResult(r, defaultImports);
 					} else {

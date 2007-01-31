@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2150 $</version>
 // </file>
 
 using System;
@@ -17,18 +17,16 @@ namespace ICSharpCode.TextEditor.Gui.CompletionWindow
 	public abstract class AbstractCompletionWindow : System.Windows.Forms.Form
 	{
 		protected TextEditorControl control;
-		protected string            fileName;
 		protected Size              drawingSize;
 		Rectangle workingScreen;
 		Form parentForm;
 		
-		protected AbstractCompletionWindow(Form parentForm, TextEditorControl control, string fileName)
+		protected AbstractCompletionWindow(Form parentForm, TextEditorControl control)
 		{
 			workingScreen = Screen.GetWorkingArea(parentForm);
 //			SetStyle(ControlStyles.Selectable, false);
 			this.parentForm = parentForm;
 			this.control  = control;
-			this.fileName = fileName;
 			
 			SetLocation();
 			StartPosition   = FormStartPosition.Manual;
@@ -170,8 +168,12 @@ namespace ICSharpCode.TextEditor.Gui.CompletionWindow
 			// take out the inserted methods
 			parentForm.LocationChanged -= new EventHandler(ParentFormLocationChanged);
 			
-			control.ActiveTextAreaControl.VScrollBar.ValueChanged     -= new EventHandler(ParentFormLocationChanged);
-			control.ActiveTextAreaControl.HScrollBar.ValueChanged     -= new EventHandler(ParentFormLocationChanged);
+			if (control.ActiveTextAreaControl.VScrollBar != null) {
+				control.ActiveTextAreaControl.VScrollBar.ValueChanged -= new EventHandler(ParentFormLocationChanged);
+			}
+			if (control.ActiveTextAreaControl.HScrollBar != null) {
+				control.ActiveTextAreaControl.HScrollBar.ValueChanged -= new EventHandler(ParentFormLocationChanged);
+			}
 			
 			control.ActiveTextAreaControl.TextArea.LostFocus          -= new EventHandler(this.TextEditorLostFocus);
 			control.ActiveTextAreaControl.Caret.PositionChanged       -= new EventHandler(CaretOffsetChanged);

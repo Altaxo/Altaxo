@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="none" email=""/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2043 $</version>
 // </file>
 
 using System;
@@ -63,7 +63,7 @@ namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 			
 			helper.Saved += delegate {
 				if (Get<CheckBox>("signAssembly").Checked) {
-					helper.SetProperty("AssemblyOriginatorKeyMode", "File", signAssemblyBinding.Location);
+					helper.SetProperty("AssemblyOriginatorKeyMode", "File", true, signAssemblyBinding.Location);
 				}
 			};
 		}

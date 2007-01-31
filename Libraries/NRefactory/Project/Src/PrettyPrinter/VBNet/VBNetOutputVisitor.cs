@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1966 $</version>
+//     <version>$Revision: 2200 $</version>
 // </file>
 
 using System;
@@ -41,13 +41,12 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 			}
 		}
 		
-		public object Options {
-			get {
-				return prettyPrintOptions;
-			}
-			set {
-				prettyPrintOptions = value as VBNetPrettyPrintOptions;
-			}
+		AbstractPrettyPrintOptions IOutputAstVisitor.Options {
+			get { return prettyPrintOptions; }
+		}
+		
+		public VBNetPrettyPrintOptions Options {
+			get { return prettyPrintOptions; }
 		}
 		
 		public NodeTracker NodeTracker {
@@ -86,46 +85,15 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 			return null;
 		}
 		
+		/// <summary>
+		/// Converts type name to primitive type name. Returns null if typeString is not
+		/// a primitive type.
+		/// </summary>
 		static string ConvertTypeString(string typeString)
 		{
-			switch (typeString) {
-				case "System.Boolean":
-					return "Boolean";
-				case "System.String":
-					return "String";
-				case "System.Char":
-					return "Char";
-				case "System.Double":
-					return "Double";
-				case "System.Single":
-					return "Single";
-				case "System.Decimal":
-					return "Decimal";
-				case "System.DateTime":
-					return "Date";
-				case "System.Int64":
-					return "Long";
-				case "System.Int32":
-					return "Integer";
-				case "System.Int16":
-					return "Short";
-				case "System.Byte":
-					return "Byte";
-				case "System.Void":
-					return "Void";
-				case "System.Object":
-					return "Object";
-					
-				case "System.UInt64":
-					return "ULong";
-				case "System.UInt32":
-					return "UInteger";
-				case "System.UInt16":
-					return "UShort";
-				case "System.SByte":
-					return "SByte";
-			}
-			return null;
+			string primitiveType;
+			TypeReference.PrimitiveTypesVBReverse.TryGetValue(typeString, out primitiveType);
+			return primitiveType;
 		}
 
 		public object VisitTypeReference(TypeReference typeReference, object data)
@@ -1191,7 +1159,8 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 					break;
 			}
 			
-			if (declareDeclaration.TypeReference.IsNull) {
+			bool isVoid = declareDeclaration.TypeReference.IsNull || declareDeclaration.TypeReference.SystemType == "System.Void";
+			if (isVoid) {
 				outputFormatter.PrintToken(Tokens.Sub);
 			} else {
 				outputFormatter.PrintToken(Tokens.Function);
@@ -1217,7 +1186,7 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 			AppendCommaSeparatedList(declareDeclaration.Parameters);
 			outputFormatter.PrintToken(Tokens.CloseParenthesis);
 			
-			if (!declareDeclaration.TypeReference.IsNull) {
+			if (!isVoid) {
 				outputFormatter.Space();
 				outputFormatter.PrintToken(Tokens.As);
 				outputFormatter.Space();
@@ -2677,11 +2646,12 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 			}
 		}
 		
-		void AppendCommaSeparatedList(IList list)
+		public void AppendCommaSeparatedList<T>(ICollection<T> list) where T : class, INode
 		{
 			if (list != null) {
-				for (int i = 0; i < list.Count; ++i) {
-					nodeTracker.TrackedVisit(((INode)list[i]), null);
+				int i = 0;
+				foreach (T node in list) {
+					nodeTracker.TrackedVisit(node, null);
 					if (i + 1 < list.Count) {
 						outputFormatter.PrintToken(Tokens.Comma);
 						outputFormatter.Space();
@@ -2691,6 +2661,7 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 							outputFormatter.PrintText("\t");
 						}
 					}
+					i++;
 				}
 			}
 		}

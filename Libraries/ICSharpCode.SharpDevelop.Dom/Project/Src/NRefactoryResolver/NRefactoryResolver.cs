@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1958 $</version>
+//     <version>$Revision: 2064 $</version>
 // </file>
 
 using System;
@@ -82,9 +82,13 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 			}
 		}
 		
-		public NRefactoryResolver(IProjectContent projectContent)
+		public NRefactoryResolver(IProjectContent projectContent, LanguageProperties languageProperties)
 		{
-			this.languageProperties = projectContent.Language;
+			if (projectContent == null)
+				throw new ArgumentNullException("projectContent");
+			if (languageProperties == null)
+				throw new ArgumentNullException("languageProperties");
+			this.languageProperties = languageProperties;
 			this.projectContent = projectContent;
 			if (languageProperties is LanguageProperties.CSharpProperties) {
 				language = NR.SupportedLanguage.CSharp;
@@ -94,6 +98,10 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 				throw new NotSupportedException("The language " + languageProperties.ToString() + " is not supported in the resolver");
 			}
 		}
+		
+		[Obsolete("Use the IProjectContent, LanguageProperties overload instead to support .cs files inside vb projects or similar.")]
+		public NRefactoryResolver(IProjectContent projectContent)
+			: this(projectContent, projectContent.Language) {}
 		
 		Expression ParseExpression(string expression)
 		{
@@ -989,16 +997,15 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 		{
 			ArrayList result = new ArrayList();
 			if (language == NR.SupportedLanguage.VBNet) {
-				foreach (KeyValuePair<string, string> pair in TypeReference.GetPrimitiveTypesVB()) {
-					string primitive = Char.ToUpper(pair.Key[0]) + pair.Key.Substring(1);
-					if ("System." + primitive != pair.Value) {
-						result.Add(GetPrimitiveClass(pair.Value, primitive));
+				foreach (KeyValuePair<string, string> pair in TypeReference.PrimitiveTypesVB) {
+					if ("System." + pair.Key != pair.Value) {
+						result.Add(GetPrimitiveClass(pair.Value, pair.Key));
 					}
 				}
 				result.Add("Global");
 				result.Add("New");
 			} else {
-				foreach (KeyValuePair<string, string> pair in TypeReference.GetPrimitiveTypesCSharp()) {
+				foreach (KeyValuePair<string, string> pair in TypeReference.PrimitiveTypesCSharp) {
 					result.Add(GetPrimitiveClass(pair.Value, pair.Key));
 				}
 			}
@@ -1021,7 +1028,7 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 			callingMember = GetCurrentMember();
 			if (callingMember != null) {
 				CompilationUnit parsedCu = ParseCurrentMemberAsCompilationUnit(fileContent);
-				if (cu != null) {
+				if (parsedCu != null) {
 					lookupTableVisitor.VisitCompilationUnit(parsedCu, null);
 				}
 			}
