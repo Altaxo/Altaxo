@@ -39,15 +39,27 @@ namespace Altaxo.Gui.Graph
 
     #region IBarGraphPlotStyleView Members
 
+    public bool IndependentColor
+    {
+      get
+      {
+        return _chkIndependentColor.Checked;
+      }
+      set
+      {
+        _chkIndependentColor.Checked = value;
+      }
+    }
+
     public Altaxo.Graph.Gdi.BrushX FillBrush
     {
       get
       {
-        return _fillBrushGlue.Brush;
+        return this._cbFillBrush.Brush;
       }
       set
       {
-        _fillBrushGlue.Brush = value;
+        _cbFillBrush.Brush = value;
       }
     }
 

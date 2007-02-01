@@ -159,6 +159,56 @@ namespace Altaxo.Graph.Commands
     }
   }
 
+  /// <summary>
+  /// Handler for the menu item "Edit" - "CopyPageAsBitmap".
+  /// The resulting bitmap has a resolution of 150 dpi and ARGB format.
+  /// </summary>
+  public class CopyPageAsBitmap150dpiARGB : AbstractGraphControllerCommand
+  {
+    public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
+    {
+      Altaxo.Graph.Procedures.GraphCommands.CopyPageToClipboardAsBitmap(ctrl, 150, null, PixelFormat.Format32bppArgb);
+    }
+  }
+
+  /// <summary>
+  /// Handler for the menu item "Edit" - "CopyPageAsBitmap".
+  /// The resulting bitmap has a resolution of 150 dpi and RGB format.
+  /// </summary>
+  public class CopyPageAsBitmap150dpiRGB : AbstractGraphControllerCommand
+  {
+    public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
+    {
+      Altaxo.Graph.Procedures.GraphCommands.CopyPageToClipboardAsBitmap(ctrl, 150, Brushes.White, PixelFormat.Format24bppRgb);
+    }
+  }
+
+
+  /// <summary>
+  /// Handler for the menu item "Edit" - "CopyPageAsBitmap".
+  /// The resulting bitmap has a resolution of 300 dpi and ARGB format.
+  /// </summary>
+  public class CopyPageAsBitmap300dpiARGB : AbstractGraphControllerCommand
+  {
+    public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
+    {
+      Altaxo.Graph.Procedures.GraphCommands.CopyPageToClipboardAsBitmap(ctrl,300,null,PixelFormat.Format32bppArgb);
+    }
+  }
+
+  /// <summary>
+  /// Handler for the menu item "Edit" - "CopyPageAsBitmap".
+  /// The resulting bitmap has a resolution of 300 dpi and RGB format.
+  /// </summary>
+  public class CopyPageAsBitmap300dpiRGB : AbstractGraphControllerCommand
+  {
+    public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
+    {
+      Altaxo.Graph.Procedures.GraphCommands.CopyPageToClipboardAsBitmap(ctrl, 300, Brushes.White, PixelFormat.Format24bppRgb);
+    }
+  }
+
+
   public class SaveGraphAsTemplate : AbstractGraphControllerCommand
   {
     public override void Run(Altaxo.Graph.GUI.GraphController ctrl)

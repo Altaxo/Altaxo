@@ -212,7 +212,30 @@
       <Condition name = "WindowActive" activewindow="Altaxo.Gui.SharpDevelop.SDGraphViewContent" action="Exclude">
         <MenuItem id="GraphCopyPage" label="${res:XML.MainMenu.EditMenu.CopyPage}" icon="Icons.16x16.NewDocumentIcon"
           description="${res:XML.MainMenu.EditMenu.CopyPage.Description}" class="Altaxo.Graph.Commands.CopyPage" />
-      </Condition>
+        <MenuItem id="CopyPageAsBitmap" label="${res:XML.MainMenu.EditMenu.CopyPageAsBitmap}"  type="Menu">
+          <MenuItem id="GraphCopyPageAsBitmap150dpiARGB"
+                    label="${res:XML.MainMenu.EditMenu.CopyPageAsBitmap150dpiARGB}"
+                    icon="Icons.16x16.NewDocumentIcon"
+                    description="${res:XML.MainMenu.EditMenu.CopyPageAsBitmap150dpiARGB.Description}"
+                    class="Altaxo.Graph.Commands.CopyPageAsBitmap150dpiARGB" />
+          <MenuItem id="GraphCopyPageAsBitmap300dpiRGB"
+                    label="${res:XML.MainMenu.EditMenu.CopyPageAsBitmap150dpiRGB}"
+                    icon="Icons.16x16.NewDocumentIcon"
+                    description="${res:XML.MainMenu.EditMenu.CopyPageAsBitmap150dpiRGB.Description}"
+                    class="Altaxo.Graph.Commands.CopyPageAsBitmap150dpiRGB" />
+
+          <MenuItem id="GraphCopyPageAsBitmap300dpiARGB"
+                    label="${res:XML.MainMenu.EditMenu.CopyPageAsBitmap300dpiARGB}"
+                    icon="Icons.16x16.NewDocumentIcon"
+                    description="${res:XML.MainMenu.EditMenu.CopyPageAsBitmap300dpiARGB.Description}" 
+                    class="Altaxo.Graph.Commands.CopyPageAsBitmap300dpiARGB" />
+          <MenuItem id="GraphCopyPageAsBitmap300dpiRGB"
+                    label="${res:XML.MainMenu.EditMenu.CopyPageAsBitmap300dpiRGB}"
+                    icon="Icons.16x16.NewDocumentIcon"
+                    description="${res:XML.MainMenu.EditMenu.CopyPageAsBitmap300dpiRGB.Description}"
+                    class="Altaxo.Graph.Commands.CopyPageAsBitmap300dpiRGB" />
+        </MenuItem>
+       </Condition>
       <Condition name = "WindowActive" activewindow="Altaxo.Gui.SharpDevelop.SDWorksheetViewContent" action="Exclude">
         <MenuItem id="XYVToMatrix" label="${res:XML.MainMenu.EditMenu.XYVToMatrix}"
           description="${res:XML.MainMenu.EditMenu.XYVToMatrix.Description}" class="Altaxo.Worksheet.Commands.XYVToMatrix" />
@@ -404,22 +427,25 @@
 					description="${res:XML.MainMenu.AnalysisMenu.StatisticsOnColumns.Description}" class="Altaxo.Worksheet.Commands.AnalysisStatisticsOnColumns" />
         <MenuItem id="StatisticsOnRows" label="${res:XML.MainMenu.AnalysisMenu.StatisticsOnRows}"
 					description="${res:XML.MainMenu.AnalysisMenu.StatisticsOnRows.Description}" class="Altaxo.Worksheet.Commands.AnalysisStatisticsOnRows" />
-        <MenuItem id="PCAOnCols" label="${res:XML.MainMenu.AnalysisMenu.PCAOnColumns}" description="${res:XML.MainMenu.AnalysisMenu.PCAOnColumns.Description}"
+
+        <MenuItem id="ChemometricsMenu" label="${res:XML.MainMenu.Analysis.ChemometricsMenu}"  type="Menu">
+          <MenuItem id="PCAOnCols" label="${res:XML.MainMenu.AnalysisMenu.PCAOnColumns}" description="${res:XML.MainMenu.AnalysisMenu.PCAOnColumns.Description}"
 					class="Altaxo.Worksheet.Commands.AnalysisPCAOnCols" />
-        <MenuItem id="PCAOnRows" label="${res:XML.MainMenu.AnalysisMenu.PCAOnRows}" description="${res:XML.MainMenu.AnalysisMenu.PCAOnRows.Description}"
-					class="Altaxo.Worksheet.Commands.AnalysisPCAOnRows" />
-        <MenuItem id="PLSOnCols" label="${res:XML.MainMenu.AnalysisMenu.PLSOnColumns}" description="${res:XML.MainMenu.AnalysisMenu.PLSOnColumns.Description}"
-					class="Altaxo.Worksheet.Commands.AnalysisPLSOnCols" />
-        <MenuItem id="PLSOnRows" label="${res:XML.MainMenu.AnalysisMenu.PLSOnRows}" description="${res:XML.MainMenu.AnalysisMenu.PLSOnRows.Description}"
-					class="Altaxo.Worksheet.Commands.AnalysisPLSOnRows" />
-        <MenuItem id="PLSPredictOnCols" label="${res:XML.MainMenu.AnalysisMenu.PLSPredictOnColumns}" description="${res:XML.MainMenu.AnalysisMenu.PLSPredictOnColumns.Description}"
-					class="Altaxo.Worksheet.Commands.AnalysisPLSPredictOnCols" />
-        <MenuItem id="PLSPredictOnRows" label="${res:XML.MainMenu.AnalysisMenu.PLSPredictOnRows}" description="${res:XML.MainMenu.AnalysisMenu.PLSPredictOnRows.Description}"
-					class="Altaxo.Worksheet.Commands.AnalysisPLSPredictOnRows" />
-        <MenuItem id="ExportPLSCalibration" label="${res:XML.MainMenu.AnalysisMenu.ExportPLSCalibration}" description="${res:XML.MainMenu.AnalysisMenu.ExportPLSCalibration.Description}"
-					class="Altaxo.Worksheet.Commands.AnalysisExportPLSCalibration" />
-        <MenuItem id="MultColsToMatrix" label="${res:XML.MainMenu.AnalysisMenu.MultiplyColumnsToMatrix}"
-					description="${res:XML.MainMenu.AnalysisMenu.MultiplyColumnsToMatrix.Description}" class="Altaxo.Worksheet.Commands.AnalysisMultiplyColumnsToMatrix" />
+          <MenuItem id="PCAOnRows" label="${res:XML.MainMenu.AnalysisMenu.PCAOnRows}" description="${res:XML.MainMenu.AnalysisMenu.PCAOnRows.Description}"
+            class="Altaxo.Worksheet.Commands.AnalysisPCAOnRows" />
+          <MenuItem id="PLSOnCols" label="${res:XML.MainMenu.AnalysisMenu.PLSOnColumns}" description="${res:XML.MainMenu.AnalysisMenu.PLSOnColumns.Description}"
+            class="Altaxo.Worksheet.Commands.AnalysisPLSOnCols" />
+          <MenuItem id="PLSOnRows" label="${res:XML.MainMenu.AnalysisMenu.PLSOnRows}" description="${res:XML.MainMenu.AnalysisMenu.PLSOnRows.Description}"
+            class="Altaxo.Worksheet.Commands.AnalysisPLSOnRows" />
+          <MenuItem id="PLSPredictOnCols" label="${res:XML.MainMenu.AnalysisMenu.PLSPredictOnColumns}" description="${res:XML.MainMenu.AnalysisMenu.PLSPredictOnColumns.Description}"
+            class="Altaxo.Worksheet.Commands.AnalysisPLSPredictOnCols" />
+          <MenuItem id="PLSPredictOnRows" label="${res:XML.MainMenu.AnalysisMenu.PLSPredictOnRows}" description="${res:XML.MainMenu.AnalysisMenu.PLSPredictOnRows.Description}"
+            class="Altaxo.Worksheet.Commands.AnalysisPLSPredictOnRows" />
+          <MenuItem id="ExportPLSCalibration" label="${res:XML.MainMenu.AnalysisMenu.ExportPLSCalibration}" description="${res:XML.MainMenu.AnalysisMenu.ExportPLSCalibration.Description}"
+            class="Altaxo.Worksheet.Commands.AnalysisExportPLSCalibration" />
+          <MenuItem id="MultColsToMatrix" label="${res:XML.MainMenu.AnalysisMenu.MultiplyColumnsToMatrix}"
+            description="${res:XML.MainMenu.AnalysisMenu.MultiplyColumnsToMatrix.Description}" class="Altaxo.Worksheet.Commands.AnalysisMultiplyColumnsToMatrix" />
+        </MenuItem>
       </MenuItem>
     </Condition>
     <!-- Graph-Analysis menu -->
@@ -470,8 +496,6 @@
 				description="${res:XML.MainMenu.HelpMenu.ProgramHelp.Description}" shortcut="F1" class="Altaxo.Main.Commands.ShowAltaxoProgramHelp" />
       <MenuItem id="ClassHelp" label="${res:XML.MainMenu.HelpMenu.ClassHelp}" icon="Icons.16x16.HelpIcon"
 				description="${res:XML.MainMenu.HelpMenu.ClassHelp.Description}" shortcut="Alt|F1" class="Altaxo.Main.Commands.ShowAltaxoClassHelp" />
-      <MenuItem id="TipOfTheDay" label="${res:XML.MainMenu.HelpMenu.Tips}" icon="Icons.16x16.TipOfTheDay"
-				description="${res:XML.MainMenu.HelpMenu.Tips.Description}" class="ICSharpCode.SharpDevelop.Commands.ViewTipOfTheDay" />
       <MenuItem id="Separator1" type = "Separator"/>
       <MenuItem id="Web" label="${res:XML.MainMenu.HelpMenu.WebMenu}"  type="Menu">
 
@@ -507,12 +531,8 @@
 						link="http://www.sourceforge.net/projects/dockpanelsuite" />
           <MenuItem id="NAnt" label="NAnt" icon="Icons.16x16.WebSearchIcon" description="THE .NET building tool."
 						link="http://nant.sourceforge.net/" />
-          <MenuItem id="NDoc" label="NDoc" icon="Icons.16x16.WebSearchIcon" description="I used the NDoc as the SharpDevelop documentation generator. Look out it is cool."
-						link="http://ndoc.sourceforge.net/" />
-          <MenuItem id="#ZipLib" label="#ZipLib" icon="Icons.16x16.WebSearchIcon" description="I used the NDoc as the SharpDevelop documentation generator. Look out it is cool."
-						link="http://www.icsharpcode.net/OpenSource/NZipLib" />
-          <MenuItem id="#CvsLib" label="#CvsLib" icon="Icons.16x16.WebSearchIcon" description="I used the NDoc as the SharpDevelop documentation generator. Look out it is cool."
-						link="http://www.icsharpcode.net/OpenSource/NetCvsLib" />
+          <MenuItem id="#ZipLib" label="#ZipLib" icon="Icons.16x16.WebSearchIcon" description="Is used to provide a storage container for the Altaxo projects."
+						link="http://www.icsharpcode.net/OpenSource/SharpZipLib/" />
         </MenuItem>
         <MenuItem id = "NETPlatforms" label = ".NET Platforms" type="Menu">
           <MenuItem id = "MSNET"  label = "MS .NET" icon = "Icons.16x16.WebSearchIcon" link = "http://msdn.microsoft.com/net" />
@@ -522,7 +542,7 @@
       </MenuItem>
       <MenuItem id="Separator2" type = "Separator"/>
       <MenuItem id="ForceException" label="${res:XML.MainMenu.HelpMenu.ForceException}"
-        description="${res:XML.MainMenu.HelpMenu.ForceException.Description}" class="Altaxo.Worksheet.Commands.OpenScriptDialog" />
+        description="${res:XML.MainMenu.HelpMenu.ForceException.Description}" class="Altaxo.Worksheet.Commands.AltaxoProvokeException" />
       <MenuItem id="About" label="${res:XML.MainMenu.HelpMenu.About}" icon="Icons.16x16.AboutIcon"
 				description="${res:XML.MainMenu.HelpMenu.About.Description}" class="Altaxo.Main.Commands.HelpAboutAltaxo" />
     </MenuItem>
@@ -700,11 +720,13 @@
   </Path>
 
   <Path name = "/Altaxo/BuiltinTextures">
+    <Texture id="Caustics/BlueCaustic" resource = "Textures.Caustics.BlueCaustics"/>
+    <Texture id="Marbel/DarkMarble1" resource = "Textures.Marble.DarkMarble1"/>
     <Texture id="Marbel/RedMarble1" resource = "Textures.Marble.RedMarble1"/>
     <Texture id="Marbel/RedMarble2" resource = "Textures.Marble.RedMarble2"/>
-    <Texture id="Caustics/BlueCaustic" resource = "Textures.Caustics.BlueCaustics"/>
     <Texture id="Metal/ScratchedSilver" resource = "Textures.Metal.ScratchedSilver"/>
-
+    <Texture id="Paper/BrownPaper" resource = "Textures.Paper.BrownPaper"/>
+    <Texture id="Paper/YellowPaper" resource = "Textures.Paper.YellowPaper"/>
   </Path>
 
   <!-- End of Altaxo stuff -->

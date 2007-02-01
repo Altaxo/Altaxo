@@ -20,11 +20,11 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("http://altaxo.sourceforge.net")]
 [assembly: AssemblyProduct("Altaxo")]
-[assembly: AssemblyCopyright("(C) Dr. Dirk Lellinger 2002-2006")]
-[assembly: AssemblyTrademark("(C) Dr. Dirk Lellinger 2002-2006")]
+[assembly: AssemblyCopyright("(C) Dr. Dirk Lellinger 2002-2007")]
+[assembly: AssemblyTrademark("(C) Dr. Dirk Lellinger 2002-2007")]
 [assembly: AssemblyCulture("")]
 
-[assembly: AssemblyVersion("0.54.0.552")]
+[assembly: AssemblyVersion("0.54.0.553")]
 
 [assembly: AssemblyDelaySign(false)]
 

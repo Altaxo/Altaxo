@@ -1,4 +1,4 @@
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -186,7 +186,9 @@
     <EmbeddedResource Include="Resources\TextEditorControl.bmp" />
     <EmbeddedResource Include="Resources\Java-Mode.xshd" />
     <EmbeddedResource Include="Resources\JavaScript-Mode.xshd" />
-    <EmbeddedResource Include="Resources\Mode.xsd" />
+    <EmbeddedResource Include="Resources\Mode.xsd">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Resources\PHP-Mode.xshd" />
     <EmbeddedResource Include="Resources\RightArrow.cur" />
     <EmbeddedResource Include="Resources\SyntaxModes.xml" />

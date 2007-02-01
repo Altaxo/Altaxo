@@ -120,19 +120,36 @@ namespace Altaxo.Graph.Procedures
     /// <param name="pixelformat">Specify the pixelformat here.</param>
     public static void SaveAsBitmap(GraphDocument doc, System.IO.Stream stream, int dpiResolution, System.Drawing.Imaging.ImageFormat imageFormat, Brush backbrush, PixelFormat pixelformat)
     {
+      System.Drawing.Bitmap bitmap = SaveAsBitmap(doc, dpiResolution, backbrush, pixelformat);
 
+      bitmap.Save(stream, imageFormat);
+
+      bitmap.Dispose();
+    }
+
+
+        /// <summary>
+    /// Saves the graph as an bitmap file and returns the bitmap.
+    /// </summary>
+    /// <param name="doc">The graph document to export.</param>
+    /// <param name="dpiResolution">Resolution of the bitmap in dpi. Determines the pixel size of the bitmap.</param>
+    /// <param name="backbrush">Brush used to fill the background of the image. Can be <c>null</c>.</param>
+    /// <param name="pixelformat">Specify the pixelformat here.</param>
+    /// <returns>The saved bitmap. You should call Dispose when you no longer need the bitmap.</returns>
+    public static System.Drawing.Bitmap SaveAsBitmap(GraphDocument doc, int dpiResolution, Brush backbrush, PixelFormat pixelformat)
+    {
       double scale = dpiResolution / 72.0;
       // Code to write the stream goes here.
 
       // round the pixels to multiples of 4, many programs rely on this
-      int width = (int)(4*Math.Ceiling(0.25 * doc.PageBounds.Width * scale));
-      int height = (int)(4*Math.Ceiling(0.25 * doc.PageBounds.Height * scale));
-      System.Drawing.Bitmap mf = new System.Drawing.Bitmap(width, height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-      mf.SetResolution(dpiResolution, dpiResolution);
+      int width = (int)(4 * Math.Ceiling(0.25 * doc.PageBounds.Width * scale));
+      int height = (int)(4 * Math.Ceiling(0.25 * doc.PageBounds.Height * scale));
+      System.Drawing.Bitmap bitmap = new System.Drawing.Bitmap(width, height, pixelformat);
+      bitmap.SetResolution(dpiResolution, dpiResolution);
 
-      Graphics grfx = Graphics.FromImage(mf);
-      if(null != backbrush)
-        grfx.FillRectangle(backbrush,new Rectangle(0,0,width,height));
+      Graphics grfx = Graphics.FromImage(bitmap);
+      if (null != backbrush)
+        grfx.FillRectangle(backbrush, new Rectangle(0, 0, width, height));
 
       grfx.PageUnit = GraphicsUnit.Point;
       grfx.TranslateTransform(doc.PrintableBounds.X, doc.PrintableBounds.Y);
@@ -143,12 +160,9 @@ namespace Altaxo.Graph.Procedures
 
       grfx.Dispose();
 
-      mf.Save(stream, imageFormat);
-
-      mf.Dispose();
-
-
+      return bitmap;
     }
+
 
     #endregion
 

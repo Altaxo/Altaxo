@@ -158,5 +158,22 @@ namespace Altaxo.Graph.Procedures
     {
       CopyPageCommand.Run(ctrl);
     }
+
+    /// <summary>
+    /// Copies the current graph as an bitmap image to the clipboard.
+    /// </summary>
+    /// <param name="ctrl">Controller controlling the current graph.</param>
+    /// <param name="dpiResolution">Resolution of the bitmap in dpi. Determines the pixel size of the bitmap.</param>
+    /// <param name="backbrush">Brush used to fill the background of the image. Can be <c>null</c>.</param>
+    /// <param name="pixelformat">Specify the pixelformat here.</param>
+    public static void CopyPageToClipboardAsBitmap(GraphController ctrl, int dpiResolution, Brush backbrush, PixelFormat pixelformat)
+    {
+      System.Windows.Forms.DataObject dao = new System.Windows.Forms.DataObject();
+      System.Drawing.Bitmap bitmap = Altaxo.Graph.Procedures.Export.SaveAsBitmap(ctrl.Doc, dpiResolution, backbrush, pixelformat);
+      dao.SetImage(bitmap);
+      System.Windows.Forms.Clipboard.SetDataObject(dao);
+    }
+
+
   }
 }

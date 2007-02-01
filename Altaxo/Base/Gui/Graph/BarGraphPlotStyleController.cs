@@ -32,6 +32,7 @@ namespace Altaxo.Gui.Graph
   #region Interfaces
   public interface IBarGraphPlotStyleView
   {
+    bool IndependentColor { get; set; }
     BrushX FillBrush { get; set; }
     PenX FillPen { get; set; }
     string InnerGap { get; set; }
@@ -56,6 +57,7 @@ namespace Altaxo.Gui.Graph
     {
       if (_view != null)
       {
+        _view.IndependentColor = _doc.IndependentColor;
         _view.FillBrush = _doc.FillBrush;
         _view.FillPen = _doc.FramePen;
         _view.InnerGap = Serialization.GUIConversion.ToString(_doc.InnerGap * 100);
@@ -114,6 +116,7 @@ namespace Altaxo.Gui.Graph
 
     public bool Apply()
     {
+      _doc.IndependentColor = _view.IndependentColor;
       _doc.FillBrush = _view.FillBrush;
       _doc.FramePen = _view.FillPen;
       

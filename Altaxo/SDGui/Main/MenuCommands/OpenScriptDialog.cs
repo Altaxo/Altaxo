@@ -38,13 +38,16 @@ using ICSharpCode.Core;
 namespace Altaxo.Worksheet.Commands
 {
   /// <summary>
-  /// Summary description for OpenScriptDialog.
+  /// Menu point to provoke an exception.
   /// </summary>
-  public class OpenScriptDialog : AbstractMenuCommand
+  public class AltaxoProvokeException : AbstractMenuCommand
   {
+      bool _disable;
+      internal bool Disable { set { _disable = value; } }
     public override void Run()
     {
-      throw new ApplicationException("This is a menu point to provoke an exception");
+      if (!_disable)
+        throw new ApplicationException("This is a menu point to provoke an exception");
       System.Diagnostics.Debug.WriteLine("Exception thrown");
     }
 

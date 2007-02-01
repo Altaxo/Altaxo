@@ -160,6 +160,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       this._relOuterGapWidth = from._relOuterGapWidth;
       this._width = from._width;
       this._position = from._position;
+      this._independentColor = from._independentColor;
       this._fillBrush = from._fillBrush.Clone();
       this._framePen = from._framePen == null ? null : (PenX)from._framePen.Clone();
       this._startAtPreviousItem = from._startAtPreviousItem;
@@ -173,6 +174,18 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     public bool IsColorReceiver
     {
       get { return !this._independentColor; }
+    }
+
+    public bool IndependentColor
+    {
+      get
+      {
+        return _independentColor;
+      }
+      set
+      {
+        _independentColor = value;
+      }
     }
 
     public BrushX FillBrush

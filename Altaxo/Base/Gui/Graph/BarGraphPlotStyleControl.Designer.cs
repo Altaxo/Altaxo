@@ -61,11 +61,10 @@ namespace Altaxo.Gui.Graph
       this._edYGap = new System.Windows.Forms.TextBox();
       this._chkUsePreviousItem = new System.Windows.Forms.CheckBox();
       this._lblYGap = new System.Windows.Forms.Label();
-      this._cbPenColor = new Altaxo.Gui.Common.Drawing.ColorComboBox();
-      this._cbFillColor = new Altaxo.Gui.Common.Drawing.ColorComboBox();
-      this._fillBrushGlue = new Altaxo.Gui.Common.Drawing.BrushControlsGlue();
-      this._framePenGlue = new Altaxo.Gui.Common.Drawing.PenControlsGlue();
       this._chkIndependentColor = new System.Windows.Forms.CheckBox();
+      this._cbFillBrush = new Altaxo.Gui.Common.Drawing.BrushColorComboBox();
+      this._cbPenColor = new Altaxo.Gui.Common.Drawing.ColorComboBox();
+      this._framePenGlue = new Altaxo.Gui.Common.Drawing.PenControlsGlue();
       this.SuspendLayout();
       // 
       // _lblInnerGap
@@ -154,6 +153,30 @@ namespace Altaxo.Gui.Graph
       this._lblYGap.TabIndex = 11;
       this._lblYGap.Text = "Y-gap (%) :";
       // 
+      // _chkIndependentColor
+      // 
+      this._chkIndependentColor.AutoSize = true;
+      this._chkIndependentColor.Location = new System.Drawing.Point(12, 7);
+      this._chkIndependentColor.Name = "_chkIndependentColor";
+      this._chkIndependentColor.Size = new System.Drawing.Size(97, 17);
+      this._chkIndependentColor.TabIndex = 13;
+      this._chkIndependentColor.Text = "Indep. fill color:";
+      this._chkIndependentColor.UseVisualStyleBackColor = true;
+      // 
+      // _cbFillBrush
+      // 
+      this._cbFillBrush.ColorType = Altaxo.Graph.ColorType.PlotColor;
+      this._cbFillBrush.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+      this._cbFillBrush.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this._cbFillBrush.FormattingEnabled = true;
+      this._cbFillBrush.ItemHeight = 15;
+      this._cbFillBrush.Items.AddRange(new object[] {
+            System.Drawing.Color.Black});
+      this._cbFillBrush.Location = new System.Drawing.Point(159, 5);
+      this._cbFillBrush.Name = "_cbFillBrush";
+      this._cbFillBrush.Size = new System.Drawing.Size(121, 21);
+      this._cbFillBrush.TabIndex = 14;
+      // 
       // _cbPenColor
       // 
       this._cbPenColor.ColorType = Altaxo.Graph.ColorType.KnownAndSystemColor;
@@ -165,44 +188,6 @@ namespace Altaxo.Gui.Graph
       this._cbPenColor.Name = "_cbPenColor";
       this._cbPenColor.Size = new System.Drawing.Size(121, 21);
       this._cbPenColor.TabIndex = 1;
-      // 
-      // _cbFillColor
-      // 
-      this._cbFillColor.ColorType = Altaxo.Graph.ColorType.KnownAndSystemColor;
-      this._cbFillColor.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-      this._cbFillColor.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this._cbFillColor.FormattingEnabled = true;
-      this._cbFillColor.ItemHeight = 15;
-      this._cbFillColor.Location = new System.Drawing.Point(159, 5);
-      this._cbFillColor.Name = "_cbFillColor";
-      this._cbFillColor.Size = new System.Drawing.Size(121, 21);
-      this._cbFillColor.TabIndex = 0;
-      // 
-      // _fillBrushGlue
-      // 
-      this._fillBrushGlue.CbBrushType = null;
-      this._fillBrushGlue.CbColor1 = this._cbFillColor;
-      this._fillBrushGlue.CbColor2 = null;
-      this._fillBrushGlue.CbGradientFocus = null;
-      this._fillBrushGlue.CbGradientMode = null;
-      this._fillBrushGlue.CbGradientScale = null;
-      this._fillBrushGlue.CbGradientShape = null;
-      this._fillBrushGlue.CbHatchStyle = null;
-      this._fillBrushGlue.CbTextureImage = null;
-      this._fillBrushGlue.CbTextureScale = null;
-      this._fillBrushGlue.CbWrapMode = null;
-      this._fillBrushGlue.ChkExchangeColors = null;
-      this._fillBrushGlue.ColorType = Altaxo.Graph.ColorType.KnownAndSystemColor;
-      this._fillBrushGlue.LabelColor2 = null;
-      this._fillBrushGlue.LabelExchangeColors = null;
-      this._fillBrushGlue.LabelGradientFocus = null;
-      this._fillBrushGlue.LabelGradientMode = null;
-      this._fillBrushGlue.LabelGradientScale = null;
-      this._fillBrushGlue.LabelGradientShape = null;
-      this._fillBrushGlue.LabelHatchStyle = null;
-      this._fillBrushGlue.LabelTextureImage = null;
-      this._fillBrushGlue.LabelTextureScale = null;
-      this._fillBrushGlue.LabelWrapMode = null;
       // 
       // _framePenGlue
       // 
@@ -221,20 +206,11 @@ namespace Altaxo.Gui.Graph
       this._framePenGlue.CbStartCapSize = null;
       this._framePenGlue.ColorType = Altaxo.Graph.ColorType.KnownAndSystemColor;
       // 
-      // _chkIndependentColor
-      // 
-      this._chkIndependentColor.AutoSize = true;
-      this._chkIndependentColor.Location = new System.Drawing.Point(12, 7);
-      this._chkIndependentColor.Name = "_chkIndependentColor";
-      this._chkIndependentColor.Size = new System.Drawing.Size(97, 17);
-      this._chkIndependentColor.TabIndex = 13;
-      this._chkIndependentColor.Text = "Indep. fill color:";
-      this._chkIndependentColor.UseVisualStyleBackColor = true;
-      // 
       // BarGraphPlotStyleControl
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+      this.Controls.Add(this._cbFillBrush);
       this.Controls.Add(this._chkIndependentColor);
       this.Controls.Add(this._lblYGap);
       this.Controls.Add(this._chkUsePreviousItem);
@@ -247,7 +223,6 @@ namespace Altaxo.Gui.Graph
       this.Controls.Add(this._lblOuterGap);
       this.Controls.Add(this._lblInnerGap);
       this.Controls.Add(this._cbPenColor);
-      this.Controls.Add(this._cbFillColor);
       this.Name = "BarGraphPlotStyleControl";
       this.Size = new System.Drawing.Size(283, 179);
       this.ResumeLayout(false);
@@ -257,8 +232,6 @@ namespace Altaxo.Gui.Graph
 
     #endregion
 
-    private Altaxo.Gui.Common.Drawing.BrushControlsGlue _fillBrushGlue;
-    private Altaxo.Gui.Common.Drawing.ColorComboBox _cbFillColor;
     private Altaxo.Gui.Common.Drawing.PenControlsGlue _framePenGlue;
     private Altaxo.Gui.Common.Drawing.ColorComboBox _cbPenColor;
     private System.Windows.Forms.Label _lblInnerGap;
@@ -272,5 +245,6 @@ namespace Altaxo.Gui.Graph
     private System.Windows.Forms.CheckBox _chkUsePreviousItem;
     private System.Windows.Forms.Label _lblYGap;
     private System.Windows.Forms.CheckBox _chkIndependentColor;
+    private Altaxo.Gui.Common.Drawing.BrushColorComboBox _cbFillBrush;
   }
 }
