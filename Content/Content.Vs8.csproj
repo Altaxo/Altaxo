@@ -201,6 +201,7 @@
     <Content Include="data\templates\file\CSharp\CSharp.ConfigurationSection.xft" />
     <Content Include="data\templates\project\CSharp\SharpDevelopCustomTool.xpt" />
     <Content Include="data\templates\project\VBNet\CompactFormsProject.xpt" />
+    <Content Include="doc\help\AltaxoClassRef.chw" />
     <None Include="HelpConverter.InstallState" />
     <Content Include="data\resources\StringResources.no.resources" />
     <Content Include="data\templates\project\CSharp\NotifyIconResources.resx">
@@ -405,16 +406,10 @@
     <Content Include="doc\Contributions\ExocortexDSP-license.txt" />
     <Content Include="doc\Contributions\LevMar-license.txt" />
     <Content Include="doc\copyright.txt" />
-    <Content Include="doc\help\031SharpZipLib.chm" />
-    <Content Include="doc\help\031SharpZipLib.hhc" />
     <Content Include="doc\help\AltaxoClassRef.chm" />
-    <Content Include="doc\help\AltaxoClassRef.hhc" />
     <Content Include="doc\help\AltaxoHelp.chm" />
     <Content Include="doc\help\AltaxoHelp.hhc" />
     <Content Include="doc\help\HelpDescription.xml" />
-    <Content Include="doc\help\SharpDevelop.chm" />
-    <Content Include="doc\help\SharpDevelop.hhc" />
-    <Content Include="doc\help\SharpDevelop2.hhc" />
     <Content Include="doc\license.txt" />
     <Content Include="doc\SharpDevelopTODO.txt" />
   </ItemGroup>

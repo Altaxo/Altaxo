@@ -25,7 +25,7 @@
         <namespaceSummaryItem name="Altaxo.Graph.Gdi" isDocumented="True">Contains classes for graphical representation, that build on the GDI+ graphical subsystem.</namespaceSummaryItem>
         <namespaceSummaryItem name="Altaxo.Graph.Gdi.Axis" isDocumented="True">Axis related stuff, i.e. code to draw axis lines and ticks.</namespaceSummaryItem>
         <namespaceSummaryItem name="Altaxo.Graph.Gdi.Background" isDocumented="True">Drawing of backgrounds (for instance for text items, labels, and so on).</namespaceSummaryItem>
-        <namespaceSummaryItem name="Altaxo.Graph.Gdi.CS" isDocumented="False">Contains different coordinate systems.</namespaceSummaryItem>
+        <namespaceSummaryItem name="Altaxo.Graph.Gdi.CS" isDocumented="True">Contains different coordinate systems.</namespaceSummaryItem>
         <namespaceSummaryItem name="Altaxo.Graph.Gdi.LabelFormatting" isDocumented="True">Classes to format labels.</namespaceSummaryItem>
         <namespaceSummaryItem name="Altaxo.Graph.Gdi.LineCaps" isDocumented="True">Different start and end caps used for line drawing.</namespaceSummaryItem>
         <namespaceSummaryItem name="Altaxo.Graph.Gdi.Plot" isDocumented="True">Contains different plot item classes.</namespaceSummaryItem>
@@ -72,12 +72,12 @@
         <dependencyItem depPath="V:\C\Altaxo\src\rtdebug\bin\*.*" />
         <dependencyItem depPath="GAC:System.Configuration, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
     </dependencies>
-    <projectSummary>Altaxo- data processing and plotting programm written in C# for the .NET framework.</projectSummary>
+    <projectSummary>Class reference for Altaxo - the data processing and plotting programm written in C# for the .NET framework.</projectSummary>
     <sandcastlePath />
     <hhcPath />
     <hxcompPath />
     <outputPath>..\..\..\tempsource\AltaxoClassRef\</outputPath>
-    <helpFileFormat>HtmlHelp1x</helpFileFormat>
+    <helpFileFormat>Help1xAndWebsite</helpFileFormat>
     <cleanIntermediates>True</cleanIntermediates>
     <purgeDuplicateTopics>True</purgeDuplicateTopics>
     <cppCommentsFixup>False</cppCommentsFixup>
@@ -86,11 +86,11 @@
     <includeFavorites>False</includeFavorites>
     <preliminary>False</preliminary>
     <rootNSContainer>False</rootNSContainer>
-    <helpTitle>Altaxo(Core+Base) class reference (0.53.0.429, 2005/12/22)</helpTitle>
+    <helpTitle>Altaxo(Core+Base) class reference (0.54.0.554, 2007/02/02)</helpTitle>
     <htmlHelpName>AltaxoClassRef</htmlHelpName>
     <language>en-US</language>
-    <copyrightHref />
-    <copyrightText>(C) Dr. D. Lellinger 2007</copyrightText>
+    <copyrightHref>http://www.dki-online.de/mitarbeiter/dlellinger.html</copyrightHref>
+    <copyrightText>Documentation built by/partial (C) Dr. D. Lellinger 2007</copyrightText>
     <feedbackEMailAddress />
     <headerText />
     <projectLinks>Local</projectLinks>
