@@ -1,4 +1,4 @@
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <OutputType>Library</OutputType>
     <RootNamespace>ICSharpCode.SharpDevelop.Sda</RootNamespace>
@@ -32,8 +32,8 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>Full</DebugType>
     <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
-    <OutputPath>bin\debug\</OutputPath>
-    <DocumentationFile>bin\debug\ICSharpCode.SharpDevelop.Sda.xml</DocumentationFile>
+    <OutputPath>..\..\rtdebug\bin\</OutputPath>
+    <DocumentationFile>..\..\rtdebug\bin\ICSharpCode.SharpDevelop.Sda.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <BaseIntermediateOutputPath>obj\</BaseIntermediateOutputPath>

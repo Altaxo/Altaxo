@@ -1,2 +1,2 @@
-call clean-temporary-vsstudio-files.cmd
+call clean.cmd
 Altaxo.VS8.sln

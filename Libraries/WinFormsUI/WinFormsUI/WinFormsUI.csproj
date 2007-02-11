@@ -21,7 +21,7 @@
     <AssemblyOriginatorKeyMode>File</AssemblyOriginatorKeyMode>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\..\..\rtdebug\bin\</OutputPath>
     <BaseAddress>101187584</BaseAddress>
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <DefineConstants>TRACE;DEBUG;FRAMEWORK_VER_2x</DefineConstants>
