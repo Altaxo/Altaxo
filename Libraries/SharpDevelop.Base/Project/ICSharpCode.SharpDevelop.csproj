@@ -11,7 +11,7 @@
     <NoConfig>False</NoConfig>
     <OutputType>Library</OutputType>
     <SignAssembly>True</SignAssembly>
-    <AssemblyOriginatorKeyFile>..\..\ICSharpCode.SharpDevelop.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>Resources\ICSharpCode.SharpDevelop.snk</AssemblyOriginatorKeyFile>
     <AssemblyOriginatorKeyMode>File</AssemblyOriginatorKeyMode>
     <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
     <RegisterForComInterop>False</RegisterForComInterop>
@@ -26,7 +26,7 @@
     <Optimize>False</Optimize>
     <DefineConstants>DEBUG,TRACE;ModifiedForAltaxo</DefineConstants>
     <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
-    <OutputPath>..\..\..\rtdebug\bin\</OutputPath>
+    <OutputPath>bin\debug\</OutputPath>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -771,6 +771,9 @@
       <Name>ICSharpCode.SharpDevelop.Widgets</Name>
       <Private>False</Private>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ICSharpCode.SharpDevelop.snk" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSHARP.Targets" />
 </Project>

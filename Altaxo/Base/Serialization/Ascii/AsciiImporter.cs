@@ -21,6 +21,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 
 namespace Altaxo.Serialization.Ascii
 {
@@ -100,15 +101,24 @@ namespace Altaxo.Serialization.Ascii
       stream.Position = 0;
       System.IO.StreamReader sr = new System.IO.StreamReader(stream,System.Text.Encoding.Default,true);
       System.Collections.ArrayList result = new System.Collections.ArrayList();
-    
+
+      List<string> firstFewLines = new List<string>();
       for(int i=0;i<nLines;i++)
       {
         sLine = sr.ReadLine();
         if(null==sLine)
           break;
-        result.Add(new AsciiLineAnalyzer(i,sLine));
+        firstFewLines.Add(sLine);
       }
-    
+      if (firstFewLines.Count == 0)
+        return null; // there is no line to analyze
+
+      // Analyze the whitespace structure of the lines first, find out if there is a fixed column width
+
+
+      for(int i=0;i<firstFewLines.Count;i++)
+        result.Add(new AsciiLineAnalyzer(i, firstFewLines[i]));
+
       if(result.Count==0)
         return null; // there is nothing to analyze
 

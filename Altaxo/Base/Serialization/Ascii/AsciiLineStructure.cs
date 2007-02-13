@@ -21,6 +21,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 
 namespace Altaxo.Serialization.Ascii
 {
@@ -32,19 +33,19 @@ namespace Altaxo.Serialization.Ascii
     /// <summary>
     /// The structure of the line. This list holds <see cref="System.Type" /> values that represent the recognized items in the line.
     /// </summary>
-    protected System.Collections.ArrayList mylist = new System.Collections.ArrayList();
+    protected List<Type> _recognizedTypes = new List<Type>();
     /// <summary>The line number of the ascii file that is represented by this instance.</summary>
     protected int m_LineNumber;
-    protected bool m_ContainsDBNull=false;
+    protected bool m_ContainsDBNull;
 
     /// <summary>
     /// If true, the cached data in this class are invalid and needs to be recalculated. 
     /// </summary>
     protected bool m_CachedDataInvalid=true;
-    protected int m_Priority=0;
-    protected int m_HashValue=0;
-    protected int m_CountDecimalSeparatorDot=0; // used for statistics of use of decimal separator
-    protected int m_CountDecimalSeparatorComma=0; // used for statistics of use of decimal separator
+    protected int m_Priority;
+    protected int m_HashValue;
+    protected int m_CountDecimalSeparatorDot; // used for statistics of use of decimal separator
+    protected int m_CountDecimalSeparatorComma; // used for statistics of use of decimal separator
 
     static char[] sm_ExponentChars = { 'e', 'E' };
 
@@ -56,7 +57,7 @@ namespace Altaxo.Serialization.Ascii
     {
       get
       {
-        return mylist.Count;
+        return _recognizedTypes.Count;
       }
     }
 
@@ -66,7 +67,7 @@ namespace Altaxo.Serialization.Ascii
     /// <param name="o">The recognized item represented by its type, i.e. typeof(double) represents a recognized double number.</param>
     public void Add(System.Type o)
     {
-      mylist.Add(o);
+      _recognizedTypes.Add(o);
       m_CachedDataInvalid=true;
     }
 
@@ -101,11 +102,11 @@ namespace Altaxo.Serialization.Ascii
     {
       get
       {
-        return (System.Type)mylist[i];
+        return _recognizedTypes[i];
       }
       set
       {
-        mylist[i]=value;
+        _recognizedTypes[i]=value;
         m_CachedDataInvalid=true;
       }
     }

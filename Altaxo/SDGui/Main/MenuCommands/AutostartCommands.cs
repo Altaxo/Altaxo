@@ -46,6 +46,7 @@ namespace Altaxo.Main.Commands // ICSharpCode.SharpDevelop.Commands
     
     public override void Run()
     {
+      Altaxo.Current.SetPropertyService(new PropertyServiceWrapper());
       Altaxo.Current.SetResourceService(new ResourceServiceWrapper());      
       Altaxo.Current.SetProjectService( new Altaxo.Main.ProjectService() );
       Altaxo.Current.SetGUIFactoryService(new Altaxo.Main.Services.GUIFactoryService());
@@ -74,6 +75,18 @@ namespace Altaxo.Main.Commands // ICSharpCode.SharpDevelop.Commands
       public System.Drawing.Bitmap GetBitmap(string name)
       {
         return ICSharpCode.Core.ResourceService.GetBitmap(name);
+      }
+    }
+
+
+    private class PropertyServiceWrapper : Altaxo.Main.Services.IPropertyService
+    {
+      public string ConfigDirectory
+      {
+        get
+        {
+          return ICSharpCode.Core.PropertyService.ConfigDirectory;
+        }
       }
     }
   }

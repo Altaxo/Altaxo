@@ -29,7 +29,7 @@
     </UpgradeBackupLocation>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <OutputPath>..\rtdebug\bin\</OutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <BaseAddress>285212672</BaseAddress>
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
@@ -417,14 +417,18 @@
   <PropertyGroup>
     <PreBuildEvent>
     </PreBuildEvent>
-    <PostBuildEvent>if not exist ..\data mkdir  ..\data
-xcopy $(ProjectDir)data\*.* ..\data /E /I /Y
-
-if not exist ..\doc mkdir  ..\doc
-xcopy $(ProjectDir)doc\*.* ..\doc /E /I /Y
-
+    <PostBuildEvent>if not exist ..\..\..\rt$(ConfigurationName)\bin mkdir  ..\..\..\rt$(ConfigurationName)\bin
+xcopy ..\..\AddIns\*.* ..\..\..\rt$(ConfigurationName)\AddIns /E /I /Y
+xcopy ..\..\data\*.* ..\..\..\rt$(ConfigurationName)\data /E /I /Y
+xcopy ..\..\doc\*.* ..\..\..\rt$(ConfigurationName)\doc /E /I /Y
 rem Dont forget to copy the 
-copy $(ProjectDir)..\Libraries\bin\Interop.SHDocVw.dll $(TargetDir)
+copy ..\..\..\Libraries\bin\Interop.SHDocVw.dll ..\..\..\rt$(ConfigurationName)\bin
+
+rem copy the HelpConverter.exe and .pdb to the bin directory
+copy HelpConverter.* ..\..\..\rt$(ConfigurationName)\bin
+
+rem Update the build version of the main important assemblies
+rem ..\..\..\Libraries\bin\AssemblySvnVersion ..\..\..\  ..\..\..\Altaxo\Startup\AssemblyInfo.cs ..\..\..\Altaxo\Core\AssemblyInfo.cs ..\..\..\Altaxo\SDGui\AssemblyInfo.cs ..\..\..\Altaxo\Base\AssemblyInfo.cs
 </PostBuildEvent>
   </PropertyGroup>
 </Project>

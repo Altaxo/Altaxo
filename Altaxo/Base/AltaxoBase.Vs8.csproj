@@ -27,14 +27,14 @@
     </UpgradeBackupLocation>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <OutputPath>..\..\rtdebug\bin\</OutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <BaseAddress>285212672</BaseAddress>
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DocumentationFile>..\..\rtdebug\bin\AltaxoBase.xml</DocumentationFile>
+    <DocumentationFile>bin\Debug\AltaxoBase.xml</DocumentationFile>
     <DebugSymbols>true</DebugSymbols>
     <FileAlignment>4096</FileAlignment>
     <NoStdLib>false</NoStdLib>
@@ -107,10 +107,6 @@
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
-    <ProjectReference Include="..\..\Libraries\ICSharpCode.Core\Project\ICSharpCode.Core.csproj">
-      <Project>{35CEF10F-2D4C-45F2-9DD1-161E0FEC583C}</Project>
-      <Name>ICSharpCode.Core</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Libraries\Numerator\zNumerator.csproj">
       <Project>{1CFDD727-D2B7-4521-AF53-D24EA4C69176}</Project>
       <Name>zNumerator</Name>
@@ -1406,7 +1402,9 @@
     <Compile Include="Gui\UserControllerForObjectAttribute.cs" />
     <Compile Include="Main\EventSuppressor.cs" />
     <Compile Include="Main\InstanceChangedEvent.cs" />
+    <Compile Include="Main\Services\IPropertyService.cs" />
     <Compile Include="Scripting\ProgramInstanceScript.cs" />
+    <Compile Include="Serialization\Ascii\AsciiSeparationAnalyzer.cs" />
     <Compile Include="Serialization\LengthUnit.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -1421,7 +1419,6 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>rem ..\..\..\..\Libraries\bin\AssemblySvnVersion ..\..\..\..\  ..\..\AssemblyInfo.cs</PreBuildEvent>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <PostBuildEvent>copy AltaxoBase.??? ..\..\..\..\rt$(ConfigurationName)\bin</PostBuildEvent>
   </PropertyGroup>
 </Project>

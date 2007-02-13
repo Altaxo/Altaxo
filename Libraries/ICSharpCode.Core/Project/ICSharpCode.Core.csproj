@@ -1,4 +1,4 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -12,7 +12,7 @@
     <NoConfig>False</NoConfig>
     <OutputType>Library</OutputType>
     <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>..\..\ICSharpCode.SharpDevelop.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>Resources\ICSharpCode.Core.snk</AssemblyOriginatorKeyFile>
     <BaseAddress>83886080</BaseAddress>
     <RunPostBuildEvent>Always</RunPostBuildEvent>
     <DelaySign>False</DelaySign>
@@ -22,11 +22,11 @@
     <DebugSymbols>true</DebugSymbols>
     <Optimize>False</Optimize>
     <DebugType>Full</DebugType>
-    <DocumentationFile>..\..\..\rtdebug\bin\ICSharpCode.Core.xml</DocumentationFile>
+    <DocumentationFile>bin\debug\ICSharpCode.Core.xml</DocumentationFile>
     <NoWarn>1591</NoWarn>
     <DefineConstants>DEBUG;ModifiedForAltaxo</DefineConstants>
     <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
-    <OutputPath>..\..\..\rtdebug\bin\</OutputPath>
+    <OutputPath>bin\debug\</OutputPath>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\ICSharpCode.Core.doc" />
+    <None Include="Resources\ICSharpCode.Core.snk" />
     <Compile Include="Configuration\AssemblyInfo.cs" />
     <Compile Include="Src\AddInTree\AddIn\AddIn.cs" />
     <Compile Include="Src\AddInTree\AddIn\AddInLoadException.cs" />

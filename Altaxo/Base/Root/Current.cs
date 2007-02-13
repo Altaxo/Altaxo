@@ -53,6 +53,8 @@ namespace Altaxo
 
     private static Altaxo.Main.Services.GUIFactoryService sm_theGUIFactoryService;
 
+    private static Altaxo.Main.Services.IPropertyService sm_thePropertyService;
+
     private static Altaxo.Main.Services.IResourceService sm_theResourceService;
 
     private static Altaxo.Main.Services.IFitFunctionService sm_theFitFunctionService;
@@ -106,6 +108,15 @@ namespace Altaxo
     {
       get { return sm_theGUIFactoryService; }
     }
+
+    /// <summary>
+    /// Returns the property service, which is used to obtain application settings.
+    /// </summary>
+    public static Altaxo.Main.Services.IPropertyService PropertyService
+    {
+      get { return sm_thePropertyService; }
+    }
+
 
     /// <summary>
     /// Returns the resource service, which is used to obtain resource strings.
@@ -198,6 +209,20 @@ namespace Altaxo
         throw new ApplicationException("The printing service can not be re-set to another value, only initialized for the first time!");
 
     }
+
+
+    /// <summary>
+    /// Sets the property service.
+    /// </summary>
+    /// <param name="resourceservice">The instance of property service to use in this application.</param>
+    public static void SetPropertyService(Altaxo.Main.Services.IPropertyService service)
+    {
+      if (null == sm_thePropertyService)
+        sm_thePropertyService = service;
+      else
+        throw new ApplicationException("The property service can not be re-set to another value, only initialized for the first time!");
+    }
+
 
     /// <summary>
     /// Sets the resource service.
