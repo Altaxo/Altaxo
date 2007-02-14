@@ -24,30 +24,38 @@ using System;
 
 namespace Altaxo.Serialization.Ascii
 {
+  /// <summary>
+  /// Denotes options about how to import data from an ascii text file.
+  /// </summary>
   public class AsciiImportOptions
   {
-    public bool bRenameColumns; /// rename the columns if 1st line contain  the column names
-    public bool bRenameWorksheet; // rename the worksheet to the data file name
+    /// <summary>If true, rename the columns if 1st line contain  the column names.</summary>
+    public bool RenameColumns; 
+    /// <summary>If true, rename the worksheet to the data file name.</summary>
+    public bool RenameWorksheet;
 
-    public int nMainHeaderLines; // lines to skip (the main header)
-    public bool bDelimited;      // true if delimited by a single char
-    public char cDelimiter;      // the delimiter char
-
-    public int m_DecimalSeparatorDotCount=0;
-    public int m_DecimalSeparatorCommaCount=0;
+    /// <summary>Number of lines to skip (the main header).</summary>
+    public int NumberOfMainHeaderLines;
 
 
-    public AsciiLineStructure recognizedStructure=null;
+    /// <summary>Number of dots that act as decimal separator in numeric strings.</summary>
+    public int DecimalSeparatorDotCount;
+    /// <summary>Number of commas that act as decimal separator in numeric strings.</summary>
+    public int DecimalSeparatorCommaCount;
+
+    /// <summary>Method to separate the tokens in each line of ascii text.</summary>
+    public IAsciiSeparationStrategy SeparationStrategy;      
+
+    /// <summary>Structur of the file (which data type is placed in which column).</summary>
+    public AsciiLineStructure RecognizedStructure;
 
 
 
 
+    /// <summary>Clones the options. This is a shallow copy, so the class members are not cloned.</summary>
     public AsciiImportOptions Clone()
     {
       return (AsciiImportOptions)MemberwiseClone();
     }
-
   }
-
-
 }

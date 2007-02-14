@@ -25,13 +25,21 @@ using System.Collections.Generic;
 
 namespace Altaxo.Serialization.Ascii
 {
+  /// <summary>
+  /// Central class for import of ascii data.
+  /// </summary>
   public class AsciiImporter
   {
-    protected System.IO.Stream stream;
+    protected System.IO.Stream _stream;
 
-    public AsciiImporter(System.IO.Stream _stream)
+    /// <summary>
+    /// Constructor. You have to provide a stream here. Afterwards, you must call one of the methods, for instance
+    /// Analyze if you are not sure about the structure of the ascii data, or ImportAscii if you know the import options.
+    /// </summary>
+    /// <param name="stream">Stream. This stream must be readable, and seekable.</param>
+    public AsciiImporter(System.IO.Stream stream)
     {
-      this.stream = _stream;
+      this._stream = stream;
     }
 
 
@@ -42,26 +50,26 @@ namespace Altaxo.Serialization.Ascii
     /// <param name="bestLine"></param>
     /// <param name="sep"></param>
     /// <returns></returns>
-    public static int GetPriorityOf(System.Collections.ArrayList result, AsciiLineAnalyzer.Separation sep, ref AsciiLineStructure bestLine)
+    public static int GetPriorityOf(List<AsciiLineAnalysis> result, IAsciiSeparationStrategy sep, ref AsciiLineStructure bestLine)
     {
-      System.Collections.Hashtable sl = new System.Collections.Hashtable();
+      Dictionary<int, int> sl = new Dictionary<int, int>();
       bestLine=null;
       for(int i=0;i<result.Count;i++)
       {
-        AsciiLineAnalyzer ala = (AsciiLineAnalyzer)result[i];
-        int p  = ((AsciiLineAnalyzer)result[i]).structure[(int)sep].GetHashCode(); // and hash code
-        if(null==sl[p])
-          sl.Add(p,1);
-        else 
-          sl[p] = 1+(int)sl[p];
+        AsciiLineAnalysis ala = result[i];
+        int p  = ala.Structures[sep].GetHashCode(); // and hash code
+        if(sl.ContainsKey(p))
+          sl[p] = 1+sl[p];
+        else
+          sl.Add(p, 1);
       }
       // get the count with the topmost frequency
       int nNumberOfMaxSame = 0;
       int nHashOfMaxSame = 0;
-      foreach(System.Collections.DictionaryEntry ohash in sl)
+      foreach(KeyValuePair<int,int> ohash in sl)
       {
-        int hash = (int)ohash.Key;
-        int cnt = (int)ohash.Value;
+        int hash = ohash.Key;
+        int cnt = ohash.Value;
         if(nNumberOfMaxSame<cnt)
         {
           nNumberOfMaxSame  = cnt;
@@ -72,14 +80,14 @@ namespace Altaxo.Serialization.Ascii
       int nMaxPriorityOfMaxSame=0;
       for(int i=0;i<result.Count;i++)
       {
-        AsciiLineAnalyzer ala = (AsciiLineAnalyzer)result[i];
-        if(nHashOfMaxSame == ((AsciiLineAnalyzer)result[i]).structure[(int)sep].GetHashCode())
+        AsciiLineAnalysis ala = result[i];
+        if(nHashOfMaxSame == result[i].Structures[sep].GetHashCode())
         {
-          int prty = ((AsciiLineAnalyzer)result[i]).structure[(int)sep].Priority;
+          int prty = result[i].Structures[sep].Priority;
           if(prty>nMaxPriorityOfMaxSame)
           {
             nMaxPriorityOfMaxSame = prty;
-            bestLine = ((AsciiLineAnalyzer)result[i]).structure[(int)sep];
+            bestLine = result[i].Structures[sep];
           }
         }// if
       } // for
@@ -98,9 +106,9 @@ namespace Altaxo.Serialization.Ascii
 
       string sLine;
 
-      stream.Position = 0;
-      System.IO.StreamReader sr = new System.IO.StreamReader(stream,System.Text.Encoding.Default,true);
-      System.Collections.ArrayList result = new System.Collections.ArrayList();
+      _stream.Position = 0;
+      System.IO.StreamReader sr = new System.IO.StreamReader(_stream,System.Text.Encoding.Default,true);
+      List<AsciiLineAnalysis> result = new List<AsciiLineAnalysis>();
 
       List<string> firstFewLines = new List<string>();
       for(int i=0;i<nLines;i++)
@@ -114,152 +122,87 @@ namespace Altaxo.Serialization.Ascii
         return null; // there is no line to analyze
 
       // Analyze the whitespace structure of the lines first, find out if there is a fixed column width
+      AsciiGlobalStructureAnalysis globalStructure = new AsciiGlobalStructureAnalysis(firstFewLines);
+      List<IAsciiSeparationStrategy> separationStrategies = new List<IAsciiSeparationStrategy>();
 
+      if(globalStructure.ContainsTabs)
+        separationStrategies.Add(new SingleCharSeparationStrategy('\t'));
+      if(globalStructure.ContainsCommas)
+        separationStrategies.Add(new SingleCharSeparationStrategy(','));
+      if(globalStructure.ContainsSemicolons)
+        separationStrategies.Add(new SingleCharSeparationStrategy(';'));
+      if (globalStructure.FixedBoundaries != null)
+      {
+        if(globalStructure.RecognizedTabSize==1)
+          separationStrategies.Add(new FixedColumnWidthWithoutTabSeparationStrategy(globalStructure.FixedBoundaries));
+        else
+          separationStrategies.Add(new FixedColumnWidthWithTabSeparationStrategy(globalStructure.FixedBoundaries, globalStructure.RecognizedTabSize));
+      }
+      if (separationStrategies.Count == 0)
+        separationStrategies.Add(new SkipWhiteSpaceSeparationStrategy());
 
       for(int i=0;i<firstFewLines.Count;i++)
-        result.Add(new AsciiLineAnalyzer(i, firstFewLines[i]));
+        result.Add(new AsciiLineAnalysis(i, firstFewLines[i],separationStrategies));
 
       if(result.Count==0)
         return null; // there is nothing to analyze
 
-      // now view the results
-      // calc the frequency o
-      System.Collections.SortedList sl= new System.Collections.SortedList();
-      int nItems;
-      // first the tabs
 
-      /*
-      sl.Clear();
-      for(int i=0;i<result.Count;i++)
-      {
-        nItems = ((AsciiLineAnalyzer)result[i]).nNumberOfTabs;
-        if(0!=nItems)
-        {
-          if(null==sl[nItems])
-            sl.Add(nItems,1);
-          else 
-            sl[nItems] = 1+(int)sl[nItems];
-        }
-      }
-      // get the tab count with the topmost frequency
-      int nMaxNumberOfSameTabs = 0;
-      int nMaxTabsOfSameNumber = 0;
-      for(int i=0;i<sl.Count;i++)
-      {
-        if(nMaxNumberOfSameTabs<(int)sl.GetByIndex(i))
-        {
-          nMaxNumberOfSameTabs = (int)sl.GetByIndex(i);
-          nMaxTabsOfSameNumber = (int)sl.GetKey(i);
-        }
-      }
-*/
-      
-      
-      // Count the commas
-      sl.Clear();
-      for(int i=0;i<result.Count;i++)
-      {
-        nItems = ((AsciiLineAnalyzer)result[i]).nNumberOfCommas;
-        if(0!=nItems)
-        {
-          if(null==sl[nItems])
-            sl.Add(nItems,1);
-          else 
-            sl[nItems] = 1+(int)sl[nItems];
-        }
-      }
-      // get the comma count with the topmost frequency
-      int nMaxNumberOfSameCommas = 0;
-      int nMaxCommasOfSameNumber = 0;
-      for(int i=0;i<sl.Count;i++)
-      {
-        if(nMaxNumberOfSameCommas<(int)sl.GetByIndex(i))
-        {
-          nMaxNumberOfSameCommas = (int)sl.GetByIndex(i);
-          nMaxCommasOfSameNumber = (int)sl.GetKey(i);
-        }
-      }
 
-      // Count the semicolons
-      sl.Clear();
-      for(int i=0;i<result.Count;i++)
-      {
-        nItems = ((AsciiLineAnalyzer)result[i]).nNumberOfSemicolons;
-        if(0!=nItems)
-        {
-          if(null==sl[nItems])
-            sl.Add(nItems,1);
-          else 
-            sl[nItems] = 1+(int)sl[nItems];
-        }
-      }
-      // get the tab count with the topmost frequency
-      int nMaxNumberOfSameSemicolons = 0;
-      int nMaxSemicolonsOfSameNumber = 0;
-      for(int i=0;i<sl.Count;i++)
-      {
-        if(nMaxNumberOfSameSemicolons<(int)sl.GetByIndex(i))
-        {
-          nMaxNumberOfSameSemicolons = (int)sl.GetByIndex(i);
-          nMaxSemicolonsOfSameNumber = (int)sl.GetKey(i);
-        }
-      }
+      Dictionary<IAsciiSeparationStrategy,NumberAndStructure> st = new Dictionary<IAsciiSeparationStrategy,NumberAndStructure>();
 
-    
-      NumberAndStructure[] st = new NumberAndStructure[3];
-
-      for(int i=0;i<3;i++)
+      foreach (IAsciiSeparationStrategy strat in result[0].Structures.Keys)
       {
-        st[i].nLines = GetPriorityOf(result,(AsciiLineAnalyzer.Separation)i,ref st[i].structure);
+        NumberAndStructure value = new NumberAndStructure();
+        value.NumberOfLines = GetPriorityOf(result, strat, ref value.LineStructure);
+        st.Add(strat, value);
       }
 
       // look for the top index
-    
       int nMaxLines = int.MinValue;
       double maxprtylines=0;
-      int nBestSeparator = int.MinValue;
-      for(int i=0;i<3;i++)
+      IAsciiSeparationStrategy bestSeparationStragegy = null;
+      foreach(KeyValuePair<IAsciiSeparationStrategy,NumberAndStructure> entry in st)
       {
-        double prtylines = (double)st[i].nLines * st[i].structure.Priority;
+        double prtylines = (double)entry.Value.NumberOfLines * entry.Value.LineStructure.Priority;
         if(prtylines==maxprtylines)
         {
-          if(st[i].nLines > nMaxLines)
+          if(entry.Value.NumberOfLines > nMaxLines)
           {
-            nMaxLines = st[i].nLines;
-            nBestSeparator = i;
+            nMaxLines = entry.Value.NumberOfLines;
+            bestSeparationStragegy = entry.Key;
           }
         }
         else if(prtylines>maxprtylines)
         {
           maxprtylines = prtylines;
-          nBestSeparator = i;
-          nMaxLines=st[i].nLines;
+          bestSeparationStragegy = entry.Key;
+          nMaxLines=entry.Value.NumberOfLines;
         }
       }
 
       AsciiImportOptions opt = defaultImportOptions.Clone();
       
-      opt.bDelimited = true;
-      opt.cDelimiter = nBestSeparator==0 ? '\t' : (nBestSeparator==1 ? ',' : ';');
-      opt.recognizedStructure = st[nBestSeparator].structure;
+      opt.SeparationStrategy = bestSeparationStragegy;
+      opt.RecognizedStructure = st[bestSeparationStragegy].LineStructure;
 
 
       // look how many header lines are in the file by comparing the structure of the first lines  with the recognized structure
       for(int i=0;i<result.Count;i++)
       {
-        opt.nMainHeaderLines=i;
-        if(((AsciiLineAnalyzer)result[i]).structure[nBestSeparator].IsCompatibleWith(opt.recognizedStructure))
+        opt.NumberOfMainHeaderLines=i;
+        if(result[i].Structures[bestSeparationStragegy].IsCompatibleWith(opt.RecognizedStructure))
           break;
       }
 
 
       // calculate the total statistics of decimal separators
-      opt.m_DecimalSeparatorCommaCount=0;
-      opt.m_DecimalSeparatorDotCount=0;
+      opt.DecimalSeparatorCommaCount=0;
+      opt.DecimalSeparatorDotCount=0;
       for(int i=0;i<result.Count;i++)
       {
-        opt.m_DecimalSeparatorDotCount += ((AsciiLineAnalyzer)result[i]).structure[nBestSeparator].DecimalSeparatorDotCount;
-        opt.m_DecimalSeparatorCommaCount += ((AsciiLineAnalyzer)result[i]).structure[nBestSeparator].DecimalSeparatorCommaCount;
+        opt.DecimalSeparatorDotCount += result[i].Structures[bestSeparationStragegy].DecimalSeparatorDotCount;
+        opt.DecimalSeparatorCommaCount += result[i].Structures[bestSeparationStragegy].DecimalSeparatorCommaCount;
       }
 
 
@@ -272,23 +215,23 @@ namespace Altaxo.Serialization.Ascii
     public void ImportAscii(AsciiImportOptions impopt, Altaxo.Data.DataTable table)
     {
       string sLine;
-      stream.Position=0; // rewind the stream to the beginning
-      System.IO.StreamReader sr = new System.IO.StreamReader(stream,System.Text.Encoding.Default,true);
+      _stream.Position=0; // rewind the stream to the beginning
+      System.IO.StreamReader sr = new System.IO.StreamReader(_stream,System.Text.Encoding.Default,true);
       Altaxo.Data.DataColumnCollection newcols = new Altaxo.Data.DataColumnCollection();
     
       Altaxo.Data.DataColumnCollection newpropcols = new Altaxo.Data.DataColumnCollection();
 
       // in case a structure is provided, allocate already the columsn
       
-      if(null!=impopt.recognizedStructure)
+      if(null!=impopt.RecognizedStructure)
       {
-        for(int i=0;i<impopt.recognizedStructure.Count;i++)
+        for(int i=0;i<impopt.RecognizedStructure.Count;i++)
         {
-          if(impopt.recognizedStructure[i]==typeof(Double))
+          if(impopt.RecognizedStructure[i]==typeof(Double))
             newcols.Add(new Altaxo.Data.DoubleColumn());
-          else if(impopt.recognizedStructure[i]==typeof(DateTime))
+          else if(impopt.RecognizedStructure[i]==typeof(DateTime))
             newcols.Add(new Altaxo.Data.DateTimeColumn());
-          else if(impopt.recognizedStructure[i]==typeof(string))
+          else if(impopt.RecognizedStructure[i]==typeof(string))
             newcols.Add(new Altaxo.Data.TextColumn());
           else
             newcols.Add(new Altaxo.Data.DBNullColumn());;
@@ -296,27 +239,27 @@ namespace Altaxo.Serialization.Ascii
       }
 
       // add also additional property columns if not enough there
-      if(impopt.nMainHeaderLines>1) // if there are more than one header line, allocate also property columns
+      if(impopt.NumberOfMainHeaderLines>1) // if there are more than one header line, allocate also property columns
       {
-        int toAdd = impopt.nMainHeaderLines-1;
+        int toAdd = impopt.NumberOfMainHeaderLines-1;
         for(int i=0;i<toAdd;i++)
           newpropcols.Add(new Data.TextColumn());
       }
 
       // if decimal separator statistics is provided by impopt, create a number format info object
       System.Globalization.NumberFormatInfo numberFormatInfo=null;
-      if(impopt.m_DecimalSeparatorCommaCount>0 || impopt.m_DecimalSeparatorDotCount>0)
+      if(impopt.DecimalSeparatorCommaCount>0 || impopt.DecimalSeparatorDotCount>0)
       {
         numberFormatInfo = (System.Globalization.NumberFormatInfo)System.Globalization.NumberFormatInfo.CurrentInfo.Clone();
 
         // analyse the statistics
-        if(impopt.m_DecimalSeparatorCommaCount>impopt.m_DecimalSeparatorDotCount) // the comma is the decimal separator
+        if(impopt.DecimalSeparatorCommaCount>impopt.DecimalSeparatorDotCount) // the comma is the decimal separator
         {
           numberFormatInfo.NumberDecimalSeparator=",";
           if(numberFormatInfo.NumberGroupSeparator==numberFormatInfo.NumberDecimalSeparator)
             numberFormatInfo.NumberGroupSeparator=""; // in case now the group separator is also comma, remove the group separator
         }
-        else if(impopt.m_DecimalSeparatorCommaCount<impopt.m_DecimalSeparatorDotCount) // the comma is the decimal separator
+        else if(impopt.DecimalSeparatorCommaCount<impopt.DecimalSeparatorDotCount) // the comma is the decimal separator
         {
           numberFormatInfo.NumberDecimalSeparator=".";
           if(numberFormatInfo.NumberGroupSeparator==numberFormatInfo.NumberDecimalSeparator)
@@ -328,20 +271,18 @@ namespace Altaxo.Serialization.Ascii
         numberFormatInfo = System.Globalization.NumberFormatInfo.CurrentInfo;
       }
 
-
-      char [] splitchar = new char[]{impopt.cDelimiter};
-
       // first of all, read the header if existent
-      for(int i=0;i<impopt.nMainHeaderLines;i++)
+      for(int i=0;i<impopt.NumberOfMainHeaderLines;i++)
       {
         sLine = sr.ReadLine();
         if(null==sLine) break;
 
-        string[] substr = sLine.Split(splitchar);
-        int cnt = substr.Length;
-        for(int k=0;k<cnt;k++)
+        int k=-1;
+        foreach(string token in impopt.SeparationStrategy.GetTokens(sLine))
         {
-          if(substr[k].Length==0)
+          k++;
+          string ttoken = token.Trim();
+          if(string.IsNullOrEmpty(ttoken))
             continue;
 
           if(k>=newcols.ColumnCount)
@@ -349,40 +290,48 @@ namespace Altaxo.Serialization.Ascii
         
           if(i==0) // is it the column name line
           {
-            newcols.SetColumnName(k, substr[k]);
+            newcols.SetColumnName(k, ttoken);
           }
           else // this are threated as additional properties
           {
-            ((Data.DataColumn)newpropcols[i-1])[k] = substr[k]; // set the properties
+            ((Data.DataColumn)newpropcols[i-1])[k] = ttoken; // set the properties
           }
         }
       }
       
+
+      // now the data lines
       for(int i=0;true;i++)
       {
         sLine = sr.ReadLine();
-        if(null==sLine) break;
+        if(null==sLine)
+          break;
 
-        string[] substr = sLine.Split(splitchar);
-        int cnt = Math.Min(substr.Length,newcols.ColumnCount);
-        for(int k=0;k<cnt;k++)
+        int maxcolumns = newcols.ColumnCount;
+
+        int k = -1;
+        foreach(string token in impopt.SeparationStrategy.GetTokens(sLine))
         {
-          if(substr[k].Length==0)
+          k++;
+          if (k >= maxcolumns)
+            break;
+
+          if(string.IsNullOrEmpty(token))
             continue;
 
           if(newcols[k] is Altaxo.Data.DoubleColumn)
           {
-            try { ((Altaxo.Data.DoubleColumn)newcols[k])[i] = System.Convert.ToDouble(substr[k],numberFormatInfo); }
+            try { ((Altaxo.Data.DoubleColumn)newcols[k])[i] = System.Convert.ToDouble(token,numberFormatInfo); }
             catch {}
           }
           else if( newcols[k] is Altaxo.Data.DateTimeColumn)
           {
-            try { ((Altaxo.Data.DateTimeColumn)newcols[k])[i] = System.Convert.ToDateTime(substr[k]); }
+            try { ((Altaxo.Data.DateTimeColumn)newcols[k])[i] = System.Convert.ToDateTime(token); }
             catch {}
           }
           else if( newcols[k] is Altaxo.Data.TextColumn)
           {
-            ((Altaxo.Data.TextColumn)newcols[k])[i] = substr[k];
+            ((Altaxo.Data.TextColumn)newcols[k])[i] = token.Trim();
           }
           else if(null==newcols[k] || newcols[k] is Altaxo.Data.DBNullColumn)
           {
@@ -392,7 +341,7 @@ namespace Altaxo.Serialization.Ascii
 
             try
             { 
-              val = System.Convert.ToDouble(substr[k]);
+              val = System.Convert.ToDouble(token);
               bConverted=true;
             }
             catch
@@ -408,7 +357,7 @@ namespace Altaxo.Serialization.Ascii
             {
               try
               { 
-                valDateTime = System.Convert.ToDateTime(substr[k]);
+                valDateTime = System.Convert.ToDateTime(token);
                 bConverted=true;
               }
               catch
@@ -424,7 +373,7 @@ namespace Altaxo.Serialization.Ascii
               else
               {
                 Altaxo.Data.TextColumn newc = new Altaxo.Data.TextColumn();
-                newc[i]=substr[k];
+                newc[i]=token;
                 newcols.Replace(k,newc);
               }
             } // end outer if null==newcol

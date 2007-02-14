@@ -612,9 +612,6 @@
     <Compile Include="Serialization\Ascii\AsciiImportOptions.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Serialization\Ascii\AsciiLineAnalyzer.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Serialization\Ascii\AsciiLineStructure.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -1404,7 +1401,9 @@
     <Compile Include="Main\InstanceChangedEvent.cs" />
     <Compile Include="Main\Services\IPropertyService.cs" />
     <Compile Include="Scripting\ProgramInstanceScript.cs" />
-    <Compile Include="Serialization\Ascii\AsciiSeparationAnalyzer.cs" />
+    <Compile Include="Serialization\Ascii\AsciiGlobalStructureAnalysis.cs" />
+    <Compile Include="Serialization\Ascii\AsciiLineAnalysis.cs" />
+    <Compile Include="Serialization\Ascii\AsciiSeparationStrategy.cs" />
     <Compile Include="Serialization\LengthUnit.cs" />
   </ItemGroup>
   <ItemGroup>

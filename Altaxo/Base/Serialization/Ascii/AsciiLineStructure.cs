@@ -35,19 +35,19 @@ namespace Altaxo.Serialization.Ascii
     /// </summary>
     protected List<Type> _recognizedTypes = new List<Type>();
     /// <summary>The line number of the ascii file that is represented by this instance.</summary>
-    protected int m_LineNumber;
-    protected bool m_ContainsDBNull;
+    protected int _lineNumber;
+    protected bool _containsDBNull;
 
     /// <summary>
     /// If true, the cached data in this class are invalid and needs to be recalculated. 
     /// </summary>
-    protected bool m_CachedDataInvalid=true;
-    protected int m_Priority;
-    protected int m_HashValue;
-    protected int m_CountDecimalSeparatorDot; // used for statistics of use of decimal separator
-    protected int m_CountDecimalSeparatorComma; // used for statistics of use of decimal separator
+    protected bool _isCachedDataInvalid=true;
+    protected int _priorityValue;
+    protected int _hashValue;
+    protected int _countDecimalSeparatorDot; // used for statistics of use of decimal separator
+    protected int _countDecimalSeparatorComma; // used for statistics of use of decimal separator
 
-    static char[] sm_ExponentChars = { 'e', 'E' };
+    static char[] __exponentChars = { 'e', 'E' };
 
 
     /// <summary>
@@ -68,7 +68,7 @@ namespace Altaxo.Serialization.Ascii
     public void Add(System.Type o)
     {
       _recognizedTypes.Add(o);
-      m_CachedDataInvalid=true;
+      _isCachedDataInvalid=true;
     }
 
 
@@ -80,7 +80,7 @@ namespace Altaxo.Serialization.Ascii
     /// the two dots counts here.</remarks>
     public int DecimalSeparatorDotCount
     {
-      get { return m_CountDecimalSeparatorDot; }
+      get { return _countDecimalSeparatorDot; }
     }
 
     /// <summary>
@@ -91,7 +91,7 @@ namespace Altaxo.Serialization.Ascii
     /// the two commas counts here.</remarks>
     public int DecimalSeparatorCommaCount
     {
-      get { return m_CountDecimalSeparatorComma; }
+      get { return _countDecimalSeparatorComma; }
     }
 
 
@@ -107,7 +107,7 @@ namespace Altaxo.Serialization.Ascii
       set
       {
         _recognizedTypes[i]=value;
-        m_CachedDataInvalid=true;
+        _isCachedDataInvalid=true;
       }
     }
     
@@ -118,11 +118,11 @@ namespace Altaxo.Serialization.Ascii
     {
       get
       {
-        return m_LineNumber;
+        return _lineNumber;
       }
       set
       {
-        m_LineNumber=value;
+        _lineNumber=value;
       }
     }
 
@@ -130,9 +130,9 @@ namespace Altaxo.Serialization.Ascii
     {
       get
       {
-        if(m_CachedDataInvalid)
+        if(_isCachedDataInvalid)
           CalculateCachedData();
-        return m_ContainsDBNull;
+        return _containsDBNull;
       }
     }
 
@@ -140,48 +140,48 @@ namespace Altaxo.Serialization.Ascii
     {
       get
       {
-        if(m_CachedDataInvalid)
+        if(_isCachedDataInvalid)
           CalculateCachedData();
-        return m_Priority;
+        return _priorityValue;
       }
     }
     
     protected void CalculateCachedData()
     {
-      m_CachedDataInvalid = false;
+      _isCachedDataInvalid = false;
 
       // Calculate priority and hash
 
       int len = Count;
-      m_Priority = 0;
+      _priorityValue = 0;
       for(int i=0;i<len;i++)
       {
         Type t = (Type) this[i];
         if(t==typeof(DateTime))
-          m_Priority += 10;
+          _priorityValue += 10;
         else if(t==typeof(Double))
-          m_Priority += 5;
+          _priorityValue += 5;
         else if(t==typeof(String))
-          m_Priority += 2;
+          _priorityValue += 2;
         else if(t==typeof(DBNull))
         {
-          m_Priority += 1;
-          m_ContainsDBNull=true;
+          _priorityValue += 1;
+          _containsDBNull=true;
         }
       } // for
 
       // calculate hash
 
-      m_HashValue = Count.GetHashCode();
+      _hashValue = Count.GetHashCode();
       for(int i=0;i<len;i++)
-        m_HashValue = ((m_HashValue<<1) | 1) ^ this[i].GetHashCode();
+        _hashValue = ((_hashValue<<1) | 1) ^ this[i].GetHashCode();
     }
 
     public override int GetHashCode()
     {
-      if(m_CachedDataInvalid)
+      if(_isCachedDataInvalid)
         CalculateCachedData();
-      return m_HashValue;
+      return _hashValue;
     }
     public bool IsCompatibleWith(AsciiLineStructure ano)
     {
@@ -220,29 +220,29 @@ namespace Altaxo.Serialization.Ascii
 
       if(ds>=0 && de!=ds)
       {
-        m_CountDecimalSeparatorComma++;
+        _countDecimalSeparatorComma++;
       }
       if(cs>=0 && ce!=cs)
       {
-        m_CountDecimalSeparatorDot++;
+        _countDecimalSeparatorDot++;
       }
 
       // if there is only one dot and no comma
       if(ds>=0 && de==ds && cs<0)
       {
-        if(numstring.IndexOfAny(sm_ExponentChars)>0) // if there is one dot, but no comma, and a Exponent char (e, E), than dot is the decimal separator
-          m_CountDecimalSeparatorDot++;
+        if(numstring.IndexOfAny(__exponentChars)>0) // if there is one dot, but no comma, and a Exponent char (e, E), than dot is the decimal separator
+          _countDecimalSeparatorDot++;
         else if((ds>=4 && Char.IsDigit(numstring,ds-4)) || ((ds+4)<numstring.Length && Char.IsDigit(numstring,ds+4)))
-          m_CountDecimalSeparatorDot++;       // analyze the digits before and back, if 4 chars before or back is a digit (no separator), than dot is the decimal separator
+          _countDecimalSeparatorDot++;       // analyze the digits before and back, if 4 chars before or back is a digit (no separator), than dot is the decimal separator
       }
 
       // if there is only one comma and no dot
       if(cs>=0 && ce==cs && ds<0)
       {
-        if(numstring.IndexOfAny(sm_ExponentChars)>0) // if there is one dot, but no comma, and a Exponent char (e, E), than dot is the decimal separator
-          m_CountDecimalSeparatorComma++;
+        if(numstring.IndexOfAny(__exponentChars)>0) // if there is one dot, but no comma, and a Exponent char (e, E), than dot is the decimal separator
+          _countDecimalSeparatorComma++;
         else if((cs>=4 && Char.IsDigit(numstring,cs-4)) || ((cs+4)<numstring.Length && Char.IsDigit(numstring,cs+4)))
-          m_CountDecimalSeparatorComma++;       // analyze the digits before and back, if 4 chars before or back is a digit (no separator), than dot is the decimal separator
+          _countDecimalSeparatorComma++;       // analyze the digits before and back, if 4 chars before or back is a digit (no separator), than dot is the decimal separator
       }
 
     }
@@ -256,10 +256,10 @@ namespace Altaxo.Serialization.Ascii
   public struct NumberAndStructure
   {
     /// <summary>Number of lines that have the same structure.</summary>
-    public int nLines;
+    public int NumberOfLines;
 
     /// <summary>The structure that these lines have.</summary>
-    public AsciiLineStructure structure;
+    public AsciiLineStructure LineStructure;
   } // end class
 
 }

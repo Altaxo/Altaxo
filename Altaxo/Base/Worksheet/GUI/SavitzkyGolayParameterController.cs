@@ -134,6 +134,7 @@ namespace Altaxo.Worksheet.GUI
 
     public void EhValidatingNumberOfPoints(int val)
     {
+      _numberOfPoints = val;
       _polynomialOrder = Math.Min(_polynomialOrder,val);
       _view.InitializePolynomialOrder(_polynomialOrder,val);
       EhValidatingPolynomialOrder(_polynomialOrder);
@@ -141,6 +142,7 @@ namespace Altaxo.Worksheet.GUI
 
     public void EhValidatingPolynomialOrder(int val)
     {
+      _polynomialOrder = val;
       _derivativeOrder = Math.Min(_derivativeOrder,val);
       _view.InitializeDerivativeOrder(_derivativeOrder,val);
       EhValidatingDerivativeOrder(_derivativeOrder);

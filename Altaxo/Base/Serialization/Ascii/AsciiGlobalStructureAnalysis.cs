@@ -26,10 +26,20 @@ using System.Text;
 
 namespace Altaxo.Serialization.Ascii
 {
-  public class AsciiSeparationAnalyzer
+  /// <summary>
+  /// Provides a coarse analysis of the first few lines of the ascii file. This analysis looks for separation chars,
+  /// looks for whitespaces, and if appropriate, tests if there is a structure with fixed column widths.
+  /// </summary>
+  public class AsciiGlobalStructureAnalysis
   {
     /// <summary>True if any of the lines contains a tabulator char.</summary>
     bool _containsTabs;
+
+    /// <summary>True if any of the lines contains a comma char.</summary>
+    bool _containsCommas;
+
+    /// <summary>True if any of the lines contains a semicolon char.</summary>
+    bool _containsSemicolons;
 
     /// <summary>True if any of the lines contains a space char.</summary>
     bool _containsSpaces;
@@ -37,15 +47,77 @@ namespace Altaxo.Serialization.Ascii
     /// <summary>True if any of the lines contains more than one whitespace successively.</summary>
     bool _containsRepeatingWhiteSpaces;
 
+    /// <summary>
+    /// If a fixed column width structure was recognized, this element contains the tabbed start positions of
+    /// the columns, assuming a tab size of <see cref="_recognizedTabSize"/>.
+    /// </summary>
     List<int> _fixedBoundaries;
 
-    int _recognizedTabSize;
+    /// If a fixed column width structure was recognized, this element contains the recognized tab size.
+    int _recognizedTabSize=1;
 
-    public AsciiSeparationAnalyzer(List<string> firstLines)
+
+    /// <summary>True if any of the lines contains a tabulator char.</summary>
+    public bool ContainsTabs
     {
-      _containsTabs = ContainsTabs(firstLines);
-      _containsSpaces = ContainsSpaces(firstLines);
-      _containsRepeatingWhiteSpaces = ContainsRepeatingWhiteSpaces(firstLines);
+      get
+      {
+        return _containsTabs;
+      }
+    }
+
+    /// <summary>True if any of the lines contains a comma char.</summary>
+    public bool ContainsCommas
+    {
+      get
+      {
+        return _containsCommas;
+      }
+    }
+
+    /// <summary>True if any of the lines contains a semicolon char.</summary>
+    public bool ContainsSemicolons
+    {
+      get
+      {
+        return _containsSemicolons;
+      }
+    }
+
+    /// <summary>
+    /// If a fixed column width structure was recognized, this element contains the tabbed start positions of
+    /// the columns, assuming a tab size of <see cref="_recognizedTabSize"/>.
+    /// </summary>
+    public List<int> FixedBoundaries
+    {
+      get
+      {
+        return _fixedBoundaries;
+      }
+    }
+
+    /// If a fixed column width structure was recognized, this element contains the recognized tab size. Otherwise it is 1.
+    public int RecognizedTabSize
+    {
+      get
+      {
+        return _recognizedTabSize;
+      }
+    }
+
+
+
+    /// <summary>
+    /// Constructor for the analysis. You must provide the first few lines of a ascii file (say 30) in order to have a good analysis.
+    /// </summary>
+    /// <param name="firstLines">List of the first lines of an ascii file.</param>
+    public AsciiGlobalStructureAnalysis(List<string> firstLines)
+    {
+      _containsTabs = TestForTabs(firstLines);
+      _containsSpaces = TestForSpaces(firstLines);
+      _containsCommas = TestForCommas(firstLines);
+      _containsSemicolons = TestForSemicolons(firstLines);
+      _containsRepeatingWhiteSpaces = TestForRepeatingWhiteSpaces(firstLines);
 
       // if the document contains repeating white spaces, it is a good candidate for
       // fixed column width structure
@@ -83,10 +155,38 @@ namespace Altaxo.Serialization.Ascii
     /// </summary>
     /// <param name="lines">The lines to test.</param>
     /// <returns>True if any of the lines contains a tabulator char.</returns>
-    public static bool ContainsTabs(List<string> lines)
+    public static bool TestForTabs(List<string> lines)
     {
       foreach (string s in lines)
         if (s.IndexOf('\t') >= 0)
+          return true;
+
+      return false;
+    }
+
+    /// <summary>
+    /// Tests if any of the lines contains a comma char.
+    /// </summary>
+    /// <param name="lines">The lines to test.</param>
+    /// <returns>True if any of the lines contains a tabulator char.</returns>
+    public static bool TestForCommas(List<string> lines)
+    {
+      foreach (string s in lines)
+        if (s.IndexOf(',') >= 0)
+          return true;
+
+      return false;
+    }
+
+    /// <summary>
+    /// Tests if any of the lines contains a semicolon char.
+    /// </summary>
+    /// <param name="lines">The lines to test.</param>
+    /// <returns>True if any of the lines contains a tabulator char.</returns>
+    public static bool TestForSemicolons(List<string> lines)
+    {
+      foreach (string s in lines)
+        if (s.IndexOf(';') >= 0)
           return true;
 
       return false;
@@ -97,7 +197,7 @@ namespace Altaxo.Serialization.Ascii
     /// </summary>
     /// <param name="lines">The lines to test.</param>
     /// <returns>True if any of the lines contains a space char.</returns>
-    public static bool ContainsSpaces(List<string> lines)
+    public static bool TestForSpaces(List<string> lines)
     {
       foreach (string s in lines)
         if (s.IndexOf(' ') >= 0)
@@ -112,7 +212,7 @@ namespace Altaxo.Serialization.Ascii
     /// <param name="lines">The lines to test.</param>
     /// <returns>True if any of the lines contains at least two subsequent whitespaces.</returns>
 
-    public static bool ContainsRepeatingWhiteSpaces(List<string> lines)
+    public static bool TestForRepeatingWhiteSpaces(List<string> lines)
     {
       foreach (string s in lines)
       {
@@ -127,17 +227,19 @@ namespace Altaxo.Serialization.Ascii
    
 
     /// <summary>
-    /// Finds common word boundaries.
+    /// Finds common word boundaries. You have to provide the word bounds for a few lines of text.
     /// </summary>
-    /// <param name="listOfTabbedWordBounds"></param>
-    /// <returns></returns>
+    /// <param name="listOfTabbedWordBounds">Tabbed word bounds for some lines of text.</param>
+    /// <returns>List of tabbed (!) positions that are most common to the majority of lines. Note that the first token
+    /// always start at 0, the first element in the list is the position of the second token.</returns>
     List<int> FindCommonWordBoundaries(List<List<int>> listOfTabbedWordBounds)
     {
       double relThreshold = 0.5;
       int maxlen = MaxTabbedLineLength(listOfTabbedWordBounds);
-      int[] inWords = new int[maxlen];
-      int[] startOfWords = new int[maxlen];
-      int[] endOfWords = new int[maxlen];
+      // we allocate one element more to make it easier to handle the end of line
+      int[] inWords = new int[maxlen+1];
+      int[] startOfWords = new int[maxlen+1];
+      int[] endOfWords = new int[maxlen+1];
 
       ReportInsideOfWords(listOfTabbedWordBounds, inWords);
       ReportStartOfWords(listOfTabbedWordBounds, startOfWords);
@@ -207,6 +309,11 @@ namespace Altaxo.Serialization.Ascii
       return bounds;
     }
 
+    /// <summary>
+    /// Return the maximal tabbed line length of the provided list of tabbed word bounds.
+    /// </summary>
+    /// <param name="listOfTabbedWordBounds"></param>
+    /// <returns></returns>
     int MaxTabbedLineLength(List<List<int>> listOfTabbedWordBounds)
     {
       int maxlength = 0;
@@ -217,6 +324,13 @@ namespace Altaxo.Serialization.Ascii
       return maxlength;
     }
 
+    /// <summary>
+    /// When a start of word is detected, the counterArray is incremented at this tabbed position by one.
+    /// This is done for every word in all lines, meaning that if a word starts in all N lines at the same position,
+    /// the counterArray is incremented at this position by N.
+    /// </summary>
+    /// <param name="listOfTabbedWordBounds">List of tabbed word bounds (for each line one tabbed words bound list).</param>
+    /// <param name="couterArray">Integer array with the line counts for each tabbed position.</param>
     void ReportStartOfWords(List<List<int>> listOfTabbedWordBounds, int[] counterArray)
     {
       foreach (List<int> list in listOfTabbedWordBounds)
@@ -228,6 +342,13 @@ namespace Altaxo.Serialization.Ascii
       }
     }
 
+    /// <summary>
+    /// When a end of word is detected, the counterArray is incremented at this tabbed position by one.
+    /// This is done for every word in all lines, meaning that if a word ends in all N lines at the same position,
+    /// the counterArray is incremented at this position by N.
+    /// </summary>
+    /// <param name="listOfTabbedWordBounds">List of tabbed word bounds (for each line one tabbed words bound list).</param>
+    /// <param name="couterArray">Integer array with the line counts for each tabbed position.</param>
     void ReportEndOfWords(List<List<int>> listOfTabbedWordBounds, int[] counterArray)
     {
       foreach (List<int> list in listOfTabbedWordBounds)
@@ -241,11 +362,12 @@ namespace Altaxo.Serialization.Ascii
 
 
     /// <summary>
-    /// Returns an array, where for each screen position (tabbed position) the number of lines is counted,
-    /// where we are inside a word.
+    /// When our position is just inside of a word, the counterArray is incremented at this tabbed position by one.
+    /// This is done for every position in all lines, meaning that if a word is present in all N lines at the same position,
+    /// the counterArray is incremented at this position by N.
     /// </summary>
     /// <param name="listOfTabbedWordBounds">List of tabbed word bounds (for each line one tabbed words bound list).</param>
-    /// <returns>Integer array with the line counts for each tabbed position.</returns>
+    /// <param name="couterArray">Integer array with the line counts for each tabbed position.</param>
     void ReportInsideOfWords(List<List<int>> listOfTabbedWordBounds, int[] counterArray)
     {
       foreach (List<int> list in listOfTabbedWordBounds)
