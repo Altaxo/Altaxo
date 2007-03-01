@@ -1652,6 +1652,35 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     /// <summary>
+    /// Multiplies matrix a with vector b and stores the result in vector c.
+    /// </summary>
+    /// <param name="a">First multiplicant.</param>
+    /// <param name="b">Second multiplicant. The vector must have the length of a.Columns.</param>
+    /// <param name="c">The vector where to store the result. Has to be of dimension (a.Rows).</param>
+    public static void Multiply(IROMatrix a, IROVector b, IVector c)
+    {
+      int crows = a.Rows; // the rows of resultant matrix
+      int numil = b.Length; // number of summands for most inner loop
+
+      // Presumtion:
+      // a.Cols == b.Rows;
+      if (a.Columns != numil)
+        throw new ArithmeticException(string.Format("Try to multiplicate a matrix of dim({0},{1}) with vector of dim({2}) is not possible!", a.Rows, a.Columns, b.Length));
+      if (c.Length != crows)
+        throw new ArithmeticException(string.Format("The provided resultant vector (actual dim({0}))has not the expected dimension ({1})", c.Length, crows));
+
+      for (int i = 0; i < crows; i++)
+      {
+        double sum = 0;
+        for (int k = 0; k < numil; k++)
+          sum += a[i, k] * b[k];
+
+        c[i] = sum;
+      }
+    }
+
+
+    /// <summary>
     /// Multiplies matrix a_transposed with matrix b and stores the result in matrix c.
     /// </summary>
     /// <param name="a">First multiplicant.</param>
@@ -1679,6 +1708,33 @@ namespace Altaxo.Calc.LinearAlgebra
         
           c[i,j] = sum;
         }
+      }
+    }
+
+    /// <summary>
+    /// Multiplies matrix a_transposed with vector b and stores the result in vector c.
+    /// </summary>
+    /// <param name="a">First multiplicant.</param>
+    /// <param name="b">Second multiplicant.</param>
+    /// <param name="c">The matrix where to store the result. Has to be of dimension (a.Rows, b.Columns).</param>
+    public static void MultiplyFirstTransposed(IROMatrix a, IROVector b, IVector c)
+    {
+      int crows = a.Columns; // the rows of resultant vector
+      int numil = a.Rows;
+
+      // Presumtion:
+      if (a.Rows != b.Length)
+        throw new ArithmeticException(string.Format("Try to multiplicate a transposed matrix of dim({0},{1}) with vector of dim({2}) is not possible!", a.Rows, a.Columns, b.Length));
+      if (crows != c.Length)
+        throw new ArithmeticException(string.Format("The provided resultant vector (actual dim({0}))has not the expected dimension ({1})", c.Length, crows));
+
+      for (int i = 0; i < crows; i++)
+      {
+        double sum = 0;
+        for (int k = 0; k < numil; k++)
+          sum += a[k, i] * b[k];
+
+        c[i] = sum;
       }
     }
 

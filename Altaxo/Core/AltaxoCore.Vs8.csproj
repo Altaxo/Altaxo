@@ -137,7 +137,20 @@
     <Compile Include="Calc\Fourier\Pfa235FFT.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Calc\Fourier\RealFFTResultWrapper.cs" />
     <Compile Include="Calc\Fourier\RealFourierTransform.cs" />
+    <Compile Include="Calc\Fourier\Windows\AbstractWindow.cs" />
+    <Compile Include="Calc\Fourier\Windows\BartlettWindow.cs" />
+    <Compile Include="Calc\Fourier\Windows\BlackmanHarrisWindow.cs" />
+    <Compile Include="Calc\Fourier\Windows\BlackmanWindow.cs" />
+    <Compile Include="Calc\Fourier\Windows\FlattopWindow.cs" />
+    <Compile Include="Calc\Fourier\Windows\RectangleWindow.cs" />
+    <Compile Include="Calc\Fourier\Windows\GaussianWindow.cs" />
+    <Compile Include="Calc\Fourier\Windows\HammingWindow.cs" />
+    <Compile Include="Calc\Fourier\Windows\HanningWindow.cs" />
+    <Compile Include="Calc\Fourier\Windows\NuttallWindow.cs" />
+    <Compile Include="Calc\Fourier\Windows\VonHannWindow.cs" />
+    <Compile Include="Calc\Fourier\Windows\WelchWindow.cs" />
     <Compile Include="Calc\GammaRelated.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -280,7 +293,9 @@
     </Compile>
     <Compile Include="Calc\LinearAlgebra\NotPositiveDefiniteException.cs" />
     <Compile Include="Calc\LinearAlgebra\NotSquareMatrixException.cs" />
+    <Compile Include="Calc\LinearAlgebra\QRDecomposition.cs" />
     <Compile Include="Calc\LinearAlgebra\SingularMatrixException.cs" />
+    <Compile Include="Calc\LinearAlgebra\SVDDecomposition.cs" />
     <Compile Include="Calc\LinearAlgebra\VectorMath.cs">
       <SubType>Code</SubType>
     </Compile>

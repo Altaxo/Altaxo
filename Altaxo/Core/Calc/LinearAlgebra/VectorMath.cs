@@ -87,12 +87,93 @@ namespace Altaxo.Calc.LinearAlgebra
       {
       }
 
+      public RWDoubleArrayWrapper(double[] x, int usedlength)
+        : base(x,usedlength)
+      {
+      }
+
       #region IVector Members
 
       public new double this[int i]
       {
         get { return _x[i]; }
         set { _x[i] = value; }
+      }
+
+      #endregion
+    }
+
+    /// <summary>
+    /// Serves as Wrapper for an double array to plug-in where a IROVector is neccessary.
+    /// </summary>
+    private class RODoubleArraySectionWrapper : IROVector
+    {
+      protected double[] _x;
+      protected int _start;
+      protected int _length;
+
+      /// <summary>
+      /// Constructor, takes a double array for wrapping.
+      /// </summary>
+      /// <param name="x"></param>
+      public RODoubleArraySectionWrapper(double[] x)
+      {
+        _x = x;
+        _start = 0;
+        _length = _x.Length;
+      }
+
+      /// <summary>
+      /// Constructor, takes a double array for wrapping.
+      /// </summary>
+      /// <param name="x"></param>
+      /// <param name="usedlength">The length used for the vector.</param>
+      public RODoubleArraySectionWrapper(double[] x, int start, int usedlength)
+      {
+        if(start<0)
+          throw new ArgumentException("start is negative");
+        if(usedlength<0)
+          throw new ArgumentException("usedlength is negative");
+
+        if ((start+usedlength) > x.Length)
+          throw new ArgumentException("Length provided in argument usedlength is greater than length of array");
+
+        _x = x;
+        _start = start;
+        _length = usedlength;
+      }
+
+      /// <summary>Gets the value at index i with LowerBound &lt;= i &lt;=UpperBound.</summary>
+      /// <value>The element at index i.</value>
+      public double this[int i] { get { return _x[i+_start]; } }
+
+      /// <summary>The smallest valid index of this vector</summary>
+      public int LowerBound { get { return _x.GetLowerBound(0); } }
+
+      /// <summary>The greates valid index of this vector. Is by definition LowerBound+Length-1.</summary>
+      public int UpperBound { get { return _x.GetLowerBound(0)+_length-1; } }
+
+      /// <summary>The number of elements of this vector.</summary>
+      public int Length { get { return _length; } }  // change this later to length property
+    }
+
+    private class RWDoubleArraySectionWrapper : RODoubleArraySectionWrapper, IVector
+    {
+      public RWDoubleArraySectionWrapper(double[] x)
+        : base(x)
+      {
+      }
+      public RWDoubleArraySectionWrapper(double[] x, int start, int usedlength)
+        : base(x,start,usedlength)
+      {
+      }
+
+      #region IVector Members
+
+      public new double this[int i]
+      {
+        get { return _x[i+_start]; }
+        set { _x[i+_start] = value; }
       }
 
       #endregion
@@ -117,7 +198,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         if(start>=x.Length)
           throw new ArgumentException("Start of the section is beyond length of the vector");
-       if (start+len>=x.Length)
+       if (start+len>x.Length)
           throw new ArgumentException("End of the section is beyond length of the vector");
        
         _x = x;
@@ -128,6 +209,51 @@ namespace Altaxo.Calc.LinearAlgebra
       /// <summary>Gets the value at index i with LowerBound &lt;= i &lt;=UpperBound.</summary>
       /// <value>The element at index i.</value>
       public double this[int i] { get { return _x[i+_start]; } }
+
+      /// <summary>The smallest valid index of this vector.</summary>
+      public int LowerBound { get { return 0; } }
+
+      /// <summary>The greates valid index of this vector. Is by definition LowerBound+Length-1.</summary>
+      public int UpperBound { get { return _length - 1; } }
+
+      /// <summary>The number of elements of this vector.</summary>
+      public int Length { get { return _length; } }  // change this later to length property
+    }
+
+    /// <summary>
+    /// Serves as wrapper for an IVector to get only a section of the original wrapper.
+    /// </summary>
+    private class RWVectorSectionWrapper : IVector
+    {
+      protected IVector _x;
+      int _start;
+      int _length;
+
+      /// <summary>
+      /// Constructor, takes a double array for wrapping.
+      /// </summary>
+      /// <param name="x"></param>
+      /// <param name="start">Start index of the section to wrap.</param>
+      /// <param name="len">Length of the section to wrap.</param>
+      public RWVectorSectionWrapper(IVector x, int start, int len)
+      {
+        if (start >= x.Length)
+          throw new ArgumentException("Start of the section is beyond length of the vector");
+        if (start + len >= x.Length)
+          throw new ArgumentException("End of the section is beyond length of the vector");
+
+        _x = x;
+        _start = start;
+        _length = len;
+      }
+
+      /// <summary>Gets the value at index i with LowerBound &lt;= i &lt;=UpperBound.</summary>
+      /// <value>The element at index i.</value>
+      public double this[int i] 
+      {
+        get { return _x[i + _start]; }
+        set { _x[i + _start] = value; }
+      }
 
       /// <summary>The smallest valid index of this vector.</summary>
       public int LowerBound { get { return 0; } }
@@ -284,6 +410,8 @@ namespace Altaxo.Calc.LinearAlgebra
     #endregion
 
     #region Type conversion
+
+    #region From/To double[]
     /// <summary>
     /// Wraps a double[] array to get a IROVector.
     /// </summary>
@@ -306,6 +434,58 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     /// <summary>
+    /// Wraps a double[] array till a given length to get a IROVector.
+    /// </summary>
+    /// <param name="x">The array to wrap.</param>
+    /// <param name="usedlength">Length of the resulting vector. Can be equal or less the length of the array.</param>
+    /// <returns>A wrapper objects with the <see cref="IROVector" /> interface that wraps the provided array.</returns>
+    public static IROVector ToROVector(double[] x, int start, int usedlength)
+    {
+      if(0==start)
+        return new RODoubleArrayWrapper(x, usedlength);
+      else
+        return new RODoubleArraySectionWrapper(x, start, usedlength);
+    }
+
+
+    /// <summary>
+    /// Wraps a double[] array to get a IVector.
+    /// </summary>
+    /// <param name="x">The array to wrap.</param>
+    /// <returns>A wrapper objects with the <see cref="IVector" /> interface that wraps the provided array.</returns>
+    public static IVector ToVector(double[] x)
+    {
+      return new RWDoubleArrayWrapper(x);
+    }
+
+    /// <summary>
+    /// Wraps a double[] array to get a IVector.
+    /// </summary>
+    /// <param name="x">The array to wrap.</param>
+    /// <returns>A wrapper objects with the <see cref="IVector" /> interface that wraps the provided array.</returns>
+    public static IVector ToVector(double[] x, int usedlength)
+    {
+      return new RWDoubleArrayWrapper(x, usedlength);
+    }
+
+
+    /// <summary>
+    /// Wraps a double[] array to get a IVector.
+    /// </summary>
+    /// <param name="x">The array to wrap.</param>
+    /// <returns>A wrapper objects with the <see cref="IVector" /> interface that wraps the provided array.</returns>
+    public static IVector ToVector(double[] x, int start, int count)
+    {
+      if (0 == start)
+        return new RWDoubleArrayWrapper(x, count);
+      else
+        return new RWDoubleArraySectionWrapper(x,start,count);
+    }
+    #endregion
+
+    #region from/to IROVector
+
+    /// <summary>
     /// Wraps a section of a original vector <c>x</c> into a new vector.
     /// </summary>
     /// <param name="x">Original vector.</param>
@@ -317,15 +497,24 @@ namespace Altaxo.Calc.LinearAlgebra
       return new ROVectorSectionWrapper(x, start, len);
     }
 
+    #endregion
+
+    #region from/to IVector
+
     /// <summary>
-    /// Wraps a double[] array to get a IVector.
+    /// Wraps a section of a original vector <c>x</c> into a new vector.
     /// </summary>
-    /// <param name="x">The array to wrap.</param>
-    /// <returns>A wrapper objects with the <see cref="IVector" /> interface that wraps the provided array.</returns>
-    public static IVector ToVector(double[] x)
+    /// <param name="x">Original vector.</param>
+    /// <param name="start">Index of the start of the section to wrap.</param>
+    /// <param name="len">Length (=number of elements) of the section to wrap.</param>
+    /// <returns>A IVector that contains the section from <c>start</c> to <c>start+len-1</c> of the original vector.</returns>
+    public static IVector ToVector(IVector x, int start, int len)
     {
-      return new RWDoubleArrayWrapper(x);
+      return new RWVectorSectionWrapper(x, start, len);
     }
+
+
+    #endregion
 
     /// <summary>
     /// Creates a new extensible vector of length <c>length</c>
@@ -350,8 +539,6 @@ namespace Altaxo.Calc.LinearAlgebra
       return new EquidistantSequenceVector(start, step, length);
     }
     #endregion
-
-
 
     #region Filling
 
@@ -421,7 +608,54 @@ namespace Altaxo.Calc.LinearAlgebra
         c[i]=a[i]+b[i];
     }
 
+    /// <summary>
+    /// Multiplies (elementwise) two vectors a and b and stores the result in c. All vectors must have the same length.
+    /// </summary>
+    /// <param name="a">First summand.</param>
+    /// <param name="b">Second summand.</param>
+    /// <param name="c">The resulting vector.</param>
+    public static void Multiply(IROVector a, IROVector b, IVector c)
+    {
+      if (a.Length != b.Length)
+        throw new ArgumentException("Length of vectors a and b unequal");
+      if (c.Length != b.Length)
+        throw new ArgumentException("Length of vectors a and c unequal");
+      if (a.LowerBound != b.LowerBound || a.LowerBound != c.LowerBound)
+        throw new ArgumentException("Vectors a, b, and c have not the same LowerBound property");
+
+      int end = c.UpperBound;
+      for (int i = c.LowerBound; i <= end; i++)
+        c[i] = a[i] * b[i];
+    }
+
     #endregion
+
+    /// <summary>
+    /// Returns the used length of the vector. This is one more than the highest index of the element that is different from Double.NaN.
+    /// </summary>
+    /// <param name="values">The vector for which the used length has to be determined.</param>
+    /// <param name="currentlength">The current length of the array. Normally values.Length, but you can provide a value less than this.</param>
+    /// <returns>The used length. Elements with indices greater or equal this until <c>currentlength</c> are NaNs.</returns>
+    static public int GetUsedLength(IROVector values, int currentlength)
+    {
+      for (int i = currentlength - 1; i >= 0; i--)
+      {
+        if (!Double.IsNaN(values[i]))
+          return i + 1;
+      }
+      return 0;
+    }
+
+    /// <summary>
+    /// Returns the used length of the vector. This is one more than the highest index of the element that is different from Double.NaN.
+    /// </summary>
+    /// <param name="values">The vector for which the used length has to be determined.</param>
+    /// <returns>The used length. Elements with indices greater or equal this until the end of the array are NaNs.</returns>
+    static public int GetUsedLength(IROVector values)
+    {
+      return GetUsedLength(values, values.Length);
+    }
+
 
     /// <summary>
     /// Returns the maximum of the elements in xarray.

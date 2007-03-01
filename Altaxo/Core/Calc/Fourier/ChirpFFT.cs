@@ -101,10 +101,10 @@ namespace Altaxo.Calc.Fourier
     /// </summary>
     /// <param name="resultreal">The real part of the result. (may be identical with arr1 or arr2).</param>
     /// <param name="resultimag">The imaginary part of the result (may be identical with arr1 or arr2).</param>
-    /// <param name="arr1real">The real part of the first input array.</param>
-    /// <param name="arr1imag">The imaginary part of the first input array.</param>
-    /// <param name="arr2real">The real part of the second input array.</param>
-    /// <param name="arr2imag">The imaginary part of the second input array.</param>
+    /// <param name="arr1real">The real part of the first input array. Destroyed at the end of function!</param>
+    /// <param name="arr1imag">The imaginary part of the first input array. Destroyed at the end of function!</param>
+    /// <param name="arr2real">The real part of the second input array. Destroyed at the end of function!</param>
+    /// <param name="arr2imag">The imaginary part of the second input array. Destroyed at the end of function!</param>
     /// <param name="arrsize">The length of the convolution. Has to be equal or smaller than the array size. Has to be a power of 2!</param>
     static void fhtconvolution(double[] resultreal, double[] resultimag, double[] arr1real, double[] arr1imag, double[] arr2real, double[] arr2imag, int arrsize)
     {
@@ -241,10 +241,17 @@ namespace Altaxo.Calc.Fourier
         throw new ArgumentException("This algorithm works for array sizes > 2 only.");
 
       int msize = GetNecessaryTransformationSize(arrsize);
-     
+
       if(s==null || s.Length!=msize)
       {
         s = new ChirpNativeFFTStorage(msize);
+      }
+      else // if the temp storage is not fresh, we have to clear the arrays first
+      {
+        Array.Clear(s.xjfj_real,0,msize);
+        Array.Clear(s.xjfj_imag,0,msize);
+        Array.Clear(s.fserp_real,0,msize);
+        Array.Clear(s.fserp_imag,0,msize);
       }
 
       double[] xjfj_real  = s.xjfj_real;

@@ -247,6 +247,12 @@ namespace Altaxo.Data
       return 0;
     }
 
+    public static explicit operator DoubleColumn(double[] src)
+    {
+      DoubleColumn c = new DoubleColumn();
+      c.CopyDataFrom(src);
+      return c;
+    }
 
     /// <summary>
     /// Copies the data from an array into the column. All data in the source array is copied.
@@ -284,6 +290,47 @@ namespace Altaxo.Data
       if(oldCount>0 || m_Count>0) // message only if really was a change
         NotifyDataChanged(0,oldCount>m_Count? (oldCount):(m_Count),m_Count<oldCount);
     }
+
+    /// <summary>
+    /// Provides a setter property to which a vector can be assigned to. Copies all elements of the vector to this column. 
+    /// The getter property creates a wrapper for this data column that implements IROVector
+    /// </summary>
+    public Altaxo.Calc.LinearAlgebra.IROVector Vector
+    {
+      get { return Altaxo.Calc.LinearAlgebra.DataColumnWrapper.ToROVector(this); }
+      set { CopyDataFrom(value, value.Length); }
+    }
+
+    /// <summary>
+    /// Copies the data from an read-only into the column. The data from index 0 until <c>count-1</c> is copied to the destination.
+    /// </summary>
+    /// <param name="srcarray">Vector containing the source data.</param>
+    /// <param name="count">Length of the array (or length of the used range of the array, starting from index 0).</param>
+    public void CopyDataFrom(Altaxo.Calc.LinearAlgebra.IROVector srcarray, int count)
+    {
+      int oldCount = this.m_Count;
+      int srcarraycount = 0;
+
+      if (null == srcarray || 0 == (srcarraycount = Altaxo.Calc.LinearAlgebra.VectorMath.GetUsedLength(srcarray, Math.Min(srcarray.Length, count))))
+      {
+        m_Array = null;
+        m_Capacity = 0;
+        m_Count = 0;
+      }
+      else
+      {
+        if (m_Capacity < srcarraycount)
+          m_Array = new double[srcarraycount];
+        for (int i = 0; i < srcarraycount; ++i)
+          m_Array[i] = srcarray[i];
+        m_Capacity = m_Array.Length;
+        m_Count = srcarraycount;
+      }
+      if (oldCount > 0 || m_Count > 0) // message only if really was a change
+        NotifyDataChanged(0, oldCount > m_Count ? (oldCount) : (m_Count), m_Count < oldCount);
+    }
+
+
 
     protected void Realloc(int i)
     {

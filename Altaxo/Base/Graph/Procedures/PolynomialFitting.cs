@@ -184,16 +184,13 @@ namespace Altaxo.Graph.Procedures
       string[] plotNames = GetActivePlotName(ctrl);
 
 
-      // Error-Array
-      earr = new double[numberOfDataPoints];
-      for(int i=0;i<earr.Length;i++)
-        earr[i]=1;
+     
 
       int numberOfParameter = order+1;
       double[] parameter= new double[numberOfParameter];
       LinearFitBySvd fit = 
         new LinearFitBySvd(
-        xarr,yarr,earr,numberOfDataPoints, order+1, new FunctionBaseEvaluator(EvaluatePolynomialBase),1E-5);
+        xarr,yarr,null,numberOfDataPoints, order+1, new FunctionBaseEvaluator(EvaluatePolynomialBase),1E-5);
 
       // Output of results
 

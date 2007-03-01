@@ -102,13 +102,34 @@ namespace Altaxo.Calc.LinearAlgebra
 
     #region INumericSequence Members
 
-    public abstract double this[int i]
+    public double this[int i]
     {
-      get; 
+      get { return GetElementAt(i); }
     }
+
+    protected abstract double GetElementAt(int i);
 
     #endregion
   }
+
+  
+  public abstract class AbstractDoubleVector : AbstractRODoubleVector, IVector
+  {
+    public new double this[int i]
+    {
+      get
+      {
+        return GetElementAt(i);
+      }
+      set
+      {
+        SetElementAt(i, value);
+      }
+    }
+
+    protected abstract void SetElementAt(int i, double value);
+  }
+  
 
   public class RODoubleVector : AbstractRODoubleVector
   {
@@ -149,9 +170,9 @@ namespace Altaxo.Calc.LinearAlgebra
 
     #region INumericSequence Members
 
-    public override double this[int i]
+    protected override double GetElementAt(int i)
     {
-      get { return _data[i]; }
+       return _data[i]; 
     }
 
     #endregion

@@ -47,6 +47,26 @@ namespace Altaxo.Calc.LinearAlgebra
       return result;
     }
 
+    /// <summary>
+    /// Allocates an array of the same dimensions than the provided matrix a, and copies the element of a to the new array.
+    /// </summary>
+    /// <param name="a">The matrix to copy.</param>
+    /// <returns>New jagged array with the same element values than matrix a.</returns>
+    public static double[][] GetMatrixCopy(IROMatrix a)
+    {
+      int rows = a.Rows;
+      int cols = a.Columns;
+      double[][] result = new double[rows][];
+      double[] row;
+      for (int i = 0; i < rows; i++)
+      {
+        result[i] = row = new double[cols];
+        for (int j = 0; j < cols; j++)
+          row[j] = a[i, j];
+      }
+      return result;
+    }
+
     #endregion
 
     #region Inner types
@@ -309,6 +329,40 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
     }
+
+    /// <summary>
+    /// Multiplies matrix a_transposed with matrix a itself and stores the result in matrix c.
+    /// </summary>
+    /// <param name="a">First and second multiplicant.</param>
+    /// <param name="arows">Number of rows of a.</param>
+    /// <param name="acols">Number of columns of a.</param>
+    /// <param name="c">The matrix where to store the result. Has to be of dimension (acols, acols).</param>
+    /// <param name="crows">Number of rows of c.</param>
+    /// <param name="ccols">Number of columns of c.</param>
+    public static void MultiplyFirstTransposedWithItself(
+      double[][] a, int arows, int acols,
+      double[][] c, int crows, int ccols)
+    {
+      int numil = arows; // number of summands for most inner loop
+
+      // Presumtion:
+      if (crows != acols || ccols != acols)
+        throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1}))has not the expected dimension ({2},{3})", crows, ccols, acols, acols));
+
+      for (int i = 0; i < crows; i++)
+      {
+        for (int j = i; j < ccols; j++)
+        {
+          double sum = 0;
+          for (int k = 0; k < numil; k++)
+            sum += a[k][i] * a[k][j];
+
+          c[i][j] = sum;
+          c[j][i] = sum;
+        }
+      }
+    }
+
 
 
     /// <summary>

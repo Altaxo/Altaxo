@@ -997,6 +997,14 @@ namespace Altaxo.Data
     }
 
     /// <summary>
+    /// Removes all columns of the collection.
+    /// </summary>
+    public virtual void RemoveColumnsAll()
+    {
+      RemoveColumns(new IntegerRangeAsCollection(0,this.ColumnCount));
+    }
+
+    /// <summary>
     /// Removes the column at the given index.
     /// </summary>
     /// <param name="nFirstColumn">The index of the column to remove.</param>

@@ -171,8 +171,7 @@ namespace Altaxo.Calc.Fourier
       }
       else
       {
-        for(int i=0;i<_tempArr1N.Length;++i) 
-          _tempArr1N[i]=0;
+        Array.Clear(_tempArr1N, 0, _tempArr1N.Length);
       }
     }
     #endregion
