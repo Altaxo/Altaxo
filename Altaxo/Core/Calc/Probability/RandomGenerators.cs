@@ -74,12 +74,12 @@
 |                                                                               |
 \*-----------------------------------------------------------------------------*/
 
-
+#if true
 
 using System;
 using Altaxo.Calc;
 
-namespace Altaxo.Calc.Probability
+namespace Altaxo.Calc.Probability.Old
 {
 
   #region RandomGenerator
@@ -2843,6 +2843,7 @@ namespace Altaxo.Calc.Probability
 
   #endregion
 
+
   #region StudentTDistribution
 
   /// <summary>
@@ -3734,3 +3735,4 @@ namespace Altaxo.Calc.Probability
   #endregion
 
 }
+#endif

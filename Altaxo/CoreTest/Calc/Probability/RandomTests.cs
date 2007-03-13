@@ -48,25 +48,6 @@ namespace AltaxoTest.Calc.Probability
 
 
     }
-  
-
-    [Test]
-    public  void TestRan002()
-    {
-      Altaxo.Calc.Probability.Ran002 rand = new Ran002();
-
-      EntCalc calc = new EntCalc(false);
-
-      for(int i=0;i<100000;++i)
-      {
-        calc.AddSample((int)rand.Long(),false);
-      }
-
-      EntCalc.EntCalcResult result = calc.EndCalculation();
-      Assert.IsTrue(result.ChiProbability<0.01);
-
-
-    }
   }
   #region EntCalc
   /// <summary>

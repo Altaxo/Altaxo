@@ -489,6 +489,57 @@ namespace Altaxo.Calc.Regression
       }
     }
 
+    public void EstimateParameterByBurgsAlgorithm(IROVector data, int m, out double xms)
+    {
+      int n = data.Length;
+      double[] wk1 = new double[data.Length];
+      double[] wk2 = new double[data.Length];
+      double[] wkm = new double[data.Length];
+
+      double p = 0;
+      for (int j = 0; j < n; ++j)
+        p += RMath.Pow2(data[j]);
+      xms = p / n;
+
+      wk1[0] = data[0];
+      wk2[n - 2] = data[n - 1];
+      for (int j = 1; j < (n - 1); ++j)
+      {
+        wk1[j] = data[j];
+        wk2[j - 1] = data[j];
+      }
+      for (int k = 0; k < m; ++k)
+      {
+        double num = 0;
+        double denom = 0;
+        for (int j = 0; j < (n - k - 1); ++j)
+        {
+          num += wk1[j] * wk2[j];
+          denom += RMath.Pow2(wk1[j]) + RMath.Pow2(wk2[j]);
+        }
+        _parameter[k] = 2 * num / denom;
+
+        xms *= (1 - RMath.Pow2(_parameter[k]));
+
+        for (int i = 0; i < k; ++i)
+          _parameter[i] = wkm[i] - _parameter[k] * wkm[k - i];
+
+        if (k == (m-1))
+          return;
+
+        for (int i = 0; i <= k; ++i)
+        {
+          wkm[i] = _parameter[i];
+        }
+        for (int j = 0; j < (n - k - 2); ++j)
+        {
+          wk1[j] -= wkm[k] * wk2[j]; // subtract actual prediction
+          wk2[j] = wk2[j + 1] - wkm[k] * wk1[j + 1]; // left shift with subtracted actual prediction
+        }
+      }
+      throw new ArithmeticException("Should never be here, this is a programming error");
+    }
+
     /// <summary>
     /// Extrapolates y-values until the end of the vector by using linear prediction.
     /// </summary>
@@ -585,7 +636,7 @@ namespace Altaxo.Calc.Regression
   public class DynamicParameterEstimationVariableX : DynamicParameterEstimation
   {
     int[] _xcount;
-    
+    int[] _ycount;
     /// <summary>
     /// Constructor. 
     /// </summary>
@@ -598,6 +649,7 @@ namespace Altaxo.Calc.Regression
       : base(xcount.Length, numY, backgroundOrder)
     {
       this._xcount = xcount;
+      this._ycount = GetUniformCountArray(numY, 1);
     }
 
     /// <summary>
@@ -613,7 +665,27 @@ namespace Altaxo.Calc.Regression
       : base(xcount.Length, numY, backgroundOrder, solver)
     {
       this._xcount = xcount;
+      this._ycount = GetUniformCountArray(numY, 1);
     }
+
+    /// <summary>
+    /// Constructor. 
+    /// </summary>
+    /// <param name="xcount">Designate which x points are processed together as one unit. The array must have the length of _numX. For every x parameter, the element in the array
+    /// designates how many points of the x history are added up and threated as one input element. If you set all elements to 1, the behaviour should
+    /// be the same than GetTransferFunction.</param>
+    /// <param name="ycount">Designate which y points are processed together as one unit. The array must have the length of _numX. For every x parameter, the element in the array
+    /// designates how many points of the x history are added up and threated as one input element. If you set all elements to 1, the behaviour should
+    /// be the same than GetTransferFunction.</param>
+    /// <param name="backgroundOrder">Order of the background fitting.</param>
+    /// <param name="solver">The solver to use with dynamic parameter estimation. Use the static getter methods <see cref="SVDSolver" /> or <see cref="LUSolver" /> to get a solver.</param>
+    public DynamicParameterEstimationVariableX(int[] xcount, int[] ycount, int backgroundOrder, IDynamicParameterEstimationSolver solver)
+      : base(xcount.Length, ycount.Length, backgroundOrder, solver)
+    {
+      this._xcount = xcount;
+      this._ycount = ycount;
+    }
+
 
     protected override void CalculateStartingPoint()
     {
@@ -629,6 +701,19 @@ namespace Altaxo.Calc.Regression
           xsum += _xcount[i];
 
         _startingPoint = Math.Max(_startingPoint, xsum - 1);
+      }
+
+      if (_numY > 0 && _ycount != null)
+      {
+        if (_ycount.Length != _numY)
+          throw new ArgumentException("Length of ycount is not equal to _numY");
+
+        // Find starting point
+        int ysum = 0;
+        for (int i = 0; i < _ycount.Length; i++)
+          ysum += _ycount[i];
+
+        _startingPoint = Math.Max(_startingPoint, ysum);
       }
     }
 
@@ -661,9 +746,20 @@ namespace Altaxo.Calc.Regression
         }
 
         // fill with y history samples
-        for (int j = 0; j < _numY; j++)
+        for (int j = 0, k=0; j < _numY; j++)
         {
-          M[i, j + _numX] = y[yIdx - 1 - j];
+          if (_ycount == null || _ycount[j] == 1)
+          {
+            M[i, j+_numX] = y[yIdx - 1 -  k];
+            k++;
+          }
+          else
+          {
+            double sum = 0;
+            for (int l = _ycount[j]; l > 0; l--, k++)
+              sum += y[yIdx - 1 - k];
+            M[i, j+_numX] = sum;
+          }
         }
 
         // fill with polynomial background component
@@ -684,14 +780,18 @@ namespace Altaxo.Calc.Regression
     /// <param name="yValueBeforePulse">This is the y-value (not x!) before the pulse. If the <c>NumberOfY</c> is set to zero, this parameter is ignored, since no information about y for t&lt;0 is neccessary.</param>
     public override void GetTransferFunction( double yValueBeforePulse, IVector output)
     {
-      double[] y = new double[_numY];
-
       int maxXidx = 0;
       for (int i = 0; i < _xcount.Length; ++i)
         maxXidx += _xcount[i];
 
+      int maxYidx = 0;
+      for (int i = 0; i < _ycount.Length; ++i)
+        maxYidx += _ycount[i];
+
+      double[] y = new double[maxYidx];
+
       // Initialization
-      for (int i = 0; i < _numY; i++)
+      for (int i = 0; i < y.Length; i++)
         y[i] = yValueBeforePulse;
 
       int currXcountIdx=-1;
@@ -710,8 +810,9 @@ namespace Altaxo.Calc.Regression
           sum += _parameter[currXcountIdx]; // this is the contribution of x
         }
 
-        for (int j = 0; j < _numY; j++)
-          sum += _parameter[j + _numX] * y[j];
+        for (int j = 0,sumYCount=0; j < _numY; j++)
+          for(int l=_ycount[j];l>0;--l,++sumYCount)
+            sum += _parameter[j + _numX] * y[sumYCount];
 
         // right-shift both y 
         for (int j = _numY - 1; j > 0; j--)
@@ -736,14 +837,22 @@ namespace Altaxo.Calc.Regression
       }
 
       Complex denom = new Complex();
-      for (int i = 0; i < _numY; i++)
+      for (int i = 0,j=0; i < _numY; i++)
       {
-        denom += Complex.FromModulusArgument(_parameter[_numX + i], -(i + 1) * w);
+        for(int k=_ycount[i];k>0;--k,++j)
+          denom += Complex.FromModulusArgument(_parameter[_numX + i], -(j + 1) * w);
       }
 
       return nom / (1 - denom);
     }
 
+    public static int[] GetUniformCountArray(int numPara, int count)
+    {
+      int[] result = new int[numPara];
+      for (int i = 0; i < result.Length; i++)
+        result[i] = count;
+      return result;
+    }
 
     public static int[] GetXCountFromTotalLength(int totallength, int start, double factor)
     {
@@ -840,7 +949,6 @@ namespace Altaxo.Calc.Regression
       return GetXCountFromNumberOfParametersAndLength(numX, start, ref len, out factor);
     }
 
-
     public static int[] GetXCountFromNumberOfParametersAndLength(int numX, int start, ref int totallength, out double factor)
     {
       if (start < 0)
@@ -928,6 +1036,37 @@ namespace Altaxo.Calc.Regression
       return result;
     }
 
+    /// <summary>
+    /// Gets an array where the first history point (y[0]) is excluded from the history (this is because y[0] is already on the right side of the equation.
+    /// If the first element of xcount is greater than one, the result is a cloned xcount array with the first element reduced by one.
+    /// If the first element of xcount is one, than an copyied version of xcount, without the first element, is returned.
+    /// </summary>
+    /// <param name="xcount">The xcount array.</param>
+    /// <returns>A version of count suitable for use with the y history.</returns>
+    public static int[] GetYCountFromXCount(int[] xcount)
+    {
+      if (xcount == null)
+        throw new ArgumentNullException("xcount");
+      if (xcount.Length == 0)
+        throw new ArgumentException("Length of xcount is 0");
+      if(xcount[0]<1)
+        throw new ArgumentException("First element of xcout array must be greater than zero");
+
+      int[] ycount;
+      if (xcount[0] > 1)
+      {
+        ycount = (int[])xcount.Clone();
+        ycount[0]--;
+      }
+      else
+      {
+        ycount = new int[xcount.Length - 1];
+        Array.Copy(xcount, 1, ycount, 0, ycount.Length);
+      }
+      return ycount;
+    }
+
+
   }
 
 
@@ -978,7 +1117,7 @@ namespace Altaxo.Calc.Regression
         _startingPoint = Math.Max(_startingPoint, _offsetX+(_numX-1)*_xSpacing);
 
       if (_numY > 0)
-        _startingPoint = Math.Max(_startingPoint, _numY * _ySpacing);
+        _startingPoint = Math.Max(_startingPoint, 1 + (_numY-1) * _ySpacing);
     }
 
 
@@ -1003,7 +1142,7 @@ namespace Altaxo.Calc.Regression
         // fill with y history samples
         for (int j = 0; j < _numY; j++)
         {
-          M[i, j + _numX] = y[yIdx - (j+1)*_ySpacing];
+          M[i, j + _numX] = y[yIdx - 1 - j*_ySpacing];
         }
 
         // fill with polynomial background component
@@ -1064,7 +1203,7 @@ namespace Altaxo.Calc.Regression
       Complex denom = new Complex();
       for (int i = 0; i < _numY; i++)
       {
-        denom += Complex.FromModulusArgument(_parameter[_numX + i], -(i + 1)*_ySpacing * w);
+        denom += Complex.FromModulusArgument(_parameter[_numX + i], -(1 + i*_ySpacing) * w);
       }
 
       return nom / (1 - denom);

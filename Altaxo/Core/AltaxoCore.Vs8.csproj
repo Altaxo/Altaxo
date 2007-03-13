@@ -318,11 +318,65 @@
     <Compile Include="Calc\Polynomials.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Calc\Probability\ContinuousDistributions\BetaDistribution.cs" />
+    <Compile Include="Calc\Probability\ContinuousDistributions\BetaPrimeDistribution.cs" />
+    <Compile Include="Calc\Probability\ContinuousDistributions\CauchyDistribution.cs" />
+    <Compile Include="Calc\Probability\ContinuousDistributions\ChiDistribution.cs" />
+    <Compile Include="Calc\Probability\ContinuousDistributions\ChiSquareDistribution.cs" />
+    <Compile Include="Calc\Probability\ContinuousDistributions\ContinuousDistribution.cs" />
+    <Compile Include="Calc\Probability\ContinuousDistributions\ContinuousUniformDistribution.cs" />
+    <Compile Include="Calc\Probability\ContinuousDistributions\ErlangDistribution.cs" />
+    <Compile Include="Calc\Probability\ContinuousDistributions\ExponentialDistribution.cs" />
+    <Compile Include="Calc\Probability\ContinuousDistributions\FisherSnedecorDistribution.cs" />
+    <Compile Include="Calc\Probability\ContinuousDistributions\FisherTippettDistribution.cs" />
+    <Compile Include="Calc\Probability\ContinuousDistributions\GammaDistribution.cs" />
+    <Compile Include="Calc\Probability\ContinuousDistributions\LaplaceDistribution.cs" />
+    <Compile Include="Calc\Probability\ContinuousDistributions\LognormalDistribution.cs" />
+    <Compile Include="Calc\Probability\ContinuousDistributions\NormalDistribution.cs" />
+    <Compile Include="Calc\Probability\ContinuousDistributions\ParetoDistribution.cs" />
+    <Compile Include="Calc\Probability\ContinuousDistributions\PowerDistribution.cs" />
+    <Compile Include="Calc\Probability\ContinuousDistributions\RayleighDistribution.cs" />
+    <Compile Include="Calc\Probability\ContinuousDistributions\StudentsTDistribution.cs" />
+    <Compile Include="Calc\Probability\ContinuousDistributions\TriangularDistribution.cs" />
+    <Compile Include="Calc\Probability\MultiContinuousDistributions\UnitSphereDistribution.cs" />
+    <Compile Include="Calc\Probability\ContinuousDistributions\WeibullDistribution.cs" />
+    <Compile Include="Calc\Probability\DiscreteDistributions\BernoulliDistribution.cs" />
+    <Compile Include="Calc\Probability\DiscreteDistributions\BinomialDistribution.cs" />
+    <Compile Include="Calc\Probability\DiscreteDistributions\DiscreteDistribution.cs" />
+    <Compile Include="Calc\Probability\DiscreteDistributions\DiscreteUniformDistribution.cs" />
+    <Compile Include="Calc\Probability\DiscreteDistributions\GeometricDistribution.cs" />
+    <Compile Include="Calc\Probability\DiscreteDistributions\PoissonDistribution.cs" />
+    <Compile Include="Calc\Probability\Distribution.cs" />
+    <Compile Include="Calc\Probability\Generator.cs" />
     <Compile Include="Calc\Probability\ProbabilityDistributions.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Calc\Probability\PseudoRNGs\ALFGenerator.cs" />
+    <Compile Include="Calc\Probability\PseudoRNGs\MT19937Generator.cs" />
+    <Compile Include="Calc\Probability\PseudoRNGs\StandardGenerator.cs" />
+    <Compile Include="Calc\Probability\PseudoRNGs\XorShift128Generator.cs" />
     <Compile Include="Calc\Probability\RandomGenerators.cs">
       <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\Probability\Resources\ExceptionMessages.de.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ExceptionMessages.de.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Calc\Probability\Resources\ExceptionMessages.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ExceptionMessages.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Calc\Probability\Resources\ExceptionMessages.es.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ExceptionMessages.es.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Calc\Probability\Resources\ExceptionMessages.fr.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ExceptionMessages.fr.resx</DependentUpon>
     </Compile>
     <Compile Include="Calc\Regression\DynamicParameterEstimation.cs" />
     <Compile Include="Calc\Regression\LinearRegression.cs">
@@ -404,6 +458,28 @@
     <Compile Include="Calc\VectorCoupling.cs">
       <SubType>Code</SubType>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Calc\Probability\Resources\ExceptionMessages.de.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ExceptionMessages.de.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calc\Probability\Resources\ExceptionMessages.es.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ExceptionMessages.es.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calc\Probability\Resources\ExceptionMessages.fr.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ExceptionMessages.fr.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calc\Probability\Resources\ExceptionMessages.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ExceptionMessages.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

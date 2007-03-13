@@ -499,6 +499,8 @@ namespace Altaxo.Worksheet.Commands
     /// </remarks>
     public static void PasteFromTable(GUI.WorksheetController dg, Altaxo.Data.DataTable sourcetable)
     {
+      dg.DataTable.Suspend();
+
       if(!dg.AreColumnsOrRowsSelected)
       {
         PasteFromTableToUnselected(dg,sourcetable);
@@ -533,6 +535,8 @@ namespace Altaxo.Worksheet.Commands
       {
         PasteFromTableRowsToSelectedRows(dg,sourcetable);
       }
+
+      dg.DataTable.Resume();
     }
 
     /// <summary>

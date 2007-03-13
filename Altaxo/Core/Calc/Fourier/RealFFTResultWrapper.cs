@@ -215,7 +215,7 @@ namespace Altaxo.Calc.Fourier
           else if ((i + i) == _arr.Length)
             return 0;
           else
-            return _arr[_arr.Length-i];
+            return -_arr[_arr.Length-i];
         }
       }
 
