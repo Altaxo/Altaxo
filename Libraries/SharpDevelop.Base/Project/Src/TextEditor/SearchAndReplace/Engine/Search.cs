@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2364 $</version>
 // </file>
 
 using System;
@@ -88,8 +88,9 @@ namespace SearchAndReplace
 			Debug.Assert(textIteratorBuilder != null);
 			
 			if (info != null && textIterator != null && documentIterator.CurrentFileName != null) {
-				if (info.FileName != documentIterator.CurrentFileName) { // create new iterator, if document changed
-					info         = documentIterator.Current;
+				ProvidedDocumentInformation currentInfo = documentIterator.Current;
+				if (!info.Equals(currentInfo)) { // create new iterator, if document changed
+					info         = currentInfo;
 					textIterator = textIteratorBuilder.BuildTextIterator(info);
 				} else { // old document -> initialize iterator position to caret pos
 					textIterator.Position = info.CurrentOffset;
@@ -106,7 +107,7 @@ namespace SearchAndReplace
 			if (documentIterator.MoveForward()) {
 				info = documentIterator.Current;
 				// document is valid for searching -> set iterator & fileName
-				if (info != null && info.TextBuffer != null && info.EndOffset >= 0 && info.EndOffset < info.TextBuffer.Length) {
+				if (info != null && info.TextBuffer != null && info.EndOffset >= 0 && info.EndOffset <= info.TextBuffer.Length) {
 					textIterator = textIteratorBuilder.BuildTextIterator(info);
 				} else {
 					textIterator = null;
@@ -120,8 +121,9 @@ namespace SearchAndReplace
 		public SearchResult FindNext(int offset, int length)
 		{
 			if (info != null && textIterator != null && documentIterator.CurrentFileName != null) {
-				if (info.FileName != documentIterator.CurrentFileName) { // create new iterator, if document changed
-					info         = documentIterator.Current;
+				ProvidedDocumentInformation currentInfo = documentIterator.Current;
+				if (!info.Equals(currentInfo)) { // create new iterator, if document changed
+					info         = currentInfo;
 					textIterator = textIteratorBuilder.BuildTextIterator(info);
 				} else { // old document -> initialize iterator position to caret pos
 					textIterator.Position = info.CurrentOffset;

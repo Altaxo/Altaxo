@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2165 $</version>
+//     <version>$Revision: 2416 $</version>
 // </file>
 
 using System;
@@ -24,11 +24,13 @@ namespace ICSharpCode.SharpDevelop.Dom
 				throw new ArgumentNullException("registry");
 			LoggingService.Info("Cecil: Load from " + fileName);
 			AssemblyDefinition asm = AssemblyFactory.GetAssembly(fileName);
-			List<AssemblyName> referencedAssemblies = new List<AssemblyName>();
-			foreach (AssemblyNameReference anr in asm.MainModule.AssemblyReferences) {
-				referencedAssemblies.Add(new AssemblyName(anr.FullName));
+			List<DomAssemblyName> referencedAssemblies = new List<DomAssemblyName>();
+			foreach (ModuleDefinition module in asm.Modules) {
+				foreach (AssemblyNameReference anr in module.AssemblyReferences) {
+					referencedAssemblies.Add(new DomAssemblyName(anr.FullName));
+				}
 			}
-			return new CecilProjectContent(asm.Name.FullName, fileName, referencedAssemblies.ToArray(), asm.MainModule.Types, registry);
+			return new CecilProjectContent(asm.Name.FullName, fileName, referencedAssemblies.ToArray(), asm, registry);
 		}
 		
 		static void AddAttributes(IProjectContent pc, IList<IAttribute> list, CustomAttributeCollection attributes)
@@ -121,9 +123,17 @@ namespace ICSharpCode.SharpDevelop.Dom
 		
 		private sealed class CecilProjectContent : ReflectionProjectContent
 		{
-			public CecilProjectContent(string fullName, string fileName, AssemblyName[] referencedAssemblies,
-			                           TypeDefinitionCollection types, ProjectContentRegistry registry)
+			public CecilProjectContent(string fullName, string fileName, DomAssemblyName[] referencedAssemblies,
+			                           AssemblyDefinition assembly, ProjectContentRegistry registry)
 				: base(fullName, fileName, referencedAssemblies, registry)
+			{
+				foreach (ModuleDefinition module in assembly.Modules) {
+					AddTypes(module.Types);
+				}
+				InitializeSpecialClasses();
+			}
+			
+			void AddTypes(TypeDefinitionCollection types)
 			{
 				foreach (TypeDefinition td in types) {
 					if ((td.Attributes & TypeAttributes.Public) == TypeAttributes.Public) {
@@ -141,7 +151,6 @@ namespace ICSharpCode.SharpDevelop.Dom
 						AddClassToNamespaceListInternal(new CecilClass(this.AssemblyCompilationUnit, null, td, name));
 					}
 				}
-				InitializeSpecialClasses();
 			}
 		}
 		
@@ -256,6 +265,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 						DefaultField f = new DefaultField(this, field.Name);
 						f.Modifiers = TranslateModifiers(field);
 						f.ReturnType = CreateType(this.ProjectContent, this, field.FieldType);
+						AddAttributes(CompilationUnit.ProjectContent, f.Attributes, field.CustomAttributes);
 						Fields.Add(f);
 					}
 				}
@@ -277,6 +287,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 							p.IsIndexer = true;
 						}
 						AddParameters(p, property.Parameters);
+						AddAttributes(CompilationUnit.ProjectContent, p.Attributes, property.CustomAttributes);
 						Properties.Add(p);
 					}
 				}
@@ -290,6 +301,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 							e.Modifiers = TranslateModifiers(eventDef);
 						}
 						e.ReturnType = CreateType(this.ProjectContent, this, eventDef.EventType);
+						AddAttributes(CompilationUnit.ProjectContent, e.Attributes, eventDef.CustomAttributes);
 						Events.Add(e);
 					}
 				}
@@ -320,6 +332,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 					}
 					
 					m.ReturnType = CreateType(this.ProjectContent, m, method.ReturnType.ReturnType);
+					AddAttributes(CompilationUnit.ProjectContent, m.Attributes, method.CustomAttributes);
 					if (this.ClassType == ClassType.Interface) {
 						m.Modifiers = ModifierEnum.Public | ModifierEnum.Abstract;
 					} else {

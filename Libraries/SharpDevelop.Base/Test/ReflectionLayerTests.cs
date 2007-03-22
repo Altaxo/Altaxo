@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1872 $</version>
+//     <version>$Revision: 2411 $</version>
 // </file>
 
 using System;
@@ -122,7 +122,7 @@ namespace ICSharpCode.SharpDevelop.Tests
 		[Test]
 		public void ReflectionParserTest()
 		{
-			ICompilationUnit cu = new ReflectionProjectContent("TestName", "testlocation", new AssemblyName[0], ParserService.DefaultProjectContentRegistry).AssemblyCompilationUnit;
+			ICompilationUnit cu = new ReflectionProjectContent("TestName", "testlocation", new DomAssemblyName[0], ParserService.DefaultProjectContentRegistry).AssemblyCompilationUnit;
 			IClass c = new ReflectionClass(cu, typeof(TestClass<,>), typeof(TestClass<,>).FullName, null);
 			cu.ProjectContent.AddClassToNamespaceList(c);
 			

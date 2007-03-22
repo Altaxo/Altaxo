@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2301 $</version>
 // </file>
 
 using System;
@@ -86,6 +86,21 @@ namespace SearchAndReplace
 			}
 			return new DocumentFactory().CreateFromTextBuffer(textBuffer);
 		}		
+		
+		public override bool Equals(object obj)
+		{
+			ProvidedDocumentInformation info = obj as ProvidedDocumentInformation;
+			if (info == null) {
+				return false;
+			}
+			return this.fileName == info.fileName && 
+				this.textAreaControl == info.textAreaControl;
+		}
+		
+		public override int GetHashCode()
+		{
+			return fileName.GetHashCode();
+		}
 		
 		public ProvidedDocumentInformation(IDocument document, string fileName, int currentOffset)
 		{

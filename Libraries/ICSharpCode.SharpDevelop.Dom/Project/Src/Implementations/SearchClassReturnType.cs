@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1661 $</version>
+//     <version>$Revision: 2384 $</version>
 // </file>
 
 using System;
@@ -49,21 +49,9 @@ namespace ICSharpCode.SharpDevelop.Dom
 		
 		public override bool Equals(object o)
 		{
-			SearchClassReturnType rt = o as SearchClassReturnType;
-			if (rt != null) {
-				if (name != rt.name)
-					return false;
-				if (declaringClass.FullyQualifiedName == rt.declaringClass.FullyQualifiedName
-				    && typeParameterCount == rt.typeParameterCount
-				    && caretLine == rt.caretLine
-				    && caretColumn == rt.caretColumn)
-				{
-					return true;
-				}
-			}
 			IReturnType rt2 = o as IReturnType;
 			if (rt2 != null && rt2.IsDefaultReturnType)
-				return rt2.FullyQualifiedName == this.FullyQualifiedName && rt2.TypeParameterCount == this.TypeParameterCount;
+				return DefaultReturnType.Equals(this, rt2);
 			else
 				return false;
 		}
@@ -126,14 +114,16 @@ namespace ICSharpCode.SharpDevelop.Dom
 				lock (cache) {
 					if (cache.TryGetValue(this, out type))
 						return type;
-					try {
-						isSearching = true;
-						type = pc.SearchType(new SearchTypeRequest(name, typeParameterCount, declaringClass, caretLine, caretColumn)).Result;
+				}
+				try {
+					isSearching = true;
+					type = pc.SearchType(new SearchTypeRequest(name, typeParameterCount, declaringClass, caretLine, caretColumn)).Result;
+					lock (cache) {
 						cache[this] = type;
-						return type;
-					} finally {
-						isSearching = false;
 					}
+					return type;
+				} finally {
+					isSearching = false;
 				}
 			}
 		}

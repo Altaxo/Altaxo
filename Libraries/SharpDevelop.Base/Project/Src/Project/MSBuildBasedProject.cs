@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2124 $</version>
+//     <version>$Revision: 2380 $</version>
 // </file>
 
 using System;
@@ -120,7 +120,7 @@ namespace ICSharpCode.SharpDevelop.Project
 			Name = information.ProjectName;
 			FileName = information.OutputProjectFileName;
 			
-			IdGuid = "{" + Guid.NewGuid().ToString().ToUpperInvariant() + "}";
+			base.IdGuid = "{" + Guid.NewGuid().ToString().ToUpperInvariant() + "}";
 			MSBuild.BuildPropertyGroup group = project.AddNewPropertyGroup(false);
 			group.AddNewProperty(ProjectGuidPropertyName, IdGuid, true);
 			group.AddNewProperty("Configuration", "Debug", true).Condition = " '$(Configuration)' == '' ";
@@ -130,6 +130,15 @@ namespace ICSharpCode.SharpDevelop.Project
 			this.ActivePlatform = "AnyCPU";
 		}
 		
+		/// <summary>
+		/// The MSBuild property used to store the project's IdGuid.
+		/// The IdGuid is only stored in the project file to make multiple solutions use the same
+		/// GUID for the project when the project is added to multiple solutions. However, the actual
+		/// GUID used for the project in the solution can differ from the GUID in the project file -
+		/// SharpDevelop does not try to correct mismatches but simply always use the value from the solution.
+		/// SharpDevelop creates a new GUID for the solution when the project GUID cannot be used because it
+		/// would conflict with another project. This happens when one project is created by copying another project.
+		/// </summary>
 		public const string ProjectGuidPropertyName = "ProjectGuid";
 		
 		/// <summary>
@@ -811,9 +820,28 @@ namespace ICSharpCode.SharpDevelop.Project
 		
 		internal static void InitializeMSBuildProject(MSBuild.Project project)
 		{
-			project.GlobalProperties.SetProperty("BuildingInsideVisualStudio", "true");
-			foreach (KeyValuePair<string, string> pair in MSBuildEngine.MSBuildProperties) {
-				project.GlobalProperties.SetProperty(pair.Key, pair.Value, true);
+			InitializeMSBuildProjectProperties(project.GlobalProperties);
+		}
+		
+		/// <summary>
+		/// Set compilation properties (MSBuildProperties and AddInTree/AdditionalPropertiesPath).
+		/// </summary>
+		internal static void InitializeMSBuildProjectProperties(MSBuild.BuildPropertyGroup propertyGroup)
+		{
+			foreach (KeyValuePair<string, string> entry in MSBuildEngine.MSBuildProperties) {
+				propertyGroup.SetProperty(entry.Key, entry.Value);
+			}
+			// re-load these properties from AddInTree every time because "text" might contain
+			// SharpDevelop properties resolved by the StringParser (e.g. ${property:FxCopPath})
+			AddInTreeNode node = AddInTree.GetTreeNode(MSBuildEngine.AdditionalPropertiesPath, false);
+			if (node != null) {
+				foreach (Codon codon in node.Codons) {
+					object item = codon.BuildItem(null, new System.Collections.ArrayList());
+					if (item != null) {
+						bool escapeValue = !codon.Properties.Get("text", "").Contains("$(");
+						propertyGroup.SetProperty(codon.Id, item.ToString(), escapeValue);
+					}
+				}
 			}
 		}
 		
@@ -849,18 +877,25 @@ namespace ICSharpCode.SharpDevelop.Project
 				CreateItemsListFromMSBuild();
 				LoadConfigurationPlatformNamesFromMSBuild();
 				
-				IdGuid = GetEvaluatedProperty(ProjectGuidPropertyName);
-				if (IdGuid == null) {
-					// Fix projects that have nb GUID
-					IdGuid = Guid.NewGuid().ToString();
-					SetPropertyInternal(null, null, ProjectGuidPropertyName, IdGuid, PropertyStorageLocations.Base, true);
-					try {
-						// save fixed project
-						project.Save(fileName);
-					} catch {}
-				}
+				base.IdGuid = GetEvaluatedProperty(ProjectGuidPropertyName);
 			} finally {
 				isLoading = false;
+			}
+		}
+		
+		[Browsable(false)]
+		public override string IdGuid {
+			get { return base.IdGuid; }
+			set {
+				if (base.IdGuid == null) {
+					// Save the GUID in the project if the project does not yet have a GUID.
+					SetPropertyInternal(null, null, ProjectGuidPropertyName, value, PropertyStorageLocations.Base, true);
+					try {
+						// save fixed project
+						project.Save(this.FileName);
+					} catch {}
+				}
+				base.IdGuid = value;
 			}
 		}
 		#endregion

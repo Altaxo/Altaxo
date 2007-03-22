@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2043 $</version>
+//     <version>$Revision: 2259 $</version>
 // </file>
 
 using System;
@@ -282,7 +282,11 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 				return combineDescriptor.CreateSolution(projectCreateInformation, this.languagename);
 			} else if (projectDescriptor != null) {
 				projectCreateInformation.Solution = new Solution();
-				return projectDescriptor.CreateProject(projectCreateInformation, this.languagename).FileName;
+				IProject project = projectDescriptor.CreateProject(projectCreateInformation, this.languagename);
+				if (project != null)
+					return project.FileName;
+				else
+					return null;
 			} else {
 				return null;
 			}

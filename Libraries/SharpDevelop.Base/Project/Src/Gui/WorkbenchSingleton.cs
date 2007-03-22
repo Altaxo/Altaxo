@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2067 $</version>
+//     <version>$Revision: 2361 $</version>
 // </file>
 
 using System;
@@ -72,6 +72,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			StatusBarService.Initialize();
 			DomHostCallback.Register(); // must be called after StatusBarService.Initialize()
 			ParserService.InitializeParserService();
+			Bookmarks.BookmarkManager.Initialize();
 			Project.CustomToolsService.Initialize();
 
       workbench = (ICSharpCode.SharpDevelop.Gui.DefaultWorkbench)Activator.CreateInstance(workbenchtype);
@@ -82,6 +83,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			StatusBarService.Initialize();
 			DomHostCallback.Register(); // must be called after StatusBarService.Initialize()
 			ParserService.InitializeParserService();
+			Bookmarks.BookmarkManager.Initialize();
 			Project.CustomToolsService.Initialize();
 			
 			workbench = new DefaultWorkbench();

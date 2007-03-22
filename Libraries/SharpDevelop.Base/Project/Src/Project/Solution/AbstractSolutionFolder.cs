@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2085 $</version>
+//     <version>$Revision: 2260 $</version>
 // </file>
 
 using System;
@@ -51,7 +51,7 @@ namespace ICSharpCode.SharpDevelop.Project
 		}
 		
 		[Browsable(false)]
-		public string IdGuid {
+		public virtual string IdGuid {
 			get {
 				return idGuid;
 			}

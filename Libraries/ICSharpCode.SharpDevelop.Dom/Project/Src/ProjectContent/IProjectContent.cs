@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2043 $</version>
+//     <version>$Revision: 2326 $</version>
 // </file>
 
 using System;
@@ -14,6 +14,15 @@ namespace ICSharpCode.SharpDevelop.Dom
 	public interface IProjectContent : IDisposable
 	{
 		XmlDoc XmlDoc {
+			get;
+		}
+		
+		/// <summary>
+		/// Gets if the project content is representing the current version of the assembly.
+		/// This property always returns true for ParseProjectContents but might return false
+		/// for ReflectionProjectContent/CecilProjectContent if the file was changed.
+		/// </summary>
+		bool IsUpToDate {
 			get;
 		}
 		
@@ -82,6 +91,10 @@ namespace ICSharpCode.SharpDevelop.Dom
 		string SearchNamespace(string name, IClass curType, ICompilationUnit unit, int caretLine, int caretColumn);
 		SearchTypeResult SearchType(SearchTypeRequest request);
 		
+		/// <summary>
+		/// Gets the definition position of the class/member.
+		/// </summary>
+		/// <param name="fullMemberName">The full member name in Reflection syntax (always case sensitive, ` for generics)</param>
 		FilePosition GetPosition(string fullMemberName);
 	}
 	

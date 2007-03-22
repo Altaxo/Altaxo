@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2146 $</version>
+//     <version>$Revision: 2367 $</version>
 // </file>
 
 using System;
@@ -38,6 +38,7 @@ namespace ICSharpCode.SharpDevelop.Project
 			preferences = new SolutionPreferences(this);
 		}
 		
+		[Browsable(false)]
 		public MSBuild.Engine BuildEngine {
 			get { return buildEngine; }
 		}
@@ -511,8 +512,12 @@ namespace ICSharpCode.SharpDevelop.Project
 				foreach (SolutionItem item in nestedProjectsSection.Items) {
 					string from = item.Name;
 					string to   = item.Location;
-					ISolutionFolderContainer folder = newSolution.guidDictionary[to] as ISolutionFolderContainer;
-					folder.AddFolder(newSolution.guidDictionary[from]);
+					if (newSolution.guidDictionary.ContainsKey(to) && newSolution.guidDictionary.ContainsKey(from)) {
+						// ignore invalid entries
+						
+						ISolutionFolderContainer folder = newSolution.guidDictionary[to] as ISolutionFolderContainer;
+						folder.AddFolder(newSolution.guidDictionary[from]);
+					}
 				}
 			}
 			
@@ -538,7 +543,10 @@ namespace ICSharpCode.SharpDevelop.Project
 				if (sec.Name == "SolutionConfiguration") {
 					this.Sections.Remove(sec);
 					foreach (SolutionItem item in sec.Items) {
-						newSec.Items.Add(new SolutionItem(item.Name + "|Any CPU", item.Location + "|Any CPU"));
+						// item.Name = item.Location
+						// might be  ConfigName.0 = Debug   (VS.NET)
+						// or        Debug = Debug          (VS.NET 03)
+						newSec.Items.Add(new SolutionItem(item.Location + "|Any CPU", item.Location + "|Any CPU"));
 					}
 					break;
 				}

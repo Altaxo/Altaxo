@@ -2,12 +2,13 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2327 $</version>
 // </file>
 
 using System;
 using System.Text.RegularExpressions;
 using ICSharpCode.Core;
+using ICSharpCode.SharpDevelop.Gui;
 
 namespace SearchAndReplace
 {
@@ -15,7 +16,7 @@ namespace SearchAndReplace
 	{
 		Regex regex = null;
 		
-		public bool CompilePattern()
+		public bool CompilePattern(IProgressMonitor monitor)
 		{
 			RegexOptions regexOptions = RegexOptions.Compiled;
 			if (!SearchOptions.MatchCase) {
@@ -25,7 +26,9 @@ namespace SearchAndReplace
 				regex = new Regex(SearchOptions.FindPattern, regexOptions);
 				return true;
 			} catch (ArgumentException ex) {
+				if (monitor != null) monitor.ShowingDialog = true;
 				MessageService.ShowError("${res:Dialog.NewProject.SearchReplace.ErrorParsingRegex}\n" + ex.Message);
+				if (monitor != null) monitor.ShowingDialog = false;
 				return false;
 			}
 		}

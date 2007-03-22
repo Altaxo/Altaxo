@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2151 $</version>
+//     <version>$Revision: 2309 $</version>
 // </file>
 
 using System;
@@ -17,6 +17,8 @@ using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.Dom;
 using ICSharpCode.SharpDevelop.Gui;
 using ICSharpCode.SharpDevelop.Project;
+
+using RegistryContentPair = System.Collections.Generic.KeyValuePair<ICSharpCode.SharpDevelop.Dom.ProjectContentRegistry, ICSharpCode.SharpDevelop.Dom.IProjectContent>;
 
 namespace ICSharpCode.SharpDevelop
 {
@@ -96,20 +98,11 @@ namespace ICSharpCode.SharpDevelop
 		}
 		
 		/// <summary>
-		/// Gets the list of project contents of all open projects.
+		/// Gets the list of project contents of all open projects. Does not include assembly project contents.
 		/// </summary>
 		public static IEnumerable<IProjectContent> AllProjectContents {
 			get {
 				return projectContents.Values;
-			}
-		}
-		
-		/// <summary>
-		/// Gets the list of project contents of all open projects plus the referenced project contents.
-		/// </summary>
-		public static IEnumerable<IProjectContent> AllProjectContentsWithReferences {
-			get {
-				return Linq.Distinct(Linq.Concat(AllProjectContents, defaultProjectContentRegistry.GetLoadedProjectContents()));
 			}
 		}
 		
@@ -847,7 +840,7 @@ namespace ICSharpCode.SharpDevelop
 					if (r != null) {
 						return r;
 					} else {
-						return defaultProjectContentRegistry; // fallback when class not found
+						return defaultProjectContentRegistry; // fallback when registry class not found
 					}
 				}
 			}
@@ -876,6 +869,74 @@ namespace ICSharpCode.SharpDevelop
 				return ParserService.GetProjectContent(((ProjectReferenceProjectItem)item).ReferencedProject);
 			}
 			return GetRegistryForReference(item).GetProjectContentForReference(item.Include, item.FileName);
+		}
+		
+		/// <summary>
+		/// Refreshes the project content for the specified reference if required.
+		/// This method does nothing if the reference is not an assembly reference, is not loaded or already is up-to-date.
+		/// </summary>
+		public static void RefreshProjectContentForReference(ReferenceProjectItem item)
+		{
+			if (item is ProjectReferenceProjectItem) {
+				return;
+			}
+			ProjectContentRegistry registry = GetRegistryForReference(item);
+			registry.RunLocked(
+				delegate {
+					IProjectContent rpc = GetExistingProjectContentForReference(item);
+					if (rpc == null) {
+						LoggingService.Debug("RefreshProjectContentForReference: not refreshing (rpc==null) " + item.FileName);
+						return;
+					}
+					if (rpc.IsUpToDate) {
+						LoggingService.Debug("RefreshProjectContentForReference: not refreshing (rpc.IsUpToDate) " + item.FileName);
+						return;
+					}
+					LoggingService.Debug("RefreshProjectContentForReference " + item.FileName);
+					
+					HashSet<IProject> projectsToRefresh = new HashSet<IProject>();
+					HashSet<IProjectContent> unloadedReferenceContents = new HashSet<IProjectContent>();
+					UnloadReferencedContent(projectsToRefresh, unloadedReferenceContents, registry, rpc);
+					
+					foreach (IProject p in projectsToRefresh) {
+						Reparse(p, true, false);
+					}
+				});
+		}
+		
+		static void UnloadReferencedContent(HashSet<IProject> projectsToRefresh, HashSet<IProjectContent> unloadedReferenceContents, ProjectContentRegistry referencedContentRegistry, IProjectContent referencedContent)
+		{
+			LoggingService.Debug("Unload referenced content " + referencedContent);
+			
+			List<RegistryContentPair> otherContentsToUnload = new List<RegistryContentPair>();
+			foreach (ProjectContentRegistryDescriptor registry in registries) {
+				if (registry.IsRegistryLoaded) {
+					foreach (IProjectContent pc in registry.Registry.GetLoadedProjectContents()) {
+						if (pc.ReferencedContents.Contains(referencedContent)) {
+							if (unloadedReferenceContents.Add(pc)) {
+								LoggingService.Debug("Mark dependent content for unloading " + pc);
+								otherContentsToUnload.Add(new RegistryContentPair(registry.Registry, pc));
+							}
+						}
+					}
+				}
+			}
+			
+			foreach (IProjectContent pc in ParserService.AllProjectContents) {
+				IProject project = (IProject)pc.Project;
+				if (projectsToRefresh.Contains(project))
+					continue;
+				if (pc.ReferencedContents.Remove(referencedContent)) {
+					LoggingService.Debug("UnloadReferencedContent: Mark project for reparsing " + project.Name);
+					projectsToRefresh.Add(project);
+				}
+			}
+			
+			foreach (RegistryContentPair pair in otherContentsToUnload) {
+				UnloadReferencedContent(projectsToRefresh, unloadedReferenceContents, pair.Key, pair.Value);
+			}
+			
+			referencedContentRegistry.UnloadProjectContent(referencedContent);
 		}
 	}
 }

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2117 $</version>
+//     <version>$Revision: 2298 $</version>
 // </file>
 
 using System;
@@ -441,6 +441,14 @@ namespace ICSharpCode.TextEditor
 				}
 			}
 			base.WndProc(ref m);
+		}
+		
+		protected override void OnEnter(EventArgs e)
+		{
+			// SD2-1072 - Make sure the caret line is valid if anyone
+			// has handlers for the Enter event.
+			Caret.ValidateCaretPos();
+			base.OnEnter(e);
 		}
 	}
 }

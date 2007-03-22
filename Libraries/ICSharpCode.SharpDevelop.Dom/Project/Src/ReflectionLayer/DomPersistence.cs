@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2066 $</version>
+//     <version>$Revision: 2408 $</version>
 // </file>
 
 using System;
@@ -20,7 +20,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 	{
 		public const long FileMagic = 0x11635233ED2F428C;
 		public const long IndexFileMagic = 0x11635233ED2F427D;
-		public const short FileVersion = 9;
+		public const short FileVersion = 10;
 		
 		ProjectContentRegistry registry;
 		string cacheDirectory;
@@ -249,8 +249,8 @@ namespace ICSharpCode.SharpDevelop.Dom
 					time = File.GetLastWriteTimeUtc(pc.AssemblyLocation).ToFileTime();
 				} catch {}
 				writer.Write(time);
-				writer.Write(pc.ReferencedAssemblies.Length);
-				foreach (AssemblyName name in pc.ReferencedAssemblies) {
+				writer.Write(pc.ReferencedAssemblyNames.Count);
+				foreach (DomAssemblyName name in pc.ReferencedAssemblyNames) {
 					writer.Write(name.FullName);
 				}
 				WriteClasses();
@@ -281,9 +281,9 @@ namespace ICSharpCode.SharpDevelop.Dom
 					LoggingService.Warn("Read dom: assembly changed since cache was created");
 					return null;
 				}
-				AssemblyName[] referencedAssemblies = new AssemblyName[reader.ReadInt32()];
+				DomAssemblyName[] referencedAssemblies = new DomAssemblyName[reader.ReadInt32()];
 				for (int i = 0; i < referencedAssemblies.Length; i++) {
-					referencedAssemblies[i] = new AssemblyName(reader.ReadString());
+					referencedAssemblies[i] = new DomAssemblyName(reader.ReadString());
 				}
 				this.pc = new ReflectionProjectContent(assemblyName, assemblyLocation, referencedAssemblies, registry);
 				if (ReadClasses()) {

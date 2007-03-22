@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2296 $</version>
 // </file>
 
 using System;
@@ -39,10 +39,14 @@ namespace ICSharpCode.SharpDevelop.Bookmarks
 		
 		public const string ContextMenuPath = "/SharpDevelop/ViewContent/DefaultTextEditor/ClassMemberContextMenu";
 		
-		public override void Click(Control parent, MouseEventArgs e)
+		public override bool Click(Control parent, MouseEventArgs e)
 		{
-			if (e.Button == MouseButtons.Left)
+			if (e.Button == MouseButtons.Left) {
 				MenuService.ShowContextMenu(this, ContextMenuPath, parent, e.X, e.Y);
+				return true;
+			} else {
+				return false;
+			}
 		}
 		
 		public abstract int IconIndex {
@@ -76,10 +80,14 @@ namespace ICSharpCode.SharpDevelop.Bookmarks
 		
 		public const string ContextMenuPath = "/SharpDevelop/ViewContent/DefaultTextEditor/ClassBookmarkContextMenu";
 		
-		public override void Click(Control parent, MouseEventArgs e)
+		public override bool Click(Control parent, MouseEventArgs e)
 		{
-			if (e.Button == MouseButtons.Left)
+			if (e.Button == MouseButtons.Left) {
 				MenuService.ShowContextMenu(this, ContextMenuPath, parent, e.X, e.Y);
+				return true;
+			} else {
+				return false;
+			}
 		}
 		
 		public override void Draw(IconBarMargin margin, Graphics g, Point p)

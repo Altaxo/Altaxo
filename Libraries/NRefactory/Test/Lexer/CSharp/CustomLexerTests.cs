@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1634 $</version>
+//     <version>$Revision: 2419 $</version>
 // </file>
 
 using System;
@@ -39,6 +39,34 @@ namespace ICSharpCode.NRefactory.Tests.Lexer.CSharp
 			Token t = lexer.NextToken();
 			Assert.AreEqual(Tokens.Identifier, t.kind);
 			Assert.AreEqual("a_Bc05", t.val);
+		}
+		
+		[Test]
+		public void TestIdentifierStartingWithUnderscore()
+		{
+			ILexer lexer = GenerateLexer(new StringReader("_Bc05"));
+			Token t = lexer.NextToken();
+			Assert.AreEqual(Tokens.Identifier, t.kind);
+			Assert.AreEqual("_Bc05", t.val);
+		}
+		
+		[Test]
+		public void TestKeyWordAsIdentifier()
+		{
+			ILexer lexer = GenerateLexer(new StringReader("@int"));
+			Token t = lexer.NextToken();
+			Assert.AreEqual(Tokens.Identifier, t.kind);
+			Assert.AreEqual("int", t.val);
+		}
+		
+		
+		[Test]
+		public void TestKeyWordAsIdentifierStartingWithUnderscore()
+		{
+			ILexer lexer = GenerateLexer(new StringReader("@_int"));
+			Token t = lexer.NextToken();
+			Assert.AreEqual(Tokens.Identifier, t.kind);
+			Assert.AreEqual("_int", t.val);
 		}
 		
 		[Test]

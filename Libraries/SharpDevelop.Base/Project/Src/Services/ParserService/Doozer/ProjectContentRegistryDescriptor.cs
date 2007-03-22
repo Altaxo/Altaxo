@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1966 $</version>
+//     <version>$Revision: 2309 $</version>
 // </file>
 
 using System;
@@ -25,6 +25,10 @@ namespace ICSharpCode.SharpDevelop
 			get {
 				return registry ?? (registry = (ProjectContentRegistry)codon.AddIn.CreateObject(codon.Properties["class"]));
 			}
+		}
+		
+		public bool IsRegistryLoaded {
+			get { return registry != null; }
 		}
 		
 		public bool UseRegistryForProject(IProject project)

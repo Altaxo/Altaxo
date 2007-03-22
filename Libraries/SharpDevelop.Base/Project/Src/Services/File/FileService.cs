@@ -2,12 +2,13 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2159 $</version>
+//     <version>$Revision: 2252 $</version>
 // </file>
 
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Windows.Forms;
 
 using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.Gui;
@@ -244,6 +245,32 @@ namespace ICSharpCode.SharpDevelop
 			}
 			NavigationService.Log(content.BuildNavPoint());
 			return content;
+		}
+		
+		/// <summary>
+		/// Creates a FolderBrowserDialog that will initially select the 
+		/// specified folder. If the folder does not exist then the default
+		/// behaviour of the FolderBrowserDialog is used where it selects the
+		/// desktop folder.
+		/// </summary>
+		public static FolderBrowserDialog CreateFolderBrowserDialog(string description, string selectedPath)
+		{
+			FolderBrowserDialog dialog = new FolderBrowserDialog();
+			dialog.Description = StringParser.Parse(description);
+			if (selectedPath != null && selectedPath.Length > 0 && Directory.Exists(selectedPath)) {
+				dialog.RootFolder = Environment.SpecialFolder.MyComputer;
+				dialog.SelectedPath = selectedPath;
+			}
+			return dialog;
+		}
+		
+		/// <summary>
+		/// Creates a FolderBrowserDialog that will initially select the 
+		/// desktop folder.
+		/// </summary>
+		public static FolderBrowserDialog CreateFolderBrowserDialog(string description)
+		{
+			return CreateFolderBrowserDialog(description, null);
 		}
 		
 		static void OnFileRemoved(FileEventArgs e)

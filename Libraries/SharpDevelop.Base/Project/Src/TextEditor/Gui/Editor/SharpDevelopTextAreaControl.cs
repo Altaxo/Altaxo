@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2161 $</version>
+//     <version>$Revision: 2355 $</version>
 // </file>
 
 using System;
@@ -242,14 +242,6 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			((Bookmarks.SDBookmarkFactory)Document.BookmarkManager.Factory).ChangeFilename(this.FileName);
 			ActivateQuickClassBrowserOnDemand();
 		}
-		
-		//// Alex: routine for pulsing parser thread
-//		protected void PulseParser() {
-//			lock(DefaultParserService.ParserPulse) {
-//				Monitor.Pulse(DefaultParserService.ParserPulse);
-//			}
-//		}
-		//// ALex: end of mod
 		
 		static ICodeCompletionBinding[] codeCompletionBindings;
 		

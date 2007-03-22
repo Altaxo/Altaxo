@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2014 $</version>
+//     <version>$Revision: 2358 $</version>
 // </file>
 
 using System;
@@ -707,7 +707,7 @@ namespace ICSharpCode.TextEditor
 		}
 		
 		/// <remarks>
-		/// Overwritten refresh method that locks if the control is in
+		/// Overwritten refresh method that does nothing if the control is in
 		/// an update cycle.
 		/// </remarks>
 		public override void Refresh()

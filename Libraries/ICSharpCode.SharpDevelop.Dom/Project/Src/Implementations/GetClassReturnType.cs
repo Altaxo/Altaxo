@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2339 $</version>
 // </file>
 
 using System;
@@ -41,15 +41,11 @@ namespace ICSharpCode.SharpDevelop.Dom
 		
 		public override bool Equals(object o)
 		{
-			GetClassReturnType rt = o as GetClassReturnType;
-			if (rt == null) {
-				IReturnType rt2 = o as IReturnType;
-				if (rt2 != null && rt2.IsDefaultReturnType)
-					return rt2.FullyQualifiedName == fullName && rt2.TypeParameterCount == this.TypeParameterCount;
-				else
-					return false;
-			}
-			return fullName == rt.fullName && typeParameterCount == rt.typeParameterCount && content == rt.content;
+			IReturnType rt = o as IReturnType;
+			if (rt != null && rt.IsDefaultReturnType)
+				return DefaultReturnType.Equals(this, rt);
+			else
+				return false;
 		}
 		
 		public override int GetHashCode()

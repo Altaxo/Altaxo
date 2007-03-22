@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1956 $</version>
+//     <version>$Revision: 2303 $</version>
 // </file>
 
 // created on 22.08.2003 at 19:02
@@ -463,7 +463,10 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 		{
 			if (reference.IsArrayType) {
 				for (int i = reference.RankSpecifier.Length - 1; i >= 0; --i) {
-					t = new ArrayReturnType(pc, t, reference.RankSpecifier[i] + 1);
+					int dimensions = reference.RankSpecifier[i] + 1;
+					if (dimensions > 0) {
+						t = new ArrayReturnType(pc, t, dimensions);
+					}
 				}
 			}
 			return t;

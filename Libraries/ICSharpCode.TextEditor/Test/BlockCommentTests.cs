@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 2300 $</version>
 // </file>
 
 using ICSharpCode.TextEditor;
@@ -139,6 +139,23 @@ namespace ICSharpCode.TextEditor.Tests
 			document.TextContent = "<!-- -->";
 			int selectionStartOffset = 8;
 			int selectionEndOffset = 8;
+			
+			BlockCommentRegion commentRegion = ToggleBlockComment.FindSelectedCommentRegion(document, commentStart, commentEnd, selectionStartOffset, selectionEndOffset);
+			Assert.IsNull(commentRegion);
+		}
+		
+		[Test]
+		public void TwoExistingBlockComments()
+		{
+			document.TextContent = "<a>\r\n" +
+									"<!--<b></b>-->\r\n" +
+									"\t<c></c>\r\n" +
+									"<!--<d></d>-->\r\n" +
+									"</a>";
+			
+			string selectedText = "<c></c>";
+			int selectionStartOffset = document.TextContent.IndexOf(selectedText);
+			int selectionEndOffset = selectionStartOffset + selectedText.Length;
 			
 			BlockCommentRegion commentRegion = ToggleBlockComment.FindSelectedCommentRegion(document, commentStart, commentEnd, selectionStartOffset, selectionEndOffset);
 			Assert.IsNull(commentRegion);

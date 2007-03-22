@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2075 $</version>
+//     <version>$Revision: 2408 $</version>
 // </file>
 
 using System;
@@ -18,7 +18,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 	public class ReflectionProjectContent : DefaultProjectContent
 	{
 		string assemblyFullName;
-		AssemblyName[] referencedAssemblies;
+		DomAssemblyName[] referencedAssemblyNames;
 		ICompilationUnit assemblyCompilationUnit;
 		string assemblyLocation;
 		ProjectContentRegistry registry;
@@ -35,15 +35,39 @@ namespace ICSharpCode.SharpDevelop.Dom
 			}
 		}
 		
+		[Obsolete("This property always returns an empty array! Use ReferencedAssemblyNames instead!")]
 		public AssemblyName[] ReferencedAssemblies {
-			get {
-				return referencedAssemblies;
-			}
+			get { return new AssemblyName[0]; }
+		}
+		
+		/// <summary>
+		/// Gets the list of assembly names referenced by this project content.
+		/// </summary>
+		public IList<DomAssemblyName> ReferencedAssemblyNames {
+			get { return Array.AsReadOnly(referencedAssemblyNames); }
 		}
 		
 		public ICompilationUnit AssemblyCompilationUnit {
+			get { return assemblyCompilationUnit; }
+		}
+		
+		DateTime assemblyFileLastWriteTime;
+		
+		/// <summary>
+		/// Gets if the project content is representing the current version of the assembly.
+		/// This property always returns true for ParseProjectContents but might return false
+		/// for ReflectionProjectContent/CecilProjectContent if the file was changed.
+		/// </summary>
+		public override bool IsUpToDate {
 			get {
-				return assemblyCompilationUnit;
+				DateTime newWriteTime;
+				try {
+					newWriteTime = File.GetLastWriteTimeUtc(assemblyLocation);
+				} catch (Exception ex) {
+					LoggingService.Warn(ex);
+					return true;
+				}
+				return assemblyFileLastWriteTime == newWriteTime;
 			}
 		}
 		
@@ -53,7 +77,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 		}
 		
 		public ReflectionProjectContent(Assembly assembly, string assemblyLocation, ProjectContentRegistry registry)
-			: this(assembly.FullName, assemblyLocation, assembly.GetReferencedAssemblies(), registry)
+			: this(assembly.FullName, assemblyLocation, DomAssemblyName.Convert(assembly.GetReferencedAssemblies()), registry)
 		{
 			foreach (Type type in assembly.GetExportedTypes()) {
 				string name = type.FullName;
@@ -64,7 +88,13 @@ namespace ICSharpCode.SharpDevelop.Dom
 			InitializeSpecialClasses();
 		}
 		
+		[Obsolete("Use DomAssemblyName instead of AssemblyName!")]
 		public ReflectionProjectContent(string assemblyFullName, string assemblyLocation, AssemblyName[] referencedAssemblies, ProjectContentRegistry registry)
+			: this(assemblyFullName, assemblyLocation, DomAssemblyName.Convert(referencedAssemblies), registry)
+		{
+		}
+		
+		public ReflectionProjectContent(string assemblyFullName, string assemblyLocation, DomAssemblyName[] referencedAssemblies, ProjectContentRegistry registry)
 		{
 			if (assemblyFullName == null)
 				throw new ArgumentNullException("assemblyFullName");
@@ -75,9 +105,15 @@ namespace ICSharpCode.SharpDevelop.Dom
 			
 			this.registry = registry;
 			this.assemblyFullName = assemblyFullName;
-			this.referencedAssemblies = referencedAssemblies;
+			this.referencedAssemblyNames = referencedAssemblies;
 			this.assemblyLocation = assemblyLocation;
 			this.assemblyCompilationUnit = new DefaultCompilationUnit(this);
+			
+			try {
+				assemblyFileLastWriteTime = File.GetLastWriteTimeUtc(assemblyLocation);
+			} catch (Exception ex) {
+				LoggingService.Warn(ex);
+			}
 			
 			string fileName = LookupLocalizedXmlDoc(assemblyLocation);
 			// Not found -> look in runtime directory.
@@ -120,7 +156,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 		}
 		
 		bool initialized = false;
-		List<AssemblyName> missingNames;
+		List<DomAssemblyName> missingNames;
 		
 		public void InitializeReferences()
 		{
@@ -143,7 +179,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 				}
 			} else {
 				initialized = true;
-				foreach (AssemblyName name in referencedAssemblies) {
+				foreach (DomAssemblyName name in referencedAssemblyNames) {
 					IProjectContent content = registry.GetExistingProjectContent(name);
 					if (content != null) {
 						changed = true;
@@ -152,7 +188,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 						}
 					} else {
 						if (missingNames == null)
-							missingNames = new List<AssemblyName>();
+							missingNames = new List<DomAssemblyName>();
 						missingNames.Add(name);
 					}
 				}

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1968 $</version>
+//     <version>$Revision: 2297 $</version>
 // </file>
 
 using System;
@@ -16,6 +16,8 @@ namespace ICSharpCode.SharpDevelop.Debugging
 	public class BreakpointBookmark : SDMarkerBookmark
 	{
 		bool willBeHit = true;
+		
+		static readonly Color defaultColor = Color.FromArgb(180, 38, 38);
 		
 		public virtual bool WillBeHit {
 			get {
@@ -44,7 +46,7 @@ namespace ICSharpCode.SharpDevelop.Debugging
 			if (LineNumber >= Document.TotalNumberOfLines)
 				LineNumber = Document.TotalNumberOfLines - 1;
 			LineSegment lineSeg = Document.GetLineSegment(LineNumber);
-			TextMarker marker = new TextMarker(lineSeg.Offset, lineSeg.Length, TextMarkerType.SolidBlock, Color.Red, Color.White);
+			TextMarker marker = new TextMarker(lineSeg.Offset, lineSeg.Length, TextMarkerType.SolidBlock, defaultColor, Color.White);
 			Document.MarkerStrategy.AddMarker(marker);
 			return marker;
 		}

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2074 $</version>
+//     <version>$Revision: 2262 $</version>
 // </file>
 
 using System;
@@ -223,6 +223,7 @@ namespace ICSharpCode.TextEditor.Document
 				OnDocumentAboutToBeChanged(new DocumentEventArgs(this, 0, 0, value));
 				textBufferStrategy.SetContent(value);
 				lineTrackingStrategy.SetContent(value);
+				undoStack.ClearAll();
 				
 				OnDocumentChanged(new DocumentEventArgs(this, 0, 0, value));
 				OnTextContentChanged(EventArgs.Empty);

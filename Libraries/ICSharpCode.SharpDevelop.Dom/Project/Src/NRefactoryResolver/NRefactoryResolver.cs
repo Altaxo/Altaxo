@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2064 $</version>
+//     <version>$Revision: 2337 $</version>
 // </file>
 
 using System;
@@ -266,7 +266,7 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 		
 		void RunLookupTableVisitor(string fileContent)
 		{
-			lookupTableVisitor = new LookupTableVisitor(languageProperties.NameComparer);
+			lookupTableVisitor = new LookupTableVisitor(language);
 			
 			if (callingMember != null) {
 				CompilationUnit cu = ParseCurrentMemberAsCompilationUnit(fileContent);
@@ -278,7 +278,7 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 		
 		public void RunLookupTableVisitor(INode currentMemberNode)
 		{
-			lookupTableVisitor = new LookupTableVisitor(languageProperties.NameComparer);
+			lookupTableVisitor = new LookupTableVisitor(language);
 			currentMemberNode.AcceptVisitor(lookupTableVisitor, null);
 		}
 		
@@ -1017,7 +1017,7 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 			this.caretLine   = caretLine;
 			this.caretColumn = caretColumn;
 			
-			lookupTableVisitor = new LookupTableVisitor(languageProperties.NameComparer);
+			lookupTableVisitor = new LookupTableVisitor(language);
 			
 			cu = parseInfo.MostRecentCompilationUnit;
 			

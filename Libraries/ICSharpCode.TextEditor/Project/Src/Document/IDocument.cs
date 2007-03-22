@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 2262 $</version>
 // </file>
 
 using System;
@@ -193,7 +193,10 @@ namespace ICSharpCode.TextEditor.Document
 
 #region ITextBufferStrategy interface
 		/// <value>
-		/// Get the whole text as string
+		/// Get the whole text as string.
+		/// When setting the text using the TextContent property, the undo stack is cleared.
+		/// Set TextContent only for actions such as loading a file; if you want to change the current document
+		/// use the Replace method instead.
 		/// </value>
 		string TextContent {
 			get;

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2043 $</version>
+//     <version>$Revision: 2346 $</version>
 // </file>
 
 using System;
@@ -523,6 +523,12 @@ namespace ICSharpCode.SharpDevelop.Gui
 		protected override void OnClosing(CancelEventArgs e)
 		{
 			base.OnClosing(e);
+			
+			if (ProjectService.IsBuilding) {
+				MessageService.ShowMessage(StringParser.Parse("${res:MainWindow.CannotCloseWithBuildInProgressMessage}"));
+				e.Cancel = true;
+				return;
+			}
 			
 			ProjectService.SaveSolutionPreferences();
 			

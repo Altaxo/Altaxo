@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2340 $</version>
 // </file>
 
 using System;
@@ -64,6 +64,9 @@ namespace ICSharpCode.SharpDevelop.Dom.ReflectionLayer
 			}
 			if (methodBase.IsAbstract) {
 				modifiers |= ModifierEnum.Abstract;
+			}
+			if (methodBase.IsFinal) {
+				modifiers |= ModifierEnum.Sealed;
 			}
 			this.Modifiers = modifiers;
 		}

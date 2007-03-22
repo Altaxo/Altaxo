@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2382 $</version>
 // </file>
 
 using System;
@@ -85,14 +85,36 @@ namespace SearchAndReplace
 			
 			switch (state) {
 				case TextIteratorState.Resetted:
+					if (textBuffer.Length == 0) {
+						state = TextIteratorState.Done;
+						return false;
+					}
 					Position = endOffset;
 					state = TextIteratorState.Iterating;
 					return true;
 				case TextIteratorState.Done:
 					return false;
 				case TextIteratorState.Iterating:
+					if (oldOffset == -1 && textBuffer.Length == endOffset) {
+						// HACK: Take off one if the iterator start
+						// position is at the end of the text.
+						Position--;
+					}
+					
+					if (oldOffset != -1 && Position == endOffset - 1 && textBuffer.Length == endOffset) {
+						state = TextIteratorState.Done;
+						return false;
+					}
+					
 					Position = (Position + numChars) % textBuffer.Length;
 					bool finish = oldOffset != -1 && (oldOffset > Position || oldOffset < endOffset) && Position >= endOffset;
+					
+					// HACK: Iterating is complete if Position == endOffset - 1 
+					// when the iterator start position was initially at the
+					// end of the text.
+					if (oldOffset != -1 && oldOffset == endOffset - 1 && textBuffer.Length == endOffset) {
+						finish = true;
+					}
 					
 					oldOffset = Position;
 					if (finish) {

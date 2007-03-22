@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2066 $</version>
+//     <version>$Revision: 2380 $</version>
 // </file>
 
 using System;
@@ -72,17 +72,21 @@ namespace ICSharpCode.SharpDevelop.Dom
 			}
 		}
 		
+		/// <summary>
+		/// Gets if <paramref name="t"/> is/contains a generic return type referring to a class type parameter.
+		/// </summary>
 		bool CheckReturnType(IReturnType t)
 		{
+			if (t == null) {
+				return false;
+			}
 			if (t.IsGenericReturnType) {
 				return t.CastToGenericReturnType().TypeParameter.Method == null;
 			} else if (t.IsArrayReturnType) {
 				return CheckReturnType(t.CastToArrayReturnType().ArrayElementType);
 			} else if (t.IsConstructedReturnType) {
 				foreach (IReturnType para in t.CastToConstructedReturnType().TypeArguments) {
-					if (para != null) {
-						if (CheckReturnType(para)) return true;
-					}
+					if (CheckReturnType(para)) return true;
 				}
 				return false;
 			} else {

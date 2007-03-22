@@ -150,7 +150,6 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="data\templates\file\CSharp\FileCategorySortOrder.xml" />
-    <Content Include="data\templates\file\Misc\EmptySharpReport.xft" />
     <Content Include="data\templates\file\VBNet\FileCategorySortOrder.xml" />
     <Content Include="data\templates\project\CSharp\ProjectCategorySortOrder.xml" />
     <Content Include="data\resources\mathml\cm-roman.ttf" />
@@ -202,12 +201,14 @@
     <Content Include="data\templates\project\CSharp\SharpDevelopCustomTool.xpt" />
     <Content Include="data\templates\project\VBNet\CompactFormsProject.xpt" />
     <Content Include="doc\help\AltaxoClassRef.chw" />
+    <Content Include="data\templates\file\Misc\EmptyReport.xft" />
     <None Include="HelpConverter.InstallState" />
     <Content Include="data\resources\StringResources.no.resources" />
     <Content Include="data\templates\project\CSharp\NotifyIconResources.resx">
       <SubType>Designer</SubType>
     </Content>
     <Content Include="data\resources\StringResources.pt.resources" />
+    <Content Include="data\resources\StringResources.cn-gb.resources" />
     <EmbeddedResource Include="HelpSetup.resx">
       <DependentUpon>HelpSetup.cs</DependentUpon>
       <SubType>Designer</SubType>

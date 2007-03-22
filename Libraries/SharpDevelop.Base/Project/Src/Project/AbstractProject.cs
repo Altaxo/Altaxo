@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2124 $</version>
+//     <version>$Revision: 2251 $</version>
 // </file>
 
 using System;
@@ -183,7 +183,7 @@ namespace ICSharpCode.SharpDevelop.Project
 		string activePlatform = "AnyCPU";
 		
 		[ReadOnly(true)]
-		[LocalizedProperty("${res:Dialog.ProjectOptions.Configuration}")]
+		[LocalizedProperty("${res:Dialog.Options.CombineOptions.Configurations.ConfigurationColumnHeader}")]
 		public string ActiveConfiguration {
 			get { return activeConfiguration; }
 			set {

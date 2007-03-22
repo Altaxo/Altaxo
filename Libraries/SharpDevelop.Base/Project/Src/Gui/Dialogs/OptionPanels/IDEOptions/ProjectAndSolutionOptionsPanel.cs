@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Matthew Ward" email="mrward@users.sourceforge.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2252 $</version>
 // </file>
 
 using System;
@@ -51,9 +51,11 @@ namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 		
 		void SelectProjectLocationButtonClicked(object sender, EventArgs e)
 		{
-			FolderDialog fdiag = new  FolderDialog();
-			if (fdiag.DisplayDialog(StringParser.Parse("${res:Dialog.Options.IDEOptions.ProjectAndSolutionOptions.SelectDefaultProjectLocationDialog.Title}")) == DialogResult.OK) {
-				ControlDictionary["projectLocationTextBox"].Text = fdiag.Path;
+			TextBox projectLocationTextBox = (TextBox)ControlDictionary["projectLocationTextBox"];
+			using (FolderBrowserDialog fdiag = FileService.CreateFolderBrowserDialog("${res:Dialog.Options.IDEOptions.ProjectAndSolutionOptions.SelectDefaultProjectLocationDialog.Title}", projectLocationTextBox.Text)) {
+				if (fdiag.ShowDialog() == DialogResult.OK) {
+					projectLocationTextBox.Text = fdiag.SelectedPath;
+				}
 			}
 		}
 	}

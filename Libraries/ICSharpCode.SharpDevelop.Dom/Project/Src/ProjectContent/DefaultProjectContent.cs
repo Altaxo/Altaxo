@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2137 $</version>
+//     <version>$Revision: 2411 $</version>
 // </file>
 
 using System;
@@ -41,6 +41,17 @@ namespace ICSharpCode.SharpDevelop.Dom
 		public virtual object Project {
 			get {
 				return null;
+			}
+		}
+		
+		/// <summary>
+		/// Gets if the project content is representing the current version of the assembly.
+		/// This property always returns true for ParseProjectContents but might return false
+		/// for ReflectionProjectContent/CecilProjectContent if the file was changed.
+		/// </summary>
+		public virtual bool IsUpToDate {
+			get {
+				return true;
 			}
 		}
 		
@@ -772,23 +783,24 @@ namespace ICSharpCode.SharpDevelop.Dom
 			SearchTypeResult fallbackResult = SearchTypeResult.Empty;
 			if (request.CurrentType != null) {
 				// Try parent namespaces of the current class
-				string fullname = request.CurrentType.FullyQualifiedName;
-				string[] namespaces = fullname.Split('.');
-				StringBuilder curnamespace = new StringBuilder();
-				for (int i = 0; i < namespaces.Length; ++i) {
-					curnamespace.Append(namespaces[i]);
-					curnamespace.Append('.');
+				string fullname = request.CurrentType.Namespace;
+				while (fullname != null && fullname.Length > 0) {
+					string nameSpace = fullname + '.' + name;
 					
-					curnamespace.Append(name);
-					c = GetClass(curnamespace.ToString(), request.TypeParameterCount);
+					c = GetClass(nameSpace, request.TypeParameterCount);
 					if (c != null) {
 						if (c.TypeParameters.Count == request.TypeParameterCount)
 							return new SearchTypeResult(c.DefaultReturnType);
 						else
 							fallbackResult = new SearchTypeResult(c.DefaultReturnType);
 					}
-					// remove class name again to try next namespace
-					curnamespace.Length -= name.Length;
+					
+					int pos = fullname.LastIndexOf('.');
+					if (pos < 0) {
+						fullname = null;
+					} else {
+						fullname = fullname.Substring(0, pos);
+					}
 				}
 				
 				if (name.IndexOf('.') < 0) {
@@ -830,13 +842,26 @@ namespace ICSharpCode.SharpDevelop.Dom
 			return fallbackResult;
 		}
 		
+		IClass GetClassByDotNetName(string className, bool lookInReferences)
+		{
+			className = className.Replace('+', '.');
+			if (className.Length > 2 && className[className.Length - 2] == '`') {
+				int typeParameterCount = className[className.Length - 1] - '0';
+				if (typeParameterCount < 0) typeParameterCount = 0;
+				className = className.Substring(0, className.Length - 2);
+				return GetClass(className, typeParameterCount, LanguageProperties.CSharp, lookInReferences);
+			} else {
+				return GetClass(className, 0, LanguageProperties.CSharp, lookInReferences);
+			}
+		}
+		
 		/// <summary>
 		/// Gets the position of a member in this project content (not a referenced one).
 		/// </summary>
-		/// <param name="fullMemberName">Fully qualified member name (always case sensitive).</param>
+		/// <param name="fullMemberName">The full member name in Reflection syntax (always case sensitive, ` for generics)</param>
 		public IDecoration GetElement(string fullMemberName)
 		{
-			IClass curClass = GetClass(fullMemberName, 0, LanguageProperties.CSharp, false);
+			IClass curClass = GetClassByDotNetName(fullMemberName, false);
 			if (curClass != null) {
 				return curClass;
 			}
@@ -854,7 +879,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 				if (pos2 > 0) {
 					string className = memberName.Substring(0, pos2);
 					memberName = memberName.Substring(pos2 + 1);
-					curClass = GetClass(className, 0, LanguageProperties.CSharp, false);
+					curClass = GetClassByDotNetName(className, false);
 					if (curClass != null) {
 						IMethod firstMethod = null;
 						foreach (IMethod m in curClass.Methods) {
@@ -874,6 +899,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 								}
 							}
 						}
+						return firstMethod;
 					}
 				}
 			} else {
@@ -881,7 +907,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 				if (pos > 0) {
 					string className = fullMemberName.Substring(0, pos);
 					string memberName = fullMemberName.Substring(pos + 1);
-					curClass = GetClass(className, 0, LanguageProperties.CSharp, false);
+					curClass = GetClassByDotNetName(className, false);
 					if (curClass != null) {
 						// get first method with that name, but prefer method without parameters
 						IMethod firstMethod = null;

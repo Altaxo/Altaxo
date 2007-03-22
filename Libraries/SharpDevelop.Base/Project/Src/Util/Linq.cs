@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2151 $</version>
+//     <version>$Revision: 2309 $</version>
 // </file>
 
 using System;
@@ -75,6 +75,18 @@ namespace ICSharpCode.SharpDevelop
 			return default(T);
 		}
 		
+		/// <summary>
+		/// Gets if any element in the input matches the filter.
+		/// </summary>
+		public static bool Exists<T>(IEnumerable<T> input, Predicate<T> filter)
+		{
+			foreach (T element in input) {
+				if (filter(element))
+					return true;
+			}
+			return false;
+		}
+		
 		public static List<T> ToList<T>(IEnumerable<T> input)
 		{
 			return new List<T>(input);
@@ -108,9 +120,14 @@ namespace ICSharpCode.SharpDevelop
 		/// <summary>
 		/// Concatenates the specified enumerables.
 		/// </summary>
-		public static IEnumerable<T> Concat<T>(params IEnumerable<T>[] inputs)
+		public static IEnumerable<T> Concat<T>(IEnumerable<T> input1, IEnumerable<T> input2)
 		{
-			return Concat(inputs as IEnumerable<IEnumerable<T>>);
+			foreach (T element in input1) {
+				yield return element;
+			}
+			foreach (T element in input2) {
+				yield return element;
+			}
 		}
 		
 		/// <summary>

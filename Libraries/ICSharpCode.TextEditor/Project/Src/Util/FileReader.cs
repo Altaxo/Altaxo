@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 2354 $</version>
 // </file>
 
 using System;
@@ -25,7 +25,7 @@ namespace ICSharpCode.TextEditor.Util
 		
 		public static string ReadFileContent(string fileName, ref Encoding encoding, Encoding defaultEncoding)
 		{
-			using (FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read)) {
+			using (FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)) {
 				using (StreamReader reader = OpenStream(fs, encoding, defaultEncoding)) {
 					encoding = reader.CurrentEncoding;
 					return reader.ReadToEnd();

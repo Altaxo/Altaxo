@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1512 $</version>
+//     <version>$Revision: 2330 $</version>
 // </file>
 
 using System;
@@ -13,7 +13,7 @@ using ICSharpCode.SharpDevelop.Gui.XmlForms;
 
 namespace ICSharpCode.SharpDevelop.Gui
 {
-	public abstract class AbstractOptionPanel : BaseSharpDevelopUserControl, IDialogPanel
+	public class AbstractOptionPanel : BaseSharpDevelopUserControl, IDialogPanel
 	{
 		bool   wasActivated = false;
 		bool   isFinished   = true;
@@ -176,15 +176,21 @@ namespace ICSharpCode.SharpDevelop.Gui
 			
 			public void Event(object sender, EventArgs e)
 			{
-				FolderDialog fdiag = new FolderDialog();
-				if (fdiag.DisplayDialog(description) == DialogResult.OK) {
-					string path = fdiag.Path;
-					if (panel.baseDirectory != null) {
-						path = FileUtility.GetRelativePath(panel.baseDirectory, path);
+				string startLocation = panel.baseDirectory;
+				if (startLocation != null) {
+					startLocation = FileUtility.GetAbsolutePath(startLocation, panel.ControlDictionary[target].Text);
+				}
+				
+				using (FolderBrowserDialog fdiag = FileService.CreateFolderBrowserDialog(description, startLocation)) {
+					if (fdiag.ShowDialog() == DialogResult.OK) {
+						string path = fdiag.SelectedPath;
+						if (panel.baseDirectory != null) {
+							path = FileUtility.GetRelativePath(panel.baseDirectory, path);
+						}
+						if (!path.EndsWith("\\") && !path.EndsWith("/"))
+							path += "\\";
+						panel.ControlDictionary[target].Text = path;
 					}
-					if (!path.EndsWith("\\") && !path.EndsWith("/"))
-						path += "\\";
-					panel.ControlDictionary[target].Text = path;
 				}
 			}
 		}

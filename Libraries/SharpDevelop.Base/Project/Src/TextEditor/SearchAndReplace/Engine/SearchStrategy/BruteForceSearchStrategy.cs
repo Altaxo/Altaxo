@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2327 $</version>
 // </file>
 
 using System;
@@ -71,7 +71,7 @@ namespace SearchAndReplace
 			return -1;
 		}
 		
-		public bool CompilePattern()
+		public bool CompilePattern(ICSharpCode.SharpDevelop.Gui.IProgressMonitor monitor)
 		{
 			searchPattern = SearchOptions.MatchCase ? SearchOptions.FindPattern : SearchOptions.FindPattern.ToUpper();
 			return true;

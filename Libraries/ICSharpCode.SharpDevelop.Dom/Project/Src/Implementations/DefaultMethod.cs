@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2066 $</version>
+//     <version>$Revision: 2363 $</version>
 // </file>
 
 using System;
@@ -165,12 +165,6 @@ namespace ICSharpCode.SharpDevelop.Dom
 		public virtual int CompareTo(IMethod value)
 		{
 			int cmp;
-			
-			cmp = base.CompareTo((IDecoration)value);
-			
-			if (cmp != 0) {
-				return cmp;
-			}
 			
 			if (FullyQualifiedName != null) {
 				cmp = FullyQualifiedName.CompareTo(value.FullyQualifiedName);

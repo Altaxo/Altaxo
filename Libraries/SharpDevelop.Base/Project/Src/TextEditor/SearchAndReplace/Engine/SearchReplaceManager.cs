@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2154 $</version>
+//     <version>$Revision: 2327 $</version>
 // </file>
 
 using System;
@@ -103,7 +103,7 @@ namespace SearchAndReplace
 			SetSearchOptions();
 			ClearSelection();
 			find.Reset();
-			if (!find.SearchStrategy.CompilePattern())
+			if (!find.SearchStrategy.CompilePattern(monitor))
 				return;
 			List<TextEditorControl> textAreas = new List<TextEditorControl>();
 			int count;
@@ -128,7 +128,7 @@ namespace SearchAndReplace
 			SetSearchOptions();
 			find.Reset();
 			
-			if (!find.SearchStrategy.CompilePattern())
+			if (!find.SearchStrategy.CompilePattern(monitor))
 				return;
 			
 			List<TextEditorControl> textAreas = new List<TextEditorControl>();
@@ -191,7 +191,7 @@ namespace SearchAndReplace
 			SetSearchOptions();
 			ClearSelection();
 			find.Reset();
-			if (!find.SearchStrategy.CompilePattern())
+			if (!find.SearchStrategy.CompilePattern(monitor))
 				return;
 			
 			List<TextEditorControl> textAreas = new List<TextEditorControl>();
@@ -239,7 +239,7 @@ namespace SearchAndReplace
 			SetSearchOptions();
 			find.Reset();
 			
-			if (!find.SearchStrategy.CompilePattern())
+			if (!find.SearchStrategy.CompilePattern(monitor))
 				return;
 			
 			for (int count = 0;; count++) {
@@ -274,7 +274,7 @@ namespace SearchAndReplace
 				return;
 			}
 			
-			if (!find.SearchStrategy.CompilePattern()) {
+			if (!find.SearchStrategy.CompilePattern(monitor)) {
 				find.Reset();
 				lastResult = null;
 				return;
@@ -319,7 +319,7 @@ namespace SearchAndReplace
 				return;
 			}
 			
-			if (!find.SearchStrategy.CompilePattern()) {
+			if (!find.SearchStrategy.CompilePattern(monitor)) {
 				find.Reset();
 				lastResult = null;
 				return;

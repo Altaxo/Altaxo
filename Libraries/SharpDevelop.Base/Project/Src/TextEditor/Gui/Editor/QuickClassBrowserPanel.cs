@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="none" email=""/>
-//     <version>$Revision: 2029 $</version>
+//     <version>$Revision: 2257 $</version>
 // </file>
 
 // created on 07.03.2004 at 19:12
@@ -221,7 +221,6 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 					if (currentCompilationUnit != (ICompilationUnit)parseInfo.MostRecentCompilationUnit) {
 						currentCompilationUnit = (ICompilationUnit)parseInfo.MostRecentCompilationUnit;
 						if (currentCompilationUnit != null) {
-							
 							FillClassComboBox(true);
 							FillMembersComboBox();
 						}
@@ -244,7 +243,6 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 						if (((ComboBoxItem)membersComboBox.Items[i]).IsInside(textAreaControl.ActiveTextAreaControl.Caret.Line)) {
 							if (membersComboBox.SelectedIndex != i) {
 								membersComboBox.SelectedIndex = i;
-								
 							}
 							if (!membersComboBoxSelectedMember) {
 								membersComboBox.Refresh();
@@ -254,6 +252,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 						}
 					}
 				}
+				membersComboBox.SelectedIndex = -1;
 				if (membersComboBoxSelectedMember) {
 					membersComboBox.Refresh();
 					membersComboBoxSelectedMember = false;
@@ -484,6 +483,10 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 						string fileName = m.DeclaringType.CompilationUnit.FileName;
 						FileService.JumpToFilePosition(fileName, item.Line, item.Column);
 					}
+				}
+				if (comboBox == classComboBox) {
+					FillMembersComboBox();
+					UpdateMembersComboBox();
 				}
 			}
 		}

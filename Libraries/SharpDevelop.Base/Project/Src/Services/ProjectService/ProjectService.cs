@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2140 $</version>
+//     <version>$Revision: 2346 $</version>
 // </file>
 
 using System;
@@ -196,6 +196,14 @@ namespace ICSharpCode.SharpDevelop.Project
 		
 		public static void AddProject(ISolutionFolderNode solutionFolderNode, IProject newProject)
 		{
+			if (Linq.Exists(solutionFolderNode.Solution.SolutionFolders,
+			                delegate (ISolutionFolder folder) {
+			                	return string.Equals(folder.IdGuid, newProject.IdGuid, StringComparison.OrdinalIgnoreCase);
+			                }))
+			{
+				LoggingService.Warn("ProjectService.AddProject: Duplicate IdGuid detected");
+				newProject.IdGuid = Guid.NewGuid().ToString().ToUpperInvariant();
+			}
 			solutionFolderNode.Container.AddFolder(newProject);
 			ParserService.CreateProjectContentForAddedProject(newProject);
 			solutionFolderNode.Solution.FixSolutionConfiguration(new IProject[] { newProject });
@@ -537,8 +545,17 @@ namespace ICSharpCode.SharpDevelop.Project
 			}
 		}
 		
+		static bool building;
+		
+		public static bool IsBuilding {
+			get {
+				return building;
+			}
+		}
+		
 		public static void RaiseEventStartBuild()
 		{
+			building = true;
 			if (StartBuild != null) {
 				StartBuild(null, EventArgs.Empty);
 			}
@@ -546,6 +563,7 @@ namespace ICSharpCode.SharpDevelop.Project
 		
 		public static void RaiseEventEndBuild()
 		{
+			building = false;
 			if (EndBuild != null) {
 				EndBuild(null, EventArgs.Empty);
 			}

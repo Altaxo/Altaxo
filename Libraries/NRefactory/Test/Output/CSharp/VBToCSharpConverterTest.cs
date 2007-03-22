@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2200 $</version>
+//     <version>$Revision: 2331 $</version>
 // </file>
 
 using System;
@@ -550,6 +550,32 @@ static int static_Test2_j = 0;");
 			              "\t.AddLine(p1, p2)\n" +
 			              "End With",
 			              "{\n\tEjes.AddLine(p1, p2);\n}");
+		}
+		
+		[Test]
+		public void NestedWithStatements()
+		{
+			TestStatement(
+				"With tb1\n" +
+				"  With .Font\n" +
+				"    .Italic = True\n" +
+				"  End With\n" +
+				"End With",
+				
+				"{\n\t{\n\t\ttb1.Font.Italic = true;\n\t}\n}");
+		}
+		
+		[Test]
+		public void NestedWithStatements2()
+		{
+			TestStatement(
+				"With tb1\n" +
+				"  With .Something.Font\n" +
+				"    .Italic = True\n" +
+				"  End With\n" +
+				"End With",
+				
+				"{\n\t{\n\t\ttb1.Something.Font.Italic = true;\n\t}\n}");
 		}
 		
 		[Test]

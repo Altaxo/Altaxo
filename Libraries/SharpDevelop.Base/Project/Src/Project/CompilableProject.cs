@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2067 $</version>
+//     <version>$Revision: 2338 $</version>
 // </file>
 
 using System;
@@ -70,6 +70,8 @@ namespace ICSharpCode.SharpDevelop.Project
 		protected override void Create(ICSharpCode.SharpDevelop.Internal.Templates.ProjectCreateInformation information)
 		{
 			base.Create(information);
+			
+			this.MSBuildProject.DefaultTargets = "Build";
 			
 			this.OutputType = OutputType.Exe;
 			this.RootNamespace = information.RootNamespace;

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1661 $</version>
+//     <version>$Revision: 2339 $</version>
 // </file>
 
 using System;
@@ -31,7 +31,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 		{
 			IReturnType rt = o as IReturnType;
 			if (rt == null) return false;
-			return rt.IsDefaultReturnType && this.FullyQualifiedName == rt.FullyQualifiedName && this.TypeParameterCount == rt.TypeParameterCount;
+			return rt.IsDefaultReturnType && DefaultReturnType.Equals(this, rt);
 		}
 		
 		public override int GetHashCode()

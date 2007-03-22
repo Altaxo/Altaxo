@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1576 $</version>
+//     <version>$Revision: 2367 $</version>
 // </file>
 
 using System;
@@ -141,7 +141,7 @@ namespace ICSharpCode.TextEditor.Document
 					OnRemoved(new BookmarkEventArgs(mark));
 					--i;
 					changed = true;
-				} else if (mark.LineNumber > e.LineStart + 1 || (e.LinesMoved < 0 && mark.LineNumber > e.LineStart))  {
+				} else if (mark.LineNumber > e.LineStart) {
 					changed = true;
 					int newLine = mark.LineNumber + e.LinesMoved;
 					if (newLine >= 0) {

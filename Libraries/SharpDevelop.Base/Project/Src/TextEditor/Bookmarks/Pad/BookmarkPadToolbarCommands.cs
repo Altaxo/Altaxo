@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2367 $</version>
 // </file>
 
 using System;
@@ -35,7 +35,7 @@ namespace ICSharpCode.SharpDevelop.Bookmarks
 	{
 		public override void Run()
 		{
-			BookmarkNode node = BookmarkPad.Instance.CurrentNode;
+			BookmarkNode node = ((BookmarkPadBase)Owner).CurrentNode;
 			if (node != null) {
 				if (node.Bookmark.Document != null) {
 					node.Bookmark.Document.BookmarkManager.RemoveMark(node.Bookmark);
@@ -51,8 +51,7 @@ namespace ICSharpCode.SharpDevelop.Bookmarks
 	{
 		public override void Run()
 		{
-			BookmarkPad.Instance.EnableDisableAll();
+			((BookmarkPadBase)Owner).EnableDisableAll();
 		}
 	}
-	
 }

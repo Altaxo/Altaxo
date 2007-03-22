@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="David Alpert" email="david@spinthemoose.com"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2247 $</version>
 // </file>
 
 using System;
@@ -24,7 +24,7 @@ namespace ICSharpCode.SharpDevelop
 		public TextNavigationPoint(string fileName, int lineNumber, int column) : this(fileName, lineNumber, column, String.Empty) {}
 		public TextNavigationPoint(string fileName, int lineNumber, int column, string content) : base(fileName, new Point(column, lineNumber))
 		{
-			this.content = content;
+			this.content = content.Trim();
 		}
 		#endregion
 		

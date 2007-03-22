@@ -1,8 +1,8 @@
-﻿// <file>
+// <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2159 $</version>
+//     <version>$Revision: 2262 $</version>
 // </file>
 
 using System;
@@ -25,8 +25,6 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		// but this will do
 		static TextEditorDisplayBinding()
 		{
-			
-			
 			string modeDir = Path.Combine(PropertyService.ConfigDirectory, "modes");
 			if (!Directory.Exists(modeDir)) {
 				Directory.CreateDirectory(modeDir);
@@ -56,7 +54,6 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			b2.textAreaControl.Document.HighlightingStrategy = HighlightingStrategyFactory.CreateHighlightingStrategyForFile(fileName);
 			b2.textAreaControl.InitializeAdvancedHighlighter();
 			b2.textAreaControl.InitializeFormatter();
-			b2.ForceFoldingUpdate();
 			b2.textAreaControl.ActivateQuickClassBrowserOnDemand();
 			
 			return b2;
@@ -221,7 +218,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		
 		void SetText(string value)
 		{
-			textAreaControl.Document.TextContent = value;
+			textAreaControl.Document.Replace(0, textAreaControl.Document.TextLength, value);
 		}
 		
 		public string Text {
@@ -395,6 +392,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 				mark.Document = textAreaControl.Document;
 				textAreaControl.Document.BookmarkManager.Marks.Add(mark);
 			}
+			ForceFoldingUpdate();
 		}
 		
 		public Properties CreateMemento()
