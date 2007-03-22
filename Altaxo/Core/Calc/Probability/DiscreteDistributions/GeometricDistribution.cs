@@ -1,3 +1,26 @@
+#region Copyright
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+#endregion
+
+#region Further copyright(s)
 /*
  * Copyright © 2006 Stefan Troschütz (stefan@troschuetz.de)
  * 
@@ -75,190 +98,214 @@
  *****************************************************************************/
 #endregion
 
+#endregion
+
 using System;
 
 namespace Altaxo.Calc.Probability
 {
-	/// <summary>
-	/// Provides generation of geometric distributed random numbers. This is variant A, which denotes the probability that with a number
+  /// <summary>
+  /// Provides generation of geometric distributed random numbers. This is variant A, which denotes the probability that with a number
   /// of n trials one has the first success (so the lowest value is 1).
-	/// </summary>
-	/// <remarks>
-	/// The geometric distribution generates only discrete numbers.<br />
-    /// The implementation of the <see cref="GeometricDistribution"/> type bases upon information presented on
-    ///   <a href="http://en.wikipedia.org/wiki/Geometric_distribution">Wikipedia - Geometric distribution</a>
-    ///   and the implementation in the <a href="http://www.lkn.ei.tum.de/lehre/scn/cncl/doc/html/cncl_toc.html">
-    ///   Communication Networks Class Library</a>.<br />
-    /// Please note that the geometric distribution provided by Mathematica 5.1
-    /// is variant_B: the probability that n failed trials occur before first success (so the lowest value is 0 there).
-    /// </remarks>
+  /// </summary>
+  /// <remarks>
+  /// The geometric distribution generates only discrete numbers.<br />
+  /// The implementation of the <see cref="GeometricDistribution"/> type bases upon information presented on
+  ///   <a href="http://en.wikipedia.org/wiki/Geometric_distribution">Wikipedia - Geometric distribution</a>
+  ///   and the implementation in the <a href="http://www.lkn.ei.tum.de/lehre/scn/cncl/doc/html/cncl_toc.html">
+  ///   Communication Networks Class Library</a>.<br />
+  /// Please note that the geometric distribution provided by Mathematica 5.1
+  /// is variant_B: the probability that n failed trials occur before first success (so the lowest value is 0 there).
+  /// </remarks>
   public class GeometricDistribution : DiscreteDistribution
-	{
-		#region instance fields
-		/// <summary>
-        /// Gets or sets the parameter alpha which is used for generation of geometric distributed random numbers.
-		/// </summary>
-		/// <remarks>Call <see cref="IsValidAlpha"/> to determine whether a value is valid and therefor assignable.</remarks>
-		public double Alpha
-		{
-			get
-			{
-                return this.alpha;
-			}
-			set
-			{
-                if (this.IsValidAlpha(value))
-                {
-                    this.alpha = value;
-                }
-        	}
-		}
+  {
+    #region instance fields
+    /// <summary>
+    /// Gets or sets the parameter alpha which is used for generation of geometric distributed random numbers.
+    /// </summary>
+    /// <remarks>Call <see cref="IsValidProbability"/> to determine whether a value is valid and therefor assignable.</remarks>
+    public double Probability
+    {
+      get
+      {
+        return this._probability;
+      }
+      set
+      {
+        Initialize(value);
+      }
+    }
 
-		/// <summary>
-        /// Stores the parameter alpha which is used for generation of geometric distributed random numbers.
-		/// </summary>
-        private double alpha;
-        #endregion
+    /// <summary>
+    /// Stores the parameter alpha which is used for generation of geometric distributed random numbers.
+    /// </summary>
+    private double _probability;
+    #endregion
 
-		#region construction
-		/// <summary>
-        /// Initializes a new instance of the <see cref="GeometricDistribution"/> class, using a 
-        ///   <see cref="StandardGenerator"/> as underlying random number generator.
-		/// </summary>
-        public GeometricDistribution()
-            : this(new StandardGenerator())
-		{
-		}
-		
-		/// <summary>
-        /// Initializes a new instance of the <see cref="GeometricDistribution"/> class, using the specified 
-        ///   <see cref="Generator"/> as underlying random number generator.
-        /// </summary>
-        /// <param name="generator">A <see cref="Generator"/> object.</param>
-        /// <exception cref="ArgumentNullException">
-        /// <paramref name="generator"/> is NULL (<see langword="Nothing"/> in Visual Basic).
-        /// </exception>
-        public GeometricDistribution(Generator generator)
-            : base(generator)
-        {
-            this.alpha = 0.5;
-        }
-		#endregion
-	
-		#region instance methods
-		/// <summary>
-        /// Determines whether the specified value is valid for parameter <see cref="Alpha"/>.
-		/// </summary>
-		/// <param name="value">The value to check.</param>
-		/// <returns>
-		/// <see langword="true"/> if value is greater than 0.0, and less than or equal to 1.0; otherwise, <see langword="false"/>.
-		/// </returns>
-        public bool IsValidAlpha(double value)
-		{
-			return (value > 0.0 && value <= 1.0);
-		}
+    #region construction
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GeometricDistribution"/> class, using a 
+    ///   <see cref="StandardGenerator"/> as underlying random number generator.
+    /// </summary>
+    public GeometricDistribution()
+      : this(DefaultGenerator)
+    {
+    }
 
-        /// <summary>
-        /// Returns a geometric distributed random number.
-        /// </summary>
-        /// <returns>A geometric distributed 32-bit signed integer.</returns>
-        public int Next()
-        {
-            int samples = 1;
-            for (; this.Generator.NextDouble() >= this.alpha; samples++)
-            {
-            }
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GeometricDistribution"/> class, using the specified 
+    ///   <see cref="Generator"/> as underlying random number generator.
+    /// </summary>
+    /// <param name="generator">A <see cref="Generator"/> object.</param>
+    /// <exception cref="ArgumentNullException">
+    /// <paramref name="generator"/> is NULL (<see langword="Nothing"/> in Visual Basic).
+    /// </exception>
+    public GeometricDistribution(Generator generator)
+      : this(0.5, generator)
+    {
+    }
 
-            return samples;
-        }
-        #endregion
+    public GeometricDistribution(double probability)
+      : this(probability, DefaultGenerator)
+    {
+    }
 
-		#region overridden Distribution members
-        /// <summary>
-		/// Gets the minimum possible value of geometric distributed random numbers.
-		/// </summary>
-        public override double Minimum
-		{
-			get
-			{
-				return 1.0;
-			}
-		}
+    public GeometricDistribution(double probability, Generator generator)
+      : base(generator)
+    {
+      Initialize(probability);
+    }
 
-		/// <summary>
-		/// Gets the maximum possible value of geometric distributed random numbers.
-		/// </summary>
-        public override double Maximum
-		{
-			get
-			{
-				return double.MaxValue;
-			}
-		}
+    #endregion
 
-		/// <summary>
-		/// Gets the mean value of geometric distributed random numbers.
-		/// </summary>
-        public override double Mean
-		{
-			get
-			{
-                return 1.0 / this.alpha;
-			}
-		}
-		
-		/// <summary>
-		/// Gets the median of geometric distributed random numbers.
-		/// </summary>
-        public override double Median
-		{
-			get
-			{
-				return double.NaN;
-			}
-		}
-		
-		/// <summary>
-		/// Gets the variance of geometric distributed random numbers.
-		/// </summary>
-        public override double Variance
-		{
-			get
-			{
-                return (1.0 - this.alpha) / Math.Pow(this.alpha, 2.0);
-			}
-		}
-		
-		/// <summary>
-		/// Gets the mode of geometric distributed random numbers.
-		/// </summary>
-        public override double[] Mode
-		{
-			get
-			{
-				return new double[] {1.0};
-			}
-		}
-		
-		/// <summary>
-		/// Returns a geometric distributed floating point random number.
-		/// </summary>
-		/// <returns>A geometric distributed double-precision floating point number.</returns>
-        public override double NextDouble()
-		{
-			double samples = 1.0;
-            for (; this.Generator.NextDouble() >= this.alpha; samples++)
-            {
-            }
+    #region instance methods
+    /// <summary>
+    /// Determines whether the specified value is valid for parameter <see cref="Alpha"/>.
+    /// </summary>
+    /// <param name="value">The value to check.</param>
+    /// <returns>
+    /// <see langword="true"/> if value is greater than 0.0, and less than or equal to 1.0; otherwise, <see langword="false"/>.
+    /// </returns>
+    public bool IsValidProbability(double value)
+    {
+      return (value > 0.0 && value <= 1.0);
+    }
 
-			return samples;
-		}
-		#endregion
+    public void Initialize(double probability)
+    {
+      if (probability <= 0 || probability > 1)
+        throw new ArgumentOutOfRangeException("Probability must be within (0,1]");
+
+      _probability = probability;
+    }
+
+    #endregion
+
+    #region overridden Distribution members
+    /// <summary>
+    /// Gets the minimum possible value of geometric distributed random numbers.
+    /// </summary>
+    public override double Minimum
+    {
+      get
+      {
+        return 1.0;
+      }
+    }
+
+    /// <summary>
+    /// Gets the maximum possible value of geometric distributed random numbers.
+    /// </summary>
+    public override double Maximum
+    {
+      get
+      {
+        return double.MaxValue;
+      }
+    }
+
+    /// <summary>
+    /// Gets the mean value of geometric distributed random numbers.
+    /// </summary>
+    public override double Mean
+    {
+      get
+      {
+        return 1.0 / this._probability;
+      }
+    }
+
+    /// <summary>
+    /// Gets the median of geometric distributed random numbers.
+    /// </summary>
+    public override double Median
+    {
+      get
+      {
+        return double.NaN;
+      }
+    }
+
+    /// <summary>
+    /// Gets the variance of geometric distributed random numbers.
+    /// </summary>
+    public override double Variance
+    {
+      get
+      {
+        return (1.0 - this._probability) / Math.Pow(this._probability, 2.0);
+      }
+    }
+
+    /// <summary>
+    /// Gets the mode of geometric distributed random numbers.
+    /// </summary>
+    public override double[] Mode
+    {
+      get
+      {
+        return new double[] { 1.0 };
+      }
+    }
+
+    /// <summary>
+    /// Returns a geometric distributed floating point random number.
+    /// </summary>
+    /// <returns>A geometric distributed double-precision floating point number.</returns>
+    public override double NextDouble()
+    {
+      double u = Generator.NextPositiveDouble();
+
+      double k;
+
+      if (this._probability == 1)
+      {
+        k = 1;
+      }
+      else
+      {
+        k = Math.Floor(Math.Log(u) / Math.Log(1 - _probability) + 1);
+      }
+
+      return k;
+
+    }
+
+    /// <summary>
+    /// Returns a geometric distributed random number.
+    /// </summary>
+    /// <returns>A geometric distributed 32-bit signed integer.</returns>
+    public int Next()
+    {
+      double k = this.NextDouble();
+      return k > int.MaxValue ? int.MaxValue : (int)k;
+    }
+    #endregion
 
     #region CdfPdf
     public override double CDF(double x)
     {
-      return CDF(x, this.Alpha);
+      return CDF(x, this.Probability);
     }
     public static double CDF(double x, double p)
     {
@@ -281,13 +328,13 @@ namespace Altaxo.Calc.Probability
 
     public override double PDF(double x)
     {
-      return PDF(x, this.Alpha);
+      return PDF(x, this.Probability);
     }
     public static double PDF(double x, double p)
     {
       double xi = Math.Floor(x);
       if (xi == x && xi >= 1)
-        return p*Math.Pow(1-p, xi-1);
+        return p * Math.Pow(1 - p, xi - 1);
       else
         return 0;
     }
@@ -305,5 +352,5 @@ namespace Altaxo.Calc.Probability
 
     #endregion
 
-	}
+  }
 }

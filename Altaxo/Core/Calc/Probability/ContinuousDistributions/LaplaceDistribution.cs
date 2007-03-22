@@ -49,10 +49,7 @@ namespace Altaxo.Calc.Probability
 			}
 			set
 			{
-                if (this.IsValidAlpha(value))
-                {
-                    this.alpha = value;
-                }
+        Initialize(mu, value);
         	}
 		}
 
@@ -73,10 +70,7 @@ namespace Altaxo.Calc.Probability
 			}
 			set
 			{
-                if (this.IsValidMu(value))
-                {
-                    this.mu = value;
-                }
+        Initialize(value, alpha);
         	}
 		}
 
@@ -92,7 +86,7 @@ namespace Altaxo.Calc.Probability
         ///   <see cref="StandardGenerator"/> as underlying random number generator.
 		/// </summary>
         public LaplaceDistribution()
-            : this(new StandardGenerator())
+            : this(DefaultGenerator)
 		{
 		}
 
@@ -105,14 +99,31 @@ namespace Altaxo.Calc.Probability
         /// <paramref name="generator"/> is NULL (<see langword="Nothing"/> in Visual Basic).
         /// </exception>
         public LaplaceDistribution(Generator generator)
-            : base(generator)
+            : this(0,1,generator)
         {
-            this.alpha = 1.0;
-            this.mu = 0.0;
         }
+    public LaplaceDistribution(double mu, double alpha)
+      : this(mu,alpha,DefaultGenerator)
+    {
+    }
+    public LaplaceDistribution(double mu, double alpha, Generator generator)
+      : base(generator)
+    {
+      Initialize(mu, alpha);
+    }
 		#endregion
 	
 		#region instance methods
+    public void Initialize(double mu, double alpha)
+    {
+      if (!IsValidMu(mu))
+        throw new ArgumentOutOfRangeException("Mu is out of range (infinity or NaN)");
+      if (!IsValidAlpha(alpha))
+        throw new ArgumentOutOfRangeException("Alpha is out of range");
+
+      
+    }
+
 		/// <summary>
         /// Determines whether the specified value is valid for parameter <see cref="Alpha"/>.
 		/// </summary>
@@ -132,7 +143,7 @@ namespace Altaxo.Calc.Probability
         /// <returns><see langword="true"/>.</returns>
 		public bool IsValidMu(double value)
 		{
-			return true;
+			return value>=double.MinValue && value<=double.MaxValue;
 		}
         #endregion
 
@@ -188,7 +199,7 @@ namespace Altaxo.Calc.Probability
 		{
 			get
 			{
-                return 2.0 * Math.Pow(this.alpha, 2.0);
+                return 2.0 * alpha*alpha;
 			}
 		}
 		
@@ -213,5 +224,41 @@ namespace Altaxo.Calc.Probability
             return this.mu - this.alpha * Math.Sign(rand) * Math.Log(2.0 * Math.Abs(rand));
 		}
 		#endregion
+
+        #region CdfPdfQuantile
+
+    public override double CDF(double x)
+    {
+      return CDF(x, mu, alpha);
+    }
+    public static double CDF(double x, double mu, double beta)
+    {
+      return (1 + (1 - Math.Exp(-((-mu + x) * Math.Sign(-mu + x)) / beta)) * Math.Sign(-mu + x)) / 2;
+    }
+
+
+
+    public override double PDF(double x)
+    {
+      return PDF(x, mu,alpha);
+    }
+    public static double PDF(double x, double mu, double beta)
+    {
+      return Math.Exp((mu - x) * Math.Sign(x-mu ) / beta)/(2*beta);
+    }
+
+
+    public override double Quantile(double p)
+    {
+      return Quantile(p, mu, alpha);
+    }
+    public static double Quantile(double p, double mu, double beta)
+    {
+      return mu - beta * Math.Log(1 - (-1 + 2 * p) * Math.Sign(-1 + 2 * p)) * Math.Sign(-1 + 2 * p);
+    }
+
+
+    #endregion
+
 	}
 }

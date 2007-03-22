@@ -65,14 +65,7 @@ namespace Altaxo.Calc.Probability
 			{
                 return this.alpha;
 			}
-			set
-			{
-                if (this.IsValidAlpha(value))
-                {
-                    this.alpha = value;
-                    this.UpdateHelpers();
-                }
-        	}
+		
 		}
 
 		/// <summary>
@@ -90,14 +83,7 @@ namespace Altaxo.Calc.Probability
 			{
                 return this.beta;
 			}
-            set
-            {
-                if (this.IsValidBeta(value))
-                {
-                    this.beta = value;
-                    this.UpdateHelpers();
-                }
-            }
+           
 		}
 
 		/// <summary>
@@ -115,14 +101,7 @@ namespace Altaxo.Calc.Probability
 			{
                 return this.gamma;
 			}
-			set
-			{
-                if (this.IsValidGamma(value))
-                {
-                    this.gamma = value;
-                    this.UpdateHelpers();
-                }
-			}
+			
 		}
 
 		/// <summary>
@@ -173,7 +152,7 @@ namespace Altaxo.Calc.Probability
         ///   <see cref="StandardGenerator"/> as underlying random number generator.
 		/// </summary>
         public TriangularDistribution()
-            : this(new StandardGenerator())
+            : this(DefaultGenerator)
 		{
 		}
 
@@ -186,16 +165,39 @@ namespace Altaxo.Calc.Probability
         /// <paramref name="generator"/> is NULL (<see langword="Nothing"/> in Visual Basic).
         /// </exception>
         public TriangularDistribution(Generator generator)
-            : base(generator)
+            : this(0,0.5,1,generator)
         {
-            this.alpha = 0.0;
-            this.beta = 1.0;
-            this.gamma = 0.5;
-            this.UpdateHelpers();
         }
+    public TriangularDistribution(double alpha, double gamma, double beta)
+      : this(alpha, gamma, beta, DefaultGenerator)
+    {
+    }
+
+    public TriangularDistribution(double alpha, double gamma, double beta, Generator generator)
+      : base(generator)
+    {
+      Initialize(alpha, gamma, beta);
+    }
 		#endregion
 	
 		#region instance methods
+    public void Initialize(double alpha, double gamma, double beta)
+    {
+      if (!(alpha < beta && alpha <= gamma))
+        throw new ArgumentOutOfRangeException("Alpha out of range (must be < beta and <= gamma)");
+      if (!(beta > alpha && beta >= gamma))
+        throw new ArgumentOutOfRangeException("Beta out of range (have to be > alpha and >= gamma)");
+      if (!(gamma >= alpha && gamma <= beta))
+        throw new ArgumentOutOfRangeException("Gamma out of range (have to be >= alpha and <= beta)");
+
+      this.alpha = alpha;
+      this.beta = beta;
+      this.gamma = gamma;
+
+      UpdateHelpers();
+
+    }
+
 		/// <summary>
         /// Determines whether the specified value is valid for parameter <see cref="Alpha"/>.
 		/// </summary>

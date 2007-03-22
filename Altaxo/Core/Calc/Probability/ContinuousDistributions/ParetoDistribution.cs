@@ -50,10 +50,7 @@ namespace Altaxo.Calc.Probability
 			}
 			set
 			{
-                if (this.IsValidAlpha(value))
-                {
-                    this.alpha = value;
-                }
+        Initialize(value, beta);
         	}
 		}
 
@@ -74,11 +71,7 @@ namespace Altaxo.Calc.Probability
 			}
 			set
 			{
-                if (this.IsValidBeta(value))
-                {
-                    this.beta = value;
-                    this.UpdateHelpers();
-                }
+        Initialize(alpha, value);
         	}
 		}
 
@@ -103,7 +96,7 @@ namespace Altaxo.Calc.Probability
         ///   <see cref="StandardGenerator"/> as underlying random number generator.
 		/// </summary>
         public ParetoDistribution()
-            : this(new StandardGenerator())
+            : this(DefaultGenerator)
 		{
 		}
 
@@ -116,15 +109,36 @@ namespace Altaxo.Calc.Probability
         /// <paramref name="generator"/> is NULL (<see langword="Nothing"/> in Visual Basic).
         /// </exception>
         public ParetoDistribution(Generator generator)
-            : base(generator)
+            : this(1,1,generator)
         {
-            this.alpha = 1.0;
-            this.beta = 1.0;
-            this.UpdateHelpers();
+            
         }
+    public ParetoDistribution(double alpha, double beta)
+      : this(alpha, beta, DefaultGenerator)
+    {
+    }
+    public ParetoDistribution(double alpha, double beta, Generator generator)
+      : base(generator)
+    {
+      Initialize(alpha, beta);
+    }
+
 		#endregion
 	
 		#region instance methods
+    public void Initialize(double alpha, double beta)
+    {
+      if (!IsValidAlpha(alpha))
+        throw new ArgumentOutOfRangeException("Alpha out of range (must be positive)");
+      if (!IsValidBeta(beta))
+        throw new ArgumentOutOfRangeException("Beta out of range (must be positive)");
+      
+      this.alpha = alpha;
+      this.beta = beta;
+
+      this.helper1 = 1.0 / this.beta;
+    }
+
 		/// <summary>
 		/// Determines whether the specified value is valid for parameter <see cref="Alpha"/>.
 		/// </summary>
@@ -149,14 +163,7 @@ namespace Altaxo.Calc.Probability
 			return value > 0.0;
 		}
 
-        /// <summary>
-        /// Updates the helper variables that store intermediate results for generation of pareto distributed random 
-        ///   numbers.
-        /// </summary>
-        private void UpdateHelpers()
-        {
-            this.helper1 = 1.0 / this.beta;
-        }
+       
         #endregion
 
 		#region overridden Distribution members
@@ -249,5 +256,41 @@ namespace Altaxo.Calc.Probability
             return this.alpha / Math.Pow(1.0 - this.Generator.NextDouble(), this.helper1);
 		}
 		#endregion
+
+    #region CdfPdfQuantile
+
+    public override double CDF(double x)
+    {
+      return CDF(x, alpha, beta);
+    }
+    public static double CDF(double x, double alpha, double beta)
+    {
+      return 1 - Math.Pow(alpha / x, beta);
+    }
+
+
+
+    public override double PDF(double x)
+    {
+      return PDF(x, alpha, beta);
+    }
+    public static double PDF(double x, double alpha, double beta)
+    {
+      return Math.Pow(alpha, beta) * beta * Math.Pow(x, -1 - beta);
+    }
+
+
+    public override double Quantile(double p)
+    {
+      return Quantile(p, alpha, beta);
+    }
+    public static double Quantile(double p, double alpha, double beta)
+    {
+      return alpha * Math.Pow(1 - p, -1 / beta);
+    }
+
+
+    #endregion
+
 	}
 }

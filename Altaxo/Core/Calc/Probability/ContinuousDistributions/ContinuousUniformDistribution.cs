@@ -48,14 +48,6 @@ namespace Altaxo.Calc.Probability
             {
                 return this.alpha;
             }
-            set
-            {
-                if (this.IsValidAlpha(value))
-                {
-                    this.alpha = value;
-                    this.UpdateHelpers();
-                }
-            }
         }
 
         /// <summary>
@@ -72,14 +64,6 @@ namespace Altaxo.Calc.Probability
             get
             {
                 return this.beta;
-            }
-            set
-            {
-                if (this.IsValidBeta(value))
-                {
-                    this.beta = value;
-                    this.UpdateHelpers();
-                }
             }
         }
 
@@ -104,7 +88,7 @@ namespace Altaxo.Calc.Probability
         ///   <see cref="StandardGenerator"/> as underlying random number generator. 
         /// </summary>
         public ContinuousUniformDistribution()
-            : this(new StandardGenerator())
+            : this(DefaultGenerator)
         {
         }
 
@@ -117,25 +101,48 @@ namespace Altaxo.Calc.Probability
         /// <paramref name="generator"/> is NULL (<see langword="Nothing"/> in Visual Basic).
         /// </exception>
         public ContinuousUniformDistribution(Generator generator)
-            : base(generator)
+            : this(0,1,generator)
         {
-            this.alpha = 0.0;
-            this.beta = 1.0;
-            this.UpdateHelpers();
         }
+
+    public ContinuousUniformDistribution(double lower, double upper)
+      : this(lower,upper,DefaultGenerator)
+    {
+      
+    }
+    public ContinuousUniformDistribution(double lower, double upper, Generator generator)
+      : base(generator)
+    {
+      Initialize(lower, upper);
+    }
         #endregion
 
         #region instance methods
+
+    public void Initialize(double lower, double upper)
+    {
+      if (!(lower <= upper))
+        throw new ArgumentOutOfRangeException("Lower bound is not less or equal than upper bound");
+      if (!IsValidAlpha(lower))
+        throw new ArgumentOutOfRangeException("Lower bound is out of range");
+      if (!IsValidBeta(upper))
+        throw new ArgumentOutOfRangeException("Upper bound is out of range");
+
+      this.alpha = lower;
+      this.beta = upper;
+      this.helper1 = this.beta - this.alpha;
+    }
+
         /// <summary>
         /// Determines whether the specified value is valid for parameter <see cref="Alpha"/>.
         /// </summary>
         /// <param name="value">The value to check.</param>
         /// <returns>
-        /// <see langword="true"/> if value is less than or equal to <see cref="Beta"/>; otherwise, <see langword="false"/>.
+    /// <see langword="true"/> if value is a valid number and not infinity; otherwise, <see langword="false"/>.
         /// </returns>
         public bool IsValidAlpha(double value)
         {
-            return (value <= this.beta);
+          return value >= double.MinValue && value <= double.MaxValue;
         }
 
         /// <summary>
@@ -143,20 +150,11 @@ namespace Altaxo.Calc.Probability
         /// </summary>
         /// <param name="value">The value to check.</param>
         /// <returns>
-        /// <see langword="true"/> if value is greater than or equal to <see cref="Alpha"/>; otherwise, <see langword="false"/>.
+        /// <see langword="true"/> if value is a valid number and not infinity; otherwise, <see langword="false"/>.
         /// </returns>
         public bool IsValidBeta(double value)
         {
-            return (value >= this.alpha);
-        }
-        
-        /// <summary>
-        /// Updates the helper variables that store intermediate results for generation of uniformly distributed random 
-        ///   numbers.
-        /// </summary>
-        private void UpdateHelpers()
-        {
-            this.helper1 = this.beta - this.alpha;
+          return value >= double.MinValue && value <= double.MaxValue;
         }
         #endregion
 

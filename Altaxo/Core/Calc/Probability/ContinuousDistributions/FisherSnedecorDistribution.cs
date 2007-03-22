@@ -29,7 +29,22 @@ namespace Altaxo.Calc.Probability
 	/// <remarks>
     /// The implementation of the <see cref="FisherSnedecorDistribution"/> type bases upon information presented on
     ///   <a href="http://en.wikipedia.org/wiki/F-distribution">Wikipedia - F-distribution</a>.
-    /// </remarks>
+  /// <code>
+  /// Return F-distributed (variance ratio distributed) random deviates       
+  /// with n numerator degrees of freedom and d denominator degrees of freedom  
+  /// according to the density:                 
+  ///                            
+  ///   p   (x) dx =  ... dx                 
+  ///    a,b                      
+  ///                       
+  /// Both paramters alpha and beta must be positive.              
+  ///                       
+  /// Method: The random numbers are directly generated from ratios of           
+  ///         ChiSquare variates according to:              
+  ///                            
+  ///  F = (ChiSquare(alpha)/alpha) / (ChiSquare(beta)/beta)              
+  ///                            
+  /// </code></remarks>
   public class FisherSnedecorDistribution : ContinuousDistribution
 	{
 		#region instance fields
@@ -37,32 +52,28 @@ namespace Altaxo.Calc.Probability
 		/// Gets or sets the parameter alpha which is used for generation of Fisher-Snedecor distributed random numbers.
 		/// </summary>
 		/// <remarks>Call <see cref="IsValidAlpha"/> to determine whether a value is valid and therefor assignable.</remarks>
-		public int Alpha
-		{
-			get
-			{
-				return this.alpha;
-			}
-			set
-			{
-                if (this.IsValidAlpha(value))
-                {
-                    this.alpha = value;
-                    this.UpdateHelpers();
-                }
-        	}
-		}
+    public double Alpha
+    {
+      get
+      {
+        return this.alpha;
+      }
+      set
+      {
+        Initialize(value, beta);
+      }
+    }
 
 		/// <summary>
 		/// Stores the parameter alpha which is used for generation of Fisher-Snedecor distributed random numbers.
 		/// </summary>
-        private int alpha;
+        private double alpha;
 		
 		/// <summary>
         /// Gets or sets the parameter beta which is used for generation of Fisher-Snedecor distributed random numbers.
 		/// </summary>
 		/// <remarks>Call <see cref="IsValidBeta"/> to determine whether a value is valid and therefor assignable.</remarks>
-        public int Beta
+        public double Beta
 		{
 			get
 			{
@@ -70,18 +81,27 @@ namespace Altaxo.Calc.Probability
 			}
 			set
 			{
-                if (this.IsValidBeta(value))
-                {
-                    this.beta = value;
-                    this.UpdateHelpers();
-                }
+        Initialize(alpha, value);
         	}
 		}
 
 		/// <summary>
         /// Stores the parameter beta which is used for generation of Fisher-Snedecor distributed random numbers.
 		/// </summary>
-        private int beta;
+        private double beta;
+
+
+    public void Initialize(double alpha, double beta)
+    {
+      if(!IsValidAlpha(alpha))
+        throw new ArgumentOutOfRangeException("Alpha out of range (must be positive)");
+      if(!IsValidBeta(beta))
+        throw new ArgumentOutOfRangeException("Beta out of range (must be positive");
+
+      this.alpha = alpha;
+      this.beta = beta;
+      this.UpdateHelpers();
+    }
 
         /// <summary>
         /// Stores a <see cref="ChiSquareDistribution"/> object used for generation of Fisher-Snedecor distributed random 
@@ -111,7 +131,7 @@ namespace Altaxo.Calc.Probability
         ///   <see cref="StandardGenerator"/> as underlying random number generator.
 		/// </summary>
         public FisherSnedecorDistribution()
-            : this(new StandardGenerator())
+            : this(DefaultGenerator)
 		{
 		}
 
@@ -124,14 +144,21 @@ namespace Altaxo.Calc.Probability
         /// <paramref name="generator"/> is NULL (<see langword="Nothing"/> in Visual Basic).
         /// </exception>
         public FisherSnedecorDistribution(Generator generator)
-            : base(generator)
+            : this(1,1,generator)
         {
-            this.alpha = 1;
-            this.beta = 1;
-            this.chiSquareDistributionAlpha = new ChiSquareDistribution(generator);
-            this.chiSquareDistributionBeta = new ChiSquareDistribution(generator);
-            this.UpdateHelpers();
         }
+
+    public FisherSnedecorDistribution(double alpha, double beta)
+      : this(alpha, beta, DefaultGenerator)
+    {
+    }
+
+    public FisherSnedecorDistribution(double alpha, double beta, Generator generator)
+      : base(generator)
+    {
+      Initialize(alpha, beta);
+    }
+
 		#endregion
 	
 		#region instance methods
@@ -142,7 +169,7 @@ namespace Altaxo.Calc.Probability
 		/// <returns>
 		/// <see langword="true"/> if value is greater than 0; otherwise, <see langword="false"/>.
 		/// </returns>
-        public bool IsValidAlpha(int value)
+        public bool IsValidAlpha(double value)
 		{
 			return value > 0;
 		}
@@ -154,22 +181,30 @@ namespace Altaxo.Calc.Probability
 		/// <returns>
 		/// <see langword="true"/> if value is greater than 0; otherwise, <see langword="false"/>.
 		/// </returns>
-        public bool IsValidBeta(int value)
+        public bool IsValidBeta(double value)
 		{
 			return value > 0;
 		}
-        
-        /// <summary>
-        /// Updates the helper variables that store intermediate results for generation of Fisher-Snedecor distributed random 
-        ///   numbers.
-        /// </summary>
-        private void UpdateHelpers()
-        {
-            this.chiSquareDistributionAlpha.Alpha = this.alpha;
-            this.chiSquareDistributionBeta.Alpha = this.beta;
-            this.helper1 = (double)this.beta / (double)this.alpha;
-        }
-        #endregion
+
+    /// <summary>
+    /// Updates the helper variables that store intermediate results for generation of Fisher-Snedecor distributed random 
+    ///   numbers.
+    /// </summary>
+    private void UpdateHelpers()
+    {
+      if (null == this.chiSquareDistributionAlpha)
+        this.chiSquareDistributionAlpha = new ChiSquareDistribution(alpha, generator);
+      else
+        this.chiSquareDistributionAlpha.Alpha = this.alpha;
+
+      if (null == this.chiSquareDistributionBeta)
+        this.chiSquareDistributionBeta = new ChiSquareDistribution(beta, generator);
+      else
+        this.chiSquareDistributionBeta.Alpha = this.beta;
+
+      this.helper1 = (double)this.beta / (double)this.alpha;
+    }
+    #endregion
 
 		#region overridden Distribution members
         /// <summary>
@@ -294,13 +329,13 @@ namespace Altaxo.Calc.Probability
     /// Returns the cumulated distribution function for value x with the distribution parameters numf and denomf.
     /// </summary>
     /// <param name="x">The function argument.</param>
-    /// <param name="numf">First parameter of the distribution.</param>
-    /// <param name="denomf">Second paramenter of the distribution.</param>
+    /// <param name="alpha">First parameter of the distribution.</param>
+    /// <param name="beta">Second paramenter of the distribution.</param>
     /// <returns>The cumulated distribution (probability) of the distribution at value x.</returns>
-    public static double CDF(double x, double numf, double denomf)
+    public static double CDF(double x, double alpha, double beta)
     {
-      double n1x = numf * x;
-      return GammaRelated.BetaIR(n1x / (denomf + n1x), 0.5 * numf, 0.5 * denomf);
+      double n1x = alpha * x;
+      return GammaRelated.BetaIR(n1x / (beta + n1x), 0.5 * alpha, 0.5 * beta);
     }
 
     /// <summary>
@@ -318,12 +353,12 @@ namespace Altaxo.Calc.Probability
     /// Returns the probability density function for value x with the distribution parameters p and q.
     /// </summary>
     /// <param name="x">The function argument.</param>
-    /// <param name="p">First parameter of the distribution.</param>
-    /// <param name="q">Second paramenter of the distribution.</param>
+    /// <param name="alpha">First parameter of the distribution.</param>
+    /// <param name="beta">Second paramenter of the distribution.</param>
     /// <returns>The probability density of the distribution at value x.</returns>
-    public static double PDF(double x, double p, double q)
+    public static double PDF(double x, double alpha, double beta)
     {
-      return (Math.Pow(p, p / 2) * Math.Pow(q, q / 2) * Math.Pow(x, (-2 + p) / 2) * Math.Pow(q + p * x, (-p - q) / 2)) / GammaRelated.Beta(p / 2, q / 2);
+      return (Math.Pow(alpha, alpha / 2) * Math.Pow(beta, beta / 2) * Math.Pow(x, (-2 + alpha) / 2) * Math.Pow(beta + alpha * x, (-alpha - beta) / 2)) / GammaRelated.Beta(alpha / 2, beta / 2);
     }
 
     /// <summary>
@@ -341,13 +376,13 @@ namespace Altaxo.Calc.Probability
     /// Quantile of the F-distribution.
     /// </summary>
     /// <param name="probability">Probability (0..1).</param>
-    /// <param name="p">First parameter of the distribution.</param>
-    /// <param name="q">Second parameter of the distribution.</param>
+    /// <param name="alpha">First parameter of the distribution.</param>
+    /// <param name="beta">Second parameter of the distribution.</param>
     /// <returns>The quantile of the F-Distribution.</returns>
-    public static double Quantile(double probability, double p, double q)
+    public static double Quantile(double probability, double alpha, double beta)
     {
-      double inverse_beta = GammaRelated.InverseBetaRegularized(1 - probability, q / 2, p / 2);
-      return (q / p) * (1.0 / inverse_beta - 1.0);
+      double inverse_beta = GammaRelated.InverseBetaRegularized(1 - probability, beta / 2, alpha / 2);
+      return (beta / alpha) * (1.0 / inverse_beta - 1.0);
     }
 
     #endregion
@@ -364,7 +399,7 @@ namespace Altaxo.Calc.Probability
         ///   <see cref="StandardGenerator"/> as underlying random number generator.
 		/// </summary>
         public FDistribution()
-            : this(new StandardGenerator())
+            : base()
 		{
 		}
 
@@ -380,6 +415,16 @@ namespace Altaxo.Calc.Probability
             : base(generator)
         {
         }
+
+    public FDistribution(double alpha, double beta)
+      : base(alpha, beta)
+    {
+    }
+
+    public FDistribution(double alpha, double beta, Generator generator)
+      : base(alpha, beta, generator)
+    {
+    }
 		#endregion
 
   }

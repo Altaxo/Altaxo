@@ -348,16 +348,10 @@
     <Compile Include="Calc\Probability\DiscreteDistributions\PoissonDistribution.cs" />
     <Compile Include="Calc\Probability\Distribution.cs" />
     <Compile Include="Calc\Probability\Generator.cs" />
-    <Compile Include="Calc\Probability\ProbabilityDistributions.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Calc\Probability\PseudoRNGs\ALFGenerator.cs" />
     <Compile Include="Calc\Probability\PseudoRNGs\MT19937Generator.cs" />
     <Compile Include="Calc\Probability\PseudoRNGs\StandardGenerator.cs" />
     <Compile Include="Calc\Probability\PseudoRNGs\XorShift128Generator.cs" />
-    <Compile Include="Calc\Probability\RandomGenerators.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Calc\Probability\Resources\ExceptionMessages.de.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

@@ -1,3 +1,26 @@
+#region Copyright
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+#endregion
+
+#region Further copyright(s)
 /*
  * Copyright © 2006 Stefan Troschütz (stefan@troschuetz.de)
  * 
@@ -22,6 +45,7 @@
  *               and made accessible through new protected property "Generator")
  * 
  */
+#endregion
 
 using System;
 
@@ -40,53 +64,36 @@ namespace Altaxo.Calc.Probability
     {
         #region instance fields
         /// <summary>
-        /// Gets or sets the parameter alpha which is used for generation of uniformly distributed random numbers.
+        /// Gets or sets the parameter lower bound which is used for generation of uniformly distributed random numbers.
         /// </summary>
-        /// <remarks>Call <see cref="IsValidAlpha"/> to determine whether a value is valid and therefor assignable.</remarks>
-        public int Alpha
+        public int LowerBound
         {
             get
             {
-                return this.alpha;
-            }
-            set
-            {
-                if (this.IsValidAlpha(value))
-                {
-                    this.alpha = value;
-                }
+                return this._lowerBound;
             }
         }
 
         /// <summary>
-        /// Stores the parameter alpha which is used for generation of uniformly distributed random numbers.
+        /// Stores the parameter lower bound which is used for generation of uniformly distributed random numbers.
         /// </summary>
-        private int alpha;
+        private int _lowerBound;
 
         /// <summary>
-        /// Gets or sets the parameter beta which is used for generation of uniformly distributed random numbers.
+        /// Gets or sets the upper boundary which is used for generation of uniformly distributed random numbers.
         /// </summary>
-        /// <remarks>Call <see cref="IsValidBeta"/> to determine whether a value is valid and therefor assignable.</remarks>
-        public int Beta
+        public int UpperBound
         {
             get
             {
-                return this.beta;
-            }
-            set
-            {
-                if (this.IsValidBeta(value))
-                {
-                    this.beta = value;
-                    this.UpdateHelpers();
-                }
+                return this._upperBound;
             }
         }
 
         /// <summary>
         /// Stores the parameter beta which is used for generation of uniformly distributed random numbers.
         /// </summary>
-        private int beta;
+        private int _upperBound;
 
         /// <summary>
         /// Stores an intermediate result for generation of uniformly distributed random numbers.
@@ -95,16 +102,29 @@ namespace Altaxo.Calc.Probability
         /// Speeds up random number generation cause this value only depends on distribution parameters 
         ///   and therefor doesn't need to be recalculated in successive executions of <see cref="NextDouble"/>.
         /// </remarks>
-        private int helper1;
+        private int _upperPlus1;
         #endregion
 
-        #region construction
+
+
+#region construction
+
+    public DiscreteUniformDistribution()
+      : this(DefaultGenerator)
+    {
+    }
+
+    public DiscreteUniformDistribution(Generator gen)
+      : this(0, 1, gen)
+    {
+    }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="DiscreteUniformDistribution"/> class, using a 
         ///   <see cref="StandardGenerator"/> as underlying random number generator. 
         /// </summary>
-        public DiscreteUniformDistribution()
-            : this(new StandardGenerator())
+        public DiscreteUniformDistribution(int lower, int upper)
+            : this(lower,upper,DefaultGenerator)
         {
         }
 
@@ -116,12 +136,10 @@ namespace Altaxo.Calc.Probability
         /// <exception cref="ArgumentNullException">
         /// <paramref name="generator"/> is NULL (<see langword="Nothing"/> in Visual Basic).
         /// </exception>
-        public DiscreteUniformDistribution(Generator generator)
+        public DiscreteUniformDistribution(int lower, int upper, Generator generator)
             : base(generator)
         {
-            this.alpha = 0;
-            this.beta = 1;
-            this.UpdateHelpers();
+          Initialize(lower, upper);
         }
         #endregion
 
@@ -135,7 +153,7 @@ namespace Altaxo.Calc.Probability
         /// </returns>
         public bool IsValidAlpha(int value)
         {
-            return (value <= this.beta);
+            return (value <= this._upperBound);
         }
 
         /// <summary>
@@ -148,16 +166,23 @@ namespace Altaxo.Calc.Probability
         /// </returns>
         public bool IsValidBeta(int value)
         {
-            return (value >= this.alpha && value < int.MaxValue);
+            return (value >= this._lowerBound && value < int.MaxValue);
         }
 
         /// <summary>
         /// Updates the helper variables that store intermediate results for generation of uniformly distributed random 
         ///   numbers.
         /// </summary>
-        private void UpdateHelpers()
+        private void Initialize(int lower, int upper)
         {
-            this.helper1 = this.beta + 1;
+          if (upper < lower)
+            throw new ArgumentException("Upper bound must be >= lower bound");
+          if (upper == int.MaxValue)
+            throw new ArgumentOutOfRangeException("Upper bound must be < int.MaxValue");
+
+          _lowerBound = lower;
+          _upperBound = upper;
+           this._upperPlus1 = this._upperBound + 1;
         }
 
         /// <summary>
@@ -166,7 +191,7 @@ namespace Altaxo.Calc.Probability
         /// <returns>A geometric distributed 32-bit signed integer.</returns>
         public int Next()
         {
-            return this.Generator.Next(this.alpha, this.helper1);
+            return this.Generator.Next(this._lowerBound, this._upperPlus1);
         }
         #endregion
 
@@ -178,7 +203,7 @@ namespace Altaxo.Calc.Probability
         {
             get
             {
-                return this.alpha;
+                return this._lowerBound;
             }
         }
 
@@ -189,7 +214,7 @@ namespace Altaxo.Calc.Probability
         {
             get
             {
-                return this.beta;
+                return this._upperBound;
             }
         }
 
@@ -200,7 +225,7 @@ namespace Altaxo.Calc.Probability
         {
             get
             {
-                return this.alpha / 2.0 + this.beta / 2.0;
+                return this._lowerBound / 2.0 + this._upperBound / 2.0;
             }
         }
 
@@ -211,7 +236,7 @@ namespace Altaxo.Calc.Probability
         {
             get
             {
-                return this.alpha / 2.0 + this.beta / 2.0;
+                return this._lowerBound / 2.0 + this._upperBound / 2.0;
             }
         }
 
@@ -222,7 +247,7 @@ namespace Altaxo.Calc.Probability
         {
             get
             {
-                return (Math.Pow(this.beta - this.alpha + 1.0, 2.0) - 1.0) / 12.0;
+                return (Math.Pow(this._upperBound - this._lowerBound + 1.0, 2.0) - 1.0) / 12.0;
             }
         }
 
@@ -243,14 +268,14 @@ namespace Altaxo.Calc.Probability
         /// <returns>A uniformly distributed double-precision floating point number.</returns>
         public override double NextDouble()
         {
-            return this.Generator.Next(this.alpha, this.helper1);
+            return this.Generator.Next(this._lowerBound, this._upperPlus1);
         }
         #endregion
 
         #region CdfPdf
         public override double CDF(double x)
         {
-          return CDF(x, this.Alpha, this.Beta);
+          return CDF(x, this.LowerBound, this.UpperBound);
         }
         public static double CDF(double x, double low, double high)
         {
@@ -265,7 +290,7 @@ namespace Altaxo.Calc.Probability
 
         public override double PDF(double x)
         {
-          return PDF(x, this.Alpha, this.Beta);
+          return PDF(x, this.LowerBound, this.UpperBound);
         }
         public static double PDF(double x, double low, double high)
         {

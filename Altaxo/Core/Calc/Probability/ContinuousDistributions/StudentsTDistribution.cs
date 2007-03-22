@@ -38,7 +38,7 @@ namespace Altaxo.Calc.Probability
         /// Gets or sets the parameter nu which is used for generation of t-distributed random numbers.
 		/// </summary>
         /// <remarks>Call <see cref="IsValidNu"/> to determine whether a value is valid and therefor assignable.</remarks>
-        public int Nu
+        public double Nu
 		{
 			get
 			{
@@ -46,18 +46,14 @@ namespace Altaxo.Calc.Probability
 			}
 			set
 			{
-                if (this.IsValidNu(value))
-                {
-                    this.nu = value;
-                    this.UpdateHelpers();
-                }
+        Initialize(value);
         	}
 		}
 
 		/// <summary>
         /// Stores the parameter nu which is used for generation of t-distributed random numbers.
 		/// </summary>
-        private int nu;
+        private double nu;
 
         /// <summary>
         /// Stores a <see cref="NormalDistribution"/> object used for generation of t-distributed random numbers.
@@ -76,10 +72,24 @@ namespace Altaxo.Calc.Probability
         ///   <see cref="StandardGenerator"/> as underlying random number generator.
 		/// </summary>
         public StudentsTDistribution()
-            : this(new StandardGenerator())
+            : this(DefaultGenerator)
 		{
 		}
-		
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="StudentsTDistribution"/> class, using a 
+    ///   <see cref="StandardGenerator"/> as underlying random number generator.
+    /// </summary>
+    public StudentsTDistribution(Generator generator)
+      : this(1,generator)
+    {
+    }
+
+    public StudentsTDistribution(double nu)
+      : this(nu, DefaultGenerator)
+    {
+    }
+
 		/// <summary>
         /// Initializes a new instance of the <see cref="StudentsTDistribution"/> class, using the specified 
         ///   <see cref="Generator"/> as underlying random number generator.
@@ -88,15 +98,11 @@ namespace Altaxo.Calc.Probability
         /// <exception cref="ArgumentNullException">
         /// <paramref name="generator"/> is NULL (<see langword="Nothing"/> in Visual Basic).
         /// </exception>
-        public StudentsTDistribution(Generator generator)
+        public StudentsTDistribution(double nu, Generator generator)
             : base(generator)
         {
-            this.nu = 1;
-            this.normalDistribution = new NormalDistribution(generator);
-            this.normalDistribution.Mu = 0.0;
-            this.normalDistribution.Sigma = 1.0;
-            this.chiSquareDistribution = new ChiSquareDistribution(generator);
-            this.UpdateHelpers();
+            this.normalDistribution = new NormalDistribution(0,1,generator);
+            this.Initialize(nu);
         }
 		#endregion
 	
@@ -108,7 +114,7 @@ namespace Altaxo.Calc.Probability
 		/// <returns>
 		/// <see langword="true"/> if value is greater than 0; otherwise, <see langword="false"/>.
 		/// </returns>
-        public bool IsValidNu(int value)
+        public bool IsValidNu(double value)
 		{
 			return value > 0;
 		}
@@ -117,8 +123,15 @@ namespace Altaxo.Calc.Probability
         /// Updates the helper variables that store intermediate results for generation of t-distributed random 
         ///   numbers.
         /// </summary>
-        private void UpdateHelpers()
+        public void Initialize(double nu)
         {
+          if (!IsValidNu(nu))
+            throw new ArgumentOutOfRangeException("Nu out of range (must be positive");
+
+          this.nu = nu;
+          if (null == chiSquareDistribution)
+            this.chiSquareDistribution = new ChiSquareDistribution(nu);
+          else
             this.chiSquareDistribution.Alpha = this.nu;
         }
         #endregion
@@ -221,7 +234,7 @@ namespace Altaxo.Calc.Probability
     {
       return CDF(x, nu);
     }
-    public static double CDF(double x, int n)
+    public static double CDF(double x, double n)
     {
       return (1 + (1 - GammaRelated.BetaIR(n / (n + (x * x)), n * 0.5, 0.5)) * Math.Sign(x)) / 2.0;
     }
@@ -230,7 +243,7 @@ namespace Altaxo.Calc.Probability
     {
       return PDF(x, nu);
     }
-    public static double PDF(double x, int n)
+    public static double PDF(double x, double n)
     {
       return Math.Pow(n / (n + (x * x)), (1 + n) / 2.0) / (Math.Sqrt(n) * GammaRelated.Beta(n / 2.0, 0.5));
     }
@@ -239,7 +252,7 @@ namespace Altaxo.Calc.Probability
     {
       return Quantile(p, nu);
     }
-    public static double Quantile(double alpha, int n)
+    public static double Quantile(double alpha, double n)
     {
       return Math.Sqrt(n) * Math.Sqrt(-1 + 1 / GammaRelated.InverseBetaRegularized(1 - Math.Abs(1 - 2 * alpha), n * 0.5, 0.5)) * Math.Sign(-1 + 2 * alpha);
     }
@@ -255,7 +268,7 @@ namespace Altaxo.Calc.Probability
         ///   <see cref="StandardGenerator"/> as underlying random number generator.
 		/// </summary>
         public StudentTDistribution()
-            : this(new StandardGenerator())
+            : base()
 		{
 		}
 		
@@ -271,6 +284,18 @@ namespace Altaxo.Calc.Probability
             : base(generator)
         {
         }
+
+    public StudentTDistribution(double nu)
+      : base(nu)
+    {
+    }
+
+    public StudentTDistribution(double nu, Generator generator)
+      : base(nu, generator)
+    {
+    }
+
+   
 		#endregion
 
   }

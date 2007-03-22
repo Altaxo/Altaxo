@@ -38,7 +38,7 @@ namespace Altaxo.Calc.Probability
         /// <summary>
         /// Gets or sets a <see cref="Generator"/> object that can be used as underlying random number generator.
         /// </summary>
-        protected Generator Generator
+        public Generator Generator
         {
             get
             {
@@ -53,7 +53,15 @@ namespace Altaxo.Calc.Probability
         /// <summary>
         /// Stores a <see cref="Generator"/> object that can be used as underlying random number generator.
         /// </summary>
-        private Generator generator;
+        protected Generator generator;
+
+    public static Generator DefaultGenerator
+    {
+      get
+      {
+        return new StandardGenerator();
+      }
+    }
 
         /// <summary>
         /// Gets a value indicating whether the random number distribution can be reset, so that it produces the same 

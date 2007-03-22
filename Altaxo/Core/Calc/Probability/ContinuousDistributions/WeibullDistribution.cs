@@ -57,11 +57,7 @@ namespace Altaxo.Calc.Probability
 			}
 			set
 			{
-                if (this.IsValidAlpha(value))
-                {
-                    this.alpha = value;
-                    this.UpdateHelpers();
-                }
+        Initialize(value, lambda);
         	}
 		}
 
@@ -82,10 +78,7 @@ namespace Altaxo.Calc.Probability
             }
             set
             {
-                if (this.IsValidLambda(value))
-                {
-                    this.lambda = value;
-                }
+              Initialize(alpha, value);
             }
         }
 
@@ -110,7 +103,7 @@ namespace Altaxo.Calc.Probability
         ///   <see cref="StandardGenerator"/> as underlying random number generator.
 		/// </summary>
         public WeibullDistribution()
-            : this(new StandardGenerator())
+            : this(DefaultGenerator)
 		{
 		}
 
@@ -123,15 +116,39 @@ namespace Altaxo.Calc.Probability
         /// <paramref name="generator"/> is NULL (<see langword="Nothing"/> in Visual Basic).
         /// </exception>
         public WeibullDistribution(Generator generator)
-            : base(generator)
+            : this(1,1,generator)
         {
-            this.alpha = 1.0;
-            this.lambda = 1.0;
-            this.UpdateHelpers();
         }
+
+    public WeibullDistribution(double alpha, double lambda)
+      : this(alpha, lambda, DefaultGenerator)
+    {
+    }
+
+
+    public WeibullDistribution(double alpha, double lambda, Generator generator)
+      : base(generator)
+    {
+      Initialize(alpha, lambda);
+    }
 		#endregion
 	
 		#region instance methods
+
+    public void Initialize(double alpha, double lambda)
+    {
+      if (!IsValidAlpha(alpha))
+        throw new ArgumentOutOfRangeException("Alpha out of range");
+      if (!IsValidLambda(lambda))
+        throw new ArgumentOutOfRangeException("Lambda out of range");
+
+      this.alpha = alpha;
+      this.lambda = lambda;
+      this.helper1 = 1.0 / this.alpha;
+
+    }
+
+
 		/// <summary>
         /// Determines whether the specified value is valid for parameter <see cref="Alpha"/>.
 		/// </summary>
@@ -156,14 +173,7 @@ namespace Altaxo.Calc.Probability
 			return value > 0.0;
 		}
 
-        /// <summary>
-        /// Updates the helper variables that store intermediate results for generation of weibull distributed random 
-        ///   numbers.
-        /// </summary>
-        private void UpdateHelpers()
-        {
-            this.helper1 = 1.0 / this.alpha;
-        }
+       
 
         /// <summary>
         /// Represents a Lanczos approximation of the Gamma function.
@@ -268,5 +278,41 @@ namespace Altaxo.Calc.Probability
             return this.lambda * Math.Pow(-Math.Log(1.0 - this.Generator.NextDouble()), this.helper1);
 		}
 		#endregion
+
+    #region CdfPdfQuantile
+
+    public override double CDF(double x)
+    {
+      return CDF(x, alpha, lambda);
+    }
+    public static double CDF(double x, double alpha, double lambda)
+    {
+      return 1 - Math.Exp(-Math.Pow(x / lambda, alpha));
+    }
+
+
+
+    public override double PDF(double x)
+    {
+      return PDF(x, alpha, lambda);
+    }
+    public static double PDF(double x, double alpha, double lambda)
+    {
+      return (alpha * Math.Pow(x, -1 + alpha)) / (Math.Exp(Math.Pow(x / lambda, alpha)) * Math.Pow(lambda, alpha));
+    }
+
+
+    public override double Quantile(double p)
+    {
+      return Quantile(p, alpha, this.lambda);
+    }
+    public static double Quantile(double p, double alpha, double lambda)
+    {
+      return lambda * Math.Pow(-Math.Log(1 - p), 1 / alpha);
+    }
+
+
+    #endregion
+
 	}
 }

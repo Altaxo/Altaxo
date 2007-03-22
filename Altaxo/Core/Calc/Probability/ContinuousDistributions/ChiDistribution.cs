@@ -42,33 +42,30 @@ namespace Altaxo.Calc.Probability
 
         #region instance fields
         /// <summary>
-        /// Gets or sets the parameter alpha which is used for generation of chi distributed random numbers.
+        /// Gets or sets the parameter N (degree of freedom) which is used for generation of chi distributed random numbers.
 		/// </summary>
-		/// <remarks>Call <see cref="IsValidAlpha"/> to determine whether a value is valid and therefor assignable.</remarks>
-		public int Alpha
+		/// <remarks>Call <see cref="IsValidN"/> to determine whether a value is valid and therefor assignable.</remarks>
+		public int N
 		{
 			get
 			{
-                return this.alpha;
+                return this._N;
 			}
 			set
 			{
-                if (this.IsValidAlpha(value))
-                {
-                    this.alpha = value;
-                }
-        	}
+        Initialize(value);
+     	}
 		}
 
 		/// <summary>
         /// Stores the parameter alpha which is used for generation of chi distributed random numbers.
 		/// </summary>
-        private int alpha;
+        private int _N;
 
         /// <summary>
         /// Stores a <see cref="NormalDistribution"/> object used for generation of chi distributed random numbers.
         /// </summary>
-        private NormalDistribution normalDistribution;
+        private NormalDistribution _normalDistribution;
         #endregion
 
 		#region construction
@@ -77,7 +74,7 @@ namespace Altaxo.Calc.Probability
         ///   <see cref="StandardGenerator"/> as underlying random number generator.
 		/// </summary>
         public ChiDistribution()
-            : this(new StandardGenerator())
+            : this(DefaultGenerator)
 		{
 		}
 		
@@ -90,16 +87,50 @@ namespace Altaxo.Calc.Probability
         /// <paramref name="generator"/> is NULL (<see langword="Nothing"/> in Visual Basic).
         /// </exception>
         public ChiDistribution(Generator generator)
-            : base(generator)
+            : this(1,generator)
         {
-            this.alpha = 1;
-            this.normalDistribution = new NormalDistribution(generator);
-            this.normalDistribution.Mu = 0.0;
-            this.normalDistribution.Sigma = 1.0;
         }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ChiDistribution"/> class, using the specified 
+        ///   <see cref="Generator"/> as underlying random number generator.
+        /// </summary>
+        /// <param name="generator">A <see cref="Generator"/> object.</param>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="generator"/> is NULL (<see langword="Nothing"/> in Visual Basic).
+        /// </exception>
+        public ChiDistribution(int N)
+          : this(N,DefaultGenerator)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ChiDistribution"/> class, using the specified 
+        ///   <see cref="Generator"/> as underlying random number generator.
+        /// </summary>
+        /// <param name="generator">A <see cref="Generator"/> object.</param>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="generator"/> is NULL (<see langword="Nothing"/> in Visual Basic).
+        /// </exception>
+        public ChiDistribution(int N, Generator generator)
+          : base(generator)
+        {
+          this._normalDistribution = new NormalDistribution(0,1,generator);
+          Initialize(N);
+        }
+
+
 		#endregion
 	
 		#region instance methods
+
+    public void Initialize(int N)
+    {
+      if (!IsValidN(N))
+        throw new ArgumentOutOfRangeException("N out of range (must be >0)");
+      this._N = N;
+    }
+
 		/// <summary>
         /// Determines whether the specified value is valid for parameter <see cref="Alpha"/>.
 		/// </summary>
@@ -107,7 +138,7 @@ namespace Altaxo.Calc.Probability
 		/// <returns>
 		/// <see langword="true"/> if value is greater than 0; otherwise, <see langword="false"/>.
 		/// </returns>
-        public bool IsValidAlpha(int value)
+        public bool IsValidN(int value)
 		{
 			return value > 0;
 		}
@@ -161,7 +192,7 @@ namespace Altaxo.Calc.Probability
 		{
 			get
 			{
-                return Math.Sqrt(2.0) * this.Gamma((this.alpha + 1.0) / 2.0) / this.Gamma(this.alpha / 2.0);
+                return Math.Sqrt(2.0) * this.Gamma((this._N + 1.0) / 2.0) / this.Gamma(this._N / 2.0);
 			}
 		}
 		
@@ -183,7 +214,7 @@ namespace Altaxo.Calc.Probability
 		{
 			get
 			{
-                return this.alpha - Math.Pow(this.Mean, 2.0);
+                return this._N - Math.Pow(this.Mean, 2.0);
 			}
 		}
 		
@@ -194,9 +225,9 @@ namespace Altaxo.Calc.Probability
 		{
             get
             {
-                if (this.alpha >= 1)
+                if (this._N >= 1)
                 {
-                    return new double[] { Math.Sqrt(this.alpha - 1.0) };
+                    return new double[] { Math.Sqrt(this._N - 1.0) };
                 }
                 else
                 {
@@ -212,13 +243,48 @@ namespace Altaxo.Calc.Probability
         public override double NextDouble()
 		{
             double sum = 0.0;
-            for (int i = 0; i < this.alpha; i++)
+            for (int i = 0; i < this._N; i++)
             {
-                sum += Math.Pow(this.normalDistribution.NextDouble(), 2);
+                sum += Math.Pow(this._normalDistribution.NextDouble(), 2);
             }
 
             return Math.Sqrt(sum);
 		}
         #endregion
+
+    #region CdfPdfQuantile
+
+    public override double CDF(double x)
+    {
+      return CDF(x, _N);
+    }
+    public static double CDF(double x, double N)
+    {
+      return Calc.GammaRelated.GammaRegularized(0.5*N, 0, 0.5*x*x);
+    }
+
+
+
+    public override double PDF(double x)
+    {
+      return PDF(x, _N);
+    }
+    public static double PDF(double x, double N)
+    {
+      return (Math.Pow(2, 1 - N / 2) * Math.Pow(x, -1 + N)) / (Math.Exp(x * x * 0.5) * GammaRelated.Gamma(N / 2));
+    }
+
+
+    public override double Quantile(double p)
+    {
+      return Quantile(p, _N);
+    }
+    public static double Quantile(double p, double N)
+    {
+      return Math.Sqrt(2) * Math.Sqrt(GammaRelated.InverseGammaRegularized(N / 2, 1 - p));
+    }
+
+
+    #endregion
     }
 }

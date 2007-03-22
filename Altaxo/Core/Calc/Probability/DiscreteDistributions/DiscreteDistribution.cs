@@ -42,5 +42,11 @@ namespace Altaxo.Calc.Probability
     {
       throw new NotImplementedException();
     }
+
+    public virtual double Quantile(double x)
+    {
+      throw new NotSupportedException("Sorry, Quantile is not supported here since it is a discrete distribution");
+    }
+
   }
 }

@@ -44,7 +44,13 @@ namespace Altaxo.Calc.Probability
         /// <see langword="true"/>, if the random number generator was reset; otherwise, <see langword="false"/>.
         /// </returns>
         public abstract bool Reset();
-		
+
+
+    /// <summary>
+    /// Gets the maximum number that a call to <see cref="Next"/> can return.
+    /// </summary>
+    public virtual int Maximum { get { return int.MaxValue - 1; } }
+    
 		/// <summary>
 		/// Returns a nonnegative random number less than <see cref="Int32.MaxValue"/>.
 		/// </summary>
@@ -92,6 +98,26 @@ namespace Altaxo.Calc.Probability
         ///   the range of return values includes 0.0 but not 1.0. 
 		/// </returns>
         public abstract double NextDouble();
+
+
+        /// <summary>
+        /// Returns a floating point random number in the range (0,1), i.e. greater than 0.0 and less than 1.0.
+        /// </summary>
+        /// <returns>
+        /// A double-precision floating point number greater than or equal to 0.0, and less than 1.0; that is, 
+        ///   the range of return values includes 0.0 but not 1.0. 
+        /// </returns>
+    public virtual double NextPositiveDouble()
+    {
+      double result;
+      do
+      {
+        result = NextDouble();
+      } while(0==result);
+      return result;
+    }
+
+
 
         /// <summary>
         /// Returns a nonnegative floating point random number less than the specified maximum.

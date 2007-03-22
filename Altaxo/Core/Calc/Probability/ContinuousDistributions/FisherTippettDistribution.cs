@@ -28,7 +28,7 @@ using System;
 namespace Altaxo.Calc.Probability
 {
 	/// <summary>
-	/// Provides generation of Fisher-Tippett distributed random numbers.
+	/// Provides generation of Fisher-Tippett distributed random numbers (also known as ExtremeValueDistribution).
 	/// </summary>
 	/// <remarks>
     /// The implementation of the <see cref="FisherTippettDistribution"/> type bases upon information presented on
@@ -49,11 +49,8 @@ namespace Altaxo.Calc.Probability
 			}
 			set
 			{
-                if (this.IsValidAlpha(value))
-                {
-                    this.alpha = value;
-                }
-        	}
+        Initialize(mu, value);
+      }
 		}
 
 		/// <summary>
@@ -73,10 +70,7 @@ namespace Altaxo.Calc.Probability
 			}
 			set
 			{
-                if (this.IsValidMu(value))
-                {
-                    this.mu = value;
-                }
+        Initialize(value, alpha);
         	}
 		}
 
@@ -92,7 +86,7 @@ namespace Altaxo.Calc.Probability
         ///   <see cref="StandardGenerator"/> as underlying random number generator.
 		/// </summary>
         public FisherTippettDistribution()
-            : this(new StandardGenerator())
+            : this(DefaultGenerator)
 		{
 		}
 
@@ -105,14 +99,39 @@ namespace Altaxo.Calc.Probability
         /// <paramref name="generator"/> is NULL (<see langword="Nothing"/> in Visual Basic).
         /// </exception>
         public FisherTippettDistribution(Generator generator)
-            : base(generator)
+            : this(0,1,generator)
         {
-            this.alpha = 1.0;
-            this.mu = 0.0;
         }
+
+    public FisherTippettDistribution(double mu, double alpha)
+      : this(mu, alpha, DefaultGenerator)
+    {
+    }
+      
+
+    public FisherTippettDistribution(double mu, double alpha, Generator generator)
+      : base(generator)
+    {
+      Initialize(mu, alpha);
+    }
+
+
 		#endregion
 	
 		#region instance methods
+
+    public void Initialize(double mu, double alpha)
+    {
+      if (!IsValidMu(mu))
+        throw new ArgumentOutOfRangeException("Mu is out of range");
+      if (!IsValidAlpha(alpha))
+        throw new ArgumentOutOfRangeException("Alpha is out of range");
+
+      this.mu = mu;
+      this.alpha = alpha;
+      
+    }
+
 		/// <summary>
         /// Determines whether the specified value is valid for parameter <see cref="Alpha"/>.
 		/// </summary>
@@ -213,5 +232,42 @@ namespace Altaxo.Calc.Probability
             return this.mu - this.alpha * Math.Log(-Math.Log(1.0 - this.Generator.NextDouble()));
 		}
 		#endregion
+
+    #region CdfPdfQuantile
+
+    public override double CDF(double x)
+    {
+      return CDF(x, mu, alpha);
+    }
+
+    public static double CDF(double x, double alpha, double beta)
+    {
+      return Math.Exp(-Math.Exp(-(-alpha + x) / beta));
+    }
+
+    public override double PDF(double x)
+    {
+      return PDF(x, mu, alpha);
+    }
+    public static double PDF(double x, double alpha, double beta)
+    {
+      return Math.Exp(-Math.Exp((alpha - x) / beta) + (alpha - x) / beta) / beta;
+    }
+
+
+    public override double Quantile(double p)
+    {
+      return Quantile(p, mu, alpha);
+    }
+    public static double Quantile(double p, double alpha, double beta)
+    {
+      if (p < 0 || p > 1)
+        throw new ArgumentException("Probability p must be between 0 and 1");
+      return alpha - beta * Math.Log(Math.Log(1 / p));
+    }
+
+
+    #endregion
+
 	}
 }

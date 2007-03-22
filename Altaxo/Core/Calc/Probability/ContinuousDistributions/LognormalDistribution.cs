@@ -1,3 +1,26 @@
+#region Copyright
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+#endregion
+
+#region Original Copyright(s)
 /*
  * Copyright © 2006 Stefan Troschütz (stefan@troschuetz.de)
  * 
@@ -22,7 +45,6 @@
  *             Renamed field my and property My to mu/Mu to consistently use english names
  * 
  */
-
 #region original copyright
 /* boost random/lognormal_distribution.hpp header file
  *
@@ -40,6 +62,8 @@
  */
 #endregion
 
+#endregion
+
 using System;
 
 namespace Altaxo.Calc.Probability
@@ -51,7 +75,34 @@ namespace Altaxo.Calc.Probability
     /// The implementation of the <see cref="LognormalDistribution"/> type bases upon information presented on
     ///   <a href="http://en.wikipedia.org/wiki/Log-normal_distribution">Wikipedia - Lognormal Distribution</a> and
     ///   the implementation in the <a href="http://www.boost.org/libs/random/index.html">Boost Random Number Library</a>.
-    /// </remarks>
+  /// <code>                       
+  /// Return log-normal distributed random deviates           
+  /// with given mean and standard deviation stdev              
+  /// according to the density function:                
+  ///                                                2            
+  ///                     1                (ln x - m)           
+  /// p   (x) dx =  -------------- exp( - ------------ ) dx  for x > 0       
+  ///  m,s          sqrt(2 pi x) s               2              
+  ///                                         2 s             
+  ///                       
+  ///            = 0   otherwise                  
+  ///                       
+  /// where  m  and  s  are related to the arguments mean and stdev by:       
+  ///                               
+  ///                        2                  
+  ///                    mean                 
+  /// m = ln ( --------------------- )               
+  ///                     2      2                  
+  ///          sqrt( stdev + mean  )                
+  ///                         
+  ///                     2      2                  
+  ///                stdev + mean                 
+  /// s = sqrt( ln( -------------- ) )                
+  ///                        2                  
+  ///                    mean                  
+  ///                            
+  /// 
+  /// </code></remarks>
   public class LognormalDistribution : ContinuousDistribution
   {
     #region instance fields
@@ -67,10 +118,7 @@ namespace Altaxo.Calc.Probability
       }
       set
       {
-        if (this.IsValidMu(value))
-        {
-          this.mu = value;
-        }
+        Initialize(value, sigma);
       }
     }
 
@@ -91,10 +139,7 @@ namespace Altaxo.Calc.Probability
       }
       set
       {
-        if (this.IsValidSigma(value))
-        {
-          this.sigma = value;
-        }
+        Initialize(mu, value);
       }
     }
 
@@ -115,7 +160,17 @@ namespace Altaxo.Calc.Probability
     ///   <see cref="StandardGenerator"/> as underlying random number generator.
     /// </summary>
     public LognormalDistribution()
-      : this(new StandardGenerator())
+      : this(DefaultGenerator)
+    {
+    }
+
+    public LognormalDistribution(Generator generator)
+      : this(0, 1, generator)
+    {
+    }
+
+    public LognormalDistribution(double mu, double sigma)
+      : this(mu, sigma, DefaultGenerator)
     {
     }
 
@@ -127,18 +182,28 @@ namespace Altaxo.Calc.Probability
     /// <exception cref="ArgumentNullException">
     /// <paramref name="generator"/> is NULL (<see langword="Nothing"/> in Visual Basic).
     /// </exception>
-    public LognormalDistribution(Generator generator)
+    public LognormalDistribution(double mu, double sigma, Generator generator)
       : base(generator)
     {
-      this.mu = 1.0;
-      this.sigma = 1.0;
-      this.normalDistribution = new NormalDistribution(generator);
-      this.normalDistribution.Mu = 0.0;
-      this.normalDistribution.Sigma = 1.0;
+      this.normalDistribution = new NormalDistribution(0,1,generator);
+      Initialize(mu, sigma);
     }
     #endregion
 
     #region instance methods
+
+    public void Initialize(double mu, double sigma)
+    {
+      if (!IsValidMu(mu))
+        throw new ArgumentOutOfRangeException("Mu is out of range (Infinity and NaN now allowed)");
+      if (!IsValidSigma(sigma))
+        throw new ArgumentOutOfRangeException("Sigma is out of range (must be positive)");
+
+      this.mu = mu;
+      this.sigma = sigma;
+    }
+
+
     /// <summary>
     /// Determines whether the specified value is valid for parameter <see cref="Mu"/>.
     /// </summary>
@@ -146,7 +211,7 @@ namespace Altaxo.Calc.Probability
     /// <returns><see langword="true"/>.</returns>
     public bool IsValidMu(double value)
     {
-      return true;
+      return value >= double.MinValue && value <= double.MaxValue;
     }
 
     /// <summary>

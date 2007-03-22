@@ -1,3 +1,26 @@
+#region Copyright
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+#endregion
+
+#region Further copyright(s)
 /*
  * Copyright © 2006 Stefan Troschütz (stefan@troschuetz.de)
  * 
@@ -22,6 +45,7 @@
  *               and made accessible through new protected property "Generator")
  * 
  */
+#endregion
 
 using System;
 
@@ -41,12 +65,12 @@ namespace Altaxo.Calc.Probability
     /// <summary>
     /// Gets or sets the parameter alpha which is used for generation of bernoulli distributed random numbers.
     /// </summary>
-    /// <remarks>Call <see cref="IsValidAlpha"/> to determine whether a value is valid and therefor assignable.</remarks>
-    public double Alpha
+    /// <remarks>Call <see cref="IsValidProbability"/> to determine whether a value is valid and therefor assignable.</remarks>
+    public double Probability
     {
       get
       {
-        return this.alpha;
+        return this._probability;
       }
       set
       {
@@ -56,17 +80,16 @@ namespace Altaxo.Calc.Probability
 
     public void Initialize(double probability)
     {
-      if (IsValidAlpha(probability))
-        this.alpha = probability;
-      else
+      if (!IsValidProbability(probability))
         throw new ArgumentOutOfRangeException("probability has to be between 0 and 1");
 
+      this._probability = probability;
     }
 
     /// <summary>
     /// Stores the parameter alpha which is used for generation of bernoulli distributed random numbers.
     /// </summary>
-    private double alpha;
+    private double _probability;
     #endregion
 
     #region construction
@@ -75,7 +98,7 @@ namespace Altaxo.Calc.Probability
     ///   <see cref="StandardGenerator"/> as underlying random number generator.
     /// </summary>
     public BernoulliDistribution()
-      : this(new StandardGenerator())
+      : this(DefaultGenerator)
     {
     }
 
@@ -93,19 +116,20 @@ namespace Altaxo.Calc.Probability
     }
 
     public BernoulliDistribution(double probability)
-      : this(probability, new StandardGenerator())
+      : this(probability, DefaultGenerator)
     {
     }
 
     public BernoulliDistribution(double probability, Generator generator)
       : base(generator)
     {
-      this.alpha = probability;
+      Initialize(probability);
     }
 
     #endregion
 
     #region instance methods
+
     /// <summary>
     /// Determines whether the specified value is valid for parameter <see cref="Alpha"/>.
     /// </summary>
@@ -113,7 +137,7 @@ namespace Altaxo.Calc.Probability
     /// <returns>
     /// <see langword="true"/> if value is greater than or equal to 0.0, and less than or equal to 1.0; otherwise, <see langword="false"/>.
     /// </returns>
-    public bool IsValidAlpha(double value)
+    public bool IsValidProbability(double value)
     {
       return (value >= 0.0 && value <= 1.0);
     }
@@ -124,7 +148,7 @@ namespace Altaxo.Calc.Probability
     /// <returns>A bernoulli distributed 32-bit signed integer.</returns>
     public int Next()
     {
-      if (this.Generator.NextDouble() < this.alpha)
+      if (this.Generator.NextDouble() < this._probability)
       {
         return 1;
       }
@@ -165,7 +189,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this.alpha;
+        return this._probability;
       }
     }
 
@@ -187,7 +211,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return this.alpha * (1.0 - this.alpha);
+        return this._probability * (1.0 - this._probability);
       }
     }
 
@@ -198,11 +222,11 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        if (this.alpha > (1 - this.alpha))
+        if (this._probability > (1 - this._probability))
         {
           return new double[] { 1.0 };
         }
-        else if (this.alpha < (1 - this.alpha))
+        else if (this._probability < (1 - this._probability))
         {
           return new double[] { 0.0 };
         }
@@ -219,7 +243,7 @@ namespace Altaxo.Calc.Probability
     /// <returns>A bernoulli distributed double-precision floating point number.</returns>
     public override double NextDouble()
     {
-      if (this.Generator.NextDouble() < this.alpha)
+      if (this.Generator.NextDouble() < this._probability)
       {
         return 1.0;
       }
@@ -233,7 +257,7 @@ namespace Altaxo.Calc.Probability
     #region CdfPdf
     public override double CDF(double x)
     {
-      return CDF(x, this.Alpha);
+      return CDF(x, this.Probability);
     }
     public static double CDF(double x, double p)
     {
@@ -247,7 +271,7 @@ namespace Altaxo.Calc.Probability
 
     public override double PDF(double x)
     {
-      return PDF(x, this.Alpha);
+      return PDF(x, this.Probability);
     }
     public static double PDF(double x, double p)
     {

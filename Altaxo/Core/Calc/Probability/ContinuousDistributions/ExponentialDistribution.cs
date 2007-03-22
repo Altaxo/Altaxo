@@ -34,7 +34,17 @@ namespace Altaxo.Calc.Probability
 	/// <remarks>
     /// The implementation of the <see cref="ExponentialDistribution"/> type bases upon information presented on
     ///   <a href="http://en.wikipedia.org/wiki/Exponential_distribution">Wikipedia - Exponential distribution</a>.
-    /// </remarks>
+  ///<code>
+  ///                            
+  /// Return exponentially distributed random deviates according to:      
+  ///                            
+  /// p (x) = lambda * exp(-lambda x) dx   for x >= 0             
+  ///  l                              
+  ///       = 0                    otherwise             
+  ///                            
+  /// The probability density has mean = stdev = 1/lambda.          
+  ///                            
+  /// </code></remarks>
   public class ExponentialDistribution : ContinuousDistribution
 	{
 		#region instance fields
@@ -50,11 +60,7 @@ namespace Altaxo.Calc.Probability
 			}
 			set
 			{
-                if (this.IsValidLambda(value))
-                {
-                    this.lambda = value;
-                    this.UpdateHelpers();
-                }
+        Initialize(value);
         	}
 		}
 		
@@ -79,7 +85,7 @@ namespace Altaxo.Calc.Probability
         ///   <see cref="StandardGenerator"/> as underlying random number generator.
 		/// </summary>
         public ExponentialDistribution()
-            : this(new StandardGenerator())
+            : this(DefaultGenerator)
 		{
 		}
 		
@@ -92,10 +98,34 @@ namespace Altaxo.Calc.Probability
         /// <paramref name="generator"/> is NULL (<see langword="Nothing"/> in Visual Basic).
         /// </exception>
         public ExponentialDistribution(Generator generator)
-            : base(generator)
+            : this(1,generator)
         {
-            this.lambda = 1.0;
-            this.UpdateHelpers();
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ExponentialDistribution"/> class, using the specified 
+        ///   <see cref="Generator"/> as underlying random number generator.
+        /// </summary>
+        /// <param name="generator">A <see cref="Generator"/> object.</param>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="generator"/> is NULL (<see langword="Nothing"/> in Visual Basic).
+        /// </exception>
+        public ExponentialDistribution(double lambda)
+          : this(lambda,DefaultGenerator)
+        {
+        }
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ExponentialDistribution"/> class, using the specified 
+        ///   <see cref="Generator"/> as underlying random number generator.
+        /// </summary>
+        /// <param name="generator">A <see cref="Generator"/> object.</param>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="generator"/> is NULL (<see langword="Nothing"/> in Visual Basic).
+        /// </exception>
+        public ExponentialDistribution(double lambda, Generator generator)
+          : base(generator)
+        {
+          Initialize(lambda);
         }
         #endregion
 		
@@ -116,8 +146,12 @@ namespace Altaxo.Calc.Probability
         /// Updates the helper variables that store intermediate results for generation of exponential distributed random 
         ///   numbers.
         /// </summary>
-        private void UpdateHelpers()
+        public void Initialize(double lambda)
         {
+          if (!IsValidLambda(lambda))
+            throw new ArgumentOutOfRangeException("Lambda out of range (must be positive)");
+
+          this.lambda = lambda;
             this.helper1 = -1.0 / this.lambda;
         }
         #endregion
@@ -206,31 +240,25 @@ namespace Altaxo.Calc.Probability
     {
       return CDF(z, lambda);
     }
-    public static double CDF(double z, double m)
+    public static double CDF(double x, double lambda)
     {
-      if (z < 0)
-        return 0;
-      else
-        return 1 - Math.Exp(-z / m);
+        return 1 - Math.Exp(- lambda * x);
     }
     public override double PDF(double z)
     {
       return PDF(z, lambda);
     }
-    public static double PDF(double z, double m)
+    public static double PDF(double x, double lambda)
     {
-      if (z < 0)
-        return 0;
-      else
-        return Math.Exp(-z / m) / m;
+      return lambda*Math.Exp(- lambda * x);
     }
     public override double Quantile(double p)
     {
       return Quantile(p, lambda);
     }
-    public static double Quantile(double p, double m)
+    public static double Quantile(double p, double lambda)
     {
-      return -m * Math.Log(1 - p);
+      return -Math.Log(1 - p)/lambda;
     }
 
     #endregion

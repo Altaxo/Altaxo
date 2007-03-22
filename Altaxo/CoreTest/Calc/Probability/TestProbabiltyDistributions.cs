@@ -110,9 +110,7 @@ new double[]{2.5, 3.5, 0.2739037303169420423172000, 1.749247541974141744140178, 
       {
         ContDistTester tester = new ContDistTester(para[i], delegate(double a, double b)
         {
-          BetaDistribution ret = new BetaDistribution();
-          ret.Alpha = a;
-          ret.Beta = b;
+          BetaDistribution ret = new BetaDistribution(a,b);
           return ret;
         }
           );
@@ -155,7 +153,7 @@ new double[]{7, 0, 2.062729304476599455816607, 0.488171949494276922953910, 3.750
         ContDistTester tester = new ContDistTester(para[i], delegate(double a, double b)
         {
           ChiDistribution ret = new ChiDistribution();
-          ret.Alpha= (int)a;
+          ret.N= (int)a;
           return ret;
         }
           );
@@ -196,9 +194,7 @@ new double[]{3, 5, 3.500000000000000000000000, 0.5000000000000000000000000, 4.90
       {
         ContDistTester tester = new ContDistTester(para[i], delegate(double a, double b)
         {
-          ContinuousUniformDistribution ret = new ContinuousUniformDistribution();
-          ret.Alpha = a;
-          ret.Beta = b;
+          ContinuousUniformDistribution ret = new ContinuousUniformDistribution(a,b);
           return ret;
         }
           );
@@ -218,9 +214,7 @@ new double[]{3.0, 0.5, 0.8636497089302596965312208, 0.530369629973745149272610, 
       {
         ContDistTester tester = new ContDistTester(para[i], delegate(double a, double b)
         {
-          ErlangDistribution ret = new ErlangDistribution();
-          ret.Alpha = (int)a;
-          ret.Lambda = b;
+          ErlangDistribution ret = new ErlangDistribution((int)a,b);
           return ret;
         }
           );
@@ -284,8 +278,8 @@ new double[]{3.5, 1.8, 2.912058332039094231671373, 0.1925408834888736970603423, 
         ContDistTester tester = new ContDistTester(para[i], delegate(double a, double b)
         {
           FisherTippettDistribution ret = new FisherTippettDistribution();
-          ret.Alpha = a;
-          ret.Mu = b;
+          ret.Mu = a;
+          ret.Alpha = b;
           return ret;
         }
           );
@@ -305,9 +299,8 @@ new double[]{1.375, 0.5, 0.2611286278084653847745789, 1.046077103945108021281691
       {
         ContDistTester tester = new ContDistTester(para[i], delegate(double a, double b)
         {
-          GammaDistribution ret = new GammaDistribution();
-          ret.Alpha = a;
-          ret.Theta = b;
+          GammaDistribution ret = new GammaDistribution(a,b);
+          
           return ret;
         }
           );
@@ -328,8 +321,8 @@ new double[]{1.375, 0.5, 1.028426409720027345291384, 0.500000000000000000000000,
         ContDistTester tester = new ContDistTester(para[i], delegate(double a, double b)
         {
           LaplaceDistribution ret = new LaplaceDistribution();
-          ret.Alpha = a;
-          ret.Mu = b;
+          ret.Mu = a;
+          ret.Alpha = b;
           return ret;
         }
           );
@@ -527,10 +520,7 @@ new double[]{}
       {
         ContDistTester tester = new ContDistTester(para[i], delegate(double a, double b)
         {
-          TriangularDistribution ret = new TriangularDistribution();
-          ret.Alpha = a;
-          ret.Beta = b;
-
+          TriangularDistribution ret = new TriangularDistribution(a,0.5*(a+b),b);
           return ret;
         }
           );
@@ -635,7 +625,7 @@ new double[]{0.75, 0, 0, 0.2500000000000000000000000, 0.250000000000000000000000
         DiscDistTester tester = new DiscDistTester(para[i], delegate(double a, double b)
         {
           BernoulliDistribution ret = new BernoulliDistribution();
-          ret.Alpha = a;
+          ret.Probability = a;
           return ret;
         }
           );
@@ -649,7 +639,8 @@ new double[]{0.75, 0, 0, 0.2500000000000000000000000, 0.250000000000000000000000
     public void TestBinomialDistribution()
     {
       double[][] para = {
-new double[]{10, 0.75, 7, 0.4744071960449218750000000, 0.2502822875976562500000000}
+new double[]{10, 0.75, 7, 0.4744071960449218750000000, 0.2502822875976562500000000},
+new double[]{100, 0.375, 40, 0.7339137587545079200156959, 0.07115992585884902329546213}
       };
       for (int i = 0; i < para.Length; i++)
       {
@@ -659,7 +650,7 @@ new double[]{10, 0.75, 7, 0.4744071960449218750000000, 0.25028228759765625000000
           return ret;
         }
           );
-        tester.Test(1E-14);
+        tester.Test(1E-12);
       }
     }
     #endregion
@@ -675,9 +666,7 @@ new double[]{1, 11, 5, 0.4545454545454545454545455, 0.09090909090909090909090909
       {
         DiscDistTester tester = new DiscDistTester(para[i], delegate(double a, double b)
         {
-          DiscreteUniformDistribution ret = new DiscreteUniformDistribution();
-          ret.Alpha = (int)a;
-          ret.Beta = (int)b;
+          DiscreteUniformDistribution ret = new DiscreteUniformDistribution((int)a,(int)b);
           return ret;
         }
           );
@@ -699,7 +688,7 @@ new double[]{0.125, 0, 5, 0.4870910644531250000000000, 0.07327270507812500000000
         DiscDistTester tester = new DiscDistTester(para[i], delegate(double a, double b)
         {
           GeometricDistribution ret = new GeometricDistribution();
-          ret.Alpha = a;
+          ret.Probability = a;
           return ret;
         }
           );
@@ -719,8 +708,7 @@ new double[]{11, 0, 9, 0.3405106424656610472811084, 0.1085255092982049925567724}
       {
         DiscDistTester tester = new DiscDistTester(para[i], delegate(double a, double b)
         {
-          PoissonDistribution ret = new PoissonDistribution();
-          ret.Lambda = a;
+          PoissonDistribution ret = new PoissonDistribution(a);
           return ret;
         }
           );

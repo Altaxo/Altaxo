@@ -45,11 +45,7 @@ namespace Altaxo.Calc.Probability
 			}
 			set
 			{
-                if (this.IsValidSigma(value))
-                {
-                    this.sigma = value;
-                    this.UpdateHelpers();
-                }
+        Initialize(value);
         	}
 		}
 
@@ -75,7 +71,7 @@ namespace Altaxo.Calc.Probability
         ///   <see cref="StandardGenerator"/> as underlying random number generator.
 		/// </summary>
         public RayleighDistribution()
-            : this(new StandardGenerator())
+            : this(DefaultGenerator)
 		{
 		}
 
@@ -88,15 +84,23 @@ namespace Altaxo.Calc.Probability
         /// <paramref name="generator"/> is NULL (<see langword="Nothing"/> in Visual Basic).
         /// </exception>
         public RayleighDistribution(Generator generator)
-            : base(generator)
+            : this(1,generator)
         {
-            this.sigma = 1.0;
-            this.normalDistribution1 = new NormalDistribution(generator);
-            this.normalDistribution1.Mu = 0.0;
-            this.normalDistribution2 = new NormalDistribution(generator);
-            this.normalDistribution2.Mu = 0.0;
-            this.UpdateHelpers();
         }
+
+    public RayleighDistribution(double sigma)
+      : this(sigma, DefaultGenerator)
+    {
+    }
+
+
+    public RayleighDistribution(double sigma, Generator generator)
+      : base(generator)
+    {
+      this.normalDistribution1 = new NormalDistribution(0,1,generator);
+      this.normalDistribution2 = new NormalDistribution(0,1,generator);
+      this.Initialize(sigma);
+    }
 		#endregion
 	
 		#region instance methods
@@ -116,10 +120,14 @@ namespace Altaxo.Calc.Probability
         /// Updates the helper variables that store intermediate results for generation of rayleigh distributed random 
         ///   numbers.
         /// </summary>
-        private void UpdateHelpers()
+        public void Initialize(double sigma)
         {
-            this.normalDistribution1.Sigma = this.sigma;
-            this.normalDistribution2.Sigma = this.sigma;
+          if (!IsValidSigma(sigma))
+            throw new ArgumentOutOfRangeException("Sigma out of range (must be >0)");
+
+          this.sigma = sigma;
+          this.normalDistribution1.Sigma = this.sigma;
+          this.normalDistribution2.Sigma = this.sigma;
         }
         #endregion
 
@@ -199,5 +207,42 @@ namespace Altaxo.Calc.Probability
             return Math.Sqrt(Math.Pow(this.normalDistribution1.NextDouble(), 2) + Math.Pow(this.normalDistribution2.NextDouble(), 2));
         }
 		#endregion
+
+        #region CdfPdfQuantile
+    static double Pow2(double x) { return x * x; }
+
+        public override double CDF(double x)
+        {
+          return CDF(x, sigma);
+        }
+        public static double CDF(double x, double sigma)
+        {
+          return 1 - Math.Exp(-Pow2(x) / (2.0 * Pow2(sigma)));
+        }
+
+
+
+        public override double PDF(double x)
+        {
+          return PDF(x, sigma);
+        }
+        public static double PDF(double x, double sigma)
+        {
+          return x / (Math.Exp(Pow2(x) / (2.0 * Pow2(sigma))) * Pow2(sigma));
+        }
+
+
+        public override double Quantile(double p)
+        {
+          return Quantile(p, this.sigma);
+        }
+        public static double Quantile(double p, double sigma)
+        {
+          return sigma * Math.Sqrt(-Math.Log((1 - p)*(1 - p)));
+        }
+
+
+        #endregion
+
 	}
 }

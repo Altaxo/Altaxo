@@ -1392,10 +1392,36 @@ namespace Altaxo.Calc.Probability.Old
   /// <summary>
   /// Base class for all distributions.
   /// </summary>
-  public abstract class ProbabilityDistribution : RandomGenerator
+  public abstract class ProbabilityDistribution 
   {
+    #region Helper functions and constants
+
+    /// <summary>Maximum value of a System.Double.</summary>
+    protected const double DBL_MAX = double.MaxValue;
+    /// <summary>Smallest positive value of a System.Double.</summary>
+    protected const double DBL_MIN = double.Epsilon; // god saves microsoft!
+    /// <summary>Maximum binary exponent of a <see cref="System.Double"/>.</summary>
+    protected const int DBL_MAX_EXP = 1024;
+    /// <summary>Natural logarithm of 2.</summary>
+    protected const double M_LN2 = 0.69314718055994530941723212145818;
+
+
+    /// <summary>
+    /// Return first number with sign of second number
+    /// </summary>
+    /// <param name="x">The first number.</param>
+    /// <param name="y">The second number whose sign is used.</param>
+    /// <returns>The first number x with the sign of the second argument y.</returns>
+    protected static double CopySign(double x, double y)
+    {
+      return (y < 0) ? ((x < 0) ? x : -x) : ((x > 0) ? x : -x);
+    }
+
+    #endregion
+
+
     /// <summary>Pointer to generator.</summary>
-    protected RandomGenerator gen; 
+    protected RandomGenerator generator; 
 
     /// <summary>Empty constructor. Use this only in inheritance hierarchies.</summary>
     protected ProbabilityDistribution()
@@ -1406,32 +1432,30 @@ namespace Altaxo.Calc.Probability.Old
     /// Generates a random value distributed according to the distribution.
     /// </summary>
     /// <returns></returns>
-    public abstract double val();
+    public abstract double NextDouble();
 
     /// <summary>Initialize the distribution by providing the random generator used
     /// to produce the random values.</summary>
     /// <param name="ran">The random generator used to produce the random values.</param>
     public  ProbabilityDistribution(RandomGenerator ran)
     {
-      gen = ran;
-      max_val = ran.Maximum;
-      seed = ran.Seed;
+      generator = ran;
     }
 
     /// <summary>Returns the random generator used by the distribution to generate the random values.</summary>
     /// <value>The used random generator.</value>
     public RandomGenerator Generator
     {
-      get { return gen; }
+      get { return generator; }
     }
 
-    /// <summary>The generation function.</summary>
-    /// <returns>The next random value.</returns>
-    public override uint Long()
+    public static RandomGenerator DefaultGenerator
     {
-      return gen.Long();
+      get
+      {
+        return RandomGenerator.DefaultGenerator;
+      }
     }
-
 
     /// <summary>
     /// Gives the probability density at x.
@@ -1481,18 +1505,14 @@ namespace Altaxo.Calc.Probability.Old
       { 
         low = hi; high = lo; 
       }
-      scale = (high-low) / max_val;
+      scale = (high-low) / generator.Maximum;
     }
 
-    public override double val() // we may not want a getter here, because debugging then changes the state of the generator
+    public override double NextDouble() // we may not want a getter here, because debugging then changes the state of the generator
     {
-      return (scale * gen.Long() + low);
+      return (scale * generator.Long() + low);
     }
     
-    public override uint Long()
-    {
-      return gen.Long();
-    }
     public double LowerBound
     {
       get { return low; }
@@ -1550,16 +1570,13 @@ namespace Altaxo.Calc.Probability.Old
     public U01_Distribution(RandomGenerator ran)
       : base(ran)
     {
-      scale = 1.0 / max_val;
+      scale = 1.0 / generator.Maximum;
     }
-    public override double val() 
+    public override double NextDouble() 
     {
-      return scale * gen.Long();
+      return scale * generator.Long();
     }
-    public override uint Long()
-    {
-      return gen.Long();
-    }
+   
 
     public override double PDF(double z)
     {
@@ -1590,7 +1607,7 @@ namespace Altaxo.Calc.Probability.Old
   }
   #endregion
 
-  #region NormalDistribution
+  #region NormalDistribution *
 
   
 
@@ -1609,21 +1626,21 @@ namespace Altaxo.Calc.Probability.Old
   /// </code></remarks>
   public class NormalDistribution : ProbabilityDistribution 
   {
-    protected double m, s, scale, cacheval;
-    protected int cached;
+    protected double mu, sigma, scale, cacheval;
+    protected bool cached;
     protected NormalDistribution() {}
     public NormalDistribution (double mean, double stdev, RandomGenerator ran)
       : base(ran)
     {
-      cached = 0;
-      m = mean;
-      s = stdev;
-      scale  = 2.0 / max_val;
+      cached = false;
+      mu = mean;
+      sigma = stdev;
+      scale = 2.0 / generator.Maximum;
     }
-    public override double val()
+    public override double NextDouble()
     {
       // We don't have an extra deviate
-      if  (cached == 0) 
+      if  (cached == false) 
       {
 
         // Pick two uniform numbers in the square extending from -1 tp +1
@@ -1631,8 +1648,8 @@ namespace Altaxo.Calc.Probability.Old
         double v1, v2, r;
         do 
         {
-          v1 = scale * gen.Long() - 1; // scale maps the random long to [0,2]
-          v2 = scale * gen.Long() - 1;
+          v1 = scale * generator.Long() - 1; // scale maps the random long to [0,2]
+          v2 = scale * generator.Long() - 1;
           r = v1 * v1 + v2 * v2;
         } while (r >= 1.0);
 
@@ -1641,48 +1658,45 @@ namespace Altaxo.Calc.Probability.Old
         // Make Box-Muller transformation to get two normal deviates.
         // Return one and save the other for the next time.
         cacheval = v1 * f;
-        cached = 1;
-        return (v2 * f * s + m);
+        cached = true;
+        return (v2 * f * sigma + mu);
 
         // We have an extra deviate, so unset the flag and return it
       } 
       else 
       {
-        cached = 0;
-        return (cacheval * s + m);
+        cached = false;
+        return (cacheval * sigma + mu);
       }
     }
-    public override uint Long()
-    {
-      return gen.Long();
-    }
-    public virtual double Mean { get { return m; }}
-    public virtual double Stdev {get { return s; }}
+   
+    public virtual double Mean { get { return mu; }}
+    public virtual double Stdev {get { return sigma; }}
 
 
     static readonly double _OneBySqrt2Pi = 1/Math.Sqrt(2*Math.PI);
     static double Sqr(double x) { return x*x; }
     public override double PDF(double z)
     {
-      return _OneBySqrt2Pi*Math.Exp(-0.5*Sqr((z-m)/s))/s;
+      return _OneBySqrt2Pi*Math.Exp(-0.5*Sqr((z-mu)/sigma))/sigma;
     }
 
     static readonly double _OneBySqrt2 = 1/Math.Sqrt(2);
     public override double CDF(double z)
     {
-      return 0.5*(1+Altaxo.Calc.ErrorFunction.Erf(_OneBySqrt2*(z-m)/s));
+      return 0.5*(1+Altaxo.Calc.ErrorFunction.Erf(_OneBySqrt2*(z-mu)/sigma));
     }
 
     public override double Quantile(double p)
     {
-      return m+s*ErrorFunction.QuantileOfNormalDistribution01(p);
+      return mu+sigma*ErrorFunction.QuantileOfNormalDistribution01(p);
     }
   }
 
 
   #endregion
 
-  #region LogNormalDistribution
+  #region LogNormalDistribution *
 
   /// <summary>
   /// Generates log-normal distributed random numbers.
@@ -1730,8 +1744,8 @@ namespace Altaxo.Calc.Probability.Old
       double m2 = m_log * m_log, 
         s2 = s_log * s_log,
         sm2 = s2+m2;
-      m = Math.Log( m2 / Math.Sqrt(sm2) );
-      s = Math.Sqrt( Math.Log(sm2/m2) );
+      mu = Math.Log( m2 / Math.Sqrt(sm2) );
+      sigma = Math.Sqrt( Math.Log(sm2/m2) );
     }
 
 
@@ -1746,9 +1760,9 @@ namespace Altaxo.Calc.Probability.Old
     {
       Initialize(mean,stdev);
     }
-    public override double val() 
+    public override double NextDouble() 
     {
-      return Math.Exp(base.val());
+      return Math.Exp(base.NextDouble());
     }
     public override double Mean { get { return m_log; }}
     public override double Stdev { get { return s_log; }}
@@ -1761,24 +1775,24 @@ namespace Altaxo.Calc.Probability.Old
       if(z<=0)
         return 0;
       else
-        return _OneBySqrt2Pi*Math.Exp(-0.5*Sqr((Math.Log(z)-m)/s))/(s*z);
+        return _OneBySqrt2Pi*Math.Exp(-0.5*Sqr((Math.Log(z)-mu)/sigma))/(sigma*z);
     }
 
     static readonly double _OneBySqrt2 = 1/Math.Sqrt(2);
     public override double CDF(double z)
     {
-      return 0.5*(1+Altaxo.Calc.ErrorFunction.Erf(_OneBySqrt2*(Math.Log(z)-m)/s));
+      return 0.5*(1+Altaxo.Calc.ErrorFunction.Erf(_OneBySqrt2*(Math.Log(z)-mu)/sigma));
     }
 
     public override double Quantile(double p)
     {
-      return Math.Exp(m+s*ErrorFunction.QuantileOfNormalDistribution01(p));
+      return Math.Exp(mu+sigma*ErrorFunction.QuantileOfNormalDistribution01(p));
     }
   }
 
   #endregion
 
-  #region ExponentialDistribution
+  #region ExponentialDistribution *
   /// <summary>
   /// Generates exponentially distributed random numbers.
   /// </summary>
@@ -1802,18 +1816,15 @@ namespace Altaxo.Calc.Probability.Old
       : base(ran)
     {
       m = mean;
-      scale = 1.0/max_val;
+      scale = 1.0 / generator.Maximum;
     }
 
-    public override double val() 
+    public override double NextDouble() 
     {
-      return (-m * Math.Log( gen.Long() * scale)); 
+      return (-m * Math.Log( generator.Long() * scale)); 
     }
     
-    public override uint Long()
-    {
-      return gen.Long();
-    }
+    
     public double Mean { get {return m; }}
   
   
@@ -1840,7 +1851,7 @@ namespace Altaxo.Calc.Probability.Old
   
   #endregion
 
-  #region ErlangDistribution
+  #region ErlangDistribution *
 
   /// <summary>
   /// Generates Erlang distributed random numbers.
@@ -1877,8 +1888,8 @@ namespace Altaxo.Calc.Probability.Old
         throw new ArgumentException("location parameter must be non-zero");
       else 
       {
-        scale  = 1.0 / max_val;   // scale long to [0,1]
-        scale2 = 2.0 / max_val;   // auxilliary
+        scale = 1.0 / generator.Maximum;   // scale long to [0,1]
+        scale2 = 2.0 / generator.Maximum;   // auxilliary
         A = order;      // order of Erlang distribution
         a1 = A-1.0;     // auxilliary
         sq = Math.Sqrt( 2 * a1 + 1 ); // auxilliary
@@ -1892,15 +1903,15 @@ namespace Altaxo.Calc.Probability.Old
     { 
       SetOrder(order,loc); 
     }
-    public override double val()
+    public override double NextDouble()
     {
       if (A < 6) 
       { // direct method
         double x;
         do 
         {
-          x = gen.Long() * scale;
-          for (int i = 1; i < A; i++) x *= gen.Long() * scale;
+          x = generator.Long() * scale;
+          for (int i = 1; i < A; i++) x *= generator.Long() * scale;
         } while (x <= 0.0);
         return ( -Math.Log(x)/B );
 
@@ -1915,23 +1926,20 @@ namespace Altaxo.Calc.Probability.Old
             double v1,v2;
             do 
             {
-              v1 = scale2 * gen.Long() - 1;
-              v2 = scale2 * gen.Long() - 1;
+              v1 = scale2 * generator.Long() - 1;
+              v2 = scale2 * generator.Long() - 1;
             } while ( (v1 == 0.0) || (v1*v1 + v2*v2 > 1.0) );
             y = v2/v1;
             x = sq*y + a1;
           } while (x <= 0.0);
           b = (1.0 + y*y) * Math.Exp( a1 * Math.Log(x/a1) - sq*y );
-        } while ( (scale * gen.Long()) > b );
+        } while ( (scale * generator.Long()) > b );
         return x/B;
       }
     }
 
 
-    public override uint Long()
-    {
-      return gen.Long();
-    }
+   
     public int Order { get {return A; }}
     public double Location { get { return B; }}
   
@@ -1956,7 +1964,7 @@ namespace Altaxo.Calc.Probability.Old
 
   #endregion
 
-  #region GammaDistribution
+  #region GammaDistribution *
 
   /// <summary>
   /// Generates Gamma distributed random numbers.
@@ -1990,7 +1998,7 @@ namespace Altaxo.Calc.Probability.Old
   {
     protected NormalDistribution normalDistribution;
     protected ExponentialDistribution exponentialDistribution;
-    protected double A, B, s, s2, d, r, q0, b, si, c, scale;
+    protected double alpha, _invTheta, s, s2, d, r, q0, b, si, c, scale;
     protected bool algorithmGD;
     protected void Initialize (double order, double loc)
     {
@@ -2001,14 +2009,14 @@ namespace Altaxo.Calc.Probability.Old
         throw new ArgumentException("location parameter must be non-zero");
 
       // store parameters
-      A = order;  // a is the mean of the standard gamma distribution (b = 0)
-      B = loc;
+      alpha = order;  // a is the mean of the standard gamma distribution (b = 0)
+      _invTheta = loc;
 
       // scale random long to (0,1) - boundaries are not allowed !
-      scale  = 1.0 / (normalDistribution.Maximum+1.0); // original: scale  = 1.0 / (NormalDistribution::max_val+1.0);
+      scale  = 1.0 / (normalDistribution.Generator.Maximum+1.0); // original: scale  = 1.0 / (NormalDistribution::max_val+1.0);
 
       // select algorithm
-      algorithmGD = (A >= 1);
+      algorithmGD = (alpha >= 1);
 
       // initialize algorithm GD
       if (algorithmGD) 
@@ -2025,25 +2033,25 @@ namespace Altaxo.Calc.Probability.Old
                 q7 = 2.424e-4;
 
         // calculates s, s2, and d
-        s2 = A - 0.5;
+        s2 = alpha - 0.5;
         s = Math.Sqrt(s2);
         d = Math.Sqrt(32.0) - 12.0 * s; 
 
         // calculate q0, b, si, and c
-        r = 1.0 / A;
+        r = 1.0 / alpha;
         q0 = ((((((q7*r+q6)*r+q5)*r+q4)*r+q3)*r+q2)*r+q1)*r;
 
         // Approximation depending on size of parameter A.
         // The constants in the expressions for b, si, and
         // c were established by numerical experiments.
 
-        if (A <= 3.686) 
+        if (alpha <= 3.686) 
         {   // case 1.0 <= A <= 3.686
           b = 0.463 + s + 0.178 * s2;
           si = 1.235;
           c = 0.195 / s - 7.9e-2 + 1.6e-1 * s;
         } 
-        else if (A <= 13.022) 
+        else if (alpha <= 13.022) 
         { // case  3.686 < A <= 13.022
           b = 1.654 + 7.6e-3 * s2;
           si = 1.68 / s + 0.275;
@@ -2060,7 +2068,7 @@ namespace Altaxo.Calc.Probability.Old
       } 
       else 
       {
-        b = 1.0 + 0.3678794 * A;
+        b = 1.0 + 0.3678794 * alpha;
       }
     }
 
@@ -2075,7 +2083,7 @@ namespace Altaxo.Calc.Probability.Old
       Initialize(order,loc);
     }
   
-    public override double val()
+    public override double NextDouble()
     {
       // algorithm GD for A >= 1
       if (algorithmGD) 
@@ -2100,18 +2108,18 @@ namespace Altaxo.Calc.Probability.Old
         double q, w, gamdis;
 
         // standard normal deviate
-        double t = normalDistribution.val(); // original  this->NormalDistribution::operator()();
+        double t = normalDistribution.NextDouble(); // original  this->NormalDistribution::operator()();
 
         // (s,1/2)-normal deviate
         double x = s + 0.5 * t;
   
         // immediate acceptance
         gamdis = x * x;
-        if (t >= 0.0) return gamdis/B;
+        if (t >= 0.0) return gamdis/_invTheta;
 
         // (0,1) uniform sample, squeeze acceptance
-        double u = normalDistribution.Long() * scale; // original NormalDistribution::gen->Long() * scale;
-        if ( d * u <= t * t * t ) return gamdis/B;
+        double u = normalDistribution.Generator.Long() * scale; // original NormalDistribution::gen->Long() * scale;
+        if ( d * u <= t * t * t ) return gamdis/_invTheta;
 
         // no quotient test if x not positive
         if (x > 0.0) 
@@ -2125,16 +2133,16 @@ namespace Altaxo.Calc.Probability.Old
             q = q0 - s * t + 0.25 * t * t + (s2+s2) * Math.Log(1.0+vv);
       
           // quotient acceptance 
-          if (Math.Log(1.0-u) <= q) return gamdis/B;
+          if (Math.Log(1.0-u) <= q) return gamdis/_invTheta;
         }
 
       loop:
 
         // stdandard exponential deviate
-        double e = exponentialDistribution.val(); // original this->ExponentialDistribution::operator()();
+        double e = exponentialDistribution.NextDouble(); // original this->ExponentialDistribution::operator()();
 
         // (0,1) uniform deviate
-        u =  normalDistribution.Long() * scale; // NormalDistribution::gen->Long() * scale;
+        u =  normalDistribution.Generator.Long() * scale; // NormalDistribution::gen->Long() * scale;
 
         u += (u-1.0); 
 
@@ -2164,7 +2172,7 @@ namespace Altaxo.Calc.Probability.Old
 
         x = s + 0.5*t;
         gamdis = x * x;
-        return gamdis/B;
+        return gamdis/_invTheta;
 
 
         // algorithm GS for 0 < A < 1
@@ -2175,45 +2183,42 @@ namespace Altaxo.Calc.Probability.Old
         double gamdis;
         for (;;) 
         {
-          double p = b * normalDistribution.Long() * scale;
+          double p = b * normalDistribution.Generator.Long() * scale;
           if (p < 1.0) 
           {
-            gamdis = Math.Exp( Math.Log(p) / A );
-            if (exponentialDistribution.val() >= gamdis)
-              return gamdis/B;
+            gamdis = Math.Exp( Math.Log(p) / alpha );
+            if (exponentialDistribution.NextDouble() >= gamdis)
+              return gamdis/_invTheta;
           } 
           else 
           {
-            gamdis = -Math.Log( (b-p) / A );
-            if (exponentialDistribution.val() >= (1.0-A)*Math.Log(gamdis)) return gamdis/B;
+            gamdis = -Math.Log( (b-p) / alpha );
+            if (exponentialDistribution.NextDouble() >= (1.0-alpha)*Math.Log(gamdis)) return gamdis/_invTheta;
           }
         } // for
 
       }
     }
 
-    public override uint Long() 
-    {
-      return normalDistribution.Long(); 
-    }
-    public double Order { get { return A; }}
-    public double Location { get { return B; }}
+   
+    public double Order { get { return alpha; }}
+    public double Location { get { return _invTheta; }}
 
 
 
     public override double PDF(double x)
     {
-      return Math.Exp(-B*x)*Math.Pow(B*x,A-1)*B/Calc.GammaRelated.Gamma(A);
+      return Math.Exp(-_invTheta*x)*Math.Pow(_invTheta*x,alpha-1)*_invTheta/Calc.GammaRelated.Gamma(alpha);
     }
 
     public override double CDF(double x)
     {
-      return GammaRelated.GammaRegularized(A,0,B*x);
+      return GammaRelated.GammaRegularized(alpha,0,_invTheta*x);
     }
 
     public override double Quantile(double p)
     {
-      return GammaRelated.InverseGammaRegularized(A,1-p)/B;
+      return GammaRelated.InverseGammaRegularized(alpha,1-p)/_invTheta;
     }
 
 
@@ -2221,7 +2226,7 @@ namespace Altaxo.Calc.Probability.Old
 
   #endregion
 
-  #region BetaDistribution
+  #region BetaDistribution *
 
   /// <summary>
   /// Generates Beta distributed random numbers.
@@ -2260,7 +2265,7 @@ namespace Altaxo.Calc.Probability.Old
       bb = pb;
 
       // scale random long to (0,1) - boundaries are not allowed !
-      scale  = 1.0 / (max_val+1.0);
+      scale  = 1.0 / (generator.Maximum+1.0);
 
       // maximal exponent for exp() function in evaluation "a*exp(v)" below
       maxexp = DBL_MAX_EXP * M_LN2 - 1;
@@ -2296,7 +2301,7 @@ namespace Altaxo.Calc.Probability.Old
       RandomGenerator ran)
       : base(ran) 
     { Initialize(pa,pb); }
-    public override double val()
+    public override double NextDouble()
     {         
       // returned on overflow
       const double infinity = DBL_MAX;
@@ -2310,8 +2315,8 @@ namespace Altaxo.Calc.Probability.Old
         double r, t;
         do 
         {
-          double u1 = gen.Long() * scale;
-          double u2 = gen.Long() * scale;
+          double u1 = generator.Long() * scale;
+          double u2 = generator.Long() * scale;
           double v = beta * Math.Log(u1/(1.0-u1));
           w = (v > maxexp) ? infinity : a * Math.Exp(v);  
           double z = u1 * u1 * u2;
@@ -2330,8 +2335,8 @@ namespace Altaxo.Calc.Probability.Old
       loop:
 
         double v, y, z;
-        double u1 = gen.Long() * scale;
-        double u2 = gen.Long() * scale;
+        double u1 = generator.Long() * scale;
+        double u2 = generator.Long() * scale;
 
         if (u1 < 0.5) 
         {
@@ -2362,10 +2367,7 @@ namespace Altaxo.Calc.Probability.Old
     }
 
 
-    public override uint Long()
-    {
-      return gen.Long(); 
-    }
+   
     public double A {  get{ return aa; }}
     public double B { get { return bb; }}
 
@@ -2404,7 +2406,7 @@ namespace Altaxo.Calc.Probability.Old
 
   #endregion
 
-  #region ChiSquareDistribution
+  #region ChiSquareDistribution *
 
   /// <summary>
   /// Generates central chi-square distributed random numbers.
@@ -2440,9 +2442,9 @@ namespace Altaxo.Calc.Probability.Old
     {
       F = f;
     }
-    public new double val() 
+    public new double NextDouble() 
     {
-      return 2.0 * base.val();
+      return 2.0 * base.NextDouble();
     }
     public double Freedom  { get { return F; }}
 
@@ -2463,7 +2465,7 @@ namespace Altaxo.Calc.Probability.Old
   }
   #endregion
 
-  #region FDistribution
+  #region FDistribution *
 
   /// <summary>
   /// Generates F-distributed random numbers.
@@ -2491,7 +2493,7 @@ namespace Altaxo.Calc.Probability.Old
 
     protected double NF, DF;
     protected ChiSquareDistribution NumChi2, DenomChi2; // uninitialized !
-    public  FDistribution (double numf, double denomf) : this(numf, denomf, RandomGenerator.DefaultGenerator) {}
+    public  FDistribution (double numf, double denomf) : this(numf, denomf, DefaultGenerator) {}
     FDistribution (double numf, double denomf, RandomGenerator ran)
       : base(ran)
     { 
@@ -2508,10 +2510,10 @@ namespace Altaxo.Calc.Probability.Old
       DenomChi2 = new ChiSquareDistribution(DF,ran);
     }
  
-    public override double val() 
+    public override double NextDouble() 
     {
-      double numerator   = NumChi2.val()/NF,
-        denominator = DenomChi2.val()/DF;
+      double numerator   = NumChi2.NextDouble()/NF,
+        denominator = DenomChi2.NextDouble()/DF;
   
       // return avoiding overflow
       return (denominator <= numerator*DBL_MIN) ? DBL_MAX : numerator/denominator;
@@ -2594,7 +2596,7 @@ namespace Altaxo.Calc.Probability.Old
 
   #endregion
 
-  #region PoissonDistribution (Discrete)
+  #region PoissonDistribution (Discrete) *
 
   /// <summary>
   /// Generates Poisson distributed random numbers.
@@ -2619,8 +2621,8 @@ namespace Altaxo.Calc.Probability.Old
     protected double scale, scalepi, m, sq, alm, g;
     protected void Initialize (double mean)
     {
-      m = mean; 
-      scale  = 1.0 / max_val; 
+      m = mean;
+      scale = 1.0 / generator.Maximum; 
     
       if (m < 12.0) 
       { // direct method
@@ -2629,7 +2631,7 @@ namespace Altaxo.Calc.Probability.Old
       } 
       else 
       {   // rejection method
-        scalepi = Math.PI / max_val; 
+        scalepi = Math.PI / generator.Maximum; 
         sq = Math.Sqrt(2.0*m); 
         alm = Math.Log(m);
         g = m*alm - GammaRelated.LnGamma(m+1.0);
@@ -2643,7 +2645,7 @@ namespace Altaxo.Calc.Probability.Old
     {
       Initialize(mean);
     }
-    public override double val()
+    public override double NextDouble()
     {
       double em, t, y; 
     
@@ -2655,7 +2657,7 @@ namespace Altaxo.Calc.Probability.Old
         do 
         {
           em += 1.0;
-          t *= gen.Long() * scale;
+          t *= generator.Long() * scale;
         } while (t > g);
 
       } 
@@ -2666,32 +2668,41 @@ namespace Altaxo.Calc.Probability.Old
         {
           do 
           {
-            y = Math.Tan( gen.Long() * scalepi );
+            y = Math.Tan( generator.Long() * scalepi );
             em = sq * y + m;
           } while (em < 0.0);
           em = Math.Floor(em);
           t = 0.9 * (1.0 +  y*y) * Math.Exp( em * alm - GammaRelated.LnGamma(em+1.0) - g );
-        } while ( gen.Long() * scale > t);
+        } while ( generator.Long() * scale > t);
       }
 
       return em;
     }
-    public override uint Long()
-    {
-      return gen.Long();
-    }
+  
     double Mean { get { return m; }}
 
 
-    public override double PDF(double x)
-    {
-      return Math.Exp(-m +x*Math.Log(m) - Calc.GammaRelated.LnGamma(x+1));
-    }
-
+    #region CdfPdf
     public override double CDF(double x)
     {
-      return Calc.GammaRelated.GammaRegularized(1 + Math.Floor(x),m);
+      return CDF(x, m);
     }
+    public static double CDF(double x, double m)
+    {
+      return Calc.GammaRelated.GammaRegularized(1 + Math.Floor(x), m);
+    }
+
+    public override double PDF(double x)
+    {
+      return PDF(x, m);
+    }
+    public static double PDF(double x, double m)
+    {
+      return Math.Exp(-m + x * Math.Log(m) - Calc.GammaRelated.LnGamma(x + 1));
+    }
+
+
+    #endregion
 
     public override double Quantile(double x)
     {
@@ -2701,7 +2712,7 @@ namespace Altaxo.Calc.Probability.Old
   }
   #endregion
 
-  #region BinomialDistribution
+  #region BinomialDistribution (Discrete) *
 
   /// <summary>
   /// Generates Binomial distributed random numbers.
@@ -2731,8 +2742,8 @@ namespace Altaxo.Calc.Probability.Old
       if (pp >= 0.0 && pp <= 1.0) 
       {
 
-        scale = 1.0 / max_val;
-        scalepi = Math.PI / max_val;
+        scale = 1.0 / generator.Maximum;
+        scalepi = Math.PI / generator.Maximum;
 
         if (pp <= 0.5) 
         { // use invariance under  p  <==> 1-p 
@@ -2767,7 +2778,7 @@ namespace Altaxo.Calc.Probability.Old
       Initialize(prob,num);
     }
 
-    public override double val()
+    public override double NextDouble()
     {
       double bnl;
 
@@ -2776,7 +2787,7 @@ namespace Altaxo.Calc.Probability.Old
 
         bnl = 0.0;
         for (int j = 0; j < n; j++)
-          if (scale * gen.Long() < p) bnl++;
+          if (scale * generator.Long() < p) bnl++;
   
       } 
       else if (np < 1.0) 
@@ -2786,7 +2797,7 @@ namespace Altaxo.Calc.Probability.Old
         double t = 1.0;
         for (j = 0; j <= n; j++) 
         {
-          t *= scale * gen.Long();
+          t *= scale * generator.Long();
           if (t < npexp) break;
         }
         bnl = (j <= n ? j : n);
@@ -2800,7 +2811,7 @@ namespace Altaxo.Calc.Probability.Old
         {
           do 
           {
-            y = Math.Tan( scalepi * gen.Long() );
+            y = Math.Tan( scalepi * generator.Long() );
             em = sq * y + np;
           } while (em < 0.0 || em >= en1);
           em = Math.Floor(em);
@@ -2809,7 +2820,7 @@ namespace Altaxo.Calc.Probability.Old
             - GammaRelated.LnGamma(en1-em) 
             + em * plog
             + (en-em) * pclog );
-        } while (scale * gen.Long() > t);
+        } while (scale * generator.Long() > t);
         bnl = em;
       }
     
@@ -2817,23 +2828,30 @@ namespace Altaxo.Calc.Probability.Old
 
       return bnl;
     }
-    public override uint Long()
-    {
-      return gen.Long();
-    }
+   
     public double Prob { get { return p; }}
     public int Num { get { return n; }}
 
-    public override double PDF(double x)
-    {
-      return Math.Pow(1 - p,n - x)*Math.Pow(p,x)*Calc.GammaRelated.Binomial(n,x);
-    }
-
-
+    #region CdfPdf
     public override double CDF(double x)
     {
-      return Calc.GammaRelated.BetaRegularized(1 - p,n - Math.Floor(x),1 + Math.Floor(x));
+      return CDF(x, sym?1-p:p, n);
     }
+    public static double CDF(double x, double p, int n)
+    {
+      return Calc.GammaRelated.BetaRegularized(1 - p, n - Math.Floor(x), 1 + Math.Floor(x));
+    }
+
+    public override double PDF(double x)
+    {
+      return PDF(x, sym?1-p:p, n);
+    }
+    public static double PDF(double x, double p, int n)
+    {
+      return Math.Pow(1 - p, n - x) * Math.Pow(p, x) * Calc.GammaRelated.Binomial(n, x);
+    }
+
+    #endregion
 
     public override double Quantile(double x)
     {
@@ -2843,8 +2861,7 @@ namespace Altaxo.Calc.Probability.Old
 
   #endregion
 
-
-  #region StudentTDistribution
+  #region StudentTDistribution *
 
   /// <summary>
   /// Implements the Student t distribution.
@@ -3683,20 +3700,20 @@ namespace Altaxo.Calc.Probability.Old
     public UnitSphereDistribution(RandomGenerator ran) 
       : base(ran) 
     {
-      scale = 2.0 / Maximum;
+      scale = 2.0 / generator.Maximum;
     }
     
-    public override double val()
+    public override double NextDouble()
     {
       throw new NotSupportedException("Use val(out double x, out double y, out double z) instead of this method");
     }
 
-    public void val( out double x, out double y, out double z)
+    public void NextDouble( out double x, out double y, out double z)
     { 
       for (;;) 
       {
-        double d1 = 1.0 - scale * Long(),
-          d2 = 1.0 - scale * Long(),
+        double d1 = 1.0 - scale * generator.Long(),
+          d2 = 1.0 - scale * generator.Long(),
           dd = d1 * d1 + d2 * d2;
         if (dd < 1.0) 
         { 
@@ -3708,10 +3725,7 @@ namespace Altaxo.Calc.Probability.Old
         }
       }
     }
-    public override uint Long() 
-    {
-      return gen.Long();
-    }
+    
 
     public override double PDF(double x)
     {

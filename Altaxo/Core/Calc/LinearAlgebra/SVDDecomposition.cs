@@ -14,7 +14,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
     int gsl_linalg_SV_decomp_mod(IROMatrix A,
                                IROMatrix X,
-                              IROMatrix V, IROVector S, IVector work)
+                              IMatrix V, IVector S, IVector work)
     {
       int i, j;
 
@@ -35,7 +35,7 @@ namespace Altaxo.Calc.LinearAlgebra
       }
       else if (X.Rows != N)
       {
-        throw new ArgumentException("square matrix X must match second dimension of matrix A",);
+        throw new ArgumentException("square matrix X must match second dimension of matrix A");
       }
       else if (X.Rows != X.Columns)
       {
@@ -70,7 +70,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
       for (i = 0; i < N; i++)
       {
-        gsl_vector_view c = gsl_matrix_column(A, i);
+        IVector c = MatrixMath.ColumnToVector(A, i); // gsl_vector_view c = gsl_matrix_column(A, i);
         gsl_vector_view v = gsl_vector_subvector(&c.vector, i, M - i);
         double tau_i = gsl_linalg_householder_transform(&v.vector);
 

@@ -24,7 +24,7 @@ using System;
 namespace Altaxo.Calc.Probability
 {
     /// <summary>
-    /// Provides generation of beta-prime distributed random numbers.
+    /// Provides generation of beta-prime distributed random numbers. This distribution is alsow known as inverted beta distribution.
     /// </summary>
     /// <remarks>
     /// The implementation of the <see cref="BetaPrimeDistribution"/> type bases upon information presented on
@@ -45,11 +45,7 @@ namespace Altaxo.Calc.Probability
             }
             set
             {
-                if (this.IsValidAlpha(value))
-                {
-                    this.alpha = value;
-                    this.UpdateHelpers();
-                }
+              Initialize(value, beta);
             }
         }
 
@@ -70,11 +66,7 @@ namespace Altaxo.Calc.Probability
             }
             set
             {
-                if (this.IsValidBeta(value))
-                {
-                    this.beta = value;
-                    this.UpdateHelpers();
-                }
+              Initialize(alpha, value);
             }
         }
 
@@ -95,7 +87,7 @@ namespace Altaxo.Calc.Probability
         ///   <see cref="StandardGenerator"/> as underlying random number generator.
         /// </summary>
         public BetaPrimeDistribution()
-            : this(new StandardGenerator())
+            : this(DefaultGenerator)
         {
         }
 
@@ -108,14 +100,40 @@ namespace Altaxo.Calc.Probability
         /// <paramref name="generator"/> is NULL (<see langword="Nothing"/> in Visual Basic).
         /// </exception>
         public BetaPrimeDistribution(Generator generator)
-            : base(generator)
+            : this(2,2,generator)
         {
-            this.alpha = 2.0;
-            this.beta = 2.0;
-            this.betaDistribution = new BetaDistribution(generator);
-            this.UpdateHelpers();
         }
-        #endregion
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BetaPrimeDistribution"/> class, using the specified 
+        ///   <see cref="Generator"/> as underlying random number generator.
+        /// </summary>
+        /// <param name="generator">A <see cref="Generator"/> object.</param>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="generator"/> is NULL (<see langword="Nothing"/> in Visual Basic).
+        /// </exception>
+        public BetaPrimeDistribution(double alpha, double beta)
+          : this(alpha, beta, DefaultGenerator)
+        {
+        }
+
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BetaPrimeDistribution"/> class, using the specified 
+        ///   <see cref="Generator"/> as underlying random number generator.
+        /// </summary>
+        /// <param name="generator">A <see cref="Generator"/> object.</param>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="generator"/> is NULL (<see langword="Nothing"/> in Visual Basic).
+        /// </exception>
+        public BetaPrimeDistribution(double alpha, double beta, Generator generator)
+          : base(generator)
+        {
+          Initialize(alpha, beta);
+        }
+
+
+#endregion
 
         #region instance methods
         /// <summary>
@@ -146,10 +164,16 @@ namespace Altaxo.Calc.Probability
         /// Updates the helper variables that store intermediate results for generation of beta-prime distributed random 
         ///   numbers.
         /// </summary>
-        private void UpdateHelpers()
+        public void Initialize(double alpha, double beta)
         {
-            this.betaDistribution.Alpha = this.alpha;
-            this.betaDistribution.Beta = this.beta;
+          if (!IsValidAlpha(alpha))
+            throw new ArgumentOutOfRangeException("alpha has to be greater than 1");
+          if (!IsValidBeta(beta))
+            throw new ArgumentOutOfRangeException("beta has to be greater than 1");
+          
+          this.alpha = alpha;
+          this.beta = beta;
+          this.betaDistribution.Initialize(this.alpha, this.beta);
         }
         #endregion
 

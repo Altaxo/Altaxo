@@ -38,7 +38,7 @@ namespace Altaxo.Calc.Probability
     {
         #region instance fields
         /// <summary>
-        /// Gets or sets the parameter alpha of cauchy distributed random numbers which is used for their generation.
+      /// Gets or sets the parameter alpha (location parameter - designates the median) of cauchy distributed random numbers which is used for their generation.
         /// </summary>
         /// <remarks>Call <see cref="IsValidAlpha"/> to determine whether a value is valid and therefor assignable.</remarks>
         public double Alpha
@@ -49,20 +49,17 @@ namespace Altaxo.Calc.Probability
             }
             set
             {
-                if (this.IsValidAlpha(value))
-                {
-                    this.alpha = value;
-                }
+              Initialize(value, gamma);
             }
         }
 
         /// <summary>
-        /// Stores the parametera alpha of cauchy distributed random numbers which is used for their generation.
+        /// Stores the parametera alpha (location parameter - designates the median) of cauchy distributed random numbers which is used for their generation.
         /// </summary>
         private double alpha;
 
         /// <summary>
-        /// Gets or sets the parameter gamma which is used for generation of cauchy distributed random numbers.
+        /// Gets or sets the parameter gamma (scale parameter - designates half with at half maximum) which is used for generation of cauchy distributed random numbers.
         /// </summary>
         /// <remarks>Call <see cref="IsValidGamma"/> to determine whether a value is valid and therefor assignable.</remarks>
         public double Gamma
@@ -73,10 +70,7 @@ namespace Altaxo.Calc.Probability
             }
             set
             {
-                if (this.IsValidGamma(value))
-                {
-                    this.gamma = value;
-                }
+              Initialize(alpha, value);
             }
         }
 
@@ -92,7 +86,7 @@ namespace Altaxo.Calc.Probability
         ///   <see cref="StandardGenerator"/> as underlying random number generator. 
         /// </summary>
         public CauchyDistribution()
-            : this(new StandardGenerator())
+            : this(DefaultGenerator)
         {
         }
 
@@ -105,11 +99,36 @@ namespace Altaxo.Calc.Probability
         /// <paramref name="generator"/> is NULL (<see langword="Nothing"/> in Visual Basic).
         /// </exception>
         public CauchyDistribution(Generator generator)
-            : base(generator)
+            : this(1,1,generator)
         {
-            this.alpha = 1.0;
-            this.gamma = 1.0;
         }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CauchyDistribution"/> class, using the specified 
+        ///   <see cref="Generator"/> as underlying random number generator.
+        /// </summary>
+        /// <param name="generator">A <see cref="Generator"/> object.</param>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="generator"/> is NULL (<see langword="Nothing"/> in Visual Basic).
+        /// </exception>
+        public CauchyDistribution(double alpha, double gamma)
+          : this(alpha, gamma, DefaultGenerator)
+        {
+        }
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CauchyDistribution"/> class, using the specified 
+        ///   <see cref="Generator"/> as underlying random number generator.
+        /// </summary>
+        /// <param name="generator">A <see cref="Generator"/> object.</param>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="generator"/> is NULL (<see langword="Nothing"/> in Visual Basic).
+        /// </exception>
+        public CauchyDistribution(double alpha, double gamma, Generator generator)
+          : base(generator)
+        {
+          Initialize(alpha, gamma);
+        }
+
         #endregion
 
         #region instance methods
@@ -120,7 +139,7 @@ namespace Altaxo.Calc.Probability
         /// <returns><see langword="true"/>.</returns>
         public bool IsValidAlpha(double value)
         {
-            return true;
+            return value>double.MinValue && value<double.MaxValue;
         }
         
         /// <summary>
@@ -134,6 +153,19 @@ namespace Altaxo.Calc.Probability
         {
             return value > 0.0;
         }
+
+
+    public void Initialize(double alpha, double gamma)
+    {
+      if (!IsValidAlpha(alpha))
+        throw new ArgumentOutOfRangeException("Alpha is out of range");
+      if (!IsValidGamma(gamma))
+        throw new ArgumentOutOfRangeException("Gamma is out of range (has to be positive)");
+
+
+      this.alpha = alpha;
+      this.gamma = gamma;
+    }
         #endregion
 
         #region overridden Distribution members
@@ -160,7 +192,7 @@ namespace Altaxo.Calc.Probability
         }
 
         /// <summary>
-        /// Gets the mean value of cauchy distributed random numbers.
+        /// Gets the mean value of cauchy distributed random numbers. It's undefined, so the return value is <see cref="double.NaN"/>.
         /// </summary>
         public override double Mean
         {
@@ -211,6 +243,42 @@ namespace Altaxo.Calc.Probability
         {
             return this.alpha + this.gamma * Math.Tan(Math.PI * (this.Generator.NextDouble() - 0.5));
         }
+        #endregion
+
+        #region CdfPdfQuantile
+
+    private static double Pow2(double x) { return x * x; }
+        public override double CDF(double x)
+        {
+          return CDF(x, alpha, gamma);
+        }
+        public static double CDF(double x, double a, double b)
+        {
+          return 0.5 + Math.Atan((-a + x) / b) / Math.PI;
+        }
+
+
+
+        public override double PDF(double x)
+        {
+          return PDF(x, alpha, gamma);
+        }
+        public static double PDF(double x, double a, double b)
+        {
+          return 1 / (b * Math.PI * (1 + Pow2(-a + x) / Pow2(b)));
+        }
+
+
+        public override double Quantile(double p)
+        {
+          return Quantile(p, alpha, gamma);
+        }
+        public static double Quantile(double p, double a, double b)
+        {
+          return a + b * Math.Tan((-0.5 + p) * Math.PI);
+        }
+
+
         #endregion
     }
 }

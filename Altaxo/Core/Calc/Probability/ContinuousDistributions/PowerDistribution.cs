@@ -50,11 +50,7 @@ namespace Altaxo.Calc.Probability
 			}
 			set
 			{
-                if (this.IsValidAlpha(value))
-                {
-                    this.alpha = value;
-                    this.UpdateHelpers();
-                }
+        Initialize(value, beta);
         	}
 		}
 
@@ -75,10 +71,7 @@ namespace Altaxo.Calc.Probability
 			}
 			set
 			{
-                if (this.IsValidBeta(value))
-                {
-                    this.beta = value;
-                }
+        Initialize(alpha, value);
         	}
 		}
 
@@ -103,7 +96,7 @@ namespace Altaxo.Calc.Probability
         ///   <see cref="StandardGenerator"/> as underlying random number generator.
 		/// </summary>
         public PowerDistribution()
-            : this(new StandardGenerator())
+            : this(DefaultGenerator)
 		{
 		}
 
@@ -116,12 +109,21 @@ namespace Altaxo.Calc.Probability
         /// <paramref name="generator"/> is NULL (<see langword="Nothing"/> in Visual Basic).
         /// </exception>
         public PowerDistribution(Generator generator)
-            : base(generator)
+            : this(1,1,generator)
         {
-            this.alpha = 1.0;
-            this.beta = 1.0;
-            this.UpdateHelpers();
         }
+
+    public PowerDistribution(double alpha, double beta)
+      : this(alpha, beta, DefaultGenerator)
+    {
+
+    }
+
+    public PowerDistribution(double alpha, double beta, Generator generator)
+      : base(generator)
+    {
+      Initialize(alpha, beta);
+    }
 		#endregion
 	
 		#region instance methods
@@ -153,8 +155,15 @@ namespace Altaxo.Calc.Probability
         /// Updates the helper variables that store intermediate results for generation of power distributed random 
         ///   numbers.
         /// </summary>
-        private void UpdateHelpers()
+        public void Initialize(double alpha, double beta)
         {
+          if (!IsValidAlpha(alpha))
+            throw new ArgumentOutOfRangeException("Alpha out of range (must be positive)");
+          if (!IsValidBeta(beta))
+            throw new ArgumentOutOfRangeException("Beta out of range (must be positive)");
+
+          this.alpha = alpha;
+          this.beta = beta;
             this.helper1 = 1.0 / this.alpha;
         }
 
