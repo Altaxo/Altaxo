@@ -256,5 +256,53 @@ namespace Altaxo.Calc.Probability
             return Math.Pow(this.Generator.NextDouble(), this.helper1) / this.beta;
 		}
 		#endregion
+
+    #region CdfPdfQuantile
+
+    public override double CDF(double x)
+    {
+      return CDF(x, alpha, beta);
+    }
+    public static double CDF(double x, double A, double B)
+    {
+      if (x <= 0)
+        return 0;
+      if (x >= 1 / B)
+        return 1;
+      else
+        return Math.Pow(B*x, A);
+    }
+
+
+
+    public override double PDF(double x)
+    {
+      return PDF(x, alpha, beta);
+    }
+    public static double PDF(double x, double A, double B)
+    {
+      if (x <= 0 || x >= 1/B)
+      {
+        return 0;
+      }
+      else
+      {
+        return A * Math.Pow(B * x, A) / x;
+      }
+    }
+
+
+    public override double Quantile(double p)
+    {
+      return Quantile(p, alpha, beta);
+    }
+    public static double Quantile(double p, double A, double B)
+    {
+      return Math.Pow(p, 1 / A) / B;
+    }
+
+
+    #endregion
+
 	}
 }

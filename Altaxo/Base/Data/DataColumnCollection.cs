@@ -982,6 +982,23 @@ namespace Altaxo.Data
       this.Resume();
     }
 
+
+    /// <summary>
+    /// Deletes all columns in the collection, and then copy all columns from the source table.
+    /// </summary>
+    /// <param name="src">The source collection to copy the columns from.</param>
+    public void CopyAllColumnsFrom(DataColumnCollection src)
+    {
+      this.Suspend();
+      this.RemoveColumnsAll();
+      for (int i = 0; i < src.ColumnCount; i++)
+      {
+        this.Add((DataColumn)src[i].Clone(), src.GetColumnName(i), src.GetColumnKind(i), src.GetColumnGroup(i));
+      }
+      this.Resume();
+    }
+
+
     #endregion
 
     #region Column removal and move to another collection

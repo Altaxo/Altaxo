@@ -36,19 +36,32 @@
 using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 [assembly: CLSCompliant(true)]
 
 [assembly: AssemblyTitle("ICSharpCode.SharpZipLibrary")]
 [assembly: AssemblyDescription("A free C# compression library")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("ICSharpCode.net")]
 [assembly: AssemblyProduct("#ZipLibrary")]
-[assembly: AssemblyCopyright("Copyright Mike Krueger 2001-2005")]
+[assembly: AssemblyCopyright("Copyright 2001-2005 Mike Krueger")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
-[assembly: AssemblyVersion("0.83.1.0")]
+[assembly: AssemblyVersion("0.85.1.271")]
+
+// Setting ComVisible to false makes the types in this assembly not visible 
+// to COM components.  If you need to access a type in this assembly from 
+// COM, set the ComVisible attribute to true on that type.
+[assembly: ComVisible(false)]
 
 [assembly: AssemblyDelaySign(false)]
+
+#if NET_VER_1
+#if VSTUDIO
+[assembly: AssemblyKeyFile("../../ICSharpCode.SharpZipLib.key")]
+#else
 [assembly: AssemblyKeyFile("../ICSharpCode.SharpZipLib.key")]
+#endif
+#endif

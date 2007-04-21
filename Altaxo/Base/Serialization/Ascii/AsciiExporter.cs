@@ -64,11 +64,19 @@ namespace Altaxo.Serialization.Ascii
 
       for(int i=0;i<nPropColumns;i++)
       {
-        for(int j=0;j<nDataColumns;j++)
+        string columnName = columnCollection.GetColumnName(i).Replace(separator, ' ');
+        columnName += "=";
+        bool isTextColumn = columnCollection[i] is Data.TextColumn;
+        for (int j = 0; j < nDataColumns; j++)
         {
           if(!columnCollection[i].IsElementEmpty(j))
           {
-            strwr.Write(columnCollection[i][j].ToString().Replace(separator,' '));
+            string data = columnCollection[i][j].ToString().Replace(separator,' ');
+            if(!isTextColumn && !data.Contains("="))
+              strwr.Write(columnName);
+
+            strwr.Write(data);
+            
           }
           if((j+1)<nDataColumns)
             strwr.Write(separator);

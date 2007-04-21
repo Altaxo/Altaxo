@@ -35,30 +35,105 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 {
   using Plot.Data;
 
+  /// <summary>
+  /// Transforming plot style used for waterfall plots.
+  /// </summary>
   public class WaterfallTransform : ICoordinateTransformingGroupStyle
   {
     /// <summary>User defined scale. The multiplication with _xinc results in the xinc that is used for the waterfall.</summary>
-    double _scaleXInc=1;
+    double _scaleXInc = 1;
     /// <summary>User defined scale. The multiplication with _yinc results in the yinc that is used for the waterfall.</summary>
     double _scaleYInc = 1;
     /// <summary>If true, the actual plot item is clipped by the previous plot items.</summary>
     bool _useClipping;
 
-    double _xinc=0;
-    double _yinc=0;
+    // Cached values
+    double _xinc = 0;
+    double _yinc = 0;
+
+    #region Serialization
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(WaterfallTransform), 0)]
+    class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        WaterfallTransform s = (WaterfallTransform)obj;
+        info.AddValue("XScale", s._scaleXInc);
+        info.AddValue("YScale", s._scaleYInc);
+        info.AddValue("UseClipping", s._useClipping);
+        info.AddValue("XInc", s._xinc);
+        info.AddValue("YInc", s._xinc);
+
+      }
+
+
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        WaterfallTransform s = null != o ? (WaterfallTransform)o : new WaterfallTransform();
+        s._scaleXInc = info.GetDouble("XScale");
+        s._scaleYInc = info.GetDouble("YScale");
+        s._useClipping = info.GetBoolean("UseClipping");
+        s._xinc = info.GetDouble("XInc");
+        s._yinc = info.GetDouble("YInc");
+        return s;
+      }
+    }
+
+    #endregion
+
 
     public WaterfallTransform()
     {
     }
 
+    /// <summary>
+    /// Copy constructor of a waterfall plot style.
+    /// </summary>
+    /// <param name="from">The waterfall plot style to copy from.</param>
     public WaterfallTransform(WaterfallTransform from)
     {
       this._scaleXInc = from._scaleXInc;
       this._scaleYInc = from._scaleYInc;
+      this._useClipping = from._useClipping;
 
       this._xinc = from._xinc;
       this._yinc = from._yinc;
     }
+
+    public double XScale
+    {
+      get
+      {
+        return _scaleXInc;
+      }
+      set
+      {
+        _scaleXInc = value;
+      }
+    }
+    public double YScale
+    {
+      get
+      {
+        return _scaleYInc;
+      }
+      set
+      {
+        _scaleYInc = value;
+      }
+    }
+    public bool UseClipping
+    {
+      get
+      {
+        return _useClipping;
+      }
+      set
+      {
+        _useClipping = value;
+      }
+    }
+
 
     #region ICoordinateTransformingGroupStyle Members
 
@@ -66,9 +141,9 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 
     public void MergeXBoundsInto(IPlotArea layer, IPhysicalBoundaries pb, PlotItemCollection coll)
     {
-      if(!(pb is NumericalBoundaries))
+      if (!(pb is NumericalBoundaries))
       {
-        CoordinateTransformingStyleBase.MergeXBoundsInto(pb,coll);
+        CoordinateTransformingStyleBase.MergeXBoundsInto(pb, coll);
         return;
       }
 
@@ -83,12 +158,12 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
           IXBoundsHolder xbpi = (IXBoundsHolder)pi;
           xbpi.MergeXBoundsInto(xbounds);
         }
-        if(pi is G2DPlotItem)
+        if (pi is G2DPlotItem)
           nItems++;
 
       }
 
-     
+
       if (nItems == 0)
         _xinc = 0;
       else
@@ -167,6 +242,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
       double[] xincColl = new double[coll.Count];
       double[] yincColl = new double[coll.Count];
 
+      // First prepare
       int idx = -1;
       Processed2DPlotData previousPlotData = null;
       for (int i = 0; i < coll.Count; i++)
@@ -196,15 +272,52 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
             plotdata.PlotPointsInAbsoluteLayerCoordinates[j] = new System.Drawing.PointF((float)xabs, (float)yabs);
           }
 
+          // if clipping is used, we must get a clipping region for every plot item
+          // and combine the regions from 
           if (_useClipping)
           {
-            GraphicsPath path = new System.Drawing.Drawing2D.GraphicsPath();
+            if (i == 0)
+              clippingColl[i] = g.Clip;
+
+            Plot.Styles.LinePlotStyle linestyle = null;
+            foreach (Plot.Styles.IG2DPlotStyle st in gpi.Style)
+            {
+              if (st is Plot.Styles.LinePlotStyle)
+              {
+                linestyle = st as Plot.Styles.LinePlotStyle;
+                break;
+              }
+            }
+
+            if (null != linestyle)
+            {
+              GraphicsPath path = new System.Drawing.Drawing2D.GraphicsPath();
+              linestyle.GetFillPath(path, layer, plotdata, CSPlaneID.Bottom);
+              if ((i + 1) < clippingColl.Length)
+              {
+                clippingColl[i + 1] = (Region)clippingColl[i].Clone();
+                clippingColl[i + 1].Exclude(path);
+              }
+            }
+            else
+            {
+              if ((i + 1) < clippingColl.Length)
+                clippingColl[i + 1] = clippingColl[i];
+            }
 
           }
         }
       }
+
+      // now paint
       for (int i = coll.Count - 1; i >= 0; i--)
       {
+        if (_useClipping)
+        {
+          //g.SetClip(clippingColl[i], CombineMode.Replace);
+          g.Clip = clippingColl[i];
+        }
+
         if (null == plotDataColl[i])
         {
           coll[i].Paint(g, layer);
@@ -213,6 +326,15 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
         {
           TransformedLayerWrapper layerwrapper = new TransformedLayerWrapper(layer, xincColl[i], yincColl[i]);
           ((G2DPlotItem)coll[i]).Paint(g, layerwrapper, plotDataColl[i]);
+        }
+
+        // The clipping region is no longer needed, so we can dispose it
+        if (_useClipping)
+        {
+          if (i == 0)
+            g.Clip = clippingColl[0]; // restore the original clipping region
+          else
+            clippingColl[i].Dispose(); // for i!=0 dispose the clipping region
         }
       }
     }
@@ -231,9 +353,8 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
     #region ICoordinateTransformingGroupStyle Members
 
 
-   
-    #endregion
 
+    #endregion
 
     #region Inner Classes - TransformedLayerWrapper
 
@@ -311,9 +432,9 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
         }
       }
 
-    
 
-    
+
+
 
       #endregion
 

@@ -33,6 +33,12 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 
+using System;
+
+#if !COMPACT_FRAMEWORK_V10 && !COMPACT_FRAMEWORK_V20
+using System.Runtime.Serialization;
+#endif
+
 using ICSharpCode.SharpZipLib;
 
 namespace ICSharpCode.SharpZipLib.Tar {
@@ -40,8 +46,24 @@ namespace ICSharpCode.SharpZipLib.Tar {
 	/// <summary>
 	/// TarExceptions are used for exceptions specific to tar classes and code.	
 	/// </summary>
+#if !COMPACT_FRAMEWORK_V10 && !COMPACT_FRAMEWORK_V20
+	[Serializable]
+#endif
 	public class TarException : SharpZipBaseException
 	{
+#if !COMPACT_FRAMEWORK_V10 && !COMPACT_FRAMEWORK_V20
+		/// <summary>
+		/// Deserialization constructor 
+		/// </summary>
+		/// <param name="info"><see cref="SerializationInfo"/> for this constructor</param>
+		/// <param name="context"><see cref="StreamingContext"/> for this constructor</param>
+		protected TarException(SerializationInfo info, StreamingContext context)
+			: base(info, context)
+
+		{
+		}
+#endif
+
 		/// <summary>
 		/// Initialises a new instance of the TarException class.
 		/// </summary>
@@ -53,7 +75,18 @@ namespace ICSharpCode.SharpZipLib.Tar {
 		/// Initialises a new instance of the TarException class with a specified message.
 		/// </summary>
 		/// <param name="message">The message that describes the error.</param>
-		public TarException(string message) : base(message)
+		public TarException(string message)
+			: base(message)
+		{
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="message">A message describing the error.</param>
+		/// <param name="exception">The exception that is the cause of the current exception.</param>
+		public TarException(string message, Exception exception)
+			: base(message, exception)
 		{
 		}
 	}

@@ -1,4 +1,5 @@
 // BZip2OutputStream.cs
+//
 // Copyright (C) 2001 Mike Krueger
 //
 // This program is free software; you can redistribute it and/or
@@ -48,10 +49,101 @@ namespace ICSharpCode.SharpZipLib.BZip2
 	/// </summary>
 	public class BZip2OutputStream : Stream
 	{
+		#region Constants
+		const int SETMASK       = (1 << 21);
+		const int CLEARMASK     = (~SETMASK);
+		const int GREATER_ICOST = 15;
+		const int LESSER_ICOST = 0;
+		const int SMALL_THRESH = 20;
+		const int DEPTH_THRESH = 10;
+		
+		/*--
+		If you are ever unlucky/improbable enough
+		to get a stack overflow whilst sorting,
+		increase the following constant and try
+		again.  In practice I have never seen the
+		stack go above 27 elems, so the following
+		limit seems very generous.
+		--*/
+		const int QSORT_STACK_SIZE = 1000;
+
+		/*--
+		Knuth's increments seem to work better
+		than Incerpi-Sedgewick here.  Possibly
+		because the number of elems to sort is
+		usually small, typically <= 20.
+		--*/
+		readonly int[] increments = new int[] { 
+												  1, 4, 13, 40, 121, 364, 1093, 3280,
+												  9841, 29524, 88573, 265720,
+												  797161, 2391484 
+											  };
+		#endregion
+
+		#region Constructors
+		/// <summary>
+		/// Construct a default output stream with maximum block size
+		/// </summary>
+		/// <param name="stream">The stream to write BZip data onto.</param>
+		public BZip2OutputStream(Stream stream) : this(stream, 9)
+		{
+		}
+		
+		/// <summary>
+		/// Initialise a new instance of the <see cref="BZip2OutputStream"></see> 
+		/// for the specified stream, using the given blocksize.
+		/// </summary>
+		/// <param name="stream">The stream to write compressed data to.</param>
+		/// <param name="blockSize">The block size to use.</param>
+		/// <remarks>
+		/// Valid block sizes are in the range 1..9, with 1 giving 
+		/// the lowest compression and 9 the highest.
+		/// </remarks>
+		public BZip2OutputStream(Stream stream, int blockSize)
+		{
+			BsSetStream(stream);
+			
+			workFactor = 50;
+			if (blockSize > 9) {
+				blockSize = 9;
+			}
+			
+			if (blockSize < 1) {
+				blockSize = 1;
+			}
+			blockSize100k = blockSize;
+			AllocateCompressStructures();
+			Initialize();
+			InitBlock();
+		}
+		#endregion
+		#region Destructor
+		/// <summary>
+		/// Ensures that resources are freed and other cleanup operations 
+		/// are performed when the garbage collector reclaims the BZip2OutputStream.
+		/// </summary>
+		~BZip2OutputStream()
+		{
+			Dispose(false);
+		}
+		#endregion
+		/// <summary>
+		/// Get/set flag indicating ownership of underlying stream.
+		/// When the flag is true <see cref="Close"></see> will close the underlying stream also.
+		/// </summary>
+		public bool IsStreamOwner
+		{
+			get { return isStreamOwner; }
+			set { isStreamOwner = value; }
+		}
+		
+
+		#region Stream overrides
 		/// <summary>
 		/// Gets a value indicating whether the current stream supports reading
 		/// </summary>
-		public override bool CanRead {
+		public override bool CanRead 
+		{
 			get {
 				return false;
 			}
@@ -107,7 +199,7 @@ namespace ICSharpCode.SharpZipLib.BZip2
 		/// <summary>
 		/// Sets the length of this stream to the given value.
 		/// </summary>
-		public override void SetLength(long val)
+		public override void SetLength(long value)
 		{
 			throw new NotSupportedException("BZip2OutputStream SetLength not supported");
 		}
@@ -123,7 +215,7 @@ namespace ICSharpCode.SharpZipLib.BZip2
 		/// <summary>
 		/// Read a block of bytes
 		/// </summary>
-		public override int Read(byte[] b, int off, int len)
+		public override int Read(byte[] buffer, int offset, int count)
 		{
 			throw new NotSupportedException("BZip2OutputStream Read not supported");
 		}
@@ -131,285 +223,38 @@ namespace ICSharpCode.SharpZipLib.BZip2
 		/// <summary>
 		/// Write a block of bytes to the stream
 		/// </summary>
-		public override void Write(byte[] buf, int off, int len)
+		public override void Write(byte[] buffer, int offset, int count)
 		{
-			for (int i = 0; i < len; ++i) {
-				WriteByte(buf[off + i]);
+			if ( buffer == null ) {
+				throw new ArgumentNullException("buffer");
 			}
-		}
-		
-		readonly static int SETMASK       = (1 << 21);
-		readonly static int CLEARMASK     = (~SETMASK);
-		readonly static int GREATER_ICOST = 15;
-		readonly static int LESSER_ICOST  = 0;
-		readonly static int SMALL_THRESH  = 20;
-		readonly static int DEPTH_THRESH  = 10;
-		
-		/*--
-		If you are ever unlucky/improbable enough
-		to get a stack overflow whilst sorting,
-		increase the following constant and try
-		again.  In practice I have never seen the
-		stack go above 27 elems, so the following
-		limit seems very generous.
-		--*/
-		readonly static int QSORT_STACK_SIZE = 1000;
-		
-		static void Panic() 
-		{
-			throw new BZip2Exception("BZip2 output stream panic");
-		}
-		
-		void MakeMaps() 
-		{
-			int i;
-			nInUse = 0;
-			for (i = 0; i < 256; i++) {
-				if (inUse[i]) {
-					seqToUnseq[nInUse] = (char)i;
-					unseqToSeq[i] = (char)nInUse;
-					nInUse++;
-				}
+
+			if ( offset < 0 )
+			{
+				throw new ArgumentOutOfRangeException("offset");
 			}
-		}
-		
-		static void HbMakeCodeLengths(char[] len, int[] freq, int alphaSize, int maxLen) 
-		{
-			/*--
-			Nodes and heap entries run from 1.  Entry 0
-			for both the heap and nodes is a sentinel.
-			--*/
-			int nNodes, nHeap, n1, n2, j, k;
-			bool  tooLong;
-			
-			int[] heap   = new int[BZip2Constants.MAX_ALPHA_SIZE + 2];
-			int[] weight = new int[BZip2Constants.MAX_ALPHA_SIZE * 2];
-			int[] parent = new int[BZip2Constants.MAX_ALPHA_SIZE * 2];
-			
-			for (int i = 0; i < alphaSize; ++i) {
-				weight[i+1] = (freq[i] == 0 ? 1 : freq[i]) << 8;
+
+			if ( count < 0 )
+			{
+				throw new ArgumentOutOfRangeException("count");
 			}
-			
-			while (true) {
-				nNodes = alphaSize;
-				nHeap = 0;
-				
-				heap[0] = 0;
-				weight[0] = 0;
-				parent[0] = -2;
-				
-				for (int i = 1; i <= alphaSize; ++i) {
-					parent[i] = -1;
-					nHeap++;
-					heap[nHeap] = i;
-					int zz = nHeap;
-					int tmp = heap[zz];
-					while (weight[tmp] < weight[heap[zz >> 1]]) {
-						heap[zz] = heap[zz >> 1];
-						zz >>= 1;
-					}
-					heap[zz] = tmp;
-				}
-				if (!(nHeap < (BZip2Constants.MAX_ALPHA_SIZE+2))) {
-					Panic();
-				}
-				
-				while (nHeap > 1) {
-					n1 = heap[1];
-					heap[1] = heap[nHeap];
-					nHeap--;
-					int zz = 1;
-					int yy = 0;
-					int tmp = heap[zz];
-					while (true) {
-						yy = zz << 1;
-						if (yy > nHeap) {
-							break;
-						}
-						if (yy < nHeap &&  weight[heap[yy+1]] < weight[heap[yy]]) {
-							yy++;
-						}
-						if (weight[tmp] < weight[heap[yy]]) {
-							break;
-						}
-						
-						heap[zz] = heap[yy];
-						zz = yy;
-					}
-					heap[zz] = tmp;
-					n2 = heap[1];
-					heap[1] = heap[nHeap];
-					nHeap--;
-					
-					zz = 1;
-					yy = 0;
-					tmp = heap[zz];
-					while (true) {
-						yy = zz << 1;
-						if (yy > nHeap) {
-							break;
-						}
-						if (yy < nHeap && weight[heap[yy+1]] < weight[heap[yy]]) {
-							yy++;
-						}
-						if (weight[tmp] < weight[heap[yy]]) {
-							break;
-						}
-						heap[zz] = heap[yy];
-						zz = yy;
-					}
-					heap[zz] = tmp;
-					nNodes++;
-					parent[n1] = parent[n2] = nNodes;
-					
-					weight[nNodes] = (int)((weight[n1] & 0xffffff00) + (weight[n2] & 0xffffff00)) | 
-					                 (int)(1 + (((weight[n1] & 0x000000ff) > (weight[n2] & 0x000000ff)) ? (weight[n1] & 0x000000ff) : (weight[n2] & 0x000000ff)));
-					
-					parent[nNodes] = -1;
-					nHeap++;
-					heap[nHeap] = nNodes;
-					
-					zz  = nHeap;
-					tmp = heap[zz];
-					while (weight[tmp] < weight[heap[zz >> 1]]) {
-						heap[zz] = heap[zz >> 1];
-						zz >>= 1;
-					}
-					heap[zz] = tmp;
-				}
-				if (!(nNodes < (BZip2Constants.MAX_ALPHA_SIZE * 2))) {
-					Panic();
-				}
-				
-				tooLong = false;
-				for (int i = 1; i <= alphaSize; ++i) {
-					j = 0;
-					k = i;
-					while (parent[k] >= 0) {
-						k = parent[k];
-						j++;
-					}
-					len[i - 1] = (char)j;
-					if (j > maxLen) {
-						tooLong = true;
-					}
-				}
-				
-				if (!tooLong) {
-					break;
-				}
-				
-				for (int i = 1; i < alphaSize; ++i) {
-					j = weight[i] >> 8;
-					j = 1 + (j / 2);
-					weight[i] = j << 8;
-				}
+
+			if ( buffer.Length - offset < count )
+			{
+				throw new ArgumentException("Offset/count out of range");
 			}
-		}
-		
-		/*--
-		index of the last char in the block, so
-		the block size == last + 1.
-		--*/
-		int last;
-		
-		/*--
-		index in zptr[] of original string after sorting.
-		--*/
-		int origPtr;
-		
-		/*--
-		always: in the range 0 .. 9.
-		The current block size is 100000 * this number.
-		--*/
-		int blockSize100k;
-		
-		bool blockRandomised;
-		
-		int bytesOut;
-		int bsBuff;
-		int bsLive;
-		IChecksum mCrc = new StrangeCRC();
-		
-		bool[] inUse = new bool[256];
-		int nInUse;
-		
-		char[] seqToUnseq = new char[256];
-		char[] unseqToSeq = new char[256];
-		
-		char[] selector = new char[BZip2Constants.MAX_SELECTORS];
-		char[] selectorMtf = new char[BZip2Constants.MAX_SELECTORS];
-		
-		byte[]  block;
-		int[]   quadrant;
-		int[]   zptr;
-		short[] szptr;
-		int[]   ftab;
-		
-		int nMTF;
-		
-		int[] mtfFreq = new int[BZip2Constants.MAX_ALPHA_SIZE];
-		
-		/*
-		* Used when sorting.  If too many long comparisons
-		* happen, we stop sorting, randomise the block
-		* slightly, and try again.
-		*/
-		int workFactor;
-		int workDone;
-		int workLimit;
-		bool firstAttempt;
-		int nBlocksRandomised;
-		
-		int currentChar = -1;
-		int runLength = 0;
-		
-		/// <summary>
-		/// Construct a default output stream with maximum block size
-		/// </summary>
-		/// <param name="stream">The stream to write BZip data onto.</param>
-		public BZip2OutputStream(Stream stream) : this(stream, 9)
-		{
-		}
-		
-		/// <summary>
-		/// Initialise a new instance of the <see cref="BZip2OutputStream"></see> 
-		/// for the specified stream, using the given blocksize.
-		/// </summary>
-		/// <param name="stream">The stream to write compressed data to.</param>
-		/// <param name="blockSize">The block size to use.</param>
-		/// <remarks>
-		/// Valid block sizes are in the range 1..9, with 1 giving 
-		/// the lowest compression and 9 the highest.
-		/// </remarks>
-		public BZip2OutputStream(Stream stream, int blockSize)
-		{
-			block    = null;
-			quadrant = null;
-			zptr     = null;
-			ftab     = null;
-			
-			BsSetStream(stream);
-			
-			workFactor = 50;
-			if (blockSize > 9) {
-				blockSize = 9;
+
+			for (int i = 0; i < count; ++i) {
+				WriteByte(buffer[offset + i]);
 			}
-			if (blockSize < 1) {
-				blockSize = 1;
-			}
-			blockSize100k = blockSize;
-			AllocateCompressStructures();
-			Initialize();
-			InitBlock();
 		}
 		
 		/// <summary>
 		/// Write a byte to the stream.
 		/// </summary>
-		public override void WriteByte(byte bv)
+		public override void WriteByte(byte value)
 		{
-			int b = (256 + bv) % 256;
+			int b = (256 + value) % 256;
 			if (currentChar != -1) {
 				if (currentChar == b) {
 					runLength++;
@@ -429,6 +274,32 @@ namespace ICSharpCode.SharpZipLib.BZip2
 			}
 		}
 		
+		/// <summary>
+		/// End the current block and end compression.
+		/// Close the stream and free any resources
+		/// </summary>
+		public override void Close()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		#endregion
+		void MakeMaps() 
+		{
+			nInUse = 0;
+			for (int i = 0; i < 256; i++) {
+				if (inUse[i]) {
+					seqToUnseq[nInUse] = (char)i;
+					unseqToSeq[i] = (char)nInUse;
+					nInUse++;
+				}
+			}
+		}
+		
+		/// <summary>
+		/// Get the number of bytes written to output.
+		/// </summary>
 		void WriteRun()
 		{
 			if (last < allowableBlockSize) {
@@ -477,36 +348,49 @@ namespace ICSharpCode.SharpZipLib.BZip2
 			}
 		}
 		
-		bool closed = false;
-		
 		/// <summary>
-		/// Free any resources and other cleanup before garbage collection reclaims memory
+		/// Get the number of bytes written to the output.
 		/// </summary>
-		public void Finalize()
+		public int BytesWritten
 		{
-			Close();
+			get { return bytesOut; }
 		}
-		
+
 		/// <summary>
-		/// End the current block and end compression.
-		/// Close the stream and free any resources
+		/// Releases the unmanaged resources used by the <see cref="BZip2OutputStream"/> and optionally releases the managed resources.
 		/// </summary>
-		public override void Close()
+		/// <param name="disposing">true to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
+#if NET_VER_1 || COMPACT_FRAMEWORK_V10
+		protected virtual void Dispose(bool disposing)
+#else		
+		override protected void Dispose(bool disposing)
+#endif			
 		{
-			if (closed) {
-				return;
-			}
+#if !NET_VER_1 && !COMPACT_FRAMEWORK_V10
+			base.Dispose(disposing);
+#endif			
+			if ( !disposed_ )
+			{
+				disposed_ = true;
+
+				if (runLength > 0)
+				{
+					WriteRun();
+				}
+		
+				currentChar = -1;
+				EndBlock();
+				EndCompression();
+				Flush();
 			
-			if (runLength > 0) {
-				WriteRun();
+				if ( disposing )
+				{
+					if ( IsStreamOwner ) 
+					{
+						baseStream.Close();
+					}
+				}
 			}
-			
-			currentChar = -1;
-			EndBlock();
-			EndCompression();
-			closed = true;
-			Flush();
-			baseStream.Close();
 		}
 
 		/// <summary>
@@ -516,19 +400,16 @@ namespace ICSharpCode.SharpZipLib.BZip2
 		{
 			baseStream.Flush();
 		}
-		
-		uint blockCRC, combinedCRC;
-		
+				
 		void Initialize()
 		{
 			bytesOut = 0;
 			nBlocksRandomised = 0;
 			
-			/*--- Write `magic' bytes h indicating file-format == huffmanised,
+			/*--- Write header `magic' bytes indicating file-format == huffmanised,
 			followed by a digit indicating blockSize100k.
 			---*/
 			
-			// TODO  adding header here should be optional?
 			BsPutUChar('B');
 			BsPutUChar('Z');
 			
@@ -538,14 +419,10 @@ namespace ICSharpCode.SharpZipLib.BZip2
 			combinedCRC = 0;
 		}
 		
-		int allowableBlockSize;
-		
 		void InitBlock() 
 		{
-			//		blockNo++;
 			mCrc.Reset();
 			last = -1;
-			//		ch = 0;
 			
 			for (int i = 0; i < 256; i++) {
 				inUse[i] = false;
@@ -557,15 +434,15 @@ namespace ICSharpCode.SharpZipLib.BZip2
 		
 		void EndBlock()
 		{
-			if (last < 0) {       //-jr- dont do anything for empty files, (makes empty files compatible with original Bzip)
+			if (last < 0) {       // dont do anything for empty files, (makes empty files compatible with original Bzip)
 				return;
 			}
 			
-			blockCRC = (uint)mCrc.Value;
+			blockCRC = unchecked((uint)mCrc.Value);
 			combinedCRC = (combinedCRC << 1) | (combinedCRC >> 31);
 			combinedCRC ^= blockCRC;
 			
-			/*-- sort the block and establish posn of original string --*/
+			/*-- sort the block and establish position of original string --*/
 			DoReversibleTransformation();
 			
 			/*--
@@ -589,7 +466,9 @@ namespace ICSharpCode.SharpZipLib.BZip2
 			BsPutUChar(0x59);
 			
 			/*-- Now the block's CRC, so it is in a known place. --*/
-			BsPutint((int)blockCRC);
+			unchecked {
+				BsPutint((int)blockCRC);
+			}
 			
 			/*-- Now a single bit indicating randomisation. --*/
 			if (blockRandomised) {
@@ -619,28 +498,16 @@ namespace ICSharpCode.SharpZipLib.BZip2
 			BsPutUChar(0x50);
 			BsPutUChar(0x90);
 			
-			BsPutint((int)combinedCRC);
+			unchecked {
+				BsPutint((int)combinedCRC);
+			}
 			
 			BsFinishedWithStream();
 		}
 		
-		void HbAssignCodes (int[] code, char[] length, int minLen, int maxLen, int alphaSize) 
+		void BsSetStream(Stream stream) 
 		{
-			int vec = 0;
-			for (int n = minLen; n <= maxLen; ++n) {
-				for (int i = 0; i < alphaSize; ++i) {
-					if (length[i] == n) {
-						code[i] = vec;
-						++vec;
-					}
-				}
-				vec <<= 1;
-			}
-		}
-		
-		void BsSetStream(Stream f) 
-		{
-			baseStream = f;
+			baseStream = stream;
 			bsLive = 0;
 			bsBuff = 0;
 			bytesOut = 0;
@@ -662,7 +529,7 @@ namespace ICSharpCode.SharpZipLib.BZip2
 		{
 			while (bsLive >= 8) {
 				int ch = (bsBuff >> 24);
-				baseStream.WriteByte((byte)ch); // write 8-bit
+				unchecked{baseStream.WriteByte((byte)ch);} // write 8-bit
 				bsBuff <<= 8;
 				bsLive -= 8;
 				++bytesOut;
@@ -698,7 +565,7 @@ namespace ICSharpCode.SharpZipLib.BZip2
 			
 			int gs, ge, totc, bt, bc, iter;
 			int nSelectors = 0, alphaSize, minLen, maxLen, selCtr;
-			int nGroups, nBytes;
+			int nGroups;
 			
 			alphaSize = nInUse + 2;
 			for (int t = 0; t < BZip2Constants.N_GROUPS; t++) {
@@ -760,7 +627,7 @@ namespace ICSharpCode.SharpZipLib.BZip2
 				rfreq[i] = new int[BZip2Constants.MAX_ALPHA_SIZE];
 			}
 			
-			int[]   fave = new int[BZip2Constants.N_GROUPS];
+			int[] fave = new int[BZip2Constants.N_GROUPS];
 			short[] cost = new short[BZip2Constants.N_GROUPS];
 			/*---
 			Iterate up to N_ITERS times to improve the tables.
@@ -866,6 +733,7 @@ namespace ICSharpCode.SharpZipLib.BZip2
 			if (!(nGroups < 8)) {
 				Panic();
 			}
+			
 			if (!(nSelectors < 32768 && nSelectors <= (2 + (900000 / BZip2Constants.G_SIZE)))) {
 				Panic();
 			}
@@ -873,9 +741,11 @@ namespace ICSharpCode.SharpZipLib.BZip2
 			/*--- Compute MTF values for the selectors. ---*/
 			char[] pos = new char[BZip2Constants.N_GROUPS];
 			char ll_i, tmp2, tmp;
+			
 			for (int i = 0; i < nGroups; i++) {
 				pos[i] = (char)i;
 			}
+			
 			for (int i = 0; i < nSelectors; i++) {
 				ll_i = selector[i];
 				int j = 0;
@@ -928,7 +798,6 @@ namespace ICSharpCode.SharpZipLib.BZip2
 				}
 			}
 			
-			nBytes = bytesOut;
 			for (int i = 0; i < 16; ++i) {
 				if (inUse16[i]) {
 					BsW(1,1);
@@ -950,7 +819,6 @@ namespace ICSharpCode.SharpZipLib.BZip2
 			}
 			
 			/*--- Now the selectors. ---*/
-			nBytes = bytesOut;
 			BsW(3, nGroups);
 			BsW(15, nSelectors);
 			for (int i = 0; i < nSelectors; ++i) {
@@ -961,8 +829,6 @@ namespace ICSharpCode.SharpZipLib.BZip2
 			}
 			
 			/*--- Now the coding tables. ---*/
-			nBytes = bytesOut;
-			
 			for (int t = 0; t < nGroups; ++t) {
 				int curr = len[t][0];
 				BsW(5, curr);
@@ -980,7 +846,6 @@ namespace ICSharpCode.SharpZipLib.BZip2
 			}
 			
 			/*--- And finally, the block data proper ---*/
-			nBytes = bytesOut;
 			selCtr = 0;
 			gs = 0;
 			while (true) {
@@ -1009,9 +874,7 @@ namespace ICSharpCode.SharpZipLib.BZip2
 			BsPutIntVS(24, origPtr);
 			GenerateMTFValues();
 			SendMTFValues();
-		}
-		
-		Stream baseStream;
+		}	
 		
 		void SimpleSort(int lo, int hi, int d) 
 		{
@@ -1024,13 +887,13 @@ namespace ICSharpCode.SharpZipLib.BZip2
 			}
 			
 			hp = 0;
-			while (incs[hp] < bigN) {
+			while (increments[hp] < bigN) {
 				hp++;
 			}
 			hp--;
 			
 			for (; hp >= 0; hp--) {
-				h = incs[hp];
+				h = increments[hp];
 				
 				i = lo + h;
 				while (true) {
@@ -1100,42 +963,16 @@ namespace ICSharpCode.SharpZipLib.BZip2
 			}
 		}
 		
-		byte Med3(byte a, byte b, byte c ) 
-		{
-			byte t;
-			if (a > b) {
-				t = a;
-				a = b;
-				b = t;
-			}
-			if (b > c) {
-				t = b;
-				b = c;
-				c = t;
-			}
-			if (a > b) {
-				b = a;
-			}
-			return b;
-		}
-		
-		class StackElem 
-		{
-			public int ll;
-			public int hh;
-			public int dd;
-		}
-		
 		void QSort3(int loSt, int hiSt, int dSt) 
 		{
 			int unLo, unHi, ltLo, gtHi, med, n, m;
-			int sp, lo, hi, d;
-			StackElem[] stack = new StackElem[QSORT_STACK_SIZE];
+			int lo, hi, d;
+			StackElement[] stack = new StackElement[QSORT_STACK_SIZE];
 			for (int count = 0; count < QSORT_STACK_SIZE; count++) {
-				stack[count] = new StackElem();
+				stack[count] = new StackElement();
 			}
 			
-			sp = 0;
+			int sp = 0;
 			
 			stack[sp].ll = loSt;
 			stack[sp].hh = hiSt;
@@ -1187,6 +1024,7 @@ namespace ICSharpCode.SharpZipLib.BZip2
 						}
 						unLo++;
 					}
+
 					while (true) {
 						if (unLo > unHi) {
 							break;
@@ -1206,9 +1044,11 @@ namespace ICSharpCode.SharpZipLib.BZip2
 						}
 						unHi--;
 					}
+
 					if (unLo > unHi) {
 						break;
 					}
+
 					{
 						int temp = zptr[unLo];
 						zptr[unLo] = zptr[unHi];
@@ -1621,18 +1461,6 @@ namespace ICSharpCode.SharpZipLib.BZip2
 			return false;
 		}
 		
-		/*--
-		Knuth's increments seem to work better
-		than Incerpi-Sedgewick here.  Possibly
-		because the number of elems to sort is
-		usually small, typically <= 20.
-		--*/
-		readonly int[] incs = new int[] { 
-			1, 4, 13, 40, 121, 364, 1093, 3280,
-			9841, 29524, 88573, 265720,
-			797161, 2391484 
-		};
-		
 		void AllocateCompressStructures() 
 		{
 			int n = BZip2Constants.baseBlockSize * blockSize100k;
@@ -1760,10 +1588,281 @@ namespace ICSharpCode.SharpZipLib.BZip2
 			
 			nMTF = wr;
 		}
+
+		static void Panic() 
+		{
+			throw new BZip2Exception("BZip2 output stream panic");
+		}
+		
+		static void HbMakeCodeLengths(char[] len, int[] freq, int alphaSize, int maxLen) 
+		{
+			/*--
+			Nodes and heap entries run from 1.  Entry 0
+			for both the heap and nodes is a sentinel.
+			--*/
+			int nNodes, nHeap, n1, n2, j, k;
+			bool  tooLong;
+			
+			int[] heap   = new int[BZip2Constants.MAX_ALPHA_SIZE + 2];
+			int[] weight = new int[BZip2Constants.MAX_ALPHA_SIZE * 2];
+			int[] parent = new int[BZip2Constants.MAX_ALPHA_SIZE * 2];
+			
+			for (int i = 0; i < alphaSize; ++i) 
+			{
+				weight[i+1] = (freq[i] == 0 ? 1 : freq[i]) << 8;
+			}
+			
+			while (true) 
+			{
+				nNodes = alphaSize;
+				nHeap = 0;
+				
+				heap[0] = 0;
+				weight[0] = 0;
+				parent[0] = -2;
+				
+				for (int i = 1; i <= alphaSize; ++i) 
+				{
+					parent[i] = -1;
+					nHeap++;
+					heap[nHeap] = i;
+					int zz = nHeap;
+					int tmp = heap[zz];
+					while (weight[tmp] < weight[heap[zz >> 1]]) 
+					{
+						heap[zz] = heap[zz >> 1];
+						zz >>= 1;
+					}
+					heap[zz] = tmp;
+				}
+				if (!(nHeap < (BZip2Constants.MAX_ALPHA_SIZE+2))) 
+				{
+					Panic();
+				}
+				
+				while (nHeap > 1) 
+				{
+					n1 = heap[1];
+					heap[1] = heap[nHeap];
+					nHeap--;
+					int zz = 1;
+					int yy = 0;
+					int tmp = heap[zz];
+					while (true) 
+					{
+						yy = zz << 1;
+						if (yy > nHeap) 
+						{
+							break;
+						}
+						if (yy < nHeap &&  weight[heap[yy+1]] < weight[heap[yy]]) 
+						{
+							yy++;
+						}
+						if (weight[tmp] < weight[heap[yy]]) 
+						{
+							break;
+						}
+						
+						heap[zz] = heap[yy];
+						zz = yy;
+					}
+					heap[zz] = tmp;
+					n2 = heap[1];
+					heap[1] = heap[nHeap];
+					nHeap--;
+					
+					zz = 1;
+					yy = 0;
+					tmp = heap[zz];
+					while (true) 
+					{
+						yy = zz << 1;
+						if (yy > nHeap) 
+						{
+							break;
+						}
+						if (yy < nHeap && weight[heap[yy+1]] < weight[heap[yy]]) 
+						{
+							yy++;
+						}
+						if (weight[tmp] < weight[heap[yy]]) 
+						{
+							break;
+						}
+						heap[zz] = heap[yy];
+						zz = yy;
+					}
+					heap[zz] = tmp;
+					nNodes++;
+					parent[n1] = parent[n2] = nNodes;
+					
+					weight[nNodes] = (int)((weight[n1] & 0xffffff00) + (weight[n2] & 0xffffff00)) | 
+						(int)(1 + (((weight[n1] & 0x000000ff) > (weight[n2] & 0x000000ff)) ? (weight[n1] & 0x000000ff) : (weight[n2] & 0x000000ff)));
+					
+					parent[nNodes] = -1;
+					nHeap++;
+					heap[nHeap] = nNodes;
+					
+					zz  = nHeap;
+					tmp = heap[zz];
+					while (weight[tmp] < weight[heap[zz >> 1]]) 
+					{
+						heap[zz] = heap[zz >> 1];
+						zz >>= 1;
+					}
+					heap[zz] = tmp;
+				}
+				if (!(nNodes < (BZip2Constants.MAX_ALPHA_SIZE * 2))) 
+				{
+					Panic();
+				}
+				
+				tooLong = false;
+				for (int i = 1; i <= alphaSize; ++i) 
+				{
+					j = 0;
+					k = i;
+					while (parent[k] >= 0) 
+					{
+						k = parent[k];
+						j++;
+					}
+					len[i - 1] = (char)j;
+					if (j > maxLen) 
+					{
+						tooLong = true;
+					}
+				}
+				
+				if (!tooLong) 
+				{
+					break;
+				}
+				
+				for (int i = 1; i < alphaSize; ++i) 
+				{
+					j = weight[i] >> 8;
+					j = 1 + (j / 2);
+					weight[i] = j << 8;
+				}
+			}
+		}
+		
+		static void HbAssignCodes (int[] code, char[] length, int minLen, int maxLen, int alphaSize) 
+		{
+			int vec = 0;
+			for (int n = minLen; n <= maxLen; ++n) 
+			{
+				for (int i = 0; i < alphaSize; ++i) 
+				{
+					if (length[i] == n) 
+					{
+						code[i] = vec;
+						++vec;
+					}
+				}
+				vec <<= 1;
+			}
+		}
+		
+		static byte Med3(byte a, byte b, byte c ) 
+		{
+			byte t;
+			if (a > b) 
+			{
+				t = a;
+				a = b;
+				b = t;
+			}
+			if (b > c) 
+			{
+				t = b;
+				b = c;
+				c = t;
+			}
+			if (a > b) 
+			{
+				b = a;
+			}
+			return b;
+		}
+		
+		class StackElement 
+		{
+			public int ll;
+			public int hh;
+			public int dd;
+		}
+		
+		#region Instance Fields
+		bool isStreamOwner = true;
+		
+		/*--
+		index of the last char in the block, so
+		the block size == last + 1.
+		--*/
+		int last;
+		
+		/*--
+		index in zptr[] of original string after sorting.
+		--*/
+		int origPtr;
+		
+		/*--
+		always: in the range 0 .. 9.
+		The current block size is 100000 * this number.
+		--*/
+		int blockSize100k;
+		
+		bool blockRandomised;
+		
+		int bytesOut;
+		int bsBuff;
+		int bsLive;
+		IChecksum mCrc = new StrangeCRC();
+		
+		bool[] inUse = new bool[256];
+		int nInUse;
+		
+		char[] seqToUnseq = new char[256];
+		char[] unseqToSeq = new char[256];
+		
+		char[] selector = new char[BZip2Constants.MAX_SELECTORS];
+		char[] selectorMtf = new char[BZip2Constants.MAX_SELECTORS];
+		
+		byte[]  block;
+		int[]   quadrant;
+		int[]   zptr;
+		short[] szptr;
+		int[]   ftab;
+		
+		int nMTF;
+		
+		int[] mtfFreq = new int[BZip2Constants.MAX_ALPHA_SIZE];
+		
+		/*
+		* Used when sorting.  If too many long comparisons
+		* happen, we stop sorting, randomise the block
+		* slightly, and try again.
+		*/
+		int workFactor;
+		int workDone;
+		int workLimit;
+		bool firstAttempt;
+		int nBlocksRandomised;
+		
+		int currentChar = -1;
+		int runLength;
+		uint blockCRC, combinedCRC;
+		int allowableBlockSize;
+		Stream baseStream;
+		bool disposed_;
+		#endregion
 	}
 }
 
-/* This file was derived from a file containing under this license:
+/* This file was derived from a file containing this license:
  * 
  * This file is a part of bzip2 and/or libbzip2, a program and
  * library for lossless, block-sorting data compression.

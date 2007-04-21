@@ -84,7 +84,7 @@ namespace Altaxo.Serialization.Ascii
         if(nHashOfMaxSame == result[i].Structures[sep].GetHashCode())
         {
           int prty = result[i].Structures[sep].Priority;
-          if(prty>nMaxPriorityOfMaxSame)
+          if(prty>=nMaxPriorityOfMaxSame)
           {
             nMaxPriorityOfMaxSame = prty;
             bestLine = result[i].Structures[sep];

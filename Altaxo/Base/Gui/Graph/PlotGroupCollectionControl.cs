@@ -49,7 +49,8 @@ namespace Altaxo.Gui.Graph
   
     private void _btEditCSTransfoStyle_Click(object sender, EventArgs e)
     {
-
+      if (null != _controller)
+        _controller.EhView_CoordinateTransformingGroupStyleEdit();
     }
 
 

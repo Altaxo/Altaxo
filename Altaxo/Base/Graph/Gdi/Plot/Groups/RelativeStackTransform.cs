@@ -32,6 +32,26 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 
   public class RelativeStackTransform : ICoordinateTransformingGroupStyle
   {
+    #region Serialization
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(RelativeStackTransform), 0)]
+    class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        RelativeStackTransform s = (RelativeStackTransform)obj;
+
+      }
+
+
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        RelativeStackTransform s = null != o ? (RelativeStackTransform)o : new RelativeStackTransform();
+        return s;
+      }
+    }
+
+    #endregion
+
     public RelativeStackTransform()
     {
     }

@@ -37,18 +37,59 @@ namespace ICSharpCode.SharpZipLib.Tests.GZip
 			
 			GZipInputStream inStream = new GZipInputStream(ms);
 			byte[] buf2 = new byte[buf.Length];
-			int    pos  = 0;
+			int    currentIndex  = 0;
+			int    count = buf2.Length;
 			while (true) {
-				int numRead = inStream.Read(buf2, pos, 4096);
+				int numRead = inStream.Read(buf2, currentIndex, count);
 				if (numRead <= 0) {
 					break;
 				}
-				pos += numRead;
+				currentIndex += numRead;
+				count -= numRead;
 			}
 			
 			for (int i = 0; i < buf.Length; ++i) {
 				Assert.AreEqual(buf2[i], buf[i]);
 			}
+		}
+
+		/// <summary>
+		/// Writing GZip headers is delayed so that this stream can be used with HTTP/IIS.
+		/// </summary>
+		[Test]
+		public void DelayedHeaderWriteNoData()
+		{
+			MemoryStream ms = new MemoryStream();
+			Assert.AreEqual(0, ms.Length);
+			using (GZipOutputStream outStream = new GZipOutputStream(ms))
+			{
+				Assert.AreEqual(0, ms.Length);
+			}
+			byte[] data = ms.ToArray();
+
+			Assert.IsTrue(data.Length > 0);
+		}
+
+		/// <summary>
+		/// Writing GZip headers is delayed so that this stream can be used with HTTP/IIS.
+		/// </summary>
+		[Test]
+		public void DelayedHeaderWriteWithData()
+		{
+			MemoryStream ms = new MemoryStream();
+			Assert.AreEqual(0, ms.Length);
+			using (GZipOutputStream outStream = new GZipOutputStream(ms))
+			{
+				Assert.AreEqual(0, ms.Length);
+				outStream.WriteByte(45);
+
+				// Should in fact contain header right now with
+				// 1 byte in the compression pipeline
+				Assert.AreEqual(10, ms.Length);
+			}
+			byte[] data = ms.ToArray();
+
+			Assert.IsTrue(data.Length > 0);
 		}
 	}
 }

@@ -344,5 +344,71 @@ namespace Altaxo.Calc.Probability
             }
         }
         #endregion
+
+        #region CdfPdfQuantile
+
+        public override double CDF(double x)
+        {
+          return CDF(x, this.Alpha, this.Beta, this.Gamma);
+        }
+        public static double CDF(double x, double A, double B, double C)
+        {
+          if (x <= A)
+            return 0;
+          if (x >= B)
+            return 1;
+          if (x <= C)
+            return  (x - A)*(x-A) / ((B - A) * (C - A));
+          else
+            return 1- (B-x)* (B - x) / ((B - A) * (B - C));
+        }
+
+
+
+        public override double PDF(double x)
+        {
+          return PDF(x, this.Alpha, this.Beta, this.Gamma);
+        }
+        public static double PDF(double x, double A, double B, double C)
+        {
+          if (x <= A)
+            return 0;
+          if(x >= B)
+            return 0;
+          if(x <= C)
+            return 2*(x-A)/((B-A)*(C-A));
+          else
+            return 2*(B-x)/((B-A)*(B-C));
+        }
+
+
+        public override double Quantile(double p)
+        {
+          return Quantile(p, this.Alpha, this.Beta, this.Gamma);
+        }
+        public static double Quantile(double p, double A, double B, double C)
+        {
+          double x;
+          if (!(p >= 0 && p <= 1))
+            throw new ArgumentOutOfRangeException("p must be inbetween [0,1]");
+          if(!(A<B))
+            throw new ArgumentOutOfRangeException("A must be < B");
+          if(!(C>=A))
+            throw new ArgumentOutOfRangeException("C must be >= A");
+          if(!(C<=B))
+            throw new ArgumentOutOfRangeException("C must be <= B");
+
+
+          x = A + Math.Sqrt(p*(A-B)*(A-C));
+
+          if (x > C)
+            x = B - Math.Sqrt((1 - p) * (B - A) * (B - C));
+
+          return x;
+        }
+
+
+        #endregion
+
 	}
 }

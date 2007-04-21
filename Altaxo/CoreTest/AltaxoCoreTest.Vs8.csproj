@@ -144,6 +144,8 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Calc\FFT\TestRealFourierTransform.cs" />
+    <Compile Include="Calc\Integration\QAGPTests.cs" />
+    <Compile Include="Calc\Integration\QAGSTests.cs" />
     <Compile Include="Calc\Interpolation\BivariateAkimaSpline.cs" />
     <Compile Include="Calc\LinearAlgebra\Comparer.cs" />
     <Compile Include="Calc\LinearAlgebra\ComplexDoubleCholeskyDecompTest.cs" />

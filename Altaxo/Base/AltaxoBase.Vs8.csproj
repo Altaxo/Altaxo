@@ -989,6 +989,10 @@
       <DependentUpon>TitleFormatLayerControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\WaterfallTransformControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>WaterfallTransformControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Gui\Graph\XYAxisLabelStyleControl.resx">
       <DependentUpon>XYAxisLabelStyleControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -1392,6 +1396,13 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Gui\Graph\TitleFormatLayerController.cs" />
+    <Compile Include="Gui\Graph\WaterfallTransformControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\WaterfallTransformControl.Designer.cs">
+      <DependentUpon>WaterfallTransformControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\WaterfallTransformController.cs" />
     <Compile Include="Gui\IApplyController.cs" />
     <Compile Include="Gui\IClassForClassAttribute.cs" />
     <Compile Include="Gui\ModelViewController.cs" />

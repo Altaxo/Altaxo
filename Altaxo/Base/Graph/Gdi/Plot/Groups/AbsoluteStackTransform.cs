@@ -32,6 +32,26 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 
   public class AbsoluteStackTransform : ICoordinateTransformingGroupStyle
   {
+    #region Serialization
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AbsoluteStackTransform), 0)]
+    class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        AbsoluteStackTransform s = (AbsoluteStackTransform)obj;
+       
+      }
+
+
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        AbsoluteStackTransform s = null != o ? (AbsoluteStackTransform)o : new AbsoluteStackTransform();
+        return s;
+      }
+    }
+
+    #endregion
+
 
     public AbsoluteStackTransform()
     {

@@ -45,7 +45,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       Top = 3
     }
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Graph.XYPlotLineStyles.FillDirection", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotLineStyles.FillDirection", 0)]
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FillDirection), 1)]
     public class FillDirectionXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
@@ -75,7 +75,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       StepHorzCenter,
       StepVertCenter
     }
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Graph.XYPlotLineStyles.ConnectionStyle", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotLineStyles.ConnectionStyle", 0)]
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ConnectionStyle), 1)]
     public class ConnectionStyleXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
@@ -123,6 +123,19 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       IPlotArea layer,
       float symbolGap);
 
+    /// <summary>
+    /// Template to get a fill path.
+    /// </summary>
+    /// <param name="g">Graphics context.</param>
+    /// <param name="pdata">The plot data. Don't use the Range property of the pdata, since it is overriden by the next argument.</param>
+    /// <param name="overriderange">The plot range to use.</param>
+    /// <param name="layer">Graphics layer.</param>
+    public delegate void FillPathOneRangeTemplate(
+      GraphicsPath gp,
+      Processed2DPlotData pdata,
+      PlotRange overriderange,
+      IPlotArea layer,
+      CSPlaneID fillDirection);
 
 
     protected PenX _penHolder;
@@ -143,6 +156,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     // cached values
     [NonSerialized]
     protected PaintOneRangeTemplate _cachedPaintOneRange; // subroutine to paint a single range
+    [NonSerialized]
+    protected FillPathOneRangeTemplate _cachedFillOneRange; // subroutine to get a fill path
     [NonSerialized]
     protected Main.IDocumentNode _parentObject;
     [field: NonSerialized]
@@ -193,7 +208,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Graph.XYPlotLineStyle", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotLineStyle", 0)]
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotLineStyle", 1)] // by accident, it was never different from 0
     class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
@@ -230,7 +245,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         XYPlotLineStyles.FillDirection fillDir = (XYPlotLineStyles.FillDirection)info.GetValue("FillDirection", typeof(XYPlotLineStyles.FillDirection));
         if (s._fillArea)
           s._fillDirection = GetFillDirection(fillDir);
-        
+
         return s;
       }
 
@@ -310,7 +325,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     }
     #endregion
 
-
+    #region Construction and copying
 
     public LinePlotStyle()
     {
@@ -322,6 +337,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       _fillDirection = null;
       _connectionStyle = XYPlotLineStyles.ConnectionStyle.Straight;
       _cachedPaintOneRange = new PaintOneRangeTemplate(StraightConnection_PaintOneRange);
+      _cachedFillOneRange = StraightConnection_FillOneRange;
       _independentColor = false;
 
       CreateEventChain();
@@ -336,7 +352,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       this._ignoreMissingPoints = from._ignoreMissingPoints;
       this._fillArea = from._fillArea;
       this._fillBrush = null == from._fillBrush ? null : (BrushX)from._fillBrush.Clone();
-      this._fillDirection = null==from._fillDirection ? null : from._fillDirection.Clone();
+      this._fillDirection = null == from._fillDirection ? null : from._fillDirection.Clone();
       this.Connection = from._connectionStyle; // beachte links nur Connection, damit das Template mit gesetzt wird
       this._independentColor = from._independentColor;
       this._independentFillColor = from._independentFillColor;
@@ -355,6 +371,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       CreateEventChain();
     }
 
+    public object Clone()
+    {
+      return new LinePlotStyle(this);
+    }
+
     protected virtual void CreateEventChain()
     {
       if (null != _penHolder)
@@ -363,6 +384,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       if (null != _fillBrush)
         _fillBrush.Changed += new EventHandler(this.EhChildChanged);
     }
+    #endregion
+
+    #region Properties
 
     public XYPlotLineStyles.ConnectionStyle Connection
     {
@@ -370,38 +394,49 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       set
       {
         _connectionStyle = value;
+
         switch (_connectionStyle)
         {
           case XYPlotLineStyles.ConnectionStyle.NoLine:
-            _cachedPaintOneRange = new PaintOneRangeTemplate(NoConnection_PaintOneRange);
+            _cachedPaintOneRange = NoConnection_PaintOneRange;
+            _cachedFillOneRange = NoConnection_FillOneRange;
             break;
           default:
           case XYPlotLineStyles.ConnectionStyle.Straight:
-            _cachedPaintOneRange = new PaintOneRangeTemplate(StraightConnection_PaintOneRange);
+            _cachedPaintOneRange = StraightConnection_PaintOneRange;
+            _cachedFillOneRange = StraightConnection_FillOneRange; 
             break;
           case XYPlotLineStyles.ConnectionStyle.Segment2:
-            _cachedPaintOneRange = new PaintOneRangeTemplate(Segment2Connection_PaintOneRange);
+            _cachedPaintOneRange = Segment2Connection_PaintOneRange;
+            _cachedFillOneRange = Segment2Connection_FillOneRange; 
             break;
           case XYPlotLineStyles.ConnectionStyle.Segment3:
-            _cachedPaintOneRange = new PaintOneRangeTemplate(Segment3Connection_PaintOneRange);
+            _cachedPaintOneRange = Segment3Connection_PaintOneRange;
+            _cachedFillOneRange = Segment3Connection_FillOneRange; 
             break;
           case XYPlotLineStyles.ConnectionStyle.Spline:
-            _cachedPaintOneRange = new PaintOneRangeTemplate(SplineConnection_PaintOneRange);
+            _cachedPaintOneRange = SplineConnection_PaintOneRange;
+            _cachedFillOneRange = SplineConnection_FillOneRange; 
             break;
           case XYPlotLineStyles.ConnectionStyle.Bezier:
-            _cachedPaintOneRange = new PaintOneRangeTemplate(BezierConnection_PaintOneRange);
+            _cachedPaintOneRange = BezierConnection_PaintOneRange;
+            _cachedFillOneRange = BezierConnection_FillOneRange; 
             break;
           case XYPlotLineStyles.ConnectionStyle.StepHorz:
-            _cachedPaintOneRange = new PaintOneRangeTemplate(StepHorzConnection_PaintOneRange);
+            _cachedPaintOneRange = StepHorzConnection_PaintOneRange;
+            _cachedFillOneRange = StepHorzConnection_FillOneRange; 
             break;
           case XYPlotLineStyles.ConnectionStyle.StepVert:
-            _cachedPaintOneRange = new PaintOneRangeTemplate(StepVertConnection_PaintOneRange);
+            _cachedPaintOneRange = StepVertConnection_PaintOneRange;
+            _cachedFillOneRange = StepVertConnection_FillOneRange;
             break;
           case XYPlotLineStyles.ConnectionStyle.StepHorzCenter:
-            _cachedPaintOneRange = new PaintOneRangeTemplate(StepHorzCenterConnection_PaintOneRange);
+            _cachedPaintOneRange = StepHorzCenterConnection_PaintOneRange;
+            _cachedFillOneRange = StepHorzCenterConnection_FillOneRange;
             break;
           case XYPlotLineStyles.ConnectionStyle.StepVertCenter:
-            _cachedPaintOneRange = new PaintOneRangeTemplate(StepVertCenterConnection_PaintOneRange);
+            _cachedPaintOneRange = StepVertCenterConnection_PaintOneRange;
+            _cachedFillOneRange = StepVertCenterConnection_FillOneRange;
             break;
         } // end switch
         OnChanged(); // Fire Changed event
@@ -554,10 +589,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
-    public object Clone()
-    {
-      return new LinePlotStyle(this);
-    }
+    #endregion
+
+    #region Painting
 
     public virtual void PaintLine(Graphics g, PointF beg, PointF end)
     {
@@ -588,7 +622,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         }
         g.Restore(gs);
       }
-    
+
       return bounds;
     }
 
@@ -601,7 +635,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
       // ensure that brush and pen are cached
       if (null != _penHolder) _penHolder.Cached = true;
-    
+
       if (_fillArea)
       {
         if (null != _fillBrush)
@@ -611,7 +645,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
 
       int rangelistlen = rangeList.Count;
-     
+
       if (this._ignoreMissingPoints)
       {
         // in case we ignore the missing points, all ranges can be plotted
@@ -629,6 +663,36 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    public void GetFillPath(GraphicsPath gp, IPlotArea layer, Processed2DPlotData pdata, CSPlaneID fillDirection)
+    {
+      PointF[] linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
+      PlotRangeList rangeList = pdata.RangeList;
+      float symbolGap = this._symbolGap;
+      layer.UpdateCSPlaneID(fillDirection);
+
+      int rangelistlen = rangeList.Count;
+
+      if (this._ignoreMissingPoints)
+      {
+        // in case we ignore the missing points, all ranges can be plotted
+        // as one range, i.e. continuously
+        // for this, we create the totalRange, which contains all ranges
+        PlotRange totalRange = new PlotRange(rangeList[0].LowerBound, rangeList[rangelistlen - 1].UpperBound);
+        _cachedFillOneRange(gp, pdata, totalRange, layer, fillDirection);
+      }
+      else // we not ignore missing points, so plot all ranges separately
+      {
+        for (int i = 0; i < rangelistlen; i++)
+        {
+          _cachedFillOneRange(gp, pdata, rangeList[i], layer, fillDirection);
+        }
+      }
+    }
+
+
+    #endregion
+
+    #region NoConnection
 
     public void NoConnection_PaintOneRange(
       Graphics g,
@@ -639,6 +703,20 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     {
     }
 
+    public void NoConnection_FillOneRange(GraphicsPath gp,
+     Processed2DPlotData pdata,
+     PlotRange range,
+     IPlotArea layer,
+     CSPlaneID fillDirection
+     )
+    {
+      
+    }
+
+    #endregion
+
+    #region StraightConnection
+
     public void StraightConnection_PaintOneRange(
       Graphics g,
       Processed2DPlotData pdata,
@@ -647,23 +725,16 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       float symbolGap)
     {
       PointF[] linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
-      PointF[] linepts = new PointF[range.Length+(_connectCircular?1:0)];
+      PointF[] linepts = new PointF[range.Length + (_connectCircular ? 1 : 0)];
       Array.Copy(linePoints, range.LowerBound, linepts, 0, range.Length); // Extract
       if (_connectCircular) linepts[linepts.Length - 1] = linepts[0];
       int lastIdx = range.Length - 1 + (_connectCircular ? 1 : 0);
       GraphicsPath gp = new GraphicsPath();
       SizeF layerSize = layer.Size;
-   
+
       if (_fillArea)
       {
-        Logical3D r0 = layer.GetLogical3D(pdata, range.OriginalFirstPoint);
-        layer.CoordinateSystem.GetIsolineFromPlaneToPoint(gp, _fillDirection, r0);
-        gp.AddLines(linepts);
-        Logical3D r1 = layer.GetLogical3D(pdata, _connectCircular ? range.OriginalFirstPoint: range.OriginalLastPoint);
-        layer.CoordinateSystem.GetIsolineFromPointToPlane(gp, r1, _fillDirection);
-        layer.CoordinateSystem.GetIsolineOnPlane(gp, _fillDirection, r1, r0);
-
-        gp.CloseFigure();
+        StraightConnection_FillOneRange(gp, pdata, range, layer, _fillDirection, linepts);
         g.FillPath(this._fillBrush, gp);
         gp.Reset();
       }
@@ -705,6 +776,43 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     } // end function PaintOneRange
 
+    public void StraightConnection_FillOneRange(GraphicsPath gp,
+      Processed2DPlotData pdata,
+      PlotRange range,
+      IPlotArea layer,
+      CSPlaneID fillDirection
+      )
+    {
+      PointF[] linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
+      PointF[] linepts = new PointF[range.Length + (_connectCircular ? 1 : 0)];
+      Array.Copy(linePoints, range.LowerBound, linepts, 0, range.Length); // Extract
+      if (_connectCircular) linepts[linepts.Length - 1] = linepts[0];
+
+      StraightConnection_FillOneRange(gp, pdata, range, layer, fillDirection, linepts);
+    }
+
+
+    private void StraightConnection_FillOneRange(GraphicsPath gp,
+      Processed2DPlotData pdata,
+      PlotRange range,
+      IPlotArea layer,
+      CSPlaneID fillDirection,
+      PointF[] linepts
+      )
+    {
+      Logical3D r0 = layer.GetLogical3D(pdata, range.OriginalFirstPoint);
+      layer.CoordinateSystem.GetIsolineFromPlaneToPoint(gp, fillDirection, r0);
+      gp.AddLines(linepts);
+      Logical3D r1 = layer.GetLogical3D(pdata, _connectCircular ? range.OriginalFirstPoint : range.OriginalLastPoint);
+      layer.CoordinateSystem.GetIsolineFromPointToPlane(gp, r1, fillDirection);
+      layer.CoordinateSystem.GetIsolineOnPlane(gp, fillDirection, r1, r0);
+      gp.CloseFigure();
+    }
+
+    #endregion
+
+    #region SplineConnection
+
     public void SplineConnection_PaintOneRange(
       Graphics g,
       Processed2DPlotData pdata,
@@ -721,14 +829,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
       if (_fillArea)
       {
-        Logical3D r0 = layer.GetLogical3D(pdata, range.OriginalFirstPoint);
-        layer.CoordinateSystem.GetIsolineFromPlaneToPoint(gp, _fillDirection, r0);
-        gp.AddCurve(linepts);
-        Logical3D r1 = layer.GetLogical3D(pdata, range.OriginalLastPoint);
-        layer.CoordinateSystem.GetIsolineFromPointToPlane(gp, r1, _fillDirection);
-        layer.CoordinateSystem.GetIsolineOnPlane(gp, _fillDirection, r1, r0);
-
-        gp.CloseFigure();
+        SplineConnection_FillOneRange(gp, pdata, range, layer, _fillDirection, linepts);
         g.FillPath(this._fillBrush, gp);
         gp.Reset();
       }
@@ -739,6 +840,40 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     } // end function PaintOneRange (Spline)
 
+    public void SplineConnection_FillOneRange(GraphicsPath gp,
+     Processed2DPlotData pdata,
+     PlotRange range,
+     IPlotArea layer,
+     CSPlaneID fillDirection
+     )
+    {
+      PointF[] linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
+      PointF[] linepts = new PointF[range.Length];
+      Array.Copy(linePoints, range.LowerBound, linepts, 0, range.Length); // Extract
+
+      SplineConnection_FillOneRange(gp, pdata, range, layer, fillDirection, linepts);
+    }
+
+    void SplineConnection_FillOneRange(GraphicsPath gp,
+      Processed2DPlotData pdata,
+      PlotRange range,
+      IPlotArea layer,
+      CSPlaneID fillDirection,
+      PointF[] linepts
+      )
+    {
+      Logical3D r0 = layer.GetLogical3D(pdata, range.OriginalFirstPoint);
+      layer.CoordinateSystem.GetIsolineFromPlaneToPoint(gp, fillDirection, r0);
+      gp.AddCurve(linepts);
+      Logical3D r1 = layer.GetLogical3D(pdata, range.OriginalLastPoint);
+      layer.CoordinateSystem.GetIsolineFromPointToPlane(gp, r1, fillDirection);
+      layer.CoordinateSystem.GetIsolineOnPlane(gp, fillDirection, r1, r0);
+
+      gp.CloseFigure();
+    }
+    #endregion
+
+    #region BezierConnection
 
     public void BezierConnection_PaintOneRange(
       Graphics g,
@@ -763,14 +898,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
       if (_fillArea)
       {
-        Logical3D r0 = layer.GetLogical3D(pdata, range.OriginalFirstPoint);
-        layer.CoordinateSystem.GetIsolineFromPlaneToPoint(gp, _fillDirection, r0);
-        gp.AddBeziers(linepts);
-        Logical3D r1 = layer.GetLogical3D(pdata, range.OriginalLastPoint);
-        layer.CoordinateSystem.GetIsolineFromPointToPlane(gp, r1, _fillDirection);
-        layer.CoordinateSystem.GetIsolineOnPlane(gp, _fillDirection, r1, r0);
-
-        gp.CloseFigure();
+        BezierConnection_FillOneRange(gp, pdata, range, layer, _fillDirection, linepts);
         g.FillPath(this._fillBrush, gp);
         gp.Reset();
       }
@@ -780,6 +908,52 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       g.DrawBeziers(this._penHolder, linepts);
 
     } // end function PaintOneRange BezierLineStyle
+
+    public void BezierConnection_FillOneRange(GraphicsPath gp,
+    Processed2DPlotData pdata,
+    PlotRange rangeRaw,
+    IPlotArea layer,
+    CSPlaneID fillDirection
+    )
+    {
+      // Bezier is only supported with point numbers n=4+3*k
+      // so trim the range appropriately
+      PointF[] linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
+      PlotRange range = new PlotRange(rangeRaw);
+      SizeF layerSize = layer.Size;
+      range.UpperBound = range.LowerBound + 3 * ((range.Length + 2) / 3) - 2;
+      if (range.Length < 4)
+        return; // then to less points are in this range
+
+      PointF[] linepts = new PointF[range.Length];
+      Array.Copy(linePoints, range.LowerBound, linepts, 0, range.Length); // Extract
+
+
+      BezierConnection_FillOneRange(gp, pdata, range, layer, fillDirection, linepts);
+    }
+
+    public void BezierConnection_FillOneRange(GraphicsPath gp,
+     Processed2DPlotData pdata,
+     PlotRange range,
+     IPlotArea layer,
+     CSPlaneID fillDirection,
+     PointF[] linepts
+     )
+    {
+      Logical3D r0 = layer.GetLogical3D(pdata, range.OriginalFirstPoint);
+      layer.CoordinateSystem.GetIsolineFromPlaneToPoint(gp, fillDirection, r0);
+      gp.AddBeziers(linepts);
+      Logical3D r1 = layer.GetLogical3D(pdata, range.OriginalLastPoint);
+      layer.CoordinateSystem.GetIsolineFromPointToPlane(gp, r1, fillDirection);
+      layer.CoordinateSystem.GetIsolineOnPlane(gp, fillDirection, r1, r0);
+
+      gp.CloseFigure();
+    }
+
+    #endregion
+
+    #region StepHorzConnection
+
 
 
     public void StepHorzConnection_PaintOneRange(
@@ -792,41 +966,24 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       if (range.Length < 2)
         return;
 
+      int lastIdx;
+      PointF[] linepts = StepHorzConnection_GetSubPoints(pdata, range, layer, out lastIdx);
       PointF[] linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
-      SizeF layerSize = layer.Size;
-      PointF[] linepts = new PointF[range.Length * 2 - 1];
-      int end = range.UpperBound - 1;
-      int i, j;
-      for (i = 0, j = range.LowerBound; j < end; i += 2, j++)
-      {
-        linepts[i] = linePoints[j];
-        linepts[i + 1].X = linePoints[j + 1].X;
-        linepts[i + 1].Y = linePoints[j].Y;
-      }
-      linepts[i] = linePoints[j];
-      int lastIdx = i;
 
       GraphicsPath gp = new GraphicsPath();
 
       if (_fillArea)
       {
-        Logical3D r0 = layer.GetLogical3D(pdata, range.OriginalFirstPoint);
-        layer.CoordinateSystem.GetIsolineFromPlaneToPoint(gp, _fillDirection, r0);
-        gp.AddLines(linepts);
-        Logical3D r1 = layer.GetLogical3D(pdata, range.OriginalLastPoint);
-        layer.CoordinateSystem.GetIsolineFromPointToPlane(gp, r1, _fillDirection);
-        layer.CoordinateSystem.GetIsolineOnPlane(gp, _fillDirection, r1, r0);
-
-        gp.CloseFigure();
+        StepHorzConnection_FillOneRange(gp, pdata, range, layer, _fillDirection, linepts);
         g.FillPath(this._fillBrush, gp);
         gp.Reset();
       }
 
       if (this._useLineSymbolGap && symbolGap > 0)
       {
-        end = range.UpperBound - 1;
+        int end = range.UpperBound - 1;
         float symbolGapSquared = symbolGap * symbolGap;
-        for (j = range.LowerBound; j < end; j++)
+        for (int j = range.LowerBound; j < end; j++)
         {
           float xmiddle = linePoints[j + 1].X;
           float ymiddle = linePoints[j].Y;
@@ -862,6 +1019,65 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     } // end function PaintOneRange StepHorzLineStyle
 
+    PointF[] StepHorzConnection_GetSubPoints(
+   Processed2DPlotData pdata,
+   PlotRange range,
+   IPlotArea layer,
+      out int lastIndex)
+    {
+      PointF[] linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
+      SizeF layerSize = layer.Size;
+      PointF[] linepts = new PointF[range.Length * 2 - 1];
+      int end = range.UpperBound - 1;
+      int i, j;
+      for (i = 0, j = range.LowerBound; j < end; i += 2, j++)
+      {
+        linepts[i] = linePoints[j];
+        linepts[i + 1].X = linePoints[j + 1].X;
+        linepts[i + 1].Y = linePoints[j].Y;
+      }
+      linepts[i] = linePoints[j];
+      lastIndex = i;
+      return linepts;
+    }
+
+    public void StepHorzConnection_FillOneRange(GraphicsPath gp,
+    Processed2DPlotData pdata,
+    PlotRange range,
+    IPlotArea layer,
+    CSPlaneID fillDirection
+    )
+    {
+      if (range.Length < 2)
+        return;
+
+      int lastIdx;
+      PointF[] linepts = StepHorzConnection_GetSubPoints(pdata, range, layer, out lastIdx);
+      StepHorzConnection_FillOneRange(gp, pdata, range, layer, fillDirection, linepts);
+    }
+
+
+    void StepHorzConnection_FillOneRange(GraphicsPath gp,
+    Processed2DPlotData pdata,
+    PlotRange range,
+    IPlotArea layer,
+      CSPlaneID fillDirection,
+    PointF[] linepts
+    )
+    {
+      Logical3D r0 = layer.GetLogical3D(pdata, range.OriginalFirstPoint);
+      layer.CoordinateSystem.GetIsolineFromPlaneToPoint(gp, fillDirection, r0);
+      gp.AddLines(linepts);
+      Logical3D r1 = layer.GetLogical3D(pdata, range.OriginalLastPoint);
+      layer.CoordinateSystem.GetIsolineFromPointToPlane(gp, r1, fillDirection);
+      layer.CoordinateSystem.GetIsolineOnPlane(gp, fillDirection, r1, r0);
+      gp.CloseFigure();
+    }
+
+    #endregion
+
+    #region StepVertConnection
+
     public void StepVertConnection_PaintOneRange(
       Graphics g,
       Processed2DPlotData pdata,
@@ -872,41 +1088,24 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       if (range.Length < 2)
         return;
 
+      int lastIdx;
+      PointF[] linepts = StepVertConnection_GetSubPoints(pdata, range, layer, out lastIdx);
       PointF[] linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
-      SizeF layerSize = layer.Size;
-      PointF[] linepts = new PointF[range.Length * 2 - 1];
-      int end = range.UpperBound - 1;
-      int i, j;
-      for (i = 0, j = range.LowerBound; j < end; i += 2, j++)
-      {
-        linepts[i] = linePoints[j];
-        linepts[i + 1].X = linePoints[j].X;
-        linepts[i + 1].Y = linePoints[j + 1].Y;
-      }
-      linepts[i] = linePoints[j];
-      int lastIdx = i;
 
       GraphicsPath gp = new GraphicsPath();
 
       if (_fillArea)
       {
-        Logical3D r0 = layer.GetLogical3D(pdata, range.OriginalFirstPoint);
-        layer.CoordinateSystem.GetIsolineFromPlaneToPoint(gp, _fillDirection, r0);
-        gp.AddLines(linepts);
-        Logical3D r1 = layer.GetLogical3D(pdata, range.OriginalLastPoint);
-        layer.CoordinateSystem.GetIsolineFromPointToPlane(gp, r1, _fillDirection);
-        layer.CoordinateSystem.GetIsolineOnPlane(gp, _fillDirection, r1, r0);
-
-        gp.CloseFigure();
+        StepVertConnection_FillOneRange(gp, pdata, range, layer, _fillDirection, linepts);
         g.FillPath(this._fillBrush, gp);
         gp.Reset();
       }
 
       if (this._useLineSymbolGap && symbolGap > 0)
       {
-        end = range.UpperBound - 1;
+        int end = range.UpperBound - 1;
         float symbolGapSquared = symbolGap * symbolGap;
-        for (j = range.LowerBound; j < end; j++)
+        for (int j = range.LowerBound; j < end; j++)
         {
           float xmiddle = linePoints[j + 1].X;
           float ymiddle = linePoints[j].Y;
@@ -942,6 +1141,69 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     } // end function PaintOneRange StepVertLineStyle
 
+
+    PointF[] StepVertConnection_GetSubPoints(
+  Processed2DPlotData pdata,
+  PlotRange range,
+  IPlotArea layer,
+     out int lastIdx)
+    {
+      PointF[] linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
+      SizeF layerSize = layer.Size;
+      PointF[] linepts = new PointF[range.Length * 2 - 1];
+      int end = range.UpperBound - 1;
+      int i, j;
+      for (i = 0, j = range.LowerBound; j < end; i += 2, j++)
+      {
+        linepts[i] = linePoints[j];
+        linepts[i + 1].X = linePoints[j].X;
+        linepts[i + 1].Y = linePoints[j + 1].Y;
+      }
+      linepts[i] = linePoints[j];
+      lastIdx = i;
+
+      return linepts;
+    }
+
+    public void StepVertConnection_FillOneRange(GraphicsPath gp,
+    Processed2DPlotData pdata,
+    PlotRange range,
+    IPlotArea layer,
+    CSPlaneID fillDirection
+    )
+    {
+      if (range.Length < 2)
+        return;
+
+      int lastIdx;
+      PointF[] linepts = StepVertConnection_GetSubPoints(pdata, range, layer, out lastIdx);
+      StepVertConnection_FillOneRange(gp, pdata, range, layer, fillDirection, linepts);
+    }
+
+
+    void StepVertConnection_FillOneRange(GraphicsPath gp,
+    Processed2DPlotData pdata,
+    PlotRange range,
+    IPlotArea layer,
+      CSPlaneID fillDirection,
+    PointF[] linepts
+    )
+    {
+      Logical3D r0 = layer.GetLogical3D(pdata, range.OriginalFirstPoint);
+      layer.CoordinateSystem.GetIsolineFromPlaneToPoint(gp, fillDirection, r0);
+      gp.AddLines(linepts);
+      Logical3D r1 = layer.GetLogical3D(pdata, range.OriginalLastPoint);
+      layer.CoordinateSystem.GetIsolineFromPointToPlane(gp, r1, fillDirection);
+      layer.CoordinateSystem.GetIsolineOnPlane(gp, fillDirection, r1, r0);
+
+      gp.CloseFigure();
+
+    }
+
+    #endregion
+
+    #region StepVertCenterConnection
+
     public void StepVertCenterConnection_PaintOneRange(
       Graphics g,
       Processed2DPlotData pdata,
@@ -953,42 +1215,23 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         return;
 
       PointF[] linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
-      SizeF layerSize = layer.Size;
-      PointF[] linepts = new PointF[range.Length * 3 - 2];
-      int end = range.UpperBound - 1;
-      int i, j;
-      for (i = 0, j = range.LowerBound; j < end; i += 3, j++)
-      {
-        linepts[i] = linePoints[j];
-        linepts[i + 1].X = linePoints[j].X;
-        linepts[i + 1].Y = 0.5f * (linePoints[j].Y + linePoints[j + 1].Y);
-        linepts[i + 2].X = linePoints[j + 1].X;
-        linepts[i + 2].Y = linepts[i + 1].Y;
-      }
-      linepts[i] = linePoints[j];
-      int lastIdx = i;
+      int lastIdx;
+      PointF[] linepts = StepVertCenterConnection_GetSubPoints(pdata, range, layer, out lastIdx);
 
       GraphicsPath gp = new GraphicsPath();
 
       if (_fillArea)
       {
-        Logical3D r0 = layer.GetLogical3D(pdata, range.OriginalFirstPoint);
-        layer.CoordinateSystem.GetIsolineFromPlaneToPoint(gp, _fillDirection, r0);
-        gp.AddLines(linepts);
-        Logical3D r1 = layer.GetLogical3D(pdata, range.OriginalLastPoint);
-        layer.CoordinateSystem.GetIsolineFromPointToPlane(gp, r1, _fillDirection);
-        layer.CoordinateSystem.GetIsolineOnPlane(gp, _fillDirection, r1, r0);
-
-        gp.CloseFigure();
+        StepVertCenterConnection_FillOneRange(gp, pdata, range, layer, _fillDirection, linepts);
         g.FillPath(this._fillBrush, gp);
         gp.Reset();
       }
 
       if (this._useLineSymbolGap && symbolGap > 0)
       {
-        end = linepts.Length - 1;
+        int end = linepts.Length - 1;
         float symbolGapSquared = symbolGap * symbolGap;
-        for (j = 0; j < end; j += 3)
+        for (int j = 0; j < end; j += 3)
         {
           float ydiff = linepts[j + 1].Y - linepts[j].Y;
           if (System.Math.Abs(ydiff) > symbolGap) // then the two vertical lines are visible, and full visible horz line
@@ -1019,6 +1262,71 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     } // end function PaintOneRange StepVertMiddleLineStyle
 
+
+    PointF[] StepVertCenterConnection_GetSubPoints(
+Processed2DPlotData pdata,
+PlotRange range,
+IPlotArea layer,
+  out int lastIdx)
+    {
+      PointF[] linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
+      SizeF layerSize = layer.Size;
+      PointF[] linepts = new PointF[range.Length * 3 - 2];
+      int end = range.UpperBound - 1;
+      int i, j;
+      for (i = 0, j = range.LowerBound; j < end; i += 3, j++)
+      {
+        linepts[i] = linePoints[j];
+        linepts[i + 1].X = linePoints[j].X;
+        linepts[i + 1].Y = 0.5f * (linePoints[j].Y + linePoints[j + 1].Y);
+        linepts[i + 2].X = linePoints[j + 1].X;
+        linepts[i + 2].Y = linepts[i + 1].Y;
+      }
+      linepts[i] = linePoints[j];
+      lastIdx = i;
+
+      return linepts;
+    }
+
+    public void StepVertCenterConnection_FillOneRange(GraphicsPath gp,
+    Processed2DPlotData pdata,
+    PlotRange range,
+    IPlotArea layer,
+    CSPlaneID fillDirection
+    )
+    {
+      if (range.Length < 2)
+        return;
+
+      int lastIdx;
+      PointF[] linepts = StepVertCenterConnection_GetSubPoints(pdata, range, layer, out lastIdx);
+      StepVertCenterConnection_FillOneRange(gp, pdata, range, layer, fillDirection, linepts);
+    }
+
+
+    void StepVertCenterConnection_FillOneRange(GraphicsPath gp,
+    Processed2DPlotData pdata,
+    PlotRange range,
+    IPlotArea layer,
+      CSPlaneID fillDirection,
+    PointF[] linepts
+    )
+    {
+      Logical3D r0 = layer.GetLogical3D(pdata, range.OriginalFirstPoint);
+      layer.CoordinateSystem.GetIsolineFromPlaneToPoint(gp, fillDirection, r0);
+      gp.AddLines(linepts);
+      Logical3D r1 = layer.GetLogical3D(pdata, range.OriginalLastPoint);
+      layer.CoordinateSystem.GetIsolineFromPointToPlane(gp, r1, fillDirection);
+      layer.CoordinateSystem.GetIsolineOnPlane(gp, fillDirection, r1, r0);
+
+      gp.CloseFigure();
+
+    }
+
+    #endregion
+
+    #region StepHorzCenterConnection
+
     public void StepHorzCenterConnection_PaintOneRange(
       Graphics g,
       Processed2DPlotData pdata,
@@ -1030,42 +1338,23 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         return;
 
       PointF[] linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
-      SizeF layerSize = layer.Size;
-      PointF[] linepts = new PointF[range.Length * 3 - 2];
-      int end = range.UpperBound - 1;
-      int i, j;
-      for (i = 0, j = range.LowerBound; j < end; i += 3, j++)
-      {
-        linepts[i] = linePoints[j];
-        linepts[i + 1].Y = linePoints[j].Y;
-        linepts[i + 1].X = 0.5f * (linePoints[j].X + linePoints[j + 1].X);
-        linepts[i + 2].Y = linePoints[j + 1].Y;
-        linepts[i + 2].X = linepts[i + 1].X;
-      }
-      linepts[i] = linePoints[j];
-      int lastIdx = i;
+      int lastIdx;
+      PointF[] linepts = StepHorzCenterConnection_GetSubPoints(pdata, range, layer, out lastIdx);
 
       GraphicsPath gp = new GraphicsPath();
 
       if (_fillArea)
       {
-        Logical3D r0 = layer.GetLogical3D(pdata, range.OriginalFirstPoint);
-        layer.CoordinateSystem.GetIsolineFromPlaneToPoint(gp, _fillDirection, r0);
-        gp.AddLines(linepts);
-        Logical3D r1 = layer.GetLogical3D(pdata, range.OriginalLastPoint);
-        layer.CoordinateSystem.GetIsolineFromPointToPlane(gp, r1, _fillDirection);
-        layer.CoordinateSystem.GetIsolineOnPlane(gp, _fillDirection, r1, r0);
-
-        gp.CloseFigure();
+        StepHorzCenterConnection_FillOneRange(gp, pdata, range, layer, _fillDirection, linepts);
         g.FillPath(this._fillBrush, gp);
         gp.Reset();
       }
 
       if (this._useLineSymbolGap && symbolGap > 0)
       {
-        end = linepts.Length - 1;
+        int end = linepts.Length - 1;
         float symbolGapSquared = symbolGap * symbolGap;
-        for (j = 0; j < end; j += 3)
+        for (int j = 0; j < end; j += 3)
         {
           float xdiff = linepts[j + 1].X - linepts[j].X;
           if (System.Math.Abs(xdiff) > symbolGap) // then the two horz lines are visible, and full visible vert line
@@ -1096,6 +1385,68 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     } // end function PaintOneRange StepHorzMiddleLineStyle
 
+    PointF[] StepHorzCenterConnection_GetSubPoints(
+Processed2DPlotData pdata,
+PlotRange range,
+IPlotArea layer,
+ out int lastIdx)
+    {
+      PointF[] linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
+      SizeF layerSize = layer.Size;
+      PointF[] linepts = new PointF[range.Length * 3 - 2];
+      int end = range.UpperBound - 1;
+      int i, j;
+      for (i = 0, j = range.LowerBound; j < end; i += 3, j++)
+      {
+        linepts[i] = linePoints[j];
+        linepts[i + 1].Y = linePoints[j].Y;
+        linepts[i + 1].X = 0.5f * (linePoints[j].X + linePoints[j + 1].X);
+        linepts[i + 2].Y = linePoints[j + 1].Y;
+        linepts[i + 2].X = linepts[i + 1].X;
+      }
+      linepts[i] = linePoints[j];
+      lastIdx = i;
+
+      return linepts;
+    }
+
+    public void StepHorzCenterConnection_FillOneRange(GraphicsPath gp,
+    Processed2DPlotData pdata,
+    PlotRange range,
+    IPlotArea layer,
+    CSPlaneID fillDirection
+    )
+    {
+      if (range.Length < 2)
+        return;
+
+      int lastIdx;
+      PointF[] linepts = StepHorzCenterConnection_GetSubPoints(pdata, range, layer, out lastIdx);
+      StepHorzCenterConnection_FillOneRange(gp, pdata, range, layer, fillDirection, linepts);
+    }
+
+
+    void StepHorzCenterConnection_FillOneRange(GraphicsPath gp,
+    Processed2DPlotData pdata,
+    PlotRange range,
+    IPlotArea layer,
+      CSPlaneID fillDirection,
+    PointF[] linepts
+    )
+    {
+      Logical3D r0 = layer.GetLogical3D(pdata, range.OriginalFirstPoint);
+      layer.CoordinateSystem.GetIsolineFromPlaneToPoint(gp, fillDirection, r0);
+      gp.AddLines(linepts);
+      Logical3D r1 = layer.GetLogical3D(pdata, range.OriginalLastPoint);
+      layer.CoordinateSystem.GetIsolineFromPointToPlane(gp, r1, fillDirection);
+      layer.CoordinateSystem.GetIsolineOnPlane(gp, fillDirection, r1, r0);
+
+      gp.CloseFigure();
+    }
+
+    #endregion
+
+    #region Segment2Connection
 
     public void Segment2Connection_PaintOneRange(
       Graphics g,
@@ -1104,29 +1455,16 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       IPlotArea layer,
       float symbolGap)
     {
+      int lastIdx;
+      PointF[] linepts = Segment2Connection_GetSubPoints(pdata, range, layer, out lastIdx);
       PointF[] linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
-      SizeF layerSize = layer.Size;
-      PointF[] linepts = new PointF[range.Length];
-      Array.Copy(linePoints, range.LowerBound, linepts, 0, range.Length); // Extract
-      int lastIdx = range.Length - 1;
+
       GraphicsPath gp = new GraphicsPath();
       int i;
 
       if (_fillArea)
       {
-            int offs = range.LowerBound;
-            for (i = 0; i < lastIdx; i += 2)
-            {
-              Logical3D r0 = layer.GetLogical3D(pdata, i + range.OriginalFirstPoint);
-              layer.CoordinateSystem.GetIsolineFromPlaneToPoint(gp, _fillDirection, r0);
-              gp.AddLine(linepts[i].X, linepts[i].Y, linepts[i+1].X, linepts[i+1].Y);
-              Logical3D r1 = layer.GetLogical3D(pdata, i + 1 + range.OriginalFirstPoint);
-              layer.CoordinateSystem.GetIsolineFromPointToPlane(gp, r1, _fillDirection);
-              layer.CoordinateSystem.GetIsolineOnPlane(gp, _fillDirection, r1, r0);
-              gp.StartFigure();
-            }
-
-        gp.CloseFigure();
+        Segment2Connection_FillOneRange(gp, pdata, range, layer, _fillDirection, linepts,lastIdx);
         g.FillPath(this._fillBrush, gp);
         gp.Reset();
       }
@@ -1172,6 +1510,65 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     } // end function PaintOneRange Segment2LineStyle
 
 
+    PointF[] Segment2Connection_GetSubPoints(
+Processed2DPlotData pdata,
+PlotRange range,
+IPlotArea layer,
+ out int lastIdx)
+    {
+      PointF[] linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
+      SizeF layerSize = layer.Size;
+      PointF[] linepts = new PointF[range.Length];
+      Array.Copy(linePoints, range.LowerBound, linepts, 0, range.Length); // Extract
+      lastIdx = range.Length - 1;
+
+      return linepts;
+    }
+
+    public void Segment2Connection_FillOneRange(GraphicsPath gp,
+    Processed2DPlotData pdata,
+    PlotRange range,
+    IPlotArea layer,
+    CSPlaneID fillDirection
+    )
+    {
+      if (range.Length < 2)
+        return;
+
+      int lastIdx;
+      PointF[] linepts = Segment2Connection_GetSubPoints(pdata, range, layer, out lastIdx);
+      Segment2Connection_FillOneRange(gp, pdata, range, layer, fillDirection, linepts,lastIdx);
+    }
+
+
+    void Segment2Connection_FillOneRange(GraphicsPath gp,
+    Processed2DPlotData pdata,
+    PlotRange range,
+    IPlotArea layer,
+      CSPlaneID fillDirection,
+    PointF[] linepts,
+      int lastIdx
+    )
+    {
+      int offs = range.LowerBound;
+      for (int i = 0; i < lastIdx; i += 2)
+      {
+        Logical3D r0 = layer.GetLogical3D(pdata, i + range.OriginalFirstPoint);
+        layer.CoordinateSystem.GetIsolineFromPlaneToPoint(gp, fillDirection, r0);
+        gp.AddLine(linepts[i].X, linepts[i].Y, linepts[i + 1].X, linepts[i + 1].Y);
+        Logical3D r1 = layer.GetLogical3D(pdata, i + 1 + range.OriginalFirstPoint);
+        layer.CoordinateSystem.GetIsolineFromPointToPlane(gp, r1, fillDirection);
+        layer.CoordinateSystem.GetIsolineOnPlane(gp, fillDirection, r1, r0);
+        gp.StartFigure();
+      }
+
+      gp.CloseFigure();
+    }
+
+    #endregion
+
+    #region Segment3Connection
+
     public void Segment3Connection_PaintOneRange(
       Graphics g,
       Processed2DPlotData pdata,
@@ -1180,30 +1577,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       float symbolGap)
     {
       PointF[] linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
-      SizeF layerSize = layer.Size;
-      PointF[] linepts = new PointF[range.Length];
-      Array.Copy(linePoints, range.LowerBound, linepts, 0, range.Length); // Extract
       int lastIdx;
+      PointF[] linepts = Segment3Connection_GetSubPoints(pdata, range, layer, out lastIdx);
       GraphicsPath gp = new GraphicsPath();
       int i;
 
       if (_fillArea)
       {
-        lastIdx = range.Length - 2;
-        int offs = range.LowerBound;
-            for (i = 0; i < lastIdx; i += 3)
-            {
-              Logical3D r0 = layer.GetLogical3D(pdata, i + range.OriginalFirstPoint);
-              layer.CoordinateSystem.GetIsolineFromPlaneToPoint(gp, _fillDirection, r0);
-              gp.AddLine(linepts[i].X, linepts[i].Y, linepts[i + 1].X, linepts[i + 1].Y);
-              gp.AddLine(linepts[i+1].X, linepts[i+1].Y, linepts[i + 2].X, linepts[i + 2].Y);
-
-              Logical3D r1 = layer.GetLogical3D(pdata, i + 2 + range.OriginalFirstPoint);
-              layer.CoordinateSystem.GetIsolineFromPointToPlane(gp, r1, _fillDirection);
-              layer.CoordinateSystem.GetIsolineOnPlane(gp, _fillDirection, r1, r0);
-              gp.StartFigure();
-            }
-        gp.CloseFigure();
+        Segment3Connection_FillOneRange(gp, pdata, range, layer, _fillDirection, linepts);
         g.FillPath(this._fillBrush, gp);
         gp.Reset();
       }
@@ -1253,9 +1634,69 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         gp.Reset();
       }
     } // end function PaintOneRange Segment3LineStyle
+
+    PointF[] Segment3Connection_GetSubPoints(
+Processed2DPlotData pdata,
+PlotRange range,
+IPlotArea layer,
+out int lastIndex)
+    {
+      PointF[] linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
+      SizeF layerSize = layer.Size;
+      PointF[] linepts = new PointF[range.Length];
+      Array.Copy(linePoints, range.LowerBound, linepts, 0, range.Length); // Extract
+      lastIndex = 0;
+
+      return linepts;
+    }
+
+    public void Segment3Connection_FillOneRange(GraphicsPath gp,
+    Processed2DPlotData pdata,
+    PlotRange range,
+    IPlotArea layer,
+    CSPlaneID fillDirection
+    )
+    {
+      if (range.Length < 2)
+        return;
+
+      int lastIdx;
+      PointF[] linepts = Segment3Connection_GetSubPoints(pdata, range, layer, out lastIdx);
+      Segment3Connection_FillOneRange(gp, pdata, range, layer, fillDirection, linepts);
+    }
+
+
+    void Segment3Connection_FillOneRange(GraphicsPath gp,
+    Processed2DPlotData pdata,
+    PlotRange range,
+    IPlotArea layer,
+      CSPlaneID fillDirection,
+    PointF[] linepts
+    )
+    {
+      int lastIdx = range.Length - 2;
+      int offs = range.LowerBound;
+      for (int i = 0; i < lastIdx; i += 3)
+      {
+        Logical3D r0 = layer.GetLogical3D(pdata, i + range.OriginalFirstPoint);
+        layer.CoordinateSystem.GetIsolineFromPlaneToPoint(gp, fillDirection, r0);
+        gp.AddLine(linepts[i].X, linepts[i].Y, linepts[i + 1].X, linepts[i + 1].Y);
+        gp.AddLine(linepts[i + 1].X, linepts[i + 1].Y, linepts[i + 2].X, linepts[i + 2].Y);
+
+        Logical3D r1 = layer.GetLogical3D(pdata, i + 2 + range.OriginalFirstPoint);
+        layer.CoordinateSystem.GetIsolineFromPointToPlane(gp, r1, fillDirection);
+        layer.CoordinateSystem.GetIsolineOnPlane(gp, fillDirection, r1, r0);
+        gp.StartFigure();
+      }
+      gp.CloseFigure();
+    }
+
+
+    #endregion
+
     #region IChangedEventSource Members
 
-   
+
 
     protected virtual void OnChanged()
     {
@@ -1274,7 +1715,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     #endregion
 
-  
+
     public bool IsColorProvider
     {
       get
@@ -1309,7 +1750,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     {
       _fillBrush.Color = Color.FromArgb(_fillBrush.Color.A, c.R, c.G, c.B);
     }
-  
+
 
     float SymbolSize
     {
@@ -1319,9 +1760,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
-   
 
-  
+
+
 
 
 
@@ -1363,7 +1804,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
-   
+
 
     #endregion
 

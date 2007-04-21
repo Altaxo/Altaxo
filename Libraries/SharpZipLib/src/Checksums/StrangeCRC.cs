@@ -1,5 +1,5 @@
-// StrangeCRC.cs - computes a crc used in the bziplib ... I don't think that
-//                 this is the 'standard' crc, please correct me, if I'm wrong
+// StrangeCRC.cs - computes a crc used in the bziplib
+//
 // Copyright (C) 2001 Mike Krueger
 //
 // This file was translated from java, it was part of the GNU Classpath
@@ -115,7 +115,7 @@ namespace ICSharpCode.SharpZipLib.Checksums
 		int globalCrc;
 
 		/// <summary>
-		/// construct Crc
+		/// Initialise a default instance of <see cref="StrangeCRC"></see>
 		/// </summary>	
 		public StrangeCRC() 
 		{
@@ -123,7 +123,7 @@ namespace ICSharpCode.SharpZipLib.Checksums
 		}
 
 		/// <summary>
-		/// reset state of Crc
+		/// Reset the state of Crc.
 		/// </summary>
 		public void Reset()
 		{
@@ -131,7 +131,7 @@ namespace ICSharpCode.SharpZipLib.Checksums
 		}
 
 		/// <summary>
-		/// current Crc value
+		/// Get the current Crc value.
 		/// </summary>
 		public long Value {
 			get {
@@ -140,44 +140,67 @@ namespace ICSharpCode.SharpZipLib.Checksums
 		}
 		
 		/// <summary>
-		/// update Crc value
+		/// Update the Crc value.
 		/// </summary>
-		/// <param name="inCh">data update is based on</param>
-		public void Update(int inCh)
+		/// <param name="value">data update is based on</param>
+		public void Update(int value)
 		{
-			int temp = (globalCrc >> 24) ^ inCh;
+			int temp = (globalCrc >> 24) ^ value;
 			if (temp < 0) {
 				temp = 256 + temp;
 			}
-			globalCrc = (int)((globalCrc << 8) ^ crc32Table[temp]);
+			globalCrc = unchecked((int)((globalCrc << 8) ^ crc32Table[temp]));
 		}
 
 		/// <summary>
 		/// Update Crc based on a block of data
 		/// </summary>		
-		public void Update(byte[] buf)
+		public void Update(byte[] buffer)
 		{
-			Update(buf, 0, buf.Length);
+			if (buffer == null) {
+				throw new ArgumentNullException("buffer");
+			}
+			
+			Update(buffer, 0, buffer.Length);
 		}
 		
 		/// <summary>
-		/// update Crc based on a portion of a block of data
+		/// Update Crc based on a portion of a block of data
 		/// </summary>
-		/// <param name="buf">block of data</param>
-		/// <param name="off">index of first byte to use</param>
-		/// <param name="len">number of bytes to use</param>
-		public void Update(byte[] buf, int off, int len)
+		/// <param name="buffer">block of data</param>
+		/// <param name="offset">index of first byte to use</param>
+		/// <param name="count">number of bytes to use</param>
+		public void Update(byte[] buffer, int offset, int count)
 		{
-			if (buf == null) {
-				throw new ArgumentNullException("buf");
+			if (buffer == null) {
+				throw new ArgumentNullException("buffer");
 			}
 			
-			if (off < 0 || len < 0 || off + len > buf.Length) {
-				throw new ArgumentOutOfRangeException();
+			if ( offset < 0 )
+			{
+#if COMPACT_FRAMEWORK_V10
+				throw new ArgumentOutOfRangeException("offset");
+#else
+				throw new ArgumentOutOfRangeException("offset", "cannot be less than zero");
+#endif				
+			}
+
+			if ( count < 0 )
+			{
+#if COMPACT_FRAMEWORK_V10
+				throw new ArgumentOutOfRangeException("count");
+#else
+				throw new ArgumentOutOfRangeException("count", "cannot be less than zero");
+#endif
+			}
+
+			if ( offset + count > buffer.Length )
+			{
+				throw new ArgumentOutOfRangeException("count");
 			}
 			
-			for (int i = 0; i < len; ++i) {
-				Update(buf[off++]);
+			for (int i = 0; i < count; ++i) {
+				Update(buffer[offset++]);
 			}
 		}
 	}

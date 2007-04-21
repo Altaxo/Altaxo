@@ -73,7 +73,7 @@ namespace Altaxo.Gui.Graph
     SelectableListNodeList _availableNormalStyles;
     CheckableSelectableListNodeList _currentNormalStyles;
     SelectableListNodeList _availableUpdateModes;
-    Type _currentTransfoStyle;
+    ICoordinateTransformingGroupStyle _currentTransfoStyle;
     int _currentStepItems;
 
     void Initialize(bool initDoc)
@@ -87,13 +87,20 @@ namespace Altaxo.Gui.Graph
 
         Type[] types;
         // Transfo-Styles
-        _currentTransfoStyle = _doc.CoordinateTransformingStyle == null ? null : _doc.CoordinateTransformingStyle.GetType();
+        _currentTransfoStyle = _doc.CoordinateTransformingStyle == null ? null : (ICoordinateTransformingGroupStyle)_doc.CoordinateTransformingStyle.Clone();
         _availableTransfoStyles = new SelectableListNodeList();
         _availableTransfoStyles.Add(new SelectableListNode("None",null,null==_currentTransfoStyle));
          types = ReflectionService.GetNonAbstractSubclassesOf(typeof(ICoordinateTransformingGroupStyle));
         foreach (Type t in types)
         {
-            _availableTransfoStyles.Add(new SelectableListNode(Current.Gui.GetUserFriendlyClassName(t), t, t==_currentTransfoStyle));
+           Type currentStyleType = _currentTransfoStyle == null ? null : _currentTransfoStyle.GetType();
+           ICoordinateTransformingGroupStyle style;
+          if(t==currentStyleType)
+            style = _currentTransfoStyle;
+          else
+            style = (ICoordinateTransformingGroupStyle)Activator.CreateInstance(t);
+            
+          _availableTransfoStyles.Add(new SelectableListNode(Current.Gui.GetUserFriendlyClassName(t), style, t==currentStyleType));
         }
 
         // Normal Styles
@@ -284,15 +291,11 @@ namespace Altaxo.Gui.Graph
       {
         if (node.Selected)
         {
-          _currentTransfoStyle = (Type)node.Item;
+          _currentTransfoStyle = (ICoordinateTransformingGroupStyle)node.Item;
+          _doc.CoordinateTransformingStyle = _currentTransfoStyle;
           break;
         }
       }
-
-      if (null != _currentTransfoStyle)
-        _doc.CoordinateTransformingStyle = (ICoordinateTransformingGroupStyle)Activator.CreateInstance(_currentTransfoStyle);
-      else
-        _doc.CoordinateTransformingStyle = null;
 
       _view.SynchronizeCurrentNormalGroupStyles(); // synchronize the checked state of the items
       foreach (CheckableSelectableListNode node in _currentNormalStyles)
@@ -325,12 +328,30 @@ namespace Altaxo.Gui.Graph
 
     public void EhView_CoordinateTransformingGroupStyleChanged()
     {
-
+      foreach (SelectableListNode node in _availableTransfoStyles)
+      {
+        if (node.Selected)
+        {
+          _currentTransfoStyle = (ICoordinateTransformingGroupStyle)node.Item;
+          break;
+        }
+      }
     }
 
     public void EhView_CoordinateTransformingGroupStyleEdit()
     {
+      // look wheter there is a appropriate edit dialog available for the group style
+      foreach (SelectableListNode node in _availableTransfoStyles)
+      {
+        if (node.Selected)
+        {
+          _currentTransfoStyle = (ICoordinateTransformingGroupStyle)node.Item;
+          break;
+        }
+      }
 
+      if (null != _currentTransfoStyle)
+        Current.Gui.ShowDialog(new object[] { _currentTransfoStyle }, "Edit transformation style");
     }
 
 

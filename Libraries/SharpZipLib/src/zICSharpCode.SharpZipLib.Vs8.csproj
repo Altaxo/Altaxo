@@ -1,7 +1,7 @@
 ﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
-    <ProductVersion>8.0.50215</ProductVersion>
+    <ProductVersion>8.0.50727</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{62C31D94-812C-430E-AB9B-7DCF84D93BAE}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -109,6 +109,14 @@
     <Compile Include="Checksums\StrangeCRC.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Core\FileSystemScanner.cs" />
+    <Compile Include="Core\INameTransform.cs" />
+    <Compile Include="Core\IScanFilter.cs" />
+    <Compile Include="Core\IScanner.cs" />
+    <Compile Include="Core\NameFilter.cs" />
+    <Compile Include="Core\PathFilter.cs" />
+    <Compile Include="Core\StreamUtils.cs" />
+    <Compile Include="Encryption\PkzipClassic.cs" />
     <Compile Include="GZip\GZIPConstants.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -190,21 +198,27 @@
     <Compile Include="Zip\Compression\Streams\StreamManipulator.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Zip\FastZip.cs" />
+    <Compile Include="Zip\IEntryFactory.cs" />
     <Compile Include="Zip\ZipConstants.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Zip\ZipEntry.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Zip\ZipEntryFactory.cs" />
     <Compile Include="Zip\ZipException.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Zip\ZipExtraData.cs" />
     <Compile Include="Zip\ZipFile.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Zip\ZipHelperStream.cs" />
     <Compile Include="Zip\ZipInputStream.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Zip\ZipNameTransform.cs" />
     <Compile Include="Zip\ZipOutputStream.cs">
       <SubType>Code</SubType>
     </Compile>

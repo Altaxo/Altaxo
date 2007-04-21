@@ -1,4 +1,4 @@
-// GzipOutputStream.cs
+// GZipOutputStream.cs
 //
 // Copyright (C) 2001 Mike Krueger
 //
@@ -58,28 +58,33 @@ namespace ICSharpCode.SharpZipLib.GZip
 	/// using System.IO;
 	/// 
 	/// using ICSharpCode.SharpZipLib.GZip;
+	/// using ICSharpCode.SharpZipLib.Core;
 	/// 
 	/// class MainClass
 	/// {
 	/// 	public static void Main(string[] args)
 	/// 	{
-	/// 		Stream s = new GZipOutputStream(File.Create(args[0] + ".gz"));
-	/// 		FileStream fs = File.OpenRead(args[0]);
-	/// 		byte[] writeData = new byte[fs.Length];
-	/// 		fs.Read(writeData, 0, (int)fs.Length);
-	/// 		s.Write(writeData, 0, writeData.Length);
-	/// 		s.Close();
+	/// 			using (Stream s = new GZipOutputStream(File.Create(args[0] + ".gz")))
+	/// 			using (FileStream fs = File.OpenRead(args[0])) {
+	/// 				byte[] writeData = new byte[4096];
+	/// 				Streamutils.Copy(s, fs, writeData);
+	/// 			}
+	/// 		}
 	/// 	}
 	/// }	
 	/// </code>
 	/// </example>
 	public class GZipOutputStream : DeflaterOutputStream
 	{
+		#region Instance Fields
 		/// <summary>
 		/// CRC-32 value for uncompressed data
 		/// </summary>
 		protected Crc32 crc = new Crc32();
-		
+		bool headerWritten_;
+		#endregion
+
+		#region Constructors
 		/// <summary>
 		/// Creates a GzipOutputStream with the default buffer size
 		/// </summary>
@@ -101,57 +106,10 @@ namespace ICSharpCode.SharpZipLib.GZip
 		/// </param>
 		public GZipOutputStream(Stream baseOutputStream, int size) : base(baseOutputStream, new Deflater(Deflater.DEFAULT_COMPRESSION, true), size)
 		{
-			WriteHeader();
 		}
-		
-		void WriteHeader()
-		{
-			int mod_time = (int)(DateTime.Now.Ticks / 10000L);  // Ticks give back 100ns intervals
-			byte[] gzipHeader = {
-				/* The two magic bytes */
-				(byte) (GZipConstants.GZIP_MAGIC >> 8), (byte) GZipConstants.GZIP_MAGIC,
-				
-				/* The compression type */
-				(byte) Deflater.DEFLATED,
-				
-				/* The flags (not set) */
-				0,
-				
-				/* The modification time */
-				(byte) mod_time, (byte) (mod_time >> 8),
-				(byte) (mod_time >> 16), (byte) (mod_time >> 24),
-				
-				/* The extra flags */
-				0,
-				
-				/* The OS type (unknown) */
-				(byte) 255
-			};
-			baseOutputStream.Write(gzipHeader, 0, gzipHeader.Length);
-		}
-
-		/// <summary>
-		/// Write given buffer to output updating crc
-		/// </summary>
-		/// <param name="buf">Buffer to write</param>
-		/// <param name="off">Offset of first byte in buf to write</param>
-		/// <param name="len">Number of bytes to write</param>
-		public override void Write(byte[] buf, int off, int len)
-		{
-			crc.Update(buf, off, len);
-			base.Write(buf, off, len);
-		}
-		
-		/// <summary>
-		/// Writes remaining compressed output data to the output stream
-		/// and closes it.
-		/// </summary>
-		public override void Close()
-		{
-			Finish();
-			baseOutputStream.Close();
-		}
-		
+		#endregion
+	
+		#region Public API
 		/// <summary>
 		/// Sets the active compression level (1-9).  The new level will be activated
 		/// immediately.
@@ -176,11 +134,50 @@ namespace ICSharpCode.SharpZipLib.GZip
 		{
 			return def.GetLevel();
 		}
+		#endregion
+		
+		#region Stream overrides
+		/// <summary>
+		/// Write given buffer to output updating crc
+		/// </summary>
+		/// <param name="buffer">Buffer to write</param>
+		/// <param name="offset">Offset of first byte in buf to write</param>
+		/// <param name="count">Number of bytes to write</param>
+		public override void Write(byte[] buffer, int offset, int count)
+		{
+			if ( ! headerWritten_ ) {
+				WriteHeader();
+			}
+
+			crc.Update(buffer, offset, count);
+			base.Write(buffer, offset, count);
+		}
+		
+		/// <summary>
+		/// Writes remaining compressed output data to the output stream
+		/// and closes it.
+		/// </summary>
+		public override void Close()
+		{
+			Finish();
+			
+			if ( IsStreamOwner ) {
+				baseOutputStream.Close();
+			}
+		}
+		#endregion
+		
+		#region DeflaterOutputStream overrides
 		/// <summary>
 		/// Finish compression and write any footer information required to stream
 		/// </summary>
 		public override void Finish()
 		{
+			// If no data has been written a header should be added.
+			if ( !headerWritten_ ) {
+				WriteHeader();
+			}
+
 			base.Finish();
 			
 			int totalin = def.TotalIn;
@@ -199,5 +196,38 @@ namespace ICSharpCode.SharpZipLib.GZip
 			baseOutputStream.Write(gzipFooter, 0, gzipFooter.Length);
 			//    System.err.println("wrote GZIP trailer (" + gzipFooter.length + " bytes )");
 		}
+		#endregion
+		
+		#region Support Routines
+		void WriteHeader()
+		{
+			if ( !headerWritten_ ) 
+			{
+				headerWritten_ = true;
+				int mod_time = (int)((DateTime.Now.Ticks - new DateTime(1970, 1, 1).Ticks) / 10000000L);  // Ticks give back 100ns intervals
+				byte[] gzipHeader = {
+					// The two magic bytes
+					(byte) (GZipConstants.GZIP_MAGIC >> 8), (byte) (GZipConstants.GZIP_MAGIC & 0xff),
+
+					// The compression type
+					(byte) Deflater.DEFLATED,
+
+					// The flags (not set)
+					0,
+
+					// The modification time
+					(byte) mod_time, (byte) (mod_time >> 8),
+					(byte) (mod_time >> 16), (byte) (mod_time >> 24),
+
+					// The extra flags
+					0,
+
+					// The OS type (unknown)
+					(byte) 255
+				};
+				baseOutputStream.Write(gzipHeader, 0, gzipHeader.Length);
+			}
+		}
+		#endregion
 	}
 }

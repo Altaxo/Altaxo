@@ -124,14 +124,17 @@ namespace Altaxo
 
     public void SaveToZippedFile(ICompressedFileContainerStream zippedStream, Altaxo.Serialization.Xml.XmlStreamSerializationInfo info)
     {
+
       System.Text.StringBuilder errorText = new System.Text.StringBuilder();
+      int compressionLevel = 1;
+     // DateTime time1 = DateTime.UtcNow;
 
       // first, we save all tables into the tables subdirectory
       foreach(Altaxo.Data.DataTable table in this.m_DataSet)
       {
         try
         {
-          zippedStream.StartFile("Tables/"+table.Name+".xml",0);
+          zippedStream.StartFile("Tables/" + table.Name + ".xml", compressionLevel);
           //ZipEntry ZipEntry = new ZipEntry("Tables/"+table.Name+".xml");
           //zippedStream.PutNextEntry(ZipEntry);
           //zippedStream.SetLevel(0);
@@ -150,7 +153,7 @@ namespace Altaxo
       {
         try
         {
-          zippedStream.StartFile("Graphs/"+graph.Name+".xml",0);
+          zippedStream.StartFile("Graphs/" + graph.Name + ".xml", compressionLevel);
           //ZipEntry ZipEntry = new ZipEntry("Graphs/"+graph.Name+".xml");
           //zippedStream.PutNextEntry(ZipEntry);
           //zippedStream.SetLevel(0);
@@ -169,7 +172,7 @@ namespace Altaxo
       {
         try 
         {
-          zippedStream.StartFile("TableLayouts/"+layout.Name+".xml",0);
+          zippedStream.StartFile("TableLayouts/" + layout.Name + ".xml", compressionLevel);
           //ZipEntry ZipEntry = new ZipEntry("TableLayouts/"+layout.Name+".xml");
           //zippedStream.PutNextEntry(ZipEntry);
           //zippedStream.SetLevel(0);
@@ -188,7 +191,7 @@ namespace Altaxo
       {
         try 
         {
-          zippedStream.StartFile("FitFunctionScripts/"+fit.CreationTime.ToString()+".xml",0);
+          zippedStream.StartFile("FitFunctionScripts/" + fit.CreationTime.ToString() + ".xml", compressionLevel);
           //ZipEntry ZipEntry = new ZipEntry("TableLayouts/"+layout.Name+".xml");
           //zippedStream.PutNextEntry(ZipEntry);
           //zippedStream.SetLevel(0);
@@ -202,6 +205,7 @@ namespace Altaxo
         }
       }
 
+    //  Current.Console.WriteLine("Saving took {0} sec.", (DateTime.UtcNow - time1).TotalSeconds);
 
       if(errorText.Length!=0)
         throw new ApplicationException(errorText.ToString());

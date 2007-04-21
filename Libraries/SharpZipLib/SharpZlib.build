@@ -1,13 +1,25 @@
-<?xml version="1.0"?>
+﻿<?xml version="1.0"?>
 
-<project name="#ZLib" default="build" basedir=".">
+<project name="#ZipLib" default="build" basedir=".">
 	<property name="debug" value="False"/>
 	<property name="optimize" value="True"/>
+	<property name="version" value="0.85.1"/>
+	<property name="build.cf" value="COMPACT_FRAMEWORK_V10" />
+	<property name="cf.path" value="C:/Program Files/Microsoft Visual Studio 8/SmartDevices/SDK/CompactFramework/2.0/v1.0/WindowsCE" />
 
-	<target name="build">
-		<!-- compile SharpZipLib -->
-
-		<echo message="Building #ZLib"/>
+<!--    Use this to compile for compact framework V2.0, once you have set up the correct path
+	<property name="build.cf" value="COMPACT_FRAMEWORK_V20" />
+	<property name="cf.path" value="C:/Program Files/Microsoft Visual Studio 8/SmartDevices/SDK/CompactFramework/2.0/v2.0/WindowsCE" />
+-->
+	
+<!--	Use this to compile for compact framework V1.0, once you have set up the correct path
+	<property name="build.cf" value="COMPACT_FRAMEWORK_V10" />
+	<property name="cf.path" value="C:/Program Files/Microsoft Visual Studio .NET 2003/CompactFrameworkSDK/v1.0.5000/Windows CE" />
+-->	
+	
+	<target name="build"
+		description="Build the current source.">
+		<echo message="Building #ZipLib"/>
 		<csc 
 			target="library" 
 			output="bin/ICSharpCode.SharpZipLib.dll" 
@@ -15,20 +27,200 @@
 			debug="${debug}">
 			
 			<sources basedir="src">
-				<includes name="**/*.cs"/>
+				<include name="**/*.cs"/>
 			</sources>
 		</csc>
 		<nant buildfile = "samples/cs/samples.build" />
+		<nant buildfile = "samples/vb/samples.build" />
+	</target>
+
+	<target name="build.cf"
+		description="Build for compact framework. Version defined in build.cf property">
+		<echo message="Building #ZipLib for compact framework"/>
+		<csc 
+			target="library" 
+			output="bin/ICSharpCode.SharpZipLib.dll" 
+			optimize="${optimize}"
+			debug="${debug}"
+			nostdlib="true"
+			noconfig="true"
+			define="${build.cf}"
+		>
+			<sources basedir="src">
+				<include name="**/*.cs"/>
+			</sources>
+			<references>
+				<include name="${cf.path}/mscorlib.dll"/>
+				<include name="${cf.path}/system.dll"/>
+			</references>
+		</csc>
+	</target>
+
+	<target name="preparerelease"
+		description="Prepare for a release.">
+		<script language="C#">
+			<code><![CDATA[
+		static StringCollection SearchDirectory(string directory, string filemask)
+		{
+			StringCollection collection = new StringCollection();
+			SearchDirectory(directory, filemask, collection);
+			return collection;
+		}
+		
+		static void SearchDirectory(string directory, string filemask, StringCollection collection)
+		{
+			try {
+				string[] file = Directory.GetFiles(directory, filemask);
+				foreach (string f in file) {
+					collection.Add(f);
+				}
+				
+				string[] dir = Directory.GetDirectories(directory);
+				foreach (string d in dir) {
+					SearchDirectory(d, filemask, collection);
+				}
+			} catch (Exception) {
+			}
+		}
+		
+		static Regex AssemblyVersion = new Regex("AssemblyVersion\\(.*\\)]");
+		static void SetVersionInfo(string fileName, string version)
+		{
+			StreamReader inFile = null;
+			string       content;
+			
+			try {
+				inFile  = new StreamReader(fileName);
+				content = inFile.ReadToEnd();
+			} catch (Exception e) {
+				Console.WriteLine(e);
+				return;
+			} finally {
+				if (inFile != null) {
+					inFile.Close();
+				}
+			}
+			
+			if (content != null) {
+				string newContent = AssemblyVersion.Replace(content, "AssemblyVersion(\"" + version + "\")]");
+				StreamWriter outFile = null;
+				try {
+					outFile = new StreamWriter(fileName);
+					outFile.Write(newContent);
+				} catch (Exception e) {
+					Console.WriteLine(e);
+					return;
+				} finally {
+					if (outFile != null) {
+						outFile.Close();
+					}
+				}
+			}
+		}
+		
+		static string revisionNumber = "0";
+		static string ReadRevisionFromFile()
+		{
+			try {
+				StreamReader reader = new StreamReader(@"REVISION");
+				using (reader) {
+					return reader.ReadLine();
+				}
+			}
+			catch (Exception e) {
+				Console.WriteLine(e.Message);
+				throw new Exception("Cannot read revision number from file: " + e.Message);
+			}
+		}
+		static void RetrieveRevisionNumber()
+		{
+			try {
+				System.Diagnostics.ProcessStartInfo psi = new System.Diagnostics.ProcessStartInfo("svn", "info");
+				psi.UseShellExecute = false;
+				psi.RedirectStandardOutput = true;
+				
+				try {
+					System.Diagnostics.Process process = System.Diagnostics.Process.Start(psi);
+					process.WaitForExit();
+					string output = process.StandardOutput.ReadToEnd();
+					
+					Regex r = new Regex(@"Revision:\s+(\d+)");
+					Match m = r.Match(output);
+					if (m != null && m.Success && m.Groups[1] != null) {
+						revisionNumber = m.Groups[1].Value;
+						Console.WriteLine("SVN Version '{0}'", revisionNumber);
+					}
+					if ((revisionNumber == null) || revisionNumber.Equals("") || revisionNumber.Equals("0")) {
+						throw new Exception("Could not find revision number in svn output");
+					}
+				} catch (Exception e) {
+					revisionNumber = ReadRevisionFromFile();
+					Console.WriteLine("Exception retrieving SVN revision - {0} using revision {1}", e.Message, revisionNumber);
+				}
+			} catch {
+			}
+		}
+
+		static void SetVersion(string directory, string version)
+		{
+			StringCollection col = SearchDirectory(directory, "AssemblyInfo.cs");
+			string[] dontTouchList = new string[] { 
+				"samples/HttpCompressionModule/src/AssemblyInfo.cs",
+				"samples/DIME/DimeDataSetService/AssemblyInfo.cs",
+				"samples/DIME/DimeDataSetServiceConsumer/AssemblyInfo.cs",
+				};
+			string versionNumber = version + "." + revisionNumber;
+			foreach (string fileName in col) {
+				bool doSetVersion = true;
+				foreach (string dontTouch in dontTouchList) {
+					if (fileName.EndsWith(dontTouch.Replace("/", Path.DirectorySeparatorChar.ToString()))) {
+						doSetVersion = false;
+						break;
+					}
+				}
+				if (doSetVersion) {
+					Console.WriteLine("set revision to file : " + fileName + " to " + versionNumber);
+					SetVersionInfo(fileName, versionNumber);
+				}
+			}
+		}
+		
+		public static void ScriptMain(Project project) 
+		{
+			Console.WriteLine("Hello World");
+			RetrieveRevisionNumber();
+			SetVersion(".", project.Properties["version"].ToString());
+		}
+			]]></code>
+		</script>
 	</target>
 	
-	<target name="clean">
-	        <delete verbose="true" >
+	<target name="releasebuild"
+		description="Prepare and builds a release version">
+		<call target="preparerelease" />
+		<call target="build" />	
+	</target>
+
+	<target name="clean"
+		description="Remove build artefacts">
+			<delete verbose="true" >
 			<fileset basedir=".">
-				<includes name="bin/ICSharpCode.SharpZipLib.dll"/>
-				<includes name="bin/ICSharpCode.SharpZipLib.pdb"/>
+				<include name="bin/ICSharpCode.SharpZipLib.dll"/>
+				<include name="bin/ICSharpCode.SharpZipLib.pdb"/>
 			</fileset>
 		</delete>
 		<nant buildfile = "samples/cs/samples.build" target="clean"/>
 		<nant buildfile = "samples/vb/samples.build" target="clean"/>
+		<nant buildfile = "tests/tests.build" target="clean"/>
+	</target>
+
+	<target name="rebuild"
+		description="Clean and rebuild"
+		depends="clean, build" />
+
+	<target name="test"
+		description="Run unit tests"
+		depends = "build">
+		<nant buildfile="tests/tests.build" target="test"/>
 	</target>
 </project>

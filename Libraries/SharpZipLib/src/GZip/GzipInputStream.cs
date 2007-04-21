@@ -57,31 +57,25 @@ namespace ICSharpCode.SharpZipLib.GZip
 	/// using System;
 	/// using System.IO;
 	/// 
+	/// using ICSharpCode.SharpZipLib.Core;
 	/// using ICSharpCode.SharpZipLib.GZip;
 	/// 
 	/// class MainClass
 	/// {
 	/// 	public static void Main(string[] args)
 	/// 	{
-	/// 		Stream s = new GZipInputStream(File.OpenRead(args[0]));
-	/// 		FileStream fs = File.Create(Path.GetFileNameWithoutExtension(args[0]));
-	/// 		int size = 2048;
-	/// 		byte[] writeData = new byte[2048];
-	/// 		while (true) {
-	/// 			size = s.Read(writeData, 0, size);
-	/// 			if (size > 0) {
-	/// 				fs.Write(writeData, 0, size);
-	/// 			} else {
-	/// 				break;
-	/// 			}
+	///			using (Stream inStream = new GZipInputStream(File.OpenRead(args[0])))
+	///			using (FileStream outStream = File.Create(Path.GetFileNameWithoutExtension(args[0]))) {
+	///				byte[] buffer = new byte[4096];
+	///				StreamUtils.Copy(inStream, outStream, buffer);
 	/// 		}
-	/// 		s.Close();
 	/// 	}
 	/// }	
 	/// </code>
 	/// </example>
-	public class GZipInputStream : InflaterInputStream 
+	public class GZipInputStream : InflaterInputStream
 	{
+		#region Instance Fields
 		/// <summary>
 		/// CRC-32 value for uncompressed data
 		/// </summary>
@@ -94,14 +88,16 @@ namespace ICSharpCode.SharpZipLib.GZip
 		
 		// Have we read the GZIP header yet?
 		bool readGZIPHeader;
-		
+		#endregion
+		#region Constructors
 		/// <summary>
 		/// Creates a GzipInputStream with the default buffer size
 		/// </summary>
 		/// <param name="baseInputStream">
 		/// The stream to read compressed data from (baseInputStream GZIP format)
 		/// </param>
-		public GZipInputStream(Stream baseInputStream) : this(baseInputStream, 4096)
+		public GZipInputStream(Stream baseInputStream)
+			: this(baseInputStream, 4096)
 		{
 		}
 		
@@ -114,32 +110,34 @@ namespace ICSharpCode.SharpZipLib.GZip
 		/// <param name="size">
 		/// Size of the buffer to use
 		/// </param>
-		public GZipInputStream(Stream baseInputStream, int size) : base(baseInputStream, new Inflater(true), size)
+		public GZipInputStream(Stream baseInputStream, int size)
+			: base(baseInputStream, new Inflater(true), size)
 		{
 		}
-		
+		#endregion	
+		#region Stream overrides
 		/// <summary>
 		/// Reads uncompressed data into an array of bytes
 		/// </summary>
-		/// <param name="buf">
+		/// <param name="buffer">
 		/// The buffer to read uncompressed data into
 		/// </param>
 		/// <param name="offset">
 		/// The offset indicating where the data should be placed
 		/// </param>
-		/// <param name="len">
+		/// <param name="count">
 		/// The number of uncompressed bytes to be read
 		/// </param>
-		public override int Read(byte[] buf, int offset, int len) 
+		public override int Read(byte[] buffer, int offset, int count) 
 		{
-			// We first have to slurp baseInputStream the GZIP header, then we feed all the
-			// rest of the data to the superclass.
+			// We first have to read the GZIP header, then we feed all the
+			// rest of the data to the base class.
 			//
 			// As we do that we continually update the CRC32. Once the data is
 			// finished, we check the CRC32
 			//
 			// This means we don't need our own buffer, as everything is done
-			// baseInputStream the superclass.
+			// in baseInputStream the superclass.
 			if (!readGZIPHeader) {
 				ReadHeader();
 			}
@@ -148,22 +146,22 @@ namespace ICSharpCode.SharpZipLib.GZip
 				return 0;
 			}
 			
-			//    System.err.println("GZIPIS.read(byte[], off, len ... " + offset + " and len " + len);
-			//We don't have to read the header, so we just grab data from the superclass
-			int numRead = base.Read(buf, offset, len);
-			if (numRead > 0) {
-				crc.Update(buf, offset, numRead);
+			// We don't have to read the header, so we just grab data from the superclass
+			int bytesRead = base.Read(buffer, offset, count);
+			if (bytesRead > 0) {
+				crc.Update(buffer, offset, bytesRead);
 			}
 			
 			if (inf.IsFinished) {
 				ReadFooter();
 			}
-			return numRead;
+			return bytesRead;
 		}
-		
+		#endregion	
+		#region Support routines
 		void ReadHeader() 
 		{
-			/* 1. Check the two magic bytes */
+			// 1. Check the two magic bytes
 			Crc32 headCRC = new Crc32();
 			int magic = baseInputStream.ReadByte();
 			if (magic < 0) {
@@ -181,14 +179,14 @@ namespace ICSharpCode.SharpZipLib.GZip
 			}
 			headCRC.Update(magic);
 			
-			/* 2. Check the compression type (must be 8) */
+			// 2. Check the compression type (must be 8)
 			int CM = baseInputStream.ReadByte();
 			if (CM != 8) {
 				throw new GZipException("Error baseInputStream GZIP header, data not baseInputStream deflate format");
 			}
 			headCRC.Update(CM);
 			
-			/* 3. Check the flags */
+			// 3. Check the flags
 			int flags = baseInputStream.ReadByte();
 			if (flags < 0) {
 				throw new GZipException("Early EOF baseInputStream GZIP header");
@@ -205,38 +203,38 @@ namespace ICSharpCode.SharpZipLib.GZip
 				bit 5   reserved
 				bit 6   reserved
 				bit 7   reserved
-				*/
+			*/
 				
-			/* 3.1 Check the reserved bits are zero */
+			// 3.1 Check the reserved bits are zero
 			
 			if ((flags & 0xd0) != 0) {
-				throw new GZipException("Reserved flag bits baseInputStream GZIP header != 0");
+				throw new GZipException("Reserved flag bits in GZIP header != 0");
 			}
 			
-			/* 4.-6. Skip the modification time, extra flags, and OS type */
+			// 4.-6. Skip the modification time, extra flags, and OS type
 			for (int i=0; i< 6; i++) {
 				int readByte = baseInputStream.ReadByte();
 				if (readByte < 0) {
-					throw new GZipException("Early EOF baseInputStream GZIP header");
+					throw new GZipException("Early EOF GZIP header");
 				}
 				headCRC.Update(readByte);
 			}
 			
-			/* 7. Read extra field */
+			// 7. Read extra field
 			if ((flags & GZipConstants.FEXTRA) != 0) {
-				/* Skip subfield id */
+				// Skip subfield id
 				for (int i=0; i< 2; i++) {
 					int readByte = baseInputStream.ReadByte();
 					if (readByte < 0) {
-						throw new GZipException("Early EOF baseInputStream GZIP header");
+						throw new GZipException("Early EOF GZIP header");
 					}
 					headCRC.Update(readByte);
 				}
 				if (baseInputStream.ReadByte() < 0 || baseInputStream.ReadByte() < 0) {
-					throw new GZipException("Early EOF baseInputStream GZIP header");
+					throw new GZipException("Early EOF GZIP header");
 				}
 				
-				int len1, len2, extraLen;
+				int len1, len2;
 				len1 = baseInputStream.ReadByte();
 				len2 = baseInputStream.ReadByte();
 				if ((len1 < 0) || (len2 < 0)) {
@@ -245,7 +243,7 @@ namespace ICSharpCode.SharpZipLib.GZip
 				headCRC.Update(len1);
 				headCRC.Update(len2);
 				
-				extraLen = (len1 << 8) | len2;
+				int extraLen = (len1 << 8) | len2;
 				for (int i = 0; i < extraLen;i++) {
 					int readByte = baseInputStream.ReadByte();
 					if (readByte < 0) 
@@ -256,7 +254,7 @@ namespace ICSharpCode.SharpZipLib.GZip
 				}
 			}
 			
-			/* 8. Read file name */
+			// 8. Read file name
 			if ((flags & GZipConstants.FNAME) != 0) {
 				int readByte;
 				while ( (readByte = baseInputStream.ReadByte()) > 0) {
@@ -268,7 +266,7 @@ namespace ICSharpCode.SharpZipLib.GZip
 				headCRC.Update(readByte);
 			}
 			
-			/* 9. Read comment */
+			// 9. Read comment
 			if ((flags & GZipConstants.FCOMMENT) != 0) {
 				int readByte;
 				while ( (readByte = baseInputStream.ReadByte()) > 0) {
@@ -278,10 +276,11 @@ namespace ICSharpCode.SharpZipLib.GZip
 				if (readByte < 0) {
 					throw new GZipException("Early EOF baseInputStream GZIP comment");
 				}
+
 				headCRC.Update(readByte);
 			}
 			
-			/* 10. Read header CRC */
+			// 10. Read header CRC
 			if ((flags & GZipConstants.FHCRC) != 0) {
 				int tempByte;
 				int crcval = baseInputStream.ReadByte();
@@ -301,7 +300,6 @@ namespace ICSharpCode.SharpZipLib.GZip
 			}
 			
 			readGZIPHeader = true;
-			//System.err.println("Read GZIP header");
 		}
 		
 		void ReadFooter() 
@@ -313,17 +311,17 @@ namespace ICSharpCode.SharpZipLib.GZip
 				avail = 8;
 			}
 			
-			System.Array.Copy(buf, len - inf.RemainingInput, footer, 0, avail);
+			System.Array.Copy(inputBuffer.RawData, inputBuffer.RawLength - inf.RemainingInput, footer, 0, avail);
 			int needed = 8 - avail;
 			
 			while (needed > 0) {
-				int count = baseInputStream.Read(footer, 8-needed, needed);
+				int count = baseInputStream.Read(footer, 8 - needed, needed);
 				if (count <= 0) {
 					throw new GZipException("Early EOF baseInputStream GZIP footer");
 				}
-				needed -= count; //Jewel Jan 16
+				needed -= count; // Jewel Jan 16
 			}
-			
+
 			int crcval = (footer[0] & 0xff) | ((footer[1] & 0xff) << 8) | ((footer[2] & 0xff) << 16) | (footer[3] << 24);
 			if (crcval != (int) crc.Value) {
 				throw new GZipException("GZIP crc sum mismatch, theirs \"" + crcval + "\" and ours \"" + (int) crc.Value);
@@ -331,13 +329,13 @@ namespace ICSharpCode.SharpZipLib.GZip
 			
 			int total = (footer[4] & 0xff) | ((footer[5] & 0xff) << 8) | ((footer[6] & 0xff) << 16) | (footer[7] << 24);
 			if (total != inf.TotalOut) {
-				throw new GZipException("Number of bytes mismatch");
+				throw new GZipException("Number of bytes mismatch in footer");
 			}
 			
-			/* XXX Should we support multiple members.
-			* Difficult, since there may be some bytes still baseInputStream buf
-			*/
+			// Should we support multiple gzip members.
+			// Difficult, since there may be some bytes still in baseInputStream dataBuffer
 			eos = true;
 		}
+		#endregion
 	}
 }

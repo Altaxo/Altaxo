@@ -1,0 +1,16 @@
+﻿Microsoft Visual Studio Solution File, Format Version 9.00
+# SharpDevelop 2.0.0.1710
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICSharpCode.SharpZipLib", "ICSharpCode.SharpZipLib.csproj", "{AAEC11D4-AD2E-4487-984A-137DAE3D078E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AAEC11D4-AD2E-4487-984A-137DAE3D078E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AAEC11D4-AD2E-4487-984A-137DAE3D078E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AAEC11D4-AD2E-4487-984A-137DAE3D078E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AAEC11D4-AD2E-4487-984A-137DAE3D078E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+EndGlobal

@@ -267,7 +267,7 @@ namespace Altaxo.Serialization.Ascii
           // if rightDecrement is higher than leftincrement, then the words are rightjustified
           // if not they are leftjustified
 
-          if (rightdecrement > leftincrement && rightdecrement > nThresh)
+          if (rightdecrement >= leftincrement && rightdecrement > nThresh)
           {
             if (true == lastLeftJustified && bounds.Count > 0)
             {
@@ -306,7 +306,7 @@ namespace Altaxo.Serialization.Ascii
           nPos++;
         }
       }
-      return bounds;
+      return bounds.Count>0 ? bounds : null;
     }
 
     /// <summary>

@@ -46,10 +46,55 @@ namespace ICSharpCode.SharpZipLib.BZip2
 	/// </summary>
 	public class BZip2InputStream : Stream
 	{
+		#region Constants
+		const int START_BLOCK_STATE = 1;
+		const int RAND_PART_A_STATE = 2;
+		const int RAND_PART_B_STATE = 3;
+		const int RAND_PART_C_STATE = 4;
+		const int NO_RAND_PART_A_STATE = 5;
+		const int NO_RAND_PART_B_STATE = 6;
+		const int NO_RAND_PART_C_STATE = 7;
+		#endregion
+		#region Constructors
+		/// <summary>
+		/// Construct instance for reading from stream
+		/// </summary>
+		/// <param name="stream">Data source</param>
+		public BZip2InputStream(Stream stream) 
+		{
+			// init arrays
+			for (int i = 0; i < BZip2Constants.N_GROUPS; ++i) 
+			{
+				limit[i] = new int[BZip2Constants.MAX_ALPHA_SIZE];
+				baseArray[i]  = new int[BZip2Constants.MAX_ALPHA_SIZE];
+				perm[i]  = new int[BZip2Constants.MAX_ALPHA_SIZE];
+			}
+			
+			BsSetStream(stream);
+			Initialize();
+			InitBlock();
+			SetupBlock();
+		}
+		
+		#endregion
+
+		/// <summary>
+		/// Get/set flag indicating ownership of underlying stream.
+		/// When the flag is true <see cref="Close"></see> will close the underlying stream also.
+		/// </summary>
+		public bool IsStreamOwner
+		{
+			get { return isStreamOwner; }
+			set { isStreamOwner = value; }
+		}
+		
+
+		#region Stream Overrides
 		/// <summary>
 		/// Gets a value indicating if the stream supports reading
 		/// </summary>
-		public override bool CanRead {
+		public override bool CanRead 
+		{
 			get {
 				return baseStream.CanRead;
 			}
@@ -121,7 +166,7 @@ namespace ICSharpCode.SharpZipLib.BZip2
 		/// This operation is not supported and will throw a NotSupportedExceptionortedException
 		/// </summary>
 		/// <exception cref="NotSupportedException">Any access</exception>
-		public override void SetLength(long val)
+		public override void SetLength(long value)
 		{
 			throw new NotSupportedException("BZip2InputStream SetLength not supported");
 		}
@@ -131,7 +176,7 @@ namespace ICSharpCode.SharpZipLib.BZip2
 		/// This operation is not supported and will throw a NotSupportedException
 		/// </summary>
 		/// <exception cref="NotSupportedException">Any access</exception>
-		public override void Write(byte[] array, int offset, int count)
+		public override void Write(byte[] buffer, int offset, int count)
 		{
 			throw new NotSupportedException("BZip2InputStream Write not supported");
 		}
@@ -140,8 +185,9 @@ namespace ICSharpCode.SharpZipLib.BZip2
 		/// Writes a byte to the current position in the file stream.
 		/// This operation is not supported and will throw a NotSupportedException
 		/// </summary>
+		/// <param name="value">The value to write.</param>
 		/// <exception cref="NotSupportedException">Any access</exception>
-		public override void WriteByte(byte val)
+		public override void WriteByte(byte value)
 		{
 			throw new NotSupportedException("BZip2InputStream WriteByte not supported");
 		}
@@ -149,21 +195,26 @@ namespace ICSharpCode.SharpZipLib.BZip2
 		/// <summary>
 		/// Read a sequence of bytes and advances the read position by one byte.
 		/// </summary>
-		/// <param name="b">Array of bytes to store values in</param>
+		/// <param name="buffer">Array of bytes to store values in</param>
 		/// <param name="offset">Offset in array to begin storing data</param>
 		/// <param name="count">The maximum number of bytes to read</param>
 		/// <returns>The total number of bytes read into the buffer. This might be less
 		/// than the number of bytes requested if that number of bytes are not 
 		/// currently available or zero if the end of the stream is reached.
 		/// </returns>
-		public override int Read(byte[] b, int offset, int count)
+		public override int Read(byte[] buffer, int offset, int count)
 		{
+			if ( buffer == null )
+			{
+				throw new ArgumentNullException("buffer");
+			}
+
 			for (int i = 0; i < count; ++i) {
 				int rb = ReadByte();
 				if (rb == -1) {
 					return i;
 				}
-				b[offset + i] = (byte)rb;
+				buffer[offset + i] = (byte)rb;
 			}
 			return count;
 		}
@@ -173,128 +224,24 @@ namespace ICSharpCode.SharpZipLib.BZip2
 		/// </summary>
 		public override void Close()
 		{
-			if (baseStream != null) {
+			if ( IsStreamOwner && (baseStream != null) ) {
 				baseStream.Close();
 			}
 		}
-		
-		void MakeMaps() 
-		{
-			nInUse = 0;
-			for (int i = 0; i < 256; ++i) {
-				if (inUse[i]) {
-					seqToUnseq[nInUse] = (byte)i;
-					unseqToSeq[i] = (byte)nInUse;
-					nInUse++;
-				}
-			}
-		}
-		
-		/*--
-		index of the last char in the block, so
-		the block size == last + 1.
-		--*/
-		int last;
-		
-		/*--
-		index in zptr[] of original string after sorting.
-		--*/
-		int origPtr;
-		
-		/*--
-		always: in the range 0 .. 9.
-		The current block size is 100000 * this number.
-		--*/
-		int blockSize100k;
-		
-		bool blockRandomised;
-		
-		int bsBuff;
-		int bsLive;
-		IChecksum mCrc = new StrangeCRC();
-		
-		bool[] inUse = new bool[256];
-		int    nInUse;
-		
-		byte[] seqToUnseq = new byte[256];
-		byte[] unseqToSeq = new byte[256];
-		
-		byte[] selector    = new byte[BZip2Constants.MAX_SELECTORS];
-		byte[] selectorMtf = new byte[BZip2Constants.MAX_SELECTORS];
-		
-		int[] tt;
-		byte[] ll8;
-		
-		/*--
-		freq table collected to save a pass over the data
-		during decompression.
-		--*/
-		int[] unzftab = new int[256];
-		
-		int[][] limit     = new int[BZip2Constants.N_GROUPS][];
-		int[][] baseArray = new int[BZip2Constants.N_GROUPS][];
-		int[][] perm      = new int[BZip2Constants.N_GROUPS][];
-		int[] minLens     = new int[BZip2Constants.N_GROUPS];
-		
-		Stream baseStream;
-		bool   streamEnd = false;
-		
-		int currentChar = -1;
-		
-		const int START_BLOCK_STATE = 1;
-		const int RAND_PART_A_STATE = 2;
-		const int RAND_PART_B_STATE = 3;
-		const int RAND_PART_C_STATE = 4;
-		const int NO_RAND_PART_A_STATE = 5;
-		const int NO_RAND_PART_B_STATE = 6;
-		const int NO_RAND_PART_C_STATE = 7;
-		
-		int currentState = START_BLOCK_STATE;
-		
-		int storedBlockCRC, storedCombinedCRC;
-		int computedBlockCRC;
-		uint computedCombinedCRC;
-		
-		int count, chPrev, ch2;
-		int tPos;
-		int rNToGo = 0;
-		int rTPos  = 0;
-		int i2, j2;
-		byte z;
-		
-		/// <summary>
-		/// Construct instance for reading from stream
-		/// </summary>
-		/// <param name="stream">Data source</param>
-		public BZip2InputStream(Stream stream) 
-		{
-			// init arrays
-			for (int i = 0; i < BZip2Constants.N_GROUPS; ++i) {
-				limit[i] = new int[BZip2Constants.MAX_ALPHA_SIZE];
-				baseArray[i]  = new int[BZip2Constants.MAX_ALPHA_SIZE];
-				perm[i]  = new int[BZip2Constants.MAX_ALPHA_SIZE];
-			}
-			
-			ll8 = null;
-			tt  = null;
-			BsSetStream(stream);
-			Initialize();
-			InitBlock();
-			SetupBlock();
-		}
-		
 		/// <summary>
 		/// Read a byte from stream advancing position
 		/// </summary>
 		/// <returns>byte read or -1 on end of stream</returns>
 		public override int ReadByte()
 		{
-			if (streamEnd) {
+			if (streamEnd) 
+			{
 				return -1; // ok
 			}
 			
 			int retChar = currentChar;
-			switch (currentState) {
+			switch (currentState) 
+			{
 				case RAND_PART_B_STATE:
 					SetupRandPartB();
 					break;
@@ -317,6 +264,20 @@ namespace ICSharpCode.SharpZipLib.BZip2
 			return retChar;
 		}
 		
+		#endregion
+
+		void MakeMaps() 
+		{
+			nInUse = 0;
+			for (int i = 0; i < 256; ++i) {
+				if (inUse[i]) {
+					seqToUnseq[nInUse] = (byte)i;
+					unseqToSeq[i] = (byte)nInUse;
+					nInUse++;
+				}
+			}
+		}
+				
 		void Initialize() 
 		{
 			char magic1 = BsGetUChar();
@@ -368,7 +329,7 @@ namespace ICSharpCode.SharpZipLib.BZip2
 		{
 			computedBlockCRC = (int)mCrc.Value;
 			
-			/*-- A bad CRC is considered a fatal error. --*/
+			// -- A bad CRC is considered a fatal error. --
 			if (storedBlockCRC != computedBlockCRC) {
 				CrcError();
 			}
@@ -388,30 +349,9 @@ namespace ICSharpCode.SharpZipLib.BZip2
 			streamEnd = true;
 		}
 		
-		static void CompressedStreamEOF() 
+		void BsSetStream(Stream stream) 
 		{
-			throw new BZip2Exception("BZip2 input stream end of compressed stream");
-		}
-		
-		static void BlockOverrun() 
-		{
-			throw new BZip2Exception("BZip2 input stream block overrun");
-		}
-		
-		static void BadBlockHeader() 
-		{
-			throw new BZip2Exception("BZip2 input stream bad block header");
-		}
-		
-		static void CrcError() 
-		{
-			throw new BZip2Exception("BZip2 input stream crc error");
-		}
-		
-		
-		void BsSetStream(Stream f) 
-		{
-			baseStream = f;
+			baseStream = stream;
 			bsLive = 0;
 			bsBuff = 0;
 		}
@@ -452,8 +392,7 @@ namespace ICSharpCode.SharpZipLib.BZip2
 		
 		int BsGetint() 
 		{
-			int u = 0;
-			u = (u << 8) | BsR(8);
+			int u =        BsR(8);
 			u = (u << 8) | BsR(8);
 			u = (u << 8) | BsR(8);
 			u = (u << 8) | BsR(8);
@@ -462,54 +401,12 @@ namespace ICSharpCode.SharpZipLib.BZip2
 		
 		int BsGetIntVS(int numBits) 
 		{
-			return (int)BsR(numBits);
+			return BsR(numBits);
 		}
 		
 		int BsGetInt32() 
 		{
-			return (int)BsGetint();
-		}
-		
-		void HbCreateDecodeTables(int[] limit, int[] baseArray, int[] perm, char[] length, int minLen, int maxLen, int alphaSize) 
-		{
-			int pp = 0;
-			
-			for (int i = minLen; i <= maxLen; ++i) {
-				for (int j = 0; j < alphaSize; ++j) {
-					if (length[j] == i) {
-						perm[pp] = j;
-						++pp;
-					}
-				}
-			}
-			
-			for (int i = 0; i < BZip2Constants.MAX_CODE_LEN; i++) {
-				baseArray[i] = 0;
-			}
-			
-			for (int i = 0; i < alphaSize; i++) {
-				++baseArray[length[i] + 1];
-			}
-			
-			for (int i = 1; i < BZip2Constants.MAX_CODE_LEN; i++) {
-				baseArray[i] += baseArray[i - 1];
-			}
-			
-			for (int i = 0; i < BZip2Constants.MAX_CODE_LEN; i++) {
-				limit[i] = 0;
-			}
-			
-			int vec = 0;
-			
-			for (int i = minLen; i <= maxLen; i++) {
-				vec += (baseArray[i + 1] - baseArray[i]);
-				limit[i] = vec - 1;
-				vec <<= 1;
-			}
-			
-			for (int i = minLen + 1; i <= maxLen; i++) {
-				baseArray[i] = ((limit[i - 1] + 1) << 1) - baseArray[i];
-			}
+			return BsGetint();
 		}
 		
 		void RecvDecodingTables() 
@@ -521,7 +418,7 @@ namespace ICSharpCode.SharpZipLib.BZip2
 			
 			bool[] inUse16 = new bool[16];
 			
-			/*--- Receive the mapping table ---*/
+			//--- Receive the mapping table ---
 			for (int i = 0; i < 16; i++) {
 				inUse16[i] = (BsR(1) == 1);
 			} 
@@ -541,7 +438,7 @@ namespace ICSharpCode.SharpZipLib.BZip2
 			MakeMaps();
 			int alphaSize = nInUse + 2;
 			
-			/*--- Now the selectors ---*/
+			//--- Now the selectors ---
 			int nGroups    = BsR(3);
 			int nSelectors = BsR(15);
 			
@@ -553,7 +450,7 @@ namespace ICSharpCode.SharpZipLib.BZip2
 				selectorMtf[i] = (byte)j;
 			}
 			
-			/*--- Undo the MTF values for the selectors. ---*/
+			//--- Undo the MTF values for the selectors. ---
 			byte[] pos = new byte[BZip2Constants.N_GROUPS];
 			for (int v = 0; v < nGroups; v++) {
 				pos[v] = (byte)v;
@@ -570,7 +467,7 @@ namespace ICSharpCode.SharpZipLib.BZip2
 				selector[i] = tmp;
 			}
 			
-			/*--- Now the coding tables ---*/
+			//--- Now the coding tables ---
 			for (int t = 0; t < nGroups; t++) {
 				int curr = BsR(5);
 				for (int i = 0; i < alphaSize; i++) {
@@ -585,7 +482,7 @@ namespace ICSharpCode.SharpZipLib.BZip2
 				}
 			}
 			
-			/*--- Create the Huffman decoding tables ---*/
+			//--- Create the Huffman decoding tables ---
 			for (int t = 0; t < nGroups; t++) {
 				int minLen = 32;
 				int maxLen = 0;
@@ -640,7 +537,7 @@ namespace ICSharpCode.SharpZipLib.BZip2
 			
 			while (zvec > limit[zt][zn]) {
 				if (zn > 20) { // the longest code
-					throw new BZip2Exception("Bzip data error");  // -jr- 17-Dec-2003 from bzip 1.02 why 20???
+					throw new BZip2Exception("Bzip data error");
 				}
 				zn++;
 				while (bsLive < 1) {
@@ -651,7 +548,7 @@ namespace ICSharpCode.SharpZipLib.BZip2
 				zvec = (zvec << 1) | zj;
 			}
 			if (zvec - baseArray[zt][zn] < 0 || zvec - baseArray[zt][zn] >= BZip2Constants.MAX_ALPHA_SIZE) {
-				throw new BZip2Exception("Bzip data error");  // -jr- 17-Dec-2003 from bzip 1.02
+				throw new BZip2Exception("Bzip data error");
 			}
 			nextSym = perm[zt][zvec - baseArray[zt][zn]];
 			
@@ -908,7 +805,7 @@ namespace ICSharpCode.SharpZipLib.BZip2
 		
 		void SetDecompressStructureSizes(int newSize100k) 
 		{
-			if (!(0 <= newSize100k   && newSize100k <= 9 && 0 <= blockSize100k && blockSize100k <= 9)) {
+			if (!(0 <= newSize100k && newSize100k <= 9 && 0 <= blockSize100k && blockSize100k <= 9)) {
 				throw new BZip2Exception("Invalid block size");
 			}
 			
@@ -922,9 +819,147 @@ namespace ICSharpCode.SharpZipLib.BZip2
 			ll8 = new byte[n];
 			tt  = new int[n];
 		}
+
+		static void CompressedStreamEOF() 
+		{
+			throw new BZip2Exception("BZip2 input stream end of compressed stream");
+		}
+		
+		static void BlockOverrun() 
+		{
+			throw new BZip2Exception("BZip2 input stream block overrun");
+		}
+		
+		static void BadBlockHeader() 
+		{
+			throw new BZip2Exception("BZip2 input stream bad block header");
+		}
+		
+		static void CrcError() 
+		{
+			throw new BZip2Exception("BZip2 input stream crc error");
+		}
+		
+		static void HbCreateDecodeTables(int[] limit, int[] baseArray, int[] perm, char[] length, int minLen, int maxLen, int alphaSize) 
+		{
+			int pp = 0;
+			
+			for (int i = minLen; i <= maxLen; ++i) 
+			{
+				for (int j = 0; j < alphaSize; ++j) 
+				{
+					if (length[j] == i) 
+					{
+						perm[pp] = j;
+						++pp;
+					}
+				}
+			}
+			
+			for (int i = 0; i < BZip2Constants.MAX_CODE_LEN; i++) 
+			{
+				baseArray[i] = 0;
+			}
+			
+			for (int i = 0; i < alphaSize; i++) 
+			{
+				++baseArray[length[i] + 1];
+			}
+			
+			for (int i = 1; i < BZip2Constants.MAX_CODE_LEN; i++) 
+			{
+				baseArray[i] += baseArray[i - 1];
+			}
+			
+			for (int i = 0; i < BZip2Constants.MAX_CODE_LEN; i++) 
+			{
+				limit[i] = 0;
+			}
+			
+			int vec = 0;
+			
+			for (int i = minLen; i <= maxLen; i++) 
+			{
+				vec += (baseArray[i + 1] - baseArray[i]);
+				limit[i] = vec - 1;
+				vec <<= 1;
+			}
+			
+			for (int i = minLen + 1; i <= maxLen; i++) 
+			{
+				baseArray[i] = ((limit[i - 1] + 1) << 1) - baseArray[i];
+			}
+		}
+		
+		#region Instance Fields
+		/*--
+		index of the last char in the block, so
+		the block size == last + 1.
+		--*/
+		int last;
+		
+		/*--
+		index in zptr[] of original string after sorting.
+		--*/
+		int origPtr;
+		
+		/*--
+		always: in the range 0 .. 9.
+		The current block size is 100000 * this number.
+		--*/
+		int blockSize100k;
+		
+		bool blockRandomised;
+		
+		int bsBuff;
+		int bsLive;
+		IChecksum mCrc = new StrangeCRC();
+		
+		bool[] inUse = new bool[256];
+		int    nInUse;
+		
+		byte[] seqToUnseq = new byte[256];
+		byte[] unseqToSeq = new byte[256];
+		
+		byte[] selector    = new byte[BZip2Constants.MAX_SELECTORS];
+		byte[] selectorMtf = new byte[BZip2Constants.MAX_SELECTORS];
+		
+		int[] tt;
+		byte[] ll8;
+		
+		/*--
+		freq table collected to save a pass over the data
+		during decompression.
+		--*/
+		int[] unzftab = new int[256];
+		
+		int[][] limit     = new int[BZip2Constants.N_GROUPS][];
+		int[][] baseArray = new int[BZip2Constants.N_GROUPS][];
+		int[][] perm      = new int[BZip2Constants.N_GROUPS][];
+		int[] minLens     = new int[BZip2Constants.N_GROUPS];
+		
+		Stream baseStream;
+		bool   streamEnd;
+		
+		int currentChar = -1;
+	
+		int currentState = START_BLOCK_STATE;
+		
+		int storedBlockCRC, storedCombinedCRC;
+		int computedBlockCRC;
+		uint computedCombinedCRC;
+		
+		int count, chPrev, ch2;
+		int tPos;
+		int rNToGo;
+		int rTPos;
+		int i2, j2;
+		byte z;
+		bool isStreamOwner = true;
+		#endregion
 	}
 }
-/* This file was derived from a file containing under this license:
+/* This file was derived from a file containing this license:
  * 
  * This file is a part of bzip2 and/or libbzip2, a program and
  * library for lossless, block-sorting data compression.
