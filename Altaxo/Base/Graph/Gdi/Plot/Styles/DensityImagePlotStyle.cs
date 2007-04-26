@@ -417,89 +417,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       // there is a need for rebuilding the bitmap only if the data are invalid for some reason
       if(!m_bCachedDataValid)
       {
-        System.Diagnostics.Trace.WriteLine("DensityImagePlotStyle.Paint, calculate image data...");
-
-        // look if the image has the right dimensions
-        if(null==m_Image || m_Image.Width != cols || m_Image.Height != rows)
-        {
-          if(null!=m_Image)
-            m_Image.Dispose();
-
-          // please notice: the horizontal direction of the image is related to the row index!!! (this will turn the image in relation to the table)
-          // and the vertical direction of the image is related to the column index
-          m_Image = new System.Drawing.Bitmap(rows,cols,System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-        }
-
-        // now we can fill the image with our data
-
-        NumericalBoundaries pb = m_ScalingStyle==ScalingStyle.Logarithmic ? (NumericalBoundaries)new PositiveFiniteNumericalBoundaries() :  (NumericalBoundaries)new FiniteNumericalBoundaries();
-        myPlotAssociation.SetVBoundsFromTemplate(pb); // ensure that the right v-boundary type is set
-        myPlotAssociation.MergeVBoundsInto(pb);
-
-        double vmin = double.IsNaN(this.m_RangeFrom) ? pb.LowerBound : Math.Max(pb.LowerBound,this.m_RangeFrom);
-        double vmax = double.IsNaN(this.m_RangeTo) ? pb.UpperBound : Math.Min(pb.UpperBound, this.m_RangeTo);
-        double lowerBound = vmin;
-        double upperBound = vmax;
-
-        if(this.m_ScalingStyle == ScalingStyle.Logarithmic)
-        {
-          // Ensure that min and max >0
-          vmin = lowerBound = Math.Max(lowerBound,double.Epsilon);
-          vmax = upperBound = Math.Max(lowerBound,upperBound); // lowerBound is ok, to ensure that upperBound>=lowerBound
-          
-          vmin = Math.Log(vmin);
-          vmax = vmax>0 ? Math.Log(vmax) : vmin;
-        }
-
-        // double vmid = (vmin+vmax)*0.5;
-        double vscal = vmax<=vmin ? 1 : 255.0/(vmax - vmin);
-
-        int r,g,b;
-
-        for(int i=0;i<cols;i++)
-        {
-          Altaxo.Data.INumericColumn col = myPlotAssociation.DataColumns[i] as Altaxo.Data.INumericColumn;
-          if(null==col)
-            continue;
-
-          for(int j=0;j<rows;j++)
-          {
-            double val = col[j];
-            if(double.IsNaN(val))
-            {
-              m_Image.SetPixel(j,cols-i-1,m_ColorInvalid); // invalid pixels are transparent
-            }
-            else if(val<lowerBound)
-            {
-              m_Image.SetPixel(j,cols-i-1,m_ColorBelow); // below the lower bound
-            }
-            else if(val>upperBound)
-            {
-              m_Image.SetPixel(j,cols-i-1,m_ColorAbove); // above the upper bound
-            }
-            else // a valid value
-            {
-              double relval;
-              // calculate a relative value between 0 and 255 from the borders and the scaling style
-              if(this.m_ScalingStyle == ScalingStyle.Logarithmic)
-              {
-                relval = (Math.Log(val) - vmin ) * vscal;
-              }
-              else // ScalingStyle is linear
-              {
-                relval = (val - vmin) * vscal;
-              }
-
-
-              r =((int)(Math.Abs(relval)))%256;
-              g=((int)(Math.Abs(relval+relval)))%256;
-              b=((int)(Math.Abs(255-relval)))%256;
-              m_Image.SetPixel(j,cols-i-1,System.Drawing.Color.FromArgb(r,g,b));
-            }
-          } // for all pixel of a column
-        } // for all columns
-
-
+        BuildImage(myPlotAssociation,cols,rows);
         m_bCachedDataValid = true; // now the bitmap is valid
       }
 
@@ -526,6 +444,90 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+    void BuildImage(XYZMeshedColumnPlotData myPlotAssociation, int cols, int rows)
+    {
+      // look if the image has the right dimensions
+      if (null == m_Image || m_Image.Width != cols || m_Image.Height != rows)
+      {
+        if (null != m_Image)
+          m_Image.Dispose();
+
+        // please notice: the horizontal direction of the image is related to the row index!!! (this will turn the image in relation to the table)
+        // and the vertical direction of the image is related to the column index
+        m_Image = new System.Drawing.Bitmap(rows, cols, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+      }
+
+      // now we can fill the image with our data
+
+      NumericalBoundaries pb = m_ScalingStyle == ScalingStyle.Logarithmic ? (NumericalBoundaries)new PositiveFiniteNumericalBoundaries() : (NumericalBoundaries)new FiniteNumericalBoundaries();
+      myPlotAssociation.SetVBoundsFromTemplate(pb); // ensure that the right v-boundary type is set
+      myPlotAssociation.MergeVBoundsInto(pb);
+
+      double vmin = double.IsNaN(this.m_RangeFrom) ? pb.LowerBound : Math.Max(pb.LowerBound, this.m_RangeFrom);
+      double vmax = double.IsNaN(this.m_RangeTo) ? pb.UpperBound : Math.Min(pb.UpperBound, this.m_RangeTo);
+      double lowerBound = vmin;
+      double upperBound = vmax;
+
+      if (this.m_ScalingStyle == ScalingStyle.Logarithmic)
+      {
+        // Ensure that min and max >0
+        vmin = lowerBound = Math.Max(lowerBound, double.Epsilon);
+        vmax = upperBound = Math.Max(lowerBound, upperBound); // lowerBound is ok, to ensure that upperBound>=lowerBound
+
+        vmin = Math.Log(vmin);
+        vmax = vmax > 0 ? Math.Log(vmax) : vmin;
+      }
+
+      // double vmid = (vmin+vmax)*0.5;
+      double vscal = vmax <= vmin ? 1 : 255.0 / (vmax - vmin);
+
+      int r, g, b;
+
+      for (int i = 0; i < cols; i++)
+      {
+        Altaxo.Data.INumericColumn col = myPlotAssociation.GetDataColumn(i) as Altaxo.Data.INumericColumn;
+        if (null == col)
+          continue;
+
+        for (int j = 0; j < rows; j++)
+        {
+          double val = col[j];
+          if (double.IsNaN(val))
+          {
+            m_Image.SetPixel(j, cols - i - 1, m_ColorInvalid); // invalid pixels are transparent
+          }
+          else if (val < lowerBound)
+          {
+            m_Image.SetPixel(j, cols - i - 1, m_ColorBelow); // below the lower bound
+          }
+          else if (val > upperBound)
+          {
+            m_Image.SetPixel(j, cols - i - 1, m_ColorAbove); // above the upper bound
+          }
+          else // a valid value
+          {
+            double relval;
+            // calculate a relative value between 0 and 255 from the borders and the scaling style
+            if (this.m_ScalingStyle == ScalingStyle.Logarithmic)
+            {
+              relval = (Math.Log(val) - vmin) * vscal;
+            }
+            else // ScalingStyle is linear
+            {
+              relval = (val - vmin) * vscal;
+            }
+
+
+            r = ((int)(Math.Abs(relval))) % 256;
+            g = ((int)(Math.Abs(relval + relval))) % 256;
+            b = ((int)(Math.Abs(255 - relval))) % 256;
+            m_Image.SetPixel(j, cols - i - 1, System.Drawing.Color.FromArgb(r, g, b));
+          }
+        } // for all pixel of a column
+      } // for all columns
+
+
+    }
     
     #region IChangedEventSource Members
 
