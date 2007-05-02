@@ -347,12 +347,12 @@ namespace Altaxo.Graph.Plot.Data
     {
     }
 
-    public XYZMeshedColumnPlotData(Altaxo.Data.DataColumnCollection coll, IAscendingIntegerCollection selected)
+    public XYZMeshedColumnPlotData(Altaxo.Data.INumericColumn xCol, Altaxo.Data.INumericColumn yCol, Altaxo.Data.DataColumnCollection coll, IAscendingIntegerCollection selected)
     {
-      _xColumn = new ReadableColumnProxy(new Altaxo.Data.IndexerColumn());
+      _xColumn = new ReadableColumnProxy(xCol);
       _xColumn.Changed += new EventHandler(EhColumnDataChangedEventHandler);
 
-      _yColumn = new ReadableColumnProxy(new Altaxo.Data.IndexerColumn());
+      _yColumn = new ReadableColumnProxy(yCol);
       _yColumn.Changed += new EventHandler(EhColumnDataChangedEventHandler);
 
       int len = selected == null ? coll.ColumnCount : selected.Count;

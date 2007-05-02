@@ -21,10 +21,14 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using Altaxo.Serialization;
 using Altaxo.Graph.Scales.Boundaries;
+using Altaxo.Data;
+using Altaxo.Calc.Interpolation;
+using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
@@ -52,31 +56,45 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <summary>
     /// The image which is shown during paint.
     /// </summary>
-    System.Drawing.Bitmap m_Image;
+    System.Drawing.Bitmap _cachedImage;
 
+    enum CachedImageType { LinearEquidistant, Linear, Other };
     
     /// <summary>
     /// Indicates that the cached data (i.e. the image in this case) is valid and up to date.
     /// </summary>
-    bool m_bCachedDataValid=false;
+    bool _isCachedDataValid=false;
 
     /// <summary>The lower bound of the plot range</summary>
-    double m_RangeFrom = double.NaN; 
+    double _vRangeFrom = double.NaN; 
 
     /// <summary>The upper bound of the plot range</summary>
-    double m_RangeTo = double.NaN;
+    double _vRangeTo = double.NaN;
 
     /// <summary>If true, the image is clipped to the layer boundaries.</summary>
-    bool   m_ClipToLayer = true;
+    bool   _clipToLayer = true;
 
     /// <summary>The color used if the values are below the lower bound.</summary>
-    System.Drawing.Color m_ColorBelow = System.Drawing.Color.Black;
+    System.Drawing.Color _colorBelow = System.Drawing.Color.Black;
 
     /// <summary>The color used if the values are above the upper bound.</summary>
-    System.Drawing.Color m_ColorAbove = System.Drawing.Color.Snow;
+    System.Drawing.Color _colorAbove = System.Drawing.Color.Snow;
 
     /// <summary>The color used for invalid values (missing values).</summary>
-    System.Drawing.Color m_ColorInvalid = System.Drawing.Color.Transparent;
+    System.Drawing.Color _colorInvalid = System.Drawing.Color.Transparent;
+
+    double _vmin, _vscal, _vLowerBound, _vUpperBound;
+
+    CachedImageType _imageType;
+    /// <summary>
+    /// Cached coordinates of the image.
+    /// </summary>
+    float _imageTop, _imageLeft, _imageWidth, _imageHeight;
+
+    /// <summary>
+    /// Stores the conditions under which the image is valid. Depends on the type of image.
+    /// </summary>
+    object _imageConditionMemento;
 
     /// <summary>
     /// The kind of scaling of the values between from and to.
@@ -91,10 +109,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     };
 
     /// <summary>The style for scaling of the values between from and to.</summary>
-    ScalingStyle m_ScalingStyle = ScalingStyle.Linear;
+    ScalingStyle _scalingStyle = ScalingStyle.Linear;
 
     [NonSerialized]
-    protected object m_Parent;
+    protected object _parent;
 
     [field: NonSerialized]
     public event System.EventHandler Changed;
@@ -164,26 +182,26 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       {
         DensityImagePlotStyle s = (DensityImagePlotStyle)obj;
         
-        info.AddEnum("ScalingStyle",s.m_ScalingStyle);
-        info.AddValue("RangeFrom",s.m_RangeFrom);
-        info.AddValue("RangeTo",s.m_RangeTo);
-        info.AddValue("ClipToLayer",s.m_ClipToLayer);
-        info.AddValue("ColorBelow",s.m_ColorBelow);
-        info.AddValue("ColorAbove",s.m_ColorAbove);
-        info.AddValue("ColorInvalid",s.m_ColorInvalid);
+        info.AddEnum("ScalingStyle",s._scalingStyle);
+        info.AddValue("RangeFrom",s._vRangeFrom);
+        info.AddValue("RangeTo",s._vRangeTo);
+        info.AddValue("ClipToLayer",s._clipToLayer);
+        info.AddValue("ColorBelow",s._colorBelow);
+        info.AddValue("ColorAbove",s._colorAbove);
+        info.AddValue("ColorInvalid",s._colorInvalid);
       }
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
         
         DensityImagePlotStyle s = null!=o ? (DensityImagePlotStyle)o : new DensityImagePlotStyle();
         
-        s.m_ScalingStyle = (DensityImagePlotStyle.ScalingStyle)info.GetEnum("ScalingStyle",s.m_ScalingStyle.GetType());
-        s.m_RangeFrom    = info.GetDouble("RangeFrom");
-        s.m_RangeTo      = info.GetDouble("RangeTo");
-        s.m_ClipToLayer  = info.GetBoolean("ClipToLayer");
-        s.m_ColorBelow   = (System.Drawing.Color)info.GetValue("ColorBelow",parent);
-        s.m_ColorAbove   = (System.Drawing.Color)info.GetValue("ColorAbove",parent);
-        s.m_ColorInvalid = (System.Drawing.Color)info.GetValue("ColorInvalid",parent);
+        s._scalingStyle = (DensityImagePlotStyle.ScalingStyle)info.GetEnum("ScalingStyle",s._scalingStyle.GetType());
+        s._vRangeFrom    = info.GetDouble("RangeFrom");
+        s._vRangeTo      = info.GetDouble("RangeTo");
+        s._clipToLayer  = info.GetBoolean("ClipToLayer");
+        s._colorBelow   = (System.Drawing.Color)info.GetValue("ColorBelow",parent);
+        s._colorAbove   = (System.Drawing.Color)info.GetValue("ColorAbove",parent);
+        s._colorInvalid = (System.Drawing.Color)info.GetValue("ColorInvalid",parent);
 
         return s;
       }
@@ -205,8 +223,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// </summary>
     protected void InitializeMembers()
     {
-      m_Image = null;
-      m_bCachedDataValid = false;
+      _cachedImage = null;
+      _isCachedDataValid = false;
     }
 
     /// <summary>
@@ -225,17 +243,17 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     {
       InitializeMembers();
 
-      this.m_ClipToLayer = from.m_ClipToLayer;
-      this.m_RangeFrom = from.m_RangeFrom;
-      this.m_RangeTo   = from.m_RangeTo;
-      this.m_ColorAbove = from.m_ColorAbove;
-      this.m_ColorBelow = from.m_ColorBelow;
-      this.m_ColorInvalid = from.m_ColorInvalid;
-      this.m_ScalingStyle = from.m_ScalingStyle;
+      this._clipToLayer = from._clipToLayer;
+      this._vRangeFrom = from._vRangeFrom;
+      this._vRangeTo   = from._vRangeTo;
+      this._colorAbove = from._colorAbove;
+      this._colorBelow = from._colorBelow;
+      this._colorInvalid = from._colorInvalid;
+      this._scalingStyle = from._scalingStyle;
 
-      this.m_Parent = from.m_Parent;
+      this._parent = from._parent;
 
-      this.m_bCachedDataValid = false;
+      this._isCachedDataValid = false;
     }
 
 
@@ -247,15 +265,15 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     public ScalingStyle Scaling
     {
-      get { return m_ScalingStyle; }
+      get { return _scalingStyle; }
       set
       {
-        ScalingStyle oldValue = m_ScalingStyle;
+        ScalingStyle oldValue = _scalingStyle;
         
-        m_ScalingStyle = value;
-        if(m_ScalingStyle != oldValue)
+        _scalingStyle = value;
+        if(_scalingStyle != oldValue)
         {
-          m_bCachedDataValid = false;
+          _isCachedDataValid = false;
           OnChanged();
         }
       }
@@ -264,13 +282,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     public bool ClipToLayer
     {
-      get { return m_ClipToLayer; }
+      get { return _clipToLayer; }
       set
       {
-        bool oldValue = m_ClipToLayer;
-        m_ClipToLayer = value;
+        bool oldValue = _clipToLayer;
+        _clipToLayer = value;
 
-        if(m_ClipToLayer != oldValue)
+        if(_clipToLayer != oldValue)
         {
           OnChanged();
         }
@@ -289,15 +307,15 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     public double RangeFrom
     {
-      get { return m_RangeFrom; }
+      get { return _vRangeFrom; }
       set
       {
-        double oldValue = m_RangeFrom;
-        m_RangeFrom = value;
+        double oldValue = _vRangeFrom;
+        _vRangeFrom = value;
 
-        if(!NaNEqual(m_RangeFrom,oldValue))
+        if(!NaNEqual(_vRangeFrom,oldValue))
         {
-          m_bCachedDataValid = false;
+          _isCachedDataValid = false;
           OnChanged();
         }
       }
@@ -305,14 +323,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     public double RangeTo
     {
-      get { return m_RangeTo; }
+      get { return _vRangeTo; }
       set
       {
-        double oldValue = m_RangeTo;
-        m_RangeTo = value;
-        if(!NaNEqual(m_RangeTo,oldValue))
+        double oldValue = _vRangeTo;
+        _vRangeTo = value;
+        if(!NaNEqual(_vRangeTo,oldValue))
         {
-          m_bCachedDataValid = false;
+          _isCachedDataValid = false;
           OnChanged();
         }
       }
@@ -321,15 +339,15 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     public System.Drawing.Color ColorBelow
     {
-      get { return m_ColorBelow; }
+      get { return _colorBelow; }
       set
       {
-        Color oldValue = m_ColorBelow;
-        m_ColorBelow = value;
+        Color oldValue = _colorBelow;
+        _colorBelow = value;
 
-        if(m_ColorBelow != oldValue)
+        if(_colorBelow != oldValue)
         {
-          m_bCachedDataValid = false;
+          _isCachedDataValid = false;
           OnChanged();
         }
 
@@ -338,15 +356,15 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     public System.Drawing.Color ColorAbove
     {
-      get { return m_ColorAbove; }
+      get { return _colorAbove; }
       set
       {
-        Color oldValue = m_ColorAbove;
+        Color oldValue = _colorAbove;
   
-        m_ColorAbove = value;
-        if(m_ColorAbove != oldValue)
+        _colorAbove = value;
+        if(_colorAbove != oldValue)
         {
-          m_bCachedDataValid = false;
+          _isCachedDataValid = false;
           OnChanged();
         }
 
@@ -355,14 +373,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     public System.Drawing.Color ColorInvalid
     {
-      get { return m_ColorInvalid; }
+      get { return _colorInvalid; }
       set
       {
-        Color oldValue = m_ColorInvalid;
-        m_ColorInvalid = value;
-        if(m_ColorInvalid != oldValue)
+        Color oldValue = _colorInvalid;
+        _colorInvalid = value;
+        if(_colorInvalid != oldValue)
         {
-          m_bCachedDataValid = false;
+          _isCachedDataValid = false;
           OnChanged();
         }
 
@@ -376,7 +394,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <param name="sender">The sender of the message.</param>
     public void EhDataChanged(object sender)
     {
-      m_bCachedDataValid = false;
+      _isCachedDataValid = false;
       OnChanged();
     }
   
@@ -390,7 +408,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <param name="plotObject">The data to plot.</param>
     public void Paint(Graphics gfrx, IPlotArea gl, object plotObject) // plots the curve with the choosen style
     {
-      if(!(plotObject is XYZMeshedColumnPlotData))
+      if (!(plotObject is XYZMeshedColumnPlotData))
         return; // we cannot plot any other than a TwoDimMeshDataAssociation now
 
       XYZMeshedColumnPlotData myPlotAssociation = (XYZMeshedColumnPlotData)plotObject;
@@ -398,7 +416,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       Altaxo.Data.INumericColumn xColumn = myPlotAssociation.XColumn as Altaxo.Data.INumericColumn;
       Altaxo.Data.INumericColumn yColumn = myPlotAssociation.YColumn as Altaxo.Data.INumericColumn;
 
-      if(null==xColumn || null==yColumn)
+      if (null == xColumn || null == yColumn)
         return; // this plotitem is only for x and y double columns
 
 
@@ -410,79 +428,490 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       int rows = myPlotAssociation.RowCount;
 
 
-      if(cols<=0 || rows<=0)
+      if (cols <= 0 || rows <= 0)
         return; // we cannot show a picture if one length is zero
 
 
       // there is a need for rebuilding the bitmap only if the data are invalid for some reason
-      if(!m_bCachedDataValid)
+      // if the cached image is valid, then test if the conditions hold any longer
+      if (_isCachedDataValid)
       {
-        BuildImage(myPlotAssociation,cols,rows);
-        m_bCachedDataValid = true; // now the bitmap is valid
+        switch (_imageType)
+        {
+          case CachedImageType.LinearEquidistant:
+            {
+              ImageTypeEquiLinearMemento memento = new ImageTypeEquiLinearMemento(gl);
+              if (!memento.Equals(_imageConditionMemento))
+                _isCachedDataValid = false;
+              
+            }
+            break;
+          case CachedImageType.Other:
+            {
+              ImageTypeOtherMemento memento = new ImageTypeOtherMemento(gl);
+              if (!memento.Equals(_imageConditionMemento))
+                _isCachedDataValid = false;
+            }
+            break;
+        }
+      }
+    
+
+      // now build the image 
+      // note that the image type can change during the call of BuildImage
+      if (!_isCachedDataValid)
+      {
+        BuildImage(gfrx, gl, myPlotAssociation, cols, rows);
+        _isCachedDataValid = true; // now the bitmap is valid
+        switch (_imageType)
+        {
+          case CachedImageType.LinearEquidistant:
+            _imageConditionMemento = new ImageTypeEquiLinearMemento(gl);
+            break;
+          case CachedImageType.Other:
+            _imageConditionMemento = new ImageTypeOtherMemento(gl);
+            break;
+        }
       }
 
-
-      double x_rel_left = gl.XAxis.PhysicalVariantToNormal(xColumn[0]);
-      double x_rel_right = gl.XAxis.PhysicalVariantToNormal(xColumn[rows-1]);
-
-      double y_rel_bottom = gl.YAxis.PhysicalVariantToNormal(yColumn[0]);
-      double y_rel_top = gl.YAxis.PhysicalVariantToNormal(yColumn[cols-1]);
-
-      double xleft, xright, ytop, ybottom;
-      if (gl.CoordinateSystem.LogicalToLayerCoordinates(new Logical3D(x_rel_left, y_rel_top), out xleft, out ytop) &&
-        gl.CoordinateSystem.LogicalToLayerCoordinates(new Logical3D(x_rel_right, y_rel_bottom), out xright, out ybottom))
+      // and now draw the image 
+      switch (_imageType)
       {
+        case CachedImageType.LinearEquidistant:
+          {
+           
 
-        GraphicsState savedGraphicsState = gfrx.Save();
+            double x_rel_left = gl.XAxis.PhysicalVariantToNormal(xColumn[0]);
+            double x_rel_right = gl.XAxis.PhysicalVariantToNormal(xColumn[rows - 1]);
 
-        if(this.m_ClipToLayer)
-          gfrx.Clip = gl.CoordinateSystem.GetRegion();
+            double y_rel_bottom = gl.YAxis.PhysicalVariantToNormal(yColumn[0]);
+            double y_rel_top = gl.YAxis.PhysicalVariantToNormal(yColumn[cols - 1]);
 
-        gfrx.DrawImage(m_Image,(float)xleft,(float)ytop,(float)(xright-xleft),(float)(ybottom-ytop));
-      
-        gfrx.Restore(savedGraphicsState);
+            double x0, y0, x1, y1, x2, y2;
+            if (gl.CoordinateSystem.LogicalToLayerCoordinates(new Logical3D(x_rel_left, y_rel_top), out x0, out y0) &&
+              gl.CoordinateSystem.LogicalToLayerCoordinates(new Logical3D(x_rel_left, y_rel_bottom), out x1, out y1) &&
+              gl.CoordinateSystem.LogicalToLayerCoordinates(new Logical3D(x_rel_right, y_rel_bottom), out x2, out y2)
+              )
+            {
+              // calculate the parameters of the transformation matrix
+              double r0, s0, r1, s1, r2, s2;
+              r0 = 0.5;
+              s0 = 0.5;
+              r1 = 0.5;
+              s1 = _cachedImage.Height - 0.5;
+              r2 = _cachedImage.Width - 0.5;
+              s2 = _cachedImage.Height - 0.5;
+
+              double det = r2 * (s0 - s1) + r0 * (s1 - s2) + r1 * (-s0 + s2);
+              double a = (s2 * (-x0 + x1) + s1 * (x0 - x2) + s0 * (-x1 + x2)) / det;
+              double b = (s2 * (-y0 + y1) + s1 * (y0 - y2) + s0 * (-y1 + y2)) / det;
+              double c = (r2 * (x0 - x1) + r0 * (x1 - x2) + r1 * (-x0 + x2)) / det;
+              double d = (r2 * (y0 - y1) + r0 * (y1 - y2) + r1 * (-y0 + y2)) / det;
+              double e = (-(r2 * s1 * x0) + r1 * s2 * x0 + r2 * s0 * x1 - r0 * s2 * x1 - r1 * s0 * x2 + r0 * s1 * x2) / det;
+              double f = (-(r2 * s1 * y0) + r1 * s2 * y0 + r2 * s0 * y1 - r0 * s2 * y1 - r1 * s0 * y2 + r0 * s1 * y2) / det;
+
+              System.Drawing.Drawing2D.Matrix mat = new System.Drawing.Drawing2D.Matrix((float)a,(float)b,(float)c,(float)d,(float)e,(float)f);
+             
+              //PointF[] transfor = new PointF[] { new PointF((float)r0, (float)s0), new PointF((float)r1, (float)s1), new PointF((float)r2, (float)s2) };
+              //mat.TransformPoints(transfor);
+               
+              GraphicsState savedGraphicsState = gfrx.Save();
+
+              if (this._clipToLayer)
+                gfrx.Clip = gl.CoordinateSystem.GetRegion();
+
+              gfrx.MultiplyTransform(mat, MatrixOrder.Prepend);
+
+              gfrx.DrawImage(_cachedImage, 0 , 0, _cachedImage.Width,_cachedImage.Height);
+
+              gfrx.Restore(savedGraphicsState);
+            }
+          }
+          break;
+        case CachedImageType.Other:
+          {
+            gfrx.DrawImage(_cachedImage, 0, 0, gl.Size.Width, gl.Size.Height);
+          }
+          break;
+      }
+    }
+    class ImageTypeEquiLinearMemento
+    {
+      Type xtype, ytype;
+      Type cstype;
+
+      public ImageTypeEquiLinearMemento(IPlotArea gl)
+      {
+        xtype = gl.XAxis.GetType();
+        ytype = gl.YAxis.GetType();
+        cstype = gl.CoordinateSystem.GetType();
+      }
+
+      public override bool Equals(object obj)
+      {
+        ImageTypeEquiLinearMemento from = obj as ImageTypeEquiLinearMemento;
+        if (from == null)
+          return false;
+        else
+          return
+            this.xtype == from.xtype &&
+            this.ytype == from.ytype &&
+            this.cstype == from.cstype ;
+
+      }
+    }
+    class ImageTypeOtherMemento
+    {
+      Type xtype, ytype;
+      AltaxoVariant xorg, xend, yorg, yend;
+
+      Type cstype;
+      double x00, x10, x01, x11, x32;
+      double y00, y10, y01, y11, y32;
+
+      public ImageTypeOtherMemento(IPlotArea gl)
+      {
+        xtype = gl.XAxis.GetType();
+        xorg = gl.XAxis.OrgAsVariant;
+        xend = gl.XAxis.EndAsVariant;
+
+        ytype = gl.YAxis.GetType();
+        yorg = gl.YAxis.OrgAsVariant;
+        yend = gl.YAxis.EndAsVariant;
+
+        cstype = gl.CoordinateSystem.GetType();
+        gl.CoordinateSystem.LogicalToLayerCoordinates(new Logical3D(0, 0), out x00, out y00);
+        gl.CoordinateSystem.LogicalToLayerCoordinates(new Logical3D(1, 0), out x10, out y10);
+        gl.CoordinateSystem.LogicalToLayerCoordinates(new Logical3D(0, 1), out x01, out y01);
+        gl.CoordinateSystem.LogicalToLayerCoordinates(new Logical3D(1, 1), out x11, out y11);
+        gl.CoordinateSystem.LogicalToLayerCoordinates(new Logical3D(0.3, 0.2), out x32, out y32);
+      }
+
+      public override bool Equals(object obj)
+      {
+        ImageTypeOtherMemento from = obj as ImageTypeOtherMemento;
+        if (from == null)
+          return false;
+        else
+          return
+            this.xtype == from.xtype &&
+            this.ytype == from.ytype &&
+            this.xorg == from.xorg &&
+            this.xend == from.xend &&
+            this.yend == from.yend &&
+            this.cstype == from.cstype &&
+            this.x00 == from.x00 &&
+            this.x10 == from.x10 &&
+            this.x01 == from.x01 &&
+            this.x11 == from.x11 &&
+            this.x32 == from.x32 &&
+            this.y00 == from.y00 &&
+            this.y10 == from.y10 &&
+            this.y01 == from.y01 &&
+            this.y11 == from.y11 &&
+            this.y32 == from.y32;
+
       }
     }
 
-    void BuildImage(XYZMeshedColumnPlotData myPlotAssociation, int cols, int rows)
+
+    void BuildImage(Graphics gfrx, IPlotArea gl, XYZMeshedColumnPlotData myPlotAssociation, int cols, int rows)
     {
-      // look if the image has the right dimensions
-      if (null == m_Image || m_Image.Width != cols || m_Image.Height != rows)
+      List<double> lx = new List<double>(rows);
+      List<double> ly = new List<double>(cols);
+      List<INumericColumn> vcolumns = new List<INumericColumn>(cols);
+
+      Altaxo.Data.IReadableColumn xColumn = myPlotAssociation.XColumn;
+      Altaxo.Data.IReadableColumn yColumn = myPlotAssociation.YColumn;
+
+      // now we sort out only those lx and ly values, which are valid
+      Altaxo.Collections.AscendingIntegerCollection validX = new Altaxo.Collections.AscendingIntegerCollection();
+      Altaxo.Collections.AscendingIntegerCollection validY = new Altaxo.Collections.AscendingIntegerCollection();
+
+
+      // build the logical values of x and y
+      for (int i = 0; i < rows; i++)
       {
-        if (null != m_Image)
-          m_Image.Dispose();
+        double val = gl.XAxis.PhysicalVariantToNormal(xColumn[i]);
+        if (!double.IsNaN(val) && !double.IsInfinity(val))
+        {
+          validX.Add(i);
+          lx.Add(val);
+        }
+      }
+      // now y is more hard, we had to find out the column number of the column associated
+      for (int i = 0; i < cols; i++)
+      {
+        int nColIdx=i;
+        Altaxo.Data.IReadableColumn rcol = myPlotAssociation.GetDataColumn(i);
+        Altaxo.Data.DataColumn dcol = rcol as Altaxo.Data.DataColumn;
+        if (null != dcol)
+        {
+          DataColumnCollection parentcoll = DataColumnCollection.GetParentDataColumnCollectionOf(dcol);
+          if (parentcoll != null)
+            nColIdx = parentcoll.GetColumnNumber(dcol);
+        }
+
+        double val = gl.YAxis.PhysicalVariantToNormal(yColumn[nColIdx]);
+
+        if (!double.IsNaN(val) && !double.IsInfinity(val) && (rcol is INumericColumn))
+        {
+          validY.Add(i);
+          ly.Add(val);
+          vcolumns.Add(rcol as INumericColumn);
+        }
+      }
+
+      // ---------------- prepare the color scaling -------------------------------------
+
+      NumericalBoundaries pb = _scalingStyle == ScalingStyle.Logarithmic ? (NumericalBoundaries)new PositiveFiniteNumericalBoundaries() : (NumericalBoundaries)new FiniteNumericalBoundaries();
+      myPlotAssociation.SetVBoundsFromTemplate(pb); // ensure that the right v-boundary type is set
+      myPlotAssociation.MergeVBoundsInto(pb);
+
+      _vmin = double.IsNaN(this._vRangeFrom) ? pb.LowerBound : Math.Max(pb.LowerBound, this._vRangeFrom);
+      double vmax = double.IsNaN(this._vRangeTo) ? pb.UpperBound : Math.Min(pb.UpperBound, this._vRangeTo);
+      _vLowerBound = _vmin;
+      _vUpperBound = vmax;
+
+      if (this._scalingStyle == ScalingStyle.Logarithmic)
+      {
+        // Ensure that min and max >0
+        _vmin = _vLowerBound = Math.Max(_vLowerBound, double.Epsilon);
+        vmax = _vUpperBound = Math.Max(_vLowerBound, _vUpperBound); // lowerBound is ok, to ensure that upperBound>=lowerBound
+
+        _vmin = Math.Log(_vmin);
+        vmax = vmax > 0 ? Math.Log(vmax) : _vmin;
+      }
+
+      // double vmid = (vmin+vmax)*0.5;
+      _vscal = vmax <= _vmin ? 1 : 255.0 / (vmax - _vmin);
+
+      // --------------- end preparation of color scaling ------------------------------
+
+
+      // test if the coordinate system is affine and the scale is linear
+      if (!gl.CoordinateSystem.IsAffine)
+      {
+        BuildImageV3(gfrx, gl, lx.ToArray(), ly.ToArray(), vcolumns.ToArray());
+      }
+      else // Coordinate System is affine
+      {
+        // now test lx and ly (only the valid indices for equidistantness
+        bool isEquististantX = IsEquidistant(lx, 0.2);
+        bool isEquististantY = IsEquidistant(ly, 0.2);
+
+        bool areLinearScales = (gl.XAxis is Scales.LinearScale) && (gl.YAxis is Scales.LinearScale);
+
+        if (areLinearScales && isEquististantX && isEquististantY)
+        {
+          BuildImageV1(myPlotAssociation, cols, rows); // affine, linear scales, and equidistant points
+        }
+        else if (areLinearScales)
+        {
+          BuildImageV3(gfrx, gl, lx.ToArray(), ly.ToArray(), vcolumns.ToArray()); // affine, but nonlinear scales
+          //BuildImageV2(); // affine and linear scales, but not equidistant
+        }
+        else
+        {
+          BuildImageV3(gfrx, gl, lx.ToArray(), ly.ToArray(), vcolumns.ToArray()); // affine, but nonlinear scales
+        }
+      }
+
+      
+    }
+
+
+    static bool IsEquidistant(double[] x, Altaxo.Collections.IAscendingIntegerCollection indices, double relthreshold)
+    {
+      if (indices.Count <= 1)
+        return true;
+      int N = indices.Count;
+      double first = x[indices[0]];
+      double last = x[indices[N-1]];
+      double spanByNM1 = (last-first)/(N-1);
+      double threshold = Math.Abs(relthreshold * spanByNM1);
+
+      for (int i = 0; i < N; i++)
+      {
+        if (Math.Abs((x[indices[i]] - first) - i*spanByNM1) > threshold)
+          return false;
+      }
+      return true;
+    }
+
+    static bool IsEquidistant(IList<double> x, double relthreshold)
+    {
+      int NM1 = x.Count - 1;
+      if (NM1 <= 0)
+        return true;
+      double first = x[0];
+      double last = x[NM1];
+      double spanByNM1 = (last - first) / (NM1);
+      double threshold = Math.Abs(relthreshold * spanByNM1);
+
+      for (int i = 0; i <= NM1; i++)
+      {
+        if (Math.Abs((x[i] - first) - i * spanByNM1) > threshold)
+          return false;
+      }
+      return true;
+    }
+
+    Color GetColor(double val)
+    {
+                if (double.IsNaN(val))
+          {
+            return _colorInvalid; // invalid pixels are transparent
+          }
+          else if (val < _vLowerBound)
+          {
+            return _colorBelow; // below the lower bound
+          }
+          else if (val > _vUpperBound)
+          {
+            return _colorAbove; // above the upper bound
+          }
+          else // a valid value
+          {
+
+            double relval;
+            // calculate a relative value between 0 and 255 from the borders and the scaling style
+            if (this._scalingStyle == ScalingStyle.Logarithmic)
+            {
+              relval = (Math.Log(val) - _vmin) * _vscal;
+            }
+            else // ScalingStyle is linear
+            {
+              relval = (val - _vmin) * _vscal;
+            }
+
+
+            int r = ((int)(Math.Abs(relval))) % 256;
+            int g = ((int)(Math.Abs(relval + relval))) % 256;
+            int b = ((int)(Math.Abs(255 - relval))) % 256;
+            return System.Drawing.Color.FromArgb(r, g, b);
+          }
+    }
+
+    // CoordinateSystem is affine and has linear scales, but not equidistant x and y
+    void BuildImageV2()
+    {
+      // CoordinateSystem is affine and has linear scales, but not equidistant x and y
+      // we build a bitmap, interpolate the points for it
+      _imageType = CachedImageType.Linear;
+    }
+
+    // CoordinateSystem is not affine, or scales are non-linear
+    void BuildImageV3(Graphics gfrx, IPlotArea gl, 
+      double[] lx, 
+      double[] ly, 
+      INumericColumn[]  vcolumns)
+    {
+      // allocate a bitmap of same dimensions than the underlying layer
+      _imageType = CachedImageType.Other;
+
+      int dimX = (int)Math.Ceiling(gl.Size.Width / 72.0 * gfrx.DpiX);
+      int dimY = (int)Math.Ceiling(gl.Size.Height / 72.0 * gfrx.DpiY);
+
+      dimX = Math.Min(2048, dimX);
+      dimY = Math.Min(2048, dimY);
+
+      // look if the image has the right dimensions
+      if (null == _cachedImage || _cachedImage.Width != dimX || _cachedImage.Height != dimY)
+      {
+        if (null != _cachedImage)
+          _cachedImage.Dispose();
 
         // please notice: the horizontal direction of the image is related to the row index!!! (this will turn the image in relation to the table)
         // and the vertical direction of the image is related to the column index
-        m_Image = new System.Drawing.Bitmap(rows, cols, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+        _cachedImage = new System.Drawing.Bitmap(dimX, dimY, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+      }
+
+
+      double widthByDimX = gl.Size.Width / dimX;
+      double heightByDimY = gl.Size.Height / dimY;
+      Logical3D rel = new Logical3D();
+
+      double minRX = lx[0];
+      double maxRX = lx[lx.Length - 1];
+      double minRY = ly[0];
+      double maxRY = ly[ly.Length - 1];
+
+      if (minRX > maxRX)
+      {
+        double h = minRX;
+        minRX = maxRX;
+        maxRX = h;
+      }
+      if (minRY > maxRY)
+      {
+        double h = minRY;
+        minRY = maxRY;
+        maxRY = h;
+      }
+
+      BivariateLinearSpline interpol = new BivariateLinearSpline(
+        VectorMath.ToROVector(lx),
+        VectorMath.ToROVector(ly),
+        DataTableWrapper.ToROColumnMatrix(vcolumns, new Altaxo.Collections.IntegerRangeAsCollection(0,lx.Length)));
+
+      for (int nx = 0; nx < dimX; nx++)
+      {
+        double px = (nx + 0.5) * widthByDimX;
+        for (int ny = 0; ny < dimY; ny++)
+        {
+          double py = (ny + 0.5) * heightByDimY;
+
+
+          if (false == gl.CoordinateSystem.LayerToLogicalCoordinates(px, py, out rel))
+          {
+            _cachedImage.SetPixel(nx, ny, _colorInvalid);
+          }
+          else // conversion to relative coordinates was possible
+          {
+            double rx = rel.RX;
+            double ry = rel.RY;
+
+            if (rx < minRX || rx > maxRX || ry < minRY || ry > maxRY)
+            {
+              _cachedImage.SetPixel(nx, ny, _colorInvalid);
+            }
+            else
+            {
+              double val = interpol.Interpolate(rx, ry);
+              if (double.IsNaN(val))
+              {
+                _cachedImage.SetPixel(nx, ny, _colorInvalid);
+              }
+              else
+              {
+                _cachedImage.SetPixel(nx, ny, GetColor(val));
+              }
+            }
+
+          }
+        }
+      }
+     
+     
+    }
+    void BuildImageV1(XYZMeshedColumnPlotData myPlotAssociation, int cols, int rows)
+    {
+      _imageType = CachedImageType.LinearEquidistant;
+      // look if the image has the right dimensions
+      if (null == _cachedImage || _cachedImage.Width != cols || _cachedImage.Height != rows)
+      {
+        if (null != _cachedImage)
+          _cachedImage.Dispose();
+
+        // please notice: the horizontal direction of the image is related to the row index!!! (this will turn the image in relation to the table)
+        // and the vertical direction of the image is related to the column index
+        _cachedImage = new System.Drawing.Bitmap(rows, cols, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
       }
 
       // now we can fill the image with our data
 
-      NumericalBoundaries pb = m_ScalingStyle == ScalingStyle.Logarithmic ? (NumericalBoundaries)new PositiveFiniteNumericalBoundaries() : (NumericalBoundaries)new FiniteNumericalBoundaries();
-      myPlotAssociation.SetVBoundsFromTemplate(pb); // ensure that the right v-boundary type is set
-      myPlotAssociation.MergeVBoundsInto(pb);
-
-      double vmin = double.IsNaN(this.m_RangeFrom) ? pb.LowerBound : Math.Max(pb.LowerBound, this.m_RangeFrom);
-      double vmax = double.IsNaN(this.m_RangeTo) ? pb.UpperBound : Math.Min(pb.UpperBound, this.m_RangeTo);
-      double lowerBound = vmin;
-      double upperBound = vmax;
-
-      if (this.m_ScalingStyle == ScalingStyle.Logarithmic)
-      {
-        // Ensure that min and max >0
-        vmin = lowerBound = Math.Max(lowerBound, double.Epsilon);
-        vmax = upperBound = Math.Max(lowerBound, upperBound); // lowerBound is ok, to ensure that upperBound>=lowerBound
-
-        vmin = Math.Log(vmin);
-        vmax = vmax > 0 ? Math.Log(vmax) : vmin;
-      }
-
-      // double vmid = (vmin+vmax)*0.5;
-      double vscal = vmax <= vmin ? 1 : 255.0 / (vmax - vmin);
-
-      int r, g, b;
-
+      
       for (int i = 0; i < cols; i++)
       {
         Altaxo.Data.INumericColumn col = myPlotAssociation.GetDataColumn(i) as Altaxo.Data.INumericColumn;
@@ -491,38 +920,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
         for (int j = 0; j < rows; j++)
         {
-          double val = col[j];
-          if (double.IsNaN(val))
-          {
-            m_Image.SetPixel(j, cols - i - 1, m_ColorInvalid); // invalid pixels are transparent
-          }
-          else if (val < lowerBound)
-          {
-            m_Image.SetPixel(j, cols - i - 1, m_ColorBelow); // below the lower bound
-          }
-          else if (val > upperBound)
-          {
-            m_Image.SetPixel(j, cols - i - 1, m_ColorAbove); // above the upper bound
-          }
-          else // a valid value
-          {
-            double relval;
-            // calculate a relative value between 0 and 255 from the borders and the scaling style
-            if (this.m_ScalingStyle == ScalingStyle.Logarithmic)
-            {
-              relval = (Math.Log(val) - vmin) * vscal;
-            }
-            else // ScalingStyle is linear
-            {
-              relval = (val - vmin) * vscal;
-            }
-
-
-            r = ((int)(Math.Abs(relval))) % 256;
-            g = ((int)(Math.Abs(relval + relval))) % 256;
-            b = ((int)(Math.Abs(255 - relval))) % 256;
-            m_Image.SetPixel(j, cols - i - 1, System.Drawing.Color.FromArgb(r, g, b));
-          }
+          _cachedImage.SetPixel(j,cols-i-1,GetColor(col[j]));
         } // for all pixel of a column
       } // for all columns
 
@@ -534,8 +932,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     protected virtual void OnChanged()
     {
-      if (m_Parent is Main.IChildChangedEventSink)
-        ((Main.IChildChangedEventSink)m_Parent).EhChildChanged(this, EventArgs.Empty);
+      if (_parent is Main.IChildChangedEventSink)
+        ((Main.IChildChangedEventSink)_parent).EhChildChanged(this, EventArgs.Empty);
       if(null!=Changed)
         Changed(this,new EventArgs());
     }
@@ -544,8 +942,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     public virtual object ParentObject
     {
-      get { return m_Parent; }
-      set { m_Parent = value; }
+      get { return _parent; }
+      set { _parent = value; }
     }
 
     public virtual string Name

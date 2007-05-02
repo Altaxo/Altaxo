@@ -61,7 +61,34 @@ namespace Altaxo.Calc.LinearAlgebra
 
         _rows = selectedRows;
       }
-      #region IROMatrix Members
+
+      /// <summary>
+      /// Constructor
+      /// </summary>
+      /// <param name="collection">Collection of <see cref="DataColumn" />s. It is not cloned, so make sure it don't change during usage.</param>
+      /// <param name="selectedColumns">Set set of indices into the collection that are part of the matrix.</param>
+      /// <param name="selectedRows">The set of rows that are part of the matrix. This collection is not cloned here, therefore it must not be subsequently changed!</param>
+      public DataColumnToColumnROMatrixWrapper(Altaxo.Data.INumericColumn[] collection, Altaxo.Collections.IAscendingIntegerCollection selectedColumns, Altaxo.Collections.IAscendingIntegerCollection selectedRows)
+      {
+        _columns = new Altaxo.Data.INumericColumn[selectedColumns.Count];
+        for (int i = selectedColumns.Count - 1; i >= 0; i--)
+          _columns[i] = (Altaxo.Data.INumericColumn)collection[selectedColumns[i]];
+         _rows = selectedRows;
+      }
+
+      /// <summary>
+      /// Constructor
+      /// </summary>
+      /// <param name="collection">Collection of <see cref="DataColumn" />s. It is not cloned, so make sure it don't change during usage.</param>
+      /// <param name="selectedRows">The set of rows that are part of the matrix. This collection is not cloned here, therefore it must not be subsequently changed!</param>
+      public DataColumnToColumnROMatrixWrapper(Altaxo.Data.INumericColumn[] collection, Altaxo.Collections.IAscendingIntegerCollection selectedRows)
+      {
+        _columns = collection;
+        _rows = selectedRows;
+      }
+
+
+#region IROMatrix Members
 
       /// <summary>
       /// Number of rows of the matrix.
@@ -227,6 +254,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
         _rows = selectedRows;
       }
+   
       #region IROMatrix Members
 
       /// <summary>
@@ -314,6 +342,29 @@ namespace Altaxo.Calc.LinearAlgebra
     public static IROMatrix ToROColumnMatrix(Altaxo.Data.DataColumnCollection collection, Altaxo.Collections.IAscendingIntegerCollection selectedColumns, Altaxo.Collections.IAscendingIntegerCollection selectedRows)
     {
       return new DataColumnToColumnROMatrixWrapper(collection, selectedColumns, (IAscendingIntegerCollection)selectedRows.Clone());
+    }
+
+    /// <summary>
+    /// Wraps a set of <see cref="DataColumn" />s into a readonly matrix so that the matrix columns corresponds to the <see cref="DataColumn" />s.
+    /// </summary>
+    /// <param name="collection">Collection of <see cref="DataColumn" />s.</param>
+    /// <param name="selectedColumns">Set set of indices into the collection that are part of the matrix. You can subsequently change this parameter without affecting this wrapper.</param>
+    /// <param name="selectedRows">The set of rows that are part of the matrix. This collection will be cloned here, i.e. you can subsequently change it without affecting this wrapper.</param>
+    /// <returns>The wrapping read only matrix.</returns>
+    public static IROMatrix ToROColumnMatrix(Altaxo.Data.INumericColumn[] collection, Altaxo.Collections.IAscendingIntegerCollection selectedColumns, Altaxo.Collections.IAscendingIntegerCollection selectedRows)
+    {
+      return new DataColumnToColumnROMatrixWrapper(collection, selectedColumns, (IAscendingIntegerCollection)selectedRows.Clone());
+    }
+
+    /// <summary>
+    /// Wraps a set of <see cref="DataColumn" />s into a readonly matrix so that the matrix columns corresponds to the <see cref="DataColumn" />s.
+    /// </summary>
+    /// <param name="collection">Collection of <see cref="DataColumn" />s.</param>
+    /// <param name="selectedRows">The set of rows that are part of the matrix. This collection will be cloned here, i.e. you can subsequently change it without affecting this wrapper.</param>
+    /// <returns>The wrapping read only matrix.</returns>
+    public static IROMatrix ToROColumnMatrix(Altaxo.Data.INumericColumn[] collection, Altaxo.Collections.IAscendingIntegerCollection selectedRows)
+    {
+      return new DataColumnToColumnROMatrixWrapper(collection,selectedRows);
     }
 
     /// <summary>

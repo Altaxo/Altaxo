@@ -868,5 +868,40 @@ namespace Altaxo.Calc.LinearAlgebra
       return index;
     }
 
+
+     /// <summary>
+    /// Returns true if the sequence given by the vector argument is strictly increasing or decreasing.
+    /// </summary>
+    /// <param name="x">Vector (sequence) to test.</param>
+    /// <returns>True if the sequence is strictly increasing or decreasing.</returns>
+    public static bool IsStrictlyIncreasingOrDecreasing(IROVector x)
+    {
+      bool isDecreasing;
+      return IsStrictlyIncreasingOrDecreasing(x, out isDecreasing);
+    }
+    /// <summary>
+    /// Returns true if the sequence given by the vector argument is strictly increasing or decreasing.
+    /// </summary>
+    /// <param name="x">Vector (sequence) to test.</param>
+    /// <param name="isDecreasing">On return, this argument is set to true if the sequence is strictly decreasing. If increasing, this argument is set to false.</param>
+    /// <returns>True if the sequence is strictly increasing or decreasing.</returns>
+    public static bool IsStrictlyIncreasingOrDecreasing(IROVector x, out bool isDecreasing)
+    {
+      isDecreasing = false;
+      if (x.Length == 0)
+        return false;
+      int sign = Math.Sign(x[x.Length - 1] - x[0]);
+      if (sign == 0)
+        return false;
+
+      isDecreasing = (sign < 0);
+
+      for (int i = x.Length - 1; i >= 1; --i)
+        if (Math.Sign(x[i] - x[i - 1]) != sign)
+          return false;
+
+      return true;
+    }
+
   }
 }

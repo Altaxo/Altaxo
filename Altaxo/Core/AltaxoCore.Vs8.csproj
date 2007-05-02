@@ -158,6 +158,7 @@
     <Compile Include="Calc\Integration\AlgoQags.cs" />
     <Compile Include="Calc\Integration\QK.cs" />
     <Compile Include="Calc\Interpolation\BivariateAkimaSpline.cs" />
+    <Compile Include="Calc\Interpolation\BivariateLinearSpline.cs" />
     <Compile Include="Calc\Interpolation\Interpolation.cs">
       <SubType>Code</SubType>
     </Compile>
