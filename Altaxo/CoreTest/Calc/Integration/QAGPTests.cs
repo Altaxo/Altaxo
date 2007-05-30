@@ -36,9 +36,8 @@ namespace AltaxoTest.Calc.Integration
     [Test]
     public void TestSin()
     {
-      gsl_integration_workspace workspace = new gsl_integration_workspace(100);
       double result, abserr;
-      AlgoQagp.qagp(Math.Sin, new double[] { 0, Math.PI }, 2, 0, 1E-6, 100, workspace, out result, out abserr);
+      QagpIntegration.Integration(Math.Sin, new double[] { 0, Math.PI }, 2, 0, 1E-6, 100, out result, out abserr);
 
       NUnit.Framework.Assert.AreEqual(2.0, result, 2.0 * 1E-6);
     }
@@ -46,9 +45,8 @@ namespace AltaxoTest.Calc.Integration
     [Test]
     public void TestOneBySqrtX()
     {
-      gsl_integration_workspace workspace = new gsl_integration_workspace(100);
       double result, abserr;
-      AlgoQagp.qagp(delegate(double x) { return 1 / Math.Sqrt(Math.Abs(x)); }, new double[] { -1, 0, 1 }, 3, 0, 1E-6, 100, workspace, out result, out abserr);
+      QagpIntegration.Integration(delegate(double x) { return 1 / Math.Sqrt(Math.Abs(x)); }, new double[] { -1, 0, 1 }, 3, 0, 1E-6, 100, out result, out abserr);
 
       NUnit.Framework.Assert.AreEqual(4.0, result, 4.0 * 1E-6);
     }

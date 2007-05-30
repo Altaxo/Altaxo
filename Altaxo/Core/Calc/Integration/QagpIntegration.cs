@@ -4,8 +4,114 @@ using System.Text;
 
 namespace Altaxo.Calc.Integration
 {
-  public class AlgoQagp
+  public class QagpIntegration
   {
+    #region offical C# interface
+    gsl_integration_workspace _workSpace;
+    gsl_integration_rule _integrationRule;
+
+
+    public QagpIntegration()
+    {
+      _integrationRule = new QK21().Integrate;
+    }
+
+    public GSL_ERROR Integrate(ScalarFunctionDD f,
+       double[] pts, int npts,
+       double epsabs, double epsrel, int limit,
+       gsl_integration_rule integrationRule,
+       out double result, out double abserr)
+    {
+      if (null == _workSpace || limit > _workSpace.limit)
+        _workSpace = new gsl_integration_workspace(limit);
+
+      return qagp(f, pts, npts, epsabs, epsrel, limit, _workSpace, out result, out abserr, integrationRule);
+    }
+
+    public GSL_ERROR Integrate(ScalarFunctionDD f,
+          double[] pts, int npts,
+          double epsabs, double epsrel, int limit,
+          out double result, out double abserr)
+    {
+      return Integrate(f, pts, npts, epsabs, epsrel, limit, _integrationRule, out result, out abserr);
+    }
+
+    public GSL_ERROR Integrate(ScalarFunctionDD f,
+      double[] pts,
+      double epsabs, double epsrel, int limit,
+      gsl_integration_rule integrationRule,
+      out double result, out double abserr)
+    {
+      return Integrate(f, pts, pts.Length, epsabs, epsrel, limit, integrationRule, out result, out abserr);
+    }
+
+
+    public GSL_ERROR Integrate(ScalarFunctionDD f,
+      double[] pts, 
+      double epsabs, double epsrel, int limit,
+      out double result, out double abserr)
+    {
+      return Integrate(f, pts, pts.Length, epsabs, epsrel, limit, _integrationRule, out result, out abserr);
+    }
+
+
+
+    public static GSL_ERROR
+    Integration(ScalarFunctionDD f,
+          double[] pts, int npts,
+          double epsabs, double epsrel,
+          int limit,
+          gsl_integration_rule q,
+          out double result, out double abserr,
+          ref object tempStorage)
+    {
+      QagpIntegration algo = tempStorage as QagpIntegration;
+      if (null == algo)
+        tempStorage = algo = new QagpIntegration();
+      return algo.Integrate(f, pts, npts, epsabs, epsrel, limit, q, out result, out abserr);
+    }
+
+    public static GSL_ERROR
+    Integration(ScalarFunctionDD f,
+          double[] pts, int npts,
+          double epsabs, double epsrel,
+          int limit,
+          out double result, out double abserr,
+          ref object tempStorage
+          )
+    {
+      return Integration(f, pts, npts, epsabs, epsrel, limit, new QK21().Integrate, out result, out abserr, ref tempStorage);
+    }
+
+    public static GSL_ERROR
+   Integration(ScalarFunctionDD f,
+     double[] pts, int npts,
+     double epsabs, double epsrel,
+     int limit,
+      gsl_integration_rule q,
+     out double result, out double abserr
+     )
+    {
+      object tempStorage = null;
+      return Integration(f, pts, npts, epsabs, epsrel, limit, q, out result, out abserr, ref tempStorage);
+    }
+
+
+    public static GSL_ERROR
+    Integration(ScalarFunctionDD f,
+      double[] pts, int npts,
+      double epsabs, double epsrel,
+      int limit,
+      out double result, out double abserr
+      )
+    {
+      object tempStorage = null;
+      return Integration(f, pts, npts, epsabs, epsrel, limit, new QK21().Integrate,out result, out abserr, ref tempStorage);
+    }
+
+
+    #endregion
+
     /* integration/qagp.c
  * 
  * Copyright (C) 1996, 1997, 1998, 1999, 2000 Brian Gough
@@ -42,9 +148,7 @@ namespace Altaxo.Calc.Integration
       return status;
     }
 
-
-
-    public static GSL_ERROR
+    static GSL_ERROR
     qagp(ScalarFunctionDD f,
           double[] pts, int npts,
           double epsabs, double epsrel, int limit,
@@ -55,13 +159,13 @@ namespace Altaxo.Calc.Integration
                          epsabs, epsrel, limit,
                          workspace,
                          out result, out abserr,
-                         QK.AlgorithmQk21);
+                         new QK21().Integrate);
 
       return status;
     }
 
 
-    public static GSL_ERROR
+    static GSL_ERROR
     qagp(ScalarFunctionDD f,
           double[] pts, int npts,
           double epsabs, double epsrel,

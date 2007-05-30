@@ -579,6 +579,24 @@ namespace Altaxo.Gui.Graph
     
     }
 
+    protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+    {
+      if (null != Controller)
+      {
+        if (keyData == (Keys.Control | Keys.C))
+        {
+          Controller.EhView_CopyClipboard(SelectedNodes(this.m_Contents_lbContents));
+        }
+        else if (keyData == (Keys.Control | Keys.V))
+        {
+          Controller.EhView_PasteClipboard();
+        }
+      }
+
+      return base.ProcessCmdKey(ref msg, keyData);
+    }
+   
+
     #region IMVCView Members
 
     public object ControllerObject

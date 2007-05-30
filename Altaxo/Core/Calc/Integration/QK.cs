@@ -27,7 +27,7 @@ namespace Altaxo.Calc.Integration
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-    static void
+    protected static void
     gsl_integration_qk(int n,
                         double[] xgk, double[] wg, double[] wgk,
                         double[] fv1, double[] fv2,
@@ -161,10 +161,11 @@ namespace Altaxo.Calc.Integration
     }
 
     #endregion
+  }
 
-    #region QK15
+  #region QK15
 
-    /* integration/qk15.c
+  /* integration/qk15.c
  * 
  * Copyright (C) 1996, 1997, 1998, 1999, 2000 Brian Gough
  * 
@@ -183,12 +184,12 @@ namespace Altaxo.Calc.Integration
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-    /* Gauss quadrature weights and kronrod quadrature abscissae and
-   weights as evaluated with 80 decimal digit arithmetic by
-   L. W. Fullerton, Bell Labs, Nov. 1981. */
-    class QK15
-    {
-      static readonly double[] xgk =    /* abscissae of the 15-point kronrod rule */
+  /* Gauss quadrature weights and kronrod quadrature abscissae and
+ weights as evaluated with 80 decimal digit arithmetic by
+ L. W. Fullerton, Bell Labs, Nov. 1981. */
+  public class QK15 : QK
+  {
+    static readonly double[] xgk =    /* abscissae of the 15-point kronrod rule */
 {
   0.991455371120812639206854697526329,
   0.949107912342758524526189684047851,
@@ -200,10 +201,10 @@ namespace Altaxo.Calc.Integration
   0.000000000000000000000000000000000
 };
 
-      /* xgk[1], xgk[3], ... abscissae of the 7-point gauss rule. 
-         xgk[0], xgk[2], ... abscissae to optimally extend the 7-point gauss rule */
+    /* xgk[1], xgk[3], ... abscissae of the 7-point gauss rule. 
+       xgk[0], xgk[2], ... abscissae to optimally extend the 7-point gauss rule */
 
-      static readonly double[] wg =     /* weights of the 7-point gauss rule */
+    static readonly double[] wg =     /* weights of the 7-point gauss rule */
 {
   0.129484966168869693270611432679082,
   0.279705391489276667901467771423780,
@@ -211,7 +212,7 @@ namespace Altaxo.Calc.Integration
   0.417959183673469387755102040816327
 };
 
-      static readonly double[] wgk =    /* weights of the 15-point kronrod rule */
+    static readonly double[] wgk =    /* weights of the 15-point kronrod rule */
 {
   0.022935322010529224963732008058970,
   0.063092092629978553290700663189204,
@@ -223,53 +224,65 @@ namespace Altaxo.Calc.Integration
   0.209482141084727828012999174891714
 };
 
-      public static void gsl_integration_qk15(ScalarFunctionDD f, double a, double b,
-            out double result, out double abserr,
-            out double resabs, out double resasc)
-      {
-        double[] fv1 = new double[8];
-        double[] fv2 = new double[8];
-        gsl_integration_qk(8, xgk, wg, wgk, fv1, fv2, f, a, b, out result, out abserr, out resabs, out resasc);
-      }
+
+    const int _fvlength = 8;
+    double[] _fv1;
+    double[] _fv2;
+    public QK15()
+    {
+      _fv1 = new double[_fvlength];
+      _fv2 = new double[_fvlength];
+    }
+    public void Integrate(ScalarFunctionDD f, double a, double b,
+                out double result, out double abserr,
+                out double resabs, out double resasc)
+    {
+      gsl_integration_qk(_fvlength, xgk, wg, wgk, _fv1, _fv2, f, a, b, out result, out abserr, out resabs, out resasc);
     }
 
-    public static void AlgorithmQk15(ScalarFunctionDD f, double a, double b,
-                  out double result, out double abserr,
-                  out double resabs, out double resasc)
+    public static void Integration(ScalarFunctionDD f, double a, double b,
+                 out double result, out double abserr,
+                 out double resabs, out double resasc)
     {
-      QK15.gsl_integration_qk15(f, a, b, out result, out abserr, out resabs, out resasc);
+      double[] fv1 = new double[_fvlength];
+      double[] fv2 = new double[_fvlength];
+      gsl_integration_qk(_fvlength, xgk, wg, wgk, fv1, fv2, f, a, b, out result, out abserr, out resabs, out resasc);
     }
 
+  }
 
-    #endregion
 
-    #region QK21
-    class QK21
-    {
-      /* integration/qk21.c
- * 
- * Copyright (C) 1996, 1997, 1998, 1999, 2000 Brian Gough
- * 
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
- * your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- */
 
-      /* Gauss quadrature weights and kronrod quadrature abscissae and
-         weights as evaluated with 80 decimal digit arithmetic by
-         L. W. Fullerton, Bell Labs, Nov. 1981. */
 
-      static readonly double[] xgk =   /* abscissae of the 21-point kronrod rule */
+  #endregion
+
+  #region QK21
+  public class QK21 : QK
+  {
+    /* integration/qk21.c
+* 
+* Copyright (C) 1996, 1997, 1998, 1999, 2000 Brian Gough
+* 
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation; either version 2 of the License, or (at
+* your option) any later version.
+* 
+* This program is distributed in the hope that it will be useful, but
+* WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+* General Public License for more details.
+* 
+* You should have received a copy of the GNU General Public License
+* along with this program; if not, write to the Free Software
+* Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+*/
+
+    /* Gauss quadrature weights and kronrod quadrature abscissae and
+       weights as evaluated with 80 decimal digit arithmetic by
+       L. W. Fullerton, Bell Labs, Nov. 1981. */
+
+    static readonly double[] xgk =   /* abscissae of the 21-point kronrod rule */
 {
   0.995657163025808080735527280689003,
   0.973906528517171720077964012084452,
@@ -284,10 +297,10 @@ namespace Altaxo.Calc.Integration
   0.000000000000000000000000000000000
 };
 
-      /* xgk[1], xgk[3], ... abscissae of the 10-point gauss rule. 
-         xgk[0], xgk[2], ... abscissae to optimally extend the 10-point gauss rule */
+    /* xgk[1], xgk[3], ... abscissae of the 10-point gauss rule. 
+       xgk[0], xgk[2], ... abscissae to optimally extend the 10-point gauss rule */
 
-      static readonly double[] wg =     /* weights of the 10-point gauss rule */
+    static readonly double[] wg =     /* weights of the 10-point gauss rule */
 {
   0.066671344308688137593568809893332,
   0.149451349150580593145776339657697,
@@ -296,7 +309,7 @@ namespace Altaxo.Calc.Integration
   0.295524224714752870173892994651338
 };
 
-      static readonly double[] wgk =   /* weights of the 21-point kronrod rule */
+    static readonly double[] wgk =   /* weights of the 21-point kronrod rule */
 {
   0.011694638867371874278064396062192,
   0.032558162307964727478818972459390,
@@ -312,30 +325,37 @@ namespace Altaxo.Calc.Integration
 };
 
 
-      public static void gsl_integration_qk21(ScalarFunctionDD f, double a, double b,
-                            out double result, out double abserr,
-                            out double resabs, out double resasc)
-      {
-        double[] fv1 = new double[11];
-        double[] fv2 = new double[11];
-        gsl_integration_qk(11, xgk, wg, wgk, fv1, fv2, f, a, b, out result, out abserr, out resabs, out resasc);
-      }
+    const int _fvlength = 11;
+    double[] _fv1;
+    double[] _fv2;
+    public QK21()
+    {
+      _fv1 = new double[_fvlength];
+      _fv2 = new double[_fvlength];
+    }
+    public void Integrate(ScalarFunctionDD f, double a, double b,
+                out double result, out double abserr,
+                out double resabs, out double resasc)
+    {
+      gsl_integration_qk(_fvlength, xgk, wg, wgk, _fv1, _fv2, f, a, b, out result, out abserr, out resabs, out resasc);
     }
 
-
-    public static void AlgorithmQk21(ScalarFunctionDD f, double a, double b,
-                      out double result, out double abserr,
-                      out double resabs, out double resasc)
+    public static void Integration(ScalarFunctionDD f, double a, double b,
+                 out double result, out double abserr,
+                 out double resabs, out double resasc)
     {
-      QK21.gsl_integration_qk21(f, a, b, out result, out abserr, out resabs, out resasc);
+      double[] fv1 = new double[_fvlength];
+      double[] fv2 = new double[_fvlength];
+      gsl_integration_qk(_fvlength, xgk, wg, wgk, fv1, fv2, f, a, b, out result, out abserr, out resabs, out resasc);
     }
+  }
 
 
-    #endregion
+  #endregion
 
-    #region QK31
-    class QK31
-    {
+  #region QK31
+  public class QK31 : QK
+  {
     /* integration/qk31.c
  * 
  * Copyright (C) 1996, 1997, 1998, 1999, 2000 Brian Gough
@@ -356,11 +376,11 @@ namespace Altaxo.Calc.Integration
  */
 
 
-/* Gauss quadrature weights and kronrod quadrature abscissae and
-   weights as evaluated with 80 decimal digit arithmetic by
-   L. W. Fullerton, Bell Labs, Nov. 1981. */
+    /* Gauss quadrature weights and kronrod quadrature abscissae and
+       weights as evaluated with 80 decimal digit arithmetic by
+       L. W. Fullerton, Bell Labs, Nov. 1981. */
 
-readonly static double[] xgk =   /* abscissae of the 31-point kronrod rule */
+    readonly static double[] xgk =   /* abscissae of the 31-point kronrod rule */
 {
   0.998002298693397060285172840152271,
   0.987992518020485428489565718586613,
@@ -380,10 +400,10 @@ readonly static double[] xgk =   /* abscissae of the 31-point kronrod rule */
   0.000000000000000000000000000000000
 };
 
-/* xgk[1], xgk[3], ... abscissae of the 15-point gauss rule. 
-   xgk[0], xgk[2], ... abscissae to optimally extend the 15-point gauss rule */
+    /* xgk[1], xgk[3], ... abscissae of the 15-point gauss rule. 
+       xgk[0], xgk[2], ... abscissae to optimally extend the 15-point gauss rule */
 
-readonly static double[] wg =     /* weights of the 15-point gauss rule */
+    readonly static double[] wg =     /* weights of the 15-point gauss rule */
 {
   0.030753241996117268354628393577204,
   0.070366047488108124709267416450667,
@@ -395,7 +415,7 @@ readonly static double[] wg =     /* weights of the 15-point gauss rule */
   0.202578241925561272880620199967519
 };
 
-readonly static double[] wgk =   /* weights of the 31-point kronrod rule */
+    readonly static double[] wgk =   /* weights of the 31-point kronrod rule */
 {
   0.005377479872923348987792051430128,
   0.015007947329316122538374763075807,
@@ -415,54 +435,61 @@ readonly static double[] wgk =   /* weights of the 31-point kronrod rule */
   0.101330007014791549017374792767493
 };
 
-public static void
-gsl_integration_qk31 (ScalarFunctionDD f, double a, double b,
-      out double result, out double abserr,
-      out double resabs, out double resasc)
-{
-  double[] fv1 = new double[16];
-  double[] fv2 = new double[16];
-  gsl_integration_qk(16, xgk, wg, wgk, fv1, fv2, f, a, b, out result, out abserr, out resabs, out resasc);
-} 
-  }
-
-    public static void AlgorithmQk31(ScalarFunctionDD f, double a, double b,
-                     out double result, out double abserr,
-                     out double resabs, out double resasc)
+    const int _fvlength = 16;
+    double[] _fv1;
+    double[] _fv2;
+    public QK31()
     {
-      QK31.gsl_integration_qk31(f, a, b, out result, out abserr, out resabs, out resasc);
+      _fv1 = new double[_fvlength];
+      _fv2 = new double[_fvlength];
     }
-    #endregion
-
-    #region QK41
-    class QK41
+    public void Integrate(ScalarFunctionDD f, double a, double b,
+                out double result, out double abserr,
+                out double resabs, out double resasc)
     {
-      /* integration/qk41.c
- * 
- * Copyright (C) 1996, 1997, 1998, 1999, 2000 Brian Gough
- * 
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
- * your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- */
+      gsl_integration_qk(_fvlength, xgk, wg, wgk, _fv1, _fv2, f, a, b, out result, out abserr, out resabs, out resasc);
+    }
+
+    public static void Integration(ScalarFunctionDD f, double a, double b,
+                 out double result, out double abserr,
+                 out double resabs, out double resasc)
+    {
+      double[] fv1 = new double[_fvlength];
+      double[] fv2 = new double[_fvlength];
+      gsl_integration_qk(_fvlength, xgk, wg, wgk, fv1, fv2, f, a, b, out result, out abserr, out resabs, out resasc);
+    }
+  }
+  #endregion
+
+  #region QK41
+  public class QK41 : QK
+  {
+    /* integration/qk41.c
+* 
+* Copyright (C) 1996, 1997, 1998, 1999, 2000 Brian Gough
+* 
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation; either version 2 of the License, or (at
+* your option) any later version.
+* 
+* This program is distributed in the hope that it will be useful, but
+* WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+* General Public License for more details.
+* 
+* You should have received a copy of the GNU General Public License
+* along with this program; if not, write to the Free Software
+* Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+*/
 
 
 
-/* Gauss quadrature weights and kronrod quadrature abscissae and
-   weights as evaluated with 80 decimal digit arithmetic by
-   L. W. Fullerton, Bell Labs, Nov. 1981. */
+    /* Gauss quadrature weights and kronrod quadrature abscissae and
+       weights as evaluated with 80 decimal digit arithmetic by
+       L. W. Fullerton, Bell Labs, Nov. 1981. */
 
-readonly static double[] xgk =   /* abscissae of the 41-point kronrod rule */
+    readonly static double[] xgk =   /* abscissae of the 41-point kronrod rule */
 {
   0.998859031588277663838315576545863,
   0.993128599185094924786122388471320,
@@ -487,10 +514,10 @@ readonly static double[] xgk =   /* abscissae of the 41-point kronrod rule */
   0.000000000000000000000000000000000
 };
 
-/* xgk[1], xgk[3], ... abscissae of the 20-point gauss rule. 
-   xgk[0], xgk[2], ... abscissae to optimally extend the 20-point gauss rule */
+    /* xgk[1], xgk[3], ... abscissae of the 20-point gauss rule. 
+       xgk[0], xgk[2], ... abscissae to optimally extend the 20-point gauss rule */
 
-readonly static double[] wg =    /* weights of the 20-point gauss rule */
+    readonly static double[] wg =    /* weights of the 20-point gauss rule */
 {
   0.017614007139152118311861962351853,
   0.040601429800386941331039952274932,
@@ -504,7 +531,7 @@ readonly static double[] wg =    /* weights of the 20-point gauss rule */
   0.152753387130725850698084331955098
 };
 
-readonly static double[] wgk =   /* weights of the 41-point kronrod rule */
+    readonly static double[] wgk =   /* weights of the 41-point kronrod rule */
 {
   0.003073583718520531501218293246031,
   0.008600269855642942198661787950102,
@@ -529,54 +556,62 @@ readonly static double[] wgk =   /* weights of the 41-point kronrod rule */
   0.076600711917999656445049901530102
 };
 
-public static void
-gsl_integration_qk41 (ScalarFunctionDD f, double a, double b,
-                      out double result, out double abserr,
-                      out double resabs, out double resasc)
-{
-  double[] fv1 = new double[21], fv2 = new double[21];
-  gsl_integration_qk(21, xgk, wg, wgk, fv1, fv2, f, a, b, out result, out abserr, out resabs, out resasc);
-}
- 
-    }
-    public static void AlgorithmQk41(ScalarFunctionDD f, double a, double b,
-                     out double result, out double abserr,
-                     out double resabs, out double resasc)
+    const int _fvlength = 21;
+    double[] _fv1;
+    double[] _fv2;
+    public QK41()
     {
-      QK41.gsl_integration_qk41(f, a, b, out result, out abserr, out resabs, out resasc);
+      _fv1 = new double[_fvlength];
+      _fv2 = new double[_fvlength];
+    }
+    public void Integrate(ScalarFunctionDD f, double a, double b,
+                out double result, out double abserr,
+                out double resabs, out double resasc)
+    {
+      gsl_integration_qk(_fvlength, xgk, wg, wgk, _fv1, _fv2, f, a, b, out result, out abserr, out resabs, out resasc);
     }
 
-    #endregion
-
-    #region QK51
-    class QK51
+    public static void Integration(ScalarFunctionDD f, double a, double b,
+                 out double result, out double abserr,
+                 out double resabs, out double resasc)
     {
-      /* integration/qk51.c
- * 
- * Copyright (C) 1996, 1997, 1998, 1999, 2000 Brian Gough
- * 
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
- * your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- */
+      double[] fv1 = new double[_fvlength];
+      double[] fv2 = new double[_fvlength];
+      gsl_integration_qk(_fvlength, xgk, wg, wgk, fv1, fv2, f, a, b, out result, out abserr, out resabs, out resasc);
+    }
+  }
+
+  #endregion
+
+  #region QK51
+  public class QK51 : QK
+  {
+    /* integration/qk51.c
+* 
+* Copyright (C) 1996, 1997, 1998, 1999, 2000 Brian Gough
+* 
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation; either version 2 of the License, or (at
+* your option) any later version.
+* 
+* This program is distributed in the hope that it will be useful, but
+* WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+* General Public License for more details.
+* 
+* You should have received a copy of the GNU General Public License
+* along with this program; if not, write to the Free Software
+* Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+*/
 
 
 
-/* Gauss quadrature weights and kronrod quadrature abscissae and
-   weights as evaluated with 80 decimal digit arithmetic by
-   L. W. Fullerton, Bell Labs, Nov. 1981. */
+    /* Gauss quadrature weights and kronrod quadrature abscissae and
+       weights as evaluated with 80 decimal digit arithmetic by
+       L. W. Fullerton, Bell Labs, Nov. 1981. */
 
-readonly static double[] xgk =   /* abscissae of the 51-point kronrod rule */
+    readonly static double[] xgk =   /* abscissae of the 51-point kronrod rule */
 {
   0.999262104992609834193457486540341,
   0.995556969790498097908784946893902,
@@ -606,10 +641,10 @@ readonly static double[] xgk =   /* abscissae of the 51-point kronrod rule */
   0.000000000000000000000000000000000
 };
 
-/* xgk[1], xgk[3], ... abscissae of the 25-point gauss rule. 
-   xgk[0], xgk[2], ... abscissae to optimally extend the 25-point gauss rule */
+    /* xgk[1], xgk[3], ... abscissae of the 25-point gauss rule. 
+       xgk[0], xgk[2], ... abscissae to optimally extend the 25-point gauss rule */
 
-readonly static double[] wg =    /* weights of the 25-point gauss rule */
+    readonly static double[] wg =    /* weights of the 25-point gauss rule */
 {
   0.011393798501026287947902964113235,
   0.026354986615032137261901815295299,
@@ -626,7 +661,7 @@ readonly static double[] wg =    /* weights of the 25-point gauss rule */
   0.123176053726715451203902873079050
 };
 
-readonly static double[] wgk =   /* weights of the 51-point kronrod rule */
+    readonly static double[] wgk =   /* weights of the 51-point kronrod rule */
 {
   0.001987383892330315926507851882843,
   0.005561932135356713758040236901066,
@@ -656,55 +691,63 @@ readonly static double[] wgk =   /* weights of the 51-point kronrod rule */
   0.061580818067832935078759824240066
 };
 
-/* wgk[25] was calculated from the values of wgk[0..24] */
+    /* wgk[25] was calculated from the values of wgk[0..24] */
 
-public static void
-gsl_integration_qk51 (ScalarFunctionDD f, double a, double b,
-                      out double result, out double abserr,
-                      out double resabs, out double resasc)
-{
-  double[] fv1 = new double[26], fv2 = new double[26];
-  gsl_integration_qk(26, xgk, wg, wgk, fv1, fv2, f, a, b, out result, out abserr, out resabs, out resasc);
-}
- 
-    }
-    public static void AlgorithmQk51(ScalarFunctionDD f, double a, double b,
-                     out double result, out double abserr,
-                     out double resabs, out double resasc)
+    const int _fvlength = 26;
+    double[] _fv1;
+    double[] _fv2;
+    public QK51()
     {
-      QK51.gsl_integration_qk51(f, a, b, out result, out abserr, out resabs, out resasc);
+      _fv1 = new double[_fvlength];
+      _fv2 = new double[_fvlength];
     }
-    #endregion
-
-    #region QK61
-    class QK61
+    public void Integrate(ScalarFunctionDD f, double a, double b,
+                out double result, out double abserr,
+                out double resabs, out double resasc)
     {
-      /* integration/qk61.c
- * 
- * Copyright (C) 1996, 1997, 1998, 1999, 2000 Brian Gough
- * 
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or (at
- * your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- */
+      gsl_integration_qk(_fvlength, xgk, wg, wgk, _fv1, _fv2, f, a, b, out result, out abserr, out resabs, out resasc);
+    }
+
+    public static void Integration(ScalarFunctionDD f, double a, double b,
+                 out double result, out double abserr,
+                 out double resabs, out double resasc)
+    {
+      double[] fv1 = new double[_fvlength];
+      double[] fv2 = new double[_fvlength];
+      gsl_integration_qk(_fvlength, xgk, wg, wgk, fv1, fv2, f, a, b, out result, out abserr, out resabs, out resasc);
+    }
+  }
+  #endregion
+
+  #region QK61
+  public class QK61 : QK
+  {
+    /* integration/qk61.c
+* 
+* Copyright (C) 1996, 1997, 1998, 1999, 2000 Brian Gough
+* 
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation; either version 2 of the License, or (at
+* your option) any later version.
+* 
+* This program is distributed in the hope that it will be useful, but
+* WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+* General Public License for more details.
+* 
+* You should have received a copy of the GNU General Public License
+* along with this program; if not, write to the Free Software
+* Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+*/
 
 
 
-/* Gauss quadrature weights and kronrod quadrature abscissae and
-   weights as evaluated with 80 decimal digit arithmetic by
-   L. W. Fullerton, Bell Labs, Nov. 1981. */
+    /* Gauss quadrature weights and kronrod quadrature abscissae and
+       weights as evaluated with 80 decimal digit arithmetic by
+       L. W. Fullerton, Bell Labs, Nov. 1981. */
 
-readonly static double[] xgk =   /* abscissae of the 61-point kronrod rule */
+    readonly static double[] xgk =   /* abscissae of the 61-point kronrod rule */
 {
   0.999484410050490637571325895705811,
   0.996893484074649540271630050918695,
@@ -739,10 +782,10 @@ readonly static double[] xgk =   /* abscissae of the 61-point kronrod rule */
   0.000000000000000000000000000000000
 };
 
-/* xgk[1], xgk[3], ... abscissae of the 30-point gauss rule. 
-   xgk[0], xgk[2], ... abscissae to optimally extend the 30-point gauss rule */
+    /* xgk[1], xgk[3], ... abscissae of the 30-point gauss rule. 
+       xgk[0], xgk[2], ... abscissae to optimally extend the 30-point gauss rule */
 
-readonly static double[] wg =    /* weights of the 30-point gauss rule */
+    readonly static double[] wg =    /* weights of the 30-point gauss rule */
 {
   0.007968192496166605615465883474674,
   0.018466468311090959142302131912047,
@@ -761,7 +804,7 @@ readonly static double[] wg =    /* weights of the 30-point gauss rule */
   0.102852652893558840341285636705415
 };
 
-readonly static double[] wgk =   /* weights of the 61-point kronrod rule */
+    readonly static double[] wgk =   /* weights of the 61-point kronrod rule */
 {
   0.001389013698677007624551591226760,
   0.003890461127099884051267201844516,
@@ -796,21 +839,30 @@ readonly static double[] wgk =   /* weights of the 61-point kronrod rule */
   0.051494729429451567558340433647099
 };
 
-public static void
-gsl_integration_qk61 (ScalarFunctionDD f, double a, double b,
-                      out double result, out double abserr,
-                      out double resabs, out double resasc)
-{
-  double[] fv1 = new double[31], fv2 = new double[31];
-  gsl_integration_qk(31, xgk, wg, wgk, fv1, fv2, f, a, b, out result, out abserr, out resabs, out resasc);
-} 
-    }
-    public static void AlgorithmQk61(ScalarFunctionDD f, double a, double b,
-                     out double result, out double abserr,
-                     out double resabs, out double resasc)
+    const int _fvlength = 31;
+    double[] _fv1;
+    double[] _fv2;
+    public QK61()
     {
-      QK61.gsl_integration_qk61(f, a, b, out result, out abserr, out resabs, out resasc);
+      _fv1 = new double[_fvlength];
+      _fv2 = new double[_fvlength];
     }
-    #endregion
+    public void Integrate(ScalarFunctionDD f, double a, double b,
+                out double result, out double abserr,
+                out double resabs, out double resasc)
+    {
+      gsl_integration_qk(_fvlength, xgk, wg, wgk, _fv1, _fv2, f, a, b, out result, out abserr, out resabs, out resasc);
+    }
+
+    public static void Integration(ScalarFunctionDD f, double a, double b,
+                 out double result, out double abserr,
+                 out double resabs, out double resasc)
+    {
+      double[] fv1 = new double[_fvlength];
+      double[] fv2 = new double[_fvlength];
+      gsl_integration_qk(_fvlength, xgk, wg, wgk, fv1, fv2, f, a, b, out result, out abserr, out resabs, out resasc);
+    }
   }
+  #endregion
+
 }

@@ -40,30 +40,35 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
   /// with a single data point in the table. Splining of data is not implemented here. Beause of this limitation, the image can only be shown
   /// on linear axes.
   /// </summary>
-  [SerializationSurrogate(0,typeof(DensityImagePlotStyle.SerializationSurrogate0))]
-  [SerializationVersion(0)]
-  public class DensityImagePlotStyle 
+  [Serializable]
+  public class DensityImagePlotStyle  
     :
     System.ICloneable, 
     System.Runtime.Serialization.IDeserializationCallback, 
     Main.IChangedEventSource,
     Main.IDocumentNode
   {
+    [Serializable]
+    enum CachedImageType { None, LinearEquidistant, Other };
 
+    /// <summary>
+    /// The kind of scaling of the values between from and to.
+    /// </summary>
+    [Serializable]
+    public enum ScalingStyle
+    {
+      /// <summary>Linear scale, i.e. color changes linear between from and to.</summary>
+      Linear,
 
-  
+      /// <summary>Logarithmic style, i.e. color changes with log(value) between log(from) and log(to).</summary>
+      Logarithmic
+    };
 
     /// <summary>
     /// The image which is shown during paint.
     /// </summary>
+    [NonSerialized]
     System.Drawing.Bitmap _cachedImage;
-
-    enum CachedImageType { LinearEquidistant, Linear, Other };
-    
-    /// <summary>
-    /// Indicates that the cached data (i.e. the image in this case) is valid and up to date.
-    /// </summary>
-    bool _isCachedDataValid=false;
 
     /// <summary>The lower bound of the plot range</summary>
     double _vRangeFrom = double.NaN; 
@@ -85,28 +90,16 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     double _vmin, _vscal, _vLowerBound, _vUpperBound;
 
+    [NonSerialized]
     CachedImageType _imageType;
-    /// <summary>
-    /// Cached coordinates of the image.
-    /// </summary>
-    float _imageTop, _imageLeft, _imageWidth, _imageHeight;
-
+   
     /// <summary>
     /// Stores the conditions under which the image is valid. Depends on the type of image.
     /// </summary>
+    [NonSerialized]
     object _imageConditionMemento;
 
-    /// <summary>
-    /// The kind of scaling of the values between from and to.
-    /// </summary>
-    public enum ScalingStyle 
-    {
-      /// <summary>Linear scale, i.e. color changes linear between from and to.</summary>
-      Linear,
-
-      /// <summary>Logarithmic style, i.e. color changes with log(value) between log(from) and log(to).</summary>
-      Logarithmic 
-    };
+  
 
     /// <summary>The style for scaling of the values between from and to.</summary>
     ScalingStyle _scalingStyle = ScalingStyle.Linear;
@@ -224,7 +217,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     protected void InitializeMembers()
     {
       _cachedImage = null;
-      _isCachedDataValid = false;
+      
     }
 
     /// <summary>
@@ -253,7 +246,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
       this._parent = from._parent;
 
-      this._isCachedDataValid = false;
+      this._imageType = CachedImageType.None;
     }
 
 
@@ -273,7 +266,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         _scalingStyle = value;
         if(_scalingStyle != oldValue)
         {
-          _isCachedDataValid = false;
+          this._imageType = CachedImageType.None;
           OnChanged();
         }
       }
@@ -315,7 +308,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
         if(!NaNEqual(_vRangeFrom,oldValue))
         {
-          _isCachedDataValid = false;
+          this._imageType = CachedImageType.None;
           OnChanged();
         }
       }
@@ -330,7 +323,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         _vRangeTo = value;
         if(!NaNEqual(_vRangeTo,oldValue))
         {
-          _isCachedDataValid = false;
+          this._imageType = CachedImageType.None;
           OnChanged();
         }
       }
@@ -347,7 +340,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
         if(_colorBelow != oldValue)
         {
-          _isCachedDataValid = false;
+          this._imageType = CachedImageType.None;
           OnChanged();
         }
 
@@ -364,7 +357,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         _colorAbove = value;
         if(_colorAbove != oldValue)
         {
-          _isCachedDataValid = false;
+          this._imageType = CachedImageType.None;
           OnChanged();
         }
 
@@ -380,7 +373,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         _colorInvalid = value;
         if(_colorInvalid != oldValue)
         {
-          _isCachedDataValid = false;
+          this._imageType = CachedImageType.None;
           OnChanged();
         }
 
@@ -394,7 +387,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <param name="sender">The sender of the message.</param>
     public void EhDataChanged(object sender)
     {
-      _isCachedDataValid = false;
+      this._imageType = CachedImageType.None;
       OnChanged();
     }
   
@@ -434,35 +427,31 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
       // there is a need for rebuilding the bitmap only if the data are invalid for some reason
       // if the cached image is valid, then test if the conditions hold any longer
-      if (_isCachedDataValid)
+      switch (_imageType)
       {
-        switch (_imageType)
-        {
-          case CachedImageType.LinearEquidistant:
-            {
-              ImageTypeEquiLinearMemento memento = new ImageTypeEquiLinearMemento(gl);
-              if (!memento.Equals(_imageConditionMemento))
-                _isCachedDataValid = false;
-              
-            }
-            break;
-          case CachedImageType.Other:
-            {
-              ImageTypeOtherMemento memento = new ImageTypeOtherMemento(gl);
-              if (!memento.Equals(_imageConditionMemento))
-                _isCachedDataValid = false;
-            }
-            break;
-        }
+        case CachedImageType.LinearEquidistant:
+          {
+            ImageTypeEquiLinearMemento memento = new ImageTypeEquiLinearMemento(gl);
+            if (!memento.Equals(_imageConditionMemento))
+              this._imageType = CachedImageType.None;
+
+          }
+          break;
+        case CachedImageType.Other:
+          {
+            ImageTypeOtherMemento memento = new ImageTypeOtherMemento(gl);
+            if (!memento.Equals(_imageConditionMemento))
+              this._imageType = CachedImageType.None;
+          }
+          break;
       }
     
 
       // now build the image 
       // note that the image type can change during the call of BuildImage
-      if (!_isCachedDataValid)
+      if (_imageType == CachedImageType.None || _cachedImage==null)
       {
         BuildImage(gfrx, gl, myPlotAssociation, cols, rows);
-        _isCachedDataValid = true; // now the bitmap is valid
         switch (_imageType)
         {
           case CachedImageType.LinearEquidistant:
@@ -793,13 +782,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
           }
     }
 
-    // CoordinateSystem is affine and has linear scales, but not equidistant x and y
-    void BuildImageV2()
-    {
-      // CoordinateSystem is affine and has linear scales, but not equidistant x and y
-      // we build a bitmap, interpolate the points for it
-      _imageType = CachedImageType.Linear;
-    }
+   
 
     // CoordinateSystem is not affine, or scales are non-linear
     void BuildImageV3(Graphics gfrx, IPlotArea gl, 
@@ -826,6 +809,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         // and the vertical direction of the image is related to the column index
         _cachedImage = new System.Drawing.Bitmap(dimX, dimY, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
       }
+
+      byte[] imageBytes = new byte[dimX*dimY*4];
 
 
       double widthByDimX = gl.Size.Width / dimX;
@@ -855,12 +840,15 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         VectorMath.ToROVector(ly),
         DataTableWrapper.ToROColumnMatrix(vcolumns, new Altaxo.Collections.IntegerRangeAsCollection(0,lx.Length)));
 
-      for (int nx = 0; nx < dimX; nx++)
+
+      int addr = 0;
+      for (int ny = 0; ny < dimY; ny++)
       {
-        double px = (nx + 0.5) * widthByDimX;
-        for (int ny = 0; ny < dimY; ny++)
+        double py = (ny + 0.5) * heightByDimY;
+
+        for (int nx = 0; nx < dimX; nx++, addr += 4)
         {
-          double py = (ny + 0.5) * heightByDimY;
+          double px = (nx + 0.5) * widthByDimX;
 
 
           if (false == gl.CoordinateSystem.LayerToLogicalCoordinates(px, py, out rel))
@@ -874,26 +862,53 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
             if (rx < minRX || rx > maxRX || ry < minRY || ry > maxRY)
             {
-              _cachedImage.SetPixel(nx, ny, _colorInvalid);
+              //_cachedImage.SetPixel(nx, ny, _colorInvalid);
+              imageBytes[addr + 0] = _colorInvalid.B;
+              imageBytes[addr + 1] = _colorInvalid.G;
+              imageBytes[addr + 2] = _colorInvalid.R;
+              imageBytes[addr + 3] = _colorInvalid.A;
             }
             else
             {
               double val = interpol.Interpolate(rx, ry);
               if (double.IsNaN(val))
               {
-                _cachedImage.SetPixel(nx, ny, _colorInvalid);
+                //_cachedImage.SetPixel(nx, ny, _colorInvalid);
+                imageBytes[addr + 0] = _colorInvalid.B;
+                imageBytes[addr + 1] = _colorInvalid.G;
+                imageBytes[addr + 2] = _colorInvalid.R;
+                imageBytes[addr + 3] = _colorInvalid.A;
+
               }
               else
               {
-                _cachedImage.SetPixel(nx, ny, GetColor(val));
+                //_cachedImage.SetPixel(nx, ny, GetColor(val));
+                Color c = GetColor(val);
+                imageBytes[addr + 0] = c.B;
+                imageBytes[addr + 1] = c.G;
+                imageBytes[addr + 2] = c.R;
+                imageBytes[addr + 3] = c.A;
               }
             }
 
           }
         }
       }
-     
-     
+
+      // Lock the bitmap's bits.  
+      Rectangle rect = new Rectangle(0, 0, _cachedImage.Width, _cachedImage.Height);
+      System.Drawing.Imaging.BitmapData bmpData =
+          _cachedImage.LockBits(rect, System.Drawing.Imaging.ImageLockMode.WriteOnly,
+          _cachedImage.PixelFormat);
+
+      // Get the address of the first line.
+      IntPtr ptr = bmpData.Scan0;
+
+      // Copy the RGB values back to the bitmap
+      System.Runtime.InteropServices.Marshal.Copy(imageBytes, 0, ptr, imageBytes.Length);
+      
+      _cachedImage.UnlockBits(bmpData);
+
     }
     void BuildImageV1(XYZMeshedColumnPlotData myPlotAssociation, int cols, int rows)
     {
@@ -910,8 +925,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
 
       // now we can fill the image with our data
-
-      
       for (int i = 0; i < cols; i++)
       {
         Altaxo.Data.INumericColumn col = myPlotAssociation.GetDataColumn(i) as Altaxo.Data.INumericColumn;

@@ -493,7 +493,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
         Fit2Jac();
       else
       */
-        Fit1();
+      Fit1();
     }
 
     public void Fit1()

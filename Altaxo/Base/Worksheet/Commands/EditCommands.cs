@@ -914,36 +914,40 @@ namespace Altaxo.Worksheet.Commands
       return columnmap;
     }
 
-    public static void PasteFromClipboard(GUI.WorksheetController dg)
+    public static DataTable GetTableFromClipboard()
     {
-      Altaxo.Data.DataTable dt = dg.DataTable;
       System.Windows.Forms.DataObject dao = System.Windows.Forms.Clipboard.GetDataObject() as System.Windows.Forms.DataObject;
-
       string[] formats = dao.GetFormats();
-      System.Diagnostics.Trace.WriteLine("Available formats:");
+      //System.Diagnostics.Trace.WriteLine("Available formats:");
       //foreach(string format in formats) System.Diagnostics.Trace.WriteLine(format);
 
-      if(dao.GetDataPresent("Altaxo.Data.DataTable.ClipboardMemento"))
+      if (dao.GetDataPresent("Altaxo.Data.DataTable.ClipboardMemento"))
       {
         Altaxo.Data.DataTable.ClipboardMemento tablememento = (Altaxo.Data.DataTable.ClipboardMemento)dao.GetData("Altaxo.Data.DataTable.ClipboardMemento");
-        PasteFromTable(dg,tablememento.DataTable);
-        return;
+        return tablememento.DataTable;
       }
 
-      object clipboardobject=null;
-      Altaxo.Data.DataTable table=null;
+      object clipboardobject = null;
+      Altaxo.Data.DataTable table = null;
 
-      if(dao.GetDataPresent("Csv"))
+      if (dao.GetDataPresent("Csv"))
         clipboardobject = dao.GetData("Csv");
-      else if(dao.GetDataPresent("Text"))
+      else if (dao.GetDataPresent("Text"))
         clipboardobject = dao.GetData("Text");
 
 
-      if(clipboardobject is System.IO.MemoryStream)
+      if (clipboardobject is System.IO.MemoryStream)
         table = Altaxo.Serialization.Ascii.AsciiImporter.Import((System.IO.Stream)clipboardobject);
-      else if(clipboardobject is string)
+      else if (clipboardobject is string)
         table = Altaxo.Serialization.Ascii.AsciiImporter.Import((string)clipboardobject);
-      
+
+
+      return table;
+    }
+
+    public static void PasteFromClipboard(GUI.WorksheetController dg)
+    {
+      DataTable table = GetTableFromClipboard();
       
       if(null!=table)
         PasteFromTable(dg,table);

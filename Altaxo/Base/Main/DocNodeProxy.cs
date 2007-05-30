@@ -29,12 +29,50 @@ namespace Altaxo.Main
   /// measures are used in the case the document node is disposed. In this case the path to the node is stored, and if a new document node with
   /// that path exists, the reference to the object is restored.
   /// </summary>
-  public class DocNodeProxy : System.ICloneable, Main.IChangedEventSource
+  [Serializable]
+  public class DocNodeProxy 
+    :
+    System.ICloneable,
+    Main.IChangedEventSource, 
+    System.Runtime.Serialization.ISerializable,
+    System.Runtime.Serialization.IDeserializationCallback
   {
+    [NonSerialized]
     protected object _docNode;
+
     protected Main.DocumentPath _docNodePath;
 
     #region Serialization
+
+    #region ISerializable Members (Clipboard Serialization)
+
+    public void GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
+    {
+      if (_docNode is Main.IDocumentNode)
+        info.AddValue("Node", Main.DocumentPath.GetAbsolutePath((Main.IDocumentNode)_docNode));
+      else if (_docNodePath != null)
+        info.AddValue("Node", _docNodePath);
+      else
+        info.AddValue("Node", _docNode);
+    }
+
+    protected DocNodeProxy(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
+    {
+      object node = info.GetValue("Node", typeof(object));
+      if (node is Main.DocumentPath)
+        _docNodePath = (Main.DocumentPath)node;
+      else
+        SetDocNode(node);
+    }
+
+
+    public void OnDeserialization(object sender)
+    {
+    }
+
+
+    #endregion
+
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DocNodeProxy),0)]
       class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
@@ -273,6 +311,9 @@ namespace Altaxo.Main
         Changed(this, EventArgs.Empty);
     }
     #endregion
+
+   
+   
   }
 
 }

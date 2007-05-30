@@ -154,8 +154,12 @@
     <Compile Include="Calc\GammaRelated.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Calc\Integration\AlgoQAGP.cs" />
-    <Compile Include="Calc\Integration\AlgoQags.cs" />
+    <Compile Include="Calc\Integration\IntegrationBase.cs" />
+    <Compile Include="Calc\Integration\QagiIntegration.cs" />
+    <Compile Include="Calc\Integration\QagilIntegration.cs" />
+    <Compile Include="Calc\Integration\QagiuIntegration.cs" />
+    <Compile Include="Calc\Integration\QagpIntegration.cs" />
+    <Compile Include="Calc\Integration\QagsIntegration.cs" />
     <Compile Include="Calc\Integration\QK.cs" />
     <Compile Include="Calc\Interpolation\BivariateAkimaSpline.cs" />
     <Compile Include="Calc\Interpolation\BivariateLinearSpline.cs" />
@@ -340,6 +344,7 @@
     <Compile Include="Calc\Probability\ContinuousDistributions\ParetoDistribution.cs" />
     <Compile Include="Calc\Probability\ContinuousDistributions\PowerDistribution.cs" />
     <Compile Include="Calc\Probability\ContinuousDistributions\RayleighDistribution.cs" />
+    <Compile Include="Calc\Probability\ContinuousDistributions\StableDistribution.cs" />
     <Compile Include="Calc\Probability\ContinuousDistributions\StudentsTDistribution.cs" />
     <Compile Include="Calc\Probability\ContinuousDistributions\TriangularDistribution.cs" />
     <Compile Include="Calc\Probability\MultiContinuousDistributions\UnitSphereDistribution.cs" />

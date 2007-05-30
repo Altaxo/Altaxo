@@ -45,7 +45,15 @@ namespace Altaxo.Main
       {
         RelDocNodeProxy s = (RelDocNodeProxy)obj;
         System.Diagnostics.Debug.Assert(s._parentNode != null);
-        Main.DocumentPath path = Main.DocumentPath.GetRelativePathFromTo(s._parentNode, (Main.IDocumentNode)s._docNode);
+        Main.DocumentPath path;
+        if (s._docNode != null)
+        {
+          path = Main.DocumentPath.GetRelativePathFromTo(s._parentNode, (Main.IDocumentNode)s._docNode);
+        }
+        else
+        {
+          path = s._docNodePath;
+        }
         info.AddValue("Node", path);
       }
 

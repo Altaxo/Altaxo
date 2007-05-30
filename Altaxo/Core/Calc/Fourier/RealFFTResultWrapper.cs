@@ -33,6 +33,7 @@ namespace Altaxo.Calc.Fourier
   public class RealFFTResultWrapper
   {
     double[] _fftresult;
+    int _count;
 
     /// <summary>
     /// Constructur. You must provide the array with the result of a real valued fourier transformation.
@@ -41,10 +42,28 @@ namespace Altaxo.Calc.Fourier
     public RealFFTResultWrapper(double[] fftresult)
     {
       _fftresult = fftresult;
+      _count = fftresult.Length % 2 == 0 ? fftresult.Length / 2 + 1 : (fftresult.Length + 1) / 2;
     }
+
+    #region Count
+    /// <summary>
+    /// Return the length of the wrapper vectors Amplitude, RealPart, ImaginaryPart and Phase
+    /// </summary>
+    public int Count
+    {
+      get
+      {
+        return _count;
+      }
+    }
+    #endregion
 
     #region Amplitude
     AmplitudeWrapper _amplitudeWrapper;
+
+    /// <summary>
+    /// Returns the vector of amplitudes, i.e. the modulus of the complex result.
+    /// </summary>
     public IROVector Amplitude
     {
       get
@@ -91,9 +110,9 @@ namespace Altaxo.Calc.Fourier
         get 
         {
           if (i == 0)
-            return 0.5*Math.Abs(_arr[0]);
+            return Math.Abs(_arr[0]);
           else if ((i + i) == _arr.Length)
-            return 0.5*Math.Abs(_arr[_arr.Length / 2]);
+            return Math.Abs(_arr[_arr.Length / 2]);
           else
             return RMath.Hypot(_arr[i], _arr[_arr.Length - i]);
         }
@@ -105,6 +124,10 @@ namespace Altaxo.Calc.Fourier
 
     #region Real part
     RealPartWrapper _realPartWrapper;
+
+    /// <summary>
+    /// Returns the vector of the resulting real parts of the FFT.
+    /// </summary>
     public IROVector RealPart
     {
       get
@@ -151,9 +174,9 @@ namespace Altaxo.Calc.Fourier
         get
         {
           if (i == 0)
-            return 0.5 * _arr[0];
+            return _arr[0];
           else if ((i + i) == _arr.Length)
-            return 0.5 * _arr[_arr.Length / 2];
+            return _arr[_arr.Length / 2];
           else
             return _arr[i];
         }
@@ -165,6 +188,9 @@ namespace Altaxo.Calc.Fourier
 
     #region Imaginary part
     ImaginaryPartWrapper _imagPartWrapper;
+    /// <summary>
+    /// Returns the vector of the resulting imaginary parts of the FFT.
+    /// </summary>
     public IROVector ImaginaryPart
     {
       get
@@ -215,7 +241,7 @@ namespace Altaxo.Calc.Fourier
           else if ((i + i) == _arr.Length)
             return 0;
           else
-            return -_arr[_arr.Length-i];
+            return _arr[_arr.Length-i];
         }
       }
 
@@ -223,8 +249,74 @@ namespace Altaxo.Calc.Fourier
     }
     #endregion
 
+    #region Complex Re-Im
+    ComplexPartWrapper _complexPartWrapper;
+
+    /// <summary>
+    /// Returns the vector of the complex result of the FFT.
+    /// </summary>
+    public IROComplexDoubleVector ComplexResult
+    {
+      get
+      {
+        if (null == _complexPartWrapper)
+          _complexPartWrapper = new ComplexPartWrapper(_fftresult);
+        return _complexPartWrapper;
+      }
+    }
+    class ComplexPartWrapper : IROComplexDoubleVector
+    {
+      double[] _arr;
+      int _wlen;
+
+      public ComplexPartWrapper(double[] arr)
+      {
+        _arr = arr;
+        _wlen = arr.Length % 2 == 0 ? arr.Length / 2 + 1 : (arr.Length + 1) / 2;
+      }
+
+      #region IROVector Members
+
+      public int LowerBound
+      {
+        get { return 0; }
+      }
+
+      public int UpperBound
+      {
+        get { return _wlen - 1; }
+      }
+
+      public int Length
+      {
+        get { return _wlen; }
+      }
+
+      #endregion
+
+      #region INumericSequence Members
+
+      public Complex this[int i]
+      {
+        get
+        {
+          if (i == 0)
+            return Complex.FromRealImaginary(_arr[0],0);
+          else if ((i + i) == _arr.Length)
+            return Complex.FromRealImaginary(_arr[_arr.Length / 2],0);
+          else
+            return Complex.FromRealImaginary(_arr[i],_arr[_arr.Length-i]);
+        }
+      }
+      #endregion
+    }
+    #endregion
+
     #region Phase
     PhaseWrapper _phaseWrapper;
+    /// <summary>
+    /// Returns the vector of the resulting phases of the FFT.
+    /// </summary>
     public IROVector Phase
     {
       get
@@ -284,13 +376,25 @@ namespace Altaxo.Calc.Fourier
     #endregion
 
     #region Frequency
-    public IROVector FrequenciesFromTimeIncrement(double timeincrement)
+    /// <summary>
+    /// Given a value for the xincrement (x interval between two points before the Fourier transformation), the vector of frequencies
+    /// is returned.
+    /// </summary>
+    /// <param name="xincrement">X interval between two points before the Fourier transformation (sample period).</param>
+    /// <returns>The vector of frequencies that correspond to the vectors Amplitude, RealPart, ImaginaryPart and Phase.</returns>
+    public IROVector FrequenciesFromXIncrement(double xincrement)
     {
-      return new FrequencyWrapper(_fftresult,1/timeincrement);
+      return new FrequencyWrapper(_fftresult,1/xincrement);
     }
-    public IROVector FrequenciesFromSampleRate(double samplerate)
+    /// <summary>
+    /// Given a value for the xrate (inverse of x interval between two points before the Fourier transformation), the vector of frequencies
+    /// is returned.
+    /// </summary>
+    /// <param name="xrate">Inverse of the x interval between two points before the Fourier transformation (sample rate).</param>
+    /// <returns>The vector of frequencies that correspond to the vectors Amplitude, RealPart, ImaginaryPart and Phase.</returns>
+    public IROVector FrequenciesFromXRate(double xrate)
     {
-      return new FrequencyWrapper(_fftresult, samplerate);
+      return new FrequencyWrapper(_fftresult, xrate);
     }
     class FrequencyWrapper : IROVector
     {
@@ -329,6 +433,71 @@ namespace Altaxo.Calc.Fourier
         get
         {
           return i * _frequencyIncrement;
+        }
+      }
+
+      #endregion
+    }
+    #endregion
+
+    #region CircularFrequency
+    /// <summary>
+    /// Given a value for the xincrement (x interval between two points before the Fourier transformation), the vector of circular frequencies
+    /// is returned.
+    /// </summary>
+    /// <param name="xincrement">X interval between two points before the Fourier transformation (sample period).</param>
+    /// <returns>The vector of circular frequencies that correspond to the vectors Amplitude, RealPart, ImaginaryPart and Phase.</returns>
+    public IROVector CircularFrequenciesFromXIncrement(double xincrement)
+    {
+      return new CircularFrequencyWrapper(_fftresult, 1 / xincrement);
+    }
+    /// <summary>
+    /// Given a value for the xrate (inverse of x interval between two points before the Fourier transformation), the vector of circular frequencies
+    /// is returned.
+    /// </summary>
+    /// <param name="xrate">Inverse of the x interval between two points before the Fourier transformation (sample rate).</param>
+    /// <returns>The vector of circular frequencies that correspond to the vectors Amplitude, RealPart, ImaginaryPart and Phase.</returns>
+    public IROVector CircularFrequenciesFromXRate(double xrate)
+    {
+      return new CircularFrequencyWrapper(_fftresult, xrate);
+    }
+    class CircularFrequencyWrapper : IROVector
+    {
+      int _wlen;
+      double _omegaIncrement;
+
+      public CircularFrequencyWrapper(double[] arr, double samplerate)
+      {
+        _wlen = arr.Length % 2 == 0 ? arr.Length / 2 + 1 : (arr.Length + 1) / 2;
+        _omegaIncrement = 2*Math.PI*samplerate / arr.Length;
+      }
+
+      #region IROVector Members
+
+      public int LowerBound
+      {
+        get { return 0; }
+      }
+
+      public int UpperBound
+      {
+        get { return _wlen - 1; }
+      }
+
+      public int Length
+      {
+        get { return _wlen; }
+      }
+
+      #endregion
+
+      #region INumericSequence Members
+
+      public double this[int i]
+      {
+        get
+        {
+          return i * _omegaIncrement;
         }
       }
 

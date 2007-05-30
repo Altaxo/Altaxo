@@ -58,6 +58,9 @@ namespace Altaxo.Gui.Graph
     void EhView_EditRangeClick(NGTreeNode[] selNodes);
     void EhView_PlotAssociationsClick(NGTreeNode[] selNodes);
 
+    void EhView_CopyClipboard(NGTreeNode[] selNodes);
+    void EhView_PasteClipboard();
+
   }
 
   public interface ILineScatterLayerContentsView : IMVCView
@@ -574,6 +577,72 @@ namespace Altaxo.Gui.Graph
         EhView_ContentsDoubleClick(selNodes[0]);
     }
 
+    public void EhView_CopyClipboard(NGTreeNode[] selNodes)
+    {
+      System.Windows.Forms.DataObject dao = new System.Windows.Forms.DataObject();
+
+      ArrayList objectList = new ArrayList();
+
+      foreach (NGTreeNode o in selNodes)
+      {
+
+          objectList.Add(o.Tag);
+      }
+
+      dao.SetData("Altaxo.Graph.PlotItemList", objectList);
+
+      // Test code to test if the object list can be serialized
+#if false
+      {
+      System.Runtime.Serialization.Formatters.Binary.BinaryFormatter binform = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+        System.IO.MemoryStream stream = new System.IO.MemoryStream();
+        binform.Serialize(stream, objectList);
+
+        stream.Flush();
+        stream.Seek(0, System.IO.SeekOrigin.Begin);
+        object obj = binform.Deserialize(stream);
+        stream.Close();
+        stream.Dispose();
+      }
+#endif
+
+      // now copy the data object to the clipboard
+      System.Windows.Forms.Clipboard.SetDataObject(dao, true);
+    }
+    public void EhView_PasteClipboard()
+    {
+      System.Windows.Forms.DataObject dao = System.Windows.Forms.Clipboard.GetDataObject() as System.Windows.Forms.DataObject;
+
+      string[] formats = dao.GetFormats();
+      if (dao.GetDataPresent("Altaxo.Graph.PlotItemList"))
+      {
+        object obj = dao.GetData("Altaxo.Graph.PlotItemList");
+
+        // if at this point obj is a memory stream, you probably have forgotten the deserialization constructor of the class you expect to deserialize here
+        if (obj is ArrayList)
+        {
+          ArrayList list = (ArrayList)obj;
+          foreach (object item in list)
+          {
+            if (item is IGPlotItem)
+            {
+              IGPlotItem newItem = item as IGPlotItem;
+              _doc.Add(newItem);
+
+              NGTreeNode newNode = new NGTreeNode();
+              newNode.Text = newItem.GetName(2);
+              newNode.Tag = newItem;
+              _plotItemsTree.Add(newNode);
+            }
+          }
+
+          View.Contents_SetItems(_plotItemsTree);
+          SetDirty();
+
+        }
+
+      }
+    }
 
     #endregion
 

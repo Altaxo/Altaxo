@@ -144,6 +144,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Calc\FFT\TestRealFourierTransform.cs" />
+    <Compile Include="Calc\FFT\TestRealFourierTransformWrapper.cs" />
     <Compile Include="Calc\Integration\QAGPTests.cs" />
     <Compile Include="Calc\Integration\QAGSTests.cs" />
     <Compile Include="Calc\Interpolation\BivariateAkimaSpline.cs" />
@@ -199,6 +200,7 @@
     <Compile Include="Calc\Optimization\Rosenbrock.cs" />
     <Compile Include="Calc\Probability\RandomTests.cs" />
     <Compile Include="Calc\Probability\TestProbabiltyDistributions.cs" />
+    <Compile Include="Calc\Probability\TestStableDistribution.cs" />
     <Compile Include="Calc\Regression\NonLinearFit_Tests.cs" />
     <Compile Include="Calc\Regression\TestNonlinearFit2.cs" />
     <Compile Include="Calc\TestBesselRelated.cs">

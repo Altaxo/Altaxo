@@ -56,6 +56,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     void EhView_CopyParameterV();
     void EhView_CopyParameterNV();
     void EhView_CopyParameterNVV();
+    void EhView_PasteParameterV();
   }
 
   #endregion
@@ -328,6 +329,30 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         new Altaxo.Collections.AscendingIntegerCollection(),
         dao);
       System.Windows.Forms.Clipboard.SetDataObject(dao, true);
+    }
+    public void EhView_PasteParameterV()
+    {
+      Altaxo.Data.DataTable table = Altaxo.Worksheet.Commands.EditCommands.GetTableFromClipboard();
+      if (null == table)
+        return;
+       Altaxo.Data.DoubleColumn col = null;
+        // Find the first column that contains numeric values
+        for (int i = 0; i < table.DataColumnCount; i++)
+        {
+          if (table[i] is Altaxo.Data.DoubleColumn)
+          {
+            col = table[i] as Altaxo.Data.DoubleColumn;
+            break;
+          }
+        }
+        if (null==col)
+          return;
+
+        int len = Math.Max(col.Count, _doc.CurrentParameters.Count);
+      for(int i=0;i<len;i++)
+        _doc.CurrentParameters[i].Parameter = col[i];
+
+      _doc.CurrentParameters.OnInitializationFinished();
     }
     public void EhView_CopyParameterNV()
     {

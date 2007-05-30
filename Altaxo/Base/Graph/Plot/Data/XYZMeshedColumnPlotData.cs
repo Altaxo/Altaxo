@@ -32,11 +32,13 @@ namespace Altaxo.Graph.Plot.Data
   /// <summary>
   /// Summary description for XYColumnPlotData.
   /// </summary>
+  [Serializable]
   public class XYZMeshedColumnPlotData
     :
     Main.IChangedEventSource,
     System.ICloneable,
-    Main.IDocumentNode
+    Main.IDocumentNode,
+    System.Runtime.Serialization.IDeserializationCallback
   {
     [NonSerialized]
     protected object _parent;
@@ -48,11 +50,8 @@ namespace Altaxo.Graph.Plot.Data
     protected Altaxo.Data.ReadableColumnProxy _yColumn;
 
     // cached or temporary data
-    [NonSerialized]
     protected NumericalBoundaries _xBoundaries;
-    [NonSerialized]
     protected NumericalBoundaries _yBoundaries;
-    [NonSerialized]
     protected NumericalBoundaries _vBoundaries;
 
 
@@ -60,6 +59,7 @@ namespace Altaxo.Graph.Plot.Data
     /// Number of rows, here the maximum of the row counts of all columns.
     /// </summary>
     protected int _numberOfRows;
+    [NonSerialized]
     protected bool _isCachedDataValid = false;
 
     // events
@@ -80,6 +80,15 @@ namespace Altaxo.Graph.Plot.Data
 
     #region Serialization
 
+    #region Clipboard
+  
+    public void OnDeserialization(object sender)
+    {
+      CreateEventChain();
+    }
+
+     #endregion
+  
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYZEquidistantMeshColumnPlotData", 0)]
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYZMeshedColumnPlotData), 1)]
     class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
@@ -649,6 +658,8 @@ namespace Altaxo.Graph.Plot.Data
         return null == noc ? null : noc.GetNameOfChildObject(this);
       }
     }
+
+   
   }
 
 

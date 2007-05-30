@@ -713,14 +713,14 @@ qelg(out double result, out double abserr)
     ScalarFunctionDD f, double a, double b,
     out double result, out double abserr,
                                   out double defabs, out double resabs);
-  public class AlgoQags
+  public class IntegrationBase
   {
-    static bool test_positivity(double result, double resabs)
+    protected static bool test_positivity(double result, double resabs)
     {
       bool status = (Math.Abs(result) >= (1 - 50 * GSL_CONST.GSL_DBL_EPSILON) * resabs);
       return status;
     }
-    static bool subinterval_too_small(double a1, double a2, double b2)
+    protected static bool subinterval_too_small(double a1, double a2, double b2)
     {
       const double e = GSL_CONST.GSL_DBL_EPSILON;
       const double u = GSL_CONST.GSL_DBL_MIN;
@@ -732,174 +732,16 @@ qelg(out double result, out double abserr)
       return status;
     }
 
-
-    /*
-    public static int qags (
-      ScalarFunctionDD f,
-      double a, double b,
-      double epsabs, 
-      double epsrel,
-      int limit,
-      gsl_integration_workspace * workspace,
-      out double result, out double abserr,
-      gsl_integration_rule * q);
-     */
-
-    public static GSL_ERROR gsl_integration_qags(ScalarFunctionDD f,
-                          double a, double b,
-                          double epsabs, double epsrel, int limit,
-                          gsl_integration_workspace workspace,
-                          out double result, out double abserr)
-    {
-      GSL_ERROR status = qags(f, a, b, epsabs, epsrel, limit,
-                         workspace,
-                         out result, out abserr,
-                         QK.AlgorithmQk21);
-      return status;
-    }
-
-    /* QAGI: evaluate an integral over an infinite range using the
-       transformation
-
-       integrate(f(x),-Inf,Inf) = integrate((f((1-t)/t) + f(-(1-t)/t))/t^2,0,1)
-
-       */
-
-    //static double i_transform (double t, void *params);
-
-    public static GSL_ERROR
-    gsl_integration_qagi(ScalarFunctionDD f,
-                          double epsabs, double epsrel, int limit,
-                          gsl_integration_workspace workspace,
-                          out double result, out double abserr)
-    {
-      //int status;
-
-      //  gsl_function f_transform;
-      //  f_transform.function = &i_transform;
-      //  f_transform.params = f;
-
-      ScalarFunctionDD f_transform = delegate(double t) { return i_transform(t, f); };
-
-      GSL_ERROR status = qags(f_transform, 0.0, 1.0,
-                     epsabs, epsrel, limit,
-                     workspace,
-                     out result, out abserr,
-                     QK.AlgorithmQk15);
-
-      return status;
-    }
-
-    static double i_transform(double t, ScalarFunctionDD func)
-    {
-      double x = (1 - t) / t;
-      double y = func(x) + func(-x);
-      return (y / t) / t;
-    }
-
-
-    /* QAGIL: Evaluate an integral over an infinite range using the
-       transformation,
    
-       integrate(f(x),-Inf,b) = integrate(f(b-(1-t)/t)/t^2,0,1)
 
-       */
+   
 
-    struct il_params { public double b; public ScalarFunctionDD f; } ;
+   
 
-    //static double il_transform (double t, void *params);
-
-    public static GSL_ERROR
-    gsl_integration_qagil(ScalarFunctionDD f,
-                           double b,
-                           double epsabs, double epsrel, int limit,
-                           gsl_integration_workspace workspace,
-                           out double result, out double abserr)
-    {
-      //int status;
-
-      // gsl_function f_transform;
-      il_params transform_params = new il_params();
-      transform_params.b = b;
-      transform_params.f = f;
-
-      //  f_transform.function = &il_transform;
-      //  f_transform.params = &transform_params;
-
-      ScalarFunctionDD f_transform = delegate(double t) { return il_transform(t, transform_params); };
-
-      GSL_ERROR status = qags(f_transform, 0.0, 1.0,
-                     epsabs, epsrel, limit,
-                     workspace,
-                     out result, out abserr,
-                     QK.AlgorithmQk15);
-
-      return status;
-    }
-
-    static double
-    il_transform(double t, il_params p)
-    {
-      //struct il_params *p = (struct il_params *) params;
-      double b = p.b;
-      ScalarFunctionDD f = p.f;
-      double x = b - (1 - t) / t;
-      double y = f(x);
-      return (y / t) / t;
-    }
-
-    /* QAGIU: Evaluate an integral over an infinite range using the
-       transformation
-
-       integrate(f(x),a,Inf) = integrate(f(a+(1-t)/t)/t^2,0,1)
-
-       */
-
-    struct iu_params { public double a; public ScalarFunctionDD f; } ;
-
-    //static double iu_transform (double t, void *params);
-
-    public static GSL_ERROR
-    gsl_integration_qagiu(ScalarFunctionDD f,
-                           double a,
-                           double epsabs, double epsrel, int limit,
-                           gsl_integration_workspace workspace,
-                           out double result, out double abserr)
-    {
-      //int status;
-
-      //  gsl_function f_transform;
-      iu_params transform_params = new iu_params();
-      transform_params.a = a;
-      transform_params.f = f;
-
-      //f_transform.function = &iu_transform;
-      //f_transform.params = &transform_params;
-
-      ScalarFunctionDD f_transform = delegate(double t) { return iu_transform(t, transform_params); };
-
-      GSL_ERROR status = qags(f_transform, 0.0, 1.0,
-                     epsabs, epsrel, limit,
-                     workspace,
-                     out result, out abserr,
-                     QK.AlgorithmQk15);
-
-      return status;
-    }
-
-    static double
-    iu_transform(double t, iu_params p)
-    {
-      double a = p.a;
-      ScalarFunctionDD f = p.f;
-      double x = a + (1 - t) / t;
-      double y = f(x);
-      return (y / t) / t;
-    }
 
     /* Main integration function */
 
-    public static GSL_ERROR
+    protected static GSL_ERROR
     qags(ScalarFunctionDD f,
           double a, double b,
           double epsabs, double epsrel,
@@ -1278,5 +1120,9 @@ qelg(out double result, out double abserr)
       }
 
     }
+
+   
   }
+
+  
 }

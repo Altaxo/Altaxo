@@ -27,6 +27,7 @@ namespace Altaxo.Main
   /// <summary>
   /// DocumentPath holds a path to a document
   /// </summary>
+  [Serializable]
   public class DocumentPath : System.Collections.Specialized.StringCollection, System.ICloneable
   {
     protected bool _IsAbsolutePath;

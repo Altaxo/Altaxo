@@ -102,6 +102,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       InnerList.Add(e);
       e.Changed += new EventHandler(EhChildChanged);
 
+      CollectParameterNames();
       OnChanged();
     }
 

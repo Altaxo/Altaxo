@@ -31,9 +31,19 @@ namespace Altaxo.Data
   /// <summary>
   /// Summary description for DataColumnPlaceHolder.
   /// </summary>
+  [Serializable]
   public class ReadableColumnProxy : DocNodeProxy
   {
     #region Serialization
+
+    #region Clipboard
+    protected ReadableColumnProxy(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
+      : base(info,context)
+    {
+    }
+
+    #endregion
+
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ReadableColumnProxy),0)]
       class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {

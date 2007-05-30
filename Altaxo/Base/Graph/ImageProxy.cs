@@ -471,8 +471,7 @@ namespace Altaxo.Graph
         _stream.Seek(0, SeekOrigin.Begin);
         _image = Image.FromStream(_stream);
       }
-
-      if (_url != null)
+      else if (_url != null)
       {
           LoadStreamBuffer(_url);
           if (_stream != null)

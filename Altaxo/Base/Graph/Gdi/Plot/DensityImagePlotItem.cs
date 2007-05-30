@@ -40,10 +40,24 @@ namespace Altaxo.Graph.Gdi.Plot
   /// </summary>
   [SerializationSurrogate(0,typeof(DensityImagePlotItem.SerializationSurrogate0))]
   [SerializationVersion(0)]
-  public class DensityImagePlotItem : PlotItem, System.Runtime.Serialization.IDeserializationCallback, IXBoundsHolder, IYBoundsHolder
+  [Serializable]
+  public class DensityImagePlotItem 
+    :
+    PlotItem, 
+    System.Runtime.Serialization.IDeserializationCallback,
+    IXBoundsHolder,
+    IYBoundsHolder
   {
     protected XYZMeshedColumnPlotData m_PlotAssociation;
     protected DensityImagePlotStyle       m_PlotStyle;
+
+    [field:NonSerialized]
+    public event BoundaryChangedHandler XBoundariesChanged;
+
+    [field:NonSerialized]
+    public event BoundaryChangedHandler YBoundariesChanged;
+
+
 
     #region Serialization
     /// <summary>Used to serialize the DensityImagePlotItem Version 0.</summary>
@@ -291,7 +305,6 @@ namespace Altaxo.Graph.Gdi.Plot
         XBoundariesChanged(this,args);
     }
 
-    public event BoundaryChangedHandler XBoundariesChanged;
 
     public void SetXBoundsFromTemplate(IPhysicalBoundaries val)
     {
@@ -315,7 +328,6 @@ namespace Altaxo.Graph.Gdi.Plot
         YBoundariesChanged(this,args);
     }
 
-    public event BoundaryChangedHandler YBoundariesChanged;
 
     public void SetYBoundsFromTemplate(IPhysicalBoundaries val)
     {
