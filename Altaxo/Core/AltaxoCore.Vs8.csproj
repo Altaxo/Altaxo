@@ -157,10 +157,17 @@
     <Compile Include="Calc\Integration\IntegrationBase.cs" />
     <Compile Include="Calc\Integration\QagiIntegration.cs" />
     <Compile Include="Calc\Integration\QagilIntegration.cs" />
+    <Compile Include="Calc\Integration\QagIntegration.cs" />
     <Compile Include="Calc\Integration\QagiuIntegration.cs" />
     <Compile Include="Calc\Integration\QagpIntegration.cs" />
     <Compile Include="Calc\Integration\QagsIntegration.cs" />
+    <Compile Include="Calc\Integration\QawcIntegration.cs" />
+    <Compile Include="Calc\Integration\QawfIntegration.cs" />
+    <Compile Include="Calc\Integration\QawoIntegration.cs" />
+    <Compile Include="Calc\Integration\QawsIntegration.cs" />
+    <Compile Include="Calc\Integration\Qcheb.cs" />
     <Compile Include="Calc\Integration\QK.cs" />
+    <Compile Include="Calc\Integration\Qng.cs" />
     <Compile Include="Calc\Interpolation\BivariateAkimaSpline.cs" />
     <Compile Include="Calc\Interpolation\BivariateLinearSpline.cs" />
     <Compile Include="Calc\Interpolation\Interpolation.cs">

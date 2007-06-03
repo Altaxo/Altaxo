@@ -93,8 +93,8 @@ namespace Altaxo.Calc.Integration
     public int nrmax;
     public int i;
     public int maximum_level;
-    double[] alist;
-    double[] blist;
+    public double[] alist;
+    public double[] blist;
     double[] rlist;
     public double[] elist;
     int[] order;
@@ -734,7 +734,26 @@ qelg(out double result, out double abserr)
 
    
 
-   
+   /* Define a rounding function which moves extended precision values
+   out of registers and rounds them to double-precision. This should
+   be used *sparingly*, in places where it is necessary to keep
+   double-precision rounding for critical expressions while running in
+   extended precision. For example, the following code should ensure
+   exact equality, even when extended precision registers are in use,
+
+      double q = GSL_COERCE_DBL(3.0/7.0) ;
+      if (q == GSL_COERCE_DBL(3.0/7.0)) { ... } ;
+
+   It carries a penalty even when the program is running in double
+   precision mode unless you compile a separate version of the
+   library with HAVE_EXTENDED_PRECISION_REGISTERS turned off. */
+
+
+protected static double GSL_COERCE_DBL(double x) 
+{
+  return (x); 
+}
+
 
    
 

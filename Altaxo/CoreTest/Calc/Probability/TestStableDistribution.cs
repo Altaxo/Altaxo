@@ -30,7 +30,8 @@ namespace AltaxoTest.Calc.Probability
 {
   [TestFixture]
   public class TestStableDistribution
-	{
+  {
+    #region PDF test data
     /* Mathematica code to create the table following (use the stable packet from the mathematica library web site)
     
      << StableDistribution`SMath`
@@ -267,7 +268,7 @@ new double[]{2,1,0.5,0.265003532344028561},
 new double[]{2,1,4,0.00516674633852301346},
 new double[]{2,1,10,3.91771663275433383e-12}
 };
-
+    #endregion
 
     [Test]
     public void PdfTest()
@@ -279,12 +280,29 @@ new double[]{2,1,10,3.91771663275433383e-12}
         double x = _pdfTest1[i][2];
         double expectedy = _pdfTest1[i][3];
         double y = StableDistributionS0.PDF(x, alpha, beta);
-        double maxdelta = Math.Abs(expectedy / 1E-7);
-        string msg = string.Format("alpha={0}, beta={1}, x={2}, expected={3}, actual={4}", alpha, beta, x, expectedy, y);
+        double maxdelta = Math.Abs(expectedy / 1E7);
+        maxdelta = Math.Max(maxdelta, 1e-25);
+        string msg = string.Format("i={0}, alpha={1}, beta={2}, x={3}, expected={4}, actual={5}", i,alpha, beta, x, expectedy, y);
         Assert.AreEqual(expectedy, y, maxdelta, msg);
       }
     }
 
+    [Test]
+    public void PdfTestSpec()
+    {
+      int i = 140; 
+      {
+        double alpha = _pdfTest1[i][0];
+        double beta = _pdfTest1[i][1];
+        double x = _pdfTest1[i][2];
+        double expectedy = _pdfTest1[i][3];
+        double y = StableDistributionS0.PDF(x, alpha, beta);
+        double maxdelta = Math.Abs(expectedy / 1E7);
+        maxdelta = Math.Max(maxdelta, 1e-25);
+        string msg = string.Format("i={0}, alpha={1}, beta={2}, x={3}, expected={4}, actual={5}", i, alpha, beta, x, expectedy, y);
+        Assert.AreEqual(expectedy, y, maxdelta, msg);
+      }
+    }
 
   }
 }

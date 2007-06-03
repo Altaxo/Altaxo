@@ -24,10 +24,10 @@ namespace Altaxo.Calc.Probability
         throw new ArgumentOutOfRangeException("Alpha must be in the range (0,2]");
       if(beta<-1 || beta>1)
         throw new ArgumentOutOfRangeException("Beta must be in the range [-1,1]");
-      if (beta == -1 && x > 0)
-        throw new ArgumentOutOfRangeException("If beta==-1, then x must be negative");
-      if (beta == 1 && x < 0)
-        throw new ArgumentOutOfRangeException("If beta==-1, then x must be positive");
+     // if (beta == -1 && x > 0)
+       // return 0;
+      //if (beta == 1 && x < 0)
+        //return 0;
 
       double zeta = -beta * Math.Tan(alpha * 0.5 * Math.PI);
 
@@ -66,7 +66,7 @@ namespace Altaxo.Calc.Probability
     {
       double xi = Math.Atan(-zeta) / alpha;
       double factor = Math.Pow(x - zeta, alpha / (alpha - 1)) * Math.Pow(Math.Cos(alpha * xi), 1 / (alpha - 1));
-      double integrand = Integrate(delegate(double theta) { return PDFCore1(factor, alpha, xi, theta); }, -xi, 0.5*Math.PI,ref tempStorage);
+      double integrand = Integrate(delegate(double theta) { return PDFCore1(factor, alpha, xi, theta); }, -xi, 0.5*Math.PI, alpha>1, ref tempStorage);
       double pre = alpha / (Math.PI * Math.Abs(alpha - 1) * (x - zeta));
       return pre * integrand;
     }
@@ -75,13 +75,14 @@ namespace Altaxo.Calc.Probability
     {
       double r1 = Math.Pow(Math.Cos(theta) / Math.Sin(alpha * (theta + xi)), alpha / (alpha - 1));
       double r2 = Math.Cos(alpha * xi + (alpha - 1) * theta) / Math.Cos(theta);
-      return factor * r1 * r2;
+      double result = factor * r1 * r2;
+      return result < 0 ? 0 : result; // the result should be always positive, if not this is due to numerical inaccuracies near the borders, we can safely set the result 0 then
     }
 
     private static double PDFMethod2(double x, double beta, ref object tempStorage)
     {
-      double factor = Math.Exp(0.5 * Math.PI * x / beta) * 2 / Math.PI;
-      double integrand = Integrate(delegate(double theta) { return PDFCore2(factor, beta, theta); }, -0.5*Math.PI, 0.5 * Math.PI, ref tempStorage);
+      double factor = Math.Exp(-0.5 * Math.PI * x / beta) * 2 / Math.PI;
+      double integrand = Integrate(delegate(double theta) { return PDFCore2(factor, beta, theta); }, -0.5*Math.PI, 0.5 * Math.PI, beta<0, ref tempStorage);
       double pre = 1 / (2*Math.Abs(beta));
       return pre * integrand;
     }
@@ -99,13 +100,28 @@ namespace Altaxo.Calc.Probability
     /// <param name="x0"></param>
     /// <param name="x1"></param>
     /// <returns></returns>
-    private static double Integrate(ScalarFunctionDD func, double x0, double x1, ref object tempStorage)
+    private static double Integrate(ScalarFunctionDD func, double x0, double x1, bool isDecreasing, ref object tempStorage)
     {
-      double xm = FindYEqualToOne(func, x0, x1);
-      double result, abserr;
-      Calc.Integration.QagpIntegration.Integration(delegate(double x) { double f = func(x);  return f * Math.Exp(-f); },
-        new double[] { x0, xm, x1 }, 3, 0, 1e-6, 100, out result, out abserr, ref tempStorage);
-      return result;
+      double xm = isDecreasing ? FindDecreasingYEqualToOne(func, x0, x1) : FindIncreasingYEqualToOne(func, x0, x1);
+      double result=0, abserr=0;
+      try
+      {
+        Calc.Integration.QagpIntegration.Integration(
+          delegate(double x)
+          {
+            double f = func(x);
+            double r = double.IsInfinity(f) ? 0 : f * Math.Exp(-f);
+            //System.Diagnostics.Debug.WriteLine(string.Format("x={0}, f={1}, r={2}", x, f, r));
+            //Console.WriteLine("x={0}, f={1}, r={2}", x, f, r);
+            return r;
+          },
+          new double[] { x0, xm, x1 }, 3, 0, 1e-6, 100, out result, out abserr, ref tempStorage);
+        return result;
+      }
+      catch (Exception ex)
+      {
+        return result;
+      }
     }
 
     /// <summary>
@@ -115,7 +131,7 @@ namespace Altaxo.Calc.Probability
     /// <param name="x0"></param>
     /// <param name="x1"></param>
     /// <returns></returns>
-    private static double FindYEqualToOne(ScalarFunctionDD func, double x0, double x1)
+    private static double FindIncreasingYEqualToOne(ScalarFunctionDD func, double x0, double x1)
     {
       double low = x0;
       double high = x1;
@@ -130,6 +146,35 @@ namespace Altaxo.Calc.Probability
           low = xm;
         else
           high = xm;
+
+        if ((high - low) < 1E-15)
+          break;
+      }
+      return xm;
+    }
+
+    /// <summary>
+    /// Finds the x where func(x)==1+-1E-5 between x<x0<x1 for a monoton decreasing function func.
+    /// </summary>
+    /// <param name="func"></param>
+    /// <param name="x0"></param>
+    /// <param name="x1"></param>
+    /// <returns></returns>
+    private static double FindDecreasingYEqualToOne(ScalarFunctionDD func, double x0, double x1)
+    {
+      double low = x0;
+      double high = x1;
+      double xm;
+      for (; ; )
+      {
+        xm = 0.5 * (low + high);
+        double y = func(xm);
+        if (Math.Abs(y - 1) < 1E-5)
+          break;
+        else if (y < 1)
+          high = xm;
+        else
+          low = xm;
 
         if ((high - low) < 1E-15)
           break;

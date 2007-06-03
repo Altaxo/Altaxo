@@ -13,7 +13,15 @@ namespace Altaxo.Calc.Integration
 
     public QagiuIntegration()
     {
-      _integrationRule = new QK15().Integrate;
+      _integrationRule = DefaultIntegrationRule;
+    }
+
+    public static gsl_integration_rule DefaultIntegrationRule
+    {
+      get
+      {
+        return new QK15().Integrate;
+      }
     }
 
     public GSL_ERROR Integrate(ScalarFunctionDD f,
@@ -103,7 +111,7 @@ namespace Altaxo.Calc.Integration
 
     //static double iu_transform (double t, void *params);
 
-    static GSL_ERROR
+    internal static GSL_ERROR
     gsl_integration_qagiu(ScalarFunctionDD f,
                            double a,
                            double epsabs, double epsrel, int limit,
