@@ -4,6 +4,10 @@ using System.Text;
 
 namespace Altaxo.Calc.Integration
 {
+  /// <summary>
+  /// Computes the 12-th order and 24-th order Chebyshev
+  /// approximations to f(x) on [a,b].
+  /// </summary>
   public class Qcheb
   {
     #region Official C# interface

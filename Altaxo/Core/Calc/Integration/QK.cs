@@ -4,6 +4,9 @@ using System.Text;
 
 namespace Altaxo.Calc.Integration
 {
+  /// <summary>
+  /// Base class for all Kronrod algorithms.
+  /// </summary>
   public class QK
   {
     #region QK

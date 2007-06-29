@@ -715,6 +715,19 @@ qelg(out double result, out double abserr)
                                   out double defabs, out double resabs);
   public class IntegrationBase
   {
+    /// <summary>
+    /// Returns the default setting of the debug flag in the derived classes. Default is false, which means that
+    /// errors due to failed integration will not cause an exception.
+    /// </summary>
+    public static bool DefaultDebugFlag
+    {
+      get
+      {
+        return false;
+      }
+    }
+
+
     protected static bool test_positivity(double result, double resabs)
     {
       bool status = (Math.Abs(result) >= (1 - 50 * GSL_CONST.GSL_DBL_EPSILON) * resabs);
@@ -767,10 +780,8 @@ protected static double GSL_COERCE_DBL(double x)
           int limit,
           gsl_integration_workspace workspace,
           out double result, out double abserr,
-          gsl_integration_rule q)
+          gsl_integration_rule q, bool bDebug)
     {
-      bool bDebug = true;
-
       double area, errsum;
       double res_ext, err_ext;
       double result0, abserr0, resabs0, resasc0;

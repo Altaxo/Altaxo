@@ -107,6 +107,8 @@ namespace Altaxo.Graph.Scales
 
       this._axisOrg = from._axisOrg;
       this._axisEnd = from._axisEnd;
+      this._majorSpan = from._majorSpan;
+      this._minorTicks = from._minorTicks;
  
       this.InternalSetDataBounds((FiniteDateTimeBoundaries)from._dataBounds.Clone());
       this.InternalSetRescaling((DateTimeAxisRescaleConditions)from._rescaling.Clone());
@@ -425,6 +427,7 @@ namespace Altaxo.Graph.Scales
 
       DateTime oldAxisOrg = this._axisOrg;
       DateTime oldAxisEnd = this._axisEnd;
+      SpanCompound oldAxisSpan = this._majorSpan;
     
      
 
@@ -457,7 +460,7 @@ namespace Altaxo.Graph.Scales
       }
 
       // compare with the saved values to find out whether or not something changed
-      if( _axisOrg!=oldAxisOrg || _axisEnd!=oldAxisEnd)
+      if( _axisOrg!=oldAxisOrg || _axisEnd!=oldAxisEnd || _majorSpan._span!=oldAxisSpan._span || _majorSpan._unit!=oldAxisSpan._unit)
       {
         OnChanged();
       }

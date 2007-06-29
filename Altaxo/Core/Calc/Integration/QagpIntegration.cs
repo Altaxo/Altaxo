@@ -4,73 +4,217 @@ using System.Text;
 
 namespace Altaxo.Calc.Integration
 {
-  public class QagpIntegration
+  /// <summary>
+  /// Adaptive integration with known singular points.
+  /// </summary>
+  /// <remarks>
+  /// This class applies the adaptive integration algorithm QAGS taking account of the
+  /// user-supplied locations of singular points. The array pts of length npts should contain
+  /// the endpoints of the integration ranges defined by the integration region and locations
+  /// of the singularities. For example, to integrate over the region (a, b) with break-points
+  /// at x1, x2, x3 (where a &lt; x1 &lt; x2 &lt; x3 &lt; b) the following pts array should be used:
+  /// <code> 
+  /// pts[0] = a
+  /// pts[1] = x1
+  /// pts[2] = x2
+  /// pts[3] = x3
+  /// pts[4] = b
+  ///  </code>
+  /// with npts = 5.
+  /// If you know the locations of the singular points in the integration region then this
+  /// routine will be faster than QAGS.
+  /// <para>Ref.: Gnu Scientific library reference manual (<see href="http://www.gnu.org/software/gsl/" />)</para>
+  /// </remarks>
+  public class QagpIntegration : IntegrationBase
   {
     #region offical C# interface
+    bool _debug;
     gsl_integration_workspace _workSpace;
     gsl_integration_rule _integrationRule;
 
-
-    public QagpIntegration()
+    /// <summary>
+    /// Returns the default integration rule used for this class.
+    /// </summary>
+    public static gsl_integration_rule DefaultIntegrationRule
     {
-      _integrationRule = new QK21().Integrate;
+      get
+      {
+        return new QK21().Integrate;
+      }
     }
 
+    /// <summary>
+    /// Creates an instance of this integration class with a default integration rule and default debug flag setting.
+    /// </summary>
+    public QagpIntegration()
+      : this(DefaultIntegrationRule, DefaultDebugFlag)
+    {
+    }
+
+    /// <summary>
+    /// Creates an instance of this integration class with a default integration rule and specified debug flag setting.
+    /// </summary>
+    /// <param name="debug">Setting of the debug flag for this instance. If the integration fails or the specified accuracy
+    /// is not reached, an exception is thrown if the debug flag is set to true. If set to false, the return value of the integration
+    /// function will be set to the appropriate error code (an exception will be thrown then only for serious errors).</param>
+    public QagpIntegration(bool debug)
+      : this(DefaultIntegrationRule, debug)
+    {
+    }
+
+    /// <summary>
+    /// Creates an instance of this integration class with specified integration rule and specified debug flag setting.
+    /// </summary>
+    /// <param name="integrationRule">Integration rule used for integration.</param>
+    /// <param name="debug">Setting of the debug flag for this instance. If the integration fails or the specified accuracy
+    /// is not reached, an exception is thrown if the debug flag is set to true. If set to false, the return value of the integration
+    /// function will be set to the appropriate error code (an exception will be thrown then only for serious errors).</param>
+    public QagpIntegration(gsl_integration_rule integrationRule, bool debug)
+    {
+      _integrationRule = integrationRule;
+      _debug = debug;
+    }
+
+
+    /// <summary>
+    /// Adaptive integration with known singular points.
+    /// </summary>
+    /// <param name="f">Function to integrate.</param>
+    /// <param name="pts">Range of integration including the known singular points, see remarks here: <see cref="QagpIntegration" /see></param>
+    /// <param name="npts">Number of valid points in the array pts. Must be less or equal the size of the array pts.</param>
+    /// <param name="epsabs">Specifies the expected absolute error of integration. Should be set to zero (0) if you specify a relative error.</param>
+    /// <param name="epsrel">Specifies the expected relative error of integration. Should be set to zero (0) if you specify an absolute error.</param>
+    /// <param name="limit">Maximum number of subintervals used for integration.</param>
+    /// <param name="integrationRule">Integration rule used for integration (only for this function call).</param>
+    /// <param name="debug">Setting of the debug flag (only for this function call). If the integration fails or the specified accuracy
+    /// is not reached, an exception is thrown if the debug flag is set to true. If set to false, the return value of the integration
+    /// function will be set to the appropriate error code (an exception will be thrown then only for serious errors).</param>
+    /// <param name="result">On return, contains the integration result.</param>
+    /// <param name="abserr">On return, contains the absolute error of integration.</param>
+    /// <returns>Null if successfull, otherwise the appropriate error code.</returns>
     public GSL_ERROR Integrate(ScalarFunctionDD f,
        double[] pts, int npts,
        double epsabs, double epsrel, int limit,
-       gsl_integration_rule integrationRule,
+       gsl_integration_rule integrationRule, bool debug,
        out double result, out double abserr)
     {
       if (null == _workSpace || limit > _workSpace.limit)
         _workSpace = new gsl_integration_workspace(limit);
 
-      return qagp(f, pts, npts, epsabs, epsrel, limit, _workSpace, out result, out abserr, integrationRule);
+      return qagp(f, pts, npts, epsabs, epsrel, limit, _workSpace, out result, out abserr, integrationRule, debug);
     }
 
+    /// <summary>
+    /// Adaptive integration with known singular points using the integration rule and debug setting given in the constructor.
+    /// </summary>
+    /// <param name="f">Function to integrate.</param>
+    /// <param name="pts">Range of integration including the known singular points, see remarks here: <see cref="QagpIntegration" /see></param>
+    /// <param name="npts">Number of valid points in the array pts. Must be less or equal the size of the array pts.</param>
+    /// <param name="epsabs">Specifies the expected absolute error of integration. Should be set to zero (0) if you specify a relative error.</param>
+    /// <param name="epsrel">Specifies the expected relative error of integration. Should be set to zero (0) if you specify an absolute error.</param>
+    /// <param name="limit">Maximum number of subintervals used for integration.</param>
+    /// <param name="result">On return, contains the integration result.</param>
+    /// <param name="abserr">On return, contains the absolute error of integration.</param>
+    /// <returns>Null if successfull, otherwise the appropriate error code.</returns>
     public GSL_ERROR Integrate(ScalarFunctionDD f,
           double[] pts, int npts,
           double epsabs, double epsrel, int limit,
           out double result, out double abserr)
     {
-      return Integrate(f, pts, npts, epsabs, epsrel, limit, _integrationRule, out result, out abserr);
+      return Integrate(f, pts, npts, epsabs, epsrel, limit, _integrationRule, _debug, out result, out abserr);
     }
 
+    /// <summary>
+    /// Adaptive integration with known singular points.
+    /// </summary>
+    /// <param name="f">Function to integrate.</param>
+    /// <param name="pts">Range of integration including the known singular points, see remarks here: <see cref="QagpIntegration" /see></param>
+    /// <param name="epsabs">Specifies the expected absolute error of integration. Should be set to zero (0) if you specify a relative error.</param>
+    /// <param name="epsrel">Specifies the expected relative error of integration. Should be set to zero (0) if you specify an absolute error.</param>
+    /// <param name="limit">Maximum number of subintervals used for integration.</param>
+    /// <param name="integrationRule">Integration rule used for integration (only for this function call).</param>
+    /// <param name="debug">Setting of the debug flag (only for this function call). If the integration fails or the specified accuracy
+    /// is not reached, an exception is thrown if the debug flag is set to true. If set to false, the return value of the integration
+    /// function will be set to the appropriate error code (an exception will be thrown then only for serious errors).</param>
+    /// <param name="result">On return, contains the integration result.</param>
+    /// <param name="abserr">On return, contains the absolute error of integration.</param>
+    /// <returns>Null if successfull, otherwise the appropriate error code.</returns>
     public GSL_ERROR Integrate(ScalarFunctionDD f,
       double[] pts,
       double epsabs, double epsrel, int limit,
-      gsl_integration_rule integrationRule,
+      gsl_integration_rule integrationRule, bool debug,
       out double result, out double abserr)
     {
-      return Integrate(f, pts, pts.Length, epsabs, epsrel, limit, integrationRule, out result, out abserr);
+      return Integrate(f, pts, pts.Length, epsabs, epsrel, limit, integrationRule, debug, out result, out abserr);
     }
 
 
+    /// <summary>
+    /// Adaptive integration with known singular points using the integration rule and debug setting given in the constructor.
+    /// </summary>
+    /// <param name="f">Function to integrate.</param>
+    /// <param name="pts">Range of integration including the known singular points, see remarks here: <see cref="QagpIntegration" /see></param>
+    /// <param name="epsabs">Specifies the expected absolute error of integration. Should be set to zero (0) if you specify a relative error.</param>
+    /// <param name="epsrel">Specifies the expected relative error of integration. Should be set to zero (0) if you specify an absolute error.</param>
+    /// <param name="limit">Maximum number of subintervals used for integration.</param>
+    /// <param name="result">On return, contains the integration result.</param>
+    /// <param name="abserr">On return, contains the absolute error of integration.</param>
+    /// <returns>Null if successfull, otherwise the appropriate error code.</returns>
     public GSL_ERROR Integrate(ScalarFunctionDD f,
-      double[] pts, 
+      double[] pts,
       double epsabs, double epsrel, int limit,
       out double result, out double abserr)
     {
-      return Integrate(f, pts, pts.Length, epsabs, epsrel, limit, _integrationRule, out result, out abserr);
+      return Integrate(f, pts, pts.Length, epsabs, epsrel, limit, _integrationRule, _debug, out result, out abserr);
     }
 
 
 
+    /// <summary>
+    /// Adaptive integration with known singular points.
+    /// </summary>
+    /// <param name="f">Function to integrate.</param>
+    /// <param name="pts">Range of integration including the known singular points, see remarks here: <see cref="QagpIntegration" /see></param>
+    /// <param name="npts">Number of valid points in the array pts. Must be less or equal the size of the array pts.</param>
+    /// <param name="epsabs">Specifies the expected absolute error of integration. Should be set to zero (0) if you specify a relative error.</param>
+    /// <param name="epsrel">Specifies the expected relative error of integration. Should be set to zero (0) if you specify an absolute error.</param>
+    /// <param name="limit">Maximum number of subintervals used for integration.</param>
+    /// <param name="integrationRule">Integration rule used for integration (only for this function call).</param>
+    /// <param name="debug">Setting of the debug flag (only for this function call). If the integration fails or the specified accuracy
+    /// is not reached, an exception is thrown if the debug flag is set to true. If set to false, the return value of the integration
+    /// function will be set to the appropriate error code (an exception will be thrown then only for serious errors).</param>
+    /// <param name="result">On return, contains the integration result.</param>
+    /// <param name="abserr">On return, contains the absolute error of integration.</param>
+    /// <param name="tempStorage">Provides a temporary storage object that you can reuse for repeating function calls.</param>
+    /// <returns>Null if successfull, otherwise the appropriate error code.</returns>
     public static GSL_ERROR
     Integration(ScalarFunctionDD f,
           double[] pts, int npts,
           double epsabs, double epsrel,
           int limit,
-          gsl_integration_rule q,
+          gsl_integration_rule q, bool debug,
           out double result, out double abserr,
           ref object tempStorage)
     {
       QagpIntegration algo = tempStorage as QagpIntegration;
       if (null == algo)
-        tempStorage = algo = new QagpIntegration();
-      return algo.Integrate(f, pts, npts, epsabs, epsrel, limit, q, out result, out abserr);
+        tempStorage = algo = new QagpIntegration(q, debug);
+      return algo.Integrate(f, pts, npts, epsabs, epsrel, limit, q, debug, out result, out abserr);
     }
 
+    /// <summary>
+    /// Adaptive integration with known singular points using default settings for integration rule and debugging.
+    /// </summary>
+    /// <param name="f">Function to integrate.</param>
+    /// <param name="pts">Range of integration including the known singular points, see remarks here: <see cref="QagpIntegration" /see></param>
+    /// <param name="npts">Number of valid points in the array pts. Must be less or equal the size of the array pts.</param>
+    /// <param name="epsabs">Specifies the expected absolute error of integration. Should be set to zero (0) if you specify a relative error.</param>
+    /// <param name="epsrel">Specifies the expected relative error of integration. Should be set to zero (0) if you specify an absolute error.</param>
+    /// <param name="limit">Maximum number of subintervals used for integration.</param>
+    /// <param name="result">On return, contains the integration result.</param>
+    /// <param name="abserr">On return, contains the absolute error of integration.</param>
+    /// <param name="tempStorage">Provides a temporary storage object that you can reuse for repeating function calls.</param>
+    /// <returns>Null if successfull, otherwise the appropriate error code.</returns>
     public static GSL_ERROR
     Integration(ScalarFunctionDD f,
           double[] pts, int npts,
@@ -80,23 +224,55 @@ namespace Altaxo.Calc.Integration
           ref object tempStorage
           )
     {
-      return Integration(f, pts, npts, epsabs, epsrel, limit, new QK21().Integrate, out result, out abserr, ref tempStorage);
+      QagpIntegration algo = tempStorage as QagpIntegration;
+      if (null == algo)
+        tempStorage = algo = new QagpIntegration();
+      return algo.Integrate(f, pts, npts, epsabs, epsrel, limit, out result, out abserr);
     }
 
+    /// <summary>
+    /// Adaptive integration with known singular points.
+    /// </summary>
+    /// <param name="f">Function to integrate.</param>
+    /// <param name="pts">Range of integration including the known singular points, see remarks here: <see cref="QagpIntegration" /see></param>
+    /// <param name="npts">Number of valid points in the array pts. Must be less or equal the size of the array pts.</param>
+    /// <param name="epsabs">Specifies the expected absolute error of integration. Should be set to zero (0) if you specify a relative error.</param>
+    /// <param name="epsrel">Specifies the expected relative error of integration. Should be set to zero (0) if you specify an absolute error.</param>
+    /// <param name="limit">Maximum number of subintervals used for integration.</param>
+    /// <param name="integrationRule">Integration rule used for integration (only for this function call).</param>
+    /// <param name="debug">Setting of the debug flag (only for this function call). If the integration fails or the specified accuracy
+    /// is not reached, an exception is thrown if the debug flag is set to true. If set to false, the return value of the integration
+    /// function will be set to the appropriate error code (an exception will be thrown then only for serious errors).</param>
+    /// <param name="result">On return, contains the integration result.</param>
+    /// <param name="abserr">On return, contains the absolute error of integration.</param>
+    /// <param name="tempStorage">Provides a temporary storage object that you can reuse for repeating function calls.</param>
+    /// <returns>Null if successfull, otherwise the appropriate error code.</returns>
     public static GSL_ERROR
    Integration(ScalarFunctionDD f,
      double[] pts, int npts,
      double epsabs, double epsrel,
      int limit,
-      gsl_integration_rule q,
+      gsl_integration_rule q, bool debug,
      out double result, out double abserr
      )
     {
       object tempStorage = null;
-      return Integration(f, pts, npts, epsabs, epsrel, limit, q, out result, out abserr, ref tempStorage);
+      return Integration(f, pts, npts, epsabs, epsrel, limit, q, debug, out result, out abserr, ref tempStorage);
     }
 
 
+    /// <summary>
+    /// Adaptive integration with known singular points using default settings for integration rule and debugging.
+    /// </summary>
+    /// <param name="f">Function to integrate.</param>
+    /// <param name="pts">Range of integration including the known singular points, see remarks here: <see cref="QagpIntegration" /see></param>
+    /// <param name="npts">Number of valid points in the array pts. Must be less or equal the size of the array pts.</param>
+    /// <param name="epsabs">Specifies the expected absolute error of integration. Should be set to zero (0) if you specify a relative error.</param>
+    /// <param name="epsrel">Specifies the expected relative error of integration. Should be set to zero (0) if you specify an absolute error.</param>
+    /// <param name="limit">Maximum number of subintervals used for integration.</param>
+    /// <param name="result">On return, contains the integration result.</param>
+    /// <param name="abserr">On return, contains the absolute error of integration.</param>
+    /// <returns>Null if successfull, otherwise the appropriate error code.</returns>
     public static GSL_ERROR
     Integration(ScalarFunctionDD f,
       double[] pts, int npts,
@@ -106,7 +282,7 @@ namespace Altaxo.Calc.Integration
       )
     {
       object tempStorage = null;
-      return Integration(f, pts, npts, epsabs, epsrel, limit, new QK21().Integrate,out result, out abserr, ref tempStorage);
+      return Integration(f, pts, npts, epsabs, epsrel, limit, out result, out abserr, ref tempStorage);
     }
 
 
@@ -131,39 +307,6 @@ namespace Altaxo.Calc.Integration
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-    static bool test_positivity(double result, double resabs)
-    {
-      bool status = (Math.Abs(result) >= (1 - 50 * GSL_CONST.GSL_DBL_EPSILON) * resabs);
-      return status;
-    }
-    static bool subinterval_too_small(double a1, double a2, double b2)
-    {
-      const double e = GSL_CONST.GSL_DBL_EPSILON;
-      const double u = GSL_CONST.GSL_DBL_MIN;
-
-      double tmp = (1 + 100 * e) * (Math.Abs(a2) + 1000 * u);
-
-      bool status = Math.Abs(a1) <= tmp && Math.Abs(b2) <= tmp;
-
-      return status;
-    }
-
-    static GSL_ERROR
-    qagp(ScalarFunctionDD f,
-          double[] pts, int npts,
-          double epsabs, double epsrel, int limit,
-          gsl_integration_workspace workspace,
-          out double result, out double abserr)
-    {
-      GSL_ERROR status = qagp(f, pts, npts,
-                         epsabs, epsrel, limit,
-                         workspace,
-                         out result, out abserr,
-                         new QK21().Integrate);
-
-      return status;
-    }
-
 
     static GSL_ERROR
     qagp(ScalarFunctionDD f,
@@ -172,9 +315,8 @@ namespace Altaxo.Calc.Integration
           int limit,
           gsl_integration_workspace workspace,
           out double result, out double abserr,
-          gsl_integration_rule q)
+          gsl_integration_rule q, bool bDebug)
     {
-      bool bDebug = true;
       double area, errsum;
       double res_ext, err_ext;
       double result0, abserr0, resabs0;
