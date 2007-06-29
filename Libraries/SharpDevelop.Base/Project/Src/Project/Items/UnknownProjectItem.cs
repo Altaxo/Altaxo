@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2043 $</version>
+//     <version>$Revision: 2574 $</version>
 // </file>
 
 using System;
@@ -23,8 +23,16 @@ namespace ICSharpCode.SharpDevelop.Project
 		/// Constructor for internal use in ProjectDescriptor.
 		/// </summary>
 		internal UnknownProjectItem(IProject project, string itemType, string include)
-			: base(project, new ItemType(itemType), include)
+			: this(project, itemType, include, false)
 		{
 		}
+
+		/// <summary>
+		/// Constructor for internal use in ProjectDescriptor.
+		/// </summary>
+		internal UnknownProjectItem(IProject project, string itemType, string include, bool treatIncludeAsLiteral)
+			: base(project, new ItemType(itemType), include, treatIncludeAsLiteral)
+		{
+		}		
 	}
 }

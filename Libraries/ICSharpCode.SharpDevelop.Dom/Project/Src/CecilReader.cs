@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2416 $</version>
+//     <version>$Revision: 2492 $</version>
 // </file>
 
 using System;
@@ -340,6 +340,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 					}
 					AddParameters(m, method.Parameters);
 					AddExplicitInterfaceImplementations(method.Overrides, m);
+					ReflectionLayer.ReflectionMethod.ApplySpecialsFromAttributes(m);
 					Methods.Add(m);
 				}
 			}

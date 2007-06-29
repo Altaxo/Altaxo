@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2137 $</version>
+//     <version>$Revision: 2530 $</version>
 // </file>
 
 // created on 04.08.2003 at 17:49
@@ -128,7 +128,7 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 					else
 						break;
 				} else {
-					m = left + (line - leftLine) * (right - left) / (rightLine - leftLine);
+					m = (int)(left + Math.BigMul((line - leftLine), (right - left)) / (rightLine - leftLine));
 				}
 				
 				int mLine = specials[m].StartPosition.Y;

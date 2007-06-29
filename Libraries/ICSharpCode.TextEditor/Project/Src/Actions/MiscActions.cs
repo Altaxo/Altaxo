@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2300 $</version>
+//     <version>$Revision: 2542 $</version>
 // </file>
 
 using System;
@@ -212,7 +212,7 @@ namespace ICSharpCode.TextEditor.Actions
 				} else {
 					textArea.Caret.DesiredColumn = Math.Max(0, currentColumn - remainder);
 				}
-				textArea.SetCaretToDesiredColumn(textArea.Caret.Line);
+				textArea.SetCaretToDesiredColumn();
 			}
 		}
 	}

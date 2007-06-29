@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2517 $</version>
 // </file>
 
 using System;
@@ -15,6 +15,7 @@ namespace ICSharpCode.NRefactory.Visitors
 	/// Applying the VBNetToCSharpConvertVisitor on a CompilationUnit has the same effect
 	/// as applying the VBNetConstructsConvertVisitor and ToCSharpConvertVisitor.
 	/// </summary>
+	[Obsolete("Use VBNetConstructsConvertVisitor + ToCSharpConvertVisitor instead")]
 	public class VBNetToCSharpConvertVisitor : VBNetConstructsConvertVisitor
 	{
 		public override object VisitCompilationUnit(CompilationUnit compilationUnit, object data)

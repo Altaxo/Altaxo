@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2198 $</version>
+//     <version>$Revision: 2500 $</version>
 // </file>
 
 using System;
@@ -13,7 +13,7 @@ namespace ICSharpCode.SharpDevelop.Dom.Refactoring
 	{
 		public bool BracesOnSameLine = true;
 		public bool EmptyLinesBetweenMembers = true;
-		string indentString;
+		string indentString = "\t";
 		
 		public string IndentString {
 			get { return indentString; }

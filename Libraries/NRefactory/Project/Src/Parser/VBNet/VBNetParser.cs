@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2522 $</version>
 // </file>
 
 using System;
@@ -63,7 +63,33 @@ namespace ICSharpCode.NRefactory.Parser.VB
 			lexer.NextToken();
 			Expression expr;
 			Expr(out expr);
+			while (la.kind == Tokens.EOL) lexer.NextToken();
+			Expect(Tokens.EOF);
 			return expr;
+		}
+		
+		public override BlockStatement ParseBlock()
+		{
+			lexer.NextToken();
+			compilationUnit = new CompilationUnit();
+			
+			Statement st;
+			Block(out st);
+			Expect(Tokens.EOF);
+			return st as BlockStatement;
+		}
+		
+		public override List<INode> ParseTypeMembers()
+		{
+			lexer.NextToken();
+			compilationUnit = new CompilationUnit();
+			
+			TypeDeclaration newType = new TypeDeclaration(Modifiers.None, null);
+			compilationUnit.BlockStart(newType);
+			ClassBody(newType);
+			compilationUnit.BlockEnd();
+			Expect(Tokens.EOF);
+			return newType.Children;
 		}
 
 		bool LeaveBlock()

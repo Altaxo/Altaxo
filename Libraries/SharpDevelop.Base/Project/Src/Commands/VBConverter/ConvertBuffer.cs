@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1609 $</version>
+//     <version>$Revision: 2521 $</version>
 // </file>
 
 using System;
@@ -36,7 +36,9 @@ namespace ICSharpCode.SharpDevelop.Commands
 				
 				List<ISpecial> specials = p.Lexer.SpecialTracker.CurrentSpecials;
 				PreprocessingDirective.CSharpToVB(specials);
-				new CSharpToVBNetConvertVisitor().VisitCompilationUnit(p.CompilationUnit, null);
+				p.CompilationUnit.AcceptVisitor(new CSharpConstructsVisitor(), null);
+				p.CompilationUnit.AcceptVisitor(new ToVBNetConvertVisitor(), null);
+				
 				using (SpecialNodesInserter.Install(specials, vbv)) {
 					vbv.VisitCompilationUnit(p.CompilationUnit, null);
 				}

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="none" email=""/>
-//     <version>$Revision: 2043 $</version>
+//     <version>$Revision: 2446 $</version>
 // </file>
 
 using System;
@@ -35,7 +35,7 @@ namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 			
 			
 			keyFile = Get<ComboBox>("keyFile");
-			b = helper.BindString(keyFile, "AssemblyOriginatorKeyFile");
+			b = helper.BindString(keyFile, "AssemblyOriginatorKeyFile", TextBoxEditMode.EditEvaluatedProperty);
 			b.RegisterLocationButton(locationButton);
 			FindKeys(baseDirectory);
 			if (keyFile.Text.Length > 0) {
@@ -96,7 +96,7 @@ namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 		void BrowseKeyFile()
 		{
 			keyFile.SelectedIndex = -1;
-			new BrowseButtonEvent(this, "keyFileComboBox", "${res:SharpDevelop.FileFilter.KeyFiles} (" + KeyFileExtensions + ")|" + KeyFileExtensions + "|${res:SharpDevelop.FileFilter.AllFiles}|*.*").Event(this, EventArgs.Empty);
+			new BrowseButtonEvent(this, "keyFileComboBox", "${res:SharpDevelop.FileFilter.KeyFiles} (" + KeyFileExtensions + ")|" + KeyFileExtensions + "|${res:SharpDevelop.FileFilter.AllFiles}|*.*", TextBoxEditMode.EditEvaluatedProperty).Event(this, EventArgs.Empty);
 		}
 		
 		void CreateKeyFile()

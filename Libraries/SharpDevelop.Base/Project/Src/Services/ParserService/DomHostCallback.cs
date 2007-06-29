@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2059 $</version>
+//     <version>$Revision: 2500 $</version>
 // </file>
 
 using System;
@@ -43,6 +43,8 @@ namespace ICSharpCode.SharpDevelop
 				WorkbenchSingleton.SafeThreadAsyncCall(ShowAssemblyLoadError,
 				                                       fileName, include, message);
 			};
+			
+			HostCallback.InitializeCodeGeneratorOptions = AmbienceService.InitializeCodeGeneratorOptions;
 		}
 		
 		static void ShowAssemblyLoadError(string fileName, string include, string message)

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2522 $</version>
 // </file>
 
 using System;
@@ -16,7 +16,7 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 	/// </summary>
 	public abstract class AbstractOutputFormatter : IOutputFormatter
 	{
-		internal StringBuilder text = new StringBuilder();
+		StringBuilder text = new StringBuilder();
 		
 		int           indentationLevel = 0;
 		bool          indent         = true;
@@ -35,6 +35,12 @@ namespace ICSharpCode.NRefactory.PrettyPrinter
 		public string Text {
 			get {
 				return text.ToString();
+			}
+		}
+		
+		public int TextLength {
+			get {
+				return text.Length;
 			}
 		}
 		

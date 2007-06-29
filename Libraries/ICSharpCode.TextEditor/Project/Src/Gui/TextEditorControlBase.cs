@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2358 $</version>
+//     <version>$Revision: 2539 $</version>
 // </file>
 
 using System;
@@ -501,7 +501,11 @@ namespace ICSharpCode.TextEditor
 		protected virtual void OnReloadHighlighting(object sender, EventArgs e)
 		{
 			if (Document.HighlightingStrategy != null) {
-				Document.HighlightingStrategy = HighlightingStrategyFactory.CreateHighlightingStrategy(Document.HighlightingStrategy.Name);
+				try {
+					Document.HighlightingStrategy = HighlightingStrategyFactory.CreateHighlightingStrategy(Document.HighlightingStrategy.Name);
+				} catch (HighlightingDefinitionInvalidException ex) {
+					MessageBox.Show(ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				}
 				OptionsChanged();
 			}
 		}
@@ -620,7 +624,11 @@ namespace ICSharpCode.TextEditor
 			document.UndoStack.ClearAll();
 			document.BookmarkManager.Clear();
 			if (autoLoadHighlighting) {
-				document.HighlightingStrategy = HighlightingStrategyFactory.CreateHighlightingStrategyForFile(fileName);
+				try {
+					document.HighlightingStrategy = HighlightingStrategyFactory.CreateHighlightingStrategyForFile(fileName);
+				} catch (HighlightingDefinitionInvalidException ex) {
+					MessageBox.Show(ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				}
 			}
 			
 			if (autodetectEncoding) {

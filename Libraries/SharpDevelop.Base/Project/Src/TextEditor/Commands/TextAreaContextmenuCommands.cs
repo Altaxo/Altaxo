@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2523 $</version>
 // </file>
 
 using System;
@@ -56,13 +56,17 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 					i.Checked = false;
 				}
 				item.Checked = true;
-				IHighlightingStrategy strat = HighlightingStrategyFactory.CreateHighlightingStrategy(item.Text);
-				if (strat == null) {
-					throw new Exception("Strategy can't be null");
-				}
-				control.Document.HighlightingStrategy = strat;
-				if (control is SharpDevelopTextAreaControl) {
-					((SharpDevelopTextAreaControl)control).InitializeAdvancedHighlighter();
+				try {
+					IHighlightingStrategy strat = HighlightingStrategyFactory.CreateHighlightingStrategy(item.Text);
+					if (strat == null) {
+						throw new Exception("Strategy can't be null");
+					}
+					control.Document.HighlightingStrategy = strat;
+					if (control is SharpDevelopTextAreaControl) {
+						((SharpDevelopTextAreaControl)control).InitializeAdvancedHighlighter();
+					}
+				} catch (HighlightingDefinitionInvalidException ex) {
+					MessageBox.Show(ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 				}
 				control.Refresh();
 			}

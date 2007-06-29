@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2337 $</version>
+//     <version>$Revision: 2496 $</version>
 // </file>
 
 using System;
@@ -22,7 +22,7 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 		IClass callingClass;
 		IMember callingMember;
 		ICSharpCode.NRefactory.Visitors.LookupTableVisitor lookupTableVisitor;
-		IProjectContent projectContent = null;
+		IProjectContent projectContent;
 		
 		NR.SupportedLanguage language;
 		
@@ -40,6 +40,8 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 				return projectContent;
 			}
 			set {
+				if (value == null)
+					throw new ArgumentNullException("value");
 				projectContent = value;
 			}
 		}
@@ -194,7 +196,7 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 			
 			RunLookupTableVisitor(fileContent);
 			
-			ResolveResult rr = CtrlSpaceResolveHelper.GetResultFromDeclarationLine(callingClass, callingMember as IMethodOrProperty, caretLine, caretColumn, expression);
+			ResolveResult rr = CtrlSpaceResolveHelper.GetResultFromDeclarationLine(callingClass, callingMember as IMethodOrProperty, caretLine, caretColumn, expressionResult);
 			if (rr != null) return rr;
 			
 			return ResolveInternal(expr, expressionResult.Context);
@@ -981,6 +983,8 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 		IClass GetPrimitiveClass(string systemType, string newName)
 		{
 			IClass c = projectContent.GetClass(systemType);
+			if (c == null)
+				return null;
 			DefaultClass c2 = new DefaultClass(c.CompilationUnit, newName);
 			c2.ClassType = c.ClassType;
 			c2.Modifiers = c.Modifiers;
@@ -999,14 +1003,16 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 			if (language == NR.SupportedLanguage.VBNet) {
 				foreach (KeyValuePair<string, string> pair in TypeReference.PrimitiveTypesVB) {
 					if ("System." + pair.Key != pair.Value) {
-						result.Add(GetPrimitiveClass(pair.Value, pair.Key));
+						IClass c = GetPrimitiveClass(pair.Value, pair.Key);
+						if (c != null) result.Add(c);
 					}
 				}
 				result.Add("Global");
 				result.Add("New");
 			} else {
 				foreach (KeyValuePair<string, string> pair in TypeReference.PrimitiveTypesCSharp) {
-					result.Add(GetPrimitiveClass(pair.Value, pair.Key));
+					IClass c = GetPrimitiveClass(pair.Value, pair.Key);
+					if (c != null) result.Add(c);
 				}
 			}
 			ParseInformation parseInfo = HostCallback.GetParseInformation(fileName);
@@ -1046,6 +1052,13 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 					}
 				}
 			}
+			if (callingMember is IProperty) {
+				IProperty property = (IProperty)callingMember;
+				if (property.SetterRegion.IsInside(caretLine, caretColumn)) {
+					result.Add(new DefaultField.ParameterField(property.ReturnType, "value", property.Region, callingClass));
+				}
+			}
+			
 			CtrlSpaceResolveHelper.AddImportedNamespaceContents(result, cu, callingClass);
 			return result;
 		}

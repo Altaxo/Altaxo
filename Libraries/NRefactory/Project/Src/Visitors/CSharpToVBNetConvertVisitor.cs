@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2517 $</version>
 // </file>
 
 using System;
@@ -13,6 +13,7 @@ namespace ICSharpCode.NRefactory.Visitors
 	/// <summary>
 	/// This class converts C# constructs to their VB.NET equivalents.
 	/// </summary>
+	[Obsolete("Use CSharpConstructsVisitor + ToVBNetConvertVisitor instead")]
 	public class CSharpToVBNetConvertVisitor : CSharpConstructsVisitor
 	{
 		public override object VisitCompilationUnit(CompilationUnit compilationUnit, object data)

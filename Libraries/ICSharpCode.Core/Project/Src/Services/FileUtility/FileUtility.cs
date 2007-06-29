@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2075 $</version>
+//     <version>$Revision: 2520 $</version>
 // </file>
 
 using System;
@@ -106,6 +106,32 @@ namespace ICSharpCode.Core
 		public static bool IsUrl(string path)
 		{
 			return path.IndexOf(':') >= 2;
+		}
+		
+		public static string GetCommonBaseDirectory(string dir1, string dir2)
+		{
+			if (dir1 == null || dir2 == null) return null;
+			if (IsUrl(dir1) || IsUrl(dir2)) return null;
+			
+			dir1 = Path.GetFullPath(dir1);
+			dir2 = Path.GetFullPath(dir2);
+			
+			string[] aPath = dir1.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+			string[] bPath = dir2.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+			StringBuilder result = new StringBuilder();
+			int indx = 0;
+			for(; indx < Math.Min(bPath.Length, aPath.Length); ++indx) {
+				if (bPath[indx].Equals(aPath[indx], StringComparison.OrdinalIgnoreCase)) {
+					if (result.Length > 0) result.Append(Path.DirectorySeparatorChar);
+					result.Append(aPath[indx]);
+				} else {
+					break;
+				}
+			}
+			if (indx == 0)
+				return null;
+			else
+				return result.ToString();
 		}
 		
 		/// <summary>
@@ -239,12 +265,12 @@ namespace ICSharpCode.Core
 		
 		public static List<string> SearchDirectory(string directory, string filemask, bool searchSubdirectories)
 		{
-			return SearchDirectory(directory, filemask, searchSubdirectories, false);
+			return SearchDirectory(directory, filemask, searchSubdirectories, true);
 		}
 		
 		public static List<string> SearchDirectory(string directory, string filemask)
 		{
-			return SearchDirectory(directory, filemask, true, false);
+			return SearchDirectory(directory, filemask, true, true);
 		}
 		
 		/// <summary>
@@ -257,11 +283,19 @@ namespace ICSharpCode.Core
 		/// </summary>
 		static void SearchDirectory(string directory, string filemask, List<string> collection, bool searchSubdirectories, bool ignoreHidden)
 		{
+			// If Directory.GetFiles() searches the 8.3 name as well as the full name so if the filemask is 
+			// "*.xpt" it will return "Template.xpt~"
+			bool isExtMatch = Regex.IsMatch(filemask, @"^\*\..{3}$");
+			string ext = null; 
 			string[] file = Directory.GetFiles(directory, filemask);
+			if (isExtMatch) ext = filemask.Remove(0,1);
+			
 			foreach (string f in file) {
 				if (ignoreHidden && (File.GetAttributes(f) & FileAttributes.Hidden) == FileAttributes.Hidden) {
 					continue;
 				}
+				if (isExtMatch && Path.GetExtension(f) != ext) continue;
+				
 				collection.Add(f);
 			}
 			

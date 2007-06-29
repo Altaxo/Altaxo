@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2505 $</version>
 // </file>
 
 using System;
@@ -232,12 +232,16 @@ namespace ICSharpCode.SharpDevelop.BrowserDisplayBinding
 		
 		public void Navigate(string url)
 		{
-			webBrowser.Navigate(new Uri(url));
+			Navigate(new Uri(url));
 		}
 		
 		public void Navigate(Uri url)
 		{
-			webBrowser.Navigate(url);
+			try {
+				webBrowser.Navigate(url);
+			} catch (Exception ex) {
+				LoggingService.Warn("Error navigating to " + url.ToString(), ex);
+			}
 		}
 		
 		public const string DefaultHomepage = "http://www.icsharpcode.net/";

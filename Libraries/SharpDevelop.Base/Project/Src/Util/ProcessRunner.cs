@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Matthew Ward" email="mrward@users.sourceforge.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2505 $</version>
 // </file>
 
 using System;
@@ -222,9 +222,7 @@ namespace ICSharpCode.SharpDevelop.Util
 					process = null;
 				}
 			}
-			// Control-C does not seem to work.
-			//GenerateConsoleCtrlEvent((int)ConsoleEvent.ControlC, 0);
-		}		
+		}
 		
 		/// <summary>
 		/// Raises the <see cref="ProcessExited"/> event.
@@ -262,15 +260,6 @@ namespace ICSharpCode.SharpDevelop.Util
 			if (ErrorLineReceived != null) {
 				ErrorLineReceived(this, e);
 			}
-		}		
-
-		enum ConsoleEvent
-		{
-			ControlC = 0,
-			ControlBreak = 1
-		};
-		
-		[DllImport("kernel32.dll", SetLastError=true)] 
-		static extern int GenerateConsoleCtrlEvent(int dwCtrlEvent, int dwProcessGroupId);
+		}
 	}
 }

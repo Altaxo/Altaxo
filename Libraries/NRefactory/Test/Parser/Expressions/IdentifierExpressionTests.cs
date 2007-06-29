@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1609 $</version>
+//     <version>$Revision: 2452 $</version>
 // </file>
 
 using System;
@@ -48,10 +48,12 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 		}
 		
 		[Test]
-		public void VBNetAssemblyIdentifierExpressionTest()
+		public void VBNetContextKeywordsTest()
 		{
 			Assert.AreEqual("Assembly", ParseUtilVBNet.ParseExpression<IdentifierExpression>("Assembly").Identifier);
 			Assert.AreEqual("Custom", ParseUtilVBNet.ParseExpression<IdentifierExpression>("Custom").Identifier);
+			Assert.AreEqual("Off", ParseUtilVBNet.ParseExpression<IdentifierExpression>("Off").Identifier);
+			Assert.AreEqual("Explicit", ParseUtilVBNet.ParseExpression<IdentifierExpression>("Explicit").Identifier);
 		}
 		#endregion
 	}

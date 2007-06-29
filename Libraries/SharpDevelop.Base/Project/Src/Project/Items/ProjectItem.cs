@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2124 $</version>
+//     <version>$Revision: 2582 $</version>
 // </file>
 
 using System;
@@ -31,6 +31,7 @@ namespace ICSharpCode.SharpDevelop.Project
 	{
 		IProject project;
 		volatile string fileNameCache;
+		bool treatIncludeAsLiteral;
 		
 		// either use: (bound mode)
 		BuildItem buildItem;
@@ -46,6 +47,7 @@ namespace ICSharpCode.SharpDevelop.Project
 				throw new ArgumentNullException("project");
 			this.project = project;
 			this.buildItem = buildItem;
+			this.treatIncludeAsLiteral = true;
 		}
 		
 		protected ProjectItem(IProject project, ItemType itemType)
@@ -54,11 +56,17 @@ namespace ICSharpCode.SharpDevelop.Project
 		}
 		
 		protected ProjectItem(IProject project, ItemType itemType, string include)
+			: this(project, itemType, include, true)
+		{
+		}
+		
+		protected ProjectItem(IProject project, ItemType itemType, string include, bool treatIncludeAsLiteral)
 		{
 			this.project = project;
 			this.virtualItemType = itemType;
 			this.virtualInclude = include ?? "";
 			this.virtualMetadata = new Dictionary<string, string>();
+			this.treatIncludeAsLiteral = treatIncludeAsLiteral;
 		}
 		
 		[Browsable(false)]
@@ -66,6 +74,12 @@ namespace ICSharpCode.SharpDevelop.Project
 			get {
 				return project;
 			}
+		}
+		
+		[Browsable(false)]
+		public bool TreatIncludeAsLiteral {
+			get { return treatIncludeAsLiteral; }
+			set { treatIncludeAsLiteral = value; }
 		}
 		
 		/// <summary>

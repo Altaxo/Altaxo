@@ -423,6 +423,8 @@ NonModuleDeclaration<ModifierList m, List<AttributeSection> attributes>
 	[ ClassBaseType<out typeRef> (. newType.BaseTypes.Add(typeRef); .) ]
 	{ TypeImplementsClause<out baseInterfaces> (. newType.BaseTypes.AddRange(baseInterfaces); .) }
 	ClassBody<newType>
+	"End" "Class" (. newType.EndLocation = t.EndLocation; .)
+	EOL
 	(.
 		compilationUnit.BlockEnd();
 	.)
@@ -540,8 +542,6 @@ ClassBody<TypeDeclaration newType>
 		{ MemberModifier<m> }
 		ClassMemberDecl<m, attributes>
 	}
-	"End" "Class" (. newType.EndLocation = t.EndLocation; .)
-	EOL
 	.
 
 StructureBody<TypeDeclaration newType>
@@ -1524,16 +1524,14 @@ ImplementsClause<out List<InterfaceImplementation> baseInterfaces>
 .
 
 EventMemberSpecifier<out string name>
-	(. string type; name = String.Empty; .) =
-	Identifier (. type = t.val; .)
+(. string eventName; .)
+=
+	( Identifier | "MyBase" | "Me" )
+	(. name = t.val; .)
 	"."
-	Identifier (. name = type + "." + t.val; .)
-	| "MyBase" "."
-	(
-		Identifier (. name = "MyBase." + t.val; .)
-		| "Error"  (. name = "MyBase.Error"; .)
-	)
-	.
+	IdentifierOrKeyword<out eventName>
+	(. name = name + "." + eventName; .)
+.
 
 Expr<out Expression expr>
 =
@@ -2188,7 +2186,8 @@ Block<out Statement stmt>
 	=
 	(.
 		BlockStatement blockStmt = new BlockStatement();
-		blockStmt.StartLocation = t.Location;
+		/* in snippet parsing mode, t might be null */
+		if (t != null) blockStmt.StartLocation = t.Location;
 		compilationUnit.BlockStart(blockStmt);
 	.)
 	{	
@@ -2198,7 +2197,7 @@ Block<out Statement stmt>
 	}
 	(.
 		stmt = blockStmt;
-		blockStmt.EndLocation = t.EndLocation;
+		if (t != null) blockStmt.EndLocation = t.EndLocation;
 		compilationUnit.BlockEnd();
 	.)
 	.
@@ -2779,6 +2778,8 @@ Identifier	=
 	| "Preserve"
 	| "Unicode"
 	| "Until"
+	| "Off"
+	| "Explicit"
 .
 
 IdentifierForFieldDeclaration =
@@ -2793,6 +2794,8 @@ IdentifierForFieldDeclaration =
 	| "Preserve"
 	| "Unicode"
 	| "Until"
+	| "Off"
+	| "Explicit"
 .
 
 /* 2.2 */

@@ -2,11 +2,12 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2150 $</version>
+//     <version>$Revision: 2499 $</version>
 // </file>
 
 using System;
 using System.Drawing;
+using System.Diagnostics;
 using System.Windows.Forms;
 using ICSharpCode.TextEditor.Document;
 
@@ -78,6 +79,7 @@ namespace ICSharpCode.TextEditor.Gui.CompletionWindow
 			}
 			SetDeclarationViewLocation();
 			declarationViewWindow.ShowDeclarationViewWindow();
+			declarationViewWindow.MouseMove += ControlMouseMove;
 			control.Focus();
 			CodeCompletionListViewSelectedItemChanged(this, EventArgs.Empty);
 			
@@ -280,6 +282,7 @@ namespace ICSharpCode.TextEditor.Gui.CompletionWindow
 					if (endOffset - startOffset > 0) {
 						control.Document.Remove(startOffset, endOffset - startOffset);
 					}
+					Debug.Assert(startOffset <= document.TextLength);
 					result = dataProvider.InsertAction(data, control.ActiveTextAreaControl.TextArea, startOffset, ch);
 				} finally {
 					control.EndUpdate();

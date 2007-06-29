@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2241 $</version>
+//     <version>$Revision: 2542 $</version>
 // </file>
 
 using System;
@@ -29,12 +29,12 @@ namespace ICSharpCode.TextEditor
 	[ToolboxItem(false)]
 	public class TextArea : Control
 	{
-		internal bool HiddenMouseCursor = false;
+		bool hiddenMouseCursor = false;
 		/// <summary>
 		/// The position where the mouse cursor was when it was hidden. Sometimes the text editor gets MouseMove
 		/// events when typing text even if the mouse is not moved.
 		/// </summary>
-		internal Point MouseCursorHidePosition;
+		Point mouseCursorHidePosition;
 		
 		Point virtualTop        = new Point(0, 0);
 		TextAreaControl         motherTextAreaControl;
@@ -270,6 +270,12 @@ namespace ICSharpCode.TextEditor
 			Caret.DesiredColumn = TextView.GetDrawingXPos(Caret.Line, Caret.Column) + (int)(VirtualTop.X * textView.WideSpaceWidth);
 		}
 		
+		public void SetCaretToDesiredColumn()
+		{
+			Caret.Position = textView.GetLogicalColumn(Caret.Line, Caret.DesiredColumn + (int)(VirtualTop.X * textView.WideSpaceWidth));
+		}
+		
+		[Obsolete("Use the parameterless version")]
 		public void SetCaretToDesiredColumn(int caretLine)
 		{
 			Caret.Position = textView.GetLogicalColumn(Caret.Line, Caret.DesiredColumn + (int)(VirtualTop.X * textView.WideSpaceWidth));
@@ -311,6 +317,20 @@ namespace ICSharpCode.TextEditor
 			foreach (AbstractMargin margin in leftMargins) {
 				if (margin.DrawingPosition.Contains(e.X, e.Y)) {
 					margin.HandleMouseDown(new Point(e.X, e.Y), e.Button);
+				}
+			}
+		}
+		
+		/// <summary>
+		/// Shows the mouse cursor if it has been hidden.
+		/// </summary>
+		/// <param name="forceShow"><c>true</c> to always show the cursor or <c>false</c> to show it only if it has been moved since it was hidden.</param>
+		internal void ShowHiddenCursor(bool forceShow)
+		{
+			if (hiddenMouseCursor) {
+				if (mouseCursorHidePosition != Cursor.Position || forceShow) {
+					Cursor.Show();
+					hiddenMouseCursor = false;
 				}
 			}
 		}
@@ -442,7 +462,14 @@ namespace ICSharpCode.TextEditor
 				lastMouseInMargin = null;
 			}
 			if (textView.DrawingPosition.Contains(e.X, e.Y)) {
-				this.Cursor = textView.Cursor;
+				Point realmousepos = TextView.GetLogicalPosition(e.X - TextView.DrawingPosition.X, e.Y - TextView.DrawingPosition.Y);
+				if(SelectionManager.IsSelected(Document.PositionToOffset(realmousepos)) && MouseButtons == MouseButtons.None) {
+					// mouse is hovering over a selection, so show default mouse
+					this.Cursor = Cursors.Default;
+				} else {
+					// mouse is hovering over text area, not a selection, so show the textView cursor
+					this.Cursor = textView.Cursor;
+				}
 				return;
 			}
 			this.Cursor = Cursors.Default;
@@ -569,10 +596,10 @@ namespace ICSharpCode.TextEditor
 				return;
 			}
 			
-			if (!HiddenMouseCursor && TextEditorProperties.HideMouseCursor) {
+			if (!hiddenMouseCursor && TextEditorProperties.HideMouseCursor) {
 				if (this.ClientRectangle.Contains(PointToClient(Cursor.Position))) {
-					MouseCursorHidePosition = Cursor.Position;
-					HiddenMouseCursor = true;
+					mouseCursorHidePosition = Cursor.Position;
+					hiddenMouseCursor = true;
 					Cursor.Hide();
 				}
 			}

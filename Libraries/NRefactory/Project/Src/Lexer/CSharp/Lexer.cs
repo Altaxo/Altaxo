@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Andrea Paatz" email="andrea@icsharpcode.net"/>
-//     <version>$Revision: 2419 $</version>
+//     <version>$Revision: 2559 $</version>
 // </file>
 
 using System;
@@ -289,7 +289,13 @@ namespace ICSharpCode.NRefactory.Parser.CSharp
 				// Try to determine a parsable value using ranges. (Quick hack!)
 				double d = 0;
 				if (ishex) {
-					d = ulong.Parse(digit, NumberStyles.HexNumber);
+					ulong result;
+					if (ulong.TryParse(digit, NumberStyles.HexNumber, null, out result)) {
+						d = result;
+					} else {
+						errors.Error(y, x, String.Format("Can't parse hexadecimal constant {0}", digit));
+						return new Token(Tokens.Literal, x, y, stringValue.ToString(), 0);
+					}
 				} else {
 					if (!Double.TryParse(digit, NumberStyles.Integer, null, out d)) {
 						errors.Error(y, x, String.Format("Can't parse integral constant {0}", digit));

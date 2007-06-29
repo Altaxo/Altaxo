@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2124 $</version>
+//     <version>$Revision: 2560 $</version>
 // </file>
 
 using System;
@@ -338,6 +338,11 @@ namespace ICSharpCode.SharpDevelop.Sda
 			public CallbackHelper(SharpDevelopHost host)
 			{
 				this.host = host;
+			}
+			
+			public override object InitializeLifetimeService()
+			{
+				return null;
 			}
 			
 			private bool InvokeRequired {

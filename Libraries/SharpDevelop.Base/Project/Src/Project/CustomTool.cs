@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2067 $</version>
+//     <version>$Revision: 2470 $</version>
 // </file>
 
 using System;
@@ -438,7 +438,7 @@ namespace ICSharpCode.SharpDevelop.Project
 				if (subdir.Equals("source", StringComparison.OrdinalIgnoreCase))
 					continue;
 				standardNameSpace.Append('.');
-				standardNameSpace.Append(NewFileDialog.GenerateValidClassName(subdir));
+				standardNameSpace.Append(NewFileDialog.GenerateValidClassOrNamespaceName(subdir, true));
 			}
 			return standardNameSpace.ToString();
 		}

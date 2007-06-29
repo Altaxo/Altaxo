@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="David Alpert" email="david@spinthemoose.com"/>
-//     <version>$Revision: 1964 $</version>
+//     <version>$Revision: 2510 $</version>
 // </file>
 
 using System;
@@ -535,6 +535,7 @@ namespace NavigationServiceTests
 			Assert.AreEqual(r, NavigationService.CurrentPosition);
 		}
 		
+		/*
 		[Test]
 		[Ignore] // this test disabled on purpose - DA
 		/// <summary>
@@ -571,6 +572,7 @@ namespace NavigationServiceTests
 			Assert.IsTrue(NavigationService.CanNavigateBack);
 			Assert.IsTrue(NavigationService.CanNavigateForwards);
 		}
+		*/
 		
 		[Test]
 		/// <summary>

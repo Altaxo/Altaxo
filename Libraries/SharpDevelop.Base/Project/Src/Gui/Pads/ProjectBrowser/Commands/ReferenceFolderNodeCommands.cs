@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2438 $</version>
 // </file>
 
 using System;
@@ -94,7 +94,7 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 								credential = dialog.Credential;
 							} else {
 								retry = false;
-							} 	
+							}
 						}
 					} else {
 						throw ex;
@@ -117,7 +117,7 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 						// Do not overwrite existing web references.
 						refDialog.WebReference.Name = WebReference.GetReferenceName(refDialog.WebReference.WebReferencesDirectory, refDialog.WebReference.Name);
 						refDialog.WebReference.Save();
-					
+						
 						foreach (ProjectItem item in refDialog.WebReference.Items) {
 							ProjectService.AddProjectItem(node.Project, item);
 						}
@@ -129,7 +129,7 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 
 						node.Project.Save();
 					}
-				}		
+				}
 			}
 		}
 		
@@ -176,6 +176,21 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 				}
 			}
 			return webReferencesNode;
+		}
+	}
+	
+	public class RefreshReference : AbstractMenuCommand
+	{
+		public override void Run()
+		{
+			ReferenceNode node = Owner as ReferenceNode;
+			if (node != null)
+			{
+				ReferenceProjectItem item = node.ReferenceProjectItem;
+				if (item != null) {
+					ParserService.RefreshProjectContentForReference(item);
+				}
+			}
 		}
 	}
 }

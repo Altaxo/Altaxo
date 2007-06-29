@@ -2,10 +2,11 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2496 $</version>
 // </file>
 
 using System;
+using System.Collections;
 using ICSharpCode.SharpDevelop.Dom;
 using ICSharpCode.TextEditor;
 
@@ -76,7 +77,8 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 				if (charTyped != '\0') {
 					preSelection = null;
 				}
-				AddResolveResults(ParserService.CtrlSpace(caretLineNumber, caretColumn, fileName, textArea.Document.TextContent, expressionResult.Context), expressionResult.Context);
+				ArrayList results = ParserService.CtrlSpace(caretLineNumber, caretColumn, fileName, textArea.Document.TextContent, expressionResult.Context);
+				AddResolveResults(results, expressionResult.Context);
 			}
 		}
 	}

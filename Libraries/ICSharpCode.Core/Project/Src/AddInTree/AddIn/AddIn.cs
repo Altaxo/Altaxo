@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2038 $</version>
+//     <version>$Revision: 2540 $</version>
 // </file>
 
 using System;
@@ -145,7 +145,7 @@ namespace ICSharpCode.Core
 			get {
 				return enabled;
 			}
-			internal set {
+			set {
 				enabled = value;
 				this.Action = value ? AddInAction.Enable : AddInAction.Disable;
 			}

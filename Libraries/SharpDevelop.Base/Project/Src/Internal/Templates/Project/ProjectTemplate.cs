@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2259 $</version>
+//     <version>$Revision: 2519 $</version>
 // </file>
 
 using System;
@@ -50,9 +50,15 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 		/// </summary>
 		public static ReadOnlyCollection<ProjectTemplate> ProjectTemplates {
 			get {
+				#if DEBUG
+				// Always reload project templates if debugging.
+				// TODO: Make this a configurable option.
+				LoadProjectTemplates();
+				#else
 				if (projectTemplates == null) {
 					LoadProjectTemplates();
 				}
+				#endif
 				return projectTemplates.AsReadOnly();
 			}
 		}

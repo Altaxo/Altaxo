@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2003 $</version>
+//     <version>$Revision: 2560 $</version>
 // </file>
 
 using System;
@@ -24,6 +24,12 @@ namespace ICSharpCode.SharpDevelop.Sda
 	{
 		SharpDevelopHost.CallbackHelper callback;
 		bool useSharpDevelopErrorHandler;
+		
+		
+		public override object InitializeLifetimeService()
+		{
+			return null;
+		}
 		
 		#region Initialize Core
 		public void InitSharpDevelopCore(SharpDevelopHost.CallbackHelper callback, StartupSettings properties)

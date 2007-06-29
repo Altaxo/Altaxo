@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2252 $</version>
+//     <version>$Revision: 2477 $</version>
 // </file>
 
 using System;
@@ -33,6 +33,15 @@ namespace ICSharpCode.SharpDevelop.Project.Dialogs
 		protected Dictionary<string, int> icons = new Dictionary<string, int>();
 		
 		protected bool createNewSolution;
+		
+		public string InitialProjectLocationDirectory {
+			get {
+				return ((TextBox)ControlDictionary["locationTextBox"]).Text;
+			}
+			set {
+				((TextBox)ControlDictionary["locationTextBox"]).Text = value;
+			}
+		}
 		
 		public NewProjectDialog(bool createNewSolution)
 		{

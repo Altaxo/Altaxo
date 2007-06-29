@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2043 $</version>
+//     <version>$Revision: 2446 $</version>
 // </file>
 
 using System;
@@ -28,8 +28,7 @@ namespace CSharpBinding.OptionPanels
 			
 			ConfigurationGuiBinding b;
 			
-			b = helper.BindString("conditionalSymbolsTextBox", "DefineConstants");
-			b.TreatPropertyValueAsLiteral = false;
+			b = helper.BindString("conditionalSymbolsTextBox", "DefineConstants", TextBoxEditMode.EditRawProperty);
 			b.DefaultLocation = PropertyStorageLocations.ConfigurationSpecific;
 			b.CreateLocationButton("conditionalSymbolsTextBox");
 			

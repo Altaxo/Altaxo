@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2198 $</version>
+//     <version>$Revision: 2500 $</version>
 // </file>
 
 using System;
@@ -19,6 +19,11 @@ namespace ICSharpCode.SharpDevelop.Dom.Refactoring
 	/// </summary>
 	public abstract class CodeGenerator
 	{
+		protected CodeGenerator()
+		{
+			HostCallback.InitializeCodeGeneratorOptions(this);
+		}
+		
 		#region Dummy Code Generator
 		public static readonly CodeGenerator DummyCodeGenerator = new DummyCodeGeneratorClass();
 		

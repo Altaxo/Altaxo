@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2259 $</version>
+//     <version>$Revision: 2574 $</version>
 // </file>
 
 using System;
@@ -142,10 +142,12 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 		
 		void LoadProjectItems(XmlElement projectItemsElement)
 		{
+			bool escapeIncludeValue = String.Equals(projectItemsElement.GetAttribute("escapeValue"), "false", StringComparison.OrdinalIgnoreCase);
 			foreach (XmlElement projectItemElement in ChildElements(projectItemsElement)) {
 				ProjectItem item = new UnknownProjectItem(null,
 				                                          projectItemElement.Name,
-				                                          projectItemElement.GetAttribute("Include"));
+				                                          projectItemElement.GetAttribute("Include"),
+				                                          escapeIncludeValue);
 				foreach (XmlElement metadataElement in ChildElements(projectItemElement)) {
 					item.SetMetadata(metadataElement.Name, metadataElement.InnerText);
 				}

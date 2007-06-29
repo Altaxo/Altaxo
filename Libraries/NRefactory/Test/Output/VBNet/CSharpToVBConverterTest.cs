@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2200 $</version>
+//     <version>$Revision: 2517 $</version>
 // </file>
 
 using System;
@@ -24,7 +24,8 @@ namespace ICSharpCode.NRefactory.Tests.PrettyPrinter
 			IParser parser = ParserFactory.CreateParser(SupportedLanguage.CSharp, new StringReader(input));
 			parser.Parse();
 			Assert.AreEqual("", parser.Errors.ErrorOutput);
-			parser.CompilationUnit.AcceptVisitor(new CSharpToVBNetConvertVisitor(), null);
+			parser.CompilationUnit.AcceptVisitor(new CSharpConstructsVisitor(), null);
+			parser.CompilationUnit.AcceptVisitor(new ToVBNetConvertVisitor(), null);
 			VBNetOutputVisitor outputVisitor = new VBNetOutputVisitor();
 			outputVisitor.VisitCompilationUnit(parser.CompilationUnit, null);
 			Assert.AreEqual("", outputVisitor.Errors.ErrorOutput);

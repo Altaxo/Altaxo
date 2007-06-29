@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2043 $</version>
+//     <version>$Revision: 2446 $</version>
 // </file>
 
 using System;
@@ -41,6 +41,10 @@ namespace ICSharpCode.SharpDevelop.Project
 			}
 		}
 		
+		/// <summary>
+		/// Gets if the value should be evaluated when loading the property and escaped
+		/// when saving. The default value is true.
+		/// </summary>
 		public bool TreatPropertyValueAsLiteral {
 			get { return treatPropertyValueAsLiteral; }
 			set { treatPropertyValueAsLiteral = value; }
