@@ -4,7 +4,7 @@ using System.Text;
 
 using Altaxo.Data;
 
-namespace Altaxo.Worksheet
+namespace Altaxo.Worksheet.Commands
 {
   public class Sorting
   {

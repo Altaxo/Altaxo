@@ -274,23 +274,22 @@ namespace Altaxo.Graph.Procedures
     {
       Metafile mf = null;
 
-      if (Current.PrintingService != null && Current.PrintingService.PrintDocument != null)
+      // it is preferable to use a graphics context from a printer to create the metafile, in this case
+      // the metafile will become device independent (metaFile.GetMetaFileHeader().IsDisplay() will return false)
+      // Only when no printer is installed, we use a graphics context from a bitmap, but this will lead
+      // to wrong positioning / wrong boundaries depending on the current screen
+      if (Current.PrintingService != null && 
+        Current.PrintingService.PrintDocument != null &&
+        Current.PrintingService.PrintDocument.PrinterSettings !=null
+        )
       {
-
-        System.Drawing.Printing.PrintPageEventHandler printproc = delegate(object o, System.Drawing.Printing.PrintPageEventArgs e)
-        {
-          mf = SaveAsMetafile(e.Graphics, doc, stream, dpiResolution, backbrush, pixelformat);
-          e.HasMorePages = false;
-          e.Cancel = true;
-        };
-
-        Current.PrintingService.PrintDocument.PrintPage += printproc;
-        Current.PrintingService.PrintDocument.Print();
-        Current.PrintingService.PrintDocument.PrintPage -= printproc;
+        Graphics grfx = Current.PrintingService.PrintDocument.PrinterSettings.CreateMeasurementGraphics();
+        mf = SaveAsMetafile(grfx, doc, stream, dpiResolution, backbrush, pixelformat);
+        grfx.Dispose();
       }
       else
       {
-        // Create a bitmap just to have a graphics context
+        // Create a bitmap just to get a graphics context from it
         System.Drawing.Bitmap helperbitmap = new System.Drawing.Bitmap(4, 4, pixelformat);
         helperbitmap.SetResolution(dpiResolution, dpiResolution);
         Graphics grfx = Graphics.FromImage(helperbitmap);
@@ -319,8 +318,8 @@ namespace Altaxo.Graph.Procedures
       bool usePageBoundaries = false;
 
       grfx.PageUnit = GraphicsUnit.Point;
-      // Code to write the stream goes here.
       IntPtr ipHdc = grfx.GetHdc();
+
       RectangleF metaFileBounds;
       if (usePageBoundaries)
         metaFileBounds = doc.PageBounds;
@@ -328,25 +327,26 @@ namespace Altaxo.Graph.Procedures
         metaFileBounds = new RectangleF(PointF.Empty, doc.PrintableSize);
 
       System.Drawing.Imaging.Metafile mf = new System.Drawing.Imaging.Metafile(stream, ipHdc, metaFileBounds, MetafileFrameUnit.Point);
-
-      Graphics grfx2 = Graphics.FromImage(mf);
-
-      if (Environment.OSVersion.Version.Major < 6 || !mf.GetMetafileHeader().IsDisplay())
+      using (Graphics grfx2 = Graphics.FromImage(mf))
       {
-        grfx2.PageUnit = GraphicsUnit.Point;
-        grfx2.PageScale = 1; // that would not work properly (a bug?) in Windows Vista, instead we have to use the following:
+
+        if (Environment.OSVersion.Version.Major < 6 || !mf.GetMetafileHeader().IsDisplay())
+        {
+          grfx2.PageUnit = GraphicsUnit.Point;
+          grfx2.PageScale = 1; // that would not work properly (a bug?) in Windows Vista, instead we have to use the following:
+        }
+        else
+        {
+          grfx2.PageScale = Math.Min(72.0f / grfx2.DpiX, 72.0f / grfx2.DpiY); // this works in Vista with display mode
+        }
+
+        if (usePageBoundaries)
+          grfx2.TranslateTransform(doc.PrintableBounds.X, doc.PrintableBounds.Y);
+
+        doc.DoPaint(grfx2, true);
+
+        grfx2.Dispose();
       }
-      else
-      {
-        grfx2.PageScale = Math.Min(72.0f / grfx2.DpiX, 72.0f / grfx2.DpiY); // this works in Vista
-      }
-
-      if (usePageBoundaries)
-        grfx2.TranslateTransform(doc.PrintableBounds.X, doc.PrintableBounds.Y);
-
-      doc.DoPaint(grfx2, true);
-
-      grfx2.Dispose();
 
       grfx.ReleaseHdc(ipHdc);
 
