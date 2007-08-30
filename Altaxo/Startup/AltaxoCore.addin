@@ -647,6 +647,10 @@
         class="Altaxo.Worksheet.Commands.SetColumnValues"	/>
       <MenuItem	id="SetColumnAsX"	label="${res:XML.MainMenu.ColumnMenu.SetColumnAsX}"	description="${res:XML.MainMenu.ColumnMenu.SetColumnAsX.Description}"
         class="Altaxo.Worksheet.Commands.SetColumnAsX" />
+      <MenuItem	id="SortTableAsc"	label="${res:XML.MainMenu.ColumnMenu.SortTableAscending}"	description="${res:XML.MainMenu.ColumnMenu.SortTableAscending.Description}"
+        class="Altaxo.Worksheet.Commands.SortTableAscending" />
+      <MenuItem	id="SortTableDesc"	label="${res:XML.MainMenu.ColumnMenu.SortTableDescending}"	description="${res:XML.MainMenu.ColumnMenu.SortTableDescending.Description}"
+        class="Altaxo.Worksheet.Commands.SortTableDescending" />
     </Condition>
     <MenuItem	id="SetColumnAsV"	label="${res:XML.MainMenu.ColumnMenu.SetColumnAsValue}"	description="${res:XML.MainMenu.ColumnMenu.SetColumnAsValue.Description}"
       class="Altaxo.Worksheet.Commands.SetColumnAsValue" />
@@ -691,6 +695,10 @@
         class="Altaxo.Worksheet.Commands.RenameColumn" />
       <MenuItem	id="SetColumnValues" label="${res:XML.MainMenu.ColumnMenu.SetColumnValues}"	description="${res:XML.MainMenu.ColumnMenu.SetColumnValues.Description}"
         class="Altaxo.Worksheet.Commands.SetColumnValues"	/>
+      <MenuItem	id="SortTableAsc"	label="${res:XML.MainMenu.ColumnMenu.SortTableAscending}"	description="${res:XML.MainMenu.ColumnMenu.SortTableAscending.Description}"
+        class="Altaxo.Worksheet.Commands.SortTableAscending" />
+      <MenuItem	id="SortTableDesc"	label="${res:XML.MainMenu.ColumnMenu.SortTableDescending}"	description="${res:XML.MainMenu.ColumnMenu.SortTableDescending.Description}"
+        class="Altaxo.Worksheet.Commands.SortTableDescending" />
     </Condition>
     <MenuItem	id="MoveColumns" label="${res:XML.MainMenu.ColumnMenu.MoveColumns}"	
       description="${res:XML.MainMenu.ColumnMenu.MoveColumns.Description}" class="Altaxo.Worksheet.Commands.SetColumnPosition"	/>

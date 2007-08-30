@@ -584,6 +584,29 @@ namespace Altaxo.Worksheet.Commands
     }
   }
 
+  public class SortTableAscending : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
+    {
+      Sort(ctrl, true);
+    }
+
+    public static void Sort(Altaxo.Worksheet.GUI.WorksheetController ctrl, bool ascending)
+    {
+      if (ctrl.SelectedDataColumns.Count == 1)
+        Altaxo.Worksheet.Sorting.SortDataRows(ctrl.Doc, ctrl.Doc.DataColumns[ctrl.SelectedDataColumns[0]], ascending);
+      else if (ctrl.SelectedPropertyColumns.Count == 1)
+        Altaxo.Worksheet.Sorting.SortColumnsByPropertyColumn(ctrl.Doc, ctrl.Doc.PropCols[ctrl.SelectedPropertyColumns[0]], ascending);
+    }
+  }
+  public class SortTableDescending : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
+    {
+      SortTableAscending.Sort(ctrl, false);
+    }
+  }
+
   #endregion
 
   #region Row commands

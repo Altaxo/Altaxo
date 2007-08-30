@@ -166,10 +166,10 @@ namespace Altaxo.Graph.Procedures
     /// <param name="dpiResolution">Resolution of the bitmap in dpi. Determines the pixel size of the bitmap.</param>
     /// <param name="backbrush">Brush used to fill the background of the image. Can be <c>null</c>.</param>
     /// <param name="pixelformat">Specify the pixelformat here.</param>
-    public static void CopyPageToClipboardAsBitmap(GraphController ctrl, int dpiResolution, Brush backbrush, PixelFormat pixelformat)
+    public static void CopyPageToClipboardAsBitmap(GraphController ctrl, int dpiResolution, Brush backbrush, PixelFormat pixelformat, bool usePageBounds)
     {
       System.Windows.Forms.DataObject dao = new System.Windows.Forms.DataObject();
-      System.Drawing.Bitmap bitmap = Altaxo.Graph.Procedures.Export.SaveAsBitmap(ctrl.Doc, dpiResolution, backbrush, pixelformat);
+      System.Drawing.Bitmap bitmap = Altaxo.Graph.Procedures.Export.SaveAsBitmap(ctrl.Doc, dpiResolution, backbrush, pixelformat, usePageBounds);
       dao.SetImage(bitmap);
       System.Windows.Forms.Clipboard.SetDataObject(dao);
     }

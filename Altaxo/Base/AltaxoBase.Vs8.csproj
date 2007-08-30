@@ -1416,6 +1416,7 @@
     <Compile Include="Serialization\Ascii\AsciiLineAnalysis.cs" />
     <Compile Include="Serialization\Ascii\AsciiSeparationStrategy.cs" />
     <Compile Include="Serialization\LengthUnit.cs" />
+    <Compile Include="Worksheet\Commands\Sorting.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Calc\FitFunctions\Relaxation\.svn\prop-base\" />

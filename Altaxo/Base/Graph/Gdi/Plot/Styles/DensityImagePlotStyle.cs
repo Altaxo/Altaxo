@@ -41,10 +41,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
   /// on linear axes.
   /// </summary>
   [Serializable]
-  public class DensityImagePlotStyle  
+  public class DensityImagePlotStyle
     :
-    System.ICloneable, 
-    System.Runtime.Serialization.IDeserializationCallback, 
+    System.ICloneable,
+    System.Runtime.Serialization.IDeserializationCallback,
     Main.IChangedEventSource,
     Main.IDocumentNode
   {
@@ -71,13 +71,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     System.Drawing.Bitmap _cachedImage;
 
     /// <summary>The lower bound of the plot range</summary>
-    double _vRangeFrom = double.NaN; 
+    double _vRangeFrom = double.NaN;
 
     /// <summary>The upper bound of the plot range</summary>
     double _vRangeTo = double.NaN;
 
     /// <summary>If true, the image is clipped to the layer boundaries.</summary>
-    bool   _clipToLayer = true;
+    bool _clipToLayer = true;
 
     /// <summary>The color used if the values are below the lower bound.</summary>
     System.Drawing.Color _colorBelow = System.Drawing.Color.Black;
@@ -90,16 +90,26 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     double _vmin, _vscal, _vLowerBound, _vUpperBound;
 
+    /// <summary>The lower bound of the y plot range</summary>
+    [NonSerialized]
+    AltaxoVariant _yRangeFrom = double.NaN;
+
+    /// <summary>The upper bound of the y plot range</summary>
+    [NonSerialized]
+    AltaxoVariant _yRangeTo = double.NaN;
+
+
     [NonSerialized]
     CachedImageType _imageType;
-   
+
     /// <summary>
     /// Stores the conditions under which the image is valid. Depends on the type of image.
     /// </summary>
     [NonSerialized]
     object _imageConditionMemento;
 
-  
+
+
 
     /// <summary>The style for scaling of the values between from and to.</summary>
     ScalingStyle _scalingStyle = ScalingStyle.Linear;
@@ -122,10 +132,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       /// <param name="obj">The DensityImagePlotStyle to serialize.</param>
       /// <param name="info">The serialization info.</param>
       /// <param name="context">The streaming context.</param>
-      public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context  )
+      public void GetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
       {
         DensityImagePlotStyle s = (DensityImagePlotStyle)obj;
-      
+
         // nothing to save up to now
       }
       /// <summary>
@@ -136,7 +146,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       /// <param name="context">The streaming context.</param>
       /// <param name="selector">The deserialization surrogate selector.</param>
       /// <returns>The deserialized DensityImagePlotStyle.</returns>
-      public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
+      public object SetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context, System.Runtime.Serialization.ISurrogateSelector selector)
       {
         DensityImagePlotStyle s = (DensityImagePlotStyle)obj;
         s.InitializeMembers();
@@ -147,54 +157,54 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Graph.DensityImagePlotStyle",0)]
-      class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.DensityImagePlotStyle", 0)]
+    class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         DensityImagePlotStyle s = (DensityImagePlotStyle)obj;
-          
+
         // nothing to save up to now
       }
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        
-        DensityImagePlotStyle s = null!=o ? (DensityImagePlotStyle)o : new DensityImagePlotStyle();
+
+        DensityImagePlotStyle s = null != o ? (DensityImagePlotStyle)o : new DensityImagePlotStyle();
 
         // Nothing to deserialize in the moment
-      
+
         return s;
       }
     }
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Graph.DensityImagePlotStyle",1)]
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DensityImagePlotStyle),2)]
-      class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.DensityImagePlotStyle", 1)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DensityImagePlotStyle), 2)]
+    class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         DensityImagePlotStyle s = (DensityImagePlotStyle)obj;
-        
-        info.AddEnum("ScalingStyle",s._scalingStyle);
-        info.AddValue("RangeFrom",s._vRangeFrom);
-        info.AddValue("RangeTo",s._vRangeTo);
-        info.AddValue("ClipToLayer",s._clipToLayer);
-        info.AddValue("ColorBelow",s._colorBelow);
-        info.AddValue("ColorAbove",s._colorAbove);
-        info.AddValue("ColorInvalid",s._colorInvalid);
+
+        info.AddEnum("ScalingStyle", s._scalingStyle);
+        info.AddValue("RangeFrom", s._vRangeFrom);
+        info.AddValue("RangeTo", s._vRangeTo);
+        info.AddValue("ClipToLayer", s._clipToLayer);
+        info.AddValue("ColorBelow", s._colorBelow);
+        info.AddValue("ColorAbove", s._colorAbove);
+        info.AddValue("ColorInvalid", s._colorInvalid);
       }
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        
-        DensityImagePlotStyle s = null!=o ? (DensityImagePlotStyle)o : new DensityImagePlotStyle();
-        
-        s._scalingStyle = (DensityImagePlotStyle.ScalingStyle)info.GetEnum("ScalingStyle",s._scalingStyle.GetType());
-        s._vRangeFrom    = info.GetDouble("RangeFrom");
-        s._vRangeTo      = info.GetDouble("RangeTo");
-        s._clipToLayer  = info.GetBoolean("ClipToLayer");
-        s._colorBelow   = (System.Drawing.Color)info.GetValue("ColorBelow",parent);
-        s._colorAbove   = (System.Drawing.Color)info.GetValue("ColorAbove",parent);
-        s._colorInvalid = (System.Drawing.Color)info.GetValue("ColorInvalid",parent);
+
+        DensityImagePlotStyle s = null != o ? (DensityImagePlotStyle)o : new DensityImagePlotStyle();
+
+        s._scalingStyle = (DensityImagePlotStyle.ScalingStyle)info.GetEnum("ScalingStyle", s._scalingStyle.GetType());
+        s._vRangeFrom = info.GetDouble("RangeFrom");
+        s._vRangeTo = info.GetDouble("RangeTo");
+        s._clipToLayer = info.GetBoolean("ClipToLayer");
+        s._colorBelow = (System.Drawing.Color)info.GetValue("ColorBelow", parent);
+        s._colorAbove = (System.Drawing.Color)info.GetValue("ColorAbove", parent);
+        s._colorInvalid = (System.Drawing.Color)info.GetValue("ColorInvalid", parent);
 
         return s;
       }
@@ -217,7 +227,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     protected void InitializeMembers()
     {
       _cachedImage = null;
-      
+
     }
 
     /// <summary>
@@ -238,7 +248,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
       this._clipToLayer = from._clipToLayer;
       this._vRangeFrom = from._vRangeFrom;
-      this._vRangeTo   = from._vRangeTo;
+      this._vRangeTo = from._vRangeTo;
       this._colorAbove = from._colorAbove;
       this._colorBelow = from._colorBelow;
       this._colorInvalid = from._colorInvalid;
@@ -262,9 +272,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       set
       {
         ScalingStyle oldValue = _scalingStyle;
-        
+
         _scalingStyle = value;
-        if(_scalingStyle != oldValue)
+        if (_scalingStyle != oldValue)
         {
           this._imageType = CachedImageType.None;
           OnChanged();
@@ -281,7 +291,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         bool oldValue = _clipToLayer;
         _clipToLayer = value;
 
-        if(_clipToLayer != oldValue)
+        if (_clipToLayer != oldValue)
         {
           OnChanged();
         }
@@ -292,10 +302,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     private bool NaNEqual(double a, double b)
     {
-      if(double.IsNaN(a) && double.IsNaN(b))
+      if (double.IsNaN(a) && double.IsNaN(b))
         return true;
 
-      return a==b;
+      return a == b;
     }
 
     public double RangeFrom
@@ -306,7 +316,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         double oldValue = _vRangeFrom;
         _vRangeFrom = value;
 
-        if(!NaNEqual(_vRangeFrom,oldValue))
+        if (!NaNEqual(_vRangeFrom, oldValue))
         {
           this._imageType = CachedImageType.None;
           OnChanged();
@@ -321,7 +331,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       {
         double oldValue = _vRangeTo;
         _vRangeTo = value;
-        if(!NaNEqual(_vRangeTo,oldValue))
+        if (!NaNEqual(_vRangeTo, oldValue))
         {
           this._imageType = CachedImageType.None;
           OnChanged();
@@ -338,7 +348,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         Color oldValue = _colorBelow;
         _colorBelow = value;
 
-        if(_colorBelow != oldValue)
+        if (_colorBelow != oldValue)
         {
           this._imageType = CachedImageType.None;
           OnChanged();
@@ -353,9 +363,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       set
       {
         Color oldValue = _colorAbove;
-  
+
         _colorAbove = value;
-        if(_colorAbove != oldValue)
+        if (_colorAbove != oldValue)
         {
           this._imageType = CachedImageType.None;
           OnChanged();
@@ -371,7 +381,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       {
         Color oldValue = _colorInvalid;
         _colorInvalid = value;
-        if(_colorInvalid != oldValue)
+        if (_colorInvalid != oldValue)
         {
           this._imageType = CachedImageType.None;
           OnChanged();
@@ -390,7 +400,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       this._imageType = CachedImageType.None;
       OnChanged();
     }
-  
+
 
 
     /// <summary>
@@ -445,11 +455,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
           }
           break;
       }
-    
+
 
       // now build the image 
       // note that the image type can change during the call of BuildImage
-      if (_imageType == CachedImageType.None || _cachedImage==null)
+      if (_imageType == CachedImageType.None || _cachedImage == null)
       {
         BuildImage(gfrx, gl, myPlotAssociation, cols, rows);
         switch (_imageType)
@@ -468,13 +478,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       {
         case CachedImageType.LinearEquidistant:
           {
-           
+
 
             double x_rel_left = gl.XAxis.PhysicalVariantToNormal(xColumn[0]);
             double x_rel_right = gl.XAxis.PhysicalVariantToNormal(xColumn[rows - 1]);
 
-            double y_rel_bottom = gl.YAxis.PhysicalVariantToNormal(yColumn[0]);
-            double y_rel_top = gl.YAxis.PhysicalVariantToNormal(yColumn[cols - 1]);
+            double y_rel_bottom = gl.YAxis.PhysicalVariantToNormal(_yRangeFrom);
+
+            double y_rel_top = gl.YAxis.PhysicalVariantToNormal(_yRangeTo);
 
             double x0, y0, x1, y1, x2, y2;
             if (gl.CoordinateSystem.LogicalToLayerCoordinates(new Logical3D(x_rel_left, y_rel_top), out x0, out y0) &&
@@ -499,11 +510,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
               double e = (-(r2 * s1 * x0) + r1 * s2 * x0 + r2 * s0 * x1 - r0 * s2 * x1 - r1 * s0 * x2 + r0 * s1 * x2) / det;
               double f = (-(r2 * s1 * y0) + r1 * s2 * y0 + r2 * s0 * y1 - r0 * s2 * y1 - r1 * s0 * y2 + r0 * s1 * y2) / det;
 
-              System.Drawing.Drawing2D.Matrix mat = new System.Drawing.Drawing2D.Matrix((float)a,(float)b,(float)c,(float)d,(float)e,(float)f);
-             
+              System.Drawing.Drawing2D.Matrix mat = new System.Drawing.Drawing2D.Matrix((float)a, (float)b, (float)c, (float)d, (float)e, (float)f);
+
               //PointF[] transfor = new PointF[] { new PointF((float)r0, (float)s0), new PointF((float)r1, (float)s1), new PointF((float)r2, (float)s2) };
               //mat.TransformPoints(transfor);
-               
+
               GraphicsState savedGraphicsState = gfrx.Save();
 
               if (this._clipToLayer)
@@ -511,7 +522,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
               gfrx.MultiplyTransform(mat, MatrixOrder.Prepend);
 
-              gfrx.DrawImage(_cachedImage, 0 , 0, _cachedImage.Width,_cachedImage.Height);
+              gfrx.DrawImage(_cachedImage, 0, 0, _cachedImage.Width, _cachedImage.Height);
 
               gfrx.Restore(savedGraphicsState);
             }
@@ -545,7 +556,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
           return
             this.xtype == from.xtype &&
             this.ytype == from.ytype &&
-            this.cstype == from.cstype ;
+            this.cstype == from.cstype;
 
       }
     }
@@ -629,9 +640,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         }
       }
       // now y is more hard, we had to find out the column number of the column associated
+      // we have also to maintain the physical values of y of the first and the last column
+      bool isFirstY = true;
       for (int i = 0; i < cols; i++)
       {
-        int nColIdx=i;
+        int nColIdx = i;
         Altaxo.Data.IReadableColumn rcol = myPlotAssociation.GetDataColumn(i);
         Altaxo.Data.DataColumn dcol = rcol as Altaxo.Data.DataColumn;
         if (null != dcol)
@@ -639,6 +652,16 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
           DataColumnCollection parentcoll = DataColumnCollection.GetParentDataColumnCollectionOf(dcol);
           if (parentcoll != null)
             nColIdx = parentcoll.GetColumnNumber(dcol);
+        }
+
+        if (isFirstY)
+        {
+          isFirstY = false;
+          _yRangeFrom = yColumn[nColIdx];
+        }
+        else
+        {
+          _yRangeTo = yColumn[nColIdx];
         }
 
         double val = gl.YAxis.PhysicalVariantToNormal(yColumn[nColIdx]);
@@ -706,7 +729,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         }
       }
 
-      
+
     }
 
 
@@ -716,13 +739,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         return true;
       int N = indices.Count;
       double first = x[indices[0]];
-      double last = x[indices[N-1]];
-      double spanByNM1 = (last-first)/(N-1);
+      double last = x[indices[N - 1]];
+      double spanByNM1 = (last - first) / (N - 1);
       double threshold = Math.Abs(relthreshold * spanByNM1);
 
       for (int i = 0; i < N; i++)
       {
-        if (Math.Abs((x[indices[i]] - first) - i*spanByNM1) > threshold)
+        if (Math.Abs((x[indices[i]] - first) - i * spanByNM1) > threshold)
           return false;
       }
       return true;
@@ -748,47 +771,47 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     Color GetColor(double val)
     {
-                if (double.IsNaN(val))
-          {
-            return _colorInvalid; // invalid pixels are transparent
-          }
-          else if (val < _vLowerBound)
-          {
-            return _colorBelow; // below the lower bound
-          }
-          else if (val > _vUpperBound)
-          {
-            return _colorAbove; // above the upper bound
-          }
-          else // a valid value
-          {
+      if (double.IsNaN(val))
+      {
+        return _colorInvalid; // invalid pixels are transparent
+      }
+      else if (val < _vLowerBound)
+      {
+        return _colorBelow; // below the lower bound
+      }
+      else if (val > _vUpperBound)
+      {
+        return _colorAbove; // above the upper bound
+      }
+      else // a valid value
+      {
 
-            double relval;
-            // calculate a relative value between 0 and 255 from the borders and the scaling style
-            if (this._scalingStyle == ScalingStyle.Logarithmic)
-            {
-              relval = (Math.Log(val) - _vmin) * _vscal;
-            }
-            else // ScalingStyle is linear
-            {
-              relval = (val - _vmin) * _vscal;
-            }
+        double relval;
+        // calculate a relative value between 0 and 255 from the borders and the scaling style
+        if (this._scalingStyle == ScalingStyle.Logarithmic)
+        {
+          relval = (Math.Log(val) - _vmin) * _vscal;
+        }
+        else // ScalingStyle is linear
+        {
+          relval = (val - _vmin) * _vscal;
+        }
 
 
-            int r = ((int)(Math.Abs(relval))) % 256;
-            int g = ((int)(Math.Abs(relval + relval))) % 256;
-            int b = ((int)(Math.Abs(255 - relval))) % 256;
-            return System.Drawing.Color.FromArgb(r, g, b);
-          }
+        int r = ((int)(Math.Abs(relval))) % 256;
+        int g = ((int)(Math.Abs(relval + relval))) % 256;
+        int b = ((int)(Math.Abs(255 - relval))) % 256;
+        return System.Drawing.Color.FromArgb(r, g, b);
+      }
     }
 
-   
+
 
     // CoordinateSystem is not affine, or scales are non-linear
-    void BuildImageV3(Graphics gfrx, IPlotArea gl, 
-      double[] lx, 
-      double[] ly, 
-      INumericColumn[]  vcolumns)
+    void BuildImageV3(Graphics gfrx, IPlotArea gl,
+      double[] lx,
+      double[] ly,
+      INumericColumn[] vcolumns)
     {
       // allocate a bitmap of same dimensions than the underlying layer
       _imageType = CachedImageType.Other;
@@ -810,7 +833,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         _cachedImage = new System.Drawing.Bitmap(dimX, dimY, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
       }
 
-      byte[] imageBytes = new byte[dimX*dimY*4];
+      byte[] imageBytes = new byte[dimX * dimY * 4];
 
 
       double widthByDimX = gl.Size.Width / dimX;
@@ -838,7 +861,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       BivariateLinearSpline interpol = new BivariateLinearSpline(
         VectorMath.ToROVector(lx),
         VectorMath.ToROVector(ly),
-        DataTableWrapper.ToROColumnMatrix(vcolumns, new Altaxo.Collections.IntegerRangeAsCollection(0,lx.Length)));
+        DataTableWrapper.ToROColumnMatrix(vcolumns, new Altaxo.Collections.IntegerRangeAsCollection(0, lx.Length)));
 
 
       int addr = 0;
@@ -906,7 +929,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
       // Copy the RGB values back to the bitmap
       System.Runtime.InteropServices.Marshal.Copy(imageBytes, 0, ptr, imageBytes.Length);
-      
+
       _cachedImage.UnlockBits(bmpData);
 
     }
@@ -933,13 +956,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
         for (int j = 0; j < rows; j++)
         {
-          _cachedImage.SetPixel(j,cols-i-1,GetColor(col[j]));
+          _cachedImage.SetPixel(j, cols - i - 1, GetColor(col[j]));
         } // for all pixel of a column
       } // for all columns
 
 
     }
-    
+
     #region IChangedEventSource Members
 
 
@@ -947,8 +970,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     {
       if (_parent is Main.IChildChangedEventSink)
         ((Main.IChildChangedEventSink)_parent).EhChildChanged(this, EventArgs.Empty);
-      if(null!=Changed)
-        Changed(this,new EventArgs());
+      if (null != Changed)
+        Changed(this, new EventArgs());
     }
 
     #endregion
@@ -964,7 +987,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       get
       {
         Main.INamedObjectCollection noc = ParentObject as Main.INamedObjectCollection;
-        return null==noc ? null : noc.GetNameOfChildObject(this);
+        return null == noc ? null : noc.GetNameOfChildObject(this);
       }
     }
 

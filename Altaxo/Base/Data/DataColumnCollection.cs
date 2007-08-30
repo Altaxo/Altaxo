@@ -1552,6 +1552,26 @@ namespace Altaxo.Data
 
     #region Column and row position manipulation
 
+    public void SwapColumnPositions(int i, int j)
+    {
+      if (i == j)
+        return;
+      if (i < 0 || i >= ColumnCount)
+        throw new ArgumentOutOfRangeException("Index i is out of rage");
+      if (j < 0 || j >= ColumnCount)
+        throw new ArgumentOutOfRangeException("Index j is out of rage");
+
+      DataColumn coli = (DataColumn)m_ColumnsByNumber[i];
+      DataColumn colj = (DataColumn)m_ColumnsByNumber[j];
+
+      m_ColumnsByNumber[i] = colj;
+      m_ColumnsByNumber[j] = coli;
+      ((DataColumnInfo)m_ColumnInfo[coli]).Number = j;
+      ((DataColumnInfo)m_ColumnInfo[colj]).Number = i;
+
+      this.EhChildChanged(null, ChangeEventArgs.CreateColumnMoveArgs(Math.Min(i,j), Math.Max(i,j)));
+    }
+
     /// <summary>
     /// Moves one or more columns to a new position.
     /// </summary>

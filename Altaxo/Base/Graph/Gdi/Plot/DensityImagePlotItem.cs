@@ -38,23 +38,23 @@ namespace Altaxo.Graph.Gdi.Plot
   /// <summary>
   /// Association of data and style specialized for x-y-plots of column data.
   /// </summary>
-  [SerializationSurrogate(0,typeof(DensityImagePlotItem.SerializationSurrogate0))]
+  [SerializationSurrogate(0, typeof(DensityImagePlotItem.SerializationSurrogate0))]
   [SerializationVersion(0)]
   [Serializable]
-  public class DensityImagePlotItem 
+  public class DensityImagePlotItem
     :
-    PlotItem, 
+    PlotItem,
     System.Runtime.Serialization.IDeserializationCallback,
     IXBoundsHolder,
     IYBoundsHolder
   {
     protected XYZMeshedColumnPlotData m_PlotAssociation;
-    protected DensityImagePlotStyle       m_PlotStyle;
+    protected DensityImagePlotStyle m_PlotStyle;
 
-    [field:NonSerialized]
+    [field: NonSerialized]
     public event BoundaryChangedHandler XBoundariesChanged;
 
-    [field:NonSerialized]
+    [field: NonSerialized]
     public event BoundaryChangedHandler YBoundariesChanged;
 
 
@@ -69,11 +69,11 @@ namespace Altaxo.Graph.Gdi.Plot
       /// <param name="obj">The DensityImagePlotItem to serialize.</param>
       /// <param name="info">The serialization info.</param>
       /// <param name="context">The streaming context.</param>
-      public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context  )
+      public void GetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
       {
         DensityImagePlotItem s = (DensityImagePlotItem)obj;
-        info.AddValue("Data",s.m_PlotAssociation);  
-        info.AddValue("Style",s.m_PlotStyle);  
+        info.AddValue("Data", s.m_PlotAssociation);
+        info.AddValue("Style", s.m_PlotStyle);
       }
       /// <summary>
       /// Deserializes the DensityImagePlotItem Version 0.
@@ -83,37 +83,37 @@ namespace Altaxo.Graph.Gdi.Plot
       /// <param name="context">The streaming context.</param>
       /// <param name="selector">The deserialization surrogate selector.</param>
       /// <returns>The deserialized DensityImagePlotItem.</returns>
-      public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
+      public object SetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context, System.Runtime.Serialization.ISurrogateSelector selector)
       {
         DensityImagePlotItem s = (DensityImagePlotItem)obj;
 
-        s.m_PlotAssociation = (XYZMeshedColumnPlotData)info.GetValue("Data",typeof(XYZMeshedColumnPlotData));
-        s.m_PlotStyle = (DensityImagePlotStyle)info.GetValue("Style",typeof(DensityImagePlotStyle));
-    
+        s.m_PlotAssociation = (XYZMeshedColumnPlotData)info.GetValue("Data", typeof(XYZMeshedColumnPlotData));
+        s.m_PlotStyle = (DensityImagePlotStyle)info.GetValue("Style", typeof(DensityImagePlotStyle));
+
         return s;
       }
     }
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Graph.DensityImagePlotItem", 0)]
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DensityImagePlotItem),1)]
-      class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.DensityImagePlotItem", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DensityImagePlotItem), 1)]
+    class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         DensityImagePlotItem s = (DensityImagePlotItem)obj;
-        info.AddValue("Data",s.m_PlotAssociation);  
-        info.AddValue("Style",s.m_PlotStyle);  
+        info.AddValue("Data", s.m_PlotAssociation);
+        info.AddValue("Style", s.m_PlotStyle);
       }
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
 
-        
-        XYZMeshedColumnPlotData pa = (XYZMeshedColumnPlotData)info.GetValue("Data",o);
-        DensityImagePlotStyle ps = (DensityImagePlotStyle)info.GetValue("Style",o);
 
-        if(o==null)
+        XYZMeshedColumnPlotData pa = (XYZMeshedColumnPlotData)info.GetValue("Data", o);
+        DensityImagePlotStyle ps = (DensityImagePlotStyle)info.GetValue("Style", o);
+
+        if (o == null)
         {
-          return new DensityImagePlotItem(pa,ps);
+          return new DensityImagePlotItem(pa, ps);
         }
         else
         {
@@ -133,12 +133,12 @@ namespace Altaxo.Graph.Gdi.Plot
     {
       // Restore the event chain
 
-      if(null!=m_PlotAssociation)
+      if (null != m_PlotAssociation)
       {
         m_PlotAssociation.Changed += new EventHandler(OnDataChangedEventHandler);
       }
 
-      if(null!=m_PlotStyle)
+      if (null != m_PlotStyle)
       {
         m_PlotStyle.Changed += new EventHandler(OnStyleChangedEventHandler);
       }
@@ -181,15 +181,15 @@ namespace Altaxo.Graph.Gdi.Plot
       get { return m_PlotAssociation; }
       set
       {
-        if(null==value)
+        if (null == value)
           throw new System.ArgumentNullException();
-        else if(!(value is XYZMeshedColumnPlotData))
+        else if (!(value is XYZMeshedColumnPlotData))
           throw new System.ArgumentException("The provided data object is not of the type " + m_PlotAssociation.GetType().ToString() + ", but of type " + value.GetType().ToString() + "!");
         else
         {
-          if(!object.ReferenceEquals(m_PlotAssociation,value))
+          if (!object.ReferenceEquals(m_PlotAssociation, value))
           {
-            if(null!=m_PlotAssociation)
+            if (null != m_PlotAssociation)
             {
               m_PlotAssociation.Changed -= new EventHandler(OnDataChangedEventHandler);
               m_PlotAssociation.XBoundariesChanged -= new BoundaryChangedHandler(EhXBoundariesChanged);
@@ -198,8 +198,8 @@ namespace Altaxo.Graph.Gdi.Plot
             }
 
             m_PlotAssociation = (XYZMeshedColumnPlotData)value;
-          
-            if(null!=m_PlotAssociation )
+
+            if (null != m_PlotAssociation)
             {
               m_PlotAssociation.Changed += new EventHandler(OnDataChangedEventHandler);
               m_PlotAssociation.XBoundariesChanged += new BoundaryChangedHandler(EhXBoundariesChanged);
@@ -223,22 +223,22 @@ namespace Altaxo.Graph.Gdi.Plot
       get { return m_PlotStyle; }
       set
       {
-        if(null==value)
+        if (null == value)
           throw new System.ArgumentNullException();
         else
         {
-          if(!object.ReferenceEquals(m_PlotStyle,value))
+          if (!object.ReferenceEquals(m_PlotStyle, value))
           {
             // delete event wiring to old AbstractXYPlotStyle
-            if(null!=m_PlotStyle)
+            if (null != m_PlotStyle)
             {
               m_PlotStyle.Changed -= new EventHandler(OnStyleChangedEventHandler);
             }
-          
+
             m_PlotStyle = (DensityImagePlotStyle)value;
 
             // create event wire to new Plotstyle
-            if(null!=m_PlotStyle)
+            if (null != m_PlotStyle)
             {
               m_PlotStyle.Changed += new EventHandler(OnStyleChangedEventHandler);
             }
@@ -267,9 +267,9 @@ namespace Altaxo.Graph.Gdi.Plot
 
     public override void Paint(Graphics g, IPlotArea layer)
     {
-      if(null!=this.m_PlotStyle)
+      if (null != this.m_PlotStyle)
       {
-        m_PlotStyle.Paint(g,layer,m_PlotAssociation);
+        m_PlotStyle.Paint(g, layer, m_PlotAssociation);
       }
     }
 
@@ -281,7 +281,7 @@ namespace Altaxo.Graph.Gdi.Plot
     /// <param name="layer">The plot layer.</param>
     public override void PrepareScales(IPlotArea layer)
     {
-      if(null!=this.m_PlotAssociation)
+      if (null != this.m_PlotAssociation)
         m_PlotAssociation.CalculateCachedData();
     }
 
@@ -292,7 +292,7 @@ namespace Altaxo.Graph.Gdi.Plot
     public override void OnDataChanged()
     {
       // first inform our AbstractXYPlotStyle of the change, so it can invalidate its cached data
-      if(null!=this.m_PlotStyle)
+      if (null != this.m_PlotStyle)
         m_PlotStyle.EhDataChanged(this);
 
       base.OnDataChanged();
@@ -301,20 +301,20 @@ namespace Altaxo.Graph.Gdi.Plot
 
     void EhXBoundariesChanged(object sender, BoundariesChangedEventArgs args)
     {
-      if(null!=XBoundariesChanged)
-        XBoundariesChanged(this,args);
+      if (null != XBoundariesChanged)
+        XBoundariesChanged(this, args);
     }
 
 
     public void SetXBoundsFromTemplate(IPhysicalBoundaries val)
     {
-      if(val is NumericalBoundaries)
+      if (val is NumericalBoundaries)
         this.m_PlotAssociation.SetXBoundsFromTemplate(val as NumericalBoundaries);
     }
 
     public void MergeXBoundsInto(IPhysicalBoundaries pb)
     {
-      if(pb is NumericalBoundaries)
+      if (pb is NumericalBoundaries)
         this.m_PlotAssociation.MergeXBoundsInto(pb as NumericalBoundaries);
     }
 
@@ -324,20 +324,20 @@ namespace Altaxo.Graph.Gdi.Plot
 
     void EhYBoundariesChanged(object sender, BoundariesChangedEventArgs args)
     {
-      if(null!=YBoundariesChanged)
-        YBoundariesChanged(this,args);
+      if (null != YBoundariesChanged)
+        YBoundariesChanged(this, args);
     }
 
 
     public void SetYBoundsFromTemplate(IPhysicalBoundaries val)
     {
-      if(val is NumericalBoundaries)
+      if (val is NumericalBoundaries)
         this.m_PlotAssociation.SetYBoundsFromTemplate(val as NumericalBoundaries);
     }
 
     public void MergeYBoundsInto(IPhysicalBoundaries pb)
     {
-      if(pb is NumericalBoundaries)
+      if (pb is NumericalBoundaries)
         this.m_PlotAssociation.MergeYBoundsInto(pb as NumericalBoundaries);
     }
 
@@ -345,17 +345,17 @@ namespace Altaxo.Graph.Gdi.Plot
 
     public override void CollectStyles(PlotGroupStyleCollection styles)
     {
-      
+
     }
 
     public override void PrepareStyles(PlotGroupStyleCollection externalGroups, IPlotArea layer)
     {
-      
+
     }
 
     public override void ApplyStyles(PlotGroupStyleCollection externalGroups)
     {
-      
+
     }
 
     /// <summary>
@@ -368,7 +368,7 @@ namespace Altaxo.Graph.Gdi.Plot
       if (!(template is DensityImagePlotItem))
         return;
       DensityImagePlotItem from = (DensityImagePlotItem)template;
-//      m_PlotStyle.CopyFrom(from.m_PlotStyle);
+      //      m_PlotStyle.CopyFrom(from.m_PlotStyle);
     }
 
   }

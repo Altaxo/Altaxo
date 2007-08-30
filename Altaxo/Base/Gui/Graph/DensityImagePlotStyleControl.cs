@@ -26,6 +26,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Data;
 using System.Windows.Forms;
+using Altaxo.Gui.Common.Drawing;
 
 namespace Altaxo.Gui.Graph
 {
@@ -39,9 +40,9 @@ namespace Altaxo.Gui.Graph
     private System.Windows.Forms.Label label23;
     private System.Windows.Forms.TextBox m_edRangeTo;
     private System.Windows.Forms.TextBox m_edRangeFrom;
-    private System.Windows.Forms.ComboBox m_cbColorBelow;
-    private System.Windows.Forms.ComboBox m_cbColorAbove;
-    private System.Windows.Forms.ComboBox m_cbColorInvalid;
+    private ColorComboBox m_cbColorBelow;
+    private ColorComboBox m_cbColorAbove;
+    private ColorComboBox m_cbColorInvalid;
     private System.Windows.Forms.ComboBox m_cbScalingStyle;
     private System.Windows.Forms.Label label1;
     private System.Windows.Forms.Label label2;
@@ -87,9 +88,9 @@ namespace Altaxo.Gui.Graph
       this.m_edRangeTo = new System.Windows.Forms.TextBox();
       this.m_edRangeFrom = new System.Windows.Forms.TextBox();
       this.label23 = new System.Windows.Forms.Label();
-      this.m_cbColorBelow = new System.Windows.Forms.ComboBox();
-      this.m_cbColorAbove = new System.Windows.Forms.ComboBox();
-      this.m_cbColorInvalid = new System.Windows.Forms.ComboBox();
+      this.m_cbColorBelow = new ColorComboBox();
+      this.m_cbColorAbove = new ColorComboBox();
+      this.m_cbColorInvalid = new ColorComboBox();
       this.m_cbScalingStyle = new System.Windows.Forms.ComboBox();
       this.label1 = new System.Windows.Forms.Label();
       this.label2 = new System.Windows.Forms.Label();
@@ -113,7 +114,6 @@ namespace Altaxo.Gui.Graph
       this.m_edRangeTo.Name = "m_edRangeTo";
       this.m_edRangeTo.Size = new System.Drawing.Size(136, 20);
       this.m_edRangeTo.TabIndex = 16;
-      this.m_edRangeTo.Text = "";
       this.m_edRangeTo.Validating += new System.ComponentModel.CancelEventHandler(this.EhRangeTo_Validating);
       // 
       // m_edRangeFrom
@@ -122,7 +122,6 @@ namespace Altaxo.Gui.Graph
       this.m_edRangeFrom.Name = "m_edRangeFrom";
       this.m_edRangeFrom.Size = new System.Drawing.Size(136, 20);
       this.m_edRangeFrom.TabIndex = 15;
-      this.m_edRangeFrom.Text = "";
       this.m_edRangeFrom.Validating += new System.ComponentModel.CancelEventHandler(this.EhRangeFrom_Validating);
       // 
       // label23
@@ -141,7 +140,7 @@ namespace Altaxo.Gui.Graph
       this.m_cbColorBelow.Size = new System.Drawing.Size(136, 21);
       this.m_cbColorBelow.TabIndex = 20;
       this.m_cbColorBelow.Text = "comboBox1";
-      this.m_cbColorBelow.SelectionChangeCommitted += new System.EventHandler(this.EhColorBelow_SelectionChangeCommitted);
+      this.m_cbColorBelow.ColorChoiceChanged += new System.EventHandler(this.EhColorBelow_SelectionChangeCommitted);
       // 
       // m_cbColorAbove
       // 
@@ -150,7 +149,7 @@ namespace Altaxo.Gui.Graph
       this.m_cbColorAbove.Size = new System.Drawing.Size(136, 21);
       this.m_cbColorAbove.TabIndex = 21;
       this.m_cbColorAbove.Text = "comboBox1";
-      this.m_cbColorAbove.SelectionChangeCommitted += new System.EventHandler(this.EhColorAbove_SelectionChangeCommitted);
+      this.m_cbColorAbove.ColorChoiceChanged += new System.EventHandler(this.EhColorAbove_SelectionChangeCommitted);
       // 
       // m_cbColorInvalid
       // 
@@ -159,7 +158,7 @@ namespace Altaxo.Gui.Graph
       this.m_cbColorInvalid.Size = new System.Drawing.Size(136, 21);
       this.m_cbColorInvalid.TabIndex = 22;
       this.m_cbColorInvalid.Text = "comboBox1";
-      this.m_cbColorInvalid.SelectionChangeCommitted += new System.EventHandler(this.EhColorInvalid_SelectionChangeCommitted);
+      this.m_cbColorInvalid.ColorChoiceChanged += new System.EventHandler(this.EhColorInvalid_SelectionChangeCommitted);
       // 
       // m_cbScalingStyle
       // 
@@ -234,6 +233,7 @@ namespace Altaxo.Gui.Graph
       this.Name = "DensityImagePlotStyleControl";
       this.Size = new System.Drawing.Size(272, 296);
       this.ResumeLayout(false);
+      this.PerformLayout();
 
     }
     #endregion
@@ -269,38 +269,25 @@ namespace Altaxo.Gui.Graph
     {
       if(null!=Controller)
       {
-        string name = (string)this.m_cbColorBelow.SelectedItem;
-        if(name!="Custom")
-        {
-          Controller.EhView_ColorBelowChanged(System.Drawing.Color.FromName(name));
-        }
+          Controller.EhView_ColorBelowChanged(m_cbColorBelow.ColorChoice);
       }
     }
 
     private void EhColorAbove_SelectionChangeCommitted(object sender, System.EventArgs e)
     {
-      if(null!=Controller)
+      if (null != Controller)
       {
-        string name = (string)this.m_cbColorAbove.SelectedItem;
-        if(name!="Custom")
-        {
-          Controller.EhView_ColorAboveChanged(System.Drawing.Color.FromName(name));
-        }
+        Controller.EhView_ColorAboveChanged(m_cbColorAbove.ColorChoice);
       }
-    
     }
 
     private void EhColorInvalid_SelectionChangeCommitted(object sender, System.EventArgs e)
     {
-      if(null!=Controller)
+      if (null != Controller)
       {
-        string name = (string)this.m_cbColorInvalid.SelectedItem;
-        if(name!="Custom")
-        {
-          Controller.EhView_ColorInvalidChanged(System.Drawing.Color.FromName(name));
-        }
+        Controller.EhView_ColorInvalidChanged(m_cbColorInvalid.ColorChoice);
       }
-    
+
     }
 
     private void EhClipToLayer_CheckedChanged(object sender, System.EventArgs e)
@@ -341,13 +328,9 @@ namespace Altaxo.Gui.Graph
     }
 
 
-    public static void InitColorComboBox(System.Windows.Forms.ComboBox box, System.Drawing.Color color)
+    public static void InitColorComboBox(ColorComboBox box, System.Drawing.Color color)
     {
-      box.Items.Clear();
-      string[] names = System.Enum.GetNames(typeof(System.Drawing.KnownColor));
-      box.Items.Add("Custom");
-      box.Items.AddRange(names);
-      box.SelectedItem = color.IsKnownColor ? color.Name : "Custom";
+      box.ColorChoice = color;
     }
 
 

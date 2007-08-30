@@ -1284,9 +1284,9 @@ namespace Altaxo.Graph.GUI
     /// <param name="dpiResolution">Resolution of the bitmap in dpi. Determines the pixel size of the bitmap.</param>
     /// <param name="imageFormat">The format of the destination image.</param>
     /// <returns>Null if successfull, error description otherwise.</returns>
-    public string SaveAsBitmap(System.IO.Stream stream, int dpiResolution, System.Drawing.Imaging.ImageFormat imageFormat)
+    public string SaveAsBitmap(System.IO.Stream stream, int dpiResolution, System.Drawing.Imaging.ImageFormat imageFormat, bool usePageBounds)
     {
-      Graph.Procedures.Export.SaveAsBitmap(m_Graph, stream, dpiResolution, imageFormat);
+      Graph.Procedures.Export.SaveAsBitmap(m_Graph, stream, dpiResolution, imageFormat,usePageBounds);
       return null;
     }
 

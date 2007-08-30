@@ -167,7 +167,7 @@ namespace Altaxo.Graph.Commands
   {
     public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
     {
-      Altaxo.Graph.Procedures.GraphCommands.CopyPageToClipboardAsBitmap(ctrl, 150, null, PixelFormat.Format32bppArgb);
+      Altaxo.Graph.Procedures.GraphCommands.CopyPageToClipboardAsBitmap(ctrl, 150, null, PixelFormat.Format32bppArgb,false);
     }
   }
 
@@ -179,7 +179,7 @@ namespace Altaxo.Graph.Commands
   {
     public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
     {
-      Altaxo.Graph.Procedures.GraphCommands.CopyPageToClipboardAsBitmap(ctrl, 150, Brushes.White, PixelFormat.Format24bppRgb);
+      Altaxo.Graph.Procedures.GraphCommands.CopyPageToClipboardAsBitmap(ctrl, 150, Brushes.White, PixelFormat.Format24bppRgb, false);
     }
   }
 
@@ -192,7 +192,7 @@ namespace Altaxo.Graph.Commands
   {
     public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
     {
-      Altaxo.Graph.Procedures.GraphCommands.CopyPageToClipboardAsBitmap(ctrl,300,null,PixelFormat.Format32bppArgb);
+      Altaxo.Graph.Procedures.GraphCommands.CopyPageToClipboardAsBitmap(ctrl, 300, null, PixelFormat.Format32bppArgb, false);
     }
   }
 
@@ -204,7 +204,7 @@ namespace Altaxo.Graph.Commands
   {
     public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
     {
-      Altaxo.Graph.Procedures.GraphCommands.CopyPageToClipboardAsBitmap(ctrl, 300, Brushes.White, PixelFormat.Format24bppRgb);
+      Altaxo.Graph.Procedures.GraphCommands.CopyPageToClipboardAsBitmap(ctrl, 300, Brushes.White, PixelFormat.Format24bppRgb, false);
     }
   }
 
@@ -278,7 +278,7 @@ namespace Altaxo.Graph.Commands
       {
         if ((myStream = saveFileDialog1.OpenFile()) != null)
         {
-          ctrl.SaveAsBitmap(myStream,300,System.Drawing.Imaging.ImageFormat.Tiff);
+          ctrl.SaveAsBitmap(myStream,300,System.Drawing.Imaging.ImageFormat.Tiff,true);
           myStream.Close();
         } // end openfile ok
       } // end dlgresult ok
