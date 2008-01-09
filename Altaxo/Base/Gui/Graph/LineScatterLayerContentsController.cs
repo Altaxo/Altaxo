@@ -172,7 +172,9 @@ namespace Altaxo.Gui.Graph
         NGTreeNode no = new NGTreeNode();
         foreach(Data.DataTable dt in Current.Project.DataTableCollection)
         {
-          no.Nodes.Add( new NGTreeNode(dt.Name,new NGTreeNode[1]{new NGTreeNode()}));
+          NGTreeNode newnode = new NGTreeNode(dt.Name, new NGTreeNode[1] { new NGTreeNode() });
+          newnode.Tag = dt;
+          no.Nodes.Add( newnode );
         }
 
         View.DataAvailable_Initialize(no.Nodes);
@@ -233,11 +235,36 @@ namespace Altaxo.Gui.Graph
       }
     }
 
-   
 
+    static XYColumnPlotItem FindFirstXYColumnPlotItem(PlotItemCollection coll)
+    {
+     
+      // search in our document for the first plot item that is XYColumnPlotItem,
+      // we need this as template style
+      foreach (IGPlotItem pi in coll)
+      {
+        if (pi is PlotItemCollection)
+        {
+          XYColumnPlotItem result = FindFirstXYColumnPlotItem(pi as PlotItemCollection);
+          if (result != null)
+            return result;
+        }
+        else if (pi is XYColumnPlotItem)
+        {
+          return pi as XYColumnPlotItem;
+        }
+      }
+      return null;
+    }
 
     private IGPlotItem CreatePlotItem(string tablename, string columnname)
     {
+      if (string.IsNullOrEmpty(tablename) || string.IsNullOrEmpty(columnname))
+        return null;
+
+     
+     
+
       // create a new plotassociation from the column
       // first, get the y column from table and name
       Data.DataTable tab = Current.Project.DataTableCollection[tablename];
@@ -248,11 +275,33 @@ namespace Altaxo.Gui.Graph
         {
           Data.DataColumn xcol = tab.DataColumns.FindXColumnOf(ycol);
 
+          // search in our document for the first plot item that is an XYColumnPlotItem,
+          // we need this as template style
+          XYColumnPlotItem templatePlotItem = FindFirstXYColumnPlotItem(_doc);
+          G2DPlotStyleCollection templatePlotStyle;
+          if (null != templatePlotItem)
+          {
+            templatePlotStyle = templatePlotItem.Style.Clone();
+          }
+          else // there is no item that can be used as template
+          {
+            int numRows = Math.Min(ycol.Count, xcol.Count);
+            if (numRows < 100)
+            {
+              templatePlotStyle = new G2DPlotStyleCollection(LineScatterPlotStyleKind.LineAndScatter);
+            }
+            else
+            {
+              templatePlotStyle = new G2DPlotStyleCollection(LineScatterPlotStyleKind.Line);
+            }
+          }
+
+
           XYColumnPlotItem result;
           if(null==xcol)
-            result = new XYColumnPlotItem(new XYColumnPlotData(new Altaxo.Data.IndexerColumn(),ycol),new G2DPlotStyleCollection(LineScatterPlotStyleKind.Scatter));
+            result = new XYColumnPlotItem(new XYColumnPlotData(new Altaxo.Data.IndexerColumn(),ycol),templatePlotStyle);
           else
-            result = new XYColumnPlotItem(new XYColumnPlotData(xcol,ycol),new G2DPlotStyleCollection(LineScatterPlotStyleKind.LineAndScatter));
+            result = new XYColumnPlotItem(new XYColumnPlotData(xcol,ycol),templatePlotStyle);
 
 
           return result;
@@ -318,12 +367,13 @@ namespace Altaxo.Gui.Graph
       // first, put the selected node into the list, even if it is not checked
       foreach (NGTreeNode sn  in selNodes)
       {
-        if(null!=sn.Parent)
+        if(null!=sn.Parent && (sn.Parent.Tag is Altaxo.Data.DataTable))
         {
-       
           IGPlotItem newItem = this.CreatePlotItem(sn.Parent.Text,sn.Text);
+          if (null == newItem)
+            continue;
+
           _doc.Add(newItem);
-          
           NGTreeNode newNode = new NGTreeNode();
           newNode.Text = newItem.GetName(2);
           newNode.Tag = newItem;

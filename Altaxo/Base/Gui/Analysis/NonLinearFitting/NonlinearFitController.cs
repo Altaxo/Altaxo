@@ -70,7 +70,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     NonlinearFitDocument _doc;
     INonlinearFitView _view;
 
-    IMVCAController _parameterController;
+    IMVCANController _parameterController;
     FitFunctionSelectionController _funcselController;
     IFitEnsembleController _fitEnsembleController;
 
@@ -79,7 +79,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     public NonlinearFitController(NonlinearFitDocument doc)
     {
       _doc = doc;
-      _parameterController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _doc.CurrentParameters }, typeof(IMVCAController));
+      _parameterController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.CurrentParameters }, typeof(IMVCANController));
       _fitEnsembleController = (IFitEnsembleController)Current.Gui.GetControllerAndControl(new object[] { _doc.FitEnsemble }, typeof(IFitEnsembleController));
 
       _funcselController = new FitFunctionSelectionController(_doc.FitEnsemble.Count == 0 ? null : _doc.FitEnsemble[0].FitFunction);
@@ -100,6 +100,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     private void EhFitEnsemble_Changed(object sender, EventArgs e)
     {
+      _parameterController.InitializeDocument(_doc.CurrentParameters);
     }
 
     #region  INonlinearFitViewEventSink
@@ -264,12 +265,10 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     System.Collections.ArrayList _functionPlotItems = new System.Collections.ArrayList();
     public void OnAfterFittingStep()
     {
-
+      _parameterController.InitializeDocument(_doc.CurrentParameters);
 
       if (_view != null)
         _view.SetChiSquare(this._chiSquare);
-
-
 
       if (_doc.FitContext is Altaxo.Graph.GUI.GraphController)
       {
@@ -314,92 +313,115 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       }
     }
 
-    public void EhView_CopyParameterV()
-    {
-      System.Windows.Forms.DataObject dao = new System.Windows.Forms.DataObject();
-      Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
-      for (int i = 0; i < _doc.CurrentParameters.Count; i++)
-        col[i] = _doc.CurrentParameters[i].Parameter;
-
-      Altaxo.Data.DataTable tb = new Altaxo.Data.DataTable();
-      tb.DataColumns.Add(col, "Value", Altaxo.Data.ColumnKind.V, 0);
-      Altaxo.Worksheet.Commands.EditCommands.WriteAsciiToClipBoardIfDataCellsSelected(
-        tb, new Altaxo.Collections.AscendingIntegerCollection(),
-        new Altaxo.Collections.AscendingIntegerCollection(),
-        new Altaxo.Collections.AscendingIntegerCollection(),
-        dao);
-      System.Windows.Forms.Clipboard.SetDataObject(dao, true);
-    }
     public void EhView_PasteParameterV()
     {
       Altaxo.Data.DataTable table = Altaxo.Worksheet.Commands.EditCommands.GetTableFromClipboard();
       if (null == table)
         return;
-       Altaxo.Data.DoubleColumn col = null;
-        // Find the first column that contains numeric values
-        for (int i = 0; i < table.DataColumnCount; i++)
+      Altaxo.Data.DoubleColumn col = null;
+      // Find the first column that contains numeric values
+      for (int i = 0; i < table.DataColumnCount; i++)
+      {
+        if (table[i] is Altaxo.Data.DoubleColumn)
         {
-          if (table[i] is Altaxo.Data.DoubleColumn)
-          {
-            col = table[i] as Altaxo.Data.DoubleColumn;
-            break;
-          }
+          col = table[i] as Altaxo.Data.DoubleColumn;
+          break;
         }
-        if (null==col)
-          return;
+      }
+      if (null == col)
+        return;
 
-        int len = Math.Max(col.Count, _doc.CurrentParameters.Count);
-      for(int i=0;i<len;i++)
+      int len = Math.Max(col.Count, _doc.CurrentParameters.Count);
+      for (int i = 0; i < len; i++)
         _doc.CurrentParameters[i].Parameter = col[i];
 
-      _doc.CurrentParameters.OnInitializationFinished();
+      _parameterController.InitializeDocument(_doc.CurrentParameters);
     }
+
+    public void EhView_CopyParameterV()
+    {
+      if (true == this._parameterController.Apply())
+      {
+        System.Windows.Forms.DataObject dao = new System.Windows.Forms.DataObject();
+        Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
+        for (int i = 0; i < _doc.CurrentParameters.Count; i++)
+          col[i] = _doc.CurrentParameters[i].Parameter;
+
+        Altaxo.Data.DataTable tb = new Altaxo.Data.DataTable();
+        tb.DataColumns.Add(col, "Value", Altaxo.Data.ColumnKind.V, 0);
+        Altaxo.Worksheet.Commands.EditCommands.WriteAsciiToClipBoardIfDataCellsSelected(
+          tb, new Altaxo.Collections.AscendingIntegerCollection(),
+          new Altaxo.Collections.AscendingIntegerCollection(),
+          new Altaxo.Collections.AscendingIntegerCollection(),
+          dao);
+        System.Windows.Forms.Clipboard.SetDataObject(dao, true);
+      }
+      else
+      {
+        Current.Gui.ErrorMessageBox("Some of your parameter input is not valid!");
+      }
+    }
+   
     public void EhView_CopyParameterNV()
     {
-      System.Windows.Forms.DataObject dao = new System.Windows.Forms.DataObject();
-      Altaxo.Data.TextColumn txt = new Altaxo.Data.TextColumn();
-      Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
-
-      for (int i = 0; i < _doc.CurrentParameters.Count; i++)
+      if (true == this._parameterController.Apply())
       {
-        txt[i] = _doc.CurrentParameters[i].Name;
-        col[i] = _doc.CurrentParameters[i].Parameter;
-      }
+        System.Windows.Forms.DataObject dao = new System.Windows.Forms.DataObject();
+        Altaxo.Data.TextColumn txt = new Altaxo.Data.TextColumn();
+        Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
 
-      Altaxo.Data.DataTable tb = new Altaxo.Data.DataTable();
-      tb.DataColumns.Add(txt, "Name", Altaxo.Data.ColumnKind.V, 0);
-      tb.DataColumns.Add(col, "Value", Altaxo.Data.ColumnKind.V, 0);
-      Altaxo.Worksheet.Commands.EditCommands.WriteAsciiToClipBoardIfDataCellsSelected(
-        tb, new Altaxo.Collections.AscendingIntegerCollection(),
-        new Altaxo.Collections.AscendingIntegerCollection(),
-        new Altaxo.Collections.AscendingIntegerCollection(),
-        dao);
-      System.Windows.Forms.Clipboard.SetDataObject(dao, true);
+        for (int i = 0; i < _doc.CurrentParameters.Count; i++)
+        {
+          txt[i] = _doc.CurrentParameters[i].Name;
+          col[i] = _doc.CurrentParameters[i].Parameter;
+        }
+
+        Altaxo.Data.DataTable tb = new Altaxo.Data.DataTable();
+        tb.DataColumns.Add(txt, "Name", Altaxo.Data.ColumnKind.V, 0);
+        tb.DataColumns.Add(col, "Value", Altaxo.Data.ColumnKind.V, 0);
+        Altaxo.Worksheet.Commands.EditCommands.WriteAsciiToClipBoardIfDataCellsSelected(
+          tb, new Altaxo.Collections.AscendingIntegerCollection(),
+          new Altaxo.Collections.AscendingIntegerCollection(),
+          new Altaxo.Collections.AscendingIntegerCollection(),
+          dao);
+        System.Windows.Forms.Clipboard.SetDataObject(dao, true);
+      }
+      else
+      {
+        Current.Gui.ErrorMessageBox("Some of your parameter input is not valid!");
+      }
     }
     public void EhView_CopyParameterNVV()
     {
-      System.Windows.Forms.DataObject dao = new System.Windows.Forms.DataObject();
-      Altaxo.Data.TextColumn txt = new Altaxo.Data.TextColumn();
-      Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
-      Altaxo.Data.DoubleColumn var = new Altaxo.Data.DoubleColumn();
-
-      for (int i = 0; i < _doc.CurrentParameters.Count; i++)
+      if (true == this._parameterController.Apply())
       {
-        txt[i] = _doc.CurrentParameters[i].Name;
-        col[i] = _doc.CurrentParameters[i].Parameter;
-        var[i] = _doc.CurrentParameters[i].Variance;
-      }
+        System.Windows.Forms.DataObject dao = new System.Windows.Forms.DataObject();
+        Altaxo.Data.TextColumn txt = new Altaxo.Data.TextColumn();
+        Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
+        Altaxo.Data.DoubleColumn var = new Altaxo.Data.DoubleColumn();
 
-      Altaxo.Data.DataTable tb = new Altaxo.Data.DataTable();
-      tb.DataColumns.Add(txt, "Name", Altaxo.Data.ColumnKind.V, 0);
-      tb.DataColumns.Add(col, "Value", Altaxo.Data.ColumnKind.V, 0);
-      tb.DataColumns.Add(var, "Variance", Altaxo.Data.ColumnKind.V, 0);
-      Altaxo.Worksheet.Commands.EditCommands.WriteAsciiToClipBoardIfDataCellsSelected(
-        tb, new Altaxo.Collections.AscendingIntegerCollection(),
-        new Altaxo.Collections.AscendingIntegerCollection(),
-        new Altaxo.Collections.AscendingIntegerCollection(),
-        dao);
-      System.Windows.Forms.Clipboard.SetDataObject(dao, true);
+        for (int i = 0; i < _doc.CurrentParameters.Count; i++)
+        {
+          txt[i] = _doc.CurrentParameters[i].Name;
+          col[i] = _doc.CurrentParameters[i].Parameter;
+          var[i] = _doc.CurrentParameters[i].Variance;
+        }
+
+        Altaxo.Data.DataTable tb = new Altaxo.Data.DataTable();
+        tb.DataColumns.Add(txt, "Name", Altaxo.Data.ColumnKind.V, 0);
+        tb.DataColumns.Add(col, "Value", Altaxo.Data.ColumnKind.V, 0);
+        tb.DataColumns.Add(var, "Variance", Altaxo.Data.ColumnKind.V, 0);
+        Altaxo.Worksheet.Commands.EditCommands.WriteAsciiToClipBoardIfDataCellsSelected(
+          tb, new Altaxo.Collections.AscendingIntegerCollection(),
+          new Altaxo.Collections.AscendingIntegerCollection(),
+          new Altaxo.Collections.AscendingIntegerCollection(),
+          dao);
+        System.Windows.Forms.Clipboard.SetDataObject(dao, true);
+      }
+      else
+      {
+        Current.Gui.ErrorMessageBox("Some of your parameter input is not valid!");
+      }
     }
 
     #endregion

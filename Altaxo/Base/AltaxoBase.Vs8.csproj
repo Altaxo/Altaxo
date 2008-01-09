@@ -833,6 +833,10 @@
       <DependentUpon>NonlinearFitControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Analysis\NonLinearFitting\ParameterSetControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ParameterSetControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Gui\Analysis\NonLinearFitting\ParameterSetElementControl.resx">
       <DependentUpon>ParameterSetElementControl.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -1225,6 +1229,12 @@
     <Compile Include="Graph\TextureManager.cs" />
     <Compile Include="Graph\XAnchorPositionType.cs" />
     <Compile Include="Graph\YAnchorPositionType.cs" />
+    <Compile Include="Gui\Analysis\NonLinearFitting\ParameterSetControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Analysis\NonLinearFitting\ParameterSetControl.Designer.cs">
+      <DependentUpon>ParameterSetControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Common\BooleanValueControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
