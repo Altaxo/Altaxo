@@ -446,9 +446,16 @@ namespace Altaxo.Calc.Regression.Nonlinear
       if (maxLength == int.MaxValue)
         maxLength = 0;
 
+      // here we take into account that the user limited the usage of the rows
       maxLength = Math.Min(maxLength, this._rangeOfRows.End);
 
       bool[] arr = Altaxo.Calc.LinearAlgebra.DataTableWrapper.GetValidNumericRows(cols, selectedCols, maxLength);
+
+      // now we must also take into account that the valid range may not start with zero
+      // so we must invalidate all rows with indices smaller than _rangeOfRows.First
+      for (int j = _rangeOfRows.First - 1; j >= 0; j--)
+        arr[j] = false;
+
       return Altaxo.Calc.LinearAlgebra.DataTableWrapper.GetCollectionOfValidNumericRows(arr);
 
     }
