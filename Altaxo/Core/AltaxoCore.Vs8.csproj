@@ -154,6 +154,7 @@
     <Compile Include="Calc\GammaRelated.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Calc\GSL_ERR.cs" />
     <Compile Include="Calc\Integration\IntegrationBase.cs" />
     <Compile Include="Calc\Integration\QagiIntegration.cs" />
     <Compile Include="Calc\Integration\QagilIntegration.cs" />
@@ -351,8 +352,12 @@
     <Compile Include="Calc\Probability\ContinuousDistributions\ParetoDistribution.cs" />
     <Compile Include="Calc\Probability\ContinuousDistributions\PowerDistribution.cs" />
     <Compile Include="Calc\Probability\ContinuousDistributions\RayleighDistribution.cs" />
-    <Compile Include="Calc\Probability\ContinuousDistributions\StableDistribution.cs" />
+    <Compile Include="Calc\Probability\ContinuousDistributions\StableDistributionBase.cs" />
+    <Compile Include="Calc\Probability\ContinuousDistributions\StableDistributionS0.cs" />
+    <Compile Include="Calc\Probability\ContinuousDistributions\StableDistributionFeller.cs" />
+    <Compile Include="Calc\Probability\ContinuousDistributions\StableDistributionS1.cs" />
     <Compile Include="Calc\Probability\ContinuousDistributions\StudentsTDistribution.cs" />
+    <Compile Include="Calc\Probability\ContinuousDistributions\StableDistributionSymmetric.cs" />
     <Compile Include="Calc\Probability\ContinuousDistributions\TriangularDistribution.cs" />
     <Compile Include="Calc\Probability\MultiContinuousDistributions\UnitSphereDistribution.cs" />
     <Compile Include="Calc\Probability\ContinuousDistributions\WeibullDistribution.cs" />
@@ -456,6 +461,7 @@
     <Compile Include="Calc\RMath.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Calc\RootFinding.cs" />
     <Compile Include="Calc\Rounding.cs">
       <SubType>Code</SubType>
     </Compile>

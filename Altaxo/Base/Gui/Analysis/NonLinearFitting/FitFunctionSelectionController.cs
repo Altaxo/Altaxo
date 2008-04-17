@@ -54,6 +54,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
   {
     void EhView_SelectionChanged(IFitFunctionInformation selectedtag);
     void EhView_EditItem(IFitFunctionInformation selectedtag);
+    void EhView_CreateItemFromHere(IFitFunctionInformation selectedtag);
     void EhView_RemoveItem(IFitFunctionInformation selectedtag);
   }
 
@@ -105,12 +106,25 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     {
       if (selectedtag is DocumentFitFunctionInformation)
       {
-        EditItem(selectedtag.CreateFitFunction());
+        EditItem(selectedtag.CreateFitFunction(),false);
       }
       else if (selectedtag is FileBasedFitFunctionInformation)
       {
         IFitFunction func = Altaxo.Main.Services.FitFunctionService.ReadUserDefinedFitFunction(selectedtag as Altaxo.Main.Services.FileBasedFitFunctionInformation);
-        EditItem(func);
+        EditItem(func,false);
+      }
+    }
+
+    public void EhView_CreateItemFromHere(IFitFunctionInformation selectedtag)
+    {
+      if (selectedtag is DocumentFitFunctionInformation)
+      {
+        EditItem(selectedtag.CreateFitFunction(),true);
+      }
+      else if (selectedtag is FileBasedFitFunctionInformation)
+      {
+        IFitFunction func = Altaxo.Main.Services.FitFunctionService.ReadUserDefinedFitFunction(selectedtag as Altaxo.Main.Services.FileBasedFitFunctionInformation);
+        EditItem(func,true);
       }
     }
 
@@ -128,11 +142,11 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       }
     }
 
-    void EditItem(IFitFunction func)
+    void EditItem(IFitFunction func, bool editCopy)
     {
       if (null != func)
       {
-        object[] args = new object[] { func };
+        object[] args = new object[] { (editCopy && (func is ICloneable)) ? ((ICloneable)func).Clone() : func };
         if (Current.Gui.ShowDialog(args, "Edit fit function script"))
         {
           if (args[0] is FitFunctionScript)
@@ -140,18 +154,17 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
             Altaxo.Gui.Scripting.FitFunctionNameAndCategoryController ctrl = new Altaxo.Gui.Scripting.FitFunctionNameAndCategoryController((FitFunctionScript)args[0]);
             if (Current.Gui.ShowDialog(ctrl, "Store?"))
             {
+              // add the new script to the list
+              Current.Project.FitFunctionScripts.Add((FitFunctionScript)args[0]);
+
               // Note: category and/or name can have changed now, so it is more save to
               // completely reinitialize the fit function tree
               Initialize();
             }
           }
-
         }
       }
     }
-
-
-
       
 
     #region IMVCController Members

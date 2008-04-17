@@ -4,6 +4,7 @@ using System.Text;
 
 namespace Altaxo.Calc.Integration
 {
+  public enum OscillatoryTerm { Cosine, Sine };
   /// <summary>
   /// QAWO adaptive integration for oscillatory functions
   /// </summary>
@@ -33,7 +34,85 @@ namespace Altaxo.Calc.Integration
   public class QawoIntegration : IntegrationBase
   {
 
+    #region offical C# interface
+    protected static int _defaultOscTableLength = 20;
+    protected bool _debug;
+    protected gsl_integration_workspace _workSpace;
+    protected gsl_integration_qawo_table _qawoTable;
 
+
+     /// <summary>
+    /// Creates an instance of this integration class with a default integration rule and default debug flag setting.
+    /// </summary>
+    public QawoIntegration()
+      : this(DefaultDebugFlag)
+    {
+    }
+
+
+    /// <summary>
+    /// Creates an instance of this integration class with specified integration rule and specified debug flag setting.
+    /// </summary>
+    /// <param name="debug">Setting of the debug flag for this instance. If the integration fails or the specified accuracy
+    /// is not reached, an exception is thrown if the debug flag is set to true. If set to false, the return value of the integration
+    /// function will be set to the appropriate error code (an exception will be thrown then only for serious errors).</param>
+    public QawoIntegration(bool debug)
+    {
+      _debug = debug;
+    }
+
+    public GSL_ERROR
+     Integrate(ScalarFunctionDD f,
+     double a, double b,
+     OscillatoryTerm oscTerm,
+     double omega,
+     double epsabs, double epsrel, int limit,
+     out double result, out double abserr)
+    {
+      return Integrate(f, a, b, oscTerm, omega, epsabs, epsrel, limit, _debug, out result, out abserr);
+    }
+
+    public GSL_ERROR 
+      Integrate(ScalarFunctionDD f,
+      double a, double b,
+      OscillatoryTerm oscTerm,
+      double omega,
+      double epsabs, double epsrel, int limit,
+      bool debug,
+      out double result, out double abserr)
+    {
+      if (null == _workSpace || limit > _workSpace.limit)
+        _workSpace = new gsl_integration_workspace(limit);
+      if (null == _qawoTable)
+      {
+        _qawoTable = new gsl_integration_qawo_table(omega, b - a, oscTerm == OscillatoryTerm.Cosine ? gsl_integration_qawo_enum.GSL_INTEG_COSINE : gsl_integration_qawo_enum.GSL_INTEG_SINE, _defaultOscTableLength);
+      }
+      else
+      {
+        _qawoTable.set(omega, b - a, oscTerm == OscillatoryTerm.Cosine ? gsl_integration_qawo_enum.GSL_INTEG_COSINE : gsl_integration_qawo_enum.GSL_INTEG_SINE);
+      }
+
+      return gsl_integration_qawo(f, a, epsabs, epsrel, limit, _workSpace, _qawoTable, out result, out abserr, debug);
+    }
+    
+    public static GSL_ERROR
+    Integration(ScalarFunctionDD f,
+          double a, double b,
+      OscillatoryTerm oscTerm,
+     double omega,
+          double epsabs, double epsrel,
+          int limit,
+          out double result, out double abserr,
+          ref object tempStorage
+          )
+    {
+      QawoIntegration algo = tempStorage as QawoIntegration;
+      if (null == algo)
+        tempStorage = algo = new QawoIntegration();
+      return algo.Integrate(f, a, b, oscTerm, omega, epsabs, epsrel, limit, out result, out abserr);
+    }
+
+#endregion
 
     protected enum gsl_integration_qawo_enum { GSL_INTEG_COSINE, GSL_INTEG_SINE };
 
@@ -46,6 +125,38 @@ namespace Altaxo.Calc.Integration
       public gsl_integration_qawo_enum sine;
       public double[] chebmo;
 
+
+      public
+        gsl_integration_qawo_table(double omega, double L,
+                                  gsl_integration_qawo_enum sine,
+                                  int n)
+      {
+
+        if (n == 0)
+        {
+          throw new ArgumentOutOfRangeException("table length n must be positive integer");
+        }
+
+        this.chebmo = new double[25 * n];
+        this.n = n;
+        this.sine = sine;
+        this.omega = omega;
+        this.L = L;
+        this.par = 0.5 * omega * L;
+
+        /* precompute the moments */
+
+        {
+          int i;
+          double scale = 1.0;
+
+          for (i = 0; i < this.n; i++)
+          {
+            compute_moments(this.par * scale, this.chebmo, 25 * i);
+            scale *= 0.5;
+          }
+        }
+      }
 
       public void set(double omega, double L, gsl_integration_qawo_enum sine)
       {

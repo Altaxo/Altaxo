@@ -47,6 +47,8 @@ namespace Altaxo.Gui.Graph
     private System.Windows.Forms.ComboBox cbCombo3;
     private System.Windows.Forms.TextBox edText3;
     private System.Windows.Forms.Label lblLabel3;
+    private Label lblLabel4;
+    private TextBox edText4;
     /// <summary> 
     /// Required designer variable.
     /// </summary>
@@ -97,6 +99,8 @@ namespace Altaxo.Gui.Graph
       this.cbCombo3 = new System.Windows.Forms.ComboBox();
       this.edText3 = new System.Windows.Forms.TextBox();
       this.lblLabel3 = new System.Windows.Forms.Label();
+      this.lblLabel4 = new System.Windows.Forms.Label();
+      this.edText4 = new System.Windows.Forms.TextBox();
       this.SuspendLayout();
       // 
       // lblLabel1
@@ -111,6 +115,7 @@ namespace Altaxo.Gui.Graph
       // 
       this.edText1.Location = new System.Drawing.Point(216, 0);
       this.edText1.Name = "edText1";
+      this.edText1.Size = new System.Drawing.Size(100, 20);
       this.edText1.TabIndex = 1;
       this.edText1.Text = "textBox1";
       this.edText1.Validating += new System.ComponentModel.CancelEventHandler(this.edText1_Validating);
@@ -137,6 +142,7 @@ namespace Altaxo.Gui.Graph
       // 
       this.edText2.Location = new System.Drawing.Point(216, 40);
       this.edText2.Name = "edText2";
+      this.edText2.Size = new System.Drawing.Size(100, 20);
       this.edText2.TabIndex = 4;
       this.edText2.Text = "textBox2";
       this.edText2.Validating += new System.ComponentModel.CancelEventHandler(this.edText2_Validating);
@@ -162,6 +168,7 @@ namespace Altaxo.Gui.Graph
       // 
       this.edText3.Location = new System.Drawing.Point(216, 80);
       this.edText3.Name = "edText3";
+      this.edText3.Size = new System.Drawing.Size(100, 20);
       this.edText3.TabIndex = 7;
       this.edText3.Text = "textBox3";
       this.edText3.Validating += new System.ComponentModel.CancelEventHandler(this.edText3_Validating);
@@ -174,8 +181,27 @@ namespace Altaxo.Gui.Graph
       this.lblLabel3.TabIndex = 6;
       this.lblLabel3.Text = "label3";
       // 
+      // lblLabel4
+      // 
+      this.lblLabel4.Location = new System.Drawing.Point(9, 116);
+      this.lblLabel4.Name = "lblLabel4";
+      this.lblLabel4.Size = new System.Drawing.Size(64, 20);
+      this.lblLabel4.TabIndex = 9;
+      this.lblLabel4.Text = "label3";
+      // 
+      // edText4
+      // 
+      this.edText4.Location = new System.Drawing.Point(216, 113);
+      this.edText4.Name = "edText4";
+      this.edText4.Size = new System.Drawing.Size(100, 20);
+      this.edText4.TabIndex = 10;
+      this.edText4.Text = "textBox3";
+      this.edText4.Validating += new System.ComponentModel.CancelEventHandler(this.edText4_Validating);
+      // 
       // OrgEndSpanControl
       // 
+      this.Controls.Add(this.edText4);
+      this.Controls.Add(this.lblLabel4);
       this.Controls.Add(this.cbCombo3);
       this.Controls.Add(this.edText3);
       this.Controls.Add(this.lblLabel3);
@@ -186,8 +212,9 @@ namespace Altaxo.Gui.Graph
       this.Controls.Add(this.edText1);
       this.Controls.Add(this.lblLabel1);
       this.Name = "OrgEndSpanControl";
-      this.Size = new System.Drawing.Size(328, 104);
+      this.Size = new System.Drawing.Size(328, 150);
       this.ResumeLayout(false);
+      this.PerformLayout();
 
     }
     #endregion
@@ -207,6 +234,11 @@ namespace Altaxo.Gui.Graph
     public void SetLabel3(string txt)
     {
       this.lblLabel3.Text = txt;
+    }
+
+    public void SetLabel4(string txt)
+    {
+      this.lblLabel4.Text = txt;
     }
 
     static void SetChoice(ComboBox cb, string[] choices, int selected)
@@ -244,6 +276,11 @@ namespace Altaxo.Gui.Graph
     public void SetValue3(string txt)
     {
       this.edText3.Text = txt;
+    }
+
+    public void SetValue4(string txt)
+    {
+      this.edText4.Text = txt;
     }
 
     public void EnableChoice1(bool enable)
@@ -319,6 +356,12 @@ namespace Altaxo.Gui.Graph
       if(_controller!=null)
         e.Cancel |= _controller.EhValue3Changed(this.edText3.Text);
     }
+
+    private void edText4_Validating(object sender, CancelEventArgs e)
+    {
+      if (_controller != null)
+        e.Cancel |= _controller.EhValue4Changed(this.edText4.Text);
+    }
   }
 
   public interface IOrgEndSpanView
@@ -328,12 +371,14 @@ namespace Altaxo.Gui.Graph
     void SetLabel1(string txt);
     void SetLabel2(string txt);
     void SetLabel3(string txt);
+    void SetLabel4(string txt);
     void SetChoice1(string[] choices, int selected);
     void SetChoice2(string[] choices, int selected);
     void SetChoice3(string[] choices, int selected);
     void SetValue1(string txt);
     void SetValue2(string txt);
     void SetValue3(string txt);
+    void SetValue4(string txt);
 
     void EnableChoice1(bool enable);
     void EnableChoice2(bool enable);
@@ -352,5 +397,6 @@ namespace Altaxo.Gui.Graph
     bool EhValue1Changed(string txt);
     bool EhValue2Changed(string txt);
     bool EhValue3Changed(string txt);
+    bool EhValue4Changed(string txt);
   }
 }

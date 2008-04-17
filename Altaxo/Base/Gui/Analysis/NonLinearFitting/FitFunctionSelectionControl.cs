@@ -50,6 +50,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     private MenuItem menuContextRemove;
     private ContextMenu _appFileLeafNodeContextMenu;
     private MenuItem menuItem1;
+    private MenuItem menuItem2;
     /// <summary> 
     /// Required designer variable.
     /// </summary>
@@ -93,6 +94,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       this.menuContextRemove = new System.Windows.Forms.MenuItem();
       this._appFileLeafNodeContextMenu = new System.Windows.Forms.ContextMenu();
       this.menuItem1 = new System.Windows.Forms.MenuItem();
+      this.menuItem2 = new System.Windows.Forms.MenuItem();
       this._splitContainer.Panel1.SuspendLayout();
       this._splitContainer.Panel2.SuspendLayout();
       this._splitContainer.SuspendLayout();
@@ -142,6 +144,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       // 
       this._userFileLeafNodeContextMenu.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
             this.menuContextEdit,
+            this.menuItem2,
             this.menuContextRemove});
       // 
       // menuContextEdit
@@ -152,7 +155,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       // 
       // menuContextRemove
       // 
-      this.menuContextRemove.Index = 1;
+      this.menuContextRemove.Index = 2;
       this.menuContextRemove.Text = "Remove";
       this.menuContextRemove.Click += new System.EventHandler(this.menuContextRemove_Click);
       // 
@@ -165,6 +168,12 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       // 
       this.menuItem1.Index = 0;
       this.menuItem1.Text = "Edit";
+      // 
+      // menuItem2
+      // 
+      this.menuItem2.Index = 1;
+      this.menuItem2.Text = "Edit copy of this";
+      this.menuItem2.Click += new System.EventHandler(this.menuContextCreateFromHere_Click);
       // 
       // FitFunctionSelectionControl
       // 
@@ -362,6 +371,12 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         _controller.EhView_EditItem(_lastClickedNode.Tag as IFitFunctionInformation);
     }
 
+    private void menuContextCreateFromHere_Click(object sender, EventArgs e)
+    {
+      if (_controller != null)
+        _controller.EhView_CreateItemFromHere(_lastClickedNode.Tag as IFitFunctionInformation);
+    }
+
     private void menuContextRemove_Click(object sender, EventArgs e)
     {
       if (_controller != null)
@@ -373,5 +388,6 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       _lastClickedNode = e.Node;
     }
 
+  
   }
 }

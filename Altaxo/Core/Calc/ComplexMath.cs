@@ -1103,6 +1103,40 @@ namespace Altaxo.Calc
       }
     }
 
+
+    /// <summary>
+    /// Calculates x^n by repeated multiplications. The algorithm takes ld(n) multiplications.
+    /// This algorithm can also be used with negative n.
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="n"></param>
+    /// <returns></returns>
+    public static Complex Pow(Complex x, int n)
+    {
+      Complex value = 1.0;
+
+      bool inverse = (n < 0);
+      if (n < 0)
+      {
+        n = -n;
+      }
+
+      /* repeated squaring method 
+       * returns 0.0^0 = 1.0, so continuous in x
+       */
+      do
+      {
+        if (0 != (n & 1))
+          value *= x;  /* for n odd */
+
+        n >>= 1;
+        x *= x;
+      } while (n != 0);
+
+      return inverse ? 1.0 / value : value;
+    }
+
+
     /// <summary>
     /// Calculate the power of a complex number.
     /// </summary>
@@ -1147,6 +1181,26 @@ namespace Altaxo.Calc
       c.Im = (float)( modulus * System.Math.Sin( argument ) );
 
       return  c;
+    }
+
+    /// <summary>
+    /// Returns the square of the complex number.
+    /// </summary>
+    /// <param name="c">Argument.</param>
+    /// <returns>Square of c.</returns>
+    static public Complex Pow2(Complex c)
+    {
+      return c * c;
+    }
+
+    /// <summary>
+    /// Returns the square of the complex number.
+    /// </summary>
+    /// <param name="c">Argument.</param>
+    /// <returns>Square of c.</returns>
+    static public Complex Pow3(Complex c)
+    {
+      return c * c * c;
     }
 
     /// <summary>

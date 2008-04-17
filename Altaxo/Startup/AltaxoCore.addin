@@ -457,6 +457,13 @@
 					class="Altaxo.Graph.Commands.FitNonlinear" />
       </MenuItem>
     </Condition>
+    <!-- Tools menu -->
+    <MenuItem id="Tools" label="${res:XML.MainMenu.ToolsMenu}" type="Menu">
+          <MenuItem id="AddTempUserAsm" 
+                    label="${res:XML.MainMenu.ToolsMenu.AddTempUserAssembly}"
+                    description="${res:XML.MainMenu.ToolsMenu.AddTempUserAssembly.Description}"
+                    class="Altaxo.Main.Commands.AddTemporaryUserAssembly" />
+    </MenuItem>
     <!-- Window menu -->
     <MenuItem id="Window" label="${res:XML.MainMenu.WindowMenu}" type="Menu">
       <Condition name = "WindowActive" activewindow="*" action="Disable">

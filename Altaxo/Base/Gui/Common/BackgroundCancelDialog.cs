@@ -42,6 +42,8 @@ namespace Altaxo.Gui.Common
     private System.Windows.Forms.Label lblText;
     private System.Windows.Forms.Button btCancel;
     private System.Timers.Timer _timer;
+    System.Threading.ThreadStart _threadStart;
+    System.Exception _threadException;
     System.Threading.Thread _thread;
     IExternalDrivenBackgroundMonitor _monitor;
     private System.Windows.Forms.Button _btInterrupt;
@@ -65,6 +67,54 @@ namespace Altaxo.Gui.Common
       _btInterrupt.Visible = monitor == null;
       _btAbort.Visible = false;
 
+    }
+
+    public BackgroundCancelDialog(System.Threading.ThreadStart threadstart, IExternalDrivenBackgroundMonitor monitor)
+    {
+      _monitor = monitor;
+
+      _threadStart = threadstart;
+      _threadException = null;
+      _thread = new System.Threading.Thread(MonitoredThreadEntryPoint);
+      _thread.Start();
+
+      //
+      // Required for Windows Form Designer support
+      //
+      InitializeComponent();
+
+      btCancel.Visible = monitor != null;
+      _btInterrupt.Visible = monitor == null;
+      _btAbort.Visible = false;
+
+    }
+
+    public System.Threading.Thread Thread
+    {
+      get
+      {
+        return _thread;
+      }
+    }
+
+    public System.Exception ThreadException
+    {
+      get
+      {
+        return _threadException;
+      }
+    }
+
+    private void MonitoredThreadEntryPoint()
+    {
+      try
+      {
+        _threadStart();
+      }
+      catch (Exception ex)
+      {
+        _threadException = ex;
+      }
     }
 
     protected override void OnLoad(EventArgs e)
@@ -173,16 +223,17 @@ namespace Altaxo.Gui.Common
   
     private void _timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
     {
-      if(!_thread.IsAlive)
-      {
-        this.DialogResult = wasUserInterrupted ? DialogResult.OK : DialogResult.Cancel;
-        this.Close();
-      }
-
       if (_monitor != null)
       {
         this.lblText.Text = _monitor.ReportText;
         _monitor.ShouldReport = true;
+      }
+
+      if(!_thread.IsAlive)
+      {
+        _timer.Stop();
+        this.DialogResult = wasUserInterrupted ? DialogResult.OK : DialogResult.Cancel;
+        this.Close();
       }
     }
 

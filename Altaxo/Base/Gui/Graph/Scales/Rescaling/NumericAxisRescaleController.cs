@@ -47,6 +47,8 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
     protected double _end;
     protected double _span;
 
+    protected int? _minorTicks;
+
     protected BoundaryRescaling _orgRescaling;
     protected BoundaryRescaling _endRescaling;
     protected BoundaryRescaling _spanRescaling;
@@ -79,6 +81,7 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
         _org =  _doc.Org;
         _end =  _doc.End;
         _span = _doc.Span;
+        _minorTicks = _doc.MinorTicks;
 
         if(_axis!=null)
         {
@@ -105,6 +108,7 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
       _view.SetLabel1("Org:");
       _view.SetLabel2("End:");
       _view.SetLabel3("Span:");
+      _view.SetLabel4("Minor ticks:");
 
       _view.SetChoice1(_choices, (int)_orgRescaling);
       _view.SetChoice2(_choices, (int)_endRescaling);
@@ -114,6 +118,7 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
       _view.SetValue1(NumberConversion.ToString(_org));
       _view.SetValue2(NumberConversion.ToString(_end));
       _view.SetValue3(NumberConversion.ToString(_span));
+      _view.SetValue4(_minorTicks == null ? string.Empty : NumberConversion.ToString((int)_minorTicks));
 
       SetEnableState();
     }
@@ -177,6 +182,22 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
       return false;  
     }
 
+    public virtual bool EhValue4Changed(string txt)
+    {
+      int val;
+
+      if (string.IsNullOrEmpty(txt))
+      {
+        _minorTicks = null;
+        return false;
+      }
+      else if (!GUIConversion.IsInteger(txt, out val))
+        return true;
+
+      _minorTicks = val;
+      return false;
+    }
+
     #endregion
 
     #region IMVCController Members
@@ -213,7 +234,8 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
 
     public bool Apply()
     {
-      _doc.SetOrgEndSpan(_orgRescaling,_org,_endRescaling,_end,_spanRescaling,_span);
+      _doc.SetOrgEndSpan(_orgRescaling,_org,_endRescaling,_end,_spanRescaling,_span,_minorTicks);
+      
 
       if(null!=_axis)
       {

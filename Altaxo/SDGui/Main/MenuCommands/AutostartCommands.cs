@@ -59,6 +59,7 @@ namespace Altaxo.Main.Commands // ICSharpCode.SharpDevelop.Commands
       Altaxo.Main.Services.FitFunctionService fitFunctionService = new Altaxo.Main.Services.FitFunctionService();
       Altaxo.Current.SetFitFunctionService(fitFunctionService);
       AddInTree.GetTreeNode("/Altaxo/BuiltinTextures").BuildChildItems(this);
+      Altaxo.Main.Services.ParserServiceConnector.Initialize();
     }
 
     private class ResourceServiceWrapper : Altaxo.Main.Services.IResourceService

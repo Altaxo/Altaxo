@@ -493,8 +493,8 @@ namespace Altaxo.Calc
     /// <returns></returns>
     public static Complex operator-( double f, Complex a ) 
     {
-      a.Re  = (float)( f - a.Re );
-      a.Im  = (float)( 0 - a.Im );
+      a.Re  = ( f - a.Re );
+      a.Im  = ( 0 - a.Im );
       return a;
     }
 
@@ -519,8 +519,8 @@ namespace Altaxo.Calc
     /// <returns></returns>
     public static Complex operator*( Complex a, double f ) 
     {
-      a.Re  = (double)( a.Re * f );
-      a.Im  = (double)( a.Im * f );
+      a.Re  = ( a.Re * f );
+      a.Im  = ( a.Im * f );
       return a;
     }
     

@@ -90,6 +90,10 @@
       <Project>{35CEF10F-2D4C-45F2-9DD1-161E0FEC583C}</Project>
       <Name>ICSharpCode.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Libraries\ICSharpCode.SharpDevelop.Dom\Project\ICSharpCode.SharpDevelop.Dom.csproj">
+      <Project>{924EE450-603D-49C1-A8E5-4AFAA31CE6F3}</Project>
+      <Name>ICSharpCode.SharpDevelop.Dom</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Libraries\ICSharpCode.TextEditor\Project\ICSharpCode.TextEditor.csproj">
       <Project>{2D18BE89-D210-49EB-A9DD-2246FBB3DF6D}</Project>
       <Name>ICSharpCode.TextEditor</Name>
@@ -161,6 +165,7 @@
     <Compile Include="Main\MenuCommands\SelectedColumnCondition.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Main\MenuCommands\ToolCommands.cs" />
     <Compile Include="Main\MenuCommands\WindowCommands.cs" />
     <Compile Include="Main\MenuCommands\WorksheetCommands.cs">
       <SubType>Code</SubType>
@@ -168,6 +173,7 @@
     <Compile Include="Main\ProjectService.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Main\Services\ParserServiceConnector.cs" />
     <Compile Include="Main\TextureDoozer.cs" />
     <Compile Include="Main\ZippedStreamWrapper.cs">
       <SubType>Code</SubType>

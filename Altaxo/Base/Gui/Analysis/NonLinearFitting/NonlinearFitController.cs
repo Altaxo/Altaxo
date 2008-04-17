@@ -54,6 +54,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     void EhView_SelectFitFunction();
     void EhView_NewFitFunction();
     void EhView_CopyParameterV();
+    void EhView_CopyParameterVAsCDef();
     void EhView_CopyParameterNV();
     void EhView_CopyParameterNVV();
     void EhView_PasteParameterV();
@@ -354,6 +355,29 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
           new Altaxo.Collections.AscendingIntegerCollection(),
           new Altaxo.Collections.AscendingIntegerCollection(),
           dao);
+        System.Windows.Forms.Clipboard.SetDataObject(dao, true);
+      }
+      else
+      {
+        Current.Gui.ErrorMessageBox("Some of your parameter input is not valid!");
+      }
+    }
+
+    public void EhView_CopyParameterVAsCDef()
+    {
+      if (true == this._parameterController.Apply())
+      {
+        System.Windows.Forms.DataObject dao = new System.Windows.Forms.DataObject();
+        System.Text.StringBuilder stb = new System.Text.StringBuilder();
+        for (int i = 0; i < _doc.CurrentParameters.Count; i++)
+        {
+          stb.Append("double ");
+          stb.Append(_doc.CurrentParameters[i].Name);
+          stb.Append(" = ");
+          stb.Append(Altaxo.Serialization.NumberConversion.ToString(_doc.CurrentParameters[i].Parameter));
+          stb.Append(";\r\n");
+        }
+        dao.SetText(stb.ToString(), System.Windows.Forms.TextDataFormat.Text);
         System.Windows.Forms.Clipboard.SetDataObject(dao, true);
       }
       else

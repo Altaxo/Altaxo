@@ -34,6 +34,14 @@ namespace Altaxo.Calc.Probability
 	/// </summary>
 	public abstract class Distribution
     {
+    /// <summary>
+    /// Stores a generator object that is by default common to all distributions. Note: It is better to have only <b>one</b> generator object,
+    /// than to instantiate a new one for every distribution instance. Only with one generator object it can be assured that the
+    /// generated numbers of different distribution instances are independent from each other. (Many generators with the same seed value
+    /// will create the same numbers).
+    /// </summary>
+    static Generator _defaultGenerator = new StandardGenerator();
+
         #region instance fields
         /// <summary>
         /// Gets or sets a <see cref="Generator"/> object that can be used as underlying random number generator.
@@ -59,7 +67,7 @@ namespace Altaxo.Calc.Probability
     {
       get
       {
-        return new StandardGenerator();
+        return _defaultGenerator;
       }
     }
 

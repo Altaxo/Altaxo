@@ -887,6 +887,9 @@ namespace Altaxo.Calc
         const double sq2pil = 0.91893853320467274178032973640562;
         double  dxrel  = Math.Sqrt(DBL_EPSILON);
 
+        if (!(x >= double.MinValue && x <= double.MaxValue))
+          return double.NaN;
+
         double ret_val;
 
         if (first_Gamma) 
@@ -943,8 +946,10 @@ namespace Altaxo.Calc
         // gamma(x) for x >= 2.0 and x <= 10.0 
 
         L30:
-          for (i = 1; i <= n; ++i) 
-            ret_val = (y + i) * ret_val;
+        for (i = 1; i <= n; ++i)
+        {
+          ret_val = (y + i) * ret_val;
+        }
         return ret_val;
     
         // gamma(x) for abs(x) > 10.0.  recall y = abs(x).
@@ -2522,7 +2527,6 @@ namespace Altaxo.Calc
       }
     }
     #endregion
-
 
     #region InverseBeta
 

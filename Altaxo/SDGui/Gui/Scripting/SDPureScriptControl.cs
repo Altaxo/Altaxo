@@ -78,8 +78,10 @@ namespace Altaxo.Gui.Scripting
       this.edFormula.Text = "";
 
       this.Controls.Add(this.edFormula);
-      
-      this.ScriptName = System.Guid.NewGuid().ToString() + ".cs";
+
+      string scriptName = System.Guid.NewGuid().ToString() + ".cs";
+      this.ScriptName = scriptName;
+      Altaxo.Main.Services.ParserServiceConnector.RegisterScriptFileName(scriptName);
       this.edFormula.Document.TextEditorProperties.TabIndent=2;
       this.edFormulaWrapper.textAreaControl.InitializeFormatter();
       this.edFormulaWrapper.textAreaControl.TextEditorProperties.MouseWheelScrollDown=true;

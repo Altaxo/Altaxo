@@ -1083,6 +1083,11 @@
     <None Include="Calc\FitFunctions\Relaxation\.svn\entries" />
     <None Include="Calc\FitFunctions\Relaxation\.svn\format" />
     <None Include="Calc\FitFunctions\Relaxation\.svn\text-base\HavriliakNegamiFunction.cs.svn-base" />
+    <Compile Include="Calc\FitFunctions\Kinetics\KineticsNthOrder.cs" />
+    <Compile Include="Calc\FitFunctions\Transitions\FermiDiracTransition.cs" />
+    <Compile Include="Calc\FitFunctions\Transitions\GeneralEffectiveMedium.cs" />
+    <Compile Include="Calc\FitFunctions\Transitions\PercolationTheory.cs" />
+    <Compile Include="Calc\FitFunctions\Transitions\SmoothedPercolation.cs" />
     <Compile Include="Collections\AltaxoSet.cs" />
     <Compile Include="Collections\IArray.cs" />
     <Compile Include="Collections\ListNode.cs" />
@@ -1426,6 +1431,8 @@
     <Compile Include="Serialization\Ascii\AsciiLineAnalysis.cs" />
     <Compile Include="Serialization\Ascii\AsciiSeparationStrategy.cs" />
     <Compile Include="Serialization\LengthUnit.cs" />
+    <Compile Include="Settings\Scripting\ReferencedAssemblies.cs" />
+    <Compile Include="Settings\Scripting\ReferencedAssembliesCommands.cs" />
     <Compile Include="Worksheet\Commands\Sorting.cs" />
     <Compile Include="Worksheet\Commands\Transpose.cs" />
   </ItemGroup>

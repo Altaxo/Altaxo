@@ -53,6 +53,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     private ToolStripButton _tsbCopyParameterAll;
     private ToolStripButton _tsbCopyParameterValue;
     private ToolStripButton _tsbPasteParameterValue;
+    private ToolStripButton _tsbCopyParameterAsCDef;
     /// <summary> 
     /// Required designer variable.
     /// </summary>
@@ -99,12 +100,13 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       this._tsbCopyParameter = new System.Windows.Forms.ToolStripButton();
       this._tsbCopyParameterAll = new System.Windows.Forms.ToolStripButton();
       this._tsbCopyParameterValue = new System.Windows.Forms.ToolStripButton();
+      this._tsbPasteParameterValue = new System.Windows.Forms.ToolStripButton();
       this._btDoSimplex = new System.Windows.Forms.Button();
       this.label1 = new System.Windows.Forms.Label();
       this._edChiSqr = new System.Windows.Forms.TextBox();
       this._btChiSqr = new System.Windows.Forms.Button();
       this._btDoFit = new System.Windows.Forms.Button();
-      this._tsbPasteParameterValue = new System.Windows.Forms.ToolStripButton();
+      this._tsbCopyParameterAsCDef = new System.Windows.Forms.ToolStripButton();
       this._tabControl.SuspendLayout();
       this._tpSelectFunction.SuspendLayout();
       this._tpMakeFit.SuspendLayout();
@@ -180,6 +182,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       this._toolStripFit.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this._tsbCopyParameter,
             this._tsbCopyParameterAll,
+            this._tsbCopyParameterAsCDef,
             this._tsbCopyParameterValue,
             this._tsbPasteParameterValue});
       this._toolStripFit.Location = new System.Drawing.Point(0, 0);
@@ -220,6 +223,16 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       this._tsbCopyParameterValue.Text = "Copy V";
       this._tsbCopyParameterValue.ToolTipText = "Copy Parameter Values only";
       this._tsbCopyParameterValue.Click += new System.EventHandler(this._tsbCopyParameterValue_Click);
+      // 
+      // _tsbPasteParameterValue
+      // 
+      this._tsbPasteParameterValue.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+      this._tsbPasteParameterValue.ImageTransparentColor = System.Drawing.Color.Magenta;
+      this._tsbPasteParameterValue.Name = "_tsbPasteParameterValue";
+      this._tsbPasteParameterValue.Size = new System.Drawing.Size(49, 22);
+      this._tsbPasteParameterValue.Text = "Paste V";
+      this._tsbPasteParameterValue.ToolTipText = "Paste parameter values";
+      this._tsbPasteParameterValue.Click += new System.EventHandler(this._tsbPasteParameterValue_Click);
       // 
       // _btDoSimplex
       // 
@@ -268,15 +281,16 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       this._btDoFit.Text = "Fit!";
       this._btDoFit.Click += new System.EventHandler(this._btDoFit_Click);
       // 
-      // _tsbPasteParameterValue
+      // _tsbCopyParameterAsCDef
       // 
-      this._tsbPasteParameterValue.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-      this._tsbPasteParameterValue.ImageTransparentColor = System.Drawing.Color.Magenta;
-      this._tsbPasteParameterValue.Name = "_tsbPasteParameterValue";
-      this._tsbPasteParameterValue.Size = new System.Drawing.Size(49, 22);
-      this._tsbPasteParameterValue.Text = "Paste V";
-      this._tsbPasteParameterValue.ToolTipText = "Paste parameter values";
-      this._tsbPasteParameterValue.Click += new System.EventHandler(this._tsbPasteParameterValue_Click);
+      this._tsbCopyParameterAsCDef.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+      this._tsbCopyParameterAsCDef.Image = ((System.Drawing.Image)(resources.GetObject("_tsbCopyParameterAsCDef.Image")));
+      this._tsbCopyParameterAsCDef.ImageTransparentColor = System.Drawing.Color.Magenta;
+      this._tsbCopyParameterAsCDef.Name = "_tsbCopyParameterAsCDef";
+      this._tsbCopyParameterAsCDef.Size = new System.Drawing.Size(81, 22);
+      this._tsbCopyParameterAsCDef.Text = "Copy V as C#";
+      this._tsbCopyParameterAsCDef.ToolTipText = "Copy Parameter Values only";
+      this._tsbCopyParameterAsCDef.Click += new System.EventHandler(this._tsbCopyParameterValueAsCDef_Click);
       // 
       // NonlinearFitControl
       // 
@@ -416,13 +430,20 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     {
       if (_controller != null)
         _controller.EhView_CopyParameterV();
-
     }
+
+    private void _tsbCopyParameterValueAsCDef_Click(object sender, EventArgs e)
+    {
+      if (_controller != null)
+        _controller.EhView_CopyParameterVAsCDef();
+    }
+
 
     private void _tsbPasteParameterValue_Click(object sender, EventArgs e)
     {
       if (_controller != null)
         _controller.EhView_PasteParameterV();
     }
+
   }
 }

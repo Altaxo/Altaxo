@@ -404,7 +404,7 @@ namespace Altaxo.Calc
       double term1 = GammaRelated.Gamma((k+k-1)/beta)*z_pow_2km1/ k2m2fac;
 
       if (z_square == 0)
-        return term1; // if z was so small that z_square can not be evaluated, return after term1
+        return term1/beta; // if z was so small that z_square can not be evaluated, return after term1
 
       k=2;
       k2m2fac = 2;
@@ -594,6 +594,52 @@ namespace Altaxo.Calc
     {
       return Complex.FromRealImaginary(Re(beta, w), Im(beta, w));
     }
+
+    #endregion
+
+    #region Miscellaneous
+
+    /// <summary>
+    /// Returns (approximately) the location of the maximum of the imaginary part of the Fourier transformed Kohlrausch function.
+    /// </summary>
+    /// <param name="beta">The beta parameter.</param>
+    /// <returns>The maximum location (beta*ln(w)) of the imaginary part.</returns>
+    public static double GetBetaLnWOfMaximum(double beta)
+    {
+      return 0.60607 * (beta * beta - beta);
+    }
+    /// <summary>
+    /// Returns (approximately) the location of the maximum of the imaginary part of the Fourier transformed Kohlrausch function.
+    /// </summary>
+    /// <param name="beta">The beta parameter.</param>
+    /// <returns>The maximum location ln(w) of the imaginary part.</returns>
+    public static double GetLnWOfMaximum(double beta)
+    {
+      return GetBetaLnWOfMaximum(beta) / beta;
+    }
+    /// <summary>
+    /// Returns (approximately) the location of the maximum of the imaginary part of the Fourier transformed Kohlrausch function.
+    /// </summary>
+    /// <param name="beta">The beta parameter.</param>
+    /// <returns>The maximum location ln(w) of the imaginary part.</returns>
+    public static double GetWOfMaximum(double beta)
+    {
+      return Math.Exp(GetLnWOfMaximum(beta));
+    }
+
+    /// <summary>
+    /// Returns (approximately) the maximum value of the imaginary part of the Fourier transformed Kohlrausch function.
+    /// </summary>
+    /// <param name="beta"></param>
+    /// <returns></returns>
+    public static double GetMaximumImaginaryPart(double beta)
+    {
+      double pie = Math.PI / Math.E;
+      double armax = pie / (1 + beta * Math.Sqrt(beta) * (pie - 1));
+
+      return 0.5*beta * armax;
+    }
+
 
     #endregion
 

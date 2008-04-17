@@ -33,6 +33,88 @@ namespace Altaxo.Calc.Integration
   /// </remarks>
   public class QawfIntegration : QawoIntegration
   {
+       #region offical C# interface
+    gsl_integration_workspace _cycleWorkspace;
+
+
+     /// <summary>
+    /// Creates an instance of this integration class with a default integration rule and default debug flag setting.
+    /// </summary>
+    public QawfIntegration()
+      : this(DefaultDebugFlag)
+    {
+    }
+
+
+    /// <summary>
+    /// Creates an instance of this integration class with specified integration rule and specified debug flag setting.
+    /// </summary>
+    /// <param name="debug">Setting of the debug flag for this instance. If the integration fails or the specified accuracy
+    /// is not reached, an exception is thrown if the debug flag is set to true. If set to false, the return value of the integration
+    /// function will be set to the appropriate error code (an exception will be thrown then only for serious errors).</param>
+    public QawfIntegration(bool debug)
+      : base(debug)
+    {
+    }
+
+    public GSL_ERROR
+     Integrate(ScalarFunctionDD f,
+     double a, 
+     OscillatoryTerm oscTerm,
+     double omega,
+     double epsabs, int limit,
+     out double result, out double abserr)
+    {
+      return Integrate(f, a, oscTerm, omega, epsabs, limit, _debug, out result, out abserr);
+    }
+
+    public GSL_ERROR 
+      Integrate(ScalarFunctionDD f,
+      double a, 
+      OscillatoryTerm oscTerm,
+      double omega,
+      double epsabs, int limit,
+      bool debug,
+      out double result, out double abserr)
+    {
+      if (null == _workSpace || limit > _workSpace.limit)
+        _workSpace = new gsl_integration_workspace(limit);
+
+      if (null == _cycleWorkspace || limit > _cycleWorkspace.limit)
+        _cycleWorkspace = new gsl_integration_workspace(limit);
+
+
+      if (null == _qawoTable)
+      {
+        _qawoTable = new gsl_integration_qawo_table(omega, 1, oscTerm == OscillatoryTerm.Cosine ? gsl_integration_qawo_enum.GSL_INTEG_COSINE : gsl_integration_qawo_enum.GSL_INTEG_SINE, _defaultOscTableLength);
+      }
+      else
+      {
+        _qawoTable.set(omega, 1, oscTerm == OscillatoryTerm.Cosine ? gsl_integration_qawo_enum.GSL_INTEG_COSINE : gsl_integration_qawo_enum.GSL_INTEG_SINE);
+      }
+      return gsl_integration_qawf(f, a, epsabs, limit, _workSpace, _cycleWorkspace, _qawoTable, out result, out abserr, debug);
+    }
+    
+    public static GSL_ERROR
+    Integration(ScalarFunctionDD f,
+          double a, 
+      OscillatoryTerm oscTerm,
+     double omega,
+          double epsabs,
+          int limit,
+          out double result, out double abserr,
+          ref object tempStorage
+          )
+    {
+      QawfIntegration algo = tempStorage as QawfIntegration;
+      if (null == algo)
+        tempStorage = algo = new QawfIntegration();
+      return algo.Integrate(f, a, oscTerm, omega, epsabs, limit, out result, out abserr);
+    }
+
+#endregion
+
+
     #region qawf.c
 
     /* integration/qawf.c

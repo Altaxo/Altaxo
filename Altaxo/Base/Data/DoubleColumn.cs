@@ -2044,8 +2044,24 @@ namespace Altaxo.Data
         c3.m_Array[i] = System.Math.Log(c1,c2.m_Array[i]);
       }
       c3.m_Count=len;
-      return c3;  
+      return c3;
     }
+
+
+    #region Log10
+    public static Altaxo.Data.DoubleColumn Log10(Altaxo.Data.DoubleColumn c1)
+    {
+      int len = c1.m_Count;
+      Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
+      for (int i = 0; i < len; i++)
+      {
+        c3.m_Array[i] = System.Math.Log10(c1.m_Array[i]);
+      }
+      c3.m_Count = len;
+      return c3;
+    }
+    #endregion
+
 
     public static Altaxo.Data.DoubleColumn Max(Altaxo.Data.DoubleColumn c1, Altaxo.Data.DoubleColumn c2)
     {

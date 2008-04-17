@@ -235,7 +235,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
       XYColumnPlotItem plotitem = null;
       do
       {
-        nextplotitemnumber = this._PlotItemNumber + Math.Sign(increment);
+        nextplotitemnumber = nextplotitemnumber + Math.Sign(increment);
         if(nextplotitemnumber<0)
         {
           nextlayer-=1;

@@ -177,6 +177,11 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
       return false;  
     }
 
+    public virtual bool EhValue4Changed(string txt)
+    {
+      return false;
+    }
+
     #endregion
 
     #region IMVCController Members

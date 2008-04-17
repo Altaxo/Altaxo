@@ -291,11 +291,19 @@ namespace Altaxo.Main.Services
       // parameters.OutputAssembly = this.ScriptName;
 
       // Add available assemblies including the application itself 
+      foreach (string loc in Settings.Scripting.ReferencedAssemblies.AllLocations)
+        parameters.ReferencedAssemblies.Add(loc);
+
+      //parameters.ReferencedAssemblies.Add(@"D:\users\Lellid_LW_V\C\CALC\USSimulation\USSimulationCore\bin\Debug\USSimulationCore.dll");
+
+      /*
       foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies()) 
       {
+        // this will include only those assemblies that have an external file
         if(!(asm is System.Reflection.Emit.AssemblyBuilder) && asm.Location!=null && asm.Location!=String.Empty)
           parameters.ReferencedAssemblies.Add(asm.Location);
       }
+      */
 
       CompilerResults results;
       if(scriptText.Length==1)

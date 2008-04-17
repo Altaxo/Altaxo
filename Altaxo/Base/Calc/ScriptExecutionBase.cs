@@ -86,7 +86,8 @@ namespace Altaxo.Calc
     public static Altaxo.Data.DoubleColumn Log(Altaxo.Data.DoubleColumn s, Altaxo.Data.DoubleColumn bas) { return Altaxo.Data.DoubleColumn.Log(s,bas); }
     public static Altaxo.Data.DoubleColumn Log(Altaxo.Data.DoubleColumn s, double bas) { return Altaxo.Data.DoubleColumn.Log(s,bas); }
     public static Altaxo.Data.DoubleColumn Log(double s, Altaxo.Data.DoubleColumn bas) { return Altaxo.Data.DoubleColumn.Log(s,bas); }
-    public static Altaxo.Data.DoubleColumn Max(Altaxo.Data.DoubleColumn x, Altaxo.Data.DoubleColumn y) { return Altaxo.Data.DoubleColumn.Max(x,y); }
+    public static Altaxo.Data.DoubleColumn Log10(Altaxo.Data.DoubleColumn s) { return Altaxo.Data.DoubleColumn.Log10(s); }
+    public static Altaxo.Data.DoubleColumn Max(Altaxo.Data.DoubleColumn x, Altaxo.Data.DoubleColumn y) { return Altaxo.Data.DoubleColumn.Max(x, y); }
     public static Altaxo.Data.DoubleColumn Max(Altaxo.Data.DoubleColumn x, double y) { return Altaxo.Data.DoubleColumn.Max(x,y); }
     public static Altaxo.Data.DoubleColumn Max(double x, Altaxo.Data.DoubleColumn y) { return Altaxo.Data.DoubleColumn.Max(x,y); }
     public static Altaxo.Data.DoubleColumn Min(Altaxo.Data.DoubleColumn x, Altaxo.Data.DoubleColumn y) { return Altaxo.Data.DoubleColumn.Min(x,y); }

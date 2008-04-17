@@ -1193,7 +1193,7 @@ namespace Altaxo.Scripting
         ((IFitFunction)m_ScriptObject).Evaluate(independent,parameters,result);
         return;
       }
-      catch (Exception)
+      catch (Exception ex)
       {
         return;
       }

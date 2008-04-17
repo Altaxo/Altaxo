@@ -423,6 +423,9 @@ namespace Altaxo.Graph.Scales
       if (!(xorgfixed && xendfixed))
       {
         CalculateTicks(xorg, xend, out _majorSpan, out _minorTicks);
+        if (_rescaling.MinorTicks != null)
+          _minorTicks = Math.Abs((int)_rescaling.MinorTicks);
+
         double orgByMajor, endByMajor;
         CalculateActualLimits(xorg, xorgfixed, xend, xendfixed, _majorSpan, _minorTicks, out orgByMajor, out endByMajor);
         xorg = orgByMajor * _majorSpan;
@@ -430,6 +433,9 @@ namespace Altaxo.Graph.Scales
       }
 
       CalculateTicks(xorg, xend, out _majorSpan, out _minorTicks);
+      if (_rescaling.MinorTicks != null)
+        _minorTicks = Math.Abs((int)_rescaling.MinorTicks);
+
       _axisOrgByMajor = xorg / _majorSpan;
       _axisEndByMajor = xend / _majorSpan;
       

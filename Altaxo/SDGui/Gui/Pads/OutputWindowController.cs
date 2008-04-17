@@ -143,14 +143,12 @@ namespace Altaxo.Gui.Pads
 
     #region IOutputService Members
 
-
-
-    public void Write(string text)
+    void WriteInternal(string text)
     {
       _view.AppendText(text);
 
 
-      if (!_view.Visible || _view.Parent==null)
+      if (!_view.Visible || _view.Parent == null)
       {
         ICSharpCode.SharpDevelop.Gui.IWorkbenchWindow ww = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow;
 
@@ -162,6 +160,20 @@ namespace Altaxo.Gui.Pads
       }
     }
 
+
+    public void Write(string text)
+    {
+      if (_view.InvokeRequired)
+      {
+        System.Windows.Forms.MethodInvoker i = delegate { WriteInternal(text); };
+        _view.Invoke(i);
+      }
+      else
+      {
+        WriteInternal(text);
+      }
+    }
+
     public void WriteLine()
     {
       Write(System.Environment.NewLine);
@@ -169,20 +181,17 @@ namespace Altaxo.Gui.Pads
 
     public void WriteLine(string text)
     {
-      Write(text);
-      WriteLine();
+      Write(text + System.Environment.NewLine);
     }
 
     public void WriteLine(string format, params object[] args)
     {
-      Write(format,args);
-      WriteLine();
+      Write(string.Format(format, args) + System.Environment.NewLine);
     }
 
     public void WriteLine(System.IFormatProvider provider, string format, params object[] args)
     {
-      Write(string.Format(provider,format,args));
-      WriteLine();
+      Write(string.Format(provider, format, args) + System.Environment.NewLine);
     }
 
  
