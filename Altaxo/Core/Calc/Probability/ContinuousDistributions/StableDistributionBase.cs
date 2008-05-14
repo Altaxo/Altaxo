@@ -9,6 +9,9 @@ namespace Altaxo.Calc.Probability
     ExponentialDistribution _expDist = new ExponentialDistribution();
     ContinuousUniformDistribution _contDist = new ContinuousUniformDistribution();
 
+    /// <summary>The highest number x that, when taken Exp(-x), gives a result greater than zero.</summary>
+    protected static readonly double MinusLogTiny = -Math.Log(double.Epsilon);
+
     #region Abstract Implementation of ContinuousDistribution
 
     protected StableDistributionBase(Generator generator)
@@ -54,7 +57,7 @@ namespace Altaxo.Calc.Probability
     }
     #endregion
 
-    
+
 
     #region Integration
 
@@ -81,13 +84,13 @@ namespace Altaxo.Calc.Probability
           double xdiff = x1 - xm;
           if (x1 - 8 * xdiff > x0)
           {
-            if(xdiff<=0)
-              xdiff = (x1-x0)*DoubleConstants.DBL_EPSILON;
+            if (xdiff <= 0)
+              xdiff = (x1 - x0) * DoubleConstants.DBL_EPSILON;
 
             double n = Math.Floor(Math.Log((x1 - x0) / xdiff) / Math.Log(4));
             if (n > 100)
               n = 100;
-           
+
             if (n >= 2)
             {
               int nn = (int)n;
@@ -194,10 +197,16 @@ namespace Altaxo.Calc.Probability
       {
         used = PartFromTheLeft(xm, x1, xdiffl, intgrenzen, 0);
       }
-      else
+      else if ((xm - x0) < (x1 - xm))
       {
         intgrenzen[0] = x0;
         used = 1 + PartFromTheLeft(xm, x1, xdiffl, intgrenzen, 1);
+      }
+      else
+      {
+        intgrenzen[0] = x0;
+        intgrenzen[1] = x1;
+        used = 2;
       }
       return used;
     }
@@ -283,13 +292,13 @@ namespace Altaxo.Calc.Probability
     */
     static double[] AddIntegrationPointsToTheEndInc(double x0, double x1, ScalarFunctionDD func, double[] intgrenzen, double yatlastdiv)
     {
-      const int additionalPoints=10;
+      const int additionalPoints = 10;
 
       // the last interval of the original intgrenzen is to long and must be further divided
       double xlast = intgrenzen[intgrenzen.Length - 2];
 
       double ynext;
-      double xnext = FindIncreasingYEqualTo(func, xlast, x1, yatlastdiv + 60,1, out ynext);
+      double xnext = FindIncreasingYEqualTo(func, xlast, x1, yatlastdiv + 60, 1, out ynext);
 
 
       double[] result = new double[intgrenzen.Length + additionalPoints];
@@ -311,12 +320,12 @@ namespace Altaxo.Calc.Probability
     /// <param name="x0"></param>
     /// <param name="x1"></param>
     /// <returns></returns>
-    protected static double IntegrateFuncExpMFuncInc(ScalarFunctionDD func, double x0, double x1, ref object tempStorage, double precision)
+    protected static double IntegrateFuncExpMFuncInc(ScalarFunctionDD func, ScalarFunctionDD funcExpMFunc, double x0, double x1, ref object tempStorage, double precision)
     {
       double y0 = func(x0);
       if (y0 >= 1)
       {
-        return IntegrateFuncExpMFuncIncAdvanced(func, x0, x0, x1, ref tempStorage, precision);
+        return IntegrateFuncExpMFuncIncAdvanced(func, funcExpMFunc, x0, x0, x1, ref tempStorage, precision);
       }
 
       double xm = FindIncreasingYEqualToOne(func, x0, x1);
@@ -326,22 +335,11 @@ namespace Altaxo.Calc.Probability
       try
       {
         GSL_ERROR error = Calc.Integration.QagpIntegration.Integration(
-          delegate(double x)
-          {
-            double f = func(x);
-            if (f < 0)
-              throw new ArithmeticException("Function value < 0 at x=" + x.ToString());
-
-            double r = double.IsInfinity(f) ? 0 : f * Math.Exp(-f);
-            //System.Diagnostics.Debug.WriteLine(string.Format("x={0}, f={1}, r={2}", x, f, r));
-            //Current.Console.WriteLine("x={0}, f={1}, r={2}", x, f, r);
-            return r;
-          },
-          intgrenzen, nIntPts, 0, precision, 200, out result, out abserr, ref tempStorage);
+        funcExpMFunc, intgrenzen, nIntPts, 0, precision, 200, out result, out abserr, ref tempStorage);
 
         if (null != error)
         {
-          result = IntegrateFuncExpMFuncIncAdvanced(func, x0, xm, x1, ref tempStorage, precision);
+          result = IntegrateFuncExpMFuncIncAdvanced(func, funcExpMFunc, x0, xm, x1, ref tempStorage, precision);
         }
 
         return result;
@@ -352,7 +350,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    protected static double IntegrateFuncExpMFuncIncAdvanced(ScalarFunctionDD func, double x0, double xm, double x1, ref object tempStorage, double precision)
+    protected static double IntegrateFuncExpMFuncIncAdvanced(ScalarFunctionDD func, ScalarFunctionDD funcExpMFunc, double x0, double xm, double x1, ref object tempStorage, double precision)
     {
       const double ySearchLeftSide = 1E-3;
       const double yToleranceLeftSide = 1E-4;
@@ -362,7 +360,7 @@ namespace Altaxo.Calc.Probability
       const double MinScale = 10;
       const double MaxScale = 80;
       const int MaxDivisions = 30;
-      double[] intgrenzen = new double[MaxDivisions + 2];
+      double[] intgrenzen = new double[2 * MaxDivisions + 4];
 
       double resultLeft = 0;
       double resultRight = 0;
@@ -378,25 +376,14 @@ namespace Altaxo.Calc.Probability
         double xdiffr = xm - xl;
         if (xdiffr < xdiffl) // then we logarithmically space beginning from xm to the left border x0
         {
-          n = PartFromTheRight(x0, xm, xdiffr, intgrenzen);
+          n = PartFromTheRight(x0, xm, xdiffr, intgrenzen, 0);
         }
         else
         {
-          n = PartFromTheLeft(x0, xm, xdiffl, intgrenzen,0);
+          n = PartFromTheLeft(x0, xm, xdiffl, intgrenzen, 0);
         }
         GSL_ERROR error = Calc.Integration.QagpIntegration.Integration(
-          delegate(double x)
-          {
-            double f = func(x);
-            if (f < 0)
-              throw new ArithmeticException("Function value < 0 at x=" + x.ToString());
-
-            double r = double.IsInfinity(f) ? 0 : f * Math.Exp(-f);
-            //System.Diagnostics.Debug.WriteLine(string.Format("x={0}, f={1}, r={2}", x, f, r));
-            //Current.Console.WriteLine("x={0}, f={1}, r={2}", x, f, r);
-            return r;
-          },
-          intgrenzen, n, 0, precision, 100, out resultLeft, out abserrLeft, ref tempStorage);
+         funcExpMFunc, intgrenzen, n, 0, precision, 100, out resultLeft, out abserrLeft, ref tempStorage);
 
         if (null != error)
         {
@@ -408,6 +395,7 @@ namespace Altaxo.Calc.Probability
       // now lets integrate the right
       if (xm < x1)
       {
+        /*
         int n;
         double ySearchRightSide = yOffsetRightSide + func(xm);
         double yr;
@@ -416,25 +404,17 @@ namespace Altaxo.Calc.Probability
         double xdiffr = x1 - xr;
         if (xdiffr < xdiffl) // then we logarithmically space beginning from xm to the left border x0
         {
-          n = PartFromTheRight(xm, x1, xdiffr, intgrenzen);
+          n = PartFromTheRight(xm, x1, xdiffr, intgrenzen,0);
         }
         else
         {
           n = PartFromTheLeft(xm, x1, xdiffl, intgrenzen,0);
         }
-        GSL_ERROR error = Calc.Integration.QagpIntegration.Integration(
-          delegate(double x)
-          {
-            double f = func(x);
-            if (f < 0)
-              throw new ArithmeticException("Function value < 0 at x=" + x.ToString());
+        */
 
-            double r = double.IsInfinity(f) ? 0 : f * Math.Exp(-f);
-            //System.Diagnostics.Debug.WriteLine(string.Format("x={0}, f={1}, r={2}", x, f, r));
-            //Current.Console.WriteLine("x={0}, f={1}, r={2}", x, f, r);
-            return r;
-          },
-          intgrenzen, n, 0, precision, 100, out resultRight, out abserrRight, ref tempStorage);
+        int n = PartUnknownRightSideInc(func, xm, x1, intgrenzen, 0);
+        GSL_ERROR error = Calc.Integration.QagpIntegration.Integration(
+          funcExpMFunc, intgrenzen, n, 0, precision, 200, out resultRight, out abserrRight, ref tempStorage);
 
         if (null != error)
         {
@@ -464,7 +444,7 @@ namespace Altaxo.Calc.Probability
     {
       double scale = double.MaxValue;
       double OneByN = 1.0 / n;
-      double ges = span/smallestDivision;
+      double ges = span / smallestDivision;
       if (ges + 1 < double.MaxValue)
       {
         // first guess
@@ -484,9 +464,9 @@ namespace Altaxo.Calc.Probability
 
 
 
-    static int PartFromTheRight(double x0, double x1, double xdiffr, double[] intgrenzen)
+    protected static int PartFromTheRight(double x0, double x1, double xdiffr, double[] intgrenzen, int start)
     {
-      const double MinScale = 10;
+      const double MinScale = 4;
       const double MaxScale = 100;
       const int MaxDivisions = 30;
 
@@ -497,39 +477,41 @@ namespace Altaxo.Calc.Probability
 
       double xdiffl = (x1 - x0) - xdiffr;
       double n = MaxDivisions;
-      double scale = Math.Pow(xdiffl, 1.0 / n) * Math.Pow(xdiffr, -1.0 / n);
+      double scale = GetScaleOfLogarithmicSubdivision(x1 - x0, xdiffr, n);
       if (scale < MinScale)
       {
         scale = MinScale;
-        n = Math.Floor((Math.Log(xdiffl) - Math.Log(xdiffr)) / Math.Log(scale));
+        n = Math.Ceiling(GetNumberOfLogarithmicDivisions(x1 - x0, xdiffr, scale));
       }
       else if (scale > MaxScale)
       {
         scale = MaxScale;
-        n = Math.Floor((Math.Log(xdiffl) - Math.Log(xdiffr)) / Math.Log(scale));
+        n = Math.Ceiling(GetNumberOfLogarithmicDivisions(x1 - x0, xdiffr, scale));
       }
       else
       {
       }
 
-      int nn = (int)Math.Min(MaxDivisions,Math.Max(1, n));
-      intgrenzen[0] = x0;
-      intgrenzen[nn + 1] = x1;
+      int nn = (int)Math.Min(MaxDivisions, Math.Max(1, n));
+      intgrenzen[start] = x0;
+      intgrenzen[start + nn + 1] = x1;
       double interval = xdiffr;
       for (int i = 0; i < nn; i++)
       {
-        intgrenzen[nn - i] = x1 - interval;
+        double xp = x1-interval;
+        intgrenzen[start + nn - i] = x1 - interval;
         interval *= scale;
       }
       return nn + 2;
     }
 
 
-    static int PartFromTheLeft(double x0, double x1, double xdiffl, double[] intgrenzen, int start)
+    protected static int PartFromTheLeft(double x0, double x1, double xdiffl, double[] intgrenzen, int start)
     {
-      const double MinScale = 10;
+      const double MinScale = 4;
       const double MaxScale = 100;
       const int MaxDivisions = 30;
+
 
       if (xdiffl <= 0)
       {
@@ -539,34 +521,137 @@ namespace Altaxo.Calc.Probability
 
       double xdiffr = (x1 - x0) - xdiffl;
       double n = MaxDivisions;
-      double scale = Math.Pow(xdiffr, 1.0 / n) * Math.Pow(xdiffl, -1.0 / n); // do not simplify because overflows can occure here
+      double scale = GetScaleOfLogarithmicSubdivision(x1 - x0, xdiffl, n);
       if (scale < MinScale)
       {
         scale = MinScale;
-        n = Math.Floor(Math.Log(xdiffr / xdiffl) / Math.Log(scale));
+        n = Math.Ceiling(GetNumberOfLogarithmicDivisions(x1 - x0, xdiffl, scale));
       }
       else if (scale > MaxScale)
       {
         scale = MaxScale;
-        n = Math.Floor((Math.Log(xdiffr)-Math.Log(xdiffl)) / Math.Log(scale)); // do not simplify because overflow
+        n = Math.Ceiling(GetNumberOfLogarithmicDivisions(x1 - x0, xdiffl, scale));
       }
       else
       {
       }
 
-      int nn = (int)Math.Min(MaxDivisions,Math.Max(1, n));
+      int nn = (int)Math.Min(MaxDivisions, Math.Max(1, n));
 
-      intgrenzen[start] = x0;
-      intgrenzen[start + nn + 1] = x1;
-      double interval = xdiffl;
-      for (int i = 0; i < nn; i++)
+      try
       {
-        intgrenzen[start + i + 1] = x0 + interval;
-        interval *= scale;
+        intgrenzen[start] = x0;
+        intgrenzen[start + nn + 1] = x1;
+        double interval = xdiffl;
+        for (int i = 0; i < nn; i++)
+        {
+          intgrenzen[start + i + 1] = x0 + interval;
+          interval *= scale;
+        }
+        return nn + 2;
       }
-      return nn + 2;
+      catch (Exception ex)
+      {
+      }
+      return 0;
     }
+
    
+
+    protected static int PartUnknownRightSideInc(ScalarFunctionDD func, double x0, double x1, double[] intgrenzen, int start)
+    {
+      const double diffOneDecade = 7;
+      int count;
+      double y1;
+
+
+      x1 = FindIncreasingYEqualTo(func, x0, x1, MinusLogTiny + 1, 1, out y1);
+      double y0 = func(x0);
+
+      // When the difference of y values results in a difference able to handle by the algorithm, then return immediately
+      if ((y0 >= MinusLogTiny) || ((y1 - y0) < diffOneDecade))
+      {
+        intgrenzen[start] = x0;
+        intgrenzen[start + 1] = x1;
+        count = 2;
+      }
+      else
+      {
+        // now take the overall derivative
+        double s01 = (y1 - y0) / (x1 - x0); // overall derivative
+
+
+        // Take the values in the vicinity of x0 and x1, respectively, but make sure
+        // not to use too big differences
+        double y00, y11;
+        double s0, s1;
+        double dx;
+
+        dx = x0==0 ? 16*double.Epsilon : x0*16*DoubleConstants.DBL_EPSILON;
+        y00 = func(x0 + dx);
+        s0 = (y00 - y0) / dx;
+
+        dx = x1 * 16 * DoubleConstants.DBL_EPSILON;
+        y11 = func(x1 - dx);
+        s1 = (y1 - y11) / dx; // derivative at point y0
+
+        // now compare the different slopes 
+        // note that all slope values should be zero or greater than zero, since the function is increasing
+
+        if (s0 > s01 && s1 < s01)
+        {
+          // increasing fast at x0 and slow at x1, so part from the left
+          double increment = Math.Min(x0>0 ? x0 : double.MaxValue, diffOneDecade / s0);
+          count = PartFromTheLeft(x0, x1, increment, intgrenzen, start);
+        }
+        else if (s0 < s01 && s1 > s01)
+        {
+          // increasing slow at x0 and fast at x1, so part from the right
+          count = PartFromTheRight(x0, x1, diffOneDecade / s1, intgrenzen, start);
+        }
+        else if (s0 < s01 && s1 < s01)
+        {
+          // in this case, there is the fast transition somewhere inbetween the interval, so we have to search for it
+          double ym;
+          double xm = FindIncreasingYEqualTo(func, x0, x1, 0.5 * (y0 + y1), 0.1, out ym);
+          double xdist = Math.Min(xm - x0, x1 - xm);
+          xdist = Math.Min(xdist, 1 / s01);
+          double sm = (func(xm + 0.5 * xdist) - func(xm - 0.5 * xdist)) / xdist;
+
+          double xinterval = sm > 0 ? diffOneDecade / sm : xm * DoubleConstants.DBL_EPSILON;
+          count = PartFromTheRight(x0, xm, xinterval, intgrenzen, start);
+          count--; // we decrease count because we don't want to have the middle point twice
+          count += PartFromTheLeft(xm, x1, xinterval, intgrenzen, start + count);
+        }
+        else if (s0 > s01 && s1 > s01)
+        {
+          // then we have fast increases both on x0 and x1, so we must have a plateau inbetween
+          double xm = 0.5 * (x0 + x1);
+          double increment = Math.Min(x0 > 0 ? x0 : double.MaxValue, diffOneDecade / s0);
+          count = PartFromTheLeft(x0, xm, increment, intgrenzen, start);
+          count--; // we decrease count because we don't want to have the middle point twice
+          count += PartFromTheRight(xm, x1, diffOneDecade / s1, intgrenzen, start + count);
+        }
+        else
+        {
+          // part linearly spaced between x0 and x1
+          double xinc = diffOneDecade / s01;
+          double xs = x0;
+          for (count = 0; (start + count) < intgrenzen.Length; count++)
+          {
+            if (xs >= x1)
+            {
+              intgrenzen[start + count] = x1;
+              count++;
+              break;
+            }
+            intgrenzen[start + count] = xs;
+            xs += xinc;
+          }
+        }
+      }
+      return count;
+    }
 
     /// <summary>
     /// Integrates func*Exp(-func) from x0 to x1. It relies on the fact that func is monotonical decreasing from x0 to x1.
@@ -575,43 +660,32 @@ namespace Altaxo.Calc.Probability
     /// <param name="x0"></param>
     /// <param name="x1"></param>
     /// <returns></returns>
-    protected static double IntegrateFuncExpMFuncDec(ScalarFunctionDD func, double x0, double x1, ref object tempStorage, double precision)
+    protected static double IntegrateFuncExpMFuncDec(ScalarFunctionDD func, ScalarFunctionDD funcExpMFunc, double x0, double x1, ref object tempStorage, double precision)
     {
       const int MaxDivisions = 30;
-        double xm = FindDecreasingYEqualToOne(func, x0, x1);
+      double xm = FindDecreasingYEqualToOne(func, x0, x1);
 
-        double result = 0, abserr = 0;
-        double[] intgrenzen = new double[100];
-        int nIntPts = GetIntegrationPointsXmNearX0(x0, xm, x1, intgrenzen);
-    
-        try
-        {
-          GSL_ERROR error = Calc.Integration.QagpIntegration.Integration(
-            delegate(double x)
-            {
-              double f = func(x);
-              if (f < 0)
-                throw new ArithmeticException("Function value < 0 at x=" + x.ToString());
+      double result = 0, abserr = 0;
+      double[] intgrenzen = new double[100];
+      int nIntPts = GetIntegrationPointsXmNearX0(x0, xm, x1, intgrenzen);
 
-              double r = double.IsInfinity(f) ? 0 : f * Math.Exp(-f);
-              //System.Diagnostics.Debug.WriteLine(string.Format("x={0}, f={1}, r={2}", x, f, r));
-              //Current.Console.WriteLine("x={0}, f={1}, r={2}", x, f, r);
-              return r;
-            },
-            intgrenzen, nIntPts, 0, precision, 100, out result, out abserr, ref tempStorage);
+      try
+      {
+        GSL_ERROR error = Calc.Integration.QagpIntegration.Integration(
+         funcExpMFunc, intgrenzen, nIntPts, 0, precision, 100, out result, out abserr, ref tempStorage);
 
-          if (null != error)
-            result = double.NaN;
+        if (null != error)
+          result = double.NaN;
 
-          return result;
-        }
-        catch (Exception ex)
-        {
-          return result;
-        }
+        return result;
       }
-     
-    
+      catch (Exception ex)
+      {
+        return result;
+      }
+    }
+
+
 
 
 
@@ -656,7 +730,7 @@ namespace Altaxo.Calc.Probability
     /// <returns></returns>
     protected static double FindIncreasingYEqualToOne(ScalarFunctionDD func, double x0, double x1)
     {
-      const double ConsideredAsZero = 2*double.Epsilon;
+      const double ConsideredAsZero = 2 * double.Epsilon;
       double low = x0;
       double high = x1;
       double xm = 0;
@@ -678,7 +752,7 @@ namespace Altaxo.Calc.Probability
           high = xm;
       }
 
-      return (x0==0 && xm<=ConsideredAsZero) ? 0 : xm;
+      return (x0 == 0 && xm <= ConsideredAsZero) ? 0 : xm;
     }
 
     /// <summary>
@@ -778,7 +852,7 @@ namespace Altaxo.Calc.Probability
     }
 
 
- /// <summary>
+    /// <summary>
     /// Finds the x where func(x)==1+-1E-5 between x<x0<x1 for a monoton decreasing function func.
     /// </summary>
     /// <param name="func"></param>
@@ -844,7 +918,7 @@ namespace Altaxo.Calc.Probability
     private static double GammaFromAlphaBetaTanPiA2(double alpha, double beta, double tan_pi_alpha_2)
     {
       if (Math.Abs(beta) == 1) // Avoid roundoff errors when Abs(beta)==1
-        return beta == 1 ? Math.IEEERemainder(-alpha,2) : Math.IEEERemainder(alpha,2);
+        return beta == 1 ? Math.IEEERemainder(-alpha, 2) : Math.IEEERemainder(alpha, 2);
       else
         return 2 / Math.PI * Math.Atan(-beta * tan_pi_alpha_2);
     }
@@ -852,7 +926,7 @@ namespace Altaxo.Calc.Probability
     {
       if (Math.Floor(alpha) == alpha)
       {
-        double rem = Math.IEEERemainder(alpha,2);
+        double rem = Math.IEEERemainder(alpha, 2);
         if (rem == 0)
           return 0;
         else if (rem == 1)
@@ -966,7 +1040,7 @@ namespace Altaxo.Calc.Probability
 
     public static void ParameterConversionS0ToS1(double alpha, double beta, double sigma0, double mu0, out double mu1)
     {
-      if(alpha!=1)
+      if (alpha != 1)
       {
         mu1 = mu0 - sigma0 * beta * TanPiAlphaBy2(alpha);
       }

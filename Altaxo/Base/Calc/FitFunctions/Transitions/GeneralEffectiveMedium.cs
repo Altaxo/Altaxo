@@ -105,7 +105,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
       return "y";
     }
 
-    public string ParameterName(int i)
+    public virtual string ParameterName(int i)
     {
       switch (i)
       {
@@ -133,7 +133,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
       return null;
     }
 
-    public void Evaluate(double[] X, double[] P, double[] Y)
+    public virtual void Evaluate(double[] X, double[] P, double[] Y)
     {
       Y[0] = Evaluate(X[0], P[0], P[1], P[2], P[3], P[4]);
     }
@@ -224,5 +224,74 @@ namespace Altaxo.Calc.FitFunctions.Transitions
 
   }
 
+   /// <summary>
+  /// Only for testing purposes - use a "real" linear fit instead.
+  /// </summary>
+  [FitFunctionClass]
+  public class GeneralEffectiveMediumLog10 : GeneralEffectiveMedium
+  {
+    #region Serialization
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GeneralEffectiveMediumLog10), 0)]
+    class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        GeneralEffectiveMediumLog10 s = (GeneralEffectiveMediumLog10)obj;
+
+
+      }
+
+      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        GeneralEffectiveMediumLog10 s = o != null ? (GeneralEffectiveMediumLog10)o : new GeneralEffectiveMediumLog10();
+        return s;
+      }
+    }
+
+    #endregion
+
+    public GeneralEffectiveMediumLog10()
+    {
+    }
+
+
+    [FitFunctionCreator("GeneralEffectiveMediumLog10", "Transitions", 1, 1, 5)]
+    [System.ComponentModel.Description("FitFunctions.Transitions.GeneralEffectiveMediumLog10")]
+    public static IFitFunction CreateGeneralEffectiveMediumLog10()
+    {
+      return new GeneralEffectiveMediumLog10();
+    }
+
+    public override void Evaluate(double[] X, double[] P, double[] Y)
+    {
+      Y[0] = EvaluateLog10(X[0], P[0], P[1], P[2], P[3], P[4]);
+    }
+
+
+    public static double EvaluateLog10(double phi, double lg_y0, double lg_y1, double phi_c, double s, double t)
+    {
+      return Math.Log10(GeneralEffectiveMedium.Evaluate(phi,Math.Pow(10,lg_y0), Math.Pow(10,lg_y1), phi_c, s, t));
+    }
+
+    public override string ParameterName(int i)
+    {
+      switch (i)
+      {
+        case 0:
+          return "Lg_y0";
+        case 1:
+          return "Lg_y1)";
+        case 2:
+          return "phi_c";
+        case 3:
+          return "s";
+        case 4:
+          return "t";
+      }
+      return string.Empty;
+    }
+
+  }
 
 }

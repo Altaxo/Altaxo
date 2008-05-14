@@ -209,7 +209,14 @@ namespace Altaxo.Main.Services
         }
         else
         {
-          string rawtext = Current.ResourceService.GetString(res);
+          string rawtext = null;
+          try
+          {
+            rawtext = Current.ResourceService.GetString(res);
+          }
+          catch (Exception)
+          {
+          }
           if (rawtext != null && rawtext.Length > 0)
             stb.Append(rawtext);
         }

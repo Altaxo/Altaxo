@@ -2,9 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
+using Altaxo.Calc.Regression.Nonlinear;
+
 namespace Altaxo.Calc.FitFunctions.Transitions
 {
-  public class FermiDiracTransition
+ 
+  public abstract class FermiDiracTransitionBase : IFitFunction
   {
     /// <summary>
     /// Returns a value which is 1 for p=0 and is 0 for p=1.
@@ -62,6 +65,172 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     }
 
 
+
+
+    #region IFitFunction Members
+
+    public int NumberOfIndependentVariables
+    {
+      get { return 1; }
+    }
+
+    public int NumberOfDependentVariables
+    {
+      get { return 1; }
+    }
+
+    public int NumberOfParameters
+    {
+      get { return 4; }
+    }
+
+    public string IndependentVariableName(int i)
+    {
+      return "p";
+    }
+
+    public string DependentVariableName(int i)
+    {
+      return "y";
+    }
+
+    public string ParameterName(int i)
+    {
+      switch (i)
+      {
+        case 0:
+          return "y0";
+        case 1:
+          return "y1";
+        case 2:
+          return "pc";
+        case 3:
+          return "w";
+        default:
+          return "?";
+      }
+    }
+
+    public double DefaultParameterValue(int i)
+    {
+      switch (i)
+      {
+        case 0:
+          return 1;
+        case 1:
+          return 10;
+        case 2:
+          return 0.5;
+        case 3:
+          return 0.5;
+        default:
+          return 0;
+      }
+    }
+
+    public abstract IVarianceScaling DefaultVarianceScaling(int i);
+
+    public abstract void Evaluate(double[] independent, double[] parameters, double[] FV);
+
+
+    #endregion
+  }
+
+  [FitFunctionClass]
+  public class LinearFermiDiracTransition : FermiDiracTransitionBase
+  {
+     #region Serialization
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LinearFermiDiracTransition), 0)]
+    class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        LinearFermiDiracTransition s = (LinearFermiDiracTransition)obj;
+        
+
+      }
+
+      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        LinearFermiDiracTransition s = o != null ? (LinearFermiDiracTransition)o : new LinearFermiDiracTransition();
+        return s;
+      }
+    }
+
+    #endregion
+
+    public LinearFermiDiracTransition()
+    {
+    }
+
+
+    [FitFunctionCreator("LinearFermiDiracTransition", "Transitions", 1, 1, 4)]
+    [System.ComponentModel.Description("FitFunctions.Transitions.LinearFermiDiracTransition")]
+    public static IFitFunction CreateLinearFermiDiracTransition()
+    {
+      return new LinearFermiDiracTransition();
+    }
+
+    public override void Evaluate(double[] independent, double[] parameters, double[] FV)
+    {
+      FV[0] = LinearScaledTransition(independent[0], parameters[0], parameters[1], parameters[2], parameters[3]);
+    }
+
+    public override IVarianceScaling DefaultVarianceScaling(int i)
+    {
+      return new ConstantVarianceScaling();
+    }
+
+  }
+
+
+
+  [FitFunctionClass]
+  public class LogarithmicFermiDiracTransition : FermiDiracTransitionBase
+  {
+    #region Serialization
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LogarithmicFermiDiracTransition), 0)]
+    class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        LogarithmicFermiDiracTransition s = (LogarithmicFermiDiracTransition)obj;
+
+
+      }
+
+      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        LogarithmicFermiDiracTransition s = o != null ? (LogarithmicFermiDiracTransition)o : new LogarithmicFermiDiracTransition();
+        return s;
+      }
+    }
+
+    #endregion
+
+    public LogarithmicFermiDiracTransition()
+    {
+    }
+
+
+    [FitFunctionCreator("LogarithmicFermiDiracTransition", "Transitions", 1, 1, 4)]
+    [System.ComponentModel.Description("FitFunctions.Transitions.LogarithmicFermiDiracTransition")]
+    public static IFitFunction CreateLogarithmicFermiDiracTransition()
+    {
+      return new LogarithmicFermiDiracTransition();
+    }
+
+    public override void Evaluate(double[] independent, double[] parameters, double[] FV)
+    {
+      FV[0] = LogarithmicScaledTransition(independent[0], parameters[0], parameters[1], parameters[2], parameters[3]);
+    }
+
+    public override IVarianceScaling DefaultVarianceScaling(int i)
+    {
+      return new RelativeVarianceScaling();
+    }
 
   }
 }
