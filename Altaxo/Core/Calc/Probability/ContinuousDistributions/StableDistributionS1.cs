@@ -195,6 +195,8 @@ namespace Altaxo.Calc.Probability
 
     #endregion
 
+    #region PDF dispatcher
+
     public static double PDF(double x, double alpha, double beta)
     {
       object tempStore = null;
@@ -211,8 +213,19 @@ namespace Altaxo.Calc.Probability
     {
       return PDF((x - mu) / sigma, alpha, beta, ref tempStorage, precision) / sigma;
     }
-
+    
     public static double PDF(double x, double alpha, double beta, ref object tempStorage, double precision)
+    {
+      double abe;
+      if (beta >= 0)
+        abe = 1 - beta;
+      else
+        abe = -1 + beta;
+
+      return PDF(x, alpha, beta, abe, ref tempStorage, precision);
+    }
+    
+    public static double PDF(double x, double alpha, double beta, double abe, ref object tempStorage, double precision)
     {
       // Test for special case of symmetric destribution, this can be handled much better 
       if (beta == 0)
@@ -226,9 +239,9 @@ namespace Altaxo.Calc.Probability
 
       if (alpha != 1)
       {
-        double gamma, sigmaf, muf;
-        ParameterConversionS1ToFeller(alpha, beta, 1, 0, out gamma, out sigmaf, out muf);
-        return StableDistributionFeller.PDF((x - muf) / sigmaf, alpha, gamma) / sigmaf;
+        double gamma, aga, sigmaf, muf;
+        ParameterConversionS1ToFeller(alpha, beta, abe, 1, 0, out gamma, out aga, out sigmaf, out muf);
+        return StableDistributionFeller.PDF((x - muf) / sigmaf, alpha, gamma, aga) / sigmaf;
       }
       else
       {
@@ -236,7 +249,51 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-   
+    #endregion
+
+    #region CDF dispatcher
+
+    public static double CDF(double x, double alpha, double gamma)
+    {
+      object tempStorage = null;
+      double aga = StableDistributionFeller.GetAgaFromAlphaGamma(alpha, gamma);
+      return CDF(x, alpha, gamma, aga, ref tempStorage, DefaultPrecision);
+    }
+
+    public static double CDF(double x, double alpha, double gamma, ref object tempStorage, double precision)
+    {
+      double aga = StableDistributionFeller.GetAgaFromAlphaGamma(alpha, gamma);
+      return CDF(x, alpha, gamma, aga, ref tempStorage, precision);
+    }
+
+    public static double CDF(double x, double alpha, double gamma, double aga)
+    {
+      object temp = null;
+      return CDF(x, alpha, gamma, aga, ref temp, DefaultPrecision);
+    }
+
+    public static double CDF(double x, double alpha, double beta, double abe, ref object tempStorage, double precision)
+    {
+      // test input parameter
+      if (!(alpha > 0 && alpha <= 2))
+        throw new ArgumentOutOfRangeException(string.Format("Alpha must be in the range (0,2], but was: {0}", alpha));
+      if (!(beta >= -1 && beta <= 1))
+        throw new ArgumentOutOfRangeException(string.Format("Beta must be in the range [-1,1], but was: {0}", beta));
+
+
+      if (alpha != 1)
+      {
+        double gamma, aga, sigmaf, muf;
+        ParameterConversionS1ToFeller(alpha, beta, abe, 1, 0, out gamma, out aga, out sigmaf, out muf);
+        return StableDistributionFeller.CDF((x - muf) / sigmaf, alpha, gamma, aga, ref tempStorage, precision);
+      }
+      else
+      {
+        return StableDistributionS0.CDFMethodAlphaOne(x, beta, abe, ref tempStorage, precision);
+      }
+    }
+
+    #endregion
 
   }
 

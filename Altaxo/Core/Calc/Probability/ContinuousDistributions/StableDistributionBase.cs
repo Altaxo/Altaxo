@@ -11,6 +11,7 @@ namespace Altaxo.Calc.Probability
 
     /// <summary>The highest number x that, when taken Exp(-x), gives a result greater than zero.</summary>
     protected static readonly double MinusLogTiny = -Math.Log(double.Epsilon);
+    protected static readonly double DefaultPrecision = Math.Sqrt(DoubleConstants.DBL_EPSILON);
 
     #region Abstract Implementation of ContinuousDistribution
 
@@ -755,40 +756,7 @@ namespace Altaxo.Calc.Probability
       return (x0 == 0 && xm <= ConsideredAsZero) ? 0 : xm;
     }
 
-    /// <summary>
-    /// Finds the x where func(x)==1+-1E-5 between x<x0<x1 for a monoton increasing function func.
-    /// </summary>
-    /// <param name="func"></param>
-    /// <param name="x0"></param>
-    /// <param name="x1"></param>
-    /// <returns></returns>
-    protected static double FindIncreasingYEqualTo(ScalarFunctionDD func, double x0, double x1, double ysearch, double tol, out double y)
-    {
-      const double ConsideredAsZero = 2 * double.Epsilon;
-
-      double low = x0;
-      double high = x1;
-      double xm = 0;
-      double xmprev = 0;
-      y = double.NaN;
-
-      for (; ; )
-      {
-        xm = 0.5 * (low + high);
-        if (xm == xmprev)
-          break;
-        xmprev = xm;
-
-        y = func(xm);
-        if (Math.Abs(y - ysearch) < tol)
-          break;
-        else if (y < ysearch)
-          low = xm;
-        else
-          high = xm;
-      }
-      return (x0 == 0 && xm <= ConsideredAsZero) ? 0 : xm;
-    }
+    
 
     /// <summary>
     /// Finds the x where func(x)==1+-1E-5 between x<x0<x1 for a monoton increasing function func.
@@ -852,20 +820,24 @@ namespace Altaxo.Calc.Probability
     }
 
 
+
     /// <summary>
-    /// Finds the x where func(x)==1+-1E-5 between x<x0<x1 for a monoton decreasing function func.
+    /// Finds the x where func(x)==1+-1E-5 between x<x0<x1 for a monoton increasing function func.
     /// </summary>
     /// <param name="func"></param>
     /// <param name="x0"></param>
     /// <param name="x1"></param>
     /// <returns></returns>
-    protected static double FindDecreasingYEqualTo(ScalarFunctionDD func, double x0, double x1, double ysearch)
+    protected static double FindIncreasingYEqualTo(ScalarFunctionDD func, double x0, double x1, double ysearch, double tol, out double y)
     {
+      const double ConsideredAsZero = 2 * double.Epsilon;
+
       double low = x0;
       double high = x1;
-      double xmprev = 0;
       double xm = 0;
-      double y;
+      double xmprev = 0;
+      y = double.NaN;
+
       for (; ; )
       {
         xm = 0.5 * (low + high);
@@ -874,7 +846,39 @@ namespace Altaxo.Calc.Probability
         xmprev = xm;
 
         y = func(xm);
-        if (Math.Abs(y - ysearch) < 1E-5)
+        if (Math.Abs(y - ysearch) < tol)
+          break;
+        else if (y < ysearch)
+          low = xm;
+        else
+          high = xm;
+      }
+      return (x0 == 0 && xm <= ConsideredAsZero) ? 0 : xm;
+    }
+
+    /// <summary>
+    /// Finds the x where func(x)==1+-1E-5 between x<x0<x1 for a monoton decreasing function func.
+    /// </summary>
+    /// <param name="func"></param>
+    /// <param name="x0"></param>
+    /// <param name="x1"></param>
+    /// <returns></returns>
+    protected static double FindDecreasingYEqualTo(ScalarFunctionDD func, double x0, double x1, double ysearch, double tol, out double y)
+    {
+      double low = x0;
+      double high = x1;
+      double xmprev = 0;
+      double xm = 0;
+      y = double.NaN;
+      for (; ; )
+      {
+        xm = 0.5 * (low + high);
+        if (xm == xmprev)
+          break;
+        xmprev = xm;
+
+        y = func(xm);
+        if (Math.Abs(y - ysearch) < tol)
           break;
         else if (y < ysearch)
           high = xm;
@@ -915,40 +919,219 @@ namespace Altaxo.Calc.Probability
 
     #region Parameter conversion between different parametrizations
 
-    private static double GammaFromAlphaBetaTanPiA2(double alpha, double beta, double tan_pi_alpha_2)
+    private static double GammaFromAlphaBetaTanPiA2(double alpha, double beta, double abe, double tan_pi_alpha_2, out double aga)
     {
-      if (Math.Abs(beta) == 1) // Avoid roundoff errors when Abs(beta)==1
-        return beta == 1 ? Math.IEEERemainder(-alpha, 2) : Math.IEEERemainder(alpha, 2);
-      else
-        return 2 / Math.PI * Math.Atan(-beta * tan_pi_alpha_2);
-    }
-    private static double TanPiAlphaBy2(double alpha)
-    {
-      if (Math.Floor(alpha) == alpha)
+      // The orginal formula is gamma=(2/Pi)*ArcTan(-beta*Tan(alpha Pi/2))
+      double gamma;
+      if(0==beta)
       {
-        double rem = Math.IEEERemainder(alpha, 2);
-        if (rem == 0)
-          return 0;
-        else if (rem == 1)
-          return double.PositiveInfinity;
-        else if (rem == -1)
-          return double.NegativeInfinity;
+        gamma = 0;
+        aga = StableDistributionFeller.GetAgaFromAlphaGamma(alpha,gamma);
+      }
+      else if (abe==0) // Avoid roundoff errors when Abs(beta)==1
+      {
+        if (beta >=0)
+          gamma = Math.IEEERemainder(-alpha, 2);
         else
-          return double.NaN;
+          gamma = Math.IEEERemainder(alpha, 2);
+
+        aga = StableDistributionFeller.GetAgaFromAlphaGamma(alpha, gamma);
+      }
+      else if(Math.Abs(beta)<0.5 && Math.Abs(beta*tan_pi_alpha_2)<1)
+      {
+        double arg = -beta * tan_pi_alpha_2;
+          gamma = (2 / Math.PI) * Math.Atan(arg); 
+          aga = StableDistributionFeller.GetAgaFromAlphaGamma(alpha, gamma);
+        
       }
       else
       {
-        return Math.Tan(0.5 * Math.PI * alpha);
+        // here we used arctan((x-y)/(1+x y) = arctan(x)-arctan(y) and set y to Tan(alpha Pi/2)
+        double diff =  2 * Math.Atan(abe*SinXPiBy2(2*alpha)/(2-abe*(1-CosXPiBy2(2*alpha)))) / (Math.PI);
+        if (alpha <= 1)
+        {
+          aga = diff / alpha;
+          gamma = StableDistributionFeller.GetGammaFromAlphaAga(alpha, aga, beta > 0);
+        }
+        else
+        {
+          aga = -diff;
+          gamma = StableDistributionFeller.GetGammaFromAlphaAga(alpha, aga, beta < 0);
+        }
+      }
+    
+     
+      return gamma;
+    }
+
+    public static double BetaFromAlphaGammaAga(double alpha, double gamma, double aga, out double abe)
+    {
+      // The original formula is:
+      // beta = -Tan(gamma Pi/2)/Tan(alpha Pi/2)
+      double beta = -TanXPiBy2(gamma) / TanXPiBy2(alpha);
+      if (alpha <= 1)
+      {
+        // we use the formula Tan(a)-Tan(b)=Sin(a-b)/(Cos(a)*Cos(b))
+        // with gamma = alpha(1-aga), so a===alpha*Pi/2 and b===alpha*aga*Pi/2;
+        if (aga > 0.5)
+        {
+          beta = -TanXPiBy2(gamma) / TanXPiBy2(alpha);
+          abe = beta >= 0 ? 1 - beta : 1 + beta;
+        }
+        else if (alpha < 0.5)
+        {
+          abe = SinXPiBy2(alpha * aga) / (SinXPiBy2(alpha) * CosXPiBy2(gamma));
+          beta = gamma >= 0 ? -1 + abe : 1 - abe;
+        }
+        else 
+        {
+          abe = SinXPiBy2(alpha * aga) / (SinXPiBy2(alpha) * SinXPiBy2((1 - alpha) + alpha * aga));
+          beta = gamma >= 0 ? -1 + abe : 1 - abe;
+        }
+      }
+      else
+      {
+        if (alpha < 1.5)
+        {
+          abe = SinXPiBy2(aga) / (SinXPiBy2(alpha) * SinXPiBy2((alpha - 1) + aga));
+          beta = gamma >= 0 ? 1 - abe : -1 + abe;
+        }
+        else
+        {
+          abe = SinXPiBy2(aga) / (SinXPiBy2(alpha) * CosXPiBy2(gamma));
+          beta = gamma >= 0 ? 1 - abe : -1 + abe;
+        }
+      }
+
+      return beta;
+    }
+
+    public static double SinXPiBy2(double x)
+    {
+      const double PiBy2 = Math.PI/2;
+
+      double first = Math.IEEERemainder(x, 4);
+      double rem = Math.IEEERemainder(first, 1);
+      int fix = (int)(first - rem);
+      switch (fix)
+      {
+        case -1:
+          return -Math.Cos(PiBy2 * rem);
+        case 0:
+          return Math.Sin(PiBy2 * rem);
+        case 1:
+          return Math.Cos(PiBy2 * rem);
+        default:
+          return -Math.Sin(PiBy2 * rem);
       }
     }
 
-    public static void ParameterConversionS0ToFeller(double alpha, double beta, double sigma0, double mu0, out double gamma, out double sigmaf, out double muf)
+    public static double CosXPiBy2(double x)
+    {
+      const double PiBy2 = Math.PI / 2;
+
+      double first = Math.IEEERemainder(x, 4);
+      double rem = Math.IEEERemainder(first, 1);
+      int fix = (int)(first - rem);
+      switch (fix)
+      {
+        case -1:
+          return Math.Sin(PiBy2 * rem);
+        case 0:
+          return Math.Cos(PiBy2 * rem);
+        case 1:
+          return -Math.Sin(PiBy2 * rem);
+        default:
+          return -Math.Cos(PiBy2 * rem);
+      }
+    }
+
+    private static double TanXPiBy2(double x)
+    {
+      const double PiBy2 = Math.PI / 2;
+
+      double first = Math.IEEERemainder(x, 2);
+      double rem = Math.IEEERemainder(first, 1);
+      int fix = (int)(first - rem);
+      switch (fix)
+      {
+        case 0:
+          return Math.Tan(PiBy2 * rem);
+        default:
+          return -1 / Math.Tan(PiBy2 * rem);
+      }
+    }
+
+    protected static double TanGammaPiBy2(double alpha, double gamma, double aga)
+    {
+      if (Math.Abs(gamma) <= 0.5)
+      {
+        return TanXPiBy2(gamma);
+      }
+      else
+      {
+        if (alpha <= 1)
+        {
+          if(gamma>=0)
+            return 1 / TanXPiBy2((1 - alpha) + aga * alpha);
+          else
+            return -1/TanXPiBy2((1 - alpha) + aga * alpha);
+        }
+        else
+        {
+          if(gamma>=0)
+            return 1/TanXPiBy2((alpha-1)+aga);
+          else 
+            return -1/TanXPiBy2((alpha-1)+aga);
+        }
+      }
+    }
+
+    private static double CosGammaPiBy2(double alpha, double gamma, double aga)
+    {
+      if (Math.Abs(gamma) <= 0.5)
+      {
+        return CosXPiBy2(gamma);
+      }
+      else
+      {
+        if (alpha <= 1)
+        {
+            return SinXPiBy2((1 - alpha) + aga * alpha);
+        }
+        else
+        {
+            return SinXPiBy2((alpha - 1) + aga);
+        }
+      }
+    }
+
+    public static double PowerOfOnePlusXSquared(double x, double pow)
+    {
+      const double BIG = 1 / DoubleConstants.DBL_EPSILON;
+
+      double ax = Math.Abs(x);
+      if (ax < 1)
+      {
+        return Math.Exp(pow * RMath.Log1p(x*x));
+      }
+      else
+      {
+          return Math.Pow(ax, 2 * pow)*Math.Exp(pow*RMath.Log1p(1/(x*x)));
+      }
+    }
+
+    public static void ParameterConversionS0ToFeller(double alpha, double beta, double abe, double sigma0, double mu0, out double gamma, out double aga, out double sigmaf, out double muf)
     {
       if (alpha != 1)
       {
-        double tan_pi_alpha_2 = TanPiAlphaBy2(alpha);
-        gamma = GammaFromAlphaBetaTanPiA2(alpha, beta, tan_pi_alpha_2);
-        sigmaf = sigma0 * Math.Pow(1 + RMath.Pow2(beta * tan_pi_alpha_2), 0.5 / alpha);
+        double tan_pi_alpha_2 = TanXPiBy2(alpha);
+        gamma = GammaFromAlphaBetaTanPiA2(alpha, beta, abe, tan_pi_alpha_2, out aga);
+        double h = beta * tan_pi_alpha_2;
+        if (h < 1)
+          sigmaf = sigma0 * Math.Exp(0.5 * RMath.Log1p(h * h) / alpha);
+        else
+          sigmaf = sigma0 * Math.Pow(1 + RMath.Pow2(beta * tan_pi_alpha_2), 0.5 / alpha);
         muf = mu0 - sigma0 * beta * tan_pi_alpha_2;
       }
       else
@@ -958,6 +1141,7 @@ namespace Altaxo.Calc.Probability
           gamma = 0;
           sigmaf = sigma0;
           muf = mu0;
+          aga = 1;
         }
         else
         {
@@ -966,12 +1150,12 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    public static void ParameterConversionS1ToFeller(double alpha, double beta, double sigma1, double mu1, out double gamma, out double sigmaf, out double muf)
+    public static void ParameterConversionS1ToFeller(double alpha, double beta, double abe, double sigma1, double mu1, out double gamma, out double aga, out double sigmaf, out double muf)
     {
       if (alpha != 1)
       {
-        double tan_pi_alpha_2 = TanPiAlphaBy2(alpha);
-        gamma = GammaFromAlphaBetaTanPiA2(alpha, beta, tan_pi_alpha_2);
+        double tan_pi_alpha_2 = TanXPiBy2(alpha);
+        gamma = GammaFromAlphaBetaTanPiA2(alpha, beta, abe, tan_pi_alpha_2, out aga);
         sigmaf = sigma1 * Math.Pow(1 + RMath.Pow2(beta * tan_pi_alpha_2), 0.5 / alpha);
         muf = mu1;
       }
@@ -980,6 +1164,7 @@ namespace Altaxo.Calc.Probability
         if (beta == 0)
         {
           gamma = 0;
+          aga = 1;
           sigmaf = sigma1;
           muf = mu1;
         }
@@ -990,13 +1175,18 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    public static void ParameterConversionFellerToS0(double alpha, double gamma, double sigmaf, double muf, out double beta, out double sigma0, out double mu0)
+
+
+
+    public static void ParameterConversionFellerToS0(double alpha, double gamma, double aga, double sigmaf, double muf, out double beta, out double abe, out double sigma0, out double mu0)
     {
       if (alpha != 1 && alpha != 2)
       {
-        double tan_pi_alpha_2 = TanPiAlphaBy2(alpha);
-        beta = -Math.Tan(0.5 * Math.PI * gamma) / tan_pi_alpha_2;
-        sigma0 = sigmaf * Math.Pow(1 + RMath.Pow2(beta * tan_pi_alpha_2), -0.5 / alpha);
+        double tan_pi_alpha_2 = TanXPiBy2(alpha);
+        // beta = -Math.Tan(0.5 * Math.PI * gamma) / tan_pi_alpha_2;
+        beta = BetaFromAlphaGammaAga(alpha, gamma, aga, out abe);
+        // sigma0 = sigmaf * Math.Pow(1 + RMath.Pow2(beta * tan_pi_alpha_2), -0.5 / alpha);
+        sigma0 = sigmaf*PowerOfOnePlusXSquared(beta * tan_pi_alpha_2, -0.5 / alpha);
         mu0 = muf + sigma0 * beta * tan_pi_alpha_2;
       }
       else
@@ -1004,6 +1194,7 @@ namespace Altaxo.Calc.Probability
         if (gamma == 0)
         {
           beta = 0;
+          abe = 1;
           sigma0 = sigmaf;
           mu0 = muf;
         }
@@ -1018,8 +1209,17 @@ namespace Altaxo.Calc.Probability
     {
       if (alpha != 1 && alpha != 2)
       {
-        double tan_pi_alpha_2 = TanPiAlphaBy2(alpha);
-        beta = -Math.Tan(0.5 * Math.PI * gamma) / tan_pi_alpha_2;
+        double tan_pi_alpha_2 = TanXPiBy2(alpha);
+        beta = - TanXPiBy2(gamma) / tan_pi_alpha_2;
+        // abe 
+        if (alpha <= 1)
+        {
+
+        }
+        else
+        {
+        }
+
         sigma1 = sigmaf * Math.Pow(1 + RMath.Pow2(beta * tan_pi_alpha_2), -0.5 / alpha);
         mu1 = muf;
       }
@@ -1042,7 +1242,7 @@ namespace Altaxo.Calc.Probability
     {
       if (alpha != 1)
       {
-        mu1 = mu0 - sigma0 * beta * TanPiAlphaBy2(alpha);
+        mu1 = mu0 - sigma0 * beta * TanXPiBy2(alpha);
       }
       else
       {
@@ -1054,7 +1254,7 @@ namespace Altaxo.Calc.Probability
     {
       if (alpha != 1)
       {
-        mu0 = mu1 + sigma1 * beta * TanPiAlphaBy2(alpha);
+        mu0 = mu1 + sigma1 * beta * TanXPiBy2(alpha);
       }
       else
       {
@@ -1140,6 +1340,32 @@ namespace Altaxo.Calc.Probability
         return c * X;
       }
     }
+
+
+    protected double GenerateAsymmetricCaseS1_ANe1(double alpha, double t, double B, double S, double c)
+    {
+      double V, W, X;
+      const double M_PI = Math.PI;
+      const double M_PI_2 = Math.PI / 2;
+
+
+      V = M_PI * (_contDist.NextDouble() - 0.5);
+
+      do
+      {
+        W = _expDist.NextDouble();
+      }
+      while (W == 0);
+      ///  double t = beta * Math.Tan(M_PI_2 * alpha);
+      ///  double B = Math.Atan(t) / alpha;
+      ///  double S = Math.Pow(1 + t * t, 1 / (2 * alpha));
+
+        X = S * Math.Sin(alpha * (V + B)) / Math.Pow(Math.Cos(V), 1 / alpha)
+          * Math.Pow(Math.Cos(V - alpha * (V + B)) / W, (1 - alpha) / alpha);
+        return c * X;
+    }
+
+
     #endregion
   }
 }
