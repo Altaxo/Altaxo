@@ -19,7 +19,7 @@ namespace Altaxo.Calc.Probability
 
     object _tempStorePDF;
     static readonly double _pdfPrecision = Math.Sqrt(DoubleConstants.DBL_EPSILON);
-   
+
 
     #region construction
 
@@ -128,28 +128,29 @@ namespace Altaxo.Calc.Probability
 
     public override double Minimum
     {
-      get 
+      get
       {
         if (_alpha < 1 && _beta == 1)
           return _mu - _scale * Math.Tan(_alpha * 0.5 * Math.PI);
         else
-          return double.MinValue; 
+          return double.MinValue;
       }
     }
 
     public override double Maximum
     {
-      get {
+      get
+      {
         if (_alpha < 1 && _beta == -1)
           return _mu + _scale * Math.Tan(_alpha * 0.5 * Math.PI);
         else
-          return double.MaxValue; 
+          return double.MaxValue;
       }
     }
 
     public override double Mean
     {
-      get { return _alpha <= 1 ? double.NaN : _mu - _beta*_scale*Math.Tan(0.5*Math.PI*_alpha); }
+      get { return _alpha <= 1 ? double.NaN : _mu - _beta * _scale * Math.Tan(0.5 * Math.PI * _alpha); }
     }
 
     public override double Median
@@ -191,7 +192,7 @@ namespace Altaxo.Calc.Probability
         return GenerateSymmetricCase(_alpha) * _scale + _mu;
       else
       {
-        if(_alpha==1)
+        if (_alpha == 1)
           return GenerateAsymmetricCaseS1(_alpha, _beta, _scale) + _mu;
         else
           return GenerateAsymmetricCaseS1(_alpha, _beta, _scale) + _muOffsetToS1;
@@ -246,7 +247,7 @@ namespace Altaxo.Calc.Probability
       {
         double gamma, aga, sigmaf, muf;
         ParameterConversionS0ToFeller(alpha, beta, abe, 1, 0, out gamma, out aga, out sigmaf, out muf);
-        return StableDistributionFeller.PDF((x - muf) / sigmaf, alpha, gamma,aga) / sigmaf;
+        return StableDistributionFeller.PDF((x - muf) / sigmaf, alpha, gamma, aga) / sigmaf;
       }
       else
       {
@@ -263,7 +264,7 @@ namespace Altaxo.Calc.Probability
     public static double CDF(double x, double alpha, double beta, double abe)
     {
       object temp = null;
-      return CDF(x,alpha,beta,abe,ref temp,Math.Sqrt(DoubleConstants.DBL_EPSILON));
+      return CDF(x, alpha, beta, abe, ref temp, Math.Sqrt(DoubleConstants.DBL_EPSILON));
     }
 
     public static double CDF(double x, double alpha, double beta, double abe, ref object tempStorage, double precision)
@@ -279,7 +280,7 @@ namespace Altaxo.Calc.Probability
       {
         double gamma, aga, sigmaf, muf;
         ParameterConversionS0ToFeller(alpha, beta, abe, 1, 0, out gamma, out aga, out sigmaf, out muf);
-        return StableDistributionFeller.CDF((x - muf) / sigmaf, alpha, gamma, aga,ref tempStorage,precision);
+        return StableDistributionFeller.CDF((x - muf) / sigmaf, alpha, gamma, aga, ref tempStorage, precision);
       }
       else
       {
@@ -287,7 +288,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    
+    /*
 
     private static double PDFMethod1(double x, double alpha, double beta, double zeta, ref object tempStorage, double precision)
     {
@@ -305,6 +306,8 @@ namespace Altaxo.Calc.Probability
       double result = factor * r1 * r2;
       return result < 0 ? 0 : result; // the result should be always positive, if not this is due to numerical inaccuracies near the borders, we can safely set the result 0 then
     }
+    */
+
 
     public static double PDFMethodAlphaOne(double x, double beta, double abe, ref object tempStorage, double precision)
     {
@@ -345,455 +348,11 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    public class Aeq1BpI
-    {
-      double beta;
-      double abe;
-      double logFactorp;
-      double logPdfPrefactor;
-      double _x0;
-
-      public Aeq1BpI(double x, double beta, double abe)
-      {
-        this.beta = beta;
-        this.abe = abe;
-        this.logFactorp = -0.5 * Math.PI * x / beta;
-        this.logPdfPrefactor = -Math.Log(2 * Math.Abs(beta));
-      }
-
-      public double PDFCore(double thetas)
-      {
-        double r1;
-        double r2;
-        if (abe == 0 && thetas < 1E-10)
-        {
-          r1 = 2 * Math.Exp(logFactorp) / (Math.PI * Math.E);
-          r2 = 1;
-        }
-        else
-        {
-          double abeta = Math.Abs(beta);
-          double h = Math.PI * abe + 2 * abeta * thetas;
-          r1 = Math.Exp(logFactorp - h / (2 * abeta * Math.Tan(thetas)));
-          r2 = h / (Math.PI * Math.Sin(thetas));
-        }
-        double result = r1 * r2;
-        if (!(result >= 0))
-          result = double.MaxValue;
-
-        //System.Diagnostics.Debug.WriteLine(string.Format("CorAlt1GnI theta={0}, result={1}", thetas, result));
-        return result;
-      }
-
-
-      public double PDFCoreDerivativeByCore(double thetas)
-      {
-        double abeta = Math.Abs(beta);
-        double c1 = (abe * Math.PI / (2 * abeta) + thetas);
-
-        double s1 = 1 / c1;
-        double s2 = -2 / Math.Tan(thetas);
-        double s3 = c1*RMath.Pow(Math.Sin(thetas), -2);
-        
-        return s1 + s2 + s3;
-      }
-
-
-      public double PDFFunc(double x)
-      {
-        double f = PDFCore(x);
-        double r = double.IsInfinity(f) ? 0 : f * Math.Exp(-f + logPdfPrefactor);
-        //System.Diagnostics.Debug.WriteLine(string.Format("x={0}, f={1}, r={2}", x, f, r));
-        //Current.Console.WriteLine("x={0}, f={1}, r={2}", x, f, r);
-        return r;
-      }
-
-      public double PDFFuncLogInt(double z)
-      {
-        double x = Math.Exp(z);
-        double f = PDFCore(x);
-        double r = double.IsInfinity(f) ? 0 : f * Math.Exp(z - f + logPdfPrefactor);
-        //System.Diagnostics.Debug.WriteLine(string.Format("x={0}, f={1}, r={2}", x, f, r));
-        //Current.Console.WriteLine("x={0}, f={1}, r={2}", x, f, r);
-        return r;
-      }
-
-      public double PDFFuncLogIntToLeft(double z)
-      {
-        double x = _x0 - Math.Exp(z);
-        if (x < 0)
-          x = 0;
-
-        double f = PDFCore(x);
-        double r = double.IsInfinity(f) ? 0 : f * Math.Exp(z - f + logPdfPrefactor);
-        //System.Diagnostics.Debug.WriteLine(string.Format("x={0}, f={1}, r={2}", x, f, r));
-        //Current.Console.WriteLine("x={0}, f={1}, r={2}", x, f, r);
-        return r;
-      }
-      public double PDFFuncLogIntToRight(double z)
-      {
-        double x = _x0 + Math.Exp(z);
-        double f = PDFCore(x);
-        double r = double.IsInfinity(f) ? 0 : f * Math.Exp(z - f + logPdfPrefactor);
-        //System.Diagnostics.Debug.WriteLine(string.Format("x={0}, f={1}, r={2}", x, f, r));
-        //Current.Console.WriteLine("x={0}, f={1}, r={2}", x, f, r);
-        return r;
-      }
-
-      public double Integrate(ref object tempStorage, double precision)
-      {
-        if (abe == 0)
-          return IntegrateAbeEqZero(ref tempStorage, precision);
-        else
-          return IntegrateAbeNotEqZero(ref tempStorage, precision);
-      }
-
-      public double IntegrateAbeNotEqZero(ref object tempStorage, double precision)
-      {
-        GSL_ERROR error;
-        double abserr;
-        double result;
-        double x1 = UpperIntegrationLimit;
-        
-        double ym;
-        double xm = FindIncreasingYEqualTo(PDFCore, 0, x1, 1, 0.125, out ym);
-
-        try
-        {
-          double xwidth = 1/(PDFCoreDerivativeByCore(xm)*ym);
-          if(xwidth*8 < xm)
-          {
-            _x0 = xm + xwidth;
-            error = Calc.Integration.QagpIntegration.Integration(
-               PDFFuncLogIntToLeft,
-               new double[] { Math.Log(xwidth), Math.Log(xm+xwidth) }, 2,
-               0, precision, 100, out result, out abserr, ref tempStorage);
-
-            if (error == null)
-            {
-              double result1;
-              _x0 = xm - xwidth;
-              error = Calc.Integration.QagpIntegration.Integration(
-               PDFFuncLogIntToRight,
-               new double[] { Math.Log(xwidth), Math.Log(x1-_x0) }, 2,
-               0, precision, 100, out result1, out abserr, ref tempStorage);
-
-              result += result1;
-            }
-          }
-          else if(xm*8<(x1-xm))
-          {
-            error = Calc.Integration.QagpIntegration.Integration(
-               PDFFunc,
-               new double[] { 0, xm }, 2,
-               0, precision, 100, out result, out abserr, ref tempStorage);
-           
-            if (error == null)
-            {
-              double result1;
-              error = Calc.Integration.QagpIntegration.Integration(
-               PDFFuncLogInt,
-               new double[] { Math.Log(xm), Math.Log(x1) }, 2,
-               0, precision, 100, out result1, out abserr, ref tempStorage);
-
-              result += result1;
-            }
-          }
-          else
-          {
-            error = Calc.Integration.QagpIntegration.Integration(
-             PDFFunc,
-             new double[] { 0, xm, x1 }, 3,
-             0, precision, 100, out result, out abserr, ref tempStorage);
-          }
-          if (null != error)
-            result = double.NaN;
-
-          return result;
-        }
-        catch (Exception ex)
-        {
-          return double.NaN;
-        }
-      }
-
-
-      public double IntegrateAbeEqZero(ref object tempStorage, double precision)
-      {
-        GSL_ERROR error;
-        double abserr;
-        double result;
-        double x1 = UpperIntegrationLimit;
-        double xm = 1e-10;
-
-        try
-        {
-           error = Calc.Integration.QagpIntegration.Integration(
-               PDFFunc,
-               new double[] { 0, xm }, 2,
-               0, precision, 100, out result, out abserr, ref tempStorage);
-
-            if (error == null)
-            {
-              double result1;
-              error = Calc.Integration.QagpIntegration.Integration(
-               PDFFuncLogInt,
-               new double[] { Math.Log(xm), Math.Log(x1) }, 2,
-               0, precision, 100, out result1, out abserr, ref tempStorage);
-
-              result += result1;
-            }
-        
-          if (null != error)
-            result = double.NaN;
-
-          return result;
-        }
-        catch (Exception ex)
-        {
-          return double.NaN;
-        }
-      }
-
-      public double UpperIntegrationLimit
-      {
-        get
-        {
-          return Math.PI;
-        }
-      }
-
-      public bool IsMaximumLeftHandSide()
-      {
-        return PDFCore(0.5 * UpperIntegrationLimit) > 1;
-      }
-
-      #region CDF
-
-      public double CDFFunc(double x)
-      {
-        double f = PDFCore(x);
-        double r = double.IsInfinity(f) ? 0 : Math.Exp(-f + logPdfPrefactor);
-        //System.Diagnostics.Debug.WriteLine(string.Format("x={0}, f={1}, r={2}", x, f, r));
-        //Current.Console.WriteLine("x={0}, f={1}, r={2}", x, f, r);
-        return r;
-      }
-
-      public double CDFFuncLogInt(double z)
-      {
-        double x = Math.Exp(z) + _x0;
-        double f = PDFCore(x);
-        double r = double.IsInfinity(f) ? 0 : Math.Exp(z - f + logPdfPrefactor);
-        //System.Diagnostics.Debug.WriteLine(string.Format("x={0}, f={1}, r={2}", x, f, r));
-        //Current.Console.WriteLine("x={0}, f={1}, r={2}", x, f, r);
-        return r;
-      }
-
-      public double CDFIntegrate(ref object tempStorage, double precision)
-      {
-        GSL_ERROR error1;
-        double resultRight, abserrRight;
-
-        double xm, yfound;
-        if (abe == 0)
-          xm = FindIncreasingYEqualTo(PDFCore, 0, UpperIntegrationLimit, PDFCore(0) + 1, 0.1, out yfound);
-        else
-          xm = FindIncreasingYEqualToOne(PDFCore, 0, UpperIntegrationLimit);
-
-        if ((xm * 10) < UpperIntegrationLimit)
-        {
-          // logarithmical integration
-          _x0 = -xm;
-          // now integrate logarithmically
-          error1 = Calc.Integration.QagpIntegration.Integration(
-   CDFFuncLogInt,
-   new double[] { Math.Log(xm), Math.Log(UpperIntegrationLimit + xm) }, 2, 0, precision, 100, out resultRight, out abserrRight, ref tempStorage);
-
-        }
-        else // linear integration
-        {
-          error1 = Calc.Integration.QagpIntegration.Integration(
-   CDFFunc,
-   new double[] { 0, UpperIntegrationLimit }, 2, 0, precision, 100, out resultRight, out abserrRight, ref tempStorage);
-
-        }
-
-        if (null != error1)
-          return double.NaN;
-        else
-          return resultRight;
-      }
-
-      #endregion
-    }
-
-    public class Aeq1BpD
-    {
-      double beta;
-      double abe;
-      double logFactorp;
-      double logPdfPrefactor;
-      double _x0;
-
-      public Aeq1BpD(double x, double beta, double abe)
-      {
-        this.beta = beta;
-        this.abe = abe;
-        this.logFactorp = -0.5 * Math.PI * x / beta;
-        this.logPdfPrefactor = -Math.Log(2 * Math.Abs(beta));
-      }
-
-      public double PDFCore(double thetas)
-      {
-        double r1;
-        double r2;
-       
-        double abeta = Math.Abs(beta);
-        double h = Math.PI * (2-abe) - 2 * abeta * thetas;
-        r1 = Math.Exp(logFactorp + h / (2 * abeta * Math.Tan(thetas)));
-        r2 = h / (Math.PI * Math.Sin(thetas));
-        double result = r1 * r2;
-        if (!(result >= 0))
-          result = double.MaxValue;
-
-        //System.Diagnostics.Debug.WriteLine(string.Format("CorAlt1GnI theta={0}, result={1}", thetas, result));
-        return result;
-      }
-
-      public double PDFCoreDerivativeByCore(double thetas)
-      {
-        double abeta = Math.Abs(beta);
-        double c1 = 2 * abeta / (Math.PI * (1+abeta) -  abeta * thetas);
-
-        double s1 = c1;
-        double s2 = 2 / Math.Tan(thetas);
-        double s3 = 1/(c1 * RMath.Pow(Math.Sin(thetas), 2));
-        return s1 + s2 + s3;
-      }
-
-      public double PDFFunc(double x)
-      {
-        double f = PDFCore(x);
-        double r = double.IsInfinity(f) ? 0 : f * Math.Exp(-f + logPdfPrefactor);
-        //System.Diagnostics.Debug.WriteLine(string.Format("x={0}, f={1}, r={2}", x, f, r));
-        //Current.Console.WriteLine("x={0}, f={1}, r={2}", x, f, r);
-        return r;
-      }
-
-      public double PDFFuncLogInt(double z)
-      {
-        double x = Math.Exp(z);
-        double f = PDFCore(x);
-        double r = double.IsInfinity(f) ? 0 : f * Math.Exp(z - f + logPdfPrefactor);
-        //System.Diagnostics.Debug.WriteLine(string.Format("x={0}, f={1}, r={2}", x, f, r));
-        //Current.Console.WriteLine("x={0}, f={1}, r={2}", x, f, r);
-        return r;
-      }
-
-      public double PDFFuncLogIntToLeft(double z)
-      {
-        double x = _x0 - Math.Exp(z);
-        if (x < 0)
-          x = 0;
-
-        double f = PDFCore(x);
-        double r = double.IsInfinity(f) ? 0 : f * Math.Exp(z - f + logPdfPrefactor);
-        //System.Diagnostics.Debug.WriteLine(string.Format("x={0}, f={1}, r={2}", x, f, r));
-        //Current.Console.WriteLine("x={0}, f={1}, r={2}", x, f, r);
-        return r;
-      }
-      public double PDFFuncLogIntToRight(double z)
-      {
-        double x = _x0 + Math.Exp(z);
-        double f = PDFCore(x);
-        double r = double.IsInfinity(f) ? 0 : f * Math.Exp(z - f + logPdfPrefactor);
-        //System.Diagnostics.Debug.WriteLine(string.Format("x={0}, f={1}, r={2}", x, f, r));
-        //Current.Console.WriteLine("x={0}, f={1}, r={2}", x, f, r);
-        return r;
-      }
-
-      public double Integrate(ref object tempStorage, double precision)
-      {
-        GSL_ERROR error;
-        double abserr;
-        double result;
-        double x1 = UpperIntegrationLimit;
-        double ym;
-        double xm = FindDecreasingYEqualTo(PDFCore, 0, x1, 1, 0.125, out ym);
-        try
-        {
-          double xwidth = 1 / (PDFCoreDerivativeByCore(xm) * ym);
-          if (xwidth * 8 < xm)
-          {
-            _x0 = xm + xwidth;
-            error = Calc.Integration.QagpIntegration.Integration(
-               PDFFuncLogIntToLeft,
-               new double[] { Math.Log(xwidth), Math.Log(xm + xwidth) }, 2,
-               0, precision, 100, out result, out abserr, ref tempStorage);
-
-            if (error == null)
-            {
-              double result1;
-              _x0 = xm - xwidth;
-              error = Calc.Integration.QagpIntegration.Integration(
-               PDFFuncLogIntToRight,
-               new double[] { Math.Log(xwidth), Math.Log(x1 - _x0) }, 2,
-               0, precision, 100, out result1, out abserr, ref tempStorage);
-
-              result += result1;
-            }
-          }
-          else if (xm * 8 < (x1 - xm))
-          {
-            error = Calc.Integration.QagpIntegration.Integration(
-               PDFFunc,
-               new double[] { 0, xm }, 2,
-               0, precision, 100, out result, out abserr, ref tempStorage);
-            if (error == null)
-            {
-              double result1;
-              error = Calc.Integration.QagpIntegration.Integration(
-               PDFFuncLogInt,
-               new double[] { Math.Log(xm), Math.Log(x1) }, 2,
-               0, precision, 100, out result1, out abserr, ref tempStorage);
-
-              result += result1;
-            }
-          }
-          else
-          {
-            error = Calc.Integration.QagpIntegration.Integration(
-             PDFFunc,
-             new double[] { 0, xm, x1 }, 3,
-             0, precision, 100, out result, out abserr, ref tempStorage);
-          }
-          if (null != error)
-            result = double.NaN;
-
-          return result;
-        }
-        catch (Exception ex)
-        {
-          return double.NaN;
-        }
-      }
-
-      public double UpperIntegrationLimit
-      {
-        get
-        {
-          return Math.PI;
-        }
-      }
-
-      public bool IsMaximumLeftHandSide()
-      {
-        return PDFCore(0.5 * UpperIntegrationLimit) > 1;
-      }
-    }
+   
 
     #endregion
 
+ 
     #region CDF
 
     /*
@@ -850,7 +409,7 @@ namespace Altaxo.Calc.Probability
       }
 
     }
-     */
+     
 
     private static double CDFMethod1(double x, double alpha, double beta, double zeta, ref object tempStorage)
     {
@@ -867,6 +426,7 @@ namespace Altaxo.Calc.Probability
       double plus = alpha > 1 ? 1 : (Math.PI / 2 - zeta) / Math.PI;
       return plus + pre * integrand;
     }
+   
 
     private static double CDFMethod2(double x, double beta, ref object tempStorage)
     {
@@ -906,7 +466,7 @@ namespace Altaxo.Calc.Probability
         return result;
       }
     }
-
+     */
     #endregion
 
     #region Quantile
@@ -934,7 +494,7 @@ namespace Altaxo.Calc.Probability
 
   }
 
- 
 
- 
+
+
 }

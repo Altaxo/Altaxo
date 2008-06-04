@@ -306,7 +306,7 @@ namespace Altaxo.Serialization.Ascii
           nPos++;
         }
       }
-      return bounds.Count>0 ? bounds : null;
+      return bounds;
     }
 
     /// <summary>

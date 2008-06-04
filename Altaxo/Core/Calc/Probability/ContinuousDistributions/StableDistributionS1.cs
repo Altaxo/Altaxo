@@ -245,7 +245,7 @@ namespace Altaxo.Calc.Probability
       }
       else
       {
-        return PDFMethodAlphaOne(x, beta, ref tempStorage, precision);
+        return StableDistributionS0.PDFMethodAlphaOne(x, beta, abe, ref tempStorage, precision);
       }
     }
 

@@ -94,7 +94,7 @@ namespace Altaxo.Calc.Probability
       else if (lgx > 3 / (1 + alpha))
         return PDFSeriesBigX(x, alpha);
       else
-        return PDFIntegrationLog(x, alpha, precision, ref tempStorage);
+        return PDFIntegration(x, alpha, precision, ref tempStorage);
 
     }
 
@@ -374,113 +374,48 @@ namespace Altaxo.Calc.Probability
 
     #region Direct integration
 
+
+    public static void GetAlt1GnParameter(double x, double alpha, 
+                        out double factorp, out double facdiv, out double dev, out double logPdfPrefactor)
+    {
+      dev = Math.PI * 0.5;
+      facdiv = 1; 
+      factorp = x;
+      logPdfPrefactor = Math.Log(alpha / (Math.PI * Math.Abs(alpha - 1) * x));
+    }
+
+    public static void GetAgt1GnParameter(double x, double alpha, 
+                        out double factorp, out double factorw, out double dev, out double logPrefactor)
+    {
+      dev = Math.PI * (0.5 * ((2 - alpha)));
+      factorp = x;
+      factorw = x;
+      logPrefactor = Math.Log(alpha / (Math.PI * Math.Abs(alpha - 1) * x));
+    }
+
     public static double PDFIntegration(double x, double alpha, double precision, ref object tempStorage)
     {
-      double factor = Math.Pow(x, alpha / (alpha - 1));
-      double integrand = IntegrateFuncExpMFunc(delegate(double theta) { return PDFCore1(factor, alpha, theta); }, 0, 0.5 * Math.PI, alpha > 1, ref tempStorage, precision);
-      double pre = alpha / (Math.PI * Math.Abs(alpha - 1) * x);
-      return pre * integrand;
-    }
-
-    public static double PDFIntegrationLog(double x, double alpha, double precision, ref object tempStorage)
-    {
-      double factor = Math.Pow(x, alpha / (alpha - 1));
-      double integrand = IntegrateLog(delegate(double theta) { return PDFCore1(factor, alpha, theta); }, 0, 0.5 * Math.PI, alpha > 1, precision, ref tempStorage);
-      double pre = alpha / (Math.PI * Math.Abs(alpha - 1) * x);
-      return pre * integrand;
-    }
-
-
-    private static double PDFCore1(double factor, double alpha, double theta)
-    {
-      double r1 = Math.Pow(Math.Cos(theta) / Math.Sin(alpha * theta), alpha / (alpha - 1));
-      double r2 = Math.Cos((alpha - 1) * theta) / Math.Cos(theta);
-      double result = factor * r1 * r2;
-      return result < 0 ? 0 : result; // the result should be always positive, if not this is due to numerical inaccuracies near the borders, we can safely set the result 0 then
-    }
-
-   
-    /// <summary>
-    /// Integrates func*Exp(-func) from x0 to x1. It relies on the fact that func is monotonical increasing from x0 to x1.
-    /// </summary>
-    /// <param name="func"></param>
-    /// <param name="x0"></param>
-    /// <param name="x1"></param>
-    /// <returns></returns>
-    private static double IntegrateLog(ScalarFunctionDD func, double x0, double x1, bool isDecreasing, double precision, ref object tempStorage)
-    {
-      double xm = isDecreasing ? FindDecreasingYEqualToOne(func, x0, x1) : FindIncreasingYEqualToOne(func, x0, x1);
-      double result = 0, abserr = 0;
-      double[] intgrenzen;
-
-      if (isDecreasing)
+      if (alpha < 1)
       {
-        // if xm is very near to the upper boundary x1, we add another point which should be roughly 4*(x1-xm)
-        // this is to make sure the bisection in the left interval (x0,xm) is fine enough because here
-        // the function is very fast decreasing
-        double xdiff = x1 - xm;
-        if (x1 - 8 * xdiff > x0)
-          intgrenzen = new double[] { x0, x1 - 4 * xdiff, xm, x1 };
+        double factorp, facdiv, dev, logPdfPrefactor;
+        GetAlt1GnParameter(x,alpha,out factorp, out facdiv, out dev, out logPdfPrefactor);
+        Alt1GnI intg = new Alt1GnI(factorp,facdiv,logPdfPrefactor,alpha,dev);
+        if (intg.IsMaximumLeftHandSide())
+          return intg.PDFIntegrate(ref tempStorage, precision);
         else
-          intgrenzen = new double[] { x0, xm, x1 };
+          return new Alt1GnD(factorp,facdiv,logPdfPrefactor,alpha,dev).Integrate(ref tempStorage,precision);
       }
-      else // increasing
+      else
       {
-        // if xm is very near to the lower boundary, we add another point which should be roughly 4*xm
-        // this is to make sure the bisection in the right interval (xm, x1) is fine enough because here
-        // the function is very fast decreasing
-        double xdiff = xm - x0;
-        if (x0 + 8 * xdiff < x1)
-          intgrenzen = new double[] { x0, xm, x0 + 4 * xdiff, x1 };
+        double factorp, factorw, dev, logPdfPrefactor;
+        GetAgt1GnParameter(x, alpha, out factorp, out factorw, out dev, out logPdfPrefactor);
+        Agt1GnI intg = new Agt1GnI(factorp, factorw, logPdfPrefactor, alpha, dev);
+        if(intg.IsMaximumLeftHandSide())
+          return intg.Integrate(ref tempStorage, precision);
         else
-          intgrenzen = new double[] { x0, xm, x1 };
-      }
-
-      try
-      {
-        double result1;
-        GSL_ERROR error = Calc.Integration.QagpIntegration.Integration(
-        delegate(double x)
-        {
-          double f = func(x);
-          double r = double.IsInfinity(f) ? 0 : f * Math.Exp(-f);
-          //System.Diagnostics.Debug.WriteLine(string.Format("x={0}, f={1}, r={2}", x, f, r));
-          //Current.Console.WriteLine("x={0}, f={1}, r={2}", x, f, r);
-          return r;
-        },
-    new double[] { x0, xm }, 2, 0, precision, 100, out result1, out abserr, ref tempStorage);
-
-        if (null != error)
-          return double.NaN;
-
-        error = Calc.Integration.QagpIntegration.Integration(
-          delegate(double l)
-          {
-            double x = Math.Exp(l);
-            double f = func(x);
-            double r = double.IsInfinity(f) ? 0 : f * Math.Exp(-f) * x;
-            //System.Diagnostics.Debug.WriteLine(string.Format("x={0}, f={1}, r={2}", x, f, r));
-            //Current.Console.WriteLine("x={0}, f={1}, r={2}", x, f, r);
-            return r;
-          },
-          new double[] { Math.Log(xm), Math.Log(x1) }, 2, 0, precision, 100, out result, out abserr, ref tempStorage);
-
-        result += result1;
-
-        if (null != error)
-          result = double.NaN;
-
-        return result;
-      }
-      catch (Exception ex)
-      {
-        return result;
+          return new Agt1GnD(factorp, factorw, logPdfPrefactor, alpha, dev).Integrate(ref tempStorage, precision);
       }
     }
-
-
-
-   
 
     #endregion
 
@@ -570,14 +505,21 @@ namespace Altaxo.Calc.Probability
 
     private static double CDFMethod1(double x, double alpha, ref object tempStorage)
     {
-      double factor = Math.Pow(x, alpha / (alpha - 1)) * Math.Pow(1, 1 / (alpha - 1));
-      double integrand = IntegrateExpMFunc(
-        delegate(double theta)
-        {
-          return PDFCore1(factor, alpha, theta);
-        },
-        0, 0.5 * Math.PI, alpha > 1, ref tempStorage);
-
+      double integrand;
+      if (alpha < 1)
+      {
+        double factorp, facdiv, dev, logPdfPrefactor;
+        GetAlt1GnParameter(x, alpha, out factorp, out facdiv, out dev, out logPdfPrefactor);
+        Alt1GnI intg = new Alt1GnI(factorp, facdiv, logPdfPrefactor, alpha, dev);
+        integrand = intg.CDFIntegrate(ref tempStorage, DefaultPrecision);
+      }
+      else
+      {
+        double factorp, factorw, dev, logPdfPrefactor;
+        GetAgt1GnParameter(x, alpha, out factorp, out factorw, out dev, out logPdfPrefactor);
+        Agt1GnI intg = new Agt1GnI(factorp, factorw, logPdfPrefactor, alpha, dev);
+        integrand = intg.CDFIntegrate(ref tempStorage, DefaultPrecision);
+      }
       double pre = Math.Sign(1 - alpha) / Math.PI;
       double plus = alpha > 1 ? 1 : 0.5;
       return plus + pre * integrand;

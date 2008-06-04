@@ -94,5 +94,15 @@ namespace Altaxo.Calc.Regression
     {
       return  _n*_sxx*_sxxxx -_sxx*_sxx*_sxx + 2*_sx*_sxx*_sxxx - _n*_sxxx*_sxxx - _sx*_sx*_sxxxx;
     }
+
+    /// <summary>
+    /// Calculates the regression function value at the argument x. Don't call this function frequently, since the polynomial coefficients are calculated at each call.
+    /// </summary>
+    /// <param name="x">Argument.</param>
+    /// <returns>The regression function value at x.</returns>
+    public double GetY(double x)
+    {
+      return (GetA2()*x+GetA1())*x+GetA0();
+    }
   }
 }
