@@ -25,6 +25,15 @@ using System;
 namespace Altaxo.Calc.Regression.Nonlinear
 {
   /// <summary>
+  /// This evaluates a function value. 
+  /// </summary>
+  /// <param name="independent">The independent variables.</param>
+  /// <param name="parameters">Parameters for evaluation.</param>
+  /// <param name="FV">On return, this array contains the one (or more) evaluated
+  /// function values at the point (independent).</param>
+  public delegate void FitEvaluationFunction(double[] independent, double[] parameters, double[] FV);
+
+  /// <summary>
   /// Represents the interface to a fitting function.
   /// </summary>
   public interface IFitFunction

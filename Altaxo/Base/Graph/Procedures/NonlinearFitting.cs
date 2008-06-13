@@ -86,9 +86,16 @@ namespace Altaxo.Graph.Procedures
       }
       else // localdoc.FitEnsemble.Count>0
       {
+        bool hasColumnsChanged = false;
+        hasColumnsChanged |= !(object.ReferenceEquals(localdoc.FitEnsemble[0].IndependentVariables(0), xColumn));
+        hasColumnsChanged |= !(object.ReferenceEquals(localdoc.FitEnsemble[0].DependentVariables(0), yColumn));
+
         localdoc.FitEnsemble[0].SetIndependentVariable(0,xColumn);
         localdoc.FitEnsemble[0].SetDependentVariable(0,yColumn);
-        localdoc.FitEnsemble[0].SetRowRange(xyPlotItem.XYColumnPlotData.PlotRangeStart,xyPlotItem.XYColumnPlotData.PlotRangeLength);
+
+        Altaxo.Calc.PositiveIntegerRange oldRange = localdoc.FitEnsemble[0].GetRowRange();
+        if(hasColumnsChanged || oldRange.First<xyPlotItem.XYColumnPlotData.PlotRangeStart || oldRange.Last>xyPlotItem.XYColumnPlotData.PlotRangeEnd)
+          localdoc.FitEnsemble[0].SetRowRange(xyPlotItem.XYColumnPlotData.PlotRangeStart,xyPlotItem.XYColumnPlotData.PlotRangeLength);
       }
         
       localdoc.FitContext = ctrl;

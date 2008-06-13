@@ -445,6 +445,38 @@ namespace Altaxo.Calc.Probability
       }
     }
 
+    static readonly double OneMinusExp_SmallBound = Math.Pow(DoubleConstants.DBL_EPSILON * 3628800, 1 / 9.0);
+    /// <summary>
+    /// Calculates 1-Exp(x) with more accuracy around x=0
+    /// </summary>
+    /// <param name="x">Function argument</param>
+    /// <returns>1-Exp(x)</returns>
+    public static double OneMinusExp(double x)
+    {
+      const double A1 = 1;
+      const double A2 = 1/2.0;
+      const double A3 = 1/6.0;
+      const double A4 = 1/24.0;
+      const double A5 = 1/120.0;
+      const double A6 = 1/720.0;
+      const double A7 = 1/5040.0;
+      const double A8 = 1/40320.0;
+      const double A9 = 1/362880.0;
+
+      double ax = Math.Abs(x);
+      if (ax < OneMinusExp_SmallBound)
+      {
+        if (ax < DoubleConstants.DBL_EPSILON)
+          return -x;
+        else
+         return -(((((((((A9*x)+A8)*x+A7)*x+A6)*x+A5)*x+A4)*x+A3)*x+A2)*x+A1)*x; 
+      }
+      else
+      {
+        return 1 - Math.Exp(x);
+      }
+    }
+
     public static void ParameterConversionS0ToFeller(double alpha, double beta, double abe, double sigma0, double mu0, out double gamma, out double aga, out double sigmaf, out double muf)
     {
       if (alpha != 1)
@@ -1170,7 +1202,7 @@ namespace Altaxo.Calc.Probability
       public double CDFFunc(double x)
       {
         double f = PDFCore(x);
-        double r = double.IsInfinity(f) ? 0 : Math.Exp(-f + logPdfPrefactor);
+        double r = double.IsInfinity(f) ? 0 : Math.Exp(-f);
         //System.Diagnostics.Debug.WriteLine(string.Format("x={0}, f={1}, r={2}", x, f, r));
         //Current.Console.WriteLine("x={0}, f={1}, r={2}", x, f, r);
         return r;
@@ -1180,7 +1212,7 @@ namespace Altaxo.Calc.Probability
       {
         double x = Math.Exp(z) + _x0;
         double f = PDFCore(x);
-        double r = double.IsInfinity(f) ? 0 : Math.Exp(z - f + logPdfPrefactor);
+        double r = double.IsInfinity(f) ? 0 : Math.Exp(z - f);
         //System.Diagnostics.Debug.WriteLine(string.Format("x={0}, f={1}, r={2}", x, f, r));
         //Current.Console.WriteLine("x={0}, f={1}, r={2}", x, f, r);
         return r;
@@ -1411,12 +1443,20 @@ namespace Altaxo.Calc.Probability
         return r;
       }
 
+      public double UpperIntegrationLimit
+      {
+        get
+        {
+          return Math.PI - dev;
+        }
+      }
+
       public double Integrate(ref object tempStorage, double precision)
       {
         GSL_ERROR error;
         double abserr;
         double result;
-        double x1 = Math.PI - dev;
+        double x1 = UpperIntegrationLimit;
         double xm = FindDecreasingYEqualToOne(pdfCore, 0, x1);
         try
         {
@@ -1456,7 +1496,63 @@ namespace Altaxo.Calc.Probability
       }
 
 
+      #region CDF
 
+      public double CDFFunc(double x)
+      {
+
+        double f = PDFCore(x);
+        double r = double.IsInfinity(f) ? 0 : OneMinusExp(-f);
+        //System.Diagnostics.Debug.WriteLine(string.Format("x={0}, f={1}, r={2}", x, f, r));
+        //Current.Console.WriteLine("x={0}, f={1}, r={2}", x, f, r);
+        return r;
+      }
+
+      public double CDFFuncLogInt(double z)
+      {
+        double x = Math.Exp(z) + _x0;
+        double f = PDFCore(x);
+        double r = double.IsInfinity(f) ? 0 : Math.Exp(z)*OneMinusExp(- f);
+        //System.Diagnostics.Debug.WriteLine(string.Format("x={0}, f={1}, r={2}", x, f, r));
+        //Current.Console.WriteLine("x={0}, f={1}, r={2}", x, f, r);
+        return r;
+      }
+
+      public double CDFIntegrate(ref object tempStorage, double precision)
+      {
+        GSL_ERROR error1;
+        double resultRight, abserrRight;
+
+        double xm, yfound;
+
+        xm = FindDecreasingYEqualToOne(PDFCore, 0, UpperIntegrationLimit);
+
+        if ((xm * 10) < UpperIntegrationLimit)
+        {
+          // logarithmical integration
+          _x0 = -xm;
+          // now integrate logarithmically
+          error1 = Calc.Integration.QagpIntegration.Integration(
+                      CDFFuncLogInt,
+                      new double[] { Math.Log(xm), Math.Log(UpperIntegrationLimit + xm) }, 2,
+                      0, precision, 100, out resultRight, out abserrRight, ref tempStorage);
+
+        }
+        else // linear integration
+        {
+          error1 = Calc.Integration.QagpIntegration.Integration(
+                      CDFFunc,
+                      new double[] { 0, UpperIntegrationLimit }, 2,
+                      0, precision, 100, out resultRight, out abserrRight, ref tempStorage);
+        }
+
+        if (null != error1)
+          return double.NaN;
+        else
+          return resultRight;
+      }
+
+      #endregion
     }
 
     public class Alt1GnDA1 : Alt1GnD
@@ -1704,7 +1800,7 @@ namespace Altaxo.Calc.Probability
       public double CDFFunc(double x)
       {
         double f = PDFCore(x);
-        double r = double.IsInfinity(f) ? 0 : Math.Exp(-f + logPdfPrefactor);
+        double r = double.IsInfinity(f) ? 0 : Math.Exp(-f);
         //System.Diagnostics.Debug.WriteLine(string.Format("x={0}, f={1}, r={2}", x, f, r));
         //Current.Console.WriteLine("x={0}, f={1}, r={2}", x, f, r);
         return r;
@@ -1714,7 +1810,7 @@ namespace Altaxo.Calc.Probability
       {
         double x = Math.Exp(z) + _x0;
         double f = PDFCore(x);
-        double r = double.IsInfinity(f) ? 0 : Math.Exp(z - f + logPdfPrefactor);
+        double r = double.IsInfinity(f) ? 0 : Math.Exp(z - f);
         //System.Diagnostics.Debug.WriteLine(string.Format("x={0}, f={1}, r={2}", x, f, r));
         //Current.Console.WriteLine("x={0}, f={1}, r={2}", x, f, r);
         return r;
@@ -1935,6 +2031,14 @@ namespace Altaxo.Calc.Probability
         return r;
       }
 
+      public double UpperIntegrationLimit
+      {
+        get
+        {
+          return dev;
+        }
+      }
+
       public double Integrate(ref object tempStorage, double precision)
       {
         GSL_ERROR error;
@@ -1979,7 +2083,63 @@ namespace Altaxo.Calc.Probability
         }
       }
 
+      #region CDF
 
+      public double CDFFunc(double x)
+      {
+
+        double f = PDFCore(x);
+        double r = double.IsInfinity(f) ? 0 : OneMinusExp(-f );
+        //System.Diagnostics.Debug.WriteLine(string.Format("x={0}, f={1}, r={2}", x, f, r));
+        //Current.Console.WriteLine("x={0}, f={1}, r={2}", x, f, r);
+        return r;
+      }
+
+      public double CDFFuncLogInt(double z)
+      {
+        double x = Math.Exp(z) + _x0;
+        double f = PDFCore(x);
+        double r = double.IsInfinity(f) ? 0 : Math.Exp(z)*OneMinusExp(- f);
+        //System.Diagnostics.Debug.WriteLine(string.Format("x={0}, f={1}, r={2}", x, f, r));
+        //Current.Console.WriteLine("x={0}, f={1}, r={2}", x, f, r);
+        return r;
+      }
+
+      public double CDFIntegrate(ref object tempStorage, double precision)
+      {
+        GSL_ERROR error1;
+        double resultRight, abserrRight;
+
+        double xm, yfound;
+
+        xm = FindDecreasingYEqualToOne(PDFCore, 0, UpperIntegrationLimit);
+
+        if ((xm * 10) < UpperIntegrationLimit)
+        {
+          // logarithmical integration
+          _x0 = -xm;
+          // now integrate logarithmically
+          error1 = Calc.Integration.QagpIntegration.Integration(
+                      CDFFuncLogInt,
+                      new double[] { Math.Log(xm), Math.Log(UpperIntegrationLimit + xm) }, 2,
+                      0, precision, 100, out resultRight, out abserrRight, ref tempStorage);
+
+        }
+        else // linear integration
+        {
+          error1 = Calc.Integration.QagpIntegration.Integration(
+                      CDFFunc,
+                      new double[] { 0, UpperIntegrationLimit }, 2,
+                      0, precision, 100, out resultRight, out abserrRight, ref tempStorage);
+        }
+
+        if (null != error1)
+          return double.NaN;
+        else
+          return resultRight;
+      }
+
+      #endregion
     }
 
     public class Alt1GpDA1 : Alt1GpD
@@ -2097,7 +2257,6 @@ namespace Altaxo.Calc.Probability
 
     #region Classes for integration (alpha==1)
 
-    #region Integration classes for alpha equal one
 
     public class Aeq1BpI
     {
@@ -2327,7 +2486,7 @@ namespace Altaxo.Calc.Probability
       public double CDFFunc(double x)
       {
         double f = PDFCore(x);
-        double r = double.IsInfinity(f) ? 0 : Math.Exp(-f + logPdfPrefactor);
+        double r = double.IsInfinity(f) ? 0 : Math.Exp(-f);
         //System.Diagnostics.Debug.WriteLine(string.Format("x={0}, f={1}, r={2}", x, f, r));
         //Current.Console.WriteLine("x={0}, f={1}, r={2}", x, f, r);
         return r;
@@ -2337,7 +2496,7 @@ namespace Altaxo.Calc.Probability
       {
         double x = Math.Exp(z) + _x0;
         double f = PDFCore(x);
-        double r = double.IsInfinity(f) ? 0 : Math.Exp(z - f + logPdfPrefactor);
+        double r = double.IsInfinity(f) ? 0 : Math.Exp(z - f);
         //System.Diagnostics.Debug.WriteLine(string.Format("x={0}, f={1}, r={2}", x, f, r));
         //Current.Console.WriteLine("x={0}, f={1}, r={2}", x, f, r);
         return r;
@@ -2544,10 +2703,64 @@ namespace Altaxo.Calc.Probability
       {
         return PDFCore(0.5 * UpperIntegrationLimit) > 1;
       }
+
+      #region CDF
+
+      public double CDFFunc(double x)
+      {
+        double f = PDFCore(x);
+        double r = double.IsInfinity(f) ? 0 : Math.Exp(-f);
+        //System.Diagnostics.Debug.WriteLine(string.Format("x={0}, f={1}, r={2}", x, f, r));
+        //Current.Console.WriteLine("x={0}, f={1}, r={2}", x, f, r);
+        return r;
+      }
+
+      public double CDFFuncLogInt(double z)
+      {
+        double x = Math.Exp(z) + _x0;
+        double f = PDFCore(x);
+        double r = double.IsInfinity(f) ? 0 : Math.Exp(z - f);
+        //System.Diagnostics.Debug.WriteLine(string.Format("x={0}, f={1}, r={2}", x, f, r));
+        //Current.Console.WriteLine("x={0}, f={1}, r={2}", x, f, r);
+        return r;
+      }
+
+      public double CDFIntegrate(ref object tempStorage, double precision)
+      {
+        GSL_ERROR error1;
+        double resultRight, abserrRight;
+
+        double xm, yfound;
+        xm = FindDecreasingYEqualToOne(PDFCore, 0, UpperIntegrationLimit);
+
+        if ((xm * 10) < UpperIntegrationLimit)
+        {
+          // logarithmical integration
+          _x0 = -xm;
+          // now integrate logarithmically
+          error1 = Calc.Integration.QagpIntegration.Integration(
+   CDFFuncLogInt,
+   new double[] { Math.Log(xm), Math.Log(UpperIntegrationLimit + xm) }, 2, 0, precision, 100, out resultRight, out abserrRight, ref tempStorage);
+
+        }
+        else // linear integration
+        {
+          error1 = Calc.Integration.QagpIntegration.Integration(
+   CDFFunc,
+   new double[] { 0, UpperIntegrationLimit }, 2, 0, precision, 100, out resultRight, out abserrRight, ref tempStorage);
+
+        }
+
+        if (null != error1)
+          return double.NaN;
+        else
+          return resultRight;
+      }
+
+      #endregion
+
     }
-    #endregion
-
-
+  
     #endregion
 
     #region Classes for integration (alpha>1)
@@ -2675,13 +2888,13 @@ namespace Altaxo.Calc.Probability
       {
         get
         {
-          return Math.PI - dev;
+          return (Math.PI - dev)/alpha;
         }
       }
      
       public bool IsMaximumLeftHandSide()
       {
-        return PDFCore(0.5 * (Math.PI - dev)) > 1;
+        return PDFCore(0.5 * UpperIntegrationLimit) > 1;
       }
 
       #region CDF
@@ -2689,7 +2902,7 @@ namespace Altaxo.Calc.Probability
       public double CDFFunc(double x)
       {
         double f = PDFCore(x);
-        double r = double.IsInfinity(f) ? 0 : Math.Exp(-f + logPdfPrefactor);
+        double r = double.IsInfinity(f) ? 0 : Math.Exp(-f);
         //System.Diagnostics.Debug.WriteLine(string.Format("x={0}, f={1}, r={2}", x, f, r));
         //Current.Console.WriteLine("x={0}, f={1}, r={2}", x, f, r);
         return r;
@@ -2699,7 +2912,7 @@ namespace Altaxo.Calc.Probability
       {
         double x = Math.Exp(z) + _x0;
         double f = PDFCore(x);
-        double r = double.IsInfinity(f) ? 0 : Math.Exp(z - f + logPdfPrefactor);
+        double r = double.IsInfinity(f) ? 0 : Math.Exp(z - f);
         //System.Diagnostics.Debug.WriteLine(string.Format("x={0}, f={1}, r={2}", x, f, r));
         //Current.Console.WriteLine("x={0}, f={1}, r={2}", x, f, r);
         return r;
@@ -2864,9 +3077,68 @@ namespace Altaxo.Calc.Probability
       {
         get
         {
-          return Math.PI - dev;
+          return (Math.PI - dev)/alpha;
         }
       }
+
+      #region CDF
+
+      public double CDFFunc(double x)
+      {
+        
+        double f = PDFCore(x);
+        double r = double.IsInfinity(f) ? 0 : OneMinusExp(-f);
+        //System.Diagnostics.Debug.WriteLine(string.Format("x={0}, f={1}, r={2}", x, f, r));
+        //Current.Console.WriteLine("x={0}, f={1}, r={2}", x, f, r);
+        return r;
+      }
+
+      public double CDFFuncLogInt(double z)
+      {
+        double x = Math.Exp(z) + _x0;
+        double f = PDFCore(x);
+        double r = double.IsInfinity(f) ? 0 : Math.Exp(z) * OneMinusExp(- f);
+        //System.Diagnostics.Debug.WriteLine(string.Format("x={0}, f={1}, r={2}", x, f, r));
+        //Current.Console.WriteLine("x={0}, f={1}, r={2}", x, f, r);
+        return r;
+      }
+
+      public double CDFIntegrate(ref object tempStorage, double precision)
+      {
+        GSL_ERROR error1;
+        double resultRight, abserrRight;
+
+        double xm, yfound;
+     
+        xm = FindDecreasingYEqualToOne(PDFCore, 0, UpperIntegrationLimit);
+
+        if ((xm * 10) < UpperIntegrationLimit)
+        {
+          // logarithmical integration
+          _x0 = -xm;
+          // now integrate logarithmically
+          error1 = Calc.Integration.QagpIntegration.Integration(
+                      CDFFuncLogInt,
+                      new double[] { Math.Log(xm), Math.Log(UpperIntegrationLimit + xm) }, 2,
+                      0, precision, 100, out resultRight, out abserrRight, ref tempStorage);
+
+        }
+        else // linear integration
+        {
+          error1 = Calc.Integration.QagpIntegration.Integration(
+                      CDFFunc,
+                      new double[] { 0, UpperIntegrationLimit }, 2,
+                      0, precision, 100, out resultRight, out abserrRight, ref tempStorage);
+        }
+
+        if (null != error1)
+          return double.NaN;
+        else
+          return resultRight;
+      }
+
+      #endregion
+
     }
 
     #endregion

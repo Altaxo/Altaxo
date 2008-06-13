@@ -552,17 +552,28 @@ new double[]{2,1,10,0.0000600054567345840717}
     [Test]
     public void PdfTestS1()
     {
-      for (int i = 0; i < _pdfTestS0.Length; i++)
+      for (int i = 0; i < _pdfTestS1.Length; i++)
       {
-        double alpha = _pdfTestS1[i][0];
-        double beta = _pdfTestS1[i][1];
-        double x = _pdfTestS1[i][2];
-        double expectedy = _pdfTestS1[i][3];
-        double y = StableDistributionS1.PDF(x, alpha, beta, 1.7, 3.0/7.0);
+        
+       
+          double alpha = _pdfTestS1[i][0];
+          double beta = _pdfTestS1[i][1];
+          double x = _pdfTestS1[i][2];
+          double expectedy = _pdfTestS1[i][3];
+          try
+          {
+            double y = StableDistributionS1.PDF(x, alpha, beta, 1.7, 3.0 / 7.0);
+         
         double maxdelta = Math.Abs(expectedy / 1E7);
-        maxdelta = Math.Max(maxdelta, 1e-25);
-        string msg = string.Format("i={0}, alpha={1}, beta={2}, x={3}, expected={4}, actual={5}", i, alpha, beta, x, expectedy, y);
-        Assert.AreEqual(expectedy, y, maxdelta, msg);
+          maxdelta = Math.Max(maxdelta, 1e-25);
+          string msg = string.Format("i={0}, alpha={1}, beta={2}, x={3}, expected={4}, actual={5}", i, alpha, beta, x, expectedy, y);
+          Assert.AreEqual(expectedy, y, maxdelta, msg);
+        }
+        catch (Exception ex)
+        {
+          Assert.Fail(string.Format("Exception at i={0}, alpha={1}, beta={2}, x={3}: {4}", i, alpha, beta, x, ex.Message));
+        } 
+       
       }
     }
 
@@ -765,7 +776,7 @@ new double[]{2.0,1.0,0,0,0,1.0,0}
       if (expected == 0)
         return Math.Abs(actual);
       else
-        return Math.Abs((actual - expected) / expected);
+        return Math.Abs((actual - expected) / expected)/DoubleConstants.DBL_EPSILON;
     }
 
     [Test]
@@ -940,6 +951,75 @@ new double[]{2.0,1.0,0,0,0,1.0,0}
 
     #endregion
 
+    #endregion
+
+    #region Text OneMinusExp
+
+    static readonly double[][] _ONETestData = 
+      {
+new double[]{-50.0,0.999999999999999999999807},
+new double[]{-20.0,0.9999999979388463775614422},
+new double[]{-10.0,0.9999546000702375151484644},
+new double[]{-2.0,0.8646647167633873081060005},
+new double[]{-1.0625,0.6544092474230254841093413},
+new double[]{-0.9375,0.6083943733232010067731923},
+new double[]{-0.5009765625,0.3940613662625090234372491},
+new double[]{-0.4990234375,0.3928767358794658787743839},
+new double[]{-0.0625,0.06058693718652421388028918},
+new double[]{-0.015625,0.01550356299459159401301117},
+new double[]{-0.0009765625,0.0009760858180243377652882104},
+new double[]{-9.5367431640625e-7,9.536738616590436737910799e-7},
+new double[]{-9.31322574615478515625e-10,9.313225741817976467654305e-10},
+new double[]{-9.094947017729282379150391e-13,9.094947017725146476087627e-13},
+new double[]{-8.881784197001252323389053e-16,8.881784197001248379084527e-16},
+new double[]{0,0},
+new double[]{8.881784197001252323389053e-16,-8.881784197001256267693579e-16},
+new double[]{9.094947017729282379150391e-13,-9.094947017733418282213157e-13},
+new double[]{9.31322574615478515625e-10,-9.31322575049159384753834e-10},
+new double[]{0.0009765625,-0.0009770394924165352428452926},
+new double[]{0.015625,-0.01574770858668574745853507},
+new double[]{0.0625,-0.06449445891785942956339059},
+new double[]{0.4990234375,-0.6471119772499226866424172},
+new double[]{0.5009765625,-0.650332136493589345052458},
+new double[]{0.9375,-1.553589458062926873446965},
+new double[]{1.0625,-1.893595944171760941474281},
+new double[]{2.0,-6.389056098930650227230427},
+new double[]{10.0,-22025.4657948067165169579},
+new double[]{20.0,-4.851651944097902779691068e8},
+new double[]{50.0,-5.184705528587072464086453e21}
+      };
+
+
+    [Test]
+    public void TestOneMinusExp()
+    {
+      double tol = DoubleConstants.DBL_EPSILON;
+
+      double maxtol = 0;
+      int maxtoli = -1;
+      double t;
+
+      for (int i = 0; i < _ONETestData.Length; i++)
+      {
+
+        double x = _ONETestData[i][0];
+        double expFunc = _ONETestData[i][1];
+
+        double func = StableDistributionBase.OneMinusExp(x);
+
+        t = Tolerance(expFunc, func);
+        if (t > maxtol)
+        {
+          maxtol = t;
+          maxtoli = i;
+        }
+      }
+
+      string msg;
+
+      msg = String.Format("i={0}", maxtoli);
+      Assert.Less(1, maxtol, msg);
+    }
     #endregion
   }
 }

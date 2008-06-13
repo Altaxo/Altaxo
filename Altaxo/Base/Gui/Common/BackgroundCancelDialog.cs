@@ -41,7 +41,8 @@ namespace Altaxo.Gui.Common
   {
     private System.Windows.Forms.Label lblText;
     private System.Windows.Forms.Button btCancel;
-    private System.Timers.Timer _timer;
+    //private System.Timers.Timer _timer;
+    private System.Windows.Forms.Timer _timer;
     System.Threading.ThreadStart _threadStart;
     System.Exception _threadException;
     System.Threading.Thread _thread;
@@ -147,10 +148,9 @@ namespace Altaxo.Gui.Common
     {
       this.lblText = new System.Windows.Forms.Label();
       this.btCancel = new System.Windows.Forms.Button();
-      this._timer = new System.Timers.Timer();
+      this._timer = new System.Windows.Forms.Timer();
       this._btInterrupt = new System.Windows.Forms.Button();
       this._btAbort = new System.Windows.Forms.Button();
-      ((System.ComponentModel.ISupportInitialize)(this._timer)).BeginInit();
       this.SuspendLayout();
       // 
       // lblText
@@ -177,8 +177,8 @@ namespace Altaxo.Gui.Common
       // 
       // _timer
       // 
-      this._timer.SynchronizingObject = this;
-      this._timer.Elapsed += new System.Timers.ElapsedEventHandler(this._timer_Elapsed);
+      this._timer.Interval = 100;
+      this._timer.Tick += new EventHandler(this._timer_Elapsed);
       // 
       // _btInterrupt
       // 
@@ -213,7 +213,6 @@ namespace Altaxo.Gui.Common
       this.Name = "BackgroundCancelDialog";
       this.Text = "Working...";
       this.Closing += new System.ComponentModel.CancelEventHandler(this.BackgroundCancelDialog_Closing);
-      ((System.ComponentModel.ISupportInitialize)(this._timer)).EndInit();
       this.ResumeLayout(false);
 
     }
@@ -221,11 +220,11 @@ namespace Altaxo.Gui.Common
 
    
   
-    private void _timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+    private void _timer_Elapsed(object sender, EventArgs e)
     {
       if (_monitor != null)
       {
-        this.lblText.Text = _monitor.ReportText;
+          this.lblText.Text = _monitor.ReportText;
         _monitor.ShouldReport = true;
       }
 

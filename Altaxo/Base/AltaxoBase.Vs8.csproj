@@ -1088,6 +1088,7 @@
     <Compile Include="Calc\FitFunctions\Transitions\GeneralEffectiveMedium.cs" />
     <Compile Include="Calc\FitFunctions\Transitions\PercolationTheory.cs" />
     <Compile Include="Calc\FitFunctions\Transitions\SmoothedPercolation.cs" />
+    <Compile Include="Calc\Regression\Nonlinear\SimpleNonlinearFit.cs" />
     <Compile Include="Collections\AltaxoSet.cs" />
     <Compile Include="Collections\IArray.cs" />
     <Compile Include="Collections\ListNode.cs" />

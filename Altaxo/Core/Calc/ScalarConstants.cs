@@ -60,6 +60,10 @@ namespace Altaxo.Calc
     /// </summary>
     private static readonly double sqeps  = Math.Sqrt(DBL_EPSILON);
 
+    /// <summary>
+    /// Square root of Epsilon.
+    /// </summary>
+    public static readonly double SQRT_DBL_EPSILON = Math.Sqrt(DBL_EPSILON);
 
   }
 }

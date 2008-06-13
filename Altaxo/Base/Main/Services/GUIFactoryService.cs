@@ -429,7 +429,7 @@ namespace Altaxo.Main.Services
     }
 
 
-    public bool ShowBackgroundCancelDialog(int millisecondsDelay, System.Threading.ThreadStart threadstart, IExternalDrivenBackgroundMonitor monitor)
+    public bool ShowBackgroundCancelDialog(int millisecondsDelay, IExternalDrivenBackgroundMonitor monitor, System.Threading.ThreadStart threadstart)
     {
       Altaxo.Gui.Common.BackgroundCancelDialog dlg = new Altaxo.Gui.Common.BackgroundCancelDialog(threadstart, monitor);
       System.Threading.Thread thread = dlg.Thread;
@@ -455,7 +455,7 @@ namespace Altaxo.Main.Services
       return false;
     }
 
-    public bool ShowBackgroundCancelDialog(int millisecondsDelay, System.Threading.Thread thread, IExternalDrivenBackgroundMonitor monitor)
+    public bool ShowBackgroundCancelDialog(int millisecondsDelay, IExternalDrivenBackgroundMonitor monitor, System.Threading.Thread thread)
     {
       for (int i = 0; i < millisecondsDelay && thread.IsAlive; i += 10)
         System.Threading.Thread.Sleep(10);

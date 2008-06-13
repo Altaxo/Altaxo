@@ -28,6 +28,7 @@ namespace Altaxo.Calc.Probability
       object store = null;
       return PDF(x, alpha, ref store, Math.Sqrt(DoubleConstants.DBL_EPSILON));
     }
+    
     /// <summary>
     /// Calculates the probability density using either series expansion for small or big arguments, or a integration
     /// in the intermediate range.
@@ -384,6 +385,16 @@ namespace Altaxo.Calc.Probability
       logPdfPrefactor = Math.Log(alpha / (Math.PI * Math.Abs(alpha - 1) * x));
     }
 
+    public static void GetAlt1GpParameterByGamma(double x, double alpha,
+                        out double factorp, out double facdiv, out double dev, out double logPdfPrefactor)
+    {
+      dev = Math.PI * 0.5;
+      facdiv = 1;
+      factorp = x;
+      logPdfPrefactor = Math.Log(alpha / (Math.PI * Math.Abs(alpha - 1) * x));
+    }
+
+
     public static void GetAgt1GnParameter(double x, double alpha, 
                         out double factorp, out double factorw, out double dev, out double logPrefactor)
     {
@@ -467,35 +478,89 @@ namespace Altaxo.Calc.Probability
     public static double CDF(double x, double alpha)
     {
       object tempStorage = null;
-      return CDF(x, alpha, ref tempStorage);
+      return CDF(x, alpha, ref tempStorage, DefaultPrecision);
     }
 
-    public static double CDF(double x, double alpha, ref object tempStorage)
+    public static double CDF(double x, double alpha, ref object tempStorage, double precision)
     {
       // test input parameter
       if (!(alpha > 0 && alpha <= 2))
         throw new ArgumentOutOfRangeException(string.Format("Alpha must be in the range (0,2], but was: {0}", alpha));
 
-      if (alpha != 1)
-      {
-        if (IsXNearlyEqualToZero(x))
+      double integFromXZero, integFromXInfinity;
+     if (IsXNearlyEqualToZero(x))
         {
           return 0.5;
         }
         else if (x > 0)
         {
-          return CDFMethod1(x, alpha, ref tempStorage);
+          CDFMethodForPositiveX(x, alpha, ref tempStorage, precision, out integFromXZero, out integFromXInfinity);
+          return 0.5 + integFromXZero;
         }
-        else
+        else // x<0
         {
-          return 1 - CDFMethod1(-x, alpha, ref tempStorage);
+          CDFMethodForPositiveX(-x, alpha, ref tempStorage, precision, out integFromXZero, out integFromXInfinity);
+          return integFromXInfinity;
         }
-      }
-      else // alpha == 1
-      {
-          return 0.5 + Math.Atan(x) / Math.PI;
-      }
+    }
 
+    public static double CCDF(double x, double alpha)
+    {
+      object tempStorage = null;
+      return CCDF(x, alpha, ref tempStorage, DefaultPrecision);
+    }
+
+    public static double CCDF(double x, double alpha, ref object tempStorage, double precision)
+    {
+      // test input parameter
+      if (!(alpha > 0 && alpha <= 2))
+        throw new ArgumentOutOfRangeException(string.Format("Alpha must be in the range (0,2], but was: {0}", alpha));
+
+      double integFromXZero, integFromXInfinity;
+      if (IsXNearlyEqualToZero(x))
+      {
+        return 0.5;
+      }
+      else if (x > 0)
+      {
+        CDFMethodForPositiveX(x, alpha, ref tempStorage, precision, out integFromXZero, out integFromXInfinity);
+        return integFromXInfinity;
+      }
+      else // x<0
+      {
+        CDFMethodForPositiveX(-x, alpha, ref tempStorage, precision, out integFromXZero, out integFromXInfinity);
+        return 0.5 + integFromXZero;
+      }
+    }
+
+
+    public static double XZCDF(double x, double alpha)
+    {
+      object tempStorage = null;
+      return XZCDF(x, alpha, ref tempStorage, DefaultPrecision);
+    }
+
+    public static double XZCDF(double x, double alpha, ref object tempStorage, double precision)
+    {
+      // test input parameter
+      if (!(alpha > 0 && alpha <= 2))
+        throw new ArgumentOutOfRangeException(string.Format("Alpha must be in the range (0,2], but was: {0}", alpha));
+
+      double integFromXZero, integFromXInfinity;
+      if (x==0)
+      {
+        return 0;
+      }
+      else if (x > 0)
+      {
+        CDFMethodForPositiveX(x, alpha, ref tempStorage, precision, out integFromXZero, out integFromXInfinity);
+        return integFromXZero;
+      }
+      else // x<0
+      {
+        CDFMethodForPositiveX(-x, alpha, ref tempStorage, precision, out integFromXZero, out integFromXInfinity);
+        return -integFromXZero;
+      }
     }
 
     private static bool IsXNearlyEqualToZero(double x)
@@ -503,26 +568,55 @@ namespace Altaxo.Calc.Probability
       return Math.Abs(x) < DoubleConstants.DBL_EPSILON;
     }
 
-    private static double CDFMethod1(double x, double alpha, ref object tempStorage)
+    private static void CDFMethodForPositiveX(double x, double alpha, ref object tempStorage, double precision, out double integFromXZero, out double integFromXInfinity)
     {
-      double integrand;
+      const double offs = 0.5;
+
       if (alpha < 1)
       {
         double factorp, facdiv, dev, logPdfPrefactor;
         GetAlt1GnParameter(x, alpha, out factorp, out facdiv, out dev, out logPdfPrefactor);
-        Alt1GnI intg = new Alt1GnI(factorp, facdiv, logPdfPrefactor, alpha, dev);
-        integrand = intg.CDFIntegrate(ref tempStorage, DefaultPrecision);
+        Alt1GnI inc = new Alt1GnI(factorp, facdiv, logPdfPrefactor, alpha, dev);
+        if (inc.IsMaximumLeftHandSide())
+        {
+          integFromXZero = inc.CDFIntegrate(ref tempStorage, precision) / Math.PI;
+          integFromXInfinity = offs - integFromXZero;
+        }
+        else
+        {
+          integFromXInfinity = new Alt1GnD(factorp, facdiv, logPdfPrefactor, alpha, dev).CDFIntegrate(ref tempStorage, precision)/Math.PI;
+          integFromXZero = offs - integFromXInfinity;
+        }
       }
-      else
+      else if(alpha==1)
+      {
+        if (x <= 1)
+        {
+          integFromXZero = Math.Atan(x) / Math.PI;
+          integFromXInfinity = offs - integFromXZero;
+        }
+        else
+        {
+          integFromXInfinity = Math.Atan(1 / x) / Math.PI;
+          integFromXZero = offs - integFromXInfinity;
+        }
+      }
+      else // if(alpha>1)
       {
         double factorp, factorw, dev, logPdfPrefactor;
         GetAgt1GnParameter(x, alpha, out factorp, out factorw, out dev, out logPdfPrefactor);
-        Agt1GnI intg = new Agt1GnI(factorp, factorw, logPdfPrefactor, alpha, dev);
-        integrand = intg.CDFIntegrate(ref tempStorage, DefaultPrecision);
+        Agt1GnI inc = new Agt1GnI(factorp, factorw, logPdfPrefactor, alpha, dev);
+        if (inc.IsMaximumLeftHandSide())
+        {
+          integFromXInfinity = inc.CDFIntegrate(ref tempStorage, precision)/Math.PI;
+          integFromXZero = offs - integFromXInfinity;
+        }
+        else
+        {
+          integFromXZero= new Agt1GnD(factorp, factorw, logPdfPrefactor, alpha, dev).CDFIntegrate(ref tempStorage, precision)/Math.PI;
+          integFromXInfinity = offs - integFromXZero;
+        }
       }
-      double pre = Math.Sign(1 - alpha) / Math.PI;
-      double plus = alpha > 1 ? 1 : 0.5;
-      return plus + pre * integrand;
     }
 
 
@@ -554,15 +648,44 @@ namespace Altaxo.Calc.Probability
         x1 = xguess;
       }
 
-      if (RootFinding.BracketRootByExtensionOnly(delegate(double x) { return CDF(x, alpha) - p; }, 0, ref x0, ref x1))
+      object tempStorage = null;
+      if (RootFinding.BracketRootByExtensionOnly(delegate(double x) { return CDF(x, alpha, ref tempStorage, DefaultPrecision) - p; }, 0, ref x0, ref x1))
       {
         double root;
-        if (null == RootFinding.ByBrentsAlgorithm(delegate(double x) { return CDF(x, alpha) - p; }, x0, x1, 0, DoubleConstants.DBL_EPSILON, out root))
+        if (null == RootFinding.ByBrentsAlgorithm(delegate(double x) { return CDF(x, alpha, ref tempStorage, DefaultPrecision) - p; }, x0, x1, 0, DoubleConstants.DBL_EPSILON, out root))
           return root;
       }
       return double.NaN;
     }
 
+    public static double QuantileCCDF(double q, double alpha)
+    {
+      if (q == 0.5)
+        return 0;
+
+      double xguess = Math.Exp(2 / alpha); // guess value for a nearly constant p value in dependence of alpha
+      double x0, x1;
+
+      if (q > 0.5)
+      {
+        x0 = -xguess;
+        x1 = 0;
+      }
+      else
+      {
+        x0 = 0;
+        x1 = xguess;
+      }
+
+      object tempStorage = null;
+      if (RootFinding.BracketRootByExtensionOnly(delegate(double x) { return CCDF(x, alpha, ref tempStorage, DefaultPrecision) - q; }, 0, ref x0, ref x1))
+      {
+        double root;
+        if (null == RootFinding.ByBrentsAlgorithm(delegate(double x) { return CCDF(x, alpha, ref tempStorage, DefaultPrecision) - q; }, x0, x1, 0, DoubleConstants.DBL_EPSILON, out root))
+          return root;
+      }
+      return double.NaN;
+    }
     #endregion
 
   }

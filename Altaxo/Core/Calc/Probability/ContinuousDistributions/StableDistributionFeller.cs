@@ -1263,6 +1263,7 @@ namespace Altaxo.Calc.Probability
 
     public static double CDFIntegral(double x, double alpha, double gamma, double aga, ref object temp, double precision)
     {
+      bool inverseRuleUsed;
       bool xWasNegative = false;
       if (x < 0)
       {
@@ -1283,16 +1284,16 @@ namespace Altaxo.Calc.Probability
         if (gamma > 0)
           againv = gammainv > 0 ? 2 * (alpha - 1) + aga : 2 * (2 - alpha) - aga;
 
-        double integral = CDFIntegralForPositiveXAlt1(xinv, alphainv, gammainv, againv, ref temp, precision);
+        double integral = CDFIntegralForPositiveXAlt1(xinv, alphainv, gammainv, againv, ref temp, precision, out inverseRuleUsed);
 
         if (xWasNegative)
           return Math.Abs(1 - alpha) / alpha * xinv * integral;
         else
           return 1 - Math.Abs(1 - alpha) / alpha * xinv * integral;
       }
-      else
+      else // alpha < 1
       {
-        double integral = CDFIntegralForPositiveXAlt1(x, alpha, gamma, aga, ref temp, precision);
+        double integral = CDFIntegralForPositiveXAlt1(x, alpha, gamma, aga, ref temp, precision, out inverseRuleUsed);
         if (xWasNegative)
         {
           double offs = gamma >= 0 ? 0.5 * aga : 1 - 0.5 * aga;
@@ -1306,22 +1307,26 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    static double CDFIntegralForPositiveXAlt1(double x, double alpha, double gamma, double aga, ref object temp, double precision)
+    static double CDFIntegralForPositiveXAlt1(double x, double alpha, double gamma, double aga, ref object temp, double precision, out bool inverseRuleUsed)
     {
+      double result;
       if (gamma <= 0)
       {
         double factorp, facdiv, dev, logPdfPrefactor;
         GetAlt1GnParameterByGamma(x,alpha,gamma,aga,out factorp, out facdiv, out dev, out logPdfPrefactor);
         Alt1GnI a = new Alt1GnI(factorp, facdiv, logPdfPrefactor, alpha, dev);
-        return a.CDFIntegrate(ref temp, precision);
+        result= a.CDFIntegrate(ref temp, precision);
+        inverseRuleUsed = false;
       }
       else
       {
         double factorp, facdiv, dev, logPdfPrefactor;
         GetAlt1GpParameterByGamma(x, alpha, gamma, aga, out factorp, out facdiv, out dev, out logPdfPrefactor);
         Alt1GpI a = new Alt1GpI(factorp, facdiv, logPdfPrefactor, alpha, dev);
-        return a.CDFIntegrate(ref temp, precision);
+        result = a.CDFIntegrate(ref temp, precision);
+        inverseRuleUsed = false;
       }
+      return result;
     }
 
     static double CDFIntegralForPositiveXAgt1(double x, double alpha, double gamma, double aga, ref object temp, double precision)

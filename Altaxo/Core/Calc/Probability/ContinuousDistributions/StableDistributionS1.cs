@@ -220,7 +220,7 @@ namespace Altaxo.Calc.Probability
       if (beta >= 0)
         abe = 1 - beta;
       else
-        abe = -1 + beta;
+        abe = 1 + beta;
 
       return PDF(x, alpha, beta, abe, ref tempStorage, precision);
     }
