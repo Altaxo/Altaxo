@@ -9,17 +9,16 @@ namespace Altaxo.Calc.Probability
 
     double _alpha;
     double _beta;
+    double _abe;
 
     double _mu;
     double _scale = 1;
 
     object _tempStorePDF;
-    static readonly double _pdfPrecision = Math.Sqrt(DoubleConstants.DBL_EPSILON);
 
      #region construction
     /// <summary>
-    /// Initializes a new instance of the <see cref="ExponentialDistribution"/> class, using a 
-    ///   <see cref="StandardGenerator"/> as underlying random number generator.
+    /// Creates a new instance of this distribution with default parameters (alpha=1, beta=0) and the default generator.
     /// </summary>
     public StableDistributionS1()
       : this(DefaultGenerator)
@@ -27,80 +26,125 @@ namespace Altaxo.Calc.Probability
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ExponentialDistribution"/> class, using the specified 
-    ///   <see cref="Generator"/> as underlying random number generator.
+    /// Creates a new instance of this distribution with default parameters (alpha=1, beta=0).
     /// </summary>
-    /// <param name="generator">A <see cref="Generator"/> object.</param>
-    /// <exception cref="ArgumentNullException">
-    /// <paramref name="generator"/> is NULL (<see langword="Nothing"/> in Visual Basic).
-    /// </exception>
+    /// <param name="generator">Random number generator to be used with this distribution.</param>
     public StableDistributionS1(Generator generator)
-      : this(1, 0, 1, 0, generator)
+      : this(1, 0, 1, 1, 0, generator)
     {
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ExponentialDistribution"/> class, using the specified 
-    ///   <see cref="Generator"/> as underlying random number generator.
+    /// Creates a new instance of this distribution with given parameters (alpha, beta) and the default random number generator.
     /// </summary>
-    /// <param name="generator">A <see cref="Generator"/> object.</param>
-    /// <exception cref="ArgumentNullException">
-    /// <paramref name="generator"/> is NULL (<see langword="Nothing"/> in Visual Basic).
-    /// </exception>
+    /// <param name="alpha">Distribution parameter alpha (broadness exponent).</param>
+    /// <param name="beta">Distribution parameter beta (skew).</param>
     public StableDistributionS1(double alpha, double beta)
-      : this(alpha, beta, 1, 0, DefaultGenerator)
+      : this(alpha, beta, GetAbeFromBeta(beta), 1, 0, DefaultGenerator)
     {
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ExponentialDistribution"/> class, using the specified 
-    ///   <see cref="Generator"/> as underlying random number generator.
+    /// Creates a new instance of this distribution with given parameters (alpha, beta, abe) and the default random number generator.
     /// </summary>
-    /// <param name="generator">A <see cref="Generator"/> object.</param>
-    /// <exception cref="ArgumentNullException">
-    /// <paramref name="generator"/> is NULL (<see langword="Nothing"/> in Visual Basic).
-    /// </exception>
-    public StableDistributionS1(double alpha, double beta, double sigma, double mu)
-      : this(alpha, beta, sigma, mu, DefaultGenerator)
+    /// <param name="alpha">Distribution parameter alpha (broadness exponent).</param>
+    /// <param name="beta">Distribution parameter beta (skew).</param>
+    /// <param name="abe">Parameter to specify beta with higher accuracy around -1 and 1. Is 1-beta for beta&gt;=0 or 1+beta for beta&lt;0.</param>
+    public StableDistributionS1(double alpha, double beta, double abe)
+      : this(alpha, beta, abe, 1, 0, DefaultGenerator)
     {
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ExponentialDistribution"/> class, using the specified 
-    ///   <see cref="Generator"/> as underlying random number generator.
+    /// Creates a new instance of this distribution with given parameters (alpha, beta, scale, location) and the default random number generator.
     /// </summary>
-    /// <param name="generator">A <see cref="Generator"/> object.</param>
-    /// <exception cref="ArgumentNullException">
-    /// <paramref name="generator"/> is NULL (<see langword="Nothing"/> in Visual Basic).
-    /// </exception>
-    public StableDistributionS1(double alpha, double beta, double sigma, double mu, Generator generator)
+    /// <param name="alpha">Distribution parameter alpha (broadness exponent).</param>
+    /// <param name="beta">Distribution parameter beta (skew).</param>
+    /// <param name="scale">Scaling parameter (broadness of the distribution).</param>
+    /// <param name="location">Location of the distribution.</param>
+    public StableDistributionS1(double alpha, double beta, double scale, double location)
+      : this(alpha, beta, GetAbeFromBeta(beta), scale, location, DefaultGenerator)
+    {
+    }
+
+    /// <summary>
+    /// Creates a new instance of this distribution with given parameters (alpha, beta, scale, location) and the provided random number generator.
+    /// </summary>
+    /// <param name="alpha">Distribution parameter alpha (broadness exponent).</param>
+    /// <param name="beta">Distribution parameter beta (skew).</param>
+    /// <param name="scale">Scaling parameter (broadness of the distribution).</param>
+    /// <param name="location">Location of the distribution.</param>
+    /// <param name="generator">Random number generator to be used with this distribution.</param>
+    public StableDistributionS1(double alpha, double beta, double scale, double location, Generator generator)
+      : this(alpha, beta, GetAbeFromBeta(beta), scale, location, generator)
+    {
+    }
+
+    /// <summary>
+    /// Creates a new instance of this distribution with given parameters (alpha, beta, abe, scale, location) and the default random number generator.
+    /// </summary>
+    /// <param name="alpha">Distribution parameter alpha (broadness exponent).</param>
+    /// <param name="beta">Distribution parameter beta (skew).</param>
+    /// <param name="abe">Parameter to specify beta with higher accuracy around -1 and 1. Is 1-beta for beta&gt;=0 or 1+beta for beta&lt;0.</param>
+    /// <param name="scale">Scaling parameter (broadness of the distribution).</param>
+    /// <param name="location">Location of the distribution.</param>
+    public StableDistributionS1(double alpha, double beta, double abe, double scale, double location)
+      : this(alpha, beta, abe, scale, location, DefaultGenerator)
+    {
+    }
+
+    /// <summary>
+    /// Creates a new instance of this distribution with given parameters (alpha, beta, abe, scale, location) and the provided random number generator.
+    /// </summary>
+    /// <param name="alpha">Distribution parameter alpha (broadness exponent).</param>
+    /// <param name="beta">Distribution parameter beta (skew).</param>
+    /// <param name="abe">Parameter to specify beta with higher accuracy around -1 and 1. Is 1-beta for beta&gt;=0 or 1+beta for beta&lt;0.</param>
+    /// <param name="scale">Scaling parameter (broadness of the distribution).</param>
+    /// <param name="location">Location of the distribution.</param>
+    /// <param name="generator">Random number generator to be used with this distribution.</param>
+    public StableDistributionS1(double alpha, double beta, double abe, double scale, double location, Generator generator)
       : base(generator)
     {
-      Initialize(alpha, beta, sigma, mu);
+      Initialize(alpha, beta, abe, scale, location);
     }
-    #endregion
+
+#endregion
 
     #region Distribution properties
-
     /// <summary>
-    /// Updates the helper variables that store intermediate results for generation of exponential distributed random 
-    ///   numbers.
+    /// Initializes this instance of the distribution with the distribution parameters. 
     /// </summary>
-    public void Initialize(double alpha, double beta, double sigma, double mu)
+    /// <param name="alpha">Distribution parameter alpha (broadness exponent).</param>
+    /// <param name="beta">Distribution parameter beta (skew).</param>
+    /// <param name="abe">Parameter to specify beta with higher accuracy around -1 and 1. Is 1-beta for beta&gt;=0 or 1+beta for beta&lt;0.</param>
+    /// <param name="scale">Scaling parameter (broadness of the distribution).</param>
+    /// <param name="location">Location of the distribution.</param>
+    public void Initialize(double alpha, double beta, double abe, double scale, double location)
     {
       if (!IsValidAlpha(alpha))
         throw new ArgumentOutOfRangeException("Alpha out of range (must be greater 0.1 and smalle or equal than 2)");
       if (!IsValidBeta(beta))
         throw new ArgumentOutOfRangeException("Beta out of range (must be in the range [-1,1])");
-      if (!IsValidSigma(sigma))
+      if (!IsValidScale(scale))
         throw new ArgumentOutOfRangeException("Sigma out of range (must be >0)");
-      if (!IsValidMu(mu))
+      if (!IsValidLocation(location))
         throw new ArgumentOutOfRangeException("Mu out of range (must be finite)");
 
       this._alpha = alpha;
       this._beta = beta;
-      this._scale = sigma;
-      this._mu = mu;
+      this._abe = abe;
+      this._scale = scale;
+      this._mu = location;
+
+      // Generator variables
+      if (_alpha != 1 && _alpha != 2)
+      {
+        double tanpialpha2 = TanXPiBy2(alpha);
+        _gen_t = beta * tanpialpha2;
+        _gen_B = Math.Atan(_gen_t) / alpha;
+        _gen_S = PowerOfOnePlusXSquared(_gen_t, 0.5 / _alpha);
+        _gen_Scale = 1;
+      }
     }
 
     public static bool IsValidAlpha(double alpha)
@@ -111,13 +155,13 @@ namespace Altaxo.Calc.Probability
     {
       return beta >= -1 && beta <= 1;
     }
-    public static bool IsValidSigma(double sigma)
+    public static bool IsValidScale(double scale)
     {
-      return sigma > 0;
+      return scale > 0;
     }
-    public static bool IsValidMu(double mu)
+    public static bool IsValidLocation(double location)
     {
-      return mu >= double.MinValue && mu <= double.MaxValue;
+      return location >= double.MinValue && location <= double.MaxValue;
     }
 
     public override double Minimum
@@ -183,14 +227,29 @@ namespace Altaxo.Calc.Probability
     public override double NextDouble()
     {
       if (_beta == 0)
-        return _mu + _scale*GenerateSymmetricCase(_alpha);
+        return _mu + _scale * GenerateSymmetricCase(_alpha);
       else
-        return _mu + GenerateAsymmetricCaseS1(_alpha, _beta, _scale);
+      {
+        if (_alpha == 1)
+          return GenerateAsymmetricCaseS1_AEq1(_alpha, _beta) * _scale + _mu;
+        else
+          return GenerateAsymmetricCaseS1_ANe1(_alpha, _gen_t, _gen_B, _gen_S, _scale) + _mu;
+      }
     }
 
     public override double PDF(double x)
     {
-      return PDF(x, _alpha, _beta, _scale, _mu, ref _tempStorePDF, _pdfPrecision);
+      return PDF((x-_mu)/_scale, _alpha, _beta, _abe, ref _tempStorePDF, DefaultPrecision)/_scale;
+    }
+
+    public override double CDF(double x)
+    {
+      return CDF((x-_mu)/_scale, _alpha, _beta, _abe, ref _tempStorePDF, DefaultPrecision);
+    }
+
+    public override double Quantile(double p)
+    {
+      return _mu + _scale * Quantile(p, _alpha, _beta, _abe);
     }
 
     #endregion
@@ -292,6 +351,94 @@ namespace Altaxo.Calc.Probability
         return StableDistributionS0.CDFMethodAlphaOne(x, beta, abe, ref tempStorage, precision);
       }
     }
+
+    #endregion
+
+    #region Quantile
+
+    public static double Quantile(double p, double alpha, double beta)
+    {
+      object tempStorage = null;
+      double abe = GetAbeFromBeta(beta);
+      return Quantile(p, alpha, beta, abe, ref tempStorage, DefaultPrecision);
+    }
+
+    public static double Quantile(double p, double alpha, double beta, double abe)
+    {
+      object tempStorage = null;
+      return Quantile(p, alpha, beta, abe, ref tempStorage, DefaultPrecision);
+    }
+
+    public static double Quantile(double p, double alpha, double beta, double abe, ref object tempStorage, double precision)
+    {
+      double xguess = Math.Exp(2 / alpha); // guess value for a nearly constant p value in dependence of alpha
+      double x0 = -xguess;
+      double x1 = xguess;
+
+      object temp = tempStorage;
+      double root = double.NaN;
+      if (RootFinding.BracketRootByExtensionOnly(delegate(double x) { return CDF(x, alpha, beta, abe, ref temp, DefaultPrecision) - p; }, 0, ref x0, ref x1))
+      {
+        if (null != RootFinding.ByBrentsAlgorithm(delegate(double x) { return CDF(x, alpha, beta, abe, ref temp, DefaultPrecision) - p; }, x0, x1, 0, DoubleConstants.DBL_EPSILON, out root))
+          root = double.NaN;
+      }
+      tempStorage = temp;
+
+      return root;
+    }
+
+    #endregion
+
+    #region Calculation of integration parameters
+
+    public static void GetAlt1GnParameter(double x, double alpha, double beta, double abe,
+                                          out double factorp, out double facdiv, out double dev, out double logPdfPrefactor)
+    {
+      double tan_pi_alpha_2 = TanXPiBy2(alpha);
+
+      double aga;
+      double gamma = GammaFromAlphaBetaTanPiA2(alpha, beta, abe, tan_pi_alpha_2, out aga);
+      dev = Math.PI * (gamma < 0 ? 0.5 * aga : 1 - 0.5 * aga);
+      // double factor = Math.Pow(xx, alpha / (alpha - 1)) * Math.Pow(Math.Cos(alpha * xi), 1 / (alpha - 1));
+      facdiv = CosGammaPiBy2(alpha, gamma, aga); // Inverse part of the original factor without power
+      factorp = x * facdiv; // part of the factor with power alpha/(alpha-1);
+      logPdfPrefactor = Math.Log(alpha / (Math.PI * Math.Abs(alpha - 1) * (x)));
+    }
+
+    public static void GetAlt1GpParameter(double x, double alpha, double beta, double abe,
+                                          out double factorp, out double facdiv, out double dev, out double logPdfPrefactor)
+    {
+      double tan_pi_alpha_2 = TanXPiBy2(alpha);
+
+      double aga;
+      double gamma = GammaFromAlphaBetaTanPiA2(alpha, beta, abe, tan_pi_alpha_2, out aga);
+      dev = Math.PI * (gamma >= 0 ? 0.5 * aga : 1 - 0.5 * aga);
+      // double factor = Math.Pow(xx, alpha / (alpha - 1)) * Math.Pow(Math.Cos(alpha * xi), 1 / (alpha - 1));
+      facdiv = CosGammaPiBy2(alpha, gamma, aga); // Inverse part of the original factor without power
+      factorp = x * facdiv; // part of the factor with power alpha/(alpha-1);
+      logPdfPrefactor = Math.Log(alpha / (Math.PI * Math.Abs(alpha - 1) * x));
+    }
+
+    public static void GetAgt1GnParameter(double x, double alpha, double beta, double abe,
+                                                 out double factorp, out double factorw, out double dev, out double logPrefactor)
+    {
+      double tan_pi_alpha_2 = TanXPiBy2(alpha);
+
+      double aga;
+      double gamma = GammaFromAlphaBetaTanPiA2(alpha, beta, abe, tan_pi_alpha_2, out aga);
+
+      dev = Math.PI * (gamma < 0 ? 0.5 * aga : (0.5 * ((2 - alpha) + gamma)));
+      if (dev < 0)
+        dev = 0;
+
+      //double factor = Math.Pow(xx, alpha / (alpha - 1)) * Math.Pow(Math.Cos(alpha * xi), 1 / (alpha - 1));
+      // we separate the factor in a power of 1/alpha-1 and the rest
+      factorp = x * CosGammaPiBy2(alpha, gamma, aga); // Math.Cos(-gamma * 0.5 * Math.PI);
+      factorw = x;
+
+      logPrefactor = Math.Log(alpha / (Math.PI * Math.Abs(alpha - 1) * x));
+    }
+
 
     #endregion
 

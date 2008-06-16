@@ -9,8 +9,13 @@ namespace Altaxo.Calc.Probability
     ExponentialDistribution _expDist = new ExponentialDistribution();
     ContinuousUniformDistribution _contDist = new ContinuousUniformDistribution();
 
+    /// <summary>Helper variables used for generating the random values.</summary>
+    protected double _gen_t, _gen_B, _gen_S, _gen_Scale;
+
+
     /// <summary>The highest number x that, when taken Exp(-x), gives a result greater than zero.</summary>
     protected static readonly double MinusLogTiny = -Math.Log(double.Epsilon);
+    /// <summary>Default precision used for the integrations.</summary>
     protected static readonly double DefaultPrecision = Math.Sqrt(DoubleConstants.DBL_EPSILON);
 
     #region Abstract Implementation of ContinuousDistribution
@@ -370,7 +375,7 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    private static double TanXPiBy2(double x)
+    protected static double TanXPiBy2(double x)
     {
       const double PiBy2 = Math.PI / 2;
 
@@ -475,6 +480,16 @@ namespace Altaxo.Calc.Probability
       {
         return 1 - Math.Exp(x);
       }
+    }
+
+    public static double GetAbeFromBeta(double beta)
+    {
+      return beta >= 0 ? 1 - beta : 1 + beta;
+    }
+
+    public static double GetBetaFromAbe(double abe, bool isBetaNegative)
+    {
+      return isBetaNegative ? -1 + abe : 1 - abe;
     }
 
     public static void ParameterConversionS0ToFeller(double alpha, double beta, double abe, double sigma0, double mu0, out double gamma, out double aga, out double sigmaf, out double muf)
@@ -897,7 +912,7 @@ namespace Altaxo.Calc.Probability
 
         double xm = 1E-10;
 
-        double resultLeft = Math.Exp(logPdfPrefactor) * xm * pdfFunc(0);
+        double resultLeft = xm * pdfFunc(0); // note that logPdfPrefactor is already included in pdfFunc(0), so it is not neccessary to include it here
 
         GSL_ERROR error1;
         double resultRight, abserrRight;
@@ -1314,7 +1329,7 @@ namespace Altaxo.Calc.Probability
       public double PDFIntegrateAlphaNearOne(ref object tempStorage, double precision)
       {
         if (dev == 0)
-          return PDFIntegrateZeroDev(ref tempStorage, precision);
+          return PDFIntegrateZeroDevAlphaNearOne(ref tempStorage, precision);
 
         GSL_ERROR error;
         double resultLeft = 0, resultRight;
@@ -1362,6 +1377,61 @@ namespace Altaxo.Calc.Probability
         return (resultLeft + resultRight);
       }
 
+      protected double PDFIntegrateZeroDevAlphaNearOne(ref object tempStorage, double precision)
+      {
+        const double logPrefactorOffset = 100;
+        const double OneByPrefactorOffset = 3.720075976020835962959696e-44;
+
+        // for zero dev we know that the core is constant until x=1E-10
+        // so the first part
+
+        double y0 = pdfCore(0);
+
+        if (y0 > (MinusLogTiny + 2 + logPdfPrefactor))
+          return 0;
+
+        bool prefactorApplied = false;
+        double orgPrefactor = logPdfPrefactor;
+        if (y0 > (MinusLogTiny + logPdfPrefactor - logPrefactorOffset))
+        {
+          prefactorApplied = true;
+          logPdfPrefactor += logPrefactorOffset;
+        }
+
+        double ye;
+        double xe = FindIncreasingYEqualTo(pdfCore, 0, UpperIntegrationLimit, y0 + 9, 1, out ye);
+
+        GSL_ERROR error1;
+        double result, abserr;
+        if (xe * 10 < UpperIntegrationLimit) // then: logarithmic integration
+        {
+          double xm = 1E-10;
+          double resultLeft = xm * pdfFunc(0); // note that the logPdfPrefactor is already included in pdfFunc(0), so it is unneccessary to have it here again
+
+          // now integrate logarithmically
+          error1 = Calc.Integration.QagpIntegration.Integration(
+                      PDFFuncLogInt,
+                      new double[] { Math.Log(xm), Math.Log(Math.PI) }, 2,
+                      0, precision, 100, out result, out abserr, ref tempStorage);
+          
+          result += resultLeft;
+        }
+        else // linear integration
+        {
+          error1 = Calc.Integration.QagpIntegration.Integration(
+                      PDFFunc,
+                      new double[] { 0, xe, Math.PI }, 3,
+                      0, precision, 100, out result, out abserr, ref tempStorage);
+        }
+
+        if (null != error1 && error1.Number!= GSL_ERR.GSL_EROUND) // ignore rounding errors here because rounding errors are possible due to the high power alpha/(1-alpha)
+          result = double.NaN;
+
+        logPdfPrefactor = orgPrefactor;
+
+        return prefactorApplied ? OneByPrefactorOffset * result :  result;
+      }
+
 
       private double PDF_R1Core(double thetas)
       {
@@ -1369,7 +1439,7 @@ namespace Altaxo.Calc.Probability
       }
       private double PDF_R1CoreDerivativeByR1Core(double thetas)
       {
-        return alpha / Math.Tan(alpha * _xm) - 1 / Math.Tan(dev + _xm);
+        return alpha / Math.Tan(alpha * thetas) - 1 / Math.Tan(dev + thetas);
       }
 
     }

@@ -11,6 +11,7 @@ namespace Altaxo.Calc.Probability
   {
     double _alpha;
     double _beta;
+    double _abe;
 
     double _mu;
     double _scale = 1;
@@ -18,14 +19,11 @@ namespace Altaxo.Calc.Probability
     double _muOffsetToS1;
 
     object _tempStorePDF;
-    static readonly double _pdfPrecision = Math.Sqrt(DoubleConstants.DBL_EPSILON);
-
 
     #region construction
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ExponentialDistribution"/> class, using a 
-    ///   <see cref="StandardGenerator"/> as underlying random number generator.
+    /// Creates a new instance of this distribution with default parameters (alpha=1, beta=0) and the default generator.
     /// </summary>
     public StableDistributionS0()
       : this(DefaultGenerator)
@@ -33,56 +31,86 @@ namespace Altaxo.Calc.Probability
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ExponentialDistribution"/> class, using the specified 
-    ///   <see cref="Generator"/> as underlying random number generator.
+    /// Creates a new instance of this distribution with default parameters (alpha=1, beta=0).
     /// </summary>
-    /// <param name="generator">A <see cref="Generator"/> object.</param>
-    /// <exception cref="ArgumentNullException">
-    /// <paramref name="generator"/> is NULL (<see langword="Nothing"/> in Visual Basic).
-    /// </exception>
+    /// <param name="generator">Random number generator to be used with this distribution.</param>
     public StableDistributionS0(Generator generator)
-      : this(1, 0, 1, 0, generator)
+      : this(1, 0, 1, 1, 0, generator)
     {
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ExponentialDistribution"/> class, using the specified 
-    ///   <see cref="Generator"/> as underlying random number generator.
+    /// Creates a new instance of this distribution with given parameters (alpha, beta) and the default random number generator.
     /// </summary>
-    /// <param name="generator">A <see cref="Generator"/> object.</param>
-    /// <exception cref="ArgumentNullException">
-    /// <paramref name="generator"/> is NULL (<see langword="Nothing"/> in Visual Basic).
-    /// </exception>
+    /// <param name="alpha">Distribution parameter alpha (broadness exponent).</param>
+    /// <param name="beta">Distribution parameter beta (skew).</param>
     public StableDistributionS0(double alpha, double beta)
-      : this(alpha, beta, 1, 0, DefaultGenerator)
+      : this(alpha, beta, GetAbeFromBeta(beta), 1, 0, DefaultGenerator)
     {
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ExponentialDistribution"/> class, using the specified 
-    ///   <see cref="Generator"/> as underlying random number generator.
+    /// Creates a new instance of this distribution with given parameters (alpha, beta, abe) and the default random number generator.
     /// </summary>
-    /// <param name="generator">A <see cref="Generator"/> object.</param>
-    /// <exception cref="ArgumentNullException">
-    /// <paramref name="generator"/> is NULL (<see langword="Nothing"/> in Visual Basic).
-    /// </exception>
-    public StableDistributionS0(double alpha, double beta, double sigma, double mu)
-      : this(alpha, beta, sigma, mu, DefaultGenerator)
+    /// <param name="alpha">Distribution parameter alpha (broadness exponent).</param>
+    /// <param name="beta">Distribution parameter beta (skew).</param>
+    /// <param name="abe">Parameter to specify beta with higher accuracy around -1 and 1. Is 1-beta for beta&gt;=0 or 1+beta for beta&lt;0.</param>
+    public StableDistributionS0(double alpha, double beta, double abe)
+      : this(alpha, beta, abe, 1, 0, DefaultGenerator)
     {
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ExponentialDistribution"/> class, using the specified 
-    ///   <see cref="Generator"/> as underlying random number generator.
+    /// Creates a new instance of this distribution with given parameters (alpha, beta, scale, location) and the default random number generator.
     /// </summary>
-    /// <param name="generator">A <see cref="Generator"/> object.</param>
-    /// <exception cref="ArgumentNullException">
-    /// <paramref name="generator"/> is NULL (<see langword="Nothing"/> in Visual Basic).
-    /// </exception>
-    public StableDistributionS0(double alpha, double beta, double sigma, double mu, Generator generator)
+    /// <param name="alpha">Distribution parameter alpha (broadness exponent).</param>
+    /// <param name="beta">Distribution parameter beta (skew).</param>
+    /// <param name="scale">Scaling parameter (broadness of the distribution).</param>
+    /// <param name="location">Location of the distribution.</param>
+    public StableDistributionS0(double alpha, double beta, double scale, double location)
+      : this(alpha, beta, GetAbeFromBeta(beta), scale, location, DefaultGenerator)
+    {
+    }
+
+    /// <summary>
+    /// Creates a new instance of this distribution with given parameters (alpha, beta, scale, location) and the provided random number generator.
+    /// </summary>
+    /// <param name="alpha">Distribution parameter alpha (broadness exponent).</param>
+    /// <param name="beta">Distribution parameter beta (skew).</param>
+    /// <param name="scale">Scaling parameter (broadness of the distribution).</param>
+    /// <param name="location">Location of the distribution.</param>
+    /// <param name="generator">Random number generator to be used with this distribution.</param>
+    public StableDistributionS0(double alpha, double beta, double scale, double location, Generator generator)
+      : this(alpha, beta, GetAbeFromBeta(beta), scale, location, generator)
+    {
+    }
+
+    /// <summary>
+    /// Creates a new instance of this distribution with given parameters (alpha, beta, abe, scale, location) and the default random number generator.
+    /// </summary>
+    /// <param name="alpha">Distribution parameter alpha (broadness exponent).</param>
+    /// <param name="beta">Distribution parameter beta (skew).</param>
+    /// <param name="abe">Parameter to specify beta with higher accuracy around -1 and 1. Is 1-beta for beta&gt;=0 or 1+beta for beta&lt;0.</param>
+    /// <param name="scale">Scaling parameter (broadness of the distribution).</param>
+    /// <param name="location">Location of the distribution.</param>
+    public StableDistributionS0(double alpha, double beta, double abe, double scale, double location)
+      : this(alpha, beta, abe, scale, location, DefaultGenerator)
+    {
+    }
+
+    /// <summary>
+    /// Creates a new instance of this distribution with given parameters (alpha, beta, abe, scale, location) and the provided random number generator.
+    /// </summary>
+    /// <param name="alpha">Distribution parameter alpha (broadness exponent).</param>
+    /// <param name="beta">Distribution parameter beta (skew).</param>
+    /// <param name="abe">Parameter to specify beta with higher accuracy around -1 and 1. Is 1-beta for beta&gt;=0 or 1+beta for beta&lt;0.</param>
+    /// <param name="scale">Scaling parameter (broadness of the distribution).</param>
+    /// <param name="location">Location of the distribution.</param>
+    /// <param name="generator">Random number generator to be used with this distribution.</param>
+    public StableDistributionS0(double alpha, double beta, double abe, double scale, double location, Generator generator)
       : base(generator)
     {
-      Initialize(alpha, beta, sigma, mu);
+      Initialize(alpha, beta, abe, scale, location);
     }
     #endregion
 
@@ -91,7 +119,7 @@ namespace Altaxo.Calc.Probability
     /// Updates the helper variables that store intermediate results for generation of exponential distributed random 
     ///   numbers.
     /// </summary>
-    public void Initialize(double alpha, double beta, double sigma, double mu)
+    public void Initialize(double alpha, double beta, double abe, double sigma, double mu)
     {
       if (!IsValidAlpha(alpha))
         throw new ArgumentOutOfRangeException("Alpha out of range (must be greater 0.1 and smalle or equal than 2)");
@@ -104,10 +132,22 @@ namespace Altaxo.Calc.Probability
 
       this._alpha = alpha;
       this._beta = beta;
+      this._abe = abe;
       this._scale = sigma;
       this._mu = mu;
       ParameterConversionS0ToS1(_alpha, _beta, _scale, _mu, out _muOffsetToS1);
+
+      // Generator variables
+       if (_alpha != 1 && _alpha != 2)
+      {
+         double tanpialpha2 = TanXPiBy2(alpha);
+        _gen_t = beta * tanpialpha2;
+        _gen_B = Math.Atan(_gen_t)/alpha;
+        _gen_S = PowerOfOnePlusXSquared(_gen_t, 0.5 / _alpha);
+        _gen_Scale = 1;
+      }
     }
+    
 
     public static bool IsValidAlpha(double alpha)
     {
@@ -193,16 +233,27 @@ namespace Altaxo.Calc.Probability
       else
       {
         if (_alpha == 1)
-          return GenerateAsymmetricCaseS1(_alpha, _beta, _scale) + _mu;
+          return GenerateAsymmetricCaseS1_AEq1(_alpha, _beta)*_scale + _mu;
         else
-          return GenerateAsymmetricCaseS1(_alpha, _beta, _scale) + _muOffsetToS1;
+          return GenerateAsymmetricCaseS1_ANe1(_alpha, _gen_t, _gen_B, _gen_S, _scale) + _muOffsetToS1;
       }
     }
 
     public override double PDF(double x)
     {
-      return PDF(x, _alpha, _beta, _scale, _mu, ref _tempStorePDF, _pdfPrecision);
+      return PDF(x, _alpha, _beta, _scale, _mu, ref _tempStorePDF, DefaultPrecision);
     }
+
+    public override double CDF(double x)
+    {
+      return CDF((x-_mu)/_scale, _alpha, _beta, _abe, ref _tempStorePDF, DefaultPrecision);
+    }
+
+    public double Quantile(double p)
+    {
+      return _mu + _scale*Quantile(p, _alpha, _beta, _abe);
+    }
+
     #endregion
 
     #region PDF
@@ -255,58 +306,8 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-    public static double CDF(double x, double alpha, double beta)
-    {
-      double abe = beta >= 0 ? 1 - beta : 1 + beta;
-      return CDF(x, alpha, beta, abe);
-    }
-
-    public static double CDF(double x, double alpha, double beta, double abe)
-    {
-      object temp = null;
-      return CDF(x, alpha, beta, abe, ref temp, Math.Sqrt(DoubleConstants.DBL_EPSILON));
-    }
-
-    public static double CDF(double x, double alpha, double beta, double abe, ref object tempStorage, double precision)
-    {
-      // test input parameter
-      if (!(alpha > 0 && alpha <= 2))
-        throw new ArgumentOutOfRangeException(string.Format("Alpha must be in the range (0,2], but was: {0}", alpha));
-      if (!(beta >= -1 && beta <= 1))
-        throw new ArgumentOutOfRangeException(string.Format("Beta must be in the range [-1,1], but was: {0}", beta));
-
-
-      if (alpha != 1)
-      {
-        double gamma, aga, sigmaf, muf;
-        ParameterConversionS0ToFeller(alpha, beta, abe, 1, 0, out gamma, out aga, out sigmaf, out muf);
-        return StableDistributionFeller.CDF((x - muf) / sigmaf, alpha, gamma, aga, ref tempStorage, precision);
-      }
-      else
-      {
-        return CDFMethodAlphaOne(x, beta, abe, ref tempStorage, precision);
-      }
-    }
-
-    /*
-
-    private static double PDFMethod1(double x, double alpha, double beta, double zeta, ref object tempStorage, double precision)
-    {
-      double xi = Math.Atan(-zeta) / alpha;
-      double factor = Math.Pow(x - zeta, alpha / (alpha - 1)) * Math.Pow(Math.Cos(alpha * xi), 1 / (alpha - 1));
-      double integrand = IntegrateFuncExpMFunc(delegate(double theta) { return PDFCore1(factor, alpha, xi, theta); }, -xi, 0.5 * Math.PI, alpha > 1, ref tempStorage, precision);
-      double pre = alpha / (Math.PI * Math.Abs(alpha - 1) * (x - zeta));
-      return pre * integrand;
-    }
-
-    private static double PDFCore1(double factor, double alpha, double xi, double theta)
-    {
-      double r1 = Math.Pow(Math.Cos(theta) / Math.Sin(alpha * (theta + xi)), alpha / (alpha - 1));
-      double r2 = Math.Cos(alpha * xi + (alpha - 1) * theta) / Math.Cos(theta);
-      double result = factor * r1 * r2;
-      return result < 0 ? 0 : result; // the result should be always positive, if not this is due to numerical inaccuracies near the borders, we can safely set the result 0 then
-    }
-    */
+   
+   
 
 
     public static double PDFMethodAlphaOne(double x, double beta, double abe, ref object tempStorage, double precision)
@@ -331,6 +332,47 @@ namespace Altaxo.Calc.Probability
       }
     }
 
+  
+   
+
+    #endregion
+ 
+    #region CDF
+
+    public static double CDF(double x, double alpha, double beta)
+    {
+      double abe = beta >= 0 ? 1 - beta : 1 + beta;
+      return CDF(x, alpha, beta, abe);
+    }
+
+    public static double CDF(double x, double alpha, double beta, double abe)
+    {
+      object temp = null;
+      return CDF(x, alpha, beta, abe, ref temp, DefaultPrecision);
+    }
+
+    public static double CDF(double x, double alpha, double beta, double abe, ref object tempStorage, double precision)
+    {
+      // test input parameter
+      if (!(alpha > 0 && alpha <= 2))
+        throw new ArgumentOutOfRangeException(string.Format("Alpha must be in the range (0,2], but was: {0}", alpha));
+      if (!(beta >= -1 && beta <= 1))
+        throw new ArgumentOutOfRangeException(string.Format("Beta must be in the range [-1,1], but was: {0}", beta));
+
+
+      if (alpha != 1)
+      {
+        double gamma, aga, sigmaf, muf;
+        ParameterConversionS0ToFeller(alpha, beta, abe, 1, 0, out gamma, out aga, out sigmaf, out muf);
+        return StableDistributionFeller.CDF((x - muf) / sigmaf, alpha, gamma, aga, ref tempStorage, precision);
+      }
+      else
+      {
+        return CDFMethodAlphaOne(x, beta, abe, ref tempStorage, precision);
+      }
+    }
+
+
     public static double CDFMethodAlphaOne(double x, double beta, double abe, ref object tempStorage, double precision)
     {
       if (0 == beta)
@@ -348,150 +390,102 @@ namespace Altaxo.Calc.Probability
       }
     }
 
-   
-
-    #endregion
-
- 
-    #region CDF
-
-    /*
-    public static double CDF(double x, double alpha, double beta)
-    {
-      object tempStorage = null;
-      return CDF(x, alpha, beta, ref tempStorage);
-    }
-
-    public static double CDF(double x, double alpha, double beta, ref object tempStorage)
-    {
-      // test input parameter
-      if (!(alpha > 0 && alpha <= 2))
-        throw new ArgumentOutOfRangeException(string.Format("Alpha must be in the range (0,2], but was: {0}", alpha));
-      if (!(beta >= -1 && beta <= 1))
-        throw new ArgumentOutOfRangeException(string.Format("Beta must be in the range [-1,1], but was: {0}", beta));
-      // if (beta == -1 && x > 0)
-      // return 0;
-      //if (beta == 1 && x < 0)
-      //return 0;
-
-      double zeta = -beta * Math.Tan(alpha * 0.5 * Math.PI);
-
-      //throw new ApplicationException();
-      if (alpha != 1)
-      {
-        if (IsXNearlyEqualToZeta(x, zeta))
-        {
-          return (Math.PI / 2 - zeta) / Math.PI;
-        }
-        else if (x > zeta)
-        {
-          return CDFMethod1(x, alpha, beta, zeta, ref tempStorage);
-        }
-        else
-        {
-          return 1 - CDFMethod1(-x, alpha, -beta, -zeta, ref tempStorage);
-        }
-      }
-      else // alpha == 1
-      {
-        if (beta == 0)
-        {
-          return 0.5 + Math.Atan(x) / Math.PI;
-        }
-        else if (beta > 0)
-        {
-          return CDFMethod2(x, beta, ref tempStorage);
-        }
-        else // beta < 0
-        {
-          return CDFMethod2(x, -beta, ref tempStorage);
-        }
-      }
-
-    }
-     
-
-    private static double CDFMethod1(double x, double alpha, double beta, double zeta, ref object tempStorage)
-    {
-      double xi = Math.Atan(-zeta) / alpha;
-      double factor = Math.Pow(x - zeta, alpha / (alpha - 1)) * Math.Pow(Math.Cos(alpha * xi), 1 / (alpha - 1));
-      double integrand = CDFIntegrate(
-        delegate(double theta)
-        {
-          return PDFCore1(factor, alpha, xi, theta);
-        },
-        -xi, 0.5 * Math.PI, alpha > 1, ref tempStorage);
-
-      double pre = Math.Sign(1 - alpha) / Math.PI;
-      double plus = alpha > 1 ? 1 : (Math.PI / 2 - zeta) / Math.PI;
-      return plus + pre * integrand;
-    }
-   
-
-    private static double CDFMethod2(double x, double beta, ref object tempStorage)
-    {
-      double factor = Math.Exp(-0.5 * Math.PI * x / beta) * 2 / Math.PI;
-      double integrand = CDFIntegrate(delegate(double theta) { return PDFCoreAlphaOne(factor, beta, theta); }, -0.5 * Math.PI, 0.5 * Math.PI, beta < 0, ref tempStorage);
-      double pre = 1 / Math.PI;
-      return pre * integrand;
-    }
-
-    /// <summary>
-    /// Integrates Exp(-func) from x0 to x1. It relies on the fact that func is monotonical increasing from x0 to x1, so that the maximum 
-    /// of Exp(-func) is at x0.
-    /// </summary>
-    /// <param name="func"></param>
-    /// <param name="x0"></param>
-    /// <param name="x1"></param>
-    /// <returns></returns>
-    private static double CDFIntegrate(ScalarFunctionDD func, double x0, double x1, bool isDecreasing, ref object tempStorage)
-    {
-      double result = 0, abserr = 0;
-      try
-      {
-        Calc.Integration.QagpIntegration.Integration(
-          delegate(double x)
-          {
-            double f = func(x);
-            double r = double.IsInfinity(f) ? 0 : Math.Exp(-f);
-            //System.Diagnostics.Debug.WriteLine(string.Format("x={0}, f={1}, r={2}", x, f, r));
-            //Console.WriteLine("x={0}, f={1}, r={2}", x, f, r);
-            return r;
-          },
-          new double[] { x0, x0, x1 }, 3, 0, 1e-6, 100, out result, out abserr, ref tempStorage);
-        return result;
-      }
-      catch (Exception ex)
-      {
-        return result;
-      }
-    }
-     */
+  
     #endregion
 
     #region Quantile
 
     public static double Quantile(double p, double alpha, double beta)
     {
+      object tempStorage = null;
+      double abe = GetAbeFromBeta(beta);
+      return Quantile(p, alpha, beta, abe, ref tempStorage, DefaultPrecision);
+    }
+
+    public static double Quantile(double p, double alpha, double beta, double abe)
+    {
+      object tempStorage = null;
+      return Quantile(p, alpha, beta, abe, ref tempStorage, DefaultPrecision);
+    }
+
+    public static double Quantile(double p, double alpha, double beta, double abe, ref object tempStorage, double precision)
+    {
       double xguess = Math.Exp(2 / alpha); // guess value for a nearly constant p value in dependence of alpha
       double x0 = -xguess;
       double x1 = xguess;
 
-      double abe = beta >= 0 ? 1 - beta : 1 + beta;
-
-      object tempStore = null;
-      if (RootFinding.BracketRootByExtensionOnly(delegate(double x) { return CDF(x, alpha, beta, abe, ref tempStore, DefaultPrecision) - p; }, 0, ref x0, ref x1))
+      object temp = tempStorage;
+      double root = double.NaN;
+      if (RootFinding.BracketRootByExtensionOnly(delegate(double x) { return CDF(x, alpha, beta, abe, ref temp, DefaultPrecision) - p; }, 0, ref x0, ref x1))
       {
-        double root;
-        if (null == RootFinding.ByBrentsAlgorithm(delegate(double x) { return CDF(x, alpha, beta, abe, ref tempStore, DefaultPrecision) - p; }, x0, x1, 0, DoubleConstants.DBL_EPSILON, out root))
-          return root;
+        if (null != RootFinding.ByBrentsAlgorithm(delegate(double x) { return CDF(x, alpha, beta, abe, ref temp, DefaultPrecision) - p; }, x0, x1, 0, DoubleConstants.DBL_EPSILON, out root))
+          root = double.NaN;
       }
-      return double.NaN;
+      tempStorage = temp;
+
+      return root;
     }
 
     #endregion
 
+    #region Calculation of integration parameters
 
+    public static void GetAlt1GnParameter(double x, double alpha, double beta, double abe,
+                                          out double factorp, out double facdiv, out double dev, out double logPdfPrefactor)
+    {
+      double tan_pi_alpha_2 = TanXPiBy2(alpha);
+      double zeta = -beta * tan_pi_alpha_2;
+      double xx = x - zeta;
+
+      double aga;
+      double gamma = GammaFromAlphaBetaTanPiA2(alpha, beta, abe, tan_pi_alpha_2, out aga);
+      dev = Math.PI * (gamma<0 ? 0.5 * aga : 1-0.5*aga);
+      // double factor = Math.Pow(xx, alpha / (alpha - 1)) * Math.Pow(Math.Cos(alpha * xi), 1 / (alpha - 1));
+      facdiv = CosGammaPiBy2(alpha, gamma, aga); // Inverse part of the original factor without power
+      factorp = xx * facdiv; // part of the factor with power alpha/(alpha-1);
+      logPdfPrefactor = Math.Log(alpha / (Math.PI * Math.Abs(alpha - 1) * (xx)));
+    }
+
+    public static void GetAlt1GpParameter(double x, double alpha, double beta, double abe,
+                                          out double factorp, out double facdiv, out double dev, out double logPdfPrefactor)
+    {
+      double tan_pi_alpha_2 = TanXPiBy2(alpha);
+      double zeta = -beta * tan_pi_alpha_2;
+      double xx = x - zeta;
+
+      double aga;
+      double gamma = GammaFromAlphaBetaTanPiA2(alpha, beta, abe, tan_pi_alpha_2, out aga);
+      dev = Math.PI * (gamma >= 0 ? 0.5 * aga : 1 - 0.5 * aga);
+      // double factor = Math.Pow(xx, alpha / (alpha - 1)) * Math.Pow(Math.Cos(alpha * xi), 1 / (alpha - 1));
+      facdiv = CosGammaPiBy2(alpha, gamma, aga); // Inverse part of the original factor without power
+      factorp = xx * facdiv; // part of the factor with power alpha/(alpha-1);
+      logPdfPrefactor = Math.Log(alpha / (Math.PI * Math.Abs(alpha - 1) * xx));
+    }
+
+    public static void GetAgt1GnParameter(double x, double alpha, double beta, double abe,
+                                                 out double factorp, out double factorw, out double dev, out double logPrefactor)
+    {
+      double tan_pi_alpha_2 = TanXPiBy2(alpha);
+      double zeta = -beta * tan_pi_alpha_2;
+      double xx = x -zeta; // equivalent to x-zeta in S0 integral
+
+      double aga;
+      double gamma = GammaFromAlphaBetaTanPiA2(alpha, beta, abe, tan_pi_alpha_2, out aga);
+
+      dev = Math.PI * (gamma<0 ? 0.5 * aga : (0.5 * ((2 - alpha) + gamma)));
+      if (dev < 0)
+        dev = 0;
+
+      //double factor = Math.Pow(xx, alpha / (alpha - 1)) * Math.Pow(Math.Cos(alpha * xi), 1 / (alpha - 1));
+      // we separate the factor in a power of 1/alpha-1 and the rest
+      factorp = xx * CosGammaPiBy2(alpha, gamma, aga); // Math.Cos(-gamma * 0.5 * Math.PI);
+      factorw = xx;
+
+      logPrefactor = Math.Log(alpha / (Math.PI * Math.Abs(alpha - 1) * xx));
+    }
+
+
+    #endregion
   }
 
 

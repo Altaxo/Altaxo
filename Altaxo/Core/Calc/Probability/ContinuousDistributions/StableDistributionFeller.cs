@@ -15,16 +15,13 @@ namespace Altaxo.Calc.Probability
     double _mu;
     double _scale = 1;
 
-    double _gen_t, _gen_B, _gen_S, _gen_Scale;
-
     object _tempStorePDF;
     static readonly double _pdfPrecision = Math.Sqrt(DoubleConstants.DBL_EPSILON);
 
     #region construction
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ExponentialDistribution"/> class, using a 
-    ///   <see cref="StandardGenerator"/> as underlying random number generator.
+    /// Creates a new instance of this distribution with default parameters (alpha=1, beta=0) and the default generator.
     /// </summary>
     public StableDistributionFeller()
       : this(DefaultGenerator)
@@ -32,65 +29,100 @@ namespace Altaxo.Calc.Probability
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ExponentialDistribution"/> class, using the specified 
-    ///   <see cref="Generator"/> as underlying random number generator.
+    /// Creates a new instance of this distribution with default parameters (alpha=1, beta=0).
     /// </summary>
-    /// <param name="generator">A <see cref="Generator"/> object.</param>
-    /// <exception cref="ArgumentNullException">
-    /// <paramref name="generator"/> is NULL (<see langword="Nothing"/> in Visual Basic).
-    /// </exception>
+    /// <param name="generator">Random number generator to be used with this distribution.</param>
     public StableDistributionFeller(Generator generator)
-      : this(1, 0, 1, 0, generator)
+      : this(1, 0, 1, 1, 0, generator)
     {
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ExponentialDistribution"/> class, using the specified 
-    ///   <see cref="Generator"/> as underlying random number generator.
+    /// Creates a new instance of this distribution with given parameters (alpha, beta) and the default random number generator.
     /// </summary>
-    /// <param name="generator">A <see cref="Generator"/> object.</param>
-    /// <exception cref="ArgumentNullException">
-    /// <paramref name="generator"/> is NULL (<see langword="Nothing"/> in Visual Basic).
-    /// </exception>
+    /// <param name="alpha">Distribution parameter alpha (broadness exponent).</param>
+    /// <param name="gamma">Distribution parameter gamma (skew).</param>
     public StableDistributionFeller(double alpha, double gamma)
-      : this(alpha, gamma, 1, 0, DefaultGenerator)
+      : this(alpha, gamma, GetAgaFromAlphaGamma(alpha,gamma), 1, 0, DefaultGenerator)
     {
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ExponentialDistribution"/> class, using the specified 
-    ///   <see cref="Generator"/> as underlying random number generator.
+    /// Creates a new instance of this distribution with given parameters (alpha, beta, abe) and the default random number generator.
     /// </summary>
-    /// <param name="generator">A <see cref="Generator"/> object.</param>
-    /// <exception cref="ArgumentNullException">
-    /// <paramref name="generator"/> is NULL (<see langword="Nothing"/> in Visual Basic).
-    /// </exception>
-    public StableDistributionFeller(double alpha, double gamma, double sigma, double mu)
-      : this(alpha, gamma, sigma, mu, DefaultGenerator)
+    /// <param name="alpha">Distribution parameter alpha (broadness exponent).</param>
+    /// <param name="gamma">Distribution parameter gamma (skew).</param>
+    /// <param name="aga">Parameter to specify gamma with higher accuracy around it's limit(s). For an explanation how aga is defined, see <see cref="GetAgaFromAlphaGamma"/>.</param>
+    public StableDistributionFeller(double alpha, double gamma, double aga)
+      : this(alpha, gamma, aga, 1, 0, DefaultGenerator)
     {
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ExponentialDistribution"/> class, using the specified 
-    ///   <see cref="Generator"/> as underlying random number generator.
+    /// Creates a new instance of this distribution with given parameters (alpha, beta, scale, location) and the default random number generator.
     /// </summary>
-    /// <param name="generator">A <see cref="Generator"/> object.</param>
-    /// <exception cref="ArgumentNullException">
-    /// <paramref name="generator"/> is NULL (<see langword="Nothing"/> in Visual Basic).
-    /// </exception>
-    public StableDistributionFeller(double alpha, double gamma, double sigma, double mu, Generator generator)
+    /// <param name="alpha">Distribution parameter alpha (broadness exponent).</param>
+    /// <param name="gamma">Distribution parameter gamma (skew).</param>
+    /// <param name="scale">Scaling parameter (broadness of the distribution).</param>
+    /// <param name="location">Location of the distribution.</param>
+    public StableDistributionFeller(double alpha, double gamma, double scale, double location)
+      : this(alpha, gamma, GetAgaFromAlphaGamma(alpha,gamma), scale, location, DefaultGenerator)
+    {
+    }
+
+    /// <summary>
+    /// Creates a new instance of this distribution with given parameters (alpha, beta, scale, location) and the provided random number generator.
+    /// </summary>
+    /// <param name="alpha">Distribution parameter alpha (broadness exponent).</param>
+    /// <param name="gamma">Distribution parameter gamma (skew).</param>
+    /// <param name="scale">Scaling parameter (broadness of the distribution).</param>
+    /// <param name="location">Location of the distribution.</param>
+    /// <param name="generator">Random number generator to be used with this distribution.</param>
+    public StableDistributionFeller(double alpha, double gamma, double scale, double location, Generator generator)
+      : this(alpha, gamma, GetAgaFromAlphaGamma(alpha, gamma), scale, location, generator)
+    {
+    }
+
+    /// <summary>
+    /// Creates a new instance of this distribution with given parameters (alpha, beta, abe, scale, location) and the default random number generator.
+    /// </summary>
+    /// <param name="alpha">Distribution parameter alpha (broadness exponent).</param>
+    /// <param name="gamma">Distribution parameter gamma (skew).</param>
+    /// <param name="aga">Parameter to specify gamma with higher accuracy around it's limit(s). For an explanation how aga is defined, see <see cref="GetAgaFromAlphaGamma"/>.</param>
+    /// <param name="scale">Scaling parameter (broadness of the distribution).</param>
+    /// <param name="location">Location of the distribution.</param>
+    public StableDistributionFeller(double alpha, double gamma, double aga, double scale, double location)
+      : this(alpha, gamma, aga, scale, location, DefaultGenerator)
+    {
+    }
+
+    /// <summary>
+    /// Creates a new instance of this distribution with given parameters (alpha, beta, abe, scale, location) and the provided random number generator.
+    /// </summary>
+    /// <param name="alpha">Distribution parameter alpha (broadness exponent).</param>
+    /// <param name="gamma">Distribution parameter gamma (skew).</param>
+    /// <param name="aga">Parameter to specify gamma with higher accuracy around it's limit(s). For an explanation how aga is defined, see <see cref="GetAgaFromAlphaGamma"/>.</param>
+    /// <param name="scale">Scaling parameter (broadness of the distribution).</param>
+    /// <param name="location">Location of the distribution.</param>
+    /// <param name="generator">Random number generator to be used with this distribution.</param>
+    public StableDistributionFeller(double alpha, double gamma, double aga, double scale, double location, Generator generator)
       : base(generator)
     {
-      Initialize(alpha, gamma, sigma, mu);
+      Initialize(alpha, gamma, aga, scale, location);
     }
     #endregion
 
     #region Distribution members
+
     /// <summary>
-    /// Updates the helper variables that store intermediate results for generation of exponential distributed random 
-    ///   numbers.
+    /// Initializes this instance of the distribution with the distribution parameters. 
     /// </summary>
-    public void Initialize(double alpha, double gamma, double sigma, double mu)
+    /// <param name="alpha">Distribution parameter alpha (broadness exponent).</param>
+    /// <param name="gamma">Distribution parameter gamma (skew).</param>
+    /// <param name="aga">Parameter to specify gamma with higher accuracy around it's limit(s). For an explanation how aga is defined, see <see cref="GetAgaFromAlphaGamma"/>.</param>
+    /// <param name="scale">Scaling parameter (broadness of the distribution).</param>
+    /// <param name="location">Location of the distribution.</param>
+    public void Initialize(double alpha, double gamma, double aga, double scale, double location)
     {
       if (!IsValidAlpha(alpha))
         throw new ArgumentOutOfRangeException("Alpha out of range (must be greater 0.1 and smalle or equal than 2)");
@@ -99,15 +131,15 @@ namespace Altaxo.Calc.Probability
       if (!IsValidGamma(alpha, gamma))
         throw new ArgumentOutOfRangeException("Beta out of range (must be in the range [-1,1])");
       _gamma = gamma;
-      _aga = GetAgaFromAlphaGamma(alpha, gamma);
+      _aga = aga;
 
-      if (!IsValidSigma(sigma))
-        throw new ArgumentOutOfRangeException("Sigma out of range (must be >0)");
-      _scale = sigma;
+      if (!IsValidScale(scale))
+        throw new ArgumentOutOfRangeException("Scale out of range (must be >0)");
+      _scale = scale;
 
-      if (!IsValidMu(mu))
-        throw new ArgumentOutOfRangeException("Mu out of range (must be finite)");
-      _mu = mu;
+      if (!IsValidLocation(location))
+        throw new ArgumentOutOfRangeException("Location out of range (must be finite)");
+      _mu = location;
 
 
 
@@ -147,13 +179,13 @@ namespace Altaxo.Calc.Probability
         return Math.Abs(gamma) <= (2 - alpha);
     }
 
-    public static bool IsValidSigma(double sigma)
+    public static bool IsValidScale(double scale)
     {
-      return sigma > 0;
+      return scale > 0;
     }
-    public static bool IsValidMu(double mu)
+    public static bool IsValidLocation(double location)
     {
-      return mu >= double.MinValue && mu <= double.MaxValue;
+      return location >= double.MinValue && location <= double.MaxValue;
     }
 
     public override double Minimum
@@ -314,6 +346,12 @@ namespace Altaxo.Calc.Probability
       double aga = GetAgaFromAlphaGamma(alpha, gamma);
       return CDF(x, alpha, gamma, aga, ref tempStorage, DefaultPrecision);
     }
+    
+    public static double CDF(double x, double alpha, double gamma, double aga)
+    {
+      object temp = null;
+      return CDF(x, alpha, gamma, aga, ref temp, DefaultPrecision);
+    }
 
     public static double CDF(double x, double alpha, double gamma, ref object tempStorage, double precision)
     {
@@ -321,32 +359,348 @@ namespace Altaxo.Calc.Probability
       return CDF(x, alpha, gamma, aga, ref tempStorage, precision);
     }
 
-    public static double CDF(double x, double alpha, double gamma, double aga)
+    static double CDFAtXZero(double alpha, double gamma, double aga)
     {
-      object temp = null;
-      return CDF(x, alpha, gamma, aga, ref temp, DefaultPrecision);
+      double result;
+      if (alpha < 1)
+      {
+        result = gamma >= 0 ? 1 - 0.5 * aga : 0.5 * aga;
+      }
+      else if (alpha == 1)
+      {
+        result = gamma >= 0 ? 1 - 0.5 * aga : 0.5 * aga;
+      }
+      else // alpha>1
+      {
+        result = (alpha + gamma) / (2 * alpha);
+      }
+      return result;
+    }
+
+    static double CCDFAtXZero(double alpha, double gamma, double aga)
+    {
+      double result;
+      if (alpha < 1)
+      {
+        result = gamma >= 0 ? 0.5 * aga : 1 - 0.5 * aga;
+      }
+      else if (alpha == 1)
+      {
+        result = gamma >= 0 ? 0.5 * aga : 1 - 0.5 * aga;
+      }
+      else // alpha>1
+      {
+        result = (alpha - gamma) / (2 * alpha);
+      }
+      return result;
     }
 
     public static double CDF(double x, double alpha, double gamma, double aga, ref object tempStorage, double precision)
     {
-      if (alpha == 1)
+      // test input parameter
+      if (!(alpha > 0 && alpha <= 2))
+        throw new ArgumentOutOfRangeException(string.Format("Alpha must be in the range (0,2], but was: {0}", alpha));
+
+      double integFromXZero, integFromXInfinity, offs;
+      if (x==0)
+      {
+        return CDFAtXZero(alpha, gamma, aga);
+      }
+      else if (x > 0)
+      {
+        CDFMethodForPositiveX(x, alpha, gamma, aga, ref tempStorage, precision, out integFromXZero, out integFromXInfinity, out offs);
+        return integFromXZero < integFromXInfinity ? (1 - offs) + integFromXZero : 1 - integFromXInfinity;
+      }
+      else // x<0
+      {
+        CDFMethodForPositiveX(-x, alpha, -gamma, aga, ref tempStorage, precision, out integFromXZero, out integFromXInfinity, out offs);
+        return integFromXInfinity;
+      }
+    }
+
+    public static double CCDF(double x, double alpha, double gamma)
+    {
+      object tempStorage = null;
+      double aga = GetAgaFromAlphaGamma(alpha, gamma);
+      return CCDF(x, alpha, gamma, aga, ref tempStorage, DefaultPrecision);
+    }
+
+    public static double CCDF(double x, double alpha, double gamma, double aga)
+    {
+      object tempStorage = null;
+      return CCDF(x, alpha, gamma, aga, ref tempStorage, DefaultPrecision);
+    }
+
+    public static double CCDF(double x, double alpha,double gamma, double aga, ref object tempStorage, double precision)
+    {
+      // test input parameter
+      if (!(alpha > 0 && alpha <= 2))
+        throw new ArgumentOutOfRangeException(string.Format("Alpha must be in the range (0,2], but was: {0}", alpha));
+
+      double integFromXZero, integFromXInfinity, offs;
+      if (0==x)
+      {
+        return CCDFAtXZero(alpha,gamma,aga);
+      }
+      else if (x > 0)
+      {
+        CDFMethodForPositiveX(x, alpha, gamma, aga, ref tempStorage, precision, out integFromXZero, out integFromXInfinity, out offs);
+        return integFromXInfinity;
+      }
+      else // x<0
+      {
+        CDFMethodForPositiveX(-x, alpha, -gamma, aga, ref tempStorage, precision, out integFromXZero, out integFromXInfinity, out offs);
+        return integFromXZero < integFromXInfinity ? (1 - offs) + integFromXZero : 1 - integFromXInfinity;
+      }
+    }
+
+
+    public static double XZCDF(double x, double alpha, double gamma)
+    {
+      object tempStorage = null;
+      double aga = GetAgaFromAlphaGamma(alpha, gamma);
+      return XZCDF(x, alpha, gamma, aga, ref tempStorage, DefaultPrecision);
+    }
+
+    public static double XZCDF(double x, double alpha, double gamma, double aga)
+    {
+      object tempStorage = null;
+      return XZCDF(x, alpha, gamma, aga, ref tempStorage, DefaultPrecision);
+    }
+
+    public static double XZCDF(double x, double alpha, double gamma, double aga, ref object tempStorage, double precision)
+    {
+      // test input parameter
+      if (!(alpha > 0 && alpha <= 2))
+        throw new ArgumentOutOfRangeException(string.Format("Alpha must be in the range (0,2], but was: {0}", alpha));
+      double result = alpha == 1 ? 0.5-CDFAtXZero(alpha, gamma, aga) : 0;
+
+      double integFromXZero, integFromXInfinity, offs;
+      if (x == 0)
+      {
+        result = 0;
+      }
+      else if (x > 0)
+      {
+        CDFMethodForPositiveX(x, alpha, gamma, aga, ref tempStorage, precision, out integFromXZero, out integFromXInfinity, out offs);
+        result += integFromXZero;
+      }
+      else // x<0
+      {
+        CDFMethodForPositiveX(-x, alpha, -gamma, aga, ref tempStorage, precision, out integFromXZero, out integFromXInfinity, out offs);
+        result += -integFromXZero;
+      }
+
+  
+
+      return result;
+    }
+
+    public static void CDFMethodForPositiveX(double x, double alpha, double gamma, double aga, ref object tempStorage, double precision, out double integFromXZero, out double integFromXInfinity, out double offs)
+    {
+      if (alpha <= 0)
+        throw new ArgumentException("Alpha must be in the range alpha>0");
+
+      if(alpha<1)
+      {
+        if (gamma <= 0)
+        {
+          offs = 1 - 0.5 * aga;
+          if (x == 0)
+          {
+            integFromXZero = 0;
+            integFromXInfinity = offs;
+          }
+          else // x != 0
+          {
+            double factorp, facdiv, dev, logPdfPrefactor;
+            GetAlt1GnParameterByGamma(x, alpha, gamma, aga, out factorp, out facdiv, out dev, out logPdfPrefactor);
+            Alt1GnI inc = new Alt1GnI(factorp, facdiv, logPdfPrefactor, alpha, dev);
+            if (inc.IsMaximumLeftHandSide())
+            {
+              integFromXZero = inc.CDFIntegrate(ref tempStorage, precision) / Math.PI;
+              integFromXInfinity = offs - integFromXZero;
+            }
+            else
+            {
+              integFromXInfinity = new Alt1GnD(factorp, facdiv, logPdfPrefactor, alpha, dev).CDFIntegrate(ref tempStorage, precision) / Math.PI;
+              integFromXZero = offs - integFromXInfinity;
+            }
+          }
+        }
+        else // gamma>0
+        {
+          offs = 0.5 * aga;
+          if (x == 0)
+          {
+            integFromXZero = 0;
+            integFromXInfinity = offs;
+          }
+          else // x!=0
+          {
+            double factorp, facdiv, dev, logPdfPrefactor;
+            GetAlt1GpParameterByGamma(x, alpha, gamma, aga, out factorp, out facdiv, out dev, out logPdfPrefactor);
+            Alt1GpI inc = new Alt1GpI(factorp, facdiv, logPdfPrefactor, alpha, dev);
+            if (inc.IsMaximumLeftHandSide())
+            {
+              integFromXZero = inc.CDFIntegrate(ref tempStorage, precision) / Math.PI;
+              integFromXInfinity = offs - integFromXZero;
+            }
+            else
+            {
+              integFromXInfinity = new Alt1GpD(factorp, facdiv, logPdfPrefactor, alpha, dev).CDFIntegrate(ref tempStorage, precision) / Math.PI;
+              integFromXZero = offs - integFromXInfinity;
+            }
+          }
+        }
+      }
+       else if (alpha == 1)
       {
         double a; // = Math.Cos(gamma*Math.PI/2);
         double b; // = Math.Sin(gamma*Math.PI/2);
-
+        offs = 0.5; 
         a = SinXPiBy2(aga); // for alpha=1 aga is 1-gamma or -1+gamma, thus we can turn cosine into sine
         b = SinXPiBy2(gamma); // for b it is not important to have high accuracy with gamma=1 or -1
-        return 0.5 + Math.Atan((b + x) / a) / Math.PI;
+        double arg = (b + x) / a;
+        if (arg <= 1)
+        {
+          integFromXZero = Math.Atan(arg) / Math.PI;
+          integFromXInfinity = offs - integFromXZero;
+        }
+        else
+        {
+          integFromXInfinity = Math.Atan(1/arg) / Math.PI;
+          integFromXZero = offs - integFromXInfinity;
+        }
+      }
+      else if (alpha <= 2)
+      {
+        double xinv = Math.Pow(x, -alpha);
+        double alphainv = 1 / alpha;
+        double gammainv = (gamma - alpha + 1) / alpha;
+        double againv = aga;
+        if (gamma > 0)
+          againv = gammainv > 0 ? 2 * (alpha - 1) + aga : 2 * (2 - alpha) - aga;
+        else
+          againv = aga;
+
+        CDFMethodForPositiveX(xinv, alphainv, gammainv, againv, ref tempStorage, precision, out integFromXZero, out integFromXInfinity, out offs);
+        double h = integFromXZero;
+        integFromXZero = integFromXInfinity/alpha;
+        integFromXInfinity = h/alpha;
+        offs /= alpha;
+      
       }
       else
       {
-        return CDFIntegral(x, alpha, gamma, aga, ref tempStorage, precision);
+        throw new ArgumentException("Alpha not in the range 0<alpha<=2");
       }
+    }
+
+    #endregion
+
+    #region Quantile
+
+    public static double Quantile(double p, double alpha, double gamma)
+    {
+      object tempStorage = null;
+      double aga = GetAgaFromAlphaGamma(alpha, gamma);
+      return Quantile(p, alpha, gamma, aga, ref tempStorage, DefaultPrecision);
+    }
+
+    public static double Quantile(double p, double alpha, double gamma, double aga)
+    {
+      object tempStorage = null;
+      return Quantile(p, alpha, gamma, aga, ref tempStorage, DefaultPrecision);
+    }
+
+    public static double Quantile(double p, double alpha, double gamma, double aga, ref object tempStorage, double precision)
+    {
+      if (p == 0.5)
+        return 0;
+
+      double xguess = Math.Exp(2 / alpha); // guess value for a nearly constant p value in dependence of alpha
+      double x0, x1;
+
+      if (p < 0.5)
+      {
+        x0 = -xguess;
+        x1 = 0;
+      }
+      else
+      {
+        x0 = 0;
+        x1 = xguess;
+      }
+
+      object temp = tempStorage;
+      double root = double.NaN;
+      if (RootFinding.BracketRootByExtensionOnly(delegate(double x) { return CDF(x, alpha, gamma, aga, ref temp, precision) - p; }, 0, ref x0, ref x1))
+      {
+        if (null != RootFinding.ByBrentsAlgorithm(delegate(double x) { return CDF(x, alpha, gamma, aga, ref temp, precision) - p; }, x0, x1, 0, DoubleConstants.DBL_EPSILON, out root))
+          root = double.NaN;
+      }
+      tempStorage = temp;
+      return root;
+    }
+
+    public static double QuantileCCDF(double p, double alpha, double gamma)
+    {
+      object tempStorage = null;
+      double aga = GetAgaFromAlphaGamma(alpha, gamma);
+      return QuantileCCDF(p, alpha, gamma, aga, ref tempStorage, DefaultPrecision);
+    }
+
+    public static double QuantileCCDF(double p, double alpha, double gamma, double aga)
+    {
+      object tempStorage = null;
+      return QuantileCCDF(p, alpha, gamma, aga, ref tempStorage, DefaultPrecision);
+    }
+
+
+    public static double QuantileCCDF(double q, double alpha, double gamma, double aga, ref object tempStorage, double precision)
+    {
+      if (q == 0.5)
+        return 0;
+
+      double xguess = Math.Exp(2 / alpha); // guess value for a nearly constant p value in dependence of alpha
+      double x0, x1;
+
+      if (q > 0.5)
+      {
+        x0 = -xguess;
+        x1 = 0;
+      }
+      else
+      {
+        x0 = 0;
+        x1 = xguess;
+      }
+
+      object temp = tempStorage;
+      double root = double.NaN;
+      if (RootFinding.BracketRootByExtensionOnly(delegate(double x) { return CCDF(x, alpha, gamma, aga, ref temp, precision) - q; }, 0, ref x0, ref x1))
+      {
+        if (null != RootFinding.ByBrentsAlgorithm(delegate(double x) { return CCDF(x, alpha, gamma, aga, ref temp, precision) - q; }, x0, x1, 0, DoubleConstants.DBL_EPSILON, out root))
+          root = double.NaN;
+      }
+      tempStorage = temp;
+
+      return root;
     }
     #endregion
 
     #region Aga calculations
 
+
+    /// <summary>
+    /// Aga is defined as follows: For alpha &lt;=1, it is (alpha-gamma)/alpha (for gamma &gt;=0) or (alpha+gamma)/alpha (for gamma &lt;0).
+    /// For alpha &gt;1 it is 2-alpha-gamma (for gamma &gt;=0) or 2-alpha+gamma (for gamma &lt;0).
+    /// This function calculates aga from alpha and gamma.
+    /// </summary>
+    /// <param name="alpha">Distribution parameter alpha (broadness exponent).</param>
+    /// <param name="gamma">Distribution parameter gamma (skew).</param>
+    /// <returns>The parameter aga.</returns>
     public static double GetAgaFromAlphaGamma(double alpha, double gamma)
     {
       double result;
@@ -378,6 +732,15 @@ namespace Altaxo.Calc.Probability
       return result;
     }
 
+    /// <summary>
+    /// Calculates gamma in dependence of alpha and aga.
+    /// </summary>
+    /// <param name="alpha">Distribution parameter alpha (broadness exponent).</param>
+    /// <param name="aga">Aga is defined as follows: For alpha &lt;=1, it is (alpha-gamma)/alpha (for gamma &gt;=0) or (alpha+gamma)/alpha (for gamma &lt;0).
+    /// For alpha &gt;1 it is 2-alpha-gamma (for gamma &gt;=0) or 2-alpha+gamma (for gamma &lt;0).
+    /// </param>
+    /// <param name="isGammaNegative">Because gamma is not defined by aga alone, you have to specify if gamma should be positive or negative.</param>
+    /// <returns>Distribution parameter gamma.</returns>
     public static double GetGammaFromAlphaAga(double alpha, double aga, bool isGammaNegative)
     {
       double result;
@@ -1170,13 +1533,7 @@ namespace Altaxo.Calc.Probability
       double zeta = TanGammaPiBy2(alpha, gamma, aga); // Math.Tan(0.5 * gamma * Math.PI);
       double sigmaf = PowerOfOnePlusXSquared(zeta, 0.5 / alpha); // Math.Pow(1 + zeta * zeta, 0.5 / alpha);
       double xx = x * sigmaf; // equivalent to x-zeta in S0 integral
-
-      double minusGammaByAlpha = -gamma / alpha;
-      if (minusGammaByAlpha < -1)
-        minusGammaByAlpha = -1;
-      else if (minusGammaByAlpha > 1)
-        minusGammaByAlpha = 1;
-
+      
       if (gamma < 0)
         dev = Math.PI * 0.5 * aga;
       else
@@ -1261,51 +1618,6 @@ namespace Altaxo.Calc.Probability
 
     #region CDF Integral
 
-    public static double CDFIntegral(double x, double alpha, double gamma, double aga, ref object temp, double precision)
-    {
-      bool inverseRuleUsed;
-      bool xWasNegative = false;
-      if (x < 0)
-      {
-        xWasNegative = true;
-        x = -x;
-        gamma = -gamma;
-        // note: aga remains invariant
-      }
-      if (!(x > 0))
-        return double.NaN;
-
-      if (alpha > 1) // use alpha inversion formula for alpha>1
-      {
-        double xinv = Math.Pow(x, -alpha);
-        double alphainv = 1 / alpha;
-        double gammainv = (gamma - alpha + 1) / alpha;
-        double againv = aga;
-        if (gamma > 0)
-          againv = gammainv > 0 ? 2 * (alpha - 1) + aga : 2 * (2 - alpha) - aga;
-
-        double integral = CDFIntegralForPositiveXAlt1(xinv, alphainv, gammainv, againv, ref temp, precision, out inverseRuleUsed);
-
-        if (xWasNegative)
-          return Math.Abs(1 - alpha) / alpha * xinv * integral;
-        else
-          return 1 - Math.Abs(1 - alpha) / alpha * xinv * integral;
-      }
-      else // alpha < 1
-      {
-        double integral = CDFIntegralForPositiveXAlt1(x, alpha, gamma, aga, ref temp, precision, out inverseRuleUsed);
-        if (xWasNegative)
-        {
-          double offs = gamma >= 0 ? 0.5 * aga : 1 - 0.5 * aga;
-          return offs - Math.Abs(1 - alpha) / alpha * x * integral;
-        }
-        else
-        {
-          double offs = gamma >= 0 ? 1 - 0.5 * aga : 0.5 * aga;
-          return offs + Math.Abs(1 - alpha) / alpha * x * integral;
-        }
-      }
-    }
 
     static double CDFIntegralForPositiveXAlt1(double x, double alpha, double gamma, double aga, ref object temp, double precision, out bool inverseRuleUsed)
     {
