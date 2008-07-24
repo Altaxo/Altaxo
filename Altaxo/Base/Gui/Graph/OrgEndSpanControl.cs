@@ -49,6 +49,8 @@ namespace Altaxo.Gui.Graph
     private System.Windows.Forms.Label lblLabel3;
     private Label lblLabel4;
     private TextBox edText4;
+    private TextBox edText5;
+    private Label lblLabel5;
     /// <summary> 
     /// Required designer variable.
     /// </summary>
@@ -101,6 +103,8 @@ namespace Altaxo.Gui.Graph
       this.lblLabel3 = new System.Windows.Forms.Label();
       this.lblLabel4 = new System.Windows.Forms.Label();
       this.edText4 = new System.Windows.Forms.TextBox();
+      this.edText5 = new System.Windows.Forms.TextBox();
+      this.lblLabel5 = new System.Windows.Forms.Label();
       this.SuspendLayout();
       // 
       // lblLabel1
@@ -198,8 +202,27 @@ namespace Altaxo.Gui.Graph
       this.edText4.Text = "textBox3";
       this.edText4.Validating += new System.ComponentModel.CancelEventHandler(this.edText4_Validating);
       // 
+      // edText5
+      // 
+      this.edText5.Location = new System.Drawing.Point(216, 153);
+      this.edText5.Name = "edText5";
+      this.edText5.Size = new System.Drawing.Size(100, 20);
+      this.edText5.TabIndex = 11;
+      this.edText5.Text = "textBox3";
+      this.edText5.Validating += new System.ComponentModel.CancelEventHandler(this.edText5_Validating);
+      // 
+      // lblLabel5
+      // 
+      this.lblLabel5.Location = new System.Drawing.Point(8, 153);
+      this.lblLabel5.Name = "lblLabel5";
+      this.lblLabel5.Size = new System.Drawing.Size(64, 20);
+      this.lblLabel5.TabIndex = 12;
+      this.lblLabel5.Text = "label3";
+      // 
       // OrgEndSpanControl
       // 
+      this.Controls.Add(this.lblLabel5);
+      this.Controls.Add(this.edText5);
       this.Controls.Add(this.edText4);
       this.Controls.Add(this.lblLabel4);
       this.Controls.Add(this.cbCombo3);
@@ -212,7 +235,7 @@ namespace Altaxo.Gui.Graph
       this.Controls.Add(this.edText1);
       this.Controls.Add(this.lblLabel1);
       this.Name = "OrgEndSpanControl";
-      this.Size = new System.Drawing.Size(328, 150);
+      this.Size = new System.Drawing.Size(328, 176);
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -281,6 +304,11 @@ namespace Altaxo.Gui.Graph
     public void SetValue4(string txt)
     {
       this.edText4.Text = txt;
+    }
+
+    public void SetValue5(string txt)
+    {
+      this.edText5.Text = txt;
     }
 
     public void EnableChoice1(bool enable)
@@ -362,6 +390,12 @@ namespace Altaxo.Gui.Graph
       if (_controller != null)
         e.Cancel |= _controller.EhValue4Changed(this.edText4.Text);
     }
+
+    private void edText5_Validating(object sender, CancelEventArgs e)
+    {
+      if (_controller != null)
+        e.Cancel |= _controller.EhValue5Changed(this.edText5.Text);
+    }
   }
 
   public interface IOrgEndSpanView
@@ -379,6 +413,7 @@ namespace Altaxo.Gui.Graph
     void SetValue2(string txt);
     void SetValue3(string txt);
     void SetValue4(string txt);
+    void SetValue5(string txt);
 
     void EnableChoice1(bool enable);
     void EnableChoice2(bool enable);
@@ -398,5 +433,6 @@ namespace Altaxo.Gui.Graph
     bool EhValue2Changed(string txt);
     bool EhValue3Changed(string txt);
     bool EhValue4Changed(string txt);
+    bool EhValue5Changed(string txt);
   }
 }

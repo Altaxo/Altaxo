@@ -241,12 +241,12 @@ namespace Altaxo.Calc.Probability
 
     public override double PDF(double x)
     {
-      return PDF(x, _alpha, _beta, _scale, _mu, ref _tempStorePDF, DefaultPrecision);
+      return PDF(x, _alpha, _beta, _abe, _scale, _mu, ref _tempStorePDF, DefaultPrecision);
     }
 
     public override double CDF(double x)
     {
-      return CDF((x-_mu)/_scale, _alpha, _beta, _abe, ref _tempStorePDF, DefaultPrecision);
+      return CDF(x, _alpha, _beta, _abe, _scale, _mu, ref _tempStorePDF, DefaultPrecision);
     }
 
     public double Quantile(double p)
@@ -275,6 +275,11 @@ namespace Altaxo.Calc.Probability
       return PDF((x - mu) / sigma, alpha, beta, ref tempStorage, precision) / sigma;
     }
 
+    public static double PDF(double x, double alpha, double beta, double abe, double sigma, double mu, ref object tempStorage, double precision)
+    {
+      return PDF((x - mu) / sigma, alpha, beta, abe, ref tempStorage, precision) / sigma;
+    }
+
     public static double PDF(double x, double alpha, double beta, ref object tempStorage, double precision)
     {
       double abe = beta >= 0 ? 1 - beta : 1 + beta;
@@ -294,7 +299,20 @@ namespace Altaxo.Calc.Probability
         throw new ArgumentOutOfRangeException(string.Format("Beta must be in the range [-1,1], but was: {0}", beta));
 
 
-      if (alpha != 1)
+      if (alpha <1)
+      {
+        double gamma, aga, sigmaf, muf;
+        ParameterConversionS0ToFeller(alpha, beta, abe, 1, 0, out gamma, out aga, out sigmaf, out muf);
+        return StableDistributionFeller.PDF((x - muf) / sigmaf, alpha, gamma, aga) / sigmaf;
+        /*
+        PdfEvaluationMethod method = GetEvaluationMethod(alpha, (x - muf) / sigmaf, abe == 0, beta < 0);
+        switch (method)
+        {
+          case PdfEvaluationMethod.Integration:
+        }
+        */
+      }
+      else if (alpha > 1)
       {
         double gamma, aga, sigmaf, muf;
         ParameterConversionS0ToFeller(alpha, beta, abe, 1, 0, out gamma, out aga, out sigmaf, out muf);
@@ -319,14 +337,14 @@ namespace Altaxo.Calc.Probability
       else
       {
 
-        Aeq1BpI inc = new Aeq1BpI(x, beta, abe);
+        Aeq1I inc = new Aeq1I(x, beta, abe);
         if (inc.IsMaximumLeftHandSide())
         {
           return inc.Integrate(ref tempStorage, precision);
         }
         else
         {
-          Aeq1BpD dec = new Aeq1BpD(x, beta, abe);
+          Aeq1D dec = new Aeq1D(x, beta, abe);
           return dec.Integrate(ref tempStorage, precision);
         }
       }
@@ -341,17 +359,44 @@ namespace Altaxo.Calc.Probability
 
     public static double CDF(double x, double alpha, double beta)
     {
-      double abe = beta >= 0 ? 1 - beta : 1 + beta;
-      return CDF(x, alpha, beta, abe);
+      object tempStorage = null;
+      double abe = GetAbeFromBeta(beta);
+      return CDF(x, alpha, beta, abe, 1, 0, ref tempStorage, DefaultPrecision);
+    }
+
+    public static double CDF(double x, double alpha, double beta, double scale, double location)
+    {
+      object tempStorage = null;
+      double abe = GetAbeFromBeta(beta);
+      return CDF(x, alpha, beta, abe, scale, location, ref tempStorage, DefaultPrecision);
+    }
+
+
+    public static double CDF(double x, double alpha, double beta, ref object tempStorage, double precision)
+    {
+      double abe = GetAbeFromBeta(beta);
+      return CDF(x, alpha, beta, abe, 1, 0, ref tempStorage, DefaultPrecision);
+    }
+
+    public static double CDF(double x, double alpha, double beta, double scale, double location, ref object tempStorage, double precision)
+    {
+      double abe = GetAbeFromBeta(beta);
+      return CDF(x, alpha, beta, abe, scale, location, ref tempStorage, DefaultPrecision);
     }
 
     public static double CDF(double x, double alpha, double beta, double abe)
     {
       object temp = null;
-      return CDF(x, alpha, beta, abe, ref temp, DefaultPrecision);
+      return CDF(x, alpha, beta, abe, 1, 0, ref temp, DefaultPrecision);
     }
 
-    public static double CDF(double x, double alpha, double beta, double abe, ref object tempStorage, double precision)
+    public static double CDF(double x, double alpha, double beta, double abe, double scale, double location)
+    {
+      object temp = null;
+      return CDF(x, alpha, beta, abe, scale, location, ref temp, DefaultPrecision);
+    }
+
+    public static double CDF(double x, double alpha, double beta, double abe, double scale, double location, ref object tempStorage, double precision)
     {
       // test input parameter
       if (!(alpha > 0 && alpha <= 2))
@@ -363,12 +408,12 @@ namespace Altaxo.Calc.Probability
       if (alpha != 1)
       {
         double gamma, aga, sigmaf, muf;
-        ParameterConversionS0ToFeller(alpha, beta, abe, 1, 0, out gamma, out aga, out sigmaf, out muf);
+        ParameterConversionS0ToFeller(alpha, beta, abe, scale, location, out gamma, out aga, out sigmaf, out muf);
         return StableDistributionFeller.CDF((x - muf) / sigmaf, alpha, gamma, aga, ref tempStorage, precision);
       }
       else
       {
-        return CDFMethodAlphaOne(x, beta, abe, ref tempStorage, precision);
+        return CDFMethodAlphaOne((x-location)/scale, beta, abe, ref tempStorage, precision);
       }
     }
 
@@ -381,12 +426,12 @@ namespace Altaxo.Calc.Probability
       }
       else
       {
-        Aeq1BpI inc = new Aeq1BpI(x, beta, abe);
+        Aeq1I inc = new Aeq1I(x, beta, abe);
 
         if (beta > 0)
-          return inc.CDFIntegrate(ref tempStorage, precision);
+          return inc.CDFIntegrate(ref tempStorage, precision)/Math.PI;
         else
-          return inc.CDFIntegrate(ref tempStorage, precision);
+          return 1 - inc.CDFIntegrate(ref tempStorage, precision)/Math.PI;
       }
     }
 
@@ -416,9 +461,9 @@ namespace Altaxo.Calc.Probability
 
       object temp = tempStorage;
       double root = double.NaN;
-      if (RootFinding.BracketRootByExtensionOnly(delegate(double x) { return CDF(x, alpha, beta, abe, ref temp, DefaultPrecision) - p; }, 0, ref x0, ref x1))
+      if (RootFinding.BracketRootByExtensionOnly(delegate(double x) { return CDF(x, alpha, beta, abe, 1, 0, ref temp, DefaultPrecision) - p; }, 0, ref x0, ref x1))
       {
-        if (null != RootFinding.ByBrentsAlgorithm(delegate(double x) { return CDF(x, alpha, beta, abe, ref temp, DefaultPrecision) - p; }, x0, x1, 0, DoubleConstants.DBL_EPSILON, out root))
+        if (null != RootFinding.ByBrentsAlgorithm(delegate(double x) { return CDF(x, alpha, beta, abe, 1, 0, ref temp, DefaultPrecision) - p; }, x0, x1, 0, DoubleConstants.DBL_EPSILON, out root))
           root = double.NaN;
       }
       tempStorage = temp;
@@ -442,6 +487,7 @@ namespace Altaxo.Calc.Probability
       dev = Math.PI * (gamma<0 ? 0.5 * aga : 1-0.5*aga);
       // double factor = Math.Pow(xx, alpha / (alpha - 1)) * Math.Pow(Math.Cos(alpha * xi), 1 / (alpha - 1));
       facdiv = CosGammaPiBy2(alpha, gamma, aga); // Inverse part of the original factor without power
+     // for later use: facdiv = PowerOfOnePlusXSquared(beta * tan_pi_alpha_2, -0.5);
       factorp = xx * facdiv; // part of the factor with power alpha/(alpha-1);
       logPdfPrefactor = Math.Log(alpha / (Math.PI * Math.Abs(alpha - 1) * (xx)));
     }

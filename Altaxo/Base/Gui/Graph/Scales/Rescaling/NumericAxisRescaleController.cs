@@ -48,6 +48,7 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
     protected double _span;
 
     protected int? _minorTicks;
+    protected double? _majorTick;
 
     protected BoundaryRescaling _orgRescaling;
     protected BoundaryRescaling _endRescaling;
@@ -82,6 +83,7 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
         _end =  _doc.End;
         _span = _doc.Span;
         _minorTicks = _doc.MinorTicks;
+        _majorTick = _doc.MajorTick;
 
         if(_axis!=null)
         {
@@ -119,6 +121,7 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
       _view.SetValue2(NumberConversion.ToString(_end));
       _view.SetValue3(NumberConversion.ToString(_span));
       _view.SetValue4(_minorTicks == null ? string.Empty : NumberConversion.ToString((int)_minorTicks));
+      _view.SetValue5(_majorTick == null ? string.Empty : NumberConversion.ToString((double)_majorTick));
 
       SetEnableState();
     }
@@ -198,6 +201,23 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
       return false;
     }
 
+    public virtual bool EhValue5Changed(string txt)
+    {
+      double val;
+
+      if (string.IsNullOrEmpty(txt))
+      {
+        _majorTick = null;
+        return false;
+      }
+      else if (!GUIConversion.IsDouble(txt, out val))
+        return true;
+
+      _majorTick = val;
+      return false;
+    }
+
+
     #endregion
 
     #region IMVCController Members
@@ -234,7 +254,7 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
 
     public bool Apply()
     {
-      _doc.SetOrgEndSpan(_orgRescaling,_org,_endRescaling,_end,_spanRescaling,_span,_minorTicks);
+      _doc.SetOrgEndSpan(_orgRescaling,_org,_endRescaling,_end,_spanRescaling,_span,_minorTicks,_majorTick);
       
 
       if(null!=_axis)

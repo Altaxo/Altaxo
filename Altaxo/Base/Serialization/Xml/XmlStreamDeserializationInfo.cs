@@ -245,7 +245,8 @@ namespace Altaxo.Serialization.Xml
 
     public void GetArray(out float[] val)
     {
-      int count = this.OpenArray();
+      int count = GetInt32Attribute("Count");
+      //int count = this.OpenArray();
       val = new float[count];
       // Attribute must be readed before ReadStartElement
       if(count>0)
@@ -255,8 +256,8 @@ namespace Altaxo.Serialization.Xml
         switch(m_Reader.Name)
         {
           default:
-            for(int i=0;i<count;i++)
-              val[i] = XmlConvert.ToSingle(m_Reader.ReadElementString());
+            for (int i = 0; i < count; i++)
+              val[i] = m_Reader.ReadElementContentAsFloat();
             break;
           case "Base64":
             GetArrayOfPrimitiveTypeBase64(val,count,_size_of_float);

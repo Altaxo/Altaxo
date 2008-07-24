@@ -865,6 +865,91 @@ namespace Altaxo.Calc.Probability
       }
     }
 
+
+    protected enum PdfEvaluationMethod { XZero, SeriesSmallX, SeriesBigX, Integration, IntegrationA1, AlphaEqualOne};
+
+    protected static PdfEvaluationMethod GetEvaluationMethod(double alpha, double x, bool isGammaAtBoundary, bool isGammaPositive)
+    {
+      if (x == 0)
+        return PdfEvaluationMethod.XZero;
+
+      if (alpha <= 1)
+      {
+        // special case alpha==gamma
+        //if (gamma > 0 && aga == 0)
+        //return 0;
+
+        if (alpha <= 0.2)
+        {
+          if (alpha < 0.1)
+          {
+            // return PDFAlphaBetween0And01(x, alpha, gamma, aga, ref tempStorage, precision);
+            double smallestexp = GetLog10BoundaryForOneTermOfSeriesExpansionSmall(alpha, DoubleConstants.DBL_EPSILON);
+            double lgx = Math.Log10(x);
+
+            if (lgx <= smallestexp && (!isGammaAtBoundary || isGammaPositive))
+              return PdfEvaluationMethod.XZero;
+            else if (lgx > -0.3 / alpha)
+              return PdfEvaluationMethod.SeriesBigX;
+            else
+              return PdfEvaluationMethod.Integration;
+          }
+          else
+          {
+            //return PDFAlphaBetween01And02(x, alpha, gamma, aga, ref tempStorage, precision);
+            double a15 = alpha * Math.Sqrt(alpha);
+            double smallestexp = -9 + 0.217147240951625 * ((-1.92074130618617 / a15 + 1.35936488329912 * a15));
+
+
+            //  double smallestexp = 80 * alpha - 24; // Exponent is -16 for alpha=0.1 and -8 for alpha=0.2
+            double lgx = Math.Log10(x);
+            if (lgx <= smallestexp && (!isGammaAtBoundary || isGammaPositive))
+              return PdfEvaluationMethod.XZero;
+            else if (lgx > 3 / (1 + alpha))
+              return PdfEvaluationMethod.SeriesBigX;
+            else
+              return PdfEvaluationMethod.Integration;
+          }
+        }
+        else // alpha >0.2
+        {
+          if (alpha <= 0.99)
+          {
+            //return PDFAlphaBetween02And099(x, alpha, gamma, aga, ref tempStorage, precision);
+            double smallestexp;
+            if (alpha <= 0.3)
+              smallestexp = 30 * alpha - 14; // Exponent is -8 for alpha=0.2 and -5 for alpha=0.3
+            else if (alpha <= 0.6)
+              smallestexp = 10 * alpha - 8; // Exponent is -5 for alpha=0.3 and -2 for alpha=0.6
+            else
+              smallestexp = 2.5 * alpha - 3.5; // Exponent is -2 for alpha=0.6 and -1 for alpha=1
+
+            double lgx = Math.Log10(x);
+            if (lgx <= smallestexp && (!isGammaAtBoundary || isGammaPositive))
+              return PdfEvaluationMethod.SeriesSmallX;
+            else if (lgx > 3 / (1 + alpha))
+              return PdfEvaluationMethod.SeriesBigX;
+            else
+              return PdfEvaluationMethod.Integration;
+          }
+          else
+          {
+            //return PDFAlphaBetween099And101(x, alpha, gamma, aga, ref tempStorage, precision);
+            if (alpha == 1)
+              return PdfEvaluationMethod.AlphaEqualOne;
+            if (x <= 0.1)
+              return PdfEvaluationMethod.SeriesSmallX;
+            else if (x >= 10)
+              return PdfEvaluationMethod.SeriesBigX;
+            else
+              return PdfEvaluationMethod.IntegrationA1;
+          }
+        }
+      }
+      throw new ArgumentException();
+    }
+
+
     public static double PDFforXZero(double alpha, double gamma, double aga)
     {
       // use different methods, which provide the best accuracy for the case

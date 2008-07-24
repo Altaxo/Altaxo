@@ -1147,6 +1147,20 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
+
+    static bool IsEqual(float[] a, float[] b)
+    {
+      if (a == null || b == null)
+        return false;
+      if (a.Length != b.Length)
+        return false;
+      for (int i = a.Length - 1; i >= 0; i--)
+        if (a[i] != b[i])
+          return false;
+
+      return true;
+    }
+
     public DashStyleEx DashStyleEx
     {
       get
@@ -1158,8 +1172,22 @@ namespace Altaxo.Graph.Gdi
       }
       set
       {
-        DashStyle = value.KnownStyle;
-        DashPattern = value.CustomStyle;
+        bool bChanged = (m_DashStyle != value.KnownStyle);
+        if (value.KnownStyle == DashStyle.Custom)
+        {
+          bChanged |= IsEqual(value.CustomStyle, this.m_DashPattern);
+        }
+
+        if (bChanged)
+        {
+          m_DashStyle = value.KnownStyle;
+          m_DashPattern = null == value.CustomStyle ? null : (float[])value.CustomStyle.Clone();
+
+          _SetProp(Configured.DashStyle, DashStyle.Solid != value.KnownStyle);
+          _SetProp(Configured.DashPattern, null != value.CustomStyle && value.CustomStyle.Length > 0);
+          _SetPenVariable(null);
+          OnChanged(); // Fire the Changed event
+        }
       }
     }
 
@@ -1406,6 +1434,19 @@ namespace Altaxo.Graph.Gdi
         pen.DashPattern = (float[])this._customStyle.Clone();
     }
 
+    static bool IsEqual(float[] a, float[] b)
+    {
+      if (a == null || b == null)
+        return false;
+      if (a.Length != b.Length)
+        return false;
+      for (int i = a.Length - 1; i >= 0; i--)
+        if (a[i] != b[i])
+          return false;
+
+      return true;
+    }
+
     public override bool Equals(object obj)
     {
       if (obj is DashStyleEx)
@@ -1414,10 +1455,9 @@ namespace Altaxo.Graph.Gdi
 
         if (this.IsKnownStyle && this._knownStyle == from._knownStyle)
           return true;
-        else if (this.IsCustomStyle && this._customStyle == from._customStyle)
+        else if (this.IsCustomStyle && IsEqual(this._customStyle, from._customStyle))
           return true;
       }
-
       return false;
     }
     public override int GetHashCode()
@@ -1449,6 +1489,7 @@ namespace Altaxo.Graph.Gdi
     {
       get { return new DashStyleEx(DashStyle.Solid); }
     }
+
     public static DashStyleEx Dot
     {
       get { return new DashStyleEx(DashStyle.Dot); }
@@ -1463,9 +1504,15 @@ namespace Altaxo.Graph.Gdi
     {
       get { return new DashStyleEx(DashStyle.DashDot); }
     }
+
     public static DashStyleEx DashDotDot
     {
       get { return new DashStyleEx(DashStyle.DashDotDot); }
+    }
+
+    public static DashStyleEx LongDash
+    {
+      get { return new DashStyleEx(new float[] {5.0f, 3.0f }); }
     }
 
 

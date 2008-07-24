@@ -70,6 +70,7 @@ namespace Altaxo.Gui.Common.Drawing
       _dashStyles.Add(new DashStyleEx(DashStyle.Dash));
       _dashStyles.Add(new DashStyleEx(DashStyle.DashDot));
       _dashStyles.Add(new DashStyleEx(DashStyle.DashDotDot));
+      _dashStyles.Add(DashStyleEx.LongDash);
     }
 
     void SetDataSource(DashStyleEx selected)

@@ -1303,9 +1303,110 @@ namespace Altaxo.Calc.Probability
         else
         {
           //System.Diagnostics.Debug.Write("CO-");
-          return PDFCore(_xm + dx);
+          return PDFCoreSmallDev(_xm + dx);
         }
       }
+
+      /// <summary>
+      /// Special calculation of the core function if dev==0. Especially accurate when alpha is very close to 1.
+      /// </summary>
+      /// <param name="thetas"></param>
+      /// <returns></returns>
+      public double PDFCoreZeroDev(double thetas)
+      {
+        double ala = 1 - alpha;
+        double n = alpha / ala;
+
+        double r1;
+        double r2;
+        if (thetas == 0)
+        {
+          r1 = Math.Pow(alpha / factorp, n);
+          r2 = ala / facdiv;
+        }
+        else
+        {
+          // The problem is, that r1 is for a wide range of thetas very close to 1,
+          // but in connection with the high power small changes can have a dramatic effect on the result
+          // original: r1 = Math.Pow(Math.Sin(alpha * thetas) / (factorp * Math.Sin(thetas)), alpha / (1 - alpha));
+
+
+          // here we calculate the value y as follows: Sin(alpha x)/Sin(x) == alpha*(1+y)
+          double y = Math.Sin(alpha * thetas) / n - 2 * Math.Cos((1-0.5*ala)*thetas) * Math.Sin(0.5 * ala * thetas);
+          y /= Math.Sin(thetas);
+
+          r1 = Math.Pow(alpha / factorp, n) * Math.Exp(n * RMath.Log1p(y));
+          r2 = Math.Sin(thetas * ala) / (facdiv * Math.Sin(thetas));
+        }
+        double result = r1 * r2;
+        if (!(result >= 0))
+          result = double.MaxValue;
+
+        //System.Diagnostics.Debug.WriteLine(string.Format("CorAlt1GnI theta={0}, result={1}", thetas, result));
+        return result;
+      }
+
+      /// <summary>
+      /// Special calculation of the core function if dev==0. Especially accurate when alpha is very close to 1.
+      /// </summary>
+      /// <param name="thetas"></param>
+      /// <returns></returns>
+      public double PDFCoreSmallDev(double thetas)
+      {
+        double ala = 1 - alpha;
+        double n = alpha / ala;
+
+        double r1;
+        double r2;
+        if (dev==0 && thetas == 0)
+        {
+          r1 = Math.Pow(alpha / factorp, n);
+          r2 = ala / facdiv;
+        }
+        else
+        {
+          if (thetas < dev)
+          {
+            r1 = Math.Pow(Math.Sin(alpha * thetas) / (factorp * Math.Sin(dev + thetas)), alpha / (1 - alpha));
+          }
+          else
+          {
+            // The problem is, that r1 is for a wide range of thetas very close to 1,
+            // but in connection with the high power small changes can have a dramatic effect on the result
+            // here we calculate the value y as follows: Sin(alpha x)/Sin(x+dev) == alpha*(1+y)
+            double dev2 = dev / 2;
+            double y = Math.Sin(alpha * thetas) / n - 2 * Math.Cos((1 - 0.5 * ala) * thetas + dev2) * Math.Sin(0.5 * ala * thetas + dev2);
+            y /= Math.Sin(thetas+dev);
+            r1 = Math.Pow(alpha / factorp, n) * Math.Exp(n * RMath.Log1p(y));
+          }
+          r2 = Math.Sin(dev + ala*thetas) / (facdiv * Math.Sin(dev + thetas));
+        }
+        double result = r1 * r2;
+        if (!(result >= 0))
+          result = double.MaxValue;
+
+        //System.Diagnostics.Debug.WriteLine(string.Format("CorAlt1GnI theta={0}, result={1}", thetas, result));
+        return result;
+      }
+
+      public double PDFFuncZeroDev(double x)
+      {
+        double f = PDFCoreZeroDev(x);
+        double r = double.IsInfinity(f) ? 0 : f * Math.Exp(-f + logPdfPrefactor);
+        //System.Diagnostics.Debug.WriteLine(string.Format("x={0}, f={1}, r={2}", x, f, r));
+        //Current.Console.WriteLine("x={0}, f={1}, r={2}", x, f, r);
+        return r;
+      }
+      public double PDFFuncLogIntZeroDev(double z)
+      {
+        double x = Math.Exp(z);
+        double f = PDFCoreZeroDev(x);
+        double r = double.IsInfinity(f) ? 0 : f * Math.Exp(z - f + logPdfPrefactor);
+        //System.Diagnostics.Debug.WriteLine(string.Format("x={0}, f={1}, r={2}", x, f, r));
+        //Current.Console.WriteLine("x={0}, f={1}, r={2}", x, f, r);
+        return r;
+      }
+
 
       public new double PDFFuncLogIntToLeft(double z)
       {
@@ -1360,6 +1461,8 @@ namespace Altaxo.Calc.Probability
         double r2 = Math.Sin(dev + _xm * (1 - alpha)) / (facdiv * Math.Sin(dev + _xm));
 
         // oder wir versuchen dies
+        if (double.IsInfinity(xinc)) // this can happen if the derivative (_a) is zero
+          xinc = _xmax / _n;
 
         _x0 = xinc;
         error = Calc.Integration.QagpIntegration.Integration(
@@ -1399,7 +1502,8 @@ namespace Altaxo.Calc.Probability
         }
 
         double ye;
-        double xe = FindIncreasingYEqualTo(pdfCore, 0, UpperIntegrationLimit, y0 + 9, 1, out ye);
+        //double xe = FindIncreasingYEqualTo(pdfCore, 0, UpperIntegrationLimit, y0 + 9, 1, out ye);
+        double xe = FindIncreasingYEqualTo(PDFCoreZeroDev, 0, UpperIntegrationLimit, y0 + 9, 1, out ye);
 
         GSL_ERROR error1;
         double result, abserr;
@@ -1410,7 +1514,7 @@ namespace Altaxo.Calc.Probability
 
           // now integrate logarithmically
           error1 = Calc.Integration.QagpIntegration.Integration(
-                      PDFFuncLogInt,
+                      PDFFuncLogIntZeroDev,
                       new double[] { Math.Log(xm), Math.Log(Math.PI) }, 2,
                       0, precision, 100, out result, out abserr, ref tempStorage);
           
@@ -1419,7 +1523,7 @@ namespace Altaxo.Calc.Probability
         else // linear integration
         {
           error1 = Calc.Integration.QagpIntegration.Integration(
-                      PDFFunc,
+                      PDFFuncZeroDev,
                       new double[] { 0, xe, Math.PI }, 3,
                       0, precision, 100, out result, out abserr, ref tempStorage);
         }
@@ -1704,6 +1808,9 @@ namespace Altaxo.Calc.Probability
           return Math.Exp(logPdfPrefactor) * GammaRelated.Gamma(1 / _n) / (-_a * _n * _n); // then we use the analytic solution of the integral
         else
           _xmax = 1e5 * _xm * DoubleConstants.DBL_EPSILON;
+
+        if (double.IsInfinity(xinc))
+          xinc = _xmax / _n;
 
         // now we integrate
         _x0 = xinc;
@@ -2328,7 +2435,7 @@ namespace Altaxo.Calc.Probability
     #region Classes for integration (alpha==1)
 
 
-    public class Aeq1BpI
+    public class Aeq1I
     {
       double beta;
       double abe;
@@ -2336,7 +2443,7 @@ namespace Altaxo.Calc.Probability
       double logPdfPrefactor;
       double _x0;
 
-      public Aeq1BpI(double x, double beta, double abe)
+      public Aeq1I(double x, double beta, double abe)
       {
         this.beta = beta;
         this.abe = abe;
@@ -2610,7 +2717,7 @@ namespace Altaxo.Calc.Probability
       #endregion
     }
 
-    public class Aeq1BpD
+    public class Aeq1D
     {
       double beta;
       double abe;
@@ -2618,7 +2725,7 @@ namespace Altaxo.Calc.Probability
       double logPdfPrefactor;
       double _x0;
 
-      public Aeq1BpD(double x, double beta, double abe)
+      public Aeq1D(double x, double beta, double abe)
       {
         this.beta = beta;
         this.abe = abe;
@@ -2685,6 +2792,7 @@ namespace Altaxo.Calc.Probability
         //Current.Console.WriteLine("x={0}, f={1}, r={2}", x, f, r);
         return r;
       }
+    
       public double PDFFuncLogIntToRight(double z)
       {
         double x = _x0 + Math.Exp(z);
@@ -2779,7 +2887,7 @@ namespace Altaxo.Calc.Probability
       public double CDFFunc(double x)
       {
         double f = PDFCore(x);
-        double r = double.IsInfinity(f) ? 0 : Math.Exp(-f);
+        double r = double.IsInfinity(f) ? 0 : OneMinusExp(-f);
         //System.Diagnostics.Debug.WriteLine(string.Format("x={0}, f={1}, r={2}", x, f, r));
         //Current.Console.WriteLine("x={0}, f={1}, r={2}", x, f, r);
         return r;
@@ -2789,7 +2897,7 @@ namespace Altaxo.Calc.Probability
       {
         double x = Math.Exp(z) + _x0;
         double f = PDFCore(x);
-        double r = double.IsInfinity(f) ? 0 : Math.Exp(z - f);
+        double r = double.IsInfinity(f) ? 0 : Math.Exp(z) * OneMinusExp(-f);
         //System.Diagnostics.Debug.WriteLine(string.Format("x={0}, f={1}, r={2}", x, f, r));
         //Current.Console.WriteLine("x={0}, f={1}, r={2}", x, f, r);
         return r;
@@ -3210,6 +3318,15 @@ namespace Altaxo.Calc.Probability
       #endregion
 
     }
+
+    #endregion
+
+    #region PDF distributor
+
+
+   
+
+
 
     #endregion
   }
