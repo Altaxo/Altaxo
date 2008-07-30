@@ -160,6 +160,9 @@
           <MenuItem id="WorksheetImportGalacticSPC" label="${res:XML.MainMenu.FileMenu.Import.GalacticSPC}"
 						icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.Import.GalacticSPC.Description}"
 						class="Altaxo.Worksheet.Commands.ImportGalacticSPC" />
+          <MenuItem id="WorksheetImportJcamp" label="${res:XML.MainMenu.FileMenu.Import.Jcamp}"
+						icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.Import.Jcamp.Description}"
+						class="Altaxo.Worksheet.Commands.ImportJcamp" />
           <MenuItem id="WorksheetImportOriginOpj" label="${res:XML.MainMenu.FileMenu.Import.OriginOpj}"
 						icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.Import.OriginOpj.Description}"
 						class="Altaxo.Main.Commands.FileImportOriginOpj" />
@@ -335,6 +338,8 @@
 					class="Altaxo.Worksheet.Commands.WorksheetRename" />
         <MenuItem id="Duplicate" label="${res:XML.MainMenu.WorksheetMenu.Duplicate}" description="${res:XML.MainMenu.WorksheetMenu.Duplicate.Description}"
 					class="Altaxo.Worksheet.Commands.WorksheetDuplicate" />
+        <MenuItem id="ClearData" label="${res:XML.MainMenu.WorksheetMenu.ClearData}" description="${res:XML.MainMenu.WorksheetMenu.ClearData.Description}"
+					class="Altaxo.Worksheet.Commands.WorksheetClearData" />
         <MenuItem id="Transpose" label="${res:XML.MainMenu.WorksheetMenu.Transpose}" description="${res:XML.MainMenu.WorksheetMenu.Transpose.Description}"
 					class="Altaxo.Worksheet.Commands.WorksheetTranspose" />
         <MenuItem id="TableScript" label="${res:XML.MainMenu.WorksheetMenu.TableScript}" description="${res:XML.MainMenu.WorksheetMenu.TableScript.Description}"
@@ -631,10 +636,18 @@
         class="Altaxo.Graph.Commands.ArrangeTop" />
       <ToolbarItem id="ArrangeBottom" icon="Icons.16x16.ArrangeBottom" tooltip="${res:XML.MainMenu.GraphMenu.ArrangeBottom.Description}"
         class="Altaxo.Graph.Commands.ArrangeBottom" />
+      <ToolbarItem id="ArrangeTopToBottom" icon="Icons.16x16.ArrangeTopToBottom" tooltip="${res:XML.MainMenu.GraphMenu.ArrangeTopToBottom.Description}"
+        class="Altaxo.Graph.Commands.ArrangeTopToBottom" />
+      <ToolbarItem id="ArrangeBottomToTop" icon="Icons.16x16.ArrangeBottomToTop" tooltip="${res:XML.MainMenu.GraphMenu.ArrangeBottomToTop.Description}"
+        class="Altaxo.Graph.Commands.ArrangeBottomToTop" />
       <ToolbarItem id="ArrangeLeft" icon="Icons.16x16.ArrangeLeft" tooltip="${res:XML.MainMenu.GraphMenu.ArrangeLeft.Description}"
         class="Altaxo.Graph.Commands.ArrangeLeft" />
       <ToolbarItem id="ArrangeRight" icon="Icons.16x16.ArrangeRight" tooltip="${res:XML.MainMenu.GraphMenu.ArrangeRight.Description}"
         class="Altaxo.Graph.Commands.ArrangeRight" />
+      <ToolbarItem id="ArrangeLeftToRight" icon="Icons.16x16.ArrangeLeftToRight" tooltip="${res:XML.MainMenu.GraphMenu.ArrangeLeftToRight.Description}"
+        class="Altaxo.Graph.Commands.ArrangeLeftToRight" />
+      <ToolbarItem id="ArrangeRightToLeft" icon="Icons.16x16.ArrangeRightToLeft" tooltip="${res:XML.MainMenu.GraphMenu.ArrangeRightToLeft.Description}"
+        class="Altaxo.Graph.Commands.ArrangeRightToLeft" />
       <ToolbarItem id="ArrangeHorizontal" icon="Icons.16x16.ArrangeHorizontal" tooltip="${res:XML.MainMenu.GraphMenu.ArrangeHorizontal.Description}"
         class="Altaxo.Graph.Commands.ArrangeHorizontal" />
       <ToolbarItem id="ArrangeVertical" icon="Icons.16x16.ArrangeVertical" tooltip="${res:XML.MainMenu.GraphMenu.ArrangeVertical.Description}"
@@ -643,6 +656,8 @@
         class="Altaxo.Graph.Commands.ArrangeHorizontalTable" />
       <ToolbarItem id="ArrangeVerticalTable" icon="Icons.16x16.ArrangeVerticalTable" tooltip="${res:XML.MainMenu.GraphMenu.ArrangeVerticalTable.Description}"
         class="Altaxo.Graph.Commands.ArrangeVerticalTable" />
+      <ToolbarItem id="GroupObjects" icon="Icons.16x16.ArrangeVerticalTable" tooltip="${res:XML.MainMenu.GraphMenu.GroupObjects.Description}"
+        class="Altaxo.Graph.Commands.GroupSelectedObjects" />
     </Condition>
   </Path>
 
@@ -732,6 +747,8 @@
       class="Altaxo.Worksheet.Commands.AddDataColumns" />
     <MenuItem id="AddPropertyColumns" label="${res:XML.MainMenu.WorksheetMenu.AddPropertyColumns}"
       description="${res:XML.MainMenu.WorksheetMenu.AddPropertyColumns.Description}" class="Altaxo.Worksheet.Commands.AddPropertyColumns" />
+    <MenuItem id="ClearData" label="${res:XML.MainMenu.WorksheetMenu.ClearData}" description="${res:XML.MainMenu.WorksheetMenu.ClearData.Description}"
+      class="Altaxo.Worksheet.Commands.WorksheetClearData" />
   </Path>
 
   <Path name = "/Altaxo/BuiltinTextures">

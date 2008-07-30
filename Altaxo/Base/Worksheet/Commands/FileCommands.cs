@@ -176,6 +176,11 @@ namespace Altaxo.Worksheet.Commands
       Altaxo.Serialization.Galactic.Import.ShowDialog(ctrl.View.TableViewForm, ctrl.DataTable);
     }
 
+    public static void ImportJcamp(WorksheetController ctrl)
+    {
+      Altaxo.Serialization.Jcamp.Import.ShowDialog(ctrl.View.TableViewForm, ctrl.DataTable);
+    }
+
 
     public static void ExportGalacticSPC(WorksheetController ctrl)
     {

@@ -1784,10 +1784,6 @@ namespace Altaxo.Data
         }
       }
     }
-
-
-  
-
     #endregion Indexer
 
     #region Collection Properties

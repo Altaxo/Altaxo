@@ -3319,6 +3319,368 @@ namespace Altaxo.Calc.Probability
 
     }
 
+    public class Agt1GpI
+    {
+      double factorp;
+      double factorw;
+      double alpha;
+      double dev;
+      double logPdfPrefactor;
+      double _x0;
+
+      ScalarFunctionDD pdfCore;
+      ScalarFunctionDD pdfFunc;
+
+      public Agt1GpI(double factorp, double factorw, double logPdfPrefactor, double alpha, double dev)
+      {
+        this.factorp = factorp;
+        this.factorw = factorw;
+        this.logPdfPrefactor = logPdfPrefactor;
+        this.alpha = alpha;
+        this.dev = dev;
+        pdfCore = null;
+        pdfFunc = null;
+        Initialize();
+      }
+
+      public void Initialize()
+      {
+        pdfCore = new ScalarFunctionDD(PDFCore);
+        pdfFunc = new ScalarFunctionDD(PDFFunc);
+      }
+
+
+
+      public double PDFCore(double thetas)
+      {
+        double r1;
+        double r2;
+        double sin_al_devMthetas = Math.Sin(alpha * (dev-thetas));
+        {
+          r1 = Math.Pow(factorp * Math.Sin(thetas) / sin_al_devMthetas, 1 / (alpha - 1));
+          r2 = (factorw * Math.Sin(alpha * dev - (alpha - 1) * thetas)) / sin_al_devMthetas;
+        }
+        double result = r1 * r2;
+        if (!(result >= 0))
+          result = double.MaxValue;
+
+        //System.Diagnostics.Debug.WriteLine(string.Format("Cor1d theta={0}, result={1}", thetas, result));
+        return result;
+      }
+      public double PDFFunc(double x)
+      {
+        double f = PDFCore(x);
+        double r = double.IsInfinity(f) ? 0 : f * Math.Exp(-f + logPdfPrefactor);
+        //System.Diagnostics.Debug.WriteLine(string.Format("x={0}, f={1}, r={2}", x, f, r));
+        //Current.Console.WriteLine("x={0}, f={1}, r={2}", x, f, r);
+        return r;
+      }
+      public double PDFFuncLogIntToRight(double z)
+      {
+        double x = _x0 + Math.Exp(z);
+        double f = PDFCore(x);
+        double r = double.IsInfinity(f) ? 0 : f * Math.Exp(z - f + logPdfPrefactor);
+        //System.Diagnostics.Debug.WriteLine(string.Format("x={0}, f={1}, r={2}", x, f, r));
+        //Current.Console.WriteLine("x={0}, f={1}, r={2}", x, f, r);
+        return r;
+      }
+      public double Integrate(ref object tempStorage, double precision)
+      {
+        double xm = FindIncreasingYEqualToOne(pdfCore, 0, UpperIntegrationLimit);
+        try
+        {
+          if (xm * 10 < UpperIntegrationLimit) // then a logarithmic integration from left to right
+          {
+            double result1 = 0, abserr1 = 0;
+            GSL_ERROR error1 = Calc.Integration.QagpIntegration.Integration(
+            pdfFunc,
+            new double[] { 0, xm }, 2,
+            0, precision, 200, out result1, out abserr1, ref tempStorage);
+
+
+
+            double result2 = 0, abserr2 = 0;
+            double xincrement = xm / 10;
+            _x0 = xm - xincrement;
+            GSL_ERROR error2 = Calc.Integration.QagpIntegration.Integration(
+                        PDFFuncLogIntToRight,
+                        new double[] { Math.Log(xincrement), Math.Log(UpperIntegrationLimit - _x0) }, 2,
+                        0, precision, 200, out result2, out abserr2, ref tempStorage);
+
+            if (null == error1 && null == error2)
+              return result1 + result2;
+            else
+              return double.NaN;
+          }
+          else
+          {
+            double result = 0, abserr = 0;
+            GSL_ERROR error = Calc.Integration.QagpIntegration.Integration(
+                        pdfFunc,
+                        new double[] { 0, xm, UpperIntegrationLimit }, 3,
+                        0, precision, 200, out result, out abserr, ref tempStorage);
+
+            if (null == error)
+              return result;
+            else
+              return double.NaN;
+          }
+        }
+        catch (Exception ex)
+        {
+          return double.NaN;
+        }
+      }
+
+      public double UpperIntegrationLimit
+      {
+        get
+        {
+          return dev;
+        }
+      }
+
+      #region CDF
+
+      public double CDFFunc(double x)
+      {
+
+        double f = PDFCore(x);
+        double r = double.IsInfinity(f) ? 0 : OneMinusExp(-f);
+        //System.Diagnostics.Debug.WriteLine(string.Format("x={0}, f={1}, r={2}", x, f, r));
+        //Current.Console.WriteLine("x={0}, f={1}, r={2}", x, f, r);
+        return r;
+      }
+
+      public double CDFFuncLogInt(double z)
+      {
+        double x = Math.Exp(z) + _x0;
+        double f = PDFCore(x);
+        double r = double.IsInfinity(f) ? 0 : Math.Exp(z) * OneMinusExp(-f);
+        //System.Diagnostics.Debug.WriteLine(string.Format("x={0}, f={1}, r={2}", x, f, r));
+        //Current.Console.WriteLine("x={0}, f={1}, r={2}", x, f, r);
+        return r;
+      }
+
+      public double CDFIntegrate(ref object tempStorage, double precision)
+      {
+        GSL_ERROR error1;
+        double resultRight, abserrRight;
+
+        double xm, yfound;
+
+        xm = FindIncreasingYEqualToOne(PDFCore, 0, UpperIntegrationLimit);
+
+        if ((xm * 10) < UpperIntegrationLimit)
+        {
+          // logarithmical integration
+          _x0 = -xm;
+          // now integrate logarithmically
+          error1 = Calc.Integration.QagpIntegration.Integration(
+                      CDFFuncLogInt,
+                      new double[] { Math.Log(xm), Math.Log(UpperIntegrationLimit + xm) }, 2,
+                      0, precision, 100, out resultRight, out abserrRight, ref tempStorage);
+
+        }
+        else // linear integration
+        {
+          error1 = Calc.Integration.QagpIntegration.Integration(
+                      CDFFunc,
+                      new double[] { 0, UpperIntegrationLimit }, 2,
+                      0, precision, 100, out resultRight, out abserrRight, ref tempStorage);
+        }
+
+        if (null != error1)
+          return double.NaN;
+        else
+          return resultRight;
+      }
+
+      #endregion
+
+    }
+
+    public class Agt1GpD
+    {
+      double factorp;
+      double factorw;
+      double alpha;
+      double dev;
+      double logPdfPrefactor;
+      double _x0;
+
+      ScalarFunctionDD pdfCore;
+      ScalarFunctionDD pdfFunc;
+
+      public Agt1GpD(double factorp, double factorw, double logPdfPrefactor, double alpha, double dev)
+      {
+        this.factorp = factorp;
+        this.factorw = factorw;
+        this.logPdfPrefactor = logPdfPrefactor;
+        this.alpha = alpha;
+        this.dev = dev;
+        pdfCore = null;
+        pdfFunc = null;
+        Initialize();
+      }
+
+      public void Initialize()
+      {
+        pdfCore = new ScalarFunctionDD(PDFCore);
+        pdfFunc = new ScalarFunctionDD(PDFFunc);
+      }
+
+
+
+      public double PDFCore(double thetas)
+      {
+        double r1;
+        double r2;
+        double sin_al_thetas = Math.Sin(alpha * thetas);
+        {
+          r1 = Math.Pow(factorp * Math.Sin(dev-thetas) / sin_al_thetas, 1 / (alpha - 1));
+          r2 = (factorw * Math.Sin(dev + (alpha - 1) * thetas)) / sin_al_thetas;
+        }
+        double result = r1 * r2;
+        if (!(result >= 0))
+          result = double.MaxValue;
+
+        //System.Diagnostics.Debug.WriteLine(string.Format("Cor1d theta={0}, result={1}", thetas, result));
+        return result;
+      }
+      public double PDFFunc(double x)
+      {
+        double f = PDFCore(x);
+        double r = double.IsInfinity(f) ? 0 : f * Math.Exp(-f + logPdfPrefactor);
+        //System.Diagnostics.Debug.WriteLine(string.Format("x={0}, f={1}, r={2}", x, f, r));
+        //Current.Console.WriteLine("x={0}, f={1}, r={2}", x, f, r);
+        return r;
+      }
+      public double PDFFuncLogIntToRight(double z)
+      {
+        double x = _x0 + Math.Exp(z);
+        double f = PDFCore(x);
+        double r = double.IsInfinity(f) ? 0 : f * Math.Exp(z - f + logPdfPrefactor);
+        //System.Diagnostics.Debug.WriteLine(string.Format("x={0}, f={1}, r={2}", x, f, r));
+        //Current.Console.WriteLine("x={0}, f={1}, r={2}", x, f, r);
+        return r;
+      }
+      public double Integrate(ref object tempStorage, double precision)
+      {
+        double xm = FindDecreasingYEqualToOne(pdfCore, 0, UpperIntegrationLimit);
+        try
+        {
+          if (xm * 10 < UpperIntegrationLimit) // then a logarithmic integration from left to right
+          {
+            double result1 = 0, abserr1 = 0;
+            GSL_ERROR error1 = Calc.Integration.QagpIntegration.Integration(
+            pdfFunc,
+            new double[] { 0, xm }, 2,
+            0, precision, 200, out result1, out abserr1, ref tempStorage);
+
+
+
+            double result2 = 0, abserr2 = 0;
+            double xincrement = xm / 10;
+            _x0 = xm - xincrement;
+            GSL_ERROR error2 = Calc.Integration.QagpIntegration.Integration(
+                        PDFFuncLogIntToRight,
+                        new double[] { Math.Log(xincrement), Math.Log(UpperIntegrationLimit - _x0) }, 2,
+                        0, precision, 200, out result2, out abserr2, ref tempStorage);
+
+            if (null == error1 && null == error2)
+              return result1 + result2;
+            else
+              return double.NaN;
+          }
+          else
+          {
+            double result = 0, abserr = 0;
+            GSL_ERROR error = Calc.Integration.QagpIntegration.Integration(
+                        pdfFunc,
+                        new double[] { 0, xm, UpperIntegrationLimit }, 3,
+                        0, precision, 200, out result, out abserr, ref tempStorage);
+
+            if (null == error)
+              return result;
+            else
+              return double.NaN;
+          }
+        }
+        catch (Exception ex)
+        {
+          return double.NaN;
+        }
+      }
+
+      public double UpperIntegrationLimit
+      {
+        get
+        {
+          return dev;
+        }
+      }
+
+      #region CDF
+
+      public double CDFFunc(double x)
+      {
+
+        double f = PDFCore(x);
+        double r = double.IsInfinity(f) ? 0 : OneMinusExp(-f);
+        //System.Diagnostics.Debug.WriteLine(string.Format("x={0}, f={1}, r={2}", x, f, r));
+        //Current.Console.WriteLine("x={0}, f={1}, r={2}", x, f, r);
+        return r;
+      }
+
+      public double CDFFuncLogInt(double z)
+      {
+        double x = Math.Exp(z) + _x0;
+        double f = PDFCore(x);
+        double r = double.IsInfinity(f) ? 0 : Math.Exp(z) * OneMinusExp(-f);
+        //System.Diagnostics.Debug.WriteLine(string.Format("x={0}, f={1}, r={2}", x, f, r));
+        //Current.Console.WriteLine("x={0}, f={1}, r={2}", x, f, r);
+        return r;
+      }
+
+      public double CDFIntegrate(ref object tempStorage, double precision)
+      {
+        GSL_ERROR error1;
+        double resultRight, abserrRight;
+
+        double xm, yfound;
+
+        xm = FindDecreasingYEqualToOne(PDFCore, 0, UpperIntegrationLimit);
+
+        if ((xm * 10) < UpperIntegrationLimit)
+        {
+          // logarithmical integration
+          _x0 = -xm;
+          // now integrate logarithmically
+          error1 = Calc.Integration.QagpIntegration.Integration(
+                      CDFFuncLogInt,
+                      new double[] { Math.Log(xm), Math.Log(UpperIntegrationLimit + xm) }, 2,
+                      0, precision, 100, out resultRight, out abserrRight, ref tempStorage);
+
+        }
+        else // linear integration
+        {
+          error1 = Calc.Integration.QagpIntegration.Integration(
+                      CDFFunc,
+                      new double[] { 0, UpperIntegrationLimit }, 2,
+                      0, precision, 100, out resultRight, out abserrRight, ref tempStorage);
+        }
+
+        if (null != error1)
+          return double.NaN;
+        else
+          return resultRight;
+      }
+
+      #endregion
+
+    }
+
     #endregion
 
     #region PDF distributor

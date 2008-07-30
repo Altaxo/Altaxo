@@ -1432,6 +1432,7 @@
     <Compile Include="Serialization\Ascii\AsciiGlobalStructureAnalysis.cs" />
     <Compile Include="Serialization\Ascii\AsciiLineAnalysis.cs" />
     <Compile Include="Serialization\Ascii\AsciiSeparationStrategy.cs" />
+    <Compile Include="Serialization\Jcamp\ImportJcampFiles.cs" />
     <Compile Include="Serialization\LengthUnit.cs" />
     <Compile Include="Settings\Scripting\ReferencedAssemblies.cs" />
     <Compile Include="Settings\Scripting\ReferencedAssembliesCommands.cs" />

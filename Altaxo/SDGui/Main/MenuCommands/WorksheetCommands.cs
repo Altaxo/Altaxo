@@ -115,6 +115,14 @@ namespace Altaxo.Worksheet.Commands
     }
   }
 
+  public class ImportJcamp : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
+    {
+      Altaxo.Worksheet.Commands.FileCommands.ImportJcamp(ctrl);
+    }
+  }
+
   public class ExportAscii : AbstractWorksheetControllerCommand
   {
     public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
@@ -346,6 +354,15 @@ namespace Altaxo.Worksheet.Commands
       Altaxo.Worksheet.Commands.WorksheetCommands.CreatePropertyColumnOfColumnNames(ctrl);
     }
   }
+
+  public class WorksheetClearData : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
+    {
+      Altaxo.Worksheet.Commands.WorksheetCommands.WorksheetClearData(ctrl);
+    }
+  }
+
 
   public class OpenExtractTableDataScriptDialog : AbstractWorksheetControllerCommand
   {

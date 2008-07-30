@@ -535,7 +535,46 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     }
 
 
-    
+
+    // <summary>
+    /// Groups the selected objects to form a ShapeGroup.
+    /// </summary>
+    public void GroupSelectedObjects()
+    {
+      System.Collections.Generic.List<IHitTestObject> removedObjects = new System.Collections.Generic.List<IHitTestObject>();
+
+      Altaxo.Graph.Gdi.Shapes.ShapeGroup group = new Altaxo.Graph.Gdi.Shapes.ShapeGroup();
+      foreach (IHitTestObject o in this.m_SelectedObjects)
+      {
+        if (o.HittedObject is Altaxo.Graph.Gdi.Shapes.GraphicBase)
+        {
+          group.Add((Altaxo.Graph.Gdi.Shapes.GraphicBase)o.HittedObject);
+          removedObjects.Add(o);
+        }
+      }
+
+      if (removedObjects.Count > 0)
+      {
+        foreach (IHitTestObject o in removedObjects)
+        {
+          o.Remove(o);
+          this.m_SelectedObjects.Remove(o);
+        }
+      }
+
+      _grac.ActiveLayer.GraphObjects.Add(group);
+      _grac.RefreshGraph();
+    }
+
+
+    // <summary>
+    /// Ungroups the selected objects (if they are ShapeGroup objects).
+    /// </summary>
+    public void UngroupSelectedObjects()
+    {
+      
+    }
+
 
 
     public delegate void ArrangeElement(IHitTestObject obj, RectangleF bounds, RectangleF masterbounds);
@@ -565,7 +604,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     }
 
     /// <summary>
-    /// Arranges the objects so they share the top boundary of the last selected object.
+    /// Arranges the objects so they share the top boundary with the top boundary of the master element.
     /// </summary>
     public void ArrangeTopToTop()
     {
@@ -575,17 +614,37 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     }
 
     /// <summary>
-    /// Arranges the objects so they share the bottom boundary of the last selected object.
+    /// Arranges the objects so they share the bottom boundary with the top boundary of the master element.
     /// </summary>
-    public void ArrangeBottomToBottom()
+    public void ArrangeBottomToTop()
     {
       Arrange(delegate(IHitTestObject obj, RectangleF bounds, RectangleF masterbounds)
-      { obj.ShiftPosition(0, (masterbounds.Y+masterbounds.Height) - (bounds.Y+bounds.Height)); }
+      { obj.ShiftPosition(0, (masterbounds.Y) - (bounds.Y+bounds.Height)); }
       );
     }
 
     /// <summary>
-    /// Arranges the objects so they share the left boundary of the last selected object.
+    /// Arranges the objects so they share the top boundary with the bottom boundary of the master element.
+    /// </summary>
+    public void ArrangeTopToBottom()
+    {
+      Arrange(delegate(IHitTestObject obj, RectangleF bounds, RectangleF masterbounds)
+      { obj.ShiftPosition(0, (masterbounds.Y + masterbounds.Height) - (bounds.Y)); }
+      );
+    }
+
+    /// <summary>
+    /// Arranges the objects so they share the bottom boundary with the bottom boundary of the master element.
+    /// </summary>
+    public void ArrangeBottomToBottom()
+    {
+      Arrange(delegate(IHitTestObject obj, RectangleF bounds, RectangleF masterbounds)
+      { obj.ShiftPosition(0, (masterbounds.Y + masterbounds.Height) - (bounds.Y + bounds.Height)); }
+      );
+    }
+
+    /// <summary>
+    /// Arranges the objects so they share the left boundary with the left boundary of the master element.
     /// </summary>
     public void ArrangeLeftToLeft()
     {
@@ -595,14 +654,35 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     }
 
     /// <summary>
-    /// Arranges the objects so they share the bottom line of the last selected object.
+    /// Arranges the objects so they share the left boundary with the right boundary of the master element.
+    /// </summary>
+    public void ArrangeLeftToRight()
+    {
+      Arrange(delegate(IHitTestObject obj, RectangleF bounds, RectangleF masterbounds)
+      { obj.ShiftPosition((masterbounds.X+masterbounds.Width) - bounds.X, 0); }
+      );
+    }
+
+    /// <summary>
+    /// Arranges the objects so they share the right boundary with the left boundary of the master element.
+    /// </summary>
+    public void ArrangeRightToLeft()
+    {
+      Arrange(delegate(IHitTestObject obj, RectangleF bounds, RectangleF masterbounds)
+      { obj.ShiftPosition( (masterbounds.X) - (bounds.X + bounds.Width), 0); }
+      );
+    }
+
+    /// <summary>
+    /// Arranges the objects so they share the right boundary with the right boundary of the master element.
     /// </summary>
     public void ArrangeRightToRight()
     {
       Arrange(delegate(IHitTestObject obj, RectangleF bounds, RectangleF masterbounds)
-      { obj.ShiftPosition( (masterbounds.X + masterbounds.Width) - (bounds.X + bounds.Width), 0); }
+      { obj.ShiftPosition((masterbounds.X + masterbounds.Width) - (bounds.X + bounds.Width), 0); }
       );
     }
+
 
     /// <summary>
     /// Arranges the objects so they share the horizontal middle line of the last selected object.

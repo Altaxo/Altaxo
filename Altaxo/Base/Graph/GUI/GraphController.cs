@@ -1716,41 +1716,84 @@ namespace Altaxo.Graph.GUI
       }
     }
 
+    public void GroupSelectedObjects()
+    {
+      if (m_MouseState is ObjectPointerMouseHandler)
+        ((ObjectPointerMouseHandler)m_MouseState).GroupSelectedObjects();
+    }
+
     #endregion
 
     #region Arrangement of selected objects
 
     /// <summary>
-    /// Arranges the objects so they share the bottom boundary of the last selected object.
+    /// Arranges the objects so that they share the top boundary with the top boundary of the last selected object.
     /// </summary>
-    public void ArrangeBottom()
-    {
-        if (m_MouseState is ObjectPointerMouseHandler)
-          ((ObjectPointerMouseHandler)m_MouseState).ArrangeBottomToBottom();
-    }
-
-    /// <summary>
-    /// Arranges the objects so they share the top boundary of the last selected object.
-    /// </summary>
-    public void ArrangeTop()
+    public void ArrangeTopToTop()
     {
       if (m_MouseState is ObjectPointerMouseHandler)
-         ((ObjectPointerMouseHandler)m_MouseState).ArrangeTopToTop();
+        ((ObjectPointerMouseHandler)m_MouseState).ArrangeTopToTop();
     }
 
     /// <summary>
-    /// Arranges the objects so they share the left boundary of the last selected object.
+    /// Arranges the objects so that they share the top boundary with the bottom boundary of the last selected object.
     /// </summary>
-    public void ArrangeLeft()
+    public void ArrangeTopToBottom()
+    {
+      if (m_MouseState is ObjectPointerMouseHandler)
+        ((ObjectPointerMouseHandler)m_MouseState).ArrangeTopToBottom();
+    }
+
+    /// <summary>
+    /// Arranges the objects so that they share the bottom boundary with the bottom boundary of the last selected object.
+    /// </summary>
+    public void ArrangeBottomToTop()
+    {
+        if (m_MouseState is ObjectPointerMouseHandler)
+          ((ObjectPointerMouseHandler)m_MouseState).ArrangeBottomToTop();
+    }
+
+    /// <summary>
+    /// Arranges the objects so that they share the bottom boundary with the bottom boundary of the last selected object.
+    /// </summary>
+    public void ArrangeBottomToBottom()
+    {
+      if (m_MouseState is ObjectPointerMouseHandler)
+        ((ObjectPointerMouseHandler)m_MouseState).ArrangeBottomToBottom();
+    }
+   
+
+    /// <summary>
+    /// Arranges the objects so that they share the left boundary with the left boundary of the last selected object.
+    /// </summary>
+    public void ArrangeLeftToLeft()
     {
       if (m_MouseState is ObjectPointerMouseHandler)
          ((ObjectPointerMouseHandler)m_MouseState).ArrangeLeftToLeft();
     }
 
     /// <summary>
-    /// Arranges the objects so they share the right boundary of the last selected object.
+    /// Arranges the objects so that they share the left boundary with the right boundary of the last selected object.
     /// </summary>
-    public void ArrangeRight()
+    public void ArrangeLeftToRight()
+    {
+      if (m_MouseState is ObjectPointerMouseHandler)
+        ((ObjectPointerMouseHandler)m_MouseState).ArrangeLeftToRight();
+    }
+
+    /// <summary>
+    /// Arranges the objects so that they share the right boundary with the left boundary of the last selected object.
+    /// </summary>
+    public void ArrangeRightToLeft()
+    {
+      if (m_MouseState is ObjectPointerMouseHandler)
+        ((ObjectPointerMouseHandler)m_MouseState).ArrangeRightToLeft();
+    }
+
+    /// <summary>
+    /// Arranges the objects so that they share the right boundary with the right boundary of the last selected object.
+    /// </summary>
+    public void ArrangeRightToRight()
     {
       if (m_MouseState is ObjectPointerMouseHandler)
          ((ObjectPointerMouseHandler)m_MouseState).ArrangeRightToRight();

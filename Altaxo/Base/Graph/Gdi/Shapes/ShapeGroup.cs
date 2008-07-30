@@ -38,8 +38,9 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 
 
-     public ShapeGroup()
+    public ShapeGroup()
     {
+      _groupedObjects = new List<GraphicBase>();
     }
 
     public ShapeGroup(PointF graphicPosition)
@@ -153,8 +154,89 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     #region Addition of objects
 
+    RectangleF ExpandToInclude(RectangleF r, PointF p)
+    {
+      if (!(r.Contains(p)))
+      {
+        if (p.X < r.X)
+          r.X = p.X;
+        else if (p.X > r.Right)
+          r.Width = p.X - r.X;
+
+        if (p.Y < r.Y)
+          r.Y = p.Y;
+        else if (p.Y > r.Bottom)
+          r.Height = p.Y - r.Y;
+      }
+      return r;
+    }
+
+    RectangleF BoundingBox(PointF p1, PointF p2, PointF p3, PointF p4)
+    {
+      RectangleF r = new RectangleF(p1, SizeF.Empty);
+      r = ExpandToInclude(r, p2);
+      r = ExpandToInclude(r, p3);
+      r = ExpandToInclude(r, p4);
+      return r;
+    }
+
     public void Add(GraphicBase obj)
     {
+      // calculate the bounding box of obj with respect to zero orientation
+      if (_groupedObjects.Count == 0)
+      {
+        // calculate the bounding box of obj with respect to zero orientation (because a new group object has zero orientation)
+        PointF p1 = obj.ToUnrotatedCoordinates(obj.Position, obj.Position);
+        PointF p2 = obj.ToUnrotatedCoordinates(obj.Position, new PointF(obj.Position.X + obj.Width,obj.Position.Y));
+        PointF p3 = obj.ToUnrotatedCoordinates(obj.Position, new PointF(obj.Position.X, obj.Position.Y+obj.Height));
+        PointF p4 = obj.ToUnrotatedCoordinates(obj.Position, new PointF(obj.Position.X + obj.Width, obj.Position.Y+obj.Height));
+        RectangleF r = BoundingBox(p1, p2, p3, p4);
+        this.Position = r.Location;
+        this.Size = r.Size;
+        this.Rotation = 0;
+      }
+      else // other objects already there
+      {
+        SizeF s1 = obj.ToRotatedDifference(obj.Position, obj.Position);
+        SizeF s2 = obj.ToRotatedDifference(obj.Position, new PointF(obj.Position.X + obj.Width,obj.Position.Y));
+        SizeF s3 = obj.ToRotatedDifference(obj.Position, new PointF(obj.Position.X, obj.Position.Y+obj.Height));
+        SizeF s4 = obj.ToRotatedDifference(obj.Position, new PointF(obj.Position.X + obj.Width, obj.Position.Y + obj.Height));
+
+        PointF p1 = this.ToUnrotatedCoordinates(this.Position, obj.Position + s1);
+        PointF p2 = this.ToUnrotatedCoordinates(this.Position, obj.Position + s2);
+        PointF p3 = this.ToUnrotatedCoordinates(this.Position, obj.Position + s3);
+        PointF p4 = this.ToUnrotatedCoordinates(this.Position, obj.Position + s4);
+
+        RectangleF r = new RectangleF(this.Position, this.Size);
+        r = ExpandToInclude(r, p1);
+        r = ExpandToInclude(r, p2);
+        r = ExpandToInclude(r, p3);
+        r = ExpandToInclude(r, p4);
+
+        if(r.Size.Width>this.Size.Width)
+          this.Width = r.Size.Width;
+
+        if (r.Size.Height > this.Size.Height)
+          this.Height = r.Size.Height;
+
+        if (r.X < this.X)
+        {
+          float d = r.X - this.X;
+          foreach (GraphicBase o in _groupedObjects)
+            o.X -= d;
+          this.X = r.X;
+        }
+        if (r.Y < this.Y)
+        {
+          float d = r.Y - this.Y;
+          foreach (GraphicBase o in _groupedObjects)
+            o.Y -= d;
+          this.Y = r.Y;
+        }
+      }
+         obj.Position = new PointF( obj.Position.X-this.Position.X, obj.Position.Y - this.Position.Y);
+        _groupedObjects.Add(obj);
+
 
     }
 

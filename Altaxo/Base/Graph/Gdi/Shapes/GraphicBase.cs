@@ -29,7 +29,7 @@ using Altaxo.Serialization;
 namespace Altaxo.Graph.Gdi.Shapes
 {
   /// <summary>
-  /// GraphicsObject is the abstract base class for general graphical objects on the layer,
+  /// The abstract base class for general graphical objects on the layer,
   /// for instance text elements, lines, pictures, rectangles and so on.
   /// </summary>
   [Serializable]

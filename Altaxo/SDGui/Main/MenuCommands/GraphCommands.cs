@@ -367,32 +367,68 @@ namespace Altaxo.Graph.Commands
     }
   }
 
+  public class GroupSelectedObjects : AbstractGraphControllerCommand
+  {
+    public override void Run(GraphController ctrl)
+    {
+      ctrl.GroupSelectedObjects();
+    }
+  }
+
   public class ArrangeTop : AbstractGraphControllerCommand
   {
     public override void Run(GraphController ctrl)
     {
-      ctrl.ArrangeTop();
+      ctrl.ArrangeTopToTop();
     }
   }
   public class ArrangeBottom : AbstractGraphControllerCommand
   {
     public override void Run(GraphController ctrl)
     {
-      ctrl.ArrangeBottom();
+      ctrl.ArrangeBottomToBottom();
+    }
+  }
+  public class ArrangeTopToBottom : AbstractGraphControllerCommand
+  {
+    public override void Run(GraphController ctrl)
+    {
+      ctrl.ArrangeTopToBottom();
+    }
+  }
+  public class ArrangeBottomToTop : AbstractGraphControllerCommand
+  {
+    public override void Run(GraphController ctrl)
+    {
+      ctrl.ArrangeBottomToTop();
     }
   }
   public class ArrangeLeft : AbstractGraphControllerCommand
   {
     public override void Run(GraphController ctrl)
     {
-      ctrl.ArrangeLeft();
+      ctrl.ArrangeLeftToLeft();
     }
   }
   public class ArrangeRight : AbstractGraphControllerCommand
   {
     public override void Run(GraphController ctrl)
     {
-      ctrl.ArrangeRight();
+      ctrl.ArrangeRightToRight();
+    }
+  }
+  public class ArrangeLeftToRight : AbstractGraphControllerCommand
+  {
+    public override void Run(GraphController ctrl)
+    {
+      ctrl.ArrangeLeftToRight();
+    }
+  }
+  public class ArrangeRightToLeft : AbstractGraphControllerCommand
+  {
+    public override void Run(GraphController ctrl)
+    {
+      ctrl.ArrangeRightToLeft();
     }
   }
   public class ArrangeHorizontal : AbstractGraphControllerCommand

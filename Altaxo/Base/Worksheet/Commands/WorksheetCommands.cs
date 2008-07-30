@@ -134,6 +134,12 @@ namespace Altaxo.Worksheet.Commands
       ShowAddColumnsDialog(ctrl.DataTable,true);
     }
 
+    public static void WorksheetClearData(WorksheetController ctrl)
+    {
+      ctrl.DataTable.DataColumns.ClearData();
+      ctrl.DataTable.PropCols.ClearData();
+    }
+
     /// <summary>
     /// Shows a dialog to add columns to a table.
     /// </summary>

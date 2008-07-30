@@ -529,6 +529,31 @@ namespace Altaxo.Calc.Probability
 
       logPrefactor = Math.Log(alpha / (Math.PI * Math.Abs(alpha - 1) * xx));
     }
+    public static void GetAgt1GpParameter(double x, double alpha, double beta, double abe,
+                                                 out double factorp, out double factorw, out double dev, out double logPrefactor)
+    {
+      double tan_pi_alpha_2 = TanXPiBy2(alpha);
+      double zeta = -beta * tan_pi_alpha_2;
+      double xx = x - zeta; // equivalent to x-zeta in S0 integral
+
+      double aga;
+      double gamma = GammaFromAlphaBetaTanPiA2(alpha, beta, abe, tan_pi_alpha_2, out aga);
+
+      // original formula: dev = Math.PI * 0.5 * (alpha - gamma) / alpha;
+      // original formula (2): Math.PI * 0.5 + Math.Atan(beta * tan_pi_alpha_2) / alpha;
+      dev = Math.PI * 0.5 * (alpha - gamma) / alpha;
+      dev = Math.PI * 0.5 + Math.Atan(beta * tan_pi_alpha_2) / alpha;
+
+      if (dev < 0)
+        dev = 0;
+
+      //double factor = Math.Pow(xx, alpha / (alpha - 1)) * Math.Pow(Math.Cos(alpha * xi), 1 / (alpha - 1));
+      // we separate the factor in a power of 1/alpha-1 and the rest
+      factorp = xx * CosGammaPiBy2(alpha, gamma, aga); // Math.Cos(-gamma * 0.5 * Math.PI);
+      factorw = xx;
+
+      logPrefactor = Math.Log(alpha / (Math.PI * Math.Abs(alpha - 1) * xx));
+    }
 
 
     #endregion
