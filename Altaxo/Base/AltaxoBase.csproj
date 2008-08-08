@@ -1,7 +1,7 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{CA928A5C-9673-4FBB-A60E-F91364CC9DB5}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -25,6 +25,22 @@
     </FileUpgradeFlags>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
+    <OldToolsVersion>2.0</OldToolsVersion>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>bin\Debug\</OutputPath>
@@ -111,8 +127,8 @@
       <Project>{1CFDD727-D2B7-4521-AF53-D24EA4C69176}</Project>
       <Name>zNumerator</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Core\AltaxoCore.Vs8.csproj">
-      <Name>AltaxoCore.Vs8</Name>
+    <ProjectReference Include="..\Core\AltaxoCore.csproj">
+      <Name>AltaxoCore</Name>
       <Project>{7045C197-9DA8-4FA4-886C-992ACADD838F}</Project>
       <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
     </ProjectReference>
@@ -813,9 +829,11 @@
     </Compile>
     <EmbeddedResource Include="Graph\GUI\GraphPanel.resx">
       <DependentUpon>GraphPanel.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Graph\GUI\GraphView.resx">
       <DependentUpon>GraphView.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Analysis\NonLinearFitting\FitElementControl.resx">
       <DependentUpon>FitElementControl.cs</DependentUpon>
@@ -871,6 +889,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Common\MultiChildControl.resx">
       <DependentUpon>MultiChildControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Common\SingleChoiceComboBoxControl.resx">
       <DependentUpon>SingleChoiceComboBoxControl.cs</DependentUpon>
@@ -889,9 +908,11 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Common\TabbedElementControl.resx">
       <DependentUpon>TabbedElementControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Graph\ArrangeLayersControl.resx">
       <DependentUpon>ArrangeLayersControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Graph\AxisLineStyleControl.resx">
       <SubType>Designer</SubType>
@@ -999,9 +1020,11 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Graph\XYAxisLabelStyleControl.resx">
       <DependentUpon>XYAxisLabelStyleControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Graph\XYColumnPlotDataControl.resx">
       <DependentUpon>XYColumnPlotDataControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Graph\XYGridStyleControl.resx">
       <DependentUpon>XYGridStyleControl.cs</DependentUpon>
@@ -1009,9 +1032,11 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Graph\XYPlotGroupControl.resx">
       <DependentUpon>XYPlotGroupControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Graph\XYPlotLabelStyleControl.resx">
       <DependentUpon>XYPlotLabelStyleControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Graph\XYPlotLineStyleControl.resx">
       <SubType>Designer</SubType>
@@ -1019,24 +1044,31 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Graph\XYPlotScatterStyleControl.resx">
       <DependentUpon>XYPlotScatterStyleControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Graph\XYPlotStyleCollectionControl.resx">
       <DependentUpon>XYPlotStyleCollectionControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Scripting\FitFunctionScriptControl.resx">
       <DependentUpon>FitFunctionScriptControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Scripting\PureScriptControl.resx">
       <DependentUpon>PureScriptControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Scripting\ScriptControl.resx">
       <DependentUpon>ScriptControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Scripting\ScriptExecutionDialog.resx">
       <DependentUpon>ScriptExecutionDialog.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Main\AboutDialog.resx">
       <DependentUpon>AboutDialog.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Main\GUI\MWControls\EditorHatchStyleUI.resx">
       <DependentUpon>EditorHatchStyleUI.cs</DependentUpon>
@@ -1044,36 +1076,46 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Main\GUI\MWControls\MWTreeView.resx">
       <DependentUpon>MWTreeView.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Serialization\Galactic\ExportGalacticSpcFileDialog.resx">
       <DependentUpon>ExportGalacticSpcFileDialog.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Textures.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Worksheet\GUI\InterpolationControl.resx">
       <DependentUpon>InterpolationControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Worksheet\GUI\PLSPredictValueControl.resx">
       <DependentUpon>PLSPredictValueControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Worksheet\GUI\PLSStartAnalysisControl.resx">
       <DependentUpon>PLSStartAnalysisControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Worksheet\GUI\SavitzkyGolayParameterControl.resx">
       <DependentUpon>SavitzkyGolayParameterControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Worksheet\GUI\SpectralPreprocessingControl.resx">
       <DependentUpon>SpectralPreprocessingControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Worksheet\GUI\TransposeWorksheetControl.resx">
       <DependentUpon>TransposeWorksheetControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Worksheet\GUI\WorksheetPanel.resx">
       <DependentUpon>WorksheetPanel.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Worksheet\GUI\WorksheetView.resx">
       <DependentUpon>WorksheetView.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <Content Include="Calc\FitFunctions\Relaxation\.svn\README.txt" />
     <Content Include="Main\App.ico" />
@@ -1447,6 +1489,23 @@
     <Folder Include="Calc\FitFunctions\Relaxation\.svn\tmp\text-base\" />
     <Folder Include="Calc\FitFunctions\Relaxation\.svn\tmp\wcprops\" />
     <Folder Include="Calc\FitFunctions\Relaxation\.svn\wcprops\" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

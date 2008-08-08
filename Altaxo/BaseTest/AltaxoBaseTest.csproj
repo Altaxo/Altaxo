@@ -1,7 +1,7 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
-    <ProductVersion>8.0.50215</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{3B2A9A3B-5EBC-4C38-8B73-B4DCA6BFB1C3}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -26,6 +26,7 @@
     </FileUpgradeFlags>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
+    <OldToolsVersion>2.0</OldToolsVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>bin\Debug\</OutputPath>
@@ -83,18 +84,18 @@
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
-    <ProjectReference Include="..\..\Libraries\SharpZipLib\src\zICSharpCode.SharpZipLib.Vs8.csproj">
-      <Name>zICSharpCode.SharpZipLib.Vs8</Name>
+    <ProjectReference Include="..\..\Libraries\SharpZipLib\src\zICSharpCode.SharpZipLib.csproj">
+      <Name>zICSharpCode.SharpZipLib</Name>
       <Project>{62C31D94-812C-430E-AB9B-7DCF84D93BAE}</Project>
       <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
     </ProjectReference>
-    <ProjectReference Include="..\Base\AltaxoBase.Vs8.csproj">
-      <Name>AltaxoBase.Vs8</Name>
+    <ProjectReference Include="..\Base\AltaxoBase.csproj">
+      <Name>AltaxoBase</Name>
       <Project>{CA928A5C-9673-4FBB-A60E-F91364CC9DB5}</Project>
       <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
     </ProjectReference>
-    <ProjectReference Include="..\Core\AltaxoCore.Vs8.csproj">
-      <Name>AltaxoCore.Vs8</Name>
+    <ProjectReference Include="..\Core\AltaxoCore.csproj">
+      <Name>AltaxoCore</Name>
       <Project>{7045C197-9DA8-4FA4-886C-992ACADD838F}</Project>
       <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
     </ProjectReference>

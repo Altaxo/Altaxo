@@ -1,1567 +1,439 @@
-<VisualStudioProject>
-    <CSHARP
-        ProjectType = "Local"
-        ProductVersion = "7.10.3077"
-        SchemaVersion = "2.0"
-        ProjectGuid = "{012F4935-9036-4F02-8C03-060EC9514A1D}"
-    >
-        <Build>
-            <Settings
-                ApplicationIcon = ""
-                AssemblyKeyContainerName = ""
-                AssemblyName = "HelpConverter"
-                AssemblyOriginatorKeyFile = ""
-                DefaultClientScript = "JScript"
-                DefaultHTMLPageLayout = "Grid"
-                DefaultTargetSchema = "IE50"
-                DelaySign = "false"
-                OutputType = "Exe"
-                PreBuildEvent = ""
-                PostBuildEvent = "if not exist ..\..\..\rt$(ConfigurationName)\bin mkdir  ..\..\..\rt$(ConfigurationName)\bin&#xd;&#xa;xcopy ..\..\AddIns\*.* ..\..\..\rt$(ConfigurationName)\AddIns /E /I /Y&#xd;&#xa;xcopy ..\..\data\*.* ..\..\..\rt$(ConfigurationName)\data /E /I /Y&#xd;&#xa;xcopy ..\..\doc\*.* ..\..\..\rt$(ConfigurationName)\doc /E /I /Y&#xd;&#xa;rem Dont forget to copy the &#xd;&#xa;copy ..\..\..\Libraries\bin\Interop.SHDocVw.dll ..\..\..\rt$(ConfigurationName)\bin&#xd;&#xa;&#xd;&#xa;rem copy the HelpConverter.exe and .pdb to the bin directory&#xd;&#xa;copy HelpConverter.* ..\..\..\rt$(ConfigurationName)\bin&#xd;&#xa;&#xd;&#xa;rem Update the build version of the main important assemblies&#xd;&#xa;rem ..\..\..\Libraries\bin\AssemblySvnVersion ..\..\..\  ..\..\..\Altaxo\Startup\AssemblyInfo.cs ..\..\..\Altaxo\Core\AssemblyInfo.cs ..\..\..\Altaxo\SDGui\AssemblyInfo.cs ..\..\..\Altaxo\Base\AssemblyInfo.cs&#xd;&#xa;"
-                RootNamespace = ""
-                RunPostBuildEvent = "OnOutputUpdated"
-                StartupObject = ""
-            >
-                <Config
-                    Name = "Debug"
-                    AllowUnsafeBlocks = "false"
-                    BaseAddress = "285212672"
-                    CheckForOverflowUnderflow = "false"
-                    ConfigurationOverrideFile = ""
-                    DefineConstants = "DEBUG;TRACE;ModifiedForAltaxo"
-                    DocumentationFile = ""
-                    DebugSymbols = "true"
-                    FileAlignment = "4096"
-                    IncrementalBuild = "false"
-                    NoStdLib = "false"
-                    NoWarn = ""
-                    Optimize = "false"
-                    OutputPath = "bin\Debug\"
-                    RegisterForComInterop = "false"
-                    RemoveIntegerChecks = "false"
-                    TreatWarningsAsErrors = "false"
-                    WarningLevel = "4"
-                />
-                <Config
-                    Name = "Release"
-                    AllowUnsafeBlocks = "false"
-                    BaseAddress = "285212672"
-                    CheckForOverflowUnderflow = "false"
-                    ConfigurationOverrideFile = ""
-                    DefineConstants = "TRACE;ModifiedForAltaxo"
-                    DocumentationFile = ""
-                    DebugSymbols = "false"
-                    FileAlignment = "4096"
-                    IncrementalBuild = "false"
-                    NoStdLib = "false"
-                    NoWarn = ""
-                    Optimize = "true"
-                    OutputPath = "bin\Release\"
-                    RegisterForComInterop = "false"
-                    RemoveIntegerChecks = "false"
-                    TreatWarningsAsErrors = "false"
-                    WarningLevel = "4"
-                />
-            </Settings>
-            <References>
-                <Reference
-                    Name = "System"
-                    AssemblyName = "System"
-                    HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.dll"
-                />
-                <Reference
-                    Name = "System.Configuration.Install"
-                    AssemblyName = "System.Configuration.Install"
-                    HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Configuration.Install.dll"
-                />
-                <Reference
-                    Name = "System.XML"
-                    AssemblyName = "System.Xml"
-                    HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.XML.dll"
-                />
-                <Reference
-                    Name = "System.Windows.Forms"
-                    AssemblyName = "System.Windows.Forms"
-                    HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Windows.Forms.dll"
-                />
-                <Reference
-                    Name = "zICSharpCode.SharpZipLib"
-                    Project = "{62C31D94-812C-430E-AB9B-7DCF84D93BAE}"
-                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
-                />
-            </References>
-        </Build>
-        <Files>
-            <Include>
-                <File
-                    RelPath = "AssemblyInfo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "HelpConverter.InstallState"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "HelpSetup.cs"
-                    SubType = "Component"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "HelpSetup.resx"
-                    DependentUpon = "HelpSetup.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "HhcFileParser.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Main.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "data\vb.rsp"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\ConversionStyleSheets\ConvertPrjx10to11.xsl"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\ConversionStyleSheets\ShowChangeLog.xsl"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\ConversionStyleSheets\ShowXmlDocumentation.xsl"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\ConversionStyleSheets\SVNChangelogToXml.xsl"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\modes\C64CSharp.xshd"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\modes\CSharp-Mode-VSEnh.xshd"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\modes\Jay-Mode.xshd"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\options\MainMenuItems.xml"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\options\SharpDevelopControlLibrary.sdcl"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\options\SharpDevelopProperties.xml"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\options\SharpDevelop-templates.xml"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\options\SharpDevelop-tools.xml"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\options\StandardHeader.xml"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\options\TextAreaContextMenu.xml"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\options\TipsOfTheDay.xml"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\options\TextLib\ASCIITable.xml"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\options\TextLib\CSharpDocumentationTags.xml"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\options\TextLib\Licenses.xml"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\options\TextLib\SharpDevelop.xml"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\options\TextLib\XSLT.xml"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\AddIn.xsd"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\AltaxoBitmap.resources"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\AltaxoString.resources"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\SharpDevelop.ico"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\StringResources.ar.resources"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\StringResources.bg.resources"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\StringResources.cn-big.resources"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\StringResources.cn-gb.resources"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\StringResources.cz.resources"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\StringResources.de.resources"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\StringResources.dk.resources"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\StringResources.el.resources"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\StringResources.es.resources"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\StringResources.es-mx.resources"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\StringResources.fi.resources"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\StringResources.fr.resources"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\StringResources.hu.resources"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\StringResources.it.resources"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\StringResources.jp.resources"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\StringResources.kr.resources"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\StringResources.lt.resources"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\StringResources.nl.resources"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\StringResources.no.resources"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\StringResources.pl.resources"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\StringResources.pt.resources"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\StringResources.pt-br.resources"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\StringResources.ro.resources"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\StringResources.ru.resources"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\StringResources.se.resources"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\StringResources.sk.resources"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\StringResources.sl.resources"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\StringResources.sr.resources"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\StringResources.tr.resources"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\css\MsdnHelp.css"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\css\SharpDevelopStandard.css"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\dialogs\AddSidebarComponentsDialog.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\dialogs\CommonAboutDialog.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\dialogs\ConfigureSidebarDialog.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\dialogs\EditTemplateDialog.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\dialogs\FindDialog.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\dialogs\FindInFilesDialog.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\dialogs\GotoLineNumberDialog.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\dialogs\InputBox.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\dialogs\NewFileDialog.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\dialogs\NewFileWithNameDialog.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\dialogs\NewProjectDialog.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\dialogs\RegExpTkGroupForm.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\dialogs\RegExpTkMainForm.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\dialogs\RenameSidebarCategoryDialog.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\dialogs\ReplaceDialog.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\dialogs\ReplaceInFilesDialog.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\dialogs\SortOptionsDialog.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\dialogs\TabbedOptionsDialog.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\dialogs\TreeViewOptionsDialog.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\dialogs\ViewGPLDialog.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\dialogs\WordCountDialog.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\dialogs\ErrorDialog\SaveErrorChooseDialog.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\dialogs\ErrorDialog\SaveErrorInformDialog.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\dialogs\ResourceEditor\RenameEntryDialog.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\dialogs\SharpQuery\SqlParametersInput.xfrm"
-                    BuildAction = "Content"
-                />
-                <Folder RelPath = "data\resources\dialogs\UML Designer\" />
-                <File
-                    RelPath = "data\resources\filetypes\c.ico"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\filetypes\cmbx.ico"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\filetypes\cs.ico"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\filetypes\Filetypes.xml"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\filetypes\java.ico"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\filetypes\prjx.ico"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\filetypes\resx.ico"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\filetypes\vb.ico"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\filetypes\xfrm.ico"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\filetypes\xml.ico"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\InstallerBitmaps\Complete.ico"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\InstallerBitmaps\Custom.ico"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\InstallerBitmaps\default-banner.bmp"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\InstallerBitmaps\default-dialog.bmp"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\InstallerBitmaps\exclamic.bmp"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\InstallerBitmaps\info.bmp"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\InstallerBitmaps\new.bmp"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\InstallerBitmaps\Remove.ico"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\InstallerBitmaps\Repair.ico"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\InstallerBitmaps\Typical.ico"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\InstallerBitmaps\up.bmp"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\InstallerBitmaps\vsi6banner.bmp"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\InstallerBitmaps\vsibanner.bmp"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\languages\Arabic.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\languages\badgoisern.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\languages\brazil.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\languages\bulgaria.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\languages\chinalg.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\languages\czech.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\languages\denmark.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\languages\england.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\languages\finnish.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\languages\france.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\languages\germany.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\languages\hungary.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\languages\italy.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\languages\japan.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\languages\LanguageDefinition.xml"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\languages\lithuania.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\languages\mexico.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\languages\netherlands.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\languages\norway.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\languages\poland.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\languages\portugal.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\languages\romania.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\languages\russia.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\languages\Serbia.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\languages\slovenia.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\languages\south_korea.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\languages\spain.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\languages\sweden.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\languages\uk.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\languages\usa.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\languages\.xvpics\russia.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\languages\.xvpics\south_korea.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\languages\.xvpics\sweden.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\panels\AssemblyScoutOptions.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\panels\BehaviorTextEditorPanel.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\panels\ChooseRuntimePanel.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\panels\CodeGenerationOptionsPanel.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\panels\CodeTemplatePanel.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\panels\CombineStartupPanel.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\panels\CompileFileProjectOptions.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\panels\DeployFileOptions.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\panels\EditStandardHeaderPanel.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\panels\ExternalToolOptions.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\panels\FontSelectionPanel.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\panels\FormDesingerToolboxConfigurationPanel.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\panels\GeneralProjectOptions.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\panels\GeneralTextEditorPanel.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\panels\LoadSaveOptionPanel.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\panels\MarkersTextEditorPanel.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\panels\OutputWindowOptionsPanel.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\panels\ProjectAndCombineOptions.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\panels\SelectStylePanel.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\panels\TaskListOptions.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\panels\VBCompilerPanel.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\panels\VBSpecificTextEditorOptions.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\panels\WindowsFormsGeneralOptions.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\panels\WindowsFormsGridOptions.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\panels\CompletionDatabaseWizard\CreateNewFilePanel.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\panels\CompletionDatabaseWizard\CreationFinishedPanel.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\panels\CompletionDatabaseWizard\UseExistingFilePanel.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\panels\CompletionDatabaseWizard\ViewProgressPanel.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\panels\CompletionDatabaseWizard\WelcomePanel.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\panels\HighlightingEditor\ColorDialog.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\panels\HighlightingEditor\Digits.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\panels\HighlightingEditor\EditDialog.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\panels\HighlightingEditor\Environment.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\panels\HighlightingEditor\KeywordList.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\panels\HighlightingEditor\KeywordLists.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\panels\HighlightingEditor\Marker.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\panels\HighlightingEditor\Markers.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\panels\HighlightingEditor\OptionPanel.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\panels\HighlightingEditor\Properties.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\panels\HighlightingEditor\RuleSet.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\panels\HighlightingEditor\RuleSets.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\panels\HighlightingEditor\Scheme.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\panels\HighlightingEditor\Span.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\panels\HighlightingEditor\Spans.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\panels\PrettyPrinterGUI\PrettyPrintPanel.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\panels\ProjectOptions\CodeGenerationPanel.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\panels\ProjectOptions\CPPCodeGenerationPanel.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\panels\ProjectOptions\GeneralProjectOptions.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\panels\ProjectOptions\OutputPanel.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\panels\ProjectOptions\VBDOCConfigurationPanel.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\panels\ProjectOptions\VBNetCodeGenerationPanel.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\startpage\Layout\default.css"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\startpage\Layout\blue\balken_links.gif"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\startpage\Layout\blue\balken_mitte.gif"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\startpage\Layout\blue\balken_rechts.gif"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\startpage\Layout\brown\balken_links.gif"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\startpage\Layout\brown\balken_mitte.gif"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\startpage\Layout\brown\balken_rechts.gif"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\startpage\Layout\common\blind.gif"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\startpage\Layout\common\dot_listing.gif"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\startpage\Layout\common\klinker_milestone.gif"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\startpage\Layout\common\line_hor_black.gif"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\startpage\Layout\common\milestone_col_head.gif"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\startpage\Layout\common\pixel_weiss.gif"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\startpage\Layout\green\balken_links.gif"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\startpage\Layout\green\balken_mitte.gif"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\startpage\Layout\green\balken_rechts.gif"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\startpage\Layout\orange\balken_links.gif"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\startpage\Layout\orange\balken_mitte.gif"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\startpage\Layout\orange\balken_rechts.gif"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\startpage\Layout\red\balken_links.gif"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\startpage\Layout\red\balken_mitte.gif"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\startpage\Layout\red\balken_rechts.gif"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\xslt\allmembers.xslt"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\xslt\common.xslt"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\xslt\event.xslt"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\xslt\field.xslt"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\xslt\filenames.xslt"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\xslt\individualmembers.xslt"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\xslt\member.xslt"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\xslt\memberoverload.xslt"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\xslt\memberscommon.xslt"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\xslt\namespace.xslt"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\xslt\namespacehierarchy.xslt"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\xslt\property.xslt"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\xslt\syntax.xslt"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\xslt\type.xslt"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\schemas\AddIn.xsd"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\schemas\appconfig.xsd"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\schemas\manifest.xsd"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\schemas\nant.xsd"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\schemas\nant-0.84.xsd"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\schemas\readme.txt"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\schemas\W3C-License.html"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\schemas\wix.xsd"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\schemas\XMLSchema.xsd"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\schemas\xslt.xsd"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\templates\file\CPPNet\CPP.Empty.xft"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\templates\file\CPPNet\CPP.Header.xft"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\templates\file\CPPNet\CPP.Wizards.NewClass.xft"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\templates\file\CSharp\CSharp.Empty.xft"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\templates\file\CSharp\CSharp.EmptyClass.xft"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\templates\file\CSharp\CSharp.Forms.Form.xft"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\templates\file\CSharp\CSharp.Forms.UserControl.xft"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\templates\file\CSharp\CSharp.Patterns.Singleton.xft"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\templates\file\CSharp\CSharp.UnitTest.xft"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\templates\file\CSharp\CSharp.Wizards.NewClass.xft"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\templates\file\CSharp\CSharp.Wizards.TypedCollection.xft"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\templates\file\CSharp\CSharp.Wizards.TypedHashtable.xft"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\templates\file\Misc\EmptyHTMLFile.xft"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\templates\file\Misc\EmptyResourceFile.xft"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\templates\file\Misc\EmptySharpReport.xft"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\templates\file\Misc\EmptyTextFile.xft"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\templates\file\Misc\EmptyWixFragment.xft"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\templates\file\Misc\EmptyXMLFile.xft"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\templates\file\Misc\EmptyXmlForm.xft"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\templates\file\Misc\EmptyXmlUserControl.xft"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\templates\file\SharpDevelop\ExampleMenuCommand.xft"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\templates\file\SharpDevelop\ExampleOptionPanel.xft"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\templates\file\SharpDevelop\ExamplePad.xft"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\templates\file\SharpDevelop\ExampleView.xft"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\templates\file\SharpDevelop\SimpleCommand.xft"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\templates\file\VBNet\VBNet.Empty.xft"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\templates\file\VBNet\VBNet.EmptyClass.xft"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\templates\file\VBNet\VBNet.Forms.Form.xft"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\templates\file\VBNet\VBNet.Forms.UserControl.xft"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\templates\file\VBNet\VBNet.Patterns.Singleton.xft"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\templates\file\VBNet\VBNet.UnitTest.xft"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\templates\file\VBNet\VBNet.Wizards.NewClass.xft"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\templates\file\VBNet\VBNet.Wizards.TypedCollection.xft"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\templates\file\VBNet\VBNet.Wizards.TypedHashtable.xft"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\templates\project\ComplexExample.xpt.test"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\templates\project\CPPNet\ConsoleProject.xpt"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\templates\project\CPPNet\EmptyProject.xpt"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\templates\project\CPPNet\FormsProject.xpt"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\templates\project\CSharp\ConsoleProject.xpt"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\templates\project\CSharp\ControlLibrary.xpt"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\templates\project\CSharp\Direct3DProject.xpt"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\templates\project\CSharp\EmptyProject.xpt"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\templates\project\CSharp\FormsProject.xpt"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\templates\project\CSharp\Library.xpt"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\templates\project\CSharp\Service.xpt"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\templates\project\ILAsm\ConsoleProject.xpt"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\templates\project\Misc\BlankCombine.xpt"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\templates\project\Setup\WixProject.xpt"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\templates\project\Setup\WixProjectEx.xpt"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\templates\project\Setup\WixProjectVS6I.xpt"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\templates\project\Setup\WixProjectVSI.xpt"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\templates\project\VBNet\ConsoleProject.xpt"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\templates\project\VBNet\ControlLibrary.xpt"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\templates\project\VBNet\Direct3DProject.xpt"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\templates\project\VBNet\EmptyProject.xpt"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\templates\project\VBNet\FormsProject.xpt"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\templates\project\VBNet\Library.xpt"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\templates\project\VBNet\Service.xpt"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "doc\BuiltWithSharpDevelop.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "doc\ChangeLog.xml"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "doc\CodingStyleGuide.pdf"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "doc\CodingStyleGuide.sxw"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "doc\copyright.txt"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "doc\license.txt"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "doc\SharpDevelopTODO.txt"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "doc\AddIns\AddIn.html"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "doc\AddIns\AddIn_p1.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "doc\AddIns\AddIn_p10.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "doc\AddIns\AddIn_p11.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "doc\AddIns\AddIn_p12.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "doc\AddIns\AddIn_p13.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "doc\AddIns\AddIn_p14.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "doc\AddIns\AddIn_p15.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "doc\AddIns\AddIn_p16.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "doc\AddIns\AddIn_p17.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "doc\AddIns\AddIn_p18.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "doc\AddIns\AddIn_p19.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "doc\AddIns\AddIn_p2.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "doc\AddIns\AddIn_p20.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "doc\AddIns\AddIn_p21.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "doc\AddIns\AddIn_p22.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "doc\AddIns\AddIn_p23.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "doc\AddIns\AddIn_p24.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "doc\AddIns\AddIn_p25.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "doc\AddIns\AddIn_p26.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "doc\AddIns\AddIn_p27.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "doc\AddIns\AddIn_p28.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "doc\AddIns\AddIn_p29.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "doc\AddIns\AddIn_p3.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "doc\AddIns\AddIn_p30.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "doc\AddIns\AddIn_p31.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "doc\AddIns\AddIn_p32.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "doc\AddIns\AddIn_p33.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "doc\AddIns\AddIn_p34.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "doc\AddIns\AddIn_p35.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "doc\AddIns\AddIn_p36.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "doc\AddIns\AddIn_p37.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "doc\AddIns\AddIn_p4.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "doc\AddIns\AddIn_p5.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "doc\AddIns\AddIn_p6.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "doc\AddIns\AddIn_p7.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "doc\AddIns\AddIn_p8.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "doc\AddIns\AddIn_p9.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "doc\help\031SharpZipLib.chm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "doc\help\031SharpZipLib.hhc"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "doc\help\AltaxoClassRef.chm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "doc\help\AltaxoClassRef.hhc"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "doc\help\AltaxoHelp.chm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "doc\help\AltaxoHelp.hhc"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "doc\help\HelpDescription.xml"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "doc\help\SharpDevelop.chm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "doc\help\SharpDevelop.hhc"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "doc\help\SharpDevelop2.hhc"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "doc\help\SharpDevelopHelp.zip"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "HelpTreeBuilder\AssemblyLoader.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "HelpTreeBuilder\ClassNodeBuilder.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "HelpTreeBuilder\DelegateNodeBuilder.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "HelpTreeBuilder\EnumNodeBuilder.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "HelpTreeBuilder\Generator.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "HelpTreeBuilder\InterfaceNodeBuilder.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "HelpTreeBuilder\ITypeNodeBuilder.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "HelpTreeBuilder\StructNodeBuilder.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "HelpTreeBuilder\TypeNodeFactory.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-            </Include>
-        </Files>
-    </CSHARP>
-</VisualStudioProject>
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{012F4935-9036-4F02-8C03-060EC9514A1D}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ApplicationIcon>
+    </ApplicationIcon>
+    <AssemblyKeyContainerName>
+    </AssemblyKeyContainerName>
+    <AssemblyName>HelpConverter</AssemblyName>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>
+    </RootNamespace>
+    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
+    <StartupObject>
+    </StartupObject>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>2.0</OldToolsVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE;ModifiedForAltaxo</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE;ModifiedForAltaxo</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>false</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System">
+      <Name>System</Name>
+    </Reference>
+    <Reference Include="System.Configuration.Install">
+      <Name>System.Configuration.Install</Name>
+    </Reference>
+    <Reference Include="System.Windows.Forms">
+      <Name>System.Windows.Forms</Name>
+    </Reference>
+    <Reference Include="System.Xml">
+      <Name>System.XML</Name>
+    </Reference>
+    <ProjectReference Include="..\Libraries\SharpZipLib\src\zICSharpCode.SharpZipLib.csproj">
+      <Name>zICSharpCode.SharpZipLib</Name>
+      <Project>{62C31D94-812C-430E-AB9B-7DCF84D93BAE}</Project>
+      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Content Include="data\templates\project\AddInWritingHelp.txt" />
+    <Content Include="data\templates\project\CSharp\DefaultAssemblyInfo.cs" />
+    <Content Include="data\templates\file\CSharp\ConfigurationElement.cs" />
+    <Content Include="data\templates\file\CSharp\ConfigurationElementCollection.cs" />
+    <Content Include="data\templates\file\CSharp\ConfigurationSection.cs" />
+    <Content Include="data\templates\project\CSharp\WPFAssemblyInfo.cs" />
+    <Compile Include="HelpSetup.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="HelpTreeBuilder\AssemblyLoader.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="HelpTreeBuilder\ClassNodeBuilder.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="HelpTreeBuilder\DelegateNodeBuilder.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="HelpTreeBuilder\EnumNodeBuilder.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="HelpTreeBuilder\Generator.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="HelpTreeBuilder\InterfaceNodeBuilder.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="HelpTreeBuilder\ITypeNodeBuilder.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="HelpTreeBuilder\StructNodeBuilder.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="HelpTreeBuilder\TypeNodeFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="HhcFileParser.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Main.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Content Include="data\ConversionStyleSheets\CSharp_prjx2csproj.xsl" />
+    <Content Include="data\ConversionStyleSheets\CSharp_prjx2csproj_user.xsl" />
+    <Content Include="data\ConversionStyleSheets\vsnet2msbuild.xsl" />
+    <Content Include="data\ConversionStyleSheets\vsnet2msbuild_user.xsl" />
+    <Content Include="data\resources\languages\catalonia.png" />
+    <Content Include="data\resources\languages\turkey.png" />
+    <Content Include="data\resources\layouts\Debug.xml" />
+    <Content Include="data\resources\layouts\Default.xml" />
+    <Content Include="data\resources\layouts\LayoutConfig.xml" />
+    <Content Include="data\resources\layouts\Plain.xml" />
+    <Content Include="data\resources\mathml\font-configuration-1-math-roman.xml" />
+    <Content Include="data\resources\mathml\font-configuration-2-cm-stretchy.xml" />
+    <Content Include="data\resources\mathml\font-configuration-3-times-new-roman.xml" />
+    <Content Include="data\schemas\manifest.xsd">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="data\templates\file\CSharp\FileCategorySortOrder.xml" />
+    <Content Include="data\templates\file\VBNet\FileCategorySortOrder.xml" />
+    <Content Include="data\templates\project\CSharp\ProjectCategorySortOrder.xml" />
+    <Content Include="data\resources\mathml\cm-roman.ttf" />
+    <Content Include="data\resources\mathml\cm-stretchy.ttf" />
+    <Content Include="data\resources\mathml\math-roman.ttf" />
+    <Content Include="data\templates\file\CSharp\CSharp.Gtk.Window.xft" />
+    <Content Include="data\templates\file\CSharp\CSharp.Interface.xft" />
+    <Content Include="data\templates\file\CSharp\CSharp.Web.WebControl.xft" />
+    <Content Include="data\templates\file\CSharp\CSharp.Web.WebForm.xft" />
+    <Content Include="data\templates\file\CSharp\CSharp.Web.WebService.xft" />
+    <Content Include="data\templates\file\CSharp\CSharp.WPFFlowDocument.xft" />
+    <Content Include="data\templates\file\CSharp\CSharp.WPFPage.xft" />
+    <Content Include="data\templates\file\CSharp\CSharp.WPFPageFunction.xft" />
+    <Content Include="data\templates\file\CSharp\CSharp.WPFResourceDictionary.xft" />
+    <Content Include="data\templates\file\CSharp\CSharp.WPFUserControl.xft" />
+    <Content Include="data\templates\file\CSharp\CSharp.WPFWindow.xft" />
+    <Content Include="data\templates\file\Misc\EmptyMsBuildFile.xft" />
+    <Content Include="data\templates\file\Misc\EmptyNAntBuildFile.xft" />
+    <Content Include="data\templates\file\SharpDevelop\AddInOptions.xft" />
+    <Content Include="data\templates\file\VBNet\VBNet.Interface.xft" />
+    <Content Include="data\templates\file\VBNet\VBNet.Module.xft" />
+    <Content Include="data\templates\file\VBNet\VBNet.MyExtensionClass.xft" />
+    <Content Include="data\templates\project\CSharp\GladeProject.xpt" />
+    <Content Include="data\templates\project\CSharp\GtkProject.xpt" />
+    <Content Include="data\templates\project\CSharp\SharpDevelopAddin.xpt" />
+    <Content Include="data\templates\project\CSharp\SharpDevelopCustomToolTemplate.xft.xml" />
+    <Content Include="data\templates\project\CSharp\SharpDevelopMacro.xpt" />
+    <Content Include="data\templates\project\CSharp\WebpageProject.xpt" />
+    <Content Include="data\templates\project\CSharp\WPFApplication.xpt" />
+    <Content Include="data\templates\project\CSharp\WPFNavigationApplication.xpt" />
+    <Content Include="data\templates\project\VBNet\DefaultAssemblyInfo.vb" />
+    <Content Include="data\templates\project\VBNet\ProjectCategorySortOrder.xml" />
+    <Content Include="data\templates\project\VBNet\SharpDevelopAddin.xpt" />
+    <Content Include="data\templates\project\VBNet\SharpDevelopMacro.xpt" />
+    <Content Include="data\templates\file\VBNet\VBNet.Gtk.Window.xft" />
+    <Content Include="data\templates\project\VBNet\GtkProject.xpt" />
+    <Content Include="data\schemas\wixloc.xsd">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="data\templates\file\CSharp\CSharp.Struct.xft" />
+    <Content Include="data\templates\project\CSharp\CompactFormsProject.xpt" />
+    <Content Include="data\templates\project\CSharp\NotifyIcon.xpt" />
+    <Content Include="data\templates\project\CSharp\SharedAddin.xpt" />
+    <Content Include="data\templates\project\CSharp\WebService.xpt" />
+    <Content Include="data\templates\project\VBNet\SharedAddin.xpt" />
+    <Content Include="data\templates\file\CSharp\CSharp.ConfigurationElement.xft" />
+    <Content Include="data\templates\file\CSharp\CSharp.ConfigurationElementCollection.xft" />
+    <Content Include="data\templates\file\CSharp\CSharp.ConfigurationSection.xft" />
+    <Content Include="data\templates\project\CSharp\SharpDevelopCustomTool.xpt" />
+    <Content Include="data\templates\project\VBNet\CompactFormsProject.xpt" />
+    <Content Include="doc\help\AltaxoClassRef.chw" />
+    <Content Include="data\templates\file\Misc\EmptyReport.xft" />
+    <Content Include="data\templates\file\Misc\AppConfigFile.xft" />
+    <None Include="HelpConverter.InstallState" />
+    <Content Include="data\resources\StringResources.no.resources" />
+    <Content Include="data\templates\project\CSharp\NotifyIconResources.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="data\resources\StringResources.pt.resources" />
+    <Content Include="data\resources\StringResources.cn-gb.resources" />
+    <EmbeddedResource Include="HelpSetup.resx">
+      <DependentUpon>HelpSetup.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Content Include="data\ConversionStyleSheets\ShowChangeLog.xsl" />
+    <Content Include="data\ConversionStyleSheets\ShowXmlDocumentation.xsl" />
+    <Content Include="data\ConversionStyleSheets\SVNChangelogToXml.xsl" />
+    <Content Include="data\modes\C64CSharp.xshd" />
+    <Content Include="data\modes\CSharp-Mode-VSEnh.xshd" />
+    <Content Include="data\options\SharpDevelopControlLibrary.sdcl" />
+    <Content Include="data\options\SharpDevelopProperties.xml" />
+    <Content Include="data\options\SharpDevelop-templates.xml" />
+    <Content Include="data\options\SharpDevelop-tools.xml" />
+    <Content Include="data\options\StandardHeader.xml" />
+    <Content Include="data\options\TextLib\ASCIITable.xml" />
+    <Content Include="data\options\TextLib\CSharpDocumentationTags.xml" />
+    <Content Include="data\options\TextLib\Licenses.xml" />
+    <Content Include="data\options\TextLib\XSLT.xml" />
+    <Content Include="data\resources\AltaxoBitmap.resources" />
+    <Content Include="data\resources\AltaxoString.resources" />
+    <Content Include="data\resources\css\MsdnHelp.css" />
+    <Content Include="data\resources\css\SharpDevelopStandard.css" />
+    <Content Include="data\resources\InstallerBitmaps\default-banner.bmp" />
+    <Content Include="data\resources\InstallerBitmaps\default-dialog.bmp" />
+    <Content Include="data\resources\InstallerBitmaps\exclamic.bmp" />
+    <Content Include="data\resources\InstallerBitmaps\info.bmp" />
+    <Content Include="data\resources\InstallerBitmaps\new.bmp" />
+    <Content Include="data\resources\InstallerBitmaps\up.bmp" />
+    <Content Include="data\resources\languages\Arabic.png" />
+    <Content Include="data\resources\languages\badgoisern.png" />
+    <Content Include="data\resources\languages\brazil.png" />
+    <Content Include="data\resources\languages\bulgaria.png" />
+    <Content Include="data\resources\languages\chinalg.png" />
+    <Content Include="data\resources\languages\czech.png" />
+    <Content Include="data\resources\languages\denmark.png" />
+    <Content Include="data\resources\languages\england.png" />
+    <Content Include="data\resources\languages\finnish.png" />
+    <Content Include="data\resources\languages\france.png" />
+    <Content Include="data\resources\languages\germany.png" />
+    <Content Include="data\resources\languages\hungary.png" />
+    <Content Include="data\resources\languages\italy.png" />
+    <Content Include="data\resources\languages\japan.png" />
+    <Content Include="data\resources\languages\LanguageDefinition.xml" />
+    <Content Include="data\resources\languages\lithuania.png" />
+    <Content Include="data\resources\languages\mexico.png" />
+    <Content Include="data\resources\languages\netherlands.png" />
+    <Content Include="data\resources\languages\norway.png" />
+    <Content Include="data\resources\languages\poland.png" />
+    <Content Include="data\resources\languages\portugal.png" />
+    <Content Include="data\resources\languages\romania.png" />
+    <Content Include="data\resources\languages\russia.png" />
+    <Content Include="data\resources\languages\Serbia.png" />
+    <Content Include="data\resources\languages\slovenia.png" />
+    <Content Include="data\resources\languages\south_korea.png" />
+    <Content Include="data\resources\languages\spain.png" />
+    <Content Include="data\resources\languages\sweden.png" />
+    <Content Include="data\resources\languages\uk.png" />
+    <Content Include="data\resources\languages\usa.png" />
+    <Content Include="data\resources\startpage\Layout\blue\balken_links.gif" />
+    <Content Include="data\resources\startpage\Layout\blue\balken_mitte.gif" />
+    <Content Include="data\resources\startpage\Layout\blue\balken_rechts.gif" />
+    <Content Include="data\resources\startpage\Layout\brown\balken_links.gif" />
+    <Content Include="data\resources\startpage\Layout\brown\balken_mitte.gif" />
+    <Content Include="data\resources\startpage\Layout\brown\balken_rechts.gif" />
+    <Content Include="data\resources\startpage\Layout\common\blind.gif" />
+    <Content Include="data\resources\startpage\Layout\common\dot_listing.gif" />
+    <Content Include="data\resources\startpage\Layout\common\klinker_milestone.gif" />
+    <Content Include="data\resources\startpage\Layout\common\line_hor_black.gif" />
+    <Content Include="data\resources\startpage\Layout\common\milestone_col_head.gif" />
+    <Content Include="data\resources\startpage\Layout\common\pixel_weiss.gif" />
+    <Content Include="data\resources\startpage\Layout\default.css" />
+    <Content Include="data\resources\startpage\Layout\green\balken_links.gif" />
+    <Content Include="data\resources\startpage\Layout\green\balken_mitte.gif" />
+    <Content Include="data\resources\startpage\Layout\green\balken_rechts.gif" />
+    <Content Include="data\resources\startpage\Layout\orange\balken_links.gif" />
+    <Content Include="data\resources\startpage\Layout\orange\balken_mitte.gif" />
+    <Content Include="data\resources\startpage\Layout\orange\balken_rechts.gif" />
+    <Content Include="data\resources\startpage\Layout\red\balken_links.gif" />
+    <Content Include="data\resources\startpage\Layout\red\balken_mitte.gif" />
+    <Content Include="data\resources\startpage\Layout\red\balken_rechts.gif" />
+    <Content Include="data\resources\StringResources.cz.resources" />
+    <Content Include="data\resources\StringResources.de.resources" />
+    <Content Include="data\resources\StringResources.es.resources" />
+    <Content Include="data\resources\StringResources.es-mx.resources" />
+    <Content Include="data\resources\StringResources.fr.resources" />
+    <Content Include="data\resources\StringResources.hu.resources" />
+    <Content Include="data\resources\StringResources.it.resources" />
+    <Content Include="data\resources\StringResources.kr.resources" />
+    <Content Include="data\resources\StringResources.nl.resources" />
+    <Content Include="data\resources\StringResources.pl.resources" />
+    <Content Include="data\resources\StringResources.pt-br.resources" />
+    <Content Include="data\resources\StringResources.ro.resources" />
+    <Content Include="data\resources\StringResources.se.resources" />
+    <Content Include="data\resources\StringResources.tr.resources" />
+    <Content Include="data\schemas\AddIn.xsd">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="data\schemas\appconfig.xsd">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="data\schemas\nant.xsd">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="data\schemas\readme.txt" />
+    <Content Include="data\schemas\W3C-License.html" />
+    <Content Include="data\schemas\wix.xsd">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="data\schemas\XMLSchema.xsd">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="data\schemas\xslt.xsd">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="data\templates\file\CSharp\CSharp.Empty.xft" />
+    <Content Include="data\templates\file\CSharp\CSharp.EmptyClass.xft" />
+    <Content Include="data\templates\file\CSharp\CSharp.Forms.Form.xft" />
+    <Content Include="data\templates\file\CSharp\CSharp.Forms.UserControl.xft" />
+    <Content Include="data\templates\file\CSharp\CSharp.Patterns.Singleton.xft" />
+    <Content Include="data\templates\file\CSharp\CSharp.UnitTest.xft" />
+    <Content Include="data\templates\file\Misc\EmptyHTMLFile.xft" />
+    <Content Include="data\templates\file\Misc\EmptyResourceFile.xft" />
+    <Content Include="data\templates\file\Misc\EmptyTextFile.xft" />
+    <Content Include="data\templates\file\Misc\EmptyXMLFile.xft" />
+    <Content Include="data\templates\file\SharpDevelop\ExampleMenuCommand.xft" />
+    <Content Include="data\templates\file\SharpDevelop\ExampleOptionPanel.xft" />
+    <Content Include="data\templates\file\SharpDevelop\ExamplePad.xft" />
+    <Content Include="data\templates\file\SharpDevelop\ExampleView.xft" />
+    <Content Include="data\templates\file\SharpDevelop\SimpleCommand.xft" />
+    <Content Include="data\templates\file\VBNet\VBNet.Empty.xft" />
+    <Content Include="data\templates\file\VBNet\VBNet.EmptyClass.xft" />
+    <Content Include="data\templates\file\VBNet\VBNet.Forms.Form.xft" />
+    <Content Include="data\templates\file\VBNet\VBNet.Forms.UserControl.xft" />
+    <Content Include="data\templates\file\VBNet\VBNet.Patterns.Singleton.xft" />
+    <Content Include="data\templates\file\VBNet\VBNet.UnitTest.xft" />
+    <Content Include="data\templates\project\ComplexExample.xpt.test" />
+    <Content Include="data\templates\project\CSharp\ConsoleProject.xpt" />
+    <Content Include="data\templates\project\CSharp\ControlLibrary.xpt" />
+    <Content Include="data\templates\project\CSharp\Direct3DProject.xpt" />
+    <Content Include="data\templates\project\CSharp\EmptyProject.xpt" />
+    <Content Include="data\templates\project\CSharp\FormsProject.xpt" />
+    <Content Include="data\templates\project\CSharp\Library.xpt" />
+    <Content Include="data\templates\project\CSharp\Service.xpt" />
+    <Content Include="data\templates\project\Misc\BlankCombine.xpt" />
+    <Content Include="data\templates\project\VBNet\ConsoleProject.xpt" />
+    <Content Include="data\templates\project\VBNet\ControlLibrary.xpt" />
+    <Content Include="data\templates\project\VBNet\Direct3DProject.xpt" />
+    <Content Include="data\templates\project\VBNet\EmptyProject.xpt" />
+    <Content Include="data\templates\project\VBNet\FormsProject.xpt" />
+    <Content Include="data\templates\project\VBNet\Library.xpt" />
+    <Content Include="data\templates\project\VBNet\Service.xpt" />
+    <Content Include="doc\AddIns\AddIn.html" />
+    <Content Include="doc\AddIns\AddIn_p1.png" />
+    <Content Include="doc\AddIns\AddIn_p10.png" />
+    <Content Include="doc\AddIns\AddIn_p11.png" />
+    <Content Include="doc\AddIns\AddIn_p12.png" />
+    <Content Include="doc\AddIns\AddIn_p13.png" />
+    <Content Include="doc\AddIns\AddIn_p14.png" />
+    <Content Include="doc\AddIns\AddIn_p15.png" />
+    <Content Include="doc\AddIns\AddIn_p16.png" />
+    <Content Include="doc\AddIns\AddIn_p17.png" />
+    <Content Include="doc\AddIns\AddIn_p18.png" />
+    <Content Include="doc\AddIns\AddIn_p19.png" />
+    <Content Include="doc\AddIns\AddIn_p2.png" />
+    <Content Include="doc\AddIns\AddIn_p20.png" />
+    <Content Include="doc\AddIns\AddIn_p21.png" />
+    <Content Include="doc\AddIns\AddIn_p22.png" />
+    <Content Include="doc\AddIns\AddIn_p23.png" />
+    <Content Include="doc\AddIns\AddIn_p24.png" />
+    <Content Include="doc\AddIns\AddIn_p25.png" />
+    <Content Include="doc\AddIns\AddIn_p26.png" />
+    <Content Include="doc\AddIns\AddIn_p27.png" />
+    <Content Include="doc\AddIns\AddIn_p28.png" />
+    <Content Include="doc\AddIns\AddIn_p29.png" />
+    <Content Include="doc\AddIns\AddIn_p3.png" />
+    <Content Include="doc\AddIns\AddIn_p30.png" />
+    <Content Include="doc\AddIns\AddIn_p31.png" />
+    <Content Include="doc\AddIns\AddIn_p32.png" />
+    <Content Include="doc\AddIns\AddIn_p33.png" />
+    <Content Include="doc\AddIns\AddIn_p34.png" />
+    <Content Include="doc\AddIns\AddIn_p35.png" />
+    <Content Include="doc\AddIns\AddIn_p36.png" />
+    <Content Include="doc\AddIns\AddIn_p37.png" />
+    <Content Include="doc\AddIns\AddIn_p4.png" />
+    <Content Include="doc\AddIns\AddIn_p5.png" />
+    <Content Include="doc\AddIns\AddIn_p6.png" />
+    <Content Include="doc\AddIns\AddIn_p7.png" />
+    <Content Include="doc\AddIns\AddIn_p8.png" />
+    <Content Include="doc\AddIns\AddIn_p9.png" />
+    <Content Include="doc\BuiltWithSharpDevelop.png" />
+    <Content Include="doc\ChangeLog.xml" />
+    <Content Include="doc\CodingStyleGuide.pdf" />
+    <Content Include="doc\CodingStyleGuide.sxw" />
+    <Content Include="doc\Contributions\Contributions.txt" />
+    <Content Include="doc\Contributions\dnAnalytics-license.txt" />
+    <Content Include="doc\Contributions\ExocortexDSP-license.txt" />
+    <Content Include="doc\Contributions\LevMar-license.txt" />
+    <Content Include="doc\copyright.txt" />
+    <Content Include="doc\help\AltaxoClassRef.chm" />
+    <Content Include="doc\help\AltaxoHelp.chm" />
+    <Content Include="doc\help\AltaxoHelp.hhc" />
+    <Content Include="doc\help\HelpDescription.xml" />
+    <Content Include="doc\license.txt" />
+    <Content Include="doc\SharpDevelopTODO.txt" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>if not exist ..\..\..\rt$(ConfigurationName)\bin mkdir  ..\..\..\rt$(ConfigurationName)\bin
+xcopy ..\..\AddIns\*.* ..\..\..\rt$(ConfigurationName)\AddIns /E /I /Y
+xcopy ..\..\data\*.* ..\..\..\rt$(ConfigurationName)\data /E /I /Y
+xcopy ..\..\doc\*.* ..\..\..\rt$(ConfigurationName)\doc /E /I /Y
+rem Dont forget to copy the 
+copy ..\..\..\Libraries\bin\Interop.SHDocVw.dll ..\..\..\rt$(ConfigurationName)\bin
 
+rem copy the HelpConverter.exe and .pdb to the bin directory
+copy HelpConverter.* ..\..\..\rt$(ConfigurationName)\bin
+
+rem Update the build version of the main important assemblies
+rem ..\..\..\Libraries\bin\AssemblySvnVersion ..\..\..\  ..\..\..\Altaxo\Startup\AssemblyInfo.cs ..\..\..\Altaxo\Core\AssemblyInfo.cs ..\..\..\Altaxo\SDGui\AssemblyInfo.cs ..\..\..\Altaxo\Base\AssemblyInfo.cs
+</PostBuildEvent>
+  </PropertyGroup>
+</Project>

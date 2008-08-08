@@ -1,7 +1,7 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{63420446-3D85-4D00-BA9E-9EA7680B87E0}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -26,6 +26,7 @@
     </FileUpgradeFlags>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
+    <OldToolsVersion>2.0</OldToolsVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>..\..\rtdebug\bin\</OutputPath>
@@ -112,8 +113,12 @@
     </None>
     <None Include="Resources\StartUp.snk" />
     <None Include="UsingSharpDevelopForAltaxo.txt" />
-    <EmbeddedResource Include="Resources\BitmapResources.resources" />
-    <EmbeddedResource Include="Resources\StringResources.resources" />
+    <EmbeddedResource Include="Resources\BitmapResources.resources">
+      <LogicalName>Resources.BitmapResources.resources</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\StringResources.resources">
+      <LogicalName>Resources.StringResources.resources</LogicalName>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Libraries\ICSharpCode.Core\Project\ICSharpCode.Core.csproj">
@@ -132,13 +137,13 @@
       <Project>{2748AD25-9C63-4E12-877B-4DCE96FBED54}</Project>
       <Name>ICSharpCode.SharpDevelop</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Base\AltaxoBase.Vs8.csproj">
+    <ProjectReference Include="..\Base\AltaxoBase.csproj">
       <Project>{CA928A5C-9673-4FBB-A60E-F91364CC9DB5}</Project>
-      <Name>AltaxoBase.Vs8</Name>
+      <Name>AltaxoBase</Name>
     </ProjectReference>
-    <ProjectReference Include="..\SDGui\AltaxoSDGui.Vs8.csproj">
+    <ProjectReference Include="..\SDGui\AltaxoSDGui.csproj">
       <Project>{9EBAB076-12F4-4549-9FD5-6D2B8B387B06}</Project>
-      <Name>AltaxoSDGui.Vs8</Name>
+      <Name>AltaxoSDGui</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
