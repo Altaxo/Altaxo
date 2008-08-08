@@ -1,4 +1,4 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
     <ProductVersion>9.0.21022</ProductVersion>
@@ -41,6 +41,7 @@
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>bin\Debug\</OutputPath>
@@ -108,6 +109,9 @@
       <Name>System</Name>
     </Reference>
     <Reference Include="System.configuration" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Data">
       <Name>System.Data</Name>
     </Reference>
@@ -1480,15 +1484,6 @@
     <Compile Include="Settings\Scripting\ReferencedAssembliesCommands.cs" />
     <Compile Include="Worksheet\Commands\Sorting.cs" />
     <Compile Include="Worksheet\Commands\Transpose.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Calc\FitFunctions\Relaxation\.svn\prop-base\" />
-    <Folder Include="Calc\FitFunctions\Relaxation\.svn\props\" />
-    <Folder Include="Calc\FitFunctions\Relaxation\.svn\tmp\prop-base\" />
-    <Folder Include="Calc\FitFunctions\Relaxation\.svn\tmp\props\" />
-    <Folder Include="Calc\FitFunctions\Relaxation\.svn\tmp\text-base\" />
-    <Folder Include="Calc\FitFunctions\Relaxation\.svn\tmp\wcprops\" />
-    <Folder Include="Calc\FitFunctions\Relaxation\.svn\wcprops\" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
