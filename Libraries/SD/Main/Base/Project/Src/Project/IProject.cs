@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2120 $</version>
+//     <version>$Revision: 2933 $</version>
 // </file>
 
 using System;
@@ -22,7 +22,7 @@ namespace ICSharpCode.SharpDevelop.Project
 	/// When you implement IProject, you should also implement IProjectItemListProvider and IProjectAllowChangeConfigurations
 	/// </summary>
 	public interface IProject
-		: ISolutionFolder, IDisposable, IMementoCapable, ICanBeDirty
+		: IBuildable, ISolutionFolder, IDisposable, IMementoCapable
 	{
 		/// <summary>
 		/// Gets the list of items in the project. This member is thread-safe.
@@ -68,10 +68,9 @@ namespace ICSharpCode.SharpDevelop.Project
 		
 		/// <summary>
 		/// Gets the ambience used for the project. This member is thread-safe.
+		/// Because the IAmbience interface is not thread-safe, every call returns a new instance.
 		/// </summary>
-		ICSharpCode.SharpDevelop.Dom.IAmbience Ambience {
-			get;
-		}
+		ICSharpCode.SharpDevelop.Dom.IAmbience GetAmbience();
 		
 		/// <summary>
 		/// Gets the name of the project file.
@@ -203,14 +202,37 @@ namespace ICSharpCode.SharpDevelop.Project
 		ParseProjectContent CreateProjectContent();
 		
 		/// <summary>
-		/// Starts building the project using the specified options.
-		/// </summary>
-		void StartBuild(BuildOptions options);
-		
-		/// <summary>
 		/// Creates a new ProjectItem for the passed MSBuild item.
 		/// </summary>
 		ProjectItem CreateProjectItem(Microsoft.Build.BuildEngine.BuildItem item);
+		
+		/// <summary>
+		/// Gets the minimum version the solution must have to support this project type.
+		/// </summary>
+		int MinimumSolutionVersion { get; }
+		
+		/// <summary>
+		/// Retrieve the fully qualified assembly names and file location of referenced assemblies.
+		/// This method is thread safe.
+		/// </summary>
+		void ResolveAssemblyReferences();
+	}
+	
+	/// <summary>
+	/// A project or solution.
+	/// </summary>
+	public interface IBuildable : ISolutionFolder
+	{
+		/// <summary>
+		/// Gets the list of projects on which this project depends.
+		/// </summary>
+		ICollection<IBuildable> GetBuildDependencies(ProjectBuildOptions buildOptions);
+		
+		/// <summary>
+		/// Starts building the project using the specified options.
+		/// This member must be implemented thread-safe.
+		/// </summary>
+		void StartBuild(ProjectBuildOptions buildOptions, IBuildFeedbackSink feedbackSink);
 	}
 	
 	/// <summary>

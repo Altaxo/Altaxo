@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2487 $</version>
 // </file>
 
 using System;
@@ -53,16 +53,8 @@ namespace ICSharpCode.SharpDevelop.Gui
 		
 		protected List<IDialogPanel> OptionPanels = new List<IDialogPanel>();
 		
-		protected Properties properties = null;
-		
 		protected Font plainFont = null;
 		protected Font boldFont  = null;
-		
-		public Properties Properties {
-			get {
-				return properties;
-			}
-		}
 		
 		protected void AcceptEvent(object sender, EventArgs e)
 		{
@@ -139,7 +131,6 @@ namespace ICSharpCode.SharpDevelop.Gui
 			IDialogPanelDescriptor descriptor = node.Tag as IDialogPanelDescriptor;
 			if (descriptor != null && descriptor.DialogPanel != null && descriptor.DialogPanel.Control != null) {
 				if (!OptionPanels.Contains(descriptor.DialogPanel)) {
-					descriptor.DialogPanel.CustomizationObject = this.properties;
 					descriptor.DialogPanel.Control.Dock = DockStyle.Fill;
 					OptionPanels.Add(descriptor.DialogPanel);
 				}
@@ -205,10 +196,8 @@ namespace ICSharpCode.SharpDevelop.Gui
 			}
 		}
 		
-		public TreeViewOptions(Properties properties, AddInTreeNode node)
+		public TreeViewOptions(AddInTreeNode node)
 		{
-			this.properties = properties;
-			
 			this.Text = StringParser.Parse("${res:Dialog.Options.TreeViewOptions.DialogName}");
 
 			this.InitializeComponent();
@@ -225,7 +214,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		
 		protected void InitializeComponent()
 		{
-			Owner = (Form)WorkbenchSingleton.Workbench;
+			Owner = WorkbenchSingleton.MainForm;
 
 			SetupFromXmlStream(this.GetType().Assembly.GetManifestResourceStream("Resources.TreeViewOptionsDialog.xfrm"));
 			

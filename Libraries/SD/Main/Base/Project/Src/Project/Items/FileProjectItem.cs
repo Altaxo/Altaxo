@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2049 $</version>
+//     <version>$Revision: 3160 $</version>
 // </file>
 
 using System;
@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing.Design;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using System.Windows.Forms.Design;
 
@@ -57,6 +58,7 @@ namespace ICSharpCode.SharpDevelop.Project
 			}
 			set {
 				this.ItemType = new ItemType(value);
+				ReFilterProperties();
 			}
 		}
 		
@@ -74,9 +76,7 @@ namespace ICSharpCode.SharpDevelop.Project
 			
 			static IEnumerable<string> GetNames(IEnumerable<ItemType> itemTypes)
 			{
-				return Linq.Select<ItemType, string>(
-					itemTypes, delegate(ItemType it) { return it.ItemName; }
-				);
+				return itemTypes.Select(it => it.ItemName);
 			}
 		}
 		
@@ -100,6 +100,7 @@ namespace ICSharpCode.SharpDevelop.Project
 			}
 			set {
 				SetEvaluatedMetadata("Generator", value);
+				ReFilterProperties();
 			}
 		}
 		
@@ -115,19 +116,7 @@ namespace ICSharpCode.SharpDevelop.Project
 				}
 			}
 		}
-		
-		[LocalizedProperty("${res:ICSharpCode.SharpDevelop.Internal.Project.ProjectFile.CustomToolNamespace}",
-		                   Description ="${res:ICSharpCode.SharpDevelop.Internal.Project.ProjectFile.CustomToolNamespace.Description}")]
-		public string CustomToolNamespace {
-			get {
-				return GetEvaluatedMetadata("CustomToolNamespace");
-			}
-			set {
-				SetEvaluatedMetadata("CustomToolNamespace", value);
-				CustomToolsService.RunCustomTool(this, false);
-			}
-		}
-		
+
 		[Browsable(false)]
 		public string DependentUpon {
 			get {
@@ -155,12 +144,12 @@ namespace ICSharpCode.SharpDevelop.Project
 			}
 		}
 		
-		[Browsable(false)]
 		/// <summary>
 		/// Gets the name of the file in the virtual project file system.
 		/// This is normally the same as Include, except for linked files, where it is
 		/// the value of Properties["Link"].
 		/// </summary>
+		[Browsable(false)]
 		public string VirtualName {
 			get {
 				if (HasMetadata("Link"))

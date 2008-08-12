@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2505 $</version>
+//     <version>$Revision: 2533 $</version>
 // </file>
 
 using System;
@@ -352,7 +352,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 				FileLineReference lineReference = OutputTextLineParser.GetFileLineReference(textLine);
 				if (lineReference != null) {
 					// Open matching file.
-					FileService.JumpToFilePosition(Path.GetFullPath(lineReference.FileName), lineReference.Line, lineReference.Column);
+					FileService.JumpToFilePosition(lineReference.FileName, lineReference.Line, lineReference.Column);
 				}
 			}
 		}

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="none" email=""/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 2487 $</version>
 // </file>
 
 using System.Drawing;
@@ -11,17 +11,13 @@ using System.Windows.Forms;
 
 namespace ICSharpCode.TextEditor.Util
 {
-	sealed class TipPainter
+	static class TipPainter
 	{
 		const float HorizontalBorder = 2;
 		const float VerticalBorder   = 1;
 		static RectangleF workingArea = RectangleF.Empty;
 		
 		//static StringFormat centerTipFormat = CreateTipStringFormat();
-		
-		TipPainter()
-		{
-		}
 		
 		public static Size GetTipSize(Control control, Graphics graphics, Font font, string description)
 		{

@@ -2,20 +2,43 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2929 $</version>
 // </file>
 
 using System;
+using System.Collections.Generic;
 
 namespace ICSharpCode.SharpDevelop.Dom
 {
-	public interface IAttribute : IComparable
+	public interface IAttribute : IFreezable
 	{
+		/// <summary>
+		/// Gets the compilation unit in which this attribute is defined.
+		/// </summary>
+		ICompilationUnit CompilationUnit {
+			get;
+		}
+		
+		/// <summary>
+		/// Gets the code region of this attribute.
+		/// </summary>
+		DomRegion Region {
+			get;
+		}
+		
 		AttributeTarget AttributeTarget {
 			get;
 		}
 		
-		string Name {
+		IReturnType AttributeType {
+			get;
+		}
+		
+		IList<object> PositionalArguments {
+			get;
+		}
+		
+		IDictionary<string, object> NamedArguments {
 			get;
 		}
 	}
@@ -32,17 +55,5 @@ namespace ICSharpCode.SharpDevelop.Dom
 		Property,
 		Return,
 		Type
-	}
-	
-	public struct AttributeArgument
-	{
-		public readonly IReturnType Type;
-		public readonly object Value;
-		
-		public AttributeArgument(IReturnType type, object value)
-		{
-			this.Type = type;
-			this.Value = value;
-		}
 	}
 }

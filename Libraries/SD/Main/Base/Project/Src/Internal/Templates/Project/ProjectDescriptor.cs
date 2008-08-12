@@ -2,25 +2,25 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2574 $</version>
+//     <version>$Revision: 3065 $</version>
 // </file>
 
+using ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Xml;
-
 using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.Project;
-
+using Import = System.Collections.Generic.KeyValuePair<System.String, System.String>;
 using MSBuild = Microsoft.Build.BuildEngine;
-using Import = System.Collections.Generic.KeyValuePair<string, string>;
 
 namespace ICSharpCode.SharpDevelop.Internal.Templates
 {
 	/// <summary>
-	/// This class is used inside the combine templates for projects.
+	/// This class is used inside the solution templates for projects.
 	/// </summary>
 	public sealed class ProjectDescriptor
 	{
@@ -57,12 +57,13 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 		List<FileDescriptionTemplate> files = new List<FileDescriptionTemplate>();
 		List<ProjectItem> projectItems = new List<ProjectItem>();
 		List<ProjectProperty> projectProperties = new List<ProjectProperty>();
+		List<Action<IProject>> createActions = new List<Action<IProject>>();
 		
 		/// <summary>
 		/// Creates a project descriptor for the project node specified by the xml element.
 		/// </summary>
 		/// <param name="element">The &lt;Project&gt; node of the xml template file.</param>
-		/// <param name="xmlFileName">The name of the xml file. Used to display warning/error messages</param>
+		/// <param name="hintPath">The directory on which relative paths (e.g. for referenced files) are based.</param>
 		public ProjectDescriptor(XmlElement element, string hintPath)
 		{
 			if (element == null)
@@ -98,7 +99,7 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 		
 		static IEnumerable<XmlElement> ChildElements(XmlElement parentElement)
 		{
-			return Linq.OfType<XmlElement>(parentElement.ChildNodes);
+			return parentElement.ChildNodes.OfType<XmlElement>();
 		}
 		
 		void LoadElement(XmlElement node, string hintPath)
@@ -106,6 +107,9 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 			switch (node.Name) {
 				case "Options":
 					ProjectTemplate.WarnObsoleteNode(node, "Options are no longer supported, use properties instead.");
+					break;
+				case "CreateActions":
+					LoadCreateActions(node);
 					break;
 				case "ProjectItems":
 					LoadProjectItems(node);
@@ -137,6 +141,34 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 					break;
 				default:
 					throw new TemplateLoadException("Unknown node in <Project>: " + node.Name);
+			}
+		}
+		
+		void LoadCreateActions(XmlElement createActionsElement)
+		{
+			foreach (XmlElement el in createActionsElement) {
+				Action<IProject> action = ReadAction(el);
+				if (action != null)
+					createActions.Add(action);
+			}
+		}
+		
+		static Action<IProject> ReadAction(XmlElement el)
+		{
+			switch (el.Name) {
+				case "RunCommand":
+					if (el.HasAttribute("path")) {
+						ICommand command = (ICommand)AddInTree.BuildItem(el.GetAttribute("path"), null);
+						return project => {
+							command.Owner = project;
+							command.Run();
+						};
+					} else {
+						ProjectTemplate.WarnAttributeMissing(el, "path");
+						return null;
+					}
+				default:
+					throw new TemplateLoadException("Unknown node in <CreateActions>: " + el.Name);
 			}
 		}
 		
@@ -357,7 +389,12 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 						} else {
 							// Textual content
 							StreamWriter sr = new StreamWriter(File.Create(fileName), ParserService.DefaultFileEncoding);
-							sr.Write(StringParser.Parse(StringParser.Parse(file.Content, new string[,] { {"ProjectName", projectCreateInformation.ProjectName}, {"FileName", fileName}})));
+							string fileContent = StringParser.Parse(file.Content, new string[,] { {"ProjectName", projectCreateInformation.ProjectName}, {"FileName", fileName}});
+							fileContent = StringParser.Parse(fileContent);
+							if (SharpDevelopTextEditorProperties.Instance.IndentationString != "\t") {
+								fileContent = fileContent.Replace("\t", SharpDevelopTextEditorProperties.Instance.IndentationString);
+							}
+							sr.Write(fileContent);
 							sr.Close();
 						}
 					} catch (Exception ex) {
@@ -365,6 +402,8 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 						MessageService.ShowError(ex, "${res:ICSharpCode.SharpDevelop.Internal.Templates.ProjectDescriptor.FileCouldntBeWrittenError}");
 					}
 				}
+				
+				RunCreateActions(project);
 				
 				// Save project
 				if (File.Exists(projectLocation)) {
@@ -376,7 +415,8 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 					project.Save();
 				}
 				
-				projectCreateInformation.CreatedProjects.Add(project.FileName);
+				projectCreateInformation.createdProjects.Add(project);
+				ProjectService.OnProjectCreated(new ProjectEventArgs(project));
 				return project;
 			}
 			finally
@@ -384,6 +424,13 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 				// set back outerProjectBasePath
 				projectCreateInformation.ProjectBasePath = outerProjectBasePath;
 				projectCreateInformation.ProjectName = outerProjectName;
+			}
+		}
+		
+		void RunCreateActions(IProject project)
+		{
+			foreach (Action<IProject> action in createActions) {
+				action(project);
 			}
 		}
 		#endregion

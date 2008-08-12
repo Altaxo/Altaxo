@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2485 $</version>
+//     <version>$Revision: 2676 $</version>
 // </file>
 
 using System;
@@ -24,7 +24,7 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 			
 			Assert.IsTrue(ce.Condition is BinaryOperatorExpression);
 			Assert.IsTrue(ce.TrueExpression is InvocationExpression);
-			Assert.IsTrue(ce.FalseExpression is FieldReferenceExpression);
+			Assert.IsTrue(ce.FalseExpression is MemberReferenceExpression);
 		}
 		
 		[Test]
@@ -35,7 +35,7 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 			
 			Assert.IsTrue(ce.Condition is TypeOfIsExpression);
 			Assert.IsTrue(ce.TrueExpression is InvocationExpression);
-			Assert.IsTrue(ce.FalseExpression is FieldReferenceExpression);
+			Assert.IsTrue(ce.FalseExpression is MemberReferenceExpression);
 		}
 		
 		[Test]
@@ -45,7 +45,7 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 			
 			Assert.IsTrue(ce.Condition is TypeOfIsExpression);
 			Assert.IsTrue(ce.TrueExpression is InvocationExpression);
-			Assert.IsTrue(ce.FalseExpression is FieldReferenceExpression);
+			Assert.IsTrue(ce.FalseExpression is MemberReferenceExpression);
 		}
 		
 		[Test]
@@ -55,7 +55,7 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 			
 			Assert.IsTrue(ce.Condition is TypeOfIsExpression);
 			Assert.IsTrue(ce.TrueExpression is ParenthesizedExpression);
-			Assert.IsTrue(ce.FalseExpression is FieldReferenceExpression);
+			Assert.IsTrue(ce.FalseExpression is MemberReferenceExpression);
 		}
 		
 		[Test]

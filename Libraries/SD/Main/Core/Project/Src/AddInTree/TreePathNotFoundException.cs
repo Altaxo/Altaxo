@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1624 $</version>
+//     <version>$Revision: 2318 $</version>
 // </file>
 
 using System;
@@ -23,15 +23,23 @@ namespace ICSharpCode.Core
 		{
 		}
 		
-		// Required for Serialization
+		/// <summary>
+		/// Constructs a new <see cref="TreePathNotFoundException"/>
+		/// </summary>
 		public TreePathNotFoundException() : base()
 		{
 		}
 		
+		/// <summary>
+		/// Constructs a new <see cref="TreePathNotFoundException"/>
+		/// </summary>
 		public TreePathNotFoundException(string message, Exception innerException) : base(message, innerException)
 		{
 		}
 		
+		/// <summary>
+		/// Deserializes a <see cref="TreePathNotFoundException"/>
+		/// </summary>
 		protected TreePathNotFoundException(SerializationInfo info, StreamingContext context) : base(info, context)
 		{
 		}

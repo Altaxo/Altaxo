@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Shinsaku Nakagawa" email="shinsaku@users.sourceforge.jp"/>
-//     <version>$Revision: 2541 $</version>
+//     <version>$Revision: 3113 $</version>
 // </file>
 
 using System;
@@ -20,11 +20,12 @@ namespace ICSharpCode.TextEditor
 		public Ime(IntPtr hWnd, Font font)
 		{
 			string PROCESSOR_ARCHITEW6432 = Environment.GetEnvironmentVariable("PROCESSOR_ARCHITEW6432");
-			if (PROCESSOR_ARCHITEW6432 == "IA64" || PROCESSOR_ARCHITEW6432 == "AMD64") {
+			if (PROCESSOR_ARCHITEW6432 == "IA64" || PROCESSOR_ARCHITEW6432 == "AMD64" || Environment.OSVersion.Platform == PlatformID.Unix) {
 				disableIME = true;
+			} else {
+				this.hIMEWnd = ImmGetDefaultIMEWnd(hWnd);
 			}
 			this.hWnd = hWnd;
-			this.hIMEWnd = ImmGetDefaultIMEWnd(hWnd);
 			this.font = font;
 			SetIMEWindowFont(font);
 		}
@@ -49,7 +50,8 @@ namespace ICSharpCode.TextEditor
 			set {
 				if (this.hWnd != value) {
 					this.hWnd = value;
-					this.hIMEWnd = ImmGetDefaultIMEWnd(value);
+					if (!disableIME)
+						this.hIMEWnd = ImmGetDefaultIMEWnd(value);
 					SetIMEWindowFont(font);
 				}
 			}

@@ -2,51 +2,70 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2436 $</version>
+//     <version>$Revision: 2977 $</version>
 // </file>
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Diagnostics;
 
 namespace ICSharpCode.SharpDevelop.Dom
 {
 	/// <summary>
 	/// A class made up of multiple partial classes.
+	/// 
+	/// CompoundClass is immutable, it freezes the underlying DefaultClass in the constructor.
+	/// The constructor also freezes all parts to ensure that the methods/properties/fields/events of a
+	/// CompoundClass never change.
+	/// When you want to build add or remove parts from a CompoundClass, you need to create a new
+	/// CompoundClass instance with the new parts.
 	/// </summary>
-	public class CompoundClass : DefaultClass
+	public sealed class CompoundClass : DefaultClass
 	{
 		/// <summary>
 		/// The parts this class is based on.
-		/// Requires manual locking!
 		/// </summary>
-		internal List<IClass> parts = new List<IClass>();
+		readonly ReadOnlyCollection<IClass> parts;
 		
 		/// <summary>
-		/// Gets the parts this class is based on. This method is thread-safe and
-		/// returns a copy of the list!
+		/// Gets the parts this class is based on.
 		/// </summary>
-		public IList<IClass> GetParts()
-		{
-			lock (this) {
-				return parts.ToArray();
+		public ReadOnlyCollection<IClass> Parts {
+			get {
+				return parts;
 			}
 		}
 		
 		/// <summary>
-		/// Creates a new CompoundClass with the specified class as first part.
+		/// Creates a new CompoundClass with the specified parts.
 		/// </summary>
-		public CompoundClass(IClass firstPart) : base(new DefaultCompilationUnit(firstPart.ProjectContent), firstPart.FullyQualifiedName)
+		public static CompoundClass Create(IEnumerable<IClass> parts)
+		{
+			// Ensure that the list of parts does not change.
+			var p = parts.ToList();
+			foreach (IClass c in p) {
+				c.Freeze();
+			}
+			return new CompoundClass(p);
+		}
+		
+		private CompoundClass(List<IClass> parts) : base(new DefaultCompilationUnit(parts[0].ProjectContent), parts[0].FullyQualifiedName)
 		{
 			this.CompilationUnit.Classes.Add(this);
 			
-			parts.Add(firstPart);
+			this.parts = parts.AsReadOnly();
+			
 			UpdateInformationFromParts();
+			this.CompilationUnit.Freeze();
+			Debug.Assert(this.IsFrozen);
 		}
 		
 		/// <summary>
-		/// Re-calculate information from class parts (Modifier, Base classes, Type parameters etc.)
+		/// Calculate information from class parts (Modifier, Base classes, Type parameters etc.)
 		/// </summary>
-		internal void UpdateInformationFromParts()
+		void UpdateInformationFromParts()
 		{
 			// Common for all parts:
 			this.ClassType = parts[0].ClassType;
@@ -55,7 +74,12 @@ namespace ICSharpCode.SharpDevelop.Dom
 			const ModifierEnum defaultClassVisibility = ModifierEnum.Internal;
 			
 			this.BaseTypes.Clear();
+			this.InnerClasses.Clear();
 			this.Attributes.Clear();
+			this.Methods.Clear();
+			this.Properties.Clear();
+			this.Events.Clear();
+			this.Fields.Clear();
 			
 			string shortestFileName = null;
 			
@@ -77,9 +101,12 @@ namespace ICSharpCode.SharpDevelop.Dom
 						this.BaseTypes.Add(rt);
 					}
 				}
-				foreach (IAttribute attribute in part.Attributes) {
-					this.Attributes.Add(attribute);
-				}
+				this.InnerClasses.AddRange(part.InnerClasses);
+				this.Attributes.AddRange(part.Attributes);
+				this.Methods.AddRange(part.Methods);
+				this.Properties.AddRange(part.Properties);
+				this.Events.AddRange(part.Events);
+				this.Fields.AddRange(part.Fields);
 			}
 			this.CompilationUnit.FileName = shortestFileName;
 			if ((modifier & ModifierEnum.VisibilityMask) == ModifierEnum.None) {
@@ -89,87 +116,17 @@ namespace ICSharpCode.SharpDevelop.Dom
 		}
 		
 		/// <summary>
-		/// Type parameters are same on all parts
+		/// Type parameters are the same on all parts.
 		/// </summary>
 		public override IList<ITypeParameter> TypeParameters {
 			get {
-				lock (this) {
-					// Locking for the time of getting the reference to the sub-list is sufficient:
-					// Classes used for parts never change, instead the whole part is replaced with
-					// a new IClass instance.
-					return parts[0].TypeParameters;
-				}
+				// Locking for the time of getting the reference to the sub-list is sufficient:
+				// Classes used for parts never change, instead the whole part is replaced with
+				// a new IClass instance.
+				return parts[0].TypeParameters;
 			}
 			set {
 				throw new NotSupportedException();
-			}
-		}
-		
-		/// <summary>
-		/// CompoundClass has a normal return type even though IsPartial is set.
-		/// </summary>
-		protected override IReturnType CreateDefaultReturnType()
-		{
-			return new DefaultReturnType(this);
-		}
-		
-		public override List<IClass> InnerClasses {
-			get {
-				lock (this) {
-					List<IClass> l = new List<IClass>();
-					foreach (IClass part in parts) {
-						l.AddRange(part.InnerClasses);
-					}
-					return l;
-				}
-			}
-		}
-		
-		public override List<IField> Fields {
-			get {
-				lock (this) {
-					List<IField> l = new List<IField>();
-					foreach (IClass part in parts) {
-						l.AddRange(part.Fields);
-					}
-					return l;
-				}
-			}
-		}
-		
-		public override List<IProperty> Properties {
-			get {
-				lock (this) {
-					List<IProperty> l = new List<IProperty>();
-					foreach (IClass part in parts) {
-						l.AddRange(part.Properties);
-					}
-					return l;
-				}
-			}
-		}
-		
-		public override List<IMethod> Methods {
-			get {
-				lock (this) {
-					List<IMethod> l = new List<IMethod>();
-					foreach (IClass part in parts) {
-						l.AddRange(part.Methods);
-					}
-					return l;
-				}
-			}
-		}
-		
-		public override List<IEvent> Events {
-			get {
-				lock (this) {
-					List<IEvent> l = new List<IEvent>();
-					foreach (IClass part in parts) {
-						l.AddRange(part.Events);
-					}
-					return l;
-				}
 			}
 		}
 	}

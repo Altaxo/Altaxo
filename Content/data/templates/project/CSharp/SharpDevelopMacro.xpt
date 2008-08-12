@@ -10,6 +10,7 @@
 		<Subcategory>SharpDevelop</Subcategory>
 		<Icon>C#.Project.ControlLibrary</Icon>
 		<Description>${res:Templates.Project.SharpDevelopMacro.Description}</Description>
+		<SupportedTargetFrameworks>v2.0</SupportedTargetFrameworks>
 	</TemplateConfiguration>
 	
 	<!-- Actions -->
@@ -19,6 +20,10 @@
 	</Actions>
 	
 	<Project language="C#">
+		<CreateActions>
+			<RunCommand path = "/SharpDevelop/BackendBindings/TemplateCommands/AddDotNet35ReferencesIfTargetFrameworkIs35"/>
+		</CreateActions>
+		
 		<ProjectItems>
 			<Reference Include="System" />
 			<Reference Include="System.Data" />
@@ -50,7 +55,6 @@
 ]]></File>
 		<File name="Src/Command.cs">
 			<![CDATA[${StandardHeader.C#}
-
 using System;
 using System.Text;
 using ICSharpCode.Core;

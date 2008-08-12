@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2121 $</version>
+//     <version>$Revision: 3069 $</version>
 // </file>
 
 using System;
@@ -30,32 +30,17 @@ namespace CSharpBinding
 		{
 		}
 		
+		static CSharpExpressionFinder CreateExpressionFinder(string fileName)
+		{
+			return new CSharpExpressionFinder(ParserService.GetParseInformation(fileName));
+		}
+		
 		public override bool HandleKeyPress(SharpDevelopTextAreaControl editor, char ch)
 		{
-			CSharpExpressionFinder ef = new CSharpExpressionFinder(editor.FileName);
+			CSharpExpressionFinder ef = CreateExpressionFinder(editor.FileName);
 			int cursor = editor.ActiveTextAreaControl.Caret.Offset;
 			ExpressionContext context = null;
 			if (ch == '(') {
-				if (CodeCompletionOptions.KeywordCompletionEnabled) {
-					switch (editor.GetWordBeforeCaret().Trim()) {
-						case "for":
-						case "lock":
-							context = ExpressionContext.Default;
-							break;
-						case "using":
-							context = ExpressionContext.TypeDerivingFrom(ParserService.CurrentProjectContent.GetClass("System.IDisposable"), false);
-							break;
-						case "catch":
-							context = ExpressionContext.TypeDerivingFrom(ParserService.CurrentProjectContent.GetClass("System.Exception"), false);
-							break;
-						case "foreach":
-						case "typeof":
-						case "sizeof":
-						case "default":
-							context = ExpressionContext.Type;
-							break;
-					}
-				}
 				if (context != null) {
 					if (IsInComment(editor)) return false;
 					editor.ShowCompletionWindow(new CtrlSpaceCompletionDataProvider(context), ch);
@@ -88,7 +73,7 @@ namespace CSharpBinding
 						ResolveResult resolveResult = ParserService.Resolve(result, editor.ActiveTextAreaControl.Caret.Line + 1, editor.ActiveTextAreaControl.Caret.Column + 1, editor.FileName, documentText);
 						if (resolveResult != null && resolveResult.ResolvedType != null) {
 							IClass underlyingClass = resolveResult.ResolvedType.GetUnderlyingClass();
-							if (underlyingClass != null && underlyingClass.IsTypeInInheritanceTree(ParserService.CurrentProjectContent.GetClass("System.MulticastDelegate"))) {
+							if (underlyingClass != null && underlyingClass.IsTypeInInheritanceTree(ParserService.CurrentProjectContent.GetClass("System.MulticastDelegate", 0))) {
 								EventHandlerCompletitionDataProvider eventHandlerProvider = new EventHandlerCompletitionDataProvider(result.Expression, resolveResult);
 								eventHandlerProvider.InsertSpace = true;
 								editor.ShowCompletionWindow(eventHandlerProvider, ch);
@@ -107,66 +92,67 @@ namespace CSharpBinding
 						}
 					}
 				}
-			} else if (ch == ';') {
-				LineSegment curLine = editor.Document.GetLineSegmentForOffset(cursor);
-				// don't return true when inference succeeds, otherwise the ';' won't be added to the document.
-				TryDeclarationTypeInference(editor, curLine);
+			} else if (ch == '.') {
+				editor.ShowCompletionWindow(new CSharpCodeCompletionDataProvider(), ch);
+				return true;
+			}
+			
+			if (char.IsLetter(ch) && CodeCompletionOptions.CompleteWhenTyping) {
+				char prevChar = cursor > 1 ? editor.Document.GetCharAt(cursor - 1) : ' ';
+				bool afterUnderscore = prevChar == '_';
+				if (afterUnderscore) {
+					cursor--;
+					prevChar = cursor > 1 ? editor.Document.GetCharAt(cursor - 1) : ' ';
+				}
+				if (!char.IsLetterOrDigit(prevChar) && prevChar != '.' && !IsInComment(editor)) {
+					ExpressionResult result = ef.FindExpression(editor.Text, cursor);
+					LoggingService.Debug("CC: Beginning to type a word, result=" + result);
+					if (result.Context != ExpressionContext.IdentifierExpected) {
+						editor.ShowCompletionWindow(new CtrlSpaceCompletionDataProvider(result.Context) { 
+						                            	ShowTemplates = true,
+						                            	AllowCompleteExistingExpression = afterUnderscore
+						                            }, '\0');
+					}
+				}
 			}
 			
 			return base.HandleKeyPress(editor, ch);
 		}
 		
-		bool TryDeclarationTypeInference(SharpDevelopTextAreaControl editor, LineSegment curLine)
+		class CSharpCodeCompletionDataProvider : CodeCompletionDataProvider
 		{
-			string lineText = editor.Document.GetText(curLine.Offset, curLine.Length);
-			ILexer lexer = ParserFactory.CreateLexer(SupportedLanguage.CSharp, new System.IO.StringReader(lineText));
-			Token typeToken = lexer.NextToken();
-			if (typeToken.kind == CSTokens.Question) {
-				if (lexer.NextToken().kind == CSTokens.Identifier) {
-					Token t = lexer.NextToken();
-					if (t.kind == CSTokens.Assign) {
-						string expr = lineText.Substring(t.col);
-						LoggingService.Debug("DeclarationTypeInference: >" + expr + "<");
-						ResolveResult rr = ParserService.Resolve(new ExpressionResult(expr),
-						                                         editor.ActiveTextAreaControl.Caret.Line + 1,
-						                                         t.col, editor.FileName,
-						                                         editor.Document.TextContent);
-						if (rr != null && rr.ResolvedType != null) {
-							ClassFinder context = new ClassFinder(editor.FileName, editor.ActiveTextAreaControl.Caret.Line, t.col);
-							if (CodeGenerator.CanUseShortTypeName(rr.ResolvedType, context))
-								CSharpAmbience.Instance.ConversionFlags = ConversionFlags.None;
-							else
-								CSharpAmbience.Instance.ConversionFlags = ConversionFlags.UseFullyQualifiedNames;
-							string typeName = CSharpAmbience.Instance.Convert(rr.ResolvedType);
-							editor.Document.Replace(curLine.Offset + typeToken.col - 1, 1, typeName);
-							editor.ActiveTextAreaControl.Caret.Column += typeName.Length - 1;
-							return true;
-						}
-					}
-				}
+			protected override ResolveResult Resolve(ExpressionResult expressionResult, int caretLineNumber, int caretColumn, string fileName, string fileContent)
+			{
+				// bypass ParserService.Resolve and set resolver.LimitMethodExtractionUntilCaretLine
+				ParseInformation parseInfo = ParserService.GetParseInformation(fileName);
+				NRefactoryResolver resolver = new NRefactoryResolver(LanguageProperties.CSharp);
+				resolver.LimitMethodExtractionUntilLine = caretLineNumber;
+				return resolver.Resolve(expressionResult, parseInfo, fileContent);
 			}
-			return false;
 		}
 		
 		bool IsInComment(SharpDevelopTextAreaControl editor)
 		{
-			CSharpExpressionFinder ef = new CSharpExpressionFinder(editor.FileName);
+			CSharpExpressionFinder ef = CreateExpressionFinder(editor.FileName);
 			int cursor = editor.ActiveTextAreaControl.Caret.Offset - 1;
 			return ef.FilterComments(editor.Document.GetText(0, cursor + 1), ref cursor) == null;
 		}
 		
 		public override bool HandleKeyword(SharpDevelopTextAreaControl editor, string word)
 		{
-			// TODO: Assistance writing Methods/Fields/Properties/Events:
-			// use public/static/etc. as keywords to display a list with other modifiers
-			// and possible return types.
 			switch (word) {
 				case "using":
 					if (IsInComment(editor)) return false;
 					
-					// TODO: check if we are inside class/namespace
-					editor.ShowCompletionWindow(new CtrlSpaceCompletionDataProvider(ExpressionContext.Namespace), ' ');
-					return true;
+					ParseInformation parseInfo = ParserService.GetParseInformation(editor.FileName);
+					if (parseInfo != null) {
+						IClass innerMostClass = parseInfo.MostRecentCompilationUnit.GetInnermostClass(editor.ActiveTextAreaControl.Caret.Line + 1, editor.ActiveTextAreaControl.Caret.Column + 1);
+						if (innerMostClass == null) {
+							editor.ShowCompletionWindow(new CtrlSpaceCompletionDataProvider(ExpressionContext.Namespace), ' ');
+						}
+						return true;
+					}
+					return false;
 				case "as":
 				case "is":
 					if (IsInComment(editor)) return false;
@@ -196,22 +182,100 @@ namespace CSharpBinding
 		
 		bool ShowNewCompletion(SharpDevelopTextAreaControl editor)
 		{
-			CSharpExpressionFinder ef = new CSharpExpressionFinder(editor.FileName);
+			CSharpExpressionFinder ef = CreateExpressionFinder(editor.FileName);
 			int cursor = editor.ActiveTextAreaControl.Caret.Offset;
-			ExpressionContext context = ef.FindExpression(editor.Document.GetText(0, cursor) + " T.", cursor + 2).Context;
-			if (context.IsObjectCreation) {
-				editor.ShowCompletionWindow(new CtrlSpaceCompletionDataProvider(context), ' ');
+			string documentToCursor = editor.Document.GetText(0, cursor);
+			ExpressionResult expressionResult = ef.FindExpression(documentToCursor, cursor);
+			
+			LoggingService.Debug("ShowNewCompletion: expression is " + expressionResult);
+			if (expressionResult.Context.IsObjectCreation) {
+				LineSegment currentLine = editor.Document.GetLineSegmentForOffset(cursor);
+				string lineText = editor.Document.GetText(currentLine.Offset, cursor - currentLine.Offset);
+				// when the new follows an assignment, improve code-completion by detecting the
+				// type of the variable that is assigned to
+				if (lineText.Replace(" ", "").EndsWith("=new")) {
+					int pos = lineText.LastIndexOf('=');
+					ExpressionContext context = FindExactContextForNewCompletion(editor, documentToCursor,
+					                                                             currentLine, pos);
+					if (context != null)
+						expressionResult.Context = context;
+				}
+				editor.ShowCompletionWindow(new CtrlSpaceCompletionDataProvider(expressionResult.Context), ' ');
 				return true;
 			}
 			return false;
+		}
+		
+		ExpressionContext FindExactContextForNewCompletion(SharpDevelopTextAreaControl editor, string documentToCursor,
+		                                                   LineSegment currentLine, int pos)
+		{
+			CSharpExpressionFinder ef = CreateExpressionFinder(editor.FileName);
+			// find expression on left hand side of the assignment
+			ExpressionResult lhsExpr = ef.FindExpression(documentToCursor, currentLine.Offset + pos);
+			if (lhsExpr.Expression != null) {
+				ResolveResult rr = ParserService.Resolve(lhsExpr, currentLine.LineNumber, pos, editor.FileName, editor.Text);
+				if (rr != null && rr.ResolvedType != null) {
+					ExpressionContext context;
+					IClass c;
+					if (rr.ResolvedType.IsArrayReturnType) {
+						// when creating an array, all classes deriving from the array's element type are allowed
+						IReturnType elementType = rr.ResolvedType.CastToArrayReturnType().ArrayElementType;
+						c = elementType != null ? elementType.GetUnderlyingClass() : null;
+						context = ExpressionContext.TypeDerivingFrom(elementType, false);
+					} else {
+						// when creating a normal instance, all non-abstract classes deriving from the type
+						// are allowed
+						c = rr.ResolvedType.GetUnderlyingClass();
+						context = ExpressionContext.TypeDerivingFrom(rr.ResolvedType, true);
+					}
+					if (c != null && context.ShowEntry(c)) {
+						// Try to suggest an entry (List<int> a = new => suggest List<int>).
+						
+						string suggestedClassName = LanguageProperties.CSharp.CodeGenerator.GenerateCode(
+							CodeGenerator.ConvertType(
+								rr.ResolvedType,
+								new ClassFinder(ParserService.GetParseInformation(editor.FileName), editor.ActiveTextAreaControl.Caret.Line + 1, editor.ActiveTextAreaControl.Caret.Column + 1)
+							), "");
+						if (suggestedClassName != c.Name) {
+							// create an IClass instance that includes the type arguments in its name
+							context.SuggestedItem = new RenamedClass(c, suggestedClassName);
+						} else {
+							context.SuggestedItem = c;
+						}
+					}
+					return context;
+				}
+			}
+			return null;
+		}
+		
+		/// <summary>
+		/// A class that copies the properties important for the code completion display from another class,
+		/// but provides its own Name implementation.
+		/// Unlike the AbstractEntity.Name implementation, here 'Name' may include the namespace or type arguments.
+		/// </summary>
+		sealed class RenamedClass : DefaultClass, IClass
+		{
+			string newName;
+			
+			public RenamedClass(IClass c, string newName) : base(c.CompilationUnit, c.ClassType, c.Modifiers, c.Region, c.DeclaringType)
+			{
+				this.newName = newName;
+				this.Documentation = c.Documentation;
+				this.FullyQualifiedName = c.FullyQualifiedName;
+			}
+			
+			string IEntity.Name {
+				get { return newName; }
+			}
 		}
 		
 		#region "case"-keyword completion
 		bool DoCaseCompletion(SharpDevelopTextAreaControl editor)
 		{
 			ICSharpCode.TextEditor.Caret caret = editor.ActiveTextAreaControl.Caret;
-			NRefactoryResolver r = new NRefactoryResolver(ParserService.CurrentProjectContent, LanguageProperties.CSharp);
-			if (r.Initialize(editor.FileName, caret.Line + 1, caret.Column + 1)) {
+			NRefactoryResolver r = new NRefactoryResolver(LanguageProperties.CSharp);
+			if (r.Initialize(ParserService.GetParseInformation(editor.FileName), caret.Line + 1, caret.Column + 1)) {
 				AST.INode currentMember = r.ParseCurrentMember(editor.Text);
 				if (currentMember != null) {
 					CaseCompletionSwitchFinder ccsf = new CaseCompletionSwitchFinder(caret.Line + 1, caret.Column + 1);

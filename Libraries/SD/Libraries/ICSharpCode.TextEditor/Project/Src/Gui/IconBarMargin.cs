@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2296 $</version>
+//     <version>$Revision: 3176 $</version>
 // </file>
 
 using System;
@@ -77,7 +77,7 @@ namespace ICSharpCode.TextEditor
 				}
 			}
 			
-			List<Bookmark> marks = textArea.Document.BookmarkManager.Marks;
+			IList<Bookmark> marks = textArea.Document.BookmarkManager.Marks;
 			List<Bookmark> marksInLine = new List<Bookmark>();
 			int oldCount = marks.Count;
 			foreach (Bookmark mark in marks) {
@@ -98,7 +98,7 @@ namespace ICSharpCode.TextEditor
 		}
 		
 		#region Drawing functions
-		public void DrawBreakpoint(Graphics g, int y, bool isEnabled, bool willBeHit)
+		public void DrawBreakpoint(Graphics g, int y, bool isEnabled, bool isHealthy)
 		{
 			int diameter = Math.Min(iconBarWidth - 2, textArea.TextView.FontHeight);
 			Rectangle rect = new Rectangle(1,
@@ -112,7 +112,7 @@ namespace ICSharpCode.TextEditor
 				using (PathGradientBrush pthGrBrush = new PathGradientBrush(path)) {
 					pthGrBrush.CenterPoint = new PointF(rect.Left + rect.Width / 3 , rect.Top + rect.Height / 3);
 					pthGrBrush.CenterColor = Color.MistyRose;
-					Color[] colors = {willBeHit?Color.Firebrick:Color.Olive};
+					Color[] colors = {isHealthy ? Color.Firebrick : Color.Olive};
 					pthGrBrush.SurroundColors = colors;
 					
 					if (isEnabled) {

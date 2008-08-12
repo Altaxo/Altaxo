@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Matthew Ward" email="mrward@users.sourceforge.net"/>
-//     <version>$Revision: 2340 $</version>
+//     <version>$Revision: 2359 $</version>
 // </file>
 
 using System;
@@ -82,7 +82,7 @@ namespace ICSharpCode.SharpDevelop.Tests
 		{
 			ProjectContentRegistry registry = new ProjectContentRegistry();
 			IProjectContent mscorlibProjectContent = registry.Mscorlib;
-			IClass c = mscorlibProjectContent.GetClass("System.Exception");
+			IClass c = mscorlibProjectContent.GetClass("System.Exception", 0);
 			
 			List<string> propertyNames = new List<string>();
 			foreach (IProperty p in c.Properties) {
@@ -111,7 +111,7 @@ namespace ICSharpCode.SharpDevelop.Tests
 		{
 			ProjectContentRegistry registry = new ProjectContentRegistry();
 			IProjectContent mscorlibProjectContent = registry.Mscorlib;
-			IClass exceptionClass = mscorlibProjectContent.GetClass("System.Exception");
+			IClass exceptionClass = mscorlibProjectContent.GetClass("System.Exception", 0);
 			
 			DefaultProjectContent projectContent = new DefaultProjectContent();
 			DefaultCompilationUnit unit = new DefaultCompilationUnit(projectContent);

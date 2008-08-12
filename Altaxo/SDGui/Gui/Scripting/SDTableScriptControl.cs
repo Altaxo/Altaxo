@@ -51,18 +51,20 @@ namespace Altaxo.Gui.Scripting
     private System.ComponentModel.Container components = null;
 
     private ITableScriptController m_Controller;
+		private string _scriptName;
 
     public SDTableScriptControl()
     {
-      // This call is required by the Windows.Forms Form Designer.
+			this._scriptName = System.Guid.NewGuid().ToString() + ".cs";
+			
+			// This call is required by the Windows.Forms Form Designer.
       InitializeComponent();
 
       // TODO: Add any initialization after the InitializeComponent call
 
-      this.ScriptName = System.Guid.NewGuid().ToString() + ".cs";
       this.edFormula.Document.TextEditorProperties.TabIndent=2;
-      this.edFormulaWrapper.textAreaControl.InitializeFormatter();
-      this.edFormulaWrapper.textAreaControl.TextEditorProperties.MouseWheelScrollDown=true;
+			((ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor.SharpDevelopTextAreaControl)this.edFormulaWrapper.TextEditorControl).InitializeFormatter();
+      this.edFormulaWrapper.TextEditorControl.TextEditorProperties.MouseWheelScrollDown=true;
     }
 
     /// <summary> 
@@ -87,7 +89,7 @@ namespace Altaxo.Gui.Scripting
     /// </summary>
     private void InitializeComponent()
     {
-      this.edFormulaWrapper = new ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor.TextEditorDisplayBindingWrapper();
+      this.edFormulaWrapper = new ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor.TextEditorDisplayBindingWrapper(new SDScriptOpenedFile(_scriptName));
       this.edFormula = edFormulaWrapper.TextEditorControl;
       this.lbCompilerErrors = new System.Windows.Forms.ListBox();
       this.btUpdate = new System.Windows.Forms.Button();
@@ -196,22 +198,21 @@ namespace Altaxo.Gui.Scripting
       }
     }
 
-    public string ScriptName
-    {
-      set
-      {
-        edFormulaWrapper.TextEditorControl.FileName = value;
-        edFormulaWrapper.TitleName = value;
-        edFormulaWrapper.FileName = value;
-      }
-    }
+		public string ScriptName
+		{
+			set
+			{
+				this.edFormula.FileName = value;
+				// TODO hier standen noch andere Settings, bitte testen ob alles I.O.
+			}
+		}
 
     public int ScriptCursorLocation
     {
       set
       {
-        System.Drawing.Point point = edFormulaWrapper.textAreaControl.Document.OffsetToPosition(value);
-        this.edFormulaWrapper.JumpTo(point.Y,point.X);
+        ICSharpCode.TextEditor.TextLocation point = edFormulaWrapper.TextEditorControl.Document.OffsetToPosition(value);
+        this.edFormulaWrapper.JumpTo(point.Line,point.Column);
       }
 
     }

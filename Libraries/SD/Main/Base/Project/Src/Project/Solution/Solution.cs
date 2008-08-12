@@ -2,17 +2,19 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2367 $</version>
+//     <version>$Revision: 3214 $</version>
 // </file>
 
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-
+using SearchAndReplace;
 using ICSharpCode.Core;
+using ICSharpCode.SharpDevelop.Gui;
 using MSBuild = Microsoft.Build.BuildEngine;
 
 namespace ICSharpCode.SharpDevelop.Project
@@ -24,12 +26,17 @@ namespace ICSharpCode.SharpDevelop.Project
 		}
 	}
 	
-	public class Solution : SolutionFolder, IDisposable, IMSBuildEngineProvider
+	public class Solution : SolutionFolder, IDisposable, IMSBuildEngineProvider, IBuildable
 	{
-		// contains <guid>, (IProject/ISolutionFolder) pairs.
+		public const int SolutionVersionVS05 = 9;
+		public const int SolutionVersionVS08 = 10;
+		
+		/// <summary>contains &lt;GUID, (IProject/ISolutionFolder)&gt; pairs.</summary>
 		Dictionary<string, ISolutionFolder> guidDictionary = new Dictionary<string, ISolutionFolder>();
 		
 		string fileName = String.Empty;
+		
+		bool readOnly = false;
 		
 		MSBuild.Engine buildEngine = MSBuildInternals.CreateEngine();
 		
@@ -195,18 +202,6 @@ namespace ICSharpCode.SharpDevelop.Project
 			}
 		}
 		
-		[Browsable(false)]
-		public bool IsDirty {
-			get {
-				foreach (IProject project in Projects) {
-					if (project.IsDirty) {
-						return true;
-					}
-				}
-				return false;
-			}
-		}
-		
 		SolutionPreferences preferences;
 		
 		[Browsable(false)]
@@ -214,6 +209,12 @@ namespace ICSharpCode.SharpDevelop.Project
 			get {
 				return preferences;
 			}
+		}
+		
+		/// <summary>Property to determine if the solution is readonly.</summary>
+		[Browsable(false)]
+		public bool ReadOnly {
+			get { return readOnly; }
 		}
 		#endregion
 		
@@ -249,9 +250,25 @@ namespace ICSharpCode.SharpDevelop.Project
 		{
 			try {
 				Save(fileName);
+				return;
 			} catch (IOException ex) {
 				MessageService.ShowError("Could not save " + fileName + ":\n" + ex.Message);
 			} catch (UnauthorizedAccessException ex) {
+				FileAttributes attributes = File.GetAttributes(fileName);
+				if ((FileAttributes.ReadOnly & attributes) == FileAttributes.ReadOnly) {
+					bool attemptOverwrite = MessageService.AskQuestionFormatted(
+						"Solution file {0} is marked readonly. Attempt to save anyway?",
+						new string [] {fileName});
+					if (attemptOverwrite) {
+						try {
+							attributes &= ~FileAttributes.ReadOnly;
+							File.SetAttributes(fileName, attributes);
+							Save(fileName);
+							return;
+						} catch { /* If something screws up shows the error */ }
+					}
+				}
+				this.readOnly = true;
 				MessageService.ShowError("Could not save " + fileName + ":\n" + ex.Message + "\n\nEnsure the file is writable.");
 			}
 		}
@@ -267,24 +284,17 @@ namespace ICSharpCode.SharpDevelop.Project
 			StringBuilder projectSection        = new StringBuilder();
 			StringBuilder nestedProjectsSection = new StringBuilder();
 			
-			List<ISolutionFolder> folderList = Folders;
-			Stack<ISolutionFolder> stack = new Stack<ISolutionFolder>(folderList.Count);
+			Stack<ISolutionFolder> stack = new Stack<ISolutionFolder>(Folders.Count);
 			// push folders in reverse order because it's a stack
-			for (int i = folderList.Count - 1; i >= 0; i--) {
-				stack.Push(folderList[i]);
+			for (int i = Folders.Count - 1; i >= 0; i--) {
+				stack.Push(Folders[i]);
 			}
 			
 			while (stack.Count > 0) {
 				ISolutionFolder currentFolder = stack.Pop();
-				
-				projectSection.Append("Project(\"");
-				projectSection.Append(currentFolder.TypeGuid);
-				projectSection.Append("\")");
-				projectSection.Append(" = ");
-				projectSection.Append('"');
-				projectSection.Append(currentFolder.Name);
-				projectSection.Append("\", ");
 				string relativeLocation;
+				
+				// The project file relative to the solution file.
 				if (currentFolder is IProject) {
 					currentFolder.Location = ((IProject)currentFolder).FileName;
 				}
@@ -293,12 +303,10 @@ namespace ICSharpCode.SharpDevelop.Project
 				} else {
 					relativeLocation = currentFolder.Location;
 				}
-				projectSection.Append('"');
-				projectSection.Append(relativeLocation);
-				projectSection.Append("\", ");
-				projectSection.Append('"');
-				projectSection.Append(currentFolder.IdGuid);
-				projectSection.Append("\"");
+				
+				projectSection.AppendFormat
+					("Project(\"{0}\") = \"{1}\", \"{2}\", \"{3}\"",
+					 new object [] {currentFolder.TypeGuid, currentFolder.Name, relativeLocation, currentFolder.IdGuid});
 				projectSection.AppendLine();
 				
 				if (currentFolder is IProject) {
@@ -311,7 +319,10 @@ namespace ICSharpCode.SharpDevelop.Project
 					
 					SaveProjectSections(folder.Sections, projectSection);
 					
-					foreach (ISolutionFolder subFolder in folder.Folders) {
+					ISolutionFolder subFolder;
+					for (int i = folder.Folders.Count - 1; i >= 0; i--) {
+						//foreach (ISolutionFolder subFolder in folder.Folders) {
+						subFolder = folder.Folders[i];
 						stack.Push(subFolder);
 						nestedProjectsSection.Append("\t\t");
 						nestedProjectsSection.Append(subFolder.IdGuid);
@@ -345,8 +356,18 @@ namespace ICSharpCode.SharpDevelop.Project
 			// we need to specify UTF8 because MSBuild needs the BOM
 			using (StreamWriter sw = new StreamWriter(fileName, false, Encoding.UTF8)) {
 				sw.WriteLine();
-				sw.WriteLine("Microsoft Visual Studio Solution File, Format Version 9.00");
-				sw.WriteLine("# Visual Studio 2005");
+				int versionNumber = SolutionVersionVS05;
+				foreach (IProject p in this.Projects) {
+					if (p.MinimumSolutionVersion > versionNumber)
+						versionNumber = p.MinimumSolutionVersion;
+				}
+				
+				sw.WriteLine("Microsoft Visual Studio Solution File, Format Version " + versionNumber + ".00");
+				if (versionNumber == SolutionVersionVS05) {
+					sw.WriteLine("# Visual Studio 2005");
+				} else if (versionNumber == SolutionVersionVS08) {
+					sw.WriteLine("# Visual Studio 2008");
+				}
 				sw.WriteLine("# SharpDevelop " + RevisionClass.FullVersion);
 				sw.Write(projectSection.ToString());
 				
@@ -428,19 +449,18 @@ namespace ICSharpCode.SharpDevelop.Project
 			}
 		}
 		
-		static bool SetupSolution(Solution newSolution, string fileName)
+		static bool SetupSolution(Solution newSolution)
 		{
-			string         solutionDirectory     = Path.GetDirectoryName(fileName);
 			ProjectSection nestedProjectsSection = null;
 			
 			bool needsConversion = false;
 			
 			// read solution files using system encoding, but detect UTF8 if BOM is present
-			using (StreamReader sr = new StreamReader(fileName, Encoding.Default, true)) {
+			using (StreamReader sr = new StreamReader(newSolution.FileName, Encoding.Default, true)) {
 				string line = GetFirstNonCommentLine(sr);
 				Match match = versionPattern.Match(line);
 				if (!match.Success) {
-					MessageService.ShowErrorFormatted("${res:SharpDevelop.Solution.InvalidSolutionFile}", fileName);
+					MessageService.ShowErrorFormatted("${res:SharpDevelop.Solution.InvalidSolutionFile}", newSolution.FileName);
 					return false;
 				}
 				
@@ -458,53 +478,15 @@ namespace ICSharpCode.SharpDevelop.Project
 						}
 						break;
 					case "9.00":
+					case "10.00":
 						break;
 					default:
 						MessageService.ShowErrorFormatted("${res:SharpDevelop.Solution.UnknownSolutionVersion}", match.Result("${Version}"));
 						return false;
 				}
 				
-				while (true) {
-					line = sr.ReadLine();
-					
-					if (line == null) {
-						break;
-					}
-					match = projectLinePattern.Match(line);
-					if (match.Success) {
-						string projectGuid  = match.Result("${ProjectGuid}");
-						string title        = match.Result("${Title}");
-						string location     = match.Result("${Location}");
-						string guid         = match.Result("${Guid}");
-						
-						if (!FileUtility.IsUrl(location)) {
-							location = Path.GetFullPath(Path.Combine(solutionDirectory, location));
-						}
-						
-						if (projectGuid == FolderGuid) {
-							SolutionFolder newFolder = SolutionFolder.ReadFolder(sr, title, location, guid);
-							newSolution.AddFolder(newFolder);
-						} else {
-							IProject newProject = LanguageBindingService.LoadProject(newSolution, location, title, projectGuid);
-							ReadProjectSections(sr, newProject.ProjectSections);
-							newProject.IdGuid = guid;
-							newSolution.AddFolder(newProject);
-						}
-						match = match.NextMatch();
-					} else {
-						match = globalSectionPattern.Match(line);
-						if (match.Success) {
-							ProjectSection newSection = ProjectSection.ReadGlobalSection(sr, match.Result("${Name}"), match.Result("${Type}"));
-							// Don't put the NestedProjects section into the global sections list
-							// because it's transformed to a tree representation and the tree representation
-							// is transformed back to the NestedProjects section during save.
-							if (newSection.Name == "NestedProjects") {
-								nestedProjectsSection = newSection;
-							} else {
-								newSolution.Sections.Add(newSection);
-							}
-						}
-					}
+				using (AsynchronousWaitDialog waitDialog = AsynchronousWaitDialog.ShowWaitDialog("Loading solution")) {
+					nestedProjectsSection = SetupSolutionLoadSolutionProjects(newSolution, sr, waitDialog);
 				}
 			}
 			// Create solution folder 'tree'.
@@ -526,6 +508,56 @@ namespace ICSharpCode.SharpDevelop.Project
 				newSolution.Save();
 			}
 			return true;
+		}
+		
+		static ProjectSection SetupSolutionLoadSolutionProjects(Solution newSolution, StreamReader sr, IProgressMonitor progressMonitor)
+		{
+			string solutionDirectory = Path.GetDirectoryName(newSolution.FileName);
+			
+			ProjectSection nestedProjectsSection = null;
+			while (true) {
+				string line = sr.ReadLine();
+				
+				if (line == null) {
+					break;
+				}
+				Match match = projectLinePattern.Match(line);
+				if (match.Success) {
+					string projectGuid  = match.Result("${ProjectGuid}");
+					string title        = match.Result("${Title}");
+					string location     = match.Result("${Location}");
+					string guid         = match.Result("${Guid}");
+					
+					if (!FileUtility.IsUrl(location)) {
+						location = FileUtility.NormalizePath(Path.Combine(solutionDirectory, location));
+					}
+					
+					if (projectGuid == FolderGuid) {
+						SolutionFolder newFolder = SolutionFolder.ReadFolder(sr, title, location, guid);
+						newSolution.AddFolder(newFolder);
+					} else {
+						IProject newProject = LanguageBindingService.LoadProject(newSolution, location, title, projectGuid, progressMonitor);
+						ReadProjectSections(sr, newProject.ProjectSections);
+						newProject.IdGuid = guid;
+						newSolution.AddFolder(newProject);
+					}
+					match = match.NextMatch();
+				} else {
+					match = globalSectionPattern.Match(line);
+					if (match.Success) {
+						ProjectSection newSection = ProjectSection.ReadGlobalSection(sr, match.Result("${Name}"), match.Result("${Type}"));
+						// Don't put the NestedProjects section into the global sections list
+						// because it's transformed to a tree representation and the tree representation
+						// is transformed back to the NestedProjects section during save.
+						if (newSection.Name == "NestedProjects") {
+							nestedProjectsSection = newSection;
+						} else {
+							newSolution.Sections.Add(newSection);
+						}
+					}
+				}
+			}
+			return nestedProjectsSection;
 		}
 		#endregion
 		
@@ -622,15 +654,7 @@ namespace ICSharpCode.SharpDevelop.Project
 			foreach (IProject project in projects) {
 				string guid = project.IdGuid.ToUpperInvariant();
 				foreach (SolutionItem configuration in solSec.Items) {
-					string searchKey = guid + "." + configuration.Name + ".Build.0";
-					if (!prjSec.Items.Exists(delegate (SolutionItem item) {
-					                         	return item.Name == searchKey;
-					                         }))
-					{
-						prjSec.Items.Add(new SolutionItem(searchKey, configuration.Location));
-						changed = true;
-					}
-					searchKey = guid + "." + configuration.Name + ".ActiveCfg";
+					string searchKey = guid + "." + configuration.Name + ".ActiveCfg";
 					if (!prjSec.Items.Exists(delegate (SolutionItem item) {
 					                         	return item.Name == searchKey;
 					                         }))
@@ -725,11 +749,11 @@ namespace ICSharpCode.SharpDevelop.Project
 				if (this.SolutionItem == null)
 					return;
 				string oldName = this.SolutionItem.Name;
-				this.SolutionItem.Name = this.Project.IdGuid + "." + newConfiguration + "|" + newPlatform + ".Build.0";
+				this.SolutionItem.Name = this.Project.IdGuid + "." + newConfiguration + "|" + newPlatform + ".ActiveCfg";
 				string newName = this.SolutionItem.Name;
-				if (StripBuild0(ref oldName) && StripBuild0(ref newName)) {
-					oldName += ".ActiveCfg";
-					newName += ".ActiveCfg";
+				if (StripActiveCfg(ref oldName) && StripActiveCfg(ref newName)) {
+					oldName += ".Build.0";
+					newName += ".Build.0";
 					foreach (SolutionItem item in section.Items) {
 						if (item.Name == oldName)
 							item.Name = newName;
@@ -745,8 +769,8 @@ namespace ICSharpCode.SharpDevelop.Project
 					return;
 				this.SolutionItem.Location = newConfiguration + "|" + newPlatform;
 				string thisName = this.SolutionItem.Name;
-				if (StripBuild0(ref thisName)) {
-					thisName += ".ActiveCfg";
+				if (StripActiveCfg(ref thisName)) {
+					thisName += ".Build.0";
 					foreach (SolutionItem item in section.Items) {
 						if (item.Name == thisName)
 							item.Location = this.SolutionItem.Location;
@@ -754,10 +778,10 @@ namespace ICSharpCode.SharpDevelop.Project
 				}
 			}
 			
-			internal static bool StripBuild0(ref string s)
+			internal static bool StripActiveCfg(ref string s)
 			{
-				if (s.EndsWith(".Build.0")) {
-					s = s.Substring(0, s.Length - ".Build.0".Length);
+				if (s.EndsWith(".ActiveCfg")) {
+					s = s.Substring(0, s.Length - ".ActiveCfg".Length);
 					return true;
 				} else {
 					return false;
@@ -774,7 +798,7 @@ namespace ICSharpCode.SharpDevelop.Project
 			foreach (SolutionItem item in prjSec.Items) {
 				dict[item.Name] = item;
 			}
-			string searchKeyPostFix = "." + solutionConfiguration + "|" + solutionPlatform + ".Build.0";
+			string searchKeyPostFix = "." + solutionConfiguration + "|" + solutionPlatform + ".ActiveCfg";
 			foreach (IProject p in Projects) {
 				string searchKey = p.IdGuid + searchKeyPostFix;
 				SolutionItem solutionItem;
@@ -796,11 +820,11 @@ namespace ICSharpCode.SharpDevelop.Project
 		
 		internal SolutionItem CreateMatchingItem(string solutionConfiguration, string solutionPlatform, IProject project, string initialLocation)
 		{
-			SolutionItem item = new SolutionItem(project.IdGuid + "." + solutionConfiguration + "|"
-			                                     + solutionPlatform + ".Build.0", initialLocation);
-			GetProjectConfigurationsSection().Items.Add(item);
 			GetProjectConfigurationsSection().Items.Add(new SolutionItem(project.IdGuid + "." + solutionConfiguration + "|"
-			                                                             + solutionPlatform + ".ActiveCfg", initialLocation));
+			                                                             + solutionPlatform + ".Build.0", initialLocation));
+			SolutionItem item = new SolutionItem(project.IdGuid + "." + solutionConfiguration + "|"
+			                        + solutionPlatform + ".ActiveCfg", initialLocation);
+			GetProjectConfigurationsSection().Items.Add(item);
 			return item;
 		}
 		#endregion
@@ -925,8 +949,8 @@ namespace ICSharpCode.SharpDevelop.Project
 					projectConfiguration = matching.Configuration;
 					projectPlatform = matching.Platform;
 				} else {
-					projectConfiguration = Linq.ToArray(project.ConfigurationNames)[0];
-					projectPlatform = FixPlatformNameForSolution(Linq.ToArray(project.PlatformNames)[0]);
+					projectConfiguration = project.ConfigurationNames.First();
+					projectPlatform = FixPlatformNameForSolution(project.PlatformNames.First());
 				}
 				if (createInProjects) {
 					ICollection<string> existingInProject = addPlatform ? project.PlatformNames : project.ConfigurationNames;
@@ -965,14 +989,14 @@ namespace ICSharpCode.SharpDevelop.Project
 		/// <summary>
 		/// Gets the configuration|platform name from a conf item, e.g.
 		/// "Release|Any CPU" from
-		/// "{7115F3A9-781C-4A95-90AE-B5AB53C4C588}.Release|Any CPU.Build.0"
+		/// "{7115F3A9-781C-4A95-90AE-B5AB53C4C588}.Release|Any CPU.ActiveCfg"
 		/// </summary>
 		static string GetKeyFromProjectConfItem(string name)
 		{
 			int pos = name.IndexOf('.');
 			if (pos < 0) return null;
 			name = name.Substring(pos + 1);
-			if (!ProjectConfigurationPlatformMatching.StripBuild0(ref name)) {
+			if (!ProjectConfigurationPlatformMatching.StripActiveCfg(ref name)) {
 				pos = name.LastIndexOf('.');
 				if (pos < 0) return null;
 				name = name.Substring(0, pos);
@@ -1090,7 +1114,7 @@ namespace ICSharpCode.SharpDevelop.Project
 				}
 			} else {
 				newSolution.fileName = fileName;
-				if (!SetupSolution(newSolution, fileName)) {
+				if (!SetupSolution(newSolution)) {
 					return null;
 				}
 			}
@@ -1113,12 +1137,20 @@ namespace ICSharpCode.SharpDevelop.Project
 		}
 		#endregion
 		
-		public void StartBuild(BuildOptions options)
+		#region Building
+		ICollection<IBuildable> IBuildable.GetBuildDependencies(ProjectBuildOptions buildOptions)
 		{
-			MSBuildBasedProject.RunMSBuild(this, null,
-			                               this.Preferences.ActiveConfiguration,
-			                               this.Preferences.ActivePlatform,
-			                               options);
+			List<IBuildable> result = new List<IBuildable>();
+			foreach (IProject p in this.Projects)
+				result.Add(p);
+			return result;
 		}
+		
+		void IBuildable.StartBuild(ProjectBuildOptions buildOptions, IBuildFeedbackSink feedbackSink)
+		{
+			// building a solution finishes immediately: we only care for the dependencies
+			feedbackSink.Done(true);
+		}
+		#endregion
 	}
 }

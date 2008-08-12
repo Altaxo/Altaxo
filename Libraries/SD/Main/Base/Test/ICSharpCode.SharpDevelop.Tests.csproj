@@ -1,4 +1,4 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -23,6 +23,7 @@
     <RegisterForComInterop>False</RegisterForComInterop>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -32,6 +33,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
@@ -48,13 +50,13 @@
     <Reference Include="Microsoft.Build.Engine" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AbstractDecorationIsOverridableTestFixture.cs" />
+    <Compile Include="AbstractEntityIsOverridableTestFixture.cs" />
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="CodeConverterTests.cs" />
     <Compile Include="CSharpExpressionFinderTests.cs" />
     <Compile Include="ExceptionClassOverridesTestFixture.cs" />
-    <Compile Include="FindNextWithCursorAtEndTestFixture.cs" />
-    <Compile Include="ForwardIteratorWithEmptyTextBufferTestFixture.cs" />
-    <Compile Include="ForwardTextIteratorPositionIsEndOffsetTestFixture.cs" />
+    <Compile Include="GenerateOverrideMethodTests.cs" />
+    <Compile Include="GetElementByReflectionNameTests.cs" />
     <Compile Include="NRefactoryResolverTests.cs" />
     <Compile Include="CollectionClassOverridesTestFixture.cs" />
     <Compile Include="OverridableMethodsTestFixture.cs" />
@@ -67,12 +69,13 @@
     <Compile Include="OverloadFinding.cs" />
     <Compile Include="SearchGenericClassTests.cs" />
     <Compile Include="MemberLookupHelperTests.cs" />
+    <Compile Include="StringTagProvider\MockProjectForTagProvider.cs" />
+    <Compile Include="StringTagProvider\NullProjectStringTagProviderTestFixture.cs" />
+    <Compile Include="StringTagProvider\ProjectTagsTestFixture.cs" />
     <Compile Include="Utils\MockAmbience.cs" />
     <Compile Include="Utils\MockClass.cs" />
-    <Compile Include="Utils\MockCurrentDocumentIterator.cs" />
-    <Compile Include="Utils\MockDecoration.cs" />
+    <Compile Include="Utils\MockEntity.cs" />
     <Compile Include="Utils\MockDefaultReturnType.cs" />
-    <Compile Include="Utils\MockDocument.cs" />
     <Compile Include="Utils\MockMethod.cs" />
     <Compile Include="Utils\MockProject.cs" />
     <Compile Include="Utils\MockProperty.cs" />
@@ -146,6 +149,7 @@
       <Link>ICSharpCode.TextEditor.dll</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Folder Include="StringTagProvider" />
     <Folder Include="Utils" />
     <Folder Include="WebReferences" />
     <Folder Include="Templates" />

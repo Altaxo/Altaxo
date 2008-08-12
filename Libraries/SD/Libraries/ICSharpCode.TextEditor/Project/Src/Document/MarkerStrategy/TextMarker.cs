@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2140 $</version>
+//     <version>$Revision: 3206 $</version>
 // </file>
 
 using System;
@@ -12,6 +12,7 @@ namespace ICSharpCode.TextEditor.Document
 {
 	public enum TextMarkerType
 	{
+		Invisible,
 		SolidBlock,
 		Underlined,
 		WaveLine
@@ -51,6 +52,11 @@ namespace ICSharpCode.TextEditor.Document
 				return overrideForeColor;
 			}
 		}
+		
+		/// <summary>
+		/// Marks the text segment as read-only.
+		/// </summary>
+		public bool IsReadOnly { get; set; }
 		
 		public string ToolTip {
 			get {

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1609 $</version>
+//     <version>$Revision: 2676 $</version>
 // </file>
 
 using System;
@@ -21,13 +21,13 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 		public void CSharpStatementExpressionTest()
 		{
 			ExpressionStatement stmtExprStmt = ParseUtilCSharp.ParseStatement<ExpressionStatement>("my.Obj.PropCall;");
-			Assert.IsTrue(stmtExprStmt.Expression is FieldReferenceExpression);
+			Assert.IsTrue(stmtExprStmt.Expression is MemberReferenceExpression);
 		}
 		[Test]
 		public void CSharpStatementExpressionTest1()
 		{
 			ExpressionStatement stmtExprStmt = ParseUtilCSharp.ParseStatement<ExpressionStatement>("yield.yield;");
-			Assert.IsTrue(stmtExprStmt.Expression is FieldReferenceExpression);
+			Assert.IsTrue(stmtExprStmt.Expression is MemberReferenceExpression);
 		}
 		#endregion
 		

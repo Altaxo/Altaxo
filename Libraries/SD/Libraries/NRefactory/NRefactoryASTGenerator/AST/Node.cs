@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2032 $</version>
+//     <version>$Revision: 2729 $</version>
 // </file>
 
 using System;
@@ -22,8 +22,9 @@ namespace NRefactoryASTGenerator.Ast
 	abstract class AttributedNode : AbstractNode
 	{
 		List<AttributeSection> attributes;
-		Modifiers               modifier;
+		Modifiers modifier;
 		
+		public AttributedNode() {}
 		public AttributedNode(List<AttributeSection> attributes) {}
 		public AttributedNode(Modifiers modifier, List<AttributeSection> attributes) {}
 	}
@@ -33,12 +34,10 @@ namespace NRefactoryASTGenerator.Ast
 		string name;
 		List<ParameterDeclarationExpression> parameters;
 		
+		public ParametrizedNode() {}
+		
 		public ParametrizedNode(Modifiers modifier, List<AttributeSection> attributes,
 		                        string name, List<ParameterDeclarationExpression> parameters)
-			: base(modifier, attributes)
-		{}
-		
-		public ParametrizedNode(Modifiers modifier, List<AttributeSection> attributes)
 			: base(modifier, attributes)
 		{}
 	}
@@ -50,7 +49,7 @@ namespace NRefactoryASTGenerator.Ast
 	}
 	
 	[CustomImplementation]
-	class InnerClassTypeReference : TypeReference 
+	class InnerClassTypeReference : TypeReference
 	{
 		TypeReference baseType;
 	}
@@ -59,8 +58,6 @@ namespace NRefactoryASTGenerator.Ast
 	{
 		string attributeTarget;
 		List<Attribute> attributes;
-		
-		public AttributeSection(string attributeTarget, List<Attribute> attributes) {}
 	}
 	
 	class Attribute : AbstractNode
@@ -69,6 +66,7 @@ namespace NRefactoryASTGenerator.Ast
 		List<Expression> positionalArguments;
 		List<NamedArgumentExpression> namedArguments;
 		
+		public Attribute() {}
 		public Attribute(string name, List<Expression> positionalArguments, List<NamedArgumentExpression> namedArguments) {}
 	}
 }

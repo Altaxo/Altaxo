@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2990 $</version>
 // </file>
 
 using System;
@@ -115,7 +115,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		
 		public CodeCompletionData(string s, int imageIndex)
 		{
-			ambience = AmbienceService.CurrentAmbience;
+			ambience = AmbienceService.GetCurrentAmbience();
 			description = documentation = String.Empty;
 			text = s;
 			this.imageIndex = imageIndex;
@@ -124,13 +124,13 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		
 		public CodeCompletionData(IClass c)
 		{
-			ambience = AmbienceService.CurrentAmbience;
+			ambience = AmbienceService.GetCurrentAmbience();
 			// save class (for the delegate description shortcut)
 			this.c = c;
 			imageIndex = ClassBrowserIconService.GetIcon(c);
-			ambience.ConversionFlags = ConversionFlags.None;
+			ambience.ConversionFlags = ConversionFlags.ShowTypeParameterList;
 			text = ambience.Convert(c);
-			ambience.ConversionFlags = ConversionFlags.UseFullyQualifiedNames | ConversionFlags.ShowReturnType | ConversionFlags.ShowModifiers;
+			ambience.ConversionFlags = ConversionFlags.StandardConversionFlags | ConversionFlags.UseFullyQualifiedMemberNames;
 			description = ambience.Convert(c);
 			documentation = c.Documentation;
 			GetPriority(c.DotNetName);
@@ -139,10 +139,11 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		public CodeCompletionData(IMethod method)
 		{
 			member = method;
-			ambience = AmbienceService.CurrentAmbience;
-			ambience.ConversionFlags = ConversionFlags.ShowReturnType | ConversionFlags.ShowParameterNames | ConversionFlags.ShowModifiers;
 			imageIndex  = ClassBrowserIconService.GetIcon(method);
-			text        = method.Name;
+			ambience = AmbienceService.GetCurrentAmbience();
+			ambience.ConversionFlags = ConversionFlags.None;
+			text = ambience.Convert(method);
+			ambience.ConversionFlags = ConversionFlags.StandardConversionFlags;
 			description = ambience.Convert(method);
 			documentation = method.Documentation;
 			GetPriority(method.DotNetName);
@@ -151,10 +152,11 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		public CodeCompletionData(IField field)
 		{
 			member = field;
-			ambience = AmbienceService.CurrentAmbience;
-			ambience.ConversionFlags = ConversionFlags.ShowReturnType | ConversionFlags.ShowParameterNames | ConversionFlags.ShowModifiers;
+			ambience = AmbienceService.GetCurrentAmbience();
 			imageIndex  = ClassBrowserIconService.GetIcon(field);
-			text        = field.Name;
+			ambience.ConversionFlags = ConversionFlags.None;
+			text = ambience.Convert(field);
+			ambience.ConversionFlags = ConversionFlags.StandardConversionFlags;
 			description = ambience.Convert(field);
 			documentation = field.Documentation;
 			GetPriority(field.DotNetName);
@@ -163,10 +165,11 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		public CodeCompletionData(IProperty property)
 		{
 			member = property;
-			ambience = AmbienceService.CurrentAmbience;
-			ambience.ConversionFlags = ConversionFlags.ShowReturnType | ConversionFlags.ShowParameterNames | ConversionFlags.ShowModifiers;
+			ambience = AmbienceService.GetCurrentAmbience();
 			imageIndex  = ClassBrowserIconService.GetIcon(property);
-			text        = property.Name;
+			ambience.ConversionFlags = ConversionFlags.None;
+			text = ambience.Convert(property);
+			ambience.ConversionFlags = ConversionFlags.StandardConversionFlags;
 			description = ambience.Convert(property);
 			documentation = property.Documentation;
 			GetPriority(property.DotNetName);
@@ -175,10 +178,11 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		public CodeCompletionData(IEvent e)
 		{
 			member = e;
-			ambience = AmbienceService.CurrentAmbience;
-			ambience.ConversionFlags = ConversionFlags.ShowReturnType | ConversionFlags.ShowParameterNames | ConversionFlags.ShowModifiers;
+			ambience = AmbienceService.GetCurrentAmbience();
 			imageIndex  = ClassBrowserIconService.GetIcon(e);
-			text        = e.Name;
+			ambience.ConversionFlags = ConversionFlags.None;
+			text = ambience.Convert(e);
+			ambience.ConversionFlags = ConversionFlags.StandardConversionFlags;
 			description = ambience.Convert(e);
 			documentation = e.Documentation;
 			GetPriority(e.DotNetName);
@@ -191,8 +195,8 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			}
 			if (c != null && text.Length > c.Name.Length) {
 				textArea.InsertString(text.Substring(0, c.Name.Length + 1));
-				Point start = textArea.Caret.Position;
-				Point end;
+				TextLocation start = textArea.Caret.Position;
+				TextLocation end;
 				int pos = text.IndexOf(',');
 				if (pos < 0) {
 					textArea.InsertString(text.Substring(c.Name.Length + 1));
@@ -305,15 +309,5 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			}
 			return cref;
 		}
-		
-		#region System.IComparable interface implementation
-		public int CompareTo(object obj)
-		{
-			if (obj == null || !(obj is CodeCompletionData)) {
-				return -1;
-			}
-			return text.CompareTo(((CodeCompletionData)obj).text);
-		}
-		#endregion
 	}
 }

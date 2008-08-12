@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="none" email=""/>
-//     <version>$Revision: 1989 $</version>
+//     <version>$Revision: 3067 $</version>
 // </file>
 
 // 
@@ -13,10 +13,10 @@ using System.ComponentModel;
 namespace ICSharpCode.SharpDevelop.Gui
 {
 	/// <summary>
-	/// GlobalizedObject implements ICustomTypeDescriptor to enable 
+	/// GlobalizedObject implements ICustomTypeDescriptor to enable
 	/// required functionality to describe a type (class).<br></br>
-	/// The main task of this class is to instantiate our own property descriptor 
-	/// of type GlobalizedPropertyDescriptor.  
+	/// The main task of this class is to instantiate our own property descriptor
+	/// of type GlobalizedPropertyDescriptor.
 	/// </summary>
 	public class LocalizedObject : ICustomTypeDescriptor
 	{
@@ -42,22 +42,22 @@ namespace ICSharpCode.SharpDevelop.Gui
 			return TypeDescriptor.GetConverter(this, true);
 		}
 
-		EventDescriptor ICustomTypeDescriptor.GetDefaultEvent() 
+		EventDescriptor ICustomTypeDescriptor.GetDefaultEvent()
 		{
 			return TypeDescriptor.GetDefaultEvent(this, true);
 		}
 
-		PropertyDescriptor ICustomTypeDescriptor.GetDefaultProperty() 
+		PropertyDescriptor ICustomTypeDescriptor.GetDefaultProperty()
 		{
 			return TypeDescriptor.GetDefaultProperty(this, true);
 		}
 
-		object ICustomTypeDescriptor.GetEditor(Type editorBaseType) 
+		object ICustomTypeDescriptor.GetEditor(Type editorBaseType)
 		{
 			return TypeDescriptor.GetEditor(this, editorBaseType, true);
 		}
 
-		EventDescriptorCollection ICustomTypeDescriptor.GetEvents(Attribute[] attributes) 
+		EventDescriptorCollection ICustomTypeDescriptor.GetEvents(Attribute[] attributes)
 		{
 			return TypeDescriptor.GetEvents(this, attributes, true);
 		}
@@ -67,6 +67,15 @@ namespace ICSharpCode.SharpDevelop.Gui
 			return TypeDescriptor.GetEvents(this, true);
 		}
 
+		/// <summary>
+		/// Causes the list of property descriptors to be recreated.
+		/// </summary>
+		protected void ReFilterProperties()
+		{
+			globalizedProps = null;
+			WorkbenchSingleton.SafeThreadAsyncCall(delegate { PropertyPad.RefreshItem(this); });
+		}
+		
 		protected virtual void FilterProperties(PropertyDescriptorCollection globalizedProps)
 		{
 		}
@@ -110,12 +119,12 @@ namespace ICSharpCode.SharpDevelop.Gui
 			return globalizedProps;
 		}
 
-		object ICustomTypeDescriptor.GetPropertyOwner(PropertyDescriptor pd) 
+		object ICustomTypeDescriptor.GetPropertyOwner(PropertyDescriptor pd)
 		{
 			return this;
 		}
 		
-		public virtual void InformSetValue(LocalizedPropertyDescriptor localizedPropertyDescriptor, object component, object value)
+		public virtual void InformSetValue(PropertyDescriptor propertyDescriptor, object component, object value)
 		{
 			
 		}

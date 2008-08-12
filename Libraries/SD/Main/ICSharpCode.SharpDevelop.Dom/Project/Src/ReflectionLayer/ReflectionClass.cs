@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2492 $</version>
+//     <version>$Revision: 2702 $</version>
 // </file>
 
 using System;
@@ -65,24 +65,31 @@ namespace ICSharpCode.SharpDevelop.Dom.ReflectionLayer
 		internal static void AddAttributes(IProjectContent pc, IList<IAttribute> list, IList<CustomAttributeData> attributes)
 		{
 			foreach (CustomAttributeData att in attributes) {
-				DefaultAttribute a = new DefaultAttribute(att.Constructor.DeclaringType.FullName);
+				DefaultAttribute a = new DefaultAttribute(ReflectionReturnType.Create(pc, null, att.Constructor.DeclaringType, false));
 				foreach (CustomAttributeTypedArgument arg in att.ConstructorArguments) {
-					IReturnType type = ReflectionReturnType.Create(pc, null, arg.ArgumentType, false);
-					a.PositionalArguments.Add(new AttributeArgument(type, arg.Value));
+					a.PositionalArguments.Add(ReplaceTypeByIReturnType(pc, arg.Value));
 				}
 				foreach (CustomAttributeNamedArgument arg in att.NamedArguments) {
-					IReturnType type = ReflectionReturnType.Create(pc, null, arg.TypedValue.ArgumentType, false);
-					a.NamedArguments.Add(arg.MemberInfo.Name, new AttributeArgument(type, arg.TypedValue.Value));
+					a.NamedArguments.Add(arg.MemberInfo.Name, ReplaceTypeByIReturnType(pc, arg.TypedValue.Value));
 				}
 				list.Add(a);
+			}
+		}
+		
+		static object ReplaceTypeByIReturnType(IProjectContent pc, object val)
+		{
+			if (val is Type) {
+				return ReflectionReturnType.Create(pc, null, (Type)val, false);
+			} else {
+				return val;
 			}
 		}
 		
 		internal static void ApplySpecialsFromAttributes(DefaultClass c)
 		{
 			foreach (IAttribute att in c.Attributes) {
-				if (att.Name == "Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute"
-				    || att.Name == "System.Runtime.CompilerServices.CompilerGlobalScopeAttribute")
+				if (att.AttributeType.FullyQualifiedName == "Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute"
+				    || att.AttributeType.FullyQualifiedName == "System.Runtime.CompilerServices.CompilerGlobalScopeAttribute")
 				{
 					c.ClassType = ClassType.Module;
 					break;
@@ -167,7 +174,7 @@ namespace ICSharpCode.SharpDevelop.Dom.ReflectionLayer
 			InitMembers(type);
 		}
 		
-		internal void AddConstraintsFromType(ITypeParameter tp, Type type)
+		internal static void AddConstraintsFromType(ITypeParameter tp, Type type)
 		{
 			foreach (Type constraint in type.GetGenericParameterConstraints()) {
 				if (tp.Method != null) {

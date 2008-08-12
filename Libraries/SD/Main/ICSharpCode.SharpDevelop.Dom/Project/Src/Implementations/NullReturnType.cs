@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1661 $</version>
+//     <version>$Revision: 2506 $</version>
 // </file>
 
 using System;
@@ -13,9 +13,11 @@ namespace ICSharpCode.SharpDevelop.Dom
 	/// <summary>The type of the 'null'/'nothing' literal.</summary>
 	public sealed class NullReturnType : AbstractReturnType
 	{
+		private NullReturnType() {}
+		
 		public static readonly NullReturnType Instance = new NullReturnType();
 		
-		public override bool Equals(object o)
+		public override bool Equals(IReturnType o)
 		{
 			return o is NullReturnType;
 		}

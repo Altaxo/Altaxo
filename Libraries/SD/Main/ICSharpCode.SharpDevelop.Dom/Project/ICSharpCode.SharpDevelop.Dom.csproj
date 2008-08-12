@@ -20,25 +20,20 @@
     <FileAlignment>4096</FileAlignment>
     <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
-    <OldToolsVersion>2.0</OldToolsVersion>
-    <UpgradeBackupLocation>
-    </UpgradeBackupLocation>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <RunCodeAnalysis>False</RunCodeAnalysis>
+    <CodeAnalysisRules>-Microsoft.Design#CA1002;-Microsoft.Design#CA1063;-Microsoft.Performance#CA1800;-Microsoft.Security#CA2104</CodeAnalysisRules>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-    <BaseIntermediateOutputPath>obj\</BaseIntermediateOutputPath>
     <IntermediateOutputPath>obj\Debug\</IntermediateOutputPath>
     <Optimize>False</Optimize>
     <DefineConstants>TRACE;DEBUG;ModifiedForAltaxo</DefineConstants>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>Full</DebugType>
     <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
-    <OutputPath>bin\debug\</OutputPath>
+    <OutputPath>..\..\..\..\..\rtdebug\bin\</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-    <BaseIntermediateOutputPath>obj\</BaseIntermediateOutputPath>
     <IntermediateOutputPath>obj\Release\</IntermediateOutputPath>
     <Optimize>True</Optimize>
     <DefineConstants>TRACE</DefineConstants>
@@ -47,30 +42,40 @@
     <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Mono.Cecil, Version=0.4.3.65051, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\bin\Mono.Cecil.dll</HintPath>
+    <Reference Include="log4net">
+      <HintPath>..\..\..\Libraries\log4net\log4net.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Xml" />
+    <Reference Include="Mono.Cecil">
+      <HintPath>..\..\..\Libraries\Mono.Cecil\Mono.Cecil.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\Core\Project\Src\Services\FileUtility\FileUtility.Minimal.cs">
+      <Link>Src\ProjectContent\FileUtility.Minimal.cs</Link>
+    </Compile>
     <Compile Include="Configuration\AssemblyInfo.cs" />
     <Compile Include="..\..\GlobalAssemblyInfo.cs">
       <Link>Configuration\GlobalAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="Src\Implementations\AbstractDecoration.cs" />
+    <Compile Include="Src\CSharp\OverloadResolution.cs" />
+    <Compile Include="Src\CSharp\TypeInference.cs" />
+    <Compile Include="Src\ExtensionMethods.cs" />
+    <Compile Include="Src\Implementations\AbstractEntity.cs" />
     <Compile Include="Src\Implementations\AbstractMember.cs" />
-    <Compile Include="Src\Implementations\AbstractNamedEntity.cs" />
     <Compile Include="Src\Implementations\AbstractReturnType.cs" />
     <Compile Include="Src\Implementations\AnonymousMethodReturnType.cs" />
     <Compile Include="Src\Implementations\ArrayReturnType.cs" />
+    <Compile Include="Src\Implementations\AttributeReturnType.cs" />
     <Compile Include="Src\Implementations\CombinedReturnType.cs" />
     <Compile Include="Src\Implementations\CompoundClass.cs" />
     <Compile Include="Src\Implementations\ConstructedReturnType.cs" />
+    <Compile Include="Src\Implementations\DecoratingReturnType.cs" />
     <Compile Include="Src\Implementations\DefaultAttribute.cs" />
     <Compile Include="Src\Implementations\DefaultClass.cs" />
     <Compile Include="Src\Implementations\DefaultComment.cs" />
@@ -83,19 +88,35 @@
     <Compile Include="Src\Implementations\DefaultReturnType.cs" />
     <Compile Include="Src\Implementations\DefaultTypeParameter.cs" />
     <Compile Include="Src\Implementations\DefaultUsing.cs" />
+    <Compile Include="Src\Implementations\ElementReturnType.cs" />
     <Compile Include="Src\Implementations\GenericReturnType.cs" />
     <Compile Include="Src\Implementations\GetClassReturnType.cs" />
+    <Compile Include="Src\Implementations\MethodGroupReturnType.cs" />
     <Compile Include="Src\Implementations\NullReturnType.cs" />
+    <Compile Include="Src\Implementations\PointerReturnType.cs" />
     <Compile Include="Src\Implementations\ProxyReturnType.cs" />
+    <Compile Include="Src\Implementations\ReferenceReturnType.cs" />
     <Compile Include="Src\Implementations\SearchClassReturnType.cs" />
     <Compile Include="Src\Implementations\SystemTypes.cs" />
     <Compile Include="Src\Interfaces\ExplicitInterfaceImplementation.cs" />
+    <Compile Include="Src\Interfaces\IDomProgressMonitor.cs" />
+    <Compile Include="Src\Interfaces\IFreezable.cs" />
+    <Compile Include="Src\LazyList.cs" />
+    <Compile Include="Src\NRefactoryResolver\CodeSnippetConverter.cs" />
+    <Compile Include="Src\NRefactoryResolver\CSharpToVBNetConvertVisitor.cs" />
+    <Compile Include="Src\NRefactoryResolver\InferredReturnType.cs" />
+    <Compile Include="Src\NRefactoryResolver\LambdaParameterReturnType.cs" />
+    <Compile Include="Src\NRefactoryResolver\LambdaReturnType.cs" />
     <Compile Include="Src\NRefactoryResolver\NRefactoryASTConvertVisitor.cs" />
     <Compile Include="Src\NRefactoryResolver\NRefactoryInformationProvider.cs" />
     <Compile Include="Src\NRefactoryResolver\NRefactoryResolver.cs" />
+    <Compile Include="Src\NRefactoryResolver\ResolveVisitor.cs" />
     <Compile Include="Src\NRefactoryResolver\TypeVisitor.cs" />
+    <Compile Include="Src\NRefactoryResolver\VBNetToCSharpConvertVisitor.cs" />
     <Compile Include="Src\ProjectContent\DomAssemblyName.cs" />
+    <Compile Include="Src\ReadOnlyDictionary.cs" />
     <Compile Include="Src\Refactoring\CodeGeneratorOptions.cs" />
+    <Compile Include="Src\Refactoring\TextFinder.cs" />
     <Compile Include="Src\ReflectionLayer\DomPersistence.cs" />
     <Compile Include="Src\ReflectionLayer\ReflectionClass.cs" />
     <Compile Include="Src\ReflectionLayer\ReflectionEvent.cs" />
@@ -121,7 +142,7 @@
     <Compile Include="Src\Interfaces\IAttribute.cs" />
     <Compile Include="Src\Interfaces\IClass.cs" />
     <Compile Include="Src\Interfaces\ICompilationUnit.cs" />
-    <Compile Include="Src\Interfaces\IDecoration.cs" />
+    <Compile Include="Src\Interfaces\IEntity.cs" />
     <Compile Include="Src\Interfaces\IEvent.cs" />
     <Compile Include="Src\Interfaces\IField.cs" />
     <Compile Include="Src\Interfaces\IMember.cs" />
@@ -142,7 +163,6 @@
     <Compile Include="Src\FusionNative.cs" />
     <Compile Include="Src\DiffUtility.cs" />
     <Compile Include="Src\ProjectContent\ParseInformation.cs" />
-    <Compile Include="Src\Functional.cs" />
     <Compile Include="Src\HostCallback.cs" />
     <Compile Include="Src\Refactoring\CodeGenerator.cs" />
     <Compile Include="Src\Refactoring\IDocument.cs" />
@@ -164,13 +184,6 @@
       <Project>{3A9AE6AA-BC07-4A2F-972C-581E3AE2F195}</Project>
       <Name>NRefactory</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\log4net\src\log4net.csproj">
-      <Project>{F6A02431-167E-4347-BC43-65532C31CDB7}</Project>
-      <Name>log4net</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ICSharpCode.SharpDevelop.snk" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>

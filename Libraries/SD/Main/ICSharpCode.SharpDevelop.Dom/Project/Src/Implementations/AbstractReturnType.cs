@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2339 $</version>
+//     <version>$Revision: 2949 $</version>
 // </file>
 
 using System;
@@ -21,22 +21,27 @@ namespace ICSharpCode.SharpDevelop.Dom
 		public abstract List<IField>    GetFields();
 		public abstract List<IEvent>    GetEvents();
 		
-		public virtual int TypeParameterCount {
+		public virtual int TypeArgumentCount {
 			get {
 				return 0;
 			}
 		}
 		
-		public override bool Equals(object o)
+		public virtual bool Equals(IReturnType other)
 		{
-			IReturnType rt = o as IReturnType;
-			if (rt == null) return false;
-			return rt.IsDefaultReturnType && DefaultReturnType.Equals(this, rt);
+			if (other == null)
+				return false;
+			return other.IsDefaultReturnType && DefaultReturnType.Equals(this, other);
+		}
+		
+		public sealed override bool Equals(object o)
+		{
+			return Equals(o as IReturnType);
 		}
 		
 		public override int GetHashCode()
 		{
-			return fullyQualifiedName.GetHashCode();
+			return DefaultReturnType.GetHashCode(this);
 		}
 		
 		string fullyQualifiedName = null;
@@ -92,7 +97,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 		}
 		public virtual ArrayReturnType CastToArrayReturnType()
 		{
-			throw new InvalidCastException("Cannot cast " + ToString() + " to expected type.");
+			return null;
 		}
 		
 		public virtual bool IsGenericReturnType {
@@ -102,7 +107,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 		}
 		public virtual GenericReturnType CastToGenericReturnType()
 		{
-			throw new InvalidCastException("Cannot cast " + ToString() + " to expected type.");
+			return null;
 		}
 		
 		public virtual bool IsConstructedReturnType {
@@ -112,7 +117,17 @@ namespace ICSharpCode.SharpDevelop.Dom
 		}
 		public virtual ConstructedReturnType CastToConstructedReturnType()
 		{
-			throw new InvalidCastException("Cannot cast " + ToString() + " to expected type.");
+			return null;
+		}
+		
+		public bool IsDecoratingReturnType<T>() where T : DecoratingReturnType
+		{
+			return false;
+		}
+		
+		public T CastToDecoratingReturnType<T>() where T : DecoratingReturnType
+		{
+			return null;
 		}
 	}
 }

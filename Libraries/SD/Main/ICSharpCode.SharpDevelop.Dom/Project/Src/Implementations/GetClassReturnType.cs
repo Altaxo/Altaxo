@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2339 $</version>
+//     <version>$Revision: 2949 $</version>
 // </file>
 
 using System;
@@ -11,19 +11,19 @@ namespace ICSharpCode.SharpDevelop.Dom
 {
 	/// <summary>
 	/// The GetClassReturnType is used when the class should be resolved on demand, but the
-	/// full name is already known. Example: ReflectionReturnType
+	/// full name is already known.
 	/// </summary>
 	public sealed class GetClassReturnType : ProxyReturnType
 	{
 		IProjectContent content;
 		string fullName;
 		string shortName;
-		int typeParameterCount;
+		int typeArgumentCount;
 		
 		public GetClassReturnType(IProjectContent content, string fullName, int typeParameterCount)
 		{
 			this.content = content;
-			this.typeParameterCount = typeParameterCount;
+			this.typeArgumentCount = typeParameterCount;
 			SetFullyQualifiedName(fullName);
 		}
 		
@@ -33,29 +33,15 @@ namespace ICSharpCode.SharpDevelop.Dom
 			}
 		}
 		
-		public override int TypeParameterCount {
+		public override int TypeArgumentCount {
 			get {
-				return typeParameterCount;
+				return typeArgumentCount;
 			}
-		}
-		
-		public override bool Equals(object o)
-		{
-			IReturnType rt = o as IReturnType;
-			if (rt != null && rt.IsDefaultReturnType)
-				return DefaultReturnType.Equals(this, rt);
-			else
-				return false;
-		}
-		
-		public override int GetHashCode()
-		{
-			return content.GetHashCode() ^ fullName.GetHashCode() ^ (typeParameterCount * 5);
 		}
 		
 		public override IReturnType BaseType {
 			get {
-				IClass c = content.GetClass(fullName, typeParameterCount);
+				IClass c = content.GetClass(fullName, typeArgumentCount);
 				return (c != null) ? c.DefaultReturnType : null;
 			}
 		}
@@ -66,7 +52,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 			}
 		}
 		
-		public void SetFullyQualifiedName(string fullName)
+		void SetFullyQualifiedName(string fullName)
 		{
 			if (fullName == null)
 				throw new ArgumentNullException("fullName");

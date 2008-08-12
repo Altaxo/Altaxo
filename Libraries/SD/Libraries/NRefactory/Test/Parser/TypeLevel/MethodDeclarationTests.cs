@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2437 $</version>
+//     <version>$Revision: 3125 $</version>
 // </file>
 
 using System;
@@ -21,6 +21,41 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 			MethodDeclaration md = ParseUtilCSharp.ParseTypeMember<MethodDeclaration>("void MyMethod() {} ");
 			Assert.AreEqual("void", md.TypeReference.Type);
 			Assert.AreEqual(0, md.Parameters.Count);
+			Assert.IsFalse(md.IsExtensionMethod);
+		}
+		
+		[Test]
+		public void CSharpAbstractMethodDeclarationTest()
+		{
+			MethodDeclaration md = ParseUtilCSharp.ParseTypeMember<MethodDeclaration>("abstract void MyMethod();");
+			Assert.AreEqual("void", md.TypeReference.Type);
+			Assert.AreEqual(0, md.Parameters.Count);
+			Assert.IsFalse(md.IsExtensionMethod);
+			Assert.IsTrue(md.Body.IsNull);
+			Assert.AreEqual(Modifiers.Abstract, md.Modifier);
+		}
+		
+		[Test]
+		public void CSharpDefiningPartialMethodDeclarationTest()
+		{
+			MethodDeclaration md = ParseUtilCSharp.ParseTypeMember<MethodDeclaration>("partial void MyMethod();");
+			Assert.AreEqual("void", md.TypeReference.Type);
+			Assert.AreEqual(0, md.Parameters.Count);
+			Assert.IsFalse(md.IsExtensionMethod);
+			Assert.IsTrue(md.Body.IsNull);
+			Assert.AreEqual(Modifiers.Partial, md.Modifier);
+		}
+		
+		
+		[Test]
+		public void CSharpImplementingPartialMethodDeclarationTest()
+		{
+			MethodDeclaration md = ParseUtilCSharp.ParseTypeMember<MethodDeclaration>("partial void MyMethod() { }");
+			Assert.AreEqual("void", md.TypeReference.Type);
+			Assert.AreEqual(0, md.Parameters.Count);
+			Assert.IsFalse(md.IsExtensionMethod);
+			Assert.IsFalse(md.Body.IsNull);
+			Assert.AreEqual(Modifiers.Partial, md.Modifier);
 		}
 		
 		[Test]
@@ -62,7 +97,7 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 			MethodDeclaration md = ParseUtilCSharp.ParseTypeMember<MethodDeclaration>("void MyMethod(int) {} ", true);
 			Assert.AreEqual("void", md.TypeReference.Type);
 			Assert.AreEqual(1, md.Parameters.Count);
-			Assert.AreEqual("?", ((ParameterDeclarationExpression)md.Parameters[0]).ParameterName);
+			//Assert.AreEqual("?", ((ParameterDeclarationExpression)md.Parameters[0]).ParameterName);
 		}
 		
 		[Test]
@@ -148,6 +183,20 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 		}
 		
 		[Test]
+		public void CSharpShadowingMethodInInterface()
+		{
+			const string program = @"interface MyInterface : IDisposable {
+	new void Dispose();
+}
+";
+			TypeDeclaration td = ParseUtilCSharp.ParseGlobal<TypeDeclaration>(program);
+			MethodDeclaration md = (MethodDeclaration)td.Children[0];
+			Assert.AreEqual("void", md.TypeReference.Type);
+			Assert.AreEqual(0, md.Parameters.Count);
+			Assert.AreEqual(Modifiers.New, md.Modifier);
+		}
+		
+		[Test]
 		public void CSharpMethodImplementingInterfaceTest()
 		{
 			MethodDeclaration md = ParseUtilCSharp.ParseTypeMember<MethodDeclaration>("int MyInterface.MyMethod() {} ");
@@ -195,6 +244,45 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 			Assert.AreEqual(1, md.Templates.Count);
 			Assert.AreEqual("T", md.Templates[0].Name);
 			Assert.AreEqual(0, md.Templates[0].Bases.Count);
+		}
+		
+		[Test]
+		public void CSharpExtensionMethodTest()
+		{
+			MethodDeclaration md = ParseUtilCSharp.ParseTypeMember<MethodDeclaration>(
+				"public static int ToInt32(this string s) { return int.Parse(s); }"
+			);
+			Assert.AreEqual("ToInt32", md.Name);
+			Assert.IsTrue(md.IsExtensionMethod);
+			Assert.AreEqual("s", md.Parameters[0].ParameterName);
+			Assert.AreEqual("string", md.Parameters[0].TypeReference.Type);
+		}
+		
+		[Test]
+		public void CSharpVoidExtensionMethodTest()
+		{
+			MethodDeclaration md = ParseUtilCSharp.ParseTypeMember<MethodDeclaration>(
+				"public static void Print(this string s) { Console.WriteLine(s); }"
+			);
+			Assert.AreEqual("Print", md.Name);
+			Assert.IsTrue(md.IsExtensionMethod);
+			Assert.AreEqual("s", md.Parameters[0].ParameterName);
+			Assert.AreEqual("string", md.Parameters[0].TypeReference.Type);
+		}
+		
+		[Test]
+		public void CSharpMethodWithEmptyAssignmentErrorInBody()
+		{
+			MethodDeclaration md = ParseUtilCSharp.ParseTypeMember<MethodDeclaration>(
+				"void A\n" +
+				"{\n" +
+				"int a = 3;\n" +
+				" = 4;\n" +
+				"}", true /* expect errors */
+			);
+			Assert.AreEqual("A", md.Name);
+			Assert.AreEqual(new Location(1, 2), md.Body.StartLocation);
+			Assert.AreEqual(new Location(2, 5), md.Body.EndLocation);
 		}
 		#endregion
 		
@@ -312,6 +400,17 @@ End Interface
 				@"Public Sub MyMethod() Handles MyBase.Event, Button1.Click
 			End Sub");
 			Assert.AreEqual(new string[] { "MyBase.Event", "Button1.Click" }, md.HandlesClause.ToArray());
+		}
+		
+		[Test]
+		public void VBNetMethodWithTypeCharactersTest()
+		{
+			const string program = @"Public Function Func!(ByVal Param&)
+				Func! = CSingle(Param&)
+			End Function";
+			
+			MethodDeclaration md = ParseUtilVBNet.ParseTypeMember<MethodDeclaration>(program);
+			Assert.AreEqual(Modifiers.Public, md.Modifier);
 		}
 		
 		#endregion

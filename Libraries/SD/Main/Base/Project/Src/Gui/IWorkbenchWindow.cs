@@ -1,11 +1,12 @@
 ﻿// <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
+//     <version>$Revision: 2708 $</version>
 // </file>
 
 using System;
+using System.Collections.Generic;
 
 namespace ICSharpCode.SharpDevelop.Gui
 {
@@ -20,7 +21,6 @@ namespace ICSharpCode.SharpDevelop.Gui
 		/// </summary>
 		string Title {
 			get;
-			set;
 		}
 		
 		/// <summary>
@@ -31,23 +31,41 @@ namespace ICSharpCode.SharpDevelop.Gui
 		}
 		
 		/// <summary>
-		/// The primary view content in this window.
+		/// Gets/Sets current view content which is shown inside this window.
 		/// </summary>
-		IViewContent ViewContent {
+		IViewContent ActiveViewContent {
+			get;
+			set;
+		}
+		
+		/// <summary>
+		/// Gets/Sets the icon of the view content.
+		/// </summary>
+		System.Drawing.Icon Icon {
+			get;
+			set;
+		}
+		
+		/// <summary>
+		/// Is raised when the ActiveViewContent property has changed.
+		/// </summary>
+		event EventHandler ActiveViewContentChanged;
+		
+		/// <summary>
+		/// Gets the list of view contents displayed in this window
+		/// </summary>
+		IList<IViewContent> ViewContents {
 			get;
 		}
 		
 		/// <summary>
-		/// The current view content which is shown inside this window.
-		/// This method is thread-safe.
+		/// Activates the view with the specified index.
 		/// </summary>
-		IBaseViewContent ActiveViewContent {
-			get;
-		}
+		void SwitchView(int viewNumber);
 		
 		/// <summary>
 		/// Closes the window, if force == true it closes the window
-		/// without ask, even the content is dirty.
+		/// without asking, even the content is dirty.
 		/// </summary>
 		/// <returns>true, if window is closed</returns>
 		bool CloseWindow(bool force);
@@ -60,15 +78,17 @@ namespace ICSharpCode.SharpDevelop.Gui
 		
 		void RedrawContent();
 		
-		void SwitchView(int viewNumber);
-		
 		/// <summary>
-		/// Only for internal use.
+		/// Used internally:
+		/// This method is called by the workbench to notify the window that is was selected.
 		/// </summary>
 		void OnWindowSelected(EventArgs e);
-		void OnWindowDeselected(EventArgs e);
 		
-		//void AttachSecondaryViewContent(ISecondaryViewContent secondaryViewContent);
+		/// <summary>
+		/// Used internally:
+		/// This method is called by the workbench to notify the window that is was deselected.
+		/// </summary>
+		void OnWindowDeselected(EventArgs e);
 		
 		/// <summary>
 		/// Is called when the window is selected.

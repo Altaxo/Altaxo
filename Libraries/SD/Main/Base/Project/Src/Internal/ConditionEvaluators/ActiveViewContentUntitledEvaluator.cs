@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2313 $</version>
 // </file>
 
 using System;
@@ -27,14 +27,19 @@ namespace ICSharpCode.SharpDevelop
 	{
 		public bool IsValid(object caller, Condition condition)
 		{
-			if (WorkbenchSingleton.Workbench == null || WorkbenchSingleton.Workbench.ActiveWorkbenchWindow == null || WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent == null) {
+			if (WorkbenchSingleton.Workbench == null) {
+				return false;
+			}
+			
+			IViewContent viewContent = WorkbenchSingleton.Workbench.ActiveViewContent;
+			if (viewContent == null || viewContent.PrimaryFile == null) {
 				return false;
 			}
 			
 			if (!condition.Properties.Contains("activewindowuntitled"))
-				return WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent.IsUntitled;
+				return viewContent.PrimaryFile.IsUntitled;
 			bool activewindowuntitled = Boolean.Parse(condition.Properties["activewindowuntitled"]);
-			return WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent.IsUntitled == activewindowuntitled;
+			return viewContent.PrimaryFile.IsUntitled == activewindowuntitled;
 		}
 	}
 }

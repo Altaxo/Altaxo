@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2640 $</version>
 // </file>
 
 using System;
@@ -44,14 +44,14 @@ namespace ICSharpCode.SharpDevelop.Internal.Undo
 			}
 		}
 		
-		/// <summary>
-		/// You call this method to pool the last x operations from the undo stack
-		/// to make 1 operation from it.
-		/// </summary>
-		public void UndoLast(int x)
-		{
-			undostack.Push(new UndoQueue(this, x));
-		}
+//		/// <summary>
+//		/// You call this method to pool the last x operations from the undo stack
+//		/// to make 1 operation from it.
+//		/// </summary>
+//		public void UndoLast(int x)
+//		{
+//			undostack.Push(new UndoQueue(this, x));
+//		}
 		
 		/// <summary>
 		/// Call this method to undo the last operation on the stack

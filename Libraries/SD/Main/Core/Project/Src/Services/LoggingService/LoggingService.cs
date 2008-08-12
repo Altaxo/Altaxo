@@ -2,16 +2,20 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2703 $</version>
 // </file>
 
 using System;
 using System.IO;
+using System.Diagnostics;
 using log4net;
 using log4net.Config;
 
 namespace ICSharpCode.Core
 {
+	/// <summary>
+	/// Class for easy logging. Uses log4net as backend.
+	/// </summary>
 	public static class LoggingService
 	{
 		static ILog log = LogManager.GetLogger(typeof(LoggingService));

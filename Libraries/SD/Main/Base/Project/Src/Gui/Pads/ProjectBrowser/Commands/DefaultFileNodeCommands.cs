@@ -2,11 +2,12 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2249 $</version>
+//     <version>$Revision: 3242 $</version>
 // </file>
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
 
@@ -30,7 +31,7 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 		}
 	}
 	
-	public class OpenFileEvent : AbstractMenuCommand
+	public class OpenFileFromProjectBrowser : AbstractMenuCommand
 	{
 		public override void Run()
 		{
@@ -40,6 +41,79 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 			}
 			
 			node.ActivateItem();
+		}
+	}
+	
+	public class OpenFileFromProjectBrowserWith : AbstractMenuCommand
+	{
+		public override void Run()
+		{
+			SolutionItemNode solutionItemNode = ProjectBrowserPad.Instance.SelectedNode as SolutionItemNode;
+			if (solutionItemNode != null) {
+				OpenWith(solutionItemNode.FileName);
+				return;
+			}
+			
+			FileNode fileNode = ProjectBrowserPad.Instance.SelectedNode as FileNode;
+			if (fileNode != null) {
+				OpenWith(fileNode.FileName);
+				return;
+			}
+			
+			ProjectNode projectNode = ProjectBrowserPad.Instance.SelectedNode as ProjectNode;
+			if (projectNode != null) {
+				OpenWith(projectNode.Project.FileName);
+				return;
+			}
+		}
+		
+		/// <summary>
+		/// Shows the OpenWith dialog for the specified file.
+		/// </summary>
+		static void OpenWith(string fileName)
+		{
+			var codons = DisplayBindingService.GetCodonsPerFileName(fileName);
+			int defaultCodonIndex = codons.IndexOf(DisplayBindingService.GetDefaultCodonPerFileName(fileName));
+			using (OpenWithDialog dlg = new OpenWithDialog(codons, defaultCodonIndex, Path.GetExtension(fileName))) {
+				if (dlg.ShowDialog(WorkbenchSingleton.MainForm) == DialogResult.OK) {
+					FileUtility.ObservedLoad(new FileService.LoadFileWrapper(dlg.SelectedBinding.Binding).Invoke, fileName);
+				}
+			}
+		}
+	}
+	
+	/// <summary>
+	/// Opens the containing folder in the clipboard.
+	/// </summary>
+	public class OpenFolderContainingFile : AbstractMenuCommand
+	{
+		public override void Run()
+		{
+			SolutionItemNode solutionItemNode = ProjectBrowserPad.Instance.SelectedNode as SolutionItemNode;
+			if (solutionItemNode != null) {
+				OpenContainingFolderInExplorer(solutionItemNode.FileName);
+				return;
+			}
+			
+			FileNode fileNode = ProjectBrowserPad.Instance.SelectedNode as FileNode;
+			if (fileNode != null) {
+				OpenContainingFolderInExplorer(fileNode.FileName);
+				return;
+			}
+			
+			ProjectNode projectNode = ProjectBrowserPad.Instance.SelectedNode as ProjectNode;
+			if (projectNode != null) {
+				OpenContainingFolderInExplorer(projectNode.Project.FileName);
+				return;
+			}
+		}
+		
+		void OpenContainingFolderInExplorer(string fileName)
+		{
+			if (File.Exists(fileName)) {
+				string folder = Path.GetDirectoryName(fileName);
+				Process.Start(folder);
+			}
 		}
 	}
 	

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2659 $</version>
 // </file>
 
 using System;
@@ -48,7 +48,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 			cancelButton.Text = ResourceService.GetString("Global.CancelButtonText");
 			
 //			selectionListBox.Sorted = true;
-			Point caretPos  = textEditorControl.ActiveTextAreaControl.Caret.Position;
+			TextLocation caretPos  = textEditorControl.ActiveTextAreaControl.Caret.Position;
 			TextArea textArea = textEditorControl.ActiveTextAreaControl.TextArea;
 			TextView textView = textArea.TextView;
 			Point visualPos;

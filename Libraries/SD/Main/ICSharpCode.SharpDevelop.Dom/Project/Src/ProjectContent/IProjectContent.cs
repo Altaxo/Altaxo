@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2326 $</version>
+//     <version>$Revision: 2977 $</version>
 // </file>
 
 using System;
@@ -30,10 +30,17 @@ namespace ICSharpCode.SharpDevelop.Dom
 			get;
 		}
 		
+		/// <summary>
+		/// Gets the list of namespaces defined in this project content. Does not include namespaces from
+		/// referenced project contents.
+		/// </summary>
 		ICollection<string> NamespaceNames {
 			get;
 		}
 		
+		/// <summary>
+		/// Gets the list of referenced project contents.
+		/// </summary>
 		ICollection<IProjectContent> ReferencedContents {
 			get;
 		}
@@ -70,13 +77,14 @@ namespace ICSharpCode.SharpDevelop.Dom
 			get;
 		}
 		
+		IList<IAttribute> GetAssemblyAttributes();
+		
 		string GetXmlDocumentation(string memberTag);
 		
 		void AddClassToNamespaceList(IClass addClass);
 		void RemoveCompilationUnit(ICompilationUnit oldUnit);
 		void UpdateCompilationUnit(ICompilationUnit oldUnit, ICompilationUnit parserOutput, string fileName);
 		
-		IClass GetClass(string typeName);
 		IClass GetClass(string typeName, int typeParameterCount);
 		bool NamespaceExists(string name);
 		ArrayList GetNamespaceContents(string nameSpace);
@@ -90,6 +98,12 @@ namespace ICSharpCode.SharpDevelop.Dom
 		
 		string SearchNamespace(string name, IClass curType, ICompilationUnit unit, int caretLine, int caretColumn);
 		SearchTypeResult SearchType(SearchTypeRequest request);
+		
+		/// <summary>
+		/// Gets the position of a member in this project content (not a referenced one).
+		/// </summary>
+		/// <param name="fullMemberName">The full member name in Reflection syntax (always case sensitive, ` for generics)</param>
+		IEntity GetElement(string fullMemberName);
 		
 		/// <summary>
 		/// Gets the definition position of the class/member.
@@ -114,7 +128,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 			this.Name = name;
 			this.TypeParameterCount = typeParameterCount;
 			this.CurrentCompilationUnit = currentType.CompilationUnit;
-			this.CurrentType = currentType;
+			this.CurrentType = currentType != null ? currentType.GetCompoundClass() : null;
 			this.CaretLine = caretLine;
 			this.CaretColumn = caretColumn;
 		}
@@ -126,7 +140,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 			this.Name = name;
 			this.TypeParameterCount = typeParameterCount;
 			this.CurrentCompilationUnit = currentCompilationUnit;
-			this.CurrentType = currentType;
+			this.CurrentType = currentType != null ? currentType.GetCompoundClass() : null;
 			this.CaretLine = caretLine;
 			this.CaretColumn = caretColumn;
 		}
@@ -134,12 +148,14 @@ namespace ICSharpCode.SharpDevelop.Dom
 	
 	public struct SearchTypeResult
 	{
-		public static readonly SearchTypeResult Empty = new SearchTypeResult(null);
+		public static readonly SearchTypeResult Empty = new SearchTypeResult(null, null);
 		
 		readonly IReturnType result;
 		readonly IUsing usedUsing;
 		
 		public SearchTypeResult(IReturnType result) : this(result, null) {}
+		
+		public SearchTypeResult(IClass c) : this(c != null ? c.DefaultReturnType : null) {}
 		
 		public SearchTypeResult(IReturnType result, IUsing usedUsing)
 		{
@@ -160,3 +176,4 @@ namespace ICSharpCode.SharpDevelop.Dom
 		}
 	}
 }
+

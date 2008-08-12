@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald"/>
-//     <version>$Revision: 2522 $</version>
+//     <version>$Revision: 2657 $</version>
 // </file>
 
 using System;
@@ -26,7 +26,7 @@ namespace ICSharpCode.NRefactory.Tests.Output
 			// parser.Specials is the list of comments, preprocessor directives etc.
 			PreprocessingDirective.CSharpToVB(parser.Specials);
 			// Convert C# constructs to VB.NET:
-			node.AcceptVisitor(new CSharpConstructsVisitor(), null);
+			node.AcceptVisitor(new CSharpConstructsConvertVisitor(), null);
 			node.AcceptVisitor(new ToVBNetConvertVisitor(), null);
 
 			VBNetOutputVisitor output = new VBNetOutputVisitor();

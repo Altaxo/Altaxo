@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1609 $</version>
+//     <version>$Revision: 2676 $</version>
 // </file>
 
 using System;
@@ -24,7 +24,7 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 		[Test]
 		public void VBNetClassReferenceExpressionTest1()
 		{
-			FieldReferenceExpression fre = ParseUtilVBNet.ParseExpression<FieldReferenceExpression>("MyClass.myField");
+			MemberReferenceExpression fre = ParseUtilVBNet.ParseExpression<MemberReferenceExpression>("MyClass.myField");
 			Assert.IsTrue(fre.TargetObject is ClassReferenceExpression);
 		}
 		#endregion

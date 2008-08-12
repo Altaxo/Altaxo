@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2514 $</version>
+//     <version>$Revision: 3061 $</version>
 // </file>
 
 using System;
@@ -13,27 +13,32 @@ using System.Windows.Forms;
 
 using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.Widgets.AutoHide;
-using WeifenLuo.WinFormsUI;
+using WeifenLuo.WinFormsUI.Docking;
 
 namespace ICSharpCode.SharpDevelop.Gui
 {
 	/// <summary>
 	/// This is the a Workspace with a single document interface.
 	/// </summary>
-	public class SdiWorkbenchLayout : IWorkbenchLayout
+#if ModifiedForAltaxo
+	public class SdiWorkbenchLayout : IWorkbenchLayout // Make class public in order to use it in AltaxoStartup
+#else
+	internal sealed class SdiWorkbenchLayout : IWorkbenchLayout
+#endif
 	{
 		DefaultWorkbench wbForm;
 		
 		DockPanel dockPanel;
 		Dictionary<string, PadContentWrapper> contentHash = new Dictionary<string, PadContentWrapper>();
-		ToolStripContainer toolStripContainer;
 		AutoHideMenuStripContainer mainMenuContainer;
 		AutoHideStatusStripContainer statusStripContainer;
+		ToolStripPanel toolBarPanel;
+		
 		#if DEBUG
 		static bool firstTimeError = true; // TODO: Debug statement only, remove me
 		#endif
 		
-		public IWorkbenchWindow ActiveWorkbenchwindow {
+		public IWorkbenchWindow ActiveWorkbenchWindow {
 			get {
 				if (dockPanel == null)  {
 					return null;
@@ -88,29 +93,40 @@ namespace ICSharpCode.SharpDevelop.Gui
 			wbForm = (DefaultWorkbench)workbench;
 			wbForm.SuspendLayout();
 			wbForm.Controls.Clear();
-			toolStripContainer = new ToolStripContainer();
-			toolStripContainer.SuspendLayout();
-			toolStripContainer.Dock = DockStyle.Fill;
 			
-			mainMenuContainer = new AutoHideMenuStripContainer(((DefaultWorkbench)wbForm).TopMenu);
+			mainMenuContainer = new AutoHideMenuStripContainer(wbForm.TopMenu);
 			mainMenuContainer.Dock = DockStyle.Top;
 			
 			statusStripContainer = new AutoHideStatusStripContainer((StatusStrip)StatusBarService.Control);
 			statusStripContainer.Dock = DockStyle.Bottom;
 			
-			dockPanel = new WeifenLuo.WinFormsUI.DockPanel();
-			dockPanel.DocumentStyle = DocumentStyles.DockingWindow;
-			this.dockPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			toolBarPanel = new ToolStripPanel();
+			if (wbForm.ToolBars != null) {
+				toolBarPanel.Controls.AddRange(wbForm.ToolBars);
+			}
+			toolBarPanel.Dock = DockStyle.Top;
 			
-			Panel helperPanel = new Panel();
-			helperPanel.Dock = DockStyle.Fill;
-			helperPanel.Controls.Add(dockPanel);
-			toolStripContainer.ContentPanel.Controls.Add(helperPanel);
+			dockPanel = new DockPanel();
+			dockPanel.Dock = DockStyle.Fill;
+			dockPanel.RightToLeftLayout = true;
 			
-			toolStripContainer.ContentPanel.Controls.Add(mainMenuContainer);
-			toolStripContainer.ContentPanel.Controls.Add(statusStripContainer);
+			// Known issues with certain DocumentStyles:
+			//   DockingMdi:
+			//    - this is the default value
+			//    - after switching between layouts, text editor tooltips sometimes do not show up anymore
+			//   DockingSdi:
+			//    - in this mode, the tab bar is not shown when there is only one open window
+			//   DockingWindow:
+			//    - SharpDevelop 2.x used this mode
+			//    - it was also the only mode supported by the early DockPanelSuite versions used by SharpDevelop 1.x
 			
-			wbForm.Controls.Add(toolStripContainer);
+			dockPanel.DocumentStyle = DocumentStyle.DockingWindow;
+			
+			wbForm.Controls.Add(dockPanel);
+			wbForm.Controls.Add(toolBarPanel);
+			wbForm.Controls.Add(mainMenuContainer);
+			wbForm.Controls.Add(statusStripContainer);
+			wbForm.MainMenuStrip = wbForm.TopMenu;
 			// dock panel has to be added to the form before LoadLayoutConfiguration is called to fix SD2-463
 			
 			LoadLayoutConfiguration();
@@ -124,7 +140,6 @@ namespace ICSharpCode.SharpDevelop.Gui
 			dockPanel.ActiveContentChanged += new EventHandler(ActiveContentChanged);
 			ActiveMdiChanged(this, EventArgs.Empty);
 			
-			toolStripContainer.ResumeLayout(false);
 			wbForm.ResumeLayout(false);
 			
 			Properties fullscreenProperties = PropertyService.Get("ICSharpCode.SharpDevelop.Gui.FullscreenOptions", new Properties());
@@ -182,7 +197,8 @@ namespace ICSharpCode.SharpDevelop.Gui
 				} else {
 					LoadDefaultLayoutConfiguration();
 				}
-			} catch {
+			} catch (Exception ex) {
+				MessageService.ShowError(ex);
 				// ignore errors loading configuration
 			}
 		}
@@ -204,37 +220,6 @@ namespace ICSharpCode.SharpDevelop.Gui
 			}
 		}
 		
-		void ShowToolBars()
-		{
-			if (wbForm.ToolBars != null) {
-				ArrayList oldControls = new ArrayList();
-				foreach (Control ctl in toolStripContainer.ContentPanel.Controls) {
-					oldControls.Add(ctl);
-				}
-				toolStripContainer.ContentPanel.Controls.Clear();
-				toolStripContainer.ContentPanel.Controls.Add(oldControls[0] as Control);
-				foreach (ToolStrip toolBar in wbForm.ToolBars) {
-					if (!toolStripContainer.ContentPanel.Controls.Contains(toolBar)) {
-						toolStripContainer.ContentPanel.Controls.Add(toolBar);
-					}
-				}
-				for (int i = 1; i < oldControls.Count; i++) {
-					toolStripContainer.ContentPanel.Controls.Add(oldControls[i] as Control);
-				}
-			}
-		}
-		
-		void HideToolBars()
-		{
-			if (wbForm.ToolBars != null) {
-				foreach (ToolStrip toolBar in wbForm.ToolBars) {
-					if (toolStripContainer.ContentPanel.Controls.Contains(toolBar)) {
-						toolStripContainer.ContentPanel.Controls.Remove(toolBar);
-					}
-				}
-			}
-		}
-		
 		DockContent GetContent(string padTypeName)
 		{
 			foreach (PadDescriptor content in WorkbenchSingleton.Workbench.PadContentCollection) {
@@ -250,7 +235,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			if (dockPanel != null) {
 				NativeMethods.SetWindowRedraw(wbForm.Handle, false);
 				try {
-					IViewContent activeView = GetActiveView();
+					IWorkbenchWindow activeWindow = this.ActiveWorkbenchWindow;
 					dockPanel.ActiveDocumentChanged -= new EventHandler(ActiveMdiChanged);
 					
 					DetachPadContents(false);
@@ -260,8 +245,8 @@ namespace ICSharpCode.SharpDevelop.Gui
 					LoadLayoutConfiguration();
 					ShowPads();
 					ShowViewContents();
-					if (activeView != null && activeView.WorkbenchWindow != null) {
-						activeView.WorkbenchWindow.SelectWindow();
+					if (activeWindow != null) {
+						activeWindow.SelectWindow();
 					}
 				} finally {
 					NativeMethods.SetWindowRedraw(wbForm.Handle, true);
@@ -310,14 +295,11 @@ namespace ICSharpCode.SharpDevelop.Gui
 		
 		void DetachViewContents(bool dispose)
 		{
-			foreach (IViewContent viewContent in WorkbenchSingleton.Workbench.ViewContentCollection) {
+			foreach (SdiWorkspaceWindow f in WorkbenchSingleton.Workbench.WorkbenchWindowCollection) {
 				try {
-					SdiWorkspaceWindow f = (SdiWorkspaceWindow)viewContent.WorkbenchWindow;
 					f.DockPanel = null;
 					if (dispose) {
-						viewContent.WorkbenchWindow = null;
-						f.CloseEvent -= new EventHandler(CloseWindowEvent);
-						f.DetachContent();
+						f.CloseEvent -= CloseWindowEvent;
 						f.Dispose();
 					}
 				} catch (Exception e) { MessageService.ShowError(e); }
@@ -364,10 +346,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 				if (padDescriptor == null)
 					throw new ArgumentNullException("padDescriptor");
 				this.padDescriptor = padDescriptor;
-				this.DockableAreas = ((((WeifenLuo.WinFormsUI.DockAreas.Float | WeifenLuo.WinFormsUI.DockAreas.DockLeft) |
-				                        WeifenLuo.WinFormsUI.DockAreas.DockRight) |
-				                       WeifenLuo.WinFormsUI.DockAreas.DockTop) |
-				                      WeifenLuo.WinFormsUI.DockAreas.DockBottom);
+				this.DockAreas = DockAreas.Float | DockAreas.DockLeft | DockAreas.DockRight | DockAreas.DockTop | DockAreas.DockBottom;
 				HideOnClose = true;
 			}
 			
@@ -432,6 +411,11 @@ namespace ICSharpCode.SharpDevelop.Gui
 					}
 				}
 			}
+			
+			public override string ToString()
+			{
+				return "[PadContentWrapper " + padDescriptor.Class + "]";
+			}
 		}
 		
 		PadContentWrapper CreateContent(PadDescriptor content)
@@ -439,7 +423,6 @@ namespace ICSharpCode.SharpDevelop.Gui
 			if (contentHash.ContainsKey(content.Class)) {
 				return contentHash[content.Class];
 			}
-			Properties properties = (Properties)PropertyService.Get("Workspace.ViewMementos", new Properties());
 			
 			PadContentWrapper newContent = new PadContentWrapper(content);
 			if (!string.IsNullOrEmpty(content.Icon)) {
@@ -536,15 +519,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			bool hideInFullscreen = fullscreenProperties.Get("HideToolbars", true);
 			bool toolBarVisible = PropertyService.Get("ICSharpCode.SharpDevelop.Gui.ToolBarVisible", true);
 			
-			if (toolBarVisible) {
-				if (wbForm.FullScreen && hideInFullscreen) {
-					HideToolBars();
-				} else {
-					ShowToolBars();
-				}
-			} else {
-				HideToolBars();
-			}
+			toolBarPanel.Visible = toolBarVisible && !(wbForm.FullScreen && hideInFullscreen);
 		}
 		
 		void RedrawStatusBar()
@@ -560,17 +535,17 @@ namespace ICSharpCode.SharpDevelop.Gui
 			statusStripContainer.Visible = statusBarVisible;
 		}
 		
-		public void CloseWindowEvent(object sender, EventArgs e)
+		void CloseWindowEvent(object sender, EventArgs e)
 		{
 			SdiWorkspaceWindow f = (SdiWorkspaceWindow)sender;
 			f.CloseEvent -= CloseWindowEvent;
-			if (f.ViewContent != null) {
-				((IWorkbench)wbForm).CloseContent(f.ViewContent);
-				if (f == oldSelectedWindow) {
-					oldSelectedWindow = null;
-				}
-				ActiveMdiChanged(this, null);
+			foreach (IViewContent vc in f.ViewContents) {
+				((IWorkbench)wbForm).CloseContent(vc);
 			}
+			if (f == oldSelectedWindow) {
+				oldSelectedWindow = null;
+			}
+			ActiveMdiChanged(this, null);
 		}
 		
 		public IWorkbenchWindow ShowView(IViewContent content)
@@ -582,12 +557,11 @@ namespace ICSharpCode.SharpDevelop.Gui
 					return oldSdiWindow;
 				}
 			}
-			if (!content.Control.Visible) {
-				content.Control.Visible = true;
-			}
 			content.Control.Dock = DockStyle.Fill;
-			SdiWorkspaceWindow sdiWorkspaceWindow = new SdiWorkspaceWindow(content);
-			sdiWorkspaceWindow.CloseEvent        += new EventHandler(CloseWindowEvent);
+			SdiWorkspaceWindow sdiWorkspaceWindow = new SdiWorkspaceWindow();
+			sdiWorkspaceWindow.ViewContents.Add(content);
+			sdiWorkspaceWindow.ViewContents.AddRange(content.SecondaryViewContents);
+			sdiWorkspaceWindow.CloseEvent += new EventHandler(CloseWindowEvent);
 			if (dockPanel != null) {
 				sdiWorkspaceWindow.Show(dockPanel);
 			}
@@ -605,20 +579,12 @@ namespace ICSharpCode.SharpDevelop.Gui
 			OnActiveWorkbenchWindowChanged(e);
 		}
 		
-		static IViewContent GetActiveView()
-		{
-			IWorkbenchWindow activeWindow = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow;
-			if (activeWindow != null) {
-				return activeWindow.ViewContent;
-			}
-			return null;
-		}
-		
 		IWorkbenchWindow oldSelectedWindow = null;
-		public virtual void OnActiveWorkbenchWindowChanged(EventArgs e)
+		
+		internal void OnActiveWorkbenchWindowChanged(EventArgs e)
 		{
-			IWorkbenchWindow newWindow = this.ActiveWorkbenchwindow;
-			if (newWindow == null || newWindow.ViewContent != null) {
+			IWorkbenchWindow newWindow = this.ActiveWorkbenchWindow;
+			if (newWindow == null || newWindow.ActiveViewContent != null) {
 				if (ActiveWorkbenchWindowChanged != null) {
 					ActiveWorkbenchWindowChanged(this, e);
 				}
@@ -629,13 +595,12 @@ namespace ICSharpCode.SharpDevelop.Gui
 			} else {
 				//LoggingService.Debug("ignore window change to disposed window");
 			}
-			if (oldSelectedWindow != null) {
+			if (oldSelectedWindow != null && oldSelectedWindow.ActiveViewContent != null) {
 				oldSelectedWindow.OnWindowDeselected(EventArgs.Empty);
 			}
 			oldSelectedWindow = newWindow;
-			if (oldSelectedWindow != null && oldSelectedWindow.ActiveViewContent != null && oldSelectedWindow.ActiveViewContent.Control != null) {
-				oldSelectedWindow.OnWindowSelected(EventArgs.Empty);
-				oldSelectedWindow.ActiveViewContent.SwitchedTo();
+			if (newWindow != null && newWindow.ActiveViewContent != null) {
+				newWindow.OnWindowSelected(EventArgs.Empty);
 			}
 		}
 		

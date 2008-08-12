@@ -2,16 +2,14 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2582 $</version>
+//     <version>$Revision: 3140 $</version>
 // </file>
 
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Globalization;
 using System.IO;
-using System.Text;
-using System.Xml;
+using System.Linq;
 
 using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.Gui;
@@ -99,7 +97,7 @@ namespace ICSharpCode.SharpDevelop.Project
 		/// Gets if the item is added to it's owner project.
 		/// </summary>
 		[Browsable(false)]
-		public bool IsAddedToProject {
+		internal bool IsAddedToProject {
 			get {
 				return buildItem != null;
 			}
@@ -301,7 +299,7 @@ namespace ICSharpCode.SharpDevelop.Project
 					if (buildItem != null)
 						return MSBuildInternals.GetCustomMetadataNames(buildItem);
 					else
-						return Linq.ToArray(virtualMetadata.Keys);
+						return virtualMetadata.Keys.ToArray();
 				}
 			}
 		}
@@ -392,12 +390,7 @@ namespace ICSharpCode.SharpDevelop.Project
 				string fileName = this.fileNameCache;
 				if (fileName == null) {
 					lock (SyncRoot) {
-						fileName = Path.Combine(project.Directory, this.Include);
-						try {
-							if (Path.IsPathRooted(fileName)) {
-								fileName = Path.GetFullPath(fileName);
-							}
-						} catch {}
+						fileName = FileUtility.NormalizePath(Path.Combine(project.Directory, this.Include));
 						fileNameCache = fileName;
 					}
 				}
@@ -429,9 +422,17 @@ namespace ICSharpCode.SharpDevelop.Project
 			                     GetType().Name, this.ItemType.ItemName, this.Include);
 		}
 		
-		public override void InformSetValue(LocalizedPropertyDescriptor localizedPropertyDescriptor, object component, object value)
+		protected override void FilterProperties(PropertyDescriptorCollection globalizedProps)
 		{
-			base.InformSetValue(localizedPropertyDescriptor, component, value);
+			base.FilterProperties(globalizedProps);
+			foreach (PropertyDescriptor p in AddInTree.BuildItems<PropertyDescriptor>("/SharpDevelop/Views/ProjectBrowser/ContextSpecificProperties", this, false)) {
+				globalizedProps.Add(p);
+			}
+		}
+		
+		public override void InformSetValue(PropertyDescriptor propertyDescriptor, object component, object value)
+		{
+			base.InformSetValue(propertyDescriptor, component, value);
 			if (project != null) {
 				project.Save();
 			}

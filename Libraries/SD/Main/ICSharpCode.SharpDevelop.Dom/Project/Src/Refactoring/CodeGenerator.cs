@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2500 $</version>
+//     <version>$Revision: 3123 $</version>
 // </file>
 
 using System;
@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Text;
 
 using ICSharpCode.NRefactory.Ast;
+using ICSharpCode.NRefactory.AstBuilder;
 using NR = ICSharpCode.NRefactory.Ast;
 
 namespace ICSharpCode.SharpDevelop.Dom.Refactoring
@@ -138,9 +139,9 @@ namespace ICSharpCode.SharpDevelop.Dom.Refactoring
 		
 		public static List<AttributeSection> ConvertAttributes(IList<IAttribute> attributes, ClassFinder targetContext)
 		{
-			AttributeSection sec = new AttributeSection(null, null);
+			AttributeSection sec = new AttributeSection();
 			foreach (IAttribute att in attributes) {
-				sec.Attributes.Add(new ICSharpCode.NRefactory.Ast.Attribute(att.Name, null, null));
+				sec.Attributes.Add(new ICSharpCode.NRefactory.Ast.Attribute(ConvertType(att.AttributeType, targetContext).Type, null, null));
 			}
 			List<AttributeSection> resultList = new List<AttributeSection>(1);
 			if (sec.Attributes.Count > 0)
@@ -164,7 +165,7 @@ namespace ICSharpCode.SharpDevelop.Dom.Refactoring
 		public static BlockStatement CreateNotImplementedBlock()
 		{
 			BlockStatement b = new BlockStatement();
-			b.AddChild(new ThrowStatement(new ObjectCreateExpression(new TypeReference("NotImplementedException"), null)));
+			b.Throw(new TypeReference("NotImplementedException").New());
 			return b;
 		}
 		
@@ -176,15 +177,15 @@ namespace ICSharpCode.SharpDevelop.Dom.Refactoring
 				                                  ConvertParameters(m.Parameters, targetContext),
 				                                  ConvertAttributes(m.Attributes, targetContext));
 			} else {
-				MethodDeclaration md;
-				md = new MethodDeclaration(m.Name,
-				                           ConvertModifier(m.Modifiers, targetContext),
-				                           ConvertType(m.ReturnType, targetContext),
-				                           ConvertParameters(m.Parameters, targetContext),
-				                           ConvertAttributes(m.Attributes, targetContext));
-				md.Templates = ConvertTemplates(m.TypeParameters, targetContext);
-				md.Body = CreateNotImplementedBlock();
-				return md;
+				return new MethodDeclaration {
+					Name = m.Name,
+					Modifier = ConvertModifier(m.Modifiers, targetContext),
+					TypeReference = ConvertType(m.ReturnType, targetContext),
+					Parameters = ConvertParameters(m.Parameters, targetContext),
+					Attributes = ConvertAttributes(m.Attributes, targetContext),
+					Templates = ConvertTemplates(m.TypeParameters, targetContext),
+					Body = CreateNotImplementedBlock()
+				};
 			}
 		}
 		
@@ -223,8 +224,14 @@ namespace ICSharpCode.SharpDevelop.Dom.Refactoring
 				                             p.Name,
 				                             ConvertParameters(p.Parameters, targetContext));
 				md.TypeReference = ConvertType(p.ReturnType, targetContext);
-				if (p.CanGet) md.GetRegion = new PropertyGetRegion(CreateNotImplementedBlock(), null);
-				if (p.CanSet) md.SetRegion = new PropertySetRegion(CreateNotImplementedBlock(), null);
+				if (p.CanGet) {
+					md.GetRegion = new PropertyGetRegion(CreateNotImplementedBlock(), null);
+					md.GetRegion.Modifier = ConvertModifier(p.GetterModifiers, null);
+				}
+				if (p.CanSet) {
+					md.SetRegion = new PropertySetRegion(CreateNotImplementedBlock(), null);
+					md.SetRegion.Modifier = ConvertModifier(p.SetterModifiers, null);
+				}
 				return md;
 			}
 		}
@@ -240,11 +247,12 @@ namespace ICSharpCode.SharpDevelop.Dom.Refactoring
 		
 		public static EventDeclaration ConvertMember(IEvent e, ClassFinder targetContext)
 		{
-			return new EventDeclaration(ConvertType(e.ReturnType, targetContext),
-			                            e.Name,
-			                            ConvertModifier(e.Modifiers, targetContext),
-			                            ConvertAttributes(e.Attributes, targetContext),
-			                            null);
+			return new EventDeclaration {
+				TypeReference = ConvertType(e.ReturnType, targetContext),
+				Name = e.Name,
+				Modifier = ConvertModifier(e.Modifiers, targetContext),
+				Attributes = ConvertAttributes(e.Attributes, targetContext),
+			};
 		}
 		#endregion
 		
@@ -351,14 +359,12 @@ namespace ICSharpCode.SharpDevelop.Dom.Refactoring
 			property.TypeReference = ConvertType(field.ReturnType, new ClassFinder(field));
 			if (createGetter) {
 				BlockStatement block = new BlockStatement();
-				block.AddChild(new ReturnStatement(new IdentifierExpression(field.Name)));
+				block.Return(new IdentifierExpression(field.Name));
 				property.GetRegion = new PropertyGetRegion(block, null);
 			}
 			if (createSetter) {
 				BlockStatement block = new BlockStatement();
-				Expression left = new IdentifierExpression(field.Name);
-				Expression right = new IdentifierExpression("value");
-				block.AddChild(new ExpressionStatement(new AssignmentExpression(left, AssignmentOperatorType.Assign, right)));
+				block.Assign(new IdentifierExpression(field.Name), new IdentifierExpression("value"));
 				property.SetRegion = new PropertySetRegion(block, null);
 			}
 			
@@ -372,9 +378,11 @@ namespace ICSharpCode.SharpDevelop.Dom.Refactoring
 		{
 			ClassFinder targetContext = new ClassFinder(property);
 			string name = property.Name + "Changed";
-			EventDeclaration ed = new EventDeclaration(new TypeReference("EventHandler"), name,
-			                                           ConvertModifier(property.Modifiers & (ModifierEnum.VisibilityMask | ModifierEnum.Static), targetContext)
-			                                           , null, null);
+			EventDeclaration ed = new EventDeclaration {
+				TypeReference = new TypeReference("EventHandler"),
+				Name = name,
+				Modifier = ConvertModifier(property.Modifiers & (ModifierEnum.VisibilityMask | ModifierEnum.Static), targetContext),
+			};
 			InsertCodeAfter(property, document, ed);
 			
 			List<Expression> arguments = new List<Expression>(2);
@@ -382,7 +390,7 @@ namespace ICSharpCode.SharpDevelop.Dom.Refactoring
 				arguments.Add(new PrimitiveExpression(null, "null"));
 			else
 				arguments.Add(new ThisReferenceExpression());
-			arguments.Add(new FieldReferenceExpression(new IdentifierExpression("EventArgs"), "Empty"));
+			arguments.Add(new IdentifierExpression("EventArgs").Member("Empty"));
 			InsertCodeAtEnd(property.SetterRegion, document,
 			                new RaiseEventStatement(name, arguments));
 		}
@@ -414,10 +422,12 @@ namespace ICSharpCode.SharpDevelop.Dom.Refactoring
 				modifier = ModifierEnum.Protected;
 			else
 				modifier = ModifierEnum.Protected | ModifierEnum.Virtual;
-			MethodDeclaration method = new MethodDeclaration("On" + e.Name,
-			                                                 ConvertModifier(modifier, context),
-			                                                 new TypeReference("System.Void"),
-			                                                 parameters, null);
+			MethodDeclaration method = new MethodDeclaration {
+				Name = "On" + e.Name,
+				Modifier = ConvertModifier(modifier, context),
+				TypeReference = new TypeReference("System.Void"),
+				Parameters = parameters
+			};
 			
 			List<Expression> arguments = new List<Expression>();
 			if (sender) {
@@ -527,6 +537,7 @@ namespace ICSharpCode.SharpDevelop.Dom.Refactoring
 			foreach (IEvent e in interf.GetEvents()) {
 				if (!InterfaceMemberAlreadyImplemented(targetClassEvents, e, out requireAlternativeImplementation)) {
 					EventDeclaration ed = ConvertMember(e, context);
+					ed.Attributes.Clear();
 					if (explicitImpl || requireAlternativeImplementation) {
 						ed.InterfaceImplementations.Add(CreateInterfaceImplementation(e, context));
 						
@@ -550,6 +561,7 @@ namespace ICSharpCode.SharpDevelop.Dom.Refactoring
 			foreach (IProperty p in interf.GetProperties()) {
 				if (!InterfaceMemberAlreadyImplemented(targetClassProperties, p, out requireAlternativeImplementation)) {
 					AttributedNode pd = ConvertMember(p, context);
+					pd.Attributes.Clear();
 					if (explicitImpl || requireAlternativeImplementation) {
 						InterfaceImplementation impl = CreateInterfaceImplementation(p, context);
 						if (pd is IndexerDeclaration) {
@@ -570,6 +582,7 @@ namespace ICSharpCode.SharpDevelop.Dom.Refactoring
 			foreach (IMethod m in interf.GetMethods()) {
 				if (!InterfaceMemberAlreadyImplemented(targetClassMethods, m, out requireAlternativeImplementation)) {
 					MethodDeclaration md = ConvertMember(m, context) as MethodDeclaration;
+					md.Attributes.Clear();
 					if (md != null) {
 						if (explicitImpl || requireAlternativeImplementation) {
 							md.InterfaceImplementations.Add(CreateInterfaceImplementation(m, context));
@@ -593,29 +606,28 @@ namespace ICSharpCode.SharpDevelop.Dom.Refactoring
 			node.Modifier &= ~(Modifiers.Virtual | Modifiers.Abstract);
 			node.Modifier |= Modifiers.Override;
 			
-			MethodDeclaration method = node as MethodDeclaration;
-			if (method != null) {
-				method.Body.Children.Clear();
-				if (method.TypeReference.SystemType == "System.Void") {
-					method.Body.AddChild(new ExpressionStatement(CreateForwardingMethodCall(method)));
-				} else {
-					method.Body.AddChild(new ReturnStatement(CreateForwardingMethodCall(method)));
+			if (!baseMember.IsAbstract) {
+				// replace the method/property body with a call to the base method/property
+				MethodDeclaration method = node as MethodDeclaration;
+				if (method != null) {
+					method.Body.Children.Clear();
+					if (method.TypeReference.SystemType == "System.Void") {
+						method.Body.AddChild(new ExpressionStatement(CreateForwardingMethodCall(method)));
+					} else {
+						method.Body.AddChild(new ReturnStatement(CreateForwardingMethodCall(method)));
+					}
 				}
-			}
-			PropertyDeclaration property = node as PropertyDeclaration;
-			if (property != null) {
-				Expression field = new FieldReferenceExpression(new BaseReferenceExpression(),
-				                                                property.Name);
-				if (!property.GetRegion.Block.IsNull) {
-					property.GetRegion.Block.Children.Clear();
-					property.GetRegion.Block.AddChild(new ReturnStatement(field));
-				}
-				if (!property.SetRegion.Block.IsNull) {
-					property.SetRegion.Block.Children.Clear();
-					Expression expr = new AssignmentExpression(field,
-					                                           AssignmentOperatorType.Assign,
-					                                           new IdentifierExpression("value"));
-					property.SetRegion.Block.AddChild(new ExpressionStatement(expr));
+				PropertyDeclaration property = node as PropertyDeclaration;
+				if (property != null) {
+					Expression field = new BaseReferenceExpression().Member(property.Name);
+					if (!property.GetRegion.Block.IsNull) {
+						property.GetRegion.Block.Children.Clear();
+						property.GetRegion.Block.Return(field);
+					}
+					if (!property.SetRegion.Block.IsNull) {
+						property.SetRegion.Block.Children.Clear();
+						property.SetRegion.Block.Assign(field, new IdentifierExpression("value"));
+					}
 				}
 			}
 			return node;
@@ -623,8 +635,8 @@ namespace ICSharpCode.SharpDevelop.Dom.Refactoring
 		
 		static InvocationExpression CreateForwardingMethodCall(MethodDeclaration method)
 		{
-			Expression methodName = new FieldReferenceExpression(new BaseReferenceExpression(),
-			                                                     method.Name);
+			Expression methodName = new MemberReferenceExpression(new BaseReferenceExpression(),
+			                                                      method.Name);
 			InvocationExpression ie = new InvocationExpression(methodName, null);
 			foreach (ParameterDeclarationExpression param in method.Parameters) {
 				Expression expr = new IdentifierExpression(param.ParameterName);

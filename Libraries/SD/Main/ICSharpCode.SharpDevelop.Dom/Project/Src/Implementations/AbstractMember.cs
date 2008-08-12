@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2066 $</version>
+//     <version>$Revision: 2931 $</version>
 // </file>
 
 using System;
@@ -10,29 +10,26 @@ using System.Collections.Generic;
 
 namespace ICSharpCode.SharpDevelop.Dom
 {
-	public abstract class AbstractMember : AbstractNamedEntity, IMember
+	public abstract class AbstractMember : AbstractEntity, IMember
 	{
 		IReturnType returnType;
 		DomRegion region;
-		DomRegion bodyRegion;
-		List<ExplicitInterfaceImplementation> interfaceImplementations;
+		IList<ExplicitInterfaceImplementation> interfaceImplementations;
 		IReturnType declaringTypeReference;
+		
+		protected override void FreezeInternal()
+		{
+			interfaceImplementations = FreezeList(interfaceImplementations);
+			base.FreezeInternal();
+		}
 		
 		public virtual DomRegion Region {
 			get {
 				return region;
 			}
 			set {
+				CheckBeforeMutation();
 				region = value;
-			}
-		}
-		
-		public virtual DomRegion BodyRegion {
-			get {
-				return bodyRegion;
-			}
-			protected set {
-				bodyRegion = value;
 			}
 		}
 		
@@ -41,6 +38,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 				return returnType;
 			}
 			set {
+				CheckBeforeMutation();
 				returnType = value;
 			}
 		}
@@ -53,6 +51,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 				return declaringTypeReference ?? this.DeclaringType.DefaultReturnType;
 			}
 			set {
+				CheckBeforeMutation();
 				declaringTypeReference = value;
 			}
 		}
@@ -72,6 +71,21 @@ namespace ICSharpCode.SharpDevelop.Dom
 		object ICloneable.Clone()
 		{
 			return this.Clone();
+		}
+		
+		IMember genericMember;
+		
+		public virtual IMember GenericMember {
+			get { return genericMember; }
+		}
+		
+		public virtual IMember CreateSpecializedMember()
+		{
+			AbstractMember copy = Clone() as AbstractMember;
+			if (copy == null)
+				throw new Exception("Clone() must return an AbstractMember instance, or CreateSpecializedMember must also be overridden.");
+			copy.genericMember = this;
+			return copy;
 		}
 	}
 }

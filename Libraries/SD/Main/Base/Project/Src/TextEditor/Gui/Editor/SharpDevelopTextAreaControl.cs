@@ -1,8 +1,8 @@
-// <file>
+﻿// <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2355 $</version>
+//     <version>$Revision: 3209 $</version>
 // </file>
 
 using System;
@@ -23,10 +23,10 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 {
 	public class SharpDevelopTextAreaControl : TextEditorControl
 	{
-		readonly static string contextMenuPath       = "/SharpDevelop/ViewContent/DefaultTextEditor/ContextMenu";
-		readonly static string editActionsPath       = "/AddIns/DefaultTextEditor/EditActions";
-		readonly static string formatingStrategyPath = "/AddIns/DefaultTextEditor/Formatter";
-		readonly static string advancedHighlighterPath = "/AddIns/DefaultTextEditor/AdvancedHighlighter";
+		protected string contextMenuPath = "/SharpDevelop/ViewContent/DefaultTextEditor/ContextMenu";
+		const string editActionsPath         = "/AddIns/DefaultTextEditor/EditActions";
+		const string formatingStrategyPath   = "/AddIns/DefaultTextEditor/Formatter";
+		const string advancedHighlighterPath = "/AddIns/DefaultTextEditor/AdvancedHighlighter";
 		
 		QuickClassBrowserPanel quickClassBrowserPanel = null;
 		Control customQuickClassBrowserPanel = null;
@@ -53,15 +53,20 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		}
 		
 		public SharpDevelopTextAreaControl()
+			: this(true, true)
 		{
-			errorDrawer = new ErrorDrawer(this);
+			GenerateEditActions();
+			
+			TextEditorProperties = SharpDevelopTextEditorProperties.Instance;
+		}
+		
+		protected SharpDevelopTextAreaControl(bool enableFolding, bool sdBookmarks)
+		{
 			Document.FoldingManager.FoldingStrategy = new ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor.ParserFoldingStrategy();
 			Document.BookmarkManager.Factory = new Bookmarks.SDBookmarkFactory(Document.BookmarkManager);
 			Document.BookmarkManager.Added   += new BookmarkEventHandler(BookmarkAdded);
 			Document.BookmarkManager.Removed += new BookmarkEventHandler(BookmarkRemoved);
-			GenerateEditActions();
-			
-			TextEditorProperties = new SharpDevelopTextEditorProperties();
+			Document.LineCountChanged += BookmarkLineCountChanged;
 		}
 		
 		void BookmarkAdded(object sender, BookmarkEventArgs e)
@@ -80,12 +85,26 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			}
 		}
 		
+		void BookmarkLineCountChanged(object sender, LineCountChangeEventArgs e)
+		{
+			foreach (Bookmark b in Document.BookmarkManager.Marks) {
+				if (b.LineNumber >= e.LineStart) {
+					Bookmarks.SDBookmark sdb = b as Bookmarks.SDBookmark;
+					if (sdb != null) {
+						sdb.RaiseLineNumberChanged();
+					}
+				}
+			}
+		}
+		
 		protected override void InitializeTextAreaControl(TextAreaControl newControl)
 		{
 			base.InitializeTextAreaControl(newControl);
 			
 			newControl.ShowContextMenu += delegate(object sender, MouseEventArgs e) {
-				MenuService.ShowContextMenu(this, contextMenuPath, (Control)sender, e.X, e.Y);
+				if (contextMenuPath != null) {
+					MenuService.ShowContextMenu(this, contextMenuPath, (Control)sender, e.X, e.Y);
+				}
 			};
 			newControl.TextArea.KeyEventHandler += new ICSharpCode.TextEditor.KeyEventHandler(HandleKeyPress);
 			newControl.TextArea.ClipboardHandler.CopyText += new CopyTextEventHandler(ClipboardHandlerCopyText);
@@ -154,8 +173,9 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		
 		void ClipboardHandlerCopyText(object sender, CopyTextEventArgs e)
 		{
-			ICSharpCode.SharpDevelop.Gui.SideBarView.PutInClipboardRing(e.Text);
+			TextEditorSideBar.Instance.PutInClipboardRing(e.Text);
 		}
+		
 		public override void OptionsChanged()
 		{
 			base.OptionsChanged();
@@ -167,13 +187,31 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 				} else {
 					ActivateQuickClassBrowserOnDemand();
 				}
+				if (sdtep.UnderlineErrors) {
+					if (errorDrawer == null) {
+						errorDrawer = new ErrorDrawer(this);
+					}
+				} else {
+					if (errorDrawer != null) {
+						errorDrawer.Dispose();
+						errorDrawer = null;
+					}
+				}
+			}
+		}
+		
+		internal void FileLoaded()
+		{
+			if (errorDrawer != null) {
+				errorDrawer.UpdateErrors();
 			}
 		}
 		
 		void GenerateEditActions()
 		{
 			#if DEBUG
-			editactions[Keys.Control | Keys.OemPeriod] = new DebugCodeCompletionAction();
+			editactions[Keys.Control | Keys.OemPeriod] = new DebugDotCompletionAction();
+			editactions[Keys.Control | Keys.Shift | Keys.Space] = new DebugCtrlSpaceCodeCompletionAction();
 			#endif
 			try {
 				IEditAction[] actions = (IEditAction[])(AddInTree.GetTreeNode(editActionsPath).BuildChildItems(this)).ToArray(typeof(IEditAction));
@@ -285,26 +323,6 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 							return false;
 					}
 				}
-				if (ch == ' ') {
-					string word = GetWordBeforeCaret();
-					if (word != null) {
-						CodeTemplateGroup templateGroup = CodeTemplateLoader.GetTemplateGroupPerFilename(FileName);
-						if (templateGroup != null) {
-							foreach (CodeTemplate template in templateGroup.Templates) {
-								if (template.Shortcut == word) {
-									if (word.Length > 0) {
-										int newCaretOffset = DeleteWordBeforeCaret();
-										//// set new position in text area
-										ActiveTextAreaControl.TextArea.Caret.Position = Document.OffsetToPosition(newCaretOffset);
-									}
-									
-									InsertTemplate(template);
-									return true;
-								}
-							}
-						}
-					}
-				}
 			} catch (Exception ex) {
 				LogException(ex);
 			} finally {
@@ -313,14 +331,33 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			return false;
 		}
 		
+		internal bool ExpandTemplateOnTab()
+		{
+			string word = GetWordBeforeCaret();
+			if (word != null) {
+				CodeTemplateGroup templateGroup = CodeTemplateLoader.GetTemplateGroupPerFilename(FileName);
+				if (templateGroup != null) {
+					foreach (CodeTemplate template in templateGroup.Templates) {
+						if (template.Shortcut == word) {
+							if (word.Length > 0) {
+								int newCaretOffset = DeleteWordBeforeCaret();
+								//// set new position in text area
+								ActiveTextAreaControl.TextArea.Caret.Position = Document.OffsetToPosition(newCaretOffset);
+							}
+							
+							InsertTemplate(template);
+							return true;
+						}
+					}
+				}
+			}
+			return false;
+		}
+		
 		public void ShowInsightWindow(IInsightDataProvider insightDataProvider)
 		{
 			if (insightWindow == null || insightWindow.IsDisposed) {
-#if ModifiedForAltaxo
-        insightWindow = new InsightWindow(Form.ActiveForm, this);
-#else
-				insightWindow = new InsightWindow(((Form)WorkbenchSingleton.Workbench), this);
-#endif
+				insightWindow = new InsightWindow(WorkbenchSingleton.MainForm, this);
 				insightWindow.Closed += new EventHandler(CloseInsightWindow);
 			}
 			insightWindow.AddInsightDataProvider(insightDataProvider, this.FileName);
@@ -335,12 +372,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		
 		public void ShowCompletionWindow(ICompletionDataProvider completionDataProvider, char ch)
 		{
-#if ModifiedForAltaxo
-      Form active = Form.ActiveForm;
-      codeCompletionWindow = CodeCompletionWindow.ShowCompletionWindow(active, this, this.FileName, completionDataProvider, ch);
-#else
-			codeCompletionWindow = CodeCompletionWindow.ShowCompletionWindow((Form)WorkbenchSingleton.Workbench, this, this.FileName, completionDataProvider, ch);
-#endif
+			codeCompletionWindow = CodeCompletionWindow.ShowCompletionWindow(WorkbenchSingleton.MainForm, this, this.FileName, completionDataProvider, ch);
 			if (codeCompletionWindow != null) {
 				codeCompletionWindow.Closed += new EventHandler(CloseCodeCompletionWindow);
 			}
@@ -370,8 +402,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		public void InsertTemplate(CodeTemplate template)
 		{
 			string selectedText = String.Empty;
-			int undoActionCount = Document.UndoStack.UndoItemCount;
-			Console.WriteLine("undoActionCount before " + undoActionCount);
+			Document.UndoStack.StartUndoGroup();
 			if (base.ActiveTextAreaControl.TextArea.SelectionManager.HasSomethingSelected) {
 				selectedText = base.ActiveTextAreaControl.TextArea.SelectionManager.SelectedText;
 				ActiveTextAreaControl.TextArea.Caret.Position = ActiveTextAreaControl.TextArea.SelectionManager.SelectionCollection[0].StartPosition;
@@ -403,8 +434,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			
 			Document.FormattingStrategy.IndentLines(ActiveTextAreaControl.TextArea, beginLine, endLine);
 			
-			Console.WriteLine("UndoItemCount after " + Document.UndoStack.UndoItemCount);
-			Document.UndoStack.CombineLast(Document.UndoStack.UndoItemCount - undoActionCount);
+			Document.UndoStack.EndUndoGroup();
 			EndUpdate();
 			Document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.WholeTextArea));
 			Document.CommitUpdate();

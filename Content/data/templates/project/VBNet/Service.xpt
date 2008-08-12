@@ -20,6 +20,7 @@
 	<Project language="VBNet">
 		<PropertyGroup>
 			<OutputType>Exe</OutputType>
+			<AppDesignerFolder>Properties</AppDesignerFolder>
 		</PropertyGroup>
 		
 		<ProjectItems>
@@ -40,7 +41,6 @@
 
 		<Files>
 			<File name="${ProjectName}.vb"><![CDATA[${StandardHeader.VBNET}
-
 Imports System.ServiceProcess
 
 Public Class ${ProjectName}
@@ -70,7 +70,6 @@ End Class
 
 ]]></File>
 				<File name="ProjectInstaller.vb"><![CDATA[${StandardHeader.VBNET}
-
 Imports System.ComponentModel
 Imports System.Configuration.Install
 Imports System.ServiceProcess
@@ -92,7 +91,7 @@ Public Class ProjectInstaller
 End Class
 
 ]]></File>
-		<File name="AssemblyInfo.vb" src="DefaultAssemblyInfo.vb"/>
+		<File name="Properties\AssemblyInfo.vb" src="DefaultAssemblyInfo.vb"/>
 		</Files>
 	</Project>
 </Template>

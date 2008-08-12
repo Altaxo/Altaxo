@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2066 $</version>
+//     <version>$Revision: 2465 $</version>
 // </file>
 
 using System;
@@ -85,10 +85,10 @@ namespace ICSharpCode.SharpDevelop.Tests
 		{
 			IReturnType type = SearchType(shortName, typeParameterCount);
 			Assert.AreEqual(fullType, type.FullyQualifiedName);
-			Assert.AreEqual(typeParameterCount, type.TypeParameterCount);
+			Assert.AreEqual(typeParameterCount, type.TypeArgumentCount);
 			type = SearchTypeVB(vbShortName, typeParameterCount);
 			Assert.AreEqual(fullType, type.FullyQualifiedName);
-			Assert.AreEqual(typeParameterCount, type.TypeParameterCount);
+			Assert.AreEqual(typeParameterCount, type.TypeArgumentCount);
 		}
 		#endregion
 		

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2003 $</version>
+//     <version>$Revision: 2563 $</version>
 // </file>
 
 using System;
@@ -82,11 +82,11 @@ namespace ICSharpCode.SharpDevelop.Project
 			ProjectService.SolutionClosed += ProjectServiceSolutionClosed;
 			ProjectService.SolutionPreferencesSaving += ProjectServiceSolutionPreferencesSaving;
 			
-			WorkbenchSingleton.Workbench.ActiveWorkbenchWindowChanged += ActiveWindowChanged;
+			WorkbenchSingleton.Workbench.ActiveContentChanged += ActiveContentChanged;
 			if (ProjectService.OpenSolution != null) {
 				ProjectServiceSolutionLoaded(null, new SolutionEventArgs(ProjectService.OpenSolution));
 			}
-			ActiveWindowChanged(null, null);
+			ActiveContentChanged(null, null);
 		}
 		
 		public void StartLabelEdit(ExtTreeNode node)
@@ -112,21 +112,20 @@ namespace ICSharpCode.SharpDevelop.Project
 		
 		string lastFileName;
 		
-		void ActiveWindowChanged(object sender, EventArgs e)
+		void ActiveContentChanged(object sender, EventArgs e)
 		{
 			if (WorkbenchSingleton.Workbench.ActiveContent == this) {
 				projectBrowserPanel.ProjectBrowserControl.PadActivated();
 			} else {
-				IWorkbenchWindow window = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow;
-				if (window == null) {
+				IViewContent content = WorkbenchSingleton.Workbench.ActiveViewContent;
+				if (content == null)
 					return;
-				}
-				string fileName = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent.FileName;
+				string fileName = content.PrimaryFileName;
 				if (fileName == null || lastFileName == fileName) {
 					return;
 				}
 				
-				if (!FileUtility.IsValidFileName(fileName)) {
+				if (!FileUtility.IsValidPath(fileName)) {
 					return;
 				}
 				lastFileName = fileName;

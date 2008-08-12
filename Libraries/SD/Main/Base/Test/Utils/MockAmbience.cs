@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Matthew Ward" email="mrward@users.sourceforge.net"/>
-//     <version>$Revision: 2340 $</version>
+//     <version>$Revision: 2397 $</version>
 // </file>
 
 using System;
@@ -17,11 +17,6 @@ namespace ICSharpCode.SharpDevelop.Tests.Utils
 	{
 		public MockAmbience()
 		{
-		}
-		
-		public override string Convert(ModifierEnum modifier)
-		{
-			return String.Empty;
 		}
 		
 		public override string Convert(IClass c)

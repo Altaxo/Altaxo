@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2339 $</version>
+//     <version>$Revision: 2949 $</version>
 // </file>
 
 using System;
@@ -19,7 +19,27 @@ namespace ICSharpCode.SharpDevelop.Dom
 	{
 		public static bool Equals(IReturnType rt1, IReturnType rt2)
 		{
-			return rt1.FullyQualifiedName == rt2.FullyQualifiedName && rt1.TypeParameterCount == rt2.TypeParameterCount;
+			if (rt1 == rt2) return true;
+			if (rt1 == null || rt2 == null) return false;
+			IClass c1 = rt1.GetUnderlyingClass();
+			IClass c2 = rt2.GetUnderlyingClass();
+			if (c1 == null && c2 == null) {
+				// guess if the classes are equal
+				return rt1.FullyQualifiedName == rt2.FullyQualifiedName && rt1.TypeArgumentCount == rt2.TypeArgumentCount;
+			} else {
+				if (c1 == c2)
+					return true;
+				if (c1 == null || c2 == null)
+					return false;
+				return c1.FullyQualifiedName == c2.FullyQualifiedName && c1.TypeParameters.Count == c2.TypeParameters.Count;
+			}
+		}
+		
+		public static int GetHashCode(IReturnType rt)
+		{
+			if (rt == null)
+				return 0;
+			return (rt.FullyQualifiedName ?? "").GetHashCode() ^ rt.TypeArgumentCount;
 		}
 		
 		IClass c;
@@ -36,7 +56,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 			return c.FullyQualifiedName;
 		}
 		
-		public override int TypeParameterCount {
+		public override int TypeArgumentCount {
 			get {
 				return c.TypeParameters.Count;
 			}
@@ -77,7 +97,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 					if (m.IsConstructor)
 						continue;
 					
-					bool ok = true;
+					/*bool ok = true;
 					if (m.IsOverridable) {
 						StringComparer comparer = m.DeclaringType.ProjectContent.Language.NameComparer;
 						foreach (IMethod oldMethod in c.Methods) {
@@ -92,7 +112,8 @@ namespace ICSharpCode.SharpDevelop.Dom
 						}
 					}
 					if (ok)
-						l.Add(m);
+						l.Add(m);*/
+					l.Add(m);
 				}
 			}
 		}
@@ -118,7 +139,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 		{
 			if (baseType != null) {
 				foreach (IProperty p in baseType.GetProperties()) {
-					bool ok = true;
+					/*bool ok = true;
 					if (p.IsOverridable) {
 						StringComparer comparer = p.DeclaringType.ProjectContent.Language.NameComparer;
 						foreach (IProperty oldProperty in c.Properties) {
@@ -133,7 +154,8 @@ namespace ICSharpCode.SharpDevelop.Dom
 						}
 					}
 					if (ok)
-						l.Add(p);
+						l.Add(p);*/
+					l.Add(p);
 				}
 			}
 		}

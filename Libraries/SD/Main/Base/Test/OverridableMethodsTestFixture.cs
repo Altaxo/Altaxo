@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Matthew Ward" email="mrward@users.sourceforge.net"/>
-//     <version>$Revision: 2340 $</version>
+//     <version>$Revision: 3073 $</version>
 // </file>
 
 using System;
@@ -35,7 +35,12 @@ namespace ICSharpCode.SharpDevelop.Tests
 			returnType = new MockDefaultReturnType();
 			c.DefaultReturnType = returnType;
 		}
-	
+		
+		IMethod[] GetOverridableMethods(IClass baseClass)
+		{
+			return OverrideCompletionDataProvider.GetOverridableMethods(new MockClass("DerivedClass") { BaseType = baseClass.DefaultReturnType });
+		}
+		
 		/// <summary>
 		/// Add one overridable method to the return type and this
 		/// should be returned in the list of overridable methods.
@@ -50,7 +55,7 @@ namespace ICSharpCode.SharpDevelop.Tests
 			
 			expectedMethods.Add(method);
 
-			IMethod[] methods = OverrideCompletionDataProvider.GetOverridableMethods(c);
+			IMethod[] methods = GetOverridableMethods(c);
 			
 			AssertAreMethodsEqual(expectedMethods, methods);
 		}
@@ -84,7 +89,7 @@ namespace ICSharpCode.SharpDevelop.Tests
 			method.IsConst = true;
 			returnType.Methods.Add(method);
 			
-			IMethod[] methods = OverrideCompletionDataProvider.GetOverridableMethods(c);
+			IMethod[] methods = GetOverridableMethods(c);
 			
 			AssertAreMethodsEqual(expectedMethods, methods);
 		}
@@ -101,7 +106,7 @@ namespace ICSharpCode.SharpDevelop.Tests
 			method.IsPrivate = true;
 			returnType.Methods.Add(method);
 			
-			IMethod[] methods = OverrideCompletionDataProvider.GetOverridableMethods(c);
+			IMethod[] methods = GetOverridableMethods(c);
 			
 			AssertAreMethodsEqual(expectedMethods, methods);
 		}

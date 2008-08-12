@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="none" email=""/>
-//     <version>$Revision: 1968 $</version>
+//     <version>$Revision: 3165 $</version>
 // </file>
 
 using System;
@@ -39,6 +39,7 @@ namespace ICSharpCode.SharpDevelop.Debugging
 				return;
 			}
 			
+			OnDebugStarting(EventArgs.Empty);
 			try {
 				attachedProcess = new Process();
 				attachedProcess.StartInfo = processStartInfo;
@@ -47,8 +48,21 @@ namespace ICSharpCode.SharpDevelop.Debugging
 				attachedProcess.Start();
 				OnDebugStarted(EventArgs.Empty);
 			} catch (Exception) {
+				OnDebugStopped(EventArgs.Empty);
 				throw new ApplicationException("Can't execute " + "\"" + processStartInfo.FileName + "\"\n");
 			}
+		}
+		
+		public void ShowAttachDialog()
+		{
+		}
+		
+		public void Attach(Process process)
+		{
+		}
+		
+		public void Detach()
+		{
 		}
 		
 		void AttachedProcessExited(object sender, EventArgs e)
@@ -158,6 +172,15 @@ namespace ICSharpCode.SharpDevelop.Debugging
 		{
 			if (DebugStopped != null) {
 				DebugStopped(this, e);
+			}
+		}
+		
+		public event EventHandler DebugStarting;
+		
+		protected virtual void OnDebugStarting(EventArgs e)
+		{
+			if (DebugStarting != null) {
+				DebugStarting(this, e);
 			}
 		}
 		

@@ -111,9 +111,9 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		protected bool InsightRefreshOnComma(SharpDevelopTextAreaControl editor, char ch)
 		{
 			// Show MethodInsightWindow or IndexerInsightWindow
-			NRefactoryResolver r = new NRefactoryResolver(ParserService.CurrentProjectContent, languageProperties);
+			NRefactoryResolver r = new NRefactoryResolver(languageProperties);
 			Location cursorLocation = new Location(editor.ActiveTextAreaControl.Caret.Column + 1, editor.ActiveTextAreaControl.Caret.Line + 1);
-			if (r.Initialize(editor.FileName, cursorLocation.Y, cursorLocation.X)) {
+			if (r.Initialize(ParserService.GetParseInformation(editor.FileName), cursorLocation.Y, cursorLocation.X)) {
 				TextReader currentMethod = r.ExtractCurrentMethod(editor.Text);
 				if (currentMethod != null) {
 					ILexer lexer = ParserFactory.CreateLexer(language, currentMethod);
@@ -164,12 +164,11 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			if (c == null) return false;
 			if (c.ClassType == ClassType.Enum) {
 				CtrlSpaceCompletionDataProvider cdp = new CtrlSpaceCompletionDataProvider();
-				cdp.ForceNewExpression = true;
 				ContextCompletionDataProvider cache = new ContextCompletionDataProvider(cdp);
 				cache.activationKey = charTyped;
 				cache.GenerateCompletionData(editor.FileName, editor.ActiveTextAreaControl.TextArea, charTyped);
 				ICompletionData[] completionData = cache.CompletionData;
-				Array.Sort(completionData);
+				Array.Sort(completionData, DefaultCompletionData.Compare);
 				for (int i = 0; i < completionData.Length; i++) {
 					CodeCompletionData ccd = completionData[i] as CodeCompletionData;
 					if (ccd != null && ccd.Class != null) {
@@ -216,30 +215,17 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 				overloadIsSure = true;
 				dp.DefaultIndex = 0;
 			} else {
-				IReturnType[] parameterTypes = new IReturnType[paramCount + 1];
+				IReturnType[] argumentTypes = new IReturnType[paramCount + 1];
 				int i = 0;
 				foreach (ResolveResult rr in parameters) {
 					if (rr != null) {
-						parameterTypes[i] = rr.ResolvedType;
+						argumentTypes[i] = rr.ResolvedType;
 					}
 					i++;
 				}
-				IReturnType[][] tmp;
-				int[] ranking = MemberLookupHelper.RankOverloads(methods, parameterTypes, true, out overloadIsSure, out tmp);
-				bool multipleBest = false;
-				int bestRanking = -1;
-				int best = 0;
-				for (i = 0; i < ranking.Length; i++) {
-					if (ranking[i] > bestRanking) {
-						bestRanking = ranking[i];
-						best = i;
-						multipleBest = false;
-					} else if (ranking[i] == bestRanking) {
-						multipleBest = true;
-					}
-				}
-				if (multipleBest) overloadIsSure = false;
-				dp.DefaultIndex = best;
+				IMethodOrProperty result = Dom.CSharp.OverloadResolution.FindOverload(
+					methods, argumentTypes, true, false, out overloadIsSure);
+				dp.DefaultIndex = methods.IndexOf(result);
 			}
 			editor.ShowInsightWindow(dp);
 			if (overloadIsSure) {
@@ -262,8 +248,8 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		protected IMember GetCurrentMember(SharpDevelopTextAreaControl editor)
 		{
 			ICSharpCode.TextEditor.Caret caret = editor.ActiveTextAreaControl.Caret;
-			NRefactoryResolver r = new NRefactoryResolver(ParserService.CurrentProjectContent, languageProperties);
-			if (r.Initialize(editor.FileName, caret.Line + 1, caret.Column + 1)) {
+			NRefactoryResolver r = new NRefactoryResolver(languageProperties);
+			if (r.Initialize(ParserService.GetParseInformation(editor.FileName), caret.Line + 1, caret.Column + 1)) {
 				return r.CallingMember;
 			} else {
 				return null;

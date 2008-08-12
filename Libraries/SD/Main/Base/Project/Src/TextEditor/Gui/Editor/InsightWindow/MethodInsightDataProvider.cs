@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 3104 $</version>
 // </file>
 
 using System;
@@ -50,17 +50,10 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		public string GetInsightData(int number)
 		{
 			IMember method = methods[number];
-			IAmbience conv = AmbienceService.CurrentAmbience;
-			conv.ConversionFlags = ConversionFlags.StandardConversionFlags;
+			IAmbience conv = AmbienceService.GetCurrentAmbience();
+			conv.ConversionFlags = ConversionFlags.StandardConversionFlags| ConversionFlags.UseFullyQualifiedMemberNames;
 			string documentation = method.Documentation;
-			string text;
-			if (method is IMethod) {
-				text = conv.Convert(method as IMethod);
-			} else if (method is IProperty) {
-				text = conv.Convert(method as IProperty);
-			} else {
-				text = method.ToString();
-			}
+			string text = conv.Convert(method);
 			return text + "\n" + CodeCompletionData.GetDocumentation(documentation);
 		}
 		
@@ -102,7 +95,8 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			if (expressionFinder == null)
 				expressionResult = new ExpressionResult(TextUtilities.GetExpressionBeforeOffset(textArea, useOffset));
 			else
-				expressionResult = expressionFinder.FindExpression(textArea.Document.TextContent, useOffset - 1);
+				expressionResult = expressionFinder.FindExpression(textArea.Document.TextContent, useOffset);
+			
 			if (expressionResult.Expression == null) // expression is null when cursor is in string/comment
 				return;
 			expressionResult.Expression = expressionResult.Expression.Trim();
@@ -114,21 +108,24 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 					LoggingService.DebugFormatted("ShowInsight for >>{0}<<, context={1}", expressionResult.Expression, expressionResult.Context);
 			}
 			
+			int caretLineNumber = document.GetLineNumberForOffset(useOffset);
+			int caretColumn     = useOffset - document.GetLineSegment(caretLineNumber).Offset;
 			// the parser works with 1 based coordinates
-			int caretLineNumber = document.GetLineNumberForOffset(useOffset) + 1;
-			int caretColumn     = useOffset - document.GetLineSegment(caretLineNumber).Offset + 1;
-			SetupDataProvider(fileName, document, expressionResult, caretLineNumber, caretColumn);
+			SetupDataProvider(fileName, document, expressionResult, caretLineNumber + 1, caretColumn + 1);
 		}
 		
 		protected virtual void SetupDataProvider(string fileName, IDocument document, ExpressionResult expressionResult, int caretLineNumber, int caretColumn)
 		{
 			bool constructorInsight = false;
-			if (expressionResult.Context.IsAttributeContext) {
+			if (expressionResult.Context == ExpressionContext.Attribute) {
 				constructorInsight = true;
 			} else if (expressionResult.Context.IsObjectCreation) {
 				constructorInsight = true;
 				expressionResult.Context = ExpressionContext.Type;
+			} else if (expressionResult.Context == ExpressionContext.BaseConstructorCall) {
+				constructorInsight = true;
 			}
+			
 			ResolveResult results = ParserService.Resolve(expressionResult, caretLineNumber, caretColumn, fileName, document.TextContent);
 			LanguageProperties language = ParserService.CurrentProjectContent.Language;
 			TypeResolveResult trr = results as TypeResolveResult;
@@ -141,25 +138,32 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 					constructorInsight = true;
 			}
 			if (constructorInsight) {
-				if (trr == null)
-					return;
-				foreach (IMethod method in trr.ResolvedType.GetMethods()) {
-					if (method.IsConstructor && !method.IsStatic) {
-						methods.Add(method);
+				if (trr == null) {
+					if ((expressionResult.Expression == "this") && (expressionResult.Context == ExpressionContext.BaseConstructorCall)) {
+						methods.AddRange(GetConstructorMethods(results.ResolvedType.GetMethods()));
+					}
+					
+					if ((expressionResult.Expression == "base") && (expressionResult.Context == ExpressionContext.BaseConstructorCall)) {
+						if (results.CallingClass.BaseType.DotNetName == "System.Object")
+							return;
+						methods.AddRange(GetConstructorMethods(results.CallingClass.BaseType.GetMethods()));
+					}
+				} else {
+					methods.AddRange(GetConstructorMethods(trr.ResolvedType.GetMethods()));
+					
+					if (methods.Count == 0 && trr.ResolvedClass != null && !trr.ResolvedClass.IsAbstract && !trr.ResolvedClass.IsStatic) {
+						// add default constructor
+						methods.Add(Constructor.CreateDefault(trr.ResolvedClass));
 					}
 				}
-				
-				if (methods.Count == 0 && trr.ResolvedClass != null && !trr.ResolvedClass.IsAbstract && !trr.ResolvedClass.IsStatic) {
-					// add default constructor
-					methods.Add(Constructor.CreateDefault(trr.ResolvedClass));
-				}
 			} else {
-				MethodResolveResult result = results as MethodResolveResult;
+				MethodGroupResolveResult result = results as MethodGroupResolveResult;
 				if (result == null)
 					return;
 				bool classIsInInheritanceTree = false;
 				if (result.CallingClass != null)
 					classIsInInheritanceTree = result.CallingClass.IsTypeInInheritanceTree(result.ContainingType.GetUnderlyingClass());
+				
 				foreach (IMethod method in result.ContainingType.GetMethods()) {
 					if (language.NameComparer.Equals(method.Name, result.Name)) {
 						if (method.IsAccessible(result.CallingClass, classIsInInheritanceTree)) {
@@ -172,13 +176,28 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 					ResolveResult.AddExtensions(language, list, result.CallingClass, result.ContainingType);
 					foreach (IMethodOrProperty mp in list) {
 						if (language.NameComparer.Equals(mp.Name, result.Name) && mp is IMethod) {
-							IMethod m = (IMethod)mp.Clone();
+							DefaultMethod m = (DefaultMethod)mp.CreateSpecializedMember();
+							// for the insight window, remove first parameter and mark the
+							// method as normal - this is required to show the list of
+							// parameters the method expects.
+							m.IsExtensionMethod = false;
 							m.Parameters.RemoveAt(0);
 							methods.Add(m);
 						}
 					}
 				}
 			}
+		}
+		
+		List<IMethodOrProperty> GetConstructorMethods(List<IMethod> methods)
+		{
+			List<IMethodOrProperty> constructorMethods = new List<IMethodOrProperty>();
+			foreach (IMethod method in methods) {
+				if (method.IsConstructor && !method.IsStatic) {
+					constructorMethods.Add(method);
+				}
+			}
+			return constructorMethods;
 		}
 		
 		public bool CaretOffsetChanged()

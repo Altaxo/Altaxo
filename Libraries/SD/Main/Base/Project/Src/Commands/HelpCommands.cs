@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2365 $</version>
 // </file>
 
 using System;
@@ -63,8 +63,8 @@ namespace ICSharpCode.SharpDevelop.Commands
 		public override void Run()
 		{
 			using (CommonAboutDialog ad = new CommonAboutDialog()) {
-				ad.Owner = (Form)WorkbenchSingleton.Workbench;
-				ad.ShowDialog(ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.MainForm);
+				ad.Owner = WorkbenchSingleton.MainForm;
+				ad.ShowDialog(WorkbenchSingleton.MainForm);
 			}
 		}
 	}

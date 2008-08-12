@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2522 $</version>
+//     <version>$Revision: 2819 $</version>
 // </file>
 
 using System;
@@ -49,6 +49,7 @@ namespace ICSharpCode.NRefactory.Tests.PrettyPrinter
 			IParser parser = ParserFactory.CreateParser(SupportedLanguage.CSharp, new StringReader(expression + ";"));
 			Expression e = parser.ParseExpression();
 			Assert.AreEqual("", parser.Errors.ErrorOutput);
+			Assert.IsNotNull(e, "ParseExpression returned null");
 			CSharpOutputVisitor outputVisitor = new CSharpOutputVisitor();
 			e.AcceptVisitor(outputVisitor, null);
 			Assert.AreEqual("", outputVisitor.Errors.ErrorOutput);
@@ -127,7 +128,7 @@ namespace ICSharpCode.NRefactory.Tests.PrettyPrinter
 		[Test]
 		public void ArrayInitializer()
 		{
-			TestStatement("object[] a = new object[] {1, 2, 3};");
+			TestStatement("object[] a = new object[] { 1, 2, 3 };");
 		}
 		
 		[Test]
@@ -185,6 +186,26 @@ namespace ICSharpCode.NRefactory.Tests.PrettyPrinter
 		}
 		
 		[Test]
+		public void Switch()
+		{
+			TestStatement("switch (a) {" +
+			              " case 0:" +
+			              " case 1:" +
+			              "  break;" +
+			              " case 2:" +
+			              "  return;" +
+			              " default:" +
+			              "  throw new Exception(); " +
+			              "}");
+		}
+		
+		[Test]
+		public void MultipleVariableForLoop()
+		{
+			TestStatement("for (int a = 0, b = 0; b < 100; ++b,a--) { }");
+		}
+		
+		[Test]
 		public void SizeOf()
 		{
 			TestExpression("sizeof(IntPtr)");
@@ -224,13 +245,13 @@ namespace ICSharpCode.NRefactory.Tests.PrettyPrinter
 		[Test]
 		public void LongInteger()
 		{
-			TestExpression("12l");
+			TestExpression("12L");
 		}
 		
 		[Test]
 		public void LongUnsignedInteger()
 		{
-			TestExpression("12ul");
+			TestExpression("12uL");
 		}
 		
 		[Test]
@@ -244,6 +265,12 @@ namespace ICSharpCode.NRefactory.Tests.PrettyPrinter
 		{
 			TestExpression("12.5");
 			TestExpression("12.0");
+		}
+		
+		[Test]
+		public void StringWithUnicodeLiteral()
+		{
+			TestExpression(@"""\u0001""");
 		}
 		
 		[Test]
@@ -416,6 +443,12 @@ namespace ICSharpCode.NRefactory.Tests.PrettyPrinter
 		}
 		
 		[Test]
+		public void ExtensionMethod()
+		{
+			TestTypeMember("public static T[] Slice<T>(this T[] source, int index, int count)\n{ }");
+		}
+		
+		[Test]
 		public void FixedStructField()
 		{
 			TestProgram(@"unsafe struct CrudeMessage
@@ -431,6 +464,114 @@ namespace ICSharpCode.NRefactory.Tests.PrettyPrinter
 {
 	fixed byte data[4 * sizeof(int)], data2[10];
 }");
+		}
+		
+		[Test]
+		public void ImplicitlyTypedLambda()
+		{
+			TestExpression("x => x + 1");
+		}
+		
+		[Test]
+		public void ImplicitlyTypedLambdaWithBody()
+		{
+			TestExpression("x => { return x + 1; }");
+			TestStatement("Func<int, int> f = x => { return x + 1; };");
+		}
+		
+		[Test]
+		public void ExplicitlyTypedLambda()
+		{
+			TestExpression("(int x) => x + 1");
+		}
+		
+		[Test]
+		public void ExplicitlyTypedLambdaWithBody()
+		{
+			TestExpression("(int x) => { return x + 1; }");
+		}
+		
+		[Test]
+		public void LambdaMultipleParameters()
+		{
+			TestExpression("(x, y) => x * y");
+			TestExpression("(x, y) => { return x * y; }");
+			TestExpression("(int x, int y) => x * y");
+			TestExpression("(int x, int y) => { return x * y; }");
+		}
+		
+		[Test]
+		public void LambdaNoParameters()
+		{
+			TestExpression("() => Console.WriteLine()");
+			TestExpression("() => { Console.WriteLine(); }");
+		}
+		
+		[Test]
+		public void ObjectInitializer()
+		{
+			TestExpression("new Point { X = 0, Y = 1 }");
+			TestExpression("new Rectangle { P1 = new Point { X = 0, Y = 1 }, P2 = new Point { X = 2, Y = 3 } }");
+			TestExpression("new Rectangle(arguments) { P1 = { X = 0, Y = 1 }, P2 = { X = 2, Y = 3 } }");
+		}
+		
+		[Test]
+		public void CollectionInitializer()
+		{
+			TestExpression("new List<int> { 0, 1, 2, 3, 4, 5 }");
+			TestExpression(@"new List<Contact> { new Contact { Name = ""Chris Smith"", PhoneNumbers = { ""206-555-0101"", ""425-882-8080"" } }, new Contact { Name = ""Bob Harris"", PhoneNumbers = { ""650-555-0199"" } } }");
+		}
+		
+		[Test]
+		public void AnonymousTypeCreation()
+		{
+			TestExpression("new { obj.Name, Price = 26.9, ident }");
+		}
+		
+		[Test]
+		public void ImplicitlyTypedArrayCreation()
+		{
+			TestExpression("new[] { 1, 10, 100, 1000 }");
+		}
+		
+		[Test]
+		public void QuerySimpleWhere()
+		{
+			TestExpression("from n in numbers where n < 5 select n");
+		}
+		
+		[Test]
+		public void QueryMultipleFrom()
+		{
+			TestExpression("from c in customers" +
+			               " where c.Region == \"WA\"" +
+			               " from o in c.Orders" +
+			               " where o.OrderDate >= cutoffDate" +
+			               " select new { c.CustomerID, o.OrderID }");
+		}
+		
+		[Test]
+		public void QuerySimpleOrdering()
+		{
+			TestExpression("from w in words" +
+			               " orderby w" +
+			               " select w");
+		}
+		
+		[Test]
+		public void QueryComplexOrdering()
+		{
+			TestExpression("from w in words" +
+			               " orderby w.Length descending, w ascending" +
+			               " select w");
+		}
+		
+		[Test]
+		public void QueryGroupInto()
+		{
+			TestExpression("from n in numbers" +
+			               " group n by n % 5 into g" +
+			               " select new { Remainder = g.Key, Numbers = g }");
 		}
 	}
 }

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Matthew Ward" email="mrward@users.sourceforge.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 3065 $</version>
 // </file>
 
 using System;
@@ -41,9 +41,8 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		/// </summary>
 		class IncrementalSearchFormattingStrategy : DefaultFormattingStrategy
 		{
-			public override int FormatLine(TextArea textArea, int line, int cursorOffset, char ch)
+			public override void FormatLine(TextArea textArea, int line, int cursorOffset, char ch)
 			{
-				return 0;
 			}
 		}
 		
@@ -58,6 +57,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		/// <summary>
 		/// Creates an incremental search for the specified text editor.
 		/// </summary>
+		/// <param name="textEditor">The text editor to search in.</param>
 		/// <param name="forwards">Indicates whether the search goes
 		/// forward from the cursor or backwards.</param>
 		public IncrementalSearch(TextEditorControl textEditor, bool forwards)

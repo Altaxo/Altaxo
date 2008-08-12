@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2520 $</version>
+//     <version>$Revision: 3142 $</version>
 // </file>
 
 using System;
@@ -34,11 +34,8 @@ namespace ICSharpCode.Core
 	/// <summary>
 	/// A utility class related to file utilities.
 	/// </summary>
-	public static class FileUtility
+	public static partial class FileUtility
 	{
-		// TODO: GetFullPath is a **very** expensive method (performance-wise)!
-		// Call it only when necessary. (see IsEqualFile)
-		
 		readonly static char[] separators = { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar, Path.VolumeSeparatorChar };
 		static string applicationRootPath = AppDomain.CurrentDomain.BaseDirectory;
 		const string fileNameRegEx = @"^([a-zA-Z]:)?[^:]+$";
@@ -52,43 +49,89 @@ namespace ICSharpCode.Core
 			}
 		}
 		
+		static string GetPathFromRegistry(string key, string valueName)
+		{
+			using (RegistryKey installRootKey = Registry.LocalMachine.OpenSubKey(key)) {
+				if (installRootKey != null) {
+					object o = installRootKey.GetValue(valueName);
+					if (o != null) {
+						string r = o.ToString();
+						if (!string.IsNullOrEmpty(r))
+							return r;
+					}
+				}
+			}
+			return null;
+		}
+		
+		#region InstallRoot Properties
+		
+		static string netFrameworkInstallRoot = null;
 		/// <summary>
 		/// Gets the installation root of the .NET Framework (@"C:\Windows\Microsoft.NET\Framework\")
 		/// </summary>
-		public static string NETFrameworkInstallRoot {
+		public static string NetFrameworkInstallRoot {
 			get {
-				using (RegistryKey installRootKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\.NETFramework")) {
-					object o = installRootKey.GetValue("InstallRoot");
-					return o == null ? String.Empty : o.ToString();
+				if (netFrameworkInstallRoot == null) {
+					netFrameworkInstallRoot = GetPathFromRegistry(@"SOFTWARE\Microsoft\.NETFramework", "InstallRoot") ?? string.Empty;
 				}
+				return netFrameworkInstallRoot;
 			}
 		}
 		
+		static string netSdk20InstallRoot = null;
 		/// <summary>
-		/// Gets the Windows Vista SDK installation root. If the Vista SDK is not installed, the
-		/// .NET 2.0 SDK installation root is returned. If both are not installed, an empty string is returned.
+		/// Location of the .NET 2.0 SDK install root.
 		/// </summary>
-		public static string NetSdkInstallRoot {
+		public static string NetSdk20InstallRoot {
 			get {
-				string val = String.Empty;
-				RegistryKey sdkRootKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Microsoft SDKs\Windows\v6.0");
-				if (sdkRootKey != null) {
-					object o = sdkRootKey.GetValue("InstallationFolder");
-					val = o == null ? String.Empty : o.ToString();
-					sdkRootKey.Close();
+				if (netSdk20InstallRoot == null) {
+					netSdk20InstallRoot = GetPathFromRegistry(@"SOFTWARE\Microsoft\.NETFramework", "sdkInstallRootv2.0") ?? string.Empty;
 				}
-				
-				if (val.Length == 0) {
-					RegistryKey installRootKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\.NETFramework");
-					if (installRootKey != null) {
-						object o = installRootKey.GetValue("sdkInstallRootv2.0");
-						val = o == null ? String.Empty : o.ToString();
-						installRootKey.Close();
-					}
-				}
-				return val;
+				return netSdk20InstallRoot;
 			}
 		}
+		
+		static string windowsSdk60InstallRoot = null;
+		/// <summary>
+		/// Location of the .NET 3.0 SDK (Windows SDK 6.0) install root.
+		/// </summary>
+		public static string WindowsSdk60InstallRoot {
+			get {
+				if (windowsSdk60InstallRoot == null) {
+					windowsSdk60InstallRoot = GetPathFromRegistry(@"SOFTWARE\Microsoft\Microsoft SDKs\Windows\v6.0", "InstallationFolder") ?? string.Empty;
+				}
+				return windowsSdk60InstallRoot;
+			}
+		}
+		
+		static string windowsSdk60aInstallRoot = null;
+		/// <summary>
+		/// Location of the Windows SDK Components in Visual Studio 2008 (.NET 3.5; Windows SDK 6.0a).
+		/// </summary>
+		public static string WindowsSdk60aInstallRoot {
+			get {
+				if (windowsSdk60aInstallRoot == null) {
+					windowsSdk60aInstallRoot = GetPathFromRegistry(@"SOFTWARE\Microsoft\Microsoft SDKs\Windows\v6.0a", "InstallationFolder") ?? string.Empty;
+				}
+				return windowsSdk60aInstallRoot;
+			}
+		}
+		
+		static string windowsSdk61InstallRoot = null;
+		/// <summary>
+		/// Location of the .NET 3.5 SDK (Windows SDK 6.1) install root.
+		/// </summary>
+		public static string WindowsSdk61InstallRoot {
+			get {
+				if (windowsSdk61InstallRoot == null) {
+					windowsSdk61InstallRoot = GetPathFromRegistry(@"SOFTWARE\Microsoft\Microsoft SDKs\Windows\v6.1", "InstallationFolder") ?? string.Empty;
+				}
+				return windowsSdk61InstallRoot;
+			}
+		}
+		
+		#endregion
 		
 		public static string Combine(params string[] paths)
 		{
@@ -113,8 +156,8 @@ namespace ICSharpCode.Core
 			if (dir1 == null || dir2 == null) return null;
 			if (IsUrl(dir1) || IsUrl(dir2)) return null;
 			
-			dir1 = Path.GetFullPath(dir1);
-			dir2 = Path.GetFullPath(dir2);
+			dir1 = NormalizePath(dir1);
+			dir2 = NormalizePath(dir2);
 			
 			string[] aPath = dir1.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
 			string[] bPath = dir2.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
@@ -135,6 +178,36 @@ namespace ICSharpCode.Core
 		}
 		
 		/// <summary>
+		/// Searches all the .net sdk bin folders and return the path of the
+		/// exe from the latest sdk.
+		/// </summary>
+		/// <param name="exeName">The EXE to search for.</param>
+		/// <returns>The path of the executable.</returns>
+		/// <exception cref="System.IO.FileNotFoundException">
+		/// Thrown if the exe is not found.
+		/// </exception>
+		public static string GetSdkPath(string exeName) {
+			string execPath;
+			if (!string.IsNullOrEmpty(WindowsSdk61InstallRoot)) {
+				execPath = Path.Combine(WindowsSdk61InstallRoot, "bin\\" + exeName);
+				if (File.Exists(execPath)) { return execPath; }
+			}
+			if (!string.IsNullOrEmpty(WindowsSdk60aInstallRoot)) {
+				execPath = Path.Combine(WindowsSdk60aInstallRoot, "bin\\" + exeName);
+				if (File.Exists(execPath)) { return execPath; }
+			}
+			if (!string.IsNullOrEmpty(WindowsSdk60InstallRoot)) {
+				execPath = Path.Combine(WindowsSdk60InstallRoot, "bin\\" + exeName);
+				if (File.Exists(execPath)) { return execPath; }
+			}
+			if (!string.IsNullOrEmpty(NetSdk20InstallRoot)) {
+				execPath = Path.Combine(NetSdk20InstallRoot, "bin\\" + exeName);
+				if (File.Exists(execPath)) { return execPath; }
+			}
+			throw new FileNotFoundException(StringParser.Parse("${res:Fileutility.CantFindExecutableError}", new string[,] { {"EXECUTABLE",  exeName} }));
+		}
+		
+		/// <summary>
 		/// Converts a given absolute path and a given base path to a path that leads
 		/// from the base path to the absoulte path. (as a relative path)
 		/// </summary>
@@ -143,12 +216,9 @@ namespace ICSharpCode.Core
 			if (IsUrl(absPath) || IsUrl(baseDirectoryPath)){
 				return absPath;
 			}
-			try {
-				baseDirectoryPath = Path.GetFullPath(baseDirectoryPath.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar));
-				absPath           = Path.GetFullPath(absPath);
-			} catch (Exception ex) {
-				throw new ArgumentException("GetRelativePath error '" + baseDirectoryPath + "' -> '" + absPath + "'", ex);
-			}
+			
+			baseDirectoryPath = NormalizePath(baseDirectoryPath);
+			absPath           = NormalizePath(absPath);
 			
 			string[] bPath = baseDirectoryPath.Split(separators);
 			string[] aPath = absPath.Split(separators);
@@ -178,62 +248,28 @@ namespace ICSharpCode.Core
 		}
 		
 		/// <summary>
-		/// Converts a given relative path and a given base path to a path that leads
-		/// to the relative path absoulte.
+		/// Combines baseDirectoryPath with relPath and normalizes the resulting path.
 		/// </summary>
 		public static string GetAbsolutePath(string baseDirectoryPath, string relPath)
 		{
-			return Path.GetFullPath(Path.Combine(baseDirectoryPath, relPath));
-		}
-		
-		public static bool IsEqualFileName(string fileName1, string fileName2)
-		{
-			// Optimized for performance:
-			//return Path.GetFullPath(fileName1.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)).ToLower() == Path.GetFullPath(fileName2.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)).ToLower();
-			
-			if (string.IsNullOrEmpty(fileName1) || string.IsNullOrEmpty(fileName2)) return false;
-			
-			char lastChar;
-			lastChar = fileName1[fileName1.Length - 1];
-			if (lastChar == Path.DirectorySeparatorChar || lastChar == Path.AltDirectorySeparatorChar)
-				fileName1 = fileName1.Substring(0, fileName1.Length - 1);
-			lastChar = fileName2[fileName2.Length - 1];
-			if (lastChar == Path.DirectorySeparatorChar || lastChar == Path.AltDirectorySeparatorChar)
-				fileName2 = fileName2.Substring(0, fileName2.Length - 1);
-			
-			try {
-				if (fileName1.Length < 2 || fileName1[1] != ':' || fileName1.IndexOf("/.") >= 0 || fileName1.IndexOf("\\.") >= 0)
-					fileName1 = Path.GetFullPath(fileName1);
-				if (fileName2.Length < 2 || fileName2[1] != ':' || fileName2.IndexOf("/.") >= 0 || fileName2.IndexOf("\\.") >= 0)
-					fileName2 = Path.GetFullPath(fileName2);
-			} catch (Exception) { }
-			return string.Equals(fileName1, fileName2, StringComparison.OrdinalIgnoreCase);
+			return NormalizePath(Path.Combine(baseDirectoryPath, relPath));
 		}
 		
 		public static bool IsBaseDirectory(string baseDirectory, string testDirectory)
 		{
-			try {
-				baseDirectory = Path.GetFullPath(baseDirectory).ToUpperInvariant();
-				testDirectory = Path.GetFullPath(testDirectory).ToUpperInvariant();
-				baseDirectory = baseDirectory.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
-				testDirectory = testDirectory.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
-				
-				if (baseDirectory[baseDirectory.Length - 1] != Path.DirectorySeparatorChar)
-					baseDirectory += Path.DirectorySeparatorChar;
-				if (testDirectory[testDirectory.Length - 1] != Path.DirectorySeparatorChar)
-					testDirectory += Path.DirectorySeparatorChar;
-				
-				return testDirectory.StartsWith(baseDirectory);
-			} catch (Exception) {
+			if (baseDirectory == null || testDirectory == null)
 				return false;
-			}
+			baseDirectory = NormalizePath(baseDirectory) + Path.DirectorySeparatorChar;
+			testDirectory = NormalizePath(testDirectory) + Path.DirectorySeparatorChar;
+			
+			return testDirectory.StartsWith(baseDirectory, StringComparison.InvariantCultureIgnoreCase);
 		}
 		
 		public static string RenameBaseDirectory(string fileName, string oldDirectory, string newDirectory)
 		{
-			fileName     = Path.GetFullPath(fileName);
-			oldDirectory = Path.GetFullPath(oldDirectory.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar));
-			newDirectory = Path.GetFullPath(newDirectory.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar));
+			fileName     = NormalizePath(fileName);
+			oldDirectory = NormalizePath(oldDirectory.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar));
+			newDirectory = NormalizePath(newDirectory.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar));
 			if (IsBaseDirectory(oldDirectory, fileName)) {
 				if (fileName.Length == oldDirectory.Length) {
 					return newDirectory;
@@ -283,10 +319,10 @@ namespace ICSharpCode.Core
 		/// </summary>
 		static void SearchDirectory(string directory, string filemask, List<string> collection, bool searchSubdirectories, bool ignoreHidden)
 		{
-			// If Directory.GetFiles() searches the 8.3 name as well as the full name so if the filemask is 
+			// If Directory.GetFiles() searches the 8.3 name as well as the full name so if the filemask is
 			// "*.xpt" it will return "Template.xpt~"
 			bool isExtMatch = Regex.IsMatch(filemask, @"^\*\..{3}$");
-			string ext = null; 
+			string ext = null;
 			string[] file = Directory.GetFiles(directory, filemask);
 			if (isExtMatch) ext = filemask.Remove(0,1);
 			
@@ -315,9 +351,9 @@ namespace ICSharpCode.Core
 		public static int MaxPathLength = 260;
 		
 		/// <summary>
-		/// This method checks the file fileName if it is valid.
+		/// This method checks if a path (full or relative) is valid.
 		/// </summary>
-		public static bool IsValidFileName(string fileName)
+		public static bool IsValidPath(string fileName)
 		{
 			// Fixme: 260 is the hardcoded maximal length for a path on my Windows XP system
 			//        I can't find a .NET property or method for determining this variable.
@@ -367,7 +403,7 @@ namespace ICSharpCode.Core
 		/// </summary>
 		public static bool IsValidDirectoryName(string name)
 		{
-			if (!IsValidFileName(name)) {
+			if (!IsValidPath(name)) {
 				return false;
 			}
 			if (name.IndexOfAny(new char[]{Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar}) >= 0) {
@@ -466,7 +502,7 @@ namespace ICSharpCode.Core
 		// Observe SAVE functions
 		public static FileOperationResult ObservedSave(FileOperationDelegate saveFile, string fileName, string message, FileErrorPolicy policy)
 		{
-			System.Diagnostics.Debug.Assert(IsValidFileName(fileName));
+			System.Diagnostics.Debug.Assert(IsValidPath(fileName));
 			try {
 				saveFile();
 				OnFileSaved(new FileNameEventArgs(fileName));
@@ -511,7 +547,7 @@ namespace ICSharpCode.Core
 		
 		public static FileOperationResult ObservedSave(NamedFileOperationDelegate saveFileAs, string fileName, string message, FileErrorPolicy policy)
 		{
-			System.Diagnostics.Debug.Assert(IsValidFileName(fileName));
+			System.Diagnostics.Debug.Assert(IsValidPath(fileName));
 			try {
 				string directory = Path.GetDirectoryName(fileName);
 				if (!Directory.Exists(directory)) {

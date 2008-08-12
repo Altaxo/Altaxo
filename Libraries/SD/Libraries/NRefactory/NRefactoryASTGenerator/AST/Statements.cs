@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1703 $</version>
+//     <version>$Revision: 3184 $</version>
 // </file>
 
 using System;
@@ -188,10 +188,9 @@ namespace NRefactoryASTGenerator.Ast
 	class EmptyStatement : Statement {}
 	
 	class FixedStatement : StatementWithEmbeddedStatement {
-		TypeReference             typeReference;
-		List<VariableDeclaration> pointerDeclarators;
+		Statement pointerDeclaration;
 		
-		public FixedStatement(TypeReference typeReference, List<VariableDeclaration> pointerDeclarators, Statement embeddedStatement) {}
+		public FixedStatement(Statement pointerDeclaration, Statement embeddedStatement) {}
 	}
 	
 	[IncludeBoolProperty("IsDefaultCase", "return expression.IsNull;")]

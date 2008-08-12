@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2640 $</version>
 // </file>
 
 using System;
@@ -19,18 +19,13 @@ namespace ICSharpCode.TextEditor.Document
 		/// <summary>
 		/// This function formats a specific line after <code>ch</code> is pressed.
 		/// </summary>
-		/// <returns>
-		/// the caret delta position the caret will be moved this number
-		/// of bytes (e.g. the number of bytes inserted before the caret, or
-		/// removed, if this number is negative)
-		/// </returns>
-		int FormatLine(TextArea textArea, int line, int caretOffset, char charTyped);
+		void FormatLine(TextArea textArea, int line, int caretOffset, char charTyped);
 		
 		/// <summary>
 		/// This function sets the indentation level in a specific line
 		/// </summary>
 		/// <returns>
-		/// the number of inserted characters.
+		/// The target caret position (length of new indentation).
 		/// </returns>
 		int IndentLine(TextArea textArea, int line);
 		

@@ -6,7 +6,12 @@
 // </file>
 
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Text;
+using ICSharpCode.NRefactory;
+using ICSharpCode.NRefactory.Parser;
+using ICSharpCode.NRefactory.Parser.CSharp;
 
 namespace ICSharpCode.SharpDevelop.Dom.CSharp
 {
@@ -15,381 +20,846 @@ namespace ICSharpCode.SharpDevelop.Dom.CSharp
 	/// </summary>
 	public class CSharpExpressionFinder : IExpressionFinder
 	{
-		string fileName;
+		ParseInformation parseInformation;
+		IProjectContent projectContent;
 		
-		public CSharpExpressionFinder(string fileName)
+		public CSharpExpressionFinder(ParseInformation parseInformation)
 		{
-			this.fileName = fileName;
-		}
-		
-		#region Capture Context
-		ExpressionResult CreateResult(string expression, string inText, int offset)
-		{
-			if (expression == null)
-				return new ExpressionResult(null);
-			if (expression.StartsWith("using "))
-				return new ExpressionResult(expression.Substring(6).TrimStart(), ExpressionContext.Namespace, null);
-			if (!hadParenthesis && expression.StartsWith("new ")) {
-				return new ExpressionResult(expression.Substring(4).TrimStart(), GetCreationContext(), null);
+			this.parseInformation = parseInformation;
+			if (parseInformation != null && parseInformation.MostRecentCompilationUnit != null) {
+				projectContent = parseInformation.MostRecentCompilationUnit.ProjectContent;
+			} else {
+				projectContent = DefaultProjectContent.DummyProjectContent;
 			}
-			if (IsInAttribute(inText, offset))
-				return new ExpressionResult(expression, ExpressionContext.GetAttribute(HostCallback.GetCurrentProjectContent()));
-			return new ExpressionResult(expression);
 		}
 		
-		ExpressionContext GetCreationContext()
+		ILexer lexer;
+		Location targetPosition;
+		List<int> lineOffsets;
+		
+		int LocationToOffset(Location location)
 		{
-			UnGetToken();
-			if (GetNextNonWhiteSpace() == '=') { // was: "= new"
-				ReadNextToken();
-				if (curTokenType == Ident) {     // was: "ident = new"
-					int typeEnd = offset;
-					ReadNextToken();
-					int typeStart = -1;
-					while (curTokenType == Ident) {
-						typeStart = offset + 1;
-						ReadNextToken();
-						if (curTokenType == Dot) {
-							ReadNextToken();
-						} else {
+			if (location.Line <= 0) return -1;
+			return lineOffsets[location.Line - 1] + location.Column - 1;
+		}
+		
+		Location OffsetToLocation(int offset)
+		{
+			int lineNumber = lineOffsets.BinarySearch(offset);
+			if (lineNumber < 0) {
+				lineNumber = (~lineNumber) - 1;
+			}
+			return new Location(offset - lineOffsets[lineNumber] + 1, lineNumber + 1);
+		}
+		
+		enum FrameType
+		{
+			Global,
+			/// <summary>
+			/// "class C { * }"
+			/// </summary>
+			TypeDecl,
+			/// <summary>
+			/// "interface I { * }"
+			/// </summary>
+			Interface,
+			/// <summary>
+			/// "enum E { * }"
+			/// </summary>
+			Enum,
+			/// <summary>
+			/// "void Method(*) {}"
+			/// </summary>
+			ParameterList,
+			/// <summary>
+			/// "public string Property { * }"
+			/// </summary>
+			Property,
+			/// <summary>
+			/// "public event EventHandler SomethingChanged { * }"
+			/// </summary>
+			Event,
+			/// <summary>
+			/// "void Method() { * }"
+			/// </summary>
+			Statements,
+			/// <summary>
+			/// "if (*) {}"
+			/// </summary>
+			Expression,
+			/// <summary>
+			/// "new T { * }"
+			/// </summary>
+			ObjectInitializer,
+			/// <summary>
+			/// "[*] class ..."
+			/// </summary>
+			AttributeSection,
+			/// <summary>
+			/// "[Obsolete(*)] class ..."
+			/// </summary>
+			AttributeArguments,
+			/// <summary>
+			/// Type reference frame "typeof(*)"
+			/// </summary>
+			TypeReference,
+			/// <summary>
+			/// Type parameter declaration, "class C&lt;*gt;"
+			/// </summary>
+			TypeParameterDecl,
+			/// <summary>
+			/// The Frame is no longer active.
+			/// </summary>
+			Popped
+		}
+		
+		/// <summary>
+		/// Used to support a frame-type specific state machine. Used in TrackCurrentContext
+		/// </summary>
+		enum FrameState
+		{
+			/// <summary>
+			/// the default state (all frame types)
+			/// </summary>
+			Normal,
+			/// <summary>
+			/// parsing an inheritance list (Global+TypeDecl)
+			/// </summary>
+			InheritanceList,
+			/// <summary>
+			/// parsing an event declaration (Interface+TypeDecl)
+			/// </summary>
+			EventDecl,
+			/// <summary>
+			/// parsing a field declaration (Interface+TypeDecl).
+			/// Could also be a method or property declaration.
+			/// </summary>
+			FieldDecl,
+			/// <summary>
+			/// parsing a field declaration, the field name was already specified (Interface+TypeDecl).
+			/// Could also be a method or property declaration.
+			/// </summary>
+			FieldDeclAfterIdentifier,
+			/// <summary>
+			/// parsing a method declaration (Interface+TypeDecl) or a delegate declaration (Global+TypeDecl)
+			/// </summary>
+			MethodDecl,
+			/// <summary>
+			/// parsing a field initializer (TypeDecl)
+			/// </summary>
+			Initializer,
+			/// <summary>
+			/// Between class/struct/enum keyword and body of the type declaration
+			/// </summary>
+			TypeDecl,
+			/// <summary>
+			/// Between "where" and start of the generic method/class
+			/// </summary>
+			Constraints,
+			/// <summary>
+			/// Between "new" and "(" / "{".
+			/// </summary>
+			ObjectCreation,
+			/// <summary>
+			/// In object initializer, in the value part (after "=")
+			/// </summary>
+			ObjectInitializerValue
+		}
+		
+		/// <summary>
+		/// When parsing the code, each block starting with one of the brackets "(", "[", "{" or "&lt;" (for generics)
+		/// gets an instance of Frame.
+		/// </summary>
+		sealed class Frame
+		{
+			internal Frame parent;
+			internal FrameType type;
+			internal FrameType parenthesisChildType;
+			internal FrameType curlyChildType;
+			internal FrameType squareBracketChildType;
+			internal FrameState state;
+			internal char bracketType;
+			internal ExpressionContext context;
+			internal IReturnType expectedType;
+			
+			internal bool InExpressionMode {
+				get {
+					return type == FrameType.Statements
+						|| type == FrameType.Expression
+						|| type == FrameType.AttributeArguments
+						|| type == FrameType.ObjectInitializer
+						|| state == FrameState.Initializer
+						|| state == FrameState.ObjectCreation;
+				}
+			}
+			
+			internal void SetContext(ExpressionContext context)
+			{
+				this.context = context;
+				this.expectedType = null;
+			}
+			internal void SetExpectedType(IReturnType expectedType)
+			{
+				this.expectedType = expectedType;
+				this.context = ExpressionContext.Default;
+			}
+			internal void SetDefaultContext()
+			{
+				if (state == FrameState.InheritanceList) {
+					if (curlyChildType == FrameType.Enum) {
+						SetContext(ExpressionContext.EnumBaseType);
+					} else if (curlyChildType == FrameType.Interface) {
+						SetContext(ExpressionContext.Interface);
+					} else {
+						SetContext(ExpressionContext.InheritableType);
+					}
+				} else if (state == FrameState.Constraints) {
+					SetContext(ExpressionContext.Constraints);
+				} else {
+					switch (type) {
+						case FrameType.Global:
+							SetContext(ExpressionContext.Global);
 							break;
-						}
-					}
-					if (typeStart >= 0) {
-						string className = text.Substring(typeStart, typeEnd - typeStart);
-						int pos = className.IndexOf('<');
-						string nonGenericClassName, genericPart;
-						int typeParameterCount = 0;
-						if (pos > 0) {
-							nonGenericClassName = className.Substring(0, pos);
-							genericPart = className.Substring(pos);
-							pos = 0;
-							do {
-								typeParameterCount += 1;
-								pos = genericPart.IndexOf(',', pos + 1);
-							} while (pos > 0);
-						} else {
-							nonGenericClassName = className;
-							genericPart = null;
-						}
-						ClassFinder finder = new ClassFinder(fileName, text, typeStart);
-						IReturnType t = finder.SearchType(nonGenericClassName, typeParameterCount);
-						IClass c = (t != null) ? t.GetUnderlyingClass() : null;
-						if (c != null) {
-							ExpressionContext context = ExpressionContext.TypeDerivingFrom(c, true);
-							if (context.ShowEntry(c)) {
-								if (genericPart != null) {
-									DefaultClass genericClass = new DefaultClass(c.CompilationUnit, c.ClassType, c.Modifiers, c.Region, c.DeclaringType);
-									genericClass.FullyQualifiedName = c.FullyQualifiedName + genericPart;
-									genericClass.Documentation = c.Documentation;
-									context.SuggestedItem = genericClass;
-								} else {
-									context.SuggestedItem = c;
-								}
+						case FrameType.TypeDecl:
+							SetContext(ExpressionContext.TypeDeclaration);
+							break;
+						case FrameType.Enum:
+						case FrameType.TypeParameterDecl:
+							SetContext(ExpressionContext.IdentifierExpected);
+							break;
+						case FrameType.Interface:
+							SetContext(ExpressionContext.InterfaceDeclaration);
+							break;
+						case FrameType.Event:
+							SetContext(ExpressionContext.EventDeclaration);
+							break;
+						case FrameType.Property:
+							if (parent != null && parent.type == FrameType.Interface) {
+								SetContext(ExpressionContext.InterfacePropertyDeclaration);
+							} else {
+								SetContext(ExpressionContext.PropertyDeclaration);
 							}
-							return context;
+							break;
+						case FrameType.Statements:
+							SetContext(ExpressionContext.MethodBody);
+							break;
+						case FrameType.ParameterList:
+							SetContext(ExpressionContext.ParameterType);
+							break;
+						case FrameType.ObjectInitializer:
+							if (state == FrameState.ObjectInitializerValue) {
+								SetContext(ExpressionContext.Default);
+							} else {
+								SetContext(ExpressionContext.ObjectInitializer);
+							}
+							break;
+						case FrameType.AttributeSection:
+							SetContext(ExpressionContext.Attribute);
+							break;
+						case FrameType.TypeReference:
+							SetContext(ExpressionContext.Type);
+							break;
+						default:
+							SetContext(ExpressionContext.Default);
+							break;
+					}
+				}
+			}
+			
+			/// <summary>start of the expression currently being tracked</summary>
+			internal Location lastExpressionStart;
+			
+			/// <summary>Position of the last "new" keyword</summary>
+			internal Location lastNewTokenStart;
+			
+			public Frame() : this(null, '\0') {}
+			
+			public Frame(Frame parent, char bracketType)
+			{
+				this.parent = parent;
+				this.bracketType = bracketType;
+				if (parent != null) {
+					if (bracketType == '{') {
+						this.type = parent.curlyChildType;
+					} else if (bracketType == '(') {
+						this.type = parent.parenthesisChildType;
+					} else if (bracketType == '[') {
+						this.type = parent.squareBracketChildType;
+					} else {
+						this.type = parent.type;
+					}
+				}
+				ResetCurlyChildType();
+				ResetParenthesisChildType();
+				ResetSquareBracketChildType();
+				SetDefaultContext();
+			}
+			
+			public void ResetCurlyChildType()
+			{
+				if (state == FrameState.Initializer) {
+					this.curlyChildType = FrameType.Expression;
+				} else {
+					switch (this.type) {
+						case FrameType.Property:
+						case FrameType.Event:
+							this.curlyChildType = FrameType.Statements;
+							break;
+						default:
+							this.curlyChildType = this.type;
+							break;
+					}
+				}
+			}
+			
+			public void ResetParenthesisChildType()
+			{
+				if (this.InExpressionMode) {
+					this.parenthesisChildType = FrameType.Expression;
+				} else if (type == FrameType.AttributeSection) {
+					this.parenthesisChildType = FrameType.AttributeArguments;
+				} else {
+					this.parenthesisChildType = this.type;
+				}
+			}
+			
+			public void ResetSquareBracketChildType()
+			{
+				if (InExpressionMode)
+					this.squareBracketChildType = FrameType.Expression;
+				else
+					this.squareBracketChildType = FrameType.AttributeSection;
+			}
+		}
+		
+		void Init(string text, int offset)
+		{
+			if (offset < 0 || offset > text.Length)
+				throw new ArgumentOutOfRangeException("offset", offset, "offset must be between 0 and " + text.Length);
+			lexer = ParserFactory.CreateLexer(SupportedLanguage.CSharp, new StringReader(text));
+			lexer.SkipAllComments = true;
+			lineOffsets = new List<int>();
+			lineOffsets.Add(0);
+			for (int i = 0; i < text.Length; i++) {
+				if (i == offset) {
+					targetPosition = new Location(offset - lineOffsets[lineOffsets.Count - 1] + 1, lineOffsets.Count);
+				}
+				if (text[i] == '\n') {
+					lineOffsets.Add(i + 1);
+				}
+			}
+			if (offset == text.Length) {
+				targetPosition = new Location(offset - lineOffsets[lineOffsets.Count - 1] + 1, lineOffsets.Count);
+			}
+			
+			frame = new Frame();
+			lastToken = Tokens.EOF;
+		}
+		
+		Frame frame;
+		int lastToken;
+		
+		public ExpressionResult FindExpression(string text, int offset)
+		{
+			Init(text, offset);
+			Token token;
+			Location lastError = Location.Empty;
+			lexer.Errors.Error = delegate (int errorLine, int errorCol, string errorMsg) {
+				lastError = new Location(errorCol, errorLine);
+			};
+			while ((token = lexer.NextToken()) != null) {
+				if (token.kind == Tokens.EOF) break;
+				
+				if (targetPosition <= token.Location) {
+					break;
+				}
+				ApplyToken(token);
+				if (targetPosition <= token.EndLocation) {
+					if (token.kind == Tokens.Literal) {
+						// do not return string literal as expression if offset was inside the literal,
+						// or if it was at the end of the literal when the literal was not terminated correctly.
+						if (targetPosition < token.EndLocation || lastError == token.Location) {
+							frame.lastExpressionStart = Location.Empty;
 						}
 					}
+					break;
+				}
+				lastToken = token.kind;
+			}
+			
+			int tokenOffset;
+			if (token == null || token.kind == Tokens.EOF)
+				tokenOffset = text.Length;
+			else
+				tokenOffset = LocationToOffset(token.Location);
+			int lastExpressionStartOffset = LocationToOffset(frame.lastExpressionStart);
+			if (lastExpressionStartOffset >= 0) {
+				if (offset < tokenOffset) {
+					// offset is in front of this token
+					return MakeResult(text, lastExpressionStartOffset, tokenOffset, frame.context);
+				} else {
+					// offset is IN this token
+					return MakeResult(text, lastExpressionStartOffset, offset, frame.context);
 				}
 			} else {
-				UnGet();
-				if (ReadIdentifier(GetNextNonWhiteSpace()) == "throw") {
-					return ExpressionContext.TypeDerivingFrom(HostCallback.GetCurrentProjectContent().GetClass("System.Exception"), true);
-				}
+				return new ExpressionResult(null, frame.context);
 			}
-			return ExpressionContext.ObjectCreation;
 		}
 		
-		bool IsInAttribute(string txt, int offset)
+		void ApplyToken(Token token)
 		{
-			// Get line start:
-			int lineStart = offset;
-			while (--lineStart > 0 && txt[lineStart] != '\n');
-			
-			bool inAttribute = false;
-			int parens = 0;
-			for (int i = lineStart + 1; i < offset; i++) {
-				char ch = txt[i];
-				if (char.IsWhiteSpace(ch))
-					continue;
-				if (!inAttribute) {
-					// outside attribute
-					if (ch == '[')
-						inAttribute = true;
-					else
-						return false;
-				} else if (parens == 0) {
-					// inside attribute, outside parameter list
-					if (ch == ']')
-						inAttribute = false;
-					else if (ch == '(')
-						parens = 1;
-					else if (!char.IsLetterOrDigit(ch) && ch != ',')
-						return false;
+			TrackCurrentFrameAndExpression(token);
+			TrackCurrentContext(token);
+		}
+		
+		void TrackCurrentFrameAndExpression(Token token)
+		{
+			while (frame.bracketType == '<' && !Tokens.ValidInsideTypeName[token.kind]) {
+				frame.type = FrameType.Popped;
+				frame = frame.parent;
+			}
+			switch (token.kind) {
+				case Tokens.OpenCurlyBrace:
+					frame.lastExpressionStart = Location.Empty;
+					frame = new Frame(frame, '{');
+					frame.parent.ResetCurlyChildType();
+					break;
+				case Tokens.CloseCurlyBrace:
+					while (frame.parent != null) {
+						if (frame.bracketType == '{') {
+							frame.type = FrameType.Popped;
+							frame = frame.parent;
+							break;
+						} else {
+							frame.type = FrameType.Popped;
+							frame = frame.parent;
+						}
+					}
+					break;
+				case Tokens.OpenParenthesis:
+					if (frame.lastExpressionStart.IsEmpty)
+						frame.lastExpressionStart = token.Location;
+					frame = new Frame(frame, '(');
+					frame.parent.ResetParenthesisChildType();
+					break;
+				case Tokens.OpenSquareBracket:
+					frame = new Frame(frame, '[');
+					frame.parent.ResetSquareBracketChildType();
+					break;
+				case Tokens.CloseParenthesis:
+				case Tokens.CloseSquareBracket:
+					if (frame.parent != null && (frame.bracketType == '(' || frame.bracketType == '[')) {
+						frame.type = FrameType.Popped;
+						frame = frame.parent;
+					}
+					break;
+				case Tokens.LessThan:
+					if (Tokens.ValidInsideTypeName[lastToken]) {
+						frame = new Frame(frame, '<');
+						if (frame.parent.InExpressionMode) {
+							frame.SetContext(ExpressionContext.Default);
+						} else if ((frame.parent.state == FrameState.TypeDecl
+						            || frame.parent.state == FrameState.MethodDecl
+						            || frame.parent.state == FrameState.FieldDeclAfterIdentifier)
+						           && frame.parent.context == ExpressionContext.IdentifierExpected)
+						{
+							frame.type = FrameType.TypeParameterDecl;
+							frame.SetContext(ExpressionContext.IdentifierExpected);
+							frame.parent.SetContext(ExpressionContext.ConstraintsStart);
+						} else {
+							frame.SetContext(ExpressionContext.Type);
+						}
+					}
+					break;
+				case Tokens.GreaterThan:
+					if (frame.parent != null && frame.bracketType == '<') {
+						frame.type = FrameType.Popped;
+						frame = frame.parent;
+					} else {
+						frame.lastExpressionStart = Location.Empty;
+						frame.SetDefaultContext();
+					}
+					break;
+				case Tokens.Question:
+					// do not reset context - TrackCurrentContext will take care of this
+					frame.lastExpressionStart = Location.Empty;
+					break;
+				case Tokens.Dot:
+				case Tokens.DoubleColon:
+					// let the current expression continue
+					break;
+				default:
+					if (Tokens.IdentifierTokens[token.kind]) {
+						if (lastToken != Tokens.Dot && lastToken != Tokens.DoubleColon) {
+							if (Tokens.ValidInsideTypeName[lastToken]) {
+								frame.SetDefaultContext();
+							}
+							frame.lastExpressionStart = token.Location;
+						}
+					} else if (Tokens.SimpleTypeName[token.kind] || Tokens.ExpressionStart[token.kind] || token.kind == Tokens.Literal) {
+						frame.lastExpressionStart = token.Location;
+					} else {
+						frame.lastExpressionStart = Location.Empty;
+						frame.SetDefaultContext();
+					}
+					break;
+			}
+		}
+		
+		void TrackCurrentContext(Token token)
+		{
+			if (frame.state == FrameState.ObjectCreation) {
+				if (token.kind == Tokens.CloseParenthesis) {
+					if (frame.context.IsObjectCreation) {
+						frame.context = ExpressionContext.Default;
+						frame.lastExpressionStart = frame.lastNewTokenStart;
+					}
+					// keep frame.state
+				} else if (token.kind == Tokens.GreaterThan
+				           || token.kind == Tokens.DoubleColon || token.kind == Tokens.Dot
+				           || Tokens.SimpleTypeName[token.kind])
+				{
+					// keep frame.state == FrameState.ObjectCreationInType
 				} else {
-					// inside attribute, inside parameter list
-					if (ch == '(')
-						parens++;
-					else if (ch == ')')
-						parens--;
+					frame.state = FrameState.Normal;
+					frame.ResetCurlyChildType();
 				}
 			}
-			return inAttribute && parens == 0;
+			
+			switch (token.kind) {
+				case Tokens.Using:
+					if (frame.type == FrameType.Global) {
+						frame.SetContext(ExpressionContext.Namespace);
+						break;
+					} else {
+						goto case Tokens.For;
+					}
+				case Tokens.For:
+				case Tokens.Foreach:
+				case Tokens.Fixed:
+				case Tokens.Catch:
+					if (frame.type == FrameType.Statements) {
+						frame.parenthesisChildType = FrameType.Statements;
+					}
+					break;
+				case Tokens.Throw:
+					frame.SetExpectedType(projectContent.SystemTypes.Exception);
+					break;
+				case Tokens.New:
+					if (frame.InExpressionMode) {
+						frame.SetContext(ExpressionContext.TypeDerivingFrom(frame.expectedType, true));
+						frame.state = FrameState.ObjectCreation;
+						frame.curlyChildType = FrameType.ObjectInitializer;
+						frame.lastNewTokenStart = token.Location;
+					}
+					break;
+				case Tokens.Namespace:
+					frame.SetContext(ExpressionContext.IdentifierExpected);
+					break;
+				case Tokens.Assign:
+					if (frame.type == FrameType.Global) {
+						frame.SetContext(ExpressionContext.FullyQualifiedType);
+						break;
+					} else if (frame.type == FrameType.Enum) {
+						frame.SetContext(ExpressionContext.Default);
+						break;
+					} else if (frame.type == FrameType.TypeDecl) {
+						frame.SetContext(ExpressionContext.Default);
+						frame.state = FrameState.Initializer;
+						frame.ResetParenthesisChildType();
+						frame.ResetSquareBracketChildType();
+						frame.ResetCurlyChildType();
+						break;
+					} else if (frame.type == FrameType.ObjectInitializer) {
+						frame.state = FrameState.ObjectInitializerValue;
+						frame.SetDefaultContext();
+						break;
+					} else {
+						goto default;
+					}
+				case Tokens.Colon:
+					if (frame.state == FrameState.MethodDecl && lastToken == Tokens.CloseParenthesis) {
+						frame.SetContext(ExpressionContext.BaseConstructorCall);
+						frame.parenthesisChildType = FrameType.Expression;
+					} else {
+						if (frame.curlyChildType == FrameType.TypeDecl || frame.curlyChildType == FrameType.Interface || frame.curlyChildType == FrameType.Enum) {
+							if (frame.state != FrameState.Constraints) {
+								frame.state = FrameState.InheritanceList;
+								frame.SetDefaultContext();
+							}
+						}
+					}
+					break;
+				case Tokens.Class:
+				case Tokens.Struct:
+					if (frame.type == FrameType.Global || frame.type == FrameType.TypeDecl) {
+						if (frame.state != FrameState.Constraints) {
+							frame.state = FrameState.TypeDecl;
+							frame.curlyChildType = FrameType.TypeDecl;
+							frame.SetContext(ExpressionContext.IdentifierExpected);
+						}
+					}
+					break;
+				case Tokens.Interface:
+					if (frame.type == FrameType.Global || frame.type == FrameType.TypeDecl) {
+						frame.state = FrameState.TypeDecl;
+						frame.curlyChildType = FrameType.Interface;
+						frame.SetContext(ExpressionContext.IdentifierExpected);
+					}
+					break;
+				case Tokens.Enum:
+					if (frame.type == FrameType.Global || frame.type == FrameType.TypeDecl) {
+						frame.state = FrameState.TypeDecl;
+						frame.curlyChildType = FrameType.Enum;
+						frame.SetContext(ExpressionContext.IdentifierExpected);
+					}
+					break;
+				case Tokens.Delegate:
+					if (frame.InExpressionMode) {
+						frame.parenthesisChildType = FrameType.ParameterList;
+						frame.curlyChildType = FrameType.Statements;
+					} else if (frame.type == FrameType.Global || frame.type == FrameType.TypeDecl) {
+						frame.parenthesisChildType = FrameType.ParameterList;
+						frame.state = FrameState.MethodDecl;
+						frame.SetContext(ExpressionContext.Type);
+					}
+					break;
+				case Tokens.LambdaArrow:
+					frame.curlyChildType = FrameType.Statements;
+					break;
+				case Tokens.Event:
+					frame.SetContext(ExpressionContext.DelegateType);
+					frame.curlyChildType = FrameType.Event;
+					frame.state = FrameState.EventDecl;
+					break;
+				case Tokens.Comma:
+					if (frame.state == FrameState.FieldDecl
+					    || frame.state == FrameState.FieldDeclAfterIdentifier
+					    || frame.state == FrameState.Initializer)
+					{
+						frame.state = FrameState.FieldDecl;
+						frame.SetContext(ExpressionContext.IdentifierExpected);
+					} else if (frame.state == FrameState.ObjectInitializerValue) {
+						frame.state = FrameState.Normal;
+						frame.SetDefaultContext();
+					} else if (frame.type == FrameType.Statements) {
+						frame.SetContext(ExpressionContext.IdentifierExpected);
+					}
+					break;
+				case Tokens.Where:
+					if (!frame.InExpressionMode && (frame.type == FrameType.Global || frame.type == FrameType.TypeDecl)) {
+						frame.state = FrameState.Constraints;
+						frame.SetDefaultContext();
+					}
+					break;
+				case Tokens.CloseCurlyBrace:
+				case Tokens.Semicolon:
+					frame.state = FrameState.Normal;
+					frame.SetDefaultContext();
+					break;
+				case Tokens.OpenParenthesis:
+					if (frame.parent != null && (frame.parent.state == FrameState.FieldDeclAfterIdentifier
+					                             || frame.parent.state == FrameState.FieldDecl))
+					{
+						frame.type = FrameType.ParameterList;
+						frame.SetContext(ExpressionContext.FirstParameterType);
+						frame.parent.state = FrameState.MethodDecl;
+						frame.parent.curlyChildType = FrameType.Statements;
+					}
+					break;
+				case Tokens.Question:
+					// IdentifierExpected = this is after a type name = the ? was a nullable marker
+					if (frame.context != ExpressionContext.IdentifierExpected) {
+						frame.SetDefaultContext();
+					}
+					break;
+				case Tokens.This:
+					if (frame.state == FrameState.FieldDecl) {
+						// this is an indexer declaration
+						frame.squareBracketChildType = FrameType.ParameterList;
+						frame.state = FrameState.FieldDeclAfterIdentifier;
+					}
+					break;
+				case Tokens.Goto:
+					frame.SetContext(ExpressionContext.IdentifierExpected);
+					break;
+				case Tokens.As:
+				case Tokens.Is:
+					frame.SetContext(ExpressionContext.Type);
+					break;
+				case Tokens.Typeof:
+					frame.parenthesisChildType = FrameType.TypeReference;
+					break;
+				default:
+					if (Tokens.SimpleTypeName[token.kind]) {
+						if (frame.type == FrameType.Interface || frame.type == FrameType.TypeDecl) {
+							if (frame.state == FrameState.Normal) {
+								frame.state = FrameState.FieldDecl;
+								frame.curlyChildType = FrameType.Property;
+							} else if (frame.state == FrameState.FieldDecl && Tokens.IdentifierTokens[token.kind]) {
+								frame.state = FrameState.FieldDeclAfterIdentifier;
+							}
+							if (frame.state != FrameState.ObjectCreation) {
+								frame.SetContext(ExpressionContext.IdentifierExpected);
+							}
+						} else if (frame.type == FrameType.ParameterList
+						           || frame.type == FrameType.Statements
+						           || frame.type == FrameType.Global)
+						{
+							if (!frame.context.IsObjectCreation) {
+								frame.SetContext(ExpressionContext.IdentifierExpected);
+							}
+						}
+					}
+					break;
+			}
 		}
-		#endregion
 		
-		#region RemoveLastPart
+		public ExpressionResult FindFullExpression(string text, int offset)
+		{
+			return FindFullExpression(text, offset, null);
+		}
+		
 		/// <summary>
-		/// Removed the last part of the expression.
+		/// Like FindFullExpression, but text is a code snippet inside a type declaration.
 		/// </summary>
-		/// <example>
-		/// "arr[i]" => "arr"
-		/// "obj.Field" => "obj"
-		/// "obj.Method(args,...)" => "obj.Method"
-		/// </example>
+		public ExpressionResult FindFullExpressionInTypeDeclaration(string text, int offset)
+		{
+			Frame root = new Frame();
+			root.curlyChildType = FrameType.TypeDecl;
+			Frame typeDecl = new Frame(root, '{');
+			return FindFullExpression(text, offset, typeDecl);
+		}
+		
+		
+		/// <summary>
+		/// Like FindFullExpression, but text is a code snippet inside a method body.
+		/// </summary>
+		public ExpressionResult FindFullExpressionInMethod(string text, int offset)
+		{
+			Frame root = new Frame();
+			root.curlyChildType = FrameType.TypeDecl;
+			Frame typeDecl = new Frame(root, '{');
+			typeDecl.curlyChildType = FrameType.Statements;
+			Frame methodBody = new Frame(typeDecl, '{');
+			return FindFullExpression(text, offset, methodBody);
+		}
+		
+		ExpressionResult FindFullExpression(string text, int offset, Frame initialFrame)
+		{
+			Init(text, offset);
+			
+			if (initialFrame != null) {
+				frame = initialFrame;
+			}
+			
+			const int SEARCHING_OFFSET = 0;
+			const int SEARCHING_END = 1;
+			int state = SEARCHING_OFFSET;
+			Frame resultFrame = frame;
+			int resultStartOffset = -1;
+			int alternateResultStartOffset = -1;
+			int resultEndOffset = -1;
+			ExpressionContext prevContext = ExpressionContext.Default;
+			ExpressionContext resultContext = ExpressionContext.Default;
+			
+			Token token;
+			while ((token = lexer.NextToken()) != null) {
+				if (token.kind == Tokens.EOF) break;
+				
+				if (state == SEARCHING_OFFSET) {
+					if (targetPosition < token.Location) {
+						resultFrame = frame;
+						resultContext = frame.context;
+						resultStartOffset = LocationToOffset(frame.lastExpressionStart);
+						alternateResultStartOffset = LocationToOffset(frame.lastNewTokenStart);
+						if (resultStartOffset < 0)
+							break;
+						resultEndOffset = LocationToOffset(token.Location);
+						state = SEARCHING_END;
+					}
+				}
+				prevContext = frame.context;
+				ApplyToken(token);
+				if (state == SEARCHING_OFFSET) {
+					if (targetPosition < token.EndLocation) {
+						resultFrame = frame;
+						resultContext = prevContext;
+						resultStartOffset = LocationToOffset(frame.lastExpressionStart);
+						alternateResultStartOffset = LocationToOffset(frame.lastNewTokenStart);
+						resultEndOffset = LocationToOffset(token.EndLocation);
+						if (resultStartOffset < 0)
+							break;
+						state = SEARCHING_END;
+					}
+				} else if (state == SEARCHING_END) {
+					int lastExpressionStartOffset = LocationToOffset(resultFrame.lastExpressionStart);
+					if (lastExpressionStartOffset == alternateResultStartOffset && alternateResultStartOffset >= 0)
+						resultStartOffset = lastExpressionStartOffset;
+					if (resultFrame.type == FrameType.Popped ||
+					    lastExpressionStartOffset != resultStartOffset ||
+					    token.kind == Tokens.Dot || token.kind == Tokens.DoubleColon)
+					{
+						
+						// now we can change the context based on the next token
+						if (frame == resultFrame && Tokens.IdentifierTokens[token.kind]) {
+							// the expression got aborted because of an identifier. This means the
+							// expression was a type reference
+							resultContext = ExpressionContext.Type;
+						} else if (resultFrame.bracketType == '<' && token.kind == Tokens.GreaterThan) {
+							// expression was a type argument
+							resultContext = ExpressionContext.Type;
+							return MakeResult(text, resultStartOffset, resultEndOffset, resultContext);
+						}
+						if (frame == resultFrame || resultFrame.type == FrameType.Popped) {
+							return MakeResult(text, resultStartOffset, resultEndOffset, resultContext);
+						}
+					} else {
+						if (frame.bracketType != '<') {
+							resultEndOffset = LocationToOffset(token.EndLocation);
+						}
+					}
+				}
+				lastToken = token.kind;
+			}
+			// offset is behind all tokens -> cannot find any expression
+			return new ExpressionResult(null, frame.context);
+		}
+		
+		ExpressionResult MakeResult(string text, int startOffset, int endOffset, ExpressionContext context)
+		{
+			return new ExpressionResult(text.Substring(startOffset, endOffset - startOffset),
+			                            DomRegion.FromLocation(OffsetToLocation(startOffset), OffsetToLocation(endOffset)),
+			                            context, null);
+		}
+		
 		public string RemoveLastPart(string expression)
 		{
-			text = expression;
-			offset = text.Length - 1;
-			ReadNextToken();
-			if (curTokenType == Ident && Peek() == '.')
-				GetNext();
-			return text.Substring(0, offset + 1);
-		}
-		#endregion
-		
-		#region Find Expression
-		public ExpressionResult FindExpression(string inText, int offset)
-		{
-			inText = FilterComments(inText, ref offset);
-			return CreateResult(FindExpressionInternal(inText, offset), inText, offset);
-		}
-		
-		public string FindExpressionInternal(string inText, int offset)
-		{
-			// warning: Do not confuse this.offset and offset
-			this.text = inText;
-			this.offset = this.lastAccept = offset;
-			this.state  = START;
-			hadParenthesis = false;
-			if (this.text == null) {
-				return null;
-			}
-			
-			while (state != ERROR) {
-				ReadNextToken();
-				state = stateTable[state, curTokenType];
+			Init(expression, expression.Length - 1);
+			int lastValidPos = 0;
+			Token token;
+			while ((token = lexer.NextToken()) != null) {
+				if (token.kind == Tokens.EOF) break;
 				
-				if (state == ACCEPT || state == ACCEPT2) {
-					lastAccept = this.offset;
-				}
-				if (state == ACCEPTNOMORE) {
-					lastExpressionStartPosition = this.offset + 1;
-					return this.text.Substring(this.offset + 1, offset - this.offset);
-				}
-			}
-			
-			if (lastAccept < 0)
-				return null;
-			
-			lastExpressionStartPosition = this.lastAccept + 1;
-			
-			return this.text.Substring(this.lastAccept + 1, offset - this.lastAccept);
-		}
-		
-		int lastExpressionStartPosition;
-		
-		/// <summary>
-		/// Gets the position in the source string (after filtering out comments)
-		/// where the beginning of last expression was found. 
-		/// </summary>
-		public int LastExpressionStartPosition {
-			get {
-				return lastExpressionStartPosition;
-			}
-		}
-		#endregion
-		
-		#region FindFullExpression
-		public ExpressionResult FindFullExpression(string inText, int offset)
-		{
-			int offsetWithoutComments = offset;
-			string textWithoutComments = FilterComments(inText, ref offsetWithoutComments);
-			string expressionBeforeOffset = FindExpressionInternal(textWithoutComments, offsetWithoutComments);
-			if (expressionBeforeOffset == null || expressionBeforeOffset.Length == 0)
-				return CreateResult(null, textWithoutComments, offsetWithoutComments);
-			StringBuilder b = new StringBuilder(expressionBeforeOffset);
-			// append characters after expression
-			bool wordFollowing = false;
-			int i;
-			for (i = offset + 1; i < inText.Length; ++i) {
-				char c = inText[i];
-				if (Char.IsLetterOrDigit(c) || c == '_') {
-					if (Char.IsWhiteSpace(inText, i - 1)) {
-						wordFollowing = true;
-						break;
-					}
-					b.Append(c);
-				} else if (Char.IsWhiteSpace(c)) {
-					// ignore whitespace
-				} else if (c == '(' || c == '[') {
-					int otherBracket = SearchBracketForward(inText, i + 1, c, (c == '(') ? ')' : ']');
-					if (otherBracket < 0)
-						break;
-					if (c == '[') {
-						// do not include [] when it is an array declaration (versus indexer call)
-						bool ok = false;
-						for (int j = i + 1; j < otherBracket; j++) {
-							if (inText[j] != ',' && !char.IsWhiteSpace(inText, j)) {
-								ok = true;
-								break;
-							}
-						}
-						if (!ok) {
-							break;
-						}
-					}
-					b.Append(inText, i, otherBracket - i + 1);
-					break;
-				} else if (c == '<') {
-					// accept only if this is a generic type reference
-					int typeParameterEnd = FindEndOfTypeParameters(inText, i);
-					if (typeParameterEnd < 0)
-						break;
-					b.Append(inText, i, typeParameterEnd - i + 1);
-					i = typeParameterEnd;
-				} else {
-					break;
-				}
-			}
-			ExpressionResult res = CreateResult(b.ToString(), textWithoutComments, offsetWithoutComments);
-			if (res.Context == ExpressionContext.Default && wordFollowing) {
-				b = new StringBuilder();
-				for (; i < inText.Length; ++i) {
-					char c = inText[i];
-					if (char.IsLetterOrDigit(c) || c == '_')
-						b.Append(c);
-					else
-						break;
-				}
-				if (b.Length > 0) {
-					if (ICSharpCode.NRefactory.Parser.CSharp.Keywords.GetToken(b.ToString()) < 0) {
-						res.Context = ExpressionContext.Type;
+				if (frame.parent == null) {
+					if (token.kind == Tokens.Dot || token.kind == Tokens.DoubleColon
+					    || token.kind == Tokens.OpenParenthesis || token.kind == Tokens.OpenSquareBracket)
+					{
+						lastValidPos = LocationToOffset(token.Location);
 					}
 				}
+				ApplyToken(token);
+				
+				lastToken = token.kind;
 			}
-			return res;
+			return expression.Substring(0, lastValidPos);
 		}
-		
-		int FindEndOfTypeParameters(string inText, int offset)
-		{
-			int level = 0;
-			for (int i = offset; i < inText.Length; ++i) {
-				char c = inText[i];
-				if (Char.IsLetterOrDigit(c) || Char.IsWhiteSpace(c)) {
-					// ignore identifiers and whitespace
-				} else if (c == ',' || c == '?' || c == '[' || c == ']') {
-					// ,  : seperating generic type parameters
-					// ?  : nullable types
-					// [] : arrays
-				} else if (c == '<') {
-					++level;
-				} else if (c == '>') {
-					--level;
-				} else {
-					return -1;
-				}
-				if (level == 0)
-					return i;
-			}
-			return -1;
-		}
-		#endregion
-		
-		#region SearchBracketForward
-		// like CSharpFormattingStrategy.SearchBracketForward, but operates on a string.
-		private int SearchBracketForward(string text, int offset, char openBracket, char closingBracket)
-		{
-			bool inString = false;
-			bool inChar   = false;
-			bool verbatim = false;
-			
-			bool lineComment  = false;
-			bool blockComment = false;
-			
-			if (offset < 0) return -1;
-			
-			int brackets = 1;
-			
-			for (; offset < text.Length; ++offset) {
-				char ch = text[offset];
-				switch (ch) {
-					case '\r':
-					case '\n':
-						lineComment = false;
-						inChar = false;
-						if (!verbatim) inString = false;
-						break;
-					case '/':
-						if (blockComment) {
-							if (offset > 0 && text[offset - 1] == '*') {
-								blockComment = false;
-							}
-						}
-						if (!inString && !inChar && offset + 1 < text.Length) {
-							if (!blockComment && text[offset + 1] == '/') {
-								lineComment = true;
-							}
-							if (!lineComment && text[offset + 1] == '*') {
-								blockComment = true;
-							}
-						}
-						break;
-					case '"':
-						if (!(inChar || lineComment || blockComment)) {
-							if (inString && verbatim) {
-								if (offset + 1 < text.Length && text[offset + 1] == '"') {
-									++offset; // skip escaped quote
-									inString = false; // let the string go on
-								} else {
-									verbatim = false;
-								}
-							} else if (!inString && offset > 0 && text[offset - 1] == '@') {
-								verbatim = true;
-							}
-							inString = !inString;
-						}
-						break;
-					case '\'':
-						if (!(inString || lineComment || blockComment)) {
-							inChar = !inChar;
-						}
-						break;
-					case '\\':
-						if ((inString && !verbatim) || inChar)
-							++offset; // skip next character
-						break;
-					default:
-						if (ch == openBracket) {
-							if (!(inString || inChar || lineComment || blockComment)) {
-								++brackets;
-							}
-						} else if (ch == closingBracket) {
-							if (!(inString || inChar || lineComment || blockComment)) {
-								--brackets;
-								if (brackets == 0) {
-									return offset;
-								}
-							}
-						}
-						break;
-				}
-			}
-			return -1;
-		}
-		#endregion
 		
 		#region Comment Filter and 'inside string watcher'
+		
+		// NOTE: FilterComments is not used anymore inside the ExpressionFinder, it should be moved
+		// into another class / or removed completely if it is not required anymore.
+		
 		int initialOffset;
 		public string FilterComments(string text, ref int offset)
 		{
@@ -456,9 +926,13 @@ namespace ICSharpCode.SharpDevelop.Dom.CSharp
 						++curOffset;
 						break;
 				}
+
+
+
 			}
 			
 			return outText.ToString();
+
 		}
 		
 		bool ReadToEOL(string text, ref int curOffset, ref int offset)
@@ -524,8 +998,11 @@ namespace ICSharpCode.SharpDevelop.Dom.CSharp
 						return true;
 					}
 				}
+
+
 			}
 			return false;
+
 		}
 		
 		bool ReadMultiLineComment(string text, ref int curOffset, ref int offset)
@@ -544,335 +1021,7 @@ namespace ICSharpCode.SharpDevelop.Dom.CSharp
 			return false;
 		}
 		#endregion
-		
-		#region mini backward lexer
-		string text;
-		int    offset;
-		
-		char GetNext()
-		{
-			if (offset >= 0) {
-				return text[offset--];
-			}
-			return '\0';
-		}
-		
-		char GetNextNonWhiteSpace()
-		{
-			char ch;
-			do {
-				ch = GetNext();
-			} while (char.IsWhiteSpace(ch));
-			return ch;
-		}
-		
-		char Peek(int n)
-		{
-			if (offset - n >= 0) {
-				return text[offset - n];
-			}
-			return '\0';
-		}
-		
-		char Peek()
-		{
-			if (offset >= 0) {
-				return text[offset];
-			}
-			return '\0';
-		}
-		
-		void UnGet()
-		{
-			++offset;
-		}
-		
-		void UnGetToken()
-		{
-			do {
-				UnGet();
-			} while (char.IsLetterOrDigit(Peek()));
-		}
-		
-		// tokens for our lexer
-		static int Err     = 0;
-		static int Dot     = 1;
-		static int StrLit  = 2;
-		static int Ident   = 3;
-		static int New     = 4;
-		static int Bracket = 5;
-		static int Parent  = 6;
-		static int Curly   = 7;
-		static int Using   = 8;
-		static int Digit   = 9;
-		int curTokenType;
-		
-		readonly static string[] tokenStateName = new string[] {
-			"Err", "Dot", "StrLit", "Ident", "New", "Bracket", "Paren", "Curly", "Using", "Digit"
-		};
-		
-		string GetTokenName(int state)
-		{
-			return tokenStateName[state];
-		}
-		
-		/// <summary>
-		/// used to control whether an expression is in a ObjectCreation context (new *expr*),
-		/// or is in the default context (e.g. "new MainForm().Show()", 'new ' is there part of the expression
-		/// </summary>
-		bool hadParenthesis;
-		
-		string lastIdentifier;
-		
-		void ReadNextToken()
-		{
-			curTokenType = Err;
-			char ch = GetNextNonWhiteSpace();
-			if (ch == '\0') {
-				return;
-			}
-			
-			switch (ch) {
-				case '}':
-					if (ReadBracket('{', '}')) {
-						curTokenType = Curly;
-					}
-					break;
-				case ')':
-					if (ReadBracket('(', ')')) {
-						hadParenthesis = true;
-						curTokenType = Parent;
-					}
-					break;
-				case ']':
-					if (ReadBracket('[', ']')) {
-						curTokenType = Bracket;
-					}
-					break;
-				case '>':
-					if (ReadTypeParameters()) {
-						// hack: ignore type parameters and continue reading without changing state
-						ReadNextToken();
-					}
-					break;
-				case '.':
-					curTokenType = Dot;
-					break;
-				case ':':
-					if (GetNext() == ':') {
-						// treat :: like dot
-						curTokenType = Dot;
-					}
-					break;
-				case '\'':
-				case '"':
-					if (ReadStringLiteral(ch)) {
-						curTokenType = StrLit;
-					}
-					break;
-				default:
-					if (IsNumber(ch)) {
-						ReadDigit(ch);
-						curTokenType = Digit;
-					} else if (IsIdentifierPart(ch)) {
-						string ident = ReadIdentifier(ch);
-						if (ident != null) {
-							switch (ident) {
-								case "new":
-									curTokenType = New;
-									break;
-								case "using":
-									curTokenType = Using;
-									break;
-								case "return":
-								case "throw":
-								case "in":
-								case "else":
-									// treat as error / end of expression
-									break;
-								default:
-									curTokenType = Ident;
-									lastIdentifier = ident;
-									break;
-							}
-						}
-					}
-					
-					break;
-			}
-		}
-		bool IsNumber(char ch)
-		{
-			if (!Char.IsDigit(ch))
-				return false;
-			int n = 0;
-			while (true) {
-				ch = Peek(n);
-				if (Char.IsDigit(ch)) {
-					n++;
-					continue;
-				}
-				return n > 0 && !Char.IsLetter(ch);
-			}
-		}
-		bool ReadStringLiteral(char litStart)
-		{
-			while (true) {
-				char ch = GetNext();
-				if (ch == '\0') {
-					return false;
-				}
-				if (ch == litStart) {
-					if (Peek() == '@' && litStart == '"') {
-						GetNext();
-					}
-					return true;
-				}
-			}
-		}
-		
-		bool ReadTypeParameters()
-		{
-			int level = 1;
-			while (level > 0) {
-				char ch = GetNext();
-				switch (ch) {
-					case '?':
-					case '[':
-					case ',':
-					case ']':
-						break;
-					case '<':
-						--level;
-						break;
-					case '>':
-						++level;
-						break;
-					default:
-						if (!char.IsWhiteSpace(ch) && !char.IsLetterOrDigit(ch))
-							return false;
-						break;
-				}
-			}
-			return true;
-		}
-		
-		bool ReadBracket(char openBracket, char closingBracket)
-		{
-			int curlyBraceLevel    = 0;
-			int squareBracketLevel = 0;
-			int parenthesisLevel   = 0;
-			switch (openBracket) {
-				case '(':
-					parenthesisLevel++;
-					break;
-				case '[':
-					squareBracketLevel++;
-					break;
-				case '{':
-					curlyBraceLevel++;
-					break;
-			}
-			
-			while (parenthesisLevel != 0 || squareBracketLevel != 0 || curlyBraceLevel != 0) {
-				char ch = GetNext();
-				switch (ch) {
-					case '\0':
-						return false;
-					case '(':
-						parenthesisLevel--;
-						break;
-					case '[':
-						squareBracketLevel--;
-						break;
-					case '{':
-						curlyBraceLevel--;
-						break;
-					case ')':
-						parenthesisLevel++;
-						break;
-					case ']':
-						squareBracketLevel++;
-						break;
-					case '}':
-						curlyBraceLevel++;
-						break;
-				}
-			}
-			return true;
-		}
-		
-		string ReadIdentifier(char ch)
-		{
-			string identifier = ch.ToString();
-			while (IsIdentifierPart(Peek())) {
-				identifier = GetNext() + identifier;
-			}
-			return identifier;
-		}
-		
-		void ReadDigit(char ch)
-		{
-			//string digit = ch.ToString();
-			while (Char.IsDigit(Peek()) || Peek() == '.') {
-				GetNext();
-				//digit = GetNext() + digit;
-			}
-			//return digit;
-		}
-		
-		bool IsIdentifierPart(char ch)
-		{
-			return Char.IsLetterOrDigit(ch) || ch == '_' || ch == '@';
-		}
-		#endregion
-		
-		#region finite state machine
-		readonly static int ERROR  = 0;
-		readonly static int START  = 1;
-		readonly static int DOT    = 2;
-		readonly static int MORE   = 3;
-		readonly static int CURLY  = 4;
-		readonly static int CURLY2 = 5;
-		readonly static int CURLY3 = 6;
-		
-		readonly static int ACCEPT = 7;
-		readonly static int ACCEPTNOMORE = 8;
-		readonly static int ACCEPT2 = 9;
-		
-		readonly static string[] stateName = new string[] {
-			"ERROR",
-			"START",
-			"DOT",
-			"MORE",
-			"CURLY",
-			"CURLY2",
-			"CURLY3",
-			"ACCEPT",
-			"ACCEPTNOMORE",
-			"ACCEPT2"
-		};
-		
-		string GetStateName(int state)
-		{
-			return stateName[state];
-		}
-		
-		int state = 0;
-		int lastAccept = 0;
-		static int[,] stateTable = new int[,] {
-			//                   Err,     Dot,     Str,      ID,         New,     Brk,     Par,     Cur,   Using,       digit
-			/*ERROR*/        { ERROR,   ERROR,   ERROR,   ERROR,        ERROR,  ERROR,   ERROR,   ERROR,   ERROR,        ERROR},
-			/*START*/        { ERROR,     DOT,  ACCEPT,  ACCEPT,        ERROR,   MORE, ACCEPT2,   CURLY,   ACCEPTNOMORE, ERROR},
-			/*DOT*/          { ERROR,   ERROR,  ACCEPT,  ACCEPT,        ERROR,   MORE,  ACCEPT,   CURLY,   ERROR,        ACCEPT},
-			/*MORE*/         { ERROR,   ERROR,  ACCEPT,  ACCEPT,        ERROR,   MORE, ACCEPT2,   CURLY,   ERROR,        ACCEPT},
-			/*CURLY*/        { ERROR,   ERROR,   ERROR,   ERROR,        ERROR, CURLY2,   ERROR,   ERROR,   ERROR,        ERROR},
-			/*CURLY2*/       { ERROR,   ERROR,   ERROR,  CURLY3,        ERROR,  ERROR,   ERROR,   ERROR,   ERROR,        CURLY3},
-			/*CURLY3*/       { ERROR,   ERROR,   ERROR,   ERROR, ACCEPTNOMORE,  ERROR,   ERROR,   ERROR,   ERROR,        ERROR},
-			/*ACCEPT*/       { ERROR,    MORE,   ERROR,   ERROR,       ACCEPT,  ERROR,   ERROR,   ERROR,   ACCEPTNOMORE, ERROR},
-			/*ACCEPTNOMORE*/ { ERROR,   ERROR,   ERROR,   ERROR,        ERROR,  ERROR,   ERROR,   ERROR,   ERROR,        ERROR},
-			/*ACCEPT2*/      { ERROR,    MORE,   ERROR,  ACCEPT,       ACCEPT,  ERROR,   ERROR,   ERROR,   ERROR,        ACCEPT},
-		};
-		#endregion
 	}
 }
+
+

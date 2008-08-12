@@ -20,7 +20,6 @@
     <OldToolsVersion>2.0</OldToolsVersion>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <Optimize>False</Optimize>
@@ -44,13 +43,11 @@
     <FileAlignment>4096</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <OutputPath>..\..\..\rtdebug\bin\</OutputPath>
+    <OutputPath>..\..\..\..\..\rtdebug\bin\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;ModifiedForAltaxo</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Core">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
@@ -60,6 +57,15 @@
       <Link>Configuration\GlobalAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Configuration\AssemblyInfo.cs" />
+    <Compile Include="ListViewSorting\AbstractListViewParseableColumnComparer.cs" />
+    <Compile Include="ListViewSorting\AbstractListViewSubItemComparer.cs" />
+    <Compile Include="ListViewSorting\ListViewIntegerParseColumnComparer.cs" />
+    <Compile Include="ListViewSorting\ListViewMultipleColumnsComparer.cs" />
+    <Compile Include="ListViewSorting\ListViewTextColumnComparer.cs" />
+    <Compile Include="ListViewSorting\IListViewItemComparer.cs" />
+    <Compile Include="ListViewSorting\ListViewItemSorter.cs" />
+    <Compile Include="MouseWheelHandler.cs" />
+    <Compile Include="Resources\BitmapResources.cs" />
     <Compile Include="TreeGrid\CollectionWithEvents.cs" />
     <Compile Include="TreeGrid\DynamicList.cs">
       <SubType>UserControl</SubType>
@@ -96,6 +102,8 @@
     <Compile Include="DesignTimeSupport\DropDownEditorListBox.cs">
       <SubType>Component</SubType>
     </Compile>
+    <EmbeddedResource Include="Resources\Icons.16x16.SortAscending.png" />
+    <EmbeddedResource Include="Resources\Icons.16x16.SortDescending.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2470 $</version>
+//     <version>$Revision: 3160 $</version>
 // </file>
 
 using System;
@@ -10,14 +10,15 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
 using ICSharpCode.Core;
+using ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor;
 using ICSharpCode.SharpDevelop.Gui.XmlForms;
 using ICSharpCode.SharpDevelop.Internal.Templates;
 using ICSharpCode.SharpDevelop.Project;
-using Microsoft.Build.BuildEngine;
 
 namespace ICSharpCode.SharpDevelop.Gui
 {
@@ -95,10 +96,12 @@ namespace ICSharpCode.SharpDevelop.Gui
 			((ListView)ControlDictionary["templateListView"]).SmallImageList = smalllist;
 			
 			InsertCategories(null, categories);
-			((TreeView)ControlDictionary["categoryTreeView"]).TreeViewNodeSorter = new TemplateCategoryComparer();
-			((TreeView)ControlDictionary["categoryTreeView"]).Sort();
+			TreeView categoryTreeView = ((TreeView)ControlDictionary["categoryTreeView"]);
+			categoryTreeView.TreeViewNodeSorter = new TemplateCategoryComparer();
+			categoryTreeView.Sort();
 			
-			SelectLastSelectedCategoryNode(((TreeView)ControlDictionary["categoryTreeView"]).Nodes, PropertyService.Get("Dialogs.NewFileDialog.LastSelectedCategory", "C#"));
+			TreeViewHelper.ApplyViewStateString(PropertyService.Get("Dialogs.NewFileDialog.CategoryViewState", ""), categoryTreeView);
+			categoryTreeView.SelectedNode = TreeViewHelper.GetNodeByPath(categoryTreeView, PropertyService.Get("Dialogs.NewFileDialog.LastSelectedCategory", "C#"));
 		}
 		
 		void InsertCategories(TreeNode node, ArrayList catarray)
@@ -111,22 +114,6 @@ namespace ICSharpCode.SharpDevelop.Gui
 				}
 				InsertCategories(cat, cat.Categories);
 			}
-		}
-		
-		TreeNode SelectLastSelectedCategoryNode(TreeNodeCollection nodes, string name)
-		{
-			foreach (TreeNode node in nodes) {
-				if (node.Name == name) {
-					((TreeView)ControlDictionary["categoryTreeView"]).SelectedNode = node;
-					node.ExpandAll();
-					return node;
-				}
-				TreeNode selectedNode = SelectLastSelectedCategoryNode(node.Nodes, name);
-				if (selectedNode != null) {
-					return selectedNode;
-				}
-			}
-			return null;
 		}
 		
 		Category GetCategory(string categoryname, string subcategoryname)
@@ -232,6 +219,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			if (!Controls.Contains(propertyGrid)) {
 				this.SuspendLayout();
 				propertyGrid.Location = new Point(Width - GridMargin, GridMargin);
+				propertyGrid.Anchor = AnchorStyles.Top | AnchorStyles.Right | AnchorStyles.Bottom;
 				localizedTypeDescriptor.Properties.Clear();
 				foreach (TemplateProperty property in SelectedTemplate.Properties) {
 					LocalizedProperty localizedProperty;
@@ -260,6 +248,10 @@ namespace ICSharpCode.SharpDevelop.Gui
 							}
 							StringParser.Properties["Properties." + localizedProperty.Name] = defVal;
 							localizedProperty.DefaultValue = Boolean.Parse(defVal);
+						} else {
+							string defVal = property.DefaultValue == null ? String.Empty : property.DefaultValue.ToString();
+							StringParser.Properties["Properties." + localizedProperty.Name] = defVal;
+							localizedProperty.DefaultValue = defVal;
 						}
 					}
 					localizedProperty.LocalizedName = property.LocalizedName;
@@ -372,6 +364,13 @@ namespace ICSharpCode.SharpDevelop.Gui
 			// Parse twice so that tags used in included standard header are parsed
 			string parsedContent = StringParser.Parse(StringParser.Parse(content));
 			
+			if (parsedContent != null) {
+				if (SharpDevelopTextEditorProperties.Instance.IndentationString != "\t") {
+					parsedContent = parsedContent.Replace("\t", SharpDevelopTextEditorProperties.Instance.IndentationString);
+				}
+			}
+			
+			
 			// when newFile.Name is "${Path}/${FileName}", there might be a useless '/' in front of the file name
 			// if the file is created when no project is opened. So we remove single '/' or '\', but not double
 			// '\\' (project is saved on network share).
@@ -393,13 +392,13 @@ namespace ICSharpCode.SharpDevelop.Gui
 					LoggingService.Warn("binary file was skipped");
 					return;
 				}
-				IWorkbenchWindow window = FileService.NewFile(Path.GetFileName(parsedFileName), StringParser.Parse(newfile.Language), parsedContent);
-				if (window == null) {
+				IViewContent viewContent = FileService.NewFile(Path.GetFileName(parsedFileName), parsedContent);
+				if (viewContent == null) {
 					return;
 				}
 				if (Path.IsPathRooted(parsedFileName)) {
 					Directory.CreateDirectory(Path.GetDirectoryName(parsedFileName));
-					window.ViewContent.Save(parsedFileName);
+					viewContent.PrimaryFile.SaveToDisk(parsedFileName);
 				}
 			}
 			createdFiles.Add(new KeyValuePair<string, FileDescriptionTemplate>(parsedFileName, newfile));
@@ -429,10 +428,11 @@ namespace ICSharpCode.SharpDevelop.Gui
 		
 		void OpenEvent(object sender, EventArgs e)
 		{
-			if (((TreeView)ControlDictionary["categoryTreeView"]).SelectedNode != null) {
-				
+			TreeView categoryTreeView = ((TreeView)ControlDictionary["categoryTreeView"]);
+			if (categoryTreeView.SelectedNode != null) {
 				PropertyService.Set("Dialogs.NewProjectDialog.LargeImages", ((RadioButton)ControlDictionary["largeIconsRadioButton"]).Checked);
-				PropertyService.Set("Dialogs.NewFileDialog.LastSelectedCategory", ((TreeView)ControlDictionary["categoryTreeView"]).SelectedNode.Text);
+				PropertyService.Set("Dialogs.NewFileDialog.CategoryViewState", TreeViewHelper.GetViewStateString(categoryTreeView));
+				PropertyService.Set("Dialogs.NewFileDialog.LastSelectedCategory", TreeViewHelper.GetPath(categoryTreeView.SelectedNode));
 			}
 			createdFiles.Clear();
 			if (((ListView)ControlDictionary["templateListView"]).SelectedItems.Count == 1) {
@@ -447,7 +447,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 					fileName = GenerateCurrentFileName();
 				} else {
 					fileName = ControlDictionary["fileNameTextBox"].Text.Trim();
-					if (!FileUtility.IsValidFileName(fileName)
+					if (!FileUtility.IsValidPath(fileName)
 					    || fileName.IndexOf(Path.AltDirectorySeparatorChar) >= 0
 					    || fileName.IndexOf(Path.DirectorySeparatorChar) >= 0)
 					{
@@ -458,7 +458,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 						fileName += Path.GetExtension(item.Template.DefaultName);
 					}
 					fileName = Path.Combine(basePath, fileName);
-					fileName = Path.GetFullPath(fileName);
+					fileName = FileUtility.NormalizePath(fileName);
 					IProject project = ProjectService.CurrentProject;
 					if (project != null) {
 						StringParser.Properties["StandardNamespace"] = CustomToolsService.GetDefaultNamespace(project, fileName);
@@ -472,6 +472,22 @@ namespace ICSharpCode.SharpDevelop.Gui
 				
 				StringParser.Properties["ClassName"] = GenerateValidClassOrNamespaceName(Path.GetFileNameWithoutExtension(fileName), false);
 				
+				// when adding a file to a project (but not when creating a standalone file while a project is open):
+				if (ProjectService.CurrentProject != null && !this.allowUntitledFiles) {
+					// add required assembly references to the project
+					bool changes = false;
+					foreach (ReferenceProjectItem reference in item.Template.RequiredAssemblyReferences) {
+						IEnumerable<ProjectItem> refs = ProjectService.CurrentProject.GetItemsOfType(ItemType.Reference);
+						if (!refs.Any(projItem => string.Equals(projItem.Include, reference.Include, StringComparison.InvariantCultureIgnoreCase))) {
+							ReferenceProjectItem projItem = (ReferenceProjectItem)reference.CloneFor(ProjectService.CurrentProject);
+							ProjectService.AddProjectItem(ProjectService.CurrentProject, projItem);
+							changes = true;
+						}
+					}
+					if (changes) {
+						ProjectService.CurrentProject.Save();
+					}
+				}
 				
 				if (item.Template.WizardPath != null) {
 					Properties customizer = new Properties();
@@ -499,9 +515,9 @@ namespace ICSharpCode.SharpDevelop.Gui
 					}
 					DialogResult = DialogResult.OK;
 					
-					// raise FileCreated event for the new files
+					// raise FileCreated event for the new files.
 					foreach (KeyValuePair<string, FileDescriptionTemplate> entry in createdFiles) {
-						FileService.FireFileCreated(entry.Key);
+						FileService.FireFileCreated(entry.Key, false);
 					}
 				}
 			}
@@ -609,7 +625,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			tooltip.SetToolTip(ControlDictionary["largeIconsRadioButton"], StringParser.Parse("${res:Global.LargeIconToolTip}"));
 			tooltip.SetToolTip(ControlDictionary["smallIconsRadioButton"], StringParser.Parse("${res:Global.SmallIconToolTip}"));
 			tooltip.Active = true;
-			Owner         = (Form)WorkbenchSingleton.Workbench;
+			Owner         = WorkbenchSingleton.MainForm;
 			StartPosition = FormStartPosition.CenterParent;
 			Icon          = null;
 			

@@ -1,12 +1,14 @@
-﻿// <file>
+﻿
+// <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1946 $</version>
+//     <version>$Revision: 3067 $</version>
 // </file>
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Windows.Forms;
 
 using ICSharpCode.Core;
@@ -77,46 +79,52 @@ namespace ICSharpCode.SharpDevelop.Commands
 		
 		public void Run(IList<string> fileList)
 		{
-			Form f = (Form)WorkbenchSingleton.Workbench;
-			f.Show();
+			//WorkbenchSingleton.MainForm.Show();
 			
-			bool didLoadCombineOrFile = false;
+			bool didLoadSolutionOrFile = false;
+		
+			NavigationService.SuspendLogging();
 			
 			foreach (string file in fileList) {
-				didLoadCombineOrFile = true;
+				LoggingService.Info("Open file " + file);
+				didLoadSolutionOrFile = true;
 				try {
-					IProjectLoader loader = ProjectService.GetProjectLoader(file);
+					string fullFileName = Path.GetFullPath(file);
+					
+					IProjectLoader loader = ProjectService.GetProjectLoader(fullFileName);
 					if (loader != null) {
-						FileUtility.ObservedLoad(new NamedFileOperationDelegate(loader.Load), file);
+						loader.Load(fullFileName);
 					} else {
-						FileService.OpenFile(file);
+						FileService.OpenFile(fullFileName);
 					}
 				} catch (Exception e) {
 					MessageService.ShowError(e, "unable to open file " + file);
 				}
 			}
 			
-			// load previous combine
-			if (!didLoadCombineOrFile && PropertyService.Get("SharpDevelop.LoadPrevProjectOnStartup", false)) {
+			// load previous solution
+			if (!didLoadSolutionOrFile && PropertyService.Get("SharpDevelop.LoadPrevProjectOnStartup", false)) {
 				if (FileService.RecentOpen.RecentProject.Count > 0) {
 					ProjectService.LoadSolution(FileService.RecentOpen.RecentProject[0].ToString());
-					didLoadCombineOrFile = true;
+					didLoadSolutionOrFile = true;
 				}
 			}
 			
-			if (!didLoadCombineOrFile) {
-				foreach (ICommand command in AddInTree.BuildItems("/Workspace/AutostartNothingLoaded", null, false)) {
+			if (!didLoadSolutionOrFile) {
+				foreach (ICommand command in AddInTree.BuildItems<ICommand>("/Workspace/AutostartNothingLoaded", null, false)) {
 					command.Run();
 				}
 			}
 			
-			f.Focus(); // windows.forms focus workaround
+			NavigationService.ResumeLogging();
+			
+			//WorkbenchSingleton.MainForm.Focus(); // windows.forms focus workaround
 			
 			ParserService.StartParserThread();
 			
 			// finally run the workbench window ...
 			Application.AddMessageFilter(new FormKeyHandler());
-			Application.Run(f);
+			Application.Run(WorkbenchSingleton.MainForm);
 			
 			// save the workbench memento in the ide properties
 			try {
@@ -127,3 +135,4 @@ namespace ICSharpCode.SharpDevelop.Commands
 		}
 	}
 }
+

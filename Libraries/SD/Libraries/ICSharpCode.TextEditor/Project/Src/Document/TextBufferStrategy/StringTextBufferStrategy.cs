@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2682 $</version>
 // </file>
 
 using System;
@@ -72,18 +72,14 @@ namespace ICSharpCode.TextEditor.Document
 		{
 		}
 		
-		StringTextBufferStrategy(string fileName)
-		{
-			Encoding encoding = Encoding.Default;
-			SetContent(Util.FileReader.ReadFileContent(fileName, ref encoding, encoding));
-		}
-		
 		public static ITextBufferStrategy CreateTextBufferFromFile(string fileName)
 		{
 			if (!File.Exists(fileName)) {
 				throw new System.IO.FileNotFoundException(fileName);
 			}
-			return new StringTextBufferStrategy(fileName);
+			StringTextBufferStrategy s = new StringTextBufferStrategy();
+			s.SetContent(Util.FileReader.ReadFileContent(fileName, Encoding.Default));
+			return s;
 		}
 	}
 }

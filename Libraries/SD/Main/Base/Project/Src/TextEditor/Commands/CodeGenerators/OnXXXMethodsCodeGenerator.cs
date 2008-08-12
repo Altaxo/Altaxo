@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2990 $</version>
 // </file>
 
 using System;
@@ -63,7 +63,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 			
 			public override string ToString()
 			{
-				IAmbience ambience = AmbienceService.CurrentAmbience;
+				IAmbience ambience = AmbienceService.GetCurrentAmbience();
 				ambience.ConversionFlags = ConversionFlags.None;
 				return ambience.Convert(evt);
 			}

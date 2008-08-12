@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 961 $</version>
+//     <version>$Revision: 2318 $</version>
 // </file>
 
 using System;
@@ -12,7 +12,7 @@ using System.Windows.Forms;
 namespace ICSharpCode.Core
 {
 	/// <summary>
-	/// Description of InputBox.
+	/// Class used to display an input box.
 	/// </summary>
 	internal class InputBox : System.Windows.Forms.Form
 	{

@@ -2,11 +2,12 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 3096 $</version>
 // </file>
 
 using System;
 using System.Collections.Generic;
+using System.Windows.Forms;
 using ICSharpCode.Core;
 
 namespace ICSharpCode.SharpDevelop.Gui
@@ -17,6 +18,13 @@ namespace ICSharpCode.SharpDevelop.Gui
 	public interface IWorkbench : IMementoCapable
 	{
 		/// <summary>
+		/// Gets the main form for the work bench.
+		/// </summary>
+		Form MainForm { 
+			get;
+		}
+		
+		/// <summary>
 		/// The title shown in the title bar.
 		/// </summary>
 		string Title {
@@ -25,29 +33,64 @@ namespace ICSharpCode.SharpDevelop.Gui
 		}
 		
 		/// <summary>
-		/// A collection in which all active workspace windows are saved.
+		/// A collection in which all opened view contents are saved.
 		/// </summary>
-		List<IViewContent> ViewContentCollection {
+		ICollection<IViewContent> ViewContentCollection {
 			get;
 		}
 		
 		/// <summary>
 		/// A collection in which all active workspace windows are saved.
 		/// </summary>
-		List<PadDescriptor> PadContentCollection {
+		IList<IWorkbenchWindow> WorkbenchWindowCollection {
+			get;
+		}
+		
+		/// <summary>
+		/// A collection in which all active workspace windows are saved.
+		/// </summary>
+		IList<PadDescriptor> PadContentCollection {
 			get;
 		}
 		
 		/// <summary>
 		/// The active workbench window.
+		/// This is the window containing the active view content.
 		/// </summary>
 		IWorkbenchWindow ActiveWorkbenchWindow {
 			get;
 		}
 		
+		/// <summary>
+		/// Is called, when the ActiveWorkbenchWindow property changes.
+		/// </summary>
+		event EventHandler ActiveWorkbenchWindowChanged;
+		
+		/// <summary>
+		/// The active view content inside the active workbench window.
+		/// </summary>
+		IViewContent ActiveViewContent {
+			get;
+		}
+		
+		/// <summary>
+		/// Is called, when the active view content has changed.
+		/// </summary>
+		event EventHandler ActiveViewContentChanged;
+		
+		/// <summary>
+		/// The active content, depending on where the focus currently is.
+		/// If a document is currently active, this will be equal to ActiveViewContent,
+		/// if a pad has the focus, this property will return the IPadContent instance.
+		/// </summary>
 		object ActiveContent {
 			get;
 		}
+		
+		/// <summary>
+		/// Is called, when the active content has changed.
+		/// </summary>
+		event EventHandler ActiveContentChanged;
 		
 		IWorkbenchLayout WorkbenchLayout {
 			get;
@@ -60,6 +103,11 @@ namespace ICSharpCode.SharpDevelop.Gui
 		bool IsActiveWindow {
 			get;
 		}
+		
+		/// <summary>
+		/// Initializes the workbench.
+		/// </summary>
+		void Initialize();
 		
 		/// <summary>
 		/// Inserts a new <see cref="IViewContent"/> object in the workspace.
@@ -99,6 +147,11 @@ namespace ICSharpCode.SharpDevelop.Gui
 		void RedrawAllComponents();
 		
 		/// <summary>
+		/// Updates the toolstrip renderer.
+		/// </summary>
+		void UpdateRenderer();
+		
+		/// <summary>
 		/// Is called, when a workbench view was opened
 		/// </summary>
 		/// <example>
@@ -114,9 +167,8 @@ namespace ICSharpCode.SharpDevelop.Gui
 		event ViewContentEventHandler ViewClosed;
 		
 		/// <summary>
-		/// Is called, when the workbench window which the user has into
-		/// the foreground (e.g. editable) changed to a new one.
+		/// Is called when a key is pressed. Can be used to intercept command keys.
 		/// </summary>
-		event EventHandler ActiveWorkbenchWindowChanged;
+		event System.Windows.Forms.KeyEventHandler ProcessCommandKey;
 	}
 }

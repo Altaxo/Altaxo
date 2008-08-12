@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2470 $</version>
+//     <version>$Revision: 3067 $</version>
 // </file>
 
 using System;
@@ -145,6 +145,7 @@ namespace ICSharpCode.SharpDevelop.Project
 				outputItem.FileName = outputFileName;
 				outputItem.DependentUpon = Path.GetFileName(baseItem.FileName);
 				ProjectService.AddProjectItem(project, outputItem);
+				FileService.FireFileCreated(outputFileName, false);
 				project.Save();
 				ProjectBrowserPad.Instance.ProjectBrowserControl.RefreshView();
 			}
@@ -409,10 +410,9 @@ namespace ICSharpCode.SharpDevelop.Project
 				return;
 			}
 			CustomToolContext context = new CustomToolContext(baseItem.Project);
-			if (string.IsNullOrEmpty(baseItem.CustomToolNamespace)) {
+			context.OutputNamespace = baseItem.GetEvaluatedMetadata("CustomToolNamespace");
+			if (string.IsNullOrEmpty(context.OutputNamespace)) {
 				context.OutputNamespace = GetDefaultNamespace(baseItem.Project, baseItem.FileName);
-			} else {
-				context.OutputNamespace = baseItem.CustomToolNamespace;
 			}
 			RunCustomTool(new CustomToolRun(context, fileName, baseItem, customTool, showMessageBoxOnErrors));
 		}
@@ -455,7 +455,7 @@ namespace ICSharpCode.SharpDevelop.Project
 					run.context.MessageView.AppendLine("Custom tool '" + run.baseItem.CustomTool + "' failed.");
 					if (run.showMessageBoxOnErrors) {
 						MessageService.ShowError("Custom tool '" + run.baseItem.CustomTool
-						                         + "'failed:" + Environment.NewLine + ex.ToString());
+						                         + "' failed:" + Environment.NewLine + ex.ToString());
 					}
 				}
 				if (run.context.RunningSeparateThread) {

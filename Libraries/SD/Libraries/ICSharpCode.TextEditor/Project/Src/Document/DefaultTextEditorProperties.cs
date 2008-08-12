@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="none" email=""/>
-//     <version>$Revision: 1893 $</version>
+//     <version>$Revision: 3205 $</version>
 // </file>
 
 using System;
@@ -19,6 +19,7 @@ namespace ICSharpCode.TextEditor.Document
 	public class DefaultTextEditorProperties : ITextEditorProperties
 	{
 		int                   tabIndent             = 4;
+		int                   indentationSize       = 4;
 		IndentStyle           indentStyle           = IndentStyle.Smart;
 		DocumentSelectionMode documentSelectionMode = DocumentSelectionMode.Normal;
 		Encoding              encoding              = System.Text.Encoding.UTF8;
@@ -39,19 +40,18 @@ namespace ICSharpCode.TextEditor.Document
 		bool        showMatchingBracket = true;
 		bool        showLineNumbers     = true;
 		
-		bool        showSpaces          = true;
-		bool        showTabs            = true;
-		bool        showEOLMarker       = true;
+		bool        showSpaces          = false;
+		bool        showTabs            = false;
+		bool        showEOLMarker       = false;
 		
-		bool        showInvalidLines    = true;
+		bool        showInvalidLines    = false;
 		
-		bool        isIconBarVisible    = true;
+		bool        isIconBarVisible    = false;
 		bool        enableFolding       = true;
 		bool        showHorizontalRuler = false;
 		bool        showVerticalRuler   = true;
 		bool        convertTabsToSpaces = false;
-		bool        useAntiAliasedFont  = false;
-		bool        createBackupCopy    = false;
+		System.Drawing.Text.TextRenderingHint textRenderingHint = System.Drawing.Text.TextRenderingHint.SystemDefault;
 		bool        mouseWheelScrollDown = true;
 		bool        mouseWheelTextZoom   = true;
 		
@@ -62,7 +62,7 @@ namespace ICSharpCode.TextEditor.Document
 		LineViewerStyle  lineViewerStyle = LineViewerStyle.None;
 		string      lineTerminator = "\r\n";
 		bool        autoInsertCurlyBracket = true;
-		bool        useCustomLine = false;
+		bool        supportReadOnlySegments = false;
 		
 		public int TabIndent {
 			get {
@@ -73,6 +73,10 @@ namespace ICSharpCode.TextEditor.Document
 			}
 		}
 		
+		public int IndentationSize {
+			get { return indentationSize; }
+			set { indentationSize = value; }
+		}
 		
 		public IndentStyle IndentStyle {
 			get {
@@ -186,22 +190,11 @@ namespace ICSharpCode.TextEditor.Document
 				convertTabsToSpaces = value;
 			}
 		}
-		public bool UseAntiAliasedFont {
-			get {
-				return useAntiAliasedFont;
-			}
-			set {
-				useAntiAliasedFont = value;
-			}
+		public System.Drawing.Text.TextRenderingHint TextRenderingHint {
+			get { return textRenderingHint; }
+			set { textRenderingHint = value; }
 		}
-		public bool CreateBackupCopy {
-			get {
-				return createBackupCopy;
-			}
-			set {
-				createBackupCopy = value;
-			}
-		}
+		
 		public bool MouseWheelScrollDown {
 			get {
 				return mouseWheelScrollDown;
@@ -302,12 +295,12 @@ namespace ICSharpCode.TextEditor.Document
 			}
 		}
 		
-		public bool UseCustomLine {
+		public bool SupportReadOnlySegments {
 			get {
-				return useCustomLine;
+				return supportReadOnlySegments;
 			}
 			set {
-				useCustomLine = value;
+				supportReadOnlySegments = value;
 			}
 		}
 	}

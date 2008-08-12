@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2510 $</version>
+//     <version>$Revision: 3020 $</version>
 // </file>
 
 using System;
@@ -191,8 +191,8 @@ namespace ICSharpCode.TextEditor.Document
 		public static int FindWordStart(IDocument document, int offset)
 		{
 			LineSegment line = document.GetLineSegmentForOffset(offset);
-			
-			while (offset > line.Offset && !IsLetterDigitOrUnderscore(document.GetCharAt(offset - 1))) {
+			int lineOffset = line.Offset;
+			while (offset > lineOffset && IsLetterDigitOrUnderscore(document.GetCharAt(offset - 1))) {
 				--offset;
 			}
 			

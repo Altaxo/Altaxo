@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2066 $</version>
+//     <version>$Revision: 2992 $</version>
 // </file>
 
 using System;
@@ -15,6 +15,17 @@ namespace ICSharpCode.SharpDevelop.Dom
 		IMethod  removeMethod;
 		IMethod  raiseMethod;
 		
+		protected override void FreezeInternal()
+		{
+			if (addMethod != null)
+				addMethod.Freeze();
+			if (removeMethod != null)
+				removeMethod.Freeze();
+			if (raiseMethod != null)
+				raiseMethod.Freeze();
+			base.FreezeInternal();
+		}
+		
 		public override string DocumentationTag {
 			get {
 				return "E:" + this.DotNetName;
@@ -24,9 +35,16 @@ namespace ICSharpCode.SharpDevelop.Dom
 		public override IMember Clone()
 		{
 			DefaultEvent de = new DefaultEvent(Name, ReturnType, Modifiers, Region, BodyRegion, DeclaringType);
+			de.CopyDocumentationFrom(this);
 			foreach (ExplicitInterfaceImplementation eii in InterfaceImplementations) {
 				de.InterfaceImplementations.Add(eii.Clone());
 			}
+			if (addMethod != null)
+				de.addMethod = (IMethod)addMethod.Clone();
+			if (removeMethod != null)
+				de.removeMethod = (IMethod)removeMethod.Clone();
+			if (raiseMethod != null)
+				de.raiseMethod = (IMethod)raiseMethod.Clone();
 			return de;
 		}
 		
@@ -49,7 +67,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 		{
 			int cmp;
 			
-			if(0 != (cmp = base.CompareTo((IDecoration)value)))
+			if(0 != (cmp = base.CompareTo((IEntity)value)))
 				return cmp;
 			
 			if (FullyQualifiedName != null) {
@@ -68,7 +86,8 @@ namespace ICSharpCode.SharpDevelop.Dom
 			get {
 				return addMethod;
 			}
-			protected set {
+			set {
+				CheckBeforeMutation();
 				addMethod = value;
 			}
 		}
@@ -77,7 +96,8 @@ namespace ICSharpCode.SharpDevelop.Dom
 			get {
 				return removeMethod;
 			}
-			protected set {
+			set {
+				CheckBeforeMutation();
 				removeMethod = value;
 			}
 		}
@@ -86,7 +106,8 @@ namespace ICSharpCode.SharpDevelop.Dom
 			get {
 				return raiseMethod;
 			}
-			protected set {
+			set {
+				CheckBeforeMutation();
 				raiseMethod = value;
 			}
 		}

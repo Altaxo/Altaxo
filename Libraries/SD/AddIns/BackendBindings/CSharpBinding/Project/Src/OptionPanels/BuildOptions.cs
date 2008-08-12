@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2446 $</version>
+//     <version>$Revision: 2739 $</version>
 // </file>
 
 using System;
@@ -23,8 +23,7 @@ namespace CSharpBinding.OptionPanels
 			InitIntermediateOutputPath();
 			InitOutputPath();
 			InitXmlDoc();
-			InitTargetFramework(CSharpProject.DefaultTargetsFile,
-			                    @"$(SharpDevelopBinPath)\SharpDevelop.Build.CSharp.targets");
+			InitTargetFramework();
 			
 			ConfigurationGuiBinding b;
 			

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Poul Staugaard" email="poul@staugaard.dk"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2631 $</version>
 // </file>
 
 using System;
@@ -44,10 +44,10 @@ namespace ICSharpCode.SharpDevelop.Gui
 		{
 			foreach (ListViewItem item in SelectedItems) {
 				TypeLibrary library = (TypeLibrary)item.Tag;
-				selectDialog.AddReference(ReferenceType.Typelib,
-				                          library.Name,
-				                          library.Path,
-				                          library);
+				selectDialog.AddReference(
+					library.Name, "Typelib", library.Path,
+					new ComReferenceProjectItem(selectDialog.ConfigureProject, library)
+				);
 			}
 		}
 		

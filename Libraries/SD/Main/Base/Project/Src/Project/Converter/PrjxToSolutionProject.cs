@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2043 $</version>
+//     <version>$Revision: 3119 $</version>
 // </file>
 
 using System;
@@ -82,7 +82,7 @@ namespace ICSharpCode.SharpDevelop.Project.Converter
 			{
 				if (hintPath == null || hintPath.Length == 0)
 					return false;
-				return !FileUtility.IsBaseDirectory(FileUtility.NETFrameworkInstallRoot, hintPath);
+				return !FileUtility.IsBaseDirectory(FileUtility.NetFrameworkInstallRoot, hintPath);
 			}
 			
 			string rootNamespace;
@@ -282,11 +282,10 @@ namespace ICSharpCode.SharpDevelop.Project.Converter
 			
 			conversion.basePath = Path.GetDirectoryName(fileName);
 			
-			Encoding tmp = Encoding.Default;
-			string content = ICSharpCode.TextEditor.Util.FileReader.ReadFileContent(old, ref tmp, tmp);
+			string content = ICSharpCode.TextEditor.Util.FileReader.ReadFileContent(old, Encoding.Default);
 			RunConverter(new StringReader(content), fileName, "vsnet2msbuild.xsl", conversion);
 			if (File.Exists(oldUserFile)) {
-				content = ICSharpCode.TextEditor.Util.FileReader.ReadFileContent(oldUserFile, ref tmp, tmp);
+				content = ICSharpCode.TextEditor.Util.FileReader.ReadFileContent(oldUserFile, Encoding.Default);
 				RunConverter(new StringReader(content), userFile, "vsnet2msbuild_user.xsl", conversion);
 			}
 		}

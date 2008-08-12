@@ -2,11 +2,12 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2049 $</version>
+//     <version>$Revision: 2933 $</version>
 // </file>
 
 using System;
 using System.ComponentModel;
+using System.Linq;
 using System.IO;
 
 using ICSharpCode.SharpDevelop.Dom;
@@ -21,11 +22,9 @@ namespace CSharpBinding
 	/// </summary>
 	public class CSharpProject : CompilableProject
 	{
-		[Browsable(false)]
-		public override IAmbience Ambience {
-			get {
-				return CSharpAmbience.Instance;
-			}
+		public override IAmbience GetAmbience()
+		{
+			return new CSharpAmbience();
 		}
 		
 		public override string Language {
@@ -58,11 +57,16 @@ namespace CSharpBinding
 		}
 		
 		public const string DefaultTargetsFile = @"$(MSBuildBinPath)\Microsoft.CSharp.Targets";
+		public const string ExtendedTargetsFile = @"$(SharpDevelopBinPath)\SharpDevelop.Build.CSharp.targets";
 		
 		protected override void Create(ProjectCreateInformation information)
 		{
-			base.Create(information);
 			this.AddImport(DefaultTargetsFile, null);
+			
+			// Add import before base.Create call - base.Create will call AddOrRemoveExtensions, which
+			// needs to change the import when the compact framework is targeted.
+			base.Create(information);
+			
 			SetProperty("Debug", null, "CheckForOverflowUnderflow", "True",
 			            PropertyStorageLocations.ConfigurationSpecific, true);
 			SetProperty("Release", null, "CheckForOverflowUnderflow", "False",
@@ -80,6 +84,49 @@ namespace CSharpBinding
 				return ItemType.Compile;
 			else
 				return base.GetDefaultItemType(fileName);
+		}
+		
+		public override void StartBuild(ProjectBuildOptions options, IBuildFeedbackSink feedbackSink)
+		{
+			if (this.MinimumSolutionVersion == 9) {
+				MSBuildEngine.StartBuild(this,
+				                         options,
+				                         feedbackSink,
+				                         MSBuildEngine.AdditionalTargetFiles.Concat(
+				                         	new [] { "$(SharpDevelopBinPath)/SharpDevelop.CheckMSBuild35Features.targets" }));
+			} else {
+				base.StartBuild(options, feedbackSink);
+			}
+		}
+		
+		protected override void AddOrRemoveExtensions()
+		{
+			// Test if SharpDevelop-Build extensions are required
+			bool needExtensions = false;
+			
+			foreach (var p in GetAllProperties("TargetFrameworkVersion")) {
+				if (p.IsImported == false) {
+					if (p.Value.StartsWith("CF")) {
+						needExtensions = true;
+					}
+				}
+			}
+			
+			foreach (Microsoft.Build.BuildEngine.Import import in MSBuildProject.Imports) {
+				if (needExtensions) {
+					if (DefaultTargetsFile.Equals(import.ProjectPath, StringComparison.InvariantCultureIgnoreCase)) {
+						//import.ProjectPath = extendedTargets;
+						MSBuildInternals.SetImportProjectPath(this, import, ExtendedTargetsFile);
+						break;
+					}
+				} else {
+					if (ExtendedTargetsFile.Equals(import.ProjectPath, StringComparison.InvariantCultureIgnoreCase)) {
+						//import.ProjectPath = defaultTargets;
+						MSBuildInternals.SetImportProjectPath(this, import, DefaultTargetsFile);
+						break;
+					}
+				}
+			}
 		}
 	}
 }

@@ -2,30 +2,65 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2029 $</version>
+//     <version>$Revision: 2931 $</version>
 // </file>
 
 using System;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace ICSharpCode.SharpDevelop.Dom
 {
-	public class DefaultClass : AbstractNamedEntity, IClass, IComparable
+	public class DefaultClass : AbstractEntity, IClass, IComparable
 	{
 		ClassType classType;
 		DomRegion region;
-		DomRegion bodyRegion;
 		
 		ICompilationUnit compilationUnit;
 		
-		List<IReturnType> baseTypes   = null;
+		IList<IReturnType> baseTypes;
 		
-		List<IClass>    innerClasses = null;
-		List<IField>    fields       = null;
-		List<IProperty> properties   = null;
-		List<IMethod>   methods      = null;
-		List<IEvent>    events       = null;
-		IList<ITypeParameter> typeParameters = null;
+		IList<IClass>    innerClasses;
+		IList<IField>    fields;
+		IList<IProperty> properties;
+		IList<IMethod>   methods;
+		IList<IEvent>    events;
+		IList<ITypeParameter> typeParameters;
+		
+		protected override void FreezeInternal()
+		{
+			baseTypes = FreezeList(baseTypes);
+			innerClasses = FreezeList(innerClasses);
+			fields = FreezeList(fields);
+			properties = FreezeList(properties);
+			methods = FreezeList(methods);
+			events = FreezeList(events);
+			typeParameters = FreezeList(typeParameters);
+			base.FreezeInternal();
+		}
+		
+		/*
+		public virtual IClass Unfreeze()
+		{
+			DefaultClass copy = new DefaultClass(compilationUnit, DeclaringType);
+			copy.FullyQualifiedName = this.FullyQualifiedName;
+			copy.Attributes.AddRange(this.Attributes);
+			copy.BaseTypes.AddRange(this.BaseTypes);
+			copy.BodyRegion = this.BodyRegion;
+			copy.ClassType = this.ClassType;
+			copy.Documentation = this.Documentation;
+			copy.Events.AddRange(this.Events);
+			copy.Fields.AddRange(this.Fields);
+			copy.InnerClasses.AddRange(this.InnerClasses);
+			copy.Methods.AddRange(this.Methods);
+			copy.Modifiers = this.Modifiers;
+			copy.Properties.AddRange(this.Properties);
+			copy.Region = this.Region;
+			copy.TypeParameters.AddRange(this.TypeParameters);
+			copy.UserData = this.UserData;
+			return copy;
+		}
+		*/
 		
 		byte flags;
 		const byte hasPublicOrInternalStaticMembersFlag = 0x02;
@@ -69,6 +104,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 				return flags;
 			}
 			set {
+				CheckBeforeMutation();
 				flags = value;
 			}
 		}
@@ -102,22 +138,42 @@ namespace ICSharpCode.SharpDevelop.Dom
 			Modifiers = modifiers;
 		}
 		
-		IReturnType defaultReturnType;
+		// fields must be volatile to ensure that the optimizer doesn't reorder accesses to it
+		// or causes DefaultReturnType to return null when the local copy of this.defaultReturnType is
+		// optimized away.
+		volatile IReturnType defaultReturnType;
+		bool hasCompoundClass;
 		
 		public IReturnType DefaultReturnType {
 			get {
-				if (defaultReturnType == null)
-					defaultReturnType = CreateDefaultReturnType();
+				IReturnType defaultReturnType = this.defaultReturnType;
+				if (defaultReturnType == null) {
+					lock (this) {
+						this.defaultReturnType = defaultReturnType = CreateDefaultReturnType();
+					}
+				}
 				return defaultReturnType;
 			}
 		}
 		
 		protected virtual IReturnType CreateDefaultReturnType()
 		{
-			if (IsPartial) {
+			if (hasCompoundClass) {
 				return new GetClassReturnType(ProjectContent, FullyQualifiedName, TypeParameters.Count);
 			} else {
 				return new DefaultReturnType(this);
+			}
+		}
+		
+		bool IClass.HasCompoundClass {
+			get { return hasCompoundClass; }
+			set {
+				if (hasCompoundClass != value) {
+					lock (this) {
+						hasCompoundClass = value;
+						defaultReturnType = null;
+					}
+				}
 			}
 		}
 		
@@ -126,11 +182,11 @@ namespace ICSharpCode.SharpDevelop.Dom
 				return (this.Modifiers & ModifierEnum.Partial) == ModifierEnum.Partial;
 			}
 			set {
+				CheckBeforeMutation();
 				if (value)
 					this.Modifiers |= ModifierEnum.Partial;
 				else
 					this.Modifiers &= ~ModifierEnum.Partial;
-				defaultReturnType = null; // re-create default return type
 			}
 		}
 		
@@ -142,10 +198,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 		protected override void OnFullyQualifiedNameChanged(EventArgs e)
 		{
 			base.OnFullyQualifiedNameChanged(e);
-			GetClassReturnType rt = defaultReturnType as GetClassReturnType;
-			if (rt != null) {
-				rt.SetFullyQualifiedName(FullyQualifiedName);
-			}
+			defaultReturnType = null; // re-create default return type
 		}
 		
 		public ICompilationUnit CompilationUnit {
@@ -167,6 +220,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 				return classType;
 			}
 			set {
+				CheckBeforeMutation();
 				classType = value;
 			}
 		}
@@ -176,25 +230,24 @@ namespace ICSharpCode.SharpDevelop.Dom
 				return region;
 			}
 			set {
+				CheckBeforeMutation();
 				region = value;
-			}
-		}
-		
-		public DomRegion BodyRegion {
-			get {
-				return bodyRegion;
-			}
-			set {
-				bodyRegion = value;
 			}
 		}
 		
 		public override string DotNetName {
 			get {
-				if (typeParameters == null || typeParameters.Count == 0) {
-					return FullyQualifiedName;
+				string fullName;
+				if (this.DeclaringType != null) {
+					fullName = this.DeclaringType.DotNetName + "+" + this.Name;
 				} else {
-					return FullyQualifiedName + "`" + typeParameters.Count;
+					fullName = this.FullyQualifiedName;
+				}
+				IList<ITypeParameter> typeParameters = this.TypeParameters;
+				if (typeParameters == null || typeParameters.Count == 0) {
+					return fullName;
+				} else {
+					return fullName + "`" + typeParameters.Count;
 				}
 			}
 		}
@@ -205,7 +258,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 			}
 		}
 		
-		public List<IReturnType> BaseTypes {
+		public IList<IReturnType> BaseTypes {
 			get {
 				if (baseTypes == null) {
 					baseTypes = new List<IReturnType>();
@@ -214,7 +267,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 			}
 		}
 		
-		public virtual List<IClass> InnerClasses {
+		public virtual IList<IClass> InnerClasses {
 			get {
 				if (innerClasses == null) {
 					innerClasses = new List<IClass>();
@@ -223,7 +276,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 			}
 		}
 		
-		public virtual List<IField> Fields {
+		public virtual IList<IField> Fields {
 			get {
 				if (fields == null) {
 					fields = new List<IField>();
@@ -232,7 +285,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 			}
 		}
 		
-		public virtual List<IProperty> Properties {
+		public virtual IList<IProperty> Properties {
 			get {
 				if (properties == null) {
 					properties = new List<IProperty>();
@@ -241,7 +294,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 			}
 		}
 		
-		public virtual List<IMethod> Methods {
+		public virtual IList<IMethod> Methods {
 			get {
 				if (methods == null) {
 					methods = new List<IMethod>();
@@ -250,7 +303,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 			}
 		}
 		
-		public virtual List<IEvent> Events {
+		public virtual IList<IEvent> Events {
 			get {
 				if (events == null) {
 					events = new List<IEvent>();
@@ -267,6 +320,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 				return typeParameters;
 			}
 			set {
+				CheckBeforeMutation();
 				typeParameters = value;
 			}
 		}
@@ -275,7 +329,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 		{
 			int cmp;
 			
-			if(0 != (cmp = base.CompareTo((IDecoration)value))) {
+			if(0 != (cmp = base.CompareTo((IEntity)value))) {
 				return cmp;
 			}
 			
@@ -317,7 +371,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 					if (typesToVisit.Count > 0) {
 						nextType = typesToVisit.Dequeue();
 					} else {
-						nextType = enqueuedLastBaseType ? null : GetBaseTypeByClassType();
+						nextType = enqueuedLastBaseType ? null : GetBaseTypeByClassType(this);
 						enqueuedLastBaseType = true;
 					}
 					if (nextType != null) {
@@ -332,12 +386,6 @@ namespace ICSharpCode.SharpDevelop.Dom
 		
 		protected bool UseInheritanceCache = false;
 		
-		protected override bool CanBeSubclass {
-			get {
-				return true;
-			}
-		}
-
 		public IReturnType GetBaseType(int index)
 		{
 			return BaseTypes[index];
@@ -357,28 +405,28 @@ namespace ICSharpCode.SharpDevelop.Dom
 					}
 				}
 				if (cachedBaseType == null) {
-					return GetBaseTypeByClassType();
+					return GetBaseTypeByClassType(this);
 				} else {
 					return cachedBaseType;
 				}
 			}
 		}
 		
-		IReturnType GetBaseTypeByClassType()
+		internal static IReturnType GetBaseTypeByClassType(IClass c)
 		{
-			switch (ClassType) {
+			switch (c.ClassType) {
 				case ClassType.Class:
 				case ClassType.Interface:
-					if (FullyQualifiedName != "System.Object") {
-						return this.ProjectContent.SystemTypes.Object;
+					if (c.FullyQualifiedName != "System.Object") {
+						return c.ProjectContent.SystemTypes.Object;
 					}
 					break;
 				case ClassType.Enum:
-					return this.ProjectContent.SystemTypes.Enum;
+					return c.ProjectContent.SystemTypes.Enum;
 				case ClassType.Delegate:
-					return this.ProjectContent.SystemTypes.Delegate;
+					return c.ProjectContent.SystemTypes.Delegate;
 				case ClassType.Struct:
-					return this.ProjectContent.SystemTypes.ValueType;
+					return c.ProjectContent.SystemTypes.ValueType;
 			}
 			return null;
 		}
@@ -390,20 +438,11 @@ namespace ICSharpCode.SharpDevelop.Dom
 					if (baseClass != null && baseClass.ClassType == this.ClassType)
 						return baseClass;
 				}
-				switch (ClassType) {
-					case ClassType.Class:
-						if (FullyQualifiedName != "System.Object") {
-							return this.ProjectContent.SystemTypes.Object.GetUnderlyingClass();
-						}
-						break;
-					case ClassType.Enum:
-						return this.ProjectContent.SystemTypes.Enum.GetUnderlyingClass();
-					case ClassType.Delegate:
-						return this.ProjectContent.SystemTypes.Delegate.GetUnderlyingClass();
-					case ClassType.Struct:
-						return this.ProjectContent.SystemTypes.ValueType.GetUnderlyingClass();
-				}
-				return null;
+				IReturnType defaultBaseType = GetBaseTypeByClassType(this);
+				if (defaultBaseType != null)
+					return defaultBaseType.GetUnderlyingClass();
+				else
+					return null;
 			}
 		}
 		
@@ -454,11 +493,17 @@ namespace ICSharpCode.SharpDevelop.Dom
 		public IClass GetInnermostClass(int caretLine, int caretColumn)
 		{
 			foreach (IClass c in InnerClasses) {
-				if (c != null && c.Region.IsInside(caretLine, caretColumn)) {
+				if (c != null && IsInside(c, caretLine, caretColumn)) {
 					return c.GetInnermostClass(caretLine, caretColumn);
 				}
 			}
 			return this;
+		}
+		
+		internal static bool IsInside(IClass c, int caretLine, int caretColumn)
+		{
+			return c.Region.IsInside(caretLine, caretColumn)
+				|| c.Attributes.Any((IAttribute a) => a.Region.IsInside(caretLine, caretColumn));
 		}
 		
 		public List<IClass> GetAccessibleTypes(IClass callingClass)

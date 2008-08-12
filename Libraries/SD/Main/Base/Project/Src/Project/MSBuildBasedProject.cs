@@ -2,13 +2,14 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2542 $</version>
+//     <version>$Revision: 3126 $</version>
 // </file>
 
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.IO;
 
 using ICSharpCode.Core;
@@ -59,6 +60,32 @@ namespace ICSharpCode.SharpDevelop.Project
 			base.Dispose();
 			// unload evaluatingTempProject if necessary:
 			MSBuildInternals.EnsureCorrectTempProject(project, null, null, ref evaluatingTempProject);
+		}
+		
+		public override int MinimumSolutionVersion {
+			get {
+				lock (SyncRoot) {
+					if (string.IsNullOrEmpty(project.DefaultToolsVersion)
+					    || project.DefaultToolsVersion == "2.0")
+					{
+						return Solution.SolutionVersionVS05;
+					} else {
+						return Solution.SolutionVersionVS08;
+					}
+				}
+			}
+		}
+		
+		public virtual void ConvertToMSBuild35(bool changeTargetFrameworkToNet35)
+		{
+			lock (SyncRoot) {
+				project.DefaultToolsVersion = "3.5";
+			}
+		}
+		
+		public override void ResolveAssemblyReferences()
+		{
+			MSBuildInternals.ResolveAssemblyReferences(this, null);
 		}
 		
 		#region CreateProjectItem
@@ -119,6 +146,9 @@ namespace ICSharpCode.SharpDevelop.Project
 			
 			Name = information.ProjectName;
 			FileName = information.OutputProjectFileName;
+			
+			project.FullFileName = information.OutputProjectFileName;
+			project.DefaultToolsVersion = "3.5";
 			
 			base.IdGuid = "{" + Guid.NewGuid().ToString().ToUpperInvariant() + "}";
 			MSBuild.BuildPropertyGroup group = project.AddNewPropertyGroup(false);
@@ -309,10 +339,10 @@ namespace ICSharpCode.SharpDevelop.Project
 			if (string.IsNullOrEmpty(configuration)) configuration = ActiveConfiguration;
 			if (string.IsNullOrEmpty(platform))      platform = ActivePlatform;
 			
-			// We need to use ToArray because EvaluateMSBuildCondition invalidates the list
+			// We need to use ToList because EvaluateMSBuildCondition invalidates the list
 			// of property groups.
 			foreach (MSBuild.BuildPropertyGroup g
-			         in Linq.ToList(Linq.CastTo<MSBuild.BuildPropertyGroup>(project.PropertyGroups)))
+			         in project.PropertyGroups.Cast<MSBuild.BuildPropertyGroup>().ToList())
 			{
 				if (g.IsImported) {
 					continue;
@@ -326,6 +356,7 @@ namespace ICSharpCode.SharpDevelop.Project
 					return property;
 				}
 			}
+			
 			location = PropertyStorageLocations.Unknown;
 			group = null;
 			return null;
@@ -797,22 +828,34 @@ namespace ICSharpCode.SharpDevelop.Project
 		#endregion
 		
 		#region Building
-		public override void StartBuild(BuildOptions options)
+		public override ICollection<IBuildable> GetBuildDependencies(ProjectBuildOptions buildOptions)
 		{
-			RunMSBuild(this.ParentSolution, this,
-			           this.ActiveConfiguration, this.ActivePlatform, options);
+			ICollection<IBuildable> result = base.GetBuildDependencies(buildOptions);
+			foreach (ProjectItem item in GetItemsOfType(ItemType.ProjectReference)) {
+				ProjectReferenceProjectItem prpi = item as ProjectReferenceProjectItem;
+				if (prpi != null && prpi.ReferencedProject != null)
+					result.Add(prpi.ReferencedProject);
+			}
+			return result;
 		}
 		
+		public override void StartBuild(ProjectBuildOptions options, IBuildFeedbackSink feedbackSink)
+		{
+			MSBuildEngine.StartBuild(this, options, feedbackSink, MSBuildEngine.AdditionalTargetFiles);
+		}
+		
+		/*
 		internal static void RunMSBuild(Solution solution, IProject project,
 		                                string configuration, string platform, BuildOptions options)
 		{
 			WorkbenchSingleton.Workbench.GetPad(typeof(CompilerMessageView)).BringPadToFront();
-			MSBuildEngine engine = new MSBuildEngine();
+			oldMSBuildEngine engine = new oldMSBuildEngine();
 			engine.Configuration = configuration;
 			engine.Platform = platform;
 			engine.MessageView = TaskService.BuildMessageViewCategory;
 			engine.Run(solution, project, options);
 		}
+		 */
 		#endregion
 		
 		#region Loading
@@ -873,10 +916,16 @@ namespace ICSharpCode.SharpDevelop.Project
 						// MSB4075 is:
 						// "The project file must be opened in VS IDE and converted to latest version
 						// before it can be build by MSBuild."
-						Converter.PrjxToSolutionProject.ConvertVSNetProject(fileName);
-						project.Load(fileName);
+						try {
+							Converter.PrjxToSolutionProject.ConvertVSNetProject(fileName);
+							project.Load(fileName);
+						} catch (System.Xml.XmlException ex2) {
+							throw new ProjectLoadException(ex2.Message, ex2);
+						} catch (MSBuild.InvalidProjectFileException ex2) {
+							throw new ProjectLoadException(ex2.Message, ex2);
+						}
 					} else {
-						throw;
+						throw new ProjectLoadException(ex.Message, ex);
 					}
 				}
 				this.ActiveConfiguration = GetEvaluatedProperty("Configuration") ?? this.ActiveConfiguration;
@@ -1071,7 +1120,7 @@ namespace ICSharpCode.SharpDevelop.Project
 				bool copiedGroup = false;
 				if (copyFrom != null) {
 					foreach (MSBuild.BuildPropertyGroup g
-					         in Linq.ToList(Linq.CastTo<MSBuild.BuildPropertyGroup>(project.PropertyGroups)))
+					         in project.PropertyGroups.Cast<MSBuild.BuildPropertyGroup>().ToList())
 					{
 						if (g.IsImported) {
 							continue;
@@ -1101,7 +1150,7 @@ namespace ICSharpCode.SharpDevelop.Project
 				bool copiedGroup = false;
 				if (copyFrom != null) {
 					foreach (MSBuild.BuildPropertyGroup g
-					         in Linq.ToList(Linq.CastTo<MSBuild.BuildPropertyGroup>(project.PropertyGroups)))
+					         in project.PropertyGroups.Cast<MSBuild.BuildPropertyGroup>().ToList())
 					{
 						if (g.IsImported) {
 							continue;
@@ -1151,7 +1200,7 @@ namespace ICSharpCode.SharpDevelop.Project
 					throw new InvalidOperationException("cannot remove the last configuration");
 				}
 				foreach (MSBuild.BuildPropertyGroup g
-				         in Linq.ToList(Linq.CastTo<MSBuild.BuildPropertyGroup>(project.PropertyGroups)))
+				         in project.PropertyGroups.Cast<MSBuild.BuildPropertyGroup>().ToList())
 				{
 					if (g.IsImported) {
 						continue;
@@ -1189,7 +1238,7 @@ namespace ICSharpCode.SharpDevelop.Project
 					throw new InvalidOperationException("cannot remove the last platform");
 				}
 				foreach (MSBuild.BuildPropertyGroup g
-				         in Linq.ToList(Linq.CastTo<MSBuild.BuildPropertyGroup>(project.PropertyGroups)))
+				         in project.PropertyGroups.Cast<MSBuild.BuildPropertyGroup>().ToList())
 				{
 					if (g.IsImported) {
 						continue;

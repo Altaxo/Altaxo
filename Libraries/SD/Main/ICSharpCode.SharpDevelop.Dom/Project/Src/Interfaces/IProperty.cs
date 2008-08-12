@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2613 $</version>
 // </file>
 
 using System;
@@ -28,6 +28,14 @@ namespace ICSharpCode.SharpDevelop.Dom
 		}
 		
 		bool IsIndexer {
+			get;
+		}
+		
+		ModifierEnum GetterModifiers {
+			get;
+		}
+		
+		ModifierEnum SetterModifiers {
 			get;
 		}
 	}

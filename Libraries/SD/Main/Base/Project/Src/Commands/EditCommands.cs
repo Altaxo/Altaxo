@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2576 $</version>
 // </file>
 
 using System;
@@ -16,7 +16,7 @@ namespace ICSharpCode.SharpDevelop.Commands
 	{
 		public override bool IsEnabled {
 			get {
-				IUndoHandler editable = WorkbenchSingleton.Workbench.ActiveContent as IUndoHandler;
+				IUndoHandler editable = (WorkbenchSingleton.Workbench.ActiveContent as IUndoHandler) ?? (WorkbenchSingleton.ActiveControl as IUndoHandler);
 				if (editable != null) {
 					return editable.EnableUndo;
 				} else {
@@ -31,7 +31,7 @@ namespace ICSharpCode.SharpDevelop.Commands
 		
 		public override void Run()
 		{
-			IUndoHandler editable = WorkbenchSingleton.Workbench.ActiveContent as IUndoHandler;
+			IUndoHandler editable = (WorkbenchSingleton.Workbench.ActiveContent as IUndoHandler) ?? (WorkbenchSingleton.ActiveControl as IUndoHandler);
 			if (editable != null) {
 				editable.Undo();
 			} else {
@@ -47,7 +47,7 @@ namespace ICSharpCode.SharpDevelop.Commands
 	{
 		public override bool IsEnabled {
 			get {
-				IUndoHandler editable = WorkbenchSingleton.Workbench.ActiveContent as IUndoHandler;
+				IUndoHandler editable = (WorkbenchSingleton.Workbench.ActiveContent as IUndoHandler) ?? (WorkbenchSingleton.ActiveControl as IUndoHandler);
 				if (editable != null) {
 					return editable.EnableRedo;
 				}
@@ -57,7 +57,7 @@ namespace ICSharpCode.SharpDevelop.Commands
 		
 		public override void Run()
 		{
-			IUndoHandler editable = WorkbenchSingleton.Workbench.ActiveContent as IUndoHandler;
+			IUndoHandler editable = (WorkbenchSingleton.Workbench.ActiveContent as IUndoHandler) ?? (WorkbenchSingleton.ActiveControl as IUndoHandler);
 			if (editable != null) {
 				editable.Redo();
 			}
@@ -77,7 +77,7 @@ namespace ICSharpCode.SharpDevelop.Commands
 			ComboBox cb = ctl as ComboBox;
 			if (cb != null && cb.DropDownStyle != ComboBoxStyle.DropDownList)
 				return new ComboBoxWrapper(cb);
-			return null;
+			return ctl as IClipboardHandler;
 		}
 		
 		private class TextBoxWrapper : IClipboardHandler
@@ -214,7 +214,7 @@ namespace ICSharpCode.SharpDevelop.Commands
 		public override void Run()
 		{
 			using (WordCountDialog wcd = new WordCountDialog()) {
-				wcd.Owner = (Form)WorkbenchSingleton.Workbench;
+				wcd.Owner = WorkbenchSingleton.MainForm;
 				wcd.ShowDialog(ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.MainForm);
 			}
 		}

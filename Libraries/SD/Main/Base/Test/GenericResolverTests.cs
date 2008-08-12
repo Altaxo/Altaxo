@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2510 $</version>
+//     <version>$Revision: 3171 $</version>
 // </file>
 
 using System;
@@ -25,6 +25,11 @@ namespace ICSharpCode.SharpDevelop.Tests
 		RR Resolve<RR>(string program, string expression, int line) where RR : ResolveResult
 		{
 			return nrrt.Resolve<RR>(program, expression, line);
+		}
+		
+		RR Resolve<RR>(string program, string expression, int line, int column) where RR : ResolveResult
+		{
+			return nrrt.Resolve<RR>(program, expression, line, column, ExpressionContext.Default);
 		}
 		
 		ResolveResult ResolveVB(string program, string expression, int line)
@@ -173,6 +178,46 @@ class DerivedClass : BaseClass<string> {
 		}
 		
 		[Test]
+		public void InheritFromGenericClass2()
+		{
+			string program = @"using System;
+class Test {
+  void M(DerivedClass d) {
+    
+  }
+}
+class BaseClass<T> {
+	public T value;
+}
+class DerivedClass : BaseClass<string> {
+	
+}
+";
+			MemberResolveResult rr = Resolve(program, "d.value", 4) as MemberResolveResult;
+			Assert.AreEqual("System.String", rr.ResolvedType.FullyQualifiedName);
+		}
+		
+		[Test]
+		public void InheritFromGenericClass3()
+		{
+			string program = @"using System;
+class Test {
+  void M(DerivedClass<string> d) {
+    
+  }
+}
+class BaseClass<T> {
+	public T value;
+}
+class DerivedClass<T> : BaseClass<T> {
+	
+}
+";
+			MemberResolveResult rr = Resolve(program, "d.value", 4) as MemberResolveResult;
+			Assert.AreEqual("System.String", rr.ResolvedType.FullyQualifiedName);
+		}
+		
+		[Test]
 		public void CrossTypeParametersInheritance()
 		{
 			string program = @"using System;
@@ -187,6 +232,23 @@ class DerivedClass<A,B> : BaseClass<B,A> {
 			Assert.AreEqual("B", rr.ResolvedType.Name);
 			rr = Resolve(program, "b", 7) as MemberResolveResult;
 			Assert.AreEqual("A", rr.ResolvedType.Name);
+		}
+		
+		[Test]
+		public void PropertyOnGenericClass()
+		{
+			string program = @"using System;
+class T {
+	void M() {
+	
+	}
+}
+";
+			MemberResolveResult rr = Resolve(program, "System.Collections.Generic.Comparer<string>.Default", 4) as MemberResolveResult;
+			Assert.AreEqual("System.Collections.Generic.Comparer.Default", rr.ResolvedMember.FullyQualifiedName);
+			Assert.AreEqual("System.Collections.Generic.Comparer<string>",
+			                (new Dom.CSharp.CSharpAmbience { ConversionFlags = ConversionFlags.UseFullyQualifiedTypeNames } )
+			                .Convert(rr.ResolvedType));
 		}
 		#endregion
 		
@@ -255,6 +317,18 @@ public class GenericClass<T> where T : IDisposable {
 			Assert.IsTrue(rr is LocalResolveResult);
 			Assert.IsTrue(rr.ResolvedType is GenericReturnType);
 		}
+		
+		[Test]
+		public void ResolveGenericClassInDeclarationLine()
+		{
+			const string program = @"using System;
+public abstract class Sorter { }
+public abstract class Sorter<T> : Sorter, IComparer<T> { }
+";
+			
+			TypeResolveResult trr = Resolve<TypeResolveResult>(program, "Sorter", 3, 37);
+			Assert.AreEqual(0, trr.ResolvedClass.TypeParameters.Count);
+		}
 		#endregion
 		
 		#region Generic methods
@@ -282,8 +356,238 @@ class TestClass {
 			
 			// ensure that the reference pointing to the specialized method is seen as a reference
 			// to the generic method.
-			// Fixing this requires changing the IMember interface: won't fix for 2.x
-			//Assert.IsTrue(Refactoring.RefactoringService.IsReferenceToMember(genericMethod, mrr));
+			Assert.IsTrue(mrr.IsReferenceTo(genericMethod));
+		}
+		
+		[Test]
+		public void BothGenericAndNonGenericMethod()
+		{
+			string program = @"using System;
+class TestClass {
+	void Main() {
+		
+	}
+	static object GetSomething() {
+		return null;
+	}
+	static T GetSomething<T>() {
+		return default(T);
+	}
+}
+";
+			
+			MemberResolveResult mrr = Resolve<MemberResolveResult>(program, "GetSomething()", 4);
+			
+			IMethod nonGenericMethod = mrr.ResolvedMember.DeclaringType.Methods[1];
+			Assert.AreEqual("System.Object", nonGenericMethod.ReturnType.FullyQualifiedName);
+			
+			IMethod genericMethod = mrr.ResolvedMember.DeclaringType.Methods[2];
+			Assert.AreEqual("T", genericMethod.ReturnType.FullyQualifiedName);
+			
+			Assert.AreSame(nonGenericMethod, mrr.ResolvedMember);
+			
+			Assert.IsTrue(mrr.IsReferenceTo(nonGenericMethod));
+			Assert.IsFalse(mrr.IsReferenceTo(genericMethod));
+			
+			mrr = Resolve<MemberResolveResult>(program, "GetSomething<int>()", 4);
+			Assert.AreEqual("System.Int32", mrr.ResolvedType.FullyQualifiedName);
+			Assert.AreEqual("System.Int32", mrr.ResolvedMember.ReturnType.FullyQualifiedName);
+			
+			Assert.IsTrue(mrr.IsReferenceTo(genericMethod));
+			Assert.IsFalse(mrr.IsReferenceTo(nonGenericMethod));
+		}
+		
+		[Test]
+		public void OverrideGenericMethodTest()
+		{
+			string program = @"using System;
+class Program {
+	public static void Main() {
+		D d = new D();
+		
+		d.T<char, int>('a', 1);
+		d.T<int, char>('a', 2);
+	}
+	protected virtual void T<A, B>(A a, B b) {
+	}
+	protected virtual void T<X, Y>(Y a, X b) {
+	}
+}
+class D : Program  {
+	protected override void T<X, Y>(X a, Y b) {
+		// overrides T<A,B> - type arguments are identified by position
+	}
+}";
+			IAmbience ambience = new Dom.CSharp.CSharpAmbience();
+			ambience.ConversionFlags = ConversionFlags.UseFullyQualifiedMemberNames | ConversionFlags.ShowTypeParameterList;
+			MemberResolveResult mrr;
+			
+			mrr = Resolve<MemberResolveResult>(program, "d.T<int, char>('a', 2)", 5);
+			Assert.AreEqual("Program.T<X, Y>", ambience.Convert((IMethod)mrr.ResolvedMember));
+			
+			mrr = Resolve<MemberResolveResult>(program, "d.T<char, int>('a', 1)", 6);
+			Assert.AreEqual("D.T<X, Y>", ambience.Convert((IMethod)mrr.ResolvedMember));
+			
+			IMember baseMember = MemberLookupHelper.FindBaseMember(mrr.ResolvedMember);
+			Assert.IsNotNull(baseMember);
+			Assert.AreEqual("Program.T<A, B>", ambience.Convert((IMethod)baseMember));
+		}
+		
+		[Test]
+		public void PassGenericArgumentOnToOtherGenericMethod()
+		{
+			string program = @"class T {
+		static void Test<ValueT>(ValueT v, int iKey) {
+			
+		}
+	}
+	class TestClass<T> {
+		public static bool Equals(T a, T b) { return false; }
+	}";
+			
+			MemberResolveResult mrr;
+			
+			mrr = Resolve<MemberResolveResult>(program, "TestClass<ValueT>.Equals(v, default(ValueT))", 3);
+			Assert.AreEqual("TestClass.Equals", mrr.ResolvedMember.FullyQualifiedName);
+			
+			mrr = Resolve<MemberResolveResult>(program, "TestClass<int>.Equals(v, default(ValueT))", 3);
+			Assert.AreEqual("System.Object.Equals", mrr.ResolvedMember.FullyQualifiedName);
+			
+			mrr = Resolve<MemberResolveResult>(program, "TestClass<ValueT>.Equals(v, default(object))", 3);
+			Assert.AreEqual("System.Object.Equals", mrr.ResolvedMember.FullyQualifiedName);
+		}
+		#endregion
+		
+		#region C# 3.0 Type Inference
+		MemberResolveResult ResolveInSelectProgram(string expression)
+		{
+			string program = @"using System;
+using System.Collections.Generic;
+delegate R Func<A, R>(A arg);
+static class TestClass {
+	static void Main() {
+		{XXX};
+	}
+	static IEnumerable<TResult> Select<TSource,TResult>(
+		this IEnumerable<TSource> source, Func<TSource,TResult> selector)
+	{
+		foreach (TSource element in source) yield return selector(element);
+	}
+	static double StringToDouble(string s) { return double.Parse(s); }
+}
+";
+			return Resolve<MemberResolveResult>(program.Replace("{XXX}", expression), expression, 6, 3);
+		}
+		
+		[Test]
+		public void SelectWithExplicitDelegate()
+		{
+			MemberResolveResult mrr = ResolveInSelectProgram("Select(new string[0], new Func<string, double>(StringToDouble))");
+			Assert.AreEqual("System.Collections.Generic.IEnumerable{System.Double}", mrr.ResolvedType.DotNetName);
+		}
+		
+		[Test]
+		public void SelectWithArgumentIgnoringAnonymousMethod()
+		{
+			MemberResolveResult mrr = ResolveInSelectProgram("Select(new string[0], delegate { return DateTime.MinValue; })");
+			Assert.AreEqual("System.Collections.Generic.IEnumerable{System.DateTime}", mrr.ResolvedType.DotNetName);
+		}
+		
+		[Test]
+		public void SelectWithExplicitlyTypedLambda()
+		{
+			MemberResolveResult mrr = ResolveInSelectProgram("Select(new string[0], (string s) => s.Length)");
+			Assert.AreEqual("System.Collections.Generic.IEnumerable{System.Int32}", mrr.ResolvedType.DotNetName);
+		}
+		
+		[Test]
+		public void SelectWithImplicitlyTypedLambda()
+		{
+			MemberResolveResult mrr = ResolveInSelectProgram("Select(new string[0], s => s.Length)");
+			Assert.AreEqual("System.Collections.Generic.IEnumerable{System.Int32}", mrr.ResolvedType.DotNetName);
+		}
+		
+		[Test]
+		public void SelectWithImplicitlyTypedLambdaCalledAsExtensionMethod()
+		{
+			MemberResolveResult mrr = ResolveInSelectProgram("(new string[0]).Select(s => s.Length)");
+			Assert.AreEqual("System.Collections.Generic.IEnumerable{System.Int32}", mrr.ResolvedType.DotNetName);
+		}
+		
+		[Test]
+		public void SelectWithImplicitlyTypedLambdaPassingGenericList()
+		{
+			MemberResolveResult mrr = ResolveInSelectProgram("Select(new List<string>(), s => s.Length)");
+			Assert.AreEqual("System.Collections.Generic.IEnumerable{System.Int32}", mrr.ResolvedType.DotNetName);
+		}
+		
+		[Test]
+		public void SelectWithImplicitlyTypedLambdaPassingGenericDictionary()
+		{
+			MemberResolveResult mrr = ResolveInSelectProgram("Select(new Dictionary<double, string>(), s => s.Key)");
+			Assert.AreEqual("System.Collections.Generic.IEnumerable{System.Double}", mrr.ResolvedType.DotNetName);
+		}
+		
+		[Test]
+		public void MultipleOverloadsWithDifferentParameterCounts()
+		{
+			string program = @"class MainClass {
+	void Main() {
+		M(x=>x.ToUpper());
+	}
+	delegate R Func<T, R>(T arg);
+	T M<T>(Func<string, T> f){ /* whatever ... */ }
+	T M<T>(Func<string, T> f, T g){ /* whatever ... */ }
+}";
+			var mrr = nrrt.Resolve<MemberResolveResult>(program, "M(x=>x.ToUpper())", 3, 3, ExpressionContext.Default);
+			Assert.AreEqual("System.String", mrr.ResolvedType.DotNetName);
+			Assert.AreEqual(1, ((IMethod)mrr.ResolvedMember).Parameters.Count);
+		}
+		
+		[Test]
+		public void MultipleOverloadsWithDifferentParameterCountsAsExtensionMethod()
+		{
+			string program = @"class MainClass {
+	static void Main() {
+		(string.Empty).M(x=>x.ToUpper());
+	}
+	delegate R Func<T, R>(T arg);
+	static T M<X, T>(this X x, Func<X, T> f){ /* whatever ... */ }
+	static T M<X, T>(this X x, Func<X, T> f, T g){ /* whatever ... */ }
+}";
+			var mrr = nrrt.Resolve<MemberResolveResult>(program, "(string.Empty).M(x=>x.ToUpper())", 3, 3, ExpressionContext.Default);
+			Assert.AreEqual("System.String", mrr.ResolvedType.DotNetName);
+			Assert.AreEqual(2, ((IMethod)mrr.ResolvedMember).Parameters.Count);
+		}
+		
+		[Test]
+		public void EnsureApplicabilityIsTestedAfterTypeInference()
+		{
+			string program = @"class TestClass {
+	static void Main() {
+		
+	}
+	static void G(object obj1, object obj2) {}
+	static void G<T>(T a, T b) {}
+}
+		";
+			var mrr = Resolve<MemberResolveResult>(program, "G(1, 2)", 3);
+			Assert.AreEqual("TestClass.G<T>(int a, int b)", ToCSharp(mrr.ResolvedMember));
+			
+			mrr = Resolve<MemberResolveResult>(program, "G(1, 2.2)", 3);
+			Assert.AreEqual("TestClass.G<T>(double a, double b)", ToCSharp(mrr.ResolvedMember));
+			
+			mrr = Resolve<MemberResolveResult>(program, "G(1, \"a\")", 3);
+			Assert.AreEqual("TestClass.G(object obj1, object obj2)", ToCSharp(mrr.ResolvedMember));
+		}
+		
+		string ToCSharp(IEntity entity)
+		{
+			return (new Dom.CSharp.CSharpAmbience {
+			        	ConversionFlags = ConversionFlags.UseFullyQualifiedMemberNames
+			        		| ConversionFlags.ShowParameterList | ConversionFlags.ShowParameterNames
+			        		| ConversionFlags.ShowTypeParameterList
+			        }).Convert(entity);
 		}
 		#endregion
 	}

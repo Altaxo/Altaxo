@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2190 $</version>
+//     <version>$Revision: 3017 $</version>
 // </file>
 
 using System;
@@ -43,13 +43,39 @@ namespace ICSharpCode.SharpDevelop.Tests
 		{
 			string[] overloads = {"<T>(T a)", "(int a)"};
 			Test("(1)", 1, overloads);
-			//Test("(short.MaxValue)", 1, overloads); WRONG TEST - Actually here the generic method must be called.
+			Test("(short.MaxValue)", 0, overloads);
 			Test("(long.MaxValue)", 0, overloads);
+		}
+		
+		[Test] public void NullForReferenceTypes()
+		{
+			string[] overloads = {"(int a)", "(string a)"};
+			Test("(null)", 1, overloads);
+		}
+		
+		[Test] public void NullForNullableType()
+		{
+			string[] overloads = {"(int a)", "(int? a)"};
+			Test("(null)", 1, overloads);
+		}
+		
+		[Test] public void Generic()
+		{
+			string program = "class T<A> {}   class T<A, B> {}";
+			string[] overloads = {"(T<int> a)", "(T<int, string> a)", "(T<char, string> a)"};
+			Test("(new T<int>())", program, 0, overloads);
+			Test("(new T<int, string>())", program, 1, overloads);
+			Test("(new T<char, string>())", program, 2, overloads);
 		}
 		
 		NRefactoryResolverTests nrrt = new NRefactoryResolverTests();
 		
 		void Test(string callExpr, int num, params string[] signatures)
+		{
+			Test(callExpr, "", num, signatures);
+		}
+		
+		void Test(string callExpr, string extraCode, int num, params string[] signatures)
 		{
 			StringBuilder b = new StringBuilder();
 			int lineNumber = 0;
@@ -69,6 +95,7 @@ namespace ICSharpCode.SharpDevelop.Tests
 				++lineNumber; b.AppendLine(" }");
 			}
 			b.AppendLine("}");
+			b.Append(extraCode);
 			MemberResolveResult mrr = nrrt.Resolve<MemberResolveResult>(b.ToString(), "Method" + callExpr, callPosition);
 			string msg = "wrong overload: ";
 			for (int i = 0; i < positions.Length; i++) {
@@ -76,6 +103,51 @@ namespace ICSharpCode.SharpDevelop.Tests
 					msg += signatures[i];
 			}
 			Assert.AreEqual(positions[num], mrr.ResolvedMember.Region.BeginLine, msg);
+		}
+		
+		[Test]
+		public void MultipleOverloadsWithImplicitLambda()
+		{
+			string program = @"class MainClass {
+	void Main() {
+		M(x=>x.ToUpper());
+	}
+	delegate R Func<T, R>(T arg);
+	int M(Func<int, int> f){ /* whatever ... */ }
+	string M(Func<string, string> f){ /* whatever ... */ }
+}";
+			var mrr = nrrt.Resolve<MemberResolveResult>(program, "M(x=>x.ToUpper())", 3, 3, ExpressionContext.Default);
+			Assert.AreEqual("System.String", mrr.ResolvedType.DotNetName);
+		}
+		
+		[Test]
+		public void MultipleOverloadsWithImplicitLambda2()
+		{
+			string program = @"class MainClass {
+	void Main() {
+		M(x=>x.Length);
+	}
+	delegate R Func<T, R>(T arg);
+	int M(Func<int, int> f){ /* whatever ... */ }
+	string M(Func<string, int> f){ /* whatever ... */ }
+}";
+			var mrr = nrrt.Resolve<MemberResolveResult>(program, "M(x=>x.Length)", 3, 3, ExpressionContext.Default);
+			Assert.AreEqual("System.String", mrr.ResolvedType.DotNetName);
+		}
+		
+		[Test]
+		public void MultipleOverloadsWithImplicitLambda3()
+		{
+			string program = @"class MainClass {
+	void Main() {
+		M(x=>x+x);
+	}
+	delegate R Func<T, R>(T arg);
+	string M(Func<string, int> f){ /* whatever ... */ }
+	int M(Func<int, int> f){ /* whatever ... */ }
+}";
+			var mrr = nrrt.Resolve<MemberResolveResult>(program, "M(x=>x+x)", 3, 3, ExpressionContext.Default);
+			Assert.AreEqual("System.Int32", mrr.ResolvedType.DotNetName);
 		}
 	}
 }

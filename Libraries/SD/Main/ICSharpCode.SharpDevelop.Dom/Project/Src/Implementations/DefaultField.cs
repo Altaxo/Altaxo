@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2992 $</version>
 // </file>
 
 using System;
@@ -30,14 +30,16 @@ namespace ICSharpCode.SharpDevelop.Dom
 		
 		public override IMember Clone()
 		{
-			return new DefaultField(ReturnType, Name, Modifiers, Region, DeclaringType);
+			DefaultField field = new DefaultField(ReturnType, Name, Modifiers, Region, DeclaringType);
+			field.CopyDocumentationFrom(this);
+			return field;
 		}
 		
 		public virtual int CompareTo(IField field)
 		{
 			int cmp;
 			
-			cmp = base.CompareTo((IDecoration)field);
+			cmp = base.CompareTo((IEntity)field);
 			if (cmp != 0) {
 				return cmp;
 			}

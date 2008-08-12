@@ -8,6 +8,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ICSharpCode.SharpDevelop.Dom
 {
@@ -152,12 +153,6 @@ namespace ICSharpCode.SharpDevelop.Dom
 			}
 		}
 		
-		[Obsolete()]
-		public static ResolveResult GetResultFromDeclarationLine(IClass callingClass, IMethodOrProperty callingMember, int caretLine, int caretColumn, string expression)
-		{
-			return GetResultFromDeclarationLine(callingClass, callingMember, caretLine, caretColumn, new ExpressionResult(expression));
-		}
-		
 		public static ResolveResult GetResultFromDeclarationLine(IClass callingClass, IMethodOrProperty callingMember, int caretLine, int caretColumn, ExpressionResult expressionResult)
 		{
 			string expression = expressionResult.Expression;
@@ -167,11 +162,11 @@ namespace ICSharpCode.SharpDevelop.Dom
 				expression = expression.Substring(0, pos);
 			}
 			expression = expression.Trim();
-			if (!callingClass.BodyRegion.IsInside(caretLine, caretColumn)
-			    && callingClass.ProjectContent.Language.NameComparer.Equals(expression, callingClass.Name))
-			{
-				return new TypeResolveResult(callingClass, callingMember, callingClass);
-			}
+//			if (!callingClass.BodyRegion.IsInside(caretLine, caretColumn)
+//			    && callingClass.ProjectContent.Language.NameComparer.Equals(expression, callingClass.Name))
+//			{
+//				return new TypeResolveResult(callingClass, callingMember, callingClass);
+//			}
 			if (expressionResult.Context != ExpressionContext.Type) {
 				if (callingMember != null
 				    && !callingMember.BodyRegion.IsInside(caretLine, caretColumn)
@@ -181,6 +176,52 @@ namespace ICSharpCode.SharpDevelop.Dom
 				}
 			}
 			return null;
+		}
+		
+		public static IList<IMethodOrProperty> FindAllExtensions(LanguageProperties language, IClass callingClass)
+		{
+			if (language == null)
+				throw new ArgumentNullException("language");
+			if (callingClass == null)
+				throw new ArgumentNullException("callingClass");
+			
+			HashSet<IMethodOrProperty> res = new HashSet<IMethodOrProperty>();
+			
+			bool supportsExtensionMethods = language.SupportsExtensionMethods;
+			bool supportsExtensionProperties = language.SupportsExtensionProperties;
+			if (supportsExtensionMethods || supportsExtensionProperties) {
+				ArrayList list = new ArrayList();
+				IMethod dummyMethod = new DefaultMethod("dummy", VoidReturnType.Instance, ModifierEnum.Static, DomRegion.Empty, DomRegion.Empty, callingClass);
+				CtrlSpaceResolveHelper.AddContentsFromCalling(list, callingClass, dummyMethod);
+				CtrlSpaceResolveHelper.AddImportedNamespaceContents(list, callingClass.CompilationUnit, callingClass);
+				
+				bool searchExtensionsInClasses = language.SearchExtensionsInClasses;
+				foreach (object o in list) {
+					IMethodOrProperty mp = o as IMethodOrProperty;
+					if (mp != null && mp.IsExtensionMethod &&
+					    (supportsExtensionMethods && o is IMethod || supportsExtensionProperties && o is IProperty))
+					{
+						res.Add(mp);
+					} else if (searchExtensionsInClasses && o is IClass) {
+						IClass c = o as IClass;
+						if (c.HasExtensionMethods) {
+							if (supportsExtensionProperties) {
+								foreach (IProperty p in c.Properties) {
+									if (p.IsExtensionMethod)
+										res.Add(p);
+								}
+							}
+							if (supportsExtensionMethods) {
+								foreach (IMethod m in c.Methods) {
+									if (m.IsExtensionMethod)
+										res.Add(m);
+								}
+							}
+						}
+					}
+				}
+			}
+			return res.ToList();
 		}
 	}
 }

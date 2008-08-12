@@ -2,10 +2,11 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 3007 $</version>
 // </file>
 
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using ICSharpCode.SharpDevelop.Dom;
 using ICSharpCode.TextEditor.Document;
@@ -34,12 +35,12 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 				return a.Usings[0].CompareTo(b.Usings[0]);
 			}
 			if (a.Aliases.Count != 0 && b.Aliases.Count != 0) {
-				return a.Aliases.Keys[0].CompareTo(b.Aliases.Keys[0]);
+				return a.Aliases.Keys.First().CompareTo(b.Aliases.Keys.First());
 			}
 			return 0;
 		}
 		
-		public static void ManageUsings(string fileName, IDocument document, bool sort, bool removedUnused)
+		public static void ManageUsings(Gui.IProgressMonitor progressMonitor, string fileName, IDocument document, bool sort, bool removedUnused)
 		{
 			ParseInformation info = ParserService.ParseFile(fileName, document.TextContent);
 			if (info == null) return;
@@ -51,7 +52,7 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 			}
 			
 			if (removedUnused) {
-				IList<IUsing> decl = cu.ProjectContent.Language.RefactoringProvider.FindUnusedUsingDeclarations(fileName, document.TextContent, cu);
+				IList<IUsing> decl = cu.ProjectContent.Language.RefactoringProvider.FindUnusedUsingDeclarations(Gui.DomProgressMonitor.Wrap(progressMonitor), fileName, document.TextContent, cu);
 				if (decl != null && decl.Count > 0) {
 					foreach (IUsing u in decl) {
 						string ns = null;
@@ -67,7 +68,16 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 			}
 			
 			// put empty line after last System namespace
-			if (sort && newUsings.Count > 1 && newUsings[0].Usings.Count > 0) {
+			if (sort) {
+				PutEmptyLineAfterLastSystemNamespace(newUsings);
+			}
+			
+			cu.ProjectContent.Language.CodeGenerator.ReplaceUsings(new TextEditorDocument(document), cu.Usings, newUsings);
+		}
+		
+		static void PutEmptyLineAfterLastSystemNamespace(List<IUsing> newUsings)
+		{
+			if (newUsings.Count > 1 && newUsings[0].Usings.Count > 0) {
 				bool inSystem = IsSystemNamespace(newUsings[0].Usings[0]);
 				int inSystemCount = 1;
 				for (int i = 1; inSystem && i < newUsings.Count; i++) {
@@ -81,8 +91,36 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 					}
 				}
 			}
+		}
+		
+		public static void AddUsingDeclaration(ICompilationUnit cu, IDocument document, string newNamespace, bool sortExistingUsings)
+		{
+			IUsing newUsingDecl = new DefaultUsing(cu.ProjectContent);
+			newUsingDecl.Usings.Add(newNamespace);
 			
+			List<IUsing> newUsings = new List<IUsing>(cu.Usings);
+			if (sortExistingUsings) {
+				newUsings.Sort(CompareUsings);
+			}
+			bool inserted = false;
+			for (int i = 0; i < newUsings.Count; i++) {
+				if (newUsings[i].Usings.Count >= 1
+				    && cu.ProjectContent.Language.NameComparer.Compare(newNamespace, newUsings[i].Usings[0]) <= 0)
+				{
+					newUsings.Insert(i, newUsingDecl);
+					inserted = true;
+					break;
+				}
+			}
+			if (!inserted) {
+				newUsings.Add(newUsingDecl);
+			}
+			if (sortExistingUsings) {
+				PutEmptyLineAfterLastSystemNamespace(newUsings);
+			}
 			cu.ProjectContent.Language.CodeGenerator.ReplaceUsings(new TextEditorDocument(document), cu.Usings, newUsings);
 		}
 	}
 }
+
+

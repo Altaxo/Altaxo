@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2164 $</version>
+//     <version>$Revision: 2812 $</version>
 // </file>
 
 using System;
@@ -24,15 +24,6 @@ namespace ICSharpCode.SharpDevelop
 		readonly static char[] separators = {Path.DirectorySeparatorChar, Path.VolumeSeparatorChar};
 		
 		static IconService()
-		{
-			Thread myThread = new Thread(new ThreadStart(LoadThread));
-			myThread.Name = "IconLoader";
-			myThread.IsBackground = true;
-			myThread.Priority = ThreadPriority.Normal;
-			myThread.Start();
-		}
-		
-		static void LoadThread()
 		{
 			try {
 				InitializeIcons(AddInTree.GetTreeNode("/Workspace/Icons"));
@@ -73,7 +64,13 @@ namespace ICSharpCode.SharpDevelop
 		
 		public static Bitmap GetBitmap(string name)
 		{
-			Bitmap bmp = ResourceService.GetBitmap(name);
+			Bitmap bmp;
+			try {
+				bmp = ResourceService.GetBitmap(name);
+			} catch (ResourceNotFoundException ex) {
+				LoggingService.Warn(ex);
+				bmp = null;
+			}
 			if (bmp != null) {
 				return bmp;
 			}

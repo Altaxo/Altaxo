@@ -2,11 +2,12 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2939 $</version>
 // </file>
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Windows.Forms;
 
 using ICSharpCode.SharpDevelop.Dom;
@@ -91,6 +92,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		
 		/// <summary>
 		/// Generates the completion data. This method is called by the text editor control.
+		/// This method may return null.
 		/// </summary>
 		public abstract ICompletionData[] GenerateCompletionData(string fileName, TextArea textArea, char charTyped);
 	}
@@ -105,7 +107,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		protected int caretColumn;
 		protected string fileName;
 		
-		protected ArrayList completionData = null;
+		protected List<ICompletionData> completionData = null;
 		protected ExpressionContext overrideContext;
 		
 		/// <summary>
@@ -113,7 +115,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		/// </summary>
 		public override ICompletionData[] GenerateCompletionData(string fileName, TextArea textArea, char charTyped)
 		{
-			completionData = new ArrayList();
+			completionData = new List<ICompletionData>();
 			this.fileName = fileName;
 			IDocument document = textArea.Document;
 			
@@ -123,7 +125,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			
 			GenerateCompletionData(textArea, charTyped);
 			
-			return (ICompletionData[])completionData.ToArray(typeof(ICompletionData));
+			return completionData.ToArray();
 		}
 		
 		protected ExpressionResult GetExpression(TextArea textArea)
@@ -133,7 +135,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			if (expressionFinder == null) {
 				return new ExpressionResult(TextUtilities.GetExpressionBeforeOffset(textArea, textArea.Caret.Offset));
 			} else {
-				ExpressionResult res = expressionFinder.FindExpression(document.GetText(0, textArea.Caret.Offset), textArea.Caret.Offset - 1);
+				ExpressionResult res = expressionFinder.FindExpression(document.GetText(0, textArea.Caret.Offset), textArea.Caret.Offset);
 				if (overrideContext != null)
 					res.Context = overrideContext;
 				return res;
@@ -155,7 +157,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 				CodeCompletionData ccd = CreateItem(o, context);
 				if (object.Equals(o, context.SuggestedItem))
 					suggestedData = ccd;
-				if (ccd != null && !ccd.Text.StartsWith("___"))
+				if (ccd != null)
 					completionData.Add(ccd);
 			}
 			if (context.SuggestedItem != null) {
@@ -166,7 +168,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 					}
 				}
 				if (suggestedData != null) {
-					completionData.Sort();
+					completionData.Sort(DefaultCompletionData.Compare);
 					this.DefaultIndex = completionData.IndexOf(suggestedData);
 				}
 			}
@@ -186,7 +188,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 				}
 			} else if (o is IMethod) {
 				IMethod method = (IMethod)o;
-				if (method.Name != null &&!method.IsConstructor) {
+				if (method.Name != null) {
 					CodeCompletionData ccd = new CodeCompletionData(method);
 					if (insertedElements[method.Name] == null) {
 						insertedElements[method.Name] = ccd;

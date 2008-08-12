@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 3037 $</version>
 // </file>
 
 using System;
@@ -27,7 +27,6 @@ namespace ICSharpCode.TextEditor.Document
 		/// used
 		/// </value>
 		string[] Extensions {
-			set;
 			get;
 		}
 		
@@ -40,17 +39,7 @@ namespace ICSharpCode.TextEditor.Document
 		/// <remarks>
 		/// Gets the color of an Environment element.
 		/// </remarks>
-		HighlightColor   GetColorFor(string name);
-		
-		/// <remarks>
-		/// Used internally, do not call
-		/// </remarks>
-		HighlightRuleSet GetRuleSet(Span span);
-		
-		/// <remarks>
-		/// Used internally, do not call
-		/// </remarks>
-		HighlightColor   GetColor(IDocument document, LineSegment keyWord, int index, int length);
+		HighlightColor GetColorFor(string name);
 		
 		/// <remarks>
 		/// Used internally, do not call
@@ -61,5 +50,18 @@ namespace ICSharpCode.TextEditor.Document
 		/// Used internally, do not call
 		/// </remarks>
 		void MarkTokens(IDocument document);
+	}
+	
+	public interface IHighlightingStrategyUsingRuleSets : IHighlightingStrategy
+	{
+		/// <remarks>
+		/// Used internally, do not call
+		/// </remarks>
+		HighlightRuleSet GetRuleSet(Span span);
+		
+		/// <remarks>
+		/// Used internally, do not call
+		/// </remarks>
+		HighlightColor GetColor(IDocument document, LineSegment keyWord, int index, int length);
 	}
 }

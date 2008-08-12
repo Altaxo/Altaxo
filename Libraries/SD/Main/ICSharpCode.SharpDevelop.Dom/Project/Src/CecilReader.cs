@@ -2,10 +2,11 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2492 $</version>
+//     <version>$Revision: 3184 $</version>
 // </file>
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 
@@ -36,8 +37,13 @@ namespace ICSharpCode.SharpDevelop.Dom
 		static void AddAttributes(IProjectContent pc, IList<IAttribute> list, CustomAttributeCollection attributes)
 		{
 			foreach (CustomAttribute att in attributes) {
-				DefaultAttribute a = new DefaultAttribute(att.Constructor.DeclaringType.FullName);
-				// TODO: add only attributes marked "important", and include attribute arguments
+				DefaultAttribute a = new DefaultAttribute(CreateType(pc, null, att.Constructor.DeclaringType));
+				foreach (object o in att.ConstructorParameters) {
+					a.PositionalArguments.Add(o);
+				}
+				foreach (DictionaryEntry entry in att.Properties) {
+					a.NamedArguments.Add(entry.Key.ToString(), entry.Value);
+				}
 				list.Add(a);
 			}
 		}
@@ -56,7 +62,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 		/// <summary>
 		/// Create a SharpDevelop return type from a Cecil type reference.
 		/// </summary>
-		internal static IReturnType CreateType(IProjectContent pc, IDecoration member, TypeReference type)
+		internal static IReturnType CreateType(IProjectContent pc, IEntity member, TypeReference type)
 		{
 			while (type is ModType) {
 				type = (type as ModType).ElementType;
@@ -68,6 +74,8 @@ namespace ICSharpCode.SharpDevelop.Dom
 			if (type is ReferenceType) {
 				// TODO: Use ByRefRefReturnType
 				return CreateType(pc, member, (type as ReferenceType).ElementType);
+			} else if (type is PointerType) {
+				return new PointerReturnType(CreateType(pc, member, (type as PointerType).ElementType));
 			} else if (type is ArrayType) {
 				return new ArrayReturnType(pc, CreateType(pc, member, (type as ArrayType).ElementType), (type as ArrayType).Rank);
 			} else if (type is GenericInstanceType) {
@@ -127,6 +135,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 			                           AssemblyDefinition assembly, ProjectContentRegistry registry)
 				: base(fullName, fileName, referencedAssemblies, registry)
 			{
+				AddAttributes(this, this.AssemblyCompilationUnit.Attributes, assembly.CustomAttributes);
 				foreach (ModuleDefinition module in assembly.Modules) {
 					AddTypes(module.Types);
 				}
@@ -331,7 +340,10 @@ namespace ICSharpCode.SharpDevelop.Dom
 						}
 					}
 					
-					m.ReturnType = CreateType(this.ProjectContent, m, method.ReturnType.ReturnType);
+					if (method.IsConstructor)
+						m.ReturnType = this.DefaultReturnType;
+					else
+						m.ReturnType = CreateType(this.ProjectContent, m, method.ReturnType.ReturnType);
 					AddAttributes(CompilationUnit.ProjectContent, m.Attributes, method.CustomAttributes);
 					if (this.ClassType == ClassType.Interface) {
 						m.Modifiers = ModifierEnum.Public | ModifierEnum.Abstract;
@@ -363,10 +375,12 @@ namespace ICSharpCode.SharpDevelop.Dom
 				foreach (ParameterDefinition par in plist) {
 					IReturnType pReturnType = CreateType(this.ProjectContent, target, par.ParameterType);
 					DefaultParameter p = new DefaultParameter(par.Name, pReturnType, DomRegion.Empty);
-					if ((par.Attributes & ParameterAttributes.Out) == ParameterAttributes.Out) {
-						p.Modifiers = ParameterModifiers.Out;
-					} else if (par.ParameterType is ReferenceType) {
-						p.Modifiers = ParameterModifiers.Ref;
+					if (par.ParameterType is ReferenceType) {
+						if ((par.Attributes & ParameterAttributes.Out) == ParameterAttributes.Out) {
+							p.Modifiers = ParameterModifiers.Out;
+						} else {
+							p.Modifiers = ParameterModifiers.Ref;
+						}
 					} else {
 						p.Modifiers = ParameterModifiers.In;
 					}
@@ -444,7 +458,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 				
 				if (field.IsLiteral)
 					m |= ModifierEnum.Const;
-				else if (field.IsReadOnly)
+				else if (field.IsInitOnly)
 					m |= ModifierEnum.Readonly;
 				
 				if ((field.Attributes & FieldAttributes.Public) == FieldAttributes.Public)

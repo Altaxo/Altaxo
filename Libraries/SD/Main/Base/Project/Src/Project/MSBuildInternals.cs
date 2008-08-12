@@ -2,18 +2,21 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2582 $</version>
+//     <version>$Revision: 3041 $</version>
 // </file>
 
+using ICSharpCode.Core;
 using System;
-using System.Diagnostics;
+using System.IO;
 using System.Collections;
 using System.Collections.Generic;
-using System.Xml;
-using System.Text;
+using System.Diagnostics;
 using System.Globalization;
+using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Text.RegularExpressions;
+using System.Xml;
 using MSBuild = Microsoft.Build.BuildEngine;
 
 namespace ICSharpCode.SharpDevelop.Project
@@ -23,6 +26,12 @@ namespace ICSharpCode.SharpDevelop.Project
 	/// </summary>
 	public static class MSBuildInternals
 	{
+		/// <summary>
+		/// MSBuild does not support multi-threading, so every invocation of MSBuild that
+		/// runs inside the SharpDevelop process must lock on this object to prevent conflicts.
+		/// </summary>
+		public readonly static object InProcessMSBuildLock = new object();
+		
 		const string MSBuildXmlNamespace = "http://schemas.microsoft.com/developer/msbuild/2003";
 		
 		#region Escaping
@@ -214,13 +223,13 @@ namespace ICSharpCode.SharpDevelop.Project
 		
 		public static MSBuild.BuildProperty GetProperty(MSBuild.BuildPropertyGroup pg, string name)
 		{
-			return Linq.Find(Linq.CastTo<MSBuild.BuildProperty>(pg),
-			                 delegate(MSBuild.BuildProperty p) { return p.Name == name; });
+			return pg.Cast<MSBuild.BuildProperty>().FirstOrDefault(p => p.Name == name);
 		}
 		
 		public static MSBuild.Engine CreateEngine()
 		{
-			return new MSBuild.Engine(System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory());
+			return new MSBuild.Engine(MSBuild.ToolsetDefinitionLocations.Registry
+			                          | MSBuild.ToolsetDefinitionLocations.ConfigurationFile);
 		}
 		
 		/// <summary>
@@ -228,6 +237,9 @@ namespace ICSharpCode.SharpDevelop.Project
 		/// </summary>
 		public static void ClearImports(MSBuild.Project project)
 		{
+			if (project == null)
+				throw new ArgumentNullException("project");
+			
 			XmlElement xmlProject = BeginXmlManipulation(project);
 			List<XmlNode> nodesToRemove = new List<XmlNode>();
 			foreach (XmlNode node in xmlProject.ChildNodes) {
@@ -238,6 +250,7 @@ namespace ICSharpCode.SharpDevelop.Project
 			foreach (XmlNode node in nodesToRemove) {
 				xmlProject.RemoveChild(node);
 			}
+			EndXmlManipulation(project);
 		}
 		
 		/// <summary>
@@ -268,16 +281,16 @@ namespace ICSharpCode.SharpDevelop.Project
 		}
 		
 		/// <summary>
-		/// Gets an array containing all custom metadata names.
+		/// Gets all custom metadata names defined directly on the item, ignoring defaulted metadata entries.
 		/// </summary>
-		public static string[] GetCustomMetadataNames(MSBuild.BuildItem item)
+		public static IList<string> GetCustomMetadataNames(MSBuild.BuildItem item)
 		{
-			ArrayList a = (ArrayList)typeof(MSBuild.BuildItem).InvokeMember(
-				"GetAllCustomMetadataNames",
-				BindingFlags.InvokeMethod | BindingFlags.Instance | BindingFlags.NonPublic,
-				null, item, null
-			);
-			return (string[])a.ToArray(typeof(string));
+			PropertyInfo prop = typeof(MSBuild.BuildItem).GetProperty("ItemDefinitionLibrary", BindingFlags.Instance | BindingFlags.NonPublic);
+			object oldValue = prop.GetValue(item, null);
+			prop.SetValue(item, null, null);
+			IList<string> result = (IList<string>)item.CustomMetadataNames;
+			prop.SetValue(item, oldValue, null);
+			return result;
 		}
 		
 		static XmlElement CreateElement(XmlDocument document, string name)
@@ -301,6 +314,94 @@ namespace ICSharpCode.SharpDevelop.Project
 				BindingFlags.InvokeMethod | BindingFlags.Instance | BindingFlags.NonPublic,
 				null, project, null
 			);
+		}
+		
+		internal static void ResolveAssemblyReferences(MSBuildBasedProject baseProject, ReferenceProjectItem[] referenceReplacements)
+		{
+			MSBuild.Engine engine;
+			MSBuild.Project tempProject;
+			IEnumerable<ReferenceProjectItem> references;
+			
+			lock (baseProject.SyncRoot) {
+				// create a copy of the project
+				engine = CreateEngine();
+				tempProject = engine.CreateNewProject();
+				// tell MSBuild the path so that projects containing <Import Project="relativePath" />
+				// can be loaded
+				tempProject.FullFileName = baseProject.MSBuildProject.FullFileName;
+				MSBuildBasedProject.InitializeMSBuildProject(tempProject);
+				tempProject.LoadXml(baseProject.MSBuildProject.Xml);
+				tempProject.SetProperty("Configuration", baseProject.ActiveConfiguration);
+				tempProject.SetProperty("Platform", baseProject.ActivePlatform);
+				tempProject.SetProperty("BuildingProject", "false");
+				
+				if (referenceReplacements == null) {
+					references = baseProject.GetItemsOfType(ItemType.Reference).OfType<ReferenceProjectItem>();
+					
+					// remove the "Private" meta data
+					foreach (MSBuild.BuildItemGroup itemGroup in tempProject.ItemGroups) {
+						// skip item groups from imported projects
+						if (itemGroup.IsImported)
+							continue;
+						foreach (MSBuild.BuildItem item in itemGroup) {
+							if (item.Name == ItemType.Reference.ItemName) {
+								item.RemoveMetadata("Private");
+							}
+						}
+					}
+				} else {
+					references = referenceReplacements;
+					
+					// replace all references in the project with the referenceReplacements
+					foreach (MSBuild.BuildItemGroup itemGroup in tempProject.ItemGroups) {
+						// skip item groups from imported projects
+						if (itemGroup.IsImported)
+							continue;
+						foreach (MSBuild.BuildItem item in itemGroup.ToArray()) {
+							if (item.Name == ItemType.Reference.ItemName) {
+								itemGroup.RemoveItem(item);
+							}
+						}
+					}
+					foreach (ReferenceProjectItem item in referenceReplacements) {
+						tempProject.AddNewItem("Reference", item.Include, true);
+					}
+				}
+			}
+			var referenceDict = new Dictionary<string, ReferenceProjectItem>();
+			foreach (ReferenceProjectItem item in references) {
+				// references could be duplicate, so we cannot use referenceDict.Add or reference.ToDictionary
+				referenceDict[item.Include] = item;
+			}
+			
+			
+			#if DEBUG
+			//engine.RegisterLogger(new MSBuild.ConsoleLogger(Microsoft.Build.Framework.LoggerVerbosity.Detailed));
+			#endif
+			
+			//Environment.CurrentDirectory = Path.GetDirectoryName(tempProject.FullFileName);
+			lock (MSBuildInternals.InProcessMSBuildLock) {
+				if (!tempProject.Build("ResolveAssemblyReferences")) {
+					LoggingService.Warn("ResolveAssemblyReferences exited with error");
+					return;
+				}
+			}
+			
+			foreach (MSBuild.BuildItem item in tempProject.GetEvaluatedItemsByName("_ResolveAssemblyReferenceResolvedFiles")) {
+				string originalInclude = item.GetEvaluatedMetadata("OriginalItemSpec");
+				ReferenceProjectItem reference;
+				if (referenceDict.TryGetValue(originalInclude, out reference)) {
+					reference.AssemblyName = new Dom.DomAssemblyName(item.GetEvaluatedMetadata("FusionName"));
+					//string fullPath = item.GetEvaluatedMetadata("FullPath"); is incorrect for relative paths
+					string fullPath = FileUtility.GetAbsolutePath(baseProject.Directory, item.GetEvaluatedMetadata("Identity"));
+					reference.FileName = fullPath;
+					reference.Redist = item.GetEvaluatedMetadata("Redist");
+					//LoggingService.Debug("Got information about " + originalInclude + "; fullpath=" + fullPath);
+					reference.DefaultCopyLocalValue = bool.Parse(item.GetEvaluatedMetadata("CopyLocal"));
+				} else {
+					LoggingService.Warn("Unknown item " + originalInclude);
+				}
+			}
 		}
 	}
 }

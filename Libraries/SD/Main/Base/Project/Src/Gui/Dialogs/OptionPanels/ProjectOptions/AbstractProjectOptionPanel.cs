@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2043 $</version>
+//     <version>$Revision: 2487 $</version>
 // </file>
 
 using System;
@@ -21,7 +21,7 @@ namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 		
 		protected void InitializeHelper()
 		{
-			project = (MSBuildBasedProject)((Properties)CustomizationObject).Get("Project");
+			project = (MSBuildBasedProject)CustomizationObject;
 			baseDirectory = project.Directory;
 			helper = new ConfigurationGuiHelper(project, this.ControlDictionary);
 		}
@@ -31,9 +31,9 @@ namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 			set { helper.IsDirty = value; }
 		}
 		
-		public event EventHandler DirtyChanged {
-			add    { helper.DirtyChanged += value; }
-			remove { helper.DirtyChanged -= value; }
+		public event EventHandler IsDirtyChanged {
+			add    { helper.IsDirtyChanged += value; }
+			remove { helper.IsDirtyChanged -= value; }
 		}
 		
 		public override bool StorePanelContents()

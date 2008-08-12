@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="none" email=""/>
-//     <version>$Revision: 1893 $</version>
+//     <version>$Revision: 3205 $</version>
 // </file>
 
 using System;
@@ -43,7 +43,7 @@ namespace ICSharpCode.TextEditor.Document
 			set;
 		}
 
-		bool UseAntiAliasedFont { // is wrapped in text editor control
+		System.Drawing.Text.TextRenderingHint TextRenderingHint { // is wrapped in text editor control
 			get;
 			set;
 		}
@@ -59,11 +59,6 @@ namespace ICSharpCode.TextEditor.Document
 		}
 		
 		string LineTerminator {
-			get;
-			set;
-		}
-		
-		bool CreateBackupCopy { // is wrapped in text editor control
 			get;
 			set;
 		}
@@ -128,7 +123,18 @@ namespace ICSharpCode.TextEditor.Document
 			set;
 		}
 		
+		/// <summary>
+		/// The width of a tab.
+		/// </summary>
 		int TabIndent { // is wrapped in text editor control
+			get;
+			set;
+		}
+		
+		/// <summary>
+		/// The amount of spaces a tab is converted to if ConvertTabsToSpaces is true.
+		/// </summary>
+		int IndentationSize {
 			get;
 			set;
 		}
@@ -157,9 +163,9 @@ namespace ICSharpCode.TextEditor.Document
 			set;
 		}
 		
-		bool UseCustomLine {
+		bool SupportReadOnlySegments {
 			get;
 			set;
-		}	
+		}
 	}
 }

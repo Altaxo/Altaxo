@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 3023 $</version>
 // </file>
 
 using System;
@@ -37,6 +37,11 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		
 		protected override void GenerateCompletionData(TextArea textArea, char charTyped)
 		{
+			#if DEBUG
+			if (DebugMode) {
+				Debugger.Break();
+			}
+			#endif
 			preSelection = null;
 			if (fixedExpression.Expression == null)
 				GenerateCompletionData(textArea, GetExpression(textArea));
@@ -61,13 +66,15 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 					LoggingService.DebugFormatted("GenerateCompletionData for >>{0}<<, context={1}", expressionResult.Expression, expressionResult.Context);
 			}
 			string textContent = textArea.Document.TextContent;
-			#if DEBUG
-			if (DebugMode) {
-				Debugger.Break();
-			}
-			#endif
-			AddResolveResults(ParserService.Resolve(expressionResult, caretLineNumber, caretColumn, fileName, textContent),
-			                  expressionResult.Context);
+			ResolveResult rr = Resolve(expressionResult, caretLineNumber, caretColumn, fileName, textContent);
+			AddResolveResults(rr, expressionResult.Context);
+		}
+		
+		protected virtual ResolveResult Resolve(ExpressionResult expressionResult,
+		                                        int caretLineNumber, int caretColumn,
+		                                        string fileName, string fileContent)
+		{
+			return ParserService.Resolve(expressionResult, caretLineNumber, caretColumn, fileName, fileContent);
 		}
 	}
 }

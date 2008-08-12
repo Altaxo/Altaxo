@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2971 $</version>
 // </file>
 
 // project created on 2/6/2003 at 11:10 AM
@@ -83,14 +83,14 @@ namespace ICSharpCode.SharpDevelop.Sda
 		/// <summary>
 		/// Creates a new ExceptionBox instance.
 		/// </summary>
-		/// <param name="e">The exception to display</param>
+		/// <param name="exception">The exception to display</param>
 		/// <param name="message">An additional message to display</param>
 		/// <param name="mustTerminate">If <paramref name="mustTerminate"/> is true, the
 		/// continue button is not available.</param>
 		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
-		public ExceptionBox(Exception e, string message, bool mustTerminate)
+		public ExceptionBox(Exception exception, string message, bool mustTerminate)
 		{
-			this.exceptionThrown = e;
+			this.exceptionThrown = exception;
 			this.message = message;
 			InitializeComponent();
 			if (mustTerminate) {
@@ -119,37 +119,9 @@ namespace ICSharpCode.SharpDevelop.Sda
 			}
 		}
 		
-		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
 		string getClipboardString()
 		{
-			string str = "";
-			Version v = typeof(ExceptionBox).Assembly.GetName().Version;
-			str += "SharpDevelop Version : " + v.ToString() + Environment.NewLine;
-			str += ".NET Version         : " + Environment.Version.ToString() + Environment.NewLine;
-			str += "OS Version           : " + Environment.OSVersion.ToString() + Environment.NewLine;
-			string cultureName = null;
-			try {
-				cultureName = CultureInfo.CurrentCulture.Name;
-				str += "Current culture      : " + CultureInfo.CurrentCulture.EnglishName + " (" + cultureName + ")" + Environment.NewLine;
-			} catch {}
-			try {
-				if (cultureName == null || !cultureName.StartsWith(ResourceService.Language)) {
-					str += "Current UI language  : " + ResourceService.Language + Environment.NewLine;
-				}
-			} catch {}
-			try {
-				if (IntPtr.Size != 4) {
-					str += "Running as " + (IntPtr.Size * 8) + " bit process" + Environment.NewLine;
-				}
-				if (SystemInformation.TerminalServerSession) {
-					str += "Terminal Server Session" + Environment.NewLine;
-				}
-				if (SystemInformation.BootMode != BootMode.Normal) {
-					str += "Boot Mode            : " + SystemInformation.BootMode + Environment.NewLine;
-				}
-			} catch {}
-			str += "Working Set Memory   : " + (Environment.WorkingSet / 1024) + "kb" + Environment.NewLine;
-			str += "GC Heap Memory       : " + (GC.GetTotalMemory(false) / 1024) + "kb" + Environment.NewLine;
+			string str = Gui.AboutSharpDevelopTabPage.GetVersionInformationString();
 			
 			str += Environment.NewLine;
 			

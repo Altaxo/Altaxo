@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2516 $</version>
+//     <version>$Revision: 2932 $</version>
 // </file>
 
 using System;
@@ -65,7 +65,7 @@ namespace ICSharpCode.TextEditor.Gui.CompletionWindow
 		
 		public CodeCompletionListView(ICompletionData[] completionData)
 		{
-			Array.Sort(completionData);
+			Array.Sort(completionData, DefaultCompletionData.Compare);
 			this.completionData = completionData;
 			
 //			this.KeyDown += new System.Windows.Forms.KeyEventHandler(OnKey);

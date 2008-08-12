@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2500 $</version>
+//     <version>$Revision: 3169 $</version>
 // </file>
 
 using System;
@@ -28,13 +28,6 @@ namespace ICSharpCode.SharpDevelop.Dom
 		};
 		
 		/// <summary>
-		/// Get parse information by file name.
-		/// </summary>
-		public static Func<string, ParseInformation> GetParseInformation = delegate {
-			throw new NotImplementedException("GetParseInformation was not implemented by the host.");
-		};
-		
-		/// <summary>
 		/// Get the current project content.
 		/// </summary>
 		public static Func<IProjectContent> GetCurrentProjectContent = delegate {
@@ -48,10 +41,6 @@ namespace ICSharpCode.SharpDevelop.Dom
 		public static Func<IMember, string, bool> RenameMember = delegate {
 			return false;
 		};
-		
-		public static Action<string> BeginAssemblyLoad = delegate {};
-		
-		public static Action FinishAssemblyLoad = delegate {};
 		
 		/// <summary>
 		/// Show error loading code-completion information.

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2251 $</version>
+//     <version>$Revision: 3008 $</version>
 // </file>
 
 using System;
@@ -75,10 +75,7 @@ namespace ICSharpCode.SharpDevelop.Project
 			Properties properties = new Properties();
 			properties.Set("bookmarks", ICSharpCode.SharpDevelop.Bookmarks.BookmarkManager.GetProjectBookmarks(this).ToArray());
 			List<string> files = new List<string>();
-			foreach (ICSharpCode.SharpDevelop.Gui.IViewContent vc
-			         in ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.Workbench.ViewContentCollection)
-			{
-				string fileName = vc.FileName;
+			foreach (string fileName in FileService.GetOpenFiles()) {
 				if (fileName != null && IsFileInProject(fileName)) {
 					files.Add(fileName);
 				}
@@ -117,7 +114,7 @@ namespace ICSharpCode.SharpDevelop.Project
 			}
 			set {
 				WorkbenchSingleton.AssertMainThread();
-				Debug.Assert(Path.IsPathRooted(value));
+				Debug.Assert(FileUtility.IsUrl(value) || Path.IsPathRooted(value));
 				
 				lock (SyncRoot) { // locking still required for Directory
 					fileName = value;
@@ -162,7 +159,7 @@ namespace ICSharpCode.SharpDevelop.Project
 		}
 		#endregion
 		
-		#region Language Properties / Ambience
+		#region Language Properties / GetAmbience
 		[Browsable(false)]
 		public virtual ICSharpCode.SharpDevelop.Dom.LanguageProperties LanguageProperties {
 			get {
@@ -170,11 +167,9 @@ namespace ICSharpCode.SharpDevelop.Project
 			}
 		}
 		
-		[Browsable(false)]
-		public virtual ICSharpCode.SharpDevelop.Dom.IAmbience Ambience {
-			get {
-				return null;
-			}
+		public virtual ICSharpCode.SharpDevelop.Dom.IAmbience GetAmbience()
+		{
+			return null;
 		}
 		#endregion
 		
@@ -388,9 +383,7 @@ namespace ICSharpCode.SharpDevelop.Project
 						}
 					}
 				}
-				try {
-					fileName = Path.GetFullPath(fileName);
-				} catch {}
+				fileName = FileUtility.NormalizePath(fileName);
 				FileProjectItem outputItem;
 				findFileCache.TryGetValue(fileName, out outputItem);
 				return outputItem;
@@ -404,10 +397,6 @@ namespace ICSharpCode.SharpDevelop.Project
 		protected virtual ParseProjectContent CreateProjectContent()
 		{
 			return null;
-		}
-		
-		public virtual void StartBuild(BuildOptions options)
-		{
 		}
 		
 		/// <summary>
@@ -448,6 +437,39 @@ namespace ICSharpCode.SharpDevelop.Project
 		public virtual ItemType GetDefaultItemType(string fileName)
 		{
 			return ItemType.None;
+		}
+		
+		[Browsable(false)]
+		public virtual int MinimumSolutionVersion {
+			get { return Solution.SolutionVersionVS05; }
+		}
+		
+		public virtual void ResolveAssemblyReferences()
+		{
+		}
+		
+		public virtual void StartBuild(ProjectBuildOptions options, IBuildFeedbackSink feedbackSink)
+		{
+			feedbackSink.ReportError(new BuildError { ErrorText = "Building project " + Name + " is not supported.", IsWarning = true });
+			// we don't know how to build anything, report that we're done.
+			feedbackSink.Done(true);
+		}
+		
+		public virtual ICollection<IBuildable> GetBuildDependencies(ProjectBuildOptions buildOptions)
+		{
+			List<IBuildable> result = new List<IBuildable>();
+			foreach (ProjectSection section in this.ProjectSections) {
+				if (section.Name == "ProjectDependencies") {
+					foreach (SolutionItem item in section.Items) {
+						foreach (IProject p in ParentSolution.Projects) {
+							if (p.IdGuid == item.Name) {
+								result.Add(p);
+							}
+						}
+					}
+				}
+			}
+			return result;
 		}
 	}
 }

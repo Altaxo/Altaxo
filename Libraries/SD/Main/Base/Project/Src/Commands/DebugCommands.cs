@@ -2,10 +2,11 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2051 $</version>
+//     <version>$Revision: 3165 $</version>
 // </file>
 
 using System;
+using System.Windows.Forms;
 using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor;
 using ICSharpCode.SharpDevelop.Gui;
@@ -25,6 +26,7 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 				if (build.LastBuildResults.ErrorCount == 0) {
 					IProject startupProject = ProjectService.OpenSolution.StartupProject;
 					if (startupProject != null) {
+						LoggingService.Info("Debugger Command: Start (withDebugger=" + withDebugger + ")");
 						startupProject.Start(withDebugger);
 					} else {
 						MessageService.ShowError("${res:BackendBindings.ExecutionManager.CantExecuteDLLError}");
@@ -47,6 +49,7 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 	{
 		public override void Run()
 		{
+			LoggingService.Info("Debugger Command: Continue");
 			DebuggerService.CurrentDebugger.Continue();
 		}
 	}
@@ -55,6 +58,7 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 	{
 		public override void Run()
 		{
+			LoggingService.Info("Debugger Command: Break");
 			DebuggerService.CurrentDebugger.Break();
 		}
 	}
@@ -63,6 +67,7 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 	{
 		public override void Run()
 		{
+			LoggingService.Info("Debugger Command: Stop");
 			DebuggerService.CurrentDebugger.Stop();
 		}
 	}
@@ -71,6 +76,7 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 	{
 		public override void Run()
 		{
+			LoggingService.Info("Debugger Command: StepOver");
 			DebuggerService.CurrentDebugger.StepOver();
 		}
 	}
@@ -79,6 +85,7 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 	{
 		public override void Run()
 		{
+			LoggingService.Info("Debugger Command: StepInto");
 			DebuggerService.CurrentDebugger.StepInto();
 		}
 	}
@@ -87,6 +94,7 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 	{
 		public override void Run()
 		{
+			LoggingService.Info("Debugger Command: StepOut");
 			DebuggerService.CurrentDebugger.StepOut();
 		}
 	}
@@ -95,13 +103,30 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 	{
 		public override void Run()
 		{
-			IWorkbenchWindow window = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow;
+			ITextEditorControlProvider provider = WorkbenchSingleton.Workbench.ActiveContent as ITextEditorControlProvider;
 			
-			if (window == null || !(window.ViewContent is ITextEditorControlProvider)) {
-				return;
+			if (provider != null) {
+				TextEditorControl textEditor = provider.TextEditorControl;
+				if (!string.IsNullOrEmpty(textEditor.FileName)) {
+					DebuggerService.ToggleBreakpointAt(textEditor.Document, textEditor.FileName, textEditor.ActiveTextAreaControl.Caret.Line);
+				}
 			}
-			TextEditorControl textEditor = ((ITextEditorControlProvider)window.ViewContent).TextEditorControl;
-			DebuggerService.ToggleBreakpointAt(textEditor.Document, textEditor.FileName, textEditor.ActiveTextAreaControl.Caret.Line);
 		}
 	}
+	
+	public class AttachToProcessCommand : AbstractMenuCommand
+	{
+		public override void Run()
+		{
+			DebuggerService.CurrentDebugger.ShowAttachDialog();
+		}
+	}	
+	
+	public class DetachFromProcessCommand : AbstractMenuCommand
+	{
+		public override void Run()
+		{
+			DebuggerService.CurrentDebugger.Detach();
+		}
+	}	
 }

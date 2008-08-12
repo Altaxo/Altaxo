@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2365 $</version>
 // </file>
 
 using System;
@@ -20,7 +20,7 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 			
 			
 			using (NewProjectDialog npdlg = new NewProjectDialog(true)) {
-				npdlg.Owner = (Form)WorkbenchSingleton.Workbench;
+				npdlg.Owner = WorkbenchSingleton.MainForm;
 				npdlg.ShowDialog(ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.MainForm);
 			}
 		}
@@ -48,7 +48,7 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 		{
 			ProjectService.SaveSolutionPreferences();
 			WorkbenchSingleton.Workbench.CloseAllViews();
-			if (WorkbenchSingleton.Workbench.ViewContentCollection.Count == 0) {
+			if (WorkbenchSingleton.Workbench.WorkbenchWindowCollection.Count == 0) {
 				ProjectService.CloseSolution();
 			}
 		}

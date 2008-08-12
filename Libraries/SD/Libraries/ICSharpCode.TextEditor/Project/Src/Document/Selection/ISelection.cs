@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2659 $</version>
 // </file>
 
 using System.Drawing;
@@ -14,12 +14,12 @@ namespace ICSharpCode.TextEditor.Document
 	/// </summary>
 	public interface ISelection
 	{
-		Point StartPosition {
+		TextLocation StartPosition {
 			get;
 			set;
 		}
 		
-		Point EndPosition {
+		TextLocation EndPosition {
 			get;
 			set;
 		}
@@ -59,6 +59,6 @@ namespace ICSharpCode.TextEditor.Document
 		
 		bool ContainsOffset(int offset);
 		
-		bool ContainsPosition(Point position);
+		bool ContainsPosition(TextLocation position);
 	}
 }

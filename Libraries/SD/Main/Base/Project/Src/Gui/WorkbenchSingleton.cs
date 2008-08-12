@@ -1,11 +1,12 @@
-// <file>
+﻿// <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2361 $</version>
+//     <version>$Revision: 3113 $</version>
 // </file>
 
 using System;
+using System.Diagnostics;
 using System.Windows.Forms;
 using ICSharpCode.Core;
 
@@ -18,14 +19,23 @@ namespace ICSharpCode.SharpDevelop.Gui
 		const string workbenchMemento        = "WorkbenchMemento";
 		
 		static STAThreadCaller caller;
-		static DefaultWorkbench workbench    = null;
+		static IWorkbench workbench;
 		
+		/// <summary>
+		/// Gets the main form. Returns null in unit-testing mode.
+		/// </summary>
 		public static Form MainForm {
 			get {
-				return (Form)workbench;
+				if (workbench != null) {
+					return workbench.MainForm;
+				}
+				return null;
 			}
 		}
 		
+		/// <summary>
+		/// Gets the workbench. Returns null in unit-testing mode.
+		/// </summary>
 		public static IWorkbench Workbench {
 			get {
 				return workbench;
@@ -65,55 +75,87 @@ namespace ICSharpCode.SharpDevelop.Gui
 			}
 		}
 		
-#if ModifiedForAltaxo
- 		public static void InitializeWorkbench(System.Type workbenchtype)
-		{
-			LayoutConfiguration.LoadLayoutConfiguration();
-			StatusBarService.Initialize();
-			DomHostCallback.Register(); // must be called after StatusBarService.Initialize()
-			ParserService.InitializeParserService();
-			Bookmarks.BookmarkManager.Initialize();
-			Project.CustomToolsService.Initialize();
-
-      workbench = (ICSharpCode.SharpDevelop.Gui.DefaultWorkbench)Activator.CreateInstance(workbenchtype);
-#else
+		/// <summary>
+		/// Runs workbench initialization.
+		/// Is called by ICSharpCode.SharpDevelop.Sda and should not be called manually!
+		/// </summary>
 		public static void InitializeWorkbench()
 		{
+			if (Environment.OSVersion.Platform == PlatformID.Unix)
+				InitializeWorkbench(new DefaultWorkbench(), new SimpleWorkbenchLayout());
+			else
+				InitializeWorkbench(new DefaultWorkbench(), new SdiWorkbenchLayout());
+		}
+		
+		public static void InitializeWorkbench(IWorkbench workbench, IWorkbenchLayout layout)
+		{
+			WorkbenchSingleton.workbench = workbench;
+
+			DisplayBindingService.InitializeService();
 			LayoutConfiguration.LoadLayoutConfiguration();
+			FileService.InitializeService();
 			StatusBarService.Initialize();
 			DomHostCallback.Register(); // must be called after StatusBarService.Initialize()
 			ParserService.InitializeParserService();
 			Bookmarks.BookmarkManager.Initialize();
 			Project.CustomToolsService.Initialize();
 			
-			workbench = new DefaultWorkbench();
-#endif
-			MessageService.MainForm = workbench;
+			MessageService.MainForm = workbench.MainForm;
 			
 			PropertyService.PropertyChanged += new PropertyChangedEventHandler(TrackPropertyChanges);
 			ResourceService.LanguageChanged += delegate { workbench.RedrawAllComponents(); };
 			
-			caller = new STAThreadCaller(workbench);
+			caller = new STAThreadCaller(workbench.MainForm);
 			
-			workbench.InitializeWorkspace();
-			
+			workbench.Initialize();
 			workbench.SetMemento(PropertyService.Get(workbenchMemento, new Properties()));
-			
-			workbench.WorkbenchLayout = new SdiWorkbenchLayout();
+			workbench.WorkbenchLayout = layout;
 			
 			OnWorkbenchCreated();
+			
+			// initialize workbench-dependent services:
+			Project.ProjectService.InitializeService();
+			NavigationService.InitializeService();
+			
+			workbench.ActiveContentChanged += delegate {
+				LoggingService.Debug("ActiveContentChanged to " + workbench.ActiveContent);
+			};
+			workbench.ActiveViewContentChanged += delegate {
+				LoggingService.Debug("ActiveViewContentChanged to " + workbench.ActiveViewContent);
+			};
+			workbench.ActiveWorkbenchWindowChanged += delegate {
+				LoggingService.Debug("ActiveWorkbenchWindowChanged to " + workbench.ActiveWorkbenchWindow);
+			};
+		}
+		
+		/// <summary>
+		/// Runs workbench cleanup.
+		/// Is called by ICSharpCode.SharpDevelop.Sda and should not be called manually!
+		/// </summary>
+		public static void OnWorkbenchUnloaded()
+		{
+			Project.ProjectService.CloseSolution();
+			NavigationService.Unload();
+			
+			if (WorkbenchUnloaded != null) {
+				WorkbenchUnloaded(null, EventArgs.Empty);
+			}
+			
+			FileService.Unload();
 		}
 		
 		#region Safe Thread Caller
 		/// <summary>
-		/// Description of STAThreadCaller.
+		/// Helper class for invoking methods on the main thread.
 		/// </summary>
-		private class STAThreadCaller
+		private sealed class STAThreadCaller
 		{
 			Control ctl;
 			
 			public STAThreadCaller(Control ctl)
 			{
+				if (ctl == null)
+					throw new ArgumentNullException("ctl");
 				this.ctl = ctl;
 			}
 			
@@ -130,7 +172,11 @@ namespace ICSharpCode.SharpDevelop.Gui
 				if (method == null) {
 					throw new ArgumentNullException("method");
 				}
-				ctl.BeginInvoke(method, arguments);
+				try {
+					ctl.BeginInvoke(method, arguments);
+				} catch (InvalidOperationException ex) {
+					LoggingService.Warn("Error in SafeThreadAsyncCall", ex);
+				}
 			}
 		}
 		
@@ -139,8 +185,18 @@ namespace ICSharpCode.SharpDevelop.Gui
 				if (workbench == null)
 					return false; // unit test mode, don't crash
 				else
-					return ((Form)workbench).InvokeRequired;
+					return workbench.MainForm.InvokeRequired;
 			}
+		}
+		
+		/// <summary>
+		/// Throws an exception if the current thread is not the main thread.
+		/// For performance reasons, the thread check is only done in debug builds.
+		/// </summary>
+		[Conditional("DEBUG")]
+		internal static void DebugAssertMainThread()
+		{
+			AssertMainThread();
 		}
 		
 		/// <summary>
@@ -153,6 +209,8 @@ namespace ICSharpCode.SharpDevelop.Gui
 			}
 		}
 		
+		readonly static object[] emptyObjectArray = new object[0];
+		
 		/// <summary>
 		/// Makes a call GUI threadsafe. WARNING: This method waits for the result of the
 		/// operation, which can result in a dead-lock when the main thread waits for a lock
@@ -160,7 +218,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		/// </summary>
 		public static R SafeThreadFunction<R>(Func<R> method)
 		{
-			return (R)caller.Call(method, new object[0]);
+			return (R)caller.Call(method, emptyObjectArray);
 		}
 		
 		/// <summary>
@@ -180,7 +238,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		/// </summary>
 		public static void SafeThreadCall(Action method)
 		{
-			caller.Call(method, new object[0]);
+			caller.Call(method, emptyObjectArray);
 		}
 		
 		/// <summary>
@@ -257,5 +315,10 @@ namespace ICSharpCode.SharpDevelop.Gui
 		/// Is called, when the workbench is created
 		/// </summary>
 		public static event EventHandler WorkbenchCreated;
+		
+		/// <summary>
+		/// Is called, when the workbench is unloaded
+		/// </summary>
+		public static event EventHandler WorkbenchUnloaded;
 	}
 }

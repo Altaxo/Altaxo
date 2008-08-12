@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2659 $</version>
 // </file>
 
 using System;
@@ -100,7 +100,7 @@ namespace ICSharpCode.TextEditor.Document
 			return markers;
 		}
 		
-		public List<TextMarker> GetMarkers(Point position)
+		public List<TextMarker> GetMarkers(TextLocation position)
 		{
 			if (position.Y >= document.TotalNumberOfLines || position.Y < 0) {
 				return new List<TextMarker>();

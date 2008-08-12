@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1968 $</version>
+//     <version>$Revision: 2874 $</version>
 // </file>
 
 using System;
@@ -11,6 +11,7 @@ using System.Drawing;
 using System.Windows.Forms;
 
 using ICSharpCode.SharpDevelop.Widgets.TreeGrid;
+using ICSharpCode.TextEditor;
 
 namespace ICSharpCode.SharpDevelop.Debugging
 {
@@ -69,11 +70,42 @@ namespace ICSharpCode.SharpDevelop.Debugging
 			EndUpdate();
 		}
 		
-		DynamicTreeRow.ChildForm frm;
-		
-		public void ShowForm(ICSharpCode.TextEditor.TextArea textArea, Point logicTextPos)
+		class TooltipForm : DynamicTreeRow.ChildForm
 		{
-			frm = new DynamicTreeRow.ChildForm();
+			protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+			{
+				if (base.ProcessCmdKey(ref msg, keyData)) {
+					return true;
+				} else {
+					Console.WriteLine("Handling " + keyData);
+					var i = FindItemByShortcut(Gui.WorkbenchSingleton.MainForm.MainMenuStrip.Items, keyData);
+					if (i != null)
+						i.PerformClick();
+					return false;
+				}
+			}
+			
+			static ToolStripMenuItem FindItemByShortcut(ToolStripItemCollection c, Keys shortcut)
+			{
+				foreach (ToolStripItem i in c) {
+					ToolStripMenuItem mi = i as ToolStripMenuItem;
+					if (mi != null) {
+						if (mi.ShortcutKeys == shortcut && mi.Enabled)
+							return mi;
+						mi = FindItemByShortcut(mi.DropDownItems, shortcut);
+						if (mi != null)
+							return mi;
+					}
+				}
+				return null;
+			}
+		}
+		
+		TooltipForm frm;
+		
+		public void ShowForm(ICSharpCode.TextEditor.TextArea textArea, TextLocation logicTextPos)
+		{
+			frm = new TooltipForm();
 			frm.AllowResizing = false;
 			frm.Owner = textArea.FindForm();
 			int ypos = (textArea.Document.GetVisibleLine(logicTextPos.Y) + 1) * textArea.TextView.FontHeight - textArea.VirtualTop.Y;

@@ -2,11 +2,13 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2446 $</version>
+//     <version>$Revision: 2739 $</version>
 // </file>
 
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 
 using ICSharpCode.Core;
@@ -25,7 +27,7 @@ namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 			                  TextBoxEditMode.EditRawProperty,
 			                  delegate { return @"obj\"; }
 			                 ).CreateLocationButton("baseIntermediateOutputPathTextBox");
-			ConnectBrowseFolder("baseIntermediateOutputPathBrowseButton", "baseIntermediateOutputPathTextBox", 
+			ConnectBrowseFolder("baseIntermediateOutputPathBrowseButton", "baseIntermediateOutputPathTextBox",
 			                    "${res:Dialog.Options.PrjOptions.Configuration.FolderBrowserDescription}",
 			                    TextBoxEditMode.EditRawProperty);
 		}
@@ -226,49 +228,59 @@ namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 			}
 		}
 		
-		protected void InitTargetFramework(string defaultTargets, string extendedTargets)
+		protected void InitTargetFramework()
 		{
+			Button convertProjectToMSBuild35Button = (Button)ControlDictionary["convertProjectToMSBuild35Button"];
+			ComboBox targetFrameworkComboBox = (ComboBox)ControlDictionary["targetFrameworkComboBox"];
+			
+			if (convertProjectToMSBuild35Button != null) {
+				if (project.MinimumSolutionVersion == Solution.SolutionVersionVS05) {
+					// VS05 project
+					targetFrameworkComboBox.Enabled = false;
+					convertProjectToMSBuild35Button.Click += OnConvertProjectToMSBuild35ButtonClick;
+					return;
+				} else {
+					// VS08 project
+					targetFrameworkComboBox.Enabled = true;
+					convertProjectToMSBuild35Button.Visible = false;
+				}
+			}
+			
 			const string TargetFrameworkProperty = "TargetFrameworkVersion";
 			ConfigurationGuiBinding targetFrameworkBinding;
-			targetFrameworkBinding = helper.BindStringEnum("targetFrameworkComboBox", TargetFrameworkProperty,
-			                                               "",
-			                                               new StringPair("", "Default (.NET 2.0)"),
-			                                               // We do not support .NET 1.0 anymore - compiling would still work,
-			                                               // but debugging, unit testing etc. are not supported.
-			                                               //new StringPair("v1.0", ".NET Framework 1.0"),
-			                                               new StringPair("v1.1", ".NET Framework 1.1"),
-			                                               new StringPair("v2.0", ".NET Framework 2.0"),
-			                                               new StringPair("CF 1.0", "Compact Framework 1.0"),
-			                                               new StringPair("CF 2.0", "Compact Framework 2.0"),
-			                                               new StringPair("Mono v1.1", "Mono 1.1"),
-			                                               new StringPair("Mono v2.0", "Mono 2.0"));
+			
+			targetFrameworkBinding = helper.BindStringEnum(
+				"targetFrameworkComboBox", TargetFrameworkProperty,
+				"v2.0",
+				(from targetFramework in Internal.Templates.TargetFramework.TargetFrameworks
+				 where targetFramework.DisplayName != null
+				 select new StringPair(targetFramework.Name, targetFramework.DisplayName)).ToArray());
 			targetFrameworkBinding.CreateLocationButton("targetFrameworkLabel");
 			helper.Saved += delegate {
-				// Test if SharpDevelop-Build extensions are needed
-				MSBuildBasedProject project = helper.Project;
-				bool needExtensions = false;
-				foreach (MSBuild.BuildProperty p in project.GetAllProperties(TargetFrameworkProperty)) {
-					if (p.IsImported == false && p.Value.Length > 0) {
-						needExtensions = true;
-						break;
-					}
-				}
-				foreach (MSBuild.Import import in project.MSBuildProject.Imports) {
-					if (needExtensions) {
-						if (defaultTargets.Equals(import.ProjectPath, StringComparison.InvariantCultureIgnoreCase)) {
-							//import.ProjectPath = extendedTargets;
-							MSBuildInternals.SetImportProjectPath(project, import, extendedTargets);
-							break;
+				CompilableProject cProject = (CompilableProject)project;
+				cProject.AddOrRemoveExtensions();
+			};
+		}
+		
+		void OnConvertProjectToMSBuild35ButtonClick(object sender, EventArgs e)
+		{
+			using (ConvertToMSBuild35Dialog dlg = new ConvertToMSBuild35Dialog(project.Language + " newversion")) {
+				if (dlg.ShowDialog() == DialogResult.OK) {
+					if (dlg.ConvertAllProjects) {
+						foreach (IProject p in ProjectService.OpenSolution.Projects) {
+							MSBuildBasedProject msbp = p as MSBuildBasedProject;
+							if (msbp != null)
+								msbp.ConvertToMSBuild35(dlg.ChangeTargetFramework);
 						}
 					} else {
-						if (extendedTargets.Equals(import.ProjectPath, StringComparison.InvariantCultureIgnoreCase)) {
-							//import.ProjectPath = defaultTargets;
-							MSBuildInternals.SetImportProjectPath(project, import, defaultTargets);
-							break;
-						}
+						project.ConvertToMSBuild35(dlg.ChangeTargetFramework);
 					}
+					if (project.MinimumSolutionVersion == Solution.SolutionVersionVS05)
+						throw new InvalidOperationException("Project did not convert to MSBuild 3.5");
+					ProjectService.SaveSolution();
+					InitTargetFramework();
 				}
-			};
+			}
 		}
 	}
 }

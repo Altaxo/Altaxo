@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2460 $</version>
 // </file>
 
 using System;
@@ -17,9 +17,17 @@ namespace ICSharpCode.SharpDevelop.Gui
 	/// </summary>
 	public interface IWorkbenchLayout
 	{
-		IWorkbenchWindow ActiveWorkbenchwindow {
+		/// <summary>
+		/// The active workbench window.
+		/// </summary>
+		IWorkbenchWindow ActiveWorkbenchWindow {
 			get;
 		}
+		
+		/// <summary>
+		/// The active content. This can be either a IViewContent or a IPadContent, depending on
+		/// where the focus currently is.
+		/// </summary>
 		object ActiveContent {
 			get;
 		}
@@ -80,9 +88,5 @@ namespace ICSharpCode.SharpDevelop.Gui
 		/// the foreground (e.g. editable) changed to a new one.
 		/// </summary>
 		event EventHandler ActiveWorkbenchWindowChanged;
-		
-		// only needed in the workspace window when the 'secondary view content' changed
-		// it is somewhat like 'active workbench window changed'
-		void OnActiveWorkbenchWindowChanged(EventArgs e);
 	}
 }

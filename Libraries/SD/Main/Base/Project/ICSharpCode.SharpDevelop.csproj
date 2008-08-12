@@ -1,8 +1,8 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+﻿<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30428</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{2748AD25-9C63-4E12-877B-4DCE96FBED54}</ProjectGuid>
     <AssemblyName>ICSharpCode.SharpDevelop</AssemblyName>
@@ -11,7 +11,7 @@
     <NoConfig>False</NoConfig>
     <OutputType>Library</OutputType>
     <SignAssembly>True</SignAssembly>
-    <AssemblyOriginatorKeyFile>Resources\ICSharpCode.SharpDevelop.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>..\..\ICSharpCode.SharpDevelop.snk</AssemblyOriginatorKeyFile>
     <AssemblyOriginatorKeyMode>File</AssemblyOriginatorKeyMode>
     <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
     <RegisterForComInterop>False</RegisterForComInterop>
@@ -21,54 +21,115 @@
     <FileAlignment>4096</FileAlignment>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <DelaySign>False</DelaySign>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
-    <OldToolsVersion>2.0</OldToolsVersion>
-    <UpgradeBackupLocation>
-    </UpgradeBackupLocation>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <Optimize>False</Optimize>
-    <DefineConstants>DEBUG,TRACE;ModifiedForAltaxo</DefineConstants>
-    <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
-    <OutputPath>bin\debug\</OutputPath>
+    <NoWarn>0809 1591</NoWarn>
     <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <Optimize>True</Optimize>
-    <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
     <OutputPath>..\..\..\..\bin\</OutputPath>
-    <WarningLevel>4</WarningLevel>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugType>Full</DebugType>
     <DebugSymbols>true</DebugSymbols>
+    <DefineConstants>DEBUG,TRACE,ModifiedForAltaxo</DefineConstants>
+    <Optimize>False</Optimize>
+    <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+    <OutputPath>..\..\..\..\..\rtdebug\bin\</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <DebugSymbols>False</DebugSymbols>
+    <DebugType>None</DebugType>
+    <Optimize>True</Optimize>
+    <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Core">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
+    <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Design" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.XML" />
-    <Reference Include="Microsoft.Build.Framework" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.Build.Framework">
+      <Private>False</Private>
+    </Reference>
     <Reference Include="Microsoft.Build.Engine" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Src\Gui\AbstractSecondaryViewContent.cs" />
+    <Compile Include="Src\Gui\AbstractViewContentHandlingLoadErrors.cs" />
+    <Compile Include="Src\Gui\AbstractViewContentWithoutFile.cs" />
+    <Compile Include="Src\Gui\BrowserDisplayBinding\BrowserDisplayBinding.cs" />
+    <Compile Include="Src\Gui\Components\SideBar\TextEditorSideBar.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Src\Gui\Dialogs\AddOpenWithEntryDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Src\Gui\Dialogs\AddOpenWithEntryDialog.Designer.cs">
+      <DependentUpon>AddOpenWithEntryDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Src\Gui\Dialogs\AsynchronousWaitDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Src\Gui\Dialogs\AsynchronousWaitDialog.Designer.cs">
+      <DependentUpon>AsynchronousWaitDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Src\Gui\Dialogs\AbstractAttachToProcessForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Src\Gui\Dialogs\AbstractAttachToProcessForm.Designer.cs">
+      <DependentUpon>AbstractAttachToProcessForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Src\Gui\Dialogs\ExtractInterfaceDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <None Include="Src\Gui\Dialogs\ExtractInterfaceDialog.cs">
+      <Link>Src\Services\RefactoringService\ExtractInterfaceDialog.cs</Link>
+    </None>
+    <Compile Include="Src\Gui\Dialogs\ExtractInterfaceDialog.Designer.cs">
+      <DependentUpon>ExtractInterfaceDialog.cs</DependentUpon>
+    </Compile>
+    <None Include="Src\Gui\Dialogs\ExtractInterfaceDialog.Designer.cs">
+      <Link>Src\Services\RefactoringService\ExtractInterfaceDialog.Designer.cs</Link>
+      <DependentUpon>ExtractInterfaceDialog.cs</DependentUpon>
+    </None>
+    <Compile Include="Src\Gui\Dialogs\NewProjectDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Src\Gui\Dialogs\NewProjectDialog.Designer.cs">
+      <DependentUpon>NewProjectDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Src\Gui\Dialogs\OpenWithDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Src\Gui\Dialogs\OpenWithDialog.Designer.cs">
+      <DependentUpon>OpenWithDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Src\Gui\Dialogs\OptionPanels\ProjectOptions\ConvertToMSBuild35Dialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Src\Gui\Dialogs\OptionPanels\ProjectOptions\ConvertToMSBuild35Dialog.Designer.cs">
+      <DependentUpon>ConvertToMSBuild35Dialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Src\Gui\Dialogs\SolutionConfiguration\AddNewConfigurationDialog.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Src\Gui\Dialogs\SolutionConfiguration\AddNewConfigurationDialog.Designer.cs">
       <DependentUpon>AddNewConfigurationDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="Src\Gui\Pads\ProjectBrowser\TreeNodes\DirectoryNodeFactory.cs" />
+    <Compile Include="Src\Gui\Pads\SearchResultPad\Nodes\SearchFolderNode.cs" />
+    <Compile Include="Src\Gui\Pads\SearchResultPad\Nodes\SearchResultNode.cs" />
+    <Compile Include="Src\Gui\Pads\SearchResultPad\Nodes\SearchRootNode.cs" />
+    <Compile Include="Src\Gui\Pads\SearchResultPad\ProvidedDocumentInformation.cs" />
+    <Compile Include="Src\Gui\Pads\SearchResultPad\SearchResult.cs" />
+    <Compile Include="Src\Gui\Pads\SearchResultPad\SearchResultMatch.cs" />
+    <Compile Include="Src\Gui\Pads\SearchResultPad\SearchResultPanel.cs" />
+    <Compile Include="Src\Gui\Pads\SearchResultPad\SearchResultPanelToolbarCommands.cs" />
+    <Compile Include="Src\Gui\Pads\TaskList\TaskListPadCommands.cs" />
+    <Compile Include="Src\Gui\Pads\ToolsPad.cs" />
+    <Compile Include="Src\Gui\Workbench\Layouts\SimpleWorkbenchLayout.cs" />
+    <Compile Include="Src\Gui\Workbench\SingleInstanceHelper.cs" />
     <Compile Include="Src\Internal\ExternalTool\ExternalTool.cs" />
     <Compile Include="Src\Internal\Templates\CodeTemplate.cs" />
     <Compile Include="Src\Internal\Templates\Project\ProjectTemplate.cs" />
@@ -79,10 +140,19 @@
     <Compile Include="Src\Internal\Undo\IUndoableOperation.cs" />
     <Compile Include="Src\Internal\Undo\UndoQueue.cs" />
     <Compile Include="Src\Internal\Undo\UndoStack.cs" />
-    <Compile Include="Src\Project\MSBuildEngineWorker.cs" />
+    <Compile Include="Src\Project\BuildEngine.cs" />
+    <Compile Include="Src\Project\ContextSpecificProperties.cs" />
+    <Compile Include="Src\Project\IBuildFeedbackSink.cs" />
+    <Compile Include="Src\Project\MSBuildFileProject.cs" />
+    <Compile Include="Src\Project\ProjectLoadException.cs" />
     <Compile Include="Src\Project\ProjectPropertyChangedEventArgs.cs" />
     <Compile Include="Src\Services\Debugger\BreakpointBookmark.cs" />
     <Compile Include="Src\Services\Debugger\BreakpointBookmarkEventArgs.cs" />
+    <Compile Include="Src\Services\DisplayBinding\ExternalProcessDisplayBinding.cs" />
+    <Compile Include="Src\Services\DisplayBinding\ISecondaryDisplayBinding.cs" />
+    <Compile Include="Src\Services\DisplayBinding\ShellExecuteDisplayBinding.cs" />
+    <Compile Include="Src\Services\File\FileChangeWatcher.cs" />
+    <Compile Include="Src\Services\File\OpenedFile.cs" />
     <Compile Include="Src\Services\File\RecentOpen.cs" />
     <Compile Include="Src\Services\Language\LanguageService.cs" />
     <Compile Include="Src\Internal\ConditionEvaluators\WindowActiveEvaluator.cs" />
@@ -92,6 +162,7 @@
     <Compile Include="Src\Internal\Doozers\IDialogPanelDescriptor.cs" />
     <Compile Include="Src\Services\File\FileService.cs" />
     <Compile Include="Src\Services\File\FileEventArgs.cs" />
+    <Compile Include="Src\Services\RefactoringService\ExtractInterfaceOptions.cs" />
     <Compile Include="Src\Services\Tasks\Task.cs" />
     <Compile Include="Src\Services\Tasks\TaskService.cs" />
     <Compile Include="Src\Services\DisplayBinding\IDisplayBinding.cs" />
@@ -108,12 +179,11 @@
     <Compile Include="Src\Services\DisplayBinding\DisplayBindingService.cs" />
     <Compile Include="Src\Internal\ConditionEvaluators\ProjectActiveEvaluator.cs" />
     <Compile Include="Src\Services\AmbienceService\NetAmbience.cs" />
-    <Compile Include="Src\Services\AmbienceService\AmbienceReflectionDecorator.cs" />
     <Compile Include="Src\Services\AmbienceService\AmbienceService.cs" />
     <Compile Include="Src\Services\AmbienceService\CodeDOMGeneratorUtility.cs" />
     <Compile Include="Src\Internal\ConditionEvaluators\WindowOpenEvaluator.cs" />
     <Compile Include="Src\Internal\Templates\Project\ProjectDescriptor.cs" />
-    <Compile Include="Src\Internal\Templates\Project\CombineDescriptor.cs" />
+    <Compile Include="Src\Internal\Templates\Project\SolutionDescriptor.cs" />
     <Compile Include="Src\Gui\IProgressMonitor.cs" />
     <Compile Include="Src\Gui\IViewContent.cs" />
     <Compile Include="Src\Gui\IWorkbench.cs" />
@@ -141,7 +211,6 @@
     <Compile Include="Src\Gui\Pads\ProjectBrowser\Commands\FolderNodeCommands.cs" />
     <Compile Include="Src\Gui\Pads\ProjectBrowser\Commands\ProjectNodeCommands.cs" />
     <Compile Include="Src\Gui\Pads\ProjectBrowser\Commands\ReferenceFolderNodeCommands.cs" />
-    <Compile Include="Src\Gui\BrowserDisplayBinding\BrowserDisplayBinding.cs" />
     <Compile Include="Src\Gui\BrowserDisplayBinding\HtmlViewPane.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -229,7 +298,6 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Src\Gui\Pads\PropertyPad\PropertyPad.cs" />
-    <Compile Include="Src\Gui\Pads\SideBarView.cs" />
     <Compile Include="Src\Gui\Workbench\DefaultWorkbench.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -243,17 +311,11 @@
     <Compile Include="Src\Services\ClassBrowserIcons\ClassBrowserIconService.cs" />
     <Compile Include="Src\Services\StatusBar\StatusBarService.cs" />
     <Compile Include="Src\Gui\Pads\PropertyPad\PropertyPadCommands.cs" />
-    <Compile Include="Src\Gui\ContentInterfaces\IParsableContent.cs" />
     <Compile Include="Src\Gui\ContentInterfaces\ICustomizedCommands.cs" />
     <Compile Include="Src\Commands\VBConverter\ConvertBuffer.cs" />
     <Compile Include="Src\Gui\Components\LocalizedPropertyGrid\LocalizedObject.cs" />
     <Compile Include="Src\Gui\Components\LocalizedPropertyGrid\LocalizedPropertyDescriptor.cs" />
     <Compile Include="Src\Gui\Components\LocalizedPropertyGrid\LocalizedPropertyAttribute.cs" />
-    <Compile Include="Src\Gui\IBaseViewContent.cs" />
-    <Compile Include="Src\Services\DisplayBinding\ISubDisplayBinding.cs" />
-    <Compile Include="Src\Gui\ISecondaryViewContent.cs" />
-    <Compile Include="Src\Gui\AbstractSecondaryViewContent.cs" />
-    <Compile Include="Src\Gui\AbstractBaseViewContent.cs" />
     <Compile Include="Src\Gui\XmlForms\BaseSharpDevelopUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -287,8 +349,6 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Src\Internal\ConditionEvaluators\ActiveContentExtensionEvaluator.cs" />
-    <Compile Include="Src\Gui\ContentInterfaces\IViewContentMemento.cs" />
-    <Compile Include="Src\Commands\ChooseConfigurationCommand.cs" />
     <Compile Include="Src\Gui\Workbench\ViewContentEventHandler.cs" />
     <Compile Include="Src\Services\Debugger\IDebugger.cs" />
     <Compile Include="Src\Services\Debugger\DefaultDebugger.cs" />
@@ -326,9 +386,6 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Src\Gui\Pads\ProjectBrowser\ProjectBrowserPad.cs" />
-    <Compile Include="Src\Gui\Dialogs\NewProjectDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="Src\Project\Items\ProjectReferenceProjectItem.cs" />
     <Compile Include="Src\Gui\Pads\ProjectBrowser\TreeNodes\DirectoryNode.cs" />
     <Compile Include="Src\Gui\Pads\ProjectBrowser\TreeNodes\FileNode.cs" />
@@ -416,7 +473,6 @@
     <EmbeddedResource Include="Resources\InputBox.xfrm" />
     <EmbeddedResource Include="Resources\LoadSaveOptionPanel.xfrm" />
     <EmbeddedResource Include="Resources\NewFileDialog.xfrm" />
-    <EmbeddedResource Include="Resources\NewProjectDialog.xfrm" />
     <EmbeddedResource Include="Resources\OutputWindowOptionsPanel.xfrm" />
     <EmbeddedResource Include="Resources\SelectStylePanel.xfrm" />
     <EmbeddedResource Include="Resources\TabbedOptionsDialog.xfrm" />
@@ -424,9 +480,7 @@
     <EmbeddedResource Include="Resources\TreeViewOptionsDialog.xfrm" />
     <EmbeddedResource Include="Resources\WordCountDialog.xfrm" />
     <EmbeddedResource Include="Resources\BehaviorTextEditorPanel.xfrm" />
-    <EmbeddedResource Include="Resources\FindPanel.xfrm" />
     <EmbeddedResource Include="Resources\GotoDialog.xfrm" />
-    <EmbeddedResource Include="Resources\ReplacePanel.xfrm" />
     <EmbeddedResource Include="Resources\GeneralTextEditorPanel.xfrm" />
     <EmbeddedResource Include="Resources\CodeTemplatePanel.xfrm" />
     <EmbeddedResource Include="Resources\MarkersTextEditorPanel.xfrm" />
@@ -471,6 +525,9 @@
     <Compile Include="Src\TextEditor\Gui\Dialogs\SortOptionsDialog.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Src\TextEditor\Gui\Editor\CommandPromptControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Src\TextEditor\Gui\Editor\CompletionWindow\CodeCompletionData.cs" />
     <Compile Include="Src\TextEditor\Gui\Editor\CompletionWindow\CodeCompletionDataProvider.cs" />
     <Compile Include="Src\TextEditor\Gui\Editor\CompletionWindow\CommentCompletionDataProvider.cs" />
@@ -488,6 +545,7 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Src\TextEditor\Gui\Editor\SharpDevelopTextEditorProperties.cs" />
+    <Compile Include="Src\TextEditor\Gui\Editor\TextEditorBasedPad.cs" />
     <Compile Include="Src\TextEditor\Gui\Editor\TextEditorDisplayBinding.cs" />
     <Compile Include="Src\TextEditor\Gui\OptionPanels\BehaviorTextEditorPanel.cs">
       <SubType>UserControl</SubType>
@@ -501,48 +559,6 @@
     <Compile Include="Src\TextEditor\Gui\OptionPanels\MarkersTextEditorPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Src\TextEditor\SearchAndReplace\Commands\SearchMainMenuCommands.cs" />
-    <Compile Include="Src\TextEditor\SearchAndReplace\Commands\SearchToolbarCommands.cs" />
-    <Compile Include="Src\TextEditor\SearchAndReplace\Engine\DocumentIterator\AllOpenDocumentIterator.cs" />
-    <Compile Include="Src\TextEditor\SearchAndReplace\Engine\DocumentIterator\CurrentDocumentIterator.cs" />
-    <Compile Include="Src\TextEditor\SearchAndReplace\Engine\DocumentIterator\DirectoryDocumentIterator.cs" />
-    <Compile Include="Src\TextEditor\SearchAndReplace\Engine\DocumentIterator\IDocumentIterator.cs" />
-    <Compile Include="Src\TextEditor\SearchAndReplace\Engine\DocumentIterator\ProvidedDocumentInformation.cs" />
-    <Compile Include="Src\TextEditor\SearchAndReplace\Engine\DocumentIterator\WholeProjectDocumentIterator.cs" />
-    <Compile Include="Src\TextEditor\SearchAndReplace\Engine\DocumentIterator\WholeSolutionDocumentIterator.cs" />
-    <Compile Include="Src\TextEditor\SearchAndReplace\Engine\SearchStrategy\BruteForceSearchStrategy.cs" />
-    <Compile Include="Src\TextEditor\SearchAndReplace\Engine\SearchStrategy\ISearchStrategy.cs" />
-    <Compile Include="Src\TextEditor\SearchAndReplace\Engine\SearchStrategy\KMPSearchStrategy.cs" />
-    <Compile Include="Src\TextEditor\SearchAndReplace\Engine\SearchStrategy\RegExSearchStrategy.cs" />
-    <Compile Include="Src\TextEditor\SearchAndReplace\Engine\SearchStrategy\SearchResult.cs" />
-    <Compile Include="Src\TextEditor\SearchAndReplace\Engine\SearchStrategy\WildcardSearchStrategy.cs" />
-    <Compile Include="Src\TextEditor\SearchAndReplace\Engine\TextIterator\ForwardTextIterator.cs" />
-    <Compile Include="Src\TextEditor\SearchAndReplace\Engine\TextIterator\ForwardTextIteratorBuilder.cs" />
-    <Compile Include="Src\TextEditor\SearchAndReplace\Engine\TextIterator\ITextIterator.cs" />
-    <Compile Include="Src\TextEditor\SearchAndReplace\Engine\ITextIteratorBuilder.cs" />
-    <Compile Include="Src\TextEditor\SearchAndReplace\Engine\Search.cs" />
-    <Compile Include="Src\TextEditor\SearchAndReplace\Engine\SearchAllFinishedEventHandler.cs" />
-    <Compile Include="Src\TextEditor\SearchAndReplace\Engine\SearchReplaceInFilesManager.cs" />
-    <Compile Include="Src\TextEditor\SearchAndReplace\Engine\SearchReplaceManager.cs" />
-    <Compile Include="Src\TextEditor\SearchAndReplace\Engine\SearchReplaceUtilities.cs" />
-    <Compile Include="Src\TextEditor\SearchAndReplace\Gui\AsynchronousWaitDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Src\TextEditor\SearchAndReplace\Gui\AsynchronousWaitDialog.Designer.cs">
-      <DependentUpon>AsynchronousWaitDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Src\TextEditor\SearchAndReplace\Gui\SearchAndReplaceDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Src\TextEditor\SearchAndReplace\Gui\SearchAndReplacePanel.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Src\TextEditor\SearchAndReplace\Pad\Nodes\SearchFolderNode.cs" />
-    <Compile Include="Src\TextEditor\SearchAndReplace\Pad\Nodes\SearchResultNode.cs" />
-    <Compile Include="Src\TextEditor\SearchAndReplace\Pad\Nodes\SearchRootNode.cs" />
-    <Compile Include="Src\TextEditor\SearchAndReplace\Pad\SearchResultPanel.cs" />
-    <Compile Include="Src\TextEditor\SearchAndReplace\Pad\SearchResultPanelToolbarCommands.cs" />
-    <Compile Include="Src\TextEditor\SearchAndReplace\SearchOptions.cs" />
     <Compile Include="Src\TextEditor\Actions.cs" />
     <Compile Include="Src\TextEditor\CharacterEncodings.cs" />
     <Compile Include="Src\TextEditor\XmlFormattingStrategy.cs" />
@@ -600,7 +616,6 @@
     </Compile>
     <Compile Include="Src\Services\Debugger\CurrentLineBookmark.cs" />
     <Compile Include="Src\TextEditor\Commands\ClassBookmarkMenuBuilder.cs" />
-    <Compile Include="Src\TextEditor\SearchAndReplace\Engine\SearchStrategy\BoyerMooreSearchStrategy.cs" />
     <Compile Include="Src\Gui\BrowserDisplayBinding\BrowserCommands.cs" />
     <Compile Include="Src\Gui\BrowserDisplayBinding\BrowserLocationConditionEvaluator.cs" />
     <Compile Include="Src\Services\Debugger\DebuggerDoozer.cs" />
@@ -690,7 +705,6 @@
     <Compile Include="Src\Gui\Pads\ClassBrowser\NodeBuilder\ProjectNodeBuilders.cs" />
     <Compile Include="Src\Gui\Pads\ClassBrowser\NodeBuilder\IClassNodeBuilder.cs" />
     <Compile Include="Src\Gui\Pads\ClassBrowser\NodeBuilder\IProjectNodeBuilder.cs" />
-    <Compile Include="Src\TextEditor\SearchAndReplace\Engine\TextSelection.cs" />
     <Compile Include="Src\Services\RefactoringService\NamespaceRefactoringService.cs" />
     <Compile Include="Src\Services\RefactoringService\RefactorMenu.cs" />
     <Compile Include="Src\TextEditor\Gui\Editor\AdvancedHighlightingStrategy.cs" />
@@ -712,7 +726,6 @@
     <Compile Include="Src\Services\ParserService\Doozer\ProjectContentRegistryDescriptor.cs" />
     <Compile Include="Src\Services\ParserService\Doozer\ProjectContentRegistryDoozer.cs" />
     <Compile Include="Src\Internal\ConditionEvaluators\CompareProjectPropertyConditionEvaluator.cs" />
-    <Compile Include="Src\Services\ParserService\Net1xProjectContentRegistry.cs" />
     <Compile Include="Src\Services\ParserService\NetCFProjectContentRegistry.cs" />
     <Compile Include="Src\Gui\Dialogs\SolutionConfiguration\SolutionConfigurationEditor.Designer.cs">
       <DependentUpon>SolutionConfigurationEditor.cs</DependentUpon>
@@ -723,13 +736,10 @@
     <Compile Include="Src\TextEditor\Gui\Editor\IncrementalSearch.cs" />
     <EmbeddedResource Include="Resources\IncrementalSearchCursor.cur" />
     <EmbeddedResource Include="Resources\ReverseIncrementalSearchCursor.cur" />
-    <EmbeddedResource Include="Src\TextEditor\SearchAndReplace\Gui\AsynchronousWaitDialog.resx">
-      <DependentUpon>AsynchronousWaitDialog.cs</DependentUpon>
-    </EmbeddedResource>
     <Compile Include="Src\Gui\Dialogs\SharpDevelopColorDialog.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Src\Util\Linq.cs" />
+    <Compile Include="Src\Util\ExtensionMethods.cs" />
     <Compile Include="Src\Util\DebugTimer.cs" />
     <Compile Include="Src\Project\CustomTool.cs" />
     <Compile Include="Src\Gui\Dialogs\SolutionConfiguration\EditAvailableConfigurationsDialog.Designer.cs">
@@ -751,9 +761,27 @@
     <Compile Include="Src\Project\BuildTarget.cs" />
     <Compile Include="Src\Util\GenericConverter.cs" />
     <Compile Include="Src\Internal\Templates\TemplateLoadException.cs" />
+    <Compile Include="Src\Util\UnclosableStream.cs" />
+    <EmbeddedResource Include="Resources\DefaultManifest.manifest" />
+    <EmbeddedResource Include="Src\Gui\Dialogs\ExtractInterfaceDialog.resx">
+      <DependentUpon>ExtractInterfaceDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="Src\Gui\Dialogs\ExtractInterfaceDialog.resx">
+      <Link>Src\Services\RefactoringService\ExtractInterfaceDialog.resx</Link>
+      <DependentUpon>ExtractInterfaceDialog.cs</DependentUpon>
+    </None>
+    <EmbeddedResource Include="Src\Gui\Dialogs\NewProjectDialog.resx">
+      <DependentUpon>NewProjectDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Src\Gui\Dialogs\OptionPanels\ProjectOptions\ConvertToMSBuild35Dialog.resx">
+      <DependentUpon>ConvertToMSBuild35Dialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Src\Gui\Dialogs\SolutionConfiguration\AddNewConfigurationDialog.resx">
+      <DependentUpon>AddNewConfigurationDialog.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\WinFormsUI\WinFormsUI\WinFormsUI.csproj">
+    <ProjectReference Include="..\..\..\Libraries\DockPanel_Src\WinFormsUI\WinFormsUI.csproj">
       <Project>{D3C782BA-178E-4235-A3BA-8C11DEBB6BEE}</Project>
       <Name>WinFormsUI</Name>
     </ProjectReference>
@@ -765,13 +793,17 @@
       <Project>{3A9AE6AA-BC07-4A2F-972C-581E3AE2F195}</Project>
       <Name>NRefactory</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\ICSharpCode.Core\Project\ICSharpCode.Core.csproj">
+    <ProjectReference Include="..\..\Core\Project\ICSharpCode.Core.csproj">
       <Project>{35cef10f-2d4c-45f2-9dd1-161e0fec583c}</Project>
       <Name>ICSharpCode.Core</Name>
     </ProjectReference>
     <Content Include="..\..\..\..\AddIns\ICSharpCode.SharpDevelop.addin">
       <Link>ICSharpCode.SharpDevelop.addin</Link>
     </Content>
+    <ProjectReference Include="..\..\ICSharpCode.SharpDevelop.BuildWorker\ICSharpCode.SharpDevelop.BuildWorker.csproj">
+      <Project>{C3CBC8E3-81D8-4C5B-9941-DCCD12D50B1F}</Project>
+      <Name>ICSharpCode.SharpDevelop.BuildWorker</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\ICSharpCode.SharpDevelop.Dom\Project\ICSharpCode.SharpDevelop.Dom.csproj">
       <Project>{924EE450-603D-49C1-A8E5-4AFAA31CE6F3}</Project>
       <Name>ICSharpCode.SharpDevelop.Dom</Name>
@@ -782,8 +814,5 @@
       <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\ICSharpCode.SharpDevelop.snk" />
-  </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSHARP.Targets" />
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>

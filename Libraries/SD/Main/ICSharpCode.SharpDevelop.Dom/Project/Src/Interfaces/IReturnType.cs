@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1661 $</version>
+//     <version>$Revision: 2465 $</version>
 // </file>
 
 using System;
@@ -15,7 +15,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 	/// Such a reference can be direct (DefaultReturnType), lazy (SearchClassReturnType) or
 	/// returns types that stand for special references (e.g. ArrayReturnType)
 	/// </summary>
-	public interface IReturnType
+	public interface IReturnType : IEquatable<IReturnType>
 	{
 		/// <summary>
 		/// Gets the fully qualified name of the class the return type is pointing to.
@@ -63,9 +63,10 @@ namespace ICSharpCode.SharpDevelop.Dom
 		}
 		
 		/// <summary>
-		/// Gets the count of type parameters the target class should have.
+		/// Gets the number of type parameters the target class should have
+		/// / the number of type arguments specified by this type reference.
 		/// </summary>
-		int TypeParameterCount {
+		int TypeArgumentCount {
 			get;
 		}
 		
@@ -78,7 +79,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 		/// <summary>
 		/// Gets all methods that can be called on this return type.
 		/// </summary>
-		List<IMethod>   GetMethods();
+		List<IMethod> GetMethods();
 		
 		/// <summary>
 		/// Gets all properties that can be called on this return type.
@@ -88,12 +89,12 @@ namespace ICSharpCode.SharpDevelop.Dom
 		/// <summary>
 		/// Gets all fields that can be called on this return type.
 		/// </summary>
-		List<IField>    GetFields();
+		List<IField> GetFields();
 		
 		/// <summary>
 		/// Gets all events that can be called on this return type.
 		/// </summary>
-		List<IEvent>    GetEvents();
+		List<IEvent> GetEvents();
 		
 		
 		/// <summary>
@@ -104,6 +105,18 @@ namespace ICSharpCode.SharpDevelop.Dom
 		/// False for ArrayReturnType, SpecificReturnType etc.
 		/// </returns>
 		bool IsDefaultReturnType { get; }
+		
+		/// <summary>
+		/// Gets if the cast to the specified decorating return type would be valid.
+		/// </summary>
+		bool IsDecoratingReturnType<T>() where T : DecoratingReturnType;
+		
+		/// <summary>
+		/// Casts this return type to the decorating return type specified as type parameter.
+		/// This methods casts correctly even when the return type is wrapped by a ProxyReturnType.
+		/// When the cast is invalid, <c>null</c> is returned.
+		/// </summary>
+		T CastToDecoratingReturnType<T>() where T : DecoratingReturnType;
 		
 		bool IsArrayReturnType { get; }
 		ArrayReturnType CastToArrayReturnType();

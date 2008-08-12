@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 3129 $</version>
 // </file>
 
 using System;
@@ -35,8 +35,8 @@ namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 			{"${res:Dialog.Options.ExternalTool.QuickInsertMenu.ProjectDirectory}", "${ProjectDir}"},
 			{"${res:Dialog.Options.ExternalTool.QuickInsertMenu.ProjectFileName}",  "${ProjectFileName}"},
 			{"-", ""},
-			{"${res:Dialog.Options.ExternalTool.QuickInsertMenu.CombineDirectory}", "${CombineDir}"},
-			{"${res:Dialog.Options.ExternalTool.QuickInsertMenu.CombineFileName}",  "${CombineFileName}"},
+			{"${res:Dialog.Options.ExternalTool.QuickInsertMenu.CombineDirectory}", "${SolutionDir}"},
+			{"${res:Dialog.Options.ExternalTool.QuickInsertMenu.CombineFileName}",  "${SolutionFileName}"},
 			{"-", ""},
 			{"${res:Dialog.Options.ExternalTool.QuickInsertMenu.SharpDevelopStartupPath}",  "${StartupPath}"},
 		};
@@ -49,7 +49,7 @@ namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 			{"-", ""},
 			{"${res:Dialog.Options.ExternalTool.QuickInsertMenu.ProjectDirectory}", "${ProjectDir}"},
 			{"-", ""},
-			{"${res:Dialog.Options.ExternalTool.QuickInsertMenu.CombineDirectory}", "${CombineDir}"},
+			{"${res:Dialog.Options.ExternalTool.QuickInsertMenu.CombineDirectory}", "${SolutionDir}"},
 			{"-", ""},
 			{"${res:Dialog.Options.ExternalTool.QuickInsertMenu.SharpDevelopStartupPath}",  "${StartupPath}"},
 		};
@@ -96,11 +96,13 @@ namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 			selectEvent(this, EventArgs.Empty);
 		}
 		
+		internal const string ExecutableFilesFilter = "${res:SharpDevelop.FileFilter.ExecutableFiles}|*.exe;*.com;*.pif;*.bat;*.cmd|${res:SharpDevelop.FileFilter.AllFiles}|*.*";
+		
 		void browseEvent(object sender, EventArgs e)
 		{
 			using (OpenFileDialog fdiag  = new OpenFileDialog()) {
 				fdiag.CheckFileExists = true;
-				fdiag.Filter = StringParser.Parse("${res:SharpDevelop.FileFilter.ExecutableFiles}|*.exe;*.com;*.pif;*.bat;*.cmd|${res:SharpDevelop.FileFilter.AllFiles}|*.*");
+				fdiag.Filter = StringParser.Parse(ExecutableFilesFilter);
 				
 				if (fdiag.ShowDialog(ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.MainForm) == DialogResult.OK) {
 					ControlDictionary["commandTextBox"].Text = fdiag.FileName;
@@ -147,11 +149,11 @@ namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 		{
 			List<ExternalTool> newlist = new List<ExternalTool>();
 			foreach (ExternalTool tool in ((ListBox)ControlDictionary["toolListBox"]).Items) {
-				if (!FileUtility.IsValidFileName(tool.Command)) {
+				if (!FileUtility.IsValidPath(StringParser.Parse(tool.Command))) {
 					MessageService.ShowError(String.Format("The command of tool \"{0}\" is invalid.", tool.MenuCommand));
 					return false;
 				}
-				if ((tool.InitialDirectory != "") && (!FileUtility.IsValidFileName(tool.InitialDirectory))) {
+				if ((tool.InitialDirectory != String.Empty) && (!FileUtility.IsValidPath(tool.InitialDirectory))) {
 					MessageService.ShowError(String.Format("The working directory of tool \"{0}\" is invalid.", tool.MenuCommand));
 					return false;
 				}

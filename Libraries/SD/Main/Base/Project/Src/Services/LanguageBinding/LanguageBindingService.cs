@@ -2,14 +2,14 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2070 $</version>
+//     <version>$Revision: 3126 $</version>
 // </file>
 
+using ICSharpCode.SharpDevelop.Gui;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
-
 using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.Project;
 
@@ -90,10 +90,10 @@ namespace ICSharpCode.SharpDevelop
 		
 		public static IProject LoadProject(IMSBuildEngineProvider provider, string location, string title)
 		{
-			return LoadProject(provider, location, title, "{" + Guid.Empty.ToString() + "}");
+			return LoadProject(provider, location, title, "{" + Guid.Empty.ToString() + "}", null);
 		}
 		
-		public static IProject LoadProject(IMSBuildEngineProvider provider, string location, string title, string projectTypeGuid)
+		public static IProject LoadProject(IMSBuildEngineProvider provider, string location, string title, string projectTypeGuid, IProgressMonitor progressMonitor)
 		{
 			if (provider == null)
 				throw new ArgumentNullException("provider");
@@ -104,6 +104,10 @@ namespace ICSharpCode.SharpDevelop
 			if (projectTypeGuid == null)
 				throw new ArgumentNullException("projectTypeGuid");
 			
+			if (progressMonitor != null) {
+				progressMonitor.BeginTask("Loading " + title, 0, false);
+			}
+			
 			IProject newProject;
 			if (!File.Exists(location)) {
 				newProject = new MissingProject(location, title);
@@ -111,24 +115,33 @@ namespace ICSharpCode.SharpDevelop
 			} else {
 				ILanguageBinding binding = LanguageBindingService.GetBindingPerProjectFile(location);
 				if (binding != null) {
-					try {
-						location = Path.GetFullPath(location);
-					} catch (Exception) {}
+					location = FileUtility.NormalizePath(location);
 					try {
 						newProject = binding.LoadProject(provider, location, title);
-					} catch (XmlException ex) {
+					} catch (ProjectLoadException ex) {
+						LoggingService.Warn("Project load error", ex);
+						if (progressMonitor != null) progressMonitor.ShowingDialog = true;
 						newProject = new UnknownProject(location, title, ex.Message, true);
 						newProject.TypeGuid = projectTypeGuid;
-					} catch (Microsoft.Build.BuildEngine.InvalidProjectFileException ex) {
-						newProject = new UnknownProject(location, title, ex.Message, true);
-						newProject.TypeGuid = projectTypeGuid;
+						if (progressMonitor != null) progressMonitor.ShowingDialog = false;
 					} catch (UnauthorizedAccessException ex) {
+						LoggingService.Warn("Project load error", ex);
+						if (progressMonitor != null) progressMonitor.ShowingDialog = true;
 						newProject = new UnknownProject(location, title, ex.Message, true);
 						newProject.TypeGuid = projectTypeGuid;
+						if (progressMonitor != null) progressMonitor.ShowingDialog = false;
 					}
 				} else {
-					newProject = new UnknownProject(location, title);
-					newProject.TypeGuid = projectTypeGuid;
+					string ext = Path.GetExtension(location);
+					if (".proj".Equals(ext, StringComparison.OrdinalIgnoreCase)
+					    || ".build".Equals(ext, StringComparison.OrdinalIgnoreCase))
+					{
+						newProject = new MSBuildFileProject(location, title);
+						newProject.TypeGuid = projectTypeGuid;
+					} else {
+						newProject = new UnknownProject(location, title);
+						newProject.TypeGuid = projectTypeGuid;
+					}
 				}
 			}
 			return newProject;

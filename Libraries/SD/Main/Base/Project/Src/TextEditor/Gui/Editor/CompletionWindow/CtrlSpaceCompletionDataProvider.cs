@@ -2,13 +2,16 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2496 $</version>
+//     <version>$Revision: 2939 $</version>
 // </file>
 
 using System;
 using System.Collections;
+using System.Diagnostics;
 using ICSharpCode.SharpDevelop.Dom;
+using ICSharpCode.Core;
 using ICSharpCode.TextEditor;
+using ICSharpCode.TextEditor.Gui.CompletionWindow;
 
 namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 {
@@ -23,36 +26,75 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			this.overrideContext = overrideContext;
 		}
 		
-		bool forceNewExpression;
+		bool allowCompleteExistingExpression;
 		
 		/// <summary>
-		/// Gets/Sets whether the CtrlSpaceCompletionDataProvider creates a new completion
-		/// dropdown instead of completing an old expression.
-		/// Default value is false.
+		/// Gets/Sets whether completing an old expression is allowed.
+		/// You have to set this property to true to let the provider run FindExpression, when
+		/// set to false it will use ExpressionContext.Default (unless the constructor with "overrideContext" was used).
 		/// </summary>
-		public bool ForceNewExpression {
-			get {
-				return forceNewExpression;
+		public bool AllowCompleteExistingExpression {
+			get { return allowCompleteExistingExpression; }
+			set { allowCompleteExistingExpression = value; }
+		}
+		
+		/// <summary>
+		/// Gets/Sets whether code templates should be included in code completion.
+		/// </summary>
+		public bool ShowTemplates { get; set; }
+		
+		void AddTemplates(TextArea textArea, char charTyped)
+		{
+			if (!ShowTemplates)
+				return;
+			ICompletionData suggestedData = DefaultIndex >= 0 ? completionData[DefaultIndex] : null;
+			ICompletionData[] templateCompletionData = new TemplateCompletionDataProvider().GenerateCompletionData(fileName, textArea, charTyped);
+			if (templateCompletionData == null || templateCompletionData.Length == 0)
+				return;
+			for (int i = 0; i < completionData.Count; i++) {
+				if (completionData[i].ImageIndex == ClassBrowserIconService.KeywordIndex) {
+					string text = completionData[i].Text;
+					for (int j = 0; j < templateCompletionData.Length; j++) {
+						if (templateCompletionData[j] != null && templateCompletionData[j].Text == text) {
+							// replace keyword with template
+							completionData[i] = templateCompletionData[j];
+							templateCompletionData[j] = null;
+						}
+					}
+				}
 			}
-			set {
-				forceNewExpression = value;
+			// add non-keyword code templates
+			for (int j = 0; j < templateCompletionData.Length; j++) {
+				if (templateCompletionData[j] != null)
+					completionData.Add(templateCompletionData[j]);
+			}
+			if (suggestedData != null) {
+				completionData.Sort(DefaultCompletionData.Compare);
+				DefaultIndex = completionData.IndexOf(suggestedData);
 			}
 		}
 		
 		protected override void GenerateCompletionData(TextArea textArea, char charTyped)
 		{
-			if (forceNewExpression) {
+			#if DEBUG
+			if (DebugMode) {
+				Debugger.Break();
+			}
+			#endif
+			
+			if (!allowCompleteExistingExpression) {
 				preSelection = "";
 				if (charTyped != '\0') {
 					preSelection = null;
 				}
-				ExpressionContext context = overrideContext;
-				if (context == null) context = ExpressionContext.Default;
+				ExpressionContext context = overrideContext ?? ExpressionContext.Default;
 				AddResolveResults(ParserService.CtrlSpace(caretLineNumber, caretColumn, fileName, textArea.Document.TextContent, context), context);
+				AddTemplates(textArea, charTyped);
 				return;
 			}
 			
 			ExpressionResult expressionResult = GetExpression(textArea);
+			LoggingService.Debug("Ctrl-Space got expression " + expressionResult.ToString());
 			string expression = expressionResult.Expression;
 			preSelection = null;
 			if (expression == null || expression.Length == 0) {
@@ -61,6 +103,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 					preSelection = null;
 				}
 				AddResolveResults(ParserService.CtrlSpace(caretLineNumber, caretColumn, fileName, textArea.Document.TextContent, expressionResult.Context), expressionResult.Context);
+				AddTemplates(textArea, charTyped);
 				return;
 			}
 			
@@ -79,6 +122,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 				}
 				ArrayList results = ParserService.CtrlSpace(caretLineNumber, caretColumn, fileName, textArea.Document.TextContent, expressionResult.Context);
 				AddResolveResults(results, expressionResult.Context);
+				AddTemplates(textArea, charTyped);
 			}
 		}
 	}

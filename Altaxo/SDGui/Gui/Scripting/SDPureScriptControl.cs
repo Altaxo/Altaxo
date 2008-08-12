@@ -32,6 +32,8 @@ using Altaxo.Gui.Scripting;
 
 using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop;
+using ICSharpCode.SharpDevelop.DefaultEditor;
+using ICSharpCode.TextEditor.Document;
 
 namespace Altaxo.Gui.Scripting
 {
@@ -65,7 +67,9 @@ namespace Altaxo.Gui.Scripting
     {
       this.SuspendLayout();
 
-      this.edFormulaWrapper = new ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor.TextEditorDisplayBindingWrapper();
+			string scriptName = System.Guid.NewGuid().ToString() + ".cs";
+
+      this.edFormulaWrapper = new ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor.TextEditorDisplayBindingWrapper(new SDScriptOpenedFile(scriptName));
       this.edFormula = edFormulaWrapper.TextEditorControl;
 
       this.edFormula.VisibleChanged += new EventHandler(edFormula_VisibleChanged);
@@ -79,13 +83,29 @@ namespace Altaxo.Gui.Scripting
 
       this.Controls.Add(this.edFormula);
 
-      string scriptName = System.Guid.NewGuid().ToString() + ".cs";
       this.ScriptName = scriptName;
       Altaxo.Main.Services.ParserServiceConnector.RegisterScriptFileName(scriptName);
       this.edFormula.Document.TextEditorProperties.TabIndent=2;
-      this.edFormulaWrapper.textAreaControl.InitializeFormatter();
-      this.edFormulaWrapper.textAreaControl.TextEditorProperties.MouseWheelScrollDown=true;
+      ((ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor.SharpDevelopTextAreaControl)this.edFormulaWrapper.TextEditorControl).InitializeFormatter();
+      this.edFormulaWrapper.TextEditorControl.TextEditorProperties.MouseWheelScrollDown=true;
 
+      try
+      {
+        IHighlightingStrategy strat = HighlightingStrategyFactory.CreateHighlightingStrategy("C#");
+        if (strat == null)
+        {
+          throw new Exception("Strategy can't be null");
+        }
+        edFormula.Document.HighlightingStrategy = strat;
+        if (edFormula is ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor.SharpDevelopTextAreaControl)
+        {
+          ((ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor.SharpDevelopTextAreaControl)edFormula).InitializeAdvancedHighlighter();
+        }
+      }
+      catch (HighlightingDefinitionInvalidException ex)
+      {
+        
+      }
       this.ResumeLayout();
     }
 
@@ -171,8 +191,8 @@ namespace Altaxo.Gui.Scripting
       set
       {
         edFormulaWrapper.TextEditorControl.FileName = value;
-        edFormulaWrapper.TitleName = value;
-        edFormulaWrapper.FileName = value;
+        //edFormulaWrapper.TitleName = value;
+        //edFormulaWrapper.FileName = value;
       }
     }
 
@@ -202,8 +222,8 @@ namespace Altaxo.Gui.Scripting
     {
       set
       {
-        System.Drawing.Point point = edFormulaWrapper.textAreaControl.Document.OffsetToPosition(value);
-        this.edFormulaWrapper.JumpTo(point.Y,point.X);
+        ICSharpCode.TextEditor.TextLocation point = edFormulaWrapper.TextEditorControl.Document.OffsetToPosition(value);
+        this.edFormulaWrapper.JumpTo(point.Line,point.Column);
       }
 
     }

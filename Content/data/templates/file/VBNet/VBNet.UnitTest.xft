@@ -37,11 +37,15 @@
 			description   = "${res:Templates.File.Properties.AddTearDownCode.Description}"
 		/>
 	</Properties>
-		
+	
+	<References>
+		<Reference include="NUnit.Framework" hintPath="$(SharpDevelopBinPath)\Tools\NUnit\NUnit.Framework.dll" />
+	</References>
+	
 	<Files>
 		<File name="${FullName}" language="VBNET"><![CDATA[${StandardHeader.VBNET}
-
 Imports NUnit.Framework
+Imports NUnit.Framework.SyntaxHelpers
 
 <TestFixture> _
 Public Class ${ClassName}

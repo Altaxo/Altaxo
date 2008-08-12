@@ -2,18 +2,20 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="none" email=""/>
-//     <version>$Revision: 2257 $</version>
+//     <version>$Revision: 2998 $</version>
 // </file>
 
 // created on 07.03.2004 at 19:12
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 
 using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.Dom;
+using ICSharpCode.TextEditor;
 
 namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 {
@@ -28,7 +30,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		
 		class ComboBoxItem : System.IComparable
 		{
-			object item;
+			IEntity item;
 			string text;
 			int    iconIndex;
 			bool   isInCurrentPart;
@@ -93,7 +95,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 				}
 			}
 			
-			public ComboBoxItem(object item, string text, int iconIndex, bool isInCurrentPart)
+			public ComboBoxItem(IEntity item, string text, int iconIndex, bool isInCurrentPart)
 			{
 				this.item = item;
 				this.text = text;
@@ -144,38 +146,8 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 				return 0;
 			}
 			
-			string cachedString;
-			
 			public override string ToString()
 			{
-				// ambience lookups can be expensive when the return type is
-				// resolved on the fly.
-				// Therefore, we need to cache the generated string because it is used
-				// very often for the sorting.
-				if (cachedString == null)
-					cachedString = ToStringInternal();
-				return cachedString;
-			}
-			
-			string ToStringInternal()
-			{
-				IAmbience ambience = AmbienceService.CurrentAmbience;
-				ambience.ConversionFlags = ConversionFlags.ShowParameterNames;
-				if (item is IMethod) {
-					return ambience.Convert((IMethod)item);
-				}
-				if (item is IProperty) {
-					return ambience.Convert((IProperty)item);
-				}
-				if (item is IField) {
-					return ambience.Convert((IField)item);
-				}
-				if (item is IProperty) {
-					return ambience.Convert((IProperty)item);
-				}
-				if (item is IEvent) {
-					return ambience.Convert((IEvent)item);
-				}
 				return text;
 			}
 			
@@ -267,7 +239,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		{
 			// Still needed ?
 			if (currentCompilationUnit == null) {
-				currentCompilationUnit = (ICompilationUnit)ParserService.GetParseInformation(Path.GetFullPath(textAreaControl.FileName)).MostRecentCompilationUnit;
+				currentCompilationUnit = (ICompilationUnit)ParserService.GetParseInformation(FileUtility.NormalizePath(textAreaControl.FileName)).MostRecentCompilationUnit;
 			}
 			
 			autoselect = false;
@@ -344,34 +316,39 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 					}
 				}
 				
-				lock (c) {
-					int lastIndex = 0;
-					IComparer comparer = new Comparer(System.Globalization.CultureInfo.InvariantCulture);
-					
-					foreach (IMethod m in c.Methods) {
-						items.Add(new ComboBoxItem(m, m.Name, ClassBrowserIconService.GetIcon(m), partialMode ? currentPart.Methods.Contains(m) : true));
-					}
-					items.Sort(lastIndex, c.Methods.Count, comparer);
-					lastIndex = items.Count;
-					
-					foreach (IProperty p in c.Properties) {
-						items.Add(new ComboBoxItem(p, p.Name, ClassBrowserIconService.GetIcon(p), partialMode ? currentPart.Properties.Contains(p) : true));
-					}
-					items.Sort(lastIndex, c.Properties.Count, comparer);
-					lastIndex = items.Count;
-					
-					foreach (IField f in c.Fields) {
-						items.Add(new ComboBoxItem(f, f.Name, ClassBrowserIconService.GetIcon(f), partialMode ? currentPart.Fields.Contains(f) : true));
-					}
-					items.Sort(lastIndex, c.Fields.Count, comparer);
-					lastIndex = items.Count;
-					
-					foreach (IEvent evt in c.Events) {
-						items.Add(new ComboBoxItem(evt, evt.Name, ClassBrowserIconService.GetIcon(evt), partialMode ? currentPart.Events.Contains(evt) : true));
-					}
-					items.Sort(lastIndex, c.Events.Count, comparer);
-					lastIndex = items.Count;
+				IAmbience ambience = AmbienceService.GetCurrentAmbience();
+				ambience.ConversionFlags = ConversionFlags.ShowTypeParameterList | ConversionFlags.ShowParameterList | ConversionFlags.ShowParameterNames;
+				
+				int lastIndex = 0;
+				IComparer comparer = new Comparer(System.Globalization.CultureInfo.InvariantCulture);
+				
+				foreach (IMethod m in c.Methods) {
+					items.Add(new ComboBoxItem(m, ambience.Convert(m), ClassBrowserIconService.GetIcon(m), partialMode ? currentPart.Methods.Contains(m) : true));
 				}
+				// use "items.Count - lastIndex" instead of "c.Methods.Count"
+				// because it is possible that the number of methods in the class
+				// changes while the loop is running (if a compound class is changed
+				// from another thread)
+				items.Sort(lastIndex, items.Count - lastIndex, comparer);
+				lastIndex = items.Count;
+				
+				foreach (IProperty p in c.Properties) {
+					items.Add(new ComboBoxItem(p, ambience.Convert(p), ClassBrowserIconService.GetIcon(p), partialMode ? currentPart.Properties.Contains(p) : true));
+				}
+				items.Sort(lastIndex, items.Count - lastIndex, comparer);
+				lastIndex = items.Count;
+				
+				foreach (IField f in c.Fields) {
+					items.Add(new ComboBoxItem(f, ambience.Convert(f), ClassBrowserIconService.GetIcon(f), partialMode ? currentPart.Fields.Contains(f) : true));
+				}
+				items.Sort(lastIndex, items.Count - lastIndex, comparer);
+				lastIndex = items.Count;
+				
+				foreach (IEvent evt in c.Events) {
+					items.Add(new ComboBoxItem(evt, ambience.Convert(evt), ClassBrowserIconService.GetIcon(evt), partialMode ? currentPart.Events.Contains(evt) : true));
+				}
+				items.Sort(lastIndex, items.Count - lastIndex, comparer);
+				lastIndex = items.Count;
 				
 				membersComboBox.BeginUpdate();
 				membersComboBox.Items.Clear();
@@ -381,10 +358,12 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			}
 		}
 		
-		void AddClasses(ArrayList items, ICollection classes)
+		void AddClasses(ArrayList items, ICollection<IClass> classes)
 		{
 			foreach (IClass c in classes) {
-				items.Add(new ComboBoxItem(c, c.FullyQualifiedName, ClassBrowserIconService.GetIcon(c), true));
+				IAmbience ambience = AmbienceService.GetCurrentAmbience();
+				ambience.ConversionFlags = ConversionFlags.UseFullyQualifiedMemberNames | ConversionFlags.ShowTypeParameterList;
+				items.Add(new ComboBoxItem(c, ambience.Convert(c), ClassBrowserIconService.GetIcon(c), true));
 				AddClasses(items, c.InnerClasses);
 			}
 		}
@@ -475,7 +454,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			if (autoselect) {
 				ComboBoxItem item = (ComboBoxItem)comboBox.Items[comboBox.SelectedIndex];
 				if (item.IsInCurrentPart) {
-					textAreaControl.ActiveTextAreaControl.Caret.Position = new Point(item.Column, item.Line);
+					textAreaControl.ActiveTextAreaControl.Caret.Position = new TextLocation(item.Column, item.Line);
 					textAreaControl.ActiveTextAreaControl.TextArea.Focus();
 				} else {
 					IMember m = item.Item as IMember;

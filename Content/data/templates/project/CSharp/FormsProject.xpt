@@ -10,6 +10,7 @@
 		<Subcategory>${res:Templates.File.Categories.WindowsApplications}</Subcategory>
 		<Icon>C#.Project.Form</Icon>
 		<Description>${res:Templates.Project.WindowsApplication.Description}</Description>
+		<SupportedTargetFrameworks>v2.0</SupportedTargetFrameworks>
 	</TemplateConfiguration>
 	
 	<!-- Actions -->
@@ -18,6 +19,10 @@
 	</Actions>
 	
 	<Project language = "C#">
+		<CreateActions>
+			<RunCommand path = "/SharpDevelop/BackendBindings/TemplateCommands/AddDotNet35ReferencesIfTargetFrameworkIs35"/>
+		</CreateActions>
+		
 		<ProjectItems>
 			<Reference Include="System" />
 			<Reference Include="System.Data" />
@@ -28,11 +33,11 @@
 		
 		<PropertyGroup>
 			<OutputType>WinExe</OutputType>
+			<AppDesignerFolder>Properties</AppDesignerFolder>
 		</PropertyGroup>
 		
 		<Files>
-		<File name="Program.cs" language="C#"><![CDATA[${StandardHeader.C#}
-
+			<File name="Program.cs" language="C#"><![CDATA[${StandardHeader.C#}
 using System;
 using System.Windows.Forms;
 
@@ -57,8 +62,7 @@ namespace ${StandardNamespace}
 	}
 }
 ]]></File>
-		<File name="MainForm.cs" language="C#"><![CDATA[${StandardHeader.C#}
-
+			<File name="MainForm.cs" language="C#"><![CDATA[${StandardHeader.C#}
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -85,7 +89,7 @@ namespace ${StandardNamespace}
 	}
 }
 ]]></File>
-<File name="MainForm.Designer.cs" DependentUpon="MainForm.cs" language="C#"><![CDATA[${StandardHeader.C#}
+			<File name="MainForm.Designer.cs" DependentUpon="MainForm.cs" language="C#"><![CDATA[${StandardHeader.C#}
 namespace ${StandardNamespace}
 {
 	partial class MainForm
@@ -126,7 +130,7 @@ namespace ${StandardNamespace}
 	}
 }
 ]]></File>
-		<File name="AssemblyInfo.cs" src="DefaultAssemblyInfo.cs"/>
+			<File name="Properties\AssemblyInfo.cs" src="DefaultAssemblyInfo.cs"/>
 		</Files>
 	</Project>
 </Template>

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2932 $</version>
 // </file>
 
 using System;
@@ -143,7 +143,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			public int Compare(KeyValuePair<string, UsageStruct> x, KeyValuePair<string, UsageStruct> y)
 			{
 				double a = ((double)x.Value.Uses / x.Value.ShowCount);
-				return a.CompareTo((double)y.Value.Uses / y.Value.ShowCount);
+				return -a.CompareTo((double)y.Value.Uses / y.Value.ShowCount);
 			}
 		}
 		

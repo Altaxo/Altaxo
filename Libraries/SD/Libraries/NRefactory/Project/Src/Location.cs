@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2087 $</version>
+//     <version>$Revision: 2659 $</version>
 // </file>
 
 using System;
@@ -11,6 +11,7 @@ namespace ICSharpCode.NRefactory
 {
 	/// <summary>
 	/// A line/column position.
+	/// NRefactory lines/columns are counting from one.
 	/// </summary>
 	public struct Location : IComparable<Location>, IEquatable<Location>
 	{

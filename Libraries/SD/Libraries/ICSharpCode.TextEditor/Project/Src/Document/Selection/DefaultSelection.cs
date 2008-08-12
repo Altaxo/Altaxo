@@ -2,10 +2,11 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1935 $</version>
+//     <version>$Revision: 2679 $</version>
 // </file>
 
 using System;
+using System.Diagnostics;
 using System.Drawing;
 
 namespace ICSharpCode.TextEditor.Document
@@ -17,23 +18,25 @@ namespace ICSharpCode.TextEditor.Document
 	{
 		IDocument document;
 		bool      isRectangularSelection;
-		Point     startPosition;
-		Point     endPosition;
+		TextLocation     startPosition;
+		TextLocation     endPosition;
 		
-		public Point StartPosition {
+		public TextLocation StartPosition {
 			get {
 				return startPosition;
 			}
 			set {
+				DefaultDocument.ValidatePosition(document, value);
 				startPosition = value;
 			}
 		}
 		
-		public Point EndPosition {
+		public TextLocation EndPosition {
 			get {
 				return endPosition;
 			}
 			set {
+				DefaultDocument.ValidatePosition(document, value);
 				endPosition = value;
 			}
 		}
@@ -96,8 +99,11 @@ namespace ICSharpCode.TextEditor.Document
 		/// <summary>
 		/// Creates a new instance of <see cref="DefaultSelection"/>
 		/// </summary>
-		public DefaultSelection(IDocument document, Point startPosition, Point endPosition)
+		public DefaultSelection(IDocument document, TextLocation startPosition, TextLocation endPosition)
 		{
+			DefaultDocument.ValidatePosition(document, startPosition);
+			DefaultDocument.ValidatePosition(document, endPosition);
+			Debug.Assert(startPosition <= endPosition);
 			this.document      = document;
 			this.startPosition = startPosition;
 			this.endPosition   = endPosition;
@@ -110,7 +116,7 @@ namespace ICSharpCode.TextEditor.Document
 		{
 			return String.Format("[DefaultSelection : StartPosition={0}, EndPosition={1}]", startPosition, endPosition);
 		}
-		public bool ContainsPosition(Point position)
+		public bool ContainsPosition(TextLocation position)
 		{
 			if (this.IsEmpty)
 				return false;

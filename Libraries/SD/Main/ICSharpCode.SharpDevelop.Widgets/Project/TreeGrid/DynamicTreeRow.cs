@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1968 $</version>
+//     <version>$Revision: 2914 $</version>
 // </file>
 
 using System;
@@ -204,6 +204,8 @@ namespace ICSharpCode.SharpDevelop.Widgets.TreeGrid
 		{
 			if (blockClickEvent) { blockClickEvent = false; return; }
 			OnExpanding(e);
+			// If OnExpanding displaies an error message, focus is lost, form is closed and we can not access the handle anymore
+			if (e.List.IsDisposed) return;
 			ChildForm frm = new ChildForm();
 			frm.Closed += delegate {
 				blockClickEvent = true;
@@ -213,7 +215,7 @@ namespace ICSharpCode.SharpDevelop.Widgets.TreeGrid
 				plus.RaiseItemChanged();
 				Timer timer = new Timer();
 				timer.Interval = 85;
-				timer.Tick += delegate(object sender2, EventArgs e2) { 
+				timer.Tick += delegate(object sender2, EventArgs e2) {
 					((Timer)sender2).Stop();
 					((Timer)sender2).Dispose();
 					blockClickEvent = false;
@@ -439,6 +441,18 @@ namespace ICSharpCode.SharpDevelop.Widgets.TreeGrid
 						owner.CloseOnDeactivate();
 				} else {
 					Close();
+				}
+			}
+			
+			protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+			{
+				if (base.ProcessCmdKey(ref msg, keyData)) {
+					return true;
+				} else {
+					ChildForm owner = Owner as ChildForm;
+					if (owner != null)
+						return owner.ProcessCmdKey(ref msg, keyData);
+					return false;
 				}
 			}
 		}

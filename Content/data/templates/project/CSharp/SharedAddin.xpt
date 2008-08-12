@@ -13,6 +13,7 @@
 		<Category>C#</Category>
 		<Icon>C#.Project.Library</Icon>
 		<Description>${res:Templates.Project.SharedAddin.Description}</Description>
+		<SupportedTargetFrameworks>v2.0</SupportedTargetFrameworks>
 	</TemplateConfiguration>
 	
 	<!-- Actions -->
@@ -31,12 +32,12 @@
 		
 		<PropertyGroup>
 			<OutputType>Library</OutputType>
+			<AppDesignerFolder>Properties</AppDesignerFolder>
 			<RegisterForComInterop>true</RegisterForComInterop>
 		</PropertyGroup>
 		
 		<Files>
 			<File name="Connect.cs"><![CDATA[${StandardHeader.C#}
-
 namespace ${StandardNamespace}
 {
 	using System;
@@ -116,7 +117,7 @@ namespace ${StandardNamespace}
 		private object addinInstance;
 	}
 }]]></File>
-		<File name="AssemblyInfo.cs" src="DefaultAssemblyInfo.cs"/>
+		<File name="Properties\AssemblyInfo.cs" src="DefaultAssemblyInfo.cs"/>
 		</Files>
 	</Project>
 </Template>

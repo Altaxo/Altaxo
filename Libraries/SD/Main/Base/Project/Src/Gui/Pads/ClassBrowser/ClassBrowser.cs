@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2104 $</version>
+//     <version>$Revision: 3081 $</version>
 // </file>
 
 using System;
@@ -92,6 +92,8 @@ namespace ICSharpCode.SharpDevelop.Gui.ClassBrowser
 			contentPanel.Controls.Add(toolStrip);
 			
 			ProjectService.SolutionLoaded += ProjectServiceSolutionChanged;
+			ProjectService.ProjectItemAdded += ProjectServiceSolutionChanged;
+			ProjectService.ProjectItemRemoved += ProjectServiceSolutionChanged;
 			ProjectService.ProjectAdded += ProjectServiceSolutionChanged; // rebuild view when project is added to solution
 			ProjectService.SolutionFolderRemoved += ProjectServiceSolutionChanged; // rebuild view when project is removed from solution
 			ProjectService.SolutionClosed += ProjectServiceSolutionClosed;
@@ -104,19 +106,18 @@ namespace ICSharpCode.SharpDevelop.Gui.ClassBrowser
 			}
 			UpdateToolbars();
 		}
-		
-		List<ICompilationUnit[]> pending = new List<ICompilationUnit[]> ();
+
+		List<ParseInformationEventArgs> pending = new List<ParseInformationEventArgs>();
 		
 		// running on main thread, invoked by the parser thread when a compilation unit changed
 		void UpdateThread()
 		{
 			lock (pending) {
-				foreach (ICompilationUnit[] units in pending) {
-					ICompilationUnit nonNullUnit = units[1] ?? units[0];
+				foreach (ParseInformationEventArgs e in pending) {
 					foreach (TreeNode node in classBrowserTreeView.Nodes) {
 						AbstractProjectNode prjNode = node as AbstractProjectNode;
-						if (prjNode != null && prjNode.Project.IsFileInProject(nonNullUnit.FileName)) {
-							prjNode.UpdateParseInformation(units[0], units[1]);
+						if (prjNode != null && e.ProjectContent.Project == prjNode.Project) {
+							prjNode.UpdateParseInformation(e.OldCompilationUnit, e.NewCompilationUnit);
 						}
 					}
 				}
@@ -127,7 +128,7 @@ namespace ICSharpCode.SharpDevelop.Gui.ClassBrowser
 		public void ParserServiceParseInformationUpdated(object sender, ParseInformationEventArgs e)
 		{
 			lock (pending) {
-				pending.Add(new ICompilationUnit[] { e.ParseInformation.MostRecentCompilationUnit as ICompilationUnit, e.CompilationUnit});
+				pending.Add(e);
 			}
 			WorkbenchSingleton.SafeThreadAsyncCall(UpdateThread);
 		}
@@ -274,11 +275,13 @@ namespace ICSharpCode.SharpDevelop.Gui.ClassBrowser
 		void ProjectServiceSolutionChanged(object sender, EventArgs e)
 		{
 			classBrowserTreeView.Nodes.Clear();
-			foreach (IProject project in ProjectService.OpenSolution.Projects) {
-				if (project is MissingProject || project is UnknownProject) {
-					continue;
+			if (ProjectService.OpenSolution != null) {
+				foreach (IProject project in ProjectService.OpenSolution.Projects) {
+					if (project is MissingProject || project is UnknownProject) {
+						continue;
+					}
+					ProjectNodeBuilders.AddProjectNode(classBrowserTreeView, project);
 				}
-				ProjectNodeBuilders.AddProjectNode(classBrowserTreeView, project);
 			}
 		}
 		

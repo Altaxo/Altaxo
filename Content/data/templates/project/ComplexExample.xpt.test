@@ -19,7 +19,6 @@
 	</Actions>
 	
 	<!-- Template Content -->
-	<!-- for compatibility reasons, the root node is allowed to be called either Solution or Combine -->
 	<Solution name = "${ProjectName}" directory = ".">
 		
 		<!-- the startup project can be specified like this: -->
@@ -124,8 +123,11 @@ End Class
 			</Project>
 		</SolutionFolder>
 		
-		<!-- a project without language uses the language specified in the template header -->
 		<Project name = "${ProjectName}" directory = "." language = "C#">
+			<CreateActions>
+				<RunCommand path = "/SharpDevelop/BackendBindings/TemplateCommands/AddDotNet35ReferencesIfTargetFrameworkIs35"/>
+			</CreateActions>
+			
 			<ProjectItems>
 				<Reference Include="System" />
 				<Reference Include="System.Data" />

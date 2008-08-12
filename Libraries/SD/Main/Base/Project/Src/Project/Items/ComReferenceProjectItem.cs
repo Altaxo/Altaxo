@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2043 $</version>
+//     <version>$Revision: 3041 $</version>
 // </file>
 
 using System;
@@ -25,11 +25,13 @@ namespace ICSharpCode.SharpDevelop.Project
 			this.Lcid         = library.Lcid;
 			this.WrapperTool  = library.WrapperTool;
 			this.Isolated     = library.Isolated;
+			this.DefaultCopyLocalValue = true;
 		}
 		
 		internal ComReferenceProjectItem(IProject project, Microsoft.Build.BuildEngine.BuildItem buildItem)
 			: base(project, buildItem)
 		{
+			this.DefaultCopyLocalValue = true;
 		}
 		
 		[ReadOnly(true)]

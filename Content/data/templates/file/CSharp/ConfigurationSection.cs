@@ -1,5 +1,4 @@
 ${StandardHeader.C#}
-
 using System;   
 using System.Configuration;
 
@@ -33,7 +32,8 @@ namespace ${StandardNamespace}
 		// }
 
 		/// <summary>
-		/// Represents attribute <c>exampleAttribute</c> of &lt;${ClassName}&gt;
+		/// Collection of <c>${ClassName}Element(s)</c> 
+		/// A custom XML section for an applications configuration file.
 		/// </summary>
 		[ConfigurationProperty("exampleAttribute", DefaultValue="exampleValue")]
 		public string ExampleAttribute {

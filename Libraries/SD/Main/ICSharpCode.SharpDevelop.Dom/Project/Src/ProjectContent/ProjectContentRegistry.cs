@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2408 $</version>
+//     <version>$Revision: 3169 $</version>
 // </file>
 
 using System;
@@ -23,11 +23,6 @@ namespace ICSharpCode.SharpDevelop.Dom
 	{
 		internal DomPersistence persistence;
 		Dictionary<string, IProjectContent> contents = new Dictionary<string, IProjectContent>(StringComparer.InvariantCultureIgnoreCase);
-		
-		/// <summary>
-		/// Redirects short names to long names. Used to redirect .NET libraries to the chosen .NET version
-		/// </summary>
-		protected Dictionary<string, string> redirectedAssemblyNames = new Dictionary<string, string>();
 		
 		/// <summary>
 		/// Disposes all project contents stored in this registry.
@@ -177,9 +172,6 @@ namespace ICSharpCode.SharpDevelop.Dom
 					contents["mscorlib"] = mscorlibContent;
 					contents[mscorlibContent.AssemblyFullName] = mscorlibContent;
 					contents[mscorlibContent.AssemblyLocation] = mscorlibContent;
-					lock (redirectedAssemblyNames) {
-						redirectedAssemblyNames.Add("mscorlib", mscorlibContent.AssemblyFullName);
-					}
 					return mscorlibContent;
 				}
 			}
@@ -192,48 +184,66 @@ namespace ICSharpCode.SharpDevelop.Dom
 			}
 		}
 		
-		[Obsolete("Use DomAssemblyName instead of AssemblyName")]
-		public IProjectContent GetExistingProjectContent(AssemblyName assembly)
+		/// <summary>
+		/// Unloads the specified project content, causing it to be reloaded when
+		/// GetProjectContentForReference is called the next time.
+		/// Warning: do not unload project contents that are still in use! Doing so will result
+		/// in an ObjectDisposedException when the unloaded project content is used the next time!
+		/// </summary>
+		public void UnloadProjectContent(IProjectContent pc)
 		{
-			return GetExistingProjectContent(assembly.FullName, assembly.FullName);
+			if (pc == null)
+				throw new ArgumentNullException("pc");
+			LoggingService.Debug("ProjectContentRegistry.UnloadProjectContent: " + pc);
+			lock (contents) {
+				// find all keys used for the project content - might be the short name/full name/file name
+				List<string> keys = new List<string>();
+				foreach (KeyValuePair<string, IProjectContent> pair in contents) {
+					if (pair.Value == pc) keys.Add(pair.Key);
+				}
+				foreach (string key in keys) {
+					contents.Remove(key);
+				}
+			}
+			pc.Dispose();
 		}
 		
 		public IProjectContent GetExistingProjectContent(DomAssemblyName assembly)
 		{
-			return GetExistingProjectContent(assembly.FullName, assembly.FullName);
+			return GetExistingProjectContent(assembly.FullName);
 		}
 		
-		public virtual IProjectContent GetExistingProjectContent(string itemInclude, string itemFileName)
+		public virtual IProjectContent GetExistingProjectContent(string fileNameOrAssemblyName)
 		{
-			if (itemFileName == itemInclude) {
-				string shortName = itemInclude;
-				int pos = shortName.IndexOf(',');
-				if (pos > 0)
-					shortName = shortName.Substring(0, pos);
-				
-				// redirect all references to .NET default assemblies to the .NET version this registry uses
-				lock (redirectedAssemblyNames) {
-					if (redirectedAssemblyNames.ContainsKey(shortName)) {
-						itemFileName = redirectedAssemblyNames[shortName];
-						itemInclude = shortName;
+			lock (contents) {
+				if (contents.ContainsKey(fileNameOrAssemblyName)) {
+					return contents[fileNameOrAssemblyName];
+				}
+			}
+			
+			// GetProjectContentForReference supports redirecting .NET base assemblies to the correct version,
+			// so GetExistingProjectContent must support it, too (otherwise assembly interdependencies fail
+			// to resolve correctly when a .NET 1.0 assembly is used in a .NET 2.0 project)
+			int pos = fileNameOrAssemblyName.IndexOf(',');
+			if (pos > 0) {
+				string shortName = fileNameOrAssemblyName.Substring(0, pos);
+				Assembly assembly = GetDefaultAssembly(shortName);
+				if (assembly != null) {
+					lock (contents) {
+						if (contents.ContainsKey(assembly.FullName)) {
+							return contents[assembly.FullName];
+						}
 					}
 				}
 			}
-			lock (contents) {
-				if (contents.ContainsKey(itemFileName)) {
-					return contents[itemFileName];
-				}
-				if (contents.ContainsKey(itemInclude)) {
-					return contents[itemInclude];
-				}
-			}
+			
 			return null;
 		}
 		
 		public virtual IProjectContent GetProjectContentForReference(string itemInclude, string itemFileName)
 		{
 			lock (contents) {
-				IProjectContent pc = GetExistingProjectContent(itemInclude, itemFileName);
+				IProjectContent pc = GetExistingProjectContent(itemFileName);
 				if (pc != null) {
 					return pc;
 				}
@@ -245,7 +255,6 @@ namespace ICSharpCode.SharpDevelop.Dom
 				if (pos > 0)
 					shortName = shortName.Substring(0, pos);
 				
-				HostCallback.BeginAssemblyLoad(shortName);
 				#if DEBUG
 				int time = Environment.TickCount;
 				#endif
@@ -258,13 +267,15 @@ namespace ICSharpCode.SharpDevelop.Dom
 					#if DEBUG
 					LoggingService.Debug(string.Format("Loaded {0} in {1}ms", itemInclude, Environment.TickCount - time));
 					#endif
-					HostCallback.FinishAssemblyLoad();
 				}
 				
 				if (pc != null) {
 					ReflectionProjectContent reflectionProjectContent = pc as ReflectionProjectContent;
-					if (reflectionProjectContent != null && reflectionProjectContent.AssemblyFullName != null) {
-						contents[reflectionProjectContent.AssemblyFullName] = pc;
+					if (reflectionProjectContent != null) {
+						reflectionProjectContent.InitializeReferences();
+						if (reflectionProjectContent.AssemblyFullName != null) {
+							contents[reflectionProjectContent.AssemblyFullName] = pc;
+						}
 					}
 					contents[itemInclude] = pc;
 					contents[itemFileName] = pc;
@@ -292,26 +303,28 @@ namespace ICSharpCode.SharpDevelop.Dom
 						persistence.SaveProjectContent(pc);
 					}
 				}
-				if (pc != null) {
-					// add default .NET assemblies to redirected assemblies (both when loaded from persistence
-					// and when loaded using Reflection)
-					lock (redirectedAssemblyNames) {
-						redirectedAssemblyNames.Add(shortName, pc.AssemblyFullName);
-					}
-				}
 			} else {
 				// find real file name for cecil:
 				if (File.Exists(itemFileName)) {
-					pc = CecilReader.LoadAssembly(itemFileName, this);
+					if (persistence != null) {
+						pc = persistence.LoadProjectContentByAssemblyName(itemFileName);
+					}
+					if (pc == null) {
+						pc = CecilReader.LoadAssembly(itemFileName, this);
+						
+						if (persistence != null) {
+							persistence.SaveProjectContent(pc);
+						}
+					}
 				} else {
-					GacAssemblyName asmName = GacInterop.FindBestMatchingAssemblyName(itemInclude);
+					DomAssemblyName asmName = GacInterop.FindBestMatchingAssemblyName(itemInclude);
 					if (persistence != null && asmName != null) {
 						//LoggingService.Debug("Looking up in DOM cache: " + asmName.FullName);
 						pc = persistence.LoadProjectContentByAssemblyName(asmName.FullName);
 					}
 					if (pc == null && asmName != null) {
-						string subPath = Path.Combine(asmName.Name, GetVersion__Token(asmName));
-						subPath = Path.Combine(subPath, asmName.Name + ".dll");
+						string subPath = Path.Combine(asmName.ShortName, GetVersion__Token(asmName));
+						subPath = Path.Combine(subPath, asmName.ShortName + ".dll");
 						foreach (string dir in Directory.GetDirectories(GacInterop.GacRootPath, "GAC*")) {
 							itemFileName = Path.Combine(dir, subPath);
 							if (File.Exists(itemFileName)) {
@@ -324,18 +337,18 @@ namespace ICSharpCode.SharpDevelop.Dom
 						}
 					}
 					if (pc == null) {
-						HostCallback.ShowAssemblyLoadErrorInternal("?", itemInclude, "Could not find assembly file.");
+						HostCallback.ShowAssemblyLoadErrorInternal(itemFileName, itemInclude, "Could not find assembly file.");
 					}
 				}
 			}
 			return pc;
 		}
 		
-		static string GetVersion__Token(GacAssemblyName asmName)
+		static string GetVersion__Token(DomAssemblyName asmName)
 		{
 			StringBuilder b = new StringBuilder(asmName.Version.ToString());
 			b.Append("__");
-			b.Append(asmName.PublicKey);
+			b.Append(asmName.PublicKeyToken);
 			return b.ToString();
 		}
 		
@@ -351,7 +364,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 			}
 		}
 		
-		static Assembly GetDefaultAssembly(string shortName)
+		protected virtual Assembly GetDefaultAssembly(string shortName)
 		{
 #if ModifiedForAltaxo
       if(shortName.StartsWith("Altaxo"))
@@ -365,6 +378,8 @@ namespace ICSharpCode.SharpDevelop.Dom
 			// These assemblies are already loaded by SharpDevelop, so we
 			// don't need to load them in a separate AppDomain/with Cecil.
 			switch (shortName) {
+				case "mscorlib":
+					return MscorlibAssembly;
 				case "System": // System != mscorlib !!!
 					return SystemAssembly;
 				case "System.Xml":
@@ -393,29 +408,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 					return null;
 			}
 		}
-		
-		/// <summary>
-		/// Unloads the specified project content, causing it to be reloaded when
-		/// GetProjectContentForReference is called the next time.
-		/// Warning: do not unload project contents that are still in use! Doing so will result
-		/// in an ObjectDisposedException when the unloaded project content is used the next time!
-		/// </summary>
-		public void UnloadProjectContent(IProjectContent pc)
-		{
-			if (pc == null)
-				throw new ArgumentNullException("pc");
-			LoggingService.Debug("ProjectContentRegistry.UnloadProjectContent: " + pc);
-			lock (contents) {
-				// find all keys used for the project content - might be the short name/full name/file name
-				List<string> keys = new List<string>();
-				foreach (KeyValuePair<string, IProjectContent> pair in contents) {
-					if (pair.Value == pc) keys.Add(pair.Key);
-				}
-				foreach (string key in keys) {
-					contents.Remove(key);
-				}
-			}
-			pc.Dispose();
-		}
 	}
 }
+
+

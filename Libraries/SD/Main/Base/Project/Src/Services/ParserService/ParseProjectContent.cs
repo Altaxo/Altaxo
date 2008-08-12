@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2309 $</version>
+//     <version>$Revision: 2949 $</version>
 // </file>
 
 using System;
@@ -10,10 +10,11 @@ using System.Collections.Generic;
 using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.Dom;
 using ICSharpCode.SharpDevelop.Project;
+using ICSharpCode.SharpDevelop.Gui;
 
 namespace ICSharpCode.SharpDevelop
 {
-	public class ParseProjectContent : DefaultProjectContent
+	public sealed class ParseProjectContent : DefaultProjectContent
 	{
 		internal static ParseProjectContent CreateUninitalized(IProject project)
 		{
@@ -41,26 +42,34 @@ namespace ICSharpCode.SharpDevelop
 			return string.Format("[{0}: {1}]", GetType().Name, project.Name);
 		}
 		
-		internal void Initialize1()
+		internal void Initialize1(IProgressMonitor progressMonitor)
 		{
 			ICollection<ProjectItem> items = project.Items;
 			ProjectService.ProjectItemAdded   += OnProjectItemAdded;
 			ProjectService.ProjectItemRemoved += OnProjectItemRemoved;
 			UpdateDefaultImports(items);
+			// TODO: Translate me
+			progressMonitor.TaskName = "Resolving references for " + project.Name + "...";
+			project.ResolveAssemblyReferences();
 			foreach (ProjectItem item in items) {
 				if (!initializing) return; // abort initialization
 				if (item.ItemType == ItemType.Reference
 				    || item.ItemType == ItemType.ProjectReference
 				    || item.ItemType == ItemType.COMReference)
 				{
-					AddReference(item as ReferenceProjectItem, false);
+					ReferenceProjectItem reference = item as ReferenceProjectItem;
+					if (reference != null) {
+						// TODO: Translate me
+						progressMonitor.TaskName = "Loading " + reference.ShortName + "...";
+						AddReference(reference, false);
+					}
 				}
 			}
 			UpdateReferenceInterDependencies();
 			OnReferencedContentsChanged(EventArgs.Empty);
 		}
 		
-		internal void ReInitialize1()
+		internal void ReInitialize1(IProgressMonitor progressMonitor)
 		{
 			lock (ReferencedContents) {
 				ReferencedContents.Clear();
@@ -70,7 +79,7 @@ namespace ICSharpCode.SharpDevelop
 			ProjectService.ProjectItemAdded   -= OnProjectItemAdded;
 			ProjectService.ProjectItemRemoved -= OnProjectItemRemoved;
 			initializing = true;
-			Initialize1();
+			Initialize1(progressMonitor);
 			initializing = false;
 		}
 		
@@ -102,12 +111,6 @@ namespace ICSharpCode.SharpDevelop
 			}
 		}
 		
-		// waitcallback for AddReference
-		void AddReference(object state)
-		{
-			AddReference((ReferenceProjectItem)state, true);
-		}
-		
 		// ensure that com references are built serially because we cannot invoke multiple instances of MSBuild
 		static Queue<System.Windows.Forms.MethodInvoker> callAfterAddComReference = new Queue<System.Windows.Forms.MethodInvoker>();
 		static bool buildingComReference;
@@ -124,17 +127,17 @@ namespace ICSharpCode.SharpDevelop
 						project.Save(); // project is not yet saved when ItemAdded fires, so save it here
 						TaskService.BuildMessageViewCategory.AppendText("\n${res:MainWindow.CompilerMessages.CreatingCOMInteropAssembly}\n");
 						BuildCallback afterBuildCallback = delegate {
-							System.Threading.ThreadPool.QueueUserWorkItem(AddReference, reference);
 							lock (callAfterAddComReference) {
 								if (callAfterAddComReference.Count > 0) {
 									// run next enqueued action
 									callAfterAddComReference.Dequeue()();
 								} else {
 									buildingComReference = false;
+									ParserService.Reparse(project, true, false);
 								}
 							}
 						};
-						project.StartBuild(new BuildOptions(BuildTarget.ResolveComReferences, afterBuildCallback));
+						BuildEngine.BuildInGui(project, new BuildOptions(BuildTarget.ResolveComReferences, afterBuildCallback));
 					};
 					
 					// enqueue actions when adding multiple COM references so that multiple builds of the same project
@@ -148,10 +151,7 @@ namespace ICSharpCode.SharpDevelop
 						}
 					}
 				} else {
-					// refresh the reference if required
-					ParserService.RefreshProjectContentForReference(reference);
-					
-					System.Threading.ThreadPool.QueueUserWorkItem(AddReference, reference);
+					ParserService.Reparse(project, true, false);
 				}
 			}
 			if (e.ProjectItem.ItemType == ItemType.Import) {
@@ -218,20 +218,20 @@ namespace ICSharpCode.SharpDevelop
 			return project.Items.Count;
 		}
 		
-		internal void ReInitialize2()
+		internal void ReInitialize2(IProgressMonitor progressMonitor)
 		{
 			if (initializing) return;
 			initializing = true;
-			Initialize2();
+			Initialize2(progressMonitor);
 		}
 		
-		internal void Initialize2()
+		internal void Initialize2(IProgressMonitor progressMonitor)
 		{
 			if (!initializing) return;
-			int progressStart = StatusBarService.ProgressMonitor.WorkDone;
+			int progressStart = progressMonitor.WorkDone;
 			ParseableFileContentEnumerator enumerator = new ParseableFileContentEnumerator(project);
 			try {
-				StatusBarService.ProgressMonitor.TaskName = "${res:ICSharpCode.SharpDevelop.Internal.ParserService.Parsing} " + project.Name + "...";
+				progressMonitor.TaskName = "${res:ICSharpCode.SharpDevelop.Internal.ParserService.Parsing} " + project.Name + "...";
 				
 				IProjectContent[] referencedContents;
 				lock (this.ReferencedContents) {
@@ -248,7 +248,7 @@ namespace ICSharpCode.SharpDevelop
 				while (enumerator.MoveNext()) {
 					int i = enumerator.Index;
 					if ((i % 5) == 2)
-						StatusBarService.ProgressMonitor.WorkDone = progressStart + i;
+						progressMonitor.WorkDone = progressStart + i;
 					
 					ParserService.ParseFile(this, enumerator.CurrentFileName, enumerator.CurrentFileContent, true);
 					
@@ -256,7 +256,7 @@ namespace ICSharpCode.SharpDevelop
 				}
 			} finally {
 				initializing = false;
-				StatusBarService.ProgressMonitor.WorkDone = progressStart + enumerator.ItemCount;
+				progressMonitor.WorkDone = progressStart + enumerator.ItemCount;
 				enumerator.Dispose();
 			}
 		}

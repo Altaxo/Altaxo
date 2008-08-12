@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1963 $</version>
+//     <version>$Revision: 2365 $</version>
 // </file>
 
 using System;
@@ -18,7 +18,7 @@ namespace ICSharpCode.SharpDevelop
 	/// it checks, if the files exists at every creation, and if not it doesn't list them in the 
 	/// recent files, and they'll not be saved during the next option save.
 	/// </summary>
-	public class RecentOpen
+	public sealed class RecentOpen
 	{
 		/// <summary>
 		/// This variable is the maximal length of lastfile/lastopen entries
@@ -153,7 +153,7 @@ namespace ICSharpCode.SharpDevelop
 			return p;
 		}
 		
-		public void FileRemoved(object sender, FileEventArgs e)
+		internal void FileRemoved(object sender, FileEventArgs e)
 		{
 			for (int i = 0; i < lastfile.Count; ++i) {
 				string file = lastfile[i].ToString();
@@ -165,7 +165,7 @@ namespace ICSharpCode.SharpDevelop
 			}
 		}
 		
-		public void FileRenamed(object sender, FileRenameEventArgs e)
+		internal void FileRenamed(object sender, FileRenameEventArgs e)
 		{
 			for (int i = 0; i < lastfile.Count; ++i) {
 				string file = lastfile[i].ToString();

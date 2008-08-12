@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Matthew Ward" email="mrward@users.sourceforge.net"/>
-//     <version>$Revision: 2340 $</version>
+//     <version>$Revision: 3073 $</version>
 // </file>
 
 using ICSharpCode.SharpDevelop.Dom;
@@ -29,7 +29,7 @@ namespace ICSharpCode.SharpDevelop.Tests.Utils
 				return methods;
 			}
 		}
-				
+		
 		/// <summary>
 		/// Gets the property list directly. Only available in the
 		/// mock default return type class.
@@ -38,6 +38,11 @@ namespace ICSharpCode.SharpDevelop.Tests.Utils
 			get {
 				return properties;
 			}
+		}
+		
+		public bool Equals(IReturnType other)
+		{
+			throw new NotImplementedException();
 		}
 		
 		public string FullyQualifiedName {
@@ -64,31 +69,13 @@ namespace ICSharpCode.SharpDevelop.Tests.Utils
 			}
 		}
 		
-		public int TypeParameterCount {
+		public int TypeArgumentCount {
 			get {
 				throw new NotImplementedException();
 			}
 		}
 		
 		public bool IsDefaultReturnType {
-			get {
-				throw new NotImplementedException();
-			}
-		}
-		
-		public bool IsArrayReturnType {
-			get {
-				throw new NotImplementedException();
-			}
-		}
-		
-		public bool IsGenericReturnType {
-			get {
-				throw new NotImplementedException();
-			}
-		}
-		
-		public bool IsConstructedReturnType {
 			get {
 				throw new NotImplementedException();
 			}
@@ -111,12 +98,12 @@ namespace ICSharpCode.SharpDevelop.Tests.Utils
 		
 		public List<IField> GetFields()
 		{
-			throw new NotImplementedException();
+			return new List<IField>();
 		}
 		
 		public List<IEvent> GetEvents()
 		{
-			throw new NotImplementedException();
+			return new List<IEvent>();
 		}
 		
 		public ArrayReturnType CastToArrayReturnType()
@@ -130,6 +117,34 @@ namespace ICSharpCode.SharpDevelop.Tests.Utils
 		}
 		
 		public ConstructedReturnType CastToConstructedReturnType()
+		{
+			throw new NotImplementedException();
+		}
+		
+		public bool IsArrayReturnType {
+			get {
+				throw new NotImplementedException();
+			}
+		}
+		
+		public bool IsGenericReturnType {
+			get {
+				throw new NotImplementedException();
+			}
+		}
+		
+		public bool IsConstructedReturnType {
+			get {
+				throw new NotImplementedException();
+			}
+		}
+		
+		public bool IsDecoratingReturnType<T>() where T : DecoratingReturnType
+		{
+			throw new NotImplementedException();
+		}
+		
+		public T CastToDecoratingReturnType<T>() where T : DecoratingReturnType
 		{
 			throw new NotImplementedException();
 		}

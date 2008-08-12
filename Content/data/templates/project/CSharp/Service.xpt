@@ -10,6 +10,7 @@
 		<Subcategory>${res:Templates.File.Categories.WindowsApplications}</Subcategory>
 		<Icon>C#.Project.ServiceProject</Icon>
 		<Description>${res:Templates.Project.WindowsService.Description}</Description>
+		<SupportedTargetFrameworks>v2.0</SupportedTargetFrameworks>
 	</TemplateConfiguration>
 	
 	<!-- Actions -->
@@ -19,6 +20,10 @@
 
 	<!-- Template Content -->
 	<Project language = "C#">
+		<CreateActions>
+			<RunCommand path = "/SharpDevelop/BackendBindings/TemplateCommands/AddDotNet35ReferencesIfTargetFrameworkIs35"/>
+		</CreateActions>
+		
 		<ProjectItems>
 			<Reference Include="System" />
 			<Reference Include="System.Configuration.Install" />
@@ -26,10 +31,14 @@
 			<Reference Include="System.ServiceProcess" />
 			<Reference Include="System.Xml" />
 		</ProjectItems>
+		
+		<PropertyGroup>
+			<OutputType>Exe</OutputType>
+			<AppDesignerFolder>Properties</AppDesignerFolder>
+		</PropertyGroup>
 
 		<Files>
 			<File name="${ProjectName}.cs"><![CDATA[${StandardHeader.C#}
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -82,7 +91,6 @@ namespace ${StandardNamespace}
 }
 ]]></File>
 				<File name="ProjectInstaller.cs"><![CDATA[${StandardHeader.C#}
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -111,7 +119,6 @@ namespace ${StandardNamespace}
 }
 ]]></File>
 				<File name="Program.cs"><![CDATA[${StandardHeader.C#}
-
 using System;
 using System.Collections.Generic;
 using System.ServiceProcess;
@@ -132,7 +139,7 @@ namespace ${ProjectName}
 	}
 }
 ]]></File>
-			<File name="AssemblyInfo.cs" src="DefaultAssemblyInfo.cs"/>
+			<File name="Properties\AssemblyInfo.cs" src="DefaultAssemblyInfo.cs"/>
 		</Files>
 	</Project>
 </Template>

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2298 $</version>
+//     <version>$Revision: 3078 $</version>
 // </file>
 
 using System;
@@ -100,8 +100,9 @@ namespace ICSharpCode.TextEditor
 			Controls.Add(this.hScrollBar);
 			ResizeRedraw = true;
 			
+			Document.TextContentChanged += DocumentTextContentChanged;
 			Document.DocumentChanged += AdjustScrollBarsOnDocumentChange;
-			Document.UpdateCommited  += AdjustScrollBarsOnCommittedUpdate;
+			Document.UpdateCommited  += DocumentUpdateCommitted;
 		}
 		
 		protected override void Dispose(bool disposing)
@@ -109,8 +110,9 @@ namespace ICSharpCode.TextEditor
 			if (disposing) {
 				if (!disposed) {
 					disposed = true;
+					Document.TextContentChanged -= DocumentTextContentChanged;
 					Document.DocumentChanged -= AdjustScrollBarsOnDocumentChange;
-					Document.UpdateCommited  -= AdjustScrollBarsOnCommittedUpdate;
+					Document.UpdateCommited  -= DocumentUpdateCommitted;
 					motherTextEditorControl = null;
 					if (vScrollBar != null) {
 						vScrollBar.Dispose();
@@ -127,6 +129,14 @@ namespace ICSharpCode.TextEditor
 				}
 			}
 			base.Dispose(disposing);
+		}
+		
+		void DocumentTextContentChanged(object sender, EventArgs e)
+		{
+			// after the text content is changed abruptly, we need to validate the
+			// caret position - otherwise the caret position is invalid for a short amount
+			// of time, which can break client code that expects that the caret position is always valid
+			Caret.ValidateCaretPos();
 		}
 		
 		protected override void OnResize(System.EventArgs e)
@@ -177,9 +187,12 @@ namespace ICSharpCode.TextEditor
 			}
 		}
 		
-		void AdjustScrollBarsOnCommittedUpdate(object sender, EventArgs e)
+		void DocumentUpdateCommitted(object sender, EventArgs e)
 		{
 			if (motherTextEditorControl.IsInUpdate == false) {
+				Caret.ValidateCaretPos();
+				
+				// AdjustScrollBarsOnCommittedUpdate
 				if (!scrollToPosOnNextUpdate.IsEmpty) {
 					ScrollTo(scrollToPosOnNextUpdate.Y, scrollToPosOnNextUpdate.X);
 				}
@@ -276,34 +289,30 @@ namespace ICSharpCode.TextEditor
 		
 		void HScrollBarValueChanged(object sender, EventArgs e)
 		{
-			textArea.VirtualTop = new Point(hScrollBar.Value, textArea.VirtualTop.Y);
+			textArea.VirtualTop = new Point(hScrollBar.Value * textArea.TextView.WideSpaceWidth, textArea.VirtualTop.Y);
 			textArea.Invalidate();
 		}
 		
+		Util.MouseWheelHandler mouseWheelHandler = new Util.MouseWheelHandler();
+		
 		public void HandleMouseWheel(MouseEventArgs e)
 		{
+			int scrollDistance = mouseWheelHandler.GetScrollAmount(e);
+			if (scrollDistance == 0)
+				return;
 			if ((Control.ModifierKeys & Keys.Control) != 0 && TextEditorProperties.MouseWheelTextZoom) {
-				if (e.Delta > 0) {
+				if (scrollDistance > 0) {
 					motherTextEditorControl.Font = new Font(motherTextEditorControl.Font.Name,
 					                                        motherTextEditorControl.Font.Size + 1);
-					
 				} else {
 					motherTextEditorControl.Font = new Font(motherTextEditorControl.Font.Name,
 					                                        Math.Max(6, motherTextEditorControl.Font.Size - 1));
-					
-					
 				}
 			} else {
-				int MAX_DELTA  = 120; // basically it's constant now, but could be changed later by MS
-				int multiplier = Math.Abs(e.Delta) / MAX_DELTA;
-				
-				int newValue;
-				if (System.Windows.Forms.SystemInformation.MouseWheelScrollLines > 0) {
-					newValue = this.vScrollBar.Value - (TextEditorProperties.MouseWheelScrollDown ? 1 : -1) * Math.Sign(e.Delta) * System.Windows.Forms.SystemInformation.MouseWheelScrollLines * vScrollBar.SmallChange * multiplier;
-				} else {
-					newValue = this.vScrollBar.Value - (TextEditorProperties.MouseWheelScrollDown ? 1 : -1) * Math.Sign(e.Delta) * vScrollBar.LargeChange;
-				}
-				vScrollBar.Value = Math.Max(vScrollBar.Minimum, Math.Min(vScrollBar.Maximum, newValue));
+				if (TextEditorProperties.MouseWheelScrollDown)
+					scrollDistance = -scrollDistance;
+				int newValue = vScrollBar.Value + vScrollBar.SmallChange * scrollDistance;
+				vScrollBar.Value = Math.Max(vScrollBar.Minimum, Math.Min(vScrollBar.Maximum - vScrollBar.LargeChange + 1, newValue));
 			}
 		}
 		
@@ -417,7 +426,7 @@ namespace ICSharpCode.TextEditor
 		{
 			textArea.Focus();
 			textArea.SelectionManager.ClearSelection();
-			textArea.Caret.Position = new Point(column, line);
+			textArea.Caret.Position = new TextLocation(column, line);
 			textArea.SetDesiredColumn();
 			ScrollToCaret();
 		}

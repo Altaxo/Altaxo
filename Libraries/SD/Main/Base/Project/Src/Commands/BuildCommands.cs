@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2120 $</version>
+//     <version>$Revision: 2714 $</version>
 // </file>
 
 using System;
@@ -101,39 +101,39 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 		}
 	}
 	
-	public sealed class Build : AbstractBuildMenuCommand
+	public class Build : AbstractBuildMenuCommand
 	{
+		public override void BeforeBuild()
+		{
+			base.BeforeBuild();
+			ProjectService.RaiseEventStartBuild();
+		}
+		
 		public override void StartBuild()
 		{
-			ProjectService.RaiseEventStartBuild();
-			ProjectService.OpenSolution.StartBuild(new BuildOptions(BuildTarget.Build, CallbackMethod));
+			BuildEngine.BuildInGui(ProjectService.OpenSolution, new BuildOptions(BuildTarget.Build, CallbackMethod));
 		}
 		
 		public override void AfterBuild()
 		{
 			ProjectService.RaiseEventEndBuild();
+			base.AfterBuild();
 		}
 	}
 	
-	public sealed class Rebuild : AbstractBuildMenuCommand
+	public class Rebuild : Build
 	{
 		public override void StartBuild()
 		{
-			ProjectService.RaiseEventStartBuild();
-			ProjectService.OpenSolution.StartBuild(new BuildOptions(BuildTarget.Rebuild, CallbackMethod));
-		}
-		
-		public override void AfterBuild()
-		{
-			ProjectService.RaiseEventEndBuild();
+			BuildEngine.BuildInGui(ProjectService.OpenSolution, new BuildOptions(BuildTarget.Rebuild, CallbackMethod));
 		}
 	}
 	
-	public sealed class Clean : AbstractBuildMenuCommand
+	public class Clean : AbstractBuildMenuCommand
 	{
 		public override void StartBuild()
 		{
-			ProjectService.OpenSolution.StartBuild(new BuildOptions(BuildTarget.Clean, CallbackMethod));
+			BuildEngine.BuildInGui(ProjectService.OpenSolution, new BuildOptions(BuildTarget.Clean, CallbackMethod));
 		}
 	}
 	
@@ -154,14 +154,6 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 	}
 	public class BuildProject : AbstractProjectBuildMenuCommand
 	{
-		IDictionary<string, string> additionalProperties = new SortedList<string, string>();
-		
-		public IDictionary<string, string> AdditionalProperties {
-			get {
-				return additionalProperties;
-			}
-		}
-		
 		public BuildProject()
 		{
 		}
@@ -170,27 +162,32 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 			this.targetProject = targetProject;
 		}
 		
+		public override void BeforeBuild()
+		{
+			base.BeforeBuild();
+			ProjectService.RaiseEventStartBuild();
+		}
+		
 		public override void StartBuild()
 		{
-			ProjectService.RaiseEventStartBuild();
-			this.ProjectToBuild.StartBuild(new BuildOptions(BuildTarget.Build, CallbackMethod, AdditionalProperties));
+			BuildEngine.BuildInGui(this.ProjectToBuild, new BuildOptions(BuildTarget.Build, CallbackMethod));
 		}
 		
 		public override void AfterBuild()
 		{
 			ProjectService.RaiseEventEndBuild();
+			base.AfterBuild();
 		}
 	}
 	
-	public sealed class RebuildProject : BuildProject
+	public class RebuildProject : BuildProject
 	{
 		public RebuildProject() {}
 		public RebuildProject(IProject targetProject) : base(targetProject) {}
 		
 		public override void StartBuild()
 		{
-			ProjectService.RaiseEventStartBuild();
-			this.ProjectToBuild.StartBuild(new BuildOptions(BuildTarget.Rebuild, CallbackMethod, AdditionalProperties));
+			BuildEngine.BuildInGui(this.ProjectToBuild, new BuildOptions(BuildTarget.Rebuild, CallbackMethod));
 		}
 	}
 	
@@ -198,7 +195,62 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 	{
 		public override void StartBuild()
 		{
-			this.ProjectToBuild.StartBuild(new BuildOptions(BuildTarget.Clean, CallbackMethod, null));
+			BuildEngine.BuildInGui(this.ProjectToBuild, new BuildOptions(BuildTarget.Clean, CallbackMethod));
+		}
+	}
+	
+	public class AbortBuild : ISubmenuBuilder
+	{
+		public ToolStripItem[] BuildSubmenu(Codon codon, object owner)
+		{
+			return new[] { new MenuItem() };
+		}
+		
+		sealed class MenuItem : ToolStripMenuItem
+		{
+			public MenuItem()
+			{
+				WorkbenchSingleton.Workbench.ProcessCommandKey += OnProcessCommandKey;
+				ResourceService.LanguageChanged += OnLanguageChanged;
+				OnLanguageChanged(null, null);
+			}
+			
+			protected override void Dispose(bool disposing)
+			{
+				base.Dispose(disposing);
+				if (disposing) {
+					WorkbenchSingleton.Workbench.ProcessCommandKey -= OnProcessCommandKey;
+					ResourceService.LanguageChanged -= OnLanguageChanged;
+				}
+			}
+			
+			public override bool Enabled {
+				get { return BuildEngine.IsGuiBuildRunning; }
+			}
+			
+			void OnLanguageChanged(object sender, EventArgs e)
+			{
+				Text = StringParser.Parse("${res:XML.MainMenu.BuildMenu.AbortBuild}");
+				ShortcutKeyDisplayString = StringParser.Parse("${res:XML.MainMenu.BuildMenu.BreakKey}");
+			}
+			
+			void OnProcessCommandKey(object sender, KeyEventArgs e)
+			{
+				// ToolStripMenuItem does not support Pause/Break as shortcut key, so we handle it manually
+				if (e.KeyData == Keys.Pause) {
+					if (Enabled) {
+						LoggingService.Debug("BREAK was pressed, aborting build.");
+						PerformClick();
+						e.Handled = true;
+					}
+				}
+			}
+			
+			protected override void OnClick(EventArgs e)
+			{
+				base.OnClick(e);
+				BuildEngine.CancelGuiBuild();
+			}
 		}
 	}
 	
@@ -223,6 +275,32 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 		{
 			ToolStripMenuItem item = (ToolStripMenuItem)sender;
 			ProjectService.OpenSolution.Preferences.ActiveConfiguration = item.Text;
+			ProjectService.OpenSolution.ApplySolutionConfigurationAndPlatformToProjects();
+			ProjectBrowserPad.Instance.ProjectBrowserControl.RefreshView();
+		}
+	}
+	
+	public class SetPlatformMenuBuilder : ISubmenuBuilder
+	{
+		public ToolStripItem[] BuildSubmenu(Codon codon, object owner)
+		{
+			if (ProjectService.OpenSolution == null)
+				return new ToolStripItem[0];
+			IList<string> platformNames = ProjectService.OpenSolution.GetPlatformNames();
+			string activePlatform = ProjectService.OpenSolution.Preferences.ActivePlatform;
+			ToolStripMenuItem[] items = new ToolStripMenuItem[platformNames.Count];
+			for (int i = 0; i < items.Length; i++) {
+				items[i] = new ToolStripMenuItem(platformNames[i]);
+				items[i].Click += SetPlatformItemClick;
+				items[i].Checked = activePlatform == platformNames[i];
+			}
+			return items;
+		}
+		
+		void SetPlatformItemClick(object sender, EventArgs e)
+		{
+			ToolStripMenuItem item = (ToolStripMenuItem)sender;
+			ProjectService.OpenSolution.Preferences.ActivePlatform = item.Text;
 			ProjectService.OpenSolution.ApplySolutionConfigurationAndPlatformToProjects();
 			ProjectBrowserPad.Instance.ProjectBrowserControl.RefreshView();
 		}

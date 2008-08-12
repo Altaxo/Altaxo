@@ -2,14 +2,13 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2408 $</version>
+//     <version>$Revision: 2743 $</version>
 // </file>
 
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using Microsoft.Win32;
 
 using ICSharpCode.SharpDevelop.Dom.ReflectionLayer;
 
@@ -35,11 +34,6 @@ namespace ICSharpCode.SharpDevelop.Dom
 			}
 		}
 		
-		[Obsolete("This property always returns an empty array! Use ReferencedAssemblyNames instead!")]
-		public AssemblyName[] ReferencedAssemblies {
-			get { return new AssemblyName[0]; }
-		}
-		
 		/// <summary>
 		/// Gets the list of assembly names referenced by this project content.
 		/// </summary>
@@ -49,6 +43,11 @@ namespace ICSharpCode.SharpDevelop.Dom
 		
 		public ICompilationUnit AssemblyCompilationUnit {
 			get { return assemblyCompilationUnit; }
+		}
+		
+		public override IList<IAttribute> GetAssemblyAttributes()
+		{
+			return assemblyCompilationUnit.Attributes;
 		}
 		
 		DateTime assemblyFileLastWriteTime;
@@ -85,13 +84,8 @@ namespace ICSharpCode.SharpDevelop.Dom
 					AddClassToNamespaceListInternal(new ReflectionClass(assemblyCompilationUnit, type, name, null));
 				}
 			}
+			ReflectionClass.AddAttributes(this, assemblyCompilationUnit.Attributes, CustomAttributeData.GetCustomAttributes(assembly));
 			InitializeSpecialClasses();
-		}
-		
-		[Obsolete("Use DomAssemblyName instead of AssemblyName!")]
-		public ReflectionProjectContent(string assemblyFullName, string assemblyLocation, AssemblyName[] referencedAssemblies, ProjectContentRegistry registry)
-			: this(assemblyFullName, assemblyLocation, DomAssemblyName.Convert(referencedAssemblies), registry)
-		{
 		}
 		
 		public ReflectionProjectContent(string assemblyFullName, string assemblyLocation, DomAssemblyName[] referencedAssemblies, ProjectContentRegistry registry)
@@ -115,42 +109,31 @@ namespace ICSharpCode.SharpDevelop.Dom
 				LoggingService.Warn(ex);
 			}
 			
-			string fileName = LookupLocalizedXmlDoc(assemblyLocation);
-			// Not found -> look in runtime directory.
+			string fileName = XmlDoc.LookupLocalizedXmlDoc(assemblyLocation);
 			if (fileName == null) {
-				string runtimeDirectory = System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory();
-				fileName = LookupLocalizedXmlDoc(Path.Combine(runtimeDirectory, Path.GetFileName(assemblyLocation)));
-			}
-			if (fileName == null) {
-				// still not found -> look in WinFX reference directory
-				string referenceDirectory = WinFXReferenceDirectory;
-				if (!string.IsNullOrEmpty(referenceDirectory)) {
-					fileName = LookupLocalizedXmlDoc(Path.Combine(referenceDirectory, Path.GetFileName(assemblyLocation)));
+				// Not found -> look in other directories:
+				foreach (string testDirectory in XmlDoc.XmlDocLookupDirectories) {
+					fileName = XmlDoc.LookupLocalizedXmlDoc(Path.Combine(testDirectory, Path.GetFileName(assemblyLocation)));
+					if (fileName != null)
+						break;
 				}
 			}
 			
-			if (fileName != null && registry.persistence != null) {
-				this.XmlDoc = XmlDoc.Load(fileName, Path.Combine(registry.persistence.CacheDirectory, "XmlDoc"));
-			}
-		}
-		
-		static string WinFXReferenceDirectory {
-			get {
-				RegistryKey k = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\NET Framework Setup\NDP\v3.0\Setup\Windows Communication Foundation");
-				if (k == null)
-					return null;
-				object o = k.GetValue("ReferenceInstallPath");
-				k.Close();
-				if (o == null)
-					return null;
-				else
-					return o.ToString();
+			if (fileName != null) {
+				if (registry.persistence != null) {
+					this.XmlDoc = XmlDoc.Load(fileName, Path.Combine(registry.persistence.CacheDirectory, "XmlDoc"));
+				} else {
+					this.XmlDoc = XmlDoc.Load(fileName, null);
+				}
 			}
 		}
 		
 		public void InitializeSpecialClasses()
 		{
-			if (GetClassInternal(VoidClass.VoidName, 0, Language) != null) {
+			// Replace the class representing System.Void with VoidClass.Instance
+			IClass voidClass = GetClassInternal(VoidClass.VoidName, 0, Language);
+			if (voidClass != null) {
+				RemoveClass(voidClass);
 				AddClassToNamespaceList(VoidClass.Instance);
 			}
 		}

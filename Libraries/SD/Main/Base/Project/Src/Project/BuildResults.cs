@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2051 $</version>
+//     <version>$Revision: 2703 $</version>
 // </file>
 
 using System;
@@ -21,7 +21,9 @@ namespace ICSharpCode.SharpDevelop.Project
 		/// <summary>A project build file is not valid</summary>
 		BuildFileError,
 		/// <summary>Build was not executed because another build is running</summary>
-		MSBuildAlreadyRunning
+		MSBuildAlreadyRunning,
+		/// <summary>Build was cancelled.</summary>
+		Cancelled
 	}
 	
 	/// <summary>

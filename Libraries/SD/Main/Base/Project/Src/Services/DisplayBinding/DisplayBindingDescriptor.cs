@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1963 $</version>
+//     <version>$Revision: 2646 $</version>
 // </file>
 
 using System;
@@ -13,12 +13,22 @@ namespace ICSharpCode.SharpDevelop
 {
 	public class DisplayBindingDescriptor
 	{
-		object binding = null;
+		object binding;
+		bool isSecondary;
 		Codon codon;
+		
+		/// <summary>
+		/// Gets the IDisplayBinding or ISecondaryDisplayBinding if it is already loaded,
+		/// otherwise returns null.
+		/// </summary>
+		internal object GetLoadedBinding()
+		{
+			return binding;
+		}
 		
 		public IDisplayBinding Binding {
 			get {
-				if (binding == null) {
+				if (codon != null && binding == null) {
 					binding = codon.AddIn.CreateObject(codon.Properties["class"]);
 				}
 				return binding as IDisplayBinding;
@@ -27,67 +37,79 @@ namespace ICSharpCode.SharpDevelop
 		
 		public ISecondaryDisplayBinding SecondaryBinding {
 			get {
-				if (binding == null) {
+				if (codon != null && binding == null) {
 					binding = codon.AddIn.CreateObject(codon.Properties["class"]);
 				}
 				return binding as ISecondaryDisplayBinding;
 			}
 		}
 		
-		bool isSecondary;
-		
 		public bool IsSecondary {
-			get {
-				return isSecondary;
-			}
+			get { return isSecondary; }
 		}
 		
-		public Codon Codon {
-			get {
-				return codon;
-			}
-		}
+		public string Id { get; set; }
+		public string Title { get; set; }
+		public string FileNameRegex { get; set; }
 		
 		public DisplayBindingDescriptor(Codon codon)
 		{
+			if (codon == null)
+				throw new ArgumentNullException("codon");
+			
 			isSecondary = codon.Properties["type"] == "Secondary";
 			if (!isSecondary && codon.Properties["type"] != "" && codon.Properties["type"] != "Primary")
 				MessageService.ShowWarning("Unknown display binding type: " + codon.Properties["type"]);
+			
 			this.codon = codon;
+			this.Id = codon.Id;
+			
+			string title = codon.Properties["title"];
+			if (string.IsNullOrEmpty(title))
+				this.Title = codon.Id;
+			else
+				this.Title = title;
+			
+			this.FileNameRegex = codon.Properties["fileNamePattern"];
+		}
+		
+		public DisplayBindingDescriptor(IDisplayBinding binding)
+		{
+			if (binding == null)
+				throw new ArgumentNullException("binding");
+			
+			this.isSecondary = false;
+			this.binding = binding;
+		}
+		
+		public DisplayBindingDescriptor(ISecondaryDisplayBinding binding)
+		{
+			if (binding == null)
+				throw new ArgumentNullException("binding");
+			
+			this.isSecondary = true;
+			this.binding = binding;
 		}
 		
 		/// <summary>
-		/// Gets if the display binding can possibly attach to the file.
-		/// If this method returns false, it cannot attach to it; if the method returns
-		/// true, it *might* attach to it.
+		/// Gets if the display binding can possibly open the file.
+		/// If this method returns false, it cannot open it; if the method returns
+		/// true, it *might* open it.
+		/// Call Binding.CanCreateContentForFile() to know for sure if the binding
+		/// will open the file.
 		/// </summary>
 		/// <remarks>
 		/// This method is used to skip loading addins like the ResourceEditor which cannot
 		/// attach to a certain file name for sure.
 		/// </remarks>
-		public bool CanAttachToFile(string fileName)
+		public bool CanOpenFile(string fileName)
 		{
-			string fileNameRegex = codon.Properties["fileNamePattern"];
+			string fileNameRegex = this.FileNameRegex;
 			if (fileNameRegex == null || fileNameRegex.Length == 0) // no regex specified
 				return true;
+			if (fileName == null) // regex specified but file has no name
+				return false;
 			return Regex.IsMatch(fileName, fileNameRegex, RegexOptions.IgnoreCase);
-		}
-		
-		/// <summary>
-		/// Gets if the display binding can possibly attach to the language.
-		/// If this method returns false, it cannot attach to it; if the method returns
-		/// true, it *might* attach to it.
-		/// </summary>
-		/// <remarks>
-		/// This method is used to skip loading addins like the ResourceEditor which cannot
-		/// attach to a most languages.
-		/// </remarks>
-		public bool CanAttachToLanguage(string language)
-		{
-			string languageRegex = codon.Properties["languagePattern"];
-			if (languageRegex == null || languageRegex.Length == 0) // no regex specified
-				return true;
-			return Regex.IsMatch(language, languageRegex, RegexOptions.IgnoreCase);
 		}
 	}
 }

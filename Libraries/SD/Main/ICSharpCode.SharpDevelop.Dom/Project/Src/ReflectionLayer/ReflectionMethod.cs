@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2492 $</version>
+//     <version>$Revision: 2702 $</version>
 // </file>
 
 using System;
@@ -16,7 +16,7 @@ namespace ICSharpCode.SharpDevelop.Dom.ReflectionLayer
 		{
 			if (m.IsStatic) {
 				foreach (IAttribute a in m.Attributes) {
-					string attributeName = a.Name;
+					string attributeName = a.AttributeType.FullyQualifiedName;
 					if (attributeName == "System.Runtime.CompilerServices.ExtensionAttribute"
 					    || attributeName == "Boo.Lang.ExtensionAttribute")
 					{
@@ -45,7 +45,7 @@ namespace ICSharpCode.SharpDevelop.Dom.ReflectionLayer
 				}
 				int i = 0;
 				foreach (Type g in methodBase.GetGenericArguments()) {
-					declaringType.AddConstraintsFromType(this.TypeParameters[i++], g);
+					ReflectionClass.AddConstraintsFromType(this.TypeParameters[i++], g);
 				}
 			}
 			

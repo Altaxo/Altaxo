@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1601 $</version>
+//     <version>$Revision: 2707 $</version>
 // </file>
 
 using System;
@@ -63,10 +63,10 @@ namespace ICSharpCode.SharpDevelop.Gui
 		
 		public static bool ShowAfterBuild {
 			get {
-				return PropertyService.Get("SharpDevelop.ShowErrorListAfterBuild", true);
+				return Project.BuildOptions.ShowErrorListAfterBuild;
 			}
 			set {
-				PropertyService.Set("SharpDevelop.ShowErrorListAfterBuild", value);
+				Project.BuildOptions.ShowErrorListAfterBuild = value;
 			}
 		}
 		
@@ -91,8 +91,8 @@ namespace ICSharpCode.SharpDevelop.Gui
 			};
 			
 			ProjectService.EndBuild       += ProjectServiceEndBuild;
-			ProjectService.SolutionLoaded += OnCombineOpen;
-			ProjectService.SolutionClosed += OnCombineClosed;
+			ProjectService.SolutionLoaded += OnSolutionOpen;
+			ProjectService.SolutionClosed += OnSolutionClosed;
 			
 			taskView.CreateControl();
 			contentPanel.Controls.Add(taskView);
@@ -111,13 +111,13 @@ namespace ICSharpCode.SharpDevelop.Gui
 			taskView.RefreshColumnNames();
 		}
 		
-		void OnCombineOpen(object sender, SolutionEventArgs e)
+		void OnSolutionOpen(object sender, SolutionEventArgs e)
 		{
 			taskView.ClearTasks();
 			UpdateToolstripStatus();
 		}
 		
-		void OnCombineClosed(object sender, EventArgs e)
+		void OnSolutionClosed(object sender, EventArgs e)
 		{
 			try {
 				taskView.ClearTasks();

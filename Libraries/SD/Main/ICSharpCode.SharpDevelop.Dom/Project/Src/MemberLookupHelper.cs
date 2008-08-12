@@ -2,11 +2,12 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2510 $</version>
+//     <version>$Revision: 3073 $</version>
 // </file>
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ICSharpCode.SharpDevelop.Dom
 {
@@ -14,388 +15,263 @@ namespace ICSharpCode.SharpDevelop.Dom
 	/// Class with methods to help finding the correct overload for a member.
 	/// </summary>
 	/// <remarks>
-	/// This class tries to do member lookup as close to the C# spec (ECMA-334, § 14.3) as possible.
+	/// This class does member lookup as specified by the C# spec (ECMA-334, § 14.3).
 	/// Other languages might need custom lookup methods.
 	/// </remarks>
 	public static class MemberLookupHelper
 	{
-		#region FindOverload
-		public static IMethod FindOverload(IList<IMethod> methods, IReturnType[] typeParameters, IReturnType[] arguments)
+		#region LookupMember / GetAccessibleMembers
+		static List<IMember> GetAllMembers(IReturnType rt)
 		{
-			if (methods.Count == 0)
-				return null;
-			bool tmp;
-			int[] ranking = RankOverloads(methods, typeParameters, arguments, false, out tmp);
-			int bestRanking = -1;
-			int best = 0;
-			for (int i = 0; i < ranking.Length; i++) {
-				if (ranking[i] > bestRanking) {
-					bestRanking = ranking[i];
-					best = i;
+			List<IMember> members = new List<IMember>();
+			if (rt != null) {
+				rt.GetMethods().ForEach(members.Add);
+				rt.GetProperties().ForEach(members.Add);
+				rt.GetFields().ForEach(members.Add);
+				rt.GetEvents().ForEach(members.Add);
+			}
+			return members;
+		}
+		
+		public static List<IList<IMember>> LookupMember(
+			IReturnType type, string name, IClass callingClass,
+			LanguageProperties language, bool isInvocation, bool? isClassInInheritanceTree)
+		{
+			if (language == null)
+				throw new ArgumentNullException("language");
+			
+			if (isClassInInheritanceTree == null) {
+				isClassInInheritanceTree = false;
+				IClass underlyingClass = type.GetUnderlyingClass();
+				if (underlyingClass != null)
+					isClassInInheritanceTree = underlyingClass.IsTypeInInheritanceTree(callingClass);
+			}
+			
+			IEnumerable<IMember> members;
+			if (language == LanguageProperties.VBNet && language.NameComparer.Equals(name, "New")) {
+				members = GetAllMembers(type).OfType<IMethod>().Where(m => m.IsConstructor).Select(m=>(IMember)m);
+			} else {
+				members = GetAllMembers(type).Where(m => language.NameComparer.Equals(m.Name, name));
+			}
+			
+			return LookupMember(members, callingClass, (bool)isClassInInheritanceTree, isInvocation);
+		}
+		
+		class SignatureComparer : IEqualityComparer<IMethod>
+		{
+			public bool Equals(IMethod x, IMethod y)
+			{
+				if (GetHashCode(x) != GetHashCode(y))
+					return false;
+				var paramsX = x.Parameters;
+				var paramsY = y.Parameters;
+				if (paramsX.Count != paramsY.Count)
+					return false;
+				if (x.TypeParameters.Count != y.TypeParameters.Count)
+					return false;
+				for (int i = 0; i < paramsX.Count; i++) {
+					IParameter px = paramsX[i];
+					IParameter py = paramsY[i];
+					if ((px.IsOut || px.IsRef) != (py.IsOut || py.IsRef))
+						return false;
+					if (!object.Equals(px.ReturnType, py.ReturnType))
+						return false;
+				}
+				return true;
+			}
+			
+			Dictionary<IMethod, int> cachedHashes = new Dictionary<IMethod, int>();
+			
+			public int GetHashCode(IMethod obj)
+			{
+				int hashCode;
+				if (cachedHashes.TryGetValue(obj, out hashCode))
+					return hashCode;
+				hashCode = obj.TypeParameters.Count;
+				unchecked {
+					foreach (IParameter p in obj.Parameters) {
+						hashCode *= 1000000579;
+						if (p.IsOut || p.IsRef)
+							hashCode += 1;
+						hashCode += p.ReturnType.GetHashCode();
+					}
+				}
+				cachedHashes[obj] = hashCode;
+				return hashCode;
+			}
+		}
+		
+		sealed class InheritanceLevelComparer : IComparer<IClass>
+		{
+			public readonly static InheritanceLevelComparer Instance = new InheritanceLevelComparer();
+			
+			public int Compare(IClass x, IClass y)
+			{
+				if (x == y)
+					return 0;
+				if (x.IsTypeInInheritanceTree(y))
+					return 1;
+				else
+					return -1;
+			}
+		}
+		
+		public static List<IList<IMember>> LookupMember(
+			IEnumerable<IMember> possibleMembers, IClass callingClass,
+			bool isClassInInheritanceTree, bool isInvocation)
+		{
+//			Console.WriteLine("Possible members:");
+//			foreach (IMember m in possibleMembers) {
+//				Console.WriteLine("  " + m.DotNetName);
+//			}
+			
+			IEnumerable<IMember> accessibleMembers = possibleMembers.Where(member => member.IsAccessible(callingClass, isClassInInheritanceTree));
+			if (isInvocation) {
+				accessibleMembers = accessibleMembers.Where(IsInvocable);
+			}
+			
+			// base most member => most derived member
+			//Dictionary<IMember, IMember> overrideDict = new Dictionary<IMember, IMember>();
+			
+			bool handledNonMethod = false;
+			HashSet<IMethod> handledMethods = new HashSet<IMethod>(new SignatureComparer());
+			Dictionary<IMethod, IMethod> overrideMethodDict = new Dictionary<IMethod, IMethod>(new SignatureComparer());
+			IMember nonMethodOverride = null;
+			
+			List<IList<IMember>> allResults = new List<IList<IMember>>();
+			List<IMember> results = new List<IMember>();
+			
+			foreach (var group in accessibleMembers
+			         .GroupBy(m => m.DeclaringType.GetCompoundClass())
+			         .OrderByDescending(g => g.Key, InheritanceLevelComparer.Instance))
+			{
+				//Console.WriteLine("Member group " + group.Key);
+				foreach (IMember m in group) {
+					//Console.WriteLine("  " + m.DotNetName);
+					if (m.IsOverride) {
+						IMethod method = m as IMethod;
+						if (method != null) {
+							if (!overrideMethodDict.ContainsKey(method))
+								overrideMethodDict[method] = method;
+						} else {
+							if (nonMethodOverride == null)
+								nonMethodOverride = m;
+						}
+					} else {
+						IMethod method = m as IMethod;
+						if (method != null) {
+							if (handledMethods.Add(method)) {
+								IMethod mostOverriddenMethod;
+								if (overrideMethodDict.TryGetValue(method, out mostOverriddenMethod))
+									results.Add(mostOverriddenMethod);
+								else {
+									results.Add(method);
+								}
+							}
+						} else {
+							if (!handledNonMethod) {
+								handledNonMethod = true;
+								results.Add(nonMethodOverride ?? m);
+							}
+						}
+					}
+				}
+				if (results.Count > 0) {
+					allResults.Add(results);
+					results = new List<IMember>();
 				}
 			}
-			return methods[best];
+			return allResults;
+		}
+		
+		static bool IsInvocable(IMember member)
+		{
+			if (member is IMethod || member is IEvent)
+				return true;
+			IProperty p = member as IProperty;
+			if (p != null && p.Parameters.Count > 0)
+				return true;
+			IClass c = member.ReturnType.GetUnderlyingClass();
+			return c != null && c.ClassType == ClassType.Delegate;
+		}
+		
+		/// <summary>
+		/// Gets all accessible members, including indexers and constructors.
+		/// </summary>
+		public static List<IMember> GetAccessibleMembers(IReturnType rt, IClass callingClass, LanguageProperties language)
+		{
+			bool isClassInInheritanceTree = false;
+			IClass underlyingClass = rt.GetUnderlyingClass();
+			if (underlyingClass != null)
+				isClassInInheritanceTree = underlyingClass.IsTypeInInheritanceTree(callingClass);
+			return GetAccessibleMembers(rt, callingClass, language, isClassInInheritanceTree);
+		}
+		
+		/// <summary>
+		/// Gets all accessible members, including indexers and constructors.
+		/// </summary>
+		public static List<IMember> GetAccessibleMembers(IReturnType rt, IClass callingClass, LanguageProperties language, bool isClassInInheritanceTree)
+		{
+			if (language == null)
+				throw new ArgumentNullException("language");
+			
+			List<IMember> result = new List<IMember>();
+			foreach (var g in GetAllMembers(rt).GroupBy(m => m.Name, language.NameComparer).OrderBy(g2=>g2.Key)) {
+				foreach (var group in LookupMember(g, callingClass, isClassInInheritanceTree, false)) {
+					result.AddRange(group);
+				}
+			}
+			return result;
+		}
+		#endregion
+		
+		#region FindOverload
+		/// <summary>
+		/// Finds the correct overload according to the C# specification.
+		/// </summary>
+		/// <param name="methods">List with the methods to check.</param>
+		/// <param name="arguments">The types of the arguments passed to the method.</param>
+		/// <param name="resultIsAcceptable">Out parameter. Will be true if the resulting method
+		/// is an acceptable match, false if the resulting method is just a guess and will lead
+		/// to a compile error.</param>
+		/// <returns>The method that will be called.</returns>
+		public static IMethod FindOverload(IList<IMethod> methods, IReturnType[] arguments, out bool resultIsAcceptable)
+		{
+			if (methods == null)
+				throw new ArgumentNullException("methods");
+			resultIsAcceptable = false;
+			if (methods.Count == 0)
+				return null;
+			return (IMethod)CSharp.OverloadResolution.FindOverload(
+				methods.Cast<IMethodOrProperty>().ToList(),
+				arguments,
+				false,
+				true,
+				out resultIsAcceptable);
 		}
 		
 		public static IProperty FindOverload(IList<IProperty> properties, IReturnType[] arguments)
 		{
 			if (properties.Count == 0)
 				return null;
-			bool tmp1; IReturnType[][] tmp2;
-			List<IMethodOrProperty> newList = new List<IMethodOrProperty>(properties.Count);
-			foreach (IProperty p in properties) newList.Add(p);
-			int[] ranking = RankOverloads(newList, arguments, false, out tmp1, out tmp2);
-			int bestRanking = -1;
-			int best = 0;
-			for (int i = 0; i < ranking.Length; i++) {
-				if (ranking[i] > bestRanking) {
-					bestRanking = ranking[i];
-					best = i;
-				}
-			}
-			return properties[best];
-		}
-		#endregion
-		
-		#region Rank method overloads
-		/// <summary>
-		/// Assigns a ranking score to each method in the <paramref name="list"/>.
-		/// </summary>
-		/// <param name="list">Link with the methods to check.<br/>
-		/// <b>Generic methods in the input type are replaced by methods with have the types substituted!</b>
-		/// </param>
-		/// <param name="typeParameters">List with the type parameters passed to the method.
-		/// Can be null (=no type parameters)</param>
-		/// <param name="arguments">The types of the arguments passed to the method.
-		/// A null return type means any argument type is allowed.</param>
-		/// <param name="allowAdditionalArguments">Specifies whether the method can have
-		/// more parameters than specified here. Useful for method insight scenarios.</param>
-		/// <param name="acceptableMatch">Out parameter that is true when the best ranked
-		/// method is acceptable for a method call (no invalid casts)</param>
-		/// <returns>Integer array. Each value in the array </returns>
-		public static int[] RankOverloads(IList<IMethod> list,
-		                                  IReturnType[] typeParameters,
-		                                  IReturnType[] arguments,
-		                                  bool allowAdditionalArguments,
-		                                  out bool acceptableMatch)
-		{
-			acceptableMatch = false;
-			if (list.Count == 0) return new int[] {};
-			
-			List<IMethodOrProperty> l2 = new List<IMethodOrProperty>(list.Count);
-			IReturnType[][] inferredTypeParameters;
-			// See ECMA-334, § 14.3
-			
-			// If type parameters are specified, remove all methods from the list that do not
-			// use the specified number of parameters.
-			if (typeParameters != null && typeParameters.Length > 0) {
-				for (int i = 0; i < list.Count; i++) {
-					IMethod m = list[i];
-					if (m.TypeParameters.Count == typeParameters.Length) {
-						m = (IMethod)m.Clone();
-						m.ReturnType = ConstructedReturnType.TranslateType(m.ReturnType, typeParameters, true);
-						for (int j = 0; j < m.Parameters.Count; ++j) {
-							m.Parameters[j].ReturnType = ConstructedReturnType.TranslateType(m.Parameters[j].ReturnType, typeParameters, true);
-						}
-						list[i] = m;
-						l2.Add(m);
-					}
-				}
-				
-				int[] innerRanking = RankOverloads(l2, arguments, allowAdditionalArguments, out acceptableMatch, out inferredTypeParameters);
-				int[] ranking = new int[list.Count];
-				int innerIndex = 0;
-				for (int i = 0; i < ranking.Length; i++) {
-					if (list[i].TypeParameters.Count == typeParameters.Length) {
-						ranking[i] = innerRanking[innerIndex++];
-					} else {
-						ranking[i] = 0;
-					}
-				}
-				return ranking;
-			} else {
-				// Note that when there are no type parameters, methods having type parameters
-				// are not removed, since the type inference process might be able to infer the
-				// type arguments.
-				foreach (IMethod m in list) l2.Add(m);
-				
-				int[] ranking = RankOverloads(l2, arguments, allowAdditionalArguments, out acceptableMatch, out inferredTypeParameters);
-				ApplyInferredTypeParameters(list, inferredTypeParameters);
-				return ranking;
-			}
-		}
-		
-		static void ApplyInferredTypeParameters(IList<IMethod> list, IReturnType[][] inferredTypeParameters)
-		{
-			if (inferredTypeParameters == null)
-				return;
-			for (int i = 0; i < list.Count; i++) {
-				IReturnType[] inferred = inferredTypeParameters[i];
-				if (inferred != null && inferred.Length > 0) {
-					IMethod m = (IMethod)list[i].Clone();
-					m.ReturnType = ConstructedReturnType.TranslateType(m.ReturnType, inferred, true);
-					for (int j = 0; j < m.Parameters.Count; ++j) {
-						m.Parameters[j].ReturnType = ConstructedReturnType.TranslateType(m.Parameters[j].ReturnType, inferred, true);
-					}
-					list[i] = m;
-				}
-			}
-		}
-		#endregion
-		
-		#region Main ranking algorithm
-		/// <summary>
-		/// The inner ranking engine. Works on both methods and properties.
-		/// For parameter documentation, read the comments on the above method.
-		/// </summary>
-		public static int[] RankOverloads(IList<IMethodOrProperty> list,
-		                                  IReturnType[] arguments,
-		                                  bool allowAdditionalArguments,
-		                                  out bool acceptableMatch,
-		                                  out IReturnType[][] inferredTypeParameters)
-		{
-			// § 14.4.2 Overload resolution
-			acceptableMatch = false;
-			inferredTypeParameters = null;
-			if (list.Count == 0) return new int[] {};
-			
-			int[] ranking = new int[list.Count];
-			bool[] needToExpand = new bool[list.Count];
-			int maxScore = 0;
-			int baseScore = 0;
-			int score;
-			bool expanded;
-			for (int i = 0; i < list.Count; i++) {
-				if (IsApplicable(list[i].Parameters, arguments, allowAdditionalArguments, out score, out expanded)) {
-					acceptableMatch = true;
-					score = int.MaxValue;
-				} else {
-					baseScore = Math.Max(baseScore, score);
-				}
-				needToExpand[i] = expanded;
-				ranking[i] = score;
-				maxScore = Math.Max(maxScore, score);
-			}
-			// all overloads that have maxScore (normally those that are applicable)
-			// have to be rescored.
-			// The new scala starts with baseScore + 1 to ensure that all applicable members have
-			// a higher score than non-applicable members
-			
-			// The first step is to expand the methods and do type argument substitution
-			IReturnType[][] expandedParameters = ExpandParametersAndSubstitute(list, arguments, maxScore, ranking, needToExpand, out inferredTypeParameters);
-			
-			// find the best function member
-			
-			score = baseScore + 2;
-			int bestIndex = -1;
-			for (int i = 0; i < ranking.Length; i++) {
-				if (ranking[i] == maxScore) {
-					// the best function member is the one that is better than all other function members
-					if (bestIndex < 0) {
-						ranking[i] = score;
-						bestIndex = i;
-					} else {
-						switch (GetBetterFunctionMember(arguments,
-						                                list[i], expandedParameters[i], needToExpand[i],
-						                                list[bestIndex], expandedParameters[bestIndex], needToExpand[bestIndex]))
-						{
-							case 0:
-								// neither member is better
-								ranking[i] = score;
-								break;
-							case 1:
-								// the new member is better
-								ranking[i] = ++score;
-								bestIndex = i;
-								break;
-							case 2:
-								// the old member is better
-								ranking[i] = score - 1;
-								// this is not really correct, normally we would need to
-								// compare the member with other members
-								break;
-						}
-					}
-				}
-			}
-			
-			return ranking;
-		}
-		
-		static IReturnType[][] ExpandParametersAndSubstitute(IList<IMethodOrProperty> list,
-		                                                     IReturnType[] arguments,
-		                                                     int maxScore, int[] ranking, bool[] needToExpand,
-		                                                     out IReturnType[][] inferredTypeParameters)
-		{
-			IReturnType[][] expandedParameters = new IReturnType[list.Count][];
-			inferredTypeParameters = new IReturnType[list.Count][];
-			for (int i = 0; i < ranking.Length; i++) {
-				if (ranking[i] == maxScore) {
-					IList<IParameter> parameters = list[i].Parameters;
-					IReturnType[] typeParameters = (list[i] is IMethod) ? InferTypeArguments((IMethod)list[i], arguments) : null;
-					inferredTypeParameters[i] = typeParameters;
-					IReturnType paramsType = null;
-					expandedParameters[i] = new IReturnType[arguments.Length];
-					for (int j = 0; j < arguments.Length; j++) {
-						if (j < parameters.Count) {
-							IParameter parameter = parameters[j];
-							if (parameter.IsParams && needToExpand[i]) {
-								if (parameter.ReturnType.IsArrayReturnType) {
-									paramsType = parameter.ReturnType.CastToArrayReturnType().ArrayElementType;
-									paramsType = ConstructedReturnType.TranslateType(paramsType, typeParameters, true);
-								}
-								expandedParameters[i][j] = paramsType;
-							} else {
-								expandedParameters[i][j] = ConstructedReturnType.TranslateType(parameter.ReturnType, typeParameters, true);
-							}
-						} else {
-							expandedParameters[i][j] = paramsType;
-						}
-					}
-				}
-			}
-			return expandedParameters;
-		}
-		
-		/// <summary>
-		/// Gets which function member is better. (§ 14.4.2.2)
-		/// </summary>
-		/// <param name="arguments">The arguments passed to the function</param>
-		/// <param name="m1">The first method</param>
-		/// <param name="parameters1">The expanded and substituted parameters of the first method</param>
-		/// <param name="m2">The second method</param>
-		/// <param name="parameters2">The expanded and substituted parameters of the second method</param>
-		/// <returns>0 if neither method is better. 1 if m1 is better. 2 if m2 is better.</returns>
-		static int GetBetterFunctionMember(IReturnType[] arguments,
-		                                   IMethodOrProperty m1, IReturnType[] parameters1, bool isExpanded1,
-		                                   IMethodOrProperty m2, IReturnType[] parameters2, bool isExpanded2)
-		{
-			int length = Math.Min(Math.Min(parameters1.Length, parameters2.Length), arguments.Length);
-			bool foundBetterParamIn1 = false;
-			bool foundBetterParamIn2 = false;
-			for (int i = 0; i < length; i++) {
-				if (arguments[i] == null)
-					continue;
-				int res = GetBetterConversion(arguments[i], parameters1[i], parameters2[i]);
-				if (res == 1) foundBetterParamIn1 = true;
-				if (res == 2) foundBetterParamIn2 = true;
-			}
-			if (foundBetterParamIn1 && !foundBetterParamIn2)
-				return 1;
-			if (foundBetterParamIn2 && !foundBetterParamIn1)
-				return 2;
-			if (foundBetterParamIn1 && foundBetterParamIn2)
-				return 0; // ambigous
-			// If none conversion is better than any other, it is possible that the
-			// expanded parameter lists are the same:
-			for (int i = 0; i < length; i++) {
-				if (!object.Equals(parameters1[i], parameters2[i])) {
-					// if expanded parameters are not the same, neither function member is better
-					return 0;
-				}
-			}
-			
-			// the expanded parameters are the same, apply the tie-breaking rules from the spec:
-			
-			// if one method is generic and the other non-generic, the non-generic is better
-			bool m1IsGeneric = (m1 is IMethod) ? ((IMethod)m1).TypeParameters.Count > 0 : false;
-			bool m2IsGeneric = (m2 is IMethod) ? ((IMethod)m2).TypeParameters.Count > 0 : false;
-			if (m1IsGeneric && !m2IsGeneric) return 2;
-			if (m2IsGeneric && !m1IsGeneric) return 1;
-			
-			// for params parameters: non-expanded calls are better
-			if (isExpanded1 && !isExpanded2) return 2;
-			if (isExpanded2 && !isExpanded1) return 1;
-			
-			// if the number of parameters is different, the one with more parameters is better
-			// this occurs when only when both methods are expanded
-			if (m1.Parameters.Count > m2.Parameters.Count) return 1;
-			if (m2.Parameters.Count > m1.Parameters.Count) return 2;
-			
-			IReturnType[] m1ParamTypes = new IReturnType[m1.Parameters.Count];
-			IReturnType[] m2ParamTypes = new IReturnType[m2.Parameters.Count];
-			for (int i = 0; i < m1ParamTypes.Length; i++) {
-				m1ParamTypes[i] = m1.Parameters[i].ReturnType;
-				m2ParamTypes[i] = m2.Parameters[i].ReturnType;
-			}
-			return GetMoreSpecific(m1ParamTypes, m2ParamTypes);
-		}
-		
-		/// <summary>
-		/// Gets which return type list is more specific.
-		/// § 14.4.2.2: types with generic arguments are less specific than types with fixed arguments
-		/// </summary>
-		/// <returns>0 if both are equally specific, 1 if <paramref name="r"/> is more specific,
-		/// 2 if <paramref name="s"/> is more specific.</returns>
-		static int GetMoreSpecific(IList<IReturnType> r, IList<IReturnType> s)
-		{
-			bool foundMoreSpecificParamIn1 = false;
-			bool foundMoreSpecificParamIn2 = false;
-			int length = Math.Min(r.Count, s.Count);
-			for (int i = 0; i < length; i++) {
-				int res = GetMoreSpecific(r[i], s[i]);
-				if (res == 1) foundMoreSpecificParamIn1 = true;
-				if (res == 2) foundMoreSpecificParamIn2 = true;
-			}
-			if (foundMoreSpecificParamIn1 && !foundMoreSpecificParamIn2)
-				return 1;
-			if (foundMoreSpecificParamIn2 && !foundMoreSpecificParamIn1)
-				return 2;
-			return 0;
-		}
-		
-		static int GetMoreSpecific(IReturnType r, IReturnType s)
-		{
-			if (r == null && s == null) return 0;
-			if (r == null) return 2;
-			if (s == null) return 1;
-			if (r.IsGenericReturnType && !(s.IsGenericReturnType))
-				return 2;
-			if (s.IsGenericReturnType && !(r.IsGenericReturnType))
-				return 1;
-			if (r.IsArrayReturnType && s.IsArrayReturnType)
-				return GetMoreSpecific(r.CastToArrayReturnType().ArrayElementType, s.CastToArrayReturnType().ArrayElementType);
-			if (r.IsConstructedReturnType && s.IsConstructedReturnType)
-				return GetMoreSpecific(r.CastToConstructedReturnType().TypeArguments, s.CastToConstructedReturnType().TypeArguments);
-			return 0;
+			bool acceptableMatch;
+			return (IProperty)CSharp.OverloadResolution.FindOverload(
+				properties.Cast<IMethodOrProperty>().ToList(),
+				arguments,
+				false,
+				false,
+				out acceptableMatch);
 		}
 		#endregion
 		
 		#region Type Argument Inference
-		static IReturnType[] InferTypeArguments(IMethod method, IReturnType[] arguments)
-		{
-			// §25.6.4 Inference of type arguments
-			int count = method.TypeParameters.Count;
-			if (count == 0) return null;
-			IReturnType[] result = new IReturnType[count];
-			IList<IParameter> parameters = method.Parameters;
-			for (int i = 0; i < arguments.Length; i++) {
-				if (i >= parameters.Count)
-					break;
-				if (!InferTypeArgument(parameters[i].ReturnType, arguments[i], result)) {
-					// inferring failed: maybe this is a params parameter that must be expanded?
-					if (parameters[i].IsParams && parameters[i].ReturnType.IsArrayReturnType) {
-						ArrayReturnType art = parameters[i].ReturnType.CastToArrayReturnType();
-						if (art.ArrayDimensions == 1) {
-							InferTypeArgument(art.ArrayElementType, arguments[i], result);
-						}
-					}
-				}
-			}
-			// only return the result array when there something was inferred
-			for (int i = 0; i < result.Length; i++) {
-				if (result[i] != null) {
-					return result;
-				}
-			}
-			return null;
-		}
-		
 		/// <summary>
 		/// Infers type arguments specified by passing expectedArgument as parameter where passedArgument
 		/// was expected. The resulting type arguments are written to outputArray.
 		/// Returns false when expectedArgument and passedArgument are incompatible, otherwise true
 		/// is returned (true is used both for successful inferring and other kind of errors).
+		/// 
+		/// Warning: This method for single-argument type inference doesn't support lambdas!
 		/// </summary>
 		/// <remarks>
 		/// The C# spec (§ 25.6.4) has a bug: it says that type inference works if the passedArgument is IEnumerable{T}
@@ -450,76 +326,28 @@ namespace ICSharpCode.SharpDevelop.Dom
 		#endregion
 		
 		#region IsApplicable
-		static bool IsApplicable(IList<IParameter> parameters,
-		                         IReturnType[] arguments,
-		                         bool allowAdditionalArguments,
-		                         out int score,
-		                         out bool expanded)
+		internal static bool IsApplicable(IReturnType argument, IParameter expected, IMethod targetMethod)
 		{
-			// see ECMA-334, § 14.4.2.1
-			// TODO: recognize ref/out (needs info about passing mode for arguments, you have to introduce RefReturnType)
-			
-			expanded = false;
-			score = 0;
-			if (parameters.Count == 0)
-				return arguments.Length == 0;
-			if (!allowAdditionalArguments && parameters.Count > arguments.Length + 1)
+			bool parameterIsRefOrOut = expected.IsRef || expected.IsOut;
+			bool argumentIsRefOrOut = argument != null && argument.IsDecoratingReturnType<ReferenceReturnType>();
+			if (parameterIsRefOrOut != argumentIsRefOrOut)
 				return false;
-			int lastParameter = parameters.Count - 1;
-			
-			// check all arguments except the last
-			bool ok = true;
-			for (int i = 0; i < Math.Min(lastParameter, arguments.Length); i++) {
-				if (IsApplicable(arguments[i], parameters[i].ReturnType)) {
-					score++;
-				} else {
-					ok = false;
-				}
+			if (parameterIsRefOrOut) {
+				return object.Equals(argument, expected.ReturnType);
+			} else {
+				return IsApplicable(argument, expected.ReturnType, targetMethod);
 			}
-			if (!ok) {
-				return false;
-			}
-			if (parameters.Count == arguments.Length) {
-				// try if method is applicable in normal form by checking last argument
-				if (IsApplicable(arguments[lastParameter], parameters[lastParameter].ReturnType)) {
-					return true;
-				}
-			}
-			// method is not applicable in normal form, try expanded form:
-			// - last parameter must be params array
-			if (!parameters[lastParameter].IsParams) {
-				return false;
-			}
-			expanded = true;
-			score++;
-			
-			// - all additional parameters must be applicable to the unpacked array
-			IReturnType rt = parameters[lastParameter].ReturnType;
-			if (rt == null || !rt.IsArrayReturnType) {
-				return false;
-			}
-			for (int i = lastParameter; i < arguments.Length; i++) {
-				if (IsApplicable(arguments[i], rt.CastToArrayReturnType().ArrayElementType)) {
-					score++;
-				} else {
-					ok = false;
-				}
-			}
-			return ok;
 		}
 		
-		static bool IsApplicable(IReturnType argument, IReturnType expected)
+		/// <summary>
+		/// Tests whether an argument of type "argument" is valid for a parameter of type "expected" for a call
+		/// to "targetMethod".
+		/// targetMethod may be null, it is only used when it is a generic method and expected is (or contains) one of
+		/// its type parameters.
+		/// </summary>
+		public static bool IsApplicable(IReturnType argument, IReturnType expected, IMethod targetMethod)
 		{
-			if (argument == null) // TODO: Use NullReturnType instead of no return type
-				return true; // "null" can be passed for any argument
-			if (expected.IsGenericReturnType) {
-				foreach (IReturnType constraint in expected.CastToGenericReturnType().TypeParameter.Constraints) {
-					if (!ConversionExists(argument, constraint)) {
-						return false;
-					}
-				}
-			}
-			return ConversionExists(argument, expected);
+			return ConversionExistsInternal(argument, expected, targetMethod);
 		}
 		#endregion
 		
@@ -528,6 +356,16 @@ namespace ICSharpCode.SharpDevelop.Dom
 		/// Checks if an implicit conversion exists from <paramref name="from"/> to <paramref name="to"/>.
 		/// </summary>
 		public static bool ConversionExists(IReturnType from, IReturnType to)
+		{
+			return ConversionExistsInternal(from, to, null);
+		}
+		
+		/// <summary>
+		/// Tests if an implicit conversion exists from "from" to "to".
+		/// Conversions from concrete types to generic types are only allowed when the generic type belongs to the
+		/// method "allowGenericTargetsOnThisMethod".
+		/// </summary>
+		static bool ConversionExistsInternal(IReturnType from, IReturnType to, IMethod allowGenericTargetsOnThisMethod)
 		{
 			// ECMA-334, § 13.1 Implicit conversions
 			
@@ -569,40 +407,102 @@ namespace ICSharpCode.SharpDevelop.Dom
 			if (toIsDefault && to.FullyQualifiedName == "System.Object") {
 				return true; // from any type to object
 			}
-			if (toIsDefault && (fromIsDefault || from.IsArrayReturnType)) {
-				IClass c1 = from.GetUnderlyingClass();
-				IClass c2 = to.GetUnderlyingClass();
-				if (c1 != null && c1.IsTypeInInheritanceTree(c2)) {
-					return true;
+			if (from == NullReturnType.Instance) {
+				IClass toClass = to.GetUnderlyingClass();
+				if (toClass != null) {
+					switch (toClass.ClassType) {
+						case ClassType.Class:
+						case ClassType.Delegate:
+						case ClassType.Interface:
+							return true;
+						case ClassType.Struct:
+							return toClass.FullyQualifiedName == "System.Nullable";
+					}
+				}
+				return false;
+			}
+			
+			if ((toIsDefault || to.IsConstructedReturnType || to.IsGenericReturnType)
+			    && (fromIsDefault || from.IsArrayReturnType || from.IsConstructedReturnType))
+			{
+				foreach (IReturnType baseTypeOfFrom in GetTypeInheritanceTree(from)) {
+					if (IsConstructedConversionToGenericReturnType(baseTypeOfFrom, to, allowGenericTargetsOnThisMethod))
+						return true;
 				}
 			}
+			
 			if (from.IsArrayReturnType && to.IsArrayReturnType) {
 				ArrayReturnType fromArt = from.CastToArrayReturnType();
 				ArrayReturnType toArt   = to.CastToArrayReturnType();
 				// from array to other array type
 				if (fromArt.ArrayDimensions == toArt.ArrayDimensions) {
-					return ConversionExists(fromArt.ArrayElementType, toArt.ArrayElementType);
+					return ConversionExistsInternal(fromArt.ArrayElementType, toArt.ArrayElementType, allowGenericTargetsOnThisMethod);
 				}
 			}
 			
-			if (from.IsConstructedReturnType && to.IsConstructedReturnType) {
-				if (from.FullyQualifiedName == to.FullyQualifiedName) {
-					IList<IReturnType> fromTypeArguments = from.CastToConstructedReturnType().TypeArguments;
-					IList<IReturnType> toTypeArguments = to.CastToConstructedReturnType().TypeArguments;
-					if (fromTypeArguments.Count == toTypeArguments.Count) {
-						for (int i = 0; i < fromTypeArguments.Count; i++) {
-							if (fromTypeArguments[i] == toTypeArguments[i])
-								continue;
-							if (object.Equals(fromTypeArguments[i], toTypeArguments[i]))
-								continue;
-							if (!(toTypeArguments[i].IsGenericReturnType))
-								return false;
+			if (from.IsDecoratingReturnType<AnonymousMethodReturnType>() && (toIsDefault || to.IsConstructedReturnType)) {
+				AnonymousMethodReturnType amrt = from.CastToDecoratingReturnType<AnonymousMethodReturnType>();
+				IMethod method = CSharp.TypeInference.GetDelegateOrExpressionTreeSignature(to, amrt.CanBeConvertedToExpressionTree);
+				if (method != null) {
+					if (amrt.HasParameterList) {
+						if (amrt.MethodParameters.Count != method.Parameters.Count)
+							return false;
+						for (int i = 0; i < amrt.MethodParameters.Count; i++) {
+							if (amrt.MethodParameters[i].ReturnType != null) {
+								if (!object.Equals(amrt.MethodParameters[i].ReturnType,
+								                   method.Parameters[i].ReturnType))
+								{
+									return false;
+								}
+							}
 						}
-						return true;
+					}
+					IReturnType rt = amrt.ResolveReturnType(method.Parameters.Select(p => p.ReturnType).ToArray());
+					return ConversionExistsInternal(rt, method.ReturnType, allowGenericTargetsOnThisMethod);
+				}
+			}
+			
+			return false;
+		}
+		
+		static bool IsConstructedConversionToGenericReturnType(IReturnType from, IReturnType to, IMethod allowGenericTargetsOnThisMethod)
+		{
+			// null could be passed when type arguments could not be resolved/inferred
+			if (from == null && to == null)
+				return true;
+			if (from == null || to == null)
+				return false;
+			
+			if (from.Equals(to))
+				return true;
+			
+			if (allowGenericTargetsOnThisMethod == null)
+				return false;
+			
+			if (to.IsGenericReturnType) {
+				ITypeParameter typeParameter = to.CastToGenericReturnType().TypeParameter;
+				if (typeParameter.Method != allowGenericTargetsOnThisMethod)
+					return false;
+				foreach (IReturnType constraintType in typeParameter.Constraints) {
+					if (!ConversionExistsInternal(from, constraintType, allowGenericTargetsOnThisMethod)) {
+						return false;
 					}
 				}
+				return true;
 			}
 			
+			// for conversions like from IEnumerable<string> to IEnumerable<T>, where T is a GenericReturnType
+			ConstructedReturnType cFrom = from.CastToConstructedReturnType();
+			ConstructedReturnType cTo   = to.CastToConstructedReturnType();
+			if (cFrom != null && cTo != null) {
+				if (cFrom.FullyQualifiedName == cTo.FullyQualifiedName && cFrom.TypeArguments.Count == cTo.TypeArguments.Count) {
+					for (int i = 0; i < cFrom.TypeArguments.Count; i++) {
+						if (!IsConstructedConversionToGenericReturnType(cFrom.TypeArguments[i], cTo.TypeArguments[i], allowGenericTargetsOnThisMethod))
+							return false;
+					}
+					return true;
+				}
+			}
 			return false;
 		}
 		#endregion
@@ -713,6 +613,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 		}
 		#endregion
 		
+		#region GetCommonType
 		/// <summary>
 		/// Gets the common base type of a and b.
 		/// </summary>
@@ -724,26 +625,17 @@ namespace ICSharpCode.SharpDevelop.Dom
 			if (b == null) return a;
 			if (ConversionExists(a, b))
 				return b;
-			if (ConversionExists(b, a))
-				return a;
-			IClass c = a.GetUnderlyingClass();
-			if (c != null) {
-				foreach (IClass baseClass in c.ClassInheritanceTree) {
-					IReturnType baseType = baseClass.DefaultReturnType;
-					if (baseClass.TypeParameters.Count > 0) {
-						IReturnType[] typeArguments = new IReturnType[baseClass.TypeParameters.Count];
-						for (int i = 0; i < typeArguments.Length; i++) {
-							typeArguments[i] = GetTypeParameterPassedToBaseClass(a, baseClass, i);
-						}
-						baseType = new ConstructedReturnType(baseType, typeArguments);
-					}
-					if (ConversionExists(b, baseType))
-						return baseType;
-				}
+			//if (ConversionExists(b, a)) - not required because the first baseTypeOfA is a
+			//	return a;
+			foreach (IReturnType baseTypeOfA in GetTypeInheritanceTree(a)) {
+				if (ConversionExists(b, baseTypeOfA))
+					return baseTypeOfA;
 			}
 			return projectContent.SystemTypes.Object;
 		}
+		#endregion
 		
+		#region GetTypeParameterPassedToBaseClass / GetTypeInheritanceTree
 		/// <summary>
 		/// Gets the type parameter that was passed to a certain base class.
 		/// For example, when <paramref name="returnType"/> is Dictionary(of string, int)
@@ -751,31 +643,222 @@ namespace ICSharpCode.SharpDevelop.Dom
 		/// </summary>
 		public static IReturnType GetTypeParameterPassedToBaseClass(IReturnType parentType, IClass baseClass, int baseClassTypeParameterIndex)
 		{
-			if (!parentType.IsConstructedReturnType)
-				return null;
-			ConstructedReturnType returnType = parentType.CastToConstructedReturnType();
-			IClass c = returnType.GetUnderlyingClass();
-			if (c == null) return null;
-			if (baseClass.CompareTo(c) == 0) {
-				if (baseClassTypeParameterIndex >= returnType.TypeArguments.Count)
-					return null;
-				return returnType.TypeArguments[baseClassTypeParameterIndex];
-			}
-			foreach (IReturnType baseType in c.BaseTypes) {
-				if (baseClass.CompareTo(baseType.GetUnderlyingClass()) == 0) {
-					if (!baseType.IsConstructedReturnType)
-						return null;
-					ConstructedReturnType baseTypeCRT = baseType.CastToConstructedReturnType();
-					if (baseClassTypeParameterIndex >= baseTypeCRT.TypeArguments.Count)
-						return null;
-					IReturnType result = baseTypeCRT.TypeArguments[baseClassTypeParameterIndex];
-					if (returnType.TypeArguments != null) {
-						result = ConstructedReturnType.TranslateType(result, returnType.TypeArguments, false);
+			foreach (IReturnType rt in GetTypeInheritanceTree(parentType)) {
+				ConstructedReturnType crt = rt.CastToConstructedReturnType();
+				if (crt != null && baseClass.CompareTo(rt.GetUnderlyingClass()) == 0) {
+					if (baseClassTypeParameterIndex < crt.TypeArguments.Count) {
+						return crt.TypeArguments[baseClassTypeParameterIndex];
 					}
-					return result;
 				}
 			}
 			return null;
+		}
+		
+		/// <summary>
+		/// Translates typeToTranslate using the type arguments from parentType;
+		/// </summary>
+		static IReturnType TranslateIfRequired(IReturnType parentType, IReturnType typeToTranslate)
+		{
+			if (typeToTranslate == null)
+				return null;
+			ConstructedReturnType parentConstructedType = parentType.CastToConstructedReturnType();
+			if (parentConstructedType != null) {
+				return ConstructedReturnType.TranslateType(typeToTranslate, parentConstructedType.TypeArguments, false);
+			} else {
+				return typeToTranslate;
+			}
+		}
+		
+		/// <summary>
+		/// Gets all types the specified type inherits from (all classes and interfaces).
+		/// Unlike the class inheritance tree, this method takes care of type arguments and calculates the type
+		/// arguments that are passed to base classes.
+		/// </summary>
+		public static IEnumerable<IReturnType> GetTypeInheritanceTree(IReturnType typeToListInheritanceTreeFor)
+		{
+			if (typeToListInheritanceTreeFor == null)
+				throw new ArgumentNullException("typeToListInheritanceTreeFor");
+			
+			IClass classToListInheritanceTreeFor = typeToListInheritanceTreeFor.GetUnderlyingClass();
+			if (classToListInheritanceTreeFor == null)
+				return new IReturnType[] { typeToListInheritanceTreeFor };
+			
+			if (typeToListInheritanceTreeFor.IsArrayReturnType) {
+				IReturnType elementType = typeToListInheritanceTreeFor.CastToArrayReturnType().ArrayElementType;
+				List<IReturnType> resultList = new List<IReturnType>();
+				resultList.Add(typeToListInheritanceTreeFor);
+				resultList.AddRange(GetTypeInheritanceTree(
+					new ConstructedReturnType(
+						classToListInheritanceTreeFor.ProjectContent.GetClass("System.Collections.Generic.IList", 1).DefaultReturnType,
+						new IReturnType[] { elementType }
+					)
+				));
+				resultList.Add(classToListInheritanceTreeFor.ProjectContent.GetClass("System.Collections.IList", 0).DefaultReturnType);
+				resultList.Add(classToListInheritanceTreeFor.ProjectContent.GetClass("System.Collections.ICollection", 0).DefaultReturnType);
+				// non-generic IEnumerable is already added by generic IEnumerable
+				return resultList;
+			}
+			
+			List<IReturnType> visitedList = new List<IReturnType>();
+			Queue<IReturnType> typesToVisit = new Queue<IReturnType>();
+			bool enqueuedLastBaseType = false;
+			
+			IReturnType currentType = typeToListInheritanceTreeFor;
+			IClass currentClass = classToListInheritanceTreeFor;
+			IReturnType nextType;
+			do {
+				if (currentClass != null) {
+					if (!visitedList.Contains(currentType)) {
+						visitedList.Add(currentType);
+						foreach (IReturnType type in currentClass.BaseTypes) {
+							typesToVisit.Enqueue(TranslateIfRequired(currentType, type));
+						}
+					}
+				}
+				if (typesToVisit.Count > 0) {
+					nextType = typesToVisit.Dequeue();
+				} else {
+					nextType = enqueuedLastBaseType ? null : DefaultClass.GetBaseTypeByClassType(classToListInheritanceTreeFor);
+					enqueuedLastBaseType = true;
+				}
+				if (nextType != null) {
+					currentType = nextType;
+					currentClass = nextType.GetUnderlyingClass();
+				}
+			} while (nextType != null);
+			return visitedList;
+		}
+		#endregion
+		
+		#region IsSimilarMember / FindBaseMember
+		/// <summary>
+		/// Gets if member1 is the same as member2 or if member1 overrides member2.
+		/// </summary>
+		public static bool IsSimilarMember(IMember member1, IMember member2)
+		{
+			member1 = GetGenericMember(member1);
+			member2 = GetGenericMember(member2);
+			do {
+				if (IsSimilarMemberInternal(member1, member2))
+					return true;
+			} while ((member1 = FindBaseMember(member1)) != null);
+			return false;
+		}
+		
+		/// <summary>
+		/// Gets the generic member from a specialized member.
+		/// Specialized members are the result of overload resolution with type substitution.
+		/// </summary>
+		static IMember GetGenericMember(IMember member)
+		{
+			// e.g. member = string[] ToArray<string>(IEnumerable<string> input)
+			// result = T[] ToArray<T>(IEnumerable<T> input)
+			if (member != null) {
+				while (member.GenericMember != null)
+					member = member.GenericMember;
+			}
+			return member;
+		}
+		
+		static bool IsSimilarMemberInternal(IMember member1, IMember member2)
+		{
+			if (member1 == member2)
+				return true;
+			if (member1 == null || member2 == null)
+				return false;
+			if (member1.FullyQualifiedName != member2.FullyQualifiedName)
+				return false;
+			if (member1.IsStatic != member2.IsStatic)
+				return false;
+			IMethodOrProperty m1 = member1 as IMethodOrProperty;
+			IMethodOrProperty m2 = member2 as IMethodOrProperty;
+			if (m1 != null || m2 != null) {
+				if (m1 != null && m2 != null) {
+					if (DiffUtility.Compare(m1.Parameters, m2.Parameters) != 0)
+						return false;
+					if (m1 is IMethod && m2 is IMethod) {
+						if ((m1 as IMethod).TypeParameters.Count != (m2 as IMethod).TypeParameters.Count)
+							return false;
+					}
+				} else {
+					return false;
+				}
+			}
+			return true;
+		}
+		
+		public static IMember FindSimilarMember(IClass type, IMember member)
+		{
+			member = GetGenericMember(member);
+			if (member is IMethod) {
+				IMethod parentMethod = (IMethod)member;
+				foreach (IMethod m in type.Methods) {
+					if (string.Equals(parentMethod.Name, m.Name, StringComparison.InvariantCultureIgnoreCase)) {
+						if (m.IsStatic == parentMethod.IsStatic) {
+							if (DiffUtility.Compare(parentMethod.Parameters, m.Parameters) == 0) {
+								return m;
+							}
+						}
+					}
+				}
+			} else if (member is IProperty) {
+				IProperty parentMethod = (IProperty)member;
+				foreach (IProperty m in type.Properties) {
+					if (string.Equals(parentMethod.Name, m.Name, StringComparison.InvariantCultureIgnoreCase)) {
+						if (m.IsStatic == parentMethod.IsStatic) {
+							if (DiffUtility.Compare(parentMethod.Parameters, m.Parameters) == 0) {
+								return m;
+							}
+						}
+					}
+				}
+			}
+			return null;
+		}
+		
+		public static IMember FindBaseMember(IMember member)
+		{
+			if (member == null) return null;
+			if (member is IMethod && (member as IMethod).IsConstructor) return null;
+			IClass parentClass = member.DeclaringType;
+			IClass baseClass = parentClass.BaseClass;
+			if (baseClass == null) return null;
+			
+			foreach (IClass childClass in baseClass.ClassInheritanceTree) {
+				IMember m = FindSimilarMember(childClass, member);
+				if (m != null)
+					return m;
+			}
+			return null;
+		}
+		#endregion
+		
+		[System.Diagnostics.ConditionalAttribute("DEBUG")]
+		internal static void Log(string text)
+		{
+			Console.WriteLine(text);
+		}
+		
+		[System.Diagnostics.ConditionalAttribute("DEBUG")]
+		internal static void Log(string text, IEnumerable<IReturnType> types)
+		{
+			Log(text, types.Select(t => t != null ? t.DotNetName : "<null>"));
+		}
+		
+		[System.Diagnostics.ConditionalAttribute("DEBUG")]
+		internal static void Log<T>(string text, IEnumerable<T> lines)
+		{
+			#if DEBUG
+			T[] arr = lines.ToArray();
+			if (arr.Length == 0) {
+				Log(text + "<empty collection>");
+			} else {
+				Log(text + arr[0]);
+				for (int i = 1; i < arr.Length; i++) {
+					Log(new string(' ', text.Length) + arr[i]);
+				}
+			}
+			#endif
 		}
 	}
 }

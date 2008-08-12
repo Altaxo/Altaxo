@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2505 $</version>
+//     <version>$Revision: 2708 $</version>
 // </file>
 
 using System;
@@ -19,7 +19,7 @@ using ICSharpCode.SharpDevelop.Project;
 
 namespace ICSharpCode.SharpDevelop.Gui
 {
-	public class DriveObject
+	sealed class DriveObject
 	{
 		DriveInfo driveInfo;
 		string text  = null;
@@ -64,7 +64,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		}
 	}
 	
-	class IconManager
+	sealed class IconManager
 	{
 		private static ImageList icons = new ImageList();
 		private static Hashtable iconIndecies = new Hashtable();
@@ -109,8 +109,11 @@ namespace ICSharpCode.SharpDevelop.Gui
 			}
 		}
 	}
-	
-	public class FileList : ListView
+#if ModifiedForAltaxo
+  public class FileList : ListView
+#else
+	sealed class FileList : ListView
+#endif
 	{
 		private FileSystemWatcher watcher;
 		
@@ -304,8 +307,12 @@ namespace ICSharpCode.SharpDevelop.Gui
 			
 			EndUpdate();
 		}
-		
+
+#if ModifiedForAltaxo		
 		public class FileListItem : ListViewItem
+#else
+		internal class FileListItem : ListViewItem
+#endif
 		{
 			string fullname;
 			public string FullName {
@@ -403,8 +410,12 @@ namespace ICSharpCode.SharpDevelop.Gui
 		}
 	}
 	
-	public class ShellTree : TreeView
-	{
+#if ModifiedForAltaxo
+  public class ShellTree : TreeView
+#else
+  sealed class ShellTree : TreeView
+#endif
+  {
 		public string NodePath {
 			get {
 				return (string)SelectedNode.Tag;

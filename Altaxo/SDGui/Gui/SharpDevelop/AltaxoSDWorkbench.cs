@@ -124,7 +124,7 @@ namespace Altaxo.Gui.SharpDevelop
     {
       get
       {
-        return this.ViewContentCollection;
+        return (ICollection)this.ViewContentCollection;
       }
     }
 

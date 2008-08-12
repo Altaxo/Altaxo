@@ -2,17 +2,20 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2153 $</version>
+//     <version>$Revision: 3019 $</version>
 // </file>
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
+using System.IO;
+using System.Text;
 
 using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor;
 using ICSharpCode.SharpDevelop.Dom;
+using ICSharpCode.SharpDevelop.Dom.Refactoring;
 using ICSharpCode.SharpDevelop.Gui;
+using ICSharpCode.SharpDevelop.Project;
 using ICSharpCode.TextEditor;
 using ICSharpCode.TextEditor.Document;
 using SearchAndReplace;
@@ -21,6 +24,101 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 {
 	public static class FindReferencesAndRenameHelper
 	{
+		#region Extract Interface
+		public static void ExtractInterface(IClass c)
+		{
+			ExtractInterfaceOptions extractInterface = new ExtractInterfaceOptions(c);
+			using (ExtractInterfaceDialog eid = new ExtractInterfaceDialog()) {
+				extractInterface = eid.ShowDialog(extractInterface);
+				if (extractInterface.IsCancelled) {
+					return;
+				}
+				
+				// do rename
+				/*
+				 MessageService.ShowMessageFormatted("Extracting interface",
+				                                    @"Extracting {0} [{1}] from {2} into {3}",
+				                                    extractInterface.NewInterfaceName,
+				                                    extractInterface.FullyQualifiedName,
+				                                    extractInterface.ClassEntity.Name,
+				                                    extractInterface.NewFileName
+				                                   );
+`				*/
+			}
+			
+			string newInterfaceFileName = Path.Combine(Path.GetDirectoryName(c.CompilationUnit.FileName),
+			                                           extractInterface.NewFileName);
+			if (File.Exists(newInterfaceFileName)) {
+				int confirmReplace = MessageService.ShowCustomDialog("Extract Interface",
+				                                                     newInterfaceFileName+" already exists!",
+				                                                     0,
+				                                                     1,
+				                                                     "${res:Global.ReplaceButtonText}",
+				                                                     "${res:Global.AbortButtonText}");
+				if (confirmReplace == 1) {
+					return;
+				}
+			}
+			
+			LanguageProperties language = c.ProjectContent.Language;
+			string classFileName = c.CompilationUnit.FileName;
+			string existingClassCode = ParserService.GetParseableFileContent(classFileName);
+
+			// build the new interface...
+			string newInterfaceCode =
+				language.RefactoringProvider.GenerateInterfaceForClass(extractInterface.NewInterfaceName,
+				                                                       extractInterface.ChosenMembers,
+				                                                       extractInterface.IncludeComments,
+				                                                       c.Namespace,
+				                                                       c.Name,
+				                                                       existingClassCode
+				                                                      );
+			if (newInterfaceCode == null)
+				return;
+			
+			// ...dump it to a file...
+			IViewContent viewContent = FileService.GetOpenFile(newInterfaceFileName);
+			IEditable editable = viewContent as IEditable;
+			
+			if (viewContent != null && editable != null) {
+				// simply update it
+				editable.Text = newInterfaceCode;
+				viewContent.PrimaryFile.SaveToDisk();
+				
+			} else {
+				// create it
+				viewContent = FileService.NewFile(newInterfaceFileName, newInterfaceCode);
+				viewContent.PrimaryFile.SaveToDisk(newInterfaceFileName);
+
+				// ... and add it to the project
+				IProject project = (IProject)c.ProjectContent.Project;
+				if (project != null) {
+					FileProjectItem projectItem = new FileProjectItem(project, ItemType.Compile);
+					projectItem.FileName = newInterfaceFileName;
+					ProjectService.AddProjectItem(project, projectItem);
+					FileService.FireFileCreated(newInterfaceFileName, false);
+					project.Save();
+					ProjectBrowserPad.Instance.ProjectBrowserControl.RefreshView();
+				}
+			}
+			
+			// finally, add the interface to the base types of the class that we're extracting from
+			if (extractInterface.AddInterfaceToClass) {
+				string modifiedClassCode = language.RefactoringProvider.AddBaseTypeToClass(existingClassCode, extractInterface.NewInterfaceName);
+				if (modifiedClassCode == null) {
+					return;
+				}
+				
+				viewContent = FileService.OpenFile(classFileName);
+				editable = viewContent as IEditable;
+				if (editable == null) {
+					return;
+				}
+				editable.Text = modifiedClassCode;
+			}
+		}
+		#endregion
+		
 		#region Rename Class
 		public static void RenameClass(IClass c)
 		{
@@ -59,7 +157,7 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 		{
 			CompoundClass cc = c as CompoundClass;
 			if (cc != null) {
-				return cc.GetParts();
+				return cc.Parts;
 			} else {
 				return new IClass[] {c};
 			}
@@ -70,7 +168,7 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 			if (fileName == null)
 				return;
 			ProvidedDocumentInformation documentInformation = FindReferencesAndRenameHelper.GetDocumentInformation(fileName);
-			int offset = documentInformation.CreateDocument().PositionToOffset(new Point(region.BeginColumn - 1, region.BeginLine - 1));
+			int offset = documentInformation.CreateDocument().PositionToOffset(new TextLocation(region.BeginColumn - 1, region.BeginLine - 1));
 			string text = documentInformation.TextBuffer.GetText(offset, Math.Min(name.Length + 30, documentInformation.TextBuffer.Length - offset - 1));
 			int offsetChange = -1;
 			do {
@@ -148,7 +246,7 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 		{
 			foreach (IViewContent content in WorkbenchSingleton.Workbench.ViewContentCollection) {
 				if (content is ITextEditorControlProvider &&
-				    FileUtility.IsEqualFileName(content.IsUntitled ? content.UntitledName : content.FileName, fileName))
+				    FileUtility.IsEqualFileName(content.PrimaryFileName, fileName))
 				{
 					return new ProvidedDocumentInformation(((ITextEditorControlProvider)content).TextEditorControl.Document, fileName, 0);
 				}
@@ -217,11 +315,11 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 		
 		public struct Modification
 		{
-			public IDocument Document;
+			public ICSharpCode.TextEditor.Document.IDocument Document;
 			public int Offset;
 			public int LengthDifference;
 			
-			public Modification(IDocument document, int offset, int lengthDifference)
+			public Modification(ICSharpCode.TextEditor.Document.IDocument document, int offset, int lengthDifference)
 			{
 				this.Document = document;
 				this.Offset = offset;
@@ -229,7 +327,7 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 			}
 		}
 		
-		public static void ModifyDocument(List<Modification> modifications, IDocument doc, int offset, int length, string newName)
+		public static void ModifyDocument(List<Modification> modifications, ICSharpCode.TextEditor.Document.IDocument doc, int offset, int length, string newName)
 		{
 			foreach (Modification m in modifications) {
 				if (m.Document == doc) {
@@ -256,13 +354,13 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 		public static void ShowAsSearchResults(string pattern, List<Reference> list)
 		{
 			if (list == null) return;
-			List<SearchResult> results = new List<SearchResult>(list.Count);
+			List<SearchResultMatch> results = new List<SearchResultMatch>(list.Count);
 			foreach (Reference r in list) {
-				SearchResult res = new SearchResult(r.Offset, r.Length);
+				SearchResultMatch res = new SearchResultMatch(r.Offset, r.Length);
 				res.ProvidedDocumentInformation = GetDocumentInformation(r.FileName);
 				results.Add(res);
 			}
-			SearchInFilesManager.ShowSearchResults(pattern, results);
+			SearchResultPanel.Instance.ShowSearchResults(new SearchResult(pattern, results));
 		}
 		
 		public static void RenameReferences(List<Reference> list, string newName)
@@ -270,7 +368,7 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 			List<IViewContent> modifiedContents = new List<IViewContent>();
 			List<Modification> modifications = new List<Modification>();
 			foreach (Reference r in list) {
-				IViewContent viewContent = FileService.OpenFile(r.FileName).ViewContent;
+				IViewContent viewContent = FileService.OpenFile(r.FileName);
 				if (!modifiedContents.Contains(viewContent)) {
 					modifiedContents.Add(viewContent);
 				}
@@ -283,6 +381,90 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 				ParserService.ParseViewContent(viewContent);
 			}
 		}
+
+		public static void MoveClassToFile(IClass c, string newFileName)
+		{
+			LanguageProperties language = c.ProjectContent.Language;
+			string existingCode = ParserService.GetParseableFileContent(c.CompilationUnit.FileName);
+			DomRegion fullRegion = language.RefactoringProvider.GetFullCodeRangeForType(existingCode, c);
+			if (fullRegion.IsEmpty) return;
+			
+			Action removeExtractedCodeAction;
+			string newCode = ExtractCode(c, fullRegion, c.BodyRegion.BeginLine, out removeExtractedCodeAction);
+			
+			newCode = language.RefactoringProvider.CreateNewFileLikeExisting(existingCode, newCode);
+			if (newCode == null)
+				return;
+			IViewContent viewContent = FileService.NewFile(newFileName, newCode);
+			viewContent.PrimaryFile.SaveToDisk(newFileName);
+			// now that the code is saved in the other file, remove it from the original document
+			removeExtractedCodeAction();
+			
+			IProject project = (IProject)c.ProjectContent.Project;
+			if (project != null) {
+				FileProjectItem projectItem = new FileProjectItem(project, ItemType.Compile);
+				projectItem.FileName = newFileName;
+				ProjectService.AddProjectItem(project, projectItem);
+				FileService.FireFileCreated(newFileName, false);
+				project.Save();
+				ProjectBrowserPad.Instance.ProjectBrowserControl.RefreshView();
+			}
+		}
+		
+		public static string ExtractCode(IClass c, DomRegion codeRegion, int indentationLine, out Action removeExtractedCodeAction)
+		{
+			ICSharpCode.TextEditor.Document.IDocument doc = GetDocument(c);
+			if (indentationLine < 1) indentationLine = 1;
+			if (indentationLine >= doc.TotalNumberOfLines) indentationLine = doc.TotalNumberOfLines;
+			
+			LineSegment segment = doc.GetLineSegment(indentationLine - 1);
+			string mainLine = doc.GetText(segment);
+			string indentation = mainLine.Substring(0, mainLine.Length - mainLine.TrimStart().Length);
+			
+			segment = doc.GetLineSegment(codeRegion.BeginLine - 1);
+			int startOffset = segment.Offset;
+			segment = doc.GetLineSegment(codeRegion.EndLine - 1);
+			int endOffset = segment.Offset + segment.Length;
+			
+			StringReader reader = new StringReader(doc.GetText(startOffset, endOffset - startOffset));
+			removeExtractedCodeAction = delegate {
+				doc.Remove(startOffset, endOffset - startOffset);
+				doc.RequestUpdate(new ICSharpCode.TextEditor.TextAreaUpdate(ICSharpCode.TextEditor.TextAreaUpdateType.WholeTextArea));
+				doc.CommitUpdate();
+			};
+			
+			// now remove indentation from extracted source code
+			string line;
+			StringBuilder b = new StringBuilder();
+			int endOfLastFilledLine = 0;
+			while ((line = reader.ReadLine()) != null) {
+				int startpos;
+				for (startpos = 0; startpos < line.Length && startpos < indentation.Length; startpos++) {
+					if (line[startpos] != indentation[startpos])
+						break;
+				}
+				if (startpos == line.Length) {
+					// empty line
+					if (b.Length > 0) {
+						b.AppendLine();
+					}
+				} else {
+					b.Append(line, startpos, line.Length - startpos);
+					b.AppendLine();
+					endOfLastFilledLine = b.Length;
+				}
+			}
+			b.Length = endOfLastFilledLine;
+			return b.ToString();
+		}
+
+		public static ICSharpCode.TextEditor.Document.IDocument GetDocument(IClass c)
+		{
+			ITextEditorControlProvider tecp = FileService.OpenFile(c.CompilationUnit.FileName) as ITextEditorControlProvider;
+			if (tecp == null) return null;
+			return tecp.TextEditorControl.Document;
+		}
+		
 		#endregion
 	}
 }

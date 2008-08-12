@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2262 $</version>
+//     <version>$Revision: 3205 $</version>
 // </file>
 
 using System;
@@ -90,27 +90,40 @@ namespace ICSharpCode.TextEditor.Document
 	/// <summary>
 	/// The default <see cref="IDocument"/> implementation.
 	/// </summary>
-	internal class DefaultDocument : IDocument
+	internal sealed class DefaultDocument : IDocument
 	{
 		bool readOnly = false;
 		
-		ILineManager          lineTrackingStrategy = null;
-		ICustomLineManager    customLineManager    = null;
-		BookmarkManager       bookmarkManager      = null;
-		ITextBufferStrategy   textBufferStrategy   = null;
-		IFormattingStrategy   formattingStrategy   = null;
-		FoldingManager        foldingManager       = null;
-		UndoStack             undoStack            = new UndoStack();
+		LineManager           lineTrackingStrategy;
+		BookmarkManager       bookmarkManager;
+		ITextBufferStrategy   textBufferStrategy;
+		IFormattingStrategy   formattingStrategy;
+		FoldingManager        foldingManager;
+		UndoStack             undoStack = new UndoStack();
 		ITextEditorProperties textEditorProperties = new DefaultTextEditorProperties();
-		MarkerStrategy        markerStrategy = null;
+		MarkerStrategy        markerStrategy;
+		
+		public LineManager LineManager {
+			get { return lineTrackingStrategy; }
+			set { lineTrackingStrategy = value; }
+		}
+		
+		public event EventHandler<LineLengthChangeEventArgs> LineLengthChanged {
+			add { lineTrackingStrategy.LineLengthChanged += value; }
+			remove { lineTrackingStrategy.LineLengthChanged -= value; }
+		}
+		public event EventHandler<LineCountChangeEventArgs> LineCountChanged {
+			add { lineTrackingStrategy.LineCountChanged += value; }
+			remove { lineTrackingStrategy.LineCountChanged -= value; }
+		}
+		public event EventHandler<LineEventArgs> LineDeleted {
+			add { lineTrackingStrategy.LineDeleted += value; }
+			remove { lineTrackingStrategy.LineDeleted -= value; }
+		}
 		
 		public MarkerStrategy MarkerStrategy {
-			get {
-				return markerStrategy;
-			}
-			set {
-				markerStrategy = value;
-			}
+			get { return markerStrategy; }
+			set { markerStrategy = value; }
 		}
 		
 		public ITextEditorProperties TextEditorProperties {
@@ -128,7 +141,7 @@ namespace ICSharpCode.TextEditor.Document
 			}
 		}
 		
-		public List<LineSegment> LineSegmentCollection {
+		public IList<LineSegment> LineSegmentCollection {
 			get {
 				return lineTrackingStrategy.LineSegmentCollection;
 			}
@@ -140,15 +153,6 @@ namespace ICSharpCode.TextEditor.Document
 			}
 			set {
 				readOnly = value;
-			}
-		}
-		
-		public ILineManager LineManager {
-			get {
-				return lineTrackingStrategy;
-			}
-			set {
-				lineTrackingStrategy = value;
 			}
 		}
 		
@@ -204,15 +208,6 @@ namespace ICSharpCode.TextEditor.Document
 		}
 		
 		
-		public ICustomLineManager CustomLineManager {
-			get {
-				return customLineManager;
-			}
-			set {
-				customLineManager = value;
-			}
-		}
-		
 		public string TextContent {
 			get {
 				return GetText(0, textBufferStrategy.Length);
@@ -236,17 +231,12 @@ namespace ICSharpCode.TextEditor.Document
 				return;
 			}
 			OnDocumentAboutToBeChanged(new DocumentEventArgs(this, offset, -1, text));
-			DateTime time = DateTime.Now;
+			
 			textBufferStrategy.Insert(offset, text);
-			
-			time = DateTime.Now;
 			lineTrackingStrategy.Insert(offset, text);
-			
-			time = DateTime.Now;
 			
 			undoStack.Push(new UndoableInsert(this, offset, text));
 			
-			time = DateTime.Now;
 			OnDocumentChanged(new DocumentEventArgs(this, offset, -1, text));
 		}
 		
@@ -346,14 +336,14 @@ namespace ICSharpCode.TextEditor.Document
 			return lineTrackingStrategy.GetNextVisibleLineBelow(lineNumber, lineCount);
 		}
 		
-		public Point OffsetToPosition(int offset)
+		public TextLocation OffsetToPosition(int offset)
 		{
 			int lineNr = GetLineNumberForOffset(offset);
 			LineSegment line = GetLineSegment(lineNr);
-			return new Point(offset - line.Offset, lineNr);
+			return new TextLocation(offset - line.Offset, lineNr);
 		}
 		
-		public int PositionToOffset(Point p)
+		public int PositionToOffset(TextLocation p)
 		{
 			if (p.Y >= this.TotalNumberOfLines) {
 				return 0;
@@ -364,45 +354,52 @@ namespace ICSharpCode.TextEditor.Document
 		
 		public void UpdateSegmentListOnDocumentChange<T>(List<T> list, DocumentEventArgs e) where T : ISegment
 		{
+			int removedCharacters = e.Length > 0 ? e.Length : 0;
+			int insertedCharacters = e.Text != null ? e.Text.Length : 0;
 			for (int i = 0; i < list.Count; ++i) {
-				ISegment fm = list[i];
+				ISegment s = list[i];
+				int segmentStart = s.Offset;
+				int segmentEnd = s.Offset + s.Length;
 				
-				if (e.Offset <= fm.Offset && fm.Offset <= e.Offset + e.Length ||
-				    e.Offset <= fm.Offset + fm.Length && fm.Offset + fm.Length <= e.Offset + e.Length) {
+				if (e.Offset <= segmentStart) {
+					segmentStart -= removedCharacters;
+					if (segmentStart < e.Offset)
+						segmentStart = e.Offset;
+				}
+				if (e.Offset < segmentEnd) {
+					segmentEnd -= removedCharacters;
+					if (segmentEnd < e.Offset)
+						segmentEnd = e.Offset;
+				}
+				
+				Debug.Assert(segmentStart <= segmentEnd);
+				
+				if (segmentStart == segmentEnd) {
 					list.RemoveAt(i);
 					--i;
 					continue;
 				}
 				
-				if (fm.Offset  <= e.Offset && e.Offset <= fm.Offset + fm.Length) {
-					if (e.Text != null) {
-						fm.Length += e.Text.Length;
-					}
-					if (e.Length > 0) {
-						fm.Length -= e.Length;
-					}
-					continue;
-				}
+				if (e.Offset <= segmentStart)
+					segmentStart += insertedCharacters;
+				if (e.Offset < segmentEnd)
+					segmentEnd += insertedCharacters;
 				
-				if (fm.Offset >= e.Offset) {
-					if (e.Text != null) {
-						fm.Offset += e.Text.Length;
-					}
-					if (e.Length > 0) {
-						fm.Offset -= e.Length;
-					}
-				}
+				Debug.Assert(segmentStart < segmentEnd);
+				
+				s.Offset = segmentStart;
+				s.Length = segmentEnd - segmentStart;
 			}
 		}
 		
-		protected void OnDocumentAboutToBeChanged(DocumentEventArgs e)
+		void OnDocumentAboutToBeChanged(DocumentEventArgs e)
 		{
 			if (DocumentAboutToBeChanged != null) {
 				DocumentAboutToBeChanged(this, e);
 			}
 		}
 		
-		protected void OnDocumentChanged(DocumentEventArgs e)
+		void OnDocumentChanged(DocumentEventArgs e)
 		{
 			if (DocumentChanged != null) {
 				DocumentChanged(this, e);
@@ -423,6 +420,14 @@ namespace ICSharpCode.TextEditor.Document
 		
 		public void RequestUpdate(TextAreaUpdate update)
 		{
+			if (updateQueue.Count == 1 && updateQueue[0].TextAreaUpdateType == TextAreaUpdateType.WholeTextArea) {
+				// if we're going to update the whole text area, we don't need to store detail updates
+				return;
+			}
+			if (update.TextAreaUpdateType == TextAreaUpdateType.WholeTextArea) {
+				// if we're going to update the whole text area, we don't need to store detail updates
+				updateQueue.Clear();
+			}
 			updateQueue.Add(update);
 		}
 		
@@ -433,7 +438,7 @@ namespace ICSharpCode.TextEditor.Document
 			}
 		}
 		
-		protected virtual void OnTextContentChanged(EventArgs e)
+		void OnTextContentChanged(EventArgs e)
 		{
 			if (TextContentChanged != null) {
 				TextContentChanged(this, e);
@@ -442,5 +447,11 @@ namespace ICSharpCode.TextEditor.Document
 		
 		public event EventHandler UpdateCommited;
 		public event EventHandler TextContentChanged;
+		
+		[Conditional("DEBUG")]
+		internal static void ValidatePosition(IDocument document, TextLocation position)
+		{
+			document.GetLineSegment(position.Line);
+		}
 	}
 }

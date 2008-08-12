@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2522 $</version>
+//     <version>$Revision: 2819 $</version>
 // </file>
 
 using System;
@@ -22,9 +22,9 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 		{
 			InvocationExpression invExpr = ParseUtilCSharp.ParseExpression<InvocationExpression>("0xAFFE.ToString()");
 			Assert.AreEqual(0, invExpr.Arguments.Count);
-			Assert.IsTrue(invExpr.TargetObject is FieldReferenceExpression);
-			FieldReferenceExpression fre = invExpr.TargetObject as FieldReferenceExpression;
-			Assert.AreEqual("ToString", fre.FieldName);
+			Assert.IsTrue(invExpr.TargetObject is MemberReferenceExpression);
+			MemberReferenceExpression fre = invExpr.TargetObject as MemberReferenceExpression;
+			Assert.AreEqual("ToString", fre.MemberName);
 			
 			Assert.IsTrue(fre.TargetObject is PrimitiveExpression);
 			PrimitiveExpression pe = fre.TargetObject as PrimitiveExpression;
@@ -48,6 +48,40 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 			PrimitiveExpression pe = ParseUtilCSharp.ParseExpression<PrimitiveExpression>("'\\u0356'");
 			Assert.AreEqual("'\\u0356'", pe.StringValue);
 			Assert.AreEqual('\u0356', (char)pe.Value);
+		}
+		
+		[Test]
+		public void IntMinValueTest()
+		{
+			PrimitiveExpression pe = ParseUtilCSharp.ParseExpression<PrimitiveExpression>("-2147483648");
+			Assert.AreEqual(-2147483648, (int)pe.Value);
+		}
+		
+		[Test]
+		public void IntMaxValueTest()
+		{
+			PrimitiveExpression pe = ParseUtilCSharp.ParseExpression<PrimitiveExpression>("2147483647");
+			Assert.AreEqual(2147483647, (int)pe.Value);
+			
+			pe = ParseUtilCSharp.ParseExpression<PrimitiveExpression>("2147483648");
+			Assert.AreEqual(2147483648, (uint)pe.Value);
+		}
+		
+		[Test]
+		public void LongMinValueTest()
+		{
+			PrimitiveExpression pe = ParseUtilCSharp.ParseExpression<PrimitiveExpression>("-9223372036854775808");
+			Assert.AreEqual(-9223372036854775808, (long)pe.Value);
+		}
+		
+		[Test]
+		public void LongMaxValueTest()
+		{
+			PrimitiveExpression pe = ParseUtilCSharp.ParseExpression<PrimitiveExpression>("9223372036854775807");
+			Assert.AreEqual(9223372036854775807, (long)pe.Value);
+			
+			pe = ParseUtilCSharp.ParseExpression<PrimitiveExpression>("9223372036854775808");
+			Assert.AreEqual(9223372036854775808, (ulong)pe.Value);
 		}
 		
 		[Test]

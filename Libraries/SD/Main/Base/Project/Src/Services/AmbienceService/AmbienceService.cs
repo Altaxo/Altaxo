@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2500 $</version>
+//     <version>$Revision: 2990 $</version>
 // </file>
 
 using System;
@@ -18,7 +18,6 @@ namespace ICSharpCode.SharpDevelop
 	{
 		const string ambienceProperty       = "SharpDevelop.UI.CurrentAmbience";
 		const string codeGenerationProperty = "SharpDevelop.UI.CodeGenerationOptions";
-		const string textEditorProperty     = "ICSharpCode.TextEditor.Document.Document.DefaultDocumentAggregatorProperties";
 		
 		static AmbienceService()
 		{
@@ -34,7 +33,7 @@ namespace ICSharpCode.SharpDevelop
 		static List<CodeGenerator> codeGenerators = new List<CodeGenerator>();
 		
 		static void ApplyCodeGenerationProperties(CodeGenerator generator)
-		{			
+		{
 			CodeGeneratorOptions options = generator.Options;
 			System.CodeDom.Compiler.CodeGeneratorOptions cdo = new CodeDOMGeneratorUtility().CreateCodeGeneratorOptions;
 			
@@ -76,30 +75,38 @@ namespace ICSharpCode.SharpDevelop
 			}
 		}
 		
-		static AmbienceReflectionDecorator defaultAmbience;
+		static IAmbience defaultAmbience;
 		
-		public static AmbienceReflectionDecorator CurrentAmbience {
-			get {
-				if (UseProjectAmbienceIfPossible) {
-					ICSharpCode.SharpDevelop.Project.IProject p = ICSharpCode.SharpDevelop.Project.ProjectService.CurrentProject;
-					if (p != null) {
-						IAmbience ambience = p.Ambience;
-						if (ambience != null) {
-							return new AmbienceReflectionDecorator(ambience);
-						}
-					}
+		/// <summary>
+		/// Gets the current ambience.
+		/// Might return a new ambience object, or use an existing. Not thread-safe.
+		/// </summary>
+		public static IAmbience GetCurrentAmbience()
+		{
+			Gui.WorkbenchSingleton.AssertMainThread();
+			
+			IAmbience ambience;
+			if (UseProjectAmbienceIfPossible) {
+				ICSharpCode.SharpDevelop.Project.IProject p = ICSharpCode.SharpDevelop.Project.ProjectService.CurrentProject;
+				if (p != null) {
+					ambience = p.GetAmbience();
+					if (ambience != null)
+						return ambience;
 				}
-				if (defaultAmbience == null) {
-					string language = DefaultAmbienceName;
-					IAmbience ambience = (IAmbience)AddInTree.BuildItem("/SharpDevelop/Workbench/Ambiences/" + language, null);
-					if (ambience == null) {
-						MessageService.ShowError("${res:ICSharpCode.SharpDevelop.Services.AmbienceService.AmbienceNotFoundError}");
-						return null;
-					}
-					defaultAmbience = new AmbienceReflectionDecorator(ambience);
-				}
-				return defaultAmbience;
 			}
+			if (defaultAmbience == null) {
+				string language = DefaultAmbienceName;
+				try {
+					ambience = (IAmbience)AddInTree.BuildItem("/SharpDevelop/Workbench/Ambiences/" + language, null);
+				} catch (TreePathNotFoundException) {
+					ambience = null;
+				}
+				if (ambience == null && Gui.WorkbenchSingleton.MainForm != null) {
+					MessageService.ShowError("${res:ICSharpCode.SharpDevelop.Services.AmbienceService.AmbienceNotFoundError}");
+				}
+				defaultAmbience = ambience ?? new NetAmbience();
+			}
+			return defaultAmbience;
 		}
 		
 		public static string DefaultAmbienceName {
@@ -114,10 +121,9 @@ namespace ICSharpCode.SharpDevelop
 		static void PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
 			if (e.Key == ambienceProperty) {
-				defaultAmbience = null;
 				OnAmbienceChanged(EventArgs.Empty);
 			}
-			if (e.Key == codeGenerationProperty || e.Key == textEditorProperty) {
+			if (e.Key == codeGenerationProperty) {
 				codeGenerators.ForEach(ApplyCodeGenerationProperties);
 			}
 		}

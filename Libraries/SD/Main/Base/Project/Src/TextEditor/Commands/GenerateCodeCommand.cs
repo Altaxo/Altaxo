@@ -2,11 +2,12 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 3067 $</version>
 // </file>
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor;
 using ICSharpCode.SharpDevelop.Dom;
@@ -21,16 +22,16 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 	{
 		public override void Run()
 		{
-			IWorkbenchWindow window = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow;
+			IViewContent viewContent = WorkbenchSingleton.Workbench.ActiveViewContent;
 			
-			if (window == null || !(window.ViewContent is ITextEditorControlProvider)) {
+			if (viewContent == null || !(viewContent is ITextEditorControlProvider)) {
 				return;
 			}
-			TextEditorControl textEditorControl = ((ITextEditorControlProvider)window.ViewContent).TextEditorControl;
+			TextEditorControl textEditorControl = ((ITextEditorControlProvider)viewContent).TextEditorControl;
 			
 			ParseInformation parseInformation;
 			
-			if (window.ViewContent.IsUntitled) {
+			if (viewContent.PrimaryFile.IsUntitled) {
 				parseInformation = ParserService.ParseFile(textEditorControl.FileName, textEditorControl.Document.TextContent);
 			} else {
 				parseInformation = ParserService.GetParseInformation(textEditorControl.FileName);
@@ -47,9 +48,8 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 			IClass currentClass = GetCurrentClass(textEditorControl, cu, textEditorControl.FileName);
 			
 			if (currentClass != null) {
-				ArrayList categories = new ArrayList();
-				ArrayList generators = AddInTree.BuildItems("/AddIns/DefaultTextEditor/CodeGenerator", this, true);
-				using (CodeGenerationForm form = new CodeGenerationForm(textEditorControl, (CodeGeneratorBase[])generators.ToArray(typeof(CodeGeneratorBase)), currentClass)) {
+				var generators = AddInTree.BuildItems<CodeGeneratorBase>("/AddIns/DefaultTextEditor/CodeGenerator", this, true);
+				using (CodeGenerationForm form = new CodeGenerationForm(textEditorControl, generators.ToArray(), currentClass)) {
 					form.ShowDialog(ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.MainForm);
 				}
 			}
@@ -69,7 +69,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 			}
 			return null;
 		}
-		IClass FindClass(ICollection classes, int lineNr, int column)
+		IClass FindClass(ICollection<IClass> classes, int lineNr, int column)
 		{
 			foreach (IClass c in classes) {
 				if (c.Region.IsInside(lineNr, column)) {
@@ -78,16 +78,6 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 				}
 			}
 			return null;
-		}
-	}
-	
-	public class SurroundCodeAction : AbstractEditAction
-	{
-		
-		public override void Execute(TextArea editActionHandler)
-		{
-//			SelectionWindow selectionWindow = new SelectionWindow("Surround");
-//			selectionWindow.Show();
 		}
 	}
 }

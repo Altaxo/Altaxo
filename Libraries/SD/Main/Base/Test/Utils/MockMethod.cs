@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Matthew Ward" email="mrward@users.sourceforge.net"/>
-//     <version>$Revision: 2340 $</version>
+//     <version>$Revision: 3073 $</version>
 // </file>
 
 using System;
@@ -14,19 +14,26 @@ namespace ICSharpCode.SharpDevelop.Tests.Utils
 	public class MockMethod : IMethod
 	{
 		string name = String.Empty;
-		bool overridable;
-		bool isConst;
-		bool isPrivate;
-		IClass declaringType;
 		
 		public MockMethod(string name)
 		{
 			this.name = name;
 		}
 		
+		public string Name {
+			get {
+				return name;
+			}
+		}
+		
+		public IClass DeclaringType { get; set; }
+		public bool IsConst { get; set; }
+		public bool IsPrivate { get; set; }
+		public bool IsOverridable { get; set; }
+		
 		public IList<ITypeParameter> TypeParameters {
 			get {
-				throw new NotImplementedException();
+				return new ITypeParameter[0];
 			}
 		}
 		
@@ -36,9 +43,15 @@ namespace ICSharpCode.SharpDevelop.Tests.Utils
 			}
 		}
 		
-		public IList<IParameter> Parameters {
+		public IList<string> HandlesClauses {
 			get {
 				throw new NotImplementedException();
+			}
+		}
+		
+		public IList<IParameter> Parameters {
+			get {
+				return new IParameter[0];
 			}
 		}
 		
@@ -66,12 +79,6 @@ namespace ICSharpCode.SharpDevelop.Tests.Utils
 		public DomRegion Region {
 			get {
 				throw new NotImplementedException();
-			}
-		}
-		
-		public string Name {
-			get {
-				return name;
 			}
 		}
 		
@@ -108,20 +115,8 @@ namespace ICSharpCode.SharpDevelop.Tests.Utils
 			}
 		}
 		
-		public IClass DeclaringType {
-			get {
-				return declaringType;
-			}
-			set {
-				declaringType = value;
-			}
-		}
-		
 		public ModifierEnum Modifiers {
 			get {
-				throw new NotImplementedException();
-			}
-			set {
 				throw new NotImplementedException();
 			}
 		}
@@ -156,15 +151,6 @@ namespace ICSharpCode.SharpDevelop.Tests.Utils
 			}
 		}
 		
-		public bool IsConst {
-			get {
-				return isConst;
-			}
-			set {
-				isConst = value;
-			}
-		}
-		
 		public bool IsVirtual {
 			get {
 				throw new NotImplementedException();
@@ -180,15 +166,6 @@ namespace ICSharpCode.SharpDevelop.Tests.Utils
 		public bool IsProtected {
 			get {
 				throw new NotImplementedException();
-			}
-		}
-		
-		public bool IsPrivate {
-			get {
-				return isPrivate;
-			}
-			set {
-				isPrivate = value;
 			}
 		}
 		
@@ -218,16 +195,24 @@ namespace ICSharpCode.SharpDevelop.Tests.Utils
 		
 		public bool IsOverride {
 			get {
+				return false;
+			}
+		}
+		
+		public bool IsFrozen {
+			get {
 				throw new NotImplementedException();
 			}
 		}
 		
-		public bool IsOverridable {
+		public void Freeze()
+		{
+			throw new NotImplementedException();
+		}
+			
+		public IMember GenericMember {
 			get {
-				return overridable;
-			}
-			set {
-				overridable = value;
+				throw new NotImplementedException();
 			}
 		}
 		
@@ -252,14 +237,14 @@ namespace ICSharpCode.SharpDevelop.Tests.Utils
 			}
 		}
 		
-		public bool IsAccessible(IClass callingClass, bool isClassInInheritanceTree)
+		public IMember CreateSpecializedMember()
 		{
 			throw new NotImplementedException();
 		}
 		
-		public bool MustBeShown(IClass callingClass, bool showStatic, bool isClassInInheritanceTree)
+		public bool IsAccessible(IClass callingClass, bool isClassInInheritanceTree)
 		{
-			throw new NotImplementedException();
+			return !IsPrivate;
 		}
 		
 		public int CompareTo(object obj)
@@ -271,6 +256,5 @@ namespace ICSharpCode.SharpDevelop.Tests.Utils
 		{
 			throw new NotImplementedException();
 		}
-		
 	}
 }

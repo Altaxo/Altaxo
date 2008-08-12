@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1968 $</version>
+//     <version>$Revision: 3100 $</version>
 // </file>
 
 using System;
@@ -102,5 +102,17 @@ namespace ICSharpCode.SharpDevelop.Debugging
 				return codon.Properties["supportsExecutionControl"] == "true";
 			}
 		}
+		
+		public bool SupportsAttaching {
+			get {
+				return codon.Properties["supportsAttaching"] == "true";
+			}
+		}
+
+		public bool SupportsDetaching {
+			get {
+				return codon.Properties["supportsDetaching"] == "true";
+			}
+		}		
 	}
 }

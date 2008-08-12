@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="none" email=""/>
-//     <version>$Revision: 2273 $</version>
+//     <version>$Revision: 2986 $</version>
 // </file>
 
 using System;
@@ -24,7 +24,11 @@ namespace ICSharpCode.SharpDevelop.Gui
 	{
 		public string CurrentFontString {
 			get {
-				return CurrentFont.ToString();
+				Font font = CurrentFont;
+				if (font != null)
+					return font.ToString();
+				else
+					return null;
 			}
 			set {
 				CurrentFont = FontSelectionPanel.ParseFont(value);

@@ -2,77 +2,91 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2929 $</version>
 // </file>
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace ICSharpCode.SharpDevelop.Dom
 {
-	public class DefaultAttribute : IAttribute
+	public class DefaultAttribute : AbstractFreezable, IAttribute
 	{
-		public static readonly IList<IAttribute> EmptyAttributeList = new List<IAttribute>().AsReadOnly();
+		public static readonly IList<IAttribute> EmptyAttributeList = EmptyList<IAttribute>.Instance;
 		
-		string name;
-		List<AttributeArgument> positionalArguments;
-		SortedList<string, AttributeArgument> namedArguments;
+		IList<object> positionalArguments;
+		IDictionary<string, object> namedArguments;
+		
+		protected override void FreezeInternal()
+		{
+			if (positionalArguments.Count == 0)
+				positionalArguments = EmptyList<object>.Instance;
+			else
+				positionalArguments = new ReadOnlyCollection<object>(positionalArguments);
+			
+			namedArguments = new ReadOnlyDictionary<string, object>(namedArguments);
+			
+			base.FreezeInternal();
+		}
+		
+		public DefaultAttribute(IReturnType attributeType) : this(attributeType, AttributeTarget.None) {}
+		
+		public DefaultAttribute(IReturnType attributeType, AttributeTarget attributeTarget)
+			: this(attributeType, attributeTarget, null, null)
+		{
+		}
+		
+		public DefaultAttribute(IReturnType attributeType, AttributeTarget attributeTarget, IList<object> positionalArguments, IDictionary<string, object> namedArguments)
+		{
+			if (attributeType == null)
+				throw new ArgumentNullException("attributeType");
+			this.AttributeType = attributeType;
+			this.AttributeTarget = attributeTarget;
+			this.positionalArguments = positionalArguments ?? new List<object>();
+			this.namedArguments = namedArguments ?? new SortedList<string, object>();
+		}
+		
+		IReturnType attributeType;
+		public IReturnType AttributeType {
+			get { return attributeType; }
+			set {
+				CheckBeforeMutation();
+				attributeType = value;
+			}
+		}
 		AttributeTarget attributeTarget;
-		
-		public DefaultAttribute(string name) : this(name, AttributeTarget.None) {}
-		
-		public DefaultAttribute(string name, AttributeTarget attributeTarget)
-		{
-			this.name = name;
-			this.attributeTarget = attributeTarget;
-			this.positionalArguments = new List<AttributeArgument>();
-			this.namedArguments = new SortedList<string, AttributeArgument>();
-		}
-		
-		public DefaultAttribute(string name, AttributeTarget attributeTarget, List<AttributeArgument> positionalArguments, SortedList<string, AttributeArgument> namedArguments)
-		{
-			this.name = name;
-			this.attributeTarget = attributeTarget;
-			this.positionalArguments = positionalArguments;
-			this.namedArguments = namedArguments;
-		}
-		
-		public string Name {
-			get {
-				return name;
-			}
-			set {
-				name = value;
-			}
-		}
-		
 		public AttributeTarget AttributeTarget {
-			get {
-				return attributeTarget;
-			}
+			get { return attributeTarget; }
 			set {
+				CheckBeforeMutation();
 				attributeTarget = value;
 			}
 		}
 		
-		public List<AttributeArgument> PositionalArguments {
-			get {
-				return positionalArguments;
+		public IList<object> PositionalArguments {
+			get { return positionalArguments; }
+		}
+		
+		public IDictionary<string, object> NamedArguments {
+			get { return namedArguments; }
+		}
+		
+		ICompilationUnit compilationUnit;
+		public ICompilationUnit CompilationUnit {
+			get { return compilationUnit; }
+			set {
+				CheckBeforeMutation();
+				compilationUnit = value;
 			}
 		}
-		
-		public SortedList<string, AttributeArgument> NamedArguments {
-			get {
-				return namedArguments;
+		DomRegion region;
+		public DomRegion Region {
+			get { return region; }
+			set {
+				CheckBeforeMutation();
+				region = value;
 			}
-		}
-		
-		public virtual int CompareTo(IAttribute value) {
-			return Name.CompareTo(value.Name);
-		}
-		
-		int IComparable.CompareTo(object value) {
-			return CompareTo((IAttribute)value);
 		}
 	}
 }

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2539 $</version>
+//     <version>$Revision: 2932 $</version>
 // </file>
 
 using System;
@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Text;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
@@ -36,6 +37,7 @@ namespace ICSharpCode.TextEditor
 		/// </summary>
 		protected Dictionary<Keys, IEditAction> editactions = new Dictionary<Keys, IEditAction>();
 		
+		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public ITextEditorProperties TextEditorProperties {
 			get {
@@ -83,17 +85,6 @@ namespace ICSharpCode.TextEditor
 		}
 		
 		/// <value>
-		/// true, if the textarea is updating it's status, while
-		/// it updates it status no redraw operation occurs.
-		/// </value>
-		[Browsable(false)]
-		public bool IsUpdating {
-			get {
-				return updateLevel > 0;
-			}
-		}
-		
-		/// <value>
 		/// The current document
 		/// </value>
 		[Browsable(false)]
@@ -103,13 +94,25 @@ namespace ICSharpCode.TextEditor
 				return document;
 			}
 			set {
+				if (value == null)
+					throw new ArgumentNullException("value");
+				if (document != null) {
+					document.DocumentChanged -= OnDocumentChanged;
+				}
 				document = value;
 				document.UndoStack.TextEditorControl = this;
+				document.DocumentChanged += OnDocumentChanged;
 			}
 		}
 		
-		[Browsable(true)]
+		void OnDocumentChanged(object sender, EventArgs e)
+		{
+			OnTextChanged(e);
+		}
+		
+		[EditorBrowsable(EditorBrowsableState.Always), Browsable(true)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
+		[Editor("System.ComponentModel.Design.MultilineStringEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", typeof(System.Drawing.Design.UITypeEditor))]
 		public override string Text {
 			get {
 				return Document.TextContent;
@@ -117,6 +120,13 @@ namespace ICSharpCode.TextEditor
 			set {
 				Document.TextContent = value;
 			}
+		}
+		
+		[EditorBrowsable(EditorBrowsableState.Always), Browsable(true)]
+		public new event EventHandler TextChanged
+		{
+			add { base.TextChanged += value; }
+			remove { base.TextChanged -= value; }
 		}
 		
 		static Font ParseFont(string font)
@@ -129,7 +139,6 @@ namespace ICSharpCode.TextEditor
 		/// If set to true the contents can't be altered.
 		/// </value>
 		[Browsable(false)]
-		[ReadOnly(true)]
 		public bool IsReadOnly {
 			get {
 				return Document.ReadOnly;
@@ -139,10 +148,14 @@ namespace ICSharpCode.TextEditor
 			}
 		}
 		
+		/// <value>
+		/// true, if the textarea is updating it's status, while
+		/// it updates it status no redraw operation occurs.
+		/// </value>
 		[Browsable(false)]
 		public bool IsInUpdate {
 			get {
-				return this.updateLevel > 0;
+				return updateLevel > 0;
 			}
 		}
 		
@@ -174,17 +187,17 @@ namespace ICSharpCode.TextEditor
 		}
 		
 		/// <value>
-		/// If true antialiased fonts are used inside the textarea
+		/// Specifies the quality of text rendering (whether to use hinting and/or anti-aliasing).
 		/// </value>
 		[Category("Appearance")]
-		[DefaultValue(false)]
-		[Description("If true antialiased fonts are used inside the textarea")]
-		public bool UseAntiAliasFont {
+		[DefaultValue(TextRenderingHint.SystemDefault)]
+		[Description("Specifies the quality of text rendering (whether to use hinting and/or anti-aliasing).")]
+		public TextRenderingHint TextRenderingHint {
 			get {
-				return document.TextEditorProperties.UseAntiAliasedFont;
+				return document.TextEditorProperties.TextRenderingHint;
 			}
 			set {
-				document.TextEditorProperties.UseAntiAliasedFont = value;
+				document.TextEditorProperties.TextRenderingHint = value;
 				OptionsChanged();
 			}
 		}
@@ -241,7 +254,7 @@ namespace ICSharpCode.TextEditor
 		/// If true the vertical ruler is shown in the textarea
 		/// </value>
 		[Category("Appearance")]
-		[DefaultValue(false)]
+		[DefaultValue(true)]
 		[Description("If true the vertical ruler is shown in the textarea")]
 		public bool ShowVRuler {
 			get {
@@ -289,7 +302,7 @@ namespace ICSharpCode.TextEditor
 		/// If true invalid lines are marked in the textarea
 		/// </value>
 		[Category("Appearance")]
-		[DefaultValue(true)]
+		[DefaultValue(false)]
 		[Description("If true invalid lines are marked in the textarea")]
 		public bool ShowInvalidLines {
 			get {
@@ -331,7 +344,7 @@ namespace ICSharpCode.TextEditor
 		}
 		
 		[Category("Appearance")]
-		[DefaultValue(true)]
+		[DefaultValue(false)]
 		[Description("If true the icon bar is displayed")]
 		public bool IsIconBarVisible {
 			get {
@@ -412,22 +425,6 @@ namespace ICSharpCode.TextEditor
 		/// </value>
 		[Category("Behavior")]
 		[DefaultValue(false)]
-		[Description("Creates a backup copy for overwritten files")]
-		public bool CreateBackupCopy {
-			get {
-				return document.TextEditorProperties.CreateBackupCopy;
-			}
-			set {
-				document.TextEditorProperties.CreateBackupCopy = value;
-				OptionsChanged();
-			}
-		}
-		
-		/// <value>
-		/// if true spaces are converted to tabs
-		/// </value>
-		[Category("Behavior")]
-		[DefaultValue(false)]
 		[Description("Hide the mouse cursor while typing")]
 		public bool HideMouseCursor {
 			get {
@@ -476,6 +473,7 @@ namespace ICSharpCode.TextEditor
 		/// purposes.
 		/// </value>
 		[Browsable(true)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
 		[Description("The base font of the text area. No bold or italic fonts can be used because bold/italic is reserved for highlighting purposes.")]
 		public override Font Font {
 			get {
@@ -619,6 +617,24 @@ namespace ICSharpCode.TextEditor
 		/// <param name="autodetectEncoding">Automatically detect file encoding and set Encoding property to the detected encoding.</param>
 		public void LoadFile(string fileName, bool autoLoadHighlighting, bool autodetectEncoding)
 		{
+			using (FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read)) {
+				LoadFile(fileName, fs, autoLoadHighlighting, autodetectEncoding);
+			}
+		}
+		
+		/// <remarks>
+		/// Loads a file from the specified stream.
+		/// </remarks>
+		/// <param name="fileName">The name of the file to open. Used to find the correct highlighting strategy
+		/// if autoLoadHighlighting is active, and sets the filename property to this value.</param>
+		/// <param name="stream">The stream to actually load the file content from.</param>
+		/// <param name="autoLoadHighlighting">Automatically load the highlighting for the file</param>
+		/// <param name="autodetectEncoding">Automatically detect file encoding and set Encoding property to the detected encoding.</param>
+		public void LoadFile(string fileName, Stream stream, bool autoLoadHighlighting, bool autodetectEncoding)
+		{
+			if (stream == null)
+				throw new ArgumentNullException("stream");
+			
 			BeginUpdate();
 			document.TextContent = String.Empty;
 			document.UndoStack.ClearAll();
@@ -633,7 +649,7 @@ namespace ICSharpCode.TextEditor
 			
 			if (autodetectEncoding) {
 				Encoding encoding = this.Encoding;
-				Document.TextContent = Util.FileReader.ReadFileContent(fileName, ref encoding, this.TextEditorProperties.Encoding);
+				Document.TextContent = Util.FileReader.ReadFileContent(stream, ref encoding);
 				this.Encoding = encoding;
 			} else {
 				using (StreamReader reader = new StreamReader(fileName, this.Encoding)) {
@@ -662,43 +678,37 @@ namespace ICSharpCode.TextEditor
 		}
 		
 		/// <remarks>
-		/// Saves a file given by fileName
+		/// Saves the text editor content into the file.
 		/// </remarks>
 		public void SaveFile(string fileName)
 		{
-			if (document.TextEditorProperties.CreateBackupCopy) {
-				MakeBackupCopy(fileName);
+			using (FileStream fs = new FileStream(fileName, FileMode.Create, FileAccess.Write)) {
+				SaveFile(fs);
 			}
-			
-			StreamWriter stream;
-			Encoding encoding = this.Encoding;
-			if (encoding == null) { // use UTF8 with BOM by default
-				stream = new StreamWriter(fileName, false, Encoding.UTF8);
-			} else {
-				stream = new StreamWriter(fileName, false, encoding);
-			}
-			
-			foreach (LineSegment line in Document.LineSegmentCollection) {
-				stream.Write(Document.GetText(line.Offset, line.Length));
-				stream.Write(document.TextEditorProperties.LineTerminator);
-			}
-			
-			stream.Close();
-			
 			this.FileName = fileName;
 		}
 		
-		void MakeBackupCopy(string fileName)
+		/// <remarks>
+		/// Saves the text editor content into the specified stream.
+		/// Does not close the stream.
+		/// </remarks>
+		public void SaveFile(Stream stream)
 		{
-			try {
-				if (File.Exists(fileName)) {
-					string backupName = fileName + ".bak";
-					File.Copy(fileName, backupName, true);
+			StreamWriter streamWriter = new StreamWriter(stream, this.Encoding ?? Encoding.UTF8);
+			
+			// save line per line to apply the LineTerminator to all lines
+			// (otherwise we might save files with mixed-up line endings)
+			foreach (LineSegment line in Document.LineSegmentCollection) {
+				streamWriter.Write(Document.GetText(line.Offset, line.Length));
+				if (line.DelimiterLength > 0) {
+					char charAfterLine = Document.GetCharAt(line.Offset + line.Length);
+					if (charAfterLine != '\n' && charAfterLine != '\r')
+						throw new InvalidOperationException("The document cannot be saved because it is corrupted.");
+					// only save line terminator if the line has one
+					streamWriter.Write(document.TextEditorProperties.LineTerminator);
 				}
-			} catch (Exception) {
-//
-//				MessageService.ShowError(e, "Can not create backup copy of " + fileName);
 			}
+			streamWriter.Flush();
 		}
 		
 		public abstract void OptionsChanged();
@@ -720,7 +730,7 @@ namespace ICSharpCode.TextEditor
 		/// </remarks>
 		public override void Refresh()
 		{
-			if (IsUpdating) {
+			if (IsInUpdate) {
 				return;
 			}
 			base.Refresh();
@@ -743,14 +753,6 @@ namespace ICSharpCode.TextEditor
 			}
 		}
 		
-		protected virtual void OnChanged(EventArgs e)
-		{
-			if (Changed != null) {
-				Changed(this, e);
-			}
-		}
-		
 		public event EventHandler FileNameChanged;
-		public event EventHandler Changed;
 	}
 }

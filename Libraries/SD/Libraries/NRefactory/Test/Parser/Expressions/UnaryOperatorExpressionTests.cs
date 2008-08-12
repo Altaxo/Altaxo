@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1609 $</version>
+//     <version>$Revision: 3120 $</version>
 // </file>
 
 using System;
@@ -76,13 +76,13 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 		[Test]
 		public void CSharpStarTest()
 		{
-			CSharpTestUnaryOperatorExpressionTest("*a", UnaryOperatorType.Star);
+			CSharpTestUnaryOperatorExpressionTest("*a", UnaryOperatorType.Dereference);
 		}
 		
 		[Test]
 		public void CSharpBitWiseAndTest()
 		{
-			CSharpTestUnaryOperatorExpressionTest("&a", UnaryOperatorType.BitWiseAnd);
+			CSharpTestUnaryOperatorExpressionTest("&a", UnaryOperatorType.AddressOf);
 		}
 		#endregion
 		

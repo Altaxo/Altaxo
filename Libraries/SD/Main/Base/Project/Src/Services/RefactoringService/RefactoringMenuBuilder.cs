@@ -2,11 +2,12 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 3090 $</version>
 // </file>
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 
 using ICSharpCode.Core;
@@ -41,7 +42,11 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 			List<string> definitions = new List<string>();
 			
 			// Include definitions (use the bookmarks which should already be present)
-			foreach (Bookmark mark in doc.BookmarkManager.Marks) {
+			
+			// we need to use .ToArray() because the bookmarks might change during enumeration:
+			// building member/class submenus can cause reparsing the current file, which might change
+			// the available bookmarks
+			foreach (Bookmark mark in doc.BookmarkManager.Marks.ToArray()) {
 				if (mark != null && mark.LineNumber == caretLine) {
 					ClassMemberBookmark cmb = mark as ClassMemberBookmark;
 					ClassBookmark cb = mark as ClassBookmark;
@@ -58,7 +63,7 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 					}
 					if (type != null) {
 						definitions.Add(type.DotNetName);
-						item = new ToolStripMenuItem(type.Name, ClassBrowserIconService.ImageList.Images[ClassBrowserIconService.GetIcon(type)]);
+						item = new ToolStripMenuItem(ClassNode.GetText(type), ClassBrowserIconService.ImageList.Images[ClassBrowserIconService.GetIcon(type)]);
 						MenuService.AddItemsToMenu(item.DropDown.Items,
 						                           cb ?? new ClassBookmark(textArea.Document, type),
 						                           ClassBookmark.ContextMenuPath);
@@ -76,8 +81,8 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 		repeatResolve:
 			rr = ResolveExpressionAtCaret(textArea, expressionResult);
 			item = null;
-			if (rr is MethodResolveResult) {
-				item = MakeItem(definitions, ((MethodResolveResult)rr).GetMethodIfSingleOverload());
+			if (rr is MethodGroupResolveResult) {
+				item = MakeItem(definitions, ((MethodGroupResolveResult)rr).GetMethodIfSingleOverload());
 			} else if (rr is MemberResolveResult) {
 				MemberResolveResult mrr = (MemberResolveResult)rr;
 				item = MakeItem(definitions, mrr.ResolvedMember);
@@ -92,21 +97,28 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 			} else if (rr is TypeResolveResult) {
 				item = MakeItem(definitions, ((TypeResolveResult)rr).ResolvedClass);
 			} else if (rr is LocalResolveResult) {
-				item = MakeItem((LocalResolveResult)rr, caretLine + 1 == ((LocalResolveResult)rr).Field.Region.BeginLine);
+				item = MakeItem((LocalResolveResult)rr, caretLine + 1 == ((LocalResolveResult)rr).VariableDefinitionRegion.BeginLine);
 				insertIndex = 0;	// Insert local variable menu item at the topmost position.
+			} else if (rr is UnknownIdentifierResolveResult) {
+				item = MakeItemForResolveError((UnknownIdentifierResolveResult)rr, expressionResult.Context, textArea);
+				insertIndex = 0;	// Insert menu item at the topmost position.
+			} else if (rr is UnknownConstructorCallResolveResult) {
+				item = MakeItemForResolveError((UnknownConstructorCallResolveResult)rr, expressionResult.Context, textArea);
+				insertIndex = 0;	// Insert menu item at the topmost position.
 			}
 			if (item != null) {
 				resultItems.Insert(insertIndex, item);
 			}
 			
 			// Include menu for current class and method
+			ICompilationUnit cu = null;
 			IMember callingMember = null;
-			if (rr != null) {
+			if (rr != null && rr.CallingMember != null) {
 				callingMember = rr.CallingMember;
 			} else {
 				ParseInformation parseInfo = ParserService.GetParseInformation(textEditorControl.FileName);
 				if (parseInfo != null) {
-					ICompilationUnit cu = parseInfo.MostRecentCompilationUnit;
+					cu = parseInfo.MostRecentCompilationUnit;
 					if (cu != null) {
 						IClass callingClass = cu.GetInnermostClass(caretLine + 1, textArea.Caret.Column + 1);
 						callingMember = GetCallingMember(callingClass, caretLine + 1, textArea.Caret.Column + 1);
@@ -126,6 +138,52 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 			} else {
 				resultItems.Add(new MenuSeparator());
 				return resultItems.ToArray();
+			}
+		}
+		
+		ToolStripMenuItem MakeItemForResolveError(UnknownIdentifierResolveResult rr, ExpressionContext context, TextArea textArea)
+		{
+			return MakeItemForUnknownClass(rr.CallingClass, rr.Identifier, textArea);
+		}
+		
+		ToolStripMenuItem MakeItemForResolveError(UnknownConstructorCallResolveResult rr, ExpressionContext context, TextArea textArea)
+		{
+			return MakeItemForUnknownClass(rr.CallingClass, rr.TypeName, textArea);
+		}
+		
+		ToolStripMenuItem MakeItemForUnknownClass(IClass callingClass, string unknownClassName, TextArea textArea)
+		{
+			if (callingClass == null)
+				return null;
+			IProjectContent pc = callingClass.ProjectContent;
+			if (!pc.Language.RefactoringProvider.IsEnabledForFile(callingClass.CompilationUnit.FileName))
+				return null;
+			ToolStripMenuItem item = MakeItemInternal(unknownClassName, ClassBrowserIconService.GotoArrowIndex, callingClass.CompilationUnit, DomRegion.Empty);
+			List<IClass> searchResults = new List<IClass>();
+			SearchAllClassesWithName(searchResults, pc, unknownClassName, pc.Language);
+			foreach (IProjectContent rpc in pc.ReferencedContents) {
+				SearchAllClassesWithName(searchResults, rpc, unknownClassName, pc.Language);
+			}
+			if (searchResults.Count == 0)
+				return null;
+			foreach (IClass c in searchResults) {
+				string newNamespace = c.Namespace;
+				ToolStripMenuItem subItem = new ToolStripMenuItem("using " + newNamespace, ClassBrowserIconService.ImageList.Images[ClassBrowserIconService.NamespaceIndex]);
+				item.DropDownItems.Add(subItem);
+				subItem.Click += delegate {
+					NamespaceRefactoringService.AddUsingDeclaration(callingClass.CompilationUnit, textArea.Document, newNamespace, true);
+					textArea.MotherTextEditorControl.Refresh();
+				};
+			}
+			return item;
+		}
+		
+		void SearchAllClassesWithName(List<IClass> searchResults, IProjectContent pc, string name, LanguageProperties language)
+		{
+			foreach (string ns in pc.NamespaceNames) {
+				IClass c = pc.GetClass(ns + "." + name, 0, language, false);
+				if (c != null)
+					searchResults.Add(c);
 			}
 		}
 		
@@ -149,10 +207,10 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 		
 		ToolStripMenuItem MakeItem(LocalResolveResult local, bool isDefinition)
 		{
-			ToolStripMenuItem item = MakeItemInternal(MemberNode.GetText(local.Field),
+			ToolStripMenuItem item = MakeItemInternal(local.VariableName,
 			                                          local.IsParameter ? ClassBrowserIconService.ParameterIndex : ClassBrowserIconService.LocalVariableIndex,
 			                                          local.CallingClass.CompilationUnit,
-			                                          isDefinition ? DomRegion.Empty : local.Field.Region);
+			                                          isDefinition ? DomRegion.Empty : local.VariableDefinitionRegion);
 			string treePath = "/SharpDevelop/ViewContent/DefaultTextEditor/Refactoring/";
 			treePath += local.IsParameter ? "Parameter" : "LocalVariable";
 			if (isDefinition) treePath += "Definition";
@@ -165,7 +223,7 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 			if (member == null) return null;
 			if (definitions.Contains(member.DotNetName)) return null;
 			definitions.Add(member.DotNetName);
-			ToolStripMenuItem item = MakeItem(member.FullyQualifiedName, MemberNode.Create(member), member.DeclaringType.CompilationUnit, member.Region);
+			ToolStripMenuItem item = MakeItem(MemberNode.Create(member), member.DeclaringType.CompilationUnit, member.Region);
 			ToolStripMenuItem declaringType = MakeItem(null, member.DeclaringType);
 			if (declaringType != null) {
 				item.DropDown.Items.Add(new ToolStripSeparator());
@@ -182,7 +240,7 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 				if (definitions.Contains(c.DotNetName)) return null;
 				definitions.Add(c.DotNetName);
 			}
-			return MakeItem(c.FullyQualifiedName, new ClassNode((IProject)c.ProjectContent.Project, c), c.CompilationUnit, c.Region);
+			return MakeItem(new ClassNode((IProject)c.ProjectContent.Project, c), c.CompilationUnit, c.Region);
 		}
 		
 		ToolStripMenuItem MakeItemInternal(string title, int imageIndex, ICompilationUnit cu, DomRegion region)
@@ -194,7 +252,7 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 			//item.DropDown.Items.Add(titleItem);
 			//item.DropDown.Items.Add(new ToolStripSeparator());
 			
-			if (cu.FileName != null && !region.IsEmpty) {
+			if (cu != null && cu.FileName != null && !region.IsEmpty) {
 				ToolStripMenuItem gotoDefinitionItem = new ToolStripMenuItem(StringParser.Parse("${res:ICSharpCode.NAntAddIn.GotoDefinitionMenuLabel}"),
 				                                                             ClassBrowserIconService.ImageList.Images[ClassBrowserIconService.GotoArrowIndex]);
 				gotoDefinitionItem.ShortcutKeys = Keys.Control | Keys.Enter;
@@ -207,7 +265,7 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 			return item;
 		}
 		
-		ToolStripMenuItem MakeItem(string title, ExtTreeNode classBrowserTreeNode, ICompilationUnit cu, DomRegion region)
+		ToolStripMenuItem MakeItem(ExtTreeNode classBrowserTreeNode, ICompilationUnit cu, DomRegion region)
 		{
 			ToolStripMenuItem item = MakeItemInternal(classBrowserTreeNode.Text, classBrowserTreeNode.ImageIndex, cu, region);
 			MenuService.AddItemsToMenu(item.DropDown.Items, classBrowserTreeNode, classBrowserTreeNode.ContextmenuAddinTreePath);
@@ -232,3 +290,8 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 		}
 	}
 }
+
+
+
+
+

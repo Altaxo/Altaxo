@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2521 $</version>
+//     <version>$Revision: 2465 $</version>
 // </file>
 
 using System;
@@ -14,6 +14,7 @@ using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.PrettyPrinter;
 using ICSharpCode.NRefactory.Visitors;
 using ICSharpCode.SharpDevelop.Gui;
+using ICSharpCode.SharpDevelop.Dom.NRefactoryResolver;
 
 namespace ICSharpCode.SharpDevelop.Commands
 {
@@ -21,10 +22,11 @@ namespace ICSharpCode.SharpDevelop.Commands
 	{
 		public override void Run()
 		{
-			IWorkbenchWindow window = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow;
+			IViewContent content = WorkbenchSingleton.Workbench.ActiveViewContent;
 			
-			if (window != null && window.ViewContent is IEditable) {
-				IParser p = ParserFactory.CreateParser(SupportedLanguage.VBNet, new StringReader(((IEditable)window.ViewContent).Text));
+			if (content != null && content.PrimaryFileName != null && content is IEditable) {
+				
+				IParser p = ParserFactory.CreateParser(SupportedLanguage.VBNet, new StringReader(((IEditable)content).Text));
 				p.Parse();
 
 				if (p.Errors.Count > 0) {
@@ -34,14 +36,14 @@ namespace ICSharpCode.SharpDevelop.Commands
 				ICSharpCode.NRefactory.PrettyPrinter.CSharpOutputVisitor output = new ICSharpCode.NRefactory.PrettyPrinter.CSharpOutputVisitor();
 				List<ISpecial> specials = p.Lexer.SpecialTracker.CurrentSpecials;
 				PreprocessingDirective.VBToCSharp(specials);
-				p.CompilationUnit.AcceptVisitor(new VBNetConstructsConvertVisitor(), null);
-				p.CompilationUnit.AcceptVisitor(new ToCSharpConvertVisitor(), null);
-				
+				IAstVisitor v = new VBNetToCSharpConvertVisitor(ParserService.CurrentProjectContent,
+				                                                ParserService.GetParseInformation(content.PrimaryFileName));
+				v.VisitCompilationUnit(p.CompilationUnit, null);
 				using (SpecialNodesInserter.Install(specials, output)) {
 					output.VisitCompilationUnit(p.CompilationUnit, null);
 				}
 				
-				FileService.NewFile("Generated.CS", "C#", output.Text);
+				FileService.NewFile("Generated.cs", output.Text);
 			}
 		}
 	}

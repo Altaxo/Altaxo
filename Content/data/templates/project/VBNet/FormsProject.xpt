@@ -21,6 +21,7 @@
 	<Project language="VBNet">
 		<PropertyGroup>
 			<OutputType>WinExe</OutputType>
+			<AppDesignerFolder>Properties</AppDesignerFolder>
 		</PropertyGroup>
 		
 		<ProjectItems>
@@ -93,7 +94,6 @@ End Class
 ]]></File>
 <File name="Program.vb">
 			<![CDATA[${StandardHeader.VBNET}
-
 Imports Microsoft.VisualBasic.ApplicationServices
 
 Namespace My
@@ -113,7 +113,7 @@ Namespace My
 	End Class
 End Namespace
 ]]></File>
-			<File name="AssemblyInfo.vb" src="DefaultAssemblyInfo.vb"/>
+			<File name="Properties\AssemblyInfo.vb" src="DefaultAssemblyInfo.vb"/>
 		</Files>
 	</Project>
 </Template>

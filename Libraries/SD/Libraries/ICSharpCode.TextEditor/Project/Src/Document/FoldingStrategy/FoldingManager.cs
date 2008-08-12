@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1981 $</version>
+//     <version>$Revision: 2691 $</version>
 // </file>
 
 using System;
@@ -34,7 +34,7 @@ namespace ICSharpCode.TextEditor.Document
 			}
 		}
 		
-		public FoldingManager(IDocument document, ILineManager lineTracker)
+		internal FoldingManager(IDocument document, LineManager lineTracker)
 		{
 			this.document = document;
 			document.DocumentChanged += new DocumentEventHandler(DocumentChanged);

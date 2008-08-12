@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2929 $</version>
 // </file>
 
 using System;
@@ -109,7 +109,7 @@ namespace ICSharpCode.SharpDevelop
 				Task curTask = tasks[i];
 				if (FileUtility.IsEqualFileName(curTask.FileName, e.SourceFile)) {
 					Remove(curTask);
-					curTask.FileName = Path.GetFullPath(e.TargetFile);
+					curTask.FileName = FileUtility.NormalizePath(e.TargetFile);
 					Add(curTask);
 					--i;
 				}
@@ -159,7 +159,7 @@ namespace ICSharpCode.SharpDevelop
 			}
 		}
 		
-		public static void UpdateCommentTags(string fileName, List<TagComment> tagComments)
+		public static void UpdateCommentTags(string fileName, IList<TagComment> tagComments)
 		{
 			if (fileName == null || tagComments == null) {
 				return;
@@ -167,7 +167,7 @@ namespace ICSharpCode.SharpDevelop
 			WorkbenchSingleton.SafeThreadAsyncCall(UpdateCommentTagsInvoked, fileName, tagComments);
 		}
 		
-		static void UpdateCommentTagsInvoked(string fileName, List<TagComment> tagComments)
+		static void UpdateCommentTagsInvoked(string fileName, IList<TagComment> tagComments)
 		{
 			List<Task> newTasks = new List<Task>();
 			foreach (TagComment tag in tagComments) {

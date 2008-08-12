@@ -2,11 +2,12 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2505 $</version>
+//     <version>$Revision: 3067 $</version>
 // </file>
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -28,20 +29,6 @@ namespace ICSharpCode.SharpDevelop.BrowserDisplayBinding
 		public override Control Control {
 			get {
 				return htmlViewPane;
-			}
-		}
-		
-		public override bool IsDirty {
-			get {
-				return false;
-			}
-			set {
-			}
-		}
-		
-		public override bool IsViewOnly {
-			get {
-				return true;
 			}
 		}
 		
@@ -68,14 +55,9 @@ namespace ICSharpCode.SharpDevelop.BrowserDisplayBinding
 			htmlViewPane.Dispose();
 		}
 		
-		public override void Load(string url)
+		public void Navigate(string url)
 		{
 			htmlViewPane.Navigate(url);
-		}
-		
-		public override void Save(string url)
-		{
-			Load(url);
 		}
 		
 		public Uri Url {
@@ -98,14 +80,6 @@ namespace ICSharpCode.SharpDevelop.BrowserDisplayBinding
 				TitleName = ResourceService.GetString("ICSharpCode.SharpDevelop.BrowserDisplayBinding.Browser");
 			else
 				TitleName = title;
-		}
-		
-		// TODO: Navigation - implement browser navigation points?
-		public override INavigationPoint BuildNavPoint()
-		{
-			// returning null disables navigation for this IViewContent as
-			// requests to log null points are ignored.
-			return null;
 		}
 	}
 	
@@ -181,12 +155,12 @@ namespace ICSharpCode.SharpDevelop.BrowserDisplayBinding
 			}
 		}
 		
-		static ArrayList descriptors;
+		static List<SchemeExtensionDescriptor> descriptors;
 		
 		public static ISchemeExtension GetScheme(string name)
 		{
 			if (descriptors == null) {
-				descriptors = AddInTree.BuildItems("/SharpDevelop/Views/Browser/SchemeExtensions", null, false);
+				descriptors = AddInTree.BuildItems<SchemeExtensionDescriptor>("/SharpDevelop/Views/Browser/SchemeExtensions", null, false);
 			}
 			foreach (SchemeExtensionDescriptor descriptor in descriptors) {
 				if (string.Equals(name, descriptor.SchemeName, StringComparison.OrdinalIgnoreCase)) {

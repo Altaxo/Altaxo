@@ -2,11 +2,12 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2165 $</version>
+//     <version>$Revision: 3117 $</version>
 // </file>
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -17,6 +18,7 @@ using ICSharpCode.SharpDevelop.Dom.Refactoring;
 using ICSharpCode.SharpDevelop.Gui.ClassBrowser;
 using ICSharpCode.SharpDevelop.Refactoring;
 using ICSharpCode.TextEditor;
+using ICSharpCode.SharpDevelop.Gui;
 using SearchAndReplace;
 
 namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
@@ -159,7 +161,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 		{
 			MenuCommand item = (MenuCommand)sender;
 			IMember member = (IMember)item.Tag;
-			IMember baseMember = RefactoringService.FindBaseMember(member);
+			IMember baseMember = MemberLookupHelper.FindBaseMember(member);
 			if (baseMember != null) {
 				FindReferencesAndRenameHelper.JumpToDefinition(baseMember);
 			}
@@ -175,35 +177,32 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 		{
 			MenuCommand item = (MenuCommand)sender;
 			IMember member = (IMember)item.Tag;
-			List<IClass> derivedClasses = RefactoringService.FindDerivedClasses(member.DeclaringType, ParserService.AllProjectContents, false);
-			List<SearchResult> results = new List<SearchResult>();
+			IEnumerable<IClass> derivedClasses = RefactoringService.FindDerivedClasses(member.DeclaringType, ParserService.AllProjectContents, false);
+			List<SearchResultMatch> results = new List<SearchResultMatch>();
+			IAmbience ambience = AmbienceService.GetCurrentAmbience();
+			ambience.ConversionFlags = ConversionFlags.UseFullyQualifiedMemberNames | ConversionFlags.ShowTypeParameterList;
 			foreach (IClass derivedClass in derivedClasses) {
 				if (derivedClass.CompilationUnit == null) continue;
 				if (derivedClass.CompilationUnit.FileName == null) continue;
-				IMember m = RefactoringService.FindSimilarMember(derivedClass, member);
+				IMember m = MemberLookupHelper.FindSimilarMember(derivedClass, member);
 				if (m != null && !m.Region.IsEmpty) {
-					SearchResult res = new SimpleSearchResult(m.FullyQualifiedName, new Point(m.Region.BeginColumn - 1, m.Region.BeginLine - 1));
+					string matchText = ambience.Convert(m);
+					SearchResultMatch res = new SimpleSearchResultMatch(matchText, new TextLocation(m.Region.BeginColumn - 1, m.Region.BeginLine - 1));
 					res.ProvidedDocumentInformation = FindReferencesAndRenameHelper.GetDocumentInformation(derivedClass.CompilationUnit.FileName);
 					results.Add(res);
 				}
 			}
-			SearchInFilesManager.ShowSearchResults(StringParser.Parse("${res:SharpDevelop.Refactoring.OverridesOf}",
-			                                                          new string[,] {{ "Name", member.Name }}),
-			                                       results);
+			SearchResultPanel.Instance.ShowSearchResults(new SearchResult(
+				StringParser.Parse("${res:SharpDevelop.Refactoring.OverridesOf}", new string[,] {{ "Name", member.Name }}),
+				results
+			));
 		}
 		
 		void FindReferences(object sender, EventArgs e)
 		{
 			MenuCommand item = (MenuCommand)sender;
 			IMember member = (IMember)item.Tag;
-			string memberName;
-			if (member is IProperty && ((IProperty)member).IsIndexer) {
-				// The name of the default indexer is always "Indexer" in C#.
-				// Add the type name to clarify which indexer is referred to.
-				memberName = member.Name + " of " + member.DeclaringType.Name;
-			} else {
-				memberName = member.Name;
-			}
+			string memberName = member.DeclaringType.Name + "." + member.Name;
 			using (AsynchronousWaitDialog monitor = AsynchronousWaitDialog.ShowWaitDialog("${res:SharpDevelop.Refactoring.FindReferences}"))
 			{
 				FindReferencesAndRenameHelper.ShowAsSearchResults(StringParser.Parse("${res:SharpDevelop.Refactoring.ReferencesTo}",

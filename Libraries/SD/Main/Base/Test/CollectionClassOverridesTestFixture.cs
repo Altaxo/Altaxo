@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Matthew Ward" email="mrward@users.sourceforge.net"/>
-//     <version>$Revision: 2340 $</version>
+//     <version>$Revision: 2625 $</version>
 // </file>
 
 using System;
@@ -80,7 +80,7 @@ namespace ICSharpCode.SharpDevelop.Tests
 		{
 			ProjectContentRegistry registry = new ProjectContentRegistry();
 			IProjectContent mscorlibProjectContent = registry.Mscorlib;
-			IClass c = mscorlibProjectContent.GetClass("System.Collections.ObjectModel.Collection");
+			IClass c = mscorlibProjectContent.GetClass("System.Collections.ObjectModel.Collection", 1);
 			
 			List<string> methodNames = new List<string>();
 			foreach (IMethod m in c.Methods) {
@@ -95,6 +95,9 @@ namespace ICSharpCode.SharpDevelop.Tests
 			expectedMethodNames.Add("RemoveItem");
 			expectedMethodNames.Add("SetItem");
 			
+			methodNames.Sort();
+			expectedMethodNames.Sort();
+			
 			Assert.AreEqual(expectedMethodNames.ToArray(), methodNames.ToArray());
 		}
 		
@@ -107,7 +110,7 @@ namespace ICSharpCode.SharpDevelop.Tests
 		{
 			ProjectContentRegistry registry = new ProjectContentRegistry();
 			IProjectContent mscorlibProjectContent = registry.Mscorlib;
-			IClass collectionClass = mscorlibProjectContent.GetClass("System.Collections.ObjectModel.Collection");
+			IClass collectionClass = mscorlibProjectContent.GetClass("System.Collections.ObjectModel.Collection", 1);
 			
 			DefaultProjectContent projectContent = new DefaultProjectContent();
 			DefaultCompilationUnit unit = new DefaultCompilationUnit(projectContent);

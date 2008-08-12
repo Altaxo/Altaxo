@@ -1,9 +1,11 @@
 ﻿// <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2059 $</version>
+//     <owner name="Daniel Grunwald"/>
+//     <version>$Revision: 3007 $</version>
 // </file>
+
+using System;
 
 namespace ICSharpCode.SharpDevelop.Gui
 {
@@ -43,8 +45,8 @@ namespace ICSharpCode.SharpDevelop.Gui
 		}
 		
 		/// <summary>
-		/// Gets/sets if the task current shows a modal dialog. Set this property to true to make progress dialogs windows
-		/// temporarily invisible while your modal dialog is showing.
+		/// Gets/sets if the task current shows a modal dialog. Set this property to true to make progress
+		/// dialogs windows temporarily invisible while your modal dialog is showing.
 		/// </summary>
 		bool ShowingDialog {
 			get;
@@ -56,6 +58,37 @@ namespace ICSharpCode.SharpDevelop.Gui
 		/// </summary>
 		bool IsCancelled {
 			get;
+		}
+		
+		/// <summary>
+		/// Occurs when the user cancels the operation.
+		/// This event could be raised on any thread.
+		/// </summary>
+		event EventHandler Cancelled;
+	}
+	
+	public sealed class DomProgressMonitor : Dom.IDomProgressMonitor
+	{
+		IProgressMonitor monitor;
+		
+		private DomProgressMonitor(IProgressMonitor monitor)
+		{
+			if (monitor == null)
+				throw new ArgumentNullException("monitor");
+			this.monitor = monitor;
+		}
+		
+		public static Dom.IDomProgressMonitor Wrap(IProgressMonitor monitor)
+		{
+			if (monitor == null)
+				return null;
+			else
+				return new DomProgressMonitor(monitor);
+		}
+		
+		public bool ShowingDialog {
+			get { return monitor.ShowingDialog; }
+			set { monitor.ShowingDialog = value; }
 		}
 	}
 	
@@ -93,5 +126,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			get { return showingDialog; }
 			set { showingDialog = value; }
 		}
+		
+		public event EventHandler Cancelled { add { } remove { } }
 	}
 }

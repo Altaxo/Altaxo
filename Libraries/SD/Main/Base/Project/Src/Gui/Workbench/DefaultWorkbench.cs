@@ -1,14 +1,15 @@
 // <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike KrÃ¼ger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2505 $</version>
+//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
+//     <version>$Revision: 3096 $</version>
 // </file>
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
@@ -22,21 +23,23 @@ using ICSharpCode.SharpDevelop.Project;
 namespace ICSharpCode.SharpDevelop.Gui
 {
 	/// <summary>
-	/// This is the a Workspace with a multiple document interface.
+	/// This is the Workspace with a multiple document interface.
 	/// </summary>
+#if ModifiedForAltaxo
 	public class DefaultWorkbench : Form, IWorkbench
 	{
-#if ModifiedForAltaxo
     protected string mainMenuPath = "/SharpDevelop/Workbench/MainMenu";
     protected string viewContentPath = "/SharpDevelop/Workbench/Pads";
     protected string toolBarPath = "/SharpDevelop/Workbench/ToolBar";
 #else
-		readonly static string mainMenuPath    = "/SharpDevelop/Workbench/MainMenu";
+  sealed class DefaultWorkbench : Form, IWorkbench
+  {
+    readonly static string mainMenuPath = "/SharpDevelop/Workbench/MainMenu";
 		readonly static string viewContentPath = "/SharpDevelop/Workbench/Pads";
 #endif
 		
-		List<PadDescriptor>  viewContentCollection    = new List<PadDescriptor>();
-		List<IViewContent> workbenchContentCollection = new List<IViewContent>();
+		List<PadDescriptor> padViewContentCollection = new List<PadDescriptor>();
+		List<IViewContent> viewContentCollection = new List<IViewContent>();
 		
 		bool isActiveWindow; // Gets whether SharpDevelop is the active application in Windows
 		
@@ -105,40 +108,131 @@ namespace ICSharpCode.SharpDevelop.Gui
 				value.Attach(this);
 				layout = value;
 				layout.ActiveWorkbenchWindowChanged += OnActiveWindowChanged;
+				OnActiveWindowChanged(null, null);
 			}
 		}
 		
-		public List<PadDescriptor> PadContentCollection {
+		public IList<PadDescriptor> PadContentCollection {
 			get {
-				System.Diagnostics.Debug.Assert(viewContentCollection != null);
-				return viewContentCollection;
+				Debug.Assert(padViewContentCollection != null);
+				return padViewContentCollection;
 			}
 		}
 		
-		public List<IViewContent> ViewContentCollection {
+		public IList<IWorkbenchWindow> WorkbenchWindowCollection {
 			get {
-				System.Diagnostics.Debug.Assert(workbenchContentCollection != null);
-				return workbenchContentCollection;
+				return viewContentCollection.Select(vc => vc.WorkbenchWindow)
+					.Distinct().ToArray().AsReadOnly();
 			}
 		}
+		
+		public ICollection<IViewContent> ViewContentCollection {
+			get {
+//				return Linq.ToArray(Linq.Concat(Linq.Select<IWorkbenchWindow, IEnumerable<IViewContent>>(
+//					workbenchWindowCollection, delegate (IWorkbenchWindow w) { return w.ViewContents; }
+//				)));
+				return viewContentCollection.AsReadOnly();
+			}
+		}
+		
+		void OnActiveWindowChanged(object sender, EventArgs e)
+		{
+			if (closeAll) return;
+			
+			if (layout == null) {
+				this.ActiveWorkbenchWindow = null;
+				this.ActiveContent = null;
+			} else {
+				this.ActiveWorkbenchWindow = layout.ActiveWorkbenchWindow;
+				this.ActiveContent = layout.ActiveContent;
+			}
+		}
+		
+		IWorkbenchWindow activeWorkbenchWindow;
 		
 		public IWorkbenchWindow ActiveWorkbenchWindow {
 			get {
-				if (layout == null) {
-					return null;
+				WorkbenchSingleton.AssertMainThread();
+				return activeWorkbenchWindow;
+			}
+			private set {
+				if (activeWorkbenchWindow != value) {
+					if (activeWorkbenchWindow != null) {
+						activeWorkbenchWindow.ActiveViewContentChanged -= OnWorkbenchActiveViewContentChanged;
+					}
+					activeWorkbenchWindow = value;
+					if (activeWorkbenchWindow != null) {
+						activeWorkbenchWindow.ActiveViewContentChanged += OnWorkbenchActiveViewContentChanged;
+					}
+					
+					if (ActiveWorkbenchWindowChanged != null) {
+						ActiveWorkbenchWindowChanged(this, EventArgs.Empty);
+					}
+					
+					OnWorkbenchActiveViewContentChanged(null, null);
 				}
-				return layout.ActiveWorkbenchwindow;
 			}
 		}
 		
-		public object ActiveContent {
+		void OnWorkbenchActiveViewContentChanged(object sender, EventArgs e)
+		{
+			// update ActiveViewContent
+			IWorkbenchWindow window = this.ActiveWorkbenchWindow;
+			if (window != null)
+				this.ActiveViewContent = window.ActiveViewContent;
+			else
+				this.ActiveViewContent = null;
+			
+			this.ActiveContent = layout.ActiveContent;
+		}
+		
+		public event EventHandler ActiveWorkbenchWindowChanged;
+		
+		IViewContent activeViewContent;
+		
+		/// <summary>
+		/// The active view content inside the active workbench window.
+		/// </summary>
+		public IViewContent ActiveViewContent {
 			get {
-				if (layout == null) {
-					return null;
+				WorkbenchSingleton.AssertMainThread();
+				return activeViewContent;
+			}
+			private set {
+				if (activeViewContent != value) {
+					activeViewContent = value;
+					if (ActiveViewContentChanged != null) {
+						ActiveViewContentChanged(this, EventArgs.Empty);
+					}
 				}
-				return layout.ActiveContent;
 			}
 		}
+		
+		/// <summary>
+		/// Is called, when the active view content has changed.
+		/// </summary>
+		public event EventHandler ActiveViewContentChanged;
+		
+		object activeContent;
+		
+		public object ActiveContent {
+			get {
+				return activeContent;
+			}
+			private set {
+				if (activeContent != value) {
+					activeContent = value;
+					if (ActiveContentChanged != null) {
+						ActiveContentChanged(this, EventArgs.Empty);
+					}
+				}
+			}
+		}
+		
+		/// <summary>
+		/// Is called, when the active content has changed.
+		/// </summary>
+		public event EventHandler ActiveContentChanged;
 		#endregion
 		
 		public DefaultWorkbench()
@@ -150,7 +244,10 @@ namespace ICSharpCode.SharpDevelop.Gui
 			AllowDrop     = true;
 		}
 		
-		#region Single instance code
+		public Form MainForm {
+			get { return this; }
+		}
+		
 		protected override void WndProc(ref Message m)
 		{
 			if (!SingleInstanceHelper.PreFilterMessage(ref m)) {
@@ -158,76 +255,9 @@ namespace ICSharpCode.SharpDevelop.Gui
 			}
 		}
 		
-		public static class SingleInstanceHelper
-		{
-			const int CUSTOM_MESSAGE = NativeMethods.WM_USER + 2;
-			const int RESULT_FILES_HANDLED = 2;
-			const int RESULT_PROJECT_IS_OPEN = 3;
-			
-			public static bool OpenFilesInPreviousInstance(string[] fileList)
-			{
-				LoggingService.Info("Trying to pass arguments to previous instance...");
-				int currentProcessId = Process.GetCurrentProcess().Id;
-				string currentFile = Assembly.GetEntryAssembly().Location;
-				int number = new Random().Next();
-				string fileName = Path.Combine(Path.GetTempPath(), "sd" + number + ".tmp");
-				try {
-					File.WriteAllLines(fileName, fileList);
-					List<IntPtr> alternatives = new List<IntPtr>();
-					foreach (Process p in Process.GetProcessesByName("SharpDevelop")) {
-						if (p.Id == currentProcessId) continue;
-						
-						if (FileUtility.IsEqualFileName(currentFile, p.MainModule.FileName)) {
-							IntPtr hWnd = p.MainWindowHandle;
-							if (hWnd != IntPtr.Zero) {
-								long result = NativeMethods.SendMessage(hWnd, CUSTOM_MESSAGE, new IntPtr(number), IntPtr.Zero).ToInt64();
-								if (result == RESULT_FILES_HANDLED) {
-									return true;
-								} else if (result == RESULT_PROJECT_IS_OPEN) {
-									alternatives.Add(hWnd);
-								}
-							}
-						}
-					}
-					foreach (IntPtr hWnd in alternatives) {
-						if (NativeMethods.SendMessage(hWnd, CUSTOM_MESSAGE, new IntPtr(number), new IntPtr(1)).ToInt64()== RESULT_FILES_HANDLED) {
-							return true;
-						}
-					}
-					return false;
-				} finally {
-					File.Delete(fileName);
-				}
-			}
-			
-			internal static bool PreFilterMessage(ref Message m)
-			{
-				if (m.Msg != CUSTOM_MESSAGE)
-					return false;
-				long fileNumber = m.WParam.ToInt64();
-				long openEvenIfProjectIsOpened = m.LParam.ToInt64();
-				LoggingService.Info("Receiving custom message...");
-				if (openEvenIfProjectIsOpened == 0 && ProjectService.OpenSolution != null) {
-					m.Result = new IntPtr(RESULT_PROJECT_IS_OPEN);
-				} else {
-					m.Result = new IntPtr(RESULT_FILES_HANDLED);
-					try {
-						WorkbenchSingleton.SafeThreadAsyncCall(delegate { NativeMethods.SetForegroundWindow(WorkbenchSingleton.MainForm.Handle) ; });
-						foreach (string file in File.ReadAllLines(Path.Combine(Path.GetTempPath(), "sd" + fileNumber + ".tmp"))) {
-							WorkbenchSingleton.SafeThreadAsyncCall(delegate(string openFileName) { FileService.OpenFile(openFileName); }, file);
-						}
-					} catch (Exception ex) {
-						LoggingService.Warn(ex);
-					}
-				}
-				return true;
-			}
-		}
-		#endregion
-		
 		System.Windows.Forms.Timer toolbarUpdateTimer;
 
-		public void InitializeWorkspace()
+		public void Initialize()
 		{
 			UpdateRenderer();
 			
@@ -267,11 +297,11 @@ namespace ICSharpCode.SharpDevelop.Gui
 		
 		public void CloseContent(IViewContent content)
 		{
-			if (PropertyService.Get("SharpDevelop.LoadDocumentProperties", true) && content is IMementoCapable) {
-				StoreMemento(content);
-			}
-			if (ViewContentCollection.Contains(content)) {
-				ViewContentCollection.Remove(content);
+//			if (PropertyService.Get("SharpDevelop.LoadDocumentProperties", true) && content is IMementoCapable) {
+//				StoreMemento(content);
+//			}
+			if (viewContentCollection.Contains(content)) {
+				viewContentCollection.Remove(content);
 			}
 			OnViewClosed(new ViewContentEventArgs(content));
 			content.Dispose();
@@ -282,9 +312,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		{
 			try {
 				closeAll = true;
-				List<IViewContent> fullList = new List<IViewContent>(workbenchContentCollection);
-				foreach (IViewContent content in fullList) {
-					IWorkbenchWindow window = content.WorkbenchWindow;
+				foreach (IWorkbenchWindow window in this.WorkbenchWindowCollection.ToArray()) {
 					window.CloseWindow(false);
 				}
 			} finally {
@@ -293,27 +321,27 @@ namespace ICSharpCode.SharpDevelop.Gui
 			}
 		}
 		
-		public virtual void ShowView(IViewContent content)
+		public void ShowView(IViewContent content)
 		{
 			System.Diagnostics.Debug.Assert(layout != null);
-			ViewContentCollection.Add(content);
-			if (PropertyService.Get("SharpDevelop.LoadDocumentProperties", true) && content is IMementoCapable) {
-				try {
-					Properties memento = GetStoredMemento(content);
-					if (memento != null) {
-						((IMementoCapable)content).SetMemento(memento);
-					}
-				} catch (Exception e) {
-					MessageService.ShowError(e, "Can't get/set memento");
-				}
-			}
+			viewContentCollection.Add(content);
+//			if (PropertyService.Get("SharpDevelop.LoadDocumentProperties", true) && content is IMementoCapable) {
+//				try {
+//					Properties memento = GetStoredMemento(content);
+//					if (memento != null) {
+//						((IMementoCapable)content).SetMemento(memento);
+//					}
+//				} catch (Exception e) {
+//					MessageService.ShowError(e, "Can't get/set memento");
+//				}
+//			}
 			
 			layout.ShowView(content);
 			content.WorkbenchWindow.SelectWindow();
 			OnViewOpened(new ViewContentEventArgs(content));
 		}
 		
-		public virtual void ShowPad(PadDescriptor content)
+		public void ShowPad(PadDescriptor content)
 		{
 			PadContentCollection.Add(content);
 			
@@ -356,14 +384,14 @@ namespace ICSharpCode.SharpDevelop.Gui
 					((IStatusUpdate)item).UpdateText();
 			}
 			
-			foreach (IViewContent content in workbenchContentCollection) {
+			foreach (IViewContent content in this.ViewContentCollection) {
 				content.RedrawContent();
-				if (content.WorkbenchWindow != null) {
-					content.WorkbenchWindow.RedrawContent();
-				}
+			}
+			foreach (IWorkbenchWindow window in this.WorkbenchWindowCollection) {
+				window.RedrawContent();
 			}
 			
-			foreach (PadDescriptor content in viewContentCollection) {
+			foreach (PadDescriptor content in padViewContentCollection) {
 				content.RedrawContent();
 			}
 			
@@ -382,38 +410,6 @@ namespace ICSharpCode.SharpDevelop.Gui
 			                    Path.GetFileName(contentName)
 			                    + "." + contentName.ToLowerInvariant().GetHashCode().ToString("x")
 			                    + ".xml");
-		}
-		
-		public Properties GetStoredMemento(IViewContent content)
-		{
-			if (content != null && content.FileName != null) {
-				string fullFileName = GetMementoFileName(content.FileName);
-				// check the file name length because it could be more than the maximum length of a file name
-				
-				if (FileUtility.IsValidFileName(fullFileName) && File.Exists(fullFileName)) {
-					return Properties.Load(fullFileName);
-				}
-			}
-			return null;
-		}
-		
-		public void StoreMemento(IViewContent content)
-		{
-			if (content.FileName == null) {
-				return;
-			}
-			
-			string directory = Path.Combine(PropertyService.ConfigDirectory, "temp");
-			if (!Directory.Exists(directory)) {
-				Directory.CreateDirectory(directory);
-			}
-			
-			Properties memento = ((IMementoCapable)content).CreateMemento();
-			string fullFileName = GetMementoFileName(content.FileName);
-			
-			if (FileUtility.IsValidFileName(fullFileName)) {
-				FileUtility.ObservedSave(new NamedFileOperationDelegate(memento.Save), fullFileName, FileErrorPolicy.Inform);
-			}
 		}
 		
 		// interface IMementoCapable
@@ -472,11 +468,16 @@ namespace ICSharpCode.SharpDevelop.Gui
 		
 		void CheckRemovedOrReplacedFile(object sender, FileEventArgs e)
 		{
-			for (int i = 0; i < ViewContentCollection.Count;) {
-				if (FileUtility.IsBaseDirectory(e.FileName, ViewContentCollection[i].FileName)) {
-					ViewContentCollection[i].WorkbenchWindow.CloseWindow(true);
-				} else {
-					++i;
+			foreach (OpenedFile file in FileService.OpenedFiles) {
+				if (FileUtility.IsBaseDirectory(e.FileName, file.FileName)) {
+					foreach (IViewContent content in file.RegisteredViewContents.ToArray()) {
+						// content.WorkbenchWindow can be null if multiple view contents
+						// were in the same WorkbenchWindow and both should be closed
+						// (e.g. Windows Forms Designer, Subversion History View)
+						if (content.WorkbenchWindow != null) {
+							content.WorkbenchWindow.CloseWindow(true);
+						}
+					}
 				}
 			}
 		}
@@ -484,17 +485,17 @@ namespace ICSharpCode.SharpDevelop.Gui
 		void CheckRenamedFile(object sender, FileRenameEventArgs e)
 		{
 			if (e.IsDirectory) {
-				foreach (IViewContent content in ViewContentCollection) {
-					if (content.FileName != null && FileUtility.IsBaseDirectory(e.SourceFile, content.FileName)) {
-						content.FileName = FileUtility.RenameBaseDirectory(content.FileName, e.SourceFile, e.TargetFile);
+				foreach (OpenedFile file in FileService.OpenedFiles) {
+					if (file.FileName != null && FileUtility.IsBaseDirectory(e.SourceFile, file.FileName)) {
+						file.FileName = FileUtility.RenameBaseDirectory(file.FileName, e.SourceFile, e.TargetFile);
 					}
 				}
 			} else {
-				foreach (IViewContent content in ViewContentCollection) {
-					if (content.FileName != null &&
-					    FileUtility.IsEqualFileName(content.FileName, e.SourceFile)) {
-						content.FileName  = e.TargetFile;
-						content.TitleName = Path.GetFileName(e.TargetFile);
+				foreach (OpenedFile file in FileService.OpenedFiles) {
+					if (file.FileName != null &&
+					    FileUtility.IsEqualFileName(file.FileName, e.SourceFile))
+					{
+						file.FileName  = e.TargetFile;
 						return;
 					}
 				}
@@ -525,17 +526,11 @@ namespace ICSharpCode.SharpDevelop.Gui
 			
 			ProjectService.SaveSolutionPreferences();
 			
-			while (WorkbenchSingleton.Workbench.ViewContentCollection.Count > 0) {
-				IViewContent content = WorkbenchSingleton.Workbench.ViewContentCollection[0];
-				if (content.WorkbenchWindow == null) {
-					LoggingService.Warn("Content with empty WorkbenchWindow found");
-					WorkbenchSingleton.Workbench.ViewContentCollection.RemoveAt(0);
-				} else {
-					content.WorkbenchWindow.CloseWindow(false);
-					if (WorkbenchSingleton.Workbench.ViewContentCollection.IndexOf(content) >= 0) {
-						e.Cancel = true;
-						return;
-					}
+			while (WorkbenchSingleton.Workbench.WorkbenchWindowCollection.Count > 0) {
+				IWorkbenchWindow window = WorkbenchSingleton.Workbench.WorkbenchWindowCollection[0];
+				if (!window.CloseWindow(false)) {
+					e.Cancel = true;
+					return;
 				}
 			}
 			
@@ -570,12 +565,6 @@ namespace ICSharpCode.SharpDevelop.Gui
 			StatusBarService.SetMessage("${res:MainWindow.StatusBar.ReadyMessage}");
 		}
 		
-		void OnActiveWindowChanged(object sender, EventArgs e)
-		{
-			if (!closeAll && ActiveWorkbenchWindowChanged != null) {
-				ActiveWorkbenchWindowChanged(this, e);
-			}
-		}
 //		public ToolStripManager ToolStripManager = new ToolStripManager();
 		public MenuStrip   TopMenu  = null;
 		public ToolStrip[] ToolBars = null;
@@ -642,9 +631,17 @@ namespace ICSharpCode.SharpDevelop.Gui
 			}
 		}
 		
+		public event KeyEventHandler ProcessCommandKey;
+		
 		// Handle keyboard shortcuts
 		protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
 		{
+			if (ProcessCommandKey != null) {
+				KeyEventArgs e = new KeyEventArgs(keyData);
+				ProcessCommandKey(this, e);
+				if (e.Handled || e.SuppressKeyPress)
+					return true;
+			}
 			if (IsAltGRPressed)
 				return false;
 			return base.ProcessCmdKey(ref msg, keyData);
@@ -684,14 +681,14 @@ namespace ICSharpCode.SharpDevelop.Gui
 			}
 		}
 		
-		protected virtual void OnViewOpened(ViewContentEventArgs e)
+		void OnViewOpened(ViewContentEventArgs e)
 		{
 			if (ViewOpened != null) {
 				ViewOpened(this, e);
 			}
 		}
 		
-		protected virtual void OnViewClosed(ViewContentEventArgs e)
+		void OnViewClosed(ViewContentEventArgs e)
 		{
 			if (ViewClosed != null) {
 				ViewClosed(this, e);
@@ -700,7 +697,6 @@ namespace ICSharpCode.SharpDevelop.Gui
 		
 		public event ViewContentEventHandler ViewOpened;
 		public event ViewContentEventHandler ViewClosed;
-		public event EventHandler ActiveWorkbenchWindowChanged;
 		
 		protected override void OnActivated(EventArgs e)
 		{

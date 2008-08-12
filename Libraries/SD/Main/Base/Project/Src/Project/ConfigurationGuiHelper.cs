@@ -2,12 +2,13 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2446 $</version>
+//     <version>$Revision: 2628 $</version>
 // </file>
 
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Drawing;
 using System.Globalization;
 using System.Windows.Forms;
@@ -169,14 +170,14 @@ namespace ICSharpCode.SharpDevelop.Project
 			set {
 				if (dirty != value) {
 					dirty = value;
-					if (DirtyChanged != null) {
-						DirtyChanged(this, EventArgs.Empty);
+					if (IsDirtyChanged != null) {
+						IsDirtyChanged(this, EventArgs.Empty);
 					}
 				}
 			}
 		}
 		
-		public event EventHandler DirtyChanged;
+		public event EventHandler IsDirtyChanged;
 		
 		string configuration;
 		
@@ -251,18 +252,6 @@ namespace ICSharpCode.SharpDevelop.Project
 		
 		#region Bind string to TextBox or ComboBox
 		static Func<string> GetEmptyString = delegate { return ""; };
-		
-		[Obsolete("Please explicitly specify textBoxEditMode")]
-		public ConfigurationGuiBinding BindString(string control, string property)
-		{
-			return BindString(controlDictionary[control], property, TextBoxEditMode.EditEvaluatedProperty, GetEmptyString);
-		}
-		
-		[Obsolete("Please explicitly specify textBoxEditMode")]
-		public ConfigurationGuiBinding BindString(Control control, string property)
-		{
-			return BindString(control, property, TextBoxEditMode.EditEvaluatedProperty, GetEmptyString);
-		}
 		
 		public ConfigurationGuiBinding BindString(string control, string property, TextBoxEditMode textBoxEditMode)
 		{
@@ -650,11 +639,11 @@ namespace ICSharpCode.SharpDevelop.Project
 			{
 				List<string> items;
 				configurationComboBox.Items.Clear();
-				items = Linq.ToList(helper.Project.ConfigurationNames);
+				items = helper.Project.ConfigurationNames.ToList();
 				items.Sort();
 				configurationComboBox.Items.AddRange(items.ToArray());
 				platformComboBox.Items.Clear();
-				items = Linq.ToList(helper.Project.PlatformNames);
+				items = helper.Project.PlatformNames.ToList();
 				items.Sort();
 				platformComboBox.Items.AddRange(items.ToArray());
 				ResetIndex();

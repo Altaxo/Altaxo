@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2682 $</version>
 // </file>
 
 using System;
@@ -137,7 +137,7 @@ namespace CSharpBinding.FormattingStrategy
 		{
 			this.filename = filename;
 			f = new FileStream(filename, FileMode.Open, FileAccess.Read);
-			r = ICSharpCode.TextEditor.Util.FileReader.OpenStream(f, ParserService.DefaultFileEncoding, ParserService.DefaultFileEncoding);
+			r = ICSharpCode.TextEditor.Util.FileReader.OpenStream(f, ParserService.DefaultFileEncoding);
 		}
 		
 		int num = 0;

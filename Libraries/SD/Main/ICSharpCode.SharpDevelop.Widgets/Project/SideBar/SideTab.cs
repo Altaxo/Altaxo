@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1976 $</version>
+//     <version>$Revision: 2562 $</version>
 // </file>
 
 using System;
@@ -86,7 +86,6 @@ namespace ICSharpCode.SharpDevelop.Widgets.SideBar
 		bool      canDragDrop  = true;
 		bool      canBeDeleted = true;
 		bool      canBeRenamed = true;
-		bool      isClipboardRing = false;
 		SideTabItemCollection items = new SideTabItemCollection();
 		SideTabStatus sideTabStatus;
 		SideTabItem   selectedItem = null;
@@ -97,15 +96,6 @@ namespace ICSharpCode.SharpDevelop.Widgets.SideBar
 		int       scrollIndex    = 0;
 		
 		public bool Hidden = false;
-		
-		public bool IsClipboardRing {
-			get {
-				return isClipboardRing;
-			}
-			set {
-				isClipboardRing = value;
-			}
-		}
 		
 		public int ScrollIndex {
 			get {

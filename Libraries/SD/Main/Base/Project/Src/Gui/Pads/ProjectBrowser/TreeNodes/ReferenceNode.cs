@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2438 $</version>
+//     <version>$Revision: 2640 $</version>
 // </file>
 
 using System;
@@ -28,11 +28,7 @@ namespace ICSharpCode.SharpDevelop.Project
 
 			ContextmenuAddinTreePath = "/SharpDevelop/Pads/ProjectBrowser/ContextMenu/ReferenceNode";
 			SetIcon("Icons.16x16.Reference");
-			if (referenceProjectItem.ItemType == ItemType.ProjectReference) {
-				Text = Path.GetFileNameWithoutExtension(referenceProjectItem.Include);
-			} else {
-				Text = referenceProjectItem.Name;
-			}
+			Text = referenceProjectItem.ShortName;
 		}
 		
 		#region Cut & Paste
@@ -41,7 +37,7 @@ namespace ICSharpCode.SharpDevelop.Project
 				return true;
 			}
 		}
-	
+		
 		public override void Delete()
 		{
 			IProject project = Project;

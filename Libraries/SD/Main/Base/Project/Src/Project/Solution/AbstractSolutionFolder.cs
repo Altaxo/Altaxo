@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2260 $</version>
+//     <version>$Revision: 2644 $</version>
 // </file>
 
 using System;
@@ -26,7 +26,7 @@ namespace ICSharpCode.SharpDevelop.Project
 		
 		/// <summary>
 		/// Gets the object used for thread-safe synchronization.
-		/// All members lock on this object, but if you manipulate underlying structures
+		/// Thread-safe members lock on this object, but if you manipulate underlying structures
 		/// (such as the MSBuild project for MSBuildBasedProjects) directly, you will have to lock on this object.
 		/// </summary>
 		[Browsable(false)]

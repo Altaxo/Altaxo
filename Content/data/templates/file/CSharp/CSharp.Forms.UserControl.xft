@@ -12,6 +12,11 @@
 	 
 	<Description>${res:Templates.File.WindowsUserControl.Description}</Description>
 	
+	<References>
+		<Reference include="System.Drawing" />
+		<Reference include="System.Windows.Forms" />
+	</References>
+	
 	<!-- 
 	Special new file templates:
 		${StandardNamespace}        -> Standardnamespace of the current project or FileNameWithoutExtension
@@ -64,7 +69,6 @@ namespace ${StandardNamespace}
 }
 ]]></File>
 		<File name="${FullName}" language="C#"><![CDATA[${StandardHeader.C#}
-
 using System;
 using System.ComponentModel;
 using System.Drawing;

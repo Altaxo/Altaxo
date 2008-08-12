@@ -8,6 +8,7 @@
 		<Subcategory>Compact Framework</Subcategory>
 		<Icon>C#.Project.Form</Icon>
 		<Description>${res:Templates.Project.WindowsApplication.Description}</Description>
+		<SupportedTargetFrameworks>CF 2.0</SupportedTargetFrameworks>
 	</TemplateConfiguration>
 	
 	<!-- Actions -->
@@ -27,19 +28,11 @@
 		
 		<PropertyGroup>
 			<OutputType>WinExe</OutputType>
-			
-			<PlatformFamilyName>PocketPC</PlatformFamilyName>
-			<PlatformID>WinCE</PlatformID>
-			<TargetFrameworkVersion>CF 2.0</TargetFrameworkVersion>
+			<AppDesignerFolder>Properties</AppDesignerFolder>
 		</PropertyGroup>
-		
-		<Imports clear="true">
-			<Import Project="$(SharpDevelopBinPath)\SharpDevelop.Build.CSharp.targets" />
-		</Imports>
 		
 		<Files>
 		<File name="MainForm.cs" language="C#"><![CDATA[${StandardHeader.C#}
-
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -113,7 +106,7 @@ namespace ${StandardNamespace}
 	}
 }
 ]]></File>
-		<File name="AssemblyInfo.cs" src="DefaultAssemblyInfo.cs" language="C#" />
+		<File name="Properties\AssemblyInfo.cs" src="DefaultAssemblyInfo.cs" language="C#" />
 		</Files>
 	</Project>
 </Template>

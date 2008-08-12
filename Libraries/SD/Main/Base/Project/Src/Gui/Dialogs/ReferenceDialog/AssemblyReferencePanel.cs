@@ -2,14 +2,14 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2633 $</version>
 // </file>
 
 using System;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
-
+using ICSharpCode.SharpDevelop.Project;
 using ICSharpCode.Core;
 
 namespace ICSharpCode.SharpDevelop.Gui
@@ -42,11 +42,14 @@ namespace ICSharpCode.SharpDevelop.Gui
 				
 				if (fdiag.ShowDialog(ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.MainForm) == DialogResult.OK) {
 					foreach (string file in fdiag.FileNames) {
-						selectDialog.AddReference(ReferenceType.Assembly,
-						                          Path.GetFileName(file),
-						                          file,
-						                          null);
+						ReferenceProjectItem assemblyReference = new ReferenceProjectItem(selectDialog.ConfigureProject);
+						assemblyReference.Include = Path.GetFileNameWithoutExtension(file);
+						assemblyReference.HintPath = FileUtility.GetRelativePath(selectDialog.ConfigureProject.Directory, file);
 						
+						selectDialog.AddReference(
+							Path.GetFileName(file), "Assembly", file,
+							assemblyReference
+						);
 					}
 				}
 			}

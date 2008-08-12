@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2676 $</version>
 // </file>
 
 using System;
@@ -19,13 +19,14 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 		public override void GenerateCode(List<AbstractNode> nodes, IList items)
 		{
 			TypeReference stringReference = new TypeReference("System.String");
-			MethodDeclaration method = new MethodDeclaration("ToString",
-			                                                 Modifiers.Public | Modifiers.Override,
-			                                                 stringReference,
-			                                                 null, null);
+			MethodDeclaration method = new MethodDeclaration {
+				Name = "ToString",
+				Modifier = Modifiers.Public | Modifiers.Override,
+				TypeReference = stringReference,
+			};
 			method.Body = new BlockStatement();
-			Expression target = new FieldReferenceExpression(new TypeReferenceExpression(stringReference),
-			                                                 "Format");
+			Expression target = new MemberReferenceExpression(new TypeReferenceExpression(stringReference),
+			                                                  "Format");
 			InvocationExpression methodCall = new InvocationExpression(target);
 			StringBuilder formatString = new StringBuilder();
 			formatString.Append('[');
@@ -40,7 +41,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 			formatString.Append(']');
 			methodCall.Arguments.Add(new PrimitiveExpression(formatString.ToString(), formatString.ToString()));
 			foreach (FieldWrapper w in items) {
-				methodCall.Arguments.Add(new FieldReferenceExpression(new ThisReferenceExpression(), w.Field.Name));
+				methodCall.Arguments.Add(new MemberReferenceExpression(new ThisReferenceExpression(), w.Field.Name));
 			}
 			method.Body.AddChild(new ReturnStatement(methodCall));
 			nodes.Add(method);

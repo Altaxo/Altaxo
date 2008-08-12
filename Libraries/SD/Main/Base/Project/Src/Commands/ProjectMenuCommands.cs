@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2043 $</version>
+//     <version>$Revision: 3228 $</version>
 // </file>
 
 using System;
@@ -66,23 +66,45 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 				MessageService.ShowMessage("${res:ProjectComponent.ContextMenu.GenerateDocumentation.ProjectNeedsToBeCompiled2}");
 				return;
 			}
-			string nDocProjectFile = Path.ChangeExtension(assembly, ".ndoc");
-			if (!File.Exists(nDocProjectFile)) {
-				using (StreamWriter sw = File.CreateText(nDocProjectFile)) {
-					sw.WriteLine("<project>");
+			string sandcastleHelpFileBuilderProjectFile = Path.ChangeExtension(assembly, ".shfb");
+			if (!File.Exists(sandcastleHelpFileBuilderProjectFile)) {
+				using (StreamWriter sw = File.CreateText(sandcastleHelpFileBuilderProjectFile)) {
+					sw.WriteLine("<project schemaVersion=\"1.4.0.2\">");
 					sw.WriteLine("    <assemblies>");
-					sw.WriteLine("        <assembly location=\""+ assembly +"\" documentation=\"" + xmlDocFile + "\" />");
+					sw.WriteLine("        <assembly assemblyPath=\""+ assembly +"\" xmlCommentsPath=\"" + xmlDocFile + "\" />");
 					sw.WriteLine("    </assemblies>");
 					sw.WriteLine("</project>");
 				}
 			}
 			
-			string nDocDir = Path.Combine(FileUtility.ApplicationRootPath, "bin/Tools/NDoc");
+			string sandcastleHelpFileBuilderDirectory = Path.Combine(FileUtility.ApplicationRootPath, "bin/Tools/SHFB");
 			
-			ProcessStartInfo psi = new ProcessStartInfo(Path.Combine(nDocDir, "NDocGui.exe"), '"' + nDocProjectFile + '"');
-			psi.WorkingDirectory = nDocDir;
+			ProcessStartInfo psi = new ProcessStartInfo(Path.Combine(sandcastleHelpFileBuilderDirectory, "SandcastleBuilderGUI.exe"), '"' + sandcastleHelpFileBuilderProjectFile + '"');
+			psi.WorkingDirectory = sandcastleHelpFileBuilderDirectory;
 			psi.UseShellExecute = false;
 			Process.Start(psi);
+		}
+	}
+	
+	/// <summary>
+	/// Opens the projects output folder in an explorer window.
+	/// </summary>
+	public class OpenProjectOutputFolder : AbstractMenuCommand
+	{
+		public override void Run()
+		{
+			CompilableProject project = ProjectService.CurrentProject as CompilableProject;
+			if (project == null) {
+				return;
+			}
+			
+			// Explorer does not handle relative paths as a command line argument properly
+			string outputFolder =  project.OutputFullPath;
+			if (!Directory.Exists(outputFolder)) {
+				Directory.CreateDirectory(outputFolder);
+			}
+			
+			Process.Start(outputFolder);
 		}
 	}
 }

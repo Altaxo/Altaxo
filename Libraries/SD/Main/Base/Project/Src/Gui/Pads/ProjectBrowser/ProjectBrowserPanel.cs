@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2476 $</version>
+//     <version>$Revision: 3067 $</version>
 // </file>
 
 using System;
@@ -71,7 +71,7 @@ namespace ICSharpCode.SharpDevelop.Project
 			ToolbarService.UpdateToolbar(toolStrip);
 			if (node != null && node.ToolbarAddinTreePath != null) {
 				toolStrip.Items.Add(new ToolStripSeparator());
-				toolStrip.Items.AddRange((ToolStripItem[])AddInTree.BuildItems(node.ToolbarAddinTreePath, node, false).ToArray(typeof(ToolStripItem)));
+				toolStrip.Items.AddRange(AddInTree.BuildItems<ToolStripItem>(node.ToolbarAddinTreePath, node, false).ToArray());
 			}
 		}
 		
@@ -87,7 +87,7 @@ namespace ICSharpCode.SharpDevelop.Project
 		public void StoreViewState(Properties memento)
 		{
 			projectBrowserControl.StoreViewState(memento);
-			memento.Set("ProjectBrowserState", ExtTreeView.GetViewStateString(projectBrowserControl.TreeView));
+			memento.Set("ProjectBrowserState", TreeViewHelper.GetViewStateString(projectBrowserControl.TreeView));
 		}
 		
 		/// <summary>
@@ -96,7 +96,7 @@ namespace ICSharpCode.SharpDevelop.Project
 		public void ReadViewState(Properties memento)
 		{
 			projectBrowserControl.ReadViewState(memento);
-			ExtTreeView.ApplyViewStateString(memento.Get("ProjectBrowserState", ""), projectBrowserControl.TreeView);
+			TreeViewHelper.ApplyViewStateString(memento.Get("ProjectBrowserState", ""), projectBrowserControl.TreeView);
 		}
 		
 		public void Clear()

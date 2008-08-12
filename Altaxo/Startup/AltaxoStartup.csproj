@@ -125,19 +125,19 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Libraries\ICSharpCode.Core\Project\ICSharpCode.Core.csproj">
+    <ProjectReference Include="..\..\Libraries\SD\Main\Core\Project\ICSharpCode.Core.csproj">
       <Project>{35CEF10F-2D4C-45F2-9DD1-161E0FEC583C}</Project>
       <Name>ICSharpCode.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Libraries\ICSharpCode.SharpDevelop.Dom\Project\ICSharpCode.SharpDevelop.Dom.csproj">
+    <ProjectReference Include="..\..\Libraries\SD\Main\ICSharpCode.SharpDevelop.Dom\Project\ICSharpCode.SharpDevelop.Dom.csproj">
       <Project>{924EE450-603D-49C1-A8E5-4AFAA31CE6F3}</Project>
       <Name>ICSharpCode.SharpDevelop.Dom</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Libraries\ICSharpCode.SharpDevelop.Sda\ICSharpCode.SharpDevelop.Sda.csproj">
+    <ProjectReference Include="..\..\Libraries\SD\Main\ICSharpCode.SharpDevelop.Sda\ICSharpCode.SharpDevelop.Sda.csproj">
       <Project>{80318B5F-A25D-45AB-8A95-EF31D2370A4C}</Project>
       <Name>ICSharpCode.SharpDevelop.Sda</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Libraries\SharpDevelop.Base\Project\ICSharpCode.SharpDevelop.csproj">
+    <ProjectReference Include="..\..\Libraries\SD\Main\Base\Project\ICSharpCode.SharpDevelop.csproj">
       <Project>{2748AD25-9C63-4E12-877B-4DCE96FBED54}</Project>
       <Name>ICSharpCode.SharpDevelop</Name>
     </ProjectReference>

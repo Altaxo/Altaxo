@@ -2,10 +2,11 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2346 $</version>
+//     <version>$Revision: 3048 $</version>
 // </file>
 
 using System;
+using System.Linq;
 using System.IO;
 using System.Text;
 
@@ -60,7 +61,7 @@ namespace ICSharpCode.SharpDevelop.Project
 		{
 			if (!initialized) {
 				initialized = true;
-				WorkbenchSingleton.Workbench.ActiveWorkbenchWindowChanged += ActiveWindowChanged;
+				WorkbenchSingleton.Workbench.ActiveViewContentChanged += ActiveViewContentChanged;
 				FileService.FileRenamed += FileServiceFileRenamed;
 				FileService.FileRemoved += FileServiceFileRemoved;
 			}
@@ -161,7 +162,7 @@ namespace ICSharpCode.SharpDevelop.Project
 				if (FileUtility.IsBaseDirectory(project.Directory, fileName)) {
 					IProjectItemListProvider provider = project as IProjectItemListProvider;
 					if (provider != null) {
-						foreach (ProjectItem item in Linq.ToArray(provider.Items)) {
+						foreach (ProjectItem item in provider.Items.ToArray()) {
 							if (FileUtility.IsBaseDirectory(fileName, item.FileName)) {
 								provider.RemoveProjectItem(item);
 								OnProjectItemRemoved(new ProjectItemEventArgs(project, item));
@@ -172,22 +173,13 @@ namespace ICSharpCode.SharpDevelop.Project
 			}
 		}
 		
-		static void ActiveWindowChanged(object sender, EventArgs e)
+		static void ActiveViewContentChanged(object sender, EventArgs e)
 		{
-			object activeContent = WorkbenchSingleton.Workbench.ActiveContent;
-			IViewContent viewContent = activeContent as IViewContent;
-			if (viewContent == null && activeContent is ISecondaryViewContent) {
-				// required if one creates a new winforms app and then immediately switches to design mode
-				// without focussing the text editor
-				IWorkbenchWindow window = ((ISecondaryViewContent)activeContent).WorkbenchWindow;
-				if (window == null) // workbench window is being disposed
-					return;
-				viewContent = window.ViewContent;
-			}
+			IViewContent viewContent = WorkbenchSingleton.Workbench.ActiveViewContent;
 			if (OpenSolution == null || viewContent == null) {
 				return;
 			}
-			string fileName = viewContent.FileName;
+			string fileName = viewContent.PrimaryFileName;
 			if (fileName == null) {
 				return;
 			}
@@ -196,10 +188,8 @@ namespace ICSharpCode.SharpDevelop.Project
 		
 		public static void AddProject(ISolutionFolderNode solutionFolderNode, IProject newProject)
 		{
-			if (Linq.Exists(solutionFolderNode.Solution.SolutionFolders,
-			                delegate (ISolutionFolder folder) {
-			                	return string.Equals(folder.IdGuid, newProject.IdGuid, StringComparison.OrdinalIgnoreCase);
-			                }))
+			if (solutionFolderNode.Solution.SolutionFolders.Any(
+				folder => string.Equals(folder.IdGuid, newProject.IdGuid, StringComparison.OrdinalIgnoreCase)))
 			{
 				LoggingService.Warn("ProjectService.AddProject: Duplicate IdGuid detected");
 				newProject.IdGuid = Guid.NewGuid().ToString().ToUpperInvariant();
@@ -253,7 +243,10 @@ namespace ICSharpCode.SharpDevelop.Project
 		
 		public static void LoadSolution(string fileName)
 		{
+			if (!Path.IsPathRooted(fileName))
+				throw new ArgumentException("Path must be rooted!");
 			BeforeLoadSolution();
+			OnSolutionLoading(fileName);
 			try {
 				openSolution = Solution.Load(fileName);
 				if (openSolution == null)
@@ -265,7 +258,7 @@ namespace ICSharpCode.SharpDevelop.Project
 			AbstractProject.filesToOpenAfterSolutionLoad.Clear();
 			try {
 				string file = GetPreferenceFileName(openSolution.FileName);
-				if (FileUtility.IsValidFileName(file) && File.Exists(file)) {
+				if (FileUtility.IsValidPath(file) && File.Exists(file)) {
 					(openSolution.Preferences as IMementoCapable).SetMemento(Properties.Load(file));
 				} else {
 					(openSolution.Preferences as IMementoCapable).SetMemento(new Properties());
@@ -301,7 +294,7 @@ namespace ICSharpCode.SharpDevelop.Project
 			openSolution.ApplySolutionConfigurationAndPlatformToProjects();
 			foreach (IProject project in openSolution.Projects) {
 				string file = GetPreferenceFileName(project.FileName);
-				if (FileUtility.IsValidFileName(file) && File.Exists(file)) {
+				if (FileUtility.IsValidPath(file) && File.Exists(file)) {
 					project.SetMemento(Properties.Load(file));
 				}
 			}
@@ -312,6 +305,8 @@ namespace ICSharpCode.SharpDevelop.Project
 		/// </summary>
 		public static void LoadProject(string fileName)
 		{
+			if (!Path.IsPathRooted(fileName))
+				throw new ArgumentException("Path must be rooted!");
 			string solutionFile = Path.ChangeExtension(fileName, ".sln");
 			if (File.Exists(solutionFile)) {
 				LoadSolution(solutionFile);
@@ -452,7 +447,7 @@ namespace ICSharpCode.SharpDevelop.Project
 			Properties memento = (openSolution.Preferences as IMementoCapable).CreateMemento();
 			
 			string fullFileName = GetPreferenceFileName(openSolution.FileName);
-			if (FileUtility.IsValidFileName(fullFileName)) {
+			if (FileUtility.IsValidPath(fullFileName)) {
 				FileUtility.ObservedSave(new NamedFileOperationDelegate(memento.Save), fullFileName, FileErrorPolicy.Inform);
 			}
 			
@@ -461,7 +456,7 @@ namespace ICSharpCode.SharpDevelop.Project
 				if (memento == null) continue;
 				
 				fullFileName = GetPreferenceFileName(project.FileName);
-				if (FileUtility.IsValidFileName(fullFileName)) {
+				if (FileUtility.IsValidPath(fullFileName)) {
 					FileUtility.ObservedSave(new NamedFileOperationDelegate(memento.Save), fullFileName, FileErrorPolicy.Inform);
 				}
 			}
@@ -469,6 +464,11 @@ namespace ICSharpCode.SharpDevelop.Project
 		
 		public static void CloseSolution()
 		{
+			// If a build is running, cancel it.
+			// If we would let a build run but unload the MSBuild projects, the next project.StartBuild call
+			// could cause an exception.
+			BuildEngine.CancelGuiBuild();
+			
 			if (openSolution != null) {
 				CurrentProject = null;
 				OnSolutionClosing(new SolutionEventArgs(openSolution));
@@ -478,22 +478,6 @@ namespace ICSharpCode.SharpDevelop.Project
 				
 				OnSolutionClosed(EventArgs.Empty);
 			}
-		}
-		
-		public static void MarkFileDirty(string fileName)
-		{
-			if (OpenSolution != null) {
-				foreach (IProject project in OpenSolution.Projects) {
-					if (project.IsFileInProject(fileName)) {
-						MarkProjectDirty(project);
-					}
-				}
-			}
-		}
-		
-		public static void MarkProjectDirty(IProject project)
-		{
-			project.IsDirty = true;
 		}
 		
 		static void OnCurrentProjectChanged(ProjectEventArgs e)
@@ -514,6 +498,13 @@ namespace ICSharpCode.SharpDevelop.Project
 		{
 			if (SolutionClosing != null) {
 				SolutionClosing(null, e);
+			}
+		}
+		
+		static void OnSolutionLoading(string fileName)
+		{
+			if (SolutionLoading != null) {
+				SolutionLoading(fileName, EventArgs.Empty);
 			}
 		}
 		
@@ -608,7 +599,26 @@ namespace ICSharpCode.SharpDevelop.Project
 				ProjectAdded(null, e);
 			}
 		}
+		internal static void OnProjectCreated(ProjectEventArgs e)
+		{
+			if (ProjectCreated != null) {
+				ProjectCreated(null, e);
+			}
+		}
+		internal static void OnSolutionCreated(SolutionEventArgs e)
+		{
+			if (SolutionCreated != null) {
+				SolutionCreated(null, e);
+			}
+		}
 		
+		/// <summary>
+		/// Is raised when a new project is created.
+		/// </summary>
+		public static event ProjectEventHandler ProjectCreated;
+		/// <summary>
+		/// Is raised when a new or existing project is added to the solution.
+		/// </summary>
 		public static event ProjectEventHandler ProjectAdded;
 		public static event SolutionFolderEventHandler SolutionFolderRemoved;
 		
@@ -618,6 +628,9 @@ namespace ICSharpCode.SharpDevelop.Project
 		public static event ProjectConfigurationEventHandler ProjectConfigurationChanged;
 		public static event SolutionConfigurationEventHandler SolutionConfigurationChanged;
 		
+		public static event EventHandler<SolutionEventArgs> SolutionCreated;
+		
+		public static event EventHandler                    SolutionLoading;
 		public static event EventHandler<SolutionEventArgs> SolutionLoaded;
 		public static event EventHandler<SolutionEventArgs> SolutionSaved;
 		
@@ -636,3 +649,4 @@ namespace ICSharpCode.SharpDevelop.Project
 		public static event EventHandler<ProjectItemEventArgs> ProjectItemRemoved;
 	}
 }
+

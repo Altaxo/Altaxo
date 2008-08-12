@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="none" email=""/>
-//     <version>$Revision: 2446 $</version>
+//     <version>$Revision: 2465 $</version>
 // </file>
 
 using System;
@@ -70,7 +70,7 @@ namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 		
 		void FindKeys(string directory)
 		{
-			directory = Path.GetFullPath(directory);
+			directory = FileUtility.NormalizePath(directory);
 			while (true) {
 				try {
 					foreach (string fileName in Directory.GetFiles(directory, "*.snk")) {
@@ -96,7 +96,7 @@ namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 		void BrowseKeyFile()
 		{
 			keyFile.SelectedIndex = -1;
-			new BrowseButtonEvent(this, "keyFileComboBox", "${res:SharpDevelop.FileFilter.KeyFiles} (" + KeyFileExtensions + ")|" + KeyFileExtensions + "|${res:SharpDevelop.FileFilter.AllFiles}|*.*", TextBoxEditMode.EditEvaluatedProperty).Event(this, EventArgs.Empty);
+			BrowseForFile(ControlDictionary["keyFileComboBox"], "${res:SharpDevelop.FileFilter.KeyFiles} (" + KeyFileExtensions + ")|" + KeyFileExtensions + "|${res:SharpDevelop.FileFilter.AllFiles}|*.*", TextBoxEditMode.EditEvaluatedProperty);
 		}
 		
 		void CreateKeyFile()

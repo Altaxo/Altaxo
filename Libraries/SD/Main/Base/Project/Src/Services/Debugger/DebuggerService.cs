@@ -2,11 +2,12 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1968 $</version>
+//     <version>$Revision: 3174 $</version>
 // </file>
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
@@ -44,7 +45,7 @@ namespace ICSharpCode.SharpDevelop.Debugging
 		static void GetDescriptors()
 		{
 			if (debuggers == null) {
-				debuggers = (DebuggerDescriptor[])AddInTree.BuildItems("/SharpDevelop/Services/DebuggerService/Debugger", null, false).ToArray(typeof(DebuggerDescriptor));
+				debuggers = AddInTree.BuildItems<DebuggerDescriptor>("/SharpDevelop/Services/DebuggerService/Debugger", null, false).ToArray();
 			}
 		}
 		
@@ -72,6 +73,7 @@ namespace ICSharpCode.SharpDevelop.Debugging
 			get {
 				if (currentDebugger == null) {
 					currentDebugger = GetCompatibleDebugger();
+					currentDebugger.DebugStarting += new EventHandler(OnDebugStarting);
 					currentDebugger.DebugStarted += new EventHandler(OnDebugStarted);
 					currentDebugger.DebugStopped += new EventHandler(OnDebugStopped);
 				}
@@ -97,16 +99,23 @@ namespace ICSharpCode.SharpDevelop.Debugging
 			}
 		}
 		
+		public static event EventHandler DebugStarting;
 		public static event EventHandler DebugStarted;
 		public static event EventHandler DebugStopped;
 		
-		static void OnDebugStarted(object sender, EventArgs e)
+		static void OnDebugStarting(object sender, EventArgs e)
 		{
 			WorkbenchSingleton.Workbench.WorkbenchLayout.StoreConfiguration();
-			oldLayoutConfiguration = LayoutConfiguration.CurrentLayoutName;
 			LayoutConfiguration.CurrentLayoutName = "Debug";
 
 			ClearDebugMessages();
+			
+			if (DebugStarting != null)
+				DebugStarting(null, e);
+		}
+		
+		static void OnDebugStarted(object sender, EventArgs e)
+		{
 			if (DebugStarted != null)
 				DebugStarted(null, e);
 		}
@@ -211,11 +220,12 @@ namespace ICSharpCode.SharpDevelop.Debugging
 		
 		public static void ToggleBreakpointAt(IDocument document, string fileName, int lineNumber)
 		{
-			foreach (Bookmark m in document.BookmarkManager.Marks) {
-				BreakpointBookmark breakpoint = m as BreakpointBookmark;
+			ReadOnlyCollection<Bookmark> bookmarks = document.BookmarkManager.Marks;
+			for (int i = bookmarks.Count - 1; i >= 0; --i) {
+				BreakpointBookmark breakpoint = bookmarks[i] as BreakpointBookmark;
 				if (breakpoint != null) {
 					if (breakpoint.LineNumber == lineNumber) {
-						document.BookmarkManager.RemoveMark(m);
+						document.BookmarkManager.RemoveMark(breakpoint);
 						return;
 					}
 				}
@@ -273,7 +283,7 @@ namespace ICSharpCode.SharpDevelop.Debugging
 		{
 			if (mouseButtons != MouseButtons.Left) return;
 			Rectangle viewRect = iconBar.TextArea.TextView.DrawingPosition;
-			Point logicPos = iconBar.TextArea.TextView.GetLogicalPosition(0, mousepos.Y - viewRect.Top);
+			TextLocation logicPos = iconBar.TextArea.TextView.GetLogicalPosition(0, mousepos.Y - viewRect.Top);
 			
 			if (logicPos.Y >= 0 && logicPos.Y < iconBar.TextArea.Document.TotalNumberOfLines) {
 				ToggleBreakpointAt(iconBar.TextArea.Document, iconBar.TextArea.MotherTextEditorControl.FileName, logicPos.Y);
@@ -304,7 +314,6 @@ namespace ICSharpCode.SharpDevelop.Debugging
 				}
 				
 				if (e.InDocument) {
-					
 					// Query all registered tooltip providers using the AddInTree.
 					// The first one that does not return null will be used.
 					ToolTipInfo ti = null;
@@ -328,7 +337,7 @@ namespace ICSharpCode.SharpDevelop.Debugging
 					
 				}
 			} catch (Exception ex) {
-				ICSharpCode.Core.MessageService.ShowError(ex);
+				ICSharpCode.Core.MessageService.ShowError(ex, "Error while requesting tooltip for location " + e.LogicalPosition);
 			} finally {
 				if (toolTipControl == null && CanCloseOldToolTip)
 					CloseOldToolTip();
@@ -365,7 +374,7 @@ namespace ICSharpCode.SharpDevelop.Debugging
 		/// </summary>
 		internal static ToolTipInfo GetToolTipInfo(TextArea textArea, ToolTipRequestEventArgs e)
 		{
-			Point logicPos = e.LogicalPosition;
+			TextLocation logicPos = e.LogicalPosition;
 			IDocument doc = textArea.Document;
 			IExpressionFinder expressionFinder = ParserService.GetExpressionFinder(textArea.MotherTextEditorControl.FileName);
 			if (expressionFinder == null)
@@ -381,14 +390,22 @@ namespace ICSharpCode.SharpDevelop.Debugging
 				ResolveResult result = ParserService.Resolve(expressionResult, logicPos.Y + 1, logicPos.X + 1, textArea.MotherTextEditorControl.FileName, textContent);
 				bool debuggerCanShowValue;
 				string toolTipText = GetText(result, expression, out debuggerCanShowValue);
+				if (Control.ModifierKeys == Keys.Control) {
+					toolTipText = "expr: " + expressionResult.ToString() + "\n" + toolTipText;
+					debuggerCanShowValue = false;
+				}
 				if (toolTipText != null) {
-					if (Control.ModifierKeys == Keys.Control) {
-						toolTipText = "expr: " + expressionResult.ToString() + "\n" + toolTipText;
-					} else if (debuggerCanShowValue && currentDebugger != null) {
+					if (debuggerCanShowValue && currentDebugger != null) {
 						return new ToolTipInfo(currentDebugger.GetTooltipControl(expressionResult.Expression));
 					}
 					return new ToolTipInfo(toolTipText);
 				}
+			} else {
+				#if DEBUG
+				if (Control.ModifierKeys == Keys.Control) {
+					return new ToolTipInfo("no expr: " + expressionResult.ToString());
+				}
+				#endif
 			}
 			return null;
 		}
@@ -402,15 +419,17 @@ namespace ICSharpCode.SharpDevelop.Debugging
 			}
 			if (result is MixedResolveResult)
 				return GetText(((MixedResolveResult)result).PrimaryResult, expression, out debuggerCanShowValue);
-			IAmbience ambience = AmbienceService.CurrentAmbience;
-			ambience.ConversionFlags = ConversionFlags.StandardConversionFlags | ConversionFlags.ShowAccessibility;
+			else if (result is DelegateCallResolveResult)
+				return GetText(((DelegateCallResolveResult)result).Target, expression, out debuggerCanShowValue);
+			
+			IAmbience ambience = AmbienceService.GetCurrentAmbience();
+			ambience.ConversionFlags = ConversionFlags.StandardConversionFlags | ConversionFlags.UseFullyQualifiedMemberNames;
 			if (result is MemberResolveResult) {
 				return GetMemberText(ambience, ((MemberResolveResult)result).ResolvedMember, expression, out debuggerCanShowValue);
 			} else if (result is LocalResolveResult) {
 				LocalResolveResult rr = (LocalResolveResult)result;
-				ambience.ConversionFlags = ConversionFlags.UseFullyQualifiedNames
-					| ConversionFlags.ShowReturnType
-					| ConversionFlags.QualifiedNamesOnlyForReturnTypes;
+				ambience.ConversionFlags = ConversionFlags.UseFullyQualifiedTypeNames
+					| ConversionFlags.ShowReturnType | ConversionFlags.ShowDefinitionKeyWord;
 				StringBuilder b = new StringBuilder();
 				if (rr.IsParameter)
 					b.Append("parameter ");
@@ -418,7 +437,7 @@ namespace ICSharpCode.SharpDevelop.Debugging
 					b.Append("local variable ");
 				b.Append(ambience.Convert(rr.Field));
 				if (currentDebugger != null) {
-					string currentValue = currentDebugger.GetValueAsString(rr.Field.Name);
+					string currentValue = currentDebugger.GetValueAsString(rr.VariableName);
 					if (currentValue != null) {
 						debuggerCanShowValue = true;
 						b.Append(" = ");
@@ -434,8 +453,8 @@ namespace ICSharpCode.SharpDevelop.Debugging
 					return GetMemberText(ambience, c, expression, out debuggerCanShowValue);
 				else
 					return ambience.Convert(result.ResolvedType);
-			} else if (result is MethodResolveResult) {
-				MethodResolveResult mrr = result as MethodResolveResult;
+			} else if (result is MethodGroupResolveResult) {
+				MethodGroupResolveResult mrr = result as MethodGroupResolveResult;
 				IMethod m = mrr.GetMethodIfSingleOverload();
 				if (m != null)
 					return GetMemberText(ambience, m, expression, out debuggerCanShowValue);
@@ -453,7 +472,7 @@ namespace ICSharpCode.SharpDevelop.Debugging
 			}
 		}
 		
-		static string GetMemberText(IAmbience ambience, IDecoration member, string expression, out bool debuggerCanShowValue)
+		static string GetMemberText(IAmbience ambience, IEntity member, string expression, out bool debuggerCanShowValue)
 		{
 			bool tryDisplayValue = false;
 			debuggerCanShowValue = false;

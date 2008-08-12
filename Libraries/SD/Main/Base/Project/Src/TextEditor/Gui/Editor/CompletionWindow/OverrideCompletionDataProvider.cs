@@ -2,11 +2,12 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2340 $</version>
+//     <version>$Revision: 3073 $</version>
 // </file>
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using ICSharpCode.SharpDevelop.Dom;
 using ICSharpCode.SharpDevelop.Dom.Refactoring;
 using ICSharpCode.TextEditor;
@@ -17,6 +18,16 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 {
 	public class OverrideCompletionDataProvider : AbstractCompletionDataProvider
 	{
+		static IEnumerable<IMember> GetOverridableMembers(IClass c)
+		{
+			if (c == null) {
+				throw new ArgumentException("c");
+			}
+			
+			return MemberLookupHelper.GetAccessibleMembers(c.BaseType, c, c.ProjectContent.Language, true)
+				.Where(m => m.IsOverridable && !m.IsConst);
+		}
+		
 		/// <summary>
 		/// Gets a list of overridable methods from the specified class.
 		/// A better location for this method is in the DefaultClass
@@ -24,19 +35,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		/// </summary>
 		public static IMethod[] GetOverridableMethods(IClass c)
 		{
-			if (c == null) {
-				throw new ArgumentException("c");
-			}
-			
-			List<IMethod> methods = new List<IMethod>();
-			foreach (IMethod m in c.DefaultReturnType.GetMethods()) {
-				if (m.IsOverridable && !m.IsConst && !m.IsPrivate) {
-					if (m.DeclaringType.FullyQualifiedName != c.FullyQualifiedName) {
-						methods.Add(m);
-					}
-				}
-			}
-			return methods.ToArray();
+			return GetOverridableMembers(c).OfType<IMethod>().ToArray();
 		}
 		
 		/// <summary>
@@ -44,19 +43,15 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		/// </summary>
 		public static IProperty[] GetOverridableProperties(IClass c)
 		{
-			if (c == null) {
-				throw new ArgumentException("c");
-			}
-			
-			List<IProperty> properties = new List<IProperty>();
-			foreach (IProperty p in c.DefaultReturnType.GetProperties()) {
-				if (p.IsOverridable && !p.IsConst && !p.IsPrivate) {
-					if (p.DeclaringType.FullyQualifiedName != c.FullyQualifiedName) {
-						properties.Add(p);
-					}
-				}
-			}
-			return properties.ToArray();
+			return GetOverridableMembers(c).OfType<IProperty>().ToArray();
+		}
+		
+		public override CompletionDataProviderKeyResult ProcessKey(char key)
+		{
+			if (key == '(')
+				return CompletionDataProviderKeyResult.NormalKey;
+			else
+				return base.ProcessKey(key);
 		}
 		
 		public override ICompletionData[] GenerateCompletionData(string fileName, TextArea textArea, char charTyped)
@@ -82,22 +77,24 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		
 		static string GetName(IMethod method, ConversionFlags flags)
 		{
-			AmbienceService.CurrentAmbience.ConversionFlags = flags | ConversionFlags.ShowParameterNames;
-			return AmbienceService.CurrentAmbience.Convert(method);
+			IAmbience ambience = AmbienceService.GetCurrentAmbience();
+			ambience.ConversionFlags = flags | ConversionFlags.ShowParameterNames;
+			return ambience.Convert(method);
 		}
 		
 		public OverrideCompletionData(IMethod method)
-			: base(GetName(method, ConversionFlags.None),
+			: base(GetName(method, ConversionFlags.ShowParameterList),
 			       "override " + GetName(method, ConversionFlags.ShowReturnType
+			                             | ConversionFlags.ShowParameterList
 			                             | ConversionFlags.ShowAccessibility)
-			       + "\n\n" + method.Documentation,
+			       + "\n\n" + CodeCompletionData.GetDocumentation(method.Documentation),
 			       ClassBrowserIconService.GetIcon(method))
 		{
 			this.member = method;
 		}
 		
 		public OverrideCompletionData(IProperty property)
-			: base(property.Name, "override " + property.Name + "\n\n" + property.Documentation,
+			: base(property.Name, "override " + property.Name + "\n\n" + CodeCompletionData.GetDocumentation(property.Documentation),
 			       ClassBrowserIconService.GetIcon(property))
 		{
 			this.member = property;
@@ -105,7 +102,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		
 		public override bool InsertAction(TextArea textArea, char ch)
 		{
-			ClassFinder context = new ClassFinder(textArea.MotherTextEditorControl.FileName,
+			ClassFinder context = new ClassFinder(ParserService.GetParseInformation(textArea.MotherTextEditorControl.FileName),
 			                                      textArea.Caret.Line + 1, textArea.Caret.Column + 1);
 			int caretPosition = textArea.Caret.Offset;
 			LineSegment line = textArea.Document.GetLineSegment(textArea.Caret.Line);

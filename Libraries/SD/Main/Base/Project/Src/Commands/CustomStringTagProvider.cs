@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 3119 $</version>
 // </file>
 
 using System;
@@ -15,6 +15,10 @@ using ICSharpCode.SharpDevelop.Project;
 
 namespace ICSharpCode.SharpDevelop.Commands
 {
+	/// <summary>
+	/// Provides tag to string mapping for SharpDevelop. Tags are mapped to strings by several methods
+	/// such as registry and resource files.
+	/// </summary>
 	public class SharpDevelopStringTagProvider :  IStringTagProvider
 	{
 		readonly static string[] tags = new string[] {
@@ -24,9 +28,9 @@ namespace ICSharpCode.SharpDevelop.Commands
 			"CurrentProjectName",
 			"ProjectDir", "ProjectFilename",
 			"CombineDir", "CombineFilename",
+			"SolutionDir", "SolutionFilename",
 			"Startuppath",
-			"TaskService.Warnings", "TaskService.Errors", "TaskService.Messages",
-			"NetSdkDir"
+			"TaskService.Warnings", "TaskService.Errors", "TaskService.Messages"
 		};
 		
 		public string[] Tags {
@@ -37,10 +41,7 @@ namespace ICSharpCode.SharpDevelop.Commands
 		
 		string GetCurrentItemPath()
 		{
-			if (WorkbenchSingleton.Workbench.ActiveWorkbenchWindow != null && !WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent.IsViewOnly && !WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent.IsUntitled) {
-				return WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent.FileName;
-			}
-			return String.Empty;
+			return WorkbenchSingleton.Workbench.ActiveViewContent.PrimaryFileName;
 		}
 		
 		string GetCurrentTargetPath()
@@ -72,8 +73,6 @@ namespace ICSharpCode.SharpDevelop.Commands
 					
 			}
 			switch (tag.ToUpperInvariant()) {
-				case "NETSDKDIR":
-					return FileUtility.NetSdkInstallRoot;
 				case "ITEMPATH":
 					try {
 						return GetCurrentItemPath();
@@ -95,14 +94,28 @@ namespace ICSharpCode.SharpDevelop.Commands
 					} catch (Exception) {}
 					break;
 					
-					// TODO:
 				case "CURLINE":
-					return String.Empty;
+					{
+						IPositionable positionable = WorkbenchSingleton.Workbench.ActiveViewContent as IPositionable;
+						if (positionable != null)
+							return (positionable.Line + 1).ToString();
+						break;
+					}
 				case "CURCOL":
-					return String.Empty;
+					{
+						IPositionable positionable = WorkbenchSingleton.Workbench.ActiveViewContent as IPositionable;
+						if (positionable != null)
+							return (positionable.Column + 1).ToString();
+						break;
+					}
 				case "CURTEXT":
-					return String.Empty;
-					
+					{
+						var tecp = WorkbenchSingleton.Workbench.ActiveViewContent as DefaultEditor.Gui.Editor.ITextEditorControlProvider;
+						if (tecp != null) {
+							return tecp.TextEditorControl.ActiveTextAreaControl.SelectionManager.SelectedText;
+						}
+						break;
+					}
 				case "TARGETPATH":
 					try {
 						return GetCurrentTargetPath();
@@ -126,7 +139,7 @@ namespace ICSharpCode.SharpDevelop.Commands
 					
 				case "PROJECTDIR":
 					if (ProjectService.CurrentProject != null) {
-						return ProjectService.CurrentProject.FileName;
+						return ProjectService.CurrentProject.Directory;
 					}
 					break;
 				case "PROJECTFILENAME":
@@ -138,7 +151,9 @@ namespace ICSharpCode.SharpDevelop.Commands
 					break;
 					
 				case "COMBINEDIR":
+				case "SOLUTIONDIR":
 					return Path.GetDirectoryName(ProjectService.OpenSolution.FileName);
+				case "SOLUTIONFILENAME":
 				case "COMBINEFILENAME":
 					try {
 						return Path.GetFileName(ProjectService.OpenSolution.FileName);

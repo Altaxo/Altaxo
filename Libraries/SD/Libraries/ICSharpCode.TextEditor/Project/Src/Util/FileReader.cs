@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2354 $</version>
+//     <version>$Revision: 2682 $</version>
 // </file>
 
 using System;
@@ -23,19 +23,28 @@ namespace ICSharpCode.TextEditor.Util
 			return codepage == 65001 || codepage == 65000 || codepage == 1200 || codepage == 1201;
 		}
 		
-		public static string ReadFileContent(string fileName, ref Encoding encoding, Encoding defaultEncoding)
+		public static string ReadFileContent(Stream fs, ref Encoding encoding)
 		{
-			using (FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)) {
-				using (StreamReader reader = OpenStream(fs, encoding, defaultEncoding)) {
-					encoding = reader.CurrentEncoding;
-					return reader.ReadToEnd();
-				}
+			using (StreamReader reader = OpenStream(fs, encoding)) {
+				reader.Peek();
+				encoding = reader.CurrentEncoding;
+				return reader.ReadToEnd();
 			}
 		}
 		
-		public static StreamReader OpenStream(FileStream fs, Encoding suggestedEncoding, Encoding defaultEncoding)
+		public static string ReadFileContent(string fileName, Encoding encoding)
 		{
-			if (fs.Length > 3) {
+			using (FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)) {
+				return ReadFileContent(fs, ref encoding);
+			}
+		}
+		
+		public static StreamReader OpenStream(Stream fs, Encoding defaultEncoding)
+		{
+			if (fs == null)
+				throw new ArgumentNullException("fs");
+			
+			if (fs.Length >= 2) {
 				// the autodetection of StreamReader is not capable of detecting the difference
 				// between ISO-8859-1 and UTF-8 without BOM.
 				int firstByte = fs.ReadByte();
@@ -52,15 +61,15 @@ namespace ICSharpCode.TextEditor.Util
 						return AutoDetect(fs, (byte)firstByte, (byte)secondByte, defaultEncoding);
 				}
 			} else {
-				if (suggestedEncoding != null) {
-					return new StreamReader(fs, suggestedEncoding);
+				if (defaultEncoding != null) {
+					return new StreamReader(fs, defaultEncoding);
 				} else {
 					return new StreamReader(fs);
 				}
 			}
 		}
 		
-		static StreamReader AutoDetect(FileStream fs, byte firstByte, byte secondByte, Encoding defaultEncoding)
+		static StreamReader AutoDetect(Stream fs, byte firstByte, byte secondByte, Encoding defaultEncoding)
 		{
 			int max = (int)Math.Min(fs.Length, 500000); // look at max. 500 KB
 			const int ASCII = 0;

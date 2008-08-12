@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Matthew Ward" email="mrward@users.sourceforge.net"/>
-//     <version>$Revision: 2340 $</version>
+//     <version>$Revision: 2933 $</version>
 // </file>
 
 using System;
@@ -21,10 +21,9 @@ namespace ICSharpCode.SharpDevelop.Tests.Utils
 		{
 		}
 		
-		public override IAmbience Ambience {
-			get { 
-				return new MockAmbience();
-			}
+		public override IAmbience GetAmbience()
+		{
+			return null;
 		}
 	}
 }

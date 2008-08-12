@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2043 $</version>
+//     <version>$Revision: 3119 $</version>
 // </file>
 
 using System;
@@ -84,7 +84,7 @@ namespace ICSharpCode.SharpDevelop.Commands
 					containerItem.DropDownItems.Add(cmd);
 				}
 				
-				// if there's only one nested item, add it 
+				// if there's only one nested item, add it
 				// to the result directly, ignoring the bucket
 //				if (containerItem.DropDownItems.Count==1) {
 //					items[i] = containerItem.DropDownItems[0];
@@ -94,8 +94,8 @@ namespace ICSharpCode.SharpDevelop.Commands
 //					// add the bucket to the result
 //					items[i++] = containerItem;
 //				}
-					// add the bucket to the result
-					items[i++] = containerItem;
+				// add the bucket to the result
+				items[i++] = containerItem;
 			}
 			
 			return items;
@@ -227,79 +227,69 @@ namespace ICSharpCode.SharpDevelop.Commands
 			TaskService.BuildMessageViewCategory.AppendText(output + Environment.NewLine + "${res:XML.MainMenu.ToolMenu.ExternalTools.ExitedWithCode} " + p.ExitCode + Environment.NewLine);
 		}
 		
+		
+		/// <summary>
+		/// This handler gets called when a tool in the Tool menu is clicked on.
+		/// </summary>
+		/// <param name="sender">The MenuCommand that sent the event.</param>
+		/// <param name="e">Event arguments.</param>
 		void ToolEvt(object sender, EventArgs e)
 		{
 			MenuCommand item = (MenuCommand)sender;
 			
+			// TODO: ToolLoader.Tool should get a string indexor. Overloading List or making it a Dictionary<string,ExternalTool> would work.
 			for (int i = 0; i < ToolLoader.Tool.Count; ++i) {
-				if (item.Text == ToolLoader.Tool[i].ToString()) {
-					ExternalTool tool = (ExternalTool)ToolLoader.Tool[i];
-					IWorkbenchWindow window = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow;
-					string fileName = window == null ? null : window.ViewContent.FileName;
-					StringParser.Properties["ItemPath"]        = fileName == null ? String.Empty : fileName;
-					StringParser.Properties["ItemDir"]         = fileName == null ? String.Empty : Path.GetDirectoryName(fileName);
-					StringParser.Properties["ItemFileName"]    = fileName == null ? String.Empty : Path.GetFileName(fileName);
-					StringParser.Properties["ItemExt"]         = fileName == null ? String.Empty : Path.GetExtension(fileName);
-					
-					// TODO:
-					StringParser.Properties["CurLine"]         = "0";
-					StringParser.Properties["CurCol"]          = "0";
-					StringParser.Properties["CurText"]         = "0";
-					
-					string targetPath = ProjectService.CurrentProject == null ? null : ProjectService.CurrentProject.OutputAssemblyFullPath;
-					StringParser.Properties["TargetPath"]      = targetPath == null ? String.Empty : targetPath;
-					StringParser.Properties["TargetDir"]       = targetPath == null ? String.Empty : Path.GetDirectoryName(targetPath);
-					StringParser.Properties["TargetName"]      = targetPath == null ? String.Empty : Path.GetFileName(targetPath);
-					StringParser.Properties["TargetExt"]       = targetPath == null ? String.Empty : Path.GetExtension(targetPath);
-					
-					string projectFileName = ProjectService.CurrentProject == null ? null : ProjectService.CurrentProject.FileName;
-					StringParser.Properties["ProjectDir"]      = projectFileName == null ? null : Path.GetDirectoryName(projectFileName);
-					StringParser.Properties["ProjectFileName"] = projectFileName == null ? null : projectFileName;
-					
-					string combineFileName = ProjectService.OpenSolution == null ? null : ProjectService.OpenSolution.FileName;
-					StringParser.Properties["CombineDir"]      = combineFileName == null ? null : Path.GetDirectoryName(combineFileName);
-					StringParser.Properties["CombineFileName"] = combineFileName == null ? null : combineFileName;
-					
-					StringParser.Properties["StartupPath"]     = Application.StartupPath;
-					
-					string command = StringParser.Parse(tool.Command);
-					string args    = StringParser.Parse(tool.Arguments);
-					
-					if (tool.PromptForArguments) {
-						InputBox box = new InputBox();
-						box.Text = tool.MenuCommand;
-						box.Label.Text = ResourceService.GetString("XML.MainMenu.ToolMenu.ExternalTools.EnterArguments");
-						box.TextBox.Text = args;
-						if (box.ShowDialog() != DialogResult.OK)
-							return;
-						args = box.TextBox.Text;
-					}
-					
-					try {
-						ProcessStartInfo startinfo;
-						if (args == null || args.Length == 0 || args.Trim('"', ' ').Length == 0) {
-							startinfo = new ProcessStartInfo(command);
-						} else {
-							startinfo = new ProcessStartInfo(command, args);
-						}
-						
-						startinfo.WorkingDirectory = StringParser.Parse(tool.InitialDirectory);
-						if (tool.UseOutputPad) {
-							startinfo.UseShellExecute = false;
-							startinfo.RedirectStandardOutput = true;
-						}
-						Process process = new Process();
-						process.EnableRaisingEvents = true;
-						process.StartInfo = startinfo;
-						if (tool.UseOutputPad) {
-							process.Exited += new EventHandler(ProcessExitEvent);
-						}
-						process.Start();
-					} catch (Exception ex) {
-						MessageService.ShowError("${res:XML.MainMenu.ToolMenu.ExternalTools.ExecutionFailed} '" + command + " " + args + "'\n" + ex.Message);
-					}
-					break;
+				if (item.Text != ToolLoader.Tool[i].ToString()) { continue; }
+				ExternalTool tool = (ExternalTool)ToolLoader.Tool[i];
+				
+				// Set these to somewhat useful values in case StingParser.Parse() passes when being called on one of them.
+				string command = tool.Command;
+				string args = tool.Arguments;
+
+				// This needs it's own try/catch because if parsing these messages fail, the catch block after
+				// the second try would also throw because MessageService.ShowError() calls StringParser.Parse()
+				try {
+					command = StringParser.Parse(tool.Command);
+					args    = StringParser.Parse(tool.Arguments);
+				} catch (Exception ex) {
+					MessageService.ShowError("${res:XML.MainMenu.ToolMenu.ExternalTools.ExecutionFailed} '" + ex.Message);
+					return;
 				}
+					
+				if (tool.PromptForArguments) {
+					InputBox box = new InputBox();
+					box.Text = tool.MenuCommand;
+					box.Label.Text = ResourceService.GetString("XML.MainMenu.ToolMenu.ExternalTools.EnterArguments");
+					box.TextBox.Text = args;
+					if (box.ShowDialog() != DialogResult.OK)
+						return;
+					args = box.TextBox.Text;
+				}
+					
+				try {
+					ProcessStartInfo startinfo;
+					if (args == null || args.Length == 0 || args.Trim('"', ' ').Length == 0) {
+						startinfo = new ProcessStartInfo(command);
+					} else {
+						startinfo = new ProcessStartInfo(command, args);
+					}
+					
+					startinfo.WorkingDirectory = StringParser.Parse(tool.InitialDirectory);
+					if (tool.UseOutputPad) {
+						startinfo.UseShellExecute = false;
+						startinfo.RedirectStandardOutput = true;
+					}
+					Process process = new Process();
+					process.EnableRaisingEvents = true;
+					process.StartInfo = startinfo;
+					if (tool.UseOutputPad) {
+						process.Exited += new EventHandler(ProcessExitEvent);
+					}
+					process.Start();
+				} catch (Exception ex) {
+					MessageService.ShowError("${res:XML.MainMenu.ToolMenu.ExternalTools.ExecutionFailed} '" + command + " " + args + "'\n" + ex.Message);
+				}
+				return;
 			}
 		}
 	}
@@ -309,37 +299,35 @@ namespace ICSharpCode.SharpDevelop.Commands
 		
 		class MyMenuItem : MenuCheckBox
 		{
-			IViewContent content;
-			public MyMenuItem(IViewContent content) : base(StringParser.Parse(content.TitleName))
+			IWorkbenchWindow window;
+			
+			public MyMenuItem(IWorkbenchWindow window) : base(StringParser.Parse(window.Title))
 			{
-				this.content = content;
+				this.window = window;
 			}
 			
 			protected override void OnClick(EventArgs e)
 			{
 				base.OnClick(e);
 				Checked = true;
-				content.WorkbenchWindow.SelectWindow();
+				window.SelectWindow();
 			}
 		}
 
 		public ToolStripItem[] BuildSubmenu(Codon codon, object owner)
 		{
-			int contentCount = WorkbenchSingleton.Workbench.ViewContentCollection.Count;
-			if (contentCount == 0) {
+			int windowCount = WorkbenchSingleton.Workbench.WorkbenchWindowCollection.Count;
+			if (windowCount == 0) {
 				return new ToolStripItem[] {};
 			}
-			ToolStripItem[] items = new ToolStripItem[contentCount + 1];
+			ToolStripItem[] items = new ToolStripItem[windowCount + 1];
 			items[0] = new MenuSeparator(null, null);
-			for (int i = 0; i < contentCount; ++i) {
-				IViewContent content = (IViewContent)WorkbenchSingleton.Workbench.ViewContentCollection[i];
-				if (content.WorkbenchWindow == null) {
-					continue;
-				}
-				MenuCheckBox item = new MyMenuItem(content);
-				item.Tag = content.WorkbenchWindow;
-				item.Checked = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow == content.WorkbenchWindow;
-				item.Description = "Activate this window ";
+			for (int i = 0; i < windowCount; ++i) {
+				IWorkbenchWindow window = WorkbenchSingleton.Workbench.WorkbenchWindowCollection[i];
+				MenuCheckBox item = new MyMenuItem(window);
+				item.Tag = window;
+				item.Checked = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow == window;
+				item.Description = "Activate this window";
 				items[i + 1] = item;
 			}
 			return items;

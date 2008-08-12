@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2167 $</version>
+//     <version>$Revision: 2625 $</version>
 // </file>
 
 using System;
@@ -35,7 +35,7 @@ namespace ICSharpCode.SharpDevelop
     }
 
 #else
-		public const string VersionText = "SharpDevelop " + RevisionClass.FullVersion;
+		public const string VersionText = "Montferrer (3.0) build " + RevisionClass.Revision;
 #endif
 		
 		static SplashScreenForm splashScreen;
@@ -54,9 +54,6 @@ namespace ICSharpCode.SharpDevelop
 		
 		public SplashScreenForm()
 		{
-			#if !DEBUG
-			TopMost         = true;
-			#endif
 			FormBorderStyle = FormBorderStyle.None;
 			StartPosition   = FormStartPosition.CenterScreen;
 			ShowInTaskbar   = false;

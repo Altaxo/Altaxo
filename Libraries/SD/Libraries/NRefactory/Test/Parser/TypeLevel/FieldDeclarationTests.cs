@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1609 $</version>
+//     <version>$Revision: 3138 $</version>
 // </file>
 
 using System;
@@ -47,7 +47,20 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 			Assert.AreEqual(2, fd.Fields.Count);
 			
 			Assert.AreEqual("String", ((VariableDeclaration)fd.Fields[0]).TypeReference.Type);
+			Assert.IsFalse(((VariableDeclaration)fd.Fields[0]).TypeReference.IsArrayType);
 			Assert.AreEqual("String", ((VariableDeclaration)fd.Fields[1]).TypeReference.Type);
+			Assert.IsFalse(((VariableDeclaration)fd.Fields[1]).TypeReference.IsArrayType);
+		}
+		
+		[Test]
+		public void VBNetMultiFieldsOnSingleLineTest()
+		{
+			string program = "Class TestClass : Dim a : Dim b : End Class";
+			TypeDeclaration td = ParseUtilVBNet.ParseGlobal<TypeDeclaration>(program);
+			
+			Assert.AreEqual(2, td.Children.Count);
+			Assert.IsTrue(td.Children[0] is FieldDeclaration);
+			Assert.IsTrue(td.Children[1] is FieldDeclaration);
 		}
 		
 		[Test]

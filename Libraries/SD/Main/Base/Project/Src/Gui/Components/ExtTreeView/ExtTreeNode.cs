@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2128 $</version>
+//     <version>$Revision: 3065 $</version>
 // </file>
 
 using System;
@@ -393,6 +393,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		/// <summary>
 		/// Gets the drag &amp; drop effect, when a DataObject is dragged over this node.
 		/// </summary>
+		/// <param name="dataObject"></param>
 		/// <param name="proposedEffect">
 		/// The default effect DragDropEffects.Copy and DragDropEffects.Move, depending on the
 		/// key the user presses while performing d&amp;d.

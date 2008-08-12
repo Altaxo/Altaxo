@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2631 $</version>
 // </file>
 
 using System;
@@ -44,10 +44,10 @@ namespace ICSharpCode.SharpDevelop.Gui
 				IProject project = (IProject)item.Tag;
 				ILanguageBinding binding = LanguageBindingService.GetBindingPerLanguageName(project.Language);
 				
-				selectDialog.AddReference(ReferenceType.Project,
-				                          project.Name,
-				                          project.OutputAssemblyFullPath,
-				                          project);
+				selectDialog.AddReference(
+					project.Name, "Project", project.OutputAssemblyFullPath,
+					new ProjectReferenceProjectItem(selectDialog.ConfigureProject, project)
+				);
 			}
 		}
 		

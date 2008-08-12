@@ -22,7 +22,6 @@
 	 -->
 	<Files>
 		<File name="${FullName}" language="C#"><![CDATA[${StandardHeader.C#}
-
 using System;
 
 namespace ${StandardNamespace}
@@ -30,7 +29,7 @@ namespace ${StandardNamespace}
 	/// <summary>
 	/// Description of ${ClassName}.
 	/// </summary>
-	public interface I${ClassName}
+	public interface ${ClassName}
 	{
 		
 	}

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2043 $</version>
+//     <version>$Revision: 3140 $</version>
 // </file>
 
 using System;
@@ -12,6 +12,7 @@ using System.IO;
 using System.Xml;
 
 using ICSharpCode.Core;
+using ICSharpCode.SharpDevelop.Project;
 
 namespace ICSharpCode.SharpDevelop.Internal.Templates
 {
@@ -71,38 +72,6 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 		}
 	}
 	
-	public class TemplateScript
-	{
-		string languageName;
-		string runAt;
-		string scriptSourceCode;
-		
-		public string LanguageName {
-			get {
-				return languageName;
-			}
-		}
-		
-		public string RunAt {
-			get {
-				return runAt;
-			}
-		}
-		string SourceText {
-			get {
-				return "public class ScriptObject : System.MarshalByRefObject { " + scriptSourceCode + "}";
-			}
-		}
-		
-		
-		public TemplateScript(XmlElement scriptConfig)
-		{
-			languageName     = scriptConfig.GetAttribute("language");
-			runAt            = scriptConfig.GetAttribute("runAt");
-			scriptSourceCode = scriptConfig.InnerText;
-		}
-	}
-	
 	public class TemplateType
 	{
 		string    name;
@@ -150,8 +119,8 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 		
 		List<FileDescriptionTemplate> files = new List<FileDescriptionTemplate>();
 		List<TemplateProperty> properties  = new List<TemplateProperty>();
-		List<TemplateScript> scripts = new List<TemplateScript>();
 		List<TemplateType> customTypes = new List<TemplateType>();
+		List<ReferenceProjectItem> requiredAssemblyReferences = new List<ReferenceProjectItem>();
 		
 		XmlElement fileoptions = null;
 		
@@ -238,21 +207,13 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 			}
 		}
 		
+		public List<ReferenceProjectItem> RequiredAssemblyReferences {
+			get { return requiredAssemblyReferences; }
+		}
+		
 		public bool HasProperties {
 			get {
 				return properties != null && properties.Count > 0;
-			}
-		}
-		
-		public List<TemplateScript> Scripts {
-			get {
-				return scripts;
-			}
-		}
-		
-		public bool HasScripts {
-			get {
-				return scripts != null && scripts.Count > 0;
 			}
 		}
 		
@@ -302,6 +263,16 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 				}
 			}
 			
+			if (doc.DocumentElement["References"] != null) {
+				XmlNodeList references = doc.DocumentElement["References"].SelectNodes("Reference");
+				foreach (XmlElement reference in references) {
+					if (!reference.HasAttribute("include"))
+						throw new InvalidDataException("Reference without 'include' attribute!");
+					ReferenceProjectItem item = new ReferenceProjectItem(null, reference.GetAttribute("include"));
+					requiredAssemblyReferences.Add(item);
+				}
+			}
+			
 			fileoptions = doc.DocumentElement["AdditionalOptions"];
 			
 			doc.DocumentElement.SetAttribute("fileName", filename); // used for template loading warnings
@@ -314,20 +285,13 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 					this.files.Add(new FileDescriptionTemplate((XmlElement)filenode, Path.GetDirectoryName(filename)));
 				}
 			}
-			
-			// load scripts (if any)
-			XmlNodeList scriptList = doc.DocumentElement.SelectNodes("Script");
-			foreach (XmlElement scriptElement in scriptList) {
-				this.scripts.Add(new TemplateScript(scriptElement));
-			}
-			
 		}
 		
 		static FileTemplate()
 		{
 			string dataTemplateDir = FileUtility.Combine(PropertyService.DataDirectory, "templates", "file");
 			List<string> files = FileUtility.SearchDirectory(dataTemplateDir, "*.xft");
-			foreach (string templateDirectory in AddInTree.BuildItems(ProjectTemplate.TemplatePath, null, false)) {
+			foreach (string templateDirectory in AddInTree.BuildItems<string>(ProjectTemplate.TemplatePath, null, false)) {
 				files.AddRange(FileUtility.SearchDirectory(templateDirectory, "*.xft"));
 			}
 			foreach (string file in files) {

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2107 $</version>
+//     <version>$Revision: 3067 $</version>
 // </file>
 
 using System;
@@ -38,24 +38,36 @@ namespace ICSharpCode.Core
 			conditionEvaluators.Add("Ownerstate", new OwnerStateConditionEvaluator());
 		}
 		
+		/// <summary>
+		/// Gets the list of loaded AddIns.
+		/// </summary>
 		public static IList<AddIn> AddIns {
 			get {
 				return addIns.AsReadOnly();
 			}
 		}
 		
+		/// <summary>
+		/// Gets a dictionary of registered doozers.
+		/// </summary>
 		public static Dictionary<string, IDoozer> Doozers {
 			get {
 				return doozers;
 			}
 		}
 		
+		/// <summary>
+		/// Gets a dictionary of registered condition evaluators.
+		/// </summary>
 		public static Dictionary<string, IConditionEvaluator> ConditionEvaluators {
 			get {
 				return conditionEvaluators;
 			}
 		}
 		
+		/// <summary>
+		/// Checks whether the specified path exists in the AddIn tree.
+		/// </summary>
 		public static bool ExistsTreeNode(string path)
 		{
 			if (path == null || path.Length == 0) {
@@ -66,20 +78,34 @@ namespace ICSharpCode.Core
 			AddInTreeNode curPath = rootNode;
 			int i = 0;
 			while (i < splittedPath.Length) {
-				if (!curPath.ChildNodes.ContainsKey(splittedPath[i])) {
+				// curPath = curPath.ChildNodes[splittedPath[i]] - check if child path exists
+				if (!curPath.ChildNodes.TryGetValue(splittedPath[i], out curPath)) {
 					return false;
 				}
-				curPath = curPath.ChildNodes[splittedPath[i]];
 				++i;
 			}
 			return true;
 		}
 		
+		/// <summary>
+		/// Gets the <see cref="AddInTreeNode"/> representing the specified path.
+		/// This method throws a <see cref="TreePathNotFoundException"/> when the
+		/// path does not exist.
+		/// </summary>
 		public static AddInTreeNode GetTreeNode(string path)
 		{
 			return GetTreeNode(path, true);
 		}
 		
+		/// <summary>
+		/// Gets the <see cref="AddInTreeNode"/> representing the specified path.
+		/// </summary>
+		/// <param name="path">The path of the AddIn tree node</param>
+		/// <param name="throwOnNotFound">
+		/// If set to <c>true</c>, this method throws a
+		/// <see cref="TreePathNotFoundException"/> when the path does not exist.
+		/// If set to <c>false</c>, <c>null</c> is returned for non-existing paths.
+		/// </param>
 		public static AddInTreeNode GetTreeNode(string path, bool throwOnNotFound)
 		{
 			if (path == null || path.Length == 0) {
@@ -89,13 +115,13 @@ namespace ICSharpCode.Core
 			AddInTreeNode curPath = rootNode;
 			int i = 0;
 			while (i < splittedPath.Length) {
-				if (!curPath.ChildNodes.ContainsKey(splittedPath[i])) {
+				if (!curPath.ChildNodes.TryGetValue(splittedPath[i], out curPath)) {
 					if (throwOnNotFound)
 						throw new TreePathNotFoundException(path);
 					else
 						return null;
 				}
-				curPath = curPath.ChildNodes[splittedPath[i]];
+				// curPath = curPath.ChildNodes[splittedPath[i]]; already done by TryGetValue
 				++i;
 			}
 			return curPath;
@@ -104,35 +130,22 @@ namespace ICSharpCode.Core
 		/// <summary>
 		/// Builds a single item in the addin tree.
 		/// </summary>
+		/// <param name="path">A path to the item in the addin tree.</param>
+		/// <param name="caller">The owner used to create the objects.</param>
+		/// <exception cref="TreePathNotFoundException">The path does not
+		/// exist or does not point to an item.</exception>
 		public static object BuildItem(string path, object caller)
 		{
 			int pos = path.LastIndexOf('/');
 			string parent = path.Substring(0, pos);
 			string child = path.Substring(pos + 1);
 			AddInTreeNode node = GetTreeNode(parent);
-			return node.BuildChildItem(child, caller, BuildItems(path, caller, false));
-		}
-		
-		/// <summary>
-		/// Builds the items in the path.
-		/// </summary>
-		/// <param name="path">A path in the addin tree.</param>
-		/// <param name="caller">The owner used to create the objects.</param>
-		/// <param name="throwOnNotFound">If true, throws an TreePathNotFoundException
-		/// if the path is not found. If false, an empty ArrayList is returned when the
-		/// path is not found.</param>
-		public static ArrayList BuildItems(string path, object caller, bool throwOnNotFound)
-		{
-			AddInTreeNode node = GetTreeNode(path, throwOnNotFound);
-			if (node == null)
-				return new ArrayList();
-			else
-				return node.BuildChildItems(caller);
+			return node.BuildChildItem(child, caller, new ArrayList(BuildItems<object>(path, caller, false)));
 		}
 		
 		/// <summary>
 		/// Builds the items in the path. Ensures that all items have the type T.
-		/// Throws an exception if the path is not found.
+		/// Throws a <see cref="TreePathNotFoundException"/> if the path is not found.
 		/// </summary>
 		/// <param name="path">A path in the addin tree.</param>
 		/// <param name="caller">The owner used to create the objects.</param>
@@ -146,7 +159,7 @@ namespace ICSharpCode.Core
 		/// </summary>
 		/// <param name="path">A path in the addin tree.</param>
 		/// <param name="caller">The owner used to create the objects.</param>
-		/// <param name="throwOnNotFound">If true, throws an TreePathNotFoundException
+		/// <param name="throwOnNotFound">If true, throws a <see cref="TreePathNotFoundException"/>
 		/// if the path is not found. If false, an empty ArrayList is returned when the
 		/// path is not found.</param>
 		public static List<T> BuildItems<T>(string path, object caller, bool throwOnNotFound)
@@ -185,6 +198,12 @@ namespace ICSharpCode.Core
 			}
 		}
 		
+		/// <summary>
+		/// The specified AddIn is added to the <see cref="AddIns"/> collection.
+		/// If the AddIn is enabled, its doozers, condition evaluators and extension
+		/// paths are added to the AddInTree and its resources are added to the
+		/// <see cref="ResourceService"/>.
+		/// </summary>
 		public static void InsertAddIn(AddIn addIn)
 		{
 			if (addIn.Enabled) {
@@ -227,6 +246,12 @@ namespace ICSharpCode.Core
 			addIns.Add(addIn);
 		}
 		
+		/// <summary>
+		/// The specified AddIn is removed to the <see cref="AddIns"/> collection.
+		/// This is only possible for disabled AddIns, enabled AddIns require
+		/// a restart of the application to be removed.
+		/// </summary>
+		/// <exception cref="ArgumentException">Occurs when trying to remove an enabled AddIn.</exception>
 		public static void RemoveAddIn(AddIn addIn)
 		{
 			if (addIn.Enabled) {
@@ -282,6 +307,16 @@ namespace ICSharpCode.Core
 			}
 		}
 		
+		/// <summary>
+		/// Loads a list of .addin files, ensuring that dependencies are satisfied.
+		/// This method is normally called by <see cref="CoreStartup.RunInitialization"/>.
+		/// </summary>
+		/// <param name="addInFiles">
+		/// The list of .addin file names to load.
+		/// </param>
+		/// <param name="disabledAddIns">
+		/// The list of disabled AddIn identity names.
+		/// </param>
 		public static void Load(List<string> addInFiles, List<string> disabledAddIns)
 		{
 			List<AddIn> list = new List<AddIn>();
@@ -363,7 +398,13 @@ namespace ICSharpCode.Core
 				}
 			}
 			foreach (AddIn addIn in list) {
-				InsertAddIn(addIn);
+				try {
+					InsertAddIn(addIn);
+				} catch (AddInLoadException ex) {
+					LoggingService.Error(ex);
+					MessageService.ShowError("Error loading AddIn " + addIn.FileName + ":\n"
+					                         + ex.Message);
+				}
 			}
 		}
 	}

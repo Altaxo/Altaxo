@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2933 $</version>
 // </file>
 
 using System;
@@ -30,6 +30,17 @@ namespace ICSharpCode.SharpDevelop.Gui.ClassBrowser
 			}
 		}
 		
+		internal static string GetText(IClass c)
+		{
+			if (ICSharpCode.Core.PropertyService.Initialized) {
+				IAmbience ambience = c.ProjectContent.Language.GetAmbience();
+				ambience.ConversionFlags = ConversionFlags.ShowTypeParameterList;
+				return ambience.Convert(c);
+			} else {
+				return c.Name;
+			}
+		}
+		
 		public ClassNode(IProject project, IClass c)
 		{
 			sortOrder = 3;
@@ -37,7 +48,8 @@ namespace ICSharpCode.SharpDevelop.Gui.ClassBrowser
 			this.ContextmenuAddinTreePath = "/SharpDevelop/Pads/ClassBrowser/ClassContextMenu";
 			this.project = project;
 			this.c       = c;
-			Text = c.Name;
+			
+			Text = GetText(c);
 			SelectedImageIndex = ImageIndex = ClassBrowserIconService.GetIcon(c);
 			
 			if (c.ClassType != ClassType.Delegate) {

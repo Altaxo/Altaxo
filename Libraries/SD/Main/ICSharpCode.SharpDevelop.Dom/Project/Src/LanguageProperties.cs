@@ -2,10 +2,12 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2066 $</version>
+//     <version>$Revision: 3171 $</version>
 // </file>
 
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using ICSharpCode.SharpDevelop.Dom.Refactoring;
 
 namespace ICSharpCode.SharpDevelop.Dom
@@ -19,7 +21,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 		public readonly static LanguageProperties None = new LanguageProperties(StringComparer.InvariantCulture);
 		
 		/// <summary>
-		/// C# 2.0 language properties.
+		/// C# 3.0 language properties.
 		/// </summary>
 		public readonly static LanguageProperties CSharp = new CSharpProperties();
 		
@@ -55,6 +57,15 @@ namespace ICSharpCode.SharpDevelop.Dom
 		}
 		
 		/// <summary>
+		/// Gets the ambience for this language. Because the IAmbience interface is not thread-safe, every call
+		/// creates a new instance.
+		/// </summary>
+		public virtual IAmbience GetAmbience()
+		{
+			return new CSharp.CSharpAmbience();
+		}
+		
+		/// <summary>
 		/// Gets the CodeDomProvider for this language. Can return null!
 		/// </summary>
 		public virtual System.CodeDom.Compiler.CodeDomProvider CodeDomProvider {
@@ -87,9 +98,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 		/// (first parameter = instance parameter)
 		/// </summary>
 		public virtual bool SupportsExtensionMethods {
-			get {
-				return false;
-			}
+			get { return false; }
 		}
 		
 		/// <summary>
@@ -97,47 +106,37 @@ namespace ICSharpCode.SharpDevelop.Dom
 		/// (first parameter = instance parameter)
 		/// </summary>
 		public virtual bool SupportsExtensionProperties {
-			get {
-				return false;
-			}
+			get { return false; }
 		}
 		
 		/// <summary>
 		/// Gets if extension methods/properties are searched in imported classes (returns true) or if
 		/// only the extensions from the current class, imported classes and imported modules are used
-		/// (returns false). This property has no effect if the language doesn't support
+		/// (returns false). This property has no effect if the language doesn't support extension methods or properties.
 		/// </summary>
 		public virtual bool SearchExtensionsInClasses {
-			get {
-				return false;
-			}
+			get { return false; }
 		}
 		
 		/// <summary>
 		/// Gets if namespaces are imported (i.e. Imports System, Dim a As Collections.ArrayList)
 		/// </summary>
 		public virtual bool ImportNamespaces {
-			get {
-				return false;
-			}
+			get { return false; }
 		}
 		
 		/// <summary>
 		/// Gets if modules are imported with their namespace (i.e. Microsoft.VisualBasic.Randomize()).
 		/// </summary>
 		public virtual bool ImportModules {
-			get {
-				return false;
-			}
+			get { return false; }
 		}
 		
 		/// <summary>
 		/// Gets if classes can be imported (i.e. Imports System.Math)
 		/// </summary>
 		public virtual bool CanImportClasses {
-			get {
-				return false;
-			}
+			get { return false; }
 		}
 		
 		/// <summary>
@@ -145,9 +144,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 		/// used on any part.
 		/// </summary>
 		public virtual bool ImplicitPartialClasses {
-			get {
-				return false;
-			}
+			get { return false; }
 		}
 		
 		/// <summary>
@@ -155,18 +152,14 @@ namespace ICSharpCode.SharpDevelop.Dom
 		/// Used for Boo, which creates instances like this: 'self.Size = Size(10, 20)'
 		/// </summary>
 		public virtual bool AllowObjectConstructionOutsideContext {
-			get {
-				return false;
-			}
+			get { return false; }
 		}
 		
 		/// <summary>
 		/// Gets if the language supports implicit interface implementations.
 		/// </summary>
 		public virtual bool SupportsImplicitInterfaceImplementation {
-			get {
-				return false;
-			}
+			get { return false; }
 		}
 		
 		/// <summary>
@@ -176,26 +169,35 @@ namespace ICSharpCode.SharpDevelop.Dom
 		/// with conflicting return types are invalid unless they are renamed.
 		/// </summary>
 		public virtual bool ExplicitInterfaceImplementationIsPrivateScope {
-			get {
-				return false;
-			}
+			get { return false; }
 		}
 		
 		/// <summary>
 		/// Gets if events explicitly implementing an interface require add {} remove {} regions.
 		/// </summary>
 		public virtual bool RequiresAddRemoveRegionInExplicitInterfaceImplementation {
-			get {
-				return false;
-			}
+			get { return false; }
 		}
 		
 		/// <summary>
-		/// Gets the token that denotes a possible beginning of an indexer expression.
+		/// Gets the start token of an indexer expression in the language. Usually '[' or '('.
 		/// </summary>
 		public virtual string IndexerExpressionStartToken {
-			get {
-				return "[";
+			get { return "["; }
+		}
+		
+		public virtual TextFinder GetFindClassReferencesTextFinder(IClass c)
+		{
+			return new WholeWordTextFinder(c.Name, nameComparer);
+		}
+		
+		public virtual TextFinder GetFindMemberReferencesTextFinder(IMember member)
+		{
+			IProperty property = member as IProperty;
+			if (property != null && property.IsIndexer) {
+				return new IndexBeforeTextFinder(IndexerExpressionStartToken);
+			} else {
+				return new WholeWordTextFinder(member.Name, nameComparer);
 			}
 		}
 		
@@ -214,6 +216,9 @@ namespace ICSharpCode.SharpDevelop.Dom
 		public virtual bool ShowMember(IMember member, bool showStatic)
 		{
 			if (member is IProperty && ((IProperty)member).IsIndexer) {
+				return false;
+			}
+			if (member is IMethod && ((IMethod)member).IsConstructor) {
 				return false;
 			}
 			return member.IsStatic == showStatic;
@@ -257,29 +262,45 @@ namespace ICSharpCode.SharpDevelop.Dom
 			}
 			
 			public override bool SupportsImplicitInterfaceImplementation {
-				get {
-					return true;
-				}
+				get { return true; }
 			}
 			
 			public override bool ExplicitInterfaceImplementationIsPrivateScope {
-				get {
-					return true;
-				}
+				get { return true; }
 			}
 			
 			/// <summary>
 			/// Gets if events explicitly implementing an interface require add {} remove {} regions.
 			/// </summary>
 			public override bool RequiresAddRemoveRegionInExplicitInterfaceImplementation {
-				get {
-					return true;
-				}
+				get { return true; }
+			}
+			
+			public override bool SupportsExtensionMethods {
+				get { return true; }
+			}
+			
+			public override bool SearchExtensionsInClasses {
+				get { return true; }
 			}
 			
 			public override string ToString()
 			{
 				return "[LanguageProperties: C#]";
+			}
+			
+			public override TextFinder GetFindMemberReferencesTextFinder(IMember member)
+			{
+				IMethod method = member as IMethod;
+				if (method != null && method.IsConstructor) {
+					return new CombinedTextFinder(
+						new WholeWordTextFinder(member.DeclaringType.Name, this.NameComparer),
+						new WholeWordTextFinder("this", this.NameComparer),
+						new WholeWordTextFinder("base", this.NameComparer)
+					);
+				} else {
+					return base.GetFindMemberReferencesTextFinder(member);
+				}
 			}
 		}
 		#endregion
@@ -292,6 +313,9 @@ namespace ICSharpCode.SharpDevelop.Dom
 			public override bool ShowMember(IMember member, bool showStatic)
 			{
 				if (member is ArrayReturnType.ArrayIndexer) {
+					return false;
+				}
+				if (member is IMethod && ((IMethod)member).IsConstructor) {
 					return false;
 				}
 				return member.IsStatic || !showStatic;
@@ -315,12 +339,6 @@ namespace ICSharpCode.SharpDevelop.Dom
 				}
 			}
 			
-			public override string IndexerExpressionStartToken {
-				get {
-					return "(";
-				}
-			}
-			
 			public override bool IsClassWithImplicitlyStaticMembers(IClass c)
 			{
 				return c.ClassType == ClassType.Module;
@@ -329,13 +347,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 			public override bool ShowInNamespaceCompletion(IClass c)
 			{
 				foreach (IAttribute attr in c.Attributes) {
-					if (NameComparer.Equals(attr.Name, "Microsoft.VisualBasic.HideModuleNameAttribute"))
-						return false;
-					if (NameComparer.Equals(attr.Name, "HideModuleNameAttribute"))
-						return false;
-					if (NameComparer.Equals(attr.Name, "Microsoft.VisualBasic.HideModuleName"))
-						return false;
-					if (NameComparer.Equals(attr.Name, "HideModuleName"))
+					if (attr.AttributeType.FullyQualifiedName == "Microsoft.VisualBasic.HideModuleNameAttribute")
 						return false;
 				}
 				return base.ShowInNamespaceCompletion(c);
@@ -372,9 +384,115 @@ namespace ICSharpCode.SharpDevelop.Dom
 				}
 			}
 			
+			public override IAmbience GetAmbience()
+			{
+				return new VBNet.VBNetAmbience();
+			}
+			
+			public override string IndexerExpressionStartToken {
+				get { return "("; }
+			}
+			
 			public override string ToString()
 			{
 				return "[LanguageProperties: VB.NET]";
+			}
+		}
+		#endregion
+		
+		#region Text Finder
+		protected sealed class WholeWordTextFinder : TextFinder
+		{
+			readonly string searchedText;
+			readonly bool caseInsensitive;
+			
+			public WholeWordTextFinder(string word, StringComparer nameComparer)
+			{
+				if (word == null) word = string.Empty;
+				
+				caseInsensitive = nameComparer.Equals("a", "A");
+				if (caseInsensitive)
+					this.searchedText = word.ToLowerInvariant();
+				else
+					this.searchedText = word;
+			}
+			
+			public override string PrepareInputText(string inputText)
+			{
+				if (caseInsensitive)
+					return inputText.ToLowerInvariant();
+				else
+					return inputText;
+			}
+			
+			public override TextFinderMatch Find(string inputText, int startPosition)
+			{
+				if (searchedText.Length == 0)
+					return TextFinderMatch.Empty;
+				int pos = startPosition - 1;
+				while ((pos = inputText.IndexOf(searchedText, pos + 1)) >= 0) {
+					if (pos > 0 && char.IsLetterOrDigit(inputText, pos - 1)) {
+						continue; // memberName is not a whole word (a.SomeName cannot reference Name)
+					}
+					if (pos < inputText.Length - searchedText.Length - 1
+					    && char.IsLetterOrDigit(inputText, pos + searchedText.Length))
+					{
+						continue; // memberName is not a whole word (a.Name2 cannot reference Name)
+					}
+					return new TextFinderMatch(pos, searchedText.Length);
+				}
+				return TextFinderMatch.Empty;
+			}
+		}
+		
+		protected sealed class CombinedTextFinder : TextFinder
+		{
+			readonly TextFinder[] finders;
+			
+			public CombinedTextFinder(params TextFinder[] finders)
+			{
+				if (finders == null)
+					throw new ArgumentNullException("finders");
+				if (finders.Length == 0)
+					throw new ArgumentException("finders.Length must be > 0");
+				this.finders = finders;
+			}
+			
+			public override string PrepareInputText(string inputText)
+			{
+				return finders[0].PrepareInputText(inputText);
+			}
+			
+			public override TextFinderMatch Find(string inputText, int startPosition)
+			{
+				TextFinderMatch best = TextFinderMatch.Empty;
+				foreach (TextFinder f in finders) {
+					TextFinderMatch r = f.Find(inputText, startPosition);
+					if (r.Position >= 0 && (best.Position < 0 || r.Position < best.Position)) {
+						best = r;
+					}
+				}
+				return best;
+			}
+		}
+		
+		protected sealed class IndexBeforeTextFinder : TextFinder
+		{
+			readonly string searchText;
+			
+			public IndexBeforeTextFinder(string searchText)
+			{
+				this.searchText = searchText;
+			}
+			
+			public override TextFinderMatch Find(string inputText, int startPosition)
+			{
+				int pos = inputText.IndexOf(searchText, startPosition);
+				if (pos >= 0) {
+					return new TextFinderMatch(pos, searchText.Length, pos - 1);
+				} else {
+					return TextFinderMatch.Empty;
+				}
 			}
 		}
 		#endregion

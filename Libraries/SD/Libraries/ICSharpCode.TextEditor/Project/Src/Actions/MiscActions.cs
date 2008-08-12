@@ -2,10 +2,11 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2542 $</version>
+//     <version>$Revision: 3205 $</version>
 // </file>
 
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Text;
 
@@ -25,7 +26,7 @@ namespace ICSharpCode.TextEditor.Actions
 			StringBuilder indent = new StringBuilder();
 			
 			if (document.TextEditorProperties.ConvertTabsToSpaces) {
-				int tabIndent = document.TextEditorProperties.TabIndent;
+				int tabIndent = document.TextEditorProperties.IndentationSize;
 				if (textArea != null) {
 					int column = textArea.TextView.GetVisualColumn(textArea.Caret.Line, textArea.Caret.Column);
 					indent.Append(new String(' ', tabIndent - column % tabIndent));
@@ -40,7 +41,6 @@ namespace ICSharpCode.TextEditor.Actions
 		
 		void InsertTabs(IDocument document, ISelection selection, int y1, int y2)
 		{
-			int    redocounter = 0;
 			string indentationString = GetIndentationString(document);
 			for (int i = y2; i >= y1; --i) {
 				LineSegment line = document.GetLineSegment(i);
@@ -52,14 +52,8 @@ namespace ICSharpCode.TextEditor.Actions
 				// a source file with a mixture of tabs and spaces
 //				string newLine = document.GetText(line.Offset,line.Length);
 //				document.Replace(line.Offset,line.Length,newLine);
-//				++redocounter;
 				
 				document.Insert(line.Offset, indentationString);
-				++redocounter;
-			}
-			
-			if (redocounter > 0) {
-				document.UndoStack.CombineLast(redocounter); // redo the whole operation (not the single deletes)
 			}
 		}
 		
@@ -88,6 +82,7 @@ namespace ICSharpCode.TextEditor.Actions
 			if (textArea.Document.ReadOnly) {
 				return;
 			}
+			textArea.Document.UndoStack.StartUndoGroup();
 			if (textArea.SelectionManager.HasSomethingSelected) {
 				foreach (ISelection selection in textArea.SelectionManager.SelectionCollection) {
 					int startLine = selection.StartPosition.Y;
@@ -108,6 +103,7 @@ namespace ICSharpCode.TextEditor.Actions
 			} else {
 				InsertTabAtCaretPosition(textArea);
 			}
+			textArea.Document.UndoStack.EndUndoGroup();
 		}
 	}
 	
@@ -115,7 +111,7 @@ namespace ICSharpCode.TextEditor.Actions
 	{
 		void RemoveTabs(IDocument document, ISelection selection, int y1, int y2)
 		{
-			int  redocounter = 0;
+			document.UndoStack.StartUndoGroup();
 			for (int i = y2; i >= y1; --i) {
 				LineSegment line = document.GetLineSegment(i);
 				if (i == y2 && line.Offset == selection.EndOffset) {
@@ -149,7 +145,7 @@ namespace ICSharpCode.TextEditor.Actions
 							charactersToRemove = 1;
 						} else if(document.GetCharAt(line.Offset) == ' ') {
 							int leadingSpaces = 1;
-							int tabIndent = document.TextEditorProperties.TabIndent;
+							int tabIndent = document.TextEditorProperties.IndentationSize;
 							for (leadingSpaces = 1; leadingSpaces < line.Length && document.GetCharAt(line.Offset + leadingSpaces) == ' '; leadingSpaces++) {
 								// deliberately empty
 							}
@@ -169,15 +165,11 @@ namespace ICSharpCode.TextEditor.Actions
 						}
 						if (charactersToRemove > 0) {
 							document.Remove(line.Offset,charactersToRemove);
-							++redocounter;
 						}
 					}
 				}
 			}
-			
-			if (redocounter > 0) {
-				document.UndoStack.CombineLast(redocounter); // redo the whole operation (not the single deletes)
-			}
+			document.UndoStack.EndUndoGroup();
 		}
 		
 		/// <remarks>
@@ -204,7 +196,7 @@ namespace ICSharpCode.TextEditor.Actions
 				// column is updated to that column.
 				LineSegment line = textArea.Document.GetLineSegmentForOffset(textArea.Caret.Offset);
 				string startOfLine = textArea.Document.GetText(line.Offset,textArea.Caret.Offset - line.Offset);
-				int tabIndent = textArea.Document.TextEditorProperties.TabIndent;
+				int tabIndent = textArea.Document.TextEditorProperties.IndentationSize;
 				int currentColumn = textArea.Caret.Column;
 				int remainder = currentColumn % tabIndent;
 				if (remainder == 0) {
@@ -245,7 +237,6 @@ namespace ICSharpCode.TextEditor.Actions
 		
 		void RemoveCommentAt(IDocument document, string comment, ISelection selection, int y1, int y2)
 		{
-			int  redocounter = 0;
 			firstLine = y1;
 			lastLine  = y2;
 			
@@ -259,18 +250,12 @@ namespace ICSharpCode.TextEditor.Actions
 				string lineText = document.GetText(line.Offset, line.Length);
 				if (lineText.Trim().StartsWith(comment)) {
 					document.Remove(line.Offset + lineText.IndexOf(comment), comment.Length);
-					++redocounter;
 				}
-			}
-			
-			if (redocounter > 0) {
-				document.UndoStack.CombineLast(redocounter); // redo the whole operation (not the single deletes)
 			}
 		}
 		
 		void SetCommentAt(IDocument document, string comment, ISelection selection, int y1, int y2)
 		{
-			int  redocounter = 0;
 			firstLine = y1;
 			lastLine  = y2;
 			
@@ -283,11 +268,6 @@ namespace ICSharpCode.TextEditor.Actions
 				
 				string lineText = document.GetText(line.Offset, line.Length);
 				document.Insert(line.Offset, comment);
-				++redocounter;
-			}
-			
-			if (redocounter > 0) {
-				document.UndoStack.CombineLast(redocounter); // redo the whole operation (not the single deletes)
 			}
 		}
 		
@@ -326,6 +306,7 @@ namespace ICSharpCode.TextEditor.Actions
 				return;
 			}
 			
+			textArea.Document.UndoStack.StartUndoGroup();
 			if (textArea.SelectionManager.HasSomethingSelected) {
 				bool shouldComment = true;
 				foreach (ISelection selection in textArea.SelectionManager.SelectionCollection) {
@@ -360,6 +341,7 @@ namespace ICSharpCode.TextEditor.Actions
 				textArea.Document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.SingleLine, caretLine));
 				textArea.EndUpdate();
 			}
+			textArea.Document.UndoStack.EndUndoGroup();
 		}
 	}
 	
@@ -402,11 +384,13 @@ namespace ICSharpCode.TextEditor.Actions
 			
 			BlockCommentRegion commentRegion = FindSelectedCommentRegion(textArea.Document, commentStart, commentEnd, selectionStartOffset, selectionEndOffset);
 			
+			textArea.Document.UndoStack.StartUndoGroup();
 			if (commentRegion != null) {
 				RemoveComment(textArea.Document, commentRegion);
 			} else if (textArea.SelectionManager.HasSomethingSelected) {
 				SetCommentAt(textArea.Document, selectionStartOffset, selectionEndOffset, commentStart, commentEnd);
 			}
+			textArea.Document.UndoStack.EndUndoGroup();
 			
 			textArea.Document.CommitUpdate();
 			textArea.AutoClearSelection = false;
@@ -440,7 +424,7 @@ namespace ICSharpCode.TextEditor.Actions
 				commentEndOffset += selectionStartOffset;
 			}
 			
-			// Find start of comment before or partially inside the 
+			// Find start of comment before or partially inside the
 			// selected text.
 			
 			int commentEndBeforeStartOffset = -1;
@@ -470,7 +454,7 @@ namespace ICSharpCode.TextEditor.Actions
 				}
 				string text = document.GetText(offset, document.TextLength - offset);
 				commentEndOffset = text.IndexOf(commentEnd);
-				if (commentEndOffset >= 0) {	
+				if (commentEndOffset >= 0) {
 					commentEndOffset += offset;
 				}
 			}
@@ -487,14 +471,12 @@ namespace ICSharpCode.TextEditor.Actions
 		{
 			document.Insert(offsetEnd, commentEnd);
 			document.Insert(offsetStart, commentStart);
-			document.UndoStack.CombineLast(2);
 		}
 		
 		void RemoveComment(IDocument document, BlockCommentRegion commentRegion)
 		{
 			document.Remove(commentRegion.EndOffset, commentRegion.CommentEnd.Length);
 			document.Remove(commentRegion.StartOffset, commentRegion.CommentStart.Length);
-			document.UndoStack.CombineLast(2);
 		}
 	}
 	
@@ -540,24 +522,23 @@ namespace ICSharpCode.TextEditor.Actions
 			}
 		}
 		
-		public override bool Equals(object obj)
-		{
-			BlockCommentRegion commentRegion = obj as BlockCommentRegion;
-			if (commentRegion != null) {
-				if (commentRegion.commentStart == commentStart &&
-				    commentRegion.commentEnd == commentEnd &&
-				    commentRegion.startOffset == startOffset &&
-				    commentRegion.endOffset == endOffset) {
-					return true;
-				}
-			}
-			
-			return false;
-		}
-		
 		public override int GetHashCode()
 		{
-			return commentStart.GetHashCode() & commentEnd.GetHashCode() & startOffset.GetHashCode() & endOffset.GetHashCode();
+			int hashCode = 0;
+			unchecked {
+				if (commentStart != null) hashCode += 1000000007 * commentStart.GetHashCode();
+				if (commentEnd != null) hashCode += 1000000009 * commentEnd.GetHashCode();
+				hashCode += 1000000021 * startOffset.GetHashCode();
+				hashCode += 1000000033 * endOffset.GetHashCode();
+			}
+			return hashCode;
+		}
+		
+		public override bool Equals(object obj)
+		{
+			BlockCommentRegion other = obj as BlockCommentRegion;
+			if (other == null) return false;
+			return this.commentStart == other.commentStart && this.commentEnd == other.commentEnd && this.startOffset == other.startOffset && this.endOffset == other.endOffset;
 		}
 	}
 	
@@ -593,17 +574,10 @@ namespace ICSharpCode.TextEditor.Actions
 		/// <param name="textArea">The <see cref="ItextArea"/> which is used for callback purposes</param>
 		public override void Execute(TextArea textArea)
 		{
-			if (textArea.Document.ReadOnly) {
-				return;
-			}
 			if (textArea.SelectionManager.HasSomethingSelected) {
-				textArea.BeginUpdate();
-				textArea.Caret.Position = textArea.SelectionManager.SelectionCollection[0].StartPosition;
-				textArea.SelectionManager.RemoveSelectedText();
-				textArea.ScrollToCaret();
-				textArea.EndUpdate();
+				Delete.DeleteSelection(textArea);
 			} else {
-				if (textArea.Caret.Offset > 0) {
+				if (textArea.Caret.Offset > 0 && !textArea.IsReadOnly(textArea.Caret.Offset - 1)) {
 					textArea.BeginUpdate();
 					int curLineNr     = textArea.Document.GetLineNumberForOffset(textArea.Caret.Offset);
 					int curLineOffset = textArea.Document.GetLineSegment(curLineNr).Offset;
@@ -614,17 +588,16 @@ namespace ICSharpCode.TextEditor.Actions
 						int lineEndOffset = line.Offset + line.Length;
 						int lineLength = line.Length;
 						textArea.Document.Remove(lineEndOffset, curLineOffset - lineEndOffset);
-						textArea.Caret.Position = new Point(lineLength, curLineNr - 1);
-						textArea.Document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.PositionToEnd, new Point(0, curLineNr - 1)));
-						textArea.EndUpdate();
+						textArea.Caret.Position = new TextLocation(lineLength, curLineNr - 1);
+						textArea.Document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.PositionToEnd, new TextLocation(0, curLineNr - 1)));
 					} else {
 						int caretOffset = textArea.Caret.Offset - 1;
 						textArea.Caret.Position = textArea.Document.OffsetToPosition(caretOffset);
 						textArea.Document.Remove(caretOffset, 1);
 						
-						textArea.Document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.PositionToLineEnd, new Point(textArea.Caret.Offset - textArea.Document.GetLineSegment(curLineNr).Offset, curLineNr)));
-						textArea.EndUpdate();
+						textArea.Document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.PositionToLineEnd, new TextLocation(textArea.Caret.Offset - textArea.Document.GetLineSegment(curLineNr).Offset, curLineNr)));
 					}
+					textArea.EndUpdate();
 				}
 			}
 		}
@@ -632,22 +605,29 @@ namespace ICSharpCode.TextEditor.Actions
 	
 	public class Delete : AbstractEditAction
 	{
+		internal static void DeleteSelection(TextArea textArea)
+		{
+			Debug.Assert(textArea.SelectionManager.HasSomethingSelected);
+			if (textArea.SelectionManager.SelectionIsReadonly)
+				return;
+			textArea.BeginUpdate();
+			textArea.Caret.Position = textArea.SelectionManager.SelectionCollection[0].StartPosition;
+			textArea.SelectionManager.RemoveSelectedText();
+			textArea.ScrollToCaret();
+			textArea.EndUpdate();
+		}
+		
 		/// <remarks>
 		/// Executes this edit action
 		/// </remarks>
 		/// <param name="textArea">The <see cref="ItextArea"/> which is used for callback purposes</param>
 		public override void Execute(TextArea textArea)
 		{
-			if (textArea.Document.ReadOnly) {
-				return;
-			}
 			if (textArea.SelectionManager.HasSomethingSelected) {
-				textArea.BeginUpdate();
-				textArea.Caret.Position = textArea.SelectionManager.SelectionCollection[0].StartPosition;
-				textArea.SelectionManager.RemoveSelectedText();
-				textArea.ScrollToCaret();
-				textArea.EndUpdate();
+				DeleteSelection(textArea);
 			} else {
+				if (textArea.IsReadOnly(textArea.Caret.Offset))
+					return;
 				
 				if (textArea.Caret.Offset < textArea.Document.TextLength) {
 					textArea.BeginUpdate();
@@ -659,11 +639,11 @@ namespace ICSharpCode.TextEditor.Actions
 							LineSegment nextLine = textArea.Document.GetLineSegment(curLineNr + 1);
 							
 							textArea.Document.Remove(textArea.Caret.Offset, nextLine.Offset - textArea.Caret.Offset);
-							textArea.Document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.PositionToEnd, new Point(0, curLineNr)));
+							textArea.Document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.PositionToEnd, new TextLocation(0, curLineNr)));
 						}
 					} else {
 						textArea.Document.Remove(textArea.Caret.Offset, 1);
-//						textArea.Document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.PositionToLineEnd, new Point(textArea.Caret.Offset - textArea.Document.GetLineSegment(curLineNr).Offset, curLineNr)));
+//						textArea.Document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.PositionToLineEnd, new TextLocation(textArea.Caret.Offset - textArea.Document.GetLineSegment(curLineNr).Offset, curLineNr)));
 					}
 					textArea.UpdateMatchingBracket();
 					textArea.EndUpdate();
@@ -684,7 +664,8 @@ namespace ICSharpCode.TextEditor.Actions
 			int requestedLineNumber = Math.Min(textArea.Document.GetNextVisibleLineAbove(curLineNr, textArea.TextView.VisibleLineCount), textArea.Document.TotalNumberOfLines - 1);
 			
 			if (curLineNr != requestedLineNumber) {
-				textArea.Caret.Position = new Point(textArea.Caret.DesiredColumn, requestedLineNumber);
+				textArea.Caret.Position = new TextLocation(0, requestedLineNumber);
+				textArea.SetCaretToDesiredColumn();
 			}
 		}
 	}
@@ -701,7 +682,8 @@ namespace ICSharpCode.TextEditor.Actions
 			int requestedLineNumber = Math.Max(textArea.Document.GetNextVisibleLineBelow(curLineNr, textArea.TextView.VisibleLineCount), 0);
 			
 			if (curLineNr != requestedLineNumber) {
-				textArea.Caret.Position = new Point(textArea.Caret.DesiredColumn, requestedLineNumber);
+				textArea.Caret.Position = new TextLocation(0, requestedLineNumber);
+				textArea.SetCaretToDesiredColumn();
 			}
 		}
 	}
@@ -710,25 +692,28 @@ namespace ICSharpCode.TextEditor.Actions
 		/// <remarks>
 		/// Executes this edit action
 		/// </remarks>
-		/// <param name="textArea">The <see cref="ItextArea"/> which is used for callback purposes</param>
+		/// <param name="textArea">The <see cref="TextArea"/> which is used for callback purposes</param>
 		public override void Execute(TextArea textArea)
 		{
 			if (textArea.Document.ReadOnly) {
 				return;
 			}
 			textArea.BeginUpdate();
+			textArea.Document.UndoStack.StartUndoGroup();
 			try {
 				if (textArea.HandleKeyPress('\n'))
 					return;
+				
 				textArea.InsertString(Environment.NewLine);
 				
 				int curLineNr = textArea.Caret.Line;
-				textArea.Caret.Column = textArea.Document.FormattingStrategy.FormatLine(textArea, curLineNr, textArea.Caret.Offset, '\n');
+				textArea.Document.FormattingStrategy.FormatLine(textArea, curLineNr, textArea.Caret.Offset, '\n');
 				textArea.SetDesiredColumn();
 				
 				textArea.Document.UpdateQueue.Clear();
-				textArea.Document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.PositionToEnd, new Point(0, curLineNr - 1)));
+				textArea.Document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.PositionToEnd, new TextLocation(0, curLineNr - 1)));
 			} finally {
+				textArea.Document.UndoStack.EndUndoGroup();
 				textArea.EndUpdate();
 			}
 		}
@@ -795,43 +780,45 @@ namespace ICSharpCode.TextEditor.Actions
 		public override void Execute(TextArea textArea)
 		{
 			// if anything is selected we will just delete it first
-			textArea.BeginUpdate();
 			if (textArea.SelectionManager.HasSomethingSelected) {
-				textArea.SelectionManager.RemoveSelectedText();
-				textArea.ScrollToCaret();
+				Delete.DeleteSelection(textArea);
+				return;
 			}
+			textArea.BeginUpdate();
 			// now delete from the caret to the beginning of the word
 			LineSegment line =
 				textArea.Document.GetLineSegmentForOffset(textArea.Caret.Offset);
 			// if we are not at the beginning of a line
-			if(textArea.Caret.Offset > line.Offset) {
+			if (textArea.Caret.Offset > line.Offset) {
 				int prevWordStart = TextUtilities.FindPrevWordStart(textArea.Document,
 				                                                    textArea.Caret.Offset);
-				if(prevWordStart < textArea.Caret.Offset) {
-					textArea.Document.Remove(prevWordStart,textArea.Caret.Offset -
-					                         prevWordStart);
-					textArea.Caret.Position = textArea.Document.OffsetToPosition(prevWordStart);
+				if (prevWordStart < textArea.Caret.Offset) {
+					if (!textArea.IsReadOnly(prevWordStart, textArea.Caret.Offset - prevWordStart)) {
+						textArea.Document.Remove(prevWordStart,
+						                         textArea.Caret.Offset - prevWordStart);
+						textArea.Caret.Position = textArea.Document.OffsetToPosition(prevWordStart);
+					}
 				}
 			}
 			// if we are now at the beginning of a line
-			if(textArea.Caret.Offset == line.Offset) {
+			if (textArea.Caret.Offset == line.Offset) {
 				// if we are not on the first line
-				int curLineNr =
-					textArea.Document.GetLineNumberForOffset(textArea.Caret.Offset);
-				if(curLineNr > 0) {
+				int curLineNr = textArea.Document.GetLineNumberForOffset(textArea.Caret.Offset);
+				if (curLineNr > 0) {
 					// move to the end of the line above
-					LineSegment lineAbove = textArea.Document.GetLineSegment(curLineNr -
-					                                                         1);
+					LineSegment lineAbove = textArea.Document.GetLineSegment(curLineNr - 1);
 					int endOfLineAbove = lineAbove.Offset + lineAbove.Length;
 					int charsToDelete = textArea.Caret.Offset - endOfLineAbove;
-					textArea.Document.Remove(endOfLineAbove,charsToDelete);
-					textArea.Caret.Position = textArea.Document.OffsetToPosition(endOfLineAbove);
+					if (!textArea.IsReadOnly(endOfLineAbove, charsToDelete)) {
+						textArea.Document.Remove(endOfLineAbove, charsToDelete);
+						textArea.Caret.Position = textArea.Document.OffsetToPosition(endOfLineAbove);
+					}
 				}
 			}
 			textArea.SetDesiredColumn();
 			textArea.EndUpdate();
 			// if there are now less lines, we need this or there are redraw problems
-			textArea.Document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.PositionToEnd, new Point(0, textArea.Document.GetLineNumberForOffset(textArea.Caret.Offset))));
+			textArea.Document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.PositionToEnd, new TextLocation(0, textArea.Document.GetLineNumberForOffset(textArea.Caret.Offset))));
 			textArea.Document.CommitUpdate();
 		}
 	}
@@ -850,15 +837,14 @@ namespace ICSharpCode.TextEditor.Actions
 		/// <param name="textArea">The <see cref="ItextArea"/> which is used for callback purposes</param>
 		public override void Execute(TextArea textArea)
 		{
+			if (textArea.SelectionManager.HasSomethingSelected) {
+				DeleteSelection(textArea);
+				return;
+			}
 			// if anything is selected we will just delete it first
 			textArea.BeginUpdate();
-			if (textArea.SelectionManager.HasSomethingSelected) {
-				textArea.SelectionManager.RemoveSelectedText();
-				textArea.ScrollToCaret();
-			}
 			// now delete from the caret to the beginning of the word
-			LineSegment line =
-				textArea.Document.GetLineSegmentForOffset(textArea.Caret.Offset);
+			LineSegment line = textArea.Document.GetLineSegmentForOffset(textArea.Caret.Offset);
 			if(textArea.Caret.Offset == line.Offset + line.Length) {
 				// if we are at the end of a line
 				base.Execute(textArea);
@@ -866,15 +852,16 @@ namespace ICSharpCode.TextEditor.Actions
 				int nextWordStart = TextUtilities.FindNextWordStart(textArea.Document,
 				                                                    textArea.Caret.Offset);
 				if(nextWordStart > textArea.Caret.Offset) {
-					textArea.Document.Remove(textArea.Caret.Offset,nextWordStart -
-					                         textArea.Caret.Offset);
-					// cursor never moves with this command
+					if (!textArea.IsReadOnly(textArea.Caret.Offset, nextWordStart - textArea.Caret.Offset)) {
+						textArea.Document.Remove(textArea.Caret.Offset, nextWordStart - textArea.Caret.Offset);
+						// cursor never moves with this command
+					}
 				}
 			}
 			textArea.UpdateMatchingBracket();
 			textArea.EndUpdate();
 			// if there are now less lines, we need this or there are redraw problems
-			textArea.Document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.PositionToEnd, new Point(0, textArea.Document.GetLineNumberForOffset(textArea.Caret.Offset))));
+			textArea.Document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.PositionToEnd, new TextLocation(0, textArea.Document.GetLineNumberForOffset(textArea.Caret.Offset))));
 			textArea.Document.CommitUpdate();
 		}
 	}
@@ -885,10 +872,12 @@ namespace ICSharpCode.TextEditor.Actions
 		{
 			int lineNr = textArea.Caret.Line;
 			LineSegment line = textArea.Document.GetLineSegment(lineNr);
+			if (textArea.IsReadOnly(line.Offset, line.Length))
+				return;
 			textArea.Document.Remove(line.Offset, line.TotalLength);
 			textArea.Caret.Position = textArea.Document.OffsetToPosition(line.Offset);
 
-			textArea.Document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.PositionToEnd, new Point(0, lineNr)));
+			textArea.Document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.PositionToEnd, new TextLocation(0, lineNr)));
 			textArea.UpdateMatchingBracket();
 			textArea.Document.CommitUpdate();
 		}
@@ -902,9 +891,9 @@ namespace ICSharpCode.TextEditor.Actions
 			LineSegment line = textArea.Document.GetLineSegment(lineNr);
 			
 			int numRemove = (line.Offset + line.Length) - textArea.Caret.Offset;
-			if (numRemove > 0) {
+			if (numRemove > 0 && !textArea.IsReadOnly(textArea.Caret.Offset, numRemove)) {
 				textArea.Document.Remove(textArea.Caret.Offset, numRemove);
-				textArea.Document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.SingleLine, new Point(0, lineNr)));
+				textArea.Document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.SingleLine, new TextLocation(0, lineNr)));
 				textArea.Document.CommitUpdate();
 			}
 		}
@@ -916,19 +905,19 @@ namespace ICSharpCode.TextEditor.Actions
 		{
 			Highlight highlight = textArea.FindMatchingBracketHighlight();
 			if (highlight != null) {
-				Point p1 = new Point(highlight.CloseBrace.X + 1, highlight.CloseBrace.Y);
-				Point p2 = new Point(highlight.OpenBrace.X + 1, highlight.OpenBrace.Y);
+				TextLocation p1 = new TextLocation(highlight.CloseBrace.X + 1, highlight.CloseBrace.Y);
+				TextLocation p2 = new TextLocation(highlight.OpenBrace.X + 1, highlight.OpenBrace.Y);
 				if (p1 == textArea.Caret.Position) {
 					if (textArea.Document.TextEditorProperties.BracketMatchingStyle == BracketMatchingStyle.After) {
 						textArea.Caret.Position = p2;
 					} else {
-						textArea.Caret.Position = new Point(p2.X - 1, p2.Y);
+						textArea.Caret.Position = new TextLocation(p2.X - 1, p2.Y);
 					}
 				} else {
 					if (textArea.Document.TextEditorProperties.BracketMatchingStyle == BracketMatchingStyle.After) {
 						textArea.Caret.Position = p1;
 					} else {
-						textArea.Caret.Position = new Point(p1.X - 1, p1.Y);
+						textArea.Caret.Position = new TextLocation(p1.X - 1, p1.Y);
 					}
 				}
 				textArea.SetDesiredColumn();

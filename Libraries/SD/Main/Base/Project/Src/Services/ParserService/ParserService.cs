@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2309 $</version>
+//     <version>$Revision: 3090 $</version>
 // </file>
 
 using System;
@@ -51,7 +51,7 @@ namespace ICSharpCode.SharpDevelop
 #endif
 		
 		static Dictionary<IProject, IProjectContent> projectContents = new Dictionary<IProject, IProjectContent>();
-		static Dictionary<string, ParseInformation> parsings = new Dictionary<string, ParseInformation>();
+		static Dictionary<string, ParseInformation> parsings = new Dictionary<string, ParseInformation>(StringComparer.InvariantCultureIgnoreCase);
 		static ProjectContentRegistry defaultProjectContentRegistry = new ProjectContentRegistry();
 		
 		static string domPersistencePath;
@@ -62,22 +62,25 @@ namespace ICSharpCode.SharpDevelop
 				parser = AddInTree.BuildItems<ParserDescriptor>("/Workspace/Parser", null, false);
 				registries = AddInTree.BuildItems<ProjectContentRegistryDescriptor>("/Workspace/ProjectContentRegistry", null, false);
 				
-				domPersistencePath = Path.Combine(Path.GetTempPath(), "SharpDevelop" + RevisionClass.MainVersion);
-				#if DEBUG
-				domPersistencePath = Path.Combine(domPersistencePath, "Debug");
-				#endif
-				Directory.CreateDirectory(domPersistencePath);
-				defaultProjectContentRegistry.ActivatePersistence(domPersistencePath);
+				if (!string.IsNullOrEmpty(domPersistencePath)) {
+					Directory.CreateDirectory(domPersistencePath);
+					defaultProjectContentRegistry.ActivatePersistence(domPersistencePath);
+				}
 				ProjectService.SolutionClosed += ProjectServiceSolutionClosed;
 			}
 		}
 		
 		/// <summary>
-		/// Gets the cache directory used for DOM persistence.
+		/// Gets/Sets the cache directory used for DOM persistence.
 		/// </summary>
 		public static string DomPersistencePath {
 			get {
 				return domPersistencePath;
+			}
+			set {
+				if (parser != null)
+					throw new InvalidOperationException("Cannot set DomPersistencePath after ParserService was initialized");
+				domPersistencePath = value;
 			}
 		}
 		
@@ -119,6 +122,8 @@ namespace ICSharpCode.SharpDevelop
 					content.Dispose();
 				}
 				projectContents.Clear();
+			}
+			lock (parsings) {
 				parsings.Clear();
 			}
 			lock (parseQueue) {
@@ -136,7 +141,7 @@ namespace ICSharpCode.SharpDevelop
 		{
 			if (loadSolutionProjectsThread != null) {
 				if (!abortLoadSolutionProjectsThread)
-					throw new InvalidOperationException("Cannot open new combine without closing old combine!");
+					throw new InvalidOperationException("Cannot open new solution without closing old solution!");
 				if (!loadSolutionProjectsThread.Join(50)) {
 					// loadSolutionProjects might be waiting for main thread, so give it
 					// a chance to complete safethread calls by putting this method at
@@ -146,6 +151,7 @@ namespace ICSharpCode.SharpDevelop
 				}
 			}
 			loadSolutionProjectsThread = new Thread(new ThreadStart(LoadSolutionProjects));
+			loadSolutionProjectsThread.SetApartmentState(ApartmentState.STA); // allow loadSolutionProjects thread access to MSBuild
 			loadSolutionProjectsThread.Name = "loadSolutionProjects";
 			loadSolutionProjectsThread.Priority = ThreadPriority.BelowNormal;
 			loadSolutionProjectsThread.IsBackground = true;
@@ -173,6 +179,7 @@ namespace ICSharpCode.SharpDevelop
 		
 		static void LoadSolutionProjectsInternal()
 		{
+			IProgressMonitor progressMonitor = StatusBarService.CreateProgressMonitor();
 			List<ParseProjectContent> createdContents = new List<ParseProjectContent>();
 			foreach (IProject project in ProjectService.OpenSolution.Projects) {
 				try {
@@ -188,35 +195,46 @@ namespace ICSharpCode.SharpDevelop
 				}
 			}
 			WorkbenchSingleton.SafeThreadAsyncCall(ProjectService.ParserServiceCreatedProjectContents);
-			int workAmount = 0;
-			foreach (ParseProjectContent newContent in createdContents) {
-				if (abortLoadSolutionProjectsThread) return;
-				try {
-					newContent.Initialize1();
-					workAmount += newContent.GetInitializationWorkAmount();
-				} catch (Exception e) {
-					MessageService.ShowError(e, "Error while initializing project references:" + newContent);
+			try {
+				// multiply Count with 2 so that the progress bar is only at 50% when references are done
+				progressMonitor.BeginTask("Loading references...", createdContents.Count * 2, false);
+				int workAmount = 0;
+				for (int i = 0; i < createdContents.Count; i++) {
+					if (abortLoadSolutionProjectsThread) return;
+					ParseProjectContent newContent = createdContents[i];
+					progressMonitor.WorkDone = i;
+					try {
+						newContent.Initialize1(progressMonitor);
+						workAmount += newContent.GetInitializationWorkAmount();
+					} catch (Exception e) {
+						MessageService.ShowError(e, "Error while initializing project references:" + newContent);
+					}
 				}
-			}
-			StatusBarService.ProgressMonitor.BeginTask("${res:ICSharpCode.SharpDevelop.Internal.ParserService.Parsing}...", workAmount, false);
-			foreach (ParseProjectContent newContent in createdContents) {
-				if (abortLoadSolutionProjectsThread) break;
-				try {
-					newContent.Initialize2();
-				} catch (Exception e) {
-					MessageService.ShowError(e, "Error while initializing project contents:" + newContent);
+				// multiply workamount with two and start at workAmount so that the progress bar continues
+				// from 50% towards 100%.
+				progressMonitor.BeginTask("${res:ICSharpCode.SharpDevelop.Internal.ParserService.Parsing}...", workAmount * 2, false);
+				progressMonitor.WorkDone = workAmount;
+				foreach (ParseProjectContent newContent in createdContents) {
+					if (abortLoadSolutionProjectsThread) return;
+					try {
+						newContent.Initialize2(progressMonitor);
+					} catch (Exception e) {
+						MessageService.ShowError(e, "Error while initializing project contents:" + newContent);
+					}
 				}
+			} finally {
+				progressMonitor.Done();
 			}
-			StatusBarService.ProgressMonitor.Done();
 		}
 		
 		static void InitAddedProject(object state)
 		{
 			ParseProjectContent newContent = (ParseProjectContent)state;
-			newContent.Initialize1();
-			StatusBarService.ProgressMonitor.BeginTask("${res:ICSharpCode.SharpDevelop.Internal.ParserService.Parsing}...", newContent.GetInitializationWorkAmount(), false);
-			newContent.Initialize2();
-			StatusBarService.ProgressMonitor.Done();
+			IProgressMonitor progressMonitor = StatusBarService.CreateProgressMonitor();
+			newContent.Initialize1(progressMonitor);
+			progressMonitor.BeginTask("${res:ICSharpCode.SharpDevelop.Internal.ParserService.Parsing}...", newContent.GetInitializationWorkAmount(), false);
+			newContent.Initialize2(progressMonitor);
+			progressMonitor.Done();
 		}
 		
 		#region Reparse projects
@@ -242,13 +260,14 @@ namespace ICSharpCode.SharpDevelop
 		{
 			bool parsing = false;
 			ParseProjectContent job;
+			IProgressMonitor progressMonitor = StatusBarService.CreateProgressMonitor();
 			
 			while (true) {
 				// get next job
 				lock (reParse1) {
 					if (reParse1.Count > 0) {
 						if (parsing) {
-							StatusBarService.ProgressMonitor.Done();
+							progressMonitor.Done();
 						}
 						parsing = false;
 						job = reParse1.Dequeue();
@@ -258,7 +277,7 @@ namespace ICSharpCode.SharpDevelop
 							foreach (ParseProjectContent ppc in reParse2) {
 								workAmount += ppc.GetInitializationWorkAmount();
 							}
-							StatusBarService.ProgressMonitor.BeginTask("${res:ICSharpCode.SharpDevelop.Internal.ParserService.Parsing}...", workAmount, false);
+							progressMonitor.BeginTask("${res:ICSharpCode.SharpDevelop.Internal.ParserService.Parsing}...", workAmount, false);
 						}
 						parsing = true;
 						job = reParse2.Dequeue();
@@ -266,7 +285,7 @@ namespace ICSharpCode.SharpDevelop
 						// all jobs done
 						reParseThread = null;
 						if (parsing) {
-							StatusBarService.ProgressMonitor.Done();
+							progressMonitor.Done();
 						}
 						LoggingService.Info("reParse thread finished all jobs");
 						return;
@@ -276,10 +295,10 @@ namespace ICSharpCode.SharpDevelop
 				// execute job
 				if (parsing) {
 					LoggingService.Info("reparsing code for " + job.Project);
-					job.ReInitialize2();
+					job.ReInitialize2(progressMonitor);
 				} else {
 					LoggingService.Debug("reloading references for " + job.Project);
-					job.ReInitialize1();
+					job.ReInitialize1(progressMonitor);
 				}
 			}
 		}
@@ -300,6 +319,7 @@ namespace ICSharpCode.SharpDevelop
 					if (reParseThread == null) {
 						LoggingService.Info("Starting reParse thread");
 						reParseThread = new Thread(new ThreadStart(ReparseProjects));
+						reParseThread.SetApartmentState(ApartmentState.STA); // allow reParseThread access to MSBuild
 						reParseThread.Name = "reParse";
 						reParseThread.Priority = ThreadPriority.BelowNormal;
 						reParseThread.IsBackground = true;
@@ -403,17 +423,6 @@ namespace ICSharpCode.SharpDevelop
 			LoggingService.Info("ParserUpdateThread stopped");
 		}
 		
-		static object[] GetWorkbench()
-		{
-			IWorkbenchWindow activeWorkbenchWindow = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow;
-			if (activeWorkbenchWindow == null)
-				return null;
-			IBaseViewContent activeViewContent = activeWorkbenchWindow.ActiveViewContent;
-			if (activeViewContent == null)
-				return null;
-			return new object[] { activeViewContent, activeWorkbenchWindow.ViewContent };
-		}
-		
 		public static void ParseCurrentViewContent()
 		{
 			ParserUpdateStep();
@@ -421,104 +430,67 @@ namespace ICSharpCode.SharpDevelop
 		
 		static void ParserUpdateStep()
 		{
-			object[] workbench;
+			IViewContent activeViewContent = null;
+			string fileName = null;
+			bool isUntitled = false;
 			try {
-				workbench = WorkbenchSingleton.SafeThreadFunction<object[]>(GetWorkbench);
-			} catch (InvalidOperationException) { // includes ObjectDisposedException
+				WorkbenchSingleton.SafeThreadCall(
+					delegate {
+						try {
+							activeViewContent = WorkbenchSingleton.Workbench.ActiveViewContent;
+							if (activeViewContent != null && activeViewContent.PrimaryFile != null) {
+								fileName = activeViewContent.PrimaryFileName;
+								isUntitled = activeViewContent.PrimaryFile.IsUntitled;
+							}
+						} catch (Exception ex) {
+							MessageService.ShowError(ex.ToString());
+						}
+					});
+			} catch (InvalidOperationException ex) { // includes ObjectDisposedException
 				// maybe workbench has been disposed while waiting for the SafeThreadCall
 				// can occur after workbench unload or after aborting SharpDevelop with
 				// Application.Exit()
-				LoggingService.Warn("InvalidOperationException while trying to invoke GetWorkbench()");
+				LoggingService.Warn("InvalidOperationException while trying to invoke GetActiveViewContent() " + ex);
 				return; // abort this thread
 			}
+	IEditable editable = activeViewContent as IEditable;
 #if ModifiedForAltaxo
-      if (_activeModalContent != null)
-      {
-        IEditable editable = _activeModalContent as IEditable;
-        if (editable != null)
-        {
-          string fileName = null;
-
-          IParseableContent parseableContent = _activeModalContent as IParseableContent;
-
-          //ivoko: Pls, do not throw text = parseableContent.ParseableText away. I NEED it.
-          string text = null;
-          if (parseableContent != null)
-          {
-            fileName = parseableContent.ParseableContentName;
-            text = parseableContent.ParseableText;
-          }
-          else if (_activeModalContent is ICSharpCode.SharpDevelop.Gui.IViewContent)
-          {
-            fileName = ((ICSharpCode.SharpDevelop.Gui.IViewContent)_activeModalContent).FileName;
-          }
-          if (!(fileName == null || fileName.Length == 0))
-          {
-            ParseInformation parseInformation = null;
-            bool updated = false;
-            if (text == null)
-            {
-              text = editable.Text;
-              if (text == null) return;
-            }
-            int hash = text.GetHashCode();
-            if (!lastUpdateHash.ContainsKey(fileName) || lastUpdateHash[fileName] != hash)
-            {
-              parseInformation = ParseFile(fileName, text, true);
-              lastUpdateHash[fileName] = hash;
-              updated = true;
-            }
-            if (updated)
-            {
-              if (parseInformation != null && editable is IParseInformationListener)
-              {
-                ((IParseInformationListener)editable).ParseInformationUpdated(parseInformation);
-              }
-            }
-            OnParserUpdateStepFinished(new ParserUpdateStepEventArgs(fileName, text, updated, parseInformation));
-          }
-        }
-
-        return;
-      }
+	if (_activeModalContent != null)
+	{
+		editable = _activeModalContent as IEditable;
+		if (editable == null)
+			return;
+		fileName = null;
+		if (_activeModalContent is ICSharpCode.SharpDevelop.Gui.IViewContent)
+		{
+			fileName = ((ICSharpCode.SharpDevelop.Gui.IViewContent)_activeModalContent).PrimaryFileName;
+			isUntitled = false;
+		}
+	}
+					
 #endif
-			if (workbench != null) {
-				IEditable editable = workbench[0] as IEditable;
-				if (editable != null) {
-					string fileName = null;
-					
-					IViewContent viewContent = (IViewContent)workbench[1];
-					IParseableContent parseableContent = workbench[0] as IParseableContent;
-					
-					//ivoko: Pls, do not throw text = parseableContent.ParseableText away. I NEED it.
-					string text = null;
-					if (parseableContent != null) {
-						fileName = parseableContent.ParseableContentName;
-						text = parseableContent.ParseableText;
-					} else {
-						fileName = viewContent.IsUntitled ? viewContent.UntitledName : viewContent.FileName;
+			if (editable != null) {
+				string text = null;
+		
+				if (!(fileName == null || fileName.Length == 0)) {
+					ParseInformation parseInformation = null;
+					bool updated = false;
+					if (text == null) {
+						text = editable.Text;
+						if (text == null) return;
 					}
-					
-					if (!(fileName == null || fileName.Length == 0)) {
-						ParseInformation parseInformation = null;
-						bool updated = false;
-						if (text == null) {
-							text = editable.Text;
-							if (text == null) return;
-						}
-						int hash = text.GetHashCode();
-						if (!lastUpdateHash.ContainsKey(fileName) || lastUpdateHash[fileName] != hash) {
-							parseInformation = ParseFile(fileName, text, !viewContent.IsUntitled);
-							lastUpdateHash[fileName] = hash;
-							updated = true;
-						}
-						if (updated) {
-							if (parseInformation != null && editable is IParseInformationListener) {
-								((IParseInformationListener)editable).ParseInformationUpdated(parseInformation);
-							}
-						}
-						OnParserUpdateStepFinished(new ParserUpdateStepEventArgs(fileName, text, updated, parseInformation));
+					int hash = text.GetHashCode();
+					if (!lastUpdateHash.ContainsKey(fileName) || lastUpdateHash[fileName] != hash) {
+						parseInformation = ParseFile(fileName, text, !isUntitled);
+						lastUpdateHash[fileName] = hash;
+						updated = true;
 					}
+					if (updated) {
+						if (parseInformation != null && editable is IParseInformationListener) {
+							((IParseInformationListener)editable).ParseInformationUpdated(parseInformation);
+						}
+					}
+					OnParserUpdateStepFinished(new ParserUpdateStepEventArgs(fileName, text, updated, parseInformation));
 				}
 			}
 		}
@@ -526,8 +498,8 @@ namespace ICSharpCode.SharpDevelop
 		public static void ParseViewContent(IViewContent viewContent)
 		{
 			string text = ((IEditable)viewContent).Text;
-			ParseInformation parseInformation = ParseFile(viewContent.IsUntitled ? viewContent.UntitledName : viewContent.FileName,
-			                                              text, !viewContent.IsUntitled);
+			ParseInformation parseInformation = ParseFile(viewContent.PrimaryFileName,
+			                                              text, !viewContent.PrimaryFile.IsUntitled);
 			if (parseInformation != null && viewContent is IParseInformationListener) {
 				((IParseInformationListener)viewContent).ParseInformationUpdated(parseInformation);
 			}
@@ -606,10 +578,9 @@ namespace ICSharpCode.SharpDevelop
 				defaultProjectContent.AddReferencedContent(ParserService.GetProjectContentForReference(item));
 			}
 			if (WorkbenchSingleton.Workbench != null) {
-				WorkbenchSingleton.Workbench.ActiveWorkbenchWindowChanged += delegate {
-					if (WorkbenchSingleton.Workbench.ActiveWorkbenchWindow != null) {
-						string file = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent.FileName
-							?? WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent.UntitledName;
+				WorkbenchSingleton.Workbench.ActiveViewContentChanged += delegate {
+					if (WorkbenchSingleton.Workbench.ActiveViewContent != null) {
+						string file = WorkbenchSingleton.Workbench.ActiveViewContent.PrimaryFileName;
 						if (file != null) {
 							IParser parser = GetParser(file);
 							if (parser != null && parser.Language != null) {
@@ -655,70 +626,54 @@ namespace ICSharpCode.SharpDevelop
 					fileContent = GetParseableFileContent(fileName);
 				}
 				parserOutput = parser.Parse(fileProjectContent, fileName, fileContent);
+				parserOutput.Freeze();
 				
-				if (parsings.ContainsKey(fileName)) {
-					ParseInformation parseInformation = parsings[fileName];
-					fileProjectContent.UpdateCompilationUnit(parseInformation.MostRecentCompilationUnit, parserOutput, fileName);
-				} else {
-					fileProjectContent.UpdateCompilationUnit(null, parserOutput, fileName);
+				ParseInformation parseInformation;
+				lock (parsings) {
+					if (!parsings.TryGetValue(fileName, out parseInformation)) {
+						parsings[fileName] = parseInformation = new ParseInformation();
+					}
 				}
+				ICompilationUnit oldUnit = parseInformation.MostRecentCompilationUnit;
+				fileProjectContent.UpdateCompilationUnit(oldUnit, parserOutput, fileName);
+				parseInformation.SetCompilationUnit(parserOutput);
 				if (updateCommentTags) {
 					TaskService.UpdateCommentTags(fileName, parserOutput.TagComments);
 				}
-				return UpdateParseInformation(parserOutput, fileName, updateCommentTags);
+				try {
+					OnParseInformationUpdated(new ParseInformationEventArgs(fileName, fileProjectContent, oldUnit, parserOutput));
+				} catch (Exception e) {
+					MessageService.ShowError(e);
+				}
+				return parseInformation;
 			} catch (Exception e) {
-				MessageService.ShowError(e);
+				MessageService.ShowError(e, "Error parsing " + fileName);
 			}
 			return null;
 		}
 		
-		public static ParseInformation UpdateParseInformation(ICompilationUnit parserOutput, string fileName, bool updateCommentTags)
-		{
-			if (!parsings.ContainsKey(fileName)) {
-				parsings[fileName] = new ParseInformation();
-			}
-			
-			ParseInformation parseInformation = parsings[fileName];
-			
-			try {
-				OnParseInformationUpdated(new ParseInformationEventArgs(fileName, parseInformation, parserOutput));
-			} catch (Exception e) {
-				MessageService.ShowError(e);
-			}
-			
-			if (parserOutput.ErrorsDuringCompile) {
-				parseInformation.DirtyCompilationUnit = parserOutput;
-			} else {
-				parseInformation.ValidCompilationUnit = parserOutput;
-				parseInformation.DirtyCompilationUnit = null;
-			}
-			
-			return parseInformation;
-		}
-		
+		/// <summary>
+		/// Gets the content of the file using encoding auto-detection (or DefaultFileEncoding, if that fails).
+		/// If the file is already open, gets the text in the opened view content.
+		/// </summary>
 		public static string GetParseableFileContent(string fileName)
 		{
-			IWorkbenchWindow window = FileService.GetOpenFile(fileName);
-			if (window != null) {
-				IViewContent viewContent = window.ViewContent;
-				IEditable editable = viewContent as IEditable;
-				if (editable != null) {
-					return editable.Text;
-				}
+			IViewContent viewContent = FileService.GetOpenFile(fileName);
+			IEditable editable = viewContent as IEditable;
+			if (editable != null) {
+				return editable.Text;
 			}
 			//string res = project.GetParseableFileContent(fileName);
 			//if (res != null)
 			//	return res;
 			
 			// load file
-			Encoding tmp = DefaultFileEncoding;
-			return ICSharpCode.TextEditor.Util.FileReader.ReadFileContent(fileName, ref tmp, tmp);
+			return ICSharpCode.TextEditor.Util.FileReader.ReadFileContent(fileName, DefaultFileEncoding);
 		}
 		
 		public static Encoding DefaultFileEncoding {
 			get {
-				Properties textEditorProperties = PropertyService.Get("ICSharpCode.TextEditor.Document.Document.DefaultDocumentAggregatorProperties", new Properties());
-				return Encoding.GetEncoding(textEditorProperties.Get("Encoding", 1252));
+				return DefaultEditor.Gui.Editor.SharpDevelopTextEditorProperties.Instance.Encoding;
 			}
 		}
 		
@@ -727,10 +682,28 @@ namespace ICSharpCode.SharpDevelop
 			if (fileName == null || fileName.Length == 0) {
 				return null;
 			}
-			if (!parsings.ContainsKey(fileName)) {
-				return ParseFile(fileName);
+			ParseInformation parseInfo;
+			lock (parsings) {
+				if (parsings.TryGetValue(fileName, out parseInfo))
+					return parseInfo;
 			}
-			return parsings[fileName];
+			return ParseFile(fileName);
+		}
+		
+		/// <summary>
+		/// Registers a compilation unit in the parser service.
+		/// Does not fire the OnParseInformationUpdated event, please use this for unit tests only!
+		/// </summary>
+		public static ParseInformation RegisterParseInformation(string fileName, ICompilationUnit cu)
+		{
+			ParseInformation parseInformation;
+			lock (parsings) {
+				if (!parsings.TryGetValue(fileName, out parseInformation)) {
+					parsings[fileName] = parseInformation = new ParseInformation();
+				}
+			}
+			parseInformation.SetCompilationUnit(cu);
+			return parseInformation;
 		}
 		
 		public static void ClearParseInformation(string fileName)
@@ -739,13 +712,22 @@ namespace ICSharpCode.SharpDevelop
 				return;
 			}
 			LoggingService.Info("ClearParseInformation: " + fileName);
-			if (parsings.ContainsKey(fileName)) {
-				ParseInformation parseInfo = parsings[fileName];
-				if (parseInfo != null && parseInfo.MostRecentCompilationUnit != null) {
-					parseInfo.MostRecentCompilationUnit.ProjectContent.RemoveCompilationUnit(parseInfo.MostRecentCompilationUnit);
+			ParseInformation parseInfo;
+			lock (parsings) {
+				if (parsings.TryGetValue(fileName, out parseInfo))
+					parsings.Remove(fileName);
+				else
+					return;
+			}
+			ICompilationUnit oldUnit = parseInfo.MostRecentCompilationUnit;
+			if (oldUnit != null) {
+				IProjectContent pc = parseInfo.MostRecentCompilationUnit.ProjectContent;
+				pc.RemoveCompilationUnit(oldUnit);
+				try {
+					OnParseInformationUpdated(new ParseInformationEventArgs(fileName, pc, oldUnit, null));
+				} catch (Exception e) {
+					MessageService.ShowError(e);
 				}
-				parsings.Remove(fileName);
-				OnParseInformationUpdated(new ParseInformationEventArgs(fileName, parseInfo, null));
 			}
 		}
 		
@@ -781,11 +763,12 @@ namespace ICSharpCode.SharpDevelop
 		
 		////////////////////////////////////
 		
-		public static ArrayList CtrlSpace(int caretLine, int caretColumn, string fileName, string fileContent, ExpressionContext context)
+		public static ArrayList CtrlSpace(int caretLine, int caretColumn,
+		                                  string fileName, string fileContent, ExpressionContext context)
 		{
 			IResolver resolver = CreateResolver(fileName);
 			if (resolver != null) {
-				return resolver.CtrlSpace(caretLine, caretColumn, fileName, fileContent, context);
+				return resolver.CtrlSpace(caretLine, caretColumn, GetParseInformation(fileName), fileContent, context);
 			}
 			return null;
 		}
@@ -800,14 +783,16 @@ namespace ICSharpCode.SharpDevelop
 		}
 		
 		public static ResolveResult Resolve(ExpressionResult expressionResult,
-		                                    int caretLineNumber,
-		                                    int caretColumn,
-		                                    string fileName,
-		                                    string fileContent)
+		                                    int caretLineNumber, int caretColumn,
+		                                    string fileName, string fileContent)
 		{
+			if (expressionResult.Region.IsEmpty) {
+				expressionResult.Region = new DomRegion(caretLineNumber, caretColumn);
+			}
 			IResolver resolver = CreateResolver(fileName);
 			if (resolver != null) {
-				return resolver.Resolve(expressionResult, caretLineNumber, caretColumn, fileName, fileContent);
+				ParseInformation parseInfo = GetParseInformation(fileName);
+				return resolver.Resolve(expressionResult, parseInfo, fileContent);
 			}
 			return null;
 		}
@@ -856,7 +841,7 @@ namespace ICSharpCode.SharpDevelop
 				}
 				return ParserService.GetProjectContent(((ProjectReferenceProjectItem)item).ReferencedProject);
 			}
-			return GetRegistryForReference(item).GetExistingProjectContent(item.Include, item.FileName);
+			return GetRegistryForReference(item).GetExistingProjectContent(item.FileName);
 		}
 		
 		public static IProjectContent GetProjectContentForReference(ReferenceProjectItem item)

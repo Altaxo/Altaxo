@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2026 $</version>
+//     <version>$Revision: 2191 $</version>
 // </file>
 
 using System;
@@ -518,7 +518,7 @@ namespace NRefactoryASTGenerator
 //					m.Statements.Add(new CodeMethodReturnStatement(new CodeVariableReferenceExpression("result")));
 					m.Body.InvokeMethod(Easy.This, "BeginVisit", var);
 					m.Body.DeclareVariable(typeof(object), "result").InitExpression
-						= Easy.This.InvokeMethod("TrackedVisit", var, Easy.Var("data"));
+						= Easy.This.InvokeMethod("TrackedVisit" + type.Name, var, Easy.Var("data"));
 					m.Body.InvokeMethod(Easy.This, "EndVisit", var);
 					m.Body.Return(Easy.Var("result"));
 				}
@@ -527,7 +527,7 @@ namespace NRefactoryASTGenerator
 			foreach (Type type in nodeTypes) {
 				if (!type.IsAbstract) {
 					
-					m = td.AddMethod(typeof(object), "TrackedVisit");
+					m = td.AddMethod(typeof(object), "TrackedVisit" + type.Name);
 					m.Attributes = MemberAttributes.Public;
 					m.AddParameter(ConvertType(type), GetFieldName(type.Name));
 					m.AddParameter(new CodeTypeReference(typeof(object)), "data");

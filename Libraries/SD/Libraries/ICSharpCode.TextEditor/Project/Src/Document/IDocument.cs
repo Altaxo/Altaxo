@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2262 $</version>
+//     <version>$Revision: 3205 $</version>
 // </file>
 
 using System;
@@ -72,13 +72,6 @@ namespace ICSharpCode.TextEditor.Document
 			get;
 		}
 		
-		/// <summary>
-		/// The <see cref="ICustomColorLineManager"/> attached to the <see cref="IDocument"/> instance
-		/// </summary>
-		ICustomLineManager CustomLineManager {
-			get;
-		}
-		
 		MarkerStrategy MarkerStrategy {
 			get;
 		}
@@ -90,7 +83,7 @@ namespace ICSharpCode.TextEditor.Document
 //			get;
 //		}
 		
-#region ILineManager interface
+		#region ILineManager interface
 		/// <value>
 		/// A collection of all line segments
 		/// </value>
@@ -99,13 +92,12 @@ namespace ICSharpCode.TextEditor.Document
 		/// of the 'last line ends with a delimiter problem'. Otherwise
 		/// the <see cref="GetLineSegment"/> method should be used.
 		/// </remarks>
-		List<LineSegment> LineSegmentCollection {
+		IList<LineSegment> LineSegmentCollection {
 			get;
 		}
 		
 		/// <value>
-		/// The total number of lines, this may be != ArrayList.Count 
-		/// if the last line ends with a delimiter.
+		/// The total number of lines in the document.
 		/// </value>
 		int TotalNumberOfLines {
 			get;
@@ -189,9 +181,13 @@ namespace ICSharpCode.TextEditor.Document
 		/// Get the next visible line below lineNumber
 		/// </remarks>
 		int GetNextVisibleLineBelow(int lineNumber, int lineCount);
-#endregion
+		
+		event EventHandler<LineLengthChangeEventArgs> LineLengthChanged;
+		event EventHandler<LineCountChangeEventArgs> LineCountChanged;
+		event EventHandler<LineEventArgs> LineDeleted;
+		#endregion
 
-#region ITextBufferStrategy interface
+		#region ITextBufferStrategy interface
 		/// <value>
 		/// Get the whole text as string.
 		/// When setting the text using the TextContent property, the undo stack is cleared.
@@ -264,20 +260,20 @@ namespace ICSharpCode.TextEditor.Document
 		/// number of characters to copy.
 		/// </param>
 		string GetText(int offset, int length);
-#endregion
+		#endregion
 		string GetText(ISegment segment);
 		
-#region ITextModel interface
+		#region ITextModel interface
 		/// <summary>
 		/// returns the logical line/column position from an offset
 		/// </summary>
-		Point OffsetToPosition(int offset);
+		TextLocation OffsetToPosition(int offset);
 		
 		/// <summary>
 		/// returns the offset from a logical line/column position
 		/// </summary>
-		int PositionToOffset(Point p);
-#endregion
+		int PositionToOffset(TextLocation p);
+		#endregion
 		/// <value>
 		/// A container where all TextAreaUpdate objects get stored
 		/// </value>

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2929 $</version>
 // </file>
 
 using System;
@@ -11,15 +11,33 @@ using System.Diagnostics;
 
 namespace ICSharpCode.SharpDevelop.Dom
 {
-	public class DefaultCompilationUnit : ICompilationUnit
+	public class DefaultCompilationUnit : AbstractFreezable, ICompilationUnit
 	{
-		public static readonly ICompilationUnit DummyCompilationUnit = new DefaultCompilationUnit(DefaultProjectContent.DummyProjectContent);
+		public static readonly ICompilationUnit DummyCompilationUnit = new DefaultCompilationUnit(DefaultProjectContent.DummyProjectContent).FreezeAndReturnSelf();
 		
-		List<IUsing> usings  = new List<IUsing>();
-		List<IClass> classes = new List<IClass>();
-		List<IAttribute> attributes = new List<IAttribute>();
-		List<FoldingRegion> foldingRegions = new List<FoldingRegion>();
-		List<TagComment> tagComments = new List<TagComment>();
+		DefaultCompilationUnit FreezeAndReturnSelf()
+		{
+			Freeze();
+			return this;
+		}
+		
+		IList<IUsing> usings  = new List<IUsing>();
+		IList<IClass> classes = new List<IClass>();
+		IList<IAttribute> attributes = new List<IAttribute>();
+		IList<FoldingRegion> foldingRegions = new List<FoldingRegion>();
+		IList<TagComment> tagComments = new List<TagComment>();
+		
+		protected override void FreezeInternal()
+		{
+			// Deep Freeze: freeze lists and their contents
+			usings = FreezeList(usings);
+			classes = FreezeList(classes);
+			attributes = FreezeList(attributes);
+			foldingRegions = FreezeList(foldingRegions);
+			tagComments = FreezeList(tagComments);
+			
+			base.FreezeInternal();
+		}
 		
 		bool errorsDuringCompile = false;
 		object tag               = null;
@@ -35,6 +53,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 				return fileName;
 			}
 			set {
+				CheckBeforeMutation();
 				fileName = value;
 			}
 		}
@@ -51,6 +70,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 				return errorsDuringCompile;
 			}
 			set {
+				CheckBeforeMutation();
 				errorsDuringCompile = value;
 			}
 		}
@@ -60,47 +80,48 @@ namespace ICSharpCode.SharpDevelop.Dom
 				return tag;
 			}
 			set {
+				CheckBeforeMutation();
 				tag = value;
 			}
 		}
 		
-		public virtual List<IUsing> Usings {
+		public virtual IList<IUsing> Usings {
 			get {
 				return usings;
 			}
 		}
 
-		public virtual List<IAttribute> Attributes {
+		public virtual IList<IAttribute> Attributes {
 			get {
 				return attributes;
 			}
 		}
 
-		public virtual List<IClass> Classes {
+		public virtual IList<IClass> Classes {
 			get {
 				return classes;
 			}
 		}
 		
-		public List<FoldingRegion> FoldingRegions {
+		public IList<FoldingRegion> FoldingRegions {
 			get {
 				return foldingRegions;
 			}
 		}
 
-		public virtual List<IComment> MiscComments {
+		public virtual IList<IComment> MiscComments {
 			get {
 				return null;
 			}
 		}
 
-		public virtual List<IComment> DokuComments {
+		public virtual IList<IComment> DokuComments {
 			get {
 				return null;
 			}
 		}
 
-		public virtual List<TagComment> TagComments {
+		public virtual IList<TagComment> TagComments {
 			get {
 				return tagComments;
 			}
@@ -115,55 +136,11 @@ namespace ICSharpCode.SharpDevelop.Dom
 		public IClass GetInnermostClass(int caretLine, int caretColumn)
 		{
 			foreach (IClass c in Classes) {
-				if (c != null && c.Region.IsInside(caretLine, caretColumn)) {
+				if (c != null && DefaultClass.IsInside(c, caretLine, caretColumn)) {
 					return c.GetInnermostClass(caretLine, caretColumn);
 				}
 			}
 			return null;
-		}
-		
-		
-		
-		/// <summary>
-		/// Returns all (nested) classes in which the caret currently is exept
-		/// the innermost class, returns an empty collection if the caret is in 
-		/// no class or only in the innermost class.
-		/// Zhe most outer class is the last in the collection.
-		/// </summary>
-		public List<IClass> GetOuterClasses(int caretLine, int caretColumn)
-		{
-			List<IClass> classes = new List<IClass>();
-			IClass innerMostClass = GetInnermostClass(caretLine, caretColumn);
-			foreach (IClass c in Classes) {
-				if (c != null && c.Region.IsInside(caretLine, caretColumn)) {
-					if (c != innerMostClass) {
-						GetOuterClasses(classes, c, caretLine, caretColumn);
-						if (!classes.Contains(c)) {
-							classes.Add(c);
-						}
-					}
-					break;
-				}
-			}
-			return classes;
-		}
-		
-		void GetOuterClasses(List<IClass> classes, IClass curClass, int caretLine, int caretColumn)
-		{
-			if (curClass != null && curClass.InnerClasses.Count > 0) {
-				IClass innerMostClass = GetInnermostClass(caretLine, caretColumn);
-				foreach (IClass c in curClass.InnerClasses) {
-					if (c != null && c.Region.IsInside(caretLine, caretColumn)) {
-						if (c != innerMostClass) {
-							GetOuterClasses(classes, c, caretLine, caretColumn);
-							if (!classes.Contains(c)) {
-								classes.Add(c);
-							}
-						}
-						break;
-					}
-				}
-			}
 		}
 		
 		public override string ToString() {

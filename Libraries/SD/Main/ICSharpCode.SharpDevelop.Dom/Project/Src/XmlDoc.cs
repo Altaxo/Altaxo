@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2743 $</version>
 // </file>
 
 using System;
@@ -18,6 +18,14 @@ namespace ICSharpCode.SharpDevelop.Dom
 	/// </summary>
 	public sealed class XmlDoc : IDisposable
 	{
+		static readonly List<string> xmlDocLookupDirectories = new List<string> {
+			System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory()
+		};
+		
+		public static IList<string> XmlDocLookupDirectories {
+			get { return xmlDocLookupDirectories; }
+		}
+		
 		struct IndexEntry : IComparable<IndexEntry>
 		{
 			public int HashCode;
@@ -239,40 +247,59 @@ namespace ICSharpCode.SharpDevelop.Dom
 		
 		public static XmlDoc Load(string fileName, string cachePath)
 		{
-			LoggingService.Debug("Loading XmlDoc for " + fileName);
-			Directory.CreateDirectory(cachePath);
-			string cacheName = cachePath + "/" + Path.GetFileNameWithoutExtension(fileName)
-				+ "." + fileName.GetHashCode().ToString("x") + ".dat";
+			return Load(fileName, cachePath, true);
+		}
+		
+		static XmlDoc Load(string fileName, string cachePath, bool allowRedirect)
+		{
+			//LoggingService.Debug("Loading XmlDoc for " + fileName);
 			XmlDoc doc;
-			if (File.Exists(cacheName)) {
-				doc = new XmlDoc();
-				if (doc.LoadFromBinary(cacheName, File.GetLastWriteTimeUtc(fileName))) {
-					LoggingService.Debug("XmlDoc: Load from cache successful");
-					return doc;
-				} else {
-					doc.Dispose();
-					try {
-						File.Delete(cacheName);
-					} catch {}
+			string cacheName = null;
+			if (cachePath != null) {
+				Directory.CreateDirectory(cachePath);
+				cacheName = cachePath + "/" + Path.GetFileNameWithoutExtension(fileName)
+					+ "." + fileName.GetHashCode().ToString("x") + ".dat";
+				if (File.Exists(cacheName)) {
+					doc = new XmlDoc();
+					if (doc.LoadFromBinary(cacheName, File.GetLastWriteTimeUtc(fileName))) {
+						//LoggingService.Debug("XmlDoc: Load from cache successful");
+						return doc;
+					} else {
+						doc.Dispose();
+						try {
+							File.Delete(cacheName);
+						} catch {}
+					}
 				}
 			}
 			
 			try {
 				using (XmlTextReader xmlReader = new XmlTextReader(fileName)) {
+					xmlReader.MoveToContent();
+					if (allowRedirect && !string.IsNullOrEmpty(xmlReader.GetAttribute("redirect"))) {
+						string redirectionTarget = GetRedirectionTarget(xmlReader.GetAttribute("redirect"));
+						if (redirectionTarget != null) {
+							LoggingService.Info("XmlDoc " + fileName + " is redirecting to " + redirectionTarget);
+							return Load(redirectionTarget, cachePath, false);
+						} else {
+							LoggingService.Warn("XmlDoc " + fileName + " is redirecting to " + xmlReader.GetAttribute("redirect") + ", but that file was not found.");
+							return new XmlDoc();
+						}
+					}
 					doc = Load(xmlReader);
 				}
 			} catch (XmlException ex) {
-				LoggingService.Warn("Error loading XmlDoc", ex);
+				LoggingService.Warn("Error loading XmlDoc " + fileName, ex);
 				return new XmlDoc();
 			}
 			
-			if (doc.xmlDescription.Count > cacheLength * 2) {
-				LoggingService.Debug("XmlDoc: Creating cache");
+			if (cachePath != null && doc.xmlDescription.Count > cacheLength * 2) {
+				LoggingService.Debug("XmlDoc: Creating cache for " + fileName);
 				DateTime date = File.GetLastWriteTimeUtc(fileName);
 				try {
 					doc.Save(cacheName, date);
 				} catch (Exception ex) {
-					LoggingService.Error("Cannot write to cache file", ex);
+					LoggingService.Error("Cannot write to cache file " + cacheName, ex);
 					return doc;
 				}
 				doc.Dispose();
@@ -280,6 +307,52 @@ namespace ICSharpCode.SharpDevelop.Dom
 				doc.LoadFromBinary(cacheName, date);
 			}
 			return doc;
+		}
+		
+		static string GetRedirectionTarget(string target)
+		{
+			string programFilesDir = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+			if (!programFilesDir.EndsWith("\\") && !programFilesDir.EndsWith("/"))
+				programFilesDir += "\\";
+			
+			string corSysDir = System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory();
+			if (!corSysDir.EndsWith("\\") && !corSysDir.EndsWith("/"))
+				corSysDir += "\\";
+			
+			return LookupLocalizedXmlDoc(target.Replace("%PROGRAMFILESDIR%", programFilesDir)
+			                             .Replace("%CORSYSDIR%", corSysDir));
+		}
+		
+		internal static string LookupLocalizedXmlDoc(string fileName)
+		{
+			string xmlFileName = Path.ChangeExtension(fileName, ".xml");
+			string currentCulture = System.Threading.Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName;
+			string localizedXmlDocFile = GetLocalizedName(xmlFileName, currentCulture);
+			
+			LoggingService.Debug("Try find XMLDoc @" + localizedXmlDocFile);
+			if (File.Exists(localizedXmlDocFile)) {
+				return localizedXmlDocFile;
+			}
+			LoggingService.Debug("Try find XMLDoc @" + xmlFileName);
+			if (File.Exists(xmlFileName)) {
+				return xmlFileName;
+			}
+			if (currentCulture != "en") {
+				string englishXmlDocFile = GetLocalizedName(xmlFileName, "en");
+				LoggingService.Debug("Try find XMLDoc @" + englishXmlDocFile);
+				if (File.Exists(englishXmlDocFile)) {
+					return englishXmlDocFile;
+				}
+			}
+			return null;
+		}
+		
+		static string GetLocalizedName(string fileName, string language)
+		{
+			string localizedXmlDocFile = Path.GetDirectoryName(fileName);
+			localizedXmlDocFile = Path.Combine(localizedXmlDocFile, language);
+			localizedXmlDocFile = Path.Combine(localizedXmlDocFile, Path.GetFileName(fileName));
+			return localizedXmlDocFile;
 		}
 	}
 }

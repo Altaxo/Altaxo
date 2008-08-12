@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2066 $</version>
+//     <version>$Revision: 2929 $</version>
 // </file>
 
 using System;
@@ -11,7 +11,7 @@ using System.Text;
 
 namespace ICSharpCode.SharpDevelop.Dom
 {
-	public class DefaultUsing : IUsing
+	public class DefaultUsing : AbstractFreezable, IUsing
 	{
 		DomRegion region;
 		IProjectContent projectContent;
@@ -26,8 +26,16 @@ namespace ICSharpCode.SharpDevelop.Dom
 			this.region = region;
 		}
 		
-		List<string> usings  = new List<string>();
-		SortedList<string, IReturnType> aliases = null;
+		IList<string> usings  = new List<string>();
+		IDictionary<string, IReturnType> aliases = null;
+		
+		protected override void FreezeInternal()
+		{
+			usings = FreezeList(usings);
+			if (aliases != null)
+				aliases = new ReadOnlyDictionary<string, IReturnType>(aliases);
+			base.FreezeInternal();
+		}
 		
 		public DomRegion Region {
 			get {
@@ -35,13 +43,13 @@ namespace ICSharpCode.SharpDevelop.Dom
 			}
 		}
 		
-		public List<string> Usings {
+		public IList<string> Usings {
 			get {
 				return usings;
 			}
 		}
 		
-		public SortedList<string, IReturnType> Aliases {
+		public IDictionary<string, IReturnType> Aliases {
 			get {
 				return aliases;
 			}
@@ -55,6 +63,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 		
 		public void AddAlias(string alias, IReturnType type)
 		{
+			CheckBeforeMutation();
 			if (aliases == null) aliases = new SortedList<string, IReturnType>();
 			aliases.Add(alias, type);
 		}
@@ -63,8 +72,6 @@ namespace ICSharpCode.SharpDevelop.Dom
 		{
 			if (HasAliases) {
 				foreach (KeyValuePair<string, IReturnType> entry in aliases) {
-					if (!entry.Value.IsDefaultReturnType)
-						continue;
 					string aliasString = entry.Key;
 					string nsName;
 					if (projectContent.Language.NameComparer.Equals(partialNamespaceName, aliasString)) {
@@ -104,7 +111,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 				foreach (KeyValuePair<string, IReturnType> entry in aliases) {
 					string aliasString = entry.Key;
 					if (projectContent.Language.NameComparer.Equals(partialTypeName, aliasString)) {
-						if (entry.Value.IsDefaultReturnType && entry.Value.GetUnderlyingClass() == null)
+						if (entry.Value.GetUnderlyingClass() == null)
 							continue; // type not found, maybe entry was a namespace
 						yield return entry.Value;
 					}

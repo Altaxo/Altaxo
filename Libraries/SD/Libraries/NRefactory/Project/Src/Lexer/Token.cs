@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1581 $</version>
+//     <version>$Revision: 2509 $</version>
 // </file>
 
 using System;
@@ -50,6 +50,15 @@ namespace ICSharpCode.NRefactory.Parser
 			this.line         = line;
 			this.val          = val;
 			this.literalValue = literalValue;
+		}
+		
+		public override string ToString()
+		{
+			return string.Format("[C# {0}/VB {1} line={2} col={3} val={4}]",
+			                     CSharp.Tokens.GetTokenString(kind),
+			                     VB.Tokens.GetTokenString(kind),
+			                     line, col, val);
+			
 		}
 	}
 }

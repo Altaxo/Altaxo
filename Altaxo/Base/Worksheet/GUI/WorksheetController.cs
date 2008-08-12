@@ -1007,6 +1007,7 @@ namespace Altaxo.Worksheet.GUI
           this.SetCachedNumberOfDataColumns();
           this.SetCachedNumberOfDataRows();
           this.SetCachedNumberOfPropertyColumns();
+          OnTitleNameChanged(EventArgs.Empty);
         }
         else // Data table is null
         {

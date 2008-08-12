@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2313 $</version>
 // </file>
 
 using System;
@@ -20,7 +20,7 @@ namespace ICSharpCode.TextEditor.Document
 		Font regularfont, boldfont, italicfont, bolditalicfont;
 		
 		/// <value>
-		/// The scaled, bold version of the base font
+		/// The scaled, regular version of the base font
 		/// </value>
 		public Font RegularFont {
 			get {

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2751 $</version>
 // </file>
 
 using System;
@@ -19,6 +19,8 @@ namespace ICSharpCode.SharpDevelop.Gui
 		const string DataLayoutSubPath = "resources/layouts";
 		const string configFile = "LayoutConfig.xml";
 		public static readonly List<LayoutConfiguration> Layouts = new List<LayoutConfiguration>();
+		
+		const string DefaultLayoutName = "Default";
 		
 		public static string[] DefaultLayouts = new string[] {
 			"Default",
@@ -107,20 +109,28 @@ namespace ICSharpCode.SharpDevelop.Gui
 			return DisplayName;
 		}
 		
+		static string currentLayoutName = DefaultLayoutName;
+		
 		public static string CurrentLayoutName {
 			get {
-				
-				return PropertyService.Get("Workbench.CurrentLayout", "Default");
+				return currentLayoutName;
 			}
 			set {
 				if (WorkbenchSingleton.InvokeRequired)
 					throw new InvalidOperationException("Invoke required");
 				if (value != CurrentLayoutName) {
-					PropertyService.Set("Workbench.CurrentLayout", value);
+					currentLayoutName = value;
 					WorkbenchSingleton.Workbench.WorkbenchLayout.LoadConfiguration();
 					OnLayoutChanged(EventArgs.Empty);
 				}
 			}
+		}
+		
+		public static void ReloadDefaultLayout()
+		{
+			currentLayoutName = DefaultLayoutName;
+			WorkbenchSingleton.Workbench.WorkbenchLayout.LoadConfiguration();
+			OnLayoutChanged(EventArgs.Empty);
 		}
 		
 		public static string CurrentLayoutFileName {

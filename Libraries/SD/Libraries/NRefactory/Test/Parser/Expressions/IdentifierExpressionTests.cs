@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2452 $</version>
+//     <version>$Revision: 2819 $</version>
 // </file>
 
 using System;
@@ -29,6 +29,22 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 		{
 			IdentifierExpression ident = ParseUtilCSharp.ParseExpression<IdentifierExpression>("@public");
 			Assert.AreEqual("public", ident.Identifier);
+		}
+		
+		[Test]
+		public void CSharpGenericMethodReference()
+		{
+			IdentifierExpression ident = ParseUtilCSharp.ParseExpression<IdentifierExpression>("M<int>");
+			Assert.AreEqual("M", ident.Identifier);
+			Assert.AreEqual(1, ident.TypeArguments.Count);
+		}
+		
+		[Test]
+		public void CSharpGenericMethodReference2()
+		{
+			IdentifierExpression ident = ParseUtilCSharp.ParseExpression<IdentifierExpression>("TargetMethod<string>");
+			Assert.AreEqual("TargetMethod", ident.Identifier);
+			Assert.AreEqual(1, ident.TypeArguments.Count);
 		}
 		#endregion
 		

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2363 $</version>
+//     <version>$Revision: 3009 $</version>
 // </file>
 
 using System;
@@ -31,6 +31,9 @@ namespace ICSharpCode.SharpDevelop.Dom
 		/// </summary>
 		public static Constructor CreateDefault(IClass c)
 		{
+			if (c == null)
+				throw new ArgumentNullException("c");
+			
 			Constructor con = new Constructor(ModifierEnum.Public, c.Region, c.Region, c);
 			con.Documentation = "Default constructor of " + c.Name;
 			return con;
@@ -49,8 +52,17 @@ namespace ICSharpCode.SharpDevelop.Dom
 	[Serializable]
 	public class DefaultMethod : AbstractMember, IMethod
 	{
-		IList<IParameter> parameters = null;
-		IList<ITypeParameter> typeParameters = null;
+		IList<IParameter> parameters;
+		IList<ITypeParameter> typeParameters;
+		IList<string> handlesClauses;
+		
+		protected override void FreezeInternal()
+		{
+			parameters = FreezeList(parameters);
+			typeParameters = FreezeList(typeParameters);
+			handlesClauses = FreezeList(handlesClauses);
+			base.FreezeInternal();
+		}
 		
 		bool isExtensionMethod;
 		
@@ -59,6 +71,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 				return isExtensionMethod;
 			}
 			set {
+				CheckBeforeMutation();
 				isExtensionMethod = value;
 			}
 		}
@@ -68,6 +81,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 			DefaultMethod p = new DefaultMethod(Name, ReturnType, Modifiers, Region, BodyRegion, DeclaringType);
 			p.parameters = DefaultParameter.Clone(this.Parameters);
 			p.typeParameters = this.typeParameters;
+			p.CopyDocumentationFrom(this);
 			p.documentationTag = DocumentationTag;
 			p.isExtensionMethod = this.isExtensionMethod;
 			foreach (ExplicitInterfaceImplementation eii in InterfaceImplementations) {
@@ -119,6 +133,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 				return typeParameters;
 			}
 			set {
+				CheckBeforeMutation();
 				typeParameters = value;
 			}
 		}
@@ -131,13 +146,27 @@ namespace ICSharpCode.SharpDevelop.Dom
 				return parameters;
 			}
 			set {
+				CheckBeforeMutation();
 				parameters = value;
+			}
+		}
+		
+		public IList<string> HandlesClauses {
+			get {
+				if (handlesClauses == null) {
+					handlesClauses = new List<string>();
+				}
+				return handlesClauses;
+			}
+			set {
+				CheckBeforeMutation();
+				handlesClauses = value;
 			}
 		}
 		
 		public virtual bool IsConstructor {
 			get {
-				return ReturnType == null || Name == "#ctor";
+				return Name == "#ctor";
 			}
 		}
 		
@@ -155,11 +184,11 @@ namespace ICSharpCode.SharpDevelop.Dom
 		
 		public override string ToString()
 		{
-			return String.Format("[AbstractMethod: FullyQualifiedName={0}, ReturnType = {1}, IsConstructor={2}, Modifier={3}]",
-			                     FullyQualifiedName,
-			                     ReturnType,
-			                     IsConstructor,
-			                     base.Modifiers);
+			return String.Format("[DefaultMethod: {0}]",
+			                     (new Dom.CSharp.CSharpAmbience {
+			                      	ConversionFlags = ConversionFlags.StandardConversionFlags
+			                      		| ConversionFlags.UseFullyQualifiedMemberNames
+			                      }).Convert(this));
 		}
 		
 		public virtual int CompareTo(IMethod value)

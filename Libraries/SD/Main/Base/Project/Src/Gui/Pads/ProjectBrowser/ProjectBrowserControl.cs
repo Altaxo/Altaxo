@@ -2,10 +2,11 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2028 $</version>
+//     <version>$Revision: 3160 $</version>
 // </file>
 
 using System;
+using System.IO;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -35,6 +36,24 @@ namespace ICSharpCode.SharpDevelop.Project
 					treeView.Sort();
 					treeView.EndUpdate();
 				}
+			}
+		}
+		
+		/// <summary>
+		/// The selected node or its most imediate parent that is a DirectoryNode.
+		/// </summary>
+		/// <seealso cref="DirectoryNode"/>
+		public DirectoryNode SelectedDirectoryNode {
+			get {
+				TreeNode selectedNode =
+					treeView.SelectedNode as AbstractProjectBrowserTreeNode;
+				DirectoryNode node = null;
+				while (selectedNode != null && node == null) {
+					node = selectedNode as DirectoryNode;
+					selectedNode = selectedNode.Parent;
+				}
+				// If no solution is load theres a valid reason for this to return null.
+				return node;
 			}
 		}
 		
@@ -131,7 +150,13 @@ namespace ICSharpCode.SharpDevelop.Project
 		
 		void FileServiceFileRenamed(object sender, FileRenameEventArgs e)
 		{
-			CallVisitor(new FileRenameTreeNodeVisitor(e.SourceFile, e.TargetFile));
+			if (FileUtility.IsEqualFileName(Path.GetDirectoryName(e.SourceFile),
+			                                Path.GetDirectoryName(e.TargetFile)))
+			{
+				CallVisitor(new FileRenameTreeNodeVisitor(e.SourceFile, e.TargetFile));
+			} else {
+				CallVisitor(new FileRemoveTreeNodeVisitor(e.SourceFile));
+			}
 		}
 		
 		public void RefreshView()
@@ -169,6 +194,7 @@ namespace ICSharpCode.SharpDevelop.Project
 		/// </summary>
 		public FileNode FindFileNode(string fileName)
 		{
+			WorkbenchSingleton.AssertMainThread();
 			return FindFileNode(treeView.Nodes, fileName);
 		}
 		
@@ -176,28 +202,35 @@ namespace ICSharpCode.SharpDevelop.Project
 		// that we can select it again on opening a folder
 		string lastSelectionTarget;
 		
+		bool inSelectFile;
+		
 		/// <summary>
 		/// Selects the deepest node open on the path to a particular file.
 		/// </summary>
 		public void SelectFile(string fileName)
 		{
-			lastSelectionTarget = fileName;
-			TreeNode node = FindFileNode(fileName);
-			
-			if (node != null) {
-				// select first parent that is not collapsed
-				TreeNode nodeToSelect = node;
-				TreeNode p = node.Parent;
-				while (p != null) {
-					if (!p.IsExpanded)
-						nodeToSelect = p;
-					p = p.Parent;
+			try {
+				inSelectFile = true;
+				lastSelectionTarget = fileName;
+				TreeNode node = FindFileNode(fileName);
+				
+				if (node != null) {
+					// select first parent that is not collapsed
+					TreeNode nodeToSelect = node;
+					TreeNode p = node.Parent;
+					while (p != null) {
+						if (!p.IsExpanded)
+							nodeToSelect = p;
+						p = p.Parent;
+					}
+					if (nodeToSelect != null) {
+						treeView.SelectedNode = nodeToSelect;
+					}
+				} else {
+					SelectDeepestOpenNodeForPath(fileName);
 				}
-				if (nodeToSelect != null) {
-					treeView.SelectedNode = nodeToSelect;
-				}
-			} else {
-				SelectDeepestOpenNodeForPath(fileName);
+			} finally {
+				inSelectFile = false;
 			}
 		}
 
@@ -400,7 +433,9 @@ namespace ICSharpCode.SharpDevelop.Project
 			if (node == null) {
 				return;
 			}
-			ProjectService.CurrentProject = node.Project;
+			if (!inSelectFile) {
+				ProjectService.CurrentProject = node.Project;
+			}
 			propertyContainer.SelectedObject = node.Tag;
 		}
 		
@@ -417,7 +452,7 @@ namespace ICSharpCode.SharpDevelop.Project
 		/// </summary>
 		public void StoreViewState(Properties memento)
 		{
-			memento.Set("ProjectBrowserState", ExtTreeView.GetViewStateString(treeView));
+			memento.Set("ProjectBrowserState", TreeViewHelper.GetViewStateString(treeView));
 		}
 		
 		/// <summary>
@@ -425,7 +460,7 @@ namespace ICSharpCode.SharpDevelop.Project
 		/// </summary>
 		public void ReadViewState(Properties memento)
 		{
-			ExtTreeView.ApplyViewStateString(memento.Get("ProjectBrowserState", ""), treeView);
+			TreeViewHelper.ApplyViewStateString(memento.Get("ProjectBrowserState", ""), treeView);
 		}
 		
 		#region Windows Forms Designer generated code

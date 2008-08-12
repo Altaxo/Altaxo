@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2105 $</version>
+//     <version>$Revision: 2975 $</version>
 // </file>
 
 using System;
@@ -167,6 +167,7 @@ namespace ICSharpCode.SharpDevelop.Project
 				}
 			}
 		}
+		
 		public override object AcceptVisitor(ProjectBrowserTreeNodeVisitor visitor, object data)
 		{
 			return visitor.Visit(this, data);

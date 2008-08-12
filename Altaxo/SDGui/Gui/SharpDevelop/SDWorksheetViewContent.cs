@@ -111,8 +111,19 @@ namespace Altaxo.Gui.SharpDevelop
       _controller.OutsideAllRightClicked += EhOutsideAllRightClicked;
 
       _controller.TitleNameChanged += EhTitleNameChanged;
-    }
+			SetTitle();
+		}
 
+		void EhTitleNameChanged(object sender, EventArgs e)
+		{
+			SetTitle();
+		}
+
+		void SetTitle()
+		{
+			if(_controller!=null && _controller.Doc!=null)
+				this.TitleName = _controller.Doc.Name;
+		}
     
 
     #endregion
@@ -190,66 +201,6 @@ namespace Altaxo.Gui.SharpDevelop
     {
       get { return (Control)_controller.ViewObject; }
     }
-    #endregion
-
-
-    #region Optional
-
-    /// <summary>
-    /// A generic name for the file, when it does have no file name
-    /// (e.g. newly created files)
-    /// </summary>
-    public override string UntitledName
-    {
-      get { return "UntitledTable"; }
-      set { }
-    }
-
-    /// <summary>
-    /// This is the whole name of the content, e.g. the file name or
-    /// the url depending on the type of the content.
-    /// </summary>
-    /// <returns>
-    /// Title Name, if not set it returns UntitledName
-    /// </returns>
-    public override string TitleName
-    {
-      get
-      {
-        return _controller.Doc.Name;
-      }
-      set
-      {
-      }
-    }
-    void EhTitleNameChanged(object sender, EventArgs e)
-    {
-      base.OnTitleNameChanged(e);
-    }
-
-    /// <summary>
-    /// Returns the file name (if any) assigned to this view.
-    /// </summary>
-    public override string FileName
-    {
-      get
-      {
-        return _controller.Doc.Name;
-      }
-      set
-      {
-      }
-    }
-
-    /// <summary>
-    /// The text on the tab page when more than one view content
-    /// is attached to a single window.
-    /// </summary>
-    public override string TabPageText
-    {
-      get { return TitleName; }
-    }
-
     #endregion
 
     #endregion

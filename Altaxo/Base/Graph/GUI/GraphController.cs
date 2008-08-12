@@ -793,6 +793,8 @@ namespace Altaxo.Graph.GUI
             // Ensure the current layer and plot numbers are valid
             this.EnsureValidityOfCurrentLayerNumber();
             this.EnsureValidityOfCurrentPlotNumber();
+
+            OnTitleNameChanged(EventArgs.Empty);
           }
         }
       }

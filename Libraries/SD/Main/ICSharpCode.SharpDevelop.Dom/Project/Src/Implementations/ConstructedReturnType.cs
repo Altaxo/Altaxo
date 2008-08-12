@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2380 $</version>
+//     <version>$Revision: 3060 $</version>
 // </file>
 
 using System;
@@ -18,7 +18,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 	/// collection.
 	/// Example: List&lt;string&gt;
 	/// </summary>
-	public sealed class ConstructedReturnType : ProxyReturnType
+	public sealed class ConstructedReturnType : DecoratingReturnType
 	{
 		// Return types that should be substituted for the generic types
 		// If a substitution is unknown (type could not be resolved), the list
@@ -42,22 +42,25 @@ namespace ICSharpCode.SharpDevelop.Dom
 			this.baseType = baseType;
 		}
 		
-		public override bool Equals(object o)
+		public override T CastToDecoratingReturnType<T>()
 		{
-			IReturnType rt = o as IReturnType;
-			if (rt == null) return false;
-			return this.DotNetName == rt.DotNetName;
+			if (typeof(T) == typeof(ConstructedReturnType)) {
+				return (T)(object)this;
+			} else {
+				return null;
+			}
+		}
+		
+		public override bool Equals(IReturnType rt)
+		{
+			return rt != null
+				&& rt.IsConstructedReturnType
+				&& this.DotNetName == rt.DotNetName;
 		}
 		
 		public override int GetHashCode()
 		{
-			int code = baseType.GetHashCode();
-			foreach (IReturnType t in typeArguments) {
-				if (t != null) {
-					code ^= t.GetHashCode();
-				}
-			}
-			return code;
+			return this.DotNetName.GetHashCode();
 		}
 		
 		public override IReturnType BaseType {
@@ -125,7 +128,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 		
 		public static IReturnType TranslateType(IReturnType input, IList<IReturnType> typeParameters, bool convertForMethod)
 		{
-			if (typeParameters == null || typeParameters.Count == 0) {
+			if (input == null || typeParameters == null || typeParameters.Count == 0) {
 				return input; // nothing to do when there are no type parameters specified
 			}
 			if (input.IsGenericReturnType) {
@@ -165,7 +168,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 			List<IMethod> l = baseType.GetMethods();
 			for (int i = 0; i < l.Count; ++i) {
 				if (CheckReturnType(l[i].ReturnType) || CheckParameters(l[i].Parameters)) {
-					l[i] = (IMethod)l[i].Clone();
+					l[i] = (IMethod)l[i].CreateSpecializedMember();
 					if (l[i].DeclaringType == baseType.GetUnderlyingClass()) {
 						l[i].DeclaringTypeReference = this;
 					}
@@ -183,7 +186,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 			List<IProperty> l = baseType.GetProperties();
 			for (int i = 0; i < l.Count; ++i) {
 				if (CheckReturnType(l[i].ReturnType) || CheckParameters(l[i].Parameters)) {
-					l[i] = (IProperty)l[i].Clone();
+					l[i] = (IProperty)l[i].CreateSpecializedMember();
 					if (l[i].DeclaringType == baseType.GetUnderlyingClass()) {
 						l[i].DeclaringTypeReference = this;
 					}
@@ -201,7 +204,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 			List<IField> l = baseType.GetFields();
 			for (int i = 0; i < l.Count; ++i) {
 				if (CheckReturnType(l[i].ReturnType)) {
-					l[i] = (IField)l[i].Clone();
+					l[i] = (IField)l[i].CreateSpecializedMember();
 					if (l[i].DeclaringType == baseType.GetUnderlyingClass()) {
 						l[i].DeclaringTypeReference = this;
 					}
@@ -216,7 +219,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 			List<IEvent> l = baseType.GetEvents();
 			for (int i = 0; i < l.Count; ++i) {
 				if (CheckReturnType(l[i].ReturnType)) {
-					l[i] = (IEvent)l[i].Clone();
+					l[i] = (IEvent)l[i].CreateSpecializedMember();
 					if (l[i].DeclaringType == baseType.GetUnderlyingClass()) {
 						l[i].DeclaringTypeReference = this;
 					}
@@ -238,35 +241,6 @@ namespace ICSharpCode.SharpDevelop.Dom
 				}
 			}
 			return r + ">]";
-		}
-		
-		public override bool IsDefaultReturnType {
-			get {
-				return false;
-			}
-		}
-		
-		public override bool IsArrayReturnType {
-			get {
-				return false;
-			}
-		}
-		
-		public override bool IsConstructedReturnType {
-			get {
-				return true;
-			}
-		}
-		
-		public override ConstructedReturnType CastToConstructedReturnType()
-		{
-			return this;
-		}
-		
-		public override bool IsGenericReturnType {
-			get {
-				return false;
-			}
 		}
 	}
 }

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1661 $</version>
+//     <version>$Revision: 3009 $</version>
 // </file>
 
 using System;
@@ -19,8 +19,40 @@ namespace ICSharpCode.SharpDevelop.Dom
 			get;
 		}
 		
+		public sealed override bool Equals(object obj)
+		{
+			return Equals(obj as IReturnType);
+		}
+		
+		public virtual bool Equals(IReturnType other)
+		{
+			// this check is necessary because the underlying Equals implementation
+			// expects to be able to retrieve the base type of "other" - which fails when
+			// this==other and therefore other.busy.
+			if (other == this)
+				return true;
+			
+			IReturnType baseType = BaseType;
+			bool tmp = (baseType != null && TryEnter()) ? baseType.Equals(other) : false;
+			Leave();
+			return tmp;
+		}
+		
+		public override int GetHashCode()
+		{
+			IReturnType baseType = BaseType;
+			int tmp = (baseType != null && TryEnter()) ? baseType.GetHashCode() : 0;
+			Leave();
+			return tmp;
+		}
+		
+		protected int GetObjectHashCode()
+		{
+			return base.GetHashCode();
+		}
+		
 		// Required to prevent stack overflow on inferrence cycles
-		bool busy = false;
+		bool busy;
 		
 		// keep this method as small as possible, it should be inlined!
 		bool TryEnter()
@@ -34,6 +66,11 @@ namespace ICSharpCode.SharpDevelop.Dom
 			}
 		}
 		
+		void Leave()
+		{
+			busy = false;
+		}
+		
 		void PrintTryEnterWarning()
 		{
 			LoggingService.Info("TryEnter failed on " + ToString());
@@ -43,7 +80,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 			get {
 				IReturnType baseType = BaseType;
 				string tmp = (baseType != null && TryEnter()) ? baseType.FullyQualifiedName : "?";
-				busy = false;
+				Leave();
 				return tmp;
 			}
 		}
@@ -52,7 +89,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 			get {
 				IReturnType baseType = BaseType;
 				string tmp = (baseType != null && TryEnter()) ? baseType.Name : "?";
-				busy = false;
+				Leave();
 				return tmp;
 			}
 		}
@@ -61,7 +98,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 			get {
 				IReturnType baseType = BaseType;
 				string tmp = (baseType != null && TryEnter()) ? baseType.Namespace : "?";
-				busy = false;
+				Leave();
 				return tmp;
 			}
 		}
@@ -70,16 +107,16 @@ namespace ICSharpCode.SharpDevelop.Dom
 			get {
 				IReturnType baseType = BaseType;
 				string tmp = (baseType != null && TryEnter()) ? baseType.DotNetName : "?";
-				busy = false;
+				Leave();
 				return tmp;
 			}
 		}
 		
-		public virtual int TypeParameterCount {
+		public virtual int TypeArgumentCount {
 			get {
 				IReturnType baseType = BaseType;
-				int tmp = (baseType != null && TryEnter()) ? baseType.TypeParameterCount : 0;
-				busy = false;
+				int tmp = (baseType != null && TryEnter()) ? baseType.TypeArgumentCount : 0;
+				Leave();
 				return tmp;
 			}
 		}
@@ -88,7 +125,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 		{
 			IReturnType baseType = BaseType;
 			IClass tmp = (baseType != null && TryEnter()) ? baseType.GetUnderlyingClass() : null;
-			busy = false;
+			Leave();
 			return tmp;
 		}
 		
@@ -96,7 +133,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 		{
 			IReturnType baseType = BaseType;
 			List<IMethod> tmp = (baseType != null && TryEnter()) ? baseType.GetMethods() : new List<IMethod>();
-			busy = false;
+			Leave();
 			return tmp;
 		}
 		
@@ -104,7 +141,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 		{
 			IReturnType baseType = BaseType;
 			List<IProperty> tmp = (baseType != null && TryEnter()) ? baseType.GetProperties() : new List<IProperty>();
-			busy = false;
+			Leave();
 			return tmp;
 		}
 		
@@ -112,7 +149,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 		{
 			IReturnType baseType = BaseType;
 			List<IField> tmp = (baseType != null && TryEnter()) ? baseType.GetFields() : new List<IField>();
-			busy = false;
+			Leave();
 			return tmp;
 		}
 		
@@ -120,7 +157,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 		{
 			IReturnType baseType = BaseType;
 			List<IEvent> tmp = (baseType != null && TryEnter()) ? baseType.GetEvents() : new List<IEvent>();
-			busy = false;
+			Leave();
 			return tmp;
 		}
 		
@@ -128,69 +165,57 @@ namespace ICSharpCode.SharpDevelop.Dom
 			get {
 				IReturnType baseType = BaseType;
 				bool tmp = (baseType != null && TryEnter()) ? baseType.IsDefaultReturnType : false;
-				busy = false;
+				Leave();
 				return tmp;
 			}
 		}
 		
-		public virtual bool IsArrayReturnType {
-			get {
-				IReturnType baseType = BaseType;
-				bool tmp = (baseType != null && TryEnter()) ? baseType.IsArrayReturnType : false;
-				busy = false;
-				return tmp;
-			}
+		public bool IsDecoratingReturnType<T>() where T : DecoratingReturnType
+		{
+			return CastToDecoratingReturnType<T>() != null;
 		}
-		public virtual ArrayReturnType CastToArrayReturnType()
+		
+		public virtual T CastToDecoratingReturnType<T>() where T : DecoratingReturnType
 		{
 			IReturnType baseType = BaseType;
-			ArrayReturnType temp;
+			T temp;
 			if (baseType != null && TryEnter())
-				temp = baseType.CastToArrayReturnType();
+				temp = baseType.CastToDecoratingReturnType<T>();
 			else
-				throw new InvalidCastException("Cannot cast " + ToString() + " to expected type.");
-			busy = false;
+				temp = null;
+			Leave();
 			return temp;
 		}
 		
-		public virtual bool IsGenericReturnType {
+		
+		public bool IsArrayReturnType {
 			get {
-				IReturnType baseType = BaseType;
-				bool tmp = (baseType != null && TryEnter()) ? baseType.IsGenericReturnType : false;
-				busy = false;
-				return tmp;
+				return IsDecoratingReturnType<ArrayReturnType>();
 			}
 		}
-		public virtual GenericReturnType CastToGenericReturnType()
+		public ArrayReturnType CastToArrayReturnType()
 		{
-			IReturnType baseType = BaseType;
-			GenericReturnType temp;
-			if (baseType != null && TryEnter())
-				temp = baseType.CastToGenericReturnType();
-			else
-				throw new InvalidCastException("Cannot cast " + ToString() + " to expected type.");
-			busy = false;
-			return temp;
+			return CastToDecoratingReturnType<ArrayReturnType>();
 		}
 		
-		public virtual bool IsConstructedReturnType {
+		public bool IsGenericReturnType {
 			get {
-				IReturnType baseType = BaseType;
-				bool tmp = (baseType != null && TryEnter()) ? baseType.IsConstructedReturnType : false;
-				busy = false;
-				return tmp;
+				return IsDecoratingReturnType<GenericReturnType>();
 			}
 		}
-		public virtual ConstructedReturnType CastToConstructedReturnType()
+		public GenericReturnType CastToGenericReturnType()
 		{
-			IReturnType baseType = BaseType;
-			ConstructedReturnType temp;
-			if (baseType != null && TryEnter())
-				temp = baseType.CastToConstructedReturnType();
-			else
-				throw new InvalidCastException("Cannot cast " + ToString() + " to expected type.");
-			busy = false;
-			return temp;
+			return CastToDecoratingReturnType<GenericReturnType>();
+		}
+		
+		public bool IsConstructedReturnType {
+			get {
+				return IsDecoratingReturnType<ConstructedReturnType>();
+			}
+		}
+		public ConstructedReturnType CastToConstructedReturnType()
+		{
+			return CastToDecoratingReturnType<ConstructedReturnType>();
 		}
 	}
 }

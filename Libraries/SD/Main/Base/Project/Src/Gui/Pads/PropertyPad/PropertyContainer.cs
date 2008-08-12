@@ -2,15 +2,22 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2663 $</version>
 // </file>
 
 using System;
 using System.Collections;
 using System.ComponentModel.Design;
+using System.Windows.Forms;
 
 namespace ICSharpCode.SharpDevelop.Gui
 {
+	/// <summary>
+	/// A IViewContent or IPadContent can implement this interface to display a set of properties in
+	/// the property grid when it has focus.
+	/// One view/pad content instance has to always return the same property container instance
+	/// and has to change only the properties on that PropertyContainer.
+	/// </summary>
 	public interface IHasPropertyContainer
 	{
 		PropertyContainer PropertyContainer { get; }
@@ -28,6 +35,27 @@ namespace ICSharpCode.SharpDevelop.Gui
 	/// </summary>
 	public sealed class PropertyContainer
 	{
+		/// <summary>
+		/// Creates a new PropertyContainer instance.
+		/// This has the side effect of constructing the PropertyPad if necessary.
+		/// </summary>
+		public PropertyContainer() : this(true) { }
+		
+		internal PropertyContainer(bool createPadOnConstruction)
+		{
+			if (createPadOnConstruction && WorkbenchSingleton.Workbench != null) {
+				PadDescriptor desc = WorkbenchSingleton.Workbench.GetPad(typeof(PropertyPad));
+				if (desc != null) desc.CreatePad();
+			}
+		}
+		
+		/// <summary>
+		/// Gets if this property container is currently shown in the property grid.
+		/// </summary>
+		public bool IsActivePropertyContainer {
+			get { return PropertyPad.ActiveContainer == this; }
+		}
+		
 		object selectedObject;
 		object[] selectedObjects;
 		
@@ -77,6 +105,16 @@ namespace ICSharpCode.SharpDevelop.Gui
 			}
 		}
 		
+		Control propertyGridReplacementControl;
+		
+		public Control PropertyGridReplacementControl {
+			get { return propertyGridReplacementControl; }
+			set {
+				propertyGridReplacementControl = value;
+				PropertyPad.UpdatePropertyGridReplacementControl(this);
+			}
+		}
+		
 		/// <summary>
 		/// Clears all properties on this container.
 		/// When a ViewContent is closed, it should call Clear on it's property container to
@@ -87,6 +125,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			Host = null;
 			SelectableObjects = null;
 			SelectedObject = null;
+			PropertyGridReplacementControl = null;
 		}
 	}
 }

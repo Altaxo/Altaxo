@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1671 $</version>
+//     <version>$Revision: 3125 $</version>
 // </file>
 
 using System;
@@ -23,6 +23,7 @@ namespace ICSharpCode.NRefactory.Tests.PrettyPrinter
 			parser.Parse();
 			Assert.AreEqual("", parser.Errors.ErrorOutput);
 			VBNetOutputVisitor outputVisitor = new VBNetOutputVisitor();
+			outputVisitor.Options.OutputByValModifier = true;
 			outputVisitor.VisitCompilationUnit(parser.CompilationUnit, null);
 			Assert.AreEqual("", outputVisitor.Errors.ErrorOutput);
 			Assert.AreEqual(StripWhitespace(program), StripWhitespace(outputVisitor.Text));
@@ -203,6 +204,12 @@ End Using");
 		}
 		
 		[Test]
+		public void DictionaryAccess()
+		{
+			TestExpression("c!key");
+		}
+		
+		[Test]
 		public void GenericMethodInvocation()
 		{
 			TestExpression("GenericMethod(Of T)(arg)");
@@ -316,6 +323,18 @@ End Using");
 		}
 		
 		[Test]
+		public void AssemblyAttribute()
+		{
+			TestProgram("<Assembly: CLSCompliant>");
+		}
+		
+		[Test]
+		public void ModuleAttribute()
+		{
+			TestProgram("<Module: SuppressMessageAttribute>");
+		}
+		
+		[Test]
 		public void Interface()
 		{
 			TestProgram("Interface ITest\n" +
@@ -352,6 +371,12 @@ End Using");
 		{
 			TestTypeMember("Public Shared Operator +(ByVal bugNode As TheBug, ByVal bugNode2 As TheBug) As TheBug\nEnd Operator");
 			TestTypeMember("Public Shared Operator >>(ByVal bugNode As TheBug, ByVal b As Integer) As TheBug\nEnd Operator");
+		}
+		
+		[Test]
+		public void AttributeOnParameter()
+		{
+			TestTypeMember("Sub Main(ByRef one As Integer, ByRef two As Integer, <Out> ByRef three As Integer)\nEnd Sub");
 		}
 		
 		[Test]

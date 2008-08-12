@@ -197,11 +197,11 @@ namespace Altaxo.Main.Commands.ScriptEditorCommands
 
       IWorkbenchWindow window = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow;
 
-      if (window != null && window.ViewContent is IClipboardHandler) 
+      if (window != null && window.ActiveViewContent is IClipboardHandler) 
       {
-        if (((IClipboardHandler)window.ViewContent) != null) 
+				if (((IClipboardHandler)window.ActiveViewContent) != null) 
         {
-          ((IClipboardHandler)window.ViewContent).Delete();
+					((IClipboardHandler)window.ActiveViewContent).Delete();
         }
       }
     }
@@ -234,12 +234,12 @@ namespace Altaxo.Main.Commands.ScriptEditorCommands
       IWorkbenchWindow window = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow;
       if (window != null) 
       {
-        if (window.ViewContent.IsViewOnly) 
+        if (window.ActiveViewContent.IsViewOnly) 
         {
           return;
         }
         
-        if (window.ViewContent.TitleName == null) 
+        if (window.ActiveViewContent.TitleName == null) 
         {
           SaveFileAs sfa = new SaveFileAs();
           sfa.Run();
@@ -247,15 +247,18 @@ namespace Altaxo.Main.Commands.ScriptEditorCommands
         else 
         {
           FileAttributes attr = FileAttributes.ReadOnly | FileAttributes.Directory | FileAttributes.Offline | FileAttributes.System;
-          if ((File.GetAttributes(window.ViewContent.TitleName) & attr) != 0) 
+          if ((File.GetAttributes(window.ActiveViewContent.TitleName) & attr) != 0) 
           {
             SaveFileAs sfa = new SaveFileAs();
             sfa.Run();
           } 
           else 
           {
-            ICSharpCode.SharpDevelop.Project.ProjectService.MarkFileDirty(window.ViewContent.TitleName);
-            FileUtility.ObservedSave(new FileOperationDelegate(window.ViewContent.Save), window.ViewContent.TitleName);
+						throw new NotImplementedException();
+						/*
+            ICSharpCode.SharpDevelop.Project.ProjectService.MarkFileDirty(window.ActiveViewContent.TitleName);
+            FileUtility.ObservedSave(new FileOperationDelegate(window.ActiveViewContent.Save), window.ActiveViewContent.TitleName);
+						*/
           }
         }
       }
@@ -276,13 +279,13 @@ namespace Altaxo.Main.Commands.ScriptEditorCommands
 
       if (window != null)
       {
-        if (window.ViewContent.IsViewOnly)
+        if (window.ActiveViewContent.IsViewOnly)
         {
           return;
         }
-        if (window.ViewContent is ICustomizedCommands)
+				if (window.ActiveViewContent is ICustomizedCommands)
         {
-          if (((ICustomizedCommands)window.ViewContent).SaveAsCommand())
+					if (((ICustomizedCommands)window.ActiveViewContent).SaveAsCommand())
           {
             return;
           }
@@ -296,7 +299,7 @@ namespace Altaxo.Main.Commands.ScriptEditorCommands
           fdiag.Filter = String.Join("|", fileFilters);
           for (int i = 0; i < fileFilters.Length; ++i)
           {
-            if (fileFilters[i].IndexOf(Path.GetExtension(window.ViewContent.FileName == null ? window.ViewContent.UntitledName : window.ViewContent.FileName)) >= 0)
+						if (fileFilters[i].IndexOf(Path.GetExtension(window.ActiveViewContent.PrimaryFileName == null ? "Untitled.cs" : window.ActiveViewContent.PrimaryFileName)) >= 0)
             {
               fdiag.FilterIndex = i + 1;
               break;
@@ -314,12 +317,15 @@ namespace Altaxo.Main.Commands.ScriptEditorCommands
               return;
             }
 
-            if (FileUtility.ObservedSave(new NamedFileOperationDelegate(window.ViewContent.Save), fileName) == FileOperationResult.OK)
+						throw new NotImplementedException();
+						/*
+						if (FileUtility.ObservedSave(new NamedFileOperationDelegate(window.ActiveViewContent.Save), fileName) == FileOperationResult.OK)
             {
               FileService.RecentOpen.AddLastFile(fileName);
 
               MessageService.ShowMessage(fileName, "${res:ICSharpCode.SharpDevelop.Commands.SaveFile.FileSaved}");
             }
+						*/
           }
         }
       }

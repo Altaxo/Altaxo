@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2066 $</version>
+//     <version>$Revision: 2589 $</version>
 // </file>
 
 using System;
@@ -38,7 +38,15 @@ namespace ICSharpCode.SharpDevelop.Dom
 			}
 		}
 		
-		public ClassFinder(string fileName, string fileContent, int offset)
+		public int CaretLine {
+			get { return caretLine; }
+		}
+		
+		public int CaretColumn {
+			get { return caretColumn; }
+		}
+		
+		public ClassFinder(ParseInformation parseInfo, string fileContent, int offset)
 		{
 			caretLine = 0;
 			caretColumn = 0;
@@ -50,15 +58,15 @@ namespace ICSharpCode.SharpDevelop.Dom
 					caretColumn++;
 				}
 			}
-			Init(fileName);
+			Init(parseInfo);
 		}
 		
-		public ClassFinder(string fileName, int caretLineNumber, int caretColumn)
+		public ClassFinder(ParseInformation parseInfo, int caretLineNumber, int caretColumn)
 		{
 			this.caretLine   = caretLineNumber;
 			this.caretColumn = caretColumn;
 			
-			Init(fileName);
+			Init(parseInfo);
 		}
 		
 		public ClassFinder(IMember classMember)
@@ -83,9 +91,8 @@ namespace ICSharpCode.SharpDevelop.Dom
 		{
 		}
 		
-		void Init(string fileName)
+		void Init(ParseInformation parseInfo)
 		{
-			ParseInformation parseInfo = HostCallback.GetParseInformation(fileName);
 			if (parseInfo != null) {
 				cu = parseInfo.MostRecentCompilationUnit;
 			}
@@ -94,7 +101,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 				callingClass = cu.GetInnermostClass(caretLine, caretColumn);
 				projectContent = cu.ProjectContent;
 			} else {
-				projectContent = HostCallback.GetCurrentProjectContent();
+				projectContent = DefaultProjectContent.DummyProjectContent;
 			}
 			if (projectContent == null)
 				throw new ArgumentException("projectContent not found!");
@@ -116,3 +123,4 @@ namespace ICSharpCode.SharpDevelop.Dom
 		}
 	}
 }
+

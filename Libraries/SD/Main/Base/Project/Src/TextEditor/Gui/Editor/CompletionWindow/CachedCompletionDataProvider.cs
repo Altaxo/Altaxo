@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2939 $</version>
 // </file>
 
 using System;
@@ -51,7 +51,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		public override ICompletionData[] GenerateCompletionData(string fileName, TextArea textArea, char charTyped)
 		{
 			if (completionData == null) {
-				completionData = baseProvider.GenerateCompletionData(fileName, textArea, charTyped);
+				completionData = baseProvider.GenerateCompletionData(fileName, textArea, charTyped) ?? new ICompletionData[0];
 				preSelection = baseProvider.PreSelection;
 				this.DefaultIndex = baseProvider.DefaultIndex;
 			}

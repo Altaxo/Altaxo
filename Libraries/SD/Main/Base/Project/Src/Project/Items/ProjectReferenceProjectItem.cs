@@ -2,11 +2,12 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2043 $</version>
+//     <version>$Revision: 3041 $</version>
 // </file>
 
 using System;
 using System.ComponentModel;
+using System.IO;
 using ICSharpCode.Core;
 
 namespace ICSharpCode.SharpDevelop.Project
@@ -44,9 +45,36 @@ namespace ICSharpCode.SharpDevelop.Project
 			}
 		}
 		
+		public override string ShortName {
+			get { return Path.GetFileNameWithoutExtension(Include); }
+		}
+		
+		// hide Version,Culture,PublicKeyToken,SpecificVersion in property pad
+		// (they are meaningless for project references)
+		[Browsable(false)]
+		public override Version Version {
+			get { return null; }
+		}
+		
+		[Browsable(false)]
+		public override string Culture {
+			get { return null; }
+		}
+		
+		[Browsable(false)]
+		public override string PublicKeyToken {
+			get { return null; }
+		}
+		
+		[Browsable(false)]
+		public override bool SpecificVersion {
+			get { return false; }
+		}
+		
 		internal ProjectReferenceProjectItem(IProject project, Microsoft.Build.BuildEngine.BuildItem buildItem)
 			: base(project, buildItem)
 		{
+			this.DefaultCopyLocalValue = true;
 		}
 		
 		public ProjectReferenceProjectItem(IProject project, IProject referenceTo)
@@ -56,6 +84,7 @@ namespace ICSharpCode.SharpDevelop.Project
 			ProjectGuid = referenceTo.IdGuid;
 			ProjectName = referenceTo.Name;
 			this.referencedProject = referenceTo;
+			this.DefaultCopyLocalValue = true;
 		}
 	}
 }

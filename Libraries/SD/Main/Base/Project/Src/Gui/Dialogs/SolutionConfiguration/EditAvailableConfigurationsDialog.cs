@@ -2,12 +2,13 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2120 $</version>
+//     <version>$Revision: 2952 $</version>
 // </file>
 
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 
 using ICSharpCode.Core;
@@ -41,9 +42,9 @@ namespace ICSharpCode.SharpDevelop.Gui
 			InitList();
 			
 			if (editPlatforms)
-				this.Text = "Edit Solution Platforms";
+				this.Text = StringParser.Parse("${res:Dialog.EditAvailableConfigurationsDialog.EditSolutionPlatforms}");
 			else
-				this.Text = "Edit Solution Configurations";
+				this.Text = StringParser.Parse("${res:Dialog.EditAvailableConfigurationsDialog.EditSolutionConfigurations}");
 		}
 		
 		public EditAvailableConfigurationsDialog(IProject project, bool editPlatforms)
@@ -55,9 +56,9 @@ namespace ICSharpCode.SharpDevelop.Gui
 			InitList();
 			
 			if (editPlatforms)
-				this.Text = "Edit Project Platforms";
+				this.Text = StringParser.Parse("${res:Dialog.EditAvailableConfigurationsDialog.EditProjectPlatforms}");
 			else
-				this.Text = "Edit Project Configurations";
+				this.Text = StringParser.Parse("${res:Dialog.EditAvailableConfigurationsDialog.EditProjectConfigurations}");
 		}
 		
 		void InitList()
@@ -79,7 +80,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		
 		void ShowEntries(IEnumerable<string> list, string activeItem)
 		{
-			string[] array = Linq.ToArray(list);
+			string[] array = list.ToArray();
 			listBox.Items.Clear();
 			listBox.Items.AddRange(array);
 			if (listBox.Items.Count == 0) {
@@ -91,10 +92,10 @@ namespace ICSharpCode.SharpDevelop.Gui
 		void RemoveButtonClick(object sender, EventArgs e)
 		{
 			if (listBox.Items.Count == 1) {
-				MessageService.ShowMessage("You cannot delete all configurations/platforms.");
+				MessageService.ShowMessage("${res:Dialog.EditAvailableConfigurationsDialog.CannotDeleteAllConfigurationsOrPlatforms}");
 			}
 			string name = listBox.SelectedItem.ToString();
-			if (MessageService.AskQuestionFormatted("Do you really want to remove '{0}'?",
+			if (MessageService.AskQuestionFormatted("${res:Dialog.EditAvailableConfigurationsDialog.ConfirmRemoveConfigurationOrPlatform}",
 			                                        new string[] { name }))
 			{
 				if (project != null) {
@@ -128,7 +129,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		{
 			string oldName = listBox.SelectedItem.ToString();
 			string newName = MessageService.ShowInputBox("${res:SharpDevelop.Refactoring.Rename}",
-			                                             "Enter the new name:", oldName);
+			                                             "${res:Dialog.EditAvailableConfigurationsDialog.EnterNewName}", oldName);
 			if (string.IsNullOrEmpty(newName) || newName == oldName)
 				return;
 			if (!EnsureCorrectName(ref newName))
@@ -175,7 +176,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 				newName = "Any CPU";
 			foreach (string item in listBox.Items) {
 				if (string.Equals(item, newName, StringComparison.InvariantCultureIgnoreCase)) {
-					MessageService.ShowMessage("Duplicate name.");
+					MessageService.ShowMessage("${res:Dialog.EditAvailableConfigurationsDialog.DuplicateName}");
 					return false;
 				}
 			}
@@ -183,7 +184,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			    || !FileUtility.IsValidDirectoryName(newName)
 			    || newName.Contains("'"))
 			{
-				MessageService.ShowMessage("The name was invalid.");
+				MessageService.ShowMessage("${res:Dialog.EditAvailableConfigurationsDialog.InvalidName}");
 				return false;
 			}
 			return true;

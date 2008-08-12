@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2538 $</version>
+//     <version>$Revision: 3007 $</version>
 // </file>
 
 using System;
@@ -103,7 +103,9 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 	{
 		protected override void Run(TextEditorControl textEditor, RefactoringProvider provider)
 		{
-			NamespaceRefactoringService.ManageUsings(textEditor.FileName, textEditor.Document, true, true);
+			using (var pm = Gui.AsynchronousWaitDialog.ShowWaitDialog("${res:SharpDevelop.Refactoring.RemoveUnusedImports}")) {
+				NamespaceRefactoringService.ManageUsings(pm, textEditor.FileName, textEditor.Document, true, true);
+			}
 		}
 	}
 	
@@ -117,8 +119,8 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 				Rename((rr as TypeResolveResult).ResolvedClass);
 			} else if (rr is MemberResolveResult) {
 				Rename((rr as MemberResolveResult).ResolvedMember);
-			} else if (rr is MethodResolveResult) {
-				Rename((rr as MethodResolveResult).GetMethodIfSingleOverload());
+			} else if (rr is MethodGroupResolveResult) {
+				Rename((rr as MethodGroupResolveResult).GetMethodIfSingleOverload());
 			} else if (rr is LocalResolveResult) {
 				RenameLocalVariableCommand.Run(rr as LocalResolveResult);
 			} else {

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2035 $</version>
+//     <version>$Revision: 2694 $</version>
 // </file>
 
 using System;
@@ -112,7 +112,7 @@ namespace ICSharpCode.SharpDevelop.Project
 		
 		public override void ActivateItem()
 		{
-			if (project is UnknownProject && Nodes.Count == 0) {
+			if (project is MSBuildFileProject) {
 				FileService.OpenFile(project.FileName);
 			}
 		}

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1958 $</version>
+//     <version>$Revision: 3171 $</version>
 // </file>
 
 using System;
@@ -19,7 +19,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 	/// The ResolveResult specified the location where Resolve was called (Class+Member)
 	/// and the type of the resolved expression.
 	/// </summary>
-	public class ResolveResult
+	public class ResolveResult : AbstractFreezable, ICloneable
 	{
 		IClass callingClass;
 		IMember callingMember;
@@ -32,14 +32,16 @@ namespace ICSharpCode.SharpDevelop.Dom
 			this.resolvedType = resolvedType;
 		}
 		
+		public virtual bool IsValid {
+			get { return true; }
+		}
+		
 		/// <summary>
 		/// Gets the class that contained the expression used to get this ResolveResult.
 		/// Can be null when the class is unknown.
 		/// </summary>
 		public IClass CallingClass {
-			get {
-				return callingClass;
-			}
+			get { return callingClass; }
 		}
 		
 		/// <summary>
@@ -48,9 +50,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 		/// Can be null when the expression was not inside a member or the member is unknown.
 		/// </summary>
 		public IMember CallingMember {
-			get {
-				return callingMember;
-			}
+			get { return callingMember; }
 		}
 		
 		/// <summary>
@@ -59,12 +59,21 @@ namespace ICSharpCode.SharpDevelop.Dom
 		/// expression was a namespace name).
 		/// </summary>
 		public IReturnType ResolvedType {
-			get {
-				return resolvedType;
-			}
+			get { return resolvedType; }
 			set {
+				CheckBeforeMutation();
 				resolvedType = value;
 			}
+		}
+		
+		public virtual ResolveResult Clone()
+		{
+			return new ResolveResult(callingClass, callingMember, resolvedType);
+		}
+		
+		object ICloneable.Clone()
+		{
+			return this.Clone();
 		}
 		
 		public virtual ArrayList GetCompletionData(IProjectContent projectContent)
@@ -76,24 +85,10 @@ namespace ICSharpCode.SharpDevelop.Dom
 		{
 			if (resolvedType == null) return null;
 			ArrayList res = new ArrayList();
-			bool isClassInInheritanceTree = false;
-			if (callingClass != null)
-				isClassInInheritanceTree = callingClass.IsTypeInInheritanceTree(resolvedType.GetUnderlyingClass());
-			foreach (IMethod m in resolvedType.GetMethods()) {
-				if (language.ShowMember(m, showStatic) && m.IsAccessible(callingClass, isClassInInheritanceTree))
+			
+			foreach (IMember m in MemberLookupHelper.GetAccessibleMembers(resolvedType, callingClass, language)) {
+				if (language.ShowMember(m, showStatic))
 					res.Add(m);
-			}
-			foreach (IEvent e in resolvedType.GetEvents()) {
-				if (language.ShowMember(e, showStatic) && e.IsAccessible(callingClass, isClassInInheritanceTree))
-					res.Add(e);
-			}
-			foreach (IField f in resolvedType.GetFields()) {
-				if (language.ShowMember(f, showStatic) && f.IsAccessible(callingClass, isClassInInheritanceTree))
-					res.Add(f);
-			}
-			foreach (IProperty p in resolvedType.GetProperties()) {
-				if (language.ShowMember(p, showStatic) && p.IsAccessible(callingClass, isClassInInheritanceTree))
-					res.Add(p);
 			}
 			
 			if (!showStatic && callingClass != null) {
@@ -112,66 +107,27 @@ namespace ICSharpCode.SharpDevelop.Dom
 				throw new ArgumentNullException("language");
 			if (res == null)
 				throw new ArgumentNullException("res");
-			if (callingClass == null)
-				throw new ArgumentNullException("callingClass");
 			if (resolvedType == null)
 				throw new ArgumentNullException("resolvedType");
+			if (callingClass == null)
+				throw new ArgumentNullException("callingClass");
 			
-			bool supportsExtensionMethods = language.SupportsExtensionMethods;
-			bool supportsExtensionProperties = language.SupportsExtensionProperties;
-			if (supportsExtensionMethods || supportsExtensionProperties) {
-				ArrayList list = new ArrayList();
-				IMethod dummyMethod = new DefaultMethod("dummy", VoidReturnType.Instance, ModifierEnum.Static, DomRegion.Empty, DomRegion.Empty, callingClass);
-				CtrlSpaceResolveHelper.AddContentsFromCalling(list, callingClass, dummyMethod);
-				CtrlSpaceResolveHelper.AddImportedNamespaceContents(list, callingClass.CompilationUnit, callingClass);
-				
-				bool searchExtensionsInClasses = language.SearchExtensionsInClasses;
-				foreach (object o in list) {
-					if (supportsExtensionMethods && o is IMethod || supportsExtensionProperties && o is IProperty) {
-						TryAddExtension(language, res, o as IMethodOrProperty, resolvedType);
-					} else if (searchExtensionsInClasses && o is IClass) {
-						IClass c = o as IClass;
-						if (c.HasExtensionMethods) {
-							if (supportsExtensionProperties) {
-								foreach (IProperty p in c.Properties) {
-									TryAddExtension(language, res, p, resolvedType);
-								}
-							}
-							if (supportsExtensionMethods) {
-								foreach (IMethod m in c.Methods) {
-									TryAddExtension(language, res, m, resolvedType);
-								}
-							}
-						}
-					}
-				}
+			foreach (IMethodOrProperty mp in CtrlSpaceResolveHelper.FindAllExtensions(language, callingClass)) {
+				TryAddExtension(language, res, mp, resolvedType);
 			}
 		}
 		
 		static void TryAddExtension(LanguageProperties language, ArrayList res, IMethodOrProperty ext, IReturnType resolvedType)
 		{
-			// accept only extension methods
-			if (!ext.IsExtensionMethod)
-				return;
-			// don't add extension if method with that name already exists
-			// but allow overloading extension methods
-			foreach (IMember member in res) {
-				IMethodOrProperty p = member as IMethodOrProperty;
-				if (p != null && p.IsExtensionMethod)
-					continue;
-				if (language.NameComparer.Equals(member.Name, ext.Name)) {
-					return;
-				}
-			}
 			// now add the extension method if it fits the type
-			if (MemberLookupHelper.ConversionExists(resolvedType, ext.Parameters[0].ReturnType)) {
+			if (MemberLookupHelper.IsApplicable(resolvedType, ext.Parameters[0].ReturnType, ext as IMethod)) {
 				IMethod method = ext as IMethod;
 				if (method != null && method.TypeParameters.Count > 0) {
 					IReturnType[] typeArguments = new IReturnType[method.TypeParameters.Count];
 					MemberLookupHelper.InferTypeArgument(method.Parameters[0].ReturnType, resolvedType, typeArguments);
 					for (int i = 0; i < typeArguments.Length; i++) {
 						if (typeArguments[i] != null) {
-							ext = (IMethod)ext.Clone();
+							ext = (IMethod)ext.CreateSpecializedMember();
 							ext.ReturnType = ConstructedReturnType.TranslateType(ext.ReturnType, typeArguments, true);
 							for (int j = 0; j < ext.Parameters.Count; ++j) {
 								ext.Parameters[j].ReturnType = ConstructedReturnType.TranslateType(ext.Parameters[j].ReturnType, typeArguments, true);
@@ -189,6 +145,14 @@ namespace ICSharpCode.SharpDevelop.Dom
 			// this is only possible on some subclasses of ResolveResult
 			return FilePosition.Empty;
 		}
+		
+		/// <summary>
+		/// Gets if this ResolveResult represents a reference to the specified entity.
+		/// </summary>
+		public virtual bool IsReferenceTo(IEntity entity)
+		{
+			return false;
+		}
 	}
 	#endregion
 	
@@ -201,6 +165,13 @@ namespace ICSharpCode.SharpDevelop.Dom
 	{
 		ResolveResult primaryResult, secondaryResult;
 
+		protected override void FreezeInternal()
+		{
+			base.FreezeInternal();
+			primaryResult.Freeze();
+			secondaryResult.Freeze();
+		}
+		
 		public ResolveResult PrimaryResult {
 			get {
 				return primaryResult;
@@ -227,6 +198,10 @@ namespace ICSharpCode.SharpDevelop.Dom
 		public MixedResolveResult(ResolveResult primaryResult, ResolveResult secondaryResult)
 			: base(primaryResult.CallingClass, primaryResult.CallingMember, primaryResult.ResolvedType)
 		{
+			if (primaryResult == null)
+				throw new ArgumentNullException("primaryResult");
+			if (secondaryResult == null)
+				throw new ArgumentNullException("secondaryResult");
 			this.primaryResult = primaryResult;
 			this.secondaryResult = secondaryResult;
 		}
@@ -248,6 +223,16 @@ namespace ICSharpCode.SharpDevelop.Dom
 			}
 			return result;
 		}
+		
+		public override ResolveResult Clone()
+		{
+			return new MixedResolveResult(primaryResult.Clone(), secondaryResult.Clone());
+		}
+		
+		public override bool IsReferenceTo(IEntity entity)
+		{
+			return primaryResult.IsReferenceTo(entity) || secondaryResult.IsReferenceTo(entity);
+		}
 	}
 	#endregion
 	
@@ -263,7 +248,6 @@ namespace ICSharpCode.SharpDevelop.Dom
 	public class LocalResolveResult : ResolveResult
 	{
 		IField field;
-		bool isParameter;
 		
 		public LocalResolveResult(IMember callingMember, IField field)
 			: base(callingMember.DeclaringType, callingMember, field.ReturnType)
@@ -273,28 +257,47 @@ namespace ICSharpCode.SharpDevelop.Dom
 			if (field == null)
 				throw new ArgumentNullException("field");
 			this.field = field;
-			this.isParameter = field.IsParameter;
-			if (!isParameter && !field.IsLocalVariable) {
+			if (!field.IsParameter && !field.IsLocalVariable) {
 				throw new ArgumentException("the field must either be a local variable-field or a parameter-field");
 			}
+		}
+		
+		public LocalResolveResult(IMember callingMember, IParameter parameter)
+			: this(callingMember, new DefaultField.ParameterField(parameter.ReturnType, parameter.Name, parameter.Region, callingMember.DeclaringType))
+		{
+		}
+		
+		public override ResolveResult Clone()
+		{
+			return new LocalResolveResult(this.CallingMember, this.Field);
 		}
 		
 		/// <summary>
 		/// Gets the field representing the local variable.
 		/// </summary>
 		public IField Field {
-			get {
-				return field;
-			}
+			get { return field; }
 		}
 		
 		/// <summary>
 		/// Gets if the variable is a parameter (true) or a local variable (false).
 		/// </summary>
 		public bool IsParameter {
-			get {
-				return isParameter;
-			}
+			get { return field.IsParameter; }
+		}
+		
+		/// <summary>
+		/// Gets the name of the parameter/local variable.
+		/// </summary>
+		public string VariableName {
+			get { return field.Name; }
+		}
+		
+		/// <summary>
+		/// Gets th position where the parameter/local variable is declared.
+		/// </summary>
+		public DomRegion VariableDefinitionRegion {
+			get { return field.Region; }
 		}
 		
 		public override FilePosition GetDefinitionPosition()
@@ -313,6 +316,16 @@ namespace ICSharpCode.SharpDevelop.Dom
 				LoggingService.Warn("GetDefinitionPosition: field.Region is empty");
 				return new FilePosition(cu.FileName);
 			}
+		}
+		
+		public override bool IsReferenceTo(IEntity entity)
+		{
+			IField f = entity as IField;
+			if (f != null && (f.IsLocalVariable || f.IsParameter)) {
+				return field.Region.BeginLine == f.Region.BeginLine
+					&& field.Region.BeginColumn == f.Region.BeginColumn;
+			}
+			return base.IsReferenceTo(entity);
 		}
 	}
 	#endregion
@@ -353,6 +366,11 @@ namespace ICSharpCode.SharpDevelop.Dom
 		{
 			return projectContent.GetNamespaceContents(name);
 		}
+		
+		public override ResolveResult Clone()
+		{
+			return new NamespaceResolveResult(this.CallingClass, this.CallingMember, this.Name);
+		}
 	}
 	#endregion
 	
@@ -372,6 +390,11 @@ namespace ICSharpCode.SharpDevelop.Dom
 		public override ArrayList GetCompletionData(IProjectContent projectContent)
 		{
 			return null;
+		}
+		
+		public override ResolveResult Clone()
+		{
+			return new IntegerLiteralResolveResult(this.CallingClass, this.CallingMember, this.ResolvedType);
 		}
 	}
 	#endregion
@@ -407,6 +430,11 @@ namespace ICSharpCode.SharpDevelop.Dom
 			: base(callingClass, callingMember, resolvedType)
 		{
 			this.resolvedClass = resolvedType.GetUnderlyingClass();
+		}
+		
+		public override ResolveResult Clone()
+		{
+			return new TypeResolveResult(this.CallingClass, this.CallingMember, this.ResolvedType, this.ResolvedClass);
 		}
 		
 		/// <summary>
@@ -445,6 +473,14 @@ namespace ICSharpCode.SharpDevelop.Dom
 			else
 				return new FilePosition(cu.FileName);
 		}
+		
+		public override bool IsReferenceTo(IEntity entity)
+		{
+			IClass c = entity as IClass;
+			return c != null
+				&& resolvedClass.FullyQualifiedName == c.FullyQualifiedName
+				&& resolvedClass.TypeParameters.Count == c.TypeParameters.Count;
+		}
 	}
 	#endregion
 	
@@ -477,13 +513,28 @@ namespace ICSharpCode.SharpDevelop.Dom
 			this.resolvedMember = resolvedMember;
 		}
 		
+		public override ResolveResult Clone()
+		{
+			return new MemberResolveResult(this.CallingClass, this.CallingMember, this.ResolvedMember) {
+				IsExtensionMethodCall = IsExtensionMethodCall
+			};
+		}
+		
+		bool isExtensionMethodCall;
+		
+		public bool IsExtensionMethodCall {
+			get { return isExtensionMethodCall; }
+			set {
+				CheckBeforeMutation();
+				isExtensionMethodCall = value;
+			}
+		}
+		
 		/// <summary>
 		/// Gets the member that was resolved.
 		/// </summary>
 		public IMember ResolvedMember {
-			get {
-				return resolvedMember;
-			}
+			get { return resolvedMember; }
 		}
 		
 		public override FilePosition GetDefinitionPosition()
@@ -510,10 +561,117 @@ namespace ICSharpCode.SharpDevelop.Dom
 			else
 				return new FilePosition(cu.FileName);
 		}
+		
+		public override bool IsReferenceTo(IEntity entity)
+		{
+			IClass c = entity as IClass;
+			if (c != null) {
+				IMethod m = resolvedMember as IMethod;
+				return m != null && m.IsConstructor
+					&& m.DeclaringType.FullyQualifiedName == c.FullyQualifiedName
+					&& m.DeclaringType.TypeParameters.Count == c.TypeParameters.Count;
+			} else {
+				return MemberLookupHelper.IsSimilarMember(resolvedMember, entity as IMember);
+			}
+		}
 	}
 	#endregion
 	
 	#region MethodResolveResult
+	public class MethodGroup : AbstractFreezable, IList<IMethod>
+	{
+		IList<IMethod> innerList;
+		bool isExtensionMethodGroup;
+		
+		public MethodGroup() : this(new List<IMethod>())
+		{
+		}
+		
+		public MethodGroup(IList<IMethod> innerList)
+		{
+			if (innerList == null)
+				throw new ArgumentNullException("innerList");
+			this.innerList = innerList;
+		}
+		
+		public bool IsExtensionMethodGroup {
+			get { return isExtensionMethodGroup; }
+			set {
+				CheckBeforeMutation();
+				isExtensionMethodGroup = value;
+			}
+		}
+		
+		protected override void FreezeInternal()
+		{
+			base.FreezeInternal();
+			innerList = FreezeList(innerList);
+		}
+		
+		public IMethod this[int index] {
+			get { return innerList[index]; }
+			set { innerList[index] = value; }
+		}
+		
+		public int Count {
+			get { return innerList.Count; }
+		}
+		
+		public bool IsReadOnly {
+			get { return innerList.IsReadOnly; }
+		}
+		
+		public int IndexOf(IMethod item)
+		{
+			return innerList.IndexOf(item);
+		}
+		
+		public void Insert(int index, IMethod item)
+		{
+			innerList.Insert(index, item);
+		}
+		
+		public void RemoveAt(int index)
+		{
+			innerList.RemoveAt(index);
+		}
+		
+		public void Add(IMethod item)
+		{
+			innerList.Add(item);
+		}
+		
+		public void Clear()
+		{
+			innerList.Clear();
+		}
+		
+		public bool Contains(IMethod item)
+		{
+			return innerList.Contains(item);
+		}
+		
+		public void CopyTo(IMethod[] array, int arrayIndex)
+		{
+			innerList.CopyTo(array, arrayIndex);
+		}
+		
+		public bool Remove(IMethod item)
+		{
+			return innerList.Remove(item);
+		}
+		
+		public IEnumerator<IMethod> GetEnumerator()
+		{
+			return innerList.GetEnumerator();
+		}
+		
+		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+		{
+			return this.GetEnumerator();
+		}
+	}
+	
 	/// <summary>
 	/// The MethodResolveResult is used when an expression was the name of a method,
 	/// but there were no parameters specified so the exact overload could not be found.
@@ -525,12 +683,13 @@ namespace ICSharpCode.SharpDevelop.Dom
 	/// "a.Add"      (where a is List&lt;string&gt;)
 	/// "SomeMethod" (when SomeMethod is a method in the current class)
 	/// </example>
-	public class MethodResolveResult : ResolveResult
+	public class MethodGroupResolveResult : ResolveResult
 	{
 		string name;
 		IReturnType containingType;
+		IList<MethodGroup> possibleMethods;
 		
-		public MethodResolveResult(IClass callingClass, IMember callingMember, IReturnType containingType, string name)
+		public MethodGroupResolveResult(IClass callingClass, IMember callingMember, IReturnType containingType, string name)
 			: base(callingClass, callingMember, null)
 		{
 			if (containingType == null)
@@ -539,32 +698,73 @@ namespace ICSharpCode.SharpDevelop.Dom
 				throw new ArgumentNullException("name");
 			this.containingType = containingType;
 			this.name = name;
+			this.ResolvedType = new MethodGroupReturnType();
+		}
+		
+		public MethodGroupResolveResult(IClass callingClass, IMember callingMember, IReturnType containingType, string name,
+		                                IList<MethodGroup> possibleMethods)
+			: base(callingClass, callingMember, null)
+		{
+			if (containingType == null)
+				throw new ArgumentNullException("containingType");
+			if (name == null)
+				throw new ArgumentNullException("name");
+			if (possibleMethods == null)
+				throw new ArgumentNullException("possibleMethods");
+			this.containingType = containingType;
+			this.name = name;
+			this.possibleMethods = possibleMethods;
+			this.ResolvedType = new MethodGroupReturnType();
+		}
+		
+		public override ResolveResult Clone()
+		{
+			return new MethodGroupResolveResult(this.CallingClass, this.CallingMember, this.ContainingType, this.Name, this.Methods);
+		}
+		
+		protected override void FreezeInternal()
+		{
+			base.FreezeInternal();
+			if (possibleMethods != null) {
+				possibleMethods = FreezeList(possibleMethods);
+			}
 		}
 		
 		/// <summary>
 		/// Gets the name of the method.
 		/// </summary>
 		public string Name {
-			get {
-				return name;
-			}
+			get { return name; }
 		}
 		
 		/// <summary>
 		/// Gets the class that contains the method.
 		/// </summary>
 		public IReturnType ContainingType {
+			get { return containingType; }
+		}
+		
+		/// <summary>
+		/// The list of possible methods.
+		/// </summary>
+		public IList<MethodGroup> Methods {
 			get {
-				return containingType;
+				if (possibleMethods == null) {
+					possibleMethods = FreezeList(
+						new MethodGroup[] {
+							new MethodGroup(
+								containingType.GetMethods().FindAll((IMethod m) => m.Name == this.name)
+							)
+						});
+				}
+				return possibleMethods;
 			}
 		}
 		
 		public IMethod GetMethodIfSingleOverload()
 		{
-			List<IMethod> methods = containingType.GetMethods();
-			methods = methods.FindAll(delegate(IMethod m) { return m.Name == this.Name; });
-			if (methods.Count == 1)
-				return methods[0];
+			if (this.Methods.Count > 0 && this.Methods[0].Count == 1)
+				return this.Methods[0][0];
 			else
 				return null;
 		}
@@ -576,6 +776,194 @@ namespace ICSharpCode.SharpDevelop.Dom
 				return MemberResolveResult.GetDefinitionPosition(m);
 			else
 				return base.GetDefinitionPosition();
+		}
+		
+		public override bool IsReferenceTo(IEntity entity)
+		{
+			return MemberLookupHelper.IsSimilarMember(GetMethodIfSingleOverload(), entity as IMember);
+		}
+	}
+	#endregion
+	
+	#region VBBaseOrThisReferenceInConstructorResolveResult
+	/// <summary>
+	/// Is used for "MyBase" or "Me" in VB constructors to show "New" in the completion list.
+	/// </summary>
+	public class VBBaseOrThisReferenceInConstructorResolveResult : ResolveResult
+	{
+		public VBBaseOrThisReferenceInConstructorResolveResult(IClass callingClass, IMember callingMember, IReturnType referencedType)
+			: base(callingClass, callingMember, referencedType)
+		{
+		}
+		
+		public override ArrayList GetCompletionData(IProjectContent projectContent)
+		{
+			ArrayList res = base.GetCompletionData(projectContent);
+			foreach (IMethod m in this.ResolvedType.GetMethods()) {
+				if (m.IsConstructor && !m.IsStatic && m.IsAccessible(this.CallingClass, true))
+					res.Add(m);
+			}
+			return res;
+		}
+		
+		public override ResolveResult Clone()
+		{
+			return new VBBaseOrThisReferenceInConstructorResolveResult(this.CallingClass, this.CallingMember, this.ResolvedType);
+		}
+	}
+	#endregion
+	
+	#region BaseResolveResult
+	/// <summary>
+	/// Is used for "base"/"MyBase" expression.
+	/// The completion list always shows protected members.
+	/// </summary>
+	public class BaseResolveResult : ResolveResult
+	{
+		public BaseResolveResult(IClass callingClass, IMember callingMember, IReturnType baseClassType)
+			: base(callingClass, callingMember, baseClassType)
+		{
+		}
+		
+		public override ArrayList GetCompletionData(IProjectContent projectContent)
+		{
+			if (this.ResolvedType == null) return null;
+			ArrayList res = new ArrayList();
+			
+			foreach (IMember m in MemberLookupHelper.GetAccessibleMembers(this.ResolvedType, this.CallingClass, projectContent.Language, true)) {
+				if (projectContent.Language.ShowMember(m, false))
+					res.Add(m);
+			}
+			
+			if (this.CallingClass != null) {
+				AddExtensions(projectContent.Language, res, this.CallingClass, this.ResolvedType);
+			}
+			
+			return res;
+		}
+		
+		public override ResolveResult Clone()
+		{
+			return new BaseResolveResult(this.CallingClass, this.CallingMember, this.ResolvedType);
+		}
+	}
+	#endregion
+	
+	#region DelegateCallResolveResult
+	/// <summary>
+	/// Is used for calls to delegates/events.
+	/// </summary>
+	public class DelegateCallResolveResult : ResolveResult
+	{
+		IMethod delegateInvokeMethod;
+		ResolveResult targetRR;
+		
+		protected override void FreezeInternal()
+		{
+			base.FreezeInternal();
+			delegateInvokeMethod.Freeze();
+			targetRR.Freeze();
+		}
+		
+		public DelegateCallResolveResult(ResolveResult targetRR, IMethod delegateInvokeMethod)
+			: base(targetRR.CallingClass, targetRR.CallingMember, delegateInvokeMethod.ReturnType)
+		{
+			this.targetRR = targetRR;
+			this.delegateInvokeMethod = delegateInvokeMethod;
+		}
+		
+		/// <summary>
+		/// Gets the Invoke() method of the delegate.
+		/// </summary>
+		public IMethod DelegateInvokeMethod {
+			get { return delegateInvokeMethod; }
+		}
+		
+		/// <summary>
+		/// Gets the type of the delegate.
+		/// </summary>
+		public IReturnType DelegateType {
+			get { return targetRR.ResolvedType; }
+		}
+		
+		/// <summary>
+		/// Gets the resolve result referring to the delegate.
+		/// </summary>
+		public ResolveResult Target {
+			get { return targetRR; }
+		}
+		
+		public override ResolveResult Clone()
+		{
+			return new DelegateCallResolveResult(targetRR, delegateInvokeMethod);
+		}
+		
+		public override FilePosition GetDefinitionPosition()
+		{
+			return targetRR.GetDefinitionPosition();
+		}
+		
+		public override bool IsReferenceTo(ICSharpCode.SharpDevelop.Dom.IEntity entity)
+		{
+			return targetRR.IsReferenceTo(entity);
+		}
+	}
+	#endregion
+	
+	#region UnknownIdentifierResolveResult
+	/// <summary>
+	/// Used for unknown identifiers.
+	/// </summary>
+	public class UnknownIdentifierResolveResult : ResolveResult
+	{
+		string identifier;
+		
+		public UnknownIdentifierResolveResult(IClass callingClass, IMember callingMember, string identifier)
+			: base(callingClass, callingMember, null)
+		{
+			this.identifier = identifier;
+		}
+		
+		public string Identifier {
+			get { return identifier; }
+		}
+		
+		public override bool IsValid {
+			get { return false; }
+		}
+		
+		public override ResolveResult Clone()
+		{
+			return new UnknownIdentifierResolveResult(this.CallingClass, this.CallingMember, this.Identifier);
+		}
+	}
+	#endregion
+	
+	#region UnknownConstructorCallResolveResult
+	/// <summary>
+	/// Used for constructor calls on unknown types.
+	/// </summary>
+	public class UnknownConstructorCallResolveResult : ResolveResult
+	{
+		string typeName;
+		
+		public UnknownConstructorCallResolveResult(IClass callingClass, IMember callingMember, string typeName)
+			: base(callingClass, callingMember, null)
+		{
+			this.typeName = typeName;
+		}
+		
+		public string TypeName {
+			get { return typeName; }
+		}
+		
+		public override bool IsValid {
+			get { return false; }
+		}
+		
+		public override ResolveResult Clone()
+		{
+			return new UnknownConstructorCallResolveResult(this.CallingClass, this.CallingMember, this.TypeName);
 		}
 	}
 	#endregion

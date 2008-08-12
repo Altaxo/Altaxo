@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1661 $</version>
+//     <version>$Revision: 2949 $</version>
 // </file>
 
 using System;
@@ -11,7 +11,7 @@ using System.Collections.Generic;
 namespace ICSharpCode.SharpDevelop.Dom
 {
 	/// <summary>
-	/// Combines multiple return types for use in contraints.
+	/// Combines multiple return types for use in constraints.
 	/// </summary>
 	public sealed class CombinedReturnType : AbstractReturnType
 	{
@@ -22,7 +22,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 		string @namespace;
 		string dotnetName;
 		
-		public override bool Equals(object obj)
+		public override bool Equals(IReturnType obj)
 		{
 			CombinedReturnType combined = obj as CombinedReturnType;
 			if (combined == null) return false;
@@ -40,7 +40,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 			unchecked {
 				int res = 0;
 				foreach (IReturnType rt in baseTypes) {
-					res *= 27;
+					res *= 1300027;
 					res += rt.GetHashCode();
 				}
 				return res;
@@ -142,7 +142,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 			}
 		}
 		
-		public override int TypeParameterCount {
+		public override int TypeArgumentCount {
 			get {
 				return 0;
 			}

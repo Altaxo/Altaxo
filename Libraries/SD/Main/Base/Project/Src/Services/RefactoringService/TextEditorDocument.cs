@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2161 $</version>
+//     <version>$Revision: 2659 $</version>
 // </file>
 
 using System;
@@ -72,18 +72,16 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 		
 		public int PositionToOffset(int line, int column)
 		{
-			return doc.PositionToOffset(new Point(column - 1, line - 1));
+			return doc.PositionToOffset(new TextLocation(column - 1, line - 1));
 		}
 		
 		public void Insert(int offset, string text)
 		{
-			actionCount += 1;
 			doc.Insert(offset, text);
 		}
 		
 		public void Remove(int offset, int length)
 		{
-			actionCount += 1;
 			doc.Remove(offset, length);
 		}
 		
@@ -92,20 +90,14 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 			return doc.GetCharAt(offset);
 		}
 		
-		Stack<int> undoableActionCountStack = new Stack<int>();
-		int actionCount;
-		
 		public void StartUndoableAction()
 		{
-			undoableActionCountStack.Push(actionCount);
-			actionCount = 0;
+			doc.UndoStack.StartUndoGroup();
 		}
 		
 		public void EndUndoableAction()
 		{
-			int undoCount = actionCount;
-			actionCount = undoableActionCountStack.Pop();
-			doc.UndoStack.CombineLast(undoCount);
+			doc.UndoStack.EndUndoGroup();
 		}
 		
 		public void UpdateView()

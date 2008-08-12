@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1943 $</version>
+//     <version>$Revision: 3009 $</version>
 // </file>
 
 using System;
@@ -13,15 +13,21 @@ namespace ICSharpCode.SharpDevelop.Dom
 	/// <summary>
 	/// Type parameter of a generic class/method.
 	/// </summary>
-	public class DefaultTypeParameter : ITypeParameter
+	public class DefaultTypeParameter : AbstractFreezable, ITypeParameter
 	{
-		public static readonly IList<ITypeParameter> EmptyTypeParameterList = new List<ITypeParameter>().AsReadOnly();
+		public static readonly IList<ITypeParameter> EmptyTypeParameterList = EmptyList<ITypeParameter>.Instance;
 		
 		string name;
 		IMethod method;
 		IClass targetClass;
 		int index;
-		List<IReturnType> constraints = new List<IReturnType>();
+		IList<IReturnType> constraints = new List<IReturnType>();
+		
+		protected override void FreezeInternal()
+		{
+			constraints = FreezeList(constraints);
+			base.FreezeInternal();
+		}
 		
 		public string Name {
 			get {
@@ -68,7 +74,10 @@ namespace ICSharpCode.SharpDevelop.Dom
 		/// </summary>
 		public bool HasConstructableConstraint {
 			get { return hasConstructableConstraint; }
-			set { hasConstructableConstraint = value; }
+			set {
+				CheckBeforeMutation();
+				hasConstructableConstraint = value;
+			}
 		}
 		
 		/// <summary>
@@ -76,7 +85,10 @@ namespace ICSharpCode.SharpDevelop.Dom
 		/// </summary>
 		public bool HasReferenceTypeConstraint {
 			get { return hasReferenceTypeConstraint; }
-			set { hasReferenceTypeConstraint = value; }
+			set {
+				CheckBeforeMutation();
+				hasReferenceTypeConstraint = value;
+			}
 		}
 		
 		/// <summary>
@@ -84,7 +96,10 @@ namespace ICSharpCode.SharpDevelop.Dom
 		/// </summary>
 		public bool HasValueTypeConstraint {
 			get { return hasValueTypeConstraint; }
-			set { hasValueTypeConstraint = value; }
+			set {
+				CheckBeforeMutation();
+				hasValueTypeConstraint = value;
+			}
 		}
 		
 		public DefaultTypeParameter(IMethod method, string name, int index)
@@ -128,9 +143,9 @@ namespace ICSharpCode.SharpDevelop.Dom
 			if (tp.hasValueTypeConstraint != hasValueTypeConstraint) return false;
 			if (tp.method != method) {
 				if (tp.method == null || method == null) return false;
-				if (tp.method.FullyQualifiedName == method.FullyQualifiedName) return false;
+				if (tp.method.FullyQualifiedName != method.FullyQualifiedName) return false;
 			} else {
-				if (tp.targetClass.FullyQualifiedName == targetClass.FullyQualifiedName) return false;
+				if (tp.targetClass.FullyQualifiedName != targetClass.FullyQualifiedName) return false;
 			}
 			return true;
 		}

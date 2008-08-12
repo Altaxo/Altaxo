@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2072 $</version>
+//     <version>$Revision: 2682 $</version>
 // </file>
 
 using System;
@@ -84,8 +84,7 @@ namespace ICSharpCode.SharpDevelop.Project
 			// While one file is parsed, the next is already loaded from disk.
 			
 			// load file
-			Encoding tmp = defaultEncoding;
-			return ICSharpCode.TextEditor.Util.FileReader.ReadFileContent(fileName, ref tmp, defaultEncoding);
+			return ICSharpCode.TextEditor.Util.FileReader.ReadFileContent(fileName, defaultEncoding);
 		}
 		
 		ProjectItem nextItem;
@@ -108,8 +107,10 @@ namespace ICSharpCode.SharpDevelop.Project
 			ProjectItem item = nextItem;
 			nextItem = (++index < projectItems.Count) ? projectItems[index] : null;
 			if (item == null) return false;
-			if (item.ItemType != ItemType.Compile)
+			
+			if (ParserService.GetParser(item.FileName) == null)
 				return MoveNext();
+			
 			string fileContent;
 			try {
 				fileContent = GetFileContent(item);
@@ -139,20 +140,14 @@ namespace ICSharpCode.SharpDevelop.Project
 			return GetParseableFileContent(item.Project, fileName);
 		}
 		
-		IViewContent[] viewContentCollection;
-		
-		IViewContent[] GetViewContentCollection()
-		{
-			return WorkbenchSingleton.Workbench.ViewContentCollection.ToArray();
-		}
+		IList<string> viewContentFileNamesCollection;
 		
 		bool IsFileOpen(string fileName)
 		{
-			if (viewContentCollection == null) {
-				viewContentCollection = WorkbenchSingleton.SafeThreadFunction<IViewContent[]>(GetViewContentCollection);
+			if (viewContentFileNamesCollection == null) {
+				viewContentFileNamesCollection = WorkbenchSingleton.SafeThreadFunction<IList<string>>(FileService.GetOpenFiles);
 			}
-			foreach (IViewContent content in viewContentCollection) {
-				string contentName = content.IsUntitled ? content.UntitledName : content.FileName;
+			foreach (string contentName in viewContentFileNamesCollection) {
 				if (contentName != null) {
 					if (FileUtility.IsEqualFileName(fileName, contentName))
 						return true;
@@ -163,13 +158,10 @@ namespace ICSharpCode.SharpDevelop.Project
 		
 		string GetFileContentFromOpenFile(string fileName)
 		{
-			IWorkbenchWindow window = FileService.GetOpenFile(fileName);
-			if (window != null) {
-				IViewContent viewContent = window.ViewContent;
-				IEditable editable = viewContent as IEditable;
-				if (editable != null) {
-					return editable.Text;
-				}
+			IViewContent viewContent = FileService.GetOpenFile(fileName);
+			IEditable editable = viewContent as IEditable;
+			if (editable != null) {
+				return editable.Text;
 			}
 			return null;
 		}

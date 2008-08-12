@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="none" email=""/>
-//     <version>$Revision: 1968 $</version>
+//     <version>$Revision: 3100 $</version>
 // </file>
 
 using System;
@@ -40,6 +40,10 @@ namespace ICSharpCode.SharpDevelop.Debugging
 					return (debugger != null) ? debugger.SupportsExecutionControl : false;
 				case "Stepping":
 					return (debugger != null) ? debugger.SupportsStepping : false;
+				case "Attaching":
+					return (debugger != null) ? debugger.SupportsAttaching : false;
+				case "Detaching":
+					return (debugger != null) ? debugger.SupportsDetaching : false;					
 				default:
 					throw new ArgumentException("Unknown debugger support for : >" + condition.Properties["debuggersupports"] + "< please fix addin file.", "debuggersupports");
 			}

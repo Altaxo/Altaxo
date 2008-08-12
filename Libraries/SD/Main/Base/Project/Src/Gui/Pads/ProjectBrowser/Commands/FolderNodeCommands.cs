@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2477 $</version>
+//     <version>$Revision: 3160 $</version>
 // </file>
 
 using System;
@@ -12,7 +12,6 @@ using System.Windows.Forms;
 
 using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.Gui;
-using Microsoft.Build.BuildEngine;
 using ICSharpCode.SharpDevelop.Internal.Templates;
 
 namespace ICSharpCode.SharpDevelop.Project.Commands
@@ -64,7 +63,7 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 		
 		public static void CopyDirectory(string directoryName, DirectoryNode node, bool includeInProject)
 		{
-			directoryName = Path.GetFullPath(directoryName);
+			directoryName = FileUtility.NormalizePath(directoryName);
 			string copiedFileName = Path.Combine(node.Directory, Path.GetFileName(directoryName));
 			LoggingService.Debug("Copy " + directoryName + " to " + copiedFileName);
 			if (!FileUtility.IsEqualFileName(directoryName, copiedFileName)) {
@@ -153,7 +152,7 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 			List<string> list = new List<string>();
 			StringParser.Properties["Extension"] = Path.GetExtension(fileName);
 			string prefix = Path.Combine(Path.GetDirectoryName(fileName), Path.GetFileNameWithoutExtension(fileName));
-			foreach (string ext in AddInTree.BuildItems("/SharpDevelop/Workbench/DependentFileExtensions", null, false)) {
+			foreach (string ext in AddInTree.BuildItems<string>("/SharpDevelop/Workbench/DependentFileExtensions", null, false)) {
 				if (File.Exists(prefix + ext))
 					list.Add(prefix + ext);
 			}
@@ -212,6 +211,7 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 						                                          "${res:ProjectComponent.ContextMenu.AddExistingFiles.Link}",
 						                                          "${res:Global.CancelButtonText}");
 						if (res == 1) {
+							// Link
 							foreach (KeyValuePair<string, string> pair in fileNames) {
 								string fileName = pair.Key;
 								string relFileName = FileUtility.GetRelativePath(node.Project.Directory, fileName);
@@ -229,6 +229,7 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 							return;
 						}
 						if (res == 2) {
+							// Cancel
 							return;
 						}
 						// only continue for res==0 (Copy)
@@ -259,30 +260,22 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 		}
 	}
 	
+	
+	/// <summary>
+	/// Menu item that display the NewFileDialog dialog and adds it to the solution.
+	/// </summary>
+	/// <seealso cref="NewFileDialog"/>
+	/// <exception cref="NullReferenceException">
+	/// Thrown if the selected node does not have an ancestor that is a DirectoryNode.
+	/// </exception>
 	public class AddNewItemsToProject : AbstractMenuCommand
 	{
-		
-		FileProjectItem CreateNewFile(DirectoryNode upper, string fileName)
-		{
-			upper.Expanding();
-			
-			FileNode fileNode = new FileNode(fileName, FileNodeStatus.InProject);
-			fileNode.AddTo(upper);
-			fileNode.EnsureVisible();
-			return IncludeFileInProject.IncludeFileNode(fileNode);
-		}
-		
 		public override void Run()
 		{
-			TreeNode selectedNode = ProjectBrowserPad.Instance.ProjectBrowserControl.SelectedNode;
-			DirectoryNode node = null;
-			while (selectedNode != null && node == null) {
-				node = selectedNode as DirectoryNode;
-				selectedNode = selectedNode.Parent;
-			}
+			DirectoryNode node = ProjectBrowserPad.Instance.ProjectBrowserControl.SelectedDirectoryNode;
 			if (node == null) {
 				return;
-			}
+			}	
 			node.Expand();
 			node.Expanding();
 			
@@ -290,7 +283,7 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 				if (nfd.ShowDialog(ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.MainForm) == DialogResult.OK) {
 					bool additionalProperties = false;
 					foreach (KeyValuePair<string, FileDescriptionTemplate> createdFile in nfd.CreatedFiles) {
-						FileProjectItem item = CreateNewFile(node, createdFile.Key);
+						FileProjectItem item = node.AddNewFile(createdFile.Key);
 						
 						if (createdFile.Value.SetProjectItemProperties(item)) {
 							additionalProperties = true;
@@ -325,6 +318,7 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 		{
 			upper.Expanding();
 			Directory.CreateDirectory(directoryName);
+			FileService.FireFileCreated(directoryName, true);
 			
 			DirectoryNode directoryNode = new DirectoryNode(directoryName, FileNodeStatus.InProject);
 			directoryNode.AddTo(upper);

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2313 $</version>
 // </file>
 
 using System;
@@ -33,26 +33,6 @@ namespace ICSharpCode.SharpDevelop
 		/// <returns>
 		/// A newly created IViewContent object.
 		/// </returns>
-		IViewContent CreateContentForFile(string fileName);
-		
-		/// <remarks>
-		/// This function determines, if this display binding is able to create
-		/// an IViewContent for the language given by languageName.
-		/// </remarks>
-		/// <returns>
-		/// true, if this display binding is able to create
-		/// an IViewContent for the language given by languageName.
-		/// false otherwise
-		/// </returns>
-		bool CanCreateContentForLanguage(string languageName);
-		
-		/// <remarks>
-		/// Creates a new IViewContent object for the language given by 
-		/// languageName with the content given by content
-		/// </remarks>
-		/// <returns>
-		/// A newly created IViewContent object.
-		/// </returns>
-		IViewContent CreateContentForLanguage(string languageName, string content);
+		IViewContent CreateContentForFile(OpenedFile file);
 	}
 }

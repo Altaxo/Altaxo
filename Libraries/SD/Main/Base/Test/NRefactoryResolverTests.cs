@@ -2,12 +2,13 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2496 $</version>
+//     <version>$Revision: 3184 $</version>
 // </file>
 
 using System;
 using System.Collections;
 using System.IO;
+using System.Linq;
 
 using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.Dom;
@@ -23,7 +24,7 @@ namespace ICSharpCode.SharpDevelop.Tests
 		ProjectContentRegistry projectContentRegistry = ParserService.DefaultProjectContentRegistry;
 		
 		#region Test helper methods
-		ICompilationUnit Parse(string fileName, string fileContent)
+		public ICompilationUnit Parse(string fileName, string fileContent)
 		{
 			ICSharpCode.NRefactory.IParser p = ICSharpCode.NRefactory.ParserFactory.CreateParser(ICSharpCode.NRefactory.SupportedLanguage.CSharp, new StringReader(fileContent));
 			p.ParseMethodBodies = false;
@@ -38,7 +39,7 @@ namespace ICSharpCode.SharpDevelop.Tests
 			NRefactoryASTConvertVisitor visitor = new NRefactoryASTConvertVisitor(pc);
 			visitor.VisitCompilationUnit(p.CompilationUnit, null);
 			visitor.Cu.FileName = fileName;
-			Assert.AreEqual(0, p.Errors.Count, "Parse error preparing compilation unit");
+			Assert.AreEqual(0, p.Errors.Count, String.Format("Parse error preparing compilation unit: {0}", p.Errors.ErrorOutput));
 			visitor.Cu.ErrorsDuringCompile = p.Errors.Count > 0;
 			foreach (IClass c in visitor.Cu.Classes) {
 				pc.AddClassToNamespaceList(c);
@@ -60,6 +61,7 @@ namespace ICSharpCode.SharpDevelop.Tests
 			};
 			pc.ReferencedContents.Add(projectContentRegistry.Mscorlib);
 			pc.ReferencedContents.Add(projectContentRegistry.GetProjectContentForReference("System.Windows.Forms", "System.Windows.Forms"));
+			pc.ReferencedContents.Add(projectContentRegistry.GetProjectContentForReference("Microsoft.VisualBasic", "Microsoft.VisualBasic"));
 			pc.Language = LanguageProperties.VBNet;
 			lastPC = pc;
 			NRefactoryASTConvertVisitor visitor = new NRefactoryASTConvertVisitor(pc);
@@ -74,10 +76,9 @@ namespace ICSharpCode.SharpDevelop.Tests
 			return visitor.Cu;
 		}
 		
-		void AddCompilationUnit(ICompilationUnit parserOutput, string fileName)
+		ParseInformation AddCompilationUnit(ICompilationUnit parserOutput, string fileName)
 		{
-			HostCallback.GetParseInformation = ParserService.GetParseInformation;
-			ParserService.UpdateParseInformation(parserOutput, fileName, false);
+			return ParserService.RegisterParseInformation(fileName, parserOutput);
 		}
 		
 		public ResolveResult Resolve(string program, string expression, int line)
@@ -87,39 +88,43 @@ namespace ICSharpCode.SharpDevelop.Tests
 		
 		public ResolveResult Resolve(string program, string expression, int line, int column, ExpressionContext context)
 		{
-			AddCompilationUnit(Parse("a.cs", program), "a.cs");
+			ParseInformation parseInfo = AddCompilationUnit(Parse("a.cs", program), "a.cs");
 			
-			NRefactoryResolver resolver = new NRefactoryResolver(lastPC, LanguageProperties.CSharp);
-			return resolver.Resolve(new ExpressionResult(expression, context),
-			                        line, column,
-			                        "a.cs",
-			                        program);
+			NRefactoryResolver resolver = new NRefactoryResolver(LanguageProperties.CSharp);
+			ExpressionResult expressionResult = new ExpressionResult(expression, new DomRegion(line, column), context, null);
+			return resolver.Resolve(expressionResult, parseInfo, program);
 		}
 		
 		public ResolveResult ResolveVB(string program, string expression, int line)
 		{
-			AddCompilationUnit(ParseVB("a.vb", program), "a.vb");
+			ParseInformation parseInfo = AddCompilationUnit(ParseVB("a.vb", program), "a.vb");
 			
-			NRefactoryResolver resolver = new NRefactoryResolver(lastPC, LanguageProperties.VBNet);
-			return resolver.Resolve(new ExpressionResult(expression),
-			                        line, 0,
-			                        "a.vb",
-			                        program);
+			NRefactoryResolver resolver = new NRefactoryResolver(LanguageProperties.VBNet);
+			ExpressionResult expressionResult = new ExpressionResult(expression, new DomRegion(line, 0), ExpressionContext.Default, null);
+			return resolver.Resolve(expressionResult, parseInfo, program);
 		}
 		
 		public T Resolve<T>(string program, string expression, int line) where T : ResolveResult
 		{
 			ResolveResult rr = Resolve(program, expression, line);
-			Assert.IsNotNull(rr, "Resolve returned null");
-			Assert.IsTrue(rr is T, "result is " + typeof(T).Name);
+			Assert.IsNotNull(rr, "Resolve returned null (expression=" + expression + ")");
+			Assert.AreEqual(typeof(T), rr.GetType());
+			return (T)rr;
+		}
+		
+		public T Resolve<T>(string program, string expression, int line, int column, ExpressionContext context) where T : ResolveResult
+		{
+			ResolveResult rr = Resolve(program, expression, line, column, context);
+			Assert.IsNotNull(rr, "Resolve returned null (expression=" + expression + ")");
+			Assert.AreEqual(typeof(T), rr.GetType());
 			return (T)rr;
 		}
 		
 		public T ResolveVB<T>(string program, string expression, int line) where T : ResolveResult
 		{
 			ResolveResult rr = ResolveVB(program, expression, line);
-			Assert.IsNotNull(rr, "Resolve returned null");
-			Assert.IsTrue(rr is T, "result is " + typeof(T).Name);
+			Assert.IsNotNull(rr, "Resolve returned null (expression=" + expression + ")");
+			Assert.AreEqual(typeof(T), rr.GetType());
 			return (T)rr;
 		}
 		#endregion
@@ -209,61 +214,6 @@ End Module
 		#endregion
 		
 		#region Simple Tests
-		const string arrayListConflictProgram = @"using System.Collections;
-class A {
-	void Test() {
-		
-	}
-	
-	ArrayList arrayList;
-	public ArrayList ArrayList {
-		get {
-			return arrayList;
-		}
-	}
-}
-";
-		
-		[Test]
-		public void PropertyTypeConflictTest()
-		{
-			ResolveResult result = Resolve<MemberResolveResult>(arrayListConflictProgram, "arrayList", 4);
-			Assert.AreEqual("System.Collections.ArrayList", result.ResolvedType.FullyQualifiedName);
-		}
-		
-		[Test]
-		public void PropertyTypeConflictTestResolveInTypeContext()
-		{
-			TypeResolveResult result = (TypeResolveResult)Resolve(arrayListConflictProgram, "ArrayList", 4, 0, ExpressionContext.Type);
-			Assert.AreEqual("System.Collections.ArrayList", result.ResolvedClass.FullyQualifiedName);
-			
-			result = (TypeResolveResult)Resolve(arrayListConflictProgram, "ArrayList", 8, 10, ExpressionContext.Type);
-			Assert.AreEqual("System.Collections.ArrayList", result.ResolvedClass.FullyQualifiedName);
-		}
-		
-		[Test]
-		public void PropertyTypeConflictCompletionResultTest()
-		{
-			ResolveResult result = Resolve(arrayListConflictProgram, "ArrayList", 4);
-			Assert.IsTrue(result is MixedResolveResult);
-			// CC should offer both static and non-static results
-			ArrayList list = result.GetCompletionData(lastPC);
-			bool ok = false;
-			foreach (object o in list) {
-				IMethod method = o as IMethod;
-				if (method != null && method.Name == "AddRange")
-					ok = true;
-			}
-			Assert.IsTrue(ok, "AddRange should exist");
-			ok = false;
-			foreach (object o in list) {
-				IMethod method = o as IMethod;
-				if (method != null && method.Name == "Adapter")
-					ok = true;
-			}
-			Assert.IsTrue(ok, "Adapter should exist");
-		}
-		
 		[Test]
 		public void InheritedInterfaceResolveTest()
 		{
@@ -304,6 +254,20 @@ interface IInterface2 {
 		}
 		
 		[Test]
+		public void UnknownIdentifierTest()
+		{
+			string program = @"class A {
+	void Method() {
+		
+	}
+}
+";
+			UnknownIdentifierResolveResult result = Resolve<UnknownIdentifierResolveResult>(program, "StringBuilder", 3);
+			Assert.IsFalse(result.IsValid);
+			Assert.AreEqual("StringBuilder", result.Identifier);
+		}
+		
+		[Test]
 		public void InvalidMethodCallTest()
 		{
 			string program = @"class A {
@@ -317,6 +281,21 @@ interface IInterface2 {
 		}
 		
 		[Test]
+		public void GenericObjectCreation()
+		{
+			string program = @"using System.Collections.Generic;
+class A {
+	static void Main() {
+		
+	}
+}
+";
+			MemberResolveResult result = Resolve<MemberResolveResult>(program, "new List<string>()", 4);
+			Assert.AreEqual("System.Collections.Generic.List.#ctor", result.ResolvedMember.FullyQualifiedName);
+			Assert.AreEqual("System.Collections.Generic.List{System.String}", result.ResolvedType.DotNetName);
+		}
+		
+		[Test]
 		public void InvalidConstructorCallTest()
 		{
 			string program = @"class A {
@@ -325,8 +304,50 @@ interface IInterface2 {
 	}
 }
 ";
-			ResolveResult result = Resolve(program, "new ThisClassDoesNotExist()", 3);
-			Assert.IsNull(result);
+			UnknownConstructorCallResolveResult result = Resolve<UnknownConstructorCallResolveResult>(program, "new ThisClassDoesNotExist()", 3);
+			Assert.AreEqual("ThisClassDoesNotExist", result.TypeName);
+		}
+
+		[Test]
+		public void OverriddenMethodCallTest()
+		{
+			string program = @"class A {
+	void Method() {
+		
+	}
+	
+	public abstract int GetRandomNumber();
+}
+class B : A {
+	public override int GetRandomNumber() {
+		return 4; // chosen by fair dice roll.
+		          // guaranteed to be random
+	}
+}
+";
+			MemberResolveResult result = Resolve<MemberResolveResult>(program, "new B().GetRandomNumber()", 3);
+			Assert.AreEqual("B.GetRandomNumber", result.ResolvedMember.FullyQualifiedName);
+		}
+		
+		[Test]
+		public void OverriddenMethodCallTest2()
+		{
+			string program = @"class A {
+	void Method() {
+		
+	}
+	
+	public abstract int GetRandomNumber(string a, A b);
+}
+class B : A {
+	public override int GetRandomNumber(string b, A a) {
+		return 4; // chosen by fair dice roll.
+		          // guaranteed to be random
+	}
+}
+";
+			MemberResolveResult result = Resolve<MemberResolveResult>(program, "new B().GetRandomNumber(\"x\", this)", 3);
+			Assert.AreEqual("B.GetRandomNumber", result.ResolvedMember.FullyQualifiedName);
 		}
 		
 		[Test]
@@ -344,6 +365,28 @@ interface IInterface2 {
 ";
 			ResolveResult result = Resolve<MemberResolveResult>(program, "TargetMethod()", 3);
 			Assert.AreEqual("System.Int32", result.ResolvedType.FullyQualifiedName, "'TargetMethod()'");
+		}
+		
+		[Test]
+		public void MethodGroupResolveTest()
+		{
+			string program = @"class A {
+	void Method() {
+		
+	}
+	
+	void TargetMethod(int a) { }
+	void TargetMethod<T>(T a) { }
+}
+";
+			MethodGroupResolveResult result = Resolve<MethodGroupResolveResult>(program, "TargetMethod", 3);
+			Assert.AreEqual("TargetMethod", result.Name);
+			Assert.AreEqual(2, result.Methods[0].Count);
+			
+			result = Resolve<MethodGroupResolveResult>(program, "TargetMethod<string>", 3);
+			Assert.AreEqual("TargetMethod", result.Name);
+			Assert.AreEqual(1, result.Methods[0].Count);
+			Assert.AreEqual("System.String", result.GetMethodIfSingleOverload().Parameters[0].ReturnType.FullyQualifiedName);
 		}
 		
 		[Test]
@@ -375,8 +418,8 @@ class A {
 	public event EventHandler TestEvent;
 }
 ";
-			MemberResolveResult result = Resolve<MemberResolveResult>(program, "TestEvent(this, EventArgs.Empty)", 4);
-			Assert.AreEqual("A.TestEvent", result.ResolvedMember.FullyQualifiedName);
+			var result = Resolve<DelegateCallResolveResult>(program, "TestEvent(this, EventArgs.Empty)", 4);
+			Assert.AreEqual("A.TestEvent", (result.Target as MemberResolveResult).ResolvedMember.FullyQualifiedName);
 		}
 		
 		[Test]
@@ -407,8 +450,8 @@ class A {
 	public event EventHandler TestEvent;
 }
 ";
-			MemberResolveResult result = Resolve<MemberResolveResult>(program, "this.TestEvent(this, EventArgs.Empty)", 4);
-			Assert.AreEqual("A.TestEvent", result.ResolvedMember.FullyQualifiedName);
+			var result = Resolve<DelegateCallResolveResult>(program, "this.TestEvent(this, EventArgs.Empty)", 4);
+			Assert.AreEqual("A.TestEvent", (result.Target as MemberResolveResult).ResolvedMember.FullyQualifiedName);
 		}
 		
 		[Test]
@@ -422,11 +465,29 @@ class A {
 	}
 }
 ";
-			ResolveResult result = Resolve<LocalResolveResult>(program, "eh(this, new ResolveEventArgs())", 5);
-			Assert.AreEqual("eh", (result as LocalResolveResult).Field.Name);
+			var result = Resolve<DelegateCallResolveResult>(program, "eh(this, new ResolveEventArgs())", 5);
+			Assert.AreEqual("eh", (result.Target as LocalResolveResult).Field.Name);
 			
-			result = Resolve<MemberResolveResult>(program, "eh(this, new ResolveEventArgs()).GetType(\"bla\")", 5);
-			Assert.AreEqual("System.Reflection.Module.GetType", (result as MemberResolveResult).ResolvedMember.FullyQualifiedName);
+			MemberResolveResult mrr = Resolve<MemberResolveResult>(program, "eh(this, new ResolveEventArgs()).GetType(\"bla\")", 5);
+			Assert.AreEqual("System.Reflection.Module.GetType", mrr.ResolvedMember.FullyQualifiedName);
+		}
+		
+		[Test]
+		public void DelegateReturnedFromMethodCallTest()
+		{
+			string program = @"using System;
+class A {
+	void Method() {
+		
+	}
+	abstract Predicate<string> GetHandler();
+}
+";
+			var result = Resolve<DelegateCallResolveResult>(program, "GetHandler()(abc)", 4);
+			Assert.AreEqual("System.Boolean", result.ResolvedType.FullyQualifiedName);
+			
+			MemberResolveResult mrr = Resolve<MemberResolveResult>(program, "GetHandler()(abc).ToString()", 4);
+			Assert.AreEqual("System.Boolean.ToString", mrr.ResolvedMember.FullyQualifiedName);
 		}
 		
 		[Test]
@@ -466,6 +527,7 @@ class A {
 			IMethod m = (IMethod)result.ResolvedMember;
 			Assert.IsFalse(m.IsStatic, "new A() is static");
 			Assert.AreEqual(0, m.Parameters.Count, "new A() parameter count");
+			Assert.AreEqual("A", result.ResolvedType.FullyQualifiedName);
 			
 			result = Resolve<MemberResolveResult>(program, "new A(10)", 3);
 			m = (IMethod)result.ResolvedMember;
@@ -490,6 +552,10 @@ class A {
 			MemberResolveResult result = Resolve<MemberResolveResult>(program, "new A()", 3);
 			IMethod m = (IMethod)result.ResolvedMember;
 			Assert.IsNotNull(m);
+			Assert.AreEqual("A", result.ResolvedType.FullyQualifiedName);
+			
+			ArrayList ar = result.GetCompletionData(result.CallingClass.ProjectContent);
+			Assert.IsTrue(ContainsMember(ar, "A.Method"));
 		}
 		
 		[Test]
@@ -509,7 +575,64 @@ class A {
 			Assert.AreEqual("System.String.ToString", mrr.ResolvedMember.FullyQualifiedName);
 			
 			int valueParameterCount = 0;
-			foreach (object o in CtrlSpaceResolveCSharp(program, 4)) {
+			foreach (object o in CtrlSpaceResolveCSharp(program, 4, ExpressionContext.Default)) {
+				IField f = o as IField;
+				if (f != null && f.Name == "value") {
+					valueParameterCount++;
+					Assert.IsTrue(f.IsParameter);
+					Assert.AreEqual("System.String", f.ReturnType.FullyQualifiedName);
+				}
+			}
+			Assert.IsTrue(valueParameterCount == 1);
+		}
+		
+		[Test]
+		public void ValueInsideEventTest()
+		{
+			string program = @"using System; class A {
+	public event EventHandler Ev {
+		add {
+			
+		}
+		remove {}
+	}
+}
+";
+			LocalResolveResult result = Resolve<LocalResolveResult>(program, "value", 4);
+			Assert.AreEqual("System.EventHandler", result.ResolvedType.FullyQualifiedName);
+			MemberResolveResult mrr = Resolve<MemberResolveResult>(program, "value.DynamicInvoke(null)", 4);
+			Assert.AreEqual("System.Delegate.DynamicInvoke", mrr.ResolvedMember.FullyQualifiedName);
+			
+			int valueParameterCount = 0;
+			foreach (object o in CtrlSpaceResolveCSharp(program, 4, ExpressionContext.Default)) {
+				IField f = o as IField;
+				if (f != null && f.Name == "value") {
+					valueParameterCount++;
+					Assert.IsTrue(f.IsParameter);
+					Assert.AreEqual("System.EventHandler", f.ReturnType.FullyQualifiedName);
+				}
+			}
+			Assert.IsTrue(valueParameterCount == 1);
+		}
+		
+		[Test]
+		public void ValueInsideIndexerSetterTest()
+		{
+			string program = @"using System; class A {
+		public string this[int arg] {
+			set {
+				
+			}
+		}
+}
+";
+			LocalResolveResult result = Resolve<LocalResolveResult>(program, "value", 4);
+			Assert.AreEqual("System.String", result.ResolvedType.FullyQualifiedName);
+			MemberResolveResult mrr = Resolve<MemberResolveResult>(program, "value.ToString()", 4);
+			Assert.AreEqual("System.String.ToString", mrr.ResolvedMember.FullyQualifiedName);
+			
+			int valueParameterCount = 0;
+			foreach (object o in CtrlSpaceResolveCSharp(program, 4, ExpressionContext.Default)) {
 				IField f = o as IField;
 				if (f != null && f.Name == "value") {
 					valueParameterCount++;
@@ -611,18 +734,6 @@ class B {
 		}
 		
 		[Test]
-		public void InnerClassTest()
-		{
-			string program = @"using System;
-class A {
-	
-}
-";
-			ResolveResult result = Resolve<TypeResolveResult>(program, "Environment.SpecialFolder", 3);
-			Assert.AreEqual("System.Environment.SpecialFolder", result.ResolvedType.FullyQualifiedName);
-		}
-		
-		[Test]
 		public void LoopVariableScopeTest()
 		{
 			string program = @"using System;
@@ -641,6 +752,138 @@ class TestClass {
 			Assert.AreEqual("System.Int32", lr.ResolvedType.FullyQualifiedName);
 			lr = Resolve<LocalResolveResult>(program, "i", 8);
 			Assert.AreEqual("System.Int64", lr.ResolvedType.FullyQualifiedName);
+		}
+		
+		[Test]
+		public void ShortMaxValueTest()
+		{
+			string program = @"using System;
+class TestClass {
+	void Test() {
+		
+	}
+}
+";
+			ResolveResult rr = Resolve<MemberResolveResult>(program, "short.MaxValue", 4);
+			Assert.AreEqual("System.Int16", rr.ResolvedType.FullyQualifiedName);
+			
+			rr = Resolve<ResolveResult>(program, "(short.MaxValue)", 4);
+			Assert.AreEqual("System.Int16", rr.ResolvedType.FullyQualifiedName);
+		}
+		
+		[Test]
+		public void VBNetArrayReturnedFromMethodTest()
+		{
+			string program = @"Module Main
+	Sub Main()
+		
+	End Sub
+	Function F() As String()
+	End Function
+End Module
+";
+			MemberResolveResult result = ResolveVB<MemberResolveResult>(program, "F()(0)", 3);
+			Assert.AreEqual("System.String", result.ResolvedType.FullyQualifiedName);
+			Assert.IsFalse(result.ResolvedType.IsArrayReturnType);
+			Assert.IsInstanceOfType(typeof(IProperty), result.ResolvedMember);
+			Assert.IsTrue((result.ResolvedMember as IProperty).IsIndexer);
+		}
+		
+		[Test]
+		public void ConstructorBaseCall()
+		{
+			string program = @"using System;
+class A {
+	public A(int a) {}
+}
+class B : A {
+	public B(int a)
+		: base(a)  /*7*/
+ 	{}
+}
+class C : B {
+	public C(int a)
+		: base(a)  /*12*/
+ 	{}
+}
+";
+			MemberResolveResult mrr = Resolve<MemberResolveResult>(program, "new A(2)", 3);
+			IMember aCtor = mrr.ResolvedMember;
+			Assert.AreEqual("A.#ctor", mrr.ResolvedMember.FullyQualifiedName);
+			
+			mrr = Resolve<MemberResolveResult>(program, "new B(2)", 3);
+			IMember bCtor = mrr.ResolvedMember;
+			Assert.AreEqual("B.#ctor", mrr.ResolvedMember.FullyQualifiedName);
+			
+			mrr = Resolve<MemberResolveResult>(program, "base(a)", 7);
+			Assert.AreEqual("A.#ctor", mrr.ResolvedMember.FullyQualifiedName);
+			
+			mrr = Resolve<MemberResolveResult>(program, "base(a)", 12);
+			Assert.AreEqual("B.#ctor", mrr.ResolvedMember.FullyQualifiedName);
+			
+			// ensure that the reference pointing to the B ctor is not seen as a reference
+			// to the A ctor.
+			Assert.IsTrue(mrr.IsReferenceTo(bCtor));
+			Assert.IsFalse(mrr.IsReferenceTo(aCtor));
+		}
+		
+		[Test]
+		public void ConstructorCallInCreationContext()
+		{
+			string program = @"using System;
+class A {
+	public A(int a) {}
+}
+";
+			MemberResolveResult mrr = Resolve<MemberResolveResult>(program, "new A(2)", 3, 0, ExpressionContext.ObjectCreation);
+			Assert.AreEqual("A.#ctor", mrr.ResolvedMember.FullyQualifiedName);
+			
+			mrr = Resolve<MemberResolveResult>(program, "A(2)", 3, 0, ExpressionContext.ObjectCreation);
+			Assert.AreEqual("A.#ctor", mrr.ResolvedMember.FullyQualifiedName);
+		}
+		
+		[Test]
+		public void VBIndexerCall()
+		{
+			string program = @"Imports Microsoft.VisualBasic
+Class A
+	Sub Method()
+		Dim c As Collection
+		
+	End Sub
+End Class
+";
+			MemberResolveResult result = ResolveVB<MemberResolveResult>(program, "c(3)", 5);
+			Assert.AreEqual("Microsoft.VisualBasic.Collection.Item", result.ResolvedMember.FullyQualifiedName);
+			IProperty p = (IProperty)result.ResolvedMember;
+			Assert.IsTrue(p.IsIndexer);
+			
+			result = ResolveVB<MemberResolveResult>(program, "c.Item(3)", 5);
+			Assert.AreEqual("Microsoft.VisualBasic.Collection.Item", result.ResolvedMember.FullyQualifiedName);
+			p = (IProperty)result.ResolvedMember;
+			Assert.IsTrue(p.IsIndexer);
+		}
+		
+		[Test]
+		public void VBPInvokeCall()
+		{
+			string program = @"Imports Microsoft.VisualBasic
+Class A
+	Declare Function GetRectangleArea Lib ""..\..\PinvokeLib.dll"" (ByRef rectangle As MyRectangle) As Integer
+	Sub Method(r1 As MyRectangle)
+		
+	End Sub
+End Class
+";
+			MemberResolveResult result = ResolveVB<MemberResolveResult>(program, "GetRectangleArea(r1)", 5);
+			Assert.AreEqual("A.GetRectangleArea", result.ResolvedMember.FullyQualifiedName);
+			
+			IMethod m = (IMethod)result.ResolvedMember;
+			Assert.IsTrue(m.IsStatic);
+			Assert.AreEqual("System.Int32", m.ReturnType.FullyQualifiedName);
+			Assert.AreEqual(1, m.Parameters.Count);
+			Assert.AreEqual("rectangle", m.Parameters[0].Name);
+			Assert.IsTrue(m.Parameters[0].IsRef);
 		}
 		#endregion
 		
@@ -684,19 +927,17 @@ namespace Root.Child {
 			Assert.AreEqual("Root.Alpha", result.ResolvedType.FullyQualifiedName);
 		}
 		
-		ArrayList CtrlSpaceResolveCSharp(string program, int line)
+		ArrayList CtrlSpaceResolveCSharp(string program, int line, ExpressionContext context)
 		{
-			AddCompilationUnit(Parse("a.cs", program), "a.cs");
+			ParseInformation parseInfo = AddCompilationUnit(Parse("a.cs", program), "a.cs");
 			
-			NRefactoryResolver resolver = new NRefactoryResolver(lastPC, LanguageProperties.CSharp);
-			return resolver.CtrlSpace(line, 0, "a.cs", program, ExpressionContext.Default);
+			NRefactoryResolver resolver = new NRefactoryResolver(LanguageProperties.CSharp);
+			return resolver.CtrlSpace(line, 0, parseInfo, program, context);
 		}
 		
 		[Test]
 		public void ParentNamespaceCtrlSpace()
 		{
-			// Classes in the current namespace are preferred over classes from
-			// imported namespaces
 			string program = @"using System;
 namespace Root {
   class Alpha {}
@@ -707,8 +948,8 @@ namespace Root.Child {
   }
 }
 ";
-			ArrayList m = CtrlSpaceResolveCSharp(program, 7);
-			Assert.IsTrue(TypeExists(m, "Beta"), "Meta must exist");
+			ArrayList m = CtrlSpaceResolveCSharp(program, 7, ExpressionContext.Default);
+			Assert.IsTrue(TypeExists(m, "Beta"), "Beta must exist");
 			Assert.IsTrue(TypeExists(m, "Alpha"), "Alpha must exist");
 		}
 		
@@ -843,6 +1084,41 @@ namespace A.B {
 			TypeResolveResult trr = Resolve<TypeResolveResult>(program, "C", 7);
 			Assert.AreEqual("A.B.C", trr.ResolvedClass.FullyQualifiedName, "trr.ResolvedClass.FullyQualifiedName");
 		}
+		
+		[Test]
+		public void VBBaseConstructorCall()
+		{
+			string program = @"Class A
+Inherits B
+	Sub New()
+		
+	End Sub
+	Sub Test()
+	
+	End Sub
+End Class
+Class B
+	Sub New(a As String)
+	End Sub
+End Class
+";
+			MemberResolveResult mrr = ResolveVB<MemberResolveResult>(program, "mybase.new(\"bb\")", 4);
+			Assert.AreEqual("B", mrr.ResolvedMember.DeclaringType.FullyQualifiedName);
+			Assert.IsTrue(((IMethod)mrr.ResolvedMember).IsConstructor);
+			
+			ResolveResult result = ResolveVB<VBBaseOrThisReferenceInConstructorResolveResult>(program, "mybase", 4);
+			Assert.AreEqual("B", result.ResolvedType.FullyQualifiedName);
+			Assert.IsTrue(ContainsMember(result.GetCompletionData(result.CallingClass.ProjectContent), mrr.ResolvedMember.FullyQualifiedName));
+			
+			result = ResolveVB<BaseResolveResult>(program, "mybase", 7);
+			Assert.AreEqual("B", result.ResolvedType.FullyQualifiedName);
+			Assert.IsFalse(ContainsMember(result.GetCompletionData(result.CallingClass.ProjectContent), mrr.ResolvedMember.FullyQualifiedName));
+		}
+		
+		bool ContainsMember(IEnumerable input, string fullMemberName)
+		{
+			return input.OfType<IMember>().Any(m => m.FullyQualifiedName == fullMemberName);
+		}
 		#endregion
 		
 		#region Import class tests
@@ -894,7 +1170,7 @@ class B {
 			ArrayList cd = result.GetCompletionData(lastPC);
 			Assert.IsFalse(MemberExists(cd, "member"), "member should not be in completion lookup");
 			result = Resolve(program, "b.member", 4);
-			Assert.IsNotNull(result, "member should be found even though it is not visible!");
+			Assert.IsTrue(result != null && result.IsValid, "member should be found even though it is not visible!");
 		}
 		
 		[Test]
@@ -902,7 +1178,7 @@ class B {
 		{
 			string program = @"using System;
 class A : B {
-	void TestMethod(B b) {
+	static void TestMethod(A a) {
 		
 	}
 }
@@ -910,12 +1186,31 @@ class B {
 	protected int member;
 }
 ";
-			ResolveResult result = Resolve(program, "b", 4);
+			ResolveResult result = Resolve(program, "a", 4);
 			Assert.IsNotNull(result);
 			ArrayList cd = result.GetCompletionData(lastPC);
 			Assert.IsTrue(MemberExists(cd, "member"), "member should be in completion lookup");
-			result = Resolve(program, "b.member", 4);
-			Assert.IsNotNull(result, "member should be found!");
+			result = Resolve(program, "a.member", 4);
+			Assert.IsTrue(result != null && result.IsValid, "member should be found!");
+		}
+		
+		[Test]
+		public void ProtectedMemberVisibleWithImplicitThisReferenceTest()
+		{
+			string program = @"using System;
+class A : B {
+	void TestMethod(A a) {
+		
+	}
+}
+class B {
+	protected int member;
+}
+";
+			ArrayList results = CtrlSpaceResolveCSharp(program, 4, ExpressionContext.Default);
+			Assert.IsTrue(MemberExists(results, "member"), "member should be in completion lookup");
+			ResolveResult result = Resolve(program, "member", 4);
+			Assert.IsTrue(result != null && result.IsValid, "member should be found!");
 		}
 		
 		[Test]
@@ -936,14 +1231,137 @@ class B {
 			ArrayList cd = result.GetCompletionData(lastPC);
 			Assert.IsFalse(MemberExists(cd, "member"), "member should not be in completion lookup");
 			result = Resolve(program, "b.member", 4);
-			Assert.IsNotNull(result, "member should be found even though it is not visible!");
+			Assert.IsTrue(result != null && result.IsValid, "member should be found even though it is not visible!");
+		}
+		
+		[Test]
+		public void ProtectedMemberInvisibleWhenNotUsingReferenceOfCurrentTypeTest()
+		{
+			string program = @"using System;
+class A : B {
+	void TestMethod(B b) {
+		
+	}
+}
+class B {
+	protected int member;
+}
+";
+			ResolveResult result = Resolve(program, "b", 4);
+			Assert.IsNotNull(result);
+			ArrayList cd = result.GetCompletionData(lastPC);
+			Assert.IsFalse(MemberExists(cd, "member"), "member should not be in completion lookup");
+			result = Resolve(program, "b.member", 4);
+			Assert.IsTrue(result != null && result.IsValid, "member should be found even though it is not visible!");
+		}
+		
+		[Test]
+		public void ProtectedMemberVisibleWhenUsingBaseReference()
+		{
+			string program = @"using System;
+class A : B {
+	void TestMethod(B b) {
+		
+	}
+}
+class B {
+	protected int member;
+}
+";
+			ResolveResult result = Resolve(program, "base", 4);
+			Assert.IsNotNull(result);
+			ArrayList cd = result.GetCompletionData(lastPC);
+			Assert.IsTrue(MemberExists(cd, "member"), "member should be in completion lookup");
+			result = Resolve(program, "base.member", 4);
+			Assert.IsTrue(result != null && result.IsValid, "member should be found!");
+		}
+		
+		[Test]
+		public void ProtectedMethodInvisibleWhenNotUsingReferenceOfCurrentTypeTest()
+		{
+			string program = @"using System;
+class A : B {
+	void TestMethod(B b) {
+		
+	}
+}
+class B {
+	protected int Method();
+}
+";
+			ResolveResult result = Resolve(program, "b", 4);
+			Assert.IsNotNull(result);
+			ArrayList cd = result.GetCompletionData(lastPC);
+			Assert.IsFalse(MemberExists(cd, "Method"), "member should not be in completion lookup");
+			result = Resolve(program, "b.Method()", 4);
+			Assert.IsTrue(result != null && result.IsValid, "method should be found even though it is invisible!");
+		}
+		
+		[Test]
+		public void ProtectedMethodVisibleWhenUsingBaseReference()
+		{
+			string program = @"using System;
+class A : B {
+	void TestMethod(B b) {
+		
+	}
+}
+class B {
+	protected int Method();
+}
+";
+			ResolveResult result = Resolve(program, "base", 4);
+			Assert.IsNotNull(result);
+			ArrayList cd = result.GetCompletionData(lastPC);
+			Assert.IsTrue(MemberExists(cd, "Method"), "member should be in completion lookup");
+			result = Resolve(program, "base.Method()", 4);
+			Assert.IsTrue(result != null && result.IsValid, "method should be found!");
+		}
+		
+		[Test]
+		public void ProtectedMethodVisibleWithImplicitThisReferenceTest()
+		{
+			string program = @"using System;
+class A : B {
+	void TestMethod(A a) {
+		
+	}
+}
+class B {
+	protected int Method();
+}
+";
+			ArrayList results = CtrlSpaceResolveCSharp(program, 4, ExpressionContext.Default);
+			Assert.IsTrue(MemberExists(results, "Method"), "method should be in completion lookup");
+			ResolveResult result = Resolve(program, "Method()", 4);
+			Assert.IsTrue(result != null && result.IsValid, "method should be found!");
+		}
+		
+		[Test]
+		public void ProtectedMethodVisibleWithImplicitThisReferenceConflictsWithClassNameTest()
+		{
+			string program = @"using System;
+class A : B {
+	void TestMethod(A a) {
+		
+	}
+}
+class B {
+	protected int Method();
+}
+class Method { }
+";
+			ArrayList results = CtrlSpaceResolveCSharp(program, 4, ExpressionContext.Default);
+			Assert.IsTrue(MemberExists(results, "Method"), "method should be in completion lookup");
+			ResolveResult result = Resolve(program, "Method()", 4);
+			Assert.IsTrue(result != null && result.IsValid, "method should be found!");
 		}
 		
 		bool MemberExists(ArrayList members, string name)
 		{
 			foreach (object o in members) {
 				IMember m = o as IMember;
-				if (m.Name == name) return true;
+				if (m != null && m.Name == name) return true;
 			}
 			return false;
 		}
@@ -965,11 +1383,11 @@ class B {
 			ResolveResult result = Resolve(program, "(Child)someVar", 6);
 			Assert.AreEqual("Child", result.ResolvedType.FullyQualifiedName);
 			int count = 0;
-			foreach (IMethod m in result.ResolvedType.GetMethods()) {
-				if (m.Name == "OverrideMe")
-					count += 1;
-			}
-			Assert.AreEqual(1, count);
+//			foreach (IMethod m in result.ResolvedType.GetMethods()) {
+//				if (m.Name == "OverrideMe")
+//					count += 1;
+//			}
+//			Assert.AreEqual(1, count);
 			count = 0;
 			foreach (object o in result.GetCompletionData(lastPC)) {
 				IMethod m = o as IMethod;
@@ -978,9 +1396,102 @@ class B {
 			}
 			Assert.AreEqual(1, count);
 		}
+		
+		[Test]
+		public void ShadowingTest()
+		{
+			string program = @"Imports System.Windows.Forms
+Class F
+  Inherits Form
+	Sub M
+	  
+	End Sub
+	Friend WithEvents Shadows cancelButton As Button
+End Class
+";
+			MemberResolveResult result = ResolveVB<MemberResolveResult>(program, "CancelButton", 5);
+			Assert.AreEqual("F.cancelButton", result.ResolvedMember.FullyQualifiedName);
+			
+			result = ResolveVB<MemberResolveResult>(program, "MyBase.CancelButton", 5);
+			Assert.AreEqual("System.Windows.Forms.Form.CancelButton", result.ResolvedMember.FullyQualifiedName);
+		}
+		
+		[Test]
+		public void PreferExtensionMethodToInaccessibleMethod()
+		{
+			string program = @"static class Program {
+	static void Main() {
+		new BaseClass().Test(3);
+		Console.ReadKey();
+	}
+}
+class BaseClass {
+	private void Test(int a) { }
+}
+static class Extensions {
+	public static void Test(this BaseClass b, object a) { }
+}";
+			MemberResolveResult result = Resolve<MemberResolveResult>(program, "new BaseClass().Test(3)", 4);
+			Assert.AreEqual("Extensions.Test", result.ResolvedMember.FullyQualifiedName);
+		}
 		#endregion
 		
 		#region MixedType tests
+		const string arrayListMixedTypeProgram = @"using System.Collections;
+class A {
+	void Test() {
+		
+	}
+	
+	ArrayList arrayList;
+	public ArrayList ArrayList {
+		get {
+			return arrayList;
+		}
+	}
+}
+";
+		
+		[Test]
+		public void PropertyTypeConflictTest()
+		{
+			ResolveResult result = Resolve<MemberResolveResult>(arrayListMixedTypeProgram, "arrayList", 4);
+			Assert.AreEqual("System.Collections.ArrayList", result.ResolvedType.FullyQualifiedName);
+		}
+		
+		[Test]
+		public void PropertyTypeConflictTestResolveInTypeContext()
+		{
+			TypeResolveResult result = (TypeResolveResult)Resolve(arrayListMixedTypeProgram, "ArrayList", 4, 0, ExpressionContext.Type);
+			Assert.AreEqual("System.Collections.ArrayList", result.ResolvedClass.FullyQualifiedName);
+			
+			result = (TypeResolveResult)Resolve(arrayListMixedTypeProgram, "ArrayList", 8, 10, ExpressionContext.Type);
+			Assert.AreEqual("System.Collections.ArrayList", result.ResolvedClass.FullyQualifiedName);
+		}
+		
+		[Test]
+		public void PropertyTypeConflictCompletionResultTest()
+		{
+			ResolveResult result = Resolve(arrayListMixedTypeProgram, "ArrayList", 4);
+			Assert.IsTrue(result is MixedResolveResult);
+			// CC should offer both static and non-static results
+			ArrayList list = result.GetCompletionData(lastPC);
+			bool ok = false;
+			foreach (object o in list) {
+				IMethod method = o as IMethod;
+				if (method != null && method.Name == "AddRange")
+					ok = true;
+			}
+			Assert.IsTrue(ok, "AddRange should exist");
+			ok = false;
+			foreach (object o in list) {
+				IMethod method = o as IMethod;
+				if (method != null && method.Name == "Adapter")
+					ok = true;
+			}
+			Assert.IsTrue(ok, "Adapter should exist");
+		}
+		
 		const string mixedTypeTestProgram = @"using System;
 class A {
 	void TestMethod() {
@@ -1038,5 +1549,718 @@ namespace OtherName { class Bla { } }
 			Assert.AreEqual("Instance", (result as MemberResolveResult).ResolvedMember.Name);
 		}
 		#endregion
+		
+		#region Attribute tests
+		[Test]
+		public void NamespaceInAttributeContext()
+		{
+			string program = @"using System;
+  class Test {
+
+}
+";
+			NamespaceResolveResult result = Resolve<NamespaceResolveResult>(program, "System", 2, 1, ExpressionContext.Attribute);
+			Assert.AreEqual("System", result.Name);
+			
+			result = Resolve<NamespaceResolveResult>(program, "System.Runtime", 2, 1, ExpressionContext.Attribute);
+			Assert.AreEqual("System.Runtime", result.Name);
+		}
+		
+		[Test]
+		public void AttributeWithShortName()
+		{
+			string program = @"using System;
+  class Test {
+
+}
+";
+			
+			TypeResolveResult result = Resolve<TypeResolveResult>(program, "Obsolete", 2, 1, ExpressionContext.Attribute);
+			Assert.AreEqual("System.ObsoleteAttribute", result.ResolvedClass.FullyQualifiedName);
+			
+			result = Resolve<TypeResolveResult>(program, "System.Obsolete", 2, 1, ExpressionContext.Attribute);
+			Assert.AreEqual("System.ObsoleteAttribute", result.ResolvedClass.FullyQualifiedName);
+		}
+		
+		[Test]
+		public void AttributeConstructor()
+		{
+			string program = @"using System;
+  class Test {
+
+}
+";
+			
+			MemberResolveResult result = Resolve<MemberResolveResult>(program, "LoaderOptimization(3)", 2, 1, ExpressionContext.Attribute);
+			Assert.AreEqual("System.Byte", ((IMethod)result.ResolvedMember).Parameters[0].ReturnType.FullyQualifiedName);
+			
+			result = Resolve<MemberResolveResult>(program, "LoaderOptimization(LoaderOptimization.NotSpecified)", 2, 1, ExpressionContext.Attribute);
+			Assert.AreEqual("System.LoaderOptimization", ((IMethod)result.ResolvedMember).Parameters[0].ReturnType.FullyQualifiedName);
+			
+			result = Resolve<MemberResolveResult>(program, "LoaderOptimizationAttribute(0)", 2, 1, ExpressionContext.Attribute);
+			Assert.AreEqual("System.Byte", ((IMethod)result.ResolvedMember).Parameters[0].ReturnType.FullyQualifiedName);
+		}
+		
+		[Test]
+		public void AttributeArgumentInClassContext1()
+		{
+			string program = @"using System;
+[AttributeUsage(XXX)] class MyAttribute : Attribute {
+	public const AttributeTargets XXX = AttributeTargets.All;
+}
+";
+			MemberResolveResult result = Resolve<MemberResolveResult>(program, "XXX", 2, 17, ExpressionContext.Default);
+			Assert.AreEqual("MyAttribute.XXX", result.ResolvedMember.FullyQualifiedName);
+		}
+		
+		[Test]
+		public void AttributeArgumentInClassContext2()
+		{
+			string program = @"using System; namespace MyNamespace {
+[SomeAttribute(E.A)] class Test {
+	
+}
+enum E { A, B }
+}
+";
+			MemberResolveResult result = Resolve<MemberResolveResult>(program, "E.A", 2, 16, ExpressionContext.Default);
+			Assert.AreEqual("MyNamespace.E.A", result.ResolvedMember.FullyQualifiedName);
+		}
+		#endregion
+		
+		#region C# 3.0 tests
+		[Test]
+		public void TypeInferenceTest()
+		{
+			string program = @"class TestClass {
+	static void Test() {
+		var a = 3;
+		
+	}
+}
+";
+			var lrr = Resolve<LocalResolveResult>(program, "a", 4);
+			Assert.AreEqual("System.Int32", lrr.ResolvedType.FullyQualifiedName);
+		}
+		
+		[Test]
+		public void TypeInferenceCycleTest()
+		{
+			string program = @"class TestClass {
+	static void Test() {
+		var a = a;
+		
+	}
+}
+";
+			var lrr = Resolve<LocalResolveResult>(program, "a", 4);
+			Assert.IsNull(lrr.ResolvedType.GetUnderlyingClass());
+		}
+		
+		[Test]
+		public void ExtensionMethodsTest()
+		{
+			string program = @"using XN;
+class TestClass {
+	static void Test(A a, B b, C c) {
+		
+	}
+}
+class A { }
+class B {
+	public void F(int i) { }
+}
+class C {
+	public void F(object obj) { }
+}
+namespace XN {
+	public static class XC {
+		public static void F(this object obj, int i) { }
+		public static void F(this object obj, string s) { }
+	}
+}
+";
+			MemberResolveResult mrr;
+			
+			mrr = Resolve<MemberResolveResult>(program, "a.F(1)", 4);
+			Assert.AreEqual("XN.XC.F", mrr.ResolvedMember.FullyQualifiedName);
+			Assert.AreEqual("System.Int32", ((IMethod)mrr.ResolvedMember).Parameters[1].ReturnType.FullyQualifiedName);
+			
+			mrr = Resolve<MemberResolveResult>(program, "a.F(\"text\")", 4);
+			Assert.AreEqual("XN.XC.F", mrr.ResolvedMember.FullyQualifiedName);
+			Assert.AreEqual("System.String", ((IMethod)mrr.ResolvedMember).Parameters[1].ReturnType.FullyQualifiedName);
+			
+			mrr = Resolve<MemberResolveResult>(program, "b.F(1)", 4);
+			Assert.AreEqual("B.F", mrr.ResolvedMember.FullyQualifiedName);
+			
+			mrr = Resolve<MemberResolveResult>(program, "b.F(\"text\")", 4);
+			Assert.AreEqual("XN.XC.F", mrr.ResolvedMember.FullyQualifiedName);
+			Assert.AreEqual("System.String", ((IMethod)mrr.ResolvedMember).Parameters[1].ReturnType.FullyQualifiedName);
+			
+			mrr = Resolve<MemberResolveResult>(program, "c.F(1)", 4);
+			Assert.AreEqual("C.F", mrr.ResolvedMember.FullyQualifiedName);
+			
+			mrr = Resolve<MemberResolveResult>(program, "c.F(\"text\")", 4);
+			Assert.AreEqual("C.F", mrr.ResolvedMember.FullyQualifiedName);
+		}
+		
+		[Test]
+		public void ExtensionMethodsTest2()
+		{
+			string program = @"using System; using System.Collections.Generic;
+class TestClass {
+	static void Test(string[] args) {
+		
+	}
+}
+public static class XC {
+	public static int ToInt32(this string s) { return int.Parse(s); }
+	public static T[] Slice<T>(this T[] source, int index, int count) { throw new NotImplementedException(); }
+	public static IEnumerable<T> Filter<T>(this IEnumerable<T> source, Predicate<T> predicate) { throw new NotImplementedException(); }
+}
+";
+			MemberResolveResult mrr;
+			
+			mrr = Resolve<MemberResolveResult>(program, "\"text\".ToInt32()", 4);
+			Assert.AreEqual("XC.ToInt32", mrr.ResolvedMember.FullyQualifiedName);
+			
+			mrr = Resolve<MemberResolveResult>(program, "args.Slice(1, 2)", 4);
+			Assert.AreEqual("XC.Slice", mrr.ResolvedMember.FullyQualifiedName);
+			Assert.AreEqual("System.String[]", mrr.ResolvedType.DotNetName);
+			
+			mrr = Resolve<MemberResolveResult>(program, "args.Filter(delegate { return true; })", 4);
+			Assert.AreEqual("XC.Filter", mrr.ResolvedMember.FullyQualifiedName);
+			Assert.AreEqual("System.Collections.Generic.IEnumerable{System.String}", mrr.ResolvedType.DotNetName);
+		}
+		
+		[Test]
+		public void SimpleLinqTest()
+		{
+			string program = @"using System;
+class TestClass {
+	void Test(string[] input) {
+		var r = from e in input
+			where e.StartsWith(""/"")
+			select e.Trim();
+		
+	}
+}
+";
+			LocalResolveResult lrr = Resolve<LocalResolveResult>(program, "e", 5);
+			Assert.AreEqual("System.String", lrr.ResolvedType.FullyQualifiedName);
+			lrr = Resolve<LocalResolveResult>(program, "e", 6);
+			Assert.AreEqual("System.String", lrr.ResolvedType.FullyQualifiedName);
+			
+			lrr = Resolve<LocalResolveResult>(program, "r", 7);
+			Assert.AreEqual("System.Collections.Generic.IEnumerable", lrr.ResolvedType.FullyQualifiedName);
+			Assert.AreEqual("System.String", lrr.ResolvedType.CastToConstructedReturnType().TypeArguments[0].FullyQualifiedName);
+		}
+		
+		[Test]
+		public void ParenthesizedLinqTest()
+		{
+			string program = @"using System; using System.Linq;
+class TestClass {
+	void Test(string[] input) {
+		(from e in input select e.Length)
+	}
+}
+";
+			ResolveResult rr = Resolve(program,
+			                           "(from e in input select e.Length)",
+			                           4, 3, ExpressionContext.Default);
+			Assert.IsNotNull(rr);
+			Assert.AreEqual("System.Collections.Generic.IEnumerable", rr.ResolvedType.FullyQualifiedName);
+			Assert.AreEqual("System.Int32", rr.ResolvedType.CastToConstructedReturnType().TypeArguments[0].FullyQualifiedName);
+		}
+		
+		const string objectInitializerTestProgram = @"using System; using System.Threading;
+class TestClass {
+	static void Test() {
+		Rectangle r1 = new Rectangle {
+			
+		};
+		Rectangle r2 = new Rectangle {
+			P1 = {
+				
+			}
+		};
+		MyCollectionType mct = new MyCollectionType {
+			
+		};
+	}
+}
+public class Point
+{
+	int x;
+	public int X { get { return x; } set { x = value; } }
+	public int Y;
+}
+public class Rectangle
+{
+	Point p1 = new Point();
+	Point p2 = new Point();
+	public Point P1 { get { return p1; } }
+	public Point P2 { get { return p2; } }
+}
+public class MyCollectionType : System.Collections.IEnumerable
+{
+	public void Add(object o) {}
+	public int Field;
+	public readonly int ReadOnlyValueTypeField;
+	public int ReadOnlyValueTypeProperty { get; }
+}
+";
+		
+		[Test]
+		public void ObjectInitializerCtrlSpaceCompletion()
+		{
+			ArrayList results = CtrlSpaceResolveCSharp(objectInitializerTestProgram, 5, ExpressionContext.ObjectInitializer);
+			Assert.AreEqual(new[] { "P1", "P2" }, (from IMember p in results orderby p.Name select p.Name).ToArray() );
+			
+			results = CtrlSpaceResolveCSharp(objectInitializerTestProgram, 9, ExpressionContext.ObjectInitializer);
+			Assert.AreEqual(new[] { "X", "Y" }, (from IMember p in results orderby p.Name select p.Name).ToArray() );
+			
+			results = CtrlSpaceResolveCSharp(objectInitializerTestProgram, 13, ExpressionContext.ObjectInitializer);
+			// collection type: expect system types
+			Assert.IsTrue(results.OfType<IClass>().Any((IClass c) => c.FullyQualifiedName == "System.Int32"));
+			Assert.IsTrue(results.OfType<IClass>().Any((IClass c) => c.FullyQualifiedName == "System.AppDomain"));
+			// expect local variables
+			Assert.IsTrue(results.OfType<IField>().Any((IField f) => f.IsLocalVariable && f.Name == "r1"));
+			// but also expect MyCollectionType.Field
+			Assert.IsTrue(results.OfType<IField>().Any((IField f) => f.FullyQualifiedName == "MyCollectionType.Field"));
+			Assert.IsFalse(results.OfType<IField>().Any((IField f) => f.FullyQualifiedName == "MyCollectionType.ReadOnlyValueTypeField"));
+			Assert.IsFalse(results.OfType<IProperty>().Any((IProperty f) => f.FullyQualifiedName == "MyCollectionType.ReadOnlyValueTypeProperty"));
+		}
+		
+		[Test]
+		public void ObjectInitializerCompletion()
+		{
+			MemberResolveResult mrr = (MemberResolveResult)Resolve(objectInitializerTestProgram, "P2", 5, 1, ExpressionContext.ObjectInitializer);
+			Assert.IsNotNull(mrr);
+			Assert.AreEqual("Rectangle.P2", mrr.ResolvedMember.FullyQualifiedName);
+			
+			mrr = (MemberResolveResult)Resolve(objectInitializerTestProgram, "X", 9, 1, ExpressionContext.ObjectInitializer);
+			Assert.IsNotNull(mrr);
+			Assert.AreEqual("Point.X", mrr.ResolvedMember.FullyQualifiedName);
+			
+			mrr = (MemberResolveResult)Resolve(objectInitializerTestProgram, "Field", 13, 1, ExpressionContext.ObjectInitializer);
+			Assert.IsNotNull(mrr);
+			Assert.AreEqual("MyCollectionType.Field", mrr.ResolvedMember.FullyQualifiedName);
+			
+			LocalResolveResult lrr = (LocalResolveResult)Resolve(objectInitializerTestProgram, "r1", 13, 1, ExpressionContext.ObjectInitializer);
+			Assert.IsNotNull(lrr);
+			Assert.AreEqual("r1", lrr.Field.Name);
+		}
+		#endregion
+		
+		[Test]
+		public void ClassWithSameNameAsNamespace()
+		{
+			string program = @"using System; namespace XX {
+	class Test {
+		static void X() {
+			
+		}
+	}
+	class XX {
+		public static void Test() {}
+	} }";
+			TypeResolveResult trr = Resolve<TypeResolveResult>(program, "XX", 4);
+			Assert.AreEqual("XX.XX", trr.ResolvedClass.FullyQualifiedName);
+
+			NamespaceResolveResult nrr = Resolve<NamespaceResolveResult>(program, "global::XX", 4);
+			Assert.AreEqual("XX", nrr.Name);
+			
+			trr = Resolve<TypeResolveResult>(program, "global::XX.XX", 4);
+			Assert.AreEqual("XX.XX", trr.ResolvedClass.FullyQualifiedName);
+			
+			MemberResolveResult mrr = Resolve<MemberResolveResult>(program, "XX.Test()", 4);
+			Assert.AreEqual("XX.XX.Test", mrr.ResolvedMember.FullyQualifiedName);
+		}
+		
+		[Test]
+		public void InvocableRule()
+		{
+			string program = @"using System;
+	class DerivedClass : BaseClass {
+		static void X() {
+		
+		}
+		private static new int Test;
+	}
+	class BaseClass {
+		public static string Test() {}
+	}";
+			MemberResolveResult mrr = Resolve<MemberResolveResult>(program, "BaseClass.Test()", 4);
+			Assert.AreEqual("BaseClass.Test", mrr.ResolvedMember.FullyQualifiedName);
+			
+			mrr = Resolve<MemberResolveResult>(program, "Test", 4);
+			Assert.AreEqual("DerivedClass.Test", mrr.ResolvedMember.FullyQualifiedName);
+			
+			mrr = Resolve<MemberResolveResult>(program, "DerivedClass.Test", 4);
+			Assert.AreEqual("DerivedClass.Test", mrr.ResolvedMember.FullyQualifiedName);
+			
+			// returns BaseClass.Test because DerivedClass.Test is not invocable
+			mrr = Resolve<MemberResolveResult>(program, "DerivedClass.Test()", 4);
+			Assert.AreEqual("BaseClass.Test", mrr.ResolvedMember.FullyQualifiedName);
+		}
+		
+		[Test]
+		public void InvocableRule2()
+		{
+			string program = @"using System;
+	class DerivedClass : BaseClass {
+		static void X() {
+		
+		}
+		private static new int Test;
+	}
+	delegate string SomeDelegate();
+	class BaseClass {
+		public static SomeDelegate Test;
+	}";
+			var dcrr = Resolve<DelegateCallResolveResult>(program, "BaseClass.Test()", 4);
+			Assert.AreEqual("SomeDelegate.Invoke", dcrr.DelegateInvokeMethod.FullyQualifiedName);
+			var mrr = dcrr.Target as MemberResolveResult;
+			IMember baseClassTest = mrr.ResolvedMember;
+			Assert.AreEqual("BaseClass.Test", baseClassTest.FullyQualifiedName);
+			
+			mrr = Resolve<MemberResolveResult>(program, "Test", 4);
+			Assert.AreEqual("DerivedClass.Test", mrr.ResolvedMember.FullyQualifiedName);
+			
+			mrr = Resolve<MemberResolveResult>(program, "DerivedClass.Test", 4);
+			Assert.AreEqual("DerivedClass.Test", mrr.ResolvedMember.FullyQualifiedName);
+			
+			// returns BaseClass.Test because DerivedClass.Test is not invocable
+			dcrr = Resolve<DelegateCallResolveResult>(program, "DerivedClass.Test()", 4);
+			mrr = (MemberResolveResult)dcrr.Target;
+			Assert.AreEqual("BaseClass.Test", mrr.ResolvedMember.FullyQualifiedName);
+			Assert.IsTrue(dcrr.IsReferenceTo(baseClassTest));
+		}
+		
+		[Test]
+		public void AccessibleRule()
+		{
+			string program = @"using System;
+	class BaseClass {
+		static void X() {
+		
+		}
+		public static int Test;
+	}
+	class DerivedClass : BaseClass {
+		private static new int Test;
+	}
+	";
+			// returns BaseClass.Test because DerivedClass.Test is not accessible
+			MemberResolveResult mrr = Resolve<MemberResolveResult>(program, "DerivedClass.Test", 4);
+			Assert.AreEqual("BaseClass.Test", mrr.ResolvedMember.FullyQualifiedName);
+		}
+		
+		[Test]
+		public void FieldHidingProperty()
+		{
+			string program = @"using System;
+	class DerivedClass : BaseClass {
+		static void X() {
+		
+		}
+		public static new int Test;
+	}
+	class BaseClass {
+		public static int Test { get { return 0; } }
+	}
+	";
+			MemberResolveResult mrr = Resolve<MemberResolveResult>(program, "Test", 4);
+			Assert.AreEqual("DerivedClass.Test", mrr.ResolvedMember.FullyQualifiedName);
+			
+			mrr = Resolve<MemberResolveResult>(program, "DerivedClass.Test", 4);
+			Assert.AreEqual("DerivedClass.Test", mrr.ResolvedMember.FullyQualifiedName);
+		}
+		
+		[Test]
+		public void PropertyHidingField()
+		{
+			string program = @"using System;
+	class DerivedClass : BaseClass {
+		static void X() {
+		
+		}
+		public static new int Test { get { return 0; } }
+	}
+	class BaseClass {
+		public static int Test;
+	}
+	";
+			MemberResolveResult mrr = Resolve<MemberResolveResult>(program, "Test", 4);
+			Assert.AreEqual("DerivedClass.Test", mrr.ResolvedMember.FullyQualifiedName);
+			
+			mrr = Resolve<MemberResolveResult>(program, "DerivedClass.Test", 4);
+			Assert.AreEqual("DerivedClass.Test", mrr.ResolvedMember.FullyQualifiedName);
+		}
+		
+		[Test]
+		public void TestOverloadingByRef()
+		{
+			string program = @"using System;
+class Program {
+	public static void Main() {
+		int a = 42;
+		T(a);
+		T(ref a);
+	}
+	static void T(int x) {}
+	static void T(ref int y) {}
+}";
+			
+			MemberResolveResult mrr = Resolve<MemberResolveResult>(program, "T(a)", 5);
+			Assert.IsFalse(((IMethod)mrr.ResolvedMember).Parameters[0].IsRef);
+			
+			mrr = Resolve<MemberResolveResult>(program, "T(ref a)", 5);
+			Assert.IsTrue(((IMethod)mrr.ResolvedMember).Parameters[0].IsRef);
+		}
+		
+		[Test]
+		public void AddedOverload()
+		{
+			string program = @"class BaseClass {
+	static void Main() {
+		new DerivedClass().Test(3);
+		Console.ReadKey();
+	}
+	public void Test(int a) { }
+}
+class DerivedClass : BaseClass {
+	public void Test(object a) { }
+}";
+			MemberResolveResult mrr = Resolve<MemberResolveResult>(program, "new DerivedClass().Test(3);", 4);
+			Assert.AreEqual("DerivedClass.Test", (mrr.ResolvedMember).FullyQualifiedName);
+		}
+		
+		[Test]
+		public void AddedNonApplicableOverload()
+		{
+			string program = @"class BaseClass {
+	static void Main() {
+		new DerivedClass().Test(3);
+		Console.ReadKey();
+	}
+	public void Test(int a) { }
+}
+class DerivedClass : BaseClass {
+	public void Test(string a) { }
+}";
+			MemberResolveResult mrr = Resolve<MemberResolveResult>(program, "new DerivedClass().Test(3);", 4);
+			Assert.AreEqual("BaseClass.Test", (mrr.ResolvedMember).FullyQualifiedName);
+			
+			mrr = Resolve<MemberResolveResult>(program, "new DerivedClass().Test(\"3\");", 4);
+			Assert.AreEqual("DerivedClass.Test", (mrr.ResolvedMember).FullyQualifiedName);
+		}
+		
+		[Test]
+		public void OverrideShadowed()
+		{
+			string program = @"using System;
+class BaseClass {
+	static void Main() {
+		new DerivedClass().Test(3);
+		Console.ReadKey();
+	}
+	public virtual void Test(int a) { }
+}
+class MiddleClass : BaseClass {
+	public void Test(object a) { }
+}
+class DerivedClass : MiddleClass {
+	public override void Test(int a) { }
+}";
+			
+			MemberResolveResult mrr = Resolve<MemberResolveResult>(program, "new DerivedClass().Test(3);", 4);
+			Assert.AreEqual("MiddleClass.Test", (mrr.ResolvedMember).FullyQualifiedName);
+		}
+		
+		[Test]
+		public void SimpleLambdaTest()
+		{
+			string program = @"using System;
+class TestClass {
+	static void Main() {
+		Test(i => Console.WriteLine(i));
+	}
+	public void Test(Action<int> ac) { ac(42); }
+}";
+			var lrr = Resolve<LocalResolveResult>(program, "i", 4, 31, ExpressionContext.Default);
+			Assert.AreEqual("System.Int32", lrr.ResolvedType.DotNetName);
+			
+			lrr = Resolve<LocalResolveResult>(program, "i", 4, 8, ExpressionContext.Default);
+			Assert.AreEqual("System.Int32", lrr.ResolvedType.DotNetName);
+		}
+		
+		[Test]
+		public void LambdaInConstructorTest()
+		{
+			string program = @"using System;
+class TestClass {
+	static void Main() {
+		TestClass t = new TestClass(i => Console.WriteLine(i));
+	}
+	public TestClass(Action<int> ac) { ac(42); }
+}";
+			var lrr = Resolve<LocalResolveResult>(program, "i", 4, 54, ExpressionContext.Default);
+			Assert.AreEqual("System.Int32", lrr.ResolvedType.DotNetName);
+		}
+		
+		[Test]
+		public void LambdaInGenericConstructorTest()
+		{
+			string program = @"using System;
+class TestClass {
+	static void Main() {
+		var t = new SomeClass<string>(i => Console.WriteLine(i));
+	}
+}
+class SomeClass<T> {
+	public SomeClass(Action<T> ac) { }
+}";
+			var lrr = Resolve<LocalResolveResult>(program, "i", 4, 33, ExpressionContext.Default);
+			Assert.AreEqual("System.String", lrr.ResolvedType.DotNetName);
+		}
+		
+		[Test]
+		public void IncompleteLambdaTest()
+		{
+			string program = @"using System;
+class TestClass {
+	static void Main() {
+		Test(i => i
+	}
+	public void Test(Action<int> ac) { ac(42); }
+}";
+			var lrr = Resolve<LocalResolveResult>(program, "i", 4, 13, ExpressionContext.Default);
+			Assert.AreEqual("System.Int32", lrr.ResolvedType.DotNetName);
+		}
+		
+		[Test]
+		public void IncompleteExtensionLambdaTest()
+		{
+			string program = @"using System;
+using System.Collections.Generic;
+static class TestClass {
+	static void Main(string[] args) {
+		args.Select(i => i
+	}
+	public static IEnumerable<R> Select<T, R>(this IEnumerable<T> input, Func<T, R> selector) { }
+	public delegate R Func<T, R>(T arg);
+}";
+			var lrr = Resolve<LocalResolveResult>(program, "i", 5, 20, ExpressionContext.Default);
+			Assert.AreEqual("System.String", lrr.ResolvedType.DotNetName);
+		}
+		
+		[Test]
+		public void LambdaExpressionInCastExpression()
+		{
+			string program = @"using System;
+static class TestClass {
+	static void Main(string[] args) {
+		var f = (Func<int, string>) ( i => i );
+	}
+	public delegate R Func<T, R>(T arg);
+}";
+			var lrr = Resolve<LocalResolveResult>(program, "i", 4, 38, ExpressionContext.Default);
+			Assert.AreEqual("System.Int32", lrr.ResolvedType.DotNetName);
+		}
+		
+		[Test]
+		public void CurriedLambdaExpressionInCastExpression()
+		{
+			string program = @"using System;
+static class TestClass {
+	static void Main(string[] args) {
+		var f = (Func<char, Func<string, int>>) ( a => b => 0 );
+	}
+	public delegate R Func<T, R>(T arg);
+}";
+			var lrr = Resolve<LocalResolveResult>(program, "a", 4, 45, ExpressionContext.Default);
+			Assert.AreEqual("System.Char", lrr.ResolvedType.DotNetName);
+			
+			lrr = Resolve<LocalResolveResult>(program, "b", 4, 50, ExpressionContext.Default);
+			Assert.AreEqual("System.String", lrr.ResolvedType.DotNetName);
+		}
+		
+		[Test]
+		public void LambdaExpressionInVariableInitializer()
+		{
+			string program = @"using System;
+static class TestClass {
+	static void Main() {
+		Func<int, string> f = i => i.ToString();
+	}
+	public delegate R Func<T, R>(T arg);
+}";
+			var lrr = Resolve<LocalResolveResult>(program, "i", 4, 25, ExpressionContext.Default);
+			Assert.AreEqual("System.Int32", lrr.ResolvedType.DotNetName);
+		}
+		
+		[Test]
+		public void LambdaExpressionInVariableAssignment()
+		{
+			string program = @"using System;
+static class TestClass {
+	static void Main() {
+		Func<int, string> f;
+ 		f = i => i.ToString();
+	}
+	public delegate R Func<T, R>(T arg);
+}";
+			var lrr = Resolve<LocalResolveResult>(program, "i", 5, 8, ExpressionContext.Default);
+			Assert.AreEqual("System.Int32", lrr.ResolvedType.DotNetName);
+		}
+		
+		[Test]
+		public void LambdaInDelegateCallTest()
+		{
+			string program = @"using System;
+class TestClass {
+	static void Main() {
+		Func<Func<int, string>, char> f;
+		f(i => i.ToString());
+	}
+	public delegate R Func<T, R>(T arg);
+}";
+			var lrr = Resolve<LocalResolveResult>(program, "i", 5, 5, ExpressionContext.Default);
+			Assert.AreEqual("System.Int32", lrr.ResolvedType.DotNetName);
+		}
+		
+		[Test]
+		public void InvalidAnonymousTypeDeclaration()
+		{
+			// see SD2-1393
+			string program = @"using System;
+class TestClass {
+	static void Main() {
+			var contact = {id = 54321};
+		
+		} }";
+			var lrr = Resolve<LocalResolveResult>(program, "contact", 5);
+			Assert.AreEqual("?", lrr.ResolvedType.DotNetName);
+		}
+		
+		[Test]
+		public void FixedStatement()
+		{
+			string program = @"using System;
+class TestClass {
+	static void Main(byte[] a) {
+		fixed (byte* p) {
+			
+		} } }";
+			
+			var lrr = Resolve<LocalResolveResult>(program, "p", 5);
+			Assert.AreEqual("System.Byte*", lrr.ResolvedType.DotNetName);
+			
+			var rr = Resolve<ResolveResult>(program, "*p", 5);
+			Assert.AreEqual("System.Byte", rr.ResolvedType.DotNetName);
+		}
 	}
 }

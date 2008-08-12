@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 3041 $</version>
 // </file>
 
 using System;
@@ -11,6 +11,7 @@ using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Linq;
 
 using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.Project;
@@ -21,24 +22,27 @@ namespace ICSharpCode.SharpDevelop.Gui
 	{
 		static PropertyPad instance;
 		
-		public static PropertyPad Instance {
-			get {
-				return instance;
-			}
-		}
+		// an empty container used to reset the property grid
+		readonly PropertyContainer emptyContainer = new PropertyContainer(false);
 		
 		PropertyContainer activeContainer;
+		
+		internal static PropertyContainer ActiveContainer {
+			get { return instance.activeContainer; }
+		}
 		
 		void SetActiveContainer(PropertyContainer pc)
 		{
 			if (activeContainer == pc)
 				return;
 			if (pc == null)
-				return;
+				pc = emptyContainer;
 			activeContainer = pc;
+			
 			UpdateHostIfActive(pc);
 			UpdateSelectedObjectIfActive(pc);
 			UpdateSelectableIfActive(pc);
+			UpdatePropertyGridReplacementControl(pc);
 		}
 		
 		internal static void UpdateSelectedObjectIfActive(PropertyContainer container)
@@ -76,11 +80,35 @@ namespace ICSharpCode.SharpDevelop.Gui
 			instance.SetSelectableObjects(container.SelectableObjects);
 		}
 		
+		internal static void UpdatePropertyGridReplacementControl(PropertyContainer container)
+		{
+			if (instance == null) return;
+			if (instance.activeContainer != container)
+				return;
+			LoggingService.Debug("UpdatePropertyGridReplacementControl");
+			if (container.PropertyGridReplacementControl != null) {
+				if (!instance.panel.Controls.Contains(container.PropertyGridReplacementControl)) {
+					instance.panel.Controls.Clear();
+					container.PropertyGridReplacementControl.Dock = DockStyle.Fill;
+					instance.panel.Controls.Add(container.PropertyGridReplacementControl);
+				}
+			} else {
+				if (!instance.panel.Controls.Contains(instance.grid)) {
+					instance.panel.Controls.Clear();
+					instance.panel.Controls.Add(instance.grid);
+					instance.panel.Controls.Add(instance.comboBox);
+				}
+			}
+		}
+		
 		Panel         panel;
 		ComboBox      comboBox;
 		PropertyGrid  grid;
 		IDesignerHost host;
 		
+		/// <summary>
+		/// Gets the underlying property grid. Returns null if the property pad has not yet been created.
+		/// </summary>
 		public static PropertyGrid Grid {
 			get {
 				if (instance == null)
@@ -100,18 +128,29 @@ namespace ICSharpCode.SharpDevelop.Gui
 			}
 		}
 		
-		void WorkbenchWindowChanged(object sender, EventArgs e)
+		IHasPropertyContainer previousContent;
+		
+		void WorkbenchActiveContentChanged(object sender, EventArgs e)
 		{
 			IHasPropertyContainer c = WorkbenchSingleton.Workbench.ActiveContent as IHasPropertyContainer;
 			if (c == null) {
-				IWorkbenchWindow window = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow;
-				if (window != null) {
-					c = window.ActiveViewContent as IHasPropertyContainer;
+				if (previousContent == null) {
+					c = WorkbenchSingleton.Workbench.ActiveViewContent as IHasPropertyContainer;
+				} else {
+					// if the previous content is no longer visible, we have to remove the active container
+					if (previousContent is IViewContent && previousContent != WorkbenchSingleton.Workbench.ActiveViewContent) {
+						c = null;
+					} else {
+						c = previousContent;
+					}
 				}
 			}
 			if (c != null) {
 				SetActiveContainer(c.PropertyContainer);
+			} else {
+				SetActiveContainer(null);
 			}
+			previousContent = c;
 		}
 		
 		public PropertyPad()
@@ -145,17 +184,21 @@ namespace ICSharpCode.SharpDevelop.Gui
 			panel.Controls.Add(grid);
 			panel.Controls.Add(comboBox);
 			
-			ProjectService.SolutionClosed += CombineClosedEvent;
+			ProjectService.SolutionClosed += SolutionClosedEvent;
 			
 			grid.PropertyValueChanged += new PropertyValueChangedEventHandler(PropertyChanged);
 			grid.ContextMenuStrip = MenuService.CreateContextMenu(this, "/SharpDevelop/Views/PropertyPad/ContextMenu");
 			
 			LoggingService.Debug("PropertyPad created");
-			WorkbenchSingleton.Workbench.ActiveWorkbenchWindowChanged += WorkbenchWindowChanged;
-			WorkbenchWindowChanged(null, null);
+			WorkbenchSingleton.Workbench.ActiveContentChanged += WorkbenchActiveContentChanged;
+			// it is possible that ActiveContent changes fires before ActiveViewContent.
+			// if the new content is not a IHasPropertyContainer and we listen only to ActiveContentChanged,
+			// we might display the PropertyPad of a no longer active view content
+			WorkbenchSingleton.Workbench.ActiveViewContentChanged += WorkbenchActiveContentChanged;
+			WorkbenchActiveContentChanged(null, null);
 		}
 		
-		void CombineClosedEvent(object sender, EventArgs e)
+		void SolutionClosedEvent(object sender, EventArgs e)
 		{
 			SetDesignableObjects(null);
 		}
@@ -258,7 +301,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		{
 			base.Dispose();
 			if (grid != null) {
-				ProjectService.SolutionClosed -= CombineClosedEvent;
+				ProjectService.SolutionClosed -= SolutionClosedEvent;
 				try {
 					grid.SelectedObjects = null;
 				} catch {}
@@ -282,6 +325,19 @@ namespace ICSharpCode.SharpDevelop.Gui
 			grid.SelectedObjects = obj;
 			SelectedObjectsChanged();
 			inUpdate = false;
+		}
+		
+		/// <summary>
+		/// Refreshes the property pad if the specified item is active.
+		/// </summary>
+		public static void RefreshItem(object obj)
+		{
+			WorkbenchSingleton.AssertMainThread();
+			if (instance != null && instance.grid.SelectedObjects.Contains(obj)) {
+				instance.inUpdate = true;
+				instance.grid.SelectedObjects = instance.grid.SelectedObjects;
+				instance.inUpdate = false;
+			}
 		}
 		
 		void RemoveHost(IDesignerHost host)
@@ -325,7 +381,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			if (gridItem != null) {
 				Type component = gridItem.PropertyDescriptor.ComponentType;
 				if (component != null) {
-					ICSharpCode.SharpDevelop.Dom.IClass c = ParserService.CurrentProjectContent.GetClass(component.FullName);
+					ICSharpCode.SharpDevelop.Dom.IClass c = ParserService.CurrentProjectContent.GetClass(component.FullName, 0);
 					if (c != null) {
 						foreach (ICSharpCode.SharpDevelop.Dom.IProperty p in c.DefaultReturnType.GetProperties()) {
 							if (gridItem.PropertyDescriptor.Name == p.Name) {

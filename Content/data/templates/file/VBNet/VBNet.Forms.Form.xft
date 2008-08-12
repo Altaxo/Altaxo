@@ -12,6 +12,11 @@
 	
 	<Description>${res:Templates.File.WindowsForm.Description}</Description>
 	
+		<References>
+		<Reference include="System.Drawing" />
+		<Reference include="System.Windows.Forms" />
+	</References>
+	
 	<!-- 
 	Special new file templates:
 		${StandardNamespace}        -> Standardnamespace of the current project or FileNameWithoutExtension
@@ -60,7 +65,6 @@ Partial Class ${ClassName}
 End Class
 ]]></File>
 		<File name="${FullName}" language="VBNET"><![CDATA[${StandardHeader.VBNET}
-
 Public Partial Class ${ClassName}
 	Public Sub New()
 		' The Me.InitializeComponent call is required for Windows Forms designer support.

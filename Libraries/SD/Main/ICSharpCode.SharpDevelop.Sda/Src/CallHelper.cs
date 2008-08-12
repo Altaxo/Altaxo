@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2560 $</version>
+//     <version>$Revision: 2971 $</version>
 // </file>
 
 using System;
@@ -13,6 +13,7 @@ using System.IO;
 using System.Reflection;
 using System.Resources;
 using System.Threading;
+using System.Linq;
 
 using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.Commands;
@@ -46,6 +47,7 @@ namespace ICSharpCode.SharpDevelop.Sda
 			if (properties.PropertiesName != null) {
 				startup.PropertiesName = properties.PropertiesName;
 			}
+			ParserService.DomPersistencePath = properties.DomPersistencePath;
 			
 			// disable RTL: translations for the RTL languages are inactive
 			RightToLeftConverter.RightToLeftLanguages = new string[0];
@@ -118,9 +120,6 @@ namespace ICSharpCode.SharpDevelop.Sda
 #else
 			WorkbenchSingleton.InitializeWorkbench();
 #endif
-
-			// initialize workbench-dependent services:
-			Project.ProjectService.InitializeService();
 			
 			LoggingService.Info("Starting workbench...");
 			Exception exception = null;
@@ -140,8 +139,7 @@ namespace ICSharpCode.SharpDevelop.Sda
 			} finally {
 				LoggingService.Info("Unloading services...");
 				try {
-					Project.ProjectService.CloseSolution();
-					FileService.Unload();
+					WorkbenchSingleton.OnWorkbenchUnloaded();
 					PropertyService.Save();
 				} catch (Exception ex) {
 					LoggingService.Warn("Exception during unloading", ex);
@@ -178,7 +176,7 @@ namespace ICSharpCode.SharpDevelop.Sda
 		void GetOpenDocuments(List<Document> l)
 		{
 			foreach (IViewContent vc in WorkbenchSingleton.Workbench.ViewContentCollection) {
-				Document d = Document.FromWindow(vc.WorkbenchWindow);
+				Document d = Document.FromWindow(vc);
 				if (d != null) {
 					l.Add(d);
 				}
@@ -214,6 +212,7 @@ namespace ICSharpCode.SharpDevelop.Sda
 			Project.ProjectService.LoadSolutionOrProject(fileName);
 		}
 		
+		[SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
 		public bool IsSolutionOrProject(string fileName)
 		{
 			return Project.ProjectService.HasProjectLoader(fileName);
@@ -238,6 +237,7 @@ namespace ICSharpCode.SharpDevelop.Sda
 			return WorkbenchSingleton.MainForm.IsDisposed;
 		}
 		
+		[SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
 		public void KillWorkbench()
 		{
 			System.Windows.Forms.Application.Exit();
@@ -269,3 +269,5 @@ namespace ICSharpCode.SharpDevelop.Sda
 		}
 	}
 }
+
+

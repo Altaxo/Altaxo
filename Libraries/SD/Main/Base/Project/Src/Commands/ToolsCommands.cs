@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2487 $</version>
 // </file>
 
 using System;
@@ -16,9 +16,7 @@ namespace ICSharpCode.SharpDevelop.Commands
 	{
 		public static void ShowTabbedOptions(string dialogTitle, AddInTreeNode node)
 		{
-			TabbedOptions o = new TabbedOptions(dialogTitle,
-			                                    ((Properties)PropertyService.Get("ICSharpCode.TextEditor.Document.Document.DefaultDocumentAggregatorProperties", new Properties())),
-			                                    node);
+			TabbedOptions o = new TabbedOptions(dialogTitle, node);
 			o.Width  = 450;
 			o.Height = 425;
 			o.FormBorderStyle = FormBorderStyle.FixedDialog;
@@ -28,12 +26,11 @@ namespace ICSharpCode.SharpDevelop.Commands
 		
 		public override void Run()
 		{
-			using (TreeViewOptions optionsDialog = new TreeViewOptions((Properties)PropertyService.Get("ICSharpCode.TextEditor.Document.Document.DefaultDocumentAggregatorProperties", new Properties()),
-			                                                           AddInTree.GetTreeNode("/SharpDevelop/Dialogs/OptionsDialog"))) {
+			using (TreeViewOptions optionsDialog = new TreeViewOptions(AddInTree.GetTreeNode("/SharpDevelop/Dialogs/OptionsDialog"))) {
 				optionsDialog.FormBorderStyle = FormBorderStyle.FixedDialog;
 				
-				optionsDialog.Owner = (Form)WorkbenchSingleton.Workbench;
-				optionsDialog.ShowDialog(ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.MainForm);
+				optionsDialog.Owner = WorkbenchSingleton.MainForm;
+				optionsDialog.ShowDialog(WorkbenchSingleton.MainForm);
 			}
 		}
 	}

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 3205 $</version>
 // </file>
 
 using System;
@@ -25,12 +25,11 @@ namespace ICSharpCode.TextEditor.Document
 			DefaultDocument doc = new DefaultDocument();
 			doc.TextBufferStrategy  = new GapTextBufferStrategy();
 			doc.FormattingStrategy  = new DefaultFormattingStrategy();
-			doc.LineManager         = new DefaultLineManager(doc, null);
+			doc.LineManager         = new LineManager(doc, null);
 			doc.FoldingManager      = new FoldingManager(doc, doc.LineManager);
 			doc.FoldingManager.FoldingStrategy       = null; //new ParserFoldingStrategy();
 			doc.MarkerStrategy      = new MarkerStrategy(doc);
 			doc.BookmarkManager     = new BookmarkManager(doc, doc.LineManager);
-			doc.CustomLineManager   = new CustomLineManager(doc.LineManager);
 			return doc;
 		}
 		
@@ -51,8 +50,7 @@ namespace ICSharpCode.TextEditor.Document
 		public IDocument CreateFromFile(string fileName)
 		{
 			IDocument document = CreateDocument();
-			Encoding encoding = Encoding.Default;
-			document.TextContent = Util.FileReader.ReadFileContent(fileName, ref encoding, encoding);
+			document.TextContent = Util.FileReader.ReadFileContent(fileName, Encoding.Default);
 			return document;
 		}
 	}

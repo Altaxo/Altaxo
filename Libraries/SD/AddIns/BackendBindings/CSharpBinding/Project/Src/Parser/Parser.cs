@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Andrea Paatz" email="andrea@icsharpcode.net"/>
-//     <version>$Revision: 2043 $</version>
+//     <version>$Revision: 2929 $</version>
 // </file>
 
 using System;
@@ -37,7 +37,7 @@ namespace CSharpBinding.Parser
 		
 		public IExpressionFinder CreateExpressionFinder(string fileName)
 		{
-			return new CSharpExpressionFinder(fileName);
+			return new CSharpExpressionFinder(ParserService.GetParseInformation(fileName));
 		}
 		
 		public bool CanParse(string fileName)
@@ -67,7 +67,7 @@ namespace CSharpBinding.Parser
 									case "#endregion":
 										--deep;
 										if (deep == 0) {
-											cu.FoldingRegions.Add(new FoldingRegion(directive.Arg.Trim(), new DomRegion(directive.StartPosition, nextDirective.EndPosition)));
+											cu.FoldingRegions.Add(new FoldingRegion(directive.Arg.Trim(), DomRegion.FromLocation(directive.StartPosition, nextDirective.EndPosition)));
 											goto end;
 										}
 										break;
@@ -107,15 +107,14 @@ namespace CSharpBinding.Parser
 		{
 			foreach (ICSharpCode.NRefactory.Parser.TagComment tagComment in tagComments) {
 				DomRegion tagRegion = new DomRegion(tagComment.StartPosition.Y, tagComment.StartPosition.X);
-				ICSharpCode.SharpDevelop.Dom.TagComment tag = new ICSharpCode.SharpDevelop.Dom.TagComment(tagComment.Tag, tagRegion);
-				tag.CommentString = tagComment.CommentText;
+				var tag = new ICSharpCode.SharpDevelop.Dom.TagComment(tagComment.Tag, tagRegion, tagComment.CommentText);
 				cu.TagComments.Add(tag);
 			}
 		}
 		
 		public IResolver CreateResolver()
 		{
-			return new NRefactoryResolver(ParserService.CurrentProjectContent, LanguageProperties.CSharp);
+			return new NRefactoryResolver(LanguageProperties.CSharp);
 		}
 		///////// IParser Interface END
 	}

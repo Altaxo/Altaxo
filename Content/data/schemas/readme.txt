@@ -27,14 +27,22 @@ NAnt 0.85 schema.
 http://nant.sourceforge.net/release/0.85/nant.xsd
 GNU General Public License.
 
-Wix.xsd
--------
+WiX schemas
+-----------
 
-http://sourceforge.net/projects/wix/
-Common Public License 1.0 (http://opensource.org/licenses/cpl.php)
-
+complus.xsd
+difxapp.xsd
+firewall.xsd
+gaming.xsd
+iis.xsd
+msmq.xsd
+netfx.xsd
+ps.xsd
+sql.xsd
+util.xsd
+vs.xsd
+wix.xsd
 wixloc.xsd
-----------
 
 http://sourceforge.net/projects/wix/
 Common Public License 1.0 (http://opensource.org/licenses/cpl.php)

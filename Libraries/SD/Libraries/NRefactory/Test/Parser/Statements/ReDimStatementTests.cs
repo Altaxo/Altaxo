@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1669 $</version>
+//     <version>$Revision: 2202 $</version>
 // </file>
 
 using System;
@@ -20,6 +20,8 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 		public void VBNetReDimStatementTest()
 		{
 			ReDimStatement reDimStatement = ParseUtilVBNet.ParseStatement<ReDimStatement>("ReDim Preserve MyArray(15)");
+			Assert.AreEqual(1, reDimStatement.ReDimClauses.Count);
+			Assert.AreSame(reDimStatement, reDimStatement.ReDimClauses[0].Parent);
 		}
 		
 		[Test]

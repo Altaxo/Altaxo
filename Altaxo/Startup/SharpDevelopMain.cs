@@ -2,10 +2,11 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2540 $</version>
+//     <version>$Revision: 2596 $</version>
 // </file>
 
 using System;
+using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
@@ -113,14 +114,31 @@ namespace ICSharpCode.SharpDevelop
 				Assembly exe = typeof(SharpDevelopMain).Assembly;
 				startup.ApplicationRootPath = Path.Combine(Path.GetDirectoryName(exe.Location), "..");
 				startup.AllowUserAddIns = true;
+				
+				string configDirectory = ConfigurationManager.AppSettings["settingsPath"];
+				if (String.IsNullOrEmpty(configDirectory)) {
 #if ModifiedForAltaxo
         startup.ConfigDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                                               "Altaxo/Altaxo2");
+                                               "Altaxo\\Altaxo2");
         startup.ResourceAssemblyName = "AltaxoStartup";
 #else
-				startup.ConfigDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-				                                       "ICSharpCode/SharpDevelop2.1");
+					startup.ConfigDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+					                                       "ICSharpCode/SharpDevelop" + RevisionClass.MainVersion);
 #endif				
+				} else {
+					startup.ConfigDirectory = Path.Combine(Path.GetDirectoryName(exe.Location), configDirectory);
+				}
+				
+				startup.DomPersistencePath = ConfigurationManager.AppSettings["domPersistencePath"];
+				if (string.IsNullOrEmpty(startup.DomPersistencePath)) {
+					startup.DomPersistencePath = Path.Combine(Path.GetTempPath(), "SharpDevelop" + RevisionClass.MainVersion);
+					#if DEBUG
+					startup.DomPersistencePath = Path.Combine(startup.DomPersistencePath, "Debug");
+					#endif
+				} else if (startup.DomPersistencePath == "none") {
+					startup.DomPersistencePath = null;
+				}
+				
 				startup.AddAddInsFromDirectory(Path.Combine(startup.ApplicationRootPath, "AddIns"));
 				
 				SharpDevelopHost host = new SharpDevelopHost(AppDomain.CurrentDomain, startup);
@@ -144,14 +162,14 @@ namespace ICSharpCode.SharpDevelop
 					}
 				};
 #if ModifiedForAltaxo
-				WorkbenchSingleton.InitializeWorkbench(typeof(Altaxo.Gui.SharpDevelop.AltaxoSDWorkbench));
+				Altaxo.Gui.SharpDevelop.AltaxoSDWorkbench altaxoWb = new Altaxo.Gui.SharpDevelop.AltaxoSDWorkbench();
+				WorkbenchSingleton.InitializeWorkbench(altaxoWb, new ICSharpCode.SharpDevelop.Gui.SdiWorkbenchLayout());
         Altaxo.Current.SetWorkbench((Altaxo.Gui.Common.IWorkbench)WorkbenchSingleton.Workbench);
         new Altaxo.Main.Commands.AutostartCommand().Run();
 #endif
 				
 				WorkbenchSettings workbenchSettings = new WorkbenchSettings();
 				workbenchSettings.RunOnNewThread = false;
-				workbenchSettings.UseTipOfTheDay = true;
 				for (int i = 0; i < fileList.Length; i++) {
 					workbenchSettings.InitialFileList.Add(fileList[i]);
 				}
@@ -169,7 +187,7 @@ namespace ICSharpCode.SharpDevelop
 						return false;
 					}
 				}
-				return DefaultWorkbench.SingleInstanceHelper.OpenFilesInPreviousInstance(fileList);
+				return SingleInstanceHelper.OpenFilesInPreviousInstance(fileList);
 			} catch (Exception ex) {
 				LoggingService.Error(ex);
 				return false;

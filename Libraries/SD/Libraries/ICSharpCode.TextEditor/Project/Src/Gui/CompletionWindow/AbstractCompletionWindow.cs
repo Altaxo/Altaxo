@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2499 $</version>
+//     <version>$Revision: 2681 $</version>
 // </file>
 
 using System;
@@ -39,12 +39,13 @@ namespace ICSharpCode.TextEditor.Gui.CompletionWindow
 		protected virtual void SetLocation()
 		{
 			TextArea textArea = control.ActiveTextAreaControl.TextArea;
-			Point caretPos  = textArea.Caret.Position;
+			TextLocation caretPos  = textArea.Caret.Position;
 			
 			int xpos = textArea.TextView.GetDrawingXPos(caretPos.Y, caretPos.X);
 			int rulerHeight = textArea.TextEditorProperties.ShowHorizontalRuler ? textArea.TextView.FontHeight : 0;
 			Point pos = new Point(textArea.TextView.DrawingPosition.X + xpos,
-			                      textArea.TextView.DrawingPosition.Y + (textArea.Document.GetVisibleLine(caretPos.Y)) * textArea.TextView.FontHeight - textArea.TextView.TextArea.VirtualTop.Y + textArea.TextView.FontHeight + rulerHeight);
+			                      textArea.TextView.DrawingPosition.Y + (textArea.Document.GetVisibleLine(caretPos.Y)) * textArea.TextView.FontHeight 
+			                      - textArea.TextView.TextArea.VirtualTop.Y + textArea.TextView.FontHeight + rulerHeight);
 			
 			Point location = control.ActiveTextAreaControl.PointToScreen(pos);
 			

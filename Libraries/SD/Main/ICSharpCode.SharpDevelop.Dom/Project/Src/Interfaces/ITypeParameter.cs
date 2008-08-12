@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2929 $</version>
 // </file>
 
 using System;
@@ -13,7 +13,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 	/// <summary>
 	/// Type parameter of a generic class/method.
 	/// </summary>
-	public interface ITypeParameter
+	public interface ITypeParameter : IFreezable
 	{
 		/// <summary>
 		/// The name of the type parameter (for example "T")

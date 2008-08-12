@@ -2,17 +2,14 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 915 $</version>
+//     <version>$Revision: 2691 $</version>
 // </file>
 
 using System;
 
 namespace ICSharpCode.TextEditor.Document
 {
-	public delegate void LineManagerEventHandler(object sender, LineManagerEventArgs e);
-	public delegate void LineLengthEventHandler(object sender, LineLengthEventArgs e);
-	
-	public class LineManagerEventArgs : EventArgs
+	public class LineCountChangeEventArgs : EventArgs
 	{
 		IDocument document;
 		int       start;
@@ -45,7 +42,7 @@ namespace ICSharpCode.TextEditor.Document
 			}
 		}
 		
-		public LineManagerEventArgs(IDocument document, int lineStart, int linesMoved)
+		public LineCountChangeEventArgs(IDocument document, int lineStart, int linesMoved)
 		{
 			this.document = document;
 			this.start    = lineStart;
@@ -53,53 +50,48 @@ namespace ICSharpCode.TextEditor.Document
 		}
 	}
 	
-	public class LineLengthEventArgs : EventArgs
+	public class LineEventArgs : EventArgs
 	{
 		IDocument document;
-		int       lineNumber;
-		int       lineOffset;
-		int       moved;
+		LineSegment lineSegment;
 		
 		public IDocument Document {
-			get {
-				return document;
-			}
+			get { return document; }
 		}
 		
-		public int LineNumber {
-			get {
-				return lineNumber;
-			}
+		public LineSegment LineSegment {
+			get { return lineSegment; }
 		}
 		
-		public int LineOffset {
-			get {
-				return lineOffset;
-			}
-		}
-		
-		public int Moved {
-			get {
-				return moved;
-			}
-		}
-		
-		public LineLengthEventArgs(IDocument document, int lineNumber, int lineOffset, int moved)
+		public LineEventArgs(IDocument document, LineSegment lineSegment)
 		{
 			this.document = document;
-			this.lineNumber = lineNumber;
-			this.lineOffset = lineOffset;
-			this.moved = moved;
+			this.lineSegment = lineSegment;
 		}
 		
 		public override string ToString()
 		{
-			return String.Format("[LineLengthEventArgs: Document = {0}, LineNumber = {1}, LineOffset = {2}, Moved = {3}]",
-			                     Document,
-			                     LineNumber,
-			                     LineOffset,
-			                     Moved);
+			return string.Format("[LineEventArgs Document={0} LineSegment={1}]", this.document, this.lineSegment);
+		}
+	}
+	
+	public class LineLengthChangeEventArgs : LineEventArgs
+	{
+		int lengthDelta;
+		
+		public int LengthDelta {
+			get { return lengthDelta; }
 		}
 		
+		public LineLengthChangeEventArgs(IDocument document, LineSegment lineSegment, int moved)
+			: base(document, lineSegment)
+		{
+			this.lengthDelta = moved;
+		}
+		
+		public override string ToString()
+		{
+			return string.Format("[LineLengthEventArgs Document={0} LineSegment={1} LengthDelta={2}]", this.Document, this.LineSegment, this.lengthDelta);
+		}
 	}
 }

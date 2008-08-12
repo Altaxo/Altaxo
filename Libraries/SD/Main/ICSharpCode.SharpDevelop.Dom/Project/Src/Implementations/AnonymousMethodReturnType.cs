@@ -2,22 +2,23 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1661 $</version>
+//     <version>$Revision: 3009 $</version>
 // </file>
 
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 
 namespace ICSharpCode.SharpDevelop.Dom
 {
 	/// <summary>
 	/// The return type of anonymous method expressions or lambda expressions.
 	/// </summary>
-	public sealed class AnonymousMethodReturnType : ProxyReturnType
+	public class AnonymousMethodReturnType : DecoratingReturnType
 	{
 		IReturnType returnType;
-		IList<IParameter> parameters = new List<IParameter>();
+		IList<IParameter> parameters;
 		ICompilationUnit cu;
 		
 		public AnonymousMethodReturnType(ICompilationUnit cu)
@@ -25,45 +26,79 @@ namespace ICSharpCode.SharpDevelop.Dom
 			this.cu = cu;
 		}
 		
+		public override bool Equals(IReturnType other)
+		{
+			if (other == null) return false;
+			AnonymousMethodReturnType o = other.CastToDecoratingReturnType<AnonymousMethodReturnType>();
+			if (o == null) return false;
+			return this.FullyQualifiedName == o.FullyQualifiedName;
+		}
+		
+		public override int GetHashCode()
+		{
+			return this.FullyQualifiedName.GetHashCode();
+		}
+		
+		public override T CastToDecoratingReturnType<T>()
+		{
+			if (typeof(T) == typeof(AnonymousMethodReturnType)) {
+				return (T)(object)this;
+			} else {
+				return null;
+			}
+		}
+		
 		/// <summary>
 		/// Return type of the anonymous method. Can be null if inferred from context.
 		/// </summary>
 		public IReturnType MethodReturnType {
-			get {
-				return returnType;
-			}
-			set {
-				returnType = value;
-			}
+			get { return returnType; }
+			set { returnType = value; }
+		}
+		
+		public virtual IReturnType ResolveReturnType()
+		{
+			return returnType;
+		}
+		
+		public virtual IReturnType ResolveReturnType(IReturnType[] parameterTypes)
+		{
+			return returnType;
 		}
 		
 		/// <summary>
-		/// Gets the list of method parameters.
+		/// Gets the list of method parameters. Can be null if the anonymous method has no parameter list.
 		/// </summary>
 		public IList<IParameter> MethodParameters {
+			get { return parameters; }
+			set { parameters = value; }
+		}
+		
+		public virtual bool CanBeConvertedToExpressionTree {
+			get { return false; }
+		}
+		
+		public bool HasParameterList {
+			get { return parameters != null; }
+		}
+		
+		public bool HasImplicitlyTypedParameters {
 			get {
-				return parameters;
-			}
-			set {
-				if (value == null) throw new ArgumentNullException("value");
-				parameters = value;
+				if (parameters == null)
+					return false;
+				else
+					return parameters.Any(p => p.ReturnType == null);
 			}
 		}
 		
-		public override bool IsDefaultReturnType {
-			get {
-				return false;
-			}
-		}
-		
-		volatile DefaultClass cachedClass;
+		DefaultClass cachedClass;
 		
 		public override IClass GetUnderlyingClass()
 		{
 			if (cachedClass != null) return cachedClass;
 			DefaultClass c = new DefaultClass(cu, ClassType.Delegate, ModifierEnum.None, DomRegion.Empty, null);
 			c.BaseTypes.Add(cu.ProjectContent.SystemTypes.Delegate);
-			AddDefaultDelegateMethod(c, returnType ?? cu.ProjectContent.SystemTypes.Object, parameters);
+			AddDefaultDelegateMethod(c, returnType ?? cu.ProjectContent.SystemTypes.Object, parameters ?? new IParameter[0]);
 			cachedClass = c;
 			return c;
 		}
@@ -102,17 +137,20 @@ namespace ICSharpCode.SharpDevelop.Dom
 		
 		public override string FullyQualifiedName {
 			get {
-				StringBuilder b = new StringBuilder("delegate(");
-				bool first = true;
-				foreach (IParameter p in parameters) {
-					if (first) first = false; else b.Append(", ");
-					b.Append(p.Name);
-					if (p.ReturnType != null) {
-						b.Append(":");
-						b.Append(p.ReturnType.Name);
+				StringBuilder b = new StringBuilder("delegate");
+				if (HasParameterList) {
+					bool first = true;
+					b.Append("(");
+					foreach (IParameter p in parameters) {
+						if (first) first = false; else b.Append(", ");
+						b.Append(p.Name);
+						if (p.ReturnType != null) {
+							b.Append(":");
+							b.Append(p.ReturnType.Name);
+						}
 					}
+					b.Append(")");
 				}
-				b.Append(")");
 				if (returnType != null) {
 					b.Append(":");
 					b.Append(returnType.Name);

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2432 $</version>
+//     <version>$Revision: 3211 $</version>
 // </file>
 
 using System;
@@ -34,6 +34,8 @@ namespace ICSharpCode.TextEditor
 		
 		public bool EnablePaste {
 			get {
+				if (!textArea.EnableCutOrPaste)
+					return false;
 				try {
 					return Clipboard.ContainsText();
 				} catch (ExternalException) {
@@ -44,7 +46,7 @@ namespace ICSharpCode.TextEditor
 		
 		public bool EnableDelete {
 			get {
-				return textArea.SelectionManager.HasSomethingSelected && textArea.EnableCutOrPaste;
+				return textArea.SelectionManager.HasSomethingSelected && !textArea.SelectionManager.SelectionIsReadonly;
 			}
 		}
 		
@@ -65,12 +67,7 @@ namespace ICSharpCode.TextEditor
 //			((DefaultWorkbench)WorkbenchSingleton.Workbench).UpdateToolbars();
 		}
 
-		string LineSelectedType
-		{
-			get {
-				return "MSDEVLineSelect";  // This is the type VS 2003 and 2005 use for flagging a whole line copy
-			}
-		}
+		const string LineSelectedType = "MSDEVLineSelect";  // This is the type VS 2003 and 2005 use for flagging a whole line copy
 		
 		bool CopyTextToClipboard(string stringToCopy, bool asLine)
 		{
@@ -128,31 +125,30 @@ namespace ICSharpCode.TextEditor
 		
 		public void Cut(object sender, EventArgs e)
 		{
-			if (textArea.TextEditorProperties.UseCustomLine == true) {
-				if (textArea.SelectionManager.HasSomethingSelected) {
+			if (textArea.SelectionManager.HasSomethingSelected) {
+				if (CopyTextToClipboard(textArea.SelectionManager.SelectedText)) {
 					if (textArea.SelectionManager.SelectionIsReadonly)
 						return;
-				} else if (textArea.Document.CustomLineManager.IsReadOnly(textArea.Caret.Line, false) == true)
-					return;
-			}
-			if (CopyTextToClipboard(textArea.SelectionManager.SelectedText)) {
-				// Remove text
-				textArea.BeginUpdate();
-				textArea.Caret.Position = textArea.SelectionManager.SelectionCollection[0].StartPosition;
-				textArea.SelectionManager.RemoveSelectedText();
-				textArea.EndUpdate();
-			} else if (textArea.Document.TextEditorProperties.CutCopyWholeLine){
+					// Remove text
+					textArea.BeginUpdate();
+					textArea.Caret.Position = textArea.SelectionManager.SelectionCollection[0].StartPosition;
+					textArea.SelectionManager.RemoveSelectedText();
+					textArea.EndUpdate();
+				}
+			} else if (textArea.Document.TextEditorProperties.CutCopyWholeLine) {
 				// No text was selected, select and cut the entire line
 				int curLineNr = textArea.Document.GetLineNumberForOffset(textArea.Caret.Offset);
 				LineSegment lineWhereCaretIs = textArea.Document.GetLineSegment(curLineNr);
 				string caretLineText = textArea.Document.GetText(lineWhereCaretIs.Offset, lineWhereCaretIs.TotalLength);
 				textArea.SelectionManager.SetSelection(textArea.Document.OffsetToPosition(lineWhereCaretIs.Offset), textArea.Document.OffsetToPosition(lineWhereCaretIs.Offset + lineWhereCaretIs.TotalLength));
 				if (CopyTextToClipboard(caretLineText, true)) {
+					if (textArea.SelectionManager.SelectionIsReadonly)
+						return;
 					// remove line
 					textArea.BeginUpdate();
 					textArea.Caret.Position = textArea.Document.OffsetToPosition(lineWhereCaretIs.Offset);
 					textArea.SelectionManager.RemoveSelectedText();
-					textArea.Document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.PositionToEnd, new Point(0, curLineNr)));
+					textArea.Document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.PositionToEnd, new TextLocation(0, curLineNr)));
 					textArea.EndUpdate();
 				}
 			}
@@ -171,12 +167,8 @@ namespace ICSharpCode.TextEditor
 		
 		public void Paste(object sender, EventArgs e)
 		{
-			if (textArea.TextEditorProperties.UseCustomLine == true) {
-				if (textArea.SelectionManager.HasSomethingSelected) {
-					if (textArea.SelectionManager.SelectionIsReadonly)
-						return;
-				} else if (textArea.Document.CustomLineManager.IsReadOnly(textArea.Caret.Line, false) == true)
-					return;
+			if (!textArea.EnableCutOrPaste) {
+				return;
 			}
 			// Clipboard.GetDataObject may throw an exception...
 			for (int i = 0;; i++) {
@@ -186,22 +178,24 @@ namespace ICSharpCode.TextEditor
 					if (data.GetDataPresent(DataFormats.UnicodeText)) {
 						string text = (string)data.GetData(DataFormats.UnicodeText);
 						if (text.Length > 0) {
-							int redocounter = 0;
-							if (textArea.SelectionManager.HasSomethingSelected) {
-								Delete(sender, e);
-								redocounter++;
-							}
-							if (fullLine) {
-								int col = textArea.Caret.Column;
-								textArea.Caret.Column = 0;
-								textArea.InsertString(text);
-								textArea.Caret.Column = col;
-							}
-							else {
-								textArea.InsertString(text);
-							}
-							if (redocounter > 0) {
-								textArea.Document.UndoStack.CombineLast(redocounter + 1); // redo the whole operation
+							textArea.Document.UndoStack.StartUndoGroup();
+							try {
+								if (textArea.SelectionManager.HasSomethingSelected) {
+									textArea.Caret.Position = textArea.SelectionManager.SelectionCollection[0].StartPosition;
+									textArea.SelectionManager.RemoveSelectedText();
+								}
+								if (fullLine) {
+									int col = textArea.Caret.Column;
+									textArea.Caret.Column = 0;
+									if (!textArea.IsReadOnly(textArea.Caret.Offset))
+										textArea.InsertString(text);
+									textArea.Caret.Column = col;
+								} else {
+									// textArea.EnableCutOrPaste already checked readonly for this case
+									textArea.InsertString(text);
+								}
+							} finally {
+								textArea.Document.UndoStack.EndUndoGroup();
 							}
 						}
 					}

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2731 $</version>
 // </file>
 
 using System;
@@ -26,7 +26,8 @@ namespace ICSharpCode.SharpDevelop.Gui
 		
 		public bool IsVisible {
 			get {
-				return Control.Visible && Control.Width > 0;
+				Control ctl = this.Control;
+				return ctl.Visible && ctl.Width > 0 && ctl.Height > 0;
 			}
 		}
 	}

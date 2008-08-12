@@ -18,17 +18,11 @@ namespace ICSharpCode.SharpDevelop.Dom.VBNet
 			get { return ICSharpCode.NRefactory.Ast.TypeReference.PrimitiveTypesVBReverse; }
 		}
 		
-		static VBNetAmbience instance = new VBNetAmbience();
-		
-		public static VBNetAmbience Instance {
-			get { return instance; }
-		}
-		
-		string GetModifier(IDecoration decoration)
+		string GetModifier(IEntity decoration)
 		{
 			StringBuilder builder = new StringBuilder();
 			
-			if (IncludeHTMLMarkup) {
+			if (IncludeHtmlMarkup) {
 				builder.Append("<i>");
 			}
 			
@@ -39,22 +33,24 @@ namespace ICSharpCode.SharpDevelop.Dom.VBNet
 				builder.Append("MustOverride ");
 			} else if (decoration.IsSealed) {
 				builder.Append("NotOverridable ");
-			} else if (decoration.IsVirtual) {
+			}
+			if (decoration.IsVirtual) {
 				builder.Append("Overridable ");
 			} else if (decoration.IsOverride) {
 				builder.Append("Overrides ");
-			} else if (decoration.IsNew) {
+			}
+			if (decoration.IsNew) {
 				builder.Append("Shadows ");
 			}
 			
-			if (IncludeHTMLMarkup) {
+			if (IncludeHtmlMarkup) {
 				builder.Append("</i>");
 			}
 			
 			return builder.ToString();
 		}
 		
-		public override string Convert(ModifierEnum modifier)
+		string ConvertAccessibility(ModifierEnum modifier)
 		{
 			StringBuilder builder = new StringBuilder();
 			if (ShowAccessibility) {
@@ -76,11 +72,13 @@ namespace ICSharpCode.SharpDevelop.Dom.VBNet
 		
 		public override string Convert(IClass c)
 		{
+			CheckThread();
+			
 			StringBuilder builder = new StringBuilder();
 			
-			builder.Append(Convert(c.Modifiers));
+			builder.Append(ConvertAccessibility(c.Modifiers));
 			
-			if (IncludeHTMLMarkup) {
+			if (IncludeHtmlMarkup) {
 				builder.Append("<i>");
 			}
 			
@@ -94,11 +92,11 @@ namespace ICSharpCode.SharpDevelop.Dom.VBNet
 				}
 			}
 			
-			if (IncludeHTMLMarkup) {
+			if (IncludeHtmlMarkup) {
 				builder.Append("</i>");
 			}
 			
-			if (ShowModifiers) {
+			if (ShowDefinitionKeyWord) {
 				switch (c.ClassType) {
 					case ClassType.Delegate:
 						builder.Append("Delegate ");
@@ -135,7 +133,7 @@ namespace ICSharpCode.SharpDevelop.Dom.VBNet
 				builder.Append(' ');
 			}
 			
-			if (IncludeHTMLMarkup) {
+			if (IncludeHtmlMarkup) {
 				builder.Append("<b>");
 			}
 			
@@ -145,11 +143,11 @@ namespace ICSharpCode.SharpDevelop.Dom.VBNet
 				builder.Append(c.Name);
 			}
 			
-			if (IncludeHTMLMarkup) {
+			if (IncludeHtmlMarkup) {
 				builder.Append("</b>");
 			}
 			
-			if (c.TypeParameters.Count > 0) {
+			if (ShowTypeParameterList && c.TypeParameters.Count > 0) {
 				builder.Append("(Of ");
 				for (int i = 0; i < c.TypeParameters.Count; ++i) {
 					if (i > 0) builder.Append(", ");
@@ -158,25 +156,26 @@ namespace ICSharpCode.SharpDevelop.Dom.VBNet
 				builder.Append(')');
 			}
 			
-			if (ShowReturnType && c.ClassType == ClassType.Delegate) {
+			if (ShowParameterList && c.ClassType == ClassType.Delegate) {
 				builder.Append("(");
-				if (IncludeHTMLMarkup) builder.Append("<br>");
+				if (IncludeHtmlMarkup) builder.Append("<br>");
 				
 				foreach (IMethod m in c.Methods) {
 					if (m.Name != "Invoke") continue;
 					
 					for (int i = 0; i < m.Parameters.Count; ++i) {
-						if (IncludeHTMLMarkup) builder.Append("&nbsp;&nbsp;&nbsp;");
+						if (IncludeHtmlMarkup) builder.Append("&nbsp;&nbsp;&nbsp;");
 						
 						builder.Append(Convert(m.Parameters[i]));
 						if (i + 1 < m.Parameters.Count) builder.Append(", ");
 
-						if (IncludeHTMLMarkup) builder.Append("<br>");
+						if (IncludeHtmlMarkup) builder.Append("<br>");
 					}
 				}
 
 				builder.Append(")");
-				
+			}
+			if (ShowReturnType && c.ClassType == ClassType.Delegate) {
 				foreach (IMethod m in c.Methods) {
 					if (m.Name != "Invoke") continue;
 					
@@ -188,8 +187,7 @@ namespace ICSharpCode.SharpDevelop.Dom.VBNet
 						}
 					}
 				}
-
-			} else if (ShowInheritanceList) {
+			} else if (ShowInheritanceList && c.ClassType != ClassType.Delegate) {
 				if (c.BaseTypes.Count > 0) {
 					builder.Append(" Inherits ");
 					for (int i = 0; i < c.BaseTypes.Count; ++i) {
@@ -206,6 +204,9 @@ namespace ICSharpCode.SharpDevelop.Dom.VBNet
 		
 		public override string ConvertEnd(IClass c)
 		{
+			if (c == null)
+				throw new ArgumentNullException("c");
+			
 			StringBuilder builder = new StringBuilder();
 			
 			builder.Append("End ");
@@ -236,11 +237,16 @@ namespace ICSharpCode.SharpDevelop.Dom.VBNet
 		
 		public override string Convert(IField field)
 		{
+			CheckThread();
+			
+			if (field == null)
+				throw new ArgumentNullException("field");
+			
 			StringBuilder builder = new StringBuilder();
 			
-			builder.Append(Convert(field.Modifiers));
+			builder.Append(ConvertAccessibility(field.Modifiers));
 			
-			if (IncludeHTMLMarkup) {
+			if (IncludeHtmlMarkup) {
 				builder.Append("<i>");
 			}
 			
@@ -252,7 +258,7 @@ namespace ICSharpCode.SharpDevelop.Dom.VBNet
 				}
 			}
 			
-			if (IncludeHTMLMarkup) {
+			if (IncludeHtmlMarkup) {
 				builder.Append("</i>");
 				builder.Append("<b>");
 			}
@@ -263,7 +269,7 @@ namespace ICSharpCode.SharpDevelop.Dom.VBNet
 				builder.Append(field.Name);
 			}
 			
-			if (IncludeHTMLMarkup) {
+			if (IncludeHtmlMarkup) {
 				builder.Append("</b>");
 			}
 			
@@ -277,27 +283,32 @@ namespace ICSharpCode.SharpDevelop.Dom.VBNet
 		
 		public override string Convert(IProperty property)
 		{
+			CheckThread();
+			
 			StringBuilder builder = new StringBuilder();
 			
-			builder.Append(Convert(property.Modifiers));
+			builder.Append(ConvertAccessibility(property.Modifiers));
 			
 			if (ShowModifiers) {
 				builder.Append(GetModifier(property));
+				
+				if (property.IsIndexer) {
+					builder.Append("Default ");
+				}
+				
+				if (property.CanGet && !property.CanSet) {
+					builder.Append("ReadOnly ");
+				}
+				if (property.CanSet && !property.CanGet) {
+					builder.Append("WriteOnly ");
+				}
 			}
 			
-			if (property.IsIndexer) {
-				builder.Append("Default ");
+			if (ShowDefinitionKeyWord) {
+				builder.Append("Property ");
 			}
 			
-			if (property.CanGet && !property.CanSet) {
-				builder.Append("ReadOnly ");
-			}
-			
-			if (property.CanSet && !property.CanGet) {
-				builder.Append("WriteOnly ");
-			}
-			
-			if (IncludeHTMLMarkup) {
+			if (IncludeHtmlMarkup) {
 				builder.Append("<b>");
 			}
 			
@@ -307,21 +318,21 @@ namespace ICSharpCode.SharpDevelop.Dom.VBNet
 				builder.Append(property.Name);
 			}
 			
-			if (IncludeHTMLMarkup) {
+			if (IncludeHtmlMarkup) {
 				builder.Append("</b>");
 			}
 			
-			if (property.Parameters.Count > 0) {
+			if (ShowParameterList && property.Parameters.Count > 0) {
 				builder.Append("(");
-				if (IncludeHTMLMarkup) builder.Append("<br>");
+				if (IncludeHtmlMarkup) builder.Append("<br>");
 				
 				for (int i = 0; i < property.Parameters.Count; ++i) {
-					if (IncludeHTMLMarkup) builder.Append("&nbsp;&nbsp;&nbsp;");
+					if (IncludeHtmlMarkup) builder.Append("&nbsp;&nbsp;&nbsp;");
 					builder.Append(Convert(property.Parameters[i]));
 					if (i + 1 < property.Parameters.Count) {
 						builder.Append(", ");
 					}
-					if (IncludeHTMLMarkup) builder.Append("<br>");
+					if (IncludeHtmlMarkup) builder.Append("<br>");
 				}
 				
 				builder.Append(')');
@@ -337,17 +348,24 @@ namespace ICSharpCode.SharpDevelop.Dom.VBNet
 		
 		public override string Convert(IEvent e)
 		{
+			CheckThread();
+			
+			if (e == null)
+				throw new ArgumentNullException("e");
+			
 			StringBuilder builder = new StringBuilder();
 			
-			builder.Append(Convert(e.Modifiers));
+			builder.Append(ConvertAccessibility(e.Modifiers));
 			
 			if (ShowModifiers) {
 				builder.Append(GetModifier(e));
 			}
 			
-			builder.Append("Event ");
+			if (ShowDefinitionKeyWord) {
+				builder.Append("Event ");
+			}
 			
-			if (IncludeHTMLMarkup) {
+			if (IncludeHtmlMarkup) {
 				builder.Append("<b>");
 			}
 			
@@ -357,7 +375,7 @@ namespace ICSharpCode.SharpDevelop.Dom.VBNet
 				builder.Append(e.Name);
 			}
 			
-			if (IncludeHTMLMarkup) {
+			if (IncludeHtmlMarkup) {
 				builder.Append("</b>");
 			}
 			
@@ -371,13 +389,19 @@ namespace ICSharpCode.SharpDevelop.Dom.VBNet
 		
 		public override string Convert(IMethod m)
 		{
+			CheckThread();
+			
 			StringBuilder builder = new StringBuilder();
-			builder.Append(Convert(m.Modifiers));
+			if (ShowModifiers && m.IsExtensionMethod) {
+				builder.Append("<Extension> ");
+			}
+			
+			builder.Append(ConvertAccessibility(m.Modifiers)); // show visibility
 			
 			if (ShowModifiers) {
 				builder.Append(GetModifier(m));
 			}
-			if (ShowReturnType) {
+			if (ShowDefinitionKeyWord) {
 				if (m.ReturnType == null || m.ReturnType.FullyQualifiedName == "System.Void") {
 					builder.Append("Sub ");
 				} else {
@@ -386,21 +410,21 @@ namespace ICSharpCode.SharpDevelop.Dom.VBNet
 			}
 
 			string dispName = UseFullyQualifiedMemberNames ? m.FullyQualifiedName : m.Name;
-			if (m.Name == "#ctor" || m.Name == "#cctor" || m.IsConstructor) {
+			if (m.IsConstructor) {
 				dispName = "New";
 			}
 			
-			if (IncludeHTMLMarkup) {
+			if (IncludeHtmlMarkup) {
 				builder.Append("<b>");
 			}
 			
 			builder.Append(dispName);
 			
-			if (IncludeHTMLMarkup) {
+			if (IncludeHtmlMarkup) {
 				builder.Append("</b>");
 			}
 			
-			if (m.TypeParameters.Count > 0) {
+			if (ShowTypeParameterList && m.TypeParameters.Count > 0) {
 				builder.Append("(Of ");
 				for (int i = 0; i < m.TypeParameters.Count; ++i) {
 					if (i > 0) builder.Append(", ");
@@ -409,19 +433,21 @@ namespace ICSharpCode.SharpDevelop.Dom.VBNet
 				builder.Append(')');
 			}
 			
-			builder.Append("(");
-			if (IncludeHTMLMarkup) builder.Append("<br>");
+			if (ShowParameterList) {
+				builder.Append("(");
+				if (IncludeHtmlMarkup) builder.Append("<br>");
 
-			for (int i = 0; i < m.Parameters.Count; ++i) {
-				if (IncludeHTMLMarkup) builder.Append("&nbsp;&nbsp;&nbsp;");
-				builder.Append(Convert(m.Parameters[i]));
-				if (i + 1 < m.Parameters.Count) {
-					builder.Append(", ");
+				for (int i = 0; i < m.Parameters.Count; ++i) {
+					if (IncludeHtmlMarkup) builder.Append("&nbsp;&nbsp;&nbsp;");
+					builder.Append(Convert(m.Parameters[i]));
+					if (i + 1 < m.Parameters.Count) {
+						builder.Append(", ");
+					}
+					if (IncludeHtmlMarkup) builder.Append("<br>");
 				}
-				if (IncludeHTMLMarkup) builder.Append("<br>");
+				
+				builder.Append(')');
 			}
-			
-			builder.Append(')');
 			
 			if (ShowReturnType && m.ReturnType != null && m.ReturnType.FullyQualifiedName != "System.Void") {
 				builder.Append(" As ");
@@ -433,6 +459,9 @@ namespace ICSharpCode.SharpDevelop.Dom.VBNet
 		
 		public override string ConvertEnd(IMethod m)
 		{
+			if (m == null)
+				throw new ArgumentNullException("m");
+			
 			if (m.ReturnType == null || m.ReturnType.FullyQualifiedName == "System.Void") {
 				return "End Sub";
 			} else {
@@ -442,6 +471,8 @@ namespace ICSharpCode.SharpDevelop.Dom.VBNet
 		
 		public override string Convert(IReturnType returnType)
 		{
+			CheckThread();
+			
 			if (returnType == null) {
 				return String.Empty;
 			}
@@ -452,7 +483,7 @@ namespace ICSharpCode.SharpDevelop.Dom.VBNet
 			if (fullName != null && TypeConversionTable.TryGetValue(fullName, out shortName)) {
 				builder.Append(shortName);
 			} else {
-				if (UseFullyQualifiedNames) {
+				if (UseFullyQualifiedTypeNames) {
 					builder.Append(fullName);
 				} else {
 					builder.Append(returnType.Name);
@@ -488,25 +519,29 @@ namespace ICSharpCode.SharpDevelop.Dom.VBNet
 		
 		public override string Convert(IParameter param)
 		{
+			CheckThread();
+			
+			if (param == null)
+				throw new ArgumentNullException("param");
+			
 			StringBuilder builder = new StringBuilder();
+			if (IncludeHtmlMarkup) {
+				builder.Append("<i>");
+			}
+			
+			if (param.IsOptional) {
+				builder.Append("Optional ");
+			}
+			if (param.IsRef || param.IsOut) {
+				builder.Append("ByRef ");
+			} else if (param.IsParams) {
+				builder.Append("ParamArray ");
+			}
+			if (IncludeHtmlMarkup) {
+				builder.Append("</i>");
+			}
+			
 			if (ShowParameterNames) {
-				if (IncludeHTMLMarkup) {
-					builder.Append("<i>");
-				}
-				
-				if (param.IsOptional) {
-					builder.Append("Optional ");
-				}
-				if (param.IsRef || param.IsOut) {
-					builder.Append("ByRef ");
-				} else if (param.IsParams) {
-					builder.Append("ParamArray ");
-				}
-				if (IncludeHTMLMarkup) {
-					builder.Append("</i>");
-				}
-				
-				
 				builder.Append(param.Name);
 				builder.Append(" As ");
 			}

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 3078 $</version>
 // </file>
 
 using System;
@@ -29,6 +29,7 @@ namespace ICSharpCode.TextEditor
 		
 		PrintDocument   printDocument = null;
 		
+		[Browsable(false)]
 		public PrintDocument PrintDocument {
 			get {
 				if (printDocument == null) {
@@ -128,11 +129,14 @@ namespace ICSharpCode.TextEditor
 			}
 		}
 		
+		[Browsable(false)]
 		public bool EnableUndo {
 			get {
 				return Document.UndoStack.CanUndo;
 			}
 		}
+		
+		[Browsable(false)]
 		public bool EnableRedo {
 			get {
 				return Document.UndoStack.CanRedo;
@@ -148,7 +152,6 @@ namespace ICSharpCode.TextEditor
 				BeginUpdate();
 				Document.UndoStack.Undo();
 				
-				Document.UpdateQueue.Clear();
 				Document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.WholeTextArea));
 				this.primaryTextArea.TextArea.UpdateMatchingBracket();
 				if (secondaryTextArea != null) {
@@ -167,7 +170,6 @@ namespace ICSharpCode.TextEditor
 				BeginUpdate();
 				Document.UndoStack.Redo();
 				
-				Document.UpdateQueue.Clear();
 				Document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.WholeTextArea));
 				this.primaryTextArea.TextArea.UpdateMatchingBracket();
 				if (secondaryTextArea != null) {
@@ -214,11 +216,14 @@ namespace ICSharpCode.TextEditor
 		{
 			base.EndUpdate();
 			Document.CommitUpdate();
+			if (!IsInUpdate) {
+				ActiveTextAreaControl.Caret.OnEndUpdate();
+			}
 		}
 		
 		void CommitUpdateRequested(object sender, EventArgs e)
 		{
-			if (IsUpdating) {
+			if (IsInUpdate) {
 				return;
 			}
 			foreach (TextAreaUpdate update in Document.UpdateQueue) {
@@ -257,10 +262,10 @@ namespace ICSharpCode.TextEditor
 				}
 			}
 			Document.UpdateQueue.Clear();
-			this.primaryTextArea.TextArea.Update();
-			if (this.secondaryTextArea != null) {
-				this.secondaryTextArea.TextArea.Update();
-			}
+//			this.primaryTextArea.TextArea.Update();
+//			if (this.secondaryTextArea != null) {
+//				this.secondaryTextArea.TextArea.Update();
+//			}
 		}
 		#endregion
 		

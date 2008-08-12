@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2146 $</version>
+//     <version>$Revision: 2679 $</version>
 // </file>
 
 using System;
@@ -10,7 +10,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
+using System.Runtime.Serialization;
 
+using ICSharpCode.SharpDevelop.Gui;
 using ICSharpCode.Core;
 using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.Ast;
@@ -42,7 +44,7 @@ namespace ICSharpCode.SharpDevelop.Project.Converter
 			if (descriptor == null || descriptor.Binding == null)
 				throw new InvalidOperationException("Cannot get Language Binding for " + TargetLanguageName);
 			
-			info.OutputProjectFileName = Path.GetFullPath(Path.Combine(targetProjectDirectory, info.ProjectName + descriptor.ProjectFileExtension));
+			info.OutputProjectFileName = FileUtility.NormalizePath(Path.Combine(targetProjectDirectory, info.ProjectName + descriptor.ProjectFileExtension));
 			
 			return descriptor.Binding.CreateProject(info);
 		}
@@ -51,6 +53,17 @@ namespace ICSharpCode.SharpDevelop.Project.Converter
 		{
 			if (!File.Exists(targetItem.FileName)) {
 				File.Copy(sourceItem.FileName, targetItem.FileName);
+			}
+		}
+		
+		protected virtual int GetRequiredWork(ProjectItem item)
+		{
+			if (item.ItemType == ItemType.Compile) {
+				return 50;
+			} else if (ItemType.DefaultFileItems.Contains(item.ItemType)) {
+				return 4;
+			} else {
+				return 1;
 			}
 		}
 		
@@ -109,7 +122,7 @@ namespace ICSharpCode.SharpDevelop.Project.Converter
 			}
 		}
 		
-		protected virtual void CopyItems(IProject sourceProject, IProject targetProject)
+		protected virtual void CopyItems(IProject sourceProject, IProject targetProject, IProgressMonitor monitor)
 		{
 			if (sourceProject == null)
 				throw new ArgumentNullException("sourceProject");
@@ -118,7 +131,16 @@ namespace ICSharpCode.SharpDevelop.Project.Converter
 			IProjectItemListProvider targetProjectItems = targetProject as IProjectItemListProvider;
 			if (targetProjectItems == null)
 				throw new ArgumentNullException("targetProjectItems");
-			foreach (ProjectItem item in sourceProject.Items) {
+			
+			ICollection<ProjectItem> sourceItems = sourceProject.Items;
+			int totalWork = 0;
+			foreach (ProjectItem item in sourceItems) {
+				totalWork += GetRequiredWork(item);
+			}
+			
+			monitor.BeginTask("Converting", totalWork, true);
+			int workDone = 0;
+			foreach (ProjectItem item in sourceItems) {
 				FileProjectItem fileItem = item as FileProjectItem;
 				if (fileItem != null && FileUtility.IsBaseDirectory(sourceProject.Directory, fileItem.FileName)) {
 					FileProjectItem targetItem = new FileProjectItem(targetProject, fileItem.ItemType);
@@ -128,13 +150,23 @@ namespace ICSharpCode.SharpDevelop.Project.Converter
 						if (!Directory.Exists(Path.GetDirectoryName(targetItem.FileName))) {
 							Directory.CreateDirectory(Path.GetDirectoryName(targetItem.FileName));
 						}
-						ConvertFile(fileItem, targetItem);
+						try {
+							ConvertFile(fileItem, targetItem);
+						} catch (Exception ex) {
+							throw new ConversionException("Error converting " + fileItem.FileName, ex);
+						}
 					}
 					targetProjectItems.AddProjectItem(targetItem);
 				} else {
 					targetProjectItems.AddProjectItem(item.CloneFor(targetProject));
 				}
+				if (monitor.IsCancelled) {
+					return;
+				}
+				workDone += GetRequiredWork(item);
+				monitor.WorkDone = workDone;
 			}
+			monitor.Done();
 		}
 		
 		protected StringBuilder conversionLog;
@@ -158,16 +190,23 @@ namespace ICSharpCode.SharpDevelop.Project.Converter
 			conversionLog.Append(ResourceService.GetString("ICSharpCode.SharpDevelop.Commands.Convert.TargetDirectory")).Append(": ");
 			conversionLog.AppendLine(targetProjectDirectory);
 			
-			Directory.CreateDirectory(targetProjectDirectory);
-			IProject targetProject = CreateProject(targetProjectDirectory, sourceProject);
-			CopyProperties(sourceProject, targetProject);
-			conversionLog.AppendLine();
-			CopyItems(sourceProject, targetProject);
-			conversionLog.AppendLine();
-			AfterConversion(targetProject);
-			conversionLog.AppendLine(ResourceService.GetString("ICSharpCode.SharpDevelop.Commands.Convert.ConversionComplete"));
-			targetProject.Save();
-			targetProject.Dispose();
+			IProject targetProject;
+			using (AsynchronousWaitDialog monitor = AsynchronousWaitDialog.ShowWaitDialog(translatedTitle)) {
+				Directory.CreateDirectory(targetProjectDirectory);
+				targetProject = CreateProject(targetProjectDirectory, sourceProject);
+				CopyProperties(sourceProject, targetProject);
+				conversionLog.AppendLine();
+				CopyItems(sourceProject, targetProject, monitor);
+				if (monitor.IsCancelled) {
+					return;
+				}
+				conversionLog.AppendLine();
+				AfterConversion(targetProject);
+				conversionLog.AppendLine(ResourceService.GetString("ICSharpCode.SharpDevelop.Commands.Convert.ConversionComplete"));
+				targetProject.Save();
+				targetProject.Dispose();
+			}
+			
 			TreeNode node = ProjectBrowserPad.Instance.SelectedNode;
 			if (node == null) {
 				node = ProjectBrowserPad.Instance.SolutionNode;
@@ -180,17 +219,18 @@ namespace ICSharpCode.SharpDevelop.Project.Converter
 				}
 				node = node.Parent;
 			}
-			ICSharpCode.SharpDevelop.Gui.IWorkbenchWindow newFileWindow;
-			newFileWindow = FileService.NewFile(ResourceService.GetString("ICSharpCode.SharpDevelop.Commands.Convert.ConversionResults"), "Text", conversionLog.ToString());
+			IViewContent newFileWindow;
+			newFileWindow = FileService.NewFile(ResourceService.GetString("ICSharpCode.SharpDevelop.Commands.Convert.ConversionResults"), conversionLog.ToString());
 			if (newFileWindow != null) {
-				newFileWindow.ViewContent.IsDirty = false;
+				newFileWindow.PrimaryFile.IsDirty = false;
 			}
 		}
 	}
 
 	public abstract class NRefactoryLanguageConverter : LanguageConverter
 	{
-		protected abstract void ConvertAst(CompilationUnit compilationUnit, List<ISpecial> specials);
+		protected abstract void ConvertAst(CompilationUnit compilationUnit, List<ISpecial> specials,
+		                                   FileProjectItem sourceItem);
 		
 		protected void ConvertFile(FileProjectItem sourceItem, FileProjectItem targetItem,
 		                           string sourceExtension, string targetExtension,
@@ -214,7 +254,7 @@ namespace ICSharpCode.SharpDevelop.Project.Converter
 				
 				List<ISpecial> specials = p.Lexer.SpecialTracker.CurrentSpecials;
 				
-				ConvertAst(p.CompilationUnit, specials);
+				ConvertAst(p.CompilationUnit, specials, sourceItem);
 				
 				using (SpecialNodesInserter.Install(specials, outputVisitor)) {
 					outputVisitor.VisitCompilationUnit(p.CompilationUnit, null);
@@ -237,6 +277,40 @@ namespace ICSharpCode.SharpDevelop.Project.Converter
 			} else {
 				base.ConvertFile(sourceItem, targetItem);
 			}
+		}
+		
+		protected override void CopyProperties(IProject sourceProject, IProject targetProject)
+		{
+			base.CopyProperties(sourceProject, targetProject);
+			
+			// WarningsAsErrors/NoWarn refers to warning numbers that are completely different for
+			// the two compilers.
+			MSBuildBasedProject p = (MSBuildBasedProject)targetProject;
+			p.SetProperty("WarningsAsErrors", null);
+			p.SetProperty("NoWarn", null);
+		}
+	}
+	
+	/// <summary>
+	/// Exception used when converting a file fails.
+	/// </summary>
+	[Serializable]
+	public class ConversionException : Exception
+	{
+		public ConversionException() : base()
+		{
+		}
+		
+		public ConversionException(string message) : base(message)
+		{
+		}
+		
+		public ConversionException(string message, Exception innerException) : base(message, innerException)
+		{
+		}
+		
+		protected ConversionException(SerializationInfo info, StreamingContext context) : base(info, context)
+		{
 		}
 	}
 }

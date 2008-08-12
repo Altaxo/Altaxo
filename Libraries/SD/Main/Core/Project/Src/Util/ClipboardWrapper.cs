@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2432 $</version>
+//     <version>$Revision: 2651 $</version>
 // </file>
 
 using System;
@@ -19,7 +19,6 @@ namespace ICSharpCode.Core
 		public static bool ContainsText {
 			get {
 				try {
-					LoggingService.Debug("ContainsText called");
 					return Clipboard.ContainsText();
 				} catch (ExternalException) {
 					return false;

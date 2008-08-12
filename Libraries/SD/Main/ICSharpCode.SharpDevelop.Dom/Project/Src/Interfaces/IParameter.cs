@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 2929 $</version>
 // </file>
 
 using System;
@@ -11,7 +11,7 @@ using System.Collections.Generic;
 namespace ICSharpCode.SharpDevelop.Dom
 {
 
-	public interface IParameter: IComparable
+	public interface IParameter : IFreezable, IComparable
 	{
 		string Name {
 			get;

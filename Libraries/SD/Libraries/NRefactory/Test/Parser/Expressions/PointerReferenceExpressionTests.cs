@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1609 $</version>
+//     <version>$Revision: 2676 $</version>
 // </file>
 
 using System;
@@ -21,7 +21,7 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 		public void CSharpPointerReferenceExpressionTest()
 		{
 			PointerReferenceExpression pre = ParseUtilCSharp.ParseExpression<PointerReferenceExpression>("myObj.field->b");
-			Assert.IsTrue(pre.TargetObject is FieldReferenceExpression);
+			Assert.IsTrue(pre.TargetObject is MemberReferenceExpression);
 			Assert.AreEqual("b", pre.Identifier);
 		}
 		#endregion

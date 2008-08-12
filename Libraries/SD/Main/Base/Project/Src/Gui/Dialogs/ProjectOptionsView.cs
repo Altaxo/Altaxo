@@ -2,12 +2,13 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2043 $</version>
+//     <version>$Revision: 2487 $</version>
 // </file>
 
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using System.IO;
 
 using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.Gui;
@@ -17,7 +18,7 @@ namespace ICSharpCode.SharpDevelop.Project.Dialogs
 	/// <summary>
 	/// Description of ProjectOptionsControl.
 	/// </summary>
-	public class ProjectOptionsView : AbstractViewContent
+	public class ProjectOptionsView : AbstractViewContentWithoutFile
 	{
 		List<IDialogPanelDescriptor> descriptors = new List<IDialogPanelDescriptor>();
 		TabControl tabControl = new TabControl();
@@ -29,23 +30,6 @@ namespace ICSharpCode.SharpDevelop.Project.Dialogs
 			}
 		}
 		
-		public override string TitleName {
-			get {
-				return project.Name;
-			}
-		}
-		
-		public override string FileName {
-			get {
-				return project.FileName;
-			}
-			set {
-				// possible when project is renamed by the user, project.FileName will be changed by the
-				// renaming code
-				OnTitleNameChanged(EventArgs.Empty);
-			}
-		}
-		
 		public override Control Control {
 			get {
 				return tabControl;
@@ -54,7 +38,8 @@ namespace ICSharpCode.SharpDevelop.Project.Dialogs
 		
 		public ProjectOptionsView(AddInTreeNode node, IProject project)
 		{
-			this.project    = project;
+			this.project = project;
+			this.TitleName = project.Name;
 			
 //			tabControl.Alignment = TabAlignment.Left;
 			
@@ -83,17 +68,14 @@ namespace ICSharpCode.SharpDevelop.Project.Dialogs
 		
 		void AddOptionPanels(IEnumerable<IDialogPanelDescriptor> dialogPanelDescriptors)
 		{
-			Properties newProperties = new Properties();
-			newProperties.Set("Project", project);
-			
 			foreach (IDialogPanelDescriptor descriptor in dialogPanelDescriptors) {
 				descriptors.Add(descriptor);
 				if (descriptor != null && descriptor.DialogPanel != null && descriptor.DialogPanel.Control != null) { // may be null, if it is only a "path"
-					descriptor.DialogPanel.CustomizationObject = newProperties;
+					descriptor.DialogPanel.CustomizationObject = project;
 					descriptor.DialogPanel.ReceiveDialogMessage(DialogMessage.Activated);
 					ICanBeDirty dirtyable = descriptor.DialogPanel as ICanBeDirty;
 					if (dirtyable != null) {
-						dirtyable.DirtyChanged += PanelDirtyChanged;
+						dirtyable.IsDirtyChanged += PanelDirtyChanged;
 					}
 					
 					TabPage page = new TabPage(descriptor.Label);
@@ -121,15 +103,31 @@ namespace ICSharpCode.SharpDevelop.Project.Dialogs
 					}
 				}
 			}
-			this.IsDirty = dirty;
+			this.MyIsDirty = dirty;
 		}
 		
-		public override void Load(string fileName)
+		bool myIsDirty;
+		
+		bool MyIsDirty {
+			get { return myIsDirty; }
+			set {
+				if (myIsDirty != value) {
+					myIsDirty = value;
+					RaiseIsDirtyChanged();
+				}
+			}
+		}
+		
+		public override bool IsDirty {
+			get { return myIsDirty; }
+		}
+		
+		public override void Load()
 		{
 			// TODO: reload project file
 		}
 		
-		public override void Save(string fileName)
+		public override void Save()
 		{
 			try {
 				foreach (IDialogPanelDescriptor pane in descriptors) {

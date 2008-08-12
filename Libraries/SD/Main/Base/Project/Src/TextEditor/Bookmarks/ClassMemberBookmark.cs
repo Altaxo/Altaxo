@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2296 $</version>
+//     <version>$Revision: 3039 $</version>
 // </file>
 
 using System;
@@ -32,9 +32,20 @@ namespace ICSharpCode.SharpDevelop.Bookmarks
 		}
 		
 		public ClassMemberBookmark(IDocument document, IMember member)
-			: base(document, member.Region.BeginLine - 1)
+			: base(document, GetLineNumberFromMember(document, member))
 		{
 			this.member = member;
+		}
+		
+		static int GetLineNumberFromMember(IDocument document, IMember member)
+		{
+			int line = member.Region.BeginLine - 1;
+			if (line < 0)
+				return 0;
+			else if (document != null && line >= document.TotalNumberOfLines)
+				return document.TotalNumberOfLines - 1;
+			else
+				return line;
 		}
 		
 		public const string ContextMenuPath = "/SharpDevelop/ViewContent/DefaultTextEditor/ClassMemberContextMenu";
@@ -73,9 +84,20 @@ namespace ICSharpCode.SharpDevelop.Bookmarks
 		}
 		
 		public ClassBookmark(IDocument document, IClass @class)
-			: base(document, Math.Max(@class.Region.BeginLine - 1, 0))
+			: base(document, GetLineNumberFromClass(document, @class))
 		{
 			this.@class = @class;
+		}
+		
+		static int GetLineNumberFromClass(IDocument document, IClass @class)
+		{
+			int line = @class.Region.BeginLine - 1;
+			if (line < 0)
+				return 0;
+			else if (document != null && line >= document.TotalNumberOfLines)
+				return document.TotalNumberOfLines - 1;
+			else
+				return line;
 		}
 		
 		public const string ContextMenuPath = "/SharpDevelop/ViewContent/DefaultTextEditor/ClassBookmarkContextMenu";

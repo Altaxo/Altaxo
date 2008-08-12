@@ -1,7 +1,5 @@
 <?xml version="1.0"?>
-<Template originator   = "Mike Krueger"
-          created      = "02/01/2003"
-          lastModified = "12/01/2006">
+<Template originator = "Mike Krueger" created = "02/01/2003">
 	
 	<!-- Template Header -->
 	<TemplateConfiguration>
@@ -9,6 +7,7 @@
 		<Category>C#</Category>
 		<Icon>C#.Project.Library</Icon>
 		<Description>${res:Templates.Project.ClassLibrary.Description}</Description>
+		<SupportedTargetFrameworks>v2.0;CF 2.0</SupportedTargetFrameworks>
 	</TemplateConfiguration>
 	
 	<!-- Actions -->
@@ -18,15 +17,20 @@
 	
 	<!-- Template Content -->
 	<Project language="C#">
+		<CreateActions>
+			<RunCommand path = "/SharpDevelop/BackendBindings/TemplateCommands/AddDotNet35ReferencesIfTargetFrameworkIs35"/>
+		</CreateActions>
+		
 		<PropertyGroup>
 			<OutputType>Library</OutputType>
+			<AppDesignerFolder>Properties</AppDesignerFolder>
 		</PropertyGroup>
 		
 		<ProjectItems>
 			<Reference Include="System" />
 			<Reference Include="System.Xml" />
 		</ProjectItems>
-
+		
 		<Files>
 			<File name="MyClass.cs"><![CDATA[${StandardHeader.C#}
 using System;
@@ -42,7 +46,7 @@ namespace ${StandardNamespace}
 		
 	}
 }]]></File>
-		<File name="AssemblyInfo.cs" src="DefaultAssemblyInfo.cs"/>
+			<File name="Properties\AssemblyInfo.cs" src="DefaultAssemblyInfo.cs"/>
 		</Files>
 	</Project>
 </Template>
