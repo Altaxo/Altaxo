@@ -154,7 +154,8 @@
     <Content Include="data\resources\mathml\font-configuration-2-cm-stretchy.xml" />
     <Content Include="data\resources\mathml\font-configuration-3-times-new-roman.xml" />
     <Content Include="data\schemas\manifest.xsd">
-      <SubType>Designer</SubType>
+      <SubType>
+      </SubType>
     </Content>
     <Content Include="data\templates\file\CSharp\FileCategorySortOrder.xml" />
     <Content Include="data\templates\file\VBNet\FileCategorySortOrder.xml" />
@@ -194,7 +195,8 @@
     <Content Include="data\templates\file\VBNet\VBNet.Gtk.Window.xft" />
     <Content Include="data\templates\project\VBNet\GtkProject.xpt" />
     <Content Include="data\schemas\wixloc.xsd">
-      <SubType>Designer</SubType>
+      <SubType>
+      </SubType>
     </Content>
     <Content Include="data\templates\file\CSharp\CSharp.Struct.xft" />
     <Content Include="data\templates\project\CSharp\CompactFormsProject.xpt" />
@@ -312,24 +314,30 @@
     <Content Include="data\resources\StringResources.se.resources" />
     <Content Include="data\resources\StringResources.tr.resources" />
     <Content Include="data\schemas\AddIn.xsd">
-      <SubType>Designer</SubType>
+      <SubType>
+      </SubType>
     </Content>
     <Content Include="data\schemas\appconfig.xsd">
-      <SubType>Designer</SubType>
+      <SubType>
+      </SubType>
     </Content>
     <Content Include="data\schemas\nant.xsd">
-      <SubType>Designer</SubType>
+      <SubType>
+      </SubType>
     </Content>
     <Content Include="data\schemas\readme.txt" />
     <Content Include="data\schemas\W3C-License.html" />
     <Content Include="data\schemas\wix.xsd">
-      <SubType>Designer</SubType>
+      <SubType>
+      </SubType>
     </Content>
     <Content Include="data\schemas\XMLSchema.xsd">
-      <SubType>Designer</SubType>
+      <SubType>
+      </SubType>
     </Content>
     <Content Include="data\schemas\xslt.xsd">
-      <SubType>Designer</SubType>
+      <SubType>
+      </SubType>
     </Content>
     <Content Include="data\templates\file\CSharp\CSharp.Empty.xft" />
     <Content Include="data\templates\file\CSharp\CSharp.EmptyClass.xft" />

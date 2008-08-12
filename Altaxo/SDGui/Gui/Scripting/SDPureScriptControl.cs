@@ -86,7 +86,6 @@ namespace Altaxo.Gui.Scripting
       this.ScriptName = scriptName;
       Altaxo.Main.Services.ParserServiceConnector.RegisterScriptFileName(scriptName);
       this.edFormula.Document.TextEditorProperties.TabIndent=2;
-      ((ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor.SharpDevelopTextAreaControl)this.edFormulaWrapper.TextEditorControl).InitializeFormatter();
       this.edFormulaWrapper.TextEditorControl.TextEditorProperties.MouseWheelScrollDown=true;
 
       try
@@ -100,12 +99,14 @@ namespace Altaxo.Gui.Scripting
         if (edFormula is ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor.SharpDevelopTextAreaControl)
         {
           ((ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor.SharpDevelopTextAreaControl)edFormula).InitializeAdvancedHighlighter();
-        }
+					((ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor.SharpDevelopTextAreaControl)edFormula).InitializeFormatter();
+				}
       }
       catch (HighlightingDefinitionInvalidException ex)
       {
         
       }
+
       this.ResumeLayout();
     }
 

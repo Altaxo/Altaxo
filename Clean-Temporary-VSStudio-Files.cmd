@@ -29,54 +29,57 @@ rmdir /S /Q .\Content\bin
 rmdir /S /Q .\Libraries\AssemblySvnVersion\obj
 rmdir /S /Q .\Libraries\AssemblySvnVersion\bin
 
-rmdir /S /Q .\Libraries\CSharpBinding\Project\obj
-rmdir /S /Q .\Libraries\CSharpBinding\Project\bin
-rmdir /S /Q .\Libraries\CSharpBinding\Test\obj
-rmdir /S /Q .\Libraries\CSharpBinding\Test\bin
-
-rmdir /S /Q .\Libraries\ICSharpCode.Core\Project\obj
-rmdir /S /Q .\Libraries\ICSharpCode.Core\Project\bin
-rmdir /S /Q .\Libraries\ICSharpCode.Core\Test\obj
-rmdir /S /Q .\Libraries\ICSharpCode.Core\Test\bin
-
-rmdir /S /Q .\Libraries\ICSharpCode.SharpDevelop.Dom\Project\obj
-rmdir /S /Q .\Libraries\ICSharpCode.SharpDevelop.Dom\Project\bin
-
-rmdir /S /Q .\Libraries\ICSharpCode.SharpDevelop.Sda\obj
-rmdir /S /Q .\Libraries\ICSharpCode.SharpDevelop.Sda\bin
-
-rmdir /S /Q .\Libraries\ICSharpCode.SharpDevelop.Widgets\Project\obj
-rmdir /S /Q .\Libraries\ICSharpCode.SharpDevelop.Widgets\Project\bin
-
-rmdir /S /Q .\Libraries\ICSharpCode.TextEditor\Project\obj
-rmdir /S /Q .\Libraries\ICSharpCode.TextEditor\project\bin
-rmdir /S /Q .\Libraries\ICSharpCode.TextEditor\Test\obj
-rmdir /S /Q .\Libraries\ICSharpCode.TextEditor\Test\bin
-
-rmdir /S /Q .\Libraries\log4net\src\obj
-rmdir /S /Q .\Libraries\log4net\src\bin
-rmdir /S /Q .\Libraries\log4net\bin
-rmdir /S /Q .\Libraries\log4net\build
-
-rmdir /S /Q .\Libraries\NRefactory\Project\obj
-rmdir /S /Q .\Libraries\NRefactory\Project\bin
-rmdir /S /Q .\Libraries\NRefactory\Test\obj
-rmdir /S /Q .\Libraries\NRefactory\Test\bin
-
 rmdir /S /Q .\Libraries\Numerator\obj
 rmdir /S /Q .\Libraries\Numerator\bin
 
-rmdir /S /Q .\Libraries\SharpDevelop.Base\Project\obj
-rmdir /S /Q .\Libraries\SharpDevelop.Base\Project\bin
-rmdir /S /Q .\Libraries\SharpDevelop.Base\Test\obj
-rmdir /S /Q .\Libraries\SharpDevelop.Base\Test\bin
+rmdir /S /Q .\Libraries\SD\AddIns\BackendBindings\CSharpBinding\Project\obj
+rmdir /S /Q .\Libraries\SD\AddIns\BackendBindings\CSharpBinding\Project\bin
+rmdir /S /Q .\Libraries\SD\AddIns\BackendBindings\CSharpBinding\Test\obj
+rmdir /S /Q .\Libraries\SD\AddIns\BackendBindings\CSharpBinding\Test\bin
 
+rmdir /S /Q .\Libraries\SD\Libraries\DockPanel_Src\WinFormsUI\obj
+rmdir /S /Q .\Libraries\SD\Libraries\DockPanel_Src\WinFormsUI\bin
+rmdir /S /Q .\Libraries\SD\Libraries\DockPanel_Src\DockSample\obj
+rmdir /S /Q .\Libraries\SD\Libraries\DockPanel_Src\DockSample\bin
+
+rmdir /S /Q .\Libraries\SD\Libraries\ICSharpCode.TextEditor\Project\obj
+rmdir /S /Q .\Libraries\SD\Libraries\ICSharpCode.TextEditor\project\bin
+rmdir /S /Q .\Libraries\SD\Libraries\ICSharpCode.TextEditor\Test\obj
+rmdir /S /Q .\Libraries\SD\Libraries\ICSharpCode.TextEditor\Test\bin
+
+rmdir /S /Q .\Libraries\SD\Libraries\NRefactory\Project\obj
+rmdir /S /Q .\Libraries\SD\Libraries\NRefactory\Project\bin
+rmdir /S /Q .\Libraries\SD\Libraries\NRefactory\Test\obj
+rmdir /S /Q .\Libraries\SD\Libraries\NRefactory\Test\bin
+
+rmdir /S /Q .\Libraries\SD\Main\Base\Project\obj
+rmdir /S /Q .\Libraries\SD\Main\Base\Project\bin
+rmdir /S /Q .\Libraries\SD\Main\Base\Test\obj
+rmdir /S /Q .\Libraries\SD\Main\Base\Test\bin
+
+rmdir /S /Q .\Libraries\SD\Main\Core\Project\obj
+rmdir /S /Q .\Libraries\SD\Main\Core\Project\bin
+rmdir /S /Q .\Libraries\SD\Main\Core\Test\obj
+rmdir /S /Q .\Libraries\SD\Main\Core\Test\bin
+
+rmdir /S /Q .\Libraries\SD\Main\ICSharpCode.SharpDevelop.BuildWorker\obj
+rmdir /S /Q .\Libraries\SD\Main\ICSharpCode.SharpDevelop.BuildWorker\bin
+
+rmdir /S /Q .\Libraries\SD\Main\ICSharpCode.SharpDevelop.Dom\Project\obj
+rmdir /S /Q .\Libraries\SD\Main\ICSharpCode.SharpDevelop.Dom\Project\bin
+
+rmdir /S /Q .\Libraries\SD\Main\ICSharpCode.SharpDevelop.Sda\obj
+rmdir /S /Q .\Libraries\SD\Main\ICSharpCode.SharpDevelop.Sda\bin
+
+rmdir /S /Q .\Libraries\SD\Main\ICSharpCode.SharpDevelop.Widgets\Project\obj
+rmdir /S /Q .\Libraries\SD\Main\ICSharpCode.SharpDevelop.Widgets\Project\bin
+
+rmdir /S /Q .\Libraries\SD\Tools\UpdateAssemblyInfo\obj
+rmdir /S /Q .\Libraries\SD\Tools\UpdateAssemblyInfo\bin
 
 rmdir /S /Q .\Libraries\SharpZipLib\src\obj
 rmdir /S /Q .\Libraries\SharpZipLib\src\bin
 rmdir /S /Q .\Libraries\SharpZipLib\tests\obj
 rmdir /S /Q .\Libraries\SharpZipLib\tests\bin
 
-rmdir /S /Q .\Libraries\WinFormsUI\WinFormsUI\obj
-rmdir /S /Q .\Libraries\WinFormsUI\WinFormsUI\bin
 
