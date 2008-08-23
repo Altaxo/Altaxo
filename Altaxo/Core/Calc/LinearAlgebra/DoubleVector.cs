@@ -240,6 +240,17 @@ namespace Altaxo.Calc.LinearAlgebra
       return ret;
     }
 
+		/// <summary>
+		/// Returns a wrapper object, so that the returned vector is read only. Please note, that changes to the elements
+		/// of the underlying array in DoubleVector are reflected in the wrapper object, whereas when the array itself is changing,
+		/// the wrapper object will not reflect the changed.
+		/// </summary>
+		/// <returns></returns>
+		public IROVector ToROVector()
+		{
+			return VectorMath.ToROVector(data,data.Length);
+		}
+
     ///<summary>Returns a subvector of the <c>DoubleVector</c></summary>
     ///<param name="startElement">Return data starting from this element.</param>
     ///<param name="endElement">Return data ending in this element.</param>

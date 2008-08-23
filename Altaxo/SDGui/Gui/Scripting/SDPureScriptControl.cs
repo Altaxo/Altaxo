@@ -51,26 +51,24 @@ namespace Altaxo.Gui.Scripting
 
     private ICSharpCode.TextEditor.TextEditorControl edFormula;
     private ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor.TextEditorDisplayBindingWrapper edFormulaWrapper;
-    //ICSharpCode.SharpDevelop.Services.DefaultParserService _parserService = (ICSharpCode.SharpDevelop.Services.DefaultParserService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(ICSharpCode.SharpDevelop.Services.DefaultParserService));
-
 
     public SDPureScriptControl()
     {
       // This call is required by the Windows.Forms Form Designer.
       InitializeComponent();
 
-      InitializeEditor();
+     // InitializeEditor();
 
     }
 
-    void InitializeEditor()
+    void InitializeEditor(string initialText, string scriptName)
     {
       this.SuspendLayout();
 
-			string scriptName = System.Guid.NewGuid().ToString() + ".cs";
-
+		
       this.edFormulaWrapper = new ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor.TextEditorDisplayBindingWrapper(new SDScriptOpenedFile(scriptName));
       this.edFormula = edFormulaWrapper.TextEditorControl;
+			this.edFormula.Text = initialText;
 
       this.edFormula.VisibleChanged += new EventHandler(edFormula_VisibleChanged);
       this.edFormula.Location = new System.Drawing.Point(0, 0);
@@ -79,11 +77,8 @@ namespace Altaxo.Gui.Scripting
       this.edFormula.Name = "edFormula";
       //this.edFormula.ScrollBars = System.Windows.Forms.ScrollBars.Both;
       this.edFormula.Size = new System.Drawing.Size(528, 336);
-      this.edFormula.Text = "";
 
       this.Controls.Add(this.edFormula);
-
-      this.ScriptName = scriptName;
       Altaxo.Main.Services.ParserServiceConnector.RegisterScriptFileName(scriptName);
       this.edFormula.Document.TextEditorProperties.TabIndent=2;
       this.edFormulaWrapper.TextEditorControl.TextEditorProperties.MouseWheelScrollDown=true;
@@ -187,16 +182,6 @@ namespace Altaxo.Gui.Scripting
       }
     }
 
-    public string ScriptName
-    {
-      set
-      {
-        edFormulaWrapper.TextEditorControl.FileName = value;
-        //edFormulaWrapper.TitleName = value;
-        //edFormulaWrapper.FileName = value;
-      }
-    }
-
     public string ScriptText
     {
       get 
@@ -205,17 +190,20 @@ namespace Altaxo.Gui.Scripting
       }
       set 
       {
-        if(this.edFormula.Text != value)
-        {
-          this.edFormula.Text = value;
+				if (this.edFormula == null)
+				{
+					string scriptName = System.Guid.NewGuid().ToString() + ".cs";
+					InitializeEditor(value,	scriptName);
+				}
+				else if (this.edFormula.Text != value)
+				{
+					this.edFormula.Text = value;
+					// The following line is a trick to re-get the complete folding of the text
+					// otherwise, when you change the text here, the folding will be disabled
 
-
-          // The following line is a trick to re-get the complete folding of the text
-          // otherwise, when you change the text here, the folding will be disabled
-
-          // TODO 2006-11-06test if this works without the following line
-        //  this.edFormula.Document.FoldingManager.FoldMarker.Clear(); 
-        }
+					// TODO 2006-11-06test if this works without the following line
+					//  this.edFormula.Document.FoldingManager.FoldMarker.Clear(); 
+				}
       }
     }
 
@@ -276,7 +264,6 @@ namespace Altaxo.Gui.Scripting
     private void _parentForm_Closing(object sender, CancelEventArgs e)
     {
       Unregister();
-     
     }
   }
 }

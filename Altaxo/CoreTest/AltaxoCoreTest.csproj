@@ -1,7 +1,7 @@
 ﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{95A2BF58-8568-4512-BD82-F0240FFC7558}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -153,6 +153,7 @@
     <Compile Include="Calc\Integration\QAGPTests.cs" />
     <Compile Include="Calc\Integration\QAGSTests.cs" />
     <Compile Include="Calc\Interpolation\BivariateAkimaSpline.cs" />
+    <Compile Include="Calc\Interpolation\CrossValidatedCubicSplineTest.cs" />
     <Compile Include="Calc\LinearAlgebra\Comparer.cs" />
     <Compile Include="Calc\LinearAlgebra\ComplexDoubleCholeskyDecompTest.cs" />
     <Compile Include="Calc\LinearAlgebra\ComplexDoubleLevinsonTest.cs" />

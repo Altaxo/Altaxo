@@ -3042,7 +3042,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
     protected DoubleVector xstore = new DoubleVector();
     protected DoubleVector ystore = new DoubleVector();
     protected DoubleVector dy = new DoubleVector();
-    protected DoubleVector y0 = new DoubleVector();
+    protected DoubleVector  y0 = new DoubleVector();
     protected DoubleVector  y1 = new DoubleVector();
     protected DoubleVector  y2 = new DoubleVector();
     protected DoubleVector  y3 = new DoubleVector();
@@ -3057,6 +3057,18 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
       var = -1.0; // unknown variance
       
     }
+
+		/// <summary>
+		/// Returns the spline coefficient of order 0. This are the splined y values at the positions given by x.
+		/// </summary>
+		public IROVector Coefficient0
+		{
+			get
+			{
+				return y0;
+			}
+		}
+
 
     //----------------------------------------------------------------------------//
 
@@ -3377,7 +3389,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
       double qh = q / (avh * avh);
       for (int i = 0; i < n; ++i) // LelliD
       {
-        a[i] = y[i] - p * dy[i] * v[i];
+        a[i] = y[i] - p * dy[i] * v[i+1];
         u[i+1] *= qh; // LelliD
       }
 
