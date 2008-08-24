@@ -176,6 +176,7 @@
     <Compile Include="Calc\Integration\Qng.cs" />
     <Compile Include="Calc\Interpolation\BivariateAkimaSpline.cs" />
     <Compile Include="Calc\Interpolation\BivariateLinearSpline.cs" />
+    <Compile Include="Calc\Interpolation\CrossValidatedCubicSpline.cs" />
     <Compile Include="Calc\Interpolation\Interpolation.cs">
       <SubType>Code</SubType>
     </Compile>
