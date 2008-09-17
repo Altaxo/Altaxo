@@ -127,6 +127,8 @@
 				class="Altaxo.Main.Commands.FileSave" />
       <MenuItem id="SaveProjectAs" label="${res:XML.MainMenu.FileMenu.SaveProjectAs}" icon="Icons.16x16.SaveAllIcon"
 				description="${res:XML.MainMenu.FileMenu.SaveProjectAs.Description}" class="Altaxo.Main.Commands.FileSaveAs" />
+      <MenuItem id="NewDocId" label="${res:XML.MainMenu.FileMenu.NewDocumentIdentifier}" 
+				description="${res:XML.MainMenu.FileMenu..NewDocumentIdentifier.Description}" class="Altaxo.Main.Commands.NewDocumentIdentifier" />
       <MenuItem id="SaveProjectSeparator" type = "Separator"/>
       <Condition name = "WindowActive" activewindow="Altaxo.Gui.SharpDevelop.SDWorksheetViewContent" action="Exclude">
         <MenuItem id="SaveWorksheetAs" label="${res:XML.MainMenu.FileMenu.SaveWorksheetAs}" icon="Icons.16x16.SaveIcon"

@@ -46,6 +46,38 @@ namespace Altaxo.Calc
       return Math.Log(y) - ((y-1)-x)/y ;  /* cancels errors with IEEE arithmetic */
     }
 
+    private static readonly double OneMinusExp_SmallBound = Math.Pow(DoubleConstants.DBL_EPSILON * 3628800, 1 / 9.0);
+    /// <summary>
+    /// Calculates 1-Exp(x) with better accuracy around x=0.
+    /// </summary>
+    /// <param name="x">Function argument</param>
+    /// <returns>The value 1-Exp(x)</returns>
+    public static double OneMinusExp(double x)
+    {
+      const double A1 = 1;
+      const double A2 = 1 / 2.0;
+      const double A3 = 1 / 6.0;
+      const double A4 = 1 / 24.0;
+      const double A5 = 1 / 120.0;
+      const double A6 = 1 / 720.0;
+      const double A7 = 1 / 5040.0;
+      const double A8 = 1 / 40320.0;
+      const double A9 = 1 / 362880.0;
+
+      double ax = Math.Abs(x);
+      if (ax < OneMinusExp_SmallBound)
+      {
+        if (ax < DoubleConstants.DBL_EPSILON)
+          return -x;
+        else
+          return -(((((((((A9 * x) + A8) * x + A7) * x + A6) * x + A5) * x + A4) * x + A3) * x + A2) * x + A1) * x;
+      }
+      else
+      {
+        return 1 - Math.Exp(x);
+      }
+    }
+
     
     public static double Acosh(double x)
     {

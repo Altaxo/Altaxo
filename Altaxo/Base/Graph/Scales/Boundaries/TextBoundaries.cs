@@ -28,6 +28,7 @@ using Altaxo.Collections;
 
 namespace Altaxo.Graph.Scales.Boundaries
 {
+	[Serializable]
   public class TextBoundaries : IPhysicalBoundaries
   {
     AltaxoSet<string> _itemList;
@@ -42,6 +43,32 @@ namespace Altaxo.Graph.Scales.Boundaries
     [field:NonSerialized]
     public event ItemNumberChangedHandler NumberOfItemsChanged;
 
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(TextBoundaries), 10)]
+		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				TextBoundaries s = (TextBoundaries)obj;
+				info.CreateArray("Items", s._itemList.Count);
+				foreach (string name in s._itemList)
+					info.AddValue("e", name);
+				info.CommitArray();
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+
+				TextBoundaries s = null != o ? (TextBoundaries)o : new TextBoundaries();
+
+				int count = info.OpenArray("Items");
+				for (int i = 0; i < count; i++)
+					s._itemList.Add(info.GetString("e"));
+				info.CloseArray(count);
+
+				return s;
+			}
+		}
+
     public TextBoundaries()
     {
       _itemList = new AltaxoSet<string>();
@@ -55,6 +82,8 @@ namespace Altaxo.Graph.Scales.Boundaries
         _itemList.Add(s);
       EndUpdate();
     }
+
+	
 
    
 

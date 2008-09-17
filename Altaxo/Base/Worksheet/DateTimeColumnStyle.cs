@@ -134,8 +134,8 @@ namespace Altaxo.Worksheet
     public override void Paint(Graphics dc, Rectangle cellRectangle, int nRow, Altaxo.Data.DataColumn data, bool bSelected)
     {
       PaintBackground(dc, cellRectangle, bSelected);
-    
-      string myString = ((Altaxo.Data.DateTimeColumn)data)[nRow].ToString();
+
+			string myString = ((Altaxo.Data.DateTimeColumn)data)[nRow].ToLocalTime().ToString();
     
       if(bSelected)
         dc.DrawString(myString, m_TextFont, _defaultSelectedTextBrush, cellRectangle, m_TextFormat);

@@ -119,7 +119,7 @@ namespace Altaxo.Serialization.Xml
 
     public void AddValue(string name, DateTime val)
     {
-      m_Writer.WriteElementString(name, XmlConvert.ToString(val, XmlDateTimeSerializationMode.Utc));
+      m_Writer.WriteElementString(name, XmlConvert.ToString(val, XmlDateTimeSerializationMode.RoundtripKind));
     }
 
     public void AddValue(string name, TimeSpan val)
@@ -255,11 +255,11 @@ namespace Altaxo.Serialization.Xml
         {
           m_Writer.WriteAttributeString("Encoding","Xml");
           m_Writer.WriteStartElement("e");
-          m_Writer.WriteRaw(System.Xml.XmlConvert.ToString(val[0],System.Xml.XmlDateTimeSerializationMode.Utc));
+					m_Writer.WriteRaw(System.Xml.XmlConvert.ToString(val[0], System.Xml.XmlDateTimeSerializationMode.RoundtripKind));
           for(int i=1;i<count;i++)
           {
             m_Writer.WriteRaw("</e><e>");
-            m_Writer.WriteRaw(System.Xml.XmlConvert.ToString(val[i],System.Xml.XmlDateTimeSerializationMode.Utc));
+						m_Writer.WriteRaw(System.Xml.XmlConvert.ToString(val[i], System.Xml.XmlDateTimeSerializationMode.RoundtripKind));
           }
           m_Writer.WriteEndElement(); // node "e"
         

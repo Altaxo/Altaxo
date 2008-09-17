@@ -317,7 +317,11 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
         MoveUpDown(-1);
         return true;
       }
-
+			else if (keyData ==Keys.Enter)
+			{
+				Current.Console.WriteLine("{0}",this._RowIndex);
+				return true;
+			}
 
       return false; // per default the key is not processed
     }

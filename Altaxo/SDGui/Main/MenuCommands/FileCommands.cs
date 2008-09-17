@@ -345,6 +345,25 @@ namespace Altaxo.Main.Commands
     }
   }
 
+  public class NewDocumentIdentifier : AbstractMenuCommand
+  {
+    public override void Run()
+    {
+     object oldId = Current.Project.DocumentIdentifier;
+     if (Current.Gui.ShowDialog(ref oldId, "Enter new document identifier", false))
+     {
+       string newIdentifier = (string)oldId;
+
+       if (Current.Project.DocumentIdentifier != newIdentifier)
+       {
+         Current.Project.DocumentIdentifier = newIdentifier;
+         //Current.ProjectService.
+       }
+     }
+
+    }
+  }
+
   public class HelpAboutAltaxo : AbstractMenuCommand
   {
     public override void Run()

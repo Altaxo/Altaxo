@@ -39,7 +39,7 @@ using ICSharpCode.SharpDevelop.Gui;
 using Altaxo.Main;
 namespace Altaxo.Gui.Pads
 {
-  public class ProjectTree : MWControlSuite.MWTreeView
+  public class ProjectTree : System.Windows.Forms.TreeView
   {
     protected TreeNode _rootNode;
     protected TreeNode _tablesNode;

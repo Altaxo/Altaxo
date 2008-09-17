@@ -48,6 +48,44 @@ namespace Altaxo.Graph.Scales
     protected double _cachedOneByAxisSpan = 1;
 
 
+		#region Serialization
+
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(TextScale), 0)]
+		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				TextScale s = (TextScale)obj;
+
+				info.AddValue("Bounds", s._dataBounds);
+				info.AddValue("Rescaling", s._rescaling);
+
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				TextScale s = SDeserialize(o, info, parent);
+				OnAfterDeserialization(s);
+				return s;
+			}
+
+			public virtual void OnAfterDeserialization(TextScale s)
+			{
+			}
+
+			protected virtual TextScale SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				TextScale s = null != o ? (TextScale)o : new TextScale();
+
+				s.InternalSetDataBounds((TextBoundaries)info.GetValue("Bounds", s));
+				s.InternalSetRescaling((NumericAxisRescaleConditions)info.GetValue("Rescaling", s));
+				s.ProcessDataBounds();
+
+				return s;
+			}
+		}
+		#endregion
+
     public TextScale()
     {
       _dataBounds = new TextBoundaries();
@@ -80,6 +118,23 @@ namespace Altaxo.Graph.Scales
       result.CopyFrom(this);
       return result;
     }
+
+
+		protected void InternalSetDataBounds(TextBoundaries bounds)
+		{
+			if (this._dataBounds != null)
+			{
+				this._dataBounds.BoundaryChanged -= new BoundaryChangedHandler(this.EhBoundariesChanged);
+				this._dataBounds = null;
+			}
+			this._dataBounds = bounds;
+			this._dataBounds.BoundaryChanged += new BoundaryChangedHandler(this.EhBoundariesChanged);
+		}
+
+		protected void InternalSetRescaling(NumericAxisRescaleConditions rescaling)
+		{
+			this._rescaling = rescaling;
+		}
 
     protected void EhBoundariesChanged(object sender, BoundariesChangedEventArgs e)
     {

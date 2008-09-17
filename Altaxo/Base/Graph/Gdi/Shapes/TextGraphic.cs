@@ -379,200 +379,211 @@ namespace Altaxo.Graph.Gdi.Shapes
               currTextItem.Text += _text[bi+1];
               currTxtIdx = bi+2;
             }
-              // if the backslash not followed by a symbol and than a (, 
-            else if(bi+3<_text.Length && !char.IsSeparator(_text,bi+1) && '('==_text[bi+2])
+            else if (bi + 7 < _text.Length && _text.Substring(bi + 1, 7) == "ID($DI)")
+              {
+                itemstack.Push(currTextItem);
+                currTextItem = new TextItem(currTextItem, null);
+                currTextLine.Add(currTextItem);
+                currTextItem.SetAsText(Current.Project.DocumentIdentifier);
+
+                currTextItem = new TextItem(currTextItem, null); 
+                currTextLine.Add(currTextItem); // to have room for the following text
+                currTxtIdx = bi + 8;
+              }
+            // if the backslash not followed by a symbol and than a (, 
+            else if (bi + 3 < _text.Length && !char.IsSeparator(_text, bi + 1) && '(' == _text[bi + 2])
             {
-              switch(_text[bi+1])
+              switch (_text[bi + 1])
               {
                 case 'b':
                 case 'B':
-                {
-                  itemstack.Push(currTextItem);
-                  currTextItem = new TextItem(currTextItem, new Font(currTextItem.Font.FontFamily,currTextItem.Font.Size,currTextItem.Font.Style | FontStyle.Bold, GraphicsUnit.World));
-                  currTextLine.Add(currTextItem);
-                  currTxtIdx = bi+3;
-                }
+                  {
+                    itemstack.Push(currTextItem);
+                    currTextItem = new TextItem(currTextItem, new Font(currTextItem.Font.FontFamily, currTextItem.Font.Size, currTextItem.Font.Style | FontStyle.Bold, GraphicsUnit.World));
+                    currTextLine.Add(currTextItem);
+                    currTxtIdx = bi + 3;
+                  }
                   break; // bold
                 case 'i':
                 case 'I':
-                {
-                  itemstack.Push(currTextItem);
-                  currTextItem = new TextItem(currTextItem, new Font(currTextItem.Font.FontFamily,currTextItem.Font.Size,currTextItem.Font.Style | FontStyle.Italic, GraphicsUnit.World));
-                  currTextLine.Add(currTextItem);
-                  currTxtIdx = bi+3;
-                }
+                  {
+                    itemstack.Push(currTextItem);
+                    currTextItem = new TextItem(currTextItem, new Font(currTextItem.Font.FontFamily, currTextItem.Font.Size, currTextItem.Font.Style | FontStyle.Italic, GraphicsUnit.World));
+                    currTextLine.Add(currTextItem);
+                    currTxtIdx = bi + 3;
+                  }
                   break; // italic
                 case 'u':
                 case 'U':
-                {
-                  itemstack.Push(currTextItem);
-                  currTextItem = new TextItem(currTextItem, new Font(currTextItem.Font.FontFamily,currTextItem.Font.Size,currTextItem.Font.Style | FontStyle.Underline, GraphicsUnit.World));
-                  currTextLine.Add(currTextItem);
-                  currTxtIdx = bi+3;
-                }
+                  {
+                    itemstack.Push(currTextItem);
+                    currTextItem = new TextItem(currTextItem, new Font(currTextItem.Font.FontFamily, currTextItem.Font.Size, currTextItem.Font.Style | FontStyle.Underline, GraphicsUnit.World));
+                    currTextLine.Add(currTextItem);
+                    currTxtIdx = bi + 3;
+                  }
                   break; // underlined
                 case 's':
                 case 'S': // strikeout
-                {
-                  itemstack.Push(currTextItem);
-                  currTextItem = new TextItem(currTextItem, new Font(currTextItem.Font.FontFamily,currTextItem.Font.Size,currTextItem.Font.Style | FontStyle.Strikeout, GraphicsUnit.World));
-                  currTextLine.Add(currTextItem);
-                  currTxtIdx = bi+3;
-                }
+                  {
+                    itemstack.Push(currTextItem);
+                    currTextItem = new TextItem(currTextItem, new Font(currTextItem.Font.FontFamily, currTextItem.Font.Size, currTextItem.Font.Style | FontStyle.Strikeout, GraphicsUnit.World));
+                    currTextLine.Add(currTextItem);
+                    currTxtIdx = bi + 3;
+                  }
                   break; // end strikeout
                 case 'g':
                 case 'G':
-                {
-                  itemstack.Push(currTextItem);
-                  currTextItem = new TextItem(currTextItem, new Font("Symbol",currTextItem.Font.Size,currTextItem.Font.Style, GraphicsUnit.World));
-                  currTextLine.Add(currTextItem);
-                  currTxtIdx = bi+3;
-                }
+                  {
+                    itemstack.Push(currTextItem);
+                    currTextItem = new TextItem(currTextItem, new Font("Symbol", currTextItem.Font.Size, currTextItem.Font.Style, GraphicsUnit.World));
+                    currTextLine.Add(currTextItem);
+                    currTxtIdx = bi + 3;
+                  }
                   break; // underlined
                 case '+':
                 case '-':
-                {
-                  itemstack.Push(currTextItem);
-                  // measure the current font size
-                  float cyLineSpace,cyAscent,cyDescent;
-                  MeasureFont(g,currTextItem.Font,out cyLineSpace, out cyAscent, out cyDescent);
-                  
-                  currTextItem = new TextItem(currTextItem, new Font(currTextItem.Font.FontFamily,0.65f*currTextItem.Font.Size,currTextItem.Font.Style, GraphicsUnit.World));
-                  currTextLine.Add(currTextItem);
-                  currTextItem.m_SubIndex += ('+'==_text[bi+1] ? 1 : -1);
+                  {
+                    itemstack.Push(currTextItem);
+                    // measure the current font size
+                    float cyLineSpace, cyAscent, cyDescent;
+                    MeasureFont(g, currTextItem.Font, out cyLineSpace, out cyAscent, out cyDescent);
+
+                    currTextItem = new TextItem(currTextItem, new Font(currTextItem.Font.FontFamily, 0.65f * currTextItem.Font.Size, currTextItem.Font.Style, GraphicsUnit.World));
+                    currTextLine.Add(currTextItem);
+                    currTextItem.m_SubIndex += ('+' == _text[bi + 1] ? 1 : -1);
 
 
-                  if('-'==_text[bi+1]) 
-                    currTextItem.m_yShift += 0.15f*cyAscent; // Carefull: plus (+) means shift down
-                  else
-                    currTextItem.m_yShift -= 0.35f*cyAscent; // be carefull: minus (-) means shift up
-                  
-                  currTxtIdx = bi+3;
-                }
+                    if ('-' == _text[bi + 1])
+                      currTextItem.m_yShift += 0.15f * cyAscent; // Carefull: plus (+) means shift down
+                    else
+                      currTextItem.m_yShift -= 0.35f * cyAscent; // be carefull: minus (-) means shift up
+
+                    currTxtIdx = bi + 3;
+                  }
                   break; // underlined
                 case 'l': // Plot Curve Symbol
                 case 'L':
-                {
-                  // parse the arguments
-                  // either in the Form 
-                  // \L(PlotCurveNumber) or
-                  // \L(LayerNumber, PlotCurveNumber) or
-                  // \L(LayerNumber, PlotCurveNumber, DataPointNumber)
-
-
-                  // find the corresponding closing brace
-                  int closingbracepos = _text.IndexOf(")",bi+1);
-                  if(closingbracepos<0) // no brace found, so threat this as normal text
                   {
-                    currTextItem.Text += _text.Substring(bi,3);
-                    currTxtIdx += 3;
-                    continue;
-                  }
-                  // count the commas between here and the closing brace to get
-                  // the number of arguments
-                  int parsepos=bi+3;
-                  int[] arg = new int[3];
-                  int args;
-                  for(args=0;args<3 && parsepos<closingbracepos;args++)
-                  {
-                    int commapos = _text.IndexOf(",",parsepos,closingbracepos-parsepos);
-                    int endpos = commapos>0 ? commapos : closingbracepos; // the end of this argument
-                    try { arg[args]=System.Convert.ToInt32(_text.Substring(parsepos,endpos-parsepos)); }
-                    catch(Exception) { break; }
-                    parsepos = endpos+1;
-                  }
-                  if(args==0) // if not successfully parsed at least one number
-                  {
-                    currTextItem.Text += _text.Substring(bi,3);
-                    currTxtIdx += 3;
-                    continue;   // handle it as if it where normal text
-                  }
+                    // parse the arguments
+                    // either in the Form 
+                    // \L(PlotCurveNumber) or
+                    // \L(LayerNumber, PlotCurveNumber) or
+                    // \L(LayerNumber, PlotCurveNumber, DataPointNumber)
 
-                  // itemstack.Push(currTextItem); // here we don't need to put the item on the stack, since we pared until the closing brace
-                  currTextItem = new TextItem(currTextItem,null);
-                  currTextLine.Add(currTextItem);
-                  currTextItem.SetAsSymbol(args,arg);
 
-                  currTextItem = new TextItem(currTextItem,null); // create a normal text item behind the symbol item
-                  currTextLine.Add(currTextItem); // to have room for the following text
-                  currTxtIdx = closingbracepos+1;
-                }
+                    // find the corresponding closing brace
+                    int closingbracepos = _text.IndexOf(")", bi + 1);
+                    if (closingbracepos < 0) // no brace found, so threat this as normal text
+                    {
+                      currTextItem.Text += _text.Substring(bi, 3);
+                      currTxtIdx += 3;
+                      continue;
+                    }
+                    // count the commas between here and the closing brace to get
+                    // the number of arguments
+                    int parsepos = bi + 3;
+                    int[] arg = new int[3];
+                    int args;
+                    for (args = 0; args < 3 && parsepos < closingbracepos; args++)
+                    {
+                      int commapos = _text.IndexOf(",", parsepos, closingbracepos - parsepos);
+                      int endpos = commapos > 0 ? commapos : closingbracepos; // the end of this argument
+                      try { arg[args] = System.Convert.ToInt32(_text.Substring(parsepos, endpos - parsepos)); }
+                      catch (Exception) { break; }
+                      parsepos = endpos + 1;
+                    }
+                    if (args == 0) // if not successfully parsed at least one number
+                    {
+                      currTextItem.Text += _text.Substring(bi, 3);
+                      currTxtIdx += 3;
+                      continue;   // handle it as if it where normal text
+                    }
+
+                    // itemstack.Push(currTextItem); // here we don't need to put the item on the stack, since we pared until the closing brace
+                    currTextItem = new TextItem(currTextItem, null);
+                    currTextLine.Add(currTextItem);
+                    currTextItem.SetAsSymbol(args, arg);
+
+                    currTextItem = new TextItem(currTextItem, null); // create a normal text item behind the symbol item
+                    currTextLine.Add(currTextItem); // to have room for the following text
+                    currTxtIdx = closingbracepos + 1;
+                  }
                   break; // curve symbol
                 case '%': // Plot Curve Name
-                {
-                  // parse the arguments
-                  // either in the Form 
-                  // \%(PlotCurveNumber) or
-                  // \%(LayerNumber, PlotCurveNumber) or
-                  Match match;
-                  int layerNumber=-1;
-                  int plotNumber=-1;
-                  string plotLabelStyle=null;
-                  bool   plotLabelStyleIsPropColName=false;
-                  if((match = _regexIntArgument.Match(_text,bi+2)).Success)
                   {
-                    plotNumber = int.Parse(match.Result("${argone}"));
-                  }
-                  else if((match = _regexIntIntArgument.Match(_text,bi+2)).Success)
-                  {
-                    layerNumber = int.Parse(match.Result("${argone}"));
-                    plotNumber =  int.Parse(match.Result("${argtwo}"));
-                  }
-                  else if((match = _regexIntQstrgArgument.Match(_text,bi+2)).Success)
-                  {
-                    plotNumber     = int.Parse(match.Result("${argone}"));
-                    plotLabelStyle =  match.Result("${argtwo}");
-                    plotLabelStyleIsPropColName=true;
-                  }
-                  else if((match = _regexIntStrgArgument.Match(_text,bi+2)).Success)
-                  {
-                    plotNumber     = int.Parse(match.Result("${argone}"));
-                    plotLabelStyle =  match.Result("${argtwo}");
-                  }
-                  else if((match = _regexIntIntStrgArgument.Match(_text,bi+2)).Success)
-                  {
-                    layerNumber = int.Parse(match.Result("${argone}"));
-                    plotNumber =  int.Parse(match.Result("${argtwo}"));
-                    plotLabelStyle = match.Result("${argthree}");
-                  }
-                  else if((match = _regexIntIntQstrgArgument.Match(_text,bi+2)).Success)
-                  {
-                    layerNumber = int.Parse(match.Result("${argone}"));
-                    plotNumber =  int.Parse(match.Result("${argtwo}"));
-                    plotLabelStyle = match.Result("${argthree}");
-                    plotLabelStyleIsPropColName=true;
-                  }
-      
-                  if(match.Success)
-                  {
-                    itemstack.Push(currTextItem);
-                    currTextItem = new TextItem(currTextItem,null);
-                    currTextLine.Add(currTextItem);
-                    currTextItem.SetAsPlotCurveName(layerNumber,plotNumber,plotLabelStyle,plotLabelStyleIsPropColName);
+                    // parse the arguments
+                    // either in the Form 
+                    // \%(PlotCurveNumber) or
+                    // \%(LayerNumber, PlotCurveNumber) or
+                    Match match;
+                    int layerNumber = -1;
+                    int plotNumber = -1;
+                    string plotLabelStyle = null;
+                    bool plotLabelStyleIsPropColName = false;
+                    if ((match = _regexIntArgument.Match(_text, bi + 2)).Success)
+                    {
+                      plotNumber = int.Parse(match.Result("${argone}"));
+                    }
+                    else if ((match = _regexIntIntArgument.Match(_text, bi + 2)).Success)
+                    {
+                      layerNumber = int.Parse(match.Result("${argone}"));
+                      plotNumber = int.Parse(match.Result("${argtwo}"));
+                    }
+                    else if ((match = _regexIntQstrgArgument.Match(_text, bi + 2)).Success)
+                    {
+                      plotNumber = int.Parse(match.Result("${argone}"));
+                      plotLabelStyle = match.Result("${argtwo}");
+                      plotLabelStyleIsPropColName = true;
+                    }
+                    else if ((match = _regexIntStrgArgument.Match(_text, bi + 2)).Success)
+                    {
+                      plotNumber = int.Parse(match.Result("${argone}"));
+                      plotLabelStyle = match.Result("${argtwo}");
+                    }
+                    else if ((match = _regexIntIntStrgArgument.Match(_text, bi + 2)).Success)
+                    {
+                      layerNumber = int.Parse(match.Result("${argone}"));
+                      plotNumber = int.Parse(match.Result("${argtwo}"));
+                      plotLabelStyle = match.Result("${argthree}");
+                    }
+                    else if ((match = _regexIntIntQstrgArgument.Match(_text, bi + 2)).Success)
+                    {
+                      layerNumber = int.Parse(match.Result("${argone}"));
+                      plotNumber = int.Parse(match.Result("${argtwo}"));
+                      plotLabelStyle = match.Result("${argthree}");
+                      plotLabelStyleIsPropColName = true;
+                    }
 
-                    currTextItem = new TextItem(currTextItem,null); // create a normal text item behind the symbol item
-                    currTextLine.Add(currTextItem); // to have room for the following text
-                    currTxtIdx = bi+2+match.Length;
+                    if (match.Success)
+                    {
+                      itemstack.Push(currTextItem);
+                      currTextItem = new TextItem(currTextItem, null);
+                      currTextLine.Add(currTextItem);
+                      currTextItem.SetAsPlotCurveName(layerNumber, plotNumber, plotLabelStyle, plotLabelStyleIsPropColName);
+
+                      currTextItem = new TextItem(currTextItem, null); // create a normal text item behind the symbol item
+                      currTextLine.Add(currTextItem); // to have room for the following text
+                      currTxtIdx = bi + 2 + match.Length;
+                    }
+                    else
+                    {
+                      currTextItem.Text += _text.Substring(bi, 2);
+                      currTxtIdx += 3;
+                      continue;   // handle it as if it where normal text
+                    }
                   }
-                  else
-                  {
-                    currTextItem.Text += _text.Substring(bi,2);
-                    currTxtIdx += 3;
-                    continue;   // handle it as if it where normal text
-                  }
-                }
                   break; // percent symbol
                 default:
                   // take the sequence as it is
-                  currTextItem.Text += _text.Substring(bi,3);
-                  currTxtIdx = bi+3;
+                  currTextItem.Text += _text.Substring(bi, 3);
+                  currTxtIdx = bi + 3;
                   break;
               } // end of switch
             }
             else // if no formatting and also no closing brace or backslash, take it as it is
             {
               currTextItem.Text += _text[bi];
-              currTxtIdx = bi+1;
+              currTxtIdx = bi + 1;
             }
           } // end if it was a backslash
           else if(')'==_text[bi]) // closing brace
@@ -1014,6 +1025,9 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     public void Paint(Graphics g, object obj, bool bForPreview)
     {
+      _isStructureInSync = false;
+      _isMeasureInSync = false;  // Change: interpret text every time in order to update plot items and \ID
+
       if(!this._isStructureInSync)
         this.Interpret(g);
 

@@ -49,6 +49,10 @@ namespace Altaxo
 
     private Altaxo.Scripting.FitFunctionScriptCollection _FitFunctionScripts;
 
+		/// <summary>
+		/// A short string to identify the document. This string can be shown for instance in the graph windows.
+		/// </summary>
+		private DocumentInformation _documentInformation = new DocumentInformation();
 
     //  protected System.Collections.ArrayList m_Worksheets;
     /// <summary>The list of GraphForms for the document.</summary>
@@ -205,6 +209,13 @@ namespace Altaxo
         }
       }
 
+
+      // nun noch den DocumentIdentifier abspeichern
+      zippedStream.StartFile("DocumentInformation.xml", compressionLevel);
+      info.BeginWriting(zippedStream.Stream);
+      info.AddValue("DocumentInformation", _documentInformation);
+      info.EndWriting();
+
     //  Current.Console.WriteLine("Saving took {0} sec.", (DateTime.UtcNow - time1).TotalSeconds);
 
       if(errorText.Length!=0)
@@ -260,6 +271,15 @@ namespace Altaxo
             info.EndReading();
           
           }
+          else if (!zipEntry.IsDirectory && zipEntry.Name == "DocumentInformation.xml")
+          {
+            System.IO.Stream zipinpstream = zipFile.GetInputStream(zipEntry);
+            info.BeginReading(zipinpstream);
+            object readedobject = info.GetValue("DocumentInformation", this);
+            if (readedobject is DocumentInformation)
+              this._documentInformation = (DocumentInformation)readedobject;
+            info.EndReading();
+          }
         }
         catch(Exception exc)
         {
@@ -306,6 +326,18 @@ namespace Altaxo
     {
       get { return _FitFunctionScripts; }
     }
+
+		public string DocumentIdentifier
+		{
+			get
+			{
+        return _documentInformation.DocumentIdentifier;
+			}
+      set
+			{
+        _documentInformation.DocumentIdentifier = value;
+			}
+		}
 
     protected virtual void OnDirtyChanged()
     {

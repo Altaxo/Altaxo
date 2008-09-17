@@ -296,7 +296,7 @@ namespace Altaxo.Graph
       Add(new PlotColor(System.Drawing.Color.Green, "Green"));
       Add(new PlotColor(System.Drawing.Color.Blue, "Blue"));
       Add(new PlotColor(System.Drawing.Color.Magenta, "Magenta"));
-      Add(new PlotColor(System.Drawing.Color.Yellow, "Yellow"));
+      Add(new PlotColor(System.Drawing.Color.Goldenrod, "Goldenrod"));
       Add(new PlotColor(System.Drawing.Color.Coral, "Coral"));
     }
 
