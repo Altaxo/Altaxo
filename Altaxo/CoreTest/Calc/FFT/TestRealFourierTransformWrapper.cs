@@ -52,7 +52,7 @@ namespace AltaxoTest.Calc.Fourier
         RealFFTResultWrapper wrapper = new RealFFTResultWrapper(arr);
 
         // we transform the re and im
-        NativeFourierMethods.FFT(re, im, FourierDirection.Forward);
+        NativeFourierMethods.FourierTransformation(re, im, FourierDirection.Forward);
 
         // now compare the results
         // first the realpart

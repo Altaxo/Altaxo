@@ -28,6 +28,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 {
   /// <summary>
   /// Adapts a <see cref="FitEnsemble" /> to the requirements of a Levenberg-Marquardt fitting procedure.
+	/// This means, the adapter makes the <see cref="FitEnsemble" /> compatible with the Levenberg-Marquardt algorithm.
   /// </summary>
   public class LevMarAdapter
   {
@@ -60,12 +61,12 @@ namespace Altaxo.Calc.Regression.Nonlinear
     }
     #endregion
 
-    /// <summary>The fit ensemble this adapter adapts.</summary>
+    /// <summary>The fit ensemble this adapter is using.</summary>
     FitEnsemble _fitEnsemble;
 
     /// <summary>
     /// List of constant parameters (i.e. parameters that are not changed during the fitting session).
-    /// For convinience, all parameters are stored here (the varying parameters too), but only the constant parameters are used.
+    /// For convenience, all parameters are stored here (the varying parameters too), but only the constant parameters are used.
     /// </summary>
     double[] _constantParameters;
 
@@ -78,12 +79,17 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// <summary>Holds the parameters that can vary during the fit.</summary>
     double[] _cachedVaryingParameters;
 
-    double[] _cachedDependentValues; // during the fitting procedure, this holds the original y data
+		/// <summary>During the fitting procedure, this holds the original y data.</summary>
+    double[] _cachedDependentValues; // 
 
-    double[] _cachedWeights; // if this array is set, the weights are used to scale the fit differences (yreal-yfit).
+		/// <summary>If this array is set, the weights are used to scale the fit differences (yreal-yfit).</summary>
+		double[] _cachedWeights;
 
-    double[] _resultingCovariances;
-    double  _resultingSumChiSquare;
+		/// <summary>Holds (after the fit) the resulting covariances of the parameters.</summary>
+		double[] _resultingCovariances;
+		
+		/// <summary>After the fit, this is the resulting sum of squares of the deviations.</summary>
+		double _resultingSumChiSquare;
 
     /// <summary>
     /// Constructor of the adapter.
@@ -206,6 +212,25 @@ namespace Altaxo.Calc.Regression.Nonlinear
       }
     }
 
+		/// <summary>
+		/// Returns the collection of valid numeric rows for the given fit element.
+		/// </summary>
+		/// <param name="idxFitElement">Index number of the fit element.</param>
+		/// <returns>Collection of valid numeric rows for the given fit element.</returns>
+		public IAscendingIntegerCollection GetValidNumericRows(int idxFitElement)
+		{
+			return _cachedFitElementInfo[idxFitElement].ValidRows;
+		}
+
+		/// <summary>
+		/// Returns the array of indices of dependent variables that are currently in use (i.e. associated with a data column).
+		/// </summary>
+		/// <param name="idxFitElement"></param>
+		/// <returns></returns>
+		public int[] GetDependentVariablesInUse(int idxFitElement)
+		{
+			return (int[])_cachedFitElementInfo[idxFitElement].DependentVariablesInUse.Clone();
+		}
 
     /// <summary>
     /// Stores the dependent values of all elements in an array. The data
@@ -291,7 +316,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       double[] ys,
       ref int info)
     {
-      EvaluateFitValues(parameter, ys);
+      EvaluateFitValues(parameter, ys, false);
 
       if (_cachedWeights == null)
       {
@@ -322,7 +347,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// </remarks>
     public void EvalulateFitValues(double[] parameter, double[] outputValues, object additionalData)
     {
-      EvaluateFitValues(parameter, outputValues);
+      EvaluateFitValues(parameter, outputValues, false);
     }
 
     /// <summary>
@@ -334,7 +359,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// <remarks>The values of the fit elements are stored in the order from element_0 to element_n. If there is more
     /// than one used dependent variable per fit element, the output values are stored in interleaved order.
     /// </remarks>
-    public void EvaluateFitValues(double [] parameter, double[] outputValues)
+    public void EvaluateFitValues(double [] parameter, double[] outputValues, bool calculateUnusedDependentVariablesAlso)
     {
       int outputValuesPointer = 0;
       for (int ele = 0; ele < _cachedFitElementInfo.Length; ele++)
@@ -360,12 +385,51 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
           fitEle.FitFunction.Evaluate(info.Xs, info.Parameters, info.Ys);
 
-          // copy the evaluation result to the output array (interleaved)
-          for (int k = 0; k < info.DependentVariablesInUse.Length; ++k)
-            outputValues[outputValuesPointer++] = info.Ys[info.DependentVariablesInUse[k]];
+					if (calculateUnusedDependentVariablesAlso)
+					{
+						// copy the evaluation result to the output array (interleaved)
+						for (int k = 0; k < fitEle.NumberOfDependentVariables; ++k)
+							outputValues[outputValuesPointer++] = info.Ys[k];
+					}
+					else
+					{
+						// copy the evaluation result to the output array (interleaved)
+						for (int k = 0; k < info.DependentVariablesInUse.Length; ++k)
+							outputValues[outputValuesPointer++] = info.Ys[info.DependentVariablesInUse[k]];
+					}
         }
       }
     }
+
+		/// <summary>
+		/// Calculates the fitting values with the currently set parameters.
+		/// </summary>
+		/// <param name="outputValues">You must provide an array to hold the calculated values. Size of the array must be
+		/// at least <see cref="NumberOfData" />.</param>
+		/// <remarks>The values of the fit elements are stored in the order from element_0 to element_n. If there is more
+		/// than one used dependent variable per fit element, the output values are stored in interleaved order.
+		/// </remarks>
+		public void EvaluateFitValues(double[] outputValues, bool calculateUnusedDependentVariablesAlso)
+		{
+			EvaluateFitValues(_cachedVaryingParameters, outputValues, calculateUnusedDependentVariablesAlso);
+		}
+
+		/// <summary>
+		/// Copies the current parameters for the fit element with the provided index into the provided array.
+		/// </summary>
+		/// <param name="idxFitEle">Index of the fit element.</param>
+		/// <param name="parameters">Provided array to copy the current parameters to. Must have same size as NumberOfParameters for the given fit element.</param>
+		public void GetParameters(int idxFitEle, double[] parameters)
+		{
+			CachedFitElementInfo info = _cachedFitElementInfo[idxFitEle];
+			// copy of the parameter to the temporary array
+			for (int i = 0; i < info.Parameters.Length; i++)
+			{
+				int idx = info.ParameterMapping[i];
+				parameters[i] = idx >= 0 ? _cachedVaryingParameters[idx] : _constantParameters[-1 - idx];
+			}
+
+		}
 
     /// <summary>
     /// Calculates the jacobian values, i.e. the derivatives of the fitting values with respect to the parameters.

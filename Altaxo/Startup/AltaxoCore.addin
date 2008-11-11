@@ -93,6 +93,14 @@
         precreated ="true" 
         class    = "Altaxo.Gui.Pads.DataDisplayController"/>
 
+		<Pad id       = "AltaxoNotesWindow"
+			 category = "Main"
+			 title    = "${res:MainWindow.Windows.AltaxoNotesWindowLabel}"
+			 icon     = "Icons.16x16.Notepad"
+			 shortcut = "Control|Alt|N"
+			 precreated ="true"
+			 class    = "Altaxo.Gui.Pads.NotesController"/>
+
   </Path>
 
   <Path name = "/Altaxo/Workbench/MainMenu">
@@ -254,7 +262,15 @@
             type  = "Builder"
             class = "ICSharpCode.SharpDevelop.Commands.MainViewMenuBuilder" />
       <MenuItem id="ViewItemsSeparator" type = "Separator"/>
-      <MenuItem id="FullScreen" label="${res:XML.MainMenu.ViewMenu.FullScreen}" icon="Icons.16x16.FullScreen"
+			<Condition name = "WindowActive" activewindow="Altaxo.Gui.SharpDevelop.SDGraphViewContent" action="Exclude">
+				<MenuItem id="AutoZoom" label="${res:XML.MainMenu.ViewMenu.AutoZoom}" icon="Icons.16x16.NewDocumentIcon"
+					description="${res:XML.MainMenu.FileMenu.AutoZoom.Description}" class="Altaxo.Graph.Commands.ZoomAutomatic" />
+				<MenuItem id="Zoom50Percent" label="${res:XML.MainMenu.ViewMenu.Zoom50Percent}" icon="Icons.16x16.NewDocumentIcon"
+					description="${res:XML.MainMenu.FileMenu.Zoom50Percent.Description}" class="Altaxo.Graph.Commands.Zoom50Percent" />
+				<MenuItem id="Zoom200Percent" label="${res:XML.MainMenu.ViewMenu.Zoom200Percent}" icon="Icons.16x16.NewDocumentIcon"
+					description="${res:XML.MainMenu.FileMenu.Zoom200Percent.Description}" class="Altaxo.Graph.Commands.Zoom200Percent" />
+			</Condition>
+			<MenuItem id="FullScreen" label="${res:XML.MainMenu.ViewMenu.FullScreen}" icon="Icons.16x16.FullScreen"
 				description="${res:XML.MainMenu.ViewMenu.FullScreen.Description}" class="ICSharpCode.SharpDevelop.Commands.ToggleFullscreenCommand" />
     </MenuItem>
     <!-- Plot menu -->
@@ -430,6 +446,10 @@
 					class="Altaxo.Worksheet.Commands.Analysis2DFFT" />
         <MenuItem id="2DCenteredFFT" label="${res:XML.MainMenu.AnalysisMenu.2DCenteredFFT}" description="${res:XML.MainMenu.AnalysisMenu.2DCenteredFFT.Description}"
 					class="Altaxo.Worksheet.Commands.Analysis2DCenteredFFT" />
+				<MenuItem id="Convolute" label="${res:XML.MainMenu.AnalysisMenu.Convolute}" description="${res:XML.MainMenu.AnalysisMenu.Convolute.Description}"
+					class="Altaxo.Worksheet.Commands.Convolute" />
+        <MenuItem id="Correlate" label="${res:XML.MainMenu.AnalysisMenu.Correlate}" description="${res:XML.MainMenu.AnalysisMenu.Correlate.Description}"
+					class="Altaxo.Worksheet.Commands.Correlate" />
         <MenuItem id="StatisticsOnCols" label="${res:XML.MainMenu.AnalysisMenu.StatisticsOnColumns}"
 					description="${res:XML.MainMenu.AnalysisMenu.StatisticsOnColumns.Description}" class="Altaxo.Worksheet.Commands.AnalysisStatisticsOnColumns" />
         <MenuItem id="StatisticsOnRows" label="${res:XML.MainMenu.AnalysisMenu.StatisticsOnRows}"

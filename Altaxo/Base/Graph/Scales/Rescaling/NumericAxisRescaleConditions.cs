@@ -25,7 +25,7 @@ using System;
 namespace Altaxo.Graph.Scales.Rescaling
 {
   /// <summary>
-  /// Summary description for AxisRescaleConditions.
+  /// Determines the behaviour of the axis when some of the data has changed.
   /// </summary>
   [Serializable]
   public class NumericAxisRescaleConditions : ICloneable, Altaxo.Main.IChangedEventSource

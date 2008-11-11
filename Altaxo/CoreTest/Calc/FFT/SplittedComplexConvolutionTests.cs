@@ -408,7 +408,7 @@ namespace AltaxoTest.Calc.Fourier
         im2[i] = rnd.NextDouble();
       }
  
-      NativeFourierMethods.CyclicConvolution(re1,im1,re2,im2,recmp,imcmp,n);
+      NativeFourierMethods.ConvolutionCyclic(re1,im1,re2,im2,recmp,imcmp,n);
       _conv(re1,im1, re2, im2, re, im, n);
 
       for(int i=0;i<n;i++)

@@ -201,8 +201,97 @@ namespace Altaxo.Worksheet.Commands.Analysis
       Current.ProjectService.CreateNewWorksheet(table);
 
       return null;
+		}
+
+		#region Convolution
+
+		public static void Convolution(WorksheetController ctrl)
+		{
+			string err = Convolution(Current.Project, ctrl);
+			if (null != err)
+				Current.Gui.ErrorMessageBox(err);
+		}
+
+		public static string Convolution(Altaxo.AltaxoDocument mainDocument, GUI.WorksheetController dg)
+		{
+      int len = dg.SelectedDataColumns.Count;
+      if(len==0)
+        return "No column selected!"; // nothing selected
+			if (len > 2)
+				return "Too many columns selected!";
+
+      if(!(dg.DataTable[dg.SelectedDataColumns[0]] is Altaxo.Data.DoubleColumn))
+        return "First selected column is not numeric!";
+
+			if (dg.SelectedDataColumns.Count==2 && !(dg.DataTable[dg.SelectedDataColumns[1]] is Altaxo.Data.DoubleColumn))
+				return "Second selected column is not numeric!";
+
+
+			double[] arr1 = ((Altaxo.Data.DoubleColumn)dg.DataTable[dg.SelectedDataColumns[0]]).Array;
+			double[] arr2 = arr1;
+			if(dg.SelectedDataColumns.Count==2)
+				arr2 = ((Altaxo.Data.DoubleColumn)dg.DataTable[dg.SelectedDataColumns[1]]).Array;
+
+			double[] result = new double[arr1.Length+arr2.Length-1];
+			//Pfa235Convolution co = new Pfa235Convolution(arr1.Length);
+			//co.Convolute(arr1, arr2, result, null, FourierDirection.Forward);
+
+			Calc.Fourier.NativeFourierMethods.ConvolutionNonCyclic(arr1, arr2, result);
+
+			Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
+			col.Array = result;
+
+			dg.Doc.DataColumns.Add(col, "Convolute");
+
+			return null;
+		}
+
+		#endregion
+
+    #region Correlation
+
+    public static void Correlation(WorksheetController ctrl)
+    {
+      string err = Correlation(Current.Project, ctrl);
+      if (null != err)
+        Current.Gui.ErrorMessageBox(err);
     }
 
-  
-  }
+    public static string Correlation(Altaxo.AltaxoDocument mainDocument, GUI.WorksheetController dg)
+    {
+      int len = dg.SelectedDataColumns.Count;
+      if (len == 0)
+        return "No column selected!"; // nothing selected
+      if (len > 2)
+        return "Too many columns selected!";
+
+      if (!(dg.DataTable[dg.SelectedDataColumns[0]] is Altaxo.Data.DoubleColumn))
+        return "First selected column is not numeric!";
+
+      if (dg.SelectedDataColumns.Count == 2 && !(dg.DataTable[dg.SelectedDataColumns[1]] is Altaxo.Data.DoubleColumn))
+        return "Second selected column is not numeric!";
+
+
+      double[] arr1 = ((Altaxo.Data.DoubleColumn)dg.DataTable[dg.SelectedDataColumns[0]]).Array;
+      double[] arr2 = arr1;
+      if (dg.SelectedDataColumns.Count == 2)
+        arr2 = ((Altaxo.Data.DoubleColumn)dg.DataTable[dg.SelectedDataColumns[1]]).Array;
+
+      double[] result = new double[arr1.Length + arr2.Length - 1];
+      //Pfa235Convolution co = new Pfa235Convolution(arr1.Length);
+      //co.Convolute(arr1, arr2, result, null, FourierDirection.Forward);
+
+      Calc.Fourier.NativeFourierMethods.CorrelationNonCyclic(arr1, arr2, result);
+
+      Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
+      col.Array = result;
+
+      dg.Doc.DataColumns.Add(col, "Correlate");
+
+      return null;
+    }
+
+    #endregion
+
+	}
 }

@@ -460,6 +460,33 @@ namespace Altaxo.Graph.Commands
     }
   }
 
+	public class ZoomAutomatic : AbstractGraphControllerCommand
+	{
+		public override void Run(GraphController ctrl)
+		{
+			ctrl.AutoZoom = true;
+			ctrl.RefreshGraph();
+		}
+	}
+	public class Zoom50Percent : AbstractGraphControllerCommand
+	{
+		public override void Run(GraphController ctrl)
+		{
+			ctrl.AutoZoom = false;
+			ctrl.Zoom = 0.5f;
+			ctrl.RefreshGraph();
+		}
+	}
+	public class Zoom200Percent : AbstractGraphControllerCommand
+	{
+		public override void Run(GraphController ctrl)
+		{
+			ctrl.AutoZoom = false;
+			ctrl.Zoom = 2.0f;
+			ctrl.RefreshGraph();
+		}
+	}
+
 
   /// <summary>
   /// Duplicates the Graph and the Graph view to a new one.

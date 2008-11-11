@@ -680,6 +680,23 @@ namespace Altaxo.Worksheet.Commands
     }
   }
 
+	public class Convolute : AbstractWorksheetControllerCommand
+	{
+		public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
+		{
+			Altaxo.Worksheet.Commands.Analysis.FourierCommands.Convolution(ctrl);
+		}
+	}
+
+  public class Correlate : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
+    {
+      Altaxo.Worksheet.Commands.Analysis.FourierCommands.Correlation(ctrl);
+    }
+  }
+
+
   public class AnalysisStatisticsOnColumns : AbstractWorksheetControllerCommand
   {
     public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)

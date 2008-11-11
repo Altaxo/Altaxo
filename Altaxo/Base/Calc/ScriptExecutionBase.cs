@@ -49,9 +49,11 @@ namespace Altaxo.Calc
     public static double Floor(double s) { return System.Math.Floor(s); }
     public static double IEEERemainder(double x, double y) { return System.Math.IEEERemainder(x,y); }
     public static double Log(double s) { return System.Math.Log(s); }
+		public static double Log10(double s) { return System.Math.Log10(s); }
     public static double Log(double s, double bas) { return System.Math.Log(s,bas); }
     public static double Max(double x, double y) { return System.Math.Max(x,y); }
     public static double Min(double x, double y) { return System.Math.Min(x,y); }
+		public static double Pow(double x, int y) { return RMath.Pow(x, y); }
     public static double Pow(double x, double y) { return System.Math.Pow(x,y); }
     public static double Round(double x) { return System.Math.Round(x); }
     public static double Round(double x, int i) { return System.Math.Round(x,i); }
@@ -244,6 +246,12 @@ namespace Altaxo.Calc
       else throw new ArgumentException("Error: Try to apply Log() to " + x.GetType() + " " + x.ToString() + " and " + y.TypeAndName,"x");
     }
 
+    public static Altaxo.Data.DoubleColumn Log10(Altaxo.Data.DataColumn x)
+    {
+      if (typeof(Altaxo.Data.DoubleColumn) == x.GetType())
+        return Altaxo.Data.DoubleColumn.Log10((Altaxo.Data.DoubleColumn)x);
+      else throw new ArgumentException("Error: Try to apply Log10() to " + x.TypeAndName, "x");
+    }
 
     public static Altaxo.Data.DoubleColumn Max(Altaxo.Data.DataColumn x, Altaxo.Data.DataColumn y)
     { 

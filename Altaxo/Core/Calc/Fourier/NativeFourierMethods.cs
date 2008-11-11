@@ -28,14 +28,15 @@ namespace Altaxo.Calc.Fourier
 {
 
   /// <summary>
-  /// This class provides reference methods concerning FFT that are slow and not very accurate.
+  /// This class provides reference methods related to Fourier transformation that are slow and not very accurate.
   /// Do not use them except for comparism and testing purposes!
   /// The direction of the forward Fourier transform will be defined here as reference for all other Fourier methods as
   /// multiplication of f(x)*exp(iwt), i.e. as (wt) having a positive sign (forward) and wt having a negative sign (backward).
   /// </summary>
   public class NativeFourierMethods
   {
-    
+
+    #region Correlation
 
     /// <summary>
     /// Performes a cyclic correlation between array arr1 and arr2 and stores the result in resultarr. Resultarr must be
@@ -43,11 +44,11 @@ namespace Altaxo.Calc.Fourier
     /// </summary>
     /// <param name="arr1">First array (kernel).</param>
     /// <param name="arr2">Second array (data).</param>
-    /// <param name="resultarr">The array that stores the correleation result.</param>
+    /// <param name="resultarr">The array that stores the correlation result.</param>
     /// <param name="count">Number of points to correlate.</param>
     /// <remarks>Correlation of src1 with src2 is not the same as correlation of src2 with src1.
     /// The correlation here is defined as corr(src1,src2)(j)=SUM(k) src1(k) src2(k+j).</remarks>
-    public static  void CyclicCorrelation(double[] arr1, double[] arr2, double[] resultarr, int count)
+    public static  void CorrelationCyclic(double[] arr1, double[] arr2, double[] resultarr, int count)
     {
       if(object.ReferenceEquals(resultarr,arr1) || object.ReferenceEquals(resultarr,arr2))
         throw new ArgumentException("Resultarr must not be identical to arr1 or arr2!");
@@ -76,7 +77,7 @@ namespace Altaxo.Calc.Fourier
     /// <param name="n">Number of points to correlate.</param>
     /// <remarks>Correlation of src1 with src2 is not the same as correlation of src2 with src1.
     /// The correlation here is defined as corr(src1,src2)(j)=SUM(k) src1(k) src2(k+j).</remarks>
-    public static void CyclicCorrelation( 
+    public static void CorrelationCyclic( 
       double[] src1real, double[]src1imag,
       double[] src2real, double[] src2imag,
       double[] resultreal, double[] resultimag,
@@ -107,6 +108,37 @@ namespace Altaxo.Calc.Fourier
       }
     }
 
+    /// <summary>
+    /// Performes a non-cyclic correlation between array arr1 and arr2 and stores the result in resultarr. Resultarr must be
+    /// different from the other two arrays. 
+    /// </summary>
+    /// <param name="arr1">First array.</param>
+    /// <param name="arr2">Second array.</param>
+    /// <param name="resultarr">The array that stores the correlation result.</param>
+    public static void CorrelationNonCyclic(double[] arr1, double[] arr2, double[] resultarr)
+    {
+      if (object.ReferenceEquals(resultarr, arr1) || object.ReferenceEquals(resultarr, arr2))
+        throw new ArgumentException("resultarr must not be identical to arr1 or arr2!");
+
+      int len = arr1.Length + arr2.Length - 1;
+      int i, j, k;
+      for (k = 0; k < len; k++)
+      {
+        int beg1 = Math.Max(0, 1+k - arr2.Length);
+        int beg2 = Math.Max(0, arr2.Length-1-k);
+        int end1 = arr1.Length - 1;
+        int end2 = arr2.Length - 1;
+
+        resultarr[k] = 0;
+        for (i = beg1, j = beg2; i <= end1 && j <= end2; i++, j++)
+        {
+          resultarr[k] += arr1[i] * arr2[j];
+        }
+      }
+    }
+    #endregion
+
+    #region Convolution
 
     /// <summary>
     /// Performes a cyclic convolution between array arr1 and arr2 and stores the result in resultarr. Resultarr must be
@@ -116,7 +148,7 @@ namespace Altaxo.Calc.Fourier
     /// <param name="arr2">Second array.</param>
     /// <param name="resultarr">The array that stores the correleation result.</param>
     /// <param name="count">Number of points to correlate.</param>
-    public static void CyclicConvolution( double[] arr1, double[] arr2, double[] resultarr, int count)
+    public static void ConvolutionCyclic( double[] arr1, double[] arr2, double[] resultarr, int count)
     {
       if(object.ReferenceEquals(resultarr,arr1) || object.ReferenceEquals(resultarr,arr2))
         throw new ArgumentException("resultarr must not be identical to arr1 or arr2!");
@@ -144,7 +176,7 @@ namespace Altaxo.Calc.Fourier
     /// <param name="resultreal">The array that stores the correlation result (real part values.</param>
     /// <param name="resultimag">The array that stores the correlation result (imaginary part values.</param>
     /// <param name="n">Number of points to correlate.</param>
-    public static void CyclicConvolution( 
+    public static void ConvolutionCyclic( 
       double[] src1real, double[]src1imag,
       double[] src2real, double[] src2imag,
       double[] resultreal, double[] resultimag,
@@ -175,6 +207,39 @@ namespace Altaxo.Calc.Fourier
       }
     }
 
+
+		/// <summary>
+		/// Performes a non-cyclic convolution between array arr1 and arr2 and stores the result in resultarr. Resultarr must be
+		/// different from the other two arrays. 
+		/// </summary>
+		/// <param name="arr1">First array.</param>
+		/// <param name="arr2">Second array.</param>
+		/// <param name="resultarr">The array that stores the convolution result.</param>
+		public static void ConvolutionNonCyclic(double[] arr1, double[] arr2, double[] resultarr)
+		{
+			if (object.ReferenceEquals(resultarr, arr1) || object.ReferenceEquals(resultarr, arr2))
+				throw new ArgumentException("resultarr must not be identical to arr1 or arr2!");
+
+      int len = arr1.Length + arr2.Length-1;
+			int i, j, k;
+			for (k = 0; k < len; k++)
+			{
+        int beg1 = Math.Min(k,arr1.Length-1);
+        int beg2 = Math.Max(0, k +1 - arr1.Length);
+        int end1 = 0;
+        int end2 = arr2.Length - 1;
+
+        resultarr[k] = 0;
+        for (i = beg1, j=beg2; i >= end1 && j<=end2; i--,j++)
+				{
+					resultarr[k] += arr1[i] * arr2[j];
+				}
+			}
+    }
+
+    #endregion
+
+    #region FourierTransformation
     /// <summary>
     /// Performs a native fouriertransformation of a real value array.
     /// </summary>
@@ -182,7 +247,7 @@ namespace Altaxo.Calc.Fourier
     /// <param name="resultarr">Used to store the result of the transformation.</param>
     /// <param name="count">Number of points to transform.</param>
     /// <param name="direction">Direction of the Fourier transform.</param>
-    public static void FFT(double[] arr, Complex[] resultarr, int count, FourierDirection direction)
+    public static void FourierTransformation(double[] arr, Complex[] resultarr, int count, FourierDirection direction)
     {
       int iss = direction==FourierDirection.Forward ? 1 : -1;
       for(int k=0;k<count;k++)
@@ -202,16 +267,16 @@ namespace Altaxo.Calc.Fourier
     /// <param name="real">The real part of the array to transform.</param>
     /// <param name="imag">The real part of the array to transform.</param>
     /// <param name="direction">Direction of the Fourier transform.</param>
-    public static void FFT(double[] real, double[] imag, FourierDirection direction)
+    public static void FourierTransformation(double[] real, double[] imag, FourierDirection direction)
     {
       if(real.Length!=imag.Length)
         throw new ArgumentException("Length of real and imaginary array do not match!");
 
-      FFT(real, imag, real, imag, real.Length, direction);
+      FourierTransformation(real, imag, real, imag, real.Length, direction);
     }
 
     /// <summary>
-    /// Performs a native fouriertransformation of a complex value array.
+    /// Performs a native Fourier transformation of a complex value array.
     /// </summary>
     /// <param name="inputreal">The real part of the array to transform.</param>
     /// <param name="inputimag">The real part of the array to transform.</param>
@@ -219,7 +284,7 @@ namespace Altaxo.Calc.Fourier
     /// <param name="resultimag">Used to store the imaginary part of the result of the transformation.  May be equal to the input array.</param>
     /// <param name="count">Number of points to transform.</param>
     /// <param name="direction">Direction of the Fourier transform.</param>
-    public static void FFT(double[] inputreal, double[] inputimag, double[] resultreal, double[] resultimag, int count,FourierDirection direction)
+    public static void FourierTransformation(double[] inputreal, double[] inputimag, double[] resultreal, double[] resultimag, int count,FourierDirection direction)
     {
       bool useShadowCopy = false;
       double[] resre = resultreal;
@@ -269,9 +334,9 @@ namespace Altaxo.Calc.Fourier
     /// </summary>
     /// <param name="real">The real part of the array to transform.</param>
     /// <param name="direction">Direction of the Fourier transform.</param>
-    public static void FFT(double[] real, FourierDirection direction)
+    public static void FourierTransformation(double[] real, FourierDirection direction)
     {
-      FFT(real, real, real.Length, direction);
+      FourierTransformation(real, real, real.Length, direction);
     }
 
     /// <summary>
@@ -281,7 +346,7 @@ namespace Altaxo.Calc.Fourier
     /// <param name="resultreal">Used to store the real part of the result of the transformation. May be equal to the input array.</param>
     /// <param name="count">Number of points to transform.</param>
     /// <param name="direction">Direction of the Fourier transform.</param>
-    public static void FFT(double[] inputreal, double[] resultreal,  int count,FourierDirection direction)
+    public static void FourierTransformation(double[] inputreal, double[] resultreal,  int count,FourierDirection direction)
     {
       bool useShadowCopy = false;
       double[] resre = resultreal;
@@ -355,6 +420,7 @@ namespace Altaxo.Calc.Fourier
       }
     }
 
+    #endregion
 
   }
 

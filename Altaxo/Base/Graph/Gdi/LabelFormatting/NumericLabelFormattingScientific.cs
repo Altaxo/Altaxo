@@ -86,13 +86,15 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
       throw new ApplicationException("Programming error: this function must not be called because the item can not be formatted as a string");
     }
 
-    protected void SplitInFirstPartAndExponent(double ditem, out string firstpart, out string exponent)
+    protected void SplitInFirstPartAndExponent(double ditem, out string firstpart, out double mant,  out string middelpart, out string exponent)
     {
       string sitem1 = ditem.ToString("E");
 
       if (ditem == 0)
       {
+        mant = 0;
         firstpart = 0.ToString();
+        middelpart = string.Empty;
         exponent = string.Empty;
         return;
       }
@@ -101,22 +103,28 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
       System.Diagnostics.Debug.Assert(posOfE>0);
 
       int expo = int.Parse(sitem1.Substring(posOfE+1));
-      double mant = ditem*Calc.RMath.Pow(10, -expo);
+      mant = ditem*Calc.RMath.Pow(10, -expo);
 
       if (expo != 0)
       {
 
         firstpart = mant.ToString();
         exponent = expo.ToString();
-       
+
         if (firstpart == 1.ToString())
-          firstpart = "10";
+        {
+          firstpart = string.Empty;
+          middelpart = "10";
+        }
         else
-          firstpart += "·10";
+        {
+          middelpart = "·10";
+        }
       }
       else
       {
         firstpart = mant.ToString();
+        middelpart = string.Empty;
         exponent = string.Empty;
       }
 
@@ -124,10 +132,11 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 
     public override System.Drawing.SizeF MeasureItem(System.Drawing.Graphics g, System.Drawing.Font font, System.Drawing.StringFormat strfmt, Altaxo.Data.AltaxoVariant mtick, System.Drawing.PointF morg)
     {
-      string firstpart , exponent;
-      SplitInFirstPartAndExponent((double)mtick, out firstpart, out exponent);
+      string firstpart, middelpart, exponent;
+      double mant;
+      SplitInFirstPartAndExponent((double)mtick, out firstpart, out mant, out middelpart, out exponent);
 
-      SizeF size1 = g.MeasureString(firstpart, font, new PointF(0, 0), strfmt);
+      SizeF size1 = g.MeasureString(firstpart+middelpart, font, new PointF(0, 0), strfmt);
       SizeF size2 = g.MeasureString(exponent, font, new PointF(size1.Width, 0), strfmt);
 
       return new SizeF(size1.Width + size2.Width, size1.Height);
@@ -135,11 +144,12 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 
     public override void DrawItem(Graphics g, BrushX brush, Font font, StringFormat strfmt, Altaxo.Data.AltaxoVariant item, PointF morg)
     {
-      string firstpart, exponent;
-      SplitInFirstPartAndExponent((double)item, out firstpart, out exponent);
+      string firstpart, middelpart, exponent;
+      double mant;
+      SplitInFirstPartAndExponent((double)item, out firstpart, out mant, out middelpart, out exponent);
 
-      SizeF size1 = g.MeasureString(firstpart, font, morg, strfmt);
-      g.DrawString(firstpart, font, brush, morg, strfmt);
+      SizeF size1 = g.MeasureString(firstpart+middelpart, font, morg, strfmt);
+      g.DrawString(firstpart+middelpart, font, brush, morg, strfmt);
       morg.X += size1.Width;
       morg.Y += size1.Height / 3;
       using (Font font2 = new Font(font.FontFamily, (float)(font.Size * 2 / 3.0)))
@@ -160,29 +170,51 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
       StringFormat localstrfmt = (StringFormat)strfmt.Clone();
 
       string[] firstp = new string[items.Length];
+      string[] middel = new string[items.Length];
       string[] expos = new string[items.Length];
+      double[] mants = new double[items.Length];
 
       float maxexposize=0;
+      int firstpartmin =int.MaxValue;
+      int firstpartmax = int.MinValue;
       for (int i = 0; i < items.Length; ++i)
       {
         string firstpart, exponent;
         if (items[i].IsType(Altaxo.Data.AltaxoVariant.Content.VDouble))
         {
-          SplitInFirstPartAndExponent((double)items[i], out firstpart, out exponent);
+          SplitInFirstPartAndExponent((double)items[i], out firstpart, out mants[i], out middel[i], out exponent);
+          if (exponent.Length > 0)
+          {
+            firstpartmin = Math.Min(firstpartmin, firstpart.Length);
+            firstpartmax = Math.Max(firstpartmax, firstpart.Length);
+          }
         }
         else
         {
-          firstpart = items[i].ToString(); exponent = string.Empty;
+          firstpart = items[i].ToString(); middel[i] = string.Empty; exponent = string.Empty;
         }
         firstp[i] = firstpart;
         expos[i] = exponent;
         maxexposize = Math.Max(maxexposize,g.MeasureString(exponent,localfont2,new PointF(0,0),strfmt).Width);
       }
 
+      if (firstpartmax > 0 && firstpartmax > firstpartmin) // then we must use special measures to equilibrate the mantissa
+      {
+        firstp = NumericLabelFormattingAuto.FormatItems(mants);
+      }
+
 
       for (int i = 0; i < items.Length; ++i)
       {
-        litems[i] = new MeasuredLabelItem(g, localfont1, localfont2, localstrfmt, firstp[i],expos[i],maxexposize);
+        string mid = string.Empty;
+        if (!string.IsNullOrEmpty(expos[i]))
+        {
+          if (string.IsNullOrEmpty(firstp[i]))
+            mid = "10";
+          else
+            mid = "·10";
+        }
+        litems[i] = new MeasuredLabelItem(g, localfont1, localfont2, localstrfmt, firstp[i]+mid,expos[i],maxexposize);
       }
 
       return litems;

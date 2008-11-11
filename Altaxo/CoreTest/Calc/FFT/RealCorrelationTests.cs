@@ -300,7 +300,7 @@ namespace AltaxoTest.Calc.Fourier
         re2[i] = rnd.NextDouble();
       }
  
-      NativeFourierMethods.CyclicCorrelation(re1,re2,recmp,n);
+      NativeFourierMethods.CorrelationCyclic(re1,re2,recmp,n);
       _corr(re1, re2, re, n);
 
       for(int i=0;i<n;i++)

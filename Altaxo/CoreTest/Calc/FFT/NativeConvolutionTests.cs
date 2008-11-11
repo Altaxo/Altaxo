@@ -34,7 +34,7 @@ namespace AltaxoTest.Calc.Fourier
     const int nUpperLimit=100;
     const double maxTolerableEpsPerN=1E-15;
 
-    SplittedComplexConvolutionTests _test = new SplittedComplexConvolutionTests(new SplittedComplexConvolutionTests.ConvolutionRoutine(NativeFourierMethods.CyclicConvolution));
+    SplittedComplexConvolutionTests _test = new SplittedComplexConvolutionTests(new SplittedComplexConvolutionTests.ConvolutionRoutine(NativeFourierMethods.ConvolutionCyclic));
 
  
 

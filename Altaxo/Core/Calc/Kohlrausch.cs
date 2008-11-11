@@ -649,15 +649,15 @@ namespace Altaxo.Calc
     static Interpolation.BivariateAkimaSpline _respline;
     static void CreateImaginaryPartSpline()
     {
-      IROVector x = VectorMath.CreateEquidistantSequence(0, 1.0 / 32, 34); // beta ranging from 0 to 1+1/32
-      IROVector y = VectorMath.CreateEquidistantSequence(-5, 1.0 / 64, 353); // y ranging from -5 to 0.5
+      IROVector x = VectorMath.CreateEquidistantSequenceByStartStepLength(0, 1.0 / 32, 34); // beta ranging from 0 to 1+1/32
+      IROVector y = VectorMath.CreateEquidistantSequenceByStartStepLength(-5, 1.0 / 64, 353); // y ranging from -5 to 0.5
       IROMatrix z = MatrixMath.ToROMatrix(_imdata);
       _imspline = new Interpolation.BivariateAkimaSpline(x, y, z, false);
     }
     static void CreateRealPartSpline()
     {
-      IROVector x = VectorMath.CreateEquidistantSequence(0, 1.0 / 32, 34); // beta ranging from 0 to 1+1/32
-      IROVector y = VectorMath.CreateEquidistantSequence(-5, 1.0 / 64, 353); // y ranging from -5 to 0.5
+      IROVector x = VectorMath.CreateEquidistantSequenceByStartStepLength(0, 1.0 / 32, 34); // beta ranging from 0 to 1+1/32
+      IROVector y = VectorMath.CreateEquidistantSequenceByStartStepLength(-5, 1.0 / 64, 353); // y ranging from -5 to 0.5
       IROMatrix z = MatrixMath.ToROMatrix(_redata);
       _respline = new Interpolation.BivariateAkimaSpline(x, y, z, false);
     }

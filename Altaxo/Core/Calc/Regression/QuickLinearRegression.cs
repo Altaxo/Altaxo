@@ -68,6 +68,15 @@ namespace Altaxo.Calc.Regression
       return (_n*_syx-_sx*_sy)/GetDeterminant();
     }
 
+
+		/// <summary>
+		/// Gets the intercept of the linear regression with the X-axis. Returns NaN if not enough data points entered.
+		/// </summary>
+		/// <returns>The intercept value with the X-Axis, i.e. the point where the regression value is zero. Returns NaN if not enough data points are entered.</returns>
+		public double GetX0()
+		{
+			return -(_sy * _sxx - _syx * _sx) / (_n * _syx - _sx * _sy);
+		}
   
 
     /// <summary>

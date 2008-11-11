@@ -102,7 +102,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
     }
 
 
-    public string[] FormatItems(double[] majorticks)
+    public static string[] FormatItems(double[] majorticks)
     {
 
       // print the major ticks

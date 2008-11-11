@@ -460,6 +460,32 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
     }
 
+		/// <summary>
+		/// Returns the parent table of the fit element.
+		/// </summary>
+		/// <returns>If all independent variables originate from the same table, the return value is that table. If not, the return value is null.</returns>
+		public DataTable GetParentDataTable()
+		{
+			// now look for the parent table of the fit element
+			// the parent table is defined if all independent variables originate from the same table
+			Altaxo.Data.DataTable parentTable = null;
+			for (int k = 0; k < NumberOfIndependentVariables; k++)
+			{
+				Altaxo.Data.DataColumn ncol = IndependentVariables(k) as Altaxo.Data.DataColumn;
+				if (ncol == null)
+					continue;
+				Altaxo.Data.DataTable parent = Altaxo.Data.DataTable.GetParentDataTableOf(ncol);
+				if (parent != null && parentTable == null)
+					parentTable = parent;
+				else if (parent != null && parentTable != null && !object.ReferenceEquals(parent, parentTable))
+				{
+					parentTable = null;
+					break;
+				}
+			}
+
+			return parentTable;
+		}
 
     #region ICloneable Members
 

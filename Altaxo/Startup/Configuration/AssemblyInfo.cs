@@ -24,7 +24,7 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyTrademark("(C) Dr. Dirk Lellinger 2002-2007")]
 [assembly: AssemblyCulture("")]
 
-[assembly: AssemblyVersion("0.54.0.591")]
+[assembly: AssemblyVersion("0.54.0.592")]
 
 [assembly: AssemblyDelaySign(false)]
 

@@ -54,6 +54,14 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     private ToolStripButton _tsbCopyParameterValue;
     private ToolStripButton _tsbPasteParameterValue;
     private ToolStripButton _tsbCopyParameterAsCDef;
+		private TabPage _tpSimulate;
+		private Button _btSimulate;
+		private FlowLayoutPanel _simulateLayoutPanel;
+		private GroupBox _grpbx_GenerationMethod;
+		private RadioButton _rbFromEquallySpacedInterval;
+		private RadioButton _rbGenerateFromIndependentVars;
+		private Altaxo.Gui.Common.EquallySpacedIntervalControl _ctrlEquallySpacedInterval;
+		private CheckBox _chkUseUnusedDependentVarsAlso;
     /// <summary> 
     /// Required designer variable.
     /// </summary>
@@ -89,221 +97,327 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     /// </summary>
     private void InitializeComponent()
     {
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(NonlinearFitControl));
-      this._tabControl = new System.Windows.Forms.TabControl();
-      this._tpSelectFunction = new System.Windows.Forms.TabPage();
-      this._btNew = new System.Windows.Forms.Button();
-      this._btSelect = new System.Windows.Forms.Button();
-      this._tpFitEnsemble = new System.Windows.Forms.TabPage();
-      this._tpMakeFit = new System.Windows.Forms.TabPage();
-      this._toolStripFit = new System.Windows.Forms.ToolStrip();
-      this._tsbCopyParameter = new System.Windows.Forms.ToolStripButton();
-      this._tsbCopyParameterAll = new System.Windows.Forms.ToolStripButton();
-      this._tsbCopyParameterValue = new System.Windows.Forms.ToolStripButton();
-      this._tsbPasteParameterValue = new System.Windows.Forms.ToolStripButton();
-      this._btDoSimplex = new System.Windows.Forms.Button();
-      this.label1 = new System.Windows.Forms.Label();
-      this._edChiSqr = new System.Windows.Forms.TextBox();
-      this._btChiSqr = new System.Windows.Forms.Button();
-      this._btDoFit = new System.Windows.Forms.Button();
-      this._tsbCopyParameterAsCDef = new System.Windows.Forms.ToolStripButton();
-      this._tabControl.SuspendLayout();
-      this._tpSelectFunction.SuspendLayout();
-      this._tpMakeFit.SuspendLayout();
-      this._toolStripFit.SuspendLayout();
-      this.SuspendLayout();
-      // 
-      // _tabControl
-      // 
-      this._tabControl.Controls.Add(this._tpSelectFunction);
-      this._tabControl.Controls.Add(this._tpFitEnsemble);
-      this._tabControl.Controls.Add(this._tpMakeFit);
-      this._tabControl.Dock = System.Windows.Forms.DockStyle.Fill;
-      this._tabControl.Location = new System.Drawing.Point(0, 0);
-      this._tabControl.Name = "_tabControl";
-      this._tabControl.SelectedIndex = 0;
-      this._tabControl.Size = new System.Drawing.Size(432, 384);
-      this._tabControl.TabIndex = 0;
-      // 
-      // _tpSelectFunction
-      // 
-      this._tpSelectFunction.Controls.Add(this._btNew);
-      this._tpSelectFunction.Controls.Add(this._btSelect);
-      this._tpSelectFunction.Location = new System.Drawing.Point(4, 22);
-      this._tpSelectFunction.Name = "_tpSelectFunction";
-      this._tpSelectFunction.Size = new System.Drawing.Size(424, 358);
-      this._tpSelectFunction.TabIndex = 0;
-      this._tpSelectFunction.Text = "Select fit func";
-      // 
-      // _btNew
-      // 
-      this._btNew.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this._btNew.Location = new System.Drawing.Point(120, 328);
-      this._btNew.Name = "_btNew";
-      this._btNew.Size = new System.Drawing.Size(75, 23);
-      this._btNew.TabIndex = 1;
-      this._btNew.Text = "New..";
-      this._btNew.Click += new System.EventHandler(this._btNew_Click);
-      // 
-      // _btSelect
-      // 
-      this._btSelect.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this._btSelect.Location = new System.Drawing.Point(32, 328);
-      this._btSelect.Name = "_btSelect";
-      this._btSelect.Size = new System.Drawing.Size(75, 23);
-      this._btSelect.TabIndex = 0;
-      this._btSelect.Text = "Select";
-      this._btSelect.Click += new System.EventHandler(this._btSelectFitFunc_Click);
-      // 
-      // _tpFitEnsemble
-      // 
-      this._tpFitEnsemble.Location = new System.Drawing.Point(4, 22);
-      this._tpFitEnsemble.Name = "_tpFitEnsemble";
-      this._tpFitEnsemble.Size = new System.Drawing.Size(424, 358);
-      this._tpFitEnsemble.TabIndex = 1;
-      this._tpFitEnsemble.Text = "Details";
-      // 
-      // _tpMakeFit
-      // 
-      this._tpMakeFit.Controls.Add(this._toolStripFit);
-      this._tpMakeFit.Controls.Add(this._btDoSimplex);
-      this._tpMakeFit.Controls.Add(this.label1);
-      this._tpMakeFit.Controls.Add(this._edChiSqr);
-      this._tpMakeFit.Controls.Add(this._btChiSqr);
-      this._tpMakeFit.Controls.Add(this._btDoFit);
-      this._tpMakeFit.Location = new System.Drawing.Point(4, 22);
-      this._tpMakeFit.Name = "_tpMakeFit";
-      this._tpMakeFit.Size = new System.Drawing.Size(424, 358);
-      this._tpMakeFit.TabIndex = 2;
-      this._tpMakeFit.Text = "Fit";
-      // 
-      // _toolStripFit
-      // 
-      this._toolStripFit.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(NonlinearFitControl));
+			this._tabControl = new System.Windows.Forms.TabControl();
+			this._tpSelectFunction = new System.Windows.Forms.TabPage();
+			this._btNew = new System.Windows.Forms.Button();
+			this._btSelect = new System.Windows.Forms.Button();
+			this._tpFitEnsemble = new System.Windows.Forms.TabPage();
+			this._tpMakeFit = new System.Windows.Forms.TabPage();
+			this._toolStripFit = new System.Windows.Forms.ToolStrip();
+			this._tsbCopyParameter = new System.Windows.Forms.ToolStripButton();
+			this._tsbCopyParameterAll = new System.Windows.Forms.ToolStripButton();
+			this._tsbCopyParameterAsCDef = new System.Windows.Forms.ToolStripButton();
+			this._tsbCopyParameterValue = new System.Windows.Forms.ToolStripButton();
+			this._tsbPasteParameterValue = new System.Windows.Forms.ToolStripButton();
+			this._btDoSimplex = new System.Windows.Forms.Button();
+			this.label1 = new System.Windows.Forms.Label();
+			this._edChiSqr = new System.Windows.Forms.TextBox();
+			this._btChiSqr = new System.Windows.Forms.Button();
+			this._btDoFit = new System.Windows.Forms.Button();
+			this._tpSimulate = new System.Windows.Forms.TabPage();
+			this._simulateLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
+			this._grpbx_GenerationMethod = new System.Windows.Forms.GroupBox();
+			this._rbFromEquallySpacedInterval = new System.Windows.Forms.RadioButton();
+			this._rbGenerateFromIndependentVars = new System.Windows.Forms.RadioButton();
+			this._chkUseUnusedDependentVarsAlso = new System.Windows.Forms.CheckBox();
+			this._btSimulate = new System.Windows.Forms.Button();
+			this._ctrlEquallySpacedInterval = new Altaxo.Gui.Common.EquallySpacedIntervalControl();
+			this._tabControl.SuspendLayout();
+			this._tpSelectFunction.SuspendLayout();
+			this._tpMakeFit.SuspendLayout();
+			this._toolStripFit.SuspendLayout();
+			this._tpSimulate.SuspendLayout();
+			this._simulateLayoutPanel.SuspendLayout();
+			this._grpbx_GenerationMethod.SuspendLayout();
+			this.SuspendLayout();
+			// 
+			// _tabControl
+			// 
+			this._tabControl.Controls.Add(this._tpSelectFunction);
+			this._tabControl.Controls.Add(this._tpFitEnsemble);
+			this._tabControl.Controls.Add(this._tpMakeFit);
+			this._tabControl.Controls.Add(this._tpSimulate);
+			this._tabControl.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._tabControl.Location = new System.Drawing.Point(0, 0);
+			this._tabControl.Name = "_tabControl";
+			this._tabControl.SelectedIndex = 0;
+			this._tabControl.Size = new System.Drawing.Size(432, 384);
+			this._tabControl.TabIndex = 0;
+			// 
+			// _tpSelectFunction
+			// 
+			this._tpSelectFunction.Controls.Add(this._btNew);
+			this._tpSelectFunction.Controls.Add(this._btSelect);
+			this._tpSelectFunction.Location = new System.Drawing.Point(4, 22);
+			this._tpSelectFunction.Name = "_tpSelectFunction";
+			this._tpSelectFunction.Size = new System.Drawing.Size(424, 358);
+			this._tpSelectFunction.TabIndex = 0;
+			this._tpSelectFunction.Text = "Select fit func";
+			this._tpSelectFunction.UseVisualStyleBackColor = true;
+			// 
+			// _btNew
+			// 
+			this._btNew.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this._btNew.Location = new System.Drawing.Point(120, 328);
+			this._btNew.Name = "_btNew";
+			this._btNew.Size = new System.Drawing.Size(75, 23);
+			this._btNew.TabIndex = 1;
+			this._btNew.Text = "New..";
+			this._btNew.Click += new System.EventHandler(this._btNew_Click);
+			// 
+			// _btSelect
+			// 
+			this._btSelect.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this._btSelect.Location = new System.Drawing.Point(32, 328);
+			this._btSelect.Name = "_btSelect";
+			this._btSelect.Size = new System.Drawing.Size(75, 23);
+			this._btSelect.TabIndex = 0;
+			this._btSelect.Text = "Select";
+			this._btSelect.Click += new System.EventHandler(this._btSelectFitFunc_Click);
+			// 
+			// _tpFitEnsemble
+			// 
+			this._tpFitEnsemble.Location = new System.Drawing.Point(4, 22);
+			this._tpFitEnsemble.Name = "_tpFitEnsemble";
+			this._tpFitEnsemble.Size = new System.Drawing.Size(424, 358);
+			this._tpFitEnsemble.TabIndex = 1;
+			this._tpFitEnsemble.Text = "Details";
+			this._tpFitEnsemble.UseVisualStyleBackColor = true;
+			// 
+			// _tpMakeFit
+			// 
+			this._tpMakeFit.Controls.Add(this._toolStripFit);
+			this._tpMakeFit.Controls.Add(this._btDoSimplex);
+			this._tpMakeFit.Controls.Add(this.label1);
+			this._tpMakeFit.Controls.Add(this._edChiSqr);
+			this._tpMakeFit.Controls.Add(this._btChiSqr);
+			this._tpMakeFit.Controls.Add(this._btDoFit);
+			this._tpMakeFit.Location = new System.Drawing.Point(4, 22);
+			this._tpMakeFit.Name = "_tpMakeFit";
+			this._tpMakeFit.Size = new System.Drawing.Size(424, 358);
+			this._tpMakeFit.TabIndex = 2;
+			this._tpMakeFit.Text = "Fit";
+			this._tpMakeFit.UseVisualStyleBackColor = true;
+			// 
+			// _toolStripFit
+			// 
+			this._toolStripFit.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this._tsbCopyParameter,
             this._tsbCopyParameterAll,
             this._tsbCopyParameterAsCDef,
             this._tsbCopyParameterValue,
             this._tsbPasteParameterValue});
-      this._toolStripFit.Location = new System.Drawing.Point(0, 0);
-      this._toolStripFit.Name = "_toolStripFit";
-      this._toolStripFit.Size = new System.Drawing.Size(424, 25);
-      this._toolStripFit.TabIndex = 5;
-      this._toolStripFit.Text = "toolStrip1";
-      // 
-      // _tsbCopyParameter
-      // 
-      this._tsbCopyParameter.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-      this._tsbCopyParameter.Image = ((System.Drawing.Image)(resources.GetObject("_tsbCopyParameter.Image")));
-      this._tsbCopyParameter.ImageTransparentColor = System.Drawing.Color.Magenta;
-      this._tsbCopyParameter.Name = "_tsbCopyParameter";
-      this._tsbCopyParameter.Size = new System.Drawing.Size(58, 22);
-      this._tsbCopyParameter.Text = "Copy NV";
-      this._tsbCopyParameter.ToolTipText = "Copy parameter (name and value) to clipboard";
-      this._tsbCopyParameter.Click += new System.EventHandler(this._tsbCopyParameter_Click);
-      // 
-      // _tsbCopyParameterAll
-      // 
-      this._tsbCopyParameterAll.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-      this._tsbCopyParameterAll.Image = ((System.Drawing.Image)(resources.GetObject("_tsbCopyParameterAll.Image")));
-      this._tsbCopyParameterAll.ImageTransparentColor = System.Drawing.Color.Magenta;
-      this._tsbCopyParameterAll.Name = "_tsbCopyParameterAll";
-      this._tsbCopyParameterAll.Size = new System.Drawing.Size(65, 22);
-      this._tsbCopyParameterAll.Text = "Copy NVV";
-      this._tsbCopyParameterAll.ToolTipText = "Copy Parameter (name, value, and variance))";
-      this._tsbCopyParameterAll.Click += new System.EventHandler(this._tsbCopyParameterAll_Click);
-      // 
-      // _tsbCopyParameterValue
-      // 
-      this._tsbCopyParameterValue.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-      this._tsbCopyParameterValue.Image = ((System.Drawing.Image)(resources.GetObject("_tsbCopyParameterValue.Image")));
-      this._tsbCopyParameterValue.ImageTransparentColor = System.Drawing.Color.Magenta;
-      this._tsbCopyParameterValue.Name = "_tsbCopyParameterValue";
-      this._tsbCopyParameterValue.Size = new System.Drawing.Size(49, 22);
-      this._tsbCopyParameterValue.Text = "Copy V";
-      this._tsbCopyParameterValue.ToolTipText = "Copy Parameter Values only";
-      this._tsbCopyParameterValue.Click += new System.EventHandler(this._tsbCopyParameterValue_Click);
-      // 
-      // _tsbPasteParameterValue
-      // 
-      this._tsbPasteParameterValue.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-      this._tsbPasteParameterValue.ImageTransparentColor = System.Drawing.Color.Magenta;
-      this._tsbPasteParameterValue.Name = "_tsbPasteParameterValue";
-      this._tsbPasteParameterValue.Size = new System.Drawing.Size(49, 22);
-      this._tsbPasteParameterValue.Text = "Paste V";
-      this._tsbPasteParameterValue.ToolTipText = "Paste parameter values";
-      this._tsbPasteParameterValue.Click += new System.EventHandler(this._tsbPasteParameterValue_Click);
-      // 
-      // _btDoSimplex
-      // 
-      this._btDoSimplex.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this._btDoSimplex.Location = new System.Drawing.Point(152, 328);
-      this._btDoSimplex.Name = "_btDoSimplex";
-      this._btDoSimplex.Size = new System.Drawing.Size(56, 23);
-      this._btDoSimplex.TabIndex = 4;
-      this._btDoSimplex.Text = "Simplex!";
-      this._btDoSimplex.Click += new System.EventHandler(this._btDoSimplex_Click);
-      // 
-      // label1
-      // 
-      this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.label1.Location = new System.Drawing.Point(216, 328);
-      this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(40, 16);
-      this.label1.TabIndex = 3;
-      this.label1.Text = "Chi ²:";
-      // 
-      // _edChiSqr
-      // 
-      this._edChiSqr.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this._edChiSqr.Location = new System.Drawing.Point(264, 328);
-      this._edChiSqr.Name = "_edChiSqr";
-      this._edChiSqr.Size = new System.Drawing.Size(144, 20);
-      this._edChiSqr.TabIndex = 2;
-      // 
-      // _btChiSqr
-      // 
-      this._btChiSqr.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this._btChiSqr.Location = new System.Drawing.Point(8, 328);
-      this._btChiSqr.Name = "_btChiSqr";
-      this._btChiSqr.Size = new System.Drawing.Size(48, 23);
-      this._btChiSqr.TabIndex = 1;
-      this._btChiSqr.Text = "ChiSqr";
-      this._btChiSqr.Click += new System.EventHandler(this._btChiSqr_Click);
-      // 
-      // _btDoFit
-      // 
-      this._btDoFit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this._btDoFit.Location = new System.Drawing.Point(80, 328);
-      this._btDoFit.Name = "_btDoFit";
-      this._btDoFit.Size = new System.Drawing.Size(64, 23);
-      this._btDoFit.TabIndex = 0;
-      this._btDoFit.Text = "Fit!";
-      this._btDoFit.Click += new System.EventHandler(this._btDoFit_Click);
-      // 
-      // _tsbCopyParameterAsCDef
-      // 
-      this._tsbCopyParameterAsCDef.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-      this._tsbCopyParameterAsCDef.Image = ((System.Drawing.Image)(resources.GetObject("_tsbCopyParameterAsCDef.Image")));
-      this._tsbCopyParameterAsCDef.ImageTransparentColor = System.Drawing.Color.Magenta;
-      this._tsbCopyParameterAsCDef.Name = "_tsbCopyParameterAsCDef";
-      this._tsbCopyParameterAsCDef.Size = new System.Drawing.Size(81, 22);
-      this._tsbCopyParameterAsCDef.Text = "Copy V as C#";
-      this._tsbCopyParameterAsCDef.ToolTipText = "Copy Parameter Values only";
-      this._tsbCopyParameterAsCDef.Click += new System.EventHandler(this._tsbCopyParameterValueAsCDef_Click);
-      // 
-      // NonlinearFitControl
-      // 
-      this.Controls.Add(this._tabControl);
-      this.Name = "NonlinearFitControl";
-      this.Size = new System.Drawing.Size(432, 384);
-      this._tabControl.ResumeLayout(false);
-      this._tpSelectFunction.ResumeLayout(false);
-      this._tpMakeFit.ResumeLayout(false);
-      this._tpMakeFit.PerformLayout();
-      this._toolStripFit.ResumeLayout(false);
-      this._toolStripFit.PerformLayout();
-      this.ResumeLayout(false);
+			this._toolStripFit.Location = new System.Drawing.Point(0, 0);
+			this._toolStripFit.Name = "_toolStripFit";
+			this._toolStripFit.Size = new System.Drawing.Size(424, 25);
+			this._toolStripFit.TabIndex = 5;
+			this._toolStripFit.Text = "toolStrip1";
+			// 
+			// _tsbCopyParameter
+			// 
+			this._tsbCopyParameter.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			this._tsbCopyParameter.Image = ((System.Drawing.Image)(resources.GetObject("_tsbCopyParameter.Image")));
+			this._tsbCopyParameter.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this._tsbCopyParameter.Name = "_tsbCopyParameter";
+			this._tsbCopyParameter.Size = new System.Drawing.Size(52, 22);
+			this._tsbCopyParameter.Text = "Copy NV";
+			this._tsbCopyParameter.ToolTipText = "Copy parameter (name and value) to clipboard";
+			this._tsbCopyParameter.Click += new System.EventHandler(this._tsbCopyParameter_Click);
+			// 
+			// _tsbCopyParameterAll
+			// 
+			this._tsbCopyParameterAll.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			this._tsbCopyParameterAll.Image = ((System.Drawing.Image)(resources.GetObject("_tsbCopyParameterAll.Image")));
+			this._tsbCopyParameterAll.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this._tsbCopyParameterAll.Name = "_tsbCopyParameterAll";
+			this._tsbCopyParameterAll.Size = new System.Drawing.Size(58, 22);
+			this._tsbCopyParameterAll.Text = "Copy NVV";
+			this._tsbCopyParameterAll.ToolTipText = "Copy Parameter (name, value, and variance))";
+			this._tsbCopyParameterAll.Click += new System.EventHandler(this._tsbCopyParameterAll_Click);
+			// 
+			// _tsbCopyParameterAsCDef
+			// 
+			this._tsbCopyParameterAsCDef.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			this._tsbCopyParameterAsCDef.Image = ((System.Drawing.Image)(resources.GetObject("_tsbCopyParameterAsCDef.Image")));
+			this._tsbCopyParameterAsCDef.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this._tsbCopyParameterAsCDef.Name = "_tsbCopyParameterAsCDef";
+			this._tsbCopyParameterAsCDef.Size = new System.Drawing.Size(77, 22);
+			this._tsbCopyParameterAsCDef.Text = "Copy V as C#";
+			this._tsbCopyParameterAsCDef.ToolTipText = "Copy Parameter Values only";
+			this._tsbCopyParameterAsCDef.Click += new System.EventHandler(this._tsbCopyParameterValueAsCDef_Click);
+			// 
+			// _tsbCopyParameterValue
+			// 
+			this._tsbCopyParameterValue.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			this._tsbCopyParameterValue.Image = ((System.Drawing.Image)(resources.GetObject("_tsbCopyParameterValue.Image")));
+			this._tsbCopyParameterValue.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this._tsbCopyParameterValue.Name = "_tsbCopyParameterValue";
+			this._tsbCopyParameterValue.Size = new System.Drawing.Size(45, 22);
+			this._tsbCopyParameterValue.Text = "Copy V";
+			this._tsbCopyParameterValue.ToolTipText = "Copy Parameter Values only";
+			this._tsbCopyParameterValue.Click += new System.EventHandler(this._tsbCopyParameterValue_Click);
+			// 
+			// _tsbPasteParameterValue
+			// 
+			this._tsbPasteParameterValue.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			this._tsbPasteParameterValue.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this._tsbPasteParameterValue.Name = "_tsbPasteParameterValue";
+			this._tsbPasteParameterValue.Size = new System.Drawing.Size(47, 22);
+			this._tsbPasteParameterValue.Text = "Paste V";
+			this._tsbPasteParameterValue.ToolTipText = "Paste parameter values";
+			this._tsbPasteParameterValue.Click += new System.EventHandler(this._tsbPasteParameterValue_Click);
+			// 
+			// _btDoSimplex
+			// 
+			this._btDoSimplex.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this._btDoSimplex.Location = new System.Drawing.Point(152, 328);
+			this._btDoSimplex.Name = "_btDoSimplex";
+			this._btDoSimplex.Size = new System.Drawing.Size(56, 23);
+			this._btDoSimplex.TabIndex = 4;
+			this._btDoSimplex.Text = "Simplex!";
+			this._btDoSimplex.Click += new System.EventHandler(this._btDoSimplex_Click);
+			// 
+			// label1
+			// 
+			this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.label1.Location = new System.Drawing.Point(216, 328);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(40, 16);
+			this.label1.TabIndex = 3;
+			this.label1.Text = "Chi ²:";
+			// 
+			// _edChiSqr
+			// 
+			this._edChiSqr.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this._edChiSqr.Location = new System.Drawing.Point(264, 328);
+			this._edChiSqr.Name = "_edChiSqr";
+			this._edChiSqr.Size = new System.Drawing.Size(144, 20);
+			this._edChiSqr.TabIndex = 2;
+			// 
+			// _btChiSqr
+			// 
+			this._btChiSqr.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this._btChiSqr.Location = new System.Drawing.Point(8, 328);
+			this._btChiSqr.Name = "_btChiSqr";
+			this._btChiSqr.Size = new System.Drawing.Size(48, 23);
+			this._btChiSqr.TabIndex = 1;
+			this._btChiSqr.Text = "ChiSqr";
+			this._btChiSqr.Click += new System.EventHandler(this._btChiSqr_Click);
+			// 
+			// _btDoFit
+			// 
+			this._btDoFit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this._btDoFit.Location = new System.Drawing.Point(80, 328);
+			this._btDoFit.Name = "_btDoFit";
+			this._btDoFit.Size = new System.Drawing.Size(64, 23);
+			this._btDoFit.TabIndex = 0;
+			this._btDoFit.Text = "Fit!";
+			this._btDoFit.Click += new System.EventHandler(this._btDoFit_Click);
+			// 
+			// _tpSimulate
+			// 
+			this._tpSimulate.Controls.Add(this._simulateLayoutPanel);
+			this._tpSimulate.Controls.Add(this._btSimulate);
+			this._tpSimulate.Location = new System.Drawing.Point(4, 22);
+			this._tpSimulate.Name = "_tpSimulate";
+			this._tpSimulate.Size = new System.Drawing.Size(424, 358);
+			this._tpSimulate.TabIndex = 3;
+			this._tpSimulate.Text = "Simulate";
+			this._tpSimulate.UseVisualStyleBackColor = true;
+			// 
+			// _simulateLayoutPanel
+			// 
+			this._simulateLayoutPanel.Controls.Add(this._grpbx_GenerationMethod);
+			this._simulateLayoutPanel.Controls.Add(this._ctrlEquallySpacedInterval);
+			this._simulateLayoutPanel.Controls.Add(this._chkUseUnusedDependentVarsAlso);
+			this._simulateLayoutPanel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
+			this._simulateLayoutPanel.Location = new System.Drawing.Point(3, 3);
+			this._simulateLayoutPanel.Name = "_simulateLayoutPanel";
+			this._simulateLayoutPanel.Size = new System.Drawing.Size(418, 310);
+			this._simulateLayoutPanel.TabIndex = 2;
+			// 
+			// _grpbx_GenerationMethod
+			// 
+			this._grpbx_GenerationMethod.Controls.Add(this._rbFromEquallySpacedInterval);
+			this._grpbx_GenerationMethod.Controls.Add(this._rbGenerateFromIndependentVars);
+			this._grpbx_GenerationMethod.Location = new System.Drawing.Point(3, 3);
+			this._grpbx_GenerationMethod.Name = "_grpbx_GenerationMethod";
+			this._grpbx_GenerationMethod.Size = new System.Drawing.Size(376, 43);
+			this._grpbx_GenerationMethod.TabIndex = 0;
+			this._grpbx_GenerationMethod.TabStop = false;
+			this._grpbx_GenerationMethod.Text = "Generation method";
+			// 
+			// _rbFromEquallySpacedInterval
+			// 
+			this._rbFromEquallySpacedInterval.AutoSize = true;
+			this._rbFromEquallySpacedInterval.Location = new System.Drawing.Point(115, 19);
+			this._rbFromEquallySpacedInterval.Name = "_rbFromEquallySpacedInterval";
+			this._rbFromEquallySpacedInterval.Size = new System.Drawing.Size(141, 17);
+			this._rbFromEquallySpacedInterval.TabIndex = 1;
+			this._rbFromEquallySpacedInterval.Text = "From eq. spaced interval";
+			this._rbFromEquallySpacedInterval.UseVisualStyleBackColor = true;
+			this._rbFromEquallySpacedInterval.CheckedChanged += new System.EventHandler(this.EhSimulate_GenerationMethodChanged);
+			// 
+			// _rbGenerateFromIndependentVars
+			// 
+			this._rbGenerateFromIndependentVars.AutoSize = true;
+			this._rbGenerateFromIndependentVars.Checked = true;
+			this._rbGenerateFromIndependentVars.Location = new System.Drawing.Point(6, 19);
+			this._rbGenerateFromIndependentVars.Name = "_rbGenerateFromIndependentVars";
+			this._rbGenerateFromIndependentVars.Size = new System.Drawing.Size(103, 17);
+			this._rbGenerateFromIndependentVars.TabIndex = 0;
+			this._rbGenerateFromIndependentVars.TabStop = true;
+			this._rbGenerateFromIndependentVars.Text = "From indep. vars";
+			this._rbGenerateFromIndependentVars.UseVisualStyleBackColor = true;
+			this._rbGenerateFromIndependentVars.CheckedChanged += new System.EventHandler(this.EhSimulate_GenerationMethodChanged);
+			// 
+			// _chkUseUnusedDependentVarsAlso
+			// 
+			this._chkUseUnusedDependentVarsAlso.AutoSize = true;
+			this._chkUseUnusedDependentVarsAlso.Location = new System.Drawing.Point(3, 214);
+			this._chkUseUnusedDependentVarsAlso.Name = "_chkUseUnusedDependentVarsAlso";
+			this._chkUseUnusedDependentVarsAlso.Size = new System.Drawing.Size(225, 17);
+			this._chkUseUnusedDependentVarsAlso.TabIndex = 2;
+			this._chkUseUnusedDependentVarsAlso.Text = "Generate unused dependent variables too";
+			this._chkUseUnusedDependentVarsAlso.UseVisualStyleBackColor = true;
+			// 
+			// _btSimulate
+			// 
+			this._btSimulate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this._btSimulate.Location = new System.Drawing.Point(357, 332);
+			this._btSimulate.Name = "_btSimulate";
+			this._btSimulate.Size = new System.Drawing.Size(64, 23);
+			this._btSimulate.TabIndex = 1;
+			this._btSimulate.Text = "Simulate!";
+			this._btSimulate.Click += new System.EventHandler(this._btSimulate_Click);
+			// 
+			// _ctrlEquallySpacedInterval
+			// 
+			this._ctrlEquallySpacedInterval.AutoSize = true;
+			this._ctrlEquallySpacedInterval.Enabled = false;
+			this._ctrlEquallySpacedInterval.Location = new System.Drawing.Point(3, 52);
+			this._ctrlEquallySpacedInterval.Name = "_ctrlEquallySpacedInterval";
+			this._ctrlEquallySpacedInterval.Size = new System.Drawing.Size(232, 156);
+			this._ctrlEquallySpacedInterval.TabIndex = 1;
+			// 
+			// NonlinearFitControl
+			// 
+			this.Controls.Add(this._tabControl);
+			this.Name = "NonlinearFitControl";
+			this.Size = new System.Drawing.Size(432, 384);
+			this._tabControl.ResumeLayout(false);
+			this._tpSelectFunction.ResumeLayout(false);
+			this._tpMakeFit.ResumeLayout(false);
+			this._tpMakeFit.PerformLayout();
+			this._toolStripFit.ResumeLayout(false);
+			this._toolStripFit.PerformLayout();
+			this._tpSimulate.ResumeLayout(false);
+			this._simulateLayoutPanel.ResumeLayout(false);
+			this._simulateLayoutPanel.PerformLayout();
+			this._grpbx_GenerationMethod.ResumeLayout(false);
+			this._grpbx_GenerationMethod.PerformLayout();
+			this.ResumeLayout(false);
 
     }
     #endregion
@@ -322,8 +436,12 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       }
     }
 
+		public object GetGenerationIntervalControl()
+		{
+			return _ctrlEquallySpacedInterval;
+		}
 
-    Control _setParameterControl;
+		Control _setParameterControl;
     public void SetParameterControl(object control)
     {
       if(_setParameterControl!=null)
@@ -444,6 +562,17 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       if (_controller != null)
         _controller.EhView_PasteParameterV();
     }
+
+		private void _btSimulate_Click(object sender, EventArgs e)
+		{
+			if (_controller != null)
+				_controller.EhView_DoSimulation(_rbFromEquallySpacedInterval.Checked, _chkUseUnusedDependentVarsAlso.Checked);
+		}
+
+		private void EhSimulate_GenerationMethodChanged(object sender, EventArgs e)
+		{
+			_ctrlEquallySpacedInterval.Enabled = _rbFromEquallySpacedInterval.Checked;
+		}
 
   }
 }

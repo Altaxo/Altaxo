@@ -315,7 +315,7 @@ namespace AltaxoTest.Calc.Fourier
       Array.Copy(im,0,im1,0,n);
 
       _fft(re,im,FourierDirection.Forward);
-      NativeFourierMethods.FFT(re1,im1,re1,im1,(int)n, FourierDirection.Forward);
+      NativeFourierMethods.FourierTransformation(re1,im1,re1,im1,(int)n, FourierDirection.Forward);
 
       for(uint i=0;i<n;i++)
       {
@@ -340,7 +340,7 @@ namespace AltaxoTest.Calc.Fourier
       Array.Copy(im,0,im1,0,n);
 
       _fft(re,im,FourierDirection.Inverse);
-      NativeFourierMethods.FFT(re1,im1,re1,im1,(int)n, FourierDirection.Inverse);
+      NativeFourierMethods.FourierTransformation(re1,im1,re1,im1,(int)n, FourierDirection.Inverse);
 
       for(uint i=0;i<n;i++)
       {
@@ -560,7 +560,7 @@ namespace AltaxoTest.Calc.Fourier
       Array.Copy(re,0,re1,0,n);
 
       _fft(re,FourierDirection.Forward);
-      NativeFourierMethods.FFT(re1,re1,(int)n, FourierDirection.Forward);
+      NativeFourierMethods.FourierTransformation(re1,re1,(int)n, FourierDirection.Forward);
 
       for(uint i=0;i<n;i++)
       {
@@ -580,7 +580,7 @@ namespace AltaxoTest.Calc.Fourier
       Array.Copy(re,0,re1,0,n);
 
       _fft(re,FourierDirection.Inverse);
-      NativeFourierMethods.FFT(re1,re1,(int)n, FourierDirection.Inverse);
+      NativeFourierMethods.FourierTransformation(re1,re1,(int)n, FourierDirection.Inverse);
 
       for(uint i=0;i<n;i++)
       {

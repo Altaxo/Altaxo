@@ -53,6 +53,8 @@ namespace Altaxo.Graph.Scales
 
     protected NumericAxisRescaleConditions _rescaling = new NumericAxisRescaleConditions();
 
+		protected Ticks.LinearScaleTickSettings _tickSettings = new Ticks.LinearScaleTickSettings();
+
     // cached values
     /// <summary>Current axis origin (cached value).</summary>
     protected double _cachedAxisOrg=0;
@@ -212,6 +214,7 @@ namespace Altaxo.Graph.Scales
 
       this._rescaling = null==from.Rescaling ? new NumericAxisRescaleConditions() : (NumericAxisRescaleConditions)from.Rescaling.Clone();
 
+			this._tickSettings = null == from._tickSettings ? new Ticks.LinearScaleTickSettings() : (Ticks.LinearScaleTickSettings)from._tickSettings.Clone();
     }
 
     public virtual void CopyFrom(LinearScale from)
@@ -232,7 +235,9 @@ namespace Altaxo.Graph.Scales
       this._cachedOneByAxisSpan  = from._cachedOneByAxisSpan;
 
       this._rescaling = null==from.Rescaling ? new NumericAxisRescaleConditions() : (NumericAxisRescaleConditions)from.Rescaling.Clone();
-    }
+		
+			this._tickSettings = null == from._tickSettings ? new Ticks.LinearScaleTickSettings() : (Ticks.LinearScaleTickSettings)from._tickSettings.Clone();
+		}
 
     public override object Clone()
     {

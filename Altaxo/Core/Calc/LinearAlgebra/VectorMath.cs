@@ -26,13 +26,64 @@ namespace Altaxo.Calc.LinearAlgebra
   /// <summary>
   /// VectorMath provides common static functions concerning vectors.
   /// </summary>
-  public class VectorMath
+  public static class VectorMath
   {
+		private static Func<int, IVector> _funcCreateNewVector = DefaultCreateNewVector;
+
+		public static IVector DefaultCreateNewVector(int length)
+		{
+			return new DoubleVector(length);
+		}
+
+
     #region private Helper functions
     static double Square(double x) { return x*x; }
     #endregion
   
     #region Inner types
+
+		/// <summary>
+		/// Provides a read-only vector with equal and constant items.
+		/// </summary>
+		private class ROConstantVector : IROVector
+		{
+			int _length;
+			double _value;
+
+			public ROConstantVector(double value,int length)
+			{
+				_length = length;
+				_value = value;
+			}
+
+			#region IROVector Members
+
+			public int LowerBound
+			{
+				get { return 0; }
+			}
+
+			public int UpperBound
+			{
+				get { return _length - 1; }
+			}
+
+			public int Length
+			{
+				get { return _length; }
+			}
+
+			#endregion
+
+			#region INumericSequence Members
+
+			public double this[int i]
+			{
+				get { return _value; }
+			}
+
+			#endregion
+		}
 
     /// <summary>
     /// Serves as Wrapper for an double array to plug-in where a IROVector is neccessary.
@@ -359,13 +410,13 @@ namespace Altaxo.Calc.LinearAlgebra
       }
     }
 
-    class EquidistantSequenceVector : IROVector
+    class EquidistantSequenceVectorStartStepLength : IROVector
     {
       double _start;
       double _step;
       int _len;
 
-      public EquidistantSequenceVector(double start, double step, int length)
+      public EquidistantSequenceVectorStartStepLength(double start, double step, int length)
       {
         _start = start;
         _step = step;
@@ -407,9 +458,64 @@ namespace Altaxo.Calc.LinearAlgebra
       #endregion
     }
 
+    class EquidistantSequenceVectorStartEndLength : IROVector
+    {
+      double _start;
+      double _end;
+      int _len;
+
+      public EquidistantSequenceVectorStartEndLength(double start, double end, int length)
+      {
+        _start = start;
+        _end = end;
+        _len = length;
+      }
+
+      #region IROVector Members
+
+      public int LowerBound
+      {
+        get { return 0; }
+      }
+
+      public int UpperBound
+      {
+        get { return _len - 1; }
+      }
+
+      public int Length
+      {
+        get { return _len; }
+      }
+
+      #endregion
+
+      #region INumericSequence Members
+
+      public double this[int i]
+      {
+
+        get
+        {
+          if (i < 0 || i >= _len)
+            throw new ArgumentOutOfRangeException("i");
+
+          double r = i / (double)(_len - 1);
+          return _start * (1 - r) + _end * (r);
+        }
+      }
+
+      #endregion
+    }
+
     #endregion
 
     #region Type conversion
+
+		public static IROVector GetConstantVector(double value,int length)
+		{
+			return new ROConstantVector( value,length);
+		}
 
     #region From/To double[]
     /// <summary>
@@ -534,10 +640,24 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="step">Difference between two successive elements.</param>
     /// <param name="length">Length of the vector.</param>
     /// <returns></returns>
-    public static IROVector CreateEquidistantSequence(double start, double step, int length)
+    public static IROVector CreateEquidistantSequenceByStartStepLength(double start, double step, int length)
     {
-      return new EquidistantSequenceVector(start, step, length);
+      return new EquidistantSequenceVectorStartStepLength(start, step, length);
     }
+
+		/// <summary>
+		/// Creates a read-only vector with equidistant elements from start to end. The created vector
+		/// consumes memory only for the three variables, independent of its length.
+		/// </summary>
+		/// <param name="start">First element of the vector.</param>
+		/// <param name="end">Last element of the vector.</param>
+		/// <param name="length">Length of the vector.</param>
+		/// <returns></returns>
+		public static IROVector CreateEquidistantSequenceByStartEndLength(double start, double end, int length)
+		{
+			return new EquidistantSequenceVectorStartEndLength(start, end, length);
+		}
+
     #endregion
 
     #region Filling
@@ -628,15 +748,25 @@ namespace Altaxo.Calc.LinearAlgebra
         c[i] = a[i] * b[i];
     }
 
-    #endregion
+		/// <summary>
+		/// Multiplies all vector elements with a constant.
+		/// </summary>
+		/// <param name="v">The vector.</param>
+		/// <param name="a">The constant to multiply with.</param>
+		public static void Multiply(this IVector v, double a)
+		{
+			for (int i = v.LowerBound; i <= v.UpperBound; i++)
+				v[i] *= a;
+		}
+		#endregion
 
-    /// <summary>
-    /// Returns the used length of the vector. This is one more than the highest index of the element that is different from Double.NaN.
-    /// </summary>
-    /// <param name="values">The vector for which the used length has to be determined.</param>
-    /// <param name="currentlength">The current length of the array. Normally values.Length, but you can provide a value less than this.</param>
-    /// <returns>The used length. Elements with indices greater or equal this until <c>currentlength</c> are NaNs.</returns>
-    static public int GetUsedLength(IROVector values, int currentlength)
+		/// <summary>
+		/// Returns the used length of the vector. This is one more than the highest index of the element that is different from Double.NaN.
+		/// </summary>
+		/// <param name="values">The vector for which the used length has to be determined.</param>
+		/// <param name="currentlength">The current length of the array. Normally values.Length, but you can provide a value less than this.</param>
+		/// <returns>The used length. Elements with indices greater or equal this until <c>currentlength</c> are NaNs.</returns>
+		static public int GetUsedLength(IROVector values, int currentlength)
     {
       for (int i = currentlength - 1; i >= 0; i--)
       {
@@ -656,13 +786,46 @@ namespace Altaxo.Calc.LinearAlgebra
       return GetUsedLength(values, values.Length);
     }
 
+		/// <summary>
+		/// Returns the maximum of the elements in xarray.
+		/// </summary>
+		/// <param name="xarray">The array to search for maximum element.</param>
+		/// <returns>Maximum element of xarray. Returns NaN if the array is empty.</returns>
+		public static double Min(this IROVector xarray)
+		{
+			double min = xarray.Length == 0 ? double.NaN : xarray[xarray.LowerBound];
+
+			int last = xarray.UpperBound;
+			for (int i = xarray.LowerBound + 1; i <= last; i++)
+			{
+				min = Math.Min(min, xarray[i]);
+			}
+			return min;
+		}
+
+		/// <summary>
+		/// Returns the maximum of the elements in xarray.
+		/// </summary>
+		/// <param name="xarray">The array to search for maximum element.</param>
+		/// <returns>Maximum element of xarray. Returns <see cref="Double.NaN" /> if the array is empty.</returns>
+		public static double Min(this double[] xarray)
+		{
+			double min = xarray.Length == 0 ? double.NaN : xarray[xarray.GetLowerBound(0)];
+
+			int last = xarray.GetUpperBound(0);
+			for (int i = xarray.GetLowerBound(0) + 1; i <= last; i++)
+			{
+				min = Math.Min(min, xarray[i]);
+			}
+			return min;
+		}
 
     /// <summary>
     /// Returns the maximum of the elements in xarray.
     /// </summary>
     /// <param name="xarray">The array to search for maximum element.</param>
     /// <returns>Maximum element of xarray. Returns NaN if the array is empty.</returns>
-    public static double Max(IROVector xarray)
+    public static double Max(this IROVector xarray)
     {
       double max = xarray.Length==0 ? double.NaN : xarray[xarray.LowerBound];
 
@@ -679,7 +842,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// </summary>
     /// <param name="xarray">The array to search for maximum element.</param>
     /// <returns>Maximum element of xarray. Returns <see cref="Double.NaN" /> if the array is empty.</returns>
-    public static double Max(double[] xarray)
+    public static double Max(this double[] xarray)
     {
       double max = xarray.Length==0 ? double.NaN : xarray[xarray.GetLowerBound(0)];
 
@@ -691,12 +854,40 @@ namespace Altaxo.Calc.LinearAlgebra
       return max;
     }
 
-    /// <summary>
-    /// Returns the sum of the elements in xarray.
-    /// </summary>
-    /// <param name="xarray">The array.</param>
-    /// <returns>The sum of all elements in xarray.</returns>
-    public static double Sum(double[] xarray)
+		/// <summary>
+		/// Gives the parallel maximum of vector v1 and v2. The first element of the resulting vector
+		/// is the maximum of the first element of v1 and the first element of v2. The second element of the 
+		/// resulting vector is the maximum of the second element of v1 and the second element of v2, and so on.
+		/// </summary>
+		/// <param name="v1">First vector.</param>
+		/// <param name="v2">Second vector.</param>
+		/// <param name="result">The resulting vector.</param>
+		public static void PMax(IROVector v1, IROVector v2, IVector result)
+		{
+			int maxlen = Math.Max(v1.Length, v2.Length);
+			for (int i = 0; i < maxlen; i++)
+			{
+				result[i + result.LowerBound] = Math.Max(v1[i + v1.LowerBound], v2[i + v2.LowerBound]);
+			}
+		}
+
+		public static IVector Max(this IROVector v, double b, IVector result)
+		{
+			if (null == result)
+				result = _funcCreateNewVector(v.Length);
+
+			for (int i = 0; i < v.Length; i++)
+				result[i + result.LowerBound] = Math.Max(v[i + v.LowerBound], b);
+
+			return result;
+		}
+
+		/// <summary>
+		/// Returns the sum of the elements in xarray.
+		/// </summary>
+		/// <param name="xarray">The array.</param>
+		/// <returns>The sum of all elements in xarray.</returns>
+		public static double Sum(this double[] xarray)
     {
       double sum = 0;
       for(int i=0;i<xarray.Length;i++)
@@ -704,6 +895,20 @@ namespace Altaxo.Calc.LinearAlgebra
 
       return sum;
     }
+
+		/// <summary>
+		/// Returns the sum of the elements in the vector.
+		/// </summary>
+		/// <param name="xarray">The vector.</param>
+		/// <returns>The sum of all elements in xarray.</returns>
+		public static double Sum(this IROVector xarray)
+		{
+			double sum = 0;
+			for (int i = 0; i < xarray.Length; i++)
+				sum += xarray[i];
+
+			return sum;
+		}
 
 
     /// <summary>
@@ -885,23 +1090,73 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="x">Vector (sequence) to test.</param>
     /// <param name="isDecreasing">On return, this argument is set to true if the sequence is strictly decreasing. If increasing, this argument is set to false.</param>
     /// <returns>True if the sequence is strictly increasing or decreasing.</returns>
-    public static bool IsStrictlyIncreasingOrDecreasing(IROVector x, out bool isDecreasing)
-    {
-      isDecreasing = false;
-      if (x.Length == 0)
-        return false;
-      int sign = Math.Sign(x[x.Length - 1] - x[0]);
-      if (sign == 0)
-        return false;
+		public static bool IsStrictlyIncreasingOrDecreasing(IROVector x, out bool isDecreasing)
+		{
+			isDecreasing = false;
+			if (x.Length == 0)
+				return false;
+			int sign = Math.Sign(x[x.Length - 1] - x[0]);
+			if (sign == 0)
+				return false;
 
-      isDecreasing = (sign < 0);
+			isDecreasing = (sign < 0);
 
-      for (int i = x.Length - 1; i >= 1; --i)
-        if (Math.Sign(x[i] - x[i - 1]) != sign)
-          return false;
+			for (int i = x.Length - 1; i >= 1; --i)
+				if (Math.Sign(x[i] - x[i - 1]) != sign)
+					return false;
 
-      return true;
-    }
+			return true;
+		}
 
-  }
+		/// <summary>
+		/// Fills the vector v with a linear sequence beginning from start (first element) until end (last element).
+		/// </summary>
+		/// <param name="v">The vector to be filled.</param>
+		/// <param name="start">First value of the sequence.</param>
+		/// <param name="end">Last value of the sequence.</param>
+		public static void FillWithLinearSequenceGivenByStartEnd(this IVector v, double start, double end)
+		{
+			int len = v.Length;
+			if (len == 1)
+			{
+				v[0] = start;
+				return;
+			}
+			else if (len > 1)
+			{
+				for (int i = 0; i < len; ++i)
+					v[i] = start + i * (end - start) / (len - 1);
+			}
+		}
+
+		/// <summary>
+		/// Applies a function to every element of a vector.
+		/// </summary>
+		/// <param name="v">The vector.</param>
+		/// <param name="func">The function to apply to every element.</param>
+		public static void Apply(this IVector v, Func<double,double> func)
+		{
+			for (int i = v.Length - 1; i >= 0; --i)
+				v[i] = func(v[i]);
+		}
+
+		public static bool Any(this IROVector v, Func<double, bool> func)
+		{
+			int firstIndex;
+			return Any(v, func, out firstIndex);
+		}
+
+		public static bool Any(this IROVector v, Func<double, bool> func, out int firstIndex)
+		{
+			for(int i = v.LowerBound;i<=v.UpperBound;i++)
+				if(func(v[i]))
+				{
+					firstIndex = i;
+					return true;
+				}
+
+			firstIndex = -1;
+			return false;
+		}
+	}
 }

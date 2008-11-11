@@ -195,6 +195,17 @@ namespace Altaxo.Serialization.Ascii
           break;
       }
 
+      // try to guess which of the header lines is the caption line
+      // we take the caption line to be the first column which has the same number of tokens as the recognized structure
+      // if no line fulfilles this criteria, the IndexOfCaptionLine remain unchanged.
+      for (int i = 0; i < result.Count; i++)
+      {
+        if (result[i].Structures[bestSeparationStragegy].Count == opt.RecognizedStructure.Count)
+        {
+          opt.IndexOfCaptionLine = i;
+          break;
+        }
+      }
 
       // calculate the total statistics of decimal separators
       opt.DecimalSeparatorCommaCount = 0;
@@ -239,9 +250,9 @@ namespace Altaxo.Serialization.Ascii
       }
 
       // add also additional property columns if not enough there
-      if (impopt.NumberOfMainHeaderLines > 1) // if there are more than one header line, allocate also property columns
+      if (impopt.NumberOfMainHeaderLines > 0) // if there are more than one header line, allocate also property columns
       {
-        int toAdd = impopt.NumberOfMainHeaderLines - 1;
+        int toAdd = impopt.NumberOfMainHeaderLines;
         for (int i = 0; i < toAdd; i++)
           newpropcols.Add(new Data.TextColumn());
       }
@@ -288,13 +299,13 @@ namespace Altaxo.Serialization.Ascii
           if (k >= newcols.ColumnCount)
             continue;
 
-          if (i == 0) // is it the column name line
+          if (i == impopt.IndexOfCaptionLine) // is it the column name line
           {
             newcols.SetColumnName(k, ttoken);
           }
           else // this are threated as additional properties
           {
-            ((Data.DataColumn)newpropcols[i - 1])[k] = ttoken; // set the properties
+            ((Data.DataColumn)newpropcols[i])[k] = ttoken; // set the properties
           }
         }
       }
@@ -404,7 +415,8 @@ namespace Altaxo.Serialization.Ascii
       // add the property columns
       for (int i = 0; i < newpropcols.ColumnCount; i++)
       {
-        table.PropCols.CopyOrReplaceOrAdd(i, newpropcols[i], newpropcols.GetColumnName(i));
+        if(newpropcols[i].Count>0)
+          table.PropCols.CopyOrReplaceOrAdd(i, newpropcols[i], newpropcols.GetColumnName(i));
       }
       table.Resume();
     } // end of function ImportAscii

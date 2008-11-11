@@ -36,7 +36,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
   {
     bool _useFrequencyInsteadOmega;
     bool _useFlowTerm;
-
+    bool _logarithmizeResults;
 
     #region Serialization
 
@@ -61,6 +61,30 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       }
     }
 
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(KohlrauschModulusRetardation), 1)]
+    class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        KohlrauschModulusRetardation s = (KohlrauschModulusRetardation)obj;
+        info.AddValue("UseFrequency", s._useFrequencyInsteadOmega);
+        info.AddValue("FlowTerm", s._useFlowTerm);
+        info.AddValue("LogarithmizeResults", s._logarithmizeResults);
+        //info.AddValue("IsDielectric", s._isDielectricData);
+      }
+
+      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        KohlrauschModulusRetardation s = o != null ? (KohlrauschModulusRetardation)o : new KohlrauschModulusRetardation();
+        s._useFrequencyInsteadOmega = info.GetBoolean("UseFrequency");
+        s._useFlowTerm = info.GetBoolean("FlowTerm");
+        s._logarithmizeResults = info.GetBoolean("LogarithmizeResults");
+        //s._isDielectricData = info.GetBoolean("IsDielectric");
+        return s;
+      }
+    }
+
+
     #endregion
 
     public KohlrauschModulusRetardation()
@@ -75,7 +99,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
     [FitFunctionCreator("Kohlrausch Complex (Omega)", "Retardation/Modulus", 1, 2, 4)]
     [Description("FitFunctions.Relaxation.ModulusRetardation.Introduction;XML.MML.GenericRetardationModulus;FitFunctions.Relaxation.KohlrauschSusceptibility.Part2;XML.MML.KohlrauschTimeDomain;FitFunctions.IndependentVariable.Omega;FitFunctions.Relaxation.ModulusRetardation.Part3")]
-    public static IFitFunction CreateFofOmega()
+    public static IFitFunction CreateModulusOfOmega()
     {
       KohlrauschModulusRetardation result = new KohlrauschModulusRetardation();
       result._useFrequencyInsteadOmega = false;
@@ -84,13 +108,38 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       return result;
     }
 
+    [FitFunctionCreator("Lg10 - Kohlrausch Complex (Omega)", "Retardation/Modulus", 1, 2, 4)]
+    [Description("FitFunctions.Relaxation.ModulusRetardation.Introduction;XML.MML.GenericRetardationModulus;FitFunctions.Relaxation.KohlrauschSusceptibility.Part2;XML.MML.KohlrauschTimeDomain;FitFunctions.IndependentVariable.Omega;FitFunctions.Relaxation.ModulusRetardation.Part3")]
+    public static IFitFunction CreateLg10ModulusOfOmega()
+    {
+      KohlrauschModulusRetardation result = new KohlrauschModulusRetardation();
+      result._useFrequencyInsteadOmega = false;
+      result._useFlowTerm = true;
+      result._logarithmizeResults = true;
+
+      return result;
+    }
+
     [FitFunctionCreator("Kohlrausch Complex (Freq)", "Retardation/Modulus", 1, 2, 4)]
     [Description("FitFunctions.Relaxation.ModulusRetardation.Introduction;XML.MML.GenericRetardationModulus;FitFunctions.Relaxation.KohlrauschSusceptibility.Part2;XML.MML.KohlrauschTimeDomain;FitFunctions.IndependentVariable.FrequencyAsOmega;FitFunctions.Relaxation.ModulusRetardation.Part3")]
-    public static IFitFunction CreateFofFrequency()
+    public static IFitFunction CreateModulusOfFrequency()
     {
       KohlrauschModulusRetardation result = new KohlrauschModulusRetardation();
       result._useFrequencyInsteadOmega = true;
       result._useFlowTerm = true;
+
+      return result;
+    }
+
+
+    [FitFunctionCreator("Lg10 Kohlrausch Complex (Freq)", "Retardation/Modulus", 1, 2, 4)]
+    [Description("FitFunctions.Relaxation.ModulusRetardation.Introduction;XML.MML.GenericRetardationModulus;FitFunctions.Relaxation.KohlrauschSusceptibility.Part2;XML.MML.KohlrauschTimeDomain;FitFunctions.IndependentVariable.FrequencyAsOmega;FitFunctions.Relaxation.ModulusRetardation.Part3")]
+    public static IFitFunction CreateLg10ModulusOfFrequency()
+    {
+      KohlrauschModulusRetardation result = new KohlrauschModulusRetardation();
+      result._useFrequencyInsteadOmega = true;
+      result._useFlowTerm = true;
+      result._logarithmizeResults = true;
 
       return result;
     }
@@ -183,8 +232,17 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
 
       result = 1 / result;
-      Y[0] = result.Re;
-      Y[1] = result.Im;
+
+      if (_logarithmizeResults)
+      {
+        Y[0] = Math.Log10(result.Re);
+        Y[1] = Math.Log10(result.Im);
+      }
+      else
+      {
+        Y[0] = result.Re;
+        Y[1] = result.Im;
+      }
     }
 
     #endregion

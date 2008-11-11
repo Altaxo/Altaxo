@@ -35,7 +35,7 @@ namespace AltaxoTest.Calc.Fourier
     const int nUpperLimit=100;
     const double maxTolerableEpsPerN=1E-15;
 
-    SplittedComplexFFTTests _test = new SplittedComplexFFTTests(new SplittedComplexFFTTests.FFTRoutine(NativeFourierMethods.FFT));
+    SplittedComplexFFTTests _test = new SplittedComplexFFTTests(new SplittedComplexFFTTests.FFTRoutine(NativeFourierMethods.FourierTransformation));
  
 
   
@@ -97,7 +97,7 @@ namespace AltaxoTest.Calc.Fourier
     const int nUpperLimit=100;
     const double maxTolerableEpsPerN=1E-15;
 
-    RealFFTTests _test = new RealFFTTests(new RealFFTTests.FFTRoutine(NativeFourierMethods.FFT));
+    RealFFTTests _test = new RealFFTTests(new RealFFTTests.FFTRoutine(NativeFourierMethods.FourierTransformation));
  
 
     [Test]

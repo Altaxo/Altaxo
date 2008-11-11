@@ -21,6 +21,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using System.CodeDom;
 using System.CodeDom.Compiler;
@@ -277,9 +278,10 @@ namespace Altaxo.Main.Services
         errors = null;
         return (ScriptCompilerResult)_compilerResultsByTextHash[scriptTextHash];
       }
-  
-     
-      Microsoft.CSharp.CSharpCodeProvider codeProvider = new Microsoft.CSharp.CSharpCodeProvider();
+
+			Dictionary<string, string> providerOptions = new Dictionary<string, string>();
+			providerOptions.Add("CompilerVersion", "v3.5"); 
+			Microsoft.CSharp.CSharpCodeProvider codeProvider = new Microsoft.CSharp.CSharpCodeProvider(providerOptions);
 
       // For Visual Basic Compiler try this :
       //Microsoft.VisualBasic.VBCodeProvider

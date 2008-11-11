@@ -27,7 +27,7 @@ namespace Altaxo.Calc
   /// <summary>
   /// Provides methods for real numbers, that were forgotten by the <see cref="System.Math" /> class.
   /// </summary>
-  public class RMath
+  public static class RMath
   {
 
     #region Helper constants
@@ -38,8 +38,99 @@ namespace Altaxo.Calc
 
     #endregion
 
+		#region Number tests
 
-    public static double Log1p(double x)
+		/// <summary>
+		/// Tests if x is finite, i.e. is in the interval [double.MinValue, double.MaxValue].
+		/// </summary>
+		/// <param name="x">Number to test.</param>
+		/// <returns>True if x is finite. False if is is not finite or is double.NaN.</returns>
+		public static bool IsFinite(this double x)
+		{
+			return double.MinValue <= x && x <= double.MaxValue;
+		}
+
+		/// <summary>
+		/// Tests if x is finite, i.e. is in the interval [float.MinValue, float.MaxValue].
+		/// </summary>
+		/// <param name="x">Number to test.</param>
+		/// <returns>True if x is finite. False if is is not finite or is double.NaN.</returns>
+		public static bool IsFinite(this float x)
+		{
+				return float.MinValue <= x && x <= float.MaxValue;
+		}
+
+		/// <summary>
+		/// Test if x is not a number.
+		/// </summary>
+		/// <param name="x">Number to test.</param>
+		/// <returns>True if x is NaN.</returns>
+		public static bool IsNaN(this double x)
+		{
+			return double.IsNaN(x);
+		}
+
+		/// <summary>
+		/// Test if x is not a number.
+		/// </summary>
+		/// <param name="x">Number to test.</param>
+		/// <returns>True if x is NaN.</returns>
+		public static bool IsNaN(this float x)
+		{
+				return float.IsNaN(x);
+		}
+
+		/// <summary>
+		/// Tests whether or not x is in the closed interval [xmin, xmax]. No test is done if xmin is less than xmax.
+		/// </summary>
+		/// <param name="x">The argument.</param>
+		/// <param name="xmin">The lower boundary of the interval.</param>
+		/// <param name="xmax">The upper boundary of the interval.</param>
+		/// <returns>True if xmin &lt;= x and x &lt;= xmax.</returns>
+		public static bool IsInIntervalCC(this double x, double xmin, double xmax)
+		{
+			return xmin <= x && x <= xmax;
+		}
+
+		/// <summary>
+		/// Tests whether or not x is in the open interval (xmin, xmax). No test is done if xmin is less than xmax.
+		/// </summary>
+		/// <param name="x">The argument.</param>
+		/// <param name="xmin">The lower boundary of the interval.</param>
+		/// <param name="xmax">The upper boundary of the interval.</param>
+		/// <returns>True if xmin &lt; x and x &lt; xmax.</returns>
+		public static bool IsInIntervalOO(this double x, double xmin, double xmax)
+		{
+			return xmin < x && x < xmax;
+		}
+
+		/// <summary>
+		/// Tests whether or not x is in the semi-open interval [xmin, xmax). No test is done if xmin is less than xmax.
+		/// </summary>
+		/// <param name="x">The argument.</param>
+		/// <param name="xmin">The lower boundary of the interval.</param>
+		/// <param name="xmax">The upper boundary of the interval.</param>
+		/// <returns>True if xmin &lt;= x and x &lt; xmax.</returns>
+		public static bool IsInIntervalCO(this double x, double xmin, double xmax)
+		{
+			return xmin <= x && x < xmax;
+		}
+
+		/// <summary>
+		/// Tests whether or not x is in the semi-open interval (xmin, xmax]. No test is done if xmin is less than xmax.
+		/// </summary>
+		/// <param name="x">The argument.</param>
+		/// <param name="xmin">The lower boundary of the interval.</param>
+		/// <param name="xmax">The upper boundary of the interval.</param>
+		/// <returns>True if xmin &lt; x and x &lt;= xmax.</returns>
+		public static bool IsInIntervalOC(this double x, double xmin, double xmax)
+		{
+			return xmin < x && x <= xmax;
+		}
+
+		#endregion
+
+		public static double Log1p(double x)
     {
       double y;
       y = 1 + x;
@@ -196,14 +287,14 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="x">Argument.</param>
     /// <returns><c>x</c> squared.</returns>
-    public static double Pow2(double x) { return x*x;   }
-    public static double Pow3(double x) { return x*x*x; }
-    public static double Pow4(double x) { double x2 = x*x;   return x2*x2;    }
-    public static double Pow5(double x) { double x2 = x*x;   return x2*x2*x;  }
-    public static double Pow6(double x) { double x2 = x*x;   return x2*x2*x2; }
-    public static double Pow7(double x) { double x3 = x*x*x; return x3*x3*x;  }
-    public static double Pow8(double x) { double x2 = x*x;   double x4 = x2*x2; return x4*x4; }
-    public static double Pow9(double x) { double x3 = x*x*x; return x3*x3*x3; }
+    public static double Pow2(this double x) { return x*x;   }
+    public static double Pow3(this double x) { return x*x*x; }
+    public static double Pow4(this double x) { double x2 = x*x;   return x2*x2;    }
+    public static double Pow5(this double x) { double x2 = x*x;   return x2*x2*x;  }
+    public static double Pow6(this double x) { double x2 = x*x;   return x2*x2*x2; }
+    public static double Pow7(this double x) { double x3 = x*x*x; return x3*x3*x;  }
+    public static double Pow8(this double x) { double x2 = x*x;   double x4 = x2*x2; return x4*x4; }
+    public static double Pow9(this double x) { double x3 = x*x*x; return x3*x3*x3; }
 
 
     /// <summary>
@@ -213,7 +304,7 @@ namespace Altaxo.Calc
     /// <param name="x"></param>
     /// <param name="n"></param>
     /// <returns></returns>
-    public static double Pow(double x, int n)
+    public static double Pow(this double x, int n)
     {
       double value = 1.0;
 
@@ -238,6 +329,8 @@ namespace Altaxo.Calc
       return inverse ? 1.0/value : value;
     }
 
+
+	
 
   }
 }

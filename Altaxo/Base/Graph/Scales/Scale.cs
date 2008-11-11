@@ -136,6 +136,7 @@ namespace Altaxo.Graph.Scales
 
     /// <summary>The axis origin, i.e. the first point in physical units.</summary>
     public abstract AltaxoVariant OrgAsVariant { get; set;}
+
     /// <summary>The axis end point in physical units.</summary>
     public abstract AltaxoVariant EndAsVariant { get; set;}
 

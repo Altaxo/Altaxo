@@ -54,6 +54,11 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
 
     protected float _MovementIncrement=4;
 
+    /// <summary>
+    /// If true, the tool show the printable coordinates instead of the physical values.
+    /// </summary>
+    protected bool _showPrintableCoordinates;
+
     public ReadXYCoordinatesMouseHandler(GraphController grac)
     {
       _grac = grac;
@@ -83,35 +88,50 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     } // end of function
 
 
+		bool CalculateCrossCoordinates(out Altaxo.Data.AltaxoVariant x, out Altaxo.Data.AltaxoVariant y)
+		{
+			XYPlotLayer layer = _grac.ActiveLayer;
+			if (layer == null)
+			{
+				x = new AltaxoVariant();
+				y = new AltaxoVariant();
+				return false;
+			}
+
+			PointF layerXY = layer.GraphToLayerCoordinates(m_Cross);
+
+
+
+			Logical3D r;
+			layer.CoordinateSystem.LayerToLogicalCoordinates(layerXY.X, layerXY.Y, out r);
+			x = layer.XAxis.NormalToPhysicalVariant(r.RX);
+			y = layer.YAxis.NormalToPhysicalVariant(r.RY);
+			return true;
+		}
+
     void DisplayCrossCoordinates()
     {
-     
-
-      XYPlotLayer layer = _grac.ActiveLayer;
-      if(layer==null)
-        return;
-
-      PointF layerXY = layer.GraphToLayerCoordinates(m_Cross);
-
-     
-
-      Logical3D r;
-      layer.CoordinateSystem.LayerToLogicalCoordinates(layerXY.X,layerXY.Y, out r);
-      Altaxo.Data.AltaxoVariant xphys = layer.XAxis.NormalToPhysicalVariant(r.RX);
-      Altaxo.Data.AltaxoVariant yphys = layer.YAxis.NormalToPhysicalVariant(r.RY);
-
-      this.DisplayData(_grac.CurrentLayerNumber,xphys,yphys);
+      if (_showPrintableCoordinates)
+      {
+        Current.DataDisplay.WriteOneLine(string.Format(
+        "Layer({0}) XS={1}, YS={2}",
+        _grac.CurrentLayerNumber,
+        m_Cross.X,
+        m_Cross.Y));
+      }
+      else
+      {
+        AltaxoVariant xphys, yphys;
+        if (CalculateCrossCoordinates(out xphys, out  yphys))
+          Current.DataDisplay.WriteOneLine(string.Format(
+         "Layer({0}) X={1}, Y={2}",
+         _grac.CurrentLayerNumber,
+         xphys,
+         yphys));
+      }
     }
 
 
-    void DisplayData(int layerNumber, Altaxo.Data.AltaxoVariant x, Altaxo.Data.AltaxoVariant y)
-    {
-      Current.DataDisplay.WriteOneLine(string.Format(
-        "Layer({0}) X={1}, Y={2}",
-        layerNumber,
-        x,
-        y));
-    }
 
 
     /// <summary>
@@ -173,13 +193,11 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     {
       if(keyData == Keys.Left)
       {
-        System.Diagnostics.Trace.WriteLine("Read tool key handler, left key pressed!");
         MoveLeftRight(-_MovementIncrement);
         return true;
       }
       else if(keyData == Keys.Right)
       {
-        System.Diagnostics.Trace.WriteLine("Read tool key handler, right key pressed!");
         MoveLeftRight(_MovementIncrement);
         return true;
       }
@@ -210,7 +228,25 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
 
         return true;
       }
-
+      else if (keyData == Keys.Q)
+      {
+        _showPrintableCoordinates = !_showPrintableCoordinates;
+        Current.DataDisplay.WriteOneLine("Switched to " +  (_showPrintableCoordinates ? "printable coordinates!" : "physical values!"));
+      }
+      else if (keyData == Keys.Enter)
+      {
+        if (_showPrintableCoordinates)
+        {
+          Current.Console.WriteLine("{0}\t{1}", m_Cross.X, m_Cross.Y);
+        }
+        else
+        {
+          AltaxoVariant xphys, yphys;
+          if (CalculateCrossCoordinates(out xphys, out  yphys))
+            Current.Console.WriteLine("{0}\t{1}", xphys, yphys);
+        }
+        return true;
+      }
 
       return false; // per default the key is not processed
     }

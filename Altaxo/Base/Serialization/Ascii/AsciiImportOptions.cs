@@ -37,6 +37,9 @@ namespace Altaxo.Serialization.Ascii
     /// <summary>Number of lines to skip (the main header).</summary>
     public int NumberOfMainHeaderLines;
 
+    /// <summary>Index of the line, where we can extract the column names from.</summary>
+    public int IndexOfCaptionLine;
+
 
     /// <summary>Number of dots that act as decimal separator in numeric strings.</summary>
     public int DecimalSeparatorDotCount;

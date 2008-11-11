@@ -21,6 +21,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 
 using Altaxo.Worksheet.GUI;
 using Altaxo.Calc;
@@ -111,43 +112,78 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
       InterpolationParameters parameters = (InterpolationParameters)paramobject;
 
+      Interpolation(ctrl, parameters);
+    }
 
-      Altaxo.Data.DataColumn yCol = ctrl.Doc.DataColumns[ctrl.SelectedDataColumns[0]];
-      Altaxo.Data.DataColumn xCol = ctrl.Doc.DataColumns.FindXColumnOf(yCol);
+    public static void Interpolation(WorksheetController ctrl, InterpolationParameters parameters)
+    {
+      Dictionary<DataColumn, int> _columnToGroupNumber = new Dictionary<DataColumn, int>();
 
-      if(!(yCol is INumericColumn))
+      for (int nSel = 0; nSel < ctrl.SelectedDataColumns.Count; nSel++)
       {
-        Current.Gui.ErrorMessageBox("The selected column is not numeric!");
-        return;
+        Altaxo.Data.DataColumn yCol = ctrl.Doc.DataColumns[ctrl.SelectedDataColumns[nSel]];
+        Altaxo.Data.DataColumn xCol = ctrl.Doc.DataColumns.FindXColumnOf(yCol);
+
+        if (!(yCol is INumericColumn))
+        {
+          Current.Gui.ErrorMessageBox("The selected column is not numeric!");
+          return;
+        }
+        if (!(xCol is INumericColumn))
+        {
+          Current.Gui.ErrorMessageBox("The x-column of the selected column is not numeric!");
+          return;
+        }
+
+        DoubleColumn xRes = new DoubleColumn();
+        DoubleColumn yRes = new DoubleColumn();
+        int newgroup;
+        if (!_columnToGroupNumber.TryGetValue(xCol, out newgroup))
+        {
+          newgroup = ctrl.DataTable.DataColumns.GetUnusedColumnGroupNumber();
+          ctrl.DataTable.DataColumns.Add(xRes, xCol.Name + ".I", ColumnKind.X, newgroup);
+          _columnToGroupNumber.Add(xCol, newgroup);
+        }
+        ctrl.DataTable.DataColumns.Add(yRes, yCol.Name + ".I", ColumnKind.V, newgroup);
+
+        Interpolation(xCol,yCol, parameters, xRes, yRes);
       }
-      if(!(xCol is INumericColumn))
+    }
+
+    public static void Interpolation(Altaxo.Data.DataColumn xCol, Altaxo.Data.DataColumn yCol,
+    InterpolationParameters parameters,
+    Altaxo.Data.DataColumn xRes, Altaxo.Data.DataColumn yRes)
+    {
+      Interpolation(
+        xCol, yCol,
+        parameters.InterpolationInstance,
+        VectorMath.CreateEquidistantSequenceByStartEndLength(parameters.XOrg, parameters.XEnd, parameters.NumberOfPoints),
+        xRes, yRes);
+    }
+
+    public static void Interpolation(Altaxo.Data.DataColumn xCol, Altaxo.Data.DataColumn yCol,
+      Calc.Interpolation.CurveBase interpolInstance, IROVector samplePoints, 
+      Altaxo.Data.DataColumn xRes, Altaxo.Data.DataColumn yRes)
+    {
+      int rows = Math.Min(xCol.Count, yCol.Count);
+      IROVector yVec = DataColumnWrapper.ToROVector((INumericColumn)yCol, rows);
+      IROVector xVec = DataColumnWrapper.ToROVector((INumericColumn)xCol, rows);
+
+     interpolInstance.Interpolate(xVec, yVec);
+
+      xRes.Suspend();
+      yRes.Suspend();
+      for (int i = 0; i < samplePoints.Length; i++)
       {
-        Current.Gui.ErrorMessageBox("The x-column of the selected column is not numeric!");
-        return;
+        //double r = i / (double)(parameters.NumberOfPoints - 1);
+        //double x = parameters.XOrg * (1 - r) + parameters.XEnd * (r);
+        double x = samplePoints[i];
+        double y = ((IInterpolationFunction)interpolInstance).GetYOfX(x);
+        xRes[i] = x;
+        yRes[i] = y;
       }
-
-      int rows = Math.Min(xCol.Count,yCol.Count);
-      IROVector yVec = DataColumnWrapper.ToROVector((INumericColumn)yCol,rows);
-      IROVector xVec = DataColumnWrapper.ToROVector((INumericColumn)xCol,rows);
-
-      parameters.InterpolationInstance.Interpolate(xVec,yVec);
-
-      DoubleColumn xRes = new DoubleColumn();
-      DoubleColumn yRes = new DoubleColumn();
-
-      for(int i=0; i<parameters.NumberOfPoints;i++)
-      {
-        double r = i/(double)(parameters.NumberOfPoints-1);
-        double x = parameters.XOrg*(1-r) + parameters.XEnd*(r);
-        double y = ((IInterpolationFunction)parameters.InterpolationInstance).GetYOfX(x);
-        xRes[i]=x;
-        yRes[i]=y;
-      }
-
-      int newgroup = ctrl.DataTable.DataColumns.GetUnusedColumnGroupNumber();
-      ctrl.DataTable.DataColumns.Add(xRes,xCol.Name+".I",ColumnKind.X,newgroup);
-      ctrl.DataTable.DataColumns.Add(yRes,yCol.Name+".I",ColumnKind.V,newgroup);
-
+      xRes.Resume();
+      yRes.Resume();
     }
 
     #endregion

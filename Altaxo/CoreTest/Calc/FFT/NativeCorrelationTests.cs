@@ -34,7 +34,7 @@ namespace AltaxoTest.Calc.Fourier
     const int nUpperLimit=100;
     const double maxTolerableEpsPerN=1E-15;
 
-    SplittedComplexCorrelationTests _test = new SplittedComplexCorrelationTests(new SplittedComplexCorrelationTests.CorrelationRoutine(NativeFourierMethods.CyclicCorrelation));
+    SplittedComplexCorrelationTests _test = new SplittedComplexCorrelationTests(new SplittedComplexCorrelationTests.CorrelationRoutine(NativeFourierMethods.CorrelationCyclic));
 
  
 
@@ -108,7 +108,7 @@ namespace AltaxoTest.Calc.Fourier
     const int nUpperLimit=100;
     const double maxTolerableEpsPerN=1E-15;
 
-    RealCorrelationTests _test = new RealCorrelationTests(new RealCorrelationTests.CorrelationRoutine(NativeFourierMethods.CyclicCorrelation));
+    RealCorrelationTests _test = new RealCorrelationTests(new RealCorrelationTests.CorrelationRoutine(NativeFourierMethods.CorrelationCyclic));
  
 
     [Test]

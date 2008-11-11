@@ -197,8 +197,9 @@ namespace Altaxo.Calc.Interpolation
         do 
         {
           int k = (i + j) / 2;
-          if (u < x[k])  j = k;
-          if (u >= x[k]) i = k;
+					if (u < x[k]) j = k;
+					else if (u >= x[k]) i = k;
+					else throw new ArithmeticException(string.Format("Either u or x[k] is NaN: u={0}, x[{1}]={2}", u, k, x[k]));
         } while (j > i + 1);
       }
       return i;

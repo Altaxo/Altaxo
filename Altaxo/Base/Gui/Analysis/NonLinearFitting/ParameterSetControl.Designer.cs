@@ -28,73 +28,74 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     /// </summary>
     private void InitializeComponent()
     {
-      this._grid = new System.Windows.Forms.DataGridView();
-      this.NameCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
-      this.ValueCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
-      this.VaryCol = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-      this.VarianceCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
-      ((System.ComponentModel.ISupportInitialize)(this._grid)).BeginInit();
-      this.SuspendLayout();
-      // 
-      // _grid
-      // 
-      this._grid.AllowUserToAddRows = false;
-      this._grid.AllowUserToDeleteRows = false;
-      this._grid.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this._grid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-      this._grid.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+			this._grid = new System.Windows.Forms.DataGridView();
+			this.NameCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.ValueCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.VaryCol = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+			this.VarianceCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			((System.ComponentModel.ISupportInitialize)(this._grid)).BeginInit();
+			this.SuspendLayout();
+			// 
+			// _grid
+			// 
+			this._grid.AllowUserToAddRows = false;
+			this._grid.AllowUserToDeleteRows = false;
+			this._grid.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+									| System.Windows.Forms.AnchorStyles.Left)
+									| System.Windows.Forms.AnchorStyles.Right)));
+			this._grid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+			this._grid.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.NameCol,
             this.ValueCol,
             this.VaryCol,
             this.VarianceCol});
-      this._grid.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-      this._grid.Location = new System.Drawing.Point(0, 0);
-      this._grid.Name = "_grid";
-      this._grid.RowHeadersVisible = false;
-      this._grid.Size = new System.Drawing.Size(422, 274);
-      this._grid.TabIndex = 0;
-      // 
-      // NameCol
-      // 
-      this.NameCol.HeaderText = "Parameter";
-      this.NameCol.Name = "NameCol";
-      this.NameCol.ReadOnly = true;
-      this.NameCol.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-      this.NameCol.ToolTipText = "Name of the parameter";
-      // 
-      // ValueCol
-      // 
-      this.ValueCol.HeaderText = "Value";
-      this.ValueCol.Name = "ValueCol";
-      this.ValueCol.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-      this.ValueCol.ToolTipText = "Value of the parameter";
-      this.ValueCol.Width = 130;
-      // 
-      // VaryCol
-      // 
-      this.VaryCol.HeaderText = "Vary";
-      this.VaryCol.Name = "VaryCol";
-      this.VaryCol.ToolTipText = "Indicates if the parameter should be varied";
-      this.VaryCol.Width = 40;
-      // 
-      // VarianceCol
-      // 
-      this.VarianceCol.HeaderText = "Variance";
-      this.VarianceCol.Name = "VarianceCol";
-      this.VarianceCol.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-      this.VarianceCol.ToolTipText = "Variance of the parameter value";
-      this.VarianceCol.Width = 130;
-      // 
-      // ParameterSetControl
-      // 
-      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-      this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.Controls.Add(this._grid);
-      this.Name = "ParameterSetControl";
-      this.Size = new System.Drawing.Size(425, 274);
-      ((System.ComponentModel.ISupportInitialize)(this._grid)).EndInit();
-      this.ResumeLayout(false);
+			this._grid.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+			this._grid.Location = new System.Drawing.Point(0, 0);
+			this._grid.Name = "_grid";
+			this._grid.RowHeadersVisible = false;
+			this._grid.Size = new System.Drawing.Size(422, 274);
+			this._grid.TabIndex = 0;
+			// 
+			// NameCol
+			// 
+			this.NameCol.HeaderText = "Parameter";
+			this.NameCol.Name = "NameCol";
+			this.NameCol.ReadOnly = true;
+			this.NameCol.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			this.NameCol.ToolTipText = "Name of the parameter";
+			// 
+			// ValueCol
+			// 
+			this.ValueCol.HeaderText = "Value";
+			this.ValueCol.Name = "ValueCol";
+			this.ValueCol.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			this.ValueCol.ToolTipText = "Value of the parameter";
+			this.ValueCol.Width = 130;
+			// 
+			// VaryCol
+			// 
+			this.VaryCol.HeaderText = "Vary";
+			this.VaryCol.Name = "VaryCol";
+			this.VaryCol.ToolTipText = "Indicates if the parameter should be varied";
+			this.VaryCol.Width = 40;
+			// 
+			// VarianceCol
+			// 
+			this.VarianceCol.HeaderText = "Variance";
+			this.VarianceCol.Name = "VarianceCol";
+			this.VarianceCol.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			this.VarianceCol.ToolTipText = "Variance of the parameter value";
+			this.VarianceCol.Width = 130;
+			// 
+			// ParameterSetControl
+			// 
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.Controls.Add(this._grid);
+			this.Name = "ParameterSetControl";
+			this.Size = new System.Drawing.Size(425, 274);
+			((System.ComponentModel.ISupportInitialize)(this._grid)).EndInit();
+			this.ResumeLayout(false);
 
     }
 

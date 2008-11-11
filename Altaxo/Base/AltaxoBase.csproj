@@ -887,6 +887,9 @@
       <SubType>Designer</SubType>
       <DependentUpon>PenAllPropertiesControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Common\EquallySpacedIntervalControl.resx">
+      <DependentUpon>EquallySpacedIntervalControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Gui\Common\MinMaxIntegerControl.resx">
       <DependentUpon>MinMaxIntegerControl.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -1279,6 +1282,7 @@
     <Compile Include="Graph\Scales\Scale.cs" />
     <Compile Include="Graph\Scales\ScaleLinkType.cs" />
     <Compile Include="Graph\Scales\TextScale.cs" />
+    <Compile Include="Graph\Scales\Ticks\LinearScaleTickSettings.cs" />
     <Compile Include="Graph\TextureManager.cs" />
     <Compile Include="Graph\XAnchorPositionType.cs" />
     <Compile Include="Graph\YAnchorPositionType.cs" />
@@ -1320,6 +1324,13 @@
     <Compile Include="Gui\Common\Drawing\TextureScaleComboBox.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Gui\Common\EquallySpacedIntervalControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\EquallySpacedIntervalControl.Designer.cs">
+      <DependentUpon>EquallySpacedIntervalControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Common\EquallySpacedIntervalController.cs" />
     <Compile Include="Gui\Common\IntegerAndComboBoxController.cs" />
     <Compile Include="Gui\Common\IntegerValueInputController.cs" />
     <Compile Include="Gui\Common\IWorkbench.cs" />

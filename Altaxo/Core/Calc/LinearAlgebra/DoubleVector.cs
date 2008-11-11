@@ -138,12 +138,10 @@ namespace Altaxo.Calc.LinearAlgebra
       if (lo != 0)
         throw new NotSupportedException("Lower bound value other than zero is not supported by DoubleVector class");
 
-      if (data == null || (hi - lo) >= data.Length)
+      if (data == null || (hi - lo + 1) != data.Length)
       {
         data = new double[hi - lo + 1];
       }
-      //      this.lo = lo;
-      //      this.hi = hi;
     }
 
     ///<summary>Return the length of the <c>DoubleVector</c> variable</summary>
