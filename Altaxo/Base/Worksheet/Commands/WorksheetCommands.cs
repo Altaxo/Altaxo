@@ -60,7 +60,7 @@ namespace Altaxo.Worksheet.Commands
           return null;
         else if(Data.DataTableCollection.GetParentDataTableCollectionOf(m_Ctrl.Doc)==null)
           return null; // if there is no parent data set we can enter anything
-        else if(Data.DataTableCollection.GetParentDataTableCollectionOf(m_Ctrl.Doc).ContainsTable(wksname))
+        else if(Data.DataTableCollection.GetParentDataTableCollectionOf(m_Ctrl.Doc).Contains(wksname))
           return "This worksheet name already exists, please choose another name!";
         else
           return null;

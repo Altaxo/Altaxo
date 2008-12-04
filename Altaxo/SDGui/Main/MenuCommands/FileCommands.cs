@@ -110,7 +110,7 @@ namespace Altaxo.Main.Commands
         Altaxo.Data.DataTable table = deserObject as Altaxo.Data.DataTable;
         if (table.Name == null || table.Name == string.Empty)
           table.Name = Current.Project.DataTableCollection.FindNewTableName();
-        else if (Current.Project.DataTableCollection.ContainsTable(table.Name))
+        else if (Current.Project.DataTableCollection.Contains(table.Name))
           table.Name = Current.Project.DataTableCollection.FindNewTableName(table.Name);
 
         Current.Project.DataTableCollection.Add(table);
@@ -125,7 +125,7 @@ namespace Altaxo.Main.Commands
         Altaxo.Data.DataTable table = tableAndLayout.Table;
         if (table.Name == null || table.Name == string.Empty)
           table.Name = Current.Project.DataTableCollection.FindNewTableName();
-        else if (Current.Project.DataTableCollection.ContainsTable(table.Name))
+        else if (Current.Project.DataTableCollection.Contains(table.Name))
           table.Name = Current.Project.DataTableCollection.FindNewTableName(table.Name);
         Current.Project.DataTableCollection.Add(table);
 

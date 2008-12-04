@@ -1,2 +1,2 @@
-%windir%\microsoft.net\framework\v2.0.50727\msbuild Altaxo.Vs8.sln
+%windir%\microsoft.net\framework\v3.5\msbuild Altaxo.sln
 @IF %ERRORLEVEL% NEQ 0 PAUSE

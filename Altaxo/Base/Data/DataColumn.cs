@@ -1314,9 +1314,8 @@ namespace Altaxo.Data
         return c3;
 
       throw new AltaxoOperatorException("Error: Try to apply operator FALSE to " + c1.ToString() + " (" + c1.GetType() + ")");
-    }
-
-  } // end of class Altaxo.Data.DataColumn
+		}
+	} // end of class Altaxo.Data.DataColumn
   
 
   

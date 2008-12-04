@@ -297,7 +297,7 @@ namespace Altaxo.Gui.Pads
       // table nodes
       if (e.Node.Parent != null
         && ((string)e.Node.Parent.Tag) == "Tables"
-        && Current.Project.DataTableCollection.ContainsTable(tag))
+        && Current.Project.DataTableCollection.Contains(tag))
       {
         // tag is the name of the table clicked, so look for a view that has the table or
         // create a new one
