@@ -30,7 +30,7 @@ namespace Altaxo.Serialization.Xml
   /// </summary>
   public class XmlStreamSerializationInfo : IXmlSerializationInfo
   {
-    XmlTextWriter m_Writer;
+    XmlWriter m_Writer;
 
     XmlSurrogateSelector m_SurrogateSelector;
     System.Text.StringBuilder m_StringBuilder = new System.Text.StringBuilder();
@@ -62,6 +62,12 @@ namespace Altaxo.Serialization.Xml
       m_Writer = new XmlTextWriter(stream, System.Text.Encoding.UTF8);
       m_Writer.WriteStartDocument();
     }
+
+		public void BeginWriting(System.Text.StringBuilder stb)
+		{
+			m_Writer = XmlWriter.Create(stb);
+			m_Writer.WriteStartDocument();
+		}
 
     public void EndWriting()
     {

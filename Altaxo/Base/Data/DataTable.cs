@@ -899,6 +899,41 @@ namespace Altaxo.Data
     {
       this.DataColumns.CopyAllColumnsFrom(src.DataColumns);
     }
+
+    /// <summary>
+    /// Appends data columns from DataTable src to the data in this table.
+    /// </summary>
+    /// <param name="src">Source table.</param>
+    /// <param name="ignoreNames">If true, the data columns in this table and in src table are compared by index. If false,
+    /// the data columns in this table and in src table are compared by their name.</param>
+    public void AppendAllDataColumns(DataTable src, bool ignoreNames)
+    {
+      DataColumns.AppendAllColumns(src.DataColumns, ignoreNames);
+    }
+
+    /// <summary>
+    /// Appends data columns from DataTable src to the data in this table leaving some rows free inbetween.
+    /// </summary>
+    /// <param name="src">Source table.</param>
+    /// <param name="ignoreNames">If true, the data columns in this table and in src table are compared by index. If false,
+    /// the data columns in this table and in src table are compared by their name.</param>
+    /// <param name="rowSpace">Number of rows to leave free between data in this table and newly appended data.</param>
+    public void AppendAllColumnsWithSpace(DataTable src, bool ignoreNames, int rowSpace)
+    {
+      DataColumns.AppendAllColumnsWithSpace(src.DataColumns, ignoreNames, rowSpace);
+    }
+
+    /// <summary>
+    /// Appends data columns from DataTable src to the data in this table by copying the new data to a specified row.
+    /// </summary>
+    /// <param name="src">Source table.</param>
+    /// <param name="ignoreNames">If true, the data columns in this table and in src table are compared by index. If false,
+    /// the data columns in this table and in src table are compared by their name.</param>
+    /// <param name="appendPosition">Row number of first row where the new data is copied to.</param>
+    public void AppendAllDataColumnsToPosition(DataTable src, bool ignoreNames, int appendPosition)
+    {
+      DataColumns.AppendAllColumnsToPosition(src.DataColumns, ignoreNames, appendPosition);
+    }
     /// <summary>
     /// Deletes all data and property columns in the table, and then copy all data and property columns from the source table.
     /// </summary>

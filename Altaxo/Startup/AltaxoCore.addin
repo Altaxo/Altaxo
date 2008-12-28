@@ -48,6 +48,7 @@
       <ConditionEvaluator name="SelectedDataColumns" class="Altaxo.Worksheet.Commands.SelectedDataConditionEvaluator"/>
       <ConditionEvaluator name="SelectedPropertyColumns" class="Altaxo.Worksheet.Commands.SelectedPropertyConditionEvaluator"/>
       <ConditionEvaluator name="ContainsPLSModelData" class="Altaxo.Worksheet.Commands.PLSModelConditionEvaluator"/>
+      <ConditionEvaluator name="Clipboard" class="Altaxo.Main.Commands.ClipboardContentConditionEvaluator"/>
       <Doozer name="Texture" class="Altaxo.Main.TextureDoozer"/>
     </Import>
 	</Runtime>
@@ -221,7 +222,18 @@
 				description="${res:XML.MainMenu.EditMenu.Delete.Description}" class="ICSharpCode.SharpDevelop.Commands.Delete" />
       <MenuItem id="SelectAll" label="${res:XML.MainMenu.EditMenu.SelectAll}" description="${res:XML.MainMenu.EditMenu.SelectAll.Description}"
 				shortcut="Control|A" class="ICSharpCode.SharpDevelop.Commands.SelectAll" />
-
+      <MenuItem id="CopySpec" label="${res:XML.MainMenu.CopySpecificMenu}"  type="Menu">
+        <Condition name = "WindowActive" activewindow="Altaxo.Gui.SharpDevelop.SDGraphViewContent" action="Exclude">
+          <MenuItem id="CopyGraphActiveLayer" label="${res:XML.MainMenu.EditMenu.CopyGraphActiveLayer}" description="${res:XML.MainMenu.EditMenu.CopyGraphActiveLayer.Description}"
+            class="Altaxo.Graph.Commands.CopyActiveLayer" />
+        </Condition>
+      </MenuItem>
+      <MenuItem id="PasteSpec" label="${res:XML.MainMenu.PasteSpecificMenu}"  type="Menu">
+        <Condition name="Clipboard" content="Altaxo.Graph.GraphLayerAsXml" action="Exclude">
+          <MenuItem id="PasteAsNewLayer" label="${res:XML.MainMenu.EditMenu.PasteAsNewLayer}" description="${res:XML.MainMenu.EditMenu.PasteAsNewLayer.Description}"
+            class="Altaxo.Graph.Commands.PasteAsNewLayer" />
+        </Condition>
+      </MenuItem>
       <Condition name = "WindowActive" activewindow="Altaxo.Gui.SharpDevelop.SDGraphViewContent" action="Exclude">
         <MenuItem id="GraphCopyPage" label="${res:XML.MainMenu.EditMenu.CopyPage}" icon="Icons.16x16.NewDocumentIcon"
           description="${res:XML.MainMenu.EditMenu.CopyPage.Description}" class="Altaxo.Graph.Commands.CopyPage" />

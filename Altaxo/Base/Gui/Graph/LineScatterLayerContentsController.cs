@@ -235,6 +235,18 @@ namespace Altaxo.Gui.Graph
       }
     }
 
+		private void SelNodesToTempDoc(NGTreeNode[] selNodes, PlotItemCollection picoll)
+		{
+			picoll.Clear();
+			foreach (NGTreeNode node in selNodes)
+			{
+				IGPlotItem item = (IGPlotItem)node.Tag;
+				if (item is PlotItemCollection) // if this is a plot item collection
+					TransferTreeToDoc(node, (PlotItemCollection)item);
+
+				picoll.Add(item);
+			}
+		}
 
     static XYColumnPlotItem FindFirstXYColumnPlotItem(PlotItemCollection coll)
     {
@@ -629,61 +641,28 @@ namespace Altaxo.Gui.Graph
 
     public void EhView_CopyClipboard(NGTreeNode[] selNodes)
     {
-      System.Windows.Forms.DataObject dao = new System.Windows.Forms.DataObject();
+			PlotItemCollection coll = new PlotItemCollection();
 
-      ArrayList objectList = new ArrayList();
+			SelNodesToTempDoc(selNodes, coll);
 
-      foreach (NGTreeNode o in selNodes)
-      {
-
-          objectList.Add(o.Tag);
-      }
-
-      dao.SetData("Altaxo.Graph.PlotItemList", objectList);
-
-      // Test code to test if the object list can be serialized
-#if false
-      {
-      System.Runtime.Serialization.Formatters.Binary.BinaryFormatter binform = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
-        System.IO.MemoryStream stream = new System.IO.MemoryStream();
-        binform.Serialize(stream, objectList);
-
-        stream.Flush();
-        stream.Seek(0, System.IO.SeekOrigin.Begin);
-        object obj = binform.Deserialize(stream);
-        stream.Close();
-        stream.Dispose();
-      }
-#endif
-
-      // now copy the data object to the clipboard
-      System.Windows.Forms.Clipboard.SetDataObject(dao, true);
+      Serialization.ClipboardSerialization.PutObjectToClipboard("Altaxo.Graph.Gdi.Plot.PlotItemCollection.AsXml", coll);
     }
     public void EhView_PasteClipboard()
     {
-      System.Windows.Forms.DataObject dao = System.Windows.Forms.Clipboard.GetDataObject() as System.Windows.Forms.DataObject;
-
-      string[] formats = dao.GetFormats();
-      if (dao.GetDataPresent("Altaxo.Graph.PlotItemList"))
-      {
-        object obj = dao.GetData("Altaxo.Graph.PlotItemList");
-
+			object o = Serialization.ClipboardSerialization.GetObjectFromClipboard("Altaxo.Graph.Gdi.Plot.PlotItemCollection.AsXml");
+			PlotItemCollection coll = o as PlotItemCollection;
         // if at this point obj is a memory stream, you probably have forgotten the deserialization constructor of the class you expect to deserialize here
-        if (obj is ArrayList)
+      if (null!=coll)
         {
-          ArrayList list = (ArrayList)obj;
-          foreach (object item in list)
+          foreach (IGPlotItem item in coll)
           {
-            if (item is IGPlotItem)
-            {
-              IGPlotItem newItem = item as IGPlotItem;
-              _doc.Add(newItem);
+              
+              _doc.Add(item);
 
               NGTreeNode newNode = new NGTreeNode();
-              newNode.Text = newItem.GetName(2);
-              newNode.Tag = newItem;
+              newNode.Text = item.GetName(2);
+              newNode.Tag = item;
               _plotItemsTree.Add(newNode);
-            }
           }
 
           View.Contents_SetItems(_plotItemsTree);
@@ -692,7 +671,7 @@ namespace Altaxo.Gui.Graph
         }
 
       }
-    }
+    
 
     #endregion
 

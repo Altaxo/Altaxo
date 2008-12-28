@@ -150,6 +150,7 @@
     <Compile Include="Main\MenuCommands\AutostartCommands.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Main\MenuCommands\ClipboardContentCondition.cs" />
     <Compile Include="Main\MenuCommands\FileCommands.cs">
       <SubType>Code</SubType>
     </Compile>

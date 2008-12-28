@@ -147,12 +147,15 @@ namespace Altaxo.Main.Services
         throw new ArgumentException("Expected controller type has to be IMVCController or a subclass or derived class of this");
 
       IMVCController controller = GetController(args, overrideArg0Type, typeof(IMVCController), copyDocument);
-      if (controller == null)
+      if (controller != null)
+      {
+        FindAndAttachControlTo(controller);
+        return controller;
+      }
+      else
+      {
         return null;
-
-      FindAndAttachControlTo(controller);
-
-      return controller;
+      }
     }
 
 
@@ -325,10 +328,14 @@ namespace Altaxo.Main.Services
     /// </remarks>
     public bool ShowDialog(object[] args, string title, bool showApplyButton)
     {
-      IMVCAController controller = (IMVCAController)Current.Gui.GetControllerAndControl(args, typeof(IMVCAController));
+      IMVCAController controller = (IMVCAController)GetControllerAndControl(args, typeof(IMVCAController));
 
       if (null == controller)
-        return false;
+      {
+        // we can try to use a property grid
+        controller = new PropertyController(args[0]);
+        FindAndAttachControlTo(controller);
+      }
 
       if (ShowDialog(controller, title, showApplyButton))
       {
@@ -401,7 +408,7 @@ namespace Altaxo.Main.Services
     {
       object[] args = new object[1];
       args[0] = arg;
-      bool result = Current.Gui.ShowDialog(args, title, showApplyButton);
+      bool result = ShowDialog(args, title, showApplyButton);
       arg = args[0];
       return result;
     }

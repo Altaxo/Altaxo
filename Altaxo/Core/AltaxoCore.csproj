@@ -482,6 +482,12 @@
     <Compile Include="Calc\VectorCoupling.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Science\Energy.cs" />
+    <Compile Include="Science\SIConstants.cs" />
+    <Compile Include="Science\SIUnit.cs" />
+    <Compile Include="Science\SIValue.cs" />
+    <Compile Include="Science\Temperature.cs" />
+    <Compile Include="Science\ValueTransformation.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Calc\Probability\Resources\ExceptionMessages.de.resx">

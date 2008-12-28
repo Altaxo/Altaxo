@@ -159,6 +159,37 @@ namespace Altaxo.Graph.Procedures
       CopyPageCommand.Run(ctrl);
     }
 
+
+    public static void CopyGraphToClipboard(GraphController ctrl)
+    {
+			Serialization.ClipboardSerialization.PutObjectToClipboard("Altaxo.Graph.GraphDocumentAsXml",ctrl.Doc);
+    }
+
+    public static void PasteGraphStyleFromClipboard(GraphController ctrl)
+    {
+			object o = Serialization.ClipboardSerialization.GetObjectFromClipboard("Altaxo.Graph.GraphDocumentAsXml");
+      if (!(o is GraphDocument))
+        return;
+
+      GraphDocument from = (GraphDocument)o;
+      ctrl.Doc.CopyFrom(from, GraphCopyOptions.CopyFromLayers | GraphCopyOptions.CopyPlotStyles);
+      Graph.Procedures.GraphCommands.RescaleAxes(ctrl.Doc);
+    }
+
+
+    public static void CopyActiveLayerToClipboard(GraphController ctrl)
+    {
+      Serialization.ClipboardSerialization.PutObjectToClipboard("Altaxo.Graph.GraphLayerAsXml", ctrl.ActiveLayer);
+    }
+
+    public static void PasteAsNewLayerFromClipboard(GraphController ctrl)
+    {
+			object o = Serialization.ClipboardSerialization.GetObjectFromClipboard("Altaxo.Graph.GraphLayerAsXml");
+      XYPlotLayer layer = o as XYPlotLayer;
+      if(null!=layer)
+        ctrl.Doc.Layers.Add(layer);
+    }
+
     /// <summary>
     /// Copies the current graph as an bitmap image to the clipboard.
     /// </summary>
@@ -174,6 +205,18 @@ namespace Altaxo.Graph.Procedures
       System.Windows.Forms.Clipboard.SetDataObject(dao);
     }
 
+
+    /// <summary>
+    /// This command will rescale all axes in all layers
+    /// </summary>
+    public static void RescaleAxes(GraphDocument doc)
+    {
+      for (int i = 0; i < doc.Layers.Count; i++)
+      {
+        doc.Layers[i].RescaleXAxis();
+        doc.Layers[i].RescaleYAxis();
+      }
+    }
 
   }
 }

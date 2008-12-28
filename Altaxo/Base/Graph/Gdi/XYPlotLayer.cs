@@ -38,6 +38,8 @@ namespace Altaxo.Graph.Gdi
   using Axis;
   using Plot;
 
+	
+
   /// <summary>
   /// XYPlotLayer represents a rectangular area on the graph, which holds plot curves, axes and graphical elements.
   /// </summary>
@@ -833,10 +835,10 @@ namespace Altaxo.Graph.Gdi
     public XYPlotLayer(XYPlotLayer from)
     {
       _changeEventSuppressor = new Altaxo.Main.EventSuppressor(EhChangeEventResumed);
-      CopyFrom(from);
+      CopyFrom(from, GraphCopyOptions.All);
     }
 
-    public void CopyFrom(XYPlotLayer from)
+    public void CopyFrom(XYPlotLayer from, GraphCopyOptions options)
     {
       using (IDisposable updateLock = BeginUpdate())
       {
@@ -871,8 +873,12 @@ namespace Altaxo.Graph.Gdi
 
         this.GraphObjects = null == from._graphObjects ? null : new GraphicCollection(from._graphObjects);
 
-        this.PlotItems = null == from._plotItems ? null : new PlotItemCollection(this, from._plotItems);
-
+				if(0!=(options&GraphCopyOptions.ClonePlotItems))
+					this.PlotItems = null == from._plotItems ? null : new PlotItemCollection(this, from._plotItems);
+				else if(0!=(options&GraphCopyOptions.CopyPlotStyles))
+				{
+					// TODO apply the styles from from._plotItems to the PlotItems here
+				}
 
         _cachedForwardMatrix = new Matrix();
         _cachedReverseMatrix = new Matrix();
@@ -881,6 +887,7 @@ namespace Altaxo.Graph.Gdi
         OnChanged(); // make sure that the change event is called
       }
 
+      // 2008-12-12: parent is neccessary for the layer dialog, otherwise linked layer properties are broken
       this._parent = from._parent; // outside the update, because clone operations should not cause an update of the old parent
 
     }
@@ -1113,6 +1120,7 @@ namespace Altaxo.Graph.Gdi
     public XYPlotLayerCollection ParentLayerList
     {
       get { return _parent as XYPlotLayerCollection; }
+      set { _parent = value; }
     }
 
     public GraphicCollection Legends

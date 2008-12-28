@@ -627,7 +627,7 @@ namespace Altaxo.Gui.Graph
 
       _doc.GridPlanes.RemoveUnused(); // Remove unused grid planes
 
-      _originalDoc.CopyFrom(_doc); // _doc remains suspended
+      _originalDoc.CopyFrom(_doc,GraphCopyOptions.All); // _doc remains suspended
     
       return true;
     }

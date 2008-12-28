@@ -59,6 +59,12 @@ namespace Altaxo.Serialization.Xml
       m_Reader.MoveToContent();
     }
 
+		public void BeginReading(string s)
+		{
+			m_Reader = new XmlTextReader(new System.IO.StringReader(s));
+			m_Reader.MoveToContent();
+		}
+
     public void EndReading()
     {
       // m_Reader.Close(); Do not close the reader, since the underlying stream is closed too then..., this will not work if reading zip files

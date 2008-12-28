@@ -49,6 +49,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     void EhView_ChooseFitRange();
 
     void EhView_DeleteDependentVariable(int idx);
+    void EhView_EditFitFunction();
   }
 
   public interface IFitElementController : IMVCAController
@@ -180,6 +181,14 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         _view.Refresh();
       }
     }
+
+    public void EhView_EditFitFunction()
+    {
+      object fitFunc = _doc.FitFunction;
+      if(Current.Gui.ShowDialog(ref fitFunc, "Edit fit function"))
+        _doc.FitFunction = (IFitFunction)fitFunc;
+    }
+
     public event EventHandler FitFunctionSelectionChange;
     public void EhView_ChooseFitFunction()
     {

@@ -530,6 +530,16 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
           menu.Show(this,this._lastMouseDown);
           return;
         }
+        if (IsClickOnFitFunction(_lastMouseDown))
+        {
+          ContextMenu menu = new ContextMenu();
+          MenuItem item;
+
+          item = new IdxMenuItem("Edit", new EventHandler(this.EhEditFitFunction),0);
+          menu.MenuItems.Add(item);
+          menu.Show(this, this._lastMouseDown);
+          return;
+        }
       }
       base.OnClick (e);
     }
@@ -540,6 +550,13 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       if(_controller!=null)
         _controller.EhView_DeleteDependentVariable(((IdxMenuItem)sender).TagIndex);
     }
+
+    protected void EhEditFitFunction(object sender, System.EventArgs e)
+    {
+      if (Controller != null)
+        _controller.EhView_EditFitFunction();
+    }
+
 
     protected override void OnDoubleClick(EventArgs e)
     {

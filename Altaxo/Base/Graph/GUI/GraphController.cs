@@ -1624,9 +1624,22 @@ namespace Altaxo.Graph.GUI
     /// </summary>
     public void CopySelectedObjectsToClipboard()
     {
-      if (m_MouseState is ObjectPointerMouseHandler)
-        ((ObjectPointerMouseHandler)m_MouseState).CopySelectedObjectsToClipboard();
+			var mouseStateOPM = m_MouseState as ObjectPointerMouseHandler;
+			int numberOfSelectedObjects = null == mouseStateOPM ? 0 : mouseStateOPM.NumberOfSelectedObjects;
+			if (0 != numberOfSelectedObjects)
+			{
+				mouseStateOPM.CopySelectedObjectsToClipboard();
+			}
+			else // we copy the whole graph as xml
+			{
+        Altaxo.Graph.Procedures.GraphCommands.CopyGraphToClipboard(this);
+			}
+
     }
+
+		
+
+
 
     /// <summary>
     /// Copy the selected objects of this graph to the clipboard.
@@ -1661,6 +1674,17 @@ namespace Altaxo.Graph.GUI
         }
         return;
       }
+			if (dao.GetDataPresent("Altaxo.Graph.GraphDocumentAsXml"))
+			{
+        Altaxo.Graph.Procedures.GraphCommands.PasteGraphStyleFromClipboard(this);
+				return;
+			}
+      if (dao.GetDataPresent("Altaxo.Graph.GraphLayerAsXml"))
+      {
+        Altaxo.Graph.Procedures.GraphCommands.PasteAsNewLayerFromClipboard(this);
+        return;
+      }
+
       if (dao.ContainsFileDropList())
       {
         bool bSuccess = false;

@@ -493,22 +493,28 @@ namespace Altaxo.Data
 
     protected void EhTableNameChanged(object sender, Main.NameChangedEventArgs nce)
     {
-      if(object.ReferenceEquals(this[nce.NewName],sender))
-        return; // Table alredy renamed
+      if (_tablesByName.ContainsKey(nce.NewName))
+      {
+        if (object.ReferenceEquals(_tablesByName[nce.NewName], sender))
+          return; // Table alredy renamed
+        else
+          throw new ApplicationException("Table with name " + nce.NewName + " already exists!");
+      }
 
-      if(this.Contains(nce.NewName))
-        throw new ApplicationException("Table with name " + nce.NewName + " already exists!");
+      if (_tablesByName.ContainsKey(nce.OldName))
+      {
+        if (!object.ReferenceEquals(_tablesByName[nce.OldName], sender))
+          throw new ApplicationException("Names between DataTableCollection and Tables not in sync");
 
-      if(!this.Contains(nce.OldName))
-        throw new ApplicationException("Error renaming table " + nce.OldName + " : this table name was not found in the collection!" );
-        
-      if(!object.ReferenceEquals(this[nce.OldName],sender))
-        throw new ApplicationException("Names between DataTableCollection and Tables not in sync");
+        _tablesByName.Remove(nce.OldName);
+        _tablesByName.Add(nce.NewName, (DataTable)sender);
 
-      _tablesByName.Remove(nce.OldName);
-      _tablesByName.Add(nce.NewName,(DataTable)sender);
-
-      SelfChanged(ChangedEventArgs.IfTableRenamed);
+        SelfChanged(ChangedEventArgs.IfTableRenamed);
+      }
+      else
+      {
+        throw new ApplicationException("Error renaming table " + nce.OldName + " : this table name was not found in the collection!");
+      }
     }
 
     /// <summary>

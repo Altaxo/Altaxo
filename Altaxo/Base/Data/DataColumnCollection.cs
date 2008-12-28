@@ -999,6 +999,96 @@ namespace Altaxo.Data
       this.Resume();
     }
 
+    /// <summary>
+    /// Appends data columns from DataTable src to the data in this table.
+    /// </summary>
+    /// <param name="src">Source table.</param>
+    /// <param name="ignoreNames">If true, the data columns in this table and in src table are compared by index. If false,
+    /// the data columns in this table and in src table are compared by their name.</param>
+    public void AppendAllColumns(DataColumnCollection src, bool ignoreNames)
+    {
+      AppendAllColumnsToPosition(src, ignoreNames, RowCount);
+    }
+
+    /// <summary>
+    /// Appends data columns from DataTable src to the data in this table leaving some rows free inbetween.
+    /// </summary>
+    /// <param name="src">Source table.</param>
+    /// <param name="ignoreNames">If true, the data columns in this table and in src table are compared by index. If false,
+    /// the data columns in this table and in src table are compared by their name.</param>
+    /// <param name="rowSpace">Number of rows to leave free between data in this table and newly appended data.</param>
+    public void AppendAllColumnsWithSpace(DataColumnCollection src, bool ignoreNames, int rowSpace)
+    {
+      AppendAllColumnsToPosition(src, ignoreNames, RowCount+rowSpace);
+    }
+
+    /// <summary>
+    /// Appends data columns from DataTable src to the data in this table by copying the new data to a specified row.
+    /// </summary>
+    /// <param name="src">Source table.</param>
+    /// <param name="ignoreNames">If true, the data columns in this table and in src table are compared by index. If false,
+    /// the data columns in this table and in src table are compared by their name.</param>
+    /// <param name="appendPosition">Row number of first row where the new data is copied to.</param>
+    public void AppendAllColumnsToPosition(DataColumnCollection src, bool ignoreNames, int appendPosition)
+    {
+      this.Suspend();
+      
+      // test structure
+      if(!IsColumnStructureCompatible(this,src,ignoreNames))
+        throw new ArgumentException(string.Format("DataColumnCollection {0} has another structure than {1}. Append is not possible",src.Name,this.Name));
+
+      if (ignoreNames)
+      {
+        for (int i = 0; i < ColumnCount; i++)
+        {
+          DataColumn destCol = this[i];
+          DataColumn srcCol = src[i];
+          destCol.AppendToPosition(srcCol,appendPosition);
+          _numberOfRows = Math.Max(_numberOfRows, destCol.Count);
+        }
+      }
+      else
+      {
+        for (int i = 0; i < ColumnCount; i++)
+        {
+          DataColumn destCol = this[i];
+          DataColumn srcCol = src[this[i].Name];
+          destCol.AppendToPosition(srcCol,appendPosition);
+          _numberOfRows = Math.Max(_numberOfRows, destCol.Count);
+        }
+      }
+      this.Resume();
+    }
+
+
+    public static bool IsColumnStructureCompatible(DataColumnCollection a, DataColumnCollection b, bool ignoreColumnNames)
+    {
+      if (a.ColumnCount != b.ColumnCount)
+        return false;
+
+      if (ignoreColumnNames)
+      {
+        for (int i = 0; i < a.ColumnCount; i++)
+        {
+          if (a[i].GetType() != b[i].GetType())
+            return false;
+        }
+      }
+      else
+      {
+        for (int i = 0; i < a.ColumnCount; i++)
+        {
+          string ainame = a[i].Name;
+          if (!b.ContainsColumn(ainame))
+            return false;
+          if (a[i].GetType() != b[ainame].GetType())
+            return false;
+        }
+      }
+      return true;
+    }
+
+
 
     #endregion
 

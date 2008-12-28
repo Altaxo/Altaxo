@@ -160,6 +160,28 @@ namespace Altaxo.Graph.Commands
   }
 
   /// <summary>
+  /// Handler for the menu item "Edit" - "Copy" - "ActiveLayer".
+  /// </summary>
+  public class CopyActiveLayer : AbstractGraphControllerCommand
+  {
+    public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
+    {
+      Altaxo.Graph.Procedures.GraphCommands.CopyActiveLayerToClipboard(ctrl);
+    }
+  }
+
+  /// <summary>
+  /// Handler for the menu item "Edit" - "Paste" - "AsNewLayer".
+  /// </summary>
+  public class PasteAsNewLayer : AbstractGraphControllerCommand
+  {
+    public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
+    {
+      Altaxo.Graph.Procedures.GraphCommands.PasteAsNewLayerFromClipboard(ctrl);
+    }
+  }
+
+  /// <summary>
   /// Handler for the menu item "Edit" - "CopyPageAsBitmap".
   /// The resulting bitmap has a resolution of 150 dpi and ARGB format.
   /// </summary>

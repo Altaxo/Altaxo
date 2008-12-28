@@ -108,6 +108,7 @@ namespace Altaxo.Graph.Gdi
     [field: NonSerialized]
     public event System.EventHandler Changed;
 
+		[NonSerialized]
     Main.EventSuppressor _changedEventSuppressor;
 
     /// <summary>Event fired when the name changed.</summary>
@@ -330,39 +331,65 @@ namespace Altaxo.Graph.Gdi
     public GraphDocument()
     {
       this._changedEventSuppressor = new EventSuppressor(this.EhChangedEventResumes);
-      this._layers = new XYPlotLayerCollection();
+			_creationTime = _lastChangeTime = DateTime.UtcNow;
+			this._layers = new XYPlotLayerCollection();
       this._layers.ParentObject = this;
-      SetGraphPageBoundsToPrinterSettings();
+
+			SetGraphPageBoundsToPrinterSettings();
       this._layers.SetPrintableGraphBounds(_printableBounds, false);
-      _creationTime = _lastChangeTime = DateTime.UtcNow;
     }
 
     public GraphDocument(GraphDocument from)
     {
       this._changedEventSuppressor = new EventSuppressor(this.EhChangedEventResumes);
-      this._pageBounds = from._pageBounds;
-      this._printableBounds = from._printableBounds;
-      _creationTime = _lastChangeTime = DateTime.UtcNow;
-      this._notes = from._notes;
+			_creationTime = _lastChangeTime = DateTime.UtcNow;
+			this._layers = new XYPlotLayerCollection();
+			this._layers.ParentObject = this;
 
-
-      // Clone also the table properties (deep copy)
-      if(from._graphProperties!=null)
-      {
-        foreach(string key in from._graphProperties.Keys)
-        {
-          ICloneable val = from._graphProperties[key] as ICloneable;
-          if(null!=val)
-            this.SetGraphProperty(key,val.Clone());
-        }
-      }
-
-      // the order is important here: clone the layers only before setting the printable graph bounds and other
-      // properties, otherwise some errors will happen
-      this._layers = (XYPlotLayerCollection)from._layers.Clone();
-      this._layers.ParentObject = this;
-
+			CopyFrom(from, GraphCopyOptions.All);
     }
+
+		public void CopyFrom(GraphDocument from, GraphCopyOptions options)
+		{
+			this._pageBounds = from._pageBounds;
+			this._printableBounds = from._printableBounds;
+
+			if (0 != (options & GraphCopyOptions.CloneNotes))
+				this._notes = from._notes;
+
+
+			if (0 != (options & GraphCopyOptions.CloneProperties))
+			{
+				// Clone also the table properties (deep copy)
+				if (from._graphProperties != null)
+				{
+					foreach (string key in from._graphProperties.Keys)
+					{
+						ICloneable val = from._graphProperties[key] as ICloneable;
+						if (null != val)
+							this.SetGraphProperty(key, val.Clone());
+					}
+				}
+			}
+
+			// the order is important here: clone the layers only before setting the printable graph bounds and other
+			// properties, otherwise some errors will happen
+			if (0 != (options & GraphCopyOptions.CloneLayers))
+			{
+				this._layers = (XYPlotLayerCollection)from._layers.Clone();
+			}
+			else if (0 != (options & GraphCopyOptions.CopyFromLayers))
+			{
+				// copy the style for each of thelayers
+				int len = Math.Min(this._layers.Count, from._layers.Count);
+				for (int i = 0; i < len; i++)
+				{
+					this._layers[i].CopyFrom(from._layers[i], options);
+          this._layers[i].ParentLayerList = this._layers;
+				}
+			}
+			this._layers.ParentObject = this;
+		}
 
     /// <summary>
     /// Sets the page bounds of the graph document according to the current printer settings
@@ -700,8 +727,6 @@ namespace Altaxo.Graph.Gdi
 
 
     #endregion
-
- 
 
     #region Change event handling
 

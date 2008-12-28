@@ -650,17 +650,38 @@ namespace Altaxo.Data
     /// <param name="nBeforeRow">The row number before the additional rows are inserted.</param>
     /// <param name="nCount">Number of empty rows to insert.</param>
     public abstract void InsertRows(int nBeforeRow, int nCount); // inserts additional empty rows
-    
-    
-  
-    
+
+    /// <summary>
+    /// Appends data from another column to this column
+    /// </summary>
+    /// <param name="v">Column to append.</param>
+    public virtual void Append(Altaxo.Data.DataColumn v)
+    {
+      AppendToPosition(v, Count);
+    }
+
+    /// <summary>
+    /// Appends data from another column to this column
+    /// </summary>
+    /// <param name="v">Column to append.</param>
+    /// <param name="startingRow">Row where the first data item is copied to.</param>
+    public virtual void AppendToPosition(Altaxo.Data.DataColumn v, int startingRow)
+    {
+      Suspend();
+      for (int i = startingRow + v.Count -1, j = v.Count - 1; j >= 0; i--, j--)
+        this[i] = v[j];
+      Resume();
+    }
+
+
+
     // -----------------------------------------------------------------------------
     // 
     //                      Operators
     //
     // -----------------------------------------------------------------------------
 
-    
+
     // Note: unfortunately (and maybe also undocumented) we can not use
     // the names op_Addition, op_Subtraction and so one, because these
     // names seems to be used by the compiler for the operators itself

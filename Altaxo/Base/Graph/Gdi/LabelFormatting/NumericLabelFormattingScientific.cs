@@ -118,7 +118,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
         }
         else
         {
-          middelpart = "·10";
+          middelpart = "\u00D710";
         }
       }
       else
@@ -212,7 +212,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
           if (string.IsNullOrEmpty(firstp[i]))
             mid = "10";
           else
-            mid = "·10";
+            mid = "\u00D710";
         }
         litems[i] = new MeasuredLabelItem(g, localfont1, localfont2, localstrfmt, firstp[i]+mid,expos[i],maxexposize);
       }

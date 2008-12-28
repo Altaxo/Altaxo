@@ -43,19 +43,10 @@ namespace Altaxo.Worksheet.Commands
       DataColumn xcol=null, ycol=null, vcol=null;
 
       // for this command to work, there must be exactly 3 data columns selected
-      if (ctrl.SelectedDataColumns.Count == 3)
+      int nCols = ctrl.SelectedDataColumns.Count;
+      if (nCols >= 3)
       {
-        // use the last column that is a value column as v
-        // and use the first column that is an x column as x
-        for (int i = 2; i >= 0; i--)
-        {
-          if (ctrl.DataTable.DataColumns.GetColumnKind(ctrl.SelectedDataColumns[i]) == ColumnKind.V)
-          {
-            vcol = ctrl.DataTable.DataColumns[ctrl.SelectedDataColumns[i]];
-            break;
-          }
-        }
-        for (int i = 2; i >= 0; i--)
+        for (int i = 0; i < nCols; i++)
         {
           if (ctrl.DataTable.DataColumns.GetColumnKind(ctrl.SelectedDataColumns[i]) == ColumnKind.Y)
           {
@@ -63,7 +54,7 @@ namespace Altaxo.Worksheet.Commands
             break;
           }
         }
-        for (int i = 2; i >= 0; i--)
+        for (int i = 0; i <nCols; i++)
         {
           if (ctrl.DataTable.DataColumns.GetColumnKind(ctrl.SelectedDataColumns[i]) == ColumnKind.X)
           {
@@ -72,20 +63,36 @@ namespace Altaxo.Worksheet.Commands
           }
         }
 
-        if (xcol == null || ycol == null || vcol == null)
-          return "The selected columns must be a x-column, a y-column, and a value column";
+        if (xcol == null || ycol == null)
+          return "The selected columns must be a x-column, a y-column, and one or more value columns";
       }
       else
       {
-        return "You must select exactly a x-column, a y-column, and a value column";
+        return "You must select exactly a x-column, a y-column, and one or more value column";
       }
 
-      DataTable newtable;
-      string msg = XYVToMatrix(xcol, ycol, vcol, out newtable);
-      if (msg != null)
-        return msg;
 
-      Current.ProjectService.CreateNewWorksheet(newtable);
+      // use the last column that is a value column as v
+      // and use the first column that is an x column as x
+      for (int i = 0; i < nCols; i++)
+      {
+       vcol = ctrl.DataTable.DataColumns[ctrl.SelectedDataColumns[i]];
+       if (object.ReferenceEquals(vcol, xcol) || object.ReferenceEquals(vcol, ycol))
+         continue;
+
+
+       DataTable newtable;
+       string msg = XYVToMatrix(xcol, ycol, vcol, ctrl.DataTable, out newtable);
+       if (msg != null)
+         return msg;
+
+
+       string newtablename = ctrl.DataTable.Name + "-" + vcol.Name;
+       newtable.Name = newtablename;
+       Current.ProjectService.CreateNewWorksheet(newtable);
+      
+      }
+
 
       return null;
     }
@@ -98,7 +105,7 @@ namespace Altaxo.Worksheet.Commands
     /// <param name="vcol">Column of v-values.</param>
     /// <param name="newtable">On return, contains the newly created table matrix.</param>
     /// <returns>Null if no error occurs, or an error message.</returns>
-    public static string XYVToMatrix(DataColumn xcol, DataColumn ycol, DataColumn vcol, out DataTable newtable)
+    public static string XYVToMatrix(DataColumn xcol, DataColumn ycol, DataColumn vcol, DataTable originalTable, out DataTable newtable)
     {
       newtable = null;
       System.Collections.SortedList xx = new System.Collections.SortedList();
@@ -154,11 +161,31 @@ namespace Altaxo.Worksheet.Commands
 
       // assemble all columns together in a table
       newtable = new DataTable();
-      newtable.DataColumns.Add(xnew,"X",ColumnKind.X,0);
-      newtable.PropertyColumns.Add(ynew,"Y",ColumnKind.Y,0);
 
+      // add the x-column to the data collection
+      string xname = null;
+      if (null != originalTable)
+        xname = originalTable.DataColumns.GetNameOfChildObject(xcol);
+      if (string.IsNullOrEmpty(xname))
+        xname = "X";
+      newtable.DataColumns.Add(xnew,xname,ColumnKind.X,0);
+
+      // add the y-column to the property collection
+      string yname = null;
+      if (null != originalTable)
+        yname = originalTable.DataColumns.GetNameOfChildObject(ycol);
+      if (string.IsNullOrEmpty(yname))
+        yname = "Y";
+      newtable.PropertyColumns.Add(ynew,yname,ColumnKind.Y,0);
+
+      // add the v-columns to the data collection
+      string vname = null;
+      if (null != originalTable)
+        vname = originalTable.DataColumns.GetNameOfChildObject(vcol);
+      if (string.IsNullOrEmpty(vname))
+        vname = "V";
       for (int i = 0; i < vcols.Length; ++i)
-        newtable.DataColumns.Add(vcols[i], "V" + i.ToString(), ColumnKind.V, 0);
+        newtable.DataColumns.Add(vcols[i], vname + i.ToString(), ColumnKind.V, 0);
 
       return null;
     }
