@@ -139,7 +139,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     }
 
 
-    public static double Evaluate(double phi, double y0, double y1, double phi_c, double s, double t)
+    public static double EvaluateOld(double phi, double y0, double y1, double phi_c, double s, double t)
     {
       if (!(y0 > 0))
         return double.NaN;
@@ -188,6 +188,90 @@ namespace Altaxo.Calc.FitFunctions.Transitions
 
       return Math.Exp(logy);
     }
+
+
+		private static double Sqr(double x)
+		{
+			return x * x;
+		}
+
+		public static double Evaluate(double phi, double y0, double y1, double phi_c, double s, double t)
+		{
+			if (!(y0 > 0))
+				return double.NaN;
+			if (!(y1 > 0))
+				return double.NaN;
+			if (!(phi_c >= 0 && phi_c <= 1))
+				return double.NaN;
+			if (!(s >= 0))
+				return double.NaN;
+			if (!(t >= 0))
+				return double.NaN;
+
+			if (y0 == y1)
+				return y0; // then there is no transition
+			if (phi <= 0)
+				return y0;
+			if (phi >= 1)
+				return y1;
+
+			// if y0>y1 then we exchange both and the phi value
+			if (y0 > y1)
+			{
+				double h = y0;
+				y0 = y1;
+				y1 = h;
+				phi = 1 - phi;
+			}
+
+
+			// we denote with ss and tt the powers 1/s and 1/t respectively
+			double y0ss = Math.Pow(y0, 1 / s);
+			double y1tt = Math.Pow(y1, 1 / t);
+			double A = (1 - phi_c) / phi_c;
+
+			double lmin = Math.Log(y0);
+			double lmax = Math.Log(y1);
+
+			// guess a value for the conductivity from the left or right side approximation
+			double lystart;
+			if (phi < phi_c)
+			{
+        lystart = lmin - s * Math.Log(1 -  phi / phi_c);
+				if(!(lystart<=lmax))
+					lystart = 0.5 * (lmin + lmax);
+			}
+			else if (phi > phi_c)
+			{
+        lystart = lmax + t * Math.Log((phi - phi_c) / (1 - phi_c));
+				if(!(lystart>=lmin))
+					lystart = 0.5 * (lmin + lmax);
+			}
+			else
+				lystart = 0.5 * (lmin + lmax);
+
+
+			double ly = lystart;
+			double threshold = 1e-8 * Math.Abs(lmax - lmin);
+
+			for (int i = 0; i < 20; i++)
+			{
+				double yss = Math.Exp(ly / s);
+				double ytt = Math.Exp(ly / t);
+				// errechne den Funktionswert (Abweichung von 0)
+				double f = ((1 - phi) * (y0ss - yss)) / (A * yss + y0ss) + (phi * (y1tt - ytt)) / (A * ytt + y1tt);
+
+				// calculate the derivative of f with respect to ly
+				double fs = (1 + A) * ((yss * (-1 + phi) * y0ss) / (s * Sqr(A * yss + y0ss)) - (ytt * phi * y1tt) / (t * Sqr(A * ytt + y1tt)));
+
+				double deltaly =  f / fs;
+				if (Math.Abs(deltaly)<threshold)
+					break;
+				ly -= deltaly;
+			}
+
+			return Math.Exp(ly);
+		}
 
     /// <summary>
     /// Finds the x where func(x)==0 between x0<x<x1 for a monoton decreasing function func.

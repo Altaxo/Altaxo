@@ -238,14 +238,16 @@ namespace Altaxo.Serialization.Ascii
       {
         for (int i = 0; i < impopt.RecognizedStructure.Count; i++)
         {
-          if (impopt.RecognizedStructure[i] == typeof(Double))
-            newcols.Add(new Altaxo.Data.DoubleColumn());
-          else if (impopt.RecognizedStructure[i] == typeof(DateTime))
-            newcols.Add(new Altaxo.Data.DateTimeColumn());
-          else if (impopt.RecognizedStructure[i] == typeof(string))
-            newcols.Add(new Altaxo.Data.TextColumn());
-          else
-            newcols.Add(new Altaxo.Data.DBNullColumn()); ;
+					if (impopt.RecognizedStructure[i] == typeof(Double))
+						newcols.Add(new Altaxo.Data.DoubleColumn());
+					else if (impopt.RecognizedStructure[i] == typeof(long))
+						newcols.Add(new Altaxo.Data.DoubleColumn());
+					else if (impopt.RecognizedStructure[i] == typeof(DateTime))
+						newcols.Add(new Altaxo.Data.DateTimeColumn());
+					else if (impopt.RecognizedStructure[i] == typeof(string))
+						newcols.Add(new Altaxo.Data.TextColumn());
+					else
+						newcols.Add(new Altaxo.Data.DBNullColumn()); ;
         }
       }
 

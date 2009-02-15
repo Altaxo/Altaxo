@@ -25,6 +25,8 @@ using System.Collections.Generic;
 
 namespace Altaxo.Serialization.Ascii
 {
+
+
   /// <summary>
   /// Represents the structure of one single line of imported ascii text.
   /// </summary>
@@ -157,17 +159,19 @@ namespace Altaxo.Serialization.Ascii
       for(int i=0;i<len;i++)
       {
         Type t = (Type) this[i];
-        if(t==typeof(DateTime))
-          _priorityValue += 10;
-        else if(t==typeof(Double))
-          _priorityValue += 5;
-        else if(t==typeof(String))
-          _priorityValue += 2;
-        else if(t==typeof(DBNull))
-        {
-          _priorityValue += 1;
-          _containsDBNull=true;
-        }
+				if (t == typeof(DateTime))
+					_priorityValue += 15;
+				else if (t == typeof(Double))
+					_priorityValue += 7;
+				else if (t == typeof(long))
+					_priorityValue += 3;
+				else if (t == typeof(String))
+					_priorityValue += 2;
+				else if (t == typeof(DBNull))
+				{
+					_priorityValue += 1;
+					_containsDBNull = true;
+				}
       } // for
 
       // calculate hash
@@ -193,6 +197,10 @@ namespace Altaxo.Serialization.Ascii
       {
         if(this[i]==typeof(DBNull) || ano[i]==typeof(DBNull))
           continue;
+				if (this[i] == typeof(long) && ano[i] == typeof(double))
+					continue;
+				if (this[i] == typeof(double) && ano[i] == typeof(long))
+					continue;
         if(this[i]!=ano[i])
           return false;
       }

@@ -1045,6 +1045,11 @@ namespace Altaxo.Calc.Interpolation
 			return GetYOfU(x);
 		}
 
+    public double GetY1stDerivativeOfX(double xx)
+    {
+      return CubicSplineHorner1stDerivative(xx, x, y0, y1, y2, y3);
+    }
+
 		public override double GetYOfU(double u)
 		{
 			return CubicSplineHorner(u, x, y0, y1, y2, y3);

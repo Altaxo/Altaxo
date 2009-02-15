@@ -71,8 +71,15 @@ namespace Altaxo.Serialization.Ascii
         }
         else if (IsNumeric(substring))
         {
-          tabStruc.Add(typeof(double));
-          tabStruc.AddToDecimalSeparatorStatistics(substring); // make a statistics of the use of decimal separator
+					if (IsIntegral(substring))
+					{
+						tabStruc.Add(typeof(long));
+					}
+					else
+					{
+						tabStruc.Add(typeof(double));
+						tabStruc.AddToDecimalSeparatorStatistics(substring); // make a statistics of the use of decimal separator
+					}
         }
         else if (IsDateTime(substring))
         {
@@ -112,7 +119,16 @@ namespace Altaxo.Serialization.Ascii
       return double.TryParse(s, System.Globalization.NumberStyles.Any, System.Globalization.NumberFormatInfo.InvariantInfo, out result);
     }
 
-
+		/// <summary>
+		/// Tests if the string <c>s</c> is an integral numeric value.
+		/// </summary>
+		/// <param name="s"></param>
+		/// <returns></returns>
+		public static bool IsIntegral(string s)
+		{
+			long result;
+			return long.TryParse(s, System.Globalization.NumberStyles.Integer, System.Globalization.NumberFormatInfo.InvariantInfo, out result);
+		}
     
   } // end class
 

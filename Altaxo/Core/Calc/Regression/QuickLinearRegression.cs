@@ -87,5 +87,21 @@ namespace Altaxo.Calc.Regression
     {
       return _n*_sxx-_sx*_sx;
     }
+
+    public double MeanX
+    {
+      get
+      {
+        return _sx / _n;
+      }
+    }
+
+    public double MeanY
+    {
+      get
+      {
+        return _sy / _n;
+      }
+    }
   }
 }

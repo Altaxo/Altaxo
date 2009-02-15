@@ -257,7 +257,24 @@ namespace Altaxo.Calc.Interpolation
       double dx = u - x[i];
       return (y[i] + dx * (y1[i] + dx * (y2[i] + dx * y3[i])));
     }
-   
+
+
+    public double CubicSplineHorner1stDerivative(double u,
+    IROVector x,
+    IROVector y,
+    IROVector y1,
+    IROVector y2,
+    IROVector y3)
+    {
+      // special case that there are no data. Return 0.0.
+      if (x.Length == 0) return 0.0;
+
+      int i = FindInterval(u, x);
+      if (i < x.LowerBound) i = x.LowerBound;  // extrapolate to the left
+      if (i == x.UpperBound) i--;   // extrapolate to the right
+      double dx = u - x[i];
+      return (y1[i] + dx * (2*y2[i] + dx * 3*y3[i]));
+    }
 
     /// <summary>
     /// Calculate the spline coefficients y2(i) and y3(i) for a natural cubic
@@ -794,6 +811,11 @@ namespace Altaxo.Calc.Interpolation
       return CubicSplineHorner(u,x,y,y1,y2,y3);
     }
 
+    public double GetY1stDerivativeOfX(double u)
+    {
+      return CubicSplineHorner1stDerivative(u, x, y, y1, y2, y3);
+    }
+
 
     #region deriv1
 
@@ -1059,6 +1081,11 @@ namespace Altaxo.Calc.Interpolation
     public double GetYOfX (double u)
     {
       return CubicSplineHorner(u,x,y,y1,y2,y3);
+    }
+
+    public double GetY1stDerivativeOfX(double u)
+    {
+      return CubicSplineHorner1stDerivative(u, x, y, y1, y2, y3);
     }
   }
 
@@ -2944,11 +2971,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
 
   #endregion
 
-  #region CrossValidatedCubicSpline
-
-  
  
-  #endregion
 
   #region Shepard2d
 

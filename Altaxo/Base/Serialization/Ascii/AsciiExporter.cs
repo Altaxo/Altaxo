@@ -51,6 +51,14 @@ namespace Altaxo.Serialization.Ascii
       }
     }
 
+		static protected string RemoveNewlineChars(string s)
+		{
+			s = s.Replace('\r', ' ');
+			s = s.Replace('\n', ' ');
+			return s;
+		}
+
+
     /// <summary>
     /// Exports the property columns into Ascii. Each property column is exported into one row (line).
     /// </summary>
@@ -74,6 +82,9 @@ namespace Altaxo.Serialization.Ascii
             string data = columnCollection[i][j].ToString().Replace(separator,' ');
             if(!isTextColumn && !data.Contains("="))
               strwr.Write(columnName);
+
+						if (isTextColumn)
+							data = RemoveNewlineChars(data);
 
             strwr.Write(data);
             

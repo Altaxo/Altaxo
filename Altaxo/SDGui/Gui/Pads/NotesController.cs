@@ -101,10 +101,13 @@ namespace Altaxo.Gui.Pads
 		/// </summary>
 		void StoreCurrentText()
 		{
-			if (_currentActiveViewContent is Altaxo.Gui.SharpDevelop.SDWorksheetViewContent)
-				((Altaxo.Gui.SharpDevelop.SDWorksheetViewContent)_currentActiveViewContent).Controller.Doc.Notes = _view.Text;
-			else if (_currentActiveViewContent is Altaxo.Gui.SharpDevelop.SDGraphViewContent)
-				((Altaxo.Gui.SharpDevelop.SDGraphViewContent)_currentActiveViewContent).Controller.Doc.Notes = _view.Text;
+			if (null != _view)
+			{
+				if (_currentActiveViewContent is Altaxo.Gui.SharpDevelop.SDWorksheetViewContent)
+					((Altaxo.Gui.SharpDevelop.SDWorksheetViewContent)_currentActiveViewContent).Controller.Doc.Notes = _view.Text;
+				else if (_currentActiveViewContent is Altaxo.Gui.SharpDevelop.SDGraphViewContent)
+					((Altaxo.Gui.SharpDevelop.SDGraphViewContent)_currentActiveViewContent).Controller.Doc.Notes = _view.Text;
+			}
 		}
 
     #region IPadContent Members

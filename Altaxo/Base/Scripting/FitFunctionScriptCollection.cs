@@ -22,6 +22,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Text;
 
 namespace Altaxo.Scripting
@@ -30,6 +31,29 @@ namespace Altaxo.Scripting
   public class FitFunctionScriptCollection : System.Collections.ICollection
   {
     Hashtable _InnerList = new Hashtable();
+
+		public List<FitFunctionScript> Find(string category, string name)
+		{
+			List<FitFunctionScript> result = new List<FitFunctionScript>();
+
+			foreach(FitFunctionScript script in this)
+			{
+				if (name != null && script.FitFunctionName != name)
+					continue;
+				if (category != null && script.FitFunctionCategory != category)
+					continue;
+				result.Add(script);
+			}
+
+			result.Sort(FitFunctionScriptDateTimeComparer); 
+
+			return result;
+		}
+		private int FitFunctionScriptDateTimeComparer(FitFunctionScript x, FitFunctionScript y)
+		{
+			return DateTime.Compare(x.CreationTime, y.CreationTime); 
+		}
+		 
 
     public void Add(FitFunctionScript script)
     {
