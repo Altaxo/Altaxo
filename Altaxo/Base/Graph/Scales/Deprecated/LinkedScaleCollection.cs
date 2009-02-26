@@ -29,7 +29,7 @@ using Altaxo.Serialization;
 using Altaxo.Graph.Scales;
 using Altaxo.Graph.Scales.Boundaries;
 
-namespace Altaxo.Graph.Scales
+namespace Altaxo.Graph.Scales.Deprecated
 {
   [Serializable]
   public class LinkedScaleCollection 
@@ -57,7 +57,7 @@ namespace Altaxo.Graph.Scales
     #region Serialization
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Graph.XYPlotLayerAxisPropertiesCollection", 0)]
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LinkedScaleCollection), 1)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Scales.LinkedScaleCollection", 1)]
     class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)

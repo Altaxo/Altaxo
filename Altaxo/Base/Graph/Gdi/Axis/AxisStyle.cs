@@ -280,13 +280,13 @@ namespace Altaxo.Graph.Gdi.Axis
         if (_styleID.UsePhysicalValueOtherFirst)
         {
           // then update the logical value of this identifier
-          double logicalValue = layer.Scales(_styleID.AxisNumberOtherFirst).PhysicalVariantToNormal(_styleID.PhysicalValueOtherFirst);
+          double logicalValue = layer.GetScale(_styleID.AxisNumberOtherFirst).PhysicalVariantToNormal(_styleID.PhysicalValueOtherFirst);
           _styleID.LogicalValueOtherFirst = logicalValue;
         }
         if (_styleID.UsePhysicalValueOtherSecond)
         {
           // then update the logical value of this identifier
-          double logicalValue = layer.Scales(_styleID.AxisNumberOtherSecond).PhysicalVariantToNormal(_styleID.PhysicalValueOtherSecond);
+          double logicalValue = layer.GetScale(_styleID.AxisNumberOtherSecond).PhysicalVariantToNormal(_styleID.PhysicalValueOtherSecond);
           _styleID.LogicalValueOtherSecond = logicalValue;
         }
 

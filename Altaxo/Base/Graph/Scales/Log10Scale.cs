@@ -40,9 +40,13 @@ namespace Altaxo.Graph.Scales
     /// <summary>Decimal logarithm of axis end.</summary>
     double _log10End=1; // Log10 of physical axis end
 
-    /// <summary>Number of decades per major tick.</summary>
-    int    _decadesPerMajorTick=1; // how many decades is one major tick
+		/// <summary>True if org is allowed to be extended to smaller values.</summary>
+		protected bool _isOrgExtendable;
 
+		/// <summary>True if end is allowed to be extended to higher values.</summary>
+		protected bool _isEndExtendable;
+
+  
     /// <summary>The boundary object. It collectes only positive values for the axis is logarithmic.</summary>
     protected NumericalBoundaries _dataBounds = null;
 
@@ -50,68 +54,20 @@ namespace Altaxo.Graph.Scales
 
     #region Serialization
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Graph.Log10Axis",0)]
-      class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+ 
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Log10Scale),3)]
+      class XmlSerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         Log10Scale s = (Log10Scale)obj;
         info.AddValue("Log10Org",s._log10Org);  
-        info.AddValue("Log10End",s._log10End);  
-        info.AddValue("DecadesPerMajor",s._decadesPerMajorTick);
+        info.AddValue("Log10End",s._log10End);
 
-        //info.AddValue("OrgFixed",s.m_AxisOrgFixed);
-        //info.AddValue("EndFixed",s.m_AxisEndFixed);
-
-        info.AddValue("Bounds",s._dataBounds);
-      }
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-      {
-        
-        Log10Scale s = null!=o ? (Log10Scale)o : new Log10Scale();
-
-        s._log10Org = (double)info.GetDouble("Log10Org");
-        s._log10End = (double)info.GetDouble("Log10End");
-
-        s._decadesPerMajorTick = (int)info.GetInt32("DecadesPerMajor");
-
-        bool AxisOrgFixed = (bool)info.GetBoolean("OrgFixed");
-        bool AxisEndFixed = (bool)info.GetBoolean("EndFixed");
-
-        s._dataBounds = (PositiveFiniteNumericalBoundaries)info.GetValue("Bounds",typeof(PositiveFiniteNumericalBoundaries));
-    
-        s._dataBounds.BoundaryChanged += new BoundaryChangedHandler(s.OnBoundariesChanged);
-
-
-        s._rescaling = new LogarithmicAxisRescaleConditions();
-        s._rescaling.SetOrgAndEnd(AxisOrgFixed ? BoundaryRescaling.Fixed : BoundaryRescaling.Auto, s.Org, AxisEndFixed ? BoundaryRescaling.Fixed:BoundaryRescaling.Auto, s.End);
-
-        LogarithmicAxisRescaleConditions rescaling = new LogarithmicAxisRescaleConditions();
-        rescaling.SetOrgAndEnd(AxisOrgFixed ? BoundaryRescaling.Fixed : BoundaryRescaling.Auto, s.Org, AxisEndFixed ? BoundaryRescaling.Fixed:BoundaryRescaling.Auto, s.End);
-        s._rescaling = rescaling;
-
-        return s;
-      }
-    }
-
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Axes.Log10Axis", 1)]
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Log10Scale),2)]
-      class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-    {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-      {
-        Log10Scale s = (Log10Scale)obj;
-        info.AddValue("Log10Org",s._log10Org);  
-        info.AddValue("Log10End",s._log10End);  
-        info.AddValue("DecadesPerMajor",s._decadesPerMajorTick);
-
-        //info.AddValue("OrgFixed",s.m_AxisOrgFixed);
-        //info.AddValue("EndFixed",s.m_AxisEndFixed);
+				info.AddValue("Rescaling", s._rescaling);
 
         info.AddValue("Bounds",s._dataBounds);
         
-        // new in version 1:
-        info.AddValue("Rescaling",s._rescaling);
 
       }
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -122,17 +78,12 @@ namespace Altaxo.Graph.Scales
         s._log10Org = (double)info.GetDouble("Log10Org");
         s._log10End = (double)info.GetDouble("Log10End");
 
-        s._decadesPerMajorTick = (int)info.GetInt32("DecadesPerMajor");
+				s._rescaling = (LogarithmicAxisRescaleConditions)info.GetValue("Rescaling", s);
 
-        // s.m_AxisOrgFixed = (bool)info.GetBoolean("OrgFixed");
-        // s.m_AxisEndFixed = (bool)info.GetBoolean("EndFixed");
 
         s._dataBounds = (PositiveFiniteNumericalBoundaries)info.GetValue("Bounds",typeof(PositiveFiniteNumericalBoundaries));
-    
         s._dataBounds.BoundaryChanged += new BoundaryChangedHandler(s.OnBoundariesChanged);
 
-        // new in version 1
-        s._rescaling = (LogarithmicAxisRescaleConditions)info.GetValue("Rescaling",s);
 
         return s;
       }
@@ -166,11 +117,8 @@ namespace Altaxo.Graph.Scales
     /// <param name="from">The axis to copy from.</param>
     public Log10Scale(Log10Scale from)
     {
-      this.IsLinked = from.IsLinked;
-   
       this._dataBounds   = null==from._dataBounds ? new PositiveFiniteNumericalBoundaries() : (NumericalBoundaries)from._dataBounds.Clone();
       _dataBounds.BoundaryChanged += new BoundaryChangedHandler(this.OnBoundariesChanged);
-      this._decadesPerMajorTick = from._decadesPerMajorTick;
       this._log10End = from._log10End;
       this._log10Org = from._log10Org;
 
@@ -257,231 +205,7 @@ namespace Altaxo.Graph.Scales
       return new Altaxo.Data.AltaxoVariant(NormalToPhysical(x));
     }
 
-    /// <summary>
-    /// GetMajorTicks returns the physical values
-    /// at which major ticks should occur
-    /// </summary>
-    /// <returns>physical values for the major ticks</returns>
-    public override double[] GetMajorTicks()
-    {
-      double log10org;
-      double log10end;
-
-      // ensure that log10org<log10end
-      if(_log10Org<_log10End)
-      {
-        log10org = _log10Org;
-        log10end = _log10End;
-      }
-      else
-      {
-        log10org = _log10End;
-        log10end = _log10Org;
-      }
-
-      // calculate the number of major ticks
-
-      int nFullDecades = (int)(1+Math.Floor(log10end)-Math.Ceiling(log10org));
-      int nMajorTicks = (int)Math.Floor((nFullDecades+_decadesPerMajorTick-1)/(double)_decadesPerMajorTick);
-
-
-      double[] retval = new double[nMajorTicks];
-      int beg=(int)Math.Ceiling(log10org);
-      int end=(int)Math.Floor(log10end);
-
-      int i,j;
-      for(i=beg,j=0 ;(i<=end) && (j<nMajorTicks) ; i+=_decadesPerMajorTick,j++)
-      {
-        retval[j] = Calc.RMath.Pow(10,i);
-      }
-      return retval;
-    }
-
-  
-    /// <summary>
-    /// GetMinorTicks returns the physical values
-    /// at which minor ticks should occur
-    /// </summary>
-    /// <returns>physical values for the minor ticks</returns>
-    public override double[] GetMinorTicks()
-    {
-      double log10org;
-      double log10end;
-
-      // ensure that log10org<log10end
-      if(_log10Org<_log10End)
-      {
-        log10org = _log10Org;
-        log10end = _log10End;
-      }
-      else
-      {
-        log10org = _log10End;
-        log10end = _log10Org;
-      }
-
-      double decadespan = Math.Abs(_log10Org-_log10End);
-
-      // now get the major ticks
-      double[] majorticks = GetMajorTicks();
-      // and calculate begin and end of minor ticks
-
-      int majorcount = majorticks.Length;
-
-
-      // guess from the span the tickiness (i.e. the increment of the multiplicator)
-      // so that not more than 50 minor ticks are visible
-      double minorsperdecade = 50.0/decadespan;
-      
-      // when there is more than one decade per major tick, then allow only minor ticks onto a full decade
-      if (this._decadesPerMajorTick > 1)
-      {
-        int decadesPerMinor;
-        for (decadesPerMinor = 1; decadesPerMinor<_decadesPerMajorTick; decadesPerMinor++)
-        {
-          if (0 != (_decadesPerMajorTick % decadesPerMinor))
-            continue;
-          double resultingMinors = decadespan / decadesPerMinor;
-          if (resultingMinors < 50)
-            break;
-        }
-        if (decadesPerMinor == _decadesPerMajorTick)
-          return new double[] { };
-
-        ArrayList minorlist = new ArrayList();
-
-        int log10firstmajor = (int)Math.Floor(Math.Log10(majorticks[0]) + 0.125);
-        int beg = (int)Math.Ceiling((log10org-log10firstmajor) / decadesPerMinor);
-        int end = (int)Math.Floor((log10end-log10firstmajor) / decadesPerMinor);
-
-        
-        for (int i = beg, j=0 ; i <= end; i++)
-        {
-          double result = Calc.RMath.Pow(10, log10firstmajor + i * decadesPerMinor);
-          double logdiff = Math.Log10(result) - Math.Log10(majorticks[j]);
-          if(Math.Abs(logdiff)<0.125)
-          {
-            if((j+1)<majorticks.Length)
-              j++;
-            continue;
-          }
-          minorlist.Add(result);
-        }
-        return (double[])minorlist.ToArray(typeof(double));
-      }
-
-
-      // do not allow more than 10 minors per decade than 
-      if(decadespan>0.3 && minorsperdecade>9) 
-        minorsperdecade=9;
-
-      // if minorsperdecade is lesser than one, we dont have minors, so we can
-      // return an empty field
-      if(minorsperdecade<=1)
-        return new double[0];
-
-
-      // ensure the minorsperdecade are one of the following values
-      // 3,9,..
-      double dec=1;
-      double minormax=1;
-      for(int i=0;;i++)
-      {
-        double val;
-        switch(i%2)
-        {
-          default:
-          case 0: val=3*dec; break;
-          case 1: val=9*dec; dec*=10; break;
-        }
-        if (val <= minorsperdecade)
-        {
-          minormax = val;
-        }
-        else
-          break;
-      }
-      minorsperdecade = minormax;
-      // now if minorsperdecade is at least 2, it is a good "even" value
-
-     
-
-      // of cause this increment is only valid in the decade between 1 and 10
-      double minorincrement = 9/(minorsperdecade);
-
-      // there are two cases now, either we have at least one major tick,
-      // then we have two different decades on left and right of the axis,
-      // or there is no major tick, so the whole axis is in the same decade
-      if(majorcount>=1) // the "normal" case
-      {
-        int i,j,k;
-        // count the ticks on left of the axis
-        // note: we normalized so that the "lesser values" are on the left
-        double org = Math.Pow(10,log10org);
-        double firstmajor = majorticks[0];
-        for(i=1;firstmajor*(1-i*minorincrement/10)>=org;i++) {}
-        int leftminorticks = i-1;
-
-        // count the ticks on the right of the axis
-        double end = Math.Pow(10,log10end);
-        double lastmajor = majorticks[majorcount-1];
-        for(i=1;lastmajor*(1+i*minorincrement)<=end;i++){}
-        int rightminorticks = i-1;
-
-
-        // calculate the total minorticks count
-        double [] minors = new double[leftminorticks+rightminorticks+(majorcount-1)*((int)minorsperdecade-1)];
-
-        // now fill the array
-        for(j=0,i=leftminorticks;i>0;j++,i--)
-          minors[j] = firstmajor*(1-i*minorincrement/10); 
-
-        for(k=0;k<(majorcount-1);k++)
-        {
-          for(i=1;i<minorsperdecade;j++,i++)
-            minors[j] = majorticks[k]*(1+i*minorincrement);
-        }
-        for(i=1;i<=rightminorticks;j++,i++)
-          minors[j] = lastmajor*(1+i*minorincrement);
-      
-        return minors;
-      }
-      else // in case there is no major tick
-      {
-
-        // determine the upper decade (major tick)
-        double firstmajor = Math.Pow(10,Math.Floor(log10org));
-        double groundpow = Math.Floor(log10org);
-        double norg = Math.Pow(10,log10org-groundpow);
-        double nend = Math.Pow(10,log10end-groundpow);
-
-        // norg and nend now is between 1 and 10
-        // so calculate directly the indices
-        double firstidx = Math.Ceiling(norg/minorincrement);
-        double lastidx  = Math.Floor(nend/minorincrement);
-
-
-        // do not do anything if something goes wrong
-        if((lastidx<firstidx) || ((lastidx-firstidx)>100))
-        {
-          return new double[0];
-        }
-
-        double[] minors = new double[(int)(1+lastidx-firstidx)];
-        
-        // fill the array
-        int j;
-        double di;
-        for(j=0,di=firstidx;di<=lastidx;j++,di+=1)
-          minors[j] = firstmajor*(di*minorincrement);
-
-        return minors; // return a empty array per default
-      }
-
-
-
-    }
-
+ 
 
     public override NumericalBoundaries DataBounds
     {
@@ -491,85 +215,99 @@ namespace Altaxo.Graph.Scales
     public override double Org
     {
       get { return Math.Pow(10,_log10Org); } 
-      set 
-      {
-        if(value>0)
-        {
-          ProcessDataBounds(value,true,Math.Pow(10,_log10End),true);
-        }
-      }
     }
     public override double End 
     {
       get { return Math.Pow(10,_log10End); } 
-      set
-      {
-        if(value>0)
-        {
-          ProcessDataBounds(Math.Pow(10,_log10Org),true,value,true);
-        }
-      }
     }
 
-  
 
-    /// <summary>
-    /// calculates the axis org and end using the databounds
-    /// the org / end is adjusted only if it is not fixed
-    /// and the DataBound object contains valid data
-    /// </summary>
-    public override void ProcessDataBounds(double org, bool orgfixed, double end, bool endfixed)
-    {
-      if(IsLinked)
-        return;
-      // if one of the bounds is not valid, use the old bounds instead
+		/// <summary>Returns true if it is allowed to extend the origin (to lower values).</summary>
+		public override bool IsOrgExtendable
+		{
+			get { return _isOrgExtendable; }
+		}
 
-      double log10org = org>0 ? Math.Log10(org) : _log10Org;
-      double log10end = end>0 ? Math.Log10(end) : _log10End;
+		/// <summary>Returns true if it is allowed to extend the scale end (to higher values).</summary>
+		public override bool IsEndExtendable
+		{
+			get { return _isEndExtendable; }
+		}
 
+		private void HandleInvalidOrgOrEnd(ref double org, ref double end)
+		{
+			if (org > 0)
+			{
+				end = org * 10;
+			}
+			else if (end > 0)
+			{
+				org = end / 10;
+			}
+			else
+			{
+				org = 1;
+				end = 10;
+			}
+		}
 
-      // do something if org and end are the same
-      if(log10org==log10end)
-      {
-        log10org -= 1;
-        log10end += 1;
-      }
+		private void InternalSetOrgEnd(double lgorg, double lgend, bool isOrgExtendable, bool isEndExtendable)
+		{
+			bool changed = _log10Org != lgorg ||
+				_log10End != lgend ||
+				_isOrgExtendable != isOrgExtendable ||
+				_isEndExtendable != isEndExtendable;
 
-      // calculate the number of decades between end and org
-      double decades = Math.Abs(log10end-log10org);
+			_log10Org = lgorg;
+			_log10End = lgend;
 
-      // limit the number of major ticks to about 10
-      _decadesPerMajorTick = (int)Math.Ceiling(decades/10.0);
+			_isOrgExtendable = isOrgExtendable;
+			_isEndExtendable = isEndExtendable;
 
+			if (changed)
+				OnChanged();
 
-      _log10Org = log10org;
-      _log10End = log10end;
+		}
 
-    }
-    public override void ProcessDataBounds()
-    {
-      if(null==this._dataBounds || this._dataBounds.IsEmpty)
-        return;
-    
-      ProcessDataBounds(_dataBounds.LowerBound,_dataBounds.UpperBound,_rescaling); 
-    }
+    public override void Rescale()
+		{
+			double xorg = double.NaN;
+			double xend = double.NaN;
 
-    public void ProcessDataBounds(double xorg, double xend, NumericAxisRescaleConditions rescaling)
-    {
-      bool isAutoOrg, isAutoEnd;
-      rescaling.Process(ref xorg, out isAutoOrg, ref xend, out isAutoEnd);
-      ProcessDataBounds(xorg,!isAutoOrg,xend,!isAutoEnd);
-    }
+			if (null != _dataBounds && !_dataBounds.IsEmpty)
+			{
+				xorg = _dataBounds.LowerBound;
+				xend = _dataBounds.UpperBound;
+			}
+
+			bool isAutoOrg, isAutoEnd;
+			_rescaling.Process(ref xorg, out isAutoOrg, ref xend, out isAutoEnd);
+
+			if (!(xorg > 0) || !(xend > 0))
+				HandleInvalidOrgOrEnd(ref xorg, ref xend);
+
+			InternalSetOrgEnd(Math.Log10(xorg), Math.Log10(xend), isAutoOrg, isAutoEnd);
+		}
+
+		public override string SetScaleOrgEnd(Altaxo.Data.AltaxoVariant org, Altaxo.Data.AltaxoVariant end)
+		{
+			double o = org.ToDouble();
+			double e = end.ToDouble();
+
+			if (!(o < e))
+				return "org is not less than end";
+			if (!(o > 0))
+				return "org is not positive";
+			if (!(e>0))
+				return "end is not positive";
+
+			InternalSetOrgEnd(Math.Log10(o), Math.Log10(e), false, false);
+			return null;
+		}
 
     protected void OnBoundariesChanged(object sender, BoundariesChangedEventArgs e)
     {
-      bool bIsRelevant=true;
-     
-
-      if(bIsRelevant) // if something really relevant changed
-      {
-        ProcessDataBounds(); // calculate new bounds and fire AxisChanged event
-      }
+        Rescale(); // calculate new bounds and fire AxisChanged event
     }
 
 

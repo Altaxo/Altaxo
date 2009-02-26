@@ -57,18 +57,13 @@ namespace Altaxo.Graph.Scales
 
 
 
-    /// <summary>
-    /// GetMajorTicks returns the physical values
-    /// at which major ticks should occur
-    /// </summary>
-    /// <returns>physical values for the major ticks</returns>
-    public abstract double[] GetMajorTicks();
-
+   
 
     /// <summary>
     /// Returns the rescaling conditions for this axis
     /// </summary>
     public abstract NumericAxisRescaleConditions Rescaling { get; }
+
     public override object RescalingObject
     {
       get
@@ -77,51 +72,7 @@ namespace Altaxo.Graph.Scales
       }
     }
   
-    /// <summary>
-    /// GetMinorTicks returns the physical values
-    /// at which minor ticks should occur
-    /// </summary>
-    /// <returns>physical values for the minor ticks</returns>
-    public virtual double[] GetMinorTicks()
-    {
-      return new double[]{}; // return a empty array per default
-    }
-
-
-    public override double[] GetMajorTicksNormal()
-    {
-      double[] ticks = GetMajorTicks();
-      for(int i=0;i<ticks.Length;i++)
-      {
-        ticks[i] = PhysicalToNormal(ticks[i]);
-      }
-      return ticks;
-    }
-    public override double[] GetMinorTicksNormal()
-    {
-      double[] ticks = GetMinorTicks();
-      for(int i=0;i<ticks.Length;i++)
-      {
-        ticks[i] = PhysicalToNormal(ticks[i]);
-      }
-      return ticks;
-    }
-    public override AltaxoVariant[] GetMajorTicksAsVariant()
-    {
-      double[] ticks = GetMajorTicks();
-      AltaxoVariant[] vticks = new AltaxoVariant[ticks.Length];
-      for(int i=0;i<ticks.Length;++i)
-        vticks[i] = ticks[i];
-      return vticks;
-    }
-    public override AltaxoVariant[] GetMinorTicksAsVariant()
-    {
-      double[] ticks = GetMinorTicks();
-      AltaxoVariant[] vticks = new AltaxoVariant[ticks.Length];
-      for(int i=0;i<ticks.Length;++i)
-        vticks[i] = ticks[i];
-      return vticks;
-    }
+   
 
 
     /// <summary>
@@ -134,9 +85,9 @@ namespace Altaxo.Graph.Scales
     }
 
     /// <summary>The axis origin, i.e. the first point in physical units.</summary>
-    public abstract double Org { get; set;}
+    public abstract double Org { get;}
     /// <summary>The axis end point in physical units.</summary>
-    public abstract double End { get; set;}
+    public abstract double End { get;}
 
     public override AltaxoVariant OrgAsVariant
     {
@@ -144,10 +95,7 @@ namespace Altaxo.Graph.Scales
       {
         return new AltaxoVariant (Org);
       }
-      set
-      {
-        Org = (double)value;
-      }
+    
     }
 
     public override AltaxoVariant EndAsVariant
@@ -156,38 +104,11 @@ namespace Altaxo.Graph.Scales
       {
         return new AltaxoVariant (End);
       }
-      set
-      {
-        End = (double)value;
-      }
-    }
-
-
-    // /// <summary>Indicates that the axis origin is fixed to a certain value.</summary>
-    // public abstract bool   OrgFixed { get; set; }
-    // /// <summary>Indicates that the axis end is fixed to a certain value.</summary>
-    // public abstract bool   EndFixed { get; set; }
-
-    /// <summary>
-    /// calculates the axis org and end using the databounds
-    /// the org / end is adjusted only if it is not fixed
-    /// and the DataBound object contains valid data
-    /// </summary>
-    public abstract void ProcessDataBounds(double org, bool orgfixed, double end, bool endfixed); 
-
-    /// <summary>
-    /// calculates the axis org and end using the databounds
-    /// the org / end is adjusted only if it is not fixed
-    /// and the DataBound object contains valid data
-    /// </summary>
-    public override void ProcessDataBounds(AltaxoVariant org, bool orgfixed, AltaxoVariant end, bool endfixed)
-    {
-      double dorg = org.ToDouble();
-      double dend = end.ToDouble();
-
       
-      ProcessDataBounds(dorg,orgfixed,dend,endfixed);
     }
+
+
+ 
   
   } // end of class
 

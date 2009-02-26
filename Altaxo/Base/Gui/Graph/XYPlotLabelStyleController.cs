@@ -191,6 +191,8 @@ namespace Altaxo.Gui.Graph
     /// </summary>
     /// <param name="bIndependent">True if the label has a white background.</param>
     void IndependentColor_Initialize(bool bIndependent);
+
+  
   }
 
   public interface IXYPlotLabelStyleController : IMVCANController

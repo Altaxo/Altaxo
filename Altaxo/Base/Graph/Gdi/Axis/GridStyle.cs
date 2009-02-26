@@ -26,6 +26,9 @@ using System.Text;
 
 using System.Drawing;
 
+using Altaxo.Graph.Scales;
+using Altaxo.Graph.Scales.Ticks;
+
 namespace Altaxo.Graph.Gdi.Axis
 {
   [Serializable]
@@ -209,12 +212,15 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
 
-    public void Paint(Graphics g, IPlotArea layer, int axisnumber)
+    public void Paint(Graphics g, IPlotAreaWithTicks layer, int axisnumber)
     {
       if (!_showGrid)
         return;
 
-      Scales.Scale axis = axisnumber == 0 ? layer.XAxis : layer.YAxis;
+			
+      Scale axis = axisnumber == 0 ? layer.XAxis : layer.YAxis;
+			TickSpacing ticking = axisnumber == 0 ? layer.XTicks : layer.YTicks;
+
       RectangleF layerRect = new RectangleF(new PointF(0, 0), layer.Size);
 
       if (_showZeroOnly)
@@ -239,7 +245,7 @@ namespace Altaxo.Graph.Gdi.Axis
         if (_showMinor)
         {
           _minorPen.BrushRectangle = layerRect;
-          ticks = axis.GetMinorTicksNormal();
+          ticks = ticking.GetMinorTicksNormal(axis);
           for (int i = 0; i < ticks.Length; ++i)
           {
             if (axisnumber == 0)
@@ -254,7 +260,7 @@ namespace Altaxo.Graph.Gdi.Axis
 
 
         MajorPen.BrushRectangle = layerRect;
-        ticks = axis.GetMajorTicksNormal();
+        ticks = ticking.GetMajorTicksNormal(axis);
         for (int i = 0; i < ticks.Length; ++i)
         {
           if(axisnumber==0)

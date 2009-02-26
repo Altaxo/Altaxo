@@ -92,7 +92,6 @@ namespace Altaxo.Gui.Graph
     XYPlotLayerSizeType      m_HeightType, m_WidthType;
     bool m_ClipDataToFrame;
     XYPlotLayer m_LinkedLayer;
-    IAxisLinkController m_XAxisLink, m_YAxisLink;
 
     public LayerPositionController(XYPlotLayer layer)
     {
@@ -120,10 +119,6 @@ namespace Altaxo.Gui.Graph
         m_HeightType = m_Layer.UserHeightType;
         m_WidthType = m_Layer.UserWidthType;
         m_LinkedLayer = m_Layer.LinkedLayer;
-
-
-        m_XAxisLink = new AxisLinkController(m_Layer,true);
-        m_YAxisLink = new AxisLinkController(m_Layer,false);
       }
 
       if(View!=null)
@@ -142,11 +137,6 @@ namespace Altaxo.Gui.Graph
         InitializePositionTypes();
         InitializeSizeTypes();
         InitializeLinkedAxisChoices();
-
-        // initialize the axis link properties
-        m_XAxisLink.View = View.GetXAxisLink();
-        m_YAxisLink.View = View.GetYAxisLink();
-
       }
 
     }
@@ -296,11 +286,6 @@ namespace Altaxo.Gui.Graph
 
         m_Layer.SetSize(m_Width,m_WidthType,m_Height,m_HeightType);
         m_Layer.SetPosition(m_Left,m_LeftType,m_Top,m_TopType);
-
-        if(!this.m_XAxisLink.Apply())
-          bSuccess = false;
-        if(!this.m_YAxisLink.Apply())
-          bSuccess = false;
       }
       catch(Exception)
       {

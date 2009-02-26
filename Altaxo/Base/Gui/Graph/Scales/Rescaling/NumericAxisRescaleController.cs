@@ -260,10 +260,10 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
       if(null!=_axis)
       {
         // if the user changed org or end, he maybe want to set the scale temporarily to the chosen values
-        if(_orgRescaling==BoundaryRescaling.Auto && _endRescaling==BoundaryRescaling.Auto && (_orgChanged || _endChanged))
-          _axis.ProcessDataBounds(_org,true,_end,true);
-        else
-          _axis.ProcessDataBounds();
+				if (_orgRescaling == BoundaryRescaling.Auto && _endRescaling == BoundaryRescaling.Auto && (_orgChanged || _endChanged))
+					_axis.SetScaleOrgEnd(_org, _end);
+				else
+					_axis.Rescale();
       }
 
       _orgChanged = _endChanged = false;

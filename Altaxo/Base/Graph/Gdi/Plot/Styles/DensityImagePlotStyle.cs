@@ -25,6 +25,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using Altaxo.Serialization;
+using Altaxo.Graph.Scales;
 using Altaxo.Graph.Scales.Boundaries;
 using Altaxo.Data;
 using Altaxo.Calc.Interpolation;
@@ -712,7 +713,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         bool isEquististantX = IsEquidistant(lx, 0.2);
         bool isEquististantY = IsEquidistant(ly, 0.2);
 
-        bool areLinearScales = (gl.XAxis is Scales.LinearScale) && (gl.YAxis is Scales.LinearScale);
+        bool areLinearScales = (gl.XAxis is LinearScale) && (gl.YAxis is LinearScale);
 
         if (areLinearScales && isEquististantX && isEquististantY)
         {

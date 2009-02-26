@@ -31,6 +31,7 @@ using System.Diagnostics;
 using Altaxo.Serialization;
 using Altaxo.Main;
 using Altaxo.Graph.Scales;
+using Altaxo.Graph.Scales.Ticks;
 
 namespace Altaxo.Graph.Gdi
 {
@@ -712,16 +713,24 @@ namespace Altaxo.Graph.Gdi
       XYPlotLayer newlayer= new XYPlotLayer(DefaultLayerPosition,DefaultLayerSize);
       Layers.Add(newlayer); // it is neccessary to add the new layer this early since we must set some properties relative to the linked layer
       // link the new layer to the last old layer
-      newlayer.LinkedLayer = (linklayernumber>=0 && linklayernumber<Layers.Count)? Layers[linklayernumber] : null;
+			var layerLinkedTo = (linklayernumber >= 0 && linklayernumber < Layers.Count) ? Layers[linklayernumber] : null;
+			newlayer.LinkedLayer = layerLinkedTo;
       newlayer.SetPosition(0,XYPlotLayerPositionType.RelativeThisNearToLinkedLayerNear,0,XYPlotLayerPositionType.RelativeThisNearToLinkedLayerNear);
       newlayer.SetSize(1,XYPlotLayerSizeType.RelativeToLinkedLayer,1,XYPlotLayerSizeType.RelativeToLinkedLayer);
+
+			if (null != layerLinkedTo)
+			{
+				// create a linked x axis of the same type than in the linked layer
+				var scaleLinkedTo = layerLinkedTo.Scales.X.Scale;
+				var xScale = new LinkedScale((Scale)scaleLinkedTo.Clone(),scaleLinkedTo,0);
+				newlayer.Scales.SetScaleWithTicks(0, xScale, (TickSpacing)layerLinkedTo.Scales.X.TickSpacing.Clone());
+			}
 
       // set enabling of axis
       newlayer.AxisStyles.CreateDefault(new CSLineID(0, 1));
       newlayer.AxisStyles.CreateDefault(new CSLineID(1, 1));
       
 
-      newlayer.LinkedScales.X.AxisLinkType = ScaleLinkType.Straight;
     }
 
 

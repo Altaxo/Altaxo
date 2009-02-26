@@ -30,15 +30,11 @@ namespace Altaxo.Graph.Scales
   using Rescaling;
   using Boundaries;
 
-  
- 
-
-
   /// <summary>
   /// Axis is the abstract base class of all axis types including linear axis, logarithmic axis and so on.
   /// </summary>
   [Serializable]
-  public abstract class Scale : ICloneable, Main.IChangedEventSource
+  public abstract class Scale : ICloneable, Main.IChangedEventSource, Main.IDocumentNode
   {
     /// <summary>
     /// Fired when the data of the axis has changed, for instance end point, org point, or tick spacing.
@@ -46,6 +42,8 @@ namespace Altaxo.Graph.Scales
     [field:NonSerialized]
     public event System.EventHandler Changed;
 
+		private static int _instanceCounter;
+		private readonly int _instance = _instanceCounter++;
 
 
     #region ICloneable Members
@@ -95,33 +93,6 @@ namespace Altaxo.Graph.Scales
     /// <returns>the corresponding physical value</returns>
     public abstract Altaxo.Data.AltaxoVariant NormalToPhysicalVariant(double x);
 
-    /// <summary>
-    /// This will return the the major ticks as <see cref="AltaxoVariant" />.
-    /// </summary>
-    /// <returns>The array with major tick values.</returns>
-    public abstract AltaxoVariant[] GetMajorTicksAsVariant();
-
-    /// <summary>
-    /// This will return the location of the major ticks relative on this axis, that mean
-    /// the value range is 0..1.
-    /// </summary>
-    /// <returns>The array with relative (normal) major tick values.</returns>
-    public abstract double[] GetMajorTicksNormal();
-
-    /// <summary>
-    /// This will return the minor ticks as array of <see cref="AltaxoVariant" />.
-    /// </summary>
-    /// <returns>The array with minor tick values.</returns>
-    public abstract AltaxoVariant[] GetMinorTicksAsVariant();
-
-
-    /// <summary>
-    /// This will return the location of the minor ticks relative on this axis, that mean
-    /// the value range is 0..1.
-    /// </summary>
-    /// <returns>The array with relative (normal) minor tick values.</returns>
-    public abstract double[] GetMinorTicksNormal();
-
 
     /// <summary>
     /// Returns the rescaling conditions for this axis as object.
@@ -129,62 +100,83 @@ namespace Altaxo.Graph.Scales
     public abstract object RescalingObject { get; }
 
     /// <summary>
-    /// Returns the <see cref="NumericalBoundaries"/> object that is associated with that axis.
+		/// Returns the <see cref="IPhysicalBoundaries"/> object that is associated with that axis.
     /// </summary>
     public abstract IPhysicalBoundaries DataBoundsObject { get; } // return a PhysicalBoundarie object that is associated with that axis
 
 
     /// <summary>The axis origin, i.e. the first point in physical units.</summary>
-    public abstract AltaxoVariant OrgAsVariant { get; set;}
+    public abstract AltaxoVariant OrgAsVariant { get; }
 
     /// <summary>The axis end point in physical units.</summary>
-    public abstract AltaxoVariant EndAsVariant { get; set;}
+    public abstract AltaxoVariant EndAsVariant { get;}
 
-    public abstract void ProcessDataBounds();
+		/// <summary>Returns true if it is allowed to extend the origin (to lower values).</summary>
+		public abstract bool IsOrgExtendable { get; }
+
+		/// <summary>Returns true if it is allowed to extend the scale end (to higher values).</summary>
+		public abstract bool IsEndExtendable { get; }
+
+		/// <summary>
+		/// Sets the orgin and the end of the scale temporarily (until the next DataBoundaryChanged event).
+		/// </summary>
+		/// <param name="org">The scale origin.</param>
+		/// <param name="end">The scale end.</param>
+		/// <returns>Null when the settings where applied. An string describing the problem otherwise.</returns>
+		/// <remarks>Settings like fixed boundaries or the data bounds will be ignored by this function. However, the next call
+		/// to <see cref="Rescale"/> will override the scale bounds.</remarks>
+		public abstract string SetScaleOrgEnd(AltaxoVariant org, AltaxoVariant end);
 
     
-    /// <summary>
-    /// calculates the axis org and end using the databounds
-    /// the org / end is adjusted only if it is not fixed
-    /// and the DataBound object contains valid data
-    /// </summary>
-    public abstract void ProcessDataBounds(AltaxoVariant org, bool orgfixed, AltaxoVariant end, bool endfixed); 
+		/// <summary>
+		/// Adjusts org and end considering fixed org and end values and the data boundaries.
+		/// </summary>
+		public abstract void Rescale();
 
-    /// <summary>
-    /// True if the axis is linked to another. In this case, do not process the data bounds.
-    /// The layer that controls this axis has to set IsLinked temporarily to false in order
-    /// to be able to set the data bounds of this axis.
-    /// </summary>
-    public bool IsLinked;
-
+    
+    
 
     /// <summary>
     /// Static collection that holds all available axis types.
     /// </summary>
-    protected static System.Collections.Hashtable sm_AvailableAxes;
+    protected static System.Collections.Generic.Dictionary<string,Type> sm_AvailableScales;
     
     /// <summary>
     /// Static constructor that initializes the collection of available axis types by searching in the current assembly for child classes of axis.
     /// </summary>
     static Scale()
     {
-      sm_AvailableAxes = new System.Collections.Hashtable();
+			sm_AvailableScales = new System.Collections.Generic.Dictionary<string, Type>();
 
       System.Type[] types = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(Scale));
       foreach (System.Type definedtype in types)
       {
         if(definedtype.IsVisible)
-          sm_AvailableAxes.Add(definedtype.Name, definedtype);
+          sm_AvailableScales.Add(definedtype.Name, definedtype);
       }
       
     }
 
 
     /// <summary>Returns the collection of available axes.</summary>
-    public static System.Collections.Hashtable AvailableAxes 
+		public static System.Collections.Generic.Dictionary<string, Type> AvailableAxes 
     {
-      get { return sm_AvailableAxes; }
+      get { return sm_AvailableScales; }
     }
-  } // end of class Axis
+
+		#region IDocumentNode Members
+
+		public object ParentObject
+		{
+			get { throw new NotImplementedException(); }
+		}
+
+		public string Name
+		{
+			get { throw new NotImplementedException(); }
+		}
+
+		#endregion
+	} // end of class Axis
 
 }

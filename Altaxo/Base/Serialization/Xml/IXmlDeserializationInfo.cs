@@ -34,12 +34,14 @@ namespace Altaxo.Serialization.Xml
 
     int GetInt32();
     int GetInt32(string name);
+		int? GetNullableInt32(string name);
 
     float GetSingle();
     float GetSingle(string name);
 
     double GetDouble();
     double GetDouble(string name);
+		double? GetNullableDouble(string name);
 
     string GetString();
     string GetString(string name);

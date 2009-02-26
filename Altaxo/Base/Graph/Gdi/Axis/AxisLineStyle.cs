@@ -25,6 +25,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using Altaxo.Serialization;
 using Altaxo.Graph.Scales;
+using Altaxo.Graph.Scales.Ticks;
 
 
 namespace Altaxo.Graph.Gdi.Axis
@@ -648,6 +649,7 @@ namespace Altaxo.Graph.Gdi.Axis
       CSLineID styleID = styleInfo.Identifier;
       _cachedAxisStyleInfo = styleInfo.Clone();
       Scale axis = styleID.ParallelAxisNumber == 0 ? layer.XAxis : layer.YAxis;
+			TickSpacing ticking = layer.Scales[styleID.ParallelAxisNumber].TickSpacing;
       
       Logical3D r0 = styleID.Begin;
       Logical3D r1 = styleID.End;
@@ -660,7 +662,7 @@ namespace Altaxo.Graph.Gdi.Axis
 
       // now the major ticks
       PointF outVector;
-      double[] majorticks = axis.GetMajorTicksNormal();
+      double[] majorticks = ticking.GetMajorTicksNormal(axis);
       for(int i=0;i<majorticks.Length;i++)
       {
         double r = majorticks[i];
@@ -685,7 +687,7 @@ namespace Altaxo.Graph.Gdi.Axis
         }
       }
       // now the major ticks
-      double[] minorticks = axis.GetMinorTicksNormal();
+      double[] minorticks = ticking.GetMinorTicksNormal(axis);
       for(int i=0;i<minorticks.Length;i++)
       {
         double r = minorticks[i];

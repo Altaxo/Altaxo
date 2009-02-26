@@ -62,6 +62,10 @@ namespace Altaxo.Gui.Graph
     private BrushColorComboBox _cbBackgroundBrush;
     private RotationComboBox m_edRotation;
     private FontSizeComboBox m_cbFontSize;
+    private TextBox _edSuppressLabelValues;
+    private TextBox _edSuppressLabelsByNumber;
+    private Label label9;
+    private Label label10;
     private IContainer components;
 
     public XYAxisLabelStyleControl()
@@ -119,6 +123,10 @@ namespace Altaxo.Gui.Graph
       this._backgroundGlue = new Altaxo.Gui.Graph.BackgroundControlsGlue();
       this.m_edRotation = new Altaxo.Gui.Common.Drawing.RotationComboBox();
       this.m_cbFontSize = new Altaxo.Gui.Common.Drawing.FontSizeComboBox();
+      this._edSuppressLabelValues = new System.Windows.Forms.TextBox();
+      this._edSuppressLabelsByNumber = new System.Windows.Forms.TextBox();
+      this.label9 = new System.Windows.Forms.Label();
+      this.label10 = new System.Windows.Forms.Label();
       this.groupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -158,11 +166,11 @@ namespace Altaxo.Gui.Graph
       // 
       // m_cbHorizontalAlignment
       // 
+      this.m_cbHorizontalAlignment.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.m_cbHorizontalAlignment.Location = new System.Drawing.Point(112, 136);
       this.m_cbHorizontalAlignment.Name = "m_cbHorizontalAlignment";
       this.m_cbHorizontalAlignment.Size = new System.Drawing.Size(136, 21);
       this.m_cbHorizontalAlignment.TabIndex = 22;
-      this.m_cbHorizontalAlignment.Text = "comboBox1";
       this.m_cbHorizontalAlignment.SelectionChangeCommitted += new System.EventHandler(this.EhHorizontalAlignment_SelectionChangeCommitted);
       // 
       // label1
@@ -207,11 +215,11 @@ namespace Altaxo.Gui.Graph
       // 
       // m_cbVerticalAlignment
       // 
+      this.m_cbVerticalAlignment.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.m_cbVerticalAlignment.Location = new System.Drawing.Point(112, 168);
       this.m_cbVerticalAlignment.Name = "m_cbVerticalAlignment";
       this.m_cbVerticalAlignment.Size = new System.Drawing.Size(136, 21);
       this.m_cbVerticalAlignment.TabIndex = 30;
-      this.m_cbVerticalAlignment.Text = "comboBox1";
       this.m_cbVerticalAlignment.SelectionChangeCommitted += new System.EventHandler(this.EhVerticalAlignment_SelectionChangeCommitted);
       // 
       // label5
@@ -243,7 +251,7 @@ namespace Altaxo.Gui.Graph
       // 
       // label7
       // 
-      this.label7.Location = new System.Drawing.Point(32, 232);
+      this.label7.Location = new System.Drawing.Point(32, 301);
       this.label7.Name = "label7";
       this.label7.Size = new System.Drawing.Size(64, 16);
       this.label7.TabIndex = 37;
@@ -253,7 +261,7 @@ namespace Altaxo.Gui.Graph
       // m_cbLabelStyle
       // 
       this.m_cbLabelStyle.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.m_cbLabelStyle.Location = new System.Drawing.Point(112, 232);
+      this.m_cbLabelStyle.Location = new System.Drawing.Point(112, 296);
       this.m_cbLabelStyle.Name = "m_cbLabelStyle";
       this.m_cbLabelStyle.Size = new System.Drawing.Size(232, 21);
       this.m_cbLabelStyle.TabIndex = 38;
@@ -281,6 +289,7 @@ namespace Altaxo.Gui.Graph
       // 
       // _cbBackgroundStyle
       // 
+      this._cbBackgroundStyle.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this._cbBackgroundStyle.FormattingEnabled = true;
       this._cbBackgroundStyle.Location = new System.Drawing.Point(110, 200);
       this._cbBackgroundStyle.Name = "_cbBackgroundStyle";
@@ -352,8 +361,44 @@ namespace Altaxo.Gui.Graph
       this.m_cbFontSize.TabIndex = 47;
       this.m_cbFontSize.FontSizeChanged += new System.EventHandler(this.EhFontSize_SelectionChangeCommitted);
       // 
+      // _edSuppressLabelValues
+      // 
+      this._edSuppressLabelValues.Location = new System.Drawing.Point(110, 238);
+      this._edSuppressLabelValues.Name = "_edSuppressLabelValues";
+      this._edSuppressLabelValues.Size = new System.Drawing.Size(136, 20);
+      this._edSuppressLabelValues.TabIndex = 48;
+      // 
+      // _edSuppressLabelsByNumber
+      // 
+      this._edSuppressLabelsByNumber.Location = new System.Drawing.Point(112, 264);
+      this._edSuppressLabelsByNumber.Name = "_edSuppressLabelsByNumber";
+      this._edSuppressLabelsByNumber.Size = new System.Drawing.Size(136, 20);
+      this._edSuppressLabelsByNumber.TabIndex = 49;
+      // 
+      // label9
+      // 
+      this.label9.AutoSize = true;
+      this.label9.Location = new System.Drawing.Point(16, 241);
+      this.label9.Name = "label9";
+      this.label9.Size = new System.Drawing.Size(88, 13);
+      this.label9.TabIndex = 50;
+      this.label9.Text = "Suppress values:";
+      // 
+      // label10
+      // 
+      this.label10.AutoSize = true;
+      this.label10.Location = new System.Drawing.Point(17, 267);
+      this.label10.Name = "label10";
+      this.label10.Size = new System.Drawing.Size(89, 13);
+      this.label10.TabIndex = 51;
+      this.label10.Text = "Suppress label #:";
+      // 
       // XYAxisLabelStyleControl
       // 
+      this.Controls.Add(this.label10);
+      this.Controls.Add(this.label9);
+      this.Controls.Add(this._edSuppressLabelsByNumber);
+      this.Controls.Add(this._edSuppressLabelValues);
       this.Controls.Add(this.m_cbFontSize);
       this.Controls.Add(this.m_edRotation);
       this.Controls.Add(this._cbBackgroundBrush);
@@ -378,6 +423,7 @@ namespace Altaxo.Gui.Graph
       this.groupBox1.ResumeLayout(false);
       this.groupBox1.PerformLayout();
       this.ResumeLayout(false);
+      this.PerformLayout();
 
     }
     #endregion
@@ -591,7 +637,14 @@ namespace Altaxo.Gui.Graph
     }
 
 
- 
+    public string SuppressedLabelsByValue { get { return _edSuppressLabelValues.Text;  }
+      set { _edSuppressLabelValues.Text = value; }
+
+    }
+
+    public string SuppressedLabelsByNumber { get { return _edSuppressLabelsByNumber.Text; } set { _edSuppressLabelsByNumber.Text = value; }
+    }
+
    
 
     #endregion

@@ -23,28 +23,40 @@
 using System;
 
 using Altaxo.Graph.Scales;
+using Altaxo.Graph.Scales.Ticks;
 using Altaxo.Graph.Gdi;
 using Altaxo.Gui;
+using Altaxo.Collections;
 
 namespace Altaxo.Gui.Graph
 {
   #region Interfaces
+	
+	public interface IAxisScaleView : IMVCView
+	{
+
+		IAxisScaleController Controller { get; set; }
+
+		void InitializeAxisType(SelectableListNodeList names);
+		void InitializeTickSpacingType(SelectableListNodeList names);
+		void InitializeLinkTargets(SelectableListNodeList names);
+		bool ScaleIsLinked { get; set; }
+
+
+		void SetBoundaryView(object guiobject);
+		void SetScaleView(object guiobject);
+		void SetTickSpacingView(object guiobject);
+	}
+
   public interface IAxisScaleController : IMVCAController
   {
-    void EhView_AxisTypeChanged(string text);
+    void EhView_AxisTypeChanged();
+		void EhView_TickSpacingTypeChanged();
+		void EhView_LinkTargetChanged();
+		void EhView_LinkChanged(bool isLinked);
   }
 
-  public interface IAxisScaleView : IMVCView
-  {
-
-    IAxisScaleController Controller { get; set; }
-
-    void InitializeAxisType(string[] arr, string sel);
-
-    void SetBoundaryView(object guiobject);
-    void SetScaleView(object guiobject);
-
-  }
+ 
   #endregion
 
   /// <summary>
@@ -52,218 +64,319 @@ namespace Altaxo.Gui.Graph
   /// </summary>
   public class AxisScaleController : IAxisScaleController
   {
-    public enum AxisDirection { Horizontal=0, Vertical=1 }
-    protected IAxisScaleView m_View;
-    protected XYPlotLayer m_Layer;
-    protected int m_axisNumber;
+    protected IAxisScaleView _view;
+    protected XYPlotLayer _layer;
+    protected int _axisNumber;
     
     // Cached values
-    protected Scale m_Axis;
+    protected Scale _originalScale;
 
-    protected Scale _tempAxis;
+    protected Scale _tempScale;
+		protected TickSpacing _tempTickSpacing;
 
-    protected string  m_AxisOrg;
-    protected string  m_Original_AxisOrg;
 
-    protected string  m_AxisEnd;
-    protected string  m_Original_AxisEnd;
-
-    protected string  m_AxisType;
-    protected string  m_Original_AxisType;
-
-    protected string  m_AxisRescale;
-    protected string  m_Original_AxisRescale;
-
-    protected IMVCAController m_ScaleController;
     protected IMVCAController m_BoundaryController;
 
+		protected SelectableListNodeList _scaleTypes;
+		protected IMVCAController _scaleController;
+
+		protected SelectableListNodeList _tickSpacingTypes;
+		protected IMVCAController _tickSpacingController;
+
+		protected SelectableListNodeList _linkScaleNumbers;
+		protected int _linkScaleNumber;
+
+		protected LinkedScaleParameters _linkedScaleParameters;
+		protected IMVCAController _linkedScaleParameterController;
+
+		bool _isScaleLinked;
 
     public AxisScaleController(XYPlotLayer layer, int axisnumber)
     {
-      m_Layer = layer;
-      m_axisNumber = axisnumber;
-      m_Axis = m_Layer.LinkedScales.Scale(axisnumber);
-      _tempAxis = (Scale)m_Axis.Clone();
+      _layer = layer;
+      _axisNumber = axisnumber;
+      _originalScale = _layer.Scales[axisnumber].Scale;
+			if (_originalScale is LinkedScale)
+			{
+				_isScaleLinked = true;
+				_linkScaleNumber = (_originalScale as LinkedScale).LinkedScaleIndex;
+				_tempScale = (Scale)(_originalScale as LinkedScale).WrappedScale.Clone();
+				_linkedScaleParameters = (LinkedScaleParameters)(_originalScale as LinkedScale).LinkParameters.Clone();
+			}
+			else
+			{
+				_isScaleLinked = false;
+				_linkScaleNumber = _axisNumber;
+				_tempScale = (Scale)_originalScale.Clone();
+				_linkedScaleParameters = new LinkedScaleParameters();
+			}
+
+			_tempTickSpacing = (TickSpacing)_layer.Scales[axisnumber].TickSpacing.Clone();
 
 
-      SetElements();
+      Initialize(true);
     }
 
-    public AxisScaleController(XYPlotLayer layer, Scale ax)
+		public void Initialize(bool initData)
+		{
+			InitLinkProperties(initData);
+			InitScaleTypes(initData);
+			InitScaleController(initData);
+			InitBoundaryController(initData);
+			InitTickSpacingTypes(initData);
+			InitTickSpacingController(initData);
+		}
+
+	 
+
+		void InitLinkProperties(bool bInit)
+		{
+			if (bInit)
+			{
+				_linkScaleNumbers = new SelectableListNodeList();
+				if (_layer.LinkedLayer != null)
+				{
+					for (int i = 0; i < _layer.LinkedLayer.Scales.Count; i++)
+					{
+						string name = i.ToString();
+						_linkScaleNumbers.Add(new SelectableListNode(name, i, i == _linkScaleNumber));
+					}
+				}
+
+				_linkedScaleParameterController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _linkedScaleParameters }, typeof(IMVCAController));
+			}
+
+			if (_view != null)
+			{
+				_view.ScaleIsLinked = _isScaleLinked;
+				_view.InitializeLinkTargets(_linkScaleNumbers);
+			}
+		}
+
+    public void InitScaleTypes(bool bInit)
     {
-      m_Layer = layer;
-      m_axisNumber = layer.LinkedScales.IndexOf(ax);
-      if (m_axisNumber < 0)
-        throw new ArgumentException("Provided axis is not member of the layer");
-
-      m_Axis = ax;
-      _tempAxis = (Scale)m_Axis.Clone();
-
-
-      SetElements();
-    }
-
-    public IAxisScaleView View
-    {
-      get { return m_View; }
-      set
-      {
-        if(null!=m_View)
-          m_View.Controller = null;
-
-        m_View = value;
-
-        if(null!=m_View)
-        {
-          m_View.Controller = this;
-          SetViewElements();
-        }
-      }
-    }
-
-    public object ViewObject
-    {
-      get { return View; }
-      set { View = value as IAxisScaleView; }
-    }
-
-    public object ModelObject
-    {
-      get { return this.m_Axis; }
-    }
-
-    public void SetElements()
-    {
-      SetAxisType(true);
-      SetScaleController(true);
-      SetBoundaryController(true);
-    }
-
-    public void SetViewElements()
-    {
-      SetAxisType(false);
-      SetScaleController(false);
-      SetBoundaryController(false);
-    }
-
-
-
-    public void SetAxisType(bool bInit)
-    {
-      string[] names = new string[Scale.AvailableAxes.Keys.Count];
-
-      int i=0;
-      string curraxisname=null;
-      foreach(string axs in Scale.AvailableAxes.Keys)
-      {
-        names[i++] = axs;
-        if(_tempAxis.GetType()==Scale.AvailableAxes[axs])
-          curraxisname = axs;
-      }
-
-      if(bInit)
-        m_AxisType = m_Original_AxisType = curraxisname;
-
+			if (bInit)
+			{
+				_scaleTypes = new SelectableListNodeList();
+				Type[] classes = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(Scale));
+				for (int i = 0; i < classes.Length; i++)
+				{
+					if (classes[i] == typeof(LinkedScale))
+						continue;
+					SelectableListNode node = new SelectableListNode(Current.Gui.GetUserFriendlyClassName(classes[i]), classes[i], _tempScale.GetType() == classes[i]);
+					_scaleTypes.Add(node);
+				}
+			}
 
       if(null!=View)
-        View.InitializeAxisType(names,m_AxisType);
+        View.InitializeAxisType(_scaleTypes);
     }
 
-    public void SetScaleController(bool bInit)
+
+		public void InitTickSpacingTypes(bool bInit)
+		{
+			if (bInit)
+			{
+				_tickSpacingTypes = new SelectableListNodeList();
+				Type[] classes = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(TickSpacing));
+				for (int i = 0; i < classes.Length; i++)
+				{
+					SelectableListNode node = new SelectableListNode(Current.Gui.GetUserFriendlyClassName(classes[i]), classes[i], _tempTickSpacing.GetType() == classes[i]);
+					_tickSpacingTypes.Add(node);
+				}
+			}
+
+			if (null != View)
+				View.InitializeTickSpacingType(_tickSpacingTypes);
+		}
+
+    public void InitScaleController(bool bInit)
     {
       if (bInit)
       {
-        object scaleObject = _tempAxis;
-        m_ScaleController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { scaleObject }, typeof(IMVCAController));
+        object scaleObject = _tempScale;
+        _scaleController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { scaleObject }, typeof(IMVCAController));
       }
       if (null != View)
       {
-        View.SetScaleView(null==m_ScaleController ? null : m_ScaleController.ViewObject);
+        View.SetScaleView(null==_scaleController ? null : _scaleController.ViewObject);
       }
     }
 
-    public void SetBoundaryController(bool bInit)
+    public void InitBoundaryController(bool bInit)
     {
       if(bInit)
       {
-        object rescalingObject = _tempAxis.RescalingObject;
+        object rescalingObject = _tempScale.RescalingObject;
         if (rescalingObject != null)
-          m_BoundaryController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { rescalingObject, _tempAxis }, typeof(IMVCAController));
+          m_BoundaryController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { rescalingObject, _tempScale }, typeof(IMVCAController));
         else
           m_BoundaryController = null;
       }
       if(null!=View)
       {
-        View.SetBoundaryView(null!=m_BoundaryController ? m_BoundaryController.ViewObject : null);
+				if (_isScaleLinked)
+					View.SetBoundaryView(_linkedScaleParameterController.ViewObject);
+				else
+					View.SetBoundaryView(null!=m_BoundaryController ? m_BoundaryController.ViewObject : null);
       }
     }
+
+		public void InitTickSpacingController(bool bInit)
+		{
+			if (bInit)
+			{
+			if(_tempTickSpacing!=null)
+					_tickSpacingController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _tempTickSpacing }, typeof(IMVCAController));
+				else
+					_tickSpacingController = null;
+			}
+			if (null != View)
+			{
+				View.SetTickSpacingView(null != _tickSpacingController ? _tickSpacingController.ViewObject : null);
+			}
+		}
+
+
+		#region View event handlers
+
+		public void EhView_AxisTypeChanged()
+		{
+			Type axistype = (Type)_scaleTypes.FirstSelectedNode.Item;
+
+			try
+			{
+				if (axistype != _tempScale.GetType())
+				{
+					// replace the current axis by a new axis of the type axistype
+					Scale _oldAxis = _tempScale;
+					_tempScale = (Scale)System.Activator.CreateInstance(axistype);
+
+					// Try to set the same org and end as the axis before
+					// this will fail for instance if we switch from linear to logarithmic with negative bounds
+					try
+					{
+						_tempScale.SetScaleOrgEnd(_oldAxis.OrgAsVariant, _oldAxis.EndAsVariant);
+					}
+					catch (Exception)
+					{
+					}
+
+					InitScaleController(true);
+					// now we have also to replace the controller and the control for the axis boundaries
+					InitBoundaryController(true);
+
+					_tempTickSpacing = ScaleWithTicks.CreateDefaultTicks(axistype);
+					InitTickSpacingTypes(true);
+					InitTickSpacingController(true);
+				}
+
+			}
+			catch (Exception)
+			{
+			}
+		}
+
+		public void EhView_TickSpacingTypeChanged()
+		{
+			Type spaceType = (Type)_tickSpacingTypes.FirstSelectedNode.Item;
+
+			if (spaceType == _tempTickSpacing.GetType())
+				return;
+
+			_tempTickSpacing = (TickSpacing)Activator.CreateInstance(spaceType);
+			InitTickSpacingController(true);
+		}
+
+
+		public void EhView_LinkTargetChanged()
+		{
+			_linkScaleNumber = (int)_linkScaleNumbers.FirstSelectedNode.Item;
+		}
+
+		public void EhView_LinkChanged(bool linked)
+		{
+		}
+
+		#endregion
+
+
+		#region IMVCAController
+
+		public IAxisScaleView View
+		{
+			get { return _view; }
+			set
+			{
+				if (null != _view)
+					_view.Controller = null;
+
+				_view = value;
+
+				if (null != _view)
+				{
+					_view.Controller = this;
+					Initialize(false);
+				}
+			}
+		}
+
+		public object ViewObject
+		{
+			get { return View; }
+			set { View = value as IAxisScaleView; }
+		}
+
+		public object ModelObject
+		{
+			get { return this._originalScale; }
+		}
 
     public bool Apply()
     {
-      // note: the order is essential here
-      // first set the axis in the layer, _then_ apply the RescaleConditions
-
-      m_Layer.LinkedScales.SetScale(m_axisNumber, _tempAxis);
-
-      if (null != m_ScaleController)
-      {
-        if (false == m_ScaleController.Apply())
-          return false;
-      }
-
-      if(null!=m_BoundaryController)
-      {
-        if(false==m_BoundaryController.Apply())
-          return false;
-      }
 
 
-    
-    
+			if (null != _scaleController)
+			{
+				if (false == _scaleController.Apply())
+					return false;
+			}
 
-      SetElements();
-      
-    
+			if (_view.ScaleIsLinked)
+			{
+				// Apply link conditions
+				if (false == _linkedScaleParameterController.Apply())
+					return false;
+			}
+			else // scale is not linked
+			{
+				if (null != m_BoundaryController)
+				{
+					if (false == m_BoundaryController.Apply())
+						return false;
+				}
+			}
+
+			if (null!=_tickSpacingController && false == _tickSpacingController.Apply())
+				return false;
+
+			// wrap the scale if it is linked
+			if (_view.ScaleIsLinked)
+			{
+				LinkedScale ls = new LinkedScale(_tempScale, _layer.LinkedLayer!=null ? _layer.LinkedLayer.Scales[_linkScaleNumber].Scale : null, _linkScaleNumber);
+				ls.LinkParameters.SetTo(_linkedScaleParameters);
+				_layer.Scales.SetScaleWithTicks(this._axisNumber,ls, _tempTickSpacing);
+			}
+			else
+			{
+				_layer.Scales.SetScaleWithTicks(this._axisNumber, _tempScale, _tempTickSpacing);
+			}
       
       return true; // all ok
-    }
-   
-    public void EhView_AxisTypeChanged(string text)
-    {
-      m_AxisType = text;
-      try
-      {
+		}
 
-        System.Type axistype = (System.Type)Scale.AvailableAxes[m_AxisType];
-        if(null!=axistype)
-        {
-          if(axistype!=_tempAxis.GetType())
-          {
-            // replace the current axis by a new axis of the type axistype
-            Scale _oldAxis = _tempAxis;
-            _tempAxis = (Scale)System.Activator.CreateInstance(axistype);
+		#endregion
 
-            // Try to set the same org and end as the axis before
-            // this will fail for instance if we switch from linear to logarithmic with negative bounds
-            try
-            {
-              _tempAxis.ProcessDataBounds(_oldAxis.OrgAsVariant,true,_oldAxis.EndAsVariant,true);
-            }
-            catch(Exception)
-            {
-            }
-
-            SetScaleController(true);
-            // now we have also to replace the controller and the control for the axis boundaries
-            SetBoundaryController(true);
-          }
-        }
-      }
-      catch(Exception )
-      {
-      }
-    }
-
-  }
+	}
 
 }

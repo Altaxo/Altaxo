@@ -26,7 +26,7 @@ using System.Drawing;
 
 namespace Altaxo.Graph.Plot.Data
 {
-  using Scales;
+	using Scales;
   using Gdi.Plot.Data;
 
   #region XYFunctionPlotData

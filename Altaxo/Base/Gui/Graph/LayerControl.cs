@@ -133,6 +133,7 @@ namespace Altaxo.Gui.Graph
       tc.Name = name;
       tc.Text = text;
       tc.CausesValidation = true;
+			tc.AutoScroll = true;
       tc.Validating += EhTabControl_Validating;
       
       this.m_TabCtrl.Controls.Add( tc );

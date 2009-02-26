@@ -95,6 +95,8 @@ namespace Altaxo.Gui.Graph
     /// </summary>
     /// <param name="newValue">The new selected value of AutomaticAlignment.</param>
     void EhView_AutomaticAlignmentChanged(bool newValue);
+
+  
   }
 
   public interface IXYAxisLabelStyleView
@@ -169,6 +171,10 @@ namespace Altaxo.Gui.Graph
     /// <param name="names">The possible choices.</param>
     /// <param name="name">The actual name of the choice.</param>
     void LabelStyle_Initialize(string[] names, string name);
+
+    string SuppressedLabelsByValue { get; set; }
+
+    string SuppressedLabelsByNumber { get; set; }
 
   }
 
@@ -263,6 +269,9 @@ namespace Altaxo.Gui.Graph
         View.XOffset_Initialize(Serialization.NumberConversion.ToString(_xOffset*100));
         View.YOffset_Initialize(Serialization.NumberConversion.ToString(_yOffset*100));
         View.Background = _backgroundStyle;
+        View.SuppressedLabelsByValue = Serialization.GUIConversion.ToString(_doc.SuppressedLabels.ByValues);
+        View.SuppressedLabelsByNumber = Serialization.GUIConversion.ToString(_doc.SuppressedLabels.ByNumbers);
+
         InitializeLabelStyle();
       }
     }
@@ -390,6 +399,27 @@ namespace Altaxo.Gui.Graph
       _doc.YOffset      = _yOffset;
      
       _doc.LabelFormat = this._currentLabelStyleInstance;
+
+      AltaxoVariant[] varVals;
+      if (Serialization.GUIConversion.TryParseMultipleAltaxoVariant(View.SuppressedLabelsByValue, out varVals))
+      {
+        _doc.SuppressedLabels.ByValues.Clear();
+        foreach (AltaxoVariant v in varVals)
+          _doc.SuppressedLabels.ByValues.Add(v);
+      }
+      else
+        return false;
+
+      int[] intVals;
+      if (Serialization.GUIConversion.TryParseMultipleInt32(View.SuppressedLabelsByNumber, out intVals))
+      {
+        _doc.SuppressedLabels.ByNumbers.Clear();
+        foreach (int v in intVals)
+          _doc.SuppressedLabels.ByNumbers.Add(v);
+      }
+      else
+        return false;
+
 
       return true;
     }

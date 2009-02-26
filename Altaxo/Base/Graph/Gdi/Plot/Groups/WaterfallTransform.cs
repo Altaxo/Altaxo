@@ -28,7 +28,7 @@ using System.Drawing.Drawing2D;
 
 using Altaxo.Data;
 using Altaxo.Graph.Scales.Boundaries;
-
+using Altaxo.Graph.Scales;
 
 
 namespace Altaxo.Graph.Gdi.Plot.Groups
@@ -378,12 +378,12 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
         get { return _layer.Is3D; }
       }
 
-      public Altaxo.Graph.Scales.Scale XAxis
+      public Scale XAxis
       {
         get { return _xScale; }
       }
 
-      public Altaxo.Graph.Scales.Scale YAxis
+      public Scale YAxis
       {
         get { return _yScale; }
       }
@@ -439,23 +439,17 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
       #endregion
 
       #region Helper Scale Wrapper
-      class TransformedScale : Altaxo.Graph.Scales.Scale
+      class TransformedScale : Scale
       {
-        Altaxo.Graph.Scales.Scale _originalScale;
+        Scale _originalScale;
         double _offset;
 
-        public TransformedScale(Altaxo.Graph.Scales.Scale scale, double offset)
+        public TransformedScale(Scale scale, double offset)
         {
           _originalScale = scale;
           _offset = offset;
         }
-
-
-        public override object Clone()
-        {
-          throw new Exception("The method or operation is not implemented.");
-        }
-
+      
         public override double PhysicalVariantToNormal(AltaxoVariant x)
         {
           return _originalScale.PhysicalVariantToNormal(x + _offset);
@@ -467,70 +461,51 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
           return result - _offset;
         }
 
-        public override AltaxoVariant[] GetMajorTicksAsVariant()
+        public override object Clone()
         {
-          throw new Exception("The method or operation is not implemented.");
-        }
-
-        public override double[] GetMajorTicksNormal()
-        {
-          throw new Exception("The method or operation is not implemented.");
-        }
-
-        public override AltaxoVariant[] GetMinorTicksAsVariant()
-        {
-          throw new Exception("The method or operation is not implemented.");
-        }
-
-        public override double[] GetMinorTicksNormal()
-        {
-          throw new Exception("The method or operation is not implemented.");
+            throw new NotImplementedException();
         }
 
         public override object RescalingObject
         {
-          get { throw new Exception("The method or operation is not implemented."); }
+            get { throw new NotImplementedException(); }
         }
 
         public override IPhysicalBoundaries DataBoundsObject
         {
-          get { throw new Exception("The method or operation is not implemented."); }
+            get { throw new NotImplementedException(); }
         }
 
         public override AltaxoVariant OrgAsVariant
         {
-          get
-          {
-            throw new Exception("The method or operation is not implemented.");
-          }
-          set
-          {
-            throw new Exception("The method or operation is not implemented.");
-          }
+            get { throw new NotImplementedException(); }
         }
 
         public override AltaxoVariant EndAsVariant
         {
-          get
-          {
-            throw new Exception("The method or operation is not implemented.");
-          }
-          set
-          {
-            throw new Exception("The method or operation is not implemented.");
-          }
+            get { throw new NotImplementedException(); }
         }
 
-        public override void ProcessDataBounds()
+        public override string SetScaleOrgEnd(AltaxoVariant org, AltaxoVariant end)
         {
-          throw new Exception("The method or operation is not implemented.");
+            throw new NotImplementedException();
         }
 
-        public override void ProcessDataBounds(AltaxoVariant org, bool orgfixed, AltaxoVariant end, bool endfixed)
+        public override void Rescale()
         {
-          throw new Exception("The method or operation is not implemented.");
+            throw new NotImplementedException();
         }
-      }
+
+				public override bool IsOrgExtendable
+				{
+					get { throw new NotImplementedException(); }
+				}
+
+				public override bool IsEndExtendable
+				{
+					get { throw new NotImplementedException(); }
+				}
+			}
       #endregion
     }
 

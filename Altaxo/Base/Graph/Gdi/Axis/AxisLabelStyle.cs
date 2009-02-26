@@ -21,10 +21,12 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using Altaxo.Serialization;
 using Altaxo.Graph.Scales;
+using Altaxo.Graph.Scales.Ticks;
 using Altaxo.Data;
 using Altaxo.Graph.Gdi.Background;
 
@@ -62,6 +64,8 @@ namespace Altaxo.Graph.Gdi.Axis
     protected Gdi.Background.IBackgroundStyle _backgroundStyle;
 
     protected bool _automaticRotationShift=true;
+
+    protected SuppressedTicks _suppressedLabels = new SuppressedTicks();
 
     ILabelFormatting _labelFormatting = new Gdi.LabelFormatting.NumericLabelFormattingAuto();
 
@@ -233,6 +237,67 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
 
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AxisLabelStyle), 4)]
+    class XmlSerializationSurrogate4 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+
+        AxisLabelStyle s = (AxisLabelStyle)obj;
+        info.AddValue("Font", s._font);
+        info.AddValue("Brush", s._brush);
+        info.AddValue("Background", s._backgroundStyle);
+
+        info.AddValue("AutoAlignment", s._automaticRotationShift);
+        info.AddEnum("HorzAlignment", s._horizontalAlignment);
+        info.AddEnum("VertAlignment", s._verticalAlignment);
+
+        info.AddValue("Rotation", s._rotation);
+        info.AddValue("XOffset", s._xOffset);
+        info.AddValue("YOffset", s._yOffset);
+
+        if (s._suppressedLabels.IsEmpty)
+          info.AddValue("SuppressedLabels", (object)null);
+        else
+          info.AddValue("SuppressedLabels", s._suppressedLabels);
+
+        info.AddValue("LabelFormat", s._labelFormatting);
+      }
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+
+        AxisLabelStyle s = null != o ? (AxisLabelStyle)o : new AxisLabelStyle();
+
+        s._font = (Font)info.GetValue("Font", s);
+        s._brush = (BrushX)info.GetValue("Brush", s);
+        s._backgroundStyle = (IBackgroundStyle)info.GetValue("Background");
+        s._automaticRotationShift = info.GetBoolean("AutoAlignment");
+        s._horizontalAlignment = (StringAlignment)info.GetEnum("HorzAlignment", typeof(StringAlignment));
+        s._verticalAlignment = (StringAlignment)info.GetEnum("VertAlignment", typeof(StringAlignment));
+        s._rotation = info.GetDouble("Rotation");
+        s._xOffset = info.GetDouble("XOffset");
+        s._yOffset = info.GetDouble("YOffset");
+
+        s._suppressedLabels = (SuppressedTicks)info.GetValue("SuppressedLabels", s);
+        if (s._suppressedLabels == null)
+          s._suppressedLabels = new SuppressedTicks();
+
+        s._labelFormatting = (ILabelFormatting)info.GetValue("LabelFormat", s);
+
+
+
+
+        // Modification of StringFormat is necessary to avoid 
+        // too big spaces between successive words
+        s._stringFormat = (StringFormat)StringFormat.GenericTypographic.Clone();
+        s._stringFormat.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
+
+
+
+        return s;
+      }
+    }
+
     /// <summary>
     /// Finale measures after deserialization.
     /// </summary>
@@ -262,6 +327,7 @@ namespace Altaxo.Graph.Gdi.Axis
       _rotation = from._rotation;
       _backgroundStyle = null==from._backgroundStyle ? null : (IBackgroundStyle)from._backgroundStyle.Clone();
       _labelFormatting = (ILabelFormatting)from._labelFormatting.Clone();
+      _suppressedLabels = (SuppressedTicks)from._suppressedLabels.Clone();
     }
 
     public override object Clone()
@@ -299,6 +365,7 @@ namespace Altaxo.Graph.Gdi.Axis
       }
        */
     }
+    
     #region Properties
 
     /// <summary>The font of the label.</summary>
@@ -377,6 +444,14 @@ namespace Altaxo.Graph.Gdi.Axis
           this._backgroundStyle = value;
           OnChanged(); // Fire Changed event
         }
+      }
+    }
+
+    public SuppressedTicks SuppressedLabels
+    {
+      get
+      {
+        return _suppressedLabels;
       }
     }
 
@@ -558,6 +633,7 @@ namespace Altaxo.Graph.Gdi.Axis
       _cachedStyleID = styleInfo.Identifier;
       CSLineID styleID = styleInfo.Identifier;
       Scale raxis = styleID.ParallelAxisNumber==0 ? layer.XAxis : layer.YAxis;
+			TickSpacing ticking = layer.Scales[styleID.ParallelAxisNumber].TickSpacing;
 
       _enclosingPath.Reset();
       _enclosingPath.FillMode = FillMode.Winding; // with Winding also overlapping rectangles are selected
@@ -586,13 +662,34 @@ namespace Altaxo.Graph.Gdi.Axis
       AltaxoVariant[] ticks;
       if(useMinorTicks)
       {
-        relpositions = raxis.GetMinorTicksNormal();
-        ticks = raxis.GetMinorTicksAsVariant();
+        relpositions = ticking.GetMinorTicksNormal(raxis);
+				ticks = ticking.GetMinorTicksAsVariant();
       }
       else
       {
-        relpositions = raxis.GetMajorTicksNormal();
-        ticks = raxis.GetMajorTicksAsVariant();
+        relpositions = ticking.GetMajorTicksNormal(raxis);
+        ticks = ticking.GetMajorTicksAsVariant();
+      }
+
+      if (!_suppressedLabels.IsEmpty)
+      {
+        List<AltaxoVariant> filteredTicks = new List<AltaxoVariant>();
+        List<double> filteredRelPositions = new List<double>();
+
+        for (int i = 0; i < ticks.Length; i++)
+        {
+          if (_suppressedLabels.ByValues.Contains(ticks[i]))
+            continue;
+          if (_suppressedLabels.ByNumbers.Contains(i))
+            continue;
+          if (_suppressedLabels.ByNumbers.Contains(i - ticks.Length - 1))
+            continue;
+
+          filteredTicks.Add(ticks[i]);
+          filteredRelPositions.Add(relpositions[i]);
+        }
+        ticks = filteredTicks.ToArray();
+        relpositions = filteredRelPositions.ToArray();
       }
       
       IMeasuredLabelItem[] labels = _labelFormatting.GetMeasuredItems(g,_font,_stringFormat,ticks);
@@ -655,12 +752,9 @@ namespace Altaxo.Graph.Gdi.Axis
         helperPath.Transform(math);
 
         _enclosingPath.AddPath(helperPath,true);
-
-       
       }
-    
-
     }
+
     #region IChangedEventSource Members
 
   

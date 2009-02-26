@@ -47,7 +47,6 @@ namespace Altaxo.Gui.Graph
     private System.Windows.Forms.Label label23;
     private System.Windows.Forms.RadioButton m_rbLinkAxisCustom;
     private System.Windows.Forms.RadioButton m_rbLinkAxisStraight;
-    private System.Windows.Forms.RadioButton m_rbLinkAxisNone;
     /// <summary> 
     /// Required designer variable.
     /// </summary>
@@ -93,7 +92,6 @@ namespace Altaxo.Gui.Graph
       this.label23 = new System.Windows.Forms.Label();
       this.m_rbLinkAxisCustom = new System.Windows.Forms.RadioButton();
       this.m_rbLinkAxisStraight = new System.Windows.Forms.RadioButton();
-      this.m_rbLinkAxisNone = new System.Windows.Forms.RadioButton();
       this.SuspendLayout();
       // 
       // label26
@@ -181,15 +179,7 @@ namespace Altaxo.Gui.Graph
       this.m_rbLinkAxisStraight.TabIndex = 12;
       this.m_rbLinkAxisStraight.Text = "Straight (1:1)";
       this.m_rbLinkAxisStraight.CheckedChanged += new System.EventHandler(this.EhLinkStraight_CheckedChanged);
-      // 
-      // m_rbLinkAxisNone
-      // 
-      this.m_rbLinkAxisNone.Location = new System.Drawing.Point(16, 0);
-      this.m_rbLinkAxisNone.Name = "m_rbLinkAxisNone";
-      this.m_rbLinkAxisNone.Size = new System.Drawing.Size(104, 16);
-      this.m_rbLinkAxisNone.TabIndex = 11;
-      this.m_rbLinkAxisNone.Text = "None";
-      this.m_rbLinkAxisNone.CheckedChanged += new System.EventHandler(this.EhLinkNone_CheckedChanged);
+     
       // 
       // AxisLinkControl
       // 
@@ -203,7 +193,6 @@ namespace Altaxo.Gui.Graph
       this.Controls.Add(this.label23);
       this.Controls.Add(this.m_rbLinkAxisCustom);
       this.Controls.Add(this.m_rbLinkAxisStraight);
-      this.Controls.Add(this.m_rbLinkAxisNone);
       this.Name = "AxisLinkControl";
       this.Size = new System.Drawing.Size(128, 120);
       this.ResumeLayout(false);
@@ -212,22 +201,18 @@ namespace Altaxo.Gui.Graph
     }
     #endregion
 
-    private void EhLinkNone_CheckedChanged(object sender, System.EventArgs e)
-    {
-      if(null!=Controller && this.m_rbLinkAxisNone.Checked==true)
-        Controller.EhView_LinkTypeChanged(ScaleLinkType.None);
-    }
+  
 
     private void EhLinkStraight_CheckedChanged(object sender, System.EventArgs e)
     {
       if(null!=Controller && this.m_rbLinkAxisStraight.Checked==true)
-        Controller.EhView_LinkTypeChanged(ScaleLinkType.Straight);
+        Controller.EhView_LinkTypeChanged(true);
     }
 
     private void EhLinkCustom_CheckedChanged(object sender, System.EventArgs e)
     {
       if(null!=Controller && this.m_rbLinkAxisCustom.Checked==true)
-        Controller.EhView_LinkTypeChanged(ScaleLinkType.Custom);
+        Controller.EhView_LinkTypeChanged(false);
     }
 
     private void EhOrgA_Validating(object sender, System.ComponentModel.CancelEventArgs e)
@@ -301,23 +286,18 @@ namespace Altaxo.Gui.Graph
       this.m_edLinkAxisEndB.Enabled = bEnab;
     }
 
-    public void LinkType_Initialize(ScaleLinkType linktype)
+    public void LinkType_Initialize(bool isStraight)
     {
-      switch(linktype)
-      {
-        case ScaleLinkType.None:
-          this.m_rbLinkAxisNone.Checked = true;
-          EnableCustom(false);
-          break;
-        case ScaleLinkType.Straight:
+       if(isStraight)
+			 {
           this.m_rbLinkAxisStraight.Checked = true;
           EnableCustom(false);
-          break;
-        case ScaleLinkType.Custom:
+			 }
+			 else
+			 {
           this.m_rbLinkAxisCustom.Checked = true;
           EnableCustom(true);
-          break;
-      }
+			 }
       
     }
 

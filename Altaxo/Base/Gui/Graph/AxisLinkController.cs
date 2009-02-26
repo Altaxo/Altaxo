@@ -40,7 +40,7 @@ namespace Altaxo.Gui.Graph
     /// Called if the type of the link is changed.
     /// </summary>
     /// <param name="linktype">The linktype. Valid arguments are "None", "Straight" and "Custom".</param>
-    void EhView_LinkTypeChanged(ScaleLinkType linktype);
+    void EhView_LinkTypeChanged(bool isStraight);
 
     /// <summary>
     /// Called when the contents of OrgA is changed.
@@ -87,7 +87,7 @@ namespace Altaxo.Gui.Graph
     /// Initializes the type of the link.
     /// </summary>
     /// <param name="linktype"></param>
-    void LinkType_Initialize(ScaleLinkType linktype);
+    void LinkType_Initialize(bool isStraight);
 
     /// <summary>
     /// Initializes the content of the OrgA edit box.
@@ -122,56 +122,43 @@ namespace Altaxo.Gui.Graph
   /// <summary>
   /// Summary description for LinkAxisController.
   /// </summary>
+	[ExpectedTypeOfView(typeof(IAxisLinkView))]
+	[UserControllerForObject(typeof(LinkedScaleParameters))]
   public class AxisLinkController : IAxisLinkController
   {
     IAxisLinkView m_View;
     XYPlotLayer m_Layer;
-    bool  m_bXAxis;
+    int _scaleIdx;
 
-    ScaleLinkType m_LinkType;
+    bool m_LinkType;
+
+		LinkedScaleParameters _doc;
+		LinkedScaleParameters _tempDoc;
+
     double m_OrgA;
     double m_OrgB;
     double m_EndA;
     double m_EndB;
 
 
-    public AxisLinkController(XYPlotLayer layer, bool bXAxis)
+    public AxisLinkController(LinkedScaleParameters doc)
     {
-      m_Layer = layer;
-      m_bXAxis = bXAxis;
+			_doc = doc;
+			_tempDoc = (LinkedScaleParameters)_doc;
+			m_LinkType = _tempDoc.IsStraightLink;
       SetElements(true);
     }
 
 
     void SetElements(bool bInit)
     {
-      if(bInit)
-      {
-        if(m_bXAxis)
-        {
-          m_LinkType = m_Layer.LinkedScales.X.AxisLinkType;
-          m_OrgA      = m_Layer.LinkedScales.X.LinkOrgA;
-          m_OrgB = m_Layer.LinkedScales.X.LinkOrgB;
-          m_EndA = m_Layer.LinkedScales.X.LinkEndA;
-          m_EndB = m_Layer.LinkedScales.X.LinkEndB;
-        }
-        else
-        {
-          m_LinkType  = m_Layer.LinkedScales.Y.AxisLinkType;
-          m_OrgA = m_Layer.LinkedScales.Y.LinkOrgA;
-          m_OrgB = m_Layer.LinkedScales.Y.LinkOrgB;
-          m_EndA = m_Layer.LinkedScales.Y.LinkEndA;
-          m_EndB = m_Layer.LinkedScales.Y.LinkEndB;
-        }
-      }
-
       if(null!=View)
       {
         View.LinkType_Initialize(m_LinkType);
-        View.OrgA_Initialize(m_OrgA.ToString());
-        View.OrgB_Initialize(m_OrgB.ToString());
-        View.EndA_Initialize(m_EndA.ToString());
-        View.EndB_Initialize(m_EndB.ToString());
+        View.OrgA_Initialize(Serialization.GUIConversion.ToString(_tempDoc.OrgA));
+				View.OrgB_Initialize(Serialization.GUIConversion.ToString(_tempDoc.OrgB));
+				View.EndA_Initialize(Serialization.GUIConversion.ToString(_tempDoc.EndA));
+				View.EndB_Initialize(Serialization.GUIConversion.ToString(_tempDoc.EndB));
       }
     }
     #region ILinkAxisController Members
@@ -197,33 +184,49 @@ namespace Altaxo.Gui.Graph
       }
     }
 
-    public void EhView_LinkTypeChanged(ScaleLinkType linktype)
+    public void EhView_LinkTypeChanged(bool isStraightLink)
     {
-      m_LinkType = linktype;
+			m_LinkType = isStraightLink;
 
       if(null!=View)
-        View.Enable_OrgAndEnd_Boxes(linktype == ScaleLinkType.Custom);
+        View.Enable_OrgAndEnd_Boxes(!isStraightLink);
     }
 
     public void EhView_OrgAValidating(string orgA, ref bool bCancel)
     {
-      bCancel = !NumberConversion.IsDouble(orgA, out m_OrgA);
+			double val;
+			if (NumberConversion.IsDouble(orgA, out val))
+				_tempDoc.OrgA = val;
+			else
+				bCancel = true;
     }
 
     public void EhView_OrgBValidating(string orgB, ref bool bCancel)
     {
-      bCancel = !NumberConversion.IsDouble(orgB, out m_OrgB);
-    }
+			double val;
+			if (NumberConversion.IsDouble(orgB, out val))
+				_tempDoc.OrgB = val;
+			else
+				bCancel = true;
+		}
 
     public void EhView_EndAValidating(string endA, ref bool bCancel)
     {
-      bCancel = !NumberConversion.IsDouble(endA, out m_EndA);
-    }
+			double val;
+			if (NumberConversion.IsDouble(endA, out val))
+				_tempDoc.EndA = val;
+			else
+				bCancel = true;
+		}
 
     public void EhView_EndBValidating(string endB, ref bool bCancel)
     {
-      bCancel = !NumberConversion.IsDouble(endB, out m_EndB);
-    }
+			double val;
+			if (NumberConversion.IsDouble(endB, out val))
+				_tempDoc.EndB = val;
+			else
+				bCancel = true;
+		}
 
     #endregion
 
@@ -231,14 +234,11 @@ namespace Altaxo.Gui.Graph
 
     public bool Apply()
     {
-      if(this.m_bXAxis)
-      {
-        m_Layer.LinkedScales.X.SetLinkParameter(m_LinkType, m_OrgA,m_OrgB,m_EndA,m_EndB);
-      }
-      else
-      {
-        m_Layer.LinkedScales.Y.SetLinkParameter(m_LinkType, m_OrgA,m_OrgB,m_EndA,m_EndB);
-      }
+			if (m_LinkType)
+				_doc.SetToStraightLink();
+			else
+				_doc.CopyFrom(_tempDoc);
+		
       return true;
     }
 

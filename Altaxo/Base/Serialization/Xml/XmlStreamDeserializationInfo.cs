@@ -100,6 +100,16 @@ namespace Altaxo.Serialization.Xml
     {
       return XmlConvert.ToInt32(m_Reader.ReadElementString());
     }
+
+		public int? GetNullableInt32(string name)
+		{
+			string s = m_Reader.ReadElementString();
+			if(string.IsNullOrEmpty(s))
+			return  null;
+			else
+			return XmlConvert.ToInt32(s);
+		}
+
     public int GetInt32(string name)
     {
       return GetInt32();
@@ -116,9 +126,17 @@ namespace Altaxo.Serialization.Xml
 
     public double GetDouble()
     {
-
       return XmlConvert.ToDouble(m_Reader.ReadElementString());
     }
+
+		public double? GetNullableDouble(string name)
+		{
+			string s = m_Reader.ReadElementString();
+			if(string.IsNullOrEmpty(s))
+			return  null;
+			else
+			return XmlConvert.ToDouble(s);
+		}
 
     public DateTime GetDateTime(string name)
     {

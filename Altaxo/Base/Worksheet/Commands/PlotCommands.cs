@@ -32,6 +32,7 @@ using Altaxo.Graph.Gdi.Plot.Groups;
 using Altaxo.Graph.Plot.Data;
 using Altaxo.Graph.Plot.Groups;
 using Altaxo.Graph.GUI;
+using Altaxo.Graph.Scales;
 
 
 
@@ -347,14 +348,14 @@ namespace Altaxo.Worksheet.Commands
       {
         XYColumnPlotItem firstitem = (XYColumnPlotItem)pilist[0];
         if (firstitem.Data.XColumn is TextColumn)
-          gc.Doc.Layers[0].LinkedScales.SetScale(0, new Graph.Scales.TextScale());
+          gc.Doc.Layers[0].Scales.SetScale(0, new TextScale());
         else if (firstitem.Data.XColumn is DateTimeColumn)
-          gc.Doc.Layers[0].LinkedScales.SetScale(0, new Graph.Scales.DateTimeScale());
+          gc.Doc.Layers[0].Scales.SetScale(0, new DateTimeScale());
 
         if (firstitem.Data.YColumn is TextColumn)
-          gc.Doc.Layers[0].LinkedScales.SetScale(1, new Graph.Scales.TextScale());
+          gc.Doc.Layers[0].Scales.SetScale(1, new TextScale());
         else if (firstitem.Data.YColumn is DateTimeColumn)
-          gc.Doc.Layers[0].LinkedScales.SetScale(1, new Graph.Scales.DateTimeScale());
+          gc.Doc.Layers[0].Scales.SetScale(1, new DateTimeScale());
       }
 
 

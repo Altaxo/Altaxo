@@ -1,6 +1,6 @@
-namespace Altaxo.Gui.Graph.Scales
+namespace Altaxo.Gui.Graph.Scales.Rescaling
 {
-  partial class AngularScaleControl
+  partial class AngularRescaleConditionsControl
   {
     /// <summary> 
     /// Required designer variable.

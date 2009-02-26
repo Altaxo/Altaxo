@@ -105,6 +105,15 @@ namespace Altaxo.Serialization.Xml
     {
       m_Writer.WriteElementString(name,XmlConvert.ToString(val));
     }
+
+		public void AddValue(string name, int? val)
+		{
+			if (null == val)
+				m_Writer.WriteElementString(name, string.Empty);
+			else
+				m_Writer.WriteElementString(name, XmlConvert.ToString((int)val));
+		}
+
     public void AddValue(string name, string val)
     {
       m_Writer.WriteElementString(name,val);
@@ -122,6 +131,14 @@ namespace Altaxo.Serialization.Xml
     {
       m_Writer.WriteElementString(name, XmlConvert.ToString(val));
     }
+		
+		public void AddValue(string name, double? val)
+		{
+			if (null == val)
+				m_Writer.WriteElementString(name, string.Empty);
+			else
+				m_Writer.WriteElementString(name, XmlConvert.ToString((double)val));
+		}
 
     public void AddValue(string name, DateTime val)
     {

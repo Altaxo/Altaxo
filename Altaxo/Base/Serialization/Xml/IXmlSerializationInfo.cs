@@ -38,9 +38,13 @@ namespace Altaxo.Serialization.Xml
 
     void AddValue(string name, int val);
 
+		void AddValue(string name, int? val);
+
     void AddValue(string name, float val);
 
     void AddValue(string name, double val);
+
+		void AddValue(string name, double? val);
 
     void AddValue(string name, string val);
 

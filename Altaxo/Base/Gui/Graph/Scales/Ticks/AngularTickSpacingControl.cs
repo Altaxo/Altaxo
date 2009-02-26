@@ -28,18 +28,18 @@ using System.Data;
 using System.Text;
 using System.Windows.Forms;
 
-namespace Altaxo.Gui.Graph.Scales
+namespace Altaxo.Gui.Graph.Scales.Ticks
 {
-  public partial class AngularScaleControl : UserControl, IAngularScaleView
+	public partial class AngularTickSpacingControl : UserControl, IAngularTickSpacingView
   {
-    public AngularScaleControl()
+		public AngularTickSpacingControl()
     {
       InitializeComponent();
-    }
+		}
 
-    #region IAngularScaleView Members
+		#region IAngularTickSpacingView Members
 
-    public bool UseDegrees
+		public bool UseDegrees
     {
       get
       {

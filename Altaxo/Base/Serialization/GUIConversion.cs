@@ -21,6 +21,10 @@
 #endregion
 
 using System;
+using System.Text;
+using System.Collections.Generic;
+
+using Altaxo.Data;
 
 namespace Altaxo.Serialization
 {
@@ -29,10 +33,10 @@ namespace Altaxo.Serialization
   /// used by this class.
   /// </summary>
   public class GUIConversion
-  {
+	{
+		#region DateTime
 
-
-    /// <summary>
+		/// <summary>
     /// Is the provided string a date/time?
     /// </summary>
     /// <param name="s">The string to parse</param>
@@ -106,12 +110,13 @@ namespace Altaxo.Serialization
     public static string ToString(TimeSpan o)
     {
       return o.ToString();
-    }
+		}
 
+		#endregion
 
-    #region Double
+		#region Double
 
-    /// <summary>
+		/// <summary>
     /// Is the provided string a double?
     /// </summary>
     /// <param name="s">The string to parse</param>
@@ -144,11 +149,65 @@ namespace Altaxo.Serialization
       return bRet;
     }
 
+		public static bool IsDoubleOrNull(string s, out double? val)
+		{
+			if (string.IsNullOrEmpty(s))
+			{
+				val = null;	
+				return true;
+			}
+			else
+			{
+				double val1;
+				if (IsDouble(s, out val1))
+				{
+					val = val1;
+					return true;
+				}
+				else
+				{
+					val = null;
+					return false;
+				}
+			}
+		}
+
+
+		public static bool IsInt32OrNull(string s, out int? val)
+		{
+			if (string.IsNullOrEmpty(s))
+			{
+				val = null;
+				return true;
+			}
+			else
+			{
+				int val1;
+				if (int.TryParse(s,out val1))
+				{
+					val = val1;
+					return true;
+				}
+				else
+				{
+					val = null;
+					return false;
+				}
+			}
+		}
 
     public static string ToString(double val)
     {
       return val.ToString();
     }
+
+		public static string ToString(double? val)
+		{
+			if (val == null)
+				return string.Empty;
+			else
+				return val.ToString();
+		}
 
     public static string ToString(double val, int accuracy)
     {
@@ -160,6 +219,52 @@ namespace Altaxo.Serialization
       return val.ToString(format);
     }
 
+    /*
+		public static string ToString(double[] vals)
+		{
+			StringBuilder stb = new StringBuilder();
+			foreach (int v in vals)
+			{
+				stb.Append(ToString(v));
+				stb.Append(" ");
+			}
+			return stb.ToString().TrimEnd();
+		}
+    */
+
+    public static string ToString(ICollection<double> vals)
+    {
+      StringBuilder stb = new StringBuilder();
+      foreach (int v in vals)
+      {
+        stb.Append(ToString(v));
+        stb.Append(" ");
+      }
+      return stb.ToString().TrimEnd();
+    }
+
+		public static bool TryParseMultipleDouble(string s, out double[] vals)
+		{
+			vals = null;
+			bool failed = false;
+			string[] parts = s.Split(new char[] { ' ', '\t', '\r', '\n', ';'}, StringSplitOptions.RemoveEmptyEntries);
+			double[] result = new double[parts.Length];
+
+			for (int i = 0; i < result.Length; i++)
+			{
+				if (!IsDouble(parts[i], out result[i]))
+				{
+					failed = true;
+					break;
+				}
+			}
+
+			if (failed)
+				return false;
+
+			vals = result;
+			return true;
+		}
 
     #endregion
 
@@ -191,6 +296,112 @@ namespace Altaxo.Serialization
       return val.ToString();
     }
 
+		public static string ToString(int? val)
+		{
+			if (val == null)
+				return string.Empty;
+			else 
+				return val.ToString();
+		}
+
+		public static string ToString(int[] vals)
+		{
+			StringBuilder stb = new StringBuilder();
+			foreach (int v in vals)
+			{
+				stb.Append(v.ToString());
+				stb.Append(" ");
+			}
+			return stb.ToString().TrimEnd();
+		}
+
+    public static string ToString(ICollection<int> vals)
+    {
+      StringBuilder stb = new StringBuilder();
+      foreach (int v in vals)
+      {
+        stb.Append(v.ToString());
+        stb.Append(" ");
+      }
+      return stb.ToString().TrimEnd();
+    }
+
+		public static bool TryParseMultipleInt32(string s, out int[] vals)
+		{
+			vals = null;
+			bool failed = false;
+			string[] parts = s.Split(new char[] { ' ', '\t', '\r', '\n', ';', ',' }, StringSplitOptions.RemoveEmptyEntries);
+			int[] result = new int[parts.Length];
+
+			for (int i = 0; i < result.Length; i++)
+			{
+				if (!int.TryParse(parts[i], out result[i]))
+				{
+					failed = true;
+					break;
+				}
+			}
+
+			if (failed)
+				return false;
+
+			vals = result;
+			return true;
+		}
+
+    #endregion
+
+    #region AltaxoVariant
+
+    public static string ToString(ICollection<AltaxoVariant> vals)
+    {
+      StringBuilder stb = new StringBuilder();
+      bool first = true;
+      foreach (AltaxoVariant v in vals)
+      {
+        if (first)
+          first = false;
+        else
+          stb.Append("; ");
+
+        stb.Append(v.ToString());
+        
+      }
+      return stb.ToString();
+    }
+
+
+    public static bool TryParseMultipleAltaxoVariant(string s,  out AltaxoVariant[] vals)
+    {
+      vals = null;
+      bool failed = false;
+      string[] parts = s.Split(new char[] {'\t', '\r', '\n', ';' }, StringSplitOptions.RemoveEmptyEntries);
+      AltaxoVariant[] result = new AltaxoVariant[parts.Length];
+
+      for (int i = 0; i < result.Length; i++)
+      {
+        DateTime dt;
+        double dd;
+        if (IsDouble(parts[i], out dd))
+        {
+          result[i] = dd;
+        }
+        else if(IsDateTime(parts[i], out dt))
+        {
+          result[i] = dt;
+        }
+        else
+        {
+          result[i] = parts[i];
+        }
+      }
+
+      if (failed)
+        return false;
+
+      vals = result;
+      return true;
+    }
     #endregion
 
     #region Length-Units (mm, cm, inch and so on)
@@ -328,7 +539,6 @@ namespace Altaxo.Serialization
       }
     }
     #endregion
-
 
     #region Selection lists
 

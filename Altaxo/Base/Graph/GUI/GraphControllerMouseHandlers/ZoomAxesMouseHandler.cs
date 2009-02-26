@@ -81,10 +81,14 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
       AltaxoVariant yo = layer.YAxis.NormalToPhysicalVariant(yr0);
       AltaxoVariant ye = layer.YAxis.NormalToPhysicalVariant(yr1);
 
-     
-
-      layer.XAxis.ProcessDataBounds(xo,true,xe,true);
-      layer.YAxis.ProcessDataBounds(yo,true,ye,true);
+			try // trying to set the scales can go wrong..
+			{
+				layer.XAxis.SetScaleOrgEnd(xo, xe);
+				layer.YAxis.SetScaleOrgEnd(yo, ye);
+			}
+			catch (Exception)
+			{
+			}
 
       // deselect the text tool
       // this._grac.CurrentGraphToolType = typeof(GraphControllerMouseHandlers.ObjectPointerMouseHandler);

@@ -1004,9 +1004,16 @@
       <SubType>Designer</SubType>
       <DependentUpon>PositionSizeRotationScaleControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Gui\Graph\Scales\AngularScaleControl.resx">
+    <EmbeddedResource Include="Gui\Graph\Scales\Rescaling\AngularRescaleConditionsControl.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>AngularScaleControl.cs</DependentUpon>
+      <DependentUpon>AngularRescaleConditionsControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\Scales\Ticks\AngularTickSpacingControl.resx">
+      <DependentUpon>AngularTickSpacingControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\Scales\Ticks\LinearTickSpacingControl.resx">
+      <DependentUpon>LinearTickSpacingControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Graph\ShapeGraphicControl.resx">
       <SubType>Designer</SubType>
@@ -1259,7 +1266,10 @@
     <Compile Include="Graph\Plot\Groups\SkipFrequencyGroupStyle.cs" />
     <Compile Include="Graph\Plot\Groups\SymbolSizeGroupStyle.cs" />
     <Compile Include="Graph\PointD.cs" />
+    <Compile Include="Graph\Scales\AngularRadianScale.cs" />
     <Compile Include="Graph\Scales\AngularScale.cs" />
+    <Compile Include="Graph\Scales\DateTimeScale.cs" />
+    <Compile Include="Graph\Scales\Deprecated\AngularScale.cs" />
     <Compile Include="Graph\Scales\Boundaries\AbstractPhysicalBoundaries.cs" />
     <Compile Include="Graph\Scales\Boundaries\BoundariesChangedEventArgs.cs" />
     <Compile Include="Graph\Scales\Boundaries\DummyBoundaries.cs" />
@@ -1275,20 +1285,47 @@
     <Compile Include="Graph\Scales\Boundaries\PositiveFiniteNumericalBoundaries.cs" />
     <Compile Include="Graph\CSAxisSide.cs" />
     <Compile Include="Graph\Scales\Boundaries\TextBoundaries.cs" />
-    <Compile Include="Graph\Scales\DateTimeScale.cs" />
+    <Compile Include="Graph\Scales\Deprecated\DateTimeScale.cs" />
+    <Compile Include="Graph\Scales\Deprecated\LinearScale.cs" />
+    <Compile Include="Graph\Scales\Deprecated\LinkedScale.cs" />
+    <Compile Include="Graph\Scales\Deprecated\LinkedScaleCollection.cs" />
+    <Compile Include="Graph\Scales\Deprecated\Log10Scale.cs" />
+    <Compile Include="Graph\Scales\Deprecated\NumericalScale.cs" />
     <Compile Include="Graph\Scales\LinearScale.cs" />
     <Compile Include="Graph\Scales\LinkedScale.cs" />
-    <Compile Include="Graph\Scales\LinkedScaleCollection.cs" />
+    <Compile Include="Graph\Scales\LinkedScaleParameters.cs" />
     <Compile Include="Graph\Scales\Log10Scale.cs" />
-    <Compile Include="Graph\Scales\NumericalScale.cs" />
+    <Compile Include="Graph\Scales\NumericalScale.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\Scales\Rescaling\AngularRescaleConditions.cs" />
     <Compile Include="Graph\Scales\Rescaling\BoundaryRescaling.cs" />
     <Compile Include="Graph\Scales\Rescaling\DateTimeAxisRescaleConditions.cs" />
     <Compile Include="Graph\Scales\Rescaling\LogarithmicAxisRescaleConditions.cs" />
     <Compile Include="Graph\Scales\Rescaling\NumericAxisRescaleConditions.cs" />
-    <Compile Include="Graph\Scales\Scale.cs" />
+    <Compile Include="Graph\Scales\Deprecated\Scale.cs" />
+    <Compile Include="Graph\Scales\Scale.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\Scales\ScaleCollection.cs" />
     <Compile Include="Graph\Scales\ScaleLinkType.cs" />
+    <Compile Include="Graph\Scales\Deprecated\TextScale.cs" />
     <Compile Include="Graph\Scales\TextScale.cs" />
-    <Compile Include="Graph\Scales\Ticks\LinearScaleTickSettings.cs" />
+    <Compile Include="Graph\Scales\AngularDegreeScale.cs" />
+    <Compile Include="Graph\Scales\Ticks\AdditionalTicks.cs" />
+    <Compile Include="Graph\Scales\Ticks\AngularDegreeTickSpacing.cs" />
+    <Compile Include="Graph\Scales\Ticks\AngularRadianTickSpacing.cs" />
+    <Compile Include="Graph\Scales\Ticks\AngularTickSpacing.cs" />
+    <Compile Include="Graph\Scales\Ticks\BoundaryTickSnapping.cs" />
+    <Compile Include="Graph\Scales\Ticks\DateTimeTickSpacing.cs" />
+    <Compile Include="Graph\Scales\Ticks\LinearTickSpacing.cs" />
+    <Compile Include="Graph\Scales\Ticks\Log10TickSpacing.cs" />
+    <Compile Include="Graph\Scales\Ticks\NoTickSpacing.cs" />
+    <Compile Include="Graph\Scales\Ticks\NumericTickSpacing.cs" />
+    <Compile Include="Graph\Scales\ScaleWithTicks.cs" />
+    <Compile Include="Graph\Scales\Ticks\SuppressedTicks.cs" />
+    <Compile Include="Graph\Scales\Ticks\TextTickSpacing.cs" />
+    <Compile Include="Graph\Scales\Ticks\TickSpacing.cs" />
     <Compile Include="Graph\TextureManager.cs" />
     <Compile Include="Graph\XAnchorPositionType.cs" />
     <Compile Include="Graph\YAnchorPositionType.cs" />
@@ -1458,16 +1495,30 @@
       <DependentUpon>PlotGroupCollectionControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\PlotGroupCollectionController.cs" />
-    <Compile Include="Gui\Graph\Scales\AngularScaleControl.cs">
+    <Compile Include="Gui\Graph\Scales\Rescaling\AngularRescaleConditionsControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Gui\Graph\Scales\AngularScaleControl.Designer.cs">
-      <DependentUpon>AngularScaleControl.cs</DependentUpon>
+    <Compile Include="Gui\Graph\Scales\Rescaling\AngularRescaleConditionsControl.Designer.cs">
+      <DependentUpon>AngularRescaleConditionsControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\Scales\AngularScaleController.cs" />
+    <Compile Include="Gui\Graph\Scales\Rescaling\AngularRescaleConditionsController.cs" />
     <Compile Include="Gui\Graph\Scales\Rescaling\DateTimeAxisRescaleController.cs" />
     <Compile Include="Gui\Graph\Scales\Rescaling\LogarithmicAxisRescaleController.cs" />
     <Compile Include="Gui\Graph\Scales\Rescaling\NumericAxisRescaleController.cs" />
+    <Compile Include="Gui\Graph\Scales\Ticks\AngularTickSpacingControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\Scales\Ticks\AngularTickSpacingControl.Designer.cs">
+      <DependentUpon>AngularTickSpacingControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\Scales\Ticks\AngularTickSpacingController.cs" />
+    <Compile Include="Gui\Graph\Scales\Ticks\LinearTickSpacingControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\Scales\Ticks\LinearTickSpacingControl.Designer.cs">
+      <DependentUpon>LinearTickSpacingControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\Scales\Ticks\LinearTickSpacingController.cs" />
     <Compile Include="Gui\Graph\SingleColumnChoiceControl.cs">
       <SubType>UserControl</SubType>
     </Compile>

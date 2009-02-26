@@ -47,6 +47,7 @@ namespace Altaxo.Graph.Gdi
     /// </summary>
     Scale YAxis { get; }
 
+		
 
     G2DCoordinateSystem CoordinateSystem { get; }
 
@@ -71,4 +72,11 @@ namespace Altaxo.Graph.Gdi
 
 
   }
+
+	public interface IPlotAreaWithTicks : IPlotArea
+	{
+		Altaxo.Graph.Scales.Ticks.TickSpacing XTicks { get; }
+		Altaxo.Graph.Scales.Ticks.TickSpacing YTicks { get; }
+
+	}
 }

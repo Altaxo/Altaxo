@@ -47,19 +47,27 @@ namespace Altaxo.Graph.Scales
     /// <summary>Current inverse of axis span (cached value).</summary>
     protected double _cachedOneByAxisSpan = 1;
 
+		/// <summary>True if org is allowed to be extended to smaller values.</summary>
+		protected bool _isOrgExtendable;
+
+		/// <summary>True if end is allowed to be extended to higher values.</summary>
+		protected bool _isEndExtendable;
+
 
 		#region Serialization
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(TextScale), 0)]
-		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(TextScale), 1)]
+		class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				TextScale s = (TextScale)obj;
 
-				info.AddValue("Bounds", s._dataBounds);
-				info.AddValue("Rescaling", s._rescaling);
+				info.AddValue("Org", s._cachedAxisOrg);
+				info.AddValue("End", s._cachedAxisEnd);  
 
+				info.AddValue("Rescaling", s._rescaling);
+				info.AddValue("Bounds", s._dataBounds);
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -77,10 +85,18 @@ namespace Altaxo.Graph.Scales
 			{
 				TextScale s = null != o ? (TextScale)o : new TextScale();
 
-				s.InternalSetDataBounds((TextBoundaries)info.GetValue("Bounds", s));
-				s.InternalSetRescaling((NumericAxisRescaleConditions)info.GetValue("Rescaling", s));
-				s.ProcessDataBounds();
+				s._cachedAxisOrg = (double)info.GetDouble("Org");
+				s._cachedAxisEnd = (double)info.GetDouble("End");
+				s._cachedAxisSpan = s._cachedAxisEnd - s._cachedAxisOrg;
+				s._cachedOneByAxisSpan = 1 / s._cachedAxisSpan;
+				s._isOrgExtendable = false;
+				s._isEndExtendable = false;
 
+
+				s.InternalSetRescaling((NumericAxisRescaleConditions)info.GetValue("Rescaling", s));
+
+				s.InternalSetDataBounds((TextBoundaries)info.GetValue("Bounds", s));
+		
 				return s;
 			}
 		}
@@ -138,7 +154,7 @@ namespace Altaxo.Graph.Scales
 
     protected void EhBoundariesChanged(object sender, BoundariesChangedEventArgs e)
     {
-      ProcessDataBounds(); // calculate new bounds and fire AxisChanged event
+      Rescale(); // calculate new bounds and fire AxisChanged event
     }
 
     public override double PhysicalVariantToNormal(Altaxo.Data.AltaxoVariant x)
@@ -163,44 +179,6 @@ namespace Altaxo.Graph.Scales
       return new AltaxoVariant(_cachedAxisOrg + x * _cachedAxisSpan);
     }
 
-    public override Altaxo.Data.AltaxoVariant[] GetMajorTicksAsVariant()
-    {
-      AltaxoVariant[] result = new Altaxo.Data.AltaxoVariant[_dataBounds.NumberOfItems];
-      for (int i = 0; i < result.Length; i++)
-        result[i] = new AltaxoVariant(_dataBounds.GetItem(i));
-
-      return result;
-    }
-
-    public override double[] GetMajorTicksNormal()
-    {
-      double[] result = new double[_dataBounds.NumberOfItems];
-      for (int i = 0; i < result.Length; i++)
-      {
-        result[i] = ((i + 1) - _cachedAxisOrg) * _cachedOneByAxisSpan;
-      }
-
-      return result;
-    }
-
-    public override Altaxo.Data.AltaxoVariant[] GetMinorTicksAsVariant()
-    {
-      AltaxoVariant[] result = new AltaxoVariant[_dataBounds.NumberOfItems+1];
-      for (int i = 0; i < result.Length; i++)
-        result[i] = new Altaxo.Data.AltaxoVariant(i + 0.5);
-
-      return result;
-    }
-
-    public override double[] GetMinorTicksNormal()
-    {
-      double[] result = new double[_dataBounds.NumberOfItems + 1];
-      for (int i = 0; i < result.Length; i++)
-        result[i] = ((i + 0.5) - _cachedAxisOrg) * _cachedOneByAxisSpan;
-
-      return result;
-    }
-
     public override object RescalingObject
     {
       get
@@ -220,11 +198,6 @@ namespace Altaxo.Graph.Scales
       {
         return new AltaxoVariant(_cachedAxisOrg);
       }
-      set
-      {
-        _cachedAxisOrg = value.ToDouble();
-        ProcessDataBounds(_cachedAxisOrg, true, _cachedAxisEnd, true);
-      }
     }
 
     public override Altaxo.Data.AltaxoVariant EndAsVariant
@@ -233,60 +206,70 @@ namespace Altaxo.Graph.Scales
       {
         return new AltaxoVariant(_cachedAxisEnd); 
       }
-      set
-      {
-        _cachedAxisEnd = value.ToDouble();
-        ProcessDataBounds(_cachedAxisOrg, true, _cachedAxisEnd, true);
-      }
     }
 
-    public override void ProcessDataBounds()
-    {
-      if (null == this._dataBounds || this._dataBounds.IsEmpty)
-        return;
+		/// <summary>Returns true if it is allowed to extend the origin (to lower values).</summary>
+		public override bool IsOrgExtendable
+		{
+			get { return _isOrgExtendable; }
+		}
 
-      ProcessDataBounds(1, _dataBounds.NumberOfItems, _rescaling); 
-    }
+		/// <summary>Returns true if it is allowed to extend the scale end (to higher values).</summary>
+		public override bool IsEndExtendable
+		{
+			get { return _isEndExtendable; }
+		}
 
-    public void ProcessDataBounds(double xorg, double xend, NumericAxisRescaleConditions rescaling)
-    {
-      bool isAutoOrg, isAutoEnd;
-      rescaling.Process(ref xorg, out isAutoOrg, ref xend, out isAutoEnd);
-      ProcessDataBounds(xorg, !isAutoOrg, xend, !isAutoEnd);
-    }
+		public override string SetScaleOrgEnd(Altaxo.Data.AltaxoVariant org, Altaxo.Data.AltaxoVariant end)
+		{
+			double o = org.ToDouble();
+			double e = end.ToDouble();
 
+			if (!(o < e))
+				return "org is not less than end";
 
-    public override void ProcessDataBounds(Altaxo.Data.AltaxoVariant org, bool orgfixed, Altaxo.Data.AltaxoVariant end, bool endfixed)
-    {
-      double dorg = org.ToDouble();
-      double dend = end.ToDouble();
+			InternalSetOrgEnd(o, e, false, false);
 
-      if (!orgfixed)
-      {
-        dorg = Math.Ceiling(dorg) - 0.5;
-      }
-      if (!endfixed)
-      {
-        dend = Math.Floor(dend) + 0.5;
-      }
+			return null;
+		}
 
-      bool changed = false;
-      changed |= _cachedAxisOrg != dorg;
-      _cachedAxisOrg = dorg;
+		private void InternalSetOrgEnd(double org, double end, bool isOrgExtendable, bool isEndExtendable)
+		{
+			bool changed = _cachedAxisOrg != org ||
+				_cachedAxisEnd != end ||
+				_isOrgExtendable != isOrgExtendable ||
+				_isEndExtendable != isEndExtendable;
 
-      changed |= _cachedAxisEnd != dend;
-      _cachedAxisEnd = dend;
+			_cachedAxisOrg = org;
+			_cachedAxisEnd = end;
+			_cachedAxisSpan = end - org;
+			_cachedOneByAxisSpan = 1 / _cachedAxisSpan;
 
-      changed |= _cachedAxisSpan != (dend - dorg);
-      _cachedAxisSpan = dend - dorg;
+			_isOrgExtendable = isOrgExtendable;
+			_isEndExtendable = isEndExtendable;
 
-      changed |= _cachedOneByAxisSpan != (1 / _cachedAxisSpan);
-      _cachedOneByAxisSpan = 1 / _cachedAxisSpan;
+			if (changed)
+				OnChanged();
 
-      if(changed)
-        OnChanged();
-    }
+		}
+
+		public override void Rescale()
+		{
+			double xorg = 0;
+			double xend = 1;
+
+			if (null != _dataBounds && !_dataBounds.IsEmpty)
+			{
+				xorg = 0.5;
+				xend = _dataBounds.NumberOfItems + 0.5;
+			}
+
+			bool isAutoOrg, isAutoEnd;
+			_rescaling.Process(ref xorg, out isAutoOrg, ref xend, out isAutoEnd);
+
+			InternalSetOrgEnd(xorg, xend, isAutoOrg, isAutoEnd);
+		}
+
   }
- 
 
 }

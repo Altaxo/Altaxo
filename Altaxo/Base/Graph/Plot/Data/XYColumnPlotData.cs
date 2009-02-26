@@ -785,10 +785,10 @@ namespace Altaxo.Graph.Plot.Data
 
     public void CalculateCachedData(IPhysicalBoundaries xBounds, IPhysicalBoundaries yBounds)
     {
-      if (_xBoundaries == null || _xBoundaries.GetType() != xBounds.GetType())
+      if (_xBoundaries == null || (xBounds!=null && _xBoundaries.GetType() != xBounds.GetType()))
         this.SetXBoundsFromTemplate(xBounds);
 
-      if (_yBoundaries == null || _yBoundaries.GetType() != yBounds.GetType())
+      if (_yBoundaries == null || (yBounds!=null && _yBoundaries.GetType() != yBounds.GetType()))
         this.SetYBoundsFromTemplate(yBounds);
 
       CalculateCachedData();

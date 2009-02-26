@@ -25,53 +25,38 @@ using System.Collections.Generic;
 using System.Text;
 using Altaxo.Collections;
 using Altaxo.Graph.Scales;
+using Altaxo.Graph.Scales.Rescaling;
 
-namespace Altaxo.Gui.Graph.Scales
+namespace Altaxo.Gui.Graph.Scales.Rescaling
 {
   #region Interfaces
 
-  public interface IAngularScaleView
+  public interface IAngularRescaleConditionsView
   {
-    bool UseDegrees { get; set; }
-    bool UsePositiveNegativeValues { get; set; }
     SelectableListNodeList Origin { set; }
-    SelectableListNodeList MajorTicks { set; }
-    SelectableListNodeList MinorTicks {  set; }
-    event EventHandler MajorTicksChanged;
   }
 
   #endregion
 
-  [UserControllerForObject(typeof(AngularScale))]
-  [ExpectedTypeOfView(typeof(IAngularScaleView))]
-  public class AngularScaleController : IMVCANController
+  [UserControllerForObject(typeof(AngularRescaleConditions))]
+  [ExpectedTypeOfView(typeof(IAngularRescaleConditionsView))]
+  public class AngularRescaleConditionsController : IMVCANController
   {
-    IAngularScaleView _view;
-    AngularScale _doc;
+    IAngularRescaleConditionsView _view;
+    AngularRescaleConditions _doc;
 
     SelectableListNodeList _originList;
-    SelectableListNodeList _majorTickList;
-    SelectableListNodeList _minorTickList;
-    int _tempMajorDivider;
-
 
     void Initialize(bool initDoc)
     {
       if (initDoc)
       {
-        _tempMajorDivider = _doc.MajorTickDivider;
         BuildOriginList();
-        BuildMajorTickList();
-        BuildMinorTickList();
       }
 
       if (_view != null)
       {
-        _view.UseDegrees = _doc.UseDegrees;
-        _view.UsePositiveNegativeValues = _doc.UseSignedValues;
         _view.Origin = _originList;
-        _view.MajorTicks = _majorTickList;
-        _view.MinorTicks = _minorTickList;
       }
     }
 
@@ -85,46 +70,13 @@ namespace Altaxo.Gui.Graph.Scales
       _originList.Add(new SelectableListNode("270°", 3, 3 == _doc.ScaleOrigin));
     }
 
-    void BuildMajorTickList()
-    {
-      int[] possibleDividers = _doc.GetPossibleDividers();
-      int selected = _tempMajorDivider;
-      _majorTickList = new SelectableListNodeList();
-      foreach (int div in possibleDividers)
-      {
-        _majorTickList.Add(new SelectableListNode((360.0/div).ToString()+"°",div,div==selected));
-      }
-    }
-
-    void BuildMinorTickList()
-    {
-      int[] possibleDividers = _doc.GetPossibleDividers();
-      int selected = _doc.MinorTickDivider;
-      if (selected < _tempMajorDivider)
-        selected = _tempMajorDivider;
-      _minorTickList = new SelectableListNodeList();
-      foreach (int div in possibleDividers)
-      {
-        if (div >= _tempMajorDivider && 0==(div%_tempMajorDivider))
-         _minorTickList.Add(new SelectableListNode((360.0 / div).ToString()+"°", div, div == selected));
-      }
-    }
-
-    void EhMajorTicksChanged(object sender, EventArgs e)
-    {
-      _tempMajorDivider = (int) _majorTickList.FirstSelectedNode.Item;
-      BuildMinorTickList();
-      _view.MinorTicks = _minorTickList;
-    }
-
-
     #region IMVCANController Members
 
     public bool InitializeDocument(params object[] args)
     {
       if (args == null || args.Length == 0)
         return false;
-      AngularScale doc = args[0] as AngularScale;
+      AngularRescaleConditions doc = args[0] as AngularRescaleConditions;
       if (doc == null)
         return false;
       _doc = doc;
@@ -151,13 +103,13 @@ namespace Altaxo.Gui.Graph.Scales
       {
         if (_view != null)
         {
-          _view.MajorTicksChanged -= EhMajorTicksChanged;
+          
         }
-        _view = value as IAngularScaleView;
+        _view = value as IAngularRescaleConditionsView;
         if (_view != null)
         {
           Initialize(false);
-          _view.MajorTicksChanged += EhMajorTicksChanged;
+          
         }
       }
     }
@@ -173,11 +125,7 @@ namespace Altaxo.Gui.Graph.Scales
 
     public bool Apply()
     {
-      _doc.UseDegrees = _view.UseDegrees;
-      _doc.UseSignedValues = _view.UsePositiveNegativeValues;
       _doc.ScaleOrigin = (int)_originList.FirstSelectedNode.Item;
-      _doc.MajorTickDivider = _tempMajorDivider;
-      _doc.MinorTickDivider = (int)_minorTickList.FirstSelectedNode.Item;
       return true;
     }
 
