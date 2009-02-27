@@ -1134,17 +1134,14 @@
       <DependentUpon>WorksheetView.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <Content Include="Calc\FitFunctions\Relaxation\.svn\README.txt" />
     <Content Include="Main\App.ico" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Calc\FitFunctions\Relaxation\.svn\empty-file" />
-    <None Include="Calc\FitFunctions\Relaxation\.svn\entries" />
-    <None Include="Calc\FitFunctions\Relaxation\.svn\format" />
-    <None Include="Calc\FitFunctions\Relaxation\.svn\text-base\HavriliakNegamiFunction.cs.svn-base" />
     <Compile Include="Calc\FitFunctions\Kinetics\KineticsNthOrder.cs" />
     <Compile Include="Calc\FitFunctions\Materials\ArrheniusLaw.cs" />
     <Compile Include="Calc\FitFunctions\Materials\VogelFulcherLaw.cs" />
+    <Compile Include="Calc\FitFunctions\Relaxation\HavriliakNegamiModulusRelaxation.cs" />
+    <Compile Include="Calc\FitFunctions\Relaxation\KohlrauschModulusRelaxation.cs" />
     <Compile Include="Calc\FitFunctions\Transitions\FermiDiracTransition.cs" />
     <Compile Include="Calc\FitFunctions\Transitions\GeneralEffectiveMedium.cs" />
     <Compile Include="Calc\FitFunctions\Transitions\PercolationTheory.cs" />

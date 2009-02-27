@@ -51,7 +51,7 @@ namespace Altaxo.Graph.Scales
 				s.SetNewScale( (Scale)info.GetValue("Scale",s) );
 				s.SetNewTickSpacing( (TickSpacing)info.GetValue("TickSpacing", s) );
 
-				//s._tickSpacing.FinalProcessScaleBoundaries(s._scale.OrgAsVariant, s._scale.EndAsVariant);
+				s._tickSpacing.FinalProcessScaleBoundaries(s._scale.OrgAsVariant, s._scale.EndAsVariant, s._scale);
 
 				return s;
 			}
@@ -65,15 +65,15 @@ namespace Altaxo.Graph.Scales
 
 		public ScaleWithTicks(Scale scale)
 		{
-			this.Scale = scale;
-			this.TickSpacing = CreateDefaultTicks(scale.GetType());
+			SetNewScale(scale);
+			SetNewTickSpacing(CreateDefaultTicks(scale.GetType()));
 		}
 
 
 		public ScaleWithTicks(Scale scale, TickSpacing ticks)
 		{
-			this.Scale = scale;
-			this.TickSpacing = ticks;
+			SetNewScale(scale);
+			SetNewTickSpacing(ticks);
 		}
 
 
@@ -84,9 +84,9 @@ namespace Altaxo.Graph.Scales
 
 		public void CopyFrom(ScaleWithTicks from)
 		{
-
-			this.Scale = null == from._scale ? null : (Scale)from._scale.Clone();
-			this.TickSpacing = null == from._tickSpacing ? null : (TickSpacing)from._tickSpacing.Clone();
+			SetTo(
+			 null == from._scale ? null : (Scale)from._scale.Clone(),
+			 null == from._tickSpacing ? null : (TickSpacing)from._tickSpacing.Clone());
 		}
 
 		public object Clone()
