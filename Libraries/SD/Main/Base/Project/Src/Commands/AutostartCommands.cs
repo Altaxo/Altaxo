@@ -1,9 +1,8 @@
-﻿
-// <file>
+﻿// <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3067 $</version>
+//     <version>$Revision: 3681 $</version>
 // </file>
 
 using System;
@@ -12,6 +11,7 @@ using System.IO;
 using System.Windows.Forms;
 
 using ICSharpCode.Core;
+using ICSharpCode.Core.WinForms;
 using ICSharpCode.SharpDevelop.Gui;
 using ICSharpCode.SharpDevelop.Project;
 
@@ -112,7 +112,11 @@ namespace ICSharpCode.SharpDevelop.Commands
 			
 			if (!didLoadSolutionOrFile) {
 				foreach (ICommand command in AddInTree.BuildItems<ICommand>("/Workspace/AutostartNothingLoaded", null, false)) {
-					command.Run();
+					try {
+						command.Run();
+					} catch (Exception ex) {
+						MessageService.ShowError(ex);
+					}
 				}
 			}
 			

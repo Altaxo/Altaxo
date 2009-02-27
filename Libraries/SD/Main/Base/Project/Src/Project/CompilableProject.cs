@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3228 $</version>
+//     <version>$Revision: 3753 $</version>
 // </file>
 
 using ICSharpCode.SharpDevelop.Internal.Templates;
@@ -359,11 +359,13 @@ namespace ICSharpCode.SharpDevelop.Project
 		protected override void OnPropertyChanged(ProjectPropertyChangedEventArgs e)
 		{
 			base.OnPropertyChanged(e);
-			if (reparseReferencesSensitiveProperties.Contains(e.PropertyName)) {
-				ParserService.Reparse(this, true, false);
-			}
-			if (reparseCodeSensitiveProperties.Contains(e.PropertyName)) {
-				ParserService.Reparse(this, false, true);
+			if (!isLoading) {
+				if (reparseReferencesSensitiveProperties.Contains(e.PropertyName)) {
+					ParserService.Reparse(this, true, false);
+				}
+				if (reparseCodeSensitiveProperties.Contains(e.PropertyName)) {
+					ParserService.Reparse(this, false, true);
+				}
 			}
 		}
 		

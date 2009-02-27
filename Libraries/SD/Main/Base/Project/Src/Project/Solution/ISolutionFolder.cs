@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2067 $</version>
+//     <version>$Revision: 3253 $</version>
 // </file>
 
 using System;
@@ -31,13 +31,6 @@ namespace ICSharpCode.SharpDevelop.Project
 		ISolutionFolderContainer Parent {
 			get;
 			set;
-		}
-		
-		/// <summary>
-		/// Gets the solution the solution folder/project belongs to. This member is thread-safe.
-		/// </summary>
-		Solution ParentSolution {
-			get;
 		}
 		
 		string TypeGuid {

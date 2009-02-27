@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3184 $</version>
+//     <version>$Revision: 3527 $</version>
 // </file>
 
 using System;
@@ -653,7 +653,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 					case NullRTReferenceCode:
 						return null;
 					case VoidRTCode:
-						return VoidReturnType.Instance;
+						return new VoidReturnType(pc);
 					case PointerRTCode:
 						return new PointerReturnType(ReadType());
 					default:

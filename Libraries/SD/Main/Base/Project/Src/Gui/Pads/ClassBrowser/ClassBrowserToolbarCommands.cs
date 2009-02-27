@@ -2,12 +2,13 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 3304 $</version>
 // </file>
 
 using System;
 using System.Windows.Forms;
 using ICSharpCode.Core;
+using ICSharpCode.Core.WinForms;
 
 namespace ICSharpCode.SharpDevelop.Gui.ClassBrowser
 {
@@ -50,14 +51,7 @@ namespace ICSharpCode.SharpDevelop.Gui.ClassBrowser
 		{
 			base.OnOwnerChanged(e);
 			dropDownButton = (ToolBarDropDownButton)Owner;
-			ToolStripItem[] items = (ToolStripItem[])(AddInTree.GetTreeNode("/SharpDevelop/Pads/ClassBrowser/Toolbar/SelectFilter").BuildChildItems(this)).ToArray(typeof(ToolStripItem));
-			foreach (ToolStripItem item in items) {
-				if (item is IStatusUpdate) {
-					((IStatusUpdate)item).UpdateStatus();
-				}
-			}
-			
-			dropDownButton.DropDownItems.AddRange(items);
+			MenuService.AddItemsToMenu(dropDownButton.DropDownItems, this, "/SharpDevelop/Pads/ClassBrowser/Toolbar/SelectFilter");
 		}
 	}
 	

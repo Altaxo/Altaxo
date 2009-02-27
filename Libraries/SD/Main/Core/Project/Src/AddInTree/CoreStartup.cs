@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2318 $</version>
+//     <version>$Revision: 3681 $</version>
 // </file>
 
 using System;
@@ -183,7 +183,12 @@ namespace ICSharpCode.Core
 			// run workspace autostart commands
 			LoggingService.Info("Running autostart commands...");
 			foreach (ICommand command in AddInTree.BuildItems<ICommand>("/Workspace/Autostart", null, false)) {
-				command.Run();
+				try {
+					command.Run();
+				} catch (Exception ex) {
+					// allow startup to continue if some commands fail
+					MessageService.ShowError(ex);
+				}
 			}
 		}
 		

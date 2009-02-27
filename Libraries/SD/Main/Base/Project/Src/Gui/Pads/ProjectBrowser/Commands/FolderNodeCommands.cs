@@ -2,11 +2,12 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3160 $</version>
+//     <version>$Revision: 3502 $</version>
 // </file>
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.IO;
 using System.Windows.Forms;
 
@@ -100,9 +101,9 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 					}
 				}
 				
-				FileUtility.DeepCopy(directoryName, copiedFileName, true);
+				FileService.CopyFile(directoryName, copiedFileName, true, false);
 				DirectoryNode newNode = new DirectoryNode(copiedFileName);
-				newNode.AddTo(node);
+				newNode.InsertSorted(node);
 				if (includeInProject) {
 					IncludeFileInProject.IncludeDirectoryNode(newNode, false);
 				}
@@ -123,7 +124,7 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 		{
 			string copiedFileName = Path.Combine(node.Directory, Path.GetFileName(fileName));
 			if (!FileUtility.IsEqualFileName(fileName, copiedFileName)) {
-				File.Copy(fileName, copiedFileName, true);
+				FileService.CopyFile(fileName, copiedFileName, false, true);
 			}
 			if (includeInProject) {
 				FileNode fileNode;
@@ -141,7 +142,7 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 					}
 				}
 				fileNode = new FileNode(copiedFileName);
-				fileNode.AddTo(node);
+				fileNode.InsertSorted(node);
 				return IncludeFileInProject.IncludeFileNode(fileNode);
 			}
 			return null;
@@ -161,16 +162,23 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 		
 		public override void Run()
 		{
+			this.AddExistingItems();
+		}
+		
+		protected IEnumerable<FileProjectItem> AddExistingItems()
+		{
 			TreeNode selectedNode = ProjectBrowserPad.Instance.ProjectBrowserControl.SelectedNode;
 			DirectoryNode node = selectedNode as DirectoryNode;
-			if (node == null) {
+			if (node == null && selectedNode != null) {
 				node = selectedNode.Parent as DirectoryNode;
 			}
 			if (node == null) {
-				return;
+				return null;
 			}
 			node.Expanding();
 			node.Expand();
+			
+			List<FileProjectItem> addedItems = new List<FileProjectItem>();
 			
 			using (OpenFileDialog fdiag  = new OpenFileDialog()) {
 				fdiag.AddExtension    = true;
@@ -205,11 +213,12 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 					
 					string copiedFileName = Path.Combine(node.Directory, Path.GetFileName(fileNames[0].Key));
 					if (!FileUtility.IsEqualFileName(fileNames[0].Key, copiedFileName)) {
-						int res = MessageService.ShowCustomDialog(fdiag.Title, "${res:ProjectComponent.ContextMenu.AddExistingFiles.Question}",
-						                                          0, 2,
-						                                          "${res:ProjectComponent.ContextMenu.AddExistingFiles.Copy}",
-						                                          "${res:ProjectComponent.ContextMenu.AddExistingFiles.Link}",
-						                                          "${res:Global.CancelButtonText}");
+						int res = MessageService.ShowCustomDialog(
+							fdiag.Title, "${res:ProjectComponent.ContextMenu.AddExistingFiles.Question}",
+							0, 2,
+							"${res:ProjectComponent.ContextMenu.AddExistingFiles.Copy}",
+							"${res:ProjectComponent.ContextMenu.AddExistingFiles.Link}",
+							"${res:Global.CancelButtonText}");
 						if (res == 1) {
 							// Link
 							foreach (KeyValuePair<string, string> pair in fileNames) {
@@ -219,18 +228,19 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 								FileProjectItem fileProjectItem = new FileProjectItem(node.Project, node.Project.GetDefaultItemType(fileName), relFileName);
 								fileProjectItem.SetEvaluatedMetadata("Link", Path.Combine(node.RelativePath, Path.GetFileName(fileName)));
 								fileProjectItem.DependentUpon = pair.Value;
+								addedItems.Add(fileProjectItem);
 								fileNode.ProjectItem = fileProjectItem;
-								fileNode.AddTo(node);
+								fileNode.InsertSorted(node);
 								ProjectService.AddProjectItem(node.Project, fileProjectItem);
 							}
 							node.Project.Save();
 							if (addedDependentFiles)
 								node.RecreateSubNodes();
-							return;
+							return addedItems.AsReadOnly();
 						}
 						if (res == 2) {
 							// Cancel
-							return;
+							return addedItems.AsReadOnly();
 						}
 						// only continue for res==0 (Copy)
 					}
@@ -249,6 +259,7 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 						}
 						FileProjectItem item = CopyFile(pair.Key, node, true);
 						if (item != null) {
+							addedItems.Add(item);
 							item.DependentUpon = pair.Value;
 						}
 					}
@@ -257,9 +268,70 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 						node.RecreateSubNodes();
 				}
 			}
+			
+			return addedItems.AsReadOnly();
 		}
 	}
 	
+	public class AddExistingFolderToProject : AbstractMenuCommand
+	{
+		public override void Run()
+		{
+			TreeNode selectedNode = ProjectBrowserPad.Instance.ProjectBrowserControl.SelectedNode;
+			DirectoryNode node = selectedNode as DirectoryNode;
+			if (node == null && selectedNode != null) {
+				node = selectedNode.Parent as DirectoryNode;
+			}
+			if (node == null) {
+				return;
+			}
+			node.Expanding();
+			node.Expand();
+			
+			using (FolderBrowserDialog dlg = new FolderBrowserDialog()) {
+				dlg.SelectedPath = node.Directory;
+				dlg.ShowNewFolderButton = false;
+				if (dlg.ShowDialog(WorkbenchSingleton.MainForm) == DialogResult.OK) {
+					string folderName = dlg.SelectedPath;
+					string copiedFolderName = Path.Combine(node.Directory, Path.GetFileName(folderName));
+					if (!FileUtility.IsEqualFileName(folderName, copiedFolderName)) {
+						if (FileUtility.IsBaseDirectory(folderName, node.Directory)) {
+							MessageService.ShowError("Cannot copy " + folderName + " to " + copiedFolderName);
+							return;
+						}
+						if (Directory.Exists(copiedFolderName)) {
+							MessageService.ShowError("Cannot copy " + folderName + " to " + copiedFolderName + ": target already exists.");
+							return;
+						}
+						int res = MessageService.ShowCustomDialog(
+							"${res:ProjectComponent.ContextMenu.ExistingFolder}",
+							"${res:ProjectComponent.ContextMenu.ExistingFolder.CopyQuestion}",
+							0, 1,
+							"${res:ProjectComponent.ContextMenu.AddExistingFiles.Copy}",
+							"${res:Global.CancelButtonText}");
+						if (res != 0)
+							return;
+						if (!FileService.CopyFile(folderName, copiedFolderName, true, false))
+							return;
+					}
+					// ugly HACK to get IncludeDirectoryNode to work properly
+					AbstractProjectBrowserTreeNode.ShowAll = true;
+					try {
+						node.RecreateSubNodes();
+						DirectoryNode newNode = node.AllNodes.OfType<DirectoryNode>()
+							.FirstOrDefault(dir=>FileUtility.IsEqualFileName(copiedFolderName, dir.Directory));
+						if (newNode != null) {
+							newNode.Expanding();
+							IncludeFileInProject.IncludeDirectoryNode(newNode, true);
+						}
+					} finally {
+						AbstractProjectBrowserTreeNode.ShowAll = false;
+					}
+					node.RecreateSubNodes();
+				}
+			}
+		}
+	}
 	
 	/// <summary>
 	/// Menu item that display the NewFileDialog dialog and adds it to the solution.
@@ -272,18 +344,26 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 	{
 		public override void Run()
 		{
+			this.AddNewItems();
+		}
+		
+		protected IEnumerable<FileProjectItem> AddNewItems()
+		{
 			DirectoryNode node = ProjectBrowserPad.Instance.ProjectBrowserControl.SelectedDirectoryNode;
 			if (node == null) {
-				return;
-			}	
+				return null;
+			}
 			node.Expand();
 			node.Expanding();
+			
+			List<FileProjectItem> addedItems = new List<FileProjectItem>();
 			
 			using (NewFileDialog nfd = new NewFileDialog(node.Directory)) {
 				if (nfd.ShowDialog(ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.MainForm) == DialogResult.OK) {
 					bool additionalProperties = false;
 					foreach (KeyValuePair<string, FileDescriptionTemplate> createdFile in nfd.CreatedFiles) {
 						FileProjectItem item = node.AddNewFile(createdFile.Key);
+						addedItems.Add(item);
 						
 						if (createdFile.Value.SetProjectItemProperties(item)) {
 							additionalProperties = true;
@@ -295,6 +375,8 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 					}
 				}
 			}
+			
+			return addedItems.AsReadOnly();
 		}
 	}
 	
@@ -321,7 +403,7 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 			FileService.FireFileCreated(directoryName, true);
 			
 			DirectoryNode directoryNode = new DirectoryNode(directoryName, FileNodeStatus.InProject);
-			directoryNode.AddTo(upper);
+			directoryNode.InsertSorted(upper);
 			
 			IncludeFileInProject.IncludeDirectoryNode(directoryNode, false);
 			return directoryNode;

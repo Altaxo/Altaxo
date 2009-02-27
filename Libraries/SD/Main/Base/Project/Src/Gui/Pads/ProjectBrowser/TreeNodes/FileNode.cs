@@ -2,14 +2,17 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2975 $</version>
+//     <version>$Revision: 3793 $</version>
 // </file>
 
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 
 using ICSharpCode.Core;
+using ICSharpCode.Core.WinForms;
 using ICSharpCode.SharpDevelop.Gui;
 
 namespace ICSharpCode.SharpDevelop.Project
@@ -182,11 +185,67 @@ namespace ICSharpCode.SharpDevelop.Project
 		
 		public override DragDropEffects GetDragDropEffect(IDataObject dataObject, DragDropEffects proposedEffect)
 		{
+			if (dataObject.GetDataPresent(typeof(FileNode))) {
+				// Dragging a file onto another creates a dependency.
+				// If we are in the same directory, allow moving only.
+				if (this.Project.ReadOnly)
+					return DragDropEffects.None;
+				FileNode other = (FileNode)dataObject.GetData(typeof(FileNode));
+				if (other == this || !(other.ProjectItem is FileProjectItem) || !(this.ProjectItem is FileProjectItem))
+					return DragDropEffects.None;
+				if (FileUtility.IsEqualFileName(Path.GetDirectoryName(this.FileName), Path.GetDirectoryName(other.FileName))) {
+					return DragDropEffects.Move;
+				} else {
+					return proposedEffect;
+				}
+			}
 			return ((ExtTreeNode)Parent).GetDragDropEffect(dataObject, proposedEffect);
 		}
 		
 		public override void DoDragDrop(IDataObject dataObject, DragDropEffects effect)
 		{
+			if (dataObject.GetDataPresent(typeof(FileNode))) {
+				
+				// Dragging a file onto another creates a dependency.
+				
+				FileNode other = (FileNode)dataObject.GetData(typeof(FileNode));
+				LoggingService.Debug("ProjectBrowser: Dragging file '" + other.FileName + "' onto file '" + this.FileName + "'");
+				
+				// Copy/move the file to the correct directory
+				// if the target is in a different directory than the source.
+				if (!FileUtility.IsEqualFileName(Path.GetDirectoryName(this.FileName), Path.GetDirectoryName(other.FileName))) {
+					LoggingService.Debug("-> Source file is in different directory, performing " + effect.ToString());
+					ExtTreeNode p = this;
+					DirectoryNode parentDirectory;
+					do {
+						p = (ExtTreeNode)p.Parent;
+						parentDirectory = p as DirectoryNode;
+					} while (parentDirectory == null && p != null);
+					if (parentDirectory == null) {
+						throw new InvalidOperationException("File '" + this.FileName + "' does not have a parent directory.");
+					}
+					LoggingService.Debug("-> Copying/Moving source file to parent directory of target: " + parentDirectory.Directory);
+					string otherFileName = Path.GetFileName(other.FileName);
+					parentDirectory.CopyFileHere(other, effect == DragDropEffects.Move);
+					// Find the copied or moved file node again
+					other = parentDirectory.AllNodes.OfType<FileNode>().SingleOrDefault(n => FileUtility.IsEqualFileName(Path.GetFileName(n.FileName), otherFileName));
+				}
+				
+				if (other != null) {
+					other.Remove();
+					((FileProjectItem)other.ProjectItem).DependentUpon = Path.GetFileName(this.FileName);
+					other.FileNodeStatus = FileNodeStatus.BehindFile;
+					other.InsertSorted(this);
+					LoggingService.Debug("-> Created new dependency, saving solution");
+					ProjectService.SaveSolution();
+				} else {
+					LoggingService.Debug("-> Could not find the copied or moved file node in the new parent directory.");
+				}
+				
+				return;
+				
+			}
+			
 			((ExtTreeNode)Parent).DoDragDrop(dataObject, effect);
 		}
 		#endregion
@@ -270,16 +329,9 @@ namespace ICSharpCode.SharpDevelop.Project
 		/// </summary>
 		void DeleteChildNodes()
 		{
-			if (Nodes.Count == 0) return;
-			
-			foreach (TreeNode node in Nodes) {
-				FileNode fileNode = node as FileNode;
-				if (fileNode != null) {
-					fileNode.DeleteChildNodes(); // delete recursively
-					FileService.RemoveFile(fileNode.FileName, false);
-				} else {
-					LoggingService.Warn("FileNode.DeleteChildren. Child is not a FileNode.");
-				}
+			foreach (FileNode fileNode in Nodes.OfType<FileNode>().ToList()) {
+				fileNode.DeleteChildNodes(); // delete recursively
+				FileService.RemoveFile(fileNode.FileName, false);
 			}
 		}
 	}

@@ -549,7 +549,7 @@ namespace Altaxo.Main
       }
 
       if (firstView != null)
-        WorkbenchSingleton.Workbench.WorkbenchLayout.ShowView(firstView);
+        WorkbenchSingleton.Workbench.WorkbenchLayout.ShowView(firstView,true);
     }
 
     #region Worksheet functions

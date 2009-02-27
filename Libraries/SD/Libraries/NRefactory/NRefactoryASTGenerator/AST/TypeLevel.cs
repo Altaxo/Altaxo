@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2653 $</version>
+//     <version>$Revision: 3682 $</version>
 // </file>
 
 using System;
@@ -51,7 +51,7 @@ namespace NRefactoryASTGenerator.Ast
 	}
 	
 	[ImplementNullable(NullableImplementation.Abstract)]
-	abstract class EventAddRemoveRegion : AttributedNode
+	abstract class EventAddRemoveRegion : AttributedNode, INullable
 	{
 		BlockStatement block;
 		List<ParameterDeclarationExpression> parameters;
@@ -192,7 +192,7 @@ namespace NRefactoryASTGenerator.Ast
 	}
 	
 	[ImplementNullable(NullableImplementation.Abstract)]
-	abstract class PropertyGetSetRegion : AttributedNode
+	abstract class PropertyGetSetRegion : AttributedNode, INullable
 	{
 		// can be null if only the definition is there (interface declaration)
 		BlockStatement block;

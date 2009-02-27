@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2949 $</version>
+//     <version>$Revision: 3472 $</version>
 // </file>
 
 using System;
@@ -106,6 +106,11 @@ namespace ICSharpCode.SharpDevelop
 					UpdateReferenceInterDependencies();
 				}
 				OnReferencedContentsChanged(EventArgs.Empty);
+				
+				// Refresh the reference if required.
+				// If the user removes the reference and then re-adds it, there might be other references
+				// in the project depending on it, so we do the refresh after the old reference was added.
+				ParserService.RefreshProjectContentForReference(reference);
 			} catch (Exception e) {
 				MessageService.ShowError(e);
 			}

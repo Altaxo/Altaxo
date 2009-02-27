@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <author name="Daniel Grunwald"/>
-//     <version>$Revision: 2935 $</version>
+//     <version>$Revision: 3763 $</version>
 // </file>
 
 using System;
@@ -72,7 +72,7 @@ namespace ICSharpCode.SharpDevelop.Project
 			
 			public void ReportMessage(string message)
 			{
-				messageView.AppendLine(message);
+				messageView.AppendLine(ICSharpCode.Core.StringParser.Parse(message));
 			}
 			
 			public void Done(bool success)
@@ -107,7 +107,7 @@ namespace ICSharpCode.SharpDevelop.Project
 				EventHandler eh = null;
 				lock (lockObject) {
 					if (isCancelAllowed && !isCancelled) {
-						ICSharpCode.Core.LoggingService.Debug("Cancel build");
+						ICSharpCode.Core.LoggingService.Info("Cancel build");
 						isCancelled = true;
 						eh = Cancelled;
 					}
@@ -261,6 +261,11 @@ namespace ICSharpCode.SharpDevelop.Project
 				this.project = project;
 			}
 			
+			public void DoStartBuild(object state)
+			{
+				project.StartBuild(options, this);
+			}
+			
 			public void ReportError(BuildError error)
 			{
 				engine.ReportError(this, error);
@@ -333,7 +338,7 @@ namespace ICSharpCode.SharpDevelop.Project
 				node.options.Platform = options.SolutionPlatform;
 			
 			// copy properties to project options
-			options.GlobalAdditionalProperties.Foreach(node.options.Properties.Add);
+			options.GlobalAdditionalProperties.ForEach(node.options.Properties.Add);
 			if (project == rootProject) {
 				foreach (var pair in options.ProjectAdditionalProperties) {
 					node.options.Properties[pair.Key] = pair.Value;
@@ -416,7 +421,7 @@ namespace ICSharpCode.SharpDevelop.Project
 						hasDependencyErrors |= n.hasErrors;
 					}
 					
-					ICSharpCode.Core.LoggingService.Debug("Start building " + node.project.Name);
+					ICSharpCode.Core.LoggingService.Info("Start building " + node.project.Name);
 					runningWorkers++;
 					projectsCurrentlyBuilding.Add(node);
 					if (hasDependencyErrors) {
@@ -424,7 +429,8 @@ namespace ICSharpCode.SharpDevelop.Project
 						node.hasErrors = true;
 						node.Done(false);
 					} else {
-						node.project.StartBuild(node.options, node);
+						// do not run "DoStartBuild" inside lock - run it async on the thread pool
+						System.Threading.ThreadPool.QueueUserWorkItem(node.DoStartBuild);
 					}
 				}
 			}
@@ -458,7 +464,7 @@ namespace ICSharpCode.SharpDevelop.Project
 		
 		void OnBuildFinished(BuildNode node, bool success)
 		{
-			ICSharpCode.Core.LoggingService.Debug("Finished building " + node.project.Name);
+			ICSharpCode.Core.LoggingService.Info("Finished building " + node.project.Name);
 			lock (this) {
 				if (node.buildFinished) {
 					throw new InvalidOperationException("This node already finished building, do not call IBuildFeedbackSink.Done() multiple times!");
@@ -468,6 +474,7 @@ namespace ICSharpCode.SharpDevelop.Project
 				node.hasErrors = !success;
 				
 				projectsCurrentlyBuilding.Remove(node);
+				results.AddBuiltProject(node.project);
 				if (progressMonitor != null) {
 					progressMonitor.WorkDone += 1;
 				}
@@ -505,7 +512,7 @@ namespace ICSharpCode.SharpDevelop.Project
 			if (buildIsCancelled) {
 				results.Result = BuildResultCode.Cancelled;
 				
-				ReportMessageInternal("Build was cancelled.");
+				ReportMessageInternal("${res:MainWindow.CompilerMessages.BuildCancelled}");
 			} else if (rootNode.hasErrors) {
 				results.Result = BuildResultCode.Error;
 				
@@ -603,7 +610,7 @@ namespace ICSharpCode.SharpDevelop.Project
 				}
 			}
 			if (messagesToReport != null) {
-				messagesToReport.Foreach(ReportMessageInternal);
+				messagesToReport.ForEach(ReportMessageInternal);
 			}
 			if (newNodeWithOutputLockAlreadyFinishedBuilding) {
 				// if the node already finished building before it got the output lock, we need
@@ -622,7 +629,7 @@ namespace ICSharpCode.SharpDevelop.Project
 		{
 			lock (this) {
 				if (progressMonitor != null) {
-					progressMonitor.TaskName = "Building "
+					progressMonitor.TaskName = "${res:MainWindow.CompilerMessages.BuildVerb} "
 						+ projectsCurrentlyBuilding.Select(n => n.project.Name).Join(", ")
 						+ "...";
 				}

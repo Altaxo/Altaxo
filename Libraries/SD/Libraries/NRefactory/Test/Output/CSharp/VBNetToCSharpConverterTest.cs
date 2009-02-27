@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2660 $</version>
+//     <version>$Revision: 3477 $</version>
 // </file>
 
 using System;
@@ -684,6 +684,22 @@ static int static_Test2_j = 0;");
 			TestStatement("Dim x", "object x = null;");
 			TestStatement("Dim x As Char", "char x = '\\0';");
 			TestStatement("Dim x As System.DateTime", "System.DateTime x = default(System.DateTime);");
+		}
+		
+		[Test]
+		public void ExpressionAsLoopVariable()
+		{
+			TestStatement("For Me.Field = 1 To 10 : Next Me.Field", "for (this.Field = 1; this.Field <= 10; this.Field++) {\n}");
+		}
+		
+		[Test]
+		public void ConstModuleMember()
+		{
+			TestProgram("Module Test : Public Const C As Integer = 0 : End Module",
+			            "static class Test\r\n" +
+			            "{\r\n" +
+			            "  public const int C = 0;\r\n" +
+			            "}\r\n");
 		}
 	}
 }

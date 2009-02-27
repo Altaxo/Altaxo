@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2932 $</version>
+//     <version>$Revision: 3494 $</version>
 // </file>
 
 using System;
@@ -30,9 +30,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Actions
 		public override void Execute(TextArea textArea)
 		{
 			SharpDevelopTextAreaControl sdtac = (SharpDevelopTextAreaControl)textArea.MotherTextEditorControl;
-			CtrlSpaceCompletionDataProvider provider = new CtrlSpaceCompletionDataProvider();
-			provider.AllowCompleteExistingExpression = true;
-			sdtac.ShowCompletionWindow(provider, '\0');
+			sdtac.StartCtrlSpaceCompletion();
 		}
 	}
 	

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2396 $</version>
+//     <version>$Revision: 3794 $</version>
 // </file>
 
 using System;
@@ -51,7 +51,7 @@ namespace ICSharpCode.SharpDevelop
 				builder.Append('<');
 				for (int i = 0; i < c.TypeParameters.Count; ++i) {
 					if (i > 0) builder.Append(", ");
-					builder.Append(c.TypeParameters[i].Name);
+					builder.Append(ConvertTypeParameter(c.TypeParameters[i]));
 				}
 				builder.Append('>');
 			}
@@ -176,6 +176,14 @@ namespace ICSharpCode.SharpDevelop
 			return builder.ToString();
 		}
 		
+		string ConvertTypeParameter(ITypeParameter tp)
+		{
+			if (tp.BoundTo != null)
+				return Convert(tp.BoundTo);
+			else
+				return tp.Name;
+		}
+		
 		public override string Convert(IMethod m)
 		{
 			StringBuilder builder = new StringBuilder();
@@ -195,7 +203,7 @@ namespace ICSharpCode.SharpDevelop
 				builder.Append('<');
 				for (int i = 0; i < m.TypeParameters.Count; ++i) {
 					if (i > 0) builder.Append(", ");
-					builder.Append(m.TypeParameters[i].Name);
+					builder.Append(ConvertTypeParameter(m.TypeParameters[i]));
 				}
 				builder.Append('>');
 			}
@@ -232,14 +240,17 @@ namespace ICSharpCode.SharpDevelop
 			if (returnType == null) {
 				return String.Empty;
 			}
+			
 			StringBuilder builder = new StringBuilder();
 			
 			string name = returnType.DotNetName;
 			if (UseFullyQualifiedTypeNames) {
 				builder.Append(name);
 			} else {
-				int pos = returnType.Namespace.Length;
-				builder.Append(name, pos, name.Length - pos);
+				string rtNamespace = returnType.Namespace;
+				if (name.StartsWith(rtNamespace, StringComparison.Ordinal)) {
+					builder.Append(name, rtNamespace.Length, name.Length - rtNamespace.Length);
+				}
 			}
 			
 			return builder.ToString();

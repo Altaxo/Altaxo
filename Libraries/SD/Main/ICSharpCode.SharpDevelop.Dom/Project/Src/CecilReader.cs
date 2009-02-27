@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3184 $</version>
+//     <version>$Revision: 3768 $</version>
 // </file>
 
 using System;
@@ -69,7 +69,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 			}
 			if (type == null) {
 				LoggingService.Warn("CecilReader: Null type for: " + member);
-				return VoidReturnType.Instance;
+				return new VoidReturnType(pc);
 			}
 			if (type is ReferenceType) {
 				// TODO: Use ByRefRefReturnType
@@ -174,12 +174,15 @@ namespace ICSharpCode.SharpDevelop.Dom
 						|| type.BaseType.FullName == "System.MulticastDelegate";
 			}
 			
+			protected override bool KeepInheritanceTree {
+				get { return true; }
+			}
+			
 			public CecilClass(ICompilationUnit compilationUnit, IClass declaringType,
 			                  TypeDefinition td, string fullName)
 				: base(compilationUnit, declaringType)
 			{
 				this.FullyQualifiedName = fullName;
-				this.UseInheritanceCache = true;
 				
 				AddAttributes(compilationUnit.ProjectContent, this.Attributes, td.CustomAttributes);
 				

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 3679 $</version>
 // </file>
 
 using System;
@@ -97,6 +97,11 @@ namespace ICSharpCode.SharpDevelop
 			}
 		}
 		
+		/// <summary>
+		/// Contains a reference to the build error.
+		/// </summary>
+		public BuildError BuildError { get; private set; }
+		
 		public Task(string fileName, string description, int column, int line, TaskType type)
 		{
 			this.type        = type;
@@ -121,6 +126,7 @@ namespace ICSharpCode.SharpDevelop
 				contextMenuAddInTreeEntry = error.ContextMenuAddInTreeEntry;
 			}
 			tag = error.Tag;
+			this.BuildError = error;
 		}
 		
 		public void JumpToPosition()

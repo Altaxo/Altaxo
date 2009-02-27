@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3065 $</version>
+//     <version>$Revision: 3469 $</version>
 // </file>
 
 using System;
@@ -10,8 +10,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
-using ICSharpCode.Core;
-using ICSharpCode.TextEditor;
+using ICSharpCode.Core.WinForms;
 
 namespace ICSharpCode.SharpDevelop.Gui
 {
@@ -75,12 +74,14 @@ namespace ICSharpCode.SharpDevelop.Gui
 		{
 			internalParent = parentNode;
 			parentNode.Nodes.Insert(index, this);
+			Refresh();
 		}
 		
 		public void Insert(int index, TreeView view)
 		{
 			internalParent = null;
 			view.Nodes.Insert(index, this);
+			Refresh();
 		}
 		
 		void AddTo(TreeNodeCollection nodes)
@@ -321,19 +322,19 @@ namespace ICSharpCode.SharpDevelop.Gui
 		
 		public static Font RegularMonospacedFont {
 			get {
-				return ResourceService.DefaultMonospacedFont;
+				return WinFormsResourceService.DefaultMonospacedFont;
 			}
 		}
 		public static Font BoldMonospacedFont {
 			get {
 				return boldMonospacedFont
-					?? (boldMonospacedFont = ResourceService.LoadDefaultMonospacedFont(FontStyle.Bold));
+					?? (boldMonospacedFont = WinFormsResourceService.LoadDefaultMonospacedFont(FontStyle.Bold));
 			}
 		}
 		public static Font ItalicMonospacedFont {
 			get {
 				return italicMonospacedFont
-					?? (italicMonospacedFont = ResourceService.LoadDefaultMonospacedFont(FontStyle.Italic));
+					?? (italicMonospacedFont = WinFormsResourceService.LoadDefaultMonospacedFont(FontStyle.Italic));
 			}
 		}
 		
@@ -346,35 +347,35 @@ namespace ICSharpCode.SharpDevelop.Gui
 		public static Font BoldDefaultFont {
 			get {
 				return boldDefaultFont
-					?? (boldDefaultFont = ResourceService.LoadFont(RegularDefaultFont, FontStyle.Bold));
+					?? (boldDefaultFont = WinFormsResourceService.LoadFont(RegularDefaultFont, FontStyle.Bold));
 			}
 		}
 		
 		public static Font ItalicDefaultFont {
 			get {
 				return italicDefaultFont
-					?? (italicDefaultFont = ResourceService.LoadFont(RegularDefaultFont, FontStyle.Italic));
+					?? (italicDefaultFont = WinFormsResourceService.LoadFont(RegularDefaultFont, FontStyle.Italic));
 			}
 		}
 		
 		public static Font RegularBigFont {
 			get {
 				return regularBigFont
-					?? (regularBigFont = ResourceService.LoadFont("Tahoma", 9));
+					?? (regularBigFont = WinFormsResourceService.LoadFont("Tahoma", 9));
 			}
 		}
 		
 		public static Font BoldBigFont {
 			get {
 				return boldBigFont
-					?? (boldBigFont = ResourceService.LoadFont("Tahoma", 9, FontStyle.Bold));
+					?? (boldBigFont = WinFormsResourceService.LoadFont("Tahoma", 9, FontStyle.Bold));
 			}
 		}
 		
 		public static Font ItalicBigFont {
 			get {
 				return italicBigFont
-					?? (italicBigFont = ResourceService.LoadFont("Tahoma", 9, FontStyle.Italic));
+					?? (italicBigFont = WinFormsResourceService.LoadFont("Tahoma", 9, FontStyle.Italic));
 			}
 		}
 		#endregion
@@ -502,6 +503,66 @@ namespace ICSharpCode.SharpDevelop.Gui
 			get {
 				return Text;
 			}
+		}
+		
+		int GetInsertionIndex(TreeNodeCollection nodes, TreeView treeView)
+		{
+			if (treeView == null) {
+				return nodes.Count;
+			}
+			
+			Comparison<TreeNode> comparison = null;
+			
+			ExtTreeView etv = treeView as ExtTreeView;
+			if (etv == null) {
+				if (!treeView.Sorted) {
+					return nodes.Count;
+				}
+				if (treeView.TreeViewNodeSorter != null) {
+					comparison = treeView.TreeViewNodeSorter.Compare;
+				}
+			} else {
+				if (!etv.IsSorted) {
+					return nodes.Count;
+				}
+				if (etv.NodeSorter != null) {
+					comparison = etv.NodeSorter.Compare;
+				}
+			}
+			
+			if (comparison == null) {
+				return nodes.Count;
+			}
+			
+			for (int i = 0; i < nodes.Count; ++i) {
+				if (comparison(this, nodes[i]) < 0) {
+					return i;
+				}
+			}
+			
+			return nodes.Count;
+		}
+		
+		/// <summary>
+		/// Inserts this node into the specified TreeView at the position
+		/// determined by the comparer of the TreeView, assuming that
+		/// all other immediate child nodes of the TreeView are in sorted order.
+		/// </summary>
+		public void InsertSorted(TreeView treeView)
+		{
+			this.Insert(this.GetInsertionIndex(treeView.Nodes, treeView), treeView);
+		}
+		
+		/// <summary>
+		/// Inserts this node into the specified <paramref name="parentNode"/>
+		/// at the position determined by the comparer
+		/// of the TreeView which contains the <paramref name="parentNode"/>,
+		/// assuming that all other immediate child nodes of the <paramref name="parentNode"/>
+		/// are in sorted order.
+		/// </summary>
+		public void InsertSorted(TreeNode parentNode)
+		{
+			this.Insert(this.GetInsertionIndex(parentNode.Nodes, parentNode.TreeView), parentNode);
 		}
 		#endregion
 	}

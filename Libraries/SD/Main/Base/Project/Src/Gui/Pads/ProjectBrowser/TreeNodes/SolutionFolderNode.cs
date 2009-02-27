@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2736 $</version>
+//     <version>$Revision: 3469 $</version>
 // </file>
 
 using System;
@@ -10,6 +10,7 @@ using System.Diagnostics;
 using System.Windows.Forms;
 
 using ICSharpCode.Core;
+using ICSharpCode.Core.WinForms;
 using ICSharpCode.SharpDevelop.Gui;
 
 namespace ICSharpCode.SharpDevelop.Project
@@ -87,7 +88,7 @@ namespace ICSharpCode.SharpDevelop.Project
 			string relativeFileName = FileUtility.GetRelativePath(solution.Directory, fileName);
 			SolutionItem newItem = new SolutionItem(relativeFileName, relativeFileName);
 			folder.SolutionItems.Items.Add(newItem);
-			new SolutionItemNode(solution, newItem).AddTo(this);
+			new SolutionItemNode(solution, newItem).InsertSorted(this);
 		}
 		
 		protected override void Initialize()
@@ -99,7 +100,7 @@ namespace ICSharpCode.SharpDevelop.Project
 					NodeBuilders.AddProjectNode(this, (IProject)treeObject);
 				} else if (treeObject is SolutionFolder) {
 					SolutionFolderNode folderNode = new SolutionFolderNode(solution, (SolutionFolder)treeObject);
-					folderNode.AddTo(this);
+					folderNode.InsertSorted(this);
 				} else {
 					MessageService.ShowWarning("SolutionFolderNode.Initialize(): unknown tree object : " + treeObject);
 				}
@@ -107,7 +108,7 @@ namespace ICSharpCode.SharpDevelop.Project
 			
 			// add solution items (=files) from project sections.
 			foreach (SolutionItem item in folder.SolutionItems.Items) {
-				new SolutionItemNode(Solution, item).AddTo(this);
+				new SolutionItemNode(Solution, item).InsertSorted(this);
 			}
 			base.Initialize();
 		}
@@ -149,7 +150,11 @@ namespace ICSharpCode.SharpDevelop.Project
 		
 		public static bool DoEnablePaste(ISolutionFolderNode container)
 		{
-			IDataObject dataObject = ClipboardWrapper.GetDataObject();
+			return DoEnablePaste(container, ClipboardWrapper.GetDataObject());
+		}
+		
+		static bool DoEnablePaste(ISolutionFolderNode container, IDataObject dataObject)
+		{
 			if (dataObject == null) {
 				return false;
 			}
@@ -170,13 +175,13 @@ namespace ICSharpCode.SharpDevelop.Project
 		
 		public static void DoPaste(ISolutionFolderNode folderNode)
 		{
-			if (!DoEnablePaste(folderNode)) {
+			IDataObject dataObject = ClipboardWrapper.GetDataObject();
+			if (!DoEnablePaste(folderNode, dataObject)) {
 				LoggingService.Warn("SolutionFolderNode.DoPaste: Pasting was not enabled.");
 				return;
 			}
 			
 			ExtTreeNode folderTreeNode = (ExtTreeNode)folderNode;
-			IDataObject dataObject = ClipboardWrapper.GetDataObject();
 			
 			if (dataObject.GetDataPresent(typeof(ISolutionFolder).ToString())) {
 				string guid = dataObject.GetData(typeof(ISolutionFolder).ToString()).ToString();
@@ -188,7 +193,7 @@ namespace ICSharpCode.SharpDevelop.Project
 						ExtTreeNode oldParent = node.Parent as ExtTreeNode;
 						node.Remove();
 						
-						node.AddTo(folderTreeNode);
+						node.InsertSorted(folderTreeNode);
 						if (oldParent != null) {
 							oldParent.Refresh();
 						}
@@ -259,7 +264,7 @@ namespace ICSharpCode.SharpDevelop.Project
 				AbstractProjectBrowserTreeNode parentNode = folderNode.Parent as AbstractProjectBrowserTreeNode;
 				
 				folderNode.Remove();
-				folderNode.AddTo(this);
+				folderNode.InsertSorted(this);
 				folderNode.EnsureVisible();
 				this.folder.AddFolder(folderNode.Folder);
 				if (parentNode != null) {
@@ -275,7 +280,7 @@ namespace ICSharpCode.SharpDevelop.Project
 				Container.SolutionItems.Items.Add(solutionItemNode.SolutionItem);
 				
 				solutionItemNode.Remove();
-				solutionItemNode.AddTo(this);
+				solutionItemNode.InsertSorted(this);
 				solutionItemNode.EnsureVisible();
 				if (solutionItemNode.Parent != null) {
 					((ExtTreeNode)solutionItemNode.Parent).Refresh();
@@ -286,7 +291,7 @@ namespace ICSharpCode.SharpDevelop.Project
 				ProjectNode projectNode = (ProjectNode)dataObject.GetData(typeof(ProjectNode));
 				
 				projectNode.Remove();
-				projectNode.AddTo(this);
+				projectNode.InsertSorted(this);
 				projectNode.EnsureVisible();
 				this.folder.AddFolder(projectNode.Project);
 				

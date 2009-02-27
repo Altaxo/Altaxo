@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2739 $</version>
+//     <version>$Revision: 3753 $</version>
 // </file>
 
 using System;
@@ -80,7 +80,9 @@ namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 			Get<TextBox>("xmlDocumentation").Enabled = Get<CheckBox>("xmlDocumentation").Checked;
 			if (Get<CheckBox>("xmlDocumentation").Checked) {
 				if (Get<TextBox>("xmlDocumentation").Text.Length == 0) {
-					Get<TextBox>("xmlDocumentation").Text = Path.ChangeExtension(FileUtility.GetRelativePath(baseDirectory, project.OutputAssemblyFullPath), ".xml");
+					Get<TextBox>("xmlDocumentation").Text = MSBuildInternals.Escape(
+						Path.ChangeExtension(FileUtility.GetRelativePath(baseDirectory, project.OutputAssemblyFullPath),
+						                     ".xml"));
 				}
 			} else {
 				Get<TextBox>("xmlDocumentation").Text = "";
@@ -195,6 +197,13 @@ namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 			b.DefaultLocation = PropertyStorageLocations.PlatformSpecific;
 			b.RegisterLocationButton(advancedLocationButton);
 			
+			b = CreatePlatformTarget();
+			b.RegisterLocationButton(advancedLocationButton);
+		}
+		
+		protected ConfigurationGuiBinding CreatePlatformTarget()
+		{
+			ConfigurationGuiBinding b;
 			b = helper.BindStringEnum("targetCpuComboBox", "PlatformTarget",
 			                          "AnyCPU",
 			                          new StringPair("AnyCPU", "${res:Dialog.ProjectOptions.Build.TargetCPU.Any}"),
@@ -202,9 +211,9 @@ namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 			                          new StringPair("x64", "${res:Dialog.ProjectOptions.Build.TargetCPU.x64}"),
 			                          new StringPair("Itanium", "${res:Dialog.ProjectOptions.Build.TargetCPU.Itanium}"));
 			b.DefaultLocation = PropertyStorageLocations.PlatformSpecific;
-			b.RegisterLocationButton(advancedLocationButton);
+			return b;
 		}
-		
+
 		void DebugSymbolsLoaded(object sender, EventArgs e)
 		{
 			PropertyStorageLocations location;
@@ -234,7 +243,7 @@ namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 			ComboBox targetFrameworkComboBox = (ComboBox)ControlDictionary["targetFrameworkComboBox"];
 			
 			if (convertProjectToMSBuild35Button != null) {
-				if (project.MinimumSolutionVersion == Solution.SolutionVersionVS05) {
+				if (project.MinimumSolutionVersion == Solution.SolutionVersionVS2005) {
 					// VS05 project
 					targetFrameworkComboBox.Enabled = false;
 					convertProjectToMSBuild35Button.Click += OnConvertProjectToMSBuild35ButtonClick;
@@ -275,7 +284,7 @@ namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 					} else {
 						project.ConvertToMSBuild35(dlg.ChangeTargetFramework);
 					}
-					if (project.MinimumSolutionVersion == Solution.SolutionVersionVS05)
+					if (project.MinimumSolutionVersion == Solution.SolutionVersionVS2005)
 						throw new InvalidOperationException("Project did not convert to MSBuild 3.5");
 					ProjectService.SaveSolution();
 					InitTargetFramework();

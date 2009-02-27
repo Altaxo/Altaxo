@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Matthew Ward" email="mrward@users.sourceforge.net"/>
-//     <version>$Revision: 1391 $</version>
+//     <version>$Revision: 3419 $</version>
 // </file>
 
 using System;
@@ -97,7 +97,7 @@ namespace ICSharpCode.SharpDevelop.Tests
 				string outputText = GetOutputText();
 				CreateTextFile(fullFilename, outputText);
 				runner.Start(GetConsoleAppFileName(), String.Concat("-file:", filename));
-				bool exited = runner.WaitForExit(500);
+				bool exited = runner.WaitForExit(5000);
 				
 				Assert.IsTrue(exited, "App did not exit.");
 				Assert.IsFalse(runner.IsRunning, "IsRunning should be false.");
@@ -131,7 +131,7 @@ namespace ICSharpCode.SharpDevelop.Tests
 				string outputText = GetOutputText();
 				CreateTextFile(fullFilename, outputText);
 				runner.Start(GetConsoleAppFileName(), String.Concat("-error.file:", filename));
-				bool exited = runner.WaitForExit(500);
+				bool exited = runner.WaitForExit(5000);
 				
 				Assert.IsTrue(exited, "App did not exit.");
 				Assert.IsFalse(runner.IsRunning, "IsRunning should be false.");

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2562 $</version>
+//     <version>$Revision: 3771 $</version>
 // </file>
 
 using System;
@@ -13,7 +13,6 @@ using ICSharpCode.SharpDevelop.Widgets.SideBar;
 
 namespace ICSharpCode.SharpDevelop.Commands
 {
-	/*
 	public class SideBarRenameTabItem : AbstractMenuCommand
 	{
 		public override void Run()
@@ -167,5 +166,4 @@ namespace ICSharpCode.SharpDevelop.Commands
 			}
 		} 
 	}
-	*/
 }

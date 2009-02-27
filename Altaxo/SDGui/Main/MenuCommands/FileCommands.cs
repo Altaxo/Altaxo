@@ -22,9 +22,11 @@
 
 using System;
 using System.Windows.Forms;
-using ICSharpCode.Core;
 using Altaxo;
 using Altaxo.Main;
+
+using ICSharpCode.Core;
+using ICSharpCode.Core.WinForms;
 using ICSharpCode.SharpZipLib.Zip;
 using ICSharpCode.SharpDevelop;
 using ICSharpCode.SharpDevelop.Gui;

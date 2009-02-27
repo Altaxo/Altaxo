@@ -2,12 +2,14 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2576 $</version>
+//     <version>$Revision: 3605 $</version>
 // </file>
 
+using ICSharpCode.SharpDevelop.DefaultEditor;
 using System;
 using System.Windows.Forms;
 using ICSharpCode.Core;
+using ICSharpCode.Core.WinForms;
 using ICSharpCode.SharpDevelop.Gui;
 
 namespace ICSharpCode.SharpDevelop.Commands
@@ -121,7 +123,7 @@ namespace ICSharpCode.SharpDevelop.Commands
 				get { return comboBox.SelectionLength > 0; }
 			}
 			public bool EnablePaste {
-				get { return ClipboardWrapper.ContainsText; }
+				get { return ClipboardHandling.GetClipboardContainsText(); }
 			}
 			public bool EnableDelete {
 				get { return true; }

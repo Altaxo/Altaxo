@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald"/>
-//     <version>$Revision: 3184 $</version>
+//     <version>$Revision: 3661 $</version>
 // </file>
 
 using System;
@@ -48,10 +48,16 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 		
 		TypeResolveResult CreateTypeResolveResult(IReturnType resolvedType)
 		{
-			if (resolvedType == null)
+			if (resolvedType == null) {
 				return null;
-			else
-				return new TypeResolveResult(resolver.CallingClass, resolver.CallingMember, resolvedType);
+			} else {
+				IReturnType rt = resolvedType;
+				while (rt != null && rt.IsArrayReturnType) {
+					rt = rt.CastToArrayReturnType().ArrayElementType;
+				}
+				IClass resolvedClass = rt != null ? rt.GetUnderlyingClass() : null;
+				return new TypeResolveResult(resolver.CallingClass, resolver.CallingMember, resolvedType, resolvedClass);
+			}
 		}
 		
 		MemberResolveResult CreateMemberResolveResult(IMember member)
@@ -95,7 +101,7 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 			if (arrayCreateExpression.IsImplicitlyTyped) {
 				return CreateResolveResult(arrayCreateExpression.ArrayInitializer);
 			} else {
-				return CreateResolveResult(arrayCreateExpression.CreateType);
+				return CreateTypeResolveResult(TypeVisitor.CreateReturnType(arrayCreateExpression.CreateType, resolver));
 			}
 		}
 		
@@ -409,7 +415,7 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 					}
 				}
 				return resolver.CreateMemberOrMethodGroupResolveResult(
-					null, mre.MemberName, new IList<IMember>[] { possibleMembers }, false);
+					null, mre.MemberName, new IList<IMember>[] { possibleMembers }, false, null);
 			}
 			return null;
 		}
@@ -516,6 +522,17 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 		
 		public override object VisitPointerReferenceExpression(PointerReferenceExpression pointerReferenceExpression, object data)
 		{
+			ResolveResult targetRR = Resolve(pointerReferenceExpression.TargetObject);
+			if (targetRR == null || targetRR.ResolvedType == null)
+				return null;
+			PointerReturnType type = targetRR.ResolvedType.CastToDecoratingReturnType<PointerReturnType>();
+			if (type != null) {
+				return resolver.ResolveMember(type.BaseType, pointerReferenceExpression.MemberName,
+				                              pointerReferenceExpression.TypeArguments,
+				                              NRefactoryResolver.IsInvoked(pointerReferenceExpression),
+				                              true, null
+				                             );
+			}
 			return null;
 		}
 		
@@ -532,22 +549,40 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 		
 		public override object VisitQueryExpression(QueryExpression queryExpression, object data)
 		{
-			IReturnType type = null;
 			QueryExpressionSelectClause selectClause = queryExpression.SelectOrGroupClause as QueryExpressionSelectClause;
 			QueryExpressionGroupClause groupClause = queryExpression.SelectOrGroupClause as QueryExpressionGroupClause;
 			if (selectClause != null) {
-				type = ResolveType(selectClause.Projection);
+				// Fake a call to 'Select'
+				var fakeInvocation = new InvocationExpression(new MemberReferenceExpression(
+					queryExpression.FromClause.InExpression, "Select"));
+				
+				var selector = new LambdaExpression();
+				selector.Parameters.Add(new ParameterDeclarationExpression(null, "__rangeVariable"));
+				selector.ExpressionBody = selectClause.Projection;
+				selector.Parent = fakeInvocation;
+				
+				fakeInvocation.Arguments.Add(selector);
+				
+				return CreateResolveResult(ResolveType(fakeInvocation));
 			} else if (groupClause != null) {
-				type = new ConstructedReturnType(
-					new GetClassReturnType(resolver.ProjectContent, "System.Linq.IGrouping", 2),
-					new IReturnType[] { ResolveType(groupClause.GroupBy), ResolveType(groupClause.Projection) }
-				);
-			}
-			if (type != null) {
-				return CreateResolveResult(new ConstructedReturnType(
-					new GetClassReturnType(resolver.ProjectContent, "System.Collections.Generic.IEnumerable", 1),
-					new IReturnType[] { type }
-				));
+				// Fake a call to 'GroupBy'
+				var fakeInvocation = new InvocationExpression(new MemberReferenceExpression(
+					queryExpression.FromClause.InExpression, "GroupBy"));
+				
+				var keySelector = new LambdaExpression();
+				keySelector.Parameters.Add(new ParameterDeclarationExpression(null, "__rangeVariable"));
+				keySelector.ExpressionBody = groupClause.GroupBy;
+				keySelector.Parent = fakeInvocation;
+				
+				var elementSelector = new LambdaExpression();
+				elementSelector.Parameters.Add(new ParameterDeclarationExpression(null, "__rangeVariable"));
+				elementSelector.ExpressionBody = groupClause.Projection;
+				elementSelector.Parent = fakeInvocation;
+				
+				fakeInvocation.Arguments.Add(keySelector);
+				fakeInvocation.Arguments.Add(elementSelector);
+				
+				return CreateResolveResult(ResolveType(fakeInvocation));
 			} else {
 				return null;
 			}
@@ -594,7 +629,7 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 		public override object VisitTypeReferenceExpression(TypeReferenceExpression typeReferenceExpression, object data)
 		{
 			TypeReference reference = typeReferenceExpression.TypeReference;
-			ResolveResult rr = CreateResolveResult(reference);
+			ResolveResult rr = CreateTypeResolveResult(TypeVisitor.CreateReturnType(reference, resolver));
 			if (rr == null && reference.GenericTypes.Count == 0 && !reference.IsArrayType) {
 				// reference to namespace is possible
 				if (reference.IsGlobal) {
@@ -606,7 +641,11 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 						return new NamespaceResolveResult(resolver.CallingClass, resolver.CallingMember, name);
 				}
 			}
-			return rr;
+			if (rr != null) {
+				return rr;
+			} else {
+				return new UnknownIdentifierResolveResult(resolver.CallingClass, resolver.CallingMember, reference.Type);
+			}
 		}
 		
 		public override object VisitUnaryOperatorExpression(UnaryOperatorExpression unaryOperatorExpression, object data)

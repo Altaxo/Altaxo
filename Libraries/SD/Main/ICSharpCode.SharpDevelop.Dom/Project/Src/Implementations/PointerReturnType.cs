@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <author name="Daniel Grunwald"/>
-//     <version>$Revision: 3184 $</version>
+//     <version>$Revision: 3630 $</version>
 // </file>
 
 using System;
@@ -37,10 +37,20 @@ namespace ICSharpCode.SharpDevelop.Dom
 			}
 		}
 		
+		public override IReturnType GetDirectReturnType()
+		{
+			IReturnType newBaseType = baseType.GetDirectReturnType();
+			if (newBaseType == baseType)
+				return this;
+			else
+				return new PointerReturnType(newBaseType);
+		}
+		
 		public override bool Equals(IReturnType rt)
 		{
 			if (rt == null) return false;
 			PointerReturnType prt = rt.CastToDecoratingReturnType<PointerReturnType>();
+			if (prt == null) return false;
 			return baseType.Equals(prt.baseType);
 		}
 		
@@ -71,12 +81,12 @@ namespace ICSharpCode.SharpDevelop.Dom
 		
 		public override List<IMethod> GetMethods()
 		{
-			return base.GetMethods();
+			return new List<IMethod>();
 		}
 		
 		public override List<IProperty> GetProperties()
 		{
-			return base.GetProperties();
+			return new List<IProperty>();
 		}
 		
 		public override IClass GetUnderlyingClass()

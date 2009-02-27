@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2659 $</version>
+//     <version>$Revision: 3657 $</version>
 // </file>
 
 using System;
@@ -64,12 +64,12 @@ namespace SearchAndReplace
 		
 		public virtual TextLocation GetStartPosition(IDocument document)
 		{
-			return document.OffsetToPosition(Offset);
+			return document.OffsetToPosition(Math.Min(Offset, document.TextLength));
 		}
 		
 		public virtual TextLocation GetEndPosition(IDocument document)
 		{
-			return document.OffsetToPosition(Offset + Length);
+			return document.OffsetToPosition(Math.Min(Offset + Length, document.TextLength));
 		}
 		
 		/// <summary>

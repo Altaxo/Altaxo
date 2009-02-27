@@ -2,18 +2,17 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3019 $</version>
+//     <version>$Revision: 3772 $</version>
 // </file>
 
+using ICSharpCode.NRefactory.Ast;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-
 using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor;
 using ICSharpCode.SharpDevelop.Dom;
-using ICSharpCode.SharpDevelop.Dom.Refactoring;
 using ICSharpCode.SharpDevelop.Gui;
 using ICSharpCode.SharpDevelop.Project;
 using ICSharpCode.TextEditor;
@@ -55,7 +54,7 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 				                                                     1,
 				                                                     "${res:Global.ReplaceButtonText}",
 				                                                     "${res:Global.AbortButtonText}");
-				if (confirmReplace == 1) {
+				if (confirmReplace != 0) {
 					return;
 				}
 			}
@@ -63,16 +62,12 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 			LanguageProperties language = c.ProjectContent.Language;
 			string classFileName = c.CompilationUnit.FileName;
 			string existingClassCode = ParserService.GetParseableFileContent(classFileName);
-
+			
 			// build the new interface...
-			string newInterfaceCode =
-				language.RefactoringProvider.GenerateInterfaceForClass(extractInterface.NewInterfaceName,
-				                                                       extractInterface.ChosenMembers,
-				                                                       extractInterface.IncludeComments,
-				                                                       c.Namespace,
-				                                                       c.Name,
-				                                                       existingClassCode
-				                                                      );
+			string newInterfaceCode = language.RefactoringProvider.GenerateInterfaceForClass(extractInterface.NewInterfaceName,
+			                                                                                 existingClassCode,
+			                                                                                 extractInterface.ChosenMembers,
+			                                                                                 c, extractInterface.IncludeComments);
 			if (newInterfaceCode == null)
 				return;
 			
@@ -84,7 +79,6 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 				// simply update it
 				editable.Text = newInterfaceCode;
 				viewContent.PrimaryFile.SaveToDisk();
-				
 			} else {
 				// create it
 				viewContent = FileService.NewFile(newInterfaceFileName, newInterfaceCode);
@@ -102,9 +96,12 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 				}
 			}
 			
+			ICompilationUnit newCompilationUnit = ParserService.ParseFile(newInterfaceFileName).MostRecentCompilationUnit;
+			IClass newInterfaceDef = newCompilationUnit.Classes[0];
+			
 			// finally, add the interface to the base types of the class that we're extracting from
 			if (extractInterface.AddInterfaceToClass) {
-				string modifiedClassCode = language.RefactoringProvider.AddBaseTypeToClass(existingClassCode, extractInterface.NewInterfaceName);
+				string modifiedClassCode = language.RefactoringProvider.AddBaseTypeToClass(existingClassCode, c, newInterfaceDef);
 				if (modifiedClassCode == null) {
 					return;
 				}
@@ -145,7 +142,7 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 			
 			// Add the constructors
 			foreach (IMethod m in c.Methods) {
-				if (m.IsConstructor) {
+				if (m.IsConstructor || (m.Name == "#dtor")) {
 					AddDeclarationAsReference(list, m.DeclaringType.CompilationUnit.FileName, m.Region, c.Name);
 				}
 			}
@@ -244,11 +241,14 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 		#region Common helper functions
 		public static ProvidedDocumentInformation GetDocumentInformation(string fileName)
 		{
-			foreach (IViewContent content in WorkbenchSingleton.Workbench.ViewContentCollection) {
-				if (content is ITextEditorControlProvider &&
-				    FileUtility.IsEqualFileName(content.PrimaryFileName, fileName))
-				{
-					return new ProvidedDocumentInformation(((ITextEditorControlProvider)content).TextEditorControl.Document, fileName, 0);
+			OpenedFile file = FileService.GetOpenedFile(fileName);
+			if (file != null) {
+				IFileDocumentProvider documentProvider = file.CurrentView as IFileDocumentProvider;
+				if (documentProvider != null) {
+					IDocument document = documentProvider.GetDocumentForFile(file);
+					if (document != null) {
+						return new ProvidedDocumentInformation(document, fileName, 0);
+					}
 				}
 			}
 			ITextBufferStrategy strategy = StringTextBufferStrategy.CreateTextBufferFromFile(fileName);
@@ -329,6 +329,7 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 		
 		public static void ModifyDocument(List<Modification> modifications, ICSharpCode.TextEditor.Document.IDocument doc, int offset, int length, string newName)
 		{
+			doc.UndoStack.StartUndoGroup();
 			foreach (Modification m in modifications) {
 				if (m.Document == doc) {
 					if (m.Offset < offset)
@@ -349,6 +350,7 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 				}
 				modifications.Add(new Modification(doc, offset, lengthDifference));
 			}
+			doc.UndoStack.EndUndoGroup();
 		}
 		
 		public static void ShowAsSearchResults(string pattern, List<Reference> list)
@@ -363,22 +365,58 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 			SearchResultPanel.Instance.ShowSearchResults(new SearchResult(pattern, results));
 		}
 		
+		sealed class FileView {
+			public IViewContent ViewContent { get; set; }
+			public OpenedFile OpenedFile { get; set; }
+		}
+		
 		public static void RenameReferences(List<Reference> list, string newName)
 		{
-			List<IViewContent> modifiedContents = new List<IViewContent>();
+			Dictionary<ICSharpCode.TextEditor.Document.IDocument, FileView> modifiedDocuments = new Dictionary<ICSharpCode.TextEditor.Document.IDocument, FileView>();
 			List<Modification> modifications = new List<Modification>();
 			foreach (Reference r in list) {
-				IViewContent viewContent = FileService.OpenFile(r.FileName);
-				if (!modifiedContents.Contains(viewContent)) {
-					modifiedContents.Add(viewContent);
+				ICSharpCode.TextEditor.Document.IDocument document = null;
+				IViewContent viewContent = null;
+				
+				OpenedFile file = FileService.GetOpenedFile(r.FileName);
+				if (file != null) {
+					viewContent = file.CurrentView;
+					IFileDocumentProvider p = viewContent as IFileDocumentProvider;
+					if (p != null) {
+						document = p.GetDocumentForFile(file);
+					}
 				}
-				ITextEditorControlProvider p = viewContent as ITextEditorControlProvider;
-				if (p != null) {
-					ModifyDocument(modifications, p.TextEditorControl.Document, r.Offset, r.Length, newName);
+				
+				if (document == null) {
+					viewContent = FileService.OpenFile(r.FileName, false);
+					IFileDocumentProvider p = viewContent as IFileDocumentProvider;
+					if (p != null) {
+						file = FileService.GetOpenedFile(r.FileName);
+						System.Diagnostics.Debug.Assert(file != null, "OpenedFile not found after opening the file.");
+						document = p.GetDocumentForFile(file);
+					}
 				}
+				
+				if (document == null) {
+					LoggingService.Warn("RenameReferences: Could not get document for file '" + r.FileName + "'");
+					continue;
+				}
+				
+				if (!modifiedDocuments.ContainsKey(document)) {
+					modifiedDocuments.Add(document, new FileView() {ViewContent = viewContent, OpenedFile = file});
+					document.UndoStack.StartUndoGroup();
+				}
+				
+				ModifyDocument(modifications, document, r.Offset, r.Length, newName);
 			}
-			foreach (IViewContent viewContent in modifiedContents) {
-				ParserService.ParseViewContent(viewContent);
+			foreach (KeyValuePair<ICSharpCode.TextEditor.Document.IDocument, FileView> entry in modifiedDocuments) {
+				entry.Key.UndoStack.EndUndoGroup();
+				entry.Value.OpenedFile.MakeDirty();
+				if (entry.Value.ViewContent is IEditable) {
+					ParserService.ParseViewContent(entry.Value.ViewContent);
+				} else {
+					ParserService.ParseFile(entry.Value.OpenedFile.FileName, entry.Key.TextContent, !entry.Value.OpenedFile.IsUntitled);
+				}
 			}
 		}
 

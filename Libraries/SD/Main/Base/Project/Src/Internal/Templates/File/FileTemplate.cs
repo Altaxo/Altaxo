@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3140 $</version>
+//     <version>$Revision: 3685 $</version>
 // </file>
 
 using System;
@@ -269,6 +269,7 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 					if (!reference.HasAttribute("include"))
 						throw new InvalidDataException("Reference without 'include' attribute!");
 					ReferenceProjectItem item = new ReferenceProjectItem(null, reference.GetAttribute("include"));
+					item.SetMetadata("HintPath", reference.GetAttribute("hintPath"));
 					requiredAssemblyReferences.Add(item);
 				}
 			}
@@ -287,13 +288,16 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 			}
 		}
 		
-		static FileTemplate()
+		public static void UpdateTemplates()
 		{
 			string dataTemplateDir = FileUtility.Combine(PropertyService.DataDirectory, "templates", "file");
 			List<string> files = FileUtility.SearchDirectory(dataTemplateDir, "*.xft");
 			foreach (string templateDirectory in AddInTree.BuildItems<string>(ProjectTemplate.TemplatePath, null, false)) {
+				if (!Directory.Exists(templateDirectory))
+					Directory.CreateDirectory(templateDirectory);
 				files.AddRange(FileUtility.SearchDirectory(templateDirectory, "*.xft"));
 			}
+			FileTemplates.Clear();
 			foreach (string file in files) {
 				try {
 					FileTemplates.Add(new FileTemplate(file));
@@ -306,6 +310,11 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 				}
 			}
 			FileTemplates.Sort();
+		}
+		
+		static FileTemplate()
+		{
+			UpdateTemplates();
 		}
 	}
 }

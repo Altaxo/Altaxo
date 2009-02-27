@@ -2,15 +2,15 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3222 $</version>
+//     <version>$Revision: 3786 $</version>
 // </file>
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
@@ -65,7 +65,7 @@ namespace ICSharpCode.Core
 		
 		public string this[string property] {
 			get {
-				return Convert.ToString(Get(property));
+				return Convert.ToString(Get(property), CultureInfo.InvariantCulture);
 			}
 			set {
 				Set(property, value);
@@ -214,7 +214,9 @@ namespace ICSharpCode.Core
 		public void WriteProperties(XmlWriter writer)
 		{
 			lock (properties) {
-				foreach (KeyValuePair<string, object> entry in properties.OrderBy(e=>e.Key)) {
+				List<KeyValuePair<string, object>> sortedProperties = new List<KeyValuePair<string, object>>(properties);
+				sortedProperties.Sort((a, b) => StringComparer.OrdinalIgnoreCase.Compare(a.Key, b.Key));
+				foreach (KeyValuePair<string, object> entry in sortedProperties) {
 					object val = entry.Value;
 					if (val is Properties) {
 						writer.WriteStartElement("Properties");

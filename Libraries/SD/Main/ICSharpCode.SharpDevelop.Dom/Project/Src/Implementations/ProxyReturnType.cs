@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3009 $</version>
+//     <version>$Revision: 3630 $</version>
 // </file>
 
 using System;
@@ -216,6 +216,23 @@ namespace ICSharpCode.SharpDevelop.Dom
 		public ConstructedReturnType CastToConstructedReturnType()
 		{
 			return CastToDecoratingReturnType<ConstructedReturnType>();
+		}
+		
+		public virtual bool? IsReferenceType {
+			get {
+				IReturnType baseType = BaseType;
+				bool? tmp = (baseType != null && TryEnter()) ? baseType.IsReferenceType : null;
+				Leave();
+				return tmp;
+			}
+		}
+		
+		public virtual IReturnType GetDirectReturnType()
+		{
+			IReturnType baseType = BaseType;
+			IReturnType tmp = (baseType != null && TryEnter()) ? baseType.GetDirectReturnType() : UnknownReturnType.Instance;
+			Leave();
+			return tmp;
 		}
 	}
 }

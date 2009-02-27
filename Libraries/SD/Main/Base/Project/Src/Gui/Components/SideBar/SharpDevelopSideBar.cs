@@ -2,17 +2,15 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2562 $</version>
+//     <version>$Revision: 3771 $</version>
 // </file>
 
 using System;
-using System.Collections;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Xml;
 
 using ICSharpCode.Core;
-using ICSharpCode.SharpDevelop.Internal.Templates;
+using ICSharpCode.Core.WinForms;
 using ICSharpCode.SharpDevelop.Widgets.SideBar;
 
 namespace ICSharpCode.SharpDevelop.Gui
@@ -202,5 +200,14 @@ namespace ICSharpCode.SharpDevelop.Gui
 		}
 		
 		public event SideTabEventHandler SideTabDeleted;
+		
+		
+		public Point SideBarMousePosition { get; private set; }
+		
+		protected override void OnMouseMove(MouseEventArgs e)
+		{
+			base.OnMouseMove(e);
+			this.SideBarMousePosition = new Point(e.X, e.Y);
+		}
 	}
 }

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Matthew Ward" email="mrward@users.sourceforge.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 3469 $</version>
 // </file>
 
 using System;
@@ -22,7 +22,7 @@ namespace ICSharpCode.SharpDevelop.Project
 			if (webReference.WebReferencesProjectItem != null) {
 				WebReferencesFolderNode webReferencesFolderNode = new WebReferencesFolderNode(webReference.WebReferencesProjectItem);
 				webReferencesFolderNode.FileNodeStatus = FileNodeStatus.InProject;
-				webReferencesFolderNode.AddTo(projectNode);
+				webReferencesFolderNode.InsertSorted(projectNode);
 				return webReferencesFolderNode;
 			}	
 			return null;
@@ -32,7 +32,7 @@ namespace ICSharpCode.SharpDevelop.Project
 		{
 			WebReferenceNode node = new WebReferenceNode(webReference);
 			node.FileNodeStatus = FileNodeStatus.InProject;
-			node.AddTo(webReferencesFolderNode);
+			node.InsertSorted(webReferencesFolderNode);
 			return node;
 		}
 	}

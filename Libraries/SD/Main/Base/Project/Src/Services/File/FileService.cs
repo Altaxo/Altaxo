@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3160 $</version>
+//     <version>$Revision: 3668 $</version>
 // </file>
 
 using System;
@@ -127,8 +127,10 @@ namespace ICSharpCode.SharpDevelop
 			
 			LoggingService.Debug("OpenedFileFileNameChange: " + oldName + " => " + newName);
 			
-			Debug.Assert(openedFileDict[oldName] == file);
-			Debug.Assert(!openedFileDict.ContainsKey(newName));
+			if (openedFileDict[oldName] != file)
+				throw new ArgumentException("file must be registered as oldName");
+			if (openedFileDict.ContainsKey(newName))
+				throw new ArgumentException("there already is a file with the newName");
 			
 			openedFileDict.Remove(oldName);
 			openedFileDict[newName] = file;
@@ -137,7 +139,9 @@ namespace ICSharpCode.SharpDevelop
 		/// <summary>Called by OpenedFile.UnregisterView to update the dictionary.</summary>
 		internal static void OpenedFileClosed(OpenedFile file)
 		{
-			Debug.Assert(openedFileDict[file.FileName] == file);
+			if (openedFileDict[file.FileName] != file)
+				throw new ArgumentException("file must be registered");
+			
 			openedFileDict.Remove(file.FileName);
 			LoggingService.Debug("OpenedFileClosed: " + file.FileName);
 		}
@@ -169,11 +173,13 @@ namespace ICSharpCode.SharpDevelop
 		
 		internal sealed class LoadFileWrapper
 		{
-			IDisplayBinding binding;
+			readonly IDisplayBinding binding;
+			readonly bool switchToOpenedView;
 			
-			public LoadFileWrapper(IDisplayBinding binding)
+			public LoadFileWrapper(IDisplayBinding binding, bool switchToOpenedView)
 			{
 				this.binding = binding;
+				this.switchToOpenedView = switchToOpenedView;
 			}
 			
 			public void Invoke(string fileName)
@@ -182,7 +188,7 @@ namespace ICSharpCode.SharpDevelop
 				IViewContent newContent = binding.CreateContentForFile(file);
 				if (newContent != null) {
 					DisplayBindingService.AttachSubWindows(newContent, false);
-					WorkbenchSingleton.Workbench.ShowView(newContent);
+					WorkbenchSingleton.Workbench.ShowView(newContent, switchToOpenedView);
 				}
 				file.CloseIfAllViewsClosed();
 			}
@@ -203,21 +209,41 @@ namespace ICSharpCode.SharpDevelop
 			return GetOpenFile(fileName) != null;
 		}
 		
+		/// <summary>
+		/// Opens a view content for the specified file and switches to the opened view
+		/// or switches to and returns the existing view content for the file if it is already open.
+		/// </summary>
+		/// <param name="fileName">The name of the file to open.</param>
+		/// <returns>The existing or opened <see cref="IViewContent"/> for the specified file.</returns>
 		public static IViewContent OpenFile(string fileName)
+		{
+			return OpenFile(fileName, true);
+		}
+		
+		/// <summary>
+		/// Opens a view content for the specified file
+		/// or returns the existing view content for the file if it is already open.
+		/// </summary>
+		/// <param name="fileName">The name of the file to open.</param>
+		/// <param name="switchToOpenedView">Specifies whether to switch to the view for the specified file.</param>
+		/// <returns>The existing or opened <see cref="IViewContent"/> for the specified file.</returns>
+		public static IViewContent OpenFile(string fileName, bool switchToOpenedView)
 		{
 			fileName = FileUtility.NormalizePath(fileName);
 			LoggingService.Info("Open file " + fileName);
 			
 			IViewContent viewContent = GetOpenFile(fileName);
 			if (viewContent != null) {
-				viewContent.WorkbenchWindow.SelectWindow();
+				if (switchToOpenedView) {
+					viewContent.WorkbenchWindow.SelectWindow();
+				}
 				return viewContent;
 			}
 			
 			IDisplayBinding binding = DisplayBindingService.GetBindingPerFileName(fileName);
 			
 			if (binding != null) {
-				if (FileUtility.ObservedLoad(new NamedFileOperationDelegate(new LoadFileWrapper(binding).Invoke), fileName) == FileOperationResult.OK) {
+				if (FileUtility.ObservedLoad(new NamedFileOperationDelegate(new LoadFileWrapper(binding, switchToOpenedView).Invoke), fileName) == FileOperationResult.OK) {
 					FileService.RecentOpen.AddLastFile(fileName);
 				}
 			} else {
@@ -269,12 +295,16 @@ namespace ICSharpCode.SharpDevelop
 			}
 		}
 		
+		/// <summary>
+		/// Gets a list of the names of the files that are open as primary files
+		/// in view contents.
+		/// </summary>
 		public static IList<string> GetOpenFiles()
 		{
 			List<string> fileNames = new List<string>();
 			foreach (IViewContent content in WorkbenchSingleton.Workbench.ViewContentCollection) {
 				string contentName = content.PrimaryFileName;
-				if (contentName != null)
+				if (contentName != null && !fileNames.Contains(contentName))
 					fileNames.Add(contentName);
 			}
 			return fileNames;
@@ -393,27 +423,85 @@ namespace ICSharpCode.SharpDevelop
 		}
 		
 		/// <summary>
+		/// Copies a file, raising the appropriate events. This method may show message boxes.
+		/// </summary>
+		public static bool CopyFile(string oldName, string newName, bool isDirectory, bool overwrite)
+		{
+			if (FileUtility.IsEqualFileName(oldName, newName))
+				return false;
+			FileRenamingEventArgs eargs = new FileRenamingEventArgs(oldName, newName, isDirectory);
+			OnFileCopying(eargs);
+			if (eargs.Cancel)
+				return false;
+			if (!eargs.OperationAlreadyDone) {
+				try {
+					if (isDirectory && Directory.Exists(oldName)) {
+						
+						if (!overwrite && Directory.Exists(newName)) {
+							MessageService.ShowMessage(StringParser.Parse("${res:Gui.ProjectBrowser.FileInUseError}"));
+							return false;
+						}
+						FileUtility.DeepCopy(oldName, newName, overwrite);
+						
+					} else if (File.Exists(oldName)) {
+						if (!overwrite && File.Exists(newName)) {
+							MessageService.ShowMessage(StringParser.Parse("${res:Gui.ProjectBrowser.FileInUseError}"));
+							return false;
+						}
+						File.Copy(oldName, newName, overwrite);
+					}
+				} catch (Exception e) {
+					if (isDirectory) {
+						MessageService.ShowError(e, "Can't copy directory " + oldName);
+					} else {
+						MessageService.ShowError(e, "Can't copy file " + oldName);
+					}
+					return false;
+				}
+			}
+			OnFileCopied(new FileRenameEventArgs(oldName, newName, isDirectory));
+			return true;
+		}
+		
+		/// <summary>
 		/// Opens the specified file and jumps to the specified file position.
 		/// Warning: Unlike parser coordinates, line and column are 0-based.
 		/// </summary>
 		public static IViewContent JumpToFilePosition(string fileName, int line, int column)
 		{
 			LoggingService.InfoFormatted("FileService\n\tJumping to File Position:  [{0} : {1}x{2}]", fileName, line, column);
-			NavigationService.SuspendLogging();
 			
 			if (fileName == null || fileName.Length == 0) {
 				return null;
 			}
-			IViewContent content = OpenFile(fileName);
-			if (content is IPositionable) {
-				// TODO: enable jumping to a particular view
-				((IPositionable)content).JumpTo(Math.Max(0, line), Math.Max(0, column));
-			}
 			
-			LoggingService.InfoFormatted("FileService\n\tJumped to File Position:  [{0} : {1}x{2}]", fileName, line, column);
-			NavigationService.ResumeLogging();
-
-			return content;
+			NavigationService.SuspendLogging();
+			bool loggingResumed = false;
+			
+			try {
+			
+				IViewContent content = OpenFile(fileName);
+				if (content is IPositionable) {
+					// TODO: enable jumping to a particular view
+					content.WorkbenchWindow.ActiveViewContent = content;
+					NavigationService.ResumeLogging();
+					loggingResumed = true;
+					((IPositionable)content).JumpTo(Math.Max(0, line), Math.Max(0, column));
+				} else {
+					NavigationService.ResumeLogging();
+					loggingResumed = true;
+					NavigationService.Log(content);
+				}
+				
+				LoggingService.InfoFormatted("FileService\n\tJumped to File Position:  [{0} : {1}x{2}]", fileName, line, column);
+				
+				return content;
+				
+			} finally {
+				if (!loggingResumed) {
+					NavigationService.ResumeLogging();
+				}
+			}
 		}
 		
 		/// <summary>
@@ -443,7 +531,7 @@ namespace ICSharpCode.SharpDevelop
 		}
 		
 		#region Event Handlers
-				
+		
 		static void OnFileRemoved(FileEventArgs e)
 		{
 			if (FileRemoved != null) {
@@ -471,10 +559,23 @@ namespace ICSharpCode.SharpDevelop
 			}
 		}
 		
+		static void OnFileCopied(FileRenameEventArgs e)
+		{
+			if (FileCopied != null) {
+				FileCopied(null, e);
+			}
+		}
+		
+		static void OnFileCopying(FileRenamingEventArgs e) {
+			if (FileCopying != null) {
+				FileCopying(null, e);
+			}
+		}
+		
 		#endregion Event Handlers
 		
 		#region Static event firing methods
-				
+		
 		/// <summary>
 		/// Fires the event handlers for a file being created.
 		/// </summary>
@@ -516,11 +617,14 @@ namespace ICSharpCode.SharpDevelop
 		#endregion Static event firing methods
 		
 		#region Events
-				
+		
 		public static event EventHandler<FileEventArgs> FileCreated;
 		
 		public static event EventHandler<FileRenamingEventArgs> FileRenaming;
 		public static event EventHandler<FileRenameEventArgs> FileRenamed;
+		
+		public static event EventHandler<FileRenamingEventArgs> FileCopying;
+		public static event EventHandler<FileRenameEventArgs> FileCopied;
 		
 		public static event EventHandler<FileCancelEventArgs> FileRemoving;
 		public static event EventHandler<FileEventArgs> FileRemoved;

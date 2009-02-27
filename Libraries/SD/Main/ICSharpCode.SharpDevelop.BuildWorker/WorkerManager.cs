@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <author name="Daniel Grunwald"/>
-//     <version>$Revision: 2702 $</version>
+//     <version>$Revision: 3770 $</version>
 // </file>
 
 using Microsoft.Build.Framework;
@@ -102,6 +102,7 @@ namespace ICSharpCode.SharpDevelop.BuildWorker
 		{
 			lock (lockObject) {
 				if (freeWorkerProcesses.Count > 0) {
+					Debug.WriteLine("WorkerManager: shutting down free worker");
 					DequeueFreeWorkerProcess().Shutdown();
 				} else {
 					ClearLastBuildDoneTimer();
@@ -126,6 +127,7 @@ namespace ICSharpCode.SharpDevelop.BuildWorker
 			
 			public void RaiseError(string message)
 			{
+				Debug.WriteLine(message);
 				RaiseEvent(new BuildErrorEventArgs(null, null, null, -1, -1, -1, -1, message, null, "SharpDevelopBuildWorkerManager"));
 			}
 			
@@ -187,6 +189,7 @@ namespace ICSharpCode.SharpDevelop.BuildWorker
 			
 			void OnWorkerLost(object sender, EventArgs e)
 			{
+				BuildRun buildRun;
 				lock (lockObject) {
 					workerProcessCount--;
 					freeWorkerProcesses.Remove(this);
@@ -202,8 +205,8 @@ namespace ICSharpCode.SharpDevelop.BuildWorker
 							Monitor.Enter(lockObject);
 						}
 					}
+					buildRun = Interlocked.Exchange(ref currentBuildRun, null);
 				}
-				BuildRun buildRun = Interlocked.Exchange(ref currentBuildRun, null);
 				if (buildRun != null) {
 					buildRun.RaiseError("Worker process lost during build");
 					buildRun.Done(false);
@@ -229,7 +232,10 @@ namespace ICSharpCode.SharpDevelop.BuildWorker
 			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
 			public void BuildDone(bool success)
 			{
-				BuildRun buildRun = Interlocked.Exchange(ref currentBuildRun, null);
+				BuildRun buildRun;
+				lock (lockObject) {
+					buildRun = Interlocked.Exchange(ref currentBuildRun, null);
+				}
 				if (buildRun != null) {
 					// OnReady must be called before buildRun.Done - the callback
 					// might trigger another build, and if this worker process
@@ -241,7 +247,7 @@ namespace ICSharpCode.SharpDevelop.BuildWorker
 			}
 			
 			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
-			public void ReportException(Exception ex)
+			public void ReportException(string exceptionText)
 			{
 				// shutdown worker if it produced an exception
 				try {
@@ -249,9 +255,9 @@ namespace ICSharpCode.SharpDevelop.BuildWorker
 				} catch {}
 				
 				if (ShowError != null)
-					ShowError(ex);
+					ShowError(new Exception(exceptionText));
 				else
-					Program.ShowMessageBox(ex.ToString());
+					Program.ShowMessageBox(exceptionText);
 			}
 		}
 	}

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2646 $</version>
+//     <version>$Revision: 3716 $</version>
 // </file>
 
 using System;
@@ -104,7 +104,7 @@ namespace ICSharpCode.SharpDevelop
 		/// </remarks>
 		public bool CanOpenFile(string fileName)
 		{
-			string fileNameRegex = this.FileNameRegex;
+			string fileNameRegex = StringParser.Parse(this.FileNameRegex);
 			if (fileNameRegex == null || fileNameRegex.Length == 0) // no regex specified
 				return true;
 			if (fileName == null) // regex specified but file has no name

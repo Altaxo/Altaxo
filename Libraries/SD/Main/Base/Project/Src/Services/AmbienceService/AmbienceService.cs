@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2990 $</version>
+//     <version>$Revision: 3794 $</version>
 // </file>
 
 using System;
@@ -79,7 +79,7 @@ namespace ICSharpCode.SharpDevelop
 		
 		/// <summary>
 		/// Gets the current ambience.
-		/// Might return a new ambience object, or use an existing. Not thread-safe.
+		/// Might return a new ambience object, or use an existing. Use this method only on the main thread.
 		/// </summary>
 		public static IAmbience GetCurrentAmbience()
 		{

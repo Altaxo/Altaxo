@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Matthew Ward" email="mrward@users.sourceforge.net"/>
-//     <version>$Revision: 2561 $</version>
+//     <version>$Revision: 3513 $</version>
 // </file>
 
 using System;
@@ -16,6 +16,7 @@ using System.Web.Services.Discovery;
 using System.Windows.Forms;
 
 using ICSharpCode.Core;
+using ICSharpCode.Core.WinForms;
 using ICSharpCode.SharpDevelop.Project;
 using Microsoft.Win32;
 
@@ -472,54 +473,6 @@ namespace ICSharpCode.SharpDevelop.Gui
 			}
 			return String.Empty;
 		}
-
-		bool IsValidNamespace {
-			get {
-				bool valid = false;
-				
-				if (namespaceTextBox.Text.Length > 0) {
-					
-					// Can only begin with a letter or '_'
-					char ch = namespaceTextBox.Text[0];
-					if (Char.IsLetter(ch) || (ch == '_')) {
-						valid = true;
-						for (int i = 1; i < namespaceTextBox.Text.Length; ++i) {
-							ch = namespaceTextBox.Text[i];
-							// Can only contain letters, digits or '_'
-							if (!Char.IsLetterOrDigit(ch) && (ch != '.') && (ch != '_')) {
-								valid = false;
-								break;
-							}
-						}
-					}
-				}
-				
-				return valid;
-			}
-		}
-		
-		bool IsValidReferenceName {
-			get {
-				if (referenceNameTextBox.Text.Length > 0) {
-					if (referenceNameTextBox.Text.IndexOf('\\') == -1) {
-						if (!ContainsInvalidDirectoryChar(referenceNameTextBox.Text)) {
-							return true;
-						}
-					}
-				}
-				return false;
-			}
-		}
-		
-		bool ContainsInvalidDirectoryChar(string item)
-		{
-			foreach (char ch in Path.GetInvalidPathChars()) {
-				if (item.IndexOf(ch) >= 0) {
-					return true;
-				}
-			}
-			return false;
-		}
 		
 		/// <summary>
 		/// Starts the search for web services at the specified url.
@@ -665,12 +618,12 @@ namespace ICSharpCode.SharpDevelop.Gui
 		void AddButtonClick(object sender,EventArgs e)
 		{
 			try {
-				if (!IsValidReferenceName) {
+				if (!WebReference.IsValidReferenceName(referenceNameTextBox.Text)) {
 					MessageService.ShowError(StringParser.Parse("${res:ICSharpCode.SharpDevelop.Gui.Dialogs.AddWebReferenceDialog.InvalidReferenceNameError}"));
 					return;
 				}
 				
-				if (!IsValidNamespace) {
+				if (!WebReference.IsValidNamespace(namespaceTextBox.Text)) {
 					MessageService.ShowError(StringParser.Parse("${res:ICSharpCode.SharpDevelop.Gui.Dialogs.AddWebReferenceDialog.InvalidNamespaceError}"));
 					return;
 				}
@@ -687,12 +640,12 @@ namespace ICSharpCode.SharpDevelop.Gui
 		
 		void AddImages()
 		{
-			goButton.Image = ResourceService.GetBitmap("Icons.16x16.RunProgramIcon");
-			refreshButton.Image = ResourceService.GetBitmap("Icons.16x16.BrowserRefresh");
-			backButton.Image = ResourceService.GetBitmap("Icons.16x16.BrowserBefore");
-			forwardButton.Image = ResourceService.GetBitmap("Icons.16x16.BrowserAfter");
-			stopButton.Image = ResourceService.GetBitmap("Icons.16x16.BrowserCancel");
-			Icon = ResourceService.GetIcon("Icons.16x16.WebSearchIcon");
+			goButton.Image = WinFormsResourceService.GetBitmap("Icons.16x16.RunProgramIcon");
+			refreshButton.Image = WinFormsResourceService.GetBitmap("Icons.16x16.BrowserRefresh");
+			backButton.Image = WinFormsResourceService.GetBitmap("Icons.16x16.BrowserBefore");
+			forwardButton.Image = WinFormsResourceService.GetBitmap("Icons.16x16.BrowserAfter");
+			stopButton.Image = WinFormsResourceService.GetBitmap("Icons.16x16.BrowserCancel");
+			Icon = WinFormsResourceService.GetIcon("Icons.16x16.WebSearchIcon");
 		}
 		
 		void AddStringResources()

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3008 $</version>
+//     <version>$Revision: 3753 $</version>
 // </file>
 
 using System;
@@ -120,6 +120,20 @@ namespace ICSharpCode.SharpDevelop.Project
 					fileName = value;
 					cachedDirectoryName = null;
 				}
+			}
+		}
+		
+		/// <summary>
+		/// True if the file that contains the project is readonly.
+		/// </summary>
+		[ReadOnly(true)]
+		public virtual bool ReadOnly {
+			get {
+				if (File.Exists(FileName)) {
+					FileAttributes attributes = File.GetAttributes(FileName);
+					return ((FileAttributes.ReadOnly & attributes) == FileAttributes.ReadOnly);
+				}
+				return false;
 			}
 		}
 		
@@ -441,7 +455,7 @@ namespace ICSharpCode.SharpDevelop.Project
 		
 		[Browsable(false)]
 		public virtual int MinimumSolutionVersion {
-			get { return Solution.SolutionVersionVS05; }
+			get { return Solution.SolutionVersionVS2005; }
 		}
 		
 		public virtual void ResolveAssemblyReferences()
@@ -457,19 +471,21 @@ namespace ICSharpCode.SharpDevelop.Project
 		
 		public virtual ICollection<IBuildable> GetBuildDependencies(ProjectBuildOptions buildOptions)
 		{
-			List<IBuildable> result = new List<IBuildable>();
-			foreach (ProjectSection section in this.ProjectSections) {
-				if (section.Name == "ProjectDependencies") {
-					foreach (SolutionItem item in section.Items) {
-						foreach (IProject p in ParentSolution.Projects) {
-							if (p.IdGuid == item.Name) {
-								result.Add(p);
+			lock (SyncRoot) {
+				List<IBuildable> result = new List<IBuildable>();
+				foreach (ProjectSection section in this.ProjectSections) {
+					if (section.Name == "ProjectDependencies") {
+						foreach (SolutionItem item in section.Items) {
+							foreach (IProject p in ParentSolution.Projects) {
+								if (p.IdGuid == item.Name) {
+									result.Add(p);
+								}
 							}
 						}
 					}
 				}
+				return result;
 			}
-			return result;
 		}
 	}
 }

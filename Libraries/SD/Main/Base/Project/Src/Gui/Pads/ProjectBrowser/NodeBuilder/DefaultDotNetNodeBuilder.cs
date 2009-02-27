@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2694 $</version>
+//     <version>$Revision: 3469 $</version>
 // </file>
 
 using System;
@@ -23,7 +23,7 @@ namespace ICSharpCode.SharpDevelop.Project
 		public TreeNode AddProjectNode(TreeNode motherNode, IProject project)
 		{
 			ProjectNode projectNode = new ProjectNode(project);
-			projectNode.AddTo(motherNode);
+			projectNode.InsertSorted(motherNode);
 			
 			if (project is MissingProject) {
 				CustomNode missingNode = new CustomNode();

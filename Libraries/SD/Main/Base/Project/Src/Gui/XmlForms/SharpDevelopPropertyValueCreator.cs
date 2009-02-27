@@ -2,12 +2,12 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 3287 $</version>
 // </file>
 
 using System;
 using System.Drawing;
-using ICSharpCode.Core;
+using ICSharpCode.Core.WinForms;
 
 namespace ICSharpCode.SharpDevelop.Gui.XmlForms
 {
@@ -22,11 +22,11 @@ namespace ICSharpCode.SharpDevelop.Gui.XmlForms
 		{
 			
 			if (propertyType == typeof(Icon)) {
-				return ResourceService.GetIcon(valueString);
+				return WinFormsResourceService.GetIcon(valueString);
 			}
 			
 			if (propertyType == typeof(Image)) {
-				return ResourceService.GetBitmap(valueString);
+				return WinFormsResourceService.GetBitmap(valueString);
 			}
 			
 			return null;

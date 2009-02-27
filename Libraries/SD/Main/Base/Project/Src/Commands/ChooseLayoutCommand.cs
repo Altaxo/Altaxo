@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2751 $</version>
+//     <version>$Revision: 3794 $</version>
 // </file>
 
 using System;
@@ -11,6 +11,7 @@ using System.IO;
 using System.Windows.Forms;
 
 using ICSharpCode.Core;
+using ICSharpCode.Core.WinForms;
 using ICSharpCode.SharpDevelop.Gui;
 
 namespace ICSharpCode.SharpDevelop.Commands
@@ -115,6 +116,7 @@ namespace ICSharpCode.SharpDevelop.Commands
 				frm.MinimizeBox = false;
 				frm.ClientSize = new System.Drawing.Size(400, 300);
 				frm.StartPosition = FormStartPosition.CenterParent;
+				frm.ShowInTaskbar = false;
 				
 				if (frm.ShowDialog(WorkbenchSingleton.MainForm) == DialogResult.OK) {
 					IList<string> oldNames = new List<string>(CustomLayoutNames);

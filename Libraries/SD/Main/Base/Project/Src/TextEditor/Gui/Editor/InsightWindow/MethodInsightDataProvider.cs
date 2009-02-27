@@ -2,12 +2,13 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3104 $</version>
+//     <version>$Revision: 3794 $</version>
 // </file>
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.Dom;
@@ -54,7 +55,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			conv.ConversionFlags = ConversionFlags.StandardConversionFlags| ConversionFlags.UseFullyQualifiedMemberNames;
 			string documentation = method.Documentation;
 			string text = conv.Convert(method);
-			return text + "\n" + CodeCompletionData.GetDocumentation(documentation);
+			return text + "\n" + CodeCompletionData.ConvertDocumentation(documentation);
 		}
 		
 		int lookupOffset;
@@ -127,6 +128,8 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			}
 			
 			ResolveResult results = ParserService.Resolve(expressionResult, caretLineNumber, caretColumn, fileName, document.TextContent);
+			if (results == null)
+				return;
 			LanguageProperties language = ParserService.CurrentProjectContent.Language;
 			TypeResolveResult trr = results as TypeResolveResult;
 			if (trr == null && language.AllowObjectConstructionOutsideContext) {
@@ -138,22 +141,14 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 					constructorInsight = true;
 			}
 			if (constructorInsight) {
-				if (trr == null) {
-					if ((expressionResult.Expression == "this") && (expressionResult.Context == ExpressionContext.BaseConstructorCall)) {
+				if (trr != null || expressionResult.Context == ExpressionContext.BaseConstructorCall) {
+					if (results.ResolvedType != null) {
 						methods.AddRange(GetConstructorMethods(results.ResolvedType.GetMethods()));
-					}
-					
-					if ((expressionResult.Expression == "base") && (expressionResult.Context == ExpressionContext.BaseConstructorCall)) {
-						if (results.CallingClass.BaseType.DotNetName == "System.Object")
-							return;
-						methods.AddRange(GetConstructorMethods(results.CallingClass.BaseType.GetMethods()));
-					}
-				} else {
-					methods.AddRange(GetConstructorMethods(trr.ResolvedType.GetMethods()));
-					
-					if (methods.Count == 0 && trr.ResolvedClass != null && !trr.ResolvedClass.IsAbstract && !trr.ResolvedClass.IsStatic) {
-						// add default constructor
-						methods.Add(Constructor.CreateDefault(trr.ResolvedClass));
+						IClass resolvedClass = (trr != null) ? trr.ResolvedClass : results.ResolvedType.GetUnderlyingClass();
+						if (methods.Count == 0 && resolvedClass != null && !resolvedClass.IsStatic) {
+							// add default constructor
+							methods.Add(Constructor.CreateDefault(resolvedClass));
+						}
 					}
 				}
 			} else {
@@ -189,15 +184,11 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			}
 		}
 		
-		List<IMethodOrProperty> GetConstructorMethods(List<IMethod> methods)
+		IEnumerable<IMethodOrProperty> GetConstructorMethods(List<IMethod> methods)
 		{
-			List<IMethodOrProperty> constructorMethods = new List<IMethodOrProperty>();
-			foreach (IMethod method in methods) {
-				if (method.IsConstructor && !method.IsStatic) {
-					constructorMethods.Add(method);
-				}
-			}
-			return constructorMethods;
+			return from method in methods
+				where method.IsConstructor && !method.IsStatic
+				select (IMethodOrProperty)method;
 		}
 		
 		public bool CaretOffsetChanged()

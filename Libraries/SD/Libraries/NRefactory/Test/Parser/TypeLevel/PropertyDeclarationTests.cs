@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2062 $</version>
+//     <version>$Revision: 3660 $</version>
 // </file>
 
 using System;
@@ -103,7 +103,7 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 			Assert.IsTrue(!pd.HasSetRegion);
 			
 			Assert.AreEqual("MyInterface", pd.InterfaceImplementations[0].InterfaceType.Type);
-			Assert.AreEqual("System.String", pd.InterfaceImplementations[0].InterfaceType.GenericTypes[0].SystemType);
+			Assert.AreEqual("System.String", pd.InterfaceImplementations[0].InterfaceType.GenericTypes[0].Type);
 		}
 		#endregion
 		

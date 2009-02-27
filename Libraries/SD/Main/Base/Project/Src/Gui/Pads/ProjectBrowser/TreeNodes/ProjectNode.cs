@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2694 $</version>
+//     <version>$Revision: 3292 $</version>
 // </file>
 
 using System;
@@ -11,7 +11,7 @@ using System.IO;
 using System.Windows.Forms;
 
 using ICSharpCode.Core;
-using ICSharpCode.SharpDevelop.Gui;
+using ICSharpCode.Core.WinForms;
 
 namespace ICSharpCode.SharpDevelop.Project
 {
@@ -50,9 +50,13 @@ namespace ICSharpCode.SharpDevelop.Project
 			sortOrder = 1;
 			
 			this.ContextmenuAddinTreePath = "/SharpDevelop/Pads/ProjectBrowser/ContextMenu/ProjectNode";
-			this.project   = project;
+			this.project = project;
 			
 			Text = project.Name;
+			if (project.ReadOnly) {
+				Text += StringParser.Parse(" (${res:Global.ReadOnly})");
+			}
+			
 			autoClearNodes = false;
 			
 			if (project is MissingProject) {

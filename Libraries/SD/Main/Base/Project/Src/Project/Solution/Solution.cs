@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3214 $</version>
+//     <version>$Revision: 3753 $</version>
 // </file>
 
 using System;
@@ -12,7 +12,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using SearchAndReplace;
+
 using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop.Gui;
 using MSBuild = Microsoft.Build.BuildEngine;
@@ -28,15 +28,18 @@ namespace ICSharpCode.SharpDevelop.Project
 	
 	public class Solution : SolutionFolder, IDisposable, IMSBuildEngineProvider, IBuildable
 	{
+		public const int SolutionVersionVS2005 = 9;
+		public const int SolutionVersionVS2008 = 10;
+		
+		[Obsolete("Use SolutionVersionVS2005 instead")]
 		public const int SolutionVersionVS05 = 9;
+		[Obsolete("Use SolutionVersionVS2008 instead")]
 		public const int SolutionVersionVS08 = 10;
 		
 		/// <summary>contains &lt;GUID, (IProject/ISolutionFolder)&gt; pairs.</summary>
 		Dictionary<string, ISolutionFolder> guidDictionary = new Dictionary<string, ISolutionFolder>();
 		
 		string fileName = String.Empty;
-		
-		bool readOnly = false;
 		
 		MSBuild.Engine buildEngine = MSBuildInternals.CreateEngine();
 		
@@ -211,10 +214,14 @@ namespace ICSharpCode.SharpDevelop.Project
 			}
 		}
 		
-		/// <summary>Property to determine if the solution is readonly.</summary>
+		/// <summary>Returns true if the solution is readonly.</summary>
 		[Browsable(false)]
 		public bool ReadOnly {
-			get { return readOnly; }
+			get
+			{
+				FileAttributes attributes = File.GetAttributes(fileName);
+				return ((FileAttributes.ReadOnly & attributes) == FileAttributes.ReadOnly);
+			}
 		}
 		#endregion
 		
@@ -252,24 +259,17 @@ namespace ICSharpCode.SharpDevelop.Project
 				Save(fileName);
 				return;
 			} catch (IOException ex) {
-				MessageService.ShowError("Could not save " + fileName + ":\n" + ex.Message);
+				MessageService.ShowErrorFormatted("${res:SharpDevelop.Solution.CannotSave.IOException}", fileName, ex.Message);
 			} catch (UnauthorizedAccessException ex) {
 				FileAttributes attributes = File.GetAttributes(fileName);
 				if ((FileAttributes.ReadOnly & attributes) == FileAttributes.ReadOnly) {
-					bool attemptOverwrite = MessageService.AskQuestionFormatted(
-						"Solution file {0} is marked readonly. Attempt to save anyway?",
-						new string [] {fileName});
-					if (attemptOverwrite) {
-						try {
-							attributes &= ~FileAttributes.ReadOnly;
-							File.SetAttributes(fileName, attributes);
-							Save(fileName);
-							return;
-						} catch { /* If something screws up shows the error */ }
-					}
+					MessageService.ShowErrorFormatted("${res:SharpDevelop.Solution.CannotSave.ReadOnly}", fileName);
 				}
-				this.readOnly = true;
-				MessageService.ShowError("Could not save " + fileName + ":\n" + ex.Message + "\n\nEnsure the file is writable.");
+				else
+				{
+					MessageService.ShowErrorFormatted
+						("${res:SharpDevelop.Solution.CannotSave.UnauthorizedAccessException}", fileName, ex.Message);
+				}
 			}
 		}
 		
@@ -356,16 +356,16 @@ namespace ICSharpCode.SharpDevelop.Project
 			// we need to specify UTF8 because MSBuild needs the BOM
 			using (StreamWriter sw = new StreamWriter(fileName, false, Encoding.UTF8)) {
 				sw.WriteLine();
-				int versionNumber = SolutionVersionVS05;
+				int versionNumber = SolutionVersionVS2005;
 				foreach (IProject p in this.Projects) {
 					if (p.MinimumSolutionVersion > versionNumber)
 						versionNumber = p.MinimumSolutionVersion;
 				}
 				
 				sw.WriteLine("Microsoft Visual Studio Solution File, Format Version " + versionNumber + ".00");
-				if (versionNumber == SolutionVersionVS05) {
+				if (versionNumber == SolutionVersionVS2005) {
 					sw.WriteLine("# Visual Studio 2005");
-				} else if (versionNumber == SolutionVersionVS08) {
+				} else if (versionNumber == SolutionVersionVS2008) {
 					sw.WriteLine("# Visual Studio 2008");
 				}
 				sw.WriteLine("# SharpDevelop " + RevisionClass.FullVersion);
@@ -502,8 +502,8 @@ namespace ICSharpCode.SharpDevelop.Project
 					}
 				}
 			}
-			
-			if (newSolution.FixSolutionConfiguration(newSolution.Projects) || needsConversion) {
+						
+			if (!newSolution.ReadOnly && (newSolution.FixSolutionConfiguration(newSolution.Projects) || needsConversion)) {
 				// save in new format
 				newSolution.Save();
 			}
@@ -654,7 +654,15 @@ namespace ICSharpCode.SharpDevelop.Project
 			foreach (IProject project in projects) {
 				string guid = project.IdGuid.ToUpperInvariant();
 				foreach (SolutionItem configuration in solSec.Items) {
-					string searchKey = guid + "." + configuration.Name + ".ActiveCfg";
+					string searchKey = guid + "." + configuration.Name + ".Build.0";
+					if (!prjSec.Items.Exists(delegate (SolutionItem item) {
+					                         	return item.Name == searchKey;
+					                         }))
+					{
+						prjSec.Items.Add(new SolutionItem(searchKey, configuration.Location));
+						changed = true;
+					}
+					searchKey = guid + "." + configuration.Name + ".ActiveCfg";
 					if (!prjSec.Items.Exists(delegate (SolutionItem item) {
 					                         	return item.Name == searchKey;
 					                         }))
@@ -664,9 +672,40 @@ namespace ICSharpCode.SharpDevelop.Project
 					}
 				}
 			}
+			
+			// remove all configuration entries belonging to removed projects
+			prjSec.Items.RemoveAll(
+				item => {
+					if (item.Name.Contains(".")) {
+						string guid = item.Name.Substring(0, item.Name.IndexOf('.'));
+						if (!this.Projects.Any(p => string.Equals(p.IdGuid, guid, StringComparison.OrdinalIgnoreCase))) {
+							changed = true;
+							return true;
+						}
+					}
+					return false;
+				});
 			return changed;
 		}
 		#endregion
+		
+		/// <summary>
+		/// Removes all configurations belonging to the specified project.
+		/// Is used to remove a project from the solution.
+		/// </summary>
+		internal void RemoveProjectConfigurations(string projectGuid)
+		{
+			ProjectSection prjSec = GetProjectConfigurationsSection();
+			prjSec.Items.RemoveAll(
+				item => {
+					if (item.Name.Contains(".")) {
+						string guid = item.Name.Substring(0, item.Name.IndexOf('.'));
+						if (string.Equals(projectGuid, guid, StringComparison.OrdinalIgnoreCase))
+							return true; // remove configuration
+					}
+					return false;
+				});
+		}
 		
 		#region GetProjectConfigurationsSection/GetPlatformNames
 		public IList<string> GetConfigurationNames()
@@ -702,6 +741,7 @@ namespace ICSharpCode.SharpDevelop.Project
 				l.Project.ActiveConfiguration = l.Configuration;
 				l.Project.ActivePlatform = FixPlatformNameForProject(l.Platform);
 			}
+			ProjectService.OnSolutionConfigurationChanged(new SolutionConfigurationEventArgs(this, preferences.ActiveConfiguration));
 		}
 		
 		/// <summary>
@@ -749,11 +789,11 @@ namespace ICSharpCode.SharpDevelop.Project
 				if (this.SolutionItem == null)
 					return;
 				string oldName = this.SolutionItem.Name;
-				this.SolutionItem.Name = this.Project.IdGuid + "." + newConfiguration + "|" + newPlatform + ".ActiveCfg";
+				this.SolutionItem.Name = this.Project.IdGuid + "." + newConfiguration + "|" + newPlatform + ".Build.0";
 				string newName = this.SolutionItem.Name;
-				if (StripActiveCfg(ref oldName) && StripActiveCfg(ref newName)) {
-					oldName += ".Build.0";
-					newName += ".Build.0";
+				if (StripBuild0(ref oldName) && StripBuild0(ref newName)) {
+					oldName += ".ActiveCfg";
+					newName += ".ActiveCfg";
 					foreach (SolutionItem item in section.Items) {
 						if (item.Name == oldName)
 							item.Name = newName;
@@ -769,8 +809,8 @@ namespace ICSharpCode.SharpDevelop.Project
 					return;
 				this.SolutionItem.Location = newConfiguration + "|" + newPlatform;
 				string thisName = this.SolutionItem.Name;
-				if (StripActiveCfg(ref thisName)) {
-					thisName += ".Build.0";
+				if (StripBuild0(ref thisName)) {
+					thisName += ".ActiveCfg";
 					foreach (SolutionItem item in section.Items) {
 						if (item.Name == thisName)
 							item.Location = this.SolutionItem.Location;
@@ -778,10 +818,10 @@ namespace ICSharpCode.SharpDevelop.Project
 				}
 			}
 			
-			internal static bool StripActiveCfg(ref string s)
+			internal static bool StripBuild0(ref string s)
 			{
-				if (s.EndsWith(".ActiveCfg")) {
-					s = s.Substring(0, s.Length - ".ActiveCfg".Length);
+				if (s.EndsWith(".Build.0")) {
+					s = s.Substring(0, s.Length - ".Build.0".Length);
 					return true;
 				} else {
 					return false;
@@ -798,7 +838,7 @@ namespace ICSharpCode.SharpDevelop.Project
 			foreach (SolutionItem item in prjSec.Items) {
 				dict[item.Name] = item;
 			}
-			string searchKeyPostFix = "." + solutionConfiguration + "|" + solutionPlatform + ".ActiveCfg";
+			string searchKeyPostFix = "." + solutionConfiguration + "|" + solutionPlatform + ".Build.0";
 			foreach (IProject p in Projects) {
 				string searchKey = p.IdGuid + searchKeyPostFix;
 				SolutionItem solutionItem;
@@ -820,11 +860,11 @@ namespace ICSharpCode.SharpDevelop.Project
 		
 		internal SolutionItem CreateMatchingItem(string solutionConfiguration, string solutionPlatform, IProject project, string initialLocation)
 		{
-			GetProjectConfigurationsSection().Items.Add(new SolutionItem(project.IdGuid + "." + solutionConfiguration + "|"
-			                                                             + solutionPlatform + ".Build.0", initialLocation));
 			SolutionItem item = new SolutionItem(project.IdGuid + "." + solutionConfiguration + "|"
-			                        + solutionPlatform + ".ActiveCfg", initialLocation);
+			                                     + solutionPlatform + ".Build.0", initialLocation);
 			GetProjectConfigurationsSection().Items.Add(item);
+			GetProjectConfigurationsSection().Items.Add(new SolutionItem(project.IdGuid + "." + solutionConfiguration + "|"
+			                                                             + solutionPlatform + ".ActiveCfg", initialLocation));
 			return item;
 		}
 		#endregion
@@ -989,14 +1029,14 @@ namespace ICSharpCode.SharpDevelop.Project
 		/// <summary>
 		/// Gets the configuration|platform name from a conf item, e.g.
 		/// "Release|Any CPU" from
-		/// "{7115F3A9-781C-4A95-90AE-B5AB53C4C588}.Release|Any CPU.ActiveCfg"
+		/// "{7115F3A9-781C-4A95-90AE-B5AB53C4C588}.Release|Any CPU.Build.0"
 		/// </summary>
 		static string GetKeyFromProjectConfItem(string name)
 		{
 			int pos = name.IndexOf('.');
 			if (pos < 0) return null;
 			name = name.Substring(pos + 1);
-			if (!ProjectConfigurationPlatformMatching.StripActiveCfg(ref name)) {
+			if (!ProjectConfigurationPlatformMatching.StripBuild0(ref name)) {
 				pos = name.LastIndexOf('.');
 				if (pos < 0) return null;
 				name = name.Substring(0, pos);
@@ -1152,5 +1192,12 @@ namespace ICSharpCode.SharpDevelop.Project
 			feedbackSink.Done(true);
 		}
 		#endregion
+		
+		public override string ToString()
+		{
+			return "[Solution: FileName=" + (this.FileName ?? "<null>") +
+				", HasProjects=" + this.HasProjects.ToString(System.Globalization.CultureInfo.InvariantCulture) +
+				", ReadOnly=" + this.ReadOnly.ToString(System.Globalization.CultureInfo.InvariantCulture) + "]";
+		}
 	}
 }

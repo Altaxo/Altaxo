@@ -2,16 +2,17 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3090 $</version>
+//     <version>$Revision: 3702 $</version>
 // </file>
 
 using System;
+using System.Diagnostics;
 using System.Drawing.Printing;
 using System.IO;
 using System.Windows.Forms;
-using System.Diagnostics;
 
 using ICSharpCode.Core;
+using ICSharpCode.Core.WinForms;
 using ICSharpCode.SharpDevelop.Dom;
 using ICSharpCode.SharpDevelop.Gui;
 using ICSharpCode.TextEditor;
@@ -32,6 +33,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			HighlightingManager.Manager.AddSyntaxModeFileProvider(new ICSharpCode.SharpDevelop.DefaultEditor.Codons.AddInTreeSyntaxModeProvider());
 			HighlightingManager.Manager.AddSyntaxModeFileProvider(new FileSyntaxModeProvider(Path.Combine(PropertyService.DataDirectory, "modes")));
 			HighlightingManager.Manager.AddSyntaxModeFileProvider(new FileSyntaxModeProvider(modeDir));
+			ClipboardHandling.Initialize();
 		}
 		
 		/// <summary>
@@ -47,9 +49,14 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			return true;
 		}
 		
+		protected virtual TextEditorDisplayBindingWrapper CreateWrapper(OpenedFile file)
+		{
+			return new TextEditorDisplayBindingWrapper(file);
+		}
+		
 		public virtual IViewContent CreateContentForFile(OpenedFile file)
 		{
-			TextEditorDisplayBindingWrapper b2 = new TextEditorDisplayBindingWrapper(file);
+			TextEditorDisplayBindingWrapper b2 = CreateWrapper(file);
 			file.ForceInitializeView(b2); // load file to initialize folding etc.
 			
 			b2.textEditorControl.Dock = DockStyle.Fill;
@@ -74,6 +81,15 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		public TextEditorControl TextEditorControl {
 			get {
 				return textEditorControl;
+			}
+		}
+		
+		public IDocument GetDocumentForFile(OpenedFile file)
+		{
+			if (file == this.PrimaryFile) {
+				return this.TextEditorControl.Document;
+			} else {
+				return null;
 			}
 		}
 		
@@ -250,13 +266,11 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			properties.Set("CaretOffset", textEditorControl.ActiveTextAreaControl.Caret.Offset);
 			properties.Set("VisibleLine", textEditorControl.ActiveTextAreaControl.TextArea.TextView.FirstVisibleLine);
 			properties.Set("HighlightingLanguage", textEditorControl.Document.HighlightingStrategy.Name);
-			properties.Set("Foldings", textEditorControl.Document.FoldingManager.SerializeToString());
 			return properties;
 		}
 		
-		public void SetMemento(Properties memento)
+		public void SetMemento(Properties properties)
 		{
-			Properties properties = (Properties)memento;
 			textEditorControl.ActiveTextAreaControl.Caret.Position =  textEditorControl.Document.OffsetToPosition(Math.Min(textEditorControl.Document.TextLength, Math.Max(0, properties.Get("CaretOffset", textEditorControl.ActiveTextAreaControl.Caret.Offset))));
 //			textAreaControl.SetDesiredColumn();
 			
@@ -268,7 +282,6 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			}
 			textEditorControl.ActiveTextAreaControl.TextArea.TextView.FirstVisibleLine = properties.Get("VisibleLine", 0);
 			
-			textEditorControl.Document.FoldingManager.DeserializeFromString(properties.Get("Foldings", ""));
 //			// insane check for cursor position, may be required for document reload.
 //			int lineNr = textAreaControl.Document.GetLineNumberForOffset(textAreaControl.Document.Caret.Offset);
 //			LineSegment lineSegment = textAreaControl.Document.GetLineSegment(lineNr);
@@ -337,7 +350,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		void SetIcon()
 		{
 			if (this.WorkbenchWindow != null) {
-				System.Drawing.Icon icon = ResourceService.GetIcon(IconService.GetImageForFile(this.PrimaryFileName));
+				System.Drawing.Icon icon = WinFormsResourceService.GetIcon(IconService.GetImageForFile(this.PrimaryFileName));
 				if (icon != null) {
 					this.WorkbenchWindow.Icon = icon;
 				}
@@ -453,31 +466,31 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		#region ICSharpCode.SharpDevelop.Gui.IClipboardHandler interface implementation
 		public bool EnableCut {
 			get {
-				return textEditorControl.ActiveTextAreaControl.TextArea.ClipboardHandler.EnableCut;
+				return !this.IsDisposed && textEditorControl.ActiveTextAreaControl.TextArea.ClipboardHandler.EnableCut;
 			}
 		}
 		
 		public bool EnableCopy {
 			get {
-				return textEditorControl.ActiveTextAreaControl.TextArea.ClipboardHandler.EnableCopy;
+				return !this.IsDisposed && textEditorControl.ActiveTextAreaControl.TextArea.ClipboardHandler.EnableCopy;
 			}
 		}
 		
 		public bool EnablePaste {
 			get {
-				return textEditorControl.ActiveTextAreaControl.TextArea.ClipboardHandler.EnablePaste;
+				return !this.IsDisposed && textEditorControl.ActiveTextAreaControl.TextArea.ClipboardHandler.EnablePaste;
 			}
 		}
 		
 		public bool EnableDelete {
 			get {
-				return textEditorControl.ActiveTextAreaControl.TextArea.ClipboardHandler.EnableDelete;
+				return !this.IsDisposed && textEditorControl.ActiveTextAreaControl.TextArea.ClipboardHandler.EnableDelete;
 			}
 		}
 		
 		public bool EnableSelectAll {
 			get {
-				return textEditorControl.ActiveTextAreaControl.TextArea.ClipboardHandler.EnableSelectAll;
+				return !this.IsDisposed && textEditorControl.ActiveTextAreaControl.TextArea.ClipboardHandler.EnableSelectAll;
 			}
 		}
 		
@@ -509,6 +522,11 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		
 		Control IToolsHost.ToolsControl {
 			get { return TextEditorSideBar.Instance; }
+		}
+		
+		public override string ToString()
+		{
+			return "[" + GetType().Name + " " + this.PrimaryFileName + "]";
 		}
 	}
 }

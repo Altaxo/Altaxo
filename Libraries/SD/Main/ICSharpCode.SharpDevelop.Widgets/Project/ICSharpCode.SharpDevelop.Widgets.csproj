@@ -1,4 +1,4 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <OutputType>Library</OutputType>
     <RootNamespace>ICSharpCode.SharpDevelop.Widgets</RootNamespace>
@@ -108,6 +108,15 @@
     </Compile>
     <EmbeddedResource Include="Resources\Icons.16x16.SortAscending.png" />
     <EmbeddedResource Include="Resources\Icons.16x16.SortDescending.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Configuration" />
+    <Folder Include="ListViewSorting" />
+    <Folder Include="Resources" />
+    <Folder Include="TreeGrid" />
+    <Folder Include="AutoHide" />
+    <Folder Include="SideBar" />
+    <Folder Include="DesignTimeSupport" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>

@@ -1,14 +1,15 @@
-﻿// <file>
+// <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3061 $</version>
+//     <version>$Revision: 3596 $</version>
 // </file>
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 
 using ICSharpCode.Core;
@@ -184,8 +185,8 @@ namespace ICSharpCode.SharpDevelop.Gui
 		}
 		void ShowViewContents()
 		{
-			foreach (IViewContent content in WorkbenchSingleton.Workbench.ViewContentCollection) {
-				ShowView(content);
+			foreach (IViewContent content in WorkbenchSingleton.Workbench.PrimaryViewContents) {
+				ShowView(content, true);
 			}
 		}
 		
@@ -237,10 +238,12 @@ namespace ICSharpCode.SharpDevelop.Gui
 				try {
 					IWorkbenchWindow activeWindow = this.ActiveWorkbenchWindow;
 					dockPanel.ActiveDocumentChanged -= new EventHandler(ActiveMdiChanged);
+					dockPanel.ActiveContentChanged -= new EventHandler(ActiveContentChanged);
 					
 					DetachPadContents(false);
 					DetachViewContents(false);
 					dockPanel.ActiveDocumentChanged += new EventHandler(ActiveMdiChanged);
+					dockPanel.ActiveContentChanged += new EventHandler(ActiveContentChanged);
 					
 					LoadLayoutConfiguration();
 					ShowPads();
@@ -438,21 +441,25 @@ namespace ICSharpCode.SharpDevelop.Gui
 			if (content == null) {
 				return;
 			}
-			if (!contentHash.ContainsKey(content.Class)) {
-				DockContent newContent = CreateContent(content);
+			PadContentWrapper dockContent;
+			if (!contentHash.TryGetValue(content.Class, out dockContent)) {
+				dockContent = CreateContent(content);
 				// TODO: read the default dock state from the PadDescriptor
 				// we'll also need to allow for default-hidden (HideOnClose) contents
 				// which seems to be not possible using any Show overload.
-				newContent.Show(dockPanel);
+				dockContent.Show(dockPanel);
+			} else if (dockContent.VisibleState == DockState.Unknown) {
+				dockContent.Show(dockPanel);
 			} else {
-				contentHash[content.Class].Show();
+				dockContent.Show();
 			}
 		}
 		
 		public bool IsVisible(PadDescriptor padContent)
 		{
 			if (padContent != null && contentHash.ContainsKey(padContent.Class)) {
-				return !contentHash[padContent.Class].IsHidden;
+				PadContentWrapper dockContent = contentHash[padContent.Class];
+				return !dockContent.IsHidden && dockContent.VisibleState != DockState.Unknown;
 			}
 			return false;
 		}
@@ -539,7 +546,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		{
 			SdiWorkspaceWindow f = (SdiWorkspaceWindow)sender;
 			f.CloseEvent -= CloseWindowEvent;
-			foreach (IViewContent vc in f.ViewContents) {
+			foreach (IViewContent vc in f.ViewContents.ToArray()) {
 				((IWorkbench)wbForm).CloseContent(vc);
 			}
 			if (f == oldSelectedWindow) {
@@ -548,12 +555,16 @@ namespace ICSharpCode.SharpDevelop.Gui
 			ActiveMdiChanged(this, null);
 		}
 		
-		public IWorkbenchWindow ShowView(IViewContent content)
+		public IWorkbenchWindow ShowView(IViewContent content, bool switchToOpenedView)
 		{
 			if (content.WorkbenchWindow is SdiWorkspaceWindow) {
 				SdiWorkspaceWindow oldSdiWindow = (SdiWorkspaceWindow)content.WorkbenchWindow;
 				if (!oldSdiWindow.IsDisposed) {
-					oldSdiWindow.Show(dockPanel);
+					if (switchToOpenedView) {
+						oldSdiWindow.Show(dockPanel);
+					} else {
+						this.AddWindowToDockPanelWithoutSwitching(oldSdiWindow);
+					}
 					return oldSdiWindow;
 				}
 			}
@@ -563,10 +574,27 @@ namespace ICSharpCode.SharpDevelop.Gui
 			sdiWorkspaceWindow.ViewContents.AddRange(content.SecondaryViewContents);
 			sdiWorkspaceWindow.CloseEvent += new EventHandler(CloseWindowEvent);
 			if (dockPanel != null) {
-				sdiWorkspaceWindow.Show(dockPanel);
+				if (switchToOpenedView) {
+					sdiWorkspaceWindow.Show(dockPanel);
+				} else {
+					this.AddWindowToDockPanelWithoutSwitching(sdiWorkspaceWindow);
+				}
 			}
 			
 			return sdiWorkspaceWindow;
+		}
+		
+		void AddWindowToDockPanelWithoutSwitching(SdiWorkspaceWindow sdiWorkspaceWindow)
+		{
+			sdiWorkspaceWindow.DockPanel = dockPanel;
+			SdiWorkspaceWindow otherWindow = dockPanel.ActiveContent as SdiWorkspaceWindow;
+			if (otherWindow == null) {
+				otherWindow = dockPanel.Contents.OfType<SdiWorkspaceWindow>().FirstOrDefault(c => c.Pane != null);
+			}
+			if (otherWindow != null) {
+				sdiWorkspaceWindow.Pane = otherWindow.Pane;
+			}
+			sdiWorkspaceWindow.DockState = DockState.Document;
 		}
 		
 		void ActiveMdiChanged(object sender, EventArgs e)

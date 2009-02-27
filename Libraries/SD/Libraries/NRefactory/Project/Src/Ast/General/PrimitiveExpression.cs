@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="none" email=""/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 3263 $</version>
 // </file>
 
 using System;
@@ -11,17 +11,10 @@ namespace ICSharpCode.NRefactory.Ast
 {
 	public class PrimitiveExpression : Expression
 	{
-		object val;
 		string stringValue;
 		
-		public object Value {
-			get {
-				return val;
-			}
-			set {
-				val = value;
-			}
-		}
+		public Parser.LiteralFormat LiteralFormat { get; set; }
+		public object Value { get; set; }
 		
 		public string StringValue {
 			get {

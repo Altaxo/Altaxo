@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3205 $</version>
+//     <version>$Revision: 3323 $</version>
 // </file>
 
 using System;
@@ -552,6 +552,7 @@ namespace ICSharpCode.TextEditor
 		}
 		void DocumentFoldingsChanged(object sender, EventArgs e)
 		{
+			Caret.UpdateCaretPosition();
 			Invalidate();
 			this.motherTextAreaControl.AdjustScrollBars();
 		}

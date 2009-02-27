@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3206 $</version>
+//     <version>$Revision: 3272 $</version>
 // </file>
 
 using System;
@@ -85,9 +85,20 @@ namespace ICSharpCode.TextEditor.Document
 		/// </summary>
 		public AnchorMovementType MovementType { get; set; }
 		
-		internal void Deleted()
+		public event EventHandler Deleted;
+		
+		internal void Delete(ref DeferredEventList deferredEventList)
 		{
+			// we cannot fire an event here because this method is called while the LineManager adjusts the
+			// lineCollection, so an event handler could see inconsistent state
 			lineSegment = null;
+			deferredEventList.AddDeletedAnchor(this);
+		}
+		
+		internal void RaiseDeleted()
+		{
+			if (Deleted != null)
+				Deleted(this, EventArgs.Empty);
 		}
 		
 		internal TextAnchor(LineSegment lineSegment, int columnNumber)

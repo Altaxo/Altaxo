@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Andrea Paatz" email="andrea@icsharpcode.net"/>
-//     <version>$Revision: 3125 $</version>
+//     <version>$Revision: 3717 $</version>
 // </file>
 
 using System;
@@ -57,20 +57,21 @@ namespace ICSharpCode.NRefactory.Parser.VB
 				return new Token(Tokens.ExclamationMark, Col - 1, Line);
 			}
 			unchecked {
-				int nextChar;
-				while ((nextChar = ReaderRead()) != -1) {
+				while (true) {
+					Location startLocation = new Location(Col, Line);
+					int nextChar = ReaderRead();
+					if (nextChar == -1)
+						return new Token(Tokens.EOF);
 					char ch = (char)nextChar;
 					if (Char.IsWhiteSpace(ch)) {
-						int x = Col - 1;
-						int y = Line;
 						if (HandleLineEnd(ch)) {
 							if (lineEnd) {
 								// second line end before getting to a token
 								// -> here was a blank line
-								specialTracker.AddEndOfLine(new Location(x, y));
+								specialTracker.AddEndOfLine(startLocation);
 							} else {
 								lineEnd = true;
-								return new Token(Tokens.EOL, x, y);
+								return new Token(Tokens.EOL, startLocation, new Location(Col, Line), null, null, LiteralFormat.None);
 							}
 						}
 						continue;
@@ -124,7 +125,7 @@ namespace ICSharpCode.NRefactory.Parser.VB
 							} catch (Exception e) {
 								errors.Error(Line, Col, String.Format("Invalid date time {0}", e));
 							}
-							return new Token(Tokens.LiteralDate, x, y, s, time);
+							return new Token(Tokens.LiteralDate, x, y, s, time, LiteralFormat.DateTimeLiteral);
 						} else {
 							ReadPreprocessorDirective();
 							continue;
@@ -217,9 +218,9 @@ namespace ICSharpCode.NRefactory.Parser.VB
 							if (s.Length == 0) {
 								s = "\0";
 							}
-							return new Token(Tokens.LiteralCharacter, x, y, '"' + s  + "\"C", s[0]);
+							return new Token(Tokens.LiteralCharacter, x, y, '"' + s  + "\"C", s[0], LiteralFormat.CharLiteral);
 						}
-						return new Token(Tokens.LiteralString, x, y, '"' + s + '"', s);
+						return new Token(Tokens.LiteralString, x, y, '"' + s + '"', s, LiteralFormat.StringLiteral);
 					}
 					Token token = ReadOperator(ch);
 					if (token != null) {
@@ -228,8 +229,6 @@ namespace ICSharpCode.NRefactory.Parser.VB
 					}
 					errors.Error(Line, Col, String.Format("Unknown char({0}) which can't be read", ch));
 				}
-				
-				return new Token(Tokens.EOF);
 			}
 		}
 		
@@ -294,7 +293,7 @@ namespace ICSharpCode.NRefactory.Parser.VB
 				if (ch == '&') {
 					errors.Error(Line, Col, String.Format("digit expected"));
 				}
-				return new Token(Tokens.LiteralInteger, x, y, sb.ToString() ,ch - '0');
+				return new Token(Tokens.LiteralInteger, x, y, sb.ToString() ,ch - '0', LiteralFormat.DecimalNumber);
 			}
 			if (ch == '.') {
 				if (Char.IsDigit((char)ReaderPeek())) {
@@ -334,21 +333,24 @@ namespace ICSharpCode.NRefactory.Parser.VB
 			
 			if (digit.Length == 0) {
 				errors.Error(Line, Col, String.Format("digit expected"));
-				return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), 0);
+				return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), 0, LiteralFormat.DecimalNumber);
 			}
 			
-			if (ReaderPeek() != -1 && ("%&SILU".IndexOf(PeekUpperChar()) != -1 || ishex || isokt)) {
-				ch = (char)ReaderPeek();
-				sb.Append(ch);
-				ch = Char.ToUpper(ch, CultureInfo.InvariantCulture);
-				bool unsigned = ch == 'U';
-				if (unsigned) {
-					ReaderRead(); // read the U
+			if (ReaderPeek() != -1 && "%&SILU".IndexOf(PeekUpperChar()) != -1 || ishex || isokt) {
+				bool unsigned = false;
+				if (ReaderPeek() != -1) {
 					ch = (char)ReaderPeek();
 					sb.Append(ch);
 					ch = Char.ToUpper(ch, CultureInfo.InvariantCulture);
-					if (ch != 'I' && ch != 'L' && ch != 'S') {
-						errors.Error(Line, Col, "Invalid type character: U" + ch);
+					unsigned = ch == 'U';
+					if (unsigned) {
+						ReaderRead(); // read the U
+						ch = (char)ReaderPeek();
+						sb.Append(ch);
+						ch = Char.ToUpper(ch, CultureInfo.InvariantCulture);
+						if (ch != 'I' && ch != 'L' && ch != 'S') {
+							errors.Error(Line, Col, "Invalid type character: U" + ch);
+						}
 					}
 				}
 				try {
@@ -360,56 +362,57 @@ namespace ICSharpCode.NRefactory.Parser.VB
 						}
 						if (ch == 'S') {
 							if (unsigned)
-								return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), (ushort)number);
+								return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), (ushort)number, LiteralFormat.OctalNumber);
 							else
-								return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), (short)number);
+								return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), (short)number, LiteralFormat.OctalNumber);
 						} else if (ch == '%' || ch == 'I') {
 							if (unsigned)
-								return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), (uint)number);
+								return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), (uint)number, LiteralFormat.OctalNumber);
 							else
-								return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), (int)number);
+								return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), (int)number, LiteralFormat.OctalNumber);
 						} else if (ch == '&' || ch == 'L') {
 							if (unsigned)
-								return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), (ulong)number);
+								return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), (ulong)number, LiteralFormat.OctalNumber);
 							else
-								return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), (long)number);
+								return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), (long)number, LiteralFormat.OctalNumber);
 						} else {
 							if (number > uint.MaxValue) {
-								return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), unchecked((long)number));
+								return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), unchecked((long)number), LiteralFormat.OctalNumber);
 							} else {
-								return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), unchecked((int)number));
+								return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), unchecked((int)number), LiteralFormat.OctalNumber);
 							}
 						}
 					}
+					LiteralFormat literalFormat = ishex ? LiteralFormat.HexadecimalNumber : LiteralFormat.DecimalNumber;
 					if (ch == 'S') {
 						ReaderRead();
 						if (unsigned)
-							return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), UInt16.Parse(digit, ishex ? NumberStyles.HexNumber : NumberStyles.Number));
+							return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), UInt16.Parse(digit, ishex ? NumberStyles.HexNumber : NumberStyles.Number), literalFormat);
 						else
-							return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), Int16.Parse(digit, ishex ? NumberStyles.HexNumber : NumberStyles.Number));
+							return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), Int16.Parse(digit, ishex ? NumberStyles.HexNumber : NumberStyles.Number), literalFormat);
 					} else if (ch == '%' || ch == 'I') {
 						ReaderRead();
 						if (unsigned)
-							return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), UInt32.Parse(digit, ishex ? NumberStyles.HexNumber : NumberStyles.Number));
+							return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), UInt32.Parse(digit, ishex ? NumberStyles.HexNumber : NumberStyles.Number), literalFormat);
 						else
-							return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), Int32.Parse(digit, ishex ? NumberStyles.HexNumber : NumberStyles.Number));
+							return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), Int32.Parse(digit, ishex ? NumberStyles.HexNumber : NumberStyles.Number), literalFormat);
 					} else if (ch == '&' || ch == 'L') {
 						ReaderRead();
 						if (unsigned)
-							return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), UInt64.Parse(digit, ishex ? NumberStyles.HexNumber : NumberStyles.Number));
+							return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), UInt64.Parse(digit, ishex ? NumberStyles.HexNumber : NumberStyles.Number), literalFormat);
 						else
-							return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), Int64.Parse(digit, ishex ? NumberStyles.HexNumber : NumberStyles.Number));
+							return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), Int64.Parse(digit, ishex ? NumberStyles.HexNumber : NumberStyles.Number), literalFormat);
 					} else if (ishex) {
 						ulong number = UInt64.Parse(digit, NumberStyles.HexNumber);
 						if (number > uint.MaxValue) {
-							return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), unchecked((long)number));
+							return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), unchecked((long)number), literalFormat);
 						} else {
-							return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), unchecked((int)number));
+							return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), unchecked((int)number), literalFormat);
 						}
 					}
 				} catch (OverflowException ex) {
 					errors.Error(Line, Col, ex.Message);
-					return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), 0);
+					return new Token(Tokens.LiteralInteger, x, y, sb.ToString(), 0, LiteralFormat.None);
 				}
 			}
 			Token nextToken = null; // if we accedently read a 'dot'
@@ -462,37 +465,37 @@ namespace ICSharpCode.NRefactory.Parser.VB
 			
 			try {
 				if (issingle) {
-					return new Token(Tokens.LiteralSingle, x, y, sb.ToString(), Single.Parse(digit, CultureInfo.InvariantCulture));
+					return new Token(Tokens.LiteralSingle, x, y, sb.ToString(), Single.Parse(digit, CultureInfo.InvariantCulture), LiteralFormat.DecimalNumber);
 				}
 				if (isdecimal) {
-					return new Token(Tokens.LiteralDecimal, x, y, sb.ToString(), Decimal.Parse(digit, NumberStyles.Currency | NumberStyles.AllowExponent, CultureInfo.InvariantCulture));
+					return new Token(Tokens.LiteralDecimal, x, y, sb.ToString(), Decimal.Parse(digit, NumberStyles.Currency | NumberStyles.AllowExponent, CultureInfo.InvariantCulture), LiteralFormat.DecimalNumber);
 				}
 				if (isdouble) {
-					return new Token(Tokens.LiteralDouble, x, y, sb.ToString(), Double.Parse(digit, CultureInfo.InvariantCulture));
+					return new Token(Tokens.LiteralDouble, x, y, sb.ToString(), Double.Parse(digit, CultureInfo.InvariantCulture), LiteralFormat.DecimalNumber);
 				}
 			} catch (FormatException) {
 				errors.Error(Line, Col, String.Format("{0} is not a parseable number", digit));
 				if (issingle)
-					return new Token(Tokens.LiteralSingle, x, y, sb.ToString(), 0f);
+					return new Token(Tokens.LiteralSingle, x, y, sb.ToString(), 0f, LiteralFormat.DecimalNumber);
 				if (isdecimal)
-					return new Token(Tokens.LiteralDecimal, x, y, sb.ToString(), 0m);
+					return new Token(Tokens.LiteralDecimal, x, y, sb.ToString(), 0m, LiteralFormat.DecimalNumber);
 				if (isdouble)
-					return new Token(Tokens.LiteralDouble, x, y, sb.ToString(), 0.0);
+					return new Token(Tokens.LiteralDouble, x, y, sb.ToString(), 0.0, LiteralFormat.DecimalNumber);
 			}
 			Token token;
 			try {
-				token = new Token(Tokens.LiteralInteger, x, y, sb.ToString(), Int32.Parse(digit, ishex ? NumberStyles.HexNumber : NumberStyles.Number));
+				token = new Token(Tokens.LiteralInteger, x, y, sb.ToString(), Int32.Parse(digit, ishex ? NumberStyles.HexNumber : NumberStyles.Number), ishex ? LiteralFormat.HexadecimalNumber : LiteralFormat.DecimalNumber);
 			} catch (Exception) {
 				try {
-					token = new Token(Tokens.LiteralInteger, x, y, sb.ToString(), Int64.Parse(digit, ishex ? NumberStyles.HexNumber : NumberStyles.Number));
+					token = new Token(Tokens.LiteralInteger, x, y, sb.ToString(), Int64.Parse(digit, ishex ? NumberStyles.HexNumber : NumberStyles.Number), ishex ? LiteralFormat.HexadecimalNumber : LiteralFormat.DecimalNumber);
 				} catch (FormatException) {
 					errors.Error(Line, Col, String.Format("{0} is not a parseable number", digit));
 					// fallback, when nothing helps :)
-					token = new Token(Tokens.LiteralInteger, x, y, sb.ToString(), 0);
+					token = new Token(Tokens.LiteralInteger, x, y, sb.ToString(), 0, LiteralFormat.DecimalNumber);
 				} catch (OverflowException) {
 					errors.Error(Line, Col, String.Format("{0} is too long for a integer literal", digit));
 					// fallback, when nothing helps :)
-					token = new Token(Tokens.LiteralInteger, x, y, sb.ToString(), 0);
+					token = new Token(Tokens.LiteralInteger, x, y, sb.ToString(), 0, LiteralFormat.DecimalNumber);
 				}
 			}
 			token.next = nextToken;
@@ -504,7 +507,7 @@ namespace ICSharpCode.NRefactory.Parser.VB
 			Location start = new Location(Col - 1, Line);
 			string directive = ReadIdent('#');
 			string argument  = ReadToEndOfLine();
-			this.specialTracker.AddPreprocessingDirective(new PreprocessingDirective(directive, argument.Trim(), start, new Location(start.X + directive.Length + argument.Length, start.Y)));
+			this.specialTracker.AddPreprocessingDirective(new PreprocessingDirective(directive, argument.Trim(), start, new Location(start.Column + directive.Length + argument.Length, start.Line)));
 		}
 		
 		string ReadDate()

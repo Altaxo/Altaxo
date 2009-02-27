@@ -2,15 +2,17 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3090 $</version>
+//     <version>$Revision: 3573 $</version>
 // </file>
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 
 using ICSharpCode.Core;
+using ICSharpCode.Core.WinForms;
 using ICSharpCode.SharpDevelop.Bookmarks;
 using ICSharpCode.SharpDevelop.Dom;
 using ICSharpCode.SharpDevelop.Gui;
@@ -21,6 +23,14 @@ using ICSharpCode.TextEditor.Document;
 
 namespace ICSharpCode.SharpDevelop.Refactoring
 {
+	public class RefactoringMenuContext
+	{
+		public TextArea TextArea;
+		public ExpressionResult ExpressionResult;
+		public ResolveResult ResolveResult;
+		public bool IsDefinition;
+	}
+	
 	/// <summary>
 	/// Build a menu with refactoring commands for the item that has been clicked on in the text editor.
 	/// </summary>
@@ -80,6 +90,11 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 			expressionResult = FindFullExpressionAtCaret(textArea, expressionFinder);
 		repeatResolve:
 			rr = ResolveExpressionAtCaret(textArea, expressionResult);
+			RefactoringMenuContext context = new RefactoringMenuContext {
+				TextArea = textArea,
+				ResolveResult = rr,
+				ExpressionResult = expressionResult
+			};
 			item = null;
 			if (rr is MethodGroupResolveResult) {
 				item = MakeItem(definitions, ((MethodGroupResolveResult)rr).GetMethodIfSingleOverload());
@@ -97,7 +112,8 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 			} else if (rr is TypeResolveResult) {
 				item = MakeItem(definitions, ((TypeResolveResult)rr).ResolvedClass);
 			} else if (rr is LocalResolveResult) {
-				item = MakeItem((LocalResolveResult)rr, caretLine + 1 == ((LocalResolveResult)rr).VariableDefinitionRegion.BeginLine);
+				context.IsDefinition = caretLine + 1 == ((LocalResolveResult)rr).VariableDefinitionRegion.BeginLine;
+				item = MakeItem((LocalResolveResult)rr, context);
 				insertIndex = 0;	// Insert local variable menu item at the topmost position.
 			} else if (rr is UnknownIdentifierResolveResult) {
 				item = MakeItemForResolveError((UnknownIdentifierResolveResult)rr, expressionResult.Context, textArea);
@@ -181,7 +197,7 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 		void SearchAllClassesWithName(List<IClass> searchResults, IProjectContent pc, string name, LanguageProperties language)
 		{
 			foreach (string ns in pc.NamespaceNames) {
-				IClass c = pc.GetClass(ns + "." + name, 0, language, false);
+				IClass c = pc.GetClass(ns + "." + name, 0, language, GetClassOptions.None);
 				if (c != null)
 					searchResults.Add(c);
 			}
@@ -205,16 +221,17 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 			return null;
 		}
 		
-		ToolStripMenuItem MakeItem(LocalResolveResult local, bool isDefinition)
+		ToolStripMenuItem MakeItem(LocalResolveResult local, RefactoringMenuContext context)
 		{
+			Debug.Assert(local == context.ResolveResult);
 			ToolStripMenuItem item = MakeItemInternal(local.VariableName,
 			                                          local.IsParameter ? ClassBrowserIconService.ParameterIndex : ClassBrowserIconService.LocalVariableIndex,
 			                                          local.CallingClass.CompilationUnit,
-			                                          isDefinition ? DomRegion.Empty : local.VariableDefinitionRegion);
+			                                          context.IsDefinition ? DomRegion.Empty : local.VariableDefinitionRegion);
 			string treePath = "/SharpDevelop/ViewContent/DefaultTextEditor/Refactoring/";
 			treePath += local.IsParameter ? "Parameter" : "LocalVariable";
-			if (isDefinition) treePath += "Definition";
-			MenuService.AddItemsToMenu(item.DropDown.Items, local, treePath);
+			if (context.IsDefinition) treePath += "Definition";
+			MenuService.AddItemsToMenu(item.DropDown.Items, context, treePath);
 			return item;
 		}
 		

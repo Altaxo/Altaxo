@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <author name="Daniel Grunwald"/>
-//     <version>$Revision: 2702 $</version>
+//     <version>$Revision: 3770 $</version>
 // </file>
 
 using System;
@@ -73,6 +73,7 @@ namespace ICSharpCode.SharpDevelop.BuildWorker.Interprocess
 		
 		public void CallMethodOnHost(string methodName, params object[] args)
 		{
+			Program.Log("CallMethodOnHost: " + methodName);
 			sender.Send(WorkerProcess.SerializeObject(new WorkerProcess.MethodCall(methodName, args)));
 		}
 		
@@ -97,10 +98,10 @@ namespace ICSharpCode.SharpDevelop.BuildWorker.Interprocess
 					mc.CallOn(workerObject);
 				} catch (TargetInvocationException ex) {
 					Program.Log(ex.ToString());
-					CallMethodOnHost("ReportException", ex.InnerException);
+					CallMethodOnHost("ReportException", ex.InnerException.ToString());
 				} catch (Exception ex) {
 					Program.Log(ex.ToString());
-					CallMethodOnHost("ReportException", ex);
+					CallMethodOnHost("ReportException", ex.ToString());
 				}
 			}
 		}

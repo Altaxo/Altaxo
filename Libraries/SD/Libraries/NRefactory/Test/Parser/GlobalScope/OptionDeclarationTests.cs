@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1609 $</version>
+//     <version>$Revision: 3381 $</version>
 // </file>
 
 using System;
@@ -49,6 +49,33 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 			string program = "Option Compare Text\n";
 			OptionDeclaration opDec = ParseUtilVBNet.ParseGlobal<OptionDeclaration>(program);
 			Assert.AreEqual(OptionType.CompareText, opDec.OptionType);
+			Assert.IsTrue(opDec.OptionValue);
+		}
+
+		[Test]
+		public void VBNetInferOnOptionDeclarationTest()
+		{
+			string program = "Option Infer On\n";
+			OptionDeclaration opDec = ParseUtilVBNet.ParseGlobal<OptionDeclaration>(program);
+			Assert.AreEqual(OptionType.Infer, opDec.OptionType);
+			Assert.IsTrue(opDec.OptionValue);
+		}
+
+		[Test]
+		public void VBNetInferOffOptionDeclarationTest()
+		{
+			string program = "Option Infer\n";
+			OptionDeclaration opDec = ParseUtilVBNet.ParseGlobal<OptionDeclaration>(program);
+			Assert.AreEqual(OptionType.Infer, opDec.OptionType);
+			Assert.IsTrue(opDec.OptionValue);
+		}
+		
+		[Test]
+		public void VBNetInferOptionDeclarationTest()
+		{
+			string program = "Option Infer\n";
+			OptionDeclaration opDec = ParseUtilVBNet.ParseGlobal<OptionDeclaration>(program);
+			Assert.AreEqual(OptionType.Infer, opDec.OptionType);
 			Assert.IsTrue(opDec.OptionValue);
 		}
 		

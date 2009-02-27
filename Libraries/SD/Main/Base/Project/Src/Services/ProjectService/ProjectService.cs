@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3048 $</version>
+//     <version>$Revision: 3674 $</version>
 // </file>
 
 using System;
@@ -64,6 +64,8 @@ namespace ICSharpCode.SharpDevelop.Project
 				WorkbenchSingleton.Workbench.ActiveViewContentChanged += ActiveViewContentChanged;
 				FileService.FileRenamed += FileServiceFileRenamed;
 				FileService.FileRemoved += FileServiceFileRemoved;
+				ApplicationStateInfoService.RegisterStateGetter("ProjectService.OpenSolution", delegate { return OpenSolution; });
+				ApplicationStateInfoService.RegisterStateGetter("ProjectService.CurrentProject", delegate { return CurrentProject; });
 			}
 		}
 
@@ -522,14 +524,7 @@ namespace ICSharpCode.SharpDevelop.Project
 			}
 		}
 		
-		static void OnProjectConfigurationChanged(ProjectConfigurationEventArgs e)
-		{
-			if (ProjectConfigurationChanged != null) {
-				ProjectConfigurationChanged(null, e);
-			}
-		}
-		
-		static void OnSolutionConfigurationChanged(SolutionConfigurationEventArgs e)
+		internal static void OnSolutionConfigurationChanged(SolutionConfigurationEventArgs e)
 		{
 			if (SolutionConfigurationChanged != null) {
 				SolutionConfigurationChanged(null, e);
@@ -546,17 +541,19 @@ namespace ICSharpCode.SharpDevelop.Project
 		
 		public static void RaiseEventStartBuild()
 		{
+			WorkbenchSingleton.AssertMainThread();
 			building = true;
 			if (StartBuild != null) {
 				StartBuild(null, EventArgs.Empty);
 			}
 		}
 		
-		public static void RaiseEventEndBuild()
+		public static void RaiseEventEndBuild(BuildEventArgs e)
 		{
+			WorkbenchSingleton.AssertMainThread();
 			building = false;
 			if (EndBuild != null) {
-				EndBuild(null, EventArgs.Empty);
+				EndBuild(null, e);
 			}
 		}
 		
@@ -569,8 +566,21 @@ namespace ICSharpCode.SharpDevelop.Project
 				if (folder.IdGuid == guid) {
 					folder.Parent.RemoveFolder(folder);
 					OnSolutionFolderRemoved(new SolutionFolderEventArgs(folder));
+					HandleRemovedSolutionFolder(folder);
 					break;
 				}
+			}
+		}
+		
+		static void HandleRemovedSolutionFolder(ISolutionFolder folder)
+		{
+			if (folder is IProject) {
+				OpenSolution.RemoveProjectConfigurations(folder.IdGuid);
+				ParserService.RemoveProjectContentForRemovedProject((IProject)folder);
+			}
+			if (folder is ISolutionFolderContainer) {
+				// recurse into child folders that were also removed
+				((ISolutionFolderContainer)folder).Folders.ForEach(HandleRemovedSolutionFolder);
 			}
 		}
 		
@@ -623,9 +633,10 @@ namespace ICSharpCode.SharpDevelop.Project
 		public static event SolutionFolderEventHandler SolutionFolderRemoved;
 		
 		public static event EventHandler StartBuild;
-		public static event EventHandler EndBuild;
+		public static event EventHandler<BuildEventArgs> EndBuild;
 		
-		public static event ProjectConfigurationEventHandler ProjectConfigurationChanged;
+		[Obsolete("This event is never raised.")]
+		public static event ProjectConfigurationEventHandler ProjectConfigurationChanged { add {} remove {} }
 		public static event SolutionConfigurationEventHandler SolutionConfigurationChanged;
 		
 		public static event EventHandler<SolutionEventArgs> SolutionCreated;
@@ -647,6 +658,16 @@ namespace ICSharpCode.SharpDevelop.Project
 		
 		public static event EventHandler<ProjectItemEventArgs> ProjectItemAdded;
 		public static event EventHandler<ProjectItemEventArgs> ProjectItemRemoved;
+	}
+	
+	public class BuildEventArgs : EventArgs
+	{
+		public readonly BuildResults Results;
+		
+		public BuildEventArgs(BuildResults results)
+		{
+			this.Results = results;
+		}
 	}
 }
 

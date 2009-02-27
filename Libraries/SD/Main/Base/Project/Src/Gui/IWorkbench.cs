@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3096 $</version>
+//     <version>$Revision: 3556 $</version>
 // </file>
 
 using System;
@@ -33,9 +33,16 @@ namespace ICSharpCode.SharpDevelop.Gui
 		}
 		
 		/// <summary>
-		/// A collection in which all opened view contents are saved.
+		/// A collection in which all opened view contents (including all secondary view contents) are saved.
 		/// </summary>
 		ICollection<IViewContent> ViewContentCollection {
+			get;
+		}
+		
+		/// <summary>
+		/// A collection in which all opened primary view contents are saved.
+		/// </summary>
+		ICollection<IViewContent> PrimaryViewContents {
 			get;
 		}
 		
@@ -110,9 +117,14 @@ namespace ICSharpCode.SharpDevelop.Gui
 		void Initialize();
 		
 		/// <summary>
-		/// Inserts a new <see cref="IViewContent"/> object in the workspace.
+		/// Inserts a new <see cref="IViewContent"/> object in the workspace and switches to the new view.
 		/// </summary>
 		void ShowView(IViewContent content);
+		
+		/// <summary>
+		/// Inserts a new <see cref="IViewContent"/> object in the workspace.
+		/// </summary>
+		void ShowView(IViewContent content, bool switchToOpenedView);
 		
 		/// <summary>
 		/// Inserts a new <see cref="IPadContent"/> object in the workspace.

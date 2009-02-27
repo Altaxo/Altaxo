@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2682 $</version>
+//     <version>$Revision: 3272 $</version>
 // </file>
 
 using System;
@@ -99,7 +99,7 @@ namespace CSharpBinding.FormattingStrategy
 		public bool Next()
 		{
 			if (lineDirty) {
-				doc.Replace(line.Offset, line.Length, text);
+				DefaultFormattingStrategy.SmartReplaceLine(doc, line, text);
 				lineDirty = false;
 				++changedLines;
 			}

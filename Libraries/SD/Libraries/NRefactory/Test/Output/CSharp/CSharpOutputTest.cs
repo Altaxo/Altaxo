@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2819 $</version>
+//     <version>$Revision: 3763 $</version>
 // </file>
 
 using System;
@@ -90,6 +90,12 @@ namespace ICSharpCode.NRefactory.Tests.PrettyPrinter
 		}
 		
 		[Test]
+		public void StaticMethod()
+		{
+			TestTypeMember("static void Method() { }");
+		}
+		
+		[Test]
 		public void PartialModifier()
 		{
 			TestProgram("public partial class Foo { }");
@@ -99,6 +105,12 @@ namespace ICSharpCode.NRefactory.Tests.PrettyPrinter
 		public void GenericClassDefinition()
 		{
 			TestProgram("public class Foo<T> where T : IDisposable, ICloneable { }");
+		}
+		
+		[Test]
+		public void InterfaceWithOutParameters()
+		{
+			TestProgram("public interface ITest { void Method(out int a, ref double b); }");
 		}
 		
 		[Test]
@@ -239,7 +251,13 @@ namespace ICSharpCode.NRefactory.Tests.PrettyPrinter
 		[Test]
 		public void Integer()
 		{
-			TestExpression("12");
+			TestExpression("16");
+		}
+		
+		[Test]
+		public void HexadecimalInteger()
+		{
+			TestExpression("0x10");
 		}
 		
 		[Test]
@@ -572,6 +590,12 @@ namespace ICSharpCode.NRefactory.Tests.PrettyPrinter
 			TestExpression("from n in numbers" +
 			               " group n by n % 5 into g" +
 			               " select new { Remainder = g.Key, Numbers = g }");
+		}
+		
+		[Test]
+		public void ExternAlias()
+		{
+			TestProgram("extern alias Name;");
 		}
 	}
 }

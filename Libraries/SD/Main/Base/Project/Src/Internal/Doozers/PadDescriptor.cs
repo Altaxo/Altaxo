@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2965 $</version>
+//     <version>$Revision: 3579 $</version>
 // </file>
 
 using System;
@@ -155,6 +155,7 @@ namespace ICSharpCode.SharpDevelop
 				padContentCreated = true;
 				try {
 					if (addIn != null) {
+						LoggingService.Debug("Creating pad " + Class + "...");
 						padContent = (IPadContent)addIn.CreateObject(Class);
 					} else {
 						padContent = (IPadContent)Activator.CreateInstance(padType);

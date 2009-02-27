@@ -2,13 +2,15 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3113 $</version>
+//     <version>$Revision: 3792 $</version>
 // </file>
 
 using System;
 using System.Diagnostics;
 using System.Windows.Forms;
+
 using ICSharpCode.Core;
+using ICSharpCode.Core.WinForms;
 
 namespace ICSharpCode.SharpDevelop.Gui
 {
@@ -17,6 +19,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		const string uiIconStyle             = "IconMenuItem.IconMenuStyle";
 		const string uiLanguageProperty      = "CoreProperties.UILanguage";
 		const string workbenchMemento        = "WorkbenchMemento";
+		const string activeContentState      = "Workbench.ActiveContent";
 		
 		static STAThreadCaller caller;
 		static IWorkbench workbench;
@@ -99,8 +102,11 @@ namespace ICSharpCode.SharpDevelop.Gui
 			ParserService.InitializeParserService();
 			Bookmarks.BookmarkManager.Initialize();
 			Project.CustomToolsService.Initialize();
+			Project.BuildModifiedProjectsOnlyService.Initialize();
 			
-			MessageService.MainForm = workbench.MainForm;
+			workbench.MainForm.CreateControl(); // ensure the control is created so Invoke can work
+			WinFormsMessageService.DialogOwner = workbench.MainForm;
+			WinFormsMessageService.DialogSynchronizeInvoke = workbench.MainForm;
 			
 			PropertyService.PropertyChanged += new PropertyChangedEventHandler(TrackPropertyChanges);
 			ResourceService.LanguageChanged += delegate { workbench.RedrawAllComponents(); };
@@ -110,6 +116,8 @@ namespace ICSharpCode.SharpDevelop.Gui
 			workbench.Initialize();
 			workbench.SetMemento(PropertyService.Get(workbenchMemento, new Properties()));
 			workbench.WorkbenchLayout = layout;
+			
+			ApplicationStateInfoService.RegisterStateGetter(activeContentState, delegate { return WorkbenchSingleton.Workbench.ActiveContent; });
 			
 			OnWorkbenchCreated();
 			
@@ -136,6 +144,8 @@ namespace ICSharpCode.SharpDevelop.Gui
 		{
 			Project.ProjectService.CloseSolution();
 			NavigationService.Unload();
+			
+			ApplicationStateInfoService.UnregisterStateGetter(activeContentState);
 			
 			if (WorkbenchUnloaded != null) {
 				WorkbenchUnloaded(null, EventArgs.Empty);
@@ -202,7 +212,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		/// <summary>
 		/// Throws an exception if the current thread is not the main thread.
 		/// </summary>
-		internal static void AssertMainThread()
+		public static void AssertMainThread()
 		{
 			if (InvokeRequired) {
 				throw new InvalidOperationException("This operation can be called on the main thread only.");
@@ -301,6 +311,28 @@ namespace ICSharpCode.SharpDevelop.Gui
 		public static void SafeThreadAsyncCall<A, B, C>(Action<A, B, C> method, A arg1, B arg2, C arg3)
 		{
 			caller.BeginCall(method, new object[] { arg1, arg2, arg3 });
+		}
+		
+		/// <summary>
+		/// Calls a method on the GUI thread, but delays the call a bit.
+		/// </summary>
+		public static void CallLater(int delayMilliseconds, Action method)
+		{
+			if (delayMilliseconds <= 0)
+				throw new ArgumentOutOfRangeException("delayMilliseconds", delayMilliseconds, "Value must be positive");
+			if (method == null)
+				throw new ArgumentNullException("method");
+			SafeThreadAsyncCall(
+				delegate {
+					Timer t = new Timer();
+					t.Interval = delayMilliseconds;
+					t.Tick += delegate { 
+						t.Stop();
+						t.Dispose();
+						method();
+					};
+					t.Start();
+				});
 		}
 		#endregion
 		

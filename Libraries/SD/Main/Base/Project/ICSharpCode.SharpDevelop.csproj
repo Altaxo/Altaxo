@@ -1,4 +1,4 @@
-﻿<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -130,6 +130,8 @@
     <Compile Include="Src\Gui\Pads\ToolsPad.cs" />
     <Compile Include="Src\Gui\Workbench\Layouts\SimpleWorkbenchLayout.cs" />
     <Compile Include="Src\Gui\Workbench\SingleInstanceHelper.cs" />
+    <Compile Include="Src\Internal\ConditionEvaluators\WriteableProjectEvaluator.cs" />
+    <Compile Include="Src\Internal\ConditionEvaluators\WriteableSolutionEvaluator.cs" />
     <Compile Include="Src\Internal\ExternalTool\ExternalTool.cs" />
     <Compile Include="Src\Internal\Templates\CodeTemplate.cs" />
     <Compile Include="Src\Internal\Templates\Project\ProjectTemplate.cs" />
@@ -162,6 +164,7 @@
     <Compile Include="Src\Internal\Doozers\IDialogPanelDescriptor.cs" />
     <Compile Include="Src\Services\File\FileService.cs" />
     <Compile Include="Src\Services\File\FileEventArgs.cs" />
+    <Compile Include="Src\Services\ProjectService\CompileModifiedProjectsOnly.cs" />
     <Compile Include="Src\Services\RefactoringService\ExtractInterfaceOptions.cs" />
     <Compile Include="Src\Services\Tasks\Task.cs" />
     <Compile Include="Src\Services\Tasks\TaskService.cs" />
@@ -341,9 +344,6 @@
     <Compile Include="Src\Gui\Components\LocalizedPropertyGrid\LocalizedProperty.cs" />
     <Compile Include="Src\Internal\ConditionEvaluators\IsProcessRunningEvaluator.cs" />
     <Compile Include="Src\Internal\Doozers\PadDoozer.cs" />
-    <Compile Include="Src\Gui\Dialogs\InputBox.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="Src\Gui\Pads\CompilerMessageView\MessageViewCategory.cs" />
     <Compile Include="Src\Gui\Dialogs\OptionPanels\IDEOptions\TaskListOptions.cs">
       <SubType>UserControl</SubType>
@@ -470,7 +470,6 @@
     <EmbeddedResource Include="Resources\ExternalToolOptions.xfrm" />
     <EmbeddedResource Include="Resources\FontSelectionPanel.xfrm" />
     <EmbeddedResource Include="Resources\NewFileWithNameDialog.xfrm" />
-    <EmbeddedResource Include="Resources\InputBox.xfrm" />
     <EmbeddedResource Include="Resources\LoadSaveOptionPanel.xfrm" />
     <EmbeddedResource Include="Resources\NewFileDialog.xfrm" />
     <EmbeddedResource Include="Resources\OutputWindowOptionsPanel.xfrm" />
@@ -493,6 +492,7 @@
     <Compile Include="Src\TextEditor\Bookmarks\Bookmark.cs" />
     <Compile Include="Src\TextEditor\Bookmarks\BookmarkEventHandler.cs" />
     <Compile Include="Src\TextEditor\Bookmarks\BookmarkManager.cs" />
+    <Compile Include="Src\TextEditor\ClipboardHandling.cs" />
     <Compile Include="Src\TextEditor\Codons\AddInTreeSyntaxModeProvider.cs" />
     <Compile Include="Src\TextEditor\Codons\EditActionDoozer.cs" />
     <Compile Include="Src\TextEditor\Codons\SyntaxModeDoozer.cs" />
@@ -532,6 +532,7 @@
     <Compile Include="Src\TextEditor\Gui\Editor\CompletionWindow\CodeCompletionDataProvider.cs" />
     <Compile Include="Src\TextEditor\Gui\Editor\CompletionWindow\CommentCompletionDataProvider.cs" />
     <Compile Include="Src\TextEditor\Gui\Editor\CompletionWindow\TemplateCompletionDataProvider.cs" />
+    <Compile Include="Src\TextEditor\Gui\Editor\IFileDocumentProvider.cs" />
     <Compile Include="Src\TextEditor\Gui\Editor\InsightWindow\IndexerInsightDataProvider.cs" />
     <Compile Include="Src\TextEditor\Gui\Editor\InsightWindow\MethodInsightDataProvider.cs" />
     <Compile Include="Src\TextEditor\Gui\Editor\ErrorDrawer.cs" />
@@ -685,11 +686,9 @@
     <Compile Include="Src\Gui\Dialogs\ReferenceDialog\AsyncDiscoveryState.cs" />
     <Compile Include="Src\Gui\Dialogs\ReferenceDialog\DiscoveryNetworkCredential.cs" />
     <Compile Include="Src\Services\ProjectService\ProjectLoader.cs" />
-    <Compile Include="Src\Util\HashSet.cs" />
     <Compile Include="Src\Util\NativeMethods.cs" />
     <Compile Include="Src\Util\ProcessRunnerException.cs" />
     <Compile Include="Src\Util\LineReceivedEventArgs.cs" />
-    <Compile Include="Src\Util\OutputReader.cs" />
     <Compile Include="Src\Util\ProcessRunner.cs" />
     <Compile Include="..\..\GlobalAssemblyInfo.cs">
       <Link>Configuration\GlobalAssemblyInfo.cs</Link>
@@ -801,9 +800,19 @@
       <Project>{35cef10f-2d4c-45f2-9dd1-161e0fec583c}</Project>
       <Name>ICSharpCode.Core</Name>
     </ProjectReference>
+    <Folder Include="Src\Gui\Pads\SearchResultPad" />
+    <Folder Include="Src\Gui\Pads\SearchResultPad\Nodes" />
+    <Folder Include="Src\Gui\Pads\TaskList" />
     <Content Include="..\..\..\..\AddIns\ICSharpCode.SharpDevelop.addin">
       <Link>ICSharpCode.SharpDevelop.addin</Link>
     </Content>
+    <Folder Include="Src\Util" />
+    <Folder Include="Src\Gui\Pads\ClassBrowser\NodeBuilder" />
+    <Folder Include="Src\Services\NavigationService" />
+    <ProjectReference Include="..\..\ICSharpCode.Core.WinForms\ICSharpCode.Core.WinForms.csproj">
+      <Project>{857CA1A3-FC88-4BE0-AB6A-D1EE772AB288}</Project>
+      <Name>ICSharpCode.Core.WinForms</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\ICSharpCode.SharpDevelop.BuildWorker\ICSharpCode.SharpDevelop.BuildWorker.csproj">
       <Project>{C3CBC8E3-81D8-4C5B-9941-DCCD12D50B1F}</Project>
       <Name>ICSharpCode.SharpDevelop.BuildWorker</Name>
@@ -812,6 +821,7 @@
       <Project>{924EE450-603D-49C1-A8E5-4AFAA31CE6F3}</Project>
       <Name>ICSharpCode.SharpDevelop.Dom</Name>
     </ProjectReference>
+    <Folder Include="Src\Gui\Dialogs\SolutionConfiguration" />
     <ProjectReference Include="..\..\ICSharpCode.SharpDevelop.Widgets\Project\ICSharpCode.SharpDevelop.Widgets.csproj">
       <Project>{8035765F-D51F-4A0C-A746-2FD100E19419}</Project>
       <Name>ICSharpCode.SharpDevelop.Widgets</Name>

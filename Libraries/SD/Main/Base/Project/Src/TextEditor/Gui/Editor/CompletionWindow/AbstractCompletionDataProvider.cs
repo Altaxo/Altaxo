@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2939 $</version>
+//     <version>$Revision: 3591 $</version>
 // </file>
 
 using System;
@@ -128,7 +128,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			return completionData.ToArray();
 		}
 		
-		protected ExpressionResult GetExpression(TextArea textArea)
+		protected virtual ExpressionResult GetExpression(TextArea textArea)
 		{
 			IDocument document = textArea.Document;
 			IExpressionFinder expressionFinder = ParserService.GetExpressionFinder(fileName);

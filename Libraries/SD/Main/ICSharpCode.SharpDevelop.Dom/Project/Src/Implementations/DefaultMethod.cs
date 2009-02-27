@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3009 $</version>
+//     <version>$Revision: 3786 $</version>
 // </file>
 
 using System;
@@ -14,13 +14,15 @@ namespace ICSharpCode.SharpDevelop.Dom
 	public class Constructor : DefaultMethod
 	{
 		public Constructor(ModifierEnum m, DomRegion region, DomRegion bodyRegion, IClass declaringType)
-			: base("#ctor", declaringType.DefaultReturnType,
+			: base((m & ModifierEnum.Static) != 0 ? "#cctor" : "#ctor",
+			       declaringType.DefaultReturnType,
 			       m, region, bodyRegion, declaringType)
 		{
 		}
 		
 		public Constructor(ModifierEnum m, IReturnType returnType, IClass declaringType)
-			: base("#ctor", returnType, m, DomRegion.Empty, DomRegion.Empty, declaringType)
+			: base((m & ModifierEnum.Static) != 0 ? "#cctor" : "#ctor",
+			       returnType, m, DomRegion.Empty, DomRegion.Empty, declaringType)
 		{
 		}
 		
@@ -80,7 +82,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 		{
 			DefaultMethod p = new DefaultMethod(Name, ReturnType, Modifiers, Region, BodyRegion, DeclaringType);
 			p.parameters = DefaultParameter.Clone(this.Parameters);
-			p.typeParameters = this.typeParameters;
+			p.typeParameters = new List<ITypeParameter>(this.typeParameters);
 			p.CopyDocumentationFrom(this);
 			p.documentationTag = DocumentationTag;
 			p.isExtensionMethod = this.isExtensionMethod;
@@ -166,7 +168,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 		
 		public virtual bool IsConstructor {
 			get {
-				return Name == "#ctor";
+				return Name == "#ctor" || Name == "#cctor";
 			}
 		}
 		
@@ -193,13 +195,9 @@ namespace ICSharpCode.SharpDevelop.Dom
 		
 		public virtual int CompareTo(IMethod value)
 		{
-			int cmp;
-			
-			if (FullyQualifiedName != null) {
-				cmp = FullyQualifiedName.CompareTo(value.FullyQualifiedName);
-				if (cmp != 0) {
-					return cmp;
-				}
+			int cmp = string.CompareOrdinal(this.FullyQualifiedName, value.FullyQualifiedName);
+			if (cmp != 0) {
+				return cmp;
 			}
 			
 			cmp = this.TypeParameters.Count - value.TypeParameters.Count;

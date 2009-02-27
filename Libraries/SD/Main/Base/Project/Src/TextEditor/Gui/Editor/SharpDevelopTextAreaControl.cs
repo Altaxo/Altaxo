@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3209 $</version>
+//     <version>$Revision: 3494 $</version>
 // </file>
 
 using System;
@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 
 using ICSharpCode.Core;
+using ICSharpCode.Core.WinForms;
 using ICSharpCode.SharpDevelop.DefaultEditor.Actions;
 using ICSharpCode.SharpDevelop.Gui;
 using ICSharpCode.SharpDevelop.Internal.Templates;
@@ -329,6 +330,14 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 				inHandleKeyPress = false;
 			}
 			return false;
+		}
+		
+		public void StartCtrlSpaceCompletion()
+		{
+			foreach (ICodeCompletionBinding ccBinding in CodeCompletionBindings) {
+				if (ccBinding.CtrlSpace(this))
+					return;
+			}
 		}
 		
 		internal bool ExpandTemplateOnTab()

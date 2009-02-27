@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2229 $</version>
+//     <version>$Revision: 3663 $</version>
 // </file>
 
 using System;
@@ -25,8 +25,19 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 			Assert.AreEqual(1, lvd.Variables.Count);
 			Assert.AreEqual("a", ((VariableDeclaration)lvd.Variables[0]).Name);
 			TypeReference type = lvd.GetTypeForVariable(0);
-			Assert.AreEqual("int", type.Type);
+			Assert.AreEqual("System.Int32", type.Type);
 			Assert.AreEqual(5, ((PrimitiveExpression)lvd.Variables[0].Initializer).Value);
+		}
+		
+		[Test]
+		public void CSharpVoidPointerVariableDeclarationTest()
+		{
+			LocalVariableDeclaration lvd = ParseUtilCSharp.ParseStatement<LocalVariableDeclaration>("void *a;");
+			Assert.AreEqual(1, lvd.Variables.Count);
+			Assert.AreEqual("a", ((VariableDeclaration)lvd.Variables[0]).Name);
+			TypeReference type = lvd.GetTypeForVariable(0);
+			Assert.AreEqual("System.Void", type.Type);
+			Assert.AreEqual(1, type.PointerNestingLevel);
 		}
 		
 		[Test]
@@ -58,10 +69,10 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 			ic = (InnerClassTypeReference)ic.BaseType;
 			Assert.AreEqual("InnerClass", ic.Type);
 			Assert.AreEqual(1, ic.GenericTypes.Count);
-			Assert.AreEqual("System.Int32", ic.GenericTypes[0].SystemType);
+			Assert.AreEqual("System.Int32", ic.GenericTypes[0].Type);
 			Assert.AreEqual("MyType", ic.BaseType.Type);
 			Assert.AreEqual(1, ic.BaseType.GenericTypes.Count);
-			Assert.AreEqual("System.String", ic.BaseType.GenericTypes[0].SystemType);
+			Assert.AreEqual("System.String", ic.BaseType.GenericTypes[0].Type);
 		}
 		
 		[Test]
@@ -72,7 +83,7 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 			TypeReference type = lvd.GetTypeForVariable(0);
 			Assert.AreEqual("G", type.Type);
 			Assert.AreEqual(1, type.GenericTypes.Count);
-			Assert.AreEqual("int", type.GenericTypes[0].Type);
+			Assert.AreEqual("System.Int32", type.GenericTypes[0].Type);
 			Assert.AreEqual(0, type.GenericTypes[0].GenericTypes.Count);
 			Assert.IsFalse(type.GenericTypes[0].IsArrayType);
 			Assert.AreEqual(new int[] {0}, type.RankSpecifier);
@@ -86,7 +97,7 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 			TypeReference type = lvd.GetTypeForVariable(0);
 			Assert.AreEqual("G", type.Type);
 			Assert.AreEqual(1, type.GenericTypes.Count);
-			Assert.AreEqual("int", type.GenericTypes[0].Type);
+			Assert.AreEqual("System.Int32", type.GenericTypes[0].Type);
 			Assert.AreEqual(0, type.GenericTypes[0].GenericTypes.Count);
 			Assert.IsFalse(type.IsArrayType);
 			Assert.AreEqual(new int[] {0}, type.GenericTypes[0].RankSpecifier);
@@ -102,7 +113,7 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 			Assert.AreEqual(1, type.GenericTypes.Count);
 			Assert.AreEqual("G", type.GenericTypes[0].Type);
 			Assert.AreEqual(1, type.GenericTypes[0].GenericTypes.Count);
-			Assert.AreEqual("int", type.GenericTypes[0].GenericTypes[0].Type);
+			Assert.AreEqual("System.Int32", type.GenericTypes[0].GenericTypes[0].Type);
 		}
 		
 		[Test]
@@ -115,7 +126,7 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 			Assert.AreEqual(1, type.GenericTypes.Count);
 			Assert.AreEqual("G", type.GenericTypes[0].Type);
 			Assert.AreEqual(1, type.GenericTypes[0].GenericTypes.Count);
-			Assert.AreEqual("int", type.GenericTypes[0].GenericTypes[0].Type);
+			Assert.AreEqual("System.Int32", type.GenericTypes[0].GenericTypes[0].Type);
 		}
 		
 		[Test]
@@ -126,7 +137,7 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 			TypeReference type = lvd.GetTypeForVariable(0);
 			Assert.AreEqual("G", type.Type);
 			Assert.AreEqual(1, type.GenericTypes.Count);
-			Assert.AreEqual("int", type.GenericTypes[0].Type);
+			Assert.AreEqual("System.Int32", type.GenericTypes[0].Type);
 		}
 		
 		[Test]
@@ -158,8 +169,8 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 			Assert.AreEqual(1, lvd.Variables.Count);
 			Assert.AreEqual("a", ((VariableDeclaration)lvd.Variables[0]).Name);
 			TypeReference type = lvd.GetTypeForVariable(0);
-			Assert.AreEqual("System.Nullable", type.SystemType);
-			Assert.AreEqual("System.Int32", type.GenericTypes[0].SystemType);
+			Assert.AreEqual("System.Nullable", type.Type);
+			Assert.AreEqual("System.Int32", type.GenericTypes[0].Type);
 		}
 		
 		[Test]
@@ -169,7 +180,7 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 			Assert.AreEqual(1, lvd.Variables.Count);
 			Assert.AreEqual("a", ((VariableDeclaration)lvd.Variables[0]).Name);
 			TypeReference type = lvd.GetTypeForVariable(0);
-			Assert.AreEqual("System.Nullable", type.SystemType);
+			Assert.AreEqual("System.Nullable", type.Type);
 			Assert.AreEqual("DateTime", type.GenericTypes[0].Type);
 		}
 		
@@ -181,7 +192,7 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 			Assert.AreEqual("a", ((VariableDeclaration)lvd.Variables[0]).Name);
 			TypeReference type = lvd.GetTypeForVariable(0);
 			Assert.IsTrue(type.IsArrayType);
-			Assert.AreEqual("System.Nullable", type.SystemType);
+			Assert.AreEqual("System.Nullable", type.Type);
 			Assert.AreEqual("DateTime", type.GenericTypes[0].Type);
 		}
 		
@@ -192,10 +203,10 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 			Assert.AreEqual(1, lvd.Variables.Count);
 			Assert.AreEqual("a", ((VariableDeclaration)lvd.Variables[0]).Name);
 			TypeReference type = lvd.GetTypeForVariable(0);
-			Assert.AreEqual("System.Nullable", type.SystemType);
+			Assert.AreEqual("System.Nullable", type.Type);
 			Assert.AreEqual("SomeStruct", type.GenericTypes[0].Type);
-			Assert.AreEqual("System.Nullable", type.GenericTypes[0].GenericTypes[0].SystemType);
-			Assert.AreEqual("System.Int32", type.GenericTypes[0].GenericTypes[0].GenericTypes[0].SystemType);
+			Assert.AreEqual("System.Nullable", type.GenericTypes[0].GenericTypes[0].Type);
+			Assert.AreEqual("System.Int32", type.GenericTypes[0].GenericTypes[0].GenericTypes[0].Type);
 		}
 		#endregion
 		
@@ -207,7 +218,7 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 			Assert.AreEqual(1, lvd.Variables.Count);
 			Assert.AreEqual("a", lvd.Variables[0].Name);
 			TypeReference type = lvd.GetTypeForVariable(0);
-			Assert.AreEqual("Integer", type.Type);
+			Assert.AreEqual("System.Int32", type.Type);
 			Assert.AreEqual(5, ((PrimitiveExpression)lvd.Variables[0].Initializer).Value);
 		}
 		
@@ -218,7 +229,7 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 			Assert.AreEqual(1, lvd.Variables.Count);
 			Assert.AreEqual("override", lvd.Variables[0].Name);
 			TypeReference type = lvd.GetTypeForVariable(0);
-			Assert.AreEqual("Integer", type.Type);
+			Assert.AreEqual("System.Int32", type.Type);
 			Assert.AreEqual(5, ((PrimitiveExpression)lvd.Variables[0].Initializer).Value);
 		}
 		
@@ -229,7 +240,7 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 			Assert.AreEqual(1, lvd.Variables.Count);
 			Assert.AreEqual("a", lvd.Variables[0].Name);
 			TypeReference type = lvd.GetTypeForVariable(0);
-			Assert.AreEqual("Integer", type.Type);
+			Assert.AreEqual("System.Int32", type.Type);
 			Assert.AreEqual(new int[] { 0 } , type.RankSpecifier);
 			ArrayCreateExpression ace = (ArrayCreateExpression)lvd.Variables[0].Initializer;
 			Assert.AreEqual(new int[] { 0 } , ace.CreateType.RankSpecifier);
@@ -245,7 +256,7 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 			Assert.AreEqual(1, lvd.Variables.Count);
 			Assert.AreEqual("a", lvd.Variables[0].Name);
 			TypeReference type = lvd.GetTypeForVariable(0);
-			Assert.AreEqual("Integer", type.Type);
+			Assert.AreEqual("System.Int32", type.Type);
 			Assert.AreEqual(new int[] { 0 } , type.RankSpecifier);
 			ArrayCreateExpression ace = (ArrayCreateExpression)lvd.Variables[0].Initializer;
 			Assert.AreEqual(new int[] { 0 } , ace.CreateType.RankSpecifier);
@@ -260,7 +271,7 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 			Assert.AreEqual(1, lvd.Variables.Count);
 			Assert.AreEqual("a", lvd.Variables[0].Name);
 			TypeReference type = lvd.GetTypeForVariable(0);
-			Assert.AreEqual("Integer", type.Type);
+			Assert.AreEqual("System.Int32", type.Type);
 			Assert.AreEqual(new int[] { 0 } , type.RankSpecifier);
 		}
 		
@@ -271,7 +282,7 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 			Assert.AreEqual(1, lvd.Variables.Count);
 			Assert.AreEqual("a", lvd.Variables[0].Name);
 			TypeReference type = lvd.GetTypeForVariable(0);
-			Assert.AreEqual("Integer", type.Type);
+			Assert.AreEqual("System.Int32", type.Type);
 			Assert.AreEqual(new int[] { 0, 0 } , type.RankSpecifier);
 			ArrayCreateExpression ace = (ArrayCreateExpression)lvd.Variables[0].Initializer;
 			Assert.AreEqual(new int[] {0, 0}, ace.CreateType.RankSpecifier);
@@ -303,7 +314,7 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 			TypeReference type = lvd.GetTypeForVariable(0);
 			Assert.AreEqual("G", type.Type);
 			Assert.AreEqual(1, type.GenericTypes.Count);
-			Assert.AreEqual("Integer", type.GenericTypes[0].Type);
+			Assert.AreEqual("System.Int32", type.GenericTypes[0].Type);
 			Assert.AreEqual(0, type.GenericTypes[0].GenericTypes.Count);
 			Assert.IsFalse(type.GenericTypes[0].IsArrayType);
 			Assert.AreEqual(new int[] { 0 }, type.RankSpecifier);
@@ -317,7 +328,7 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 			TypeReference type = lvd.GetTypeForVariable(0);
 			Assert.AreEqual("G", type.Type);
 			Assert.AreEqual(1, type.GenericTypes.Count);
-			Assert.AreEqual("Integer", type.GenericTypes[0].Type);
+			Assert.AreEqual("System.Int32", type.GenericTypes[0].Type);
 			Assert.AreEqual(0, type.GenericTypes[0].GenericTypes.Count);
 			Assert.IsFalse(type.IsArrayType);
 			Assert.AreEqual(1, type.GenericTypes[0].RankSpecifier.Length);
@@ -334,7 +345,7 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 			Assert.AreEqual(1, type.GenericTypes.Count);
 			Assert.AreEqual("G", type.GenericTypes[0].Type);
 			Assert.AreEqual(1, type.GenericTypes[0].GenericTypes.Count);
-			Assert.AreEqual("Integer", type.GenericTypes[0].GenericTypes[0].Type);
+			Assert.AreEqual("System.Int32", type.GenericTypes[0].GenericTypes[0].Type);
 		}
 		
 		[Test]
@@ -345,7 +356,7 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 			TypeReference type = lvd.GetTypeForVariable(0);
 			Assert.AreEqual("G", type.Type);
 			Assert.AreEqual(1, type.GenericTypes.Count);
-			Assert.AreEqual("Integer", type.GenericTypes[0].Type);
+			Assert.AreEqual("System.Int32", type.GenericTypes[0].Type);
 		}
 		
 		[Test]
@@ -356,7 +367,7 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 			TypeReference type = lvd.GetTypeForVariable(0);
 			Assert.AreEqual("G", type.Type);
 			Assert.AreEqual(1, type.GenericTypes.Count);
-			Assert.AreEqual("Integer", type.GenericTypes[0].Type);
+			Assert.AreEqual("System.Int32", type.GenericTypes[0].Type);
 			// TODO: Check initializer
 		}
 		
@@ -371,10 +382,20 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 			ic = (InnerClassTypeReference)ic.BaseType;
 			Assert.AreEqual("InnerClass", ic.Type);
 			Assert.AreEqual(1, ic.GenericTypes.Count);
-			Assert.AreEqual("System.Int32", ic.GenericTypes[0].SystemType);
+			Assert.AreEqual("System.Int32", ic.GenericTypes[0].Type);
 			Assert.AreEqual("MyType", ic.BaseType.Type);
 			Assert.AreEqual(1, ic.BaseType.GenericTypes.Count);
-			Assert.AreEqual("System.String", ic.BaseType.GenericTypes[0].SystemType);
+			Assert.AreEqual("System.String", ic.BaseType.GenericTypes[0].Type);
+		}
+		
+		[Test]
+		public void VBNetDimInSingleLineIf()
+		{
+			IfElseStatement ifes = ParseUtilVBNet.ParseStatement<IfElseStatement>("If a Then Dim b As String");
+			LocalVariableDeclaration lvd = (LocalVariableDeclaration)ifes.TrueStatement[0];
+			Assert.AreEqual(1, lvd.Variables.Count);
+			TypeReference type = lvd.GetTypeForVariable(0);
+			Assert.AreEqual("System.String", type.Type);
 		}
 		#endregion
 	}

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3113 $</version>
+//     <version>$Revision: 3673 $</version>
 // </file>
 
 using System;
@@ -234,19 +234,37 @@ namespace ICSharpCode.TextEditor
 			if (outstandingUpdate)
 				UpdateCaretPosition();
 		}
-		
+
+		void PaintCaretLine(Graphics g)
+		{
+			if (!textArea.Document.TextEditorProperties.CaretLine)
+				return;
+
+			HighlightColor caretLineColor = textArea.Document.HighlightingStrategy.GetColorFor("CaretLine");
+
+			g.DrawLine(BrushRegistry.GetDotPen(caretLineColor.Color),
+			           currentPos.X,
+			           0,
+			           currentPos.X,
+			           textArea.DisplayRectangle.Height);
+		}
+
 		public void UpdateCaretPosition()
 		{
 			Log("UpdateCaretPosition");
 			
-			if (caretImplementation.RequireRedrawOnPositionChange) {
-				textArea.UpdateLine(oldLine);
-				if (line != oldLine)
-					textArea.UpdateLine(line);
+			if (textArea.TextEditorProperties.CaretLine) {
+				textArea.Invalidate();
 			} else {
-				if (textArea.MotherTextAreaControl.TextEditorProperties.LineViewerStyle == LineViewerStyle.FullRow && oldLine != line) {
+				if (caretImplementation.RequireRedrawOnPositionChange) {
 					textArea.UpdateLine(oldLine);
-					textArea.UpdateLine(line);
+					if (line != oldLine)
+						textArea.UpdateLine(line);
+				} else {
+					if (textArea.MotherTextAreaControl.TextEditorProperties.LineViewerStyle == LineViewerStyle.FullRow && oldLine != line) {
+						textArea.UpdateLine(oldLine);
+						textArea.UpdateLine(line);
+					}
 				}
 			}
 			oldLine = line;
@@ -286,7 +304,7 @@ namespace ICSharpCode.TextEditor
 			
 			currentPos = pos;
 		}
-		
+
 		[Conditional("DEBUG")]
 		static void Log(string text)
 		{
@@ -294,9 +312,10 @@ namespace ICSharpCode.TextEditor
 		}
 		
 		#region Caret implementation
-		public void PaintCaret(Graphics g)
+		internal void PaintCaret(Graphics g)
 		{
 			caretImplementation.PaintCaret(g);
+			PaintCaretLine(g);
 		}
 		
 		abstract class CaretImplementation : IDisposable

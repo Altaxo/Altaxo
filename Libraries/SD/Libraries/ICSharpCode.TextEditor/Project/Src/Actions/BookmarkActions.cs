@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 3272 $</version>
 // </file>
 
 using System;
@@ -14,7 +14,7 @@ namespace ICSharpCode.TextEditor.Actions
 	{
 		public override void Execute(TextArea textArea)
 		{
-			textArea.Document.BookmarkManager.ToggleMarkAt(textArea.Caret.Line);
+			textArea.Document.BookmarkManager.ToggleMarkAt(textArea.Caret.Position);
 			textArea.Document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.SingleLine, textArea.Caret.Line));
 			textArea.Document.CommitUpdate();
 			
@@ -34,8 +34,9 @@ namespace ICSharpCode.TextEditor.Actions
 		{
 			Bookmark mark = textArea.Document.BookmarkManager.GetPrevMark(textArea.Caret.Line, predicate);
 			if (mark != null) {
-				textArea.Caret.Line = mark.LineNumber;
+				textArea.Caret.Position = mark.Location;
 				textArea.SelectionManager.ClearSelection();
+				textArea.SetDesiredColumn();
 			}
 		}
 	}
@@ -53,8 +54,9 @@ namespace ICSharpCode.TextEditor.Actions
 		{
 			Bookmark mark = textArea.Document.BookmarkManager.GetNextMark(textArea.Caret.Line, predicate);
 			if (mark != null) {
-				textArea.Caret.Line = mark.LineNumber;
+				textArea.Caret.Position = mark.Location;
 				textArea.SelectionManager.ClearSelection();
+				textArea.SetDesiredColumn();
 			}
 		}
 	}

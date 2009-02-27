@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="none" email=""/>
-//     <version>$Revision: 2998 $</version>
+//     <version>$Revision: 3661 $</version>
 // </file>
 
 // created on 07.03.2004 at 19:12
@@ -451,10 +451,12 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		void ComboBoxSelectedIndexChanged(object sender, System.EventArgs e)
 		{
 			ComboBox comboBox = (ComboBox)sender;
-			if (autoselect) {
+			if (autoselect && comboBox.SelectedIndex >= 0) {
 				ComboBoxItem item = (ComboBoxItem)comboBox.Items[comboBox.SelectedIndex];
 				if (item.IsInCurrentPart) {
-					textAreaControl.ActiveTextAreaControl.Caret.Position = new TextLocation(item.Column, item.Line);
+					textAreaControl.ActiveTextAreaControl.CenterViewOn(
+						item.Line, (int)(0.3 * textAreaControl.ActiveTextAreaControl.TextArea.TextView.VisibleLineCount));
+					textAreaControl.ActiveTextAreaControl.JumpTo(item.Line, item.Column);
 					textAreaControl.ActiveTextAreaControl.TextArea.Focus();
 				} else {
 					IMember m = item.Item as IMember;

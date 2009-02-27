@@ -2,12 +2,12 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 3287 $</version>
 // </file>
 
 using System;
 using System.Windows.Forms;
-using ICSharpCode.Core;
+using ICSharpCode.Core.WinForms;
 using ICSharpCode.SharpDevelop.Internal.Templates;
 
 namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
@@ -18,7 +18,7 @@ namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 		{
 			SetupFromXmlStream(this.GetType().Assembly.GetManifestResourceStream("Resources.EditStandardHeaderPanel.xfrm"));
 			
-			ControlDictionary["headerTextBox"].Font = ResourceService.DefaultMonospacedFont;
+			ControlDictionary["headerTextBox"].Font = WinFormsResourceService.DefaultMonospacedFont;
 			foreach (StandardHeader header in StandardHeader.StandardHeaders) {
 				((ComboBox)ControlDictionary["headerChooser"]).Items.Add(header);
 			}

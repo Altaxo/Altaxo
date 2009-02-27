@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 3601 $</version>
 // </file>
 
 using System;
@@ -10,7 +10,7 @@ using ICSharpCode.TextEditor;
 
 namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 {
-	public interface ITextEditorControlProvider
+	public interface ITextEditorControlProvider : IFileDocumentProvider
 	{
 		TextEditorControl TextEditorControl {
 			get;

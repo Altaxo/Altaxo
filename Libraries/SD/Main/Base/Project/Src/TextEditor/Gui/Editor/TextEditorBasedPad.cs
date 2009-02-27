@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <author name="Daniel Grunwald"/>
-//     <version>$Revision: 3209 $</version>
+//     <version>$Revision: 3601 $</version>
 // </file>
 
 using System;
@@ -11,6 +11,7 @@ using System.Windows.Forms;
 
 using ICSharpCode.SharpDevelop.Gui;
 using ICSharpCode.TextEditor;
+using ICSharpCode.TextEditor.Document;
 
 namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 {
@@ -62,6 +63,11 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 				else
 					SetText(value);
 			}
+		}
+		
+		public virtual IDocument GetDocumentForFile(OpenedFile file)
+		{
+			return null;
 		}
 		
 		PrintDocument IPrintable.PrintDocument {

@@ -2,18 +2,17 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3242 $</version>
+//     <version>$Revision: 3559 $</version>
 // </file>
 
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Windows.Forms;
 
 using ICSharpCode.Core;
+using ICSharpCode.Core.WinForms;
 using ICSharpCode.SharpDevelop.Gui;
-using ICSharpCode.SharpDevelop.Project;
 
 namespace ICSharpCode.SharpDevelop.Commands.TabStrip
 {
@@ -48,7 +47,7 @@ namespace ICSharpCode.SharpDevelop.Commands.TabStrip
 		{
 			IWorkbenchWindow window = Owner as IWorkbenchWindow;
 			if (window != null) {
-				SaveFile.Save(window.ActiveViewContent);
+				SaveFile.Save(window);
 			}
 		}
 	}
@@ -60,7 +59,7 @@ namespace ICSharpCode.SharpDevelop.Commands.TabStrip
 			IWorkbenchWindow window = Owner as IWorkbenchWindow;
 			
 			if (window != null) {
-				SaveFileAs.Save(window.ActiveViewContent);
+				SaveFileAs.Save(window);
 			}
 		}
 	}
@@ -85,10 +84,8 @@ namespace ICSharpCode.SharpDevelop.Commands.TabStrip
 		public override void Run()
 		{
 			IWorkbenchWindow window = Owner as IWorkbenchWindow;
-			if (File.Exists(window.ActiveViewContent.PrimaryFileName)) {
-				string folder = Path.GetDirectoryName(window.ActiveViewContent.PrimaryFileName);
-				Process.Start(folder);
-			}
+			ICSharpCode.SharpDevelop.Project.Commands.OpenFolderContainingFile.OpenContainingFolderInExplorer(
+				window.ActiveViewContent.PrimaryFileName);
 		}
 	}
 }

@@ -2,14 +2,14 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2819 $</version>
+//     <version>$Revision: 3717 $</version>
 // </file>
 
+using ICSharpCode.NRefactory.Visitors;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Diagnostics;
-
+using System.Text;
 using ICSharpCode.NRefactory.Ast;
 
 namespace ICSharpCode.NRefactory.Parser.VB
@@ -59,12 +59,24 @@ namespace ICSharpCode.NRefactory.Parser.VB
 			errDist = 0;
 		}
 
+		public override void Parse()
+		{
+			ParseRoot();
+			compilationUnit.AcceptVisitor(new SetParentVisitor(), null);
+		}
+		
 		public override Expression ParseExpression()
 		{
 			lexer.NextToken();
+			Location startLocation = la.Location;
 			Expression expr;
 			Expr(out expr);
 			while (la.kind == Tokens.EOL) lexer.NextToken();
+			if (expr != null) {
+				expr.StartLocation = startLocation;
+				expr.EndLocation = t.EndLocation;
+				expr.AcceptVisitor(new SetParentVisitor(), null);
+			}
 			Expect(Tokens.EOF);
 			return expr;
 		}
@@ -74,8 +86,17 @@ namespace ICSharpCode.NRefactory.Parser.VB
 			lexer.NextToken();
 			compilationUnit = new CompilationUnit();
 			
+			Location startLocation = la.Location;
 			Statement st;
 			Block(out st);
+			if (st != null) {
+				st.StartLocation = startLocation;
+				if (t != null)
+					st.EndLocation = t.EndLocation;
+				else
+					st.EndLocation = la.Location;
+				st.AcceptVisitor(new SetParentVisitor(), null);
+			}
 			Expect(Tokens.EOF);
 			return st as BlockStatement;
 		}
@@ -90,6 +111,7 @@ namespace ICSharpCode.NRefactory.Parser.VB
 			ClassBody(newType);
 			compilationUnit.BlockEnd();
 			Expect(Tokens.EOF);
+			newType.AcceptVisitor(new SetParentVisitor(), null);
 			return newType.Children;
 		}
 
@@ -105,6 +127,21 @@ namespace ICSharpCode.NRefactory.Parser.VB
 			return la.kind == Tokens.Dot && (peek == Tokens.Identifier || peek >= Tokens.AddHandler);
 		}
 
+		static bool IsIdentifierToken(Token tk)
+		{
+			return Tokens.IdentifierTokens[tk.kind] || tk.kind == Tokens.Identifier;
+		}
+		
+		bool IsIdentifiedExpressionRange()
+		{
+			return la.kind == Tokens.As || la.kind == Tokens.Assign;
+		}
+		
+		bool IsQueryExpression()
+		{
+			return (la.kind == Tokens.From || la.kind == Tokens.Aggregate) && IsIdentifierToken(Peek(1));
+		}
+		
 		bool IsEndStmtAhead()
 		{
 			int peek = Peek(1).kind;
@@ -143,6 +180,26 @@ namespace ICSharpCode.NRefactory.Parser.VB
 			int peek = Peek(1).kind;
 			return la.kind == Tokens.OpenParenthesis
 				&& (peek == Tokens.Comma || peek == Tokens.CloseParenthesis);
+		}
+		
+		/*
+			True if the next token is an identifier
+		 */
+		bool IsLoopVariableDeclaration()
+		{
+			if (!IsIdentifierToken(la))
+				return false;
+			lexer.StartPeek();
+			Token x = lexer.Peek();
+			if (x.kind == Tokens.OpenParenthesis) {
+				do {
+					x = lexer.Peek();
+				} while (x.kind == Tokens.Comma);
+				if (x.kind != Tokens.CloseParenthesis)
+					return false;
+				x = lexer.Peek();
+			}
+			return x.kind == Tokens.As || x.kind == Tokens.Assign;
 		}
 
 		bool IsSize()
@@ -209,34 +266,6 @@ namespace ICSharpCode.NRefactory.Parser.VB
 			return m.Contains(Modifiers.Abstract);
 		}
 
-		TypeReferenceExpression GetTypeReferenceExpression(Expression expr, List<TypeReference> genericTypes)
-		{
-			TypeReferenceExpression	tre = expr as TypeReferenceExpression;
-			if (tre != null) {
-				return new TypeReferenceExpression(new TypeReference(tre.TypeReference.Type, tre.TypeReference.PointerNestingLevel, tre.TypeReference.RankSpecifier, genericTypes));
-			}
-			StringBuilder b = new StringBuilder();
-			if (!WriteFullTypeName(b, expr)) {
-				// there is some TypeReferenceExpression hidden in the expression
-				while (expr is MemberReferenceExpression) {
-					expr = ((MemberReferenceExpression)expr).TargetObject;
-				}
-				tre = expr as TypeReferenceExpression;
-				if (tre != null) {
-					TypeReference typeRef = tre.TypeReference;
-					if (typeRef.GenericTypes.Count == 0) {
-						typeRef = typeRef.Clone();
-						typeRef.Type += "." + b.ToString();
-						typeRef.GenericTypes.AddRange(genericTypes);
-					} else {
-						typeRef = new InnerClassTypeReference(typeRef, b.ToString(), genericTypes);
-					}
-					return new TypeReferenceExpression(typeRef);
-				}
-			}
-			return new TypeReferenceExpression(new TypeReference(b.ToString(), 0, null, genericTypes));
-		}
-
 		/* Writes the type name represented through the expression into the string builder. */
 		/* Returns true when the expression was converted successfully, returns false when */
 		/* There was an unknown expression (e.g. TypeReferenceExpression) in it */
@@ -270,20 +299,6 @@ namespace ICSharpCode.NRefactory.Parser.VB
 		{
 			if (!(expr is PrimitiveExpression) || (expr as PrimitiveExpression).StringValue != "0")
 				Error("lower bound of array must be zero");
-		}
-		
-		InvocationExpression CreateInvocationExpression(Expression target, List<Expression> parameters, List<TypeReference> typeArguments)
-		{
-			if (typeArguments != null && typeArguments.Count > 0) {
-				if (target is IdentifierExpression) {
-					((IdentifierExpression)target).TypeArguments = typeArguments;
-				} else if (target is MemberReferenceExpression) {
-					((MemberReferenceExpression)target).TypeArguments = typeArguments;
-				} else {
-					Error("Type arguments only allowed on IdentifierExpression and MemberReferenceExpression");
-				}
-			}
-			return new InvocationExpression(target, parameters);
 		}
 		
 		/// <summary>

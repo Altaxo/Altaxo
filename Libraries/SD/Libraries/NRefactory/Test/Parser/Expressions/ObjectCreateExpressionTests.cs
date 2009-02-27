@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2676 $</version>
+//     <version>$Revision: 3660 $</version>
 // </file>
 
 using System;
@@ -38,7 +38,7 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 		public void CSharpNullableObjectCreateExpressionTest()
 		{
 			ObjectCreateExpression oce = ParseUtilCSharp.ParseExpression<ObjectCreateExpression>("new IntPtr?(1)");
-			Assert.AreEqual("System.Nullable", oce.CreateType.SystemType);
+			Assert.AreEqual("System.Nullable", oce.CreateType.Type);
 			Assert.AreEqual(1, oce.CreateType.GenericTypes.Count);
 			Assert.AreEqual("IntPtr", oce.CreateType.GenericTypes[0].Type);
 		}
@@ -72,7 +72,7 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 			TypeReference typeRef = ((ObjectCreateExpression)expr.Arguments[0]).CreateType;
 			Assert.AreEqual("SomeGenericType", typeRef.Type);
 			Assert.AreEqual(1, typeRef.GenericTypes.Count);
-			Assert.AreEqual("int", typeRef.GenericTypes[0].Type);
+			Assert.AreEqual("System.Int32", typeRef.GenericTypes[0].Type);
 		}
 		
 		Expression CheckPropertyInitializationExpression(Expression e, string name)
@@ -190,6 +190,21 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 		#endregion
 		
 		#region VB.NET
+		
+		[Test]
+		public void VBNetAnonymousType()
+		{
+			ObjectCreateExpression oce = ParseUtilVBNet.ParseExpression<ObjectCreateExpression>(
+				"New With {.Id = 1, .Name= \"Bill Gates\" }");
+			
+			Assert.IsTrue(oce.CreateType.IsNull);
+			Assert.AreEqual(0, oce.Parameters.Count);
+			Assert.AreEqual(2, oce.ObjectInitializer.CreateExpressions.Count);
+			
+			Assert.IsInstanceOfType(typeof(PrimitiveExpression), CheckPropertyInitializationExpression(oce.ObjectInitializer.CreateExpressions[0], "Id"));
+			Assert.IsInstanceOfType(typeof(NamedArgumentExpression), oce.ObjectInitializer.CreateExpressions[1]);
+		}
+		
 		[Test]
 		public void VBNetSimpleObjectCreateExpressionTest()
 		{
@@ -210,8 +225,40 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 			TypeReference typeRef = ((ObjectCreateExpression)expr.Arguments[0]).CreateType;
 			Assert.AreEqual("SomeGenericType", typeRef.Type);
 			Assert.AreEqual(1, typeRef.GenericTypes.Count);
-			Assert.AreEqual("Integer", typeRef.GenericTypes[0].Type);
+			Assert.AreEqual("System.Int32", typeRef.GenericTypes[0].Type);
 		}
+		
+		[Test]
+		public void VBNetMemberInitializationTest()
+		{
+			ObjectCreateExpression oce = ParseUtilVBNet.ParseExpression<ObjectCreateExpression>("new Contact() With { .FirstName = \"Bill\", .LastName = \"Gates\" }");
+			Assert.AreEqual(2, oce.ObjectInitializer.CreateExpressions.Count);
+			
+			Assert.AreEqual("FirstName", ((NamedArgumentExpression)oce.ObjectInitializer.CreateExpressions[0]).Name);
+			Assert.AreEqual("LastName", ((NamedArgumentExpression)oce.ObjectInitializer.CreateExpressions[1]).Name);
+			
+			Assert.IsInstanceOfType(typeof(PrimitiveExpression), ((NamedArgumentExpression)oce.ObjectInitializer.CreateExpressions[0]).Expression);
+			Assert.IsInstanceOfType(typeof(PrimitiveExpression), ((NamedArgumentExpression)oce.ObjectInitializer.CreateExpressions[1]).Expression);
+		}
+		
+		[Test]
+		public void VBNetNullableObjectCreateExpressionTest()
+		{
+			ObjectCreateExpression oce = ParseUtilVBNet.ParseExpression<ObjectCreateExpression>("New Integer?");
+			Assert.AreEqual("System.Nullable", oce.CreateType.Type);
+			Assert.AreEqual(1, oce.CreateType.GenericTypes.Count);
+			Assert.AreEqual("System.Int32", oce.CreateType.GenericTypes[0].Type);
+		}
+
+		[Test]
+		public void VBNetNullableObjectArrayCreateExpressionTest()
+		{
+			ObjectCreateExpression oce = ParseUtilVBNet.ParseExpression<ObjectCreateExpression>("New Integer?()");
+			Assert.AreEqual("System.Nullable", oce.CreateType.Type);
+			Assert.AreEqual(1, oce.CreateType.GenericTypes.Count);
+			Assert.AreEqual("System.Int32", oce.CreateType.GenericTypes[0].Type);
+		}
+		
 		#endregion
 	}
 }

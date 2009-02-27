@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2819 $</version>
+//     <version>$Revision: 3660 $</version>
 // </file>
 
 using System;
@@ -35,7 +35,7 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 			TypeReference tr = ((TypeReferenceExpression)fre.TargetObject).TypeReference;
 			Assert.AreEqual("SomeClass", tr.Type);
 			Assert.AreEqual(1, tr.GenericTypes.Count);
-			Assert.AreEqual("System.String", tr.GenericTypes[0].SystemType);
+			Assert.AreEqual("System.String", tr.GenericTypes[0].Type);
 		}
 		
 		[Test]
@@ -47,7 +47,7 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 			TypeReference tr = ((TypeReferenceExpression)fre.TargetObject).TypeReference;
 			Assert.AreEqual("Namespace.Subnamespace.SomeClass", tr.Type);
 			Assert.AreEqual(1, tr.GenericTypes.Count);
-			Assert.AreEqual("System.String", tr.GenericTypes[0].SystemType);
+			Assert.AreEqual("System.String", tr.GenericTypes[0].Type);
 		}
 		
 		[Test]
@@ -60,7 +60,7 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 			Assert.IsFalse(tr is InnerClassTypeReference);
 			Assert.AreEqual("Namespace.Subnamespace.SomeClass", tr.Type);
 			Assert.AreEqual(1, tr.GenericTypes.Count);
-			Assert.AreEqual("System.String", tr.GenericTypes[0].SystemType);
+			Assert.AreEqual("System.String", tr.GenericTypes[0].Type);
 			Assert.IsTrue(tr.IsGlobal);
 		}
 		
@@ -73,10 +73,10 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 			InnerClassTypeReference ic = (InnerClassTypeReference)((TypeReferenceExpression)fre.TargetObject).TypeReference;
 			Assert.AreEqual("InnerClass", ic.Type);
 			Assert.AreEqual(1, ic.GenericTypes.Count);
-			Assert.AreEqual("System.Int32", ic.GenericTypes[0].SystemType);
+			Assert.AreEqual("System.Int32", ic.GenericTypes[0].Type);
 			Assert.AreEqual("MyType", ic.BaseType.Type);
 			Assert.AreEqual(1, ic.BaseType.GenericTypes.Count);
-			Assert.AreEqual("System.String", ic.BaseType.GenericTypes[0].SystemType);
+			Assert.AreEqual("System.String", ic.BaseType.GenericTypes[0].Type);
 		}
 		#endregion
 		
@@ -103,11 +103,9 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 		{
 			MemberReferenceExpression fre = ParseUtilVBNet.ParseExpression<MemberReferenceExpression>("SomeClass(of string).myField");
 			Assert.AreEqual("myField", fre.MemberName);
-			Assert.IsTrue(fre.TargetObject is TypeReferenceExpression);
-			TypeReference tr = ((TypeReferenceExpression)fre.TargetObject).TypeReference;
-			Assert.AreEqual("SomeClass", tr.Type);
-			Assert.AreEqual(1, tr.GenericTypes.Count);
-			Assert.AreEqual("System.String", tr.GenericTypes[0].SystemType);
+			Assert.IsInstanceOfType(typeof(IdentifierExpression), fre.TargetObject);
+			TypeReference tr = ((IdentifierExpression)fre.TargetObject).TypeArguments[0];
+			Assert.AreEqual("System.String", tr.Type);
 		}
 		
 		[Test]
@@ -115,11 +113,12 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 		{
 			MemberReferenceExpression fre = ParseUtilVBNet.ParseExpression<MemberReferenceExpression>("System.Subnamespace.SomeClass(of string).myField");
 			Assert.AreEqual("myField", fre.MemberName);
-			Assert.IsTrue(fre.TargetObject is TypeReferenceExpression);
-			TypeReference tr = ((TypeReferenceExpression)fre.TargetObject).TypeReference;
-			Assert.AreEqual("System.Subnamespace.SomeClass", tr.Type);
-			Assert.AreEqual(1, tr.GenericTypes.Count);
-			Assert.AreEqual("System.String", tr.GenericTypes[0].SystemType);
+			Assert.IsInstanceOfType(typeof(MemberReferenceExpression), fre.TargetObject);
+			
+			MemberReferenceExpression inner = (MemberReferenceExpression)fre.TargetObject;
+			Assert.AreEqual("SomeClass", inner.MemberName);
+			Assert.AreEqual(1, inner.TypeArguments.Count);
+			Assert.AreEqual("System.String", inner.TypeArguments[0].Type);
 		}
 		
 		[Test]
@@ -127,13 +126,12 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 		{
 			MemberReferenceExpression fre = ParseUtilVBNet.ParseExpression<MemberReferenceExpression>("Global.System.Subnamespace.SomeClass(of string).myField");
 			Assert.AreEqual("myField", fre.MemberName);
-			Assert.IsTrue(fre.TargetObject is TypeReferenceExpression);
-			TypeReference tr = ((TypeReferenceExpression)fre.TargetObject).TypeReference;
-			Assert.IsFalse(tr is InnerClassTypeReference);
-			Assert.AreEqual("System.Subnamespace.SomeClass", tr.Type);
-			Assert.AreEqual(1, tr.GenericTypes.Count);
-			Assert.AreEqual("System.String", tr.GenericTypes[0].SystemType);
-			Assert.IsTrue(tr.IsGlobal);
+			Assert.IsInstanceOfType(typeof(MemberReferenceExpression), fre.TargetObject);
+			MemberReferenceExpression inner = (MemberReferenceExpression)fre.TargetObject;
+			
+			Assert.AreEqual("SomeClass", inner.MemberName);
+			Assert.AreEqual(1, inner.TypeArguments.Count);
+			Assert.AreEqual("System.String", inner.TypeArguments[0].Type);
 		}
 		
 		[Test]
@@ -141,15 +139,12 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 		{
 			MemberReferenceExpression fre = ParseUtilVBNet.ParseExpression<MemberReferenceExpression>("MyType(of string).InnerClass(of integer).myField");
 			Assert.AreEqual("myField", fre.MemberName);
-			Assert.IsTrue(fre.TargetObject is TypeReferenceExpression);
-			InnerClassTypeReference ic = (InnerClassTypeReference)((TypeReferenceExpression)fre.TargetObject).TypeReference;
-			Assert.AreEqual("InnerClass", ic.Type);
-			Assert.AreEqual(1, ic.GenericTypes.Count);
-			Assert.AreEqual("System.Int32", ic.GenericTypes[0].SystemType);
-			Assert.AreEqual("MyType", ic.BaseType.Type);
-			Assert.AreEqual(1, ic.BaseType.GenericTypes.Count);
-			Assert.AreEqual("System.String", ic.BaseType.GenericTypes[0].SystemType);
+			Assert.IsInstanceOfType(typeof(MemberReferenceExpression), fre.TargetObject);
+			
+			MemberReferenceExpression inner = (MemberReferenceExpression)fre.TargetObject;
+			Assert.AreEqual("InnerClass", inner.MemberName);
 		}
+		
 		#endregion
 	}
 }

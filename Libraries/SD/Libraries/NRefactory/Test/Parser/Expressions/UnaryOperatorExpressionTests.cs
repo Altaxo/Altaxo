@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3120 $</version>
+//     <version>$Revision: 3656 $</version>
 // </file>
 
 using System;
@@ -83,6 +83,19 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 		public void CSharpBitWiseAndTest()
 		{
 			CSharpTestUnaryOperatorExpressionTest("&a", UnaryOperatorType.AddressOf);
+		}
+		
+		[Test]
+		public void DereferenceAfterCast()
+		{
+			UnaryOperatorExpression uoe = ParseUtilCSharp.ParseExpression<UnaryOperatorExpression>("*((SomeType*) &w)");
+			Assert.AreEqual(UnaryOperatorType.Dereference, uoe.Op);
+			ParenthesizedExpression pe = (ParenthesizedExpression)uoe.Expression;
+			CastExpression ce = (CastExpression)pe.Expression;
+			Assert.AreEqual("SomeType", ce.CastTo.Type);
+			Assert.AreEqual(1, ce.CastTo.PointerNestingLevel);
+			UnaryOperatorExpression adrOf = (UnaryOperatorExpression)ce.Expression;
+			Assert.AreEqual(UnaryOperatorType.AddressOf, adrOf.Op);
 		}
 		#endregion
 		

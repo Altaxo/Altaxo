@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2625 $</version>
+//     <version>$Revision: 3408 $</version>
 // </file>
 
 using System;
@@ -35,7 +35,7 @@ namespace ICSharpCode.SharpDevelop
     }
 
 #else
-		public const string VersionText = "Montferrer (3.0) build " + RevisionClass.Revision;
+		public const string VersionText = "SharpDevelop " + RevisionClass.FullVersion;
 #endif
 		
 		static SplashScreenForm splashScreen;

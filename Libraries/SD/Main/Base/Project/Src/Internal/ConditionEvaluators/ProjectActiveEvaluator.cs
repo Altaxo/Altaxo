@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 3290 $</version>
 // </file>
 
 using System;
@@ -41,5 +41,4 @@ namespace ICSharpCode.SharpDevelop
 			return project != null && project.Language == activeproject;
 		}
 	}
-
 }

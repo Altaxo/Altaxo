@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3171 $</version>
+//     <version>$Revision: 3794 $</version>
 // </file>
 
 using System;
@@ -18,7 +18,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 		/// A case-sensitive dummy language that returns false for all Supports.. properties,
 		/// uses a dummy code generator and refactoring provider and returns null for CodeDomProvider.
 		/// </summary>
-		public readonly static LanguageProperties None = new LanguageProperties(StringComparer.InvariantCulture);
+		public readonly static LanguageProperties None = new LanguageProperties(StringComparer.Ordinal);
 		
 		/// <summary>
 		/// C# 3.0 language properties.
@@ -188,6 +188,13 @@ namespace ICSharpCode.SharpDevelop.Dom
 		
 		public virtual TextFinder GetFindClassReferencesTextFinder(IClass c)
 		{
+			// when finding attribute references, also look for the short form of the name
+			if (c.Name.Length > 9 && nameComparer.Equals(c.Name.Substring(c.Name.Length - 9), "Attribute")) {
+				return new CombinedTextFinder(
+					new WholeWordTextFinder(c.Name.Substring(0, c.Name.Length - 9), nameComparer),
+					new WholeWordTextFinder(c.Name, nameComparer)
+				);
+			}
 			return new WholeWordTextFinder(c.Name, nameComparer);
 		}
 		
@@ -241,7 +248,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 		#region CSharpProperties
 		internal sealed class CSharpProperties : LanguageProperties
 		{
-			public CSharpProperties() : base(StringComparer.InvariantCulture) {}
+			public CSharpProperties() : base(StringComparer.Ordinal) {}
 			
 			public override RefactoringProvider RefactoringProvider {
 				get {
@@ -308,7 +315,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 		#region VBNetProperties
 		internal sealed class VBNetProperties : LanguageProperties
 		{
-			public VBNetProperties() : base(StringComparer.InvariantCultureIgnoreCase) {}
+			public VBNetProperties() : base(StringComparer.OrdinalIgnoreCase) {}
 			
 			public override bool ShowMember(IMember member, bool showStatic)
 			{

@@ -2,17 +2,15 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3105 $</version>
+//     <version>$Revision: 3598 $</version>
 // </file>
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Threading;
 using System.Windows.Forms;
 
 using ICSharpCode.Core;
-using ICSharpCode.NRefactory;
+using ICSharpCode.Core.WinForms;
 using ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor;
 using ICSharpCode.SharpDevelop.Dom;
 using ICSharpCode.SharpDevelop.Project;
@@ -70,9 +68,9 @@ namespace ICSharpCode.SharpDevelop.Gui
 			TaskService.Cleared += new EventHandler(TaskServiceCleared);
 			TaskService.Added   += new TaskEventHandler(TaskServiceAdded);
 			TaskService.Removed += new TaskEventHandler(TaskServiceRemoved);
-			TaskService.InUpdateChanged += new EventHandler(TaskService_InUpdateChanged);
+			TaskService.InUpdateChanged += new EventHandler(TaskServiceInUpdateChanged);
 			
-			WorkbenchSingleton.Workbench.ActiveViewContentChanged += new EventHandler(Workbench_ActiveViewContentChanged);
+			WorkbenchSingleton.Workbench.ActiveViewContentChanged += new EventHandler(WorkbenchActiveViewContentChanged);
 			
 			if (WorkbenchSingleton.Workbench.ActiveViewContent != null) {
 				UpdateItems();
@@ -80,7 +78,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 				if (WorkbenchSingleton.Workbench.ActiveViewContent.Control is SharpDevelopTextAreaControl) {
 					SharpDevelopTextAreaControl ctrl = WorkbenchSingleton.Workbench.ActiveViewContent.Control as SharpDevelopTextAreaControl;
 					
-					ctrl.ActiveTextAreaControl.Caret.PositionChanged += new EventHandler(Caret_PositionChanged);
+					ctrl.ActiveTextAreaControl.Caret.PositionChanged += new EventHandler(CaretPositionChanged);
 				}
 			}
 			
@@ -90,7 +88,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			this.isInitialized = true;
 		}
 
-		void Workbench_ActiveViewContentChanged(object sender, EventArgs e)
+		void WorkbenchActiveViewContentChanged(object sender, EventArgs e)
 		{
 			if (WorkbenchSingleton.Workbench.ActiveViewContent == null)
 				return;
@@ -100,11 +98,11 @@ namespace ICSharpCode.SharpDevelop.Gui
 			if (WorkbenchSingleton.Workbench.ActiveViewContent.Control is SharpDevelopTextAreaControl) {
 				SharpDevelopTextAreaControl ctrl = WorkbenchSingleton.Workbench.ActiveViewContent.Control as SharpDevelopTextAreaControl;
 				
-				ctrl.ActiveTextAreaControl.Caret.PositionChanged += new EventHandler(Caret_PositionChanged);
+				ctrl.ActiveTextAreaControl.Caret.PositionChanged += new EventHandler(CaretPositionChanged);
 			}
 		}
 
-		void Caret_PositionChanged(object sender, EventArgs e)
+		void CaretPositionChanged(object sender, EventArgs e)
 		{
 			if (this.selectedScopeIndex > 2)
 			{
@@ -117,7 +115,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			}
 		}
 
-		void TaskService_InUpdateChanged(object sender, EventArgs e)
+		void TaskServiceInUpdateChanged(object sender, EventArgs e)
 		{
 			if (!TaskService.InUpdate)
 				UpdateItems();
@@ -158,13 +156,13 @@ namespace ICSharpCode.SharpDevelop.Gui
 		}
 		
 		public void UpdateItems()
-		{		
+		{
 			this.taskView.BeginUpdate();
 			
 			this.taskView.ClearTasks();
 			
 			foreach (Task t in TaskService.CommentTasks) {
-				this.taskView.AddTask(t);
+				this.AddItem(t);
 			}
 			
 			RedrawContent();
@@ -175,7 +173,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		{
 			foreach (KeyValuePair<string, bool> pair in displayedTokens) {
 				if (item.Description.StartsWith(pair.Key) && pair.Value && IsInScope(item))
-					taskView.AddTask(item);
+					this.taskView.AddTask(item);
 			}
 		}
 		
@@ -184,22 +182,23 @@ namespace ICSharpCode.SharpDevelop.Gui
 			IClass current = GetCurrentClass();
 			IClass itemClass = GetCurrentClass(item);
 			
-			switch (this.selectedScopeIndex)
-			{
+			switch (this.selectedScopeIndex) {
 				case 0:
-					foreach (AbstractProject proj in ProjectService.OpenSolution.Projects)
-						if (proj.FindFile(item.FileName) != null)
-						return true;
-					
+					if (ProjectService.OpenSolution != null) {
+						foreach (AbstractProject proj in ProjectService.OpenSolution.Projects) {
+							if (proj.FindFile(item.FileName) != null)
+								return true;
+						}
+					}
 					return false;
 				case 1:
-					return ((WorkbenchSingleton.Workbench.ActiveViewContent != null) && (ProjectService.CurrentProject.FindFile(item.FileName) != null));
+					return ProjectService.CurrentProject != null && ProjectService.CurrentProject.FindFile(item.FileName) != null;
 				case 2:
-					return ((WorkbenchSingleton.Workbench.ActiveViewContent != null) && (WorkbenchSingleton.Workbench.ActiveViewContent.PrimaryFileName == item.FileName));
+					return WorkbenchSingleton.Workbench.ActiveViewContent != null && WorkbenchSingleton.Workbench.ActiveViewContent.PrimaryFileName == item.FileName;
 				case 3:
-					return ((current != null) && (itemClass != null) && (current.Namespace == itemClass.Namespace));
+					return current != null && itemClass != null && current.Namespace == itemClass.Namespace;
 				case 4:
-					return ((current != null) && (itemClass != null) && (current == itemClass));
+					return current != null && itemClass != null && current == itemClass;
 			}
 			
 			return true;
@@ -212,10 +211,9 @@ namespace ICSharpCode.SharpDevelop.Gui
 			
 			ParseInformation parseInfo = ParserService.GetParseInformation(WorkbenchSingleton.Workbench.ActiveViewContent.PrimaryFileName);
 			if (parseInfo != null) {
-				if (WorkbenchSingleton.Workbench.ActiveViewContent.Control is ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor.SharpDevelopTextAreaControl)
-				{SharpDevelopTextAreaControl ctrl = WorkbenchSingleton.Workbench.ActiveViewContent.Control
-						as SharpDevelopTextAreaControl;
-					IClass c = parseInfo.MostRecentCompilationUnit.GetInnermostClass(ctrl.ActiveTextAreaControl.Caret.Line, ctrl.ActiveTextAreaControl.Caret.Column);
+				IPositionable positionable = WorkbenchSingleton.Workbench.ActiveViewContent as IPositionable;
+				if (positionable != null) {
+					IClass c = parseInfo.MostRecentCompilationUnit.GetInnermostClass(positionable.Line, positionable.Column);
 					if (c != null) return c;
 				}
 			}

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2701 $</version>
+//     <version>$Revision: 3749 $</version>
 // </file>
 
 using System;
@@ -61,7 +61,7 @@ namespace ICSharpCode.SharpDevelop.Project
 		
 		public static int DefaultParallelProjectCount {
 			get {
-				return PropertyService.Get("SharpDevelop.BuildParallelProjectCount", Environment.ProcessorCount >= 2 ? 2: 1);
+				return PropertyService.Get("SharpDevelop.BuildParallelProjectCount", Math.Min(4, Environment.ProcessorCount));
 			}
 			set {
 				PropertyService.Set("SharpDevelop.BuildParallelProjectCount", value);

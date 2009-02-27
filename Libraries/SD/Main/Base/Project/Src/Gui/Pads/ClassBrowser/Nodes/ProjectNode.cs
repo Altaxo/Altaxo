@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2933 $</version>
+//     <version>$Revision: 3548 $</version>
 // </file>
 
 using System;
@@ -52,7 +52,7 @@ namespace ICSharpCode.SharpDevelop.Gui.ClassBrowser
 					if (node != null) {
 						node.Class = c.GetCompoundClass();
 					} else {
-						new ClassNode(Project, c.GetCompoundClass()).AddTo(path);
+						new ClassNode(Project, c.GetCompoundClass()).InsertSorted(path);
 					}
 					wasUpdatedDictionary[c.DotNetName] = true;
 				}
@@ -111,7 +111,7 @@ namespace ICSharpCode.SharpDevelop.Gui.ClassBrowser
 				TreeNode path = GetNodeByPath(c.Namespace, true);
 				TreeNode node = GetNodeByClass(path.Nodes, c);
 				if (node == null) {
-					new ClassNode(Project, c.GetCompoundClass()).AddTo(path);
+					new ClassNode(Project, c.GetCompoundClass()).InsertSorted(path);
 				}
 			}
 		}

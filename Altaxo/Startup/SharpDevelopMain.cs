@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2596 $</version>
+//     <version>$Revision: 3559 $</version>
 // </file>
 
 using System;
@@ -140,6 +140,13 @@ namespace ICSharpCode.SharpDevelop
 				}
 				
 				startup.AddAddInsFromDirectory(Path.Combine(startup.ApplicationRootPath, "AddIns"));
+				
+				// allows testing addins without having to install them
+				foreach (string parameter in SplashScreenForm.GetParameterList()) {
+					if (parameter.StartsWith("addindir:", StringComparison.OrdinalIgnoreCase)) {
+						startup.AddAddInsFromDirectory(parameter.Substring(9));
+					}
+				}
 				
 				SharpDevelopHost host = new SharpDevelopHost(AppDomain.CurrentDomain, startup);
 #if ModifiedForAltaxo

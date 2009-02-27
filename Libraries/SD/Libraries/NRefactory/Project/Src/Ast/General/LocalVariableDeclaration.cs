@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="none" email=""/>
-//     <version>$Revision: 3010 $</version>
+//     <version>$Revision: 3717 $</version>
 // </file>
 
 using System;
@@ -22,6 +22,7 @@ namespace ICSharpCode.NRefactory.Ast
 			}
 			set {
 				typeReference = TypeReference.CheckNull(value);
+				if (!typeReference.IsNull) typeReference.Parent = this;
 			}
 		}
 		

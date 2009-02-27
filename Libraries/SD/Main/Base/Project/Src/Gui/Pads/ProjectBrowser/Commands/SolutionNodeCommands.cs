@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2480 $</version>
+//     <version>$Revision: 3469 $</version>
 // </file>
 
 using System;
@@ -138,7 +138,7 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 				solutionFolderNode.Solution.Save();
 				
 				SolutionFolderNode newSolutionFolderNode = new SolutionFolderNode(solutionFolderNode.Solution, newSolutionFolder);
-				newSolutionFolderNode.AddTo(node);
+				newSolutionFolderNode.InsertSorted(node);
 				ProjectBrowserPad.Instance.StartLabelEdit(newSolutionFolderNode);
 			}
 		}

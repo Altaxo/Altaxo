@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2455 $</version>
+//     <version>$Revision: 3469 $</version>
 // </file>
 
 using System;
@@ -61,7 +61,7 @@ namespace ICSharpCode.SharpDevelop.Project.Commands
 							foreach (ProjectItem newItem in changes.NewItems) {
 								ProjectService.AddProjectItem(url.Project, newItem);
 								FileNode fileNode = new FileNode(newItem.FileName, FileNodeStatus.InProject);
-								fileNode.AddTo(node);
+								fileNode.InsertSorted(node);
 							}
 							ProjectBrowserPad.Instance.ProjectBrowserControl.TreeView.Sort();
 							url.Project.Save();

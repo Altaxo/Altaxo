@@ -75,7 +75,7 @@ namespace Altaxo.Main.Commands // ICSharpCode.SharpDevelop.Commands
 
       public System.Drawing.Bitmap GetBitmap(string name)
       {
-        return ICSharpCode.Core.ResourceService.GetBitmap(name);
+        return ICSharpCode.Core.WinForms.WinFormsResourceService.GetBitmap(name);
       }
     }
 

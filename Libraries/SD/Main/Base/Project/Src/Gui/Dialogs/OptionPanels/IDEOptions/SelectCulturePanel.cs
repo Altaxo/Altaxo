@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 3794 $</version>
 // </file>
 
 using System;
@@ -74,6 +74,7 @@ namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 			listView.Activation = ItemActivation.OneClick;
 			listView.Anchor = (System.Windows.Forms.AnchorStyles.Top | 
 			                  (System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right));
+			listView.MultiSelect = false;
 			
 			foreach (Language language in LanguageService.Languages) {
 				listView.Items.Add(new ListViewItem(new string[] {language.Name, language.Code}, language.ImageIndex));

@@ -2,12 +2,13 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald"/>
-//     <version>$Revision: 2707 $</version>
+//     <version>$Revision: 3622 $</version>
 // </file>
 
 using System;
-using System.Linq;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 
 using ICSharpCode.Core;

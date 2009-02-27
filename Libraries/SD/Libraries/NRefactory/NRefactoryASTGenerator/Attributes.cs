@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2653 $</version>
+//     <version>$Revision: 3722 $</version>
 // </file>
 
 using System;
@@ -120,7 +120,7 @@ namespace NRefactoryASTGenerator
 				ctd.Members.Add(prop);
 			}
 			if (implementation != NullableImplementation.Abstract) {
-				EasyTypeDeclaration newType = new EasyTypeDeclaration("Null" + ctd.Name);
+				CodeTypeDeclaration newType = new CodeTypeDeclaration("Null" + ctd.Name);
 				newType.TypeAttributes = TypeAttributes.Class | TypeAttributes.NotPublic | TypeAttributes.Sealed;
 				newType.BaseTypes.Add(new CodeTypeReference(ctd.Name));
 				cns.Types.Add(newType);

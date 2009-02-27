@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3090 $</version>
+//     <version>$Revision: 3601 $</version>
 // </file>
 
 using System;
@@ -14,9 +14,11 @@ using System.Text;
 using System.Threading;
 
 using ICSharpCode.Core;
+using ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor;
 using ICSharpCode.SharpDevelop.Dom;
 using ICSharpCode.SharpDevelop.Gui;
 using ICSharpCode.SharpDevelop.Project;
+using ICSharpCode.TextEditor.Document;
 
 using RegistryContentPair = System.Collections.Generic.KeyValuePair<ICSharpCode.SharpDevelop.Dom.ProjectContentRegistry, ICSharpCode.SharpDevelop.Dom.IProjectContent>;
 
@@ -343,6 +345,13 @@ namespace ICSharpCode.SharpDevelop
 			}
 		}
 		
+		internal static void RemoveProjectContentForRemovedProject(IProject project)
+		{
+			lock (projectContents) {
+				projectContents.Remove(project);
+			}
+		}
+		
 		public static IProjectContent GetProjectContent(IProject project)
 		{
 			lock (projectContents) {
@@ -453,7 +462,7 @@ namespace ICSharpCode.SharpDevelop
 				LoggingService.Warn("InvalidOperationException while trying to invoke GetActiveViewContent() " + ex);
 				return; // abort this thread
 			}
-	IEditable editable = activeViewContent as IEditable;
+			IEditable editable = activeViewContent as IEditable;
 #if ModifiedForAltaxo
 	if (_activeModalContent != null)
 	{
@@ -471,7 +480,7 @@ namespace ICSharpCode.SharpDevelop
 #endif
 			if (editable != null) {
 				string text = null;
-		
+				
 				if (!(fileName == null || fileName.Length == 0)) {
 					ParseInformation parseInformation = null;
 					bool updated = false;
@@ -666,6 +675,23 @@ namespace ICSharpCode.SharpDevelop
 			//string res = project.GetParseableFileContent(fileName);
 			//if (res != null)
 			//	return res;
+			
+			OpenedFile file = FileService.GetOpenedFile(fileName);
+			if (file != null) {
+				IFileDocumentProvider p = file.CurrentView as IFileDocumentProvider;
+				if (p != null) {
+					IDocument document = p.GetDocumentForFile(file);
+					if (document != null) {
+						return document.TextContent;
+					}
+				}
+				
+				using(Stream s = file.OpenRead()) {
+					// load file
+					Encoding encoding = DefaultFileEncoding;
+					return ICSharpCode.TextEditor.Util.FileReader.ReadFileContent(s, ref encoding);
+				}
+			}
 			
 			// load file
 			return ICSharpCode.TextEditor.Util.FileReader.ReadFileContent(fileName, DefaultFileEncoding);

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Matthew Ward" email="mrward@users.sourceforge.net"/>
-//     <version>$Revision: 2043 $</version>
+//     <version>$Revision: 3292 $</version>
 // </file>
 
 using NUnit.Framework;
@@ -14,7 +14,7 @@ namespace ICSharpCode.SharpDevelop.Tests.WebReferences
 {
 	[TestFixture]
 	public class DirectoryNodeFactoryTests
-	{
+	{		
 		DirectoryNode appDesignerFolderNode;
 		DirectoryNode ordinaryFolderNode;
 		DirectoryNode webReferencesFolderNode;

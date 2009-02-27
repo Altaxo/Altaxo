@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3073 $</version>
+//     <version>$Revision: 3794 $</version>
 // </file>
 
 using System;
@@ -75,29 +75,34 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 	{
 		IMember member;
 		
-		static string GetName(IMethod method, ConversionFlags flags)
+		static string GetName(IMember member, ConversionFlags flags)
 		{
 			IAmbience ambience = AmbienceService.GetCurrentAmbience();
-			ambience.ConversionFlags = flags | ConversionFlags.ShowParameterNames;
-			return ambience.Convert(method);
+			ambience.ConversionFlags = flags | ConversionFlags.ShowParameterNames | ConversionFlags.ShowTypeParameterList;
+			return ambience.Convert(member);
 		}
 		
 		public OverrideCompletionData(IMethod method)
 			: base(GetName(method, ConversionFlags.ShowParameterList),
-			       "override " + GetName(method, ConversionFlags.ShowReturnType
-			                             | ConversionFlags.ShowParameterList
-			                             | ConversionFlags.ShowAccessibility)
-			       + "\n\n" + CodeCompletionData.GetDocumentation(method.Documentation),
 			       ClassBrowserIconService.GetIcon(method))
 		{
 			this.member = method;
 		}
 		
 		public OverrideCompletionData(IProperty property)
-			: base(property.Name, "override " + property.Name + "\n\n" + CodeCompletionData.GetDocumentation(property.Documentation),
+			: base(property.Name, "override " + property.Name + "\n\n" + CodeCompletionData.ConvertDocumentation(property.Documentation),
 			       ClassBrowserIconService.GetIcon(property))
 		{
 			this.member = property;
+		}
+		
+		public override string Description {
+			get {
+				return "override " + GetName(member, ConversionFlags.ShowReturnType
+				                             | ConversionFlags.ShowParameterList
+				                             | ConversionFlags.ShowAccessibility)
+					+ "\n\n" + CodeCompletionData.ConvertDocumentation(member.Documentation);
+			}
 		}
 		
 		public override bool InsertAction(TextArea textArea, char ch)

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="none" email=""/>
-//     <version>$Revision: 2986 $</version>
+//     <version>$Revision: 3287 $</version>
 // </file>
 
 using System;
@@ -13,6 +13,7 @@ using System.Threading;
 using System.Windows.Forms;
 
 using ICSharpCode.Core;
+using ICSharpCode.Core.WinForms;
 using ICSharpCode.SharpDevelop.Gui.XmlForms;
 
 namespace ICSharpCode.SharpDevelop.Gui
@@ -85,7 +86,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 				return new Font(descr[1], Single.Parse(descr[3]));
 			} catch (Exception ex) {
 				LoggingService.Warn(ex);
-				return ResourceService.DefaultMonospacedFont;
+				return WinFormsResourceService.DefaultMonospacedFont;
 			}
 		}
 		

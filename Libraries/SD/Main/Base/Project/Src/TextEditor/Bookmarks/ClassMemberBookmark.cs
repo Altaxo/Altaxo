@@ -2,14 +2,14 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3039 $</version>
+//     <version>$Revision: 3287 $</version>
 // </file>
 
 using System;
 using System.Drawing;
 using System.Windows.Forms;
 
-using ICSharpCode.Core;
+using ICSharpCode.Core.WinForms;
 using ICSharpCode.SharpDevelop.Dom;
 using ICSharpCode.TextEditor;
 using ICSharpCode.TextEditor.Document;
@@ -32,20 +32,14 @@ namespace ICSharpCode.SharpDevelop.Bookmarks
 		}
 		
 		public ClassMemberBookmark(IDocument document, IMember member)
-			: base(document, GetLineNumberFromMember(document, member))
+			: base(document, GetTextLocationFromMember(document, member))
 		{
 			this.member = member;
 		}
 		
-		static int GetLineNumberFromMember(IDocument document, IMember member)
+		static TextLocation GetTextLocationFromMember(IDocument document, IMember member)
 		{
-			int line = member.Region.BeginLine - 1;
-			if (line < 0)
-				return 0;
-			else if (document != null && line >= document.TotalNumberOfLines)
-				return document.TotalNumberOfLines - 1;
-			else
-				return line;
+			return new TextLocation(member.Region.BeginColumn - 1, member.Region.BeginLine - 1);
 		}
 		
 		public const string ContextMenuPath = "/SharpDevelop/ViewContent/DefaultTextEditor/ClassMemberContextMenu";
@@ -84,20 +78,14 @@ namespace ICSharpCode.SharpDevelop.Bookmarks
 		}
 		
 		public ClassBookmark(IDocument document, IClass @class)
-			: base(document, GetLineNumberFromClass(document, @class))
+			: base(document, GetTextLocationFromClass(document, @class))
 		{
 			this.@class = @class;
 		}
 		
-		static int GetLineNumberFromClass(IDocument document, IClass @class)
+		static TextLocation GetTextLocationFromClass(IDocument document, IClass @class)
 		{
-			int line = @class.Region.BeginLine - 1;
-			if (line < 0)
-				return 0;
-			else if (document != null && line >= document.TotalNumberOfLines)
-				return document.TotalNumberOfLines - 1;
-			else
-				return line;
+			return new TextLocation(@class.Region.BeginColumn - 1, @class.Region.BeginLine - 1);
 		}
 		
 		public const string ContextMenuPath = "/SharpDevelop/ViewContent/DefaultTextEditor/ClassBookmarkContextMenu";

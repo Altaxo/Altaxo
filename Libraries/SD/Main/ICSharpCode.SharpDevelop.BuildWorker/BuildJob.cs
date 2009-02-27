@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <author name="Daniel Grunwald"/>
-//     <version>$Revision: 2899 $</version>
+//     <version>$Revision: 3786 $</version>
 // </file>
 
 using System;
@@ -50,7 +50,7 @@ namespace ICSharpCode.SharpDevelop.BuildWorker
 			get { return additionalImports; }
 		}
 		
-		HashSet<string> interestingTaskNames = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase);
+		HashSet<string> interestingTaskNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 		
 		public ICollection<string> InterestingTaskNames {
 			get { return interestingTaskNames; }

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3160 $</version>
+//     <version>$Revision: 3469 $</version>
 // </file>
 
 using System;
@@ -393,7 +393,7 @@ namespace ICSharpCode.SharpDevelop.Project
 					NodeBuilders.AddProjectNode(solutionNode, (IProject)treeObject);
 				} else {
 					SolutionFolderNode folderNode = new SolutionFolderNode(solution, (SolutionFolder)treeObject);
-					folderNode.AddTo(solutionNode);
+					folderNode.InsertSorted(solutionNode);
 				}
 			}
 			

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2628 $</version>
+//     <version>$Revision: 3794 $</version>
 // </file>
 
 using System;
@@ -22,17 +22,26 @@ namespace ICSharpCode.SharpDevelop.Commands
 	{
 		public override void Run()
 		{
-			if (ProjectBrowserPad.Instance.CurrentProject != null) {
-				int result = MessageService.ShowCustomDialog("${res:Dialog.NewFile.AddToProjectQuestionTitle}",
-				                                             "${res:Dialog.NewFile.AddToProjectQuestion}",
-				                                             "${res:Dialog.NewFile.AddToProjectQuestionProject}",
-				                                             "${res:Dialog.NewFile.AddToProjectQuestionStandalone}");
-				if (result == 0) {
-					ProjectBrowserPad.Instance.CurrentProject.AddNewItemsToProject();
-					return;
-				} else if (result == -1) {
-					return;
+			ProjectNode node = ProjectBrowserPad.Instance.CurrentProject;
+			if (node != null) {
+				if (node.Project.ReadOnly)
+				{
+					MessageService.ShowWarningFormatted("${res:Dialog.NewFile.ReadOnlyProjectWarning}", node.Project.FileName);
 				}
+				else
+				{
+					int result = MessageService.ShowCustomDialog("${res:Dialog.NewFile.AddToProjectQuestionTitle}",
+					                                             "${res:Dialog.NewFile.AddToProjectQuestion}",
+					                                             "${res:Dialog.NewFile.AddToProjectQuestionProject}",
+					                                             "${res:Dialog.NewFile.AddToProjectQuestionStandalone}");
+					if (result == 0) {
+						node.AddNewItemsToProject();
+						return;
+					} else if (result == -1) {
+						return;
+					}
+				}
+				
 			}
 			using (NewFileDialog nfd = new NewFileDialog(null)) {
 				nfd.Owner = WorkbenchSingleton.MainForm;
@@ -55,12 +64,17 @@ namespace ICSharpCode.SharpDevelop.Commands
 	{
 		public override void Run()
 		{
-			Save(WorkbenchSingleton.Workbench.ActiveViewContent);
+			Save(WorkbenchSingleton.Workbench.ActiveWorkbenchWindow);
+		}
+		
+		internal static void Save(IWorkbenchWindow window)
+		{
+			window.ViewContents.ForEach(Save);
 		}
 		
 		internal static void Save(IViewContent content)
 		{
-			if (content != null) {
+			if (content != null && content.IsDirty) {
 				if (content is ICustomizedCommands) {
 					if (((ICustomizedCommands)content).SaveCommand()) {
 						return;
@@ -71,7 +85,8 @@ namespace ICSharpCode.SharpDevelop.Commands
 				}
 				
 				foreach (OpenedFile file in content.Files.ToArray()) {
-					Save(file);
+					if (file.IsDirty)
+						Save(file);
 				}
 			}
 		}
@@ -121,16 +136,24 @@ namespace ICSharpCode.SharpDevelop.Commands
 	{
 		public override void Run()
 		{
-			Save(WorkbenchSingleton.Workbench.ActiveViewContent);
+			Save(WorkbenchSingleton.Workbench.ActiveWorkbenchWindow);
+		}
+		
+		internal static void Save(IWorkbenchWindow window)
+		{
+			window.ViewContents.ForEach(Save);
 		}
 		
 		internal static void Save(IViewContent content)
 		{
-			if (content != null && !content.IsViewOnly) {
+			if (content != null) {
 				if (content is ICustomizedCommands) {
 					if (((ICustomizedCommands)content).SaveAsCommand()) {
 						return;
 					}
+				}
+				if (content.IsViewOnly) {
+					return;
 				}
 				// save the primary file only
 				if (content.PrimaryFile != null) {

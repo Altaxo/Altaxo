@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2932 $</version>
+//     <version>$Revision: 3723 $</version>
 // </file>
 
 using System;
@@ -658,10 +658,10 @@ namespace ICSharpCode.TextEditor
 			}
 			
 			this.FileName = fileName;
-			OptionsChanged();
 			Document.UpdateQueue.Clear();
 			EndUpdate();
 			
+			OptionsChanged();
 			Refresh();
 		}
 		

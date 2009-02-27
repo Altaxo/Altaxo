@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3123 $</version>
+//     <version>$Revision: 3474 $</version>
 // </file>
 
 using System;
@@ -487,6 +487,36 @@ namespace ICSharpCode.SharpDevelop.Tests
 		{
 			TestProgramVB2CS("Imports System\nClass Test\nEnd Class",
 			                 DefaultUsingsCSharp + "class Test\n{\n}");
+		}
+		
+		[Test]
+		public void CallMethodOnModule()
+		{
+			TestProgramVB2CS("Class Test\n" +
+			                 "  Sub A\n" +
+			                 "    Method(Field)\n" +
+			                 "  End Sub\n" +
+			                 "End Class\n" +
+			                 "Module TheModule\n" +
+			                 "  Sub Method(a As Integer)\n" +
+			                 "  End Sub\n" +
+			                 "  Public Field As Integer\n" +
+			                 "End Module",
+			                 DefaultUsingsCSharp + 
+			                 "class Test\n" +
+			                 "{\n" +
+			                 "  public void A()\n" +
+			                 "  {\n" +
+			                 "    TheModule.Method(TheModule.Field);\n" +
+			                 "  }\n" +
+			                 "}\n" +
+			                 "static class TheModule\n" +
+			                 "{\n" +
+			                 "  public static void Method(int a)\n" +
+			                 "  {\n" +
+			                 "  }\n" +
+			                 "  public static int Field;\n" +
+			                 "}");
 		}
 		
 		#region Casting

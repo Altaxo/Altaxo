@@ -2,9 +2,10 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3019 $</version>
+//     <version>$Revision: 3759 $</version>
 // </file>
 
+using ICSharpCode.NRefactory.Ast;
 using System;
 using System.Collections.Generic;
 
@@ -35,19 +36,15 @@ namespace ICSharpCode.SharpDevelop.Dom.Refactoring
 				return false;
 			}
 		}
-		public virtual string GenerateInterfaceForClass(string newInterfaceName,
-		                                                IList<IMember> membersToExtract,
-		                                                bool preserveComments,
-		                                                string sourceNamespace,
-		                                                string sourceClassName,
-		                                                string existingCode
-		                                               )
+		public virtual string GenerateInterfaceForClass(string newInterfaceName, string existingCode, IList<IMember> membersToKeep, IClass sourceClass, bool preserveComments)
+
 		{
 			throw new NotSupportedException();
 		}
 		
-		public virtual string AddBaseTypeToClass(string existingCode, string newInterfaceName) {
-			throw new NotSupportedException();
+		public virtual string AddBaseTypeToClass(string existingCode, IClass targetClass, IClass newBaseType)
+		{
+			throw new NotImplementedException();
 		}
 		#endregion
 

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3125 $</version>
+//     <version>$Revision: 3403 $</version>
 // </file>
 
 using System;
@@ -198,7 +198,10 @@ namespace ICSharpCode.NRefactory.Ast
 		
 		/// <summary>VB-only: Like</summary>
 		Like,
-		/// <summary>C#: ??</summary>
+		/// <summary>
+		/// 	C#: ??
+		/// 	VB: IF(x, y)
+		/// </summary>
 		NullCoalescing,
 		
 		/// <summary>VB-only: !</summary>
@@ -359,7 +362,8 @@ namespace ICSharpCode.NRefactory.Ast
 		Explicit,
 		Strict,
 		CompareBinary,
-		CompareText
+		CompareText,
+		Infer
 	}
 	
 	/// <summary>
@@ -367,6 +371,20 @@ namespace ICSharpCode.NRefactory.Ast
 	/// </summary>
 	public enum QueryExpressionOrderingDirection
 	{
-		None, Ascending, Descending
+		None,
+		Ascending,
+		Descending
+	}
+	
+	/// <summary>
+	/// Specifies the partition type for a VB.NET
+	/// query expression.
+	/// </summary>
+	public enum QueryExpressionPartitionType
+	{
+		Take,
+		TakeWhile,
+		Skip,
+		SkipWhile
 	}
 }

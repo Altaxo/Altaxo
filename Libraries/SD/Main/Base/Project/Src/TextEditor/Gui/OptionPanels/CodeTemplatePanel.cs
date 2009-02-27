@@ -2,14 +2,14 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 3287 $</version>
 // </file>
 
 using System;
 using System.Collections;
 using System.Windows.Forms;
 
-using ICSharpCode.Core;
+using ICSharpCode.Core.WinForms;
 using ICSharpCode.SharpDevelop.Internal.Templates;
 
 namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
@@ -42,7 +42,7 @@ namespace ICSharpCode.SharpDevelop.Gui.OptionPanels
 			ControlDictionary["removeGroupButton"].Click += new System.EventHandler(RemoveGroupEvent);
 			
 			
-			((TextBox)ControlDictionary["templateTextBox"]).Font = ResourceService.DefaultMonospacedFont;
+			((TextBox)ControlDictionary["templateTextBox"]).Font = WinFormsResourceService.DefaultMonospacedFont;
 			((TextBox)ControlDictionary["templateTextBox"]).TextChanged += new EventHandler(TextChange);
 			
 			((ListView)ControlDictionary["templateListView"]).Activation = ItemActivation.Standard;

@@ -32,6 +32,7 @@ using System.Xml;
 
 using ICSharpCode.SharpDevelop;
 using ICSharpCode.Core;
+using ICSharpCode.Core.WinForms;
 
 using ICSharpCode.SharpDevelop.Gui;
 
@@ -74,7 +75,7 @@ namespace Altaxo.Gui.SharpDevelop
       viewContentPath = "/Altaxo/Workbench/Pads";
       toolBarPath = "/Altaxo/Workbench/ToolBar";
       
-      Icon = ResourceService.GetIcon("Icons.MainApplicationIcon");
+      Icon = WinFormsResourceService.GetIcon("Icons.MainApplicationIcon");
     }
    
     public void EhProjectChanged(object sender, Altaxo.Main.ProjectEventArgs e)

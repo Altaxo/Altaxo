@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2604 $</version>
+//     <version>$Revision: 3717 $</version>
 // </file>
 
 using System;
@@ -90,10 +90,10 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 			                                                                                 "ElseIf False Then\n" +
 			                                                                                 "DoIt()\n" +
 			                                                                                 "End If");
-			Assert.AreEqual(3, (ifElseStatement.StartLocation).Y);
-			Assert.AreEqual(7, (ifElseStatement.EndLocation).Y);
-			Assert.AreEqual(5, (ifElseStatement.ElseIfSections[0].StartLocation).Y);
-			Assert.AreEqual(6, (ifElseStatement.ElseIfSections[0].EndLocation).Y);
+			Assert.AreEqual(3, (ifElseStatement.StartLocation).Line);
+			Assert.AreEqual(7, (ifElseStatement.EndLocation).Line);
+			Assert.AreEqual(5, (ifElseStatement.ElseIfSections[0].StartLocation).Line);
+			Assert.AreEqual(6, (ifElseStatement.ElseIfSections[0].EndLocation).Line);
 			Assert.IsNotNull(ifElseStatement.ElseIfSections[0].Parent);
 			
 		}

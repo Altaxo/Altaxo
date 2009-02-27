@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3022 $</version>
+//     <version>$Revision: 3660 $</version>
 // </file>
 
 using System;
@@ -530,14 +530,14 @@ End Class
 		[Test]
 		public void CSharpLinefeedToVBString()
 		{
-			TestStatement(@"String Test = ""My Test\n"";",
+			TestStatement(@"string Test = ""My Test\n"";",
 			              @"Dim Test As String = ""My Test"" & vbLf");
 		}
 		
 		[Test]
 		public void CSharpTabToVBString()
 		{
-			TestStatement(@"String Test = ""\t\a"";",
+			TestStatement(@"string Test = ""\t\a"";",
 			              @"Dim Test As String = vbTab & ChrW(7)");
 		}
 	}

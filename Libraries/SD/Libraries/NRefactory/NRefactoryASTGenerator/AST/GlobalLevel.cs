@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1703 $</version>
+//     <version>$Revision: 3718 $</version>
 // </file>
 
 using System;
@@ -91,5 +91,10 @@ namespace NRefactoryASTGenerator.Ast
 		bool       optionValue;
 		
 		public OptionDeclaration(OptionType optionType, bool optionValue) {}
+	}
+	
+	class ExternAliasDirective : AbstractNode
+	{
+		string name;
 	}
 }

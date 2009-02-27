@@ -29,6 +29,7 @@ using Altaxo.Worksheet;
 using Altaxo.Worksheet.GUI;
 
 using ICSharpCode.Core;
+using ICSharpCode.Core.WinForms;
 using ICSharpCode.SharpDevelop.Gui;
 
 namespace Altaxo.Gui.SharpDevelop

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <author name="Daniel Grunwald"/>
-//     <version>$Revision: 2899 $</version>
+//     <version>$Revision: 3786 $</version>
 // </file>
 
 // activate this define to see the build worker window
@@ -10,12 +10,14 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Diagnostics;
+using System.IO;
+using System.Runtime.Serialization;
 using System.Threading;
+
 using ICSharpCode.SharpDevelop.BuildWorker.Interprocess;
-using Microsoft.Build.Framework;
 using Microsoft.Build.BuildEngine;
+using Microsoft.Build.Framework;
 
 namespace ICSharpCode.SharpDevelop.BuildWorker
 {
@@ -59,8 +61,8 @@ namespace ICSharpCode.SharpDevelop.BuildWorker
 			ProcessStartInfo info = new ProcessStartInfo(typeof(Program).Assembly.Location);
 			info.WorkingDirectory = Path.GetDirectoryName(info.FileName);
 			info.Arguments = "worker";
-			#if RELEASE || !WORKERDEBUG
 			info.UseShellExecute = false;
+			#if RELEASE || !WORKERDEBUG
 			info.CreateNoWindow = true;
 			#endif
 			return info;
@@ -75,6 +77,7 @@ namespace ICSharpCode.SharpDevelop.BuildWorker
 		[Conditional("DEBUG")]
 		internal static void Log(string text)
 		{
+			Debug.WriteLine(text);
 			#if WORKERDEBUG
 			DateTime now = DateTime.Now;
 			Console.WriteLine(now.ToString() + "," + now.Millisecond.ToString("d3") + " " + text);
@@ -106,7 +109,8 @@ namespace ICSharpCode.SharpDevelop.BuildWorker
 		}
 		
 		// Called with CallMethodOnWorker
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+		//[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+		// TODO: make use of CancelBuild
 		public void CancelBuild()
 		{
 			lock (this) {
@@ -127,7 +131,7 @@ namespace ICSharpCode.SharpDevelop.BuildWorker
 				}
 				success = DoBuild();
 			} catch (Exception ex) {
-				host.CallMethodOnHost("ReportException", ex);
+				host.CallMethodOnHost("ReportException", ex.ToString());
 			} finally {
 				Program.Log("BuildDone");
 				
@@ -150,6 +154,7 @@ namespace ICSharpCode.SharpDevelop.BuildWorker
 			                           | ToolsetDefinitionLocations.ConfigurationFile);
 			
 			engine.RegisterLogger(new ForwardingLogger(this));
+			//engine.RegisterLogger(new ConsoleLogger(LoggerVerbosity.Diagnostic));
 			
 			return engine;
 		}
@@ -207,13 +212,16 @@ namespace ICSharpCode.SharpDevelop.BuildWorker
 				engine.GlobalProperties.SetProperty(pair.Key, pair.Value);
 			}
 			
+			Log("Loading " + currentJob.ProjectFileName);
 			Project project = LoadProject(engine, currentJob.ProjectFileName);
 			if (project == null)
 				return false;
 			
 			if (string.IsNullOrEmpty(currentJob.Target)) {
+				Log("Building default target in " + currentJob.ProjectFileName);
 				return engine.BuildProject(project);
 			} else {
+				Log("Building target '" + currentJob.Target + "' in " + currentJob.ProjectFileName);
 				return engine.BuildProject(project, currentJob.Target.Split(';'));
 			}
 		}
@@ -437,6 +445,14 @@ namespace ICSharpCode.SharpDevelop.BuildWorker
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1064:ExceptionsShouldBePublic")]
 		sealed class BuildCancelException : Exception
 		{
+			public BuildCancelException()
+			{
+			}
+			
+			BuildCancelException(SerializationInfo info, StreamingContext context)
+				: base(info, context)
+			{
+			}
 		}
 	}
 }

@@ -40,7 +40,9 @@ using ICSharpCode.SharpZipLib.Zip;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
+
 using ICSharpCode.Core;
+using ICSharpCode.Core.WinForms;
 
 namespace Altaxo.Graph.Commands
 {
@@ -978,7 +980,7 @@ namespace Altaxo.Graph.Commands
         {
           Controller.CurrentGraphToolType=typeof(Altaxo.Graph.GUI.GraphControllerMouseHandlers.ZoomAxesMouseHandler);
           
-          Cursor cursor = ResourceService.GetCursor("Cursors.32x32.ZoomAxes");
+          Cursor cursor = WinFormsResourceService.GetCursor("Cursors.32x32.ZoomAxes");
           this.Controller.View.SetPanelCursor(cursor);
         }
 

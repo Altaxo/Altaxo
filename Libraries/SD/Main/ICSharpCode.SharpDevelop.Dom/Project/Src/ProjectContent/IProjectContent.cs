@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2977 $</version>
+//     <version>$Revision: 3769 $</version>
 // </file>
 
 using System;
@@ -89,37 +89,83 @@ namespace ICSharpCode.SharpDevelop.Dom
 		bool NamespaceExists(string name);
 		ArrayList GetNamespaceContents(string nameSpace);
 		
-		IClass GetClass(string typeName, int typeParameterCount, LanguageProperties language, bool lookInReferences);
+		IClass GetClass(string typeName, int typeParameterCount, LanguageProperties language, GetClassOptions options);
 		bool NamespaceExists(string name, LanguageProperties language, bool lookInReferences);
 		/// <summary>
 		/// Adds the contents of the specified <paramref name="subNameSpace"/> to the <paramref name="list"/>.
 		/// </summary>
 		void AddNamespaceContents(ArrayList list, string subNameSpace, LanguageProperties language, bool lookInReferences);
 		
+		[Obsolete]
 		string SearchNamespace(string name, IClass curType, ICompilationUnit unit, int caretLine, int caretColumn);
+		
 		SearchTypeResult SearchType(SearchTypeRequest request);
 		
 		/// <summary>
 		/// Gets the position of a member in this project content (not a referenced one).
 		/// </summary>
-		/// <param name="fullMemberName">The full member name in Reflection syntax (always case sensitive, ` for generics)</param>
-		IEntity GetElement(string fullMemberName);
+		/// <param name="fullMemberName">The full class name in Reflection syntax (always case sensitive, ` for generics)</param>
+		/// <param name="lookInReferences">Whether to search in referenced project contents.</param>
+		IClass GetClassByReflectionName(string fullMemberName, bool lookInReferences);
 		
 		/// <summary>
 		/// Gets the definition position of the class/member.
 		/// </summary>
-		/// <param name="fullMemberName">The full member name in Reflection syntax (always case sensitive, ` for generics)</param>
-		FilePosition GetPosition(string fullMemberName);
+		/// <param name="entity">The entity to get the position from.</param>
+		FilePosition GetPosition(IEntity entity);
+		
+		/// <summary>
+		/// Gets whether internals in the project content are visible to the other project content.
+		/// </summary>
+		bool InternalsVisibleTo(IProjectContent otherProjectContent);
 	}
 	
-	public struct SearchTypeRequest
+	[Flags]
+	public enum GetClassOptions
 	{
-		public readonly string Name;
-		public readonly int TypeParameterCount;
-		public readonly ICompilationUnit CurrentCompilationUnit;
-		public readonly IClass CurrentType;
-		public readonly int CaretLine;
-		public readonly int CaretColumn;
+		None = 0,
+		/// <summary>
+		/// Also look in referenced project contents.
+		/// </summary>
+		LookInReferences = 1,
+		/// <summary>
+		/// Try if the class is an inner class.
+		/// </summary>
+		LookForInnerClass = 2,
+		/// <summary>
+		/// Default = LookInReferences + LookForInnerClass
+		/// </summary>
+		Default = LookInReferences | LookForInnerClass
+	}
+	
+	public sealed class SearchTypeRequest
+	{
+		IUsingScope currentUsingScope;
+		ICompilationUnit currentCompilationUnit;
+		
+		public string Name { get; set; }
+		public int TypeParameterCount { get; set; }
+		public IClass CurrentType { get; set; }
+		public int CaretLine { get; set; }
+		public int CaretColumn { get; set; }
+		
+		public ICompilationUnit CurrentCompilationUnit {
+			get { return currentCompilationUnit; }
+			set {
+				if (value == null)
+					throw new ArgumentNullException("CurrentCompilationUnit");
+				currentCompilationUnit = value;
+			}
+		}
+		
+		public IUsingScope CurrentUsingScope {
+			get { return currentUsingScope; }
+			set {
+				if (value == null)
+					throw new ArgumentNullException("CurrentUsingScope");
+				currentUsingScope = value;
+			}
+		}
 		
 		public SearchTypeRequest(string name, int typeParameterCount, IClass currentType, int caretLine, int caretColumn)
 		{
@@ -131,6 +177,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 			this.CurrentType = currentType != null ? currentType.GetCompoundClass() : null;
 			this.CaretLine = caretLine;
 			this.CaretColumn = caretColumn;
+			this.CurrentUsingScope = currentType.UsingScope;
 		}
 		
 		public SearchTypeRequest(string name, int typeParameterCount, IClass currentType, ICompilationUnit currentCompilationUnit, int caretLine, int caretColumn)
@@ -143,15 +190,17 @@ namespace ICSharpCode.SharpDevelop.Dom
 			this.CurrentType = currentType != null ? currentType.GetCompoundClass() : null;
 			this.CaretLine = caretLine;
 			this.CaretColumn = caretColumn;
+			this.CurrentUsingScope = (currentType != null) ? currentType.UsingScope : currentCompilationUnit.UsingScope;
 		}
 	}
 	
 	public struct SearchTypeResult
 	{
-		public static readonly SearchTypeResult Empty = new SearchTypeResult(null, null);
+		public static readonly SearchTypeResult Empty = default(SearchTypeResult);
 		
 		readonly IReturnType result;
 		readonly IUsing usedUsing;
+		readonly string namespaceResult;
 		
 		public SearchTypeResult(IReturnType result) : this(result, null) {}
 		
@@ -161,18 +210,32 @@ namespace ICSharpCode.SharpDevelop.Dom
 		{
 			this.result = result;
 			this.usedUsing = usedUsing;
+			this.namespaceResult = null;
 		}
 		
+		public SearchTypeResult(string namespaceResult, IUsing usedUsing)
+		{
+			this.result = null;
+			this.usedUsing = usedUsing;
+			this.namespaceResult = namespaceResult;
+		}
+		
+		/// <summary>
+		/// Gets the result type.
+		/// </summary>
 		public IReturnType Result {
-			get {
-				return result;
-			}
+			get { return result; }
 		}
 		
+		/// <summary>
+		/// Gets the using that was used for this type lookup.
+		/// </summary>
 		public IUsing UsedUsing {
-			get {
-				return usedUsing;
-			}
+			get { return usedUsing; }
+		}
+		
+		public string NamespaceResult {
+			get { return namespaceResult; }
 		}
 	}
 }

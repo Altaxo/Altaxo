@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2952 $</version>
+//     <version>$Revision: 3704 $</version>
 // </file>
 
 using System;
@@ -93,6 +93,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		{
 			if (listBox.Items.Count == 1) {
 				MessageService.ShowMessage("${res:Dialog.EditAvailableConfigurationsDialog.CannotDeleteAllConfigurationsOrPlatforms}");
+				return;
 			}
 			string name = listBox.SelectedItem.ToString();
 			if (MessageService.AskQuestionFormatted("${res:Dialog.EditAvailableConfigurationsDialog.ConfirmRemoveConfigurationOrPlatform}",

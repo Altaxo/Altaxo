@@ -2,12 +2,13 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2931 $</version>
+//     <version>$Revision: 3770 $</version>
 // </file>
 
 using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 
 namespace ICSharpCode.SharpDevelop.Dom
 {
@@ -26,6 +27,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 		IList<IMethod>   methods;
 		IList<IEvent>    events;
 		IList<ITypeParameter> typeParameters;
+		IUsingScope usingScope;
 		
 		protected override void FreezeInternal()
 		{
@@ -60,7 +62,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 			copy.UserData = this.UserData;
 			return copy;
 		}
-		*/
+		 */
 		
 		byte flags;
 		const byte hasPublicOrInternalStaticMembersFlag = 0x02;
@@ -119,23 +121,47 @@ namespace ICSharpCode.SharpDevelop.Dom
 			}
 		}
 		
+		/// <summary>
+		/// Gets the using scope of contains this class.
+		/// </summary>
+		public IUsingScope UsingScope {
+			get { return usingScope; }
+			set {
+				if (value == null)
+					throw new ArgumentNullException("UsingScope");
+				CheckBeforeMutation();
+				usingScope = value;
+			}
+		}
+		
 		public DefaultClass(ICompilationUnit compilationUnit, string fullyQualifiedName) : base(null)
 		{
+			if (compilationUnit == null)
+				throw new ArgumentNullException("compilationUnit");
+			if (fullyQualifiedName == null)
+				throw new ArgumentNullException("fullyQualifiedName");
 			this.compilationUnit = compilationUnit;
 			this.FullyQualifiedName = fullyQualifiedName;
+			this.UsingScope = compilationUnit.UsingScope;
 		}
 		
 		public DefaultClass(ICompilationUnit compilationUnit, IClass declaringType) : base(declaringType)
 		{
+			if (compilationUnit == null)
+				throw new ArgumentNullException("compilationUnit");
 			this.compilationUnit = compilationUnit;
+			this.UsingScope = compilationUnit.UsingScope;
 		}
 		
 		public DefaultClass(ICompilationUnit compilationUnit, ClassType classType, ModifierEnum modifiers, DomRegion region, IClass declaringType) : base(declaringType)
 		{
+			if (compilationUnit == null)
+				throw new ArgumentNullException("compilationUnit");
 			this.compilationUnit = compilationUnit;
 			this.region = region;
 			this.classType = classType;
 			Modifiers = modifiers;
+			this.UsingScope = compilationUnit.UsingScope;
 		}
 		
 		// fields must be volatile to ensure that the optimizer doesn't reorder accesses to it
@@ -348,43 +374,86 @@ namespace ICSharpCode.SharpDevelop.Dom
 			return CompareTo((IClass)o);
 		}
 		
-		List<IClass> inheritanceTreeCache;
+		volatile IClass[] inheritanceTreeCache;
 		
 		public IEnumerable<IClass> ClassInheritanceTree {
 			get {
-				if (inheritanceTreeCache != null)
-					return inheritanceTreeCache;
-				List<IClass> visitedList = new List<IClass>();
-				Queue<IReturnType> typesToVisit = new Queue<IReturnType>();
-				bool enqueuedLastBaseType = false;
-				IClass currentClass = this;
-				IReturnType nextType;
-				do {
-					if (currentClass != null) {
-						if (!visitedList.Contains(currentClass)) {
-							visitedList.Add(currentClass);
-							foreach (IReturnType type in currentClass.BaseTypes) {
-								typesToVisit.Enqueue(type);
-							}
-						}
-					}
-					if (typesToVisit.Count > 0) {
-						nextType = typesToVisit.Dequeue();
-					} else {
-						nextType = enqueuedLastBaseType ? null : GetBaseTypeByClassType(this);
-						enqueuedLastBaseType = true;
-					}
-					if (nextType != null) {
-						currentClass = nextType.GetUnderlyingClass();
-					}
-				} while (nextType != null);
-				if (UseInheritanceCache)
-					inheritanceTreeCache = visitedList;
-				return visitedList;
+				// Notes:
+				// the ClassInheritanceTree must work even if the following things happen:
+				// - cyclic inheritance
+				// - multithreaded calls
+				
+				// Recursive calls are possible if the SearchType request done by GetUnderlyingClass()
+				// uses ClassInheritanceTree.
+				// Such recursive calls are tricky, they have caused incorrect behavior (SD2-1474)
+				// or performance problems (SD2-1510) in the past.
+				// As of revision 3769, NRefactoryAstConvertVisitor sets up the SearchClassReturnType
+				// used for base types so that it does not look up inner classes in the class itself,
+				// so the ClassInheritanceTree is not used created in those cases.
+				// However, other language bindings might not set up base types correctly, so it's
+				// still possible that ClassInheritanceTree is called recursivly.
+				// In that case, we'll return an invalid inheritance tree because of
+				// ProxyReturnType's automatic stack overflow prevention.
+				
+				// We do not use locks to protect against multithreaded calls because
+				// resolving one class's base types can cause getting the inheritance tree
+				// of another class -> beware of deadlocks
+				
+				IClass[] inheritanceTree = this.inheritanceTreeCache;
+				if (inheritanceTree != null) {
+					return inheritanceTree;
+				}
+				
+				inheritanceTree = CalculateClassInheritanceTree();
+				
+				this.inheritanceTreeCache = inheritanceTree;
+				if (!KeepInheritanceTree)
+					DomCache.RegisterForClear(ClearCachedInheritanceTree);
+				
+				return inheritanceTree;
 			}
 		}
 		
-		protected bool UseInheritanceCache = false;
+		void ClearCachedInheritanceTree()
+		{
+			inheritanceTreeCache = null;
+		}
+		
+		IClass[] CalculateClassInheritanceTree()
+		{
+			List<IClass> visitedList = new List<IClass>();
+			Queue<IReturnType> typesToVisit = new Queue<IReturnType>();
+			bool enqueuedLastBaseType = false;
+			IClass currentClass = this;
+			IReturnType nextType;
+			do {
+				if (currentClass != null) {
+					if (!visitedList.Contains(currentClass)) {
+						visitedList.Add(currentClass);
+						foreach (IReturnType type in currentClass.BaseTypes) {
+							typesToVisit.Enqueue(type);
+						}
+					}
+				}
+				if (typesToVisit.Count > 0) {
+					nextType = typesToVisit.Dequeue();
+				} else {
+					nextType = enqueuedLastBaseType ? null : GetBaseTypeByClassType(this);
+					enqueuedLastBaseType = true;
+				}
+				if (nextType != null) {
+					currentClass = nextType.GetUnderlyingClass();
+				}
+			} while (nextType != null);
+			return visitedList.ToArray();
+		}
+		
+		/// <summary>
+		/// Specifies whether to keep the inheritance tree when the DomCache is cleared.
+		/// </summary>
+		protected virtual bool KeepInheritanceTree {
+			get { return false; }
+		}
 		
 		public IReturnType GetBaseType(int index)
 		{
@@ -516,7 +585,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 				if (visitedTypes.Contains(currentClass))
 					break;
 				visitedTypes.Add(currentClass);
-				bool isClassInInheritanceTree = callingClass.IsTypeInInheritanceTree(currentClass);
+				bool isClassInInheritanceTree = callingClass != null ? callingClass.IsTypeInInheritanceTree(currentClass) : false;
 				foreach (IClass c in currentClass.InnerClasses) {
 					if (c.IsAccessible(callingClass, isClassInInheritanceTree)) {
 						types.Add(c);

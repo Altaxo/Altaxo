@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2931 $</version>
+//     <version>$Revision: 3719 $</version>
 // </file>
 
 using System;
@@ -130,7 +130,6 @@ namespace ICSharpCode.SharpDevelop.Dom
 			set;
 		}
 		
-		bool IsAccessible(IClass callingClass, bool isClassInInheritanceTree);
-		//bool MustBeShown(IClass callingClass, bool showStatic, bool isClassInInheritanceTree);
+		bool IsAccessible(IClass callingClass, bool isAccessThoughReferenceOfCurrentClass);
 	}
 }

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Matthew Ward" email="mrward@users.sourceforge.net"/>
-//     <version>$Revision: 3073 $</version>
+//     <version>$Revision: 3675 $</version>
 // </file>
 
 using ICSharpCode.SharpDevelop.Dom;
@@ -56,6 +56,12 @@ namespace ICSharpCode.SharpDevelop.Tests.Utils
 		}
 		
 		public ICompilationUnit CompilationUnit {
+			get {
+				throw new NotImplementedException();
+			}
+		}
+		
+		public IUsingScope UsingScope {
 			get {
 				throw new NotImplementedException();
 			}

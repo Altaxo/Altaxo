@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2990 $</version>
+//     <version>$Revision: 3293 $</version>
 // </file>
 
 using System;
@@ -16,7 +16,8 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 	{
 		public override void Run()
 		{
-			LocalResolveResult local = (LocalResolveResult)Owner;
+			RefactoringMenuContext context = (RefactoringMenuContext)Owner;
+			LocalResolveResult local = (LocalResolveResult)context.ResolveResult;
 			FindReferencesAndRenameHelper.ShowAsSearchResults(
 				StringParser.Parse("${res:SharpDevelop.Refactoring.ReferencesTo}",
 				                   new string[,] {{ "Name", local.VariableName }}),
@@ -29,7 +30,8 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 	{
 		public override void Run()
 		{
-			Run((LocalResolveResult)Owner);
+			RefactoringMenuContext context = (RefactoringMenuContext)Owner;
+			Run((LocalResolveResult)context.ResolveResult);
 		}
 		
 		public static void Run(LocalResolveResult local)

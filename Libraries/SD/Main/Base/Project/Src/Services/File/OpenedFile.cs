@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3058 $</version>
+//     <version>$Revision: 3628 $</version>
 // </file>
 
 using System;
@@ -203,6 +203,7 @@ namespace ICSharpCode.SharpDevelop
 			if (IsUntitled)
 				throw new InvalidOperationException("Cannot save an untitled file to disk!");
 			
+			LoggingService.Debug("Save " + FileName);
 			bool safeSaving = FileService.SaveUsingTemporaryFile && File.Exists(FileName);
 			string saveAs = safeSaving ? FileName + ".bak" : FileName;
 			using (FileStream fs = new FileStream(saveAs, FileMode.Create, FileAccess.Write)) {
@@ -215,7 +216,14 @@ namespace ICSharpCode.SharpDevelop
 			if (safeSaving) {
 				DateTime creationTime = File.GetCreationTimeUtc(FileName);
 				File.Delete(FileName);
-				File.Move(saveAs, FileName);
+				try {
+					File.Move(saveAs, FileName);
+				} catch (UnauthorizedAccessException) {
+					// sometime File.Move raise exception (TortoiseSVN, Anti-vir ?)
+					// try again after short delay
+					System.Threading.Thread.Sleep(250);
+					File.Move(saveAs, FileName);
+				}
 				File.SetCreationTimeUtc(FileName, creationTime);
 			}
 			IsDirty = false;
@@ -274,11 +282,13 @@ namespace ICSharpCode.SharpDevelop
 			}
 			try {
 				inLoadOperation = true;
+				Properties memento = GetMemento(newView);
 				using (Stream sourceStream = OpenRead()) {
 					currentView = newView;
 					fileData = null;
 					newView.Load(this, sourceStream);
 				}
+				RestoreMemento(newView, memento);
 			} finally {
 				inLoadOperation = false;
 			}
@@ -286,17 +296,46 @@ namespace ICSharpCode.SharpDevelop
 		
 		public virtual void ReloadFromDisk()
 		{
+			var r = FileUtility.ObservedLoad(ReloadFromDiskInternal, FileName);
+			if (r == FileOperationResult.Failed) {
+				if (currentView != null && currentView.WorkbenchWindow != null) {
+					currentView.WorkbenchWindow.CloseWindow(true);
+				}
+			}
+		}
+		
+		void ReloadFromDiskInternal()
+		{
 			fileData = null;
 			if (currentView != null) {
 				try {
 					inLoadOperation = true;
+					Properties memento = GetMemento(currentView);
 					using (Stream sourceStream = OpenRead()) {
 						currentView.Load(this, sourceStream);
 					}
 					IsDirty = false;
+					RestoreMemento(currentView, memento);
 				} finally {
 					inLoadOperation = false;
 				}
+			}
+		}
+		
+		static Properties GetMemento(IViewContent viewContent)
+		{
+			IMementoCapable mementoCapable = viewContent as IMementoCapable;
+			if (mementoCapable == null) {
+				return null;
+			} else {
+				return mementoCapable.CreateMemento();
+			}
+		}
+		
+		static void RestoreMemento(IViewContent viewContent, Properties memento)
+		{
+			if (memento != null) {
+				((IMementoCapable)viewContent).SetMemento(memento);
 			}
 		}
 	}

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2534 $</version>
+//     <version>$Revision: 3343 $</version>
 // </file>
 
 using System;
@@ -23,31 +23,22 @@ namespace ICSharpCode.SharpDevelop
 			}
 		}
 		
+		/// <summary>
+		/// Global option to turn all code-completion-related features off.
+		/// </summary>
 		public static bool EnableCodeCompletion {
-			get {
-				return properties.Get("EnableCC", true);
-			}
-			set {
-				properties.Set("EnableCC", value);
-			}
+			get { return properties.Get("EnableCC", true); }
+			set { properties.Set("EnableCC", value); }
 		}
 		
 		public static bool DataUsageCacheEnabled {
-			get {
-				return properties.Get("DataUsageCacheEnabled", true);
-			}
-			set {
-				properties.Set("DataUsageCacheEnabled", value);
-			}
+			get { return properties.Get("DataUsageCacheEnabled", true); }
+			set { properties.Set("DataUsageCacheEnabled", value); }
 		}
 		
 		public static int DataUsageCacheItemCount {
-			get {
-				return properties.Get("DataUsageCacheItemCount", 500);
-			}
-			set {
-				properties.Set("DataUsageCacheItemCount", value);
-			}
+			get { return properties.Get("DataUsageCacheItemCount", 500); }
+			set { properties.Set("DataUsageCacheItemCount", value); }
 		}
 		
 		public static bool TooltipsEnabled {

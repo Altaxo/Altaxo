@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2676 $</version>
+//     <version>$Revision: 3660 $</version>
 // </file>
 
 using System;
@@ -30,7 +30,7 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 			IdentifierExpression ident = (IdentifierExpression)expr.TargetObject;
 			Assert.AreEqual("myMethod", ident.Identifier);
 			Assert.AreEqual(1, ident.TypeArguments.Count);
-			Assert.AreEqual("System.Char", ident.TypeArguments[0].SystemType);
+			Assert.AreEqual("System.Char", ident.TypeArguments[0].Type);
 		}
 		
 		void CheckGenericInvoke2(InvocationExpression expr)
@@ -40,8 +40,10 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 			IdentifierExpression ident = (IdentifierExpression)expr.TargetObject;
 			Assert.AreEqual("myMethod", ident.Identifier);
 			Assert.AreEqual(2, ident.TypeArguments.Count);
-			Assert.AreEqual("T", ident.TypeArguments[0].SystemType);
-			Assert.AreEqual("System.Boolean", ident.TypeArguments[1].SystemType);
+			Assert.AreEqual("T", ident.TypeArguments[0].Type);
+			Assert.IsFalse(ident.TypeArguments[0].IsKeyword);
+			Assert.AreEqual("System.Boolean", ident.TypeArguments[1].Type);
+			Assert.IsTrue(ident.TypeArguments[1].IsKeyword);
 		}
 		
 		

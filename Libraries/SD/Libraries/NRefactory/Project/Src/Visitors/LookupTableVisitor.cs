@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="none" email=""/>
-//     <version>$Revision: 3184 $</version>
+//     <version>$Revision: 3662 $</version>
 // </file>
 
 using System;
@@ -140,60 +140,69 @@ namespace ICSharpCode.NRefactory.Visitors
 			return base.VisitLambdaExpression(lambdaExpression, data);
 		}
 		
+		public override object VisitQueryExpression(QueryExpression queryExpression, object data)
+		{
+			endLocationStack.Push(GetQueryVariableEndScope(queryExpression));
+			base.VisitQueryExpression(queryExpression, data);
+			endLocationStack.Pop();
+			return null;
+		}
+		
+		Location GetQueryVariableEndScope(QueryExpression queryExpression)
+		{
+			return queryExpression.EndLocation;
+		}
+		
 		public override object VisitQueryExpressionFromClause(QueryExpressionFromClause fromClause, object data)
 		{
-			QueryExpression parentExpression = fromClause.Parent as QueryExpression;
-			if (parentExpression != null) {
-				AddVariable(fromClause.Type, fromClause.Identifier,
-				            parentExpression.StartLocation, parentExpression.EndLocation,
-				            false, true, fromClause.InExpression, null);
-			}
+			AddVariable(fromClause.Type, fromClause.Identifier,
+			            fromClause.StartLocation, CurrentEndLocation,
+			            false, true, fromClause.InExpression, null);
 			return base.VisitQueryExpressionFromClause(fromClause, data);
 		}
 		
 		public override object VisitQueryExpressionJoinClause(QueryExpressionJoinClause joinClause, object data)
 		{
 			if (string.IsNullOrEmpty(joinClause.IntoIdentifier)) {
-				QueryExpression parentExpression = joinClause.Parent as QueryExpression;
-				if (parentExpression != null) {
-					AddVariable(joinClause.Type, joinClause.Identifier,
-					            parentExpression.StartLocation, parentExpression.EndLocation,
-					            false, true, joinClause.InExpression, null);
-				}
+				AddVariable(joinClause.Type, joinClause.Identifier,
+				            joinClause.StartLocation, CurrentEndLocation,
+				            false, true, joinClause.InExpression, null);
 			} else {
 				AddVariable(joinClause.Type, joinClause.Identifier,
 				            joinClause.StartLocation, joinClause.EndLocation,
 				            false, true, joinClause.InExpression, null);
 				
-				QueryExpression parentExpression = joinClause.Parent as QueryExpression;
-				if (parentExpression != null) {
-					AddVariable(joinClause.Type, joinClause.IntoIdentifier,
-					            parentExpression.StartLocation, parentExpression.EndLocation,
-					            false, false, joinClause.InExpression, null);
-				}
+				AddVariable(joinClause.Type, joinClause.IntoIdentifier,
+				            joinClause.StartLocation, CurrentEndLocation,
+				            false, false, joinClause.InExpression, null);
 			}
 			return base.VisitQueryExpressionJoinClause(joinClause, data);
 		}
 		
 		public override object VisitQueryExpressionLetClause(QueryExpressionLetClause letClause, object data)
 		{
-			QueryExpression parentExpression = letClause.Parent as QueryExpression;
-			if (parentExpression != null) {
-				AddVariable(null, letClause.Identifier,
-				            parentExpression.StartLocation, parentExpression.EndLocation,
-				            false, false, letClause.Expression, null);
-			}
+			AddVariable(null, letClause.Identifier,
+			            letClause.StartLocation, CurrentEndLocation,
+			            false, false, letClause.Expression, null);
 			return base.VisitQueryExpressionLetClause(letClause, data);
 		}
 		
 		public override object VisitForNextStatement(ForNextStatement forNextStatement, object data)
 		{
-			// uses LocalVariableDeclaration, we just have to put the end location on the stack
 			if (forNextStatement.EmbeddedStatement.EndLocation.IsEmpty) {
 				return base.VisitForNextStatement(forNextStatement, data);
 			} else {
 				endLocationStack.Push(forNextStatement.EmbeddedStatement.EndLocation);
+				AddVariable(forNextStatement.TypeReference,
+				            forNextStatement.VariableName,
+				            forNextStatement.StartLocation,
+				            forNextStatement.EndLocation,
+				            false, false,
+				            forNextStatement.Start,
+				            null);
+				
 				base.VisitForNextStatement(forNextStatement, data);
+				
 				endLocationStack.Pop();
 				return null;
 			}

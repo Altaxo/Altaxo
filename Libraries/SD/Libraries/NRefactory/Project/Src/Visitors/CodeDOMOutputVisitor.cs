@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3057 $</version>
+//     <version>$Revision: 3660 $</version>
 // </file>
 
 using System;
@@ -84,11 +84,11 @@ namespace ICSharpCode.NRefactory.Visitors
 			if (type == null) {
 				throw new ArgumentNullException("type");
 			}
-			if (string.IsNullOrEmpty(type.SystemType)) {
+			if (string.IsNullOrEmpty(type.Type)) {
 				throw new InvalidOperationException("empty type");
 			}
 			
-			CodeTypeReference t = new CodeTypeReference(type.SystemType);
+			CodeTypeReference t = new CodeTypeReference(type.Type);
 			foreach (TypeReference gt in type.GenericTypes) {
 				t.TypeArguments.Add(ConvType(gt));
 			}
@@ -457,7 +457,7 @@ namespace ICSharpCode.NRefactory.Visitors
 			CodeVariableDeclarationStatement declStmt = null;
 			
 			for (int i = 0; i < localVariableDeclaration.Variables.Count; ++i) {
-				CodeTypeReference type = ConvType(localVariableDeclaration.GetTypeForVariable(i) ?? new TypeReference("object"));
+				CodeTypeReference type = ConvType(localVariableDeclaration.GetTypeForVariable(i) ?? new TypeReference("System.Object", true));
 				VariableDeclaration var = (VariableDeclaration)localVariableDeclaration.Variables[i];
 				if (!var.Initializer.IsNull) {
 					declStmt = new CodeVariableDeclarationStatement(type,
@@ -790,7 +790,7 @@ namespace ICSharpCode.NRefactory.Visitors
 		
 		public override object VisitLabelStatement(LabelStatement labelStatement, object data)
 		{
-			System.CodeDom.CodeLabeledStatement labelStmt = new CodeLabeledStatement(labelStatement.Label,(CodeStatement)labelStatement.AcceptVisitor(this, data));
+			System.CodeDom.CodeLabeledStatement labelStmt = new CodeLabeledStatement(labelStatement.Label);
 			
 			// Add Statement to Current Statement Collection
 			AddStmt(labelStmt);
@@ -1654,7 +1654,7 @@ namespace ICSharpCode.NRefactory.Visitors
 				}
 				return new CodeTypeReferenceExpression(type.ToString());
 			} else if (fieldReferenceExpression.TargetObject is TypeReferenceExpression) {
-				type.Insert(0, ((TypeReferenceExpression)fieldReferenceExpression.TargetObject).TypeReference.SystemType);
+				type.Insert(0, ((TypeReferenceExpression)fieldReferenceExpression.TargetObject).TypeReference.Type);
 				return new CodeTypeReferenceExpression(type.ToString());
 			} else {
 				return null;

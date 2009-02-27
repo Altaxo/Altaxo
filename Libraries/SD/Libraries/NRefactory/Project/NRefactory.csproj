@@ -1,4 +1,4 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -107,8 +107,10 @@
     <Compile Include="Src\Visitors\ConvertVisitorBase.cs" />
     <Compile Include="Src\Visitors\CSharpConstructsConvertVisitor.cs" />
     <Compile Include="Src\Visitors\LookupTableVisitor.cs" />
+    <Compile Include="Src\Visitors\NotImplementedAstVisitor.cs" />
     <Compile Include="Src\Visitors\PrefixFieldsVisitor.cs" />
     <Compile Include="Src\Visitors\RenameIdentifierVisitor.cs" />
+    <Compile Include="Src\Visitors\SetParentVisitor.cs" />
     <Compile Include="Src\Visitors\ToCSharpConvertVisitor.cs" />
     <Compile Include="Src\Visitors\ToVBNetConvertVisitor.cs" />
     <Compile Include="Src\Visitors\ToVBNetRenameConflictingVariables.cs" />
@@ -135,17 +137,26 @@
   <ItemGroup>
     <Content Include="Src\Lexer\CSharp\KeywordList.txt" />
     <Content Include="Src\Lexer\VBNet\KeywordList.txt" />
+    <Folder Include="Src\Parser" />
+    <Folder Include="Src\Parser\CSharp" />
     <Content Include="Src\Parser\CSharp\cs.ATG" />
-    <Content Include="Src\Parser\CSharp\trace.txt" />
-    <Content Include="Src\Parser\Frames\OldSharpCoco.exe" />
+    <Folder Include="Src\Parser\Frames" />
     <Content Include="Src\Parser\Frames\Parser.frame" />
-    <Content Include="Src\Parser\Frames\Parser.frame.new" />
-    <Content Include="Src\Parser\Frames\Parser.frame.old" />
     <Content Include="Src\Parser\Frames\Scanner.frame" />
     <Content Include="Src\Parser\Frames\SharpCoco.exe" />
     <Content Include="Src\Parser\Frames\trace.txt" />
+    <Folder Include="Src\Parser\VBNet" />
     <Content Include="Src\Parser\VBNet\VBNET.ATG" />
     <Content Include="Src\Parser\gen.bat" />
+    <Folder Include="Src\PrettyPrinter" />
+    <Folder Include="Src\PrettyPrinter\CSharp" />
+    <Folder Include="Src\PrettyPrinter\VBNet" />
+    <Folder Include="Src\Visitors" />
+    <Folder Include="Src\Ast" />
+    <Folder Include="Src\Ast\General" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Src\AstBuilder" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

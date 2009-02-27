@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1609 $</version>
+//     <version>$Revision: 3370 $</version>
 // </file>
 
 using System;
@@ -432,8 +432,14 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 		{
 			VBNetTestBinaryOperatorExpressionTest("a Like b", BinaryOperatorType.Like);
 		}
-		#endregion
 		
+		[Test]
+		public void VBNetNullCoalescingTest()
+		{
+			VBNetTestBinaryOperatorExpressionTest("If(a, b)", BinaryOperatorType.NullCoalescing);
+		}
+		
+		#endregion		
 		
 		#region AddIntegerTests
 		string AddIntegerToBoe(string input, int number)

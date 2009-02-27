@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Andrea Paatz" email="andrea@icsharpcode.net"/>
-//     <version>$Revision: 2987 $</version>
+//     <version>$Revision: 3715 $</version>
 // </file>
 
 using System;
@@ -76,6 +76,7 @@ namespace ICSharpCode.NRefactory.Parser.CSharp
 								bool canBeKeyword;
 								token = new Token(Tokens.Identifier, x - 1, y, ReadIdent(ch, out canBeKeyword));
 							} else {
+								HandleLineEnd(ch);
 								errors.Error(y, x, String.Format("Unexpected char in Lexer.Next() : {0}", ch));
 								continue;
 							}
@@ -287,28 +288,28 @@ namespace ICSharpCode.NRefactory.Parser.CSharp
 				if (isfloat) {
 					float num;
 					if (float.TryParse(digit, NumberStyles.Any, CultureInfo.InvariantCulture, out num)) {
-						return new Token(Tokens.Literal, x, y, stringValue, num);
+						return new Token(Tokens.Literal, x, y, stringValue, num, LiteralFormat.DecimalNumber);
 					} else {
 						errors.Error(y, x, String.Format("Can't parse float {0}", digit));
-						return new Token(Tokens.Literal, x, y, stringValue, 0f);
+						return new Token(Tokens.Literal, x, y, stringValue, 0f, LiteralFormat.DecimalNumber);
 					}
 				}
 				if (isdecimal) {
 					decimal num;
 					if (decimal.TryParse(digit, NumberStyles.Any, CultureInfo.InvariantCulture, out num)) {
-						return new Token(Tokens.Literal, x, y, stringValue, num);
+						return new Token(Tokens.Literal, x, y, stringValue, num, LiteralFormat.DecimalNumber);
 					} else {
 						errors.Error(y, x, String.Format("Can't parse decimal {0}", digit));
-						return new Token(Tokens.Literal, x, y, stringValue, 0m);
+						return new Token(Tokens.Literal, x, y, stringValue, 0m, LiteralFormat.DecimalNumber);
 					}
 				}
 				if (isdouble) {
 					double num;
 					if (double.TryParse(digit, NumberStyles.Any, CultureInfo.InvariantCulture, out num)) {
-						return new Token(Tokens.Literal, x, y, stringValue, num);
+						return new Token(Tokens.Literal, x, y, stringValue, num, LiteralFormat.DecimalNumber);
 					} else {
 						errors.Error(y, x, String.Format("Can't parse double {0}", digit));
-						return new Token(Tokens.Literal, x, y, stringValue, 0d);
+						return new Token(Tokens.Literal, x, y, stringValue, 0d, LiteralFormat.DecimalNumber);
 					}
 				}
 				
@@ -317,12 +318,12 @@ namespace ICSharpCode.NRefactory.Parser.CSharp
 				if (ishex) {
 					if (!ulong.TryParse(digit, NumberStyles.HexNumber, null, out result)) {
 						errors.Error(y, x, String.Format("Can't parse hexadecimal constant {0}", digit));
-						return new Token(Tokens.Literal, x, y, stringValue.ToString(), 0);
+						return new Token(Tokens.Literal, x, y, stringValue.ToString(), 0, LiteralFormat.HexadecimalNumber);
 					}
 				} else {
 					if (!ulong.TryParse(digit, NumberStyles.Integer, null, out result)) {
 						errors.Error(y, x, String.Format("Can't parse integral constant {0}", digit));
-						return new Token(Tokens.Literal, x, y, stringValue.ToString(), 0);
+						return new Token(Tokens.Literal, x, y, stringValue.ToString(), 0, LiteralFormat.DecimalNumber);
 					}
 				}
 				
@@ -337,40 +338,41 @@ namespace ICSharpCode.NRefactory.Parser.CSharp
 				
 				Token token;
 				
+				LiteralFormat literalFormat = ishex ? LiteralFormat.HexadecimalNumber : LiteralFormat.DecimalNumber;
 				if (islong) {
 					if (isunsigned) {
 						ulong num;
 						if (ulong.TryParse(digit, ishex ? NumberStyles.HexNumber : NumberStyles.Number, CultureInfo.InvariantCulture, out num)) {
-							token = new Token(Tokens.Literal, x, y, stringValue, num);
+							token = new Token(Tokens.Literal, x, y, stringValue, num, literalFormat);
 						} else {
 							errors.Error(y, x, String.Format("Can't parse unsigned long {0}", digit));
-							token = new Token(Tokens.Literal, x, y, stringValue, 0UL);
+							token = new Token(Tokens.Literal, x, y, stringValue, 0UL, literalFormat);
 						}
 					} else {
 						long num;
 						if (long.TryParse(digit, ishex ? NumberStyles.HexNumber : NumberStyles.Number, CultureInfo.InvariantCulture, out num)) {
-							token = new Token(Tokens.Literal, x, y, stringValue, num);
+							token = new Token(Tokens.Literal, x, y, stringValue, num, literalFormat);
 						} else {
 							errors.Error(y, x, String.Format("Can't parse long {0}", digit));
-							token = new Token(Tokens.Literal, x, y, stringValue, 0L);
+							token = new Token(Tokens.Literal, x, y, stringValue, 0L, literalFormat);
 						}
 					}
 				} else {
 					if (isunsigned) {
 						uint num;
 						if (uint.TryParse(digit, ishex ? NumberStyles.HexNumber : NumberStyles.Number, CultureInfo.InvariantCulture, out num)) {
-							token = new Token(Tokens.Literal, x, y, stringValue, num);
+							token = new Token(Tokens.Literal, x, y, stringValue, num, literalFormat);
 						} else {
 							errors.Error(y, x, String.Format("Can't parse unsigned int {0}", digit));
-							token = new Token(Tokens.Literal, x, y, stringValue, (uint)0);
+							token = new Token(Tokens.Literal, x, y, stringValue, (uint)0, literalFormat);
 						}
 					} else {
 						int num;
 						if (int.TryParse(digit, ishex ? NumberStyles.HexNumber : NumberStyles.Number, CultureInfo.InvariantCulture, out num)) {
-							token = new Token(Tokens.Literal, x, y, stringValue, num);
+							token = new Token(Tokens.Literal, x, y, stringValue, num, literalFormat);
 						} else {
 							errors.Error(y, x, String.Format("Can't parse int {0}", digit));
-							token = new Token(Tokens.Literal, x, y, stringValue, 0);
+							token = new Token(Tokens.Literal, x, y, stringValue, 0, literalFormat);
 						}
 					}
 				}
@@ -407,8 +409,8 @@ namespace ICSharpCode.NRefactory.Parser.CSharp
 					} else {
 						sb.Append(ch);
 					}
-				} else if (ch == '\n') {
-					HandleLineEnd(ch); // ensure line numbers are still correct after the error
+				} else if (HandleLineEnd(ch)) {
+					// call HandleLineEnd to ensure line numbers are still correct after the error
 					errors.Error(y, x, String.Format("No new line is allowed inside a string literal"));
 					break;
 				} else {
@@ -421,7 +423,7 @@ namespace ICSharpCode.NRefactory.Parser.CSharp
 				errors.Error(y, x, String.Format("End of file reached inside string literal"));
 			}
 			
-			return new Token(Tokens.Literal, x, y, originalValue.ToString(), sb.ToString());
+			return new Token(Tokens.Literal, x, y, originalValue.ToString(), sb.ToString(), LiteralFormat.StringLiteral);
 		}
 		
 		Token ReadVerbatimString()
@@ -429,8 +431,7 @@ namespace ICSharpCode.NRefactory.Parser.CSharp
 			sb.Length            = 0;
 			originalValue.Length = 0;
 			originalValue.Append("@\"");
-			int x = Col - 2; // @ and " already read
-			int y = Line;
+			Location startLocation = new Location(Col - 2, Line); // @ and " already read
 			int nextChar;
 			while ((nextChar = ReaderRead()) != -1) {
 				char ch = (char)nextChar;
@@ -453,13 +454,13 @@ namespace ICSharpCode.NRefactory.Parser.CSharp
 			}
 			
 			if (nextChar == -1) {
-				errors.Error(y, x, String.Format("End of file reached inside verbatim string literal"));
+				errors.Error(startLocation.Line, startLocation.Column, String.Format("End of file reached inside verbatim string literal"));
 			}
 			
-			return new Token(Tokens.Literal, x, y, originalValue.ToString(), sb.ToString());
+			return new Token(Tokens.Literal, startLocation, new Location(Col, Line), originalValue.ToString(), sb.ToString(), LiteralFormat.VerbatimStringLiteral);
 		}
 		
-		char[] escapeSequenceBuffer = new char[12];
+		readonly char[] escapeSequenceBuffer = new char[12];
 		
 		/// <summary>
 		/// reads an escape sequence
@@ -575,8 +576,8 @@ namespace ICSharpCode.NRefactory.Parser.CSharp
 			int x = Col - 1;
 			int y = Line;
 			int nextChar = ReaderRead();
-			if (nextChar == -1) {
-				errors.Error(y, x, String.Format("End of file reached inside character literal"));
+			if (nextChar == -1 || HandleLineEnd((char)nextChar)) {
+				errors.Error(y, x, String.Format("End of line reached inside character literal"));
 				return null;
 			}
 			char ch = (char)nextChar;
@@ -595,7 +596,7 @@ namespace ICSharpCode.NRefactory.Parser.CSharp
 					errors.Error(y, x, String.Format("Char not terminated"));
 				}
 			}
-			return new Token(Tokens.Literal, x, y, "'" + ch + escapeSequence + "'", chValue);
+			return new Token(Tokens.Literal, x, y, "'" + ch + escapeSequence + "'", chValue, LiteralFormat.CharLiteral);
 		}
 		
 		Token ReadOperator(char ch)

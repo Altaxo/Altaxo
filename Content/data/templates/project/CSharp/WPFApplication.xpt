@@ -5,7 +5,7 @@
 	<TemplateConfiguration>
 		<Name>${res:Templates.Project.WinFXApplication.Name}</Name>
 		<Category>C#</Category>
-		<Subcategory>.NET 3.0</Subcategory>
+		<Subcategory>WPF</Subcategory>
 		<Icon>C#.Project.Form</Icon>
 		<Description>${res:Templates.Project.WinFXApplication.Description}</Description>
 		<SupportedTargetFrameworks>v3.0</SupportedTargetFrameworks>
@@ -104,7 +104,8 @@ namespace ${StandardNamespace}
 		}
 	}
 }]]></File>
-			<File name="Properties\AssemblyInfo.cs" src="WPFAssemblyInfo.cs" />
+			<File name="Properties\WPFAssemblyInfo.cs" src="WPFAssemblyInfo.cs" />
+			<File name="Properties\AssemblyInfo.cs" src="DefaultAssemblyInfo.cs" />
 		</Files>
 	</Project>
 </Template>

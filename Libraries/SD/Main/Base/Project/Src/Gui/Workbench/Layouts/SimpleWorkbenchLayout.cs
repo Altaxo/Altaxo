@@ -9,9 +9,11 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Windows.Forms;
 
 using ICSharpCode.Core;
+using ICSharpCode.Core.WinForms;
 
 namespace ICSharpCode.SharpDevelop.Gui
 {
@@ -138,11 +140,14 @@ namespace ICSharpCode.SharpDevelop.Gui
 		{
 		}
 		
-		public IWorkbenchWindow ShowView(IViewContent content)
+		public IWorkbenchWindow ShowView(IViewContent content, bool switchToOpenedView)
 		{
 			SimpleDocumentTab sdt = new SimpleDocumentTab();
 			sdt.window.ViewContents.Add(content);
 			documentTabs.TabPages.Add(sdt);
+			if (switchToOpenedView) {
+				documentTabs.SelectedTab = sdt;
+			}
 			return sdt.window;
 		}
 		
@@ -393,6 +398,14 @@ namespace ICSharpCode.SharpDevelop.Gui
 				get { return viewContents; }
 			}
 			
+			/// <summary>
+			/// Gets whether any contained view content has changed
+			/// since the last save/load operation.
+			/// </summary>
+			public bool IsDirty {
+				get { return this.ViewContents.Any(vc => vc.IsDirty); }
+			}
+			
 			public void SwitchView(int viewNumber)
 			{
 				if (viewTabControl != null) {
@@ -410,7 +423,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 				viewContents = new ViewContentCollection(this);
 				
 				OnTitleNameChanged(this, EventArgs.Empty);
-	//				this.TabPageContextMenuStrip = MenuService.CreateContextMenu(this, contextMenuPath);
+				//				this.TabPageContextMenuStrip = MenuService.CreateContextMenu(this, contextMenuPath);
 			}
 			
 			protected override void Dispose(bool disposing)
@@ -418,10 +431,10 @@ namespace ICSharpCode.SharpDevelop.Gui
 				if (disposing) {
 					// DetachContent must be called before the controls are disposed
 					this.ViewContents.Clear();
-	//					if (this.TabPageContextMenu != null) {
-	//						this.TabPageContextMenu.Dispose();
-	//						this.TabPageContextMenu = null;
-	//					}
+					//					if (this.TabPageContextMenu != null) {
+					//						this.TabPageContextMenu.Dispose();
+					//						this.TabPageContextMenu = null;
+					//					}
 				}
 				base.Dispose(disposing);
 			}
@@ -433,7 +446,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 					
 					viewTabControl = new TabControl();
 					viewTabControl.GotFocus += delegate {
-						TabPage page = viewTabControl.TabPages[viewTabControl.TabIndex];
+						TabPage page = viewTabControl.SelectedTab;
 						if (page.Controls.Count == 1 && !page.ContainsFocus) page.Controls[0].Focus();
 					};
 					viewTabControl.Alignment = TabAlignment.Bottom;
@@ -467,20 +480,18 @@ namespace ICSharpCode.SharpDevelop.Gui
 			
 			void OnIsDirtyChanged(object sender, EventArgs e)
 			{
-				if (sender == ActiveViewContent) {
-					UpdateTitle();
-				}
+				UpdateTitle();
 			}
 			
 			void UpdateTitle()
 			{
 				IViewContent content = ActiveViewContent;
 				if (content != null) {
-	//					base.ToolTipText = content.PrimaryFileName;
+					//					base.ToolTipText = content.PrimaryFileName;
 					
 					string newTitle = content.TitleName;
 					
-					if (content.IsDirty) {
+					if (this.IsDirty) {
 						newTitle += "*";
 					} else if (content.IsReadOnly) {
 						newTitle += "+";
@@ -518,7 +529,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			
 			public bool CloseWindow(bool force)
 			{
-				if (!force && ActiveViewContent != null && ActiveViewContent.IsDirty) {
+				if (!force && this.IsDirty) {
 					DialogResult dr = MessageBox.Show(ResourceService.GetString("MainWindow.SaveChangesMessage"),
 					                                  ResourceService.GetString("MainWindow.SaveChangesMessageHeader") + " " + Title + " ?",
 					                                  MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question,
@@ -526,16 +537,18 @@ namespace ICSharpCode.SharpDevelop.Gui
 					                                  RightToLeftConverter.IsRightToLeft ? MessageBoxOptions.RtlReading | MessageBoxOptions.RightAlign : 0);
 					switch (dr) {
 						case DialogResult.Yes:
-							if (ActiveViewContent.PrimaryFile != null) {
-								while (true) {
-									ActiveViewContent.Files.Foreach(ICSharpCode.SharpDevelop.Commands.SaveFile.Save);
-									if (ActiveViewContent.IsDirty) {
-										
-										if (MessageService.AskQuestion("${res:MainWindow.DiscardChangesMessage}")) {
+							foreach (IViewContent vc in this.ViewContents) {
+								if (!vc.IsDirty) continue;
+								if (vc.PrimaryFile != null) {
+									while (true) {
+										vc.Files.ForEach(ICSharpCode.SharpDevelop.Commands.SaveFile.Save);
+										if (vc.IsDirty) {
+											if (MessageService.AskQuestion("${res:MainWindow.DiscardChangesMessage}")) {
+												break;
+											}
+										} else {
 											break;
 										}
-									} else {
-										break;
 									}
 								}
 							}
@@ -546,7 +559,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 							return false;
 					}
 				}
-	
+				
 				OnCloseEvent(null);
 				Dispose();
 				return true;

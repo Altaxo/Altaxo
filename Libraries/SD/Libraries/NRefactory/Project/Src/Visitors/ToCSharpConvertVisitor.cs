@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2799 $</version>
+//     <version>$Revision: 3660 $</version>
 // </file>
 
 using System;
@@ -37,7 +37,8 @@ namespace ICSharpCode.NRefactory.Visitors
 					}
 					FieldDeclaration fd = node as FieldDeclaration;
 					if (fd != null) {
-						fd.Modifier |= Modifiers.Static;
+						if ((fd.Modifier & Modifiers.Const) == 0)
+							fd.Modifier |= Modifiers.Static;
 					}
 				}
 			}
@@ -52,7 +53,7 @@ namespace ICSharpCode.NRefactory.Visitors
 					DelegateDeclaration dd = new DelegateDeclaration(eventDeclaration.Modifier, null);
 					dd.Name = eventDeclaration.Name + "EventHandler";
 					dd.Parameters = eventDeclaration.Parameters;
-					dd.ReturnType = new TypeReference("System.Void");
+					dd.ReturnType = new TypeReference("System.Void", true);
 					dd.Parent = eventDeclaration.Parent;
 					eventDeclaration.Parameters = null;
 					InsertAfterSibling(eventDeclaration, dd);
@@ -87,7 +88,7 @@ namespace ICSharpCode.NRefactory.Visitors
 					foreach (ParameterDeclarationExpression decl in member.Parameters) {
 						callExpression.Arguments.Add(new IdentifierExpression(decl.ParameterName));
 					}
-					if (member.TypeReference.SystemType == "System.Void") {
+					if (member.TypeReference.Type == "System.Void") {
 						newMember.Body.AddChild(new ExpressionStatement(callExpression));
 					} else {
 						newMember.Body.AddChild(new ReturnStatement(callExpression));

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <author name="Daniel Grunwald"/>
-//     <version>$Revision: 2694 $</version>
+//     <version>$Revision: 3763 $</version>
 // </file>
 
 using System;
@@ -28,7 +28,7 @@ namespace ICSharpCode.SharpDevelop.Project
 		
 		/// <summary>
 		/// Notifies the build engine that the build of a project has finished.
-		/// You sould not call any methods after the Done() call.
+		/// You should not call any methods after the Done() call.
 		/// This member is thread-safe.
 		/// </summary>
 		void Done(bool success);

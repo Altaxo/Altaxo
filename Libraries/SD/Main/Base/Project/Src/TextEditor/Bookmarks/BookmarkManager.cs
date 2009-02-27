@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2379 $</version>
+//     <version>$Revision: 3272 $</version>
 // </file>
 
 using System;
@@ -40,9 +40,24 @@ namespace ICSharpCode.SharpDevelop.Bookmarks
 		
 		public static void AddMark(SDBookmark bookmark)
 		{
+			if (bookmark == null) return;
 			if (bookmarks.Contains(bookmark)) return;
+			if (bookmarks.Exists(b => IsEqualBookmark(b, bookmark))) return;
 			bookmarks.Add(bookmark);
 			OnAdded(new BookmarkEventArgs(bookmark));
+		}
+		
+		static bool IsEqualBookmark(SDBookmark a, SDBookmark b)
+		{
+			if (a == b)
+				return true;
+			if (a == null || b == null)
+				return false;
+			if (a.GetType() != b.GetType())
+				return false;
+			if (!FileUtility.IsEqualFileName(a.FileName, b.FileName))
+				return false;
+			return a.LineNumber == b.LineNumber;
 		}
 		
 		public static void RemoveMark(SDBookmark bookmark)

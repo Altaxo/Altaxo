@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3059 $</version>
+//     <version>$Revision: 3714 $</version>
 // </file>
 
 using System;
@@ -1090,6 +1090,76 @@ void Test<T>(ref T name) where ";
 			ExpressionResult result = ef.FindExpression(program, program.Length);
 			Assert.AreEqual("where ", result.Expression);
 			Assert.AreEqual(ExpressionContext.Constraints, result.Context);
+		}
+		
+		[Test]
+		public void FindFullExpressionAfterCastAfterForLoop()
+		{
+			const string program = @"using System; using System.Text;
+class Main {
+	void M() {
+		for (;;) ((TargetType)variable).MethodCall()
+}}";
+			
+			ExpressionResult result = ef.FindFullExpression(program, program.IndexOf("Call"));
+			Assert.AreEqual(" ((TargetType)variable).MethodCall()", result.Expression);
+		}
+		
+		[Test]
+		public void FindFullExpressionAfterCastAfterCondition()
+		{
+			const string program = @"using System; using System.Text;
+class Main {
+	void M() {
+		if (true) ((TargetType)variable).MethodCall()
+}}";
+			
+			ExpressionResult result = ef.FindFullExpression(program, program.IndexOf("Call"));
+			Assert.AreEqual(" ((TargetType)variable).MethodCall()", result.Expression);
+		}
+		
+		[Test]
+		public void DontCrashOnLoneCarriageReturn()
+		{
+			// the following program was causing an ExpressionFinder crash due to the lone \r
+			string program = "\t\t}\r\t\t\r\n\t\tstatic void SetCaretPosition()\r\n\t\t{\r\n\t\t\tTextLocation newLocation = textArea.Document.GetLocation(newOffset);\r\n}\r\n\t}\r\n}\r\n";
+			for (int i = 0; i < program.Length; i++) {
+				ef.FindFullExpression(program, i);
+			}
+		}
+		
+		[Test]
+		public void UsingNamespaceContext1()
+		{
+			const string program = @"using ";
+			
+			ExpressionResult result = ef.FindExpression(program, program.Length);
+			Assert.AreEqual(null, result.Expression);
+			Assert.AreEqual(ExpressionContext.Namespace, result.Context);
+		}
+		
+		[Test]
+		public void UsingNamespaceContext2()
+		{
+			const string program = @"using System";
+			
+			ExpressionResult result = ef.FindExpression(program, program.Length);
+			Assert.AreEqual("System", result.Expression);
+			Assert.AreEqual(ExpressionContext.Namespace, result.Context);
+		}
+		
+		[Test]
+		public void SD2_1469()
+		{
+			// Test that this doesn't crash
+			const string program = @"class MainWindow
+{
+	'
+	void MainWindowDeleteEvent()
+	{
+	}
+}";
+			ef.FindFullExpression(program, 25);
 		}
 	}
 }

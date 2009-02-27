@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3125 $</version>
+//     <version>$Revision: 3712 $</version>
 // </file>
 
 using System;
@@ -198,12 +198,6 @@ End Using");
 		}
 		
 		[Test]
-		public void Integer()
-		{
-			TestExpression("12");
-		}
-		
-		[Test]
 		public void DictionaryAccess()
 		{
 			TestExpression("c!key");
@@ -323,6 +317,13 @@ End Using");
 		}
 		
 		[Test]
+		public void ReturnTypeAttribute()
+		{
+			TestTypeMember("Function A() As <Attribute> String\n" +
+			               "End Function");
+		}
+		
+		[Test]
 		public void AssemblyAttribute()
 		{
 			TestProgram("<Assembly: CLSCompliant>");
@@ -392,6 +393,13 @@ End Using");
 		}
 		
 		[Test]
+		public void ForNextStatementWithFieldLoopVariable()
+		{
+			TestStatement("For Me.Field = 0 To 10\n" +
+			              "Next Me.Field");
+		}
+		
+		[Test]
 		public void WithStatement()
 		{
 			TestStatement("With Ejes\n" +
@@ -415,6 +423,24 @@ End Using");
 		public void ClassConstraint()
 		{
 			TestProgram("Public Class Rational(Of T, O As {IRationalMath(Of T), Class})\nEnd Class");
+		}
+		
+		[Test]
+		public void Integer()
+		{
+			TestExpression("16");
+		}
+		
+		[Test]
+		public void HexadecimalInteger()
+		{
+			TestExpression("&H10");
+		}
+		
+		[Test]
+		public void HexadecimalMinusOne()
+		{
+			TestExpression("&Hffffffff");
 		}
 	}
 }

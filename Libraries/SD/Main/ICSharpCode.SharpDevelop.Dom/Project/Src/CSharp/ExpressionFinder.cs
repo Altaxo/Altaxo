@@ -163,7 +163,15 @@ namespace ICSharpCode.SharpDevelop.Dom.CSharp
 			/// <summary>
 			/// In object initializer, in the value part (after "=")
 			/// </summary>
-			ObjectInitializerValue
+			ObjectInitializerValue,
+			/// <summary>
+			/// After a keyword like "if","while","using" etc., but before the embedded statement.
+			/// </summary>
+			StatementWithEmbeddedStatement,
+			/// <summary>
+			/// After "using" in global context, but before "=" or ";".
+			/// </summary>
+			UsingNamespace
 		}
 		
 		/// <summary>
@@ -215,6 +223,8 @@ namespace ICSharpCode.SharpDevelop.Dom.CSharp
 					}
 				} else if (state == FrameState.Constraints) {
 					SetContext(ExpressionContext.Constraints);
+				} else if (state == FrameState.UsingNamespace) {
+					SetContext(ExpressionContext.Namespace);
 				} else {
 					switch (type) {
 						case FrameType.Global:
@@ -346,6 +356,10 @@ namespace ICSharpCode.SharpDevelop.Dom.CSharp
 				}
 				if (text[i] == '\n') {
 					lineOffsets.Add(i + 1);
+				} else if (text[i] == '\r') {
+					if (i + 1 < text.Length && text[i + 1] != '\n') {
+						lineOffsets.Add(i + 1);
+					}
 				}
 			}
 			if (offset == text.Length) {
@@ -368,14 +382,14 @@ namespace ICSharpCode.SharpDevelop.Dom.CSharp
 				lastError = new Location(errorCol, errorLine);
 			};
 			while ((token = lexer.NextToken()) != null) {
-				if (token.kind == Tokens.EOF) break;
+				if (token.Kind == Tokens.EOF) break;
 				
 				if (targetPosition <= token.Location) {
 					break;
 				}
 				ApplyToken(token);
 				if (targetPosition <= token.EndLocation) {
-					if (token.kind == Tokens.Literal) {
+					if (token.Kind == Tokens.Literal) {
 						// do not return string literal as expression if offset was inside the literal,
 						// or if it was at the end of the literal when the literal was not terminated correctly.
 						if (targetPosition < token.EndLocation || lastError == token.Location) {
@@ -384,11 +398,11 @@ namespace ICSharpCode.SharpDevelop.Dom.CSharp
 					}
 					break;
 				}
-				lastToken = token.kind;
+				lastToken = token.Kind;
 			}
 			
 			int tokenOffset;
-			if (token == null || token.kind == Tokens.EOF)
+			if (token == null || token.Kind == Tokens.EOF)
 				tokenOffset = text.Length;
 			else
 				tokenOffset = LocationToOffset(token.Location);
@@ -414,11 +428,11 @@ namespace ICSharpCode.SharpDevelop.Dom.CSharp
 		
 		void TrackCurrentFrameAndExpression(Token token)
 		{
-			while (frame.bracketType == '<' && !Tokens.ValidInsideTypeName[token.kind]) {
+			while (frame.bracketType == '<' && !Tokens.ValidInsideTypeName[token.Kind]) {
 				frame.type = FrameType.Popped;
 				frame = frame.parent;
 			}
-			switch (token.kind) {
+			switch (token.Kind) {
 				case Tokens.OpenCurlyBrace:
 					frame.lastExpressionStart = Location.Empty;
 					frame = new Frame(frame, '{');
@@ -484,19 +498,20 @@ namespace ICSharpCode.SharpDevelop.Dom.CSharp
 					// do not reset context - TrackCurrentContext will take care of this
 					frame.lastExpressionStart = Location.Empty;
 					break;
+				case Tokens.Pointer:
 				case Tokens.Dot:
 				case Tokens.DoubleColon:
 					// let the current expression continue
 					break;
 				default:
-					if (Tokens.IdentifierTokens[token.kind]) {
-						if (lastToken != Tokens.Dot && lastToken != Tokens.DoubleColon) {
+					if (Tokens.IdentifierTokens[token.Kind]) {
+						if (lastToken != Tokens.Dot && lastToken != Tokens.DoubleColon && lastToken != Tokens.Pointer) {
 							if (Tokens.ValidInsideTypeName[lastToken]) {
 								frame.SetDefaultContext();
 							}
 							frame.lastExpressionStart = token.Location;
 						}
-					} else if (Tokens.SimpleTypeName[token.kind] || Tokens.ExpressionStart[token.kind] || token.kind == Tokens.Literal) {
+					} else if (Tokens.SimpleTypeName[token.Kind] || Tokens.ExpressionStart[token.Kind] || token.Kind == Tokens.Literal) {
 						frame.lastExpressionStart = token.Location;
 					} else {
 						frame.lastExpressionStart = Location.Empty;
@@ -509,27 +524,33 @@ namespace ICSharpCode.SharpDevelop.Dom.CSharp
 		void TrackCurrentContext(Token token)
 		{
 			if (frame.state == FrameState.ObjectCreation) {
-				if (token.kind == Tokens.CloseParenthesis) {
+				if (token.Kind == Tokens.CloseParenthesis) {
 					if (frame.context.IsObjectCreation) {
 						frame.context = ExpressionContext.Default;
 						frame.lastExpressionStart = frame.lastNewTokenStart;
 					}
 					// keep frame.state
-				} else if (token.kind == Tokens.GreaterThan
-				           || token.kind == Tokens.DoubleColon || token.kind == Tokens.Dot
-				           || Tokens.SimpleTypeName[token.kind])
+				} else if (token.Kind == Tokens.GreaterThan
+				           || token.Kind == Tokens.DoubleColon || token.Kind == Tokens.Dot
+				           || Tokens.SimpleTypeName[token.Kind])
 				{
 					// keep frame.state == FrameState.ObjectCreationInType
 				} else {
 					frame.state = FrameState.Normal;
 					frame.ResetCurlyChildType();
 				}
+			} else if (frame.state == FrameState.UsingNamespace) {
+				if (token.Kind != Tokens.Identifier && token.Kind != Tokens.Dot && token.Kind != Tokens.DoubleColon) {
+					frame.state = FrameState.Normal;
+					frame.SetDefaultContext();
+				}
 			}
 			
-			switch (token.kind) {
+			switch (token.Kind) {
 				case Tokens.Using:
 					if (frame.type == FrameType.Global) {
-						frame.SetContext(ExpressionContext.Namespace);
+						frame.state = FrameState.UsingNamespace;
+						frame.SetDefaultContext();
 						break;
 					} else {
 						goto case Tokens.For;
@@ -540,6 +561,15 @@ namespace ICSharpCode.SharpDevelop.Dom.CSharp
 				case Tokens.Catch:
 					if (frame.type == FrameType.Statements) {
 						frame.parenthesisChildType = FrameType.Statements;
+						frame.state = FrameState.StatementWithEmbeddedStatement;
+					}
+					break;
+				case Tokens.If:
+				case Tokens.While:
+				case Tokens.Switch:
+				case Tokens.Lock:
+					if (frame.type == FrameType.Statements) {
+						frame.state = FrameState.StatementWithEmbeddedStatement;
 					}
 					break;
 				case Tokens.Throw:
@@ -667,6 +697,12 @@ namespace ICSharpCode.SharpDevelop.Dom.CSharp
 						frame.parent.curlyChildType = FrameType.Statements;
 					}
 					break;
+				case Tokens.CloseParenthesis:
+					if (frame.state == FrameState.StatementWithEmbeddedStatement) {
+						frame.state = FrameState.Normal;
+						frame.lastExpressionStart = token.EndLocation;
+					}
+					break;
 				case Tokens.Question:
 					// IdentifierExpected = this is after a type name = the ? was a nullable marker
 					if (frame.context != ExpressionContext.IdentifierExpected) {
@@ -691,12 +727,12 @@ namespace ICSharpCode.SharpDevelop.Dom.CSharp
 					frame.parenthesisChildType = FrameType.TypeReference;
 					break;
 				default:
-					if (Tokens.SimpleTypeName[token.kind]) {
+					if (Tokens.SimpleTypeName[token.Kind]) {
 						if (frame.type == FrameType.Interface || frame.type == FrameType.TypeDecl) {
 							if (frame.state == FrameState.Normal) {
 								frame.state = FrameState.FieldDecl;
 								frame.curlyChildType = FrameType.Property;
-							} else if (frame.state == FrameState.FieldDecl && Tokens.IdentifierTokens[token.kind]) {
+							} else if (frame.state == FrameState.FieldDecl && Tokens.IdentifierTokens[token.Kind]) {
 								frame.state = FrameState.FieldDeclAfterIdentifier;
 							}
 							if (frame.state != FrameState.ObjectCreation) {
@@ -706,7 +742,7 @@ namespace ICSharpCode.SharpDevelop.Dom.CSharp
 						           || frame.type == FrameType.Statements
 						           || frame.type == FrameType.Global)
 						{
-							if (!frame.context.IsObjectCreation) {
+							if (!frame.context.IsObjectCreation && frame.state != FrameState.UsingNamespace) {
 								frame.SetContext(ExpressionContext.IdentifierExpected);
 							}
 						}
@@ -765,7 +801,7 @@ namespace ICSharpCode.SharpDevelop.Dom.CSharp
 			
 			Token token;
 			while ((token = lexer.NextToken()) != null) {
-				if (token.kind == Tokens.EOF) break;
+				if (token.Kind == Tokens.EOF) break;
 				
 				if (state == SEARCHING_OFFSET) {
 					if (targetPosition < token.Location) {
@@ -798,15 +834,15 @@ namespace ICSharpCode.SharpDevelop.Dom.CSharp
 						resultStartOffset = lastExpressionStartOffset;
 					if (resultFrame.type == FrameType.Popped ||
 					    lastExpressionStartOffset != resultStartOffset ||
-					    token.kind == Tokens.Dot || token.kind == Tokens.DoubleColon)
+					    token.Kind == Tokens.Dot || token.Kind == Tokens.DoubleColon || token.Kind == Tokens.Pointer)
 					{
 						
 						// now we can change the context based on the next token
-						if (frame == resultFrame && Tokens.IdentifierTokens[token.kind]) {
+						if (frame == resultFrame && Tokens.IdentifierTokens[token.Kind]) {
 							// the expression got aborted because of an identifier. This means the
 							// expression was a type reference
 							resultContext = ExpressionContext.Type;
-						} else if (resultFrame.bracketType == '<' && token.kind == Tokens.GreaterThan) {
+						} else if (resultFrame.bracketType == '<' && token.Kind == Tokens.GreaterThan) {
 							// expression was a type argument
 							resultContext = ExpressionContext.Type;
 							return MakeResult(text, resultStartOffset, resultEndOffset, resultContext);
@@ -820,7 +856,7 @@ namespace ICSharpCode.SharpDevelop.Dom.CSharp
 						}
 					}
 				}
-				lastToken = token.kind;
+				lastToken = token.Kind;
 			}
 			// offset is behind all tokens -> cannot find any expression
 			return new ExpressionResult(null, frame.context);
@@ -839,18 +875,18 @@ namespace ICSharpCode.SharpDevelop.Dom.CSharp
 			int lastValidPos = 0;
 			Token token;
 			while ((token = lexer.NextToken()) != null) {
-				if (token.kind == Tokens.EOF) break;
+				if (token.Kind == Tokens.EOF) break;
 				
 				if (frame.parent == null) {
-					if (token.kind == Tokens.Dot || token.kind == Tokens.DoubleColon
-					    || token.kind == Tokens.OpenParenthesis || token.kind == Tokens.OpenSquareBracket)
+					if (token.Kind == Tokens.Dot || token.Kind == Tokens.DoubleColon || token.Kind == Tokens.Pointer
+					    || token.Kind == Tokens.OpenParenthesis || token.Kind == Tokens.OpenSquareBracket)
 					{
 						lastValidPos = LocationToOffset(token.Location);
 					}
 				}
 				ApplyToken(token);
 				
-				lastToken = token.kind;
+				lastToken = token.Kind;
 			}
 			return expression.Substring(0, lastValidPos);
 		}

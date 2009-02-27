@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Matthew Ward" email="mrward@users.sourceforge.net"/>
-//     <version>$Revision: 3073 $</version>
+//     <version>$Revision: 3630 $</version>
 // </file>
 
 using ICSharpCode.SharpDevelop.Dom;
@@ -147,6 +147,17 @@ namespace ICSharpCode.SharpDevelop.Tests.Utils
 		public T CastToDecoratingReturnType<T>() where T : DecoratingReturnType
 		{
 			throw new NotImplementedException();
+		}
+		
+		public Nullable<bool> IsReferenceType {
+			get {
+				throw new NotImplementedException();
+			}
+		}
+		
+		public IReturnType GetDirectReturnType()
+		{
+			return this;
 		}
 	}
 }

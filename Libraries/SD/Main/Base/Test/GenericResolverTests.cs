@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3171 $</version>
+//     <version>$Revision: 3726 $</version>
 // </file>
 
 using System;
@@ -32,9 +32,9 @@ namespace ICSharpCode.SharpDevelop.Tests
 			return nrrt.Resolve<RR>(program, expression, line, column, ExpressionContext.Default);
 		}
 		
-		ResolveResult ResolveVB(string program, string expression, int line)
+		RR ResolveVB<RR>(string program, string expression, int line) where RR : ResolveResult
 		{
-			return nrrt.ResolveVB(program, expression, line);
+			return nrrt.ResolveVB<RR>(program, expression, line);
 		}
 		#endregion
 		
@@ -408,13 +408,13 @@ class Program {
 		d.T<char, int>('a', 1);
 		d.T<int, char>('a', 2);
 	}
-	protected virtual void T<A, B>(A a, B b) {
+	public virtual void T<A, B>(A a, B b) {
 	}
-	protected virtual void T<X, Y>(Y a, X b) {
+	public virtual void T<X, Y>(Y a, X b) {
 	}
 }
 class D : Program  {
-	protected override void T<X, Y>(X a, Y b) {
+	public override void T<X, Y>(X a, Y b) {
 		// overrides T<A,B> - type arguments are identified by position
 	}
 }";
@@ -455,6 +455,25 @@ class D : Program  {
 			
 			mrr = Resolve<MemberResolveResult>(program, "TestClass<ValueT>.Equals(v, default(object))", 3);
 			Assert.AreEqual("System.Object.Equals", mrr.ResolvedMember.FullyQualifiedName);
+		}
+		
+		[Test]
+		public void OfTypeExtensionMethod()
+		{
+			string program = @"using System.Collections; using System.Collections.Generic;
+	class T {
+		static void Test(IEnumerable a) {
+			
+		}
+	}
+	static class ExtensionMethods {
+		public static IEnumerable<T> OfType<T>(this IEnumerable input) { }
+	}";
+			
+			MemberResolveResult mrr;
+			mrr = Resolve<MemberResolveResult>(program, "a.OfType<string>()", 4);
+			Assert.AreEqual("ExtensionMethods.OfType", mrr.ResolvedMember.FullyQualifiedName);
+			Assert.AreEqual("System.Collections.Generic.IEnumerable{System.String}", mrr.ResolvedType.DotNetName);
 		}
 		#endregion
 		
@@ -572,10 +591,10 @@ static class TestClass {
 }
 		";
 			var mrr = Resolve<MemberResolveResult>(program, "G(1, 2)", 3);
-			Assert.AreEqual("TestClass.G<T>(int a, int b)", ToCSharp(mrr.ResolvedMember));
+			Assert.AreEqual("TestClass.G<int>(int a, int b)", ToCSharp(mrr.ResolvedMember));
 			
 			mrr = Resolve<MemberResolveResult>(program, "G(1, 2.2)", 3);
-			Assert.AreEqual("TestClass.G<T>(double a, double b)", ToCSharp(mrr.ResolvedMember));
+			Assert.AreEqual("TestClass.G<double>(double a, double b)", ToCSharp(mrr.ResolvedMember));
 			
 			mrr = Resolve<MemberResolveResult>(program, "G(1, \"a\")", 3);
 			Assert.AreEqual("TestClass.G(object obj1, object obj2)", ToCSharp(mrr.ResolvedMember));

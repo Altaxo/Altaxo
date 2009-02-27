@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2952 $</version>
+//     <version>$Revision: 3757 $</version>
 // </file>
 
 using System;
@@ -37,7 +37,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			this.Text = StringParser.Parse(this.Text);
 			label1.Text = StringParser.Parse(label1.Text);
 			label2.Text = StringParser.Parse(label2.Text);
-			okButton.Text = StringParser.Parse(okButton.Text);
+			closeButton.Text = StringParser.Parse(closeButton.Text);
 			projectNameColumn.HeaderText = StringParser.Parse(projectNameColumn.HeaderText);
 			configurationColumn.HeaderText = StringParser.Parse(configurationColumn.HeaderText);
 			platformColumn.HeaderText = StringParser.Parse(platformColumn.HeaderText);

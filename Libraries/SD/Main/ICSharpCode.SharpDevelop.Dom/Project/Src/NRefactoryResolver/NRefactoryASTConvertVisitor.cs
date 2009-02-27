@@ -2,12 +2,11 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3049 $</version>
+//     <version>$Revision: 3793 $</version>
 // </file>
 
 // created on 04.08.2003 at 17:49
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
@@ -20,9 +19,10 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 {
 	public class NRefactoryASTConvertVisitor : AbstractAstVisitor
 	{
-		ICompilationUnit cu;
-		Stack<string> currentNamespace = new Stack<string>();
+		DefaultCompilationUnit cu;
+		DefaultUsingScope currentNamespace;
 		Stack<DefaultClass> currentClass = new Stack<DefaultClass>();
+		public string VBRootNamespace { get; set; }
 		
 		public ICompilationUnit Cu {
 			get {
@@ -93,11 +93,25 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 			List<string> lines = new List<string>();
 			int length = 0;
 			while (line > 0) {
-				string doku = GetDocumentationFromLine(--line);
-				if (doku == null)
+				line--;
+				string doku = null;
+				bool foundPreprocessing = false;
+				var specialsOnLine = GetSpecialsFromLine(line);
+				foreach (RefParser.ISpecial special in specialsOnLine) {
+					RefParser.Comment comment = special as RefParser.Comment;
+					if (comment != null && comment.CommentType == RefParser.CommentType.Documentation) {
+						doku = comment.CommentText;
+						break;
+					} else if (special is RefParser.PreprocessingDirective) {
+						foundPreprocessing = true;
+					}
+				}
+				if (doku == null && !foundPreprocessing)
 					break;
-				length += 2 + doku.Length;
-				lines.Add(doku);
+				if (doku != null) {
+					length += 2 + doku.Length;
+					lines.Add(doku);
+				}
 			}
 			StringBuilder b = new StringBuilder(length);
 			for (int i = lines.Count - 1; i >= 0; --i) {
@@ -108,8 +122,20 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 		
 		string GetDocumentationFromLine(int line)
 		{
-			if (specials == null) return null;
-			if (line < 0) return null;
+			foreach (RefParser.ISpecial special in GetSpecialsFromLine(line)) {
+				RefParser.Comment comment = special as RefParser.Comment;
+				if (comment != null && comment.CommentType == RefParser.CommentType.Documentation) {
+					return comment.CommentText;
+				}
+			}
+			return null;
+		}
+		
+		IEnumerable<RefParser.ISpecial> GetSpecialsFromLine(int line)
+		{
+			List<RefParser.ISpecial> result = new List<RefParser.ISpecial>();
+			if (specials == null) return result;
+			if (line < 0) return result;
 			// specials is a sorted list: use interpolation search
 			int left = 0;
 			int right = specials.Count - 1;
@@ -142,15 +168,12 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 					while (--m >= 0 && specials[m].StartPosition.Y == line);
 					// look at all specials in that line: find doku-comment
 					while (++m < specials.Count && specials[m].StartPosition.Y == line) {
-						RefParser.Comment comment = specials[m] as RefParser.Comment;
-						if (comment != null && comment.CommentType == RefParser.CommentType.Documentation) {
-							return comment.CommentText;
-						}
+						result.Add(specials[m]);
 					}
 					break;
 				}
 			}
-			return null;
+			return result;
 		}
 		
 		public override object VisitCompilationUnit(AST.CompilationUnit compilationUnit, object data)
@@ -158,6 +181,17 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 			if (compilationUnit == null) {
 				return null;
 			}
+			currentNamespace = new DefaultUsingScope();
+			if (!string.IsNullOrEmpty(VBRootNamespace)) {
+				foreach (string name in VBRootNamespace.Split('.')) {
+					currentNamespace = new DefaultUsingScope {
+						Parent = currentNamespace,
+						NamespaceName = PrependCurrentNamespace(name),
+					};
+					currentNamespace.Parent.ChildScopes.Add(currentNamespace);
+				}
+			}
+			cu.UsingScope = currentNamespace;
 			compilationUnit.AcceptChildren(this, data);
 			return cu;
 		}
@@ -168,7 +202,7 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 			foreach (AST.Using u in usingDeclaration.Usings) {
 				u.AcceptVisitor(this, us);
 			}
-			cu.Usings.Add(us);
+			currentNamespace.Usings.Add(us);
 			return data;
 		}
 		
@@ -247,13 +281,32 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 				}
 				
 				foreach (AST.Attribute attribute in section.Attributes) {
-					result.Add(new DefaultAttribute(new AttributeReturnType(context, attribute.Name), target) {
+					List<object> positionalArguments = new List<object>();
+					foreach (AST.Expression positionalArgument in attribute.PositionalArguments) {
+						positionalArguments.Add(ConvertAttributeArgument(positionalArgument));
+					}
+					Dictionary<string, object> namedArguments = new Dictionary<string, object>();
+					foreach (AST.NamedArgumentExpression namedArgumentExpression in attribute.NamedArguments) {
+						namedArguments.Add(namedArgumentExpression.Name, ConvertAttributeArgument(namedArgumentExpression.Expression));
+					}
+					result.Add(new DefaultAttribute(new AttributeReturnType(context, attribute.Name),
+					                                target, positionalArguments, namedArguments)
+					           {
 					           	CompilationUnit = cu,
 					           	Region = GetRegion(attribute.StartLocation, attribute.EndLocation)
 					           });
 				}
 			}
 			return result;
+		}
+		
+		static object ConvertAttributeArgument(AST.Expression expression)
+		{
+			AST.PrimitiveExpression pe = expression as AST.PrimitiveExpression;
+			if (pe != null)
+				return pe.Value;
+			else
+				return null;
 		}
 		
 		public override object VisitAttributeSection(ICSharpCode.NRefactory.Ast.AttributeSection attributeSection, object data)
@@ -265,18 +318,26 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 			return null;
 		}
 		
+		string PrependCurrentNamespace(string name)
+		{
+			if (string.IsNullOrEmpty(currentNamespace.NamespaceName))
+				return name;
+			else
+				return currentNamespace.NamespaceName + "." + name;
+		}
+		
 		public override object VisitNamespaceDeclaration(AST.NamespaceDeclaration namespaceDeclaration, object data)
 		{
-			string name;
-			if (currentNamespace.Count == 0) {
-				name = namespaceDeclaration.Name;
-			} else {
-				name = currentNamespace.Peek() + '.' + namespaceDeclaration.Name;
+			DefaultUsingScope oldNamespace = currentNamespace;
+			foreach (string name in namespaceDeclaration.Name.Split('.')) {
+				currentNamespace = new DefaultUsingScope {
+					Parent = currentNamespace,
+					NamespaceName = PrependCurrentNamespace(name),
+				};
+				currentNamespace.Parent.ChildScopes.Add(currentNamespace);
 			}
-			
-			currentNamespace.Push(name);
 			object ret = namespaceDeclaration.AcceptChildren(this, data);
-			currentNamespace.Pop();
+			currentNamespace = oldNamespace;
 			return ret;
 		}
 		
@@ -316,13 +377,10 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 				cur.InnerClasses.Add(c);
 				c.FullyQualifiedName = cur.FullyQualifiedName + '.' + typeDeclaration.Name;
 			} else {
-				if (currentNamespace.Count == 0) {
-					c.FullyQualifiedName = typeDeclaration.Name;
-				} else {
-					c.FullyQualifiedName = currentNamespace.Peek() + '.' + typeDeclaration.Name;
-				}
+				c.FullyQualifiedName = PrependCurrentNamespace(typeDeclaration.Name);
 				cu.Classes.Add(c);
 			}
+			c.UsingScope = currentNamespace;
 			currentClass.Push(c);
 			
 			ConvertTemplates(typeDeclaration.Templates, c); // resolve constrains in context of the class
@@ -330,7 +388,7 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 			
 			if (c.ClassType != ClassType.Enum && typeDeclaration.BaseTypes != null) {
 				foreach (AST.TypeReference type in typeDeclaration.BaseTypes) {
-					IReturnType rt = CreateReturnType(type);
+					IReturnType rt = CreateReturnType(type, null, TypeVisitor.ReturnTypeOptions.BaseTypeReference);
 					if (rt != null) {
 						c.BaseTypes.Add(rt);
 					}
@@ -414,19 +472,16 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 		
 		void CreateDelegate(DefaultClass c, string name, AST.TypeReference returnType, IList<AST.TemplateDefinition> templates, IList<AST.ParameterDeclarationExpression> parameters)
 		{
-			c.BaseTypes.Add(c.ProjectContent.SystemTypes.Delegate);
+			c.BaseTypes.Add(c.ProjectContent.SystemTypes.MulticastDelegate);
 			if (currentClass.Count > 0) {
 				DefaultClass cur = GetCurrentClass();
 				cur.InnerClasses.Add(c);
 				c.FullyQualifiedName = cur.FullyQualifiedName + '.' + name;
 			} else {
-				if (currentNamespace.Count == 0) {
-					c.FullyQualifiedName = name;
-				} else {
-					c.FullyQualifiedName = currentNamespace.Peek() + '.' + name;
-				}
+				c.FullyQualifiedName = PrependCurrentNamespace(name);
 				cu.Classes.Add(c);
 			}
+			c.UsingScope = currentNamespace;
 			currentClass.Push(c); // necessary for CreateReturnType
 			ConvertTemplates(templates, c);
 			
@@ -453,7 +508,7 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 		
 		internal static IParameter CreateParameter(AST.ParameterDeclarationExpression par, IMethod method, IClass currentClass, ICompilationUnit cu)
 		{
-			IReturnType parType = CreateReturnType(par.TypeReference, method, currentClass, cu);
+			IReturnType parType = CreateReturnType(par.TypeReference, method, currentClass, cu, TypeVisitor.ReturnTypeOptions.None);
 			DefaultParameter p = new DefaultParameter(par.ParameterName, parType, GetRegion(par.StartLocation, par.EndLocation));
 			p.Modifiers = (ParameterModifiers)par.ParamModifier;
 			return p;
@@ -469,7 +524,7 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 			method.IsExtensionMethod = methodDeclaration.IsExtensionMethod;
 			method.Documentation = GetDocumentation(region.BeginLine, methodDeclaration.Attributes);
 			ConvertTemplates(methodDeclaration.Templates, method);
-			method.ReturnType = CreateReturnType(methodDeclaration.TypeReference, method);
+			method.ReturnType = CreateReturnType(methodDeclaration.TypeReference, method, TypeVisitor.ReturnTypeOptions.None);
 			ConvertAttributes(methodDeclaration, method);
 			if (methodDeclaration.Parameters.Count > 0) {
 				foreach (AST.ParameterDeclarationExpression par in methodDeclaration.Parameters) {
@@ -504,7 +559,7 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 			method.Documentation = GetDocumentation(region.BeginLine, declareDeclaration.Attributes);
 			method.Modifiers |= ModifierEnum.Extern | ModifierEnum.Static;
 			
-			method.ReturnType = CreateReturnType(declareDeclaration.TypeReference, method);
+			method.ReturnType = CreateReturnType(declareDeclaration.TypeReference, method, TypeVisitor.ReturnTypeOptions.None);
 			ConvertAttributes(declareDeclaration, method);
 			
 			foreach (AST.ParameterDeclarationExpression par in declareDeclaration.Parameters) {
@@ -669,7 +724,7 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 				                                    region, c);
 				del.Modifiers |= ModifierEnum.Synthetic;
 				CreateDelegate(del, eventDeclaration.Name + "EventHandler",
-				               new AST.TypeReference("System.Void"),
+				               new AST.TypeReference("System.Void", true),
 				               new AST.TemplateDefinition[0],
 				               eventDeclaration.Parameters);
 				type = del.DefaultReturnType;
@@ -698,23 +753,23 @@ namespace ICSharpCode.SharpDevelop.Dom.NRefactoryResolver
 			return null;
 		}
 		
-		IReturnType CreateReturnType(AST.TypeReference reference, IMethod method)
+		IReturnType CreateReturnType(AST.TypeReference reference, IMethod method, TypeVisitor.ReturnTypeOptions options)
 		{
-			return CreateReturnType(reference, method, GetCurrentClass(), cu);
+			return CreateReturnType(reference, method, GetCurrentClass(), cu, options);
 		}
 		
-		static IReturnType CreateReturnType(AST.TypeReference reference, IMethod method, IClass currentClass, ICompilationUnit cu)
+		static IReturnType CreateReturnType(AST.TypeReference reference, IMethod method, IClass currentClass, ICompilationUnit cu, TypeVisitor.ReturnTypeOptions options)
 		{
 			if (currentClass == null) {
-				return TypeVisitor.CreateReturnType(reference, new DefaultClass(cu, "___DummyClass"), method, 1, 1, cu.ProjectContent, true);
+				return TypeVisitor.CreateReturnType(reference, new DefaultClass(cu, "___DummyClass"), method, 1, 1, cu.ProjectContent, options | TypeVisitor.ReturnTypeOptions.Lazy);
 			} else {
-				return TypeVisitor.CreateReturnType(reference, currentClass, method, currentClass.Region.BeginLine + 1, 1, cu.ProjectContent, true);
+				return TypeVisitor.CreateReturnType(reference, currentClass, method, currentClass.Region.BeginLine + 1, 1, cu.ProjectContent, options | TypeVisitor.ReturnTypeOptions.Lazy);
 			}
 		}
 		
 		IReturnType CreateReturnType(AST.TypeReference reference)
 		{
-			return CreateReturnType(reference, null);
+			return CreateReturnType(reference, null, TypeVisitor.ReturnTypeOptions.None);
 		}
 	}
 }

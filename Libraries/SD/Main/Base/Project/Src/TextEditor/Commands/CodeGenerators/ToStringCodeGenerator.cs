@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2676 $</version>
+//     <version>$Revision: 3787 $</version>
 // </file>
 
 using System;
@@ -18,7 +18,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 	{
 		public override void GenerateCode(List<AbstractNode> nodes, IList items)
 		{
-			TypeReference stringReference = new TypeReference("System.String");
+			TypeReference stringReference = new TypeReference("System.String", true);
 			MethodDeclaration method = new MethodDeclaration {
 				Name = "ToString",
 				Modifier = Modifiers.Public | Modifiers.Override,

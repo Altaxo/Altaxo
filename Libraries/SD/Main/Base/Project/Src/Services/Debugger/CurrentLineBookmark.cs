@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1968 $</version>
+//     <version>$Revision: 3416 $</version>
 // </file>
 
 using System;
@@ -42,8 +42,19 @@ namespace ICSharpCode.SharpDevelop.Debugging
 			endLine     = makerEndLine;
 			endColumn   = makerEndColumn;
 			
+			if (startLine < 1 || startLine > document.TotalNumberOfLines)
+				return;
+			if (endLine < 1 || endLine > document.TotalNumberOfLines) {
+				endLine = startLine;
+				endColumn = int.MaxValue;
+			}
+			if (startColumn < 1)
+				startColumn = 1;
+			
 			LineSegment line = document.GetLineSegment(startLine - 1);
-			instance = new CurrentLineBookmark(fileName, document, startLine - 1);
+			if (endColumn < 1 || endColumn > line.Length)
+				endColumn = line.Length;
+			instance = new CurrentLineBookmark(fileName, document, new TextLocation(startColumn - 1, startLine - 1));
 			document.BookmarkManager.AddMark(instance);
 			document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.LinesBetween, startLine - 1, endLine - 1));
 			document.CommitUpdate();
@@ -64,7 +75,7 @@ namespace ICSharpCode.SharpDevelop.Debugging
 			}
 		}
 		
-		public CurrentLineBookmark(string fileName, IDocument document,  int startLine) : base(fileName, document, startLine)
+		public CurrentLineBookmark(string fileName, IDocument document, TextLocation location) : base(fileName, document, location)
 		{
 			this.IsSaved = false;
 			this.IsVisibleInBookmarkPad = false;

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <author name="Daniel Grunwald"/>
-//     <version>$Revision: 3090 $</version>
+//     <version>$Revision: 3531 $</version>
 // </file>
 
 using System;
@@ -49,6 +49,20 @@ namespace ICSharpCode.SharpDevelop.Dom.Tests
 			                "b = Console.ReadLine();",
 			                Normalize(converter.VBToCSharp("a = Console.Title\n" +
 			                                               "b = Console.Readline", out errors)));
+		}
+		
+		[Test]
+		public void UnknownPropertyReference()
+		{
+			Assert.AreEqual("a = Me.Font",
+			                Normalize(converter.CSharpToVB("a = this.Font;", out errors)));
+		}
+		
+		[Test]
+		public void UnknownPropertyReference2()
+		{
+			Assert.AreEqual("X(Me.Font)",
+			                Normalize(converter.CSharpToVB("X(this.Font);", out errors)));
 		}
 		
 		[Test]

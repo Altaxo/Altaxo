@@ -2,18 +2,19 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2708 $</version>
+//     <version>$Revision: 3749 $</version>
 // </file>
 
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 
 using ICSharpCode.Core;
+using ICSharpCode.Core.WinForms;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace ICSharpCode.SharpDevelop.Gui
@@ -194,6 +195,14 @@ namespace ICSharpCode.SharpDevelop.Gui
 			get { return viewContents; }
 		}
 		
+		/// <summary>
+		/// Gets whether any contained view content has changed
+		/// since the last save/load operation.
+		/// </summary>
+		public bool IsDirty {
+			get { return this.ViewContents.Any(vc => vc.IsDirty); }
+		}
+		
 		public void SwitchView(int viewNumber)
 		{
 			if (viewTabControl != null) {
@@ -237,7 +246,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 				
 				viewTabControl = new TabControl();
 				viewTabControl.GotFocus += delegate {
-					TabPage page = viewTabControl.TabPages[viewTabControl.TabIndex];
+					TabPage page = viewTabControl.SelectedTab;
 					if (page.Controls.Count == 1 && !page.ContainsFocus) page.Controls[0].Focus();
 				};
 				viewTabControl.Alignment = TabAlignment.Bottom;
@@ -271,20 +280,25 @@ namespace ICSharpCode.SharpDevelop.Gui
 		
 		void OnIsDirtyChanged(object sender, EventArgs e)
 		{
-			if (sender == ActiveViewContent) {
-				UpdateTitle();
-			}
+			UpdateTitle();
 		}
 		
 		void UpdateTitle()
 		{
 			IViewContent content = ActiveViewContent;
+			if (content == null && this.ViewContents.Count > 0) {
+				// This can happen when the window is inactive and
+				// no tab page of the viewTabControl is selected
+				// (viewTabControl.SelectedIndex == -1)
+				// but we have multiple ViewContents.
+				content = this.ViewContents[0];
+			}
 			if (content != null) {
 				base.ToolTipText = content.PrimaryFileName;
 				
 				string newTitle = content.TitleName;
 				
-				if (content.IsDirty) {
+				if (this.IsDirty) {
 					newTitle += "*";
 				} else if (content.IsReadOnly) {
 					newTitle += "+";
@@ -322,7 +336,8 @@ namespace ICSharpCode.SharpDevelop.Gui
 		
 		public bool CloseWindow(bool force)
 		{
-			if (!force && ActiveViewContent != null && ActiveViewContent.IsDirty) {
+			bool fileDiscarded = false;
+			if (!force && this.IsDirty) {
 				DialogResult dr = MessageBox.Show(ResourceService.GetString("MainWindow.SaveChangesMessage"),
 				                                  ResourceService.GetString("MainWindow.SaveChangesMessageHeader") + " " + Title + " ?",
 				                                  MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question,
@@ -330,29 +345,63 @@ namespace ICSharpCode.SharpDevelop.Gui
 				                                  RightToLeftConverter.IsRightToLeft ? MessageBoxOptions.RtlReading | MessageBoxOptions.RightAlign : 0);
 				switch (dr) {
 					case DialogResult.Yes:
-						if (ActiveViewContent.PrimaryFile != null) {
-							while (true) {
-								ActiveViewContent.Files.Foreach(ICSharpCode.SharpDevelop.Commands.SaveFile.Save);
-								if (ActiveViewContent.IsDirty) {
-									
-									if (MessageService.AskQuestion("${res:MainWindow.DiscardChangesMessage}")) {
+						foreach (IViewContent vc in this.ViewContents) {
+							if (!vc.IsDirty) continue;
+							if (vc.PrimaryFile != null) {
+								while (true) {
+									vc.Files.ForEach(ICSharpCode.SharpDevelop.Commands.SaveFile.Save);
+									if (vc.IsDirty) {
+										if (MessageService.AskQuestion("${res:MainWindow.DiscardChangesMessage}")) {
+											fileDiscarded = true;
+											break;
+										}
+									} else {
 										break;
 									}
-								} else {
-									break;
 								}
 							}
 						}
 						break;
 					case DialogResult.No:
+						fileDiscarded = true;
 						break;
 					case DialogResult.Cancel:
 						return false;
 				}
 			}
+			
+			// Create list of files to reparse after the window is closed.
+			// This is necessary because when changes were discarded,
+			// the ParserService still has the information with the changes
+			// that are now invalid.
+			string[] filesToReparse;
+			if (fileDiscarded) {
+				filesToReparse = this.ViewContents
+					.SelectMany(vc => vc.Files)
+					.Select(f => f.FileName)
+					.Distinct(StringComparer.OrdinalIgnoreCase)
+					.ToArray();
+			} else {
+				filesToReparse = null;
+			}
 
 			OnCloseEvent(null);
 			Dispose();
+			
+			if (filesToReparse != null) {
+				// This must happen after Dispose so that the ViewContents
+				// are closed and their content is no longer found by
+				// the ParserService.
+				LoggingService.Debug("SdiWorkspaceWindow closed with discarding changes, enqueueing files for parsing: " + String.Join(", ", filesToReparse));
+				foreach (string file in filesToReparse) {
+					if (File.Exists(file)) {
+						ParserService.EnqueueForParsing(file);
+					} else {
+						ParserService.ClearParseInformation(file);
+					}
+				}
+			}
+			
 			return true;
 		}
 		

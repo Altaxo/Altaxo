@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3184 $</version>
+//     <version>$Revision: 3662 $</version>
 // </file>
 
 using System;
@@ -17,6 +17,7 @@ namespace NRefactoryASTGenerator.Ast
 	class PrimitiveExpression : Expression {}
 	
 	enum ParameterModifiers { In }
+	enum QueryExpressionPartitionType { }
 	
 	class ParameterDeclarationExpression : Expression {
 		List<AttributeSection> attributes;
@@ -35,6 +36,7 @@ namespace NRefactoryASTGenerator.Ast
 		string     name;
 		Expression expression;
 		
+		public NamedArgumentExpression() { }
 		public NamedArgumentExpression(string name, Expression expression) {}
 	}
 	
@@ -86,6 +88,7 @@ namespace NRefactoryASTGenerator.Ast
 		BinaryOperatorType op;
 		Expression         right;
 		
+		public BinaryOperatorExpression() { }
 		public BinaryOperatorExpression(Expression left, BinaryOperatorType op, Expression right) {}
 	}
 	
@@ -111,12 +114,13 @@ namespace NRefactoryASTGenerator.Ast
 		public MemberReferenceExpression(Expression targetObject, string memberName) {}
 	}
 	
+	[IncludeMember("[Obsolete] public string Identifier { get { return MemberName; } set { MemberName = value; } }")]
 	class PointerReferenceExpression : Expression {
 		Expression targetObject;
-		string     identifier;
+		string     memberName;
 		List<TypeReference> typeArguments;
 		
-		public PointerReferenceExpression(Expression targetObject, string identifier) {}
+		public PointerReferenceExpression(Expression targetObject, string memberName) {}
 	}
 	
 	class IdentifierExpression : Expression {
@@ -148,7 +152,7 @@ namespace NRefactoryASTGenerator.Ast
 		public TypeOfExpression(TypeReference typeReference) {}
 	}
 	
-	[IncludeMember("public TypeReferenceExpression(string typeName) : this(new TypeReference(typeName)) {}")]
+	[IncludeMember("[Obsolete] public TypeReferenceExpression(string typeName) : this(new TypeReference(typeName)) {}")]
 	class TypeReferenceExpression : Expression {
 		TypeReference typeReference;
 		
@@ -189,6 +193,7 @@ namespace NRefactoryASTGenerator.Ast
 		Expression trueExpression;
 		Expression falseExpression;
 		
+		public ConditionalExpression() { }
 		public ConditionalExpression(Expression condition, Expression trueExpression, Expression falseExpression) {}
 	}
 	
@@ -250,10 +255,20 @@ namespace NRefactoryASTGenerator.Ast
 	
 	[ImplementNullable(NullableImplementation.Shadow)]
 	class QueryExpression : Expression {
+		
+		/// <remarks>
+		/// Either from or aggregate clause.
+		/// </remarks>
 		QueryExpressionFromClause fromClause;
+		
+		bool isQueryContinuation;
+		
 		List<QueryExpressionClause> middleClauses;
+		
+		/// <remarks>
+		/// C# only.
+		/// </remarks>
 		QueryExpressionClause selectOrGroupClause;
-		QueryExpressionIntoClause intoClause;
 	}
 	
 	[ImplementNullable]
@@ -278,12 +293,42 @@ namespace NRefactoryASTGenerator.Ast
 	
 	[ImplementNullable(NullableImplementation.Shadow)]
 	class QueryExpressionFromClause : QueryExpressionFromOrJoinClause { }
+
+	class QueryExpressionAggregateClause : 	QueryExpressionClause {
+		QueryExpressionFromClause fromClause;
+		List<QueryExpressionClause> middleClauses;
+		List<ExpressionRangeVariable> intoVariables;
+	}
+	
+	[ImplementNullable]
+	class ExpressionRangeVariable : AbstractNode, INullable {
+		string identifier;
+		Expression expression;
+		TypeReference type;
+	}
 	
 	class QueryExpressionJoinClause : QueryExpressionFromOrJoinClause {
 		Expression onExpression;
 		Expression equalsExpression;
 		
 		string intoIdentifier;
+	}
+	
+	[ImplementNullable(NullableImplementation.Shadow)]
+	class QueryExpressionJoinVBClause : QueryExpressionClause {
+		QueryExpressionFromClause joinVariable;
+		QueryExpressionJoinVBClause subJoin;
+		List<QueryExpressionJoinConditionVB> conditions;
+	}
+
+	class QueryExpressionPartitionVBClause : QueryExpressionClause {
+		Expression expression;
+		QueryExpressionPartitionType partitionType;
+	}
+	
+	class QueryExpressionJoinConditionVB : AbstractNode {
+		Expression leftSide;
+		Expression rightSide;
 	}
 	
 	class QueryExpressionOrderClause : QueryExpressionClause {
@@ -302,17 +347,32 @@ namespace NRefactoryASTGenerator.Ast
 	class QueryExpressionSelectClause : QueryExpressionClause {
 		Expression projection;
 	}
+
+	class QueryExpressionSelectVBClause : QueryExpressionClause {
+		List<ExpressionRangeVariable> variables;
+	}
+	
+	class QueryExpressionLetVBClause : QueryExpressionClause {
+		List<ExpressionRangeVariable> variables;
+	}
+	
+	class QueryExpressionDistinctClause : QueryExpressionClause {
+		
+	}
 	
 	class QueryExpressionGroupClause : QueryExpressionClause {
 		Expression projection;
 		Expression groupBy;
 	}
 	
-	[ImplementNullable(NullableImplementation.Shadow)]
-	class QueryExpressionIntoClause : QueryExpressionClause {
-		[QuestionMarkDefault]
-		string intoIdentifier;
-		
-		QueryExpression continuedQuery;
+	class QueryExpressionGroupVBClause : QueryExpressionClause  {
+		List<ExpressionRangeVariable> groupVariables;
+		List<ExpressionRangeVariable> byVariables;
+		List<ExpressionRangeVariable> intoVariables;
+	}
+	
+	class QueryExpressionGroupJoinVBClause : QueryExpressionClause {
+		QueryExpressionJoinVBClause joinClause;
+		List<ExpressionRangeVariable> intoVariables;
 	}
 }

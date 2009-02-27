@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3067 $</version>
+//     <version>$Revision: 3498 $</version>
 // </file>
 
 using System;
@@ -84,18 +84,12 @@ namespace ICSharpCode.SharpDevelop.Project
 				});
 		}
 		
-		static object lockObject = new object();
-		static volatile MessageViewCategory customToolMessageView;
+		static MessageViewCategory customToolMessageView;
 		
 		internal static MessageViewCategory StaticMessageView {
 			get {
 				if (customToolMessageView == null) {
-					lock (lockObject) {
-						if (customToolMessageView == null) {
-							customToolMessageView = new MessageViewCategory("Custom Tool");
-							CompilerMessageView.Instance.AddCategory(customToolMessageView);
-						}
-					}
+					MessageViewCategory.Create(ref customToolMessageView, "Custom Tool");
 				}
 				return customToolMessageView;
 			}
@@ -381,7 +375,9 @@ namespace ICSharpCode.SharpDevelop.Project
 			ICustomTool customTool = GetCustomTool(baseItem.CustomTool);
 			if (customTool == null) {
 				string message = "Cannot find custom tool '" + baseItem.CustomTool + "'.";
-				CustomToolContext.StaticMessageView.AppendLine(message);
+				if (!baseItem.CustomTool.StartsWith("MSBuild:")) {
+					CustomToolContext.StaticMessageView.AppendLine(message);
+				}
 				if (showMessageBoxOnErrors) {
 					MessageService.ShowError(message);
 				}

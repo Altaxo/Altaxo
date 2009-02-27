@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="none" email=""/>
-//     <version>$Revision: 1609 $</version>
+//     <version>$Revision: 3385 $</version>
 // </file>
 
 using System;
@@ -40,12 +40,6 @@ namespace ICSharpCode.NRefactory.Parser
 			}
 		}
 		
-	//	public void Exception (string s)
-	//	{
-	//		Console.WriteLine(s); 
-	//		System.Environment.Exit(0);
-	//	}
-	
 		void DefaultCodeError(int line, int col, int n)
 		{
 			errorText.AppendLine(String.Format("-- line {0} col {1}: error {2}", line, col, n));

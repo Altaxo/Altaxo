@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 1965 $</version>
+//     <version>$Revision: 3287 $</version>
 // </file>
 
 using System;
@@ -12,6 +12,9 @@ using System.Security.Permissions;
 
 [assembly: CLSCompliant(true)]
 [assembly: StringFreezing()]
+
+// Use hard-binding:
+[assembly: Dependency("log4net", LoadHint.Always)]
 
 [assembly: AssemblyTitle("ICSharpCode.SharpDevelop.Sda")]
 [assembly: AssemblyDescription("SharpDevelop for Applications")]

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2702 $</version>
+//     <version>$Revision: 3768 $</version>
 // </file>
 
 using System;
@@ -105,8 +105,6 @@ namespace ICSharpCode.SharpDevelop.Dom.ReflectionLayer
 				FullyQualifiedName = fullName;
 			}
 			
-			this.UseInheritanceCache = true;
-			
 			try {
 				AddAttributes(compilationUnit.ProjectContent, this.Attributes, CustomAttributeData.GetCustomAttributes(type));
 			} catch (Exception ex) {
@@ -184,6 +182,9 @@ namespace ICSharpCode.SharpDevelop.Dom.ReflectionLayer
 				}
 			}
 		}
+		
+		protected override bool KeepInheritanceTree {
+			get { return true; }
+		}
 	}
-	
 }

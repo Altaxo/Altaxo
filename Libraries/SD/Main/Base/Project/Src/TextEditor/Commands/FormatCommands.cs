@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2365 $</version>
+//     <version>$Revision: 3537 $</version>
 // </file>
 
 using System;
@@ -134,7 +134,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 	{
 		public override IEditAction EditAction {
 			get {
-				return new ICSharpCode.TextEditor.Actions.FormatBuffer();
+				return new ICSharpCode.TextEditor.Actions.IndentSelection();
 			}
 		}
 	}

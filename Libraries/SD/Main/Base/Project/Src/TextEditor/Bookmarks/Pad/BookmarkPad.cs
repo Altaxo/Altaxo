@@ -2,14 +2,14 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2379 $</version>
+//     <version>$Revision: 3313 $</version>
 // </file>
 
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 
-using ICSharpCode.Core;
+using ICSharpCode.Core.WinForms;
 using ICSharpCode.SharpDevelop.Gui;
 
 namespace ICSharpCode.SharpDevelop.Bookmarks
@@ -46,9 +46,9 @@ namespace ICSharpCode.SharpDevelop.Bookmarks
 			}
 		}
 		
-		public BookmarkNode CurrentNode {
+		public TreeNode CurrentNode {
 			get {
-				return bookmarkTreeView.SelectedNode as BookmarkNode;
+				return bookmarkTreeView.SelectedNode as TreeNode;
 			}
 		}
 		

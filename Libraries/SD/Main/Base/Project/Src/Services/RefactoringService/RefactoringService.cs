@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3171 $</version>
+//     <version>$Revision: 3293 $</version>
 // </file>
 
 using System;
@@ -139,9 +139,9 @@ namespace ICSharpCode.SharpDevelop.Refactoring
 		                                         IProgressMonitor progressMonitor)
 		{
 			if (ParserService.LoadSolutionProjectsThreadRunning) {
-				progressMonitor.ShowingDialog = true;
+				if (progressMonitor != null) progressMonitor.ShowingDialog = true;
 				MessageService.ShowMessage("${res:SharpDevelop.Refactoring.LoadSolutionProjectsThreadRunning}");
-				progressMonitor.ShowingDialog = false;
+				if (progressMonitor != null) progressMonitor.ShowingDialog = false;
 				return null;
 			}
 			List<ProjectItem> files;

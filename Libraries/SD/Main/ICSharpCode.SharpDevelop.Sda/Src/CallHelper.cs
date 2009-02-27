@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2971 $</version>
+//     <version>$Revision: 3546 $</version>
 // </file>
 
 using System;
@@ -10,12 +10,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Resources;
 using System.Threading;
-using System.Linq;
 
 using ICSharpCode.Core;
+using ICSharpCode.Core.WinForms;
 using ICSharpCode.SharpDevelop.Commands;
 using ICSharpCode.SharpDevelop.Gui;
 
@@ -35,6 +36,9 @@ namespace ICSharpCode.SharpDevelop.Sda
 		#region Initialize Core
 		public void InitSharpDevelopCore(SharpDevelopHost.CallbackHelper callback, StartupSettings properties)
 		{
+			ICSharpCode.Core.Services.ServiceManager.LoggingService = new log4netLoggingService();
+			ICSharpCode.Core.Services.ServiceManager.MessageService = WinFormsMessageService.Instance;
+			
 			LoggingService.Info("InitSharpDevelop...");
 			this.callback = callback;
 			CoreStartup startup = new CoreStartup(properties.ApplicationName);
@@ -143,7 +147,7 @@ namespace ICSharpCode.SharpDevelop.Sda
 					PropertyService.Save();
 				} catch (Exception ex) {
 					LoggingService.Warn("Exception during unloading", ex);
-					if (exception != null) {
+					if (exception == null) {
 						exception = ex;
 					}
 				}
@@ -229,8 +233,8 @@ namespace ICSharpCode.SharpDevelop.Sda
 		bool CloseWorkbenchInternal(bool force)
 		{
 			if (force) {
-				foreach (IViewContent vc in WorkbenchSingleton.Workbench.ViewContentCollection.ToArray()) {
-					vc.WorkbenchWindow.CloseWindow(true);
+				foreach (IWorkbenchWindow window in WorkbenchSingleton.Workbench.WorkbenchWindowCollection.ToArray()) {
+					window.CloseWindow(true);
 				}
 			}
 			WorkbenchSingleton.MainForm.Close();

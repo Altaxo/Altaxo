@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3073 $</version>
+//     <version>$Revision: 3719 $</version>
 // </file>
 
 using System;
@@ -35,16 +35,16 @@ namespace ICSharpCode.SharpDevelop.Dom
 		
 		public static List<IList<IMember>> LookupMember(
 			IReturnType type, string name, IClass callingClass,
-			LanguageProperties language, bool isInvocation, bool? isClassInInheritanceTree)
+			LanguageProperties language, bool isInvocation, bool? isAccessThoughReferenceOfCurrentClass)
 		{
 			if (language == null)
 				throw new ArgumentNullException("language");
 			
-			if (isClassInInheritanceTree == null) {
-				isClassInInheritanceTree = false;
+			if (isAccessThoughReferenceOfCurrentClass == null) {
+				isAccessThoughReferenceOfCurrentClass = false;
 				IClass underlyingClass = type.GetUnderlyingClass();
 				if (underlyingClass != null)
-					isClassInInheritanceTree = underlyingClass.IsTypeInInheritanceTree(callingClass);
+					isAccessThoughReferenceOfCurrentClass = underlyingClass.IsTypeInInheritanceTree(callingClass);
 			}
 			
 			IEnumerable<IMember> members;
@@ -54,7 +54,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 				members = GetAllMembers(type).Where(m => language.NameComparer.Equals(m.Name, name));
 			}
 			
-			return LookupMember(members, callingClass, (bool)isClassInInheritanceTree, isInvocation);
+			return LookupMember(members, callingClass, (bool)isAccessThoughReferenceOfCurrentClass, isInvocation);
 		}
 		
 		class SignatureComparer : IEqualityComparer<IMethod>
@@ -93,7 +93,9 @@ namespace ICSharpCode.SharpDevelop.Dom
 						hashCode *= 1000000579;
 						if (p.IsOut || p.IsRef)
 							hashCode += 1;
-						hashCode += p.ReturnType.GetHashCode();
+						if (p.ReturnType != null) {
+							hashCode += p.ReturnType.GetHashCode();
+						}
 					}
 				}
 				cachedHashes[obj] = hashCode;
@@ -118,14 +120,14 @@ namespace ICSharpCode.SharpDevelop.Dom
 		
 		public static List<IList<IMember>> LookupMember(
 			IEnumerable<IMember> possibleMembers, IClass callingClass,
-			bool isClassInInheritanceTree, bool isInvocation)
+			bool isAccessThoughReferenceOfCurrentClass, bool isInvocation)
 		{
 //			Console.WriteLine("Possible members:");
 //			foreach (IMember m in possibleMembers) {
 //				Console.WriteLine("  " + m.DotNetName);
 //			}
 			
-			IEnumerable<IMember> accessibleMembers = possibleMembers.Where(member => member.IsAccessible(callingClass, isClassInInheritanceTree));
+			IEnumerable<IMember> accessibleMembers = possibleMembers.Where(member => member.IsAccessible(callingClass, isAccessThoughReferenceOfCurrentClass));
 			if (isInvocation) {
 				accessibleMembers = accessibleMembers.Where(IsInvocable);
 			}
@@ -200,24 +202,24 @@ namespace ICSharpCode.SharpDevelop.Dom
 		/// </summary>
 		public static List<IMember> GetAccessibleMembers(IReturnType rt, IClass callingClass, LanguageProperties language)
 		{
-			bool isClassInInheritanceTree = false;
+			bool isAccessThoughReferenceOfCurrentClass = false;
 			IClass underlyingClass = rt.GetUnderlyingClass();
 			if (underlyingClass != null)
-				isClassInInheritanceTree = underlyingClass.IsTypeInInheritanceTree(callingClass);
-			return GetAccessibleMembers(rt, callingClass, language, isClassInInheritanceTree);
+				isAccessThoughReferenceOfCurrentClass = underlyingClass.IsTypeInInheritanceTree(callingClass);
+			return GetAccessibleMembers(rt, callingClass, language, isAccessThoughReferenceOfCurrentClass);
 		}
 		
 		/// <summary>
 		/// Gets all accessible members, including indexers and constructors.
 		/// </summary>
-		public static List<IMember> GetAccessibleMembers(IReturnType rt, IClass callingClass, LanguageProperties language, bool isClassInInheritanceTree)
+		public static List<IMember> GetAccessibleMembers(IReturnType rt, IClass callingClass, LanguageProperties language, bool isAccessThoughReferenceOfCurrentClass)
 		{
 			if (language == null)
 				throw new ArgumentNullException("language");
 			
 			List<IMember> result = new List<IMember>();
 			foreach (var g in GetAllMembers(rt).GroupBy(m => m.Name, language.NameComparer).OrderBy(g2=>g2.Key)) {
-				foreach (var group in LookupMember(g, callingClass, isClassInInheritanceTree, false)) {
+				foreach (var group in LookupMember(g, callingClass, isAccessThoughReferenceOfCurrentClass, false)) {
 					result.AddRange(group);
 				}
 			}
@@ -669,6 +671,15 @@ namespace ICSharpCode.SharpDevelop.Dom
 			}
 		}
 		
+		readonly static Dictionary<IReturnType, IEnumerable<IReturnType>> getTypeInheritanceTreeCache = new Dictionary<IReturnType, IEnumerable<IReturnType>>();
+		
+		static void ClearGetTypeInheritanceTreeCache()
+		{
+			lock (getTypeInheritanceTreeCache) {
+				getTypeInheritanceTreeCache.Clear();
+			}
+		}
+		
 		/// <summary>
 		/// Gets all types the specified type inherits from (all classes and interfaces).
 		/// Unlike the class inheritance tree, this method takes care of type arguments and calculates the type
@@ -678,6 +689,12 @@ namespace ICSharpCode.SharpDevelop.Dom
 		{
 			if (typeToListInheritanceTreeFor == null)
 				throw new ArgumentNullException("typeToListInheritanceTreeFor");
+			
+			lock (getTypeInheritanceTreeCache) {
+				IEnumerable<IReturnType> result;
+				if (getTypeInheritanceTreeCache.TryGetValue(typeToListInheritanceTreeFor, out result))
+					return result;
+			}
 			
 			IClass classToListInheritanceTreeFor = typeToListInheritanceTreeFor.GetUnderlyingClass();
 			if (classToListInheritanceTreeFor == null)
@@ -699,6 +716,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 				return resultList;
 			}
 			
+			HashSet<IReturnType> visitedSet = new HashSet<IReturnType>();
 			List<IReturnType> visitedList = new List<IReturnType>();
 			Queue<IReturnType> typesToVisit = new Queue<IReturnType>();
 			bool enqueuedLastBaseType = false;
@@ -708,7 +726,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 			IReturnType nextType;
 			do {
 				if (currentClass != null) {
-					if (!visitedList.Contains(currentType)) {
+					if (visitedSet.Add(currentType)) {
 						visitedList.Add(currentType);
 						foreach (IReturnType type in currentClass.BaseTypes) {
 							typesToVisit.Enqueue(TranslateIfRequired(currentType, type));
@@ -726,6 +744,12 @@ namespace ICSharpCode.SharpDevelop.Dom
 					currentClass = nextType.GetUnderlyingClass();
 				}
 			} while (nextType != null);
+			lock (getTypeInheritanceTreeCache) {
+				if (getTypeInheritanceTreeCache.Count == 0) {
+					DomCache.RegisterForClear(ClearGetTypeInheritanceTreeCache);
+				}
+				getTypeInheritanceTreeCache[typeToListInheritanceTreeFor] = visitedList;
+			}
 			return visitedList;
 		}
 		#endregion

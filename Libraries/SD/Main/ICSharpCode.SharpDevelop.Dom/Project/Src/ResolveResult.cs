@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3171 $</version>
+//     <version>$Revision: 3630 $</version>
 // </file>
 
 using System;
@@ -111,6 +111,9 @@ namespace ICSharpCode.SharpDevelop.Dom
 				throw new ArgumentNullException("resolvedType");
 			if (callingClass == null)
 				throw new ArgumentNullException("callingClass");
+			
+			// convert resolvedType into direct type to speed up the IsApplicable lookups
+			resolvedType = resolvedType.GetDirectReturnType();
 			
 			foreach (IMethodOrProperty mp in CtrlSpaceResolveHelper.FindAllExtensions(language, callingClass)) {
 				TryAddExtension(language, res, mp, resolvedType);
@@ -451,9 +454,7 @@ namespace ICSharpCode.SharpDevelop.Dom
 		{
 			ArrayList ar = GetCompletionData(projectContent.Language, true);
 			if (resolvedClass != null) {
-				foreach (IClass baseClass in resolvedClass.ClassInheritanceTree) {
-					ar.AddRange(baseClass.InnerClasses);
-				}
+				ar.AddRange(resolvedClass.GetCompoundClass().GetAccessibleTypes(CallingClass));
 			}
 			return ar;
 		}

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2929 $</version>
+//     <version>$Revision: 3749 $</version>
 // </file>
 
 using System;
@@ -22,13 +22,19 @@ namespace ICSharpCode.SharpDevelop
 		/// <summary>
 		/// Runs an action for all elements in the input.
 		/// </summary>
-		public static void Foreach<T>(this IEnumerable<T> input, Action<T> action)
+		public static void ForEach<T>(this IEnumerable<T> input, Action<T> action)
 		{
 			if (input == null)
 				throw new ArgumentNullException("input");
 			foreach (T element in input) {
 				action(element);
 			}
+		}
+		
+		[Obsolete("Use ForEach instead.")]
+		public static void Foreach<T>(this IEnumerable<T> input, Action<T> action)
+		{
+			ForEach(input, action);
 		}
 		
 		/// <summary>

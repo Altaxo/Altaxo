@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 3174 $</version>
+//     <version>$Revision: 3794 $</version>
 // </file>
 
 using System;
@@ -135,9 +135,7 @@ namespace ICSharpCode.SharpDevelop.Debugging
 		static void EnsureDebugCategory()
 		{
 			if (debugCategory == null) {
-				debugCategory = new MessageViewCategory("Debug", "${res:MainWindow.Windows.OutputWindow.DebugCategory}");
-				CompilerMessageView compilerMessageView = (CompilerMessageView)WorkbenchSingleton.Workbench.GetPad(typeof(CompilerMessageView)).PadContent;
-				compilerMessageView.AddCategory(debugCategory);
+				MessageViewCategory.Create(ref debugCategory, "Debug", "${res:MainWindow.Windows.OutputWindow.DebugCategory}");
 			}
 		}
 
@@ -230,13 +228,15 @@ namespace ICSharpCode.SharpDevelop.Debugging
 					}
 				}
 			}
+			int column = 0;
 			foreach (char ch in document.GetText(document.GetLineSegment(lineNumber))) {
 				if (!char.IsWhiteSpace(ch)) {
-					document.BookmarkManager.AddMark(new BreakpointBookmark(fileName, document, lineNumber));
+					document.BookmarkManager.AddMark(new BreakpointBookmark(fileName, document, new TextLocation(column, lineNumber), BreakpointAction.Break, "", ""));
 					document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.SingleLine, lineNumber));
 					document.CommitUpdate();
 					break;
 				}
+				column++;
 			}
 		}
 		
@@ -306,6 +306,7 @@ namespace ICSharpCode.SharpDevelop.Debugging
 				TextArea textArea = (TextArea)sender;
 				if (e.ToolTipShown) return;
 				if (oldToolTipControl != null && !oldToolTipControl.AllowClose) return;
+				if (!CodeCompletionOptions.EnableCodeCompletion) return;
 				if (!CodeCompletionOptions.TooltipsEnabled) return;
 				
 				if (CodeCompletionOptions.TooltipsOnlyWhenDebugging) {
@@ -441,6 +442,8 @@ namespace ICSharpCode.SharpDevelop.Debugging
 					if (currentValue != null) {
 						debuggerCanShowValue = true;
 						b.Append(" = ");
+						if (currentValue.Length > 256)
+							currentValue = currentValue.Substring(0, 256) + "...";
 						b.Append(currentValue);
 					}
 				}
@@ -505,7 +508,7 @@ namespace ICSharpCode.SharpDevelop.Debugging
 			string documentation = member.Documentation;
 			if (documentation != null && documentation.Length > 0) {
 				text.Append('\n');
-				text.Append(ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor.CodeCompletionData.GetDocumentation(documentation));
+				text.Append(ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor.CodeCompletionData.ConvertDocumentation(documentation));
 			}
 			return text.ToString();
 		}

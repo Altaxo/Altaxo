@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2318 $</version>
+//     <version>$Revision: 3287 $</version>
 // </file>
 
 using System;
@@ -163,16 +163,6 @@ namespace ICSharpCode.Core
 				}
 			}
 			return items;
-		}
-		
-		/// <summary>
-		/// Same as <see cref="BuildChildItems"/> (no type arguments).
-		/// Workaround for Boo compiler (it cannot distinguish between the generic and non-generic method).
-		/// </summary>
-		/// <param name="caller">The owner used to create the objects.</param>
-		public ArrayList BuildChildItemsArrayList(object caller)
-		{
-			return BuildChildItems(caller);
 		}
 		
 		/// <summary>

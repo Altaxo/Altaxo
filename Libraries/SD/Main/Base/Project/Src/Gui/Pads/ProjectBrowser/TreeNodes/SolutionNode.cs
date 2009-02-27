@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1576 $</version>
+//     <version>$Revision: 3469 $</version>
 // </file>
 
 using System;
@@ -73,6 +73,9 @@ namespace ICSharpCode.SharpDevelop.Project
 		void UpdateText()
 		{
 			Text = ResourceService.GetString("ICSharpCode.SharpDevelop.Commands.ProjectBrowser.SolutionNodeText") + " " + solution.Name;
+			if (Solution.ReadOnly) {
+				Text += StringParser.Parse(" (${res:Global.ReadOnly})");
+			}
 		}
 		
 		public void AddItem(string fileName)
@@ -92,7 +95,7 @@ namespace ICSharpCode.SharpDevelop.Project
 				solution.Save();
 				
 				node = new SolutionFolderNode(solution, newSolutionFolder);
-				node.AddTo(this);
+				node.InsertSorted(this);
 			}
 			node.AddItem(fileName);
 		}
@@ -128,7 +131,7 @@ namespace ICSharpCode.SharpDevelop.Project
 				parentNode = folderNode.Parent as AbstractProjectBrowserTreeNode;
 				
 				folderNode.Remove();
-				folderNode.AddTo(this);
+				folderNode.InsertSorted(this);
 				
 				this.solution.AddFolder(folderNode.Folder);
 			}
@@ -137,7 +140,7 @@ namespace ICSharpCode.SharpDevelop.Project
 				parentNode = projectNode.Parent as AbstractProjectBrowserTreeNode;
 				
 				projectNode.Remove();
-				projectNode.AddTo(this);
+				projectNode.InsertSorted(this);
 				projectNode.EnsureVisible();
 				this.solution.AddFolder(projectNode.Project);
 			}

@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 2313 $</version>
+//     <version>$Revision: 3358 $</version>
 // </file>
 
 using System;
@@ -79,7 +79,7 @@ namespace ICSharpCode.TextEditor.Document
 			}
 			set {
 				// 1440 twips is one inch
-				int pixelSize = (int)(value.SizeInPoints * 20 / TwipsPerPixelY);
+				float pixelSize = (float)Math.Round(value.SizeInPoints * 20 / TwipsPerPixelY);
 				
 				defaultFont    = value;
 				regularfont    = new Font(value.FontFamily, pixelSize * TwipsPerPixelY / 20f, FontStyle.Regular);

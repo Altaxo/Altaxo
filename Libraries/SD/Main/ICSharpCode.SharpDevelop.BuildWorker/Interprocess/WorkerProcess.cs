@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <author name="Daniel Grunwald"/>
-//     <version>$Revision: 2702 $</version>
+//     <version>$Revision: 3697 $</version>
 // </file>
 
 using System;
@@ -65,7 +65,7 @@ namespace ICSharpCode.SharpDevelop.BuildWorker.Interprocess
 		{
 			lock (this) {
 				ClearTimeout();
-				currentTimer = new Timer(OnTimeout, null, HostProcess.SendKeepAliveInterval * 3 / 2, -1);
+				currentTimer = new Timer(OnTimeout, null, HostProcess.SendKeepAliveInterval * 5 / 2, -1);
 			}
 		}
 		
@@ -188,6 +188,7 @@ namespace ICSharpCode.SharpDevelop.BuildWorker.Interprocess
 		
 		public void CallMethodOnWorker(string methodName, params object[] args)
 		{
+			Debug.WriteLine("CallMethodOnWorker: " + methodName);
 			sender.Send(SerializeObject(new MethodCall(methodName, args)));
 		}
 		

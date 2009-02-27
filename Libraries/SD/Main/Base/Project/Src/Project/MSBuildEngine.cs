@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 3119 $</version>
+//     <version>$Revision: 3763 $</version>
 // </file>
 
 using System;
@@ -224,6 +224,7 @@ namespace ICSharpCode.SharpDevelop.Project
 			
 			if (buildInProcess) {
 				settings.BuildDoneCallback = delegate(bool success) {
+					LoggingService.Debug("BuildInProcess: Received BuildDoneCallback");
 					if (Interlocked.Exchange(ref isBuildingInProcess, 0) != 1) {
 						MessageService.ShowError("isBuildingInProcess should have been 1!");
 					}
@@ -233,15 +234,18 @@ namespace ICSharpCode.SharpDevelop.Project
 				
 				Thread thread = new Thread(new ThreadStart(
 					delegate {
+						LoggingService.Debug("Acquiring InProcessMSBuildLock");
 						lock (MSBuildInternals.InProcessMSBuildLock) {
 							WorkerManager.RunBuildInProcess(job, settings);
+							LoggingService.Debug("Leaving InProcessMSBuildLock");
 						}
 					}));
-				thread.Name = "InProcess build thread";
+				thread.Name = "InProcess build thread " + thread.ManagedThreadId;
 				thread.SetApartmentState(ApartmentState.STA);
 				thread.Start();
 			} else {
 				settings.BuildDoneCallback = delegate(bool success) {
+					LoggingService.Debug("BuildOutOfProcess: Received BuildDoneCallback");
 					logger.FlushCurrentError();
 					feedbackSink.Done(success);
 				};
@@ -366,10 +370,11 @@ namespace ICSharpCode.SharpDevelop.Project
 					}
 					if (isShortFileName && !File.Exists(file)) {
 						file = "";
-					} 
+					}
 					//TODO: Do we have to check for other SDKs here.
-					else if (FileUtility.IsBaseDirectory(FileUtility.NetFrameworkInstallRoot, file)
-					           || FileUtility.IsBaseDirectory(FileUtility.ApplicationRootPath, file))
+					else if (file.EndsWith(".targets", StringComparison.OrdinalIgnoreCase)
+					         && (FileUtility.IsBaseDirectory(FileUtility.NetFrameworkInstallRoot, file)
+					             || FileUtility.IsBaseDirectory(FileUtility.ApplicationRootPath, file)))
 					{
 						file = "";
 					}

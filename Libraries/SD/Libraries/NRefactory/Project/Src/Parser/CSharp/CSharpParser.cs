@@ -2,14 +2,14 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Daniel Grunwald" email="daniel@danielgrunwald.de"/>
-//     <version>$Revision: 2819 $</version>
+//     <version>$Revision: 3717 $</version>
 // </file>
 
+using ICSharpCode.NRefactory.Visitors;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Diagnostics;
-
+using System.Text;
 using ICSharpCode.NRefactory.Ast;
 
 namespace ICSharpCode.NRefactory.Parser.CSharp
@@ -50,13 +50,25 @@ namespace ICSharpCode.NRefactory.Parser.CSharp
 			errDist = 0;
 		}
 
+		public override void Parse()
+		{
+			ParseRoot();
+			compilationUnit.AcceptVisitor(new SetParentVisitor(), null);
+		}
+		
 		public override Expression ParseExpression()
 		{
 			lexer.NextToken();
+			Location startLocation = la.Location;
 			Expression expr;
 			Expr(out expr);
 			// SEMICOLON HACK : without a trailing semicolon, parsing expressions does not work correctly
 			if (la.kind == Tokens.Semicolon) lexer.NextToken();
+			if (expr != null) {
+				expr.StartLocation = startLocation;
+				expr.EndLocation = t.EndLocation;
+				expr.AcceptVisitor(new SetParentVisitor(), null);
+			}
 			Expect(Tokens.EOF);
 			return expr;
 		}
@@ -80,7 +92,9 @@ namespace ICSharpCode.NRefactory.Parser.CSharp
 			}
 			
 			compilationUnit.BlockEnd();
+			blockStmt.EndLocation = t.EndLocation;
 			Expect(Tokens.EOF);
+			blockStmt.AcceptVisitor(new SetParentVisitor(), null);
 			return blockStmt;
 		}
 		
@@ -94,6 +108,7 @@ namespace ICSharpCode.NRefactory.Parser.CSharp
 			ClassBody();
 			compilationUnit.BlockEnd();
 			Expect(Tokens.EOF);
+			newType.AcceptVisitor(new SetParentVisitor(), null);
 			return newType.Children;
 		}
 		
@@ -103,26 +118,27 @@ namespace ICSharpCode.NRefactory.Parser.CSharp
 			if (la.kind != Tokens.OpenParenthesis) {
 				return false;
 			}
-			if (IsSimpleTypeCast()) {
-				return true;
-			}
-			return GuessTypeCast();
-		}
-
-		// "(" ( typeKW [ "[" {","} "]" | "*" ] | void  ( "[" {","} "]" | "*" ) ) ")"
-		// only for built-in types, all others use GuessTypeCast!
-		bool IsSimpleTypeCast ()
-		{
-			// assert: la.kind == _lpar
+			bool isPossibleExpression = true;
+			
 			lexer.StartPeek();
 			Token pt = lexer.Peek();
 			
-			if (!IsTypeKWForTypeCast(ref pt)) {
+			if (!IsTypeNameOrKWForTypeCast(ref pt, ref isPossibleExpression)) {
 				return false;
 			}
-			if (pt.kind == Tokens.Question) // TODO: check if IsTypeKWForTypeCast doesn't already to this
+			
+			// ")"
+			if (pt.kind != Tokens.CloseParenthesis) {
+				return false;
+			}
+			if (isPossibleExpression) {
+				// check successor
 				pt = lexer.Peek();
-			return pt.kind == Tokens.CloseParenthesis;
+				return Tokens.CastFollower[pt.kind];
+			} else {
+				// not possibly an expression: don't check cast follower
+				return true;
+			}
 		}
 
 		/* !!! Proceeds from current peek position !!! */
@@ -139,17 +155,25 @@ namespace ICSharpCode.NRefactory.Parser.CSharp
 		}
 
 		/* !!! Proceeds from current peek position !!! */
+		bool IsTypeNameOrKWForTypeCast(ref Token pt, ref bool isPossibleExpression)
+		{
+			if (Tokens.TypeKW[pt.kind] || pt.kind == Tokens.Void) {
+				isPossibleExpression = false;
+				return IsTypeKWForTypeCast(ref pt);
+			} else {
+				return IsTypeNameForTypeCast(ref pt, ref isPossibleExpression);
+			}
+		}
+		
 		bool IsTypeNameOrKWForTypeCast(ref Token pt)
 		{
-			if (Tokens.TypeKW[pt.kind] || pt.kind == Tokens.Void)
-				return IsTypeKWForTypeCast(ref pt);
-			else
-				return IsTypeNameForTypeCast(ref pt);
+			bool tmp = false;
+			return IsTypeNameOrKWForTypeCast(ref pt, ref tmp);
 		}
 
 		// TypeName = ident [ "::" ident ] { ["<" TypeNameOrKW { "," TypeNameOrKW } ">" ] "." ident } ["?"] PointerOrDims
 		/* !!! Proceeds from current peek position !!! */
-		bool IsTypeNameForTypeCast(ref Token pt)
+		bool IsTypeNameForTypeCast(ref Token pt, ref bool isPossibleExpression)
 		{
 			// ident
 			if (!IsIdentifierToken(pt)) {
@@ -191,29 +215,10 @@ namespace ICSharpCode.NRefactory.Parser.CSharp
 				pt = Peek();
 			}
 			if (pt.kind == Tokens.Times || pt.kind == Tokens.OpenSquareBracket) {
+				isPossibleExpression = false;
 				return IsPointerOrDims(ref pt);
 			}
 			return true;
-		}
-
-		// "(" TypeName ")" castFollower
-		bool GuessTypeCast ()
-		{
-			// assert: la.kind == _lpar
-			StartPeek();
-			Token pt = Peek();
-
-			if (!IsTypeNameForTypeCast(ref pt)) {
-				return false;
-			}
-			
-			// ")"
-			if (pt.kind != Tokens.CloseParenthesis) {
-				return false;
-			}
-			// check successor
-			pt = Peek();
-			return Tokens.CastFollower[pt.kind];
 		}
 		// END IsTypeCast
 		

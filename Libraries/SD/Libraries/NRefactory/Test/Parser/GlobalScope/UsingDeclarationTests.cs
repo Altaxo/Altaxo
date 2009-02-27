@@ -2,7 +2,7 @@
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
-//     <version>$Revision: 1609 $</version>
+//     <version>$Revision: 3660 $</version>
 // </file>
 
 using System;
@@ -57,7 +57,7 @@ namespace ICSharpCode.NRefactory.Tests.Ast
 			Assert.IsTrue(((Using)ud.Usings[0]).IsAlias);
 			Assert.AreEqual("StringCollection", ud.Usings[0].Name);
 			Assert.AreEqual("System.Collections.Generic.List", ud.Usings[0].Alias.Type);
-			Assert.AreEqual("System.String", ud.Usings[0].Alias.GenericTypes[0].SystemType);
+			Assert.AreEqual("System.String", ud.Usings[0].Alias.GenericTypes[0].Type);
 		}
 		
 		#region C#
