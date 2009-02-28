@@ -219,7 +219,7 @@
       <MenuItem id="Paste" label="${res:XML.MainMenu.EditMenu.Paste}" icon="Icons.16x16.PasteIcon"
 				description="${res:XML.MainMenu.EditMenu.Paste.Description}" shortcut="Control|V" class="ICSharpCode.SharpDevelop.Commands.Paste" />
       <MenuItem id="Delete" label="${res:XML.MainMenu.EditMenu.Delete}" icon="Icons.16x16.DeleteIcon"
-				description="${res:XML.MainMenu.EditMenu.Delete.Description}" class="ICSharpCode.SharpDevelop.Commands.Delete" />
+				description="${res:XML.MainMenu.EditMenu.Delete.Description}" shortcut="Delete" class="ICSharpCode.SharpDevelop.Commands.Delete" />
       <MenuItem id="SelectAll" label="${res:XML.MainMenu.EditMenu.SelectAll}" description="${res:XML.MainMenu.EditMenu.SelectAll.Description}"
 				shortcut="Control|A" class="ICSharpCode.SharpDevelop.Commands.SelectAll" />
       <MenuItem id="CopySpec" label="${res:XML.MainMenu.CopySpecificMenu}"  type="Menu">

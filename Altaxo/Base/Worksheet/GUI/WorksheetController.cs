@@ -3008,7 +3008,7 @@ namespace Altaxo.Worksheet.GUI
 
     public bool EnableDelete
     {
-      get { return true; }
+      get { return !m_CellEdit_IsArmed; }
     }
 
     public bool EnableSelectAll
