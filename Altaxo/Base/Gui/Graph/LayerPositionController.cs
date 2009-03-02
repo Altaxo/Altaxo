@@ -68,10 +68,6 @@ namespace Altaxo.Gui.Graph
     void InitializeHeightType(SelectableListNodeList names);
     void InitializeWidthType(SelectableListNodeList names);
     void InitializeLinkedLayer(SelectableListNodeList names);
-
-    IAxisLinkView GetXAxisLink();
-    IAxisLinkView GetYAxisLink();
-
   }
   #endregion
 

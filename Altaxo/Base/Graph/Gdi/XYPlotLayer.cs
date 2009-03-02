@@ -827,7 +827,7 @@ namespace Altaxo.Graph.Gdi
         this.Legends = from._legends == null ? new GraphicCollection() : new GraphicCollection(from._legends);
 
         // XYPlotLayer specific
-        this.SetLinkedLayerLink ( from._linkedLayerProxy.ClonePathOnly(this) );
+        this.SetLinkedLayerLink(null == from._linkedLayerProxy ? null : from._linkedLayerProxy.ClonePathOnly(this));
 				this._linkedLayer = from._linkedLayer; // this is not good, but neccessary in order to let the Layer control dialog work
 
         this.GraphObjects = null == from._graphObjects ? null : new GraphicCollection(from._graphObjects);

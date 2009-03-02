@@ -55,10 +55,6 @@ namespace Altaxo.Gui.Graph
     private System.Windows.Forms.Label label16;
     private System.Windows.Forms.TextBox m_Layer_edLeftPosition;
     private System.Windows.Forms.Label label15;
-    private System.Windows.Forms.GroupBox m_groupLinkXAxis;
-    private AxisLinkControl m_ctrlLinkXAxis;
-    private System.Windows.Forms.GroupBox m_groupLinkYAxis;
-    private AxisLinkControl m_ctrlLinkYAxis;
     private System.Windows.Forms.CheckBox m_Layer_ClipDataToFrame;
     private Altaxo.Gui.Common.Drawing.RotationComboBox m_Layer_edRotation;
     /// <summary> 
@@ -140,59 +136,53 @@ namespace Altaxo.Gui.Graph
       this.label16 = new System.Windows.Forms.Label();
       this.m_Layer_edLeftPosition = new System.Windows.Forms.TextBox();
       this.label15 = new System.Windows.Forms.Label();
-      this.m_groupLinkXAxis = new System.Windows.Forms.GroupBox();
-      this.m_groupLinkYAxis = new System.Windows.Forms.GroupBox();
       this.m_Layer_ClipDataToFrame = new System.Windows.Forms.CheckBox();
       this.m_Layer_edRotation = new Altaxo.Gui.Common.Drawing.RotationComboBox();
-      this.m_ctrlLinkYAxis = new Altaxo.Gui.Graph.AxisLinkControl();
-      this.m_ctrlLinkXAxis = new Altaxo.Gui.Graph.AxisLinkControl();
-      this.m_groupLinkXAxis.SuspendLayout();
-      this.m_groupLinkYAxis.SuspendLayout();
       this.SuspendLayout();
       // 
       // m_Layer_cbHeightType
       // 
+      this.m_Layer_cbHeightType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.m_Layer_cbHeightType.Location = new System.Drawing.Point(115, 160);
       this.m_Layer_cbHeightType.Name = "m_Layer_cbHeightType";
       this.m_Layer_cbHeightType.Size = new System.Drawing.Size(157, 21);
       this.m_Layer_cbHeightType.TabIndex = 35;
-      this.m_Layer_cbHeightType.Text = "comboBox1";
       this.m_Layer_cbHeightType.SelectionChangeCommitted += new System.EventHandler(this.EhHeightType_SelectionChangeCommitted);
       // 
       // m_Layer_cbWidthType
       // 
+      this.m_Layer_cbWidthType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.m_Layer_cbWidthType.Location = new System.Drawing.Point(115, 136);
       this.m_Layer_cbWidthType.Name = "m_Layer_cbWidthType";
       this.m_Layer_cbWidthType.Size = new System.Drawing.Size(157, 21);
       this.m_Layer_cbWidthType.TabIndex = 34;
-      this.m_Layer_cbWidthType.Text = "comboBox1";
       this.m_Layer_cbWidthType.SelectionChangeCommitted += new System.EventHandler(this.EhWidthType_SelectionChangeCommitted);
       // 
       // m_Layer_cbTopType
       // 
+      this.m_Layer_cbTopType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.m_Layer_cbTopType.Location = new System.Drawing.Point(115, 104);
       this.m_Layer_cbTopType.Name = "m_Layer_cbTopType";
       this.m_Layer_cbTopType.Size = new System.Drawing.Size(157, 21);
       this.m_Layer_cbTopType.TabIndex = 33;
-      this.m_Layer_cbTopType.Text = "comboBox1";
       this.m_Layer_cbTopType.SelectionChangeCommitted += new System.EventHandler(this.EhTopType_SelectionChangeCommitted);
       // 
       // m_Layer_cbLeftType
       // 
+      this.m_Layer_cbLeftType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.m_Layer_cbLeftType.Location = new System.Drawing.Point(115, 80);
       this.m_Layer_cbLeftType.Name = "m_Layer_cbLeftType";
       this.m_Layer_cbLeftType.Size = new System.Drawing.Size(157, 21);
       this.m_Layer_cbLeftType.TabIndex = 32;
-      this.m_Layer_cbLeftType.Text = "comboBox1";
       this.m_Layer_cbLeftType.SelectionChangeCommitted += new System.EventHandler(this.EhLeftType_SelectionChangeCommitted);
       // 
       // m_Layer_cbLinkedLayer
       // 
+      this.m_Layer_cbLinkedLayer.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.m_Layer_cbLinkedLayer.Location = new System.Drawing.Point(104, 8);
       this.m_Layer_cbLinkedLayer.Name = "m_Layer_cbLinkedLayer";
       this.m_Layer_cbLinkedLayer.Size = new System.Drawing.Size(168, 21);
       this.m_Layer_cbLinkedLayer.TabIndex = 31;
-      this.m_Layer_cbLinkedLayer.Text = "None";
       this.m_Layer_cbLinkedLayer.SelectionChangeCommitted += new System.EventHandler(this.EhLinkedLayer_SelectionChangeCommitted);
       // 
       // label21
@@ -297,26 +287,6 @@ namespace Altaxo.Gui.Graph
       this.label15.Text = "Left";
       this.label15.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
       // 
-      // m_groupLinkXAxis
-      // 
-      this.m_groupLinkXAxis.Controls.Add(this.m_ctrlLinkXAxis);
-      this.m_groupLinkXAxis.Location = new System.Drawing.Point(280, 0);
-      this.m_groupLinkXAxis.Name = "m_groupLinkXAxis";
-      this.m_groupLinkXAxis.Size = new System.Drawing.Size(144, 136);
-      this.m_groupLinkXAxis.TabIndex = 37;
-      this.m_groupLinkXAxis.TabStop = false;
-      this.m_groupLinkXAxis.Text = "Link X scale";
-      // 
-      // m_groupLinkYAxis
-      // 
-      this.m_groupLinkYAxis.Controls.Add(this.m_ctrlLinkYAxis);
-      this.m_groupLinkYAxis.Location = new System.Drawing.Point(280, 144);
-      this.m_groupLinkYAxis.Name = "m_groupLinkYAxis";
-      this.m_groupLinkYAxis.Size = new System.Drawing.Size(144, 136);
-      this.m_groupLinkYAxis.TabIndex = 38;
-      this.m_groupLinkYAxis.TabStop = false;
-      this.m_groupLinkYAxis.Text = "Link Y scale";
-      // 
       // m_Layer_ClipDataToFrame
       // 
       this.m_Layer_ClipDataToFrame.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -338,30 +308,10 @@ namespace Altaxo.Gui.Graph
       this.m_Layer_edRotation.TabIndex = 42;
       this.m_Layer_edRotation.RotationChanged += new System.EventHandler(this.EhRotation_Changed);
       // 
-      // m_ctrlLinkYAxis
-      // 
-      this.m_ctrlLinkYAxis.Controller = null;
-      this.m_ctrlLinkYAxis.ControllerObject = null;
-      this.m_ctrlLinkYAxis.Location = new System.Drawing.Point(8, 16);
-      this.m_ctrlLinkYAxis.Name = "m_ctrlLinkYAxis";
-      this.m_ctrlLinkYAxis.Size = new System.Drawing.Size(128, 120);
-      this.m_ctrlLinkYAxis.TabIndex = 0;
-      // 
-      // m_ctrlLinkXAxis
-      // 
-      this.m_ctrlLinkXAxis.Controller = null;
-      this.m_ctrlLinkXAxis.ControllerObject = null;
-      this.m_ctrlLinkXAxis.Location = new System.Drawing.Point(8, 16);
-      this.m_ctrlLinkXAxis.Name = "m_ctrlLinkXAxis";
-      this.m_ctrlLinkXAxis.Size = new System.Drawing.Size(128, 120);
-      this.m_ctrlLinkXAxis.TabIndex = 36;
-      // 
       // LayerPositionControl
       // 
       this.Controls.Add(this.m_Layer_edRotation);
       this.Controls.Add(this.m_Layer_ClipDataToFrame);
-      this.Controls.Add(this.m_groupLinkYAxis);
-      this.Controls.Add(this.m_groupLinkXAxis);
       this.Controls.Add(this.m_Layer_cbHeightType);
       this.Controls.Add(this.m_Layer_cbWidthType);
       this.Controls.Add(this.m_Layer_cbTopType);
@@ -380,9 +330,7 @@ namespace Altaxo.Gui.Graph
       this.Controls.Add(this.m_Layer_edLeftPosition);
       this.Controls.Add(this.label15);
       this.Name = "LayerPositionControl";
-      this.Size = new System.Drawing.Size(432, 288);
-      this.m_groupLinkXAxis.ResumeLayout(false);
-      this.m_groupLinkYAxis.ResumeLayout(false);
+      this.Size = new System.Drawing.Size(281, 273);
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -471,8 +419,6 @@ namespace Altaxo.Gui.Graph
       InitComboBox(this.m_Layer_cbLinkedLayer,names);
     }
 
-    public IAxisLinkView GetXAxisLink() { return this.m_ctrlLinkXAxis; }
-    public IAxisLinkView GetYAxisLink() { return this.m_ctrlLinkYAxis; }
 
 
     #endregion

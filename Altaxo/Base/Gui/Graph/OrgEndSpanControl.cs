@@ -47,10 +47,6 @@ namespace Altaxo.Gui.Graph
     private System.Windows.Forms.ComboBox cbCombo3;
     private System.Windows.Forms.TextBox edText3;
     private System.Windows.Forms.Label lblLabel3;
-    private Label lblLabel4;
-    private TextBox edText4;
-    private TextBox edText5;
-    private Label lblLabel5;
     /// <summary> 
     /// Required designer variable.
     /// </summary>
@@ -101,10 +97,6 @@ namespace Altaxo.Gui.Graph
       this.cbCombo3 = new System.Windows.Forms.ComboBox();
       this.edText3 = new System.Windows.Forms.TextBox();
       this.lblLabel3 = new System.Windows.Forms.Label();
-      this.lblLabel4 = new System.Windows.Forms.Label();
-      this.edText4 = new System.Windows.Forms.TextBox();
-      this.edText5 = new System.Windows.Forms.TextBox();
-      this.lblLabel5 = new System.Windows.Forms.Label();
       this.SuspendLayout();
       // 
       // lblLabel1
@@ -126,20 +118,20 @@ namespace Altaxo.Gui.Graph
       // 
       // cbCombo1
       // 
+      this.cbCombo1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.cbCombo1.Location = new System.Drawing.Point(80, 0);
       this.cbCombo1.Name = "cbCombo1";
       this.cbCombo1.Size = new System.Drawing.Size(121, 21);
       this.cbCombo1.TabIndex = 2;
-      this.cbCombo1.Text = "comboBox1";
       this.cbCombo1.SelectionChangeCommitted += new System.EventHandler(this.cbCombo1_SelectionChangeCommitted);
       // 
       // cbCombo2
       // 
+      this.cbCombo2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.cbCombo2.Location = new System.Drawing.Point(80, 40);
       this.cbCombo2.Name = "cbCombo2";
       this.cbCombo2.Size = new System.Drawing.Size(121, 21);
       this.cbCombo2.TabIndex = 5;
-      this.cbCombo2.Text = "comboBox2";
       this.cbCombo2.SelectionChangeCommitted += new System.EventHandler(this.cbCombo2_SelectionChangeCommitted);
       // 
       // edText2
@@ -161,11 +153,11 @@ namespace Altaxo.Gui.Graph
       // 
       // cbCombo3
       // 
+      this.cbCombo3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.cbCombo3.Location = new System.Drawing.Point(80, 80);
       this.cbCombo3.Name = "cbCombo3";
       this.cbCombo3.Size = new System.Drawing.Size(121, 21);
       this.cbCombo3.TabIndex = 8;
-      this.cbCombo3.Text = "comboBox3";
       this.cbCombo3.SelectionChangeCommitted += new System.EventHandler(this.cbCombo3_SelectionChangeCommitted);
       // 
       // edText3
@@ -185,46 +177,8 @@ namespace Altaxo.Gui.Graph
       this.lblLabel3.TabIndex = 6;
       this.lblLabel3.Text = "label3";
       // 
-      // lblLabel4
-      // 
-      this.lblLabel4.Location = new System.Drawing.Point(9, 116);
-      this.lblLabel4.Name = "lblLabel4";
-      this.lblLabel4.Size = new System.Drawing.Size(64, 20);
-      this.lblLabel4.TabIndex = 9;
-      this.lblLabel4.Text = "label3";
-      // 
-      // edText4
-      // 
-      this.edText4.Location = new System.Drawing.Point(216, 113);
-      this.edText4.Name = "edText4";
-      this.edText4.Size = new System.Drawing.Size(100, 20);
-      this.edText4.TabIndex = 10;
-      this.edText4.Text = "textBox3";
-      this.edText4.Validating += new System.ComponentModel.CancelEventHandler(this.edText4_Validating);
-      // 
-      // edText5
-      // 
-      this.edText5.Location = new System.Drawing.Point(216, 153);
-      this.edText5.Name = "edText5";
-      this.edText5.Size = new System.Drawing.Size(100, 20);
-      this.edText5.TabIndex = 11;
-      this.edText5.Text = "textBox3";
-      this.edText5.Validating += new System.ComponentModel.CancelEventHandler(this.edText5_Validating);
-      // 
-      // lblLabel5
-      // 
-      this.lblLabel5.Location = new System.Drawing.Point(8, 153);
-      this.lblLabel5.Name = "lblLabel5";
-      this.lblLabel5.Size = new System.Drawing.Size(64, 20);
-      this.lblLabel5.TabIndex = 12;
-      this.lblLabel5.Text = "label3";
-      // 
       // OrgEndSpanControl
       // 
-      this.Controls.Add(this.lblLabel5);
-      this.Controls.Add(this.edText5);
-      this.Controls.Add(this.edText4);
-      this.Controls.Add(this.lblLabel4);
       this.Controls.Add(this.cbCombo3);
       this.Controls.Add(this.edText3);
       this.Controls.Add(this.lblLabel3);
@@ -235,7 +189,7 @@ namespace Altaxo.Gui.Graph
       this.Controls.Add(this.edText1);
       this.Controls.Add(this.lblLabel1);
       this.Name = "OrgEndSpanControl";
-      this.Size = new System.Drawing.Size(328, 176);
+      this.Size = new System.Drawing.Size(328, 109);
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -257,11 +211,6 @@ namespace Altaxo.Gui.Graph
     public void SetLabel3(string txt)
     {
       this.lblLabel3.Text = txt;
-    }
-
-    public void SetLabel4(string txt)
-    {
-      this.lblLabel4.Text = txt;
     }
 
     static void SetChoice(ComboBox cb, string[] choices, int selected)
@@ -300,16 +249,7 @@ namespace Altaxo.Gui.Graph
     {
       this.edText3.Text = txt;
     }
-
-    public void SetValue4(string txt)
-    {
-      this.edText4.Text = txt;
-    }
-
-    public void SetValue5(string txt)
-    {
-      this.edText5.Text = txt;
-    }
+  
 
     public void EnableChoice1(bool enable)
     {
@@ -384,18 +324,6 @@ namespace Altaxo.Gui.Graph
       if(_controller!=null)
         e.Cancel |= _controller.EhValue3Changed(this.edText3.Text);
     }
-
-    private void edText4_Validating(object sender, CancelEventArgs e)
-    {
-      if (_controller != null)
-        e.Cancel |= _controller.EhValue4Changed(this.edText4.Text);
-    }
-
-    private void edText5_Validating(object sender, CancelEventArgs e)
-    {
-      if (_controller != null)
-        e.Cancel |= _controller.EhValue5Changed(this.edText5.Text);
-    }
   }
 
   public interface IOrgEndSpanView
@@ -405,15 +333,12 @@ namespace Altaxo.Gui.Graph
     void SetLabel1(string txt);
     void SetLabel2(string txt);
     void SetLabel3(string txt);
-    void SetLabel4(string txt);
     void SetChoice1(string[] choices, int selected);
     void SetChoice2(string[] choices, int selected);
     void SetChoice3(string[] choices, int selected);
     void SetValue1(string txt);
     void SetValue2(string txt);
     void SetValue3(string txt);
-    void SetValue4(string txt);
-    void SetValue5(string txt);
 
     void EnableChoice1(bool enable);
     void EnableChoice2(bool enable);

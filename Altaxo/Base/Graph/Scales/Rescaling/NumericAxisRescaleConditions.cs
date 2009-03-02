@@ -37,13 +37,6 @@ namespace Altaxo.Graph.Scales.Rescaling
     protected double _end;
     protected double _span;
 
-    protected double _minGrace=0.1;
-    protected double _maxGrace=0.1;
-
-    /// <summary>If set, gives the number of minor ticks choosen by the user.</summary>
-    int? _minorTicks;
-    /// <summary>If set, gives the physical value between two major ticks.</summary>
-    double? _majorTick;
 
     [field:NonSerialized]
     public event EventHandler Changed;
@@ -96,13 +89,6 @@ namespace Altaxo.Graph.Scales.Rescaling
       this._org = from._org;
       this._end = from._end;
       this._span = from._span;
-
-      this._minGrace = from._minGrace;
-      this._maxGrace = from._maxGrace;
-
-      this._minorTicks = from._minorTicks;
-      this._majorTick = from._majorTick;
-      
 
       if(!bEqual)
         OnChanged();
@@ -158,47 +144,6 @@ namespace Altaxo.Graph.Scales.Rescaling
         return _spanRescaling;
       }
     }
-
-
-    public double MinGrace
-    {
-      get
-      {
-        return _minGrace;
-      }
-    }
-
-    public double MaxGrace
-    {
-      get
-      {
-        return _maxGrace;
-      }
-    }
-
-    public int? MinorTicks
-    {
-      get
-      {
-        return _minorTicks;
-      }
-      set
-      {
-        _minorTicks = value;
-      }
-    }
-
-    public double? MajorTick
-    {
-      get
-      {
-        return _majorTick;
-      }
-      set
-      {
-        _majorTick = value;
-      }
-    }
     #endregion
 
 
@@ -221,8 +166,6 @@ namespace Altaxo.Graph.Scales.Rescaling
       _end = end;
       _spanRescaling = spanRescaling;
       _span = span;
-      _minorTicks = minorTicks;
-      _majorTick = majorTick;
 
       Normalize(ref _orgRescaling, ref _endRescaling, ref _spanRescaling);
       OnChanged();

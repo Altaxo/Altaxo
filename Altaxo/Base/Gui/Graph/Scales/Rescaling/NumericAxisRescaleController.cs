@@ -82,8 +82,6 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
         _org =  _doc.Org;
         _end =  _doc.End;
         _span = _doc.Span;
-        _minorTicks = _doc.MinorTicks;
-        _majorTick = _doc.MajorTick;
 
         if(_axis!=null)
         {
@@ -110,7 +108,6 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
       _view.SetLabel1("Org:");
       _view.SetLabel2("End:");
       _view.SetLabel3("Span:");
-      _view.SetLabel4("Minor ticks:");
 
       _view.SetChoice1(_choices, (int)_orgRescaling);
       _view.SetChoice2(_choices, (int)_endRescaling);
@@ -120,8 +117,6 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
       _view.SetValue1(NumberConversion.ToString(_org));
       _view.SetValue2(NumberConversion.ToString(_end));
       _view.SetValue3(NumberConversion.ToString(_span));
-      _view.SetValue4(_minorTicks == null ? string.Empty : NumberConversion.ToString((int)_minorTicks));
-      _view.SetValue5(_majorTick == null ? string.Empty : NumberConversion.ToString((double)_majorTick));
 
       SetEnableState();
     }

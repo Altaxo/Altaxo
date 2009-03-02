@@ -231,22 +231,27 @@ namespace ICSharpCode.Core.WinForms
 			}
 		}
 #if ModifiedForAltaxo
+		static Dictionary<string, Cursor> cursorCache = new Dictionary<string,Cursor>();
     public static Cursor GetCursor(string name)
     {
-      object iconobj = GetBitmap(name);
-			
-      if (iconobj == null) 
-      {
-        return null;
-      }
-      if (iconobj is Cursor) 
-      {
-        return (Cursor)iconobj;
-      } 
-      else 
-      {
-        return new Cursor(((Bitmap)iconobj).GetHicon());
-      }
+			lock (cursorCache)
+			{
+				Cursor crs;
+				if (cursorCache.TryGetValue(name, out crs))
+					return crs;
+				object bmp = ResourceService.GetImageResource(name);
+				if (bmp == null)
+				{
+					throw new ResourceNotFoundException(name);
+				}
+				if (bmp is Cursor)
+					crs = (Cursor)bmp;
+				else
+					crs = new Cursor(((Bitmap)bmp).GetHicon());
+
+				cursorCache.Add(name, crs);
+				return crs;
+			}
     }
 #endif
 	}
