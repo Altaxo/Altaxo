@@ -22,10 +22,6 @@ namespace Altaxo.Graph.Scales.Ticks
 	public class LinearTickSpacing : NumericTickSpacing
 	{
 		// primary values
-		/// <summary>Proposed value of axis origin, proposed either by the lower physical boundary or by the user (if axis org is fixed).</summary>
-		protected double _baseOrg = 0; // proposed value of org
-		/// <summary>Proposed value of axis end, proposed either by the upper physical boundary or by the user (if axis end is fixed).</summary>
-		protected double _baseEnd = 1; // proposed value of end
 		/// <summary>Current axis origin divided by the major tick span value.</summary>
 		protected double _axisOrgByMajor = 0;
 		/// <summary>Current axis end divided by the major tick span value.</summary>
@@ -37,15 +33,6 @@ namespace Altaxo.Graph.Scales.Ticks
 
 
 
-		// cached values
-		/// <summary>Current axis origin (cached value).</summary>
-		protected double _cachedAxisOrg = 0;
-		/// <summary>Current axis end (cached value).</summary>
-		protected double _cachedAxisEnd = 1;
-		/// <summary>Current axis span (i.e. end-org) (cached value).</summary>
-		protected double _cachedAxisSpan = 1;
-		/// <summary>Current inverse of axis span (cached value).</summary>
-		protected double _cachedOneByAxisSpan = 1;
 
 
 		/// <summary>If set, gives the number of minor ticks choosen by the user.</summary>
@@ -77,7 +64,22 @@ namespace Altaxo.Graph.Scales.Ticks
 		List<double> _majorTicks;
 		List<double> _minorTicks;
 
+		class CachedMajorMinor
+		{
+			public double Org, End;
+			public double MajorSpan;
+			public int MinorTicks;
 
+			public CachedMajorMinor(double org, double end, double major, int minor)
+			{
+				Org = org;
+				End = end;
+				MajorSpan = major;
+				MinorTicks = minor;
+			}
+		}
+
+		CachedMajorMinor _cachedMajorMinor;
 
 		#region Serialization
 
@@ -196,16 +198,10 @@ namespace Altaxo.Graph.Scales.Ticks
 
 		public virtual void CopyFrom(LinearTickSpacing from)
 		{
-			this._cachedAxisEnd = from._cachedAxisEnd;
 			this._axisEndByMajor = from._axisEndByMajor;
-			this._cachedAxisOrg = from._cachedAxisOrg;
 			this._axisOrgByMajor = from._axisOrgByMajor;
-			this._cachedAxisSpan = from._cachedAxisSpan;
-			this._baseEnd = from._baseEnd;
-			this._baseOrg = from._baseOrg;
 			this._majorSpan = from._majorSpan;
 			this._numberOfMinorTicks = from._numberOfMinorTicks;
-			this._cachedOneByAxisSpan = from._cachedOneByAxisSpan;
 
 			_majorTicks.Clear();
 			_majorTicks.AddRange(from._majorTicks);
@@ -222,6 +218,9 @@ namespace Altaxo.Graph.Scales.Ticks
 
 			_snapOrgToTick = from._snapOrgToTick;
 			_snapEndToTick = from._snapEndToTick;
+
+			_targetNumberOfMajorTicks = from._targetNumberOfMajorTicks;
+			_targetNumberOfMinorTicks = from._targetNumberOfMinorTicks;
 
       _suppressedMajorTicks = (SuppressedTicks)from._suppressedMajorTicks.Clone();
       _suppressedMinorTicks = (SuppressedTicks)from._suppressedMinorTicks.Clone();
@@ -521,114 +520,37 @@ namespace Altaxo.Graph.Scales.Ticks
 
 		bool InternalPreProcessScaleBoundaries(ref double xorg, ref double xend, bool isOrgExtendable, bool isEndExtendable)
 		{
-			bool hasBoundaryChanged = false;
+			_cachedMajorMinor = null;
 
-			if (!(xend > xorg))
-				throw new ArgumentOutOfRangeException("xend is not greater than xorg");
+			if (!(xend >= xorg))
+				throw new ArgumentOutOfRangeException("xend is not greater or equal than xorg");
 
-			double range = xend - xorg;
+			if (xend == xorg)
+				ApplyGraceAndZeroLever(xorg, xend, isOrgExtendable, isEndExtendable, out xorg, out xend);
 
-			// This is the zero-lever test.  If xorg is within the zero lever fraction
-			// of the data range, then use zero.
+			double xorg2, xend2;
+			ApplyGraceAndZeroLever(xorg, xend, isOrgExtendable, isEndExtendable, out xorg2, out xend2);
 
-			if (isOrgExtendable && xorg > 0 && Math.Abs(xorg / range) < ZeroLever)
+			double propOrg, propEnd, propOrg2, propEnd2, majorSpan, majorSpan2;
+			int minorTicks, minorTicks2;
+			CalculateBoundaries(xend - xorg, xorg, xend, isOrgExtendable, isEndExtendable, out propOrg, out propEnd, out majorSpan, out minorTicks);
+			CalculateBoundaries(xend2 - xorg2, xorg, xend, isOrgExtendable, isEndExtendable, out propOrg2, out propEnd2, out majorSpan2, out minorTicks2);
+
+			if ((propEnd2 - propOrg2) < (propEnd - propOrg))
 			{
-				xorg = 0;
-				isOrgExtendable = false;
-				hasBoundaryChanged = true;
+				propOrg = propOrg2;
+				propEnd = propEnd2;
+				majorSpan = majorSpan2;
+				minorTicks = minorTicks2;
 			}
 
-			// Zero-lever test for cases where the xend value is less than zero
-			if (isEndExtendable && xend < 0 && Math.Abs(xend / range) < ZeroLever)
-			{
-				xend = 0;
-				isEndExtendable = false;
-				hasBoundaryChanged = true;
-			}
+			bool hasChanged = xorg != propOrg || xend != propEnd;
+			xorg = propOrg;
+			xend = propEnd;
 
-			range = xend - xorg;
+			_cachedMajorMinor = new CachedMajorMinor(propOrg, propEnd, majorSpan, minorTicks);
 
-			if (range == 0)
-			{
-				double extend = xorg == 0 ? 0.5 : Math.Abs(xorg / 10);
-				if (isOrgExtendable && isEndExtendable)
-				{
-					xorg -= extend;
-					xend += extend;
-					hasBoundaryChanged = true;
-				}
-				else if (isOrgExtendable)
-				{
-					xorg -= 2 * extend;
-					hasBoundaryChanged = true;
-				}
-				else if (isEndExtendable)
-				{
-					xend += 2 * extend;
-					hasBoundaryChanged = true;
-				}
-			}
-
-			range = xend - xorg;
-
-
-
-			if (range > 0)
-			{
-				double majorSpan;
-				int minorTicks;
-				CalculateTicks(xorg, xend, out majorSpan, out minorTicks);
-				double axisOrgByMajor;
-				double axisEndByMajor;
-
-				if (isOrgExtendable)
-				{
-					axisOrgByMajor = System.Math.Floor(minorTicks * xorg / majorSpan) / minorTicks;
-					double norg = axisOrgByMajor * majorSpan;
-
-					// Compare this new org with a value adjusted by grace
-					// Do not let the grace value extend the axis below zero when all the values were positive
-					double gorg = xorg;
-					if ((xorg < 0 || xorg - _minGrace * range >= 0.0))
-						gorg = xorg - _minGrace * range;
-
-					if (gorg < norg) // if the grace adjusted value exceeds the tick adjusted limit, than we adjust the limit further
-						axisOrgByMajor = System.Math.Floor(minorTicks * gorg / majorSpan) / minorTicks;
-
-					xorg = axisOrgByMajor * majorSpan;
-					hasBoundaryChanged = true;
-				}
-				else
-				{
-					axisOrgByMajor = xorg / majorSpan;
-				}
-
-				if (isEndExtendable)
-				{
-					axisEndByMajor = System.Math.Ceiling(minorTicks * xend / majorSpan) / minorTicks;
-					double nend = axisEndByMajor * majorSpan;
-
-					// Compare this new end with a value adjusted by grace
-					// Do not let the grace value extend the axis above zero when all the values are negative
-					double gend = xend;
-					if (xend > 0 || xend + _maxGrace * range <= 0.0)
-						gend = xend + _maxGrace * range;
-
-					if (gend > nend) // if the grace adjusted value exceeds the tick adjusted limit, than we adjust the limit further
-						axisEndByMajor = System.Math.Ceiling(minorTicks * gend / majorSpan) / minorTicks;
-
-					xend = axisEndByMajor * majorSpan;
-					hasBoundaryChanged = true;
-				}
-				else
-				{
-					axisEndByMajor = xend / majorSpan;
-				}
-
-			}
-
-
-			return hasBoundaryChanged;
+			return hasChanged;
 		}
 
 
@@ -657,13 +579,16 @@ namespace Altaxo.Graph.Scales.Ticks
 			if (!end.IsFinite())
 				throw new ArgumentOutOfRangeException("end is not finite");
 
-
-			CalculateTicks(org, end, out _majorSpan, out _numberOfMinorTicks);
-
-      if (_userDefinedMajorSpan != null)
-        _majorSpan = (double)_userDefinedMajorSpan;
-      if (_userDefinedMinorTicks != null)
-        _numberOfMinorTicks = (int)_userDefinedMinorTicks;
+			if (_cachedMajorMinor != null && _cachedMajorMinor.Org == org && _cachedMajorMinor.End == end)
+			{
+				_majorSpan = _cachedMajorMinor.MajorSpan;
+				_numberOfMinorTicks = _cachedMajorMinor.MinorTicks;
+			}
+			else
+			{
+				double propOrg, propEnd;
+				CalculateBoundaries(end - org, org, end, false, false, out propOrg, out propEnd, out _majorSpan, out _numberOfMinorTicks);
+			}
 
 			_axisOrgByMajor = org / _majorSpan;
 			_axisEndByMajor = end / _majorSpan;
@@ -681,7 +606,7 @@ namespace Altaxo.Graph.Scales.Ticks
 		}
 
 
-		public void InternalCalculateMajorTicks()
+		void InternalCalculateMajorTicks()
 		{
 			double i, beg, end;
 			beg = System.Math.Ceiling(_axisOrgByMajor);
@@ -713,7 +638,7 @@ namespace Altaxo.Graph.Scales.Ticks
 
 		}
 
-		public void InternalCalculateMinorTicks()
+		void InternalCalculateMinorTicks()
 		{
 			double i, beg, end;
 			if (_numberOfMinorTicks < 2)
@@ -755,107 +680,237 @@ namespace Altaxo.Graph.Scales.Ticks
 		}
 
 
+		static readonly double[] _majorSpanValues = new double[] { 1, 1.5, 2, 2.5, 3, 4, 5, 10 };
+		static readonly double[] _minorSpanValues = new double[] { 1, 1.5, 2, 2.5, 3, 4, 5, 10 };
 
-
-		static void CalculateTicks(
-		double min,                // Minimum of data 
-		double max,                // Maximum of data
-		out double majorspan,      // the span between two major ticks
-		out int minorticks      // number of ticks in a major tick span 
-		)
+		/// <summary>
+		/// Calculates the major span from the scale span, taking into account the setting for targetMajorTicks.
+		/// </summary>
+		/// <param name="scaleSpan">Scale span (end-origin).</param>
+		/// <param name="targetNumberOfMajorTicks">Target number of major ticks.</param>
+		public static double CalculateMajorSpan(double scaleSpan, int targetNumberOfMajorTicks)
 		{
-			// Make sure that minVal and maxVal are legitimate values
-			if (Double.IsInfinity(min) || Double.IsNaN(min) || min == Double.MaxValue)
-				min = 0.0;
-			if (Double.IsInfinity(max) || Double.IsNaN(max) || max == Double.MaxValue)
-				max = 0.0;
+			if (targetNumberOfMajorTicks <= 0)
+				throw new ArgumentOutOfRangeException("targetNumberOfMajorTicks is <= 0");
 
-			if (min > max) // should not happen, but can happen when there are no data and min and max are uninitialized 
+			double rawMajorSpan = scaleSpan / targetNumberOfMajorTicks;
+			int log10RawMajorSpan = (int)Math.Floor(Math.Log10(rawMajorSpan));
+			
+			double normMajorSpan = rawMajorSpan / RMath.Pow(10, log10RawMajorSpan); // number between 1 and 10
+			foreach (double span in _majorSpanValues)
 			{
-				min = max = 0;
-			}
-
-			double span = max - min; // span width between max and min
-
-			if (0 == span)
-			{
-				double diff;
-				// if span width is zero, then 1% of the velue, in case of min==max==0 we use 1
-				if (0 == max || 0 == min) // if one is null, the other should also be null, but to be secure...
-					diff = 1;
-				else
-					diff = System.Math.Abs(min / 100); // we can be sure, that min==max, because span==0
-
-				min -= diff;
-				max += diff;
-
-				span = max - min;
-			} // if 0==span
-
-
-			// we have to norm span in that way, that 100<=normspan<1000
-			int nSpanPotCorr = (int)(System.Math.Floor(System.Math.Log10(span))) - 2; // nSpanPotCorr will be 0 if 100<=span<1000 
-			double normspan = span / TenToThePowerOf(nSpanPotCorr);
-
-			// we divide normspan by 10, 20, 25, 50, 100, 200 and calculate the
-			// number of major ticks this will give
-			// we can break if the number of major ticks is below 10
-			int majornormspan = 1;
-			int minornormspan = 1;
-			for (int finep = 0; finep <= 5; finep++)
-			{
-				switch (finep)
+				if (span >= normMajorSpan)
 				{
-					case 0:
-						majornormspan = 10;
-						minornormspan = 5;
-						break;
-					case 1:
-						majornormspan = 20;
-						minornormspan = 10;
-						break;
-					case 2:
-						majornormspan = 25;
-						minornormspan = 5;
-						break;
-					case 3:
-						majornormspan = 50;
-						minornormspan = 25;
-						break;
-					case 4:
-						majornormspan = 100;
-						minornormspan = 50;
-						break;
-					case 5:
-					default:
-						majornormspan = 200;
-						minornormspan = 100;
-						break;
-				} // end of switch
-				double majorticks = 1 + System.Math.Floor(normspan / majornormspan);
-				if (majorticks <= 10)
+					normMajorSpan = span;
 					break;
+				}
 			}
-			majorspan = majornormspan * TenToThePowerOf(nSpanPotCorr);
-			minorticks = (int)(majornormspan / minornormspan);
-		} // end of function
+			return normMajorSpan * RMath.Pow(10, log10RawMajorSpan);
+		}
 
-
-		static double TenToThePowerOf(int ii)
+		/// <summary>
+		/// Calculates the number of minor ticks from the major span value and the target number of minor ticks.
+		/// </summary>
+		/// <param name="majorSpan">Major span value.</param>
+		/// <param name="targetNumberOfMinorTicks">Target number of minor ticks.</param>
+		/// <returns></returns>
+		public static int CalculateMinorTicks(double majorSpan, int targetNumberOfMinorTicks)
 		{
-			if (ii == 0)
+			if (targetNumberOfMinorTicks <= 0)
 				return 1;
-			else if (ii == 1)
-				return 10;
-			else
+			majorSpan = Math.Abs(majorSpan);
+			if (!majorSpan.IsFinite())
+				return 1;
+
+			double rawMinorSpan = majorSpan / targetNumberOfMinorTicks;
+			int log10RawMinorSpan = (int)Math.Floor(Math.Log10(rawMinorSpan));
+
+			double normMinorSpan = rawMinorSpan / RMath.Pow(10, log10RawMinorSpan); // number between 1 and 10
+			for (int i = _minorSpanValues.Length - 1; i >= 0; i--)
 			{
-				int i = System.Math.Abs(ii);
-				int halfi = i / 2;
-				double hret = TenToThePowerOf(halfi);
-				double ret = (halfi + halfi) == i ? hret * hret : 10 * hret * hret;
-				return ii < 0 ? 1 / ret : ret;
+				double span = _minorSpanValues[i];
+				if (span <= normMinorSpan)
+				{
+					normMinorSpan = span;
+					break;
+				}
+			}
+			double minorSpan = normMinorSpan * RMath.Pow(10, log10RawMinorSpan);
+			int result = (int)Math.Round(majorSpan / minorSpan);
+			return result < 1 ? 1 : result;
+		}
+
+		/// <summary>
+		/// Adjusts the parameter <paramref name="x"/> so that <paramref name="x"/> snaps to a tick according to the setting of <paramref name="snapping"/>.
+		/// </summary>
+		/// <param name="x">The boundary value to adjust.</param>
+		/// <param name="majorSpan">Value of the major tick span.</param>
+		/// <param name="minorTicks">Number of minor ticks.</param>
+		/// <param name="snapping">Setting of the tick snapping.</param>
+		/// <param name="upwards">If true, the value is towards higher values, if false it is adjusted towards smaller values.</param>
+		/// <returns>The adjusted value of x.</returns>
+		public static double SnapToTick(double x, double majorSpan, int minorTicks, BoundaryTickSnapping snapping, bool upwards)
+		{
+			switch (snapping)
+			{
+				default:
+				case BoundaryTickSnapping.SnapToNothing:
+					{
+						return x;
+					}
+				case BoundaryTickSnapping.SnapToMajorOnly:
+					{
+						double rel = x / majorSpan;
+						if (upwards)
+							return Math.Ceiling(rel) * majorSpan;
+						else
+							return Math.Floor(rel) * majorSpan;
+					}
+				case BoundaryTickSnapping.SnapToMinorOnly:
+					{
+
+						double rel = x * minorTicks / (majorSpan);
+						if(upwards)
+							rel = Math.Ceiling(rel);
+						else
+							rel = Math.Floor(rel);
+
+						if (Math.IEEERemainder(rel, 1) != 0 && minorTicks>1)
+							rel = upwards ? rel + 1 : rel - 1;
+
+						return rel * majorSpan/minorTicks;
+					}
+				case BoundaryTickSnapping.SnapToMinorOrMajor:
+					{
+						double rel = x * minorTicks / (majorSpan);
+						if (upwards)
+							return Math.Ceiling(rel) * majorSpan/minorTicks;
+						else
+							return Math.Floor(rel) * majorSpan/minorTicks;
+					}
 			}
 		}
+
+		/// <summary>
+		/// Applies the value for <see cref="MinGrace"/>, <see cref="MaxGrace"/> and <see cref="ZeroLever"/> to the scale and calculated proposed values for the boundaries.
+		/// </summary>
+		/// <param name="scaleOrg">Scale origin.</param>
+		/// <param name="scaleEnd">Scale end.</param>
+		/// <param name="isOrgExtendable">True if the scale org can be extended.</param>
+		/// <param name="isEndExtendable">True if the scale end can be extended.</param>
+		/// <param name="propOrg">Returns the proposed value of the scale origin.</param>
+		/// <param name="propEnd">Returns the proposed value of the scale end.</param>
+		public void ApplyGraceAndZeroLever(double scaleOrg, double scaleEnd, bool isOrgExtendable, bool isEndExtendable, out double propOrg, out double propEnd)
+		{
+			double scaleSpan = Math.Abs(scaleEnd - scaleOrg);
+			propOrg = scaleOrg;
+			if(isOrgExtendable)
+				propOrg -= Math.Abs(_minGrace * scaleSpan);
+
+			propEnd = scaleEnd;
+			if(isEndExtendable)
+				propEnd += Math.Abs(_maxGrace * scaleSpan);
+
+			double lever = Math.Abs(_zeroLever * scaleSpan);
+			double propOrg2 = scaleOrg - lever;
+			double propEnd2 = scaleEnd + lever;
+
+			if (isOrgExtendable && propOrg > 0 && propOrg2 <= 0)
+				propOrg = 0;
+
+			if (isEndExtendable && propEnd < 0 && propEnd2 >= 0)
+				propEnd = 0;
+
+
+			double range = propEnd - propOrg;
+			if (range == 0) // Emergency plan if range is zero
+
+			{
+				double extend = propOrg == 0 ? 0.5 : Math.Abs(propOrg / 10);
+				if (isOrgExtendable && isEndExtendable)
+				{
+					propOrg -= extend;
+					propEnd += extend;
+				}
+				else if (isOrgExtendable)
+				{
+					propOrg -= 2 * extend;
+				}
+				else if (isEndExtendable)
+				{
+					propEnd += 2 * extend;
+				}
+			}
+		}
+
+		
+
+		/// <summary>
+		/// Calculate the proposed org and end of the scale by using a certain scale span to calculate the major span value and the number of minor ticks.
+		/// </summary>
+		/// <param name="overrideScaleSpan">Scale span value used to calculate <paramref name="majorSpan"/> and <paramref name="minorTicks"/>.</param>
+		/// <param name="scaleOrg">Scale origin.</param>
+		/// <param name="scaleEnd">Scale end.</param>
+		/// <param name="isOrgExtendable">True if the scale org can be extended.</param>
+		/// <param name="isEndExtendable">True if the scale end can be extended.</param>
+		/// <param name="propOrg">Returns the proposed value of the scale origin.</param>
+		/// <param name="propEnd">Returns the proposed value of the scale end.</param>
+		/// <param name="majorSpan">Returns the proposed value of the major span.</param>
+		/// <param name="minorTicks">Returns the proposed value of the number of minor ticks.</param>
+		public void CalculateBoundaries(double overrideScaleSpan, double scaleOrg, double scaleEnd, bool isOrgExtendable, bool isEndExtendable, out double propOrg, out double propEnd, out double majorSpan, out int minorTicks)
+		{
+			if (null != _userDefinedMajorSpan)
+				majorSpan = (double)_userDefinedMajorSpan;
+			else
+				majorSpan = CalculateMajorSpan(overrideScaleSpan, _targetNumberOfMajorTicks);
+
+			if (null != _userDefinedMinorTicks)
+				minorTicks = (int)_userDefinedMinorTicks;
+			else
+				minorTicks = CalculateMinorTicks(majorSpan, _targetNumberOfMinorTicks);
+
+			CalculateBoundaries(scaleOrg, scaleEnd, isOrgExtendable, isEndExtendable, majorSpan, minorTicks, out propOrg, out propEnd);
+		}
+
+		/// <summary>
+		/// Calculates the scale boundaries using defined values for majorSpan and minorTicks, taking into accound the settings
+		/// for ZeroLever, MinGrace, MaxGrace and the Snapping to ticks
+		/// </summary>
+		/// <param name="scaleOrg">Scale origin.</param>
+		/// <param name="scaleEnd">Scale end.</param>
+		/// <param name="isOrgExtendable">True if the scale org can be extended.</param>
+		/// <param name="isEndExtendable">True if the scale end can be extended.</param>
+		/// <param name="majorSpan">The major span value used for calculation.</param>
+		/// <param name="minorTicks">The number of minor ticks used for calculation.</param>
+		/// <param name="propOrg">Returns the proposed value of the scale origin.</param>
+		/// <param name="propEnd">Returns the proposed value of the scale end.</param>
+		public void CalculateBoundaries(double scaleOrg, double scaleEnd, bool isOrgExtendable, bool isEndExtendable, double majorSpan, int minorTicks, out double propOrg, out double propEnd)
+		{
+			ApplyGraceAndZeroLever(scaleOrg, scaleEnd, isOrgExtendable, isEndExtendable, out propOrg, out propEnd);
+
+			if (isOrgExtendable)
+			{
+				double propOrg2 = SnapToTick(scaleOrg, majorSpan, minorTicks, _snapOrgToTick, false);
+				double propOrg3 = SnapToTick(propOrg, majorSpan, minorTicks, _snapOrgToTick, false);
+				if (propOrg2 <= propOrg)
+					propOrg = propOrg2;
+				else if (propOrg3 <= propOrg)
+					propOrg = propOrg3;
+			}
+
+			if (isEndExtendable)
+			{
+				double propEnd2 = SnapToTick(scaleEnd, majorSpan, minorTicks, _snapEndToTick, true);
+				double propEnd3 = SnapToTick(propEnd, majorSpan, minorTicks, _snapEndToTick, true);
+				if (propEnd2 >= propEnd)
+					propEnd = propEnd2;
+				else if (propEnd3 >= propEnd)
+					propEnd = propEnd3;
+			}
+		}
+
+
+		
 
 	}
 }

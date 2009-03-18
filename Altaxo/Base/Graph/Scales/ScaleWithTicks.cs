@@ -226,6 +226,8 @@ namespace Altaxo.Graph.Scales
 				AltaxoVariant end = _scale.EndAsVariant;
 				if (_tickSpacing.PreProcessScaleBoundaries(ref org, ref end, _scale.IsOrgExtendable, _scale.IsEndExtendable))
 				{
+					_scale.Changed -= EhScaleChanged; // suppress the changed event from scale
+
 					// note: depending on the value of org and end, it might be that those values won't be accepted
 					try
 					{
@@ -234,6 +236,9 @@ namespace Altaxo.Graph.Scales
 					catch (Exception)
 					{
 					}
+
+					_scale.Changed += EhScaleChanged; // switch event from scale on again
+
 				}
 				_tickSpacing.FinalProcessScaleBoundaries(_scale.OrgAsVariant, _scale.EndAsVariant, _scale);
 				OnChanged();

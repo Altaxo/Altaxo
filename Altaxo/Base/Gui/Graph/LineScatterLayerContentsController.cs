@@ -297,7 +297,9 @@ namespace Altaxo.Gui.Graph
           }
           else // there is no item that can be used as template
           {
-            int numRows = Math.Min(ycol.Count, xcol.Count);
+            int numRows = ycol.Count;
+            if(null!=xcol)
+            numRows = Math.Min(numRows, xcol.Count);
             if (numRows < 100)
             {
               templatePlotStyle = new G2DPlotStyleCollection(LineScatterPlotStyleKind.LineAndScatter);
