@@ -173,8 +173,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
           break;
 
         case LineScatterPlotStyleKind.LineAndScatter:
-          Add(new LinePlotStyle());
-          Add(new ScatterPlotStyle());
+					Add(new ScatterPlotStyle());
+					Add(new LinePlotStyle());
           break;
 
       }

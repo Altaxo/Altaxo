@@ -267,7 +267,8 @@ namespace Altaxo.Gui.Graph
       ++m_SuppressEvents;
       box.Items.Clear();
       box.Items.AddRange(names);
-      box.SelectedItem = name;
+			box.SelectedItem = name;
+      box.Text = name;
       --m_SuppressEvents;
     }
 
@@ -322,7 +323,7 @@ namespace Altaxo.Gui.Graph
     }
     public string SymbolSize
     {
-      get { return (string)m_cbSymbolSize.SelectedItem; }
+      get { return (string)m_cbSymbolSize.Text; }
     }
 
     public void InitializeIndependentSymbolSize(bool val)

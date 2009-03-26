@@ -1126,7 +1126,9 @@ namespace Altaxo.Graph.Gdi
       set
       {
         _SetProp(Configured.DashPattern, null != value && value.Length > 0);
-        m_DashPattern = value;
+				
+				if(!(m_DashStyle==DashStyle.Custom && null==value))
+					 m_DashPattern = value;
         _SetPenVariable(null);
         OnChanged(); // Fire the Changed event
       }
@@ -1140,6 +1142,9 @@ namespace Altaxo.Graph.Gdi
         m_DashStyle = value;
         if (bChanged)
         {
+					if (m_DashStyle == DashStyle.Custom && null == m_DashPattern)
+						m_DashPattern = new float[] { 4, 4 }; // Ensure that at least a DashPattern is present if DashStyle is Custom
+
           _SetProp(Configured.DashStyle, DashStyle.Solid != value);
           _SetPenVariable(null);
           OnChanged(); // Fire the Changed event

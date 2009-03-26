@@ -225,8 +225,8 @@ void EhView_IndependentNegativeError_CheckChanged(object sender, EventArgs e)
           _view.IndependentNegativeError_CheckChanged -= EhView_IndependentNegativeError_CheckChanged;
           _view.VerifySymbolSize -= EhView_VerifySymbolSize;
           _view.VerifySkipFrequency -= EhView_VerifySkipFrequency;
-          _view.ChoosePositiveError -= EhView_ClearPositiveError;
-          _view.ChooseNegativeError -= EhView_ClearNegativeError;
+          _view.ClearPositiveError -= EhView_ClearPositiveError;
+          _view.ClearNegativeError -= EhView_ClearNegativeError;
 
         }
 
@@ -240,8 +240,8 @@ void EhView_IndependentNegativeError_CheckChanged(object sender, EventArgs e)
           _view.IndependentNegativeError_CheckChanged += EhView_IndependentNegativeError_CheckChanged;
           _view.VerifySymbolSize += EhView_VerifySymbolSize;
           _view.VerifySkipFrequency += EhView_VerifySkipFrequency;
-          _view.ChoosePositiveError += EhView_ClearPositiveError;
-          _view.ChooseNegativeError += EhView_ClearNegativeError;
+          _view.ClearPositiveError += EhView_ClearPositiveError;
+          _view.ClearNegativeError += EhView_ClearNegativeError;
         }
       }
     }
