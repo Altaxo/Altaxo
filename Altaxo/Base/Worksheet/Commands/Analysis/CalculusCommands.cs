@@ -57,44 +57,55 @@ namespace Altaxo.Worksheet.Commands.Analysis
       Altaxo.Data.DataColumn yCol = ctrl.Doc.DataColumns[ctrl.SelectedDataColumns[0]];
       Altaxo.Data.DataColumn xCol = ctrl.Doc.DataColumns.FindXColumnOf(yCol);
 
-      double spacing = 1;
-      if(xCol is Data.INumericColumn)
-      {
-        Calc.LinearAlgebra.VectorSpacingEvaluator calcspace = new Calc.LinearAlgebra.VectorSpacingEvaluator(Calc.LinearAlgebra.DataColumnWrapper.ToROVector(xCol));
-        if(!calcspace.HasValidSpaces || calcspace.HasInvalidSpaces)
-        {
-          Current.Gui.ErrorMessageBox(string.Format("The x-column {0} contains invalid spaces (is not equally spaced)",xCol.Name));
-          return;
-        }
-        if(calcspace.RelativeSpaceDeviation>1E-2)
-        {
-          System.Windows.Forms.DialogResult dlgresult = 
-            System.Windows.Forms.MessageBox.Show(Current.MainWindow,
-            string.Format("The x-column {0} is not equally spaced, the deviation is {1}, the mean spacing is {2}. Continue anyway?", xCol.Name, calcspace.RelativeSpaceDeviation, calcspace.SpaceMeanValue),
-            "Continue?",System.Windows.Forms.MessageBoxButtons.YesNo,
-            System.Windows.Forms.MessageBoxIcon.Question,
-            System.Windows.Forms.MessageBoxDefaultButton.Button1);
-
-          if(dlgresult==System.Windows.Forms.DialogResult.No)
-            return;
-        }
-
-        spacing = calcspace.SpaceMeanValue;
-      }
-
-      Calc.Regression.SavitzkyGolay filter = new SavitzkyGolay(parameters);
-
-      yCol.Suspend();
-      filter.Apply(DataColumnWrapper.ToROVectorCopy(yCol),DataColumnWrapper.ToVector(yCol));
-
-      if(parameters.DerivativeOrder>0)
-      {
-        double factor = Math.Pow(1/spacing,parameters.DerivativeOrder)*Calc.GammaRelated.Fac(parameters.DerivativeOrder);
-        yCol.Data = yCol*factor; 
-      }
-
-      yCol.Resume();
+			SavitzkyGolay(parameters, yCol, xCol);
     }
+
+
+		public static void SavitzkyGolay(SavitzkyGolayParameters parameters, Altaxo.Data.DataColumn yCol)
+		{
+			SavitzkyGolay(parameters, yCol, null);
+		}
+
+		public static void SavitzkyGolay(SavitzkyGolayParameters parameters, Altaxo.Data.DataColumn yCol, Altaxo.Data.DataColumn xCol)
+		{
+			double spacing = 1;
+			if (xCol is Data.INumericColumn)
+			{
+				Calc.LinearAlgebra.VectorSpacingEvaluator calcspace = new Calc.LinearAlgebra.VectorSpacingEvaluator(Calc.LinearAlgebra.DataColumnWrapper.ToROVector(xCol));
+				if (!calcspace.HasValidSpaces || calcspace.HasInvalidSpaces)
+				{
+					Current.Gui.ErrorMessageBox(string.Format("The x-column {0} contains invalid spaces (is not equally spaced)", xCol.Name));
+					return;
+				}
+				if (calcspace.RelativeSpaceDeviation > 1E-2)
+				{
+					System.Windows.Forms.DialogResult dlgresult =
+						System.Windows.Forms.MessageBox.Show(Current.MainWindow,
+						string.Format("The x-column {0} is not equally spaced, the deviation is {1}, the mean spacing is {2}. Continue anyway?", xCol.Name, calcspace.RelativeSpaceDeviation, calcspace.SpaceMeanValue),
+						"Continue?", System.Windows.Forms.MessageBoxButtons.YesNo,
+						System.Windows.Forms.MessageBoxIcon.Question,
+						System.Windows.Forms.MessageBoxDefaultButton.Button1);
+
+					if (dlgresult == System.Windows.Forms.DialogResult.No)
+						return;
+				}
+
+				spacing = calcspace.SpaceMeanValue;
+			}
+
+			Calc.Regression.SavitzkyGolay filter = new SavitzkyGolay(parameters);
+
+			yCol.Suspend();
+			filter.Apply(DataColumnWrapper.ToROVectorCopy(yCol), DataColumnWrapper.ToVector(yCol));
+
+			if (parameters.DerivativeOrder > 0)
+			{
+				double factor = Math.Pow(1 / spacing, parameters.DerivativeOrder) * Calc.GammaRelated.Fac(parameters.DerivativeOrder);
+				yCol.Data = yCol * factor;
+			}
+
+			yCol.Resume();
+		}
 
     #endregion
 

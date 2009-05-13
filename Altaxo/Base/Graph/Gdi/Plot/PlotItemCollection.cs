@@ -701,7 +701,7 @@ namespace Altaxo.Graph.Gdi.Plot
 
   
 
-    public void Paint(System.Drawing.Graphics g, IPlotArea layer)
+    public object Paint(System.Drawing.Graphics g, IPlotArea layer, object lastDataObject)
     {
       ICoordinateTransformingGroupStyle coordTransStyle;
       if (null != (coordTransStyle = _styles.CoordinateTransformingStyle))
@@ -712,9 +712,10 @@ namespace Altaxo.Graph.Gdi.Plot
       {
         for (int i = _plotItems.Count - 1; i >= 0; i--)
         {
-          _plotItems[i].Paint(g, layer);
+          lastDataObject = _plotItems[i].Paint(g, layer, lastDataObject);
         }
       }
+			return lastDataObject;
     }
 
 

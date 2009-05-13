@@ -174,11 +174,13 @@ namespace Altaxo.Graph.Gdi.Plot
 
     #endregion
 
-    public override void Paint(Graphics g, IPlotArea layer)
+    public override object Paint(Graphics g, IPlotArea layer, object lastDataObject)
     {
       Processed2DPlotData pdata = GetRangesAndPoints(layer);
       if(pdata!=null)
-        Paint(g, layer, GetRangesAndPoints(layer));
+        Paint(g, layer, pdata, lastDataObject);
+
+			return pdata;
     }
 
 
@@ -189,11 +191,11 @@ namespace Altaxo.Graph.Gdi.Plot
     /// <param name="layer">The plot layer.</param>
     /// <param name="plotdata">The plot data. Since the data are transformed, you should not
     /// rely that the physical values in this item correspond to the area coordinates.</param>
-    public virtual void Paint(Graphics g, IPlotArea layer, Processed2DPlotData plotdata)
+    public virtual void Paint(Graphics g, IPlotArea layer, Processed2DPlotData plotdata, object previousDataObject)
     {
       if (null != this._plotStyles)
       {
-        _plotStyles.Paint(g, layer, plotdata);
+        _plotStyles.Paint(g, layer, plotdata, previousDataObject);
       }
       _cachedPlotDataUsedForPainting = plotdata;
     }

@@ -281,6 +281,18 @@ namespace Altaxo.Graph.Gdi
       // since we use List, we don't need to have OnLayerCollectionChanged here!
     }
 
+		/// <summary>
+		/// Inserts a layer to this layer collection.
+		/// </summary>
+		/// <param name="l"></param>
+		public void Insert(int index, XYPlotLayer l)
+		{
+			// we use List for adding since we want to have custom actions below
+			List.Insert(index, l);
+			l.SetPrintableGraphBounds(m_PrintableBounds, false);
+			// since we use List, we don't need to have OnLayerCollectionChanged here!
+		}
+
     /// <summary>
     /// Perform custom action on clearing: remove the parent attribute and the layer number from all the layers.
     /// </summary>

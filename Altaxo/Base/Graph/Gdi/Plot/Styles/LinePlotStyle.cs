@@ -24,8 +24,6 @@ using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using Altaxo.Serialization;
-//using System.Runtime.InteropServices;
-
 
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
@@ -627,7 +625,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     }
 
 
-    public void Paint(Graphics g, IPlotArea layer, Processed2DPlotData pdata)
+		public void Paint(Graphics g, IPlotArea layer, Processed2DPlotData pdata, object previousDataObject)
     {
       PointF[] linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
       PlotRangeList rangeList = pdata.RangeList;
@@ -1714,7 +1712,6 @@ out int lastIndex)
     }
 
     #endregion
-
 
     public bool IsColorProvider
     {

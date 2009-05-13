@@ -100,7 +100,9 @@ namespace Altaxo.Graph.Gdi.Plot
     /// </summary>
     /// <param name="g">The graphics context.</param>
     /// <param name="layer">The plot layer.</param>
-    void Paint(Graphics g, IPlotArea layer);
+		/// <param name="lastDataObject">An optional data object returned by the previously drawn plot item. Can be null.</param>
+		/// <returns>A data object, which can be used by the next plot item for some styles (like fill style).</returns>
+    object Paint(Graphics g, IPlotArea layer, object lastDataObject);
 
     /// <summary>
     /// Paints a symbol for this plot item for use in a legend.

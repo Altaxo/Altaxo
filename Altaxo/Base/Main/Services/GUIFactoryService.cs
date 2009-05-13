@@ -645,6 +645,24 @@ namespace Altaxo.Main.Services
       }
     }
 
+		/// <summary>
+		/// Used to register a function that can create context menues out of add in tree paths.
+		/// </summary>
+		public static Func<object, string, System.Windows.Forms.ContextMenuStrip> ContextMenuProvider;
+		/// <summary>
+		/// Creates a context menu.
+		/// </summary>
+		/// <param name="owner">The object that will be owner of this context menu.</param>
+		/// <param name="addInTreePath">Add in tree path used to build the context menu.</param>
+		/// <returns>The context menu. Returns Null if there is no registered context menu provider</returns>
+		public static System.Windows.Forms.ContextMenuStrip CreateContextMenu(object owner, string addInTreePath)
+		{
+			if(null!=ContextMenuProvider)
+				return ContextMenuProvider(owner,addInTreePath);
+			else
+				return null;
+		}
+
     #endregion
   }
 }

@@ -59,8 +59,9 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 
     public static void Paint(System.Drawing.Graphics g, IPlotArea layer, PlotItemCollection coll)
     {
+			object lastDataObject = null;
       foreach (IGPlotItem pi in coll)
-        pi.Paint(g, layer);
+        lastDataObject = pi.Paint(g, layer,lastDataObject);
     }
 
 

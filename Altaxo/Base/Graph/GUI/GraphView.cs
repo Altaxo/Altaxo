@@ -55,6 +55,7 @@ namespace Altaxo.Graph.GUI
     [Browsable(false)]
     private int        m_CachedCurrentLayer = -1;
 
+
     #region Serialization
     public class SerializationSurrogate0 : IDeserializationSubstitute, System.Runtime.Serialization.ISerializationSurrogate, System.Runtime.Serialization.ISerializable, System.Runtime.Serialization.IDeserializationCallback
     {
@@ -351,15 +352,6 @@ namespace Altaxo.Graph.GUI
       set
       {
         m_Menu = value;
-#if FormerGuiState
-        if(this.ParentForm is WorkbenchForm && null!=m_Menu)
-        {
-          if(null!=this.ParentForm.Menu)
-            this.ParentForm.Menu.MergeMenu( m_Menu ); // do not clone the menu
-          else
-            this.ParentForm.Menu = m_Menu; // do not clone the menu
-        }
-#endif
       }
     }
 
@@ -441,8 +433,11 @@ namespace Altaxo.Graph.GUI
 
         if(value > nNumButtons)
         {
-          for(int i=nNumButtons;i<value;i++)
-            m_LayerToolbar.Buttons.Add(new ToolBarButton(i.ToString()));
+					for (int i = nNumButtons; i < value; i++)
+					{
+						var newbutton = new ToolBarButton(i.ToString());
+						m_LayerToolbar.Buttons.Add(newbutton);
+					}
         }
         else if(nNumButtons > value)
         {

@@ -1148,8 +1148,12 @@ namespace Altaxo.Calc.Regression.Multivariate
       DataTable table)
     {
       // add a NumberOfFactors columm
-      DoubleColumn xNumFactor = table[_NumberOfFactors_ColumnName] as DoubleColumn;
-      if(xNumFactor==null)
+
+			DoubleColumn xNumFactor=null;
+			if (table.DataColumns.Contains(_NumberOfFactors_ColumnName))
+				xNumFactor = table[_NumberOfFactors_ColumnName] as DoubleColumn;
+
+			if(null==xNumFactor)
       {
         xNumFactor = new Altaxo.Data.DoubleColumn();   
         table.DataColumns.Add(xNumFactor,_NumberOfFactors_ColumnName,Altaxo.Data.ColumnKind.X,_NumberOfFactors_ColumnGroup);
@@ -1180,8 +1184,12 @@ namespace Altaxo.Calc.Regression.Multivariate
       DataTable table,
       MultivariateContentMemento plsContent)
     {
-      DoubleColumn pressColumn = table[GetPRESSValue_ColumnName()] as DoubleColumn;
-      DoubleColumn crossPRESSColumn = table[GetCrossPRESSValue_ColumnName()] as DoubleColumn;
+			DoubleColumn pressColumn=null;
+			DoubleColumn crossPRESSColumn=null;
+			if(table.DataColumns.Contains(GetPRESSValue_ColumnName()))
+				pressColumn = table[GetPRESSValue_ColumnName()] as DoubleColumn;
+			if(table.DataColumns.Contains(GetCrossPRESSValue_ColumnName()))
+				crossPRESSColumn = table[GetCrossPRESSValue_ColumnName()] as DoubleColumn;
       
       IROVector press;
       double meanNumberOfIncludedSpectra = plsContent.NumberOfMeasurements;

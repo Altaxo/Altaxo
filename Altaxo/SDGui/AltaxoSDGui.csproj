@@ -161,6 +161,7 @@
     <Compile Include="Main\MenuCommands\GraphCommands.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Main\MenuCommands\GraphLayerCommands.cs" />
     <Compile Include="Main\MenuCommands\HelpCommands.cs">
       <SubType>Code</SubType>
     </Compile>

@@ -377,11 +377,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     }
 
 
-    public void Paint(Graphics g, IPlotArea layer, Processed2DPlotData pdata)
+    public void Paint(Graphics g, IPlotArea layer, Processed2DPlotData pdata, object previousDataObject)
     {
       for (int i = _innerList.Count - 1; i >= 0;  i--)
       {
-        this[i].Paint(g, layer, pdata);
+        this[i].Paint(g, layer, pdata, previousDataObject);
       }
     }
 

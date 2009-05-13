@@ -320,7 +320,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 
         if (null == plotDataColl[i])
         {
-          coll[i].Paint(g, layer);
+          coll[i].Paint(g, layer,null);
         }
         else
         {

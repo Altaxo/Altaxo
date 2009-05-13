@@ -159,11 +159,16 @@ namespace Altaxo.Graph.Procedures
       CopyPageCommand.Run(ctrl);
     }
 
-
+		/// <summary>
+		/// Puts the entire graph to the clipboard in XML format.
+		/// </summary>
+		/// <param name="ctrl">Graph controller.</param>
     public static void CopyGraphToClipboard(GraphController ctrl)
     {
 			Serialization.ClipboardSerialization.PutObjectToClipboard("Altaxo.Graph.GraphDocumentAsXml",ctrl.Doc);
     }
+
+
 
     public static void PasteGraphStyleFromClipboard(GraphController ctrl)
     {
@@ -176,11 +181,58 @@ namespace Altaxo.Graph.Procedures
       Graph.Procedures.GraphCommands.RescaleAxes(ctrl.Doc);
     }
 
+		public static void EditActiveLayer(GraphController ctrl)
+		{
+			ctrl.EnsureValidityOfCurrentLayerNumber();
+			if (null != ctrl.ActiveLayer)
+				Altaxo.Gui.Graph.LayerController.ShowDialog(ctrl.ActiveLayer);
+		}
 
-    public static void CopyActiveLayerToClipboard(GraphController ctrl)
+		/// <summary>
+		/// Puts the active layer to the clipboard in XML format.
+		/// </summary>
+		/// <param name="ctrl">Graph controller.</param>
+		public static void CopyActiveLayerToClipboard(GraphController ctrl)
     {
       Serialization.ClipboardSerialization.PutObjectToClipboard("Altaxo.Graph.GraphLayerAsXml", ctrl.ActiveLayer);
     }
+
+		public static void PasteLayerAsTemplateForActiveLayerFromClipboard(GraphController ctrl, GraphCopyOptions options)
+		{
+			object o = Serialization.ClipboardSerialization.GetObjectFromClipboard("Altaxo.Graph.GraphLayerAsXml");
+			if (null == o)
+				return;
+			XYPlotLayer layer = o as XYPlotLayer;
+			if (null != layer)
+			{
+				ctrl.ActiveLayer.CopyFrom(layer,options);
+				Graph.Procedures.GraphCommands.RescaleAxes(ctrl.Doc);
+			}
+		}
+
+		public class PasteLayerOptions
+		{
+			public bool PastePlotItems { get; set; }
+			public bool PastePlotStyles { get; set; }
+			public GraphCopyOptions GetCopyOptions()
+			{
+				GraphCopyOptions co = GraphCopyOptions.None;
+				if (PastePlotItems)
+					co |= GraphCopyOptions.ClonePlotItems;
+				if (PastePlotStyles)
+					co |= GraphCopyOptions.CopyPlotStyles;
+				return co;
+			}
+		}
+
+
+		public static void PasteLayerAsTemplateForActiveLayerFromClipboard(GraphController ctrl)
+		{
+			object options = new PasteLayerOptions() { PastePlotStyles=true, PastePlotItems=true };
+			if (false == Current.Gui.ShowDialog(ref options, "Choose what to paste"))
+				return;
+			PasteLayerAsTemplateForActiveLayerFromClipboard(ctrl, (options as PasteLayerOptions).GetCopyOptions());
+		}
 
     public static void PasteAsNewLayerFromClipboard(GraphController ctrl)
     {
@@ -189,6 +241,90 @@ namespace Altaxo.Graph.Procedures
       if(null!=layer)
         ctrl.Doc.Layers.Add(layer);
     }
+
+		/// <summary>
+		/// Pastes a layer on the clipboard as new layer before the active layer.
+		/// </summary>
+		/// <param name="ctrl"></param>
+		public static void PasteAsNewLayerBeforeActiveLayerFromClipboard(GraphController ctrl)
+		{
+			object o = Serialization.ClipboardSerialization.GetObjectFromClipboard("Altaxo.Graph.GraphLayerAsXml");
+			XYPlotLayer layer = o as XYPlotLayer;
+			if (null != layer)
+			{
+				int idx = ctrl.CurrentLayerNumber;
+				ctrl.Doc.Layers.Insert(idx,layer);
+			}
+		}
+
+
+		/// <summary>
+		/// Pastes a layer on the clipboard as new layer after the active layer.
+		/// </summary>
+		/// <param name="ctrl"></param>
+		public static void PasteAsNewLayerAfterActiveLayerFromClipboard(GraphController ctrl)
+		{
+			object o = Serialization.ClipboardSerialization.GetObjectFromClipboard("Altaxo.Graph.GraphLayerAsXml");
+			XYPlotLayer layer = o as XYPlotLayer;
+			if (null != layer)
+			{
+				int idx = ctrl.CurrentLayerNumber;
+				ctrl.Doc.Layers.Insert(idx+1, layer);
+			}
+		}
+
+		/// <summary>
+		/// Deletes the active layer.
+		/// </summary>
+		/// <param name="ctrl"></param>
+		/// <param name="withGui">If true, a message box will ask the user for approval.</param>
+		public static void DeleteActiveLayer(GraphController ctrl, bool withGui)
+		{
+			if (null == ctrl.ActiveLayer)
+				return;
+
+			if (withGui && false==Current.Gui.YesNoMessageBox("This will delete the active layer. Are you sure?", "Attention", false))
+				return;
+
+			ctrl.Doc.Layers.RemoveAt(ctrl.CurrentLayerNumber);
+		}
+
+		/// <summary>
+		/// Deletes the active layer
+		/// </summary>
+		/// <param name="ctrl"></param>
+		/// <param name="destposition"></param>
+		public static void MoveActiveLayerToPosition(GraphController ctrl, int destposition)
+		{
+			XYPlotLayer layer = ctrl.ActiveLayer;
+			if (null == layer)
+				return;
+
+			int currentpos = ctrl.CurrentLayerNumber;
+			ctrl.Doc.Layers.RemoveAt(currentpos);
+			
+			if (destposition > currentpos)
+				destposition--;
+			ctrl.Doc.Layers.Insert(destposition, layer);
+		}
+
+
+		/// <summary>
+		/// Deletes the active layer
+		/// </summary>
+		/// <param name="ctrl"></param>
+		/// <param name="destposition"></param>
+		public static void MoveActiveLayerToPosition(GraphController ctrl)
+		{
+			IntegerValueInputController ivictrl = new IntegerValueInputController(0, "Please enter the new position (>=0):");
+			ivictrl.Validator = new IntegerValueInputController.ZeroOrPositiveIntegerValidator();
+			int newposition;
+			if (!Current.Gui.ShowDialog(ivictrl, "New position", false))
+				return;
+
+			newposition = ivictrl.EnteredContents;
+			MoveActiveLayerToPosition(ctrl, newposition);
+		}
 
     /// <summary>
     /// Copies the current graph as an bitmap image to the clipboard.

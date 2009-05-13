@@ -44,6 +44,19 @@ namespace Altaxo.Main
         _parent._suppressLevel++;
       }
 
+			/// <summary>
+			/// Disarms this SuppressToken so that it can not raise the suspend event anymore.
+			/// </summary>
+			public void Disarm()
+			{
+				if (_parent != null)
+				{
+					EventSuppressor parent = _parent;
+					_parent = null;
+					int oldLevel = parent._suppressLevel--;
+				}
+			}
+
       #region IDisposable Members
 
       public void Dispose()
@@ -103,6 +116,27 @@ namespace Altaxo.Main
         token = null;
       }
     }
+
+		/// <summary>
+		/// Decrease the suspend level by disposing of the object. The object can not be 
+		/// </summary>
+		/// <param name="token"></param>
+		/// <param name="suppressResumeEvent">If true, the resume event is suppressed.</param>
+		public void Resume(ref IDisposable token, bool suppressResumeEvent)
+		{
+			if (token != null)
+			{
+				if (suppressResumeEvent)
+				{
+					var stoken = token as SuppressToken;
+					if (null != stoken)
+						stoken.Disarm();
+				}
+
+				token.Dispose(); // the OnResume function is called from the SuppressToken
+				token = null;
+			}
+		}
 
     /// <summary>
     /// For the moment of execution, the suspend status is interrupted, and one time the OnResume function would be called.

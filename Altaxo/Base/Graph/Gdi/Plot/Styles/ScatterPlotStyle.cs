@@ -822,7 +822,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     #endregion
 
-
     public void Paint(Graphics g)
     {
       if (_cachedFillPath)
@@ -831,7 +830,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       g.DrawPath(_pen, _cachedPath);
     }
 
-    public void Paint(Graphics g, IPlotArea layer, Processed2DPlotData pdata)
+		public void Paint(Graphics g, IPlotArea layer, Processed2DPlotData pdata, object previousDataObject)
     {
        PlotRangeList rangeList = pdata.RangeList;
        PointF[] ptArray = pdata.PlotPointsInAbsoluteLayerCoordinates;
@@ -905,7 +904,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
       return bounds;
     }
-
 
     #region IPlotStyle Members
 

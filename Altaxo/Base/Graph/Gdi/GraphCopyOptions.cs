@@ -11,6 +11,7 @@ namespace Altaxo.Graph.Gdi
 	[Flags]
 	public enum GraphCopyOptions
 	{
+		None = 0x00,
 		/// <summary>The notes will be copied.</summary>
 		CloneNotes=0x01,
 

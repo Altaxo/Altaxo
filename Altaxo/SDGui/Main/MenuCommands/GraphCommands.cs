@@ -161,27 +161,7 @@ namespace Altaxo.Graph.Commands
     }
   }
 
-  /// <summary>
-  /// Handler for the menu item "Edit" - "Copy" - "ActiveLayer".
-  /// </summary>
-  public class CopyActiveLayer : AbstractGraphControllerCommand
-  {
-    public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
-    {
-      Altaxo.Graph.Procedures.GraphCommands.CopyActiveLayerToClipboard(ctrl);
-    }
-  }
-
-  /// <summary>
-  /// Handler for the menu item "Edit" - "Paste" - "AsNewLayer".
-  /// </summary>
-  public class PasteAsNewLayer : AbstractGraphControllerCommand
-  {
-    public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
-    {
-      Altaxo.Graph.Procedures.GraphCommands.PasteAsNewLayerFromClipboard(ctrl);
-    }
-  }
+ 
 
   /// <summary>
   /// Handler for the menu item "Edit" - "CopyPageAsBitmap".
@@ -926,6 +906,38 @@ namespace Altaxo.Graph.Commands
       }
     }
   }
+
+
+
+	/// <summary>
+	/// Drawing a rectangle on the graph.
+	/// </summary>
+	public class CurlyBraceDrawingTool : AbstractGraphToolsCommand
+	{
+		public override bool IsChecked
+		{
+			get
+			{
+				if (null != Controller)
+				{
+					base.IsChecked = (Controller.CurrentGraphToolType == typeof(GUI.GraphControllerMouseHandlers.CurlyBraceDrawingMouseHandler));
+				}
+
+				return base.IsChecked;
+			}
+			set
+			{
+				base.IsChecked = value;
+				if (true == value && null != Controller)
+				{
+					Controller.CurrentGraphToolType = typeof(GUI.GraphControllerMouseHandlers.CurlyBraceDrawingMouseHandler);
+				}
+
+				// ((ICSharpCode.SharpDevelop.Gui.DefaultWorkbench)ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.Workbench).UpdateToolbars();
+
+			}
+		}
+	}
   
 
   /// <summary>

@@ -1201,7 +1201,10 @@
     <Compile Include="Graph\Gdi\LineCaps\SymBarLineCap.cs" />
     <Compile Include="Graph\Gdi\PenX.cs" />
     <Compile Include="Graph\Gdi\Plot\Styles\ErrorBarPlotStyle.cs" />
+    <Compile Include="Graph\Gdi\Plot\Styles\FillToCurvePlotStyle.cs" />
+    <Compile Include="Graph\Gdi\Shapes\CurlyBraceShape.cs" />
     <Compile Include="Graph\Gdi\Shapes\ShapeGroup.cs" />
+    <Compile Include="Graph\GUI\GraphControllerMouseHandlers\CurlyBraceDrawingMouseHandler.cs" />
     <Compile Include="Graph\I3DPhysicalVariantAccessor.cs" />
     <Compile Include="Graph\Gdi\Plot\Data\Processed2DPlotData.cs" />
     <Compile Include="Graph\Gdi\Plot\DensityImagePlotItem.cs" />

@@ -50,6 +50,8 @@ namespace Altaxo.Main.Commands // ICSharpCode.SharpDevelop.Commands
       Altaxo.Current.SetResourceService(new ResourceServiceWrapper());      
       Altaxo.Current.SetProjectService( new Altaxo.Main.ProjectService() );
       Altaxo.Current.SetGUIFactoryService(new Altaxo.Main.Services.GUIFactoryService());
+			Altaxo.Main.Services.GUIFactoryService.ContextMenuProvider = ICSharpCode.Core.WinForms.MenuService.CreateContextMenu;
+
       Altaxo.Current.SetPrintingService(new Altaxo.Main.PrintingService());
       Altaxo.Current.ProjectService.ProjectChanged += new ProjectEventHandler(((AltaxoSDWorkbench)Altaxo.Current.Workbench).EhProjectChanged);
       

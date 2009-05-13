@@ -74,12 +74,15 @@ namespace Altaxo.Graph.Gdi.Plot
     /// <returns>The name of the plot.</returns>
     public abstract string GetName(string style);
 
-    /// <summary>
-    /// This paints the plot to the layer.
-    /// </summary>
-    /// <param name="g">The graphics context.</param>
-    /// <param name="layer">The plot layer.</param>
-    public abstract void Paint(Graphics g, IPlotArea layer);
+		/// <summary>
+		/// This paints the plot to the layer.
+		/// </summary>
+		/// <param name="g">The graphics context.</param>
+		/// <param name="layer">The plot layer.</param>
+		/// <param name="lastDataObject">An optional data object returned by the previously drawn plot item. Can be null.</param>
+		/// <returns>A data object, which can be used by the next plot item for some styles (like fill style).</returns>
+		public abstract object Paint(Graphics g, IPlotArea layer, object lastDataObject);
+
 
     /// <summary>
     /// This routine ensures that the plot item updates all its cached data and send the appropriate

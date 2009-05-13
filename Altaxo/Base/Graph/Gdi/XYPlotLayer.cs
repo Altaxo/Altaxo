@@ -2443,9 +2443,10 @@ namespace Altaxo.Graph.Gdi
       {
         g.Clip = CoordinateSystem.GetRegion();
       }
+			object lastDataObject = null;
       foreach (IGPlotItem pi in _plotItems)
       {
-        pi.Paint(g, this);
+        lastDataObject = pi.Paint(g, this, lastDataObject);
       }
       if (ClipDataToFrame==LayerDataClipping.StrictToCS)
       {

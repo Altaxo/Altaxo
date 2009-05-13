@@ -261,7 +261,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
         }
         else
         {
-          pi.Paint(g, layer);
+          pi.Paint(g, layer,null);
         }
       }
 

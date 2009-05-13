@@ -360,7 +360,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 
 
-    public void Paint(System.Drawing.Graphics g, IPlotArea layer, Altaxo.Graph.Gdi.Plot.Data.Processed2DPlotData pdata)
+    public void Paint(System.Drawing.Graphics g, IPlotArea layer, Altaxo.Graph.Gdi.Plot.Data.Processed2DPlotData pdata, object previousDataObject)
     {
       if (_isHorizontalStyle)
         PaintXErrorBars(g, layer, pdata);

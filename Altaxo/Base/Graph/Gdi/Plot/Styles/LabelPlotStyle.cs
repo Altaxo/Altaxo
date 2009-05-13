@@ -653,9 +653,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     }
 
 
-    public void Paint(Graphics g,
-     IPlotArea layer,
-     Processed2DPlotData pdata)
+    public void Paint(Graphics g, IPlotArea layer, Processed2DPlotData pdata, object previousDataObject)
     {
       if (this._labelColumn.Document == null)
         return;

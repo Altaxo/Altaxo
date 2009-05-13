@@ -646,7 +646,9 @@
         class="Altaxo.Graph.Commands.RectangleDrawingTool" />
       <ToolbarItem id="EllipseDrawingTool" icon="Icons.16x16.Ellipse" tooltip="${res:XML.MainMenu.GraphMenu.Tools.Ellipse.Description}"
         class="Altaxo.Graph.Commands.EllipseDrawingTool" />
-      <ToolbarItem id="ZoomAxes" icon="Icons.16x16.ZoomAxes" tooltip="${res:XML.MainMenu.GraphMenu.ZoomAxes.Description}"
+			<ToolbarItem id="CurlyBraceDrawingTool" icon="Icons.16x16.Rectangle" tooltip="${res:XML.MainMenu.GraphMenu.Tools.Rectangle.Description}"
+        class="Altaxo.Graph.Commands.CurlyBraceDrawingTool" />
+			<ToolbarItem id="ZoomAxes" icon="Icons.16x16.ZoomAxes" tooltip="${res:XML.MainMenu.GraphMenu.ZoomAxes.Description}"
         class="Altaxo.Graph.Commands.ZoomAxesTool" />
       <ToolbarItem id="GraphCmdsSeparator"  type = "Separator"/>
       <ToolbarItem id="NewLayerLegend" icon="Icons.16x16.NewLegend" tooltip="${res:XML.MainMenu.GraphMenu.NewLayerLegend.Description}"
@@ -785,7 +787,31 @@
       class="Altaxo.Worksheet.Commands.WorksheetClearData" />
   </Path>
 
-  <Path name = "/Altaxo/BuiltinTextures">
+	<Path name = "/Altaxo/Views/Graph/LayerButton/ContextMenu">
+		<MenuItem id="Data" label="${res:XML.MainMenu.LayerMenu.Data}" type="Menu">
+			<MenuItem id = "LayerItemsBuilder" type = "Builder" class = "Altaxo.Graph.Commands.LayerItemsBuilder" />
+		</MenuItem>
+		<MenuItem id="Edit" label="${res:XML.MainMenu.LayerMenu.EditActiveLayer}" description="${res:XML.MainMenu.LayerMenu.EditActiveLayer.Description}" 
+							class="Altaxo.Graph.Commands.EditActiveLayer" />
+		<MenuItem id="Copy" label="${res:XML.MainMenu.LayerMenu.CopyActiveLayer}" description="${res:XML.MainMenu.LayerMenu.CopyActiveLayer.Description}"
+							class="Altaxo.Graph.Commands.CopyActiveLayer" />
+		<Condition name="Clipboard" content="Altaxo.Graph.GraphLayerAsXml" action="Disable">
+			<MenuItem id="PasteNew" label="${res:XML.MainMenu.LayerMenu.PasteNewLayer}" description="${res:XML.MainMenu.LayerMenu.PasteNewLayer.Description}"
+							class="Altaxo.Graph.Commands.PasteAsNewLayer" />
+			<MenuItem id="PasteNewBefore" label="${res:XML.MainMenu.LayerMenu.PasteNewLayerBefore}" description="${res:XML.MainMenu.LayerMenu.PasteNewLayerBefore.Description}"
+								class="Altaxo.Graph.Commands.PasteAsNewLayerBefore" />
+			<MenuItem id="PasteNewAfter" label="${res:XML.MainMenu.LayerMenu.PasteNewLayerAfter}" description="${res:XML.MainMenu.LayerMenu.PasteNewLayerAfter.Description}"
+								class="Altaxo.Graph.Commands.PasteAsNewLayerAfter" />
+			<MenuItem id="PasteHere" label="${res:XML.MainMenu.LayerMenu.PasteInActiveLayer}" description="${res:XML.MainMenu.LayerMenu.PasteInActiveLayer.Description}"
+								class="Altaxo.Graph.Commands.PasteInActiveLayer" />
+		</Condition>
+		<MenuItem id="Delete" label="${res:XML.MainMenu.LayerMenu.MoveActiveLayer}" description="${res:XML.MainMenu.LayerMenu.MoveActiveLayer.Description}"
+							class="Altaxo.Graph.Commands.MoveActiveLayer" />
+		<MenuItem id="Delete" label="${res:XML.MainMenu.LayerMenu.DeleteActiveLayer}" description="${res:XML.MainMenu.LayerMenu.DeleteActiveLayer.Description}"
+							class="Altaxo.Graph.Commands.DeleteActiveLayer" />
+	</Path>
+
+	<Path name = "/Altaxo/BuiltinTextures">
     <Texture id="Caustics/BlueCaustic" resource = "Textures.Caustics.BlueCaustics"/>
     <Texture id="Marbel/DarkMarble1" resource = "Textures.Marble.DarkMarble1"/>
     <Texture id="Marbel/RedMarble1" resource = "Textures.Marble.RedMarble1"/>

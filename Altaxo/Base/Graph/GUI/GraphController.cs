@@ -888,6 +888,11 @@ namespace Altaxo.Graph.GUI
 
       if(null!=this.ActiveLayer)
       {
+				var menu = Main.Services.GUIFactoryService.CreateContextMenu(parent, "/Altaxo/Views/Graph/LayerButton/ContextMenu");
+				menu.Show(parent, pt);
+
+/*				
+				ToolStripItem item0 = menu.Items[0];
         // then append the plot associations of the actual layer
         ContextMenu contextMenu = new ContextMenu();
 
@@ -903,6 +908,7 @@ namespace Altaxo.Graph.GUI
             
         }
         contextMenu.Show(parent,pt);
+*/			
       }
     }
 
