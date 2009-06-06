@@ -565,17 +565,26 @@ namespace Altaxo.Graph.Gdi
       get { return _printableBounds; }
       set
       {
-        RectangleF oldBounds = _printableBounds;
-        _printableBounds=value;
-
-        if(_printableBounds!=oldBounds)
-        {
-          Layers.SetPrintableGraphBounds( value, true);
-          OnBoundsChanged();
-        }
+				SetPrintableBounds(value, true);
       }
     }
 
+		/// <summary>
+		/// Sets the boundaries of the printable area of the page in points (1/72 inch).
+		/// </summary>
+		/// <param name="bounds">The new boundaries.</param>
+		/// <param name="rescale">If true, the layers will be rescaled according to the ratio of new size to old size.</param>
+		public void SetPrintableBounds(RectangleF bounds, bool rescale)
+		{
+			RectangleF oldBounds = _printableBounds;
+			_printableBounds = bounds;
+
+			if (_printableBounds != oldBounds)
+			{
+				Layers.SetPrintableGraphBounds(bounds, rescale);
+				OnBoundsChanged();
+			}
+		}
 
     /// <summary>
     /// The size of the printable area in points (1/72 inch).

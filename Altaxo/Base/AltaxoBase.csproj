@@ -195,7 +195,6 @@
     <Compile Include="Data\ReadableColumnProxy.cs" />
     <Compile Include="Graph\PlotColors.cs" />
     <Compile Include="Graph\Procedures\ArrangeLayers.cs" />
-    <Compile Include="Graph\Procedures\Export.cs" />
     <Compile Include="Graph\Procedures\GraphCommands.cs" />
     <Compile Include="Gui\Analysis\NonLinearFitting\FitElementControl.cs">
       <SubType>UserControl</SubType>
@@ -968,6 +967,9 @@
       <SubType>Designer</SubType>
       <DependentUpon>TypeAndInstanceControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\GraphExportOptionsControl.resx">
+      <DependentUpon>GraphExportOptionsControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Gui\Graph\LayerControl.resx">
       <DependentUpon>LayerControl.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -1003,6 +1005,9 @@
     <EmbeddedResource Include="Gui\Graph\PositionSizeRotationScaleControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>PositionSizeRotationScaleControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\PrintableAreaSetupControl.resx">
+      <DependentUpon>PrintableAreaSetupControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Graph\Scales\Rescaling\AngularRescaleConditionsControl.resx">
       <SubType>Designer</SubType>
@@ -1180,6 +1185,7 @@
     <Compile Include="Graph\Gdi\GraphCopyOptions.cs" />
     <Compile Include="Graph\Gdi\GraphDocument.cs" />
     <Compile Include="Graph\Gdi\GraphDocumentCollection.cs" />
+    <Compile Include="Graph\Gdi\GraphExport.cs" />
     <Compile Include="Graph\Gdi\IGripManipulationHandle.cs" />
     <Compile Include="Graph\Gdi\IGrippableObject.cs" />
     <Compile Include="Graph\Gdi\IHitTestObject.cs" />
@@ -1468,6 +1474,13 @@
     <Compile Include="Gui\Common\TypeAndInstanceControl.Designer.cs">
       <DependentUpon>TypeAndInstanceControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Gui\Graph\GraphExportOptionsControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\GraphExportOptionsControl.Designer.cs">
+      <DependentUpon>GraphExportOptionsControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\GraphExportOptionsController.cs" />
     <Compile Include="Gui\Graph\GridPlaneController.cs" />
     <Compile Include="Gui\Graph\LayerControl.cs">
       <SubType>UserControl</SubType>
@@ -1495,6 +1508,13 @@
       <DependentUpon>PlotGroupCollectionControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\PlotGroupCollectionController.cs" />
+    <Compile Include="Gui\Graph\PrintableAreaSetupControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\PrintableAreaSetupControl.Designer.cs">
+      <DependentUpon>PrintableAreaSetupControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\PrintableAreaSetupController.cs" />
     <Compile Include="Gui\Graph\Scales\Rescaling\AngularRescaleConditionsControl.cs">
       <SubType>UserControl</SubType>
     </Compile>

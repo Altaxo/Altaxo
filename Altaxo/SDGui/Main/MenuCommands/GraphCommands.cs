@@ -96,6 +96,17 @@ namespace Altaxo.Graph.Commands
     }
   }
 
+	/// <summary>
+	/// Handler for the menu item "File" - "Setup Page".
+	/// </summary>
+	public class PrintableSizeSetup : AbstractGraphControllerCommand
+	{
+		public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
+		{
+			Altaxo.Graph.Procedures.GraphCommands.PrintableSizeSetup(ctrl);
+		}
+	}
+
 
   /// <summary>
   /// Handler for the menu item "File" - "Print".
@@ -150,6 +161,20 @@ namespace Altaxo.Graph.Commands
   }
 
 
+
+	/// <summary>
+	/// Handler for the menu item "Edit" - "CopyPage".
+	/// </summary>
+	public class SetCopyPageOptions : AbstractGraphControllerCommand
+	{
+		public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
+		{
+			Altaxo.Graph.Procedures.GraphCommands.SetCopyPageOptions(ctrl);
+		}
+	}
+
+
+
   /// <summary>
   /// Handler for the menu item "Edit" - "CopyPage".
   /// </summary>
@@ -171,7 +196,7 @@ namespace Altaxo.Graph.Commands
   {
     public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
     {
-      Altaxo.Graph.Procedures.GraphCommands.CopyPageToClipboardAsBitmap(ctrl, 150, null, PixelFormat.Format32bppArgb,false);
+      Altaxo.Graph.Procedures.GraphCommands.CopyPageToClipboardAsBitmap(ctrl, 150, null, PixelFormat.Format32bppArgb,	 GraphExportArea.PrintableArea);
     }
   }
 
@@ -183,7 +208,7 @@ namespace Altaxo.Graph.Commands
   {
     public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
     {
-      Altaxo.Graph.Procedures.GraphCommands.CopyPageToClipboardAsBitmap(ctrl, 150, Brushes.White, PixelFormat.Format24bppRgb, false);
+			Altaxo.Graph.Procedures.GraphCommands.CopyPageToClipboardAsBitmap(ctrl, 150, Brushes.White, PixelFormat.Format24bppRgb, GraphExportArea.PrintableArea);
     }
   }
 
@@ -196,7 +221,7 @@ namespace Altaxo.Graph.Commands
   {
     public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
     {
-      Altaxo.Graph.Procedures.GraphCommands.CopyPageToClipboardAsBitmap(ctrl, 300, null, PixelFormat.Format32bppArgb, false);
+			Altaxo.Graph.Procedures.GraphCommands.CopyPageToClipboardAsBitmap(ctrl, 300, null, PixelFormat.Format32bppArgb, GraphExportArea.PrintableArea);
     }
   }
 
@@ -208,7 +233,7 @@ namespace Altaxo.Graph.Commands
   {
     public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
     {
-      Altaxo.Graph.Procedures.GraphCommands.CopyPageToClipboardAsBitmap(ctrl, 300, Brushes.White, PixelFormat.Format24bppRgb, false);
+			Altaxo.Graph.Procedures.GraphCommands.CopyPageToClipboardAsBitmap(ctrl, 300, Brushes.White, PixelFormat.Format24bppRgb, GraphExportArea.PrintableArea);
     }
   }
 
@@ -282,12 +307,20 @@ namespace Altaxo.Graph.Commands
       {
         if ((myStream = saveFileDialog1.OpenFile()) != null)
         {
-          ctrl.SaveAsBitmap(myStream,300,System.Drawing.Imaging.ImageFormat.Tiff,true);
+          ctrl.SaveAsBitmap(myStream,300,System.Drawing.Imaging.ImageFormat.Tiff, GraphExportArea.Page);
           myStream.Close();
         } // end openfile ok
       } // end dlgresult ok
     }
   }
+
+	public class FileExportSpecific : AbstractGraphControllerCommand
+	{
+		public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
+		{
+			Altaxo.Graph.Procedures.GraphCommands.FileExportSpecific(ctrl);
+		}
+	}
   /// <summary>
   /// Handler for the menu item "Edit" - "New layer(axes)" - "Normal: Bottom X Left Y".
   /// </summary>

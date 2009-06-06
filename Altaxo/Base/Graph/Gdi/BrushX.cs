@@ -353,7 +353,7 @@ namespace Altaxo.Graph.Gdi
 
     public static implicit operator System.Drawing.Brush(BrushX bh)
     {
-      return bh.Brush;
+      return bh==null ? null : bh.Brush;
     }
 
 

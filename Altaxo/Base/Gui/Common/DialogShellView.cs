@@ -94,65 +94,63 @@ namespace Altaxo.Gui.Common
     /// </summary>
     private void InitializeComponent()
     {
-      this.m_ButtonPanel = new System.Windows.Forms.Panel();
-      this.m_btApply = new System.Windows.Forms.Button();
-      this.m_btCancel = new System.Windows.Forms.Button();
-      this.m_btOK = new System.Windows.Forms.Button();
-      this.m_ButtonPanel.SuspendLayout();
-      this.SuspendLayout();
-      // 
-      // m_ButtonPanel
-      // 
-      this.m_ButtonPanel.Controls.Add(this.m_btApply);
-      this.m_ButtonPanel.Controls.Add(this.m_btCancel);
-      this.m_ButtonPanel.Controls.Add(this.m_btOK);
-      this.m_ButtonPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
-      this.m_ButtonPanel.Location = new System.Drawing.Point(0, 226);
-      this.m_ButtonPanel.Name = "m_ButtonPanel";
-      this.m_ButtonPanel.Size = new System.Drawing.Size(292, 40);
-      this.m_ButtonPanel.TabIndex = 0;
-      // 
-      // m_btApply
-      // 
-      this.m_btApply.Location = new System.Drawing.Point(192, 8);
-      this.m_btApply.Name = "m_btApply";
-      this.m_btApply.Size = new System.Drawing.Size(59, 24);
-      this.m_btApply.TabIndex = 2;
-      this.m_btApply.Text = "Apply";
-      this.m_btApply.Click += new System.EventHandler(this.EhButtonApply_Click);
-      // 
-      // m_btCancel
-      // 
-      this.m_btCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this.m_btCancel.Location = new System.Drawing.Point(104, 8);
-      this.m_btCancel.Name = "m_btCancel";
-      this.m_btCancel.Size = new System.Drawing.Size(59, 24);
-      this.m_btCancel.TabIndex = 1;
-      this.m_btCancel.Text = "Cancel";
-      this.m_btCancel.Click += new System.EventHandler(this.EhButtonCancel_Click);
-      // 
-      // m_btOK
-      // 
-      this.m_btOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-      this.m_btOK.Location = new System.Drawing.Point(16, 8);
-      this.m_btOK.Name = "m_btOK";
-      this.m_btOK.Size = new System.Drawing.Size(59, 24);
-      this.m_btOK.TabIndex = 0;
-      this.m_btOK.Text = "OK";
-      this.m_btOK.Click += new System.EventHandler(this.EhButtonOK_Click);
-      // 
-      // DialogShellView
-      // 
-      this.AcceptButton = this.m_btOK;
-      this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-      this.CancelButton = this.m_btCancel;
-      this.ClientSize = new System.Drawing.Size(292, 266);
-      this.Controls.Add(this.m_ButtonPanel);
-      this.Name = "DialogShellView";
-      this.Text = "DialogShellView";
-      this.Load += new System.EventHandler(this.EhView_Load);
-      this.m_ButtonPanel.ResumeLayout(false);
-      this.ResumeLayout(false);
+			this.m_ButtonPanel = new System.Windows.Forms.Panel();
+			this.m_btApply = new System.Windows.Forms.Button();
+			this.m_btCancel = new System.Windows.Forms.Button();
+			this.m_btOK = new System.Windows.Forms.Button();
+			this.m_ButtonPanel.SuspendLayout();
+			this.SuspendLayout();
+			// 
+			// m_ButtonPanel
+			// 
+			this.m_ButtonPanel.Controls.Add(this.m_btApply);
+			this.m_ButtonPanel.Controls.Add(this.m_btCancel);
+			this.m_ButtonPanel.Controls.Add(this.m_btOK);
+			this.m_ButtonPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
+			this.m_ButtonPanel.Location = new System.Drawing.Point(0, 226);
+			this.m_ButtonPanel.Name = "m_ButtonPanel";
+			this.m_ButtonPanel.Size = new System.Drawing.Size(292, 40);
+			this.m_ButtonPanel.TabIndex = 0;
+			// 
+			// m_btApply
+			// 
+			this.m_btApply.Location = new System.Drawing.Point(192, 8);
+			this.m_btApply.Name = "m_btApply";
+			this.m_btApply.Size = new System.Drawing.Size(59, 24);
+			this.m_btApply.TabIndex = 2;
+			this.m_btApply.Text = "Apply";
+			this.m_btApply.Click += new System.EventHandler(this.EhButtonApply_Click);
+			// 
+			// m_btCancel
+			// 
+			this.m_btCancel.Location = new System.Drawing.Point(104, 8);
+			this.m_btCancel.Name = "m_btCancel";
+			this.m_btCancel.Size = new System.Drawing.Size(59, 24);
+			this.m_btCancel.TabIndex = 1;
+			this.m_btCancel.Text = "Cancel";
+			this.m_btCancel.Click += new System.EventHandler(this.EhButtonCancel_Click);
+			// 
+			// m_btOK
+			// 
+			this.m_btOK.Location = new System.Drawing.Point(16, 8);
+			this.m_btOK.Name = "m_btOK";
+			this.m_btOK.Size = new System.Drawing.Size(59, 24);
+			this.m_btOK.TabIndex = 0;
+			this.m_btOK.Text = "OK";
+			this.m_btOK.Click += new System.EventHandler(this.EhButtonOK_Click);
+			// 
+			// DialogShellView
+			// 
+			this.AcceptButton = this.m_btOK;
+			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+			this.CancelButton = this.m_btCancel;
+			this.ClientSize = new System.Drawing.Size(292, 266);
+			this.Controls.Add(this.m_ButtonPanel);
+			this.Name = "DialogShellView";
+			this.Text = "DialogShellView";
+			this.Load += new System.EventHandler(this.EhView_Load);
+			this.m_ButtonPanel.ResumeLayout(false);
+			this.ResumeLayout(false);
 
     }
     #endregion

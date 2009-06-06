@@ -156,7 +156,9 @@
       <Condition name = "WindowActive" activewindow="Altaxo.Gui.SharpDevelop.SDGraphViewContent" action="Exclude">
         <MenuItem id="GraphPageSetup" label="${res:XML.MainMenu.FileMenu.PageSetup}" icon="Icons.16x16.NewDocumentIcon"
 					description="${res:XML.MainMenu.FileMenu.PageSetup.Description}" class="Altaxo.Graph.Commands.PageSetup" />
-        <MenuItem id="GraphPrintPreview" label="${res:XML.MainMenu.FileMenu.PrintPreview}" icon="Icons.16x16.PreView"
+				<MenuItem id="PrintableSizeSetup" label="${res:XML.MainMenu.FileMenu.PrintableSizeSetup}" icon="Icons.16x16.NewDocumentIcon"
+					description="${res:XML.MainMenu.FileMenu.PrintableSizeSetup.Description}" class="Altaxo.Graph.Commands.PrintableSizeSetup" />
+				<MenuItem id="GraphPrintPreview" label="${res:XML.MainMenu.FileMenu.PrintPreview}" icon="Icons.16x16.PreView"
 					description="${res:XML.MainMenu.FileMenu.PrintPreview.Description}" class="Altaxo.Graph.Commands.PrintPreview" />
         <MenuItem id="GraphPrint" label="${res:XML.MainMenu.FileMenu.Print}" icon="Icons.16x16.Printer"
 					description="${res:XML.MainMenu.FileMenu.Print.Description}" class="Altaxo.Graph.Commands.Print" />
@@ -196,6 +198,8 @@
 						description="${res:XML.MainMenu.FileMenu.Export.WindowsMetaFile.Description}" class="Altaxo.Graph.Commands.FileExportMetafile" />
           <MenuItem id="GraphExportTiff" label="${res:XML.MainMenu.FileMenu.Export.BitmapTiffFile}" icon="Icons.16x16.NewDocumentIcon"
 						description="${res:XML.MainMenu.FileMenu.Export.BitmapTiffFile.Description}" class="Altaxo.Graph.Commands.FileExportTiff" />
+					<MenuItem id="GraphExportSpecific" label="${res:XML.MainMenu.FileMenu.Export.SpecificFile}" icon="Icons.16x16.NewDocumentIcon"
+					 description="${res:XML.MainMenu.FileMenu.Export.SpecificFile.Description}" class="Altaxo.Graph.Commands.FileExportSpecific" />
         </MenuItem>
       </Condition>
 
@@ -238,7 +242,12 @@
         <MenuItem id="GraphCopyPage" label="${res:XML.MainMenu.EditMenu.CopyPage}" icon="Icons.16x16.NewDocumentIcon"
           description="${res:XML.MainMenu.EditMenu.CopyPage.Description}" class="Altaxo.Graph.Commands.CopyPage" />
         <MenuItem id="CopyPageAsBitmap" label="${res:XML.MainMenu.EditMenu.CopyPageAsBitmap}"  type="Menu">
-          <MenuItem id="GraphCopyPageAsBitmap150dpiARGB"
+					<MenuItem id="SetCopyPageOptions"
+                    label="${res:XML.MainMenu.EditMenu.SetCopyPageOptions}"
+                    icon="Icons.16x16.NewDocumentIcon"
+                    description="${res:XML.MainMenu.EditMenu.SetCopyPageOptions.Description}"
+                    class="Altaxo.Graph.Commands.SetCopyPageOptions" />
+					<MenuItem id="GraphCopyPageAsBitmap150dpiARGB"
                     label="${res:XML.MainMenu.EditMenu.CopyPageAsBitmap150dpiARGB}"
                     icon="Icons.16x16.NewDocumentIcon"
                     description="${res:XML.MainMenu.EditMenu.CopyPageAsBitmap150dpiARGB.Description}"

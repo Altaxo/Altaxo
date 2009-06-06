@@ -29,6 +29,8 @@ using System.Runtime.InteropServices;
 using Altaxo.Graph.Gdi;
 using Altaxo.Gui.Common;
 
+using System.Windows.Forms;
+
 namespace Altaxo.Graph.Procedures
 {
   /// <summary>
@@ -79,6 +81,19 @@ namespace Altaxo.Graph.Procedures
       ctrl.RefreshGraph();
     }
 
+
+		public static void PrintableSizeSetup(GraphController ctrl)
+		{
+			var options = new Altaxo.Gui.Graph.PrintableAreaSetupOptions();
+			options.Area = ctrl.Doc.PrintableBounds;
+			object resultobj = options;
+			if (Current.Gui.ShowDialog(ref resultobj, "Setup printable area"))
+			{
+				var result = (Altaxo.Gui.Graph.PrintableAreaSetupOptions)resultobj;
+				ctrl.Doc.SetPrintableBounds(result.Area, result.Rescale);
+			}
+
+		}
 
     /// <summary>
     /// Handler for the menu item "Edit" - "CopyPage".
@@ -132,8 +147,10 @@ namespace Altaxo.Graph.Procedures
       }
       */
 
+			public static GraphExportOptions CopyPageOptions = new GraphExportOptions();
 
-      static public void Run(GraphController ctrl)
+
+      static public void CopyAsMetafile(GraphController ctrl)
       {
        // System.Drawing.Imaging.Metafile mf = Altaxo.Graph.Procedures.Export.GetMetafile(ctrl.Doc);
        // PutEnhMetafileOnClipboard(ctrl.View.Form.Handle, mf);
@@ -143,21 +160,109 @@ namespace Altaxo.Graph.Procedures
         string filename = filepath + "AltaxoClipboardMetafile.emf";
         if (System.IO.File.Exists(filename))
           System.IO.File.Delete(filename);
-        Metafile mf = Altaxo.Graph.Procedures.Export.SaveAsMetafile(ctrl.Doc, filename, 300);
+        Metafile mf = GraphExport.RenderAsMetafile(ctrl.Doc, filename, CopyPageOptions);
         System.Collections.Specialized.StringCollection coll = new System.Collections.Specialized.StringCollection();
         coll.Add(filename);
         dao.SetFileDropList(coll);
         dao.SetData(typeof(Metafile), mf);
         System.Windows.Forms.Clipboard.SetDataObject(dao);
-
-        
       }
+
+
+			static public void CopyAsBitmap(GraphController ctrl)
+			{
+				CopyPageToClipboardAsBitmap(ctrl, Brushes.White, CopyPageOptions);
+			}
+
+			static public void Run(GraphController ctrl)
+			{
+				var opt = CopyPageOptions;
+				if (opt.ImageFormat == ImageFormat.Emf || opt.ImageFormat == ImageFormat.Wmf)
+				{
+					CopyAsMetafile(ctrl);
+				}
+				else
+				{
+					CopyAsBitmap(ctrl);
+				}
+			}
+
     }
 
     public static void CopyPageToClipboard(GraphController ctrl)
     {
       CopyPageCommand.Run(ctrl);
     }
+
+		public static void SetCopyPageOptions(GraphController ctrl)
+		{
+			if (null == CopyPageCommand.CopyPageOptions)
+				CopyPageCommand.CopyPageOptions = new GraphExportOptions();
+
+			object resultobj = CopyPageCommand.CopyPageOptions;
+			if (Current.Gui.ShowDialog(ref resultobj, "Set copy page options"))
+			{
+				CopyPageCommand.CopyPageOptions = (GraphExportOptions)resultobj;
+			}
+		}
+
+		static string GetFileFilterString(ImageFormat fmt)
+		{
+			string filter;
+
+			if (fmt == ImageFormat.Bmp)
+				filter = "Bitmap files (*.bmp)|*.bmp|All files (*.*)|*.*";
+			else if (fmt == ImageFormat.Emf)
+				filter = "Enhances metafiles (*.emf)|*.emf|All files (*.*)|*.*";
+			else if (ImageFormat.Exif == fmt)
+				filter = "Exif files (*.exi)|*.exi|All files (*.*)|*.*";
+			else if (ImageFormat.Gif == fmt)
+				filter = "Gif files (*.gif)|*.gif|All files (*.*)|*.*";
+			else if (ImageFormat.Icon == fmt)
+				filter = "Icon files (*.ico)|*.ico|All files (*.*)|*.*";
+			else if (ImageFormat.Jpeg == fmt)
+				filter = "Jpeg files (*.jpg)|*.jpf|All files (*.*)|*.*";
+			else if (ImageFormat.Png == fmt)
+				filter = "Png files (*.png)|*.png|All files (*.*)|*.*";
+			else if (ImageFormat.Tiff == fmt)
+				filter = "Tiff files (*.tif)|*.tif|All files (*.*)|*.*";
+			else if (ImageFormat.Wmf == fmt)
+				filter = "Windows metafiles (*.wmf)|*.wmf|All files (*.*)|*.*";
+			else
+				filter = "All files (*.*)|*.*";
+
+			return filter;
+		}
+
+		static GraphExportOptions _graphExportOptionsToFile = new GraphExportOptions();
+		public static void FileExportSpecific(GraphController ctrl)
+		{
+			object resopt = _graphExportOptionsToFile;
+			if (Current.Gui.ShowDialog(ref resopt, "Choose export options"))
+			{
+				_graphExportOptionsToFile = (GraphExportOptions)resopt;
+			}
+			else
+			{
+				return;
+			}
+
+			System.IO.Stream myStream;
+			SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+
+			saveFileDialog1.Filter = GetFileFilterString(_graphExportOptionsToFile.ImageFormat);
+			saveFileDialog1.FilterIndex = 1;
+			saveFileDialog1.RestoreDirectory = true;
+
+			if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+			{
+				if ((myStream = saveFileDialog1.OpenFile()) != null)
+				{
+					ctrl.Doc.Render(myStream, _graphExportOptionsToFile);
+					myStream.Close();
+				} // end openfile ok
+			} // end dlgresult ok
+		}
 
 		/// <summary>
 		/// Puts the entire graph to the clipboard in XML format.
@@ -333,14 +438,22 @@ namespace Altaxo.Graph.Procedures
     /// <param name="dpiResolution">Resolution of the bitmap in dpi. Determines the pixel size of the bitmap.</param>
     /// <param name="backbrush">Brush used to fill the background of the image. Can be <c>null</c>.</param>
     /// <param name="pixelformat">Specify the pixelformat here.</param>
-    public static void CopyPageToClipboardAsBitmap(GraphController ctrl, int dpiResolution, Brush backbrush, PixelFormat pixelformat, bool usePageBounds)
+    public static void CopyPageToClipboardAsBitmap(GraphController ctrl, int dpiResolution, Brush backbrush, PixelFormat pixelformat, GraphExportArea areaToExport)
     {
       System.Windows.Forms.DataObject dao = new System.Windows.Forms.DataObject();
-      System.Drawing.Bitmap bitmap = Altaxo.Graph.Procedures.Export.SaveAsBitmap(ctrl.Doc, dpiResolution, backbrush, pixelformat, usePageBounds);
+			System.Drawing.Bitmap bitmap = GraphExport.RenderAsBitmap(ctrl.Doc, backbrush, pixelformat, areaToExport, dpiResolution, dpiResolution);
       dao.SetImage(bitmap);
       System.Windows.Forms.Clipboard.SetDataObject(dao);
     }
 
+
+		public static void CopyPageToClipboardAsBitmap(GraphController ctrl, Brush backbrush, GraphExportOptions options)
+		{
+			System.Windows.Forms.DataObject dao = new System.Windows.Forms.DataObject();
+			System.Drawing.Bitmap bitmap = GraphExport.RenderAsBitmap(ctrl.Doc, backbrush, options.PixelFormat, options.ExportArea, options.SourceDpiResolution, options.DestinationDpiResolution);
+			dao.SetImage(bitmap);
+			System.Windows.Forms.Clipboard.SetDataObject(dao);
+		}
 
     /// <summary>
     /// This command will rescale all axes in all layers
