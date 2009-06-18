@@ -81,8 +81,14 @@ namespace Altaxo.Graph.Gdi.Plot
 		/// <param name="layer">The plot layer.</param>
 		/// <param name="lastDataObject">An optional data object returned by the previously drawn plot item. Can be null.</param>
 		/// <returns>A data object, which can be used by the next plot item for some styles (like fill style).</returns>
-		public abstract object Paint(Graphics g, IPlotArea layer, object lastDataObject);
+		public abstract void Paint(Graphics g, IPlotArea layer, IGPlotItem previousPlotItem, IGPlotItem nextPlotItem);
 
+		/// <summary>
+		/// Called after painting has finished. Can be used to release resources. Must be overridden by a derived class.
+		/// </summary>
+		public virtual void FinishPainting()
+		{
+		}
 
     /// <summary>
     /// This routine ensures that the plot item updates all its cached data and send the appropriate

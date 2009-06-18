@@ -22,51 +22,64 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
+using System.Data;
 using System.Text;
+using System.Windows.Forms;
 
-using Altaxo.Graph.Scales.Boundaries;
+
 using Altaxo.Graph.Gdi;
-using Altaxo.Graph.Gdi.Plot;
 
-
-namespace Altaxo.Graph.Gdi.Plot.Groups
+namespace Altaxo.Gui.Graph
 {
-	using Plot.Data;
-
-  public class CoordinateTransformingStyleBase
+  public partial class ImageGraphicControl : UserControl, IImageGraphicView
   {
-    public static void MergeXBoundsInto(IPhysicalBoundaries pb, PlotItemCollection coll)
+    public ImageGraphicControl()
     {
-      foreach (IGPlotItem pi in coll)
+      InitializeComponent();
+    }
+
+    #region IShapeGraphicView Members
+
+   
+    public PointF DocPosition
+    {
+      get
       {
-        if (pi is IXBoundsHolder)
-        {
-          IXBoundsHolder plotItem = (IXBoundsHolder)pi;
-          plotItem.MergeXBoundsInto(pb);
-        }
+        return _ctrlPosSize.PositionSizeGlue.Position;
+      }
+      set
+      {
+        _ctrlPosSize.PositionSizeGlue.Position = value;
       }
     }
 
-    public static void MergeYBoundsInto(IPhysicalBoundaries pb, PlotItemCollection coll)
+    public SizeF DocSize
     {
-      foreach (IGPlotItem pi in coll)
+      get
       {
-        if (pi is IYBoundsHolder)
-        {
-          IYBoundsHolder plotItem = (IYBoundsHolder)pi;
-          plotItem.MergeYBoundsInto(pb);
-        }
+        return _ctrlPosSize.PositionSizeGlue.Size;
+      }
+      set
+      {
+        _ctrlPosSize.PositionSizeGlue.Size = value;
+      }
+    }
+    public float DocRotation
+    {
+      get
+      {
+        return (float)_ctrlPosSize.PositionSizeGlue.Rotation;
+      }
+      set
+      {
+        _ctrlPosSize.PositionSizeGlue.Rotation = value;
       }
     }
 
-    public static void Paint(System.Drawing.Graphics g, IPlotArea layer, PlotItemCollection coll)
-    {
-			for (int i = coll.Count - 1; i >= 0; --i)
-			{
-				coll[i].Paint(g, layer, i == coll.Count - 1 ? null : coll[i + 1], i == 0 ? null : coll[i - 1]);
-			}
-    }
+    #endregion
 
-
+   
   }
 }

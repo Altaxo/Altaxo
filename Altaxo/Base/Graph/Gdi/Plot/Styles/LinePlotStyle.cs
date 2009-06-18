@@ -625,7 +625,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     }
 
 
-		public void Paint(Graphics g, IPlotArea layer, Processed2DPlotData pdata, object previousDataObject)
+		public void Paint(Graphics g, IPlotArea layer, Processed2DPlotData pdata, Processed2DPlotData prevItemData, Processed2DPlotData nextItemData)
     {
       PointF[] linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
       PlotRangeList rangeList = pdata.RangeList;

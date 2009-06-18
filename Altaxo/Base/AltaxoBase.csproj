@@ -943,6 +943,10 @@
       <SubType>Designer</SubType>
       <DependentUpon>BarGraphPlotStyleControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\ImageGraphicControl.resx">
+      <DependentUpon>ImageGraphicControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Gui\Graph\DensityImagePlotStyleControl.resx">
       <DependentUpon>DensityImagePlotStyleControl.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -1437,6 +1441,13 @@
     </Compile>
     <Compile Include="Gui\Graph\BarGraphPlotStyleController.cs" />
     <Compile Include="Gui\Graph\CoordinateSystemController.cs" />
+    <Compile Include="Gui\Graph\ImageGraphicControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\ImageGraphicControl.Designer.cs">
+      <DependentUpon>ImageGraphicControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\ImageGraphicController.cs" />
     <Compile Include="Gui\Graph\DensityImagePlotItemController.cs" />
     <Compile Include="Gui\Graph\DensityImagePlotStyleControl.cs">
       <SubType>UserControl</SubType>

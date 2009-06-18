@@ -53,7 +53,14 @@ namespace Altaxo.Graph.Gdi.Plot
     /// <returns>The name of the plot.</returns>
     string GetName(string style);
 
+		/// <summary>
+		/// The collection where this plot item belongs to. Can be null for the root item.
+		/// </summary>
     PlotItemCollection ParentCollection { get; }
+
+		/// <summary>
+		/// Set the parent of this plot item.
+		/// </summary>
     new object ParentObject { set; }
 
     /// <summary>
@@ -102,7 +109,13 @@ namespace Altaxo.Graph.Gdi.Plot
     /// <param name="layer">The plot layer.</param>
 		/// <param name="lastDataObject">An optional data object returned by the previously drawn plot item. Can be null.</param>
 		/// <returns>A data object, which can be used by the next plot item for some styles (like fill style).</returns>
-    object Paint(Graphics g, IPlotArea layer, object lastDataObject);
+    void Paint(Graphics g, IPlotArea layer, IGPlotItem previousPlotItem, IGPlotItem nextPlotItem);
+
+
+		/// <summary>
+		/// Called after painting has finished. Can be used to release resources.
+		/// </summary>
+		void FinishPainting();
 
     /// <summary>
     /// Paints a symbol for this plot item for use in a legend.
@@ -112,8 +125,8 @@ namespace Altaxo.Graph.Gdi.Plot
     void PaintSymbol(Graphics g, RectangleF location);
 
     /// <summary>
-    /// Test wether the mouse hits a plot item. The default implementation here returns null.
-    /// If you want to have a reaction on mouse click on a curve, implement this function.
+    /// Test wether the mouse hits a plot item. The default implementation returns null.
+    /// If you want to have a reaction on mouse click on a curve, return a <see cref="IHitTestObject"/>.
     /// </summary>
     /// <param name="layer">The layer in which this plot item is drawn into.</param>
     /// <param name="hitpoint">The point where the mouse is pressed.</param>

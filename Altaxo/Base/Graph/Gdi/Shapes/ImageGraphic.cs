@@ -74,6 +74,22 @@ namespace Altaxo.Graph.Gdi.Shapes
     }
 
     public abstract Image GetImage();
+
+		public override IHitTestObject HitTest(PointF pt)
+		{
+			IHitTestObject result = base.HitTest(pt);
+			if (result != null)
+				result.DoubleClick = EhHitDoubleClick;
+			return result;
+		}
+
+		static bool EhHitDoubleClick(IHitTestObject o)
+		{
+			object hitted = o.HittedObject;
+			Current.Gui.ShowDialog(ref hitted, "Image properties", true);
+			((ImageGraphic)hitted).OnChanged();
+			return true;
+		}
   } //  End Class
 
 }

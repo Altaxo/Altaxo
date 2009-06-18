@@ -44,6 +44,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 	{
 		protected BrushX _fillBrush; // brush to fill the area under the line
 
+		bool _fillToPrevPlotItem = true;
+		bool _fillToNextPlotItem = true;
+
 		[NonSerialized]
 		
 		Action<Graphics, Processed2DPlotData, PlotRange, IPlotArea, Processed2DPlotData> _cachedPaintOneRange;
@@ -188,26 +191,44 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			// nothing to collect here
 		}
 
-		public void Paint(Graphics g, IPlotArea layer, Altaxo.Graph.Gdi.Plot.Data.Processed2DPlotData pdata, object previousDataObject)
+		public void Paint(Graphics g, IPlotArea layer, Altaxo.Graph.Gdi.Plot.Data.Processed2DPlotData pdata, Processed2DPlotData prevItemData, Processed2DPlotData nextItemData)
 		{
-			var otherPlotData = previousDataObject as Altaxo.Graph.Gdi.Plot.Data.Processed2DPlotData;
-			if (null == otherPlotData)
-				return;
-
-			// ensure that brush and pen are cached
-			if (null != _fillBrush)
+			if (_fillToPrevPlotItem && null != prevItemData)
 			{
-				_fillBrush.Rectangle = new RectangleF(PointF.Empty, layer.Size);
+				// ensure that brush and pen are cached
+				if (null != _fillBrush)
+				{
+					_fillBrush.Rectangle = new RectangleF(PointF.Empty, layer.Size);
+				}
+
+				PlotRangeList rangeList = pdata.RangeList;
+				int rangelistlen = rangeList.Count;
+
+				// we have to ignore the missing points here, thus all ranges can be plotted
+				// as one range, i.e. continuously
+				// for this, we create the totalRange, which contains all ranges
+				PlotRange totalRange = new PlotRange(rangeList[0].LowerBound, rangeList[rangelistlen - 1].UpperBound);
+				_cachedPaintOneRange(g, pdata, totalRange, layer, prevItemData);
 			}
 
-			PlotRangeList rangeList = pdata.RangeList;
-			int rangelistlen = rangeList.Count;
+			if (_fillToNextPlotItem && null != nextItemData)
+			{
+				// ensure that brush and pen are cached
+				if (null != _fillBrush)
+				{
+					_fillBrush.Rectangle = new RectangleF(PointF.Empty, layer.Size);
+				}
 
-			// we have to ignore the missing points here, thus all ranges can be plotted
-			// as one range, i.e. continuously
-			// for this, we create the totalRange, which contains all ranges
-			PlotRange totalRange = new PlotRange(rangeList[0].LowerBound, rangeList[rangelistlen - 1].UpperBound);
-			_cachedPaintOneRange(g, pdata, totalRange, layer, otherPlotData);
+				PlotRangeList rangeList = pdata.RangeList;
+				int rangelistlen = rangeList.Count;
+
+				// we have to ignore the missing points here, thus all ranges can be plotted
+				// as one range, i.e. continuously
+				// for this, we create the totalRange, which contains all ranges
+				PlotRange totalRange = new PlotRange(rangeList[0].LowerBound, rangeList[rangelistlen - 1].UpperBound);
+				_cachedPaintOneRange(g, pdata, totalRange, layer, nextItemData);
+			}
+
 		}
 
 		public RectangleF PaintSymbol(Graphics g, RectangleF bounds)

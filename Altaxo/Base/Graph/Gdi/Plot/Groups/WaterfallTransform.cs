@@ -320,12 +320,12 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 
         if (null == plotDataColl[i])
         {
-          coll[i].Paint(g, layer,null);
+          coll[i].Paint(g, layer, i==coll.Count-1 ? null : coll[i-1], i==0 ? null : coll[i-1]);
         }
         else
         {
           TransformedLayerWrapper layerwrapper = new TransformedLayerWrapper(layer, xincColl[i], yincColl[i]);
-          ((G2DPlotItem)coll[i]).Paint(g, layerwrapper, plotDataColl[i]);
+          ((G2DPlotItem)coll[i]).Paint(g, layerwrapper, plotDataColl[i],i==coll.Count-1 ? null : plotDataColl[i+1], i==0 ? null : plotDataColl[i-1]);
         }
 
         // The clipping region is no longer needed, so we can dispose it

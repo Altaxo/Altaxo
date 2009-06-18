@@ -250,20 +250,33 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
         }
       }
 
-      for (int i = coll.Count - 1; i >= 0; --i)
-      {
-        IGPlotItem pi = coll[i];
-        if (pi is G2DPlotItem)
-        {
-          G2DPlotItem gpi = pi as G2DPlotItem;
-          Processed2DPlotData pdata = plotDataDict[gpi];
-          gpi.Paint(g, layer, pdata);
-        }
-        else
-        {
-          pi.Paint(g, layer,null);
-        }
-      }
+			Processed2DPlotData prevPlotData = null;
+			Processed2DPlotData nextPlotData = null;
+			Processed2DPlotData currPlotData = null;
+			for (int i = coll.Count - 1; i >= 0; --i)
+			{
+				if (i > 0 && (coll[i - 1] is G2DPlotItem))
+					nextPlotData = plotDataDict[coll[i - 1] as G2DPlotItem];
+				else
+					nextPlotData = null;
+
+
+				if (coll[i] is G2DPlotItem)
+				{
+					var gpi = coll[i] as G2DPlotItem;
+					currPlotData = plotDataDict[gpi];
+					gpi.Paint(g, layer, currPlotData, prevPlotData, nextPlotData);
+				}
+				else
+				{
+					currPlotData = null;
+					coll[i].Paint(g, layer, null, null);
+				}
+
+				prevPlotData = currPlotData;
+				currPlotData = nextPlotData;
+				nextPlotData = null;
+			}
 
     }
 

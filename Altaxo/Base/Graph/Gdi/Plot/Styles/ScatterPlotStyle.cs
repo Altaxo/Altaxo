@@ -830,7 +830,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       g.DrawPath(_pen, _cachedPath);
     }
 
-		public void Paint(Graphics g, IPlotArea layer, Processed2DPlotData pdata, object previousDataObject)
+		public void Paint(Graphics g, IPlotArea layer, Processed2DPlotData pdata, Processed2DPlotData prevItemData, Processed2DPlotData nextItemData)
     {
        PlotRangeList rangeList = pdata.RangeList;
        PointF[] ptArray = pdata.PlotPointsInAbsoluteLayerCoordinates;

@@ -73,7 +73,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <param name="g">The graphics.</param>
     /// <param name="layer">Area to plot to</param>
     /// <param name="pdata">The preprocessed plot data used for plotting.</param>
-    void Paint(Graphics g, IPlotArea layer, Processed2DPlotData pdata, object previousDataObject);
+    void Paint(Graphics g, IPlotArea layer, Processed2DPlotData pdata, Processed2DPlotData prevItemData, Processed2DPlotData nextItemData );
 
   
     /// <summary>

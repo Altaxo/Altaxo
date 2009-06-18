@@ -86,6 +86,7 @@ namespace Altaxo.Graph.Scales.Ticks
 		{
 			_minorTicks.Clear();
 			_majorTicks.Clear();
+			_majorTextTicks.Clear();
 
 			// make major ticks at integral numbers and minor ticks at halfway
 			double dorg = (double)org;

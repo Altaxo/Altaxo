@@ -265,13 +265,12 @@ namespace Altaxo.Graph.Gdi.Plot
       return GetName(int.MaxValue);
     }
 
-    public override object Paint(Graphics g, IPlotArea layer, object lastDataObject)
+		public override void Paint(Graphics g, IPlotArea layer, IGPlotItem previousPlotItem, IGPlotItem nextPlotItem)
     {
       if (null != this.m_PlotStyle)
       {
         m_PlotStyle.Paint(g, layer, m_PlotAssociation);
       }
-			return lastDataObject;
     }
 
     /// <summary>

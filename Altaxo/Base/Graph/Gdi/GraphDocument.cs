@@ -628,6 +628,11 @@ namespace Altaxo.Graph.Gdi
         Layers[i].Paint(g);
       }
 
+			for (int i = Layers.Count-1; i >=0; i--)
+			{
+				Layers[i].FinishPainting();
+			}
+
       g.Restore(gs);
     } // end of function DoPaint
 

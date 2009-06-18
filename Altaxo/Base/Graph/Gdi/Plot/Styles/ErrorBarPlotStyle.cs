@@ -31,6 +31,9 @@ using Altaxo.Graph.Plot.Groups;
 
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
+	using Altaxo.Graph.Gdi.Plot.Data;
+	using Altaxo.Graph.Gdi.Plot.Groups;
+
   public class ErrorBarPlotStyle : IG2DPlotStyle
   {
     private NumericColumnProxy _positiveErrorColumn;
@@ -360,7 +363,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 
 
-    public void Paint(System.Drawing.Graphics g, IPlotArea layer, Altaxo.Graph.Gdi.Plot.Data.Processed2DPlotData pdata, object previousDataObject)
+		public void Paint(System.Drawing.Graphics g, IPlotArea layer, Altaxo.Graph.Gdi.Plot.Data.Processed2DPlotData pdata, Processed2DPlotData prevItemData, Processed2DPlotData nextItemData)
     {
       if (_isHorizontalStyle)
         PaintXErrorBars(g, layer, pdata);

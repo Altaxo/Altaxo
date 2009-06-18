@@ -174,13 +174,24 @@ namespace Altaxo.Graph.Gdi.Plot
 
     #endregion
 
-    public override object Paint(Graphics g, IPlotArea layer, object lastDataObject)
+
+		public Processed2DPlotData GetPlotData(IPlotArea layer)
+		{
+			if (_cachedPlotDataUsedForPainting == null)
+				_cachedPlotDataUsedForPainting = GetRangesAndPoints(layer);
+
+			return _cachedPlotDataUsedForPainting;
+		}
+
+		public override void Paint(Graphics g, IPlotArea layer, IGPlotItem prevPlotItem, IGPlotItem nextPlotItem)
     {
       Processed2DPlotData pdata = GetRangesAndPoints(layer);
       if(pdata!=null)
-        Paint(g, layer, pdata, lastDataObject);
+        Paint(g, layer, pdata,
+					(prevPlotItem is G2DPlotItem) ? ((G2DPlotItem)prevPlotItem).GetPlotData(layer) : null,
+					(nextPlotItem is G2DPlotItem) ? ((G2DPlotItem)nextPlotItem).GetPlotData(layer) : null
+					);
 
-			return pdata;
     }
 
 
@@ -191,13 +202,15 @@ namespace Altaxo.Graph.Gdi.Plot
     /// <param name="layer">The plot layer.</param>
     /// <param name="plotdata">The plot data. Since the data are transformed, you should not
     /// rely that the physical values in this item correspond to the area coordinates.</param>
-    public virtual void Paint(Graphics g, IPlotArea layer, Processed2DPlotData plotdata, object previousDataObject)
+		public virtual void Paint(Graphics g, IPlotArea layer, Processed2DPlotData plotdata, Processed2DPlotData prevPlotData, Processed2DPlotData nextPlotData)
     {
-      if (null != this._plotStyles)
+			_cachedPlotDataUsedForPainting = plotdata;
+			
+
+			if (null != this._plotStyles)
       {
-        _plotStyles.Paint(g, layer, plotdata, previousDataObject);
+        _plotStyles.Paint(g, layer, plotdata, prevPlotData, nextPlotData);
       }
-      _cachedPlotDataUsedForPainting = plotdata;
     }
 
 

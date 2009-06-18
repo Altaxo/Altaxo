@@ -701,7 +701,7 @@ namespace Altaxo.Graph.Gdi.Plot
 
   
 
-    public object Paint(System.Drawing.Graphics g, IPlotArea layer, object lastDataObject)
+    public void Paint(System.Drawing.Graphics g, IPlotArea layer, IGPlotItem previousPlotItem, IGPlotItem nextPlotItem)
     {
       ICoordinateTransformingGroupStyle coordTransStyle;
       if (null != (coordTransStyle = _styles.CoordinateTransformingStyle))
@@ -712,12 +712,18 @@ namespace Altaxo.Graph.Gdi.Plot
       {
         for (int i = _plotItems.Count - 1; i >= 0; i--)
         {
-          lastDataObject = _plotItems[i].Paint(g, layer, lastDataObject);
+          _plotItems[i].Paint(g, layer, previousPlotItem, i>0 ? _plotItems[i-1] : nextPlotItem);
+					previousPlotItem = _plotItems[i];
         }
       }
-			return lastDataObject;
     }
 
+		/// <summary>
+		/// Called after painting has finished. Can be used to release resources.
+		/// </summary>
+		public void FinishPainting()
+		{
+		}
 
     #region Hit test
 

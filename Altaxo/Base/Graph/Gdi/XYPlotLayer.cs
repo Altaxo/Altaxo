@@ -2424,6 +2424,15 @@ namespace Altaxo.Graph.Gdi
 
     }
 
+		/// <summary>
+		/// This function is called when painting is finished. Can be used to release the resources
+		/// not neccessary any more.
+		/// </summary>
+		public virtual void FinishPainting()
+		{
+			_plotItems.FinishPainting();
+		}
+
 
     public virtual void Paint(Graphics g)
     {
@@ -2443,12 +2452,10 @@ namespace Altaxo.Graph.Gdi
       {
         g.Clip = CoordinateSystem.GetRegion();
       }
-			object lastDataObject = null;
-      foreach (IGPlotItem pi in _plotItems)
-      {
-        lastDataObject = pi.Paint(g, this, lastDataObject);
-      }
-      if (ClipDataToFrame==LayerDataClipping.StrictToCS)
+
+			_plotItems.Paint(g, this, null, null);
+
+			if (ClipDataToFrame==LayerDataClipping.StrictToCS)
       {
         g.ResetClip();
       }
