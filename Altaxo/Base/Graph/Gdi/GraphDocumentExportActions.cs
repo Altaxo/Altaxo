@@ -1,222 +1,74 @@
-﻿#region Copyright
-/////////////////////////////////////////////////////////////////////////////
-//    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2007 Dr. Dirk Lellinger
-//
-//    This program is free software; you can redistribute it and/or modify
-//    it under the terms of the GNU General Public License as published by
-//    the Free Software Foundation; either version 2 of the License, or
-//    (at your option) any later version.
-//
-//    This program is distributed in the hope that it will be useful,
-//    but WITHOUT ANY WARRANTY; without even the implied warranty of
-//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//    GNU General Public License for more details.
-//
-//    You should have received a copy of the GNU General Public License
-//    along with ctrl program; if not, write to the Free Software
-//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-//
-/////////////////////////////////////////////////////////////////////////////
-#endregion
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Windows.Forms;
+
 
 namespace Altaxo.Graph.Gdi
 {
-	/// <summary>
-	/// Enumerates the area which is to be exported.
-	/// </summary>
-	public enum GraphExportArea
+	public static class GraphDocumentExportActions
 	{
-		/// <summary>Area is the whole page size.</summary>
-		Page,
-		/// <summary>The printable area of the page.</summary>
-		PrintableArea,
-		/// <summary>The bounding box of all graph items.</summary>
-		BoundingBox
-	}
-
-	public class GraphExportOptions
-	{
-		public ImageFormat _imageFormat;
-		public PixelFormat _pixelFormat;
-		public BrushX _backgroundBrush;
-		public double _sourceDpiResolution;
-		public double _destinationDpiResolution;
-
-		public ImageFormat ImageFormat { get { return _imageFormat; } }
-		public PixelFormat PixelFormat { get { return _pixelFormat; } }
-		public GraphExportArea ExportArea { get; set; }
-		public BrushX BackgroundBrush
+		static string GetFileFilterString(ImageFormat fmt)
 		{
-			get
-			{
-				return _backgroundBrush;
-			}
-			set
-			{
-				_backgroundBrush = value;
-			}
-		}
+			string filter;
 
-		public double SourceDpiResolution 
-		{
-			get
-			{
-				return _sourceDpiResolution;
-			}
-			set
-			{
-				if(!(value>0))
-					throw new ArgumentException("SourceDpiResolution has to be >0");
-
-				_sourceDpiResolution = value;
-			}
-		}
-
-		public double DestinationDpiResolution
-		{
-			get
-			{
-				return _destinationDpiResolution;
-			}
-			set
-			{
-				if(!(value>0))
-					throw new ArgumentException("DestinationDpiResolution has to be >0");
-
-				_destinationDpiResolution = value;
-			}
-		}
-
-
-		public GraphExportOptions()
-		{
-			this._imageFormat = System.Drawing.Imaging.ImageFormat.Emf;
-			this._pixelFormat = System.Drawing.Imaging.PixelFormat.Format24bppRgb;
-			this.ExportArea = GraphExportArea.PrintableArea;
-			this.SourceDpiResolution = 300;
-			this.DestinationDpiResolution = 300;
-			this.BackgroundBrush = null;
-		}
-
-		public bool TrySetImageAndPixelFormat(ImageFormat imgfmt, PixelFormat pixfmt)
-		{
-			if (!IsVectorFormat(imgfmt) && !CanCreateAndSaveBitmap(imgfmt, pixfmt))
-				return false;
-
-			_imageFormat = imgfmt;
-			_pixelFormat = pixfmt;
-
-			return true;
-		}
-
-		public Brush GetDefaultBrush()
-		{
-			if (IsVectorFormat(_imageFormat) || HasPixelFormatAlphaChannel(_pixelFormat))
-				return null;
-			else 
-				return new SolidBrush(Color.White);
-		}
-
-		public Brush GetBrushOrDefaultBrush()
-		{
-			if (null != _backgroundBrush)
-				return _backgroundBrush;
+			if (fmt == ImageFormat.Bmp)
+				filter = "Bitmap files (*.bmp)|*.bmp|All files (*.*)|*.*";
+			else if (fmt == ImageFormat.Emf)
+				filter = "Enhances metafiles (*.emf)|*.emf|All files (*.*)|*.*";
+			else if (ImageFormat.Exif == fmt)
+				filter = "Exif files (*.exi)|*.exi|All files (*.*)|*.*";
+			else if (ImageFormat.Gif == fmt)
+				filter = "Gif files (*.gif)|*.gif|All files (*.*)|*.*";
+			else if (ImageFormat.Icon == fmt)
+				filter = "Icon files (*.ico)|*.ico|All files (*.*)|*.*";
+			else if (ImageFormat.Jpeg == fmt)
+				filter = "Jpeg files (*.jpg)|*.jpf|All files (*.*)|*.*";
+			else if (ImageFormat.Png == fmt)
+				filter = "Png files (*.png)|*.png|All files (*.*)|*.*";
+			else if (ImageFormat.Tiff == fmt)
+				filter = "Tiff files (*.tif)|*.tif|All files (*.*)|*.*";
+			else if (ImageFormat.Wmf == fmt)
+				filter = "Windows metafiles (*.wmf)|*.wmf|All files (*.*)|*.*";
 			else
-				return GetDefaultBrush();
+				filter = "All files (*.*)|*.*";
+
+			return filter;
 		}
 
-		public void CopyFrom(object fr)
-		{
-			var from = fr as GraphExportOptions;
-			if (null == from)
-				throw new ArgumentException("Argument either null or has wrong type");
+		static GraphExportOptions _graphExportOptionsToFile = new GraphExportOptions();
 
-			this._imageFormat = from.ImageFormat;
-			this._pixelFormat = from.PixelFormat;
-			this.SourceDpiResolution = from.SourceDpiResolution;
-			this.DestinationDpiResolution = from.DestinationDpiResolution;
-			this.ExportArea = from.ExportArea;
-		}
-
-		static GraphExportOptions _currentSetting = new GraphExportOptions();
-		public static GraphExportOptions CurrentSetting
+		public static void ShowFileExportSpecificDialog(this GraphDocument doc)
 		{
-			get
+			object resopt = _graphExportOptionsToFile;
+			if (Current.Gui.ShowDialog(ref resopt, "Choose export options"))
 			{
-				return _currentSetting;
+				_graphExportOptionsToFile = (GraphExportOptions)resopt;
 			}
-		}
-
-		public static bool IsVectorFormat(ImageFormat fmt)
-		{
-			return ImageFormat.Emf==fmt || ImageFormat.Wmf==fmt;
-		}
-
-		public static bool CanCreateBitmap(PixelFormat fmt)
-		{
-			try
+			else
 			{
-				var bmp = new Bitmap(4, 4, fmt);
-				bmp.Dispose();
-				return true;
+				return;
 			}
-			catch (Exception)
-			{
-				return false;
-			}
-		}
 
-		public static bool CanCreateAndSaveBitmap(ImageFormat imgfmt, PixelFormat pixfmt)
-		{
-			try
+			System.IO.Stream myStream;
+			SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+
+			saveFileDialog1.Filter = GetFileFilterString(_graphExportOptionsToFile.ImageFormat);
+			saveFileDialog1.FilterIndex = 1;
+			saveFileDialog1.RestoreDirectory = true;
+
+			if (saveFileDialog1.ShowDialog() == DialogResult.OK)
 			{
-				using (var bmp = new Bitmap(8, 8, pixfmt))
+				if ((myStream = saveFileDialog1.OpenFile()) != null)
 				{
-
-					using (var str = new System.IO.MemoryStream())
-					{
-						bmp.Save(str, imgfmt);
-						str.Close();
-					}
-				}
-				
-				return true;
-			}
-			catch (Exception)
-			{
-				return false;
-			}
+					doc.Render(myStream, _graphExportOptionsToFile);
+					myStream.Close();
+				} // end openfile ok
+			} // end dlgresult ok
 		}
-
-		public static bool HasPixelFormatAlphaChannel(PixelFormat fmt)
-		{
-			return
-				PixelFormat.Alpha == fmt ||
-				PixelFormat.Canonical == fmt ||
-				PixelFormat.Format16bppArgb1555 == fmt ||
-				PixelFormat.Format32bppArgb == fmt ||
-				PixelFormat.Format32bppPArgb == fmt ||
-				PixelFormat.Format64bppArgb == fmt ||
-				PixelFormat.Format64bppPArgb == fmt ||
-				PixelFormat.PAlpha == fmt;
-		}
-
-	}
-
-	/// <summary>
-	/// Routines to export graphs as bitmap
-	/// </summary>
-	public static class GraphExport
-	{
-
 
 		#region Stream und file
 
@@ -363,7 +215,7 @@ namespace Altaxo.Graph.Gdi
 		{
 			RenderAsBitmap(doc, stream, options.ImageFormat, options.GetBrushOrDefaultBrush(), options.PixelFormat, options.ExportArea, options.SourceDpiResolution, options.DestinationDpiResolution);
 		}
-	
+
 
 		#endregion
 
@@ -420,7 +272,7 @@ namespace Altaxo.Graph.Gdi
 			RenderAsBitmap(doc, filename, options.ImageFormat, options.BackgroundBrush, options.PixelFormat, options.ExportArea, options.SourceDpiResolution, options.DestinationDpiResolution);
 		}
 
-	
+
 		#endregion
 
 		#region Bitmap
@@ -542,7 +394,7 @@ namespace Altaxo.Graph.Gdi
 		}
 
 
-		
+
 
 		#endregion
 
@@ -613,7 +465,7 @@ namespace Altaxo.Graph.Gdi
 		}
 
 
-	
+
 
 		/// <summary>
 		/// Saves the graph as an bitmap file into the file <paramref name="filename"/> using the default
@@ -668,4 +520,187 @@ namespace Altaxo.Graph.Gdi
 
 
 	}
+
+	/// <summary>
+	/// Enumerates the area which is to be exported.
+	/// </summary>
+	public enum GraphExportArea
+	{
+		/// <summary>Area is the whole page size.</summary>
+		Page,
+		/// <summary>The printable area of the page.</summary>
+		PrintableArea,
+		/// <summary>The bounding box of all graph items.</summary>
+		BoundingBox
+	}
+
+	public class GraphExportOptions
+	{
+		public ImageFormat _imageFormat;
+		public PixelFormat _pixelFormat;
+		public BrushX _backgroundBrush;
+		public double _sourceDpiResolution;
+		public double _destinationDpiResolution;
+
+		public ImageFormat ImageFormat { get { return _imageFormat; } }
+		public PixelFormat PixelFormat { get { return _pixelFormat; } }
+		public GraphExportArea ExportArea { get; set; }
+		public BrushX BackgroundBrush
+		{
+			get
+			{
+				return _backgroundBrush;
+			}
+			set
+			{
+				_backgroundBrush = value;
+			}
+		}
+
+		public double SourceDpiResolution
+		{
+			get
+			{
+				return _sourceDpiResolution;
+			}
+			set
+			{
+				if (!(value > 0))
+					throw new ArgumentException("SourceDpiResolution has to be >0");
+
+				_sourceDpiResolution = value;
+			}
+		}
+
+		public double DestinationDpiResolution
+		{
+			get
+			{
+				return _destinationDpiResolution;
+			}
+			set
+			{
+				if (!(value > 0))
+					throw new ArgumentException("DestinationDpiResolution has to be >0");
+
+				_destinationDpiResolution = value;
+			}
+		}
+
+
+		public GraphExportOptions()
+		{
+			this._imageFormat = System.Drawing.Imaging.ImageFormat.Emf;
+			this._pixelFormat = System.Drawing.Imaging.PixelFormat.Format24bppRgb;
+			this.ExportArea = GraphExportArea.PrintableArea;
+			this.SourceDpiResolution = 300;
+			this.DestinationDpiResolution = 300;
+			this.BackgroundBrush = null;
+		}
+
+		public bool TrySetImageAndPixelFormat(ImageFormat imgfmt, PixelFormat pixfmt)
+		{
+			if (!IsVectorFormat(imgfmt) && !CanCreateAndSaveBitmap(imgfmt, pixfmt))
+				return false;
+
+			_imageFormat = imgfmt;
+			_pixelFormat = pixfmt;
+
+			return true;
+		}
+
+		public Brush GetDefaultBrush()
+		{
+			if (IsVectorFormat(_imageFormat) || HasPixelFormatAlphaChannel(_pixelFormat))
+				return null;
+			else
+				return new SolidBrush(Color.White);
+		}
+
+		public Brush GetBrushOrDefaultBrush()
+		{
+			if (null != _backgroundBrush)
+				return _backgroundBrush;
+			else
+				return GetDefaultBrush();
+		}
+
+		public void CopyFrom(object fr)
+		{
+			var from = fr as GraphExportOptions;
+			if (null == from)
+				throw new ArgumentException("Argument either null or has wrong type");
+
+			this._imageFormat = from.ImageFormat;
+			this._pixelFormat = from.PixelFormat;
+			this.SourceDpiResolution = from.SourceDpiResolution;
+			this.DestinationDpiResolution = from.DestinationDpiResolution;
+			this.ExportArea = from.ExportArea;
+		}
+
+		static GraphExportOptions _currentSetting = new GraphExportOptions();
+		public static GraphExportOptions CurrentSetting
+		{
+			get
+			{
+				return _currentSetting;
+			}
+		}
+
+		public static bool IsVectorFormat(ImageFormat fmt)
+		{
+			return ImageFormat.Emf == fmt || ImageFormat.Wmf == fmt;
+		}
+
+		public static bool CanCreateBitmap(PixelFormat fmt)
+		{
+			try
+			{
+				var bmp = new Bitmap(4, 4, fmt);
+				bmp.Dispose();
+				return true;
+			}
+			catch (Exception)
+			{
+				return false;
+			}
+		}
+
+		public static bool CanCreateAndSaveBitmap(ImageFormat imgfmt, PixelFormat pixfmt)
+		{
+			try
+			{
+				using (var bmp = new Bitmap(8, 8, pixfmt))
+				{
+
+					using (var str = new System.IO.MemoryStream())
+					{
+						bmp.Save(str, imgfmt);
+						str.Close();
+					}
+				}
+
+				return true;
+			}
+			catch (Exception)
+			{
+				return false;
+			}
+		}
+
+		public static bool HasPixelFormatAlphaChannel(PixelFormat fmt)
+		{
+			return
+				PixelFormat.Alpha == fmt ||
+				PixelFormat.Canonical == fmt ||
+				PixelFormat.Format16bppArgb1555 == fmt ||
+				PixelFormat.Format32bppArgb == fmt ||
+				PixelFormat.Format32bppPArgb == fmt ||
+				PixelFormat.Format64bppArgb == fmt ||
+				PixelFormat.Format64bppPArgb == fmt ||
+				PixelFormat.PAlpha == fmt;
+		}
+
+	}
+
 }

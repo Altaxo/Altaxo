@@ -1276,7 +1276,7 @@ namespace Altaxo.Graph.GUI
     {
       try
       {
-        GraphExport.RenderAsMetafile(this.Doc, stream, 300);
+				GraphDocumentExportActions.RenderAsMetafile(this.Doc, stream, 300);
       }
       catch (Exception ex)
       {
@@ -1294,7 +1294,7 @@ namespace Altaxo.Graph.GUI
     /// <returns>Null if successfull, error description otherwise.</returns>
 		public string SaveAsBitmap(System.IO.Stream stream, int dpiResolution, System.Drawing.Imaging.ImageFormat imageFormat, GraphExportArea usePageBounds)
     {
-			GraphExport.RenderAsBitmap(m_Graph, stream, imageFormat, usePageBounds, dpiResolution);
+			GraphDocumentExportActions.RenderAsBitmap(m_Graph, stream, imageFormat, usePageBounds, dpiResolution);
       return null;
     }
 
@@ -1638,7 +1638,7 @@ namespace Altaxo.Graph.GUI
 			}
 			else // we copy the whole graph as xml
 			{
-        Altaxo.Graph.Procedures.GraphCommands.CopyGraphToClipboard(this);
+				this.Doc.CopyToClipboardAsNative();
 			}
 
     }
@@ -1682,12 +1682,12 @@ namespace Altaxo.Graph.GUI
       }
 			if (dao.GetDataPresent("Altaxo.Graph.GraphDocumentAsXml"))
 			{
-        Altaxo.Graph.Procedures.GraphCommands.PasteGraphStyleFromClipboard(this);
+				Doc.PasteFromClipboardAsGraphStyle();
 				return;
 			}
       if (dao.GetDataPresent("Altaxo.Graph.GraphLayerAsXml"))
       {
-        Altaxo.Graph.Procedures.GraphCommands.PasteAsNewLayerFromClipboard(this);
+				Doc.PasteFromClipboardAsNewLayer();
         return;
       }
 

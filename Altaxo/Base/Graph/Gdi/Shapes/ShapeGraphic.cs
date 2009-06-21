@@ -176,6 +176,14 @@ namespace Altaxo.Graph.Gdi.Shapes
       return result;
     }
 
+		public override IHitTestObject HitTest(RectangleF rect)
+		{
+			IHitTestObject result = base.HitTest(rect);
+			if (result != null)
+				result.DoubleClick = EhHitDoubleClick;
+			return result;
+		}
+
     static bool EhHitDoubleClick(IHitTestObject o)
     {
       object hitted = o.HittedObject;

@@ -195,7 +195,6 @@
     <Compile Include="Data\ReadableColumnProxy.cs" />
     <Compile Include="Graph\PlotColors.cs" />
     <Compile Include="Graph\Procedures\ArrangeLayers.cs" />
-    <Compile Include="Graph\Procedures\GraphCommands.cs" />
     <Compile Include="Gui\Analysis\NonLinearFitting\FitElementControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -1188,8 +1187,12 @@
     <Compile Include="Graph\Gdi\G2DCoordinateSystem.cs" />
     <Compile Include="Graph\Gdi\GraphCopyOptions.cs" />
     <Compile Include="Graph\Gdi\GraphDocument.cs" />
+    <Compile Include="Graph\Gdi\GraphDocumentClipboardActions.cs" />
     <Compile Include="Graph\Gdi\GraphDocumentCollection.cs" />
-    <Compile Include="Graph\Gdi\GraphExport.cs" />
+    <Compile Include="Graph\Gdi\GraphDocumentExportActions.cs" />
+    <Compile Include="Graph\Gdi\GraphDocumentOtherActions.cs" />
+    <Compile Include="Graph\Gdi\GraphDocumentPrinting.cs" />
+    <Compile Include="Graph\SingleGraphPrintOptions.cs" />
     <Compile Include="Graph\Gdi\IGripManipulationHandle.cs" />
     <Compile Include="Graph\Gdi\IGrippableObject.cs" />
     <Compile Include="Graph\Gdi\IHitTestObject.cs" />

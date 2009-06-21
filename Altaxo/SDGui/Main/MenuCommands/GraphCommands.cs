@@ -82,17 +82,7 @@ namespace Altaxo.Graph.Commands
   {
     public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
     {
-      try
-      {
-        if(Current.Gui.ShowPageSetupDialog())
-        {
-          ctrl.Doc.SetGraphPageBoundsToPrinterSettings();
-        }
-      }
-      catch(Exception exc)
-      {
-        MessageBox.Show(ctrl.View.Form, exc.ToString(),"Exception occured!");
-      }   
+			ctrl.Doc.ShowPageSetupDialog();
     }
   }
 
@@ -103,7 +93,7 @@ namespace Altaxo.Graph.Commands
 	{
 		public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
 		{
-			Altaxo.Graph.Procedures.GraphCommands.PrintableSizeSetup(ctrl);
+			ctrl.Doc.ShowPrintableSizeSetupDialog();
 		}
 	}
 
@@ -115,6 +105,9 @@ namespace Altaxo.Graph.Commands
   {
     public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
     {
+			ctrl.Doc.ShowPrintDialogAndPrint();
+
+			/*
       try
       {
         if(Current.Gui.ShowPrintDialog())
@@ -131,6 +124,7 @@ namespace Altaxo.Graph.Commands
       {
         Current.PrintingService.PrintDocument.PrintPage -= new System.Drawing.Printing.PrintPageEventHandler(ctrl.EhPrintPage);
       }
+			*/
     }
   }
 
@@ -141,6 +135,8 @@ namespace Altaxo.Graph.Commands
   {
     public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
     {
+			ctrl.Doc.ShowPrintPreviewDialog();
+			/*
       try
       {
         System.Windows.Forms.PrintPreviewDialog dlg = new System.Windows.Forms.PrintPreviewDialog();
@@ -157,10 +153,20 @@ namespace Altaxo.Graph.Commands
       {
         Current.PrintingService.PrintDocument.PrintPage -= new System.Drawing.Printing.PrintPageEventHandler(ctrl.EhPrintPage);
       }
+			*/
     }
   }
 
-
+	/// <summary>
+	/// Handler for the menu item "File" - "Print options".
+	/// </summary>
+	public class PrintOptionsSetup : AbstractGraphControllerCommand
+	{
+		public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
+		{
+			ctrl.Doc.ShowPrintOptionsDialog();
+		}
+	}
 
 	/// <summary>
 	/// Handler for the menu item "Edit" - "CopyPage".
@@ -169,7 +175,7 @@ namespace Altaxo.Graph.Commands
 	{
 		public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
 		{
-			Altaxo.Graph.Procedures.GraphCommands.SetCopyPageOptions(ctrl);
+			ctrl.Doc.ShowCopyPageOptionsDialog();
 		}
 	}
 
@@ -182,7 +188,7 @@ namespace Altaxo.Graph.Commands
   {
     public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
     {
-      Altaxo.Graph.Procedures.GraphCommands.CopyPageToClipboard(ctrl);
+			ctrl.Doc.CopyToClipboardAsImage();
     }
   }
 
@@ -196,7 +202,7 @@ namespace Altaxo.Graph.Commands
   {
     public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
     {
-      Altaxo.Graph.Procedures.GraphCommands.CopyPageToClipboardAsBitmap(ctrl, 150, null, PixelFormat.Format32bppArgb,	 GraphExportArea.PrintableArea);
+			ctrl.Doc.CopyToClipboardAsBitmap(150, null, PixelFormat.Format32bppArgb,	 GraphExportArea.PrintableArea);
     }
   }
 
@@ -208,7 +214,7 @@ namespace Altaxo.Graph.Commands
   {
     public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
     {
-			Altaxo.Graph.Procedures.GraphCommands.CopyPageToClipboardAsBitmap(ctrl, 150, Brushes.White, PixelFormat.Format24bppRgb, GraphExportArea.PrintableArea);
+			ctrl.Doc.CopyToClipboardAsBitmap(150, Brushes.White, PixelFormat.Format24bppRgb, GraphExportArea.PrintableArea);
     }
   }
 
@@ -221,7 +227,7 @@ namespace Altaxo.Graph.Commands
   {
     public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
     {
-			Altaxo.Graph.Procedures.GraphCommands.CopyPageToClipboardAsBitmap(ctrl, 300, null, PixelFormat.Format32bppArgb, GraphExportArea.PrintableArea);
+			ctrl.Doc.CopyToClipboardAsBitmap(300, null, PixelFormat.Format32bppArgb, GraphExportArea.PrintableArea);
     }
   }
 
@@ -233,7 +239,7 @@ namespace Altaxo.Graph.Commands
   {
     public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
     {
-			Altaxo.Graph.Procedures.GraphCommands.CopyPageToClipboardAsBitmap(ctrl, 300, Brushes.White, PixelFormat.Format24bppRgb, GraphExportArea.PrintableArea);
+			ctrl.Doc.CopyToClipboardAsBitmap(300, Brushes.White, PixelFormat.Format24bppRgb, GraphExportArea.PrintableArea);
     }
   }
 
@@ -318,7 +324,7 @@ namespace Altaxo.Graph.Commands
 	{
 		public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
 		{
-			Altaxo.Graph.Procedures.GraphCommands.FileExportSpecific(ctrl);
+			ctrl.Doc.ShowFileExportSpecificDialog();
 		}
 	}
   /// <summary>
@@ -382,7 +388,7 @@ namespace Altaxo.Graph.Commands
   {
     public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
     {
-      Altaxo.Graph.Procedures.GraphCommands.Rename(ctrl);
+			ctrl.Doc.ShowRenameDialog();
     }
   }
 
@@ -390,7 +396,7 @@ namespace Altaxo.Graph.Commands
   {
     public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
     {
-      Altaxo.Graph.Procedures.GraphCommands.Refresh(ctrl);
+      ctrl.RefreshGraph();
     }
   }
 

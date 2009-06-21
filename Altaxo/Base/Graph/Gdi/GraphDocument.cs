@@ -70,6 +70,14 @@ namespace Altaxo.Graph.Gdi
     /// </summary>
     private RectangleF _printableBounds = new RectangleF(14, 14, 814 , 567 );
 
+		private SingleGraphPrintOptions _printOptions;
+
+		public SingleGraphPrintOptions PrintOptions
+		{
+			get { return _printOptions; }
+			set { _printOptions = value; }
+		}
+
     XYPlotLayerCollection _layers;
 
     string _name;
@@ -614,26 +622,7 @@ namespace Altaxo.Graph.Gdi
     /// to the top left corner of the printable area before calling this routine.</remarks>
     public void DoPaint(Graphics g, bool bForPrinting)
     {
-      GraphicsState gs = g.Save();
-
-     
-
-      for (int i = 0; i < Layers.Count; i++)
-      {
-        Layers[i].PreparePainting();
-      }
-
-      for(int i=Layers.Count-1;i>=0;i--)
-      {
-        Layers[i].Paint(g);
-      }
-
-			for (int i = Layers.Count-1; i >=0; i--)
-			{
-				Layers[i].FinishPainting();
-			}
-
-      g.Restore(gs);
+			Layers.DoPaint(g, bForPrinting);
     } // end of function DoPaint
 
 

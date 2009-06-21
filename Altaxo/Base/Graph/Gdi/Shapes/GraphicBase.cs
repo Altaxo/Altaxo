@@ -498,6 +498,24 @@ namespace Altaxo.Graph.Gdi.Shapes
         return null;
     }
 
+		public virtual IHitTestObject HitTest(RectangleF rect)
+		{
+			// is this object contained within the supplied rectangle
+
+			GraphicsPath gp = new GraphicsPath();
+			Matrix myMatrix = new Matrix();
+
+
+			gp.AddRectangle(new RectangleF(X + _bounds.X, Y + _bounds.Y, Width, Height));
+			if (this.Rotation != 0)
+			{
+				myMatrix.RotateAt(-this._rotation, new PointF(this.X, this.Y), MatrixOrder.Append);
+			}
+			gp.Transform(myMatrix);
+			RectangleF gpRect = gp.GetBounds();
+
+			return rect.Contains(gpRect) ? new HitTestObject(gp, this) : null;
+		}
 
     public virtual GraphicsPath GetSelectionPath()
     {
@@ -518,23 +536,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       return gp;
     }
 
-    public virtual bool HitTest(RectangleF rect)
-    {
-      // is this object contained within the supplied rectangle
-
-      GraphicsPath gp = new GraphicsPath();
-      Matrix myMatrix = new Matrix();
-
-
-      gp.AddRectangle(new RectangleF(X + _bounds.X, Y + _bounds.Y, Width, Height));
-      if (this.Rotation != 0)
-      {
-        myMatrix.RotateAt(-this._rotation, new PointF(this.X, this.Y), MatrixOrder.Append);
-      }
-      gp.Transform(myMatrix);
-      RectangleF gpRect = gp.GetBounds();
-      return rect.Contains(gpRect);
-    }
+  
     #endregion
 
     #region Hitting Helper functions

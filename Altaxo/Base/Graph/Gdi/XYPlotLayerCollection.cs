@@ -372,6 +372,39 @@ namespace Altaxo.Graph.Gdi
       OnChanged();
     }
 
+		/// <summary>
+		/// Paints the graph.
+		/// </summary>
+		/// <param name="g">The graphic contents to paint to.</param>
+		/// <param name="bForPrinting">Indicates if the painting is for printing purposes. Not used for the moment.</param>
+		/// <remarks>The reference point (0,0) of the GraphDocument
+		/// is the top left corner of the printable area (and not of the page area!). The hosting class has to translate the graphics origin
+		/// to the top left corner of the printable area before calling this routine.</remarks>
+		public void DoPaint(Graphics g, bool bForPrinting)
+		{
+			GraphicsState gs = g.Save();
+
+
+
+			for (int i = 0; i < this.Count; i++)
+			{
+				this[i].PreparePainting();
+			}
+
+			for (int i = this.Count - 1; i >= 0; i--)
+			{
+				this[i].Paint(g);
+			}
+
+			for (int i = this.Count - 1; i >= 0; i--)
+			{
+				this[i].FinishPainting();
+			}
+
+			g.Restore(gs);
+		} // end of function DoPaint
+
+
     #region Change event handling
 
   
