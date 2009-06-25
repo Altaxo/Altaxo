@@ -74,12 +74,12 @@ namespace Altaxo.Graph.Gdi
 		public static bool ShowPrintableSizeSetupDialog(this GraphDocument doc)
 		{
 			var options = new Altaxo.Gui.Graph.PrintableAreaSetupOptions();
-			options.Area = doc.PrintableBounds;
+			options.Area = doc.Layers.GraphSize;
 			object resultobj = options;
 			if (Current.Gui.ShowDialog(ref resultobj, "Setup printable area"))
 			{
 				var result = (Altaxo.Gui.Graph.PrintableAreaSetupOptions)resultobj;
-				doc.SetPrintableBounds(result.Area, result.Rescale);
+				doc.Layers.SetGraphSize(result.Area, result.Rescale);
 				return true;
 			}
 			return false;
@@ -91,9 +91,10 @@ namespace Altaxo.Graph.Gdi
 			{
 				if (Current.Gui.ShowPageSetupDialog())
 				{
+					doc.SetGraphPageBoundsToPrinterSettings();
 					if (Current.Gui.YesNoMessageBox("Do you want to resize the graph document to fit into the printable area of the page?", "Question", true))
 					{
-						doc.SetGraphPageBoundsToPrinterSettings();
+						doc.Layers.SetGraphSize(doc.PrintableBounds.Size, true);
 						return true;
 					}
 				}
@@ -202,7 +203,7 @@ namespace Altaxo.Graph.Gdi
 			if (_printOptions.RotatePageAutomatically)
 			{
 				bool needLandscape=false;
-				if (_layers.PrintableGraphBounds.Width > _layers.PrintableGraphBounds.Height)
+				if (_layers.GraphSize.Width > _layers.GraphSize.Height)
 					needLandscape = true;
 
 				e.PageSettings.Landscape = needLandscape;
@@ -224,7 +225,7 @@ namespace Altaxo.Graph.Gdi
 
 			// First the size of the graph
 			// if a fixed zoom factor is set, we use that
-			SizeF graphSize = _layers.PrintableGraphBounds.Size;
+			SizeF graphSize = _layers.GraphSize;
 			float zoom = 1;
 			if (_printOptions.UseFixedZoomFactor)
 			{

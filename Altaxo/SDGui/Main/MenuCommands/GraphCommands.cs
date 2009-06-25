@@ -515,8 +515,8 @@ namespace Altaxo.Graph.Commands
 	{
 		public override void Run(GraphController ctrl)
 		{
-			ctrl.AutoZoom = false;
 			ctrl.Zoom = 0.5f;
+			ctrl.AutoZoom = false;
 			ctrl.RefreshGraph();
 		}
 	}
@@ -524,8 +524,8 @@ namespace Altaxo.Graph.Commands
 	{
 		public override void Run(GraphController ctrl)
 		{
-			ctrl.AutoZoom = false;
 			ctrl.Zoom = 2.0f;
+			ctrl.AutoZoom = false;
 			ctrl.RefreshGraph();
 		}
 	}

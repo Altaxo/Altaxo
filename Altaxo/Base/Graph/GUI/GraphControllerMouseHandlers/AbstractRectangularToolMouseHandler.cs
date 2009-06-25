@@ -185,8 +185,6 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     /// <param name="g"></param>
     public override void AfterPaint(Graphics g)
     {
-      g.TranslateTransform(_grac.Doc.PrintableBounds.X,_grac.Doc.PrintableBounds.Y);
-
       if (_currentPoint >= 1)
       {
         if (null != _grac.ActiveLayer)

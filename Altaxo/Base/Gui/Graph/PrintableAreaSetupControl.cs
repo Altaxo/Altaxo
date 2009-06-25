@@ -18,16 +18,15 @@ namespace Altaxo.Gui.Graph
 
 		#region IPrintableAreaSetupView Members
 
-		public RectangleF Area
+		public SizeF Area
 		{
 			get
 			{
-				return new RectangleF(_positionSizeGlue.Position, _positionSizeGlue.Size);
+				return _positionSizeGlue.Size;
 			}
 			set
 			{
-				_positionSizeGlue.Position = value.Location;
-				_positionSizeGlue.Size = value.Size;
+				_positionSizeGlue.Size = value;
 			}
 		}
 

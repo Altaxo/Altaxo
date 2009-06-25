@@ -281,7 +281,8 @@ namespace Altaxo.Graph.Gdi
 
         s._layers          = (XYPlotLayerCollection)info.GetValue("LayerList",s);
         s._layers.ParentObject = s;
-        s._layers.SetPrintableGraphBounds(s._printableBounds, false);
+				if(s._layers.GraphSize.IsEmpty)
+	        s._layers.SetGraphSize(s._printableBounds.Size, false);
 
         // new in version 1 - Add graph properties
         int numberproperties = info.OpenArray(); // "GraphProperties"
@@ -345,7 +346,7 @@ namespace Altaxo.Graph.Gdi
       this._layers.ParentObject = this;
 
 			SetGraphPageBoundsToPrinterSettings();
-      this._layers.SetPrintableGraphBounds(_printableBounds, false);
+      this._layers.SetGraphSize(_printableBounds.Size, false);
     }
 
     public GraphDocument(GraphDocument from)
@@ -573,7 +574,7 @@ namespace Altaxo.Graph.Gdi
       get { return _printableBounds; }
       set
       {
-				SetPrintableBounds(value, true);
+				SetPrintableBounds(value, false, false);
       }
     }
 
@@ -581,15 +582,17 @@ namespace Altaxo.Graph.Gdi
 		/// Sets the boundaries of the printable area of the page in points (1/72 inch).
 		/// </summary>
 		/// <param name="bounds">The new boundaries.</param>
-		/// <param name="rescale">If true, the layers will be rescaled according to the ratio of new size to old size.</param>
-		public void SetPrintableBounds(RectangleF bounds, bool rescale)
+		/// <param name="setGraphSize">If true, the size of the graph is set to the size of the printable bounds.</param>
+		/// <param name="rescaleGraph">If true, the layers will be rescaled according to the ratio of new size to old size.</param>
+		public void SetPrintableBounds(RectangleF bounds, bool setGraphSize, bool rescaleGraph)
 		{
 			RectangleF oldBounds = _printableBounds;
 			_printableBounds = bounds;
 
 			if (_printableBounds != oldBounds)
 			{
-				Layers.SetPrintableGraphBounds(bounds, rescale);
+				if(setGraphSize)
+					Layers.SetGraphSize(bounds.Size, rescaleGraph);
 				OnBoundsChanged();
 			}
 		}
@@ -599,7 +602,7 @@ namespace Altaxo.Graph.Gdi
     /// </summary>
     public virtual SizeF PrintableSize
     {
-      get { return new SizeF(_printableBounds.Width,_printableBounds.Height); }
+      get { return _printableBounds.Size; }
     }
 
 
@@ -742,9 +745,9 @@ namespace Altaxo.Graph.Gdi
 
     #region Change event handling
 
-    protected System.EventArgs m_ChangeData=null;
-    protected bool             m_ResumeInProgress=false;
-    protected System.Collections.ArrayList m_SuspendedChildCollection=new System.Collections.ArrayList();
+    protected System.EventArgs _changeEventData=null;
+    protected bool             _isResumeInProgress=false;
+    protected System.Collections.ArrayList _suspendedChildCollection=new System.Collections.ArrayList();
 
     public IDisposable BeginUpdate()
     {
@@ -777,8 +780,8 @@ namespace Altaxo.Graph.Gdi
 
     void AccumulateChildChangeData(object sender, EventArgs e)
     {
-      if(sender!=null && m_ChangeData==null)
-        this.m_ChangeData=new EventArgs();
+      if(sender!=null && _changeEventData==null)
+        this._changeEventData=new EventArgs();
     }   
 
     protected bool HandleImmediateChildChangeCases(object sender, EventArgs e)
@@ -806,19 +809,19 @@ namespace Altaxo.Graph.Gdi
 
       if(this.IsSuspended &&  sender is Main.ISuspendable)
       {
-        m_SuspendedChildCollection.Add(sender); // add sender to suspended child
+        _suspendedChildCollection.Add(sender); // add sender to suspended child
         ((Main.ISuspendable)sender).Suspend();
         return;
       }
 
       AccumulateChildChangeData(sender,e);  // AccumulateNotificationData
       
-      if(m_ResumeInProgress || IsSuspended)
+      if(_isResumeInProgress || IsSuspended)
         return;
 
       if(_parent is Main.IChildChangedEventSink )
       {
-        ((Main.IChildChangedEventSink)_parent).EhChildChanged(this, m_ChangeData);
+        ((Main.IChildChangedEventSink)_parent).EhChildChanged(this, _changeEventData);
         if(IsSuspended) // maybe parent has suspended us now
         {
           this.EhChildChanged(sender, e); // we call the function recursively, but now we are suspended
@@ -832,8 +835,8 @@ namespace Altaxo.Graph.Gdi
     void EhChangedEventResumes()
     {
       if (null != Changed)
-        Changed(this, m_ChangeData);
-      m_ChangeData = null;
+        Changed(this, _changeEventData);
+      _changeEventData = null;
     }
 
     protected virtual void OnChanged()
@@ -841,9 +844,9 @@ namespace Altaxo.Graph.Gdi
       if (_changedEventSuppressor.GetEnabledWithCounting())
       {
         if (null != Changed)
-          Changed(this, m_ChangeData);
+          Changed(this, _changeEventData);
 
-        m_ChangeData = null;
+        _changeEventData = null;
       }
     }
 

@@ -172,8 +172,6 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     public override void AfterPaint( Graphics g)
     {
       base.AfterPaint (g);
-      g.TranslateTransform(_grac.Doc.PrintableBounds.X,_grac.Doc.PrintableBounds.Y);
-
       // draw a red cross onto the selected data point
 
       g.DrawLine(System.Drawing.Pens.Red,m_Cross.X+1,m_Cross.Y,m_Cross.X+10,m_Cross.Y);

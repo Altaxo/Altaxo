@@ -94,7 +94,27 @@ namespace Altaxo.Calc.Regression.Multivariate
 
     #region Serialization
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Calc.Regression.PLS.PLSContentMemento",0)]
+		#region Serialization for CrossPRESSCalculationType
+
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CrossPRESSCalculationType), 0)]
+		public class CrossPRESSCalculationTypeXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				info.SetNodeContent(obj.ToString());
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+
+				string val = info.GetNodeContent();
+				return System.Enum.Parse(typeof(CrossPRESSCalculationType), val, true);
+			}
+		}
+
+		#endregion
+
+
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Calc.Regression.PLS.PLSContentMemento",0)]
       class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo  info)
@@ -198,6 +218,8 @@ namespace Altaxo.Calc.Regression.Multivariate
         // new in version 2
         info.AddValue("ClassNameOfAnalysisClass",s._ClassNameOfAnalysisClass);
 
+				// added fix after version 2 : forgotten to serialize crossPRESSCalculationType
+				info.AddValue("CrossPRESSCalculationType", s._crossPRESSCalculationType);
       }
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo  info, object parent)
       {
@@ -221,9 +243,16 @@ namespace Altaxo.Calc.Regression.Multivariate
         // new in version 2
         s._ClassNameOfAnalysisClass = info.GetString("ClassNameOfAnalysisClass");
 
+				// added fix after version 2 : forgotten to serialize crossPRESSCalculationType
+				if(info.GetNodeName()=="CrossPRESSCalculationType")
+					s._crossPRESSCalculationType = (CrossPRESSCalculationType)info.GetValue("CrossPRESSCalculationType", parent);
+				else
+					s._crossPRESSCalculationType = CrossPRESSCalculationType.ExcludeGroupsOfSimilarMeasurements;
+
         return s;
       }
     }
+
     #endregion
 
     /// <summary>

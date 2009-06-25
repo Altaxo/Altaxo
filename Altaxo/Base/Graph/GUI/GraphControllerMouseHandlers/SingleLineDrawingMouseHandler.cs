@@ -148,8 +148,6 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     {
       base.AfterPaint ( g);
 
-      g.TranslateTransform(_grac.Doc.PrintableBounds.X,_grac.Doc.PrintableBounds.Y);
-
       for(int i=1;i<this._currentPoint;i++)
         g.DrawLine(Pens.Blue,_Points[i-1].printAreaCoord,_Points[i].printAreaCoord);
 

@@ -654,7 +654,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       string yactcolname = WorksheetAnalysis.GetYOriginal_ColumnName(whichY);
  
       // Calculate the residual if not here
-      if(table[yrescolname]==null)
+      if(!table.ContainsDataColumn(yrescolname))
       {
         GetAnalysis(table).CalculateYResidual(table, whichY, numberOfFactors);
       }
@@ -678,7 +678,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       string yactcolname = WorksheetAnalysis.GetYOriginal_ColumnName(whichY);
  
       // Calculate the residual if not here
-      if(table[yrescolname]==null)
+      if(!table.ContainsDataColumn(yrescolname))
       {
         GetAnalysis(table).CalculateCrossPredictedAndResidual(table, whichY, numberOfFactors,false,true,false);
       }
@@ -722,7 +722,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       for(int i=0;i<plsMemo.NumberOfConcentrationData;i++)
       {
         string name = WorksheetAnalysis.GetPredictionScore_ColumnName(i,plsMemo.PreferredNumberOfFactors);
-        if(null!=table[name])
+        if(table.ContainsDataColumn(name))
           sel.Add(table.DataColumns.GetColumnNumber(table[name]));
       }
 
@@ -741,7 +741,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       string xresidualcolname = WorksheetAnalysis.GetXResidual_ColumnName(whichY,numberOfFactors);
       string yactcolname = WorksheetAnalysis.GetYOriginal_ColumnName(whichY);
       
-      if(table[xresidualcolname]==null)
+      if(!table.ContainsDataColumn(xresidualcolname))
       {
         GetAnalysis(table).CalculateXResidual(table,whichY,numberOfFactors);
       }
@@ -766,7 +766,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       string xresidualcolname = WorksheetAnalysis.GetXCrossResidual_ColumnName(whichY,numberOfFactors);
       string yactcolname = WorksheetAnalysis.GetYOriginal_ColumnName(whichY);
       
-      if(table[xresidualcolname]==null)
+      if(!table.ContainsDataColumn(xresidualcolname))
       {
         GetAnalysis(table).CalculateCrossPredictedAndResidual(table,whichY,numberOfFactors,false,false,true);
       }
@@ -787,7 +787,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     {
       string ypredcolname = WorksheetAnalysis.GetYPredicted_ColumnName(whichY,numberOfFactors);
       string yactcolname = WorksheetAnalysis.GetYOriginal_ColumnName(whichY);
-      if(table[ypredcolname]==null)
+      if(!table.ContainsDataColumn(ypredcolname))
       {
         GetAnalysis(table).CalculateYPredicted(table,whichY,numberOfFactors);
       }
@@ -809,7 +809,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     {
       string ypredcolname = WorksheetAnalysis.GetYCrossPredicted_ColumnName(whichY,numberOfFactors);
       string yactcolname = WorksheetAnalysis.GetYOriginal_ColumnName(whichY);
-      if(table[ypredcolname]==null)
+      if(!table.ContainsDataColumn(ypredcolname))
       {
         GetAnalysis(table).CalculateCrossPredictedAndResidual(table,whichY,numberOfFactors,true,false,false);
       }
@@ -1030,7 +1030,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       string xcolname = WorksheetAnalysis.GetMeasurementLabel_ColumnName();
       string ycolname = WorksheetAnalysis.GetXLeverage_ColumnName(preferredNumberOfFactors);
       
-      if(table[ycolname]==null)
+      if(!table.ContainsDataColumn(ycolname))
       {
         GetAnalysis(table).CalculateXLeverage(table,preferredNumberOfFactors);
       }

@@ -411,9 +411,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
 
     public override void AfterPaint(Graphics g)
     {
-      g.TranslateTransform(_grac.Doc.PrintableBounds.X,_grac.Doc.PrintableBounds.Y);
-      // finally, mark the selected objects
-      
+			// finally, mark the selected objects
       if(SingleSelectedObject is IGrippableObject)
       {
         IGrippableObject gripObject = (IGrippableObject)SingleSelectedObject;

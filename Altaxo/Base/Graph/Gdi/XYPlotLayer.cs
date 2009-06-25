@@ -56,10 +56,10 @@ namespace Altaxo.Graph.Gdi
     #region Cached member variables
 
     /// <summary>
-    /// The size and position of the printable area of the entire graph document.
+    /// The size of the area of the entire graph document.
     /// Needed to calculate "relative to page size" layer size values.
     /// </summary>
-    protected RectangleF _cachedPrintableGraphBounds;
+    protected SizeF _cachedGraphSize;
     /// <summary>
     /// The cached layer position in points (1/72 inch) relative to the upper left corner
     /// of the graph document (upper left corner of the printable area).
@@ -807,7 +807,7 @@ namespace Altaxo.Graph.Gdi
         this.Location = from._location.Clone();
         this._cachedLayerSize = from._cachedLayerSize;
         this._cachedLayerPosition = from._cachedLayerPosition;
-        this._cachedPrintableGraphBounds = from._cachedPrintableGraphBounds;
+        this._cachedGraphSize = from._cachedGraphSize;
 
         this.CoordinateSystem = (G2DCoordinateSystem)from.CoordinateSystem.Clone();
 
@@ -1432,37 +1432,34 @@ namespace Altaxo.Graph.Gdi
     /// <summary>
     /// The boundaries of the printable area of the page in points (1/72 inch).
     /// </summary>
-    public RectangleF PrintableGraphBounds
-    {
-      get { return _cachedPrintableGraphBounds; }
-    }
     public SizeF PrintableGraphSize
     {
-      get { return _cachedPrintableGraphBounds.Size; }
+      get { return _cachedGraphSize; }
     }
-    public void SetPrintableGraphBounds(RectangleF val, bool bRescale)
+
+    public void SetGraphSize(SizeF val, bool bRescale)
     {
-      RectangleF oldBounds = _cachedPrintableGraphBounds;
-      RectangleF newBounds = val;
-      _cachedPrintableGraphBounds = val;
+      SizeF oldSize = _cachedGraphSize;
+      SizeF newSize = val;
+      _cachedGraphSize = val;
 
 
 
-      if (_cachedPrintableGraphBounds != oldBounds && bRescale)
+      if (_cachedGraphSize != oldSize && bRescale)
       {
         SizeF oldLayerSize = this._cachedLayerSize;
 
 
-        double oldxdefsize = oldBounds.Width * (oldBounds.Width > oldBounds.Height ? _xDefSizeLandscape : _xDefSizePortrait);
-        double newxdefsize = newBounds.Width * (newBounds.Width > newBounds.Height ? _xDefSizeLandscape : _xDefSizePortrait);
-        double oldydefsize = oldBounds.Height * (oldBounds.Width > oldBounds.Height ? _yDefSizeLandscape : _yDefSizePortrait);
-        double newydefsize = newBounds.Height * (newBounds.Width > newBounds.Height ? _yDefSizeLandscape : _yDefSizePortrait);
+        double oldxdefsize = oldSize.Width * (oldSize.Width > oldSize.Height ? _xDefSizeLandscape : _xDefSizePortrait);
+        double newxdefsize = newSize.Width * (newSize.Width > newSize.Height ? _xDefSizeLandscape : _xDefSizePortrait);
+        double oldydefsize = oldSize.Height * (oldSize.Width > oldSize.Height ? _yDefSizeLandscape : _yDefSizePortrait);
+        double newydefsize = newSize.Height * (newSize.Width > newSize.Height ? _yDefSizeLandscape : _yDefSizePortrait);
 
 
-        double oldxdeforg = oldBounds.Width * (oldBounds.Width > oldBounds.Height ? _xDefPositionLandscape : _xDefPositionPortrait);
-        double newxdeforg = newBounds.Width * (newBounds.Width > newBounds.Height ? _xDefPositionLandscape : _xDefPositionPortrait);
-        double oldydeforg = oldBounds.Height * (oldBounds.Width > oldBounds.Height ? _yDefPositionLandscape : _yDefPositionPortrait);
-        double newydeforg = newBounds.Height * (newBounds.Width > newBounds.Height ? _yDefPositionLandscape : _yDefPositionPortrait);
+        double oldxdeforg = oldSize.Width * (oldSize.Width > oldSize.Height ? _xDefPositionLandscape : _xDefPositionPortrait);
+        double newxdeforg = newSize.Width * (newSize.Width > newSize.Height ? _xDefPositionLandscape : _xDefPositionPortrait);
+        double oldydeforg = oldSize.Height * (oldSize.Width > oldSize.Height ? _yDefPositionLandscape : _yDefPositionPortrait);
+        double newydeforg = newSize.Height * (newSize.Width > newSize.Height ? _yDefPositionLandscape : _yDefPositionPortrait);
 
         double xscale = newxdefsize / oldxdefsize;
         double yscale = newydefsize / oldydefsize;

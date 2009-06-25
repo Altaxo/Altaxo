@@ -982,6 +982,35 @@ namespace Altaxo.Data
       set { _dataColumns[name]=value; }
     }
 
+		/// <summary>
+		/// Tests if the table contains a data column with the provided name.
+		/// </summary>
+		/// <param name="name">The name to look for.</param>
+		/// <returns>True if the table contains a data column with the provided name.</returns>
+		public bool ContainsColumn(string name)
+		{
+			return _dataColumns.ContainsColumn(name);
+		}
+
+		/// <summary>
+		/// Tests if the table contains a data column with the provided name.
+		/// </summary>
+		/// <param name="name">The name to look for.</param>
+		/// <returns>True if the table contains a data column with the provided name.</returns>
+		public bool ContainsDataColumn(string name)
+		{
+			return _dataColumns.ContainsColumn(name);
+		}
+
+		/// <summary>
+		/// Tests if the table contains a property column with the provided name.
+		/// </summary>
+		/// <param name="name">The name to look for.</param>
+		/// <returns>True if the table contains a data column with the provided name.</returns>
+		public bool ContainsPropertyColumn(string name)
+		{
+			return _propertyColumns.Contains(name);
+		}
 
     
 

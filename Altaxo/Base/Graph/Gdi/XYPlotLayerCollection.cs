@@ -64,7 +64,7 @@ namespace Altaxo.Graph.Gdi
     private object _parent;
 
     [NonSerialized]
-    private RectangleF m_PrintableBounds; // do not serialize this value, its only cached
+    private SizeF _graphSize; // do not serialize this value, its only cached
 
     [NonSerialized]
     protected Main.EventSuppressor _changeEventSuppressor;
@@ -137,6 +137,39 @@ namespace Altaxo.Graph.Gdi
       }
     }
 
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotLayerCollection), 2)]
+		class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				XYPlotLayerCollection s = (XYPlotLayerCollection)obj;
+
+				info.AddValue("Size", s._graphSize);
+
+				info.CreateArray("LayerArray", s.Count);
+				for (int i = 0; i < s.Count; i++)
+					info.AddValue("XYPlotLayer", s[i]);
+				info.CommitArray();
+
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				XYPlotLayerCollection s = null != o ? (XYPlotLayerCollection)o : new XYPlotLayerCollection();
+
+				s._graphSize = (SizeF)info.GetValue("Size", parent);
+
+				int count = info.OpenArray();
+				for (int i = 0; i < count; i++)
+				{
+					XYPlotLayer l = (XYPlotLayer)info.GetValue("XYPlotLayer", s);
+					s.Add(l);
+				}
+				info.CloseArray(count);
+
+				return s;
+			}
+		}
+
 
     /// <summary>
     /// Finale measures after deserialization.
@@ -167,7 +200,7 @@ namespace Altaxo.Graph.Gdi
     public XYPlotLayerCollection(XYPlotLayerCollection from)
     {
       _changeEventSuppressor = new Altaxo.Main.EventSuppressor(this.EhChangeEventResumed);
-      this.m_PrintableBounds = from.m_PrintableBounds;
+      this._graphSize = from._graphSize;
 
       for(int i=0;i<from.Count;i++)
         this.Add((XYPlotLayer)from[i].Clone());
@@ -192,19 +225,19 @@ namespace Altaxo.Graph.Gdi
     /// <summary>
     /// The boundaries of the printable area of the page in points (1/72 inch).
     /// </summary>
-    public RectangleF PrintableGraphBounds
+    public SizeF GraphSize
     {
-      get { return m_PrintableBounds; }
+      get { return _graphSize; }
     }
-    public void SetPrintableGraphBounds(RectangleF val, bool bRescale)
+    public void SetGraphSize(SizeF val, bool bRescale)
     {
-      RectangleF oldBounds = m_PrintableBounds;
-      m_PrintableBounds=val;
+      SizeF oldSize = _graphSize;
+      _graphSize=val;
 
-      if(m_PrintableBounds!=oldBounds)
+      if(_graphSize!=oldSize)
       {
         foreach(XYPlotLayer l in InnerList)
-          l.SetPrintableGraphBounds( val, bRescale );
+          l.SetGraphSize( val, bRescale );
       }
     }
       
@@ -223,7 +256,7 @@ namespace Altaxo.Graph.Gdi
       {
         // we use List here since we want to have custom actions defined below
         List[i] = value;
-        value.SetPrintableGraphBounds(m_PrintableBounds,false);
+        value.SetGraphSize(_graphSize,false);
 
       }
     }
@@ -265,7 +298,7 @@ namespace Altaxo.Graph.Gdi
       {
         base.InnerList[i] = newlayer;
         newlayer.SetParentAndNumber(this, i);
-        newlayer.SetPrintableGraphBounds(m_PrintableBounds, false);
+        newlayer.SetGraphSize(_graphSize, false);
       }
     }
 
@@ -277,7 +310,7 @@ namespace Altaxo.Graph.Gdi
     {
       // we use List for adding since we want to have custom actions below
       List.Add(l);
-      l.SetPrintableGraphBounds(m_PrintableBounds,false);
+      l.SetGraphSize(_graphSize,false);
       // since we use List, we don't need to have OnLayerCollectionChanged here!
     }
 
@@ -289,7 +322,7 @@ namespace Altaxo.Graph.Gdi
 		{
 			// we use List for adding since we want to have custom actions below
 			List.Insert(index, l);
-			l.SetPrintableGraphBounds(m_PrintableBounds, false);
+			l.SetGraphSize(_graphSize, false);
 			// since we use List, we don't need to have OnLayerCollectionChanged here!
 		}
 
@@ -336,7 +369,7 @@ namespace Altaxo.Graph.Gdi
     {
       ((XYPlotLayer)oldValue).SetParentAndNumber(null,0);
       ((XYPlotLayer)newValue).SetParentAndNumber(this,index);
-      ((XYPlotLayer)newValue).SetPrintableGraphBounds(this.PrintableGraphBounds,true);
+      ((XYPlotLayer)newValue).SetGraphSize(this.GraphSize,true);
 
       for(int i=0;i<Count;i++)
       {

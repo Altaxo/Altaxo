@@ -118,8 +118,8 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
           // convert this layer coordinates first to PrintableAreaCoordinates
           PointF printableCoord = clickedObject.ParentLayer.LayerToGraphCoordinates(scatterPoint.LayerCoordinates);
           m_Cross = printableCoord;
-          m_Cross.X+=_grac.Doc.PrintableBounds.X;
-          m_Cross.Y+=_grac.Doc.PrintableBounds.Y;
+					// m_Cross.X -= _grac.GraphViewOffset.X;
+					// m_Cross.Y -= _grac.GraphViewOffset.Y;
            
           PointF newPixelCoord = _grac.PrintableAreaToPixelCoordinates(printableCoord);
           Cursor.Position = new Point((int)(Cursor.Position.X + newPixelCoord.X - mouseXY.X),(int)(Cursor.Position.Y + newPixelCoord.Y - mouseXY.Y));
@@ -154,8 +154,8 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
       // convert this layer coordinates first to PrintableAreaCoordinates
       PointF printableCoord = _grac.Layers[this._LayerNumber].LayerToGraphCoordinates(scatterPoint.LayerCoordinates);
       m_Cross = printableCoord;
-      m_Cross.X+=_grac.Doc.PrintableBounds.X;
-      m_Cross.Y+=_grac.Doc.PrintableBounds.Y;
+			// m_Cross.X -= _grac.GraphViewOffset.X;
+			// m_Cross.Y -= _grac.GraphViewOffset.Y;
            
       PointF newPixelCoord = _grac.PrintableAreaToPixelCoordinates(printableCoord);
       //Cursor.Position = new Point((int)(Cursor.Position.X + newPixelCoord.X - mouseXY.X),(int)(Cursor.Position.Y + newPixelCoord.Y - mouseXY.Y));
@@ -277,7 +277,6 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     public override void AfterPaint( Graphics g)
     {
       // draw a red cross onto the selected data point
-
       g.DrawLine(System.Drawing.Pens.Red,m_Cross.X+1,m_Cross.Y,m_Cross.X+10,m_Cross.Y);
       g.DrawLine(System.Drawing.Pens.Red,m_Cross.X-1,m_Cross.Y,m_Cross.X-10,m_Cross.Y);
       g.DrawLine(System.Drawing.Pens.Red,m_Cross.X,m_Cross.Y+1,m_Cross.X,m_Cross.Y+10);

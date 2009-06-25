@@ -8,7 +8,7 @@ namespace Altaxo.Gui.Graph
 {
 	public class PrintableAreaSetupOptions : ICloneable
 	{
-		public RectangleF Area { get; set; }
+		public SizeF Area { get; set; }
 		public bool Rescale { get; set; }
 
 		#region ICloneable Members
@@ -24,7 +24,7 @@ namespace Altaxo.Gui.Graph
 
 	public interface IPrintableAreaSetupView
 	{
-		RectangleF Area { get; set; }
+		SizeF Area { get; set; }
 		bool Rescale { get; set; }
 	}
 

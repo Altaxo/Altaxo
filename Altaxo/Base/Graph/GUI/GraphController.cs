@@ -44,15 +44,9 @@ namespace Altaxo.Graph.GUI
   /// <summary>
   /// GraphController is our default implementation to control a graph view.
   /// </summary>
-  [SerializationSurrogate(0,typeof(GraphController.SerializationSurrogate0))]
-  [SerializationVersion(0)]
   [Altaxo.Gui.UserControllerForObject(typeof(GraphDocument))]
   [Altaxo.Gui.ExpectedTypeOfView(typeof(IGraphView))]
-  public class GraphController 
-    :
-    IGraphController,
-    System.Runtime.Serialization.IDeserializationCallback
-    
+  public class GraphController : IGraphController
   {
 
     #region Member variables
@@ -63,109 +57,68 @@ namespace Altaxo.Graph.GUI
 
 
     /// <summary>Holds the Graph document (the place were the layers, plots, graph elements... are stored).</summary>
-    protected GraphDocument m_Graph;
+    protected GraphDocument _doc;
 
     /// <summary>Holds the view (the window where the graph is visualized).</summary>
-    protected IGraphView m_View;
+    protected IGraphView _view;
     
-    /// <summary>The main menu of this controller.</summary>
-    protected System.Windows.Forms.MainMenu m_MainMenu; 
-    
-    /// <summary>Special menu item to show the currently available plots.</summary>
-    protected System.Windows.Forms.MenuItem m_MenuDataPopup;
-
     /// <summary>
     /// Color for the area of the view, where there is no page.
     /// </summary>
-    protected Color m_NonPageAreaColor;
+    protected Color _nonPageAreaColor;
 
     /// <summary>
     /// Brush to fill the page ground. Since the printable area is filled with another brush, in effect
     /// this brush fills only the non printable margins of the page. 
     /// </summary>
-    protected BrushX m_PageGroundBrush;
+    protected BrushX _pageGroundBrush;
 
     /// <summary>
     /// Brush to fill the printable area of the graph.
     /// </summary>
-    protected BrushX m_PrintableAreaBrush;
+    protected BrushX _graphAreaBrush;
 
     /// <summary>Current horizontal resolution of the paint method.</summary>
-    protected float m_HorizRes;
+    protected float _horizontalResolution;
     
     /// <summary>Current vertical resolution of the paint method.</summary>
-    protected float m_VertRes;
+    protected float _verticalResolution;
 
     /// <summary>Current zoom factor. If AutoZoom is on, this factor is calculated automatically.</summary>
-    protected float m_Zoom;
+    protected float _zoomFactor;
     
     /// <summary>If true, the view is zoomed so that the page fits exactly into the viewing area.</summary>
-    protected bool  m_AutoZoom; // if true, the sheet is zoomed as big as possible to fit into window
+    protected bool  _isAutoZoomActive; // if true, the sheet is zoomed as big as possible to fit into window
+
+		/// <summary>
+		/// Ratio of view port dimension to the dimension of the graph. 
+		/// Example: a values of 2 means that the view port size is two times the size of the graph. 
+		/// </summary>
+		protected float _areaFillingFactor = 1.2f;
+
+		protected PointF _graphViewOffset;
     
     /// <summary>Number of the currently selected layer (or -1 if no layer is present).</summary>
-    protected int m_CurrentLayerNumber;
+    protected int _currentLayerNumber;
 
     /// <summary>Number of the currently selected plot (or -1 if no plot is present on the layer).</summary>
-    protected int m_CurrentPlotNumber;
+    protected int _currentPlotNumber;
     
     /// <summary>A instance of a mouse handler class that currently handles the mouse events..</summary>
-    protected MouseStateHandler m_MouseState;
+    protected MouseStateHandler _mouseState;
 
 
 
     /// <summary>
     /// This holds a frozen image of the graph during the moving time
     /// </summary>
-    protected Bitmap m_FrozenGraph;
+    protected Bitmap _cachedGraphImage;
 
-    protected bool   m_FrozenGraphIsDirty;
-
-    /// <summary>
-    /// Necessary to determine if deserialization finisher already has finished serialization.
-    /// </summary>
-    private object m_DeserializationSurrogate;
+    protected bool   _isCachedGraphImageDirty;
 
     #endregion Member variables
 
     #region Serialization
-    /// <summary>Used to serialize the GraphController Version 0.</summary>
-    public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
-    {
-      /// <summary>
-      /// Serializes the GraphController (version 0).
-      /// </summary>
-      /// <param name="obj">The GraphController to serialize.</param>
-      /// <param name="info">The serialization info.</param>
-      /// <param name="context">The streaming context.</param>
-      public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context  )
-      {
-        GraphController s = (GraphController)obj;
-        info.AddValue("AutoZoom",s.m_AutoZoom);
-        info.AddValue("Zoom",s.m_Zoom);
-        info.AddValue("Graph",s.m_Graph);
-      }
-      /// <summary>
-      /// Deserializes the GraphController (version 0).
-      /// </summary>
-      /// <param name="obj">The empty GraphController object to deserialize into.</param>
-      /// <param name="info">The serialization info.</param>
-      /// <param name="context">The streaming context.</param>
-      /// <param name="selector">The deserialization surrogate selector.</param>
-      /// <returns>The deserialized GraphController.</returns>
-      public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
-      {
-        GraphController s = (GraphController)obj;
-        s.SetMemberVariablesToDefault();
-
-        s.m_AutoZoom = info.GetBoolean("AutoZoom");
-        s.m_Zoom = info.GetSingle("Zoom");
-        s.m_Graph = (GraphDocument)info.GetValue("Graph",typeof(GraphDocument));
-
-        s.m_DeserializationSurrogate = this;
-        return s;
-      }
-    }
-
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GraphController),0)]
       class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
@@ -176,17 +129,17 @@ namespace Altaxo.Graph.GUI
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         GraphController s = (GraphController)obj;
-        info.AddValue("AutoZoom",s.m_AutoZoom);
-        info.AddValue("Zoom",s.m_Zoom);
-        info.AddValue("Graph",Main.DocumentPath.GetAbsolutePath(s.m_Graph));
+        info.AddValue("AutoZoom",s._isAutoZoomActive);
+        info.AddValue("Zoom",s._zoomFactor);
+        info.AddValue("Graph",Main.DocumentPath.GetAbsolutePath(s._doc));
       }
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
         
         GraphController s = null!=o ? (GraphController)o : new GraphController(null,true);
-        s.m_AutoZoom = info.GetBoolean("AutoZoom");
-        s.m_Zoom = info.GetSingle("Zoom");
-        s.m_Graph = null;
+        s._isAutoZoomActive = info.GetBoolean("AutoZoom");
+        s._zoomFactor = info.GetSingle("Zoom");
+        s._doc = null;
         
         XmlSerializationSurrogate0 surr = new XmlSerializationSurrogate0();
         surr._GraphController = s;
@@ -208,39 +161,7 @@ namespace Altaxo.Graph.GUI
     }
 
 
-    /// <summary>
-    /// Finale measures after deserialization.
-    /// </summary>
-    /// <param name="obj">Not used.</param>
-    public virtual void OnDeserialization(object obj)
-    {
-      if(null!=this.m_DeserializationSurrogate && obj is DeserializationFinisher)
-      {
-        m_DeserializationSurrogate=null;
-
-        // first finish the document
-        DeserializationFinisher finisher = new DeserializationFinisher(this);
-        
-        m_Graph.OnDeserialization(finisher);
-
-
-        // create the menu
-        this.InitializeMenu();
-
-        // set the menu of this class
-        m_View.GraphMenu = this.m_MainMenu;
-
-
-        // restore event chain to GraphDocument
-        m_Graph.Changed += new EventHandler(this.EhGraph_Changed);
-        m_Graph.Layers.LayerCollectionChanged += new EventHandler(this.EhGraph_LayerCollectionChanged);
-
-
-        // Ensure the current layer and plot numbers are valid
-        this.EnsureValidityOfCurrentLayerNumber();
-        this.EnsureValidityOfCurrentPlotNumber();
-      }
-    }
+    
     #endregion
 
     #region Constructors
@@ -251,38 +172,38 @@ namespace Altaxo.Graph.GUI
     /// </summary>
     protected virtual void SetMemberVariablesToDefault()
     {
-      m_NonPageAreaColor = Color.Gray;
+      _nonPageAreaColor = Color.Gray;
     
-      m_PageGroundBrush = new BrushX(Color.LightGray);
+      _pageGroundBrush = new BrushX(Color.LightGray);
 
-      m_PrintableAreaBrush = new BrushX(Color.Snow);
+      _graphAreaBrush = new BrushX(Color.Snow);
 
-      m_HorizRes  = 300;
+      _horizontalResolution  = 300;
     
-      m_VertRes = 300;
+      _verticalResolution = 300;
 
-      m_Zoom  = 0.4f;
+      _zoomFactor  = 0.4f;
     
       // If true, the view is zoomed so that the page fits exactly into the viewing area.</summary>
-      m_AutoZoom = true; // if true, the sheet is zoomed as big as possible to fit into window
+      _isAutoZoomActive = true; // if true, the sheet is zoomed as big as possible to fit into window
     
     
       // Number of the currently selected layer (or -1 if no layer is present).</summary>
-      m_CurrentLayerNumber = -1;
+      _currentLayerNumber = -1;
     
       // Number of the currently selected plot (or -1 if no plot is present on the layer).</summary>
-      m_CurrentPlotNumber = -1;
+      _currentPlotNumber = -1;
     
       // Currently selected GraphTool.</summary>
       // m_CurrentGraphTool = GraphTools.ObjectPointer;
     
       // A instance of a mouse handler class that currently handles the mouse events..</summary>
-      m_MouseState= new ObjectPointerMouseHandler(this);
+      _mouseState= new ObjectPointerMouseHandler(this);
 
       
 
       // This holds a frozen image of the graph during the moving time
-      m_FrozenGraph=null;
+      _cachedGraphImage=null;
     }
 
     /// <summary>
@@ -308,7 +229,7 @@ namespace Altaxo.Graph.GUI
       else if(null==graphdoc && !bDeserializationConstructor)
         throw new ArgumentNullException("graphdoc","GraphDoc must not be null");
 
-      this.InitializeMenu();
+      //this.InitializeMenu();
 
       if(null!=Doc && 0==Doc.Layers.Count)
         Doc.CreateNewLayerNormalBottomXLeftY();
@@ -326,442 +247,6 @@ namespace Altaxo.Graph.GUI
 
     #endregion // Constructors
 
-    #region Menu Definition
-
-
-    /// <summary>
-    /// Creates the default menu of a graph view.
-    /// </summary>
-    /// <remarks>In case there is already a menu here, the old menu is overwritten.</remarks>
-    public void InitializeMenu()
-    {
-      int index=0, index2=0;
-      MenuItem mi;
-
-      m_MainMenu = new MainMenu();
-
-      // File Menu
-      // **********************************************************
-      mi = new MenuItem("&File");
-      mi.Index=0;
-      mi.MergeOrder=0;
-      mi.MergeType = System.Windows.Forms.MenuMerge.MergeItems;
-      m_MainMenu.MenuItems.Add(mi);
-      index = m_MainMenu.MenuItems.Count-1;
-
-      // File - Page Setup
-      mi = new MenuItem("Page Setup..");
-      mi.Click += new EventHandler(EhMenuFilePageSetup_OnClick);
-      //mi.Shortcut = ShortCuts.
-      m_MainMenu.MenuItems[index].MenuItems.Add(mi);
-
-      // File - Print Preview
-      mi = new MenuItem("Print Preview..");
-      mi.Click += new EventHandler(EhMenuFilePrintPreview_OnClick);
-      m_MainMenu.MenuItems[index].MenuItems.Add(mi);
-
-      // File - Print 
-      mi = new MenuItem("Print..");
-      mi.Click += new EventHandler(EhMenuFilePrint_OnClick);
-      m_MainMenu.MenuItems[index].MenuItems.Add(mi);
-
-      // File - Save Graph As
-      mi = new MenuItem("Save Graph As..");
-      mi.Click += new EventHandler(EhMenuFileSaveGraphAs_OnClick);
-      m_MainMenu.MenuItems[index].MenuItems.Add(mi);
-
-      // File - Export (Popup)
-      // ------------------------------------------------------------------
-      mi = new MenuItem("Export");
-      //mi.Popup += new EventHandler(MenuFileExport_OnPopup);
-      m_MainMenu.MenuItems[index].MenuItems.Add(mi);
-      index2 = m_MainMenu.MenuItems[index].MenuItems.Count-1;
-
-      // File - Export - Metafile 
-      mi = new MenuItem("Metafile");
-      mi.Click += new EventHandler(EhMenuFileExportMetafile_OnClick);
-      m_MainMenu.MenuItems[index].MenuItems[index2].MenuItems.Add(mi);
-
-
-      // Edit (Popup)
-      // ****************************************************************** 
-      mi = new MenuItem("Edit");
-      mi.Index=1;
-      mi.MergeOrder=1;
-      mi.MergeType = System.Windows.Forms.MenuMerge.MergeItems;
-      m_MainMenu.MenuItems.Add(mi);
-      index = m_MainMenu.MenuItems.Count-1;
-
-      // Edit - NewLayer (Popup)
-      // ------------------------------------------------------------------
-      mi = new MenuItem("New layer(axes)");
-      //mi.Popup += new EventHandler(MenuFileExport_OnPopup);
-      m_MainMenu.MenuItems[index].MenuItems.Add(mi);
-      index2 = m_MainMenu.MenuItems[index].MenuItems.Count-1;
-
-      // Edit - NewLayer - Normal:Bottom X and Left Y 
-      mi = new MenuItem("(Normal): Bottom X + Left Y ");
-      mi.Click += new EventHandler(EhMenuEditNewlayerNormalBottomXLeftY_OnClick);
-      m_MainMenu.MenuItems[index].MenuItems[index2].MenuItems.Add(mi);
-
-      // Edit - NewLayer - "(Linked: Top X + Right Y" 
-      mi = new MenuItem("(Linked: Top X + Right Y");
-      mi.Click += new EventHandler(EhMenuEditNewlayerLinkedTopXRightY_OnClick);
-      m_MainMenu.MenuItems[index].MenuItems[index2].MenuItems.Add(mi);
-
-      // Edit - NewLayer - "(Linked): Top X" 
-      mi = new MenuItem("(Linked): Top X");
-      mi.Click += new EventHandler(EhMenuEditNewlayerLinkedTopX_OnClick);
-      m_MainMenu.MenuItems[index].MenuItems[index2].MenuItems.Add(mi);
-
-      // Edit - NewLayer - "(Linked): Right Y" 
-      mi = new MenuItem("(Linked): Right Y");
-      mi.Click += new EventHandler(EhMenuEditNewlayerLinkedRightY_OnClick);
-      m_MainMenu.MenuItems[index].MenuItems[index2].MenuItems.Add(mi);
-
-      // Edit - NewLayer - "(Linked): Top X + Right Y + X Axis Straight" 
-      mi = new MenuItem("(Linked): Top X + Right Y + X Axis Straight");
-      mi.Click += new EventHandler(EhMenuEditNewlayerLinkedTopXRightYXAxisStraight_OnClick);
-      m_MainMenu.MenuItems[index].MenuItems[index2].MenuItems.Add(mi);
-
-
-      // Data (Popup)
-      // ****************************************************************** 
-      mi = new MenuItem("Data");
-      mi.Index=3;
-      mi.MergeOrder=3;
-      mi.MergeType = System.Windows.Forms.MenuMerge.MergeItems;
-      m_MenuDataPopup = mi; // store this for later manimpulation
-      m_MainMenu.MenuItems.Add(mi);
-      index = m_MainMenu.MenuItems.Count-1;
-
-
-      // Graph (Popup)
-      // ****************************************************************** 
-      mi = new MenuItem("Graph");
-      mi.Index=4;
-      mi.MergeOrder=4;
-      mi.MergeType = System.Windows.Forms.MenuMerge.MergeItems;
-      m_MainMenu.MenuItems.Add(mi);
-      index = m_MainMenu.MenuItems.Count-1;
-
-      // Graph - Duplicate
-      mi = new MenuItem("Duplicate Graph");
-      mi.Click += new EventHandler(EhMenuGraphDuplicate_OnClick);
-      //mi.Shortcut = ShortCuts.
-      m_MainMenu.MenuItems[index].MenuItems.Add(mi);
-
-      // Graph - NewLayerLegend
-      mi = new MenuItem("New layer legend");
-      mi.Click += new EventHandler(EhMenuGraphNewLayerLegend_OnClick);
-      //mi.Shortcut = ShortCuts.
-      m_MainMenu.MenuItems[index].MenuItems.Add(mi);
-
-      // Graph - XYPlotLayer control
-      mi = new MenuItem("XYPlotLayer control");
-      mi.Click += new EventHandler(EhMenuGraphLayer_OnClick);
-      //mi.Shortcut = ShortCuts.
-      m_MainMenu.MenuItems[index].MenuItems.Add(mi);
-
-      // Graph - Add curve plot
-      mi = new MenuItem("Add Curve Plot");
-      mi.Click += new EventHandler(EhMenuGraphAddCurvePlot_OnClick);
-      //mi.Shortcut = ShortCuts.
-      m_MainMenu.MenuItems[index].MenuItems.Add(mi);
-    }
-
-
-    /// <summary>
-    /// Updates a special menu item, the data item, with the currently available plot names. The active plot is marked with a
-    /// check.
-    /// </summary>
-    public void UpdateDataPopup()
-    {
-      if(null==this.m_MenuDataPopup)
-        return; // as long there is no menu, we cannot do it
-
-      // first delete old menuitems
-      this.m_MenuDataPopup.MenuItems.Clear();
-
-
-      // check there is at least one layer
-      if(m_Graph.Layers.Count==0)
-        return; // there is no layer, we can not have items in the data menu
-
-      // now it is save to get the active layer
-      int actLayerNum = this.CurrentLayerNumber;
-      XYPlotLayer actLayer = this.Layers[actLayerNum];
-
-      // then append the plot associations of the actual layer
-
-      int actPA = CurrentPlotNumber;
-      int len = actLayer.PlotItems.Flattened.Length;
-      for(int i = 0; i<len; i++)
-      {
-        IGPlotItem pa = actLayer.PlotItems.Flattened[i];
-        DataMenuItem mi = new DataMenuItem(pa.ToString(), new EventHandler(EhMenuData_Data));
-        mi.Checked = (i==actPA);
-        mi.PlotItemNumber = i;
-        this.m_MenuDataPopup.MenuItems.Add(mi);
-      }
-    }
-
-
-
-
-    #endregion // Menu definition
-
-    #region Menu event handlers
-
-    /// <summary>
-    /// Handler for the menu item "File" - "Setup Page".
-    /// </summary>
-    /// <param name="sender">Not used.</param>
-    /// <param name="e">Not used.</param>
-    private void EhMenuFilePageSetup_OnClick(object sender, System.EventArgs e)
-    {
-      try
-      {
-        Current.Gui.ShowPageSetupDialog();
-      }
-      catch(Exception exc)
-      {
-        MessageBox.Show(exc.ToString(),"Exception occured!");
-      }
-    }
-
-    /// <summary>
-    /// Handler for the menu item "File" - "Print".
-    /// </summary>
-    /// <param name="sender">Not used.</param>
-    /// <param name="e">Not used.</param>
-    private void EhMenuFilePrint_OnClick(object sender, System.EventArgs e)
-    {
-      try
-      {
-        if(Current.Gui.ShowPrintDialog())
-        {
-          Current.PrintingService.PrintDocument.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(this.EhPrintPage);
-          Current.PrintingService.PrintDocument.Print();
-        }
-      }
-      catch(Exception ex)
-      {
-        System.Windows.Forms.MessageBox.Show(this.m_View.Window,ex.ToString());
-      }
-      finally
-      {
-        Current.PrintingService.PrintDocument.PrintPage -= new System.Drawing.Printing.PrintPageEventHandler(this.EhPrintPage);
-      }
-    }
-  
-
-    /// <summary>
-    /// Handler for the menu item "File" - "Print Preview".
-    /// </summary>
-    /// <param name="sender">Not used.</param>
-    /// <param name="e">Not used.</param>
-    private void EhMenuFilePrintPreview_OnClick(object sender, System.EventArgs e)
-    {
-      try
-      {
-        System.Windows.Forms.PrintPreviewDialog dlg = new System.Windows.Forms.PrintPreviewDialog();
-        Current.PrintingService.PrintDocument.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(this.EhPrintPage);
-        dlg.Document = Current.PrintingService.PrintDocument;
-        dlg.ShowDialog(this.m_View.Window);
-        dlg.Dispose();
-      }
-      catch(Exception ex)
-      {
-        System.Windows.Forms.MessageBox.Show(this.m_View.Window,ex.ToString());
-      }
-      finally
-      {
-        Current.PrintingService.PrintDocument.PrintPage -= new System.Drawing.Printing.PrintPageEventHandler(this.EhPrintPage);
-      }
-    }
-
-
-    protected void EhMenuFileSaveGraphAs_OnClick(object sender, System.EventArgs e)
-    {
-      System.IO.Stream myStream ;
-      SaveFileDialog saveFileDialog1 = new SaveFileDialog();
- 
-      saveFileDialog1.Filter = "Xml files (*.xml)|*.xml|All files (*.*)|*.*"  ;
-      saveFileDialog1.FilterIndex = 1 ;
-      saveFileDialog1.RestoreDirectory = true ;
- 
-      if(saveFileDialog1.ShowDialog() == DialogResult.OK)
-      {
-        if((myStream = saveFileDialog1.OpenFile()) != null)
-        {
-          Altaxo.Serialization.Xml.XmlStreamSerializationInfo info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo();
-          info.BeginWriting(myStream);
-          info.AddValue("Graph",this.Doc);
-          info.EndWriting();
-          myStream.Close();
-        }
-      }
-    }
-
-    /// <summary>
-    /// Handler for the menu item "File" - "Export Metafile".
-    /// </summary>
-    /// <param name="sender">Not used.</param>
-    /// <param name="e">Not used.</param>
-    private void EhMenuFileExportMetafile_OnClick(object sender, System.EventArgs e)
-    {
-      System.IO.Stream myStream ;
-      SaveFileDialog saveFileDialog1 = new SaveFileDialog();
- 
-      saveFileDialog1.Filter = "Windows Metafiles (*.emf)|*.emf|All files (*.*)|*.*"  ;
-      saveFileDialog1.FilterIndex = 2 ;
-      saveFileDialog1.RestoreDirectory = true ;
- 
-      if(saveFileDialog1.ShowDialog() == DialogResult.OK)
-      {
-        if((myStream = saveFileDialog1.OpenFile()) != null)
-        {
-          this.SaveAsMetafile(myStream);
-          myStream.Close();
-        } // end openfile ok
-      } // end dlgresult ok
-
-    }
-
-
-    /// <summary>
-    /// Handler for the menu item "Edit" - "New layer(axes)" - "Normal: Bottom X Left Y".
-    /// </summary>
-    /// <param name="sender">Not used.</param>
-    /// <param name="e">Not used.</param>
-    private void EhMenuEditNewlayerNormalBottomXLeftY_OnClick(object sender, System.EventArgs e)
-    {
-      m_Graph.CreateNewLayerNormalBottomXLeftY();
-    }
-
-    /// <summary>
-    /// Handler for the menu item "Edit" - "New layer(axes)" - "Linked: Top X Right Y".
-    /// </summary>
-    /// <param name="sender">Not used.</param>
-    /// <param name="e">Not used.</param>
-    private void EhMenuEditNewlayerLinkedTopXRightY_OnClick(object sender, System.EventArgs e)
-    {
-      m_Graph.CreateNewLayerLinkedTopXRightY(CurrentLayerNumber);
-    }
-
-    /// <summary>
-    /// Handler for the menu item "Edit" - "New layer(axes)" - "Linked: Top X".
-    /// </summary>
-    /// <param name="sender">Not used.</param>
-    /// <param name="e">Not used.</param>
-    private void EhMenuEditNewlayerLinkedTopX_OnClick(object sender, System.EventArgs e)
-    {
-    
-    }
-
-    /// <summary>
-    /// Handler for the menu item "Edit" - "New layer(axes)" - "Linked: Right Y".
-    /// </summary>
-    /// <param name="sender">Not used.</param>
-    /// <param name="e">Not used.</param>
-    private void EhMenuEditNewlayerLinkedRightY_OnClick(object sender, System.EventArgs e)
-    {
-    
-    }
-
-
-
-    /// <summary>
-    /// Handler for the menu item "Edit" - "New layer(axes)" - "Linked: Top X Right Y, X axis straight ".
-    /// </summary>
-    /// <param name="sender">Not used.</param>
-    /// <param name="e">Not used.</param>
-    private void EhMenuEditNewlayerLinkedTopXRightYXAxisStraight_OnClick(object sender, System.EventArgs e)
-    {
-      m_Graph.CreateNewLayerLinkedTopXRightY_XAxisStraight(CurrentLayerNumber);
-    }
-
-
-    /// <summary>
-    /// Duplicates the Graph and the Graph view to a new one.
-    /// </summary>
-    /// <param name="sender">Not used.</param>
-    /// <param name="e">Not used.</param>
-    private void EhMenuGraphDuplicate_OnClick(object sender, System.EventArgs e)
-    {
-      GraphDocument newDoc = new GraphDocument(this.Doc);
-      Current.ProjectService.CreateNewGraph(newDoc);
-    }
-
-    private void EhMenuGraphLayer_OnClick(object sender, System.EventArgs e)
-    {
-      EnsureValidityOfCurrentLayerNumber();
-      if(null!=this.ActiveLayer)
-        LayerController.ShowDialog(this.ActiveLayer);
-    }
-
-    private void EhMenuGraphAddCurvePlot_OnClick(object sender, System.EventArgs e)
-    {
-      EnsureValidityOfCurrentLayerNumber();
-      this.Doc.Layers[this.CurrentLayerNumber].PlotItems.Add(new XYFunctionPlotItem(new XYFunctionPlotData(new PolynomialFunction(new double[]{0,0,1})),new G2DPlotStyleCollection(LineScatterPlotStyleKind.Line)));
-    }
-
-    /// <summary>
-    /// Handler for the menu item "Graph" - "New layer legend.
-    /// </summary>
-    /// <param name="sender">Not used.</param>
-    /// <param name="e">Not used.</param>
-    private void EhMenuGraphNewLayerLegend_OnClick(object sender, System.EventArgs e)
-    {
-      m_Graph.Layers[CurrentLayerNumber].CreateNewLayerLegend();
-    }
-
-
-    /// <summary>
-    /// Handler for all submenu items of the data popup.".
-    /// </summary>
-    /// <param name="sender">The menuitem, must be of type <see cref="DataMenuItem"/>.</param>
-    /// <param name="e">Not used.</param>
-    /// <remarks>The handler either checks the menuitem, if it was unchecked. If it was already checked,
-    /// it shows the LineScatterPlotStyleControl into a dialog box.
-    /// </remarks>
-    private void EhMenuData_Data(object sender, System.EventArgs e)
-    {
-      DataMenuItem dmi = (DataMenuItem)sender;
-
-      if(!dmi.Checked)
-      {
-        // if the menu item was not checked before, check it now
-        // by making the plot association shown by the menu item
-        // the actual plot association
-        int actLayerNum = this.CurrentLayerNumber;
-        XYPlotLayer actLayer = this.Layers[actLayerNum];
-        if(null!=actLayer && dmi.PlotItemNumber<actLayer.PlotItems.Flattened.Length)
-        {
-          dmi.Checked=true;
-          CurrentPlotNumber = dmi.PlotItemNumber;
-        }
-      }
-      else
-      {
-        // if it was checked before, then bring up the plot style dialog
-        // of the plot association represented by this menu item
-        int actLayerNum = this.CurrentLayerNumber;
-        XYPlotLayer actLayer = this.Layers[actLayerNum];
-        IGPlotItem pa = actLayer.PlotItems.Flattened[CurrentPlotNumber];
-
-        Current.Gui.ShowDialog(new object[] { pa }, string.Format("#{0}: {1}", pa.Name, pa.ToString()),true);
-      }
-      
-        
-
-    }
-
-
-    
-    #endregion // Menu event handlers
-
     #region IGraphController interface definitions
 
     /// <summary>
@@ -769,12 +254,12 @@ namespace Altaxo.Graph.GUI
     /// </summary>
     public GraphDocument Doc
     {
-      get { return m_Graph; }
+      get { return _doc; }
       set
       {
-        GraphDocument oldDoc=m_Graph;
-        m_Graph = value;
-        if(!object.ReferenceEquals(m_Graph,oldDoc))
+        GraphDocument oldDoc=_doc;
+        _doc = value;
+        if(!object.ReferenceEquals(_doc,oldDoc))
         {
           if(oldDoc!=null)
           {
@@ -783,12 +268,12 @@ namespace Altaxo.Graph.GUI
             oldDoc.BoundsChanged -= new EventHandler(this.EhGraph_BoundsChanged);
             oldDoc.NameChanged -= new Main.NameChangedEventHandler(this.EhGraphDocumentNameChanged);
           }
-          if(m_Graph!=null)
+          if(_doc!=null)
           {
-            m_Graph.Changed += new EventHandler(this.EhGraph_Changed);
-            m_Graph.Layers.LayerCollectionChanged += new EventHandler(this.EhGraph_LayerCollectionChanged);
-            m_Graph.BoundsChanged += new EventHandler(this.EhGraph_BoundsChanged);
-            m_Graph.NameChanged += new Main.NameChangedEventHandler(this.EhGraphDocumentNameChanged);
+            _doc.Changed += new EventHandler(this.EhGraph_Changed);
+            _doc.Layers.LayerCollectionChanged += new EventHandler(this.EhGraph_LayerCollectionChanged);
+            _doc.BoundsChanged += new EventHandler(this.EhGraph_BoundsChanged);
+            _doc.NameChanged += new Main.NameChangedEventHandler(this.EhGraphDocumentNameChanged);
 
             // Ensure the current layer and plot numbers are valid
             this.EnsureValidityOfCurrentLayerNumber();
@@ -807,11 +292,11 @@ namespace Altaxo.Graph.GUI
     /// can restrict setting the view only the own view is still null.</remarks>
     public IGraphView View
     {
-      get { return m_View; }
+      get { return _view; }
       set
       {
-        IGraphView oldView = m_View;
-        m_View = value;
+        IGraphView oldView = _view;
+        _view = value;
 
         if(null!=oldView)
         {
@@ -819,26 +304,24 @@ namespace Altaxo.Graph.GUI
           oldView.Controller = null; // no longer the controller of this view
         }
 
-        if(null!=m_View)
+        if(null!=_view)
         {
-          m_View.Controller = this;
-          m_View.GraphMenu = m_MainMenu;
-          m_View.NumberOfLayers = m_Graph.Layers.Count;
-          m_View.CurrentLayer = this.CurrentLayerNumber;
+          _view.Controller = this;
+          _view.NumberOfLayers = _doc.Layers.Count;
+          _view.CurrentLayer = this.CurrentLayerNumber;
           //m_View.CurrentGraphTool = this.CurrentGraphTool;
         
           // Adjust the zoom level just so, that area fits into control
-          Graphics grfx = m_View.CreateGraphGraphics();
-          this.m_HorizRes = grfx.DpiX;
-          this.m_VertRes = grfx.DpiY;
+          Graphics grfx = _view.CreateGraphGraphics();
+          this._horizontalResolution = grfx.DpiX;
+          this._verticalResolution = grfx.DpiY;
           grfx.Dispose();
 
           // Calculate the zoom if Autozoom is on - simulate a SizeChanged event of the view to force calculation of new zoom factor
           this.EhView_GraphPanelSizeChanged(new EventArgs());
 
           // set the menu of this class
-          m_View.GraphMenu = this.m_MainMenu;
-          m_View.NumberOfLayers = m_Graph.Layers.Count; // tell the view how many layers we have
+          _view.NumberOfLayers = _doc.Layers.Count; // tell the view how many layers we have
         
         }
       }
@@ -929,8 +412,8 @@ namespace Altaxo.Graph.GUI
     /// <returns></returns>
     public bool EhView_ProcessCmdKey(ref Message msg, Keys keyData)
     {
-      if(this.m_MouseState!=null)
-        return this.m_MouseState.ProcessCmdKey(ref msg, keyData);
+      if(this._mouseState!=null)
+        return this._mouseState.ProcessCmdKey(ref msg, keyData);
       else
         return false;
     }
@@ -945,7 +428,7 @@ namespace Altaxo.Graph.GUI
       if(!Current.ApplicationIsClosing)
       {
 
-        System.Windows.Forms.DialogResult dlgres = System.Windows.Forms.MessageBox.Show(this.m_View.Window,"Do you really want to close this graph?","Attention",System.Windows.Forms.MessageBoxButtons.YesNo);
+        System.Windows.Forms.DialogResult dlgres = System.Windows.Forms.MessageBox.Show(this._view.Window,"Do you really want to close this graph?","Attention",System.Windows.Forms.MessageBoxButtons.YesNo);
 
         if(dlgres==System.Windows.Forms.DialogResult.No)
         {
@@ -970,23 +453,82 @@ namespace Altaxo.Graph.GUI
     /// <param name="e">EventArgs.</param>
     public virtual void EhView_GraphPanelSizeChanged(EventArgs e)
     {
-      if(m_AutoZoom)
+      if(_isAutoZoomActive)
       {
-        this.m_Zoom = CalculateAutoZoom();
+        CalculateAutoZoom();
     
         // System.Console.WriteLine("h={0}, v={1} {3} {4} {5}",zoomh,zoomv,UnitPerInch,this.ClientSize.Width,this.m_HorizRes, this.m_PageBounds.Width);
         // System.Console.WriteLine("SizeX = {0}, zoom = {1}, dpix={2},in={3}",this.ClientSize.Width,this.m_Zoom,this.m_HorizRes,this.ClientSize.Width/(this.m_HorizRes*this.m_Zoom));
-      
-        m_View.GraphScrollSize= new Size(0,0);
+
+				_view.ShowGraphScrollBars = false;
       }
       else
       {
-        double pixelh = System.Math.Ceiling(m_Graph.PageBounds.Width*this.m_HorizRes*this.m_Zoom/(UnitPerInch));
-        double pixelv = System.Math.Ceiling(m_Graph.PageBounds.Height*this.m_VertRes*this.m_Zoom/(UnitPerInch));
-        m_View.GraphScrollSize = new Size((int)pixelh,(int)pixelv);
+        double pixelh = System.Math.Ceiling(_doc.PageBounds.Width*this._horizontalResolution*this._zoomFactor/(UnitPerInch));
+        double pixelv = System.Math.Ceiling(_doc.PageBounds.Height*this._verticalResolution*this._zoomFactor/(UnitPerInch));
+				_view.ShowGraphScrollBars = true;
       }
 
     }
+
+		public void EhView_Scroll()
+		{
+			_graphViewOffset = ScrollPositionToGraphViewOffset(_view.GraphScrollPosition);
+			_isCachedGraphImageDirty = true;
+			_view.InvalidateGraph();
+		}
+
+		/// <summary>
+		/// Location of the upper left point of the viewport in graph coordinates.
+		/// </summary>
+		PointF GraphPaddingOffset
+		{
+			get
+			{
+				return new PointF(- _doc.Layers.GraphSize.Width*(_areaFillingFactor-1)/2, -_doc.Layers.GraphSize.Height*(_areaFillingFactor-1)/2);
+			}
+		}
+
+		/// <summary>
+		/// Size of the viewport (i.e. of the visible window in the graph panel) in graph coordinates.
+		/// </summary>
+		SizeF GraphViewportSize
+		{
+			get
+			{
+				return PixelToPageCoordinates(_view.GraphSize);
+			}
+		}
+
+		PointF ScrollPositionToGraphViewOffset(PointF scrollPos)
+		{
+			SizeF virtualSize = GraphViewportSize;
+			PointF po = GraphPaddingOffset;
+
+			return new PointF(
+				scrollPos.X * (_doc.Layers.GraphSize.Width  * _areaFillingFactor - virtualSize.Width) + po.X,
+				scrollPos.Y * (_doc.Layers.GraphSize.Height * _areaFillingFactor - virtualSize.Height) + po.Y);
+		}
+
+		PointF GraphViewOffsetToScrollPosition(PointF viewOffset)
+		{
+			SizeF virtualSize = GraphViewportSize;
+			PointF po = GraphPaddingOffset;
+
+			float x =	(viewOffset.X - po.X) / (_doc.Layers.GraphSize.Width  * _areaFillingFactor - virtualSize.Width);
+			float y = (viewOffset.Y - po.Y) / (_doc.Layers.GraphSize.Height * _areaFillingFactor - virtualSize.Height);
+
+			if (!(x >= 0))
+				x = 0;
+			if (!(x <= 1))
+				x = 1;
+			if (!(y >= 0))
+				y = 0;
+			if (!(y <= 1))
+				y = 1;
+			return new PointF(x, y);
+		}
+
 
 
     /// <summary>
@@ -995,7 +537,7 @@ namespace Altaxo.Graph.GUI
     /// <param name="e">MouseEventArgs.</param>
     public virtual void EhView_GraphPanelMouseUp(System.Windows.Forms.MouseEventArgs e)
     {
-      m_MouseState.OnMouseUp(e);
+      _mouseState.OnMouseUp(e);
     }
 
     /// <summary>
@@ -1004,7 +546,7 @@ namespace Altaxo.Graph.GUI
     /// <param name="e">MouseEventArgs.</param>
     public virtual void EhView_GraphPanelMouseDown(System.Windows.Forms.MouseEventArgs e)
     {
-      m_MouseState.OnMouseDown(e);
+      _mouseState.OnMouseDown(e);
     }
 
     /// <summary>
@@ -1013,7 +555,7 @@ namespace Altaxo.Graph.GUI
     /// <param name="e">MouseEventArgs.</param>
     public virtual void EhView_GraphPanelMouseMove(System.Windows.Forms.MouseEventArgs e)
     {
-      m_MouseState.OnMouseMove(e);
+      _mouseState.OnMouseMove(e);
     }
 
     /// <summary>
@@ -1022,7 +564,7 @@ namespace Altaxo.Graph.GUI
     /// <param name="e">EventArgs.</param>
     public virtual void EhView_GraphPanelMouseClick(System.EventArgs e)
     {
-      m_MouseState.OnClick(e);
+      _mouseState.OnClick(e);
     }
 
     /// <summary>
@@ -1031,7 +573,7 @@ namespace Altaxo.Graph.GUI
     /// <param name="e"></param>
     public virtual void EhView_GraphPanelMouseDoubleClick(System.EventArgs e)
     {
-      m_MouseState.OnDoubleClick(e);
+      _mouseState.OnDoubleClick(e);
     }
 
     /// <summary>
@@ -1055,15 +597,15 @@ namespace Altaxo.Graph.GUI
     /// <param name="e">The event arguments.</param>
     protected void EhGraph_LayerCollectionChanged(object sender, System.EventArgs e)
     {
-      int oldActiveLayer = this.m_CurrentLayerNumber;
+      int oldActiveLayer = this._currentLayerNumber;
 
       // Ensure that the current layer and current plot are valid anymore
       EnsureValidityOfCurrentLayerNumber();
 
-      if(oldActiveLayer!=this.m_CurrentLayerNumber)
+      if(oldActiveLayer!=this._currentLayerNumber)
       {
         if(View!=null)
-          View.CurrentLayer = this.m_CurrentLayerNumber;
+          View.CurrentLayer = this._currentLayerNumber;
       }
 
       // even if the active layer number not changed, it can be that the layer itself has changed from
@@ -1072,7 +614,7 @@ namespace Altaxo.Graph.GUI
 
       // make sure the view knows about when the number of layers changed
       if(View!=null)
-        View.NumberOfLayers = m_Graph.Layers.Count;
+        View.NumberOfLayers = _doc.Layers.Count;
     }
 
 
@@ -1099,7 +641,7 @@ namespace Altaxo.Graph.GUI
     /// <param name="e">The event arguments.</param>
     protected void EhGraph_BoundsChanged(object sender, System.EventArgs e)
     {
-      this.m_FrozenGraphIsDirty = true;
+      this._isCachedGraphImageDirty = true;
 
       if(View!=null)
       {
@@ -1148,21 +690,7 @@ namespace Altaxo.Graph.GUI
 
     #region Other event handlers
     
-    /// <summary>
-    /// Called from the system to print out a page.
-    /// </summary>
-    /// <param name="sender">Not used.</param>
-    /// <param name="ppea">PrintPageEventArgs used to retrieve the graphic context for printing.</param>
-    public void EhPrintPage(object sender, System.Drawing.Printing.PrintPageEventArgs ppea)
-    {
-      Graphics g = ppea.Graphics;
-      float hx = ppea.PageSettings.HardMarginX; // in hundreths of inch
-      float hy = ppea.PageSettings.HardMarginY; // in hundreths of inch
-      g.PageUnit = GraphicsUnit.Point;
-      g.TranslateTransform(-hx*72/100.0f,-hy*72/100.0f);
-      DoPaint(g,true);
-    }
-
+    
     
 
     /// <summary>
@@ -1236,26 +764,7 @@ namespace Altaxo.Graph.GUI
             layer.ParentLayerList.EhChildChanged(layer, EventArgs.Empty);
         }
       }
-      /*
-      TextControlDialog dlg = new TextControlDialog(layer,tg);
-      if(DialogResult.OK==dlg.ShowDialog(Current.MainWindow))
-      {
-        if(!dlg.SimpleTextGraphics.Empty)
-        {
-          tg.CopyFrom(dlg.SimpleTextGraphics);
-        }
-        else // item is empty, so must be deleted in the layer and in the selectedObjects
-        {
-          if(null!=hit.Remove)
-            shouldDeleted = hit.Remove(hit);
-          else
-            shouldDeleted = false;
-        }
-        // note the chante in the text graphics object
-        if(layer.ParentLayerList!=null)
-          layer.ParentLayerList.EhChildChanged(layer,EventArgs.Empty);
-      }
-      */
+      
 
 
       return shouldDeleted;
@@ -1294,7 +803,7 @@ namespace Altaxo.Graph.GUI
     /// <returns>Null if successfull, error description otherwise.</returns>
 		public string SaveAsBitmap(System.IO.Stream stream, int dpiResolution, System.Drawing.Imaging.ImageFormat imageFormat, GraphExportArea usePageBounds)
     {
-			GraphDocumentExportActions.RenderAsBitmap(m_Graph, stream, imageFormat, usePageBounds, dpiResolution);
+			GraphDocumentExportActions.RenderAsBitmap(_doc, stream, imageFormat, usePageBounds, dpiResolution);
       return null;
     }
 
@@ -1307,44 +816,45 @@ namespace Altaxo.Graph.GUI
       else
       {
 
-        if(m_FrozenGraph==null || m_FrozenGraph.Width!=m_View.GraphSize.Width || m_FrozenGraph.Height!=m_View.GraphSize.Height)
+        if(_cachedGraphImage==null || _cachedGraphImage.Width!=_view.GraphSize.Width || _cachedGraphImage.Height!=_view.GraphSize.Height)
         {
-          if(m_FrozenGraph!=null)
+          if(_cachedGraphImage!=null)
           {
-            m_FrozenGraph.Dispose();
-            m_FrozenGraph = null;
+            _cachedGraphImage.Dispose();
+            _cachedGraphImage = null;
           }
         
           // create a frozen bitmap of the graph
           // using(Graphics g = m_View.CreateGraphGraphics())
           
-          m_FrozenGraph = new Bitmap(m_View.GraphSize.Width,m_View.GraphSize.Height,g);
-          m_FrozenGraphIsDirty = true;
+          _cachedGraphImage = new Bitmap(_view.GraphSize.Width,_view.GraphSize.Height,g);
+          _isCachedGraphImageDirty = true;
         }
 
-        if(m_FrozenGraph==null)
+        if(_cachedGraphImage==null)
         {
           DoPaintUnbuffered(g,bForPrinting);
         }
-        else if(m_FrozenGraphIsDirty)
+        else if(_isCachedGraphImageDirty)
         {
-          using(Graphics gbmp = Graphics.FromImage(m_FrozenGraph))
+          using(Graphics gbmp = Graphics.FromImage(_cachedGraphImage))
           {
             DoPaintUnbuffered(gbmp,false);
-            m_FrozenGraphIsDirty=false;
+            _isCachedGraphImageDirty=false;
           }
          
-          g.DrawImageUnscaled(m_FrozenGraph,0,0,m_View.GraphSize.Width,m_View.GraphSize.Height);
+          g.DrawImageUnscaled(_cachedGraphImage,0,0,_view.GraphSize.Width,_view.GraphSize.Height);
           ScaleForPaint(g,bForPrinting);
         }
         else
         {
-          g.DrawImageUnscaled(m_FrozenGraph,0,0,m_View.GraphSize.Width,m_View.GraphSize.Height);
+          g.DrawImageUnscaled(_cachedGraphImage,0,0,_view.GraphSize.Width,_view.GraphSize.Height);
           ScaleForPaint(g,bForPrinting); // to be in the same state as when drawing unbuffered
         }
          
         // special painting depending on current selected tool
-        this.m_MouseState.AfterPaint(g);
+				g.TranslateTransform(-_graphViewOffset.X, -_graphViewOffset.Y);
+        this._mouseState.AfterPaint(g);
       }
     }
 
@@ -1360,8 +870,8 @@ namespace Altaxo.Graph.GUI
       // get the dpi settings of the graphics context,
       // for example; 96dpi on screen, 600dpi for the printer
       // used to adjust grid and margin sizing.
-      this.m_HorizRes = g.DpiX;
-      this.m_VertRes = g.DpiY;
+      this._horizontalResolution = g.DpiX;
+      this._verticalResolution = g.DpiY;
 
       g.PageUnit = GraphicsUnit.Point;
 
@@ -1371,9 +881,9 @@ namespace Altaxo.Graph.GUI
       }
       else
       {
-        g.PageScale = this.m_Zoom;
-        float pointsh = UnitPerInch * m_View.GraphScrollPosition.X / (this.m_HorizRes * this.m_Zoom);
-        float pointsv = UnitPerInch * m_View.GraphScrollPosition.Y / (this.m_VertRes * this.m_Zoom);
+        g.PageScale = this._zoomFactor;
+        float pointsh = UnitPerInch * _view.GraphScrollPosition.X / (this._horizontalResolution * this._zoomFactor);
+        float pointsv = UnitPerInch * _view.GraphScrollPosition.Y / (this._verticalResolution * this._zoomFactor);
         g.TranslateTransform(pointsh, pointsv);
       }
     }
@@ -1393,22 +903,18 @@ namespace Altaxo.Graph.GUI
 
         if(!bForPrinting)
         {
-          g.Clear(this.m_NonPageAreaColor);
+          g.Clear(this._nonPageAreaColor);
           // Fill the page with its own color
-          g.FillRectangle(m_PageGroundBrush,m_Graph.PageBounds);
-          g.FillRectangle(m_PrintableAreaBrush,m_Graph.PrintableBounds);
+          //g.FillRectangle(_pageGroundBrush,_doc.PageBounds);
+          //g.FillRectangle(m_PrintableAreaBrush,m_Graph.PrintableBounds);
+					g.FillRectangle(_graphAreaBrush, -_graphViewOffset.X, -_graphViewOffset.Y, _doc.Layers.GraphSize.Width, _doc.Layers.GraphSize.Height);
           // DrawMargins(g);
         }
 
-        System.Console.WriteLine("Paint with zoom {0}",this.m_Zoom);
-        // handle the possibility that the viewport is scrolled,
-        // adjust my origin coordintates to compensate
-        Point pt = m_View.GraphScrollPosition;
-        
-
         // Paint the graph now
-        g.TranslateTransform(m_Graph.PrintableBounds.X,m_Graph.PrintableBounds.Y); // translate the painting to the printable area
-        m_Graph.DoPaint(g,bForPrinting);
+        //g.TranslateTransform(m_Graph.PrintableBounds.X,m_Graph.PrintableBounds.Y); // translate the painting to the printable area
+				g.TranslateTransform(-_graphViewOffset.X, -_graphViewOffset.Y);
+        _doc.DoPaint(g,bForPrinting);
 
        
 
@@ -1424,7 +930,7 @@ namespace Altaxo.Graph.GUI
         g.DrawString(ex.ToString(),
           new System.Drawing.Font("Arial",10),
           System.Drawing.Brushes.Black,
-          m_Graph.PrintableBounds);
+          _doc.PrintableBounds);
 
       
       }
@@ -1445,14 +951,14 @@ namespace Altaxo.Graph.GUI
     {
       get 
       {
-        return m_MouseState.GetType();
+        return _mouseState.GetType();
       }
       set
       {
         
-        if(m_MouseState==null || m_MouseState.GetType() != value)
+        if(_mouseState==null || _mouseState.GetType() != value)
         {
-          m_MouseState = (MouseStateHandler)System.Activator.CreateInstance(value,new object[]{this});
+          _mouseState = (MouseStateHandler)System.Activator.CreateInstance(value,new object[]{this});
         
           if(CurrentGraphToolChanged!=null)
             CurrentGraphToolChanged(this,EventArgs.Empty);
@@ -1467,7 +973,7 @@ namespace Altaxo.Graph.GUI
     /// </summary>
     public XYPlotLayerCollection Layers
     {
-      get { return m_Graph.Layers; }
+      get { return _doc.Layers; }
     }
 
 
@@ -1478,7 +984,7 @@ namespace Altaxo.Graph.GUI
     {
       get
       {
-        return this.m_CurrentLayerNumber<0 ? null : m_Graph.Layers[this.m_CurrentLayerNumber]; 
+        return this._currentLayerNumber<0 ? null : _doc.Layers[this._currentLayerNumber]; 
       }     
     }
 
@@ -1487,16 +993,16 @@ namespace Altaxo.Graph.GUI
     /// </summary>
     public void EnsureValidityOfCurrentLayerNumber()
     {
-      if(m_Graph.Layers.Count>0) // if at least one layer is present
+      if(_doc.Layers.Count>0) // if at least one layer is present
       {
-        if(m_CurrentLayerNumber<0)
+        if(_currentLayerNumber<0)
           CurrentLayerNumber=0;
-        else if(m_CurrentLayerNumber>=m_Graph.Layers.Count)
-          CurrentLayerNumber=m_Graph.Layers.Count-1;
+        else if(_currentLayerNumber>=_doc.Layers.Count)
+          CurrentLayerNumber=_doc.Layers.Count-1;
       }
       else // no layers present
       {
-        if(-1!=m_CurrentLayerNumber)
+        if(-1!=_currentLayerNumber)
           CurrentLayerNumber=-1;
       }
     }
@@ -1510,31 +1016,31 @@ namespace Altaxo.Graph.GUI
       get
       {
         EnsureValidityOfCurrentLayerNumber();
-        return m_CurrentLayerNumber;
+        return _currentLayerNumber;
       }
       set
       {
-        int oldValue = this.m_CurrentLayerNumber;
+        int oldValue = this._currentLayerNumber;
 
         // negative values are only accepted if there is no layer
-        if(value<0 && m_Graph.Layers.Count>0)
+        if(value<0 && _doc.Layers.Count>0)
           throw new ArgumentOutOfRangeException("CurrentLayerNumber",value,"Accepted values must be >=0 if there is at least one layer in the graph!");
 
-        if(value>=m_Graph.Layers.Count)
-          throw new ArgumentOutOfRangeException("CurrentLayerNumber",value,"Accepted values must be less than the number of layers in the graph(currently " + m_Graph.Layers.Count.ToString() + ")!");
+        if(value>=_doc.Layers.Count)
+          throw new ArgumentOutOfRangeException("CurrentLayerNumber",value,"Accepted values must be less than the number of layers in the graph(currently " + _doc.Layers.Count.ToString() + ")!");
 
-        m_CurrentLayerNumber = value<0 ? -1 : value;
+        _currentLayerNumber = value<0 ? -1 : value;
 
         // if something changed
-        if(oldValue!=this.m_CurrentLayerNumber)
+        if(oldValue!=this._currentLayerNumber)
         {
           // reflect the change in layer number in the layer tool bar
           if(null!=View)
-            View.CurrentLayer = this.m_CurrentLayerNumber;
+            View.CurrentLayer = this._currentLayerNumber;
 
           // since the layer changed, also the plots changed, so the menu has
           // to reflect the new plots
-          this.UpdateDataPopup();
+          //this.UpdateDataPopup();
         }
       }
     }
@@ -1554,20 +1060,20 @@ namespace Altaxo.Graph.GUI
         // if the XYColumnPlotData don't exist anymore, correct it
         if(ActiveLayer.PlotItems.Flattened.Length>0) // if at least one plotitem exists
         {
-          if(m_CurrentPlotNumber<0)
+          if(_currentPlotNumber<0)
             CurrentPlotNumber=0;
-          else if(m_CurrentPlotNumber>ActiveLayer.PlotItems.Flattened.Length)
+          else if(_currentPlotNumber>ActiveLayer.PlotItems.Flattened.Length)
             CurrentPlotNumber = 0;
         }
         else
         {
-          if(-1!=m_CurrentPlotNumber)
+          if(-1!=_currentPlotNumber)
             CurrentPlotNumber=-1;
         }
       }
       else // if no layer anymore
       {
-        if(-1!=m_CurrentPlotNumber)
+        if(-1!=_currentPlotNumber)
           CurrentPlotNumber=-1;
       }
     }
@@ -1580,19 +1086,19 @@ namespace Altaxo.Graph.GUI
     {
       get 
       {
-        return m_CurrentPlotNumber;
+        return _currentPlotNumber;
       }
       set
       {
-        if(CurrentLayerNumber>=0 && 0!=this.m_Graph.Layers[CurrentLayerNumber].PlotItems.Flattened.Length && value<0)
+        if(CurrentLayerNumber>=0 && 0!=this._doc.Layers[CurrentLayerNumber].PlotItems.Flattened.Length && value<0)
           throw new ArgumentOutOfRangeException("CurrentPlotNumber",value,"CurrentPlotNumber has to be greater or equal than zero");
 
-        if(CurrentLayerNumber>=0 && value>=m_Graph.Layers[CurrentLayerNumber].PlotItems.Flattened.Length)
-          throw new ArgumentOutOfRangeException("CurrentPlotNumber",value,"CurrentPlotNumber has to  be lesser than actual count: " + m_Graph.Layers[CurrentLayerNumber].PlotItems.Flattened.Length.ToString());
+        if(CurrentLayerNumber>=0 && value>=_doc.Layers[CurrentLayerNumber].PlotItems.Flattened.Length)
+          throw new ArgumentOutOfRangeException("CurrentPlotNumber",value,"CurrentPlotNumber has to  be lesser than actual count: " + _doc.Layers[CurrentLayerNumber].PlotItems.Flattened.Length.ToString());
 
-        m_CurrentPlotNumber = value<0 ? -1 : value;
+        _currentPlotNumber = value<0 ? -1 : value;
 
-        this.UpdateDataPopup();
+        //this.UpdateDataPopup();
       }
     }
 
@@ -1609,8 +1115,8 @@ namespace Altaxo.Graph.GUI
     {
       get
       {
-        if (m_MouseState is ObjectPointerMouseHandler)
-          return ((ObjectPointerMouseHandler)m_MouseState).NumberOfSelectedObjects;
+        if (_mouseState is ObjectPointerMouseHandler)
+          return ((ObjectPointerMouseHandler)_mouseState).NumberOfSelectedObjects;
         else
           return 0;
       }
@@ -1621,8 +1127,8 @@ namespace Altaxo.Graph.GUI
     /// </summary>
     public void RemoveSelectedObjects()
     {
-      if (m_MouseState is ObjectPointerMouseHandler)
-        ((ObjectPointerMouseHandler)m_MouseState).RemoveSelectedObjects();
+      if (_mouseState is ObjectPointerMouseHandler)
+        ((ObjectPointerMouseHandler)_mouseState).RemoveSelectedObjects();
     }
 
     /// <summary>
@@ -1630,7 +1136,7 @@ namespace Altaxo.Graph.GUI
     /// </summary>
     public void CopySelectedObjectsToClipboard()
     {
-			var mouseStateOPM = m_MouseState as ObjectPointerMouseHandler;
+			var mouseStateOPM = _mouseState as ObjectPointerMouseHandler;
 			int numberOfSelectedObjects = null == mouseStateOPM ? 0 : mouseStateOPM.NumberOfSelectedObjects;
 			if (0 != numberOfSelectedObjects)
 			{
@@ -1652,8 +1158,8 @@ namespace Altaxo.Graph.GUI
     /// </summary>
     public void CutSelectedObjectsToClipboard()
     {
-      if (m_MouseState is ObjectPointerMouseHandler)
-        ((ObjectPointerMouseHandler)m_MouseState).CutSelectedObjectsToClipboard();
+      if (_mouseState is ObjectPointerMouseHandler)
+        ((ObjectPointerMouseHandler)_mouseState).CutSelectedObjectsToClipboard();
     }
 
     public void PasteObjectsFromClipboard()
@@ -1750,8 +1256,8 @@ namespace Altaxo.Graph.GUI
 
     public void GroupSelectedObjects()
     {
-      if (m_MouseState is ObjectPointerMouseHandler)
-        ((ObjectPointerMouseHandler)m_MouseState).GroupSelectedObjects();
+      if (_mouseState is ObjectPointerMouseHandler)
+        ((ObjectPointerMouseHandler)_mouseState).GroupSelectedObjects();
     }
 
     #endregion
@@ -1763,8 +1269,8 @@ namespace Altaxo.Graph.GUI
     /// </summary>
     public void ArrangeTopToTop()
     {
-      if (m_MouseState is ObjectPointerMouseHandler)
-        ((ObjectPointerMouseHandler)m_MouseState).ArrangeTopToTop();
+      if (_mouseState is ObjectPointerMouseHandler)
+        ((ObjectPointerMouseHandler)_mouseState).ArrangeTopToTop();
     }
 
     /// <summary>
@@ -1772,8 +1278,8 @@ namespace Altaxo.Graph.GUI
     /// </summary>
     public void ArrangeTopToBottom()
     {
-      if (m_MouseState is ObjectPointerMouseHandler)
-        ((ObjectPointerMouseHandler)m_MouseState).ArrangeTopToBottom();
+      if (_mouseState is ObjectPointerMouseHandler)
+        ((ObjectPointerMouseHandler)_mouseState).ArrangeTopToBottom();
     }
 
     /// <summary>
@@ -1781,8 +1287,8 @@ namespace Altaxo.Graph.GUI
     /// </summary>
     public void ArrangeBottomToTop()
     {
-        if (m_MouseState is ObjectPointerMouseHandler)
-          ((ObjectPointerMouseHandler)m_MouseState).ArrangeBottomToTop();
+        if (_mouseState is ObjectPointerMouseHandler)
+          ((ObjectPointerMouseHandler)_mouseState).ArrangeBottomToTop();
     }
 
     /// <summary>
@@ -1790,8 +1296,8 @@ namespace Altaxo.Graph.GUI
     /// </summary>
     public void ArrangeBottomToBottom()
     {
-      if (m_MouseState is ObjectPointerMouseHandler)
-        ((ObjectPointerMouseHandler)m_MouseState).ArrangeBottomToBottom();
+      if (_mouseState is ObjectPointerMouseHandler)
+        ((ObjectPointerMouseHandler)_mouseState).ArrangeBottomToBottom();
     }
    
 
@@ -1800,8 +1306,8 @@ namespace Altaxo.Graph.GUI
     /// </summary>
     public void ArrangeLeftToLeft()
     {
-      if (m_MouseState is ObjectPointerMouseHandler)
-         ((ObjectPointerMouseHandler)m_MouseState).ArrangeLeftToLeft();
+      if (_mouseState is ObjectPointerMouseHandler)
+         ((ObjectPointerMouseHandler)_mouseState).ArrangeLeftToLeft();
     }
 
     /// <summary>
@@ -1809,8 +1315,8 @@ namespace Altaxo.Graph.GUI
     /// </summary>
     public void ArrangeLeftToRight()
     {
-      if (m_MouseState is ObjectPointerMouseHandler)
-        ((ObjectPointerMouseHandler)m_MouseState).ArrangeLeftToRight();
+      if (_mouseState is ObjectPointerMouseHandler)
+        ((ObjectPointerMouseHandler)_mouseState).ArrangeLeftToRight();
     }
 
     /// <summary>
@@ -1818,8 +1324,8 @@ namespace Altaxo.Graph.GUI
     /// </summary>
     public void ArrangeRightToLeft()
     {
-      if (m_MouseState is ObjectPointerMouseHandler)
-        ((ObjectPointerMouseHandler)m_MouseState).ArrangeRightToLeft();
+      if (_mouseState is ObjectPointerMouseHandler)
+        ((ObjectPointerMouseHandler)_mouseState).ArrangeRightToLeft();
     }
 
     /// <summary>
@@ -1827,8 +1333,8 @@ namespace Altaxo.Graph.GUI
     /// </summary>
     public void ArrangeRightToRight()
     {
-      if (m_MouseState is ObjectPointerMouseHandler)
-         ((ObjectPointerMouseHandler)m_MouseState).ArrangeRightToRight();
+      if (_mouseState is ObjectPointerMouseHandler)
+         ((ObjectPointerMouseHandler)_mouseState).ArrangeRightToRight();
     }
 
     /// <summary>
@@ -1836,8 +1342,8 @@ namespace Altaxo.Graph.GUI
     /// </summary>
     public void ArrangeHorizontal()
     {
-      if (m_MouseState is ObjectPointerMouseHandler)
-         ((ObjectPointerMouseHandler)m_MouseState).ArrangeHorizontal();
+      if (_mouseState is ObjectPointerMouseHandler)
+         ((ObjectPointerMouseHandler)_mouseState).ArrangeHorizontal();
     }
 
 
@@ -1846,8 +1352,8 @@ namespace Altaxo.Graph.GUI
     /// </summary>
     public void ArrangeVertical()
     {
-      if (m_MouseState is ObjectPointerMouseHandler)
-         ((ObjectPointerMouseHandler)m_MouseState).ArrangeVertical();
+      if (_mouseState is ObjectPointerMouseHandler)
+         ((ObjectPointerMouseHandler)_mouseState).ArrangeVertical();
     }
 
     /// <summary>
@@ -1855,8 +1361,8 @@ namespace Altaxo.Graph.GUI
     /// </summary>
     public void ArrangeHorizontalTable()
     {
-      if (m_MouseState is ObjectPointerMouseHandler)
-         ((ObjectPointerMouseHandler)m_MouseState).ArrangeHorizontalTable();
+      if (_mouseState is ObjectPointerMouseHandler)
+         ((ObjectPointerMouseHandler)_mouseState).ArrangeHorizontalTable();
     }
 
     /// <summary>
@@ -1864,8 +1370,8 @@ namespace Altaxo.Graph.GUI
     /// </summary>
     public void ArrangeVerticalTable()
     {
-      if (m_MouseState is ObjectPointerMouseHandler)
-        ((ObjectPointerMouseHandler)m_MouseState).ArrangeVerticalTable();
+      if (_mouseState is ObjectPointerMouseHandler)
+        ((ObjectPointerMouseHandler)_mouseState).ArrangeVerticalTable();
     }
 
 
@@ -1880,14 +1386,16 @@ namespace Altaxo.Graph.GUI
     {
       get
       {
-        return m_Zoom;
+        return _zoomFactor;
       }
       set
       {
+				float oldValue = _zoomFactor;
+
         if( value > 0.05 )
-          m_Zoom = value;
+          _zoomFactor = value;
         else
-          m_Zoom = 0.05f;
+          _zoomFactor = 0.05f;
       } 
     }
 
@@ -1900,15 +1408,19 @@ namespace Altaxo.Graph.GUI
     {
       get
       {
-        return this.m_AutoZoom;
+        return this._isAutoZoomActive;
       }
       set
       {
-        this.m_AutoZoom = value;
-        if(this.m_AutoZoom)
-        {
-          RefreshAutoZoom();
-        }
+        this._isAutoZoomActive = value;
+				if (this._isAutoZoomActive)
+				{
+					RefreshAutoZoom();
+				}
+				else
+				{
+					RefreshManualZoom();
+				}
       }
     }
 
@@ -1918,10 +1430,10 @@ namespace Altaxo.Graph.GUI
     /// </summary>
     public void RefreshGraph()
     {
-      this.m_FrozenGraphIsDirty = true;
+      this._isCachedGraphImageDirty = true;
       
       if(null!=View) 
-        m_View.InvalidateGraph();
+        _view.InvalidateGraph();
     }
 
     /// <summary>
@@ -1933,7 +1445,7 @@ namespace Altaxo.Graph.GUI
       if(View==null)
         return;
 
-      if(this.m_FrozenGraph != null && !this.m_FrozenGraphIsDirty)
+      if(this._cachedGraphImage != null && !this._isCachedGraphImageDirty)
       {
         using(Graphics g = this.View.CreateGraphGraphics())
         {
@@ -1952,10 +1464,33 @@ namespace Altaxo.Graph.GUI
     /// </summary>
     protected void RefreshAutoZoom()
     {
-      this.m_Zoom = CalculateAutoZoom();
-      m_View.GraphScrollSize = new Size(0,0);
+      CalculateAutoZoom();
+			_view.ShowGraphScrollBars = false;
       RefreshGraph();
     }
+
+		protected void RefreshManualZoom()
+		{
+			SizeF virtualGraphSize = PixelToPageCoordinates(_view.GraphSize);
+			float xratio = virtualGraphSize.Width / _doc.Layers.GraphSize.Width;
+			float yratio = virtualGraphSize.Height / _doc.Layers.GraphSize.Height;
+
+			bool showScrollbars = xratio<1 || yratio<1;
+			if (showScrollbars)
+			{
+				_view.GraphScrollPosition = GraphViewOffsetToScrollPosition(_graphViewOffset);
+				_view.ShowGraphScrollBars = true;
+			}
+			else
+			{
+				_view.ShowGraphScrollBars = false;
+				// we center the graph in the viewport
+				SizeF gz = _doc.Layers.GraphSize;
+				SizeF vz = GraphViewportSize;
+				_graphViewOffset = new PointF((gz.Width-vz.Width)/2, (gz.Height-vz.Height)/2);
+			}
+		}
+
 
     /// <summary>
     /// Factor for horizontal conversion of page units (points=1/72 inch) to pixel.
@@ -1964,7 +1499,7 @@ namespace Altaxo.Graph.GUI
     /// <returns>The factor described above.</returns>
     public float HorizFactorPageToPixel()
     {
-      return this.m_HorizRes*this.m_Zoom/UnitPerInch;
+      return this._horizontalResolution*this._zoomFactor/UnitPerInch;
     }
 
     /// <summary>
@@ -1974,7 +1509,7 @@ namespace Altaxo.Graph.GUI
     /// <returns>The factor described above.</returns>
     public float VertFactorPageToPixel()
     {
-      return this.m_VertRes*this.m_Zoom/UnitPerInch;
+      return this._verticalResolution*this._zoomFactor/UnitPerInch;
     }
 
     /// <summary>
@@ -1998,6 +1533,10 @@ namespace Altaxo.Graph.GUI
     {
       return new PointF(pixelc.X/HorizFactorPageToPixel(),pixelc.Y/VertFactorPageToPixel());
     }
+		public SizeF PixelToPageCoordinates(SizeF pixelc)
+		{
+			return new SizeF(PixelToPageCoordinates(new PointF(pixelc.Width, pixelc.Height)));
+		}
 
     /// <summary>
     /// Converts page coordinates (in points=1/72 inch) to pixel coordinates . Uses the resolutions <see cref="m_HorizRes"/>
@@ -2029,8 +1568,8 @@ namespace Altaxo.Graph.GUI
     public PointF PixelToPrintableAreaCoordinates(PointF pixelc)
     {
       PointF r = PixelToPageCoordinates(pixelc);
-      r.X -= m_Graph.PrintableBounds.X;
-      r.Y -= m_Graph.PrintableBounds.Y;
+			r.X += _graphViewOffset.X;
+			r.Y += _graphViewOffset.Y;
       return r;
     }
 
@@ -2041,11 +1580,9 @@ namespace Altaxo.Graph.GUI
     /// <returns>Pixel coordinates as returned by MouseEvents</returns>
     public PointF PrintableAreaToPixelCoordinates(PointF printc)
     {
-      printc.X += m_Graph.PrintableBounds.X;
-      printc.Y += m_Graph.PrintableBounds.Y;
+			printc.X -= _graphViewOffset.X;
+			printc.Y -= _graphViewOffset.Y;
       return PageToPixelCoordinates(printc);
-     
-      
     }
 
     /// <summary>
@@ -2053,32 +1590,14 @@ namespace Altaxo.Graph.GUI
     /// best into the view.
     /// </summary>
     /// <returns>The calculated zoom factor.</returns>
-    protected virtual float CalculateAutoZoom()
+    protected virtual void CalculateAutoZoom()
     {
-      float zoomh = (UnitPerInch*m_View.GraphSize.Width/this.m_HorizRes)/m_Graph.PageBounds.Width;
-      float zoomv = (UnitPerInch*m_View.GraphSize.Height/this.m_VertRes)/m_Graph.PageBounds.Height;
-      return System.Math.Min(zoomh,zoomv);
-
+      float zoomh = (UnitPerInch*_view.GraphSize.Width/this._horizontalResolution)/(_doc.Layers.GraphSize.Width * _areaFillingFactor);
+			float zoomv = (UnitPerInch * _view.GraphSize.Height / this._verticalResolution) / (_doc.Layers.GraphSize.Height * _areaFillingFactor);
+      _zoomFactor = System.Math.Min(zoomh,zoomv);
+			_graphViewOffset = GraphPaddingOffset;
     }
-    /// <summary>
-    /// Translates the graphics properties to graph (printable area), so that the beginning of printable area now is (0,0) and the units are in Points (1/72 inch)
-    /// </summary>
-    /// <param name="g">Graphics to translate</param>
-    void TranslateGraphicsToGraphUnits(Graphics g)
-    {
-      g.PageUnit = GraphicsUnit.Point;
-      g.PageScale = this.m_Zoom;
-
-      // the graphics path was returned in printable area ("graph") coordinates
-      // thats why we have to shift our coordinate system to printable area coordinates also
-      float pointsh = UnitPerInch*m_View.GraphScrollPosition.X/(this.m_HorizRes*this.m_Zoom);
-      float pointsv = UnitPerInch*m_View.GraphScrollPosition.Y/(this.m_VertRes*this.m_Zoom);
-      pointsh += m_Graph.PrintableBounds.X;
-      pointsv += m_Graph.PrintableBounds.Y; 
-
-      // shift the coordinates to page coordinates
-      g.TranslateTransform(pointsh,pointsv);
-    }
+   
 
     #endregion // Scaling, Converting
 
@@ -2115,21 +1634,7 @@ namespace Altaxo.Graph.GUI
       return false;
     }
 
-    /// <summary>
-    /// Draws immediately a selection rectangle around the object <paramref name="graphObject"/>.
-    /// </summary>
-    /// <param name="graphObject">The graph object for which a selection rectangle has to be drawn.</param>
-    /// <param name="nLayer">The layer number the <paramref name="graphObject"/> belongs to.</param>
-    public void DrawSelectionRectangleImmediately(IHitTestObject graphObject, int nLayer)
-    {
-      using(Graphics g = m_View.CreateGraphGraphics())
-      {
-        // now translate the graphics to graph units and paint all selection path
-        this.TranslateGraphicsToGraphUnits(g);
-        //        g.DrawPath(Pens.Blue,Layers[nLayer].LayerToGraphCoordinates(graphObject.SelectionPath)); // draw the selection path
-        g.DrawPath(Pens.Blue,graphObject.SelectionPath); // draw the selection path
-      }   
-    }
+  
 
     #region IWorkbenchContentController Members
 
@@ -2169,26 +1674,7 @@ namespace Altaxo.Graph.GUI
 
     #endregion
 
-    #region Inner Classes
-
-    /// <summary>
-    /// Used as menu items in the Data menu popup. Stores the plot number the menu item represents.
-    /// </summary>
-    public class DataMenuItem : MenuItem
-    {
-      /// <summary>The plot number this menu item represents.</summary>
-      public int PlotItemNumber=0;
-
-      /// <summary>Creates the default menu item (PlotItemNumber is 0).</summary>
-      public DataMenuItem() {}
-
-      /// <summary>Creates a menuitem with text and a handler.</summary>
-      /// <param name="t">The text the menuitem shows.</param>
-      /// <param name="e">The handler in case the menu item is clicked.</param>
-      public DataMenuItem(string t, EventHandler e) : base(t,e) {}
-    }
-
-    #endregion // Inner Classes
+	
 
   }
 }

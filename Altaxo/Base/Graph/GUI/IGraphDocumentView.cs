@@ -113,16 +113,14 @@ namespace Altaxo.Graph.GUI
     string GraphViewTitle { set; }
 
 
-    /// <summary>
-    /// Get / sets the AutoScroll size property 
-    /// </summary>
-    Size GraphScrollSize { get; set; }
+
+		bool ShowGraphScrollBars { set; }
 
 
     /// <summary>
     /// Get /sets the scroll position of the graph
     /// </summary>
-    Point GraphScrollPosition { get; set; }
+    PointF GraphScrollPosition { get; set; }
 
 
     /// <summary>
@@ -298,6 +296,12 @@ namespace Altaxo.Graph.GUI
     /// <param name="keyData"></param>
     /// <returns></returns>
     bool EhView_ProcessCmdKey(ref Message msg, Keys keyData);
+
+
+		/// <summary>
+		/// A scroll event has occured.
+		/// </summary>
+		void EhView_Scroll();
 
   }
 

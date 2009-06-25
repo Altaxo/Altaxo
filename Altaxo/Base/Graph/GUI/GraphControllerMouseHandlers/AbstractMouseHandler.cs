@@ -104,7 +104,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     }
 
     /// <summary>
-    /// This function is called just after the paint event.
+    /// This function is called just after the paint event. The graphic context is in graph coordinates.
     /// </summary>
     /// <param name="g"></param>
     public virtual void AfterPaint(Graphics g)

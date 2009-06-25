@@ -1192,6 +1192,7 @@
     <Compile Include="Graph\Gdi\GraphDocumentExportActions.cs" />
     <Compile Include="Graph\Gdi\GraphDocumentOtherActions.cs" />
     <Compile Include="Graph\Gdi\GraphDocumentPrinting.cs" />
+    <Compile Include="Graph\GUI\GraphControllerActions.cs" />
     <Compile Include="Graph\SingleGraphPrintOptions.cs" />
     <Compile Include="Graph\Gdi\IGripManipulationHandle.cs" />
     <Compile Include="Graph\Gdi\IGrippableObject.cs" />

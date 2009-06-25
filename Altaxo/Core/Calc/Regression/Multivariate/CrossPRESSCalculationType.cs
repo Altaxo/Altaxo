@@ -28,6 +28,7 @@ namespace Altaxo.Calc.Regression.Multivariate
   /// <summary>
   /// Determines how to do the calculation of Cross Validated Predicted Error Sum of Squares.
   /// </summary>
+	/// <remarks>The serialization code for this enumeration is located in AltaxoBase.</remarks>
   public enum CrossPRESSCalculationType
   {
     /// <summary>

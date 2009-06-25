@@ -49,6 +49,8 @@ namespace Altaxo.Graph.GUI
 
     [Browsable(false)]
     private ToolBar m_GraphToolsToolBar=null;
+		private VScrollBar _verticalScrollBar;
+		private HScrollBar _horizontalScrollBar;
 
    
 
@@ -146,61 +148,91 @@ namespace Altaxo.Graph.GUI
     /// </summary>
     private void InitializeComponent()
     {
-      this.components = new System.ComponentModel.Container();
-      System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(GraphView));
-      this.m_GraphToolsImages = new System.Windows.Forms.ImageList(this.components);
-      this.m_LayerButtonImages = new System.Windows.Forms.ImageList(this.components);
-      this.m_LayerToolbar = new System.Windows.Forms.ToolBar();
-      this.m_GraphPanel = new Altaxo.Graph.GUI.GraphPanel();
-      this.SuspendLayout();
-      // 
-      // m_GraphToolsImages
-      // 
-      this.m_GraphToolsImages.ImageSize = new System.Drawing.Size(16, 16);
-      this.m_GraphToolsImages.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("m_GraphToolsImages.ImageStream")));
-      this.m_GraphToolsImages.TransparentColor = System.Drawing.Color.Transparent;
-      // 
-      // m_LayerButtonImages
-      // 
-      this.m_LayerButtonImages.ImageSize = new System.Drawing.Size(1, 1);
-      this.m_LayerButtonImages.TransparentColor = System.Drawing.Color.Transparent;
-      // 
-      // m_LayerToolbar
-      // 
-      this.m_LayerToolbar.ButtonSize = new System.Drawing.Size(22, 22);
-      this.m_LayerToolbar.Dock = System.Windows.Forms.DockStyle.Left;
-      this.m_LayerToolbar.DropDownArrows = true;
-      this.m_LayerToolbar.ImageList = this.m_LayerButtonImages;
-      this.m_LayerToolbar.Location = new System.Drawing.Point(0, 0);
-      this.m_LayerToolbar.Name = "m_LayerToolbar";
-      this.m_LayerToolbar.ShowToolTips = true;
-      this.m_LayerToolbar.Size = new System.Drawing.Size(22, 266);
-      this.m_LayerToolbar.TabIndex = 1;
-      this.m_LayerToolbar.ButtonClick += new System.Windows.Forms.ToolBarButtonClickEventHandler(this.EhLayerToolbar_ButtonClick);
-      this.m_LayerToolbar.MouseDown += new System.Windows.Forms.MouseEventHandler(this.EhLayerToolbar_MouseDown);
-      // 
-      // m_GraphPanel
-      // 
-      this.m_GraphPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.m_GraphPanel.Location = new System.Drawing.Point(22, 0);
-      this.m_GraphPanel.Name = "m_GraphPanel";
-      this.m_GraphPanel.Size = new System.Drawing.Size(270, 266);
-      this.m_GraphPanel.TabIndex = 2;
-      this.m_GraphPanel.Click += new System.EventHandler(this.EhGraphPanel_Click);
-      this.m_GraphPanel.SizeChanged += new System.EventHandler(this.EhGraphPanel_SizeChanged);
-      this.m_GraphPanel.MouseUp += new System.Windows.Forms.MouseEventHandler(this.EhGraphPanel_MouseUp);
-      this.m_GraphPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.EhGraphPanel_Paint);
-      this.m_GraphPanel.DoubleClick += new System.EventHandler(this.EhGraphPanel_DoubleClick);
-      this.m_GraphPanel.MouseMove += new System.Windows.Forms.MouseEventHandler(this.EhGraphPanel_MouseMove);
-      this.m_GraphPanel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.EhGraphPanel_MouseDown);
-      // 
-      // GraphView
-      // 
-      this.Controls.Add(this.m_GraphPanel);
-      this.Controls.Add(this.m_LayerToolbar);
-      this.Name = "GraphView";
-      this.Size = new System.Drawing.Size(292, 266);
-      this.ResumeLayout(false);
+			this.components = new System.ComponentModel.Container();
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(GraphView));
+			this.m_GraphToolsImages = new System.Windows.Forms.ImageList(this.components);
+			this.m_LayerButtonImages = new System.Windows.Forms.ImageList(this.components);
+			this.m_LayerToolbar = new System.Windows.Forms.ToolBar();
+			this._verticalScrollBar = new System.Windows.Forms.VScrollBar();
+			this._horizontalScrollBar = new System.Windows.Forms.HScrollBar();
+			this.m_GraphPanel = new Altaxo.Graph.GUI.GraphPanel();
+			this.SuspendLayout();
+			// 
+			// m_GraphToolsImages
+			// 
+			this.m_GraphToolsImages.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("m_GraphToolsImages.ImageStream")));
+			this.m_GraphToolsImages.TransparentColor = System.Drawing.Color.Transparent;
+			this.m_GraphToolsImages.Images.SetKeyName(0, "");
+			this.m_GraphToolsImages.Images.SetKeyName(1, "");
+			// 
+			// m_LayerButtonImages
+			// 
+			this.m_LayerButtonImages.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
+			this.m_LayerButtonImages.ImageSize = new System.Drawing.Size(1, 1);
+			this.m_LayerButtonImages.TransparentColor = System.Drawing.Color.Transparent;
+			// 
+			// m_LayerToolbar
+			// 
+			this.m_LayerToolbar.ButtonSize = new System.Drawing.Size(22, 22);
+			this.m_LayerToolbar.Dock = System.Windows.Forms.DockStyle.Left;
+			this.m_LayerToolbar.DropDownArrows = true;
+			this.m_LayerToolbar.ImageList = this.m_LayerButtonImages;
+			this.m_LayerToolbar.Location = new System.Drawing.Point(0, 0);
+			this.m_LayerToolbar.Name = "m_LayerToolbar";
+			this.m_LayerToolbar.ShowToolTips = true;
+			this.m_LayerToolbar.Size = new System.Drawing.Size(22, 311);
+			this.m_LayerToolbar.TabIndex = 0;
+			this.m_LayerToolbar.ButtonClick += new System.Windows.Forms.ToolBarButtonClickEventHandler(this.EhLayerToolbar_ButtonClick);
+			this.m_LayerToolbar.MouseDown += new System.Windows.Forms.MouseEventHandler(this.EhLayerToolbar_MouseDown);
+			// 
+			// _verticalScrollBar
+			// 
+			this._verticalScrollBar.Dock = System.Windows.Forms.DockStyle.Right;
+			this._verticalScrollBar.Location = new System.Drawing.Point(317, 0);
+			this._verticalScrollBar.Maximum = 1000000;
+			this._verticalScrollBar.Name = "_verticalScrollBar";
+			this._verticalScrollBar.Size = new System.Drawing.Size(17, 311);
+			this._verticalScrollBar.TabIndex = 1;
+			this._verticalScrollBar.Visible = false;
+			this._verticalScrollBar.Scroll += new System.Windows.Forms.ScrollEventHandler(this.EhVerticalScrollBar_Scroll);
+			// 
+			// _horizontalScrollBar
+			// 
+			this._horizontalScrollBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+									| System.Windows.Forms.AnchorStyles.Right)));
+			this._horizontalScrollBar.Location = new System.Drawing.Point(22, 294);
+			this._horizontalScrollBar.Maximum = 1000000;
+			this._horizontalScrollBar.Name = "_horizontalScrollBar";
+			this._horizontalScrollBar.Size = new System.Drawing.Size(295, 17);
+			this._horizontalScrollBar.TabIndex = 2;
+			this._horizontalScrollBar.Visible = false;
+			this._horizontalScrollBar.Scroll += new System.Windows.Forms.ScrollEventHandler(this.EhHorizontalScrollBar_Scroll);
+			// 
+			// m_GraphPanel
+			// 
+			this.m_GraphPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.m_GraphPanel.Location = new System.Drawing.Point(22, 0);
+			this.m_GraphPanel.Name = "m_GraphPanel";
+			this.m_GraphPanel.Size = new System.Drawing.Size(312, 311);
+			this.m_GraphPanel.TabIndex = 3;
+			this.m_GraphPanel.DoubleClick += new System.EventHandler(this.EhGraphPanel_DoubleClick);
+			this.m_GraphPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.EhGraphPanel_Paint);
+			this.m_GraphPanel.MouseMove += new System.Windows.Forms.MouseEventHandler(this.EhGraphPanel_MouseMove);
+			this.m_GraphPanel.Click += new System.EventHandler(this.EhGraphPanel_Click);
+			this.m_GraphPanel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.EhGraphPanel_MouseDown);
+			this.m_GraphPanel.MouseUp += new System.Windows.Forms.MouseEventHandler(this.EhGraphPanel_MouseUp);
+			this.m_GraphPanel.SizeChanged += new System.EventHandler(this.EhGraphPanel_SizeChanged);
+			// 
+			// GraphView
+			// 
+			this.Controls.Add(this._horizontalScrollBar);
+			this.Controls.Add(this._verticalScrollBar);
+			this.Controls.Add(this.m_GraphPanel);
+			this.Controls.Add(this.m_LayerToolbar);
+			this.Name = "GraphView";
+			this.Size = new System.Drawing.Size(334, 311);
+			this.ResumeLayout(false);
+			this.PerformLayout();
 
     }
     #endregion
@@ -372,35 +404,38 @@ namespace Altaxo.Graph.GUI
 
 
 
-    /// <summary>
-    /// Get / sets the AutoScroll size property 
-    /// </summary>
-    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-    public Size GraphScrollSize 
-    {
-      get
-      {
-        return this.m_GraphPanel.AutoScrollMinSize;
-      }
-      set
-      {
-        this.m_GraphPanel.AutoScrollMinSize = value;
-      }
-    }
+		/// <summary>
+		/// Get / sets the AutoScroll size property 
+		/// </summary>
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public bool ShowGraphScrollBars
+		{
+			set
+			{
+				this._horizontalScrollBar.Visible = value;
+				this._verticalScrollBar.Visible = value;
+			}
+		}
 
     /// <summary>
     /// Get /sets the scroll position of the graph
     /// </summary>
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-    public Point GraphScrollPosition 
+    public PointF GraphScrollPosition 
     { 
       get
       {
-        return this.m_GraphPanel.AutoScrollPosition;
+				return new PointF(_horizontalScrollBar.Value/(float)_horizontalScrollBar.Maximum, _verticalScrollBar.Value/(float)_verticalScrollBar.Maximum);
       }
       set
       {
-        this.m_GraphPanel.AutoScrollPosition = value;
+				var controller = m_Ctrl;
+				m_Ctrl = null; // suppress scrollbar events
+
+				this._horizontalScrollBar.Value = (int)(value.X*_horizontalScrollBar.Maximum);
+				this._verticalScrollBar.Value = (int)(value.Y * _verticalScrollBar.Maximum);
+
+				m_Ctrl = controller;
       }
     }
 
@@ -512,6 +547,24 @@ namespace Altaxo.Graph.GUI
       //      System.Diagnostics.Trace.WriteLine("GraphView CmdKey pressed");
       return base.ProcessCmdKey (ref msg, keyData);
     }
+
+		private void EhVerticalScrollBar_Scroll(object sender, ScrollEventArgs e)
+		{
+			if (ScrollEventType.ThumbTrack == e.Type)
+				return;
+
+			if (null != m_Ctrl)
+				m_Ctrl.EhView_Scroll();
+		}
+
+		private void EhHorizontalScrollBar_Scroll(object sender, ScrollEventArgs e)
+		{
+			if (ScrollEventType.ThumbTrack == e.Type)
+				return;
+
+			if (null != m_Ctrl)
+				m_Ctrl.EhView_Scroll();
+		}
 
   }
 }
