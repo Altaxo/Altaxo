@@ -110,6 +110,7 @@ namespace Altaxo.Gui.Graph
     List<SelectableListNode> DropLines { get; }
     int SkipPoints { get; }
 
+		string RelativePenWidth { get; set; }
 
     #endregion // Getter
   }
@@ -219,6 +220,7 @@ namespace Altaxo.Gui.Graph
         SetDropLineConditions();
         _view.SetEnableDisableMain(_ActivateEnableDisableMain);
         _view.InitializeSkipPoints(_tempDoc.SkipFrequency);
+				_view.RelativePenWidth = Altaxo.Serialization.GUIConversion.ToString(Math.Round(100*_tempDoc.RelativePenWidth, 3));
       }
     }
 
@@ -344,6 +346,17 @@ namespace Altaxo.Gui.Graph
         // Skip points
 
         _doc.SkipFrequency = _view.SkipPoints;
+
+				double relPenWidth;
+				if (!Altaxo.Serialization.GUIConversion.IsDouble(_view.RelativePenWidth, out relPenWidth))
+				{
+					Current.Gui.ErrorMessageBox("Relative pen width is not a number");
+					return false;
+				}
+				else
+				{
+					_doc.RelativePenWidth = (float)relPenWidth/100;
+				}
        
 
       }

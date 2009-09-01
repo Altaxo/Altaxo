@@ -406,7 +406,7 @@ namespace Altaxo.Graph.Commands
   {
     public override void Run(GraphController ctrl)
     {
-      Altaxo.Graph.Procedures.ArrangeLayersDocument.ArrangeLayers(ctrl.Doc);
+			ctrl.Doc.ShowLayerArrangementDialog(); 
     }
   }
 

@@ -24,7 +24,7 @@ using System;
 
 using Altaxo.Serialization;
 
-using Altaxo.Graph.Procedures;
+using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Gui.Graph
 {

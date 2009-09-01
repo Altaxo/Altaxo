@@ -620,6 +620,23 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
     }
 
+		public float RelativePenWidth
+		{
+			get
+			{
+				return _relativePenWidth;
+			}
+			set
+			{
+				if (!(value >= 0 && value <= float.MaxValue))
+					throw new ArgumentOutOfRangeException("Out of range: RelativePenWidth = " + value.ToString());
+
+				_relativePenWidth = value;
+				_pen.Width = _symbolSize * _relativePenWidth;
+				OnChanged();
+			}
+		}
+
     public bool IndependentSymbolSize
     {
       get

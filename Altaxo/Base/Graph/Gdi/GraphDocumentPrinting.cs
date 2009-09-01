@@ -223,53 +223,11 @@ namespace Altaxo.Graph.Gdi
 			float hy = e.PageSettings.HardMarginY; // in hundreths of inch
 			//g.TranslateTransform(-hx,-hy);
 
-			// First the size of the graph
-			// if a fixed zoom factor is set, we use that
+			float zoom;
+			PointF startLocationOnPage;
 			SizeF graphSize = _layers.GraphSize;
-			float zoom = 1;
-			if (_printOptions.UseFixedZoomFactor)
-			{
-				zoom = (float)_printOptions.ZoomFactor;
-				
-			}
-			else if (_printOptions.FitGraphToPrintIfSmaller)
-			{
-				float zoomx = e.MarginBounds.Width / graphSize.Width;
-				float zoomy = e.MarginBounds.Height / graphSize.Height;
-				if (zoomx > 1 && zoomy > 1)
-				{
-					zoom = Math.Min(zoomx, zoomy) * 72 / 100.0f;
-				}
-			}
-			else if (_printOptions.FitGraphToPrintIfLarger)
-			{
-				float zoomx = e.MarginBounds.Width / graphSize.Width;
-				float zoomy = e.MarginBounds.Height / graphSize.Height;
-				if (zoomx < 1 && zoomy < 1)
-				{
-					zoom = Math.Min(zoomx, zoomy) * 72 / 100.0f;
-				}
-			}
-			graphSize.Width *= zoom;
-			graphSize.Height *= zoom;
-
-			// First the location where to start from
-			PointF startLocationOnPage = PointF.Empty;
-			switch (_printOptions.PrintLocation)
-			{
-				case  SingleGraphPrintLocation.PrintableAreaLeftUpper:
-					startLocationOnPage = e.MarginBounds.Location;
-					break;
-				case SingleGraphPrintLocation.PageLeftUpper:
-					startLocationOnPage = new PointF(0, 0);
-					break;
-				case SingleGraphPrintLocation.PrintableAreaCenter:
-					startLocationOnPage = GetCenter(e.MarginBounds) - GetHalfSize(graphSize);
-					break;
-				case SingleGraphPrintLocation.PageCenter:
-					startLocationOnPage = GetCenter(e.PageBounds) - GetHalfSize(graphSize);
-					break;
-			}
+			_printOptions.GetZoomAndStartLocation(e.PageBounds, e.MarginBounds, graphSize, out zoom, out startLocationOnPage, true);
+			graphSize = graphSize.Scale( zoom );
 
 			PointF startLocationInGraph = new PointF(0, 0);
 			if (_printOptions.TilePages)
@@ -314,6 +272,7 @@ namespace Altaxo.Graph.Gdi
 			g.Restore(savedGraphics);
 		}
 
+
 		private void DrawCross(Graphics g, PointF center, float armLength)
 		{
 			g.DrawLine(Pens.Black, center.X - armLength, center.Y, center.X + armLength, center.Y);
@@ -327,14 +286,6 @@ namespace Altaxo.Graph.Gdi
 			g.DrawLine(Pens.Black, rect.Left, rect.Bottom, rect.Right, rect.Top);
 		}
 
-		private PointF GetCenter(RectangleF r)
-		{
-			return new PointF(r.X + r.Width / 2, r.Y + r.Height / 2);
-		}
-
-		private SizeF GetHalfSize(SizeF s)
-		{
-			return new SizeF(s.Width / 2, s.Height / 2);
-		}
+	
 	}
 }

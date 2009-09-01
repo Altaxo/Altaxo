@@ -66,7 +66,7 @@ namespace Altaxo.Graph.Gdi
 
     
     /// <summary>
-    /// The printable area of the document, i.e. the page size minus the margins at each sC:\Users\LelliD\C\CALC\Altaxo\Altaxo\Graph\GraphDocument.cside in points (1/72 inch)
+    /// The printable area of the document, i.e. the page size minus the margins at each side in points (1/72 inch)
     /// </summary>
     private RectangleF _printableBounds = new RectangleF(14, 14, 814 , 567 );
 
@@ -516,7 +516,10 @@ namespace Altaxo.Graph.Gdi
     /// <returns>The object, or null if no object under the provided name was stored here.</returns>
     public object GetGraphProperty(string key)
     {
-      return _graphProperties==null ? null : this._graphProperties[key]; 
+			object result = null;
+      if( _graphProperties!=null)
+				_graphProperties.TryGetValue(key, out result);
+			return result;
     }
 
 
@@ -567,7 +570,8 @@ namespace Altaxo.Graph.Gdi
     }
 
     /// <summary>
-    /// The boundaries of the printable area of the page in points (1/72 inch).
+    /// The boundaries of the printable area of the page in points (1/72 inch). Dependend on the last printer settings
+		/// applied to this graph.
     /// </summary>
     public RectangleF PrintableBounds
     {
@@ -596,15 +600,7 @@ namespace Altaxo.Graph.Gdi
 				OnBoundsChanged();
 			}
 		}
-
-    /// <summary>
-    /// The size of the printable area in points (1/72 inch).
-    /// </summary>
-    public virtual SizeF PrintableSize
-    {
-      get { return _printableBounds.Size; }
-    }
-
+  
 
     /// <summary>
     /// The collection of layers of the graph.
@@ -636,7 +632,7 @@ namespace Altaxo.Graph.Gdi
     /// <value>The default position of a (new) layer in points (1/72 inch).</value>
     public PointF DefaultLayerPosition
     {
-      get { return new PointF(0.145f*this.PrintableSize.Width, 0.139f*this.PrintableSize.Height); }
+      get { return new PointF(0.145f*this.PrintableBounds.Width, 0.139f*this.PrintableBounds.Height); }
     }
 
 
@@ -646,103 +642,11 @@ namespace Altaxo.Graph.Gdi
     /// <value>The default size of a (new) layer in points (1/72 inch).</value>
     public SizeF DefaultLayerSize
     {
-      get { return new SizeF(0.763f*this.PrintableSize.Width, 0.708f*this.PrintableSize.Height); }
+      get { return new SizeF(0.763f*this.PrintableBounds.Width, 0.708f*this.PrintableBounds.Height); }
     }
 
 
-    #region XYPlotLayer Creation
-
-    /// <summary>
-    /// Creates a new layer with bottom x axis and left y axis, which is not linked.
-    /// </summary>
-    public void CreateNewLayerNormalBottomXLeftY()
-    {
-      XYPlotLayer newlayer= new XYPlotLayer(DefaultLayerPosition,DefaultLayerSize);
-      newlayer.CreateDefaultAxes();
-      Layers.Add(newlayer);
-    }
-
-    /// <summary>
-    /// Creates a new layer with top x axis, which is linked to the same position with top x axis and right y axis.
-    /// </summary>
-    public void CreateNewLayerLinkedTopX(int linklayernumber)
-    {
-      XYPlotLayer newlayer= new XYPlotLayer(DefaultLayerPosition,DefaultLayerSize);
-      Layers.Add(newlayer); // it is neccessary to add the new layer this early since we must set some properties relative to the linked layer
-      // link the new layer to the last old layer
-      newlayer.LinkedLayer = (linklayernumber>=0 && linklayernumber<Layers.Count)? Layers[linklayernumber] : null;
-      newlayer.SetPosition(0,XYPlotLayerPositionType.RelativeThisNearToLinkedLayerNear,0,XYPlotLayerPositionType.RelativeThisNearToLinkedLayerNear);
-      newlayer.SetSize(1,XYPlotLayerSizeType.RelativeToLinkedLayer,1,XYPlotLayerSizeType.RelativeToLinkedLayer);
-      newlayer.AxisStyles.CreateDefault(new CSLineID(0, 1));
-    }
-
-    /// <summary>
-    /// Creates a new layer with right y axis, which is linked to the same position with top x axis and right y axis.
-    /// </summary>
-    public void CreateNewLayerLinkedRightY(int linklayernumber)
-    {
-      XYPlotLayer newlayer= new XYPlotLayer(DefaultLayerPosition,DefaultLayerSize);
-      Layers.Add(newlayer); // it is neccessary to add the new layer this early since we must set some properties relative to the linked layer
-      // link the new layer to the last old layer
-      newlayer.LinkedLayer = (linklayernumber>=0 && linklayernumber<Layers.Count)? Layers[linklayernumber] : null;
-      newlayer.SetPosition(0,XYPlotLayerPositionType.RelativeThisNearToLinkedLayerNear,0,XYPlotLayerPositionType.RelativeThisNearToLinkedLayerNear);
-      newlayer.SetSize(1,XYPlotLayerSizeType.RelativeToLinkedLayer,1,XYPlotLayerSizeType.RelativeToLinkedLayer);
-
-      // set enabling of axis
-      newlayer.AxisStyles.CreateDefault(new CSLineID(1, 1));
-    }
-
-    /// <summary>
-    /// Creates a new layer with bottom x axis and left y axis, which is linked to the same position with top x axis and right y axis.
-    /// </summary>
-    public void CreateNewLayerLinkedTopXRightY(int linklayernumber)
-    {
-      XYPlotLayer newlayer= new XYPlotLayer(DefaultLayerPosition,DefaultLayerSize);
-      Layers.Add(newlayer); // it is neccessary to add the new layer this early since we must set some properties relative to the linked layer
-      // link the new layer to the last old layer
-      newlayer.LinkedLayer = (linklayernumber>=0 && linklayernumber<Layers.Count)? Layers[linklayernumber] : null;
-      newlayer.SetPosition(0,XYPlotLayerPositionType.RelativeThisNearToLinkedLayerNear,0,XYPlotLayerPositionType.RelativeThisNearToLinkedLayerNear);
-      newlayer.SetSize(1,XYPlotLayerSizeType.RelativeToLinkedLayer,1,XYPlotLayerSizeType.RelativeToLinkedLayer);
-
-      // set enabling of axis
-      newlayer.AxisStyles.CreateDefault(new CSLineID(0, 1));
-      newlayer.AxisStyles.CreateDefault(new CSLineID(1, 1));
-     
-    }
-
-
-    /// <summary>
-    /// Creates a new layer with bottom x axis and left y axis, which is linked to the same position with top x axis and right y axis. The x axis is linked straight to the x axis of the linked layer.
-    /// </summary>
-    public void CreateNewLayerLinkedTopXRightY_XAxisStraight(int linklayernumber)
-    {
-      XYPlotLayer newlayer= new XYPlotLayer(DefaultLayerPosition,DefaultLayerSize);
-      Layers.Add(newlayer); // it is neccessary to add the new layer this early since we must set some properties relative to the linked layer
-      // link the new layer to the last old layer
-			var layerLinkedTo = (linklayernumber >= 0 && linklayernumber < Layers.Count) ? Layers[linklayernumber] : null;
-			newlayer.LinkedLayer = layerLinkedTo;
-      newlayer.SetPosition(0,XYPlotLayerPositionType.RelativeThisNearToLinkedLayerNear,0,XYPlotLayerPositionType.RelativeThisNearToLinkedLayerNear);
-      newlayer.SetSize(1,XYPlotLayerSizeType.RelativeToLinkedLayer,1,XYPlotLayerSizeType.RelativeToLinkedLayer);
-
-			if (null != layerLinkedTo)
-			{
-				// create a linked x axis of the same type than in the linked layer
-				var scaleLinkedTo = layerLinkedTo.Scales.X.Scale;
-				var xScale = new LinkedScale((Scale)scaleLinkedTo.Clone(),scaleLinkedTo,0);
-				newlayer.Scales.SetScaleWithTicks(0, xScale, (TickSpacing)layerLinkedTo.Scales.X.TickSpacing.Clone());
-			}
-
-      // set enabling of axis
-      newlayer.AxisStyles.CreateDefault(new CSLineID(0, 1));
-      newlayer.AxisStyles.CreateDefault(new CSLineID(1, 1));
-      
-
-    }
-
-
-
-    #endregion
-
+ 
     #region Change event handling
 
     protected System.EventArgs _changeEventData=null;

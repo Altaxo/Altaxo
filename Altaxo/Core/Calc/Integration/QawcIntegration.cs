@@ -19,6 +19,112 @@ namespace Altaxo.Calc.Integration
   /// </remarks>
   public class QawcIntegration : IntegrationBase
   {
+		#region offical C# interface
+    bool _debug;
+    gsl_integration_workspace _workSpace;
+
+    /// <summary>
+    /// Creates an instance of this integration class with a default integration rule and default debug flag setting.
+    /// </summary>
+    public QawcIntegration()
+      : this(DefaultDebugFlag)
+    {
+    }
+
+
+    /// <summary>
+    /// Creates an instance of this integration class with specified integration rule and specified debug flag setting.
+    /// </summary>
+    /// <param name="integrationRule">Integration rule used for integration.</param>
+    /// <param name="debug">Setting of the debug flag for this instance. If the integration fails or the specified accuracy
+    /// is not reached, an exception is thrown if the debug flag is set to true. If set to false, the return value of the integration
+    /// function will be set to the appropriate error code (an exception will be thrown then only for serious errors).</param>
+    public QawcIntegration(bool debug)
+    {
+      _debug = debug;
+    }
+    
+    public GSL_ERROR Integrate(ScalarFunctionDD f,
+       double a, double b, double c,
+       double epsabs, double epsrel, 
+			 int limit,
+       bool debug,
+       out double result, out double abserr)
+    {
+      if (null == _workSpace || limit > _workSpace.limit)
+        _workSpace = new gsl_integration_workspace(limit);
+
+			return gsl_integration_qawc(f, a, b, c, epsabs, epsrel, limit, _workSpace, out result, out abserr, debug);
+    }
+
+    public GSL_ERROR Integrate(ScalarFunctionDD f,
+				 double a, double b, double c,
+          double epsabs, double epsrel,
+					int limit,
+          out double result, out double abserr)
+    {
+      return Integrate(f, a, b, c, epsabs, epsrel, limit, _debug, out result, out abserr);
+    }
+
+
+   
+    public static GSL_ERROR
+    Integration(ScalarFunctionDD f,
+				 double a, double b, double c,
+          double epsabs, double epsrel,
+          int limit,
+          bool debug,
+          out double result, out double abserr,
+          ref object tempStorage)
+    {
+      var algo = tempStorage as QawcIntegration;
+      if (null == algo)
+        tempStorage = algo = new QawcIntegration(debug);
+      return algo.Integrate(f, a,b,c, epsabs, epsrel, limit, debug, out result, out abserr);
+    }
+
+    public static GSL_ERROR
+    Integration(ScalarFunctionDD f,
+					double a, double b, double c,
+          double epsabs, double epsrel,
+          int limit,
+          out double result, out double abserr,
+          ref object tempStorage
+          )
+    {
+      var algo = tempStorage as QawcIntegration;
+      if (null == algo)
+        tempStorage = algo = new QawcIntegration();
+      return algo.Integrate(f, a,b,c, epsabs, epsrel, limit, out result, out abserr);
+    }
+
+
+		public static GSL_ERROR
+	 Integration(ScalarFunctionDD f,
+				double a, double b, double c,
+				 double epsabs, double epsrel,
+				 int limit,
+				 bool debug,
+				 out double result, out double abserr)
+		{
+			object tempStorage = null;
+			return Integration(f, a, b, c, epsabs, epsrel, limit, debug, out result, out abserr, ref tempStorage);
+		}
+
+		public static GSL_ERROR
+		Integration(ScalarFunctionDD f,
+					double a, double b, double c,
+					double epsabs, double epsrel,
+					int limit,
+					out double result, out double abserr)
+		{
+			object tempStorage = null;
+			return Integration(f, a, b, c, epsabs, epsrel, limit, out result, out abserr, ref tempStorage);
+		}
+    #endregion
+
+
+
     #region qawc.c
     /* integration/qawc.c
  * 

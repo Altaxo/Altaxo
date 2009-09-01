@@ -152,6 +152,7 @@
     <Compile Include="Calc\FFT\TestRealFourierTransformWrapper.cs" />
     <Compile Include="Calc\Integration\QAGPTests.cs" />
     <Compile Include="Calc\Integration\QAGSTests.cs" />
+    <Compile Include="Calc\Integration\QAWCTest.cs" />
     <Compile Include="Calc\Interpolation\BivariateAkimaSpline.cs" />
     <Compile Include="Calc\Interpolation\CrossValidatedCubicSplineTest.cs" />
     <Compile Include="Calc\LinearAlgebra\Comparer.cs" />

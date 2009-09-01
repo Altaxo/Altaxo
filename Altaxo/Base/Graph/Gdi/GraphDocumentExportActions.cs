@@ -108,28 +108,33 @@ namespace Altaxo.Graph.Gdi
 			double scale = sourceDpiResolution / 72.0;
 			// Code to write the stream goes here.
 			int width, height;
-			if (areaToExport == GraphExportArea.Page)
+			switch (areaToExport)
 			{
-				// round the pixels to multiples of 4, many programs rely on this
-				width = (int)(4 * Math.Ceiling(0.25 * doc.PageBounds.Width * scale));
-				height = (int)(4 * Math.Ceiling(0.25 * doc.PageBounds.Height * scale));
+				case GraphExportArea.GraphSize:
+					// round the pixels to multiples of 4, many programs rely on this
+					width = (int)(4 * Math.Ceiling(0.25 * doc.Layers.GraphSize.Width * scale));
+					height = (int)(4 * Math.Ceiling(0.25 * doc.Layers.GraphSize.Height * scale));
+					break;
+				case GraphExportArea.Page:
+					// round the pixels to multiples of 4, many programs rely on this
+					width = (int)(4 * Math.Ceiling(0.25 * doc.PageBounds.Width * scale));
+					height = (int)(4 * Math.Ceiling(0.25 * doc.PageBounds.Height * scale));
+					break;
+				case GraphExportArea.PrintableArea:
+					// round the pixels to multiples of 4, many programs rely on this
+					width = (int)(4 * Math.Ceiling(0.25 * doc.PrintableBounds.Width * scale));
+					height = (int)(4 * Math.Ceiling(0.25 * doc.PrintableBounds.Height * scale));
+					break;
+				case GraphExportArea.BoundingBox:
+					// round the pixels to multiples of 4, many programs rely on this
+					width = (int)(4 * Math.Ceiling(0.25 * doc.PrintableBounds.Width * scale));
+					height = (int)(4 * Math.Ceiling(0.25 * doc.PrintableBounds.Height * scale));
+					break;
+				default:
+					throw new ArgumentException("areaToExport unkown: " + areaToExport.ToString());
+					break;
 			}
-			else if (areaToExport == GraphExportArea.PrintableArea) // usePrintableBounds
-			{
-				// round the pixels to multiples of 4, many programs rely on this
-				width = (int)(4 * Math.Ceiling(0.25 * doc.PrintableBounds.Width * scale));
-				height = (int)(4 * Math.Ceiling(0.25 * doc.PrintableBounds.Height * scale));
-			}
-			else if (areaToExport == GraphExportArea.BoundingBox)
-			{
-				// round the pixels to multiples of 4, many programs rely on this
-				width = (int)(4 * Math.Ceiling(0.25 * doc.PrintableBounds.Width * scale));
-				height = (int)(4 * Math.Ceiling(0.25 * doc.PrintableBounds.Height * scale));
-			}
-			else
-			{
-				throw new ArgumentException("areaToExport unkown: " + areaToExport.ToString());
-			}
+			
 
 			System.Drawing.Bitmap bitmap = new System.Drawing.Bitmap(width, height, pixelformat);
 
@@ -141,13 +146,23 @@ namespace Altaxo.Graph.Gdi
 
 			grfx.PageUnit = GraphicsUnit.Point;
 
+			float zoom;
+			PointF startLocationOnPage;
+
 			switch (areaToExport)
 			{
 				default:
+				case GraphExportArea.GraphSize:
+					break;
 				case GraphExportArea.Page:
-					grfx.TranslateTransform(doc.PrintableBounds.X, doc.PrintableBounds.Y);
+					doc.PrintOptions.GetZoomAndStartLocation(doc.PageBounds, doc.PrintableBounds, doc.Layers.GraphSize, out zoom, out startLocationOnPage, false);
+					grfx.TranslateTransform(-startLocationOnPage.X, -startLocationOnPage.Y);
+					grfx.ScaleTransform(zoom, zoom);
 					break;
 				case GraphExportArea.PrintableArea:
+					doc.PrintOptions.GetZoomAndStartLocation(doc.PageBounds, doc.PrintableBounds, doc.Layers.GraphSize, out zoom, out startLocationOnPage, false);
+					grfx.TranslateTransform(-startLocationOnPage.X + doc.PrintableBounds.X, -startLocationOnPage.Y + doc.PrintableBounds.Y);
+					grfx.ScaleTransform(zoom, zoom); 
 					break;
 			}
 			grfx.PageScale = 1; // (float)scale;
@@ -310,12 +325,16 @@ namespace Altaxo.Graph.Gdi
 			RectangleF metaFileBounds;
 			switch (area)
 			{
+				default:
+				case GraphExportArea.GraphSize:
+					metaFileBounds = new RectangleF(0, 0, (float)(doc.Layers.GraphSize.Width * scale), (float)(doc.Layers.GraphSize.Height * scale));
+					break;
 				case GraphExportArea.Page:
 					metaFileBounds = new RectangleF(0, 0, (float)(doc.PageBounds.Width * scale), (float)(doc.PageBounds.Height * scale));
 					break;
-				default:
+				
 				case GraphExportArea.PrintableArea:
-					metaFileBounds = new RectangleF(0, 0, (float)(doc.PrintableSize.Width * scale), (float)(doc.PrintableSize.Height * scale));
+					metaFileBounds = new RectangleF(0, 0, (float)(doc.PrintableBounds.Width * scale), (float)(doc.PrintableBounds.Height * scale));
 					break;
 			}
 
@@ -333,10 +352,19 @@ namespace Altaxo.Graph.Gdi
 					grfx2.PageScale = (float)(scale * Math.Min(72.0f / grfx2.DpiX, 72.0f / grfx2.DpiY)); // this works in Vista with display mode
 				}
 
+				float zoom;
+				PointF startLocationOnPage;
 				switch (area)
 				{
 					case GraphExportArea.Page:
-						grfx2.TranslateTransform(doc.PrintableBounds.X, doc.PrintableBounds.Y);
+						doc.PrintOptions.GetZoomAndStartLocation(doc.PageBounds, doc.PrintableBounds, doc.Layers.GraphSize, out zoom, out startLocationOnPage, false);
+						grfx2.TranslateTransform(-startLocationOnPage.X, -startLocationOnPage.Y);
+						grfx2.ScaleTransform(zoom, zoom);
+						break;
+					case GraphExportArea.PrintableArea:
+						doc.PrintOptions.GetZoomAndStartLocation(doc.PageBounds, doc.PrintableBounds, doc.Layers.GraphSize, out zoom, out startLocationOnPage, false);
+						grfx2.TranslateTransform(-startLocationOnPage.X+doc.PrintableBounds.X, -startLocationOnPage.Y+doc.PrintableBounds.Y);
+						grfx2.ScaleTransform(zoom, zoom); 
 						break;
 				}
 
@@ -526,7 +554,11 @@ namespace Altaxo.Graph.Gdi
 	/// </summary>
 	public enum GraphExportArea
 	{
-		/// <summary>Area is the whole page size.</summary>
+		/// <summary>
+		/// Area is the graph size.
+		/// </summary>
+		GraphSize,
+		/// <summary>Area is the whole page size. Depending on printing options.</summary>
 		Page,
 		/// <summary>The printable area of the page.</summary>
 		PrintableArea,
@@ -592,7 +624,7 @@ namespace Altaxo.Graph.Gdi
 		{
 			this._imageFormat = System.Drawing.Imaging.ImageFormat.Emf;
 			this._pixelFormat = System.Drawing.Imaging.PixelFormat.Format24bppRgb;
-			this.ExportArea = GraphExportArea.PrintableArea;
+			this.ExportArea = GraphExportArea.GraphSize;
 			this.SourceDpiResolution = 300;
 			this.DestinationDpiResolution = 300;
 			this.BackgroundBrush = null;

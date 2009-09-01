@@ -25,6 +25,9 @@ using System.Collections.Generic;
 
 namespace Altaxo.Graph.Plot.Groups
 {
+	/// <summary>
+	/// Bundles plot group styles into a collection. It is allowed only to add a single instance of every plot group class.
+	/// </summary>
   public interface IPlotGroupStyleCollection : IEnumerable<IPlotGroupStyle>, ICloneable
   {
 
@@ -85,16 +88,17 @@ namespace Altaxo.Graph.Plot.Groups
     PlotGroupStrictness PlotGroupStrictness { get; }
   
     void BeginPrepare();
-
     
     void EndPrepare();
     
-    
     void BeginApply();
+
     void EndApply();
+
     void OnBeforeApplication(Type groupStyleType);
 
     void PrepareStep();
+
     void Step(int step);
   }
 }

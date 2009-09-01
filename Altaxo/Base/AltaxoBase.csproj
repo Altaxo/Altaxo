@@ -194,7 +194,6 @@
     <Compile Include="Data\NumericColumnProxy.cs" />
     <Compile Include="Data\ReadableColumnProxy.cs" />
     <Compile Include="Graph\PlotColors.cs" />
-    <Compile Include="Graph\Procedures\ArrangeLayers.cs" />
     <Compile Include="Gui\Analysis\NonLinearFitting\FitElementControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -942,6 +941,9 @@
       <SubType>Designer</SubType>
       <DependentUpon>BarGraphPlotStyleControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\FillToCurvePlotStyleControl.resx">
+      <DependentUpon>FillToCurvePlotStyleControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Gui\Graph\ImageGraphicControl.resx">
       <DependentUpon>ImageGraphicControl.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -1185,11 +1187,14 @@
     <Compile Include="Graph\Gdi\CS\G2DPolarCoordinateSystem.cs" />
     <Compile Include="Graph\Gdi\CS\G3DCartesicCoordinateSystem.cs" />
     <Compile Include="Graph\Gdi\G2DCoordinateSystem.cs" />
+    <Compile Include="Graph\Gdi\GdiExtensionMethods.cs" />
     <Compile Include="Graph\Gdi\GraphCopyOptions.cs" />
     <Compile Include="Graph\Gdi\GraphDocument.cs" />
     <Compile Include="Graph\Gdi\GraphDocumentClipboardActions.cs" />
     <Compile Include="Graph\Gdi\GraphDocumentCollection.cs" />
     <Compile Include="Graph\Gdi\GraphDocumentExportActions.cs" />
+    <Compile Include="Graph\Gdi\GraphDocumentLayerArrangement.cs" />
+    <Compile Include="Graph\Gdi\GraphDocumentLayerCreation.cs" />
     <Compile Include="Graph\Gdi\GraphDocumentOtherActions.cs" />
     <Compile Include="Graph\Gdi\GraphDocumentPrinting.cs" />
     <Compile Include="Graph\GUI\GraphControllerActions.cs" />
@@ -1445,6 +1450,13 @@
     </Compile>
     <Compile Include="Gui\Graph\BarGraphPlotStyleController.cs" />
     <Compile Include="Gui\Graph\CoordinateSystemController.cs" />
+    <Compile Include="Gui\Graph\FillToCurvePlotStyleControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\FillToCurvePlotStyleControl.Designer.cs">
+      <DependentUpon>FillToCurvePlotStyleControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\FillToCurvePlotStyleController.cs" />
     <Compile Include="Gui\Graph\ImageGraphicControl.cs">
       <SubType>UserControl</SubType>
     </Compile>

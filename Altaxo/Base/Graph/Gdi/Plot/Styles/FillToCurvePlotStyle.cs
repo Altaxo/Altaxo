@@ -43,6 +43,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		IG2DPlotStyle
 	{
 		protected BrushX _fillBrush; // brush to fill the area under the line
+		protected PenX _strokePen; // Pen to enclose the path
 
 		bool _fillToPrevPlotItem = true;
 		bool _fillToNextPlotItem = true;
@@ -85,9 +86,48 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		}
 		#endregion
 
+		#region Serialization
+
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FillToCurvePlotStyle), 0)]
+		class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				SSerialize(obj, info);
+			}
+			public static void SSerialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				var s = (FillToCurvePlotStyle)obj;
+				info.AddValue("Brush", s._fillBrush);
+				info.AddValue("Pen", s._strokePen);
+				info.AddValue("FillToPreviousItem", s._fillToPrevPlotItem);
+				info.AddValue("FillToNextItem", s._fillToNextPlotItem);
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				return SDeserialize(o, info, parent);
+			}
+			public static object SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+
+				var s = null != o ? (FillToCurvePlotStyle)o : new FillToCurvePlotStyle();
+
+				s._fillBrush = (BrushX)info.GetValue("Brush", s);
+				s._strokePen = (PenX)info.GetValue("Pen", s);
+				s._fillToPrevPlotItem = info.GetBoolean("FillToPreviousItem");
+				s._fillToNextPlotItem = info.GetBoolean("FillToNextItem");
+
+				return s;
+			}
+		}
+		
+		#endregion
+
+
 		#region Properties
 
-		BrushX FillBrush
+		public BrushX FillBrush
 		{
 			get
 			{
@@ -102,6 +142,30 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 				if (null != _fillBrush)
 					_fillBrush.Changed += EhChildChanged;
+			}
+		}
+
+		public bool FillToPreviousItem
+		{
+			get
+			{
+				return _fillToPrevPlotItem;
+			}
+			set
+			{
+				_fillToPrevPlotItem = value;
+			}
+		}
+
+		public bool FillToNextItem
+		{
+			get
+			{
+				return _fillToNextPlotItem;
+			}
+			set
+			{
+				_fillToNextPlotItem = value;
 			}
 		}
 
@@ -269,7 +333,15 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			gp.AddLines(linepts);
 			gp.AddLines(otherLinePoints);
 			gp.CloseFigure();
-			g.FillPath(this._fillBrush, gp);
+
+			if (_fillBrush.IsVisible)
+			{
+				g.FillPath(this._fillBrush, gp);
+			}
+
+			if (null != _strokePen)
+				g.DrawPath(_strokePen, gp);
+
 			gp.Reset();
 		} // end function PaintOneRange
 
