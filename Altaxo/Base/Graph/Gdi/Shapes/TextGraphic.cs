@@ -45,7 +45,7 @@ namespace Altaxo.Graph.Gdi.Shapes
   /// to be used either in the legend or in the axis titles
   /// </summary>
   [Serializable]
-  public class TextGraphic : GraphicBase
+  public partial class TextGraphic : GraphicBase
   {
     protected string _text = ""; // the text, which contains the formatting symbols
     protected Font _font;
@@ -57,23 +57,11 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     #region Cached or temporary variables
 
-
-    /// <summary>
-    /// Hashtable where the keys are graphic paths giving
-    /// the position of a symbol into the list, and the values are the plot items.
-    /// </summary>
+		/// <summary>Hashtable where the keys are graphic paths giving the position of a symbol into the list, and the values are the plot items.</summary>
     protected Dictionary<GraphicsPath, IGPlotItem> _cachedSymbolPositions = new Dictionary<GraphicsPath, IGPlotItem>();
-
-    protected TextLine.TextLineCollection _cachedTextLines;
+		StructuralGlyph _rootNode;
     protected bool _isStructureInSync=false; // true when the text was interpretet and the structure created
     protected bool _isMeasureInSync=false; // true when all items are measured
-    protected float _cachedTextWidth=0; // the total width of the item
-    protected float _cachedTextHeight=0; /// the total heigth of the item
-    protected float _cyBaseLineSpace=0; // line space of the base font
-    protected float _cyBaseAscent=0; // ascent of the base font
-    protected float _cyBaseDescent=0; // descent of the base font
-    protected float _widthOfOne_n = 0; // Width of the lower letter n
-    protected float _widthOfThree_M = 0; // Width of three upper letters M
     protected PointF _cachedTextOffset; // offset of text to left upper corner of outer rectangle
     protected RectangleF _cachedExtendedTextBounds; // the text bounds extended by some margin around it
     #endregion // Cached or temporary variables
@@ -207,8 +195,6 @@ namespace Altaxo.Graph.Gdi.Shapes
   
     #endregion
 
-
-
     #region Constructors
 
     public TextGraphic(TextGraphic from)
@@ -257,7 +243,9 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     #endregion
 
-    protected override void CopyFrom(GraphicBase bfrom)
+		#region Copying
+
+		protected override void CopyFrom(GraphicBase bfrom)
     {
       TextGraphic from = bfrom as TextGraphic;
       if (from != null)
@@ -271,547 +259,33 @@ namespace Altaxo.Graph.Gdi.Shapes
         _yAnchorType = from._yAnchorType;
 
         // don't clone the cached items
-        this._cachedTextLines = null;
         this._isStructureInSync = false;
         this._isMeasureInSync = false;
       }
       base.CopyFrom(bfrom);
     }
+
     public void CopyFrom(TextGraphic from)
     {
       CopyFrom((GraphicBase)from);
-    }
+		}
 
+		public override object Clone()
+		{
+			return new TextGraphic(this);
+		}
 
-    static Regex _regexIntArgument = new Regex(@"\G\(\n*(?<argone>\d+)\n*\)");
-    static Regex _regexIntIntArgument = new Regex(@"\G\(\n*(?<argone>\d+)\n*,\n*(?<argtwo>\d+)\n*\)");
-    static Regex _regexIntQstrgArgument = new Regex(@"\G\(\n*(?<argone>\d+)\n*,\n*\""(?<argtwo>([^\\\""]*(\\\"")*(\\\\)*)+)\""\n*\)");
-    static Regex _regexIntStrgArgument = new Regex(@"\G\(\n*(?<argone>\d+)\n*,\n*(?<argtwo>\w+)\n*\)");
-    static Regex _regexIntIntStrgArgument = new Regex(@"\G\(\n*(?<argone>\d+)\n*,\n*(?<argtwo>\d+)\n*,\n*(?<argthree>\w+)\n*\)");
-    // Be aware that double quote characters is in truth only one quote character, this is the syntax of a verbatim literal string
-    static Regex _regexIntIntQstrgArgument = new Regex(@"\G\(\n*(?<argone>\d+)\n*,\n*(?<argtwo>\d+)\n*,\n*\""(?<argthree>([^\\\""]*(\\\"")*(\\\\)*)+)\""\n*\)");
+		#endregion
 
+		#region Background
 
-    protected void Interpret(Graphics g)
+		protected void MeasureBackground(Graphics g, double textWidth, double textHeight)
     {
-      this._isMeasureInSync = false; // if structure is changed, the measure is out of sync
+			var fontInfo = FontInfo.Create(g, _font);
 
-      char[] searchchars = new Char[] { '\\', '\r', '\n', ')' };
+			float widthOfOne_n = g.MeasureString("n", _font).Width;
+			float widthOfThree_M = g.MeasureString("MMM", _font).Width;
 
-      // Modification of StringFormat is necessary to avoid 
-      // too big spaces between successive words
-      StringFormat strfmt = (StringFormat)StringFormat.GenericTypographic.Clone();
-      strfmt.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
-
-      strfmt.LineAlignment = StringAlignment.Far;
-      strfmt.Alignment = StringAlignment.Near;
-
-      // next statement is necessary to have a consistent string length both
-      // on 0 degree rotated text and rotated text
-      // without this statement, the text is fitted to the pixel grid, which
-      // leads to "steps" during scaling
-      g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
-
-      MeasureFont(g, _font, out _cyBaseLineSpace, out _cyBaseAscent, out _cyBaseDescent);
-
-      System.Collections.Stack itemstack = new System.Collections.Stack();
-
-      Font currFont = (Font)_font.Clone();
-
-
-      if(null!=_cachedTextLines)
-        _cachedTextLines.Clear(); // delete old contents 
-      else
-        _cachedTextLines = new TextLine.TextLineCollection();
-
-
-      TextLine currTextLine = new TextLine();
-        
-      // create a new text line first
-      _cachedTextLines.Add(currTextLine);
-      int currTxtIdx = 0;
-
-      TextItem currTextItem = new TextItem(currFont);
-      //      TextItem firstItem = currTextItem; // preserve the first item
-      
-
-
-      currTextLine.Add(currTextItem);
-
-
-      while(currTxtIdx<_text.Length)
-      {
-
-        // search for the first occurence of a backslash
-        int bi = _text.IndexOfAny(searchchars,currTxtIdx);
-
-        if(bi<0) // nothing was found
-        {
-          // move the rest of the text to the current item
-          currTextItem.Text += _text.Substring(currTxtIdx,_text.Length-currTxtIdx);
-          currTxtIdx = _text.Length;
-        }
-        else // something was found
-        {
-          // first finish the current item by moving the text from
-          // currTxtIdx to (bi-1) to the current text item
-          currTextItem.Text += _text.Substring(currTxtIdx,bi-currTxtIdx);
-          
-          if('\r'==_text[bi]) // carriage return character : simply ignore it
-          {
-            // simply ignore this character, since we search for \n
-            currTxtIdx=bi+1;
-          }
-          else if('\n'==_text[bi]) // newline character : create a new line
-          {
-            currTxtIdx = bi+1;
-            // create a new line
-            currTextLine = new TextLine();
-            _cachedTextLines.Add(currTextLine);
-            // create also a new text item
-            currTextItem = new TextItem(currTextItem,null);
-            currTextLine.Add(currTextItem);
-          }
-          else if('\\'==_text[bi]) // backslash : look what comes after
-          {
-            if(bi+1<_text.Length && (')'==_text[bi+1] || '\\'==_text[bi+1])) // if a closing brace or a backslash, take these as chars
-            {
-              currTextItem.Text += _text[bi+1];
-              currTxtIdx = bi+2;
-            }
-            else if (bi + 7 < _text.Length && _text.Substring(bi + 1, 7) == "ID($DI)")
-              {
-                itemstack.Push(currTextItem);
-                currTextItem = new TextItem(currTextItem, null);
-                currTextLine.Add(currTextItem);
-                currTextItem.SetAsText(Current.Project.DocumentIdentifier);
-
-                currTextItem = new TextItem(currTextItem, null); 
-                currTextLine.Add(currTextItem); // to have room for the following text
-                currTxtIdx = bi + 8;
-              }
-            // if the backslash not followed by a symbol and than a (, 
-            else if (bi + 3 < _text.Length && !char.IsSeparator(_text, bi + 1) && '(' == _text[bi + 2])
-            {
-              switch (_text[bi + 1])
-              {
-                case 'b':
-                case 'B':
-                  {
-                    itemstack.Push(currTextItem);
-                    currTextItem = new TextItem(currTextItem, new Font(currTextItem.Font.FontFamily, currTextItem.Font.Size, currTextItem.Font.Style | FontStyle.Bold, GraphicsUnit.World));
-                    currTextLine.Add(currTextItem);
-                    currTxtIdx = bi + 3;
-                  }
-                  break; // bold
-                case 'i':
-                case 'I':
-                  {
-                    itemstack.Push(currTextItem);
-                    currTextItem = new TextItem(currTextItem, new Font(currTextItem.Font.FontFamily, currTextItem.Font.Size, currTextItem.Font.Style | FontStyle.Italic, GraphicsUnit.World));
-                    currTextLine.Add(currTextItem);
-                    currTxtIdx = bi + 3;
-                  }
-                  break; // italic
-                case 'u':
-                case 'U':
-                  {
-                    itemstack.Push(currTextItem);
-                    currTextItem = new TextItem(currTextItem, new Font(currTextItem.Font.FontFamily, currTextItem.Font.Size, currTextItem.Font.Style | FontStyle.Underline, GraphicsUnit.World));
-                    currTextLine.Add(currTextItem);
-                    currTxtIdx = bi + 3;
-                  }
-                  break; // underlined
-                case 's':
-                case 'S': // strikeout
-                  {
-                    itemstack.Push(currTextItem);
-                    currTextItem = new TextItem(currTextItem, new Font(currTextItem.Font.FontFamily, currTextItem.Font.Size, currTextItem.Font.Style | FontStyle.Strikeout, GraphicsUnit.World));
-                    currTextLine.Add(currTextItem);
-                    currTxtIdx = bi + 3;
-                  }
-                  break; // end strikeout
-                case 'g':
-                case 'G':
-                  {
-                    itemstack.Push(currTextItem);
-                    currTextItem = new TextItem(currTextItem, new Font("Symbol", currTextItem.Font.Size, currTextItem.Font.Style, GraphicsUnit.World));
-                    currTextLine.Add(currTextItem);
-                    currTxtIdx = bi + 3;
-                  }
-                  break; // underlined
-                case '+':
-                case '-':
-                  {
-                    itemstack.Push(currTextItem);
-                    // measure the current font size
-                    float cyLineSpace, cyAscent, cyDescent;
-                    MeasureFont(g, currTextItem.Font, out cyLineSpace, out cyAscent, out cyDescent);
-
-                    currTextItem = new TextItem(currTextItem, new Font(currTextItem.Font.FontFamily, 0.65f * currTextItem.Font.Size, currTextItem.Font.Style, GraphicsUnit.World));
-                    currTextLine.Add(currTextItem);
-                    currTextItem.m_SubIndex += ('+' == _text[bi + 1] ? 1 : -1);
-
-
-                    if ('-' == _text[bi + 1])
-                      currTextItem.m_yShift += 0.15f * cyAscent; // Carefull: plus (+) means shift down
-                    else
-                      currTextItem.m_yShift -= 0.35f * cyAscent; // be carefull: minus (-) means shift up
-
-                    currTxtIdx = bi + 3;
-                  }
-                  break; // underlined
-                case 'l': // Plot Curve Symbol
-                case 'L':
-                  {
-                    // parse the arguments
-                    // either in the Form 
-                    // \L(PlotCurveNumber) or
-                    // \L(LayerNumber, PlotCurveNumber) or
-                    // \L(LayerNumber, PlotCurveNumber, DataPointNumber)
-
-
-                    // find the corresponding closing brace
-                    int closingbracepos = _text.IndexOf(")", bi + 1);
-                    if (closingbracepos < 0) // no brace found, so threat this as normal text
-                    {
-                      currTextItem.Text += _text.Substring(bi, 3);
-                      currTxtIdx += 3;
-                      continue;
-                    }
-                    // count the commas between here and the closing brace to get
-                    // the number of arguments
-                    int parsepos = bi + 3;
-                    int[] arg = new int[3];
-                    int args;
-                    for (args = 0; args < 3 && parsepos < closingbracepos; args++)
-                    {
-                      int commapos = _text.IndexOf(",", parsepos, closingbracepos - parsepos);
-                      int endpos = commapos > 0 ? commapos : closingbracepos; // the end of this argument
-                      try { arg[args] = System.Convert.ToInt32(_text.Substring(parsepos, endpos - parsepos)); }
-                      catch (Exception) { break; }
-                      parsepos = endpos + 1;
-                    }
-                    if (args == 0) // if not successfully parsed at least one number
-                    {
-                      currTextItem.Text += _text.Substring(bi, 3);
-                      currTxtIdx += 3;
-                      continue;   // handle it as if it where normal text
-                    }
-
-                    // itemstack.Push(currTextItem); // here we don't need to put the item on the stack, since we pared until the closing brace
-                    currTextItem = new TextItem(currTextItem, null);
-                    currTextLine.Add(currTextItem);
-                    currTextItem.SetAsSymbol(args, arg);
-
-                    currTextItem = new TextItem(currTextItem, null); // create a normal text item behind the symbol item
-                    currTextLine.Add(currTextItem); // to have room for the following text
-                    currTxtIdx = closingbracepos + 1;
-                  }
-                  break; // curve symbol
-                case '%': // Plot Curve Name
-                  {
-                    // parse the arguments
-                    // either in the Form 
-                    // \%(PlotCurveNumber) or
-                    // \%(LayerNumber, PlotCurveNumber) or
-                    Match match;
-                    int layerNumber = -1;
-                    int plotNumber = -1;
-                    string plotLabelStyle = null;
-                    bool plotLabelStyleIsPropColName = false;
-                    if ((match = _regexIntArgument.Match(_text, bi + 2)).Success)
-                    {
-                      plotNumber = int.Parse(match.Result("${argone}"));
-                    }
-                    else if ((match = _regexIntIntArgument.Match(_text, bi + 2)).Success)
-                    {
-                      layerNumber = int.Parse(match.Result("${argone}"));
-                      plotNumber = int.Parse(match.Result("${argtwo}"));
-                    }
-                    else if ((match = _regexIntQstrgArgument.Match(_text, bi + 2)).Success)
-                    {
-                      plotNumber = int.Parse(match.Result("${argone}"));
-                      plotLabelStyle = match.Result("${argtwo}");
-                      plotLabelStyleIsPropColName = true;
-                    }
-                    else if ((match = _regexIntStrgArgument.Match(_text, bi + 2)).Success)
-                    {
-                      plotNumber = int.Parse(match.Result("${argone}"));
-                      plotLabelStyle = match.Result("${argtwo}");
-                    }
-                    else if ((match = _regexIntIntStrgArgument.Match(_text, bi + 2)).Success)
-                    {
-                      layerNumber = int.Parse(match.Result("${argone}"));
-                      plotNumber = int.Parse(match.Result("${argtwo}"));
-                      plotLabelStyle = match.Result("${argthree}");
-                    }
-                    else if ((match = _regexIntIntQstrgArgument.Match(_text, bi + 2)).Success)
-                    {
-                      layerNumber = int.Parse(match.Result("${argone}"));
-                      plotNumber = int.Parse(match.Result("${argtwo}"));
-                      plotLabelStyle = match.Result("${argthree}");
-                      plotLabelStyleIsPropColName = true;
-                    }
-
-                    if (match.Success)
-                    {
-                      itemstack.Push(currTextItem);
-                      currTextItem = new TextItem(currTextItem, null);
-                      currTextLine.Add(currTextItem);
-                      currTextItem.SetAsPlotCurveName(layerNumber, plotNumber, plotLabelStyle, plotLabelStyleIsPropColName);
-
-                      currTextItem = new TextItem(currTextItem, null); // create a normal text item behind the symbol item
-                      currTextLine.Add(currTextItem); // to have room for the following text
-                      currTxtIdx = bi + 2 + match.Length;
-                    }
-                    else
-                    {
-                      currTextItem.Text += _text.Substring(bi, 2);
-                      currTxtIdx += 3;
-                      continue;   // handle it as if it where normal text
-                    }
-                  }
-                  break; // percent symbol
-                default:
-                  // take the sequence as it is
-                  currTextItem.Text += _text.Substring(bi, 3);
-                  currTxtIdx = bi + 3;
-                  break;
-              } // end of switch
-            }
-            else // if no formatting and also no closing brace or backslash, take it as it is
-            {
-              currTextItem.Text += _text[bi];
-              currTxtIdx = bi + 1;
-            }
-          } // end if it was a backslash
-          else if(')'==_text[bi]) // closing brace
-          {
-            // the formating is finished, we can return to the formating of the previous section
-            if(itemstack.Count>0)
-            {
-              TextItem preservedprevious = (TextItem)itemstack.Pop();
-              currTextItem = new TextItem(preservedprevious,null);
-              currTextLine.Add(currTextItem);
-              currTxtIdx = bi+1;
-            }
-            else // if the stack is empty, take the brace as it is, and use the default style
-            {
-              currTextItem.Text += _text[bi];
-              currTxtIdx = bi+1;
-            }
-
-          }
-        }
-
-      } // end of while loop
-
-      this._isStructureInSync=true; // now the text was interpreted
-    }
-  
-
-    protected void MeasureStructure(Graphics g, object obj)
-    {
-      PointF zeroPoint = new PointF(0,0);
-  
-      float maxLineWidth=0;
-
-      
-      // Modification of StringFormat is necessary to avoid 
-      // too big spaces between successive words
-      StringFormat strfmt = (StringFormat)StringFormat.GenericTypographic.Clone();
-      strfmt.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
-
-      strfmt.LineAlignment = StringAlignment.Far;
-      strfmt.Alignment = StringAlignment.Near;
-
-      // next statement is necessary to have a consistent string length both
-      // on 0 degree rotated text and rotated text
-      // without this statement, the text is fitted to the pixel grid, which
-      // leads to "steps" during scaling
-      g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
-      MeasureFont(g, _font, out _cyBaseLineSpace, out _cyBaseAscent, out _cyBaseDescent);
-      _widthOfOne_n = g.MeasureString("n",_font).Width;
-      _widthOfThree_M = g.MeasureString("MMM",_font).Width;
-
-      
-      for(int nLine=0;nLine<_cachedTextLines.Count;nLine++)
-      {
-
-        float maxLineAscent=0;
-        float maxLineDescent=0;
-        float sumItemWidth=0;
-        for(int nItem=0;nItem<_cachedTextLines[nLine].Count;nItem++)
-        {
-
-          TextItem ti = _cachedTextLines[nLine][nItem];
-
-          if(ti.IsEmpty)
-          {
-            continue;
-          }
-          else if(ti.IsText)
-          {
-            MeasureFont(g,ti.Font, out ti.m_cyLineSpace, out ti.m_cyAscent, out ti.m_cyDescent);
-            ti.m_Width = g.MeasureString(ti.Text, ti.Font, 0, strfmt).Width;
-            
-            maxLineAscent = Math.Max(ti.m_cyAscent-ti.m_yShift,maxLineAscent);
-            maxLineDescent = Math.Max(ti.m_cyDescent+ti.m_yShift,maxLineDescent);
-            sumItemWidth += ti.m_Width;
-          }
-          else if(ti.IsPlotCurveName)
-          {
-            // first of all, retrieve the actual name
-            if(obj is XYPlotLayer)
-            {
-              XYPlotLayer layer = (XYPlotLayer)obj;
-              if(ti.m_LayerNumber>=0 && ti.m_LayerNumber<layer.ParentLayerList.Count)
-                layer = layer.ParentLayerList[ti.m_LayerNumber];
-
-              IGPlotItem pa=null;
-              if(ti.m_PlotNumber<layer.PlotItems.Flattened.Length)
-              {
-                pa = layer.PlotItems.Flattened[ti.m_PlotNumber];
-              }
-              if(pa!=null)
-              {
-                ti.PlotCurveName = pa.GetName(0);
-
-                if(ti.m_PlotLabelStyle!=null && !ti.m_PlotLabelStyleIsPropColName && pa is XYColumnPlotItem)
-                {
-                  XYColumnPlotItemLabelTextStyle style = XYColumnPlotItemLabelTextStyle.YS;
-                  try { style = (XYColumnPlotItemLabelTextStyle)Enum.Parse(typeof(XYColumnPlotItemLabelTextStyle),ti.m_PlotLabelStyle,true); }
-                  catch(Exception) {}
-                  ti.PlotCurveName = ((XYColumnPlotItem)pa).GetName(style);
-                }
-
-                if(ti.m_PlotLabelStyleIsPropColName && ti.m_PlotLabelStyle!=null && pa is XYColumnPlotItem)
-                {
-                  XYColumnPlotData pb = ((XYColumnPlotItem)pa).Data;
-                  Data.DataTable tbl = null;
-                  if(pb.YColumn is Data.DataColumn)
-                    tbl = Data.DataTable.GetParentDataTableOf((Data.DataColumn)pb.YColumn);
-                  
-                  if(tbl!=null)
-                  {
-                    int colNumber = tbl.DataColumns.GetColumnNumber((Data.DataColumn)pb.YColumn);
-                    if(tbl.PropertyColumns.ContainsColumn(ti.m_PlotLabelStyle))
-                      ti.PlotCurveName = tbl.PropertyColumns[ti.m_PlotLabelStyle][colNumber].ToString();
-                  }
-                }
-              }
-            }
-          
-            MeasureFont(g,ti.Font, out ti.m_cyLineSpace, out ti.m_cyAscent, out ti.m_cyDescent);
-            ti.m_Width = g.MeasureString(ti.PlotCurveName, ti.Font, 0, strfmt).Width;
-            
-            maxLineAscent = Math.Max(ti.m_cyAscent-ti.m_yShift,maxLineAscent);
-            maxLineDescent = Math.Max(ti.m_cyDescent+ti.m_yShift,maxLineDescent);
-            sumItemWidth += ti.m_Width;
-          }
-
-          else if(ti.IsSymbol)
-          {
-            if(obj is XYPlotLayer)
-            {
-              XYPlotLayer layer = (XYPlotLayer)obj;
-              if(ti.m_LayerNumber>=0 && ti.m_LayerNumber<layer.ParentLayerList.Count)
-                layer = layer.ParentLayerList[ti.m_LayerNumber];
-
-              if(ti.m_PlotNumber<layer.PlotItems.Flattened.Length)
-              {
-                //Graph.PlotItem pa = layer.PlotAssociations[ti.m_PlotNumber];
-                MeasureFont(g,ti.Font,out ti.m_cyLineSpace, out ti.m_cyAscent, out ti.m_cyDescent);
-                ti.m_Width = g.MeasureString("MMM", ti.Font, 0, strfmt).Width;
-
-                maxLineAscent = Math.Max(ti.m_cyAscent-ti.m_yShift,maxLineAscent);
-                maxLineDescent = Math.Max(ti.m_cyDescent+ti.m_yShift,maxLineDescent);
-                sumItemWidth += ti.m_Width;
-              }
-            }
-          } // end if ti.IsSymbol
-        } // end for all items in the line
-
-        // now put the line properties
-        _cachedTextLines[nLine].m_cyAscent = maxLineAscent;
-        _cachedTextLines[nLine].m_cyDescent = maxLineDescent;
-        _cachedTextLines[nLine].m_cyLineSpace = maxLineAscent + maxLineDescent;
-        _cachedTextLines[nLine].m_Width = sumItemWidth;
-      
-        maxLineWidth = Math.Max(sumItemWidth,maxLineWidth);
-      } // for all lines
-
-      _cachedTextWidth = maxLineWidth; // total width of the object
-      this._cachedTextHeight = _lineSpacingFactor * _cyBaseLineSpace * _cachedTextLines.Count;
-      // add to the height the ascent difference of the first line and the descent difference of the last line
-      if(_cachedTextLines.Count>0)
-      {
-        _cachedTextHeight += Math.Max(0,_cachedTextLines[0].m_cyAscent - _cyBaseAscent);
-        _cachedTextHeight += Math.Max(0,_cachedTextLines[_cachedTextLines.Count-1].m_cyDescent - _cyBaseDescent);
-      }
-
-      // now measure the Background and the distance from outer rectangle to text
-      MeasureBackground(g);
-
-      _isMeasureInSync = true;
-    } // end of function MeasureStructure
-
-    /*
-    protected void MeasureBackground()
-    {
-
-      float distanceXL = 0; // left distance bounds-text
-      float distanceXR = 0; // right distance text-bounds
-      float distanceYU = 0;   // upper y distance bounding rectangle-string
-      float distanceYL = 0; // lower y distance
-
-      if(this.m_BackgroundStyle!=BackgroundStyle.None)
-      {
-        // the distance to the sides should be like the character n
-        distanceXL = 0.5f*m_WidthOfOne_n; // left distance bounds-text
-        distanceXR = distanceXL; // right distance text-bounds
-        distanceYU = m_cyBaseDescent;   // upper y distance bounding rectangle-string
-        distanceYL = 0; // lower y distance
-
-        // add some additional distance in case of special backgrounds
-        switch(this.m_BackgroundStyle)
-        {
-          case BackgroundStyle.Shadow:
-            distanceXR += this.m_ShadowLength; // the shadow extends to the right
-            distanceYL += this.m_ShadowLength; // and to the lower bound
-            break;
-          case BackgroundStyle.DarkMarbel:
-            distanceXL += this.m_ShadowLength; // darkmarbel has a rim of a Shadowlen
-            distanceXR += this.m_ShadowLength; // to all sides
-            distanceYU += this.m_ShadowLength;
-            distanceYL += this.m_ShadowLength;
-            break;
-        }
-      }
-
-      SizeF size = new SizeF(m_TextWidth+distanceXL+distanceXR,m_TextHeight+distanceYU+distanceYL);
-
-      
-      float xanchor=0;
-      float yanchor=0;
-      if(m_XAnchorType==XAnchorPositionType.Center)
-        xanchor = size.Width/2.0f;
-      else if(m_XAnchorType==XAnchorPositionType.Right)
-        xanchor = size.Width;
-
-      if(m_YAnchorType==YAnchorPositionType.Center)
-        yanchor = size.Height/2.0f;
-      else if(m_YAnchorType==YAnchorPositionType.Bottom)
-        yanchor = size.Height;
-      
-      this.m_Bounds = new RectangleF(new PointF(-xanchor,-yanchor),size);
-      this.m_TextOffset = new PointF(distanceXL,distanceYU);
-    }
-     */
-
-    protected void MeasureBackground(Graphics g)
-    {
 
       float distanceXL = 0; // left distance bounds-text
       float distanceXR = 0; // right distance text-bounds
@@ -822,13 +296,13 @@ namespace Altaxo.Graph.Gdi.Shapes
       if (this._background != null)
       {
         // the distance to the sides should be like the character n
-        distanceXL = 0.25f * _widthOfOne_n; // left distance bounds-text
+        distanceXL = 0.25f * widthOfOne_n; // left distance bounds-text
         distanceXR = distanceXL; // right distance text-bounds
-        distanceYU = _cyBaseDescent;   // upper y distance bounding rectangle-string
+        distanceYU = (float)fontInfo.cyDescent;   // upper y distance bounding rectangle-string
         distanceYL = 0; // lower y distance
       }
       
-      SizeF size = new SizeF(_cachedTextWidth + distanceXL + distanceXR, _cachedTextHeight + distanceYU + distanceYL);
+      SizeF size = new SizeF((float)(textWidth + distanceXL + distanceXR), (float)(textHeight + distanceYU + distanceYL));
       _cachedExtendedTextBounds = new RectangleF(PointF.Empty, size);
       RectangleF textRectangle = new RectangleF(new PointF(-distanceXL, -distanceYU), size);
 
@@ -839,9 +313,9 @@ namespace Altaxo.Graph.Gdi.Shapes
 
         size = backgroundRect.Size;
         distanceXL = -backgroundRect.Left;
-        distanceXR = backgroundRect.Right - _cachedTextWidth;
+        distanceXR = (float)(backgroundRect.Right - textWidth);
         distanceYU = -backgroundRect.Top;
-        distanceYL = backgroundRect.Bottom - _cachedTextHeight;
+        distanceYL =(float)( backgroundRect.Bottom - textHeight);
       }
 
       float xanchor = 0;
@@ -920,9 +394,26 @@ namespace Altaxo.Graph.Gdi.Shapes
             break;
         }
       }
-    }
+		}
 
-    public Font Font
+		protected virtual void PaintBackground(Graphics g)
+		{
+			// Assumptions: 
+			// 1. the overall size of the structure must be measured before, i.e. bMeasureInSync is true
+			// 2. the graphics object was translated and rotated before, so that the paining starts at (0,0)
+
+			if (!this._isMeasureInSync)
+				return;
+
+			if (_background != null)
+				_background.Draw(g, _cachedExtendedTextBounds);
+		}
+
+		#endregion
+
+		#region Properties
+
+		public Font Font
     {
       get
       {
@@ -953,6 +444,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         this._isStructureInSync=false;
       }
     }
+
     public System.Drawing.Color Color
     {
       get
@@ -964,6 +456,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         _textBrush = new BrushX(value);
       }
     }
+
     public BrushX TextFillBrush
     {
       get
@@ -989,163 +482,111 @@ namespace Altaxo.Graph.Gdi.Shapes
     {
       get { return _yAnchorType; }
       set { _yAnchorType=value; }
-    }
+		}
 
+		#endregion
 
-  
-    public static void MeasureFont(Graphics g, Font ft, out float cyLineSpace, out float cyAscent, out float cyDescent)
-    { 
-      // get some properties of the font
-      cyLineSpace = ft.GetHeight(g); // space between two lines
-      int   iCellSpace  = ft.FontFamily.GetLineSpacing(ft.Style);
-      int   iCellAscent = ft.FontFamily.GetCellAscent(ft.Style);
-      int   iCellDescent = ft.FontFamily.GetCellDescent(ft.Style);
-      cyAscent  = cyLineSpace*iCellAscent/iCellSpace;
-      cyDescent = cyLineSpace*iCellDescent/iCellSpace; 
-    }
+		#region Interpreting and Painting
 
+		void InterpretText()
+		{
+			var parser = new Altaxo_LabelV1();
+			parser.SetSource(_text);
+			bool bMatches = parser.MainSentence();
+			var tree = parser.GetRoot();
 
-    protected virtual void PaintBackground(Graphics g)
-    {
-      // Assumptions: 
-      // 1. the overall size of the structure must be measured before, i.e. bMeasureInSync is true
-      // 2. the graphics object was translated and rotated before, so that the paining starts at (0,0)
+			TreeWalker walker = new TreeWalker(_text);
+			StyleContext style = new StyleContext(new FontIdentifier(_font.FontFamily.Name, _font.Style, _font.Size), _textBrush);
+			style.BaseFontId = new FontIdentifier(_font.FontFamily.Name, _font.Style, _font.Size);
 
-      if(!this._isMeasureInSync)
-        return;
+			_rootNode = walker.VisitTree(tree, style);
+		}
 
-      if (_background != null)
-        _background.Draw(g, _cachedExtendedTextBounds);
-    }
+		void MeasureGlyphs(Graphics g, FontCache cache, object linkedObject)
+		{
+			MeasureContext mc = new MeasureContext();
+			mc.FontCache = cache;
+			mc.LinkedObject = linkedObject;
+			mc.TabStop = g.MeasureString("MMMM", _font, PointF.Empty, _rootNode.StringFormat).Width;
 
-    public override void Paint(Graphics g, object obj)
+			if (null != _rootNode)
+				_rootNode.Measure(g, mc, 0);
+		}
+
+		void DrawGlyphs(Graphics g, DrawContext dc, double x, double y)
+		{
+			_rootNode.Draw(g, dc, y, y + _rootNode.ExtendAboveBaseline);
+		}
+
+		public override void Paint(Graphics g, object obj)
     {
       Paint(g,obj,false);
     }
 
     public void Paint(Graphics g, object obj, bool bForPreview)
     {
-      _isStructureInSync = false;
+      //_isStructureInSync = false;
       _isMeasureInSync = false;  // Change: interpret text every time in order to update plot items and \ID
 
-      if(!this._isStructureInSync)
-        this.Interpret(g);
-
-      if(!this._isMeasureInSync)
-        this.MeasureStructure(g,obj);
-
-      _cachedSymbolPositions.Clear();
-
-      System.Drawing.Drawing2D.GraphicsState gs = g.Save();
-      g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
-      
-
-      Matrix transformmatrix= new Matrix();
-      transformmatrix.Translate(X,Y);
-      transformmatrix.Rotate(-_rotation);
-      transformmatrix.Translate(_bounds.X,_bounds.Y);
-
-      if(!bForPreview)
+      if (!this._isStructureInSync)
       {
-        g.TranslateTransform(X,Y);
-        g.RotateTransform(-_rotation);
-        g.TranslateTransform(_bounds.X,_bounds.Y);
+       // this.Interpret(g);
+        this.InterpretText();
+
+        _isStructureInSync = true;
+        _isMeasureInSync = false;
       }
 
+			using (FontCache fontCache = new FontCache())
+			{
+
+				if (!this._isMeasureInSync)
+				{
+					// this.MeasureStructure(g, obj);
+					this.MeasureGlyphs(g, fontCache, obj);
+
+					MeasureBackground(g, _rootNode.Width, _rootNode.Height);
+
+					_isMeasureInSync = true;
+				}
+
+				_cachedSymbolPositions.Clear();
+
+				System.Drawing.Drawing2D.GraphicsState gs = g.Save();
+				g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
 
 
+				Matrix transformmatrix = new Matrix();
+				transformmatrix.Translate(X, Y);
+				transformmatrix.Rotate(-_rotation);
+				transformmatrix.Translate(_bounds.X, _bounds.Y);
 
-      // first of all paint the background
-      PaintBackground(g);
+				if (!bForPreview)
+				{
+					g.TranslateTransform(X, Y);
+					g.RotateTransform(-_rotation);
+					g.TranslateTransform(_bounds.X, _bounds.Y);
+				}
 
+				// first of all paint the background
+				PaintBackground(g);
 
+				DrawContext dc = new DrawContext();
+				dc.FontCache = fontCache;
+				dc.bForPreview = bForPreview;
+				dc.LinkedObject = obj;
+				dc.transformMatrix = transformmatrix;
+				dc._cachedSymbolPositions = _cachedSymbolPositions;
+				DrawGlyphs(g, dc, _cachedTextOffset.X, _cachedTextOffset.Y);
+				g.Restore(gs);
+			}
+		}
 
-      // Modification of StringFormat is necessary to avoid 
-      // too big spaces between successive words
-      StringFormat strfmt = (StringFormat)StringFormat.GenericTypographic.Clone();
-      strfmt.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
+		#endregion
 
-      strfmt.LineAlignment = StringAlignment.Near;
-      strfmt.Alignment = StringAlignment.Near;
+		#region Hit testing and handling
 
-      float PlotSymbolWidth = g.MeasureString("MMM",_font,new PointF(0,0),strfmt).Width;
-
-      float baseLineSpace, baseAscent, baseDescent;
-      MeasureFont(g, _font, out baseLineSpace, out baseAscent, out baseDescent);
-      _textBrush.Rectangle = new RectangleF(_cachedTextOffset,new SizeF(_cachedTextWidth, _cachedTextHeight));
-    
-
-      float currPosY=_cachedTextOffset.Y + baseAscent;
-
-      for(int nLine=0;nLine<_cachedTextLines.Count;nLine++)
-      {
-        float currPosX=_cachedTextOffset.X;
-        for(int nItem=0;nItem<_cachedTextLines[nLine].Count;nItem++)
-        {
-
-          TextItem ti = _cachedTextLines[nLine][nItem];
-
-          if(ti.IsEmpty)
-            continue;
-
-          if(ti.IsText)
-          {
-            g.DrawString(ti.Text, ti.Font, _textBrush, new PointF(currPosX, currPosY + ti.m_yShift - ti.m_cyAscent), strfmt);
-            // update positions
-            currPosX += ti.m_Width;
-          } // end of if ti.IsText
-          else if(ti.IsPlotCurveName)
-          {
-            g.DrawString(ti.PlotCurveName, ti.Font, _textBrush, new PointF(currPosX, currPosY + ti.m_yShift - ti.m_cyAscent), strfmt);
-            // update positions
-            currPosX += ti.m_Width;
-          } // end of if ti.IsText
-
-          else if(ti.IsSymbol && obj is XYPlotLayer)
-          {
-            XYPlotLayer layer = (XYPlotLayer)obj;
-            if(ti.m_LayerNumber>=0 && ti.m_LayerNumber<layer.ParentLayerList.Count)
-              layer = layer.ParentLayerList[ti.m_LayerNumber];
-
-            if(ti.m_PlotNumber<layer.PlotItems.Flattened.Length)
-            {
-              IGPlotItem pa = layer.PlotItems.Flattened[ti.m_PlotNumber];
-            
-              PointF symbolpos = new PointF(currPosX,currPosY + ti.m_yShift  + 0.5f*ti.m_cyDescent - 0.5f*ti.m_cyAscent);
-              float symbolwidth = ti.m_Width;
-              RectangleF symbolRect = new RectangleF(symbolpos,new SizeF(symbolwidth,0));
-              symbolRect.Inflate(0, ti.Font.Size);
-              pa.PaintSymbol(g,symbolRect);
-
-              currPosX += ti.m_Width;
-            
-              if(!bForPreview)
-              {
-                GraphicsPath gp = new GraphicsPath();
-                gp.AddRectangle(new RectangleF(symbolpos.X,symbolpos.Y-0.5f*ti.m_cyLineSpace,ti.m_Width,ti.m_cyLineSpace));
-                gp.Transform(transformmatrix);
-                this._cachedSymbolPositions.Add(gp,pa);
-              }
-            }
-
-          } // end if ti.IsSymbol
-
-        } // for all items in a textline
-      
-        currPosY += baseLineSpace*this._lineSpacingFactor;
-      } // for all textlines
-      
-
-
-      g.Restore(gs);
-    }
-
-    public override object Clone()
-    {
-      return new TextGraphic(this);
-    }
-
-    public static DoubleClickHandler  PlotItemEditorMethod;
+		public static DoubleClickHandler  PlotItemEditorMethod;
     public static DoubleClickHandler TextGraphicsEditorMethod;
 
 
@@ -1167,11 +608,13 @@ namespace Altaxo.Graph.Gdi.Shapes
         result.DoubleClick = TextGraphicsEditorMethod;
       return result;
 
-    }
+		}
 
-    #region IGrippableObject Members
+		#endregion
 
-    public override void ShowGrips(Graphics g)
+		#region IGrippableObject Members
+
+		public override void ShowGrips(Graphics g)
     {
       GraphicsState gs = g.Save();
       g.TranslateTransform(X, Y);
@@ -1197,235 +640,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     #endregion
 
 
-    #region Inner Helper classes
-
-    protected class TextItem
-    {
-      protected enum InnerType { Empty, Text, Symbol, PlotCurveName }
-
-      protected InnerType m_Type = InnerType.Empty;
-
-      protected string m_Text; // the text to display
-
-      protected internal bool m_bUnderlined;
-      protected internal bool m_bItalic;
-      protected internal bool m_bBold; // true if bold should be used
-      protected internal bool m_bGreek; // true if greek charset should be used
-      protected internal int m_SubIndex;
-
-      protected internal int m_LayerNumber = -1; // number of the layer or -1 for the current layer
-      protected internal int m_PlotNumber = -1; // number of the plot curve or -1 in case this is disabled
-      protected internal int m_PlotPointNumber = -1; // number of the plot point or -1 for the whole curve
-      protected internal string m_PlotLabelStyle = null; // named style or name of property column
-      protected internal bool m_PlotLabelStyleIsPropColName = false; // if true, then PlotLabelStyle is the name of a property column
-
-      protected internal float m_cyLineSpace; // cached linespace value of the font
-      protected internal float m_cyAscent;    // cached ascent value of the font
-      protected internal float m_cyDescent; /// cached descent value of the font
-      protected internal float m_Width; // cached width of the item
-
-
-      // help items
-      protected Font m_Font;
-      public float m_yShift = 0;
-
-      public TextItem(Font ft)
-      {
-        m_Type = InnerType.Empty;
-        m_Text = "";
-        m_Font = (null == ft) ? null : (Font)ft.Clone();
-      }
-
-      public void SetAsText(string txt)
-      {
-        m_Type = InnerType.Text;
-        m_Text = txt;
-      }
-
-      public string Text
-      {
-        get { return m_Text; }
-        set
-        {
-          m_Type = InnerType.Text;
-          m_Text = value;
-        }
-      }
-
-      public void SetAsSymbol(int args, int[] arg)
-      {
-        m_Type = InnerType.Symbol;
-        m_Text = null;
-        switch (args)
-        {
-          case 1:
-            m_LayerNumber = -1;
-            m_PlotNumber = arg[0];
-            m_PlotPointNumber = -1;
-            break;
-          case 2:
-            m_LayerNumber = arg[0];
-            m_PlotNumber = arg[1];
-            m_PlotPointNumber = -1;
-            break;
-          case 3:
-            m_LayerNumber = arg[0];
-            m_PlotNumber = arg[1];
-            m_PlotPointNumber = arg[2];
-            break;
-        }
-      }
-
-      public string PlotCurveName
-      {
-        get { return m_Text; }
-        set
-        {
-          m_Type = InnerType.PlotCurveName;
-          m_Text = value;
-        }
-      }
-
-
-      public void SetAsPlotCurveName(int layerNumber, int plotNumber, string plotLabelStyle, bool isPropCol)
-      {
-        m_Type = InnerType.PlotCurveName;
-        m_Text = null;
-        m_PlotPointNumber = -1;
-        m_LayerNumber = layerNumber;
-        m_PlotNumber = plotNumber;
-        m_PlotLabelStyle = plotLabelStyle;
-        m_PlotLabelStyleIsPropColName = isPropCol;
-      }
-
-      public void SetAsPlotCurveName(int plotNumber)
-      {
-        SetAsPlotCurveName(-1, plotNumber, null, false);
-      }
-
-      public void SetAsPlotCurveName(int layerNumber, int plotNumber)
-      {
-        SetAsPlotCurveName(layerNumber, plotNumber, null, false);
-      }
-
-
-      public void SetAsPlotCurveName(int args, int[] arg)
-      {
-        m_Type = InnerType.PlotCurveName;
-        m_Text = null;
-        switch (args)
-        {
-          case 1:
-            m_LayerNumber = -1;
-            m_PlotNumber = arg[0];
-            m_PlotPointNumber = -1;
-            break;
-          case 2:
-            m_LayerNumber = arg[0];
-            m_PlotNumber = arg[1];
-            m_PlotPointNumber = -1;
-            break;
-        }
-      }
-
-
-      /// <summary>
-      /// 
-      /// </summary>
-      /// <param name="from"></param>
-      /// <param name="ft"></param>
-      public TextItem(TextItem from, Font ft)
-      {
-        m_Type = InnerType.Empty;
-        m_Text = "";
-        m_bUnderlined = from.m_bUnderlined;
-        m_bItalic = from.m_bItalic;
-        m_bBold = from.m_bBold;
-        m_bGreek = from.m_bGreek;
-        m_SubIndex = from.m_SubIndex;
-        m_yShift = from.m_yShift;
-        m_Font = null != ft ? ft : from.m_Font;
-      }
-
-      public Font Font
-      {
-        get { return m_Font; }
-      }
-
-
-      public bool IsEmpty
-      {
-        get { return m_Type == InnerType.Empty; }
-      }
-
-      public bool IsText
-      {
-        get { return m_Type == InnerType.Text; }
-      }
-
-      public bool IsSymbol
-      {
-        get { return m_Type == InnerType.Symbol; }
-      }
-
-      public bool IsPlotCurveName
-      {
-        get
-        {
-          return m_Type == InnerType.PlotCurveName;
-        }
-      }
-    }
-
-
-    protected class TextLine
-    {
-      List<TextItem> InnerList = new List<TextItem>();
-
-      protected internal float m_cyLineSpace; // linespace value : cyAscent + cyDescent
-      protected internal float m_cyAscent;    // height of the items above the ground line
-      protected internal float m_cyDescent; /// heigth of the items below the ground line
-      protected internal float m_Width; // cached width of the line (sum of width of all items)
-
-
-      public int Count { get { return InnerList.Count; } }
-
-      public TextItem this[int i]
-      {
-        get { return InnerList[i]; }
-        set
-        {
-          if (i < Count)
-            InnerList[i] = value;
-          else if (i == Count)
-            InnerList.Add(value);
-          else
-            throw new System.ArgumentOutOfRangeException("i", i, "The index was not in the valid range");
-        }
-      }
-
-      public void Add(TextItem ti)
-      {
-        InnerList.Add(ti);
-      }
-
-      public class TextLineCollection : Altaxo.Data.CollectionBase
-      {
-
-        public TextLine this[int i]
-        {
-          get { return (TextLine)base.InnerList[i]; }
-          set { base.InnerList[i] = value; }
-        }
-
-        public void Add(TextLine tl)
-        {
-          base.InnerList.Add(tl);
-        }
-      }
-
-
-    } // end of class TextLine
+    #region Deprecated classes
 
     [Serializable]
     private enum BackgroundStyle

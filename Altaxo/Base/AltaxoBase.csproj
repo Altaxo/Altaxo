@@ -1197,6 +1197,10 @@
     <Compile Include="Graph\Gdi\GraphDocumentLayerCreation.cs" />
     <Compile Include="Graph\Gdi\GraphDocumentOtherActions.cs" />
     <Compile Include="Graph\Gdi\GraphDocumentPrinting.cs" />
+    <Compile Include="Graph\Gdi\Shapes\TextGraphic_PegBase.cs" />
+    <Compile Include="Graph\Gdi\Shapes\TextGraphic_Glyphs.cs" />
+    <Compile Include="Graph\Gdi\Shapes\TextGraphic_TreeWalker.cs" />
+    <Compile Include="Graph\Gdi\Shapes\TextGraphic_Parser.cs" />
     <Compile Include="Graph\GUI\GraphControllerActions.cs" />
     <Compile Include="Graph\SingleGraphPrintOptions.cs" />
     <Compile Include="Graph\Gdi\IGripManipulationHandle.cs" />

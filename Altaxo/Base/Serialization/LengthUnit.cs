@@ -37,7 +37,7 @@ namespace Altaxo.Serialization
     static LengthUnit _mil;
     static LengthUnit _point;
     static LengthUnit _inch;
-    static Dictionary<string, LengthUnit> _shortcutToUnit;
+    static SortedDictionary<string, LengthUnit> _shortcutToUnit;
     static List<string> _shortcuts;
 
     static LengthUnit()
@@ -50,13 +50,17 @@ namespace Altaxo.Serialization
 
       
      
-      _shortcutToUnit = new Dictionary<string, LengthUnit>();
+      _shortcutToUnit = new SortedDictionary<string, LengthUnit>();
       _shortcutToUnit.Add(_millimeter.Shortcut,_millimeter);
       _shortcutToUnit.Add(_centimeter.Shortcut, _centimeter);
       _shortcutToUnit.Add(_mil.Shortcut, _mil);
       _shortcutToUnit.Add(_point.Shortcut, _point);
       _shortcutToUnit.Add(_inch.Shortcut, _inch);
 
+			// Alternative shortcuts
+			_shortcutToUnit.Add("Mil", _mil);
+			_shortcutToUnit.Add("Inch", _inch);
+			_shortcutToUnit.Add("inch", _inch);
 
       _shortcuts = new List<string>();
       foreach (string k in _shortcutToUnit.Keys)
@@ -99,6 +103,34 @@ namespace Altaxo.Serialization
       } 
     }
 
+		static readonly char[] _digitsOrSpace = new char[] { ' ', '\t', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
+	
+		/// <summary>
+		/// Parse a string that ends with a length unit to return the length unit. The string is trimmed at the end before use.
+		/// </summary>
+		/// <param name="s">String to parse.</param>
+		/// <param name="lengthUnit">On success, returns the length unit parsed.</param>
+		/// <param name="remainder">On success, returns the part of the input string, which belongs not to the length unit.</param>
+		/// <returns>True if successfull, otherwise false.</returns>
+		public static bool TryParse(string s, out LengthUnit lengthUnit, out string remainder)
+		{
+			s = s.TrimEnd();
 
-  }
+			for (int i = _shortcuts.Count-1; i >= 0; i--)
+			{
+				if (s.EndsWith(_shortcuts[i]))
+				{
+					lengthUnit = _shortcutToUnit[_shortcuts[i]];
+					remainder = s.Substring(0, s.Length - _shortcuts[i].Length);
+					return true;
+				}
+			}
+
+			lengthUnit = null;
+			remainder = null;
+			return false;
+		}
+
+
+	}
 }
