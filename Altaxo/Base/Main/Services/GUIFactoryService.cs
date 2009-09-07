@@ -409,10 +409,36 @@ namespace Altaxo.Main.Services
       object[] args = new object[1];
       args[0] = arg;
       bool result = ShowDialog(args, title, showApplyButton);
-      arg = args[0];
+      if(result)
+				arg = args[0];
       return result;
     }
 
+
+		/// <summary>
+		/// Shows a configuration dialog for any item.
+		/// </summary>
+		/// <param name="arg">The object to configure.
+		/// If the return value is true, arg contains the configured object. </param>
+		/// <param name="title">The title of the dialog.</param>
+		/// <param name="showApplyButton">If true, the Apply button is shown.</param>
+		/// <returns>True if the object was successfully configured, false otherwise.</returns>
+		/// <remarks>The presumtions to get this function working are:
+		/// <list>
+		/// <item>A controller which implements <see cref="IMVCAController" /> has to exist.</item>
+		/// <item>A <see cref="UserControllerForObjectAttribute" /> has to be assigned to that controller, and the argument has to be the type of the object you want to configure.</item>
+		/// <item>A GUI control (Windows Forms: UserControl) must exist, to which an <see cref="UserControlForControllerAttribute" /> is assigned to, and the argument of that attribute has to be the type of the controller.</item>
+		/// </list>
+		/// </remarks>
+		public bool ShowDialog<T>(ref T arg, string title, bool showApplyButton)
+		{
+			object[] args = new object[1];
+			args[0] = arg;
+			bool result = ShowDialog(args, title, showApplyButton);
+			if(result)
+				arg = (T)args[0];
+			return result;
+		}
 
     /// <summary>
     /// Shows a message box with the error text.

@@ -117,25 +117,22 @@ namespace Altaxo.Worksheet
     public override string GetColumnValueAtRow(int nRow, Altaxo.Data.DataColumn data)
     {
       DateTime val = ((Altaxo.Data.DateTimeColumn)data)[nRow];
-      return val==Altaxo.Data.DateTimeColumn.NullValue ? "" : val.ToString();
+			return val == Altaxo.Data.DateTimeColumn.NullValue ? "" : val.ToString("o");
     }
   
     public override void SetColumnValueAtRow(string s, int nRow, Altaxo.Data.DataColumn data)
     {
-      DateTime newval;
-      try
-      { 
-        newval = s.Length==0 ? Altaxo.Data.DateTimeColumn.NullValue : System.Convert.ToDateTime(s);
+			DateTime newval = Altaxo.Data.DateTimeColumn.NullValue;
+			if (string.IsNullOrEmpty(s) || DateTime.TryParse(s, System.Globalization.CultureInfo.CurrentCulture, System.Globalization.DateTimeStyles.RoundtripKind, out newval))
         ((Altaxo.Data.DateTimeColumn)data)[nRow] = newval;
-      }
-      catch(Exception) {}
+      
     }
 
     public override void Paint(Graphics dc, Rectangle cellRectangle, int nRow, Altaxo.Data.DataColumn data, bool bSelected)
     {
       PaintBackground(dc, cellRectangle, bSelected);
 
-			string myString = ((Altaxo.Data.DateTimeColumn)data)[nRow].ToLocalTime().ToString();
+			string myString = ((Altaxo.Data.DateTimeColumn)data)[nRow].ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss.FFFFFFF");
     
       if(bSelected)
         dc.DrawString(myString, m_TextFont, _defaultSelectedTextBrush, cellRectangle, m_TextFormat);

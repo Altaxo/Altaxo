@@ -1602,6 +1602,7 @@
     <Compile Include="Main\InstanceChangedEvent.cs" />
     <Compile Include="Main\Services\IPropertyService.cs" />
     <Compile Include="Scripting\ProgramInstanceScript.cs" />
+    <Compile Include="Serialization\Ascii\AsciiExportOptions.cs" />
     <Compile Include="Serialization\Ascii\AsciiGlobalStructureAnalysis.cs" />
     <Compile Include="Serialization\Ascii\AsciiLineAnalysis.cs" />
     <Compile Include="Serialization\Ascii\AsciiSeparationStrategy.cs" />

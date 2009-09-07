@@ -22,6 +22,7 @@
 
 using System;
 using System.IO;
+using System.Collections.Generic;
 
 namespace Altaxo.Serialization.Ascii
 {
@@ -36,15 +37,15 @@ namespace Altaxo.Serialization.Ascii
     /// <param name="strwr">A stream writer to write the ascii data to.</param>
     /// <param name="table">The data table whichs data column names should be exported.</param>
     /// <param name="separator">The separator char. If the text to export contains the separator char, it is replaced by a space.</param>
-    static protected void ExportDataColumnNames(StreamWriter strwr, Altaxo.Data.DataTable table, char separator)
+    static protected void ExportDataColumnNames(StreamWriter strwr, Altaxo.Data.DataTable table, AsciiExportOptions options)
     {
       int nColumns = table.DataColumns.ColumnCount;
       for(int i=0;i<nColumns;i++)
       {
-        strwr.Write(table.DataColumns.GetColumnName(i).Replace(separator,' '));
+        strwr.Write(table.DataColumns.GetColumnName(i).Replace(options.SeparatorChar, options.SubstituteForSeparatorChar));
   
         if((i+1)<nColumns)
-          strwr.Write(separator);
+          strwr.Write(options.SeparatorChar);
         else 
           strwr.WriteLine();
   
@@ -65,21 +66,21 @@ namespace Altaxo.Serialization.Ascii
     /// <param name="strwr">A stream writer to write the ascii data to.</param>
     /// <param name="columnCollection">The column collection to export.</param>
     /// <param name="nDataColumns">The number of data columns of the table -> is the number of elements in each property column that must be exported.</param>
-    /// <param name="separator">The separator char. If the text to export contains the separator char, it is replaced by a space.</param>
-    static protected void ExportPropertyColumns(StreamWriter strwr, Altaxo.Data.DataColumnCollection columnCollection, int nDataColumns, char separator)
+    /// <param name="options">The Ascii export options.</param>
+    static protected void ExportPropertyColumns(StreamWriter strwr, Altaxo.Data.DataColumnCollection columnCollection, int nDataColumns, AsciiExportOptions options)
     {
       int nPropColumns = columnCollection.ColumnCount;
 
       for(int i=0;i<nPropColumns;i++)
       {
-        string columnName = columnCollection.GetColumnName(i).Replace(separator, ' ');
+        string columnName = columnCollection.GetColumnName(i).Replace(options.SeparatorChar, options.SubstituteForSeparatorChar);
         columnName += "=";
         bool isTextColumn = columnCollection[i] is Data.TextColumn;
         for (int j = 0; j < nDataColumns; j++)
         {
           if(!columnCollection[i].IsElementEmpty(j))
           {
-            string data = columnCollection[i][j].ToString().Replace(separator,' ');
+            string data = columnCollection[i][j].ToString().Replace(options.SeparatorChar, options.SubstituteForSeparatorChar);
             if(!isTextColumn && !data.Contains("="))
               strwr.Write(columnName);
 
@@ -90,7 +91,7 @@ namespace Altaxo.Serialization.Ascii
             
           }
           if((j+1)<nDataColumns)
-            strwr.Write(separator);
+            strwr.Write(options.SeparatorChar);
           else 
             strwr.WriteLine();
         }
@@ -98,29 +99,30 @@ namespace Altaxo.Serialization.Ascii
 
     }
 
-
     /// <summary>
     /// Exports the data columns into Ascii. Each data row is exported into one row (line).
     /// </summary>
     /// <param name="strwr">A stream writer to write the ascii data to.</param>
     /// <param name="columnCollection">The column collection to export.</param>
     /// <param name="separator">The separator char. If the text to export contains the separator char, it is replaced by a space.</param>
-    static protected void ExportDataColumns(StreamWriter strwr, Altaxo.Data.DataColumnCollection columnCollection, char separator)
+    static protected void ExportDataColumns(
+      StreamWriter strwr, 
+      Altaxo.Data.DataColumnCollection columnCollection, 
+      AsciiExportOptions options
+      )
     {
       int nRows = columnCollection.RowCount;
       int nColumns = columnCollection.ColumnCount;
 
-      for(int i=0;i<nRows;i++)
+      for (int i = 0; i < nRows; i++)
       {
-        for(int j=0;j<nColumns;j++)
+        for (int j = 0; j < nColumns; j++)
         {
-          if(!columnCollection[j].IsElementEmpty(i))
-          {
-            strwr.Write(columnCollection[j][i].ToString().Replace(separator,' '));
-          }
-          if((j+1)<nColumns)
-            strwr.Write(separator);
-          else 
+          strwr.Write(options.DataItemToString(columnCollection[j], i));
+
+          if ((j + 1) < nColumns)
+            strwr.Write(options.SeparatorChar);
+          else
             strwr.WriteLine();
         }
       }
@@ -132,19 +134,48 @@ namespace Altaxo.Serialization.Ascii
     /// <param name="myStream">The stream the table should be exported to.</param>
     /// <param name="table">The table that is to be exported.</param>
     /// <param name="separator">The separator char that separates the items from each other.</param>
-    static public void ExportAscii(System.IO.Stream myStream, Altaxo.Data.DataTable table, char separator)
+    static public void ExportAscii(System.IO.Stream myStream, Altaxo.Data.DataTable table, AsciiExportOptions options)
     {
       StreamWriter strwr = new StreamWriter(myStream, System.Text.Encoding.Default); // Change to Unicode or quest encoding by a dialog box
 
-      ExportDataColumnNames(strwr,table,separator);
+      ExportDataColumnNames(strwr,table,options);
     
-      ExportPropertyColumns(strwr,table.PropCols,table.DataColumns.ColumnCount,separator);
+      ExportPropertyColumns(strwr,table.PropCols,table.DataColumns.ColumnCount,options);
 
-      ExportDataColumns(strwr,table.DataColumns,separator);
+      ExportDataColumns(strwr,table.DataColumns,options);
 
       strwr.Flush();
     }
 
+
+     /// <summary>
+    /// Exports a table to Ascii using a stream. The stream is <b>not</b> closed at the end of this function.
+    /// </summary>
+    /// <param name="myStream">The stream the table should be exported to.</param>
+    /// <param name="table">The table that is to be exported.</param>
+    /// <param name="separator">The separator char that separates the items from each other.</param>
+    static public void ExportAscii(System.IO.Stream myStream, Altaxo.Data.DataTable table, char separator)
+    {
+      AsciiExportOptions options = new AsciiExportOptions();
+      options.SetSeparator(separator);
+      ExportAscii(myStream, table, options);
+    }
+
+    /// <summary>
+    /// Exports a table into an Ascii file.
+    /// </summary>
+    /// <param name="filename">The filename used to export the file.</param>
+    /// <param name="table">The table to export.</param>
+    /// <param name="options">The Ascii export options used for export.</param>
+    static public void ExportAscii(string filename, Altaxo.Data.DataTable table, AsciiExportOptions options)
+    {
+
+      using (System.IO.FileStream myStream = new System.IO.FileStream(filename, System.IO.FileMode.Create))
+      {
+        ExportAscii(myStream, table, options);
+        myStream.Close();
+      }
+    }
 
     /// <summary>
     /// Exports a table into an Ascii file.
@@ -154,13 +185,12 @@ namespace Altaxo.Serialization.Ascii
     /// <param name="separator">The separator char used to export the table. Normally, you should use a tabulator here.</param>
     static public void ExportAscii(string filename, Altaxo.Data.DataTable table, char separator)
     {
-
-      System.IO.FileStream myStream = new System.IO.FileStream(filename,System.IO.FileMode.Create);
-
-      ExportAscii(myStream,table,separator);
-
-      myStream.Close();
+      AsciiExportOptions options = new AsciiExportOptions();
+      options.SetSeparator( separator );
+      ExportAscii(filename, table, options);
     }
 
   }
+
+ 
 }

@@ -28,6 +28,7 @@ namespace Altaxo.Gui.Common
   /// Summary description for NumericDoubleValueController.
   /// </summary>
   [UserControllerForObject(typeof(double),100)]
+	[ExpectedTypeOfView(typeof(ISingleValueView))]
   public class NumericDoubleValueController : SingleValueController
   {
     protected double _value1Double;
