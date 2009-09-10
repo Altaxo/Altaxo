@@ -44,7 +44,111 @@ namespace Altaxo.Data
     private int      m_Capacity; // shortcut to m_Array.Length;
     private int        m_Count;
     public static readonly double NullValue = Double.NaN;
-    
+
+    #region Overridden functions
+
+    public override object Clone()
+    {
+      return new DoubleColumn(this);
+    }
+
+    public override int Count
+    {
+      get
+      {
+        return m_Count;
+      }
+    }
+
+    // indexers
+    public override void SetValueAt(int i, AltaxoVariant val)
+    {
+      if (val.IsType(AltaxoVariant.Content.VDouble))
+        this[i] = val.m_Double;
+      else if (val.CanConvertedToDouble)
+        this[i] = val.ToDouble();
+      else
+        throw new ApplicationException("Error: Try to set " + this.TypeAndName + "[" + i + "] with the string " + val.ToString());
+    }
+
+    public override AltaxoVariant GetVariantAt(int i)
+    {
+      return new AltaxoVariant(this[i]);
+    }
+
+
+
+    public override bool IsElementEmpty(int i)
+    {
+      return i < m_Count ? Double.IsNaN(m_Array[i]) : true;
+    }
+
+
+    public override void SetElementEmpty(int i)
+    {
+      if (i < m_Count)
+        this[i] = NullValue;
+    }
+
+    public override void RemoveRows(int nDelFirstRow, int nDelCount)
+    {
+      if (nDelFirstRow < 0)
+        throw new ArgumentException("Row number must be greater or equal 0, but was " + nDelFirstRow.ToString(), "nDelFirstRow");
+
+      if (nDelCount <= 0)
+        return; // nothing to do here, but we dont catch it
+
+      // we must be careful, since the range to delete can be
+      // above the range this column actually holds, but
+      // we must handle this the right way
+      int i, j;
+      for (i = nDelFirstRow, j = nDelFirstRow + nDelCount; j < m_Count; i++, j++)
+        m_Array[i] = m_Array[j];
+
+      int prevCount = m_Count;
+      m_Count = i < m_Count ? i : m_Count; // m_Count can only decrease
+
+      if (m_Count != prevCount) // raise a event only if something really changed
+        this.NotifyDataChanged(nDelFirstRow, prevCount, true);
+    }
+
+    public override void InsertRows(int nInsBeforeColumn, int nInsCount)
+    {
+      if (nInsCount <= 0 || nInsBeforeColumn >= Count)
+        return; // nothing to do
+
+      int newlen = this.m_Count + nInsCount;
+      if (newlen > m_Capacity)
+        Realloc(newlen);
+
+      // copy values from m_Count downto nBeforeColumn 
+      for (int i = m_Count - 1, j = newlen - 1; i >= nInsBeforeColumn; i--, j--)
+        m_Array[j] = m_Array[i];
+
+      for (int i = nInsBeforeColumn + nInsCount - 1; i >= nInsBeforeColumn; i--)
+        m_Array[i] = NullValue;
+
+      this.m_Count = newlen;
+      this.NotifyDataChanged(nInsBeforeColumn, m_Count, false);
+    }
+
+    public override void CopyDataFrom(Altaxo.Data.DataColumn v)
+    {
+      if (v.GetType() != typeof(Altaxo.Data.DoubleColumn))
+      {
+        throw new ArgumentException("Try to copy " + v.GetType() + " to " + this.GetType(), "v"); // throw exception
+      }
+
+      this.CopyDataFrom(((Altaxo.Data.DoubleColumn)v).m_Array, v.Count);
+    }     
+
+    public override System.Type GetColumnStyleType()
+    {
+      return typeof(Altaxo.Worksheet.DoubleColumnStyle);
+    }
+    #endregion
+
+
     public DoubleColumn()
     {
     }
@@ -65,10 +169,7 @@ namespace Altaxo.Data
       this.m_Array    = null==from.m_Array ? null : (double[])from.m_Array.Clone();
     }
 
-    public override object Clone()
-    {
-      return new DoubleColumn(this);
-    }
+   
 
 
     #region "Serialization"
@@ -183,13 +284,7 @@ namespace Altaxo.Data
 
     #endregion
 
-    public override int Count
-    {
-      get
-      {
-        return m_Count;
-      }
-    }
+   
 
     public double[] Array
     {
@@ -215,21 +310,10 @@ namespace Altaxo.Data
       return m_Array[idx];
     }
 
-    public override System.Type GetColumnStyleType()
-    {
-      return typeof(Altaxo.Worksheet.DoubleColumnStyle);
-    }
+  
         
         
-    public override void CopyDataFrom(Altaxo.Data.DataColumn v)
-    {
-      if(v.GetType()!=typeof(Altaxo.Data.DoubleColumn))
-      {
-        throw new ArgumentException("Try to copy " + v.GetType() + " to " + this.GetType(),"v"); // throw exception
-      }
-
-      this.CopyDataFrom(((Altaxo.Data.DoubleColumn)v).m_Array,v.Count);
-    }       
+     
 
     /// <summary>
     /// Returns the used length of the array. This is one plus the highest index of the number different from Double.NaN.
@@ -293,13 +377,30 @@ namespace Altaxo.Data
 
     /// <summary>
     /// Provides a setter property to which a vector can be assigned to. Copies all elements of the vector to this column. 
-    /// The getter property creates a wrapper for this data column that implements IROVector
+    /// The getter property creates a wrapper for this data column that implements IVector. The length of the wrapped vector is set to the current Count of the DoubleColumn.
     /// </summary>
-    public Altaxo.Calc.LinearAlgebra.IROVector Vector
+    public override Altaxo.Calc.LinearAlgebra.IROVector AssignVector
     {
-      get { return Altaxo.Calc.LinearAlgebra.DataColumnWrapper.ToROVector(this); }
-      set { CopyDataFrom(value, value.Length); }
+      set
+      {
+        CopyDataFrom(value, value.Length); 
+      }
     }
+
+    /// <summary>
+    /// Provides a setter property to which a readonly vector can be assigned to. Copies all elements of the readonly vector to this column. 
+    /// The getter property creates a wrapper for this data column that implements IROVector. For short time use only, since it reflects changes in the data, but not in the length of the DoubleColumn.
+    /// </summary>
+    public override Altaxo.Calc.LinearAlgebra.IROVector ToROVector(int start, int count)
+    {
+        return new ROVector(this, start, count);
+    }
+
+    public override Altaxo.Calc.LinearAlgebra.IVector ToVector(int start, int count)
+    {
+      return new RWVector(this, start, count);
+    }
+
 
     /// <summary>
     /// Copies the data from an read-only into the column. The data from index 0 until <c>count-1</c> is copied to the destination.
@@ -334,8 +435,8 @@ namespace Altaxo.Data
 
     protected void Realloc(int i)
     {
-      int newcapacity1 = (int)(m_Capacity*increaseFactor+addSpace);
-      int newcapacity2 = i+addSpace+1;
+      int newcapacity1 = (int)(m_Capacity*_increaseFactor+_addSpace);
+      int newcapacity2 = i+_addSpace+1;
       int newcapacity = newcapacity1>newcapacity2 ? newcapacity1:newcapacity2;
         
       double[] newarray = new double[newcapacity];
@@ -348,34 +449,7 @@ namespace Altaxo.Data
       m_Capacity = m_Array.Length;
     }
 
-    // indexers
-    public override void SetValueAt(int i, AltaxoVariant val)
-    {
-      if(val.IsType(AltaxoVariant.Content.VDouble))
-        this[i] = val.m_Double;
-      else if(val.CanConvertedToDouble)
-        this[i] = val.ToDouble();
-      else
-        throw new ApplicationException("Error: Try to set " + this.TypeAndName + "[" + i + "] with the string " + val.ToString());
-    }
-
-    public override AltaxoVariant GetVariantAt(int i)
-    {
-      return new AltaxoVariant(this[i]);
-    }
-
    
-
-    public override bool IsElementEmpty(int i)
-    {
-      return i<m_Count ? Double.IsNaN(m_Array[i]) : true;
-    }
-    public override void SetElementEmpty(int i)
-    {
-      if (i < m_Count)
-        this[i] = NullValue;
-    }
-
     public new double this[int i]
     {
       get
@@ -440,51 +514,103 @@ namespace Altaxo.Data
     } // end indexer
 
 
-    public override void InsertRows(int nInsBeforeColumn, int nInsCount)
+
+    #region Vector decorators
+
+    private class ROVector : Altaxo.Calc.LinearAlgebra.IROVector
     {
-      if(nInsCount<=0 || nInsBeforeColumn>=Count)
-        return; // nothing to do
+      DoubleColumn _col;
+      int _start;
+      int _count;
 
-      int newlen = this.m_Count + nInsCount;
-      if(newlen>m_Capacity)
-        Realloc(newlen);
+      public ROVector(DoubleColumn col, int start, int count)
+      {
+        _col = col;
+        _start = start;
+        _count = count;
+      }
 
-      // copy values from m_Count downto nBeforeColumn 
-      for(int i=m_Count-1, j=newlen-1; i>=nInsBeforeColumn;i--,j--)
-        m_Array[j] = m_Array[i];
+      #region IROVector Members
 
-      for(int i=nInsBeforeColumn+nInsCount-1;i>=nInsBeforeColumn;i--)
-        m_Array[i]=NullValue;
-    
-      this.m_Count=newlen;
-      this.NotifyDataChanged(nInsBeforeColumn,m_Count,false);
+      public int LowerBound
+      {
+        get { return 0; }
+      }
+
+      public int UpperBound
+      {
+        get { return _count - 1; }
+      }
+
+      public int Length
+      {
+        get { return _count; }
+      }
+
+      #endregion
+
+      #region INumericSequence Members
+
+      public double this[int i]
+      {
+        get { return _col[_start+i]; }
+      }
+
+      #endregion
     }
 
-    public override void RemoveRows(int nDelFirstRow, int nDelCount)
+    private class RWVector : Altaxo.Calc.LinearAlgebra.IVector
     {
-      if(nDelFirstRow<0)
-        throw new ArgumentException("Row number must be greater or equal 0, but was " + nDelFirstRow.ToString(), "nDelFirstRow");
+      DoubleColumn _col;
+      int _start;
+      int _count;
 
-      if(nDelCount<=0)
-        return; // nothing to do here, but we dont catch it
+      public RWVector(DoubleColumn col, int start, int count)
+      {
+        _col = col;
+        _start = start;
+        _count = count;
+      }
 
-      // we must be careful, since the range to delete can be
-      // above the range this column actually holds, but
-      // we must handle this the right way
-      int i,j;
-      for(i=nDelFirstRow,j=nDelFirstRow+nDelCount;j<m_Count;i++,j++)
-        m_Array[i]=m_Array[j];
-      
-      int prevCount = m_Count;
-      m_Count= i<m_Count ? i : m_Count; // m_Count can only decrease
+      #region IVector Members
 
-      if(m_Count!=prevCount) // raise a event only if something really changed
-        this.NotifyDataChanged(nDelFirstRow,prevCount,true);
+      public double this[int i]
+      {
+        get
+        {
+          return _col[_start+i];
+        }
+        set
+        {
+          _col[_start+i] = value;
+        }
+      }
+
+      #endregion
+
+      #region IROVector Members
+
+      public int LowerBound
+      {
+        get { return 0; }
+      }
+
+      public int UpperBound
+      {
+        get { return _count - 1; }
+      }
+
+      public int Length
+      {
+        get { return _count; }
+      }
+
+      #endregion
     }
 
+    #endregion
 
-
-    #region "Operators"
+    #region Operators
 
     // -----------------------------------------------------------------------------
     //

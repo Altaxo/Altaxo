@@ -1260,6 +1260,18 @@ namespace Altaxo.Graph.GUI
         ((ObjectPointerMouseHandler)_mouseState).GroupSelectedObjects();
     }
 
+    public void SetSelectedObjectsProperty(IRoutedSetterProperty property)
+    {
+      if (_mouseState is ObjectPointerMouseHandler)
+        ((ObjectPointerMouseHandler)_mouseState).SetSelectedObjectsProperty(property);
+    }
+
+    public void GetSelectedObjectsProperty(IRoutedGetterProperty property)
+    {
+      if (_mouseState is ObjectPointerMouseHandler)
+        ((ObjectPointerMouseHandler)_mouseState).GetSelectedObjectsProperty(property);
+    }
+
     #endregion
 
     #region Arrangement of selected objects

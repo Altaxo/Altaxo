@@ -33,6 +33,7 @@ namespace Altaxo.Graph.Gdi.Axis
   public abstract class AxisLabelStyleBase 
     :
     Main.IChangedEventSource, 
+    IRoutedPropertyReceiver,
     Main.IDocumentNode,
     System.ICloneable
   {
@@ -93,6 +94,34 @@ namespace Altaxo.Graph.Gdi.Axis
     public string Name
     {
       get { return this.GetType().Name; }
+    }
+
+    #endregion
+
+    #region IRoutedPropertyReceiver Members
+
+    public virtual void SetRoutedProperty(IRoutedSetterProperty property)
+    {
+      switch (property.Name)
+      {
+        case "FontSize":
+          {
+            var prop = (RoutedSetterProperty<double>)property;
+            this.FontSize = (float)prop.Value;
+            OnChanged();
+          }
+          break;
+      }
+    }
+
+    public virtual void GetRoutedProperty(IRoutedGetterProperty property)
+    {
+      switch (property.Name)
+      {
+        case "FontSize":
+          ((RoutedGetterProperty<double>)property).Merge(this.FontSize);
+          break;
+      }
     }
 
     #endregion

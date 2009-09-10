@@ -838,6 +838,18 @@ namespace Altaxo.Graph.Gdi.Shapes
 			}
 		}
 
+		class DocumentIdentifier : TextGlyph
+		{
+			public DocumentIdentifier(StyleContext style)
+			: base(null,style)
+			{
+			}
+			public override void Measure(Graphics g, MeasureContext mc, double x)
+			{
+				_text = Current.Project.DocumentIdentifier;
+				base.Measure(g, mc, x);
+			}
+		}
 
 		#endregion
 

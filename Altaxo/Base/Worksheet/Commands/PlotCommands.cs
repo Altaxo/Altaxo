@@ -304,6 +304,21 @@ namespace Altaxo.Worksheet.Commands
     #endregion
 
 
+		  /// <summary>
+    /// Plots selected data columns of a table.
+    /// </summary>
+    /// <param name="table">The source table.</param>
+    /// <param name="selectedColumns">The data columns of the table that should be plotted.</param>
+    /// <param name="templatePlotStyle">The plot style which is the template for all plot items.</param>
+    /// <param name="groupStyles">The group styles for the newly built plot item collection.</param>
+		public static IGraphController Plot(DataTable table,
+			IAscendingIntegerCollection selectedColumns,
+			 G2DPlotStyleCollection templatePlotStyle,
+			PlotGroupStyleCollection groupStyles)
+		{
+			return Plot(table, selectedColumns, templatePlotStyle, groupStyles, null);
+		}
+
     /// <summary>
     /// Plots selected data columns of a table.
     /// </summary>
@@ -311,13 +326,18 @@ namespace Altaxo.Worksheet.Commands
     /// <param name="selectedColumns">The data columns of the table that should be plotted.</param>
     /// <param name="templatePlotStyle">The plot style which is the template for all plot items.</param>
     /// <param name="groupStyles">The group styles for the newly built plot item collection.</param>
-    public static IGraphController Plot(DataTable table, 
+    /// <param name="preferredGraphName">Preferred name of the graph. Can be null if you have no preference.</param>
+		public static IGraphController Plot(DataTable table, 
       IAscendingIntegerCollection selectedColumns,
        G2DPlotStyleCollection templatePlotStyle,
-      PlotGroupStyleCollection groupStyles)
+      PlotGroupStyleCollection groupStyles,
+			string preferredGraphName)
     {
       Altaxo.Graph.Gdi.GraphDocument graph = new Altaxo.Graph.Gdi.GraphDocument();
-      Altaxo.Graph.Gdi.XYPlotLayer layer = new Altaxo.Graph.Gdi.XYPlotLayer(graph.DefaultLayerPosition, graph.DefaultLayerSize);
+			if(!string.IsNullOrEmpty(preferredGraphName))
+				graph.Name = preferredGraphName;
+  
+			Altaxo.Graph.Gdi.XYPlotLayer layer = new Altaxo.Graph.Gdi.XYPlotLayer(graph.DefaultLayerPosition, graph.DefaultLayerSize);
       layer.CreateDefaultAxes();
       graph.Layers.Add(layer);
       Current.Project.GraphDocumentCollection.Add(graph);
@@ -383,7 +403,7 @@ namespace Altaxo.Worksheet.Commands
     /// <param name="bScatter">If true, scatter symbols are plotted.</param>
     public static void PlotLine(GUI.WorksheetController dg, bool bLine, bool bScatter)
     {
-      PlotLine(dg.DataTable,dg.SelectedDataColumns,bLine,bScatter);
+      PlotLine(dg.DataTable,dg.SelectedDataColumns,bLine,bScatter, null);
     }
 
     /// <summary>
@@ -393,14 +413,15 @@ namespace Altaxo.Worksheet.Commands
     /// <param name="selectedColumns">The data columns of the table that should be plotted.</param>
     /// <param name="bLine">If true, the line style is activated (the points are connected by lines).</param>
     /// <param name="bScatter">If true, the scatter style is activated (the points are plotted as symbols).</param>
-    public static void PlotLine(DataTable table, Altaxo.Collections.IAscendingIntegerCollection selectedColumns, bool bLine, bool bScatter)
+		/// <param name="preferredGraphName">Preferred name of the graph. Can be null if you have no preference.</param>
+		public static void PlotLine(DataTable table, Altaxo.Collections.IAscendingIntegerCollection selectedColumns, bool bLine, bool bScatter, string preferredGraphName)
     {
       if (bLine && bScatter)
-        Plot(table, selectedColumns, PlotStyle_Line_Symbol, GroupStyle_Color_Line_Symbol);
+        Plot(table, selectedColumns, PlotStyle_Line_Symbol, GroupStyle_Color_Line_Symbol, preferredGraphName);
       else if (bLine)
-        Plot(table, selectedColumns, PlotStyle_Line, GroupStyle_Color_Line);
+				Plot(table, selectedColumns, PlotStyle_Line, GroupStyle_Color_Line, preferredGraphName);
       else
-        Plot(table, selectedColumns, PlotStyle_Symbol, GroupStyle_Color_Symbol);
+				Plot(table, selectedColumns, PlotStyle_Symbol, GroupStyle_Color_Symbol, preferredGraphName);
     }
 
     /// <summary>

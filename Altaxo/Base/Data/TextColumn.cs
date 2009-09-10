@@ -240,8 +240,8 @@ namespace Altaxo.Data
 
     protected void Realloc(int i)
     {
-      int newcapacity1 = (int)(m_Capacity*increaseFactor+addSpace);
-      int newcapacity2 = i+addSpace+1;
+      int newcapacity1 = (int)(m_Capacity*_increaseFactor+_addSpace);
+      int newcapacity2 = i+_addSpace+1;
       int newcapacity = newcapacity1>newcapacity2 ? newcapacity1:newcapacity2;
         
       string[] newarray = new string[newcapacity];

@@ -1202,6 +1202,7 @@
     <Compile Include="Graph\Gdi\Shapes\TextGraphic_TreeWalker.cs" />
     <Compile Include="Graph\Gdi\Shapes\TextGraphic_Parser.cs" />
     <Compile Include="Graph\GUI\GraphControllerActions.cs" />
+    <Compile Include="Graph\IRoutedProperty.cs" />
     <Compile Include="Graph\SingleGraphPrintOptions.cs" />
     <Compile Include="Graph\Gdi\IGripManipulationHandle.cs" />
     <Compile Include="Graph\Gdi\IGrippableObject.cs" />
@@ -1600,6 +1601,7 @@
     <Compile Include="Main\DocumentInformation.cs" />
     <Compile Include="Main\EventSuppressor.cs" />
     <Compile Include="Main\InstanceChangedEvent.cs" />
+    <Compile Include="Main\NameHelper.cs" />
     <Compile Include="Main\Services\IPropertyService.cs" />
     <Compile Include="Scripting\ProgramInstanceScript.cs" />
     <Compile Include="Serialization\Ascii\AsciiExportOptions.cs" />

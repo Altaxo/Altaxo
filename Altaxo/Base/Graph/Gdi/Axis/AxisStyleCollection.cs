@@ -41,6 +41,7 @@ namespace Altaxo.Graph.Gdi.Axis
     :
     ICloneable, 
     Main.IChangedEventSource,
+    Main.IChildChangedEventSink,
     Main.IDocumentNode,
     IEnumerable<AxisStyle>
 
@@ -300,6 +301,15 @@ namespace Altaxo.Graph.Gdi.Axis
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
     {
       return _axisStyles.GetEnumerator();
+    }
+
+    #endregion
+
+    #region IChildChangedEventSink Members
+
+    void Altaxo.Main.IChildChangedEventSink.EhChildChanged(object child, EventArgs e)
+    {
+      OnChanged();
     }
 
     #endregion

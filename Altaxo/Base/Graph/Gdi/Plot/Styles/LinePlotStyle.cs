@@ -104,7 +104,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     Main.IChildChangedEventSink,
     Main.IDocumentNode,
     System.Runtime.Serialization.IDeserializationCallback,
-    IG2DPlotStyle
+    IG2DPlotStyle, 
+    IRoutedPropertyReceiver
   {
     /// <summary>
     /// Template to make a line draw.
@@ -1816,6 +1817,37 @@ out int lastIndex)
     public string Name
     {
       get { return this.GetType().Name; }
+    }
+
+    #endregion
+
+    #region IRoutedPropertyReceiver Members
+
+    public void SetRoutedProperty(IRoutedSetterProperty property)
+    {
+      switch (property.Name)
+      {
+        case "StrokeWidth":
+          {
+            var prop = (RoutedSetterProperty<double>)property;
+            this._penHolder.Width = (float)prop.Value;
+            OnChanged();
+          }
+          break;
+      }
+    }
+
+    public void GetRoutedProperty(IRoutedGetterProperty property)
+    {
+      switch (property.Name)
+      {
+        case "StrokeWidth":
+          {
+            var prop = (RoutedGetterProperty<double>)property;
+            prop.Merge(this._penHolder.Width);
+          }
+          break;
+      }
     }
 
     #endregion

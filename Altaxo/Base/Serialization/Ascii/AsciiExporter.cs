@@ -42,7 +42,7 @@ namespace Altaxo.Serialization.Ascii
       int nColumns = table.DataColumns.ColumnCount;
       for(int i=0;i<nColumns;i++)
       {
-        strwr.Write(table.DataColumns.GetColumnName(i).Replace(options.SeparatorChar, options.SubstituteForSeparatorChar));
+        strwr.Write(options.ConvertToSaveString(table.DataColumns.GetColumnName(i)));
   
         if((i+1)<nColumns)
           strwr.Write(options.SeparatorChar);
@@ -51,14 +51,6 @@ namespace Altaxo.Serialization.Ascii
   
       }
     }
-
-		static protected string RemoveNewlineChars(string s)
-		{
-			s = s.Replace('\r', ' ');
-			s = s.Replace('\n', ' ');
-			return s;
-		}
-
 
     /// <summary>
     /// Exports the property columns into Ascii. Each property column is exported into one row (line).
@@ -73,22 +65,19 @@ namespace Altaxo.Serialization.Ascii
 
       for(int i=0;i<nPropColumns;i++)
       {
-        string columnName = columnCollection.GetColumnName(i).Replace(options.SeparatorChar, options.SubstituteForSeparatorChar);
+        string columnName = options.ConvertToSaveString(columnCollection.GetColumnName(i));
         columnName += "=";
         bool isTextColumn = columnCollection[i] is Data.TextColumn;
+
         for (int j = 0; j < nDataColumns; j++)
         {
           if(!columnCollection[i].IsElementEmpty(j))
           {
-            string data = columnCollection[i][j].ToString().Replace(options.SeparatorChar, options.SubstituteForSeparatorChar);
-            if(!isTextColumn && !data.Contains("="))
+            string data = options.DataItemToString(columnCollection[i], j);
+            if(options.ExportPropertiesWithName && !isTextColumn && !data.Contains("="))
               strwr.Write(columnName);
 
-						if (isTextColumn)
-							data = RemoveNewlineChars(data);
-
             strwr.Write(data);
-            
           }
           if((j+1)<nDataColumns)
             strwr.Write(options.SeparatorChar);
@@ -138,9 +127,11 @@ namespace Altaxo.Serialization.Ascii
     {
       StreamWriter strwr = new StreamWriter(myStream, System.Text.Encoding.Default); // Change to Unicode or quest encoding by a dialog box
 
-      ExportDataColumnNames(strwr,table,options);
+      if(options.ExportDataColumnNames)
+        ExportDataColumnNames(strwr,table,options);
     
-      ExportPropertyColumns(strwr,table.PropCols,table.DataColumns.ColumnCount,options);
+      if(options.ExportPropertyColumns)
+        ExportPropertyColumns(strwr,table.PropCols,table.DataColumns.ColumnCount,options);
 
       ExportDataColumns(strwr,table.DataColumns,options);
 

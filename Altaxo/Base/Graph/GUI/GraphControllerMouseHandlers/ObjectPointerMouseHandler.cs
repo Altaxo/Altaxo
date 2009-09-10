@@ -570,10 +570,29 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     /// </summary>
     public void UngroupSelectedObjects()
     {
-      
     }
 
+    public void SetSelectedObjectsProperty(IRoutedSetterProperty property)
+    {
+      foreach (IHitTestObject o in this.m_SelectedObjects)
+      {
+        if (o.HittedObject is IRoutedPropertyReceiver)
+        {
+          ((IRoutedPropertyReceiver)(o.HittedObject)).SetRoutedProperty(property);
+        }
+      }
+    }
 
+    public void GetSelectedObjectsProperty(IRoutedGetterProperty property)
+    {
+      foreach (IHitTestObject o in this.m_SelectedObjects)
+      {
+        if (o.HittedObject is IRoutedPropertyReceiver)
+        {
+          ((IRoutedPropertyReceiver)(o.HittedObject)).GetRoutedProperty(property);
+        }
+      }
+    }
 
     public delegate void ArrangeElement(IHitTestObject obj, RectangleF bounds, RectangleF masterbounds);
 

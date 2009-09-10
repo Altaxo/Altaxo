@@ -1875,6 +1875,21 @@ namespace Altaxo.Data
       }
     }
 
+		/// <summary>
+		/// Returns the column with name <code>s</code>. Sets the column with name <code>s</code> by copying data from
+		/// the other column (not by replacing). An exception is thrown if the two columns are not of the same type.
+		/// </summary>
+		/// <param name="s">The name of the column to retrieve.</param>
+		/// <returns>Either the column with the given name, or Null if such a column don't exist.</returns>
+		public Altaxo.Data.DataColumn TryGetColumn(string s)
+		{
+			DataColumn result;
+			if (_columnsByName.TryGetValue(s, out result))
+				return result;
+			else
+				return null;
+		}
+
     
     /// <summary>
     /// Returns the column at index <code>idx</code>. Sets the column at index<code>idx</code> by copying data from
@@ -1909,6 +1924,9 @@ namespace Altaxo.Data
         }
       }
     }
+
+
+
     #endregion Indexer
 
     #region Collection Properties

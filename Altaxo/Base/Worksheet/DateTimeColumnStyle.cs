@@ -132,7 +132,11 @@ namespace Altaxo.Worksheet
     {
       PaintBackground(dc, cellRectangle, bSelected);
 
-			string myString = ((Altaxo.Data.DateTimeColumn)data)[nRow].ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss.FFFFFFF");
+      DateTime t = ((Altaxo.Data.DateTimeColumn)data)[nRow];
+
+      string myString = (t.Kind == DateTimeKind.Unspecified || t.Kind == DateTimeKind.Local) ?
+        t.ToString("yyyy-MM-dd HH:mm:ss.FFFFFFF") :
+        t.ToString("o");
     
       if(bSelected)
         dc.DrawString(myString, m_TextFont, _defaultSelectedTextBrush, cellRectangle, m_TextFormat);

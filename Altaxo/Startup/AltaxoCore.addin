@@ -666,6 +666,18 @@
         class="Altaxo.Graph.Commands.NewLayerLegend" />
       <ToolbarItem id="RescaleAxes" icon="Icons.16x16.RescaleAxes" tooltip="${res:XML.MainMenu.GraphMenu.RescaleAxes.Description}"
         class="Altaxo.Graph.Commands.RescaleAxes" />
+      <ToolbarItem id    = "FontSizeChooser"
+		             type    = "ComboBox"
+		             tooltip = "${res:MainWindow.Windows.ClassBrowser.SearchButton.ToolTip}"
+		             class   = "Altaxo.Graph.Commands.FontSizeChooser"/>
+      <ToolbarItem id    = "FontFamilyChooser"
+		             type    = "ComboBox"
+		             tooltip = "${res:MainWindow.Windows.ClassBrowser.SearchButton.ToolTip}"
+		             class   = "Altaxo.Graph.Commands.FontFamilyChooser"/>
+      <ToolbarItem id    = "StrokeWidthChooser"
+                type    = "ComboBox"
+                tooltip = "${res:MainWindow.Windows.ClassBrowser.SearchButton.ToolTip}"
+                class   = "Altaxo.Graph.Commands.StrokeWidthChooser"/>
     </Condition>
     <ToolbarItem id="PlotSeparator"  type = "Separator"/>
     <Condition name = "WindowActive" activewindow="Altaxo.Gui.SharpDevelop.SDWorksheetViewContent" action="Disable">

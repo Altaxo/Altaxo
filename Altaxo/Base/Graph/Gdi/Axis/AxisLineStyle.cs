@@ -41,6 +41,7 @@ namespace Altaxo.Graph.Gdi.Axis
     System.Runtime.Serialization.IDeserializationCallback,
     Main.IChangedEventSource,
     Main.IDocumentNode,
+    IRoutedPropertyReceiver,
     ICloneable   
   {
 
@@ -748,6 +749,39 @@ namespace Altaxo.Graph.Gdi.Axis
       get { return this.GetType().Name; }
     }
 
+    #endregion
+
+    #region IRoutedPropertyReceiver Members
+
+    public void SetRoutedProperty(IRoutedSetterProperty property)
+    {
+      switch (property.Name)
+      {
+        case "StrokeWidth":
+          {
+            var prop = (RoutedSetterProperty<double>)property;
+            this._axisPen.Width = (float)prop.Value;
+            this._majorTickPen.Width = (float)prop.Value;
+            this._minorTickPen.Width = (float)prop.Value;
+            OnChanged();
+          }
+          break;
+      }
+    }
+    public void GetRoutedProperty(IRoutedGetterProperty property)
+    {
+      switch (property.Name)
+      {
+        case "StrokeWidth":
+          {
+            var prop = (RoutedGetterProperty<double>)property;
+            prop.Merge(this._axisPen.Width);
+            prop.Merge(this._majorTickPen.Width);
+            prop.Merge(this._minorTickPen.Width);
+          }
+          break;
+      }
+    }
     #endregion
   }
 }

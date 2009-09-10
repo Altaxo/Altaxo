@@ -1,6 +1,4 @@
-/* created on 6.9.2009 22:21:01 from peg generator V1.0 using 'Altaxo_LabelV1_PEG.txt' as input*/
-
-
+/* created on 9.9.2009 20:57:49 from peg generator V1.0 using 'Altaxo_LabelV1_PEG.txt' as input*/
 
 using System;
 using System.IO;
@@ -214,28 +212,28 @@ namespace Altaxo.Graph.Gdi.Shapes
 								 && (PositiveInteger() || QuotedString())
 								 && Char(')')));
 		}
-		public bool EscSeq1()    /*[15]^^EscSeq1:      '\\' ('V'\i / '+' / '-' / 'N'\i / 'I'\i / 'B'\i / 'G'\i / 'U'\i / 'S'\i / 'L'\i / '%' / 'AB'\i / 'AD'\i / '#' / 'ID'\i) '(' Sentence ')';*/
+		public bool EscSeq1()    /*[15]^^EscSeq1:      '\\' ('AB'\i / 'AD'\i / 'ID'\i / '+' / '-' /  '%' / '#' /  'B'\i / 'G'\i / 'I'\i / 'L'\i / 'N'\i / 'S'\i / 'U'\i / 'V'\i ) '(' Sentence ')';*/
 		{
 
 			return TreeNT((int)EAltaxo_LabelV1.EscSeq1, () =>
 					 And(() =>
 								Char('\\')
 						 && (
-										IChar('V')
+										IChar('A', 'B')
+								 || IChar('A', 'D')
+								 || IChar('I', 'D')
 								 || Char('+')
 								 || Char('-')
-								 || IChar('N')
-								 || IChar('I')
+								 || Char('%')
+								 || Char('#')
 								 || IChar('B')
 								 || IChar('G')
-								 || IChar('U')
-								 || IChar('S')
+								 || IChar('I')
 								 || IChar('L')
-								 || Char('%')
-								 || IChar('A', 'B')
-								 || IChar('A', 'D')
-								 || Char('#')
-								 || IChar('I', 'D'))
+								 || IChar('N')
+								 || IChar('S')
+								 || IChar('U')
+								 || IChar('V'))
 						 && Char('(')
 						 && Sentence()
 						 && Char(')')));

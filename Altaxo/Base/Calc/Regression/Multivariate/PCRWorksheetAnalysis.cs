@@ -135,29 +135,29 @@ namespace Altaxo.Calc.Regression.Multivariate
       Altaxo.Collections.AscendingIntegerCollection sel = new Altaxo.Collections.AscendingIntegerCollection();
       Altaxo.Data.DataColumn col;
 
-      col = table[GetXOfX_ColumnName()];
+      col = table.DataColumns.TryGetColumn(GetXOfX_ColumnName());
       if(col==null || !(col is INumericColumn)) NotFound(GetXOfX_ColumnName());
       preprocessSet.XOfX = Altaxo.Calc.LinearAlgebra.DataColumnWrapper.ToROVector((INumericColumn)col,numberOfX);
 
 
-      col = table[GetXMean_ColumnName()];
+      col = table.DataColumns.TryGetColumn(GetXMean_ColumnName());
       if(col==null) NotFound(GetXMean_ColumnName());
       preprocessSet.XMean = Altaxo.Calc.LinearAlgebra.DataColumnWrapper.ToROVector(col,numberOfX);
 
-      col = table[GetXScale_ColumnName()];
+			col = table.DataColumns.TryGetColumn(GetXScale_ColumnName());
       if(col==null) NotFound(GetXScale_ColumnName());
       preprocessSet.XScale = Altaxo.Calc.LinearAlgebra.DataColumnWrapper.ToROVector(col,numberOfX);
 
 
         
       sel.Clear();
-      col = table[GetYMean_ColumnName()];
+      col = table.DataColumns.TryGetColumn(GetYMean_ColumnName());
       if(col==null) NotFound(GetYMean_ColumnName());
       sel.Add(table.DataColumns.GetColumnNumber(col));
       preprocessSet.YMean = DataColumnWrapper.ToROVector(col,numberOfY);
 
       sel.Clear();
-      col = table[GetYScale_ColumnName()];
+      col = table.DataColumns.TryGetColumn(GetYScale_ColumnName());
       if(col==null) NotFound(GetYScale_ColumnName());
       sel.Add(table.DataColumns.GetColumnNumber(col));
       preprocessSet.YScale = DataColumnWrapper.ToROVector(col,numberOfY);
@@ -167,7 +167,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       for(int i=0;i<numberOfFactors;i++)
       {
         string colname = GetXScore_ColumnName(i);
-        col = table[colname];
+        col = table.DataColumns.TryGetColumn(colname);
         if(col==null) NotFound(colname);
         sel.Add(table.DataColumns.GetColumnNumber(col));
       }
@@ -178,7 +178,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       for(int i=0;i<numberOfFactors;i++)
       {
         string colname = GetXLoad_ColumnName(i);
-        col = table[colname];
+        col = table.DataColumns.TryGetColumn(colname);
         if(col==null) NotFound(colname);
         sel.Add(table.DataColumns.GetColumnNumber(col));
       }
@@ -189,7 +189,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       for(int i=0;i<numberOfY;i++)
       {
         string colname = GetYLoad_ColumnName(i);
-        col = table[colname];
+        col = table.DataColumns.TryGetColumn(colname);
         if(col==null) NotFound(colname);
         sel.Add(table.DataColumns.GetColumnNumber(col));
       }
@@ -197,7 +197,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 
         
       sel.Clear();
-      col = table[GetCrossProduct_ColumnName()];
+      col = table.DataColumns.TryGetColumn(GetCrossProduct_ColumnName());
       if(col==null) NotFound(GetCrossProduct_ColumnName());
       calibrationSet.CrossProduct = Altaxo.Calc.LinearAlgebra.DataColumnWrapper.ToROVector(col,numberOfFactors);
    
@@ -218,46 +218,47 @@ namespace Altaxo.Calc.Regression.Multivariate
     
     static int GetNumberOfX(Altaxo.Data.DataTable table)
     {
-      Altaxo.Data.DataColumn col = table.DataColumns[GetXLoad_ColumnName(0)];
+      var col = table.DataColumns.TryGetColumn(GetXLoad_ColumnName(0));
       if(col==null) NotFound(GetXLoad_ColumnName(0));
       return col.Count;
     }
 
     static int GetNumberOfMeasurements(Altaxo.Data.DataTable table)
     {
-      Altaxo.Data.DataColumn col = table.DataColumns[GetYLoad_ColumnName(0)];
+      var col = table.DataColumns.TryGetColumn(GetYLoad_ColumnName(0));
       if(col==null) NotFound(GetYLoad_ColumnName(0));
       return col.Count;
     }
 
     static int GetNumberOfY(Altaxo.Data.DataTable table)
     {
-      if(table.DataColumns[GetYLoad_ColumnName(0)]==null) NotFound(GetYLoad_ColumnName(0));
+      if(!table.DataColumns.Contains(GetYLoad_ColumnName(0))) NotFound(GetYLoad_ColumnName(0));
       for(int i=0;;i++)
       {
-        if(null==table.DataColumns[GetYLoad_ColumnName(i)])
+        if(!table.DataColumns.Contains(GetYLoad_ColumnName(i)))
           return i;
       }
     }
 
     static int GetNumberOfFactors(Altaxo.Data.DataTable table)
     {
-      Altaxo.Data.DataColumn col = table.DataColumns[GetCrossProduct_ColumnName()];
+      var col = table.DataColumns.TryGetColumn(GetCrossProduct_ColumnName());
       if(col==null) NotFound(GetCrossProduct_ColumnName());
       return col.Count;
     }
+
     public static bool IsPCRCalibrationModel(Altaxo.Data.DataTable table)
     {
-      if(null==table.DataColumns[GetXOfX_ColumnName()]) return false;
-      if(null==table.DataColumns[GetXMean_ColumnName()]) return false;
-      if(null==table.DataColumns[GetXScale_ColumnName()]) return false;
-      if(null==table.DataColumns[GetYMean_ColumnName()]) return false;
-      if(null==table.DataColumns[GetYScale_ColumnName()]) return false;
+      if(!table.DataColumns.Contains(GetXOfX_ColumnName())) return false;
+      if(!table.DataColumns.Contains(GetXMean_ColumnName())) return false;
+      if(!table.DataColumns.Contains(GetXScale_ColumnName())) return false;
+      if(!table.DataColumns.Contains(GetYMean_ColumnName())) return false;
+      if(!table.DataColumns.Contains(GetYScale_ColumnName())) return false;
 
-      if(null==table.DataColumns[GetXLoad_ColumnName(0)]) return false;
-      if(null==table.DataColumns[GetXScore_ColumnName(0)]) return false;
-      if(null==table.DataColumns[GetYLoad_ColumnName(0)]) return false;
-      if(null==table.DataColumns[GetCrossProduct_ColumnName()]) return false;
+      if(!table.DataColumns.Contains(GetXLoad_ColumnName(0))) return false;
+      if(!table.DataColumns.Contains(GetXScore_ColumnName(0))) return false;
+      if(!table.DataColumns.Contains(GetYLoad_ColumnName(0))) return false;
+      if(!table.DataColumns.Contains(GetCrossProduct_ColumnName())) return false;
 
       return true;
     }

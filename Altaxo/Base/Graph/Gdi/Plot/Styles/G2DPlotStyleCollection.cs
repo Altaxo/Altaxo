@@ -41,6 +41,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     IG2DPlotStyle,
     Main.IChangedEventSource,
     Main.IChildChangedEventSink,
+    IRoutedPropertyReceiver,
     Main.IDocumentNode
   {
     /// <summary>
@@ -542,6 +543,26 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       get { return "PlotStyleCollection"; }
     }
 
+    #endregion
+
+    #region IRoutedPropertyReceiver Members
+
+    public void SetRoutedProperty(IRoutedSetterProperty property)
+    {
+      foreach (object o in _innerList)
+      {
+        if (o is IRoutedPropertyReceiver)
+          (o as IRoutedPropertyReceiver).SetRoutedProperty(property);
+      }
+    }
+    public void GetRoutedProperty(IRoutedGetterProperty property)
+    {
+      foreach (object o in _innerList)
+      {
+        if (o is IRoutedPropertyReceiver)
+          (o as IRoutedPropertyReceiver).GetRoutedProperty(property);
+      }
+    }
     #endregion
   }
 }

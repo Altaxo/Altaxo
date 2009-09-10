@@ -45,7 +45,7 @@ namespace Altaxo.Graph.Gdi.Shapes
   /// to be used either in the legend or in the axis titles
   /// </summary>
   [Serializable]
-  public partial class TextGraphic : GraphicBase
+  public partial class TextGraphic : GraphicBase, IRoutedPropertyReceiver
   {
     protected string _text = ""; // the text, which contains the formatting symbols
     protected Font _font;
@@ -669,6 +669,52 @@ namespace Altaxo.Graph.Gdi.Shapes
       }
     }
 
+
+    #endregion
+
+    #region IRoutedPropertyReceiver Members
+
+    public void SetRoutedProperty(IRoutedSetterProperty property)
+    {
+      switch (property.Name)
+      {
+        case "FontSize":
+          {
+            var prop = (RoutedSetterProperty<double>)property;
+            this.Font = new Font(this.Font.FontFamily, (float)prop.Value, this.Font.Style, GraphicsUnit.World);
+            OnChanged();
+          }
+          break;
+        case "FontFamily":
+          {
+            var prop = (RoutedSetterProperty<string>)property;
+            try
+            {
+              var newFont = new Font(prop.Value, _font.Size, _font.Style, GraphicsUnit.World);
+              _font = newFont;
+              _isStructureInSync = false;
+              OnChanged();
+            }
+            catch (Exception)
+            {
+            }
+          }
+          break;
+      }
+    }
+
+    public void GetRoutedProperty(IRoutedGetterProperty property)
+    {
+      switch (property.Name)
+      {
+        case "FontSize":
+            ((RoutedGetterProperty<double>)property).Merge(this.Font.Size);
+          break;
+        case "FontFamily":
+            ((RoutedGetterProperty<string>)property).Merge(this.Font.FontFamily.Name); 
+          break;
+      }
+    }
 
     #endregion
   }

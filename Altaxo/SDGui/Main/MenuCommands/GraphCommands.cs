@@ -1041,6 +1041,159 @@ namespace Altaxo.Graph.Commands
     }
   }
 
+  public class FontSizeChooser : AbstractComboBoxCommand
+  {
+    ComboBox comboBox;
+
+    protected override void OnOwnerChanged(EventArgs e)
+    {
+      base.OnOwnerChanged(e);
+      ToolBarComboBox toolbarItem = (ToolBarComboBox)Owner;
+      comboBox = toolbarItem.ComboBox;
+      comboBox.DropDownStyle = ComboBoxStyle.DropDown;
+
+      comboBox.Items.Add("8 pt");
+      comboBox.Items.Add("10 pt");
+      comboBox.Items.Add("12 pt");
+      comboBox.Items.Add("24 pt");
+
+      comboBox.KeyDown += new KeyEventHandler(EhKeyDown);
+      }
+
+    void EhKeyDown(object sender, KeyEventArgs e)
+    {
+      if (e.KeyCode == Keys.Enter)
+        Run();
+    }
+       
+    public override void Run()
+    {
+      if(string.IsNullOrEmpty(comboBox.Text))
+        return;
+
+      Altaxo.Gui.SharpDevelop.SDGraphViewContent ctrl
+        = Current.Workbench.ActiveViewContent
+        as Altaxo.Gui.SharpDevelop.SDGraphViewContent;
+
+      if (null == ctrl)
+        return;
+
+      Altaxo.Serialization.LengthUnit unit = Altaxo.Serialization.LengthUnit.Point;
+      string number;
+      double value;
+      if( Altaxo.Serialization.GUIConversion.IsDouble(comboBox.Text, out value) ||
+        ( Altaxo.Serialization.LengthUnit.TryParse(comboBox.Text, out unit, out number) &&
+          Altaxo.Serialization.GUIConversion.IsDouble(number, out value)))
+      {
+        if (unit != null)
+          unit = Altaxo.Serialization.LengthUnit.Point;
+        string normalizedEntry = Altaxo.Serialization.GUIConversion.ToString(value) + " " + unit.Shortcut;
+        value *= (double)(unit.UnitInMeter / Altaxo.Serialization.LengthUnit.Point.UnitInMeter);
+
+        ctrl.Controller.SetSelectedObjectsProperty(new RoutedSetterProperty<double>("FontSize", value));
+
+        if (!comboBox.Items.Contains(normalizedEntry))
+          comboBox.Items.Add(normalizedEntry);
+      }
+    }
+  }
+
+  public class StrokeWidthChooser : AbstractComboBoxCommand
+  {
+    ComboBox comboBox;
+
+    protected override void OnOwnerChanged(EventArgs e)
+    {
+      base.OnOwnerChanged(e);
+      ToolBarComboBox toolbarItem = (ToolBarComboBox)Owner;
+      comboBox = toolbarItem.ComboBox;
+      comboBox.DropDownStyle = ComboBoxStyle.DropDown;
+
+      comboBox.Items.Add("8 pt");
+      comboBox.Items.Add("10 pt");
+      comboBox.Items.Add("12 pt");
+      comboBox.Items.Add("24 pt");
+
+      comboBox.KeyDown += new KeyEventHandler(EhKeyDown);
+    }
+
+    void EhKeyDown(object sender, KeyEventArgs e)
+    {
+      if (e.KeyCode == Keys.Enter)
+        Run();
+    }
+
+    public override void Run()
+    {
+      if (string.IsNullOrEmpty(comboBox.Text))
+        return;
+
+      Altaxo.Gui.SharpDevelop.SDGraphViewContent ctrl
+        = Current.Workbench.ActiveViewContent
+        as Altaxo.Gui.SharpDevelop.SDGraphViewContent;
+
+      if (null == ctrl)
+        return;
+
+      Altaxo.Serialization.LengthUnit unit = Altaxo.Serialization.LengthUnit.Point;
+      string number;
+      double value;
+      if (Altaxo.Serialization.GUIConversion.IsDouble(comboBox.Text, out value) ||
+        (Altaxo.Serialization.LengthUnit.TryParse(comboBox.Text, out unit, out number) &&
+          Altaxo.Serialization.GUIConversion.IsDouble(number, out value)))
+      {
+        if (unit != null)
+          unit = Altaxo.Serialization.LengthUnit.Point;
+        string normalizedEntry = Altaxo.Serialization.GUIConversion.ToString(value) + " " + unit.Shortcut;
+        value *= (double)(unit.UnitInMeter / Altaxo.Serialization.LengthUnit.Point.UnitInMeter);
+
+        ctrl.Controller.SetSelectedObjectsProperty(new RoutedSetterProperty<double>("StrokeWidth", value));
+
+        if (!comboBox.Items.Contains(normalizedEntry))
+          comboBox.Items.Add(normalizedEntry);
+      }
+    }
+  }
+
+
+  public class FontFamilyChooser : AbstractComboBoxCommand
+  {
+    ComboBox comboBox;
+
+    protected override void OnOwnerChanged(EventArgs e)
+    {
+      base.OnOwnerChanged(e);
+      ToolBarComboBox toolbarItem = (ToolBarComboBox)Owner;
+      comboBox = toolbarItem.ComboBox;
+      comboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+      comboBox.KeyDown += new KeyEventHandler(EhKeyDown);
+
+      // Fill with all available font families
+      foreach (FontFamily fam in FontFamily.Families)
+        comboBox.Items.Add(fam.Name);
+    }
+
+    void EhKeyDown(object sender, KeyEventArgs e)
+    {
+      if (e.KeyCode == Keys.Enter)
+        Run();
+    }
+
+    public override void Run()
+    {
+      if (string.IsNullOrEmpty(comboBox.Text))
+        return;
+
+      Altaxo.Gui.SharpDevelop.SDGraphViewContent ctrl
+        = Current.Workbench.ActiveViewContent
+        as Altaxo.Gui.SharpDevelop.SDGraphViewContent;
+      if (null == ctrl)
+        return;
+
+        ctrl.Controller.SetSelectedObjectsProperty(new RoutedSetterProperty<string>("FontFamily", comboBox.Text));
+      }
+    }
+  
 
 
 }

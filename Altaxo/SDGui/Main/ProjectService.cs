@@ -705,6 +705,16 @@ namespace Altaxo.Main
       return CreateNewGraph(this.CurrentOpenProject.CreateNewGraphDocument());
     }
 
+		/// <summary>
+		/// Creates a new graph document and the view content..
+		/// </summary>
+		/// <param name="preferredName">The preferred name the new graph document should have.</param>
+		/// <returns>The view content for the newly created graph.</returns>
+		public Altaxo.Graph.GUI.IGraphController CreateNewGraph(string preferredName)
+		{
+			return CreateNewGraph(this.CurrentOpenProject.CreateNewGraphDocument(preferredName));
+		}
+
 
 
     /// <summary>

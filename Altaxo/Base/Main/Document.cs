@@ -381,9 +381,19 @@ namespace Altaxo
       return dt1;
     }
 
-    public Altaxo.Graph.Gdi.GraphDocument CreateNewGraphDocument()
+
+		public Altaxo.Graph.Gdi.GraphDocument CreateNewGraphDocument()
+		{
+			return CreateNewGraphDocument(null);
+		}
+
+
+    public Altaxo.Graph.Gdi.GraphDocument CreateNewGraphDocument(string preferredName)
     {
-      GraphDocument doc = new GraphDocument();
+			GraphDocument doc = new GraphDocument();
+			if (!string.IsNullOrEmpty(preferredName))
+				doc.Name = preferredName;
+
       GraphDocumentCollection.Add(doc);
 
       return doc;

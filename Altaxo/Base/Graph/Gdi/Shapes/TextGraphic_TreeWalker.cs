@@ -43,7 +43,7 @@ using System.Drawing.Drawing2D;
                     ( '\\' ( '%'                         ) '(' PositiveInteger ',' (PositiveInteger / QuotedString) ')' ) 
                     ;
 
-[15]^^EscSeq1:      '\\' ('V'\i / '+' / '-' / 'N'\i / 'I'\i / 'B'\i / 'G'\i / 'U'\i / 'S'\i / 'L'\i / '%' / 'AB'\i / 'AD'\i / '#' / 'ID'\i) '(' Sentence ')';
+[15]^^EscSeq1:      '\\' ('AB'\i / 'AD'\i / 'ID'\i / '+' / '-' /  '%' / '#' /  'B'\i / 'G'\i / 'I'\i / 'L'\i / 'N'\i / 'S'\i / 'U'\i / 'V'\i ) '(' Sentence ')';
 
 [16]QuotedString:  '"' StringContent '"';
 
@@ -55,6 +55,8 @@ using System.Drawing.Drawing2D;
                         )*	;
 
 <</Grammar>>
+
+
 
 */
 namespace Altaxo.Graph.Gdi.Shapes
@@ -232,6 +234,13 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 				switch (escHeader.ToLowerInvariant())
 				{
+					case @"\id(":
+						{
+							string s = GetText(childNode);
+							if (s == "$DI")
+								parent.Add(new DocumentIdentifier(context));
+						}
+						break;
 					case  @"\g(":
 						{
 							var newContext = context.Clone();

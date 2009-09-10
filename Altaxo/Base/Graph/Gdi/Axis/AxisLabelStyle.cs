@@ -591,6 +591,28 @@ namespace Altaxo.Graph.Gdi.Axis
         return null;
     }
 
+    public override void SetRoutedProperty(IRoutedSetterProperty property)
+    {
+      switch (property.Name)
+      {
+        case "FontFamily":
+          {
+            var prop = (RoutedSetterProperty<string>)property;
+            try
+            {
+              var newFont = new Font(prop.Value, _font.Size, _font.Style, GraphicsUnit.World);
+              _font = newFont;
+              OnChanged();
+            }
+            catch (Exception)
+            {
+            }
+          }
+          break;
+      }
+      base.SetRoutedProperty(property);
+    }
+
 
     public void AdjustRectangle(ref RectangleF r, StringAlignment horz, StringAlignment vert)
     {
