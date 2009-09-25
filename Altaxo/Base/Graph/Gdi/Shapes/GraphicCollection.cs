@@ -22,6 +22,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using Altaxo.Serialization;
@@ -35,7 +36,7 @@ namespace Altaxo.Graph.Gdi.Shapes
   [Serializable]
   public class GraphicCollection 
     :
-    Altaxo.Data.CollectionBase, 
+		IList<GraphicBase>,
     Main.IChangedEventSource,
     Main.IChildChangedEventSink,
     Main.IDocumentNode
@@ -46,6 +47,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     [NonSerialized]
     object _parent;
+
+		List<GraphicBase> _items = new List<GraphicBase>();
 
    
 
@@ -59,9 +62,9 @@ namespace Altaxo.Graph.Gdi.Shapes
       {
         GraphicCollection s = (GraphicCollection)obj;
         
-        info.CreateArray("GraphObjects",s.myList.Count);
-        for(int i=0;i<s.myList.Count;i++)
-          info.AddValue("GraphicsObject",s.myList[i]);
+        info.CreateArray("GraphObjects",s.Count);
+        for(int i=0;i<s.Count;i++)
+          info.AddValue("GraphicsObject",s[i]);
         info.CommitArray();
       }
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -118,19 +121,19 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     public void DrawObjects(Graphics g, float Scale, object container)
     {
-      int len = this.InnerList.Count;
+      int len = this._items.Count;
       for(int i=0;i<len;i++)
       {
-        ((GraphicBase)this.InnerList[i]).Paint(g, container);
+        ((GraphicBase)this._items[i]).Paint(g, container);
       }
     }
 
     public GraphicBase FindObjectAtPoint(PointF pt)
     {
-      if(null!=this.InnerList)
+      if(null!=this._items)
       {
-        int len = this.InnerList.Count;
-        foreach(GraphicBase g in this.InnerList)
+        int len = this._items.Count;
+        foreach(GraphicBase g in this._items)
         {
           if(null!=g.HitTest(pt))
             return g;
@@ -147,7 +150,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <param name="yscale"></param>
     public void ScalePosition(double xscale, double yscale)
     {
-      foreach(GraphicBase o in this.InnerList)
+      foreach(GraphicBase o in this._items)
       {
         GraphicBase.ScalePosition(o,xscale,yscale);
       }
@@ -157,31 +160,23 @@ namespace Altaxo.Graph.Gdi.Shapes
     {
       get
       {
-        return (GraphicBase)List[index];
+        return _items[index];
       }
       set
       {
         value.ParentObject = this;
-        List[index] = value;
-
+        _items[index] = value;
         OnChanged();
       }
     }
 
-    public int Add(GraphicBase go)
-    {
-      return Add(go, true);
-    }
-
-    public int Add(GraphicBase go, bool fireChangedEvent)
+    public void Add(GraphicBase go, bool fireChangedEvent)
     {
       go.ParentObject = this;
-      int result =  List.Add(go);
+      _items.Add(go);
 
       if (fireChangedEvent)
         OnChanged();
-
-      return result;
     }
 
     public void AddRange(GraphicBase[] gos)
@@ -204,35 +199,24 @@ namespace Altaxo.Graph.Gdi.Shapes
 
     public bool Contains(GraphicBase go)
     {
-      return List.Contains(go);
+      return _items.Contains(go);
     }
 
     public void CopyTo(GraphicBase[] array, int index)
     {
-      List.CopyTo(array, index);
+      _items.CopyTo(array, index);
     }
 
     public int IndexOf(GraphicBase go)
     {
-      return List.IndexOf(go);
+      return _items.IndexOf(go);
     }
     public void Insert(int index, GraphicBase go)
     {
-      List.Insert(index, go);
+      _items.Insert(index, go);
       OnChanged();
     }
-
-    // See also 'System.Collections.IEnumerator'
-    public new  GraphObjectEnumerator GetEnumerator()
-    {
-      return new GraphObjectEnumerator(this);
-    }
-
-    public void Remove(GraphicBase go)
-    {
-      List.Remove(go);
-      OnChanged();
-    }
+   
     #region IChangedEventSource Members
 
 
@@ -265,44 +249,67 @@ namespace Altaxo.Graph.Gdi.Shapes
     }
 
     #endregion
-  } // end class GraphicsObjectCollection
+
+		#region IList<GraphicBase> Members
 
 
-  public class GraphObjectEnumerator :  IEnumerator
-  {
-    private IEnumerator baseEnumerator;
+		public void RemoveAt(int index)
+		{
+			_items.RemoveAt(index);
+			OnChanged();
+		}
 
-    private IEnumerable temp;
+		#endregion
 
+		#region ICollection<GraphicBase> Members
 
-    public GraphObjectEnumerator(GraphicCollection mappings)
-      : base()
-    {
-      this.temp = (IEnumerable)mappings;
-      this.baseEnumerator = temp.GetEnumerator();
-    }
+		public void Add(GraphicBase item)
+		{
+			Add(item, true);
+		}
 
-    public object Current
-    {
-      get
-      {
-        return baseEnumerator.Current;
-      }
-    }
+		public void Clear()
+		{
+			_items.Clear();
+			OnChanged();
+		}
 
-    public bool MoveNext()
-    {
-      return baseEnumerator.MoveNext();
-    }
+		public int Count
+		{
+			get { return _items.Count; }
+		}
 
+		public bool IsReadOnly
+		{
+			get { return false; }
+		}
 
-    public void Reset()
-    {
-      baseEnumerator.Reset();
-    }
+		public bool Remove(GraphicBase item)
+		{
+			bool result = _items.Remove(item);
+			if (result)
+				OnChanged();
+			return result;
+		}
 
+		#endregion
 
-  }
+		#region IEnumerable<GraphicBase> Members
 
+		public IEnumerator<GraphicBase> GetEnumerator()
+		{
+			return _items.GetEnumerator();
+		}
 
+		#endregion
+
+		#region IEnumerable Members
+
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return _items.GetEnumerator();
+		}
+
+		#endregion
+	} // end class GraphicsObjectCollection
 }

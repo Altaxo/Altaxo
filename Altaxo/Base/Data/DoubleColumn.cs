@@ -40,9 +40,9 @@ namespace Altaxo.Data
     System.Runtime.Serialization.IDeserializationCallback,
     INumericColumn
   {
-    private double[] m_Array;
-    private int      m_Capacity; // shortcut to m_Array.Length;
-    private int        m_Count;
+    private double[] _data;
+    private int      _capacity; // shortcut to m_Array.Length;
+    private int        _count;
     public static readonly double NullValue = Double.NaN;
 
     #region Overridden functions
@@ -56,19 +56,21 @@ namespace Altaxo.Data
     {
       get
       {
-        return m_Count;
+        return _count;
       }
     }
 
     // indexers
     public override void SetValueAt(int i, AltaxoVariant val)
     {
-      if (val.IsType(AltaxoVariant.Content.VDouble))
-        this[i] = val.m_Double;
-      else if (val.CanConvertedToDouble)
+      try
+      {
         this[i] = val.ToDouble();
-      else
-        throw new ApplicationException("Error: Try to set " + this.TypeAndName + "[" + i + "] with the string " + val.ToString());
+      }
+      catch (Exception ex)
+      {
+        throw new ApplicationException(string.Format("Error: Try to set {0}[{1}] with the string {2}, exception: {3}", this.TypeAndName, i, val.ToString(), ex.Message));
+      }
     }
 
     public override AltaxoVariant GetVariantAt(int i)
@@ -80,13 +82,13 @@ namespace Altaxo.Data
 
     public override bool IsElementEmpty(int i)
     {
-      return i < m_Count ? Double.IsNaN(m_Array[i]) : true;
+      return i < _count ? Double.IsNaN(_data[i]) : true;
     }
 
 
     public override void SetElementEmpty(int i)
     {
-      if (i < m_Count)
+      if (i < _count)
         this[i] = NullValue;
     }
 
@@ -102,13 +104,13 @@ namespace Altaxo.Data
       // above the range this column actually holds, but
       // we must handle this the right way
       int i, j;
-      for (i = nDelFirstRow, j = nDelFirstRow + nDelCount; j < m_Count; i++, j++)
-        m_Array[i] = m_Array[j];
+      for (i = nDelFirstRow, j = nDelFirstRow + nDelCount; j < _count; i++, j++)
+        _data[i] = _data[j];
 
-      int prevCount = m_Count;
-      m_Count = i < m_Count ? i : m_Count; // m_Count can only decrease
+      int prevCount = _count;
+      _count = i < _count ? i : _count; // m_Count can only decrease
 
-      if (m_Count != prevCount) // raise a event only if something really changed
+      if (_count != prevCount) // raise a event only if something really changed
         this.NotifyDataChanged(nDelFirstRow, prevCount, true);
     }
 
@@ -117,19 +119,19 @@ namespace Altaxo.Data
       if (nInsCount <= 0 || nInsBeforeColumn >= Count)
         return; // nothing to do
 
-      int newlen = this.m_Count + nInsCount;
-      if (newlen > m_Capacity)
+      int newlen = this._count + nInsCount;
+      if (newlen > _capacity)
         Realloc(newlen);
 
       // copy values from m_Count downto nBeforeColumn 
-      for (int i = m_Count - 1, j = newlen - 1; i >= nInsBeforeColumn; i--, j--)
-        m_Array[j] = m_Array[i];
+      for (int i = _count - 1, j = newlen - 1; i >= nInsBeforeColumn; i--, j--)
+        _data[j] = _data[i];
 
       for (int i = nInsBeforeColumn + nInsCount - 1; i >= nInsBeforeColumn; i--)
-        m_Array[i] = NullValue;
+        _data[i] = NullValue;
 
-      this.m_Count = newlen;
-      this.NotifyDataChanged(nInsBeforeColumn, m_Count, false);
+      this._count = newlen;
+      this.NotifyDataChanged(nInsBeforeColumn, _count, false);
     }
 
     public override void CopyDataFrom(Altaxo.Data.DataColumn v)
@@ -139,7 +141,7 @@ namespace Altaxo.Data
         throw new ArgumentException("Try to copy " + v.GetType() + " to " + this.GetType(), "v"); // throw exception
       }
 
-      this.CopyDataFrom(((Altaxo.Data.DoubleColumn)v).m_Array, v.Count);
+      this.CopyDataFrom(((Altaxo.Data.DoubleColumn)v)._data, v.Count);
     }     
 
     public override System.Type GetColumnStyleType()
@@ -157,16 +159,16 @@ namespace Altaxo.Data
   
     public DoubleColumn(int initialcapacity)
     {
-      m_Count = 0;
-      m_Array = new double[initialcapacity];
-      m_Capacity = initialcapacity;
+      _count = 0;
+      _data = new double[initialcapacity];
+      _capacity = initialcapacity;
     }
   
     public DoubleColumn(DoubleColumn from)
     {
-      this.m_Count    = from.m_Count; 
-      this.m_Capacity = from.m_Capacity;
-      this.m_Array    = null==from.m_Array ? null : (double[])from.m_Array.Clone();
+      this._count    = from._count; 
+      this._capacity = from._capacity;
+      this._data    = null==from._data ? null : (double[])from._data.Clone();
     }
 
    
@@ -193,17 +195,17 @@ namespace Altaxo.Data
           ((DataColumn)s).GetObjectData(info,context);
         }
 
-        if(s.m_Count!=s.m_Capacity)
+        if(s._count!=s._capacity)
         {
           // instead of the data array itself, stream only the first m_Count
           // array elements, since only they contain data
-          double[] streamarray = new Double[s.m_Count];
-          System.Array.Copy(s.m_Array,streamarray,s.m_Count);
+          double[] streamarray = new Double[s._count];
+          System.Array.Copy(s._data,streamarray,s._count);
           info.AddValue("Data",streamarray);
         }
         else // if the array is fully filled, we don't need to save a shrinked copy
         {
-          info.AddValue("Data",s.m_Array);
+          info.AddValue("Data",s._data);
         }
       }
       public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
@@ -224,9 +226,9 @@ namespace Altaxo.Data
           ((DataColumn)s).SetObjectData(obj,info,context,selector);
         }
 
-        s.m_Array = (double[])(info.GetValue("Data",typeof(double[])));
-        s.m_Capacity = null==s.m_Array ? 0 : s.m_Array.Length;
-        s.m_Count = s.m_Capacity;
+        s._data = (double[])(info.GetValue("Data",typeof(double[])));
+        s._capacity = null==s._data ? 0 : s._data.Length;
+        s._count = s._capacity;
 
         return s;
       }
@@ -242,9 +244,9 @@ namespace Altaxo.Data
         info.AddBaseValueEmbedded(s,typeof(Altaxo.Data.DataColumn));
         
         if(null==info.GetProperty("Altaxo.Data.DataColumn.SaveAsTemplate"))
-          info.AddArray("Data",s.m_Array,s.m_Count);
+          info.AddArray("Data",s._data,s._count);
         else
-          info.AddArray("Data",s.m_Array,0);
+          info.AddArray("Data",s._data,0);
       }
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
@@ -255,10 +257,10 @@ namespace Altaxo.Data
         info.GetBaseValueEmbedded(s,typeof(Altaxo.Data.DataColumn),parent);
 
         int count = info.GetInt32Attribute("Count");
-        s.m_Array = new double[count];
-        info.GetArray(s.m_Array,count);
-        s.m_Capacity = null==s.m_Array ? 0 : s.m_Array.Length;
-        s.m_Count = s.m_Capacity;
+        s._data = new double[count];
+        info.GetArray(s._data,count);
+        s._capacity = null==s._data ? 0 : s._data.Length;
+        s._count = s._capacity;
 
         return s;
       }
@@ -292,22 +294,22 @@ namespace Altaxo.Data
       {
         int len = this.Count;
         double[] arr = new double[len];
-        System.Array.Copy(m_Array,0,arr,0,len);
+        System.Array.Copy(_data,0,arr,0,len);
         return arr;
       }
 
       set
       {
-        m_Array = (double[])value.Clone();
-        this.m_Count = m_Array.Length;
-        this.m_Capacity = m_Array.Length;
-        this.NotifyDataChanged(0,m_Count,true);
+        _data = (double[])value.Clone();
+        this._count = _data.Length;
+        this._capacity = _data.Length;
+        this.NotifyDataChanged(0,_count,true);
       }
     }
 
     protected internal double GetValueDirect(int idx)
     {
-      return m_Array[idx];
+      return _data[idx];
     }
 
   
@@ -354,25 +356,25 @@ namespace Altaxo.Data
     /// <param name="count">Length of the array (or length of the used range of the array, starting from index 0).</param>
     public void CopyDataFrom(double[] srcarray, int count)
     {
-      int oldCount = this.m_Count;
+      int oldCount = this._count;
       int srcarraycount=0;
 
       if(null==srcarray || 0==(srcarraycount=GetUsedLength(srcarray,Math.Min(srcarray.Length,count))))
       {
-        m_Array=null;
-        m_Capacity=0;
-        m_Count=0;
+        _data=null;
+        _capacity=0;
+        _count=0;
       }
       else
       {
-        if(m_Capacity<srcarraycount)
-          m_Array = new double[srcarraycount];
-        System.Array.Copy(srcarray,m_Array,srcarraycount);
-        m_Capacity = m_Array.Length;
-        m_Count = srcarraycount;
+        if(_capacity<srcarraycount)
+          _data = new double[srcarraycount];
+        System.Array.Copy(srcarray,_data,srcarraycount);
+        _capacity = _data.Length;
+        _count = srcarraycount;
       }
-      if(oldCount>0 || m_Count>0) // message only if really was a change
-        NotifyDataChanged(0,oldCount>m_Count? (oldCount):(m_Count),m_Count<oldCount);
+      if(oldCount>0 || _count>0) // message only if really was a change
+        NotifyDataChanged(0,oldCount>_count? (oldCount):(_count),_count<oldCount);
     }
 
     /// <summary>
@@ -409,44 +411,44 @@ namespace Altaxo.Data
     /// <param name="count">Length of the array (or length of the used range of the array, starting from index 0).</param>
     public void CopyDataFrom(Altaxo.Calc.LinearAlgebra.IROVector srcarray, int count)
     {
-      int oldCount = this.m_Count;
+      int oldCount = this._count;
       int srcarraycount = 0;
 
       if (null == srcarray || 0 == (srcarraycount = Altaxo.Calc.LinearAlgebra.VectorMath.GetUsedLength(srcarray, Math.Min(srcarray.Length, count))))
       {
-        m_Array = null;
-        m_Capacity = 0;
-        m_Count = 0;
+        _data = null;
+        _capacity = 0;
+        _count = 0;
       }
       else
       {
-        if (m_Capacity < srcarraycount)
-          m_Array = new double[srcarraycount];
+        if (_capacity < srcarraycount)
+          _data = new double[srcarraycount];
         for (int i = 0; i < srcarraycount; ++i)
-          m_Array[i] = srcarray[i];
-        m_Capacity = m_Array.Length;
-        m_Count = srcarraycount;
+          _data[i] = srcarray[i];
+        _capacity = _data.Length;
+        _count = srcarraycount;
       }
-      if (oldCount > 0 || m_Count > 0) // message only if really was a change
-        NotifyDataChanged(0, oldCount > m_Count ? (oldCount) : (m_Count), m_Count < oldCount);
+      if (oldCount > 0 || _count > 0) // message only if really was a change
+        NotifyDataChanged(0, oldCount > _count ? (oldCount) : (_count), _count < oldCount);
     }
 
 
 
     protected void Realloc(int i)
     {
-      int newcapacity1 = (int)(m_Capacity*_increaseFactor+_addSpace);
+      int newcapacity1 = (int)(_capacity*_increaseFactor+_addSpace);
       int newcapacity2 = i+_addSpace+1;
       int newcapacity = newcapacity1>newcapacity2 ? newcapacity1:newcapacity2;
         
       double[] newarray = new double[newcapacity];
-      if(m_Count>0)
+      if(_count>0)
       {
-        System.Array.Copy(m_Array,newarray,m_Count);
+        System.Array.Copy(_data,newarray,_count);
       }
 
-      m_Array = newarray;
-      m_Capacity = m_Array.Length;
+      _data = newarray;
+      _capacity = _data.Length;
     }
 
    
@@ -454,8 +456,8 @@ namespace Altaxo.Data
     {
       get
       {
-        if(i>=0 && i<m_Count)
-          return m_Array[i];
+        if(i>=0 && i<_count)
+          return _data[i];
         return double.NaN;  
       }
       set
@@ -465,13 +467,13 @@ namespace Altaxo.Data
 
         if(Double.IsNaN(value))
         {
-          if(i>=0 && i<m_Count-1) // i is inside the used range
+          if(i>=0 && i<_count-1) // i is inside the used range
           {
-            m_Array[i]=value;
+            _data[i]=value;
           }
-          else if(i==(m_Count-1)) // m_Count is then decreasing
+          else if(i==(_count-1)) // m_Count is then decreasing
           {
-            for(m_Count=i; m_Count>0 && Double.IsNaN(m_Array[m_Count-1]); --m_Count);
+            for(_count=i; _count>0 && Double.IsNaN(_data[_count-1]); --_count);
             bCountDecreased=true;;
           }
           else // i is above the used area
@@ -481,32 +483,32 @@ namespace Altaxo.Data
         }
         else // value is not NaN
         {
-          if(i>=0 && i<m_Count) // i is inside the used range
+          if(i>=0 && i<_count) // i is inside the used range
           {
-            m_Array[i]=value;
+            _data[i]=value;
           }
-          else if(i==m_Count && i<m_Capacity) // i is the next value after the used range
+          else if(i==_count && i<_capacity) // i is the next value after the used range
           {
-            m_Array[i]=value;
-            m_Count=i+1;
+            _data[i]=value;
+            _count=i+1;
           }
-          else if(i>m_Count && i<m_Capacity) // is is outside used range, but inside capacity of array
+          else if(i>_count && i<_capacity) // is is outside used range, but inside capacity of array
           {
-            for(int k=m_Count;k<i;k++)
-              m_Array[k]=Double.NaN; // fill range between used range and new element with voids
+            for(int k=_count;k<i;k++)
+              _data[k]=Double.NaN; // fill range between used range and new element with voids
           
-            m_Array[i]=value;
-            m_Count=i+1;
+            _data[i]=value;
+            _count=i+1;
           }
           else if(i>=0) // i is outside of capacity, then realloc the array
           {
             Realloc(i);
 
-            for(int k=m_Count;k<i;k++)
-              m_Array[k]=Double.NaN; // fill range between used range and new element with voids
+            for(int k=_count;k<i;k++)
+              _data[k]=Double.NaN; // fill range between used range and new element with voids
           
-            m_Array[i]=value;
-            m_Count=i+1;
+            _data[i]=value;
+            _count=i+1;
           }
         }
         NotifyDataChanged(i,i+1,bCountDecreased);
@@ -622,23 +624,23 @@ namespace Altaxo.Data
     // ----------------------- Addition operator -----------------------------------
     public static Altaxo.Data.DoubleColumn operator +(Altaxo.Data.DoubleColumn c1, Altaxo.Data.DoubleColumn c2)
     {
-      int len = c1.m_Count<c2.m_Count ? c1.m_Count : c2.m_Count;
+      int len = c1._count<c2._count ? c1._count : c2._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
       {
-        c3.m_Array[i] = c1.m_Array[i] + c2.m_Array[i];
+        c3._data[i] = c1._data[i] + c2._data[i];
       }
-      c3.m_Count=len;
+      c3._count=len;
       return c3;  
     }
 
     public static Altaxo.Data.DoubleColumn operator +(Altaxo.Data.DoubleColumn c1, double c2)
     {
-      int len = c1.m_Count;
+      int len = c1._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
-        c3.m_Array[i] = c1.m_Array[i] + c2;
-      c3.m_Count = len;
+        c3._data[i] = c1._data[i] + c2;
+      c3._count = len;
       return c3;
     }
 
@@ -685,37 +687,37 @@ namespace Altaxo.Data
 
     public static Altaxo.Data.DoubleColumn operator -(Altaxo.Data.DoubleColumn c1, Altaxo.Data.DoubleColumn c2)
     {
-      int len = c1.m_Count<c2.m_Count ? c1.m_Count : c2.m_Count;
+      int len = c1._count<c2._count ? c1._count : c2._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
       {
-        c3.m_Array[i] = c1.m_Array[i] - c2.m_Array[i];
+        c3._data[i] = c1._data[i] - c2._data[i];
       }
-      c3.m_Count=len;
+      c3._count=len;
       return c3;  
     }
 
     public static Altaxo.Data.DoubleColumn operator -(Altaxo.Data.DoubleColumn c1, double c2)
     {
-      int len = c1.m_Count;
+      int len = c1._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
       {
-        c3.m_Array[i] = c1.m_Array[i]-c2;
+        c3._data[i] = c1._data[i]-c2;
       }
-      c3.m_Count=len;
+      c3._count=len;
       return c3;  
     }
 
     public static Altaxo.Data.DoubleColumn operator -(double c2, Altaxo.Data.DoubleColumn c1)
     {
-      int len = c1.m_Count;
+      int len = c1._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
       {
-        c3.m_Array[i] = c2 - c1.m_Array[i];
+        c3._data[i] = c2 - c1._data[i];
       }
-      c3.m_Count=len;
+      c3._count=len;
       return c3;  
     }
     
@@ -774,10 +776,10 @@ namespace Altaxo.Data
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
       {
-        c3.m_Array[i] = (c1.GetValueDirect(i)-c2.GetValueDirect(i)).TotalSeconds;
+        c3._data[i] = (c1.GetValueDirect(i)-c2.GetValueDirect(i)).TotalSeconds;
       }
       
-      c3.m_Count=len;
+      c3._count=len;
       
       return c3;  
     }
@@ -789,10 +791,10 @@ namespace Altaxo.Data
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for (int i = 0; i < len; i++)
       {
-        c3.m_Array[i] = (c1.GetValueDirect(i) - c2).TotalSeconds;
+        c3._data[i] = (c1.GetValueDirect(i) - c2).TotalSeconds;
       }
 
-      c3.m_Count = len;
+      c3._count = len;
 
       return c3;
     }
@@ -803,10 +805,10 @@ namespace Altaxo.Data
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for (int i = 0; i < len; i++)
       {
-        c3.m_Array[i] = (c1 - c2.GetValueDirect(i)).TotalSeconds;
+        c3._data[i] = (c1 - c2.GetValueDirect(i)).TotalSeconds;
       }
 
-      c3.m_Count = len;
+      c3._count = len;
 
       return c3;
     }
@@ -814,33 +816,33 @@ namespace Altaxo.Data
     // ----------------------- Multiplication operator -----------------------------------
     public static Altaxo.Data.DoubleColumn operator *(Altaxo.Data.DoubleColumn c1, Altaxo.Data.DoubleColumn c2)
     {
-      int len = c1.m_Count<c2.m_Count ? c1.m_Count : c2.m_Count;
+      int len = c1._count<c2._count ? c1._count : c2._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
       {
-        c3.m_Array[i] = c1.m_Array[i] * c2.m_Array[i];
+        c3._data[i] = c1._data[i] * c2._data[i];
       }
-      c3.m_Count=len;
+      c3._count=len;
       return c3;  
     }
 
     public static Altaxo.Data.DoubleColumn operator *(Altaxo.Data.DoubleColumn c1, double c2)
     {
-      int len = c1.m_Count;
+      int len = c1._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
-        c3.m_Array[i] = c1.m_Array[i] * c2;
-      c3.m_Count = len;
+        c3._data[i] = c1._data[i] * c2;
+      c3._count = len;
       return c3;
     }
 
     public static Altaxo.Data.DoubleColumn operator *(double c2, Altaxo.Data.DoubleColumn c1)
     {
-      int len = c1.m_Count;
+      int len = c1._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
-        c3.m_Array[i] = c1.m_Array[i] * c2;
-      c3.m_Count = len;
+        c3._data[i] = c1._data[i] * c2;
+      c3._count = len;
       return c3;
     }
 
@@ -881,37 +883,37 @@ namespace Altaxo.Data
 
     public static Altaxo.Data.DoubleColumn operator /(Altaxo.Data.DoubleColumn c1, Altaxo.Data.DoubleColumn c2)
     {
-      int len = c1.m_Count<c2.m_Count ? c1.m_Count : c2.m_Count;
+      int len = c1._count<c2._count ? c1._count : c2._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
       {
-        c3.m_Array[i] = c1.m_Array[i] / c2.m_Array[i];
+        c3._data[i] = c1._data[i] / c2._data[i];
       }
-      c3.m_Count=len;
+      c3._count=len;
       return c3;  
     }
 
     public static Altaxo.Data.DoubleColumn operator /(Altaxo.Data.DoubleColumn c1, double c2)
     {
-      int len = c1.m_Count;
+      int len = c1._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
       {
-        c3.m_Array[i] = c1.m_Array[i]/c2;
+        c3._data[i] = c1._data[i]/c2;
       }
-      c3.m_Count=len;
+      c3._count=len;
       return c3;  
     }
 
     public static Altaxo.Data.DoubleColumn operator /(double c2, Altaxo.Data.DoubleColumn c1)
     {
-      int len = c1.m_Count;
+      int len = c1._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
       {
-        c3.m_Array[i] = c2/c1.m_Array[i];
+        c3._data[i] = c2/c1._data[i];
       }
-      c3.m_Count=len;
+      c3._count=len;
       return c3;  
     }
 
@@ -965,37 +967,37 @@ namespace Altaxo.Data
     // -------------------------- operator % ----------------------------------------------
     public static Altaxo.Data.DoubleColumn operator %(Altaxo.Data.DoubleColumn c1, Altaxo.Data.DoubleColumn c2)
     {
-      int len = c1.m_Count<c2.m_Count ? c1.m_Count : c2.m_Count;
+      int len = c1._count<c2._count ? c1._count : c2._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
       {
-        c3.m_Array[i] = c1.m_Array[i] % c2.m_Array[i];
+        c3._data[i] = c1._data[i] % c2._data[i];
       }
-      c3.m_Count=len;
+      c3._count=len;
       return c3;  
     }
 
     public static Altaxo.Data.DoubleColumn operator %(Altaxo.Data.DoubleColumn c1, double c2)
     {
-      int len = c1.m_Count;
+      int len = c1._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
       {
-        c3.m_Array[i] = c1.m_Array[i] % c2;
+        c3._data[i] = c1._data[i] % c2;
       }
-      c3.m_Count=len;
+      c3._count=len;
       return c3;  
     }
 
     public static Altaxo.Data.DoubleColumn operator %(double c2, Altaxo.Data.DoubleColumn c1)
     {
-      int len = c1.m_Count;
+      int len = c1._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
       {
-        c3.m_Array[i] = c2%c1.m_Array[i];
+        c3._data[i] = c2%c1._data[i];
       }
-      c3.m_Count=len;
+      c3._count=len;
       return c3;  
     }
 
@@ -1049,35 +1051,35 @@ namespace Altaxo.Data
     // ----------------------- AND operator -----------------------------------
     public static Altaxo.Data.DoubleColumn operator &(Altaxo.Data.DoubleColumn c1, Altaxo.Data.DoubleColumn c2)
     {
-      int len = c1.m_Count<c2.m_Count ? c1.m_Count : c2.m_Count;
+      int len = c1._count<c2._count ? c1._count : c2._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
       {
-        c3.m_Array[i] = ((long)c1.m_Array[i]) & ((long)c2.m_Array[i]);
+        c3._data[i] = ((long)c1._data[i]) & ((long)c2._data[i]);
       }
-      c3.m_Count=len;
+      c3._count=len;
       return c3;  
     }
 
     public static Altaxo.Data.DoubleColumn operator &(Altaxo.Data.DoubleColumn c1, double c2)
     {
-      int len = c1.m_Count;
+      int len = c1._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       long c22 = (long)c2;
       for(int i=0;i<len;i++)
-        c3.m_Array[i] = ((long)c1.m_Array[i]) & c22;
-      c3.m_Count = len;
+        c3._data[i] = ((long)c1._data[i]) & c22;
+      c3._count = len;
       return c3;
     }
 
     public static Altaxo.Data.DoubleColumn operator &(double c2, Altaxo.Data.DoubleColumn c1)
     {
-      int len = c1.m_Count;
+      int len = c1._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       long c22 = (long)c2;
       for(int i=0;i<len;i++)
-        c3.m_Array[i] = c22 & ((long)c1.m_Array[i]);
-      c3.m_Count = len;
+        c3._data[i] = c22 & ((long)c1._data[i]);
+      c3._count = len;
       return c3;
     }
 
@@ -1131,35 +1133,35 @@ namespace Altaxo.Data
     // ----------------------- OR operator -----------------------------------
     public static Altaxo.Data.DoubleColumn operator |(Altaxo.Data.DoubleColumn c1, Altaxo.Data.DoubleColumn c2)
     {
-      int len = c1.m_Count<c2.m_Count ? c1.m_Count : c2.m_Count;
+      int len = c1._count<c2._count ? c1._count : c2._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
       {
-        c3.m_Array[i] = ((long)c1.m_Array[i]) | ((long)c2.m_Array[i]);
+        c3._data[i] = ((long)c1._data[i]) | ((long)c2._data[i]);
       }
-      c3.m_Count=len;
+      c3._count=len;
       return c3;  
     }
 
     public static Altaxo.Data.DoubleColumn operator |(Altaxo.Data.DoubleColumn c1, double c2)
     {
-      int len = c1.m_Count;
+      int len = c1._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       long c22 = (long)c2;
       for(int i=0;i<len;i++)
-        c3.m_Array[i] = ((long)c1.m_Array[i]) | c22;
-      c3.m_Count = len;
+        c3._data[i] = ((long)c1._data[i]) | c22;
+      c3._count = len;
       return c3;
     }
 
     public static Altaxo.Data.DoubleColumn operator |(double c2, Altaxo.Data.DoubleColumn c1)
     {
-      int len = c1.m_Count;
+      int len = c1._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       long c22 = (long)c2;
       for(int i=0;i<len;i++)
-        c3.m_Array[i] = c22 | ((long)c1.m_Array[i]);
-      c3.m_Count = len;
+        c3._data[i] = c22 | ((long)c1._data[i]);
+      c3._count = len;
       return c3;
     }
 
@@ -1215,35 +1217,35 @@ namespace Altaxo.Data
     // ----------------------- XOR operator -----------------------------------
     public static Altaxo.Data.DoubleColumn operator ^(Altaxo.Data.DoubleColumn c1, Altaxo.Data.DoubleColumn c2)
     {
-      int len = c1.m_Count<c2.m_Count ? c1.m_Count : c2.m_Count;
+      int len = c1._count<c2._count ? c1._count : c2._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
       {
-        c3.m_Array[i] = ((long)c1.m_Array[i]) ^ ((long)c2.m_Array[i]);
+        c3._data[i] = ((long)c1._data[i]) ^ ((long)c2._data[i]);
       }
-      c3.m_Count=len;
+      c3._count=len;
       return c3;  
     }
 
     public static Altaxo.Data.DoubleColumn operator ^(Altaxo.Data.DoubleColumn c1, double c2)
     {
-      int len = c1.m_Count;
+      int len = c1._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       long c22 = (long)c2;
       for(int i=0;i<len;i++)
-        c3.m_Array[i] = ((long)c1.m_Array[i]) ^ c22;
-      c3.m_Count = len;
+        c3._data[i] = ((long)c1._data[i]) ^ c22;
+      c3._count = len;
       return c3;
     }
 
     public static Altaxo.Data.DoubleColumn operator  ^(double c2, Altaxo.Data.DoubleColumn c1)
     {
-      int len = c1.m_Count;
+      int len = c1._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       long c22 = (long)c2;
       for(int i=0;i<len;i++)
-        c3.m_Array[i] = c22 ^ ((long)c1.m_Array[i]);
-      c3.m_Count = len;
+        c3._data[i] = c22 ^ ((long)c1._data[i]);
+      c3._count = len;
       return c3;
     }
 
@@ -1298,11 +1300,11 @@ namespace Altaxo.Data
   
     public static Altaxo.Data.DoubleColumn operator <<(Altaxo.Data.DoubleColumn c1, int c2)
     {
-      int len = c1.m_Count;
+      int len = c1._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
-        c3.m_Array[i] = ((long)c1.m_Array[i]) << c2;
-      c3.m_Count = len;
+        c3._data[i] = ((long)c1._data[i]) << c2;
+      c3._count = len;
       return c3;
     }
 
@@ -1318,9 +1320,9 @@ namespace Altaxo.Data
         Altaxo.Data.DoubleColumn c33 = new Altaxo.Data.DoubleColumn(len);
         for(int i=0;i<len;i++)
         {
-          c33.m_Array[i] = ((long)c1.m_Array[i]) << ((int)c22.m_Array[i]);
+          c33._data[i] = ((long)c1._data[i]) << ((int)c22._data[i]);
         }
-        c33.m_Count=len;
+        c33._count=len;
         c3=c33;
         return true;
       }
@@ -1339,9 +1341,9 @@ namespace Altaxo.Data
         Altaxo.Data.DoubleColumn c33 = new Altaxo.Data.DoubleColumn(len);
         for(int i=0;i<len;i++)
         {
-          c33.m_Array[i] = ((long)c22.m_Array[i]) << ((int)c1.m_Array[i]);
+          c33._data[i] = ((long)c22._data[i]) << ((int)c1._data[i]);
         }
-        c33.m_Count=len;
+        c33._count=len;
         c3=c33;
         return true;
       }
@@ -1366,12 +1368,12 @@ namespace Altaxo.Data
       if(((AltaxoVariant)c2).IsType(AltaxoVariant.Content.VDouble))
       {
         DoubleColumn c1=this;
-        int len = c1.m_Count;
+        int len = c1._count;
         Altaxo.Data.DoubleColumn c33 = new Altaxo.Data.DoubleColumn(len);
         long c22 = (long)(double)c2;
         for(int i=0;i<len;i++)
-          c33.m_Array[i] = c22 << ((int)c1.m_Array[i]);
-        c33.m_Count = len;
+          c33._data[i] = c22 << ((int)c1._data[i]);
+        c33._count = len;
         c3=c33;
         return true;
       }
@@ -1384,11 +1386,11 @@ namespace Altaxo.Data
 
     public static Altaxo.Data.DoubleColumn operator >>(Altaxo.Data.DoubleColumn c1, int c2)
     {
-      int len = c1.m_Count;
+      int len = c1._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
-        c3.m_Array[i] = ((long)c1.m_Array[i]) >> c2;
-      c3.m_Count = len;
+        c3._data[i] = ((long)c1._data[i]) >> c2;
+      c3._count = len;
       return c3;
     }
 
@@ -1404,9 +1406,9 @@ namespace Altaxo.Data
         Altaxo.Data.DoubleColumn c33 = new Altaxo.Data.DoubleColumn(len);
         for(int i=0;i<len;i++)
         {
-          c33.m_Array[i] = ((long)c1.m_Array[i]) >> ((int)c22.m_Array[i]);
+          c33._data[i] = ((long)c1._data[i]) >> ((int)c22._data[i]);
         }
-        c33.m_Count=len;
+        c33._count=len;
         c3=c33;
         return true;
       }
@@ -1424,9 +1426,9 @@ namespace Altaxo.Data
         Altaxo.Data.DoubleColumn c33 = new Altaxo.Data.DoubleColumn(len);
         for(int i=0;i<len;i++)
         {
-          c33.m_Array[i] = ((long)c22.m_Array[i]) >> ((int)c1.m_Array[i]);
+          c33._data[i] = ((long)c22._data[i]) >> ((int)c1._data[i]);
         }
-        c33.m_Count=len;
+        c33._count=len;
         c3=c33;
         return true;
       }
@@ -1439,12 +1441,12 @@ namespace Altaxo.Data
       if(((AltaxoVariant)c2).IsType(AltaxoVariant.Content.VDouble))
       {
         DoubleColumn c1=this;
-        int len = c1.m_Count;
+        int len = c1._count;
         Altaxo.Data.DoubleColumn c33 = new Altaxo.Data.DoubleColumn(len);
         int c22 = (int)(double)c2;
         for(int i=0;i<len;i++)
-          c33.m_Array[i] = ((long)c1.m_Array[i]) >> c22;
-        c33.m_Count = len;
+          c33._data[i] = ((long)c1._data[i]) >> c22;
+        c33._count = len;
         c3=c33;
         return true;
       }
@@ -1457,12 +1459,12 @@ namespace Altaxo.Data
       if(((AltaxoVariant)c2).IsType(AltaxoVariant.Content.VDouble))
       {
         DoubleColumn c1=this;
-        int len = c1.m_Count;
+        int len = c1._count;
         Altaxo.Data.DoubleColumn c33 = new Altaxo.Data.DoubleColumn(len);
         long c22 = (long)(double)c2;
         for(int i=0;i<len;i++)
-          c33.m_Array[i] = c22 >> ((int)c1.m_Array[i]);
-        c33.m_Count = len;
+          c33._data[i] = c22 >> ((int)c1._data[i]);
+        c33._count = len;
         c3=c33;
         return true;
       }
@@ -1475,33 +1477,33 @@ namespace Altaxo.Data
     // ----------------------- Lesser operator -----------------------------------
     public static Altaxo.Data.DoubleColumn operator <(Altaxo.Data.DoubleColumn c1, Altaxo.Data.DoubleColumn c2)
     {
-      int len = c1.m_Count<c2.m_Count ? c1.m_Count : c2.m_Count;
+      int len = c1._count<c2._count ? c1._count : c2._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
       {
-        c3.m_Array[i] = (c1.m_Array[i] < c2.m_Array[i]) ? 1 : 0;
+        c3._data[i] = (c1._data[i] < c2._data[i]) ? 1 : 0;
       }
-      c3.m_Count=len;
+      c3._count=len;
       return c3;  
     }
 
     public static Altaxo.Data.DoubleColumn operator <(Altaxo.Data.DoubleColumn c1, double c2)
     {
-      int len = c1.m_Count;
+      int len = c1._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
-        c3.m_Array[i] = ( c1.m_Array[i] < c2 ) ? 1 : 0;
-      c3.m_Count = len;
+        c3._data[i] = ( c1._data[i] < c2 ) ? 1 : 0;
+      c3._count = len;
       return c3;
     }
 
     public static Altaxo.Data.DoubleColumn operator  <(double c2, Altaxo.Data.DoubleColumn c1)
     {
-      int len = c1.m_Count;
+      int len = c1._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
-        c3.m_Array[i] = ( c2 < c1.m_Array[i] ) ? 1 : 0;
-      c3.m_Count = len;
+        c3._data[i] = ( c2 < c1._data[i] ) ? 1 : 0;
+      c3._count = len;
       return c3;
     }
 
@@ -1556,33 +1558,33 @@ namespace Altaxo.Data
     // ----------------------- Greater operator -----------------------------------
     public static Altaxo.Data.DoubleColumn operator >(Altaxo.Data.DoubleColumn c1, Altaxo.Data.DoubleColumn c2)
     {
-      int len = c1.m_Count<c2.m_Count ? c1.m_Count : c2.m_Count;
+      int len = c1._count<c2._count ? c1._count : c2._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
       {
-        c3.m_Array[i] = (c1.m_Array[i] > c2.m_Array[i]) ? 1 : 0;
+        c3._data[i] = (c1._data[i] > c2._data[i]) ? 1 : 0;
       }
-      c3.m_Count=len;
+      c3._count=len;
       return c3;  
     }
 
     public static Altaxo.Data.DoubleColumn operator >(Altaxo.Data.DoubleColumn c1, double c2)
     {
-      int len = c1.m_Count;
+      int len = c1._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
-        c3.m_Array[i] = ( c1.m_Array[i] > c2 ) ? 1 : 0;
-      c3.m_Count = len;
+        c3._data[i] = ( c1._data[i] > c2 ) ? 1 : 0;
+      c3._count = len;
       return c3;
     }
 
     public static Altaxo.Data.DoubleColumn operator >(double c2, Altaxo.Data.DoubleColumn c1)
     {
-      int len = c1.m_Count;
+      int len = c1._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
-        c3.m_Array[i] = ( c2 > c1.m_Array[i] ) ? 1 : 0;
-      c3.m_Count = len;
+        c3._data[i] = ( c2 > c1._data[i] ) ? 1 : 0;
+      c3._count = len;
       return c3;
     }
 
@@ -1639,33 +1641,33 @@ namespace Altaxo.Data
     // ----------------------- LesserOrEqual operator -----------------------------------
     public static Altaxo.Data.DoubleColumn operator <=(Altaxo.Data.DoubleColumn c1, Altaxo.Data.DoubleColumn c2)
     {
-      int len = c1.m_Count<c2.m_Count ? c1.m_Count : c2.m_Count;
+      int len = c1._count<c2._count ? c1._count : c2._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
       {
-        c3.m_Array[i] = (c1.m_Array[i] <= c2.m_Array[i]) ? 1 : 0;
+        c3._data[i] = (c1._data[i] <= c2._data[i]) ? 1 : 0;
       }
-      c3.m_Count=len;
+      c3._count=len;
       return c3;  
     }
 
     public static Altaxo.Data.DoubleColumn operator <=(Altaxo.Data.DoubleColumn c1, double c2)
     {
-      int len = c1.m_Count;
+      int len = c1._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
-        c3.m_Array[i] = ( c1.m_Array[i] <= c2 ) ? 1 : 0;
-      c3.m_Count = len;
+        c3._data[i] = ( c1._data[i] <= c2 ) ? 1 : 0;
+      c3._count = len;
       return c3;
     }
 
     public static Altaxo.Data.DoubleColumn operator <=(double c2, Altaxo.Data.DoubleColumn c1)
     {
-      int len = c1.m_Count;
+      int len = c1._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
-        c3.m_Array[i] = ( c2 <= c1.m_Array[i] ) ? 1 : 0;
-      c3.m_Count = len;
+        c3._data[i] = ( c2 <= c1._data[i] ) ? 1 : 0;
+      c3._count = len;
       return c3;
     }
 
@@ -1720,33 +1722,33 @@ namespace Altaxo.Data
     // ----------------------- GreaterOrEqual operator -----------------------------------
     public static Altaxo.Data.DoubleColumn operator >=(Altaxo.Data.DoubleColumn c1, Altaxo.Data.DoubleColumn c2)
     {
-      int len = c1.m_Count<c2.m_Count ? c1.m_Count : c2.m_Count;
+      int len = c1._count<c2._count ? c1._count : c2._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
       {
-        c3.m_Array[i] = (c1.m_Array[i] >= c2.m_Array[i]) ? 1 : 0;
+        c3._data[i] = (c1._data[i] >= c2._data[i]) ? 1 : 0;
       }
-      c3.m_Count=len;
+      c3._count=len;
       return c3;  
     }
 
     public static Altaxo.Data.DoubleColumn operator >=(Altaxo.Data.DoubleColumn c1, double c2)
     {
-      int len = c1.m_Count;
+      int len = c1._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
-        c3.m_Array[i] = ( c1.m_Array[i] >= c2 ) ? 1 : 0;
-      c3.m_Count = len;
+        c3._data[i] = ( c1._data[i] >= c2 ) ? 1 : 0;
+      c3._count = len;
       return c3;
     }
 
     public static Altaxo.Data.DoubleColumn operator >=(double c2, Altaxo.Data.DoubleColumn c1)
     {
-      int len = c1.m_Count;
+      int len = c1._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
-        c3.m_Array[i] = ( c2 >= c1.m_Array[i] ) ? 1 : 0;
-      c3.m_Count = len;
+        c3._data[i] = ( c2 >= c1._data[i] ) ? 1 : 0;
+      c3._count = len;
       return c3;
     }
 
@@ -1801,13 +1803,13 @@ namespace Altaxo.Data
     // --------------------------------- Unary Plus ----------------------------
     public static Altaxo.Data.DoubleColumn operator +(Altaxo.Data.DoubleColumn c1)
     {
-      int len = c1.m_Count;
+      int len = c1._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
       {
-        c3.m_Array[i] = c1.m_Array[i];
+        c3._data[i] = c1._data[i];
       }
-      c3.m_Count = len;
+      c3._count = len;
       return c3;  
     }
 
@@ -1823,13 +1825,13 @@ namespace Altaxo.Data
     // --------------------------------- Unary Minus ----------------------------
     public static Altaxo.Data.DoubleColumn operator -(Altaxo.Data.DoubleColumn c1)
     {
-      int len = c1.m_Count;
+      int len = c1._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
       {
-        c3.m_Array[i] = -c1.m_Array[i];
+        c3._data[i] = -c1._data[i];
       }
-      c3.m_Count = len;
+      c3._count = len;
       return c3;  
     }
 
@@ -1843,13 +1845,13 @@ namespace Altaxo.Data
     // --------------------------------- Unary NOT ----------------------------
     public static Altaxo.Data.DoubleColumn operator !(Altaxo.Data.DoubleColumn c1)
     {
-      int len = c1.m_Count;
+      int len = c1._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
       {
-        c3.m_Array[i] = 0==c1.m_Array[i] ? 1 : 0;
+        c3._data[i] = 0==c1._data[i] ? 1 : 0;
       }
-      c3.m_Count = len;
+      c3._count = len;
       return c3;  
     }
 
@@ -1863,13 +1865,13 @@ namespace Altaxo.Data
     // --------------------------------- Unary Complement ----------------------------
     public static Altaxo.Data.DoubleColumn operator ~(Altaxo.Data.DoubleColumn c1)
     {
-      int len = c1.m_Count;
+      int len = c1._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
       {
-        c3.m_Array[i] = ~((long)c1.m_Array[i]);
+        c3._data[i] = ~((long)c1._data[i]);
       }
-      c3.m_Count = len;
+      c3._count = len;
       return c3;  
     }
 
@@ -1883,26 +1885,26 @@ namespace Altaxo.Data
     // --------------------------------- Unary Increment ----------------------------
     public static Altaxo.Data.DoubleColumn operator ++(Altaxo.Data.DoubleColumn c1)
     {
-      int len = c1.m_Count;
+      int len = c1._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
       {
-        c3.m_Array[i] = c1.m_Array[i]+1;
+        c3._data[i] = c1._data[i]+1;
       }
-      c3.m_Count = len;
+      c3._count = len;
       return c3;  
     }
 
 
     public override bool vop_Increment(out DataColumn c3)
     {
-      int len = this.m_Count;
+      int len = this._count;
       Altaxo.Data.DoubleColumn c33 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
       {
-        c33.m_Array[i] = this.m_Array[i]+1;
+        c33._data[i] = this._data[i]+1;
       }
-      c33.m_Count = len;
+      c33._count = len;
       c3=c33;
       return true;
     }
@@ -1910,26 +1912,26 @@ namespace Altaxo.Data
     // --------------------------------- Unary Decrement ----------------------------
     public static Altaxo.Data.DoubleColumn operator --(Altaxo.Data.DoubleColumn c1)
     {
-      int len = c1.m_Count;
+      int len = c1._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
       {
-        c3.m_Array[i] = c1.m_Array[i]-1;
+        c3._data[i] = c1._data[i]-1;
       }
-      c3.m_Count = len;
+      c3._count = len;
       return c3;  
     }
 
 
     public override bool vop_Decrement(out DataColumn c3)
     {
-      int len = this.m_Count;
+      int len = this._count;
       Altaxo.Data.DoubleColumn c33 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
       {
-        c33.m_Array[i] = this.m_Array[i]-1;
+        c33._data[i] = this._data[i]-1;
       }
-      c33.m_Count = len;
+      c33._count = len;
       c3=c33;
       return true;
     }
@@ -1943,183 +1945,183 @@ namespace Altaxo.Data
 
     public static Altaxo.Data.DoubleColumn Abs(Altaxo.Data.DoubleColumn c1)
     {
-      int len=c1.m_Count;
+      int len=c1._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
       {
-        c3.m_Array[i] = System.Math.Abs(c1.m_Array[i]);
+        c3._data[i] = System.Math.Abs(c1._data[i]);
       }
-      c3.m_Count=len;
+      c3._count=len;
       return c3;
     } 
 
     public static Altaxo.Data.DoubleColumn Acos(Altaxo.Data.DoubleColumn c1)
     {
-      int len=c1.m_Count;
+      int len=c1._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
       {
-        c3.m_Array[i] = System.Math.Acos(c1.m_Array[i]);
+        c3._data[i] = System.Math.Acos(c1._data[i]);
       }
-      c3.m_Count=len;
+      c3._count=len;
       return c3;
     } 
 
     public static Altaxo.Data.DoubleColumn Asin(Altaxo.Data.DoubleColumn c1)
     {
-      int len=c1.m_Count;
+      int len=c1._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
       {
-        c3.m_Array[i] = System.Math.Asin(c1.m_Array[i]);
+        c3._data[i] = System.Math.Asin(c1._data[i]);
       }
-      c3.m_Count=len;
+      c3._count=len;
       return c3;
     } 
 
 
     public static Altaxo.Data.DoubleColumn Atan(Altaxo.Data.DoubleColumn c1)
     {
-      int len=c1.m_Count;
+      int len=c1._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
       {
-        c3.m_Array[i] = System.Math.Atan(c1.m_Array[i]);
+        c3._data[i] = System.Math.Atan(c1._data[i]);
       }
-      c3.m_Count=len;
+      c3._count=len;
       return c3;
     } 
 
     public static Altaxo.Data.DoubleColumn Atan2(Altaxo.Data.DoubleColumn c1, Altaxo.Data.DoubleColumn c2)
     {
-      int len = c1.m_Count<c2.m_Count ? c1.m_Count : c2.m_Count;
+      int len = c1._count<c2._count ? c1._count : c2._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
       {
-        c3.m_Array[i] = System.Math.Atan2(c1.m_Array[i],c2.m_Array[i]);
+        c3._data[i] = System.Math.Atan2(c1._data[i],c2._data[i]);
       }
-      c3.m_Count=len;
+      c3._count=len;
       return c3;  
     }
 
     public static Altaxo.Data.DoubleColumn Atan2(Altaxo.Data.DoubleColumn c1, double c2)
     {
-      int len = c1.m_Count;
+      int len = c1._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
       {
-        c3.m_Array[i] = System.Math.Atan2(c1.m_Array[i],c2);
+        c3._data[i] = System.Math.Atan2(c1._data[i],c2);
       }
-      c3.m_Count=len;
+      c3._count=len;
       return c3;  
     }
 
     public static Altaxo.Data.DoubleColumn Atan2(double c1, Altaxo.Data.DoubleColumn c2)
     {
-      int len = c2.m_Count;
+      int len = c2._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
       {
-        c3.m_Array[i] = System.Math.Atan2(c1,c2.m_Array[i]);
+        c3._data[i] = System.Math.Atan2(c1,c2._data[i]);
       }
-      c3.m_Count=len;
+      c3._count=len;
       return c3;  
     }
 
 
     public static Altaxo.Data.DoubleColumn Ceiling(Altaxo.Data.DoubleColumn c1)
     {
-      int len=c1.m_Count;
+      int len=c1._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
       {
-        c3.m_Array[i] = System.Math.Ceiling(c1.m_Array[i]);
+        c3._data[i] = System.Math.Ceiling(c1._data[i]);
       }
-      c3.m_Count=len;
+      c3._count=len;
       return c3;
     } 
 
     public static Altaxo.Data.DoubleColumn Cos(Altaxo.Data.DoubleColumn c1)
     {
-      int len=c1.m_Count;
+      int len=c1._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
       {
-        c3.m_Array[i] = System.Math.Cos(c1.m_Array[i]);
+        c3._data[i] = System.Math.Cos(c1._data[i]);
       }
-      c3.m_Count=len;
+      c3._count=len;
       return c3;
     } 
 
     public static Altaxo.Data.DoubleColumn Cosh(Altaxo.Data.DoubleColumn c1)
     {
-      int len=c1.m_Count;
+      int len=c1._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
       {
-        c3.m_Array[i] = System.Math.Cosh(c1.m_Array[i]);
+        c3._data[i] = System.Math.Cosh(c1._data[i]);
       }
-      c3.m_Count=len;
+      c3._count=len;
       return c3;
     } 
 
     public static Altaxo.Data.DoubleColumn Exp(Altaxo.Data.DoubleColumn c1)
     {
-      int len=c1.m_Count;
+      int len=c1._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
       {
-        c3.m_Array[i] = System.Math.Exp(c1.m_Array[i]);
+        c3._data[i] = System.Math.Exp(c1._data[i]);
       }
-      c3.m_Count=len;
+      c3._count=len;
       return c3;
     } 
 
     public static Altaxo.Data.DoubleColumn Floor(Altaxo.Data.DoubleColumn c1)
     {
-      int len=c1.m_Count;
+      int len=c1._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
       {
-        c3.m_Array[i] = System.Math.Floor(c1.m_Array[i]);
+        c3._data[i] = System.Math.Floor(c1._data[i]);
       }
-      c3.m_Count=len;
+      c3._count=len;
       return c3;
     } 
 
     public static Altaxo.Data.DoubleColumn IEEERemainder(Altaxo.Data.DoubleColumn c1, Altaxo.Data.DoubleColumn c2)
     {
-      int len = c1.m_Count<c2.m_Count ? c1.m_Count : c2.m_Count;
+      int len = c1._count<c2._count ? c1._count : c2._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
       {
-        c3.m_Array[i] = System.Math.IEEERemainder(c1.m_Array[i],c2.m_Array[i]);
+        c3._data[i] = System.Math.IEEERemainder(c1._data[i],c2._data[i]);
       }
-      c3.m_Count=len;
+      c3._count=len;
       return c3;  
     }
 
     public static Altaxo.Data.DoubleColumn IEEERemainder(Altaxo.Data.DoubleColumn c1, double c2)
     {
-      int len = c1.m_Count;
+      int len = c1._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
       {
-        c3.m_Array[i] = System.Math.IEEERemainder(c1.m_Array[i],c2);
+        c3._data[i] = System.Math.IEEERemainder(c1._data[i],c2);
       }
-      c3.m_Count=len;
+      c3._count=len;
       return c3;  
     }
 
     public static Altaxo.Data.DoubleColumn IEEERemainder(double c1, Altaxo.Data.DoubleColumn c2)
     {
-      int len = c2.m_Count;
+      int len = c2._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
       {
-        c3.m_Array[i] = System.Math.IEEERemainder(c1,c2.m_Array[i]);
+        c3._data[i] = System.Math.IEEERemainder(c1,c2._data[i]);
       }
-      c3.m_Count=len;
+      c3._count=len;
       return c3;  
     }
 
@@ -2127,49 +2129,49 @@ namespace Altaxo.Data
     
     public static Altaxo.Data.DoubleColumn Log(Altaxo.Data.DoubleColumn c1)
     {
-      int len=c1.m_Count;
+      int len=c1._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
       {
-        c3.m_Array[i] = System.Math.Log(c1.m_Array[i]);
+        c3._data[i] = System.Math.Log(c1._data[i]);
       }
-      c3.m_Count=len;
+      c3._count=len;
       return c3;
     } 
 
     public static Altaxo.Data.DoubleColumn Log(Altaxo.Data.DoubleColumn c1, Altaxo.Data.DoubleColumn c2)
     {
-      int len = c1.m_Count<c2.m_Count ? c1.m_Count : c2.m_Count;
+      int len = c1._count<c2._count ? c1._count : c2._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
       {
-        c3.m_Array[i] = System.Math.Log(c1.m_Array[i],c2.m_Array[i]);
+        c3._data[i] = System.Math.Log(c1._data[i],c2._data[i]);
       }
-      c3.m_Count=len;
+      c3._count=len;
       return c3;  
     }
 
     public static Altaxo.Data.DoubleColumn Log(Altaxo.Data.DoubleColumn c1, double c2)
     {
-      int len = c1.m_Count;
+      int len = c1._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
       {
-        c3.m_Array[i] = System.Math.Log(c1.m_Array[i],c2);
+        c3._data[i] = System.Math.Log(c1._data[i],c2);
       }
-      c3.m_Count=len;
+      c3._count=len;
       return c3;  
     }
 
     public static Altaxo.Data.DoubleColumn Log(double c1, Altaxo.Data.DoubleColumn c2)
     {
-      int len = c2.m_Count;
+      int len = c2._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
       {
-        c3.m_Array[i] = System.Math.Log(c1,c2.m_Array[i]);
+        c3._data[i] = System.Math.Log(c1,c2._data[i]);
       }
-      c3.m_Count=len;
+      c3._count=len;
       return c3;
     }
 
@@ -2177,13 +2179,13 @@ namespace Altaxo.Data
     #region Log10
     public static Altaxo.Data.DoubleColumn Log10(Altaxo.Data.DoubleColumn c1)
     {
-      int len = c1.m_Count;
+      int len = c1._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for (int i = 0; i < len; i++)
       {
-        c3.m_Array[i] = System.Math.Log10(c1.m_Array[i]);
+        c3._data[i] = System.Math.Log10(c1._data[i]);
       }
-      c3.m_Count = len;
+      c3._count = len;
       return c3;
     }
     #endregion
@@ -2191,37 +2193,37 @@ namespace Altaxo.Data
 
     public static Altaxo.Data.DoubleColumn Max(Altaxo.Data.DoubleColumn c1, Altaxo.Data.DoubleColumn c2)
     {
-      int len = c1.m_Count<c2.m_Count ? c1.m_Count : c2.m_Count;
+      int len = c1._count<c2._count ? c1._count : c2._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
       {
-        c3.m_Array[i] = System.Math.Max(c1.m_Array[i],c2.m_Array[i]);
+        c3._data[i] = System.Math.Max(c1._data[i],c2._data[i]);
       }
-      c3.m_Count=len;
+      c3._count=len;
       return c3;  
     }
 
     public static Altaxo.Data.DoubleColumn Max(Altaxo.Data.DoubleColumn c1, double c2)
     {
-      int len = c1.m_Count;
+      int len = c1._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
       {
-        c3.m_Array[i] = System.Math.Max(c1.m_Array[i],c2);
+        c3._data[i] = System.Math.Max(c1._data[i],c2);
       }
-      c3.m_Count=len;
+      c3._count=len;
       return c3;  
     }
 
     public static Altaxo.Data.DoubleColumn Max(double c1, Altaxo.Data.DoubleColumn c2)
     {
-      int len = c2.m_Count;
+      int len = c2._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
       {
-        c3.m_Array[i] = System.Math.Max(c1,c2.m_Array[i]);
+        c3._data[i] = System.Math.Max(c1,c2._data[i]);
       }
-      c3.m_Count=len;
+      c3._count=len;
       return c3;  
     }
 
@@ -2229,37 +2231,37 @@ namespace Altaxo.Data
     
     public static Altaxo.Data.DoubleColumn Min(Altaxo.Data.DoubleColumn c1, Altaxo.Data.DoubleColumn c2)
     {
-      int len = c1.m_Count<c2.m_Count ? c1.m_Count : c2.m_Count;
+      int len = c1._count<c2._count ? c1._count : c2._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
       {
-        c3.m_Array[i] = System.Math.Min(c1.m_Array[i],c2.m_Array[i]);
+        c3._data[i] = System.Math.Min(c1._data[i],c2._data[i]);
       }
-      c3.m_Count=len;
+      c3._count=len;
       return c3;  
     }
 
     public static Altaxo.Data.DoubleColumn Min(Altaxo.Data.DoubleColumn c1, double c2)
     {
-      int len = c1.m_Count;
+      int len = c1._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
       {
-        c3.m_Array[i] = System.Math.Min(c1.m_Array[i],c2);
+        c3._data[i] = System.Math.Min(c1._data[i],c2);
       }
-      c3.m_Count=len;
+      c3._count=len;
       return c3;  
     }
 
     public static Altaxo.Data.DoubleColumn Min(double c1, Altaxo.Data.DoubleColumn c2)
     {
-      int len = c2.m_Count;
+      int len = c2._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
       {
-        c3.m_Array[i] = System.Math.Min(c1,c2.m_Array[i]);
+        c3._data[i] = System.Math.Min(c1,c2._data[i]);
       }
-      c3.m_Count=len;
+      c3._count=len;
       return c3;  
     }
 
@@ -2267,37 +2269,37 @@ namespace Altaxo.Data
     
     public static Altaxo.Data.DoubleColumn Pow(Altaxo.Data.DoubleColumn c1, Altaxo.Data.DoubleColumn c2)
     {
-      int len = c1.m_Count<c2.m_Count ? c1.m_Count : c2.m_Count;
+      int len = c1._count<c2._count ? c1._count : c2._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
       {
-        c3.m_Array[i] = System.Math.Pow(c1.m_Array[i],c2.m_Array[i]);
+        c3._data[i] = System.Math.Pow(c1._data[i],c2._data[i]);
       }
-      c3.m_Count=len;
+      c3._count=len;
       return c3;  
     }
 
     public static Altaxo.Data.DoubleColumn Pow(Altaxo.Data.DoubleColumn c1, double c2)
     {
-      int len = c1.m_Count;
+      int len = c1._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
       {
-        c3.m_Array[i] = System.Math.Pow(c1.m_Array[i],c2);
+        c3._data[i] = System.Math.Pow(c1._data[i],c2);
       }
-      c3.m_Count=len;
+      c3._count=len;
       return c3;  
     }
 
     public static Altaxo.Data.DoubleColumn Pow(double c1, Altaxo.Data.DoubleColumn c2)
     {
-      int len = c2.m_Count;
+      int len = c2._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
       {
-        c3.m_Array[i] = System.Math.Pow(c1,c2.m_Array[i]);
+        c3._data[i] = System.Math.Pow(c1,c2._data[i]);
       }
-      c3.m_Count=len;
+      c3._count=len;
       return c3;  
     }
 
@@ -2305,121 +2307,121 @@ namespace Altaxo.Data
     
     public static Altaxo.Data.DoubleColumn Round(Altaxo.Data.DoubleColumn c1)
     {
-      int len=c1.m_Count;
+      int len=c1._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
       {
-        c3.m_Array[i] = System.Math.Round(c1.m_Array[i]);
+        c3._data[i] = System.Math.Round(c1._data[i]);
       }
-      c3.m_Count=len;
+      c3._count=len;
       return c3;
     } 
 
     public static Altaxo.Data.DoubleColumn Round(Altaxo.Data.DoubleColumn c1, Altaxo.Data.DoubleColumn c2)
     {
-      int len = c1.m_Count<c2.m_Count ? c1.m_Count : c2.m_Count;
+      int len = c1._count<c2._count ? c1._count : c2._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
       {
-        c3.m_Array[i] = System.Math.Round(c1.m_Array[i],(int)c2.m_Array[i]);
+        c3._data[i] = System.Math.Round(c1._data[i],(int)c2._data[i]);
       }
-      c3.m_Count=len;
+      c3._count=len;
       return c3;  
     }
 
     public static Altaxo.Data.DoubleColumn Round(Altaxo.Data.DoubleColumn c1, int c2)
     {
-      int len = c1.m_Count;
+      int len = c1._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
       {
-        c3.m_Array[i] = System.Math.Round(c1.m_Array[i],c2);
+        c3._data[i] = System.Math.Round(c1._data[i],c2);
       }
-      c3.m_Count=len;
+      c3._count=len;
       return c3;  
     }
 
     public static Altaxo.Data.DoubleColumn Round(double c1, Altaxo.Data.DoubleColumn c2)
     {
-      int len = c2.m_Count;
+      int len = c2._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
       {
-        c3.m_Array[i] = System.Math.Round(c1,(int)c2.m_Array[i]);
+        c3._data[i] = System.Math.Round(c1,(int)c2._data[i]);
       }
-      c3.m_Count=len;
+      c3._count=len;
       return c3;  
     }
     
     public static Altaxo.Data.DoubleColumn Sign(Altaxo.Data.DoubleColumn c1)
     {
-      int len=c1.m_Count;
+      int len=c1._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
       {
-        c3.m_Array[i] = System.Math.Sign(c1.m_Array[i]);
+        c3._data[i] = System.Math.Sign(c1._data[i]);
       }
-      c3.m_Count=len;
+      c3._count=len;
       return c3;
     } 
 
     public static Altaxo.Data.DoubleColumn Sin(Altaxo.Data.DoubleColumn c1)
     {
-      int len=c1.m_Count;
+      int len=c1._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
       {
-        c3.m_Array[i] = System.Math.Sin(c1.m_Array[i]);
+        c3._data[i] = System.Math.Sin(c1._data[i]);
       }
-      c3.m_Count=len;
+      c3._count=len;
       return c3;
     } 
 
     public static Altaxo.Data.DoubleColumn Sinh(Altaxo.Data.DoubleColumn c1)
     {
-      int len=c1.m_Count;
+      int len=c1._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
       {
-        c3.m_Array[i] = System.Math.Sinh(c1.m_Array[i]);
+        c3._data[i] = System.Math.Sinh(c1._data[i]);
       }
-      c3.m_Count=len;
+      c3._count=len;
       return c3;
     } 
 
     public static Altaxo.Data.DoubleColumn Sqrt(Altaxo.Data.DoubleColumn c1)
     {
-      int len=c1.m_Count;
+      int len=c1._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
       {
-        c3.m_Array[i] = System.Math.Sqrt(c1.m_Array[i]);
+        c3._data[i] = System.Math.Sqrt(c1._data[i]);
       }
-      c3.m_Count=len;
+      c3._count=len;
       return c3;
     } 
 
     public static Altaxo.Data.DoubleColumn Tan(Altaxo.Data.DoubleColumn c1)
     {
-      int len=c1.m_Count;
+      int len=c1._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
       {
-        c3.m_Array[i] = System.Math.Tan(c1.m_Array[i]);
+        c3._data[i] = System.Math.Tan(c1._data[i]);
       }
-      c3.m_Count=len;
+      c3._count=len;
       return c3;
     } 
 
     public static Altaxo.Data.DoubleColumn Tanh(Altaxo.Data.DoubleColumn c1)
     {
-      int len=c1.m_Count;
+      int len=c1._count;
       Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
       for(int i=0;i<len;i++)
       {
-        c3.m_Array[i] = System.Math.Tanh(c1.m_Array[i]);
+        c3._data[i] = System.Math.Tanh(c1._data[i]);
       }
-      c3.m_Count=len;
+      c3._count=len;
       return c3;
     } 
         

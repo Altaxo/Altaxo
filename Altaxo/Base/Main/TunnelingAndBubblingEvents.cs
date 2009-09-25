@@ -32,8 +32,8 @@ namespace Altaxo.Main
     /// <param name="e"></param>
     void EhTunnelingEvent(object sender, TunnelingEventArgs e);
 
-    event Action<object, BubblingEventArgs> BubblingEvent;
-    event Action<object, TunnelingEventArgs> TunnelingEvent;
+   // event Action<object, BubblingEventArgs> BubblingEvent;
+   // event Action<object, TunnelingEventArgs> TunnelingEvent;
   }
 
   public class BeforeDisposeEventArgs : TunnelingEventArgs

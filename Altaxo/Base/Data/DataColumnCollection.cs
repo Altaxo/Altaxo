@@ -372,7 +372,7 @@ namespace Altaxo.Data
     /// <summary>
     /// ColumnScripts, key is the corresponding column, value is of type WorksheetColumnScript
     /// </summary>
-    protected ColumnScriptCollection _columnScripts = new ColumnScriptCollection();
+		protected Dictionary<DataColumn, IColumnScriptText> _columnScripts = new Dictionary<DataColumn, IColumnScriptText>();
 
     
     /// <summary>
@@ -447,7 +447,7 @@ namespace Altaxo.Data
         Altaxo.Data.DataColumnCollection s = (Altaxo.Data.DataColumnCollection)obj;
         
         s._columnsByNumber = (List<DataColumn>)(info.GetValue("Columns",typeof(List<DataColumn>)));
-        s._columnScripts = (ColumnScriptCollection)(info.GetValue("ColumnScripts",typeof(ColumnScriptCollection)));
+				s._columnScripts = (Dictionary<DataColumn, IColumnScriptText>)(info.GetValue("ColumnScripts", typeof(Dictionary<DataColumn, IColumnScriptText>)));
 
         // set up helper objects
         s._columnsByName = new Dictionary<string, DataColumn>();
@@ -483,10 +483,10 @@ namespace Altaxo.Data
 
         // serialize the column scripts
         info.CreateArray("ColumnScripts",s._columnScripts.Count);
-        foreach(System.Collections.DictionaryEntry entry in s._columnScripts)
+        foreach(KeyValuePair<DataColumn, IColumnScriptText> entry in s._columnScripts)
         {
           info.CreateElement("Script");
-          info.AddValue("ColName", s.GetColumnName((Altaxo.Data.DataColumn)entry.Key));
+          info.AddValue("ColName", s.GetColumnName(entry.Key));
           info.AddValue("Content",entry.Value);
           info.CommitElement();
         }
@@ -718,11 +718,11 @@ namespace Altaxo.Data
         this.Add( newCol, newInfo);
       }
       // Copy all Column scripts
-      foreach(System.Collections.DictionaryEntry d in from.ColumnScripts)
+      foreach(KeyValuePair<DataColumn, IColumnScriptText> d in from.ColumnScripts)
       {
-        DataColumn srccol = (DataColumn)d.Key; // the original column this script belongs to
+        DataColumn srccol = d.Key; // the original column this script belongs to
         DataColumn destcol = this[srccol.Name]; // the new (cloned) column the script now belongs to
-        object destscript = ((ICloneable)d.Value).Clone(); // the cloned script
+        var destscript = (IColumnScriptText)d.Value.Clone(); // the cloned script
 
         // add the cloned script to the own collection
         this.ColumnScripts.Add(destcol,destscript);
@@ -744,7 +744,7 @@ namespace Altaxo.Data
     public virtual void Dispose()
     {
       // first relase all column scripts
-      foreach(System.Collections.DictionaryEntry d in this._columnScripts)
+      foreach(KeyValuePair<DataColumn, IColumnScriptText> d in this._columnScripts)
       {
         if(d.Value is IDisposable)
           ((IDisposable)d.Value).Dispose();
@@ -928,7 +928,7 @@ namespace Altaxo.Data
         oldCol.ParentObject = null;
         newCol.ParentObject = this;
         
-        object script = _columnScripts[oldCol];
+        var script = _columnScripts[oldCol];
         if(null!=script)
         {
           _columnScripts.Remove(oldCol);
@@ -1148,8 +1148,7 @@ namespace Altaxo.Data
         for(int i=nFirstColumn+nDelCount-1;i>=nFirstColumn;i--)
         {
           string columnName = GetColumnName(this[i]);
-          if(this._columnScripts.Contains(this[i]))
-            this._columnScripts.Remove(this[i]);
+          this._columnScripts.Remove(this[i]);
           this._columnInfoByColumn.Remove(_columnsByNumber[i]);
           this._columnsByName.Remove(columnName);
           this[i].ParentObject=null;
@@ -1185,7 +1184,7 @@ namespace Altaxo.Data
 
       DataColumn[] tmpColumn = new DataColumn[numberMoved];
       DataColumnInfo[] tmpInfo = new DataColumnInfo[numberMoved];
-      object[] tmpScript = new object[numberMoved];
+      IColumnScriptText[] tmpScript = new IColumnScriptText[numberMoved];
 
       for(int i=0;i<numberMoved;i++)
       {
@@ -1996,7 +1995,7 @@ namespace Altaxo.Data
     /// <summary>
     /// Returns the collection of column scripts.
     /// </summary>
-    public ColumnScriptCollection ColumnScripts
+		public Dictionary<DataColumn, IColumnScriptText> ColumnScripts
     {
       get { return this._columnScripts; }
     }

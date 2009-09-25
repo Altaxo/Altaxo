@@ -22,6 +22,7 @@
 
 
 using System;
+using System.Collections.Generic;
 using Altaxo.Serialization;
 using Altaxo.Collections;
 using Altaxo.Scripting;
@@ -108,7 +109,7 @@ namespace Altaxo.Data
     /// <remarks>The properties are saved on disc (with exception of those who starts with "tmp/".
     /// If the property you want to store is only temporary, the properties name should therefore
     /// start with "tmp/".</remarks>
-    protected System.Collections.Hashtable _tableProperties;
+    protected Dictionary<string, object> _tableProperties;
     // Helper Data
 
     /// <summary>
@@ -295,7 +296,7 @@ namespace Altaxo.Data
         info.AddValue("TableScript",s._tableScript);
 
         // new in version 2 - Add table properties
-        int numberproperties = s._tableProperties==null ? 0 : s._tableProperties.Keys.Count;
+        int numberproperties = s._tableProperties==null ? 0 : s._tableProperties.Count;
         info.CreateArray("TableProperties",numberproperties);
         if(s._tableProperties!=null)
         {
@@ -1137,7 +1138,11 @@ namespace Altaxo.Data
     /// <returns>The object, or null if no object under the provided name was stored here.</returns>
     public object GetTableProperty(string key)
     {
-      return _tableProperties==null ? null : this._tableProperties[key]; 
+			object result = null;
+      if(_tableProperties!=null)
+				_tableProperties.TryGetValue(key, out result);
+
+			return result;
     }
 
 
@@ -1149,13 +1154,10 @@ namespace Altaxo.Data
     /// start with "tmp/".</remarks>
     public void   SetTableProperty(string key, object val)
     {
-      if(_tableProperties ==null)
-        _tableProperties = new System.Collections.Hashtable();
+			if (_tableProperties == null)
+				_tableProperties = new Dictionary<string, object>();
 
-      if(_tableProperties.ContainsKey(key))
-        _tableProperties[key]=val;
-      else
-        _tableProperties.Add(key,val);
+      _tableProperties[key]=val;
     }
 
 
@@ -1168,13 +1170,7 @@ namespace Altaxo.Data
     /// start with "tmp/".</remarks>
     public bool RemoveTableProperty(string key)
     {
-      if (null != _tableProperties && _tableProperties.ContainsKey(key))
-      {
-        _tableProperties.Remove(key);
-        return true;
-      }
-      else
-        return false;
+			return _tableProperties.Remove(key);
     }
 
     /// <summary>

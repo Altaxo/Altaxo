@@ -32,9 +32,9 @@ namespace Altaxo.Data
   public class EquallySpacedColumn : INumericColumn, IReadableColumn, ICloneable
   {
     /// <summary>The start value, i.e. the value at index 0.</summary>
-    protected double m_Start=0;
+    protected double _start=0;
     /// <summary>The spacing value between consecutive elements.</summary>
-    protected double m_Increment=1;
+    protected double _increment=1;
 
 
     #region Serialization
@@ -44,16 +44,16 @@ namespace Altaxo.Data
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         EquallySpacedColumn s = (EquallySpacedColumn)obj;
-        info.AddValue("StartValue",s.m_Start);
-        info.AddValue("Increment",s.m_Increment);
+        info.AddValue("StartValue",s._start);
+        info.AddValue("Increment",s._increment);
       }
 
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
         EquallySpacedColumn s = null!=o ? (EquallySpacedColumn)o : new EquallySpacedColumn(0,1);
         
-        s.m_Start = info.GetDouble("StartValue");
-        s.m_Increment = info.GetDouble("Increment");
+        s._start = info.GetDouble("StartValue");
+        s._increment = info.GetDouble("Increment");
         return s;
       }
     }
@@ -66,8 +66,8 @@ namespace Altaxo.Data
     /// <param name="increment">The increment value (spacing value between consecutive elements).</param>
     public EquallySpacedColumn(double start, double increment)
     {
-      m_Start = start;
-      m_Increment = increment;
+      _start = start;
+      _increment = increment;
     }
 
     /// <summary>
@@ -76,7 +76,7 @@ namespace Altaxo.Data
     /// <returns>The cloned instance of this object.</returns>
     public object Clone()
     {
-      return new EquallySpacedColumn(m_Start, m_Increment);
+      return new EquallySpacedColumn(_start, _increment);
     }
 
 
@@ -89,7 +89,7 @@ namespace Altaxo.Data
     {
       get
       {
-        return m_Start + i * m_Increment;
+        return _start + i * _increment;
       }
     }
     
@@ -110,7 +110,7 @@ namespace Altaxo.Data
     {
       get 
       {
-        return new AltaxoVariant((double)(m_Start+i*m_Increment));
+        return new AltaxoVariant((double)(_start+i*_increment));
       }
     } 
 
@@ -119,7 +119,7 @@ namespace Altaxo.Data
     /// </summary>
     public string FullName
     {
-      get { return "EquallySpacedColumn("+m_Start.ToString()+","+m_Increment.ToString()+")"; }
+      get { return "EquallySpacedColumn("+_start.ToString()+","+_increment.ToString()+")"; }
     }
 
   }

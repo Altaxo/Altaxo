@@ -24,6 +24,7 @@ using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
 using Altaxo.Graph.Gdi;
@@ -2864,28 +2865,17 @@ namespace Altaxo.Worksheet.GUI
     }
 
 
-    public class ColumnStyleCache : Altaxo.Data.CollectionBase
+    public class ColumnStyleCache : IList<ColumnStyleCacheItem>
     {
-      protected int m_CachedFirstVisibleColumn=0; // the column number of the first cached item, i.e. for this[0]
-      protected int m_CachedWidth=0; // cached width of painting area
+      protected int _cachedFirstVisibleColumn=0; // the column number of the first cached item, i.e. for this[0]
+      protected int _cachedWidthOfPaintingArea=0; // cached width of painting area
+			protected List<ColumnStyleCacheItem> _items = new List<ColumnStyleCacheItem>();
  
-      public ColumnStyleCacheItem this[int i]
-      {
-        get { return (ColumnStyleCacheItem)base.InnerList[i]; }
-      }
-
-      public void Add(ColumnStyleCacheItem item)
-      {
-        base.InnerList.Add(item);
-      }
-
-  
-
       public void Update(WorksheetController dg)
       {
         if( (this.Count==0)
-          ||(dg.TableAreaWidth!=this.m_CachedWidth)
-          ||(dg.FirstVisibleColumn != this.m_CachedFirstVisibleColumn) )
+          ||(dg.TableAreaWidth!=this._cachedWidthOfPaintingArea)
+          ||(dg.FirstVisibleColumn != this._cachedFirstVisibleColumn) )
         {
           ForceUpdate(dg);
         }
@@ -2904,24 +2894,112 @@ namespace Altaxo.Worksheet.GUI
         int actualColumnLeft = 0; 
         int actualColumnRight = dg.m_TableLayout.RowHeaderStyle.Width;
       
-        this.m_CachedWidth = dg.TableAreaWidth;
+        this._cachedWidthOfPaintingArea = dg.TableAreaWidth;
         dg.m_LastFullyVisibleColumn = dg.FirstVisibleColumn;
 
-        for(int i=dg.FirstVisibleColumn;i<dg.DataTable.DataColumns.ColumnCount && actualColumnLeft<this.m_CachedWidth;i++)
+        for(int i=dg.FirstVisibleColumn;i<dg.DataTable.DataColumns.ColumnCount && actualColumnLeft<this._cachedWidthOfPaintingArea;i++)
         {
           actualColumnLeft = actualColumnRight;
           Altaxo.Worksheet.ColumnStyle cs = dg.GetDataColumnStyle(i);
           actualColumnRight = actualColumnLeft+cs.Width;
           this.Add(new ColumnStyleCacheItem(cs,actualColumnLeft,actualColumnRight));
 
-          if(actualColumnLeft<this.m_CachedWidth)
+          if(actualColumnLeft<this._cachedWidthOfPaintingArea)
             dg.m_LastVisibleColumn = i;
 
-          if(actualColumnRight<=this.m_CachedWidth)
+          if(actualColumnRight<=this._cachedWidthOfPaintingArea)
             dg.m_LastFullyVisibleColumn = i;
         }
       }
-    }
+
+			#region IList<ColumnStyleCacheItem> Members
+
+			public int IndexOf(ColumnStyleCacheItem item)
+			{
+				return _items.IndexOf(item);
+			}
+
+			public void Insert(int index, ColumnStyleCacheItem item)
+			{
+				_items.Insert(index, item);
+			}
+
+			public void RemoveAt(int index)
+			{
+				_items.RemoveAt(index);
+			}
+
+			public ColumnStyleCacheItem this[int index]
+			{
+				get
+				{
+					return _items[index];
+				}
+				set
+				{
+					_items[index] = value;
+				}
+			}
+
+			#endregion
+
+			#region ICollection<ColumnStyleCacheItem> Members
+
+			public void Add(ColumnStyleCacheItem item)
+			{
+				_items.Add(item);
+			}
+
+			public void Clear()
+			{
+				_items.Clear();
+			}
+
+			public bool Contains(ColumnStyleCacheItem item)
+			{
+				return _items.Contains(item);
+			}
+
+			public void CopyTo(ColumnStyleCacheItem[] array, int arrayIndex)
+			{
+				_items.CopyTo(array, arrayIndex);
+			}
+
+			public int Count
+			{
+				get { return _items.Count; }
+			}
+
+			public bool IsReadOnly
+			{
+				get { return false; }
+			}
+
+			public bool Remove(ColumnStyleCacheItem item)
+			{
+				return _items.Remove(item);
+			}
+
+			#endregion
+
+			#region IEnumerable<ColumnStyleCacheItem> Members
+
+			public IEnumerator<ColumnStyleCacheItem> GetEnumerator()
+			{
+				return _items.GetEnumerator();
+			}
+
+			#endregion
+
+			#region IEnumerable Members
+
+			IEnumerator IEnumerable.GetEnumerator()
+			{
+				return _items.GetEnumerator();
+			}
+
+			#endregion
+		}
 
     #endregion
 

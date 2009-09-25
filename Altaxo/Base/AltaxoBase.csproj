@@ -409,13 +409,7 @@
     <Compile Include="Scripting\AbstractScript.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Data\CollectionBase.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Data\ColumnKind.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Data\ColumnScript.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Data\DataColumn.cs">

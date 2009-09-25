@@ -28,7 +28,6 @@ using Altaxo.Serialization;
 
 namespace Altaxo.Data
 {
-
   /// <summary>
   /// This is the base class of all data columns in Altaxo. This base class provides readable, writeable 
   /// columns with a defined count.
@@ -73,7 +72,7 @@ namespace Altaxo.Data
     /// <summary>
     /// Used to accumulate change data
     /// </summary>
-    protected ChangeEventArgs __changeData;
+    protected ChangeEventArgs _changeData;
 
     /// <summary>This element is fired when the column is to be disposed.</summary><remarks>All instances, which have a reference
     /// to this column, should have a wire to this event. In case the event is fired, it indicates
@@ -478,10 +477,10 @@ namespace Altaxo.Data
     {
       System.Diagnostics.Debug.Assert(_suspendCount >= 0, "SuspendCount must always be greater or equal to zero");
 
-      if (_suspendCount > 0 && (--_suspendCount) == 0 && __changeData != null)
+      if (_suspendCount > 0 && (--_suspendCount) == 0 && _changeData != null)
       {
         if (_parent is Main.IChildChangedEventSink)
-          ((Main.IChildChangedEventSink)_parent).EhChildChanged(this, __changeData);
+          ((Main.IChildChangedEventSink)_parent).EhChildChanged(this, _changeData);
 
         if (!IsSuspended)
           OnDataChanged(); // Fire the changed event
@@ -497,10 +496,10 @@ namespace Altaxo.Data
     /// <remarks>In case the object in which to accumulate the change data is actually null, a new change data object is created.</remarks>
     protected void AccumulateChangeData(int minRow, int maxRow, bool rowCountDecreased)
     {
-      if (__changeData == null)
-        __changeData = new DataColumn.ChangeEventArgs(minRow, maxRow, rowCountDecreased);
+      if (_changeData == null)
+        _changeData = new DataColumn.ChangeEventArgs(minRow, maxRow, rowCountDecreased);
       else
-        __changeData.Accumulate(minRow, maxRow, rowCountDecreased); // AccumulateNotificationData
+        _changeData.Accumulate(minRow, maxRow, rowCountDecreased); // AccumulateNotificationData
     }
 
     /// <summary>
@@ -520,7 +519,7 @@ namespace Altaxo.Data
         return;
 
       if (_parent is Main.IChildChangedEventSink)
-        ((Main.IChildChangedEventSink)_parent).EhChildChanged(this, __changeData);
+        ((Main.IChildChangedEventSink)_parent).EhChildChanged(this, _changeData);
 
       if (!IsSuspended) // parent is not suspended
         OnDataChanged(); // Fire the changed event 
@@ -534,9 +533,9 @@ namespace Altaxo.Data
     protected virtual void OnDataChanged()
     {
       if (null != Changed)
-        Changed(this, __changeData);
+        Changed(this, _changeData);
 
-      __changeData = null;
+      _changeData = null;
     }
 
     /// <summary>
@@ -547,7 +546,7 @@ namespace Altaxo.Data
     {
       get
       {
-        return null != __changeData;
+        return null != _changeData;
       }
     }
 

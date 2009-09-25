@@ -105,9 +105,9 @@ namespace Altaxo.Data
   {
     public enum Content { VNull, VDouble, VDateTime, VString, VOperatable, VObject }
  
-    public Content m_Content;
-    public double m_Double;
-    public object m_Object;
+    Content _typeOfContent;
+    double _double;
+    object _object;
 
 
     #region Serialization
@@ -118,22 +118,22 @@ namespace Altaxo.Data
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         AltaxoVariant s = (AltaxoVariant)obj;
-        info.AddEnum("Content", s.m_Content);
-        switch (s.m_Content)
+        info.AddEnum("Content", s._typeOfContent);
+        switch (s._typeOfContent)
         {
           case Content.VNull:
             break;
           case Content.VDouble:
-            info.AddValue("Value", s.m_Double);
+            info.AddValue("Value", s._double);
             break;
           case Content.VDateTime:
-            info.AddValue("Value", (DateTime)s.m_Object);
+            info.AddValue("Value", (DateTime)s._object);
             break;
           case Content.VString:
-            info.AddValue("Value", (string)s.m_Object);
+            info.AddValue("Value", (string)s._object);
             break;
           default:
-            info.AddValue("Value", s.m_Object);
+            info.AddValue("Value", s._object);
             break;
         }
       }
@@ -142,23 +142,23 @@ namespace Altaxo.Data
       {
         AltaxoVariant s = (o == null ? new AltaxoVariant() : (AltaxoVariant)o);
         Content c = (Content)info.GetEnum("Content", typeof(Content));
-        s.m_Content = c;
+        s._typeOfContent = c;
 
         switch(c)
         {
           case Content.VNull:
             break;
           case Content.VDouble:
-            s.m_Double = info.GetDouble("Value");
+            s._double = info.GetDouble("Value");
             break;
           case Content.VDateTime:
-            s.m_Object = info.GetDateTime("Value");
+            s._object = info.GetDateTime("Value");
             break;
           case Content.VString:
-            s.m_Object = info.GetString("Value");
+            s._object = info.GetString("Value");
             break;
           default:
-            s.m_Object = info.GetValue("Value",s);
+            s._object = info.GetValue("Value",s);
             break;
         }
 
@@ -179,98 +179,98 @@ namespace Altaxo.Data
 
     public AltaxoVariant(AltaxoVariant a)
     {
-      m_Content = a.m_Content;
-      m_Double = a.m_Double;
-      m_Object = a.m_Object;
+      _typeOfContent = a._typeOfContent;
+      _double = a._double;
+      _object = a._object;
     }
     
 
     public AltaxoVariant(double d)
     {
-      m_Content = Content.VDouble;
-      m_Double = d;
-      m_Object = null;
+      _typeOfContent = Content.VDouble;
+      _double = d;
+      _object = null;
     }
     public AltaxoVariant(DateTime f)
     {
-      m_Content = Content.VDateTime;
-      m_Object = f;
-      m_Double = 0;
+      _typeOfContent = Content.VDateTime;
+      _object = f;
+      _double = 0;
     } 
     public AltaxoVariant(string s)
     {
-      m_Content = Content.VString;
-      m_Object=s;
-      m_Double = 0;
+      _typeOfContent = Content.VString;
+      _object=s;
+      _double = 0;
     }
     
     public AltaxoVariant(object k)
     {
       if(k == null)
       {
-        m_Content = Content.VNull;
-        m_Double = 0;
-        m_Object = null;
+        _typeOfContent = Content.VNull;
+        _double = 0;
+        _object = null;
       }
       else if(k is Double)
       {
-        m_Content = Content.VDouble;
-        m_Double = (double)k;
-        m_Object = null;
+        _typeOfContent = Content.VDouble;
+        _double = (double)k;
+        _object = null;
       }
       else if( k is DateTime)
       {
-        m_Content = Content.VDateTime;
-        m_Double = 0;
-        m_Object = k;
+        _typeOfContent = Content.VDateTime;
+        _double = 0;
+        _object = k;
       }
       else if (k is string)
       {
-        m_Content = Content.VString;
-        m_Double = 0;
-        m_Object = k;
+        _typeOfContent = Content.VString;
+        _double = 0;
+        _object = k;
       }
       else if (k is IOperatable)
       {
-        m_Content = Content.VOperatable;
-        m_Double = 0;
-        m_Object = k;
+        _typeOfContent = Content.VOperatable;
+        _double = 0;
+        _object = k;
       }
       else if (k is AltaxoVariant)
       {
-        m_Content = ((AltaxoVariant)k).m_Content;
-        m_Double  = ((AltaxoVariant)k).m_Double;
-        m_Object  = ((AltaxoVariant)k).m_Object; // is critical, because the object is not cloned, so be warned for the first time
+        _typeOfContent = ((AltaxoVariant)k)._typeOfContent;
+        _double  = ((AltaxoVariant)k)._double;
+        _object  = ((AltaxoVariant)k)._object; // is critical, because the object is not cloned, so be warned for the first time
       }
       else 
       {
-        m_Content = Content.VObject;
-        m_Double = 0;
-        m_Object = k;
+        _typeOfContent = Content.VObject;
+        _double = 0;
+        _object = k;
       }
     }
 
     public bool IsType(Content c)
     {
-      return this.m_Content==c;
+      return this._typeOfContent==c;
     }
 
 
     public bool IsTypeOrNull(Content c)
     {
-      return this.m_Content==c || this.m_Content==Content.VNull;
+      return this._typeOfContent==c || this._typeOfContent==Content.VNull;
     }
 
     public bool CanConvertedToDouble
     {
       get 
       {
-        if(m_Content==Content.VDouble || m_Content==Content.VDateTime)
+        if(_typeOfContent==Content.VDouble || _typeOfContent==Content.VDateTime)
           return true; // we can create a double from a double (trivial) and from DateTime
-        if(m_Content==Content.VString) // if the content is a string, we have to look if it is possible to convert
-          return Altaxo.Serialization.NumberConversion.IsNumeric((string)m_Object);
-        else if(m_Object!=null)
-          return Altaxo.Serialization.NumberConversion.IsNumeric(m_Object.ToString());
+        if(_typeOfContent==Content.VString) // if the content is a string, we have to look if it is possible to convert
+          return Altaxo.Serialization.NumberConversion.IsNumeric((string)_object);
+        else if(_object!=null)
+          return Altaxo.Serialization.NumberConversion.IsNumeric(_object.ToString());
         else
           return false; // it is not possible to convert the contents to a double
       }
@@ -283,28 +283,59 @@ namespace Altaxo.Data
     /// <remarks>An exception is thrown if the conversion fails. You have to use <see cref="CanConvertedToDouble"/> for testing if the contents can be converted to a double.</remarks>
     public double ToDouble()
     {
-      if(m_Content==Content.VDouble)
-        return m_Double;
-      else if(m_Content==Content.VDateTime)
-        return ((DateTime)m_Object).Ticks/10000000.0;
-      else if(m_Content==Content.VString)
-        return System.Convert.ToDouble((string)m_Object);
-      else if(m_Object!=null)
-        return System.Convert.ToDouble(m_Object.ToString());
+      if(_typeOfContent==Content.VDouble)
+        return _double;
+      else if(_typeOfContent==Content.VDateTime)
+        return ((DateTime)_object).Ticks/10000000.0;
+      else if(_typeOfContent==Content.VString)
+        return System.Convert.ToDouble((string)_object);
+      else if(_object!=null)
+        return System.Convert.ToDouble(_object.ToString());
       else
         throw new ApplicationException("Unable to convert the contents of this variant to a number, the contents is: " + this.ToString());
     }
 
+    /// <summary>
+    /// Converts the content to a DateTime if possible. The structure remains unchanged.
+    /// </summary>
+    /// <returns>The contents converted to a DateTime.</returns>
+    /// <remarks>An exception is thrown if the conversion fails. </remarks>
+    public DateTime ToDateTime()
+    {
+      if (_typeOfContent == Content.VDouble)
+        return new DateTime((long)(_double * 10000000.0));
+      else if (_typeOfContent == Content.VDateTime)
+        return (DateTime)_object;
+      else if (_typeOfContent == Content.VString)
+        return System.Convert.ToDateTime((string)_object);
+      else if (_object != null)
+        return System.Convert.ToDateTime(_object.ToString());
+      else
+        throw new ApplicationException("Unable to convert the contents of this variant to a DateTime, the contents is: " + this.ToString());
+    }
+
     public override string ToString()
     {
-      if(this.m_Content == Content.VNull)
+      if(this._typeOfContent == Content.VNull)
         return "(null)";
-      else if(this.m_Content == Content.VDouble)
-        return this.m_Double.ToString();
-      else if(null!=m_Object)
-        return this.m_Object.ToString();
+      else if(this._typeOfContent == Content.VDouble)
+        return this._double.ToString();
+      else if(null!=_object)
+        return this._object.ToString();
       else // everything is null
         return "";
+    }
+
+    /// <summary>
+    /// Converts the content to an object. This conversion is always possible. The structure remains unchanged.
+    /// </summary>
+    /// <returns>The contents converted to an object.</returns>
+    public object ToObject()
+    {
+      if (this._typeOfContent == Content.VDouble)
+        return _double;
+      else
+        return _object;
     }
 
     public override bool Equals(object k)
@@ -317,12 +348,12 @@ namespace Altaxo.Data
 
     public override int GetHashCode()
     {
-      if(this.m_Content == Content.VNull)
-        return this.m_Content.GetHashCode();
-      else if(this.m_Content == Content.VDouble)
-        return m_Double.GetHashCode();
+      if(this._typeOfContent == Content.VNull)
+        return this._typeOfContent.GetHashCode();
+      else if(this._typeOfContent == Content.VDouble)
+        return _double.GetHashCode();
       else
-        return m_Object.GetHashCode();
+        return _object.GetHashCode();
     }
 
     /*
@@ -337,9 +368,9 @@ namespace Altaxo.Data
 
     public static implicit operator double(AltaxoVariant f) 
     {
-      if(f.m_Content==Content.VDouble)
-        return f.m_Double;
-      throw new ApplicationException("Variant contains " + f.m_Content.ToString() + ", but expecting type Double");
+      if(f._typeOfContent==Content.VDouble)
+        return f._double;
+      throw new ApplicationException("Variant contains " + f._typeOfContent.ToString() + ", but expecting type Double");
     }
   
 
@@ -351,9 +382,9 @@ namespace Altaxo.Data
       
     public static implicit operator DateTime(AltaxoVariant f) 
     {
-      if(f.m_Content==Content.VDateTime)
-        return (DateTime)f.m_Object;
-      throw new ApplicationException("Variant contains " + f.m_Content.ToString() + ", but expecting type DateTime");
+      if(f._typeOfContent==Content.VDateTime)
+        return (DateTime)f._object;
+      throw new ApplicationException("Variant contains " + f._typeOfContent.ToString() + ", but expecting type DateTime");
     }
   
     public static implicit operator AltaxoVariant(DateTime f) 
@@ -363,9 +394,9 @@ namespace Altaxo.Data
     
     public static implicit operator string(AltaxoVariant f) 
     {
-      if(f.m_Content==Content.VString)
-        return (string)f.m_Object;
-      throw new ApplicationException("Variant contains " + f.m_Content.ToString() + ", but expecting type string");
+      if(f._typeOfContent==Content.VString)
+        return (string)f._object;
+      throw new ApplicationException("Variant contains " + f._typeOfContent.ToString() + ", but expecting type string");
     }
   
     public static implicit operator AltaxoVariant(string f) 
@@ -377,167 +408,167 @@ namespace Altaxo.Data
     {
       object result;
 
-      if(a.m_Content==Content.VDouble && b.m_Content==Content.VDouble)
-        return new AltaxoVariant(a.m_Double + b.m_Double);
-      else if(a.m_Content==Content.VString && b.m_Content==Content.VString)
-        return new AltaxoVariant(((string)a.m_Object)+((string)b.m_Object));
-      else if(a.m_Content==Content.VDateTime && b.m_Content==Content.VDouble)
-        return new AltaxoVariant(((DateTime)a.m_Object).AddSeconds(b.m_Double));
-      else if (a.m_Content == Content.VDouble && b.m_Content == Content.VDateTime)
-        return new AltaxoVariant(((DateTime)b.m_Object).AddSeconds(a.m_Double));
-      else if(a.m_Content==Content.VString && b.m_Content==Content.VDouble)
-        return new AltaxoVariant(((string)a.m_Object)+((double)b.m_Double).ToString());
-      else if(a.m_Content==Content.VString && b.m_Content==Content.VDateTime)
-        return new AltaxoVariant(((string)a.m_Object)+((System.DateTime)b.m_Object).ToString());
-      else if(a.m_Content==Content.VNull && b.m_Content==Content.VNull)
+      if(a._typeOfContent==Content.VDouble && b._typeOfContent==Content.VDouble)
+        return new AltaxoVariant(a._double + b._double);
+      else if(a._typeOfContent==Content.VString && b._typeOfContent==Content.VString)
+        return new AltaxoVariant(((string)a._object)+((string)b._object));
+      else if(a._typeOfContent==Content.VDateTime && b._typeOfContent==Content.VDouble)
+        return new AltaxoVariant(((DateTime)a._object).AddSeconds(b._double));
+      else if (a._typeOfContent == Content.VDouble && b._typeOfContent == Content.VDateTime)
+        return new AltaxoVariant(((DateTime)b._object).AddSeconds(a._double));
+      else if(a._typeOfContent==Content.VString && b._typeOfContent==Content.VDouble)
+        return new AltaxoVariant(((string)a._object)+((double)b._double).ToString());
+      else if(a._typeOfContent==Content.VString && b._typeOfContent==Content.VDateTime)
+        return new AltaxoVariant(((string)a._object)+((System.DateTime)b._object).ToString());
+      else if(a._typeOfContent==Content.VNull && b._typeOfContent==Content.VNull)
         return new AltaxoVariant();
-      else if(a.m_Content==Content.VOperatable && ((IOperatable)a.m_Object).vop_Addition(b.m_Content==Content.VDouble ? b.m_Double : b.m_Object, out result))
+      else if(a._typeOfContent==Content.VOperatable && ((IOperatable)a._object).vop_Addition(b._typeOfContent==Content.VDouble ? b._double : b._object, out result))
         return new AltaxoVariant(result);
-      else if(b.m_Content==Content.VOperatable && ((IOperatable)b.m_Object).vop_Addition_Rev(a.m_Content==Content.VDouble ? a.m_Double : a.m_Object, out result))
+      else if(b._typeOfContent==Content.VOperatable && ((IOperatable)b._object).vop_Addition_Rev(a._typeOfContent==Content.VDouble ? a._double : a._object, out result))
         return new AltaxoVariant(result);
       else
-        throw new AltaxoOperatorException("Error: Try to add types " + a.m_Content.ToString() + " and " + b.m_Content.GetType().ToString());  
+        throw new AltaxoOperatorException("Error: Try to add types " + a._typeOfContent.ToString() + " and " + b._typeOfContent.GetType().ToString());  
     }
 
     public static AltaxoVariant operator - (AltaxoVariant a, AltaxoVariant b)
     {
       object result;
 
-      if(a.m_Content==Content.VDouble && b.m_Content==Content.VDouble)
-        return new AltaxoVariant(a.m_Double - b.m_Double);
-      else if(a.m_Content==Content.VDateTime && a.m_Content==Content.VDouble)
-        return new AltaxoVariant(((DateTime)a.m_Object).AddSeconds(-b.m_Double));
-      else if(a.m_Content==Content.VDateTime && b.m_Content==Content.VDateTime)
-        return new AltaxoVariant((((DateTime)a.m_Object)-((DateTime)b.m_Object)).TotalSeconds);
-      else if(a.m_Content==Content.VNull && b.m_Content==Content.VNull)
+      if(a._typeOfContent==Content.VDouble && b._typeOfContent==Content.VDouble)
+        return new AltaxoVariant(a._double - b._double);
+      else if(a._typeOfContent==Content.VDateTime && a._typeOfContent==Content.VDouble)
+        return new AltaxoVariant(((DateTime)a._object).AddSeconds(-b._double));
+      else if(a._typeOfContent==Content.VDateTime && b._typeOfContent==Content.VDateTime)
+        return new AltaxoVariant((((DateTime)a._object)-((DateTime)b._object)).TotalSeconds);
+      else if(a._typeOfContent==Content.VNull && b._typeOfContent==Content.VNull)
         return new AltaxoVariant();
-      else if(a.m_Content==Content.VOperatable && ((IOperatable)a.m_Object).vop_Subtraction(b.m_Content==Content.VDouble ? b.m_Double : b.m_Object, out result))
+      else if(a._typeOfContent==Content.VOperatable && ((IOperatable)a._object).vop_Subtraction(b._typeOfContent==Content.VDouble ? b._double : b._object, out result))
         return new AltaxoVariant(result);
-      else if(b.m_Content==Content.VOperatable && ((IOperatable)b.m_Object).vop_Subtraction_Rev(a.m_Content==Content.VDouble ? a.m_Double : a.m_Object, out result))
+      else if(b._typeOfContent==Content.VOperatable && ((IOperatable)b._object).vop_Subtraction_Rev(a._typeOfContent==Content.VDouble ? a._double : a._object, out result))
         return new AltaxoVariant(result);
       else
-        throw new AltaxoOperatorException("Error: Try to subtract types " + a.m_Content.ToString() + " and " + b.m_Content.ToString()); 
+        throw new AltaxoOperatorException("Error: Try to subtract types " + a._typeOfContent.ToString() + " and " + b._typeOfContent.ToString()); 
     }
     
     public static AltaxoVariant operator * (AltaxoVariant a, AltaxoVariant b)
     {
       object result;
 
-      if (a.m_Content == Content.VDouble && b.m_Content == Content.VDouble)
-        return new AltaxoVariant(a.m_Double * b.m_Double);
-      else if (a.m_Content == Content.VDouble && b.m_Content == Content.VDateTime)
-        return new AltaxoVariant(DateTime.FromBinary((long)(a.m_Double * ((DateTime)b.m_Object).Ticks)));
-      else if (a.m_Content == Content.VDateTime && b.m_Content == Content.VDouble)
-        return new AltaxoVariant(DateTime.FromBinary((long)(b.m_Double * ((DateTime)a.m_Object).Ticks)));
-      else if (a.m_Content == Content.VNull && b.m_Content == Content.VNull)
+      if (a._typeOfContent == Content.VDouble && b._typeOfContent == Content.VDouble)
+        return new AltaxoVariant(a._double * b._double);
+      else if (a._typeOfContent == Content.VDouble && b._typeOfContent == Content.VDateTime)
+        return new AltaxoVariant(DateTime.FromBinary((long)(a._double * ((DateTime)b._object).Ticks)));
+      else if (a._typeOfContent == Content.VDateTime && b._typeOfContent == Content.VDouble)
+        return new AltaxoVariant(DateTime.FromBinary((long)(b._double * ((DateTime)a._object).Ticks)));
+      else if (a._typeOfContent == Content.VNull && b._typeOfContent == Content.VNull)
         return new AltaxoVariant();
-      else if (a.m_Content == Content.VOperatable && ((IOperatable)a.m_Object).vop_Multiplication(b.m_Content == Content.VDouble ? b.m_Double : b.m_Object, out result))
+      else if (a._typeOfContent == Content.VOperatable && ((IOperatable)a._object).vop_Multiplication(b._typeOfContent == Content.VDouble ? b._double : b._object, out result))
         return new AltaxoVariant(result);
-      else if (b.m_Content == Content.VOperatable && ((IOperatable)b.m_Object).vop_Multiplication_Rev(a.m_Content == Content.VDouble ? a.m_Double : a.m_Object, out result))
+      else if (b._typeOfContent == Content.VOperatable && ((IOperatable)b._object).vop_Multiplication_Rev(a._typeOfContent == Content.VDouble ? a._double : a._object, out result))
         return new AltaxoVariant(result);
       else
-        throw new AltaxoOperatorException("Error: Try to multiply types " + a.m_Content.ToString() + " and " + b.m_Content.ToString()); 
+        throw new AltaxoOperatorException("Error: Try to multiply types " + a._typeOfContent.ToString() + " and " + b._typeOfContent.ToString()); 
     }
 
     public static AltaxoVariant operator / (AltaxoVariant a, AltaxoVariant b)
     {
       object result;
-      if(a.m_Content==Content.VDouble && b.m_Content==Content.VDouble)
-        return new AltaxoVariant(a.m_Double / b.m_Double);
-      else if(a.m_Content==Content.VNull && b.m_Content==Content.VNull)
+      if(a._typeOfContent==Content.VDouble && b._typeOfContent==Content.VDouble)
+        return new AltaxoVariant(a._double / b._double);
+      else if(a._typeOfContent==Content.VNull && b._typeOfContent==Content.VNull)
         return new AltaxoVariant();
-      else if(a.m_Content==Content.VOperatable && ((IOperatable)a.m_Object).vop_Division(b.m_Content==Content.VDouble ? b.m_Double : b.m_Object, out result))
+      else if(a._typeOfContent==Content.VOperatable && ((IOperatable)a._object).vop_Division(b._typeOfContent==Content.VDouble ? b._double : b._object, out result))
         return new AltaxoVariant(result);
-      else if(b.m_Content==Content.VOperatable && ((IOperatable)b.m_Object).vop_Division_Rev(a.m_Content==Content.VDouble ? a.m_Double : a.m_Object, out result))
+      else if(b._typeOfContent==Content.VOperatable && ((IOperatable)b._object).vop_Division_Rev(a._typeOfContent==Content.VDouble ? a._double : a._object, out result))
         return new AltaxoVariant(result);
       else
-        throw new AltaxoOperatorException("Error: Try to divide types " + a.m_Content.ToString() + " and " + b.m_Content.ToString()); 
+        throw new AltaxoOperatorException("Error: Try to divide types " + a._typeOfContent.ToString() + " and " + b._typeOfContent.ToString()); 
     }
 
     public static AltaxoVariant operator % (AltaxoVariant a, AltaxoVariant b)
     {
       object result;
-      if(a.m_Content==Content.VDouble && b.m_Content==Content.VDouble)
-        return new AltaxoVariant(a.m_Double % b.m_Double);
-      else if(a.m_Content==Content.VNull && b.m_Content==Content.VNull)
+      if(a._typeOfContent==Content.VDouble && b._typeOfContent==Content.VDouble)
+        return new AltaxoVariant(a._double % b._double);
+      else if(a._typeOfContent==Content.VNull && b._typeOfContent==Content.VNull)
         return new AltaxoVariant();
-      else if(a.m_Content==Content.VOperatable && ((IOperatable)a.m_Object).vop_Modulo(b.m_Content==Content.VDouble ? b.m_Double : b.m_Object, out result))
+      else if(a._typeOfContent==Content.VOperatable && ((IOperatable)a._object).vop_Modulo(b._typeOfContent==Content.VDouble ? b._double : b._object, out result))
         return new AltaxoVariant(result);
-      else if(b.m_Content==Content.VOperatable && ((IOperatable)b.m_Object).vop_Modulo_Rev(a.m_Content==Content.VDouble ? a.m_Double : a.m_Object, out result))
+      else if(b._typeOfContent==Content.VOperatable && ((IOperatable)b._object).vop_Modulo_Rev(a._typeOfContent==Content.VDouble ? a._double : a._object, out result))
         return new AltaxoVariant(result);
       else
-        throw new AltaxoOperatorException("Error: Try to get remainder of types " + a.m_Content.ToString() + " and " + b.m_Content.ToString()); 
+        throw new AltaxoOperatorException("Error: Try to get remainder of types " + a._typeOfContent.ToString() + " and " + b._typeOfContent.ToString()); 
     }
 
     public static AltaxoVariant operator & (AltaxoVariant a, AltaxoVariant b)
     {
       object result;
-      if(a.m_Content==Content.VDouble && b.m_Content==Content.VDouble)
-        return new AltaxoVariant((double)((long)a.m_Double & (long)b.m_Double));
-      else if(a.m_Content==Content.VNull && b.m_Content==Content.VNull)
+      if(a._typeOfContent==Content.VDouble && b._typeOfContent==Content.VDouble)
+        return new AltaxoVariant((double)((long)a._double & (long)b._double));
+      else if(a._typeOfContent==Content.VNull && b._typeOfContent==Content.VNull)
         return new AltaxoVariant();
-      else if(a.m_Content==Content.VOperatable && ((IOperatable)a.m_Object).vop_And(b.m_Content==Content.VDouble ? b.m_Double : b.m_Object, out result))
+      else if(a._typeOfContent==Content.VOperatable && ((IOperatable)a._object).vop_And(b._typeOfContent==Content.VDouble ? b._double : b._object, out result))
         return new AltaxoVariant(result);
-      else if(b.m_Content==Content.VOperatable && ((IOperatable)b.m_Object).vop_And_Rev(a.m_Content==Content.VDouble ? a.m_Double : a.m_Object, out result))
+      else if(b._typeOfContent==Content.VOperatable && ((IOperatable)b._object).vop_And_Rev(a._typeOfContent==Content.VDouble ? a._double : a._object, out result))
         return new AltaxoVariant(result);
       else
-        throw new AltaxoOperatorException("Error: Try to apply operator and to types " + a.m_Content.ToString() + " and " + b.m_Content.ToString());  
+        throw new AltaxoOperatorException("Error: Try to apply operator and to types " + a._typeOfContent.ToString() + " and " + b._typeOfContent.ToString());  
     }
 
     public static AltaxoVariant operator | (AltaxoVariant a, AltaxoVariant b)
     {
       object result;
-      if(a.m_Content==Content.VDouble && b.m_Content==Content.VDouble)
-        return new AltaxoVariant((double)((long)a.m_Double | (long)b.m_Double));
-      else if(a.m_Content==Content.VNull && b.m_Content==Content.VNull)
+      if(a._typeOfContent==Content.VDouble && b._typeOfContent==Content.VDouble)
+        return new AltaxoVariant((double)((long)a._double | (long)b._double));
+      else if(a._typeOfContent==Content.VNull && b._typeOfContent==Content.VNull)
         return new AltaxoVariant();
-      else if(a.m_Content==Content.VOperatable && ((IOperatable)a.m_Object).vop_Or(b.m_Content==Content.VDouble ? b.m_Double : b.m_Object, out result))
+      else if(a._typeOfContent==Content.VOperatable && ((IOperatable)a._object).vop_Or(b._typeOfContent==Content.VDouble ? b._double : b._object, out result))
         return new AltaxoVariant(result);
-      else if(b.m_Content==Content.VOperatable && ((IOperatable)b.m_Object).vop_Or_Rev(a.m_Content==Content.VDouble ? a.m_Double : a.m_Object, out result))
+      else if(b._typeOfContent==Content.VOperatable && ((IOperatable)b._object).vop_Or_Rev(a._typeOfContent==Content.VDouble ? a._double : a._object, out result))
         return new AltaxoVariant(result);
       else
-        throw new AltaxoOperatorException("Error: Try to apply operator OR to types " + a.m_Content.ToString() + " and " + b.m_Content.ToString()); 
+        throw new AltaxoOperatorException("Error: Try to apply operator OR to types " + a._typeOfContent.ToString() + " and " + b._typeOfContent.ToString()); 
     }
 
     public static AltaxoVariant operator ^ (AltaxoVariant a, AltaxoVariant b)
     {
       object result;
-      if(a.m_Content==Content.VDouble && b.m_Content==Content.VDouble)
-        return new AltaxoVariant((double)((long)a.m_Double ^ (long)b.m_Double));
-      else if(a.m_Content==Content.VNull && b.m_Content==Content.VNull)
+      if(a._typeOfContent==Content.VDouble && b._typeOfContent==Content.VDouble)
+        return new AltaxoVariant((double)((long)a._double ^ (long)b._double));
+      else if(a._typeOfContent==Content.VNull && b._typeOfContent==Content.VNull)
         return new AltaxoVariant();
-      else if(a.m_Content==Content.VOperatable && ((IOperatable)a.m_Object).vop_Xor(b.m_Content==Content.VDouble ? b.m_Double : b.m_Object, out result))
+      else if(a._typeOfContent==Content.VOperatable && ((IOperatable)a._object).vop_Xor(b._typeOfContent==Content.VDouble ? b._double : b._object, out result))
         return new AltaxoVariant(result);
-      else if(b.m_Content==Content.VOperatable && ((IOperatable)b.m_Object).vop_Xor_Rev(a.m_Content==Content.VDouble ? a.m_Double : a.m_Object, out result))
+      else if(b._typeOfContent==Content.VOperatable && ((IOperatable)b._object).vop_Xor_Rev(a._typeOfContent==Content.VDouble ? a._double : a._object, out result))
         return new AltaxoVariant(result);
       else
-        throw new AltaxoOperatorException("Error: Try to apply operator XOR to types " + a.m_Content.ToString() + " and " + b.m_Content.ToString());  
+        throw new AltaxoOperatorException("Error: Try to apply operator XOR to types " + a._typeOfContent.ToString() + " and " + b._typeOfContent.ToString());  
     }
 
     public static AltaxoVariant operator << (AltaxoVariant a, int b)
     {
       object result;
-      if(a.m_Content==Content.VDouble)
-        return new AltaxoVariant((double)((long)a.m_Double << b));
-      else if(a.m_Content==Content.VNull)
+      if(a._typeOfContent==Content.VDouble)
+        return new AltaxoVariant((double)((long)a._double << b));
+      else if(a._typeOfContent==Content.VNull)
         return new AltaxoVariant();
-      else if(a.m_Content==Content.VOperatable && ((IOperatable)a.m_Object).vop_ShiftLeft(b, out result))
+      else if(a._typeOfContent==Content.VOperatable && ((IOperatable)a._object).vop_ShiftLeft(b, out result))
         return new AltaxoVariant(result);
       else
-        throw new AltaxoOperatorException("Error: Try to apply operator << to types " + a.m_Content.ToString() + " and " + b.ToString()); 
+        throw new AltaxoOperatorException("Error: Try to apply operator << to types " + a._typeOfContent.ToString() + " and " + b.ToString()); 
     }
 
     public static AltaxoVariant operator >> (AltaxoVariant a, int b)
     {
       object result;
-      if(a.m_Content==Content.VDouble)
-        return new AltaxoVariant((double)((long)a.m_Double >> b));
-      else if(a.m_Content==Content.VNull)
+      if(a._typeOfContent==Content.VDouble)
+        return new AltaxoVariant((double)((long)a._double >> b));
+      else if(a._typeOfContent==Content.VNull)
         return new AltaxoVariant();
-      else if(a.m_Content==Content.VOperatable && ((IOperatable)a.m_Object).vop_ShiftRight(b, out result))
+      else if(a._typeOfContent==Content.VOperatable && ((IOperatable)a._object).vop_ShiftRight(b, out result))
         return new AltaxoVariant(result);
       else
-        throw new AltaxoOperatorException("Error: Try to apply operator >> to types " + a.m_Content.ToString() + " and " + b.ToString()); 
+        throw new AltaxoOperatorException("Error: Try to apply operator >> to types " + a._typeOfContent.ToString() + " and " + b.ToString()); 
     }
 
 
@@ -547,19 +578,19 @@ namespace Altaxo.Data
     {
       bool result;
 
-      if(a.m_Content != b.m_Content)
+      if(a._typeOfContent != b._typeOfContent)
         return false;
-      else if(a.m_Content==Content.VDouble)
-        return (a.m_Double == b.m_Double);
-      else if(a.m_Content == Content.VDateTime)
-        return (((System.DateTime)a.m_Object) == ((System.DateTime)b.m_Object));
-      else if(a.m_Content == Content.VString)
-        return 0==(((String)a.m_Object).CompareTo((string)b.m_Object));
-      else if(a.m_Content==Content.VNull)
+      else if(a._typeOfContent==Content.VDouble)
+        return (a._double == b._double);
+      else if(a._typeOfContent == Content.VDateTime)
+        return (((System.DateTime)a._object) == ((System.DateTime)b._object));
+      else if(a._typeOfContent == Content.VString)
+        return 0==(((String)a._object).CompareTo((string)b._object));
+      else if(a._typeOfContent==Content.VNull)
         return false;
-      else if(a.m_Content==Content.VOperatable && ((IOperatable)b.m_Object).vop_Equal(a.m_Content==Content.VDouble ? a.m_Double : a.m_Object, out result))
+      else if(a._typeOfContent==Content.VOperatable && ((IOperatable)b._object).vop_Equal(a._typeOfContent==Content.VDouble ? a._double : a._object, out result))
         return result;
-      else if(b.m_Content==Content.VOperatable && ((IOperatable)b.m_Object).vop_Equal_Rev(a.m_Content==Content.VDouble ? a.m_Double : a.m_Object, out result))
+      else if(b._typeOfContent==Content.VOperatable && ((IOperatable)b._object).vop_Equal_Rev(a._typeOfContent==Content.VDouble ? a._double : a._object, out result))
         return result;
       else return false;  
     }
@@ -573,44 +604,44 @@ namespace Altaxo.Data
     {
       bool result;
 
-      if(a.m_Content == Content.VNull || b.m_Content==Content.VNull)
+      if(a._typeOfContent == Content.VNull || b._typeOfContent==Content.VNull)
         return false;
-      else if(a.m_Content != b.m_Content)
-        throw new AltaxoOperatorException("Error: Try to compare types " + a.m_Content.ToString() + " and " + b.m_Content.ToString());
+      else if(a._typeOfContent != b._typeOfContent)
+        throw new AltaxoOperatorException("Error: Try to compare types " + a._typeOfContent.ToString() + " and " + b._typeOfContent.ToString());
       
-      if(a.m_Content == Content.VDouble)
-        return (a.m_Double < b.m_Double);
-      else if(a.m_Content == Content.VDateTime)
-        return (((System.DateTime)a.m_Object) < ((System.DateTime)b.m_Object));
-      else if(a.m_Content== Content.VString)
-        return 0>(((String)a.m_Object).CompareTo((string)b.m_Object));
-      else if(a.m_Content==Content.VOperatable && ((IOperatable)b.m_Object).vop_Lesser(a.m_Content==Content.VDouble ? a.m_Double : a.m_Object, out result))
+      if(a._typeOfContent == Content.VDouble)
+        return (a._double < b._double);
+      else if(a._typeOfContent == Content.VDateTime)
+        return (((System.DateTime)a._object) < ((System.DateTime)b._object));
+      else if(a._typeOfContent== Content.VString)
+        return 0>(((String)a._object).CompareTo((string)b._object));
+      else if(a._typeOfContent==Content.VOperatable && ((IOperatable)b._object).vop_Lesser(a._typeOfContent==Content.VDouble ? a._double : a._object, out result))
         return result;
-      else if(b.m_Content==Content.VOperatable && ((IOperatable)b.m_Object).vop_Lesser_Rev(a.m_Content==Content.VDouble ? a.m_Double : a.m_Object, out result))
+      else if(b._typeOfContent==Content.VOperatable && ((IOperatable)b._object).vop_Lesser_Rev(a._typeOfContent==Content.VDouble ? a._double : a._object, out result))
         return result;
-      else throw new AltaxoOperatorException("Error: Try to compare types " + a.m_Content.ToString() + " and " + b.m_Content.ToString());
+      else throw new AltaxoOperatorException("Error: Try to compare types " + a._typeOfContent.ToString() + " and " + b._typeOfContent.ToString());
     }
 
     public static bool operator > (AltaxoVariant a, AltaxoVariant b)
     {
       bool result;
 
-      if(a.m_Content == Content.VNull || b.m_Content==Content.VNull)
+      if(a._typeOfContent == Content.VNull || b._typeOfContent==Content.VNull)
         return false;
-      else if(a.m_Content != b.m_Content)
-        throw new AltaxoOperatorException("Error: Try to compare types " + a.m_Content.ToString() + " and " + b.m_Content.ToString());
+      else if(a._typeOfContent != b._typeOfContent)
+        throw new AltaxoOperatorException("Error: Try to compare types " + a._typeOfContent.ToString() + " and " + b._typeOfContent.ToString());
       
-      if(a.m_Content == Content.VDouble)
-        return (a.m_Double > b.m_Double);
-      else if(a.m_Content == Content.VDateTime)
-        return (((System.DateTime)a.m_Object) > ((System.DateTime)b.m_Object));
-      else if(a.m_Content== Content.VString)
-        return 0<(((String)a.m_Object).CompareTo((string)b.m_Object));
-      else if(a.m_Content==Content.VOperatable && ((IOperatable)b.m_Object).vop_Greater(a.m_Content==Content.VDouble ? a.m_Double : a.m_Object, out result))
+      if(a._typeOfContent == Content.VDouble)
+        return (a._double > b._double);
+      else if(a._typeOfContent == Content.VDateTime)
+        return (((System.DateTime)a._object) > ((System.DateTime)b._object));
+      else if(a._typeOfContent== Content.VString)
+        return 0<(((String)a._object).CompareTo((string)b._object));
+      else if(a._typeOfContent==Content.VOperatable && ((IOperatable)b._object).vop_Greater(a._typeOfContent==Content.VDouble ? a._double : a._object, out result))
         return result;
-      else if(b.m_Content==Content.VOperatable && ((IOperatable)b.m_Object).vop_Greater_Rev(a.m_Content==Content.VDouble ? a.m_Double : a.m_Object, out result))
+      else if(b._typeOfContent==Content.VOperatable && ((IOperatable)b._object).vop_Greater_Rev(a._typeOfContent==Content.VDouble ? a._double : a._object, out result))
         return result;
-      else throw new AltaxoOperatorException("Error: Try to compare types " + a.m_Content.ToString() + " and " + b.m_Content.ToString());
+      else throw new AltaxoOperatorException("Error: Try to compare types " + a._typeOfContent.ToString() + " and " + b._typeOfContent.ToString());
     }
 
 
@@ -618,44 +649,44 @@ namespace Altaxo.Data
     {
       bool result;
 
-      if(a.m_Content == Content.VNull || b.m_Content==Content.VNull)
+      if(a._typeOfContent == Content.VNull || b._typeOfContent==Content.VNull)
         return false;
-      else if(a.m_Content != b.m_Content)
-        throw new AltaxoOperatorException("Error: Try to compare types " + a.m_Content.ToString() + " and " + b.m_Content.ToString());
+      else if(a._typeOfContent != b._typeOfContent)
+        throw new AltaxoOperatorException("Error: Try to compare types " + a._typeOfContent.ToString() + " and " + b._typeOfContent.ToString());
       
-      if(a.m_Content == Content.VDouble)
-        return (a.m_Double <= b.m_Double);
-      else if(a.m_Content == Content.VDateTime)
-        return (((System.DateTime)a.m_Object) <= ((System.DateTime)b.m_Object));
-      else if(a.m_Content== Content.VString)
-        return 0>=(((String)a.m_Object).CompareTo((string)b.m_Object));
-      else if(a.m_Content==Content.VOperatable && ((IOperatable)b.m_Object).vop_LesserOrEqual(a.m_Content==Content.VDouble ? a.m_Double : a.m_Object, out result))
+      if(a._typeOfContent == Content.VDouble)
+        return (a._double <= b._double);
+      else if(a._typeOfContent == Content.VDateTime)
+        return (((System.DateTime)a._object) <= ((System.DateTime)b._object));
+      else if(a._typeOfContent== Content.VString)
+        return 0>=(((String)a._object).CompareTo((string)b._object));
+      else if(a._typeOfContent==Content.VOperatable && ((IOperatable)b._object).vop_LesserOrEqual(a._typeOfContent==Content.VDouble ? a._double : a._object, out result))
         return result;
-      else if(b.m_Content==Content.VOperatable && ((IOperatable)b.m_Object).vop_LesserOrEqual_Rev(a.m_Content==Content.VDouble ? a.m_Double : a.m_Object, out result))
+      else if(b._typeOfContent==Content.VOperatable && ((IOperatable)b._object).vop_LesserOrEqual_Rev(a._typeOfContent==Content.VDouble ? a._double : a._object, out result))
         return result;
-      else throw new AltaxoOperatorException("Error: Try to compare types " + a.m_Content.ToString() + " and " + b.m_Content.ToString());
+      else throw new AltaxoOperatorException("Error: Try to compare types " + a._typeOfContent.ToString() + " and " + b._typeOfContent.ToString());
     }
 
     public static bool operator >= (AltaxoVariant a, AltaxoVariant b)
     {
       bool result;
 
-      if(a.m_Content == Content.VNull || b.m_Content==Content.VNull)
+      if(a._typeOfContent == Content.VNull || b._typeOfContent==Content.VNull)
         return false;
-      else if(a.m_Content != b.m_Content)
-        throw new AltaxoOperatorException("Error: Try to compare types " + a.m_Content.ToString() + " and " + b.m_Content.ToString());
+      else if(a._typeOfContent != b._typeOfContent)
+        throw new AltaxoOperatorException("Error: Try to compare types " + a._typeOfContent.ToString() + " and " + b._typeOfContent.ToString());
       
-      if(a.m_Content == Content.VDouble)
-        return (a.m_Double >= b.m_Double);
-      else if(a.m_Content == Content.VDateTime)
-        return (((System.DateTime)a.m_Object) >= ((System.DateTime)b.m_Object));
-      else if(a.m_Content== Content.VString)
-        return 0>=(((String)a.m_Object).CompareTo((string)b.m_Object));
-      else if(a.m_Content==Content.VOperatable && ((IOperatable)b.m_Object).vop_GreaterOrEqual(a.m_Content==Content.VDouble ? a.m_Double : a.m_Object, out result))
+      if(a._typeOfContent == Content.VDouble)
+        return (a._double >= b._double);
+      else if(a._typeOfContent == Content.VDateTime)
+        return (((System.DateTime)a._object) >= ((System.DateTime)b._object));
+      else if(a._typeOfContent== Content.VString)
+        return 0>=(((String)a._object).CompareTo((string)b._object));
+      else if(a._typeOfContent==Content.VOperatable && ((IOperatable)b._object).vop_GreaterOrEqual(a._typeOfContent==Content.VDouble ? a._double : a._object, out result))
         return result;
-      else if(b.m_Content==Content.VOperatable && ((IOperatable)b.m_Object).vop_GreaterOrEqual_Rev(a.m_Content==Content.VDouble ? a.m_Double : a.m_Object, out result))
+      else if(b._typeOfContent==Content.VOperatable && ((IOperatable)b._object).vop_GreaterOrEqual_Rev(a._typeOfContent==Content.VDouble ? a._double : a._object, out result))
         return result;
-      else throw new AltaxoOperatorException("Error: Try to compare types " + a.m_Content.ToString() + " and " + b.m_Content.ToString());
+      else throw new AltaxoOperatorException("Error: Try to compare types " + a._typeOfContent.ToString() + " and " + b._typeOfContent.ToString());
     }
 
 
@@ -664,7 +695,7 @@ namespace Altaxo.Data
     public static AltaxoVariant operator + (AltaxoVariant a)
     {
       object result;
-      switch(a.m_Content)
+      switch(a._typeOfContent)
       {
         case Content.VNull:
         case Content.VDouble:
@@ -672,7 +703,7 @@ namespace Altaxo.Data
           return new AltaxoVariant(a);
           
         case Content.VOperatable:
-          if(((IOperatable)a.m_Object).vop_Plus(out result))
+          if(((IOperatable)a._object).vop_Plus(out result))
             return new AltaxoVariant(result);
           break;
       }
@@ -683,14 +714,14 @@ namespace Altaxo.Data
     public static AltaxoVariant operator - (AltaxoVariant a)
     {
       object result;
-      switch(a.m_Content)
+      switch(a._typeOfContent)
       {
         case Content.VNull:
           return new AltaxoVariant();
         case Content.VDouble:
-          return new AltaxoVariant(-a.m_Double);
+          return new AltaxoVariant(-a._double);
         case Content.VOperatable:
-          if(((IOperatable)a.m_Object).vop_Minus(out result))
+          if(((IOperatable)a._object).vop_Minus(out result))
             return new AltaxoVariant(result);
           break;
       }
@@ -700,14 +731,14 @@ namespace Altaxo.Data
     public static AltaxoVariant operator ! (AltaxoVariant a)
     {
       object result;
-      switch(a.m_Content)
+      switch(a._typeOfContent)
       {
         case Content.VNull:
           return new AltaxoVariant();
         case Content.VDouble:
-          return new AltaxoVariant((double)(a.m_Double == 0 ? 1 : 0));
+          return new AltaxoVariant((double)(a._double == 0 ? 1 : 0));
         case Content.VOperatable:
-          if(((IOperatable)a.m_Object).vop_Not(out result))
+          if(((IOperatable)a._object).vop_Not(out result))
             return new AltaxoVariant(result);
           break;
       }
@@ -717,14 +748,14 @@ namespace Altaxo.Data
     public static AltaxoVariant operator ~ (AltaxoVariant a)
     {
       object result;
-      switch(a.m_Content)
+      switch(a._typeOfContent)
       {
         case Content.VNull:
           return new AltaxoVariant();
         case Content.VDouble:
-          return new AltaxoVariant((double)~(long)a.m_Double);
+          return new AltaxoVariant((double)~(long)a._double);
         case Content.VOperatable:
-          if(((IOperatable)a.m_Object).vop_Complement(out result))
+          if(((IOperatable)a._object).vop_Complement(out result))
             return new AltaxoVariant(result);
           break;
       }
@@ -734,14 +765,14 @@ namespace Altaxo.Data
     public static AltaxoVariant operator ++ (AltaxoVariant a)
     {
       object result;
-      switch(a.m_Content)
+      switch(a._typeOfContent)
       {
         case Content.VNull:
           return new AltaxoVariant();
         case Content.VDouble:
-          return new AltaxoVariant(a.m_Double+1);
+          return new AltaxoVariant(a._double+1);
         case Content.VOperatable:
-          if(((IOperatable)a.m_Object).vop_Increment(out result))
+          if(((IOperatable)a._object).vop_Increment(out result))
             return new AltaxoVariant(result);
           break;
       }
@@ -751,14 +782,14 @@ namespace Altaxo.Data
     public static AltaxoVariant operator -- (AltaxoVariant a)
     {
       object result;
-      switch(a.m_Content)
+      switch(a._typeOfContent)
       {
         case Content.VNull:
           return new AltaxoVariant();
         case Content.VDouble:
-          return new AltaxoVariant(a.m_Double-1);
+          return new AltaxoVariant(a._double-1);
         case Content.VOperatable:
-          if(((IOperatable)a.m_Object).vop_Decrement(out result))
+          if(((IOperatable)a._object).vop_Decrement(out result))
             return new AltaxoVariant(result);
           break;
       }
@@ -768,14 +799,14 @@ namespace Altaxo.Data
     public static bool operator true (AltaxoVariant a)
     {
       bool result;
-      switch(a.m_Content)
+      switch(a._typeOfContent)
       {
         case Content.VNull:
           return false;
         case Content.VDouble:
-          return a.m_Double!=0 ? true : false;
+          return a._double!=0 ? true : false;
         case Content.VOperatable:
-          if(((IOperatable)a.m_Object).vop_True(out result))
+          if(((IOperatable)a._object).vop_True(out result))
             return result;
           break;
       }
@@ -785,14 +816,14 @@ namespace Altaxo.Data
     public static bool operator false (AltaxoVariant a)
     {
       bool result;
-      switch(a.m_Content)
+      switch(a._typeOfContent)
       {
         case Content.VNull:
           return false;
         case Content.VDouble:
-          return a.m_Double==0 ? true : false;
+          return a._double==0 ? true : false;
         case Content.VOperatable:
-          if(((IOperatable)a.m_Object).vop_False(out result))
+          if(((IOperatable)a._object).vop_False(out result))
             return result;
           break;
       }
@@ -809,25 +840,25 @@ namespace Altaxo.Data
       
       AltaxoVariant from = (AltaxoVariant)obj;
 
-      if (this.m_Content != from.m_Content)
-        throw new Exception(string.Format("A variant of type {0} can not be compared to a variant of type {1}", this.m_Content.ToString(), from.m_Content.ToString()));
+      if (this._typeOfContent != from._typeOfContent)
+        throw new Exception(string.Format("A variant of type {0} can not be compared to a variant of type {1}", this._typeOfContent.ToString(), from._typeOfContent.ToString()));
 
       // both have the same content
-      switch (m_Content)
+      switch (_typeOfContent)
       {
         case Content.VNull:
           return 0;
         case Content.VDouble:
-          return m_Double.CompareTo(from.m_Double);
+          return _double.CompareTo(from._double);
         case Content.VDateTime:
-          return ((DateTime)m_Object).CompareTo(from.m_Object);
+          return ((DateTime)_object).CompareTo(from._object);
         case Content.VString:
-          return ((string)m_Object).CompareTo(from.m_Object);
+          return ((string)_object).CompareTo(from._object);
         default:
-          if (this.m_Object is IComparable)
-            return ((IComparable)this).CompareTo(from.m_Object);
+          if (this._object is IComparable)
+            return ((IComparable)this).CompareTo(from._object);
           else
-            throw new Exception(string.Format("The inner object of this AltaxoVariant (of typeof: {0}) does not implement IComparable",this.m_Object.GetType().ToString()));
+            throw new Exception(string.Format("The inner object of this AltaxoVariant (of typeof: {0}) does not implement IComparable",this._object.GetType().ToString()));
       }
     }
 

@@ -41,7 +41,7 @@ namespace Altaxo.Graph.Gdi
   [SerializationVersion(0)]
   public class XYPlotLayerCollection 
     :
-    Altaxo.Data.CollectionBase,
+		IList<XYPlotLayer>,
     System.Runtime.Serialization.IDeserializationCallback, 
     Main.IChangedEventSource,
     Main.IChildChangedEventSink,
@@ -72,6 +72,8 @@ namespace Altaxo.Graph.Gdi
     [NonSerialized]
     protected Dictionary<XYPlotLayer, IDisposable> _suspendedChilds;
 
+		List<XYPlotLayer> _items = new List<XYPlotLayer>();
+
     #region "Serialization"
 
     /// <summary>Used to serialize the XYPlotLayerCollection Version 0.</summary>
@@ -86,7 +88,7 @@ namespace Altaxo.Graph.Gdi
       public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context  )
       {
         XYPlotLayerCollection s = (XYPlotLayerCollection)obj;
-        info.AddValue("Data",s.myList);
+        info.AddValue("Data",s._items);
       }
 
       /// <summary>
@@ -101,7 +103,7 @@ namespace Altaxo.Graph.Gdi
       {
         XYPlotLayerCollection s = (XYPlotLayerCollection)obj;
 
-        s.myList = (System.Collections.ArrayList)info.GetValue("Data",typeof(System.Collections.ArrayList));
+        s._items = (List<XYPlotLayer>)info.GetValue("Data",typeof(List<XYPlotLayer>));
         return s;
       }
     }
@@ -178,7 +180,7 @@ namespace Altaxo.Graph.Gdi
     public virtual void OnDeserialization(object obj)
     {
       // set the parent and the number of all items
-      for(int i=0;i<base.InnerList.Count;i++)
+      for(int i=0;i<_items.Count;i++)
         this[i].SetParentAndNumber(this,i);
     }
     #endregion
@@ -236,166 +238,16 @@ namespace Altaxo.Graph.Gdi
 
       if(_graphSize!=oldSize)
       {
-        foreach(XYPlotLayer l in InnerList)
+        foreach(XYPlotLayer l in _items)
           l.SetGraphSize( val, bRescale );
       }
     }
       
-    /// <summary>
-    /// References the layer at index i.
-    /// </summary>
-    /// <value>The layer at index <paramref name="i"/>.</value>
-    public virtual XYPlotLayer this[int i]
-    {
-      get 
-      {
-        // for the getter, we can use the innerlist, since no actions are defined for that
-        return (XYPlotLayer)base.InnerList[i];
-      }
-      set
-      {
-        // we use List here since we want to have custom actions defined below
-        List[i] = value;
-        value.SetGraphSize(_graphSize,false);
+    
 
-      }
-    }
+ 
 
-    /// <summary>
-    /// This will exchange layer i and layer j.
-    /// </summary>
-    /// <param name="i">Index of the one element to exchange.</param>
-    /// <param name="j">Index of the other element to exchange.</param>
-    /// <remarks>To avoid the destruction of the linked layer connections, we avoid
-    /// firing the custom list actions here by using the InnerList property and
-    /// correct the layer numbers of the two exchanged elements directly.</remarks>
-    public virtual void ExchangeElements(int i, int j)
-    {
-      // we use the inner list to do that because we do not want
-      // to have custom actions (this is mainly because otherwise we have
-      // a remove action that will destoy the linked layer connections
-
-      object o = base.InnerList[i];
-      base.InnerList[i] = base.InnerList[j];
-      base.InnerList[j] = o;
-
-      // correct the XYPlotLayer numbers for the two exchanged layers
-      this[i].SetParentAndNumber(this,i);
-      this[j].SetParentAndNumber(this,j);
-
-      OnLayerCollectionChanged();
-    }
-
-    /// <summary>
-    /// Replace the old layer by the new one.
-    /// </summary>
-    /// <param name="oldlayer">Old layer, which should be replaced.</param>
-    /// <param name="newlayer">New layer to replace the old one.</param>
-    public virtual void Replace(XYPlotLayer oldlayer, XYPlotLayer newlayer)
-    {
-      int i = base.InnerList.IndexOf(oldlayer);
-      if (i >= 0)
-      {
-        base.InnerList[i] = newlayer;
-        newlayer.SetParentAndNumber(this, i);
-        newlayer.SetGraphSize(_graphSize, false);
-      }
-    }
-
-    /// <summary>
-    /// Adds a layer to this layer collection.
-    /// </summary>
-    /// <param name="l"></param>
-    public void Add(XYPlotLayer l)
-    {
-      // we use List for adding since we want to have custom actions below
-      List.Add(l);
-      l.SetGraphSize(_graphSize,false);
-      // since we use List, we don't need to have OnLayerCollectionChanged here!
-    }
-
-		/// <summary>
-		/// Inserts a layer to this layer collection.
-		/// </summary>
-		/// <param name="l"></param>
-		public void Insert(int index, XYPlotLayer l)
-		{
-			// we use List for adding since we want to have custom actions below
-			List.Insert(index, l);
-			l.SetGraphSize(_graphSize, false);
-			// since we use List, we don't need to have OnLayerCollectionChanged here!
-		}
-
-    /// <summary>
-    /// Perform custom action on clearing: remove the parent attribute and the layer number from all the layers.
-    /// </summary>
-    protected override void OnClear()
-    {
-      foreach(XYPlotLayer l in InnerList)
-        l.SetParentAndNumber(null,0);
-
-      OnLayerCollectionChanged();
-    }
-
-    /// <summary>
-    /// Perform custom action if one element removed: renumber the remaining elements.
-    /// </summary>
-    /// <param name="idx">The index where the element was removed. </param>
-    /// <param name="oldValue">The removed element.</param>
-    protected override void OnRemoveComplete(int idx, object oldValue)
-    {
-      ((XYPlotLayer)oldValue).SetParentAndNumber(null,0);
-
-      // renumber the layers from i to count
-      for(int i=idx;i<Count;i++)
-      {
-        this[i].SetParentAndNumber(this,i);
-
-        // fix linked layer connections if neccessary
-        if(XYPlotLayer.ReferenceEquals(oldValue,this[i]))
-          this[i].LinkedLayer=null;
-      }
-      OnLayerCollectionChanged();
-    }
-
-    /// <summary>
-    /// Perform custom action if one element is set: set parent and number of the newly
-    /// set element.
-    /// </summary>
-    /// <param name="index">The index where the element is set.</param>
-    /// <param name="oldValue">The old value of the list element.</param>
-    /// <param name="newValue">The new value this list element is set to.</param>
-    protected override void OnSetComplete(int index, object oldValue, object newValue )
-    {
-      ((XYPlotLayer)oldValue).SetParentAndNumber(null,0);
-      ((XYPlotLayer)newValue).SetParentAndNumber(this,index);
-      ((XYPlotLayer)newValue).SetGraphSize(this.GraphSize,true);
-
-      for(int i=0;i<Count;i++)
-      {
-        // fix linked layer connections if neccessary
-        if(XYPlotLayer.ReferenceEquals(oldValue,this[i]))
-          this[i].LinkedLayer=null;
-      }
-
-      OnLayerCollectionChanged();
-    }
-
-    /// <summary>
-    /// Perform custom action if an element is inserted: set parent and number
-    /// of the inserted element and renumber the other elements.
-    /// </summary>
-    /// <param name="index"></param>
-    /// <param name="newValue"></param>
-    protected override void OnInsertComplete(int index,object newValue)
-    {
-      // renumber the inserted and the following layers
-      for(int i=index;i<Count;i++)
-        this[i].SetParentAndNumber(this,i);
-
-      OnLayerCollectionChanged();
-    }
-
+   
 
     protected virtual void OnLayerCollectionChanged()
     {
@@ -608,6 +460,248 @@ namespace Altaxo.Graph.Gdi
     }
 
     #endregion
-  }
+
+		#region IList<XYPlotLayer> Members
+
+		public int IndexOf(XYPlotLayer item)
+		{
+			return _items.IndexOf(item);
+		}
+
+		/// <summary>
+		/// Inserts a layer to this layer collection.
+		/// </summary>
+		/// <param name="l"></param>
+		public void Insert(int index, XYPlotLayer l)
+		{
+			// we use List for adding since we want to have custom actions below
+			_items.Insert(index, l);
+			l.SetGraphSize(_graphSize, false);
+			// since we use List, we don't need to have OnLayerCollectionChanged here!
+			OnInsertComplete(index, l);
+		}
+
+		public void RemoveAt(int index)
+		{
+			var oldValue = _items[index];
+			_items.RemoveAt(index);
+			OnRemoveComplete(oldValue);
+		}
+
+		/// <summary>
+		/// References the layer at index i.
+		/// </summary>
+		/// <value>The layer at index <paramref name="i"/>.</value>
+		public virtual XYPlotLayer this[int i]
+		{
+			get
+			{
+				// for the getter, we can use the innerlist, since no actions are defined for that
+				return _items[i];
+			}
+			set
+			{
+				if (null == value)
+					throw new ArgumentNullException("value");
+
+				// we use List here since we want to have custom actions defined below
+				var oldValue = i<_items.Count ? _items[i] : null;
+				_items[i] = value;
+				value.SetGraphSize(_graphSize, false);
+
+				if (oldValue != null)
+					OnSetComplete(i, oldValue, value);
+				else
+					OnInsertComplete(i, value);
+			}
+		}
+
+
+		#endregion
+
+		#region ICollection<XYPlotLayer> Members
+
+		/// <summary>
+		/// Adds a layer to this layer collection.
+		/// </summary>
+		/// <param name="l"></param>
+		public void Add(XYPlotLayer l)
+		{
+			// we use List for adding since we want to have custom actions below
+			_items.Add(l);
+			l.SetGraphSize(_graphSize, false);
+			// since we use List, we don't need to have OnLayerCollectionChanged here!
+			OnInsertComplete(_items.Count - 1, l);
+		}
+
+		public void Clear()
+		{
+			foreach (XYPlotLayer l in _items)
+				l.SetParentAndNumber(null, 0);
+
+			_items.Clear();
+
+			OnLayerCollectionChanged();
+		}
+
+		public bool Contains(XYPlotLayer item)
+		{
+			return _items.Contains(item);
+		}
+
+		public void CopyTo(XYPlotLayer[] array, int arrayIndex)
+		{
+			_items.CopyTo(array, arrayIndex);
+		}
+
+		public int Count
+		{
+			get { return _items.Count; }
+		}
+
+		public bool IsReadOnly
+		{
+			get { return false; }
+		}
+
+		public bool Remove(XYPlotLayer item)
+		{
+			bool result = _items.Remove(item);
+			if (result)
+				OnRemoveComplete(item);
+
+			return result;
+		}
+
+		#endregion
+
+		#region IEnumerable<XYPlotLayer> Members
+
+		public IEnumerator<XYPlotLayer> GetEnumerator()
+		{
+			return _items.GetEnumerator();
+		}
+
+		#endregion
+
+		#region IEnumerable Members
+
+		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+		{
+			return _items.GetEnumerator();
+		}
+
+		#endregion
+
+		#region Other list operations
+
+		/// <summary>
+		/// This will exchange layer i and layer j.
+		/// </summary>
+		/// <param name="i">Index of the one element to exchange.</param>
+		/// <param name="j">Index of the other element to exchange.</param>
+		/// <remarks>To avoid the destruction of the linked layer connections, we avoid
+		/// firing the custom list actions here by using the InnerList property and
+		/// correct the layer numbers of the two exchanged elements directly.</remarks>
+		public virtual void ExchangeElements(int i, int j)
+		{
+			// we use the inner list to do that because we do not want
+			// to have custom actions (this is mainly because otherwise we have
+			// a remove action that will destoy the linked layer connections
+
+			var o = _items[i];
+			_items[i] = _items[j];
+			_items[j] = o;
+
+			// correct the XYPlotLayer numbers for the two exchanged layers
+			this[i].SetParentAndNumber(this, i);
+			this[j].SetParentAndNumber(this, j);
+
+			OnLayerCollectionChanged();
+		}
+
+		/// <summary>
+		/// Replace the old layer by the new one.
+		/// </summary>
+		/// <param name="oldlayer">Old layer, which should be replaced.</param>
+		/// <param name="newlayer">New layer to replace the old one.</param>
+		public virtual void Replace(XYPlotLayer oldlayer, XYPlotLayer newlayer)
+		{
+			int i = _items.IndexOf(oldlayer);
+			if (i >= 0)
+			{
+				_items[i] = newlayer;
+				newlayer.SetParentAndNumber(this, i);
+				newlayer.SetGraphSize(_graphSize, false);
+			}
+		}
+
+		#endregion
+
+		#region Actions for List operations
+
+		/// <summary>
+		/// Perform custom action if one element is set: set parent and number of the newly
+		/// set element.
+		/// </summary>
+		/// <param name="index">The index where the element is set.</param>
+		/// <param name="oldValue">The old value of the list element.</param>
+		/// <param name="newValue">The new value this list element is set to.</param>
+		protected void OnSetComplete(int index, object oldValue, object newValue)
+		{
+			((XYPlotLayer)oldValue).SetParentAndNumber(null, 0);
+			((XYPlotLayer)newValue).SetParentAndNumber(this, index);
+			((XYPlotLayer)newValue).SetGraphSize(this.GraphSize, true);
+
+			for (int i = 0; i < Count; i++)
+			{
+				// fix linked layer connections if neccessary
+				if (XYPlotLayer.ReferenceEquals(oldValue, this[i]))
+					this[i].LinkedLayer = null;
+			}
+
+			OnLayerCollectionChanged();
+		}
+
+		/// <summary>
+		/// Perform custom action if an element is inserted: set parent and number
+		/// of the inserted element and renumber the other elements.
+		/// </summary>
+		/// <param name="index"></param>
+		/// <param name="newValue"></param>
+		protected void OnInsertComplete(int index, object newValue)
+		{
+			// renumber the inserted and the following layers
+			for (int i = index; i < Count; i++)
+				this[i].SetParentAndNumber(this, i);
+
+			OnLayerCollectionChanged();
+		}
+
+		/// <summary>
+		/// Perform custom action if one element removed: renumber the remaining elements.
+		/// </summary>
+		/// <param name="oldValue">The removed element.</param>
+		protected void OnRemoveComplete(object oldValue)
+		{
+			((XYPlotLayer)oldValue).SetParentAndNumber(null, 0);
+
+			// renumber the layers from i to count
+			for (int i = 0; i < Count; i++)
+			{
+				this[i].SetParentAndNumber(this, i);
+
+				// fix linked layer connections if neccessary
+				if (XYPlotLayer.ReferenceEquals(oldValue, this[i]))
+					this[i].LinkedLayer = null;
+			}
+			OnLayerCollectionChanged();
+		}
+
+
+		#endregion
+
+
+	}
   
 }
